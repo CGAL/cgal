@@ -49,7 +49,7 @@ struct Items_with_mark_on_hedge : public CGAL::Polyhedron_items_3
 typedef CGAL::Exact_predicates_inexact_constructions_kernel  Kernel;
 typedef CGAL::Polyhedron_3<Kernel,Items_with_mark_on_hedge> Polyhedron;
 typedef Edge_mark_property_map<Polyhedron> Edge_ppmap;
-typedef CGAL::Node_visitor_refine_polyhedra<Polyhedron,Kernel,Edge_ppmap>      Split_visitor;
+typedef CGAL::Node_visitor_refine_polyhedra<Polyhedron,CGAL::Default,Kernel,Edge_ppmap>      Split_visitor;
 typedef std::vector<Kernel::Point_3> Polyline_3;
 
 struct Is_not_marked{
@@ -57,6 +57,7 @@ struct Is_not_marked{
     return !h->m;
   }
 };
+
 
 int main(int argc,char** argv) {
 
@@ -79,7 +80,7 @@ int main(int argc,char** argv) {
   
     std::list<Polyline_3> polylines;
     
-    Split_visitor visitor(NULL,true);
+    Split_visitor visitor;
     CGAL::Intersection_of_Polyhedra_3<Polyhedron,Kernel,Split_visitor> polyline_intersections(visitor);
     std::cout << "Vertices before " <<  P.size_of_vertices() << " " << Q.size_of_vertices() << std::endl;
     polyline_intersections( P,Q,std::back_inserter(polylines));
