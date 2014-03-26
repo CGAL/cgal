@@ -273,6 +273,12 @@ public:
     pts.reserve(size);
   }
 
+  //Get the size of the aloocated memory for the points vector.
+  size_t capacity()
+  {
+    return pts.capacity();
+  }
+
 
   template <class OutputIterator, class FuzzyQueryItem>
   OutputIterator
