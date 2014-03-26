@@ -1301,7 +1301,7 @@ public:
   typedef internal_IOP::Predicates_on_constructions Node_storage_type;
   typedef Tag_false Is_polyhedron_const;
   static const bool do_need_vertex_graph = true;  //because we need to know which edges are constrained
-
+  static const bool do_compute_intersection_of_coplanar_facets = true; //compute intersection of coplanar facets
   typedef Combinatorial_map_3_ Combinatorial_map_3;
   typedef internal_IOP::Volume_info<Polyhedron> Volume_info;
 

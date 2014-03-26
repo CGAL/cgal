@@ -120,6 +120,7 @@ struct Empty_node_visitor{
   typedef internal_IOP::No_predicates_on_constructions Node_storage_type;
   typedef Tag_true Is_polyhedron_const;
   static const bool do_need_vertex_graph = false;
+  static const bool do_compute_intersection_of_coplanar_facets = true;
 };
 
 namespace internal_IOP{
@@ -384,7 +385,8 @@ class Node_visitor_for_polyline_split{
   }
   
 public:
-  static const bool do_need_vertex_graph = false;  
+  static const bool do_need_vertex_graph = false;
+  static const bool do_compute_intersection_of_coplanar_facets = true;
   typedef internal_IOP::Predicates_on_constructions  Node_storage_type;  
   typedef Tag_false Is_polyhedron_const;
 
@@ -860,6 +862,7 @@ class Intersection_of_Polyhedra_3{
   Nodes_vector                nodes;          //Contains intersection points of polyhedra
   Node_visitor*               visitor;
   bool                        is_default_visitor; //indicates whether the visitor need to be deleted
+  static const bool do_compute_intersection_of_coplanar_facets = Node_visitor::do_compute_intersection_of_coplanar_facets;
   #ifdef USE_DETECTION_MULTIPLE_DEFINED_EDGES
   //this does not occur only when one extremity of an edge is inside a face.
   // The problem occur every time an edge or a part of an edge with two incident triangles
@@ -1900,7 +1903,8 @@ class Intersection_of_Polyhedra_3{
     //print_edge_to_sfacet_debug();
     #ifndef DO_NOT_HANDLE_COPLANAR_FACETS
     //first handle coplanar triangles
-    compute_intersection_of_coplanar_facets(current_node);
+    if ( do_compute_intersection_of_coplanar_facets )
+      compute_intersection_of_coplanar_facets(current_node);
     visitor->set_number_of_intersection_points_from_coplanar_facets(current_node+1);
     #endif // not DO_NOT_HANDLE_COPLANAR_FACETS
     //print_edge_to_sfacet_debug();
