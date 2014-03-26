@@ -319,14 +319,10 @@ typename Map::Dart_handle import_from_polyhedron_subset(
 
 template <class Polyhedron,
          class Kernel_=Default,
-         class EdgeMarkPropertyMap_=Default,
          class PolyhedronPointPMap_=Default >
 class Combinatorial_map_output_builder
 {
 //Default typedefs
-  typedef typename Default::Get<
-    EdgeMarkPropertyMap_,
-    Dummy_edge_mark_property_map<Polyhedron> >::type EdgeMarkPropertyMap;
   typedef typename  Default::Get<
     PolyhedronPointPMap_,
     Default_polyhedron_ppmap<Polyhedron> >::type     PolyhedronPointPMap;
@@ -355,7 +351,6 @@ public:
 private:
 //Data members
   PolyhedronPointPMap ppmap;
-  EdgeMarkPropertyMap m_edge_mark_pmap;
   boost::shared_ptr<Combinatorial_map_3>                 final_map_ptr;
 private:
   template <class Halfedge_to_dart_map>
@@ -842,15 +837,13 @@ public:
   }
 
   Combinatorial_map_output_builder(boost::shared_ptr<Combinatorial_map_3> map_ptr)
-    :final_map_ptr(map_ptr) {}
+    : final_map_ptr(map_ptr) {}
 
   Combinatorial_map_output_builder(
-    PolyhedronPointPMap point_pmap = PolyhedronPointPMap(),
-    EdgeMarkPropertyMap edge_pmap = EdgeMarkPropertyMap() )
-    : ppmap(point_pmap)
-    , m_edge_mark_pmap(edge_pmap)
-    , final_map_ptr(new  Combinatorial_map_3()) {
-  }
+    PolyhedronPointPMap point_pmap = PolyhedronPointPMap()
+  ) : ppmap(point_pmap)
+    , final_map_ptr(new  Combinatorial_map_3())
+  {}
 
   template <class Nodes_vector>
   void operator()(
