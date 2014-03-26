@@ -20,17 +20,17 @@
 
 
 /* Usage
-*
-*  This example converts arbitrary-precision arrangment into fixed-precision using Snap Rounding and by using INPUT DATA FROM A USER SPECIFIED FILE. 
-*  <Argument 1> (Mandatory) path to the input file containing the arrangment information.
-*  <Argument 2> (Optional)  path to the output file where the results of snap rounding will be stored. 
-*							Not providing this argument will print the result on standard output.
-*
-*  Input file format
-*  Line # 1: 		Number of line-segments present in the file.
-*  Line # 2 to N+1:	segment_start_point_x <space> segment_start_point_y <space> segment_end_point_x <space> segment_end_point_y
-*  
-*  Each line should contain information about just one segment. 		
+ *
+ *  This example converts arbitrary-precision arrangment into fixed-precision using Snap Rounding and by using INPUT DATA FROM A USER SPECIFIED FILE. 
+ *  <Argument 1> (Mandatory) path to the input file containing the arrangment information.
+ *  <Argument 2> (Optional)  path to the output file where the results of snap rounding will be stored. 
+ *							Not providing this argument will print the result on standard output.
+ *
+ *  Input file format
+ *  Line # 1: 		Number of line-segments present in the file.
+ *  Line # 2 to N+1:	segment_start_point_x <space> segment_start_point_y <space> segment_end_point_x <space> segment_end_point_y
+ *  
+ *  Each line should contain information about just one segment. 		
 */
 
 #include <CGAL/Cartesian.h>
@@ -51,9 +51,10 @@ typedef std::list<Polyline_2>                    Polyline_list_2;
 
 int main(int argc, char* argv[])
 {
-	if(argc > 3 || argc < 2)
+	//if(argc > 3 || argc < 2)
+	if(argc > 3)
 	{
-		std::cout<< "Incorrect input. <Arg 1> path to the INPUT file. <Arg 2> (optional) path to the OUTPUT file" << std::endl;
+		std::cout<< "Incorrect input. <Arg 1> path to the INPUT file. <Arg 2> (optional) path to the OUTPUT file. No arguments to choose the default data file" << std::endl;
 		return -1;
 	}
 
@@ -63,7 +64,10 @@ int main(int argc, char* argv[])
 	std::ifstream my_read_file;
 	std::ofstream my_write_file;
 
-	my_read_file.open(argv[1]);
+	if(argc > 1)
+		my_read_file.open(argv[1]);
+	else 
+		my_read_file.open("data/snap_rounding_data");
 
 	if(!my_read_file.is_open())
 	{
