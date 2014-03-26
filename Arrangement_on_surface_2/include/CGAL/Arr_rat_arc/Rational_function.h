@@ -223,7 +223,10 @@ public:
   Rational_function () :
     Base(static_cast<const Base &> (get_default_instance())) {}
 
-   
+  // explicit copy-constructor, required by VC9
+  Rational_function (const Self & r)
+    : Base(static_cast<const Base &> (r)) {}
+
   CGAL::Sign sign_at(const Algebraic_real_1& x,
                      CGAL::Sign epsilon = CGAL::ZERO) const
   {
