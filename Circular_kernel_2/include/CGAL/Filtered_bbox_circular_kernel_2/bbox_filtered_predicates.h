@@ -42,47 +42,35 @@ class Compare_x_2 : public BK::Circular_kernel:: template Base< BK >::Type::Comp
   typedef typename BK::Point_2                                 Point_2;
   typedef typename BK::Circular_kernel:: 
     template Base< BK >::Type::Compare_x_2                     CK_Compare_x_2;
+  typedef CK_Compare_x_2 Base;
 
 public:
 
-  typedef typename CK_Compare_x_2::result_type result_type; 
-
-  result_type
-  operator() (const Point_2 &p0,
-              const Point_2 &p1) const
-  {
-    return CK_Compare_x_2()(p0, p1);
-  }
+  typedef typename CK_Compare_x_2::result_type result_type;
 
 #ifndef CGAL_CFG_MATCHING_BUG_6
-  using CK_Compare_x_2::operator();
+  using Base::operator();
 #else
-  typedef typename BK::Line_2 Line_2;
-
+ template <typename T1, typename T2>
   result_type
-  operator() (const Point_2 &p0,
-              const Line_2 &p1,
-              const Line_2 &p2) const
+  operator()(const T1& t1, const T2& t2) const
   {
-    return CK_Compare_x_2()(p0, p1,p2);
+    return Base()(t1,t2);
+  }
+  template <typename T1, typename T2, typename T3>
+  result_type
+  operator()(const T1& t1, const T2& t2, const T3& t3) const
+  {
+    return Base()(t1,t2,t3);
   }
 
+  template <typename T1, typename T2, typename T3, typename T4>
   result_type
-  operator() (const Line_2 &p0,
-              const Line_2 &p1,
-              const Line_2 &p2) const
+  operator()(const T1& t1, const T2& t2, const T3& t3, const T4& t4) const
   {
-    return CK_Compare_x_2()(p0, p1,p2);
+    return Base()(t1,t2,t3,t4);
   }
 
-  result_type
-  operator() (const Line_2 &p0,
-              const Line_2 &p1,
-              const Line_2 &p2,
-              const Line_2 &p3) const
-  {
-    return CK_Compare_x_2()(p0, p1,p2,p3);
-  }
 #endif
   
 	
@@ -110,10 +98,10 @@ class Compare_y_2 : public BK::Circular_kernel:: template Base< BK >::Type::Comp
   typedef typename BK::Point_2                                 Point_2;
   typedef typename BK::Circular_kernel:: 
     template Base< BK >::Type::Compare_y_2                     CK_Compare_y_2;
-
+  typedef CK_Compare_y_2 Base;
 public:
 
-  typedef typename CK_Compare_y_2::result_type result_type; 
+  typedef typename CK_Compare_y_2::result_type result_type;
 
   result_type
   operator() (const Point_2 &p0,
@@ -123,33 +111,26 @@ public:
   }
 
 #ifndef CGAL_CFG_MATCHING_BUG_6
-  using CK_Compare_y_2::operator();
+  using Base::operator();
 #else
-  typedef typename BK::Line_2 Line_2;
-
+  template <typename T1, typename T2>
   result_type
-  operator() (const Point_2 &p0,
-              const Line_2 &p1,
-              const Line_2 &p2) const
+  operator()(const T1& t1, const T2& t2) const
   {
-    return CK_Compare_y_2()(p0, p1,p2);
+    return Base()(t1,t2);
+  }
+  template <typename T1, typename T2, typename T3>
+  result_type
+  operator()(const T1& t1, const T2& t2, const T3& t3) const
+  {
+    return Base()(t1,t2,t3);
   }
 
+  template <typename T1, typename T2, typename T3, typename T4>
   result_type
-  operator() (const Line_2 &p0,
-              const Line_2 &p1,
-              const Line_2 &p2) const
+  operator()(const T1& t1, const T2& t2, const T3& t3, const T4& t4) const
   {
-    return CK_Compare_y_2()(p0, p1,p2);
-  }
-
-  result_type
-  operator() (const Line_2 &p0,
-              const Line_2 &p1,
-              const Line_2 &p2,
-              const Line_2 &p3) const
-  {
-    return CK_Compare_y_2()(p0, p1,p2,p3);
+    return Base()(t1,t2,t3,t4);
   }
 #endif
   
@@ -157,7 +138,6 @@ public:
   operator()( const Circular_arc_point_2 &a, const Circular_arc_point_2 &b) const
   {
     Bbox_2 bb1=a.bbox(),bb2=b.bbox();
-
 
     if( bb1.ymin()>bb2.ymax() )
       return LARGER;
@@ -174,22 +154,27 @@ template <class BK>
 class Compare_xy_2 : public BK::Circular_kernel:: template Base< BK >::Type::Compare_xy_2
 {
   typedef typename BK::Circular_kernel::
-    template Base< BK >::Type::Compare_xy_2                    CK_Compare_xy_2;
+  template Base< BK >::Type::Compare_xy_2                      CK_Compare_xy_2;
+  typedef CK_Compare_xy_2 Base;
   typedef typename BK::Circular_arc_point_2                    Circular_arc_point_2;
   typedef typename BK::Point_2                                 Point_2;
 
 public:
 
-  typedef typename CK_Compare_xy_2::result_type result_type; 
-  using CK_Compare_xy_2::operator();
+  typedef typename Base::result_type result_type;
 
-public:
-	
+
+#ifndef CGAL_CFG_MATCHING_BUG_6
+  using Base::operator();
+#else
+ template <typename T1, typename T2>
   result_type
-  operator()( const Point_2 &a, const Point_2 &b) const
+  operator()(const T1& t1, const T2& t2) const
   {
-    return CK_Compare_xy_2()(a,b);
+    return Base()(t1,t2);
   }
+#endif
+public:
 
   result_type
   operator()( const Circular_arc_point_2 &a, const Circular_arc_point_2 &b) const
@@ -212,15 +197,25 @@ class In_x_range_2 : public BK::Circular_kernel:: template Base< BK >::Type::In_
 {
   typedef typename BK::Circular_kernel:: 
     template Base< BK >::Type::In_x_range_2                    CK_In_x_range_2;
+  typedef CK_In_x_range_2 Base;
   typedef typename BK::Circular_arc_point_2                    Circular_arc_point_2;
   typedef typename BK::Circular_arc_2                          Circular_arc_2;
   typedef typename BK::Line_arc_2                              Line_arc_2;
 
 public:
 
-  typedef typename CK_In_x_range_2::result_type result_type; 
-  using CK_In_x_range_2::operator();
+  typedef typename CK_In_x_range_2::result_type result_type;
 
+#ifndef CGAL_CFG_MATCHING_BUG_6
+  using Base::operator();
+#else
+ template <typename T1, typename T2>
+  result_type
+  operator()(const T1& t1, const T2& t2) const
+  {
+    return Base()(t1,t2);
+  }
+#endif
 private:
 
   template <class Arc_2>
@@ -274,15 +269,46 @@ class Compare_y_at_x_2 : public BK::Circular_kernel:: template Base< BK >::Type:
 {
   typedef typename BK::Circular_kernel:: 
     template Base< BK >::Type::Compare_y_at_x_2                         CK_Compare_y_at_x_2;
+  typedef CK_Compare_y_at_x_2 Base;
   typedef typename BK::Circular_arc_2                                   Circular_arc_2;
   typedef typename BK::Circular_arc_point_2                             Circular_arc_point_2;
   typedef typename BK::Line_arc_2                                       Line_arc_2;
 
 public:
 
-  typedef typename CK_Compare_y_at_x_2::result_type result_type; 
-  using CK_Compare_y_at_x_2::operator();
+  typedef typename CK_Compare_y_at_x_2::result_type result_type;
 
+#ifndef CGAL_CFG_MATCHING_BUG_6
+  using Base::operator();
+#else
+  template <typename T1, typename T2>
+  result_type
+  operator()(const T1& t1, const T2& t2) const
+  {
+    return Base()(t1,t2);
+  } 
+
+  template <typename T1, typename T2, typename T3>
+  result_type
+  operator()(const T1& t1, const T2& t2, const T3& t3) const
+  {
+    return Base()(t1,t2,t3);
+  }
+
+  template <typename T1, typename T2, typename T3, typename T4>
+  result_type
+  operator()(const T1& t1, const T2& t2, const T3& t3, const T4& t4) const
+  {
+    return Base()(t1,t2,t3,t4);
+  }
+
+  template <typename T1, typename T2, typename T3, typename T4, typename T5>
+  result_type
+  operator()(const T1& t1, const T2& t2, const T3& t3, const T4& t4, const T5& t5) const
+  {
+    return Base()(t1,t2,t3,t4,t5);
+  }
+#endif
 private:
 
   template <class Arc_2>
@@ -324,15 +350,24 @@ class Has_on_2 : public BK::Circular_kernel:: template Base< BK >::Type::Has_on_
 {
   typedef typename BK::Circular_kernel:: 
     template Base< BK >::Type::Has_on_2                                 CK_Has_on_2;
+  typedef CK_Has_on_2 Base;
   typedef typename BK::Circular_arc_2                                   Circular_arc_2;
   typedef typename BK::Circular_arc_point_2                             Circular_arc_point_2;
   typedef typename BK::Line_arc_2                                       Line_arc_2;
 
 public:
 
-  typedef typename CK_Has_on_2::result_type result_type; 
-  using CK_Has_on_2::operator();
-
+  typedef typename CK_Has_on_2::result_type result_type;
+  #ifndef CGAL_CFG_MATCHING_BUG_6
+  using Base::operator();
+#else
+ template <typename T1, typename T2>
+  result_type
+  operator()(const T1& t1, const T2& t2) const
+  {
+    return Base()(t1,t2);
+  }
+#endif
 private:
 
   template <class Arc_2>
@@ -384,73 +419,21 @@ class Equal_2
   typedef typename BK::Circular_arc_point_2                             Circular_arc_point_2;
   typedef typename BK::Line_arc_2                                       Line_arc_2;
 
+  typedef CK_Equal_2 Base;
+
 public:
 
-  typedef typename CK_Equal_2::result_type result_type; 
-
-  result_type
-  operator() (const Point_2 &p0,
-              const Point_2 &p1) const
-  { return CK_Equal_2()(p0,p1); }
+  typedef typename CK_Equal_2::result_type result_type;
 
 #ifndef CGAL_CFG_MATCHING_BUG_6
-  using CK_Equal_2::operator();
+  using Base::operator();
 #else  
+ template <typename T1, typename T2>
   result_type
-  operator() (const Vector_2 &p0,
-              const Vector_2 &p1) const
-  { return CK_Equal_2()(p0,p1); }
-       
-  result_type
-  operator() (const Vector_2 &p0,
-              const Null_vector &p1) const
-  { return CK_Equal_2()(p0,p1); }
-      
-  result_type
-  operator() (const Null_vector &p0,
-              const Vector_2 &p1) const
-  { return CK_Equal_2()(p0,p1); }
-      
-  result_type
-  operator() (const Direction_2 &p0,
-              const Direction_2 &p1) const
-  { return CK_Equal_2()(p0,p1); }
-    
-  
-  result_type
-  operator() (const Segment_2 &p0,
-              const Segment_2 &p1) const
-  { return CK_Equal_2()(p0,p1); }
-    
-
-  result_type
-  operator() (const Ray_2 &p0,
-              const Ray_2 &p1) const
-  { return CK_Equal_2()(p0,p1); }
-    
-  result_type
-  operator() (const Line_2 &p0,
-              const Line_2 &p1) const
-  { return CK_Equal_2()(p0,p1); }
-    
-
-
-  result_type
-  operator() (const Triangle_2 &p0,
-              const Triangle_2 &p1) const
-  { return CK_Equal_2()(p0,p1); }
-    
-
-  result_type
-  operator() (const Iso_rectangle_2 &p0,
-              const Iso_rectangle_2 &p1) const
-  { return CK_Equal_2()(p0,p1); }
-    
-
-  result_type
-  operator() (const Circle_2 &p0,
-              const Circle_2 &p1) const
-  { return CK_Equal_2()(p0,p1); }
+  operator()(const T1& t1, const T2& t2) const
+  {
+    return Base()(t1,t2);
+  }
 #endif
 
 private:
@@ -533,13 +516,24 @@ class Do_overlap_2 : public BK::Circular_kernel:: template Base< BK >::Type::Do_
 {
   typedef typename BK::Circular_kernel:: 
     template Base< BK >::Type::Do_overlap_2                           CK_Do_overlap_2;
+  typedef CK_Do_overlap_2 Base;
   typedef typename BK::Circular_arc_2                                 Circular_arc_2;
   typedef typename BK::Line_arc_2                                     Line_arc_2;
 
 public:
 
-  typedef typename CK_Do_overlap_2::result_type result_type; 
-  using CK_Do_overlap_2::operator();
+  typedef typename CK_Do_overlap_2::result_type result_type;
+
+#ifndef CGAL_CFG_MATCHING_BUG_6
+  using Base::operator();
+#else
+ template <typename T1, typename T2>
+  result_type
+  operator()(const T1& t1, const T2& t2) const
+  {
+    return Base()(t1,t2);
+  }
+#endif
 
 private:
 

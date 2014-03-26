@@ -114,6 +114,8 @@ protected:
   typedef typename Base::Gt             Gt;
   
 public:
+  typedef typename Base::Cell_handle    Cell_handle;
+
   static double default_value;
   static double max_value;
   static double min_value;
@@ -121,7 +123,14 @@ public:
   virtual double get_max_value() const { return 90.; }
   virtual double get_perturbation_unit() const { return 1.; }
 
+#if ( _MSC_VER != 1800 )
   using Base::operator();
+#else
+  virtual double operator()(Cell_handle cell) const
+  {
+    return Base::operator()(cell);
+  }
+#endif
 
   virtual double operator()(const Tetrahedron_3& t) const
   {
