@@ -18,7 +18,7 @@ namespace Kinetic {
 
   \sa `Kinetic::RootEnumerator`
 
-  ### Example ###
+  \cgalHeading{Example}
 
   We provide several models of the concept, which are not documented 
   separately. The models of `Kinetic::SimulationTraits` all choose 
@@ -109,7 +109,7 @@ public:
     \sa `FunctionKernel`
     \sa `FunctionKernel::ConstructFunction` 
 
-    ### Example ###
+    \cgalHeading{Example}
 
     Several ways to create functions: 
 
@@ -228,7 +228,7 @@ public:
 
     \sa `FunctionKernel` 
 
-    ### Example ###
+    \cgalHeading{Example}
 
     \code{.cpp} 
 

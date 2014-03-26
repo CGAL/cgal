@@ -283,7 +283,7 @@ namespace CGAL_MINIBALL_NAMESPACE {
 
 // If the package is used with CGAL, we include some default
 // traits classes:
-#ifdef CGAL_VERSION
+#ifndef CGAL_JUST_MINIBALL
 #include <CGAL/Min_sphere_of_spheres_d_traits_d.h>
 #include <CGAL/Min_sphere_of_spheres_d_traits_2.h>
 #include <CGAL/Min_sphere_of_spheres_d_traits_3.h>

@@ -336,7 +336,27 @@ gmpz_new_read(std::istream &is, Gmpz &z)
     r= cc-zero;
     is.get();
     CGAL_assertion(!is.fail());
-    while (true) {
+
+    // The following loop was supposed to be an infinite loop with:
+    //   while (true)
+    // where the break condition is that is.peek() returns and EOF or a
+    // non-digit character.
+    //
+    // Unfortunately, the wording of the C++03 and C++11 standard was not
+    // well understood by the authors of libc++ (the STL of clang++) and,
+    // in the version of libc++ shipped with Apple-clang-3.2,
+    // istream::peek() set the flag eofbit when it reads the last character
+    // of the stream *instead* of setting it only when it *tries to read
+    // past the last character*. For that reason, to avoid that the next
+    // peek() sets also the failbit, one has to check for EOL twice.
+    //
+    // See the LWG C++ Issue 2036, classified as Not-A-Defect:
+    //   http://lwg.github.com/issues/lwg-closed.html#2036
+    // and a StackOverflow related question:
+    //   http://stackoverflow.com/a/9020292/1728537
+    // --
+    // Laurent Rineau, 2013/10/10
+    while (!is.eof()) {
       c=is.peek();
       if (c== std::istream::traits_type::eof()) {
         break;

@@ -48,6 +48,7 @@
 #include <CGAL/poisson_refine_triangulation.h>
 #include <CGAL/Robust_circumcenter_filtered_traits_3.h>
 #include <CGAL/compute_average_spacing.h>
+#include <CGAL/Timer.h>
 
 #include <boost/shared_ptr.hpp>
 #include <boost/array.hpp>
@@ -151,7 +152,7 @@ struct Special_wrapper_of_two_functions_keep_pointers {
 \brief Implementation of the Poisson Surface Reconstruction method.
   
 Given a set of 3D points with oriented normals sampled on the boundary
-of a 3D solid, the Poisson Surface Reconstruction method \cite Kazhdan06 
+of a 3D solid, the Poisson Surface Reconstruction method \cgalCite{Kazhdan06} 
 solves for an approximate indicator function of the inferred
 solid, whose gradient best matches the input normals. The output
 scalar function, represented in an adaptive octree, is then
@@ -302,7 +303,7 @@ public:
     NormalPMap normal_pmap ///< property map: `value_type of InputIterator` -> `Vector` (the *oriented* normal of an input point).
   )
     : m_tr(new Triangulation), m_Bary(new std::vector<boost::array<double,9> > )
-    , average_spacing(CGAL::compute_average_spacing(first, beyond, 6))
+    , average_spacing(CGAL::compute_average_spacing(first, beyond, point_pmap, 6))
   {
     forward_constructor(first, beyond, point_pmap, normal_pmap, Poisson_visitor());
   }
@@ -320,7 +321,7 @@ public:
     NormalPMap normal_pmap, ///< property map: `value_type of InputIterator` -> `Vector` (the *oriented* normal of an input point).
     Visitor visitor)
     : m_tr(new Triangulation), m_Bary(new std::vector<boost::array<double,9> > )
-    , average_spacing(CGAL::compute_average_spacing(first, beyond, 6))
+    , average_spacing(CGAL::compute_average_spacing(first, beyond, point_pmap, 6))
   {
     forward_constructor(first, beyond, point_pmap, normal_pmap, visitor);
   }
@@ -573,7 +574,7 @@ public:
 
   /*! 
     `ImplicitFunction` interface: evaluates the implicit function at a 
-    given 3D query point. The function `compute_implicit_function` must be 
+    given 3D query point. The function `compute_implicit_function()` must be 
     called before the first call to `operator()`. 
   */ 
   FT operator()(const Point& p) const

@@ -3,7 +3,7 @@
 \cgalConcept
 
 Requirements of a traits class to be 
-used with the function `optimal_convex_partition_2` that computes 
+used with the function `optimal_convex_partition_2()` that computes 
 an optimal convex partition of a polygon. 
 
 \cgalRefines `PartitionTraits_2` 

@@ -35,6 +35,7 @@ template<class ECM_
         ,class VertexIndexMap_
         ,class EdgeIndexMap_
         ,class EdgeIsBorderMap_
+        ,class EdgeIsConstrainedMap_
         ,class GetCost_
         ,class GetPlacement_
         ,class VisitorT_
@@ -48,6 +49,7 @@ public:
   typedef VertexIndexMap_   VertexIndexMap ;
   typedef EdgeIndexMap_     EdgeIndexMap ;
   typedef EdgeIsBorderMap_  EdgeIsBorderMap ;
+  typedef EdgeIsConstrainedMap_ EdgeIsConstrainedMap;
   typedef GetCost_          GetCost ;
   typedef GetPlacement_     GetPlacement ;
   typedef VisitorT_         VisitorT ;
@@ -168,16 +170,17 @@ public:
   
 public:
 
-  EdgeCollapse( ECM&                    aSurface
-              , ShouldStop       const& aShouldStop 
-              , VertexIndexMap   const& aVertex_index_map 
-              , EdgeIndexMap     const& aEdge_index_map 
-              , EdgeIsBorderMap  const& aEdge_is_border_map 
-              , GetCost          const& aGetCost
-              , GetPlacement     const& aGetPlacement
-              , VisitorT                aVisitor
+  EdgeCollapse( ECM&                        aSurface
+              , ShouldStop           const& aShouldStop
+              , VertexIndexMap       const& aVertex_index_map
+              , EdgeIndexMap         const& aEdge_index_map
+              , EdgeIsBorderMap      const& aEdge_is_border_map
+              , EdgeIsConstrainedMap const& aEdge_is_constrained_map
+              , GetCost              const& aGetCost
+              , GetPlacement         const& aGetPlacement
+              , VisitorT                    aVisitor
               ) ;
-  
+
   int run() ;
   
 private:
@@ -208,6 +211,12 @@ private:
     
   bool is_border ( const_edge_descriptor const& aEdge ) const { return Edge_is_border_map[aEdge] ; }    
   
+  bool is_constrained( const_edge_descriptor const& aEdge ) const { return get(Edge_is_constrained_map,aEdge); }
+  bool is_constrained( const_vertex_descriptor const& aVertex ) const;
+
+  bool is_border_or_constrained( const_edge_descriptor const& aEdge ) const { return Edge_is_border_map[aEdge] ||
+                                                                                     Edge_is_constrained_map[aEdge];}
+
   bool is_undirected_edge_a_border ( const_edge_descriptor const& aEdge ) const
   {
     return is_border(aEdge) || is_border(opposite_edge(aEdge,mSurface)) ;
@@ -215,6 +224,8 @@ private:
   
   bool is_border ( const_vertex_descriptor const& aV ) const ;
   
+  bool is_border_or_constrained ( const_vertex_descriptor const& aV ) const ;
+
   bool are_shared_triangles_valid( Point const& p0, Point const& p1, Point const& p2, Point const& p3 ) const ;
   
   edge_descriptor find_connection ( const_vertex_descriptor const& v0, const_vertex_descriptor const& v1 ) const ;
@@ -251,13 +262,13 @@ private:
   std::string vertex_to_string( const_vertex_descriptor const& v ) const
   {
     Point const& p = get_point(v);
-    return boost::str( boost::format("[V%1%:%2%]") % v->id() % xyz_to_string(p) ) ;
+    return boost::str( boost::format("[V%1%:%2%]") % get(Vertex_index_map,v) % xyz_to_string(p) ) ;
   }
     
   std::string edge_to_string ( const_edge_descriptor const& aEdge ) const
   {
     const_vertex_descriptor p,q ; boost::tie(p,q) = get_vertices(aEdge);
-    return boost::str( boost::format("{E%1% %2%->%3%}%4%") % aEdge->id() % vertex_to_string(p) % vertex_to_string(q) % ( is_border(aEdge) ? " (BORDER)" : ( is_border(aEdge->opposite()) ? " (~BORDER)": "" ) ) ) ;
+    return boost::str( boost::format("{E%1% %2%->%3%}%4%") % get(Edge_index_map,aEdge) % vertex_to_string(p) % vertex_to_string(q) % ( is_border(aEdge) ? " (BORDER)" : ( is_border(aEdge->opposite()) ? " (~BORDER)": "" ) ) ) ;
   }
   
   Cost_type get_cost ( Profile const& aProfile ) const
@@ -321,18 +332,55 @@ private:
     }  
     return rEdge ;  
   }
-   
+
+  /// Functions to ensure the backward compatibility before addition of the constrained edge map
+  template<class AEdgeIsConstrainedMap>
+  vertex_descriptor
+  halfedge_collapse_bk_compatibility(
+    edge_descriptor const& pq, AEdgeIsConstrainedMap aEdge_is_constrained_map)
+  {
+    return halfedge_collapse(pq, mSurface, aEdge_is_constrained_map);
+  }
+
+  template<class ECM>
+  vertex_descriptor
+  halfedge_collapse_bk_compatibility(
+    edge_descriptor const& pq, No_constrained_edge_map<ECM> )
+  {
+    return halfedge_collapse(pq, mSurface);
+  }
+  ///
+
+  /// We wrap this test to avoid penalizing runtime when no constraints are present
+  template<class AEdgeIsConstrainedMap>
+  bool
+  is_edge_adjacent_to_a_constrained_edge(
+    Profile const& aProfile, AEdgeIsConstrainedMap)
+  {
+    return is_constrained(aProfile.v0()) && is_constrained(aProfile.v1());
+  }
+
+  template<class ECM>
+  bool
+  is_edge_adjacent_to_a_constrained_edge(
+    edge_descriptor const&, No_constrained_edge_map<ECM> )
+  {
+    return false;
+  }
+  ///
+
 private:
 
   ECM&                   mSurface ;
   
-  ShouldStop      const& Should_stop ;
-  VertexIndexMap  const& Vertex_index_map ;
-  EdgeIndexMap    const& Edge_index_map ;
-  EdgeIsBorderMap const& Edge_is_border_map ;
-  GetCost         const& Get_cost ;
-  GetPlacement    const& Get_placement ;
-  VisitorT               Visitor ; 
+  ShouldStop           const& Should_stop ;
+  VertexIndexMap       const& Vertex_index_map ;
+  EdgeIndexMap         const& Edge_index_map ;
+  EdgeIsBorderMap      const& Edge_is_border_map;
+  EdgeIsConstrainedMap const& Edge_is_constrained_map;
+  GetCost              const& Get_cost ;
+  GetPlacement         const& Get_placement ;
+  VisitorT                    Visitor ;
   
   
 private:

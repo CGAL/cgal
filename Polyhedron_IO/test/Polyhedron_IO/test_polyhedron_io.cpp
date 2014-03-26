@@ -73,7 +73,7 @@ void test_file_IO_OFF() {
         Polyhedron P;
         std::istringstream in( triangle);
         in >> P;    /* 'in' is the stream where the object is read from. */
-        assert(! in.bad());
+        assert(! in.fail());
         assert( P.is_triangle( P.halfedges_begin()));
         std::stringstream stream;
         stream << P << '\0';
@@ -96,7 +96,7 @@ void test_file_IO_OFF() {
         std::ifstream filein( "triangle_binary.off");
         P = Polyhedron();
         filein >> P;
-        assert(! filein.bad());
+        assert(! filein.fail());
         assert( P.is_triangle( P.halfedges_begin()));
     }{
         Polyhedron P;

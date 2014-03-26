@@ -21,6 +21,7 @@
 #ifndef CGAL_TRIANGLE_2_TRIANGLE_2_DO_INTERSECT_H
 #define CGAL_TRIANGLE_2_TRIANGLE_2_DO_INTERSECT_H
 
+#include <CGAL/Intersection_traits.h>
 #include <CGAL/Triangle_2.h>
 
 namespace CGAL {

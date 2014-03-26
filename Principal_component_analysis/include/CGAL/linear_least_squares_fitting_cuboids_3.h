@@ -21,14 +21,13 @@
 #define CGAL_LINEAR_LEAST_SQUARES_FITTING_CUBOIDS_3_H
 
 #include <CGAL/basic.h>
-#include <CGAL/Object.h>
 #include <CGAL/centroid.h>
 #include <CGAL/eigen.h>
 #include <CGAL/PCA_util.h>
-
 #include <CGAL/linear_least_squares_fitting_points_3.h>
 #include <CGAL/linear_least_squares_fitting_segments_3.h>
 
+#include <list>
 #include <iterator>
 
 namespace CGAL {

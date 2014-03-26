@@ -65,24 +65,50 @@ void generator::protected_run(int fn)
     return;
   }
 
-  int nbelements=30;
+  std::list<Point_2> pt_list;
+  std::list<Circle_2> cir_list;
+
+  Iso_rectangle_2 bbox=
+  read_active_objects(
+		      CGAL::dispatch_or_drop_output<Point_2,Circle_2>(
+      std::back_inserter(pt_list),
+      std::back_inserter(cir_list)
+    )
+  );
+
+  Kernel::Vector_2 origin;
   double size=200;
   int ret_val;
+
+
+  if (fn==0){      
+    if (cir_list.size()==0) { print_error_message(("Selection must be a circle")); return;}
+    Circle_2  circ=*cir_list.begin();
+    size =  sqrt(circ.squared_radius());
+    origin= circ.center()-CGAL::ORIGIN;
+  }else{
+    size = (bbox.xmax()-bbox.xmin())/2;
+    origin= Kernel::Vector_2((bbox.xmin()+bbox.xmax())/2,(bbox.ymin()+bbox.ymax())/2);
+    if (size<1){
+      size=200;
+      //boost::tie(ret_val,size)=request_value_from_user<int>((boost::format("Size (default : %1%)") % size).str());
+      //if (ret_val == -1) return;
+      //if (ret_val == 0) size=200;
+      origin =  Kernel::Vector_2(200,200);
+    }
+  }
+
+  int nbelements=30;
   
   boost::tie(ret_val,nbelements)=request_value_from_user<int>((boost::format("Number of elements (default : %1%)") % nbelements).str() );
   if (ret_val == -1) return;
   if (ret_val == 0) nbelements=30;
-  boost::tie(ret_val,size)=request_value_from_user<int>((boost::format("Size (default : %1%)") % size).str());
-  if (ret_val == -1) return;
-  if (ret_val == 0) size=200;
   
-  
-  if(size< 0 || nbelements < 3){
+
+  if(nbelements < 3){
     print_error_message("Not a good value");
     return;
   }
-  
-  std::cout << size << " " << nbelements<< std::endl;
   
   std::vector<Point_2> points;
   std::vector<Segment_2> segments;
@@ -126,8 +152,8 @@ void generator::protected_run(int fn)
     case 4:
       // create k-gon and write it into a window: 
       CGAL::random_polygon_2(nbelements, std::back_inserter(points),Point_generator(size));
+      for ( std::vector<Point_2>::iterator it=points.begin(); it!=points.end(); ++it) *it = *it + origin; 
       draw_polyline_in_ipe(points.begin(),points.end(),true);
-      center_selection_in_page();
       return;
     
     case 5://Random segments  
@@ -146,16 +172,20 @@ void generator::protected_run(int fn)
   if (fn==6){
     CGAL::Random random;
     for (std::vector<Point_2>::iterator it_pt=points.begin();it_pt!=points.end();++it_pt)
-      draw_in_ipe(Circle_2(*it_pt,pow(random.get_double(size/20.,size/2.),2) ));
+      draw_in_ipe(Circle_2(*it_pt+origin,pow(random.get_double(size/20.,size/2.),2) ));
     group_selected_objects_();
   }
   else
-    if (!points.empty())// Draw points
+    if (!points.empty()){// Translate and draw points
+      for ( std::vector<Point_2>::iterator it=points.begin(); it!=points.end(); ++it) *it = *it + origin; 
       draw_in_ipe(points.begin(),points.end());
+    }
     else
-      if (!segments.empty())// Draw segments
+      if (!segments.empty()){// Translate and draw segments
+	for ( std::vector<Segment_2>::iterator it=segments.begin(); it!=segments.end(); ++it) 
+	  *it = Segment_2( it->source() + origin, it->target() + origin); 
         draw_in_ipe(segments.begin(),segments.end());
-  center_selection_in_page();
+      }
 }
 
 }

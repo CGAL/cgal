@@ -81,7 +81,7 @@ types.
 
 \anchor gmpnt
 
-\cgal provides wrapper classes for number types defined in the <span class="textsc">Gnu</span> Multiple Precision arithmetic library \cite g-ggmpa-. The file
+\cgal provides wrapper classes for number types defined in the <span class="textsc">Gnu</span> Multiple Precision arithmetic library \cgalCite{g-ggmpa}. The file
 <TT>CGAL/Gmpz.h</TT> provides the class `Gmpz`, a wrapper class for
 the arbitrary-precision integer type `mpz_t`, which is compliant
 with the \cgal number type requirements. The file <TT>CGAL/Gmpq.h</TT>
@@ -94,6 +94,8 @@ arbitrary-precision floating-point type. Hence, It does not support
 operators like <TT>/</TT> to guarantee exactness of the operations. The
 arithmetic operations on this type are restricted to <TT>+</TT>, <TT>-</TT>,
 <TT>*</TT> and `integral_division()`.
+On some platforms, the file `CGAL/Mpzf.h` provides the class `Mpzf`,
+a faster alternative to `Gmpzf` that doesn't support `integral_division()`.
 
 The file <TT>CGAL/Gmpfr.h</TT> provides the class `Gmpfr`,
 a fixed-precision floating-point number type. Since the precision
@@ -103,7 +105,7 @@ Though not necessary at first, the user will take full advantage of this
 number type by understanding the ideas behind floating-point arithmetic,
 such as precision and rounding, and understanding the flags set by this
 library after each operation. For more details, the reader should refer
-to \cite cgal:mt-mpfr and the `Gmpfr` reference manual.
+to \cgalCite{cgal:mt-mpfr} and the `Gmpfr` reference manual.
 
 In addition, it is possible to directly use the C++ number types provided by
 <span class="textsc">Gmp</span> : `mpz_class`, `mpq_class` (note that support for
@@ -155,7 +157,7 @@ requirements.
 
 \anchor corent
 
-In principle <span class="textsc">Core</span> \cite klpy-clp-99 provides the same set of number types as \leda. 
+In principle <span class="textsc">Core</span> \cgalCite{klpy-clp-99} provides the same set of number types as \leda. 
 The type `CORE::BigInt` represent integers and `CORE::BigRat` 
 represent rationals of arbitrary length. The number type `CORE::BigFloat` is 
 a variable precision floating-point type. It is also possible to interpret it as an
@@ -186,9 +188,9 @@ numbers. Each interval has an associated <I>precision</I>, which is
 the maximum precision (number of bits used to represent the mantissa)
 of its endpoints. The result of the operations is guaranteed to be
 always contained in the returned interval. Since the interval arithmetic
-is implemented on top of `Gmpfr`, the global flags and the default
-precision are inherited from the `Gmpfr` interface. See
-\cite cgal:r-mpfi and the `Gmpfi` reference manual for details.
+is implemented on top of `Gmpfr`, the global flags
+are inherited from the `Gmpfr` interface. See
+\cgalCite{cgal:r-mpfi} and the `Gmpfi` reference manual for details.
 
 To use the `Gmpfi` class, <span class="textsc">Mpfi</span> must be installed.
 
@@ -209,7 +211,7 @@ It initially contained the `Quotient`, `Gmpz` and `Gmpq` classes,
 together with the interfaces to the number types provided by \leda, which were
 implemented by Stefan Schirra and Andreas Fabri.
 
-Later, around 1998-2002, Sylvain Pion implemented `Interval_nt`
+Later, around 1998-2002, Sylvain Pion implemented `Interval_nt`,
 `MP_Float` and `Lazy_exact_nt`, together with the interfaces to
 the `mpz_class` and `mpq_class` types from <span class="textsc">Gmp</span>.
 

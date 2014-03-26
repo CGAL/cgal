@@ -1,4 +1,8 @@
-#include <CGAL/Cartesian.h>
+
+//this is an enriched Polyhedron with facet normals
+#include "PolyhedralSurf.h"
+#include "PolyhedralSurf_rings.h"
+
 #include <CGAL/Ridges.h>
 #include <CGAL/Umbilics.h>
 #include <CGAL/Monge_via_jet_fitting.h>
@@ -12,9 +16,6 @@ namespace po = boost::program_options;
 
 using namespace std;
 
-//this is an enriched Polyhedron with facets' normal
-#include "PolyhedralSurf.h"
-#include "PolyhedralSurf_rings.h"
 
 typedef PolyhedralSurf::Traits          Kernel;
 typedef Kernel::FT                      FT;
@@ -322,10 +323,14 @@ int main()
   //OpenGL output
   for (;iter_lines!=iter_end;iter_lines++) (*iter_lines)->dump_4ogl(out_4ogl);
 
-  //verbose txt output
-  if (verbose)
-    for (iter_lines = ridge_lines.begin();iter_lines!=iter_end;iter_lines++)
+
+  for (iter_lines = ridge_lines.begin();iter_lines!=iter_end;iter_lines++){
+    //verbose txt output
+    if (verbose){
       out_verb << **iter_lines;
+    }
+    delete *iter_lines;
+    }
 
   //---------------------------------------------------------------------------
   // UMBILICS
@@ -354,8 +359,12 @@ int main()
   //verbose txt output
   if (verbose) {
     out_verb << "nb of umbilics " << umbilics.size() << std::endl;
-    for ( iter_umb = umbilics.begin();iter_umb!=iter_umb_end;iter_umb++)
+  }
+  for ( iter_umb = umbilics.begin();iter_umb!=iter_umb_end;iter_umb++){
+    if (verbose) {
       out_verb << **iter_umb;
+    }
+    delete *iter_umb;
   }
   return 0;
 }

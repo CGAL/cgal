@@ -1,0 +1,267 @@
+#VRML V2.0 utf8
+Configuration {
+  accumulation Accumulation { enabled TRUE }
+  stencilBits 8
+}
+ColorBackground {
+  color 1 1 1 1
+  clearStencil TRUE
+}
+NavigationInfo { type [ "EXAMINE" "ANY" ] }
+Viewpoint {
+  type "ORTHOGONAL"
+  fieldOfView 2.96
+  # radiusScale 0.7
+}
+
+DEF TRANSFORMER_NAV NavigationInfo { type [ "TRANSFORM" ] }
+
+DEF DRAW_OPAQUE_KEY SingleKeySensor { key "o" }
+DEF DRAW_HALOED_KEY SingleKeySensor { key "l" state TRUE }
+DEF DRAW_SURFACE_KEY SingleKeySensor { key "b" state TRUE }
+DEF EXPORT_KEY SingleKeySensor { key "O" }
+DEF SNAP_KEY SingleKeySensor { key "S" }
+
+DEF VERTEX_SHAPE_KEY SingleKeySensor {
+  key "v"
+  boolean FALSE
+  numberOfStates 5
+  intState 2 # disc
+}
+
+DEF EDGE_SHAPE_KEY SingleKeySensor {
+  key "e"
+  boolean FALSE
+  numberOfStates 4
+  intState 2 # strip
+}
+
+DEF HIDE_SINGULARITIES_KEY SingleKeySensor {
+  boolean FALSE
+  key "s"
+}
+
+DEF HIDE_DISCONTINUITY_KEY SingleKeySensor {
+  boolean FALSE
+  key "d"
+}
+
+DEF SNAP Snapshot {
+  image Image { }
+  fileFormat "jpg"
+  sequence FALSE
+  dirName "."
+  fileName "test01"
+}
+
+Transform {
+  rotation 1 0 0 -1.5708
+  bboxCenter 0 0 0
+  bboxSize 1.5 1.5 1.5
+  children [
+    Switch {
+      whichChoice 0
+      children [
+	DEF ARRANGMENT Group {
+	  children [
+	    Shape {
+	      drawDepth FALSE
+	      appearance Appearance {
+		material Material {
+		  diffuseColor 0.5 0.5 0.5
+		  ambientIntensity 0.7
+		  specularColor 0.5 0.5 0.5
+		}
+	      }
+	      geometry Sphere {
+		slices 32
+		stacks 32
+	      }
+	    }
+	    Shape {
+	      appearance Appearance {
+		material Material {
+		  transparency 0.0001
+		}
+	      }
+	      geometry DEF GEOM ArrangementOnSphereMarked {
+		drawSurface FALSE
+#	        drawOpaque TRUE
+	        drawHaloed TRUE
+		aosEdgeStyle "strip"
+		aosEdgeRadius 0.03
+		aosEdgeLineWidth 3
+		aosVertexStyle "disc"
+		aosVertexRadius 0.1
+		aosVertexPointSize 6
+		aosIsolatedVertexStyle "disc"
+#	        insertionStrategy "increment"
+		aosMarkedEdgeIndex 1
+		coord DEF COORD ExactCoordinate {
+		  ratPoint [0 0 1, 0 -1 0, 1 0 0,
+			    1 -2 -1, 2 -1 -1]
+		}
+		# pointIndex [6 7]
+		curveIndex [0 1, 1 2, 2 0,
+			   3 4]
+	      }
+	    }
+	   ]
+	}
+       ]
+    }
+
+    # The singularity points:
+    DEF SINGULARITIES_SWITCH Switch {
+      whichChoice 0
+      children [
+	Group {
+	  children [
+	    Shape {
+	      appearance DEF BOUNDARY_APP Appearance {
+	        material Material {
+		  # ambientIntensity 1
+		  diffuseColor 0.4 0.4 0.4
+		  # specularColor 0.8 0.8 0.8
+		  # transparency 0.0001
+		}
+	      }
+	      geometry Sphere {
+    	        center 0 0 1
+	        radius 0.05
+	      }
+	    }
+	    Shape {
+	      appearance USE AXES_APP
+	      geometry Sphere {
+    	        center 0 0 -1
+	        radius 0.05
+	      }
+	    }
+	   ]
+	}
+      ]
+    }
+
+    # The discontinuity arc:
+    DEF DISCONTINUITY_SWITCH Switch {
+      whichChoice 0
+      children [
+        Shape {
+	  appearance USE BOUNDARY_APP
+	  geometry Extrusion {
+	    creaseAngle 2.0
+	    beginCap TRUE
+	    endCap TRUE
+	    loop FALSE
+	    crossSectionRadius 0.025
+	    spine [
+		   0 0 1,
+		   -0.0980171 0 0.995185,
+		   -0.19509 0 0.980785,
+		   -0.290285 0 0.95694,
+		   -0.382683 0 0.92388,
+		   -0.471397 0 0.881921,
+		   -0.55557 0 0.83147,
+		   -0.634393 0 0.77301,
+		   -0.707107 0 0.707107,
+		   -0.77301 0 0.634393,
+		   -0.83147 0 0.55557,
+		   -0.881921 0 0.471397,
+		   -0.92388 0 0.382683,
+		   -0.95694 0 0.290285,
+		   -0.980785 0 0.19509,
+		   -0.995185 0 0.0980171,
+		   -1 0 0,
+		   -0.995185 0 -0.0980171,
+		   -0.980785 0 -0.19509,
+		   -0.95694 0 -0.290285,
+		   -0.92388 0 -0.382683,
+		   -0.881921 0 -0.471397,
+		   -0.83147 0 -0.55557,
+		   -0.77301 0 -0.634393,
+		   -0.707107 0 -0.707107,
+		   -0.634393 0 -0.77301,
+		   -0.55557 0 -0.83147,
+		   -0.471397 0 -0.881921,
+		   -0.382683 0 -0.92388,
+		   -0.290285 0 -0.95694,
+		   -0.19509 0 -0.980785,
+		   -0.0980171 0 -0.995185,
+		   0 0 -1,
+		  ]
+	  }
+	}
+       ]
+    }
+    
+    # The axes:
+    DEF AXES Transform {
+      scale 0.1 0.1 0.1
+      children [
+	Shape {
+	  appearance DEF AXES_APP Appearance {
+	    material Material {
+	      # ambientIntensity 1
+	      diffuseColor 0.4 0.4 0.4
+	      # specularColor 0.3 0.3 0.3
+	      # transparency 0.0001
+	    }
+	  }
+	  geometry Sphere { radius 0.1 }
+	}
+	DEF CS_AXIS Transform {
+	  translation 0 1.5 0
+	  children [
+	    Shape {
+	      appearance USE AXES_APP
+	      geometry Cylinder {
+		radius 0.1
+		height 3
+		set_is_bottom_visible FALSE
+		set_is_top_visible FALSE
+	      }
+	    }
+	    Transform {
+	      translation 0 1.7 0
+	      children [
+		Shape {
+		  appearance USE AXES_APP
+		  geometry Cone {
+		    bottomRadius 0.2
+		    height 0.4
+		  }
+		}
+	       ]
+	    }
+	   ]
+	}
+	Transform {
+	  rotation 0 0 -1 1.57
+	  children [ USE CS_AXIS ]
+	}
+	Transform {
+	  rotation 1 0 0 1.57
+	  children [ USE CS_AXIS ]
+	}
+       ]
+    }
+#     Transform {
+#       translation 2 0 0
+#       children [
+#         USE ARRANGMENT
+#        ]
+#     }
+   ]
+}
+
+ROUTE DRAW_OPAQUE_KEY.state TO GEOM.drawOpaque
+ROUTE DRAW_HALOED_KEY.state TO GEOM.drawHaloed
+ROUTE SNAP_KEY.state TO SNAP.trigger
+# ROUTE EXPORT_KEY.press TO GEOM.export
+
+ROUTE HIDE_DISCONTINUITY_KEY.intState TO DISCONTINUITY_SWITCH.whichChoice
+ROUTE HIDE_SINGULARITIES_KEY.intState TO SINGULARITIES_SWITCH.whichChoice
+
+ROUTE VERTEX_SHAPE_KEY.intState TO GEOM.aosVertexStyleId
+ROUTE EDGE_SHAPE_KEY.intState TO GEOM.aosEdgeStyleId

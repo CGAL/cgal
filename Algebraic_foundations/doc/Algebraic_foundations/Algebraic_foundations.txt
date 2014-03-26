@@ -31,7 +31,7 @@ it was not desirable to cover all known algebraic structures,
 e.g., we did not introduce concepts for such basic structures as <I>groups</I> or
 exceptional structures as <I>skew fields</I>.
 
-\cgalFigureBegin{figConceptHierarchyOfAlgebraicStructures,AlgebraicConceptHierarchy.gif}
+\cgalFigureBegin{figConceptHierarchyOfAlgebraicStructures,AlgebraicConceptHierarchy.png}
 Concept Hierarchy of Algebraic Structures
 \cgalFigureEnd
 
@@ -136,7 +136,7 @@ Most number types represent some subset of the real numbers. From those types
 we expect functionality to compute the sign, absolute value or double 
 approximations. In particular we can expect an order on such a type that 
 reflects the order along the real axis. 
-All these properties are gathered in the concept `RealComparable`. 
+All these properties are gathered in the concept `::RealEmbeddable`.
 The concept is orthogonal to the algebraic structure concepts, 
 i.e., it is possible 
 that a type is a model of `RealEmbeddable` only, 
@@ -267,7 +267,7 @@ compute the <i>least</i> common multiple of the denominators.
 
 The package is part of \cgal since release 3.3. Of course the package is based 
 on the former Number type support of CGAL. This goes back to Stefan Schirra and Andreas Fabri. But on the other hand the package is to a large extend influenced 
-by the experience with the number type support in <span class="textsc">Exacus</span> \cite beh-eeeafcs-05, 
+by the experience with the number type support in <span class="textsc">Exacus</span> \cgalCite{beh-eeeafcs-05}, 
 which in the main goes back to 
 Lutz Kettner, Susan Hert, Arno Eigenwillig and Michael Hemmer. 
 However, the package abstracts from the pure support for 

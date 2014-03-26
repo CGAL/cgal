@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup  PkgBGLTraits
+\ingroup  PkgBGL
 
 The class `halfedge_graph_traits` is a traits class for `HalfedgeGraph`.
 

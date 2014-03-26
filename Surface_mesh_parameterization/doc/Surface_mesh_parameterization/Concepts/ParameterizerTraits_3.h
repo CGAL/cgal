@@ -8,7 +8,7 @@
 Design Pattern 
 -------------- 
 
-`ParameterizerTraits_3` models are Strategies \cite cgal:ghjv-dpero-95 : they implement a strategy of surface parameterization for models of `ParameterizationMesh_3`. 
+`ParameterizerTraits_3` models are Strategies \cgalCite{cgal:ghjv-dpero-95} : they implement a strategy of surface parameterization for models of `ParameterizationMesh_3`. 
 
 Creation 
 -------------- 

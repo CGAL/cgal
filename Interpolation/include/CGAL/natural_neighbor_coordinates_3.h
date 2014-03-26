@@ -21,7 +21,12 @@
 #ifndef CGAL_NATURAL_NEIGHBORS_3_H
 #define CGAL_NATURAL_NEIGHBORS_3_H
 
+#include <set>
+#include <vector>
 #include <CGAL/tags.h>
+#include <CGAL/iterator.h>
+#include <CGAL/utility.h>
+#include <CGAL/triangulation_assertions.h>
 
 #include <iostream> //TO DO : to remove
 

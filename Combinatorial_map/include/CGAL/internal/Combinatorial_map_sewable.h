@@ -41,12 +41,8 @@ struct Is_sewable_functor
   {
     CGAL_assertion( 1<=i && i<=CMap::dimension );
     CGAL_assertion( 3<dim );
-    CGAL_assertion( adart1!=NULL && adart2!=NULL );
-    CGAL_assertion( adart1!=CMap::null_dart_handle &&
-        adart2!=CMap::null_dart_handle );
-
-    if ( !adart1->template is_free<i>() ||
-         !adart2->template is_free<CGAL_BETAINV(i)>() )
+    if ( !amap->template is_free<i>(adart1) ||
+         !amap->template is_free<CGAL_BETAINV(i)>(adart2) )
       return false;
 
     if ( adart1==adart2 )
@@ -57,7 +53,8 @@ struct Is_sewable_functor
 
     // hash map to build the isomorphism between the two i-cells.
     CGAL::Unique_hash_map<typename CMap::Dart_const_handle,
-        typename CMap::Dart_const_handle> bijection;
+        typename CMap::Dart_const_handle,
+        typename CMap::Hash_function> bijection;
 
     int m1 = amap->get_new_mark();
     int m2 = amap->get_new_mark();
@@ -73,8 +70,8 @@ struct Is_sewable_functor
       amap->mark(I1, mbijection);
       bijection[I1]=I2;
 
-      CGAL_assertion( I1->template is_free<i>() );
-      CGAL_assertion( I2->template is_free<CGAL_BETAINV(i)>() );
+      CGAL_assertion( amap->template is_free<i>(I1) );
+      CGAL_assertion( amap->template is_free<CGAL_BETAINV(i)>(I2) );
 
       // We can remove this constraint which is not required for
       // combinatorial map definition, but which is quite "normal"
@@ -84,16 +81,17 @@ struct Is_sewable_functor
 
       if ( i>2)
       {
-        if ( I1->template is_free<1>() )
+        if ( amap->template is_free<1>(I1) )
         {
-          if ( !I2->template is_free<0>() ) res=false;
+          if ( !amap->template is_free<0>(I2) ) res=false;
         }
         else
         {
-          if ( I2->template is_free<0>() ) res=false;
-          else if ( amap->is_marked(I1->template beta<1>(), mbijection) )
+          if ( amap->template is_free<0>(I2) ) res=false;
+          else if ( amap->is_marked(amap->template beta<1>(I1), mbijection) )
           {
-            if ( bijection[I1->template beta<1>()]!=I2->template beta<0>() )
+            if ( bijection[amap->template beta<1>(I1)]!=
+                 amap->template beta<0>(I2) )
               res=false;
           }
         }
@@ -103,16 +101,16 @@ struct Is_sewable_functor
       {
         if ( j+1!=i && j!=i && j!=i+1 )
         {
-          if ( I1->is_free(j) )
+          if ( amap->is_free(I1,j) )
           {
-            if ( !I2->is_free(j) ) res=false;
+            if ( !amap->is_free(I2,j) ) res=false;
           }
           else
           {
-            if ( I2->is_free(j) ) res=false;
-            else if ( amap->is_marked(I1->beta(j), mbijection) )
+            if ( amap->is_free(I2,j) ) res=false;
+            else if ( amap->is_marked(amap->beta(I1,j), mbijection) )
             {
-              if ( bijection[I1->beta(j)]!=I2->beta(j) ) res=false;
+              if ( bijection[amap->beta(I1,j)]!=amap->beta(I2,j) ) res=false;
             }
           }
         }
@@ -156,16 +154,12 @@ struct Is_sewable_functor<CMap, 0, dim>
 template<typename CMap>
 struct Is_sewable_functor<CMap, 0, 1>
 {
-  static bool run( const CMap* /*amap*/,
+  static bool run( const CMap* amap,
                    typename CMap::Dart_const_handle adart1,
                    typename CMap::Dart_const_handle adart2 )
   {
-    CGAL_assertion(adart1!=NULL && adart2!=NULL);
-    CGAL_assertion(adart1!=CMap::null_dart_handle &&
-        adart2!=CMap::null_dart_handle);
-
-    if ( !adart1->template is_free<0>() ||
-         !adart2->template is_free<1>() )
+    if ( !amap->template is_free<0>(adart1) ||
+         !amap->template is_free<1>(adart2) )
       return false;
     return true;
   }
@@ -174,16 +168,12 @@ struct Is_sewable_functor<CMap, 0, 1>
 template<typename CMap>
 struct Is_sewable_functor<CMap, 1, 1>
 {
-  static bool run( const CMap* /*amap*/,
+  static bool run( const CMap* amap,
                    typename CMap::Dart_const_handle adart1,
                    typename CMap::Dart_const_handle adart2 )
   {
-    CGAL_assertion(adart1!=NULL && adart2!=NULL);
-    CGAL_assertion(adart1!=CMap::null_dart_handle &&
-        adart2!=CMap::null_dart_handle);
-
-    if ( !adart1->template is_free<1>() ||
-         !adart2->template is_free<0>() )
+    if ( !amap->template is_free<1>(adart1) ||
+         !amap->template is_free<0>(adart2) )
       return false;
     return true;
   }
@@ -193,16 +183,12 @@ struct Is_sewable_functor<CMap, 1, 1>
 template<typename CMap>
 struct Is_sewable_functor<CMap, 0, 2>
 {
-  static bool run( const CMap* /*amap*/,
+  static bool run( const CMap* amap,
                    typename CMap::Dart_const_handle adart1,
                    typename CMap::Dart_const_handle adart2 )
   {
-    CGAL_assertion(adart1!=NULL && adart2!=NULL);
-    CGAL_assertion(adart1!=CMap::null_dart_handle &&
-        adart2!=CMap::null_dart_handle);
-
-    if ( !adart1->template is_free<0>() ||
-         !adart2->template is_free<1>() )
+    if ( !amap->template is_free<0>(adart1) ||
+         !amap->template is_free<1>(adart2) )
       return false;
     return true;
   }
@@ -211,16 +197,12 @@ struct Is_sewable_functor<CMap, 0, 2>
 template<typename CMap>
 struct Is_sewable_functor<CMap, 1, 2>
 {
-  static bool run( const CMap* /*amap*/,
+  static bool run( const CMap* amap,
                    typename CMap::Dart_const_handle adart1,
                    typename CMap::Dart_const_handle adart2 )
   {
-    CGAL_assertion(adart1!=NULL && adart2!=NULL);
-    CGAL_assertion(adart1!=CMap::null_dart_handle &&
-        adart2!=CMap::null_dart_handle);
-
-    if ( !adart1->template is_free<1>() ||
-         !adart2->template is_free<0>() )
+    if ( !amap->template is_free<1>(adart1) ||
+         !amap->template is_free<0>(adart2) )
       return false;
     return true;
   }
@@ -229,16 +211,12 @@ struct Is_sewable_functor<CMap, 1, 2>
 template<typename CMap>
 struct Is_sewable_functor<CMap, 2, 2>
 {
-  static bool run( const CMap* /*amap*/,
+  static bool run( const CMap* amap,
                    typename CMap::Dart_const_handle adart1,
                    typename CMap::Dart_const_handle adart2 )
   {
-    CGAL_assertion(adart1!=NULL && adart2!=NULL);
-    CGAL_assertion(adart1!=CMap::null_dart_handle &&
-        adart2!=CMap::null_dart_handle);
-
-    if ( !adart1->template is_free<2>() ||
-         !adart2->template is_free<2>() || adart1==adart2 )
+    if ( !amap->template is_free<2>(adart1) ||
+         !amap->template is_free<2>(adart2) || adart1==adart2 )
       return false;
     return true;
   }
@@ -248,29 +226,25 @@ struct Is_sewable_functor<CMap, 2, 2>
 template<typename CMap>
 struct Is_sewable_functor<CMap, 0, 3>
 {
-  static bool run( const CMap* /*amap*/,
+  static bool run( const CMap* amap,
                    typename CMap::Dart_const_handle adart1,
                    typename CMap::Dart_const_handle adart2 )
   {
-    CGAL_assertion(adart1!=NULL && adart2!=NULL);
-    CGAL_assertion(adart1!=CMap::null_dart_handle &&
-        adart2!=CMap::null_dart_handle);
-
-    if ( !adart1->template is_free<0>() ||
-         !adart2->template is_free<1>() )
+    if ( !amap->template is_free<0>(adart1) ||
+         !amap->template is_free<1>(adart2) )
       return false;
 
-    if ( adart1->template is_free<3>() )
+    if ( amap->template is_free<3>(adart1) )
     {
-      if ( !adart2->template is_free<3>() ) return false;
+      if ( !amap->template is_free<3>(adart2) ) return false;
       return true;
     }
 
     // Here adart1 is not 3-free
-    if ( adart2->template is_free<3>() ) return false;
+    if ( amap->template is_free<3>(adart2) ) return false;
 
-    CGAL_assertion( adart1->template beta<3>()->template is_free<1>() &&
-                    adart2->template beta<3>()->template is_free<0>() );
+    CGAL_assertion( amap->template is_free<1>(amap->template beta<3>(adart1)) &&
+                    amap->template is_free<0>(amap->template beta<3>(adart2)) );
     return true;
   }
 };
@@ -278,29 +252,25 @@ struct Is_sewable_functor<CMap, 0, 3>
 template<typename CMap>
 struct Is_sewable_functor<CMap, 1, 3>
 {
-  static bool run( const CMap* /*amap*/,
+  static bool run( const CMap* amap,
                    typename CMap::Dart_const_handle adart1,
                    typename CMap::Dart_const_handle adart2 )
   {
-    CGAL_assertion(adart1!=NULL && adart2!=NULL);
-    CGAL_assertion(adart1!=CMap::null_dart_handle &&
-        adart2!=CMap::null_dart_handle);
-
-    if ( !adart1->template is_free<1>() ||
-         !adart2->template is_free<0>() )
+    if ( !amap->template is_free<1>(adart1) ||
+         !amap->template is_free<0>(adart2) )
       return false;
 
-    if ( adart1->template is_free<3>() )
+    if ( amap->template is_free<3>(adart1) )
     {
-      if ( !adart2->template is_free<3>() ) return false;
+      if ( !amap->template is_free<3>(adart2) ) return false;
       return true;
     }
 
     // Here adart1 is not 3-free
-    if ( adart2->template is_free<3>() ) return false;
+    if ( amap->template is_free<3>(adart2) ) return false;
 
-    CGAL_assertion( adart1->template beta<3>()->template is_free<0>() &&
-                    adart2->template beta<3>()->template is_free<1>() );
+    CGAL_assertion( amap->template is_free<0>(amap->template beta<3>(adart1)) &&
+                    amap->template is_free<1>(amap->template beta<3>(adart2)) );
     return true;
   }
 };
@@ -308,16 +278,12 @@ struct Is_sewable_functor<CMap, 1, 3>
 template<typename CMap>
 struct Is_sewable_functor<CMap, 2, 3>
 {
-  static bool run( const CMap* /*amap*/,
+  static bool run( const CMap* amap,
                    typename CMap::Dart_const_handle adart1,
                    typename CMap::Dart_const_handle adart2 )
   {
-    CGAL_assertion(adart1!=NULL && adart2!=NULL);
-    CGAL_assertion(adart1!=CMap::null_dart_handle &&
-        adart2!=CMap::null_dart_handle);
-
-    if ( !adart1->template is_free<2>() ||
-         !adart2->template is_free<2>() || adart1==adart2 )
+    if ( !amap->template is_free<2>(adart1) ||
+         !amap->template is_free<2>(adart2) || adart1==adart2 )
       return false;
     return true;
   }
@@ -330,12 +296,8 @@ struct Is_sewable_functor<CMap, 3, 3>
                    typename CMap::Dart_const_handle adart1,
                    typename CMap::Dart_const_handle adart2 )
   {
-    CGAL_assertion(adart1!=NULL && adart2!=NULL);
-    CGAL_assertion(adart1!=CMap::null_dart_handle &&
-        adart2!=CMap::null_dart_handle);
-
-    if ( !adart1->template is_free<3>() ||
-         !adart2->template is_free<3>() )
+    if ( !amap->template is_free<3>(adart1) ||
+         !amap->template is_free<3>(adart2) )
       return false;
 
     CGAL::CMap_dart_const_iterator_basic_of_orbit<CMap,1> I1(*amap, adart1);
@@ -343,8 +305,8 @@ struct Is_sewable_functor<CMap, 3, 3>
     bool res=true;
     while (res && I1.cont() && I2.cont())
     {
-      CGAL_assertion( I1->template is_free<3>() ||
-                      I2->template is_free<3>() );
+      CGAL_assertion( amap->template is_free<3>(I1) ||
+                      amap->template is_free<3>(I2) );
 
       // We can remove this constraint which is not required for
       // combinatorial map definition, but which is quite "normal" as it avoid

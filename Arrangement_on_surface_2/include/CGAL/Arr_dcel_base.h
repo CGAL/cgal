@@ -528,11 +528,12 @@ public:
       this->p_v = v;
   }
 
-  /*! Check whether the halfedge lies on the boundary of an inner CCB. */
-  bool is_on_inner_ccb () const
+  /*! Check whether the halfedge lies on the boundary of an outer CCB. */
+  bool is_on_outer_ccb () const
   {
-    return (_is_lsb_set (this->p_comp));
+    return (!_is_lsb_set (this->p_comp));
   }
+
 
   /*!
    * Get an incident outer CCB (const version).
@@ -559,6 +560,12 @@ public:
   { 
     // Set the component pointer and reset its LSB.
     this->p_comp = oc;
+  }
+
+  /*! Check whether the halfedge lies on the boundary of an inner CCB. */
+  bool is_on_inner_ccb () const
+  {
+    return (_is_lsb_set (this->p_comp));
   }
 
   /*!

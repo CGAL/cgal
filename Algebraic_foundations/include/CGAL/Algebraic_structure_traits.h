@@ -359,10 +359,10 @@ class Algebraic_structure_traits_base< Type_,
                 Type& q, 
                 Type& r ) const {
             typedef Coercion_traits< NT1, NT2 > CT;
-            typedef typename CT::Type Type; 
-            CGAL_USE_TYPE(Type);
+            typedef typename CT::Type Coercion_type_NT1_NT2; 
+            CGAL_USE_TYPE(Coercion_type_NT1_NT2);
             CGAL_static_assertion(( 
-              ::boost::is_same<Type , Type >::value));
+              ::boost::is_same<Coercion_type_NT1_NT2 , Type >::value));
             
             typename Coercion_traits< NT1, NT2 >::Cast cast;
             operator()( cast(x), cast(y), q, r );          

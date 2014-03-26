@@ -3,12 +3,12 @@ namespace CGAL {
 /*!
 \ingroup PkgArrangement2PointLocation
 
-The function `locate` performs a batched point-location operation on a 
+Performs a batched point-location operation on a 
 given arrangement. It accepts a range of query points, and locates each 
 point in the arrangement. The query results are returned through the output 
 iterator. Each query result is given as a pair of the query point and an
 object representing the arrangement feature that contains it, namely a
-discriminated union container of the bounded types`Face_const_handle`,
+discriminated union container of the bounded types `Face_const_handle`,
 `Halfedge_const_handle`, and `Vertex_const_hanlde`. The resulting
 pairs in the output sequence are sorted in increasing \f$ xy\f$-lexicographical 
 order of the query points. The function returns a past-the-end iterator of 
@@ -25,11 +25,12 @@ the output sequence.
 \cgalHeading{A Note on Backwards Compatibility}
 This function used to return `CGAL::Object` up to
 \cgal version 4.2. Starting with \cgal version 4.3 the return type
-is determined by a metafunction. To preserve backwards compatibility
+is determined by the metafunction `CGAL::Arr_point_location_result`.
+To preserve backwards compatibility
 `CGAL::Object` can be constructed from the new return type
 implicitly, but switching to the new style is recommended. To enable
 the old style without any overhead, the macro
-`CGAL_ARR_POINT_LOCATION_VERSION` can be defined to 1 before any
+`::CGAL_ARR_POINT_LOCATION_VERSION` can be defined to 1 before any
 \cgal header is included.
 
 \sa `CGAL::Arr_point_location_result<Arrangement>`

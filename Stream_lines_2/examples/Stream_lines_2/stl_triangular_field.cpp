@@ -18,7 +18,7 @@ int main()
 {
   Runge_kutta_integrator runge_kutta_integrator(1);
 
-  /*datap.tri.cin and datav.tri.cin are ascii files where are stored the vector velues*/
+  /*datap.tri.cin and datav.tri.cin are ascii files where are stored the vector values*/
   std::ifstream inp("data/datap.tri.cin");
   std::ifstream inv("data/datav.tri.cin");
   std::istream_iterator<Point> beginp(inp);

@@ -107,8 +107,7 @@ class Quotient
 
   Quotient& operator=(const CGAL_double(NT) & n)
   {
-    num = n;
-    den = 1;
+    Split_double<NT>()(n, num, den);
     return *this;
   }
 

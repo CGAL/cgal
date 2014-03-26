@@ -29,7 +29,7 @@
 #include <CGAL/Parameterizer_traits_3.h>
 #include <CGAL/Two_vertices_parameterizer_3.h>
 #include <CGAL/surface_mesh_parameterization_assertions.h>
-
+#include <CGAL/Parameterization_mesh_feature_extractor.h>
 #include <iostream>
 
 /// \file LSCM_parameterizer_3.h
@@ -44,7 +44,7 @@ namespace CGAL {
 /// \ingroup  PkgSurfaceParameterizationMethods
 ///
 /// The class LSCM_parameterizer_3 implements the
-/// *Least Squares Conformal Maps (LSCM)* parameterization  \cite cgal:lprm-lscm-02.
+/// *Least Squares Conformal Maps (LSCM)* parameterization  \cgalCite{cgal:lprm-lscm-02}.
 ///
 /// This is a conformal parameterization, i.e. it attempts to preserve angles.
 ///

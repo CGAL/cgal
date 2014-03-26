@@ -21,7 +21,6 @@
 #define CGAL_LINEAR_LEAST_SQUARES_FITTING_TETRAHEDRA_3_H
 
 #include <CGAL/basic.h>
-#include <CGAL/Object.h>
 #include <CGAL/centroid.h>
 #include <CGAL/eigen.h>
 
@@ -119,6 +118,7 @@ linear_least_squares_fitting_3(InputIterator first,
   CGAL_precondition(first != beyond);
 
   std::list<Segment> segments;
+
   for(InputIterator it = first;
       it != beyond;
       it++)

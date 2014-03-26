@@ -34,6 +34,7 @@ int main()
     }
     obj = CGAL::intersection(s1,s2);
 
+    #if CGAL_INTERSECTION_VERSION > 1
     // check the variant return type
     CGAL::cpp11::result_of<K::Intersect_2(Triangle_2, Triangle_2) >::type o_variant = CGAL::intersection(t1,t2);
     if(!o_variant) {
@@ -53,6 +54,7 @@ int main()
         std::cerr << CGAL::exact((*V)[i]) << std::endl;
       } 
     }
+    #endif
   }
 
   {
@@ -74,6 +76,7 @@ int main()
       } 
     }
 
+    #if CGAL_INTERSECTION_VERSION > 1
     // check the variant return type
     CGAL::cpp11::result_of<K::Intersect_3(Triangle_3, Triangle_3)>::type o_variant = CGAL::intersection(t1,t2);
     if(!o_variant) {
@@ -93,7 +96,7 @@ int main()
         std::cerr << CGAL::exact((*V)[i]) << std::endl;
       } 
     }
-    
+    #endif
   }
   //making the interval construction failing
   {

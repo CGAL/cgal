@@ -33,7 +33,7 @@ namespace CGAL {
 /// \ingroup  PkgSurfaceParameterizationMethods
 ///
 /// The class `Discrete_authalic_parameterizer_3`
-/// implements the *Discrete Authalic Parameterization* algorithm \cite cgal:dma-ipsm-02.
+/// implements the *Discrete Authalic Parameterization* algorithm \cgalCite{cgal:dma-ipsm-02}.
 /// This method is sometimes called <i>DAP</i> or just <i>Authalic parameterization</i>.
 ///
 /// DAP is a weak area-preserving parameterization. It is a compromise between
@@ -41,7 +41,7 @@ namespace CGAL {
 ///
 /// One-to-one mapping is guaranteed if surface's border is mapped onto a convex polygon.
 ///
-/// This class is a Strategy \cite cgal:ghjv-dpero-95 called by the main
+/// This class is a Strategy \cgalCite{cgal:ghjv-dpero-95} called by the main
 /// parameterization algorithm `Fixed_border_parameterizer_3::parameterize()`.
 /// `Discrete_authalic_parameterizer_3`:
 /// - It provides default `BorderParameterizer_3` and `SparseLinearAlgebraTraits_d` template

@@ -2,8 +2,9 @@ Only feature releases go to all the lists.
 Bug fix releases only go to the CGAL announce
 and discuss lists.
 
+- isocpp.org
 
-Mailing lists:
+- Mailing lists:
 
   *********************************************************************
   ** Note: add a Reply-To: cgal-discuss@inria.fr, to avoid           **
@@ -19,3 +20,4 @@ And only for feature releases (not bug-fixes):
   compgeom-announce@inria.fr
   mesh@sandia.gov
   communaute@medicis.polytechnique.fr
+(The later has a DNS error. -- LR, 2013/10/18)

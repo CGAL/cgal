@@ -140,6 +140,16 @@ namespace internal {
     const double& bymax = bbox.ymax();
     const double& bzmax = bbox.zmax();
 
+
+    if( ( (px >= bxmin) && (px <= bxmax) &&
+          (py >= bymin) && (py <= bymax) &&
+          (pz >= bzmin) && (pz <= bzmax) ) ||
+        ( (qx >= bxmin) && (qx <= bxmax) &&
+          (qy >= bymin) && (qy <= bymax) &&
+          (qz >= bzmin) && (qz <= bzmax) ) ) {
+      return true;
+    }
+
     // The following code encode t1 and t2 by:
     //    t1 = tmin/dmin
     //    t2 = tmax/dmax

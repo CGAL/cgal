@@ -79,7 +79,7 @@ We provide functions to read and write sets of points or sets of
 points with normals from the following ASCII file formats: XYZ (three
 point coordinates `x y z` per line or three point coordinates and
 three normal vector coordinates `x y z nx ny nz` per line), and OFF
-(%Object File Format) \cite cgal:p-gmgv16-96.
+(%Object File Format) \cgalCite{cgal:p-gmgv16-96}.
 
 - `read_xyz_points()` 
 - `read_off_points()` 
@@ -192,7 +192,7 @@ faster than `jet_estimate_normals()`.
 
 Function `mst_orient_normals()` orients the normals of a set of
 points with unoriented normals using the method described by Hoppe et
-al. in <I>Surface reconstruction from unorganized points</I> \cite cgal:hddms-srup-92. 
+al. in <I>Surface reconstruction from unorganized points</I> \cgalCite{cgal:hddms-srup-92}. 
 More specifically, this method constructs a
 Riemannian graph over the input points (the graph of the `k`
 nearest neighbor points) and propagates a seed normal orientation

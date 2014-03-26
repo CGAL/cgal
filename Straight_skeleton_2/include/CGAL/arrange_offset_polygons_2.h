@@ -91,7 +91,7 @@ void arrange_offset_polygons_2 ( InputPolygonPtrIterator           aBegin
               lParent = lOuter ;
       }
       
-      CGAL_assertion(lParent);
+      CGAL_assertion(lParent != NULL);
       
       lParent->add_hole(*lPoly);
     }

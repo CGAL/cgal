@@ -61,6 +61,8 @@ BOOST_PARAMETER_NAME( criteria )
   
 BOOST_PARAMETER_NAME( (time_limit, tag) time_limit_ )
 BOOST_PARAMETER_NAME( (sliver_bound, tag) sliver_bound_)
+BOOST_PARAMETER_NAME( (sliver_criterion, tag) sliver_criterion_)
+BOOST_PARAMETER_NAME( (perturbation_vector, tag) perturbation_vector_) 
 BOOST_PARAMETER_NAME( (freeze_bound, tag) freeze_bound_)
 BOOST_PARAMETER_NAME( (do_freeze, tag) do_freeze_)
 BOOST_PARAMETER_NAME( (max_iteration_number, tag) max_iteration_number_ )

@@ -51,11 +51,12 @@ operator()( const char* filename1, const char* filename2 )
     Uti1::readBoxesFromFile( infile2, boxes2 );
 
     std::cout << std::endl;
-    typename Uti1::Counter_callback callback0;
+    unsigned int c0 = 0, c1 = 0, c2 = 0, c3 = 0;
+    typename Uti1::Counter_callback callback0(c0);
     typename Uti1::template Storage_callback<typename Uti1::Result_container>
-        callback1( result_all_pairs ),
-        callback2( result_scan ),
-        callback3( result_tree );
+      callback1( result_all_pairs, c1 ),
+      callback2( result_scan, c2 ),
+      callback3( result_tree, c3 );
 
     // invoke each interface routine at least once, to check if it still
     // compiles

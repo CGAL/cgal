@@ -6,7 +6,7 @@ namespace CGAL {
 
 This operator reads a polyhedral surface in Object File Format, OFF, 
 with file extension <TT>.off</TT>, which is also understood by 
-Geomview \cite cgal:p-gmgv16-96, from the input stream `in` and 
+Geomview \cgalCite{cgal:p-gmgv16-96}, from the input stream `in` and 
 appends it to the polyhedral surface \f$ P\f$. Only the point coordinates 
 and facets from the input stream are used to build the polyhedral 
 surface. Neither normal vectors nor color attributes are evaluated. If 
@@ -40,7 +40,7 @@ std::istream& operator>>( std::istream& in, CGAL::Polyhedron_3<PolyhedronTraits_
 
 This operator writes the polyhedral surface \f$P\f$ to the output
 stream out using the Object File Format, OFF, with file extension
-<TT>.off</TT>, which is also understood by GeomView \cite cgal:p-gmgv16-96. The
+<TT>.off</TT>, which is also understood by GeomView \cgalCite{cgal:p-gmgv16-96}. The
 output is in ASCII format. From the polyhedral surface, only the point
 coordinates and facets are written. Neither normal vectors nor color
 attributes are used.

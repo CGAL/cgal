@@ -81,6 +81,7 @@ int main( int argc, char **argv) {
     CGAL::Inventor_ostream os( *p_out);
     CGAL::File_writer_inventor  writer;
     CGAL::generic_copy_OFF( *p_in, *p_out, writer);
+    if(!os) return EXIT_FAILURE;
     os.close();
     vout << "    .... done." << endl;
 

@@ -7,6 +7,7 @@ policy concept of geometric computations is used in
 `CGAL::Subdivision_method_3::PTQ<Polyhedron_3, Mask>`. 
 
 \image html LoopBorderMask.png
+\image latex LoopBorderMask.png
 
 \cgalHasModel `CGAL::Loop_mask_3<Polyhedron_3>`
 

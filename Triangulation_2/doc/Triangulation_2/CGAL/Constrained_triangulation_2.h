@@ -75,7 +75,8 @@ Section \ref Section_2D_Triangulations_Constrained_Plus.
 </UL> 
 </UL> 
 
-\image html constraints.gif
+\image html constraints.png
+\image latex constraints.png
 
 
 \tparam Traits is a geometric traits class and must be a model 

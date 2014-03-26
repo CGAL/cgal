@@ -51,8 +51,8 @@ template< typename Map1, typename Map2, unsigned int i,
 struct Create_attribute_if_same_info_cmap
 {
   static typename Map2::template Attribute_handle<i>::type
-  run(Map2&, typename Map1::template Attribute_const_handle<i>::type)
-  { return NULL; }
+  run(Map2&, const Info1& )
+  { return Map2::null_handle; }
 };
 
 // Special case when both attributes have the same info.
@@ -60,12 +60,10 @@ template< typename Map1, typename Map2, unsigned int i, typename Info >
 struct Create_attribute_if_same_info_cmap<Map1, Map2, i, Info, Info>
 {
   static typename Map2::template Attribute_handle<i>::type
-  run(Map2& map2, typename Map1::template Attribute_const_handle<i>::type ah)
-  {
-    CGAL_assertion( ah!=NULL );
-    typename Map2::template Attribute_handle<i>::type
+  run(Map2& map2, const Info& info)
+  { typename Map2::template Attribute_handle<i>::type
         res = map2.template create_attribute<i>();
-    res->info() = ah->info();
+    map2.template get_attribute<i>(res).info()=info;
     return res;
   }
 };
@@ -178,7 +176,7 @@ struct Call_functor_if_both_attributes_have_info
        typename Map1::Dart_const_handle,
        typename Map2::Dart_handle,
        const Converters&)
-  { return NULL; }
+  { return Map2::null_handle; }
 };
 
 template< typename Map1, typename Map2, unsigned int i, typename Converters >
@@ -213,7 +211,7 @@ struct Call_functor_if_both_attributes_have_point
        typename Map1::Dart_const_handle,
        typename Map2::Dart_handle,
        const Pointconverter&)
-  { return NULL; }
+  { return Map2::null_handle; }
 };
 // Specialisation with i==0 and both attributes have points.
 template< typename Map1, typename Map2, typename Pointconverter >
@@ -247,10 +245,10 @@ struct Copy_attribute_functor_if_nonvoid
                    const Pointconverter& pointconverter)
   {
     // If dh1 has no i-attribute, nothing to copy.
-    if ( dh1->template attribute<i>()==NULL ) return;
+    if ( cmap1->template attribute<i>(dh1)==Map1::null_handle ) return;
 
     // If dh2 has already an i-attribute, it was already copied.
-    if ( dh2->template attribute<i>()!=NULL ) return;
+    if ( cmap2->template attribute<i>(dh2)!=Map2::null_handle ) return;
 
     // Otherwise we copy the info if both attribute have non void info.
     typename Map2::template Attribute_handle<i>::type
@@ -258,7 +256,7 @@ struct Copy_attribute_functor_if_nonvoid
         <Map1, Map2, i, Converters>::
         run(cmap1, cmap2, dh1, dh2, converters);
 
-    if ( res!=NULL )
+    if ( res!=Map2::null_handle )
       cmap2->template set_attribute<i>(dh2, res);
 
     // And the point if both attributes have points (and only for 0-attributes)
@@ -266,7 +264,8 @@ struct Copy_attribute_functor_if_nonvoid
         <Map1, Map2, i, Pointconverter>::
         run(cmap1, cmap2, dh1, dh2, pointconverter);
 
-    if ( res!=NULL && dh2->template attribute<i>()==NULL )
+    if ( res!=Map2::null_handle &&
+         cmap2->template attribute<i>(dh2)==Map2::null_handle )
       cmap2->template set_attribute<i>(dh2, res);
   }
 };
@@ -286,7 +285,7 @@ struct Copy_attribute_functor_if_nonvoid<Map1, Map2, Converters,
                    const Pointconverter&)
   {
     // If dh2 has already an 0-attribute, it was already created.
-    if ( dh2->template attribute<0>()!=NULL ) return;
+    if ( cmap2->template attribute<0>(dh2)!=Map2::null_handle ) return;
 
     // Create the point if 0-attributes has Point.
     if ( CGAL::internal::template Is_attribute_has_point
@@ -344,14 +343,13 @@ template< typename Map1, typename Map2, unsigned int i>
 struct Default_converter_cmap_attributes
 {
   typename Map2::template Attribute_handle<i>::type operator()
-  (const Map1&, Map2& map2, typename Map1::Dart_const_handle dh1,
+  (const Map1& map1, Map2& map2, typename Map1::Dart_const_handle dh1,
    typename Map2::Dart_handle dh2) const
   {
-    CGAL_assertion( dh1->template attribute<i>()!=NULL );
-    CGAL_assertion( dh2->template attribute<i>()==NULL );
+    CGAL_assertion( map1.template attribute<i>(dh1)!=Map1::null_handle );
+    CGAL_assertion( map2.template attribute<i>(dh2)==Map2::null_handle );
     return internal::Create_attribute_if_same_info_cmap
-      <Map1,Map2,i>::
-      run(map2, dh1->template attribute<i>());
+      <Map1,Map2,i>::run(map2, map1.template info<i>(dh1));
   }
 };
 // ****************************************************************************
@@ -362,15 +360,16 @@ template< typename Map1, typename Map2, unsigned int i>
 struct Cast_converter_cmap_attributes
 {
   typename Map2::template Attribute_handle<i>::type operator()
-  (const Map1&, Map2& map2, typename Map1::Dart_const_handle dh1,
+  (const Map1& map1, Map2& map2, typename Map1::Dart_const_handle dh1,
    typename Map2::Dart_handle dh2) const
   {
-    CGAL_assertion( dh1->template attribute<i>()!=NULL );
-    CGAL_assertion( dh2->template attribute<i>()==NULL );
+    CGAL_assertion( map1.template attribute<i>(dh1)!=Map1::null_handle );
+    CGAL_assertion( map2.template attribute<i>(dh2)==Map2::null_handle );
     typename Map2::template Attribute_handle<i>::type
       res = map2.template create_attribute<i>();
-    res->info() = (typename Map2::template Attribute_type<i>::type::Info)
-        dh1->template attribute<i>()->info();
+    map2.template get_attribute<i>(res).info() =
+      (typename Map2::template Attribute_type<i>::type::Info)
+        map1.template info<i>(dh1);
     return res;
   }
 };
@@ -390,22 +389,21 @@ template< typename Map1, typename Map2>
 struct Default_converter_cmap_0attributes_with_point
 {
   typename Map2::template Attribute_handle<0>::type operator()
-  (const Map1&, Map2& map2, typename Map1::Dart_const_handle dh1,
+  (const Map1& map1, Map2& map2, typename Map1::Dart_const_handle dh1,
    typename Map2::Dart_handle dh2) const
   {
-    CGAL_assertion( dh1->template attribute<0>()!=NULL );
+    CGAL_assertion( map1.template attribute<0>(dh1)!=Map1::null_handle );
 
     typename Map2::template Attribute_handle<0>::type
-      res = dh2->template attribute<0>();
-    if ( res==NULL )
+      res = map2.template attribute<0>(dh2);
+    if ( res==Map2::null_handle )
     {
       res = map2.template create_attribute<0>();
     }
     internal::Set_point_if_possible_cmap
         <typename Map1::template Attribute_type<0>::type::Point,
         typename Map2::template Attribute_type<0>::type::Point>::
-        run(dh1->template attribute<0>()->point(),
-            res->point());
+      run(map1.point(dh1), map2.template get_attribute<0>(res).point());
     return res;
   }
 };

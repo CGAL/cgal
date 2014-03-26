@@ -1,21 +1,21 @@
 // Example program for the barycenter() function for 2D and 3D points.
 
-#include <CGAL/Cartesian.h>
+#include <CGAL/Simple_cartesian.h>
 #include <CGAL/barycenter.h>
 
-#include <list>
+#include <vector>
 #include <iostream>
 #include <utility>
 
-typedef double               FT;
-typedef CGAL::Cartesian<FT>  K;
-typedef K::Point_2           Point_2;
-typedef K::Point_3           Point_3;
+typedef double                      FT;
+typedef CGAL::Simple_cartesian<FT>  K;
+typedef K::Point_2                  Point_2;
+typedef K::Point_3                  Point_3;
 
 int main()
 {
   // barycenter of 2D weighted points
-  std::list<std::pair<Point_2, FT> > points_2;
+  std::vector<std::pair<Point_2, FT> > points_2;
   points_2.push_back(std::make_pair(Point_2(1.0, 0.0),  1.0));
   points_2.push_back(std::make_pair(Point_2(2.0, 2.0),  2.0));
   points_2.push_back(std::make_pair(Point_2(3.0, 5.0), -2.0));
@@ -24,7 +24,7 @@ int main()
   std::cout << c2 << std::endl;
 
   // barycenter of 3D weighted points
-  std::list<std::pair<Point_3, FT> > points_3;
+  std::vector<std::pair<Point_3, FT> > points_3;
   points_3.push_back(std::make_pair(Point_3(1.0, 0.0, 0.5),  1.0));
   points_3.push_back(std::make_pair(Point_3(2.0, 2.0, 1.2),  2.0));
   points_3.push_back(std::make_pair(Point_3(3.0, 5.0, 4.5), -5.0));

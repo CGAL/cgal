@@ -225,6 +225,14 @@ protected:
 			  Vertex_handle vaa,
 			  Vertex_handle vbb,
 			  Exact_predicates_tag);
+private:
+  //made private to avoid using the Triangulation_2 version
+  Vertex_handle move(Vertex_handle v, const Point &)
+  {
+    CGAL_error_msg("Do not use that function!");
+    return v;
+  }
+
 public:
 // made public for Laurent  to find out deleted faces
 // when inserting a constraint with most probably 

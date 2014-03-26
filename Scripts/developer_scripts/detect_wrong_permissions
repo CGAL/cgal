@@ -1,0 +1,5 @@
+#!/bin/zsh
+
+setopt extendedglob
+
+ls -1 ^build*/**/(#i)*.^(py|sh|run|sh|csh|pl|perl)(.x)

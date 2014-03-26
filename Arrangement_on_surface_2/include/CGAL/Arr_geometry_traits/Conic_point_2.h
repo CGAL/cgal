@@ -26,6 +26,7 @@
  */
 
 #include <list>
+#include <CGAL/assertions.h>
 
 namespace CGAL {
 

@@ -231,7 +231,7 @@ ALIASES += "cgalFigureBegin{10}=\anchor fig__\1 \n <CENTER> <TABLE border=0> <TR
 ALIASES += "cgalFigureEnd=\htmlonly </div> \endhtmlonly <br>"
 ALIASES += "cgalFigureCaptionBegin{1}=\htmlonly <div class=\"cgal_figure_caption\"> \endhtmlonly \ref fig__\1"
 ALIASES += "cgalFigureCaptionEnd=\htmlonly </div> \endhtmlonly <br>"
-                         
+
 # this sets the include file of a concept to a non-existing file and
 # thus removes its include statement
 ALIASES += "cgalConcept=\details <div id=\"CGALConcept\"></div>\n \brief"
@@ -268,13 +268,18 @@ ALIASES += "cgalPkgDesc{1}=<div class=\"PkgDescription\">\1</div>"
 ALIASES += "cgalPkgSince{1}=<B>Introduced in:</B> \cgal \1<BR>"
 ALIASES += "cgalPkgDependsOn{1}=<B>Depends on:</B> \1 <BR>"
 ALIASES += "cgalPkgLicense{1}=<B>License:</B> \1 <BR>"
-ALIASES += "cgalPkgDemo{2}=<B>Demo:</B> <a href=\"http://www.cgal.org/demo/4.2/\2\">\1</a><BR>"
+ALIASES += "cgalPkgDemo{2}=<B>Windows Demo:</B> <a href=\"http://www.cgal.org/demo/${CGAL_CREATED_VERSION_NUM}/\2\">\1</a><BR><B>Common Demo Dlls:</B> <a href=\"http://www.cgal.org/demo/${CGAL_CREATED_VERSION_NUM}/CGAL-demoDLLs.zip\">dlls</a><BR>"
+ALIASES += "cgalPkgDemo{4}=<B>Windows Demos:</B> <a href=\"http://www.cgal.org/demo/${CGAL_CREATED_VERSION_NUM}/\2\">\1</a>, <a href=\"http://www.cgal.org/demo/${CGAL_CREATED_VERSION_NUM}/\4\">\3</a><BR><B>Common Demo Dlls:</B> <a href=\"http://www.cgal.org/demo/${CGAL_CREATED_VERSION_NUM}/CGAL-demoDLLs.zip\">dlls</a><BR>"
+ALIASES += "cgalPkgDemo{6}=<B>Windows Demos:</B> <a href=\"http://www.cgal.org/demo/${CGAL_CREATED_VERSION_NUM}/\2\">\1</a>, <a href=\"http://www.cgal.org/demo/${CGAL_CREATED_VERSION_NUM}/\4\">\3</a>, <a href=\"http://www.cgal.org/demo/${CGAL_CREATED_VERSION_NUM}/\6\">\5</a><BR><B>Common Demo Dlls:</B> <a href=\"http://www.cgal.org/demo/${CGAL_CREATED_VERSION_NUM}/CGAL-demoDLLs.zip\">dlls</a><BR>"
+
 ALIASES += "cgalPkgDescriptionEnd="
+
+ALIASES+= "cgalModifBegin=\htmlonly <div class=\"CGALModification\"> \endhtmlonly \xrefitem Modification \"Modifications\" \"MODIFICATIONS\" "
+ALIASES+= "cgalModifEnd=\htmlonly </div> \endhtmlonly \latexonly END MODIFICATIONS \endlatexonly"
 
 # this alias controls linking to the how to cite page, it is also
 # responsible for adding the -YY{a,b} suffix to a cite
-ALIASES += "cgalPkgBib{1}=<B>BibTeX:</B> <a href=\"../../CGAL.CGAL/html/how_to_cite_cgal.html#\1-12b\">\1-12b</a><BR>"
-
+ALIASES += "cgalPkgBib{1}=<B>BibTeX:</B> <a href=\"../Manual/how_to_cite_cgal.html#\1-${CGAL_RELEASE_YEAR_ID}\">\1-${CGAL_RELEASE_YEAR_ID}</a><BR>"
 
 ALIASES += "cgalFootnote{1}=<span class=\"footnote\">\1</span>"
 ALIASES += "cgalAutoToc=\htmlonly <div id=\"autotoc\" class=\"toc\"></div> \endhtmlonly"
@@ -285,6 +290,8 @@ ALIASES += "cgalTagFalse=\link CGAL::Tag_false `CGAL::Tag_false`\endlink"
 ALIASES+= "cgalHeading{1}= <B>\1</B><BR>"
 
 ALIASES+= "cgalClassifedRefPages=\htmlonly  <h2 class=\"groupheader\">Classified Reference Pages</h2> \endhtmlonly"
+
+ALIASES+= "cgalCite{1}=<!-- -->\cite \1"
 
 # This tag can be used to specify a number of word-keyword mappings (TCL only).
 # A mapping has the form "name=value". For example adding
@@ -647,7 +654,7 @@ SHOW_USED_FILES        = NO
 # This will remove the Files entry from the Quick Index and from the
 # Folder Tree View (if specified). The default is YES.
 
-SHOW_FILES             = YES
+SHOW_FILES             = NO
 
 # Set the SHOW_NAMESPACES tag to NO to disable the generation of the
 # Namespaces page.

@@ -20,9 +20,17 @@
 #ifndef CGAL_IMPROVED_LAPLACIAN_SMOOTH_POINT_SET_H
 #define CGAL_IMPROVED_LAPLACIAN_SMOOTH_POINT_SET_H
 
+#include <CGAL/Origin.h>
 #include <CGAL/Search_traits_3.h>
 #include <CGAL/Orthogonal_k_neighbor_search.h>
 #include <CGAL/point_set_processing_assertions.h>
+
+#include <boost/version.hpp>
+#if BOOST_VERSION >= 104000
+  #include <boost/property_map/property_map.hpp>
+#else
+  #include <boost/property_map.hpp>
+#endif
 
 #include <iterator>
 #include <list>

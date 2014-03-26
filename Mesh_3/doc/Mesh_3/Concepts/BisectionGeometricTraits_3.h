@@ -32,8 +32,8 @@ public:
 /// @{
 
 /*!
-Numerical type. Must be a model of 
-`FieldWithSqrt` and constructible from a `double`. 
+Numerical type. Must be a model of `::FieldNumberType` and
+`::FieldWithSqrt`, and constructible from a `double`. 
 */ 
 typedef unspecified_type FT; 
 
@@ -69,58 +69,62 @@ Sphere type.
 typedef unspecified_type Sphere_3; 
 
 /*!
-Function object providing the operator 
+Model of `::Kernel::ComputeScalarProduct_3`.
 
-`FT operator()(Vector_3 v, Vector_3 w)` which returns the scalar 
-(inner) product of the two vectors `v` and `w`. 
+That function object must provide the operator:
+- `FT operator()(Vector_3 v, Vector_3 w)` which returns the scalar 
+  (inner) product of the two vectors `v` and `w`. 
 */ 
 typedef unspecified_type Compute_scalar_product_3; 
 
 /*!
-Function object providing the operator 
+Model of `::Kernel::ComputeSquaredDistance_3`.
 
-`FT operator()(Point_3, Point_3)` which returns the squared distance 
+That function object must provide the operator:
+- `FT operator()(Point_3, Point_3)` which returns the squared distance 
 between two points. 
 */ 
 typedef unspecified_type Compute_squared_distance_3; 
 
 /*!
-Function object providing the operator 
+Model of `::Kernel::ComputeSquaredRadius_3`.
 
-`FT operator()(Sphere_3 s)` which returns the squared radius 
+That function object must provide the operator:
+- `FT operator()(Sphere_3 s)` which returns the squared radius 
 of `s`. 
 */ 
 typedef unspecified_type Compute_squared_radius_3; 
 
 /*!
-Function object providing the operator 
+Model of `::Kernel::ConstructCenter_3`.
 
-`Point_3 operator()(Sphere_3 s)` which returns the center of 
+That function object must provide the operator:
+- `Point_3 operator()(Sphere_3 s)` which returns the center of 
 the sphere `s`. 
 */ 
 typedef unspecified_type Construct_center_3; 
 
 /*!
-Function object providing the operator 
+Model of `::Kernel::ConstructMidpoint_3`.
 
-`Point_3 operator()(Point_3 p, Point_3 q)` which computes 
+That function object must provide the operator:
+- `Point_3 operator()(Point_3 p, Point_3 q)` which computes 
 the midpoint of the segment `pq`. 
 */ 
 typedef unspecified_type Construct_midpoint_3; 
 
 /*!
-Function object providing the following operators: 
+Model of `::Kernel::ConstructPoint_3`.
 
-`Point_3 operator()(Line_3 l,int i)` which returns an 
+That function object must provide the following operators:
+- `Point_3 operator()(Line_3 l,int i)` which returns an 
 arbitrary point on `l`. It holds `point(i) == point(j)`, iff 
 `i==j`. Furthermore, is directed from `point(i)` to 
 `point(j)`, for all `i` < `j`. 
-
-`Point_3 operator()(Ray_3 r,int i)` which returns a point on 
+- `Point_3 operator()(Ray_3 r,int i)` which returns a point on 
 `r`. `point(0)` is the source, `point(i)`, with 
 \f$ i>0\f$, is different from the source. \pre \f$ i \geq0\f$. 
-
-`Point_3 operator()(Segment_3 s,int i)` which returns either source 
+- `Point_3 operator()(Segment_3 s,int i)` which returns either source 
 or target of `s`: `point(0)` returns the source of `s`, 
 `point(1)` returns the target of `s`. Parameter 
 `i` is taken modulo 2, which gives easy access to the other end 
@@ -130,42 +134,47 @@ point.
 typedef unspecified_type Construct_point_on_3; 
 
 /*!
-Function object providing the operator 
+Model of `::Kernel::ConstructSegment_3`.
 
-`Segment_3 operator()(Point_3 p, Point_3 q)` which 
+That function object must provide the operator:
+- `Segment_3 operator()(Point_3 p, Point_3 q)` which 
 returns a segment with source `p` and target `q`, directed from the 
 source to the target. 
 */ 
 typedef unspecified_type Construct_segment_3; 
 
 /*!
-Function object providing the operator 
+Model of `::Kernel::ConstructScaledVector_3``.
 
-`Vector_3 operator()(Vector_3 v, FT scale)` which returns 
+That function object must provide the operator:
+- `Vector_3 operator()(Vector_3 v, FT scale)` which returns 
 the vector `v` scaled by a factor `scale`. 
 */ 
 typedef unspecified_type Construct_scaled_vector_3; 
 
 /*!
-Function object providing the operator 
+Model of `::Kernel::ConstructTranslatedPoint_3`.
 
-`Point_3 operator()(Point_3 p, Vector_3 v)` which returns 
+That function object must provide the operator:
+- `Point_3 operator()(Point_3 p, Vector_3 v)` which returns 
 the point obtained by translating `p` by the vector `v`. 
 */ 
 typedef unspecified_type Construct_translated_point_3; 
 
 /*!
-Function object providing the operator 
+Model of `::Kernel::ConstructVertex_3`.
 
-`Vector_3 operator()(Point_3 a, Point_3 b)` which returns 
+That function object must provide the operator:
+- `Vector_3 operator()(Point_3 a, Point_3 b)` which returns 
 the vector `b-a`. 
 */ 
 typedef unspecified_type Construct_vector_3; 
 
 /*!
-Function object providing the operator 
+Model of `::Kernel::HasOnBoundedSide_3`.
 
-`bool operator()(Sphere_3 s, Point_3 p)` which 
+That function object must provide the operator:
+- `bool operator()(Sphere_3 s, Point_3 p)` which 
 returns true iff `p` lies on the bounded side of `s. 
 */ 
 typedef unspecified_type Has_on_bounded_side_3; 

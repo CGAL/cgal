@@ -1,13 +1,14 @@
 #include <CGAL/basic.h>
 
-#include <CGAL/Quotient.h> 
-#include <CGAL/MP_Float.h> 
-#include <CGAL/Lazy_exact_nt.h> 
-#include <CGAL/Interval_nt.h> 
+#include <CGAL/Quotient.h>
+#include <CGAL/MP_Float.h>
+#include <CGAL/Lazy_exact_nt.h>
+#include <CGAL/Interval_nt.h>
 
 #ifdef CGAL_USE_GMP
 #include <CGAL/Gmpz.h>
 #include <CGAL/Gmpzf.h>
+#include <CGAL/Mpzf.h>
 #include <CGAL/Gmpq.h>
 #endif
 
@@ -39,76 +40,88 @@
 
 typedef CGAL::Quotient<CGAL::MP_Float>            QMPF;
 
-#define TESTIT(NT,N)                                                    \
-    {                                                                   \
-        std::cout << "\nTesting ioformat: " << N << std::endl;          \
-        NT tmp2(0), tmp1(13);                                           \
-                                                                        \
-        std::ostringstream os;                                          \
-        os << ::CGAL::oformat(tmp1);                                    \
-        std::istringstream is(os.str());                                \
-        is >> ::CGAL::iformat(tmp2);                                    \
-        assert( tmp1 == tmp2 );                                         \
-    }
-    
+template <typename NT>
+void test_it(const char* N, int value)
+{
+  std::cout << "\nTesting ioformat: " << N
+            << " with " << value << std::endl;
+  NT tmp2(0), tmp1(value);
+
+  std::ostringstream os;
+  os << ::CGAL::oformat(tmp1);
+  std::istringstream is(os.str());
+  is >> ::CGAL::iformat(tmp2);
+  assert( tmp1 == tmp2 );
+}
+
+template <typename NT>
+void test_it(const char* N)
+{
+  test_it<NT>(N, 13);
+  test_it<NT>(N, -27);
+  test_it<NT>(N, 0);
+}
 
 int main()
 {
-  
+
   // builtin NTs
-  TESTIT(int, "int")
-  TESTIT(long int, "long int")
-  TESTIT(short int, "short int")
+  test_it<int>("int");
+  test_it<long int>("long int");
+  test_it<short int>("short int");
   // Unsigned types are not appropriate for many things...
-  // TESTIT(unsigned int, "unsigned int")
-  // TESTIT(unsigned long int, "unsigned long int")
-  // TESTIT(unsigned short int, "unsigned short int")
+  // test_it<unsigned int>("unsigned int");
+  // test_it<unsigned long int>("unsigned long int");
+  // test_it<unsigned short int>("unsigned short int");
 #ifdef CGAL_USE_LONG_LONG
-  TESTIT(long long, "long long")
-  // TESTIT(unsigned long long, "unsigned long long")
+  test_it<long long>("long long");
+  // test_it<unsigned long long>("unsigned long long");
 #endif
-  TESTIT(float, "float")
-  TESTIT(double, "double")
-  TESTIT(long double, "long double")
+  test_it<float>("float");
+  test_it<double>("double");
+  test_it<long double>("long double");
 
   // CGAL number types
-  //TESTIT(CGAL::MP_Float, "MP_Float")
-  TESTIT(CGAL::Quotient<int>, "Quotient<int>")
-  TESTIT(QMPF, "Quotient<MP_Float>")
-  TESTIT(CGAL::Lazy_exact_nt<QMPF>, "Lazy_exact_nt<Quotient<MP_Float> >")
-  TESTIT(CGAL::Interval_nt<>, "Interval_nt<>")
+  //test_it<CGAL::MP_Float>("MP_Float");
+  test_it<CGAL::Quotient<int> >("Quotient<int>");
+  test_it<QMPF>("Quotient<MP_Float>");
+  test_it<CGAL::Lazy_exact_nt<QMPF> >("Lazy_exact_nt<Quotient<MP_Float> >");
+  test_it<CGAL::Interval_nt<> >("Interval_nt<>");
 
   // GMP based NTs
 #ifdef CGAL_USE_GMP
-  TESTIT(CGAL::Gmpz, "Gmpz")
-  TESTIT(CGAL::Gmpz, "Gmpzf")
-  TESTIT(CGAL::MP_Float, "MP_Float")
-  TESTIT(CGAL::Gmpq, "Gmpq")
+  test_it<CGAL::Gmpz>("Gmpz");
+  test_it<CGAL::Gmpzf>("Gmpzf");
+# ifdef CGAL_HAS_MPZF
+  test_it<CGAL::Mpzf>("Mpzf");
+# endif
+  test_it<CGAL::MP_Float>("MP_Float");
+  test_it<CGAL::Gmpq>("Gmpq");
 #endif // CGAL_USE_GMP
 #ifdef CGAL_USE_GMPXX
-  TESTIT(mpz_class, "mpz_class")
-  TESTIT(mpq_class, "mpq_class")
-  // TESTIT(mpf_class, "mpf_class") // Not finished.
+  test_it<mpz_class>("mpz_class");
+  test_it<mpq_class>("mpq_class");
+  // test_it<mpf_class>("mpf_class"); // Not finished.
 #endif
 
   // CORE
 #ifdef CGAL_USE_CORE
-      //bug in io for CORE. 
-      TESTIT(CORE::BigInt, "CORE::BigInt")
-      TESTIT(CORE::BigRat, "CORE::BigRat")
-      TESTIT(CORE::BigFloat, "CORE::BigFloat")
-      //TESTIT(CORE::Expr, "CORE::Expr")
+  //bug in io for CORE.
+  test_it<CORE::BigInt>("CORE::BigInt");
+  test_it<CORE::BigRat>("CORE::BigRat");
+  test_it<CORE::BigFloat>("CORE::BigFloat");
+  //test_it<CORE::Expr>("CORE::Expr");
 #endif
 
-      // LEDA based NTs
+  // LEDA based NTs
 #ifdef CGAL_USE_LEDA
-      TESTIT(leda_integer, "leda_integer")
-      TESTIT(leda_rational, "leda_rational")
-      TESTIT(leda_bigfloat, "leda_bigfloat")
-      TESTIT(leda_real, "leda_real")
-      typedef CGAL::Number_type_checker<leda_rational,leda_real> NT_checker;
-      TESTIT(NT_checker, "NT_checker");
+  test_it<leda_integer>("leda_integer");
+  test_it<leda_rational>("leda_rational");
+  test_it<leda_bigfloat>("leda_bigfloat");
+  test_it<leda_real>("leda_real");
+  typedef CGAL::Number_type_checker<leda_rational,leda_real> NT_checker;
+  test_it<NT_checker>("NT_checker");;
 #endif // CGAL_USE_LEDA
-      
+
   return 0;
 }

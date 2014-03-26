@@ -49,7 +49,7 @@ struct hilbertsortIpelet
 
 void hilbertsortIpelet::protected_run(int fn)
 {
-  if (fn==1) {
+  if (fn==2) {
     show_help();
     return;
   }
@@ -65,8 +65,9 @@ void hilbertsortIpelet::protected_run(int fn)
     return;
   }
   
-  CGAL::hilbert_sort(pt_list.begin(), pt_list.end());
-  
+  if (fn==0) CGAL::hilbert_sort(pt_list.begin(), pt_list.end());
+  else       CGAL::hilbert_sort(pt_list.begin(), pt_list.end(), CGAL::Hilbert_sort_middle_policy());
+
   draw_polyline_in_ipe(pt_list.begin(), pt_list.end());
 }
 

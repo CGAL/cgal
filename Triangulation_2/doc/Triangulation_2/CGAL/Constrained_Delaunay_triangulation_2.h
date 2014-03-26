@@ -177,6 +177,31 @@ Inserts segment `ab` as a constrained edge in the triangulation.
 void insert_constraint(Point a, Point b); 
 
 /*!
+inserts the constraints in the range `[first,beyond)`.
+Note that this function is not guaranteed to insert the constraints
+following the order of `ConstraintIterator`, as `spatial_sort()`
+is used to improve efficiency.
+More precisely, all endpoints are inserted prior to the segments and according to the order provided by the spatial sort.
+Once endpoints have been inserted, the segments are inserted in the order of the input iterator,
+using the vertex handles of its endpoints
+
+\return the number of inserted points.
+\tparam ConstraintIterator must be an input iterator with `Constraint` or `Segment_2` as value type.
+*/
+template <class ConstraintIterator>
+std::size_t insert_constraints(ConstraintIterator first, ConstraintIterator beyond);
+
+/*!
+Same as above except that each constraints is given as a pair of indices of the points
+in the range [points_first, points_beyond). The indices must go from 0 to `std::distance(points_first, points_beyond)`
+\tparam PointIterator is an input iterator with `Point_2` as value type.
+\tparam IndicesIterator is an input iterator with `std::pair<Int, Int>` where `Int` is an integral type implicitly convertible to `std::size_t`
+*/
+template <class PointIterator, class IndicesIterator>
+std::size_t insert_constraints(PointIterator points_first, PointIterator points_beyond,
+                               IndicesIterator indices_first, IndicesIterator indices_beyond);
+
+/*!
 Inserts the line segment between the points `c.first` and `c.second` as  a constrained edge in the triangulation.
 */ 
 void push_back(const Constraint& c); 

@@ -25,6 +25,7 @@
 #include <list>
 #include <algorithm>
 
+#include <CGAL/Object.h>
 #include <CGAL/Multi_surface_3.h>
 
 #include <CGAL/assertions.h>

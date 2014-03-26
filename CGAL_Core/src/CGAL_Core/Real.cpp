@@ -203,6 +203,7 @@ std::istream& operator >>(std::istream& i, Real& x) {
 
   if (i.eof()) {
     i.clear(std::ios::eofbit | std::ios::failbit);
+    delete [] str;
     return i;
   }
 
@@ -245,7 +246,10 @@ std::istream& operator >>(std::istream& i, Real& x) {
       e = 1;
   }
 
-  if (!i && !i.eof()) return i;
+  if (!i && !i.eof()) {
+    delete [] str;
+    return i;
+  }
   // chenli: make sure that the p is still in the range
   if (p - str >= size) {
     int len = p - str;

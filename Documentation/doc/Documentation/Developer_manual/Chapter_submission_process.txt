@@ -1,15 +1,15 @@
 /*!
 
-\page chapsubmission Editorial Board
+\page devman_submission Editorial Board
 
 The editorial board is in charge of approving the inclusion of new packages
 in the library.  This means that they assure that new contributions
 <UL>
-   <LI>are in keeping with the philosophy of \cgal (Chapter  \ref chapintro );
+   <LI>are in keeping with the philosophy of \cgal (Chapter  \ref devman_intro );
    <LI>are generic and fit seamlessly with other parts of the library;
-   <LI>satisfy the coding conventions of \cgal (Chapter  \ref chapcode_format );
+   <LI>satisfy the coding conventions of \cgal (Chapter  \ref devman_code_format );
    <LI>carefully and efficiently treat robustness issues
-         (Chapter  \ref chaprobustness );
+         (Chapter  \ref devman_robustness );
    <LI>are designed in a flexible, extensible, and easy-to-use fashion;
    <LI>and are designed to be technically feasible for the platforms
          supported by \cgal.

@@ -24,9 +24,6 @@
 #ifndef CGAL_COMPLEX_2_IN_TRIANGULATION_VERTEX_BASE_3_H
 #define CGAL_COMPLEX_2_IN_TRIANGULATION_VERTEX_BASE_3_H
 
-#ifndef CGAL_SURFACE_MESH_VERTEX_BASE_3_H
-#error You must include <CGAL/Surface_mesh_vertex_base_3.h> instead.
-#endif
 
 #include <CGAL/Triangulation_vertex_base_3.h>
 

@@ -25,6 +25,7 @@
  * Definition of the Arr_face_index_map<Arrangement> class.
  */
 
+#include <CGAL/Arr_observer.h>
 #include <CGAL/Unique_hash_map.h>
 #include <boost/version.hpp>
 #if BOOST_VERSION >= 104000

@@ -24,9 +24,10 @@ point-set enclosed by the box and not only intersection of the
 boundary, of course.}, only then the exact answer is computed on the
 complicated geometric primitives contained in the boxes.
 
-\image html box_inters.gif
+\image html box_inters.png
+\image latex box_inters.png
 
-We provide an efficient algorithm \cite cgal:ze-fsbi-02 for finding all
+We provide an efficient algorithm \cgalCite{cgal:ze-fsbi-02} for finding all
 intersecting pairs for large numbers of iso-oriented boxes, i.e.,
 typically these will be such bounding boxes of more complicated geometries.
 One immediate application of this algorithm is the detection of all
@@ -35,7 +36,7 @@ applying the algorithm on a large set of triangles in space, we give
 an example program later in this chapter. Not so obvious applications
 are proximity queries and distance computations among such surfaces,
 see Section \ref secbox_inters_example_proximity for an example
-and \cite cgal:ze-fsbi-02 for more details.
+and \cgalCite{cgal:ze-fsbi-02} for more details.
 
 \section secboxintersdef Definition 
 
@@ -137,7 +138,7 @@ Two implementations of iso-oriented boxes are provided;
 handle that can be used to point to the full geometry that is
 approximated by the box. Both implementations have template parameters
 for the number type used for the interval bounds, for the fixed
-dimension of the box, and for a policy class \cite cgal:a-mcdgp-01
+dimension of the box, and for a policy class \cgalCite{cgal:a-mcdgp-01}
 selecting among several solutions for providing the `id`-number.
 
 The function signatures for the bipartite case look as follows. The 
@@ -258,7 +259,7 @@ CGAL::box_self_intersection_d( ptr.begin(), ptr.end(), report_inters);
 
 \endcode
 
-In addition, the callback function `report_inters` needs to be
+In addition, the callback function `report_inters()` needs to be
 changed to work with pointers to boxes. The full example program looks
 as follows:
 
@@ -313,7 +314,7 @@ box at the center and the box from the upper-right corner of the grid.
 We write a more involved callback function object `Report` that
 stores an output iterator and writes the `id`-number of the 
 box in the first argument to the output iterator. We also provide a
-small helper function `report` that simplifies the use of the function
+small helper function `report()` that simplifies the use of the function
 object.
 
 We call the box intersection algorithm twice; once for the default
@@ -342,11 +343,11 @@ discussion.
 
 \section secboxintersperformance Runtime Performance 
 
-The implemented algorithm is described in \cite cgal:ze-fsbi-02 as
+The implemented algorithm is described in \cgalCite{cgal:ze-fsbi-02} as
 version two. Its performance depends on a `cutoff` parameter.
 When the size of both iterator ranges drops below the `cutoff`
 parameter the function switches from the streamed segment-tree
-algorithm to the two-way-scan algorithm, see \cite cgal:ze-fsbi-02
+algorithm to the two-way-scan algorithm, see \cgalCite{cgal:ze-fsbi-02}
 for the details.
 
 The streamed segment-tree algorithm needs \f$ O(n \log^d (n) + k)\f$
@@ -367,7 +368,7 @@ of course the number of boxes to be checked and their distribution. In
 cases where the callback runtime is dominant, it may be best to make
 the threshold parameter small. Otherwise a `cutoff`\f$ =\sqrt{n}\f$ can
 lead to acceptable results. For well distributed boxes the original
-paper \cite cgal:ze-fsbi-02 gives optimal cutoffs in the thousands.
+paper \cgalCite{cgal:ze-fsbi-02} gives optimal cutoffs in the thousands.
 Anyway, for optimal runtime some experiments to compare different
 cutoff parameters are recommended.
 
@@ -387,7 +388,7 @@ optimal cutoff, which would just delegate the box sets to the scanning
 algorithm. As there are more and more boxes, the overhead becomes less
 important.
 
-\cgalFigureBegin{fig_benchmark,benchmark.gif}
+\cgalFigureBegin{fig_benchmark,benchmark.png}
 Runtime comparison between the scanning and the streaming algorithm.
 \cgalFigureEnd
 
@@ -461,7 +462,7 @@ stored in the `boxes` so far.
 \section Box_intersection_dDesign Design and Implementation History
 
 Lutz Kettner and Andreas Meyer implemented the algorithms starting
-from the publication \cite cgal:ze-fsbi-02. We had access to the
+from the publication \cgalCite{cgal:ze-fsbi-02}. We had access to the
 original C implementation of Afra Zomorodian, which helped clarifying
 some questions, and we are grateful to the help of Afra Zomorodian in
 answering our questions during his visit. We thank Steve Robbins for

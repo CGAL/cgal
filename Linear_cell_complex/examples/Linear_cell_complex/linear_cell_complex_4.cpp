@@ -49,7 +49,7 @@ int main()
   std::cout<<", valid="<<lcc.is_valid()<<std::endl;
 
   // Add one edge to cut the face containing dart d3 in two.
-  Dart_handle d4 = CGAL::insert_cell_1_in_cell_2(lcc,d3,d1->beta(0));
+  Dart_handle d4 = CGAL::insert_cell_1_in_cell_2(lcc,d3,lcc.beta(d1, 0));
   CGAL_assertion( lcc.is_valid() );
   
   lcc.display_characteristics(std::cout);

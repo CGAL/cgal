@@ -10,6 +10,7 @@
 #include <CGAL/intersections_d.h>
 #include <CGAL/double.h>
 #include <CGAL/test_macros.h>
+#include <CGAL/use.h>
 
 #ifdef CGAL_USE_LEDA
 
@@ -44,6 +45,7 @@ int main()
   typedef CGAL::Direction_d<Kernel>  Direction;
   typedef CGAL::Hyperplane_d<Kernel> Hyperplane;
   typedef CGAL::Sphere_d<Kernel>     Sphere;
+  CGAL_USE_TYPE(Sphere);
   typedef CGAL::Segment_d<Kernel>    Segment;
   typedef CGAL::Ray_d<Kernel>        Ray;
   typedef CGAL::Line_d<Kernel>       Line;
@@ -218,6 +220,7 @@ int main()
   typedef CGAL::Direction_d<Kernel>  Direction;
   typedef CGAL::Hyperplane_d<Kernel> Hyperplane;
   typedef CGAL::Sphere_d<Kernel>     Sphere;
+  CGAL_USE_TYPE(Sphere);
   typedef CGAL::Segment_d<Kernel>    Segment;
   typedef CGAL::Ray_d<Kernel>        Ray;
   typedef CGAL::Line_d<Kernel>       Line;

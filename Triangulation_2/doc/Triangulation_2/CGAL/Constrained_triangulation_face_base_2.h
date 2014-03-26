@@ -17,11 +17,8 @@ of constrained triangulations.
 of the concept `TriangulationFaceBase_2`. 
 Its default is `Triangulation_face_base_2<Traits>` 
 
-\cgalHeading{Inherits From}
-
-The class `Constrained_triangulation_face_base_2` derives from its
-parameter `Fb`.  It adds three Boolean to deal with information about
-constrained edges.
+The class `Constrained_triangulation_face_base_2` derives from `Fb`
+and adds three Boolean to deal with information about constrained edges.
 
 The member functions `cw(int i)`, `ccw(int i)` 
 and `reorient` are overloaded to update 

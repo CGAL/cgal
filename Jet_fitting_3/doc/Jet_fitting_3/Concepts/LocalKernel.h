@@ -12,7 +12,7 @@ This concept provides the geometric primitives used for the
 computations in the class 
 `CGAL::Monge_via_jet_fitting`. 
 
-### Requirements ###
+\cgalHeading{Requirements}
 
 In the class `CGAL::Monge_via_jet_fitting` the scalar type, 
 `LocalKernel::FT`, must be the same as that of the `SvdTraits` 
@@ -20,7 +20,7 @@ concept : `SvdTraits::FT`.
 
 The type `LocalKernel::FT` is a model of the FieldWithSqrt concept. 
 
-### Operations ###
+\cgalHeading{Operations}
 
 The scalar type `LocalKernel::FT` must be a field type with a 
 square root. 

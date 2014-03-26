@@ -5404,8 +5404,10 @@ test_next(const Triangulation_3<GT, Tds1> &t1,
 	  std::map<typename Triangulation_3<GT, Tds1>::Vertex_handle,
                    typename Triangulation_3<GT, Tds2>::Vertex_handle> &Vmap)
 {
+
     // This function tests and registers the 4 neighbors of c1/c2,
     // and recursively calls itself over them.
+    // We don't use the call stack as it may overflow
     // Returns false if an inequality has been found.
 
     // Precondition: c1, c2 have been registered as well as their 4 vertices.
@@ -5427,17 +5429,26 @@ test_next(const Triangulation_3<GT, Tds1> &t1,
     typedef typename std::map<Vertex_handle1,
                               Vertex_handle2>::const_iterator Vit;
 
-    for (int i=0; i <= t1.dimension(); ++i) {
+    std::vector<std::pair<Cell_handle1, Cell_handle2> > cell_stack;
+    cell_stack.push_back(std::make_pair(c1, c2));
+
+    while(! cell_stack.empty()){
+
+      Cell_handle1 c1 = cell_stack.back().first;
+      Cell_handle2 c2 = cell_stack.back().second;
+      cell_stack.pop_back();
+
+      for (int i=0; i <= t1.dimension(); ++i) {
 	Cell_handle1 n1 = c1->neighbor(i);
 	Cit cit = Cmap.find(n1);
 	Vertex_handle1 v1 = c1->vertex(i);
 	Vertex_handle2 v2 = Vmap[v1];
 	Cell_handle2 n2 = c2->neighbor(c2->index(v2));
 	if (cit != Cmap.end()) {
-            // n1 was already registered.
-	    if (cit->second != n2)
-		return false;
-	    continue;
+          // n1 was already registered.
+          if (cit->second != n2)
+            return false;
+          continue;
 	}
         // n1 has not yet been registered.
         // We check that the new vertices match geometrically.
@@ -5446,27 +5457,25 @@ test_next(const Triangulation_3<GT, Tds1> &t1,
         Vertex_handle2 vn2 = n2->vertex(n2->index(c2));
         Vit vit = Vmap.find(vn1);
         if (vit != Vmap.end()) {
-            // vn1 already registered
-            if (vit->second != vn2)
-                return false;
+          // vn1 already registered
+          if (vit->second != vn2)
+            return false;
         }
         else {
-            if (t2.is_infinite(vn2))
-                return false; // vn1 can't be infinite,
-                              // since it would have been registered.
-            if (t1.geom_traits().compare_xyz_3_object()(vn1->point(),
-                                                        vn2->point()) != 0)
-                return false;
-            // We register vn1/vn2.
-            Vmap.insert(std::make_pair(vn1, vn2));
+          if (t2.is_infinite(vn2))
+            return false; // vn1 can't be infinite,
+          // since it would have been registered.
+          if (t1.geom_traits().compare_xyz_3_object()(vn1->point(),
+                                                      vn2->point()) != 0)
+            return false;
+          // We register vn1/vn2.
+          Vmap.insert(std::make_pair(vn1, vn2));
         }
 
         // We register n1/n2.
         Cmap.insert(std::make_pair(n1, n2));
-
-        // We recurse on n1/n2.
-	if (!test_next(t1, t2, n1, n2, Cmap, Vmap))
-	    return false;
+        cell_stack.push_back(std::make_pair(n1, n2));
+      }
     }
 
     return true;
@@ -5584,7 +5593,6 @@ operator==(const Triangulation_3<GT, Tds1> &t1,
 
     if (Cmap.size() == 0)
 	return false;
-
     // We now have one cell, we need to propagate recursively.
     return internal::test_next(t1, t2,
 	             Cmap.begin()->first, Cmap.begin()->second, Cmap, Vmap);

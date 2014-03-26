@@ -223,7 +223,7 @@ sub create_version_file()
 {
 #if VERSION starts with CGAL-, we remove "CGAL-" from version
 #the $newver variable will store the right version
-    if ($result = $VERSION =~ /CGAL-(.*)/){
+    if ($VERSION =~ /CGAL-(.*)/) {
         $newver = $1;
     } else {
         $newver = $VERSION;
@@ -287,51 +287,6 @@ EOF
     move("tempfile", 'version.h');
     chdir '../..' or die;
 }
-
-#-----------------------------------------------------------------------#
-# set the version information in the doc_tex/version.tex                #
-#-----------------------------------------------------------------------#
-
-sub create_version_tex_file()
-{
-    chdir "$RELEASEDIR/$VERSION/doc_tex" or die;
-    open(TEMPFILE, ">tempfile") or die;
-#if VERSION starts with CGAL-, we remove "CGAL-" from version
-#the $newver variable will store the right version
-    if ($result = $VERSION =~ /CGAL-(.*)/){
-        $newver = $1;
-    } else {
-        $newver = $VERSION;
-    }
-
-# And here we also strip the -I- (or -Ic-)... part to get the public version number
-    if ($result = $VERSION =~ /CGAL-(.*)-Ic?-/){
-        $publicver = $1;
-    } else {
-        $publicver = $VERSION;
-    }
-
-    print TEMPFILE << 'EOF';
-%% This file is automatically created by create_internal_release.
-%% Do not edit manually.
-
-EOF
-    print TEMPFILE "\\gdef\\cgalversion{$publicver}\n";
-    print TEMPFILE "\\gdef\\cgalinternalversion{$newver}\n";
-
-    my ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = localtime(time);
-
-    my @months = ( "January", "February", "March", "April",
-                   "May", "June", "July", "August", "September",
-                   "October", "November", "December" );
-
-    print TEMPFILE "\\gdef\\cgalversiondate{$mday $months[$mon] ", 1900 + $year, "}\n";
-
-    close TEMPFILE || die "Error closing temporary file: $!\n";
-    move("tempfile", 'version.tex');
-    chdir '../..' or die;
-}
-
 
 #---------------------------------------------------------------#
 # CreateExampleTestDirs
@@ -656,7 +611,6 @@ sub main(){
   CreateDemoTestDirs();
   CreateExampleTestDirs();
   create_version_file();
-  create_version_tex_file();
   #make_testscripts();
   make_testscripts_for_cmake();
 

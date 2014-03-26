@@ -101,7 +101,7 @@ public:
 
   \sa `Kinetic::EventQueue` 
 
-  ### Example ###
+  \cgalHeading{Example}
 
   All of the kinetic data structures provided have models of 
   `Event`. Here is the code implementing a swap event from the 

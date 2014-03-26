@@ -12,7 +12,8 @@ creates two new faces that have the two newly created edges in
 common (see figure below). The removal method performs the reverse 
 operation. 
 
-\image html insert_degree_2.gif 
+\image html insert_degree_2.png 
+\image latex insert_degree_2.png 
 
 <center><b>Insertion and removal of degree 2 vertices. Left to right:
 The edge `(f,i)` is replaced by two edges by means of inserting a

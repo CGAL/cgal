@@ -105,7 +105,7 @@ output_to_tetgen(std::string filename,
   std::string node_filename = filename + ".node";
   std::ofstream node_stream(node_filename.c_str());
 
-  node_stream << std::setprecision(20);
+  node_stream << std::setprecision(17);
   node_stream << tr.number_of_vertices() << " 3 0 0" << std::endl;
 
   std::size_t vert_counter = 0;
@@ -134,7 +134,7 @@ output_to_tetgen(std::string filename,
   std::string elem_filename = filename + ".elem";
   std::ofstream elem_stream(elem_filename.c_str());
 
-  elem_stream << std::setprecision(20);
+  elem_stream << std::setprecision(17);
   elem_stream << c3t3.number_of_cells_in_complex() << " 4 0" << std::endl;
 
   std::size_t cell_counter = 0;
@@ -163,7 +163,7 @@ output_to_tetgen(std::string filename,
   std::string face_filename = filename + ".face";
   std::ofstream face_stream(face_filename.c_str());
 
-  face_stream << std::setprecision(20);
+  face_stream << std::setprecision(17);
   face_stream << c3t3.number_of_facets_in_complex() << " 0" << std::endl;
 
   std::size_t facet_counter = 0;

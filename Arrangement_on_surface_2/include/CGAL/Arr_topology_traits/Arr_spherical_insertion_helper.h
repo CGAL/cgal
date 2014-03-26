@@ -14,7 +14,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Ron Wein <wein@post.tau.ac.il>
 //                 Efi Fogel <efif@post.tau.ac.il>
@@ -36,13 +36,13 @@ namespace CGAL {
  * for an Arrangement_on_surface_2 instantiated with a topology-traits class
  * for bounded curves in the plane.
  */
-template <class Traits_, class Arrangement_, class Event_, class Subcurve_> 
+template <typename Traits_, typename Arrangement_, typename Event_,
+          typename Subcurve_>
 class Arr_spherical_insertion_helper :
   public Arr_spherical_construction_helper<Traits_, Arrangement_,
                                            Event_, Subcurve_>
 {
 public:
-
   typedef Traits_                                       Traits_2;
   typedef Arrangement_                                  Arrangement_2;
   typedef Event_                                        Event;
@@ -62,21 +62,23 @@ public:
 
   typedef Arr_construction_sl_visitor<Self>             Parent_visitor;
 
+  typedef typename Arrangement_2::Vertex_handle         Vertex_handle;
   typedef typename Arrangement_2::Face_handle           Face_handle;
   typedef typename Arrangement_2::Halfedge_handle       Halfedge_handle;
 
-  typedef typename Base::Indices_list                   Indices_list;
-  typedef typename Base::Halfedge_indices_map           Halfedge_indices_map;
+protected:
+  typedef typename Arrangement_2::Topology_traits       Topology_traits;
+  typedef typename Topology_traits::Vertex              DVertex;
+
+  //! The halfedge that points at the spherical face.
+  Halfedge_handle m_spherical_halfedge;
 
 public:
   /*! Constructor */
-  Arr_spherical_insertion_helper (Arrangement_2 *arr) :
-    Base (arr)
-  {}
+  Arr_spherical_insertion_helper(Arrangement_2 *arr) : Base(arr) {}
 
   /*! Destructor. */
-  virtual ~Arr_spherical_insertion_helper ()
-  {}
+  virtual ~Arr_spherical_insertion_helper() {}
 
   /// \name Notification functions.
   //@{
@@ -88,13 +90,16 @@ public:
     this->m_spherical_face = Face_handle(this->m_top_traits->south_face());
   }
 
-  /*!
-   * A notification invoked before the sweep-line starts handling the given
+  /*! A notification invoked before the sweep-line starts handling a given
    * event.
    */
-  virtual void before_handle_event (Event* event);
-  //@}
+  virtual void before_handle_event(Event* event);
 
+  /*! A notification invoked when a new subcurve is created. */
+  virtual void add_subcurve(Halfedge_handle he, Subcurve* sc);
+
+  /*! Get the current top face. */
+  virtual Face_handle top_face() const;
 };
 
 //-----------------------------------------------------------------------------
@@ -105,54 +110,121 @@ public:
 // A notification invoked before the sweep-line starts handling the given
 // event.
 //
-template <class Tr, class Arr, class Evnt, class Sbcv> 
-void Arr_spherical_insertion_helper<Tr,Arr,Evnt,Sbcv>::before_handle_event
-    (Event* event)
+template <typename Tr, typename Arr, typename Evnt, typename Sbcv>
+void Arr_spherical_insertion_helper<Tr, Arr, Evnt, Sbcv>::
+before_handle_event(Event* event)
 {
   // Ignore events that do not have boundary conditions.
   const Arr_parameter_space ps_x = event->parameter_space_in_x();
   const Arr_parameter_space ps_y = event->parameter_space_in_y();
+  if ((ps_x == ARR_INTERIOR) && (ps_y == ARR_INTERIOR)) return;
 
-  if (ps_x == ARR_INTERIOR && ps_y == ARR_INTERIOR)
-    return;
+  if (ps_y == ARR_BOTTOM_BOUNDARY) {
+    // Process bootom contraction boundary:
+    // The event has only one right curve, as there is exactly one curve
+    // incident to an event with boundary conditions.
+    CGAL_assertion((event->number_of_left_curves() == 0) &&
+                   (event->number_of_right_curves() == 1));
+    const X_monotone_curve_2& xc =
+        (*(event->right_curves_begin()))->last_curve();
+    if (xc.halfedge_handle() != Halfedge_handle()) return;
 
-  // The is exactly one curve incident to an event with boundary conditions.
-  // Obtain this curve and check whether it already exists in the arrangement.
-  CGAL_assertion(((event->number_of_left_curves() == 0) &&
-                  (event->number_of_right_curves() == 1)) ||
-                 ((event->number_of_left_curves() == 1) &&
-                  (event->number_of_right_curves() == 0)));
-
-  const Arr_curve_end   ind =
-    (event->number_of_left_curves() == 0 &&
-     event->number_of_right_curves() == 1) ? ARR_MIN_END : ARR_MAX_END;
-  const X_monotone_curve_2& xc = (ind == ARR_MIN_END) ?
-    (*(event->right_curves_begin()))->last_curve() :
-    (*(event->left_curves_begin()))->last_curve();
-
-  if (xc.halfedge_handle() == Halfedge_handle())
-  {
-    // The curve is not in the arrangement, use the base construction helper
-    // to handle the event:
-    Base::before_handle_event (event);
+    // If a vertex on the south pole does not exists, create one.
+    DVertex* dv = this->m_top_traits->south_pole();
+    Vertex_handle v = (dv) ? Vertex_handle(dv) :
+      this->m_arr_access.create_boundary_vertex(xc, ARR_MIN_END, ps_x, ps_y);
+    event->set_vertex_handle(v);
     return;
   }
 
-  // In case we encounter an existing curve incident to the curve of
-  // discontinuity (and exteding to its right) or to the north pole,
-  // we have to update the current top face (the spherical face).
-  if (ps_y == ARR_TOP_BOUNDARY)
-  {
-    this->m_spherical_face = (ind == ARR_MIN_END) ?
-      xc.halfedge_handle()->twin()->face() : xc.halfedge_handle()->face();
-  }
-  else if (ps_x == ARR_LEFT_BOUNDARY)
-  {
-    CGAL_assertion (ind == ARR_MIN_END);
-    this->m_spherical_face = xc.halfedge_handle()->twin()->face();
+  if (ps_y == ARR_TOP_BOUNDARY) {
+    // Process top contraction boundary:
+    // The event has only one left curve, as there is exactly one curve
+    // incident to an event with boundary conditions.
+    CGAL_assertion((event->number_of_left_curves() == 1) &&
+                   (event->number_of_right_curves() == 0));
+    const X_monotone_curve_2& xc =
+      (*(event->left_curves_begin()))->last_curve();
+
+    if (xc.halfedge_handle() != Halfedge_handle()) {
+      // Update the current top face.
+      this->m_spherical_face = xc.halfedge_handle()->face();
+      return;
+    }
+
+    // If a vertex on the north pole does not exist, create one.
+    DVertex* dv = this->m_top_traits->north_pole();
+    Vertex_handle v = (dv) ? Vertex_handle(dv) :
+      this->m_arr_access.create_boundary_vertex(xc, ARR_MAX_END, ps_x, ps_y);
+    event->set_vertex_handle(v);
+    return;
   }
 
-  return;
+  if (ps_x == ARR_LEFT_BOUNDARY) {
+    // Process left discontinuity boundary:
+    // The event has only right curves, as there is exactly one curve
+    // incident to an event with boundary conditions.
+    CGAL_assertion((event->number_of_left_curves() == 0) &&
+                   (event->number_of_right_curves() >= 1));
+    const X_monotone_curve_2& xc =
+      (*(event->right_curves_begin()))->last_curve();
+
+    if (xc.halfedge_handle() != Halfedge_handle()) {
+      // Update the current top face.
+      this->m_spherical_face = xc.halfedge_handle()->twin()->face();
+      return;
+    }
+
+    // If a vertex on the line of discontinuity does not exists. create one.
+    DVertex* dv = this->m_top_traits->discontinuity_vertex(xc, ARR_MIN_END);
+    Vertex_handle v = (dv) ? Vertex_handle(dv) :
+      this->m_arr_access.create_boundary_vertex(xc, ARR_MIN_END, ps_x, ps_y);
+    event->set_vertex_handle(v);
+    return;
+  }
+
+  if (ps_x == ARR_RIGHT_BOUNDARY) {
+    // Process right discontinuity boundary:
+    // The event has only left curves, as there is exactly one curve
+    // incident to an event with boundary conditions.
+    CGAL_assertion((event->number_of_left_curves() >= 1) &&
+                   (event->number_of_right_curves() == 0));
+    const X_monotone_curve_2& xc =
+      (*(event->left_curves_begin()))->last_curve();
+    if (xc.halfedge_handle() != Halfedge_handle()) return;
+
+    // If a vertex on the line of discontinuity does not exists. create one.
+    DVertex* dv = this->m_top_traits->discontinuity_vertex(xc, ARR_MAX_END);
+    Vertex_handle v = (dv) ? Vertex_handle(dv) :
+      this->m_arr_access.create_boundary_vertex(xc, ARR_MAX_END, ps_x, ps_y);
+    event->set_vertex_handle(v);
+    return;
+  }
+}
+
+/*! A notification invoked when a new subcurve is created. */
+template <typename Tr, typename Arr, typename Evnt, typename Sbcv>
+void Arr_spherical_insertion_helper<Tr, Arr, Evnt, Sbcv>::
+add_subcurve(Halfedge_handle he, Subcurve* /* sc */)
+{
+  if (he->source()->parameter_space_in_y() == ARR_TOP_BOUNDARY) {
+    m_spherical_halfedge = he;
+    return;
+  }
+  if (he->target()->parameter_space_in_y() == ARR_TOP_BOUNDARY) {
+    m_spherical_halfedge = he->twin();
+    return;
+  }
+}
+
+/*! Get the current top face. */
+template <typename Tr, typename Arr, typename Evnt, typename Sbcv>
+typename Arr_spherical_insertion_helper<Tr, Arr, Evnt, Sbcv>::Face_handle
+Arr_spherical_insertion_helper<Tr, Arr, Evnt, Sbcv>::top_face() const
+{
+  const Halfedge_handle invalid_he;
+  if (m_spherical_halfedge != invalid_he) return m_spherical_halfedge->face();
+  return this->m_spherical_face;
 }
 
 } //namespace CGAL

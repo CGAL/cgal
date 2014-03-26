@@ -1,5 +1,5 @@
 /*!
-\ingroup PkgAlgebraicFoundationsRealNumberTypesConcepts
+\ingroup PkgAlgebraicFoundationsAlgebraicStructuresConcepts
 \cgalConcept
 
 The concept `FieldNumberType` combines the requirements of the concepts 
@@ -29,6 +29,7 @@ for Cartesian kernels.
 class FieldNumberType {
 public:
 
+/// @{
 /// @}
 
 }; /* end FieldNumberType */

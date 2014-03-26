@@ -30,6 +30,26 @@
 
 namespace CGAL {
 
+  template <class K>
+  class Plane_3;
+
+  template <class K>
+  class Line_3;
+
+  template <class K>
+  class Segment_3;
+
+  template <class K>
+  class Ray_3;
+
+  template <class K>
+  class Sphere_3;
+
+  template <class K>
+  class Triangle_3;
+
+  template <class K>
+  class Iso_cuboid_3;
 
 // the special plane_3 function
 template <class K>
@@ -518,8 +538,8 @@ intersection(const typename K::Segment_3 &s1,
     #else
     return apply_visitor(L_p_visitor<K>(s1, s2) , *v);
     #endif
-  } else
-    return intersection_return<typename K::Intersect_3, typename K::Segment_3, typename K::Segment_3>();
+  }
+  return intersection_return<typename K::Intersect_3, typename K::Segment_3, typename K::Segment_3>();
 }
 
 template <class K>

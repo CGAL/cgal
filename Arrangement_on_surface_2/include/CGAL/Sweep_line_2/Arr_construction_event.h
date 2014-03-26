@@ -14,7 +14,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Tali Zvi <talizvi@post.tau.ac.il>
 //                 Baruch Zukerman <baruchzu@post.tau.ac.il>
@@ -36,12 +36,12 @@ namespace CGAL {
 /*! \class Arr_construction_event
  *
  * Stores the data associated with an event.
- * In addition to the information stored in Sweep_line_event, when 
- * constructing an arrangement, additional information is kept, in 
+ * In addition to the information stored in Sweep_line_event, when
+ * constructing an arrangement, additional information is kept, in
  * order to speed insertion of curves into the planar map.
  *
  * The additional infomation contains the following:
- * - among the left curves of the event, we keep the highest halfedge that 
+ * - among the left curves of the event, we keep the highest halfedge that
  *   was inserted into the arrangement at any given time and when there no
  *   left curves, we keep the highest halfedge that was inseted to the right.
  *
@@ -50,7 +50,7 @@ namespace CGAL {
  */
 
 template<class Traits_, class Subcurve_, class Arrangement_>
-class Arr_construction_event : 
+class Arr_construction_event :
   public Sweep_line_event<Traits_, Subcurve_>
 {
 public:
@@ -60,7 +60,7 @@ public:
   typedef Arrangement_                                    Arrangement_2;
   typedef typename Arrangement_2::Vertex_handle           Vertex_handle;
   typedef typename Arrangement_2::Halfedge_handle         Halfedge_handle;
- 
+
   typedef typename Traits_2::X_monotone_curve_2           X_monotone_curve_2;
   typedef typename Traits_2::Point_2                      Point_2;
 
@@ -74,7 +74,7 @@ public:
   typedef typename Base::Subcurve_container         Subcurve_container;
   typedef typename Base::Subcurve_iterator          Subcurve_iterator;
   typedef typename Base::Subcurve_reverse_iterator  Subcurve_reverse_iterator;
-   
+
 protected:
 
   // Data members:
@@ -84,9 +84,9 @@ protected:
 
   Halfedge_handle    m_halfedge;              // A halfedge handle.
   Vertex_handle      m_vertex;                // A vertex handle.
-  
+
   unsigned int       m_right_curves_counter;  // Number of subcurves defined
-                                              // to the event's right that 
+                                              // to the event's right that
                                               // haven't been added to the
                                               // arrangement, when that counter
                                               // is zero, we can deallocate the
@@ -110,9 +110,9 @@ public:
   add_curve_to_right (Subcurve *curve,
                       const Traits_2 * tr)
   {
-    std::pair<bool,Subcurve_iterator> res = 
+    std::pair<bool,Subcurve_iterator> res =
       Base::add_curve_to_right(curve, tr);
-    
+
     if(res.second != this->m_rightCurves.end() && res.first == false)
       ++m_right_curves_counter;
 
@@ -128,7 +128,7 @@ public:
     return (Base::add_curve_pair_to_right(sc1, sc2));
   }
 
-  /*! using the additional data that we store at the event, we compute 
+  /*! using the additional data that we store at the event, we compute
    *  how much we have to jump (he = he->next()->twin()) from the halfedge
    *  that is stored in the event, to the halefge that is previous to 'curve'
    *  that is about to be inserted into the arrangement.
@@ -142,36 +142,36 @@ public:
 
     for (j = 0 ; j < m_isCurveInArr.size() ; j++ )
     {
-      if (m_isCurveInArr[j]) 
+      if (m_isCurveInArr[j])
         skip++;
     }
     skip--;  // now 'skip' holds the amount of the right curves of the event
              // that are already inserted to the planar map  - 1 (minus 1)
 
     Subcurve_iterator  iter = this->m_rightCurves.end();
-    unsigned int       num_left_curves = this->number_of_left_curves();
-    
+    size_t num_left_curves = this->number_of_left_curves();
+
     for (--iter; iter != this->m_rightCurves.begin() ; --iter, ++counter)
     {
       if (curve == (*iter))
       {
         m_isCurveInArr[counter] = true;
-        
-        if ((i == 0) && (num_left_curves == 0)) 
+
+        if ((i == 0) && (num_left_curves == 0))
           return (skip);
         if (num_left_curves == 0)
           return (i - 1);
-    
+
         return (i);
       }
-      
+
       if (m_isCurveInArr[counter])
         i++;
     }
 
     CGAL_assertion(curve == (*iter));
     m_isCurveInArr[counter] = true;
-    
+
     if (num_left_curves == 0)
       i--;
 
@@ -201,7 +201,7 @@ public:
    * Resize the bit-vector indicating whether the incident curves are already
    * in the arrangement, and set all flags to false.
    */
-  void init_subcurve_in_arrangement_flags (unsigned int n)
+  void init_subcurve_in_arrangement_flags (size_t n)
   {
     m_isCurveInArr.resize (n, false);
     return;
@@ -233,7 +233,7 @@ public:
   {
     return m_halfedge;
   }
-  
+
   /*! Set the vertex handle. */
   void set_vertex_handle (Vertex_handle v)
   {
@@ -254,13 +254,13 @@ public:
   }
 
   /*! Get the number of subcurves to the right of the event that we have't
-   * done yet with (haven't been inserted to the arrangement). 
+   * done yet with (haven't been inserted to the arrangement).
    */
   unsigned int right_curves_counter() const
   {
     return (m_right_curves_counter);
   }
-  
+
 };
 
 } //namespace CGAL

@@ -37,13 +37,13 @@ CGAL::Bbox_3 Viewer::bbox()
     {
       if ( empty )
       {
-        bb = LCC::point(it->dart()).bbox();
+        bb = scene->lcc->point(it->dart()).bbox();
         empty = false;
       }
       for( LCC::Dart_of_cell_range<3>::iterator
            it2=scene->lcc->darts_of_cell<3>(it->dart()).begin();
            it2.cont(); ++it2)
-        bb = bb + LCC::point(it2).bbox();
+        bb = bb + scene->lcc->point(it2).bbox();
     }
   }
 
@@ -76,17 +76,17 @@ void Viewer::drawFacet(Dart_const_handle ADart)
 {
   LCC &m = *scene->lcc;
   ::glBegin(GL_POLYGON);
-  CGAL_assertion( ADart->attribute<3>()!=NULL );
+  CGAL_assertion( m.attribute<3>(ADart)!=LCC::null_handle );
 
   //  double r = (double)ADart->attribute<3>()->info().r()/255.0;
-  double r = (double)ADart->attribute<3>()->info().color().r()/255.0;
-  double g = (double)ADart->attribute<3>()->info().color().g()/255.0;
-  double b = (double)ADart->attribute<3>()->info().color().b()/255.0;
-  if ( !ADart->is_free(3) )
+  double r = (double)m.info<3>(ADart).color().r()/255.0;
+  double g = (double)m.info<3>(ADart).color().g()/255.0;
+  double b = (double)m.info<3>(ADart).color().b()/255.0;
+  if ( !m.is_free(ADart, 3) )
   {
-    r += (double)ADart->beta(3)->attribute<3>()->info().color().r()/255.0;
-    g += (double)ADart->beta(3)->attribute<3>()->info().color().g()/255.0;
-    b += (double)ADart->beta(3)->attribute<3>()->info().color().b()/255.0;
+    r += (double)m.info<3>(m.beta(ADart,3)).color().r()/255.0;
+    g += (double)m.info<3>(m.beta(ADart,3)).color().g()/255.0;
+    b += (double)m.info<3>(m.beta(ADart,3)).color().b()/255.0;
     r /= 2; g /= 2; b /= 2;
   }
 
@@ -127,8 +127,8 @@ void Viewer::drawEdges(Dart_const_handle ADart)
         it.cont(); ++it)
   {
     LCC::Point p = m.point(it);
-    Dart_const_handle d2 = it->other_extremity();
-    if ( d2!=NULL )
+    Dart_const_handle d2 = m.other_extremity(it);
+    if ( d2!=LCC::null_handle )
     {
       LCC::Point p2 = m.point(d2);
       glVertex3f( p.x(),p.y(),p.z());
@@ -158,10 +158,10 @@ void Viewer::draw_one_vol(Dart_const_handle adart, bool filled)
     for (LCC::One_dart_per_incident_cell_range<1,3>::const_iterator
            it(m,adart); it.cont(); ++it)
     {
-      if ( it->other_extremity()!=NULL )
+      if ( m.other_extremity(it)!=LCC::null_handle )
       {
         LCC::Point p1 = m.point(it);
-        LCC::Point p2 = m.point(it->other_extremity());
+        LCC::Point p2 = m.point(m.other_extremity(it));
         glVertex3f( p1.x(),p1.y(),p1.z());
         glVertex3f( p2.x(),p2.y(),p2.z());
       }

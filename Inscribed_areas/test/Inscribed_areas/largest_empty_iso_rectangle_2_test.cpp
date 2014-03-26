@@ -34,7 +34,7 @@ int main(int argc,char *argv[])
     std::cout << "Using " << argv[i] << " and comparing against" << argv[j] << std::endl;
     std::ifstream is(argv[i]);
     std::ifstream ifs(argv[j]);
-    if(is.bad() || ifs.bad()) {
+    if(is.fail() || ifs.fail()) {
       std::cerr << "Bad input or output file : " << argv[i] 
                 << " " << argv[j] << std::endl;
       return(1);

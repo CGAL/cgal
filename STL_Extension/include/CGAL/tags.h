@@ -27,17 +27,21 @@
 #define CGAL_TAGS_H
 
 #include <CGAL/IO/io_tags.h>
-#include <boost/config.hpp>
+#include <boost/mpl/integral_c.hpp>
 
 namespace CGAL {
 
 struct Void {};
 
-// Two struct's to denote boolean compile time decisions.
-
+// Boolean_tag<bool> is a model of the Boost Integral Constant concept.
+//   http://www.boost.org/libs/mpl/doc/refmanual/integral-constant.html
 template <bool b>
 struct Boolean_tag {
+  typedef boost::mpl::integral_c_tag tag;
+  typedef bool value_type;
   static const bool value = b;
+  typedef Boolean_tag<b> type;
+  operator bool() const { return this->value; }
 };
 
 typedef Boolean_tag<true>   Tag_true;

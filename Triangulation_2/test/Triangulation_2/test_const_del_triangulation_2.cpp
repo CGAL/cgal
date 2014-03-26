@@ -37,5 +37,34 @@ int main()
   typedef CGAL::Constrained_Delaunay_triangulation_2<TestK>        CDt2;
 
   _test_cls_const_Del_triangulation(CDt2());
+
+  //Testing insertion of a range of constraints
+  std::vector<TestK::Point_2> points;
+  points.push_back( TestK::Point_2(0,0) );
+  points.push_back( TestK::Point_2(0,1) );
+  points.push_back( TestK::Point_2(2,1) );
+  points.push_back( TestK::Point_2(2,3) );
+  {
+  std::vector< std::pair<std::size_t,std::size_t> > csts;
+  csts.push_back( std::make_pair(0,1) );
+  csts.push_back( std::make_pair(1,2) );
+  CDt2 cdt;
+  cdt.insert_constraints(points.begin(), points.end(),
+                         csts.begin(), csts.end() );
+  }
+  {
+  std::vector< TestK::Segment_2 > csts;
+  csts.push_back( TestK::Segment_2(points[0],points[1]) );
+  csts.push_back( TestK::Segment_2(points[1],points[2]) );
+  CDt2 cdt;
+  cdt.insert_constraints(csts.begin(), csts.end() );
+  }
+  {
+  std::vector< CDt2::Constraint > csts;
+  csts.push_back( CDt2::Constraint(points[0],points[1]) );
+  csts.push_back( CDt2::Constraint(points[1],points[2]) );
+  CDt2 cdt;
+  cdt.insert_constraints(csts.begin(), csts.end() );
+  }
   return 0;
 }

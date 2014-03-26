@@ -17,13 +17,14 @@ representable surfaces to orientable 2-manifolds - with and without
 boundary. If the surface is closed we call it a <I>polyhedron</I>, for
 example, see the  following model of a hammerhead:
 
-\image html shark.gif
+\image html shark.png
+\image latex shark.png
 
 The polyhedral surface is realized as a container class that manages
 vertices, halfedges, facets with their incidences, and that maintains
 the combinatorial integrity of them. It is based on the highly
 flexible design of the halfedge data structure, see the introduction
-in Chapter \ref chapterHalfedgeDS "Halfedge Data Structures" and \cite k-ugpdd-99. However, the
+in Chapter \ref chapterHalfedgeDS "Halfedge Data Structures" and \cgalCite{k-ugpdd-99}. However, the
 polyhedral surface can be used and understood without knowing the
 underlying design. Some of the examples in this chapter introduce also
 gradually into first applications of this flexibility.
@@ -36,7 +37,8 @@ an incidence relation on them. Each edge is represented by two
 halfedges with opposite orientations. The incidences stored with a
 halfedge are illustrated in the following figure:
 
-\image html halfedge_small.gif
+\image html halfedge_small.png
+\image latex halfedge_small.png
 
 Vertices represent points in space. Edges are straight line segments
 between two endpoints. Facets are planar polygons without
@@ -55,7 +57,7 @@ with border edges although they do not define a closed object. If
 normal vectors are considered for the facets, normals point outwards
 (following the right-hand rule).
 
-The strict definition can be found in \cite k-ugpdd-99. One
+The strict definition can be found in \cgalCite{k-ugpdd-99}. One
 implication of this definition is that the polyhedral surface is
 always an orientable and oriented 2-manifold with border edges, i.e.,
 the neighborhood of each point on the polyhedral surface is either
@@ -226,7 +228,7 @@ that only the polyhedron can guarantee.
 \subsection PolyhedronExamplewithCirculatorWritingObject Example with Circulator Writing Object File Format (OFF)
 
 We create a tetrahedron and write it to `std::cout` using the
-%Object File Format (OFF) \cite cgal:p-gmgv16-96. This example makes use
+%Object File Format (OFF) \cgalCite{cgal:p-gmgv16-96}. This example makes use
 of \stl algorithms (`std::copy`, `std::distance`), \stl `std::ostream_iterator`, and \cgal circulators. The polyhedral
 surface provides convenient circulators for the counterclockwise
 circular sequence of halfedges around a facet and the clockwise
@@ -268,7 +270,8 @@ for the different handles that occur in the program code. The following
 Figure shows six selected steps from the creation sequence. These steps 
 are also marked in the program code.
 
-\image html make_cube.gif
+\image html make_cube.png
+\image latex make_cube.png
 
 \cgalExample{Polyhedron/polyhedron_prog_cube.cpp}
 
@@ -283,7 +286,7 @@ equation or any user-added attributes, such as color.
 
 The default file format supported in \cgal for output as well as for
 input is the %Object File Format, OFF, with file extension <TT>.off</TT>,
-which is also understood by Geomview \cite cgal:p-gmgv16-96. For OFF
+which is also understood by Geomview \cgalCite{cgal:p-gmgv16-96}. For OFF
 an ASCII and a binary format exist. The format can be selected with
 the \cgal modifiers for streams, `set_ascii_mode()` and
 `set_binary_mode()` respectively. The modifier `set_pretty_mode()`
@@ -307,8 +310,8 @@ CGAL::Polyhedron_3<PolyhedronTraits_3>& P);
 \endcode
 
 Additional formats supported for writing are OpenInventor (<TT>.iv</TT>)
-\cite cgal:w-impoo-94, VRML 1.0 and 2.0 (<TT>.wrl</TT>)
-\cite cgal:bpp-vrml-95, \cite cgal:vrmls-97, \cite cgal:hw-vrml2h-96, and Wavefront Advanced
+\cgalCite{cgal:w-impoo-94}, VRML 1.0 and 2.0 (<TT>.wrl</TT>)
+\cgalCite{cgal:bpp-vrml-95}, \cgalCite{cgal:vrmls-97}, \cgalCite{cgal:hw-vrml2h-96}, and Wavefront Advanced
 Visualizer object format (<TT>.obj</TT>). Another convenient output
 function writes a polyhedral surface to a Geomview process spawned
 from the \cgal program. These output functions are provided as
@@ -498,10 +501,10 @@ This program reads a polyhedral surface from the standard input and
 writes a refined polyhedral surface to the standard output. Input and
 output are in the %Object File Format, OFF, with the common file
 extension <TT>.off</TT>, which is also understood by
-Geomview \cite cgal:p-gmgv16-96.
+Geomview \cgalCite{cgal:p-gmgv16-96}.
 
 The refinement is a single step of the \f$ \sqrt{3}\f$-scheme for creating
-a subdivision surface \cite cgal:k-s-00. Each step subdivides a facet
+a subdivision surface \cgalCite{cgal:k-s-00}. Each step subdivides a facet
 into triangles around a new center vertex, smoothes the position of the
 old vertices, and flips the old edges. The program is organized along
 this outline. In each of these parts, the program efficiently uses the
@@ -509,7 +512,8 @@ knowledge that the newly created vertices, edges, and facets have been
 added to the end of the sequences. The program needs additional
 processing memory only for the smoothing step of the old vertices.
 
-\image html subdiv_small.gif
+\image html subdiv_small.png
+\image latex subdiv_small.png
 
 The above figure shows three example objects, each 
 subdivided four times. The initial object for the left sequence is

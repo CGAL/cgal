@@ -27,7 +27,9 @@
 #ifndef CGAL_UTILITY_H
 #define CGAL_UTILITY_H 1
 
-#include <CGAL/basic.h>
+#include <CGAL/config.h>
+#include <utility>
+#include <functional>
 
 // The Triple and Quadruple classes are NOT RECOMMENDED anymore.
 // We recommend that you use cpp11::tuple or cpp11::array instead
@@ -275,6 +277,74 @@ operator<(const Quadruple<T1, T2, T3, T4>& x,
                    (!(y.third < x.third) && x.fourth < y.fourth)) ) ) ) );
 }
 
+#if defined(CGAL_CFG_NO_CPP0X_RVALUE_REFERENCE) || \
+    defined(CGAL_CFG_NO_CPP0X_DEFAULT_TEMPLATE_ARGUMENTS_FOR_FUNCTION_TEMPLATES) || \
+    BOOST_VERSION < 105000 || \
+    defined(BOOST_NO_CXX11_HDR_TYPE_TRAITS)
+template <class T, class Compare>
+inline
+std::pair<  T, T >
+make_sorted_pair(const T& t1, const T& t2, Compare comp)
+{
+  return comp(t1, t2) ? std::make_pair(t1,t2) : std::make_pair(t2,t1);
+}
+
+template <class T>
+inline
+std::pair<T,T>
+make_sorted_pair(const T& t1, const T& t2)
+{
+  return make_sorted_pair(t1,t2, std::less<T>());
+}
+#else
+
+} //end of namespace CGAL
+
+#include <type_traits>
+
+namespace CGAL {
+
+struct Default_using_type
+{
+  template <typename Argument, typename Value>
+  struct Get {
+      typedef Argument type;
+  };
+
+  template <typename Value>
+  struct Get<Default_using_type, Value> {
+      typedef typename Value::type type;
+  };
+};
+
+template <class T_ = Default_using_type>
+struct less_cpp14
+{
+  template <class T1, class T2>
+  bool operator() (T1&& t1, T2&& t2) const
+  {
+    typedef typename Default_using_type::Get<
+      T_,
+      typename std::common_type<typename std::decay<T1>::type,
+                                typename std::decay<T2>::type> >::type T;
+    return std::less<T>()(t1,t2);
+  }
+};
+
+template <class T = Default_using_type,
+          class Compare = less_cpp14<T>,
+          class T1, class T2,
+          class A = typename Default_using_type::Get<T,
+            typename std::common_type<
+              typename std::decay<T1>::type,
+              typename std::decay<T2>::type > >::type,
+          class P = std::pair<A, A> >
+inline P make_sorted_pair(T1&& t1, T2&& t2, Compare comp = Compare())
+{
+  return comp(t1, t2) ? P(std::forward<T1>(t1), std::forward<T2>(t2))
+                      : P(std::forward<T2>(t2), std::forward<T1>(t1));
+}
+#endif
 
 } //namespace CGAL
 

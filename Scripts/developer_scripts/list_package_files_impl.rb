@@ -20,8 +20,6 @@ def get_internal_package_files_list(package_dir)
          'dont_submit',
          'maintainer',
          'description.txt',
-         'doc_tex',
-         '.svn'
         ]
                         
   dont_submit_file = package_dir + '/dont_submit' 

@@ -53,6 +53,7 @@ if ( CGAL_FOUND )
   create_single_source_cgal_program( "read_test_with_different_pmaps.cpp" )
   create_single_source_cgal_program( "analysis_test.cpp" )
   create_single_source_cgal_program( "remove_outliers_test.cpp" )
+  create_single_source_cgal_program( "psp_jet_includes.cpp" )
 
   # Use Eigen or BLAS and LAPACK (optional)
   find_package(Eigen3 3.1.0) #(requires 3.1.0 or greater)

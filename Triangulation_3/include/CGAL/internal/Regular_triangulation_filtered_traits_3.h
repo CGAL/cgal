@@ -46,7 +46,22 @@ struct Weighted_converter_3
   typedef typename Source_kernel::Point_3  Source_p;
   typedef typename Target_kernel::Point_3  Target_p;
 
+#ifdef CGAL_CFG_MATCHING_BUG_7
+
+  typedef typename Source_kernel::FT  Source_FT;
+  typedef typename Target_kernel::FT  Target_FT;
+
+  
+  // needed for weighted Alpha shapes
+ Target_FT
+  operator()(const Source_FT &p) const
+  {
+    return Converter::operator()(p);
+  }
+  
+#else 
   using Converter::operator();
+#endif 
 
   // Needed for MSVC 2005/2008 to avoid a matching ambiguity  
   Target_p
@@ -61,6 +76,7 @@ struct Weighted_converter_3
     return Target_wp(Converter::operator()(wp.point()),
                      Converter::operator()(wp.weight()));
   }
+
 };
 
 

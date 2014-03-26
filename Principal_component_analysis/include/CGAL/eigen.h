@@ -22,6 +22,7 @@
 #define CGAL_EIGEN_H
 
 #include <cmath>
+#include <CGAL/number_utils.h>
 
 namespace CGAL {
 

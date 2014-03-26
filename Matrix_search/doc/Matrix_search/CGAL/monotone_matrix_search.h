@@ -52,7 +52,7 @@ binary function: `Matrix::Value` \f$ \times\f$
 \cgalHeading{Implementation}
 
 The implementation uses an algorithm by Aggarwal 
-et al.\cite akmsw-gamsa-87. The runtime is linear in the number 
+et al.\cgalCite{akmsw-gamsa-87}. The runtime is linear in the number 
 of rows and columns of the matrix. 
 
 */

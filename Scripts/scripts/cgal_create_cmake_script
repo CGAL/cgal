@@ -100,6 +100,7 @@ EOF
       echo "    include_directories (BEFORE \"${SOURCE_DIR}include\")"
       echo
     fi
+    echo "Adding a target ${target_name}..." >&3
     cat <<EOF
     add_executable  (${target_name} ${all})
   
@@ -153,6 +154,7 @@ EOF
       egrep '\bmain[ \t]*\(' $file >/dev/null 2>&1
       if [ $? -eq 0 ]; then
         echo "  create_single_source_cgal_program( \"$file\" )"
+        echo "Adding a target ${BASE}..." >&3
       fi
     done
     
@@ -236,5 +238,5 @@ if [ -f ${OUTPUTFILE} ] ; then
   echo "moving $OUTPUTFILE to ${OUTPUTFILE}.bak ..."
   mv -f $OUTPUTFILE ${OUTPUTFILE}.bak
 fi
-create_cmake_script > $OUTPUTFILE
+create_cmake_script 3>&1 > $OUTPUTFILE
 echo "created $OUTPUTFILE in $PWD ..."

@@ -22,9 +22,9 @@
 #ifndef CGAL_TRIANGULATION_LINE_FACE_CIRCULATOR_2_H
 #define CGAL_TRIANGULATION_LINE_FACE_CIRCULATOR_2_H
 
-// #include <CGAL/circulator.h>
-// #include <CGAL/Triangulation_utils_2.h>
-// #include <CGAL/triangulation_assertions.h>
+#include <CGAL/circulator.h>
+#include <CGAL/Triangulation_utils_2.h>
+#include <CGAL/triangulation_assertions.h>
 // #include <CGAL/Triangulation_face_2.h>
 // #include <CGAL/Triangulation_vertex_2.h>
 // #include <CGAL/Triangulation_handles_2.h>
@@ -93,7 +93,7 @@ public:
   Face*                   operator->() {return &*pos;}
   Face&                   operator*() { return *pos;}
   Face_handle             handle() {return pos;}
-  operator const Face_handle() const {return pos;}
+  operator Face_handle() const {return pos;}
   bool  operator==(const Line_face_circulator& lfc) const;
   bool  operator!=(const Line_face_circulator& lfc) const;
 

@@ -220,9 +220,10 @@ public:
     Base(numer,denom,ak_ptr) {}
 
   //used to solve VS bug...
-  Rational_function (const Self & r = get_default_instance()) :
-    Base(static_cast<const Base &> (r)) {}
-    
+  Rational_function () :
+    Base(static_cast<const Base &> (get_default_instance())) {}
+
+   
   CGAL::Sign sign_at(const Algebraic_real_1& x,
                      CGAL::Sign epsilon = CGAL::ZERO) const
   {

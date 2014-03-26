@@ -24,11 +24,11 @@ Dart_handle make_tetrahedral(CMap_4& amap)
   Dart_handle d3 = make_triangle(amap);
   Dart_handle d4 = make_triangle(amap);
   amap.link_beta<2>(d1, d2);
-  amap.link_beta<2>(d3, d2->beta(0));
-  amap.link_beta<2>(d1->beta(1), d3->beta(0));
-  amap.link_beta<2>(d4, d2->beta(1));
-  amap.link_beta<2>(d4->beta(0), d3->beta(1));
-  amap.link_beta<2>(d4->beta(1), d1->beta(0));
+  amap.link_beta<2>(d3, amap.beta(d2,0));
+  amap.link_beta<2>(amap.beta(d1,1), amap.beta(d3,0));
+  amap.link_beta<2>(d4, amap.beta(d2,1));
+  amap.link_beta<2>(amap.beta(d4,0), amap.beta(d3,1));
+  amap.link_beta<2>(amap.beta(d4,1), amap.beta(d1,0));
   return d1;
 }
 

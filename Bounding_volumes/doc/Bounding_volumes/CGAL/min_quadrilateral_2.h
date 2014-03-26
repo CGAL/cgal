@@ -46,7 +46,7 @@ type from one the \cgal kernels. In this case, a default traits class
 
 We use a rotating caliper 
 algorithm 
-\cite stvwe-mepa-95, \cite v-fmep-90 with worst case running time linear 
+\cgalCite{stvwe-mepa-95}, \cgalCite{v-fmep-90} with worst case running time linear 
 in the number of input points. 
 
 \cgalHeading{Example}
@@ -115,7 +115,7 @@ is `CGAL::Point_2<K>` for some kernel `K`.
 \cgalHeading{Implementation}
 
 We use a rotating caliper 
-algorithm \cite t-sgprc-83 
+algorithm \cgalCite{t-sgprc-83} 
 with worst case running time linear in the number of input points. 
 
 \cgalHeading{Example}
@@ -183,7 +183,7 @@ is `CGAL::Point_2<K>` for some kernel `K`.
 \cgalHeading{Implementation}
 
 We use a rotating caliper 
-algorithm \cite t-sgprc-83 
+algorithm \cgalCite{t-sgprc-83} 
 with worst case running time linear in the number of input points. 
 
 \cgalHeading{Example}

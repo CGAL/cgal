@@ -41,7 +41,7 @@ functions that return instances of these types:
 \cgalHeading{Implementation}
 
 This function uses the Jarvis march (gift-wrapping) 
-algorithm \cite j-ichfs-73. This algorithm requires \f$ O(n h)\f$ time 
+algorithm \cgalCite{j-ichfs-73}. This algorithm requires \f$ O(n h)\f$ time 
 in the worst case for \f$ n\f$ input points with \f$ h\f$ extreme points. 
 
 
@@ -60,8 +60,15 @@ namespace CGAL {
 /*!
 \ingroup PkgConvexHull2Subsequence
 
-The function `ch_jarvis_march` generates the counterclockwise sequence of extreme 
+generates the counterclockwise sequence of extreme 
 points from a given set of input points that line between two input points. 
+
+More precisely, it generates the counterclockwise subsequence of
+extreme points between `start_p` and `stop_p` of the 
+points in the range [`first`,`beyond`), starting at 
+position `result` with point `start_p`. The last point 
+generated is the point preceding `stop_p` in the 
+counterclockwise order of extreme points.
 
 The default traits class `Default_traits` is the kernel in which the 
 type `ForwardIterator::value_type` is defined. 
@@ -88,16 +95,9 @@ functions that return instances of these types:
 
 \cgalHeading{Implementation}
 
-The function uses the Jarvis march (gift-wrapping) algorithm \cite j-ichfs-73. 
+The function uses the Jarvis march (gift-wrapping) algorithm \cgalCite{j-ichfs-73}. 
 This algorithm requires \f$ O(n h)\f$ time in the worst
-case for \f$ n\f$ input points with \f$ h\f$ extreme points.
-
-generates the counterclockwise subsequence of
-extreme points between `start_p` and `stop_p` of the 
-points in the range [`first`,`beyond`), starting at 
-position `result` with point `start_p`. The last point 
-generated is the point preceding `stop_p` in the 
-counterclockwise order of extreme points.
+case for \f$ n\f$ input points with \f$ h\f$ extreme points
 
 \pre `start_p` and `stop_p` are extreme points with respect to
 the points in the range [`first`,`beyond`) and `stop_p`

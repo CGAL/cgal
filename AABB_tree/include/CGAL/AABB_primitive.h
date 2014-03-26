@@ -22,6 +22,7 @@
 #ifndef CGAL_AABB_PRIMITIVE_H
 #define CGAL_AABB_PRIMITIVE_H
 
+#include <CGAL/internal/AABB_tree/Has_nested_type_Shared_data.h>
 #include <CGAL/property_map.h>
 #include <CGAL/tags.h>
 
@@ -60,7 +61,7 @@ public:
  *    and `AABBPrimitiveWithSharedData` if `ExternalPropertyMaps` is `CGAL::Tag_true`.
  *
  *
- * \tparam ObjectPropertyMap is a model of `ReadablePropertyMap`with `Id` as
+ * \tparam ObjectPropertyMap is a model of `ReadablePropertyMap` with `Id` as
  *           `key_type`. It must be default constructible.
  * \tparam PointPropertyMap is a model of `ReadablePropertyMap` with `Id` as
  *           `key_type`. It must be default constructible.

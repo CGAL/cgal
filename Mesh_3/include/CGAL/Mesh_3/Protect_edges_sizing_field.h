@@ -30,6 +30,9 @@
 
 #include <CGAL/Delaunay_triangulation_3.h>
 #include <CGAL/Mesh_3/io_signature.h>
+#ifndef CGAL_NO_ASSERTIONS
+#  include <boost/math/special_functions/next.hpp> // for float_prior
+#endif
 
 namespace CGAL {
 namespace Mesh_3 {
@@ -981,7 +984,9 @@ insert_balls(const Vertex_handle& vp,
     pt_dist = d_signF * step_size;
     norm_step_size = step_size;
   } else {
-    CGAL_assertion(n==0 || dleft_frac >= 1);
+    CGAL_assertion_code(using boost::math::float_prior);
+    CGAL_assertion(n==0 ||
+                   dleft_frac >= float_prior(float_prior(1.)));
   }
   
   // Launch balls

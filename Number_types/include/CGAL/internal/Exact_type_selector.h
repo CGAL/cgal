@@ -36,6 +36,7 @@
 #  include <CGAL/Gmpz.h>
 #  include <CGAL/Gmpq.h>
 #  include <CGAL/Gmpzf.h>
+#  include <CGAL/Mpzf.h>
 #endif
 #ifdef CGAL_USE_GMPXX
 #  include <CGAL/gmpxx.h>
@@ -72,7 +73,9 @@ struct Exact_ring_selector : Exact_field_selector < T > { };
 
 template <>
 struct Exact_ring_selector<double>
-#if defined(CGAL_HAS_THREADS) || !defined(CGAL_USE_GMP)
+#ifdef CGAL_HAS_MPZF
+{ typedef Mpzf Type; };
+#elif defined(CGAL_HAS_THREADS) || !defined(CGAL_USE_GMP)
 { typedef MP_Float Type; };
 #else
 { typedef Gmpzf Type; };
@@ -164,6 +167,12 @@ template < typename ET >
 struct Exact_ring_selector<Lazy_exact_nt<ET> >
 : Exact_ring_selector<ET>
 {};
+
+#ifndef CGAL_NO_DEPRECATED_CODE
+// Added for backward compatibility
+template < typename ET >
+struct Exact_type_selector : Exact_field_selector< ET > {};
+#endif
 
 } } // namespace CGAL::internal
 

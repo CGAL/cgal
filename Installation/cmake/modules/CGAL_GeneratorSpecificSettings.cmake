@@ -1,23 +1,29 @@
 if ( NOT CGAL_GENERATOR_SPECIFIC_SETTINGS_FILE_INCLUDED )
   set( CGAL_GENERATOR_SPECIFIC_SETTINGS_FILE_INCLUDED 1 )
- 
+
   message( STATUS "Targetting ${CMAKE_GENERATOR}")
-  
+
   if ( MSVC )
     message( STATUS "Target build enviroment supports auto-linking" )
     set(CGAL_AUTO_LINK_ENABLED TRUE)
   endif()
 
-  if ( MSVC11 )  
+  if ( MSVC13 )
+    set(CGAL_TOOLSET "vc130")
+    message( STATUS "Using VC13 compiler." )
+  elseif ( MSVC12 )
+    set(CGAL_TOOLSET "vc120")
+    message( STATUS "Using VC12 compiler." )
+  elseif ( MSVC11 )
     set(CGAL_TOOLSET "vc110")
     message( STATUS "Using VC11 compiler." )
-  elseif ( MSVC10 )  
+  elseif ( MSVC10 )
     set(CGAL_TOOLSET "vc100")
     message( STATUS "Using VC10 compiler." )
-  elseif ( MSVC90 )  
+  elseif ( MSVC90 )
     set(CGAL_TOOLSET "vc90")
     message( STATUS "Using VC90 compiler." )
-  elseif ( MSVC80 )  
+  elseif ( MSVC80 )
     set(CGAL_TOOLSET "vc80")
     message( STATUS "Using VC80 compiler." )
   elseif ( MSVC71 )
@@ -27,7 +33,7 @@ if ( NOT CGAL_GENERATOR_SPECIFIC_SETTINGS_FILE_INCLUDED )
     message( STATUS "Using ${CMAKE_CXX_COMPILER} compiler." )
   endif()
 
-  
+
   # From james Bigler, in the cmake users list.
   IF (APPLE)
     exec_program(uname ARGS -v  OUTPUT_VARIABLE DARWIN_VERSION)
@@ -38,7 +44,7 @@ if ( NOT CGAL_GENERATOR_SPECIFIC_SETTINGS_FILE_INCLUDED )
       set(CGAL_APPLE_LEOPARD 1)
     endif()
   endif()
-  
+
   if ( NOT "${CMAKE_CFG_INTDIR}" STREQUAL "." )
     set(HAS_CFG_INTDIR TRUE CACHE INTERNAL "Generator uses intermediate configuration directory" )
     message( STATUS "Generator uses intermediate configuration directory: ${CMAKE_CFG_INTDIR}" )

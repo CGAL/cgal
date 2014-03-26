@@ -7,7 +7,7 @@ namespace CGAL {
 The class `Apollonius_graph_filtered_traits_2` provides a model for the 
 `ApolloniusGraphTraits_2` concept. 
 
-The class `Apollonius_graph_filtered_traits_2` uses the filtering technique \cite cgal:bbp-iayed-01 
+The class `Apollonius_graph_filtered_traits_2` uses the filtering technique \cgalCite{cgal:bbp-iayed-01} 
 to achieve traits for the `Apollonius_graph_2<Gt,Agds>` class 
 with efficient and exact predicates given an exact 
 kernel `EK` and a filtering kernel `FK`. The geometric 
@@ -28,7 +28,7 @@ whereas the second one requires the exact evaluation of signs of
 ring-type expressions, i.e., expressions involving only additions, 
 subtractions and multiplications. 
 The way the predicates are evaluated is discussed in 
-\cite cgal:ke-ppawv-02, \cite cgal:ke-rctac-03. 
+\cgalCite{cgal:ke-ppawv-02}, \cgalCite{cgal:ke-rctac-03}. 
 
 The default values for the template parameters are as follows: 
 `CM = CGAL::Ring_tag`, 

@@ -23,6 +23,8 @@
 
 #include <list>
 #include <vector>
+#include <cmath>
+#include <CGAL/circulator.h>
 
 /// \file Parameterization_mesh_feature_extractor.h
 

@@ -66,12 +66,22 @@ The number of available Boolean marks of the combinatorial map.
 */
 static size_type NB_MARKS;
 
+/*
+\deprecated null dart handle is no longer static since \cgal 4.4.
+The null dart handle constant.
+A dart `d` is <I>i</I>-free if `beta(d, i)==null_dart_handle`.
+Note that `*null_dart_handle`\f$ \notin\f$`darts()`.
+
+static Dart_handle null_dart_handle;
+*/
+
 /*!
 The null dart handle constant.
 A dart `d` is <I>i</I>-free if `beta(d, i)==null_dart_handle`.
 Note that `*null_dart_handle`\f$ \notin\f$`darts()`.
+\deprecated null dart handle is no longer static since \cgal 4.4. You can define the `CGAL_CMAP_DEPRECATED` macro to keep the old behavior.
 */
-static Dart_handle null_dart_handle;
+Dart_handle null_dart_handle;
 
 /// @}
 
@@ -314,18 +324,6 @@ template <unsigned int i>
 size_type number_of_attributes() const;
 
 /*!
-Returns the dart handle of `d`.
-\pre `d`\f$ \in\f$`darts()`.
-*/
-Dart_handle dart_handle(Dart& d);
-
-/*!
-Returns the dart const handle of `d`.
-\pre `d`\f$ \in\f$`darts()`.
-*/
-Dart_const_handle dart_handle(const Dart& d) const;
-
-/*!
 Returns \f$ \beta_j\f$(\f$ \beta_i\f$(`*dh`)).
 Overloads of this member function are defined that take from one to nine integer as arguments.
 For each function, betas are applied in the same order as their indices are given as parameters.
@@ -336,7 +334,7 @@ and `beta(dh,1,2,3,0)`=\f$ \beta_0\f$(\f$ \beta_3\f$(\f$ \beta_2\f$(\f$ \beta_1\
   0\f$ \leq\f$<I>j</I>\f$ \leq\f$\ref CombinatorialMap::dimension "dimension"
   and `*dh`\f$ \in\f$`darts()`.
 */
-Dart_handle beta(Dart_handle dh, int i, int j) const;
+Dart_handle beta(Dart_handle dh, int i, int j);
 
 /*!
 Returns \f$ \beta_j\f$(\f$ \beta_i\f$(`*dh`)).
@@ -349,18 +347,67 @@ Overloads of this member function are defined that take from one to nine integer
 Dart_const_handle beta(Dart_const_handle dh, int i, int j) const;
 
 /*!
-Returns true iff `*dh1` can be <I>i</I>-sewn with `*dh2` by keeping the combinatorial map valid.
+Returns \f$ \beta_j\f$(\f$ \beta_i\f$(`*dh`)).
+Overloads of this member function are defined that take from one to nine integer as template arguments.
+For each function, betas are applied in the same order as their indices are given as template arguments.
 
-This is true if there is
-a bijection <I>f</I> between all the darts of the orbit
-<I>D1</I>=\f$ \langle{}\f$\f$ \beta_1\f$,\f$ \ldots\f$,\f$ \beta_{i-2}\f$,\f$ \beta_{i+2}\f$,\f$ \ldots\f$,\f$ \beta_d\f$\f$ \rangle{}\f$(<I>*dh1</I>) and
-<I>D2</I>=\f$ \langle{}\f$\f$ \beta_1\f$,\f$ \ldots\f$,\f$ \beta_{i-2}\f$,\f$ \beta_{i+2}\f$,\f$ \ldots\f$,\f$ \beta_d\f$\f$ \rangle{}\f$(<I>*dh2</I>)
-satisfying: <I>f</I>(<I>*dh1</I>)=<I>*dh2</I>, and for all <I>e</I>\f$ \in\f$<I>D1</I>, for all <I>j</I>\f$ \in\f${1,\f$ \ldots\f$,<I>i</I>-2,<I>i</I>+2,\f$ \ldots\f$,<I>d</I>},
-<I>f</I>(\f$ \beta_j\f$(<I>e</I>))=\f$ \beta_j^{-1}\f$(<I>f</I>(<I>e</I>)).
+For example `beta<1>(dh)`=\f$ \beta_1\f$(`*dh`),
+and `beta<1,2,3,0>(dh)`=\f$ \beta_0\f$(\f$ \beta_3\f$(\f$ \beta_2\f$(\f$ \beta_1\f$(`*dh`)))).
 \pre 0\f$ \leq\f$<I>i</I>\f$ \leq\f$\ref CombinatorialMap::dimension "dimension",
-  `*dh1`\f$ \in\f$`darts()`, and `*dh2`\f$ \in\f$`darts()`.
+  0\f$ \leq\f$<I>j</I>\f$ \leq\f$\ref CombinatorialMap::dimension "dimension"
+  and `*dh`\f$ \in\f$`darts()`.
 */
-template <unsigned int i> bool is_sewable(Dart_const_handle dh1, Dart_const_handle dh2) const;
+template<int i, int j>
+Dart_handle beta(Dart_handle dh);
+
+/*!
+Returns \f$ \beta_j\f$(\f$ \beta_i\f$(`*dh`)).
+Overloads of this member function are defined that take from one to nine integer as template arguments.
+\pre 0\f$ \leq\f$<I>i</I>\f$ \leq\f$\ref CombinatorialMap::dimension "dimension",
+     0\f$ \leq\f$<I>j</I>\f$ \leq\f$\ref CombinatorialMap::dimension "dimension"
+     and `*dh`\f$ \in\f$`darts()`.
+
+*/
+template<int i, int j>
+Dart_const_handle beta(Dart_const_handle dh) const;
+
+/*!
+Returns true iff dart `*dh` is <I>i</I>-free.
+\pre 0\f$ \leq\f$<I>i</I>\f$ \leq\f$\ref CombinatorialMap::dimension "dimension".
+*/
+bool is_free(Dart_const_handle dh, unsigned int i) const;
+
+/*!
+Returns true iff dart `*dh` is <I>i</I>-free.
+\pre 0\f$ \leq\f$<I>i</I>\f$ \leq\f$\ref CombinatorialMap::dimension "dimension".
+*/
+template<unsigned int i>
+bool is_free(Dart_const_handle dh) const;
+
+/*!
+Returns the highest dimension <I>i</I> such that dart `*dh` is not <I>i</I>-free. -1 if `dh` is free for any dimension.
+*/
+int highest_nonfree_dimension(Dart_const_handle dh) const;
+
+/*!
+Returns a handle to a dart belonging to the same edge than dart `*dh`, and not to the same vertex. `NULL` if such a dart does not exist.
+*/
+Dart_handle opposite(Dart_handle dh);
+
+/*!
+Returns a const handle to a dart belonging to the same edge than dart `*dh`, and not to the same vertex, when the dart is const. `NULL` if such a dart does not exist.
+*/
+Dart_const_handle opposite(Dart_const_handle dh) const;
+
+/*!
+Returns a handle to a dart belonging to the other vertex of the edge containing dart `*dh` (but contrary to `opposite()` not necessarily to the same edge). `NULL` if such a dart does not exist.
+*/
+Dart_handle other_extremity(Dart_handle dh);
+
+/*!
+Returns a const handle to a dart belonging to the other vertex of the edge containing dart `*dh`, when the dart is const (but contrary to `opposite()` not necessarily to the same edge). `NULL` if such a dart does not exist.
+*/
+Dart_const_handle other_extremity(Dart_const_handle dh) const;
 
 /*!
 Displays on `os` the number of elements of the combinatorial map.
@@ -375,6 +422,101 @@ combinatorial tetrahedra:
 <TT>\#Darts=24, \#0-cells=8, \#1-cells=12, \#2-cells=8, \#3-cells=2, \#ccs=2</TT>
 */
 std::ostream& display_characteristics(std::ostream & os) const;
+
+/// @}
+
+/// \name Attributes Access Member Functions
+/// @{
+///
+/*!
+Returns a handle to the <I>i</I>-attribute associated to dart `*dh`.
+\pre 0\f$ \leq\f$<I>i</I>\f$ \leq\f$\ref CombinatorialMap::dimension "dimension", and <I>i</I>-attributes are non `void`.
+*/
+template <unsigned int i> Attribute_handle<i>::type attribute(Dart_handle dh);
+
+/*!
+Returns a const handle to the <I>i</I>-attribute associated to dart `*dh`, when the dart is const.
+\pre 0\f$ \leq\f$<I>i</I>\f$ \leq\f$\ref CombinatorialMap::dimension "dimension", and <I>i</I>-attributes are non `void`.
+*/
+template <unsigned int i>
+Attribute_const_handle<i>::type attribute(Dart_const_handle dh) const;
+
+/*!
+Returns one dart of the cell associated to the <I>i</I>-attribute `*ah`.
+`NULL` if \ref CellAttribute::Supports_cell_dart "Supports_cell_dart" of <I>i</I>-attributes  is equal to \ref CGAL::Tag_false "Tag_false".
+\pre 0\f$ \leq\f$<I>i</I>\f$ \leq\f$\ref CombinatorialMap::dimension "dimension", <I>i</I>-attributes are non `void` and `ah`!=NULL.
+*/
+template<unsigned int i>
+Dart_handle dart_of_attribute(typename Attribute_handle<i>::type ah);
+
+/*!
+Returns one dart of the cell associated to the const <I>i</I>-attribute `*ah`.
+`NULL` if \ref CellAttribute::Supports_cell_dart "Supports_cell_dart" of <I>i</I>-attributes is equal to \ref CGAL::Tag_false "Tag_false".
+\pre 0\f$ \leq\f$<I>i</I>\f$ \leq\f$\ref CombinatorialMap::dimension "dimension", <I>i</I>-attributes are non `void` and `ah`!=NULL.
+*/
+template<unsigned int i>
+Dart_const_handle dart_of_attribute(typename Attribute_const_handle<i>::type ah) const;
+
+/*!
+Returns the information of the <I>i</I>-attribute `*ah`.
+Defined only if \ref CellAttribute::Info "Info" of <I>i</I>-attributes is not `void`.
+\pre 0\f$ \leq\f$<I>i</I>\f$ \leq\f$\ref CombinatorialMap::dimension "dimension", <I>i</I>-attributes are non `void` and `ah`!=NULL.
+*/
+template <unsigned int i>
+Attribute_type<i>::type::Info& info_of_attribute(typename Attribute_handle<i>::type ah);
+
+/*!
+Returns the information of the const <I>i</I>-attribute `*ah`.
+Defined only if \ref CellAttribute::Info "Info" of <I>i</I>-attributes is not `void`.
+\pre 0\f$ \leq\f$<I>i</I>\f$ \leq\f$\ref CombinatorialMap::dimension "dimension", <I>i</I>-attributes are non `void` and `ah`!=NULL.
+*/
+template <unsigned int i>
+const Attribute_type<i>::type::Info& info_of_attribute(typename Attribute_const_handle<i>::type ah) const;
+
+/*!
+A shorcut for \link CombinatorialMap::info_of_attribute `info_of_attribute<i>`\endlink`(`\link CombinatorialMap::attribute `attribute<i>`\endlink`(adart))`.
+\pre \ref CombinatorialMap::attribute "attribute<i>"`(adart)!=NULL`.
+*/
+template<unsigned int i>
+typename Attribute_type<i>::type::Info & info(Dart_handle adart);
+
+/*!
+A shorcut for \link CombinatorialMap::info_of_attribute(typename Attribute_const_handle<i>::type)const `info_of_attribute<i>`\endlink`(`\link CombinatorialMap::attribute(Dart_const_handle)const `attribute<i>`\endlink`(adart))` for const handle.
+\pre \link CombinatorialMap::attribute(Dart_const_handle)const `attribute<i>`\endlink`(adart)!=NULL`.
+*/
+template<unsigned int i>
+const typename Attribute_type<i>::type::Info & info(Dart_const_handle adart) const;
+
+/*!
+A shorcut for \link CombinatorialMap::dart_of_attribute `dart_of_attribute<i>`\endlink`(`\link CombinatorialMap::attribute `attribute<i>`\endlink`(adart))`.
+\pre `attribute<i>(adart)!=NULL`.
+*/
+template<unsigned int i>
+Dart_handle & dart(Dart_handle adart);
+
+/*!
+A shorcut for \link CombinatorialMap::dart_of_attribute(typename Attribute_const_handle<i>::type)const `dart_of_attribute<i>`\endlink`(`\link CombinatorialMap::attribute(Dart_const_handle)const `attribute<i>`\endlink`(adart))` for const handle.
+\pre `attribute<i>(adart)!=NULL`.
+*/
+template<unsigned int i>
+Dart_const_handle dart(Dart_const_handle adart) const;
+
+/// @}
+
+/// \name Transformations Between Handles and Instances
+/// @{
+
+/*!
+Returns the dart handle of `d`.
+\pre `d`\f$ \in\f$`darts()`.
+*/
+Dart_handle dart_handle(Dart& d);
+
+/*!
+Returns the dart const handle of `d`.
+\pre `d`\f$ \in\f$`darts()`.
+*/
+Dart_const_handle dart_handle(const Dart& d) const;
 
 /// @}
 
@@ -407,6 +549,7 @@ template<unsigned int i> Attribute_const_range<i>::type & attributes() const;
 
 /*!
 Returns a range of all the darts of the orbit `<Beta...>(*dh)`.
+The first element in the range points onto `*dh`.
 \pre `*dh`\f$ \in\f$`darts()` and `Beta...` is a sequence of integers \f$ i_1\f$,\f$ \ldots\f$,\f$ i_k\f$,
     such that 0\f$ \leq\f$\f$ i_1\f$\f$ <\f$\f$ i_2\f$\f$ <\f$\f$ \ldots\f$\f$ <\f$\f$ i_k\f$\f$ \leq\f$\ref CombinatorialMap::dimension "dimension",
      and (\f$ i_1\f$\f$ \neq\f$ 0 or \f$ i_2\f$\f$ \neq\f$ 1).
@@ -415,12 +558,14 @@ template<unsigned int ... Beta> Dart_of_orbit_range darts_of_orbit(Dart_handle d
 
 /*!
 Returns a const range of all the darts of the orbit `<Beta...>(*dh)`.
+The first element in the range points onto `*dh`.
 \pre Same as for the non const version.
 */
 template<unsigned int ... Beta> Dart_of_orbit_const_range darts_of_orbit(Dart_const_handle dh) const;
 
 /*!
 Returns a range of all the darts of the <I>i</I>-cell containing `*dh`.
+The first element in the range points onto `*dh`.
 <I>i</I>-cells are considered in <I>dim</I> dimension. If <I>i==dim+1</I>,
 range of all the darts of the connected component containing `dh`.
 \pre `*dh`\f$ \in\f$`darts()`, 0\f$ \leq\f$<I>i</I>\f$ \leq\f$<I>dim+1</I> and
@@ -430,6 +575,7 @@ template<unsigned int i,unsigned int dim=dimension> Dart_of_cell_range darts_of_
 
 /*!
 Returns a const range of all the darts of the <I>i</I>-cell containing `*dh`.
+The first element in the range points onto `*dh`.
 <I>i</I>-cells are considered in <I>dim</I> dimension. If <I>i==dim+1</I>,
 const range of all the darts of the connected component containing `*dh`.
 \pre Same as for the non const version.
@@ -438,6 +584,7 @@ template<unsigned int i,unsigned int dim=dimension> Dart_of_cell_const_range dar
 
 /*!
 Returns a range of one dart of each <I>i</I>-cell incident to the <I>j</I>-cell containing `*dh`.
+The first element in the range points onto `*dh`.
 Cells are considered in <I>dim</I> dimension. If <I>i==dim+1</I>,
 consider each connected component instead of each <I>i</I>-cell. If <I>j==dim+1</I>,
 consider the connected component containing `*dh` instead of the <I>j</I>-cell.
@@ -449,6 +596,7 @@ template<unsigned int i,unsigned int j,unsigned int dim=dimension> One_dart_per_
 
 /*!
 Returns a const range of one dart of each <I>i</I>-cell incident to the <I>j</I>-cell containing `*dh`.
+The first element in the range points onto `*dh`.
 Cells are considered in <I>dim</I> dimension. If <I>i==dim+1</I>,
 consider each connected component instead of each <I>i</I>-cell. If <I>j==dim+1</I>,
 consider the connected component containing `*dh` instead of the <I>j</I>-cell.
@@ -544,6 +692,19 @@ void swap(CombinatorialMap& cmap);
 
 /// \name Operations
 /// @{
+
+/*!
+Returns true iff `*dh1` can be <I>i</I>-sewn with `*dh2` by keeping the combinatorial map valid.
+This is true if there is
+a bijection <I>f</I> between all the darts of the orbit
+<I>D1</I>=\f$ \langle{}\f$\f$ \beta_1\f$,\f$ \ldots\f$,\f$ \beta_{i-2}\f$,\f$ \beta_{i+2}\f$,\f$ \ldots\f$,\f$ \beta_d\f$\f$ \rangle{}\f$(<I>*dh1</I>) and
+<I>D2</I>=\f$ \langle{}\f$\f$ \beta_1\f$,\f$ \ldots\f$,\f$ \beta_{i-2}\f$,\f$ \beta_{i+2}\f$,\f$ \ldots\f$,\f$ \beta_d\f$\f$ \rangle{}\f$(<I>*dh2</I>)
+satisfying: <I>f</I>(<I>*dh1</I>)=<I>*dh2</I>, and for all <I>e</I>\f$ \in\f$<I>D1</I>, for all <I>j</I>\f$ \in\f${1,\f$ \ldots\f$,<I>i</I>-2,<I>i</I>+2,\f$ \ldots\f$,<I>d</I>},
+<I>f</I>(\f$ \beta_j\f$(<I>e</I>))=\f$ \beta_j^{-1}\f$(<I>f</I>(<I>e</I>)).
+\pre 0\f$ \leq\f$<I>i</I>\f$ \leq\f$\ref CombinatorialMap::dimension "dimension",
+  `*dh1`\f$ \in\f$`darts()`, and `*dh2`\f$ \in\f$`darts()`.
+*/
+template <unsigned int i> bool is_sewable(Dart_const_handle dh1, Dart_const_handle dh2) const;
 
 /*!
   <I>i</I>-sew darts `*dh1` and `*dh2`, by keeping the combinatorial map valid.

@@ -27,7 +27,6 @@ More information can be found in Section \ref TDS3secdesign.
 \cgalHasModel CGAL::Triangulation_ds_vertex_base_3 
 \cgalHasModel CGAL::Triangulation_vertex_base_3 
 \cgalHasModel CGAL::Triangulation_vertex_base_with_info_3 
-\cgalHasModel CGAL::Triangulation_hierarchy_vertex_base_3 
 
 \sa `TriangulationVertexBase_3` 
 \sa `TriangulationHierarchyVertexBase_3` 
@@ -119,10 +118,12 @@ bool is_valid(bool verbose=false, int level=0) const;
 /// @} 
 
 /// \name Members for Compact_container
+/// \cgalAdvancedBegin
 /// These member functions are required by
-/// `Triangulation_data_structure_3` because it uses
-/// `Compact_container` to store its cells. See the documentation of
-/// `Compact_container` for the exact requirements.
+/// `CGAL::Triangulation_data_structure_3` because it uses
+/// `CGAL::Compact_container` to store its cells. See the documentation of
+/// `CGAL::Compact_container` for the exact requirements.
+/// \cgalAdvancedEnd
 /// @{
 
 /*!

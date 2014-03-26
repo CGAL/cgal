@@ -273,6 +273,12 @@ void test_non_coplanar_triangles()
   assert(obj.empty());
   obj=CGAL::intersection(t2,t1);
   assert(obj.empty());  
+  t1=Triangle( Point( 0, 0, 0 ), Point( 0, 1, 1 ), Point( 0, 1, 0 ) );
+  t2=Triangle( Point( -1, -1, 0 ),Point( 0, -1, 0 ),Point( -1, 0, 0 ) );
+  obj=CGAL::intersection(t1,t2);
+  assert(obj.empty());
+  obj=CGAL::intersection(t2,t1);
+  assert(obj.empty());
 }
 
 int main()

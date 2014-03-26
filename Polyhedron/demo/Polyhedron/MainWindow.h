@@ -55,6 +55,9 @@ public slots:
   void updateViewerBBox();
   void open(QString);
 
+  /// given a file extension file, returns true if `filename` matches the filter
+  bool file_matches_filter(const QString& filters, const QString& filename);
+
   /// Open a file with a given loader, and return true iff it was successful.
   ///
   /// This slot is for use by scripts.

@@ -35,6 +35,7 @@
  * diagram traits.
  */
 
+#include <list>
 #include <CGAL/basic.h>
 #include <CGAL/tags.h>
 #include <CGAL/representation_tags.h>

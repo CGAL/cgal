@@ -9,6 +9,7 @@ namespace CGAL {
 \author Le-Jeng Andy Shiue
 
 \image html subdivision-teaser.jpg
+\image latex subdivision-teaser.jpg
 
 \section sectionSubIntro Introduction 
 
@@ -34,7 +35,7 @@ host.
 
 In this chapter, we explain some fundamentals of 
 subdivision methods. We focus only on the topics that help you 
-to understand the design of the package. \cite cgal:ww-smgd-02 
+to understand the design of the package. \cgalCite{cgal:ww-smgd-02} 
 has details on subdivision methods.
 Some terminology introduced in this section will be used again
 in later sections. If you are only interested in using a 
@@ -56,7 +57,7 @@ to approximate a smooth surface.
 Many refinement patterns are used in practice. 
 `Subdivision_method_3` supports the four most popular 
 patterns, and each of them is used by 
-Catmull-Clark\cite cgal:cc-rgbss-78, Loop, Doo-Sabin 
+Catmull-Clark\cgalCite{cgal:cc-rgbss-78}, Loop, Doo-Sabin 
 and \f$ \sqrt{3}\f$ subdivision (left to right in the 
 figure). We name these patterns by their topological
 characteristics instead of the associated subdivision methods. 
@@ -66,7 +67,8 @@ DQQ indicates the <I>D</I>ual <I>Q</I>uadtrateral <I>Q</I>uadrisection.
 \f$ \sqrt{3}\f$ indicates the converging speed of the triangulation toward
 the subdivision surface.
 
-\image html RefSchemes.gif
+\image html RefSchemes.png
+\image latex RefSchemes.png
 
 The figure demonstrates these four refinement patterns on 
 the 1-disk of a valence-5 vertex/facet.
@@ -85,7 +87,8 @@ shown in the following figure. The blue neighborhoods in the
 top row indicate the corresponding stencils of the refined nodes 
 in red.
 
-\image html PQQStencil.gif
+\image html PQQStencil.png
+\image latex PQQStencil.png
 
 Stencils with weights are called <I>geometry masks</I>.
 A subdivision method defines a geometry mask for each stencil, and 
@@ -95,7 +98,8 @@ certain surface smoothness and shape quality.
 The geometry masks of Catmull-Clark subdivision are shown
 below.
 
-\image html cc_mask.gif
+\image html cc_mask.png
+\image latex cc_mask.png
 
 The weights shown here are unnormalized, and \f$ n\f$ is the valence 
 of the vertex. The generated point, in red, is computed by a summation
@@ -107,7 +111,7 @@ a facet-node of PQQ refinement may be computed by
 the summation of \f$ 1/5\f$ of each stencil node instead of \f$ 1/4\f$.
 Although it is legal in `Subdivision_method_3` to have 
 any kind of geometry mask, the result surfaces may be odd, 
-not smooth, or not even exist. \cite cgal:ww-smgd-02 explains the 
+not smooth, or not even exist. \cgalCite{cgal:ww-smgd-02} explains the 
 details on designing masks for a quality subdivision surface.
 
 \section secFirstSub A Quick Example: Catmull-Clark Subdivision 
@@ -318,7 +322,8 @@ quadrisection (DQQ) and \f$ \sqrt{3}\f$ triangulation.
 Respectively, they are used by Catmull-Clark, Loop, Doo-Sabin 
 and \f$ \sqrt{3}\f$ subdivision.
 
-\image html RefSchemes.gif
+\image html RefSchemes.png
+\image latex RefSchemes.png
 
 \code{.cpp}
 
@@ -380,7 +385,7 @@ polyhedron is undefined. `Subdivision_method_3` does not verify
 the precondition of the mesh characteristics before the refinement.
 
 For details of the refinement implementation, 
-interested users should refer to \cite cgal:sp-mrbee-05.
+interested users should refer to \cgalCite{cgal:sp-mrbee-05}.
 
 \section Subdivision_method_3Geometry Geometry Policy
 
@@ -395,7 +400,8 @@ The function collects the vertex neighbors of the primitive handle
 (i.e.\ nodes on the stencil), and computes the new point 
 based on the neighbors and the mask (i.e.\ the stencil weights).
 
-\image html cc_mask.gif
+\image html cc_mask.png
+\image latex cc_mask.png
 
 This figure shows the geometry masks of
 Catmull-Clark subdivision. The weights shown here are unnormalized, 

@@ -1,5 +1,4 @@
-// Copyright (c) 1997-2000 INRIA Sophia-Antipolis (France).
-// Copyright (c) 2013 Nico Kruithof (The Netherlands)
+// Copyright (c) 1997-2013 INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -20,6 +19,8 @@
 
 #ifndef CGAL_PERIODIC_2_TRIANGULATION_DUMMY_12_H
 #define CGAL_PERIODIC_2_TRIANGULATION_DUMMY_12_H
+
+#include <vector>
 
 template < class GT, class Tds >
 inline std::vector<typename Periodic_2_triangulation_2<GT, Tds>::Vertex_handle >

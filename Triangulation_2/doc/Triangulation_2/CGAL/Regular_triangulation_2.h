@@ -75,7 +75,7 @@ the power circle of
 is given by the following 
 determinant 
 \f[ 
-[\left| \begin{array}{cccc} 
+\left| \begin{array}{cccc}
 1 & x_i & y_i & x_i ^2 + y_i ^2 - w_i \\ 
 1 & x_j & y_j & x_j ^2 + y_j ^2 - w_j \\ 
 1 & x_k & y_k & x_k ^2 + y_k ^2 - w_k \\ 
@@ -217,7 +217,8 @@ Regular_triangulation_2(const Regular_triangulation_2 &rt);
 Equivalent to constructing an empty triangulation with the optional traits class argument and calling insert(first,last).
 */
 template < class InputIterator >
-Regular_triangulation_2<Traits,Tds> rt ( InputIterator first, InputIterator last, Traits gt = Traits());
+Regular_triangulation_2<Traits,Tds>
+Regular_triangulation_2 ( InputIterator first, InputIterator last, Traits gt = Traits());
 
 
 /// @} 

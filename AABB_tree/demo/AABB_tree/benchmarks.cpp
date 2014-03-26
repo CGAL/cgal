@@ -16,7 +16,7 @@ void Scene::benchmark_intersections(const double duration)
     std::cout << "Construct AABB tree...";
     CGAL::Timer timer;
     timer.start();
-    Facet_tree tree(m_pPolyhedron->facets_begin(),m_pPolyhedron->facets_end());
+    Facet_tree tree(m_pPolyhedron->facets_begin(),m_pPolyhedron->facets_end(),*m_pPolyhedron);
     std::cout << "done (" << timer.time() << " s)" << std::endl;
 
     // generates random queries
@@ -76,7 +76,7 @@ void Scene::benchmark_distances(const double duration)
     CGAL::Timer timer;
     timer.start();
     std::cout << "Construct AABB tree and internal KD tree...";
-    Facet_tree tree(m_pPolyhedron->facets_begin(),m_pPolyhedron->facets_end());
+    Facet_tree tree(m_pPolyhedron->facets_begin(),m_pPolyhedron->facets_end(),*m_pPolyhedron);
     tree.accelerate_distance_queries();
     std::cout << "done (" << timer.time() << " s)" << std::endl;
 
@@ -122,7 +122,7 @@ void Scene::bench_memory()
         // constructs tree and measure memory before then after
         typedef CGAL::Memory_sizer::size_type size_type;
         size_type before = CGAL::Memory_sizer().virtual_size();
-        Facet_tree tree(m_pPolyhedron->facets_begin(),m_pPolyhedron->facets_end());
+        Facet_tree tree(m_pPolyhedron->facets_begin(),m_pPolyhedron->facets_end(),*m_pPolyhedron);
         // tree.accelerate_distance_queries(); // 150 vs 61 bytes per primitive!
 
         size_type after = CGAL::Memory_sizer().virtual_size();
@@ -159,12 +159,12 @@ void Scene::bench_construction()
         // constructs tree
         CGAL::Timer time1;
         time1.start();
-        Facet_tree tree1(m_pPolyhedron->facets_begin(),m_pPolyhedron->facets_end());
+        Facet_tree tree1(m_pPolyhedron->facets_begin(),m_pPolyhedron->facets_end(),*m_pPolyhedron);
         double duration_construction_alone = time1.time();
 
         CGAL::Timer time2;
         time2.start();
-        Facet_tree tree2(m_pPolyhedron->facets_begin(),m_pPolyhedron->facets_end());
+        Facet_tree tree2(m_pPolyhedron->facets_begin(),m_pPolyhedron->facets_end(),*m_pPolyhedron);
         tree2.accelerate_distance_queries();
         double duration_construction_and_kdtree = time2.time();
 
@@ -203,7 +203,7 @@ void Scene::bench_intersections_vs_nbt()
         refiner.run_nb_splits(nb_splits);
 
         // constructs tree (out of timing)
-        Facet_tree tree(m_pPolyhedron->facets_begin(),m_pPolyhedron->facets_end());
+        Facet_tree tree(m_pPolyhedron->facets_begin(),m_pPolyhedron->facets_end(),*m_pPolyhedron);
 
         // calls ray queries
         CGAL::Timer timer;
@@ -247,7 +247,7 @@ void Scene::bench_distances_vs_nbt()
         refiner.run_nb_splits(nb_splits);
 
         // constructs tree (out of timing)
-        Facet_tree tree(m_pPolyhedron->facets_begin(),m_pPolyhedron->facets_end());
+        Facet_tree tree(m_pPolyhedron->facets_begin(),m_pPolyhedron->facets_end(),*m_pPolyhedron);
         tree.accelerate_distance_queries();
 
         // calls queries

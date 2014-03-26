@@ -26,6 +26,12 @@
 
 namespace CGAL{
   
+template <class Kernel, class Container>
+class Polygon_2;
+
+  template <class P, class W>
+  class Weighted_point;
+
 namespace internal{
 
 template <class Kernel, class output_iterator>

@@ -30,7 +30,6 @@
 // polyhedron_ex_parameterization -t lscm -b 2pts mesh.off mesh.obj
 
 
-#include <CGAL/Cartesian.h>
 #include <CGAL/Timer.h>
 #include <CGAL/parameterize.h>
 #include <CGAL/Parameterization_mesh_patch_3.h>
@@ -362,6 +361,7 @@ int main()
     }
     catch(...) {
       std::cerr << "Exception of unknown type!\n";
+      throw;
     }
 
     //***************************************

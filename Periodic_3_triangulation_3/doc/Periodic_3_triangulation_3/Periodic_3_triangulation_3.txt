@@ -10,6 +10,7 @@ namespace CGAL {
 \authors Manuel Caroli and Monique Teillaud
 
 \image html p3Delaunay3.jpg
+\image latex p3Delaunay3.jpg
 
 The periodic 3D-triangulation class of \cgal is designed to
 represent the triangulations of a set of points in the
@@ -58,7 +59,7 @@ The vector \f$ (0,0,0)\f$ corresponds to the representative in the original
 domain. To specify a \f$ k\f$-simplex we need \f$ k+1\f$ point-offset pairs
 (cf. \cgalFigureRef{P3Triangulation3figoffsets}).
 
-\cgalFigureBegin{P3Triangulation3figoffsets,offsets.gif}
+\cgalFigureBegin{P3Triangulation3figoffsets,offsets.png}
 Offsets in a cell.
 \cgalFigureEnd
 
@@ -76,7 +77,7 @@ defined as the orientation of the corresponding simplex in \f$ \mathbb
 R^3\f$ given by representatives determined by the respective offsets
 (see \cgalFigureRef{P3Triangulation3figorient}).
 
-\cgalFigureBegin{P3Triangulation3figorient,orient.gif}
+\cgalFigureBegin{P3Triangulation3figorient,orient.png}
 Orientation of a cell.
 \cgalFigureEnd
 
@@ -89,13 +90,13 @@ and an index (the facet `i` of a cell `c` is the facet of
 `c` that is opposite to the vertex with index `i`) and an edge
 is given by a cell and two indices (the edge `(i,j)` of a cell
 `c` is the edge whose endpoints are the vertices of `c` with
-indices `i` and `j`). See Figure \cgalFigureRef{TDS3figrepres} of chapter 3D Triangulation Data Structure.
+indices `i` and `j`). See \cgalFigureRef{TDS3figrepres} of chapter 3D Triangulation Data Structure.
 
 Some point sets do not admit a triangulation in \f$ \mathbb T_c^3\f$. In
 this case we use 27 periodic copies of the point set arranged in a
 cube of edge length \f$ 3c\f$. Any point set constructed in this way has a
 triangulation in \f$ \mathbb R^3/G'\f$ with \f$ G'=((3c\cdot\mathbb Z)^3,+)\f$
-\cite cgal:ct-c3pt-09. So we compute the triangulation in this
+\cgalCite{cgal:ct-c3pt-09}. So we compute the triangulation in this
 space, which is a <I>27-sheeted covering space</I> of \f$ \mathbb T_c^3\f$
 (see \cgalFigureRef{P3Triangulation3figcovering}).
 
@@ -146,7 +147,7 @@ that is, the circumscribing sphere of each cell does not contain any
 other vertex of the triangulation in its interior. These
 triangulations are uniquely defined except in degenerate cases where
 five points are co-spherical. Note however that the \cgal implementation computes a unique triangulation even in these cases
-\cite cgal:dt-pvr3d-03.
+\cgalCite{cgal:dt-pvr3d-03}.
 
 This implementation is fully dynamic: it supports both insertions of
 points and vertex removal.
@@ -173,7 +174,7 @@ point insertion and vertex removal, the side-of-sphere test, finding
 the conflicting region of a given point, dual functions etc.
 `Periodic_3_triangulation_3` contains all the functionality
 that is common to triangulations in general, such as location of a
-point in the triangulation \cite cgal:dpt-wt-02, access functions,
+point in the triangulation \cgalCite{cgal:dpt-wt-02}, access functions,
 geometric queries like the orientation test etc.
 
 They are built as layers on top of a triangulation data structure,
@@ -370,7 +371,7 @@ In 2006, Nico Kruithof started to work with Monique Teillaud on the 3D
 Periodic Triangulations package.
 
 In 2007, Manuel Caroli continued work on the
-algorithms \cite cgal:ct-c3pt-09 and on the package with Monique
+algorithms \cgalCite{cgal:ct-c3pt-09} and on the package with Monique
 Teillaud.
 
 The package follows the design of the 3D Triangulations package

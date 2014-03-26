@@ -1066,7 +1066,8 @@ public:
   \cgalConcept
 
   \anchor fig-compare_x_at_y_2
-  \image html compare_x_at_y.gif
+  \image html compare_x_at_y.png
+  \image latex compare_x_at_y.png
 
   \cgalRefines `AdaptableFunctor` (with three arguments) 
 
@@ -1219,7 +1220,8 @@ public:
   \cgalConcept
 
   \anchor fig-compare12
-  \image html compare1.gif
+  \image html compare1.png
+  \image latex compare1.png
 
   \cgalRefines `AdaptableFunctor` (with two arguments) 
 
@@ -1305,7 +1307,8 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \image html compare2.gif
+  \image html compare2.png
+  \image latex compare2.png
 
   \cgalRefines `AdaptableFunctor` (with three arguments) 
 
@@ -1425,7 +1428,8 @@ public:
   \cgalConcept
 
   \anchor fig-compare14
-  \image html compare1.gif
+  \image html compare1.png
+  \image latex compare1.png
 
   \cgalRefines `AdaptableFunctor` (with two arguments) 
 
@@ -6479,7 +6483,8 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalConcept
 
-\image html IsoCuboid.gif
+\image html IsoCuboid.png
+\image latex IsoCuboid.png
 
 \cgalRefines `AdaptableFunctor` (with two arguments) 
 
@@ -7103,6 +7108,9 @@ public:
   \sa `CGAL::Circle_2<Kernel>` 
   \sa `CGAL::Iso_rectangle_2<Kernel>` 
   \sa `CGAL::Triangle_2<Kernel>` 
+  \sa `::Kernel::HasOnBoundedSide_2`
+  \sa `::Kernel::HasOnUnboundedSide_2`
+  \sa `::Kernel::BoundedSide_2`
 
 */
 class HasOnBoundary_2 {
@@ -7144,6 +7152,9 @@ public:
   \sa `CGAL::Iso_cuboid_3<Kernel>` 
   \sa `CGAL::Sphere_3<Kernel>` 
   \sa `CGAL::Tetrahedron_3<Kernel>` 
+  \sa `::Kernel::HasOnBoundedSide_3`
+  \sa `::Kernel::HasOnUnboundedSide_3`
+  \sa `::Kernel::BoundedSide_3`
 
 */
 class HasOnBoundary_3 {
@@ -7184,6 +7195,9 @@ public:
   \sa `CGAL::Circle_2<Kernel>` 
   \sa `CGAL::Iso_rectangle_2<Kernel>` 
   \sa `CGAL::Triangle_2<Kernel>` 
+  \sa `::Kernel::HasOnUnboundedSide_2`
+  \sa `::Kernel::HasOnBoundary_2`
+  \sa `::Kernel::BoundedSide_2`
 
 */
 class HasOnBoundedSide_2 {
@@ -7224,6 +7238,9 @@ public:
   \sa `CGAL::Iso_cuboid_3<Kernel>` 
   \sa `CGAL::Sphere_3<Kernel>` 
   \sa `CGAL::Tetrahedron_3<Kernel>` 
+  \sa `::Kernel::HasOnUnboundedSide_3`
+  \sa `::Kernel::HasOnBoundary_3`
+  \sa `::Kernel::BoundedSide_3`
 
 */
 class HasOnBoundedSide_3 {
@@ -7430,6 +7447,9 @@ public:
   \sa `CGAL::Circle_2<Kernel>` 
   \sa `CGAL::Iso_rectangle_2<Kernel>` 
   \sa `CGAL::Triangle_2<Kernel>` 
+  \sa `::Kernel::HasOnBoundedSide_2`
+  \sa `::Kernel::HasOnBoundary_2`
+  \sa `::Kernel::BoundedSide_2`
 
 */
 class HasOnUnboundedSide_2 {
@@ -7472,6 +7492,9 @@ public:
   \sa `CGAL::Iso_cuboid_3<Kernel>` 
   \sa `CGAL::Sphere_3<Kernel>` 
   \sa `CGAL::Tetrahedron_3<Kernel>` 
+  \sa `::Kernel::HasOnBoundedSide_3`
+  \sa `::Kernel::HasOnBoundary_3`
+  \sa `::Kernel::BoundedSide_3`
 
 */
 class HasOnUnboundedSide_3 {
@@ -7638,8 +7661,8 @@ public:
 
   \cgalRefines `AdaptableFunctor` (with two arguments) 
 
-  \sa `CGAL::intersection`
-  \sa `cpp11::result_of`
+  \sa \link intersection_grp `CGAL::intersection()` \endlink
+  \sa `CGAL::cpp11::result_of`
 
 */
 class Intersect_2 {
@@ -7652,7 +7675,7 @@ public:
   /*!
     computes the intersection region of two geometrical objects of type 
     `Type1` and `Type2`, for all pairs `Type1` and `Type2`.
-    For details see the reference manual page for `intersection()`.
+    For details see the reference manual page for \link intersection_grp `CGAL::intersection()` \endlink.
   */ 
   cpp11::result_of<Kernel::Intersect_2(Type1, Type2)>::type
   operator()(Type1 obj1, Type2 obj2); 

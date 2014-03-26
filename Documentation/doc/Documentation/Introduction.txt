@@ -1,3 +1,4 @@
+namespace CGAL {
 /*!
 \example Convex_hull_2/array_convex_hull_2.cpp
 \example Convex_hull_2/vector_convex_hull_2.cpp
@@ -15,7 +16,7 @@ The goal of this chapter is to get a first idea of the look and feel of a progra
 
 We will take a closer look at four \cgal example
 programs, all of them computing the 2D convex hull of a set of points.
-You will find the same ideas in other 
+You will find the same ideas in other \cgal packages.
 
 
 \section intro_array Points in a Built-in Array
@@ -192,3 +193,6 @@ http://www.cgal.org/Tutorials/ and the user support page at
 http://www.cgal.org/.
 
 */
+} /* namespace CGAL */
+
+

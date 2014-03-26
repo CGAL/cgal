@@ -53,7 +53,7 @@ namespace CGAL {
 /// can be any class that fulfills the requirements for an STL
 /// container. It defaults to the std::vector class.
 ///
-/// ### Implementation ###
+/// \cgalHeading{Implementation}
 ///
 /// The methods `is_simple()`, `is_convex()`, `orientation()`,
 /// `oriented_side()`, `bounded_side()`, `bbox()`, `area()`, `left_vertex()`,
@@ -212,16 +212,21 @@ class Polygon_2 {
       { d_container.insert(d_container.end(), x); }
 
     /// Erases the vertex pointed to by `i`.
-    void erase(Vertex_iterator i)
-      { d_container.erase(i); }
+    Vertex_iterator erase(Vertex_iterator i)
+      {
+        return d_container.erase(i);
+      }
 
-    void erase(Vertex_circulator i)
-      { d_container.erase(i.mod_iterator()); }
+    Vertex_circulator erase(Vertex_circulator i)
+      {
+        return Vertex_circulator(&d_container,
+                                 d_container.erase(i.mod_iterator()));
+      }
 
     /// Erases the vertices in the range `[first, last)`.
-    void erase(Vertex_iterator first, Vertex_iterator last)
+    Vertex_iterator erase(Vertex_iterator first, Vertex_iterator last)
       {
-        d_container.erase(first, last);
+        return d_container.erase(first, last);
       }
 
     /// Erases the vertices in the range `[first, last)`.

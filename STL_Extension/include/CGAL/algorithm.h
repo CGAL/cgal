@@ -77,8 +77,8 @@ CGAL_DEPRECATED OutputIterator copy_n( InputIterator first, Size n, OutputIterat
   }
   return result;
 }
-#endif // CGAL_NO_DEPRECATED_CODE
-#else
+#endif // no CGAL_NO_DEPRECATED_CODE
+#else // CGAL_CFG_NO_CPP0X_COPY_N
 template <class InputIterator, class Size, class OutputIterator>
 OutputIterator copy_n( InputIterator first, Size n, OutputIterator result )
 {

@@ -23,6 +23,7 @@
 #ifndef CGAL_CONVEX_HULL_FACE_BASE_2_H
 #define CGAL_CONVEX_HULL_FACE_BASE_2_H
 
+#include <list>
 #include <CGAL/Triangulation_face_base_2.h>
 
 namespace CGAL {

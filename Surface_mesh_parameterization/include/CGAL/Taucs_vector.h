@@ -22,6 +22,12 @@
 #ifndef CGAL_TAUCS_VECTOR
 #define CGAL_TAUCS_VECTOR
 
+#include <CGAL/config.h>
+
+#ifdef CGAL_USE_TAUCS
+
+#include <CGAL/assertions.h>
+
 namespace CGAL {
 
 /// @cond SKIP_IN_MANUAL
@@ -115,5 +121,7 @@ private:
 /// @endcond
 
 } //namespace CGAL
+
+#endif
 
 #endif // CGAL_TAUCS_VECTOR

@@ -37,7 +37,6 @@ public:
   Vertex operator  () (Vertex & v) const
   {
     Dart_handle d = v.dart ();
-    CGAL_assertion (d != NULL);
 
     // Old points aren't concerned.
     if (mlcc.is_marked(d, old))
@@ -54,14 +53,14 @@ public:
          it != mlcc.one_dart_per_incident_cell<1,0>(d).end(); ++it)
     {
       // If the vertex is on a border.
-      if (it->is_free (2))
+      if (mlcc.is_free(it,2))
       { 
         return v;
       }
       // If we found barycenter of a facet.
-      if (!mlcc.is_marked(it->opposite(), old))
+      if (!mlcc.is_marked(mlcc.opposite(it), old))
       {       
-        facetsPoints.push_back(LCC::point(it->opposite()));   
+        facetsPoints.push_back(mlcc.point(mlcc.opposite(it)));
       }
     }
 
@@ -119,7 +118,6 @@ public:
   Vertex operator  () (Vertex & v) const
   {
     Dart_handle d = v.dart ();
-    CGAL_assertion (d != NULL);
 
     // Just old points are concerned.
     if (!mlcc.is_marked(d, old))
@@ -140,17 +138,17 @@ public:
         it != mlcc.one_dart_per_incident_cell<1,0>(d).end(); ++it)
     {
       // If the vertex is on a border
-      if (it->is_free (2))
+      if (mlcc.is_free(it,2))
       { 
         return v;
       }
       // If incident isn't an old point, it's an edge point.
-      if (!mlcc.is_marked(it->opposite(), old))
+      if (!mlcc.is_marked(mlcc.opposite(it), old))
       {       
-        edgesPoints.push_back (LCC::point(it->opposite()));  
+        edgesPoints.push_back (mlcc.point(mlcc.opposite(it)));
       }
       // We go find the "facet point" of incidents facet (barycenter of a facet).
-      facetsPoints.push_back (LCC::point(it->opposite()->beta_inv(1)));
+      facetsPoints.push_back (mlcc.point(mlcc.beta(mlcc.opposite(it), 0)));
       ++degree;
     }
 
@@ -270,7 +268,7 @@ subdivide_lcc_pqq (LCC & m)
       {
         // If the edge join the center and a corner.
         // We remove the edge.
-        if( m.is_marked(it2->beta(1), old) )
+        if( m.is_marked(m.beta(it2,1), old) )
         {
           remove.push_back(it2);
         }
@@ -304,7 +302,7 @@ subdivide_lcc_pqq (LCC & m)
   for (std::vector < Vertex >::iterator vit = old_vertices.begin ();
       vit != old_vertices.end (); ++vit)
   {
-    LCC::point(vit->dart())=vit->point();
+    m.point(vit->dart())=vit->point();
   }
 
   // 4) Smooth new edges points.	  
@@ -319,7 +317,7 @@ subdivide_lcc_pqq (LCC & m)
   for (std::vector < Vertex >::iterator vit = vertices.begin ();
       vit != vertices.end (); ++vit)
   {
-    LCC::point(vit->dart())=vit->point();
+    m.point(vit->dart())=vit->point();
   }
 
   m.unmark_all (old);

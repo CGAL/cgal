@@ -34,6 +34,7 @@
 #include <iomanip> // std::setprecision
 #include <iostream> // std::cerr/cout
 #include <boost/iterator/transform_iterator.hpp>
+#include <boost/function_output_iterator.hpp>
 #include <boost/bind.hpp>
 #include <boost/format.hpp>
 
@@ -185,7 +186,7 @@ public: // methods
    * max_weight(v) < d*dist(v,nearest_vertice(v))
    */
   Slivers_exuder(C3T3& c3t3,
-                 const SliverCriteria& criteria = SliverCriteria(),
+                 const SliverCriteria& criterion,
                  double d = 0.45);
   
   /**
@@ -194,10 +195,9 @@ public: // methods
    * quality below this bound will be pumped
    */
   Mesh_optimization_return_code
-  operator()(double criterion_value_limit = SliverCriteria::default_value,
-             Visitor visitor = Visitor())
+  operator()(Visitor visitor = Visitor())
   {
-    return pump_vertices<true>(criterion_value_limit, visitor);
+    return pump_vertices<true>(sliver_criteria_.sliver_bound(), visitor);
   }
   
   /// Time accessors
@@ -286,12 +286,12 @@ private:
   /**
    * Initialization
    */
-  void init(double radius_ratio_limit = SliverCriteria::default_value )
+  void init(double limit_value)
   {
-    if ( 0 < radius_ratio_limit )
-      sliver_bound_ = radius_ratio_limit;
+    if ( 0 < limit_value )
+      sliver_criteria_.set_sliver_bound(limit_value);
     else
-      sliver_bound_ = SliverCriteria::max_value;
+      sliver_criteria_.set_sliver_bound(SliverCriteria::max_value);
       
     cells_queue_.clear();
     initialize_cells_priority_queue();
@@ -307,9 +307,10 @@ private:
         cit != c3t3_.cells_in_complex_end() ;
         ++cit)
     {
-      const double value = sliver_criteria_(tr_.tetrahedron(cit));
-      
-      if( value < sliver_bound_ )
+      const double value 
+        = sliver_criteria_(cit);
+
+      if( value < sliver_criteria_.sliver_bound() )
         cells_queue_.insert(cit, value);
     }
   }
@@ -451,9 +452,10 @@ private:
         cit != c3t3_.cells_in_complex_end() ;
         ++cit)
     {
-      const double value = sliver_criteria_(tr_.tetrahedron(cit));
-      
-      if( value < sliver_bound_ )
+      const double value = 
+        sliver_criteria_(cit);
+
+      if( value < sliver_criteria_.sliver_bound() )
         return false;
     }
     
@@ -467,7 +469,6 @@ private:
   C3T3& c3t3_;
   Tr& tr_;
   double sq_delta_;
-  double sliver_bound_;
   
   int num_of_pumped_vertices_;
   int num_of_ignored_vertices_;
@@ -546,7 +547,6 @@ Slivers_exuder(C3T3& c3t3, const SC& criteria, double d)
   : c3t3_(c3t3)
   , tr_(c3t3_.triangulation())
   , sq_delta_(d*d)
-  , sliver_bound_(0)
   , num_of_pumped_vertices_(0)
   , num_of_ignored_vertices_(0)
   , num_of_treated_vertices_(0)
@@ -694,8 +694,7 @@ initialize_prestar_and_criterion_values(const Vertex_handle& v,
     // Sliver criterion values initialization
     if( c3t3_.is_in_complex(*cit) )
     {
-      double r = sliver_criteria_(tr_.tetrahedron(*cit));
-      criterion_values[f] = r;
+      criterion_values[f] = sliver_criteria_(*cit);
     }
     
 
@@ -948,9 +947,10 @@ restore_cells_and_boundary_facets(
     // the maximum, push it in the cells queue.
     if( c3t3_.is_in_complex(*cit) )
     {
-      double criterion_value = sliver_criteria_(tr_.tetrahedron(*cit));
-
-      if( criterion_value < sliver_bound_ )
+      double criterion_value 
+        = sliver_criteria_(*cit);
+      
+      if( criterion_value < sliver_criteria_.sliver_bound() )
         cells_queue_.insert(*cit, criterion_value);
     }
   }  

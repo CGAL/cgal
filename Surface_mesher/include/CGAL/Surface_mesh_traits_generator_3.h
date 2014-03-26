@@ -24,6 +24,9 @@
 
 namespace CGAL {
 
+template <class K>
+class Sphere_3;
+
 /** Defaut traits class.
  *  Partial specialization will be in other headers
 */

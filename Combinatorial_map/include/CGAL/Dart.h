@@ -30,13 +30,6 @@ namespace CGAL {
    * Definition of nD dart.
    */
 
-  template < unsigned int d_, class Refs,
-             class Items_, class Alloc_ >
-  class Combinatorial_map_base;
-
-  template<class Map, unsigned int i, unsigned int nmi>
-  struct Remove_cell_functor;
-
   namespace internal {
     template <typename Map,unsigned int i>
     struct basic_link_beta_functor;
@@ -54,29 +47,40 @@ namespace CGAL {
    * n is the dimension of the space (2 for 2D, 3 for 3D...)
    * Refs the ref class
    */
-  template <int d, typename Refs>
+  template <unsigned int d, typename Refs>
   struct Dart
   {
-    template < unsigned int d_, class Refs_,
-               class Items_, class Alloc_ >
+    template < unsigned int, class, class, class, class >
     friend class Combinatorial_map_base;
 
-    template <class T, class Alloc_>
+    template<unsigned int, class, class>
+    friend class Combinatorial_map_storage_1;
+
+    template<unsigned int, class, class>
+    friend class Combinatorial_map_storage_2;
+
+    template<unsigned int, unsigned int, class, class, class>
+    friend class Linear_cell_complex_storage_1;
+
+    template<unsigned int, unsigned int, class, class, class>
+    friend class Linear_cell_complex_storage_2;
+
+    template <class, class>
     friend class Compact_container;
 
-    template<class Map, unsigned int i, unsigned int nmi>
+    template<class, unsigned int, unsigned int>
     friend struct Remove_cell_functor;
 
-    template<class Map, unsigned int i>
+    template<class, unsigned int>
     friend struct Contract_cell_functor;
 
-    template <typename Map,unsigned int i>
+    template <typename,unsigned int>
     friend struct internal::link_beta_functor;
 
-    template <typename CMap, typename Attrib>
+    template <typename, typename>
     friend struct internal::Reverse_orientation_of_map_functor;
 
-    template <typename CMap, typename Attrib>
+    template <typename, typename>
     friend struct internal::Reverse_orientation_of_connected_component_functor;
 
   public:
@@ -99,6 +103,8 @@ namespace CGAL {
 
     /// The dimension of the combinatorial map.
     static const unsigned int dimension = d;
+
+#ifdef CGAL_CMAP_DEPRECATED
 
     /** Return if this dart is free for adimension.
      * @param i the dimension.
@@ -126,6 +132,76 @@ namespace CGAL {
       { if ( !is_free(i) ) return i; }
       return -1;
     }
+
+    /** Return a dart belonging to the same edge and to the second vertex
+     * of the current edge (NULL if such a dart does not exist).
+     * @return An handle to the opposite dart.
+     */
+    Dart_handle opposite()
+    {
+      for (unsigned int i = 2; i <= dimension; ++i)
+        if (!is_free(i)) return beta(i);
+      return NULL;
+    }
+    Dart_const_handle opposite() const
+    {
+      for (unsigned int i = 2; i <= dimension; ++i)
+        if (!is_free(i)) return beta(i);
+      return NULL;
+    }
+
+    /** Return a dart incident to the other extremity of the current edge,
+     *  but contrary to opposite, non necessary to the same edge
+     *  (NULL if such a dart does not exist).
+     * @return An handle to the opposite dart.
+     */
+    Dart_handle other_extremity()
+    {
+      for (unsigned int i = 1; i <= dimension; ++i)
+        if (!is_free(i)) return beta(i);
+      return NULL;
+    }
+    Dart_const_handle other_extremity() const
+    {
+      for (unsigned int i = 1; i <= dimension; ++i)
+        if (!is_free(i)) return beta(i);
+      return NULL;
+    }
+
+    /** Link this dart with a given dart for a given dimension.
+     * @param adart the dart to link with.
+     * @param i the dimension.
+     */
+    template<unsigned int i>
+    void basic_link_beta(Dart_handle adart)
+    {
+      CGAL_assertion(i <= dimension);
+      CGAL_assertion(this!=&*Refs::null_dart_handle);
+      mbeta[i] = adart;
+    }
+    void basic_link_beta(Dart_handle adart, unsigned int i)
+    {
+      CGAL_assertion(i <= dimension);
+      CGAL_assertion(this!=&*Refs::null_dart_handle);
+      mbeta[i] = adart;
+    }
+
+    /** Unlink this dart for a given dimension.
+     * @param i the dimension.
+     */
+    template<unsigned int i>
+    void unlink_beta()
+    {
+      CGAL_assertion(i <= dimension);
+      mbeta[i] = Refs::null_dart_handle;
+    }
+    void unlink_beta(unsigned int i)
+    {
+      CGAL_assertion(i <= dimension);
+      mbeta[i] = Refs::null_dart_handle;
+    }
+
+#endif // CGAL_CMAP_DEPRECATED
 
     /** Return the beta of this dart for a given dimension.
      * @param i the dimension.
@@ -169,41 +245,6 @@ namespace CGAL {
     Dart_const_handle beta_inv(unsigned int i) const
     { return beta(CGAL_BETAINV(i)); }
 
-    /** Return a dart belonging to the same edge and to the second vertex
-     * of the current edge (NULL if such a dart does not exist).
-     * @return An handle to the opposite dart.
-     */
-    Dart_handle opposite()
-    {
-      for (unsigned int i = 2; i <= dimension; ++i)
-        if (!is_free(i)) return beta(i);
-      return NULL;
-    }
-    Dart_const_handle opposite() const
-    {
-      for (unsigned int i = 2; i <= dimension; ++i)
-        if (!is_free(i)) return beta(i);
-      return NULL;
-    }
-
-    /** Return a dart incident to the other extremity of the current edge,
-     *  but contrary to opposite, non necessary to the same edge
-     *  (NULL if such a dart does not exist).
-     * @return An handle to the opposite dart.
-     */
-    Dart_handle other_extremity()
-    {
-      for (unsigned int i = 1; i <= dimension; ++i)
-        if (!is_free(i)) return beta(i);
-      return NULL;
-    }
-    Dart_const_handle other_extremity() const
-    {
-      for (unsigned int i = 1; i <= dimension; ++i)
-        if (!is_free(i)) return beta(i);
-      return NULL;
-    }
-
     /// @return a handle on the i-attribute
     template<int i>
     typename Attribute_handle<i>::type attribute()
@@ -220,73 +261,6 @@ namespace CGAL {
                      "attribute<i> called but i-attributes are disabled.");
       return CGAL::cpp11::get<Helper::template Dimension_index<i>::value>
         (mattribute_handles);
-    }
-
-    /** Link this dart with a given dart for a given dimension.
-     * @param adart the dart to link with.
-     * @param i the dimension.
-     */
-    template<unsigned int i>
-    void basic_link_beta(Dart_handle adart)
-    {
-      CGAL_assertion(i <= dimension);
-      CGAL_assertion(this!=&*Refs::null_dart_handle);
-      mbeta[i] = adart;
-    }
-    void basic_link_beta(Dart_handle adart, unsigned int i)
-    {
-      CGAL_assertion(i <= dimension);
-      CGAL_assertion(this!=&*Refs::null_dart_handle);
-      mbeta[i] = adart;
-    }
-
-    /** Unlink this dart for a given dimension.
-     * @param i the dimension.
-     */
-    template<unsigned int i>
-    void unlink_beta()
-    {
-      CGAL_assertion(i <= dimension);
-      mbeta[i] = Refs::null_dart_handle;
-    }
-    void unlink_beta(unsigned int i)
-    {
-      CGAL_assertion(i <= dimension);
-      mbeta[i] = Refs::null_dart_handle;
-    }
-
-    /// Set the handle on the i th attribute
-    template<int i>
-    void set_attribute( typename Attribute_handle<i>::type ahandle )
-    {
-      CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
-                     "set_attribute<i> called but i-attributes are disabled.");
-      CGAL::cpp11::get<Helper::template Dimension_index<i>::value>
-        (mattribute_handles) = ahandle;
-      if (ahandle!=NULL) ahandle->inc_nb_refs();
-    }
-
-  protected:
-    /** Default constructor: initialise marks and beta of this dart.
-     * @param amarks the marks.
-     */
-    Dart(const std::bitset<NB_MARKS>& amarks) : mmarks(amarks)
-    {
-      for (unsigned int i = 0; i <= dimension; ++i)
-        mbeta[i] = Refs::null_dart_handle;
-
-      Helper::template Foreach_enabled_attributes<Init_attribute_functor>::
-        run(this);
-    }
-
-    /** Copy constructor:
-     * @param adart a dart.
-     */
-    Dart(const std::bitset<NB_MARKS>& /*amarks*/, const Dart& adart) : mmarks(adart.mmarks),
-    mattribute_handles(adart.mattribute_handles)
-    {
-      for (unsigned int i = 0; i <= dimension; ++i)
-        mbeta[i] = adart.mbeta[i];
     }
 
     /** Return the mark value of a given mark number.
@@ -308,28 +282,45 @@ namespace CGAL {
       CGAL_assertion(amark>=0 && (size_type)amark<NB_MARKS);
       mmarks.set((size_type)amark, avalue);
     }
+    /** Flip the mark of a given mark number.
+     * @param amark the mark number.
+     */
+    void flip_mark(int amark) const
+    {
+      CGAL_assertion(amark>=0 && (size_type)amark<NB_MARKS);
+      mmarks.flip((size_type)amark);
+    }
 
     /** Return all the marks of this dart.
      * @return the marks.
      */
-    std::bitset<NB_MARKS> get_marks() const
+     std::bitset<NB_MARKS> get_marks() const
     { return mmarks; }
 
     /** Set simultaneously all the marks of this dart to a given value.
      * @param amarks the value of the marks.
      */
-    void set_marks(const std::bitset<NB_MARKS>& amarks) const
+     void set_marks(const std::bitset<NB_MARKS>& amarks) const
     { mmarks = amarks; }
 
-    /// Functor used to initialize all attributes to NULL.
-    struct Init_attribute_functor
-    {
-      template <int i>
-      static void run(Self* adart)
-      { adart->template set_attribute<i>(NULL); }
-    };
+  protected:
+    /** Default constructor: no real initialisation,
+     *  because this is done in the combinatorial map class.
+     */
+    Dart()
+    {}
 
-  public:
+    /** Copy constructor:
+     * @param adart a dart.
+     */
+    Dart(const Dart& adart) : mmarks(adart.mmarks),
+    mattribute_handles(adart.mattribute_handles)
+    {
+      for (unsigned int i = 0; i <= dimension; ++i)
+        mbeta[i] = adart.mbeta[i];
+    }
+
+   public:
     void * for_compact_container() const
     { return mbeta[0].for_compact_container(); }
     void * & for_compact_container()
@@ -339,11 +330,11 @@ namespace CGAL {
     /// Beta for each dimension +1 (from 0 to dimension).
     Dart_handle mbeta[dimension+1];
 
-    /// Attributes enabled
-    typename Helper::Attribute_handles mattribute_handles;
-
     /// Values of Boolean marks.
     mutable std::bitset<NB_MARKS> mmarks;
+
+    /// Attributes enabled
+    typename Helper::Attribute_handles mattribute_handles;
   };
 
 } // namespace CGAL

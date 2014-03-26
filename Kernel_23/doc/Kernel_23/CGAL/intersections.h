@@ -89,7 +89,7 @@ bool do_intersect(Type1<Kernel> obj1, Type2<Kernel> obj2);
 \details Depending on which \cgal kernel is used, different overloads of this global
 function are available.
 
-### Notes on Backward Compatibility ###
+\cgalHeading{Notes on Backward Compatibility}
 
 The \ref intersection_grp function used to return an `Object`, but starting with 
 \cgal 4.2 the
@@ -326,7 +326,7 @@ The following example demonstrates the most common use of
 
 template<typename R>
 struct Intersection_visitor {
-  typedef result_type void;
+  typedef void result_type;
   void operator()(const Point_2<R>& p) const 
   { // handle point
   }

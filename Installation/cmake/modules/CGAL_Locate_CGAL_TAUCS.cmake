@@ -82,7 +82,7 @@ if ( NOT CGAL_TAUCS_FOUND )
       set( CGAL_TAUCS_FOUND TRUE )
 
     # Else, search for TAUCS in CGAL "auxiliary" folder
-    elseif ( EXISTS "${CGAL_INSTALLATION_PACKAGE_DIR}/auxiliary/taucs/include" AND
+    elseif ( EXISTS "${CGAL_INSTALLATION_PACKAGE_DIR}/auxiliary/taucs/include/taucs.h" AND
              EXISTS "${CGAL_INSTALLATION_PACKAGE_DIR}/auxiliary/taucs/lib" )
 
       set( CGAL_TAUCS_INCLUDE_DIR   "${CGAL_INSTALLATION_PACKAGE_DIR}/auxiliary/taucs/include")

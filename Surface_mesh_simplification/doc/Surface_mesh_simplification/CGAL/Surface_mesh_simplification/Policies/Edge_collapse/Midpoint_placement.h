@@ -8,7 +8,7 @@ namespace Surface_mesh_simplification {
 The class `Midpoint_placement` is a model for the `GetPlacement` concept
 which  computes the placement as the midpoint position along the edge. 
 
-\tparam ECM is the type of surface being simplified, and must be a model of the `EdgeCollapsableMesh` concept. 
+\tparam ECM is the type of surface mesh being simplified, and must be a model of the `EdgeCollapsableSurfaceMesh` concept. 
 
 \cgalModels `GetPlacement`
 

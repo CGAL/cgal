@@ -3,7 +3,7 @@
 \cgalConcept
 
 Requirements of a traits class to be 
-used with the function `y_monotone_partition_2`. 
+used with the function `y_monotone_partition_2()`. 
 
 \cgalRefines `PartitionTraits_2` 
 

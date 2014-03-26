@@ -45,6 +45,9 @@
 #include "Show_point_dialog.h"
 #include "File_loader_dialog.h"
 
+#include <QGLViewer/manipulatedCameraFrame.h>
+#include <QGLViewer/manipulatedFrame.h>
+
 #ifdef QT_SCRIPT_LIB
 #  include <QScriptEngine>
 #  include <QScriptValue>
@@ -657,8 +660,8 @@ void MainWindow::reload_item() {
   new_item->setRenderingMode(item->renderingMode());
   new_item->setVisible(item->visible());
   new_item->changed();
-  scene->replaceItem(item_index, new_item);
-  delete item;
+  scene->replaceItem(item_index, new_item, true);
+  item->deleteLater();
 }
 
 Polyhedron_demo_io_plugin_interface* MainWindow::find_loader(const QString& loader_name) const {
@@ -672,10 +675,34 @@ Polyhedron_demo_io_plugin_interface* MainWindow::find_loader(const QString& load
                               .arg(loader_name).toStdString()) ;
 }
 
-void MainWindow::open(QString filename)
+bool MainWindow::file_matches_filter(const QString& filters,
+                                     const QString& filename )
 {
   QFileInfo fileinfo(filename);
   QString filename_striped=fileinfo.fileName();
+
+  //match all filters between ()
+  QRegExp all_filters_rx("\\((.*)\\)");
+
+  QStringList split_filters = filters.split(";;");
+  Q_FOREACH(const QString& filter, split_filters) {
+    //extract filters
+    if ( all_filters_rx.indexIn(filter)!=-1 ){
+      Q_FOREACH(const QString& pattern,all_filters_rx.cap(1).split(' ')){
+        QRegExp rx(pattern);
+        rx.setPatternSyntax(QRegExp::Wildcard);
+        if ( rx.exactMatch(filename_striped) ){
+          return true;
+        }
+      }
+    }
+  }
+  return false;
+}
+
+void MainWindow::open(QString filename)
+{
+  QFileInfo fileinfo(filename);
 
 #ifdef QT_SCRIPT_LIB
   // Handles the loading of script file from the command line arguments,
@@ -722,29 +749,12 @@ void MainWindow::open(QString filename)
   
   if ( dfs_it==default_plugin_selection.end() )
   {
-    //match all filters between ()
-    QRegExp all_filters_rx("\\((.*)\\)");
     // collect all io_plugins and offer them to load if the file extension match one name filter
     // also collect all available plugin in case of a no extension match
     Q_FOREACH(Polyhedron_demo_io_plugin_interface* io_plugin, io_plugins) {
       all_items << io_plugin->name();
-      QStringList split_filters = io_plugin->nameFilters().split(";;");
-      bool stop=false;
-      Q_FOREACH(const QString& filter, split_filters) {
-        //extract filters
-        if ( all_filters_rx.indexIn(filter)!=-1 ){
-          Q_FOREACH(const QString& pattern,all_filters_rx.cap(1).split(' ')){
-            QRegExp rx(pattern);
-            rx.setPatternSyntax(QRegExp::Wildcard);
-            if ( rx.exactMatch(filename_striped) ){
-              selected_items << io_plugin->name();
-              stop=true;
-              break;
-            }
-          }
-          if (stop) break;
-        }
-      }
+      if ( file_matches_filter(io_plugin->nameFilters(), filename) )
+        selected_items << io_plugin->name();
     }
   }
   else
@@ -1169,7 +1179,9 @@ void MainWindow::save(QString filename, Scene_item* item) {
   QFileInfo fileinfo(filename);
 
   Q_FOREACH(Polyhedron_demo_io_plugin_interface* plugin, io_plugins) {
-    if(plugin->canSave(item)) {
+    if(  plugin->canSave(item) &&
+        file_matches_filter(plugin->nameFilters(),filename) )
+    {
       if(plugin->save(item, fileinfo))
         break;
     }

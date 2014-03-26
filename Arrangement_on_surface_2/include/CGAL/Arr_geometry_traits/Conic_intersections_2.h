@@ -21,6 +21,8 @@
 #ifndef CGAL_CONIC_INTERSECTIONS_2_H
 #define CGAL_CONIC_INTERSECTIONS_2_H
 
+#include <CGAL/number_utils.h>
+
 /*! \file
  * Implementation of functions related to the intersection of conics curves.
  */

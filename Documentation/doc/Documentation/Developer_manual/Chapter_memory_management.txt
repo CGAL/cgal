@@ -1,6 +1,6 @@
 /*!
 
-\page chapmemory_management Memory Management
+\page devman_memory_management Memory Management
 
 \authors Michael Seel (<TT>seel@mpi-sb.mpg.de</TT>)
 \authors Efi Fogel (<TT>efif@post.tau.ac.il</TT>)
@@ -17,7 +17,7 @@ describe one way to address this using allocators. An allocator
 encapsulates the information about an allocation model.
 
 We adopted the definition of the Standard \cpp
-allocator \cite cgal:ansi-is14882-98. The `std::allocator` is the
+allocator \cgalCite{cgal:ansi-is14882-98}. The `std::allocator` is the
 only predefined and required allocator imposed by [\cpp] on all \cpp
 compiler implementations. The exact specification can also be found at
 <A HREF="http://en.wikipedia.org/wiki/Allocator_(C++)"><TT>http://en.wikipedia.org/wiki/Allocator_(C++)</TT></A>.

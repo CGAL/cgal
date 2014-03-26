@@ -6,7 +6,7 @@ namespace CGAL {
 computes the rational number with the smallest denominator in the 
 interval `[d1,d2]`.
 
-The function `simplest_rational_in_interval` computes the simplest rational number in an 
+Computes the simplest rational number in an 
 interval of two `double` values. 
 
 \cgalHeading{Implementation}

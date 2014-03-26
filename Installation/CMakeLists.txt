@@ -62,12 +62,9 @@ if ( CGAL_BRANCH_BUILD )
   endforeach()
 
 
-  set(CGAL_INSTALLATION_PACKAGE_DIR "${CMAKE_SOURCE_DIR}/Installation" CACHE PATH "Directory containing the Installation package")
-  set(CGAL_MAINTENANCE_PACKAGE_DIR "${CMAKE_SOURCE_DIR}/Maintenance" CACHE PATH "Directory containing the Maintenance package")
-  set(CGAL_CORE_PACKAGE_DIR "${CMAKE_SOURCE_DIR}/Core" CACHE PATH "Directory containing the Core package")
-  mark_as_advanced(CGAL_INSTALLATION_PACKAGE_DIR)
-  mark_as_advanced(CGAL_MAINTENANCE_PACKAGE_DIR)
-  mark_as_advanced(CGAL_CORE_PACKAGE_DIR)
+  set(CGAL_INSTALLATION_PACKAGE_DIR "${CMAKE_SOURCE_DIR}/Installation" CACHE INTERNAL "Directory containing the Installation package")
+  set(CGAL_MAINTENANCE_PACKAGE_DIR "${CMAKE_SOURCE_DIR}/Maintenance" CACHE INTERNAL "Directory containing the Maintenance package")
+  set(CGAL_CORE_PACKAGE_DIR "${CMAKE_SOURCE_DIR}/Core" CACHE INTERNAL "Directory containing the Core package")
 
   message(STATUS "Installation package directory: ${CGAL_INSTALLATION_PACKAGE_DIR}")
   message(STATUS "Maintenance package directory: ${CGAL_MAINTENANCE_PACKAGE_DIR}")
@@ -87,16 +84,22 @@ else ( CGAL_BRANCH_BUILD )
   # list packages
   set(CGAL_CONFIGURED_PACKAGES "${CMAKE_SOURCE_DIR}")
 
-  set(CGAL_INSTALLATION_PACKAGE_DIR "${CMAKE_SOURCE_DIR}" CACHE PATH "Directory containing the Installation package")
-  set(CGAL_MAINTENANCE_PACKAGE_DIR "${CMAKE_SOURCE_DIR}" CACHE PATH "Directory containing the Maintenance package")
-  set(CGAL_CORE_PACKAGE_DIR "${CMAKE_SOURCE_DIR}" CACHE PATH "Directory containing the Core package")
+  set(CGAL_INSTALLATION_PACKAGE_DIR "${CMAKE_SOURCE_DIR}" CACHE INTERNAL "Directory containing the Installation package")
+  set(CGAL_MAINTENANCE_PACKAGE_DIR "${CMAKE_SOURCE_DIR}" CACHE INTERNAL "Directory containing the Maintenance package")
+  set(CGAL_CORE_PACKAGE_DIR "${CMAKE_SOURCE_DIR}" CACHE INTERNAL "Directory containing the Core package")
 
 endif (CGAL_BRANCH_BUILD )
 
 #message(STATUS "Packages found: ${CGAL_CONFIGURED_PACKAGES}")
 
 list(SORT CGAL_CONFIGURED_PACKAGES_NAMES)
-set(CGAL_CONFIGURED_PACKAGES_NAMES ${CGAL_CONFIGURED_PACKAGES_NAMES} PARENT_SCOPE)
+if(IS_DIRECTORY "${CMAKE_SOURCE_DIR}/Documentation")
+  # Rescope CGAL_CONFIGURED_PACKAGES_NAMES
+  # We need this variable in the Doxygen configuration process. Reset it
+  # and change the scope to the parent scope.
+  # Philipp Moeller, 2013-05-302013-05-302013-05-30
+  set(CGAL_CONFIGURED_PACKAGES_NAMES ${CGAL_CONFIGURED_PACKAGES_NAMES} PARENT_SCOPE)
+endif()
 
 message(STATUS "Packagenames: ${CGAL_CONFIGURED_PACKAGES_NAMES}")
 message( "== Setting paths (DONE) ==\n" )
@@ -320,11 +323,12 @@ endif()
 #   CGAL-4.1   : 10.0.0 (No way to check the binary compatibility.)
 #   CGAL-4.2   : 10.0.1 (Nothing different in CGAL compiled libraries¹.)
 #   CGAL-4.3   : 10.0.2 (Nothing different in CGAL compiled libraries¹.)
+#   CGAL-4.4   : 10.0.3 (Nothing different in CGAL compiled libraries¹.)
 
 # ¹) According to abi-http://upstream-tracker.org/versions/cgal.html
 
 set( CGAL_SONAME_VERSION "10" )
-set( CGAL_SOVERSION      "10.0.2" )
+set( CGAL_SOVERSION      "10.0.3" )
 
 message( STATUS "CGAL_SONAME_VERSION=${CGAL_SONAME_VERSION}" )
 message( STATUS "CGAL_SOVERSION     =${CGAL_SOVERSION}" )

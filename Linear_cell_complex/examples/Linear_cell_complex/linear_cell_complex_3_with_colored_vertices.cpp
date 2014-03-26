@@ -63,22 +63,22 @@ int main()
   for (LCC_3::One_dart_per_incident_cell_range<0, 3>::iterator 
          it=lcc.one_dart_per_incident_cell<0,3>(d1).begin(), 
          itend=lcc.one_dart_per_incident_cell<0,3>(d1).end(); it!=itend; ++it)
-  { LCC_3::vertex_attribute(it)->info()=1; }
+  { lcc.info<0>(it)=1; }
   
   // Set the "color" of all vertices of the second cube to 19.
   for (LCC_3::One_dart_per_incident_cell_range<0, 3>::iterator it=
          lcc.one_dart_per_incident_cell<0,3>(d2).begin(),
          itend=lcc.one_dart_per_incident_cell<0,3>(d2).end(); it!=itend; ++it)
-  { LCC_3::vertex_attribute(it)->info()=19; }
+  { lcc.info<0>(it)=19; }
   
   // 3-Sew the two cubes along one facet.
-  lcc.sew<3>(d1->beta(1)->beta(1)->beta(2), d2->beta(2));
+  lcc.sew<3>(lcc.beta(d1, 1, 1, 2), lcc.beta(d2, 2));
 
   // Barycentric triangulation of the facet between the two cubes.
-  Dart_handle d3=lcc.insert_barycenter_in_cell<2>(d2->beta(2));
+  Dart_handle d3=lcc.insert_barycenter_in_cell<2>(lcc.beta(d2, 2));
 
   // Set the color of the new vertex to 5.
-  LCC_3::vertex_attribute(d3)->info()=5;
+  lcc.info<0>(d3)=5;
   
   // Display all the vertices of the map.
   for (LCC_3::Vertex_attribute_range::iterator 
@@ -86,8 +86,8 @@ int main()
          itend=lcc.vertex_attributes().end(); 
        it!=itend; ++it)
   {
-    std::cout<<"point: "<<it->point()<<", "<<"color: "<<it->info()
-             <<std::endl;
+    std::cout<<"point: "<<lcc.point_of_vertex_attribute(it)<<", "<<"color: "
+             <<lcc.info_of_attribute<0>(it)<<std::endl;
   }
 
   return EXIT_SUCCESS;

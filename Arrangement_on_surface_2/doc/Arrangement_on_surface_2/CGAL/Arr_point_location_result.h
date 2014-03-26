@@ -9,10 +9,10 @@ and `ArrangementVerticalRayShoot_2`, and by the free function
 `locate`. The `CGAL_ARR_POINT_LOCATION_VERSION` should be defined before any \cgal header
 is included.
 
-`CGAL_ARR_POINT_LOCATION_VERSION` == 1, the result type is set to be `CGAL::Object`.
-`CGAL_ARR_POINT_LOCATION_VERSION` == 2, the result type is set to be
+- `CGAL_ARR_POINT_LOCATION_VERSION` == 1, the result type is set to be `CGAL::Object`.
+- `CGAL_ARR_POINT_LOCATION_VERSION` == 2, the result type is set to be
 `boost::variant<Vertex_const_handle,Halfedge_const_handle,Face_const_handle>`, where `Vertex_const_handle`, `Halfedge_const_handle`, and
-`Face_const_handle` are the corresponding nested types in an `Arrangement_2` instance.
+`Face_const_handle` are the corresponding nested types in a `CGAL::Arrangement_2` instance.
 
 
 \sa `ArrangementPointLocation_2`
@@ -26,10 +26,10 @@ namespace CGAL {
 /*!
 \ingroup PkgArrangement2PointLocation
 
-A binary metafunction to determine the return type of a point-location
+A unary metafunction to determine the return type of a point-location
 or vertical ray-shoot query.
 
-\tparam Arrangement must be an instance of the `Arrangement<Traits,Dcel>` class template.
+\tparam Arrangement must be an instance of the `CGAL::Arrangement_2<Traits,Dcel>` class template.
 
 \sa `ArrangementPointLocation_2`
 \sa `ArrangementVerticalRayShoot_2`
@@ -43,7 +43,12 @@ template <class Arrangement>
 class Arr_point_location_result
 {
 public:
-  /// The type of a point-location or vertical ray-shoot query return type.
+  /*! The type of the arrangement feature that is the result of a
+   * point-location query or a vertical ray-shoot query, namely,
+   * `boost::variant<Arrangement::Vertex_const_handle, Arrangement::Halfedge_const_handle, Arrangement::Face_const_handle>`
+   * if `::CGAL_ARR_POINT_LOCATION_VERSION` == 2, which is the default, otherwise
+   * `CGAL::Object`.
+   */
   typedef Hidden_type Type;
-}; /* end Arr_walk_along_line_point_location */
+}; /* end Arr_point_location_result */
 } /* end namespace CGAL */

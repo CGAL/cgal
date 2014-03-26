@@ -126,11 +126,11 @@ void test_real_embeddable_extension(const NT_&){
 template <typename AK>
 void test_real_embeddable_extension_ak(){
   typedef typename AK::Integer Integer;
-  typedef typename AK::Rational Rational;
   typedef typename AK::Bigfloat Bigfloat; 
   typedef typename AK::Bigfloat Bigfloat_interval; 
 
   test_real_embeddable_extension(Integer());
+  //typedef typename AK::Rational Rational;
   //test_real_embeddable_extension(Rational()); TODO
   test_real_embeddable_extension(Bigfloat());
   test_real_embeddable_extension(Bigfloat_interval());

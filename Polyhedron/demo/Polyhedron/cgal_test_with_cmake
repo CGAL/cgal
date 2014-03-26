@@ -111,6 +111,7 @@ else
       io_implicit_function_plugin \
       kernel_plugin \
       mesh_3_plugin \
+      mesh_segmentation_plugin \
       mesh_simplification_plugin \
       nef_io_plugin \
       nef_plugin \

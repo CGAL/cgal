@@ -111,7 +111,7 @@ that sphere. Each normal circle defines two such points;
 the \f$ \theta\f$-extremal point of a polar circle is the pole the circle
 goes through. No such point is defined on a bipolar or a threaded
 circle. 
-These definitions are illustrated on Figure \cgalFigureRef{figdefcircles}.
+These definitions are illustrated on \cgalFigureRef{figdefcircles}.
 Notice that the \f$ \theta\f$-extremal points should not be confused with
 the endpoints of an arbitrary arc on a sphere.
 
@@ -193,7 +193,7 @@ The first version of the package was co-authored by Pedro Machado
 Manh&atilde;es de Castro and Monique Teillaud, and integrated in CGAL
 3.4. Fr&eacute;d&eacute;ric Cazals and S&eacute;bastien Loriot extended the
 package by providing functionalities restricted on a given sphere
-\cite cclt-dc3sk-08.
+\cgalCite{cclt-dc3sk-08}.
 
 Sylvain Pion is acknowledged for helpful discussions.
 

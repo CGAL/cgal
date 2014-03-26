@@ -68,9 +68,9 @@ Parameterizer_traits_3<ParameterizationMesh_3>::Error_code parameterize (Paramet
 \endcode
 
 The function `parameterize()` applies a default surface parameterization
-method, namely Floater Mean Value Coordinates \cite cgal:f-mvc-03, with an
+method, namely Floater Mean Value Coordinates \cgalCite{cgal:f-mvc-03}, with an
 arc-length circular border parameterization, and using OpenNL sparse
-linear solver \cite cgal:l-nmdgp-05. The `ParameterizationMesh_3` concept defines the input meshes handled by `parameterize()`. See Section \ref secInputMeshforparameterize. The result is stored into the `(u,v)` fields of the mesh halfedges.
+linear solver \cgalCite{cgal:l-nmdgp-05}. The `ParameterizationMesh_3` concept defines the input meshes handled by `parameterize()`. See Section \ref secInputMeshforparameterize. The result is stored into the `(u,v)` fields of the mesh halfedges.
 The mesh must be a triangle mesh surface with one connected component.
 
 Note: `Parameterizer_traits_3<ParameterizationMesh_3>` is the (pure virtual) superclass of all surface parameterizations and defines the error codes.
@@ -202,7 +202,7 @@ Such border parameterizations are described in Section
 `Barycentric_mapping_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>` 
 
 The Barycentric Mapping parameterization method has been introduced by
-Tutte \cite t-hdg-63. In parameter space, each vertex is
+Tutte \cgalCite{t-hdg-63}. In parameter space, each vertex is
 placed at the barycenter of its neighbors to achieve the so-called
 convex combination condition. This algorithm amounts to solve one
 sparse linear solver for each set of parameter coordinates, with a
@@ -223,10 +223,10 @@ Left: Tutte barycentric mapping parameterization (the red line depicts the cut g
 `Discrete_conformal_map_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>` 
 
 Discrete conformal map parameterization has been introduced by Eck et
-al. to the graphics community \cite cgal:eddhls-maam-95. It attempts to
+al. to the graphics community \cgalCite{cgal:eddhls-maam-95}. It attempts to
 lower angle deformation by minimizing a discrete version of the
 Dirichlet energy as derived by Pinkall and
-Polthier \cite cgal:pp-cdmsc-93. A one-to-one mapping is guaranteed
+Polthier \cgalCite{cgal:pp-cdmsc-93}. A one-to-one mapping is guaranteed
 only when the two following conditions are fulfilled: the barycentric mapping
 condition (each vertex in parameter space is a convex combination if
 its neighboring vertices), and the border is convex.
@@ -245,7 +245,7 @@ Left: discrete conformal map. Right: parameter space.
 `Mean_value_coordinates_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>` 
 
 The mean value coordinates parameterization method has been introduced
-by Floater \cite cgal:f-mvc-03. Each vertex in parameter space is
+by Floater \cgalCite{cgal:f-mvc-03}. Each vertex in parameter space is
 optimized so as to be a convex combination of its neighboring
 vertices. The barycentric coordinates are this time unconditionally
 positive, by deriving an application of the mean theorem for harmonic
@@ -263,7 +263,7 @@ Floater Mean Value Coordinates
 `Discrete_authalic_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>` 
 
 The discrete authalic parameterization method has been introduced by
-Desbrun et al. \cite cgal:dma-ipsm-02. It corresponds to
+Desbrun et al. \cgalCite{cgal:dma-ipsm-02}. It corresponds to
 a weak formulation of an area-preserving method, and in essence
 locally minimizes the area distortion. A one-to-one mapping is
 guaranteed only if the convex combination condition is fulfilled and
@@ -326,7 +326,7 @@ Left: Julius Cesar mask parameterization with Authalic/circular border. Right: J
 `LSCM_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>` 
 
 The Least Squares Conformal Maps (LSCM) parameterization method has
-been introduced by L&eacute;vy et al. \cite cgal:lprm-lscm-02.
+been introduced by L&eacute;vy et al. \cgalCite{cgal:lprm-lscm-02}.
 It corresponds to a conformal method with a free border (at least two
 vertices have to be constrained to obtain a unique solution), which
 allows further lowering of the angle distortion. A one-to-one mapping
@@ -431,7 +431,7 @@ and include a separate package devoted to OpenNL sparse linear solver.
 We provide an interface to several sparse linear solvers, as models
 of the `SparseLinearAlgebraTraits_d` concept:
 
-- An interface to sparse solvers from the `OpenNL` library \cite cgal:l-nmdgp-05 is provided through classes
+- An interface to sparse solvers from the `OpenNL` library \cgalCite{cgal:l-nmdgp-05} is provided through classes
 `OpenNL::DefaultLinearSolverTraits<COEFFTYPE, MATRIX, VECTOR, SOLVER>` and 
 `OpenNL::SymmetricLinearSolverTraits<COEFFTYPE, MATRIX, VECTOR, SOLVER>`. The OpenNL library version shipped with \cgal is a lightweight default sparse linear solver. It does not support large systems, but it is portable and
 supports exact number types.
@@ -710,7 +710,7 @@ You may also wonder why there is not just one `parameterize()` function
 with a default `ParameterizerTraits_3` argument equal to
 `Mean_value_coordinates_parameterizer_3<ParameterizationMesh_3>`.
 The reason is simply that this is not allowed by the C++ standard (see
-\cite cgal:ansi-is14882-98, paragraph 14.1/9).
+\cgalCite{cgal:ansi-is14882-98}, paragraph 14.1/9).
 
 \subsection Surface_mesh_parameterizationNoCommonParameterization No Common Parameterization Algorithm
 
@@ -770,7 +770,7 @@ superclass of all surface parameterization classes.
 Linear fixed border parameterization algorithms are very close. They mainly
 differ by the energy that they try to minimize, i.e.\ by the value of the \f$ w_{ij}\f$
 coefficient of the \f$ A\f$ matrix, for \f$ v_i\f$ and \f$ v_j\f$ neighbor vertices of the mesh
-\cite cgal:fh-survey-05. One consequence is that most of the code of the fixed border methods is factorized in the
+\cgalCite{cgal:fh-survey-05}. One consequence is that most of the code of the fixed border methods is factorized in the
 `Fixed_border_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>` class.
 
 Subclasses:
@@ -813,7 +813,7 @@ and accessors to the extra field arrays.
 This is the choice of the Boost Graph Library with `boost::graph_traits<>`
 and the property maps.
 <LI>Pass to all classes and methods an object that points to the actual mesh and knows
-how to access to its fields. This is the Adaptor concept \cite cgal:ghjv-dpero-95.
+how to access to its fields. This is the Adaptor concept \cgalCite{cgal:ghjv-dpero-95}.
 </UL>
 
 The current design of this package uses the second option, which is simpler.

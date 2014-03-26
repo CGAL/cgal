@@ -63,8 +63,10 @@ public:
                                         CGAL::parameters::no_perturb());
     
     // Verify
-    this->verify(c3t3,domain,criteria);
+    this->verify_c3t3_volume(c3t3, 1772330*0.95, 1772330*1.05);
+    this->verify(c3t3,domain,criteria, Bissection_tag());
   }
+
 };
 
 

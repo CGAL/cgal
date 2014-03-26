@@ -10,7 +10,7 @@ same as a polygon represented by a given sequence of points. Note that the
 traits class for `partition_is_valid_2` may have to satisfy additional 
 requirements if each partition polygon is to be tested for having a 
 particular property; see, for example, the descriptions of the 
-function `is_convex_2` 
+function `is_convex_2()` 
 and the concept `YMonotonePartitionTraits_2` for the additional requirements 
 for testing for convexity and \f$ y\f$-monotonicity, respectively. 
 

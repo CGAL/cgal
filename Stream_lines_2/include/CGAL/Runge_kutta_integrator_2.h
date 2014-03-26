@@ -22,7 +22,6 @@
 #define CGAL_RUNGE_KUTTA_INTEGRATOR_2_H_
 
 #include <CGAL/basic.h>
-#include <CGAL/Cartesian.h>
 #include <CGAL/Euler_integrator_2.h>
 
 namespace CGAL {
@@ -40,7 +39,7 @@ public:
 protected:
   typedef CGAL::Euler_integrator_2<VectorField_2> Euler_integrator_2;
 
-  Euler_integrator_2 * euler_integrator_2;
+  Euler_integrator_2 euler_integrator_2;
 
   FT default_integration_step;
 
@@ -63,7 +62,7 @@ public:
     }
   Euler_integrator_2 * get_euler_integrator_2() 
     { 
-      return euler_integrator_2; 
+      return &euler_integrator_2; 
     }
   inline FT distance(const Point_2 & p, const Point_2 & q)
     {
@@ -76,27 +75,21 @@ public:
 template <class VectorField_2>
 Runge_kutta_integrator_2<VectorField_2>::
 Runge_kutta_integrator_2()
-{
-  euler_integrator_2 = new Euler_integrator_2();
-  default_integration_step =
-    euler_integrator_2->get_default_integration_step();
-}
+  : euler_integrator_2(), 
+    default_integration_step(euler_integrator_2.get_default_integration_step())
+{}
 
 template <class VectorField_2>
 Runge_kutta_integrator_2<VectorField_2>::
 Runge_kutta_integrator_2(FT integration_step)
-{
-  euler_integrator_2 = new Euler_integrator_2(integration_step);
-  default_integration_step =
-    euler_integrator_2->get_default_integration_step();
-}
+  : euler_integrator_2(integration_step),
+    default_integration_step(integration_step)
+{}
 
 template <class VectorField_2>
 Runge_kutta_integrator_2<VectorField_2>::
 ~Runge_kutta_integrator_2()
-{
-  delete euler_integrator_2;
-}
+{}
 
 template <class VectorField_2>
 inline
@@ -104,11 +97,11 @@ typename Runge_kutta_integrator_2<VectorField_2>::
 Point_2 Runge_kutta_integrator_2<VectorField_2>::operator()
   (const Point_2 & p, const Vector_field_2& vector_field_2, const FT & integration_step, Vector_2 v, const bool & index) const
 {
-  Point_2 p1 = (*euler_integrator_2)(p, vector_field_2, 0.5*integration_step, v, index);
+  Point_2 p1 = euler_integrator_2(p, vector_field_2, 0.5*integration_step, v, index);
   if(!vector_field_2.is_in_domain(p1))
     return p1;
   v = vector_field_2.get_field(p1).first;
-  Point_2 p2 = (*euler_integrator_2)(p, vector_field_2, integration_step,v, index);
+  Point_2 p2 = euler_integrator_2(p, vector_field_2, integration_step,v, index);
   return p2;
 }
 
@@ -122,7 +115,7 @@ typename Runge_kutta_integrator_2<VectorField_2>::Point_2 Runge_kutta_integrator
   v = vector_field_2.get_field(p).first;
   Runge_kutta_integrator_2<VectorField_2>
     runge_kutta_integrator_2(default_integration_step);
-  return runge_kutta_integrator_2(p, vector_field_2, integration_step, v, index);
+  return this->operator()(p, vector_field_2, integration_step, v, index);
 }
 
 template <class VectorField_2>
@@ -132,8 +125,7 @@ typename Runge_kutta_integrator_2<VectorField_2>::Point_2 Runge_kutta_integrator
 {
   Vector_2 v;
   v = vector_field_2.get_field(p).first;
-  Runge_kutta_integrator_2<VectorField_2> runge_kutta_integrator_2(default_integration_step);
-  return runge_kutta_integrator_2(p, vector_field_2, default_integration_step, v, index);
+  return this->operator()(p, vector_field_2, default_integration_step, v, index);
 }
 
 } //namespace CGAL

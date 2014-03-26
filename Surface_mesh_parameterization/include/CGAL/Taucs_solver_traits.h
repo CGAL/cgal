@@ -24,6 +24,8 @@
 
 #include <CGAL/basic.h> // include basic.h before testing #defines
 
+#ifdef CGAL_USE_TAUCS
+
 // Uncomment the next line to see libraries selected by auto-link
 //#define CGAL_LIB_DIAGNOSTIC
 #include <CGAL/auto_link/TAUCS.h>
@@ -347,5 +349,7 @@ private:
 /// @endcond
 
 } //namespace CGAL
+
+#endif
 
 #endif // CGAL_TAUCS_SOLVER_TRAITS_H

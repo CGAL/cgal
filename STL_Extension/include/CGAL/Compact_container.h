@@ -612,6 +612,7 @@ void Compact_container<T, Allocator>::merge(Self &d)
     set_type(d.first_item, last_item, BLOCK_BOUNDARY);
     last_item = d.last_item;
   }
+  all_items.insert(all_items.end(), d.all_items.begin(), d.all_items.end());
   // Add the sizes.
   size_ += d.size_;
   // Add the capacities.

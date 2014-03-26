@@ -58,7 +58,7 @@ successively assigned to \f$ f\f$ \f$ \}\f$
 \cgalHeading{Implementation}
 
 The implementation of type `Convex_hull_d` is based on
-\cite cms-frric-93 and \cite bms-dgc-94. The details
+\cgalCite{cms-frric-93} and \cgalCite{bms-dgc-94}. The details
 of the implementation can be found in the implementation document
 available at the download site of this package.
 

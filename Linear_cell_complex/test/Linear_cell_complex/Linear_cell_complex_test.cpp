@@ -105,6 +105,7 @@ int main()
 {
   std::cout<<"Linear_cell_complex start test (v1)."<<std::flush;
 
+  trace_display_msg("\ntest_LCC_2<LCC2>");
   typedef CGAL::Linear_cell_complex<2> LCC2;
   if ( !test_LCC_2<LCC2>() )
   {
@@ -112,6 +113,7 @@ int main()
     return EXIT_FAILURE;
   }
   
+  trace_display_msg("test_LCC_3<LCC3>");
   typedef CGAL::Linear_cell_complex<3> LCC3;
   if ( !test_LCC_3<LCC3>() )
   {
@@ -119,6 +121,7 @@ int main()
     return EXIT_FAILURE;
   }
   
+  trace_display_msg("test_LCC_4<LCC4>");
   typedef CGAL::Linear_cell_complex<4> LCC4;
   if ( !test_LCC_4<LCC4>() )
   {
@@ -126,6 +129,7 @@ int main()
     return EXIT_FAILURE;
   }
   
+  trace_display_msg("test_LCC_2<LCC2b>");
   typedef CGAL::Linear_cell_complex<2,2,
                                     CGAL::Linear_cell_complex_traits<2>,
                                     Myitems_2> LCC2b;
@@ -135,6 +139,7 @@ int main()
     return EXIT_FAILURE;
   }
   
+  trace_display_msg("test_LCC_2<LCC2c>");
   typedef CGAL::Linear_cell_complex<2,2,
                                     CGAL::Linear_cell_complex_traits<2>,
                                     Myitems_2c> LCC2c;
@@ -143,6 +148,8 @@ int main()
     std::cout<<" Error during Test_LCC_2<LCC2c>."<<std::endl;
     return EXIT_FAILURE;
   }
+
+  trace_display_msg("test_LCC_3<LCC3b>");
   typedef CGAL::Linear_cell_complex<3,3,
                                     CGAL::Linear_cell_complex_traits<3>,
                                     Myitems_3> LCC3b;
@@ -152,6 +159,7 @@ int main()
     return EXIT_FAILURE;
   }
 
+  trace_display_msg("test_LCC_3<LCC3c>");
   typedef CGAL::Linear_cell_complex<3,3,
                                     CGAL::Linear_cell_complex_traits<3>,
                                     Myitems_3c> LCC3c;
@@ -161,6 +169,7 @@ int main()
     return EXIT_FAILURE;
   }
   
+  trace_display_msg("test_LCC_4<LCC4b>");
   typedef CGAL::Linear_cell_complex<4,4,
                                     CGAL::Linear_cell_complex_traits<4>,
                                     Myitems_4> LCC4b;
@@ -170,6 +179,7 @@ int main()
     return EXIT_FAILURE;
   }
 
+  trace_display_msg("test_LCC_4<LCC4c>");
   typedef CGAL::Linear_cell_complex<4,4,
                                     CGAL::Linear_cell_complex_traits<4>,
                                     Myitems_4c> LCC4c;

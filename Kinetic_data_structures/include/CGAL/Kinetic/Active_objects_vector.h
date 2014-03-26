@@ -297,7 +297,12 @@ CGAL_expensive_assertion_code(if ( storage_[i].second == storage_.back().second)
     do {
       char buf[10000];
       in.getline(buf, 10000);
-      if (!in || buf[0]=='\0' || buf[0]=='#') break;
+      if (!in || buf[0]=='\0' || buf[0]=='#') {
+        if(!in.bad()) {
+          in.clear(in.rdstate() & ~std::ios_base::failbit);
+        }
+        break;
+      }
       std::istringstream iss(buf);
       Data d; 
       iss >> d;

@@ -73,7 +73,7 @@ might still be an option in case your input number type cannot
 \cgalHeading{Implementation}
 
 We implement two algorithms, the LP-algorithm and a 
-heuristic \cite msw-sblp-92. As described in the documentation of 
+heuristic \cgalCite{msw-sblp-92}. As described in the documentation of 
 concept `MinSphereOfSpheresTraits`, each has its advantages and 
 disadvantages: Our implementation of the LP-algorithm has maximal 
 expected running time \f$ O(2^d n)\f$, while the heuristic comes without 

@@ -22,7 +22,6 @@
 #define CGAL_EULER_INTEGRATOR_2_H_
 
 #include <CGAL/basic.h>
-#include <CGAL/Cartesian.h>
 
 namespace CGAL {
 
@@ -69,16 +68,14 @@ public:
 
 template <class Vector_field>
 Euler_integrator_2<Vector_field>::Euler_integrator_2()
-{
-  default_integration_step = 1.0;
-}
+  : default_integration_step(1.0)
+{}
 
 // An additional parameter in the constructor to specify the default integration step
 template <class Vector_field>
 Euler_integrator_2<Vector_field>::Euler_integrator_2(const FT & integration_step)
-{
-  default_integration_step = integration_step;
-}
+  : default_integration_step(integration_step)
+{}
 
 template <class Vector_field>
 inline typename Euler_integrator_2<Vector_field>::Point_2 
@@ -90,10 +87,8 @@ Euler_integrator_2<Vector_field>::operator()
       Vector_2 v_t(v.x()*(-1),v.y()*(-1));
       v = v_t;
     }
-  Vector_2 Euler_step=Vector_2
-    (
-     v.x()*integration_step,
-     v.y()*integration_step);
+  Vector_2 Euler_step(v.x()*integration_step,
+                      v.y()*integration_step);
   return Point_2(p.x() + Euler_step.x(), p.y() + Euler_step.y());
 }
 
@@ -104,8 +99,7 @@ Euler_integrator_2<Vector_field>::operator()
 {
   Vector_2 v;
   v = vector_field_2.get_field(p).first;
-  Euler_integrator_2<Vector_field> euler_integrator(integration_step);
-  return  euler_integrator(p, vector_field_2, integration_step, v, index);
+  return  this->operator()(p, vector_field_2, integration_step, v, index);
 }
 
 template <class Vector_field>
@@ -113,8 +107,7 @@ inline typename Euler_integrator_2<Vector_field>::Point_2
 Euler_integrator_2<Vector_field>::operator()
   (const Point_2 & p, const Vector_field_2 & vector_field_2, const bool & index) const
 {
-  Euler_integrator_2<Vector_field> euler_integrator(default_integration_step);
-  return euler_integrator(p, vector_field_2, default_integration_step,index);
+  return this->operator()(p, vector_field_2, default_integration_step,index);
 }
 
 } //namespace CGAL

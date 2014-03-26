@@ -185,7 +185,6 @@ namespace CGAL {
         typename SK3_Intersection_traits<SK, typename SK::Line_3, typename SK::Circle_3
                                   >::type> solutions_container;
       typedef std::pair<Circular_arc_point_3, unsigned> Solution;
-      typedef typename SK3_Intersection_traits<SK, typename SK::Circle_3, typename SK::Line_arc_3>::type result_type;
 
       solutions_container solutions;
       SK().intersect_3_object()(l.supporting_line(), c, 
@@ -254,7 +253,7 @@ namespace CGAL {
 
       if(!o)
         return res;
-      if(sol = CGAL::internal::intersect_get<Point_3>(o)) {
+      if((sol = CGAL::internal::intersect_get<Point_3>(o))) {
         if(!SK().has_on_3_object()(l,*sol)) return res;
       Circular_arc_point_3 point = sol;
         *res++ = result_type(std::make_pair(point,1u));

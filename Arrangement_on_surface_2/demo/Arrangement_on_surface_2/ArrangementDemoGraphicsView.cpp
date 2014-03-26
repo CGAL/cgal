@@ -76,7 +76,7 @@ QColor ArrangementDemoGraphicsView::getBackgroundColor( ) const
 }
 
 void ArrangementDemoGraphicsView::drawForeground( QPainter* painter,
-                                                  const QRectF& rect )
+                                                  const QRectF& /* rect */)
 {
   QRectF viewportRect = this->getViewportRect( );
   if ( this->showGrid )

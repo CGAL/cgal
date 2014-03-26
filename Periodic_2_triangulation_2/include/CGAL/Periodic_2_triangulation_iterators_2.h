@@ -1,5 +1,4 @@
-// Copyright (c) 1997-2000 INRIA Sophia-Antipolis (France).
-// Copyright (c) 2013 Nico Kruithof (The Netherlands)
+// Copyright (c) 1997-2013 INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -23,6 +22,7 @@
 
 #include <CGAL/triangulation_assertions.h>
 #include <CGAL/iterator.h>
+#include <CGAL/array.h>
 
 namespace CGAL
 {

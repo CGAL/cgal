@@ -21,6 +21,7 @@
 #ifndef CGAL_IS_EXTENDED_KERNEL_H
 #define CGAL_IS_EXTENDED_KERNEL_H
 
+#include <CGAL/tags.h>
 
 namespace CGAL {
 

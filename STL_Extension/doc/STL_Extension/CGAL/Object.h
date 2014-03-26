@@ -15,7 +15,7 @@ to make copies and assignments, so that you can put them in lists
 or arrays. Note that `Object` is NOT a common base class for the 
 elementary classes. Therefore, there is no 
 automatic conversion from these classes to `Object`. Rather 
-this is done with the global function `make_object`. This 
+this is done with the global function `make_object()`. This 
 encapsulation mechanism requires the use of `assign` or 
 `object_cast` to use the functionality of the encapsulated class. 
 
@@ -96,7 +96,7 @@ class Object {
 public:
 
 /// \name Creation 
-/// Objects of type `Object` are normally created using the global function `make_object`. 
+/// Objects of type `Object` are normally created using the global function `make_object()`. 
 /// @{ 
 /*!
 introduces an empty object. 

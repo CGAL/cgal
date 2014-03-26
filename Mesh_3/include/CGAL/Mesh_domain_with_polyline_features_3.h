@@ -440,13 +440,6 @@ public:
   
   typedef CGAL::Tag_true           Has_features;
 
-  /// Constructors
-  /// Call the base class constructor
-  Mesh_domain_with_polyline_features_3()
-    : Base()
-    , current_corner_index_(1)
-    , current_curve_index_(1)
-    , curves_aabb_tree_is_built(false) {}
   
 #ifndef CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
   template <typename ... T>
@@ -456,6 +449,14 @@ public:
     , current_curve_index_(1)
     , curves_aabb_tree_is_built(false) {}
 #else
+  /// Constructors
+  /// Call the base class constructor
+  Mesh_domain_with_polyline_features_3()
+    : Base()
+    , current_corner_index_(1)
+    , current_curve_index_(1)
+    , curves_aabb_tree_is_built(false) {}
+
   template <typename T1>
   Mesh_domain_with_polyline_features_3(const T1& o1)
     : Base(o1)

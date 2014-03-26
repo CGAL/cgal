@@ -96,7 +96,7 @@ class ArrangementGraphicsItem : public ArrangementGraphicsItemBase
   typedef typename Arrangement::Face_iterator           Face_iterator;
   typedef typename Arrangement::Hole_iterator           Holes_iterator;
   typedef typename Arrangement::Ccb_halfedge_circulator Ccb_halfedge_circulator;
- 
+
   typedef typename ArrTraitsAdaptor< Traits >::Kernel   Kernel;
   typedef typename Traits::X_monotone_curve_2           X_monotone_curve_2;
   typedef typename Kernel::Point_2                      Kernel_point_2;
@@ -112,7 +112,7 @@ public:
 
   /*! Destructor (virtual) */
   ~ArrangementGraphicsItem() {}
-  
+
 public:
   void modelChanged( );
   QRectF boundingRect( ) const;
@@ -313,9 +313,30 @@ protected:
   {
     if (!f->is_unbounded())  // f is not the unbounded face
     {
+      typedef typename CGAL::Arr_polyline_traits_2<Kernel_> Arr_poly_traits;
+      typedef typename Arr_poly_traits::Compare_endpoints_xy_2 Comp_end_pts_2;
+      typedef typename Arr_poly_traits::Construct_min_vertex_2 Poly_const_min_v;
+      typedef typename Arr_poly_traits::Construct_max_vertex_2 Poly_const_max_v;
+
+      // Obtain a polyline traits class and construct the needed functors
+      Arr_poly_traits poly_tr;
+      Comp_end_pts_2 comp_end_pts = poly_tr.compare_endpoints_xy_2_object();
+      Poly_const_min_v poly_const_min_v=poly_tr.construct_min_vertex_2_object();
+      Poly_const_max_v poly_const_max_v=poly_tr.construct_max_vertex_2_object();
+
+      // Construct needed functors from the segment traits
+      typedef typename Arr_poly_traits::Segment_traits_2       Segment_traits;
+      typedef typename Segment_traits::Construct_min_vertex_2  Seg_const_min_v;
+      typedef typename Segment_traits::Construct_max_vertex_2  Seg_const_max_v;
+      Seg_const_min_v construct_min_v = poly_tr.segment_traits_2()->
+        construct_min_vertex_2_object();
+      Seg_const_max_v construct_max_v = poly_tr.segment_traits_2()->
+        construct_max_vertex_2_object();
+
+      // Iterator of the segments of an x-monotone polyline
+      typename X_monotone_curve_2::Segment_const_iterator seg_it;
+
       QVector< QPointF > pts; // holds the points of the polygon
-      typename X_monotone_curve_2::const_iterator           pt_itr;
-      typename X_monotone_curve_2::const_reverse_iterator   pt_rev_itr;
       X_monotone_curve_2 cv;
 
       /* running with around the outer of the face and generate from it
@@ -324,29 +345,49 @@ protected:
       Ccb_halfedge_circulator cc = f->outer_ccb();
       do {
         cv = cc->curve();
-        bool curve_has_same_direction =
-          ( *(cc->curve().begin()) == cc->source()->point() );
-        if ( curve_has_same_direction )
-        {
-          for( pt_itr = cv.begin() , ++pt_itr ; pt_itr != cv.end(); ++pt_itr)
+
+        // Determine the direction of cv (left-to-right or right-to-left)
+        Comparison_result dir = comp_end_pts(cv);
+
+        for (seg_it = cv.begin_segments();
+             seg_it != cv.end_segments() ; ++seg_it)
           {
-            double x = CGAL::to_double((*pt_itr).x());
-            double y = CGAL::to_double((*pt_itr).y());
+            if (dir == SMALLER)
+              {
+                // cv is directed from left-to-right
+                // Adding the left-min vertex of the current segment
+                double x = CGAL::to_double((construct_min_v(*seg_it)).x());
+                double y = CGAL::to_double((construct_min_v(*seg_it)).y());
+                QPointF coord_source(x , y);
+                pts.push_back(coord_source );
+              }
+            else
+              {
+                // cv is directed from right-to-left
+                // Adding the right-max vertex of the current segment
+                double x = CGAL::to_double((construct_max_v(*seg_it)).x());
+                double y = CGAL::to_double((construct_max_v(*seg_it)).y());
+                QPointF coord_source(x , y);
+                pts.push_back(coord_source );
+              }
+          }
+
+        if (dir == SMALLER)
+          {
+            // Add the right-most point of cv
+            double x = CGAL::to_double((poly_const_max_v(cv)).x());
+            double y = CGAL::to_double((poly_const_max_v(cv)).y());
             QPointF coord_source(x , y);
             pts.push_back(coord_source );
           }
-        }
         else
-        {
-          for (pt_rev_itr = cv.rbegin() , ++pt_rev_itr; pt_rev_itr != cv.rend();
-               ++pt_rev_itr)
           {
-            double x = CGAL::to_double((*pt_rev_itr).x());
-            double y = CGAL::to_double((*pt_rev_itr).y());
+            // Add the left-most point of cv
+            double x = CGAL::to_double((poly_const_min_v(cv)).x());
+            double y = CGAL::to_double((poly_const_min_v(cv)).y());
             QPointF coord_source(x , y);
             pts.push_back(coord_source );
           }
-        }
         //created from the outer boundary of the face
       } while (++cc != f->outer_ccb());
 
@@ -387,7 +428,7 @@ protected:
        * polygon
        */
       Ccb_halfedge_circulator cc=f->outer_ccb();
-      do 
+      do
       {
         if (this->antenna(cc))
           continue;
@@ -424,9 +465,9 @@ protected:
           pts.push_back(coord_source );
 
           const int DRAW_FACTOR = 5;
-          if (is_source_left) 
+          if (is_source_left)
           {
-            for (x = x_min + DRAW_FACTOR; x < x_max; x+=DRAW_FACTOR) 
+            for (x = x_min + DRAW_FACTOR; x < x_max; x+=DRAW_FACTOR)
             {
               //= COORD_SCALE)
               curr_x = this->toScene( x );
@@ -443,9 +484,9 @@ protected:
               pts.push_back( curr );
             }// for
           }
-          else 
+          else
           {
-            for (x = x_max; x > x_min; x-=DRAW_FACTOR) 
+            for (x = x_max; x > x_min; x-=DRAW_FACTOR)
             {
               curr_x = this->toScene( x );
               Alg_kernel   ker;
@@ -512,7 +553,7 @@ protected:
     {
       if ( this->antenna( cc ) )
         continue;
-            
+
       if ( isFirstArc )
       {
         isFirstArc = false;
@@ -567,7 +608,7 @@ protected:
         path.lineTo( target );
       }
     } while (++cc != f->outer_ccb());
-        
+
     if ( f->color().isValid() )
     {
       QPen savePen = painter->pen();
@@ -641,7 +682,7 @@ protected:
   {
     QPointF a = path.currentPosition( );
     QPointF b( to_double(c.source().x()), to_double(c.source().y()) );
-    QPointF d( to_double(c.target().x()), to_double(c.target().y()) );
+    // QPointF d( to_double(c.target().x()), to_double(c.target().y()) );
     bool res = (QLineF( a, b ).length() < 1e-2);
 
     return res;
@@ -672,7 +713,7 @@ protected:
 
       bool isFirstArc = true;
       Ccb_halfedge_circulator cc=f->outer_ccb();
-      do 
+      do
       {
         if (this->antenna(cc))
           continue;
@@ -736,7 +777,7 @@ protected:
         source = QPointF( to_double(c.source().x()), to_double(c.source().y()));
         target = QPointF( to_double(c.target().x()), to_double(c.target().y()));
         double asource = std::atan2( -to_double(source.y() - center.y()),
-                                     to_double(source.x() - center.x())); 
+                                     to_double(source.x() - center.x()));
         double atarget = std::atan2( -to_double(target.y() - center.y()),
                                      to_double(target.x() - center.x()));
 #endif
@@ -775,8 +816,8 @@ protected:
         path.arcTo( convert(circ.bbox()), asource * 180/CGAL_PI,
                     aspan *180/CGAL_PI );
 #if 0
-        qp->drawArc(convert(circ.bbox()), 
-                    (int)(asource * coeff), 
+        qp->drawArc(convert(circ.bbox()),
+                    (int)(asource * coeff),
                     (int)(aspan * coeff));
 #endif
       } while (++cc != f->outer_ccb());
@@ -843,7 +884,7 @@ protected:
   }
 
   template < typename Arr_, typename ArrTraits >
-  QRectF 
+  QRectF
   ArrangementGraphicsItem< Arr_, ArrTraits >::
   boundingRect( ) const
   {
@@ -852,7 +893,7 @@ protected:
   }
 
   template < typename Arr_, typename ArrTraits >
-  void 
+  void
   ArrangementGraphicsItem< Arr_, ArrTraits >::
   paint(QPainter* painter,
         const QStyleOptionGraphicsItem* /* option */,
@@ -958,9 +999,9 @@ protected:
   {
     painter->setPen( this->verticesPen );
     QRectF clipRect = this->boundingRect( );
-    if ( std::isinf(clipRect.left( )) || 
-         std::isinf(clipRect.right( )) || 
-         std::isinf(clipRect.top( )) || 
+    if ( std::isinf(clipRect.left( )) ||
+         std::isinf(clipRect.right( )) ||
+         std::isinf(clipRect.top( )) ||
          std::isinf(clipRect.bottom( )) )
     {
       clipRect = this->viewportRect( );
@@ -1089,7 +1130,7 @@ protected:
     {
       //std::pair< double, double > approx =
       //  this->arr->vertices_begin( )->point( ).to_double( );
-      //this->bb = CGAL::Bbox_2( approx.first, approx.second, 
+      //this->bb = CGAL::Bbox_2( approx.first, approx.second,
       //                         approx.first, approx.second );
       this->bb = CGAL::Bbox_2( 0, 0, 0, 0 );
       this->bb_initialized = true;

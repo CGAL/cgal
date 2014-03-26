@@ -5,7 +5,7 @@ namespace CGAL {
 
 The class `Rectangular_p_center_default_traits_2` defines types and operations 
 needed to compute rectilinear \f$ p\f$-centers of a planar point set 
-using the function `rectangular_p_center_2`. 
+using the function `rectangular_p_center_2()`. 
 
 
 \tparam K must be a model for `Kernel`. 
@@ -196,7 +196,7 @@ construct_iso_rectangle_2_above_right_point_2_object() const;
 /*!
 \ingroup PkgBoundingVolumes
 
-The function `rectangular_p_center_2` computes rectilinear 
+Computes rectilinear 
 \f$ p\f$-centers of a planar point set, i.e.\ a set of \f$ p\f$ points such 
 that the maximum minimal \f$ L_{\infty}\f$-distance between both sets is 
 minimized. 
@@ -248,9 +248,9 @@ The runtime is linear for \f$ p \in \{2,\,3\}\f$ and
 \f$ \mathcal{O}(n \cdot \log n)\f$ for \f$ p = 4\f$ where \f$ n\f$ is the number of 
 input points. These runtimes are worst case optimal. The \f$ 3\f$-center 
 algorithm uses a prune-and-search technique described in 
-\cite cgal:h-slacr-99. The \f$ 4\f$-center implementation uses sorted matrix 
-search \cite fj-fkppc-83, \cite fj-gsrsm-84 and fast algorithms for 
-piercing rectangles \cite sw-rpppp-96. 
+\cgalCite{cgal:h-slacr-99}. The \f$ 4\f$-center implementation uses sorted matrix 
+search \cgalCite{fj-fkppc-83}, \cgalCite{fj-gsrsm-84} and fast algorithms for 
+piercing rectangles \cgalCite{sw-rpppp-96}. 
 
 \cgalHeading{Example}
 

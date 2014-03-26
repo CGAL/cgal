@@ -77,4 +77,17 @@ together with Open Source software free of charge. Using %CGAL in
 other contexts can be done by obtaining a commercial license from
 [GeometryFactory](http://www.geometryfactory.com). For more details
 see the \ref licenseIssues "License" page.
+
+\htmlonly
+<div style="display:none">
+\endhtmlonly
+
+\subpage general_intro
+\subpage packages
+\subpage dev_manual
+
+\htmlonly
+</div>
+\endhtmlonly
+
 */

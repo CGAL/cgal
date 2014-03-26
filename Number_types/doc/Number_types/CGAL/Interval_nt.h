@@ -17,7 +17,7 @@ The purpose of interval arithmetic is to provide an efficient way to bound
 the roundoff errors made by floating point computations. 
 You can choose the behavior of your program depending on these errors. 
 You can find more theoretical information on this topic in 
-\cite cgal:bbp-iayed-01. 
+\cgalCite{cgal:bbp-iayed-01}. 
 
 Interval arithmetic is a large concept and we will only consider here a 
 simple arithmetic based on intervals whose bounds are <I>double</I>s. 

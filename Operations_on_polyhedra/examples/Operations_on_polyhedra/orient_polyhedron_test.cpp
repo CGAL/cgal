@@ -1,5 +1,5 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Orient_polyhedron_3.h>
+#include <CGAL/orient_polygon_soup.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
 
@@ -57,7 +57,7 @@ int main() {
   }
 
   bool oriented = CGAL::orient_polygon_soup(points, polygons);
-  std::cerr << (oriented ? "Oriented." : "Not oriented.") << std::endl;
+  std::cerr << (oriented ? "Oriented." : "Not orientabled.") << std::endl;
   
   if(oriented) {
     Polyhedron poly;

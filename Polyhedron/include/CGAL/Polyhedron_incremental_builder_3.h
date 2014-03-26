@@ -456,6 +456,10 @@ protected:
                         return Halfedge_handle();
                     }
                     decorator.set_face( e->next(), current_face);
+                    // The following line prevents e->next() to be picked
+                    // by get_vertex_to_edge_map(v) in an upcoming call
+                    // of lookup_halfedge(v, *)
+                    set_vertex_to_edge_map( v, e->next()->next()->opposite());
                     return e;
                 }
                 e = e->next()->opposite();
@@ -742,14 +746,14 @@ test_facet_indices( std::vector< std::size_t> indices) {
     typedef typename HDS::Supports_halfedge_vertex Supports_halfedge_vertex;
     Assert_compile_time_tag( Supports_halfedge_vertex(), Tag_true());
     // tests if the facet described by the vertex indices can be inserted 
-    // without creating a a non-manifold (and therefore invalid) situation.
+    // without creating a non-manifold (and therefore invalid) situation.
     // indices are cyclically closed once.
     std::size_t n = indices.size() - 1;
     // Test if a vertex is not twice in the indices
     for ( std::size_t i = 0; i < n; ++i) {
         CGAL_precondition( indices[i] < new_vertices);
         // check if vertex indices[i] is already in the sequence [0..i-1]
-        for ( std::size_t k = 0; k+1 < i; ++k) {
+        for ( std::size_t k = 0; k < i; ++k) {
             if ( indices[k] == indices[i])
                 return false;
         }

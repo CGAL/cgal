@@ -1,5 +1,4 @@
-// Copyright (c) 1997-2000 INRIA Sophia-Antipolis (France).
-// Copyright (c) 2013 Nico Kruithof (The Netherlands)
+// Copyright (c) 1997-2013 INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -24,6 +23,8 @@
 #define CGAL_PERIODIC_2_TRIANGULATION_HIERARCHY_2_H
 
 #include <CGAL/basic.h>
+#include <CGAL/array.h>
+#include <CGAL/spatial_sort.h>
 #include <CGAL/Triangulation_hierarchy_vertex_base_2.h>
 #include <map>
 

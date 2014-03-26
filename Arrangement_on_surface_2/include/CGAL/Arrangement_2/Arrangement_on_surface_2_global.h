@@ -43,6 +43,8 @@
 #include <CGAL/assertions.h>
 #include <CGAL/use.h>
 
+#include <CGAL/IO/Arr_iostream.h>
+
 #include <boost/type_traits.hpp>
 
 #include <list>
@@ -606,9 +608,9 @@ void insert_curves (Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
 template <class GeomTraits, class TopTraits, class PointLocation>
 typename Arrangement_on_surface_2<GeomTraits, TopTraits>::Halfedge_handle
 insert_non_intersecting_curve
-    (Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
-     const typename GeomTraits::X_monotone_curve_2& c,
-     const PointLocation& pl)
+(Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
+ const typename GeomTraits::X_monotone_curve_2& c,
+ const PointLocation& pl)
 {
   typedef Arrangement_on_surface_2<GeomTraits, TopTraits>  Arr;
 
@@ -618,9 +620,9 @@ insert_non_intersecting_curve
   typedef typename Arr::Halfedge_const_handle            Halfedge_const_handle;
   CGAL_USE_TYPE(Halfedge_const_handle);
 
-  const Traits_adaptor_2 * geom_traits =
+  const Traits_adaptor_2* geom_traits =
     static_cast<const Traits_adaptor_2*> (arr.geometry_traits());
-  Arr_accessor<Arr>                 arr_access (arr);
+  Arr_accessor<Arr> arr_access(arr);
 
   // Check whether the left end has boundary conditions, and locate it in the
   // arrangement accordingly.
@@ -628,34 +630,32 @@ insert_non_intersecting_curve
     geom_traits->parameter_space_in_x_2_object()(c, ARR_MIN_END);
   const Arr_parameter_space  by1 =
     geom_traits->parameter_space_in_y_2_object()(c, ARR_MIN_END);
-  CGAL::Object                 obj1;
-  const Vertex_const_handle   *vh1 = NULL;
+  CGAL::Object obj1;
+  const Vertex_const_handle* vh1 = NULL;
 
-  if (bx1 == ARR_INTERIOR && by1 == ARR_INTERIOR)
-  {
+  if ((bx1 == ARR_INTERIOR) && (by1 == ARR_INTERIOR)) {
     // We have a normal left endpoint with no boundary conditions:
     // use a point-location query.
-    obj1 = pl.locate (geom_traits->construct_min_vertex_2_object() (c));
+    obj1 = pl.locate(geom_traits->construct_min_vertex_2_object()(c));
 
     // The endpoint must not lie on an existing edge, but may coincide with
     // and existing vertex vh1.
     CGAL_precondition_msg
-      (object_cast<Halfedge_const_handle> (&obj1) == NULL,
+      (object_cast<Halfedge_const_handle>(&obj1) == NULL,
        "The curve must not intersect an existing edge.");
 
-    vh1 = object_cast<Vertex_const_handle> (&obj1);
+    vh1 = object_cast<Vertex_const_handle>(&obj1);
   }
-  else
-  {
+  else {
     // We have a left end with boundary conditions. Use the accessor to locate
     // the feature that contains it.
-    obj1 = arr_access.locate_curve_end (c, ARR_MIN_END, bx1, by1);
+    obj1 = arr_access.locate_curve_end(c, ARR_MIN_END, bx1, by1);
 
     CGAL_precondition_msg
-      (object_cast<Halfedge_const_handle> (&obj1) == NULL,
+      (object_cast<Halfedge_const_handle>(&obj1) == NULL,
        "The curve must not overlap an existing edge.");
 
-    vh1 = object_cast<Vertex_const_handle> (&obj1);
+    vh1 = object_cast<Vertex_const_handle>(&obj1);
   }
 
   // Check whether the right end has boundary conditions, and locate it in the
@@ -664,34 +664,36 @@ insert_non_intersecting_curve
     geom_traits->parameter_space_in_x_2_object()(c, ARR_MAX_END);
   const Arr_parameter_space  by2 =
     geom_traits->parameter_space_in_y_2_object()(c, ARR_MAX_END);
-  CGAL::Object                 obj2;
-  const Vertex_const_handle   *vh2 = NULL;
+  CGAL::Object obj2;
+  const Vertex_const_handle* vh2 = NULL;
 
-  if (bx2 == ARR_INTERIOR && by2 == ARR_INTERIOR)
-  {
+  if ((bx2 == ARR_INTERIOR) && (by2 == ARR_INTERIOR)) {
     // We have a normal right endpoint with no boundary conditions:
     // use a point-location query.
-    obj2 = pl.locate (geom_traits->construct_max_vertex_2_object() (c));
+    obj2 = pl.locate(geom_traits->construct_max_vertex_2_object()(c));
 
     // The endpoint must not lie on an existing edge, but may coincide with
     // and existing vertex vh2.
     CGAL_precondition_msg
-      (object_cast<Halfedge_const_handle> (&obj2) == NULL,
+      (object_cast<Halfedge_const_handle>(&obj2) == NULL,
        "The curve must not intersect an existing edge.");
 
-    vh2 = object_cast<Vertex_const_handle> (&obj2);
+    vh2 = object_cast<Vertex_const_handle>(&obj2);
   }
-  else
-  {
+  else {
     // We have a right end with boundary conditions. Use the accessor to locate
     // the feature that contains it.
-    obj2 = arr_access.locate_curve_end (c, ARR_MAX_END, bx2, by2);
+    // std::cout << "before locate_curve_end()"
+    //           << ", bx2: " << bx2
+    //           << ", by2: " << by2
+    //           << std::endl;
+    obj2 = arr_access.locate_curve_end(c, ARR_MAX_END, bx2, by2);
 
     CGAL_precondition_msg
-      (object_cast<Halfedge_const_handle> (&obj2) == NULL,
+      (object_cast<Halfedge_const_handle>(&obj2) == NULL,
        "The curve must not overlap an existing edge.");
 
-    vh2 = object_cast<Vertex_const_handle> (&obj2);
+    vh2 = object_cast<Vertex_const_handle>(&obj2);
   }
 
   // Notify the arrangement observers that a global operation is about to 
@@ -701,58 +703,56 @@ insert_non_intersecting_curve
   // Check whether the located features containing the curve endpoints
   // are vertices or faces, and use the proper specialized insertion function
   // accordingly.
-  typename Arr::Halfedge_handle   new_he;
+  typename Arr::Halfedge_handle new_he;
 
-  if (vh1 != NULL)
-  {
-    if (vh2 != NULL)
-    {
+  if (vh1 != NULL) {
+    if (vh2 != NULL) {
       // Both endpoints are associated with a existing vertices.
       // In this case insert_at_vertices() already returns a halfedge
       // directed from left to right.
-      new_he = arr.insert_at_vertices (c,
-                                       arr.non_const_handle (*vh1),
-                                       arr.non_const_handle (*vh2));
+      new_he = arr.insert_at_vertices(c,
+                                      arr.non_const_handle(*vh1),
+                                      arr.non_const_handle(*vh2));
     }
-    else
-    {
+    else {
       // Only the left endpoint is associated with an existing vertex.
       // In this case insert_from_left_vertex() returns a halfedge directed
       // to the new vertex it creates, so it is already directed from left to
       // right.
-      new_he = arr.insert_from_left_vertex (c, arr.non_const_handle (*vh1));
+      new_he = arr.insert_from_left_vertex(c, arr.non_const_handle(*vh1));
     }
   }
-  else
-  {
-    if (vh2 != NULL)
-    {
+  else {
+    if (vh2 != NULL) {
       // Only the right endpoint is associated with an existing vertex.
       // In this case insert_from_left_vertex() returns a halfedge directed
       // to the new vertex it creates, so it is directed from right to left
       // and we take its twin halfedge instead.
-      new_he = arr.insert_from_right_vertex (c, arr.non_const_handle (*vh2));
+      new_he = arr.insert_from_right_vertex(c, arr.non_const_handle(*vh2));
       new_he = new_he->twin();
     }
-    else
-    {
+    else {
       // Both endpoints are not associated with existing vertices, so
       // we must insert the curve in the interior of a face.
       // In this case insert_in_face_interior() already returns a halfedge
       // directed from left to right.
-      const typename Arr::Face_const_handle  *fh1;
-      const typename Arr::Face_const_handle  *fh2;
+      const typename Arr::Face_const_handle* fh1 =
+        object_cast<typename Arr::Face_const_handle>(&obj1);
+      const typename Arr::Face_const_handle* fh2 =
+        object_cast<typename Arr::Face_const_handle>(&obj2);
 
-      fh1 = object_cast<typename Arr::Face_const_handle> (&obj1);
-      fh2 = object_cast<typename Arr::Face_const_handle> (&obj2);
-
+      // std::cout << arr << std::endl;
+      // std::cout << "(*fh1)->number_of_outer_ccbs(): "
+      //           << (*fh1)->number_of_outer_ccbs() << std::endl;
+      // std::cout << "(*fh2)->number_of_outer_ccbs(): "
+      //           << (*fh2)->number_of_outer_ccbs() << std::endl;
+      
       CGAL_assertion_msg 
-        (fh1 != NULL && fh2 != NULL && *fh1 == *fh2,
+        ((fh1 != NULL) && (fh2 != NULL) && ((*fh1) == (*fh2)),
          "The curve intersects the interior of existing edges.");
 
-      if (fh1 != NULL && fh2 != NULL && *fh1 == *fh2)
-      {
-        new_he = arr.insert_in_face_interior (c, arr.non_const_handle (*fh1));
+      if ((fh1 != NULL) && (fh2 != NULL) && (*fh1 == *fh2)) {
+        new_he = arr.insert_in_face_interior(c, arr.non_const_handle (*fh1));
       }
     }
   }
@@ -762,7 +762,7 @@ insert_non_intersecting_curve
   arr_access.notify_after_global_change();
 
   // Return the resulting halfedge from the insertion operation.
-  return (new_he);
+  return new_he;
 }
 
 //-----------------------------------------------------------------------------

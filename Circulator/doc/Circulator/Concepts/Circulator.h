@@ -33,7 +33,7 @@ circulators are a contradiction, since any circulator is supposed to
 return once to itself. Output circulators are not supported since they
 would be indistinguishable from output iterators.}. Most requirements
 for circulators are equal to those for iterators. We present the
-changes, please refer to [\cite cgal:ms-strg-96, chapter 18 or \cite cgal:ansi-is14882-98] 
+changes, please refer to [\cgalCite{cgal:ms-strg-96}, chapter 18 or \cgalCite{cgal:ansi-is14882-98}] 
 for the iterator requirements.
 
 <B>Past-the-end value:</B> There is no past-the-end value for circulators. 

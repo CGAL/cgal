@@ -19,14 +19,13 @@
 #ifndef CGAL_MONGE_VIA_JET_FITTING_H_
 #define CGAL_MONGE_VIA_JET_FITTING_H_
 
-#include <CGAL/Cartesian.h>
+#include <CGAL/Simple_cartesian.h>
 #include <CGAL/circulator.h>
 #include <CGAL/Linear_algebraCd.h>
 #include <CGAL/eigen.h>
 #include <CGAL/Cartesian_converter.h>
 #include <math.h>
 #include <utility>
-
 #ifdef CGAL_EIGEN3_ENABLED
 #include <CGAL/Eigen_svd.h>
 #else
@@ -46,10 +45,10 @@ unsigned int fact(unsigned int n){
 
 ////////////////////// CLASS Monge_via_jet_fitting ////////////////////////
 #ifdef CGAL_EIGEN3_ENABLED
-template < class DataKernel, class LocalKernel = Cartesian<double>, class SvdTraits = Eigen_svd >
+template < class DataKernel, class LocalKernel = Simple_cartesian<double>, class SvdTraits = Eigen_svd >
 #else
 #ifdef CGAL_LAPACK_ENABLED
-template < class DataKernel, class LocalKernel = Cartesian<double>, class SvdTraits = Lapack_svd>  
+template < class DataKernel, class LocalKernel = Simple_cartesian<double>, class SvdTraits = Lapack_svd>  
 #else
 template < class DataKernel, class LocalKernel, class SvdTraits >  
 #endif

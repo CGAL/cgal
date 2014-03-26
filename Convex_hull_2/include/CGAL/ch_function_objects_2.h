@@ -21,6 +21,8 @@
 #ifndef CGAL_CH_FUNCTION_OBJECTS_2_H
 #define CGAL_CH_FUNCTION_OBJECTS_2_H
 
+#include <CGAL/enum.h>
+
 namespace CGAL {
 
 namespace internal {

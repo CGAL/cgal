@@ -10,7 +10,7 @@ Implementation note: To simplify the implementation, `BorderParameterizer_3` mod
 Design Pattern 
 -------------- 
 
-`BorderParameterizer_3` models are Strategies \cite cgal:ghjv-dpero-95 : they implement a strategy of border parameterization for models of `ParameterizationMesh_3`. 
+`BorderParameterizer_3` models are Strategies \cgalCite{cgal:ghjv-dpero-95} : they implement a strategy of border parameterization for models of `ParameterizationMesh_3`. 
 
 Creation 
 -------------- 

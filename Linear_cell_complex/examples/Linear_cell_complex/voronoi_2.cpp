@@ -45,10 +45,10 @@ void display_voronoi(LCC_2& alcc, Dart_handle adart)
          it=alcc.darts_of_cell<2>(adart).begin(),
          itend=alcc.darts_of_cell<2>(adart).end(); it!=itend; ++it)
   {
-    if ( !alcc.is_marked(it->beta(2), mark_toremove) )
+    if ( !alcc.is_marked(alcc.beta(it,2), mark_toremove) )
     {
-      CGAL::mark_cell<LCC_2,2>(alcc, it->beta(2), mark_toremove);
-      toremove.push(it->beta(2));
+      CGAL::mark_cell<LCC_2,2>(alcc, alcc.beta(it,2), mark_toremove);
+      toremove.push(alcc.beta(it,2));
     }    
   }
   

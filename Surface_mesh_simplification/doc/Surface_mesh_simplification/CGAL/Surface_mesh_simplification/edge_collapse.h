@@ -4,15 +4,15 @@ namespace Surface_mesh_simplification {
 /*!
 \ingroup PkgSurfaceMeshSimplification
 
-Simplifies `surface` in-place by collapsing edges, and returns
+Simplifies `surface_mesh` in-place by collapsing edges, and returns
 the number of edges effectively removed.
 
 The function `Surface_mesh_simplification::edge_collapse` simplifies in-place a triangulated surface mesh by iteratively collapsing edges. 
 
 \cgalHeading{Non-Named Parameters}
 
-`surface` is the surface to simplify. 
-It must be a model of the `EdgeCollapsableMesh` concept. 
+`surface_mesh` is the surface mesh to simplify. 
+It must be a model of the `EdgeCollapsableSurfaceMesh` concept. 
 
 `should_stop` is the stop-condition policy. 
 It must be a model of the `StopPredicate` concept. 
@@ -43,56 +43,70 @@ function designates which formal argument it is.
 
 \cgalHeading{vertex_index_map(VertexIndexMap vpm)}
 
-Maps each vertex in the surface into an unsigned integer number 
-in the range `[0,num_vertices(surface))`. 
+Maps each vertex in the surface mesh into an unsigned integer number 
+in the range `[0,num_vertices(surface_mesh))`. 
 
 `VertexIndexMap` must be a model of
 `ReadablePropertyMap` 
 whose `key_type` is 
-`boost::graph_traits<EdgeCollapsableMesh const>::%vertex_descriptor` 
+`boost::graph_traits<EdgeCollapsableSurfaceMesh const>::%vertex_descriptor` 
 and whose `value_type` is 
-`boost::graph_traits<EdgeCollapsableMesh>::%size_type`, 
+`boost::graph_traits<EdgeCollapsableSurfaceMesh>::%size_type`, 
 
-<B>%Default</B>: the property map obtained by calling `get(vertex_index,surface)`, 
-which requires the surface vertices to have an `id()` member properly initialized to the 
+<B>%Default</B>: the property map obtained by calling `get(vertex_index,surface_mesh)`, 
+which requires the surface mesh vertices to have an `id()` member properly initialized to the 
 required value. 
 
 If the vertices don't have such an `id()`, you must pass some property map explicitly. 
 An external property map can be easily obtained by calling 
-`get(vertex_external_index,surface)`. This constructs on the fly, and returns, 
+`get(vertex_external_index,surface_mesh)`. This constructs on the fly, and returns, 
 a property map which non-intrusively associates a proper id with each vertex. 
 
 \cgalHeading{edge_index_map(EdgeIndexMap eim)}
 
-Maps each <I>directed</I> edge in the surface into an unsigned integer number 
-in the range `[0,num_edges(surface))`. 
+Maps each <I>directed</I> edge in the surface mesh into an unsigned integer number 
+in the range `[0,num_edges(surface_mesh))`. 
 
 `EdgeIndexMap` must be a model of
 `ReadablePropertyMap` whose `key_type` is 
-`boost::graph_traits<EdgeCollapsableMesh const>::%edge_descriptor` 
+`boost::graph_traits<EdgeCollapsableSurfaceMesh const>::%edge_descriptor` 
 and whose `value_type` is 
-`boost::graph_traits<EdgeCollapsableMesh>::%size_type` 
+`boost::graph_traits<EdgeCollapsableSurfaceMesh>::%size_type` 
 
-<B>%Default</B>: the property map obtained by calling `get(edge_index,surface)`, 
-which requires the surface edges to have an `id()` member properly initialized to the 
+<B>%Default</B>: the property map obtained by calling `get(edge_index,surface_mesh)`, 
+which requires the surface mesh edges to have an `id()` member properly initialized to the 
 require value. 
 
 If the edges don't have such an `id()`, you must pass some property map explicitly. 
 An external property map can be easily obtained by calling 
-`get(edge_external_index,surface)`. This constructs on the fly, and returns, 
+`get(edge_external_index,surface_mesh)`. This constructs on the fly, and returns, 
 a property map which non-intrusively associates a proper id with each edge. 
 
 \cgalHeading{edge_is_border_map(EdgeIsBorderMap ebm)}
 
-Maps each <I>directed</I> edge in the surface into a Boolean value 
-which indicates if the edge belongs to the boundary of the surface 
+Maps each <I>directed</I> edge in the surface mesh into a Boolean value 
+which indicates if the edge belongs to the boundary of the surface mesh 
 (facing the outside). 
 `EdgeIsBorderMap` must be a model
 `ReadablePropertyMap` whose `key_type` is 
-`boost::graph_traits<EdgeCollapsableMesh const>::%edge_descriptor` 
+`boost::graph_traits<EdgeCollapsableSurfaceMesh const>::%edge_descriptor` 
 and whose `value_type` is `bool`. 
 
-<B>%Default</B>: the property map obtained by calling `get(edge_is_border,surface)`. 
+<B>%Default</B>: the property map obtained by calling `get(edge_is_border,surface_mesh)`. 
+
+\cgalHeading{edge_is_constrained_map(EdgeIsConstrainedMap ecm)}
+
+Maps each <I>undirected</I> edge in the surface mesh into a Boolean value
+which indicates if the edge is constrained.
+`EdgeIsConstrainedMap` must be a model
+`ReadablePropertyMap` whose `key_type` is
+`boost::graph_traits<EdgeCollapsableSurfaceMesh const>::%edge_descriptor`
+and whose `value_type` is `bool`.
+
+\attention If this parameter is provided, `surface_mesh` must be a model of the
+`EdgeCollapsableSurfaceMeshWithConstraints` concept.
+
+<B>%Default</B>: A property map always returning `false`, that is no edge is constrained.
 
 \cgalHeading{get_cost(GetCost gc)}
 
@@ -101,7 +115,7 @@ The policy which returns the collapse cost for an edge.
 The type of `gc` must be a model of the `GetCost` concept. 
 
 <B>%Default</B>: 
-`CGAL::Surface_mesh_simplification::LindstromTurk_cost<EdgeCollapsableMesh>`. 
+`CGAL::Surface_mesh_simplification::LindstromTurk_cost<EdgeCollapsableSurfaceMesh>`. 
 
 \cgalHeading{get_placement(GetPlacement gp)}
 
@@ -111,7 +125,7 @@ for an edge.
 The type of `gp` must be a model of the `GetPlacement` concept. 
 
 <B>%Default</B>: 
-`CGAL::Surface_mesh_simplification::LindstromTurk_placement<EdgeCollapsableMesh>` 
+`CGAL::Surface_mesh_simplification::LindstromTurk_placement<EdgeCollapsableSurfaceMesh>` 
 
 \cgalHeading{visitor(EdgeCollapseSimplificationVisitor v)}
 
@@ -123,7 +137,7 @@ The type of `v` must be a model of the `EdgeCollapseSimplificationVisitor` conce
 <B>%Default: an implementation-defined dummy visitor</B>. 
 
 If you wish to provide your own visitor, you can derive from: 
-`CGAL::Surface_mesh_simplification::Edge_collapse_visitor_base<EdgeCollapsableMesh>` 
+`CGAL::Surface_mesh_simplification::Edge_collapse_visitor_base<EdgeCollapsableSurfaceMesh>` 
 and override only the callbacks you are interested in. 
 
 All these functions naming parameters are defined in 
@@ -137,7 +151,7 @@ named parameter with `CGAL::`, as shown in the examples in the user manual.
 
 
 The simplification process continues until the `should_stop` policy returns `true` 
-or the surface cannot be simplified any further due to topological constraints. 
+or the surface mesh cannot be simplified any further due to topological constraints. 
 
 `get_cost` and `get_placement` are the policies which control 
 the <I>cost-strategy</I>, that is, the order in which edges are collapsed 
@@ -148,8 +162,8 @@ are called at certain points in the simplification code.
 
 */
 
-template<class EdgeCollapsableMesh,class StopPredicate, class P, class T, class R>
-int edge_collapse ( EdgeCollapsableMesh& surface
+template<class EdgeCollapsableSurfaceMesh,class StopPredicate, class P, class T, class R>
+int edge_collapse ( EdgeCollapsableSurfaceMesh& surface_mesh
 , StopPredicate const& should_stop
 , sms_named_params<P,T,R> const& named_parameters
 ) ;

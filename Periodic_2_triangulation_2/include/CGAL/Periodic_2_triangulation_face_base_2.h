@@ -1,5 +1,4 @@
-// Copyright (c) 1997-2000 INRIA Sophia-Antipolis (France).
-// Copyright (c) 2013 Nico Kruithof (The Netherlands)
+// Copyright (c) 1997-2013 INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -24,6 +23,7 @@
 #include <CGAL/basic.h>
 #include <CGAL/triangulation_assertions.h>
 #include <CGAL/Triangulation_utils_2.h>
+#include <CGAL/Triangulation_face_base_2.h>
 #include <CGAL/Dummy_tds_2.h>
 
 namespace CGAL

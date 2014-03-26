@@ -1,13 +1,14 @@
 /*!
 
-\page chapintro Introduction
+\page devman_intro Introduction
 
 \author Susan Hert
 \author Menelaos Karavelas (<TT>mkaravel@tem.uoc.gr</TT>)
 \author Stefan Schirra
 
 <CENTER>
-\image html cgal_small.gif 
+\image html cgal_small.png 
+\image latex cgal_small.png 
 </CENTER>
 <CENTER><span class="textsc">Computational Geometry Algorithms Library</span></CENTER>
 
@@ -26,7 +27,7 @@ projects 21957 (CGAL) and 28155 (GALIA).
 
 \section secdesign_goals Primary design goals 
 
-The primary design goals of \cgal are described in \cite fgkss-dccga-00:
+The primary design goals of \cgal are described in \cgalCite{fgkss-dccga-00:}
 
 \subsection Developer_manualCorrectness Correctness
 
@@ -52,7 +53,7 @@ like to provide algorithms handling degeneracies.
 A design goal particularly relevant for the implementation of
 geometric algorithms is robustness.  Many implementations of geometric
 algorithms lack robustness because of precision problems; see 
-Chapter  \ref chaprobustness  for a discussion of robustness issues within 
+Chapter  \ref devman_robustness  for a discussion of robustness issues within 
 \cgal.
 
 \subsection Developer_manualFlexibility Flexibility
@@ -83,7 +84,7 @@ integrate new classes and algorithms into \cgal.
 
 \cgal should be open to coexist with other libraries, or better, to
 work together with other libraries and programs. The \cpp 
-Standard \cite cgal:ansi-is14882-98
+Standard \cgalCite{cgal:ansi-is14882-98}
 
 defines with the \cpp Standard Library a common
 foundation for all \cpp platforms. 
@@ -131,7 +132,7 @@ maps library.
 
 A goal with similar implications as uniformity is a design
 with complete and minimal interfaces, see for example Item 18 
-in Ref. \cite cgal:m-ec-97.
+in Ref. \cgalCite{cgal:m-ec-97}.
 An object or module should be complete in its 
 functionality, but should
 not provide additional decorating functionality. Even if a certain
@@ -166,7 +167,7 @@ clearly documented which degeneracies are handled and which are not.
 For most geometric algorithms theoretical results for the time and space
 complexity are known. Also, the theoretic interest in efficiency for
 realistic inputs, as opposed to worst-case situations, is
-growing \cite v-ffrim-97.
+growing \cgalCite{v-ffrim-97}.
 For practical purposes, insight into the constant factors hidden in the
 \f$ O\f$-notation is necessary, especially if there are several competing
 algorithms.
@@ -186,7 +187,7 @@ layer of algorithms and data structures, the kernel layer and the
 arithmetic and algebra layer.
 (\cgalFigureRef{figgenericCGAL} ).
 
-\cgalFigureBegin{figgenericCGAL,generic_cgal.gif}
+\cgalFigureBegin{figgenericCGAL,generic_cgal.png}
 The generic design of \cgal.
 \cgalFigureEnd
 
@@ -196,7 +197,7 @@ template arguments that fulfill certain syntactical as well as semantic
 requirements. In order to avoid long parameter lists,
 the parameter types are collected into a single class, called the
 traits class in \cgal
-(Chapter  \ref chaptraits_classes ).
+(Chapter  \ref devman_traits_classes ).
 A <I>concept</I> is an abstraction of a type 
 defined by a set of requirements.
 Any concrete type is called a <I>model</I> for a 
@@ -257,7 +258,7 @@ the configuration layer.
 This layer takes care of setting configuration flags according to the outcome
 of tests run during installation.  The <I>support library</I> layer
  is documented in
-the <A HREF="http://www.cgal.org/Manual/latest/doc_html/cgal_manual/contents.html#part_XVII">Support Library Manual</A> and contains packages
+the \link PartSupportLibrary Support Library Manual \endlink and contains packages
 that deal with things such as visualization, number types, streams, and
 \stl extensions in \cgal.
 

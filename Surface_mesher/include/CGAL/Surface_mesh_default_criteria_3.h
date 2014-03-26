@@ -21,6 +21,7 @@
 #define CGAL_SURFACE_MESH_DEFAULT_CRITERIA_3_H
 
 #include <CGAL/Surface_mesher/Standard_criteria.h>
+#include <iostream>
 
 namespace CGAL {
 

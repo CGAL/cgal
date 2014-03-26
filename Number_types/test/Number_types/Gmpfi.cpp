@@ -26,21 +26,21 @@
 #include <CGAL/Test/_test_real_embeddable.h>
 #include <CGAL/_test_io.h>
 
-#define _TEST(_string,_code) \
+#define TEST(_string,_code) \
         std::cerr<<"testing "<<_string<<": "<<std::flush; \
         _code; \
         std::cerr<<"OK"<<std::endl;
 
-#define _TEST_AS(_a,_b,_c) \
+#define TEST_AS(_a,_b,_c) \
         std::cerr<<"testing algebraic structure ("<< \
                 _a<<','<<_b<<','<<_c<<"): "<<std::flush; \
         CGAL::test_algebraic_structure<NT,Tag,Is_exact>(NT(_a),NT(_b),NT(_c)); \
         std::cerr<<"OK"<<std::endl;
 
-template<class _NT>
+template<class NumberType>
 int test_operators(){
         typedef CGAL::Gmpfi     Gmpfi;
-        typedef _NT             NT;
+        typedef NumberType      NT;
         Gmpfi a(5.0);
         NT b(2);
         if((-a)==-5&&(a+b)==7&&(a-b)==3&&(a*b)==10&&(a/b)==2.5)
@@ -51,10 +51,10 @@ int test_operators(){
         }
 }
 
-template<class _NT>
+template<class NumberType>
 int test_arithmetic(){
         typedef CGAL::Gmpfi     Gmpfi;
-        typedef _NT             NT;
+        typedef NumberType      NT;
         Gmpfi a(7.0);
         NT b(2);
         if(
@@ -109,33 +109,33 @@ int main(){
         typedef CGAL::Field_with_kth_root_tag   Tag;
         typedef CGAL::Tag_false                 Is_exact;
 
-        _TEST("algebraic structure (default)",
-        (CGAL::test_algebraic_structure<NT,Tag,Is_exact>()))
-        _TEST_AS(4,6,15)
-        _TEST_AS(-4,6,15)
-        _TEST_AS(4,-6,15)
-        _TEST_AS(-4,-6,15)
-        _TEST_AS(4,6,-15)
-        _TEST_AS(-4,6,-15)
-        _TEST_AS(4,-6,-15)
-        _TEST_AS(-4,-6,-15)
-        _TEST("real embeddable",CGAL::test_real_embeddable<NT>())
+        TEST("algebraic structure (default)",
+             (CGAL::test_algebraic_structure<NT,Tag,Is_exact>()))
+        TEST_AS(4,6,15)
+        TEST_AS(-4,6,15)
+        TEST_AS(4,-6,15)
+        TEST_AS(-4,-6,15)
+        TEST_AS(4,6,-15)
+        TEST_AS(-4,6,-15)
+        TEST_AS(4,-6,-15)
+        TEST_AS(-4,-6,-15)
+        TEST("real embeddable",CGAL::test_real_embeddable<NT>())
 
-        _TEST("operators Gmpfi",test_operators<NT>())
-        _TEST("operators Gmpfr",test_operators<CGAL::Gmpfr>();)
-        _TEST("operators Gmpz",test_operators<CGAL::Gmpz>();)
-        _TEST("operators Gmpq",test_operators<CGAL::Gmpq>();)
-        _TEST("operators int",test_operators<int>();)
-        _TEST("operators long",test_operators<long>();)
-        _TEST("operators unsigned long",test_operators<unsigned long>();)
+        TEST("operators Gmpfi",test_operators<NT>())
+        TEST("operators Gmpfr",test_operators<CGAL::Gmpfr>();)
+        TEST("operators Gmpz",test_operators<CGAL::Gmpz>();)
+        TEST("operators Gmpq",test_operators<CGAL::Gmpq>();)
+        TEST("operators int",test_operators<int>();)
+        TEST("operators long",test_operators<long>();)
+        TEST("operators unsigned long",test_operators<unsigned long>();)
 
-        _TEST("arithmetic Gmpfi",test_arithmetic<CGAL::Gmpfi>();)
-        _TEST("arithmetic Gmpfr",test_arithmetic<CGAL::Gmpfr>();)
-        _TEST("arithmetic long",test_arithmetic<long>();)
-        _TEST("arithmetic unsigned long",test_arithmetic<unsigned long>();)
-        _TEST("arithmetic int",test_arithmetic<int>();)
-        _TEST("arithmetic Gmpz",test_arithmetic<CGAL::Gmpz>();)
-        _TEST("arithmetic Gmpq",test_arithmetic<CGAL::Gmpq>();)
+        TEST("arithmetic Gmpfi",test_arithmetic<CGAL::Gmpfi>();)
+        TEST("arithmetic Gmpfr",test_arithmetic<CGAL::Gmpfr>();)
+        TEST("arithmetic long",test_arithmetic<long>();)
+        TEST("arithmetic unsigned long",test_arithmetic<unsigned long>();)
+        TEST("arithmetic int",test_arithmetic<int>();)
+        TEST("arithmetic Gmpz",test_arithmetic<CGAL::Gmpz>();)
+        TEST("arithmetic Gmpq",test_arithmetic<CGAL::Gmpq>();)
 
         CGAL::Gmpfr plus_infinity;
         CGAL::Gmpfr minus_infinity;
@@ -144,28 +144,28 @@ int main(){
         mpfr_set_inf(plus_infinity.fr(),1);
         mpfr_set_inf(minus_infinity.fr(),-1);
 
-        _TEST("I/O int",(CGAL::test_interval_io<NT,int>(2145338339)))
-        _TEST("I/O double",(CGAL::test_interval_io<NT,double>(.2147483647)))
-        _TEST("I/O Gmpfr",
-              (CGAL::test_interval_io<NT,CGAL::Gmpfr>
-               (CGAL::Gmpfr(1,100)/CGAL::Gmpfr(3,100))))
-        _TEST("I/O [int,+inf]",
-              (CGAL::test_interval_io<NT,std::pair<int,CGAL::Gmpfr> >
-               (std::make_pair(2145338339,plus_infinity))))
-        _TEST("I/O [-inf,double]",
-              (CGAL::test_interval_io<NT,std::pair<CGAL::Gmpfr,double> >
-               (std::make_pair(minus_infinity,.2147483647))))
-        _TEST("I/O [-inf,+inf]",
-              (CGAL::test_interval_io<NT,std::pair<CGAL::Gmpfr,CGAL::Gmpfr> >
-               (std::make_pair(minus_infinity,plus_infinity))))
+        TEST("I/O int",(CGAL::test_interval_io<NT,int>(2145338339)))
+        TEST("I/O double",(CGAL::test_interval_io<NT,double>(.2147483647)))
+        TEST("I/O Gmpfr",
+             (CGAL::test_interval_io<NT,CGAL::Gmpfr>
+              (CGAL::Gmpfr(1,100)/CGAL::Gmpfr(3,100))))
+        TEST("I/O [int,+inf]",
+             (CGAL::test_interval_io<NT,std::pair<int,CGAL::Gmpfr> >
+              (std::make_pair(2145338339,plus_infinity))))
+        TEST("I/O [-inf,double]",
+             (CGAL::test_interval_io<NT,std::pair<CGAL::Gmpfr,double> >
+              (std::make_pair(minus_infinity,.2147483647))))
+        TEST("I/O [-inf,+inf]",
+             (CGAL::test_interval_io<NT,std::pair<CGAL::Gmpfr,CGAL::Gmpfr> >
+              (std::make_pair(minus_infinity,plus_infinity))))
 
-        _TEST("precision",test_precision())
+        TEST("precision",test_precision())
 
         // TODO: missing tests for conversion functions
         // to_double, to_interval, to_double_exp, to_interval_exp
 
 #ifndef CGAL_GMPFR_NO_REFCOUNT
-        _TEST("endpoint reference counting",test_refcount())
+        TEST("endpoint reference counting",test_refcount())
 #else
         std::cerr<<"endpoint reference counting was not tested"<<std::endl;
 #endif
@@ -173,8 +173,8 @@ int main(){
         return 0;
 }
 
-#undef _TEST
-#undef _TEST_AS
+#undef TEST
+#undef TEST_AS
 
 #else
 int main(){

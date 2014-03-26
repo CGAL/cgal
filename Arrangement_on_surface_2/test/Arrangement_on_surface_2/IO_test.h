@@ -8,11 +8,11 @@
 
 #include "IO_base_test.h"
 
-template <typename T_Traits>
-class IO_test : public IO_base_test<T_Traits> {
+template <typename Geom_traits_T>
+class IO_test : public IO_base_test<Geom_traits_T> {
 public:
-  typedef T_Traits                                      Traits;
-  typedef IO_base_test<Traits>                          Base;
+  typedef Geom_traits_T                                 Geom_traits;
+  typedef IO_base_test<Geom_traits>                     Base;
 
   typedef typename Base::Point_2                        Point_2;
   typedef typename Base::X_monotone_curve_2             X_monotone_curve_2;
@@ -23,11 +23,11 @@ public:
   typedef typename std::vector<Curve_2>                 Curves_vector;
 
   /*! Constructor */
-  IO_test();
+  IO_test(const Geom_traits& traits);
 
   /*! Destructor */
   virtual ~IO_test();
-  
+
   bool read_xcurves(const char* filename, Xcurves_vector& xcurves);
   bool read_points(const char* filename, Points_vector& points);
   bool read_curves(const char* filename, Curves_vector& curves);
@@ -36,7 +36,7 @@ public:
   void set_filenames(const char* points_filename,
                      const char* xcurves_filename,
                      const char* curves_filename);
-  
+
   /*! Parse the command line */
   virtual bool parse(int argc, char* argv[]);
 
@@ -48,7 +48,7 @@ public:
 
 protected:
   /*! Skip comments */
-  std::istream& skip_comments(std::istream& is, std::string& line);  
+  std::istream& skip_comments(std::istream& is, std::string& line);
 
   /*! Remove blanks */
   std::string remove_blanks(char* str);
@@ -111,31 +111,34 @@ protected:
 };
 
 /*!
- * Constructor. 
+ * Constructor.
  * Accepts test data file name.
  */
-template <typename T_Traits>
-IO_test<T_Traits>::IO_test() : m_eol_printed(true) {}
+template <typename Geom_traits_T>
+IO_test<Geom_traits_T>::IO_test(const Geom_traits_T& traits) :
+  Base(traits),
+  m_eol_printed(true)
+{}
 
 /*!
- * Destructor. 
+ * Destructor.
  */
-template <typename T_Traits>
-IO_test<T_Traits>::~IO_test() { clear(); }
+template <typename Geom_traits_T>
+IO_test<Geom_traits_T>::~IO_test() { clear(); }
 
 /*! Set the file names */
-template <typename T_Traits>
-void IO_test<T_Traits>::set_filenames(const char* points_filename,
-                                      const char* xcurves_filename,
-                                      const char* curves_filename)
+template <typename Geom_traits_T>
+void IO_test<Geom_traits_T>::set_filenames(const char* points_filename,
+                                           const char* xcurves_filename,
+                                           const char* curves_filename)
 {
   m_filename_points.assign(points_filename);
   m_filename_xcurves.assign(xcurves_filename);
   m_filename_curves.assign(curves_filename);
 }
 
-template <typename T_Traits>
-bool IO_test<T_Traits>::parse(int argc, char* argv[])
+template <typename Geom_traits_T>
+bool IO_test<Geom_traits_T>::parse(int argc, char* argv[])
 {
   if (argc < 4) {
     print_info(std::string("Usage: ").append(argv[0]).
@@ -150,8 +153,8 @@ bool IO_test<T_Traits>::parse(int argc, char* argv[])
 }
 
 /*! Initialize the data structure */
-template <typename T_Traits>
-bool IO_test<T_Traits>::init()
+template <typename Geom_traits_T>
+bool IO_test<Geom_traits_T>::init()
 {
   if (!read_points(m_filename_points.c_str(), m_points)) return false;
   if (!read_xcurves(m_filename_xcurves.c_str(), m_xcurves)) return false;
@@ -160,8 +163,8 @@ bool IO_test<T_Traits>::init()
 }
 
 /*! Clear the data structures */
-template <typename T_Traits>
-void IO_test<T_Traits>::clear()
+template <typename Geom_traits_T>
+void IO_test<Geom_traits_T>::clear()
 {
   m_filename_points.clear();
   m_filename_xcurves.clear();
@@ -176,19 +179,19 @@ void IO_test<T_Traits>::clear()
  * Skip comments. Comments start with the '#' character and extend to the
  * end of the line
  */
-template <typename T_Traits>
-std::istream& IO_test<T_Traits>::skip_comments(std::istream& is,
-                                               std::string& line)
+template <typename Geom_traits_T>
+std::istream& IO_test<Geom_traits_T>::skip_comments(std::istream& is,
+                                                    std::string& line)
 {
   while (std::getline(is, line))
-    if ((line[0] != '#') && !line.empty()) break;
+    if (!line.empty() && (line[0] != '#')) break;
   return is;
 }
 
 /*!
  */
-template <typename T_Traits>
-std::string IO_test<T_Traits>::remove_blanks(char* str)
+template <typename Geom_traits_T>
+std::string IO_test<Geom_traits_T>::remove_blanks(char* str)
 {
   std::string result = "";
   bool flag = false;
@@ -199,8 +202,7 @@ std::string IO_test<T_Traits>::remove_blanks(char* str)
         (*str >= 'a' && *str <= 'z') || //lower case letters
          *str == '_') //underscores
     {
-      if (!flag)
-        flag = true;
+      if (!flag) flag = true;
       result += *str;
     }
     if (*str == ' ' && flag) break;
@@ -209,10 +211,11 @@ std::string IO_test<T_Traits>::remove_blanks(char* str)
 }
 
 /*! */
-template <typename T_Traits>
-bool IO_test<T_Traits>::read_points(const char* filename, Points_vector& points)
+template <typename Geom_traits_T>
+bool IO_test<Geom_traits_T>::read_points(const char* filename,
+                                         Points_vector& points)
 {
-  typedef T_Traits                              Traits;
+  typedef Geom_traits_T                              Geom_traits;
 
   // read points from file into associative container
   std::ifstream p_stream(filename);
@@ -224,20 +227,21 @@ bool IO_test<T_Traits>::read_points(const char* filename, Points_vector& points)
   std::string line;
   while (skip_comments(p_stream, line)) {
     std::istringstream line_stream(line);
-    typename Traits::Point_2 p;
+    typename Geom_traits::Point_2 p;
     this->read_point(line_stream, p);
     points.push_back(p);
     line_stream.clear();
   }
+  p_stream.close();
   return true;
 }
 
 /*! */
-template <typename T_Traits>
-bool
-IO_test<T_Traits>::read_xcurves(const char* filename, Xcurves_vector& xcurves)
+template <typename Geom_traits_T>
+bool IO_test<Geom_traits_T>::read_xcurves(const char* filename,
+                                          Xcurves_vector& xcurves)
 {
-  typedef T_Traits                              Traits;
+  typedef Geom_traits_T                              Geom_traits;
 
   // read x-monotone curves from file into associative container
   std::ifstream xcv_stream(filename);
@@ -249,20 +253,22 @@ IO_test<T_Traits>::read_xcurves(const char* filename, Xcurves_vector& xcurves)
   std::string line;
   while (skip_comments(xcv_stream, line)) {
     std::istringstream line_stream(line);
-    typename Traits::X_monotone_curve_2 xcv;
+    typename Geom_traits::X_monotone_curve_2 xcv;
     this->read_xcurve(line_stream, xcv);
     xcurves.push_back(xcv);
     line_stream.clear();
   }
+  xcv_stream.close();
   return true;
 }
 
 /*! */
-template <typename T_Traits>
+template <typename Geom_traits_T>
 bool
-IO_test<T_Traits>::read_curves(const char* filename, Curves_vector& curves)
+IO_test<Geom_traits_T>::read_curves(const char* filename,
+                                    Curves_vector& curves)
 {
-  typedef T_Traits                              Traits;
+  typedef Geom_traits_T                         Geom_traits;
 
   // Read curves from file into associative container
   std::ifstream cv_stream(filename);
@@ -274,11 +280,12 @@ IO_test<T_Traits>::read_curves(const char* filename, Curves_vector& curves)
   std::string line;
   while (skip_comments(cv_stream, line)) {
     std::istringstream line_stream(line);
-    typename Traits::Curve_2 cv;
+    typename Geom_traits::Curve_2 cv;
     this->read_curve(line_stream, cv);
     curves.push_back(cv);
     line_stream.clear();
   }
+  cv_stream.close();
   return true;
 }
 

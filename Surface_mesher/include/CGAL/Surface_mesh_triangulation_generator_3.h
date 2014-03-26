@@ -22,6 +22,8 @@
 
 #include <CGAL/Triangulation_data_structure_3.h>
 #include <CGAL/Delaunay_triangulation_3.h>
+#include <CGAL/Surface_mesh_vertex_base_3.h>
+#include <CGAL/Surface_mesh_cell_base_3.h>
 
 namespace CGAL {
 

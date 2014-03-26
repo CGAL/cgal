@@ -76,6 +76,9 @@
  *
  * internal::Reverse_orientation_of_connected_component_functor to reverse
  *   the orientation of a connected component in a cmap
+ *
+ * internal::Init_attribute_functor to initialize all attributes to NULL.
+ *
  */
 
 namespace CGAL
@@ -113,33 +116,20 @@ struct Call_split_functor
   typedef typename CMap::template Attribute_type<i>::type Attribute;
   typedef typename Attribute::On_split On_split;
 
-  static void run(CMap* amap, typename CMap::Dart_handle adart1,
-                  typename CMap::Dart_handle adart2)
-  {
-    // Static version
-    CGAL::internal::Apply_cell_functor<CMap, Attribute, On_split>::
-      run(*(adart1->template attribute<i>()),
-          *(adart2->template attribute<i>()));
-    // Dynamic version
-    if ( CGAL::cpp11::get<CMap::Helper::template Dimension_index<i>::value>
-         (amap->m_onsplit_functors) )
-      CGAL::cpp11::get<CMap::Helper::template Dimension_index<i>::value>
-        (amap->m_onsplit_functors)
-        (*(adart1->template attribute<i>()),
-         *(adart2->template attribute<i>()));
-  }
   static void
   run(CMap* amap, typename CMap::template Attribute_handle<i>::type a1,
       typename CMap::template Attribute_handle<i>::type a2)
   {
     // Static version
     CGAL::internal::Apply_cell_functor<CMap, Attribute, On_split>::
-      run(*a1, *a2);
+      run(amap->template get_attribute<i>(a1),
+          amap->template get_attribute<i>(a2));
     // Dynamic version
     if ( CGAL::cpp11::get<CMap::Helper::template Dimension_index<i>::value>
          (amap->m_onsplit_functors) )
       CGAL::cpp11::get<CMap::Helper::template Dimension_index<i>::value>
-        (amap->m_onsplit_functors) (*a1, *a2);
+        (amap->m_onsplit_functors) (amap->template get_attribute<i>(a1),
+                                    amap->template get_attribute<i>(a2));
   }
 };
 // Specialization for disabled attributes.
@@ -163,33 +153,20 @@ struct Call_merge_functor
   typedef typename CMap::template Attribute_type<i>::type Attribute;
   typedef typename Attribute::On_merge On_merge;
 
-  static void run(CMap* amap, typename CMap::Dart_handle adart1,
-                  typename CMap::Dart_handle adart2)
-  {
-    // Static version
-    CGAL::internal::Apply_cell_functor<CMap, Attribute, On_merge>::
-      run(*(adart1->template attribute<i>()),
-          *(adart2->template attribute<i>()));
-    // Dynamic version
-    if ( CGAL::cpp11::get<CMap::Helper::template Dimension_index<i>::value>
-         (amap->m_onmerge_functors) )
-      CGAL::cpp11::get<CMap::Helper::template Dimension_index<i>::value>
-        (amap->m_onmerge_functors)
-        (*(adart1->template attribute<i>()),
-         *(adart2->template attribute<i>()));
-  }
   static void
   run(CMap* amap, typename CMap::template Attribute_handle<i>::type a1,
       typename CMap::template Attribute_handle<i>::type a2)
   {
     // Static version
     CGAL::internal::Apply_cell_functor<CMap, Attribute, On_merge>::
-      run(*a1, *a2);
+      run(amap->template get_attribute<i>(a1),
+          amap->template get_attribute<i>(a2));
     // Dynamic version
     if ( CGAL::cpp11::get<CMap::Helper::template Dimension_index<i>::value>
          (amap->m_onmerge_functors) )
       CGAL::cpp11::get<CMap::Helper::template Dimension_index<i>::value>
-        (amap->m_onmerge_functors) (*a1, *a2);
+        (amap->m_onmerge_functors) (amap->template get_attribute<i>(a1),
+                                    amap->template get_attribute<i>(a2));
   }
 };
 // Specialization for disabled attributes.
@@ -228,48 +205,55 @@ struct Test_is_valid_attribute_functor
     bool found_dart = false;
 
     typename CMap::template Attribute_const_handle<i>::type
-        a=adart->template attribute<i>();
+        a=amap->template attribute<i>(adart);
 
     unsigned int nb = 0;
     for ( CGAL::CMap_dart_const_iterator_basic_of_cell<CMap,i>
           it(*amap, adart, amark); it.cont(); ++it )
     {
-      if ( it->template attribute<i>() != a )
+      if ( amap->template attribute<i>(it) != a )
       {
-        std::cout<<"ERROR: an attribute of the "<<i<<"-cell is different. cur:"
-                <<&*a<<" != first:"<<&*it->template attribute<i>()
-               <<" for dart "<<&*it<<std::endl;
+        std::cout<<"ERROR: an attribute of the "<<i<<"-cell is different. cur:";
+        amap->template display_attribute<i>(a);
+        std::cout<<" != first:";
+        amap->template display_attribute<i>(amap->template attribute<i>(it));
+        std::cout<<" for dart ";
+        amap->display_dart(it);
+        std::cout<<std::endl;
         valid=false;
       }
 
-      if ( a!=NULL && it==a->dart() ) found_dart=true;
+      if ( a!=amap->null_handle && it==amap->template dart_of_attribute<i>(a) )
+        found_dart=true;
 
       amap->mark(it, amark);
       ++nb;
     }
 
-    if ( a!=NULL )
+    if ( a!=amap->null_handle )
     {
-      if ( a->get_nb_refs()!=nb )
+      if ( amap->template get_attribute<i>(a).get_nb_refs()!=nb )
       {
         std::cout<<"ERROR: the number of reference of an "<<i
                 <<"-attribute is not correct. Count: "<<nb
-               <<" != Store in the attribute: "<<a->get_nb_refs()<<" for dart "
-              <<&*adart<<std::endl;
+               <<" != Store in the attribute: "
+              <<amap->template get_attribute<i>(a).get_nb_refs()
+             <<" for dart ";
+        amap->display_dart(adart); std::cout<<std::endl;
         valid=false;
       }
-      if ( !a->is_valid() )
+      if ( !amap->template get_attribute<i>(a).is_valid() )
       {
         std::cout<<"ERROR: the dart associated with an "<<i
-                <<"-attribute is NULL for dart "
-               <<&*adart<<std::endl;
+                <<"-attribute is NULL for dart ";
+        amap->display_dart(adart); std::cout<<std::endl;
         valid=false;
       }
-      if ( a->dart()!=NULL && !found_dart )
+      if ( amap->template dart_of_attribute<i>(a)!=amap->null_handle &&
+           !found_dart )
       {
         std::cout<<"ERROR: the non NULL dart of an "<<i
-                <<"-attribute does not belong to the cell. a->dart()= "
-               <<&*a->dart()<<" for dart "<<&*adart<<std::endl;
+                <<"-attribute does not belong to the cell."<<std::endl;
         valid=false;
       }
     }
@@ -335,11 +319,13 @@ struct Decrease_attribute_functor_run
 {
   static void run(CMap* amap, typename CMap::Dart_handle adart)
   {
-    if ( adart->template attribute<i>()!=NULL )
+    if ( amap->template attribute<i>(adart)!=CMap::null_handle )
     {
-      adart->template attribute<i>()->dec_nb_refs();
-      if ( adart->template attribute<i>()->get_nb_refs()==0 )
-        amap->template erase_attribute<i>(adart->template attribute<i>());
+      amap->template get_attribute<i>(amap->template attribute<i>(adart)).
+        dec_nb_refs();
+      if ( amap->template get_attribute<i>(amap->template attribute<i>(adart)).
+           get_nb_refs()==0 )
+        amap->template erase_attribute<i>(amap->template attribute<i>(adart));
     }
   }
 };
@@ -361,6 +347,15 @@ struct Decrease_attribute_functor
   { CGAL::internal::Decrease_attribute_functor_run<CMap,i>::run(amap, adart); }
 };
 // ****************************************************************************
+/// Functor used to initialize all attributes to NULL.
+template<typename CMap>
+struct Init_attribute_functor
+{
+  template <int i>
+  static void run(CMap* amap, typename CMap::Dart_handle adart)
+  { amap->template set_dart_attribute<i>(adart, CMap::null_handle); }
+};
+// ****************************************************************************
 /// Functor used to set the i-attribute of a given dart.
 template<typename CMap, unsigned int i, typename T=
          typename CMap::template Attribute_type<i>::type>
@@ -369,14 +364,7 @@ struct Set_i_attribute_of_dart_functor
   static void run( CMap* amap, typename CMap::Dart_handle dh,
                    typename CMap::template Attribute_handle<i>::type ah )
   {
-    CGAL_static_assertion(i<=CMap::dimension);
-    CGAL_assertion( dh!=NULL && dh!=CMap::null_dart_handle );
-
-    if ( dh->template attribute<i>()==ah ) return;
-
-    CGAL::internal::Decrease_attribute_functor_run<CMap, i>::run(amap, dh);
-    dh->template set_attribute<i>(ah);
-    if ( ah!=NULL ) ah->set_dart(dh);
+    amap->template set_dart_attribute<i>(dh, ah);
   }
 };
 /// Specialization for void attributes.
@@ -389,98 +377,105 @@ struct Set_i_attribute_of_dart_functor<CMap, i, CGAL::Void>
 };
 // ****************************************************************************
 // Functor allowing to test if two info are the same or not
-template< typename Attr1, typename Attr2,
-          typename Info1=typename Attr1::Info,
-          typename Info2=typename Attr2::Info >
+template<typename Map1, typename Map2, unsigned int i,
+         typename Attr1Info1=typename Map1::template Attribute_type<i>::type::Info,
+         typename Info2=typename Map2::template Attribute_type<i>::type::Info>
 struct Is_same_info
 {
-  static bool run(const Attr1&, const Attr2&)
+  static bool run(const Map1*, const Map2*,
+                  typename Map1::template Attribute_const_handle<i>::type,
+                  typename Map2::template Attribute_const_handle<i>::type)
   { return false; }
 };
 
-template< typename Attr1, typename Attr2, typename Info1 >
-struct Is_same_info<Attr1, Attr2, Info1, void>
+template<typename Map1, typename Map2, unsigned int i, typename Info1>
+struct Is_same_info<Map1, Map2, i, Info1, void>
 {
-  static bool run(const Attr1&, const Attr2&)
+  static bool run(const Map1*, const Map2*,
+                  typename Map1::template Attribute_const_handle<i>::type,
+                  typename Map2::template Attribute_const_handle<i>::type)
   { return false; }
 };
 
-template< typename Attr1, typename Attr2, typename Info2 >
-struct Is_same_info<Attr1, Attr2, void, Info2>
+template<typename Map1, typename Map2, unsigned int i, typename Info2>
+struct Is_same_info<Map1, Map2, i, void, Info2>
 {
-  static bool run(const Attr1&, const Attr2&)
+  static bool run(const Map1*, const Map2*,
+                  typename Map1::template Attribute_const_handle<i>::type,
+                  typename Map2::template Attribute_const_handle<i>::type)
   { return false; }
 };
 
-template< typename Attr1, typename Attr2 >
-struct Is_same_info<Attr1, Attr2, void, void>
+template<typename Map1, typename Map2, unsigned int i>
+struct Is_same_info<Map1, Map2, i, void, void>
 {
-  static bool run(const Attr1&, const Attr2&)
+  static bool run(const Map1*, const Map2*,
+                  typename Map1::template Attribute_const_handle<i>::type,
+                  typename Map2::template Attribute_const_handle<i>::type)
   { return true; }
 };
 
-template< typename Attr1, typename Attr2, typename Info >
-struct Is_same_info<Attr1, Attr2, Info, Info>
+template<typename Map1, typename Map2, unsigned int i, typename Info>
+struct Is_same_info<Map1, Map2, i, Info, Info>
 {
-  static bool run(const Attr1&a1, const Attr2&a2)
-  { return a1.info()==a2.info(); }
+  static bool run(const Map1* m1, const Map2* m2,
+                  typename Map1::template Attribute_const_handle<i>::type a1,
+                  typename Map2::template Attribute_const_handle<i>::type a2)
+  { return m1->template info_of_attribute<i>(a1)==
+      m2->template info_of_attribute<i>(a2); }
 };
 
 // Case of two non void type
-template<typename Map1, typename Map2,
-         typename T1, typename T2, int i>
+template<typename Map1, typename Map2, unsigned int i,
+         typename T1=typename Map1::template Attribute_type<i>::type,
+         typename T2=typename Map2::template Attribute_type<i>::type>
 struct Is_same_attribute_info_functor
 {
-  static bool run(typename Map1::Dart_const_handle dh1,
+  static bool run(const Map1* m1, const Map2* m2,
+                  typename Map1::Dart_const_handle dh1,
                   typename Map2::Dart_const_handle dh2)
   {
-    if (dh1->template attribute<i>()==NULL &&
-        dh2->template attribute<i>()==NULL)
+    if (m1->template attribute<i>(dh1)==Map1::null_handle &&
+        m2->template attribute<i>(dh2)==Map2::null_handle)
       return true;
 
-    if (dh1->template attribute<i>()==NULL ||
-        dh2->template attribute<i>()==NULL)
+    if (m1->template attribute<i>(dh1)==Map1::null_handle ||
+        m2->template attribute<i>(dh2)==Map2::null_handle)
       return false;
 
     return
-        Is_same_info<T1,T2>::run(*(dh1->template attribute<i>()),
-                                 *(dh2->template attribute<i>()));
+      Is_same_info<Map1, Map2, i>::run(m1, m2,
+                                       m1->template attribute<i>(dh1),
+                                       m2->template attribute<i>(dh2));
   }
 };
 
 // Case T1==void
-template <typename Map1, typename Map2,
-          typename T2, int i>
-struct Is_same_attribute_info_functor<Map1, Map2, Void, T2, i>
+template <typename Map1, typename Map2, unsigned int i, typename T2>
+struct Is_same_attribute_info_functor<Map1, Map2, i, Void, T2>
 {
-  static bool run(typename Map1::Dart_const_handle,
+  static bool run(const Map1*, const Map2* m2,
+                  typename Map1::Dart_const_handle,
                   typename Map2::Dart_const_handle dh2)
-  {
-    return dh2->template attribute<i>()==NULL ||
-        Is_same_info<int,T2,void,typename T2::Info>::
-        run(0, *(dh2->template attribute<i>()));
-  }
+  { return m2->template attribute<i>(dh2)==Map2::null_handle; }
 };
 
 // Case T2==void
-template <typename Map1, typename Map2,
-          typename T1, int i>
-struct Is_same_attribute_info_functor<Map1, Map2, T1, Void, i>
+template <typename Map1, typename Map2, unsigned int i, typename T1>
+struct Is_same_attribute_info_functor<Map1, Map2, i, T1, Void>
 {
-  static bool run(typename Map1::Dart_const_handle dh1,
+  static bool run(const Map1* m1, const Map2*,
+                  typename Map1::Dart_const_handle dh1,
                   typename Map2::Dart_const_handle)
-  {
-    return dh1->template attribute<i>()==NULL ||
-        Is_same_info<T1, int, typename T1::Info, void>::
-        run(*(dh1->template attribute<i>()), 0);
-  }
+  { return m1->template attribute<i>(dh1)==Map1::null_handle; }
 };
 
 // Case T1==T2==void
-template <typename Map1, typename Map2, int i>
-struct Is_same_attribute_info_functor<Map1, Map2, Void, Void, i>
+template <typename Map1, typename Map2, unsigned int i>
+struct Is_same_attribute_info_functor<Map1, Map2, i, Void, Void>
 {
-  static bool run(typename Map1::Dart_const_handle,
+  static bool run(const Map1*, const Map2*,
+                  typename Map1::Dart_const_handle,
                   typename Map2::Dart_const_handle)
   { return true; }
 };
@@ -527,21 +522,23 @@ template<typename Map1, typename Map2,
          typename T1, typename T2, bool Withpoint1, bool Withpoint2, int i>
 struct Is_same_attribute_point_functor
 {
-  static bool run(typename Map1::Dart_const_handle dh1,
+  static bool run(const Map1* m1, const Map2* m2,
+                  typename Map1::Dart_const_handle dh1,
                   typename Map2::Dart_const_handle dh2)
   {
     CGAL_static_assertion( Withpoint1==true && Withpoint2==true );
-    if (dh1->template attribute<i>()==NULL &&
-        dh2->template attribute<i>()==NULL)
+    if (m1->template attribute<i>(dh1)==Map1::null_handle &&
+        m2->template attribute<i>(dh2)==Map2::null_handle)
       return true;
 
-    if (dh1->template attribute<i>()==NULL ||
-        dh2->template attribute<i>()==NULL)
+    if (m1->template attribute<i>(dh1)==Map1::null_handle ||
+        m2->template attribute<i>(dh2)==Map2::null_handle)
       return false;
 
     return
-        Is_same_point<T1,T2>::run(*(dh1->template attribute<i>()),
-                                  *(dh2->template attribute<i>()));
+      Is_same_point<T1,T2>::run
+      (m1->template get_attribute<i>(m1->template attribute<i>(dh1)),
+       m2->template get_attribute<i>(m2->template attribute<i>(dh2)));
   }
 };
 
@@ -550,7 +547,8 @@ template<typename Map1, typename Map2,
          typename T1, typename T2, int i>
 struct Is_same_attribute_point_functor<Map1, Map2, T1, T2, false, true, i>
 {
-  static bool run(typename Map1::Dart_const_handle,
+  static bool run(const Map1*, const Map2*,
+                  typename Map1::Dart_const_handle,
                   typename Map2::Dart_const_handle)
   { return false; }
 };
@@ -560,7 +558,8 @@ template<typename Map1, typename Map2,
          typename T1, typename T2, int i>
 struct Is_same_attribute_point_functor<Map1, Map2, T1, T2, true, false, i>
 {
-  static bool run(typename Map1::Dart_const_handle,
+  static bool run(const Map1*, const Map2*,
+                  typename Map1::Dart_const_handle,
                   typename Map2::Dart_const_handle)
   { return false; }
 };
@@ -570,7 +569,8 @@ template<typename Map1, typename Map2,
          typename T1, typename T2, int i>
 struct Is_same_attribute_point_functor<Map1, Map2, T1, T2, false, false, i>
 {
-  static bool run(typename Map1::Dart_const_handle,
+  static bool run(const Map1*, const Map2*,
+                  typename Map1::Dart_const_handle,
                   typename Map2::Dart_const_handle)
   { return true; }
 };
@@ -608,16 +608,14 @@ template<typename Map1, typename Map2>
 struct Test_is_same_attribute_functor
 {
   template<unsigned int i>
-  static void run(typename Map1::Dart_const_handle dh1,
+  static void run(const Map1* m1, const Map2* m2,
+                  typename Map1::Dart_const_handle dh1,
                   typename Map2::Dart_const_handle dh2 )
   {
     if (value)
     {
       value = Is_same_attribute_info_functor
-        <Map1, Map2,
-         typename Map1::template Attribute_type<i>::type,
-         typename Map2::template Attribute_type<i>::type,
-         i>::run(dh1, dh2);
+        <Map1, Map2, i>::run(m1, m2, dh1, dh2);
     }
     if (value)
     {
@@ -628,7 +626,7 @@ struct Test_is_same_attribute_functor
           Is_attribute_has_point<typename Map1::template
           Attribute_type<i>::type>::value,
           Is_attribute_has_point<typename Map2::template
-          Attribute_type<i>::type>::value, i>::run(dh1, dh2);
+          Attribute_type<i>::type>::value, i>::run(m1, m2, dh1, dh2);
     }
   }
   static bool value;
@@ -636,7 +634,8 @@ struct Test_is_same_attribute_functor
 template<typename Map1, typename Map2>
 bool Test_is_same_attribute_functor<Map1, Map2>::value = true;
 // ****************************************************************************
-/// Functor to reverse the orientation of a combinatorial map
+/// Functor to reverse the orientation of a combinatorial map,
+/// when 0-attributes are non void.
 template <typename CMap, typename Attrib =
           typename CMap::Helper::template Attribute_type<0>::type>
 struct Reverse_orientation_of_map_functor
@@ -653,36 +652,36 @@ struct Reverse_orientation_of_map_functor
       if (amap->is_marked(current_dart, mark)) continue;
       typename CMap::Dart_handle first_dart_in_cell= current_dart;
       typename CMap::Dart_handle current_dart_in_cell=
-        first_dart_in_cell->beta(1);
+        amap->beta(first_dart_in_cell,1);
       typename CMap::Helper::template Attribute_handle<0>::type
-        attribute_for_first_dart=current_dart_in_cell->template attribute<0>();
-      attribute_for_first_dart->inc_nb_refs();
+        attribute_for_first_dart=amap->template attribute<0>(current_dart_in_cell);
+      amap->template get_attribute<0>(attribute_for_first_dart).inc_nb_refs();
       do {
         amap->mark(current_dart_in_cell, mark);
         typename CMap::Dart_handle previous_dart_in_cell=
-          current_dart_in_cell->beta(0);
+          amap->beta(current_dart_in_cell,0);
         typename CMap::Dart_handle next_dart_in_cell=
-          current_dart_in_cell->beta(1);
+          amap->beta(current_dart_in_cell,1);
         typename CMap::Helper::template Attribute_handle<0>::type
-          next_attribute=next_dart_in_cell->template attribute<0>();
+          next_attribute=amap->template attribute<0>(next_dart_in_cell);
         // One line error???
         CGAL::internal::Set_i_attribute_of_dart_functor<CMap, 0>::
           run(amap, current_dart_in_cell, next_attribute);
-        current_dart_in_cell->basic_link_beta(previous_dart_in_cell, 1);
-        current_dart_in_cell->basic_link_beta(next_dart_in_cell, 0);
-        current_dart_in_cell = current_dart_in_cell->beta(0);
+        amap->template dart_link_beta<1>(current_dart_in_cell, previous_dart_in_cell);
+        amap->template dart_link_beta<0>(current_dart_in_cell, next_dart_in_cell);
+        current_dart_in_cell = amap->beta(current_dart_in_cell,0);
       }
       while (current_dart_in_cell != first_dart_in_cell);
       amap->mark(current_dart_in_cell, mark);
       typename CMap::Dart_handle previous_dart_in_cell=
-        current_dart_in_cell->beta(0);
+        amap->beta(current_dart_in_cell,0);
       typename CMap::Dart_handle next_dart_in_cell=
-        current_dart_in_cell->beta(1);
+        amap->beta(current_dart_in_cell,1);
       CGAL::internal::Set_i_attribute_of_dart_functor<CMap, 0>::
         run(amap, current_dart_in_cell, attribute_for_first_dart);
-      attribute_for_first_dart->dec_nb_refs();
-      current_dart_in_cell->basic_link_beta(previous_dart_in_cell, 1);
-      current_dart_in_cell->basic_link_beta(next_dart_in_cell, 0);
+      amap->template get_attribute<0>(attribute_for_first_dart).dec_nb_refs();
+      amap->template dart_link_beta<1>(current_dart_in_cell, previous_dart_in_cell);
+      amap->template dart_link_beta<0>(current_dart_in_cell, next_dart_in_cell);
     }
     amap->negate_mark(mark);
     CGAL_postcondition(amap->is_whole_map_unmarked(mark));
@@ -744,36 +743,36 @@ struct Reverse_orientation_of_connected_component_functor
       if (amap->is_marked(current_dart, mark)) continue;
       typename CMap::Dart_handle first_dart_in_cell=current_dart;
       typename CMap::Dart_handle current_dart_in_cell=
-        first_dart_in_cell->beta(1);
+        amap->beta(first_dart_in_cell,1);
       typename CMap::Helper::template Attribute_handle<0>::type
-        attribute_for_first_dart=current_dart_in_cell->template attribute<0>();
-      attribute_for_first_dart->inc_nb_refs();
+        attribute_for_first_dart=amap->template attribute<0>(current_dart_in_cell);
+      amap->template get_attribute<0>(attribute_for_first_dart).inc_nb_refs();
       do {
         amap->mark(current_dart_in_cell, mark);
         typename CMap::Dart_handle previous_dart_in_cell=
-          current_dart_in_cell->beta(0);
+          amap->beta(current_dart_in_cell,0);
         typename CMap::Dart_handle next_dart_in_cell=
-          current_dart_in_cell->beta(1);
+          amap->beta(current_dart_in_cell,1);
         typename CMap::Helper::template Attribute_handle<0>::type
-          next_attribute=next_dart_in_cell->template attribute<0>();
+          next_attribute=amap->template attribute<0>(next_dart_in_cell);
 
         CGAL::internal::Set_i_attribute_of_dart_functor<CMap, 0>::
           run(amap, current_dart_in_cell, next_attribute);
-        current_dart_in_cell->basic_link_beta(previous_dart_in_cell, 1);
-        current_dart_in_cell->basic_link_beta(next_dart_in_cell, 0);
-        current_dart_in_cell = current_dart_in_cell->beta(0);
+        amap->template dart_link_beta<1>(current_dart_in_cell, previous_dart_in_cell);
+        amap->template dart_link_beta<0>(current_dart_in_cell, next_dart_in_cell);
+        current_dart_in_cell = amap->beta(current_dart_in_cell,0);
       }
       while (current_dart_in_cell != first_dart_in_cell);
       amap->mark(current_dart_in_cell, mark);
       typename CMap::Dart_handle previous_dart_in_cell=
-        current_dart_in_cell->beta(0);
+        amap->beta(current_dart_in_cell,0);
       typename CMap::Dart_handle next_dart_in_cell=
-        current_dart_in_cell->beta(1);
+        amap->beta(current_dart_in_cell,1);
       CGAL::internal::Set_i_attribute_of_dart_functor<CMap, 0>::
           run(amap, current_dart_in_cell, attribute_for_first_dart);
-      attribute_for_first_dart->dec_nb_refs();
-      current_dart_in_cell->basic_link_beta(previous_dart_in_cell, 1);
-      current_dart_in_cell->basic_link_beta(next_dart_in_cell, 0);
+      amap->template get_attribute<0>(attribute_for_first_dart).dec_nb_refs();
+      amap->template dart_link_beta<1>(current_dart_in_cell, previous_dart_in_cell);
+      amap->template dart_link_beta<0>(current_dart_in_cell, next_dart_in_cell);
     }
     for (typename CMap::template Dart_of_cell_range<CMap::dimension+1>::iterator
            current_dart=amap->template darts_of_cell<CMap::dimension+1>(adart).
@@ -830,42 +829,56 @@ struct Reverse_orientation_of_connected_component_functor<CMap, CGAL::Void>
 // ****************************************************************************
 // Beta functor, used to combine several beta.
 #ifndef CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
-template<typename Dart_handle, typename ... Betas>
+template<typename CMap, typename Dart_handle, typename ... Betas>
 struct Beta_functor;
-template<typename Dart_handle, typename ... Betas>
-struct Beta_functor<Dart_handle, int, Betas...>
+
+template<typename CMap, typename Dart_handle>
+struct Beta_functor<CMap, Dart_handle, int>
 {
-  static Dart_handle run(Dart_handle ADart, int B, Betas... betas)
-  { return Beta_functor<Dart_handle, Betas...>::run(ADart->beta(B),
-                                                    betas...); }
+  static Dart_handle run(CMap* AMap, Dart_handle ADart, int B)
+  { return AMap->get_beta(ADart, B); }
 };
-template<typename Dart_handle>
-struct Beta_functor<Dart_handle, int>
+
+template<typename CMap, typename Dart_handle>
+struct Beta_functor<CMap, Dart_handle, unsigned int>
 {
-  static Dart_handle run(Dart_handle ADart, int B)
-  {
-    CGAL_assertion( ADart!=NULL );
-    return ADart->beta(B);
-  }
+  static Dart_handle run(CMap* AMap, Dart_handle ADart, unsigned int B)
+  { return  AMap->get_beta(ADart, B); }
+};
+
+template<typename CMap, typename Dart_handle, typename ... Betas>
+struct Beta_functor<CMap, Dart_handle, int, Betas...>
+{
+  static Dart_handle run(CMap* AMap, Dart_handle ADart, int B, Betas... betas)
+  { return Beta_functor<CMap, Dart_handle, Betas...>::
+      run(AMap, AMap->get_beta(ADart, B), betas...); }
+};
+
+template<typename CMap, typename Dart_handle, typename ... Betas>
+struct Beta_functor<CMap, Dart_handle, unsigned int, Betas...>
+{
+  static Dart_handle run(CMap* AMap, Dart_handle ADart, unsigned int B,
+                         Betas... betas)
+  { return Beta_functor<CMap, Dart_handle, Betas...>::
+      run(AMap, AMap->get_beta(ADart, B), betas...); }
 };
 // ****************************************************************************
-template<typename Dart_handle, int ... Betas>
+template<typename CMap, typename Dart_handle, int ... Betas>
 struct Beta_functor_static;
-template<typename Dart_handle, int B, int ... Betas>
-struct Beta_functor_static<Dart_handle, B, Betas...>
+
+template<typename CMap, typename Dart_handle, int B>
+struct Beta_functor_static<CMap, Dart_handle, B>
 {
-  static Dart_handle run(Dart_handle ADart)
-  { return Beta_functor_static<Dart_handle, Betas...>::
-        run(ADart->template beta<B>()); }
+  static Dart_handle run(CMap* AMap, Dart_handle ADart)
+  { return AMap->template get_beta<B>(ADart); }
 };
-template<typename Dart_handle, int B>
-struct Beta_functor_static<Dart_handle, B>
+
+template<typename CMap, typename Dart_handle, int B, int ... Betas>
+struct Beta_functor_static<CMap, Dart_handle, B, Betas...>
 {
-  static Dart_handle run(Dart_handle ADart)
-  {
-    CGAL_assertion( ADart!=NULL );
-    return ADart->template beta<B>();
-  }
+  static Dart_handle run(CMap* AMap, Dart_handle ADart)
+  { return Beta_functor_static<CMap, Dart_handle, Betas...>::
+        run(AMap, AMap->template get_beta<B>(ADart)); }
 };
 #endif //CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
 // ****************************************************************************

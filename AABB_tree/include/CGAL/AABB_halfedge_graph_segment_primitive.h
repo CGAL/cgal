@@ -31,7 +31,6 @@
 #include <CGAL/is_iterator.h>
 #include <boost/type_traits/is_convertible.hpp>
 #include <boost/utility/enable_if.hpp>
-#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 
 namespace CGAL {
 
@@ -51,7 +50,7 @@ namespace CGAL {
  * \tparam HalfedgeGraph is a model of the halfedge graph concept.
  * \tparam VertexPointPMap is a property map with `boost::graph_traits<HalfedgeGraph>::%vertex_descriptor`
  *   as key type and a \cgal Kernel `Point_3` as value type.
- * \tparam OneHalfedgeGraphPerTree is either `CGAL::Tag_true or `CGAL::Tag_false`.
+ * \tparam OneHalfedgeGraphPerTree is either `CGAL::Tag_true` or `CGAL::Tag_false`.
  * In the former case, we guarantee that all the primitives will be from a
  * common `HalfedgeGraph` and some data will be factorized so that the size of
  * the primitive is reduced. In the latter case, the primitives can be from
@@ -63,6 +62,7 @@ namespace CGAL {
  * \sa `AABBPrimitive`
  * \sa `AABB_primitive<Id,ObjectPropertyMap,PointPropertyMapPolyhedron,ExternalPropertyMaps,CacheDatum>`
  * \sa `AABB_face_graph_triangle_primitive<FaceGraph,OneFaceGraphPerTree,CacheDatum>`
+ * \sa \link BGLPolyGT `boost::graph_traits<Polyhedron>` \endlink
  */
 template < class HalfedgeGraph,
            class VertexPointPMap = typename boost::property_map< HalfedgeGraph, vertex_point_t>::type,
@@ -84,7 +84,7 @@ class AABB_halfedge_graph_segment_primitive
   typedef AABB_primitive< Id_,
                           Segment_property_map,
                           Point_property_map,
-                          Tag_true,
+                          OneHalfedgeGraphPerTree,
                           CacheDatum > Base;
 
 public:
@@ -105,6 +105,11 @@ public:
   */
   typedef boost::graph_traits<HalfedgeGraph>::edge_descriptor Id;
   /// @}
+
+  /*!
+  If `OneHalfedgeGraphPerTreeGraphPerTree` is CGAL::Tag_true, constructs a `Shared_data` object from a reference to the halfedge graph.
+  */
+  static unspecified_type construct_shared_data( HalfedgeGraph& graph );
 #endif
 
   /*!
@@ -130,21 +135,14 @@ public:
             Point_property_map(&graph) ){}
   #endif
 
-  /// For backward-compatibility with AABB_polyhedron_segment_primitive only
-  AABB_halfedge_graph_segment_primitive(Id_ id)
-    : Base( id,
-            Segment_property_map(NULL),
-            Point_property_map(NULL) ){}
-
-  static typename Base::Shared_data construct_shared_data( HalfedgeGraph& graph )
+  /// \internal
+  typedef internal::Cstr_shared_data<HalfedgeGraph, Base, Segment_property_map, Point_property_map, OneHalfedgeGraphPerTree> Cstr_shared_data;
+  /// \internal
+  static
+  typename Cstr_shared_data::Shared_data
+  construct_shared_data(HalfedgeGraph& graph)
   {
-    return Base::construct_shared_data(Segment_property_map(&graph), Point_property_map(&graph));
-  }
-
-  ///For backward-compatibility with AABB_polyhedron_segment_primitive only
-  static typename Base::Shared_data construct_shared_data()
-  {
-    return Base::construct_shared_data(Segment_property_map(NULL), Point_property_map(NULL));
+    return Cstr_shared_data::construct_shared_data(graph);
   }
 };
 

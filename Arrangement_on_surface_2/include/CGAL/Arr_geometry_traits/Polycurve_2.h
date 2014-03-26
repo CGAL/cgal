@@ -48,8 +48,8 @@ public:
   typedef typename Curve_traits_2::X_monotone_curve_2   Curve_2;
   typedef typename Curve_traits_2::Curve_2              Curve_2;
 
-  typedef std::vector<Curve_2>::const_iterator          const_iterator;
-  typedef std::vector<Curve_2>::const_reverse_iterator  const_reverse_iterator;
+  typedef typename std::vector<Curve_2>::const_iterator          const_iterator;
+  typedef typename std::vector<Curve_2>::const_reverse_iterator  const_reverse_iterator;
   
 protected:
   // The segments that comprise the polycurve:
@@ -110,7 +110,7 @@ public:
   const_reverse_iterator rbegin() const { return curves.rbegin(); }
 
   /*! Obtain a reverse past-the-end iterator for the polycurve points. */
-  const_reverse_iterator rend() const { return return curves.rend(); }
+  const_reverse_iterator rend() const { return curves.rend(); }
 
   /*!
    * Obtain the number of curves that comprise the polycurve.

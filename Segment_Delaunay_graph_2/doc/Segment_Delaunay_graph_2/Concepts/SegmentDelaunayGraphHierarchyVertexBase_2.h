@@ -14,13 +14,13 @@ next and previous level graphs.
 
 \cgalRefines `SegmentDelaunayGraphVertexBase_2` 
 
-### Types ###
+\cgalHeading{Types}
 
 `SegmentDelaunayGraphHierarchyVertexBase_2` does not introduce 
 any types in addition to those of 
 `SegmentDelaunayGraphVertexBase_2`. 
 
-### Creation ###
+\cgalHeading{Creation}
 
 The `SegmentDelaunayGraphHierarchyVertexBase_2` concept does not 
 introduce any constructors in addition to those of the 

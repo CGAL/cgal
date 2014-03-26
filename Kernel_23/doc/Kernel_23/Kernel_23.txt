@@ -59,12 +59,12 @@ There are many approaches to this problem, one of them is to compute
 exactly (compute so accurate that all decisions made by the algorithm
 are exact) which is possible in many cases but more expensive
 than standard floating-point arithmetic.
-C. M. Hoffmann \cite h-gsm-89, \cite h-pargc-89 illustrates some 
+C. M. Hoffmann \cgalCite{h-gsm-89}, \cgalCite{h-pargc-89} illustrates some 
 of the problems arising in the implementation of geometric algorithms
 and discusses some approaches to solve them. 
-A more recent overview is given in \cite s-rpigc-00.
+A more recent overview is given in \cgalCite{s-rpigc-00}.
 The exact computation paradigm is discussed by Yap and Dub&eacute; 
-\cite yd-ecp-95 and Yap \cite y-tegc-97.
+\cgalCite{yd-ecp-95} and Yap \cgalCite{y-tegc-97}.
 
 In \cgal you can choose the underlying number types and arithmetic. 
 You can use different types of arithmetic simultaneously and the choice can 
@@ -282,7 +282,7 @@ Other valid `FieldNumberType`s are `leda_rational` and
 If it is crucial for you that the computation is reliable, the right
 choice is probably a number type that guarantees exact computation.
 The `Filtered_kernel` provides a way to apply filtering techniques
-\cite cgal:bbp-iayed-01 to achieve a kernel with exact and efficient
+\cgalCite{cgal:bbp-iayed-01} to achieve a kernel with exact and efficient
 predicates. Still other people will prefer the built-in
 type <TT>double</TT>, because they need speed and can live with
 approximate results, or even algorithms that, from time to time,

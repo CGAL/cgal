@@ -540,6 +540,8 @@ create_mst_graph(
 /// This method modifies the order of input points so as to pack all sucessfully oriented points first,
 /// and returns an iterator over the first point with an unoriented normal (see erase-remove idiom).
 /// For this reason it should not be called on sorted containers.
+/// \warning This function may fail when Boost version 1.54 is used,
+/// because of the following bug: https://svn.boost.org/trac/boost/ticket/9012
 ///
 /// \pre Normals must be unit vectors
 /// \pre `k >= 2`

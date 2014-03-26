@@ -46,11 +46,11 @@ functions that return instances of these types:
 
 One of two algorithms is used, 
 depending on the type of iterator used to specify the input points. For 
-input iterators, the algorithm used is that of Bykat \cite b-chfsp-78, which 
+input iterators, the algorithm used is that of Bykat \cgalCite{b-chfsp-78}, which 
 has a worst-case running time of \f$ O(n h)\f$, where \f$ n\f$ is the number of input 
 points and \f$ h\f$ is the number of extreme points. For all other types of 
 iterators, the \f$ O(n \log n)\f$ algorithm of of Akl and Toussaint 
-\cite at-fcha-78 is used. 
+\cgalCite{at-fcha-78} is used. 
 
 
 */
@@ -81,10 +81,10 @@ namespace CGAL {
 /*!
 \ingroup PkgConvexHull2Subsequence
 
-The function `lower_hull_points_2()` generates the counterclockwise sequence of extreme 
+generates the counterclockwise sequence of extreme 
 points on the lower hull of a given set of input points. 
 
-It generates the counterclockwise sequence of extreme points
+More precisely, it generates the counterclockwise sequence of extreme points
 on the lower hull of the points in the range [`first`,
 `beyond`). The resulting sequence is placed starting at
 position `result`, and the past-the-end iterator for
@@ -127,7 +127,7 @@ functions that return instances of these types:
 \cgalHeading{Implementation}
 
 This function uses Andrew's variant of Graham's scan algorithm 
-\cite a-aeach-79, \cite m-mdscg-84. The algorithm has worst-case running time 
+\cgalCite{a-aeach-79}, \cgalCite{m-mdscg-84}. The algorithm has worst-case running time 
 of \f$ O(n \log n)\f$ for \f$ n\f$ input points. 
 
 
@@ -145,10 +145,10 @@ namespace CGAL {
 /*!
 \ingroup PkgConvexHull2Subsequence
 
-The function `upper_hull_points_2()` generates the counterclockwise sequence of extreme 
+generates the counterclockwise sequence of extreme 
 points on the upper hull of a given set of input points. 
 
-It generates the counterclockwise sequence of extreme points
+More precisely, it generates the counterclockwise sequence of extreme points
 on the upper hull of the points in the range [`first`,
 `beyond`). The resulting sequence is placed starting at
 position `result`, and the past-the-end iterator for
@@ -191,7 +191,7 @@ functions that return instances of these types:
 \cgalHeading{Implementation}
 
 This function uses Andrew's 
-variant of Graham's scan algorithm \cite a-aeach-79, \cite m-mdscg-84. The algorithm 
+variant of Graham's scan algorithm \cgalCite{a-aeach-79}, \cgalCite{m-mdscg-84}. The algorithm 
 has worst-case running time of \f$ O(n \log n)\f$ for \f$ n\f$ input points. 
 
 

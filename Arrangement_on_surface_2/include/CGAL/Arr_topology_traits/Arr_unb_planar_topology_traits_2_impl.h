@@ -14,7 +14,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Ron Wein  <wein@post.tau.ac.il>
 //                 Efi Fogel <efif@post.tau.ac.il>
@@ -123,7 +123,7 @@ void Arr_unb_planar_topology_traits_2<GeomTraits, Dcel_>::dcel_updated ()
 
   // Go over the DCEL faces and locate the fictitious face.
   typename Dcel::Face_iterator         fit;
-  
+
   fict_face = NULL;
   for (fit = this->m_dcel.faces_begin();
        fit != this->m_dcel.faces_end(); ++fit)
@@ -175,12 +175,12 @@ void Arr_unb_planar_topology_traits_2<GeomTraits, Dcel_>::init_dcel ()
   //
   //                            he2
   //             v_tl (.) ----------------> (.) v_tr
-  //                   ^ <------------------ 
+  //                   ^ <------------------
   //                   ||                   ^|
   //  fict_face    he1 ||        in_f       ||
   //                   ||                   || he3
   //                   |V                   ||
-  //                     ------------------> V 
+  //                     ------------------> V
   //             v_bl (.) <---------------- (.) v_br
   //                             he4
   //
@@ -257,13 +257,12 @@ are_equal(const Vertex *v,
   // In case the given boundary conditions do not match those of the given
   // vertex, v cannot represent the curve end.
   if (ps_x != v->parameter_space_in_x() || ps_y != v->parameter_space_in_y())
-    return (false);
+    return false;
 
   // Compare the curve end with the vertex.
   Comparison_result     res;
 
-  if (ps_x != ARR_INTERIOR)
-  {
+  if (ps_x != ARR_INTERIOR) {
     // The curve end lies at x = +/- oo and so does v. Check if the curve
     // overlaps with the curve that currently induces v.
     Arr_curve_end                  v_ind;
@@ -272,11 +271,11 @@ are_equal(const Vertex *v,
     if (v_cv == NULL)
       return (v->parameter_space_in_x() == ps_x &&
               v->parameter_space_in_y() == ps_y);
-    
-    res = this->traits->compare_y_curve_ends_2_object() (cv, *v_cv, v_ind);    
+
+    res = this->m_geom_traits->compare_y_curve_ends_2_object()(cv,
+                                                               *v_cv, v_ind);
   }
-  else 
-  {
+  else {
     CGAL_assertion (ps_y != ARR_INTERIOR);
 
     // The curve end lies at y = +/- oo and so does v. Check if the curve
@@ -289,7 +288,8 @@ are_equal(const Vertex *v,
               v->parameter_space_in_y() == ps_y);
 
     res =
-      this->traits->compare_x_curve_ends_2_object() (cv, ind, *v_cv, v_ind);
+      this->m_geom_traits->compare_x_curve_ends_2_object() (cv, ind,
+                                                            *v_cv, v_ind);
   }
 
   return (res == EQUAL);
@@ -416,10 +416,10 @@ split_fictitious_edge (Halfedge *e, Vertex *v)
   // face.
   Halfedge       *he1 = e;
   Halfedge       *he2 = he1->opposite();
-  
+
   CGAL_assertion (! he1->is_on_inner_ccb());
   Outer_ccb      *oc1 = he1->outer_ccb();
-  
+
   CGAL_assertion (oc1->face()->is_unbounded());
 
   CGAL_assertion (he2->is_on_inner_ccb());
@@ -489,9 +489,9 @@ is_unbounded(const Face *f) const
     if (curr->has_null_curve())
       // Found a fictitious halfedge along the boundary: f is unbounded.
       return (true);
-    
+
     curr = curr->next();
-    
+
   } while (curr != first);
 
   // If we reached here, all halfedges along the face boundary are valid,
@@ -512,7 +512,7 @@ is_redundant(const Vertex *v) const
   // is no valid edge incident to it).
   const Halfedge  *first_he = v->halfedge();
   const Halfedge  *next_he = first_he->next()->opposite();
-      
+
   if (next_he->next()->opposite() == first_he)
   {
     CGAL_assertion (first_he->has_null_curve() && next_he->has_null_curve());
@@ -604,7 +604,7 @@ compare_x (const Point_2& p, const Vertex* v) const
 {
   // First check if the vertex v lies at x = -oo (then it is obviously smaller
   // than p), or at x = +oo (then it is obviously larger).
-  const Arr_parameter_space          ps_x = v->parameter_space_in_x();
+  const Arr_parameter_space ps_x = v->parameter_space_in_x();
 
   if (ps_x == ARR_LEFT_BOUNDARY)
     return (LARGER);
@@ -612,21 +612,23 @@ compare_x (const Point_2& p, const Vertex* v) const
     return (SMALLER);
 
   // Check if the vertex lies at y = +/- oo.
-  const Arr_parameter_space          ps_y = v->parameter_space_in_y();
+  const Arr_parameter_space ps_y = v->parameter_space_in_y();
 
   if (ps_y != ARR_INTERIOR)
   {
     // Compare the x-position of the vertical asymptote of the curve incident
     // to v with the x-coodinate of p.
-    Arr_curve_end                  v_ind = ARR_MIN_END;
-    const X_monotone_curve_2  *v_cv = _curve (v, v_ind);
-    
-    CGAL_assertion (v_cv != NULL);
-    return (this->traits->compare_x_point_curve_end_2_object() (p, *v_cv, v_ind));
+    Arr_curve_end v_ind = ARR_MIN_END;
+    const X_monotone_curve_2* v_cv = _curve (v, v_ind);
+
+    CGAL_assertion(v_cv != NULL);
+    return
+      (this->m_geom_traits->compare_x_point_curve_end_2_object()(p, *v_cv,
+                                                                 v_ind));
   }
 
   // In this case v represents a normal point, and we compare it with p.
-  return (this->traits->compare_x_2_object() (p, v->point()));
+  return (this->m_geom_traits->compare_x_2_object() (p, v->point()));
 }
 
 //-----------------------------------------------------------------------------
@@ -639,37 +641,34 @@ compare_xy (const Point_2& p, const Vertex* v) const
 {
   // First check if the vertex v lies at x = -oo (then it is obviously smaller
   // than p), or at x = +oo (then it is obviously larger).
-  const Arr_parameter_space          ps_x = v->parameter_space_in_x();
+  const Arr_parameter_space ps_x = v->parameter_space_in_x();
 
-  if (ps_x == ARR_LEFT_BOUNDARY)
-    return (LARGER);
-  else if (ps_x == ARR_RIGHT_BOUNDARY)
-    return (SMALLER);
+  if (ps_x == ARR_LEFT_BOUNDARY) return (LARGER);
+  else if (ps_x == ARR_RIGHT_BOUNDARY) return (SMALLER);
 
   // Check if the vertex lies at y = +/- oo.
-  const Arr_parameter_space          ps_y = v->parameter_space_in_y();
+  const Arr_parameter_space ps_y = v->parameter_space_in_y();
 
-  if (ps_y != ARR_INTERIOR)
-  {
+  if (ps_y != ARR_INTERIOR) {
     // Compare the x-position of the vertical asymptote of the curve incident
     // to v with the x-coodinate of p.
-    Arr_curve_end                  v_ind = ARR_MIN_END;
-    const X_monotone_curve_2  *v_cv = _curve (v, v_ind);
+    Arr_curve_end v_ind = ARR_MIN_END;
+    const X_monotone_curve_2* v_cv = _curve (v, v_ind);
 
     CGAL_assertion (v_cv != NULL);
 
-    Comparison_result          res =
-      this->traits->compare_x_point_curve_end_2_object() (p, *v_cv, v_ind);
+    Comparison_result res =
+      this->m_geom_traits->compare_x_point_curve_end_2_object() (p, *v_cv,
+                                                                 v_ind);
 
-    if (res != EQUAL)
-      return (res);
+    if (res != EQUAL) return (res);
 
     // In case of equality, consider whether v lies at y = -oo or at y = +oo.
     return (ps_y == ARR_BOTTOM_BOUNDARY) ? LARGER : SMALLER;
   }
 
   // In this case v represents a normal point, and we compare it with p.
-  return (this->traits->compare_xy_2_object() (p, v->point()));
+  return (this->m_geom_traits->compare_xy_2_object()(p, v->point()));
 }
 
 //-----------------------------------------------------------------------------
@@ -683,54 +682,52 @@ compare_y_at_x (const Point_2& p, const Halfedge* he) const
 {
   // In case of a valid edge, just compare p to its associated curve.
   if (! he->has_null_curve())
-    return (this->traits->compare_y_at_x_2_object() (p, he->curve()));
+    return (this->m_geom_traits->compare_y_at_x_2_object()(p, he->curve()));
 
   // Otherwise, determine on which edge of the bounding rectangle does he lie.
   // Note this can be either the top edge or the bottom edge (and not the
   // left or the right edge), as p must lie in its x-range.
-  CGAL_assertion ((he->vertex()->parameter_space_in_x() == ARR_INTERIOR) ||
-                  (he->vertex()->parameter_space_in_x() != 
-                   he->opposite()->vertex()->parameter_space_in_x()));
-  CGAL_assertion ((he->vertex()->parameter_space_in_y() != ARR_INTERIOR) &&
-                  (he->vertex()->parameter_space_in_y() == 
-                   he->opposite()->vertex()->parameter_space_in_y()));
+  CGAL_assertion((he->vertex()->parameter_space_in_x() == ARR_INTERIOR) ||
+                 (he->vertex()->parameter_space_in_x() !=
+                  he->opposite()->vertex()->parameter_space_in_x()));
+  CGAL_assertion((he->vertex()->parameter_space_in_y() != ARR_INTERIOR) &&
+                 (he->vertex()->parameter_space_in_y() ==
+                  he->opposite()->vertex()->parameter_space_in_y()));
 
+  // he lies on the bottom edge, so p is obviously above it.
   if (he->vertex()->parameter_space_in_y() == ARR_BOTTOM_BOUNDARY)
-    // he lies on the bottom edge, so p is obviously above it.
-    return (LARGER);
+    return LARGER;
+  // he lies on the top edge, so p is obviously below it.
   else
-    // he lies on the top edge, so p is obviously below it.
-    return (SMALLER);
+    return SMALLER;
 }
 
 //-----------------------------------------------------------------------------
 // Get the curve associated with a boundary vertex.
 //
-template <class GeomTraits, class Dcel_>
+template <typename GeomTraits, typename Dcel_>
 const typename
-Arr_unb_planar_topology_traits_2<GeomTraits, Dcel_>::X_monotone_curve_2* 
+Arr_unb_planar_topology_traits_2<GeomTraits, Dcel_>::X_monotone_curve_2*
 Arr_unb_planar_topology_traits_2<GeomTraits, Dcel_>::
-_curve (const Vertex *v, Arr_curve_end& ind) const
+_curve (const Vertex* v, Arr_curve_end& ind) const
 {
   // Go over the incident halfedges of v until encountering the halfedge
   // associated with a valid curve (v should have three incident halfedges,
   // two of the are fictitious and one associated with a curve).
-  const Halfedge         *he = v->halfedge();
+  const Halfedge* he = v->halfedge();
 
-  while (he->has_null_curve())
-  {
+  while (he->has_null_curve()) {
     he = he->next()->opposite();
 
-    if (he == v->halfedge())
-      // No incident curve were found:
-      return (NULL);
+    // No incident curve were found:
+    if (he == v->halfedge()) return (NULL);
   }
 
   // The halfedge he is directed toward v, so if it is directed from left to
   // right, v represents the maximal end of cv, otherwise it represents its
   // minimal end.
   ind = (he->direction() == ARR_LEFT_TO_RIGHT) ? ARR_MAX_END : ARR_MIN_END;
-  
+
   // Return the x-monotone curve.
   return &(he->curve());
 }
@@ -739,116 +736,101 @@ _curve (const Vertex *v, Arr_curve_end& ind) const
 // Check whether the given infinite curve end lies on the given fictitious
 // halfedge.
 //
-template <class GeomTraits, class Dcel_>
-bool 
+template <typename GeomTraits, typename Dcel_>
+bool
 Arr_unb_planar_topology_traits_2<GeomTraits, Dcel_>::
-_is_on_fictitious_edge (const X_monotone_curve_2& cv, Arr_curve_end ind,
-                        Arr_parameter_space ps_x, Arr_parameter_space ps_y,
-                        const Halfedge *he,
-                        bool& eq_source, bool& eq_target)
+_is_on_fictitious_edge(const X_monotone_curve_2& cv, Arr_curve_end ind,
+                       Arr_parameter_space ps_x, Arr_parameter_space ps_y,
+                       const Halfedge* he,
+                       bool& eq_source, bool& eq_target)
 {
   eq_source = false;
   eq_target = false;
 
   // Get the end-vertices of the edge.
-  const Vertex      *v1 = he->opposite()->vertex();
-  const Vertex      *v2 = he->vertex();
-  Comparison_result  res1, res2;
-  Arr_curve_end      v_ind = ARR_MIN_END;
+  const Vertex* v1 = he->opposite()->vertex();
+  const Vertex* v2 = he->vertex();
+  Comparison_result res1, res2;
+  Arr_curve_end v_ind = ARR_MIN_END;
 
   // Check if this is a "vertical" ficitious edge.
   Arr_parameter_space he_ps_x = v1->parameter_space_in_x();
-  if (he_ps_x != ARR_INTERIOR && he_ps_x == v2->parameter_space_in_x())
-  {
+  if ((he_ps_x != ARR_INTERIOR) && (he_ps_x == v2->parameter_space_in_x())) {
     // If the edge lies on x = +/- oo, the curve endpoint must also lie there.
-    CGAL_assertion ((he_ps_x == ARR_LEFT_BOUNDARY) ||
-                    (he_ps_x == ARR_RIGHT_BOUNDARY));
+    CGAL_assertion((he_ps_x == ARR_LEFT_BOUNDARY) ||
+                   (he_ps_x == ARR_RIGHT_BOUNDARY));
 
-    if (he_ps_x != ps_x)
-      return (false);
+    if (he_ps_x != ps_x) return false;
 
     // Compare the y-position of the curve end to the source vertex.
-    if (v1 == v_bl || v1 == v_br)
-    {
+    if ((v1 == v_bl) || (v1 == v_br)) {
       // These vertices are below any curve.
       res1 = LARGER;
     }
-    else if (v1 == v_tl || v1 == v_tr)
-    {
+    else if ((v1 == v_tl) || (v1 == v_tr)) {
       // These vertices are above any curve.
       res1 = SMALLER;
     }
-    else
-    {
-      const Arr_curve_end  ind =
+    else {
+      const Arr_curve_end ind =
         (ps_x == ARR_LEFT_BOUNDARY) ? ARR_MIN_END : ARR_MAX_END;
 
       res1 =
-        this->traits->compare_y_curve_ends_2_object() (cv,
-						       *_curve (v1, v_ind),
-						       ind);
-      if (res1 == EQUAL)
-      {
+        this->m_geom_traits->compare_y_curve_ends_2_object()(cv,
+                                                             *_curve (v1, v_ind),
+                                                             ind);
+      if (res1 == EQUAL) {
         eq_source = true;
-        return (true);
+        return true;
       }
     }
 
     // Compare the y-position of the curve end to the target vertex.
-    if (v2 == v_bl || v2 == v_br)
-    {
+    if ((v2 == v_bl) || (v2 == v_br)) {
       // These vertices are below any curve.
       res2 = LARGER;
     }
-    else if (v2 == v_tl || v2 == v_tr)
-    {
+    else if ((v2 == v_tl) || (v2 == v_tr)) {
       // These vertices are above any curve.
       res2 = SMALLER;
     }
-    else
-    {
+    else {
       const Arr_curve_end ind =
         (ps_x == ARR_LEFT_BOUNDARY) ? ARR_MIN_END : ARR_MAX_END;
 
       res2 =
-        this->traits->compare_y_curve_ends_2_object() (cv,
-						       *_curve (v2, v_ind),
-						       ind);
-      
-      if (res2 == EQUAL)
-      {
+        this->m_geom_traits->compare_y_curve_ends_2_object()(cv,
+                                                             *_curve (v2, v_ind),
+                                                             ind);
+
+      if (res2 == EQUAL) {
         eq_target = true;
-        return (true);
+        return true;
       }
     }
   }
-  else
-  {
+  else {
     // If we reched here, we have a "horizontal" fictitious halfedge.
     Arr_parameter_space he_ps_y = v1->parameter_space_in_y();
 
-    CGAL_assertion ((he_ps_y == ARR_BOTTOM_BOUNDARY ||
-                     he_ps_y == ARR_TOP_BOUNDARY) &&
-                    he_ps_y == v2->parameter_space_in_y());
+    CGAL_assertion((he_ps_y == ARR_BOTTOM_BOUNDARY ||
+                    he_ps_y == ARR_TOP_BOUNDARY) &&
+                   he_ps_y == v2->parameter_space_in_y());
 
     // If the edge lies on y = +/- oo, the curve endpoint must also lie there
     // (and must not lies at x = +/- oo.
-    if (ps_x != ARR_INTERIOR || he_ps_y != ps_y)
-      return (false);
+    if ((ps_x != ARR_INTERIOR) || (he_ps_y != ps_y)) return false;
 
     // Compare the x-position of the curve end to the source vertex.
-    if (v1 == v_bl || v1 == v_tl)
-    {
+    if ((v1 == v_bl) || (v1 == v_tl)) {
       // These vertices are to the left of any curve.
       res1 = LARGER;
     }
-    else if (v1 == v_br || v1 == v_tr)
-    {
+    else if ((v1 == v_br) || (v1 == v_tr)) {
       // These vertices are to the right of any curve.
       res1 = SMALLER;
     }
-    else
-    {
+    else {
       const X_monotone_curve_2  *v_cv1 = _curve (v1, v_ind);
 
       // Note that v1 is a non-fictitious vertex, therefore we expect it to
@@ -858,37 +840,32 @@ _is_on_fictitious_edge (const X_monotone_curve_2& cv, Arr_curve_end ind,
       // arrangement, but it hasn't been associated with a valid halfedge
       // yet, as the insertion process is still ongoing.
       // The comparison result in this case is trivial.
-      if (v_cv1 != NULL)
-      {
-        res1 = this->traits->compare_x_curve_ends_2_object() (cv, ind,
-							      *v_cv1, v_ind);
-	
-        if (res1 == EQUAL)
-        {
+      if (v_cv1 != NULL) {
+        res1 =
+          this->m_geom_traits->compare_x_curve_ends_2_object()(cv, ind,
+                                                               *v_cv1, v_ind);
+
+        if (res1 == EQUAL) {
           eq_source = true;
-          return (true);
+          return true;
         }
       }
-      else
-      {
+      else {
         res1 = (ind == ARR_MIN_END) ? SMALLER : LARGER;
       }
     }
 
     // Compare the x-position of the curve end to the target vertex.
-    if (v2 == v_bl || v2 == v_tl)
-    {
+    if ((v2 == v_bl) || (v2 == v_tl)) {
       // These vertices are to the left of any curve.
       res2 = LARGER;
     }
-    else if (v2 == v_br || v2 == v_tr)
-    {
+    else if ((v2 == v_br) || (v2 == v_tr)) {
       // These vertices are to the right of any curve.
       res2 = SMALLER;
     }
-    else
-    {
-      const X_monotone_curve_2  *v_cv2 = _curve (v2, v_ind);
+    else {
+      const X_monotone_curve_2* v_cv2 = _curve(v2, v_ind);
 
       // Note that v2 is a non-fictitious vertex, therefore we expect it to
       // be associated with a valid curve end. If this is not the case, we
@@ -897,21 +874,19 @@ _is_on_fictitious_edge (const X_monotone_curve_2& cv, Arr_curve_end ind,
       // arrangement, but it hasn't been associated with a valid halfedge
       // yet, as the insertion process is still ongoing.
       // The comparison result in this case is trivial.
-      if (v_cv2 != NULL)
-      {
-        res2 = this->traits->compare_x_curve_ends_2_object() (cv, ind,
-							      *v_cv2, v_ind);
-	
-        if (res2 == EQUAL)
-        {
+      if (v_cv2 != NULL) {
+        res2 =
+          this->m_geom_traits->compare_x_curve_ends_2_object()(cv, ind,
+                                                               *v_cv2, v_ind);
+
+        if (res2 == EQUAL) {
           eq_target = true;
-          return (true);
-        }        
+          return true;
+        }
       }
-      else
-      {
+      else {
         res2 = (ind == ARR_MIN_END) ? SMALLER : LARGER;
-      } 
+      }
     }
   }
 

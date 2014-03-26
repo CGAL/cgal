@@ -69,7 +69,7 @@ P3Triangulation3secspace of the user manual). In the degenerate case
 when there are co-spherical points, the Delaunay triangulation is
 known not to be uniquely defined. In this case, \cgal chooses a
 particular Delaunay triangulation using a symbolic perturbation scheme
-\cite cgal:dt-pvr3d-03. Note that insertion of a new point can cause a
+\cgalCite{cgal:dt-pvr3d-03}. Note that insertion of a new point can cause a
 switch from computing in the 27-sheeted covering space to computing in
 the 1-sheeted covering space, which invalidates some `Vertex_handle`s
 and `Cell_handle`s.
@@ -146,7 +146,7 @@ re-triangulated. So, the problem reduces to triangulating a polyhedral
 region, while preserving its boundary, or to compute a
 <I>constrained</I> triangulation. This is known to be sometimes
 impossible: the Sch&ouml;nhardt polyhedron cannot be triangulated
-\cite cgal:s-cgehd-98.
+\cgalCite{cgal:s-cgehd-98}.
 
 However, when dealing with Delaunay triangulations, the case of such
 polyhedra that cannot be re-triangulated cannot happen, so \cgal

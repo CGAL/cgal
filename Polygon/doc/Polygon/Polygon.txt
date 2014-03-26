@@ -46,7 +46,7 @@ some member functions.
 
 \include Polygon.cpp
 
-\cgalFigureBegin{polygon2_algo,pgn_algos.gif}
+\cgalFigureBegin{polygon2_algo,pgn_algos.png}
 A polygon and some points
 \cgalFigureEnd
 

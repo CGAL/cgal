@@ -24,6 +24,8 @@
 
 #include <CGAL/basic.h> // include basic.h before testing #defines
 
+#ifdef CGAL_USE_TAUCS
+
 #include <CGAL/Taucs_fix.h>
 #include <CGAL/assertions.h>
 
@@ -457,5 +459,7 @@ template<> struct Taucs_traits<taucs_scomplex> {
 /// @endcond
 
 } //namespace CGAL
+
+#endif
 
 #endif // CGAL_TAUCS_MATRIX_H

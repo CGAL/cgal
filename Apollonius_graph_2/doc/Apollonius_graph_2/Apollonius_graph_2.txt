@@ -20,7 +20,7 @@ described.
 
 \section secapollonius2definitions Definitions 
 
-\cgalFigureBegin{figapollonius,apollonius_diagram.gif,apollonius_graph.gif}
+\cgalFigureBegin{figapollonius,apollonius_diagram.png,apollonius_graph.png}
 The Apollonius diagram (left) and its dual the Apollonius graph (right).
 \cgalFigureEnd
 
@@ -32,7 +32,7 @@ deletions on line. The corresponding \cgal class is called
 `Apollonius_graph_2<ApolloniusGraphTraits_2,ApolloniusGraphDataStructure_2>`
 and will be discussed in more detail in the sequel. The interested
 reader may want to refer to the paper by Karavelas and Yvinec
-\cite cgal:ky-dawvd-02 for the general idea as well as the details of the
+\cgalCite{cgal:ky-dawvd-02} for the general idea as well as the details of the
 algorithm implemented.
 
 Before describing the details of the implementation we make a brief
@@ -240,7 +240,7 @@ The predicates required for the computation of the Apollonius graph
 are rather complicated. It is not the purpose of this document to
 discuss them in detail. The interested reader may refer to the papers
 by Karavelas and Emiris for the details
-\cite cgal:ke-ppawv-02, \cite cgal:ke-rctac-03. However, we would like to give a brief
+\cgalCite{cgal:ke-ppawv-02}, \cgalCite{cgal:ke-rctac-03}. However, we would like to give a brief
 overview of what they 
 compute. There are several predicates needed by this algorithm. We
 will discuss the most important/complicated ones. It turns out that
@@ -278,7 +278,7 @@ inserted in the diagram (the green circle). In the Apollonius graph
 it tells us if a triangular face of the diagram is to be destroyed or
 not.
 
-\cgalFigureBegin{figag2vc,apollonius-vertex_conflict-false.gif,apollonius-vertex_conflict-true.gif}
+\cgalFigureBegin{figag2vc,apollonius-vertex_conflict-false.png,apollonius-vertex_conflict-true.png}
 The `Vertex_conflict_2` predicate. The left-most, bottom-most and top-most circles define the tritangent circle in the middle. We want to determine the sign of the distance of the left-most circle from the one in the middle. The almost horizontal curve is the bisector of the top-most and bottom-most circles. Left: the predicate returns `NEGATIVE`. Right: the predicate returns `POSITIVE`.
 \cgalFigureEnd
 
@@ -308,16 +308,34 @@ otherwise it is a finite edge.
 <CENTER>
 <TABLE BORDER>
 <TR>
-<TD>\image html ./apollonius-left_vertex.gif</TD>
-<TD>\image html ./apollonius-right_vertex.gif</TD>
+<TD>
+\image html ./apollonius-left_vertex.png
+\image latex ./apollonius-left_vertex.png
+</TD>
+<TD>
+\image html ./apollonius-right_vertex.png
+\image latex ./apollonius-right_vertex.png
+</TD>
 </TR>
 <TR>
-<TD>\image html ./apollonius-no_conflict.gif</TD>
-<TD>\image html ./apollonius-entire_edge.gif</TD>
+<TD>
+\image html ./apollonius-no_conflict.png
+\image latex ./apollonius-no_conflict.png
+</TD>
+<TD>
+\image html ./apollonius-entire_edge.png
+\image latex ./apollonius-entire_edge.png
+</TD>
 </TR>
 <TR>
-<TD>\image html ./apollonius-interior.gif</TD>
-<TD>\image html ./apollonius-both_vertices.gif</TD>
+<TD>
+\image html ./apollonius-interior.png
+\image latex ./apollonius-interior.png
+</TD>
+<TD>
+\image html ./apollonius-both_vertices.png
+\image latex ./apollonius-both_vertices.png
+</TD>
 </TR>
 </TABLE>
 </CENTER>
@@ -396,7 +414,7 @@ manual.
 The `Apollonius_graph_hierarchy_2<ApolloniusGraphTraits_2,ApolloniusGraphDataStructure_2>` class is nothing but the equivalent of the `Triangulation_hierarchy_2`
 class, applied to the Apollonius graph. It consists of a series of
 Apollonius graphs constructed in a manner analogous to the Delaunay
-hierarchy by Devillers \cite d-iirdt-98. The class
+hierarchy by Devillers \cgalCite{d-iirdt-98}. The class
 `Apollonius_graph_hierarchy_2<ApolloniusGraphTraits_2,ApolloniusGraphDataStructure_2>`
 has exactly the same interface and functionality as the
 `Apollonius_graph_2<ApolloniusGraphTraits_2,ApolloniusGraphDataStructure_2>`

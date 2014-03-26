@@ -37,7 +37,6 @@ public:
   Vertex operator  () (Vertex & v) const
   {
     Dart_handle d = v.dart ();
-    CGAL_assertion (d != NULL);
 
     int degree = 0;
     bool open = false;
@@ -47,7 +46,7 @@ public:
     for (; it != itend; ++it)
     {
       ++degree;
-      if (it->is_free (2)) open = true;
+      if (mlcc.is_free(it, 2)) open = true;
     }
 
     if (open)
@@ -61,8 +60,8 @@ public:
 
     for (it.rewind (); it != itend; ++it)
     {
-      CGAL_assertion (!it->is_free (2));
-      vec = vec + (mlcc.point(it->beta(2)) - CGAL::ORIGIN)
+      CGAL_assertion (!mlcc.is_free(it,2));
+      vec = vec + (mlcc.point(mlcc.beta(it,2)) - CGAL::ORIGIN)
         * alpha / degree;
     }
 
@@ -79,41 +78,41 @@ private:
 Dart_handle
 flip_edge (LCC & m, Dart_handle d)
 {
-  CGAL_assertion ( d!=NULL && !d->is_free(2) );
-  CGAL_assertion ( !d->is_free(1) && !d->is_free(0) );
-  CGAL_assertion ( !d->beta(2)->is_free(0) && !d->beta(2)->is_free(1) );  
+  CGAL_assertion ( !m.is_free(d,2) );
+  CGAL_assertion ( !m.is_free(d,1) && !m.is_free(d,0) );
+  CGAL_assertion ( !m.is_free(m.beta(d,2), 0) && !m.is_free(m.beta(d, 2), 1) );
   
-  if (!CGAL::is_removable<LCC,1>(m,d)) return NULL;
+  if (!CGAL::is_removable<LCC,1>(m,d)) return LCC::null_handle;
 
-  Dart_handle d1 = d->beta(1);
-  Dart_handle d2 = d->beta(2)->beta(0);
+  Dart_handle d1 = m.beta(d,1);
+  Dart_handle d2 = m.beta(d,2,0);
 
-  CGAL_assertion ( !d1->is_free(1) && !d2->is_free(0) );
+  CGAL_assertion ( !m.is_free(d1,1) && !m.is_free(d2,0) );
 
-  Dart_handle d3 = d1->beta(1);
-  Dart_handle d4 = d2->beta(0);
+  Dart_handle d3 = m.beta(d1,1);
+  Dart_handle d4 = m.beta(d2, 0);
 
   // We isolated the edge
-  m.basic_link_beta_1(d->beta(0), d->beta(2)->beta(1));
-  m.basic_link_beta_0(d->beta(1), d->beta(2)->beta(0));
-  if ( !d->is_free(3) )
+  m.basic_link_beta_1(m.beta(d,0), m.beta(d,2,1));
+  m.basic_link_beta_0(m.beta(d,1), m.beta(d,2,0));
+  if ( !m.is_free(d,3) )
   {
-    m.basic_link_beta_0(d->beta(0)->beta(3), d->beta(2)->beta(1)->beta(3));
-    m.basic_link_beta_1(d->beta(1)->beta(3), d->beta(2)->beta(0)->beta(3));
+    m.basic_link_beta_0(m.beta(d,0,3), m.beta(d,2,1,3));
+    m.basic_link_beta_1(m.beta(d,1,3), m.beta(d,2,0,3));
   }
 
   // Then we push the two extremities.
   m.basic_link_beta_0(d3, d);
-  m.basic_link_beta_0(d2, d->beta(2));
+  m.basic_link_beta_0(d2, m.beta(d,2));
   m.link_beta_1(d4, d);
-  m.link_beta_1(d1, d->beta(2));
+  m.link_beta_1(d1, m.beta(d,2));
 
-  if ( !d->is_free(3) )
+  if ( !m.is_free(d,3) )
   {
-    m.basic_link_beta_0(d4->beta(3), d->beta(3));
-    m.basic_link_beta_0(d1->beta(3), d->beta(2)->beta(3));
-    m.link_beta_1(d3->beta(3), d->beta(3));
-    m.link_beta_1(d2->beta(3), d->beta(2)->beta(3));
+    m.basic_link_beta_0(m.beta(d4,3), m.beta(d,3));
+    m.basic_link_beta_0(m.beta(d1,3), m.beta(d,2,3));
+    m.link_beta_1(m.beta(d3,3), m.beta(d,3));
+    m.link_beta_1(m.beta(d2,3), m.beta(d,2,3));
   }
   
   // CGAL::remove_cell<LCC,1>(m, d);
@@ -165,26 +164,25 @@ subdivide_lcc_3 (LCC & m)
   for (std::vector < Vertex >::iterator vit = vertices.begin ();
        vit != vertices.end (); ++vit)
   {
-    LCC::point(vit->dart())=vit->point();
+    m.point(vit->dart())=vit->point();
   }
 
   // 4) We flip all the old edges.
   m.negate_mark (mark);  // Now only new darts are marked.
-  Dart_handle d2 = NULL;
+  Dart_handle d2 =LCC::null_handle;
   for (LCC::Dart_range::iterator it (m.darts().begin ());
        it != m.darts().end ();)
   {
     d2 = it++;
-    CGAL_assertion (d2 != NULL);
     if (!m.is_marked (d2, mark))  // This is an old dart.
     {
       // We process only the last dart of a same edge.
-      if (!d2->is_free(2) && (d2->beta(2)->beta(3)==d2->beta(3)->beta(2)))
+      if (!m.is_free(d2,2) && (m.beta(d2,2,3)==m.beta(d2,3,2)))
       {
-        if (m.is_marked(d2->beta(2), mark) &&
-            (d2->is_free(3) ||
-             (m.is_marked(d2->beta(3), mark) &&
-              m.is_marked(d2->beta(2)->beta(3), mark))))
+        if (m.is_marked(m.beta(d2,2), mark) &&
+            (m.is_free(d2,3) ||
+             (m.is_marked(m.beta(d2,3), mark) &&
+              m.is_marked(m.beta(d2,2,3), mark))))
         {
           flip_edge (m, d2);
           m.mark(d2, mark);

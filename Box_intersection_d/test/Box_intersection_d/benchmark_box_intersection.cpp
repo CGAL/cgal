@@ -49,7 +49,8 @@ test_n( unsigned int n, std::ostream& outfile )
     Uti1::fill_boxes( n, boxes1 );
     Uti1::fill_boxes( n, boxes2 );
     std::cout << std::endl;
-    typename Uti1::Counter_callback callback1, callback2;
+    unsigned int c1 = 0, c2 = 0;
+    typename Uti1::Counter_callback callback1(c1), callback2(c2);
     CGAL::Timer timer, timer_scan;
     double time, time_scan;
     std::size_t problemsize = boxes1.size() + boxes2.size();

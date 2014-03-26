@@ -20,6 +20,7 @@
 #ifndef CGAL_RANDOM_SIMPLIFY_POINT_SET_H
 #define CGAL_RANDOM_SIMPLIFY_POINT_SET_H
 
+#include <CGAL/Kernel_traits.h>
 #include <CGAL/property_map.h>
 #include <CGAL/point_set_processing_assertions.h>
 

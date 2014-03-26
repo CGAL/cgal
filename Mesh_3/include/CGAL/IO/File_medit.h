@@ -45,11 +45,10 @@ inline
 std::ostream&
 operator<<(std::ostream &os, const std::pair<T,T>& pair)
 {
-  return !!(os << "<" << pair.first << "," << pair.second << ">");
-  // call operator!() twice, because operator bool() is C++11
+  return os << "<" << pair.first << "," << pair.second << ">";
 }
 #endif
-  
+
 // -----------------------------------
 // Rebin_cell_pmap
 // -----------------------------------
@@ -777,7 +776,7 @@ output_to_medit(std::ostream& os,
   //-------------------------------------------------------
   // Header
   //-------------------------------------------------------
-  os << std::setprecision(20);
+  os << std::setprecision(17);
 
   os << "MeshVersionFormatted 1" << std::endl
      << "Dimension 3" << std::endl;

@@ -32,7 +32,7 @@ convex polygon (oriented clock- or counterclockwise).
 \cgalHeading{Implementation}
 
 The implementation uses monotone matrix search 
-\cite akmsw-gamsa-87 and has a worst case running time of \f$ O(k 
+\cgalCite{akmsw-gamsa-87} and has a worst case running time of \f$ O(k 
 \cdot n + n \cdot \log n)\f$, where \f$ n\f$ is the number of vertices in 
 \f$ P\f$. 
 
@@ -58,7 +58,7 @@ vertices to `o` and returns the past-the-end iterator of this
 sequence. 
 
 
-The function `maximum_area_inscribed_k_gon_2` computes a maximum area 
+Computes a maximum area 
 `k`-gon \f$ P_k\f$ that can be inscribed into a given convex polygon \f$ P\f$. 
 Note that 
 <UL> 
@@ -89,7 +89,7 @@ where `K` is a model of `Kernel`.
 \cgalHeading{Implementation}
 
 The implementation uses monotone matrix search 
-\cite akmsw-gamsa-87 and has a worst case running time of \f$ O(k 
+\cgalCite{akmsw-gamsa-87} and has a worst case running time of \f$ O(k 
 \cdot n + n \cdot \log n)\f$, where \f$ n\f$ is the number of vertices in 
 \f$ P\f$. 
 
@@ -158,7 +158,7 @@ defined that computes the squareroot of a number.
 \cgalHeading{Implementation}
 
 The implementation uses monotone matrix search 
-\cite akmsw-gamsa-87 and has a worst case running time of \f$ O(k 
+\cgalCite{akmsw-gamsa-87} and has a worst case running time of \f$ O(k 
 \cdot n + n \cdot \log n)\f$, where \f$ n\f$ is the number of vertices in 
 \f$ P\f$. 
 

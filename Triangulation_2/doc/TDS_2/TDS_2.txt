@@ -51,7 +51,7 @@ of a face `f` which is opposed to the vertex indexed `i`,
 can be represented as well as an edge of the `neighbor(i)` of 
 `f`.
 
-\cgalFigureBegin{TDS_2D_Fig_neighbors1,rep_bis.gif}
+\cgalFigureBegin{TDS_2D_Fig_neighbors1,rep_bis.png}
 \cgalFigureEnd
 
 This kind or representation of simplicial complexes extends in any
@@ -139,7 +139,7 @@ see \cgalFigureRef{TDS_2D_Fig_insertion},
 <LI>removal of a vertex lowering the dimension of the triangulation
 </UL>
 
-\cgalFigureBegin{TDS_2D_Fig_insertion,Three.gif}
+\cgalFigureBegin{TDS_2D_Fig_insertion,Three.png}
 Insertion of a new vertex, splitting a face
 \cgalFigureEnd
 
@@ -177,7 +177,7 @@ is itself templated by the vertex and face classes this induces
 a cyclic dependency.
 See \cgalFigureRef{TDS_2D_Fig_three_levels_2}.
 
-\cgalFigureBegin{TDS_2D_Fig_three_levels_2,threelevels2.gif}
+\cgalFigureBegin{TDS_2D_Fig_three_levels_2,threelevels2.png}
 The cyclic dependency in triangulations software design.
 \cgalFigureEnd
 

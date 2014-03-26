@@ -1,6 +1,6 @@
 /*!
 
-\page chapportability Portability Issues
+\page devman_portability Portability Issues
 
 \author Michael Hoffmann (<TT>hoffmann@inf.ethz.ch</TT>)
 \author Stefan Schirra
@@ -185,7 +185,7 @@ Linux
 
 For (good) reasons that will not be discussed here, it was decided to
 use \cpp for the development of \cgal. An international standard for
-\cpp has been sanctioned in 1998 \cite cgal:ansi-is14882-98 and the
+\cpp has been sanctioned in 1998 \cgalCite{cgal:ansi-is14882-98} and the
 level of compliance varies widely between different
 compilers, let alone bugs.
 
@@ -194,7 +194,7 @@ compilers, let alone bugs.
 In order to provide a uniform development environment for \cgal that
 looks more standard compliant than what the compilers provide, a number
 of workaround flags and macros have been created.  Some of the
-workaround macros are set in <A HREF="http://www.cgal.org/Manual/include/CGAL/config.h"><TT><CGAL/config.h></TT></A>
+workaround macros are set in `<CGAL/config.h>`.
 
 using the macros 
 listed in Section  \ref secwhich_compiler  to identify the compiler. 
@@ -226,7 +226,7 @@ operating system and compiler that is defined as follows.
 </DL>
 
 Examples are <TT>mips_IRIX64-6.5_CC-n32-7.30</TT> or <TT>sparc_SunOS-5.6_g++-2.95</TT>. For more information, see the \cgal 
-<A HREF="http://www.cgal.org/Manual/doc_html/installation/contents.html">installation guide</A>.
+\link installation installation guide \endlink.
 
 This platform-specific configuration file is created during
 
@@ -256,9 +256,7 @@ Currently (CGAL-3.4-I-181), we have the following configuration
 test files (and flags). The short descriptions that are given in the files are 
 included here. In some cases, it is probably necessary to have a look at the
 actual files to understand what the flag is for. This list is just to
-give an overview.  See the section on
-<A HREF="http://www.cgal.org/Manual/doc_html/installation/Chapter_installation.html#Section_17">troubleshooting</A> in the installation guide
-for more explanation of some of these problems and known workarounds. 
+give an overview.
 Be sure to have a look at <TT>Installation/config/testfiles/</TT> to have an
 up-to-date version of this list.
 
@@ -295,7 +293,7 @@ up-to-date version of this list.
 \subsection secworkaround_macros Macros connected to workarounds/compilers 
 
 Some macros are defined according to certain workaround flags. This is
-done to avoid some `#ifdef`s in our actual code.
+done to avoid some \#`ifdef`s in our actual code.
 
 <DL>
 <DT><B><TT>CGAL_LITTLE_ENDIAN</TT></B><DD> set, iff

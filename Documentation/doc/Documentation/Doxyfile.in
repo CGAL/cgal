@@ -5,19 +5,18 @@ PROJECT_BRIEF       =
 OUTPUT_DIRECTORY    = ${CGAL_DOC_OUTPUT_DIR}/Manual
 
 INPUT = ${CMAKE_SOURCE_DIR}/Documentation/doc/Documentation \
-        ${CMAKE_SOURCE_DIR}/Documentation/biblio/how_to_cite_cgal.txt
+        ${CMAKE_BINARY_DIR}/how_to_cite_cgal.txt
 
 HTML_HEADER         = ${CGAL_DOC_HEADER}
 LAYOUT_FILE         = ${CMAKE_SOURCE_DIR}/Documentation/DoxygenLayout.xml
-GENERATE_TAGFILE    = ${CGAL_DOC_TAG_DIR}/Manual.tag
+GENERATE_TAGFILE    = ${CGAL_DOC_TAG_GEN_DIR}/Manual.tag
 EXAMPLE_PATH        = ${CMAKE_SOURCE_DIR}/Convex_hull_2/examples
 FILTER_PATTERNS     = *.txt=${CMAKE_BINARY_DIR}/pkglist_filter
 
 HTML_EXTRA_FILES += ${CMAKE_SOURCE_DIR}/Documentation/hacks.js \
                     ${CMAKE_SOURCE_DIR}/Documentation/cgal_stylesheet.css \
-                    ${CMAKE_SOURCE_DIR}/Documentation/biblio/how_to_cite.html
-
-EXCLUDE_PATTERNS += */Developer_manual/*
+                    ${CMAKE_BINARY_DIR}/how_to_cite_cgal.bib \
+                    ${CMAKE_BINARY_DIR}/how_to_cite.html
 
 ALLEXTERNALS             = true
 EXTERNAL_GROUPS          = false
@@ -29,6 +28,7 @@ SEARCHENGINE             = true
 
 ALIASES                 += "cgalPkgDescriptionBegin{2}=\subsection \2 \1"
 ALIASES                 += "cgalPkgManuals{2}=<div class=\"PkgManuals\"> <span> \ref \1 \"User Manual\" </span> <span style=\"padding-left: 20px;\">\ref \2 \"Reference Manual\" </span> </div>"
+ALIASES                 += "cgalReleaseNumber=${CGAL_CREATED_VERSION_NUM}"
 
 # all image paths, maybe auto-generate this?
 IMAGE_PATH = ${CMAKE_SOURCE_DIR}/Documentation/doc/Documentation/fig \
@@ -106,6 +106,7 @@ IMAGE_PATH = ${CMAKE_SOURCE_DIR}/Documentation/doc/Documentation/fig \
              ${CMAKE_SOURCE_DIR}/Straight_skeleton_2/doc/Straight_skeleton_2/fig \
              ${CMAKE_SOURCE_DIR}/Voronoi_diagram_2/doc/Voronoi_diagram_2/fig \
              ${CMAKE_SOURCE_DIR}/Surface_mesh_simplification/doc/Surface_mesh_simplification/fig \
+             ${CMAKE_SOURCE_DIR}/Surface_mesh_segmentation/doc/Surface_mesh_segmentation/fig \
              ${CMAKE_SOURCE_DIR}/Subdivision_method_3/doc/Subdivision_method_3/fig \
              ${CMAKE_SOURCE_DIR}/Surface_mesh_parameterization/doc/Surface_mesh_parameterization/fig \
              ${CMAKE_SOURCE_DIR}/Surface_reconstruction_points_3/doc/Surface_reconstruction_points_3/fig \

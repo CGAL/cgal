@@ -9,13 +9,16 @@
 /// \defgroup PkgPeriodic2Triangulation2TraitsClasses Traits Classes
 /// \ingroup PkgPeriodic2Triangulation2
 
+/// \defgroup PkgPeriodic2Triangulation2VertexFaceClasses Vertex and Face Classes
+/// \ingroup PkgPeriodic2Triangulation2
+
 /// \defgroup PkgPeriodic2Triangulation2Enums Enums
 /// \ingroup PkgPeriodic2Triangulation2
 
 /*!
 \addtogroup PkgPeriodic2Triangulation2
  
-\cgalPkgDescriptionBegin{2D Periodic Triangulations,PkgPeriodicTriangulation2Summary}
+\cgalPkgDescriptionBegin{2D Periodic Triangulations,PkgPeriodic2Triangulation2Summary}
 \cgalPkgPicture{Periodic_2_triangulation_2/fig/p2Delaunay2_thumb.png}
  
 \cgalPkgSummaryBegin

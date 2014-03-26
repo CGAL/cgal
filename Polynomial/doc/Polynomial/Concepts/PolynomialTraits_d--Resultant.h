@@ -17,7 +17,8 @@ where
 \f[ g = g_nx^n + \dots + g_0. \f] 
 The resultant of \f$ f\f$ and \f$ g\f$ is defined as the determinant of the <I>Sylvester matrix</I>: 
 
-\image html sylvester_matrix.gif
+\image html sylvester_matrix.png
+\image latex sylvester_matrix.png
 
 Note that this is a \f$ (n+m)\times(n+m)\f$ matrix as there are \f$ n\f$ rows for \f$ f\f$ 
 and \f$ m\f$ rows that are used for \f$ g\f$. The blank spaces are supposed to be 
@@ -41,7 +42,7 @@ the Sylvester Matrix or the Bezout
 Matrix as well as the so called subresultant algorithm, 
 which is a variant of the Euclidean Algorithm. 
 More sophisticated methods may use modular arithmetic and interpolation. 
-For more information we refer to, e.g., \cite gg-mca-99. 
+For more information we refer to, e.g., \cgalCite{gg-mca-99}. 
 
 \cgalRefines `AdaptableBinaryFunction` 
 \cgalRefines `CopyConstructible` 

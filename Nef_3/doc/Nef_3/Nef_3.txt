@@ -20,7 +20,7 @@ namespace CGAL {
 In solid modeling, two major representation schemes are used:
 <I>constructive solid geometry</I> (CSG) and <I>boundary
 representations</I> (B-rep). Both have inherent strengths and
-weaknesses, see \cite cgal:h-gsmi-89 for a discussion.
+weaknesses, see \cgalCite{cgal:h-gsmi-89} for a discussion.
 
 In CSG a solid is represented as a set-theoretic Boolean combination
 of primitive solid objects, such as blocks, prisms, cylinders, or
@@ -140,8 +140,14 @@ we define our polyhedron \f$ P := ( h_1 \cap h_2 \cap h_3) - ( h_4 \cap h_5)\f$.
 <center>
 <table border="0">
 <tr>
-<td>\image html nef_example.gif</td>
-<td>\image html nef_pyramids.gif</td>
+<td>
+\image html nef_example.png
+\image latex nef_example.png
+</td>
+<td>
+\image html nef_pyramids.png
+\image latex nef_pyramids.png
+</td>
 </tr>
 </table>
 </center>
@@ -175,13 +181,15 @@ from the three-dimensional elements. See Chapter
 for further details.
 
 \image html sphere_map.png
+\image latex sphere_map.png
 
 Having sphere maps for all vertices of our polyhedron is a sufficient
 but not easily accessible representation of the polyhedron. We enrich
 the data structure with more explicit representations of all the faces
 and incidences between them.
 
-\image html snc.gif 
+\image html snc.png 
+\image latex snc.png 
 
 We depart slightly from the definition of faces in a Nef polyhedron;
 we represent the connected components of a face individually and do
@@ -232,7 +240,7 @@ which are excluded from the volume.
 For each face we store a label, e.g., a set-selection mark, which
 indicates whether the face is part of the solid or if it is
 excluded. We call the resulting data structure <I>Selective Nef
-Complex</I>, <I>SNC</I> for short \cite cgal:ghhkm-bosnc-03. However, in
+Complex</I>, <I>SNC</I> for short \cgalCite{cgal:ghhkm-bosnc-03}. However, in
 \cgal we identify the names and call the <I>SNC</I> data structure
 `Nef_polyhedron_3`.
 
@@ -258,7 +266,7 @@ unspecified value, which is finite but larger than all coordinate
 values that may occur in the bounded part of the polyhedron. As a
 result, each Nef polyhedron becomes bounded. We call the boundary of
 the bounding volume the <I>infimaximal
-box</I> \cite cgal:sm-iftml-00.
+box</I> \cgalCite{cgal:sm-iftml-00}.
 
 We clip lines and rays at the infimaximal box. The intersection points
 with the infimaximal box are called <I>non-standard points</I>, which
@@ -282,7 +290,7 @@ polynomial), and runtime performance.
 \section sectoinRegularized Regularized Set Operations 
 
 Since manifolds are not closed under Boolean operations, Requicha
-proposes to use <I>regularized set operations</I> \cite cgal:km-st-76,
+proposes to use <I>regularized set operations</I> \cgalCite{cgal:km-st-76},
 cgal:r-rrstm-80. A set is <I>regular</I>, if it equals the closure
 of its interior. A regularized set operation is defined as the 
 standard set operation followed by a regularization of the result.
@@ -452,7 +460,7 @@ standard kernel.
 
 \subsection Nef_3ExploringaSphereMap Exploring a Sphere Map
 
-A sphere map is explored by using the function `get_sphere_map`, which 
+A sphere map is explored by using the function `get_sphere_map()`, which 
 returns the sphere map of the specified vertex as a `Nef_polyhedron_S2`.
 `Nef_polyhedron_S2` provides the functionality necessary for the
 exploration.
@@ -470,7 +478,8 @@ shalfedge belongs to a single shell. The figure below illustrates the
 notion of a shell. It shows a Nef polyhedron with two volumes and
 three shells.
 
-\image html shells.gif
+\image html shells.png
+\image latex shells.png
 
 The first volume is the outer volume and the second volume is the
 interior of the cube. The first shell is the whole surface of the left
@@ -485,7 +494,8 @@ same eight vertices of the cube, plus the endpoint of the antenna
 that is in contact with the cube, all halffacets
 oriented inwards, and all halfedges (the same as for the second shell).
 
-\image html closeup.gif
+\image html closeup.png
+\image latex closeup.png
 
 We discuss how sfaces, shalfedges, and sloops belong to the shells
 with a closeup view of the situation at the antenna foot. As you can
@@ -499,7 +509,7 @@ The other shalfloop lies on the inwards oriented halffacet and is
 oriented inwards, too. This shalfloop belongs to the third shell.
 
 `Nef_polyhedron_3` offers a visitor interface to explore a shell
-following the well-known visitor pattern \cite cgal:ghjv-dpero-95.
+following the well-known visitor pattern \cgalCite{cgal:ghjv-dpero-95}.
 The interface is illustrated by the following example.
 
 \cgalExample{Nef_3/shell_exploration.cpp}
@@ -572,6 +582,7 @@ an QApplication with a main widget of type `Qt_widget_Nef_3` and
 how to start the viewer.
 
 \image html visualization_SNC.png
+\image latex visualization_SNC.png
 
 \cgalExample{Nef_3/visualization_SNC.cpp}
 

@@ -8,7 +8,7 @@
 \cgalPkgPicture{detail.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthor{Fernando Cacciola}
-\cgalPkgDesc{This package provides an algorithm to simplify a triangulated surface mesh  by edge collapsing.  It is an implementation of the Turk/Lindstrom <I>memoryless</I>  mesh simplification algorithm.}
+\cgalPkgDesc{This package provides an algorithm to simplify a triangulated surface mesh  by edge collapsing.  It is an implementation of the Turk/Lindstrom <I>memoryless</I>  surface mesh simplification algorithm.}
 \cgalPkgManuals{Chapter_Triangulated_Surface_Mesh_Simplification,PkgSurfaceMeshSimplification}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
@@ -24,7 +24,8 @@
 \cgalClassifedRefPages
 
 ## Concepts ##
-- `EdgeCollapsableMesh`
+- `EdgeCollapsableSurfaceMesh`
+- `EdgeCollapsableSurfaceMeshWithConstraints`
 - `EdgeProfile`
 - `StopPredicate`
 - `GetCost`
@@ -43,6 +44,7 @@
 - `CGAL::Surface_mesh_simplification::Midpoint_placement<ECM>`
 - `CGAL::Surface_mesh_simplification::LindstromTurk_cost<ECM>`
 - `CGAL::Surface_mesh_simplification::LindstromTurk_placement<ECM>`
+- `CGAL::Surface_mesh_simplification::Constrained_placement<Placement,ECM>`
 
 */
 

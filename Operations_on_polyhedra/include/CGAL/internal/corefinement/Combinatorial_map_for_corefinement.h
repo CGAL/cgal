@@ -21,6 +21,8 @@
 #ifndef CGAL_INTERNAL_COMBINATORIAL_MAP_FOR_COREFINEMENT_H
 #define CGAL_INTERNAL_COMBINATORIAL_MAP_FOR_COREFINEMENT_H
 
+#define CGAL_CMAP_DEPRECATED 1
+
 #include <CGAL/Combinatorial_map.h>
 #include <CGAL/Combinatorial_map_constructors.h>
 #include <CGAL/Cell_attribute.h>

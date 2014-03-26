@@ -4,6 +4,9 @@ namespace CGAL {
 /*!
 \ingroup PkgAlgebraicKerneldModels
 
+This class gathers necessary tools for solving and handling bivariate 
+polynomial systems of general degree \f$ d\f$.
+
 This class is based on an algorithm computing a 
 geometric-topological analysis of a single curve \cite ekw-fast-07 and of a 
 pair of curves \cite ek-exact-08. 
@@ -59,34 +62,34 @@ public:
 /// \name Types 
 /// @{
 
-/*!
+/*! 
 Same type as the template argument `Coeff`. 
 */ 
 typedef unspecified_type Coefficient; 
 
-/*!
+/*! 
 A model of `AlgebraicKernel_d_2::Polynomial_2` 
 */ 
 typedef unspecified_type Polynomial_2; 
 
-/*!
+/*! 
 A model of `AlgebraicKernel_d_2::AlgebraicReal_2` 
 */ 
 typedef unspecified_type Algebraic_real_2; 
 
-/*!
-The choice of `Coeff` also determines the provided bound, type. 
+/*! 
+The choice of `Coeff` also determines the provided bound type.
 In case of `Coeff` is 
-- `Gmpz` or `Gmpq` this is `Gmpq` 
+- `Gmpz` or `Gmpq`, this is `Gmpq`
 
-- `CORE::BigInt` or `CORE::BigInt` this is `CORE::BigRat` 
+- `CORE::BigInt` or `CORE::BigRat`, this is `CORE::BigRat`
 
-- `leda_integer` or `leda_integer` this is `leda_rational` 
+- `leda_integer` or `leda_rational`, this is `leda_rational`
 
 */ 
 typedef unspecified_type Bound; 
 
-/*!
+/*! 
 The multiplicity type is `int`. 
 */ 
 typedef unspecified_type Multiplicity_type; 

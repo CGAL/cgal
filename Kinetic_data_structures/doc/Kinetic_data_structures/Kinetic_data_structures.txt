@@ -63,7 +63,7 @@ We are working on that one, but you will have to wait.
 \section seckds_intro An Overview of Kinetic Data Structures and Sweep Algorithms 
 
 %Kinetic data structures were first introduced in by Basch et. al. in
-1997 \cite cgal:bgh-dsmd-97. The idea stems from the observation that
+1997 \cgalCite{cgal:bgh-dsmd-97}. The idea stems from the observation that
 most, if not all, computational geometry structures are built using
 <I>predicates</I> - functions on quantities defining the geometric
 input (e.g. point coordinates), which return a discrete set of
@@ -203,7 +203,7 @@ algebraic operations for manipulating event times. The
 \ref seckds_algebraic_kernel.
 </UL>
 
-\cgalFigureBegin{figkds_uml_usage,sort_usage_pct.gif}
+\cgalFigureBegin{figkds_uml_usage,sort_usage_pct.png}
 The figure shows the interaction between the `Kinetic::Sort<Traits,
 Visitor>` kinetic data structure and the various pieces of our
 package. Other, more complicated, kinetic data structures will also
@@ -412,17 +412,44 @@ visualization support is based on the Coin library http://www.coin3d.org.
 <CENTER>
 <TABLE border=0>
 <TR>
-<TD>\image html delaunay_0.gif</TD>
-<TD>\image html delaunay_1.gif</TD>
-<TD>\image html delaunay_2.gif</TD>
-<TD>\image html delaunay_3.gif</TD>
-<TD>\image html delaunay_4.gif</TD>
+<TD>
+\image html delaunay_0.png
+\image latex delaunay_0.png
+</TD>
+<TD>
+\image html delaunay_1.png
+\image latex delaunay_1.png
+</TD>
+<TD>
+\image html delaunay_2.png
+\image latex delaunay_2.png
+</TD>
+<TD>
+\image html delaunay_3.png
+\image latex delaunay_3.png
+</TD>
+<TD>
+\image html delaunay_4.png
+\image latex delaunay_4.png
+</TD>
 </TR>
 <TR>
-<TD>\image html delaunay_5.gif</TD>
-<TD>\image html delaunay_6.gif</TD>
-<TD>\image html delaunay_7.gif</TD>
-<TD>\image html delaunay_8.gif</TD>
+<TD>
+\image html delaunay_5.png
+\image latex delaunay_5.png
+</TD>
+<TD>
+\image html delaunay_6.png
+\image latex delaunay_6.png
+</TD>
+<TD>
+\image html delaunay_7.png
+\image latex delaunay_7.png
+</TD>
+<TD>
+\image html delaunay_8.png
+\image latex delaunay_8.png
+</TD>
 </TR>
 </TABLE>
 </CENTER>
@@ -434,7 +461,7 @@ which were just created. The pictures are screen shots from
 `demo/Kinetic_data_structures/Kinetic_Delaunay_triangulation_2.cpp`
 \cgalFigureCaptionEnd
 
-\cgalFigureBegin{figkds_qtwidget_capture,qt_widget_marked_pct.gif}
+\cgalFigureBegin{figkds_qtwidget_capture,qt_widget_marked_pct.png}
 The figure shows the graphical user interface for controlling
 two-dimensional kinetic data structures. It is built on top of the
 `Qt_widget` and adds buttons to play, pause, step through and run the

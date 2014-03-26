@@ -31,7 +31,7 @@ then the default traits class of `::convex_hull_3()` is `Convex_hull_traits_3<R>
 \cgalHeading{Implementation}
 
 The algorithm implemented by these functions is the quickhull algorithm of 
-Barnard <I>et al.</I> \cite bdh-qach-96. 
+Barnard <I>et al.</I> \cgalCite{bdh-qach-96}. 
 
 
 */

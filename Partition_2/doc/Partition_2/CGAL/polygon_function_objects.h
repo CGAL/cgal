@@ -25,7 +25,7 @@ public:
 
 /*!
 `Traits` satisfies the 
-requirements of the function `is_convex_2` 
+requirements of the function `is_convex_2()` 
 */ 
 Is_convex_2(const Traits& t); 
 

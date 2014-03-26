@@ -15,7 +15,7 @@ faces as edges of the dual graph.
 
 As the scope of \cgal is geometry and not graph algorithms, we
 provide the necessary classes and functions that allow to use the
-algorithms of the <A HREF="http://www.boost.org/libs/graph/doc/index.html">Boost Graph Library (BGL)</A> \cite cgal:sll-bgl-02 for \cgal data structures.
+algorithms of the <A HREF="http://www.boost.org/libs/graph/doc/index.html">Boost Graph Library (BGL)</A> \cgalCite{cgal:sll-bgl-02} for \cgal data structures.
 
 \section BGLA A Short Introduction to the Boost Graph Library
 
@@ -285,7 +285,7 @@ kept synchronized with the number of vertices in the arrangement, so it
 should not be reused in calls to \sc{Bgl} functions in case the arrangement
 is modified in between these calls.
 
-\cgalFigureBegin{figex_bgl,ex_bgl.gif}
+\cgalFigureBegin{figex_bgl,ex_bgl.png}
 An arrangement of 7 line segments, as constructed by `ex_bgl_primal_adapter.cpp` and `ex_bgl_dual_adapter.cpp`. The breadth-first visit times for the arrangement faces, starting from the unbounded face \f$ f_0\f$, are shown is brackets.
 \cgalFigureEnd
 

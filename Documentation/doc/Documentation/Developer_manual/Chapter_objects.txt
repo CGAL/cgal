@@ -1,6 +1,6 @@
 /*!
 
-\page chappolyret Polymorphic Return Types
+\page devman_polyret Polymorphic Return Types
 
 \author Stefan Schirra (<TT>stschirr@mpi-sb.mpg.de</TT>)
 
@@ -19,19 +19,15 @@ class hierarchies. With the \cgal
 class `Object`, you can fake a common
 base class, see \cgalFigureRef{FigObject}.
 
-\cgalFigureBegin{FigObject,Object.gif }
+\cgalFigureBegin{FigObject,Object.png }
 UML class diagram for faked object hierarchies (since 2.2-I-4).
 \cgalFigureEnd
 
 Functions having a polymorphic return type create an object of the actual
 result type and wrap it into an object of type `Object`.
-Refer to the documentation of the 
-<A HREF="http://www.cgal.org/Manual/latest/doc_html/cgal_manual/STL_Extension_ref/Class_Object.html">`Object`</A>
-class for more details.
+Refer to the documentation of `#CGAL::Object` class for more details.
 
-An alternative is to use a class handling several output iterators at the same time such as the classes
-<A HREF="http://www.cgal.org/Manual/latest/doc_html/cgal_manual/STL_Extension_ref/Class_Dispatch_output_iterator.html">`Dispatch_output_iterator`</A>
-and
-<A HREF="http://www.cgal.org/Manual/latest/doc_html/cgal_manual/STL_Extension_ref/Class_Dispatch_or_drop_output_iterator.html">`Dispatch_or_drop_output_iterator`</A>.
+An alternative is to use a class handling several output iterators at the same time such as the classes `#CGAL::Dispatch_output_iterator`.
+and `#CGAL::Dispatch_or_drop_output_iterator`.
 
 */

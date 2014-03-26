@@ -1,4 +1,4 @@
-// Copyright (c) 2007-2008 Inria Lorraine (France). All rights reserved.
+// Copyright (c) 2006-2013 INRIA Nancy-Grand Est (France). All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
@@ -30,7 +30,7 @@
 #include <iostream>
 #endif
 
-#define CGALRS_dyadic_struct_struct     __mpfr_struct
+#define CGALRS_dyadic_struct            __mpfr_struct
 #define CGALRS_dyadic_t                 mpfr_t
 #define CGALRS_dyadic_ptr               mpfr_ptr
 #define CGALRS_dyadic_srcptr            mpfr_srcptr
@@ -140,7 +140,6 @@ inline void CGALRS_dyadic_ll_add(CGALRS_dyadic_ptr rop,
                                  mp_prec_t b){
         mp_exp_t l,r,temp1,temp2;
         mp_prec_t rop_prec;
-        int round;
         if(mpfr_zero_p(op1)){
                 if(rop!=op2)
                         CGALRS_dyadic_set(rop,op2);
@@ -166,7 +165,8 @@ inline void CGALRS_dyadic_ll_add(CGALRS_dyadic_ptr rop,
                 CGALRS_dyadic_prec_round(rop,rop_prec);
         else
                 CGALRS_dyadic_set_prec(rop,rop_prec);
-        round=mpfr_add(rop,op1,op2,GMP_RNDN);
+        CGAL_assertion_code(int round=)
+        mpfr_add(rop,op1,op2,GMP_RNDN);
         CGAL_assertion(!round);
 }
 
@@ -175,7 +175,6 @@ inline void CGALRS_dyadic_add_z(CGALRS_dyadic_ptr rop,
                                 mpz_srcptr z){
         mp_exp_t l,r;
         mp_prec_t rop_prec;
-        int round;
         if(mpfr_zero_p(op1)){
                 CGALRS_dyadic_set_z(rop,z);
                 return;
@@ -200,7 +199,8 @@ inline void CGALRS_dyadic_add_z(CGALRS_dyadic_ptr rop,
                 CGALRS_dyadic_prec_round(rop,rop_prec);
         else
                 CGALRS_dyadic_set_prec(rop,rop_prec);
-        round=mpfr_add_z(rop,op1,z,GMP_RNDN);
+        CGAL_assertion_code(int round=)
+        mpfr_add_z(rop,op1,z,GMP_RNDN);
         CGAL_assertion(!round);
 }
 
@@ -212,7 +212,6 @@ inline void CGALRS_dyadic_ll_sub(CGALRS_dyadic_ptr rop,
                                  mp_prec_t b){
         mp_exp_t l,r,temp1,temp2;
         mp_prec_t rop_prec;
-        int round;
         if(mpfr_zero_p(op1)){
                 CGALRS_dyadic_neg(rop,op2);
                 return;
@@ -237,7 +236,8 @@ inline void CGALRS_dyadic_ll_sub(CGALRS_dyadic_ptr rop,
                 CGALRS_dyadic_prec_round(rop,rop_prec);
         else
                 CGALRS_dyadic_set_prec(rop,rop_prec);
-        round=mpfr_sub(rop,op1,op2,GMP_RNDN);
+        CGAL_assertion_code(int round=)
+        mpfr_sub(rop,op1,op2,GMP_RNDN);
         CGAL_assertion(!round);
 }
 
@@ -247,19 +247,18 @@ inline void CGALRS_dyadic_ll_mul(CGALRS_dyadic_ptr rop,
                                  CGALRS_dyadic_srcptr op1,
                                  CGALRS_dyadic_srcptr op2,
                                  mp_prec_t b){
-        int round;
         if(rop==op1||rop==op2)
                 CGALRS_dyadic_prec_round(rop,b+mpfr_get_prec(op1)+mpfr_get_prec(op2));
         else
                 CGALRS_dyadic_set_prec(rop,b+mpfr_get_prec(op1)+mpfr_get_prec(op2));
-        round=mpfr_mul(rop,op1,op2,GMP_RNDN);
+        CGAL_assertion_code(int round=)
+        mpfr_mul(rop,op1,op2,GMP_RNDN);
         CGAL_assertion(!round);
 }
 
 inline void CGALRS_dyadic_mul_z(CGALRS_dyadic_ptr rop,
                                 CGALRS_dyadic_srcptr op1,
                                 mpz_srcptr z){
-        int round;
         if(rop==op1)
                 CGALRS_dyadic_prec_round(
                         rop,
@@ -268,26 +267,26 @@ inline void CGALRS_dyadic_mul_z(CGALRS_dyadic_ptr rop,
                 CGALRS_dyadic_set_prec(
                         rop,
                         mpfr_get_prec(op1)+mpz_sizeinbase(z,2));
-        round=mpfr_mul_z(rop,op1,z,GMP_RNDN);
+        CGAL_assertion_code(int round=)
+        mpfr_mul_z(rop,op1,z,GMP_RNDN);
         CGAL_assertion(!round);
 }
 
 inline void CGALRS_dyadic_mul_si(CGALRS_dyadic_ptr rop,
                                  CGALRS_dyadic_srcptr op1,
                                  long s){
-        int round;
         if(rop==op1)
                 CGALRS_dyadic_prec_round(rop,mpfr_get_prec(op1)+sizeof(long));
         else
                 CGALRS_dyadic_set_prec(rop,mpfr_get_prec(op1)+sizeof(long));
-        round=mpfr_mul_si(rop,op1,s,GMP_RNDN);
+        CGAL_assertion_code(int round=)
+        mpfr_mul_si(rop,op1,s,GMP_RNDN);
         CGAL_assertion(!round);
 }
 
 inline void CGALRS_dyadic_mul_ui(CGALRS_dyadic_ptr rop,
                                  CGALRS_dyadic_srcptr op1,
                                  unsigned long u){
-        int round;
         if(rop==op1)
                 CGALRS_dyadic_prec_round(
                         rop,
@@ -296,14 +295,14 @@ inline void CGALRS_dyadic_mul_ui(CGALRS_dyadic_ptr rop,
                 CGALRS_dyadic_set_prec(
                         rop,
                         mpfr_get_prec(op1)+sizeof(unsigned long));
-        round=mpfr_mul_ui(rop,op1,u,GMP_RNDN);
+        CGAL_assertion_code(int round=)
+        mpfr_mul_ui(rop,op1,u,GMP_RNDN);
         CGAL_assertion(!round);
 }
 
 inline void CGALRS_dyadic_pow_ui(CGALRS_dyadic_ptr rop,
                                  CGALRS_dyadic_srcptr op1,
                                  unsigned long u){
-        int round;
         if(!u){
                 CGAL_assertion_msg(!mpfr_zero_p(op1),"0^0");
                 CGALRS_dyadic_set_ui(rop,1);
@@ -328,7 +327,8 @@ inline void CGALRS_dyadic_pow_ui(CGALRS_dyadic_ptr rop,
                 CGALRS_dyadic_prec_round(rop,u*mpfr_get_prec(op1));
         else
                 CGALRS_dyadic_set_prec(rop,u*mpfr_get_prec(op1));
-        round=mpfr_pow_ui(rop,op1,u,GMP_RNDN);
+        CGAL_assertion_code(int round=)
+        mpfr_pow_ui(rop,op1,u,GMP_RNDN);
         CGAL_assertion(!round);
 }
 
@@ -363,7 +363,6 @@ inline void CGALRS_dyadic_addmul_ui(CGALRS_dyadic_ptr rop,
         CGALRS_dyadic_t temp;
         mp_exp_t l,r,temp1,temp2;
         mp_prec_t rop_prec;
-        int round;
         if(u==0||mpfr_zero_p(op1))
                 return;
         if(u==1){
@@ -373,8 +372,9 @@ inline void CGALRS_dyadic_addmul_ui(CGALRS_dyadic_ptr rop,
         // TODO: if(op1==1)
         // calculate temp=op1*u
         mpfr_init2(temp,mpfr_get_prec(op1)+sizeof(unsigned int));
-        round=mpfr_mul_ui(temp,op1,u,GMP_RNDN);
-        CGAL_assertion(!round);
+        CGAL_assertion_code(int round1=)
+        mpfr_mul_ui(temp,op1,u,GMP_RNDN);
+        CGAL_assertion(!round1);
         // calculate the precision needed for rop
         l=mpfr_get_exp(op1)>0?mpfr_get_exp(op1):0;
         temp1=mpfr_get_exp(op1)-(mp_exp_t)mpfr_get_prec(op1);
@@ -386,14 +386,14 @@ inline void CGALRS_dyadic_addmul_ui(CGALRS_dyadic_ptr rop,
                 rop_prec>=mpfr_get_prec(rop));
         // set precision and add
         CGALRS_dyadic_prec_round(rop,rop_prec);
-        round=mpfr_add(rop,rop,temp,GMP_RNDN);
-        CGAL_assertion(!round);
+        CGAL_assertion_code(int round2=)
+        mpfr_add(rop,rop,temp,GMP_RNDN);
+        CGAL_assertion(!round2);
 }
 
 inline void CGALRS_dyadic_mul_2exp(CGALRS_dyadic_ptr rop,
                                    CGALRS_dyadic_srcptr op1,
                                    unsigned long ui){
-        int round;
         // mpfr_mul_2ui does change the mantissa!
         if(rop==op1)
                 CGALRS_dyadic_prec_round(
@@ -403,16 +403,17 @@ inline void CGALRS_dyadic_mul_2exp(CGALRS_dyadic_ptr rop,
                 CGALRS_dyadic_set_prec(
                         rop,
                         sizeof(unsigned long)+mpfr_get_prec(op1));
-        round=mpfr_mul_2ui(rop,op1,ui,GMP_RNDN);
+        CGAL_assertion_code(int round=)
+        mpfr_mul_2ui(rop,op1,ui,GMP_RNDN);
         CGAL_assertion(!round);
 }
 
 inline void CGALRS_dyadic_div_2exp(CGALRS_dyadic_ptr rop,
                                    CGALRS_dyadic_srcptr op1,
                                    unsigned long ui){
-        int round;
         // mpfr_div_2ui does not change the mantissa... am I sure?
-        round=mpfr_div_2ui(rop,op1,ui,GMP_RNDN);
+        CGAL_assertion_code(int round=)
+        mpfr_div_2ui(rop,op1,ui,GMP_RNDN);
         CGAL_assertion(!round);
 }
 

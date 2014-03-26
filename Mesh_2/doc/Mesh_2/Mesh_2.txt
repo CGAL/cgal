@@ -7,7 +7,7 @@ namespace CGAL {
 \cgalAutoToc
 \author Laurent Rineau
 
-This package implements Shewchuk's algorithm \cite s-mgdsa-00 to construct
+This package implements Shewchuk's algorithm \cgalCite{s-mgdsa-00} to construct
 conforming triangulations and 2D meshes. Conforming triangulations will be
 described in Section \ref secMesh_2_conforming_triangulation and
 meshes in Section \ref secMesh_2_meshes.
@@ -183,7 +183,7 @@ If some input angles are smaller than \f$ 60\f$ degrees, the algorithm will
 end up with a mesh in which some triangles violate the criteria near small
 input angles. This is unavoidable since small angles formed
 by input segments cannot be suppressed. Furthermore, it has been
-shown (\cite s-mgdsa-00), that some domains with small input angles
+shown (\cgalCite{s-mgdsa-00}), that some domains with small input angles
 cannot be meshed with angles even smaller than the small input angles.
 Note that if the domain is a polygonal region, the resulting mesh will
 satisfy size and shape criteria except for the small input angles.

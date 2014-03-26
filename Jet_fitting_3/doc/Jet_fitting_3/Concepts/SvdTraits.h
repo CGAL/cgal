@@ -10,7 +10,7 @@
   It describes the linear algebra types and algorithms needed by the 
   class `CGAL::Monge_via_jet_fitting`. 
 
-  ### Requirements ###
+  \cgalHeading{Requirements}
 
   The scalar type, `SvdTraits::FT`, must be the same as that of 
   the `LocalKernel` concept : `LocalKernel::FT`. 

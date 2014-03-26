@@ -7,6 +7,7 @@
 #include <CGAL/double.h>
 #include <iostream>
 #include <CGAL/test_macros.h>
+#include <CGAL/use.h>
 
 #ifdef CGAL_USE_LEDA
 #include <CGAL/leda_integer.h>
@@ -108,15 +109,6 @@ int main()
   }
 
   }
-
-  typedef CGAL::Homogeneous_d<RT> Kernel;
-  typedef CGAL::Delaunay_d<Kernel> Delaunay_d;
-  typedef Delaunay_d::Point_d Point_d;
-  typedef Delaunay_d::Lifted_hyperplane_d Hyperplane_d;
-  typedef Delaunay_d::Sphere_d Sphere_d;
-  typedef Delaunay_d::Simplex_handle Simplex_handle;
-  typedef Delaunay_d::Vertex_handle Vertex_handle;
-  typedef Delaunay_d::Facet_handle Facet_handle;
 
   {
   typedef CGAL::Homogeneous_d<RT> Kernel;

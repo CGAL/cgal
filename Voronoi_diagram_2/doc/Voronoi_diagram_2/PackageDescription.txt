@@ -26,9 +26,7 @@
 \cgalPkgSince{3.2}
 \cgalPkgBib{cgal:k-vda2}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
-\cgalPkgDemo{2D Point Voronoi Diagram ,delaunay_triangulation_2.zip}
-\cgalPkgDemo{2D Disk Voronoi Diagram,apollonius_graph_2.zip}
-\cgalPkgDemo{2D Segment Voronoi Diagram,segment_voronoi_diagram_2.zip}
+\cgalPkgDemo{2D Point Voronoi Diagram ,delaunay_triangulation_2.zip,2D Disk Voronoi Diagram,apollonius_graph_2.zip,2D Segment Voronoi Diagram,segment_voronoi_diagram_2.zip}
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd
 

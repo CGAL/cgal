@@ -50,7 +50,7 @@ namespace CGAL {
     
     void begin_facet()
     {
-      CGAL_assertion( first_dart==NULL && prev_dart==NULL );
+      CGAL_assertion( first_dart==lcc.null_handle && prev_dart==lcc.null_handle );
       // std::cout<<"Begin facet: "<<std::flush;
     }
 
@@ -60,15 +60,14 @@ namespace CGAL {
       // std::cout<<i<<"  "<<std::flush;
       Dart_handle cur = lcc.create_dart(vertex_map[i]);
 
-      if ( prev_dart!=NULL )
+      if ( prev_dart!=lcc.null_handle )
       {
         lcc.template link_beta<1>(prev_dart, cur);
 
-        Dart_handle opposite =
-          find_dart_between(i,LCC::vertex_attribute(prev_dart));
-        if ( opposite!=NULL )
+        Dart_handle opposite=find_dart_between(i,lcc.temp_vertex_attribute(prev_dart));
+        if ( opposite!=lcc.null_handle )
         {
-          CGAL_assertion( opposite->is_free(2) );
+          CGAL_assertion( lcc.template is_free<2>(opposite) );
           lcc.template link_beta<2>(prev_dart, opposite);
         }
 
@@ -86,29 +85,29 @@ namespace CGAL {
 
     void end_facet()
     {
-      CGAL_assertion( first_dart!=NULL && prev_dart!=NULL );
+      CGAL_assertion( first_dart!=lcc.null_handle && prev_dart!=lcc.null_handle );
       lcc.template link_beta<1>(prev_dart, first_dart);
 
       Dart_handle opposite =
-        find_dart_between(first_vertex,LCC::vertex_attribute(prev_dart));
-      if ( opposite!=NULL )
+        find_dart_between(first_vertex,lcc.temp_vertex_attribute(prev_dart));
+      if ( opposite!=lcc.null_handle )
       {
-        CGAL_assertion( opposite->is_free(2) );
+        CGAL_assertion( lcc.template is_free<2>(opposite) );
         lcc.template link_beta<2>(prev_dart, opposite);
       }
 
       add_dart_in_vertex_to_dart_map( prev_dart, prev_vertex );
 
-      first_dart = NULL;
-      prev_dart = NULL;
+      first_dart = lcc.null_handle;
+      prev_dart = lcc.null_handle;
       // std::cout<<"  end facet."<<std::endl;
     }
 
     void begin_surface( std::size_t v, std::size_t /*f*/, std::size_t /*h*/)
     {
       new_vertices  = 0;
-      first_dart    = NULL;
-      prev_dart     = NULL;
+      first_dart    = lcc.null_handle;
+      prev_dart     = lcc.null_handle;
       vertex_map.clear();
       vertex_to_dart_map.clear();
       vertex_map.reserve(v);
@@ -130,15 +129,15 @@ namespace CGAL {
 
       for ( ; it!=itend; ++it )
       {
-        if ( LCC::vertex_attribute((*it)->beta(1))==vh ) return (*it);
+        if ( lcc.temp_vertex_attribute(lcc.template beta<1>(*it))==vh ) return (*it);
       }
-      return NULL;
+      return lcc.null_handle;
     }
 
     void add_dart_in_vertex_to_dart_map( Dart_handle adart, size_type i )
     {
-      CGAL_assertion( adart!=NULL );
-      CGAL_assertion( !adart->is_free(1) );
+      CGAL_assertion( adart!=lcc.null_handle );
+      CGAL_assertion( !lcc.template is_free<1>(adart) );
       vertex_to_dart_map[i].push_back(adart);
     }
 

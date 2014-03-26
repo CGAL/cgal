@@ -22,7 +22,6 @@
 #include <CGAL/Cartesian.h>
 #include <CGAL/Algebraic_kernel_for_spheres_2_3.h>
 #include <CGAL/Spherical_kernel_3.h>
-#include <CGAL/Quotient.h>
 #include <cassert>
 
 #include "CGAL/Precise_numbers.h"
@@ -48,8 +47,8 @@
 int
 main()
 {
-	typedef CGAL::Quotient<Precise_integer >                     NT1;
-	typedef double                                               NT2;
+  typedef Precise_rational                                     NT1;
+  typedef double                                               NT2;
   typedef CGAL::Cartesian<NT1>                                 Linear_k1;
   typedef CGAL::Cartesian<NT2>                                 Linear_k2;
   typedef CGAL::Algebraic_kernel_for_spheres_2_3<NT1>          Algebraic_k1;
@@ -60,16 +59,16 @@ main()
  std::cout << "Testing IO with Cartesian<double> :" << std::endl;
   _test_io( Clsd() );
 
-  std::cout << "Testing 3d with Cartesian<Quotient<Precise_integer>> :";
+  std::cout << "Testing 3d with Cartesian<Precise_rational> :";
   std::cout << std::endl;
   _test_3( Cls() );
   _test_cls_circle_3( Cls() );
 
-  std::cout << "Testing new 3d with Cartesian<Quotient<Precise_integer>> :";
+  std::cout << "Testing new 3d with Cartesian<Precise_rational> :";
   std::cout << std::endl;
   test_new_3( Cls() );
 
-  std::cout << "Testing new parts with Cartesian<Quotient<Precise_integer>> :";
+  std::cout << "Testing new parts with Cartesian<Precise_rational> :";
   std::cout << std::endl;
   _test_orientation_and_bounded_side( Cls() );
   _test_fct_points_implicit_sphere( Cls() );
@@ -79,7 +78,7 @@ main()
   _test_cls_iso_cuboid_3( Cls() );
   _test_angle( Cls() );
 
-  std::cout << "Testing 3d-2d with Cartesian<Quotient<Precise_integer> > :";
+  std::cout << "Testing 3d-2d with Cartesian<Precise_rational > :";
   std::cout << std::endl;
   _test_mf_plane_3_to_2d( Cls() );
 

@@ -3,7 +3,7 @@ namespace CGAL {
 /*!
 \ingroup PkgArrangement2Funcs
 
-The function `decompose` produces the symbolic vertical decomposition of a 
+Produces the symbolic vertical decomposition of a 
 given arrangement, performing a batched vertical ray-shooting query from 
 all arrangement vertices, such that every vertex is associated with a pair 
 of objects, one corresponds to the arrangement feature that lies below it, 

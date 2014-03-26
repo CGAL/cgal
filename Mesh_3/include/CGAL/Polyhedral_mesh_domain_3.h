@@ -414,7 +414,9 @@ public:
     operator()(const Query& q) const
     {
       CGAL_MESH_3_PROFILER(std::string("Mesh_3 profiler: ") + std::string(CGAL_PRETTY_FUNCTION));
-      typedef boost::optional< typename AABB_tree_::template Intersection_and_primitive_id<Query>::Type > AABB_intersection;
+      typedef typename AABB_tree_::template Intersection_and_primitive_id<Query>::Type
+        Intersection_and_primitive_id;
+      typedef boost::optional<Intersection_and_primitive_id> AABB_intersection;
       typedef Point_3 Bare_point;
 
       AABB_intersection intersection;
@@ -425,15 +427,17 @@ public:
         typename cpp11::result_of<
           typename IGT::Intersect_3(typename Primitive::Datum, Query)>::type o
             = IGT().intersect_3_object()(Primitive(primitive_id).datum(),q);
-        intersection = AABB_intersection(std::make_pair(o, primitive_id));
+        intersection = o ?
+          Intersection_and_primitive_id(*o, primitive_id) :
+          AABB_intersection();
       } else 
 #endif // not CGAL_MESH_3_NO_LONGER_CALLS_DO_INTERSECT_3
       {
 #ifndef CGAL_MESH_3_NO_LONGER_CALLS_DO_INTERSECT_3
-     CGAL_precondition(r_domain_.do_intersect_surface_object()(q));
+        CGAL_precondition(r_domain_.do_intersect_surface_object()(q));
 #endif // NOT CGAL_MESH_3_NO_LONGER_CALLS_DO_INTERSECT_3
 
-      intersection = r_domain_.tree_.any_intersection(q);
+        intersection = r_domain_.tree_.any_intersection(q);
       }
       if ( intersection )
       {
@@ -441,16 +445,26 @@ public:
         AABB_primitive_id primitive_id = intersection->second;
         
         // intersection may be either a point or a segment
+#if CGAL_INTERSECTION_VERSION > 1
         if ( const Bare_point* p_intersect_pt =
              boost::get<Bare_point>( &(intersection->first) ) )
+#else
+        if ( const Bare_point* p_intersect_pt =
+             object_cast<Bare_point>( &(intersection->first) ) )
+#endif
         {
           return Intersection(*p_intersect_pt,
                               r_domain_.index_from_surface_patch_index(
                                 r_domain_.make_surface_index(primitive_id)),
                               2);
         }
+#if CGAL_INTERSECTION_VERSION > 1
         else if ( const Segment_3* p_intersect_seg =
                   boost::get<Segment_3>(&(intersection->first)))
+#else
+        else if ( const Segment_3* p_intersect_seg =
+                  object_cast<Segment_3>(&(intersection->first)))
+#endif
         {
           CGAL_MESH_3_PROFILER("Mesh_3 profiler: Intersection is a segment");
 
@@ -462,7 +476,7 @@ public:
         else {
 #ifndef CGAL_MESH_3_NO_LONGER_CALLS_DO_INTERSECT_3
           std::stringstream stream;
-          stream.precision(23);
+          stream.precision(17);
           set_pretty_mode(stream);
           stream << 
             "Mesh_3 error : AABB_tree any_intersection result is "

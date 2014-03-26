@@ -15,7 +15,7 @@
 
 #include "arr_print.h"
 
-// A property map that reads/writes the information to/from the extended 
+// A property map that reads/writes the information to/from the extended
 // face.
 template <typename Arrangement, class Type> class Extended_face_property_map {
 public:
@@ -28,11 +28,12 @@ public:
   typedef Face_handle                             key_type;
 
   // The get function is required by the property map concept.
-  friend reference get(const Extended_face_property_map& map, key_type key)
+  friend reference get(const Extended_face_property_map& /* map */,
+                       key_type key)
   { return key->data(); }
 
   // The put function is required by the property map concept.
-  friend void put(Extended_face_property_map,
+  friend void put(Extended_face_property_map /* map */,
                   key_type key, value_type val)
   { key->set_data(val); }
 };

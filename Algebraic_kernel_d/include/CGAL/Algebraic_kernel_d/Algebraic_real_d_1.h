@@ -109,8 +109,11 @@ private:
   }
 public:
   
+  //! Default constructor
+  Algebraic_real_d_1() : Base(static_cast<const Base&>(get_default_instance())) {}
+
   //! copy constructor: copy existing Algebraic_real_d_1 (shares rep)
-  Algebraic_real_d_1(const Self& p = get_default_instance()) : Base(static_cast<const Base&>(p)) {}
+  Algebraic_real_d_1(const Self& p) : Base(static_cast<const Base&>(p)) {}
   
   //! creates the algebraic real from \a i.
   Algebraic_real_d_1(int i ) : Base(Algebraic_real_rep_d_1(i)) { }

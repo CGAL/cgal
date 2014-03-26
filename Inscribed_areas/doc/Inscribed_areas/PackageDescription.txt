@@ -17,8 +17,7 @@
 \cgalPkgSince{1.1}
 \cgalPkgBib{cgal:hp-ia}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
-\cgalPkgDemo{2D Inscribed k-gon as part of Polygon demo,polygon.zip}
-\cgalPkgDemo{2D Largest Empty Rectangle,largest_empty_rect_2.zip}
+\cgalPkgDemo{2D Inscribed k-gon as part of Polygon demo,polygon.zip,2D Largest Empty Rectangle,largest_empty_rect_2.zip}
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd
 

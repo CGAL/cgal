@@ -1,5 +1,7 @@
 namespace CGAL {
 
+
+namespace IO{
 /*!
   \ingroup PkgIOstreams
 
@@ -33,6 +35,7 @@ is in <span class="textsc">Ascii</span> mode.
 \sa `CGAL::is_pretty()`
 */
 enum Mode { ASCII = 0, BINARY, PRETTY };
+}
 
 /*!
 \ingroup PkgIOstreams
@@ -221,7 +224,7 @@ template <class T> Output_rep<T> oformat( const T& t);
 /*!
 \ingroup PkgIOstreams
 
-The definition of the function `iformat` is completely symmetric to `oformat()`.
+The definition of this function is completely symmetric to `oformat()`.
 */
 template <class T> Input_rep<T> iformat( const T& t);
 

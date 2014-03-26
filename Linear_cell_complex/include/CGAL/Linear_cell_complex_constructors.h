@@ -63,7 +63,7 @@ namespace CGAL {
 
     std::string txt;
     typename LCC::FT x, y;
-    Dart_handle d1 = NULL, d2 = NULL;
+    Dart_handle d1 = alcc.null_handle, d2 = alcc.null_handle;
     unsigned int v1, v2;
   
     unsigned int nbSommets = 0;
@@ -76,7 +76,7 @@ namespace CGAL {
       {
         std::cout << "Problem: file does not contain enough vertices."
                   << std::endl;
-        return NULL;
+        return alcc.null_handle;
       }
 
       ais >> x >> y;
@@ -92,7 +92,7 @@ namespace CGAL {
       {
         std::cout << "Problem: file does not contain enough edges."
                   << std::endl;
-        return NULL;
+        return alcc.null_handle;
       }
 
       // We read an egde (given by the number of its two vertices).
@@ -115,8 +115,8 @@ namespace CGAL {
     List_iterator it;
     LCC_iterator  it2;
 
-    Dart_handle first = NULL;
-    Dart_handle prec = NULL;
+    Dart_handle first = alcc.null_handle;
+    Dart_handle prec = alcc.null_handle;
     typename LCC::Point sommet1, sommet2;
   
     for (unsigned int i = 0; i < initVertices.size(); ++i)
@@ -127,8 +127,8 @@ namespace CGAL {
         // 1. We insert all the darts and sort them depending on the direction
         tabDart.clear();
       
-        sommet1 = LCC::point(*it);
-        sommet2 = LCC::point((*it)->beta(2));
+        sommet1 = alcc.point(*it);
+        sommet2 = alcc.point(alcc.beta(*it,2));
       
         tabDart.insert(std::pair<Direction, Dart_handle>
                        (typename LCC::Traits::Construct_direction_2()
@@ -138,7 +138,7 @@ namespace CGAL {
         ++it;
         while (it != testVertices[i].end())
         {
-          sommet2 = LCC::point((*it)->beta(2));
+          sommet2 = alcc.point(alcc.beta(*it,2));
           tabDart.insert(std::pair<Direction, Dart_handle>
                          (typename LCC::Traits::Construct_direction_2()
                           (typename LCC::Traits::Construct_vector()
@@ -154,11 +154,11 @@ namespace CGAL {
 
         while (it2 != tabDart.end())
         {
-          alcc.template link_beta<0>(prec, it2->second->beta(2));
+          alcc.template link_beta<0>(prec, alcc.beta(it2->second,2));
           prec = it2->second;
           ++it2;
         }
-        alcc.template link_beta<0>(prec, first->beta(2));
+        alcc.template link_beta<0>(prec, alcc.beta(first,2));
       }
     }
 
@@ -182,10 +182,10 @@ namespace CGAL {
     CGAL_static_assertion( LCC::dimension>=2 && LCC::ambient_dimension==2 );
     
     // Case of empty triangulations.
-    if (atr.number_of_vertices() == 0) return NULL;
+    if (atr.number_of_vertices() == 0) return LCC::null_handle;
 
     // Check the dimension.
-    if (atr.dimension() != 2) return NULL;
+    if (atr.dimension() != 2) return LCC::null_handle;
     CGAL_assertion(atr.is_valid());
 
     typedef typename Triangulation::Vertex_handle         TVertex_handle;
@@ -213,8 +213,8 @@ namespace CGAL {
     
     itmap_tcell maptcell_it;
 
-    typename LCC::Dart_handle res=NULL, dart=NULL;
-    typename LCC::Dart_handle cur=NULL, neighbor=NULL;
+    typename LCC::Dart_handle res=LCC::null_handle, dart=LCC::null_handle;
+    typename LCC::Dart_handle cur=LCC::null_handle, neighbor=LCC::null_handle;
 
     for (it = atr.all_faces_begin(); it != atr.all_faces_end(); ++it)
     {
@@ -228,22 +228,22 @@ namespace CGAL {
                                  TV[it->vertex(1)],
                                  TV[it->vertex(2)]);
 
-        if ( dart==NULL )
+        if ( dart==LCC::null_handle )
         {
           if ( it->vertex(0) == atr.infinite_vertex() )
             dart = res;
           else if ( it->vertex(1) == atr.infinite_vertex() )
-            dart = res->beta(1);
+            dart = alcc.beta(res,1);
           else if ( it->vertex(2) == atr.infinite_vertex() )
-            dart = res->beta(0);
+            dart = alcc.beta(res,0);
         }
         
         for (unsigned int i=0; i<3; ++i)
         {
           switch (i)
           {
-          case 0: cur = res->beta(1); break;
-          case 1: cur = res->beta(0); break;
+          case 0: cur = alcc.beta(res,1); break;
+          case 1: cur = alcc.beta(res,0); break;
           case 2: cur = res; break;
           }
 
@@ -252,9 +252,9 @@ namespace CGAL {
           {
             switch (atr.mirror_index(it,i) )
             {
-            case 0: neighbor = maptcell_it->second->beta(1);
+            case 0: neighbor = alcc.beta(maptcell_it->second,1);
               break;
-            case 1: neighbor = maptcell_it->second->beta(0);
+            case 1: neighbor = alcc.beta(maptcell_it->second,0);
               break;
             case 2: neighbor = maptcell_it->second; break;
             }
@@ -265,7 +265,7 @@ namespace CGAL {
       }
     }
 
-    CGAL_assertion(dart!=NULL);
+    CGAL_assertion(dart!=LCC::null_handle);
     return dart;
   }
   
@@ -285,10 +285,10 @@ namespace CGAL {
     CGAL_static_assertion( LCC::dimension>=3 && LCC::ambient_dimension==3 );
     
     // Case of empty triangulations.
-    if (atr.number_of_vertices() == 0) return NULL;
+    if (atr.number_of_vertices() == 0) return LCC::null_handle;
 
     // Check the dimension.
-    if (atr.dimension() != 3) return NULL;
+    if (atr.dimension() != 3) return LCC::null_handle;
     CGAL_assertion(atr.is_valid());
 
     typedef typename Triangulation::Vertex_handle    TVertex_handle;
@@ -316,8 +316,8 @@ namespace CGAL {
     
     itmap_tcell maptcell_it;
 
-    typename LCC::Dart_handle res=NULL, dart=NULL;
-    typename LCC::Dart_handle cur=NULL, neighbor=NULL;
+    typename LCC::Dart_handle res=LCC::null_handle, dart=LCC::null_handle;
+    typename LCC::Dart_handle cur=LCC::null_handle, neighbor=LCC::null_handle;
 
     for (it = atr.cells_begin(); it != atr.cells_end(); ++it)
     {
@@ -332,25 +332,25 @@ namespace CGAL {
                                     TV[it->vertex(2)],
                                     TV[it->vertex(3)]);
 
-        if ( dart==NULL )
+        if ( dart==LCC::null_handle )
         {
           if ( it->vertex(0) == atr.infinite_vertex() )
             dart = res;
           else if ( it->vertex(1) == atr.infinite_vertex() )
-            dart = res->beta(1);
+            dart = alcc.beta(res, 1);
           else if ( it->vertex(2) == atr.infinite_vertex() )
-            dart = res->beta(2);
+            dart = alcc.beta(res, 2);
           else if ( it->vertex(3) == atr.infinite_vertex() )
-            dart = res->beta(2)->beta(0);
+            dart = alcc.beta(res, 2, 0);
         }
         
         for (unsigned int i = 0; i < 4; ++i)
         {
           switch (i)
           {
-          case 0: cur = res->beta(1)->beta(2); break;
-          case 1: cur = res->beta(0)->beta(2); break;
-          case 2: cur = res->beta(2); break;
+          case 0: cur = alcc.beta(res, 1, 2); break;
+          case 1: cur = alcc.beta(res, 0, 2); break;
+          case 2: cur = alcc.beta(res, 2); break;
           case 3: cur = res; break;
           }
 
@@ -359,23 +359,23 @@ namespace CGAL {
           {
             switch (atr.mirror_index(it,i) )
             {
-            case 0: neighbor = maptcell_it->second->beta(1)->beta(2);
+            case 0: neighbor = alcc.beta(maptcell_it->second, 1, 2);
               break;
-            case 1: neighbor = maptcell_it->second->beta(0)->beta(2);
+            case 1: neighbor = alcc.beta(maptcell_it->second, 0, 2);
               break;
-            case 2: neighbor = maptcell_it->second->beta(2); break;
+            case 2: neighbor = alcc.beta(maptcell_it->second, 2); break;
             case 3: neighbor = maptcell_it->second; break;
             }
-            while (LCC::vertex_attribute(neighbor) !=
-                   LCC::vertex_attribute(cur->other_extremity()) )
-              neighbor = neighbor->beta(1);
+            while (alcc.temp_vertex_attribute(neighbor) !=
+                   alcc.temp_vertex_attribute(alcc.other_extremity(cur)) )
+              neighbor = alcc.beta(neighbor,1);
             alcc.template topo_sew<3>(cur, neighbor);
           }
         }
         (*mytc)[it] = res;
       }
     }
-    CGAL_assertion(dart!=NULL);
+    CGAL_assertion(dart!=LCC::null_handle);
     return dart;
   }
 
@@ -401,20 +401,20 @@ namespace CGAL {
     Halfedge_handle_map TC;
 
     itmap_hds it;
-    typename LCC::Dart_handle d = NULL, prev = NULL;
-    typename LCC::Dart_handle firstFacet = NULL, firstAll = NULL;
+    typename LCC::Dart_handle d = LCC::null_handle, prev = LCC::null_handle;
+    typename LCC::Dart_handle firstFacet = LCC::null_handle, firstAll = LCC::null_handle;
 
     // First traversal to build the darts and link them.
     for (Facet_iterator i = apoly.facets_begin(); i != apoly.facets_end(); ++i)
     {
       HF_circulator j = i->facet_begin();
-      prev = NULL;
+      prev = LCC::null_handle;
       do
       {
         d = alcc.create_dart();
         TC[j] = d;
       
-        if (prev != NULL) alcc.template link_beta<1>(prev, d);
+        if (prev != LCC::null_handle) alcc.template link_beta<1>(prev, d);
         else firstFacet = d;
         it = TC.find(j->opposite());
         if (it != TC.end())
@@ -423,7 +423,7 @@ namespace CGAL {
       }
       while (++j != i->facet_begin());
       alcc.template link_beta<1>(prev, firstFacet);
-      if (firstAll == NULL) firstAll = firstFacet;
+      if (firstAll == LCC::null_handle) firstAll = firstFacet;
     }
 
     // Second traversal to update the geometry.
@@ -434,7 +434,7 @@ namespace CGAL {
       do
       {
         d = TC[j]; // Get the dart associated to the Halfedge
-        if (LCC::vertex_attribute(d) == NULL)
+        if (alcc.temp_vertex_attribute(d) == LCC::null_handle)
         {
           alcc.set_vertex_attribute
             (d, alcc.create_vertex_attribute(j->opposite()->vertex()->point()));
@@ -537,12 +537,79 @@ namespace CGAL {
     if (!ais.good())
     {
       std::cout << "Error reading flux." << std::endl;
-      return NULL;
+      return LCC::null_handle;
     }
     CGAL::Polyhedron_3<typename LCC::Traits> P;
     ais >> P;
     return import_from_polyhedron_3<LCC, CGAL::Polyhedron_3
                                     <typename LCC::Traits> > (alcc, P);
+  }
+
+  template < class LCC >
+  void write_off(LCC& alcc, std::ostream& out)
+  {
+    File_header_OFF header(false);
+    header.set_binary(is_binary( out));
+    header.set_no_comments(!is_pretty( out));
+    File_writer_OFF writer( header);
+    writer.header().set_polyhedral_surface(true);
+    writer.header().set_halfedges( alcc.number_of_darts());
+
+    std::vector<unsigned int> cells; cells.push_back(2);
+    std::vector<unsigned int> res = alcc.count_cells(cells);
+
+    // Print header.
+    writer.write_header( out,
+                         alcc.number_of_vertex_attributes(),
+                         alcc.number_of_darts(),
+                         res[2]);
+
+    typedef typename LCC::Vertex_attribute_range::iterator VCI;
+    VCI vit, vend = alcc.vertex_attributes().end();
+    for ( vit = alcc.vertex_attributes().begin(); vit!=vend; ++vit )
+    {
+      writer.write_vertex( ::CGAL::to_double( vit->point().x()),
+                           ::CGAL::to_double( vit->point().y()),
+                           ::CGAL::to_double( vit->point().z()));
+    }
+
+    typedef Inverse_index< VCI > Index;
+    Index index( alcc.vertex_attributes().begin(),
+                 alcc.vertex_attributes().end());
+    writer.write_facet_header();
+
+    int m = alcc.get_new_mark();
+
+    for ( typename LCC::Dart_range::iterator itall = alcc.darts().begin(),
+            itallend = alcc.darts().end(); itall!=itallend; ++itall )
+    {
+      if ( !alcc.is_marked(itall, m) )
+      {
+        std::size_t n = 0;
+        // First we count the number of vertices of the face.
+        for ( typename LCC::template Dart_of_cell_range<2>::iterator
+                itf=alcc.template darts_of_cell<2>(itall).begin(),
+                itfend=alcc.template darts_of_cell<2>(itall).end();
+              itf!=itfend; ++itf, ++n );
+
+        CGAL_assertion( n>=3 );
+        writer.write_facet_begin(n);
+
+        // Second we write the indices of vertices.
+        for ( typename LCC::template Dart_of_cell_range<2>::iterator
+                itf=alcc.template darts_of_cell<2>(itall).begin(),
+                itfend=alcc.template darts_of_cell<2>(itall).end();
+              itf!=itfend; ++itf )
+        {
+          // TODO case with index
+          writer.write_facet_vertex_index(index[VCI(alcc.vertex_attribute(itf))]);
+          alcc.mark(itf, m);
+        }
+        writer.write_facet_end();
+      }
+    }
+    writer.write_footer();
+    alcc.free_mark(m);
   }
 
 } // namespace CGAL

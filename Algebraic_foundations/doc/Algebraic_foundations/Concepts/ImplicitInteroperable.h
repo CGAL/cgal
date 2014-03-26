@@ -6,7 +6,8 @@
 Two types `A` and `B` are a model of the concept 
 `ImplicitInteroperable`, if there is a superior type, such that 
 binary arithmetic operations involving `A` and `B` result in 
-this type. This type is \link CGAL::Coercion_traits::Type `CGAL::Coercion_traits<A,B>::Type`\endlink.
+this type. This type is \link CGAL::Coercion_traits::Type `CGAL::Coercion_traits<A,B>::Type`\endlink. 
+In case types are `RealEmbeddable` this also implies that mixed compare operators are available.
 
 The type \link CGAL::Coercion_traits::Type `CGAL::Coercion_traits<A,B>::Type`\endlink is required to be 
 implicit constructible from `A` and `B`. 

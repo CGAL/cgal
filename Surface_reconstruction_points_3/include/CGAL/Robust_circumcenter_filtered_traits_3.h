@@ -31,6 +31,8 @@
 
 namespace CGAL {
 
+namespace Reconstruction {
+
 
 template < typename K >
 class Robust_filtered_construct_circumcenter_3
@@ -360,6 +362,8 @@ private:
 
 }; // end class Robust_filtered_compute_squared_radius_3
 
+} //end namespace Reconstruction
+
 
 /**
  * \internal
@@ -371,10 +375,10 @@ template<class K>
 struct Robust_circumcenter_filtered_traits_3
 : public K
 {
-  typedef CGAL::Robust_filtered_construct_circumcenter_3<K>
+  typedef CGAL::Reconstruction::Robust_filtered_construct_circumcenter_3<K>
                                             Construct_circumcenter_3;
 
-  typedef CGAL::Robust_filtered_compute_squared_radius_3<K>
+  typedef CGAL::Reconstruction::Robust_filtered_compute_squared_radius_3<K>
                                             Compute_squared_radius_3;
 
   Construct_circumcenter_3

@@ -50,7 +50,7 @@ neighbors of a cell are also indexed with 0, 1, 2, 3
 in such a way that the neighbor indexed by \f$ i\f$ is opposite to the vertex
 with the same index (see \cgalFigureRef{TDS3figrepres}).
 
-\cgalFigureBegin{TDS3figrepres,repres.gif}
+\cgalFigureBegin{TDS3figrepres,repres.png}
 Representation.
 \cgalFigureEnd
 
@@ -83,7 +83,7 @@ infinite, thus four of the five 3-cells become infinite: the geometric
 triangulation has one finite tetrahedron remaining, each of its facets
 being incident to an infinite cell. See \cgalFigureRef{TDS3figtoposimplex4}.
 
-\cgalFigureBegin{TDS3figtoposimplex4,topo-simplex4.gif}
+\cgalFigureBegin{TDS3figtoposimplex4,topo-simplex4.png}
 4D simplex and a 3D geometric embedding.
 \cgalFigureEnd
 
@@ -93,7 +93,7 @@ the plane results from choosing one of these vertices to be infinite,
 then the geometric triangulation has one finite triangle whose edges are
 incident to the infinite triangles. See \cgalFigureRef{TDS3figtoposimplex3}.
 
-\cgalFigureBegin{TDS3figtoposimplex3,topo-simplex3.gif}
+\cgalFigureBegin{TDS3figtoposimplex3,topo-simplex3.png}
 3D simplex and a 2D geometric embedding.
 \cgalFigureEnd
 
@@ -101,7 +101,7 @@ incident to the infinite triangles. See \cgalFigureRef{TDS3figtoposimplex3}.
 vertices. The geometric embedding is an edge whose vertices are linked
 to an infinite point. See \cgalFigureRef{TDS3figtoposimplex2}.
 
-\cgalFigureBegin{TDS3figtoposimplex2,topo-simplex2.gif}
+\cgalFigureBegin{TDS3figtoposimplex2,topo-simplex2.png}
 2D simplex and a 1D geometric embedding.
 \cgalFigureEnd
 
@@ -164,7 +164,7 @@ are up to 12 different orderings of the four vertices of a cell. Note
 that cyclic permutations are negative and so do not preserve the
 orientation of a cell.
 
-\cgalFigureBegin{TDS3figcomborient,comborient.gif}
+\cgalFigureBegin{TDS3figcomborient,comborient.png}
 Coherent orientations of two cells (3-dimensional case).
 \cgalFigureEnd
 
@@ -175,7 +175,7 @@ the local validity of a given triangulation data structure.
 
 The 3D-triangulation data structure class of \cgal,
 `Triangulation_data_structure_3`, is designed to be used as a combinatorial
-layer upon which a geometric layer can be built \cite k-ddsps-98. This
+layer upon which a geometric layer can be built \cgalCite{k-ddsps-98}. This
 geometric layer is typically one of the 3D-triangulation classes of \cgal:
 `Triangulation_3`, `Delaunay_triangulation_3` and
 `Regular_triangulation_3`. This relation is described in more details in
@@ -186,7 +186,7 @@ design related to the geometry.
 We focus here on the design of the triangulation data structure (TDS)
 itself, which the \cgalFigureRef{TDS3figlayers} illustrates.
 
-\cgalFigureBegin{TDS3figlayers,design_tds.gif}
+\cgalFigureBegin{TDS3figlayers,design_tds.png}
 Triangulation Data Structure software design.
 \cgalFigureEnd
 
@@ -321,7 +321,7 @@ structures whose vertices respectively store vertex handles of the other one.
 
 Monique Teillaud introduced the triangulation of the topological
 sphere \f$ S^d\f$ in \f$ \mathbb{R}^{d+1}\f$ to manage the underlying graph of geometric
-triangulations and handle degenerate dimensions \cite t-tdtc-99.
+triangulations and handle degenerate dimensions \cgalCite{t-tdtc-99}.
 
 Sylvain Pion improved the software in several ways, in particular
 regarding the memory management.

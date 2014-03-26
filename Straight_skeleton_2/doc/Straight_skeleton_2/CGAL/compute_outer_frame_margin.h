@@ -3,7 +3,7 @@ namespace CGAL {
 /*!
 \ingroup PkgStraightSkeleton2Functions
 
-The function `compute_outer_frame_margin` computes the separation required between a polygon and the outer frame used to obtain an exterior skeleton suitable for the computation of outer offset polygons at a given distance. 
+Computes the separation required between a polygon and the outer frame used to obtain an exterior skeleton suitable for the computation of outer offset polygons at a given distance. 
 
 Given a non-degenerate strictly-simple 2D polygon whose vertices are passed 
 in the range [`first`,`beyond`), calculates the largest euclidean distance

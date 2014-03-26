@@ -22,7 +22,7 @@ the same as the point type defined by the geometric traits class.
 
 \tparam TriangulationDSVertexBase_3 is a combinatorial vertex base class from which 
 `Triangulation_vertex_base_3` derives. 
-It has the default value `Triangulation_ds_vertex_base_3<>`. 
+It has the default value `Triangulation_ds_vertex_base_3<TDS>`.
 
 \cgalModels `TriangulationVertexBase_3`
 

@@ -11,7 +11,7 @@ that the Voronoi diagram adaptor can adapt it.
 
 \cgalRefines `DefaultConstructible,` \cgalRefines `CopyConstructible,` \cgalRefines `Assignable` 
 
-### Traversal of the Delaunay graph ###
+\cgalHeading{Traversal of the Delaunay graph}
 
 A model of the `DelaunayGraph_2` concept must provide several 
 iterators and circulators that allow to traverse it (completely or 

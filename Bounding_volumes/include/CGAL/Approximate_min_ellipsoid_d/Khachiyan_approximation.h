@@ -32,7 +32,7 @@
 #include <CGAL/Approximate_min_ellipsoid_d/Approximate_min_ellipsoid_d_configure.h>
 
 // If CGAL is not being used, we need to define certain things:
-#ifndef CGAL_VERSION
+#ifdef CGAL_JUST_MINIBALL
   namespace CGAL {
     struct Tag_true {};
     struct Tag_false {};

@@ -253,7 +253,7 @@ namespace CGAL{
     }
 
     
-private:
+public:
     //declaration
     template< class multi_output_iterator >
     bool read_one_active_object( ipe::Object* object,

@@ -130,6 +130,7 @@ public:
     Handle_for(const Handle_for& h)
       : ptr_(h.ptr_)
     {
+	CGAL_assume (ptr_->count > 0);
         ++(ptr_->count);
     }
 

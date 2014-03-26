@@ -17,7 +17,7 @@ defined as
 where \f$ \|{p-z}\|\f$ is the Euclidean distance between \f$ p\f$ and \f$ z\f$. 
 \f$ {p}^{(w)}\f$ and \f$ {z}^{(w)}\f$ 
 are said to be <I>orthogonal</I> if \f$ \Pi{({p}^{(w)}-{z}^{(w)})} 
-= 0\f$ (see Figure \cgalFigureRef{Triangulation3figortho}).
+= 0\f$ (see \cgalFigureRef{Triangulation3figortho}).
 
 Four weighted points have a unique common orthogonal weighted point called 
 the <I>power sphere</I>. A sphere \f$ {z}^{(w)}\f$ is said to be 
@@ -219,7 +219,8 @@ int remove(InputIterator first, InputIterator beyond);
 Let us remark that \f$ \Pi({p}^{(w)}-{z}^{(w)}) > 0 \f$ is equivalent to `p` lies outside the sphere with center `z` and radius \f$ \sqrt{w_p^2+w_z^2}\f$. This remark helps provide an intuition about the following predicates.
 
 \anchor Triangulation3figsidedim2
-\image html  sidedim2.gif side_of_power_circle
+\image html sidedim2.png side_of_power_circle
+\image latex sidedim2.png side_of_power_circle
 */
 
 /// @{

@@ -23,6 +23,7 @@
 
 #include <CGAL/Delaunay_triangulation_2.h>
 #include <CGAL/Polygon_2_algorithms.h>
+#include <CGAL/squared_distance_2.h>
 
 #include <cfloat>
 #include <cstdlib>

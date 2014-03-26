@@ -22,6 +22,8 @@
 #define CGAL_GENERAL_POLYGON_WITH_HOLES_2_H
 
 #include <list>
+#include <iostream>
+#include <CGAL/IO/io.h>
 
 namespace CGAL {
 

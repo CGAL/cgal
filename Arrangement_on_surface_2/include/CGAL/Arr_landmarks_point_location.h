@@ -14,7 +14,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Idit Haran   <haranidi@post.tau.ac.il>
 //                 Ron Wein     <wein@post.tau.ac.il>
@@ -46,7 +46,7 @@ namespace CGAL {
  * Generator is a class that generates the set of landmarks.
  */
 
-template <class Arrangement_, 
+template <class Arrangement_,
           class Generator_ = Arr_landmarks_vertices_generator<Arrangement_> >
 class Arr_landmarks_point_location
 {
@@ -105,10 +105,10 @@ protected:
   template<typename T>
   Result_type make_result(T t) const { return Result::make_result(t); }
   inline Result_type default_result() const { return Result::default_result(); }
-  
+
 public:
   /*! Default constructor. */
-  Arr_landmarks_point_location() : 
+  Arr_landmarks_point_location() :
     p_arr(NULL),
     m_traits(NULL),
     lm_gen(NULL),
@@ -117,30 +117,29 @@ public:
 
   /*! Constructor given an arrangement only. */
   Arr_landmarks_point_location(const Arrangement_2& arr) :
-    p_arr(&arr)
-  {
-    // Allocate the landmarks generator.
-    m_traits = static_cast<const Traits_adaptor_2*>(p_arr->geometry_traits());
-    lm_gen = new Generator(arr);
-    own_gen = true;
-  }
+    p_arr(&arr),
+    m_traits(static_cast<const Traits_adaptor_2*>(p_arr->geometry_traits())),
+    lm_gen(new Generator(arr)),         // allocate the landmarks generator.
+    own_gen(true)
+  { }
 
   /*! Constructor given an arrangement, and landmarks generator. */
-  Arr_landmarks_point_location(const Arrangement_2& arr, Generator *gen) :
+  Arr_landmarks_point_location(const Arrangement_2& arr, Generator* gen) :
     p_arr(&arr),
+    m_traits(static_cast<const Traits_adaptor_2*>(p_arr->geometry_traits())),
     lm_gen(gen),
     own_gen(false)
-  {
-    m_traits = static_cast<const Traits_adaptor_2*>(p_arr->geometry_traits());
-  }
+  { }
 
   /*! Destructor. */
-  ~Arr_landmarks_point_location() 
+  ~Arr_landmarks_point_location()
   {
-    if (own_gen) 
+    if (own_gen) {
       delete lm_gen;
+      lm_gen = NULL;
+    }
   }
-   
+
  /*! Attach an arrangement object (and a generator, if supplied). */
   void attach(const Arrangement_2& arr, Generator* gen = NULL)
   {
@@ -158,8 +157,8 @@ public:
     else if (lm_gen != NULL) {
       // In case a generator exists internally, make sure it is attached to
       // the given arrangement.
-      Arrangement_2 &non_const_arr = const_cast<Arrangement_2&>(*p_arr);
-      lm_gen->attach(non_const_arr); 
+      Arrangement_2& non_const_arr = const_cast<Arrangement_2&>(*p_arr);
+      lm_gen->attach(non_const_arr);
     }
     else {
       // Allocate a new generator, attached to the given arrangement.
@@ -169,7 +168,7 @@ public:
   }
 
   /*! Detach the instance from the arrangement object. */
-  void detach() 
+  void detach()
   {
     p_arr = NULL;
     m_traits = NULL;
@@ -178,7 +177,7 @@ public:
     if (lm_gen)
       lm_gen->detach();
   }
-  
+
   /*!
    * Locate the arrangement feature containing the given point.
    * \param p The query point.
@@ -189,9 +188,7 @@ public:
   result_type locate(const Point_2& p) const;
 
 protected:
-
-  /*!
-   * Walks from the given vertex to the query point.
+  /*! Walk from the given vertex to the query point.
    * \param vh The given vertex handle.
    * \param p The query point.
    * \param crossed_edges In/Out: The set of edges crossed so far.
@@ -200,11 +197,10 @@ protected:
    *         Halfedge_const_handle or a Vertex_const_handle.
    */
   result_type _walk_from_vertex(Vertex_const_handle vh,
-                                const Point_2 & p,
+                                const Point_2& p,
                                 Halfedge_set& crossed_edges) const;
 
-  /*!
-   * Locate an edge around a given vertex that is the predecessor of the
+  /*! Locate an edge around a given vertex that is the predecessor of the
    * curve connecting the vertex to the query point in a clockwise order.
    * \param vh The vertex.
    * \param p The query point.
@@ -212,11 +208,10 @@ protected:
    * \return The desired object (a halfedge handle or a vertex handle).
    */
   result_type _find_face_around_vertex(Vertex_const_handle vh,
-                                       const Point_2& p, 
+                                       const Point_2& p,
                                        bool& new_vertex) const;
 
-  /*!
-   * Walks from a point on a given halfedge to the query point.
+  /*! Walk from a point on a given halfedge to the query point.
    * \param eh The given halfedge handle.
    * \param np The point that the walk starts from.
    * \param p The query point.
@@ -226,11 +221,10 @@ protected:
    *         Halfedge_const_handle or a Vertex_const_handle.
    */
   result_type _walk_from_edge(Halfedge_const_handle eh,
-                              const Point_2& np, 
+                              const Point_2& np,
                               const Point_2& p,
                               Halfedge_set& crossed_edges) const;
-  /*!
-   * In case the arrangement's curve contained in the segment 
+  /*! In case the arrangement's curve contained in the segment
    * from the nearest landmark to the query point
    * \param he The given halfedge handle.
    * \param p_is_left Is the query point the left endpoint of seg.
@@ -246,8 +240,7 @@ protected:
                                         const Point_2& p,
                                         Halfedge_set& crossed_edges) const;
 
-  /*!
-   * Walks from a point in a face to the query point.
+  /*! Walk from a point in a face to the query point.
    * \param fh A halfedge handle that points to the face.
    * \param np The point that the walk starts from.
    * \param p The query point.
@@ -257,12 +250,11 @@ protected:
    *         Halfedge_const_handle or a Vertex_const_handle.
    */
   result_type _walk_from_face(Face_const_handle fh,
-                              const Point_2 & np, 
-                              const Point_2 & p,
+                              const Point_2& np,
+                              const Point_2& p,
                               Halfedge_set& crossed_edges) const;
 
-  /*!
-   * Find a halfedge on the given CCB that intersects the given x-monotone
+  /*! Find a halfedge on the given CCB that intersects the given x-monotone
    * curve, connecting the current landmark to the query point.
    * \param circ The CCB circulator.
    * \param seg The segment connecting the landmark and the query point.
@@ -287,8 +279,7 @@ protected:
                          bool& cv_is_contained_in_seg,
                          Vertex_const_handle& new_vertex) const;
 
-  /*!
-   * Return the halfedge that contains the query point.
+  /*! Return the halfedge that contains the query point.
    * \param he The halfedge handle.
    * \param crossed_edges In/Out: The set of edges crossed so far.
    * \param p The query point.
@@ -300,8 +291,7 @@ protected:
                         const Point_2& p,
                         bool& is_target) const;
 
-  /*!
-   * Check whether the given curve intersects a simple segment, which connects
+  /*! Check whether the given curve intersects a simple segment, which connects
    * the current landmark to the query point, an odd number of times.
    * \param cv The curve.
    * \param seg The segment connecting the landmark and the query point.

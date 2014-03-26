@@ -361,7 +361,7 @@ public:
 
 The following handles, iterators, and circulators all have respective
 constant counterparts (for example, in addition to `Vertex_iterator`
-the type `Vertex_const_iterator` is also defined). See \cite cgal:ms-strg-96 
+the type `Vertex_const_iterator` is also defined). See \cgalCite{cgal:ms-strg-96} 
 for a discussion of constant versus mutable iterator
 types. The mutable types are assignable to their constant
 counterparts. `Vertex_iterator`, `Halfedge_iterator`, and
@@ -1045,7 +1045,7 @@ void insert (Arrangement_2<Traits,Dcel>& arr,
 /*!
   \ingroup PkgArrangement2Funcs
 
-  The function `do_intersect` checks if a given curve or \f$ x\f$-monotone 
+  Checks if a given curve or \f$ x\f$-monotone 
   curve intersects an existing arrangement's edges or vertices. 
 
   If the give curve is not an \f$ x\f$-monotone curve then the function 
@@ -1091,7 +1091,7 @@ bool do_intersect (
 /*!
   \ingroup PkgArrangement2Funcs
 
-  The function `insert_non_intersecting_curve` inserts a given \f$ x\f$-monotone curve into a given 
+  Inserts a given \f$ x\f$-monotone curve into a given 
   arrangement, where the interior of the given curve is disjoint from all 
   existing arrangement vertices and edges. Under this assumption, it is 
   possible to locate the endpoints of the given curve in the arrangement, 
@@ -1129,7 +1129,7 @@ insert_non_intersecting_curve (Arrangement_2<Traits,Dcel>& arr,
 /*!
   \ingroup PkgArrangement2Funcs
 
-  The function `insert_non_intersecting_curves` inserts a set of \f$ x\f$-monotone curves in a given 
+  Inserts a set of \f$ x\f$-monotone curves in a given 
   range into a given arrangement. The insertion is performed in an aggregated 
   manner, using the sweep-line algorithm. The input curves should be pairwise 
   disjoint in their interior and pairwise interior-disjoint from all existing 
@@ -1152,7 +1152,7 @@ void insert_non_intersecting_curves(Arrangement_2<Traits,Dcel>& arr,
 /*!
   \ingroup PkgArrangement2Funcs
 
-  The function `insert_point` inserts a given point into a given arrangement. 
+  Inserts a given point into a given arrangement. 
   It uses a given point-location object to locate the given 
   point in the given arrangement. If the point conincides with an existing 
   vertex, there is nothing left to do; if it lies on an edge, the edge is 
@@ -1190,7 +1190,7 @@ insert_point (Arrangement_2<Traits,Dcel>& arr,
 /*!
   \ingroup PkgArrangement2Funcs
 
-  The function `is_valid` checks the validity of a given arrangement. 
+  Checks the validity of a given arrangement. 
 
   Invokes the member function `arr.is_valid()` to verify the 
   topological correctness of the arrangement. Then it performs additional 
@@ -1214,7 +1214,7 @@ bool is_valid (const Arrangement_2<Traits, Dcel>& arr);
 /*!
   \ingroup PkgArrangement2Funcs
 
-  The function `remove_edge` removes an edge given by one of the twin halfedges 
+  Removes an edge given by one of the twin halfedges 
   that forms it, from a given arrangement. Once the edge is removed, if the 
   vertices associated with its endpoints become isolated, they are removed as 
   well. The call `remove_edge(arr, e)` is equivalent to the call 
@@ -1246,7 +1246,7 @@ remove_edge (Arrangement_2<Traits,Dcel>& arr,
 /*!
   \ingroup PkgArrangement2Funcs
 
-  The function `remove_vertex` attempts to removed a given vertex from a given 
+  Attempts to removed a given vertex from a given 
   arrangement. The vertex can be removed if it is either an isolated vertex, 
   (and has no incident edge,) or if it is a <I>redundant</I> vertex. That 
   is, it has exactly two incident edges, whose associated curves can be 
@@ -1271,7 +1271,7 @@ bool remove_vertex (Arrangement_2<Traits,Dcel>& arr,
 /*!
   \ingroup PkgArrangement2Funcs
 
-  The function `zone` compute the zone of the given \f$ x\f$-monotone 
+  Compute the zone of the given \f$ x\f$-monotone 
   curve in the existing arrangement. Meaning, it output the 
   arrangement's vertices, edges and faces that the \f$ x\f$-monotone curve 
   intersects. The order of the objects is the order that they are 

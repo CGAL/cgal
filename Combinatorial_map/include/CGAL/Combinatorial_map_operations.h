@@ -47,8 +47,8 @@ namespace CGAL
       for ( CGAL::CMap_dart_const_iterator_of_cell<CMap,i> it(amap, adart);
             res && it.cont(); ++it )
       {
-        if (it->template beta<i+2>()->template beta<i+1>()!=
-            it->template beta_inv<i+1>()->template beta<i+2>() )
+        if ( amap.template beta<i+2,i+1>(it)!=
+             amap.template beta<CGAL_BETAINV(i+1),i+2>(it) )
           res = false;
       }
       return res;
@@ -95,7 +95,7 @@ namespace CGAL
       size_t res = 0;
 
       typename CMap::Dart_handle d1, d2;
-      typename CMap::Dart_handle dg1=NULL, dg2=NULL;
+      typename CMap::Dart_handle dg1=amap.null_handle, dg2=amap.null_handle;
 
       int mark = amap.get_new_mark();
       int mark_modified_darts = amap.get_new_mark();
@@ -109,14 +109,14 @@ namespace CGAL
             it.cont(); ++it )
       {
         to_erase.push_back(it);
-        if ( !it->template is_free<i+1>() && dg1==NULL )
-        { dg1=it; dg2=it->template beta<i+1>(); }
+        if ( !amap.template is_free<i+1>(it) && dg1==amap.null_handle )
+        { dg1=it; dg2=amap.template beta<i+1>(it); }
         amap.mark(it, mark);
         ++res;
       }
 
       // We group the two (i+1)-cells incident if they exist.
-      if ( dg1!=NULL )
+      if ( dg1!=amap.null_handle )
         CGAL::internal::Group_attribute_functor_run<CMap, i+1>::
             run(&amap, dg1, dg2);
 
@@ -137,28 +137,28 @@ namespace CGAL
           to_erase.begin();
       for ( ; it!=to_erase.end(); ++it )
       {
-        d1=(*it)->template beta<iinv>();
-        while ( d1!=CMap::null_dart_handle && amap.is_marked(d1, mark) )
+        d1=amap.template beta<iinv>(*it);
+        while ( d1!=amap.null_dart_handle && amap.is_marked(d1, mark) )
         {
-          d1=d1->template beta<i+1>()->template beta<iinv>();
-          if ( d1==(*it)->template beta<iinv>() ) d1=CMap::null_dart_handle;
+          d1=amap.template beta<i+1, iinv>(d1);
+          if ( d1==amap. template beta<iinv>(*it) ) d1=amap.null_dart_handle;
         }
 
         if ( !amap.is_marked(d1, mark_modified_darts) )
         {
-          d2=(*it)->template beta<i+1>()->template beta<i>();
-          while ( d2!=CMap::null_dart_handle && amap.is_marked(d2, mark) )
+          d2=amap.template beta<i+1,i>(*it);
+          while ( d2!=amap.null_dart_handle && amap.is_marked(d2, mark) )
           {
-            d2=d2->template beta<i+1>()->template beta<i>();
-            if ( d2==(*it)->template beta<i+1>()->template beta<i>() )
-              d2=CMap::null_dart_handle;
+            d2=amap.template beta<i+1,i>(d2);
+            if ( d2==amap.template beta<i+1,i>(*it) )
+              d2=amap.null_dart_handle;
           }
 
           if ( !amap.is_marked(d2, mark_modified_darts) )
           {
-            if ( d1!=CMap::null_dart_handle )
+            if ( d1!=amap.null_dart_handle )
             {
-              if ( d2!=CMap::null_dart_handle && d1!=d2 )
+              if ( d2!=amap.null_dart_handle && d1!=d2 )
               {
                 //d1->basic_link_beta(d2, i);
                 amap.template basic_link_beta<i>(d1, d2);
@@ -176,20 +176,20 @@ namespace CGAL
               }
               else
               {
-                if ( !d1->template is_free<i>() )
+                if ( !amap.template is_free<i>(d1) )
                 {
-                  d1->template unlink_beta<i>();
+                  amap.template unlink_beta<i>(d1);
                   CGAL_assertion( !amap.is_marked(d1, mark_modified_darts) );
                   amap.mark(d1, mark_modified_darts);
                   first_modified_darts.push_back(d1);
                 }
               }
             }
-            else if ( d2!=CMap::null_dart_handle )
+            else if ( d2!=amap.null_dart_handle )
             {
-              if ( !d2->template is_free<iinv>() )
+              if ( !amap.template is_free<iinv>(d2) )
               {
-                d2->template unlink_beta<iinv>();
+                amap.template unlink_beta<iinv>(d2);
                 CGAL_assertion( !amap.is_marked(d2, mark_modified_darts) );
                 amap.mark(d2, mark_modified_darts);
                 modified_darts.push_back(d2);
@@ -197,13 +197,13 @@ namespace CGAL
             }
           }
         }
-        if ( (*it)->template is_free<i+1>() &&
-             !(*it)->template is_free<i>() )
+        if ( amap.template is_free<i+1>(*it) &&
+             !amap.template is_free<i>(*it) )
         {
-          d1 = (*it)->template beta<i>();
-          if ( !d1->template is_free<iinv>() )
+          d1 = amap.template beta<i>(*it);
+          if ( !amap.template is_free<iinv>(d1) )
           {
-            d1->template unlink_beta<iinv>();
+            amap.template unlink_beta<iinv>(d1);
             CGAL_assertion( !amap.is_marked(d1, mark_modified_darts) );
             amap.mark(d1, mark_modified_darts);
             modified_darts.push_back(d1);
@@ -270,8 +270,6 @@ namespace CGAL
   {
     static size_t run(CMap& amap, typename CMap::Dart_handle adart)
     {
-      CGAL_assertion( adart!=NULL );
-
       int mark = amap.get_new_mark();
       std::deque<typename CMap::Dart_handle> to_erase;
       size_t res = 0;
@@ -292,10 +290,10 @@ namespace CGAL
         it = to_erase.begin();
       for ( it = to_erase.begin(); it != to_erase.end(); ++it )
       {
-        if ( !(*it)->template is_free<CMap::dimension>() &&
-             !amap.is_marked((*it)->template beta<CMap::dimension>(), mark) )
+        if ( !amap.template is_free<CMap::dimension>(*it) &&
+             !amap.is_marked(amap.template beta<CMap::dimension>(*it), mark) )
         {
-          modified_darts.push_back((*it)->template beta<CMap::dimension>());
+          modified_darts.push_back(amap.template beta<CMap::dimension>(*it));
           amap.template unlink_beta_for_involution<CMap::dimension>(*it);
         }
       }
@@ -336,7 +334,7 @@ namespace CGAL
       size_t res = 0;
 
       typename CMap::Dart_handle d1, d2;
-      typename CMap::Dart_handle dg1=NULL, dg2=NULL;
+      typename CMap::Dart_handle dg1=amap.null_handle, dg2=amap.null_handle;
 
       int mark = amap.get_new_mark();
 //      int mark_modified_darts = amap.get_new_mark();
@@ -347,14 +345,14 @@ namespace CGAL
             it.cont(); ++it )
       {
         to_erase.push_back(it);
-        if ( !it->template is_free<0>() && dg1==NULL )
-        { dg1=it; dg2=it->template beta<0>(); }
+        if ( !amap.template is_free<0>(it) && dg1==amap.null_handle )
+        { dg1=it; dg2=amap.template beta<0>(it); }
         amap.mark(it, mark);
         ++res;
       }
 
       // We group the two edges incident if they exist.
-      if ( dg1!=NULL )
+      if ( dg1!=amap.null_handle )
         CGAL::internal::Group_attribute_functor_run<CMap, 1>::
             run(&amap, dg1, dg2);
 
@@ -369,44 +367,44 @@ namespace CGAL
           to_erase.begin();
       for ( ; it != to_erase.end(); ++it)
       {
-        if ( !(*it)->template is_free<0>() )
+        if ( !amap.template is_free<0>(*it) )
         {
-          if ( !(*it)->template is_free<1>() &&
-               (*it)->template beta<0>()!=(*it) )
+          if ( !amap.template is_free<1>(*it) &&
+               amap.template beta<0>(*it)!=(*it) )
           {
-            amap.basic_link_beta_1((*it)->template beta<0>(),
-                                   (*it)->template beta<1>());
-            modified_darts.push_back((*it)->template beta<0>());
-            modified_darts2.push_back((*it)->template beta<1>());
+            amap.basic_link_beta_1(amap.template beta<0>(*it),
+                                   amap.template beta<1>(*it));
+            modified_darts.push_back(amap.template beta<0>(*it));
+            modified_darts2.push_back(amap.template beta<1>(*it));
             // TODO push only one out of two dart ?
           }
           else
           {
-            (*it)->template beta<0>()->template unlink_beta<1>();
-            modified_darts.push_back((*it)->template beta<0>());
+            amap.template dart_unlink_beta<1>(amap.template beta<0>(*it));
+            modified_darts.push_back(amap.template beta<0>(*it));
           }
 
           for ( unsigned int j=2; j<=CMap::dimension; ++j )
           {
-            if ( !(*it)->is_free(j) )
+            if ( !amap.is_free(*it,j) )
             {
-              amap.basic_link_beta((*it)->template beta<0>(),
-                                   (*it)->beta(j), j);
+              amap.basic_link_beta(amap.template beta<0>(*it),
+                                   amap.beta(*it,j), j);
             //((*it)->beta(0))->basic_link_beta((*it)->beta(j),j);
             }
           }
         }
         else
         {
-          if ( !(*it)->template is_free<1>() )
+          if ( !amap.template is_free<1>(*it) )
           {
-            (*it)->template beta<1>()->template unlink_beta<0>();
-            modified_darts2.push_back((*it)->template beta<1>());
+            amap.template dart_unlink_beta<0>(amap.template beta<1>(*it));
+            modified_darts2.push_back(amap.template beta<1>(*it));
           }
 
           for ( unsigned int j=2; j<=CMap::dimension; ++j )
           {
-            if ( !(*it)->is_free(j) )
+            if ( !amap.is_free(*it,j) )
             { amap.unlink_beta(*it, j); }
           }
         }
@@ -461,8 +459,8 @@ namespace CGAL
       for ( CGAL::CMap_dart_const_iterator_of_cell<CMap,i> it(amap, adart);
             res && it.cont(); ++it )
       {
-        if ( it->template beta<i-2>()->template beta<i-1>()!=
-             it->template beta<i-1>()->template beta_inv<i-2>() )
+        if ( amap.template beta<i-2,i-1>(it)!=
+             amap.template beta<i-1,CGAL_BETAINV(i-2)>(it) )
           res = false;
       }
       return res;
@@ -509,7 +507,7 @@ namespace CGAL
       size_t res = 0;
 
       typename CMap::Dart_handle d1, d2;
-      typename CMap::Dart_handle dg1=NULL, dg2=NULL;
+      typename CMap::Dart_handle dg1=amap.null_handle, dg2=amap.null_handle;
 
       int mark = amap.get_new_mark();
       int mark_modified_darts = amap.get_new_mark();
@@ -522,14 +520,14 @@ namespace CGAL
             it.cont(); ++it )
       {
         to_erase.push_back(it);
-        if ( !it->template is_free<i-1>() && dg1==NULL )
-        { dg1=it; dg2=it->template beta<i-1>(); }
+        if ( !amap.template is_free<i-1>(it) && dg1==amap.null_handle )
+        { dg1=it; dg2=amap.template beta<i-1>(it); }
         amap.mark(it, mark);
         ++res;
       }
 
       // We group the two (i+1)-cells incident if they exist.
-      if ( dg1!=NULL )
+      if ( dg1!=amap.null_handle )
          CGAL::internal::Group_attribute_functor_run<CMap,i-1>::
              run(&amap, dg1, dg2);
 
@@ -542,28 +540,28 @@ namespace CGAL
           to_erase.begin();
       for ( ; it!=to_erase.end(); ++it )
       {
-        d1 = (*it)->template beta<i>();
-        while ( d1!=CMap::null_dart_handle && amap.is_marked(d1, mark) )
+        d1 = amap.template beta<i>(*it);
+        while ( d1!=amap.null_dart_handle && amap.is_marked(d1, mark) )
         {
-          d1 = d1->template beta<imuinv>()->template beta<i>();
-          if (d1 == (*it)->template beta<i>()) d1 = CMap::null_dart_handle;
+          d1 = amap.template beta<imuinv,i>(d1);
+          if (d1 == amap.template beta<i>(*it)) d1 = amap.null_dart_handle;
         }
 
         if ( !amap.is_marked(d1, mark_modified_darts) )
         {
-          d2 = (*it)->template beta<i-1>()->template beta<i>();
-          while ( d2!=CMap::null_dart_handle && amap.is_marked(d2, mark) )
+          d2 = amap.template beta<i-1,i>(*it);
+          while ( d2!=amap.null_dart_handle && amap.is_marked(d2, mark) )
           {
-            d2 = d2->template beta<i-1>()->template beta<i>();
-            if ( d2==(*it)->template beta<i-1>()->template beta<i>() )
-              d2=CMap::null_dart_handle;
+            d2 = amap.template beta<i-1,i>(d2);
+            if ( d2==amap.template beta<i-1,i>(*it) )
+              d2=amap.null_dart_handle;
           }
 
           if ( !amap.is_marked(d2, mark_modified_darts) )
           {
-            if (d1 != CMap::null_dart_handle)
+            if (d1 != amap.null_dart_handle)
             {
-              if (d2 != CMap::null_dart_handle && d1!=d2 )
+              if (d2 != amap.null_dart_handle && d1!=d2 )
               {
                 amap.template basic_link_beta_for_involution<i>(d1, d2);
                 amap.mark(d1, mark_modified_darts);
@@ -574,20 +572,20 @@ namespace CGAL
               }
               else
               {
-                if ( !d1->template is_free<i>() )
+                if ( !amap.template is_free<i>(d1) )
                 {
-                  d1->template unlink_beta<i>();
+                  amap.template unlink_beta<i>(d1);
                   CGAL_assertion( !amap.is_marked(d1, mark_modified_darts) );
                   amap.mark(d1, mark_modified_darts);
                   modified_darts.push_back(d1);
                 }
               }
             }
-            else if (d2 != CMap::null_dart_handle)
+            else if (d2 != amap.null_dart_handle)
             {
-              if ( !d2->is_free(i) )
+              if ( !amap.is_free(d2,i) )
               {
-                d2->template unlink_beta<i>();
+                amap.template unlink_beta<i>(d2);
                 CGAL_assertion( !amap.is_marked(d2, mark_modified_darts) );
                 amap.mark(d2, mark_modified_darts);
                 modified_darts.push_back(d2);
@@ -595,12 +593,12 @@ namespace CGAL
             }
           }
         }
-        if ((*it)->is_free(i-1) && !(*it)->is_free(i))
+        if (amap.is_free(*it,i-1) && !amap.is_free(*it,i))
         {
-          d1 = (*it)->beta(i);
-          if ( !d1->is_free(i) )
+          d1 = amap.beta(*it,i);
+          if ( !amap.is_free(d1,i) )
           {
-            d1->template unlink_beta<i>();
+            amap.template unlink_beta<i>(d1);
             CGAL_assertion( !amap.is_marked(d1, mark_modified_darts) );
             amap.mark(d1, mark_modified_darts);
             modified_darts.push_back(d1);
@@ -658,7 +656,7 @@ namespace CGAL
       size_t res = 0;
 
       typename CMap::Dart_handle d1, d2;
-      typename CMap::Dart_handle dg1=NULL, dg2=NULL;
+      typename CMap::Dart_handle dg1=amap.null_handle, dg2=amap.null_handle;
 
       int mark = amap.get_new_mark();
 //      int mark_modified_darts = amap.get_new_mark();
@@ -669,15 +667,15 @@ namespace CGAL
             it.cont(); ++it )
       {
         to_erase.push_back(it);
-        if ( dg1==NULL && !it->template is_free<0>() &&
-             !it->template is_free<1>() )
-        { dg1=it->template beta<0>(); dg2=it->template beta<1>(); }
+        if ( dg1==amap.null_handle && !amap.template is_free<0>(it) &&
+             !amap.template is_free<1>(it) )
+        { dg1=amap.template beta<0>(it); dg2=amap.template beta<1>(it); }
         amap.mark(it, mark);
         ++res;
       }
 
       // We group the two vertices incident if they exist.
-      if ( dg1!=NULL )
+      if ( dg1!=amap.null_handle )
         CGAL::internal::Group_attribute_functor_run<CMap, 0, 1>::
             run(&amap, dg1, dg2);
 
@@ -692,31 +690,31 @@ namespace CGAL
         to_erase.begin();
       for ( ; it!=to_erase.end(); ++it )
       {
-        if ( !(*it)->template is_free<0>() )
+        if ( !amap.template is_free<0>(*it) )
         {
-          if ( !(*it)->template is_free<1>() )
+          if ( !amap.template is_free<1>(*it) )
           {
-            if ( (*it)->template beta<1>()!=*it )
+            if ( amap.template beta<1>(*it)!=*it )
             {
                /*modified_darts2.push_back((*it)->template beta<0>());
               if ( (*it)->beta(0)!=(*it)->beta(1) )*/
-              modified_darts.push_back((*it)->template beta<1>());
-              amap.basic_link_beta_1((*it)->template beta<0>(),
-                                     (*it)->template beta<1>());
+              modified_darts.push_back(amap.template beta<1>(*it));
+              amap.basic_link_beta_1(amap.template beta<0>(*it),
+                                     amap.template beta<1>(*it));
             }
           }
           else
           {
-            modified_darts2.push_back((*it)->template beta<0>());
-            (*it)->template beta<0>()->template unlink_beta<1>();
+            modified_darts2.push_back(amap.template beta<0>(*it));
+            amap.template dart_unlink_beta<1>(amap.template beta<0>(*it));
           }
         }
         else
         {
-          if ( !(*it)->template is_free<1>() )
+          if ( !amap.template is_free<1>(*it) )
           {
-            modified_darts.push_back((*it)->template beta<1>());
-            (*it)->template beta<1>()->template unlink_beta<0>();
+            modified_darts.push_back(amap.template beta<1>(*it));
+            amap.template dart_unlink_beta<0>(amap.template beta<1>(*it));
           }
         }
       }

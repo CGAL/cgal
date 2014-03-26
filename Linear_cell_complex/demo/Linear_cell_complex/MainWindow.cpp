@@ -167,10 +167,10 @@ void MainWindow::clear_all()
 
 void MainWindow::on_new_volume(Dart_handle adart)
 {
-  CGAL_assertion( adart->attribute<3>()==NULL);
+  CGAL_assertion( scene.lcc->attribute<3>(adart)==LCC::null_handle);
   CGAL::Set_i_attribute_functor<LCC, 3>::
       run(scene.lcc, adart, scene.lcc->create_attribute<3>());
-  update_volume_list_add(adart->attribute<3>());
+  update_volume_list_add(scene.lcc->attribute<3>(adart));
 }
 
 void MainWindow::init_all_new_volumes()
@@ -178,7 +178,7 @@ void MainWindow::init_all_new_volumes()
   for (LCC::One_dart_per_cell_range<3>::iterator
        it(scene.lcc->one_dart_per_cell<3>().begin());
        it.cont(); ++it)
-    if ( it->attribute<3>()==NULL )
+    if ( scene.lcc->attribute<3>(it)==LCC::null_handle )
     { on_new_volume(it); }
 }
 
@@ -338,8 +338,8 @@ void MainWindow::on_actionCreate3Cubes_triggered ()
   on_new_volume(d2);
   on_new_volume(d3);
 
-  scene.lcc->sew<3> (d1->beta(1)->beta(1)->beta(2), d2->beta(2));
-  scene.lcc->sew<3> (d1->beta(2)->beta(1)->beta(1)->beta(2), d3);
+  scene.lcc->sew<3>(scene.lcc->beta(d1,1,1,2), scene.lcc->beta(d2,2));
+  scene.lcc->sew<3>(scene.lcc->beta(d1,2,1,1,2), d3);
 
   ++nbcube;
 
@@ -356,14 +356,14 @@ void MainWindow::on_actionCreate2Volumes_triggered ()
   Dart_handle d3 = make_iso_cuboid(Point_3(nbcube, nbcube + 1, nbcube), 1);
   Dart_handle d4 = make_iso_cuboid(Point_3(nbcube + 1, nbcube + 1, nbcube), 1);
 
-  scene.lcc->sew<3>(d1->beta(1)->beta(1)->beta(2), d2->beta (2));
-  scene.lcc->sew<3>(d1->beta(2)->beta(1)->beta(1)->beta (2), d3);
+  scene.lcc->sew<3>(scene.lcc->beta(d1,1,1,2), scene.lcc->beta(d2,2));
+  scene.lcc->sew<3>(scene.lcc->beta(d1,2,1,1,2), d3);
 
-  scene.lcc->sew<3>(d3->beta(1)->beta(1)->beta(2), d4->beta (2));
-  scene.lcc->sew<3>(d2->beta(2)->beta(1)->beta(1)->beta (2), d4);
+  scene.lcc->sew<3>(scene.lcc->beta(d3,1,1,2), scene.lcc->beta(d4,2));
+  scene.lcc->sew<3>(scene.lcc->beta(d2,2,1,1,2), d4);
 
   CGAL::remove_cell<LCC,2>(*scene.lcc, d3);
-  CGAL::remove_cell<LCC,2>(*scene.lcc, d2->beta (2));
+  CGAL::remove_cell<LCC,2>(*scene.lcc, scene.lcc->beta(d2,2));
 
   on_new_volume(d1);
   on_new_volume(d4);
@@ -527,10 +527,11 @@ void MainWindow::on_actionCompute_Voronoi_3D_triggered ()
          it=scene.lcc->darts_of_cell<3>(ddh).begin(),
          itend=scene.lcc->darts_of_cell<3>(ddh).end(); it!=itend; ++it)
     {
-      if ( !scene.lcc->is_marked(it->beta(3), mark_toremove) )
+      if ( !scene.lcc->is_marked(scene.lcc->beta(it,3), mark_toremove) )
       {
-        CGAL::mark_cell<LCC,3>(*scene.lcc, it->beta(3), mark_toremove);
-        toremove.push(it->beta(3));
+        CGAL::mark_cell<LCC,3>(*scene.lcc,
+                               scene.lcc->beta(it,3), mark_toremove);
+        toremove.push(scene.lcc->beta(it,3));
       }
     }
     while( !toremove.empty() )
@@ -655,9 +656,10 @@ void MainWindow::on_actionUnsew3_all_triggered()
   for (LCC::Dart_range::iterator it=scene.lcc->darts().begin();
        it!=scene.lcc->darts().end(); ++it)
   {
-    if ( !it->is_free(3) &&
-         it->attribute<3>()->info().is_filled_and_visible() &&
-         it->beta(3)->attribute<3>()->info().is_filled_and_visible())
+    if ( !scene.lcc->is_free(it,3) &&
+         scene.lcc->info<3>(it).is_filled_and_visible() &&
+         scene.lcc->info<3>(scene.lcc->beta(it,3))
+           .is_filled_and_visible())
     { scene.lcc->unsew<3>(it); ++nb; }
   }
 
@@ -691,9 +693,9 @@ void MainWindow::on_actionRemove_filled_volumes_triggered()
        itend=scene.lcc->attributes<3>().end(); it!=itend; )
   {
     LCC::Attribute_handle<3>::type cur = it++;
-    if( cur->info().is_filled_and_visible() )
+    if( scene.lcc->get_attribute<3>(cur).info().is_filled_and_visible() )
     {
-      CGAL::remove_cell<LCC,3>(*scene.lcc,cur->dart());
+      CGAL::remove_cell<LCC,3>(*scene.lcc,scene.lcc->get_attribute<3>(cur).dart());
       ++count;
     }
   }
@@ -723,7 +725,7 @@ void MainWindow::on_actionTriangulate_all_facets_triggered()
   for (LCC::One_dart_per_cell_range<2>::iterator
        it(scene.lcc->one_dart_per_cell<2>().begin()); it.cont(); ++it)
   {
-    if ( it->attribute<3>()->info().is_filled_and_visible() )
+    if ( scene.lcc->info<3>(it).is_filled_and_visible() )
       v.push_back(it);
   }
   for (std::vector<LCC::Dart_handle>::iterator itv(v.begin());
@@ -749,17 +751,18 @@ void MainWindow::on_actionMerge_all_volumes_triggered()
   timer.start();
 #endif
 
-  Dart_handle prev = NULL;
+  Dart_handle prev = scene.lcc->null_handle;
   for (LCC::Dart_range::iterator it(scene.lcc->darts().begin()),
        itend=scene.lcc->darts().end(); it!=itend; )
   {
-    if ( !it->is_free(3) &&
-         it->attribute<3>()->info().is_filled_and_visible() &&
-         it->beta(3)->attribute<3>()->info().is_filled_and_visible() )
+    if ( !scene.lcc->is_free(it,3) &&
+         scene.lcc->info<3>(it).is_filled_and_visible() &&
+         scene.lcc->info<3>(scene.lcc->beta(it,3))
+          .is_filled_and_visible())
     {
       CGAL::remove_cell<LCC,2>(*scene.lcc,it);
       itend=scene.lcc->darts().end();
-      if ( prev==NULL ) it=scene.lcc->darts().begin();
+      if ( prev==scene.lcc->null_handle ) it=scene.lcc->darts().begin();
       else { it=prev; if ( it!=itend ) ++it; }
     }
     else
@@ -787,7 +790,7 @@ bool MainWindow::is_volume_in_list(LCC::Attribute_handle<3>::type ah)
         reinterpret_cast<LCC::Attribute_type<3>::type*>
         ( volumeList->item(row,3)->data(Qt::UserRole).value<quintptr>() );
 
-    if(ptr==&*ah) return true;
+    if(ptr==&(scene.lcc->get_attribute<3>(ah))) return true;
   }
 
   return false;
@@ -803,26 +806,30 @@ void MainWindow::update_volume_list_add(LCC::Attribute_handle<3>::type ah)
   volumeList->setRowCount(newRow+1);
 
   QTableWidgetItem* volumeLabel = new QTableWidgetItem
-      (QString(ah->info().color_name().c_str()));
+    (QString((scene.lcc->get_attribute<3>(ah).info().color_name().c_str())));
   volumeLabel->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
   volumeLabel->setTextAlignment(Qt::AlignRight|Qt::AlignVCenter);
   volumeList->setItem(newRow,0,volumeLabel);
 
   QTableWidgetItem* fillCB = new QTableWidgetItem;
   fillCB->setFlags(Qt::ItemIsUserCheckable | Qt::ItemIsEnabled);
-  if ( ah->info().is_filled() ) fillCB->setCheckState(Qt::Checked);
-  else                          fillCB->setCheckState(Qt::Unchecked);
+  if ( scene.lcc->get_attribute<3>(ah).info().is_filled() )
+    fillCB->setCheckState(Qt::Checked);
+  else
+    fillCB->setCheckState(Qt::Unchecked);
   volumeList->setItem(newRow,1, fillCB);
 
   QTableWidgetItem* hiddenCB = new QTableWidgetItem();
   hiddenCB->setFlags(Qt::ItemIsUserCheckable | Qt::ItemIsEnabled);
-  if ( ah->info().is_visible() ) hiddenCB->setCheckState(Qt::Unchecked);
-  else                           hiddenCB->setCheckState(Qt::Checked);
+  if ( scene.lcc->get_attribute<3>(ah).info().is_visible() )
+    hiddenCB->setCheckState(Qt::Unchecked);
+  else
+    hiddenCB->setCheckState(Qt::Checked);
   volumeList->setItem(newRow,2,hiddenCB);
 
   QTableWidgetItem* attribHandle = new QTableWidgetItem;
   attribHandle->setData
-      (Qt::UserRole, reinterpret_cast<quintptr>(&*(ah)));
+      (Qt::UserRole, reinterpret_cast<quintptr>(&scene.lcc->get_attribute<3>(ah)));
 
   volumeList->setItem(newRow,3,attribHandle);
 
@@ -843,7 +850,7 @@ void MainWindow::update_volume_list_remove(LCC::Attribute_handle<3>::type ah)
         reinterpret_cast<LCC::Attribute_type<3>::type*>
         ( volumeList->item(row,3)->data(Qt::UserRole).value<quintptr>() );
 
-    if(ptr==&*ah)
+    if(ptr==&scene.lcc->get_attribute<3>(ah))
     {
       update_volume_list_remove(row);
       return;
@@ -925,7 +932,8 @@ void MainWindow::onHeaderClicked(int col)
       switch(qApp->keyboardModifiers())
       {
       case(Qt::ShiftModifier):
-        if (col==1) ptr->info().set_filled(false);
+        if (col==1)
+          ptr->info().set_filled(false);
         else if (col==2)
         {
           ptr->info().set_visible(true);
@@ -935,7 +943,8 @@ void MainWindow::onHeaderClicked(int col)
         volumeList->item(i,col)->setCheckState(Qt::Unchecked);
         break;
       case(Qt::ControlModifier):
-        if (col==1) ptr->info().negate_filled();
+        if (col==1)
+          ptr->info().negate_filled();
         else if (col==2)
         {
           ptr->info().negate_visible();
@@ -951,7 +960,8 @@ void MainWindow::onHeaderClicked(int col)
                             Qt::Unchecked: Qt::Checked);
         break;
       default:
-        if (col==1) ptr->info().set_filled(true);
+        if (col==1)
+          ptr->info().set_filled(true);
         else if (col==2)
         {
           if ( ptr->info().is_visible() )
@@ -977,9 +987,10 @@ void MainWindow::mark_all_filled_and_visible_volumes(int amark)
        it=scene.lcc->attributes<3>().begin(),
        itend=scene.lcc->attributes<3>().end(); it!=itend; ++it)
   {
-    if ( it->info().is_filled_and_visible() &&
+    if ( scene.lcc->get_attribute<3>(it).info().is_filled_and_visible() &&
          !scene.lcc->is_marked(it->dart(), amark) )
-      CGAL::mark_cell<LCC,3>(*scene.lcc, it->dart(), amark);
+      CGAL::mark_cell<LCC,3>(*scene.lcc,
+                             scene.lcc->get_attribute<3>(it).dart(), amark);
   }
 }
 
@@ -998,7 +1009,7 @@ void MainWindow::on_actionExtend_filled_volumes_triggered()
   {
     if ( !scene.lcc->is_marked(it->dart(), mark_volume) )
     {
-      if ( !it->info().is_filled() )
+      if ( !scene.lcc->get_attribute<3>(it).info().is_filled() )
       {
         already_tofill = false;
         for (LCC::Dart_of_cell_basic_range<3>::iterator it2=
@@ -1006,11 +1017,11 @@ void MainWindow::on_actionExtend_filled_volumes_triggered()
              it2.cont(); ++it2 )
         {
           scene.lcc->mark(it2, mark_volume);
-          if ( !it2->is_free(3) &&
-               it2->beta(3)->attribute<3>()->info().is_filled() &&
-               !already_tofill)
+          if ( !scene.lcc->is_free(it2,3) &&
+               scene.lcc->info<3>(scene.lcc->beta(it2,3)).
+                 is_filled() && !already_tofill)
           {
-            tofill.push_back(it2->attribute<3>());
+            tofill.push_back(scene.lcc->attribute<3>(it2));
             already_tofill = true;
           }
         }
@@ -1028,7 +1039,7 @@ void MainWindow::on_actionExtend_filled_volumes_triggered()
     for ( std::vector<LCC::Attribute_handle<3>::type>::iterator
             it=tofill.begin(), itend=tofill.end(); it!=itend; ++it )
     {
-      (*it)->info().set_filled(true);
+      scene.lcc->get_attribute<3>(*it).info().set_filled(true);
     }
 
     update_volume_list_all_ckeckstates();
@@ -1053,7 +1064,7 @@ void MainWindow::on_actionExtend_hidden_volumes_triggered()
   {
     if ( !scene.lcc->is_marked(it->dart(), mark_volume) )
     {
-      if ( it->info().is_visible() )
+      if ( scene.lcc->get_attribute<3>(it).info().is_visible() )
       {
         already_tohide = false;
         for (LCC::Dart_of_cell_basic_range<3>::iterator it2=
@@ -1061,11 +1072,11 @@ void MainWindow::on_actionExtend_hidden_volumes_triggered()
              it2.cont(); ++it2 )
         {
           scene.lcc->mark(it2, mark_volume);
-          if ( !it2->is_free(3) &&
-               !it2->beta(3)->attribute<3>()->info().is_visible() &&
-               !already_tohide)
+          if ( !scene.lcc->is_free(it2,3) &&
+               !scene.lcc->info<3>(scene.lcc->beta(it2,3)).
+                  is_visible() && !already_tohide)
           {
-            tohide.push_back(it2->attribute<3>());
+            tohide.push_back(scene.lcc->attribute<3>(it2));
             already_tohide = true;
           }
         }
@@ -1083,7 +1094,7 @@ void MainWindow::on_actionExtend_hidden_volumes_triggered()
     for ( std::vector<LCC::Attribute_handle<3>::type>::iterator
             it=tohide.begin(), itend=tohide.end(); it!=itend; ++it )
     {
-      (*it)->info().set_visible(false);
+      scene.lcc->get_attribute<3>(*it).info().set_visible(false);
     }
 
     update_volume_list_all_ckeckstates();
@@ -1227,8 +1238,8 @@ void MainWindow::onMengerInc()
 
 void MainWindow::split_edge_in_three(Dart_handle dh)
 {
-  LCC::Point p1 = LCC::point(dh);
-  LCC::Point p2 = LCC::point(dh->other_extremity());
+  LCC::Point p1 = scene.lcc->point(dh);
+  LCC::Point p2 = scene.lcc->point(scene.lcc->other_extremity(dh));
 
   LCC::Vector v1 = LCC::Traits::Construct_vector() (p1,p2);
   LCC::Vector v2 = LCC::Traits::Construct_scaled_vector() (v1,1.0/3);
@@ -1243,27 +1254,28 @@ void MainWindow::split_edge_in_three(Dart_handle dh)
 
 void MainWindow::split_face_in_three(Dart_handle dh)
 {
-  CGAL::insert_cell_1_in_cell_2(*(scene.lcc),dh->beta(1)->beta(1)->beta(1),
-                                dh->beta(0)->beta(0));
-  CGAL::insert_cell_1_in_cell_2(*(scene.lcc),dh->beta(1)->beta(1),dh->beta(0));
+  CGAL::insert_cell_1_in_cell_2(*(scene.lcc),scene.lcc->beta(dh,1,1,1),
+                                scene.lcc->beta(dh,0,0));
+  CGAL::insert_cell_1_in_cell_2(*(scene.lcc),scene.lcc->beta(dh,1,1),
+                                scene.lcc->beta(dh,0));
 }
 
 void MainWindow::split_face_in_nine(Dart_handle dh)
 {
-  Dart_handle d2 = dh->beta(1)->beta(1)->beta(1)->beta(1)
-      ->beta(1)->beta(1)->beta(1);
+  Dart_handle d2 = scene.lcc->beta(dh,1,1,1,1,1,1,1);
 
   Dart_handle e2= CGAL::insert_cell_1_in_cell_2(*(scene.lcc),
-                                                dh->beta(1)->beta(1),d2);
+                                                scene.lcc->beta(dh,1,1),d2);
   Dart_handle e1= CGAL::insert_cell_1_in_cell_2(*(scene.lcc),
-                                                dh->beta(1),d2->beta(1));
+                                                scene.lcc->beta(dh,1),
+                                                scene.lcc->beta(d2,1));
 
   split_edge_in_three(e1);
   split_edge_in_three(e2);
 
   split_face_in_three(dh);
   split_face_in_three(d2);
-  split_face_in_three(e2->beta(0));
+  split_face_in_three(scene.lcc->beta(e2,0));
 }
 
 void MainWindow::split_vol_in_three(Dart_handle dh, bool removecenter)
@@ -1271,22 +1283,22 @@ void MainWindow::split_vol_in_three(Dart_handle dh, bool removecenter)
   std::vector<Dart_handle> edges1;
   std::vector<Dart_handle> edges2;
 
-  Dart_handle curd = dh->beta(2)->beta(1)->beta(1)->beta(2);
+  Dart_handle curd = scene.lcc->beta(dh,2,1,1,2);
   for (unsigned int i=0;i<4;++i)
   {
     edges1.push_back(curd);
-    curd=curd->beta(1)->beta(2)->beta(1);
+    curd=scene.lcc->beta(curd,1,2,1);
   }
-  CGAL_assertion( curd==dh->beta(2)->beta(1)->beta(1)->beta(2) );
+  CGAL_assertion( curd==scene.lcc->beta(dh,2,1,1,2) );
 
-  curd = curd->beta(1)->beta(1)->beta(2);
+  curd = scene.lcc->beta(curd,1,1,2);
   for (unsigned int i=0;i<4;++i)
   {
     edges2.push_back(curd);
-    curd=curd->beta(1)->beta(2)->beta(1);
+    curd=scene.lcc->beta(curd,1,2,1);
   }
   CGAL_assertion( curd==
-          dh->beta(2)->beta(1)->beta(1)->beta(2)->beta(1)->beta(1)->beta(2) );
+                  scene.lcc->beta(dh,2,1,1,2,1,1,2) );
 
   Dart_handle f1=
       insert_cell_2_in_cell_3(*(scene.lcc),edges1.begin(),edges1.end());
@@ -1294,23 +1306,23 @@ void MainWindow::split_vol_in_three(Dart_handle dh, bool removecenter)
   Dart_handle f2=
       insert_cell_2_in_cell_3(*(scene.lcc),edges2.begin(),edges2.end());
 
-  f1->attribute<3>()->info().color()=
+  scene.lcc->info<3>(f1).color()=
     (CGAL::Color(myrandom.get_int(0,256),
                  myrandom.get_int(0,256),
                  myrandom.get_int(0,256)));
-  f2->attribute<3>()->info().color()=
+  scene.lcc->info<3>(f2).color()=
       (CGAL::Color(myrandom.get_int(0,256),
                    myrandom.get_int(0,256),
                    myrandom.get_int(0,256)));
 
-  update_volume_list_add(dh->attribute<3>());
+  update_volume_list_add(scene.lcc->attribute<3>(dh));
 
   if ( removecenter )
     CGAL::remove_cell<LCC,3>(*scene.lcc,f1);
   else
   {
     mengerVolumes.push_back(f1);
-    update_volume_list_add(f1->attribute<3>());
+    update_volume_list_add(scene.lcc->attribute<3>(f1));
   }
 
   mengerVolumes.push_back(f2);
@@ -1321,21 +1333,21 @@ void MainWindow::split_vol_in_nine(Dart_handle dh, bool removecenter)
   std::vector<Dart_handle> edges1;
   std::vector<Dart_handle> edges2;
 
-  Dart_handle curd = dh->beta(1)->beta(2);
+  Dart_handle curd = scene.lcc->beta(dh,1,2);
   for (unsigned int i=0;i<8;++i)
   {
     edges1.push_back(curd);
-    curd=curd->beta(1)->beta(2)->beta(1);
+    curd=scene.lcc->beta(curd,1,2,1);
   }
-  CGAL_assertion( curd==dh->beta(1)->beta(2) );
+  CGAL_assertion( curd==scene.lcc->beta(dh,1,2) );
 
-  curd = curd->beta(1)->beta(1)->beta(2);
+  curd = scene.lcc->beta(curd,1,1,2);
   for (unsigned int i=0;i<8;++i)
   {
     edges2.push_back(curd);
-    curd=curd->beta(1)->beta(2)->beta(1);
+    curd=scene.lcc->beta(curd,1,2,1);
   }
-  CGAL_assertion( curd==dh->beta(1)->beta(2)->beta(1)->beta(1)->beta(2) );
+  CGAL_assertion( curd==scene.lcc->beta(dh,1,2,1,1,2) );
 
   Dart_handle f1=
       insert_cell_2_in_cell_3(*(scene.lcc),edges1.begin(),edges1.end());
@@ -1343,33 +1355,33 @@ void MainWindow::split_vol_in_nine(Dart_handle dh, bool removecenter)
   Dart_handle f2=
       insert_cell_2_in_cell_3(*(scene.lcc),edges2.begin(),edges2.end());
 
-  f1->attribute<3>()->info().color()=
+  scene.lcc->info<3>(f1).color()=
     (CGAL::Color(myrandom.get_int(0,256),
                  myrandom.get_int(0,256),
                  myrandom.get_int(0,256)));
-  f2->attribute<3>()->info().color()=
+  scene.lcc->info<3>(f2).color()=
     (CGAL::Color(myrandom.get_int(0,256),
                  myrandom.get_int(0,256),
                  myrandom.get_int(0,256)));
 
-  update_volume_list_add(dh->attribute<3>());
+  update_volume_list_add(scene.lcc->attribute<3>(dh));
   if ( !removecenter)
-    update_volume_list_add(f1->attribute<3>());
+    update_volume_list_add(scene.lcc->attribute<3>(f1));
 
   split_face_in_three(f1);
   split_face_in_three(f2);
 
   split_vol_in_three(dh,removecenter);
 
-  mengerVolumes.push_back(f2->beta(2)->beta(1));
-  split_vol_in_three(f2->beta(2)->beta(1),removecenter);
+  mengerVolumes.push_back(scene.lcc->beta(f2,2,1));
+  split_vol_in_three(scene.lcc->beta(f2,2,1),removecenter);
 
   if ( removecenter )
     CGAL::remove_cell<LCC,3>(*scene.lcc,f1);
   else
   {
-    mengerVolumes.push_back(f1->beta(2)->beta(1));
-    split_vol_in_three(f1->beta(2)->beta(1),true);
+    mengerVolumes.push_back(scene.lcc->beta(f1,2,1));
+    split_vol_in_three(scene.lcc->beta(f1,2,1),true);
   }
 }
 
@@ -1378,21 +1390,21 @@ void MainWindow::split_vol_in_twentyseven(Dart_handle dh)
   std::vector<Dart_handle> edges1;
   std::vector<Dart_handle> edges2;
 
-  Dart_handle curd = dh->beta(1)->beta(1)->beta(2);
+  Dart_handle curd = scene.lcc->beta(dh,1,1,2);
   for (unsigned int i=0;i<12;++i)
   {
     edges1.push_back(curd);
-    curd=curd->beta(1)->beta(2)->beta(1);
+    curd=scene.lcc->beta(curd,1,2,1);
   }
-  CGAL_assertion( curd==dh->beta(1)->beta(1)->beta(2) );
+  CGAL_assertion( curd==scene.lcc->beta(dh,1,1,2) );
 
-  curd = curd->beta(1)->beta(1)->beta(2);
+  curd = scene.lcc->beta(curd,1,1,2);
   for (unsigned int i=0;i<12;++i)
   {
     edges2.push_back(curd);
-    curd=curd->beta(1)->beta(2)->beta(1);
+    curd=scene.lcc->beta(curd,1,2,1);
   }
-  CGAL_assertion( curd==dh->beta(1)->beta(1)->beta(2)->beta(1)->beta(1)->beta(2) );
+  CGAL_assertion( curd==scene.lcc->beta(dh,1,1,2,1,1,2) );
 
   Dart_handle f1=
       insert_cell_2_in_cell_3(*(scene.lcc),edges1.begin(),edges1.end());
@@ -1400,27 +1412,27 @@ void MainWindow::split_vol_in_twentyseven(Dart_handle dh)
   Dart_handle f2=
       insert_cell_2_in_cell_3(*(scene.lcc),edges2.begin(),edges2.end());
 
-  f1->attribute<3>()->info().color()=
+  scene.lcc->info<3>(f1).color()=
     (CGAL::Color(myrandom.get_int(0,256),
                  myrandom.get_int(0,256),
                  myrandom.get_int(0,256)));
-  f2->attribute<3>()->info().color()=
+  scene.lcc->info<3>(f2).color()=
     (CGAL::Color(myrandom.get_int(0,256),
                  myrandom.get_int(0,256),
                  myrandom.get_int(0,256)));
 
-  update_volume_list_add(dh->attribute<3>());
-  update_volume_list_add(f1->attribute<3>());
+  update_volume_list_add(scene.lcc->attribute<3>(dh));
+  update_volume_list_add(scene.lcc->attribute<3>(f1));
 
-  mengerVolumes.push_back(f1->beta(2));
-  mengerVolumes.push_back(f2->beta(2));
+  mengerVolumes.push_back(scene.lcc->beta(f1,2));
+  mengerVolumes.push_back(scene.lcc->beta(f2,2));
 
-  split_face_in_nine(f1->beta(1));
-  split_face_in_nine(f2->beta(1));
+  split_face_in_nine(scene.lcc->beta(f1,1));
+  split_face_in_nine(scene.lcc->beta(f2,1));
 
   split_vol_in_nine(dh,false);
-  split_vol_in_nine(f1->beta(2),true);
-  split_vol_in_nine(f2->beta(2),false);
+  split_vol_in_nine(scene.lcc->beta(f1,2),true);
+  split_vol_in_nine(scene.lcc->beta(f2,2),false);
 }
 
 void MainWindow::process_full_slice(Dart_handle init,
@@ -1428,21 +1440,21 @@ void MainWindow::process_full_slice(Dart_handle init,
                                   int markVols)
 {
   Dart_handle d[12];
-  d[0]=init->beta(1)->beta(2);
-  d[1]=d[0]->beta(3)->beta(1)->beta(2)->beta(1);
-  d[2]=d[1]->beta(1)->beta(2)->beta(1);
-  d[3]=d[2]->beta(3)->beta(1)->beta(2)->beta(1);
+  d[0]=scene.lcc->beta(init,1,2);
+  d[1]=scene.lcc->beta(d[0],3,1,2,1);
+  d[2]=scene.lcc->beta(d[1],1,2,1);
+  d[3]=scene.lcc->beta(d[2],3,1,2,1);
 
-  d[4]=init->beta(1)->beta(1)->beta(2);
-  d[5]=d[4]->beta(3)->beta(0)->beta(2)->beta(0);
-  d[6]=d[5]->beta(0)->beta(2)->beta(0);
+  d[4]=scene.lcc->beta(init,1,1,2);
+  d[5]=scene.lcc->beta(d[4],3,0,2,0);
+  d[6]=scene.lcc->beta(d[5],0,2,0);
 
-  d[7]=d[6]->beta(3)->beta(0)->beta(2)->beta(0);
-  d[8]=d[7]->beta(3)->beta(0)->beta(2)->beta(0);
-  d[9]=d[8]->beta(0)->beta(2)->beta(0);
+  d[7]=scene.lcc->beta(d[6],3,0,2,0);
+  d[8]=scene.lcc->beta(d[7],3,0,2,0);
+  d[9]=scene.lcc->beta(d[8],0,2,0);
 
-  d[10]=d[9]->beta(3)->beta(0)->beta(2)->beta(0);
-  d[11]=d[10]->beta(3)->beta(0)->beta(2)->beta(0);
+  d[10]=scene.lcc->beta(d[9],3,0,2,0);
+  d[11]=scene.lcc->beta(d[10],3,0,2,0);
 
   for (unsigned int j=0; j<12; ++j)
   {
@@ -1460,39 +1472,39 @@ void MainWindow::process_inter_slice(Dart_handle init,
 {
   Dart_handle d[24];
   d[0]=init;
-  d[1]=d[0]->beta(0)->beta(2)->beta(3)->beta(2)->beta(0);
-  d[2]=d[1]->beta(0)->beta(2)->beta(3)->beta(2)->beta(0);
-  d[3]=d[2]->beta(1)->beta(1)->beta(2)->beta(3)->beta(2);
-  d[4]=d[3]->beta(1)->beta(1)->beta(2)->beta(3)->beta(2);
-  d[5]=d[0]->beta(1)->beta(1)->beta(2)->beta(3)->beta(2);
-  d[6]=d[5]->beta(1)->beta(1)->beta(2)->beta(3)->beta(2);
-  d[7]=d[6]->beta(0)->beta(2)->beta(3)->beta(2)->beta(0);
+  d[1]=scene.lcc->beta(d[0],0,2,3,2,0);
+  d[2]=scene.lcc->beta(d[1],0,2,3,2,0);
+  d[3]=scene.lcc->beta(d[2],1,1,2,3,2);
+  d[4]=scene.lcc->beta(d[3],1,1,2,3,2);
+  d[5]=scene.lcc->beta(d[0],1,1,2,3,2);
+  d[6]=scene.lcc->beta(d[5],1,1,2,3,2);
+  d[7]=scene.lcc->beta(d[6],0,2,3,2,0);
 
-  init = init->beta(3)->beta(2)->beta(1)->beta(1)->beta(2);
+  init = scene.lcc->beta(init,3,2,1,1,2);
   d[8]=init;
-  d[9]=d[8]->beta(3)->beta(1)->beta(2)->beta(3)->beta(2)->beta(1);
-  d[10]=d[9]->beta(1)->beta(2)->beta(3)->beta(2)->beta(1)->beta(3);
-  d[11]=d[10]->beta(3)->beta(0)->beta(0)->beta(2)->beta(3)->beta(2);
-  d[12]=d[11]->beta(0)->beta(0)->beta(2)->beta(3)->beta(2)->beta(3);
-  d[13]=d[8]->beta(3)->beta(0)->beta(0)->beta(2)->beta(3)->beta(2);
-  d[14]=d[13]->beta(0)->beta(0)->beta(2)->beta(3)->beta(2)->beta(3);
-  d[15]=d[14]->beta(3)->beta(1)->beta(2)->beta(3)->beta(2)->beta(1);
+  d[9]=scene.lcc->beta(d[8],3,1,2,3,2,1);
+  d[10]=scene.lcc->beta(d[9],1,2,3,2,1,3);
+  d[11]=scene.lcc->beta(d[10],3,0,0,2,3,2);
+  d[12]=scene.lcc->beta(d[11],0,0,2,3,2,3);
+  d[13]=scene.lcc->beta(d[8],3,0,0,2,3,2);
+  d[14]=scene.lcc->beta(d[13],0,0,2,3,2,3);
+  d[15]=scene.lcc->beta(d[14],3,1,2,3,2,1);
 
-  d[16]=d[0]->beta(3)->beta(1)->beta(2);
-  d[17]=d[0]->beta(3)->beta(1)->beta(1)->beta(2);
+  d[16]=scene.lcc->beta(d[0],3,1,2);
+  d[17]=scene.lcc->beta(d[0],3,1,1,2);
 
-  d[18]=d[4]->beta(3)->beta(2);
-  d[19]=d[4]->beta(3)->beta(0)->beta(2);
+  d[18]=scene.lcc->beta(d[4],3,2);
+  d[19]=scene.lcc->beta(d[4],3,0,2);
 
-  d[20]=d[2]->beta(3)->beta(0)->beta(2);
-  d[21]=d[2]->beta(3)->beta(1)->beta(1)->beta(2);
+  d[20]=scene.lcc->beta(d[2],3,0,2);
+  d[21]=scene.lcc->beta(d[2],3,1,1,2);
 
-  d[22]=d[6]->beta(3)->beta(2);
-  d[23]=d[6]->beta(3)->beta(1)->beta(2);
+  d[22]=scene.lcc->beta(d[6],3,2);
+  d[23]=scene.lcc->beta(d[6],3,1,2);
 
   for (unsigned int j=0; j<24; ++j)
   {
-    CGAL_assertion( d[j]!=LCC::null_dart_handle );
+    CGAL_assertion( d[j]!=(scene.lcc)->null_dart_handle );
     if ( !(scene.lcc)->is_marked(d[j], markVols) )
     {
       CGAL::mark_cell<LCC,3>(*(scene.lcc), d[j], markVols);
@@ -1530,9 +1542,9 @@ void MainWindow::onMengerDec()
       Dart_handle init=*itvol;
       CGAL::mark_cell<LCC,3>(*(scene.lcc), init, markVols);
       process_full_slice(init, faces, markVols);
-      init=init->beta(2)->beta(1)->beta(1)->beta(2);
+      init=scene.lcc->beta(init, 2,1,1,2);
       process_inter_slice(init, faces, markVols);
-      init=init->beta(3)->beta(2)->beta(1)->beta(1)->beta(2)->beta(3);
+      init=scene.lcc->beta(init, 3,2,1,1,2,3);
       process_full_slice(init, faces, markVols);
     }
   }
@@ -1555,7 +1567,8 @@ void MainWindow::onMengerDec()
            itend=scene.lcc->darts_of_cell<3>(*itvol).end();
          it!=itend; ++it)
     {
-      if ( it->is_free(2) && ( it->is_free(3) || &*it<&*it->beta(3) ) )
+      if ( scene.lcc->is_free(it,2) &&
+           ( scene.lcc->is_free(it,3) || it<scene.lcc->beta(it,3) ) )
         edges.push_back(it);
     }
   }
@@ -1564,8 +1577,8 @@ void MainWindow::onMengerDec()
 
   for(unsigned int i = 0; i < edges.size(); i++)
   {
-    CGAL::remove_cell<LCC,1>(*scene.lcc, edges[i]->beta(0));
-    CGAL::remove_cell<LCC,1>(*scene.lcc, edges[i]->beta(1));
+    CGAL::remove_cell<LCC,1>(*scene.lcc, scene.lcc->beta(edges[i],0));
+    CGAL::remove_cell<LCC,1>(*scene.lcc, scene.lcc->beta(edges[i],1));
     CGAL::remove_cell<LCC,1>(*scene.lcc, edges[i]);
   }
   edges.clear();

@@ -315,7 +315,7 @@ circulator category for iterators, i.e.\ one of
 
 \cgalHeading{Example}
 
-A generic function `bar` that distinguishes between a call with a
+A generic function `bar()` that distinguishes between a call with a
 circulator range and a call with an iterator range:
 
 \code{.cpp}
@@ -545,7 +545,7 @@ In order to write algorithms that work with iterator ranges as well as
 with circulator ranges we have to consider the difference of
 representing an empty range. For iterators this is the range `[i,i)`,
 while for circulators it would be `c == NULL`, the empty sequence test.
-The function `is_empty_range` provides the necessary generic test
+The function `is_empty_range()` provides the necessary generic test
 which accepts an iterator range or a circulator range and says whether
 the range is empty or not.
 
@@ -553,7 +553,7 @@ the range is empty or not.
 
 \cgalHeading{Example}
 
-The following function `process_all` accepts a range `[i, j)` of an iterator or circulator `IC` and processes each
+The following function `process_all()` accepts a range `[i, j)` of an iterator or circulator `IC` and processes each
 element in this range:
 
 \code{.cpp}
@@ -642,12 +642,12 @@ In order to write algorithms that work with iterator ranges as well as
 with circulator ranges we have to consider the difference of
 representing an empty range. For iterators this is the range `[i,i)`,
 while for circulators it would be `c == NULL`, the empty sequence test.
-The function `is_empty_range` provides the necessary generic test
+The function `is_empty_range()` provides the necessary generic test
 which accepts an iterator range or a circulator range and says whether
 the range is empty or not.
 
 A macro `CGAL_For_all( i, j)` simplifies the writing of such simple
-loops as the one in the example of the function `is_empty_range`.
+loops as the one in the example of the function `is_empty_range()`.
 `i` and `j` can be either iterators or circulators. The macro
 loops through the range `[i, j)`. It increments `i` until it
 reaches `j`. The implementation looks like:

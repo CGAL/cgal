@@ -201,7 +201,7 @@ Scene_polygon_soup_item::load(std::istream& in)
   }
   soup->fill_edges();
   oriented = false;
-  return in;
+  return (bool) in;
 }
 
 
@@ -271,7 +271,7 @@ bool
 Scene_polygon_soup_item::save(std::ostream& out) const
 {
   typedef Polygon_soup::size_type size_type;
-  CGAL::File_writer_OFF writer(out);
+  CGAL::File_writer_OFF writer;
   writer.write_header(out,
                       soup->points.size(),
                       0,
@@ -296,7 +296,7 @@ Scene_polygon_soup_item::save(std::ostream& out) const
   }
   writer.write_footer();
 
-  return out;
+  return (bool) out;
 }
 
 bool 

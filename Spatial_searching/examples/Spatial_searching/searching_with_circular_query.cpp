@@ -1,24 +1,25 @@
-#include <CGAL/Cartesian.h>
+#include <CGAL/Simple_cartesian.h>
 #include <CGAL/Kd_tree.h>
 #include <CGAL/Search_traits_2.h>
 #include <CGAL/point_generators_2.h>
 #include <CGAL/algorithm.h>
 #include <CGAL/Fuzzy_sphere.h>
 
-typedef CGAL::Cartesian<double> K;
+typedef CGAL::Simple_cartesian<double> K;
 typedef K::Point_2 Point;
 typedef CGAL::Random_points_in_square_2<Point> Random_points_iterator;
 typedef CGAL::Counting_iterator<Random_points_iterator> N_Random_points_iterator;
 typedef CGAL::Search_traits_2<K> Traits;
 typedef CGAL::Fuzzy_sphere<Traits> Fuzzy_circle;
 typedef CGAL::Kd_tree<Traits> Tree;
-
+typedef CGAL::Random Random;
 int main() {
 
   const int N=1000;
 
   // generator for random data points in the square ( (-1,-1), (1,1) )
-  Random_points_iterator rpit( 1.0);
+  Random rnd(0);
+  Random_points_iterator rpit(1.0, rnd);
 
   // Insert also the N points in the tree
   Tree tree(N_Random_points_iterator(rpit,0),

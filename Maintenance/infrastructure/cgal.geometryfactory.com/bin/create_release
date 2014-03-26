@@ -3,19 +3,23 @@
 LC_ALL=POSIX;
 export LC_ALL
 
-if [ -d "$1/.git" ]; then
-    pushd "$1"
-    branch=`git rev-parse --abbrev-ref HEAD`
-    echo "Git repository, in branch '$branch'"
-    git fetch
-    git reset --hard origin/$branch
-    git clean -f
+# Returns an error once a command returns an error
+set -e
 
+if [ -d "$1/.git" ]; then
+    pushd "$1" > /dev/null
+    branch=`git rev-parse --abbrev-ref HEAD`
+#    echo "Git repository, in branch '$branch'"
+    git fetch --quiet
+    git reset --quiet --hard origin/$branch
+    git clean --quiet -f
+
+    ln -s -n -f "$1" $HOME/latest-internal-release-branch
     # Hard-reset integration "every day" even if today's "$branch" is not integration
     # and create testsuite-Monday, testsuite-Tuesday, and so on...
-    git push -f origin origin/$branch:refs/heads/`date '+testsuite-%A'` origin/master:integration
+    git push --quiet -f origin origin/$branch:refs/heads/`date '+testsuite-%A'` origin/master:integration
 
-    popd
+    popd > /dev/null
 else
     svn up "$1"
 fi
@@ -25,28 +29,33 @@ fi
 
 # Update the symbolic links, using $1 and $2
 rm "$HOME/CGAL/last-release-branch"
-rm "$HOME/CGAL/last-manual_tools-branch"
-rm "$HOME/CGAL/last-manual-branch"
 
 ln -s "$1" "$HOME/CGAL/last-release-branch"
 
-# Search the Manual and Manual_tools package in candidates, if any.
-# Else use the main branch.
-if [ -d "$2" -a -d "$2/Manual_tools" ]; then 
-  ln -s "$2" "$HOME/CGAL/last-manual_tools-branch";
-else
-  ln -s "$1" "$HOME/CGAL/last-manual_tools-branch";
-fi
-if [ -d "$2" -a -d "$2/Manual" ]; then 
-  ln -s "$2" "$HOME/CGAL/last-manual-branch";
-else
-  ln -s "$1" "$HOME/CGAL/last-manual-branch";
-fi
+## That was for LaTeX documentation
+#rm "$HOME/CGAL/last-manual_tools-branch"
+#rm "$HOME/CGAL/last-manual-branch"
 
-# Update the manual tools 
-# They are used in create_new_release to build the installation manual.
-"$HOME/bin/update_manual_tools"
 
-# Launch create_new_release
-exec "$HOME/CGAL/Scripts/developer_scripts/create_new_release" --no-scm-update "$@"
+## That was for LaTeX documentation
+# # Search the Manual and Manual_tools package in candidates, if any.
+# # Else use the main branch.
+# if [ -d "$2" -a -d "$2/Manual_tools" ]; then
+#   ln -s "$2" "$HOME/CGAL/last-manual_tools-branch";
+# else
+#   ln -s "$1" "$HOME/CGAL/last-manual_tools-branch";
+# fi
+# if [ -d "$2" -a -d "$2/Manual" ]; then
+#   ln -s "$2" "$HOME/CGAL/last-manual-branch";
+# else
+#   ln -s "$1" "$HOME/CGAL/last-manual-branch";
+# fi
+
+## That was for LaTeX documentation
+# # Update the manual tools
+# # They are used in create_new_release to build the installation manual.
+# "$HOME/bin/update_manual_tools"
+
+# Launch create_new_release, from the branch itself
+exec "$HOME/CGAL/last-release-branch/Scripts/developer_scripts/create_new_release" --no-scm-update "$@"
 #                       --no-scm-update because branches have already been updated

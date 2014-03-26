@@ -389,23 +389,32 @@ namespace CGAL
       template <class T>
       struct Add_compact_container{
         typedef typename CMap::Alloc::template rebind<T>::other Attr_allocator;
-        typedef CGAL::Compact_container<T,Attr_allocator> type;
+        typedef typename CMap::template Container_for_attributes<T> type;
       };
 
       // defines as type Compact_container<T>::iterator
       template <class T>
       struct Add_compact_container_iterator{
         typedef typename CMap::Alloc::template rebind<T>::other Attr_allocator;
-        typedef typename CGAL::Compact_container<T,Attr_allocator>::iterator
-        type;
+        typedef typename CMap::template Container_for_attributes<T>::iterator
+        iterator_type;
+
+        // TODO case when there is no Use_index typedef in CMap
+        typedef typename boost::mpl::if_
+        < typename boost::is_same<typename CMap::Use_index,Tag_true>::type,
+          typename CMap::Dart_handle, iterator_type >::type type;
       };
 
       // defines as type Compact_container<T>::const_iterator
       template <class T>
       struct Add_compact_container_const_iterator{
         typedef typename CMap::Alloc::template rebind<T>::other Attr_allocator;
-        typedef typename
-        CGAL::Compact_container<T,Attr_allocator>::const_iterator type;
+        typedef typename CMap::template Container_for_attributes<T>::
+        const_iterator iterator_type;
+
+        typedef typename boost::mpl::if_
+             < typename boost::is_same<typename CMap::Use_index,Tag_true>::type,
+               typename CMap::Dart_handle, iterator_type >::type type;
       };
 
       // All the attributes (with CGAL::Void)

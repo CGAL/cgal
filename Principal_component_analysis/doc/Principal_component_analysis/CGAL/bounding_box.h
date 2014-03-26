@@ -3,7 +3,7 @@ namespace CGAL {
 /*!
 \ingroup PkgPrincipalComponentAnalysisDbb
 
-The function `bounding_box` computes the axis-aligned bounding box of
+The function `bounding_box()` computes the axis-aligned bounding box of
 a set of 2D or 3D points. The bounding box is returned either as an
 iso rectangle in 2D or as an iso cuboid in 3D, the type being deduced
 automatically from the value type of the iterator range.

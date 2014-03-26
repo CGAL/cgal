@@ -14,7 +14,7 @@ The main purpose of this feature is to allow the `Surface_mesh_parameterization`
 Design Pattern 
 -------------- 
 
-`ParameterizationPatchableMesh_3` is an Adaptor \cite cgal:ghjv-dpero-95 : it changes the interface of a 3D mesh to match the interface expected by class `Parameterization_mesh_patch_3`. 
+`ParameterizationPatchableMesh_3` is an Adaptor \cgalCite{cgal:ghjv-dpero-95} : it changes the interface of a 3D mesh to match the interface expected by class `Parameterization_mesh_patch_3`. 
 
 \cgalRefines `ParameterizationMesh_3` 
 

@@ -33,7 +33,7 @@ namespace CGAL {
 /// \ingroup  PkgSurfaceParameterizationMethods
 ///
 /// The class Mean_value_coordinates_parameterizer_3
-/// implements *Floater Mean Value Coordinates* parameterization  \cite cgal:f-mvc-03.
+/// implements *Floater Mean Value Coordinates* parameterization  \cgalCite{cgal:f-mvc-03}.
 /// This method is sometimes called simply *Floater parameterization*.
 ///
 /// This is a conformal parameterization, i.e. it attempts to preserve angles.

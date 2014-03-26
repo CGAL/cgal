@@ -52,19 +52,21 @@ public:
     }
 
   Filter_circulator(const Circ& c, const Pred& p=Pred())
-    : Circ(c), is_null(false), test(p)
+    : test(p)
     {
-      if(test(static_cast<Circ&>(*this)))
+      Circ circ(c);
+      if(test(circ))
 	is_null=false;
       else
 	{
-	  Self end(*this);
+	  Circ end(c);
 	  do { 
-	    this->Circ::operator++();
-	  } while( !test(static_cast<Circ&>(*this)) && (*this)!=end );
-	  if((*this)==end)
-	    is_null=true;
+	    ++circ;
+	  } while( !test(circ) && end != circ );
+	  is_null = (end == circ);
 	}
+      static_cast<Circ&>(*this) = circ;
+      CGAL_assertion(is_null || test(*this));
     }
 
   bool operator==( Nullptr_t ) const {
@@ -87,6 +89,7 @@ public:
     do {
       this->Circ::operator++();
     } while( !test(static_cast<Circ&>(*this)) );
+    CGAL_assertion(is_null || test(static_cast<Circ&>(*this)));
     return *this;
   }
 

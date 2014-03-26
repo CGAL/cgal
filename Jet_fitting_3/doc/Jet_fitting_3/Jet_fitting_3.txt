@@ -34,7 +34,7 @@ estimating first and second order differential quantities is
 sufficient. However, some applications involving shape analysis
 require estimating third and fourth order differential quantities.
 Many different estimators have been proposed in the vast literature of
-applied geometry \cite cgal:p-smrqt-01 (section 3, page 7), and all
+applied geometry \cgalCite{cgal:p-smrqt-01} (section 3, page 7), and all
 of them need to define a neighborhood around the point at which the
 estimation is computed. Our method relies on smooth differential
 geometry calculations, carried out on smooth objects <I>fitted</I> from
@@ -52,7 +52,7 @@ properties, so that any estimation method must come with an
 asymptotic convergence analysis of the results returned. For the
 method developed in this \cgal package, the
 interested will find such an analysis in
-\cite cgal:cp-edqpf-05, (Theorem 3) - it should be stressed 
+\cgalCite{cgal:cp-edqpf-05}, (Theorem 3) - it should be stressed 
 the error bounds proved therein are optimal.
 
 On the other hand, any estimation method may be applied to arbitrarily
@@ -140,7 +140,7 @@ approximation reduces to linear algebra operations.
 </OL>
 
 Further details can be found in section \ref Jet_fitting_3Mathematical and in
-\cite cgal:cp-edqpf-05 (section 6).
+\cgalCite{cgal:cp-edqpf-05} (section 6).
 
 \subsection secdegcases Degenerate Cases 
 
@@ -151,7 +151,7 @@ cases:
 vector may not be good. The nearer this direction to the tangent
 plane the worse the estimation.
 
-<LI>As observed in \cite cgal:cp-edqpf-05 (section 3.1), the
+<LI>As observed in \cgalCite{cgal:cp-edqpf-05} (section 3.1), the
 interpolating problem is not well posed if the points project,
 into the fitting frame, onto an algebraic curve of degree \f$ d\f$. More
 generally, the problem is ill posed if the condition number is too
@@ -302,7 +302,7 @@ To begin with, observe the fitting problem involves three relevant
 direct orthonormal basis: the world-basis \f$ (w_x,w_y,w_z)\f$, the
 fitting-basis \f$ (f_x,f_y,f_z)\f$, the Monge basis \f$ (d_1,d_2,n)\f$.
 
-\cgalFigureBegin{figjet_fitting_basis,jet_fitting_basis.gif}
+\cgalFigureBegin{figjet_fitting_basis,jet_fitting_basis.png}
 The three bases involved in the estimation.
 \cgalFigureEnd
 
@@ -429,7 +429,7 @@ definite positive when \f$ M\f$ has full rank.
 The advantages of the \f$ SVD\f$
 is that it works directly on the rectangular system and gives the
 condition number of the system. For more on these alternatives, see
-\cite gl-mc-83 (Chap. 5).
+\cgalCite{gl-mc-83} (Chap. 5).
 
 \subsection Jet_fitting_3PrincipalCurvatureDirections Principal Curvature / Directions
 
@@ -458,7 +458,7 @@ estimation is performed, is \f$ (0,0,A_{0,0})\f$.
 <LI>The normal is
 \f$ n=(-A_{1,0},-A_{0,1},1)/\sqrt{A_{1,0}^2+A_{0,1}^2+1}\f$.
 <LI>Curvature related properties are retrieved resorting to
-standard differential calculus \cite c-dgcs-76 (Chap. 3). More precisely, the
+standard differential calculus \cgalCite{c-dgcs-76} (Chap. 3). More precisely, the
 Weingarten operator \f$ W=-I^{-1}II\f$ is first computed in the basis of
 the tangent plane \f$ \{ (1,0,A_{1,0}), (0,1,A_{0,1}) \}\f$. We compute
 an orthonormal basis of the tangent plane using the Gram-Schmidt

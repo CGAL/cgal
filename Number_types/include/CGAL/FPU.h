@@ -41,8 +41,6 @@
 extern "C" {
 #  include <fenv.h>
 }
-#elif defined __powerpc__ && defined __linux__
-#  include <fpu_control.h>
 #elif defined __SUNPRO_CC && defined __sun
 #  include <ieeefp.h>
 #elif defined __osf || defined __osf__
@@ -53,7 +51,8 @@ extern "C" {
 #    include <cfloat>
 #  endif
 #elif defined _MSC_VER || defined __sparc__ || \
-     (defined __i386__ && !defined __PGI && !defined __SUNPRO_CC)
+     (defined __i386__ && !defined __PGI && !defined __SUNPRO_CC \
+      && !defined __SSE2__)
    // Nothing to include.
 #else
    // By default we use the ISO C99 version.
@@ -88,23 +87,32 @@ extern "C" {
 #  include <xmmintrin.h>
 #endif
 
-// We do not handle -mfpmath=387,sse yet.
-#if defined __SSE2_MATH__ && \
-    ! (__FLT_EVAL_METHOD__ == 0 || __FLT_EVAL_METHOD__ == 1)
-#  warning Unsafe SSE2 mode : not supported yet.
-#endif
-
 // The CGAL_FPU_HAS_EXCESS_PRECISION macro is defined if some computations with
 // double can use more than the 53bits of precision of IEEE754, and/or if the
 // exponent has a wider range.  This can produce double rounding effects and
 // other bad things that we need to protect against.
 // The typical offender is the traditional FPU of x86 (SSE2-only mode is not affected).
 // Are there others, besides itanium and m68k?
-// FIXME: windows also runs on ARM now.
-#if (defined __i386__ && !defined CGAL_SAFE_SSE2) || defined _MSC_VER \
-  || defined __ia64__ \
-  || (defined FLT_EVAL_METHOD && FLT_EVAL_METHOD != 0 && FLT_EVAL_METHOD != 1)
+#if !defined CGAL_IA_NO_X86_OVER_UNDER_FLOW_PROTECT && \
+  (((defined __i386__ || defined __x86_64__) && !defined CGAL_SAFE_SSE2) \
+   || defined __ia64__ \
+   || defined _M_IX86 || defined _M_X64 || defined _M_IA64 \
+   || (defined FLT_EVAL_METHOD && FLT_EVAL_METHOD != 0 && FLT_EVAL_METHOD != 1))
 #  define CGAL_FPU_HAS_EXCESS_PRECISION
+#endif
+
+// Presence of SSE2 (for explicit use)
+#if  defined(__SSE2__) \
+  || (defined(_M_IX86_FP) && _M_IX86_FP >= 2) \
+  || defined(_M_X64)
+#  include <emmintrin.h>
+#  define CGAL_HAS_SSE2 1
+#endif
+
+// Only define CGAL_USE_SSE2 for 64 bits where malloc has a suitable
+// alignment, 32 bits is too dangerous.
+#if defined(CGAL_HAS_SSE2) && (defined(__x86_64__) || defined(_M_X64))
+#  define CGAL_USE_SSE2 1
 #endif
 
 namespace CGAL {
@@ -123,25 +131,95 @@ const double infinity = HUGE_VAL;
 
 } // namespace internal
 
+// Inline function to stop compiler optimizations that shouldn't happen with
+// pragma fenv on.
+// - constant propagation
+// - migration of fesetround across floating point operations
+// - (-a)-b -> -(a+b)
+// - (-a)*b -> -(a*b)
+// etc
+inline double IA_opacify(double x)
+{
+#ifdef __llvm__
+  // LLVM's support for inline asm is completely messed up:
+  // http://llvm.org/bugs/show_bug.cgi?id=17958
+  // http://llvm.org/bugs/show_bug.cgi?id=17959
+  // etc.
+  // This seems to produce code that is ok (not optimal but better than
+  // volatile). In case of trouble, use volatile instead.
+# ifdef CGAL_HAS_SSE2
+  asm volatile ("" : "+x"(x) );
+# else
+  asm volatile ("" : "+m"(x) );
+# endif
+  return x;
+#elif defined __GNUG__
+  // Intel used not to emulate this perfectly, we'll see.
+  // If we create a version of IA_opacify for vectors, note that gcc < 4.8
+  // fails with "+g" and we need to use "+mx" instead.
+  // "+X" ICEs ( http://gcc.gnu.org/bugzilla/show_bug.cgi?id=59155 ) and
+  // may not be safe?
+  // The constraint 'g' doesn't include floating point registers ???
+  // Intel has a bug where -mno-sse still defines __SSE__ and __SSE2__
+  // (-mno-sse2 works though), no work-around for now.
+# if defined __SSE2_MATH__ || (defined __INTEL_COMPILER && defined __SSE2__)
+#  if __GNUC__ * 100 + __GNUC_MINOR__ >= 409
+  // ICEs in reload/LRA with older versions.
+  asm volatile ("" : "+gx"(x) );
+#  else
+  asm volatile ("" : "+mx"(x) );
+#  endif
+# elif (defined __i386__ || defined __x86_64__)
+  // "+f" doesn't compile on x86(_64)
+  // ( http://gcc.gnu.org/bugzilla/show_bug.cgi?id=59157 )
+  // Don't mix "t" with "g": http://gcc.gnu.org/bugzilla/show_bug.cgi?id=59180
+  // We can't put "t" with "x" either, prefer "x" for -mfpmath=sse,387.
+  // ( http://gcc.gnu.org/bugzilla/show_bug.cgi?id=59181 )
+  asm volatile ("" : "+mt"(x) );
+# elif (defined __VFP_FP__ && !defined __SOFTFP__) || defined __aarch64__
+  // ARM
+  asm volatile ("" : "+gw"(x) );
+# elif defined __powerpc__ || defined __POWERPC__
+  // PowerPC
+  asm volatile ("" : "+gd"(x) );
+# elif defined __sparc
+  // Sparc
+  asm volatile ("" : "+ge"(x) );
+# elif defined __ia64
+  // Itanium
+  asm volatile ("" : "+gf"(x) );
+# else
+  asm volatile ("" : "+g"(x) );
+# endif
+  return x;
+#else
+  volatile double e = x;
+  return e;
+#endif
+}
 
-// Inline function to stop compiler optimization.
+// Inline function to drop excess precision before we forget the rounding mode,
+// and stop compiler optimizations at the same time.
 inline double IA_force_to_double(double x)
 {
-#if defined __GNUG__ && !defined __INTEL_COMPILER
-  // Intel does not emulate GCC perfectly...
-  // Is that still true? -- Marc Glisse, 2012-12-17
-#  ifdef CGAL_SAFE_SSE2
+#ifndef CGAL_FPU_HAS_EXCESS_PRECISION
+  return IA_opacify (x);
+#else
+#if defined __GNUG__
+#  ifdef CGAL_HAS_SSE2
   // For an explanation of volatile:
   // http://gcc.gnu.org/bugzilla/show_bug.cgi?id=56027
   asm volatile ("" : "+mx"(x) );
 #  else
-  asm volatile ("" : "=m"(x) : "m"(x));
-  // asm("" : "+m"(x) );
+  // Similar to writing to a volatile and reading back, except that calling
+  // it k times in a row only goes through memory once.
+  asm volatile ("" : "+m"(x) );
 #  endif
   return x;
 #else
   volatile double e = x;
   return e;
+#endif
 #endif
 }
 
@@ -150,24 +228,26 @@ inline double IA_force_to_double(double x)
 // precision, because there is no way to fix the problem for the exponent
 // which has the same problem.  This affects underflow and overflow cases.
 // In case one does not care about such "extreme" situations, one can
-// set CGAL_IA_NO_X86_OVER_UNDER_FLOW_PROTECT.
-// LLVM doesn't have -frounding-math so needs extra protection.
-// GCC also migrates fesetround calls through FP instructions, so protect
-// everyone (but Microsoft for now).
-// TODO: reorganize the various protections, separating excess precision from
-// abusive optimizations.
-#if (defined CGAL_FPU_HAS_EXCESS_PRECISION && \
-   !defined CGAL_IA_NO_X86_OVER_UNDER_FLOW_PROTECT) || defined __llvm__ \
-   || !defined _MSC_VER
+// set CGAL_IA_NO_X86_OVER_UNDER_FLOW_PROTECT to pretend there is no excess
+// precision.
+#if defined CGAL_FPU_HAS_EXCESS_PRECISION
 #  define CGAL_IA_FORCE_TO_DOUBLE(x) CGAL::IA_force_to_double(x)
+#elif 1
+// LLVM doesn't have -frounding-math so needs extra protection.
+// GCC also migrates fesetround calls over FP instructions, so protect
+// everyone.
+#  define CGAL_IA_FORCE_TO_DOUBLE(x) CGAL::IA_opacify(x)
 #else
+// Unused, reserved to compilers without excess precision and pragma fenv on.
+// ??? Should we trust Visual Studio not to optimize too much and let it use
+// this when CGAL_IA_NO_X86_OVER_UNDER_FLOW_PROTECT?
 #  define CGAL_IA_FORCE_TO_DOUBLE(x) (x)
 #endif
 
 // We sometimes need to stop constant propagation,
 // because operations are done with a wrong rounding mode at compile time.
 #ifndef CGAL_IA_DONT_STOP_CONSTANT_PROPAGATION
-#  define CGAL_IA_STOP_CPROP(x)    CGAL::IA_force_to_double(x)
+#  define CGAL_IA_STOP_CPROP(x)    CGAL::IA_opacify(x)
 #else
 #  define CGAL_IA_STOP_CPROP(x)    (x)
 #endif
@@ -216,9 +296,7 @@ inline double IA_bug_sqrt(double d)
         CGAL_IA_FORCE_TO_DOUBLE(CGAL_BUG_SQRT(CGAL_IA_STOP_CPROP(a)))
 
 
-#if defined __i386__ && !defined __PGI && !defined __SUNPRO_CC
-
-#  if defined CGAL_SAFE_SSE2
+#if defined CGAL_SAFE_SSE2
 
 #define CGAL_IA_SETFPCW(CW) _MM_SET_ROUNDING_MODE(CW)
 #define CGAL_IA_GETFPCW(CW) CW = _MM_GET_ROUNDING_MODE()
@@ -228,7 +306,11 @@ typedef unsigned int FPU_CW_t;
 #define CGAL_FE_UPWARD       _MM_ROUND_UP
 #define CGAL_FE_DOWNWARD     _MM_ROUND_DOWN
 
-#  else
+#elif defined __i386__ && !defined __PGI && !defined __SUNPRO_CC \
+      && !defined CGAL_HAS_SSE2
+// If we use both 387 and sse2, be safe and drop to fe[gs]etround.
+// Can we test CGAL_USE_SSE2 instead?
+
 // The GNU libc version (cf powerpc) is nicer, but doesn't work on libc 5 :(
 // This one also works with CygWin.
 // Note that the ISO C99 version may not be enough because of the extended
@@ -242,17 +324,6 @@ typedef unsigned short FPU_CW_t;
 #define CGAL_FE_TOWARDZERO   (0xc00 | 0x127f)
 #define CGAL_FE_UPWARD       (0x800 | 0x127f)
 #define CGAL_FE_DOWNWARD     (0x400 | 0x127f)
-
-#  endif
-
-#elif defined __powerpc__ && defined __linux__
-#define CGAL_IA_SETFPCW(CW) _FPU_SETCW(CW)
-#define CGAL_IA_GETFPCW(CW) _FPU_GETCW(CW)
-typedef fpu_control_t FPU_CW_t;
-#define CGAL_FE_TONEAREST    (_FPU_RC_NEAREST | _FPU_DEFAULT)
-#define CGAL_FE_TOWARDZERO   (_FPU_RC_ZERO    | _FPU_DEFAULT)
-#define CGAL_FE_UPWARD       (_FPU_RC_UP      | _FPU_DEFAULT)
-#define CGAL_FE_DOWNWARD     (_FPU_RC_DOWN    | _FPU_DEFAULT)
 
 #elif defined __SUNPRO_CC && defined __sun
 #define CGAL_IA_SETFPCW(CW) fpsetround(fp_rnd(CW))

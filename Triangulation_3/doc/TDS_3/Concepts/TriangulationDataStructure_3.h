@@ -58,7 +58,7 @@ this use as a template parameter of `CGAL::Triangulation_3`.
 A class that satisfies the requirements for a triangulation data structure 
 class must provide the following types and operations. 
 
-### I/O ###
+\cgalHeading{I/O}
 
 The information stored in the `iostream` is: 
 the dimension, the number of vertices, the number of cells, 
@@ -111,21 +111,25 @@ typedef unspecified_type Vertex_handle;
 typedef unspecified_type Cell_handle; 
 
 /*!
+\cgalAdvancedBegin
 This template class allows to get the type of a triangulation 
 data structure that only changes the vertex type. It has to define a type 
 `Rebind_vertex<Vb2>::%Other` which is a <I>rebound</I> triangulation data structure, that is, the 
 one whose `TriangulationDSVertexBase_3` will be `Vb2`.
 \note It can be implemented using a nested template class.
+\cgalAdvancedEnd
 */ 
 template <typename Vb2> 
 using Rebind_vertex = unspecified_type;
 
 /*!
+\cgalAdvancedBegin
 This template class allows to get the type of a triangulation 
 data structure that only changes the cell type. It has to define a type 
 `Rebind_cell<Cb2>::%Other` which is a <I>rebound</I> triangulation data structure, that is, the 
 one whose `TriangulationDSCellBase_3` will be `Cb2`.
 \note It can be implemented using a nested template class.
+\cgalAdvancedEnd
 */ 
 template <typename Cb2> 
 using Rebind_cell = unspecified_type;
@@ -437,7 +441,8 @@ shaded. On the right, the facet shared by the two new tetrahedra is
 shaded.
 
 \anchor TDS3figflips
-\image html flips.gif "Flips."
+\image html flips.png "Flips."
+\image latex flips.png "Flips."
 
 The following methods guarantee the validity of the resulting 3D
 combinatorial triangulation. Moreover the flip operations do not
@@ -565,7 +570,8 @@ A handle to `v` is returned.
 
 
 \anchor TDS3figtopoinsert_outside_affine_hull 
-\image html topo-insert_outside_affine_hull.gif "insert_increase_dimension (1-dimensional case)."
+\image html topo-insert_outside_affine_hull.png "insert_increase_dimension (1-dimensional case)."
+\image latex topo-insert_outside_affine_hull.png "insert_increase_dimension (1-dimensional case)."
 
 */ 
 Vertex_handle 
@@ -638,6 +644,7 @@ augmented with the vertex `v` itself, for \f$ d\f$==2,3; this one is placed on t
 
 \anchor TDS3dim_down
 \image html tds-dim_down.png
+\image latex tds-dim_down.png
 
 <center><b>From an \f$ S^d\f$ data structure to an \f$ S^{d-1}\f$ data
 structure (top: \f$ d==2\f$, bottom: \f$ d==3\f$).
@@ -1032,7 +1039,7 @@ when using the triangulation data structure class alone. They become
 compulsory when the triangulation data structure is used as a layer 
 for the geometric triangulation class. (See Section \ref TDS3secdesign.) 
 
-### Creation ###
+\cgalHeading{Creation}
 
 In order to obtain new vertices or destruct unused vertices, the user must 
 call the `create_vertex()` and `delete_vertex()` methods of the 
@@ -1138,7 +1145,7 @@ facet of index 3, and 3 edges \f$ (0,1)\f$, \f$ (1,2)\f$ and \f$ (2,0)\f$; in
 dimension 1, each cell represents one edge \f$ (0,1)\f$. (See also 
 Section \ref TDS3secintro.) 
 
-### Creation ###
+\cgalHeading{Creation}
 
 In order to obtain new cells or destruct unused cells, the user must call the 
 `create_cell()` and `delete_cell()` methods of the triangulation data 

@@ -15,6 +15,7 @@ Catmull-Clark subdivision on a `CGAL::Polyhedron_3<Cartesian>`.
 instantiated  with a %Cartesian kernel, which defines the `Point_3` for the vertices. 
 
 \image html CCBorderMask.png
+\image latex CCBorderMask.png
 
 \cgalModels `PQQMask_3`
 
@@ -88,6 +89,7 @@ Doo-Sabin subdivision on a `Polyhedron_3<Cartesian>`.
 instantiated  with a %Cartesian kernel, which defines the `Point_3` for the vertices. 
 
 \image html DSCornerMask.png
+\image latex DSCornerMask.png
 
 \cgalModels `DQQMask_3`
 
@@ -140,6 +142,7 @@ Loop subdivision on a triangulated `Polyhedron_3<Cartesian>`.
 instantiated  with a %Cartesian kernel, which defines the `Point_3` for the vertices. 
 
 \image html LoopBorderMask.png
+\image latex LoopBorderMask.png
 
 \cgalModels `PTQMask_3`
 

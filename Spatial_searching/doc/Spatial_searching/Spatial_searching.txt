@@ -60,7 +60,7 @@ nearest neighbors has to be guessed. If the guess is too large
 redundant computations are performed. If the number is too small the
 computation has to be re-invoked for a larger number of neighbors,
 thereby performing redundant computations. Therefore, Hjaltason and
-Samet \cite hs-rsd-95 introduced <I>incremental nearest neighbor
+Samet \cgalCite{hs-rsd-95} introduced <I>incremental nearest neighbor
 searching</I> in the sense that having obtained the  `k` nearest
 neighbors, the `k + 1`st neighbor can be obtained without having
 to calculate the `k + 1` nearest neighbor from scratch.
@@ -337,7 +337,7 @@ splitting rule, needed to set the maximal allowed bucket size.
 
 \subsection Kd_tree_subsection The k-d tree 
 
-Bentley \cite b-mbstu-75 introduced the `k-d` tree as a
+Bentley \cgalCite{b-mbstu-75} introduced the `k-d` tree as a
 generalization of the binary search tree in higher dimensions. `k-d`
 trees hierarchically decompose space into a relatively small number of
 rectangles such that no rectangle contains too many input objects.
@@ -361,7 +361,7 @@ threshold. The rectangles associated with the leaf nodes are called
 rectangles. Data points are only stored in the leaf nodes of the
 tree, not in the internal nodes.
 
-Friedmann, Bentley and Finkel \cite fbf-afbml-77 described the
+Friedmann, Bentley and Finkel \cgalCite{fbf-afbml-77} described the
 standard search algorithm to find the `k`th nearest neighbor by
 searching a `k-d` tree recursively.
 
@@ -369,7 +369,7 @@ When encountering a node of the tree, the algorithm first visits the
 child that is closest to the query point. On return, if the rectangle
 containing the other child lies within 1/ (1+\f$ \epsilon\f$) times the
 distance to the `k`th nearest neighbors so far, then the other child
-is visited recursively. Priority search \cite am-annqf-93 visits the
+is visited recursively. Priority search \cgalCite{am-annqf-93} visits the
 nodes in increasing order of distance from the queue with help of a
 priority queue. The search stops when the distance of the query point
 to the nearest nodes exceeds the distance to the nearest point found
@@ -381,7 +381,7 @@ neighbor searching in high dimensional space, the approximate
 searching package supports orthogonal distance computation. Orthogonal distance
 computation
 implements the efficient incremental distance computation technique
-introduced by Arya and Mount \cite am-afvq-93. This technique
+introduced by Arya and Mount \cgalCite{am-afvq-93}. This technique
 works only for neighbor queries with query items represented as points
 and with a quadratic form distance, defined by \f$ d_A(x,y)=
 (x-y)A(x-y)^T\f$, where the matrix \f$ A\f$ is positive definite,

@@ -17,7 +17,7 @@ public:
 /// @{
 
 /*!
-The type of the surface to simplify. Must be a model of the `EdgeCollapsableMesh` concept. 
+The type of the surface mesh to simplify. Must be a model of the `EdgeCollapsableSurfaceMesh` concept. 
 */ 
 typedef unspecified_type ECM; 
 

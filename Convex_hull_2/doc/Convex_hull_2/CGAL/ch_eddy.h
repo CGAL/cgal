@@ -41,8 +41,8 @@ functions that return instances of these types:
 \cgalHeading{Implementation}
 
 This function implements Eddy's algorithm 
-\cite e-nchap-77, which is the two-dimensional version of the quickhull 
-algorithm \cite bdh-qach-96. 
+\cgalCite{e-nchap-77}, which is the two-dimensional version of the quickhull 
+algorithm \cgalCite{bdh-qach-96}. 
 
 This algorithm requires \f$ O(n h)\f$ time 
 in the worst case for \f$ n\f$ input points with \f$ h\f$ extreme points. 

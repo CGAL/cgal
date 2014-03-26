@@ -17,7 +17,8 @@ function run(model, num)
 end
 
 methods = {
-  { label="Hilbert sorting curve" },
+  { label="Hilbert sorting curve, median policy" },
+  { label="Hilbert sorting curve, middle policy" },
   { label="Help" },
 }
 

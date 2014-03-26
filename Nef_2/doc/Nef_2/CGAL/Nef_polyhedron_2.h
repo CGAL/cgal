@@ -681,7 +681,8 @@ source and target vertices, edges correspond to either affine
 segments, rays or lines or are part of the bounding frame. 
 
 \anchor extsegs 
-\image html extsegs.gif
+\image html extsegs.png
+\image latex extsegs.png
 <center><b>
 Extended geometry: standard vertices are marked by S, non-standard
 vertices are marked by N. <B>A</B>: The possible embeddings of edges:

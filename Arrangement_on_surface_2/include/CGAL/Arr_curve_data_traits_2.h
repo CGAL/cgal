@@ -26,6 +26,8 @@
  * Definition of the Arr_curve_data_traits_2<> class template.
  */
 
+#include<CGAL/Object.h>
+#include<CGAL/tags.h>
 #include<CGAL/Arr_tags.h>
 #include<CGAL/Arr_geometry_traits/Curve_data_aux.h>
 #include<list>

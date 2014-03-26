@@ -178,12 +178,12 @@ bool is_same(Uncertain u) const;
 
 /*!
 returns `true` iff the value is certain, that is, it is unique, the range 
-is a singleton. That is, `u.inf() == u.sup()`. 
+is a singleton, that is `u.inf() == u.sup()`. 
 */ 
 bool is_certain() const; 
 
 /*!
-if `u`.`is_certain()`, then returns the certain value which is represented. 
+if `u.is_certain()`, then returns the certain value which is represented. 
 Otherwise, throws an exception of type `Uncertain_conversion_exception`. 
 A profile counter of the number of such exceptions thrown during the execution of 
 the program is available with `CGAL_PROFILE`. 
@@ -523,7 +523,7 @@ returns `true`.
 template <class T> bool is_certain(T t); 
 
 /*!
-returns `u`.`is_certain`(). 
+returns `u.is_certain`(). 
 \relates Uncertain 
 */ 
 template <class T> bool is_certain(Uncertain<T> u); 
@@ -555,7 +555,7 @@ returns `t`.
 template <class T> T get_certain(T t); 
 
 /*!
-returns `u`.`make_certain`(). \pre `u`.`is_certain`(). 
+returns `u.make_certain`(). \pre `u.is_certain`(). 
 \relates Uncertain 
 */ 
 template <class T> T get_certain(Uncertain<T> u); 
@@ -567,7 +567,7 @@ returns `t`.
 template <class T> T make_certain(T t); 
 
 /*!
-returns `u`.`make_certain`(). 
+returns `u.make_certain`(). 
 \relates Uncertain 
 */ 
 template <class T> T make_certain(Uncertain<T> u); 
@@ -597,7 +597,7 @@ template <class T> Uncertain<T> make_uncertain(Uncertain<T> u);
 #define CGAL_OR_3
 
 /*!
-returns `true` iff `u`.`is_certain()`, and the `u`.`make_certain`() 
+returns `true` iff `u.is_certain()`, and the `u.make_certain`() 
 returns `true`. 
 \relates Uncertain 
 */ 
@@ -610,8 +610,8 @@ returns `u`.
 bool certainly(bool u); 
 
 /*!
-returns `true` iff `u`.`is_certain()` returns `false`, or if 
-`u`.`make_certain`() returns `true`. 
+returns `true` iff `u.is_certain()` returns `false`, or if 
+`u.make_certain`() returns `true`. 
 \relates Uncertain 
 */ 
 bool possibly(Uncertain<bool> u); 
@@ -623,7 +623,7 @@ returns `u`.
 bool possibly(bool u); 
 
 /*!
-returns `true` iff `u`.`is_certain()`, and the `u`.`make_certain`() 
+returns `true` iff `u.is_certain()`, and the `u.make_certain`() 
 returns `false`. 
 \relates Uncertain 
 */ 
@@ -636,8 +636,8 @@ returns `!u`.
 bool certainly_not(bool u); 
 
 /*!
-returns `true` iff `u`.`is_certain()` returns `false`, or if 
-`u`.`make_certain`() returns `false`. 
+returns `true` iff `u.is_certain()` returns `false`, or if 
+`u.make_certain`() returns `false`. 
 \relates Uncertain 
 */ 
 bool possibly_not(Uncertain<bool> u); 

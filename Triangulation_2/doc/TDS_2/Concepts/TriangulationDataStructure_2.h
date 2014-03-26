@@ -45,7 +45,7 @@ Insertion of a new vertex in a given face, or in a given edge,
 suppression of a vertex of degree three, flip of two edges 
 are examples of combinatorial operations. 
 
-### I/O ###
+\cgalHeading{I/O}
 
 The information output in the `iostream` is: 
 the dimension, the number of (finite) vertices, 
@@ -448,7 +448,8 @@ exchanges the edge incident to
 `f` and `f->neighbor(i)` with the other 
 diagonal of the quadrilateral formed by `f` and `f->neighbor(i)`. 
 
-\image html Flip.gif "Flip"
+\image html Flip.png "Flip"
+\image latex Flip.png "Flip"
 */ 
 void flip(Face_handle f, int i); 
 
@@ -498,7 +499,8 @@ If parameter `f` is specified, it has to be a face incident to `v`
 and will be the modified face. 
 \pre %Vertex `v` is a finite vertex with degree 3 and, if specified, face `f` is incident to `v`. 
 
-\image html Three.gif "Insertion"
+\image html Three.png "Insertion"
+\image latex Three.png "Insertion"
 */ 
 void remove_degree_3(Vertex_handle v,  Face_handle f = Face_handle()); 
 
@@ -534,6 +536,7 @@ augmented with the vertex `v` itself; this one is placed on the edge `(f, i)`
 
 \anchor figtdsdim_down_2
 \image html tds-dim_down.png "From a two-dimensional data structure to a one-dimensional data structure."
+\image latex tds-dim_down.png "From a two-dimensional data structure to a one-dimensional data structure."
 
 */
 void dim_down(Face_handle f, int i); 
@@ -710,7 +713,7 @@ when using the triangulation data structure class alone.
 They became required when the triangulation data structure is plugged 
 into a triangulation. 
 
-### Creation ###
+\cgalHeading{Creation}
 
 In order to obtain new vertices or destruct unused vertices, the user must 
 call the `create_vertex()` and `delete_vertex()` methods of the 
@@ -823,13 +826,13 @@ of maximal dimension of the complex, i.e., a vertex in dimension `0`, an edge in
 Only vertices and neighbors with index `0` are set in the first case, 
 only vertices and neighbors with index `0` or `1` are set in the second case. 
 
-### Types ###
+\cgalHeading{Types}
 
 The class `TriangulationDataStructure_2::Face` defines the same types as 
 the triangulation data structure 
 except the iterators and the circulators. 
 
-### Creation ###
+\cgalHeading{Creation}
 
 The methods `create_face()` and 
 `delete_face()` 

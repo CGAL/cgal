@@ -22,6 +22,7 @@
 #ifndef CGAL_EUCLIDEAN_DISTANCE_H
 #define CGAL_EUCLIDEAN_DISTANCE_H
 #include <CGAL/Kd_tree_rectangle.h>
+#include <CGAL/number_utils.h>
 
 namespace CGAL {
 

@@ -522,7 +522,7 @@ public:
   }
 
   template <class IndicesIterator>
-  std::size_t insert_segments( std::vector<Point_2>& points,
+  std::size_t insert_segments( const std::vector<Point_2>& points,
                                IndicesIterator indices_first,
                                IndicesIterator indices_beyond )
   {
@@ -537,7 +537,7 @@ public:
               std::back_inserter(vertex_indices));
 
     size_type n = this->number_of_vertices();
-    Spatial_sort_traits_adapter_2<Gt, Point_2*> sort_traits(&(points[0]));
+    Spatial_sort_traits_adapter_2<Gt,const Point_2*> sort_traits(&(points[0]));
 
     spatial_sort(vertex_indices.begin(), vertex_indices.end(), sort_traits);
 
@@ -590,11 +590,10 @@ public:
     return segment.target();
   }
 
-  template <class Segment_2>
   static const Point_2& get_source(const Site_2& segment){
     return segment.source_of_supporting_site();
   }
-  template <class Segment_2>
+
   static const Point_2& get_target(const Site_2& segment){
     return segment.target_of_supporting_site();
   }

@@ -1,4 +1,4 @@
-// Copyright (c) 2013 Nico Kruithof (The Netherlands)
+// Copyright (c) 1997-2013 INRIA Sophia-Antipolis (France).
 // All rights reserved.
 
 namespace CGAL
@@ -11,7 +11,7 @@ The class `Periodic_2_triangulation_hierarchy_2` implements a
 triangulation augmented with a data structure which allows fast point
 location queries.
 
-### Parameters ###
+\cgalHeading{Parameters}
 
 It is templated by a parameter which must be instantiated by one of the \cgal periodic triangulation classes. <I>In the current
 implementation, only `Periodic_2_Delaunay_triangulation_2` is
@@ -23,7 +23,7 @@ supported for `PTr`.</I>
 \tparam PTr::Geom_traits has to be a model of the concept
 `Periodic_2DelaunayTriangulationTraits_2`.
 
-### Inherits From ###
+\cgalHeading{Inheritance}
 
 `Periodic_2_triangulation_hierarchy_2` offers exactly the same functionalities as `PTr`.
 Most of them (point location, insertion, removal \f$ \ldots\f$ ) are overloaded to
@@ -38,7 +38,7 @@ hierarchy into a file will lose the hierarchical structure and reading
 it from the file will result in an ordinary triangulation whose
 efficiency will be the same as `PTr`.
 
-### Implementation ###
+\cgalHeading{Implementation}
 
 The data structure is a hierarchy of triangulations. The triangulation
 at the lowest level is the original triangulation where operations and

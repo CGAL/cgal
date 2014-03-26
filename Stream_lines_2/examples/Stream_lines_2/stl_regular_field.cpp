@@ -2,7 +2,6 @@
 #include <CGAL/Stream_lines_2.h>
 #include <CGAL/Runge_kutta_integrator_2.h>
 #include <CGAL/Regular_grid_2.h>
-#include <CGAL/Triangular_field_2.h>
 
 #include <iostream>
 #include <fstream>

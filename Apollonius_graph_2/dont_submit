@@ -1,4 +1,5 @@
 generators
 benchmark
 Qt3
-doc
+include/CGAL/Apollonius_graph_2/Delage_traits
+test/Apollonius_graph_2/test_ag_new_traits_2.cpp

@@ -13,7 +13,7 @@ of the primitives are required to access the datum and the reference point.
 \sa `CGAL::AABB_tree<AABBTraits>`
 \sa `AABBPrimitive`
 
-### Example ###
+\cgalHeading{Example}
 
 The `Primitive` type can be a wrapper around an integer that refers to the position
 of an object in a vector. Assume for instance that the input objects are some triangles.
@@ -21,9 +21,9 @@ The `Datum` would be a `Triangle_3` and the `Id` a `std::size_t`. The shared dat
 `std::vector<Triangle_3>`.
 The method `datum(const Shared_data&)` then returns a triangle from the vector.
 
-\cgalHasModel `CGAL::AABB_primitive<Id,ObjectPropertyMap,PointPropertyMapPolyhedron,Tag_true,CacheDatum>`
-\cgalHasModel `CGAL::AABB_halfedge_graph_segment_primitive<HalfedgeGraph,Tag_true,CacheDatum>`
-\cgalHasModel `CGAL::AABB_face_graph_triangle_primitive<FaceGraph,Tag_true,CacheDatum>`
+\cgalHasModel `CGAL::AABB_primitive<Id,ObjectPropertyMap,PointPropertyMap,Tag_true,CacheDatum>`
+\cgalHasModel `CGAL::AABB_halfedge_graph_segment_primitive<HalfedgeGraph,VertexPointPMap,Tag_true,CacheDatum>`
+\cgalHasModel `CGAL::AABB_face_graph_triangle_primitive<FaceGraph,VertexPointPMap,Tag_true,CacheDatum>`
 */
 
 class AABBPrimitiveWithSharedData {
@@ -55,6 +55,12 @@ typedef unspecified_type Datum_reference;
 Type of identifiers through which the input objects are referred to. It must be a model of the concepts DefaultConstructible and Assignable.
 */
 typedef unspecified_type Id;
+
+/*!
+Type of the data shared amongst primitives
+*/
+typedef unspecified_type Shared_data;
+
 /// @}
 
 /// \name Operations

@@ -6,7 +6,7 @@
 This concept defines the requirements for traits classes of 
 `Width_3<Traits>`. 
 
-### Operations ###
+\cgalHeading{Operations}
 
 Whatever the coordinates of the points are, it is required for the 
 width-algorithm to have access to the homogeneous representation of 

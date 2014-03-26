@@ -40,6 +40,7 @@
 #include <CGAL/Alpha_shape_vertex_base_3.h>
 #include <CGAL/Alpha_shape_cell_base_3.h>
 #include <CGAL/internal/Lazy_alpha_nt_3.h>
+#include <CGAL/iterator.h>
 #ifdef CGAL_USE_GEOMVIEW
 #include <CGAL/IO/Geomview_stream.h>  // TBC
 #endif
@@ -309,6 +310,12 @@ private :
   make_vertex_handle_pair( Vertex_handle v1, Vertex_handle v2) const {
     return v1 < v2 ? std::make_pair(v1,v2)
                    : std::make_pair(v2,v1);
+  }
+
+  Vertex_handle_pair
+  make_vertex_handle_pair(const Edge& e) const {
+    return make_vertex_handle_pair(e.first->vertex(e.second),
+                                   e.first->vertex(e.third));
   }
 
  // the version to be used with Tag_true is templated to avoid
@@ -844,6 +851,18 @@ public:
     return it;
   }
 
+  Alpha_status
+  get_alpha_status(const Edge& e) const
+  {
+    return *edge_alpha_map.find(make_vertex_handle_pair(e))->second;
+  }
+
+  Alpha_status
+  get_alpha_status(const Facet& f) const
+  {
+    return *(f.first->get_facet_status(f.second));
+  }
+
   template<class OutputIterator>
   OutputIterator get_alpha_shape_cells(OutputIterator it, 
 				       Classification_type type) const
@@ -865,7 +884,7 @@ public:
   { return get_alpha_shape_vertices(it, type, get_alpha());}
 
    template<class OutputIterator> 
-   OutputIterator filtration(OutputIterator it)  const
+   OutputIterator filtration_with_alpha_values(OutputIterator it)  const
    // scan  the  alpha_cell_map, alpha_min_facet_map,  alpha_min_edge_map  
    // and alpha_min_vertex in GENERAL mode 
    // only alpha_cell_map in REGULARIZED mode 
@@ -949,6 +968,13 @@ public:
      return it; 
    } 
 
+   template<class OutputIterator> 
+   OutputIterator filtration(OutputIterator it)  const
+   {
+      Dispatch_or_drop_output_iterator<cpp11::tuple<CGAL::Object>, cpp11::tuple<OutputIterator> > out(it);
+      return cpp11::template get<0>( filtration_with_alpha_values(out) );
+   }
+
   private: 
 
    template<class Alpha_face_iterator> 
@@ -970,19 +996,20 @@ public:
 
    template<class OutputIterator> 
    OutputIterator   
-   filtration_output( const NT & /*alpha*/,  
+   filtration_output( const NT & alpha,
  		     Vertex_handle vh,  
  		     OutputIterator it,  
  		     Tag_true)   const 
    { 
-     it++ = make_object(vh); 
+     *it++ = make_object(vh); 
+     *it++ = alpha;
      //std::cerr << "filtration " << alpha << " \t  VERTEX " << std::endl; 
      return it; 
    } 
 
    template<class OutputIterator> 
    OutputIterator   
-   filtration_output( const NT& /*alpha*/,  
+   filtration_output( const NT& alpha,
  		     Vertex_handle vh,  
  		     OutputIterator it,  
  		     Tag_false)     const 
@@ -993,11 +1020,13 @@ public:
      if (get_mode() == GENERAL){
        Finite_vertices_iterator vit=finite_vertices_begin(); 
        for( ; vit != finite_vertices_end(); vit++) { 
-	 it++ = make_object( Vertex_handle(vit)); 
+	 *it++ = make_object( Vertex_handle(vit)); 
+         *it++ = alpha;
        } 
      }
      else {
-       it++ = make_object(vh);
+       *it++ = make_object(vh);
+       *it++ = alpha;
      }
      //std::cerr << "filtration " << alpha << " \t  VERTEX " << std::endl; 
      return it; 
@@ -1031,7 +1060,8 @@ public:
         vertex_set.insert(vh[i]); 
       } 
     } 
-    it++ = make_object(e); 
+    *it++ = make_object(e); 
+    *it++ = alpha; 
     //std::cerr << "filtration " << alpha << " \t EDGE " << std::endl; 
     return it; 
   } 
@@ -1069,7 +1099,8 @@ public:
       } 
     } 
 
-    it++ = make_object(f); 
+    *it++ = make_object(f); 
+    *it++ = alpha; 
     //std::cerr << "filtration " << alpha << " \t FACET " << std::endl; 
     return it; 
   } 
@@ -1097,7 +1128,8 @@ public:
       } 
     } 
 
-    it++ = make_object(c); 
+    *it++ = make_object(c);
+    *it++ = alpha;
     //std::cerr << "filtration " << alpha << " \t CELL " << std::endl; 
     return it; 
   } 
@@ -1185,7 +1217,7 @@ Alpha_shape_3<Dt,EACT>::initialize_alpha_facet_maps(bool reinitialize)
       pNeighbor->set_facet_status(iNeigh,as);
     }
   }
-    
+
   // initialize alpha_min if mode GENERAL 
   if(get_mode() == GENERAL &&  alpha_min_facet_map.empty()) {
     //already done if !alpha_min_facet_map.empty()
@@ -1200,7 +1232,10 @@ Alpha_shape_3<Dt,EACT>::initialize_alpha_facet_maps(bool reinitialize)
 	alpha_min_facet_map.insert(typename
 		                 Alpha_facet_map::value_type(alpha_min, *fit));
       }
-      else as->set_is_Gabriel(false);
+      else{
+        as->set_is_Gabriel(false);
+        as->set_alpha_min(as->alpha_mid());
+      }
     }
   }
   return;
@@ -1649,7 +1684,10 @@ compute_edge_status( const Cell_handle& c,
       as.set_is_Gabriel(true);
       as.set_alpha_min(alpha);
     }
-    else as.set_is_Gabriel(false);
+    else{
+      as.set_is_Gabriel(false);
+      as.set_alpha_min(as.alpha_mid());
+    }
   }   
 }
 

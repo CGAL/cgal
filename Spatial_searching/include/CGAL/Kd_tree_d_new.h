@@ -18,6 +18,8 @@
 //
 // Authors       : Hans Tangelder (<hanst@cs.uu.nl>)
 
+#if 0 // in dont_submit
+
 #ifndef CGAL_KD_TREE_D_NEW_H
 #define CGAL_KD_TREE_D_NEW_H
 #include <CGAL/Kd_tree.h>
@@ -244,3 +246,5 @@ template <class Point,
 
 } // namespace CGAL
 #endif // CGAL_KD_TREE_D_NEW_H
+
+#endif

@@ -24,9 +24,9 @@ See also the documentation of `Sqrt_extension<NT,ROOT>`.
 \cgalAdvancedEnd
 
 The current method to isolate roots is the bitstream Descartes method
-presented in \cite eigenwillig-phd-08.  The used method to refine the
+presented in \cgalCite{eigenwillig-phd-08}.  The used method to refine the
 approximation of an algebraic real root is a slightly modified
-(filtered) version of the one presented in \cite abbott-qir-06. The
+(filtered) version of the one presented in \cgalCite{abbott-qir-06}. The
 method has quadratic convergence.
 
 \cgalModels `AlgebraicKernel_d_1`
@@ -49,24 +49,24 @@ Same type as the template argument `Coeff`.
 typedef unspecified_type Coefficient; 
 
 /*!
-A model of `AlgebraicKernel_d_1::Polynomial_1`. 
+A model of `::AlgebraicKernel_d_1::Polynomial_1`.
 */ 
 typedef unspecified_type Polynomial_1; 
 
 /*!
-A model of `AlgebraicKernel_d_1::AlgebraicReal_1`. 
+A model of `::AlgebraicKernel_d_1::Algebraic_real_1`.
 */ 
 typedef unspecified_type Algebraic_real_1; 
 
 /*!
-The choice of `Coeff` also determines the provided bound, type. 
+The choice of `Coeff` also determines the provided bound type.
 In case of `Coeff` is: 
 
-- `Gmpz` or `Gmpq` this is `Gmpq`, 
+- `Gmpz` or `Gmpq`, this is `Gmpq`,
 
-- `CORE::BigInt` or `CORE::BigInt` this is `CORE::BigRat`, 
+- `CORE::BigInt` or `CORE::BigRat`, this is `CORE::BigRat`,
 
-- `leda_integer` or `leda_integer` this is `leda_rational`. 
+- `leda_integer` or `leda_rational`, this is `leda_rational`.
 */ 
 typedef unspecified_type Bound; 
 

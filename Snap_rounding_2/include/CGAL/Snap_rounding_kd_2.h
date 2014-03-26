@@ -27,6 +27,9 @@
 #include <iostream>
 #include <CGAL/predicates_on_points_2.h>
 #include <CGAL/utility.h>
+#include <CGAL/assertions.h>
+
+#include <boost/type_traits/is_pointer.hpp>
 
 namespace CGAL {
 
@@ -48,6 +51,7 @@ public:
 
 template<class Traits_, class SAVED_OBJECT>
 class Multiple_kd_tree {
+  CGAL_static_assertion_msg((boost::is_pointer<SAVED_OBJECT>::value), "SAVED_OBJECT is not a pointer.");
 private:
   typedef Traits_                                       Traits;
   typedef typename Traits::FT                           NT;
@@ -384,10 +388,25 @@ public:
       ++ind;
     }
 
+    delete[] kd_counter;
+
 #ifdef CGAL_SR_DEBUG
     std::cout << "Actual number of kd-trees created : " <<
       number_of_actual_kd_trees << std::endl;
 #endif
+
+  }
+
+  ~Multiple_kd_tree() {
+    for(typename Kd_triple_list::iterator it = kd_trees_list.begin(); 
+        it != kd_trees_list.end(); ++it) { 
+      delete (it->first);
+    }
+
+    for(typename Point_saved_pair_list::iterator it = input_points_list.begin(); 
+        it != input_points_list.end(); ++it) { 
+      delete (it->second);
+    }
 
   }
 

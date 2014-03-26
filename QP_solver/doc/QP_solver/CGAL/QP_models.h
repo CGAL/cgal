@@ -117,7 +117,7 @@ public:
   -------------- 
 
   The following example demonstrates the typical usage of makers 
-  with the simpler function `make_nonnegative_linear_program_from_iterators`. 
+  with the simpler function `make_nonnegative_linear_program_from_iterators()`. 
 
   `QP_solver/solve_convex_hull_containment_lp2.h` 
 
@@ -202,7 +202,7 @@ make_nonnegative_linear_program_from_iterators (
   -------------- 
 
   The following example demonstrates the typical usage of makers 
-  with the simpler function `make_nonnegative_linear_program_from_iterators`. 
+  with the simpler function `make_nonnegative_linear_program_from_iterators()`. 
 
   `QP_solver/solve_convex_hull_containment_lp2.h` 
 
@@ -244,7 +244,7 @@ make_nonnegative_quadratic_program_from_iterators (
   -------------- 
 
   The following example demonstrates the typical usage of makers 
-  with the simpler function `make_nonnegative_linear_program_from_iterators`. 
+  with the simpler function `make_nonnegative_linear_program_from_iterators()`. 
 
   `QP_solver/solve_convex_hull_containment_lp2.h` 
 

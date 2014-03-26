@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# Copyright (c) 2005,2006
+# Copyright (c) 2005,2006,2013
 # Foundation for Research and Technology-Hellas (Greece).
 # All rights reserved.
 #
@@ -20,6 +20,7 @@
 #
 # Authors: Herve Bronnimann
 #          Menelaos Karavelas
+#          Eric Berberich <eric.berberich@cgal.org>
 
 # This script creates the appropriate directory structure so that a CGAL
 # Qt demo can be run on MacOSX
@@ -71,11 +72,11 @@ cat > $EXECUTABLE.app/Contents/Info.plist <<ENDINFO
         <string>Created by CGAL</string>
         <key>CFBundleSignature</key>
         <string>ttxt</string>
-        <key>CFBundleExecutable</key> 
+        <key>CFBundleExecutable</key>
         <string>$EXECUTABLE</string>
 ENDINFO
 
-if [ -d "help" ] ; then 
+if [ -d "help" ] ; then
 cat >> $EXECUTABLE.app/Contents/Info.plist <<ENDINFO
 	<key>CFBundleHelpBookFolder</key>
 	<string>Help</string>
@@ -95,7 +96,6 @@ cat >> $EXECUTABLE.app/Contents/Info.plist <<ENDINFO
 ENDINFO
 
 test -d $EXECUTABLE.app/Contents/Resources || mkdir -p $EXECUTABLE.app/Contents/Resources
-CGALMAKEDIR=`dirname $CGAL_MAKEFILE`
-CGALDIR="$CGALMAKEDIR/../"
-cp $CGALDIR/auxiliary/cgal_app.icns $EXECUTABLE.app/Contents/Resources
-echo "created $EXECUTABLE.app ..." 
+DIR=$( cd "$( dirname "$0" )" && pwd )
+cp $DIR/../auxiliary/cgal_app.icns $EXECUTABLE.app/Contents/Resources
+echo "created $EXECUTABLE.app ..."

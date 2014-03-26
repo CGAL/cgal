@@ -7,7 +7,7 @@ namespace CGAL {
 
 The `Small_side_angle_bisector_decomposition_2` class implements a simple yet efficient heuristic for 
 decomposing an input polygon into convex sub-polygons. It is based 
-on the algorithm suggested by Flato and Halperin \cite fh-recpm-00, 
+on the algorithm suggested by Flato and Halperin \cgalCite{fh-recpm-00}, 
 but without introducing Steiner points. The algorithm operates in two 
 major steps. In the first step, it tries to subdivide the polygon by 
 connect two reflex vertices with an edge. When this is not possible any 

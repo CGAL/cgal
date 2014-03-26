@@ -14,7 +14,7 @@ next and previous level graphs.
 
 \cgalRefines `ApolloniusGraphVertexBase_2` 
 
-### Types ###
+\cgalHeading{Types}
 
 `ApolloniusGraphHierarchyVertexBase_2` does not introduce any 
 types in addition to those of `ApolloniusGraphVertexBase_2`. 

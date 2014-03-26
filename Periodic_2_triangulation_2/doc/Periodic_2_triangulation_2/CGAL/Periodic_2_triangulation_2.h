@@ -1,4 +1,4 @@
-// Copyright (c) 2013 Nico Kruithof (The Netherlands)
+// Copyright (c) 1997-2013 INRIA Sophia-Antipolis (France).
 // All rights reserved.
 
 namespace CGAL
@@ -10,7 +10,7 @@ namespace CGAL
 The class `Periodic_2_triangulation_2` represents a 2-dimensional
 triangulation of a point set in \f$ \mathbb T_c^2\f$.
 
-### Parameters ###
+\cgalHeading{Parameters}
 
 The class `Periodic_2_triangulation_2` has two template
 parameters. The first one \tparam Traits is the geometric traits, it
@@ -24,11 +24,11 @@ functionality in faces.
 By default, the triangulation data structure is instantiated by
 `CGAL::Triangulation_data_structure_2 < CGAL::Triangulation_vertex_base_2<Gt>, 		 CGAL::Periodic_2_triangulation_face_base_2<Gt> > >`.
 
-### Traversal of the Triangulation ###
+\cgalHeading{Traversal of the Triangulation}
 
 The periodic triangulation class provides several iterators and circulators that allow one to traverse it.
 
-### I/O ###
+\cgalHeading{I/O}
 
 The I/O operators are defined for `iostream`. The format for the
 iostream is an internal format.
@@ -46,7 +46,9 @@ The information in the `iostream` is:
 - the offsets corresponding to the vertices of the faces
 - the non-combinatorial information of each face
 
-### Implementation ###
+<p></p><!-- work around for a doxygen bug -->
+
+\cgalHeading{Implementation}
 
 Locate is implemented by a randomized walk from a vertex of the
 face given as optional parameter (or from an arbitrary vertex of if no
@@ -478,7 +480,7 @@ public:
   `false` nothing is known. This test runs in constant-time when
   not computing in the 1-sheeted covering space. (This test uses the length
   of the longest edge in the triangulation as a
-  criterion \cite cgal:ct-c3pt-09.)
+  criterion \cgalCite{cgal:ct-c3pt-09}.)
   \cgalAdvancedEnd
   */
   bool is_extensible_triangulation_in_1_sheet_h1() const;
@@ -490,7 +492,7 @@ public:
   `is_extensible_triangulation_in_1_sheet_h1()` would not. However, it is
   much less time efficient when not computing in the 1-sheeted covering
   space. (This test uses the diameter of the largest empty circle in the
-  input point set as a criterion \cite cgal:ct-c3pt-09.)
+  input point set as a criterion \cgalCite{cgal:ct-c3pt-09}.)
   \cgalAdvancedEnd
   */
   bool is_extensible_triangulation_in_1_sheet_h2() const;
@@ -966,9 +968,9 @@ public:
 // @}
 
 /// \anchor Triangulation_ref_Fig_insert1
-/// \image html insert1.gif "Insertion of a point on an edge."
+/// \image html insert1.png "Insertion of a point on an edge."
 /// \anchor Triangulation_ref_Fig_insert2
-/// \image html insert2.gif "Insertion in a face."
+/// \image html insert2.png "Insertion in a face."
 /// @{
 
 

@@ -15,7 +15,7 @@ constraints.
 
 \cgalRefines `TriangulationFaceBase_2` 
 
-### Types ###
+\cgalHeading{Types}
 
 Defines the same types as the `TriangulationFaceBase_2` concept 
 

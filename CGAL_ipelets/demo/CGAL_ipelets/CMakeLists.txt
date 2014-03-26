@@ -109,6 +109,9 @@ if ( CGAL_FOUND )
     set(CGAL_IPELETS ${CGAL_IPELETS} pca)    
     set(CGAL_IPELETS ${CGAL_IPELETS} skeleton)
     set(CGAL_IPELETS ${CGAL_IPELETS} triangulation)
+    set(CGAL_IPELETS ${CGAL_IPELETS} circle_pencils)
+    set(CGAL_IPELETS ${CGAL_IPELETS} hyperbolic)
+
 
     if ( IPELET_INSTALL_DIR )
       message(STATUS "Set Ipelets install dir: ${IPELET_INSTALL_DIR}")

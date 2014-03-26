@@ -14,9 +14,10 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Ron Wein <wein@post.tau.ac.il>
+//                 Efi Fogel <efif@post.tau.ac.il>
 
 #ifndef CGAL_ARR_BOUNDED_PLANAR_TOPOLOGY_TRAITS_2_IMPL_H
 #define CGAL_ARR_BOUNDED_PLANAR_TOPOLOGY_TRAITS_2_IMPL_H
@@ -31,24 +32,22 @@ namespace CGAL {
 //-----------------------------------------------------------------------------
 // Assign the contents of another topology-traits class.
 //
-template <class GeomTraits, class Dcel_>
-void Arr_bounded_planar_topology_traits_2<GeomTraits, Dcel_>::assign
-    (const Self& other)
+template <typename GeomTraits_, typename Dcel_>
+void Arr_bounded_planar_topology_traits_2<GeomTraits_, Dcel_>::
+assign(const Self& other)
 {
   // Assign the base class.
-  Base::assign (other);
+  Base::assign(other);
 
   // Update the topology-traits properties after the DCEL have been updated.
   dcel_updated();
-
-  return;
 }
 
 //-----------------------------------------------------------------------------
 // Initialize an empty DCEL structure.
 //
-template <class GeomTraits, class Dcel_>
-void Arr_bounded_planar_topology_traits_2<GeomTraits, Dcel_>::init_dcel ()
+template <typename GeomTraits_, typename Dcel_>
+void Arr_bounded_planar_topology_traits_2<GeomTraits_, Dcel_>::init_dcel()
 {
   // Clear the current DCEL.
   this->m_dcel.delete_all();
@@ -56,34 +55,26 @@ void Arr_bounded_planar_topology_traits_2<GeomTraits, Dcel_>::init_dcel ()
   // Create the unbounded face.
   unb_face = this->m_dcel.new_face();
 
-  unb_face->set_unbounded (true);
-  unb_face->set_fictitious (false);
-
-  return;
+  unb_face->set_unbounded(true);
+  unb_face->set_fictitious(false);
 }
 
 //-----------------------------------------------------------------------------
 // Make the necessary updates after the DCEL structure have been updated.
 //
-template <class GeomTraits, class Dcel_>
-void Arr_bounded_planar_topology_traits_2<GeomTraits, Dcel_>::dcel_updated ()
+template <typename GeomTraits_, typename Dcel_>
+void Arr_bounded_planar_topology_traits_2<GeomTraits_, Dcel_>::dcel_updated()
 {
   // Go over the DCEL faces and locate the unbounded face.
-  typename Dcel::Face_iterator         fit;
-  
   unb_face = NULL;
-  for (fit = this->m_dcel.faces_begin();
-       fit != this->m_dcel.faces_end(); ++fit)
-  {
-    if (fit->is_unbounded())
-    {
+  typename Dcel::Face_iterator fit = this->m_dcel.faces_begin();
+  for (; fit != this->m_dcel.faces_end(); ++fit) {
+    if (fit->is_unbounded()) {
       unb_face = &(*fit);
       break;
     }
   }
-  CGAL_assertion (unb_face != NULL);
-
-  return;
+  CGAL_assertion(unb_face != NULL);
 }
 
 } //namespace CGAL

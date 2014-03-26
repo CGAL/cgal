@@ -10,7 +10,7 @@ namespace CGAL {
 \cgalAutoToc
 \author Ron Wein
 
-\cgalFigureBegin{LowEnv2Fig,lwrenv.gif}
+\cgalFigureBegin{LowEnv2Fig,lwrenv.png}
 The lower envelope of a set of line segments and hyperbolic arc.
 \cgalFigureEnd
 
@@ -85,7 +85,7 @@ range of <I>arbitrary</I> (not necessarily \f$ x\f$-monotone) curves.
 In this section we explain more on the structure of the envelope
 diagram these functions output.
 
-\cgalFigureBegin{env2_figmin_diag,min_diag.gif}
+\cgalFigureBegin{env2_figmin_diag,min_diag.png}
 The lower envelope of eight line segments, labeled \f$ A, \ldots, H\f$, 
 as constructed in `envelope_segments.cpp`. The minimization
 diagram is shown at the bottom, where each diagram vertex points to
@@ -174,7 +174,7 @@ the lines that form the lower envelope of \f$ {\cal P}^{*}\f$ are dual to the
 points along the <I>upper</I> part of \f$ {\cal P}\f$'s convex hull, and the
 lines that form the upper envelope of \f$ {\cal P}^{*}\f$ are dual to the
 points along the <I>lower</I> part of the convex hull; see,
-e.g., [\cite Section 11.4 for more details.
+e.g., [\cgalCite{Section} 11.4 for more details.
 Note that the leftmost edge of the minimization diagram is associated
 with the same line as the rightmost edge of the maximization diagram,
 and vice-verse. We can therefore skip the rightmost edges of both
@@ -182,7 +182,7 @@ diagrams.
 
 \cgalExample{Envelope_2/convex_hull.cpp}
 
-\cgalFigureBegin{env2_figex_circ,ex_circle.gif}
+\cgalFigureBegin{env2_figex_circ,ex_circle.png}
 A set of four circles, as constructed in \ref Envelope_2/envelope_circles.cpp. The lower envelope and the upper envelope are shown using thick dashed lines of different colors respectively.
 \cgalFigureEnd
 
