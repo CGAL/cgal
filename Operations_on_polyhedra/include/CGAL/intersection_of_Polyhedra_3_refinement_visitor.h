@@ -26,6 +26,7 @@
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
 #include <CGAL/Triangulation_vertex_base_with_info_2.h>
 #include <CGAL/internal/corefinement/Polyhedron_subset_extraction.h>
+#include <CGAL/internal/corefinement/utils.h>
 
 #include <CGAL/property_map.h>
 #include <boost/optional.hpp>
@@ -68,58 +69,7 @@ namespace CGAL
   
   namespace internal_IOP
   {
-    template <class Polyhedron>
-    struct Compare_unik_address{
-      typedef typename Polyhedron::Halfedge_handle        Halfedge_handle;
-      typedef typename Polyhedron::Halfedge_const_handle  Halfedge_const_handle;
-      typedef typename Polyhedron::Halfedge               Halfedge;
-      
-      bool operator()(Halfedge_handle h1,Halfedge_handle h2) const {
-        Halfedge* ph1=&(*h1) < &(*h1->opposite()) ? &(*h1) : &(*h1->opposite());
-        Halfedge* ph2=&(*h2) < &(*h2->opposite()) ? &(*h2) : &(*h2->opposite());
-        return  ph1 < ph2; 
-      }
 
-      bool operator()(Halfedge_const_handle h1,Halfedge_const_handle h2) const {
-        const Halfedge* ph1=&(*h1) < &(*h1->opposite()) ? &(*h1) : &(*h1->opposite());
-        const Halfedge* ph2=&(*h2) < &(*h2->opposite()) ? &(*h2) : &(*h2->opposite());
-        return  ph1 < ph2; 
-      }
-    };
-
-  template <class Polyhedron>
-  struct Compare_address{
-    typedef typename Polyhedron::Halfedge_handle        Halfedge_handle;
-    typedef typename Polyhedron::Halfedge_const_handle  Halfedge_const_handle;
-    typedef typename Polyhedron::Halfedge               Halfedge;
-    
-    bool operator()(Halfedge_handle h1,Halfedge_handle h2) const {
-      return  &(*h1) < &(*h2); 
-    }
-
-    bool operator()(Halfedge_const_handle h1,Halfedge_const_handle h2) const {
-      return  &(*h1) < &(*h2); 
-    }
-  };
-
-  template <class Polyhedron>
-  class Non_intersection_halfedge{
-    typedef std::map< typename Polyhedron::Halfedge_const_handle,
-                      std::pair<int,int>,
-                      Compare_unik_address<Polyhedron> 
-                    >  Intersection_hedges_set;
-    Intersection_hedges_set intersection_hedges_;
-  public:  
-    Non_intersection_halfedge(const Intersection_hedges_set& the_set) : intersection_hedges_(the_set){}
-  
-  
-    bool operator()(typename Polyhedron::Halfedge_const_handle h) const
-    {
-      return intersection_hedges_.find(h)==intersection_hedges_.end();
-    }
-  };
-
-    
   template <class HDS, class NestedFacetConstruct, class NewNodeVertexVisitor, class PolyhedronPointPMap>
   class Triangulate_a_face : public CGAL::Modifier_base<HDS> {
     typedef typename HDS::Halfedge_handle Halfedge_handle;

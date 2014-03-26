@@ -24,6 +24,7 @@
 #include <CGAL/internal/corefinement/Combinatorial_map_for_corefinement.h>
 #include <CGAL/internal/corefinement/Polyhedron_subset_extraction.h>
 #include <CGAL/internal/corefinement/predicates.h>
+#include <CGAL/internal/corefinement/utils.h>
 #include <CGAL/Point_inside_polyhedron_3.h>
 #include <CGAL/Triangle_accessor_with_ppmap_3.h>
 #include <CGAL/Default.h>
@@ -314,25 +315,6 @@ typename Map::Dart_handle import_from_polyhedron_subset(
   }
 
   return first_dart;
-}
-
-template <class Halfedge_const_handle, class Border_halfedges_map>
-int node_index_of_incident_vertex(Halfedge_const_handle h,
-                                  const Border_halfedges_map& border_halfedges)
-{
-  //WARNING this may be expensive
-  Halfedge_const_handle start=h;
-  Halfedge_const_handle curr=start;
-  do {
-    typename Border_halfedges_map::const_iterator it_border =
-      border_halfedges.find(curr );
-    if (it_border!=border_halfedges.end())
-      return it_border->first==curr?it_border->second.second
-                                   :it_border->second.first;
-    curr=curr->next()->opposite();
-  } while(curr!=start);
-
-  return -1;
 }
 
 template <class Polyhedron,
