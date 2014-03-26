@@ -41,6 +41,7 @@
 #if defined(BOOST_MSVC)
 #  pragma warning(push)
 #  pragma warning(disable:4396)
+#  pragma warning(disable:4522)  // multiple assignment operators specified
 #endif
 namespace CGAL {
 
