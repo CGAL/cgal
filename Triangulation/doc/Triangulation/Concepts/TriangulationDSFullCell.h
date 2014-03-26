@@ -133,7 +133,7 @@ Full_cell_handle neighbor(const int i) const;
 /*!
 Returns the index `j` of
 the full cell `c`as a neighbor in the full cell `c``.neighbor(i);`. If the
-returned integer is not negative, it holds that `c`.`neighbor(i)->neighbor(j) == ``c`. Returns
+returned integer is not negative, it holds that `c.neighbor(i)->neighbor(j) == c`. Returns
 `-1` if `c`has no adjacent full cell of index `i`.
 \pre \f$0 \leq i \leq \f$ `maximal_dimension()`.
 */
@@ -178,13 +178,15 @@ TDS_data & tds_data();
 /// @}
 
 /*!
+Returns a handle to the mirror vertex of the `i`-th vertex of full cell `c`. 
 \cgalAdvancedBegin
-Returns a handle to the mirror vertex of the `i`-th vertex of full cell
-`c`. This function works even if the adjacency information stored in the
-neighbor full cell `*``c``.neighbor(i)` is corrupted. This is useful
+This function works even if the adjacency information stored in the
+neighbor full cell `*c.neighbor(i)` is corrupted. This is useful
 when temporary corruption is necessary during surgical operations on a
-triangulation. \pre \f$0 \leq i,\f$ `cur_dim` \f$ \leq \f$ `maximal_dimension()`.
+triangulation.
 \cgalAdvancedEnd
+
+\pre \f$0 \leq i,\f$ `cur_dim` \f$ \leq \f$ `maximal_dimension()`.
 */
 Vertex_handle mirror_vertex(const int i, const int cur_dim) const;
 
@@ -213,7 +215,7 @@ Sets the
 mirror index of the \f$ i\f$-th vertex of `c` to `index`. This corresponds
 to the index, in `c``->neighbor(i)`, of the full cell `c`.
 
-Note: an implementation of the concept `c` may choose not to store mirror
+Note: a model of this concept may choose not to store mirror
 indices, in which case this function should do nothing.
 \pre \f$0 \leq i \leq \f$`maximal_dimension()`.
 */
