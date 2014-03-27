@@ -180,6 +180,8 @@ template < class AT, class ACDE_TAG>
 void sqrt_ext_pretty_output_test(){
     typedef typename AT::Integer Integer;
     typedef CGAL::Sqrt_extension<Integer,Integer>  EXT1;
+    typedef CGAL::Sqrt_extension<EXT1,Integer> EXT2;
+    CGAL_USE_TYPE(EXT2);
     // TEST without Parens_as_product_tag
     {
         std::stringstream ss;
@@ -417,6 +419,8 @@ void fraction_traits_test(){
         
     typedef CGAL::Fraction_traits<INT1_EXT> INT_FT1;
     typedef CGAL::Fraction_traits<INT2_EXT> INT_FT2;
+    typedef CGAL::Fraction_traits<INT3_EXT> INT_FT3;
+    CGAL_USE_TYPE(INT_FT3);
         
     // RAT_FTs decomposable
     assert((boost::is_same< typename RAT_FT1::Is_fraction, 
