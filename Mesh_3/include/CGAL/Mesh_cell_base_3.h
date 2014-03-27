@@ -33,7 +33,7 @@
 #include <CGAL/Triangulation_cell_base_with_circumcenter_3.h>
 #include <CGAL/Mesh_3/Mesh_surface_cell_base_3.h>
 #include <CGAL/Mesh_3/io_signature.h>
-#include <CGAL/Mesh_3/Has_timestamp.h>
+#include <CGAL/Has_timestamp.h>
 #include <CGAL/tags.h>
 
 namespace CGAL {

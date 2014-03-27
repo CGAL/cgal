@@ -31,7 +31,7 @@
 
 #include <CGAL/memory.h>
 #include <CGAL/iterator.h>
-#include <CGAL/Mesh_3/Has_timestamp.h>
+#include <CGAL/Has_timestamp.h>
 
 #include <boost/mpl/if.hpp>
 

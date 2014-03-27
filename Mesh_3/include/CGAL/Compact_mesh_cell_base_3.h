@@ -29,7 +29,7 @@
 #include <CGAL/triangulation_assertions.h>
 #include <CGAL/internal/Dummy_tds_3.h>
 #include <CGAL/tags.h>
-#include <CGAL/Mesh_3/Has_timestamp.h>
+#include <CGAL/Has_timestamp.h>
 
 #include <CGAL/Regular_triangulation_cell_base_3.h>
 #include <CGAL/Mesh_3/io_signature.h>
