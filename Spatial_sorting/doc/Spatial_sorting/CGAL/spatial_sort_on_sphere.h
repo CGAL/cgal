@@ -8,7 +8,7 @@ improves space locality with respect to the intrinsic metric on the sphere given
 Two points close in the order will be close 
 on the sphere, and two points close on the sphere will have a high probability 
 of being close in the order. The input points are supposed to be close to the input sphere.
-If input points are not close to the input sphere, this function stills work, but it might not be a good sorting function.
+If input points are not close to the input sphere, this function still work, but it might not be a good sorting function.
 
 It sorts the range `[begin, end)` in place. 
 

@@ -5,7 +5,7 @@ namespace CGAL {
 
 The function `hilbert_sort_on_sphere()` sorts an iterator range of points that are supposed to be close to a given sphere
 along a Hilbert curve on that same sphere. 
-If input points are not close to the input sphere, this function stills work, but it might not be a good sorting function.
+If input points are not close to the input sphere, this function still work, but it might not be a good sorting function.
 
 It sorts the range `[begin, end)` in place. 
 
