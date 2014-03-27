@@ -899,7 +899,9 @@ private:
 
       if(update_surface_center)
       {
-        if(surface) {
+        Facet facet_m = c3t3_.triangulation().mirror_facet(facet);
+        if(surface)
+        {
 #ifndef CGAL_MESH_3_NO_LONGER_CALLS_DO_INTERSECT_3
           Intersection intersection = construct_intersection(dual);
 #endif // NOT CGAL_MESH_3_NO_LONGER_CALLS_DO_INTERSECT_3
@@ -907,9 +909,12 @@ private:
           // Update facet surface center
           Point_3 surface_center = CGAL::cpp0x::get<0>(intersection);
           facet.first->set_facet_surface_center(facet.second,surface_center);
+          facet_m.first->set_facet_surface_center(facet_m.second,surface_center);
         }
-        else {
+        else
+        {
           facet.first->set_facet_surface_center(facet.second,Point_3());
+          facet_m.first->set_facet_surface_center(facet_m.second,Point_3());
         }
       }
       
@@ -1146,6 +1151,8 @@ private:
 
         c->set_facet_surface_center(i, facet_surface_center_[old_i]);
         c->set_facet_surface_center_index(i, surface_center_index_table_[old_i]);
+        //here we don't need to update mirror_facet because it's been either 
+        //backuped, or unchanged
       }
     }
 
