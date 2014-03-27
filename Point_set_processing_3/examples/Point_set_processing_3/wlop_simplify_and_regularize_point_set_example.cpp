@@ -2,12 +2,12 @@
 #include <CGAL/wlop_simplify_and_regularize_point_set.h>
 #include <CGAL/IO/read_xyz_points.h>
 #include <CGAL/IO/write_xyz_points.h>
-#include <CGAL/Timer.h>#include <CGAL/tags.h>
+#include <CGAL/tags.h>
 #include <CGAL/Simple_cartesian.h>
 
 #include <vector>
 #include <fstream>
-#include <time.h>
+
 // types
 typedef CGAL::Simple_cartesian<double> Kernel;
 typedef Kernel::Point_3 Point;
@@ -28,11 +28,6 @@ int main(void)
     return EXIT_FAILURE;
   }
 
-
-  CGAL::Timer task_timer;
-  task_timer.start();
-  std::cout << "Run algorithm example: " << std::endl;  std::vector<Point> output;
-
   //with default parameters begins
   CGAL::wlop_simplify_and_regularize_point_set<CGAL::Parallel_tag>(
                                                points.begin(), 
@@ -41,9 +36,8 @@ int main(void)
   //with default parameters ends
 
   //with all parameters begins
-  
-  //Algorithm parameters
   /*
+  //Algorithm parameters
   const double retain_percentage = 2;       // percentage of points to retain.
   const double neighbor_radius = 0.03;      // neighbors size.
   const unsigned int iter_number = 30;      // number of iterations.
@@ -58,10 +52,7 @@ int main(void)
                                                need_compute_density);
   */
   //with all parameters ends
-
-  long memory = CGAL::Memory_sizer().virtual_size();
-  std::cout << "total done: " << task_timer.time() << " seconds, " 
-            << (memory>>20) << " Mb allocated" << std::endl;    std::ofstream out(INPUT_FILENAME_WITHOUT_EXT + "_WLOPED.xyz");  
+  
   if (!out ||
     !CGAL::write_xyz_points(
     out, output.begin(), output.end()))
