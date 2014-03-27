@@ -16,9 +16,9 @@
 //
 // Author(s):      Thijs van Lankveld
 
-
-template<int sz> struct _Env{ typedef void s_ptr_type; typedef void ptr_type; static const int ptr_size = sizeof(ptr_type)*8; };
+    
+template<int sz> struct _Env{ typedef void s_ptr_type; typedef void ptr_type; static const int ptr_size = sizeof(ptr_type)*8; static const bool x64 = false; };
 template<> struct _Env<4> { typedef int s_ptr_type; typedef unsigned int ptr_type; static const int ptr_size = sizeof(ptr_type)*8; };
-template<> struct _Env<8> { typedef long long s_ptr_type; typedef unsigned long long ptr_type; static const int ptr_size = sizeof(ptr_type)*8; };
+template<> struct _Env<8> { typedef long long s_ptr_type; typedef unsigned long long ptr_type; static const int ptr_size = sizeof(ptr_type)*8; static const bool x64 = true;};
 
 typedef _Env<sizeof(void*)> _ENV;

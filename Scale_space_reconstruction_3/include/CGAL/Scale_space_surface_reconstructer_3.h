@@ -78,8 +78,8 @@ class _Shape {
     typedef CGAL::Triangulation_data_structure_3<Vb,Cb>                             Tds;
 
 public:
-    typedef CGAL::Delaunay_triangulation_3< Kernel, Tds >                           Structure;
-    typedef CGAL::Alpha_shape_3< Structure >                                        Shape;
+    typedef CGAL::Delaunay_triangulation_3< Kernel, Tds >                           Structure;  ///< The triangulation that spatially orders the point set.
+    typedef CGAL::Alpha_shape_3< Structure >                                        Shape;      ///< The structure that identifies the triangles in the surface.
     
     _Shape() {}
     Shape* construct( Shape* shape, const Scalar& squared_radius ) {
@@ -108,8 +108,8 @@ class _Shape < Kernel, CGAL::Tag_true > {
     typedef CGAL::Triangulation_data_structure_3<Vb,Cb>                             Tds;
 
 public:
-    typedef CGAL::Delaunay_triangulation_3< Kernel, Tds >                           Structure;
-    typedef CGAL::Fixed_alpha_shape_3< Structure >                                  Shape;
+    typedef CGAL::Delaunay_triangulation_3< Kernel, Tds >                           Structure;  ///< The triangulation that spatially orders the point set.
+    typedef CGAL::Fixed_alpha_shape_3< Structure >                                  Shape;      ///< The structure that identifies the triangles in the surface.
        
     _Shape() {}
     Shape* construct( Shape* shape, const Scalar& squared_radius ) {
@@ -237,7 +237,10 @@ public:
     Point_const_iterator scale_space_begin() const { return _tree.begin(); }
     Point_const_iterator scale_space_end() const { return _tree.begin(); }
 
-
+    /// Check whether the spatial structure has been constructed.
+    /** \return true if the structure exists and false otherwise.
+     *  \sa construct_shape(InputIterator start, InputIterator end).
+     */
 	bool has_surface() const { return _shape != 0; }
 
 	void clear_surface() {
@@ -352,36 +355,36 @@ public:
         if( !has_squared_mean_neighborhood() )
             estimate_mean_neighborhood( _mean_neighbors, _samples );
 
-        Pointset smoothed_points;
-		smoothed_points.assign( _tree.begin(), _tree.end() );
+        Pointset points;
+		points.assign( _tree.begin(), _tree.end() );
         _tree.clear();
 
 		// Construct a search tree of the points.
         // Note that the tree has to be local for openMP.
 		for (unsigned int iter = 0; iter < iterations; ++iter) {
-            Search_tree tree( smoothed_points.begin(), smoothed_points.end() );
+            Search_tree tree( points.begin(), points.end() );
 		    if(!tree.is_built())
 			    tree.build();
 
 		    // Collect the number of neighbors of each point.
 		    // This can be done parallel.
-		    CountVec neighbors(_tree.size(), 0);
+		    CountVec neighbors(tree.size(), 0);
 		    Kernel::Compare_squared_distance_3 compare;
-		    p_size_t count = _tree.size(); // openMP can only use signed variables.
+		    p_size_t count = tree.size(); // openMP can only use signed variables.
             const Scalar squared_radius = _squared_radius; // openMP can only use local variables.
-#pragma omp parallel for shared(count,tree,smoothed_points,squared_radius,neighbors) firstprivate(compare)
+#pragma omp parallel for shared(count,tree,points,squared_radius,neighbors) firstprivate(compare)
 		    for (p_size_t i = 0; i < count; ++i) {
 			    // Iterate over the neighbors until the first one is found that is too far.
-			    Dynamic_search search(tree, tree[i]);
-			    for (Dynamic_search::iterator nit = search.begin(); nit != search.end() && compare(tree[i], nit->first, squared_radius) != CGAL::LARGER; ++nit)
+			    Dynamic_search search(tree, points[i]);
+			    for (Dynamic_search::iterator nit = search.begin(); nit != search.end() && compare(points[i], nit->first, squared_radius) != CGAL::LARGER; ++nit)
 				    ++neighbors[i];
 		    }
 		
 		    // Construct a mapping from each point to its index.
 		    PIMap indices;
             p_size_t index = 0;
-		    for( Search_tree::const_iterator tit = tree.begin(); tit != tree.end(); ++tit, ++index)
-			    indices[ *tit ] = index;
+		    for( Pointset::const_iterator pit = points.begin(); pit != points.end(); ++pit, ++index)
+			    indices[ *pit ] = index;
 
 		    // Compute the tranformed point locations.
 		    // This can be done parallel.
@@ -392,11 +395,11 @@ public:
 				    continue;
 
 			    // Collect the vertices within the ball and their weights.
-			    Dynamic_search search(tree, tree[i]);
+			    Dynamic_search search(tree, points[i]);
 			    Matrix3D pts(3, neighbors[i]);
 			    Array1D wts(1, neighbors[i]);
 			    int column = 0;
-			    for (Dynamic_search::iterator nit = search.begin(); nit != search.end() && compare(tree[i], nit->first, squared_radius) != CGAL::LARGER; ++nit, ++column) {
+			    for (Dynamic_search::iterator nit = search.begin(); nit != search.end() && compare(points[i], nit->first, squared_radius) != CGAL::LARGER; ++nit, ++column) {
 				    pts(0, column) = CGAL::to_double(nit->first[0]);
 				    pts(1, column) = CGAL::to_double(nit->first[1]);
 				    pts(2, column) = CGAL::to_double(nit->first[2]);
@@ -433,13 +436,14 @@ public:
 
 			    // The vertex is moved by projecting it onto the plane
 			    // through the barycenter and orthogonal to the Eigen vector with smallest Eigen value.
-			    Vector3 bv = Vector3(CGAL::to_double(tree[i][0]), CGAL::to_double(tree[i][1]), CGAL::to_double(tree[i][2])) - bary;
+			    Vector3 bv = Vector3(CGAL::to_double(points[i][0]), CGAL::to_double(points[i][1]), CGAL::to_double(points[i][2])) - bary;
 			    Vector3 per = bary + bv - (n.dot(bv) * n);
 
-			    smoothed_points[i] = Point(per(0), per(1), per(2));
+			    points[i] = Point(per(0), per(1), per(2));
 		    }
         }
-        _tree.insert( smoothed_points.begin(), smoothed_points.end() );
+
+        _tree.insert( points.begin(), points.end() );
 	}
 
     
@@ -499,6 +503,13 @@ public:
 	}*/
 
     // If you don't want to smooth the point set.
+    /// Construct a new spatial structure on a set of sample points.
+    /** \tparam InputIterator an iterator over the point sample.
+     *  The iterator must point to a Point type.
+     *  \param start an iterator to the first point of the collection.
+     *  \param end a past-the-end iterator for the point collection.
+     *  \sa is_constructed().
+     */
 	template < class InputIterator >
 	void construct_shape(InputIterator start, InputIterator end) {
 		deinit_shape();
@@ -519,6 +530,20 @@ private:
                            f.first->vertex( (f.second+3)&3 )->info() );
     }
 
+    /// Collect the triangles of one shell of the surface.
+    /** A shell is a maximal collection of triangles that are
+     *  connected and locally facing towards the same side of the
+     *  surface.
+     *  \tparam OutputIterator an output iterator for a collection
+     *  of triangles. The iterator must point to a Triangle type.
+     *  \param c a cell touching a triangle of the shell from the
+     *  outside of the object.
+     *  \param li the index of the vertex of the cell opposite to
+     *  the triangle touched.
+     *  \param out an iterator to place to output the triangles.
+     *  \sa collect_shell(const Facet& f, OutputIterator out).
+     *  \sa collect_surface(OutputIterator out).
+     */
 	void collect_shell( Cell_handle c, unsigned int li ) {
 		// Collect one surface mesh from the alpha-shape in a fashion similar to ball-pivoting.
 		// Invariant: the facet is regular or singular.
@@ -582,11 +607,63 @@ private:
             _surface.push_back( Triple(0,0,0) );
 	}
 
+    /// Collect the triangles of one shell of the surface.
+    /** A shell is a maximal collection of triangles that are
+     *  connected and locally facing towards the same side of the
+     *  surface.
+     *  \tparam OutputIterator an output iterator for a collection
+     *  of triangles. The iterator must point to a Triangle type.
+     *  \param f a facet of the shell as seen from the outside.
+     *  \param out an iterator to place to output the triangles.
+     *  \sa collect_shell(Cell_handle c, unsigned int li, OutputIterator out).
+     *  \sa collect_surface(OutputIterator out).
+     */
 	void collect_shell( const Facet& f ) {
 		collect_shell( f.first, f.second );
 	}
 
 public:
+    /// Compute a surface mesh from a collection of points.
+    /** The surface mesh indicates the boundary of a sampled
+     *  object. The point sample must be dense enough, such
+     *  that any region that fits an empty ball with a given
+     *  radius can be assumed to be ouside the object.
+     *
+     *  The resulting surface need not be manifold and in
+     *  many cases where the points sample the surface of
+     *  an object, the surface computed will contain both
+     *  an 'outward-facing' and an 'inward-facing' surface.
+     *
+     *  However, this surface cannot have holes and its
+     *  triangles are all oriented towards the same side of
+     *  the surface. This orientation is expressed using the
+     *  'right-hand rule' on the ordered vertices of each
+     *  triangle.
+     *
+     *  The computed triangles will be returned ordered such
+     *  that a connected 'shell' contains a set of consecutive
+     *  triangles in the output. For this purpose, a 'shell'
+     *  is a maximal collection of triangles that are connected
+     *  and locally facing towards the same side of the surface.
+     *  \tparam Kernel the geometric traits class. This class
+     *  specifies, amongst other things, the number types and
+     *  predicates used.
+     *  \tparam Vb the vertex base used in the internal data
+     *  structure that spatially orders the point set.
+     *  \tparam Cb the cell base used in the internal data
+     *  structure that spatially orders the point set.
+     */
+    /// Collect the triangles of the complete surface.
+    /** These triangles are given ordered per shell.
+     *  A shell is a maximal collection of triangles that are
+     *  connected and locally facing towards the same side of the
+     *  surface.
+     *  \tparam OutputIterator an output iterator for a collection
+     *  of triangles. The iterator must point to a Triangle type.
+     *  \param out an iterator to place to output the triangles.
+     *  \sa collect_shell(const Facet& f, OutputIterator out).
+     *  \sa collect_shell(Cell_handle c, unsigned int li, OutputIterator out).
+     */
 	template < class OutputIterator >
 	OutputIterator collect_surface( OutputIterator out ) {
         if( !has_squared_mean_neighborhood() )
@@ -628,6 +705,24 @@ public:
 		return out;
 	}
 
+    /// Construct the surface triangles from a set of sample points.
+    /** These triangles are given ordered per shell.
+     *  A shell is a maximal collection of triangles that are
+     *  connected and locally facing towards the same side of the
+     *  surface.
+     *
+     *  This method is equivalent to running [construct_shape(start, end)](\ref construct_shape)
+     *  followed by [collect_surface(out)](\ref collect_surface).
+     *  \tparam InputIterator an iterator over the point sample.
+     *  The iterator must point to a Point type.
+     *  \tparam OutputIterator an output iterator for a collection
+     *  of triangles. The iterator must point to a Triangle type.
+     *  \param start an iterator to the first point of the collection.
+     *  \param end a past-the-end iterator for the point collection.
+     *  \param out an iterator to place to output the triangles.
+     *  \sa construct_shape(InputIterator start, InputIterator end).
+     *  \sa collect_surface(OutputIterator out).
+     */
 	template < class InputIterator, class OutputIterator >
 	OutputIterator collect_surface( InputIterator start, InputIterator end, OutputIterator out ) {
 		construct_shape( start, end );
@@ -641,7 +736,8 @@ public:
 	}
 
     void collect_surface() {
-		collect_surface( scale_space_begin(), scale_space_end() );
+		construct_shape();
+		collect_surface( std::back_inserter(_surface) );
     }
 
     const Tripleset& surface() const { return _surface; }
@@ -665,9 +761,6 @@ public:
      */
 	template < class InputIterator >
 	void compute_surface(InputIterator start, InputIterator end, unsigned int neighbors = 30, unsigned int iterations = 4, unsigned int samples = 200) {
-        typedef std::map<Point, unsigned int>						Map;
-		
-
 		// Compute the radius for which the mean ball would contain the required number of neighbors.
         clear();
 		insert_points( start, end );
@@ -675,13 +768,8 @@ public:
         _mean_neighbors = neighbors;
         _samples = samples;
 
-
-		if( !has_squared_mean_neighborhood() )
-            estimate_mean_neighborhood( _mean_neighbors, samples ); // TMP: move this into transform() and compute_surface()
-
-		
 		// Smooth the scale space.
-		smooth_scale_space(iterations);
+		smooth_scale_space( iterations );
 
 		// Mesh the perturbed points.
         collect_surface();
