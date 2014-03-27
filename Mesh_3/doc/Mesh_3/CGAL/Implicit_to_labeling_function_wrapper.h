@@ -23,7 +23,9 @@ Each component corresponds to a sign vector [s1, s2, ..., sn] where si is the si
             0  else
 </pre>
 
-\tparam Function is the type of the input implicit functions.
+\tparam Function provides the definition of the function.
+This parameter stands for a model of the concept ImplicitFunction described in the surface mesh generation package.
+The number types Function::FT and BGT::FT are required to match.
 
 \tparam BGT is a geometric traits class that provides
 the basic operations to implement

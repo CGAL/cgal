@@ -4,10 +4,6 @@ namespace CGAL {
 \ingroup PkgMesh_3Domains
 
 \brief The class `Labeled_mesh_domain_3` implements indexed domains.
-Labeling function f must take its values into N.
-Let p be a Point.
- - f(p)=0 means that p is outside domain.
- - f(p)=a, a!=0 means that p is inside subdomain a.
 
 This class is a model of concept `MeshDomain_3`.
 
@@ -24,8 +20,17 @@ The bisection stops when the query segment is shorter than an error bound
 length of the diagonal of the bounding box (in world coordinates), or the radius of the bounding sphere, and
 a relative error bound passed as argument to the constructor of `Labeled_mesh_domain_3`.
 
+Implicit_mesh_domain_3 is a heir of Labeled_mesh_domain_3. It uses a satisfying labeling function if there is only one component to mesh.
 
-\tparam Labeling_function is the type of the input function.
+\tparam LabelingFunction is the type of the input function.<br />
+Labeling function f must take its values into N.<br />
+Let p be a Point.
+<ul>
+<li>f(p)=0 means that p is outside domain.</li>
+<li>f(p)=a, a!=0 means that p is inside subdomain a.</li>
+</ul>
+Implicit_multi_domain_to_labeling_function_wrapper is a good candidate for this template parameter
+if there are several components to mesh.
 
 \tparam BGT is a geometric traits class that provides
 the basic operations to implement
@@ -33,12 +38,14 @@ intersection tests and intersection computations
 through a bisection method. This parameter must be instantiated
 with a model of the concept `BisectionGeometricTraits_3`.
 
-\cgalModels `MeshDomain_3`
+\cgalModels MeshDomain_3
 
+\sa `Implicit_mesh_domain_3`
+\sa `Implicit_multi_domain_to_labeling_function_wrapper`
 \sa `CGAL::make_mesh_3()`.
 
 */
-template<class Labeling_function, class BGT>
+template<class LabelingFunction, class BGT>
 class Labeled_mesh_domain_3
 {
 public:
@@ -54,7 +61,7 @@ public:
 bisection is stopped when the length of the intersected segment is less than the product of `relative_error_bound` by the radius of
 `bounding_sphere`.
 */ 
-Labeled_mesh_domain_3(const Labeling_function& f,
+Labeled_mesh_domain_3(const LabelingFunction& f,
                        const Sphere_3& bounding_sphere,
                        const FT& relative_error_bound = FT(1e-3));
 
@@ -66,7 +73,7 @@ Labeled_mesh_domain_3(const Labeling_function& f,
 bisection is stopped when the length of the intersected segment is less than the product of `relative_error_bound` by the diagonal of
 `bounding_box`.
 */
-Labeled_mesh_domain_3(const Labeling_function& f,
+Labeled_mesh_domain_3(const LabelingFunction& f,
                        const Bbox_3& bbox,
                        const FT& relative_error_bound = FT(1e-3));
 
@@ -78,7 +85,7 @@ Labeled_mesh_domain_3(const Labeling_function& f,
 bisection is stopped when the length of the intersected segment is less than the product of `relative_error_bound` by the diagonal of
 `bounding_box`.
 */
-Labeled_mesh_domain_3(const Labeling_function& f,
+Labeled_mesh_domain_3(const LabelingFunction& f,
                        const Iso_cuboid_3& bbox,
                        const FT& relative_error_bound = FT(1e-3));
 
