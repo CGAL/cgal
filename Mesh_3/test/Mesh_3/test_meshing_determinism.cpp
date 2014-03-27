@@ -38,6 +38,7 @@ int main(int argc, char* argv[])
   double exude_bound    = 15.;
 
   // Domain
+  std::cout << "\tSeed is\t 0" << std::endl;
   Mesh_domain domain("data/cube.off");
     //no random generator is given, so CGAL::Random(0) is used
 

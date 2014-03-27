@@ -50,6 +50,9 @@ public:
     //-------------------------------------------------------
     Image image;
     image.read("data/liver.inr.gz");
+    
+    std::cout << "\tSeed is\t"
+      << CGAL::default_random.get_seed() << std::endl;
     Mesh_domain domain(image, 1e-9, &CGAL::default_random);
     
     // Set mesh criteria
