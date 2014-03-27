@@ -508,6 +508,7 @@ void Gmpzf::align ( const mpz_t*& a_aligned,
       rexp = a.exp();
       break;
     }
+  default:
   case EQUAL:
     {
       const mpz_t& amanref = a.man();
