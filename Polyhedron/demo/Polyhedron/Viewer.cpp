@@ -35,6 +35,12 @@ Viewer::Viewer(QWidget* parent, bool antialiasing)
   setKeyDescription(Qt::Key_M,
                     tr("Toggle macro mode: useful to view details very near from the camera, "
                        "but decrease the z-buffer precision"));
+#if QGLVIEWER_VERSION >= 0x020500
+  setMouseBinding(Qt::Key(0), Qt::NoModifier, Qt::LeftButton, RAP_FROM_PIXEL, true, Qt::RightButton);
+  setMouseBindingDescription(Qt::ShiftModifier, Qt::RightButton,
+                             tr("Select and pop context menu"));
+  setMouseBinding(Qt::Key_R, Qt::NoModifier, Qt::LeftButton, RAP_FROM_PIXEL);
+#endif // QGLVIEWER_VERSION >= 2.5.0
 }
 
 Viewer::~Viewer()
