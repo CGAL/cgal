@@ -36,7 +36,6 @@
 #include <tbb/parallel_for.h>
 #include <tbb/blocked_range.h>
 #include <tbb/tbbmalloc_proxy.h>
-#include <tbb/task_scheduler_init.h>
 
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/AABB_tree.h>
@@ -434,14 +433,11 @@ wlop_simplify_and_regularize_point_set(
   
   // Compute original density weight for original points if user needed
   std::vector<FT> original_density_weights;
-  const int thread_num = 1;
 
   if (need_compute_density)
   {
     //parallel
-    
 #ifdef CGAL_LINKED_WITH_TBB
-    tbb::task_scheduler_init init(thread_num);
     if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
     {
       original_density_weights.assign(number_of_original, FT(1.0));
@@ -513,7 +509,6 @@ wlop_simplify_and_regularize_point_set(
     std::vector<Point>::iterator update_iter = update_sample_points.begin();
     //parallel
 #ifdef CGAL_LINKED_WITH_TBB
-    tbb::task_scheduler_init init(thread_num);
     if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
     {
       tbb::parallel_for(
