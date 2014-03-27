@@ -8,7 +8,7 @@ The function object `Hilbert_sort_on_sphere_3` sorts iterator ranges of
 that sphere by a Hilbert curve on a certain cube. For each face of that cube, it calls an appropriate
 version of `Hilbert_sort_2` which sorts a subset of the iterator range.
 `Hilbert_sort_2` in each face is called with the median or the middle policy depending on the `PolicyTag`. The input points are supposed to be close to the input sphere.
-If input points are not close to the input sphere, this function still work, but it might not be a good sorting function.
+If input points are not close to the input sphere, this function still works, but it might not be a good sorting function.
 
 \tparam Traits must be a model for `SpatialSortingTraits_3`. 
 
