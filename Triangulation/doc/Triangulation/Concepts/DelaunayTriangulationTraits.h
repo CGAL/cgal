@@ -3,10 +3,8 @@
 \ingroup PkgTriangulationsConcepts
 \cgalConcept
 
-The concept `DelaunayTriangulationTraits` describes the various types and functions that a class
-has to provide as the first parameter (`DelaunayTriangulationTraits`) to the class template
-`Delaunay_triangulation<DelaunayTriangulationTraits, TriangulationDataStructure>`. 
-
+The concept `DelaunayTriangulationTraits` is the first template parameter of the class 
+`Delaunay_triangulation<DelaunayTriangulationTraits, TriangulationDataStructure>`.
 It brings the geometric ingredients to the definition of a Delaunay
 complex, while the combinatorial ingredients are brought by the second
 template parameter, `TriangulationDataStructure`.
@@ -14,8 +12,7 @@ template parameter, `TriangulationDataStructure`.
 \cgalRefines ::TriangulationTraits.
 
 \cgalHasModel `CGAL::Cartesian_d<FT, Dim, LA>`
-\cgalHasModel `CGAL::Simple_cartesian_d<FT, Dim, LA>`
-\cgalHasModel `CGAL::New_kernel_d` (recommended when available)
+\cgalHasModel `CGAL::Epick_d<Dim>` (recommended)
 
 \sa `TriangulationTraits`
 \sa `DelaunayTriangulation`

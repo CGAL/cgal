@@ -67,11 +67,6 @@ public:
 /// @{
 
 /*! 
-
-The `is_valid` method is only minimally defined in the
-`TriangulationDSFullCell` concept, so that we document it more
-precisely here, for the model `Triangulation_ds_full_cell`.
-
 \cgalAdvancedBegin
 Implements the validity checks required by the concept 
 `TriangulationDSFullCell`.

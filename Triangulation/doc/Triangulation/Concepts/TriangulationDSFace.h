@@ -3,7 +3,8 @@
 \ingroup PkgTriangulationsConcepts
 \cgalConcept
 
-A `TriangulationDSFace` describes a `k`-face `f` in a triangulation.
+A `TriangulationDSFace` describes a face `f` with dimension `k` 
+(a `k`-face) in a triangulation.
 It gives access to a handle to a full cell `c` containing the face
 `f` in its boundary, as well as the indices of the vertices of `f` in
 `c`. It must hold that `f` is a <I>proper</I> face of full cell
@@ -12,8 +13,8 @@ the dimension of `c`.
 
 \cgalHasModel `CGAL::Triangulation_face<TriangulationDataStructure>`
 
-\sa `TriangulationDataStructure::FullCell`
-\sa `TriangulationDataStructure::Vertex`
+\sa `TriangulationDSFullCell`
+\sa `TriangulationDSVertex`
 \sa `TriangulationDataStructure`
 \sa `Triangulation`
 

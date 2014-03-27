@@ -12,17 +12,17 @@ hull of the points in so called <I>infinite cells</I>.
 Parameters
 --------------
 
-`TriangulationTraits` is the geometric traits class that provides the geometric types
-and predicates needed by triangulations. `TriangulationTraits` must be a model of the
+`TriangulationTraits_` is the geometric traits class that provides the geometric types
+and predicates needed by triangulations. `TriangulationTraits_` must be a model of the
 concept `TriangulationTraits`.
 
-`TriangulationDataStructure` is the class used to store the underlying triangulation data
-structure. `TriangulationDataStructure` must be a model of the concept
+`TriangulationDataStructure_` is the class used to store the underlying triangulation data
+structure. `TriangulationDataStructure_` must be a model of the concept
 `TriangulationDataStructure`. The class template `Triangulation` can
 be defined by specifying only the first parameter, or by using the
 tag `CGAL::Default` as
-the second parameter. In both cases, `TriangulationDataStructure` defaults to
-`Triangulation_data_structure<TriangulationTraits::Dimension, Triangulation_vertex<TriangulationTraits>, Triangulation_full_cell<TriangulationTraits>>`.
+the second parameter. In both cases, `TriangulationDataStructure_` defaults to
+`Triangulation_data_structure<TriangulationTraits_::Dimension, Triangulation_vertex<TriangulationTraits_>, Triangulation_full_cell<TriangulationTraits_> >`.
 
 Input/Output
 --------------
@@ -38,7 +38,7 @@ preceding list of full cells.
 \sa `Delaunay_triangulation<DelaunayTriangulationTraits, TriangulationDataStructure>`
 
 */
-template< typename TriangulationTraits, typename TriangulationDataStructure >
+template< typename TriangulationTraits_, typename TriangulationDataStructure_ >
 class Triangulation {
 public:
 /// \name Types
@@ -204,7 +204,8 @@ Returns a const reference to the geometric traits instance.
 const Geom_traits & geom_traits() const;
 
 /*!
-Returns the dimension of the embedding Euclidean space.
+Returns the maximal dimension of
+the full dimensional cells that can be stored in the triangulation.
 */
 int maximal_dimension() const;
 
@@ -293,7 +294,7 @@ Full_cell_handle full_cell(const Facet & f) const;
 
 /*!
 Returns the index of the vertex of the full cell
-`c=``tr`.`full_cell(f)` which does not belong to `c`.
+`c=tr.full_cell(f)` which does not belong to `c`.
 */
 int index_of_covertex(const Facet & f) const;
 
@@ -409,9 +410,10 @@ triangulation, then `loc_type` is set to
 `OUTSIDE_AFFINE_HULL`, and <I>locate</I> returns
 `Full_cell_handle()`.
 If the `query` point lies inside the affine hull
-of the points, a \f$ k\f$-face that contains `query` in its relative
-interior is returned. (If the \f$ k\f$-face is finite, it is
-unique.)
+of the points, the function finds the \f$ k\f$-face that 
+contains `query` in its relative
+interior (if the \f$ k\f$-face is finite, it is
+unique) and the result is returned as follows:
 
 <DL> <DT><B>\f$ k=0\f$</B><DD> `loc_type` is set to `ON_VERTEX`,
 `f` is set to the vertex `v` the `query` lies on and a full cell

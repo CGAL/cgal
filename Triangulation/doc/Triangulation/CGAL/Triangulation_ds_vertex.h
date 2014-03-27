@@ -44,10 +44,6 @@ public:
 
 /*! 
 \cgalAdvancedBegin
-The `is_valid` method is only minimally defined in the
-`TriangulationDSVertex` concept, so that we document it more precisely
-here, for the model `Triangulation_ds_vertex`:
-
 Implements the validity checks required by the concept 
 `TriangulationDSVertex`. Does not implement additional checks. 
 \cgalAdvancedEnd

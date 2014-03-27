@@ -3,9 +3,9 @@
 \ingroup PkgTriangulationsConcepts
 \cgalConcept
 
-The concept `TriangulationTraits` describes the various types and functions that a class 
-must provide as the first parameter (`TriangulationTraits`) to the class template 
-`Triangulation<TriangulationTraits, TriangulationDataStructure>`. It brings the geometric ingredient to the 
+The concept `TriangulationTraits` is the first template parameter of the class 
+`Triangulation<TriangulationTraits, TriangulationDataStructure>`.
+It brings the geometric ingredient to the 
 definition of a triangulation, while the combinatorial ingredient is brought by 
 the second template parameter, `TriangulationDataStructure`. 
 
@@ -19,7 +19,7 @@ traits must refine `SpatialSortingTraits_d`. This is not needed
 if the points are inserted one by one. 
 
 \cgalHasModel `CGAL::Cartesian_d<FT, Dim, LA>`
-\cgalHasModel `CGAL::????<K>` (recommended)
+\cgalHasModel `CGAL::Epick_d<Dim>` (recommended)
 
 \sa `DelaunayTriangulationTraits` 
 \sa `Triangulation` 
@@ -87,7 +87,7 @@ typedef Hidden_type Contained_in_affine_hull_d;
 
 /// \name
 /// In the \f$ D\f$-dimensional oriented space, a \f$ k-1\f$
-/// dimensional subspace (flat) define by \f$ k\f$ points can be
+/// dimensional subspace (flat) defined by \f$ k\f$ points can be
 /// oriented in two different ways. Choosing the orientation of any
 /// simplex defined by \f$ k\f$ points fixes the orientation of all
 /// other simplices. To be able to orient lower dimensional flats, we
@@ -123,6 +123,8 @@ some \f$ D\f$.
 typedef Hidden_type Construct_flat_orientation_d; 
 
 /*! 
+
+CJTODO: update this?
 
 A predicate object that must provide the 
 templated operator 

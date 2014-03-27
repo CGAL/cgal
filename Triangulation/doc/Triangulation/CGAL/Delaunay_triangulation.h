@@ -13,27 +13,27 @@ means.
 Parameters
 --------------
 
-`DelaunayTriangulationTraits` is the geometric traits class that provides the geometric types
-and predicates needed by Delaunay triangulations. `DelaunayTriangulationTraits` must be a model of
+`DelaunayTriangulationTraits_` is the geometric traits class that provides the geometric types
+and predicates needed by Delaunay triangulations. `DelaunayTriangulationTraits_` must be a model of
 the concept `DelaunayTriangulationTraits`.
 
-`TriangulationDataStructure` is the class used to store the underlying triangulation data
-structure. `TriangulationDataStructure` must be a model of the concept
+`TriangulationDataStructure_` is the class used to store the underlying triangulation data
+structure. `TriangulationDataStructure_` must be a model of the concept
 `TriangulationDataStructure`. The class template `Delaunay_triangulation` can
 be defined by specifying only the first parameter, or by using the
 tag `CGAL::Default` as
-the second parameter. In both cases, `TriangulationDataStructure` defaults to
-`Triangulation_data_structure<TriangulationTraits::Dimension, Triangulation_vertex<TriangulationTraits>, Triangulation_full_cell<TriangulationTraits>>`.
+the second parameter. In both cases, `TriangulationDataStructure_` defaults to
+`Triangulation_data_structure<DelaunayTriangulationTraits_::Dimension, Triangulation_vertex<DelaunayTriangulationTraits_>, Triangulation_full_cell<DelaunayTriangulationTraits_> >`.
 
-The class `Delaunay_triangulation<DelaunayTriangulationTraits, TriangulationDataStructure>` inherits all the types
-defined in the base class `Triangulation<DelaunayTriangulationTraits, TriangulationDataStructure>`. Additionally, it
+The class `Delaunay_triangulation<DelaunayTriangulationTraits_, TriangulationDataStructure_>` inherits all the types
+defined in the base class `Triangulation<DelaunayTriangulationTraits_, TriangulationDataStructure_>`. Additionally, it
 defines or overloads the following methods:
 
 \sa `Triangulation_data_structure<Dimensionality, TriangulationDSVertex, TriangulationDSFullCell>`
 
 */
-template< typename DelaunayTriangulationTraits, typename TriangulationDataStructure >
-class Delaunay_triangulation : public Triangulation<DelaunayTriangulationTraits, TriangulationDataStructure> {
+template< typename DelaunayTriangulationTraits_, typename TriangulationDataStructure_ >
+class Delaunay_triangulation : public Triangulation<DelaunayTriangulationTraits_, TriangulationDataStructure_> {
 public:
 
 /// \name Creation

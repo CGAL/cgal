@@ -21,16 +21,18 @@ triggers some optimizations. Or
 dimension of the simplices (full cells) is passed as an integer argument to an instance 
 constructor (see `TriangulationDataStructure`).</UL> 
 
-`TriangulationDSVertex` is the class to be used as the base `Vertex` type in the 
-triangulation data structure. It must be a model of the concept 
+The template parameter `TriangulationDSVertex` stands for a class to
+be used as the base `Vertex` type in the triangulation data structure. 
+It must be a model of the concept 
 `TriangulationDSVertex`. The class template `Triangulation_data_structure` can be 
 defined by specifying 
 only the first parameter. It also accepts the tag `CGAL::Default` as 
 second parameter. In both cases, `TriangulationDSVertex` defaults to 
 `CGAL::Triangulation_ds_vertex<>`. 
 
-`TriangulationDSFullCell` is the class to be used as the base `Full_cell` type in 
-the triangulation data structure. It must be a model of the concept 
+The template parameter `TriangulationDSFullCell` stands for a class to
+be used as the base `Full_cell` type in the triangulation data structure. 
+It must be a model of the concept 
 `TriangulationDSFullCell`. The class template `Triangulation_data_structure` accepts that no 
 third parameter be specified. It also accepts the tag `CGAL::Default` as 
 third parameter. In both cases, `TriangulationDSFullCell` defaults to 
@@ -65,10 +67,6 @@ Triangulation_data_structure(const Triangulation_data_structure & t2);
 /*! 
 Implements the validity checks required by the concept 
 `TriangulationDataStructure`. 
-
-The `is_valid` method is only minimally defined in the
-`TriangulationDataStructure` concept, so that we document it more
-precisely here, for the model `Triangulation_data_structure`.
 
 Note that passing all these tests does not guarantee that we have a 
 triangulation (abstract pure simplicial complex). 
