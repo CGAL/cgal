@@ -10,6 +10,10 @@ It gives access to a handle to a full cell `c` containing the face
 `c`. It must hold that `f` is a <I>proper</I> face of full cell
 `c`, i.e., the dimension of `f` is strictly less than
 the dimension of `c`.
+\cgalModifBegin
+The dimension of a face is automatically set when 
+`TriangulationDSFace::set_index` is called. 
+\cgalModifEnd
 
 \cgalHasModel `CGAL::Triangulation_face<TriangulationDataStructure>`
 

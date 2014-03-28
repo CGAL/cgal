@@ -84,6 +84,11 @@ The convex hull of the points is part of the triangulation, the fact
 that there is no boundary is ensured by adding an infinite vertex and
 infinite full cells to triangulate the outside of the convex hull.
 
+\cgalModifBegin
+See Chapter \ref Chapter_3D_Triangulations "3D Triangulations" for more details
+about infinite vertices and cells.
+\cgalModifEnd
+
 The class `CGAL::Delaunay_triangulation<DelaunayTriangulationTraits, TriangulationDataStructure>` adds further
 constraints to a triangulation, in that all its simplices must have the
 so-called <I>Delaunay</I> or <I>empty-ball</I> property: the interior of

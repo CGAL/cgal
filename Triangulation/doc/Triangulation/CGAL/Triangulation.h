@@ -112,10 +112,17 @@ typedef TriangulationDataStructure::Vertex_handle
 Vertex_handle;
 
 /*!
-iterator over all vertices
+iterator over all vertices (including the infinite one)
 */
 typedef TriangulationDataStructure::Vertex_iterator
 Vertex_iterator;
+
+\cgalModifBegin
+/*!
+iterator over finite vertices 
+*/ 
+typedef unspecified_type Finite_vertex_iterator;
+\cgalModifEnd
 
 /*!
 handle to a full cell
@@ -124,17 +131,31 @@ typedef TriangulationDataStructure::Full_cell_handle
 Full_cell_handle;
 
 /*!
-iterator over all full cells
+iterator over all full cells (including the infinite ones)
 */
 typedef
 TriangulationDataStructure::Full_cell_iterator
 Full_cell_iterator;
 
+\cgalModifBegin
 /*!
-iterator over all facets
+iterator over finite full cells
+*/
+typedef unspecified_type Finite_full_cell_iterator;
+\cgalModifEnd
+
+/*!
+iterator over all facets (including the infinite ones)
 */
 typedef TriangulationDataStructure::Facet_iterator
 Facet_iterator;
+
+\cgalModifBegin
+/*!
+iterator over finite facets
+*/
+typedef unspecified_type Finite_facet_iterator;
+\cgalModifEnd
 
 /*!
 Size type (an unsigned integral
