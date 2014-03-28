@@ -112,7 +112,7 @@ Pre-allocates memory in order to store at least 'size' points.
 void reserve(size_t size);
 
 /*
- * Returns the size of the allocated memory for the points.
+Returns the number of points for which memory has been pre-allocated.
  */
 size_t capacity();
 

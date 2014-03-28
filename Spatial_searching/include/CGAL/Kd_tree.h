@@ -273,7 +273,7 @@ public:
     pts.reserve(size);
   }
 
-  //Get the size of the aloocated memory for the points vector.
+  //Get the capacity of the underlying points vector.
   size_t capacity()
   {
     return pts.capacity();
