@@ -20,7 +20,7 @@ which can not be represented.
 
 \cgalHasModel `int` 
 \cgalHasModel `long` 
-\cgalHasModel `CGAL::CORE::BigInt` 
+\cgalHasModel `CORE::BigInt` 
 \cgalHasModel `CGAL::Gmpz` 
 \cgalHasModel `leda_integer` 
 \cgalHasModel `mpz_class` 

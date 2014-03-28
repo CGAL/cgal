@@ -426,6 +426,7 @@ Equivalent to `Quadruple<T1, T2, T3, T4>(x, y, z, w)`.
 template <class T1, class T2, class T3, class T4>
 Quadruple<T1, T2, T3, T4> make_tuple(T1 x, T2 y, T3 z, T4 w);
 
+#ifndef DOXYGEN_RUNNING
 /*!
 \ingroup PkgStlExtensionUtilities
 Creates a pair `(t1,t2)` if `comp(t1,t2)==true` and `(t2,t1)` otherwise.
@@ -440,5 +441,6 @@ std::pair<T,T> make_sorted_pair(T t1, T t2, Compare comp)
 {
   return comp(t1, t2) ? std::make_pair(t1,t2) : std::make_pair(t2,t1);
 }
+#endif
 
 } /* end namespace CGAL */

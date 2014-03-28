@@ -28,6 +28,7 @@
 
 #include <CGAL/Mesh_3/config.h>
 
+#include <CGAL/Random.h>
 #include <CGAL/Polyhedral_mesh_domain_3.h>
 #include <CGAL/Mesh_domain_with_polyline_features_3.h>
 #include <CGAL/Mesh_polyhedron_3.h>
@@ -93,11 +94,10 @@ public:
   typedef CGAL::Tag_true           Has_features;
 
   /// Constructors
-  Polyhedral_mesh_domain_with_features_3(const Polyhedron& p);
-  Polyhedral_mesh_domain_with_features_3(const std::string& filename);
-
-  template <typename T1, typename T2>
-  Polyhedral_mesh_domain_with_features_3(const T1& a, const T2& b) : Base(a, b) {}
+  Polyhedral_mesh_domain_with_features_3(const Polyhedron& p,
+    CGAL::Random* p_rng = NULL);
+  Polyhedral_mesh_domain_with_features_3(const std::string& filename,
+    CGAL::Random* p_rng = NULL);
 
   template <typename T1, typename T2, typename T3>
   Polyhedral_mesh_domain_with_features_3(const T1& a, const T2& b, const T3& c)
@@ -127,17 +127,20 @@ private:
 template < typename GT_, typename P_, typename TA_,
            typename Tag_, typename E_tag_>
 Polyhedral_mesh_domain_with_features_3<GT_,P_,TA_,Tag_,E_tag_>::
-Polyhedral_mesh_domain_with_features_3(const Polyhedron& p)
+Polyhedral_mesh_domain_with_features_3(const Polyhedron& p,
+                                       CGAL::Random* p_rng)
   : Base()
   , polyhedron_(p)
 {
   this->add_primitives(polyhedron_);
+  this->set_random_generator(p_rng);
 }
 
 template < typename GT_, typename P_, typename TA_,
            typename Tag_, typename E_tag_>
 Polyhedral_mesh_domain_with_features_3<GT_,P_,TA_,Tag_,E_tag_>::
-Polyhedral_mesh_domain_with_features_3(const std::string& filename)
+Polyhedral_mesh_domain_with_features_3(const std::string& filename,
+                                       CGAL::Random* p_rng)
   : Base()
   , polyhedron_()
 {
@@ -145,6 +148,7 @@ Polyhedral_mesh_domain_with_features_3(const std::string& filename)
   std::ifstream input(filename.c_str());
   input >> polyhedron_;
   this->add_primitives(polyhedron_);
+  this->set_random_generator(p_rng);
 }
 
 

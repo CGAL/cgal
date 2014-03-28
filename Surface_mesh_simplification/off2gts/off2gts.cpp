@@ -8,16 +8,16 @@
 
 typedef CGAL::Simple_cartesian<double> Kernel ;
 
-typedef CGAL::Polyhedron_3<Kernel,CGAL::Polyhedron_items_with_id_3> OffSurface; 
+typedef CGAL::Polyhedron_3<Kernel,CGAL::Polyhedron_items_with_id_3> OffSurface_mesh; 
 
-typedef OffSurface::Vertex_handle   Vertex_handle ;
-typedef OffSurface::Halfedge_handle Halfedge_handle ;
-typedef OffSurface::Facet_handle    Facet_handle ;
-typedef OffSurface::Vertex_iterator Vertex_iterator ;
-typedef OffSurface::Edge_iterator   Edge_iterator ;
-typedef OffSurface::Facet_iterator  Facet_iterator ;
+typedef OffSurface_mesh::Vertex_handle   Vertex_handle ;
+typedef OffSurface_mesh::Halfedge_handle Halfedge_handle ;
+typedef OffSurface_mesh::Facet_handle    Facet_handle ;
+typedef OffSurface_mesh::Vertex_iterator Vertex_iterator ;
+typedef OffSurface_mesh::Edge_iterator   Edge_iterator ;
+typedef OffSurface_mesh::Facet_iterator  Facet_iterator ;
 
-void Convert ( OffSurface& off, char const* gts_name )
+void Convert ( OffSurface_mesh& off, char const* gts_name )
 {
   std::ofstream gts(gts_name);  
   if ( gts )
@@ -67,7 +67,7 @@ int main( int argc, char* argv[] )
     std::ifstream in(argv[1]);
     if ( in )
     {
-      OffSurface off ;
+      OffSurface_mesh off ;
       in >> off ;
       std::cout << "Converting " << argv[1] << " with " << off.size_of_vertices() << " vertices, " << (off.size_of_halfedges()/2) << " edges and " << off.size_of_facets() << " faces" << std::endl ;
       if ( off.is_valid() )
@@ -76,7 +76,7 @@ int main( int argc, char* argv[] )
         {
           Convert(off,argv[2]);  
         }
-        else std::cerr << "Polyhedron is not a purely triangulated surface" << std::endl ;
+        else std::cerr << "Polyhedron is not a purely triangulated surface mesh" << std::endl ;
       }
       else std::cerr << "Invalid polyhedron" << std::endl ;
     }

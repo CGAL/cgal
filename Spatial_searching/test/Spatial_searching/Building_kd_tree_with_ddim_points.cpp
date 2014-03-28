@@ -27,8 +27,9 @@ typedef CGAL::K_neighbor_search<SearchTraits>                   K_neighbor_searc
 typedef Orthogonal_k_neighbor_search::Distance                  Distance;
 //typdefs for Point_with_info
 typedef Point_with_info_helper<SearchTraits::Point_d>::type                             Point_with_info;
-typedef CGAL::Search_traits_adapter<Point_with_info,Point_property_map,SearchTraits>      Traits_with_info;
-typedef CGAL::Distance_adapter <Point_with_info,Point_property_map,Distance>              Distance_adapter;
+typedef Point_property_map<SearchTraits::Point_d>                                     Ppmap;
+typedef CGAL::Search_traits_adapter<Point_with_info,Ppmap,SearchTraits>               Traits_with_info;
+typedef CGAL::Distance_adapter <Point_with_info,Ppmap,Distance>                       Distance_adapter;
 typedef CGAL::Orthogonal_k_neighbor_search<Traits_with_info,Distance_adapter>         Orthogonal_k_neighbor_search_with_info;
 typedef CGAL::K_neighbor_search<Traits_with_info,Distance_adapter>                    K_neighbor_search_with_info;
 

@@ -112,6 +112,7 @@ public :
   edge_descriptor_vector const& border_edges() const { return mBorderEdges ; }
 
   ECM& surface() const { return *mSurface ; } 
+  ECM& surface_mesh() const { return *mSurface ; } 
  
   
 public :

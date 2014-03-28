@@ -291,7 +291,8 @@ MainWindow::on_actionClear_triggered()
 void
 MainWindow::on_actionInsertRandomPoints_triggered()
 {
-  CGAL::Random_points_in_iso_rectangle_2<Point_2> pg(triang.domain().min(), triang.domain().max());
+  CGAL::Random_points_in_iso_rectangle_2<Point_2> pg((triang.domain().min)(),
+                                                     (triang.domain().max)());
   bool ok = false;
   const int number_of_points = 
     QInputDialog::getInteger(this, 
@@ -299,7 +300,7 @@ MainWindow::on_actionInsertRandomPoints_triggered()
                              tr("Enter number of random points"),
 			     250,
 			     0,
-			     std::numeric_limits<int>::max(),
+			     (std::numeric_limits<int>::max)(),
 			     1,
 			     &ok);
 

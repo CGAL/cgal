@@ -36,23 +36,25 @@ int main( int argc, char** argv )
   Surface surface;
   is >> surface ;
 
-
+  std::size_t initial_count = (surface.size_of_halfedges()/2);
+  std::cout << "Initial count " << initial_count << " edges.\n" ;
 
   // Contract the surface as much as possible
   SMS::Count_stop_predicate<Surface> stop(0);
-     
+
   int r = SMS::edge_collapse
             (surface
             ,stop
             ,CGAL::vertex_index_map(boost::get(CGAL::vertex_external_index,surface)) 
                   .edge_index_map  (boost::get(CGAL::edge_external_index  ,surface)) 
             );
-  
+
   std::cout << "\nFinished...\n" << r << " edges removed.\n" 
             << (surface.size_of_halfedges()/2) << " final edges.\n" ;
-        
+
+  assert( initial_count == (surface.size_of_halfedges()/2) + r );
   // std::ofstream os( argc > 2 ? argv[2] : "out.off" ) ; os << surface ;
-  
+
   return 0 ;      
 }
 

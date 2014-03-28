@@ -19,7 +19,7 @@
 !define ViaFTP
 
 Var Platform
-Var IsTAUCSInstalled
+;Var IsTAUCSInstalled
 
 !ifdef ViaFTP
   !define DownloadOK      "OK"

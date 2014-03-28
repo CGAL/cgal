@@ -111,6 +111,19 @@ and <code>src/</code> directories).
 <h2 id="release4.4">Release 4.4 </h2>
 <div>
   <!-- <p> Release date: October 2013 </p> -->
+  <h3>Installation</h3>
+  <ul>
+    <li>Additional supported platforms:
+      <ul>
+        <li>The Apple Clang compiler version 5.0 is now supported on
+          OS X Mavericks.</li>
+        <!--
+        <li>The Microsoft Windows Visual C++ compiler 2013 (VC12) is now
+          supported.</li>
+        -->
+      </ul>
+    </li>
+  </ul>
   <h3>Triangulated Surface Mesh Segmentation (new package)</h3>
   <ul>
     <li> This package implements the segmentation of triangulated surface meshes
@@ -216,20 +229,30 @@ and <code>src/</code> directories).
     </li>
   </ul>
 
-  <h3>STL Extensions for CGAL</h3>
+  <h3>Triangulated Surface Mesh Simplification</h3>
   <ul>
-    <li> Add the function <code>CGAL::make_sorted_pair</code>.</li>
+    <li>Fix a bug in the way edges can be marked as non-removable by adding
+        a named-parameter <code>edge_is_constrained_map</code> to the function
+        <code>edge_collapse</code></li>
+  </ul>
+
+  <h3>dD Spatial Searching</h3>
+  <ul>
+    <li>Fix a documentation bug: The property map passed as template parameter to the classes
+        <code>Search_traits_adapter</code> and <code>Distance_adapter</code> must be a
+        lvalue property map. To avoid incorrect usage, a static assertion has been added
+        in the CGAL code to prevent the user from instantiating these classes with an
+        incorrect property map type.</li>
   </ul>
 
  <h3>CGAL ipelets</h3>
   <ul>
     <li> Better description of the demo ipelets in the user manual     </li>
     <li> New ipelet for pencils of circles</li>
-    <li> New ipelet for hyperbolic geometry in Poincare model</li>
+    <li> New ipelet for hyperbolic geometry in Poincaré model</li>
     <li> The generator ipelet now generates point in a selected zone</li>
     <li> Hilbert sort ipelet implements two policies</li>
   </ul>
-
 </div>
 
 <h2 id="release4.3">Release 4.3 </h2>

@@ -70,6 +70,14 @@
 #include <CGAL/export/CGAL.h>
 
 //----------------------------------------------------------------------//
+//  Use an implementation of fabs with sse2 on Windows
+//----------------------------------------------------------------------//
+
+#if (_M_IX86_FP >= 2) || defined(_M_X64)
+#define CGAL_USE_SSE2_FABS
+#endif
+
+//----------------------------------------------------------------------//
 //  Detect features at compile-time. Some macros have only been
 //  introduced as of Boost 1.40. In that case, we simply say that the
 //  feature is not available, even if that is wrong.
@@ -118,7 +126,7 @@
 #if !defined(__GNUC__) || defined(__INTEL_COMPILER)
 #define CGAL_CFG_NO_STATEMENT_EXPRESSIONS 1
 #endif
-#if defined(BOOST_NO_CXX11_UNIFIED_INITIALIZATION_SYNTAX) || (BOOST_VERSION < 105100)
+#if defined(BOOST_NO_CXX11_UNIFIED_INITIALIZATION_SYNTAX) || (BOOST_VERSION < 105100) || _MSC_VER==1800
 #define CGAL_CFG_NO_CPP0X_UNIFIED_INITIALIZATION_SYNTAX
 #endif
 #if __cplusplus < 201103L && !(_MSC_VER >= 1600)

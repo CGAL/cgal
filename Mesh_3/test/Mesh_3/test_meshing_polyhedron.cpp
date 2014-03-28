@@ -51,8 +51,10 @@ struct Polyhedron_tester : public Tester<K>
     std::ifstream input("data/sphere.off");
     input >> polyhedron;
     input.close();
-    
-    Mesh_domain domain(polyhedron);
+
+    std::cout << "\tSeed is\t" 
+      << CGAL::default_random.get_seed() << std::endl;
+    Mesh_domain domain(polyhedron, &CGAL::default_random);
     
     // Set mesh criteria
     Facet_criteria facet_criteria(30, 0.2, 0.02);

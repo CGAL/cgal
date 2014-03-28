@@ -12,7 +12,7 @@ in a nearest neighbor search algorithm, this class must be used as distance.
 
 `Key` is a type that is associated to a point of type `Base_distance::Point_d`. 
 
-`PointPropertyMap` is a model of `ReadablePropertyMap`
+`PointPropertyMap` is a model of `LvaluePropertyMap`
 with `Key` as `key_type` and `Base_distance::Point_d` as `value_type`. 
 
 `Base_distance` is a model of either `GeneralDistance` or `OrthogonalDistance`. 
@@ -84,7 +84,7 @@ must be used as distance.
 
 `Key` is a type that is associated to a point of type `Base_distance::Point_d`. 
 
-`PointPropertyMap` is a model of `ReadablePropertyMap`
+`PointPropertyMap` is a model of `LvaluePropertyMap`
 with `Key` as `key_type` and `Base_distance::Point_d` as `value_type`. 
 
 `BaseTraits` is a model of either `SearchTraits` or `RangeSearchTraits`. 

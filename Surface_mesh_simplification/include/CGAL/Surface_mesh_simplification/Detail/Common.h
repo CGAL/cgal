@@ -80,6 +80,17 @@ bool handle_exists ( Iterator begin, Iterator end, Handle h )
  return false ;
 }
 
+template <class ECM>
+struct No_constrained_edge_map{
+  typedef typename boost::graph_traits<ECM>::edge_descriptor key_type;
+  typedef bool value_type;
+  typedef value_type reference;
+  typedef boost::readable_property_map_tag category;
+  friend bool get(No_constrained_edge_map, key_type) {
+    return false;
+  }
+};
+
 } // namespace Surface_mesh_simplification
 
 template<class N>
