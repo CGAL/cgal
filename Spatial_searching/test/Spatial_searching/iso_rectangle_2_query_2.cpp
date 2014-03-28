@@ -29,7 +29,7 @@ main() {
   //to test wether the tree.capacity() function works properly.
   if( tree.capacity() != N)
   {
-    std::cout << "Something is wrong with allocating points memory." << std::endl;
+    std::cerr << "Something is wrong with allocating points memory." << std::endl;
     return -1;
   }
 
