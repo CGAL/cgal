@@ -41,7 +41,11 @@
 #if defined(BOOST_MSVC)
 #  pragma warning(push)
 #  pragma warning(disable:4396)
+
 #  pragma warning(disable:4522)  // multiple assignment operators specified
+// The warning, with VC12, was:
+// include\CGAL/iterator.h(1251) : warning C4522: 'CGAL::internal::Derivator<D,std::tuple<double,char>,std::tuple<std::back_insert_iterator<std::vector<double,std::allocator<_Ty>>>,std::back_insert_iterator<std::vector<char,std::allocator<char>>>>>' : multiple assignment operators specified
+
 #endif
 namespace CGAL {
 

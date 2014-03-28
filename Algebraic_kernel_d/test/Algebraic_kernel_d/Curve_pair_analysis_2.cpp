@@ -57,6 +57,7 @@ void test_routine() {
     typedef Integer Coefficient;
     typedef typename 
         CGAL::Polynomial_type_generator<Coefficient,1>::Type Poly_1;
+    CGAL_USE_TYPE(Poly_1);
     typedef typename 
         CGAL::Polynomial_type_generator<Coefficient,2>::Type Poly_2;
     
@@ -73,6 +74,7 @@ void test_routine() {
         Algebraic_kernel_d_1;
 
     typedef typename Algebraic_kernel_d_1::Algebraic_real_1 Algebraic_real;
+    CGAL_USE_TYPE(Algebraic_real);
 
 #if CGAL_ACK_USE_EXACUS
     typedef AcX::Algebraic_curve_2<Algebraic_kernel_d_1> Algebraic_curve_2;
