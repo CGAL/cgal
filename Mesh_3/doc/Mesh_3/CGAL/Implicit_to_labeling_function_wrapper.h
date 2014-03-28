@@ -4,24 +4,15 @@ namespace CGAL {
 \ingroup PkgMesh_3Domains
 
 The class `Implicit_multi_domain_to_labeling_function_wrapper` is an helping class to get a function with integer values
-labeling the components of a multi-domain. This wrapper class can be passed to `Labeled_mesh_domain_3` as first template parameter.
+labeling the components of a multi-domain. The multidomain is described through a set of function {fi(p), i=1, ...n}.
 Each component corresponds to a sign vector [s1, s2, ..., sn] where si is the sign of the function fi(p) at a point p of the component.
+This wrapper class can be passed to `Labeled_mesh_domain_3` as first template parameter.
 
 \par Example
-<pre>
-\e Creation \e of \e the \e wrapper\n
-    [f1, f2, f3]
-    [
-      [ -,  -,  +]
-      [ +,  -,  +]
-    ]
-\e Input\n
-    %Point_3 p
-\e Output\n
-    int N = 1  if f1(p)<0 and f2(p)<0 and f3(p)>0
-            2  if f1(p)>0 and f2(p)<0 and f3(p)>0
-            0  else
-</pre>
+For example, the multidomain described by the three funstions [f1,f2,f3] and the two sign vectors [-,-,+] and [+,-,+]
+ includes two components.<br />
+The first one matches the locus of points satisfying f1(p)<0 and f2(p)<0 and f3(p)>0.<br />
+The second one matches the locus of points satisfying f1(p)>0 and f2(p)<0 and f3(p)>0.<br />
 
 \tparam Function provides the definition of the function.
 This parameter stands for a model of the concept ImplicitFunction described in the surface mesh generation package.
@@ -53,13 +44,17 @@ public:
   /*!
    * \brief Construction from a vector of implicit functions.
    * \param implicit_functions the vector of implicit functions.
+   *
+   * Poistions vectors are built automatically.
+   * For each provided function f, we build a vector of position describing a component where
+   * each point p inside the component satisfies f(p)<0 and for each other function fo : fo(p)>0.
    */
   Implicit_multi_domain_to_labeling_function_wrapper (const Function_vector& implicit_functions);
 
   /*!
    * \brief Construction from a vector of implicit functions and a vector of vector of signs.
    * \param implicit_functions the vector of implicit functions.
-   * \param positions_vectors the vector of vector of signs.
+   * \param positions_vectors the vector of vector of signs. Each vector of position describes a component.
    * \sa `Sign`
    */
   Implicit_multi_domain_to_labeling_function_wrapper (const Function_vector& implicit_functions, const std::vector<std::vector<Sign> >& positions_vectors);
@@ -67,7 +62,7 @@ public:
   /*!
    * \brief Construction from a vector of implicit functions and a vector of strings.
    * \param implicit_functions the vector of implicit functions.
-   * \param positions_strings the vector of string. The strings contained in this vector must contain '+' or '-' only.
+   * \param positions_strings the vector of string. The strings contained in this vector must contain '+' or '-' only. Each string (vector of positions) describes a component.
    */
   Implicit_multi_domain_to_labeling_function_wrapper (const Function_vector& implicit_functions, const std::vector<std::string>& positions_strings);
 /// @}

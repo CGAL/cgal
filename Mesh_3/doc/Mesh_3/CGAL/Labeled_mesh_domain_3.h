@@ -23,7 +23,8 @@ a relative error bound passed as argument to the constructor of `Labeled_mesh_do
 Implicit_mesh_domain_3 is a heir of Labeled_mesh_domain_3. It uses a satisfying labeling function if there is only one component to mesh.
 
 \tparam LabelingFunction is the type of the input function.<br />
-Labeling function f must take its values into N.<br />
+This parameter stands for a model of the concept ImplicitFunction described in the surface mesh generation package.<br />
+Labeling function f must return 0 if the point isn't located in any subdomain. Usually, the return type of labeling functions are integer.<br />
 Let p be a Point.
 <ul>
 <li>f(p)=0 means that p is outside domain.</li>
