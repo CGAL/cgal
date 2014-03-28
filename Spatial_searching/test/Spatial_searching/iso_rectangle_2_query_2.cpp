@@ -24,12 +24,14 @@ main() {
   Tree tree;
   Random_points_iterator rpg;
 
+  //inserting N points one-by-one, thus the use of "reserve" is recommended, and thus we use it
+
   tree.reserve(N);
 
   //to test wether the tree.capacity() function works properly.
-  if( tree.capacity() != N)
+  if( tree.capacity() < N)
   {
-    std::cerr << "Something is wrong with allocating points memory." << std::endl;
+    std::cerr << "ERROR: Something is wrong with allocating points memory." << std::endl;
     return -1;
   }
 
