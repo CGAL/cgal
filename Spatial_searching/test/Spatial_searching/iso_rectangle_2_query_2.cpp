@@ -16,7 +16,7 @@ typedef CGAL::Fuzzy_iso_box<Traits> Fuzzy_iso_box;
 
 int
 main() {
-  const int N = 1000;
+  const size_t N = 1000;
 
   std::list<Point_d> points;
   points.push_back(Point_d(0,0));
