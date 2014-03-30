@@ -11,6 +11,7 @@ namespace CartesianDKernelFunctors {
 struct Flat_orientation {
 	std::vector<int> proj;
 	std::vector<int> rest;
+	bool reverse;
 };
 
 // For debugging purposes
@@ -23,6 +24,7 @@ inline std::ostream& operator<< (std::ostream& o, Flat_orientation const& f) {
   for(std::vector<int>::const_iterator i=f.rest.begin();
       i!=f.rest.end(); ++i)
     o << *i << ' ';
+  o << "\nInv: " << f.reverse;
   return o << '\n';
 }
 
@@ -53,9 +55,11 @@ template<class R_> struct Construct_flat_orientation : private Store_kernel<R_> 
 	typedef Flat_orientation result_type;
 
 	// This implementation is going to suck. Maybe we should push the
-	// functionality into LA.
+	// functionality into LA. And we should check (in debug mode) that
+	// the points are affinely independent.
 	template<class Iter>
 	result_type operator()(Iter f, Iter e)const{
+		Iter f_save = f;
 		PD pd (this->kernel());
 		CCC ccc (this->kernel());
 		int dim = pd(*f);
@@ -89,6 +93,9 @@ template<class R_> struct Construct_flat_orientation : private Store_kernel<R_> 
 			}
 		}
 		std::sort(proj.begin(),proj.end());
+		typename Get_functor<R, In_flat_orientation_tag>::type ifo(this->kernel());
+		o.reverse = false;
+		o.reverse = ifo(o, f_save, e) != CGAL::POSITIVE;
 		return o;
 	}
 };
@@ -186,8 +193,10 @@ template<class R_> struct In_flat_orientation : private Store_kernel<R_> {
 			if(*it != d) m(i,1+*it)=1;
 		}
 
-                return LA::sign_of_determinant(CGAL_MOVE(m));
-        }
+		result_type ret = LA::sign_of_determinant(CGAL_MOVE(m));
+		if(o.reverse) ret=-ret;
+		return ret;
+	}
 };
 
 template<class R_> struct In_flat_side_of_oriented_sphere : private Store_kernel<R_> {
@@ -233,8 +242,10 @@ template<class R_> struct In_flat_side_of_oriented_sphere : private Store_kernel
 			m(d+1,d+1)+=CGAL_NTS square(m(d+1,j+1));
 		}
 
-                return -LA::sign_of_determinant(CGAL_MOVE(m));
-        }
+		result_type ret = -LA::sign_of_determinant(CGAL_MOVE(m));
+		if(o.reverse) ret=-ret;
+		return ret;
+	}
 };
 
 
@@ -242,7 +253,7 @@ template<class R_> struct In_flat_side_of_oriented_sphere : private Store_kernel
 CGAL_KD_DEFAULT_TYPE(Flat_orientation_tag,(CGAL::CartesianDKernelFunctors::Flat_orientation),(),());
 CGAL_KD_DEFAULT_FUNCTOR(In_flat_orientation_tag,(CartesianDKernelFunctors::In_flat_orientation<K>),(Point_tag),(Compute_point_cartesian_coordinate_tag,Point_dimension_tag));
 CGAL_KD_DEFAULT_FUNCTOR(In_flat_side_of_oriented_sphere_tag,(CartesianDKernelFunctors::In_flat_side_of_oriented_sphere<K>),(Point_tag),(Compute_point_cartesian_coordinate_tag,Point_dimension_tag));
-CGAL_KD_DEFAULT_FUNCTOR(Construct_flat_orientation_tag,(CartesianDKernelFunctors::Construct_flat_orientation<K>),(Point_tag),(Compute_point_cartesian_coordinate_tag,Point_dimension_tag));
+CGAL_KD_DEFAULT_FUNCTOR(Construct_flat_orientation_tag,(CartesianDKernelFunctors::Construct_flat_orientation<K>),(Point_tag),(Compute_point_cartesian_coordinate_tag,Point_dimension_tag,In_flat_orientation_tag));
 CGAL_KD_DEFAULT_FUNCTOR(Contained_in_affine_hull_tag,(CartesianDKernelFunctors::Contained_in_affine_hull<K>),(Point_tag),(Compute_point_cartesian_coordinate_tag,Point_dimension_tag));
 }
 #endif
