@@ -28,7 +28,7 @@ class Triangulation_face
 {
     typedef typename internal::Dimen_plus_one<typename TDS::Maximal_dimension>::type Dimen_plus;
 public:
-    typedef typename TDS                            Triangulation_data_structure;
+    typedef TDS                                     Triangulation_data_structure;
     typedef typename TDS::Full_cell_handle          Full_cell_handle; /* Concept */
     typedef typename TDS::Vertex_handle             Vertex_handle; /* Concept */
     typedef internal::S_or_D_array<int, Dimen_plus> Indices;

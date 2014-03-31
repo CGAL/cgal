@@ -33,7 +33,7 @@ class Triangulation_ds_vertex
     typedef Triangulation_ds_vertex<TDS>    Self;
 
 public:
-    typedef typename TDS                    Triangulation_data_structure;
+    typedef TDS                             Triangulation_data_structure;
     typedef typename TDS::Full_cell_handle  Full_cell_handle; /* Concept */
 
     template <typename TDS2>
