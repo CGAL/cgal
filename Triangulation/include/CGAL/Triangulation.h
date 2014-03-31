@@ -66,20 +66,24 @@ protected:
       template<class Iter> 
       CGAL::Orientation operator()(Iter a, Iter b) const
       {
-        // CJTODO: temporary code
-        if (!*fop)
-          *fop = cfo(a,b);
-        return ifo(fop->get(),a,b);
-        // CJTODO: replace with this code:
-        /*if (*fop)
+        if (*fop)
           return ifo(fop->get(),a,b);
         *fop = cfo(a,b);
         CGAL_assertion(ifo(fop->get(),a,b) == CGAL::POSITIVE);
-        return CGAL::POSITIVE;*/
+        return CGAL::POSITIVE;
       }
     };
 
-    void reset_flat_orientation(){flat_orientation_=boost::none;}
+    void reset_flat_orientation()
+    {
+      if (current_dimension() == preset_flat_orientation_.first)
+      {
+        std::cout << "YOUP";
+        flat_orientation_ = preset_flat_orientation_.second;
+      }
+      else
+        flat_orientation_ = boost::none;
+    }
 
     typedef typename TriangulationTraits::Orientation_d
                                                     Orientation_d;
@@ -145,6 +149,7 @@ protected: // DATA MEMBERS
     Vertex_handle                       infinity_;
     mutable std::vector<Oriented_side>  orientations_;
     mutable boost::optional<Flat_orientation_d> flat_orientation_;
+    std::pair<int, Flat_orientation_d> preset_flat_orientation_;
     // for stochastic walk in the locate() function:
     mutable Random                      rng_;
 #ifdef CGAL_TRIANGULATION_STATISTICS
@@ -181,13 +186,30 @@ public:
         return tds().index_of_covertex(f);
     }
 
-    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - CREATION
+    // - - - - - - - - - - - - - - - - - - - - - - - - CREATION / CONSTRUCTORS
 
     Triangulation(const int dim, const Geom_traits k = Geom_traits())
         : tds_(dim)
         , kernel_(k)
         , infinity_()
         , rng_((long)0)
+#ifdef CGAL_TRIANGULATION_STATISTICS
+        ,walk_size_(0)
+#endif
+    {
+        preset_flat_orientation_.first = std::numeric_limits<int>::max();
+        clear();
+    }
+
+    Triangulation(
+      const int dim, 
+      const std::pair<int, Flat_orientation_d> &preset_flat_orientation, 
+      const Geom_traits k = Geom_traits())
+        : tds_(dim)
+        , kernel_(k)
+        , infinity_()
+        , rng_((long)0)
+        , preset_flat_orientation_(preset_flat_orientation)
 #ifdef CGAL_TRIANGULATION_STATISTICS
         ,walk_size_(0)
 #endif
@@ -204,6 +226,8 @@ public:
         ,walk_size_(t2.walk_size_)
 #endif
     {
+        preset_flat_orientation_.first = std::numeric_limits<int>::max(); // CJTODO: copy from t2?
+
         // We find the vertex at infinity by scanning the vertices of both
         // triangulations. This works because Compact_container garantees that
         // the vertices in the copy (*this) are stored in the same order as in
@@ -934,14 +958,15 @@ Triangulation<TT, TDS>
                 continue; // go to next full_cell's facet
             }
 
-        //typedef typename Self::Point_const_iterator Point_const_iterator;
-        Point_equality_predicate pred(s->vertex(i)->point());
-        Substitute_iterator< Point_const_iterator, Point_equality_predicate >
-          begin( points_begin(s), pred, p),
-          end  ( points_begin(s)+ (cur_dim+1), pred, p);
-        orientations_[i] = orientation_pred( begin, end);
- 
-        /* // we temporarily substitute |p| to the |i|-th point of the
+            //typedef typename Self::Point_const_iterator Point_const_iterator;
+            /*Point_equality_predicate pred(s->vertex(i)->point());
+            Substitute_iterator< Point_const_iterator, Point_equality_predicate >
+              begin( points_begin(s), pred, p),
+              end  ( points_begin(s)+ (cur_dim+1), pred, p);
+            orientations_[i] = orientation_pred( begin, end);*/
+
+            // CJTODO: make it better (no temporary replacement...)
+            // we temporarily substitute |p| to the |i|-th point of the
             // full_cell
             Point backup = s->vertex(i)->point();
             s->vertex(i)->set_point(p);
@@ -951,7 +976,7 @@ Triangulation<TT, TDS>
                 points_begin(s) + cur_dim + 1);
 
             // restore the correct point for vertex |i| of the full_cell
-            s->vertex(i)->set_point(backup); */
+            s->vertex(i)->set_point(backup);
 
             if( orientations_[i] != NEGATIVE )
             {

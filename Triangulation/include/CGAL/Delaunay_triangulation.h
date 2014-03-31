@@ -165,10 +165,18 @@ public:
         return Rotor(s, new_second, opposite);
     }
     
-// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - CREATION
+// - - - - - - - - - - - - - - - - - - - - - - - - - - CREATION / CONSTRUCTORS
 
     Delaunay_triangulation(const int dim, const Geom_traits k = Geom_traits())
     : Base(dim, k)
+    {
+    }
+
+    Delaunay_triangulation(
+      const int dim, 
+      const std::pair<int, Flat_orientation_d> &preset_flat_orientation, 
+      const Geom_traits k = Geom_traits())
+    : Base(dim, preset_flat_orientation, k)
     {
     }
 
@@ -286,19 +294,20 @@ public:
             }
             else
             {
-                /*int i=s->index( dc_.infinite_vertex() );
-                  Point p_inf= s->vertex(i)->point();
-                  s->vertex(i)->set_point(p_); // set temporarily position of infinity to p_
-                  Orientation o =  ori_(dc_.points_begin(s), dc_.points_begin(s) + cur_dim_ + 1);
-                  s->vertex(i)->set_point(p_inf); // restore position of infinity */
+                // CJTODO: make it better (no temporary replacement...)
+                int i=s->index( dc_.infinite_vertex() );
+                Point p_inf= s->vertex(i)->point();
+                s->vertex(i)->set_point(p_); // set temporarily position of infinity to p_
+                Orientation o =  ori_(dc_.points_begin(s), dc_.points_begin(s) + cur_dim_ + 1);
+                s->vertex(i)->set_point(p_inf); // restore position of infinity
 
-                typedef typename Base::Point_const_iterator Point_const_iterator;
+                /*typedef typename Base::Point_const_iterator Point_const_iterator;
                 typedef typename Base::Point_equality_predicate Point_equality_predicate;
                 Point_equality_predicate pred( dc_.infinite_vertex()->point() );
                 Substitute_iterator< Point_const_iterator, Point_equality_predicate >
                     begin( dc_.points_begin(s), pred, p_),
                     end  ( dc_.points_begin(s)+ (cur_dim_+1), pred, p_);
-                Orientation o =   ori_( begin, end);
+                Orientation o =   ori_( begin, end);*/
 
                 if( POSITIVE == o )
                     ok = true;
@@ -442,7 +451,10 @@ Delaunay_triangulation<DCTraits, TDS>
     typedef typename Dark_triangulation::Facet            Dark_facet;
     typedef typename Dark_triangulation::Vertex_handle    Dark_v_handle;
     typedef typename Dark_triangulation::Full_cell_handle   Dark_s_handle;
-    Dark_triangulation dark_side(maximal_dimension());
+    Dark_triangulation dark_side(maximal_dimension(), 
+      flat_orientation_ ?
+      std::make_pair(current_dimension(), flat_orientation_.get())
+      : std::make_pair(std::numeric_limits<int>::max(), Flat_orientation_d()) );
     Dark_s_handle dark_s;
     Dark_v_handle dark_v;
     typedef std::map<Vertex_handle, Dark_v_handle> Vertex_map;
