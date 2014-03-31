@@ -324,11 +324,12 @@ The following example demonstrates the most common use of
 \code
 #include <CGAL/intersections.h>
 
-template<typename R>
+template <typename R>
 struct Intersection_visitor {
   typedef void result_type;
   void operator()(const Point_2<R>& p) const
-  { // handle point
+  {
+    // handle point
   }
   void operator()(const Segment_2<R>& s) const
   {
@@ -336,8 +337,8 @@ struct Intersection_visitor {
   }
 };
 
-template <class R>
-void foo(const Segment_2<R>& seg, const Line_2<R>& lin)
+template <typename R>
+void foo (const Segment_2<R>& seg, const Line_2<R>& lin)
 {
   // with C++11 support
   // auto result = intersection(seg, lin);
