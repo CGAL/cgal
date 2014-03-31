@@ -169,10 +169,9 @@ public:
   {
     CGAL_precondition(Rt().orientation_3_object()(p,q,r,s) == CGAL::POSITIVE);
     
-    // We use Side_of_oriented_sphere_3: it is static filtered and
+    // We use Power_test_3: it is static filtered and
     // we know that p,q,r,s are positive oriented
-    typename Rt::Side_of_oriented_sphere_3 side_of_oriented_sphere =
-      Rt().side_of_oriented_sphere_3_object();
+    typename Rt::Power_test_3 power_test = Rt().power_test_3_object();
 
     // Compute denominator to swith to exact if it is 0
     FT num_x, num_y, num_z, den;
@@ -188,7 +187,7 @@ public:
       Bare_point res(p.x() + num_x*inv, p.y() - num_y*inv, p.z() + num_z*inv);
       
       // Fast output
-      if ( side_of_oriented_sphere(p,q,r,s,res) == CGAL::ON_POSITIVE_SIDE )
+      if ( power_test(p,q,r,s,res) == CGAL::ON_POSITIVE_SIDE )
         return res;
     }
     
