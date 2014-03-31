@@ -550,8 +550,8 @@ public:
 protected:
     template< typename OrientationPredicate >
     Full_cell_handle do_locate(   const Point &, Locate_type &, Face &, Facet &,
-                                Full_cell_handle start = Full_cell_handle(),
-                                const OrientationPredicate & o = geom_traits().orientation_d_object()) const;
+                                Full_cell_handle start,
+                                const OrientationPredicate & o) const;
 public:
     Full_cell_handle locate(  const Point &, Locate_type &, Face &, Facet &,
                             Full_cell_handle start = Full_cell_handle()) const;
