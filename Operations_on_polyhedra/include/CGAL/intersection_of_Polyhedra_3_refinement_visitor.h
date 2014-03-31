@@ -64,6 +64,9 @@
 //    within their double interval so that all triangles incident to each of these points are correctly
 //    oriented. This is probably an expensive test that can be activated only with a template parameter
 //    of something similar.
+//  -- We should have an option to report intersection at a point and refinement of polyhedra
+//     so that the point is included into the other polyhedra. Please be careful if the point
+//     already exists bool report_isolated_point or a template parameter (polyline with a unique point)
 namespace CGAL
 {
   
