@@ -77,10 +77,7 @@ protected:
     void reset_flat_orientation()
     {
       if (current_dimension() == preset_flat_orientation_.first)
-      {
-        std::cout << "YOUP";
         flat_orientation_ = preset_flat_orientation_.second;
-      }
       else
         flat_orientation_ = boost::none;
     }
