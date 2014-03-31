@@ -20,7 +20,7 @@ public:
 
 /// \name Types 
 /// @{
-
+///The following types aren't required for any pointer to a function of type `FT (*)(Point)`.
 /*!
 Number type 
 */ 

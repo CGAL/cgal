@@ -18,16 +18,10 @@ The second one matches the locus of points satisfying f1(p)>0 and f2(p)<0 and f3
 This parameter stands for a model of the concept ImplicitFunction described in the surface mesh generation package.
 The number types Function::FT and BGT::FT are required to match.
 
-\tparam BGT is a geometric traits class that provides
-the basic operations to implement
-intersection tests and intersection computations
-through a bisection method. This parameter must be instantiated
-with a model of the concept `BisectionGeometricTraits_3`.
-
 \sa `Implicit_mesh_domain_3`.
 
 */
-template<class Function, class BGT>
+template<class Function>
 class Implicit_multi_domain_to_labeling_function_wrapper
 {
 public:
@@ -36,7 +30,7 @@ public:
   //!
   typedef std::vector<Function*>   Function_vector;
   //!
-  typedef typename BGT::Point_3     Point_3;
+  typedef typename Function::Point     Point_3;
   /// @}
 
   /// \name Creation
@@ -45,9 +39,7 @@ public:
    * \brief Construction from a vector of implicit functions.
    * \param implicit_functions the vector of implicit functions.
    *
-   * Poistions vectors are built automatically.
-   * For each provided function f, we build a vector of position describing a component where
-   * each point p inside the component satisfies f(p)<0 and for each other function fo : fo(p)>0.
+   * Poistions vectors are built automatically so that the union of components equals the union of the functions.
    */
   Implicit_multi_domain_to_labeling_function_wrapper (const Function_vector& implicit_functions);
 

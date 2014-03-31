@@ -51,7 +51,7 @@ using namespace CGAL::parameters;
 // Domain
 struct K: public CGAL::Exact_predicates_inexact_constructions_kernel {};
 typedef FT_to_point_function_wrapper<K::FT, K::Point_3> Function;
-typedef CGAL::Mesh_3::Implicit_multi_domain_to_labeling_function_wrapper<Function, K>
+typedef CGAL::Mesh_3::Implicit_multi_domain_to_labeling_function_wrapper<Function>
                                                         Function_wrapper;
 typedef Function_wrapper::Function_vector Function_vector;
 typedef CGAL::Mesh_3::Labeled_mesh_domain_3<Function_wrapper, K> Mesh_domain;

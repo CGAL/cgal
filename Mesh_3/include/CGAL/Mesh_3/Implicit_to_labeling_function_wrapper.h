@@ -139,13 +139,28 @@ private:
 
 };  // end class Implicit_to_labeling_function_wrapper
 
-template <class ImplicitFunction, class BGT>
+template <class ImplicitFunction>
 class Implicit_multi_domain_to_labeling_function_wrapper
 {
+  template <class T_>
+  class Implicit_function_traits
+  {
+  public:
+    typedef typename T_::Point Point;
+  };
+
+  template <class RT_, class Point_>
+  class Implicit_function_traits<RT_ (*)(Point_)>
+  {
+  public:
+    typedef typename boost::remove_reference<
+            typename boost::remove_cv< Point_ >::type>::type Point;
+  };
+
 public:
   typedef int                     return_type;
-  typedef typename BGT::Point_3   Point_3;
   typedef ImplicitFunction        Function;
+  typedef typename Implicit_function_traits<ImplicitFunction>::Point   Point_3;
   typedef std::vector<Function>   Function_vector;
 
 private:
@@ -156,6 +171,8 @@ public:
   Implicit_multi_domain_to_labeling_function_wrapper (const Function_vector& vf, const std::vector<std::vector<Sign> >& vps)
   : funcs(vf), bmasks(vps.size(), boost::dynamic_bitset<>(funcs.size() * 2, false))
   {
+    assert(funcs.size());
+
     std::size_t mask_index = 0;
     for (std::vector<std::vector<Sign> >::const_iterator mask_iter = vps.begin(), mask_end_iter = vps.end();
          mask_iter != mask_end_iter;
@@ -181,23 +198,35 @@ public:
   }
 
   Implicit_multi_domain_to_labeling_function_wrapper (const Function_vector& vf)
-  : funcs(vf), bmasks(vf.size(), boost::dynamic_bitset<>(funcs.size() * 2, false))
+  : funcs(vf)
   {
-    for (std::size_t mask_index = 0; mask_index < bmasks.size(); ++mask_index)
-    {
-      boost::dynamic_bitset<>& bmask = bmasks[mask_index];
+    assert(funcs.size());
 
-      std::size_t bound = ((mask_index+1) * 2);
-      for (std::size_t i = 1; i < bound; i += 2)
-        bmask[i] = true;
-      for (std::size_t i = bound; i < bmask.size(); i += 2)
-        bmask[i] = true;
+    bmasks.reserve((1 << funcs.size()) - 1);
+    bmasks.push_back(boost::dynamic_bitset<>(std::string("10")));
+    bmasks.push_back(boost::dynamic_bitset<>(std::string("01")));
+
+    for (std::size_t i = 0; i < funcs.size()-1; ++i)
+    {
+      std::size_t c_size = bmasks.size();
+      for (std::size_t index = 0; index < c_size; ++index)
+      {
+        boost::dynamic_bitset<> aux = bmasks[index];
+        aux.push_back(true);
+        aux.push_back(false);
+        bmasks.push_back(aux);
+        bmasks[index].push_back(false);
+        bmasks[index].push_back(true);
+      }
     }
+    bmasks.pop_back();
   }
 
   Implicit_multi_domain_to_labeling_function_wrapper (const Function_vector& vf, const std::vector<std::string>& vps)
   : funcs(vf), bmasks(vps.size(), boost::dynamic_bitset<>(funcs.size() * 2, false))
   {
+    assert(funcs.size());
+
     std::size_t mask_index = 0;
     for (std::vector<std::string>::const_iterator mask_iter = vps.begin(), mask_end_iter = vps.end();
          mask_iter != mask_end_iter;
