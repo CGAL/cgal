@@ -95,6 +95,12 @@ The full cell type. A model of the concept `TriangulationDSFullCell`.
 */
 typedef Hidden_type Full_cell;
 
+/*! 
+\cgalModifBegin
+A model of the concept `FullCellData`.
+\cgalModifEnd
+*/ 
+typedef Hidden_type Full_cell_data; 
 /*!
 
 The concept `TriangulationDataStructure` also defines a type for

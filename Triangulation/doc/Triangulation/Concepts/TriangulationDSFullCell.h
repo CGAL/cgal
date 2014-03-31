@@ -34,11 +34,19 @@ public:
 
 /// \name Types
 /// @{
+  
+/*!
+\cgalModifBegin
+The `Triangulation_data_structure` in which the `TriangulationDSFullCell` is
+defined/used.
+Must be a model of the `TriangulationDataStructure` concept.
+\cgalModifEnd
+*/
+typedef Hidden_type Triangulation_data_structure;
 
 /*!
 A handle to a vertex. It must be the same as the
-nested type `TriangulationDataStructure::Vertex_handle` of the `TriangulationDataStructure` in which the
-`TriangulationDSFullCell` is defined/used.
+nested type `TriangulationDataStructure::Vertex_handle`.
 */
 typedef Hidden_type Vertex_handle;
 
@@ -50,8 +58,7 @@ typedef Hidden_type Vertex_handle_iterator;
 
 /*!
 A handle to a full cell. It must be the same as the
-nested type `TriangulationDataStructure::Full_cell_handle` of the `TriangulationDataStructure` in which the
-`TriangulationDSFullCell` is defined/used.
+nested type `TriangulationDataStructure::Full_cell_handle`.
 */
 typedef Hidden_type Full_cell_handle;
 
@@ -299,18 +306,22 @@ void * for_compact_container() const;
 void * & for_compact_container();
 
 /*!
-Reads (possibly) non-combinatorial information about a full cell from the stream `is`
-into `c`.
-*/
-template<class TriangulationDataStructure> 
-std::istream& operator>>(std::istream & is, Triangulation_ds_full_cell<TriangulationDataStructure> & c);
-
-/*!
+\cgalModifBegin
 Writes (possibly) non-combinatorial information about full cell `c` to the stream
 `os`.
+\cgalModifEnd
 */
 template<class TriangulationDataStructure> 
 std::ostream& operator<<(std::ostream & os, const Triangulation_ds_full_cell<TriangulationDataStructure> & c);
+
+/*!
+\cgalModifBegin
+Reads from stream `is` the full cell information written 
+by `operator<<`.
+\cgalModifEnd
+*/
+template<class TriangulationDataStructure> 
+std::istream& operator>>(std::istream & is, Triangulation_ds_full_cell<TriangulationDataStructure> & c);
 
 /// @}
 

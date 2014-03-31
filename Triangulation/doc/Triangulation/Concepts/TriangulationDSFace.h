@@ -31,16 +31,23 @@ public:
 /// @{
 
 /*!
-Must be the same as the nested type
-`TriangulationDataStructure::Full_cell_handle` of the `TriangulationDataStructure` in which the `TriangulationDSFace` is
+\cgalModifBegin
+The `Triangulation_data_structure` in which the `TriangulationDSFace` is
 defined/used.
+Must be a model of the `TriangulationDataStructure` concept.
+\cgalModifEnd
+*/
+typedef Hidden_type Triangulation_data_structure;
+
+/*!
+Must be the same as the nested type
+`Triangulation_data_structure::Full_cell_handle`.
 */
 typedef Hidden_type Full_cell_handle;
 
 /*!
 Must be the same as the nested type
-`TriangulationDataStructure::Vertex_handle` of the `TriangulationDataStructure` in which the `TriangulationDSFace` is
-defined/used.
+`Triangulation_data_structure::Vertex_handle`.
 */
 typedef Hidden_type Vertex_handle;
 

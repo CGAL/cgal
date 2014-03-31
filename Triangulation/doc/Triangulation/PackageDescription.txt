@@ -73,6 +73,8 @@ following concepts:
 
 `TriangulationDSFace`
 
+`FullCellData`
+
 ## Triangulations ##
 
 `TriangulationTraits`
@@ -89,26 +91,26 @@ The latter two concepts are also abbreviated respectively as `TrVertex` and `TrF
 
 ## Triangulation data structure ##
 
-\ref ::CGAL::Triangulation_data_structure<Dimensionality, TriangulationDSVertex, TriangulationDSFullCell>
+- `CGAL::Triangulation_data_structure<Dimensionality, TriangulationDSVertex, TriangulationDSFullCell>`
 
-\ref ::CGAL::Triangulation_ds_vertex<TriangulationDataStructure>
+- `CGAL::Triangulation_ds_vertex<TriangulationDataStructure>`
 
-\ref ::CGAL::Triangulation_ds_full_cell<TriangulationDataStructure, TDSFullCellStoragePolicy>
+- `CGAL::Triangulation_ds_full_cell<TriangulationDataStructure, TDSFullCellStoragePolicy>`
 
-\ref ::CGAL::Triangulation_face<TriangulationDataStructure>
+- `CGAL::Triangulation_face<TriangulationDataStructure>`
 
 ## (Geometric) triangulations ##
 
-\ref ::CGAL::Triangulation<TriangulationTraits, TriangulationDataStructure>
+- `CGAL::Triangulation<TriangulationTraits, TriangulationDataStructure>`
 
-\ref ::CGAL::Delaunay_triangulation<DelaunayTriangulationTraits, TriangulationDataStructure>
+- `CGAL::Delaunay_triangulation<DelaunayTriangulationTraits, TriangulationDataStructure>`
 
-\ref ::CGAL::Triangulation_vertex<TriangulationTraits, Data, TriangulationDSVertex>
+- `CGAL::Triangulation_vertex<TriangulationTraits, Data, TriangulationDSVertex>`
 
-\ref ::CGAL::Triangulation_full_cell<TriangulationTraits, Data, TriangulationDSFullCell>
+- `CGAL::Triangulation_full_cell<TriangulationTraits, Data, TriangulationDSFullCell>`
 
 ## Enums ##
 
-\ref ::CGAL::Triangulation::Locate_type
+- `CGAL::Triangulation::Locate_type`
 */
 

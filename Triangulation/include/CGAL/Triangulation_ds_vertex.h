@@ -33,6 +33,7 @@ class Triangulation_ds_vertex
     typedef Triangulation_ds_vertex<TDS>    Self;
 
 public:
+    typedef typename TDS                    Triangulation_data_structure;
     typedef typename TDS::Full_cell_handle  Full_cell_handle; /* Concept */
 
     template <typename TDS2>
@@ -137,9 +138,9 @@ operator<<(std::ostream & os, const Triangulation_ds_vertex<TDS> & v) /* Concept
 template<>
 class Triangulation_ds_vertex<void>
 {
-    typedef internal::Triangulation::Dummy_TDS  Triangulation_ds;
 public:
-    typedef Triangulation_ds::Full_cell_handle  Full_cell_handle; /* Concept */
+    typedef internal::Triangulation::Dummy_TDS Triangulation_data_structure;
+    typedef Triangulation_data_structure::Full_cell_handle Full_cell_handle; /* Concept */
     template <typename TDS2>
     struct Rebind_TDS /* Concept */
     {

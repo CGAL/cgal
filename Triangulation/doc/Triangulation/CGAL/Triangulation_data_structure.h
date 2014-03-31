@@ -5,16 +5,16 @@ namespace CGAL {
 \ingroup PkgTriangulations
 
 This class is used for storing the combinatorial information of a triangulation 
-of dimension \f$ k\leq d\f$. 
+of dimension \f$ d\leq D\f$ (`D` is the maximal dimension).
 
 Parameters 
 -------------- 
 
 `Dimensionality` can be either <UL> 
 
-<LI>CGAL::`Dimension_tag<d>` for some integer `d`. This 
+<LI>CGAL::`Dimension_tag<D>` for some integer `D`. This 
 indicates that the triangulation data structure can store simplices (full cells) of dimension at most 
-`d`. The maximum dimension `d` is known by the compiler, which 
+`D`. The maximal dimension `D` is known by the compiler, which 
 triggers some optimizations. Or 
 
 <LI>CGAL::`Dynamic_dimension_tag`. In this case, the maximum 
@@ -77,16 +77,6 @@ bool is_valid(bool verbose = true) const;
 
 /// \name Types 
 /// @{
-
-/*! 
-\cgalAdvancedBegin
-A data member of type `Full_cell_data` is stored in every full cell
-(models of the concept `TriangulationDSFullCell`). It is used to mark
-some full cells, during modifications of the triangulation data
-structure.
-\cgalAdvancedEnd
-*/ 
-typedef Hidden_type Full_cell_data; 
 
 /// @} 
 

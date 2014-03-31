@@ -4,10 +4,14 @@ namespace CGAL {
 /*!
 \ingroup PkgTriangulations
 
+\cgalModifBegin
 The class `Triangulation` is used to store and query the full cells and vertices of
-a triangulationin dimension \f$ d\f$. A special vertex, named
+a triangulationin dimension \f$ d\f$(see the 
+\ref Chapter_Triangulations "User Manual" for
+a definition of "triangulation"). A special vertex, named
 <I>infinite vertex</I>, is used to triangulate the outside of the convex
 hull of the points in so called <I>infinite cells</I>.
+\cgalModifEnd
 
 Parameters
 --------------
@@ -55,7 +59,7 @@ A point in Euclidean space.
 typedef TriangulationTraits::Point_d Point;
 
 /*!
-This indicates whether the dimension of the underlying space is static
+This indicates whether the maximal dimension is static
 (i.e.\ if the type of `Maximal_dimension` is `CGAL::Dimension_tag<int dim>`)
 or dynamic (i.e.\ if the type of `Maximal_dimension` is 
 `CGAL::Dynamic_dimension_tag`).
@@ -542,7 +546,7 @@ to the newly created full cells are output in the `out` output iterator.
 interior and not contain any vertex all of whose incident full cells are in
 \f$C\f$ . (This implies that `t.current_dimension()`\f$ \geq 2\f$ if
 \f$|C|>1\f$ .) The boundary of \f$C\f$ must be a triangulation of the sphere
-\f$ \mathcal S ^k-1\f$.
+\f$ \mathcal S ^d-1\f$.
 \cgalAdvancedEnd
 */
 template < typename ForwardIterator, typename OutputIterator >

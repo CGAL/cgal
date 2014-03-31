@@ -29,11 +29,19 @@ public:
 
 /// \name Types
 /// @{
+  
+/*!
+\cgalModifBegin
+The `Triangulation_data_structure` in which the `TriangulationDSVertex` is
+defined/used.
+Must be a model of the `TriangulationDataStructure` concept.
+\cgalModifEnd
+*/
+typedef Hidden_type Triangulation_data_structure;
 
 /*!
 A handle to a cell. It must be the same as the
-nested type `TriangulationDataStructure::Full_cell_handle` of the `TriangulationDataStructure` in which the
-`TriangulationDSVertex` is defined/used.
+nested type `TriangulationDataStructure::Full_cell_handle`.
 */
 typedef Hidden_type Full_cell_handle;
 
@@ -121,18 +129,21 @@ void * for_compact_container() const;
 void * & for_compact_container();
 
 /*!
-Reads (possibly) non-combinatorial information about a vertex from the stream `is`
-into `v`.
-*/
-template<class TriangulationDataStructure> 
-std::istream& operator>>(std::istream & is, Triangulation_ds_vertex<TriangulationDataStructure> & v);
-
-/*!
+\cgalModifBegin
 Writes (possibly) non-combinatorial information about vertex `v` to the stream
 `os`.
+\cgalModifEnd
 */
 template<class TriangulationDataStructure> 
 std::ostream& operator<<(std::ostream & os, const Triangulation_ds_vertex<TriangulationDataStructure> & v);
+
+/*!
+\cgalModifBegin
+Reads from stream `is` the vertex information written by `operator<<`.
+\cgalModifEnd
+*/
+template<class TriangulationDataStructure> 
+std::istream& operator>>(std::istream & is, Triangulation_ds_vertex<TriangulationDataStructure> & v);
 
 /// @}
 

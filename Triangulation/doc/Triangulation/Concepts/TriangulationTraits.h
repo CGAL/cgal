@@ -9,14 +9,11 @@ It brings the geometric ingredient to the
 definition of a triangulation, while the combinatorial ingredient is brought by 
 the second template parameter, `TriangulationDataStructure`. 
 
-Inserting a range of points in a triangulation is optimized using 
-spatial sorting, thus besides the requirements below, 
-a class provided as `TriangulationTraits` should also satisfy the concept 
-`SpatialSortingTraits_d`. 
-
-\cgalRefines ::SpatialSortingTraits_d If a range of points is inserted, the 
-traits must refine `SpatialSortingTraits_d`. This is not needed 
-if the points are inserted one by one. 
+\cgalModifBegin
+\cgalRefines `SpatialSortingTraits_d` If a range of points is inserted, the 
+traits must refine `SpatialSortingTraits_d` (this operation is optimized using 
+spatial sorting). This is not required if the points are inserted one by one.
+\cgalModifEnd
 
 \cgalHasModel `CGAL::Cartesian_d<FT, Dim, LA>`
 \cgalHasModel `CGAL::Epick_d<Dim>` (recommended)
@@ -31,13 +28,13 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
-A type representing the dimension of the underlying space. it can be static 
-(`Maximal_dimension`=`CGAL::``Dimension_tag<int dim>`) or 
-dynamic (`Maximal_dimension`=`CGAL::``Dynamic_dimension_tag`). 
-This dimension must match the dimension of the predicate 
-`Orientation_d` but not necessarily the one of `Point_d`. 
-
+/*!
+\cgalModifBegin
+A type representing the dimension of the `Orientation_d` predicate 
+(but not necessarily the one of `Point_d`). 
+Tt can be static (`Dimension`=`CGAL::``Dimension_tag<int dim>`) or 
+dynamic (`Dimension`=`CGAL::``Dynamic_dimension_tag`).
+\cgalModifEnd
 */ 
 typedef Hidden_type Dimension; 
 
@@ -47,23 +44,15 @@ A type representing a point in Euclidean space.
 typedef Hidden_type Point_d; 
 
 /*! 
-Functor returning the dimension of a `Point_d`. 
-Must provide 
-`int operator()(Point_d p)` returning the dimension of \f$ p\f$. 
-
-*/ 
-typedef Hidden_type Point_dimension_d; 
-
-/*! 
 A predicate object that must provide the 
 templated operator 
-`template<typename ForwardIterator> Orientation operator()(ForwardIterator start, ForwardIterator end)`. 
-The operator returns 
-`CGAL::POSITIVE`, `CGAL::NEGATIVE` or `CGAL::COPLANAR` depending on 
-the orientation of the simplex defined by the points in the range `[start, end)`. 
-\pre `std::distance(start,end)=D+1`, where 
-`Point_dimension_d(*it)` is \f$ D\f$ for all `it` in `[start,end)`. 
-
+`template<typename ForwardIterator> Orientation operator()(ForwardIterator start, ForwardIterator end)`.
+\cgalModifBegin
+The operator returns the orientation of the simplex defined by the points 
+in the range `[start, end)`; the value can be 
+`CGAL::POSITIVE`, `CGAL::NEGATIVE` or `CGAL::COPLANAR`.
+\pre If `Dimension`=`CGAL::``Dimension_tag<D>`, then `std::distance(start,end)=D+1`.
+\cgalModifEnd
 */ 
 typedef Hidden_type Orientation_d; 
 
@@ -73,11 +62,13 @@ the templated operator
 `template<typename ForwardIterator> bool operator()(ForwardIterator start, ForwardIterator end, const Point_d & p)`. 
 The operator returns `true` if and only if point `p` is 
 contained in the affine space spanned by the points in the range `[start, end)`. That affine space is also called the <I>affine hull</I> of the points 
-in the range. 
-\pre The \f$ k\f$ points in the range 
+in the range.
+\cgalModifBegin
+\pre If `Dimension`=`CGAL::``Dimension_tag<D>`, 
+then `std::distance(start,end)=D+1`.
+The points in the range 
 must be affinely independent. 
-`Point_dimension_d(*it)` is \f$ D\f$ for all `it` in 
-`[start,end)`, for some \f$ D\f$. 
+\cgalModifEnd
 \f$ 2\leq k\leq D\f$. 
 
 */ 
@@ -112,19 +103,19 @@ The flat spanned by the points in
 the range `R=[start, end)` can be oriented in two different ways, 
 the operator 
 returns an object that allow to orient that flat so that `R=[start, end)` 
-defines a positive simplex. 
-\pre The \f$ k\f$ points in the range 
-must be affinely independent. 
-`Point_dimension_d(*it)` is \f$ D\f$ for all `it` in `R` for 
-some \f$ D\f$. 
+defines a positive simplex.
+\cgalModifBegin
+\pre If `Dimension`=`CGAL::``Dimension_tag<D>`, 
+then `std::distance(start,end)=D+1`.
+The points in range
+`[start,end)` must be affinely independent.
+\cgalModifEnd
 \f$ 2\leq k\leq D\f$. 
 
 */ 
 typedef Hidden_type Construct_flat_orientation_d; 
 
 /*! 
-
-CJTODO: update this?
 
 A predicate object that must provide the 
 templated operator 
@@ -136,11 +127,7 @@ the orientation of the simplex defined by the points in the range `[start, end)`
 The points are supposed to belong to the lower dimensional flat 
 whose orientation is given by `orient`. 
 \pre `std::distance(start,end)=k` where \f$ k\f$ is the number of 
-points 
-used to construct `orient`. 
-`Point_dimension_d(*it)` is \f$ D\f$ for all `it` in 
-`[start,end)` where \f$ D\f$ is the dimension of the points used to 
-construct `orient`. 
+points used to construct `orient`. 
 \f$ 2\leq k\leq D\f$. 
 
 */ 
