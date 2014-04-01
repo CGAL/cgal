@@ -1403,7 +1403,7 @@ Triangulation_data_structure<Dimen, Vb, Fcb>
 
     const int cur_dim = current_dimension();
     // write the vertex indices of each full_cell
-    size_t i = 0;
+    int i = 0;
     for( Full_cell_const_iterator it = full_cells_begin(); it != full_cells_end(); ++it )
     {
         index_of_full_cell[it] = i++;
@@ -1528,10 +1528,9 @@ operator<<(std::ostream & os, const Triangulation_data_structure<Dimen, Vb, Fcb>
     if( n == 0 )
         return os;
 
-    size_t i(0);
     // write the vertices
     std::map<Vertex_handle, int> index_of_vertex;
-
+    int i = 0;
     for( Vertex_iterator it = tr.vertices_begin(); it != tr.vertices_end(); ++it, ++i )
     {
         os << *it; // write the vertex

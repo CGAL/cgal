@@ -89,7 +89,7 @@ public:
 
     int maximal_dimension() const /* Concept */
     {
-        return vertices().size() - 1;
+        return static_cast<int>(vertices().size() - 1);
     }
 
     Vertex_handle_const_iterator vertices_begin() const /* Concept */

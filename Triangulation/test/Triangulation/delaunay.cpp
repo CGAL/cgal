@@ -39,7 +39,7 @@ void test(const int d, const string & type, const int N)
     vector<Point> points;
     CGAL::Random rng;
     Random_points_iterator rand_it(d, 2.0, rng);
-    //CGAL::copy_n(rand_it, N, back_inserter(points));
+    //CGAL::cpp11::copy_n(rand_it, N, back_inserter(points));
     
     vector<int> coords(d);
     for( int i = 0; i < N; ++i )

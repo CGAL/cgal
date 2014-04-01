@@ -128,7 +128,7 @@ int main(int argc, char **argv)
 {
     int N = 5;
     int nb_trials = 4;
-    int rand_init=time(NULL);
+    unsigned int rand_init = static_cast<unsigned int>(time(NULL));
     if( argc > 1 )
         N = atoi(argv[1]);
     if( argc > 2 )

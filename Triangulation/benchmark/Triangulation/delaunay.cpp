@@ -31,7 +31,7 @@ void test(const int d, const std::string & type, const int N)
     std::vector<Point> points;
     CGAL::Random rng;
     Random_points_iterator rand_it(d, 2.0, rng);
-    CGAL::copy_n(rand_it, N, std::back_inserter(points));
+    CGAL::cpp11::copy_n(rand_it, N, std::back_inserter(points));
     cost.reset();cost.start();
     std::cout << "  Delaunay triangulation of "<<N<<" points in dim "<<d<< std::flush;
     dt.insert(points.begin(), points.end());
