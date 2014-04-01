@@ -185,7 +185,7 @@ public:
 
     // - - - - - - - - - - - - - - - - - - - - - - - - CREATION / CONSTRUCTORS
 
-    Triangulation(const int dim, const Geom_traits k = Geom_traits())
+    Triangulation(int dim, const Geom_traits k = Geom_traits())
         : tds_(dim)
         , kernel_(k)
         , infinity_()
@@ -201,7 +201,7 @@ public:
     }
 
     Triangulation(
-      const int dim, 
+      int dim, 
       const std::pair<int, Flat_orientation_d> &preset_flat_orientation, 
       const Geom_traits k = Geom_traits())
         : tds_(dim)
@@ -492,19 +492,19 @@ public:
     }
 
     template< typename OutputIterator >
-    OutputIterator incident_faces(Vertex_const_handle v, const int d, OutputIterator out)
+    OutputIterator incident_faces(Vertex_const_handle v, int d, OutputIterator out)
     {
         return tds().incident_faces(v, d, out);
     }
     /*
     template< typename OutputIterator, class Comparator >
-    OutputIterator incident_upper_faces( Vertex_const_handle v, const int d,
+    OutputIterator incident_upper_faces( Vertex_const_handle v, int d,
                                                 OutputIterator out, Comparator cmp = Comparator())
     {
         return tds().incident_upper_faces(v, d, out, cmp);
     }
     template< typename OutputIterator >
-    OutputIterator incident_upper_faces( Vertex_const_handle v, const int d,
+    OutputIterator incident_upper_faces( Vertex_const_handle v, int d,
                                                 OutputIterator out)
     { // FIXME: uncomment this function, since it uses a comparator specific to
        // *geometric* triangulation (taking infinite vertex into account)
@@ -544,7 +544,7 @@ public:
 #endif
     }
 
-    void set_current_dimension(const int d)
+    void set_current_dimension(int d)
     {
         tds().set_current_dimension(d);
     }

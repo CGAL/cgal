@@ -167,13 +167,13 @@ public:
     
 // - - - - - - - - - - - - - - - - - - - - - - - - - - CREATION / CONSTRUCTORS
 
-    Delaunay_triangulation(const int dim, const Geom_traits k = Geom_traits())
+    Delaunay_triangulation(int dim, const Geom_traits k = Geom_traits())
     : Base(dim, k)
     {
     }
 
     Delaunay_triangulation(
-      const int dim, 
+      int dim, 
       const std::pair<int, Flat_orientation_d> &preset_flat_orientation, 
       const Geom_traits k = Geom_traits())
     : Base(dim, preset_flat_orientation, k)
@@ -268,8 +268,8 @@ public:
     {
         const Self & dc_;
         const Point & p_;
-        const OrientationPredicate ori_;
-        const SideOfOrientedSpherePredicate side_of_s_;
+        OrientationPredicate ori_;
+        SideOfOrientedSpherePredicate side_of_s_;
         int cur_dim_;
     public:
         Conflict_predicate(
