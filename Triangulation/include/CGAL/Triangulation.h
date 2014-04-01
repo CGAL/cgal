@@ -190,11 +190,13 @@ public:
         , kernel_(k)
         , infinity_()
         , rng_((long)0)
+        , preset_flat_orientation_(
+            std::numeric_limits<int>::max(), 
+            geom_traits().construct_flat_orientation_d_object())
 #ifdef CGAL_TRIANGULATION_STATISTICS
         ,walk_size_(0)
 #endif
     {
-        preset_flat_orientation_.first = std::numeric_limits<int>::max();
         clear();
     }
 
@@ -219,12 +221,13 @@ public:
         , kernel_(t2.kernel_)
         , infinity_()
         , rng_(t2.rng_)
+        , preset_flat_orientation_(
+            std::numeric_limits<int>::max(), 
+            geom_traits().construct_flat_orientation_d_object())
 #ifdef CGAL_TRIANGULATION_STATISTICS
         ,walk_size_(t2.walk_size_)
 #endif
     {
-        preset_flat_orientation_.first = std::numeric_limits<int>::max(); // CJTODO: copy from t2?
-
         // We find the vertex at infinity by scanning the vertices of both
         // triangulations. This works because Compact_container garantees that
         // the vertices in the copy (*this) are stored in the same order as in

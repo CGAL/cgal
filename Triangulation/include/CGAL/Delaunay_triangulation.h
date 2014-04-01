@@ -455,7 +455,8 @@ Delaunay_triangulation<DCTraits, TDS>
     Dark_triangulation dark_side(maximal_dimension(), 
       flat_orientation_ ?
       std::make_pair(current_dimension(), flat_orientation_.get())
-      : std::make_pair(std::numeric_limits<int>::max(), Flat_orientation_d()) );
+      : std::make_pair(std::numeric_limits<int>::max(), 
+                       geom_traits().construct_flat_orientation_d_object()) );
     Dark_s_handle dark_s;
     Dark_v_handle dark_v;
     typedef std::map<Vertex_handle, Dark_v_handle> Vertex_map;
