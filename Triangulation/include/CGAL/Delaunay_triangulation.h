@@ -174,7 +174,7 @@ public:
 
     Delaunay_triangulation(
       int dim, 
-      const std::pair<int, Flat_orientation_d> &preset_flat_orientation, 
+      const std::pair<int, const Flat_orientation_d *> &preset_flat_orientation,
       const Geom_traits k = Geom_traits())
     : Base(dim, preset_flat_orientation, k)
     {
@@ -452,11 +452,13 @@ Delaunay_triangulation<DCTraits, TDS>
     typedef typename Dark_triangulation::Facet            Dark_facet;
     typedef typename Dark_triangulation::Vertex_handle    Dark_v_handle;
     typedef typename Dark_triangulation::Full_cell_handle   Dark_s_handle;
-    Dark_triangulation dark_side(maximal_dimension(), 
+
+    Dark_triangulation dark_side(
+      maximal_dimension(),
       flat_orientation_ ?
-      std::make_pair(current_dimension(), flat_orientation_.get())
-      : std::make_pair(std::numeric_limits<int>::max(), 
-                       geom_traits().construct_flat_orientation_d_object()) );
+      std::make_pair(current_dimension(), &flat_orientation_.get())
+      : std::make_pair<int, const Flat_orientation_d *>(std::numeric_limits<int>::max(), NULL) );
+
     Dark_s_handle dark_s;
     Dark_v_handle dark_v;
     typedef std::map<Vertex_handle, Dark_v_handle> Vertex_map;

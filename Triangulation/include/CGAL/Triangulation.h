@@ -77,7 +77,10 @@ protected:
     void reset_flat_orientation()
     {
       if (current_dimension() == preset_flat_orientation_.first)
-        flat_orientation_ = preset_flat_orientation_.second;
+      {
+        CGAL_assertion(preset_flat_orientation_.second != NULL);
+        flat_orientation_ = *preset_flat_orientation_.second;
+      }
       else
         flat_orientation_ = boost::none;
     }
@@ -146,7 +149,7 @@ protected: // DATA MEMBERS
     Vertex_handle                       infinity_;
     mutable std::vector<Oriented_side>  orientations_;
     mutable boost::optional<Flat_orientation_d> flat_orientation_;
-    std::pair<int, Flat_orientation_d> preset_flat_orientation_;
+    std::pair<int, const Flat_orientation_d *> preset_flat_orientation_;
     // for stochastic walk in the locate() function:
     mutable Random                      rng_;
 #ifdef CGAL_TRIANGULATION_STATISTICS
@@ -190,9 +193,7 @@ public:
         , kernel_(k)
         , infinity_()
         , rng_((long)0)
-        , preset_flat_orientation_(
-            std::numeric_limits<int>::max(), 
-            geom_traits().construct_flat_orientation_d_object())
+        , preset_flat_orientation_(std::numeric_limits<int>::max(), NULL)
 #ifdef CGAL_TRIANGULATION_STATISTICS
         ,walk_size_(0)
 #endif
@@ -201,8 +202,8 @@ public:
     }
 
     Triangulation(
-      int dim, 
-      const std::pair<int, Flat_orientation_d> &preset_flat_orientation, 
+      int dim,
+      const std::pair<int, const Flat_orientation_d *> &preset_flat_orientation, 
       const Geom_traits k = Geom_traits())
         : tds_(dim)
         , kernel_(k)
@@ -221,9 +222,7 @@ public:
         , kernel_(t2.kernel_)
         , infinity_()
         , rng_(t2.rng_)
-        , preset_flat_orientation_(
-            std::numeric_limits<int>::max(), 
-            geom_traits().construct_flat_orientation_d_object())
+        , preset_flat_orientation_(std::numeric_limits<int>::max(), NULL)
 #ifdef CGAL_TRIANGULATION_STATISTICS
         ,walk_size_(t2.walk_size_)
 #endif
