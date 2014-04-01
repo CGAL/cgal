@@ -49,7 +49,7 @@ If it has already been computed in the past, the cached value is returned.
 
 /*!
 Computes the circumcenter of the tetrahedron, or retrieves it if already 
-computed. 
+computed
 */ 
 const Point_3& circumcenter( 
 const DelaunayTriangulationTraits_3&gt = DelaunayTriangulationTraits_3()) const; 

@@ -45,7 +45,7 @@ typedef TriangulationTraits_3::Point_3 Point_3;
 
 /*!
 Computes the circumcenter of the tetrahedron, or retrieves it if already 
-computed. 
+computed
 */ 
 const Point_3& circumcenter( 
 const TriangulationTraits_3&gt = TriangulationTraits_3()) const; 

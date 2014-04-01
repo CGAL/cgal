@@ -40,7 +40,7 @@ provides a `circumcenter()` member fonction.
 
 /// @{
 /*! 
-Returns the circumcenter of the cell.
+Returns the circumcenter of the cell
 */ 
 const Point_3& circumcenter(
   const DelaunayTriangulationTraits_3& gt = DelaunayTriangulationTraits_3()) const;
