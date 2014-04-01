@@ -51,7 +51,7 @@ Returns the weighted circumcenter of the cell.
 Be careful that the return type is `RegularTriangulationTraits_3::Bare_point`,
 and the radius of the weighted 
 circumcenter is not supposed to be computed
-by the constructor `ConstructWeightedCircumcenter` of the traits
+by the constructor `Construct_weighted_circumcenter_3` of the traits
 class, so the returned point has no weight.
 */ 
 const Bare_point& weighted_circumcenter(

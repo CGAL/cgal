@@ -44,7 +44,7 @@ provides a `weighted_circumcenter()` member fonction.
 
 In this model, the `weighted_circumcenter()` member fonction returns the <b>weighted circumcenter</b>
 of the cell.
-This `Bare_point` is computed by the `ConstructWeightedCircumcenter` constructor of the traits class
+This `Bare_point` is computed by the `Construct_weighted_circumcenter_3` constructor of the traits class
 when this function is first called.
 In the next calls, the cached value is returned.
 
