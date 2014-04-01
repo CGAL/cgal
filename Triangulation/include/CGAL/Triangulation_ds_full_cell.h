@@ -36,7 +36,7 @@ class Triangulation_ds_full_cell
     typedef typename TDS::Maximal_dimension        Maximal_dimension;
 
 public:
-    typedef typename TDS                           Triangulation_data_structure;
+    typedef TDS                                    Triangulation_data_structure;
     typedef typename TDS::Face                     Face;
     typedef typename TDS::Vertex_handle            Vertex_handle; /* Concept */
     typedef typename TDS::Vertex_const_handle      Vertex_const_handle;
@@ -288,13 +288,13 @@ class Triangulation_ds_full_cell<void, StoragePolicy>
 {
 public:
     typedef internal::Triangulation::Dummy_TDS  TDS;
-    typedef typename TDS                        Triangulation_data_structure;
+    typedef TDS                                 Triangulation_data_structure;
     typedef TDS::Vertex_handle                  Vertex_handle;
     typedef TDS::Vertex_const_handle            Vertex_const_handle;
     typedef TDS::Full_cell_handle               Full_cell_handle;
     typedef TDS::Full_cell_const_handle         Full_cell_const_handle;
     typedef TDS::Vertex_handle_const_iterator   Vertex_handle_const_iterator;
-    typedef typename TDS::Full_cell_data        TDS_data;
+    typedef TDS::Full_cell_data                 TDS_data;
     template <typename TDS2>
     struct Rebind_TDS
     {
