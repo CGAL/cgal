@@ -81,6 +81,24 @@ int main() {
     typedef const_iterator::difference_type   C_difference_type;
     typedef const_iterator::iterator_category C_iterator_category;
 
+    CGAL_USE_TYPE(const_reverse_iterator);
+    CGAL_USE_TYPE(value_type);
+    CGAL_USE_TYPE(pointer);
+    CGAL_USE_TYPE(reference);
+    CGAL_USE_TYPE(allocator_type);
+    CGAL_USE_TYPE(difference_type);
+    CGAL_USE_TYPE(size_type);
+    CGAL_USE_TYPE(I_value_type);
+    CGAL_USE_TYPE(I_pointer);
+    CGAL_USE_TYPE(I_reference);
+    CGAL_USE_TYPE(I_difference_type);
+    CGAL_USE_TYPE(I_iterator_category);
+    CGAL_USE_TYPE(C_value_type);
+    CGAL_USE_TYPE(C_pointer);
+    CGAL_USE_TYPE(C_reference);
+    CGAL_USE_TYPE(C_difference_type);
+    CGAL_USE_TYPE(C_iterator_category);
+
 
     vector V;
     std::cout << V.capacity() << ", " << V.size()<< std::endl;
