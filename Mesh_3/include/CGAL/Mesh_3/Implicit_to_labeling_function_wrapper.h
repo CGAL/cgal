@@ -220,6 +220,7 @@ public:
       }
     }
     bmasks.pop_back();
+    std::sort(bmasks.begin(), bmasks.end());
   }
 
   Implicit_multi_domain_to_labeling_function_wrapper (const Function_vector& vf, const std::vector<std::string>& vps)
