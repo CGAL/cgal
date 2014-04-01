@@ -268,8 +268,8 @@ public:
     {
         const Self & dc_;
         const Point & p_;
-        const OrientationPredicate & ori_;
-        const SideOfOrientedSpherePredicate & side_of_s_;
+        const OrientationPredicate ori_;
+        const SideOfOrientedSpherePredicate side_of_s_;
         int cur_dim_;
     public:
         Conflict_predicate(
@@ -278,6 +278,7 @@ public:
                 const OrientationPredicate & ori,
                 const SideOfOrientedSpherePredicate & side)
         : dc_(dc), p_(p), ori_(ori), side_of_s_(side), cur_dim_(dc.current_dimension()) {}
+
         inline
         bool operator()(Full_cell_const_handle s) const
         {
