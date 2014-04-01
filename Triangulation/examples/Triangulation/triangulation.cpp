@@ -1,10 +1,10 @@
-#include <CGAL/Cartesian_d.h>
+#include <CGAL/Epick_d.h>
 #include <CGAL/point_generators_d.h>
 #include <CGAL/Triangulation.h>
 #include <CGAL/algorithm.h>
 
-typedef CGAL::Cartesian_d<double>  K;
-typedef CGAL::Triangulation<K>     Triangulation;
+typedef CGAL::Epick_d< CGAL::Dynamic_dimension_tag >  K;
+typedef CGAL::Triangulation<K>                        Triangulation;
 
 int main()
 {
@@ -13,7 +13,7 @@ int main()
     // - - - - - - - - - - - - - - - - - - - - - - - - STEP 1
     CGAL::Random_points_in_cube_d<Triangulation::Point> rand_it(D, 1.0);
     std::vector<Triangulation::Point> points;
-    CGAL::copy_n(rand_it, N, std::back_inserter(points));
+    CGAL::cpp11::copy_n(rand_it, N, std::back_inserter(points));
 
     Triangulation t(D);                      // create triangulation
     assert(t.empty());
@@ -27,7 +27,7 @@ int main()
     t.tds().incident_faces(t.infinite_vertex(), 1, out);  
     // collect faces of dimension 1 (edges) incident to the infinite vertex
     std::cout << "There are " << edges.size() 
-	      << " vertices on the convex hull." << std::endl;
+              << " vertices on the convex hull." << std::endl;
 
 #include "triangulation1.cpp" // See below
 #include "triangulation2.cpp"

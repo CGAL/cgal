@@ -39,9 +39,9 @@ void test(const int d, const std::string & type, const int N)
     std::size_t nbfc= dt.number_of_finite_full_cells();
     std::size_t nbc= dt.number_of_full_cells();
     std::cout << dt.number_of_vertices() << " vertices, " 
-	      << nbfc << " finite simplices and " 
-	      << (nbc-nbfc) << " convex hull Facets."
-	      << std::endl;
+              << nbfc << " finite simplices and " 
+              << (nbc-nbfc) << " convex hull Facets."
+              << std::endl;
 }
 
 template< int D >
