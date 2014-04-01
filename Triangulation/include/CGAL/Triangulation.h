@@ -149,6 +149,10 @@ protected: // DATA MEMBERS
     Vertex_handle                       infinity_;
     mutable std::vector<Oriented_side>  orientations_;
     mutable boost::optional<Flat_orientation_d> flat_orientation_;
+    // The user can specify a Flat_orientation_d object to be used for 
+    // orienting simplices of a specific dimension 
+    // (= preset_flat_orientation_.first)
+    // preset_flat_orientation_.first = numeric_limits<int>::max() otherwise)
     std::pair<int, const Flat_orientation_d *> preset_flat_orientation_;
     // for stochastic walk in the locate() function:
     mutable Random                      rng_;
@@ -201,6 +205,11 @@ public:
         clear();
     }
 
+    // With this constructor,
+    // the user can specify a Flat_orientation_d object to be used for 
+    // orienting simplices of a specific dimension 
+    // (= preset_flat_orientation_.first)
+    // It it used for by dark triangulations created by DT::remove
     Triangulation(
       int dim,
       const std::pair<int, const Flat_orientation_d *> &preset_flat_orientation, 

@@ -172,6 +172,11 @@ public:
     {
     }
 
+    // With this constructor,
+    // the user can specify a Flat_orientation_d object to be used for 
+    // orienting simplices of a specific dimension 
+    // (= preset_flat_orientation_.first)
+    // It it used for by dark triangulations created by DT::remove
     Delaunay_triangulation(
       int dim, 
       const std::pair<int, const Flat_orientation_d *> &preset_flat_orientation,
@@ -453,10 +458,13 @@ Delaunay_triangulation<DCTraits, TDS>
     typedef typename Dark_triangulation::Vertex_handle    Dark_v_handle;
     typedef typename Dark_triangulation::Full_cell_handle   Dark_s_handle;
 
+    // If flat_orientation_ is defined, we give it the Dark triangulation
+    // so that the orientation it uses for "current_dimension()"-simplices is
+    // coherent with the global triangulation
     Dark_triangulation dark_side(
       maximal_dimension(),
       flat_orientation_ ?
-      std::make_pair(current_dimension(), &flat_orientation_.get())
+      std::make_pair(current_dimension(), flat_orientation_.get_ptr())
       : std::make_pair<int, const Flat_orientation_d *>(std::numeric_limits<int>::max(), NULL) );
 
     Dark_s_handle dark_s;
