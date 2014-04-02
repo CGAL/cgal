@@ -54,9 +54,10 @@ template<class R_,class Zero_> struct Construct_LA_vector
 		return typename Constructor::Dimension()(d);
 	}
 	result_type operator()()const{
-		return typename Constructor::Dimension()(this->kernel().dimension());
+		return typename Constructor::Dimension()(std::max(0,this->kernel().dimension()));
 	}
 	result_type operator()(Zero_ const&)const{
+	  // Makes no sense for an unknown dimension.
 		return typename Constructor::Dimension()(this->kernel().dimension());
 	}
 	result_type operator()(result_type const& v)const{

@@ -334,7 +334,8 @@ void test3(){
   CA ca Kinit(component_accessor_d_object);
   E ed Kinit(equal_d_object);
   SD sd Kinit(squared_distance_d_object);
-  P a=cp(2,3,4);
+  P a; // Triangulation needs this :-(
+  a=cp(2,3,4);
   P b=cp(5,6,7,8);
   int rr[]={3,5,2,3};
   int* r=rr;
