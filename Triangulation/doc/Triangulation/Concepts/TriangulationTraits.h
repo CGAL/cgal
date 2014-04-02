@@ -39,7 +39,8 @@ dynamic (`Dimension`=`CGAL::``Dynamic_dimension_tag`).
 typedef Hidden_type Dimension; 
 
 /*! 
-A type representing a point in Euclidean space. 
+A type representing a point in Euclidean space. It must be 
+`DefaultConstructible`, `CopyConstructible` and `Assignable`.
 */ 
 typedef Hidden_type Point_d; 
 
