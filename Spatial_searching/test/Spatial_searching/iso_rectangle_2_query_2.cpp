@@ -35,7 +35,7 @@ main() {
     return -1;
   }
 
-  for(int i = 0; i < N; i++)
+  for(size_t i = 0; i < N; i++)
   {
     tree.insert(*rpg++);
   }
