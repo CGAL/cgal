@@ -88,6 +88,52 @@ protected:
     typedef typename TriangulationTraits::Orientation_d
                                                     Orientation_d;
 
+    // Iterator which iterates over vertex_handle's, but returns a point when
+    // dereferenced. If the current 
+    // vertex_handle vh == vh_where_point_should_be_substituted, it returns
+    // "subtitute_point", otherwise, it returns vh->point()
+    template<typename Vertex_iterator>
+    class Substitute_point_in_vertex_iterator
+      : public boost::iterator_adaptor<
+            Substitute_point_in_vertex_iterator<Vertex_iterator>      // Derived
+          , Vertex_iterator                                         // Base
+          , typename Vertex_iterator::value_type::value_type::Point // Value
+          , boost::use_default                                      // CategoryOrTraversal
+          , typename Vertex_iterator::value_type::value_type::Point const & // Reference
+        >
+    {
+      typedef typename Vertex_iterator::value_type        Vertex_handle;
+      typedef typename Vertex_handle::value_type::Point   Point;
+    public:
+      Substitute_point_in_vertex_iterator()
+      : Substitute_point_in_vertex_iterator::iterator_adaptor_(Vertex_iterator()) {}
+
+      explicit Substitute_point_in_vertex_iterator(
+        Vertex_iterator it, 
+        const Vertex_handle &vh_where_point_should_be_substituted,
+        const Point &subtitute_point)
+      : Substitute_point_in_vertex_iterator::iterator_adaptor_(it)
+      , vh_where_point_should_be_substituted_(vh_where_point_should_be_substituted)
+      , subtitute_point_(subtitute_point)
+      {
+        std::cout << sizeof(vh_where_point_should_be_substituted) << std::endl;
+      }
+
+    private:
+      friend class boost::iterator_core_access;
+
+      typename iterator_adaptor::reference dereference() const
+      {
+        if (*this->base() == vh_where_point_should_be_substituted_)
+          return subtitute_point_;
+        else
+          return (*this->base())->point(); 
+      }
+
+      Vertex_handle vh_where_point_should_be_substituted_;
+      const Point &subtitute_point_;
+    };
+
 public:
 
     typedef TriangulationTraits                     Geom_traits;
@@ -966,25 +1012,11 @@ Triangulation<TT, TDS>
                 continue; // go to next full_cell's facet
             }
 
-            //typedef typename Self::Point_const_iterator Point_const_iterator;
-            /*Point_equality_predicate pred(s->vertex(i)->point());
-            Substitute_iterator< Point_const_iterator, Point_equality_predicate >
-              begin( points_begin(s), pred, p),
-              end  ( points_begin(s)+ (cur_dim+1), pred, p);
-            orientations_[i] = orientation_pred( begin, end);*/
-
-            // CJTODO: make it better (no temporary replacement...)
-            // we temporarily substitute |p| to the |i|-th point of the
-            // full_cell
-            Point backup = s->vertex(i)->point();
-            s->vertex(i)->set_point(p);
-
-            orientations_[i] = orientation_pred(
-                points_begin(s),
-                points_begin(s) + cur_dim + 1);
-
-            // restore the correct point for vertex |i| of the full_cell
-            s->vertex(i)->set_point(backup);
+            Substitute_point_in_vertex_iterator<
+              Full_cell::Vertex_handle_const_iterator> it(s->vertices_begin(), 
+                                                          s->vertex(i), 
+                                                          p);
+            orientations_[i] = orientation_pred(it, it + cur_dim + 1);
 
             if( orientations_[i] != NEGATIVE )
             {

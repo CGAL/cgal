@@ -48,6 +48,8 @@ class Delaunay_triangulation
                                                     Side_of_oriented_sphere_d;
     typedef typename DCTraits::Orientation_d        Orientation_d;
 
+    using Base::Substitute_point_in_vertex_iterator;
+
 public: // PUBLIC NESTED TYPES
 
     typedef DCTraits                                Geom_traits;
@@ -300,21 +302,12 @@ public:
             }
             else
             {
-                // CJTODO: make it better (no temporary replacement...)
-                int i=s->index( dc_.infinite_vertex() );
-                Point p_inf= s->vertex(i)->point();
-                s->vertex(i)->set_point(p_); // set temporarily position of infinity to p_
-                Orientation o =  ori_(dc_.points_begin(s), dc_.points_begin(s) + cur_dim_ + 1);
-                s->vertex(i)->set_point(p_inf); // restore position of infinity
-
-                /*typedef typename Base::Point_const_iterator Point_const_iterator;
-                typedef typename Base::Point_equality_predicate Point_equality_predicate;
-                Point_equality_predicate pred( dc_.infinite_vertex()->point() );
-                Substitute_iterator< Point_const_iterator, Point_equality_predicate >
-                    begin( dc_.points_begin(s), pred, p_),
-                    end  ( dc_.points_begin(s)+ (cur_dim_+1), pred, p_);
-                Orientation o =   ori_( begin, end);*/
-
+                Substitute_point_in_vertex_iterator<
+                  Full_cell::Vertex_handle_const_iterator> it(s->vertices_begin(), 
+                                                              dc_.infinite_vertex(), 
+                                                              p_);
+                Orientation o =  ori_(it, it + cur_dim_ + 1);
+                
                 if( POSITIVE == o )
                     ok = true;
                 else if( o == NEGATIVE )
