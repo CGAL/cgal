@@ -1,6 +1,8 @@
 
 -------------------------------- Release 4.4 --------------------------------
 
+Release date: April 2014
+
 
 * Installation
 
@@ -8,6 +10,8 @@
 
       - The Apple Clang compiler version 5.0 is now supported on
         OS X Mavericks.
+
+      - The Microsoft Windows Visual C++ compiler 2013 (VC12) is now supported.
 
 
 

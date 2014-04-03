@@ -1,30 +1,27 @@
-Subject: CGAL 4.3 Released, Computational Geometry Algorithms Library
+Subject: CGAL 4.4 Released, Computational Geometry Algorithms Library
+Content-Type: text/plain; charset="utf-8"
 Body: 
 
-The CGAL Open Source Project is pleased to announce the release 4.3
+The CGAL Open Source Project is pleased to announce the release 4.4
 of CGAL, the Computational Geometry Algorithms Library.
 
 Besides fixes to existing packages, the following has changed since
-CGAL 4.2:
+CGAL 4.3:
 
- o The CGAL Manual generated with Doxygen
+  o New compiler support
 
-   The documentation of CGAL is now generated with Doxygen:
-   http://doc.cgal.org/4.3/
+    The Apple Clang compiler version 5.0 is now supported on
+    OS X Mavericks.
 
-   The conversion to Doxygen from our home-made tools was not completely
-   smooth. Please report any documentation bug you may discover to the
-   Inria Forge bug tracker:
-   https://gforge.inria.fr/tracker/?atid=13845&group_id=52&func=browse
+    The Microsoft Windows Visual C++ compiler 2013 (VC12) is now supported.
 
-  o 2D Periodic Triangulations (new package)
 
-    This package allows to build and handle triangulations of point sets in
-    the two dimensional flat torus. Triangulations are built incrementally
-    and can be modified by insertion or removal of vertices. They offer
-    point location facilities. The package provides Delaunay triangulations
-    and offers nearest neighbor queries and primitives to build the dual
-    Voronoi diagrams.
+  o Triangulated Surface Mesh Segmentation (new package)
+
+    This package implements the segmentation of triangulated surface meshes
+    based on the Shape Diameter Function (SDF). In addition, it also provides
+    functions to generate segmentations based on a user defined alternative to
+    the SDF.
 
 
 See http://www.cgal.org/releases.html for a complete list of changes.
