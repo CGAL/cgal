@@ -304,9 +304,9 @@ public:
             }
             else
             {
-                Substitute_point_in_vertex_iterator<
-                  typename Full_cell::Vertex_handle_const_iterator> 
-                  spivi(dc_.infinite_vertex(), &p_);
+                typedef typename Full_cell::Vertex_handle_const_iterator VHCI;
+                typedef typename Base::template Substitute_point_in_vertex_iterator<VHCI> F;
+                F spivi(dc_.infinite_vertex(), &p_);
 
                 Orientation o =  ori_(
                   boost::make_transform_iterator(s->vertices_begin(), spivi),
@@ -462,8 +462,8 @@ Delaunay_triangulation<DCTraits, TDS>
     Dark_triangulation dark_side(
       maximal_dimension(),
       flat_orientation_ ?
-      std::make_pair(current_dimension(), flat_orientation_.get_ptr())
-      : std::make_pair<int, const Flat_orientation_d *>(std::numeric_limits<int>::max(), NULL) );
+      std::pair<int, const Flat_orientation_d *>(current_dimension(), flat_orientation_.get_ptr())
+      : std::pair<int, const Flat_orientation_d *>(std::numeric_limits<int>::max(), NULL) );
 
     Dark_s_handle dark_s;
     Dark_v_handle dark_v;

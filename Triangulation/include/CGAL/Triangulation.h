@@ -94,7 +94,7 @@ protected:
     template<class VertexHandleConstIter>
     class Substitute_point_in_vertex_iterator 
     {
-      typedef typename VertexHandleConstIter::value_type Vertex_handle;
+      typedef typename std::iterator_traits<VertexHandleConstIter>::value_type Vertex_handle;
       typedef typename Vertex_handle::value_type Vertex;
       typedef typename Vertex::Point Point;
 
