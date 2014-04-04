@@ -423,74 +423,6 @@ bool check_compare_y_at_x_2()
   return true;
 }
 
-void check_push_back()
-{
-  Polycurve_conic_traits_2 traits;
-  Polycurve_conic_traits_2::Push_back_2  push_back_2 = traits.push_back_2_object();
-
-  Polycurve_conic_traits_2::Curve_2 polycurve;
-  Polycurve_conic_traits_2::X_monotone_curve_2 x_monotone_polycurve;
-
-   //create a curve
-  Rat_point_2       ps1 (1, 10);
-  Rat_point_2       pmid1(5, 4);
-  Rat_point_2       pt1 (10, 1);
-  Conic_curve_2     c1 (ps1, pmid1, pt1);
-
-  Rat_point_2       ps2 (10, 1);
-  Rat_point_2       pmid2(15, 14);
-  Rat_point_2       pt2 (20, 10);
-  Conic_curve_2     c2 (ps2, pmid2, pt2);
-  
-
-  // push_back_2(polycurve, c1);
-  // std::cout<< "Push_back_2::size of polycurve after 1 segment push_back: " << polycurve.size() << std::endl;
-
-  // push_back_2(polycurve, c2);
-  // std::cout<< "Push_back_2::size of polycurve after 2 segment push_back: " << polycurve.size() << std::endl;
-
-  // push_back_2( x_monotone_polycurve, Polycurve_conic_traits_2::X_monotone_segment_2(c1) );
-  // std::cout<< "Push_back_2::size of x-monotone polycurve after 1 x-monotone segment push_back: " << x_monotone_polycurve.size() << std::endl;
-  
-  //error
-  //push_back_2( x_monotone_polycurve, Polycurve_conic_traits_2::X_monotone_segment_2(c2) );
-  //std::cout<< "Push_back_2::size of x-monotone polycurve after 2 x-monotone segment push_back: " << x_monotone_polycurve.size() << std::endl;
-
-}
-
-void check_push_front()
-{
-  Polycurve_conic_traits_2 traits;
-  Polycurve_conic_traits_2::Push_front_2  push_front_2 = traits.push_front_2_object();
-
-  Polycurve_conic_traits_2::Curve_2 polycurve;
-  Polycurve_conic_traits_2::X_monotone_curve_2 x_monotone_polycurve;
-
-   //create a curve
-  Rat_point_2       ps1 (1, 10);
-  Rat_point_2       pmid1(5, 4);
-  Rat_point_2       pt1 (10, 1);
-  Conic_curve_2     c1 (ps1, pmid1, pt1);
-
-  Rat_point_2       ps2 (10, 1);
-  Rat_point_2       pmid2(15, 14);
-  Rat_point_2       pt2 (20, 10);
-  Conic_curve_2     c2 (ps2, pmid2, pt2);
-
-  // push_front_2(polycurve, c1);
-  // std::cout<< "Push_front_2::size of polycurve after 1 segment push_back: " << polycurve.size() << std::endl;
-
-  // push_front_2(polycurve, c2);
-  // std::cout<< "Push_front_2::size of polycurve after 2 segment push_back: " << polycurve.size() << std::endl;
-
-  // push_front_2( x_monotone_polycurve, Polycurve_conic_traits_2::X_monotone_segment_2(c1) );
-  // std::cout<< "Push_front_2::size of x-monotone polycurve after 1 x-monotone segment push_back: " << x_monotone_polycurve.size() << std::endl;
-  
-  //error
-  //push_front_2( x_monotone_polycurve, Polycurve_conic_traits_2::X_monotone_segment_2(c2) );
-  //std::cout<< "Push_front_2::size of x-monotone polycurve after 2 x-monotone segment push_back: " << x_monotone_polycurve.size() << std::endl;
-}
-
 void check_are_mergable()
 {
   Polycurve_conic_traits_2 traits;
@@ -651,12 +583,38 @@ void check_make_x_monotne_curve( Curve_type c1)
 
   std::cout<< "The poly curve have been split into " << obj_vec.size() << " polycurves" << std::endl;
 
-  const Pc_x_monotone_curve_2 *split_curve_1 = CGAL::object_cast<Pc_x_monotone_curve_2> (&(obj_vec[0]));
+  //const Pc_x_monotone_curve_2 *split_curve_1 = CGAL::object_cast<Pc_x_monotone_curve_2> (&(obj_vec[0]));
   //const Pc_x_monotone_curve_2 *split_curve_2 = CGAL::object_cast<Pc_x_monotone_curve_2> (&(obj_vec[1]));
 
-  std::cout << "The split curve 1 is: " << *split_curve_1 << std::endl;
+  //std::cout << "The split curve 1 is: " << *split_curve_1 << std::endl;
   //std::cout << "The split curve 2 is: " << *split_curve_2 << std::endl;  
 
+}
+
+template<typename Curve, typename Segment>
+void check_push_front(Curve base_curve, Segment curve_tobe_pushed)
+{
+  Polycurve_conic_traits_2 traits;
+
+  std::cout << "Base curve: " << base_curve << std::endl;
+  std::cout << "push curve: " << curve_tobe_pushed << std::endl;
+
+  traits.push_front_2_object()( base_curve, curve_tobe_pushed);
+
+  std::cout << "result curve: " << base_curve << std::endl;
+}
+
+template<typename Curve, typename Segment>
+void check_push_back(Curve base_curve, Segment curve_tobe_pushed)
+{
+  Polycurve_conic_traits_2 traits;
+
+  std::cout << "Base curve: " << base_curve << std::endl;
+  std::cout << "push curve: " << curve_tobe_pushed << std::endl;
+
+  traits.push_back_2_object()( base_curve, curve_tobe_pushed);
+
+  std::cout << "result curve: " << base_curve << std::endl;
 }
 
 int main ()
@@ -688,7 +646,15 @@ int main ()
   //construct poly-curve
   Polycurve_conic_traits_2::Curve_2 conic_polycurve = construct_polycurve( conic_curves.begin(), conic_curves.end() );
 
+  Conic_curve_2     c11( 0,1,0,-1,0,0,CGAL::COUNTERCLOCKWISE, Conic_point_2( Algebraic(25), Algebraic(-5) ), Conic_point_2( Algebraic(0), Algebraic(0) ) );
+  Conic_curve_2     c12( 1,0,0,0,-1,0,CGAL::COUNTERCLOCKWISE, Conic_point_2( Algebraic(0), Algebraic(0) ), Conic_point_2( Algebraic(5), Algebraic(25) ) );
+  conic_curves.clear();
+  conic_curves.push_back(c11);
+  conic_curves.push_back(c12);
   
+  //construct poly-curve
+  Polycurve_conic_traits_2::Curve_2 conic_polycurve_2 = construct_polycurve( conic_curves.begin(), conic_curves.end() );
+
   /* VERY IMPORTANT
   For efficiency reasons, we recommend users not to construct x-monotone conic arc directly, 
   but rather use the Make_x_monotone_2 functor supplied by the conic-arc traits class to convert conic curves to x-monotone curves.
@@ -716,7 +682,16 @@ int main ()
   xmono_conic_curves_2.push_back(xc7);
   xmono_conic_curves_2.push_back(xc8);
   //construct x-monotone poly-curve
-  Pc_x_monotone_curve_2 conic_x_mono_polycurve_2 = construct_x_mono_polycurve(xmono_conic_curves_2.begin(), xmono_conic_curves_2.end());;
+  Pc_x_monotone_curve_2 conic_x_mono_polycurve_2 = construct_x_mono_polycurve(xmono_conic_curves_2.begin(), xmono_conic_curves_2.end());
+
+  xmono_conic_curves_2.clear();
+  xmono_conic_curves_2.push_back(xc5);
+  Polycurve_conic_traits_2::X_monotone_segment_2 xcurve_push =  Polycurve_conic_traits_2::X_monotone_segment_2(c5);//traits.construct_x_monotone_curve_2_object()(c5);
+
+  xmono_conic_curves_2.clear();
+  xmono_conic_curves_2.push_back(xc3);
+  xmono_conic_curves_2.push_back(xc4);
+  Pc_x_monotone_curve_2 base_curve = construct_x_mono_polycurve(xmono_conic_curves_2.begin(), xmono_conic_curves_2.end());
 
 
 
@@ -734,8 +709,8 @@ int main ()
   //check_split( conic_x_mono_polycurve_1, conic_x_mono_polycurve_2 );
   // std::cout<< std::endl;
 
-  check_make_x_monotne_curve( conic_polycurve );
-   std::cout<< std::endl;
+  //check_make_x_monotne_curve( conic_polycurve_2 );
+   //std::cout<< std::endl;
 
   // check_is_vertical();
   // std::cout<< std::endl;
@@ -743,11 +718,13 @@ int main ()
    //check_compare_y_at_x_2();
    //std::cout<< std::endl;
 
-  // check_push_back();
-  // std::cout<< std::endl;
+    //adds the segment to the right.
+   //check_push_back(base_curve, xcurve_push);
+   //std::cout<< std::endl;
 
-  // check_push_front();
-  // std::cout<< std::endl;
+    //adds the segment to the left.
+   check_push_front(base_curve, xcurve_push);
+   std::cout<< std::endl;
 
   // check_are_mergable();
   // std::cout<< std::endl;

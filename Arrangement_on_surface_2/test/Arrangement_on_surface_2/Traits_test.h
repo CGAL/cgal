@@ -235,6 +235,11 @@ private:
   bool compare_x_on_boundary_wrapper_imp(std::istringstream&,
                                          CGAL::Arr_use_traits_tag);
 
+  /*
+ * Test Push_back 
+ */
+bool push_back_wrapper (std::istringstream& str_stream);
+
   // TODO Is_on_x_identification_2
 
   //@}
@@ -314,6 +319,10 @@ Traits_test<Geom_traits_T>::Traits_test(const Geom_traits_T& traits) : Base(trai
   m_wrappers[std::string("compare_x_on_boundary")] =
     &Traits_test<Traits>::compare_x_on_boundary_wrapper;
 
+  //push_back and pus_front functors for polylines/curves
+  m_wrappers[std::string("push_back")] =
+    &Traits_test<Traits>::push_back_wrapper; 
+
   // TODO Is_on_x_identification_2
 }
 
@@ -322,6 +331,66 @@ Traits_test<Geom_traits_T>::Traits_test(const Geom_traits_T& traits) : Base(trai
  */
 template <typename Geom_traits_T>
 Traits_test<Geom_traits_T>::~Traits_test() {}
+
+
+/*
+ * Test Push_back 
+ */
+template<typename Geom_traits_T>
+bool Traits_test<Geom_traits_T>::
+push_back_wrapper (std::istringstream& str_stream)
+{
+  //type: 0 for pushing a segment into curve.
+  //      1 for pushing x-monotone segment into x-monotone curve.
+  unsigned int type;   
+  str_stream >> type;
+
+  // Ids of base curve/x-curve and curve/x-curve to be pushed back.
+  unsigned int id1, id2;
+  str_stream >> id1 >> id2;
+
+  //id of expected polycurve/x-monotone polycurve
+  unsigned int expected_curve_id;
+
+  if( type == 0 )
+  {
+    std::cout << "Test: push_back ( " 
+              << this->m_curves[id2] << "into" 
+              << this->m_curves[id1] << " ) ? ";
+
+    Curve_2 exp_curve = this->m_curves[expected_curve_id];
+    Curve_2 base_curve = this->m_curves[id1]; 
+
+    this->m_geom_traits.push_back_2_object()( base_curve, this->m_curves[id2] );
+
+    if( !this->compare_curves(exp_curve, base_curve) );
+      return false; 
+  }
+
+  else if( type == 1 )
+  {
+    std::cout << "Test: push_back ( " 
+              << this->m_curves[id2] << "into" 
+              << this->m_curves[id1] << " ) ? ";
+
+    X_monotone_curve_2 exp_curve   = this->m_xcurves[expected_curve_id];
+    X_monotone_curve_2 base_xcurve = this->m_xcurves[id1];
+
+    this->m_geom_traits.push_back_2_object()( base_xcurve, this->m_xcurves[id2] );
+
+    if( !this->compare_curves(exp_curve, base_xcurve) );
+      return false; 
+  }
+
+  else
+  {
+    std::cout << "Incorrect type of operator. 0 for pushing a segment into a polycurve, 
+                  1 for pushing an x-monotone segment into x-monotone polycurve." << std::endl; 
+    return false;
+  }
+
+  return true;
+} 
 
 
 /*! Test Compare_x_2
@@ -567,7 +636,8 @@ make_x_monotone_wrapper(std::istringstream& str_stream)
   str_stream >> num;
   if (!this->compare(num, object_vec.size(), "size")) return false;
 
-  for (size_t i = 0; i < num; ++i) {
+  for (size_t i = 0; i < num; ++i) 
+  {
     unsigned int type;                  // 0 - point, 1 - x-monotone curve
     str_stream >> type;
 

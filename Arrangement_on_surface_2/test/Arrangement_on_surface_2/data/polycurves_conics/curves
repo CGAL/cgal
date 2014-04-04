@@ -1,5 +1,13 @@
 #
-# curve 1: (y=x^2)[(0,0)->(5,25)] 
-# curve 2: (y=x^2) (y=x^2):[(0,0)->(5,-25)] both counter-clockwise 
+# 1.<Type of curve> 2.<Number of curves in a polycurve> 3.<coefficients of conic> 4.<Orientation> 5.<source point> 6.<Target point> (repeat 3 to 6 for number of curves time. )
+#
+## curve 1: (y = x^2) [(0,0)->(5,25)]   counter-clockwise
+# curve 2: (y^2 = x) [(25,-5)->(0,0)]  clockwise 
 # Curve id: 0
-a 2 -1 0 0 0 1 0 1 -5 25 0 0 -1 0 0 0 1 0 1 0 0 5 25 
+a 2 0 1 0 1 0 0 1 -25 -5 0 0 0 1 0 1 0 0 1 0 0 -25 5 
+#
+# curve 1: (y^2 = x) [(25,-5)->(0,0)]  clockwise 
+# curve 2: (y = x^2) [(0,0)->(5,25)]   clockwise
+# Curve id: 1
+#problem I think both of them should be either CW or CCW
+a 2 0 1 0 -1 0 0 1 25 -5 0 0 -1 0 0 0 1 0 1 0 0 5 25

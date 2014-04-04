@@ -477,6 +477,7 @@ execute_commands_new_structure()
     commands_indicator[ASSERTIONS]=0
     commands_indicator[CONSTRUCTOR]=0
     commands_indicator[EQUAL]=0
+    commands_indicator[PUSH_BACK]=0
     i=1
     if [ $# -gt 2 ] ; then
 	for arg in $* ; do
@@ -569,6 +570,10 @@ execute_commands_new_structure()
     if [ ${commands_indicator[$EQUAL]} -ne 0 ] ; then
   run_trapped_test test_traits data/$1/points \
       data/$1/xcurves data/$1/curves data/$1/equal $2
+    fi
+    if [ ${commands_indicator[$PUSH_BACK]} -ne 0 ] ; then
+  run_trapped_test test_traits data/$1/points \
+      data/$1/xcurves data/$1/curves data/$1/push_back $2
     fi
 }
 
@@ -1055,8 +1060,8 @@ test_polycurve_conic_traits()
   if [ -n "${SUCCESS}" ] ; then
     
     # The input arguments for the execute_commands_new_structure, 
-    # Polycurve_conics is the directory name in "data"
-    # polycurve_conic_traits is a string
+    # 1. Polycurve_conics is the directory name in "data"
+    # 2. polycurve_conic_traits is a string
     # Execute_command_new_structure will only run the test on functors provided as the third, fourth and so on arguments.
     # To see how the input data directory should be structured for each functor, check the execute_commands_new_structure function in this file. 
     execute_commands_new_structure polycurves_conics polycurve_conic_traits \
@@ -1068,7 +1073,8 @@ test_polycurve_conic_traits()
       ARE_MERGEABLE \
       COMPARE_Y_AT_X_LEFT \
       COMPARE_Y_AT_X_RIGHT \
-      MAKE_X_MONOTONE
+      MAKE_X_MONOTONE \
+      PUSH_BACK
 
   else
     echo "   ERROR:    not executed   test_traits polyline_traits" >> $ERRORFILE
