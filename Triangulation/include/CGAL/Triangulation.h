@@ -18,7 +18,6 @@
 #ifndef CGAL_TRIANGULATION_H
 #define CGAL_TRIANGULATION_H
 
-#include <boost/iterator/filter_iterator.hpp>
 #include <CGAL/internal/Triangulation/utilities.h>
 #include <CGAL/Triangulation_data_structure.h>
 #include <CGAL/Triangulation_full_cell.h>
@@ -28,6 +27,9 @@
 #include <CGAL/Dimension.h>
 #include <CGAL/iterator.h>
 #include <CGAL/Default.h>
+
+#include <boost/iterator/filter_iterator.hpp>
+#include <boost/iterator/transform_iterator.hpp>
 
 namespace CGAL {
 
