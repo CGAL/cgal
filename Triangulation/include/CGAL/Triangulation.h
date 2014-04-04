@@ -29,9 +29,6 @@
 #include <CGAL/iterator.h>
 #include <CGAL/Default.h>
 
-#include <CGAL/substitute_iterator.h>
-
-
 namespace CGAL {
 
 template <  class TriangulationTraits, class TDS_ = Default >
@@ -92,44 +89,35 @@ protected:
     // dereferenced. If the current 
     // vertex_handle vh == vh_where_point_should_be_substituted, it returns
     // "subtitute_point", otherwise, it returns vh->point()
-    template<typename Vertex_iterator>
-    class Substitute_point_in_vertex_iterator
-      : public boost::iterator_adaptor<
-            Substitute_point_in_vertex_iterator<Vertex_iterator>      // Derived
-          , Vertex_iterator                                         // Base
-          , typename Vertex_iterator::value_type::value_type::Point // Value
-          , boost::use_default                                      // CategoryOrTraversal
-          , typename Vertex_iterator::value_type::value_type::Point const & // Reference
-        >
+    template<class VertexHandleConstIter>
+    class Substitute_point_in_vertex_iterator 
     {
-      typedef typename Vertex_iterator::value_type        Vertex_handle;
-      typedef typename Vertex_handle::value_type::Point   Point;
-    public:
-      Substitute_point_in_vertex_iterator()
-      : Substitute_point_in_vertex_iterator::iterator_adaptor_(Vertex_iterator()) {}
+      typedef typename VertexHandleConstIter::value_type Vertex_handle;
+      typedef typename Vertex_handle::value_type Vertex;
+      typedef typename Vertex::Point Point;
 
-      explicit Substitute_point_in_vertex_iterator(
-        Vertex_iterator it, 
-        const Vertex_handle &vh_where_point_should_be_substituted,
-        const Point *subtitute_point)
-      : Substitute_point_in_vertex_iterator::iterator_adaptor_(it)
-      , vh_where_point_should_be_substituted_(vh_where_point_should_be_substituted)
+    public:
+      typedef Point const& result_type; // For result_of
+
+      Substitute_point_in_vertex_iterator(
+        Vertex_handle vh_where_point_should_be_substituted,
+        Point const *subtitute_point)
+      : vh_where_point_should_be_substituted_(vh_where_point_should_be_substituted)
       , subtitute_point_(subtitute_point)
       {}
 
-    private:
-      friend class boost::iterator_core_access;
-
-      typename iterator_adaptor::reference dereference() const
+      result_type operator()(Vertex_handle vh) const
       {
-        if (*this->base() == vh_where_point_should_be_substituted_)
+        if (vh == vh_where_point_should_be_substituted_) 
           return *subtitute_point_;
         else
-          return (*this->base())->point(); 
+          return vh->point();
       }
 
+    private:
       Vertex_handle vh_where_point_should_be_substituted_;
-      const Point *subtitute_point_;
+      Point const *subtitute_point_;
+
     };
 
 public:
@@ -1011,10 +999,13 @@ Triangulation<TT, TDS>
             }
 
             Substitute_point_in_vertex_iterator<
-              Full_cell::Vertex_handle_const_iterator> it(s->vertices_begin(), 
-                                                          s->vertex(i), 
-                                                          &p);
-            orientations_[i] = orientation_pred(it, it + cur_dim + 1);
+              typename Full_cell::Vertex_handle_const_iterator> 
+              spivi(s->vertex(i), &p);
+
+            orientations_[i] = orientation_pred(
+              boost::make_transform_iterator(s->vertices_begin(), spivi),
+              boost::make_transform_iterator(s->vertices_begin() + cur_dim + 1, 
+                                             spivi));
 
             if( orientations_[i] != NEGATIVE )
             {

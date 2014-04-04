@@ -303,11 +303,14 @@ public:
             else
             {
                 Substitute_point_in_vertex_iterator<
-                  Full_cell::Vertex_handle_const_iterator> it(s->vertices_begin(), 
-                                                              dc_.infinite_vertex(), 
-                                                              &p_);
-                Orientation o =  ori_(it, it + cur_dim_ + 1);
-                
+                  typename Full_cell::Vertex_handle_const_iterator> 
+                  spivi(dc_.infinite_vertex(), &p_);
+
+                Orientation o =  ori_(
+                  boost::make_transform_iterator(s->vertices_begin(), spivi),
+                  boost::make_transform_iterator(s->vertices_begin() + cur_dim_ + 1, 
+                                                 spivi));
+
                 if( POSITIVE == o )
                     ok = true;
                 else if( o == NEGATIVE )
