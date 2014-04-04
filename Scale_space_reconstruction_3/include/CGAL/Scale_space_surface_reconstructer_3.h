@@ -29,8 +29,6 @@
 
 #include <boost/iterator/transform_iterator.hpp>
 
-#include <CGAL/internal/Shape_type.h>
-
 #include <CGAL/utility.h>
 
 #include <CGAL/Search_traits_3.h>
@@ -38,7 +36,8 @@
 #include <CGAL/Orthogonal_k_neighbor_search.h>
 #include <CGAL/Random.h>
 
-#include <CGAL/internal/check3264.h>
+#include <CGAL/Scale_space_reconstruction_3/internal/check3264.h>
+#include <CGAL/Scale_space_reconstruction_3/Shape_type.h>
 
 #include <Eigen/Dense>
 
@@ -85,7 +84,7 @@ class Scale_space_surface_reconstructer_3 {
 	typedef CGAL::Random                                Random;
 
     // Constructing the surface.
-    typedef internal::Shape_type< Kernel, Fixed_shape > Shape_generator;
+    typedef Shape_type< Kernel, Fixed_shape >           Shape_generator;
 
  	typedef typename Shape_generator::Shape             Shape;
 	typedef typename Shape::Vertex_handle				Vertex_handle;

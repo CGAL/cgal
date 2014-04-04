@@ -20,7 +20,7 @@
 #ifndef CGAL_INTERNAL_SHAPE_TYPE_H
 #define CGAL_INTERNAL_SHAPE_TYPE_H
 
-#include <CGAL/internal/Auto_count.h>
+#include <CGAL/Scale_space_reconstruction_3/internal/Auto_count.h>
 
 #include <CGAL/Delaunay_triangulation_3.h>
 #include <CGAL/Triangulation_vertex_base_with_info_3.h>
@@ -36,8 +36,6 @@
 
 
 namespace CGAL {
-
-namespace internal {
 
 /// The standard type for the shape of a set of points.
 /** \tparam Kernel the geometric traits class. It should be a model of
@@ -151,8 +149,6 @@ public:
                           squared_radius );
     }
 }; // class Shape_type
-
-} // namespace internal
 
 } // namespace CGAL
 
