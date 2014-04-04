@@ -111,13 +111,11 @@ protected:
       explicit Substitute_point_in_vertex_iterator(
         Vertex_iterator it, 
         const Vertex_handle &vh_where_point_should_be_substituted,
-        const Point &subtitute_point)
+        const Point *subtitute_point)
       : Substitute_point_in_vertex_iterator::iterator_adaptor_(it)
       , vh_where_point_should_be_substituted_(vh_where_point_should_be_substituted)
       , subtitute_point_(subtitute_point)
-      {
-        std::cout << sizeof(vh_where_point_should_be_substituted) << std::endl;
-      }
+      {}
 
     private:
       friend class boost::iterator_core_access;
@@ -125,13 +123,13 @@ protected:
       typename iterator_adaptor::reference dereference() const
       {
         if (*this->base() == vh_where_point_should_be_substituted_)
-          return subtitute_point_;
+          return *subtitute_point_;
         else
           return (*this->base())->point(); 
       }
 
       Vertex_handle vh_where_point_should_be_substituted_;
-      const Point &subtitute_point_;
+      const Point *subtitute_point_;
     };
 
 public:
@@ -1015,7 +1013,7 @@ Triangulation<TT, TDS>
             Substitute_point_in_vertex_iterator<
               Full_cell::Vertex_handle_const_iterator> it(s->vertices_begin(), 
                                                           s->vertex(i), 
-                                                          p);
+                                                          &p);
             orientations_[i] = orientation_pred(it, it + cur_dim + 1);
 
             if( orientations_[i] != NEGATIVE )

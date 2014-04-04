@@ -305,7 +305,7 @@ public:
                 Substitute_point_in_vertex_iterator<
                   Full_cell::Vertex_handle_const_iterator> it(s->vertices_begin(), 
                                                               dc_.infinite_vertex(), 
-                                                              p_);
+                                                              &p_);
                 Orientation o =  ori_(it, it + cur_dim_ + 1);
                 
                 if( POSITIVE == o )
