@@ -17,17 +17,19 @@
 // Author(s):      Thijs van Lankveld
 
 
-#ifndef SCALE_SPACE_SURFACE_CONSTRUCTER
-#define SCALE_SPACE_SURFACE_CONSTRUCTER
-
-#include <omp.h>
+#ifndef CGAL_SCALE_SPACE_SURFACE_RECONSTRUCTER_H
+#define CGAL_SCALE_SPACE_SURFACE_RECONSTRUCTER_H
 
 #include <iostream>
 #include <list>
 #include <map>
 #include <vector>
 
+#include <omp.h>
+
 #include <boost/iterator/transform_iterator.hpp>
+
+#include <CGAL/internal/Shape_type.h>
 
 #include <CGAL/utility.h>
 
@@ -36,94 +38,12 @@
 #include <CGAL/Orthogonal_k_neighbor_search.h>
 #include <CGAL/Random.h>
 
-#include <CGAL/Delaunay_triangulation_3.h>
-#include <CGAL/Triangulation_vertex_base_with_info_3.h>
-#include <CGAL/Triangulation_cell_base_with_info_3.h>
-
-#include <CGAL/Alpha_shape_3.h>
-#include <CGAL/Alpha_shape_vertex_base_3.h>
-#include <CGAL/Alpha_shape_cell_base_3.h>
-
-#include <CGAL/Fixed_alpha_shape_3.h>
-#include <CGAL/Fixed_alpha_shape_vertex_base_3.h>
-#include <CGAL/Fixed_alpha_shape_cell_base_3.h>
+#include <CGAL/internal/check3264.h>
 
 #include <Eigen/Dense>
 
-#include <CGAL/check3264.h>
-
 
 namespace CGAL {
-
-//a functor that returns a std::pair<Point,unsigned>.
-//the unsigned integer is incremented at each call to
-//operator()
-template < class T >
-class Auto_count: public std::unary_function< const T&, std::pair< T, unsigned int > > {
-    mutable unsigned int i;
-public:
-    Auto_count(): i(0) {}
-    std::pair< T,unsigned int > operator()( const T& t ) const { return std::make_pair( t, i++ ); }
-};
-
-// Struct to choose between the alpha-shape and fixed alpha-shape
-template < class Kernel, class Fixed_shape >
-class _Shape {
-	typedef typename Kernel::FT                                                     Scalar;
-
-    typedef CGAL::Alpha_shape_vertex_base_3< Kernel,
-            CGAL::Triangulation_vertex_base_with_info_3< unsigned int, Kernel > >   Vb;
-    typedef CGAL::Alpha_shape_cell_base_3< Kernel,
-            CGAL::Triangulation_cell_base_with_info_3< unsigned int, Kernel > >     Cb;
-    typedef CGAL::Triangulation_data_structure_3<Vb,Cb>                             Tds;
-
-public:
-    typedef CGAL::Delaunay_triangulation_3< Kernel, Tds >                           Structure;  ///< The triangulation that spatially orders the point set.
-    typedef CGAL::Alpha_shape_3< Structure >                                        Shape;      ///< The structure that identifies the triangles in the surface.
-    
-    _Shape() {}
-    Shape* construct( Shape* shape, const Scalar& squared_radius ) {
-        if( shape ) return new Shape( *shape, squared_radius, Shape::GENERAL );
-        else return new Shape( squared_radius, Shape::GENERAL );
-    }
-    template < class InputIterator >
-    Shape* construct( InputIterator start, InputIterator end, const Scalar& squared_radius ) {
-        return new Shape( boost::make_transform_iterator( start, Auto_count<Point>() ),
-                          boost::make_transform_iterator( end, Auto_count<Point>() ),
-                          squared_radius, Shape::GENERAL );
-    }
-}; // class _Shape
-
-// Struct to choose between the alpha-shape and fixed alpha-shape
-// specialization: fixed..
-template < class Kernel >
-class _Shape < Kernel, CGAL::Tag_true > {
-	typedef typename Kernel::FT                                                     Scalar;
-
-    typedef CGAL::Fixed_alpha_shape_vertex_base_3< Kernel,
-            CGAL::Triangulation_vertex_base_with_info_3< unsigned int, Kernel > >   Vb;
-    typedef CGAL::Fixed_alpha_shape_cell_base_3< Kernel,
-            CGAL::Triangulation_cell_base_with_info_3< unsigned int, Kernel > >     Cb;
-
-    typedef CGAL::Triangulation_data_structure_3<Vb,Cb>                             Tds;
-
-public:
-    typedef CGAL::Delaunay_triangulation_3< Kernel, Tds >                           Structure;  ///< The triangulation that spatially orders the point set.
-    typedef CGAL::Fixed_alpha_shape_3< Structure >                                  Shape;      ///< The structure that identifies the triangles in the surface.
-       
-    _Shape() {}
-    Shape* construct( Shape* shape, const Scalar& squared_radius ) {
-        if( shape ) return new Shape( *shape, squared_radius );
-        else return new Shape( squared_radius );
-    }
-    template < class InputIterator >
-    Shape* construct( InputIterator start, InputIterator end, const Scalar& squared_radius ) {
-        return new Shape( boost::make_transform_iterator( start, Auto_count<Point>() ),
-                          boost::make_transform_iterator( end, Auto_count<Point>() ),
-                          squared_radius );
-    }
-}; // class _Shape
-
 
 /// Compute a smoothed surface mesh from a collection of points.
 /** An appropriate neighborhood size is estimated, followed by a
@@ -165,7 +85,7 @@ class Scale_space_surface_reconstructer_3 {
 	typedef CGAL::Random                                Random;
 
     // Constructing the surface.
-    typedef _Shape< Kernel, Fixed_shape >               Shape_generator;
+    typedef internal::Shape_type< Kernel, Fixed_shape > Shape_generator;
 
  	typedef typename Shape_generator::Shape             Shape;
 	typedef typename Shape::Vertex_handle				Vertex_handle;
@@ -791,4 +711,4 @@ operator>>( std::istream& is, Triple< T1, T2, T3 >& t ) {
 
 } // namespace CGAL
 
-#endif // SCALE_SPACE_SURFACE_CONSTRUCTER
+#endif // CGAL_SCALE_SPACE_SURFACE_RECONSTRUCTER_H
