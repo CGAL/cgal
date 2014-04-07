@@ -875,7 +875,10 @@ protected:
                       const Offset& o_p, const Offset& o_q,
                       const Offset& o_r, const Offset& o_s) const
   {
-	  return inexact_orientation(p+o_p, q+o_q, r+o_r, s+o_s);
+    return inexact_orientation(construct_point(p, o_p),
+        construct_point(q, o_q),
+        construct_point(r, o_r),
+        construct_point(s, o_s));
   }
 
 public:
