@@ -396,6 +396,11 @@ _test_cls_periodic_3_triangulation_3(const PeriodicTriangulation &,
   assert(!PT3.are_equal(Facet(ch,1),nb,i));
 
   std::cout<<"Point location"<<std::endl;
+  ch = PT3_deg.inexact_locate(Point(0.5,0.5,0.5));
+  assert( PT3_deg.tetrahedron(PT3_deg.periodic_tetrahedron(ch))
+      == PT3_deg.geom_traits().construct_tetrahedron_3_object()(
+    Point(0,0,0), Point(0,2,0), Point(0,0,2), Point(2,0,0)) );
+
   ch = PT3_deg.locate(Point(0.5,0.5,0.5));
   assert( PT3_deg.tetrahedron(PT3_deg.periodic_tetrahedron(ch))
       == PT3_deg.geom_traits().construct_tetrahedron_3_object()(
