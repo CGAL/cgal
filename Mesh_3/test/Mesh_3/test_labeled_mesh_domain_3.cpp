@@ -23,8 +23,8 @@
 //******************************************************************************
 
 #include "test_meshing_utilities.h"
-#include <CGAL/Mesh_3/Labeled_mesh_domain_3.h>
-#include <CGAL/Mesh_3/Implicit_to_labeling_function_wrapper.h>
+#include <CGAL/Labeled_mesh_domain_3.h>
+#include <CGAL/Implicit_to_labeling_function_wrapper.h>
 
 
 template <typename K>

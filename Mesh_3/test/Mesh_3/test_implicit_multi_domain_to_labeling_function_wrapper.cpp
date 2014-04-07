@@ -1,5 +1,5 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Mesh_3/Implicit_to_labeling_function_wrapper.h>
+#include <CGAL/Implicit_to_labeling_function_wrapper.h>
 
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K_e_i;

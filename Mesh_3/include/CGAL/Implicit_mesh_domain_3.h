@@ -31,8 +31,8 @@
 #  pragma warning(disable:4180) // qualifier applied to function type has no meaning; ignored
 #endif
 
-#include <CGAL/Mesh_3/Labeled_mesh_domain_3.h>
-#include <CGAL/Mesh_3/Implicit_to_labeling_function_wrapper.h>
+#include <CGAL/Labeled_mesh_domain_3.h>
+#include <CGAL/Implicit_to_labeling_function_wrapper.h>
 
 namespace CGAL {
 
