@@ -33,6 +33,42 @@
 
 namespace CGAL {
 
+// Iterator which iterates over vertex_handle's, but returns a point when
+// dereferenced. If the current 
+// vertex_handle vh == vh_where_point_should_be_substituted, it returns
+// "subtitute_point", otherwise, it returns vh->point()
+template<class VertexHandleConstIter>
+class Substitute_point_in_vertex_iterator 
+{
+  typedef typename std::iterator_traits<VertexHandleConstIter>::value_type Vertex_handle;
+  typedef typename Vertex_handle::value_type Vertex;
+  typedef typename Vertex::Point Point;
+
+public:
+  typedef Point const& result_type; // For result_of
+
+  Substitute_point_in_vertex_iterator(
+    Vertex_handle vh_where_point_should_be_substituted,
+    Point const *subtitute_point)
+  : vh_where_point_should_be_substituted_(vh_where_point_should_be_substituted)
+  , subtitute_point_(subtitute_point)
+  {}
+
+  result_type operator()(Vertex_handle vh) const
+  {
+    if (vh == vh_where_point_should_be_substituted_) 
+      return *subtitute_point_;
+    else
+      return vh->point();
+  }
+
+private:
+  Vertex_handle vh_where_point_should_be_substituted_;
+  Point const *subtitute_point_;
+
+};
+
+
 template <  class TriangulationTraits, class TDS_ = Default >
 class Triangulation
 {
@@ -86,41 +122,6 @@ protected:
 
     typedef typename TriangulationTraits::Orientation_d
                                                     Orientation_d;
-
-    // Iterator which iterates over vertex_handle's, but returns a point when
-    // dereferenced. If the current 
-    // vertex_handle vh == vh_where_point_should_be_substituted, it returns
-    // "subtitute_point", otherwise, it returns vh->point()
-    template<class VertexHandleConstIter>
-    class Substitute_point_in_vertex_iterator 
-    {
-      typedef typename std::iterator_traits<VertexHandleConstIter>::value_type Vertex_handle;
-      typedef typename Vertex_handle::value_type Vertex;
-      typedef typename Vertex::Point Point;
-
-    public:
-      typedef Point const& result_type; // For result_of
-
-      Substitute_point_in_vertex_iterator(
-        Vertex_handle vh_where_point_should_be_substituted,
-        Point const *subtitute_point)
-      : vh_where_point_should_be_substituted_(vh_where_point_should_be_substituted)
-      , subtitute_point_(subtitute_point)
-      {}
-
-      result_type operator()(Vertex_handle vh) const
-      {
-        if (vh == vh_where_point_should_be_substituted_) 
-          return *subtitute_point_;
-        else
-          return vh->point();
-      }
-
-    private:
-      Vertex_handle vh_where_point_should_be_substituted_;
-      Point const *subtitute_point_;
-
-    };
 
 public:
 

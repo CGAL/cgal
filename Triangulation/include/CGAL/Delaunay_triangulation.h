@@ -50,8 +50,6 @@ class Delaunay_triangulation
                                                     Side_of_oriented_sphere_d;
     typedef typename DCTraits::Orientation_d        Orientation_d;
 
-    using Base::Substitute_point_in_vertex_iterator;
-
 public: // PUBLIC NESTED TYPES
 
     typedef DCTraits                                Geom_traits;
@@ -305,7 +303,7 @@ public:
             else
             {
                 typedef typename Full_cell::Vertex_handle_const_iterator VHCI;
-                typedef typename Base::template Substitute_point_in_vertex_iterator<VHCI> F;
+                typedef Substitute_point_in_vertex_iterator<VHCI> F;
                 F spivi(dc_.infinite_vertex(), &p_);
 
                 Orientation o =  ori_(
