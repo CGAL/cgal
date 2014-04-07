@@ -25,7 +25,7 @@
 #include <CGAL/Linear_cell_complex_constructors.h>
 #include <fstream>
 
-#define LCC_TRACE_TEST_BEGIN 1
+// #define LCC_TRACE_TEST_BEGIN 1
 
 void trace_test_begin()
 {
