@@ -93,7 +93,7 @@ typedef K::Point_3                                     Point;
   typedef CGAL::Delaunay_triangulation_3<
     K, DT_Tds, CGAL::Default, Lock_ds>            DT3;
   /*typedef CGAL::Delaunay_triangulation_3<
-    K, DT_Tds, Fast_location, Lock_ds>            DT3_FastLoc;*/ // CJTODO (no parallel fast location for now)
+    K, DT_Tds, Fast_location, Lock_ds>            DT3_FastLoc;*/ // (no parallel fast location for now)
 
   // Regular T3 with hidden points kept
   typedef CGAL::Triangulation_data_structure_3<

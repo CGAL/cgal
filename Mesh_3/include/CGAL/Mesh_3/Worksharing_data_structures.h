@@ -595,7 +595,6 @@ public:
     int index = m_stats.get_laziest_cell_index();
     bool popped = m_work_batches[index].try_pop(wb);
 
-    // If queue is empty // CJTODO: do something better
     if (!popped)
     {
       // Look for an non-empty queue
