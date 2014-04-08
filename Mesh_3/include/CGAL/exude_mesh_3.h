@@ -61,7 +61,7 @@ exude_mesh_3_impl(C3T3& c3t3,
   typedef typename C3T3::Triangulation Tr;
   typedef Mesh_3::Min_dihedral_angle_criterion<Tr> Sc;
   //typedef Mesh_3::Radius_radio_criterion<Tr> Sc;
-  typedef typename Mesh_3::Slivers_exuder<C3T3, Sc> Exuder;
+  typedef typename Mesh_3::Slivers_exuder<C3T3, Md, Sc> Exuder;
   
   // Create exuder
   Sc criterion(sliver_bound, c3t3.triangulation());
