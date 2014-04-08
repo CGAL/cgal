@@ -110,11 +110,7 @@ void test(const int d, const string & type, const int N)
 template< int D >
 void go(const int N)
 {
-    //typedef double RT;
-    //typedef CGAL::Gmpq RT;
-    //typedef CGAL::Cartesian_d<RT> K;
-    //typedef CGAL::Simple_cartesian_d<RT, D> K;
-    //typedef CGAL::Filtered_kernel_d<K> FK;
+    //typedef CGAL::Epick_d<CGAL::Dynamic_dimension_tag> FK;
     typedef CGAL::Epick_d<CGAL::Dimension_tag<D> > FK;
     typedef CGAL::Delaunay_triangulation<FK> Triangulation;
     //test<Triangulation>(D, "dynamic", N);

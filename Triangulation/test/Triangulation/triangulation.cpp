@@ -107,6 +107,7 @@ template< int D >
 void go(int N)
 {
     typedef CGAL::Epick_d<CGAL::Dimension_tag<D> > K;
+    //typedef CGAL::Epick_d<CGAL::Dynamic_dimension_tag> K;
     typedef CGAL::Triangulation<K> Triangulation;
     test<Triangulation>(D, "static", N);
     //test<Triangulation>(D, "dynamic", N);

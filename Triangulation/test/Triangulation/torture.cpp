@@ -111,6 +111,7 @@ template< int D >
 void go(const int N, const int nb_trials)
 {
     typedef CGAL::Epick_d<CGAL::Dimension_tag<D> > K;
+    //typedef CGAL::Epick_d<CGAL::Dynamic_dimension_tag> K;
     typedef CGAL::Delaunay_triangulation<K> Triangulation;
     for( int d = 0; d <= D; ++d )
     {
