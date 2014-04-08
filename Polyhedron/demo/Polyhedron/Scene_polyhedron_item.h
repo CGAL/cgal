@@ -73,6 +73,8 @@ public slots:
 signals:
   void selected_vertex(void*);
   void selected_facet(void*);
+  void selected_edge(void*);
+  void selected_halfedge(void*);
 
 private:
   // Initialization

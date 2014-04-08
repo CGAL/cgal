@@ -66,6 +66,10 @@ template<class T>       // Tested with T = taucs_single or taucs_double
                         // May also work with T = taucs_dcomplex and taucs_scomplex
 class Taucs_symmetric_solver_traits
 {
+
+private:
+	boost::shared_ptr<taucs_io_handle> mtr;
+
 // Public types
 public:
 
@@ -176,6 +180,104 @@ public:
         }
     }
 
+
+	bool factor (const Matrix& A, NT& D)
+	{
+		D = 1;          // TAUCS does not support homogeneous coordinates
+
+#ifdef DEBUG_TRACE
+		// Turn on TAUCS trace to stderr or to a log file
+#if DEBUG_TRACE >= 2
+		std::cerr.flush();
+		taucs_logfile((char*)"stderr");
+#else
+		taucs_logfile((char*)"taucs.log");
+#endif
+
+#endif
+
+#ifdef WIN32
+		Win32_exception_handler eh; // catch Win32 structured exceptions
+#endif
+
+		try
+		{
+			int     success;
+
+			// ordering
+			int*    perm_raw = NULL;
+			int*    invperm_raw = NULL;
+			taucs_ccs_order((taucs_ccs_matrix*) A.get_taucs_matrix(),
+				&perm_raw,
+				&invperm_raw,
+				(char*)"colamd");
+			boost::shared_ptr<int> perm(perm_raw, free);
+			boost::shared_ptr<int> invperm(invperm_raw, free);
+			if ( perm == NULL || invperm == NULL)
+				throw std::runtime_error("Ordering Failed");
+
+			// Create multi-file for out-of-core swapping.
+			// Note: g++ complains that tempnam() is deprecated. You may safely ignore the warning.
+#ifdef _MSC_VER
+			char template_name[13] = {'t', 'a', 'u', 'c', 's','.','X','X','X','X','X','X', '\0' };
+			char* matrixfile = _mktemp(template_name);
+			if (matrixfile == NULL)
+				throw std::runtime_error("Cannot Create Multifile");
+			boost::shared_ptr<taucs_io_handle> oocL(taucs_io_create_multifile(matrixfile), taucs_io_delete);
+			mtr = oocL;
+#else
+			boost::shared_ptr<char> matrixfile(tempnam(NULL, "taucs.L"), free);
+			if (matrixfile == NULL)
+				throw std::runtime_error("Cannot Create Multifile");
+			boost::shared_ptr<taucs_io_handle> oocL(taucs_io_create_multifile(matrixfile.get()), taucs_io_delete);
+			mtr = oocL;
+#endif
+			if (mtr == NULL)
+				throw std::runtime_error("Cannot Create Multifile");
+
+			// factor
+			int memory_mb = int(taucs_available_memory_size()/1048576.0);
+			success = taucs_ooc_factor_llt((taucs_ccs_matrix*) A.get_taucs_matrix(),
+				mtr.get(),
+				memory_mb*1048576.0);
+			if (success != TAUCS_SUCCESS)
+				throw std::runtime_error("Factorization Failed");
+
+			return true;
+		}
+		catch (std::exception& e)
+		{
+			taucs_printf((char*)"\t");
+			taucs_printf((char*)(e.what() != NULL ? e.what() : "Incorrect Matrix"));
+			taucs_printf((char*)"\n");
+			return false;
+		}
+		catch (...)
+		{
+			taucs_printf((char*)"\tIncorrect Matrix\n");
+			return false;
+		}
+	}
+
+
+
+
+	bool solve (const Vector& B, Vector& X)
+	{
+		int     success;
+		success = taucs_ooc_solve_llt(mtr.get(),
+			X.get_taucs_vector(),
+			(T*) B.get_taucs_vector());
+		if (success != TAUCS_SUCCESS)
+			throw std::runtime_error("Solving Failed");
+
+		return true;
+
+	}
+
+
+
+
 private:
 
     // Test if a floating point number is (close to) 0.0.
@@ -204,6 +306,11 @@ template<class T>       // Tested with T = taucs_single or taucs_double
 class Taucs_solver_traits
 {
 // Public types
+
+private:
+
+	boost::shared_ptr<taucs_io_handle> mtr;
+
 public:
 
     typedef Taucs_matrix<T>             Matrix;
@@ -337,6 +444,105 @@ public:
             return false;
         }
     }
+
+
+
+	bool factor (const Matrix& A, NT& D)
+	{
+		D = 1;          // TAUCS does not support homogeneous coordinates
+
+#ifdef DEBUG_TRACE
+		// Turn on TAUCS trace to stderr or to a log file
+#if DEBUG_TRACE >= 2
+		std::cerr.flush();
+		taucs_logfile((char*)"stderr");
+#else
+		taucs_logfile((char*)"taucs.log");
+#endif
+
+#endif
+
+#ifdef WIN32
+		Win32_exception_handler eh; // catch Win32 structured exceptions
+#endif
+
+		try
+		{
+			int     success;
+
+			// ordering
+			int*    perm_raw = NULL;
+			int*    invperm_raw = NULL;
+			taucs_ccs_order((taucs_ccs_matrix*) A.get_taucs_matrix(),
+				&perm_raw,
+				&invperm_raw,
+				(char*)"colamd");
+			boost::shared_ptr<int> perm(perm_raw, free);
+			boost::shared_ptr<int> invperm(invperm_raw, free);
+			if ( perm == NULL || invperm == NULL)
+				throw std::runtime_error("Ordering Failed");
+
+			// Create multi-file for out-of-core swapping.
+			// Note: g++ complains that tempnam() is deprecated. You may safely ignore the warning.
+#ifdef _MSC_VER
+			char template_name[13] = {'t', 'a', 'u', 'c', 's','.','X','X','X','X','X','X', '\0' };
+			char* matrixfile = _mktemp(template_name);
+			if (matrixfile == NULL)
+				throw std::runtime_error("Cannot Create Multifile");
+			boost::shared_ptr<taucs_io_handle> oocL(taucs_io_create_multifile(matrixfile), taucs_io_delete);
+			mtr = oocL;
+#else
+			boost::shared_ptr<char> matrixfile(tempnam(NULL, "taucs.L"), free);
+			if (matrixfile == NULL)
+				throw std::runtime_error("Cannot Create Multifile");
+			boost::shared_ptr<taucs_io_handle> oocL(taucs_io_create_multifile(matrixfile.get()), taucs_io_delete);
+			mtr = oocL;
+#endif
+			if (mtr == NULL)
+				throw std::runtime_error("Cannot Create Multifile");
+
+			// factor
+			int memory_mb = int(taucs_available_memory_size()/1048576.0);
+			success = taucs_ooc_factor_lu((taucs_ccs_matrix*) A.get_taucs_matrix(),
+				perm.get(),
+				mtr.get(),
+				memory_mb*1048576.0);
+			if (success != TAUCS_SUCCESS)
+				throw std::runtime_error("Factorization Failed");
+
+			return true;
+		}
+		catch (std::exception& e)
+		{
+			taucs_printf((char*)"\t");
+			taucs_printf((char*)(e.what() != NULL ? e.what() : "Incorrect Matrix"));
+			taucs_printf((char*)"\n");
+			return false;
+		}
+		catch (...)
+		{
+			taucs_printf((char*)"\tIncorrect Matrix\n");
+			return false;
+		}
+	}
+
+
+
+
+	bool solve (const Vector& B, Vector& X)
+	{
+			int     success;
+			success = taucs_ooc_solve_lu(mtr.get(),
+				X.get_taucs_vector(),
+				(T*) B.get_taucs_vector());
+			if (success != TAUCS_SUCCESS)
+				throw std::runtime_error("Solving Failed");
+
+			return true;
+		
+	}
+
+
 
 private:
 
