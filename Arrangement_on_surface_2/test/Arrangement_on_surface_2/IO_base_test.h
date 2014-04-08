@@ -9,7 +9,19 @@ public:
   typedef typename Geom_traits::X_monotone_curve_2      X_monotone_curve_2;
   typedef typename Geom_traits::Curve_2                 Curve_2;
 
-  
+  #if TEST_GEOM_TRAITS == POLYCURVE_CONIC_GEOM_TRAITS
+
+  // Poly curves needs some testing where Segments and X-monotone segments are required 
+  // instead of polycurves/x-monotone polycurves.
+  typedef typename Geom_traits::Segment_2               Segment_2;
+  typedef typename Geom_traits::X_monotone_segment_2    X_monotone_segment_2;
+
+  template <typename stream>
+  bool read_segment(stream& is, Segment_2& seg);
+  template <typename stream>
+  bool read_xsegment(stream& is, X_monotone_segment_2& xseg);
+
+  #endif
 
   /*! Constructor */
   IO_base_test(const Geom_traits& traits);
@@ -153,13 +165,6 @@ bool IO_base_test<Base_geom_traits>::read_curve(stream& is, Curve_2& cv)
 //polycurve_conic
 #elif TEST_GEOM_TRAITS == POLYCURVE_CONIC_GEOM_TRAITS
 
-// conic traits and rational traits use same number
-// type CORE:Expr so this code can be shared
-
-//for polycurves
-  typedef Geom_traits::Segment_2               Segment_2;
-  typedef Geom_traits::X_monotone_segment_2    X_monotone_segment_2;
-
 /*! Read a point */
 
 template <>
@@ -194,14 +199,6 @@ bool read_app_point(stream& is, Point_2& p)
   is >> x >> y;
   p = Point_2(Algebraic(x), Algebraic(y));
   return true;
-
-  //waqar: my modification
-  // long int rat_x_num, rat_x_den, rat_y_num, rat_y_den;
-  // is >> rat_x_num >> rat_x_den >> rat_y_num >> rat_y_den;
-  
-  //Basic_number_type x(rat_x), y(rat_y);
-  //p = Point_2( Rational(rat_x_num, rat_x_den), Rational(rat_y_num, rat_y_den) );
-  //return true;
 }
 
 /*! */
@@ -285,8 +282,6 @@ bool read_general_curve(stream& is, Curve& cv)
   cv = Curve(r, s, t, u, v, w, orient, source, target);
   return true;
 }
-
-
 
 /*! Read an x-monotone conic poly-curve */
 template <>
@@ -416,6 +411,40 @@ bool IO_base_test<Base_geom_traits>::read_curve(stream& is, Curve_2& cv)
   
   return true;
 }
+
+template <>
+template <typename stream>
+bool IO_base_test<Base_geom_traits>::read_segment(stream& is, Segment_2& seg)
+{
+  Segment_2 tmp_seg;
+
+  char type;
+  is >> type;
+
+  if( !read_general_curve(is, tmp_seg) )
+    return false;
+
+  seg = tmp_seg;
+
+   return true;
+}
+
+template <>
+template <typename stream>
+bool IO_base_test<Base_geom_traits>::read_xsegment(stream& is,
+                                                 X_monotone_segment_2& xseg)                               //read x-segment
+{
+  char type;
+  is >> type;
+  Segment_2 tmp_seg;
+  
+  if( !read_general_curve(is, tmp_seg) )
+        return false;
+
+  xseg = X_monotone_segment_2(tmp_seg);
+
+  return true;
+}  
 
 
 #elif TEST_GEOM_TRAITS == POLYCURVE_CIRCULAR_ARC_GEOM_TRAITS

@@ -599,13 +599,14 @@ void check_push_front(Curve base_curve, Segment curve_tobe_pushed)
   std::cout << "Base curve: " << base_curve << std::endl;
   std::cout << "push curve: " << curve_tobe_pushed << std::endl;
 
+
   traits.push_front_2_object()( base_curve, curve_tobe_pushed);
 
   std::cout << "result curve: " << base_curve << std::endl;
 }
 
 template<typename Curve, typename Segment>
-void check_push_back(Curve base_curve, Segment curve_tobe_pushed)
+void check_push_back(Curve& base_curve, Segment curve_tobe_pushed)
 {
   Polycurve_conic_traits_2 traits;
 
@@ -615,6 +616,21 @@ void check_push_back(Curve base_curve, Segment curve_tobe_pushed)
   traits.push_back_2_object()( base_curve, curve_tobe_pushed);
 
   std::cout << "result curve: " << base_curve << std::endl;
+}
+
+template<typename Segment>
+void check_compare_x_2(const Segment& seg1, const Segment& seg2 )
+{
+  Polycurve_conic_traits_2 traits;
+  CGAL::Comparison_result result;
+
+  result = traits.compare_x_2_object()(seg1, CGAL::ARR_MIN_END, seg2, CGAL::ARR_MIN_END);
+  std::cout << "Compare_x_2:: Expected Answer: Larger, Computed answer:  "<< (result == CGAL::SMALLER ? "smaller":
+               (result == CGAL::LARGER ? "Larger" : "equal")) << std::endl;
+
+  result = traits.compare_x_2_object()(seg1, CGAL::ARR_MIN_END, seg2, CGAL::ARR_MAX_END);
+  std::cout << "Compare_x_2:: Expected Answer: Equal, Computed answer:  "<< (result == CGAL::SMALLER ? "smaller":
+               (result == CGAL::LARGER ? "Larger" : "equal")) << std::endl;
 }
 
 int main ()
@@ -686,6 +702,8 @@ int main ()
 
   xmono_conic_curves_2.clear();
   xmono_conic_curves_2.push_back(xc5);
+
+  Pc_x_monotone_curve_2                          x_polycurve_push = construct_x_mono_polycurve(xmono_conic_curves_2.begin(), xmono_conic_curves_2.end());
   Polycurve_conic_traits_2::X_monotone_segment_2 xcurve_push =  Polycurve_conic_traits_2::X_monotone_segment_2(c5);//traits.construct_x_monotone_curve_2_object()(c5);
 
   xmono_conic_curves_2.clear();
@@ -693,9 +711,24 @@ int main ()
   xmono_conic_curves_2.push_back(xc4);
   Pc_x_monotone_curve_2 base_curve = construct_x_mono_polycurve(xmono_conic_curves_2.begin(), xmono_conic_curves_2.end());
 
+  //curves for push_back
+  Conic_curve_2     c13(1,1,0,-50,12,660,CGAL::COUNTERCLOCKWISE, Conic_point_2( Algebraic(25), Algebraic(-7) ), Conic_point_2( Algebraic(25), Algebraic(-5) ) );
+  Conic_curve_2     c14(0,1,0,-1,0,0,CGAL::COUNTERCLOCKWISE, Conic_point_2( Algebraic(25), Algebraic(-5) ), Conic_point_2( Algebraic(0), Algebraic(0) ) );
+  Conic_curve_2     c15(-1,0,0,0,1,0,CGAL::COUNTERCLOCKWISE, Conic_point_2( Algebraic(0), Algebraic(0) ), Conic_point_2( Algebraic(5), Algebraic(25) ) );
+  conic_curves.clear();
+  conic_curves.push_back(c13);
+  conic_curves.push_back(c14);
+  Polycurve_conic_traits_2::Curve_2 base_curve_push_back = construct_polycurve( conic_curves.begin(), conic_curves.end() );
+
+  conic_curves.push_back(c15);
+   Polycurve_conic_traits_2::Curve_2 Expected_push_back_result = construct_polycurve( conic_curves.begin(), conic_curves.end() );
+
+
 
 
   // std::cout<< std::endl;
+
+  check_compare_x_2(xc3, xc5); 
 
   // check_equal();
   // std::cout<< std::endl;
@@ -719,12 +752,13 @@ int main ()
    //std::cout<< std::endl;
 
     //adds the segment to the right.
-   //check_push_back(base_curve, xcurve_push);
+   //check_push_back(base_curve_push_back, c15);
    //std::cout<< std::endl;
 
+
     //adds the segment to the left.
-   check_push_front(base_curve, xcurve_push);
-   std::cout<< std::endl;
+   //check_push_front(base_curve, xcurve_push);
+   //std::cout<< std::endl;
 
   // check_are_mergable();
   // std::cout<< std::endl;
@@ -740,6 +774,9 @@ int main ()
 
   // check_compare_y_at_x_left();
   // std::cout<< std::endl;
+
+   std::string str = "Hello";
+   std::cout<< "Thr first letter is: " << str[0];
 
   return 0;
 }

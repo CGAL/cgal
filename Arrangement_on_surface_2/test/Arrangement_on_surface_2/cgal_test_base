@@ -478,6 +478,7 @@ execute_commands_new_structure()
     commands_indicator[CONSTRUCTOR]=0
     commands_indicator[EQUAL]=0
     commands_indicator[PUSH_BACK]=0
+    commands_indicator[PUSH_FRONT]=0
     i=1
     if [ $# -gt 2 ] ; then
 	for arg in $* ; do
@@ -574,6 +575,10 @@ execute_commands_new_structure()
     if [ ${commands_indicator[$PUSH_BACK]} -ne 0 ] ; then
   run_trapped_test test_traits data/$1/points \
       data/$1/xcurves data/$1/curves data/$1/push_back $2
+    fi
+    if [ ${commands_indicator[$PUSH_FRONT]} -ne 0 ] ; then
+  run_trapped_test test_traits data/$1/points \
+      data/$1/xcurves data/$1/curves data/$1/push_front $2
     fi
 }
 
@@ -1074,7 +1079,8 @@ test_polycurve_conic_traits()
       COMPARE_Y_AT_X_LEFT \
       COMPARE_Y_AT_X_RIGHT \
       MAKE_X_MONOTONE \
-      PUSH_BACK
+      PUSH_BACK \
+      PUSH_FRONT
 
   else
     echo "   ERROR:    not executed   test_traits polyline_traits" >> $ERRORFILE
@@ -1533,7 +1539,7 @@ if [ "${TEST_WITH_CMAKE}" != "FALSE" ]; then
     compile_and_run construction_test_suite_generator
 fi
 
-#waqar start
+# waqar start
 
 test_polycurve_conic_traits
 #test_polycurve_circular_arc_traits
@@ -1543,7 +1549,7 @@ test_polycurve_conic_traits
 #test_conic_traits
 
 
-#waqar end
+# waqar end
 
 #commenting of the code below it
 if [ 1 -eq 0 ]; then
