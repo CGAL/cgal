@@ -251,6 +251,9 @@ private:
   #if TEST_GEOM_TRAITS == POLYCURVE_CONIC_GEOM_TRAITS
   bool push_back_wrapper (std::istringstream& str_stream);
   bool push_front_wrapper (std::istringstream& str_stream);
+  bool compare_x_polycurve_wrapper (std::istringstream& str_stream);
+  bool compare_xy_polycurve_wrapper (std::istringstream& str_stream);
+  bool number_of_points_wrapper (std::istringstream& str_stream);
   #endif
   // TODO Is_on_x_identification_2
 
@@ -337,7 +340,13 @@ Traits_test<Geom_traits_T>::Traits_test(const Geom_traits_T& traits) : Base(trai
   m_wrappers[std::string("push_back")] =
     &Traits_test<Traits>::push_back_wrapper; 
   m_wrappers[std::string("push_front")] =
-    &Traits_test<Traits>::push_front_wrapper;   
+    &Traits_test<Traits>::push_front_wrapper;  
+  m_wrappers[std::string("compare_x_polycurve")] =
+    &Traits_test<Traits>::compare_x_polycurve_wrapper;
+  m_wrappers[std::string("compare_xy_polycurve")] =
+    &Traits_test<Traits>::compare_xy_polycurve_wrapper;
+    m_wrappers[std::string("number_of_points")] =
+    &Traits_test<Traits>::number_of_points_wrapper;
 #endif
   // TODO Is_on_x_identification_2
 }
@@ -512,6 +521,66 @@ push_front_wrapper (std::istringstream& str_stream)
 
   return true;
 } 
+
+/*
+ * Compare_x_2 for polycurve
+ * This functor compare_x_2 in polylines/polycurves also supports segments and not just points. 
+ * This wrapper will only test for the x-monotone segments. For testing the points, compare_x_wrapper can be used.
+ */
+template<typename Geom_traits_T>
+bool Traits_test<Geom_traits_T>::
+compare_x_polycurve_wrapper (std::istringstream& str_stream)
+{
+  unsigned int id1, id2;
+  str_stream >> id1 >> id2;
+  unsigned int end1, end2;
+  str_stream >> end1 >> end2;
+  unsigned int expected_answer = this->get_expected_enum(str_stream);
+  
+  std::cout << "Test: compare_x( " << this->m_xsegments[id1] << "at " << ((end1 == 0) ? "MIN_END" : "MAX_END") << " vs "
+                                   << this->m_xsegments[id2] << "at " << ((end2 == 0) ? "MIN_END" : "MAX_END") << " ) ? " 
+                                   << expected_answer << " ";
+
+  unsigned int real_answer =
+    this->m_geom_traits.compare_x_2_object()(this->m_xsegments[id1], ((end1 == 0) ? CGAL::ARR_MIN_END : CGAL::ARR_MAX_END),
+                                             this->m_xsegments[id2], ((end2 == 0) ? CGAL::ARR_MIN_END : CGAL::ARR_MAX_END) );
+
+  return this->compare(expected_answer, real_answer);
+}
+
+template<typename Geom_traits_T>
+bool Traits_test<Geom_traits_T>::
+compare_xy_polycurve_wrapper (std::istringstream& str_stream)
+{
+  unsigned int id1, id2;
+  str_stream >> id1 >> id2;
+  unsigned int end1, end2;
+  str_stream >> end1 >> end2;
+  unsigned int expected_answer = this->get_expected_enum(str_stream);
+  
+  std::cout << "Test: compare_xy( " << this->m_xsegments[id1] << "at " << ((end1 == 0) ? "MIN_END" : "MAX_END") << " vs "
+                                   << this->m_xsegments[id2] << "at " << ((end2 == 0) ? "MIN_END" : "MAX_END") << " ) ? " 
+                                   << expected_answer << " ";
+
+  unsigned int real_answer =
+    this->m_geom_traits.compare_x_2_object()(this->m_xsegments[id1], ((end1 == 0) ? CGAL::ARR_MIN_END : CGAL::ARR_MAX_END),
+                                             this->m_xsegments[id2], ((end2 == 0) ? CGAL::ARR_MIN_END : CGAL::ARR_MAX_END) );
+
+  return this->compare(expected_answer, real_answer);
+}
+
+template<typename Geom_traits_T>
+bool Traits_test<Geom_traits_T>::
+number_of_points_wrapper (std::istringstream& str_stream)
+{
+  unsigned int id, expected_result;
+  str_stream >> id >> expected_result;
+
+  unsigned int real_answer = 
+      this->m_geom_traits.number_of_points_2_object()(this->m_curves[id]);
+  
+  return this->compare(expected_result, real_answer);
+}
 
 #endif 
 //  end of POLYCURVE_CONIC_GEOM_TRAITS preprocessor if

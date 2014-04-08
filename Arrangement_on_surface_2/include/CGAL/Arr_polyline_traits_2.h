@@ -422,7 +422,7 @@ namespace CGAL {
     };
 
     Number_of_points_2 number_of_points_2_object() const
-    { return Number_of_points_2(this); }
+    { return Number_of_points_2(*this); }
 
 
     class Construct_min_vertex_2 {

@@ -728,7 +728,7 @@ int main ()
 
   // std::cout<< std::endl;
 
-  check_compare_x_2(xc3, xc5); 
+  //check_compare_x_2(xc3, xc5); 
 
   // check_equal();
   // std::cout<< std::endl;
@@ -775,8 +775,8 @@ int main ()
   // check_compare_y_at_x_left();
   // std::cout<< std::endl;
 
-   std::string str = "Hello";
-   std::cout<< "Thr first letter is: " << str[0];
+   //number of segments
+    //std::cout<< "Number of segments: " << traits.number_of_points_2_object()(base_curve_push_back) << std::endl;
 
   return 0;
 }
