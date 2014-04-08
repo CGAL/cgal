@@ -43,7 +43,11 @@ void trace_test_end()
 #endif
 }
 
-void trace_display_msg(const char* msg)
+void trace_display_msg(const char*
+#ifdef LCC_TRACE_TEST_BEGIN
+                       msg
+#endif
+                       )
 {
 #ifdef LCC_TRACE_TEST_BEGIN
   std::cout<<"***************** "<<msg<<"***************** "<<std::endl;
