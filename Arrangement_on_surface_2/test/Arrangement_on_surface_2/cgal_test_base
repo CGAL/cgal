@@ -482,6 +482,8 @@ execute_commands_new_structure()
     commands_indicator[COMPARE_X_POLYCURVE]=0
     commands_indicator[COMPARE_XY_POLYCURVE]=0
     commands_indicator[NUMBER_OF_POINTS]=0
+    commands_indicator[COMPARE_ENDPOINTS_XY]=0
+    commands_indicator[CONSTRUCT_OPPOSITE]=0
     i=1
     if [ $# -gt 2 ] ; then
 	for arg in $* ; do
@@ -594,6 +596,14 @@ execute_commands_new_structure()
     if [ ${commands_indicator[$NUMBER_OF_POINTS]} -ne 0 ] ; then
   run_trapped_test test_traits data/$1/points \
       data/$1/xcurves data/$1/curves data/$1/number_of_points $2
+    fi
+    if [ ${commands_indicator[$COMPARE_ENDPOINTS_XY]} -ne 0 ] ; then
+  run_trapped_test test_traits data/$1/points \
+      data/$1/xcurves data/$1/curves data/$1/compare_endpoints_xy $2
+    fi
+    if [ ${commands_indicator[$CONSTRUCT_OPPOSITE]} -ne 0 ] ; then
+  run_trapped_test test_traits data/$1/points \
+      data/$1/xcurves data/$1/curves data/$1/construct_opposite $2
     fi
 }
 
@@ -1098,7 +1108,9 @@ test_polycurve_conic_traits()
       PUSH_FRONT \
       COMPARE_X_POLYCURVE \
       COMPARE_XY_POLYCURVE \
-      NUMBER_OF_POINTS
+      NUMBER_OF_POINTS \
+      VERTEX \
+      CONSTRUCT_OPPOSITE
 
   else
     echo "   ERROR:    not executed   test_traits polyline_traits" >> $ERRORFILE

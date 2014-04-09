@@ -1,0 +1,24 @@
+# -*- comment-start: "#"; -*-
+# Check for min and max vertices
+# Format: <command> <x-curve id> <expected point id>
+#
+min_vertex 0 19
+min_vertex 1 20
+min_vertex 2 20
+min_vertex 3 21
+min_vertex 4 19
+min_vertex 5 21
+min_vertex 6 19
+min_vertex 7 23
+min_vertex 8 14
+#
+#
+max_vertex 0 24
+max_vertex 1 19
+max_vertex 2 25
+max_vertex 3 24
+max_vertex 4 25
+max_vertex 5 19
+max_vertex 6 22
+max_vertex 7 19
+max_vertex 8 24

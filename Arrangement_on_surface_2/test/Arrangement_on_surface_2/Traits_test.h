@@ -254,6 +254,8 @@ private:
   bool compare_x_polycurve_wrapper (std::istringstream& str_stream);
   bool compare_xy_polycurve_wrapper (std::istringstream& str_stream);
   bool number_of_points_wrapper (std::istringstream& str_stream);
+  bool compare_endpoints_xy_wrapper (std::istringstream& str_stream);
+  bool construct_opposite_wrapper (std::istringstream& str_stream);
   #endif
   // TODO Is_on_x_identification_2
 
@@ -345,8 +347,12 @@ Traits_test<Geom_traits_T>::Traits_test(const Geom_traits_T& traits) : Base(trai
     &Traits_test<Traits>::compare_x_polycurve_wrapper;
   m_wrappers[std::string("compare_xy_polycurve")] =
     &Traits_test<Traits>::compare_xy_polycurve_wrapper;
-    m_wrappers[std::string("number_of_points")] =
+  m_wrappers[std::string("number_of_points")] =
     &Traits_test<Traits>::number_of_points_wrapper;
+  m_wrappers[std::string("compare_endpoints_xy")] =
+    &Traits_test<Traits>::compare_endpoints_xy_wrapper;
+  m_wrappers[std::string("construct_opposite")] =
+    &Traits_test<Traits>::construct_opposite_wrapper;    
 #endif
   // TODO Is_on_x_identification_2
 }
@@ -580,6 +586,37 @@ number_of_points_wrapper (std::istringstream& str_stream)
       this->m_geom_traits.number_of_points_2_object()(this->m_curves[id]);
   
   return this->compare(expected_result, real_answer);
+}
+
+template<typename Geom_traits_T>
+bool Traits_test<Geom_traits_T>::
+compare_endpoints_xy_wrapper (std::istringstream& str_stream)
+{
+  unsigned int id;
+  str_stream >> id;
+
+  unsigned int expected_answer = this->get_expected_enum(str_stream);
+  
+  std::cout << "Test: compare_endpoints_xy( " << this->m_xcurves[id] << " ) ? " <<expected_answer << " ";
+  unsigned int real_answer = 
+        this->m_geom_traits.compare_endpoints_xy_2_object()(this->m_xcurves[id]);
+
+  return this->compare(expected_answer, real_answer);
+}
+
+template<typename Geom_traits_T>
+bool Traits_test<Geom_traits_T>::
+construct_opposite_wrapper (std::istringstream& str_stream)
+{
+  unsigned int id1, id2;
+  str_stream >> id1 >> id2;
+
+  std::cout << "Test: construct_opposite( " << this->m_xcurves[id1] << " ) ? " << "expected_answer: " << this->m_xcurves[id2]<< " ";
+
+  X_monotone_curve_2 obtained_curve =
+      this->m_geom_traits.construct_opposite_2_object()(this->m_xcurves[id1]);
+
+  return this->compare_curves(obtained_curve, this->m_xcurves[id2]);
 }
 
 #endif 
