@@ -107,7 +107,9 @@ public :
   Triangle_vector const& triangles() const { return mTriangles ; }
   
   // The cycle of vertices around the edge  
-  vertex_descriptor_vector const& link() const { return mLink ; }
+  vertex_descriptor_vector const& link() const {
+    CGAL_PROFILER("link calls");
+    return mLink ; }
   
   edge_descriptor_vector const& border_edges() const { return mBorderEdges ; }
 

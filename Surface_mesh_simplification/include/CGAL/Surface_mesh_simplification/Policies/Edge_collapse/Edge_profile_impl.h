@@ -41,6 +41,7 @@ Edge_profile<ECM>::Edge_profile ( edge_descriptor  const& aV0V1
   ,mSurface(boost::addressof(aSurface))
   
 {
+    CGAL_PROFILER("Edge_profile constructor calls");
   mV1V0 = opposite_edge(v0_v1(),surface_mesh());
   
   mV0 = source(v0_v1(),surface_mesh());
@@ -146,6 +147,7 @@ void Edge_profile<ECM>::Extract_triangle( vertex_descriptor const& v0
                                         , EdgeIsBorderMap   const& is_border
                                         )
 {
+  mLink.reserve(12);
   // The 3 vertices are obtained by circulating ccw around v0, that is, e02 = next_ccw(e01).
   // Since these vertices are NOT obtained by circulating the face, the actual triangle orientation is unspecified.
   
