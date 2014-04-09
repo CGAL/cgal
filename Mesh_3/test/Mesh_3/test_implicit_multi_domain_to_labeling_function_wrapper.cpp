@@ -3,7 +3,7 @@
 
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K_e_i;
-typedef typename K_e_i::Point_3 Point_3;
+typedef K_e_i::Point_3 Point_3;
 typedef double (Function) (const Point_3&);
 
 typedef CGAL::Mesh_3::Implicit_multi_domain_to_labeling_function_wrapper<Function*> Labeling_function;
