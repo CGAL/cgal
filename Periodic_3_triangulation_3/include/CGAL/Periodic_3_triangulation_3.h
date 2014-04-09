@@ -1861,19 +1861,8 @@ inexact_periodic_locate(const Point& p, const Offset& o_p,
 	Cell_handle previous = Cell_handle();
 	Cell_handle c = start;
 
-	boost::rand48 rng;
-	boost::uniform_smallint<> four(0, 3);
-	boost::variate_generator<boost::rand48&, boost::uniform_smallint<> > die4(rng, four);
-
-
 	// Now treat the cell c.
 try_next_cell:
-	// For the remembering stochastic walk,
-	// we need to start trying with a random index :
-	int i = die4();
-	// For the remembering visibility walk (Delaunay only), we don't :
-	// int i = 0;
-
 	cumm_off =
 			c->offset(0) | c->offset(1) | c->offset(2) | c->offset(3);
 
