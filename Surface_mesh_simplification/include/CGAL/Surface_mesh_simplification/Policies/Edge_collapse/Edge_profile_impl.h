@@ -41,7 +41,8 @@ Edge_profile<ECM>::Edge_profile ( edge_descriptor  const& aV0V1
   ,mSurface(boost::addressof(aSurface))
   
 {
-    CGAL_PROFILER("Edge_profile constructor calls");
+  CGAL_PROFILER("Edge_profile constructor calls");
+  mLink.reserve(12);
   mV1V0 = opposite_edge(v0_v1(),surface_mesh());
   
   mV0 = source(v0_v1(),surface_mesh());
@@ -147,7 +148,6 @@ void Edge_profile<ECM>::Extract_triangle( vertex_descriptor const& v0
                                         , EdgeIsBorderMap   const& is_border
                                         )
 {
-  mLink.reserve(12);
   // The 3 vertices are obtained by circulating ccw around v0, that is, e02 = next_ccw(e01).
   // Since these vertices are NOT obtained by circulating the face, the actual triangle orientation is unspecified.
   
@@ -175,12 +175,11 @@ void Edge_profile<ECM>::Extract_triangle( vertex_descriptor const& v0
 //
 template<class ECM>
 template<class VertexIdxMap, class EdgeIsBorderMap>
-void Edge_profile<ECM>::Extract_triangles_and_link( VertexIdxMap const&    vertex_idx
+void Edge_profile<ECM>::Extract_triangles_and_link( VertexIdxMap const& 
                                                   , EdgeIsBorderMap const& is_border 
                                                   )
 {
-  
-  IdxSet lCollected ;
+  std::set<vertex_descriptor> lCollected ;
   
   // 
   // Extract around mV0, CCW
@@ -199,7 +198,7 @@ void Edge_profile<ECM>::Extract_triangles_and_link( VertexIdxMap const&    verte
     {
       mLink.push_back(v2) ;
       CGAL_assertion_code( bool lInserted = )
-        lCollected.insert(vertex_idx[v2])
+        lCollected.insert(v2)
           CGAL_assertion_code( .second ) ;
       CGAL_assertion(lInserted);
     }
@@ -222,7 +221,7 @@ void Edge_profile<ECM>::Extract_triangles_and_link( VertexIdxMap const&    verte
 
     
   // This could have been added to the link while circulating around mP
-  if ( v1 != mV0 && lCollected.find(vertex_idx[v1]) == lCollected.end() )
+  if ( v1 != mV0 && lCollected.find(v1) == lCollected.end() )
     mLink.push_back(v1) ;
   
   e02 = opposite_edge(prev_edge(e02,surface_mesh()), surface_mesh());
@@ -232,7 +231,7 @@ void Edge_profile<ECM>::Extract_triangles_and_link( VertexIdxMap const&    verte
     vertex_descriptor v2 = target(e02,surface_mesh());
 
     // Any of the vertices found around mP can be reached again around mQ, but we can't duplicate them here.
-    if ( v2 != mV0 && lCollected.find(vertex_idx[v2]) == lCollected.end() )
+    if ( v2 != mV0 && lCollected.find(v2) == lCollected.end() )
       mLink.push_back(v2) ;
     
     Extract_triangle(v0,v1,v2,e02,is_border);
