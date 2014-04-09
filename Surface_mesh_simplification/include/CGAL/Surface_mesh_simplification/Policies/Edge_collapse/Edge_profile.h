@@ -146,10 +146,6 @@ private:
 
 private:
    
-  void Extract_borders( vertex_descriptor const& v
-                        , std::set<edge_descriptor>& rCollected 
-                      ) ;
-   
    void Extract_borders() ;
    
    void Extract_triangle( vertex_descriptor const& v0

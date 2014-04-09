@@ -93,42 +93,34 @@ Edge_profile<ECM>::Edge_profile ( edge_descriptor  const& aV0V1
   Extract_borders();
 }
 
-template<class ECM>
-void Edge_profile<ECM>::Extract_borders( vertex_descriptor const& v
-                                         , std::set<edge_descriptor>& rCollected 
-                                       )
-{
-  in_edge_iterator eb, ee ; 
-  for ( boost::tie(eb,ee) = in_edges(v,surface_mesh()) ; eb != ee ; ++ eb )
-  {
-    edge_descriptor edge     = *eb ;
-    edge_descriptor opp_edge = opposite_edge(edge,surface_mesh()) ;
-    
-    bool is_edge_border     = edge->is_border() ;
-    bool is_opp_edge_border = opp_edge->is_border() ;
-    
-    if ( is_edge_border || is_opp_edge_border )
-    {
-      bool lNotCollected = rCollected.find(edge) == rCollected.end() ;
-      if ( lNotCollected )
-      {  
-        rCollected.insert(edge);
-        rCollected.insert(opp_edge);
-        
-        edge_descriptor border_edge = is_edge_border ? edge : opp_edge ;
-      
-        mBorderEdges.push_back(border_edge) ;
-      }  
-    }  
-  }
-}
 
 template<class ECM>
 void Edge_profile<ECM>::Extract_borders()
 {
-  std::set<edge_descriptor> lCollected ;
-  Extract_borders(mV0,lCollected);
-  Extract_borders(mV1,lCollected);
+  edge_descriptor e = mV0V1;
+  edge_descriptor oe = opposite_edge(e, surface_mesh());
+  bool b;
+  if((b = e->is_border()) || oe->is_border()){
+    mBorderEdges.push_back(b?e:oe);
+  }
+  e = next_edge(oe,surface_mesh());
+  oe = opposite_edge(e,surface_mesh());
+  while(e != mV0V1){
+    if((b = e->is_border()) || oe->is_border()){
+      mBorderEdges.push_back(b?e:oe);
+    }
+    e = next_edge(oe,surface_mesh());
+    oe = opposite_edge(e,surface_mesh());
+  }
+  e = opposite_edge(next_edge(e,surface_mesh()),surface_mesh());
+  oe = opposite_edge(e,surface_mesh());
+    while(e != mV0V1){
+    if((b = e->is_border()) || oe->is_border()){
+      mBorderEdges.push_back(b?e:oe);
+    } 
+    e = opposite_edge(next_edge(e,surface_mesh()),surface_mesh());
+    oe = opposite_edge(e,surface_mesh());
+    }
 }
 
 //
