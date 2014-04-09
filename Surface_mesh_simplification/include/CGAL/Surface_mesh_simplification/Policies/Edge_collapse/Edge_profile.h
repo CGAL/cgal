@@ -84,6 +84,7 @@ public :
                , VertexIdxMap     const& aVertex_index_map
                , EdgeIdxMap       const& aEdge_index_map
                , EdgeIsBorderMap  const& aEdge_is_border_map
+               , bool has_border 
                ) ;
      
 public :

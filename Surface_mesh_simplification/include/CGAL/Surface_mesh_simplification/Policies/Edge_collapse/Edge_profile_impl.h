@@ -34,7 +34,8 @@ Edge_profile<ECM>::Edge_profile ( edge_descriptor  const& aV0V1
                                 , ECM&                    aSurface
                                 , VertexIdxMap     const& 
                                 , EdgeIdxMap       const&
-                                , EdgeIsBorderMap  const& 
+                                , EdgeIsBorderMap  const&
+                                , bool has_border
                                 )
   :
    mV0V1(aV0V1)
@@ -88,9 +89,10 @@ Edge_profile<ECM>::Edge_profile ( edge_descriptor  const& aV0V1
   {
     CGAL_SURF_SIMPL_TEST_assertion( mV1V0->is_border() ) ;
   }
-    
-  //Extract_triangles_and_link();
-  Extract_borders();
+  
+  if(has_border){
+    Extract_borders();
+  }
 }
 
 
