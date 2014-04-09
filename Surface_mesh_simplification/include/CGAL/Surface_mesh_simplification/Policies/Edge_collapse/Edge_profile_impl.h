@@ -32,9 +32,9 @@ template<class VertexIdxMap
         >
 Edge_profile<ECM>::Edge_profile ( edge_descriptor  const& aV0V1
                                 , ECM&                    aSurface
-                                , VertexIdxMap     const& vertex_idx
-                                , EdgeIdxMap       const& edge_idx
-                                , EdgeIsBorderMap  const& is_border
+                                , VertexIdxMap     const& 
+                                , EdgeIdxMap       const&
+                                , EdgeIsBorderMap  const& 
                                 )
   :
    mV0V1(aV0V1)
@@ -43,6 +43,7 @@ Edge_profile<ECM>::Edge_profile ( edge_descriptor  const& aV0V1
 {
   CGAL_PROFILER("Edge_profile constructor calls");
   mLink.reserve(12);
+  mTriangles.reserve(16);
   mV1V0 = opposite_edge(v0_v1(),surface_mesh());
   
   mV0 = source(v0_v1(),surface_mesh());
@@ -53,8 +54,8 @@ Edge_profile<ECM>::Edge_profile ( edge_descriptor  const& aV0V1
   mP0 = get(vertex_point,surface_mesh(),mV0);
   mP1 = get(vertex_point,surface_mesh(),mV1);
   
-  mIsBorderV0V1 = is_border[v0_v1()];
-  mIsBorderV1V0 = is_border[v1_v0()];
+  mIsBorderV0V1 = v0_v1()->is_border();
+  mIsBorderV1V0 = v1_v0()->is_border();
   
   if ( left_face_exists() ) 
   {
@@ -88,16 +89,13 @@ Edge_profile<ECM>::Edge_profile ( edge_descriptor  const& aV0V1
     CGAL_SURF_SIMPL_TEST_assertion( mV1V0->is_border() ) ;
   }
     
-  Extract_triangles_and_link(vertex_idx,is_border);
-  Extract_borders(edge_idx,is_border);
+  //Extract_triangles_and_link();
+  Extract_borders();
 }
 
 template<class ECM>
-template<class EdgeIdxMap, class EdgeIsBorderMap>
 void Edge_profile<ECM>::Extract_borders( vertex_descriptor const& v
-                                       , IdxSet&                  rCollected 
-                                       , EdgeIdxMap        const& edge_idx
-                                       , EdgeIsBorderMap   const& is_border
+                                         , std::set<edge_descriptor>& rCollected 
                                        )
 {
   in_edge_iterator eb, ee ; 
@@ -106,17 +104,16 @@ void Edge_profile<ECM>::Extract_borders( vertex_descriptor const& v
     edge_descriptor edge     = *eb ;
     edge_descriptor opp_edge = opposite_edge(edge,surface_mesh()) ;
     
-    bool is_edge_border     = is_border[edge] ;
-    bool is_opp_edge_border = is_border[opp_edge] ;
+    bool is_edge_border     = edge->is_border() ;
+    bool is_opp_edge_border = opp_edge->is_border() ;
     
     if ( is_edge_border || is_opp_edge_border )
     {
-      std::size_t eidx = edge_idx[edge];
-      bool lNotCollected = rCollected.find(eidx) == rCollected.end() ;
+      bool lNotCollected = rCollected.find(edge) == rCollected.end() ;
       if ( lNotCollected )
       {  
-        rCollected.insert(eidx);
-        rCollected.insert(edge_idx[opp_edge]);
+        rCollected.insert(edge);
+        rCollected.insert(opp_edge);
         
         edge_descriptor border_edge = is_edge_border ? edge : opp_edge ;
       
@@ -127,12 +124,11 @@ void Edge_profile<ECM>::Extract_borders( vertex_descriptor const& v
 }
 
 template<class ECM>
-template<class EdgeIdxMap, class EdgeIsBorderMap>
-void Edge_profile<ECM>::Extract_borders( EdgeIdxMap const& edge_idx, EdgeIsBorderMap  const& is_border)
+void Edge_profile<ECM>::Extract_borders()
 {
-  IdxSet lCollected ;
-  Extract_borders(mV0,lCollected,edge_idx,is_border);
-  Extract_borders(mV1,lCollected,edge_idx,is_border);
+  std::set<edge_descriptor> lCollected ;
+  Extract_borders(mV0,lCollected);
+  Extract_borders(mV1,lCollected);
 }
 
 //
@@ -140,12 +136,10 @@ void Edge_profile<ECM>::Extract_borders( EdgeIdxMap const& edge_idx, EdgeIsBorde
 // the triangle, properly oriented, is added to mTriangles.
 //
 template<class ECM>
-template<class EdgeIsBorderMap>
 void Edge_profile<ECM>::Extract_triangle( vertex_descriptor const& v0
                                         , vertex_descriptor const& v1
                                         , vertex_descriptor const& v2 
                                         , edge_descriptor   const& e02
-                                        , EdgeIsBorderMap   const& is_border
                                         )
 {
   // The 3 vertices are obtained by circulating ccw around v0, that is, e02 = next_ccw(e01).
@@ -157,7 +151,7 @@ void Edge_profile<ECM>::Extract_triangle( vertex_descriptor const& v0
     // The triangle is oriented v0->v2->v1.
     // In this case e02 is an edge of the facet.
     // If this facet edge is a border edge then this triangle is not in the mesh .
-    if ( !is_border[e02] )
+    if ( ! e02->is_border() )
       mTriangles.push_back(Triangle(v0,v2,v1) ) ;
   }
   else
@@ -165,7 +159,7 @@ void Edge_profile<ECM>::Extract_triangle( vertex_descriptor const& v0
     // The triangle is oriented v0->v1->v2.
     // In this case, e20 and not e02, is an edge of the facet.
     // If this facet edge is a border edge then this triangle is not in the mesh .
-    if ( !is_border[opposite_edge(e02,surface_mesh())] )
+    if ( ! opposite_edge(e02,surface_mesh())->is_border() )
       mTriangles.push_back(Triangle(v0,v1,v2) ) ;
   }
 }
@@ -174,13 +168,9 @@ void Edge_profile<ECM>::Extract_triangle( vertex_descriptor const& v0
 // Extract all triangles (its normals) and vertices (the link) around the collpasing edge p_q
 //
 template<class ECM>
-template<class VertexIdxMap, class EdgeIsBorderMap>
-void Edge_profile<ECM>::Extract_triangles_and_link( VertexIdxMap const& 
-                                                  , EdgeIsBorderMap const& is_border 
-                                                  )
+void Edge_profile<ECM>::Extract_triangles_and_link()
 {
   std::set<vertex_descriptor> lCollected ;
-  
   // 
   // Extract around mV0, CCW
   //  
@@ -203,7 +193,7 @@ void Edge_profile<ECM>::Extract_triangles_and_link( VertexIdxMap const&
       CGAL_assertion(lInserted);
     }
       
-    Extract_triangle(v0,v1,v2,e02,is_border);
+    Extract_triangle(v0,v1,v2,e02);
     
     v1 = v2 ;
   }
@@ -234,7 +224,7 @@ void Edge_profile<ECM>::Extract_triangles_and_link( VertexIdxMap const&
     if ( v2 != mV0 && lCollected.find(v2) == lCollected.end() )
       mLink.push_back(v2) ;
     
-    Extract_triangle(v0,v1,v2,e02,is_border);
+    Extract_triangle(v0,v1,v2,e02);
     
     v1 = v2 ;
      
