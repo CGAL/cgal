@@ -1,4 +1,4 @@
-// Copyright (c) 2001  Tel-Aviv University (Israel).
+// Copyright (c) 2001,2009,2014  Tel-Aviv University (Israel), Max-Planck-Institute Saarbruecken (Germany).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -14,9 +14,11 @@
 //
 // $URL$
 // $Id$
-// 
 //
-// author(s)     : Eli Packer <elip@post.tau.ac.il>
+//
+// author(s)     : Eli Packer <elip@post.tau.ac.il>,
+//                 Waqar Khan <wkhan@mpi-inf.mpg.de>
+
 #ifndef CGAL_SNAP_ROUNDING_2_TRAITS_H
 #define CGAL_SNAP_ROUNDING_2_TRAITS_H
 
@@ -33,28 +35,29 @@ class Snap_rounding_traits_2 :
   public CGAL::Arr_segment_traits_2<Base_kernel> {
 
 public: // otherwise Segment_data cannot access the types
-  typedef typename Base_kernel::FT                      NT;
-  typedef typename Base_kernel::FT                      FT;
-  typedef typename Base_kernel::Point_2                 Point_2;
-  typedef typename Base_kernel::Segment_2               Segment_2;
-  typedef typename Base_kernel::Iso_rectangle_2         Iso_rectangle_2;
-  typedef typename Base_kernel::Vector_2                Vector_2;
-  typedef typename Base_kernel::Line_2                  Line_2;
-  typedef typename Base_kernel::Aff_transformation_2    Aff_transformation_2;
-  typedef typename Base_kernel::Direction_2             Direction_2;
-  typedef typename Base_kernel::Construct_vertex_2      Construct_vertex_2 ;
-  typedef typename Base_kernel::Construct_segment_2     Construct_segment_2 ;
-  typedef typename Base_kernel::Construct_iso_rectangle_2
-    Construct_iso_rectangle_2;
-  typedef typename Base_kernel::Compare_y_2             Compare_y_2;
+  typedef typename Base_kernel::FT                          NT;
+  typedef typename Base_kernel::FT                          FT;
+  typedef typename Base_kernel::Point_2                     Point_2;
+  typedef typename Base_kernel::Segment_2                   Segment_2;
+  typedef typename Base_kernel::Iso_rectangle_2             Iso_rectangle_2;
+  typedef typename Base_kernel::Vector_2                    Vector_2;
+  typedef typename Base_kernel::Line_2                      Line_2;
+  typedef typename Base_kernel::Aff_transformation_2        Aff_transformation_2;
+  typedef typename Base_kernel::Direction_2                 Direction_2;
+  typedef typename Base_kernel::Construct_vertex_2          Construct_vertex_2 ;
+  typedef typename Base_kernel::Construct_segment_2         Construct_segment_2 ;
+  typedef typename Base_kernel::Construct_iso_rectangle_2   Construct_iso_rectangle_2;
+  typedef typename Base_kernel::Compare_y_2                 Compare_y_2;
 
-  typedef CGAL::Arr_segment_traits_2<Base_kernel>       Base_traits;
+  typedef typename Base_kernel::Construct_min_vertex_2                    Construct_min_vertex_2;
+  typedef typename Base_kernel::Construct_max_vertex_2                    Construct_max_vertex_2;
+  typedef typename Base_kernel::Cartesian_const_iterator_2                Cartesian_const_iterator_2;
+  typedef typename Base_kernel::Construct_cartesian_const_iterator_2      Construct_cartesian_const_iterator_2;
 
-  typedef typename Base_traits::Compare_x_2             Compare_x_2;
-  
+  typedef CGAL::Arr_segment_traits_2<Base_kernel>                         Base_traits;
+  typedef typename Base_traits::Compare_x_2                               Compare_x_2;
+  typedef CGAL::To_double<NT>                                             To_double;
 
-  typedef CGAL::To_double<NT>                           To_double;
-  
 public:
   /*! Functor */
   class Snap_2 {
@@ -197,7 +200,6 @@ public:
     Base_kernel k;
     return k.construct_iso_rectangle_2_object();
   }
-
 
 };
 
