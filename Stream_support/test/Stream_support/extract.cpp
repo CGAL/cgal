@@ -26,7 +26,7 @@ int main()
       sum += (x + y + z);
     }
     
-    std::cout << "operator>>(istream&,double&) Sum =  " <<  sum << std::endl << t.time() << "sec\n";
+    std::cout << "operator>>(istream&,double&) Sum = " <<  sum << std::endl << t.time() << " sec\n";
   }    
 
  {
@@ -39,7 +39,7 @@ int main()
       sum += (x + y + z);
     }
     
-    std::cout << "extract(istream&, double&)   Sum = " <<  sum << std::endl << t.time() << "sec\n";
+    std::cout << "extract(istream&, double&)   Sum = " <<  sum << std::endl << t.time() << " sec\n";
   }    
  return 0;
 }
