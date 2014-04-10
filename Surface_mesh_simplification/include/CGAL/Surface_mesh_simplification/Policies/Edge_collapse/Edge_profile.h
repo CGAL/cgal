@@ -144,12 +144,15 @@ private:
 
   typedef typename GraphTraits::in_edge_iterator  in_edge_iterator ;
   
+  bool is_border(edge_descriptor e) const
+  {
+    return get(CGAL::edge_is_border, surface_mesh(), e);
+  }
+   
 
-private:
+  void Extract_borders() ;
    
-   void Extract_borders() ;
-   
-   void Extract_triangles_and_link() ;
+  void Extract_triangles_and_link() ;
     
 private:
  

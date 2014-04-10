@@ -55,7 +55,7 @@ EdgeCollapse<M,SP,VIM,EIM,EBM,ECTM,CF,PF,V>::EdgeCollapse( ECM&                 
   for ( boost::tie(eb,ee) = undirected_edges(mSurface); eb!=ee; ++eb )
     {
       edge_descriptor ed = *eb;
-      if(ed->is_border()){
+      if(is_border(ed)){
         m_has_border = true;
         break;
       }
@@ -405,7 +405,7 @@ bool EdgeCollapse<M,SP,VIM,EIM,EBM,ECTM,CF,PF,V>::Is_collapse_topologically_vali
             if ( lIsFace )
             {
               // Is k_v1 the halfedge bounding the face 'k-v1-v0'?
-              if ( !k_v1->is_border() && k_v1->next()->vertex() == aProfile.v0() )
+              if ( ! is_border(k_v1) && k_v1->next()->vertex() == aProfile.v0() )
               {
                 CGAL_SURF_SIMPL_TEST_assertion( !k_v1->is_border() ) ;
                 CGAL_SURF_SIMPL_TEST_assertion(  k_v1                ->vertex() == aProfile.v1() ) ;

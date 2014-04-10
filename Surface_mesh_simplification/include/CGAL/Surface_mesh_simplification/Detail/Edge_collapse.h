@@ -209,7 +209,7 @@ private:
     return is_primary_edge(aEdge) ? aEdge : opposite_edge(aEdge,mSurface) ;
   }  
     
-  bool is_border ( const_edge_descriptor const& aEdge ) const { return Edge_is_border_map[aEdge] ; }    
+  bool is_border ( const_edge_descriptor const& aEdge ) const { return get(CGAL::edge_is_border, mSurface, aEdge) ; }    
   
   bool is_constrained( const_edge_descriptor const& aEdge ) const { return get(Edge_is_constrained_map,aEdge); }
   bool is_constrained( const_vertex_descriptor const& aVertex ) const;

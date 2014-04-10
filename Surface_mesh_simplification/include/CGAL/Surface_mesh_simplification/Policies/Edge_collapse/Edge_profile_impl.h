@@ -43,6 +43,7 @@ Edge_profile<ECM>::Edge_profile ( edge_descriptor  const& aV0V1
   
 {
   CGAL_PROFILER("Edge_profile constructor calls");
+
   mLink.reserve(12);
   mTriangles.reserve(16);
   mV1V0 = opposite_edge(v0_v1(),surface_mesh());
@@ -55,8 +56,8 @@ Edge_profile<ECM>::Edge_profile ( edge_descriptor  const& aV0V1
   mP0 = get(vertex_point,surface_mesh(),mV0);
   mP1 = get(vertex_point,surface_mesh(),mV1);
   
-  mIsBorderV0V1 = v0_v1()->is_border();
-  mIsBorderV1V0 = v1_v0()->is_border();
+  mIsBorderV0V1 = is_border(v0_v1());
+  mIsBorderV1V0 = is_border(v1_v0());
   
   if ( left_face_exists() ) 
   {
@@ -102,13 +103,13 @@ void Edge_profile<ECM>::Extract_borders()
   edge_descriptor e = mV0V1;
   edge_descriptor oe = opposite_edge(e, surface_mesh());
   bool b;
-  if((b = e->is_border()) || oe->is_border()){
+  if((b = is_border(e)) || is_border(oe)){
     mBorderEdges.push_back(b?e:oe);
   }
   e = next_edge(oe,surface_mesh());
   oe = opposite_edge(e,surface_mesh());
   while(e != mV0V1){
-    if((b = e->is_border()) || oe->is_border()){
+    if((b = is_border(e)) || is_border(oe)){
       mBorderEdges.push_back(b?e:oe);
     }
     e = next_edge(oe,surface_mesh());
@@ -117,7 +118,7 @@ void Edge_profile<ECM>::Extract_borders()
   e = opposite_edge(next_edge(e,surface_mesh()),surface_mesh());
   oe = opposite_edge(e,surface_mesh());
     while(e != mV0V1){
-    if((b = e->is_border()) || oe->is_border()){
+    if((b = is_border(e)) || is_border(oe)){
       mBorderEdges.push_back(b?e:oe);
     } 
     e = opposite_edge(next_edge(e,surface_mesh()),surface_mesh());
@@ -152,10 +153,10 @@ void Edge_profile<ECM>::Extract_triangles_and_link()
     if(v2 != vL()){
       mLink.push_back(v2);
     }
-    bool is_border = e02->is_border();
+    bool is_b = is_border(e02);
     e02 = opposite_edge(prev_edge(e02,surface_mesh()), surface_mesh());
     v = target(e02,surface_mesh());
-    if(! is_border){
+    if(! is_b){
       mTriangles.push_back(Triangle(v,v0(),v2) ) ;
     }
     v2 = v;
@@ -171,10 +172,10 @@ void Edge_profile<ECM>::Extract_triangles_and_link()
     if(v2 != vR()){
       mLink.push_back(v2);
     }
-    bool is_border = e02->is_border();
+    bool is_b = is_border(e02);
     e02 = opposite_edge(prev_edge(e02,surface_mesh()), surface_mesh());
     v = target(e02,surface_mesh());
-    if(! is_border){
+    if(! is_b){
       mTriangles.push_back(Triangle(v,v1(),v2) ) ;
     }
     v2 = v;
