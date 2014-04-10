@@ -313,11 +313,17 @@ using std::max;
 #ifndef __has_builtin
   #define __has_builtin(x) 0  // Compatibility with non-clang compilers.
 #endif
+#ifndef __has_attribute
+  #define __has_attribute(x) 0  // Compatibility with non-clang compilers.
+#endif
+#ifndef __has_warning
+  #define __has_warning(x) 0  // Compatibility with non-clang compilers.
+#endif
 
 // Macro to trigger deprecation warnings
 #ifdef CGAL_NO_DEPRECATION_WARNINGS
 #  define CGAL_DEPRECATED
-#elif defined(__GNUC__)
+#elif defined(__GNUC__) || __has_attribute(__deprecated__)
 #  define CGAL_DEPRECATED __attribute__((__deprecated__))
 #elif defined (_MSC_VER) && (_MSC_VER > 1300)
 #  define CGAL_DEPRECATED __declspec(deprecated)
@@ -327,14 +333,14 @@ using std::max;
 
 
 // Macro to specify a 'noreturn' attribute.
-#ifdef __GNUG__
+#if defined(__GNUG__) || __has_attribute(__noreturn__)
 #  define CGAL_NORETURN  __attribute__ ((__noreturn__))
 #else
 #  define CGAL_NORETURN
 #endif
 
 // Macro to specify a 'unused' attribute.
-#ifdef __GNUG__
+#if defined(__GNUG__) || __has_attribute(__unused__)
 #  define CGAL_UNUSED  __attribute__ ((__unused__))
 #else
 #  define CGAL_UNUSED
@@ -361,6 +367,14 @@ using std::max;
 #  endif
 #endif
 
+// Helper macros to disable macros
+#if defined(__clang__) || (BOOST_GCC >= 40600)
+#  define CGAL_PRAGMA_DIAG_PUSH _Pragma("GCC diagnostic push")
+#  define CGAL_PRAGMA_DIAG_POP  _Pragma("GCC diagnostic pop")
+#else
+#  define CGAL_PRAGMA_DIAG_PUSH
+#  define CGAL_PRAGMA_DIAG_POP
+#endif
 
 namespace CGAL {
 
