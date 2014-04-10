@@ -159,7 +159,7 @@ void Edge_profile<ECM>::Extract_triangle( vertex_descriptor const& v0
 }
 
 //
-// Extract all triangles (its normals) and vertices (the link) around the collpasing edge p_q
+// Extract all triangles (its normals) and vertices (the link) around the collapsing edge p_q
 //
 template<class ECM>
 void Edge_profile<ECM>::Extract_triangles_and_link()
