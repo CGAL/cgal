@@ -50,8 +50,8 @@ EdgeCollapse<M,SP,VIM,EIM,EBM,ECTM,CF,PF,V>::EdgeCollapse( ECM&                 
   const FT cMaxDihedralAngleCos = std::cos( 1.0 * CGAL_PI / 180.0 ) ;
   
   mcMaxDihedralAngleCos2 = cMaxDihedralAngleCos * cMaxDihedralAngleCos ;
- bool has_border = false;
- undirected_edge_iterator eb, ee ;
+
+  undirected_edge_iterator eb, ee ;
   for ( boost::tie(eb,ee) = undirected_edges(mSurface); eb!=ee; ++eb )
     {
       edge_descriptor ed = *eb;
