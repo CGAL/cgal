@@ -138,21 +138,16 @@ void Edge_profile<ECM>::Extract_triangles_and_link()
   edge_descriptor endleft = next_edge(v1_v0(), surface_mesh());
   edge_descriptor endright = next_edge(v0_v1(), surface_mesh());
 
-  if( left_face_exists() ){
-    mLink.push_back(vL());
+  if( left_face_exists() )
     mTriangles.push_back(Triangle(v0(),v1(),vL()) ) ;
-  }
-  if( right_face_exists() ){
-    mLink.push_back(vR());
+  if( right_face_exists() )
     mTriangles.push_back(Triangle(v1(),v0(),vR()) ) ;
-  }
+
   // counterclockwise around v0
   edge_descriptor e02 = opposite_edge(prev_edge(v0_v1(),surface_mesh()), surface_mesh());
   vertex_descriptor v, v2 =target(e02,surface_mesh());
   while(e02 != endleft) {
-    if(v2 != vL()){
-      mLink.push_back(v2);
-    }
+    mLink.push_back(v2);
     bool is_b = is_border(e02);
     e02 = opposite_edge(prev_edge(e02,surface_mesh()), surface_mesh());
     v = target(e02,surface_mesh());
@@ -169,9 +164,7 @@ void Edge_profile<ECM>::Extract_triangles_and_link()
   e02 = opposite_edge(prev_edge(v1_v0(),surface_mesh()), surface_mesh());
   v2 = target(e02,surface_mesh());
   while(e02 != endright) {
-    if(v2 != vR()){
-      mLink.push_back(v2);
-    }
+    mLink.push_back(v2);
     bool is_b = is_border(e02);
     e02 = opposite_edge(prev_edge(e02,surface_mesh()), surface_mesh());
     v = target(e02,surface_mesh());
