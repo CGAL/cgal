@@ -138,11 +138,11 @@ void Edge_profile<ECM>::Extract_triangles_and_link()
   edge_descriptor endleft = next_edge(v1_v0(), surface_mesh());
   edge_descriptor endright = next_edge(v0_v1(), surface_mesh());
 
-  if(vL() != vertex_descriptor()){
+  if( left_face_exists() ){
     mLink.push_back(vL());
     mTriangles.push_back(Triangle(v0(),v1(),vL()) ) ;
   }
-  if(vR() != vertex_descriptor()){
+  if( right_face_exists() ){
     mLink.push_back(vR());
     mTriangles.push_back(Triangle(v1(),v0(),vR()) ) ;
   }
@@ -167,7 +167,7 @@ void Edge_profile<ECM>::Extract_triangles_and_link()
 
   // counterclockwise around v1
   e02 = opposite_edge(prev_edge(v1_v0(),surface_mesh()), surface_mesh());
-  v2 =target(e02,surface_mesh());
+  v2 = target(e02,surface_mesh());
   while(e02 != endright) {
     if(v2 != vR()){
       mLink.push_back(v2);
