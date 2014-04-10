@@ -172,9 +172,11 @@ public:
             }
         } else {
             skip_comment();
-            m_in >> x >> y >> z;
+            extract(m_in, x);
+            extract(m_in, y);
+            extract(m_in, z);
             if ( is_homogeneous())
-                m_in >> w;
+              extract(m_in, w);
         }
     }
     void scan_vertex( int& x, int& y, int& z, int& w) {

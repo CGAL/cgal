@@ -26,10 +26,12 @@
 #ifndef CGAL_IO_H
 #define CGAL_IO_H
 
+#include <cstdio>
 #include <iostream>
 #include <CGAL/tags.h>
 #include <CGAL/IO/io_tags.h>
 #include <CGAL/IO/Color.h>
+#include <string>
 
 
 namespace CGAL {
@@ -163,6 +165,15 @@ is_ascii(std::ios& i);
 CGAL_EXPORT
 bool
 is_binary(std::ios& i);
+
+
+  inline std::istream& extract(std::istream& is, double &d)
+{
+  std::string s;
+  is >> s;
+  sscanf(s.c_str(), "%lf", &d);
+  return is;
+}
 
 template < class T >
 inline
