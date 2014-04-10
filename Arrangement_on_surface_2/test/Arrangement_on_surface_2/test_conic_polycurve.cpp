@@ -633,6 +633,14 @@ void check_compare_x_2(const Segment& seg1, const Segment& seg2 )
                (result == CGAL::LARGER ? "Larger" : "equal")) << std::endl;
 }
 
+template<typename Curve>
+void check_compare_points(Curve& cv)
+{
+  Polycurve_conic_traits_2 traits;
+  
+  CGAL::Arr_parameter_space result = traits.parameter_space_in_x_2_object()(cv, CGAL::ARR_MAX_END);
+}
+
 int main ()
 {
   Polycurve_conic_traits_2 traits;
@@ -774,6 +782,7 @@ int main ()
 
   // check_compare_y_at_x_left();
   // std::cout<< std::endl;
+   check_compare_points(conic_x_mono_polycurve_1);
 
    //number of segments
     //std::cout<< "Number of segments: " << traits.number_of_points_2_object()(base_curve_push_back) << std::endl;

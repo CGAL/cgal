@@ -1110,7 +1110,8 @@ test_polycurve_conic_traits()
       COMPARE_XY_POLYCURVE \
       NUMBER_OF_POINTS \
       VERTEX \
-      CONSTRUCT_OPPOSITE
+      CONSTRUCT_OPPOSITE \
+      MERGE
 
   else
     echo "   ERROR:    not executed   test_traits polyline_traits" >> $ERRORFILE
