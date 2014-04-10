@@ -47,7 +47,8 @@ proper face of another simplex. A pure complex is <i>manifold</i> if all faces
 of dimension \f$ d-1 \f$ are proper faces of exactly two simplices.
 \cgalModifEnd
 
-If the vertices are embedded into Euclidean space \f$ \R^d\f$, we deal with
+If the vertices are embedded into Euclidean space \f$ \mathbb{R}^d\f$, 
+we deal with
 <I>finite simplicial complexes</I> which have slightly different simplices
 and additional requirements:
 <UL>
