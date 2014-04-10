@@ -125,106 +125,64 @@ void Edge_profile<ECM>::Extract_borders()
     }
 }
 
-//
-// If (v0,v1,v2) is a finite triangular facet of the mesh, that is, NONE of these vertices are boundary vertices,
-// the triangle, properly oriented, is added to mTriangles.
-//
-template<class ECM>
-void Edge_profile<ECM>::Extract_triangle( vertex_descriptor const& v0
-                                        , vertex_descriptor const& v1
-                                        , vertex_descriptor const& v2 
-                                        , edge_descriptor   const& e02
-                                        )
-{
-  // The 3 vertices are obtained by circulating ccw around v0, that is, e02 = next_ccw(e01).
-  // Since these vertices are NOT obtained by circulating the face, the actual triangle orientation is unspecified.
-  
-  // The triangle is oriented v0->v2->v1 if the next edge that follows e02 (which is the edge v0->v2) is v2->v1.
-  if ( target(next_edge(e02,surface_mesh()),surface_mesh()) == v1 ) 
-  {
-    // The triangle is oriented v0->v2->v1.
-    // In this case e02 is an edge of the facet.
-    // If this facet edge is a border edge then this triangle is not in the mesh .
-    if ( ! e02->is_border() )
-      mTriangles.push_back(Triangle(v0,v2,v1) ) ;
-  }
-  else
-  {
-    // The triangle is oriented v0->v1->v2.
-    // In this case, e20 and not e02, is an edge of the facet.
-    // If this facet edge is a border edge then this triangle is not in the mesh .
-    if ( ! opposite_edge(e02,surface_mesh())->is_border() )
-      mTriangles.push_back(Triangle(v0,v1,v2) ) ;
-  }
-}
 
-//
+
 // Extract all triangles (its normals) and vertices (the link) around the collapsing edge p_q
 //
 template<class ECM>
 void Edge_profile<ECM>::Extract_triangles_and_link()
 {
-  std::set<vertex_descriptor> lCollected ;
-  // 
-  // Extract around mV0, CCW
-  //  
-  vertex_descriptor v0 = mV0;
-  vertex_descriptor v1 = mV1;
-  
-  edge_descriptor e02 = mV0V1;
-  
-  do
-  {
-    e02 = opposite_edge(prev_edge(e02,surface_mesh()), surface_mesh());
-    vertex_descriptor v2 = target(e02,surface_mesh());
-  
-    if ( v2 != mV1 )
-    {
-      mLink.push_back(v2) ;
-      CGAL_assertion_code( bool lInserted = )
-        lCollected.insert(v2)
-          CGAL_assertion_code( .second ) ;
-      CGAL_assertion(lInserted);
+  // look at the two faces or holes adjacent to edge (v0,v1)
+  // and at the opposite vertex if it exists
+  edge_descriptor endleft, endright;
+  if(vL() != vertex_descriptor()){
+    mLink.push_back(vL());
+    mTriangles.push_back(Triangle(v0(),v1(),vL()) ) ;
+    endright = next_edge(v0_v1(), surface_mesh());
+  }
+  if(vR() != vertex_descriptor()){
+    mLink.push_back(vR());
+    mTriangles.push_back(Triangle(v1(),v0(),vR()) ) ;
+    endleft = next_edge(v1_v0(), surface_mesh());
+  }
+  // counterclockwise around v0
+  edge_descriptor e02 = opposite_edge(prev_edge(v0_v1(),surface_mesh()), surface_mesh());
+  vertex_descriptor v, v2 =target(e02,surface_mesh());
+  while(e02 != endleft) {
+    if(v2 != vL()){
+      mLink.push_back(v2);
     }
-      
-    Extract_triangle(v0,v1,v2,e02);
-    
-    v1 = v2 ;
-  }
-  while ( e02 != mV0V1 ) ;
-  
-  // 
-  // Extract around mV1, CCW
-  //  
-  
-  v0 = mV1;
-  
-  e02 = opposite_edge(prev_edge(mV1V0,surface_mesh()), surface_mesh());
-  
-  v1 = target(e02,surface_mesh()); 
-
-    
-  // This could have been added to the link while circulating around mP
-  if ( v1 != mV0 && lCollected.find(v1) == lCollected.end() )
-    mLink.push_back(v1) ;
-  
-  e02 = opposite_edge(prev_edge(e02,surface_mesh()), surface_mesh());
-  
-  do
-  {
-    vertex_descriptor v2 = target(e02,surface_mesh());
-
-    // Any of the vertices found around mP can be reached again around mQ, but we can't duplicate them here.
-    if ( v2 != mV0 && lCollected.find(v2) == lCollected.end() )
-      mLink.push_back(v2) ;
-    
-    Extract_triangle(v0,v1,v2,e02);
-    
-    v1 = v2 ;
-     
+    bool is_border = e02->is_border();
     e02 = opposite_edge(prev_edge(e02,surface_mesh()), surface_mesh());
+    v = target(e02,surface_mesh());
+    if(! is_border){
+      mTriangles.push_back(Triangle(v,v0(),v2) ) ;
+    }
+    v2 = v;
   }
-  while ( e02 != mV1V0 ) ;
+  if(v != vR()){
+    mLink.push_back(v);
+  }
+
+  // vounterclockwise around v1
+  e02 = opposite_edge(prev_edge(v1_v0(),surface_mesh()), surface_mesh());
+  v2 =target(e02,surface_mesh());
+  while(e02 != endright) {
+    if(v2 != vR()){
+      mLink.push_back(v2);
+    }
+    bool is_border = e02->is_border();
+    e02 = opposite_edge(prev_edge(e02,surface_mesh()), surface_mesh());
+    v = target(e02,surface_mesh());
+    if(! is_border){
+      mTriangles.push_back(Triangle(v,v1(),v2) ) ;
+    }
+    v2 = v;
+  }
+  if(v != vL()){
+    mLink.push_back(v);
+  }
+  
 }
 
 } // namespace Surface_mesh_simplification

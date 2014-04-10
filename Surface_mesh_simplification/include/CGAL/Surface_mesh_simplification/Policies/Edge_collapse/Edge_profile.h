@@ -149,12 +149,6 @@ private:
    
    void Extract_borders() ;
    
-   void Extract_triangle( vertex_descriptor const& v0
-                        , vertex_descriptor const& v1
-                        , vertex_descriptor const& v2 
-                        , edge_descriptor   const& e02
-                        ) ;
-                        
    void Extract_triangles_and_link() ;
     
 private:
