@@ -54,7 +54,9 @@ insert_first(const Storage_site_2& ss, const Point_2& p)
   Vertex_handle v = this->_tds.insert_second();
   v->set_site(ss);
 
+#ifdef CGAL_SDG_VERY_VERBOSE
   CGAL_SDG_DEBUG(file_output_verbose(std::cout););
+#endif
 
   return v;
 }
@@ -77,7 +79,9 @@ insert_second(const Storage_site_2& ss, const Point_2& p)
     return finite_vertices_begin();
   }
   Vertex_handle v = create_vertex_dim_up(ss);
+#ifdef CGAL_SDG_VERY_VERBOSE
   CGAL_SDG_DEBUG(file_output_verbose(std::cout););
+#endif
   return v;
 }
 
@@ -515,7 +519,9 @@ insert_point2(const Storage_site_2& ss, const Site_2& t,
 
   //std::cout << "debug insert_point2 finishing" << std::endl;
 
+#ifdef CGAL_SDG_VERY_VERBOSE
   CGAL_SDG_DEBUG( file_output_verbose(std::cout); ) ;
+#endif
 
   return v;
 }
