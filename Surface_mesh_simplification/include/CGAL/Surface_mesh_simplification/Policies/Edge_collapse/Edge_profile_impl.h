@@ -156,7 +156,7 @@ void Edge_profile<ECM>::Extract_triangles_and_link()
     }
     v2 = v;
   }
-  if(v != vR()){
+  if(v != vR() && (v!= vertex_descriptor())){
     mLink.push_back(v);
   }
 
@@ -173,7 +173,7 @@ void Edge_profile<ECM>::Extract_triangles_and_link()
     }
     v2 = v;
   }
-  if(v != vL()){
+  if(v != vL() && (v!= vertex_descriptor())){
     mLink.push_back(v);
   }
   
