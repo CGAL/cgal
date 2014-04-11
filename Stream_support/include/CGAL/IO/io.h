@@ -26,12 +26,13 @@
 #ifndef CGAL_IO_H
 #define CGAL_IO_H
 
+
 #include <cstdio>
+#include <string>
 #include <iostream>
 #include <CGAL/tags.h>
 #include <CGAL/IO/io_tags.h>
 #include <CGAL/IO/Color.h>
-#include <string>
 
 
 namespace CGAL {
@@ -169,9 +170,13 @@ is_binary(std::ios& i);
 
   inline std::istream& extract(std::istream& is, double &d)
 {
+#if defined( _MSC_VER ) && ( _MSC_VER > 1600 )
   std::string s;
   is >> s;
   sscanf(s.c_str(), "%lf", &d);
+#else
+  is >> d;
+#endif
   return is;
 }
 
