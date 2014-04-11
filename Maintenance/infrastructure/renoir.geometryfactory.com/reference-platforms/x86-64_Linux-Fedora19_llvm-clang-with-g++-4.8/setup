@@ -11,7 +11,7 @@ export BOOST_ROOT
 CXXFLAGS="-I$BOOST_ROOT/include -fsanitize=address"
 
 ASAN_OPTIONS="detect_leaks=1"
-LSAN_OPTIONS="suppressions=${REFS}/x86-64_Linux-Fedora19_llvm-clang-with-g++-4.8/suppr.txt"
+LSAN_OPTIONS="suppressions=${REFS}/x86-64_Linux-Fedora19_llvm-clang-with-g++-4.8/suppr.txt:print_suppressions=0"
 ASAN_SYMBOLIZER_PATH=/usr/local/packages/llvm-trunk/bin/llvm-symbolizer
 export ASAN_OPTIONS LSAN_OPTIONS ASAN_SYMBOLIZER_PATH
 
