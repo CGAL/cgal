@@ -112,6 +112,19 @@ and <code>src/</code> directories).
 <h2 id="release4.5">Release 4.5 </h2>
 <div>
   <p>Release date: September 2014 </p>
+  <h3>Snap_rounding_2</h3>
+  <ul>
+    <li> Replaced use of private <code>kd_tree</code> with CGAL's official <code>Kd_tree</code> from <code>Spatial_searching</code> package;
+      results in a small performance gain. Removed the private <code>kd_tree</code> package.
+    </li>
+  </ul>
+  <h3>Spatial_searching</h3>
+  <ul>
+    <li> Added methods <code>reserve(size_t size)</code> and <code>size_t capacity()</code> to class <code>Kd_tree</code> to allocate
+      memory to store <code>size</code> points and to report that number (STL compliance).
+    </li>
+  </ul>
+
   <h3>Vanilla package (fake package, to be removed by the RM)</h3>
   <ul>
     <li> Blablabla
@@ -120,7 +133,6 @@ and <code>src/</code> directories).
     <li> ... And the price</li>
   </ul>
 </div>
-
 
 <h2 id="release4.4">Release 4.4 </h2>
 <div>
