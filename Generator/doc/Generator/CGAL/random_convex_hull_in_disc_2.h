@@ -3,13 +3,21 @@ namespace CGAL {
 /*!
 \ingroup PkgGenerators
 
+
 \brief Computes a random convex polygon by writing its vertices (oriented
-counterclockwise) in the list `l`, as the convex hull of \f$ n \f$ random points in a disc centered in \f$0\f$ with radius \f$radius\f$.
+counterclockwise) in an `OutputIterator`, as the convex hull of \f$ n \f$ random points in a disc centered in \f$0\f$ with radius \f$radius\f$.
 The generated polygon will have an average number of vertices \f$ n^\frac{1}{3}(1+o(1))\f$. 
+
+
 \pre \f$n \geq 3 \f$
 
-\cgalHeading{Requirements}
-`Generator` has to be a Boost random generator, such as `boost::random::mt19937`. 
+\cgalHeading{Requires}
+
+- `Generator` has to be a Boost random generator, such as `boost::random::mt19937`.
+
+- `fast` is a Boolean value, `true` for a time efficiency behavior and `false` for a memory efficiency behavior.
+
+- The `OutputIterator` must accept values of type `Point_2<Traits>`.
 
 \cgalHeading{Implementation}
 
@@ -27,6 +35,6 @@ The following program displays a random simple polygon made of \f$10000\f$ point
 
 */
 
-    template<class P,class Generator>
-    void random_convex_hull_in_disc_2(size_t n,  typename Kernel_traits<P>::Kernel::FT radius, std::list<P> & l,Generator & g, bool fast=true );
+    template < class OutputIterator, class Traits, class Generator >
+void random_convex_hull_in_disc_2(std::size_t n, double radius, Generator & gen, OutputIterator it, const Traits & traits, bool fast=true);
 } /* namespace CGAL */
