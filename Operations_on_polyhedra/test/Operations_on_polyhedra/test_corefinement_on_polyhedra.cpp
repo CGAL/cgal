@@ -46,9 +46,11 @@ int main(int argc,char** argv) {
   Facet_id_map P_facet_id_map, Q_facet_id_map;
 
   CGAL::cpp11::array<boost::optional<Polyhedron*>, 4 > desired_output;
-  Polyhedron inter;
+  Polyhedron inter, union_;
   desired_output[Output_builder::P_MINUS_Q]=boost::make_optional( &P );
+  desired_output[Output_builder::Q_MINUS_P]=boost::make_optional( &Q );
   desired_output[Output_builder::P_INTER_Q]=boost::make_optional( &inter );
+  desired_output[Output_builder::P_UNION_Q]=boost::make_optional( &union_ );
   
   Output_builder output_builder(P, Q,
                                 desired_output,
@@ -63,9 +65,6 @@ int main(int argc,char** argv) {
   std::cout << "Vertices after " <<  P.size_of_vertices()
             << " " << Q.size_of_vertices() << std::endl;
 
-  CGAL_assertion(P.is_valid());
-  CGAL_assertion(Q.is_valid());
-
   if ( output_builder.union_valid() ) std::cout << "Union is valid\n";
   else std::cout << "Union is invalid\n";
   if ( output_builder.intersection_valid() ) std::cout << "Intersection is valid\n";
@@ -75,12 +74,26 @@ int main(int argc,char** argv) {
   if ( output_builder.Q_minus_P_valid() ) std::cout << "Q-P is valid\n";
   else std::cout << "Q-P is invalid\n";
 
+  CGAL_assertion(P.is_valid());
+  CGAL_assertion(Q.is_valid());
+  CGAL_assertion(inter.is_valid());
+  CGAL_assertion(union_.is_valid());
+
   std::ofstream output("P_minus_Q.off");
   output << P;
   output.close();
   
   output.open("P_inter_Q.off");
   output << inter;
+  output.close();
   
+  output.open("P_union_Q.off");
+  output << union_;
+  output.close();
+  
+  output.open("Q_minus_P.off");
+  output << Q;
+  output.close();
+
   return 0;
 }

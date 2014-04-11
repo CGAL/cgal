@@ -33,6 +33,8 @@
 #include <boost/foreach.hpp>
 #include <boost/optional.hpp>
 
+#include <sstream>
+
 namespace CGAL{
 
 namespace internal_IOP{
@@ -637,6 +639,52 @@ public:
 };
 
 template <class Polyhedron>
+class Remove_isolated_patch_simplices
+  : public CGAL::Modifier_base<typename Polyhedron::HalfedgeDS>
+{
+  typedef typename Polyhedron::HalfedgeDS HDS;
+  typedef typename HDS::Halfedge_handle   Halfedge_handle;
+  typedef typename HDS::Vertex_handle     Vertex_handle;
+  typedef typename HDS::Face_handle       Face_handle;
+  typedef typename HDS::Vertex            Vertex;
+  typedef typename HDS::Halfedge          Halfedge;
+  typedef typename HDS::Face              Face;
+  typedef typename HDS::Halfedge::Base    HBase;
+
+  const std::vector<Face_handle>& facets;
+  const std::set<Vertex_handle>& interior_vertices;
+  const std::vector<Halfedge_handle>& interior_halfedges;
+  const std::vector<Halfedge_handle>& border_halfedges;
+
+public:
+
+  Remove_isolated_patch_simplices(
+    const std::vector<Face_handle>& facets_,
+    const std::set<Vertex_handle>& interior_vertices_,
+    const std::vector<Halfedge_handle>& interior_halfedges_,
+    const std::vector<Halfedge_handle>& border_halfedges_
+  ) : facets(facets_)
+    , interior_vertices(interior_vertices_)
+    , interior_halfedges(interior_halfedges_)
+    , border_halfedges(border_halfedges_)
+  {}
+
+  void operator()(HDS& hds)
+  {
+    CGAL::HalfedgeDS_decorator<HDS> decorator(hds);
+    //remove the simplices
+    BOOST_FOREACH(Halfedge_handle h, interior_halfedges)
+      hds.edges_erase(h);
+    BOOST_FOREACH(Halfedge_handle h, border_halfedges)
+      hds.edges_erase(h);
+    BOOST_FOREACH(Face_handle f, facets)
+      hds.faces_erase(f);
+    BOOST_FOREACH(Vertex_handle v, interior_vertices)
+      hds.vertices_erase(v);
+  }
+};
+
+template <class Polyhedron>
 class Disconnect_patches : public CGAL::Modifier_base<typename Polyhedron::HalfedgeDS> {
   typedef typename Polyhedron::HalfedgeDS HDS;
   typedef typename HDS::Halfedge_handle   Halfedge_handle;
@@ -674,27 +722,44 @@ public:
 
     new_patch_border.reserve( patch_border_halfedges.size() );
 
+    std::map<Halfedge_handle, Halfedge_handle> old_to_new;
+
     // put the halfedges on the boundary of the patch on the boundary of the polyhedron
     Face_handle border;
     BOOST_FOREACH(Halfedge_handle h, patch_border_halfedges)
     {
-      new_patch_border.push_back(hds.edges_push_back(*(h->opposite())));
+      Halfedge_handle new_hedge = hds.edges_push_back(*h);
+      new_patch_border.push_back(new_hedge);
       decorator.set_face(h, border);
-      decorator.set_face(new_patch_border.back(), border);
+      decorator.set_face(new_hedge->opposite(), border);
+      old_to_new.insert( std::make_pair(h, new_hedge) );
     }
 
-    // set next/prev relationship of border halfedges
+    // update next/prev pointer of new hedges in case it is one of the new hedges
+    BOOST_FOREACH(Halfedge_handle h, new_patch_border)
+    {
+      if ( h->next()->is_border() ){
+        h->HBase::set_next( old_to_new[h->next()] );
+        decorator.set_prev( h->next(), h);
+      }
+    }
+
+    // set next/prev pointers on the border of the neighbor patch
     BOOST_FOREACH(Halfedge_handle h, patch_border_halfedges)
     {
       Halfedge_handle next=h->next();
-      while(!next->is_border())
-        next=next->opposite()->next();
-      h->HBase::set_next(next);
-      decorator.set_prev(next,h);
+      // check if not already done
+      if ( !next->is_border() ){
+        do{
+          next=next->opposite()->next();
+        } while(!next->is_border());
+        h->HBase::set_next(next);
+        decorator.set_prev(next,h);
+      }
 
       // setting prev is only needed in case the polyhedron has a boundary
       // and the intersection polyline intersects its boundary
-      if ( !h->prev()->is_border() || h->prev()->next()!=h ){
+      if ( !h->prev()->is_border() ){
         Halfedge_handle prev=h->prev();
         do{
           prev=prev->opposite()->prev();
@@ -706,42 +771,50 @@ public:
       CGAL_assertion( h->prev()->is_border() );
 
       decorator.set_vertex_halfedge(h->vertex(),h);
+      decorator.set_vertex_halfedge(h->opposite()->vertex(),h->opposite()); //  only needed if the polyhedra is open
     }
 
+    //update next/prev relationship inside the patch
+    //to have a correct connectivity, and update facet halfedge pointer
     BOOST_FOREACH(Halfedge_handle h, new_patch_border)
     {
-      Halfedge_handle next=h->next();
-      while(!next->is_border())
-        next=next->opposite()->next();
-      h->HBase::set_next(next);
-      decorator.set_prev(next,h);
+      if ( h->prev()->next() != h )
+        h->prev()->HBase::set_next( h );
+      if ( h->next()->prev() != h )
+        decorator.set_prev(h->next(), h);
+      decorator.set_face_halfedge(h->facet(), h);
+    }
 
-      // setting prev is only needed in case the polyhedron has a boundary
-      // and the intersection polyline intersects its boundary
-      if ( !h->prev()->is_border() || h->prev()->next()!=h ){
-        Halfedge_handle prev=h->prev();
-        do {
-          prev=prev->opposite()->prev();
-        } while( !prev->is_border() );
-        prev->HBase::set_next(h);
-        decorator.set_prev(h, prev);
+    // update next/prev pointers on the border of the patch
+    BOOST_FOREACH(Halfedge_handle h, new_patch_border)
+    {
+      h=h->opposite();
+      //set next pointer if not already set
+      if ( h->next()->prev()!=h )
+      {
+        // we visit facets inside the patch we consider
+        Halfedge_handle candidate = h->opposite()->prev()->opposite();
+        while ( !candidate->is_border() )
+          candidate = candidate->prev()->opposite();
+        h->HBase::set_next(candidate);
+        decorator.set_prev(candidate,h);
+      }
+      CGAL_assertion( h->next()->prev()== h );
+
+      // set prev pointer if not already set
+      if ( h->prev()->next() != h )
+      {
+        Halfedge_handle candidate = h->opposite()->next()->opposite();
+        while ( !candidate->is_border() )
+          candidate = candidate->next()->opposite();
+        decorator.set_prev(h,candidate);
+        candidate->HBase::set_next(h);
       }
 
+      CGAL_assertion( h->next()->prev()== h );
       CGAL_assertion( h->prev()->is_border() );
+      CGAL_assertion( h->next()->is_border() );
     }
-
-    /*
-    if (clean_up_patch)
-    {
-      //now remove the simplices
-      BOOST_FOREACH(Halfedge_handle h, interior_halfedges)
-        hds.edges_erase(h);
-      BOOST_FOREACH(Face_handle f, facets)
-        hds.faces_erase(f);
-      BOOST_FOREACH(Vertex_handle v, interior_vertices)
-        hds.vertices_erase(v);
-    }
-    */
   }
 };
 
@@ -921,6 +994,7 @@ private:
   typedef internal_IOP::Intersection_polylines<Polyhedron> Intersection_polylines;
   typedef internal_IOP::Patch_description<Polyhedron> Patch_description;
   typedef internal_IOP::Patch_container<Polyhedron, Facet_id_pmap> Patch_container;
+  typedef std::map< Halfedge_handle, Halfedge_handle, Cmp_unik_ad>       Edge_map;
 #ifdef CGAL_COREFINEMENT_POLYHEDRA_DEBUG
   #warning move these to predicates.h
 #endif
@@ -988,7 +1062,9 @@ private:
   void disconnect_patches_from_polyhedra(
     Polyhedron* P_ptr,
     const boost::dynamic_bitset<>& patches_to_remove,
-    Patch_container& patches_of_P
+    Patch_container& patches_of_P,
+    const Edge_map& Phedge_to_Qhedge, //map former patch border halfedge to the equivalent in the other polyhedron
+    Edge_map& new_Phedge_to_Qhedge //map new patch border halfedge to the equivalent in the other polyhedron
   )
   {
     for (std::size_t i=patches_to_remove.find_first();
@@ -1003,46 +1079,58 @@ private:
                   patch.patch_border_halfedges,
                   new_patch_border );
       P_ptr->delegate(modifier);
+
+
+      CGAL_assertion( new_patch_border.size() ==
+                      patch.patch_border_halfedges.size() );
+
+      std::size_t nb_hedges=new_patch_border.size();
+      for (std::size_t k=0; k < nb_hedges; ++k){
+
+        CGAL_assertion( patch.patch_border_halfedges[k]->vertex() == new_patch_border[k]->vertex() );
+        CGAL_assertion( patch.patch_border_halfedges[k]->opposite()->vertex() == new_patch_border[k]->opposite()->vertex() );
+        CGAL_assertion( new_patch_border[k]->is_border_edge() );
+        CGAL_assertion( !new_patch_border[k]->is_border() );
+        CGAL_assertion( new_patch_border[k]->opposite()->next()->is_border() );
+        CGAL_assertion( new_patch_border[k]->opposite()->prev()->is_border() );
+
+        typename Edge_map::const_iterator it_res =
+          Phedge_to_Qhedge.find(patch.patch_border_halfedges[k]);
+        CGAL_assertion( it_res != Phedge_to_Qhedge.end() );
+        CGAL_assertion( it_res->first->vertex()->point() == it_res->second->vertex()->point() );
+        CGAL_assertion( it_res->first->opposite()->vertex()->point() == it_res->second->opposite()->vertex()->point() );
+        new_Phedge_to_Qhedge[
+          patch.patch_border_halfedges[k]==it_res->first
+          ? new_patch_border[k]
+          : new_patch_border[k]->opposite() ] = it_res->second;
+      }
+
       patch.patch_border_halfedges.swap(new_patch_border);
-      // P_ptr->is_valid() might not be true at this point. For example if two
-      // incident patches are removed, there is a cycle of edges with not facets
-      // on both side (one of the two patches is a coplanar patch).
     }
   }
 
   template <bool reverse_patch_orientation >
   void append_Q_patches_to_P(
     Polyhedron* P_ptr,
-    Polyhedron* Q_ptr,
     const boost::dynamic_bitset<>& patches_to_append,
-    const std::vector<std::size_t>& Q_patch_ids,
-    Facet_id_pmap Q_facet_id_pmap,
-    const std::map< Halfedge_const_handle,
-                      std::pair<int,int>,Cmp_unik_ad >& border_halfedges,
+    Patch_container& patches,
     std::map< Halfedge_handle,
             Halfedge_handle,
             internal_IOP::Compare_unik_address<Polyhedron>
           >& Qhedge_to_Phedge
   ){
-    if ( patches_to_append.any() )
+    for (std::size_t i=patches_to_append.find_first();
+                     i < patches_to_append.npos; i = patches_to_append.find_next(i))
     {
-      std::vector<Facet_handle> facets;
-      std::set<Vertex_handle> interior_vertices;
-      std::vector<Halfedge_handle> interior_halfedges;
-      std::vector<Halfedge_handle> patch_border_halfedges;
+      Patch_description& patch = patches[i];
 
-      for (std::size_t i=patches_to_append.find_first();
-                       i < patches_to_append.npos; i = patches_to_append.find_next(i))
-      {
-        internal_IOP::extract_patch_simplices(i, *Q_ptr, Q_facet_id_pmap, Q_patch_ids, facets, interior_vertices, interior_halfedges, patch_border_halfedges, border_halfedges);
-      }
-
-      //CGAL_assertion( Qhedge_to_Phedge.size()==patch_border_halfedges.size() ); // this is not true in case of coplanar patches
       internal_IOP::Surface_extension_by_patch_appending<Polyhedron,PolyhedronPointPMap, reverse_patch_orientation>
-        modifier(facets, interior_halfedges, interior_vertices, Qhedge_to_Phedge, ppmap);
+        modifier(patch.facets, patch.interior_halfedges, patch.interior_vertices, Qhedge_to_Phedge, ppmap);
       P_ptr->delegate(modifier);
-      //CGAL_assertion( P_ptr->is_valid() );
     }
+
+    //CGAL_assertion( Qhedge_to_Phedge.size()==patch_border_halfedges.size() ); // this is not true in case of coplanar patches
+    //CGAL_assertion( P_ptr->is_valid() );
   }
 
   void
@@ -1071,9 +1159,30 @@ private:
     O.delegate( modifier );
   }
 
+  void compute_border_edge_map(
+    const Intersection_polylines& polylines,
+    Patch_container& patches_of_P,
+    Patch_container& patches_of_Q,
+    Edge_map& Qhedge_to_Phedge
+  ){
+    std::size_t nb_polylines = polylines.lengths.size();
+    for( std::size_t i=0; i<nb_polylines; ++i)
+    {
+      Halfedge_handle phedge = polylines.P[i];
+      Halfedge_handle qhedge = polylines.Q[i];
+      int nb_segments = polylines.lengths[i];
+
+      for (int k=0;k<nb_segments;++k)
+      {
+        Qhedge_to_Phedge[qhedge]=phedge;
+        qhedge=next_marked_halfedge_around_target_vertex(qhedge, patches_of_Q.border_halfedges);
+        phedge=next_marked_halfedge_around_target_vertex(phedge, patches_of_P.border_halfedges);
+      }
+    }
+  }
+
   void compute_difference_inplace(
     Polyhedron* P_ptr,
-    Polyhedron* Q_ptr,
     boost::dynamic_bitset<> is_patch_inside_Q,
     boost::dynamic_bitset<> is_patch_inside_P,
     const boost::dynamic_bitset<>& coplanar_patches_of_P,
@@ -1081,28 +1190,8 @@ private:
     const boost::dynamic_bitset<>& coplanar_patches_of_P_for_union_and_intersection,
     Patch_container& patches_of_P,
     Patch_container& patches_of_Q,
-    const Intersection_polylines& polylines
+    Edge_map& Qhedge_to_Phedge
   ){
-      std::map< Halfedge_handle,
-                Halfedge_handle,
-                internal_IOP::Compare_unik_address<Polyhedron>
-              > Qhedge_to_Phedge;
-      //maps patch border halfedge from Q to halfedge from P
-      std::size_t nb_polylines = polylines.lengths.size();
-      for( std::size_t i=0; i<nb_polylines; ++i)
-      {
-        Halfedge_handle phedge = polylines.P[i];
-        Halfedge_handle qhedge = polylines.Q[i];
-        int nb_segments = polylines.lengths[i];
-
-        for (int k=0;k<nb_segments;++k)
-        {
-          Qhedge_to_Phedge[qhedge]=phedge;
-          qhedge=next_marked_halfedge_around_target_vertex(qhedge, patches_of_Q.border_halfedges);
-          phedge=next_marked_halfedge_around_target_vertex(phedge, patches_of_P.border_halfedges);
-        }
-      }
-
       if ( coplanar_patches_of_P.any() )
         is_patch_inside_Q|=(coplanar_patches_of_P & coplanar_patches_of_P_for_union_and_intersection);
 
@@ -1113,19 +1202,16 @@ private:
       boost::dynamic_bitset<> is_patch_outside_P=is_patch_inside_P;
       is_patch_outside_P.flip();
       is_patch_inside_P-=coplanar_patches_of_Q;
-      append_Q_patches_to_P<true>(P_ptr, Q_ptr, is_patch_inside_P, patches_of_Q.patch_ids, patches_of_Q.facet_id_pmap, patches_of_Q.border_halfedges, Qhedge_to_Phedge);
+      append_Q_patches_to_P<true>(P_ptr, is_patch_inside_P, patches_of_Q, Qhedge_to_Phedge);
 
       /// in case the result is empty, there will be no facets in the polyhedron
       /// but maybe marked halfedges
       if ( P_ptr->facets_begin()==P_ptr->facets_end() )
         P_ptr->clear();
   }
-#ifdef CGAL_COREFINEMENT_POLYHEDRA_DEBUG
-  #warning factorize with the code of compute_difference_inplace
-#endif
-  void compute_difference_inplace_delay_removal(
+
+  void compute_difference_inplace(
     Polyhedron* P_ptr,
-    Polyhedron* Q_ptr,
     boost::dynamic_bitset<> is_patch_inside_Q,
     boost::dynamic_bitset<> is_patch_inside_P,
     const boost::dynamic_bitset<>& coplanar_patches_of_P,
@@ -1135,10 +1221,36 @@ private:
     Patch_container& patches_of_Q,
     const Intersection_polylines& polylines
   ){
-      std::map< Halfedge_handle,
-                Halfedge_handle,
-                internal_IOP::Compare_unik_address<Polyhedron>
-              > Qhedge_to_Phedge;
+      Edge_map Qhedge_to_Phedge;
+      //maps patch border halfedge from Q to halfedge from P
+      compute_border_edge_map(polylines, patches_of_P,
+                              patches_of_Q, Qhedge_to_Phedge);
+
+      compute_difference_inplace( P_ptr,
+                                  is_patch_inside_Q, is_patch_inside_P,
+                                  coplanar_patches_of_P, coplanar_patches_of_Q,
+                                  coplanar_patches_of_P_for_union_and_intersection,
+                                  patches_of_P, patches_of_Q,
+                                  Qhedge_to_Phedge);
+    }
+
+
+#ifdef CGAL_COREFINEMENT_POLYHEDRA_DEBUG
+  #warning factorize with the code of compute_difference_inplace
+#endif
+  void compute_difference_inplace_delay_removal(
+    Polyhedron* P_ptr,
+    boost::dynamic_bitset<> is_patch_inside_Q,
+    boost::dynamic_bitset<> is_patch_inside_P,
+    const boost::dynamic_bitset<>& coplanar_patches_of_P,
+    const boost::dynamic_bitset<>& coplanar_patches_of_Q,
+    const boost::dynamic_bitset<>& coplanar_patches_of_P_for_union_and_intersection,
+    Patch_container& patches_of_P,
+    Patch_container& patches_of_Q,
+    const Intersection_polylines& polylines,
+    Edge_map& disconnected_patches_hedge_to_Qhedge
+  ){
+      Edge_map Qhedge_to_Phedge, Phedge_to_Qhedge;
       //maps patch border halfedge from Q to halfedge from P
       std::size_t nb_polylines = polylines.lengths.size();
       for( std::size_t i=0; i<nb_polylines; ++i)
@@ -1150,6 +1262,7 @@ private:
         for (int k=0;k<nb_segments;++k)
         {
           Qhedge_to_Phedge[qhedge]=phedge;
+          Phedge_to_Qhedge[phedge]=qhedge;
           qhedge=next_marked_halfedge_around_target_vertex(qhedge, patches_of_Q.border_halfedges);
           phedge=next_marked_halfedge_around_target_vertex(phedge, patches_of_P.border_halfedges);
         }
@@ -1158,14 +1271,18 @@ private:
       if ( coplanar_patches_of_P.any() )
         is_patch_inside_Q|=(coplanar_patches_of_P & coplanar_patches_of_P_for_union_and_intersection);
 
-      //clean up patches inside Q
-      disconnect_patches_from_polyhedra(P_ptr, is_patch_inside_Q, patches_of_P);
+#ifdef CGAL_COREFINEMENT_POLYHEDRA_DEBUG
+      #warning do not try to disconnect if the patch is isolated? i.e opposite(border_edge_of_patch)->is_border()
+#endif
+      //disconnect patches inside Q
+      disconnect_patches_from_polyhedra(P_ptr, is_patch_inside_Q, patches_of_P,
+                                        Phedge_to_Qhedge, disconnected_patches_hedge_to_Qhedge);
 
       //we import patches from Q
       boost::dynamic_bitset<> is_patch_outside_P=is_patch_inside_P;
       is_patch_outside_P.flip();
       is_patch_inside_P-=coplanar_patches_of_Q;
-      append_Q_patches_to_P<true>(P_ptr, Q_ptr, is_patch_inside_P, patches_of_Q.patch_ids, patches_of_Q.facet_id_pmap, patches_of_Q.border_halfedges, Qhedge_to_Phedge);
+      append_Q_patches_to_P<true>(P_ptr, is_patch_inside_P, patches_of_Q, Qhedge_to_Phedge);
 
       /// in case the result is empty, there will be no facets in the polyhedron
       /// but maybe marked halfedges
@@ -1173,14 +1290,30 @@ private:
         P_ptr->clear();
   }
 
+  void remove_isolated_patches(
+    Polyhedron& P,
+    Patch_container& patches,
+    boost::dynamic_bitset<> patches_to_remove)
+  {
+    for (std::size_t i=patches_to_remove.find_first();
+                     i < patches_to_remove.npos;
+                     i = patches_to_remove.find_next(i))
+    {
+      Patch_description& patch=patches[i];
+      internal_IOP::Remove_isolated_patch_simplices<Polyhedron>
+        modifier( patch.facets, patch.interior_vertices,
+          patch.interior_halfedges, patch.patch_border_halfedges
+      );
+      P.delegate( modifier );
+    }
+  }
+
   void fill_new_polyhedron(
     Polyhedron& O, // output
-    const boost::dynamic_bitset<>& patches_of_P,
-    const boost::dynamic_bitset<>& patches_of_Q,
-    const std::vector<std::size_t>& P_patch_ids,
-    const std::vector<std::size_t>& Q_patch_ids,
-    Facet_id_pmap P_facet_id_pmap,
-    Facet_id_pmap Q_facet_id_pmap,
+    const boost::dynamic_bitset<>& patches_of_P_to_import,
+    const boost::dynamic_bitset<>& patches_of_Q_to_import,
+    Patch_container& patches_of_P,
+    Patch_container& patches_of_Q,
     const Intersection_polylines& polylines,
     const std::map< Halfedge_const_handle,
                     std::pair<int,int>,Cmp_unik_ad >& border_halfedges
@@ -1200,10 +1333,10 @@ private:
                         P_to_O_vertex, border_halfedges);
 
     //import patches of P
-    append_Q_patches_to_P<false>(&O, P_ptr, patches_of_P, P_patch_ids, P_facet_id_pmap, border_halfedges, P_to_O_hedge);
+    append_Q_patches_to_P<false>(&O, patches_of_P_to_import, patches_of_P, P_to_O_hedge);
 
     //import patches from Q
-    append_Q_patches_to_P<false>(&O, Q_ptr, patches_of_Q, Q_patch_ids, Q_facet_id_pmap, border_halfedges, Q_to_O_hedge);
+    append_Q_patches_to_P<false>(&O, patches_of_Q_to_import, patches_of_Q, Q_to_O_hedge);
 
     /// in case the result is empty, there will be no facets in the polyhedron
     /// but maybe marked halfedges
@@ -1661,9 +1794,6 @@ public:
       Q_polylines.push_back(qhedge);
       polyline_lengths.push_back(polyline_info.second-1);
     }
-#ifdef CGAL_COREFINEMENT_POLYHEDRA_DEBUG
-    #warning Factorize patch extraction
-#endif //CGAL_COREFINEMENT_POLYHEDRA_DEBUG
 
     //store the patch description in a container to avoid recomputing it several times
     Patch_container patches_of_P( P_ptr, P_patch_ids, P_facet_id_pmap, border_halfedges, P_nb_cc),
@@ -1690,16 +1820,12 @@ public:
       fill_new_polyhedron(
         *union_ptr,
         is_patch_outside_Q, is_patch_outside_P,
-        P_patch_ids, Q_patch_ids,
-        P_facet_id_pmap, Q_facet_id_pmap,
+        patches_of_P, patches_of_Q,
         Intersection_polylines( P_polylines,
                                 Q_polylines,
                                 polyline_lengths),
         border_halfedges
       );
-
-      // std::ofstream output("P_union_Q.off");
-      // output << Union;
     }
 
     /// compute the intersection
@@ -1715,57 +1841,55 @@ public:
                                     : is_patch_inside_Q |
                                       (coplanar_patches_of_P - coplanar_patches_of_P_for_union_and_intersection),
         is_patch_inside_P,
-        P_patch_ids, Q_patch_ids,
-        P_facet_id_pmap, Q_facet_id_pmap,
+        patches_of_P, patches_of_Q,
         Intersection_polylines( P_polylines,
                                 Q_polylines,
                                 polyline_lengths),
         border_halfedges
       );
-
-      // std::ofstream output("P_inter_Q.off");
-      // output << Inter;
     }
+
+    Edge_map disconnected_patches_hedge_to_Qhedge;
 
     /// tmp: update P to contain P-Q
     if ( !impossible_operation.test(P_MINUS_Q) && desired_output[P_MINUS_Q] )
     {
       CGAL_assertion( *desired_output[P_MINUS_Q] == P_ptr ); //tmp
 
-      compute_difference_inplace(
-      //~ compute_difference_inplace_delay_removal(
-        P_ptr, Q_ptr,
+      /// compute_difference_inplace(
+      compute_difference_inplace_delay_removal(
+        P_ptr,
         is_patch_inside_Q, is_patch_inside_P,
         coplanar_patches_of_P,
         coplanar_patches_of_Q,
         coplanar_patches_of_P_for_union_and_intersection,
         patches_of_P, patches_of_Q,
         Intersection_polylines(P_polylines, Q_polylines, polyline_lengths)
+        , disconnected_patches_hedge_to_Qhedge
       );
-      // std::ofstream output("P_minus_Q.off");
-      // output << *P_ptr;
     }
 
     /// tmp: update Q to contain Q-P
-    if ( !impossible_operation.test(Q_MINUS_P) && desired_output[Q_MINUS_P] )
+    if (!impossible_operation.test(Q_MINUS_P) && desired_output[Q_MINUS_P] )
     {
-#ifdef CGAL_COREFINEMENT_POLYHEDRA_DEBUG
-      #warning We must not clean patches from P, simply disconnect them and only remove them at the end.
-#endif //CGAL_COREFINEMENT_POLYHEDRA_DEBUG
-
       CGAL_assertion( *desired_output[Q_MINUS_P] == Q_ptr ); //tmp
 
-      compute_difference_inplace( Q_ptr, P_ptr,
+      compute_difference_inplace( Q_ptr,
                                   is_patch_inside_P, is_patch_inside_Q,
                                   coplanar_patches_of_Q,
                                   coplanar_patches_of_P,
                                   ~coplanar_patches_of_Q_for_difference & coplanar_patches_of_Q,
                                   patches_of_Q, patches_of_P,
-                                  Intersection_polylines(Q_polylines, P_polylines, polyline_lengths)
+                                  /// Intersection_polylines(Q_polylines, P_polylines, polyline_lengths)
+                                  disconnected_patches_hedge_to_Qhedge
       );
-      // std::ofstream output("Q_minus_P.off");
-      // output << *Q_ptr;
     }
+
+    //clean isolated patch no longer needed
+    //  OK because we don't use it after...
+    if ( coplanar_patches_of_P.any() )
+      is_patch_inside_Q|=(coplanar_patches_of_P & coplanar_patches_of_P_for_union_and_intersection);
+    remove_isolated_patches(*P_ptr, patches_of_P, is_patch_inside_Q);
   }
 };
 
