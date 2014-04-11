@@ -118,7 +118,7 @@ CMAKE_COLOR_MAKEFILE:BOOL=ON
 CMAKE_CXX_COMPILER:FILEPATH=/Library/Developer/CommandLineTools/usr/bin/clang++
 
 //Flags used by the compiler during all build types.
-CMAKE_CXX_FLAGS:STRING='-Wall -Wextra -I/Users/cgaltester/boost-cpp11/boost_1_54_0 '
+CMAKE_CXX_FLAGS:STRING='-Wall -Wextra -isystem /Users/cgaltester/boost-cpp11/boost_1_54_0 '
 
 //Flags used by the compiler during debug builds.
 CMAKE_CXX_FLAGS_DEBUG:STRING=-g
@@ -1290,7 +1290,7 @@ CMAKE_UNAME:INTERNAL=/usr/bin/uname
 CMAKE_USE_RELATIVE_PATHS-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_VERBOSE_MAKEFILE
 CMAKE_VERBOSE_MAKEFILE-ADVANCED:INTERNAL=1
-CONFIG_CXX_FLAGS:INTERNAL='-Wall -Wextra -I/Users/cgaltester/boost-cpp11/boost_1_54_0 '
+CONFIG_CXX_FLAGS:INTERNAL='-Wall -Wextra -isystem /Users/cgaltester/boost-cpp11/boost_1_54_0 '
 //Variable hidden from user
 EXECUTABLE_OUTPUT_PATH:INTERNAL=
 //Details about finding GMP
