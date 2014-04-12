@@ -603,16 +603,6 @@ public:
           std::cout << "debug infinite-edge-int-cf special POS"
           << std::endl;);
       if (s.is_point() and r.is_point()) {
-        // philaris: I assert that sqt and rqt are monotone
-
-        CGAL_assertion(
-            or_linf(s.point(), q.point(), t.point()) ==
-            DEGENERATE );
-
-        CGAL_assertion(
-            or_linf(r.point(), q.point(), t.point()) ==
-            DEGENERATE );
-
         if ((bounded_side_of_bbox(
                t.point(), s.point(), q.point()) ==
                  ON_BOUNDED_SIDE) and
