@@ -1228,21 +1228,17 @@ private:
       RT d_fine = CGAL::min(CGAL::abs(scalediffdvtx),
                             CGAL::abs(scalediffdvty));
 
-      const Site_2 * p_ptr;
       const Site_2 * s1_ptr;
       const Site_2 * s2_ptr;
 
       if (p_.is_point()) {
-        p_ptr = &p_;
         s1_ptr = &q_;
         s2_ptr = &r_;
       } else if (q_.is_point()) {
-        p_ptr = &q_;
         s1_ptr = &r_;
         s2_ptr = &p_;
       } else {
         CGAL_assertion(r_.is_point());
-        p_ptr = &r_;
         s1_ptr = &p_;
         s2_ptr = &q_;
       }
@@ -1953,53 +1949,64 @@ private:
       ((is_r_point)? 1 : 0)  ;
 
     bool is_p_tsrc(false);
-    bool has_p_endp_tsrc(false);
+    CGAL_assertion_code( bool has_p_endp_tsrc(false); )
     if ( is_p_point ) {
       if ( same_points(p_, t.source_site()) ) {
         is_p_tsrc = true;
       }
-    } else { // p is segment
+    }
+#ifndef CGAL_NO_ASSERTIONS
+    else { // p is segment
       if (same_points(p_.source_site(), t.source_site()) or
           same_points(p_.target_site(), t.source_site())   ) {
         has_p_endp_tsrc = true;
       }
     }
+#endif
 
     bool is_q_tsrc(false);
-    bool has_q_endp_tsrc(false);
+    CGAL_assertion_code( bool has_q_endp_tsrc(false); )
     if ( is_q_point ) {
       if ( same_points(q_, t.source_site()) ) {
         is_q_tsrc = true;
       }
-    } else { // q is segment
+    }
+#ifndef CGAL_NO_ASSERTIONS
+    else { // q is segment
       if (same_points(q_.source_site(), t.source_site()) or
           same_points(q_.target_site(), t.source_site())   ) {
         has_q_endp_tsrc = true;
       }
     }
+#endif
 
     bool is_r_tsrc(false);
-    bool has_r_endp_tsrc(false);
+    CGAL_assertion_code( bool has_r_endp_tsrc(false); )
     if ( is_r_point ) {
       if ( same_points(r_, t.source_site()) ) {
         is_r_tsrc = true;
       }
-    } else { // r is segment
+    }
+#ifndef CGAL_NO_ASSERTIONS
+    else { // r is segment
       if (same_points(r_.source_site(), t.source_site()) or
           same_points(r_.target_site(), t.source_site())   ) {
         has_r_endp_tsrc = true;
       }
     }
+#endif
 
-    CGAL_SDG_DEBUG(
+#ifndef CGAL_NO_ASSERTIONS
     unsigned int num_common_endp_tsrc =
       ((has_p_endp_tsrc)? 1 : 0) +
       ((has_q_endp_tsrc)? 1 : 0) +
       ((has_r_endp_tsrc)? 1 : 0)  ;
 
+    CGAL_SDG_DEBUG(
     std::cout << "debug num_common_endp_tsrc="
       << num_common_endp_tsrc << std::endl;
     );
+#endif
 
     unsigned int numendpts_of_t = 0;
 
@@ -2018,53 +2025,64 @@ private:
 
 
     bool is_p_ttrg(false);
-    bool has_p_endp_ttrg(false);
+    CGAL_assertion_code( bool has_p_endp_ttrg(false); )
     if ( is_p_point ) {
       if ( same_points(p_, t.target_site()) ) {
         is_p_ttrg = true;
       }
-    } else { // p is segment
+    }
+#ifndef CGAL_NO_ASSERTIONS
+    else { // p is segment
       if (same_points(p_.source_site(), t.target_site()) or
           same_points(p_.target_site(), t.target_site())   ) {
         has_p_endp_ttrg = true;
       }
     }
+#endif
 
     bool is_q_ttrg(false);
-    bool has_q_endp_ttrg(false);
+    CGAL_assertion_code( bool has_q_endp_ttrg(false); )
     if ( is_q_point ) {
       if ( same_points(q_, t.target_site()) ) {
         is_q_ttrg = true;
       }
-    } else { // q is segment
+    }
+#ifndef CGAL_NO_ASSERTIONS
+    else { // q is segment
       if (same_points(q_.source_site(), t.target_site()) or
           same_points(q_.target_site(), t.target_site())   ) {
         has_q_endp_ttrg = true;
       }
     }
+#endif
 
     bool is_r_ttrg(false);
-    bool has_r_endp_ttrg(false);
+    CGAL_assertion_code( bool has_r_endp_ttrg(false); )
     if ( is_r_point ) {
       if ( same_points(r_, t.target_site()) ) {
         is_r_ttrg = true;
       }
-    } else { // r is segment
+    }
+#ifndef CGAL_NO_ASSERTIONS
+    else { // r is segment
       if (same_points(r_.source_site(), t.target_site()) or
           same_points(r_.target_site(), t.target_site())   ) {
         has_r_endp_ttrg = true;
       }
     }
+#endif
 
-    CGAL_SDG_DEBUG(
+#ifndef CGAL_NO_ASSERTIONS
     unsigned int num_common_endp_ttrg =
       ((has_p_endp_ttrg)? 1 : 0) +
       ((has_q_endp_ttrg)? 1 : 0) +
       ((has_r_endp_ttrg)? 1 : 0)  ;
 
+    CGAL_SDG_DEBUG(
     std::cout << "debug num_common_endp_ttrg="
       << num_common_endp_ttrg << std::endl;
     );
+#endif
 
     if ( is_p_ttrg or is_q_ttrg or is_r_ttrg ) {
       d2 = ZERO;
