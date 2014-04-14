@@ -245,11 +245,10 @@ namespace CGAL {
         // check if two points have the same x or y coordinate
         Point_2 const *s1;
         Point_2 const *s2;
-        Point_2 const *dx;
-        Point_2 const *dy;
 
-        bool exist_two_with_same_x (false);
+        Point_2 const *dx;
         // check if two points have the same x coordinate
+        bool exist_two_with_same_x (false);
         if (samex_pq) {
           exist_two_with_same_x = true;
           s1 = &p;
@@ -268,7 +267,6 @@ namespace CGAL {
           s2 = &r;
           dx = &p;
         }
-
 
         Point_2 dxmirror;
         if (exist_two_with_same_x) {
@@ -290,6 +288,7 @@ namespace CGAL {
           }
         }
 
+        Point_2 const *dy = NULL;
         // check if two points have the same y coordinate
         bool exist_two_with_same_y (false);
         if (samey_pq) {
@@ -313,6 +312,7 @@ namespace CGAL {
 
         Point_2 dymirror;
         if (exist_two_with_same_y) {
+          CGAL_assertion( dy != NULL );
           CGAL_SDG_DEBUG(std::cout << "debug Side_of_bs two same y"
               << std::endl;);
           if ( ( ( compare_x_2(*dy, *s1) == SMALLER ) and
