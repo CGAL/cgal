@@ -9,7 +9,7 @@ The class `Mesh_triangulation_3` is a metafunctor which provides the  triangulat
 \tparam MD stands for a model of `MeshDomain_3`.
 
 \tparam Gt stands for a model of `RegularTriangulationTraits_3`
-and defaults to `Kernel_traits<MD>::Kernel`.
+and defaults to `Kernel_traits<MD>::%Kernel`.
 
 \tparam Concurrency_tag is a place-holder. It is not used yet
 and defaults to `Default`.
