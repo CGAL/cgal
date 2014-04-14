@@ -2001,7 +2001,7 @@ private:
       ((has_p_endp_tsrc)? 1 : 0) +
       ((has_q_endp_tsrc)? 1 : 0) +
       ((has_r_endp_tsrc)? 1 : 0)  ;
-
+    CGAL_USE(num_common_endp_tsrc);
     CGAL_SDG_DEBUG(
     std::cout << "debug num_common_endp_tsrc="
       << num_common_endp_tsrc << std::endl;
@@ -2077,7 +2077,7 @@ private:
       ((has_p_endp_ttrg)? 1 : 0) +
       ((has_q_endp_ttrg)? 1 : 0) +
       ((has_r_endp_ttrg)? 1 : 0)  ;
-
+    CGAL_USE(num_common_endp_ttrg);
     CGAL_SDG_DEBUG(
     std::cout << "debug num_common_endp_ttrg="
       << num_common_endp_ttrg << std::endl;
