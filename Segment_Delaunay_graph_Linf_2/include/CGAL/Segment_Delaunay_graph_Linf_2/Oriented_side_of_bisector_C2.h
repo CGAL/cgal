@@ -133,7 +133,7 @@ private:
 
     //CGAL_SDG_DEBUG(std::cout << "debug compare_distances_sp compute closest " << std::endl;);
 
-    Point_2 closest;
+    Point_2 closest = Point_2(0, 0);
     bool set_closest = false;
 
     Point_2 ssrc = s.source(), strg = s.target();
