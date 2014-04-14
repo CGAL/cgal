@@ -1133,13 +1133,6 @@ insert_point_on_segment(const Storage_site_2& ss, const Site_2& ,
   Storage_site_2 ssv2 =
     storage_traits().construct_storage_site_2_object()(ssitev, ss, false);
 
-  // philaris: the following variables are set but never used
-  Site_2 sv1 = ssv1.site();
-  Site_2 sv2 = ssv2.site();
-
-  CGAL_SDG_DEBUG(std::cout << "debug unused-but-set (sv1, sv2)= ( " 
-                 << sv1 << " , " << sv2 << " )" << std::endl ;);
-  
   v1->set_site( ssv1 );
   v2->set_site( ssv2 );
 
