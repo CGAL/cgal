@@ -814,16 +814,16 @@ private:
     } else {
       // here, not all segments have a common point
 
-      CGAL_SDG_DEBUG(
+      CGAL_assertion_code(
       bool is_qsrc_r = is_endpoint_of(sq.source_site(), sr);
       bool is_qtrg_r = is_endpoint_of(sq.target_site(), sr);
       );
       bool have_common_pq = is_psrc_q or is_ptrg_q;
-      CGAL_SDG_DEBUG(
+      CGAL_assertion_code(
       bool have_common_qr = is_qsrc_r or is_qtrg_r; );
       bool have_common_rp = is_psrc_r or is_ptrg_r;
 
-      CGAL_SDG_DEBUG(
+      CGAL_assertion_code(
       unsigned int num_common =
         ((have_common_pq) ? 1 : 0) +
         ((have_common_qr) ? 1 : 0) +
@@ -834,7 +834,7 @@ private:
       bool is_q_hv = is_site_h_or_v(sq);
       bool is_r_hv = is_site_h_or_v(sr);
 
-      CGAL_SDG_DEBUG(
+      CGAL_assertion_code(
       unsigned int num_hv =
         ((is_p_hv) ? 1 : 0) +
         ((is_q_hv) ? 1 : 0) +
@@ -845,13 +845,14 @@ private:
       bool bqrset(false);
       bool brpset(false);
 
+      CGAL_assertion_code(
       CGAL_SDG_DEBUG(std::cout
           << "debug: vsqr num_common=" << num_common
           << " pq=" << have_common_pq
           << " qr=" << have_common_qr
           << " rp=" << have_common_rp
           << " num_hv=" << num_hv
-          << std::endl;);
+          << std::endl; ); );
 
       Polychainline_2 bpq;
       if ((is_p_hv and is_q_hv and have_common_pq) ) {
