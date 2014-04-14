@@ -1202,7 +1202,6 @@ public:
     CGAL_assertion( not ( p.is_segment() and q.is_segment()) );
 
     if ( p.is_segment() or q.is_segment() ) {
-      Segment_2 seg = (p.is_point())? q.segment(): p.segment();
       Site_2 siteseg = (p.is_point())? q: p;
 
       if ( is_site_h_or_v(siteseg) ) {

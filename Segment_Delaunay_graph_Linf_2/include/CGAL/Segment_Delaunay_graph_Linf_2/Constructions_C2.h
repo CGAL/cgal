@@ -931,7 +931,6 @@ public:
         //pnt is the point site and seg is the segment site
         Point_2 pnt = (p.is_point()) ? p.point() : q.point();
         Segment_2 seg = (p.is_segment()) ? p.segment() : q.segment();
-        Site_2 sitepnt = (p.is_point()) ? p : q;
         Site_2 siteseg = (p.is_point()) ? q : p;
         // lseg is the suporting line of the segment site
         Line_2 lseg = siteseg.supporting_site().segment().supporting_line();
