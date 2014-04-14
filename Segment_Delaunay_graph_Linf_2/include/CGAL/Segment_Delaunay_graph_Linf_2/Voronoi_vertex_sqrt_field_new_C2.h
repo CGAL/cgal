@@ -817,7 +817,8 @@ private:
       bool is_qsrc_r = is_endpoint_of(sq.source_site(), sr);
       bool is_qtrg_r = is_endpoint_of(sq.target_site(), sr);
       bool have_common_pq = is_psrc_q or is_ptrg_q;
-      bool have_common_qr = is_qsrc_r or is_qtrg_r;
+      CGAL_SDG_DEBUG(
+      bool have_common_qr = is_qsrc_r or is_qtrg_r; );
       bool have_common_rp = is_psrc_r or is_ptrg_r;
 
       CGAL_SDG_DEBUG(
