@@ -65,7 +65,7 @@ private:
 
     Compare_x_2 compare_x_2;
     Compare_y_2 compare_y_2;
-    Are_same_points_2 are_same_points;//the arguments are sites
+    CGAL_assertion_code( Are_same_points_2 are_same_points; )
     CGAL_assertion( !(are_same_points(p, q)) );
     Comparison_result cmpx = compare_x_2(pp, pq);
     Comparison_result cmpy = compare_y_2(pp, pq);

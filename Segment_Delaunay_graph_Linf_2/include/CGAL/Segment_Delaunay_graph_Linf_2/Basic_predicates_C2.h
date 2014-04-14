@@ -959,12 +959,11 @@ public:
     CGAL_precondition(p.is_point());
     CGAL_precondition(q.is_point());
 
-    Compare_x_2 cmpx;
-    Compare_y_2 cmpy;
-
     Point_2 pp = p.point();
     Point_2 qq = q.point();
 
+    CGAL_assertion_code( Compare_x_2 cmpx; )
+    CGAL_assertion_code( Compare_y_2 cmpy; )
     CGAL_assertion(cmpx(pp,qq) != EQUAL);
     CGAL_assertion(cmpy(pp,qq) != EQUAL);
 
