@@ -146,9 +146,9 @@ public:
             b = &s2;
           }
 
-          FT distpa;
+          FT distpa (0);
           bool is_a_cand = test_candidate(*a, p, v, distpa);
-          FT distpb;
+          FT distpb (0);
           bool is_b_cand = test_candidate(*b, p, v, distpb);
           unsigned int num_candidates =
             (is_a_cand? 1 : 0) +
