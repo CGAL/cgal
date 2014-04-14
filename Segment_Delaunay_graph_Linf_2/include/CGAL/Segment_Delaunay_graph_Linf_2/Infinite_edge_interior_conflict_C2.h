@@ -143,10 +143,12 @@ public:
           if (is_q_tsrc or is_q_ttrg) {
             // philaris: this code should never be executed
 
+            CGAL_assertion_code(
             bool is_q_ssrc = same_points(q, s.source_site());
             bool is_q_strg = same_points(q, s.target_site());
             bool is_q_rsrc = same_points(q, r.source_site());
             bool is_q_rtrg = same_points(q, r.target_site());
+            );
 
             CGAL_assertion(
                 (is_q_ssrc or is_q_strg) and
