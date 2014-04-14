@@ -978,6 +978,9 @@ private:
   // 3 = Q  - P
   std::bitset<4> impossible_operation;
 
+  //Orientation of polyhedra
+  bool is_P_inside_out;
+  bool is_Q_inside_out;
 
 //Polyhedron typedefs
   typedef typename Polyhedron::Halfedge_const_handle      Halfedge_const_handle;
@@ -1359,7 +1362,10 @@ public:
     , desired_output( desired_output_ )
     , P_facet_id_pmap(P_facet_id_pmap_)
     , Q_facet_id_pmap(Q_facet_id_pmap_)
-    , ppmap(point_pmap) {}
+    , ppmap(point_pmap)
+    , is_P_inside_out(false)
+    , is_Q_inside_out(false)
+    {}
 
     Polyhedra_output_builder(
     Polyhedron& P,
@@ -1371,12 +1377,18 @@ public:
     , desired_output( desired_output_ )
     , P_facet_id_pmap( boost::get(boost::edge_index, P) )
     , Q_facet_id_pmap( boost::get(boost::edge_index, Q) )
-    , ppmap(point_pmap) {}
+    , ppmap(point_pmap)
+    , is_P_inside_out(false)
+    , is_Q_inside_out(false)
+    {}
 
   bool union_valid()        const { return !impossible_operation[P_UNION_Q]; }
   bool intersection_valid() const { return !impossible_operation[P_INTER_Q]; }
   bool P_minus_Q_valid()    const { return !impossible_operation[P_MINUS_Q]; }
   bool Q_minus_P_valid()    const { return !impossible_operation[Q_MINUS_P]; }
+
+  void P_is_inside_out() { is_P_inside_out = true; }
+  void Q_is_inside_out() { is_Q_inside_out = true; }
 
   template <class Nodes_vector>
   void operator()(
@@ -1704,6 +1716,8 @@ public:
 
     if ( patch_status_not_set_P.any() )
     {
+      CGAL::Bounded_side in_Q = is_Q_inside_out ? ON_UNBOUNDED_SIDE : ON_BOUNDED_SIDE;
+
       Inside_poly_test inside_Q(*Q_ptr, accessor);
       for (typename Polyhedron::Face_iterator fit=P_ptr->facets_begin(),
                                               fit_end=P_ptr->facets_end();
@@ -1713,7 +1727,7 @@ public:
         if ( patch_status_not_set_P.test( patch_id ) )
         {
           patch_status_not_set_P.reset( patch_id );
-          if ( inside_Q( get(ppmap,fit->halfedge()->vertex()) ) == ON_BOUNDED_SIDE )
+          if ( inside_Q( get(ppmap,fit->halfedge()->vertex()) ) == in_Q )
             is_patch_inside_Q.set(patch_id);
 
           if ( patch_status_not_set_P.none() ) break;
@@ -1723,6 +1737,8 @@ public:
 
     if ( patch_status_not_set_Q.any() )
     {
+      CGAL::Bounded_side in_P = is_P_inside_out ? ON_UNBOUNDED_SIDE : ON_BOUNDED_SIDE;
+
       Inside_poly_test inside_P(*P_ptr, accessor);
       for (typename Polyhedron::Face_iterator fit=Q_ptr->facets_begin(),
                                               fit_end=Q_ptr->facets_end();
@@ -1732,7 +1748,7 @@ public:
         if ( patch_status_not_set_Q.test( patch_id ) )
         {
           patch_status_not_set_Q.reset( patch_id );
-          if ( inside_P( get(ppmap,fit->halfedge()->vertex()) ) == ON_BOUNDED_SIDE )
+          if ( inside_P( get(ppmap,fit->halfedge()->vertex()) ) == in_P )
             is_patch_inside_P.set(patch_id);
 
           if ( patch_status_not_set_Q.none() ) break;
