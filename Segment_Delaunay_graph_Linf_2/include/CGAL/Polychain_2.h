@@ -444,9 +444,6 @@ public:
                      Vertex_const_iterator
           VI;
 
-      typedef typename std::vector<typename Traits_P::Segment_2>::
-               const_iterator SI;
-
       CGAL::Object result;
 
       VI sourcepcl  = pcl.vertices_begin();
