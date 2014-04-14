@@ -854,7 +854,7 @@ void extract_patch_simplices(
                                            fit_end=P.facets_end();
                                            fit!=fit_end; ++fit)
   {
-    if ( patch_ids[ facet_indices[fit] ]==patch_id )
+    if ( patch_ids[ get(facet_indices, fit) ]==patch_id )
     {
       facets.push_back( fit );
       Halfedge_handle hedges[]={fit->halfedge(), fit->halfedge()->next(), fit->halfedge()->prev()};
@@ -939,6 +939,18 @@ struct Patch_container{
 
 } //end of namespace internal_IOP
 
+template<class Polyhedron>
+struct Default_facet_id_pmap
+{
+  typedef boost::read_write_property_map_tag                             category;
+  typedef std::size_t                                                  value_type;
+  typedef std::size_t&                                                 reference;
+  typedef typename Polyhedron::Facet_const_handle key_type;
+
+  friend std::size_t get(Default_facet_id_pmap, key_type f) { return f->id(); }
+  friend void put(Default_facet_id_pmap, key_type f, std::size_t i) { const_cast<typename Polyhedron::Facet&>(*f).id()=i; }
+};
+
 namespace Corefinement
 {
 
@@ -959,8 +971,7 @@ class Polyhedra_output_builder
     >::Kernel >::type                                                    Kernel;
   typedef typename Default::Get<
     Facet_id_pmap_,
-    typename boost::property_map<Polyhedron, boost::edge_index_t>::type
-  >::type                                                         Facet_id_pmap;
+    Default_facet_id_pmap<Polyhedron> >::type                     Facet_id_pmap;
 public:
 //Boolean operation indices
   enum {P_UNION_Q = 0, P_INTER_Q, P_MINUS_Q, Q_MINUS_P };
@@ -1375,8 +1386,6 @@ public:
   ) : P_ptr(&P)
     , Q_ptr(&Q)
     , desired_output( desired_output_ )
-    , P_facet_id_pmap( boost::get(boost::edge_index, P) )
-    , Q_facet_id_pmap( boost::get(boost::edge_index, Q) )
     , ppmap(point_pmap)
     , is_P_inside_out(false)
     , is_Q_inside_out(false)
@@ -1480,13 +1489,13 @@ public:
             impossible_operation.reset(0);
 
             std::size_t patch_id_P =
-              P_patch_ids[ P_facet_id_pmap[ first_hedge->is_border()
-                                            ? first_hedge->opposite()->facet()
-                                            : first_hedge->facet() ] ];
+              P_patch_ids[ get( P_facet_id_pmap, first_hedge->is_border()
+                                                 ? first_hedge->opposite()->facet()
+                                                 : first_hedge->facet() ) ];
             std::size_t patch_id_Q =
-              Q_patch_ids[ Q_facet_id_pmap[ second_hedge->is_border()
-                                            ? second_hedge->opposite()->facet()
-                                            : second_hedge->facet() ] ];
+              Q_patch_ids[ get( Q_facet_id_pmap, second_hedge->is_border()
+                                                 ? second_hedge->opposite()->facet()
+                                                 : second_hedge->facet() ) ];
             patch_status_not_set_P.reset(patch_id_P);
             patch_status_not_set_Q.reset(patch_id_Q);
           }
@@ -1533,10 +1542,10 @@ public:
           int index_q1=node_index_of_incident_vertex(second_hedge->opposite()->next(),border_halfedges);
           int index_q2=node_index_of_incident_vertex(second_hedge->next(),border_halfedges);
 
-          std::size_t patch_id_p1=P_patch_ids[ P_facet_id_pmap[first_hedge->opposite()->facet()] ];
-          std::size_t patch_id_p2=P_patch_ids[ P_facet_id_pmap[first_hedge->facet()] ];
-          std::size_t patch_id_q1=Q_patch_ids[ Q_facet_id_pmap[second_hedge->opposite()->facet()] ];
-          std::size_t patch_id_q2=Q_patch_ids[ Q_facet_id_pmap[second_hedge->facet()] ];
+          std::size_t patch_id_p1=P_patch_ids[ get(P_facet_id_pmap, first_hedge->opposite()->facet()) ];
+          std::size_t patch_id_p2=P_patch_ids[ get(P_facet_id_pmap, first_hedge->facet()) ];
+          std::size_t patch_id_q1=Q_patch_ids[ get(Q_facet_id_pmap, second_hedge->opposite()->facet()) ];
+          std::size_t patch_id_q2=Q_patch_ids[ get(Q_facet_id_pmap, second_hedge->facet()) ];
 
           //indicates that patch status will be updated
           patch_status_not_set_P.reset(patch_id_p1);
@@ -1723,7 +1732,7 @@ public:
                                               fit_end=P_ptr->facets_end();
                                               fit!=fit_end; ++fit)
       {
-        std::size_t patch_id=P_patch_ids[ P_facet_id_pmap[fit] ];
+        std::size_t patch_id=P_patch_ids[ get(P_facet_id_pmap, fit) ];
         if ( patch_status_not_set_P.test( patch_id ) )
         {
           patch_status_not_set_P.reset( patch_id );
@@ -1744,7 +1753,7 @@ public:
                                               fit_end=Q_ptr->facets_end();
                                               fit!=fit_end; ++fit)
       {
-        std::size_t patch_id=Q_patch_ids[ Q_facet_id_pmap[fit] ];
+        std::size_t patch_id=Q_patch_ids[ get(Q_facet_id_pmap, fit) ];
         if ( patch_status_not_set_Q.test( patch_id ) )
         {
           patch_status_not_set_Q.reset( patch_id );
