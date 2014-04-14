@@ -2045,9 +2045,10 @@ private:
         return POSITIVE;
       }
 
-      Homogeneous_point_2 hqref;
       if (q.is_point()) {
         qref = q.point();
+        diffdvqx = vv.x() - qref.x();
+        diffdvqy = vv.y() - qref.y();
       } else {
         // tocheck and tofix
         // here q and r are segments and p is point
@@ -2103,13 +2104,7 @@ private:
         }
         Line_2 lq = compute_supporting_line(q.supporting_site());
         //qref = compute_linf_projection_nonhom(lq, vv);
-        hqref = compute_linf_projection_hom(lq, vv);
-      }
-
-      if (q.is_point()) {
-        diffdvqx = vv.x() - qref.x();
-        diffdvqy = vv.y() - qref.y();
-      } else {
+        Homogeneous_point_2 hqref = compute_linf_projection_hom(lq, vv);
         diffdvqx = vv.x() - hqref.x();
         diffdvqy = vv.y() - hqref.y();
       }
