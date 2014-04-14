@@ -820,28 +820,34 @@ private:
       bool have_common_qr = is_qsrc_r or is_qtrg_r;
       bool have_common_rp = is_psrc_r or is_ptrg_r;
 
+      CGAL_SDG_DEBUG(
       unsigned int num_common =
         ((have_common_pq) ? 1 : 0) +
         ((have_common_qr) ? 1 : 0) +
         ((have_common_rp) ? 1 : 0)  ;
+      );
 
       bool is_p_hv = is_site_h_or_v(sp);
       bool is_q_hv = is_site_h_or_v(sq);
       bool is_r_hv = is_site_h_or_v(sr);
 
+      CGAL_SDG_DEBUG(
       unsigned int num_hv =
         ((is_p_hv) ? 1 : 0) +
         ((is_q_hv) ? 1 : 0) +
         ((is_r_hv) ? 1 : 0)  ;
+      );
 
       bool bpqset(false);
       bool bqrset(false);
       bool brpset(false);
 
       CGAL_SDG_DEBUG(std::cout
-          << "debug: vsqr common pq=" << have_common_pq
+          << "debug: vsqr num_common=" << num_common
+          << " pq=" << have_common_pq
           << " qr=" << have_common_qr
           << " rp=" << have_common_rp
+          << " num_hv=" << num_hv
           << std::endl;);
 
       Polychainline_2 bpq;
@@ -1792,8 +1798,6 @@ private:
       CGAL_SDG_DEBUG(std::cout
           << "debug d=" << d << " d_fine=" << d_fine << std::endl;);
 
-      unsigned int num_same_quadrant_as_t = 0;
-
       Point_2 pref, qref, rref;
 
       FT diffdvpx;
@@ -2236,8 +2240,6 @@ private:
         }
 
       } // case r is non-hv and has endpoint p or q
-
-      CGAL_assertion(num_same_quadrant_as_t == 0);
 
       CGAL_SDG_DEBUG(std::cout
           << "debug in refinement return final zero" << std::endl;);

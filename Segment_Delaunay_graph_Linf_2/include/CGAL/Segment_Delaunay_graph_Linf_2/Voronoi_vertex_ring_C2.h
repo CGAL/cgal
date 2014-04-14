@@ -981,8 +981,6 @@ private:
       RT d_fine = CGAL::min(CGAL::abs(scalediffdvtx),
                             CGAL::abs(scalediffdvty));
 
-      unsigned int num_same_quadrant_as_t = 0;
-
       Point_2 pref;
 
       if (p_.is_point()) {
@@ -1171,7 +1169,6 @@ private:
 
       } // case r is non-hv and has endpoint p or q
 
-      CGAL_assertion(num_same_quadrant_as_t == 0);
       return ZERO;
 
       //FT radius_fine = linf_fine_radius(vv, p, q, r, type);
@@ -1230,8 +1227,6 @@ private:
 
       RT d_fine = CGAL::min(CGAL::abs(scalediffdvtx),
                             CGAL::abs(scalediffdvty));
-
-      unsigned int num_same_quadrant_as_t = 0;
 
       const Site_2 * p_ptr;
       const Site_2 * s1_ptr;
@@ -1464,7 +1459,6 @@ private:
         }
       }
 
-      CGAL_assertion(num_same_quadrant_as_t == 0);
       CGAL_SDG_DEBUG(std::cout
           << "debug vring PSS P return final ZERO"
           << std::endl;);
@@ -1997,13 +1991,15 @@ private:
       }
     }
 
+    CGAL_SDG_DEBUG(
     unsigned int num_common_endp_tsrc =
       ((has_p_endp_tsrc)? 1 : 0) +
       ((has_q_endp_tsrc)? 1 : 0) +
       ((has_r_endp_tsrc)? 1 : 0)  ;
 
-    CGAL_SDG_DEBUG(std::cout << "debug num_common_endp_tsrc="
-      << num_common_endp_tsrc << std::endl;);
+    std::cout << "debug num_common_endp_tsrc="
+      << num_common_endp_tsrc << std::endl;
+    );
 
     unsigned int numendpts_of_t = 0;
 
@@ -2060,13 +2056,15 @@ private:
       }
     }
 
+    CGAL_SDG_DEBUG(
     unsigned int num_common_endp_ttrg =
       ((has_p_endp_ttrg)? 1 : 0) +
       ((has_q_endp_ttrg)? 1 : 0) +
       ((has_r_endp_ttrg)? 1 : 0)  ;
 
-    CGAL_SDG_DEBUG(std::cout << "debug num_common_endp_ttrg="
-      << num_common_endp_ttrg << std::endl;);
+    std::cout << "debug num_common_endp_ttrg="
+      << num_common_endp_ttrg << std::endl;
+    );
 
     if ( is_p_ttrg or is_q_ttrg or is_r_ttrg ) {
       d2 = ZERO;
