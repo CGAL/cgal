@@ -1107,8 +1107,8 @@ insert_point_on_segment(const Storage_site_2& ss, const Site_2& ,
   Storage_site_2 ssx =
     storage_traits().construct_storage_site_2_object()(ss, ssitev);
 
-  Site_2 sitev = ssitev.site();
   #ifdef CGAL_SDG_VERBOSE
+  Site_2 sitev = ssitev.site();
   std::cout << "debug insert_point_on_segment intsec=" 
     << ssx.site() << " v=" << sitev << std::endl ;
   #endif
