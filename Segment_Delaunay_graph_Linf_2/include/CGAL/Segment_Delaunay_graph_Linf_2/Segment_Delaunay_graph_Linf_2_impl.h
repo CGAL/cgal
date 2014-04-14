@@ -1188,7 +1188,7 @@ insert_point_on_segment(const Storage_site_2& ss, const Site_2& ,
 #ifdef CGAL_SDG_VERBOSE
     std::cout << "debug flip otherg=";
     face_output("[", otherg, "]");
-    std::cout << " at g_i=" << f_i << std::endl;
+    std::cout << " at g_i=" << g_i << std::endl;
 #endif
     unsigned int remaining_pon = flips_pon;
     Face_handle current_face, next_face;
