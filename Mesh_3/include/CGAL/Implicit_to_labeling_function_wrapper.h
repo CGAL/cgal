@@ -272,7 +272,7 @@ public:
 
     std::vector<boost::dynamic_bitset<> >::const_iterator iter = std::lower_bound(bmasks.begin(), bmasks.end(), bmask);
     if (iter != bmasks.end() && *iter == bmask)
-      return 1 + (iter - bmasks.begin());
+      return static_cast<return_type>(1 + (iter - bmasks.begin()));
     return 0;
   }
 };
