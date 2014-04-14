@@ -1000,14 +1000,14 @@ insert_exact_point_on_segment(const Storage_site_2& ss, const Site_2& t,
   Face_handle qqf = boost::tuples::get<2>(qq); //qq.third;
 
   Face_handle otherf;
-  int f_i;
+  int f_i = -1;
   if (flips_nop > 0) {
     otherf = qqf->neighbor(qqf->index(v1));
     f_i = this->_tds.mirror_index(qqf, qqf->index(v1));
   }
 
   Face_handle otherg;
-  int g_i;
+  int g_i = -1;
   if (flips_pon > 0) {
     Face_handle qqg = boost::tuples::get<3>(qq); //qq.fourth;
     otherg = qqg->neighbor(qqg->index(v2));
@@ -1018,6 +1018,7 @@ insert_exact_point_on_segment(const Storage_site_2& ss, const Site_2& t,
     this->_tds.insert_in_edge(qqf, cw(qqf->index(v1)));
 
   if (flips_nop > 0) {
+    CGAL_assertion( f_i != -1 );
 #ifdef CGAL_SDG_VERBOSE
     std::cout << "debug flip_nop>0 otherf=";
     face_output("[", otherf, "]");
@@ -1046,10 +1047,11 @@ insert_exact_point_on_segment(const Storage_site_2& ss, const Site_2& t,
   }
 
   if (flips_pon > 0) {
+    CGAL_assertion( g_i != -1);
 #ifdef CGAL_SDG_VERBOSE
     std::cout << "debug flip otherg=";
     face_output("[", otherg, "]");
-    std::cout << " at g_i=" << f_i << std::endl;
+    std::cout << " at g_i=" << g_i << std::endl;
 #endif
     unsigned int remaining_pon = flips_pon;
     Face_handle current_face, next_face;
@@ -1148,14 +1150,14 @@ insert_point_on_segment(const Storage_site_2& ss, const Site_2& ,
   Face_handle qqf = boost::tuples::get<2>(qq); //qq.third;
 
   Face_handle otherf;
-  int f_i;
+  int f_i = -1;
   if (flips_nop > 0) {
     otherf = qqf->neighbor(qqf->index(v1));
     f_i = this->_tds.mirror_index(qqf, qqf->index(v1));
   }
 
   Face_handle otherg;
-  int g_i;
+  int g_i = -1;
   if (flips_pon > 0) {
     Face_handle qqg = boost::tuples::get<3>(qq); //qq.fourth;
     otherg = qqg->neighbor(qqg->index(v2));
@@ -1166,6 +1168,7 @@ insert_point_on_segment(const Storage_site_2& ss, const Site_2& ,
     this->_tds.insert_in_edge(qqf, cw(qqf->index(v1)));
 
   if (flips_nop > 0) {
+    CGAL_assertion( f_i != -1);
 #ifdef CGAL_SDG_VERBOSE
     std::cout << "debug flip_nop>0 otherf=";
     face_output("[", otherf, "]");
@@ -1194,6 +1197,7 @@ insert_point_on_segment(const Storage_site_2& ss, const Site_2& ,
   }
 
   if (flips_pon > 0) {
+    CGAL_assertion( g_i != -1);
 #ifdef CGAL_SDG_VERBOSE
     std::cout << "debug flip otherg=";
     face_output("[", otherg, "]");
