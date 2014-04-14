@@ -1736,7 +1736,7 @@ add_bogus_vertex(Edge e, List& l)
 {
   Edge esym = sym_edge(e);
   Face_handle g1 = e.first;
-  Face_handle g2 = esym.first;
+  CGAL_assertion_code(Face_handle g2 = esym.first);
 
   Vertex_handle v = insert_degree_2(e);
 
@@ -1869,7 +1869,7 @@ retriangulate_conflict_region(Vertex_handle v, List& l,
   Edge e_start = l.front();
   Edge eit = e_start;
   do {
-    Edge esym = sym_edge(eit);
+    CGAL_assertion_code(Edge esym =) sym_edge(eit);
     Face_handle f = eit.first;
     int k = eit.second;
     CGAL_assertion( !l.is_in_list(esym) );
