@@ -624,6 +624,7 @@ find_faces_to_split(const Vertex_handle& v, const Site_2& t,
   CGAL_assertion_code( bool first_found_f2 = false; );
   Face_handle f0_no, f0_op, f0_po, f0_on;
 
+#ifndef CGAL_NO_ASSERTIONS
   bool is_nop(false);
   bool is_pon(false);
 
@@ -631,6 +632,7 @@ find_faces_to_split(const Vertex_handle& v, const Site_2& t,
   bool is_set_f0_op(false);
   bool is_set_f0_no(false);
   bool is_set_f0_po(false);
+#endif
 
   bool connect_all_nop(false);
   bool connect_all_pon(false);
@@ -736,13 +738,13 @@ find_faces_to_split(const Vertex_handle& v, const Site_2& t,
       }
       if (os2 == ON_NEGATIVE_SIDE) {
         CGAL_assertion(not is_set_f0_on);
-        is_set_f0_on = true;
+        CGAL_assertion_code( is_set_f0_on = true ) ;
         f0_on = ff1;
         CGAL_SDG_DEBUG(std::cout << "debug impl found f0_on "
           << std::endl;);
       } else if (os2 == ON_POSITIVE_SIDE) {
         CGAL_assertion(not is_set_f0_op);
-        is_set_f0_op = true;
+        CGAL_assertion_code( is_set_f0_op = true ) ;
         f0_op = ff1;
         CGAL_SDG_DEBUG(std::cout << "debug impl found f0_op "
           << std::endl;);
@@ -757,10 +759,12 @@ find_faces_to_split(const Vertex_handle& v, const Site_2& t,
       count_zeros = 0;
       CGAL_SDG_DEBUG(std::cout << "debug impl found_f1 set to true "
           << "with os1=" << os1 << std::endl;);
+#ifndef CGAL_NO_ASSERTIONS
       if (os1 == ON_ORIENTED_BOUNDARY) {
         CGAL_assertion(not is_nop);
         is_nop = true;
       }
+#endif
       if ( !found_f2 ) {
         first_found_f1 = true;
       }
@@ -777,10 +781,12 @@ find_faces_to_split(const Vertex_handle& v, const Site_2& t,
       count_zeros = 0;
       CGAL_SDG_DEBUG(std::cout << "debug impl found_f2 set to true "
           << "with os1=" << os1 << std::endl;);
+#ifndef CGAL_NO_ASSERTIONS
       if (os1 == ON_ORIENTED_BOUNDARY) {
         CGAL_assertion(not is_pon);
         is_pon = true;
       }
+#endif
       CGAL_assertion_code(
       if ( !found_f1 ) {
         first_found_f2 = true;
@@ -791,13 +797,13 @@ find_faces_to_split(const Vertex_handle& v, const Site_2& t,
     if (os2 == ON_ORIENTED_BOUNDARY) {
       if (os1 == ON_NEGATIVE_SIDE) {
         CGAL_assertion(not is_set_f0_no);
-        is_set_f0_no = true;
+        CGAL_assertion_code( is_set_f0_no = true ) ;
         f0_no = ff2;
         CGAL_SDG_DEBUG(std::cout << "debug impl found f0_no "
           << std::endl;);
       } else if (os1 == ON_POSITIVE_SIDE) {
         CGAL_assertion(not is_set_f0_po);
-        is_set_f0_po = true;
+        CGAL_assertion_code( is_set_f0_po = true ) ;
         f0_po = ff2;
         CGAL_SDG_DEBUG(std::cout << "debug impl found f0_po "
           << std::endl;);
