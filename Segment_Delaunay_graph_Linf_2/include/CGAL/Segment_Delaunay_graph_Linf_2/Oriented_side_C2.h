@@ -310,7 +310,6 @@ public:
 
     Line_2 lseg = compute_supporting_line( s.supporting_site() );
     Line_2 lp = compute_linf_perpendicular(lseg, p.point());
-    bool has_lseg_neg_slope;
 
     // Voronoi_vertex_2 v(s1, s2, inf);
     // compute linf projection of v(s1, s2, inf) on segment s,
@@ -381,7 +380,7 @@ public:
 
         CGAL_assertion( not is_site_h_or_v(s) );
 
-        has_lseg_neg_slope =
+        bool has_lseg_neg_slope =
           CGAL::sign(lseg.a()) == CGAL::sign(lseg.b());
 
         if (has_lseg_neg_slope) {
@@ -421,23 +420,11 @@ public:
               << s << ") (" << p << ") "
               << "trying to fix ZERO"
               << std::endl;);
-
-      // in order to do tie breaking, use the input point itself
-      // as the test point (i.e., not the linf projection)
-      if (has_lseg_neg_slope) {
-        if (is_s1_segment) {
-          testpnt = s2.point();
-        } else {
-          testpnt = s1.point();
-        }
+      if (is_s1_segment) {
+        testpnt = s2.point();
       } else {
-        // here, segment has positive slope
-        if (is_s1_segment) {
-          testpnt = s2.point();
-        } else {
-          testpnt = s1.point();
-        }
-      } // end of case: seg has positive slope
+        testpnt = s1.point();
+      }
       retval = - oriented_side_of_line(lp, testpnt);
     }
 
