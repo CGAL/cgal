@@ -25,7 +25,7 @@ namespace CGAL {
 namespace internal {
 
 /// A general system parameters definition.
-template<int sz> struct _EnvDef{
+template< int sz > struct _EnvDef{
     typedef void s_ptr_type;                        ///< The pointer size type.
     typedef void ptr_type;                          ///< The pointer type.
 }; // struct _EnvDef
@@ -44,7 +44,7 @@ template<> struct _EnvDef<8> {
 
 /// The current system configuration.
 struct _Env {
-    typedef _EnvDef< sizeof(void*) > _DEF;          ///< The system definitions.
+    typedef _EnvDef< sizeof( void* ) > _DEF;        ///< The system definitions.
 
     typedef _DEF::s_ptr_type    s_ptr_type;         ///< The pointer size type.
     typedef _DEF::ptr_type      ptr_type;           ///< The pointer type.
@@ -54,7 +54,7 @@ struct _Env {
     static const bool is_x64 = ( ptr_size == 64 );  ///< Whether the system is 64-bit.
 }; // struct _Env
 
-typedef _Env _ENV;
+typedef _Env _ENVIRONMENT;                          ///< The system environment.
 
 } // namespace internal
 

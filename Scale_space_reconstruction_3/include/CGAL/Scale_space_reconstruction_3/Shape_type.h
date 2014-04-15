@@ -45,17 +45,19 @@ namespace CGAL {
  */
 template < class Kernel, class Fixed_shape >
 class Shape_type {
-	typedef typename Kernel::FT                                                     Scalar;
+	typedef typename Kernel::FT                                             Scalar;
+	typedef typename Kernel::Point_3                                        Point;
+    typedef internal::Auto_count<Point>                                     PointIndex;
 
-    typedef CGAL::Alpha_shape_vertex_base_3< Kernel,
-            CGAL::Triangulation_vertex_base_with_info_3< unsigned int, Kernel > >   Vb;
-    typedef CGAL::Alpha_shape_cell_base_3< Kernel,
-            CGAL::Triangulation_cell_base_with_info_3< unsigned int, Kernel > >     Cb;
-    typedef CGAL::Triangulation_data_structure_3<Vb,Cb>                             Tds;
+    typedef Triangulation_vertex_base_with_info_3< unsigned int, Kernel >   Vb;
+    typedef Alpha_shape_vertex_base_3< Kernel, Vb >                         aVb;
+    typedef Triangulation_cell_base_with_info_3< unsigned int, Kernel >     Cb;
+    typedef Alpha_shape_cell_base_3< Kernel, Cb >                           aCb;
+    typedef Triangulation_data_structure_3<aVb,aCb>                         Tds;
 
 public:
-    typedef CGAL::Delaunay_triangulation_3< Kernel, Tds >                           Structure;  ///< The triangulation that spatially orders the point set.
-    typedef CGAL::Alpha_shape_3< Structure >                                        Shape;      ///< The structure that identifies the triangles in the surface.
+    typedef Delaunay_triangulation_3< Kernel, Tds >                         Structure;  ///< The triangulation that spatially orders the point set.
+    typedef Alpha_shape_3< Structure >                                      Shape;      ///< The structure that identifies the triangles in the surface.
     
     /// Default constructor.
     Shape_type() {}
@@ -67,7 +69,7 @@ public:
      *  \param squared_radius the squared scale parameter of the shape.
      *  \return a pointer to the new shape.
      *
-     *  Note: this class does not take responsibility for destroying
+     *  Note: Shape_type does not take responsibility for destroying
      *  the object after use.
      */
     Shape* construct( Shape* shape, const Scalar& squared_radius ) {
@@ -77,41 +79,43 @@ public:
     
     /// Construct a new shape.
     /** \tparam InputIterator an interator over the points of the shape.
-     *  It should point to a CGAL::Point_3<Kernel>.
+     *  The iterator should point to a model of CGAL::Point_3<Kernel>.
      *  \param start an iterator to the first point of the shape.
      *  \param end a past-the-end iterator for the points of the shape.
      *  \param squared_radius the squared scale parameter of the shape.
      *  \return a pointer to the new shape.
      *
-     *  Note: this class does not take responsibility for destroying
+     *  Note: Shape_type does not take responsibility for destroying
      *  the object after use.
      */
     template < class InputIterator >
     Shape* construct( InputIterator start, InputIterator end, const Scalar& squared_radius ) {
-        return new Shape( boost::make_transform_iterator( start, Auto_count<Point>() ),
-                          boost::make_transform_iterator( end, Auto_count<Point>() ),
+        return new Shape( boost::make_transform_iterator( start, PointIndex() ),
+                          boost::make_transform_iterator( end, PointIndex() ),
                           squared_radius, Shape::GENERAL );
     }
 }; // class Shape_type
 
-/// The yype for the shape of a set of points with fixed scale.
-/** \tparam Kernel the geometric traits class. It should be a model of
+// The type for the shape of a set of points with fixed scale.
+/* \tparam Kernel the geometric traits class. It should be a model of
  *  DelaunayTriangulationTraits_3.
  */
 template < class Kernel >
-class Shape_type < Kernel, CGAL::Tag_true > {
-	typedef typename Kernel::FT                                                     Scalar;
+class Shape_type < Kernel, Tag_true > {
+	typedef typename Kernel::FT                                             Scalar;
+	typedef typename Kernel::Point_3                                        Point;
+    typedef internal::Auto_count<Point>                                     PointIndex;
 
-    typedef CGAL::Fixed_alpha_shape_vertex_base_3< Kernel,
-            CGAL::Triangulation_vertex_base_with_info_3< unsigned int, Kernel > >   Vb;
-    typedef CGAL::Fixed_alpha_shape_cell_base_3< Kernel,
-            CGAL::Triangulation_cell_base_with_info_3< unsigned int, Kernel > >     Cb;
+    typedef Triangulation_vertex_base_with_info_3< unsigned int, Kernel >   Vb;
+    typedef Fixed_alpha_shape_vertex_base_3< Kernel, Vb >                   aVb;
+    typedef Triangulation_cell_base_with_info_3< unsigned int, Kernel >     Cb;
+    typedef Fixed_alpha_shape_cell_base_3< Kernel, Cb >                     aCb;
 
-    typedef CGAL::Triangulation_data_structure_3<Vb,Cb>                             Tds;
+    typedef Triangulation_data_structure_3<aVb,aCb>                         Tds;
 
 public:
-    typedef CGAL::Delaunay_triangulation_3< Kernel, Tds >                           Structure;  ///< The triangulation that spatially orders the point set.
-    typedef CGAL::Fixed_alpha_shape_3< Structure >                                  Shape;      ///< The structure that identifies the triangles in the surface.
+    typedef Delaunay_triangulation_3< Kernel, Tds >                         Structure;  ///< The triangulation that spatially orders the point set.
+    typedef Fixed_alpha_shape_3< Structure >                                Shape;      ///< The structure that identifies the triangles in the surface.
        
     /// Default constructor.
     Shape_type() {}
@@ -123,7 +127,7 @@ public:
      *  \param squared_radius the squared scale parameter of the shape.
      *  \return a pointer to the new shape.
      *
-     *  Note: this class does not take responsibility for destroying
+     *  Note: Shape_type does not take responsibility for destroying
      *  the object after use.
      */
     Shape* construct( Shape* shape, const Scalar& squared_radius ) {
@@ -133,19 +137,19 @@ public:
     
     /// Construct a new shape.
     /** \tparam InputIterator an interator over the points of the shape.
-     *  It should point to a CGAL::Point_3<Kernel>.
+     *  The iterator should point to a model of CGAL::Point_3<Kernel>.
      *  \param start an iterator to the first point of the shape.
      *  \param end a past-the-end iterator for the points of the shape.
      *  \param squared_radius the squared scale parameter of the shape.
      *  \return a pointer to the new shape.
      *
-     *  Note: this class does not take responsibility for destroying
+     *  Note: Shape_type does not take responsibility for destroying
      *  the object after use.
      */
     template < class InputIterator >
     Shape* construct( InputIterator start, InputIterator end, const Scalar& squared_radius ) {
-        return new Shape( boost::make_transform_iterator( start, Auto_count<Point>() ),
-                          boost::make_transform_iterator( end, Auto_count<Point>() ),
+        return new Shape( boost::make_transform_iterator( start, PointIndex() ),
+                          boost::make_transform_iterator( end, PointIndex() ),
                           squared_radius );
     }
 }; // class Shape_type

@@ -1,0 +1,35 @@
+namespace CGAL {
+/*!
+
+\mainpage User Manual 
+\anchor Chapter_Scale_space_reconstruction
+\anchor chapterScaleSpaceReconstruction3
+\cgalAutoToc
+
+\authors Thijs van Lankveld
+
+General introduction.
+
+\section ScaleSpaceReconstruction3secintro Representation 
+
+Something.
+
+\section ScaleSpaceReconstruction3secdesign Software Design 
+
+Something else..
+
+\section Triangulation3seccomplexity Complexity and Performance 
+
+Should I have this section?
+
+\subsection Triangulation_3RunningTime Running Time
+
+Probably, right?
+
+\section Triangulation_3Design Design and Implementation History
+
+This method has in fact, actually, and really been implemented at some point.
+
+*/ 
+} /* namespace CGAL */
+

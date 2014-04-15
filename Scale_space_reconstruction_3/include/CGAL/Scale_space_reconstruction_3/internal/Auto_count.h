@@ -32,7 +32,8 @@ namespace internal {
 /** \tparam T the type of object to count.
  */
 template < class T >
-class Auto_count: public std::unary_function< const T&, std::pair< T, unsigned int > > {
+class Auto_count
+: public std::unary_function< const T&, std::pair< T, unsigned int > > {
     mutable unsigned int i;
 public:
     ///< Start a new count.

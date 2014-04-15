@@ -71,17 +71,17 @@ namespace CGAL {
  *  \sa Scale_space_transform.
  *  \sa Surface_mesher.
  */
-template < class Kernel, class Fixed_shape = CGAL::Tag_true, class Shells = CGAL::Tag_true >
+template < class Kernel, class Fixed_shape = Tag_true, class Shells = Tag_true >
 class Scale_space_surface_reconstructer_3 {
     // Searching for neighbors.
-	typedef typename CGAL::Search_traits_3< Kernel >    Search_traits;
-	typedef typename CGAL::Orthogonal_k_neighbor_search< Search_traits >
+	typedef typename Search_traits_3< Kernel >    Search_traits;
+	typedef typename Orthogonal_k_neighbor_search< Search_traits >
                                                         Static_search;
-	typedef typename CGAL::Orthogonal_incremental_neighbor_search< Search_traits >
+	typedef typename Orthogonal_incremental_neighbor_search< Search_traits >
                                                         Dynamic_search;
 	typedef typename Dynamic_search::Tree               Search_tree;
 
-	typedef CGAL::Random                                Random;
+	typedef Random                                Random;
 
     // Constructing the surface.
     typedef Shape_type< Kernel, Fixed_shape >           Shape_generator;
@@ -213,7 +213,7 @@ public:
 			if (samples >= (_tree.size() - handled) || _generator.get_double() < double(samples - checked) / (_tree.size() - handled)) {
                 // The neighborhood should contain the point itself as well.
 		        Static_search search( _tree, *it, _mean_neighbors+1 );
-		        radius += CGAL::sqrt( CGAL::to_double( squared_distance( *it, ( search.end()-1 )->first ) ) );
+		        radius += sqrt( to_double( squared_distance( *it, ( search.end()-1 )->first ) ) );
 				++checked;
 			}
 			++handled;
@@ -256,32 +256,35 @@ public:
      *  \param iterations the number of iterations to perform.
      */
 	void smooth_scale_space(unsigned int iterations = 1) {
-	
-		typedef std::vector<unsigned int>					CountVec;
+		typedef std::vector< unsigned int >					CountVec;
 		typedef typename std::map<Point, size_t>			PIMap;
 
-		typedef Eigen::Matrix<double, 3, Eigen::Dynamic>	Matrix3D;
-		typedef Eigen::Array<double, 1, Eigen::Dynamic>		Array1D;
-		typedef Eigen::Matrix3d								Matrix3;
-		typedef Eigen::Vector3d								Vector3;
-		typedef Eigen::SelfAdjointEigenSolver<Matrix3>		EigenSolver;
+		typedef Eigen::Matrix<double, 3, Eigen::Dynamic>	EMatrix3D;
+		typedef Eigen::Array<double, 1, Eigen::Dynamic>		EArray1D;
+		typedef Eigen::Matrix3d								EMatrix3;
+		typedef Eigen::Vector3d								EVector3;
+		typedef Eigen::SelfAdjointEigenSolver<EMatrix3>		EigenSolver;
 
-		typedef _ENV::s_ptr_type							p_size_t;
+		typedef internal::_ENVIRONMENT::s_ptr_type			p_size_t;
 		
 		// This method must be called after filling the point collection.
 		CGAL_assertion(!_tree.empty());
-
+        
         if( !has_squared_mean_neighborhood() )
             estimate_mean_neighborhood( _mean_neighbors, _samples );
 
+        // In order to reduce memory consumption, we maintain two data structures:
+        // a local tree (because openMP cannot work on global members), and
+        // a vector for the points after smoothing.
         Pointset points;
 		points.assign( _tree.begin(), _tree.end() );
         _tree.clear();
+        Search_tree tree;
 
 		// Construct a search tree of the points.
         // Note that the tree has to be local for openMP.
 		for (unsigned int iter = 0; iter < iterations; ++iter) {
-            Search_tree tree( points.begin(), points.end() );
+            tree.insert( points.begin(), points.end() );
 		    if(!tree.is_built())
 			    tree.build();
 
@@ -295,10 +298,10 @@ public:
 		    for (p_size_t i = 0; i < count; ++i) {
 			    // Iterate over the neighbors until the first one is found that is too far.
 			    Dynamic_search search(tree, points[i]);
-			    for (Dynamic_search::iterator nit = search.begin(); nit != search.end() && compare(points[i], nit->first, squared_radius) != CGAL::LARGER; ++nit)
+			    for (Dynamic_search::iterator nit = search.begin(); nit != search.end() && compare(points[i], nit->first, squared_radius) != LARGER; ++nit)
 				    ++neighbors[i];
 		    }
-		
+            
 		    // Construct a mapping from each point to its index.
 		    PIMap indices;
             p_size_t index = 0;
@@ -315,24 +318,25 @@ public:
 
 			    // Collect the vertices within the ball and their weights.
 			    Dynamic_search search(tree, points[i]);
-			    Matrix3D pts(3, neighbors[i]);
-			    Array1D wts(1, neighbors[i]);
-			    int column = 0;
-			    for (Dynamic_search::iterator nit = search.begin(); nit != search.end() && compare(points[i], nit->first, squared_radius) != CGAL::LARGER; ++nit, ++column) {
-				    pts(0, column) = CGAL::to_double(nit->first[0]);
-				    pts(1, column) = CGAL::to_double(nit->first[1]);
-				    pts(2, column) = CGAL::to_double(nit->first[2]);
+			    EMatrix3D pts(3, neighbors[i]);
+			    EArray1D wts(1, neighbors[i]);
+			    unsigned int column = 0;
+			    for (Dynamic_search::iterator nit = search.begin(); nit != search.end() && column < neighbors[i]; ++nit, ++column) {
+				    pts(0, column) = to_double(nit->first[0]);
+				    pts(1, column) = to_double(nit->first[1]);
+				    pts(2, column) = to_double(nit->first[2]);
 				    wts(column) = 1.0 / neighbors[indices[nit->first]];
 			    }
+                CGAL_assertion( column == neighbors[i] );
 
 			    // Construct the barycenter.
-			    Vector3 bary = (pts.array().rowwise() * wts).rowwise().sum() / wts.sum();
+			    EVector3 bary = (pts.array().rowwise() * wts).rowwise().sum() / wts.sum();
 			
 			    // Replace the points by their difference with the barycenter.
 			    pts = (pts.colwise() - bary).array().rowwise() * wts;
 
 			    // Construct the weighted covariance matrix.
-			    Matrix3 covariance = Matrix3::Zero();
+			    EMatrix3 covariance = EMatrix3::Zero();
 			    for (column = 0; column < pts.cols(); ++column)
 				    covariance += wts.matrix()(column) * pts.col(column) * pts.col(column).transpose();
 
@@ -346,20 +350,22 @@ public:
 			    // Find the Eigen vector with the smallest Eigen value.
 			    std::ptrdiff_t index;
 			    solver.eigenvalues().minCoeff(&index);
-			    if (solver.eigenvectors().col(index).imag() != Vector3::Zero()) {
+			    if (solver.eigenvectors().col(index).imag() != EVector3::Zero()) {
 				    // This should actually never happen!
 				    CGAL_assertion(false);
 				    continue;
 			    }
-			    Vector3 n = solver.eigenvectors().col(index).real();
+			    EVector3 n = solver.eigenvectors().col(index).real();
 
 			    // The vertex is moved by projecting it onto the plane
 			    // through the barycenter and orthogonal to the Eigen vector with smallest Eigen value.
-			    Vector3 bv = Vector3(CGAL::to_double(points[i][0]), CGAL::to_double(points[i][1]), CGAL::to_double(points[i][2])) - bary;
-			    Vector3 per = bary + bv - (n.dot(bv) * n);
+			    EVector3 bv = EVector3(to_double(points[i][0]), to_double(points[i][1]), to_double(points[i][2])) - bary;
+			    EVector3 per = bary + bv - (n.dot(bv) * n);
 
 			    points[i] = Point(per(0), per(1), per(2));
 		    }
+            
+            tree.clear();
         }
 
         _tree.insert( points.begin(), points.end() );

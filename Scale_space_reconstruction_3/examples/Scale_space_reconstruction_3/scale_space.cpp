@@ -110,7 +110,8 @@ int main(int argc, char** argv) {
 		sscanf(argv[4], "%u", &samples);
     
     std::string input = base + ".off";
-	std::string output = base + "_ss.off";
+	std::string output_ss = base + "_ss.off";
+	std::string output_sm = base + "_sm.off";
     
     // Read the data.
     std::cout << "Input: " << input << std::flush;
@@ -128,9 +129,18 @@ int main(int argc, char** argv) {
     std::cout << "Reconstruction done." << std::endl;
 
     // Write the reconstruction.
-    std::cout << "Output: " << output << std::flush;
-    if( !writeOFF( output, points, reconstruct.surface() ) ) {
-        std::cerr << std::endl << "Error writing " << output << std::endl;
+    std::cout << "Output: " << output_ss << std::flush;
+    if( !writeOFF( output_ss, points, reconstruct.surface() ) ) {
+        std::cerr << std::endl << "Error writing " << output_ss << std::endl;
+        exit(-1);
+    }
+	std::cout << " written." << std::endl;
+
+    // Write the reconstruction.
+    std::cout << "Output: " << output_sm << std::flush;
+    Pointset smoothed( reconstruct.scale_space_begin(), reconstruct.scale_space_end() );
+    if( !writeOFF( output_sm, smoothed, reconstruct.surface() ) ) {
+        std::cerr << std::endl << "Error writing " << output_ss << std::endl;
         exit(-1);
     }
 	std::cout << " written." << std::endl;
