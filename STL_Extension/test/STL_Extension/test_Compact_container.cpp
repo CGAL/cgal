@@ -10,7 +10,7 @@
 #include <CGAL/Testsuite/use.h>
 
 #include <CGAL/use.h>
-
+#include <CGAL/assertions.h>
 
 struct Node_1
 : public CGAL::Compact_container_base
@@ -220,12 +220,19 @@ void test(const Cont &)
 }
 
 
+struct Incomplete_struct;
+
 int main()
 {
   CGAL::Compact_container<Node_1> C1;
   CGAL::Compact_container<Node_2> C2;
+
   test(C1);
   test(C2);
+
+  // Check that Compact_container does not require a complete type.
+  CGAL_static_assertion(sizeof(CGAL::Compact_container<Incomplete_struct>) > 0);
+
   return 0;
 }
 // EOF //
