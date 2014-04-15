@@ -8,6 +8,8 @@
 // surface mesh
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Polyhedron_items_3.h>
+#include <CGAL/Has_timestamp.h>
+#include <CGAL/tags.h>
 
 #include <set>
 
@@ -23,6 +25,8 @@ private:
 
   Set_of_indices indices;
   std::size_t mID;
+  std::size_t time_stamp_;
+
 public:
   int nb_of_feature_edges;
 
@@ -38,6 +42,13 @@ public:
     indices.insert(i);
   }
 
+  std::size_t time_stamp() const {
+    return time_stamp_;
+  }
+  void set_time_stamp(const std::size_t& ts) {
+    time_stamp_ = ts;
+  }
+
   const Set_of_indices&
   incident_patches_ids_set() const {
     return indices;
@@ -50,6 +61,17 @@ public:
   Polyhedron_demo_vertex(const Point& p) : Pdv_base(p), mID(-1), nb_of_feature_edges(0) {}
 };
 
+namespace CGAL {
+namespace internal {
+namespace Mesh_3 {
+  template <typename Refs, typename Tag, typename Pt, typename P_id>
+  struct Has_timestamp< Polyhedron_demo_vertex<Refs, Tag, Pt, P_id> > 
+    : public CGAL::Tag_true
+    {};
+} // end namespace internal::Mesh_3
+} // end namespace internal
+} // end namespace CGAL
+
 template <class Refs, class Tprev, class Tvertex, class Tface>
 class Polyhedron_demo_halfedge : 
   public CGAL::HalfedgeDS_halfedge_base<Refs,Tprev,Tvertex,Tface>
@@ -57,6 +79,8 @@ class Polyhedron_demo_halfedge :
 private:
   bool feature_edge;
   std::size_t mID;
+  std::size_t time_stamp_;
+
 public:
 
   Polyhedron_demo_halfedge() 
@@ -74,7 +98,24 @@ public:
   std::size_t& id()       { return mID; }
   std::size_t  id() const { return mID; }
 
+  std::size_t time_stamp() const {
+    return time_stamp_;
+  }
+  void set_time_stamp(const std::size_t& ts) {
+    time_stamp_ = ts;
+  }
 };
+
+namespace CGAL {
+namespace internal {
+namespace Mesh_3 {
+  template <class Refs, class Tprev, class Tv, class Tf>
+  struct Has_timestamp< Polyhedron_demo_halfedge<Refs, Tprev, Tv, Tf> > 
+    : public CGAL::Tag_true
+    {};
+} // end namespace internal::Mesh_3
+} // end namespace internal
+} // end namespace CGAL
 
 template <class Refs, class T_, class Pln_, class Patch_id_>
 class Polyhedron_demo_face : 
@@ -83,6 +124,8 @@ class Polyhedron_demo_face :
 private:
   Patch_id_ patch_id_;
   std::size_t mID;
+  std::size_t time_stamp_;
+
 public:
   typedef Patch_id_ Patch_id;
   
@@ -100,7 +143,24 @@ public:
   std::size_t& id()       { return mID; }
   std::size_t  id() const { return mID; }
 
+  std::size_t time_stamp() const {
+    return time_stamp_;
+  }
+  void set_time_stamp(const std::size_t& ts) {
+    time_stamp_ = ts;
+  }
 };
+
+namespace CGAL {
+namespace internal {
+namespace Mesh_3 {
+  template <class Refs, class T_, class Pln_, class Pid_>
+  struct Has_timestamp< Polyhedron_demo_face<Refs, T_, Pln_, Pid_> > 
+    : public CGAL::Tag_true
+    {};
+} // end namespace internal::Mesh_3
+} // end namespace internal
+} // end namespace CGAL
 
 template <typename Patch_id>
 class Polyhedron_demo_items : public CGAL::Polyhedron_items_3 {
