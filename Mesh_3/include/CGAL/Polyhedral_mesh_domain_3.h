@@ -657,13 +657,16 @@ public:
 
   void set_random_generator(CGAL::Random* p_rng)
   {
+    if(delete_rng_) delete p_rng_;
     if(!p_rng_)
     {
       p_rng_ = new CGAL::Random(0);
       delete_rng_ = true;
     }
-    else
+    else {
       p_rng_ = p_rng;
+      delete_rng_ = false;
+    }
   }
 
 private:
