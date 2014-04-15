@@ -27,6 +27,8 @@
 
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Polyhedron_items_3.h>
+#include <CGAL/Has_timestamp.h>
+#include <CGAL/tags.h>
 
 #include <set>
 
@@ -77,15 +79,6 @@ public:
   Mesh_polyhedron_vertex(const Point& p) : Pdv_base(p), nb_of_feature_edges(0) {}
 };
 
-namespace internal {
-namespace Mesh_3 {
-  template <typename Refs, typename Tag, typename Pt, typename P_id>
-  struct Has_timestamp< Mesh_polyhedron_vertex<Refs, Tag, Pt, P_id> > 
-    : public CGAL::Tag_true
-    {};
-} // end namespace internal::Mesh_3
-} // end namespace internal
-
 template <class Refs, class Tprev, class Tvertex, class Tface>
 class Mesh_polyhedron_halfedge : 
 public CGAL::HalfedgeDS_halfedge_base<Refs,Tprev,Tvertex,Tface>
@@ -116,14 +109,6 @@ public:
   }
 };
 
-namespace internal {
-namespace Mesh_3 {
-  template <class Refs, class Tprev, class Tv, class Tf>
-  struct Has_timestamp< Mesh_polyhedron_halfedge<Refs, Tprev, Tv, Tf> > 
-    : public CGAL::Tag_true
-    {};
-} // end namespace internal::Mesh_3
-} // end namespace internal
 
 template <class Refs, class T_, class Pln_, class Patch_id_>
 class Mesh_polyhedron_face : 
@@ -156,14 +141,6 @@ public:
   }
 };
 
-namespace internal {
-namespace Mesh_3 {
-  template <class Refs, class T_, class Pln_, class Pid_>
-  struct Has_timestamp< Mesh_polyhedron_face<Refs, T_, Pln_, Pid_> > 
-    : public CGAL::Tag_true
-    {};
-} // end namespace internal::Mesh_3
-} // end namespace internal
 
 
 template <typename Patch_id>
@@ -208,7 +185,33 @@ struct Mesh_polyhedron_3
   typedef type Type;
 };
 
-  
+namespace internal {
+namespace Mesh_3 {
+  template <typename Refs, typename Tag, typename Pt, typename P_id>
+  struct Has_timestamp<CGAL::Mesh_3::Mesh_polyhedron_vertex<Refs, Tag, Pt, P_id> >
+    : public CGAL::Tag_true
+    {};
+} // end namespace internal::Mesh_3
+} // end namespace internal
+
+namespace internal {
+namespace Mesh_3 {
+  template <class Refs, class Tprev, class Tv, class Tf>
+  struct Has_timestamp<CGAL::Mesh_3::Mesh_polyhedron_halfedge<Refs, Tprev, Tv, Tf> > 
+    : public CGAL::Tag_true
+    {};
+} // end namespace internal::Mesh_3
+} // end namespace internal
+
+namespace internal {
+namespace Mesh_3 {
+  template <class Refs, class T_, class Pln_, class Pid_>
+  struct Has_timestamp<CGAL::Mesh_3::Mesh_polyhedron_face<Refs, T_, Pln_, Pid_> > 
+    : public CGAL::Tag_true
+    {};
+} // end namespace internal::Mesh_3
+} // end namespace internal
+
 } // end namespace CGAL
 
 #endif // CGAL_MESH_POLYHEDRON_3_H
