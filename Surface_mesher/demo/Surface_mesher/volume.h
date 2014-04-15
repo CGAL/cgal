@@ -54,7 +54,7 @@ class QTreeWidgetItem;
 #include <CGAL/Surface_mesh_vertex_base_3.h>
 #include <CGAL/Triangulation_cell_base_with_info_3.h>
 #include <CGAL/Surface_mesh_cell_base_3.h>
-#include <CGAL/Triangulation_cell_base_with_circumcenter_3.h>
+#include <CGAL/Delaunay_triangulation_cell_base_with_circumcenter_3.h>
 #include <CGAL/Delaunay_triangulation_3.h>
 #include <CGAL/Surface_mesh_complex_2_in_triangulation_3.h>
 #include <CGAL/Surface_mesh_default_criteria_3.h>
@@ -63,7 +63,7 @@ class QTreeWidgetItem;
 typedef CGAL::Surface_mesh_vertex_base_3<Kernel> Vb;
 typedef CGAL::Triangulation_cell_base_with_info_3<unsigned char, Kernel> Cb1;
 typedef CGAL::Surface_mesh_cell_base_3<Kernel, Cb1> Cb2;
-typedef CGAL::Triangulation_cell_base_with_circumcenter_3<Kernel, Cb2> Cb;
+typedef CGAL::Delaunay_triangulation_cell_base_with_circumcenter_3<Kernel, Cb2> Cb;
 typedef CGAL::Triangulation_data_structure_3<Vb, Cb> Tds;
 typedef CGAL::Delaunay_triangulation_3<Kernel, Tds> Tr;
 typedef CGAL::Surface_mesh_complex_2_in_triangulation_3<Tr> C2t3;
