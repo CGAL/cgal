@@ -149,6 +149,22 @@ public:
   void reset()                {}
 };
 
+template <class T,
+          class TimeStamper_,
+          bool has_ts = CGAL::internal::Has_timestamp<T>::value>
+struct CC_ts_impl_impl : public CGAL_time_stamper<T>
+{};
+
+template <class T,
+          class TimeStamper_>
+struct CC_ts_impl_impl<T, TimeStamper_, false> : public CGAL_no_time_stamp<T>
+{};
+
+template <class T,
+          class TimeStamper_>
+struct CC_ts_impl : public CC_ts_impl_impl<T, TimeStamper_>
+{};
+
 template < class T, 
            class Allocator_ = Default,
            class TimeStamper_ = Default >
@@ -158,11 +174,7 @@ class Compact_container
   typedef typename Default::Get< Al, CGAL_ALLOCATOR(T) >::type Allocator;
   
   typedef TimeStamper_                              Ts;
-  typedef typename boost::mpl::if_c<
-        CGAL::internal::Mesh_3::Has_timestamp<T>::value,
-        CGAL_time_stamper<T>,
-        CGAL_no_time_stamp<T> >::type      Time_stamper_;
-  typedef typename Default::Get<Ts, Time_stamper_>::type Time_stamper;
+  typedef CC_ts_impl<T, Ts>                         Time_stamper_impl;
   
   typedef Compact_container <T, Al, Ts>             Self;
   typedef Compact_container_traits <T>              Traits;
@@ -185,7 +197,7 @@ public:
 
   explicit Compact_container(const Allocator &a = Allocator())
   : alloc(a)
-  , time_stamper()
+  , time_stamper(new Time_stamper_impl())
   {
     init();
   }
@@ -194,7 +206,7 @@ public:
   Compact_container(InputIterator first, InputIterator last,
                     const Allocator & a = Allocator())
   : alloc(a)
-  , time_stamper()
+  , time_stamper(new Time_stamper_impl())
   {
     init();
     std::copy(first, last, CGAL::inserter(*this));
@@ -203,11 +215,11 @@ public:
   // The copy constructor and assignment operator preserve the iterator order
   Compact_container(const Compact_container &c)
   : alloc(c.get_allocator())
-  , time_stamper()
+  , time_stamper(new Time_stamper_impl())
   {
     init();
     block_size = c.block_size;
-    time_stamper = c.time_stamper;
+    *time_stamper = *c.time_stamper;
     std::copy(c.begin(), c.end(), CGAL::inserter(*this));
   }
 
@@ -223,6 +235,7 @@ public:
   ~Compact_container()
   {
     clear();
+    delete time_stamper;
   }
 
   void swap(Self &c)
@@ -281,7 +294,7 @@ public:
     new (ret) value_type(args...);
     CGAL_assertion(type(ret) == USED);
     ++size_;
-    time_stamper.set_time_stamp(ret);
+    time_stamper->set_time_stamp(ret);
     return iterator(ret, 0);
   }
 #else
@@ -296,7 +309,7 @@ public:
     new (ret) value_type();
     CGAL_assertion(type(ret) == USED);
     ++size_;
-    time_stamper.set_time_stamp(ret);
+    time_stamper->set_time_stamp(ret);
     return iterator(ret, 0);
   }
 
@@ -312,7 +325,7 @@ public:
     new (ret) value_type(t1);
     CGAL_assertion(type(ret) == USED);
     ++size_;
-    time_stamper.set_time_stamp(ret);
+    time_stamper->set_time_stamp(ret);
     return iterator(ret, 0);
   }
 
@@ -328,7 +341,7 @@ public:
     new (ret) value_type(t1, t2);
     CGAL_assertion(type(ret) == USED);
     ++size_;
-    time_stamper.set_time_stamp(ret);
+    time_stamper->set_time_stamp(ret);
     return iterator(ret, 0);
   }
 
@@ -344,7 +357,7 @@ public:
     new (ret) value_type(t1, t2, t3);
     CGAL_assertion(type(ret) == USED);
     ++size_;
-    time_stamper.set_time_stamp(ret);
+    time_stamper->set_time_stamp(ret);
     return iterator(ret, 0);
   }
 
@@ -360,7 +373,7 @@ public:
     new (ret) value_type(t1, t2, t3, t4);
     CGAL_assertion(type(ret) == USED);
     ++size_;
-    time_stamper.set_time_stamp(ret);
+    time_stamper->set_time_stamp(ret);
     return iterator(ret, 0);
   }
 
@@ -377,7 +390,7 @@ public:
     new (ret) value_type(t1, t2, t3, t4, t5);
     CGAL_assertion(type(ret) == USED);
     ++size_;
-    time_stamper.set_time_stamp(ret);
+    time_stamper->set_time_stamp(ret);
     return iterator(ret, 0);
   }
 
@@ -395,7 +408,7 @@ public:
     new (ret) value_type(t1, t2, t3, t4, t5, t6);
     CGAL_assertion(type(ret) == USED);
     ++size_;
-    time_stamper.set_time_stamp(ret);
+    time_stamper->set_time_stamp(ret);
     return iterator(ret, 0);
   }
 
@@ -413,7 +426,7 @@ public:
     new (ret) value_type(t1, t2, t3, t4, t5, t6, t7);
     CGAL_assertion(type(ret) == USED);
     ++size_;
-    time_stamper.set_time_stamp(ret);
+    time_stamper->set_time_stamp(ret);
     return iterator(ret, 0);
   }
 
@@ -431,7 +444,7 @@ public:
     new (ret) value_type(t1, t2, t3, t4, t5, t6, t7, t8);
     CGAL_assertion(type(ret) == USED);
     ++size_;
-    time_stamper.set_time_stamp(ret);
+    time_stamper->set_time_stamp(ret);
     return iterator(ret, 0);
   }
 #endif // CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
@@ -446,7 +459,7 @@ public:
     alloc.construct(ret, t);
     CGAL_assertion(type(ret) == USED);
     ++size_;
-    time_stamper.set_time_stamp(ret);
+    time_stamper->set_time_stamp(ret);
     return iterator(ret, 0);
   }
 
@@ -637,7 +650,7 @@ private:
     first_item = NULL;
     last_item  = NULL;
     all_items  = All_items();
-    time_stamper.reset();
+    time_stamper->reset();
   }
 
   allocator_type   alloc;
@@ -648,7 +661,7 @@ private:
   pointer          first_item;
   pointer          last_item;
   All_items        all_items;
-  Time_stamper     time_stamper;
+  Time_stamper_impl* time_stamper;
 };
 
 template < class T, class Allocator, class TimeStamper>
@@ -794,7 +807,6 @@ namespace internal {
     typedef typename DSC::value_type                  value_type;
     typedef typename DSC::size_type                   size_type;
     typedef typename DSC::difference_type             difference_type;
-    typedef typename DSC::Time_stamper                TimeStamper;
     typedef typename boost::mpl::if_c< Const, const value_type*,
                                        value_type*>::type pointer;
     typedef typename boost::mpl::if_c< Const, const value_type&,
@@ -829,6 +841,8 @@ namespace internal {
     }
 
   private:
+
+    typedef typename DSC::Time_stamper_impl           Time_stamper_impl;
 
     union {
       pointer      p;
@@ -932,23 +946,23 @@ namespace internal {
     // For std::less...
     bool operator<(const CC_iterator& other) const
     {
-      return TimeStamper::less(m_ptr.p, other.m_ptr.p);
+      return Time_stamper_impl::less(m_ptr.p, other.m_ptr.p);
     }
 
     bool operator>(const CC_iterator& other) const
     {
-      return TimeStamper::less(other.m_ptr.p, m_ptr.p);
+      return Time_stamper_impl::less(other.m_ptr.p, m_ptr.p);
     }
 
     bool operator<=(const CC_iterator& other) const
     {
-      return TimeStamper::less(m_ptr.p, other.m_ptr.p)
+      return Time_stamper_impl::less(m_ptr.p, other.m_ptr.p)
           || (*this == other);
     }
 
     bool operator>=(const CC_iterator& other) const
     {
-      return TimeStamper::less(other.m_ptr.p, m_ptr.p)
+      return Time_stamper_impl::less(other.m_ptr.p, m_ptr.p)
           || (*this == other);
     }
 

@@ -59,7 +59,7 @@ struct Detect_polyline_less
   {
     typedef typename std::iterator_traits<Handle>::value_type Type;
     typedef typename boost::mpl::if_c<
-        CGAL::internal::Mesh_3::Has_timestamp<Type>::value,
+        CGAL::internal::Has_timestamp<Type>::value,
         CGAL_with_time_stamp<Handle>,
         CGAL_no_time_stamp<Handle> >::type    Comparator;
     return Comparator::less(h1, h2);

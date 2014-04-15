@@ -63,6 +63,8 @@ public:
     indices.insert(i);
   }
 
+  typedef Tag_true Has_timestamp;
+
   std::size_t time_stamp() const {
     return time_stamp_;
   }
@@ -101,6 +103,8 @@ public:
     this->opposite()->feature_edge = b;
   }
 
+  typedef Tag_true Has_timestamp;
+
   std::size_t time_stamp() const {
     return time_stamp_;
   }
@@ -132,6 +136,8 @@ public:
   void set_patch_id(const Patch_id& i) {
     patch_id_ = i;
   }
+
+  typedef Tag_true Has_timestamp;
 
   std::size_t time_stamp() const {
     return time_stamp_;
@@ -184,33 +190,6 @@ struct Mesh_polyhedron_3
   typedef Polyhedron_3<Gt, Mesh_3::Mesh_polyhedron_items<Patch_id> > type;
   typedef type Type;
 };
-
-namespace internal {
-namespace Mesh_3 {
-  template <typename Refs, typename Tag, typename Pt, typename P_id>
-  struct Has_timestamp<CGAL::Mesh_3::Mesh_polyhedron_vertex<Refs, Tag, Pt, P_id> >
-    : public CGAL::Tag_true
-    {};
-} // end namespace internal::Mesh_3
-} // end namespace internal
-
-namespace internal {
-namespace Mesh_3 {
-  template <class Refs, class Tprev, class Tv, class Tf>
-  struct Has_timestamp<CGAL::Mesh_3::Mesh_polyhedron_halfedge<Refs, Tprev, Tv, Tf> > 
-    : public CGAL::Tag_true
-    {};
-} // end namespace internal::Mesh_3
-} // end namespace internal
-
-namespace internal {
-namespace Mesh_3 {
-  template <class Refs, class T_, class Pln_, class Pid_>
-  struct Has_timestamp<CGAL::Mesh_3::Mesh_polyhedron_face<Refs, T_, Pln_, Pid_> > 
-    : public CGAL::Tag_true
-    {};
-} // end namespace internal::Mesh_3
-} // end namespace internal
 
 } // end namespace CGAL
 

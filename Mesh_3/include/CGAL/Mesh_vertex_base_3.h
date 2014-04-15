@@ -126,6 +126,8 @@ public:
   }
 #endif
 
+  typedef Tag_true Has_timestamp;
+
   std::size_t time_stamp() const {
     return time_stamp_;
   }
@@ -191,15 +193,6 @@ private:
   std::size_t time_stamp_;
 
 };  // end class Mesh_vertex_base_3
-
-namespace internal {
-namespace Mesh_3 {
-  template < class GT, class MT, class Vb >
-  struct Has_timestamp< Mesh_vertex_base_3<GT, MT, Vb> > 
-    : public CGAL::Tag_true
-    {};
-} // end namespace internal::Mesh_3
-} // end namespace internal
 
 template<class GT,
          class MD,

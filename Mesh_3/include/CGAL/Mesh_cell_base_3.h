@@ -163,6 +163,7 @@ public:
   }
 #endif // CGAL_INTRUSIVE_LIST
 
+  typedef Tag_true Has_timestamp;
   std::size_t time_stamp() const {
     return time_stamp_;
   }
@@ -183,16 +184,6 @@ private:
   std::size_t time_stamp_;
 
 };  // end class Mesh_cell_base_3
-
-namespace internal {
-namespace Mesh_3 {
-  template < class GT, class MT, class Cb >
-  struct Has_timestamp< Mesh_cell_base_3<GT, MT, Cb> > 
-    : public CGAL::Tag_true
-    {};
-} // end namespace internal::Mesh_3
-} // end namespace internal
-
 
 template < class GT, class MT, class Cb >
 std::istream&

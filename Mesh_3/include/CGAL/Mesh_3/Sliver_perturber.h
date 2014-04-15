@@ -668,7 +668,7 @@ build_priority_queue(const FT& sliver_bound, PQueue& pqueue) const
   int pqueue_size = 0;
 
   typedef typename std::iterator_traits<Vertex_handle>::value_type Vertex;
-  typedef CGAL::internal::Mesh_3::Has_timestamp<Vertex> Vertex_has_timestamp;
+  typedef CGAL::internal::Has_timestamp<Vertex> Vertex_has_timestamp;
   using CGAL::internal::Mesh_3::VHash;
   typedef VHash<Tr, Vertex_has_timestamp::value> Hash_fct;
   typedef boost::unordered_map<Vertex_handle,PVertex,Hash_fct> M;
