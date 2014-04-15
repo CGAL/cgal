@@ -1821,7 +1821,7 @@ typename Periodic_3_triangulation_3<GT,TDS>::Cell_handle
 Periodic_3_triangulation_3<GT,TDS>::
 inexact_periodic_locate(const Point& p, const Offset& o_p,
                Cell_handle start,
-               int max_num_cells) const
+               int n_of_turns) const
 {
 	int cumm_off = 0;
 	Offset off_query = o_p;
@@ -1863,6 +1863,7 @@ inexact_periodic_locate(const Point& p, const Offset& o_p,
 
 	// Now treat the cell c.
 try_next_cell:
+  --n_of_turns;
 	cumm_off =
 			c->offset(0) | c->offset(1) | c->offset(2) | c->offset(3);
 
@@ -1928,7 +1929,8 @@ try_next_cell:
 		off_query = combine_offsets(off_query, get_neighbor_offset(c,i,next));
 		previous = c;
 		c = next;
-		goto try_next_cell;
+		if (n_of_turns)
+		  goto try_next_cell;
 	}
 
 	return c;
