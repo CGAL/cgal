@@ -700,6 +700,9 @@ private:
   /// Computes facet properties and add facet to the refinement queue if needed
   void treat_new_facet(Facet& facet);
 
+  /// Compute the exact dual of a facet
+  Object dual_exact(const Facet & f) const;
+
   /**
    * Computes at once is_facet_on_surface and facet_surface_center.
    * @param facet The input facet
@@ -1206,6 +1209,7 @@ conflicts_zone_impl(const Point& point
 
     if (p_facet != 0 && !facet_is_in_its_cz)
     {
+      CGAL_error_msg("Info: the facet is not in its conflict zone."); // CJTODO TEMP
 # ifdef CGAL_MESH_3_VERBOSE
       std::cerr << "Info: the facet is not in its conflict zone. "
         "Switching to exact computation." << std::endl;
@@ -1267,6 +1271,7 @@ conflicts_zone_impl(const Point& point
 
     if (could_lock_zone && p_facet != 0 && !facet_is_in_its_cz)
     {
+      CGAL_error_msg("Info: the facet is not in its conflict zone."); // CJTODO TEMP
 #ifdef CGAL_MESH_3_VERBOSE
       std::cerr << "Info: the facet is not in its conflict zone. "
         "Switching to exact computation." << std::endl;
@@ -1483,6 +1488,63 @@ treat_new_facet(Facet& facet)
   set_facet_visited(mirror);
 }
 
+template<class Tr, class Cr, class MD, class C3T3_, class P_, class Ct, class C_>
+Object
+Refine_facets_3<Tr,Cr,MD,C3T3_,P_,Ct,C_>::
+dual_exact(const Facet& facet) const
+{
+  typedef typename Gt::Bare_point Bare_point;
+
+  Cell_handle c = facet.first;
+  int i = facet.second;
+  Cell_handle n = c->neighbor(i);
+  if ( ! r_tr_.is_infinite(c) && ! r_tr_.is_infinite(n) )
+  {
+    Bare_point p1 = Gt().construct_weighted_circumcenter_3_object()(
+      c->vertex(0)->point(),
+      c->vertex(1)->point(),
+      c->vertex(2)->point(),
+      c->vertex(3)->point(),
+      true);
+    Bare_point p2 = Gt().construct_weighted_circumcenter_3_object()(
+      n->vertex(0)->point(),
+      n->vertex(1)->point(),
+      n->vertex(2)->point(),
+      n->vertex(3)->point(),
+      true);
+    return Gt().construct_object_3_object()(
+      Gt().construct_segment_3_object()(p1, p2));
+  }
+
+  // either n or c is infinite
+  int in;
+  if ( r_tr_.is_infinite(c) )
+    in = n->index(c);
+  else {
+    n = c;
+    in = i;
+  }
+  // n now denotes a finite cell, either c or c->neighbor(i)
+  int ind[3] = {(in+1)&3,(in+2)&3,(in+3)&3};
+  if ( (in&1) == 1 )
+    std::swap(ind[0], ind[1]);
+  const Point& p = n->vertex(ind[0])->point();
+  const Point& q = n->vertex(ind[1])->point();
+  const Point& r = n->vertex(ind[2])->point();
+
+  typename Gt::Line_3 l = Gt().construct_perpendicular_line_3_object()
+    ( Gt().construct_plane_3_object()(p,q,r),
+      Gt().construct_weighted_circumcenter_3_object()(p,q,r) );
+  return Gt().construct_object_3_object()(
+    Gt().construct_ray_3_object()(
+      Gt().construct_weighted_circumcenter_3_object()(
+        n->vertex(0)->point(),
+        n->vertex(1)->point(),
+        n->vertex(2)->point(),
+        n->vertex(3)->point(),
+        true),
+      l));
+}
 
 template<class Tr, class Cr, class MD, class C3T3_, class P_, class Ct, class C_>
 typename Refine_facets_3<Tr,Cr,MD,C3T3_,P_,Ct,C_>::Facet_properties
@@ -1506,7 +1568,7 @@ compute_facet_properties(const Facet& facet, bool force_exact) const
 
 
   // Get dual of facet
-  Object dual = r_tr_.dual(facet, force_exact);
+  Object dual = (force_exact ? dual_exact(facet) : r_tr_.dual(facet));
 
   // If the dual is a segment
   if ( const Segment_3* p_segment = object_cast<Segment_3>(&dual) )

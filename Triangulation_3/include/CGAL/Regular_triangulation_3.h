@@ -825,12 +825,12 @@ namespace CGAL {
 
 
     // Dual functions
-    Bare_point dual(Cell_handle c, bool force_exact = false) const;
+    Bare_point dual(Cell_handle c) const;
 
-    Object dual(const Facet & f, bool force_exact = false) const
-    { return dual( f.first, f.second, force_exact ); }
+    Object dual(const Facet & f) const
+    { return dual( f.first, f.second ); }
 
-    Object dual(Cell_handle c, int i, bool force_exact = false) const;
+    Object dual(Cell_handle c, int i) const;
 
     template < class Stream>
     Stream& draw_dual(Stream & os)
@@ -862,11 +862,9 @@ namespace CGAL {
       construct_weighted_circumcenter(const Weighted_point &p,
       const Weighted_point &q,
       const Weighted_point &r,
-      const Weighted_point &s,
-      bool force_exact = false) const
+      const Weighted_point &s) const
     {
-      return geom_traits().construct_weighted_circumcenter_3_object()(
-                                                    p,q,r,s,force_exact);
+      return geom_traits().construct_weighted_circumcenter_3_object()(p,q,r,s);
     }
 
     Bare_point
@@ -1291,21 +1289,20 @@ namespace CGAL {
   template < class Gt, class Tds, class Lds >
   typename Regular_triangulation_3<Gt,Tds,Lds>::Bare_point
     Regular_triangulation_3<Gt,Tds,Lds>::
-    dual(Cell_handle c, bool force_exact) const
+    dual(Cell_handle c) const
   {
     CGAL_triangulation_precondition(dimension()==3);
     CGAL_triangulation_precondition( ! is_infinite(c) );
     return construct_weighted_circumcenter( c->vertex(0)->point(),
       c->vertex(1)->point(),
       c->vertex(2)->point(),
-      c->vertex(3)->point(),
-      force_exact);
+      c->vertex(3)->point());
   }
 
   template < class Gt, class Tds, class Lds >
   typename Regular_triangulation_3<Gt,Tds,Lds>::Object
     Regular_triangulation_3<Gt,Tds,Lds>::
-    dual(Cell_handle c, int i, bool force_exact) const
+    dual(Cell_handle c, int i) const
   {
     CGAL_triangulation_precondition(dimension()>=2);
     CGAL_triangulation_precondition( ! is_infinite(c,i) );
@@ -1321,8 +1318,7 @@ namespace CGAL {
     // dimension() == 3
     Cell_handle n = c->neighbor(i);
     if ( ! is_infinite(c) && ! is_infinite(n) )
-      return construct_object(construct_segment(
-        dual(c, force_exact), dual(n, force_exact) ));
+      return construct_object(construct_segment( dual(c), dual(n) ));
 
     // either n or c is infinite
     int in;
@@ -1343,7 +1339,7 @@ namespace CGAL {
     Line l =
       construct_perpendicular_line( construct_plane(p,q,r),
       construct_weighted_circumcenter(p,q,r) );
-    return construct_object(construct_ray( dual(n, force_exact), l));
+    return construct_object(construct_ray( dual(n), l));
   }
 
 
