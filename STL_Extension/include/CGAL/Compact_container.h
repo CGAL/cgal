@@ -114,6 +114,8 @@ namespace internal {
   class CC_iterator;
 }
 
+// For the determinism of CC_iterator. That implementation initializes and
+// uses the time stamps embedded in the type.
 template <typename T>
 struct CGAL_time_stamper
 {
@@ -136,6 +138,8 @@ private:
   std::size_t time_stamp_;
 };
 
+// For the determinism of CC_iterator. That implementation compares
+// pointers. That is not deterministic on all platforms.
 template <typename T>
 struct CGAL_no_time_stamp
 {
@@ -149,6 +153,14 @@ public:
   void reset()                {}
 };
 
+
+// That class template is an auxiliary class for `CC_ts_impl`.  It has a
+// specialization for the case where `T::Has_timestamp` does not exists.
+// The non-specialized template, when `T::Has_timestamp` exists, derives
+// from `CGAL_time_stamper<T>` or `CGAL_no_time_stamp<T>` depending on the
+// value of the Boolean constant `T::Has_timestamp`.  If `TimeSpamper_` is
+// not `CGAL::Default`, derives from it.  The declaration of that class
+// template requires `T` to be a complete type.
 template <class T,
           class TimeStamper_,
           bool has_ts = CGAL::internal::Has_timestamp<T>::value>
@@ -158,8 +170,15 @@ struct CC_ts_impl_impl : public CGAL_time_stamper<T>
 template <class T,
           class TimeStamper_>
 struct CC_ts_impl_impl<T, TimeStamper_, false> : public CGAL_no_time_stamp<T>
+// Specialization when `T::Has_timestamp` does not exist, derives from
+// `TimeSpamper_`, or from `CGAL_no_time_stamp<T>` if `TimeSpamper_` is
+// `CGAL::Default`.
 {};
 
+// Implementation of the timestamp policy. It is very important that the
+// declaration of that class template does not require `T` to be a complete
+// type.  That way, the declaration of a pointer of type `CC_ts_impl<T, Ts>
+// in `Compact_container` is possible with an incomplete type.
 template <class T,
           class TimeStamper_>
 struct CC_ts_impl : public CC_ts_impl_impl<T, TimeStamper_>
@@ -661,6 +680,9 @@ private:
   pointer          first_item;
   pointer          last_item;
   All_items        all_items;
+
+  // This is a pointer, so that the definition of Compact_container does
+  // not require a complete type `T`.
   Time_stamper_impl* time_stamper;
 };
 

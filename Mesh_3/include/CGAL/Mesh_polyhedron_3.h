@@ -63,6 +63,8 @@ public:
     indices.insert(i);
   }
 
+  /// For the determinism of Compact_container iterators
+  ///@{
   typedef Tag_true Has_timestamp;
 
   std::size_t time_stamp() const {
@@ -71,6 +73,7 @@ public:
   void set_time_stamp(const std::size_t& ts) {
     time_stamp_ = ts;
   }
+  ///@}
   
   const Set_of_indices&
   incident_patches_ids_set() const {
@@ -103,6 +106,8 @@ public:
     this->opposite()->feature_edge = b;
   }
 
+  /// For the determinism of Compact_container iterators
+  ///@{
   typedef Tag_true Has_timestamp;
 
   std::size_t time_stamp() const {
@@ -111,6 +116,7 @@ public:
   void set_time_stamp(const std::size_t& ts) {
     time_stamp_ = ts;
   }
+  ///@}
 };
 
 
@@ -137,6 +143,8 @@ public:
     patch_id_ = i;
   }
 
+  /// For the determinism of Compact_container iterators
+  ///@{
   typedef Tag_true Has_timestamp;
 
   std::size_t time_stamp() const {
@@ -145,6 +153,7 @@ public:
   void set_time_stamp(const std::size_t& ts) {
     time_stamp_ = ts;
   }
+  ///@}
 };
 
 

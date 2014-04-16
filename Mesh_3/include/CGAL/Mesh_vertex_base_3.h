@@ -126,6 +126,8 @@ public:
   }
 #endif
 
+  /// For the determinism of Compact_container iterators
+  ///@{
   typedef Tag_true Has_timestamp;
 
   std::size_t time_stamp() const {
@@ -134,6 +136,7 @@ public:
   void set_time_stamp(const std::size_t& ts) {
     time_stamp_ = ts;
   }
+  ///@}
 
   bool is_c2t3_cache_valid() const {
     return cache_validity;
