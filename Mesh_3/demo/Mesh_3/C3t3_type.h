@@ -67,7 +67,7 @@ typedef CGAL::Mesh_3::Robust_intersection_traits_3<Kernel>              RKernel;
 typedef CGAL::Polyhedral_mesh_domain_3<Polyhedron,RKernel>              Polyhedral_mesh_domain;
 typedef CGAL::Labeled_image_mesh_domain_3<Image,Kernel>                 Image_mesh_domain;
 typedef Wrapper<Kernel>                                                 Function_wrapper;
-typedef CGAL::Mesh_3::Labeled_mesh_domain_3<Function_wrapper, Kernel>   Function_mesh_domain;
+typedef CGAL::Labeled_mesh_domain_3<Function_wrapper, Kernel>   Function_mesh_domain;
 
 // Triangulation
 typedef CGAL::Mesh_triangulation_3<Polyhedral_mesh_domain>::type Tr;

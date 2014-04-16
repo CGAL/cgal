@@ -45,13 +45,13 @@ namespace CGAL {
  */
 template<class Function,
   class BGT,
-  class Wrapper = Mesh_3::Implicit_to_labeling_function_wrapper<Function,BGT> >
+  class Wrapper = Implicit_to_labeling_function_wrapper<Function,BGT> >
 class Implicit_mesh_domain_3
- : public Mesh_3::Labeled_mesh_domain_3<Wrapper, BGT >
+ : public Labeled_mesh_domain_3<Wrapper, BGT >
 {
 public:
   /// Base type
-  typedef Mesh_3::Labeled_mesh_domain_3<Wrapper, BGT> Base;
+  typedef Labeled_mesh_domain_3<Wrapper, BGT> Base;
 
   /// Public types
   typedef typename Base::Sphere_3 Sphere_3;

@@ -16,15 +16,15 @@
 // $Id$
 //
 //
-// Author(s)     : Stéphane Tayeb
+// Author(s)     : Stéphane Tayeb, Aymeric PELLE
 //
 //******************************************************************************
 // File Description :
 // class Labeled_mesh_domain_3. See class description.
 //******************************************************************************
 
-#ifndef CGAL_MESH_3_LABELED_MESH_DOMAIN_3_H
-#define CGAL_MESH_3_LABELED_MESH_DOMAIN_3_H
+#ifndef CGAL_LABELED_MESH_DOMAIN_3_H
+#define CGAL_LABELED_MESH_DOMAIN_3_H
 
 #include <CGAL/Mesh_3/config.h>
 
@@ -40,8 +40,6 @@
 #include <CGAL/Origin.h>
 
 namespace CGAL {
-
-namespace Mesh_3 {
 
 /**
  * \class Labeled_mesh_domain_3
@@ -601,8 +599,6 @@ Labeled_mesh_domain_3<F,BGT>::Construct_initial_points::operator()(
   return pts;
 }
 
-
-}  // end namespace Mesh_3
 
 }  // end namespace CGAL
 

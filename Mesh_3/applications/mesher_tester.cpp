@@ -63,9 +63,9 @@ typedef CGAL::Polyhedron_3<Geom_traits> Polyhedron;
 typedef CGAL::Polyhedral_mesh_domain_3<Polyhedron, Geom_traits> Polyhedral_domain; 
 // Implicit domain
 typedef FT_to_point_function_wrapper<K::FT, K::Point_3> I_Function;
-typedef CGAL::Mesh_3::Implicit_multi_domain_to_labeling_function_wrapper<I_Function> I_Function_wrapper;
+typedef CGAL::Implicit_multi_domain_to_labeling_function_wrapper<I_Function> I_Function_wrapper;
 typedef I_Function_wrapper::Function_vector I_Function_vector;
-typedef CGAL::Mesh_3::Labeled_mesh_domain_3<I_Function_wrapper, K> Implicit_domain;
+typedef CGAL::Labeled_mesh_domain_3<I_Function_wrapper, K> Implicit_domain;
 // 3D Image
 typedef CGAL::Image_3 Image;
 typedef CGAL::Labeled_image_mesh_domain_3<Image,K> Image_domain;

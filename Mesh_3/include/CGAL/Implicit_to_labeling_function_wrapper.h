@@ -16,7 +16,7 @@
 // $Id$
 //
 //
-// Author(s)     : Stéphane Tayeb
+// Author(s)     : Stéphane Tayeb, Aymeric PELLE
 //
 //******************************************************************************
 // File Description :
@@ -27,8 +27,8 @@
 // See classes description to have more information.
 //******************************************************************************
 
-#ifndef CGAL_MESH_3_IMPLICIT_TO_LABELED_FUNCTION_WRAPPER_H
-#define CGAL_MESH_3_IMPLICIT_TO_LABELED_FUNCTION_WRAPPER_H
+#ifndef CGAL_IMPLICIT_TO_LABELING_FUNCTION_WRAPPER_H
+#define CGAL_IMPLICIT_TO_LABELING_FUNCTION_WRAPPER_H
 
 
 #if defined(BOOST_MSVC)
@@ -39,8 +39,6 @@
 #include <boost/dynamic_bitset.hpp>
 
 namespace CGAL {
-
-namespace Mesh_3 {
 
 #include <CGAL/config.h>
 
@@ -277,8 +275,6 @@ public:
   }
 };
 
-}  // end namespace Mesh_3
-
 }  // end namespace CGAL
 
 
@@ -287,4 +283,4 @@ public:
 #  pragma warning(pop)
 #endif
 
-#endif // CGAL_MESH_3_IMPLICIT_TO_LABELED_FUNCTION_WRAPPER_H
+#endif // CGAL_IMPLICIT_TO_LABELING_FUNCTION_WRAPPER_H
