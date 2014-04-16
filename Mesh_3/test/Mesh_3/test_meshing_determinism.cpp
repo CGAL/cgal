@@ -93,7 +93,7 @@ int main(int argc, char* argv[])
 
     if(i == 0)
       continue;
-    //else check 
+    //else check
     for(std::size_t j = 0; j < 5; ++j)
     {
       if(0 != output_c3t3[5*(i-1)+j].compare(output_c3t3[5*i+j]))

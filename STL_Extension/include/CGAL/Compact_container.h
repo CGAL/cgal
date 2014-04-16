@@ -85,8 +85,8 @@
 namespace CGAL {
 
 #define CGAL_INIT_COMPACT_CONTAINER_BLOCK_SIZE 14
-#define CGAL_INCREMENT_COMPACT_CONTAINER_BLOCK_SIZE 16 
-  
+#define CGAL_INCREMENT_COMPACT_CONTAINER_BLOCK_SIZE 16
+
 // The following base class can be used to easily add a squattable pointer
 // to a class (maybe you loose a bit of compactness though).
 // TODO : Shouldn't adding these bits be done automatically and transparently,
@@ -127,7 +127,7 @@ struct CC_time_stamper
   static bool less(T* p_t1, T* p_t2) {
     if(p_t1 == NULL)      return (p_t2 != NULL);
     else if(p_t2 == NULL) return false;
-    else                  return p_t1->time_stamp() < p_t2->time_stamp(); 
+    else                  return p_t1->time_stamp() < p_t2->time_stamp();
   }
 
   void reset() {
@@ -145,7 +145,7 @@ struct CC_no_time_stamp
 public:
   void set_time_stamp(T* pt)  {}
   static bool less(T* p_t1, T* p_t2) {
-    return p_t1 < p_t2; 
+    return p_t1 < p_t2;
   }
   void reset()                {}
 }; // end class template CC_no_time_stamp<T>
@@ -194,16 +194,16 @@ namespace internal {
   class CC_iterator;
 }
 
-template < class T, 
+template < class T,
            class Allocator_ = Default,
            class TimeStamper_ = Default >
 class Compact_container
 {
   typedef Allocator_                                Al;
   typedef typename Default::Get< Al, CGAL_ALLOCATOR(T) >::type Allocator;
-  
+
   typedef TimeStamper_                              Ts;
-  
+
   typedef Compact_container <T, Al, Ts>             Self;
   typedef Compact_container_traits <T>              Traits;
 public:
@@ -597,7 +597,7 @@ public:
 
   /** Reserve method to ensure that the capacity of the Compact_container be
    * greater or equal than a given value n.
-   */ 
+   */
   void reserve(size_type n)
   {
     if ( capacity_>=n ) return;
@@ -606,7 +606,7 @@ public:
     allocate_new_block();
     block_size = tmp+CGAL_INCREMENT_COMPACT_CONTAINER_BLOCK_SIZE;
   }
-  
+
 private:
 
   void allocate_new_block();
@@ -658,7 +658,7 @@ private:
   {
     // This out of range compare is always true and causes lots of
     // unnecessary warnings.
-    // CGAL_precondition(0 <= t && t < 4); 
+    // CGAL_precondition(0 <= t && t < 4);
     Traits::pointer(*ptr) = (void *) ((clean_pointer((char *) p)) + (int) t);
   }
 

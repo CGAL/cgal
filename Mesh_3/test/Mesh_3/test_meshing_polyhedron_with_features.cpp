@@ -19,7 +19,7 @@
 // Author(s)     : Stephane Tayeb
 //
 //******************************************************************************
-// File Description : 
+// File Description :
 //******************************************************************************
 
 #include "test_meshing_utilities.h"
@@ -36,26 +36,26 @@ struct Polyhedron_with_features_tester : public Tester<K>
   {
     typedef CGAL::Mesh_3::Robust_intersection_traits_3<K> Gt;
     typedef CGAL::Polyhedral_mesh_domain_with_features_3<Gt> Mesh_domain;
-    
+
     typedef typename CGAL::Mesh_triangulation_3<Mesh_domain>::type Tr;
     typedef CGAL::Mesh_complex_3_in_triangulation_3 <
       Tr,
       typename Mesh_domain::Corner_index,
       typename Mesh_domain::Curve_segment_index > C3t3;
-    
+
     typedef CGAL::Mesh_criteria_3<Tr> Mesh_criteria;
     typedef typename Mesh_criteria::Edge_criteria Edge_criteria;
     typedef typename Mesh_criteria::Facet_criteria Facet_criteria;
     typedef typename Mesh_criteria::Cell_criteria Cell_criteria;
-    
+
     //-------------------------------------------------------
     // Data generation
     //-------------------------------------------------------
-    std::cout << "\tSeed is\t" 
+    std::cout << "\tSeed is\t"
       << CGAL::default_random.get_seed() << std::endl;
     Mesh_domain domain("data/cube.off", &CGAL::default_random);
     domain.detect_features();
-    
+
     // Set mesh criteria
     Edge_criteria edge_criteria(0.2);
     Facet_criteria facet_criteria(30, 0.2, 0.02);
@@ -66,7 +66,7 @@ struct Polyhedron_with_features_tester : public Tester<K>
     C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria,
                                         CGAL::parameters::no_exude(),
                                         CGAL::parameters::no_perturb());
-    
+
     // Verify
     this->verify(c3t3,domain,criteria,
                  Polyhedral_tag()); //, 1099, 1099, 1158, 1158, 4902, 4902);
@@ -83,7 +83,7 @@ struct Polyhedron_with_features_tester : public Tester<K>
                              std::ios_base::in|std::ios_base::binary);
     CGAL::Mesh_3::load_binary_file(in_binary, c3t3_bis);
     assert(c3t3_bis.triangulation() == c3t3.triangulation());
-    
+
   }
 };
 

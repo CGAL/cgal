@@ -38,7 +38,7 @@ struct CGAL_with_time_stamp
 public:
   static bool less(Handle h1, Handle h2)
   {
-    return h1->time_stamp() < h2->time_stamp(); 
+    return h1->time_stamp() < h2->time_stamp();
   }
 };
 
@@ -47,8 +47,8 @@ struct CGAL_no_time_stamp
 {
 public:
   static bool less(Handle h1, Handle h2)
-  { 
-    return &*h1 < &*h2; 
+  {
+    return &*h1 < &*h2;
   }
 };
 

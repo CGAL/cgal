@@ -19,7 +19,7 @@
 // Author(s)     : Stephane Tayeb
 //
 //******************************************************************************
-// File Description : 
+// File Description :
 //******************************************************************************
 
 #include "test_meshing_utilities.h"
@@ -34,16 +34,16 @@ struct Polyhedron_tester : public Tester<K>
     typedef K Gt;
     typedef CGAL::Polyhedron_3<Gt> Polyhedron;
     typedef CGAL::Polyhedral_mesh_domain_3<Polyhedron, Gt> Mesh_domain;
-    
+
     typedef typename CGAL::Mesh_triangulation_3<Mesh_domain>::type Tr;
     typedef CGAL::Mesh_complex_3_in_triangulation_3<Tr> C3t3;
-    
+
     typedef CGAL::Mesh_criteria_3<Tr> Mesh_criteria;
     typedef typename Mesh_criteria::Facet_criteria Facet_criteria;
     typedef typename Mesh_criteria::Cell_criteria Cell_criteria;
-    
+
     typedef typename Mesh_domain::Surface_patch_index Surface_patch_index;
-    
+
     //-------------------------------------------------------
     // Data generation
     //-------------------------------------------------------
@@ -52,29 +52,29 @@ struct Polyhedron_tester : public Tester<K>
     input >> polyhedron;
     input.close();
 
-    std::cout << "\tSeed is\t" 
+    std::cout << "\tSeed is\t"
       << CGAL::default_random.get_seed() << std::endl;
     Mesh_domain domain(polyhedron, &CGAL::default_random);
-    
+
     // Set mesh criteria
     Facet_criteria facet_criteria(30, 0.2, 0.02);
     Cell_criteria cell_criteria(2, 0.2);
     Mesh_criteria criteria(facet_criteria, cell_criteria);
-    
+
     // Mesh generation
     C3t3 c3t3;
     typename Polyhedron::Point_iterator end = polyhedron.points_begin();
     int i=0;
     while ( i++ < 4 ) { ++end; }
-    
+
     c3t3.insert_surface_points(polyhedron.points_begin(),
                                end,
                                domain.index_from_surface_patch_index(Surface_patch_index(0,1)));
-    
+
     CGAL::refine_mesh_3(c3t3, domain, criteria,
                         CGAL::parameters::no_exude(),
                         CGAL::parameters::no_perturb());
-    
+
     // Verify
     double vol = 0.479171765761454;
     this->verify_c3t3_volume(c3t3, vol*0.95, vol*1.05);
@@ -87,6 +87,6 @@ int main()
   Polyhedron_tester<K_e_i> test_epic;
   std::cerr << "Mesh generation from a polyhedron:\n";
   test_epic.polyhedron();
-  
+
   return EXIT_SUCCESS;
 }
