@@ -240,11 +240,8 @@ struct Test_c3t3_io {
         return false;
       }
     }
-#ifdef WIN32
-#  ifdef _MSC_VER
-#    pragma message("Note: The Triangulation_3 facets iterator is not deterministic")
-#  endif
-#else // not WIN32
+#if 0
+    // Note: The Triangulation_3 facets iterator order changes after a reload
     for(typename Tr::Finite_facets_iterator 
           fit1 = t1.finite_facets_begin(),
           fit2 = t2.finite_facets_begin(),
