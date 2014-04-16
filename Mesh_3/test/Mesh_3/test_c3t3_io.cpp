@@ -329,6 +329,10 @@ struct Test_c3t3_io {
               << c3t3_bis
               << "\n******end******" << std::endl;
     assert(stream);
+    std::ostringstream ss_c3t3, ss_c3t3_bis;
+    ss_c3t3 << c3t3;
+    ss_c3t3_bis << c3t3_bis;
+    assert(ss_c3t3.str() == ss_c3t3_bis.str());
     return check_equality(c3t3, c3t3_bis);
   }
 
