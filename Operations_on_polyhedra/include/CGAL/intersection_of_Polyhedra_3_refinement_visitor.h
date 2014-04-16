@@ -256,8 +256,8 @@ struct Dummy_edge_mark_property_map{
 
 template <class Polyhedron>
 struct Default_facet_construct{
-  typename Polyhedron::Facet operator()( const typename Polyhedron::Facet& )
-  { return typename Polyhedron::Facet(); }
+  typename Polyhedron::Facet operator()( const typename Polyhedron::Facet& f)
+  { return f; }
 };
 
 template <class Polyhedron>
