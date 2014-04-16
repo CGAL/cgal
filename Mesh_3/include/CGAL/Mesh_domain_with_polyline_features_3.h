@@ -150,8 +150,8 @@ public:
       else if ( distance > length() ) { distance -= length(); }
     }
     
-    CGAL_assertion( distance > FT(0) );
-    CGAL_assertion( distance < length() );
+    CGAL_assertion( distance >= FT(0) );
+    CGAL_assertion( distance <= length() );
     
     // Initialize iterators
     const_iterator pit = points_.begin();

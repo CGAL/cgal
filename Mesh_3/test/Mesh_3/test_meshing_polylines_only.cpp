@@ -99,6 +99,6 @@ int main(int argc, char** argv)
   save_binary_file(binary_file, c3t3);
   std::cout << "Number of vertices in c3t3: "
             << c3t3.triangulation().number_of_vertices() << std::endl;
-  assert(c3t3.triangulation().number_of_vertices() > 700);
+  assert(c3t3.triangulation().number_of_vertices() > 650);
   assert(c3t3.triangulation().number_of_vertices() < 1000);
 }
