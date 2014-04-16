@@ -42,12 +42,17 @@ public:
     indices.insert(i);
   }
 
+  /// For the determinism of Compact_container iterators
+  ///@{
+  typedef CGAL::Tag_true Has_timestamp;
+
   std::size_t time_stamp() const {
     return time_stamp_;
   }
   void set_time_stamp(const std::size_t& ts) {
     time_stamp_ = ts;
   }
+  ///}@
 
   const Set_of_indices&
   incident_patches_ids_set() const {
@@ -60,17 +65,6 @@ public:
   Polyhedron_demo_vertex() : Pdv_base(), mID(-1), nb_of_feature_edges(0) {}
   Polyhedron_demo_vertex(const Point& p) : Pdv_base(p), mID(-1), nb_of_feature_edges(0) {}
 };
-
-namespace CGAL {
-namespace internal {
-namespace Mesh_3 {
-  template <typename Refs, typename Tag, typename Pt, typename P_id>
-  struct Has_timestamp< Polyhedron_demo_vertex<Refs, Tag, Pt, P_id> > 
-    : public CGAL::Tag_true
-    {};
-} // end namespace internal::Mesh_3
-} // end namespace internal
-} // end namespace CGAL
 
 template <class Refs, class Tprev, class Tvertex, class Tface>
 class Polyhedron_demo_halfedge : 
@@ -98,24 +92,18 @@ public:
   std::size_t& id()       { return mID; }
   std::size_t  id() const { return mID; }
 
+  /// For the determinism of Compact_container iterators
+  ///@{
+  typedef CGAL::Tag_true Has_timestamp;
+
   std::size_t time_stamp() const {
     return time_stamp_;
   }
   void set_time_stamp(const std::size_t& ts) {
     time_stamp_ = ts;
   }
+  ///@}
 };
-
-namespace CGAL {
-namespace internal {
-namespace Mesh_3 {
-  template <class Refs, class Tprev, class Tv, class Tf>
-  struct Has_timestamp< Polyhedron_demo_halfedge<Refs, Tprev, Tv, Tf> > 
-    : public CGAL::Tag_true
-    {};
-} // end namespace internal::Mesh_3
-} // end namespace internal
-} // end namespace CGAL
 
 template <class Refs, class T_, class Pln_, class Patch_id_>
 class Polyhedron_demo_face : 
@@ -143,24 +131,18 @@ public:
   std::size_t& id()       { return mID; }
   std::size_t  id() const { return mID; }
 
+  /// For the determinism of Compact_container iterators
+  ///@{
+  typedef CGAL::Tag_true Has_timestamp;
+
   std::size_t time_stamp() const {
     return time_stamp_;
   }
   void set_time_stamp(const std::size_t& ts) {
     time_stamp_ = ts;
   }
+  ///@}
 };
-
-namespace CGAL {
-namespace internal {
-namespace Mesh_3 {
-  template <class Refs, class T_, class Pln_, class Pid_>
-  struct Has_timestamp< Polyhedron_demo_face<Refs, T_, Pln_, Pid_> > 
-    : public CGAL::Tag_true
-    {};
-} // end namespace internal::Mesh_3
-} // end namespace internal
-} // end namespace CGAL
 
 template <typename Patch_id>
 class Polyhedron_demo_items : public CGAL::Polyhedron_items_3 {
