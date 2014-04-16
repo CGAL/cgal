@@ -112,12 +112,12 @@ struct Compact_container_traits {
 // For the determinism of CC_iterator. That implementation initializes and
 // uses the time stamps embedded in the type.
 template <typename T>
-struct CGAL_time_stamper
+struct CC_time_stamper
 {
-  CGAL_time_stamper()
+  CC_time_stamper()
    : time_stamp_(0) {}
 
-  CGAL_time_stamper(const CGAL_time_stamper& ts)
+  CC_time_stamper(const CC_time_stamper& ts)
    : time_stamp_(ts.time_stamp_) {}
 
   void set_time_stamp(T* pt) {
@@ -135,12 +135,12 @@ struct CGAL_time_stamper
   }
 private:
   std::size_t time_stamp_;
-}; // end class template CGAL_time_stamper<T>
+}; // end class template CC_time_stamper<T>
 
 // For the determinism of CC_iterator. That implementation compares
 // pointers. That is not deterministic on all platforms.
 template <typename T>
-struct CGAL_no_time_stamp
+struct CC_no_time_stamp
 {
 public:
   void set_time_stamp(T* pt)  {}
@@ -148,13 +148,13 @@ public:
     return p_t1 < p_t2; 
   }
   void reset()                {}
-}; // end class template CGAL_no_time_stamp<T>
+}; // end class template CC_no_time_stamp<T>
 
 
 // That class template is an auxiliary class for `CC_ts_impl`.  It has a
 // specialization for the case where `T::Has_timestamp` does not exists.
 // The non-specialized template, when `T::Has_timestamp` exists, derives
-// from `CGAL_time_stamper<T>` or `CGAL_no_time_stamp<T>` depending on the
+// from `CC_time_stamper<T>` or `CC_no_time_stamp<T>` depending on the
 // value of the Boolean constant `T::Has_timestamp`.  If `TimeSpamper_` is
 // not `CGAL::Default`, derives from it.  The declaration of that class
 // template requires `T` to be a complete type.
@@ -166,18 +166,18 @@ struct CC_ts_impl_aux
       TimeStamper_,
       typename boost::mpl::if_c<
         CGAL::internal::Has_timestamp<T>::value,
-        CGAL_time_stamper<T>,
-        CGAL_no_time_stamp<T>
+        CC_time_stamper<T>,
+        CC_no_time_stamp<T>
       >::type // closes mpl::if_c
     >::type // closes Default::Get
 {};
 
 // Specialization when `T::Has_timestamp` does not exist, derives from
-// `TimeSpamper_`, or from `CGAL_no_time_stamp<T>` if `TimeSpamper_` is
+// `TimeSpamper_`, or from `CC_no_time_stamp<T>` if `TimeSpamper_` is
 // `CGAL::Default`.
 template <class T, class TimeStamper_>
 struct CC_ts_impl_aux<T, TimeStamper_, false>
-  : public Default::Get<TimeStamper_, CGAL_no_time_stamp<T> >::type
+  : public Default::Get<TimeStamper_, CC_no_time_stamp<T> >::type
 {};
 
 // Implementation of the timestamp policy. It is very important that the
