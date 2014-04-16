@@ -203,11 +203,12 @@ class Compact_container
   typedef typename Default::Get< Al, CGAL_ALLOCATOR(T) >::type Allocator;
   
   typedef TimeStamper_                              Ts;
-  typedef CC_ts_impl<T, Ts>                         Time_stamper_impl;
   
   typedef Compact_container <T, Al, Ts>             Self;
   typedef Compact_container_traits <T>              Traits;
 public:
+  typedef CC_ts_impl<T, Ts>                         Time_stamper_impl;
+
   typedef T                                         value_type;
   typedef Allocator                                 allocator_type;
   typedef typename Allocator::reference             reference;
