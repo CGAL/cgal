@@ -164,15 +164,23 @@ public:
 template <class T,
           class TimeStamper_,
           bool has_ts = CGAL::internal::Has_timestamp<T>::value>
-struct CC_ts_impl_impl : public CGAL_time_stamper<T>
+struct CC_ts_impl_aux
+  : public Default::Get<
+      TimeStamper_,
+      typename boost::mpl::if_c<
+        CGAL::internal::Has_timestamp<T>::value,
+        CGAL_time_stamper<T>,
+        CGAL_no_time_stamp<T>
+      >::type // closes mpl::if_c
+    >::type // closes Default::Get
 {};
 
-template <class T,
-          class TimeStamper_>
-struct CC_ts_impl_impl<T, TimeStamper_, false> : public CGAL_no_time_stamp<T>
 // Specialization when `T::Has_timestamp` does not exist, derives from
 // `TimeSpamper_`, or from `CGAL_no_time_stamp<T>` if `TimeSpamper_` is
 // `CGAL::Default`.
+template <class T, class TimeStamper_>
+struct CC_ts_impl_aux<T, TimeStamper_, false>
+  : public Default::Get<TimeStamper_, CGAL_no_time_stamp<T> >::type
 {};
 
 // Implementation of the timestamp policy. It is very important that the
@@ -181,7 +189,7 @@ struct CC_ts_impl_impl<T, TimeStamper_, false> : public CGAL_no_time_stamp<T>
 // in `Compact_container` is possible with an incomplete type.
 template <class T,
           class TimeStamper_>
-struct CC_ts_impl : public CC_ts_impl_impl<T, TimeStamper_>
+struct CC_ts_impl : public CC_ts_impl_aux<T, TimeStamper_>
 {};
 
 template < class T, 
