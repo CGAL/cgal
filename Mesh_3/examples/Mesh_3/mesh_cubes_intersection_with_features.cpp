@@ -61,81 +61,82 @@ double cube_function_2 (const Point& p)
   return 1.;
 }
 
-typedef std::vector<Point>  Polyline;
-typedef std::list<Polyline> Polylines;
+// Polyline
+typedef std::vector<Point>  Polyline_3;
+typedef std::list<Polyline_3> Polylines;
 
 void create_polylines (Polylines& polylines)
 {
   {
-    Polyline polyline;
+    Polyline_3 polyline;
     polyline.push_back(Point(1,1,1));
     polyline.push_back(Point(2,1,1));
     polylines.push_back(polyline);
   }
   {
-    Polyline polyline;
+    Polyline_3 polyline;
     polyline.push_back(Point(2,1,1));
     polyline.push_back(Point(2,2,1));
     polylines.push_back(polyline);
   }
   {
-    Polyline polyline;
+    Polyline_3 polyline;
     polyline.push_back(Point(2,2,1));
     polyline.push_back(Point(1,2,1));
     polylines.push_back(polyline);
   }
   {
-    Polyline polyline;
+    Polyline_3 polyline;
     polyline.push_back(Point(1,2,1));
     polyline.push_back(Point(1,1,1));
     polylines.push_back(polyline);
   }
 //----------
   {
-    Polyline polyline;
+    Polyline_3 polyline;
     polyline.push_back(Point(1,1,2));
     polyline.push_back(Point(2,1,2));
     polylines.push_back(polyline);
   }
   {
-    Polyline polyline;
+    Polyline_3 polyline;
     polyline.push_back(Point(2,1,2));
     polyline.push_back(Point(2,2,2));
     polylines.push_back(polyline);
   }
   {
-    Polyline polyline;
+    Polyline_3 polyline;
     polyline.push_back(Point(2,2,2));
     polyline.push_back(Point(1,2,2));
     polylines.push_back(polyline);
   }
   {
-    Polyline polyline;
+    Polyline_3 polyline;
     polyline.push_back(Point(1,2,2));
     polyline.push_back(Point(1,1,2));
     polylines.push_back(polyline);
   }
   //----------
   {
-    Polyline polyline;
+    Polyline_3 polyline;
     polyline.push_back(Point(1,1,1));
     polyline.push_back(Point(1,1,2));
     polylines.push_back(polyline);
   }
   {
-    Polyline polyline;
+    Polyline_3 polyline;
     polyline.push_back(Point(2,1,1));
     polyline.push_back(Point(2,1,2));
     polylines.push_back(polyline);
   }
   {
-    Polyline polyline;
+    Polyline_3 polyline;
     polyline.push_back(Point(2,2,1));
     polyline.push_back(Point(2,2,2));
     polylines.push_back(polyline);
   }
   {
-    Polyline polyline;
+    Polyline_3 polyline;
     polyline.push_back(Point(1,2,1));
     polyline.push_back(Point(1,2,2));
     polylines.push_back(polyline);
