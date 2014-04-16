@@ -109,34 +109,33 @@ struct Compact_container_traits {
   static void * & pointer(T &t)       { return t.for_compact_container(); }
 };
 
-namespace internal {
-  template < class DSC, bool Const >
-  class CC_iterator;
-}
-
 // For the determinism of CC_iterator. That implementation initializes and
 // uses the time stamps embedded in the type.
 template <typename T>
 struct CGAL_time_stamper
 {
-public:
   CGAL_time_stamper()
    : time_stamp_(0) {}
+
   CGAL_time_stamper(const CGAL_time_stamper& ts)
    : time_stamp_(ts.time_stamp_) {}
 
-  void set_time_stamp(T* pt)    { pt->set_time_stamp(time_stamp_++); }
-  static bool less(T* p_t1, T* p_t2)
-  {
+  void set_time_stamp(T* pt) {
+    pt->set_time_stamp(time_stamp_++);
+  }
+
+  static bool less(T* p_t1, T* p_t2) {
     if(p_t1 == NULL)      return (p_t2 != NULL);
     else if(p_t2 == NULL) return false;
     else                  return p_t1->time_stamp() < p_t2->time_stamp(); 
   }
-  void reset()                  { time_stamp_ = 0; }
 
+  void reset() {
+    time_stamp_ = 0;
+  }
 private:
   std::size_t time_stamp_;
-};
+}; // end class template CGAL_time_stamper<T>
 
 // For the determinism of CC_iterator. That implementation compares
 // pointers. That is not deterministic on all platforms.
@@ -144,14 +143,12 @@ template <typename T>
 struct CGAL_no_time_stamp
 {
 public:
-  CGAL_no_time_stamp()        {}
   void set_time_stamp(T* pt)  {}
-  static bool less(T* p_t1, T* p_t2)
-  { 
+  static bool less(T* p_t1, T* p_t2) {
     return p_t1 < p_t2; 
   }
   void reset()                {}
-};
+}; // end class template CGAL_no_time_stamp<T>
 
 
 // That class template is an auxiliary class for `CC_ts_impl`.  It has a
@@ -191,6 +188,11 @@ template <class T,
           class TimeStamper_>
 struct CC_ts_impl : public CC_ts_impl_aux<T, TimeStamper_>
 {};
+
+namespace internal {
+  template < class DSC, bool Const >
+  class CC_iterator;
+}
 
 template < class T, 
            class Allocator_ = Default,
