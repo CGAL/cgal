@@ -14,7 +14,7 @@ of `Segment_Delaunay_graph_hierarchy_2`.
 
 The `Segment_Delaunay_graph_Linf_hierarchy_2` class derives publicly from
 the `Segment_Delaunay_graph_Linf_2<Gt,DS>` class.
-The interface is the same with its base class.
+The interface is the same as its base class.
 
 \cgalModels `DefaultConstructible`
 \cgalModels `CopyConstructible`

@@ -5,8 +5,8 @@ namespace CGAL {
 \ingroup PkgSDGLinf
 
 The class `Segment_Delaunay_graph_Linf_2`
-represents the segment Delaunay graph under the L_{infinity} metric (which is
-the dual graph of the 2D segment Voronoi diagram under the L_{infinity}
+represents the segment Delaunay graph under the \f$ L_{\infty} \f$ metric (which is
+the dual graph of the 2D segment Voronoi diagram under the \f$ L_{\infty} \f$
 metric).
 Currently it supports only insertions of sites.
 It is templated by two template arguments `Gt`, which
