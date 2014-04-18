@@ -20,8 +20,8 @@ distance.
 Segment Voronoi diagrams in the \f$ L_{\infty} \f$ metric have applications
 in VLSI design \cite pl-svdlinf-2001.
 
-In section \ref secsdglinfdefinitions we give some definitions.
-In section \ref secsdglinfdesign we explain the design of the
+In Section \ref secsdglinfdefinitions we give some definitions.
+In Section \ref secsdglinfdesign we explain the design of the
 algorithm and traits.
 
 \cgalFigureBegin{figsvdlinf,svdlinfweak.png,svdlinfstrong.png}
@@ -40,7 +40,7 @@ point \f$ c \f$ is the axis-parallel square with center \f$ c \f$
 and side length \f$ 2r \f$ (the analog in \f$ L_2 \f$ is a circle
 with center \f$ c \f$ and diameter \f$ 2r \f$).
 
-\subsection subsecbis1dim Bisectors and 1-dimensionalization
+\subsection subsecbis1dim Bisectors and 1-Dimensionalization
 
 If we assume general position of sites, then the
 \f$ L_{\infty} \f$ bisectors between two points or between a point
@@ -95,7 +95,7 @@ The \f$ L_{\infty} \f$ bisector between a vertical segment and
 one of its endpoints and its 1-dimensionalization.
 \cgalFigureEnd
 
-\section secsdglinfdesign Software design
+\section secsdglinfdesign Software Design
 
 In general, the software design of the algorithms and traits for the
 \f$ L_{\infty} \f$ Segment Delaunay graph are relying on the
@@ -111,7 +111,7 @@ The order of complexity of the construction of the \f$ L_{\infty}
 and thus we refer the end user to the 2D Segment Delaunay graph
 manual for complexity analysis.
 
-\subsection Segment_Delaunay_graph_Linf_2_Graph Segment Delaunay graph
+\subsection Segment_Delaunay_graph_Linf_2_Graph Segment Delaunay Graph
 
 The  \f$ L_{\infty} \f$ Segment Delaunay graph class
 `Segment_Delaunay_graph_Linf_2<SegmentDelaunayGraphLinfTraits_2,SegmentDelaunayGraphDataStructure_2>`
@@ -122,7 +122,7 @@ are used when inserting a point in the interior of an existing
 segment are overridden. The details are not of interest to the end
 user, so we do not elaborate further.
 
-\subsection Segment_Delaunay_graph_Linf_2_Traits Segment Delaunay graph traits
+\subsection Segment_Delaunay_graph_Linf_2_Traits Segment Delaunay Graph Traits
 
 As in the case of \f$ L_{2} \f$, the geometric predicates are
 quite elaborate and we do not bother the end user with details.
@@ -145,7 +145,7 @@ For more details,
 see the Segment Delaunay graph package manual.
 
 
-\subsection Segment_Delaunay_graph_Linf_2_Hierarchy Segment Delaunay graph hierarchy
+\subsection Segment_Delaunay_graph_Linf_2_Hierarchy Segment Delaunay Graph Hierarchy
 
 The
 `Segment_Delaunay_graph_Linf_hierarchy_2<SegmentDelaunayGraphLinfTraits_2, SSTag, SegmentDelaunayGraphDataStructure_2>`
