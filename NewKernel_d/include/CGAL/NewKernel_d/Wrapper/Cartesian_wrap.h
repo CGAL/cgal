@@ -8,6 +8,7 @@
 #include <CGAL/NewKernel_d/Wrapper/Vector_d.h>
 #include <CGAL/NewKernel_d/Wrapper/Segment_d.h>
 #include <CGAL/NewKernel_d/Wrapper/Sphere_d.h>
+#include <CGAL/NewKernel_d/Wrapper/Hyperplane_d.h>
 
 #include <CGAL/NewKernel_d/Wrapper/Ref_count_obj.h>
 
@@ -85,6 +86,7 @@ CGAL_REGISTER_OBJECT_WRAPPER(Point);
 CGAL_REGISTER_OBJECT_WRAPPER(Vector);
 CGAL_REGISTER_OBJECT_WRAPPER(Segment);
 CGAL_REGISTER_OBJECT_WRAPPER(Sphere);
+CGAL_REGISTER_OBJECT_WRAPPER(Hyperplane);
 #undef CGAL_REGISTER_OBJECT_WRAPPER
 
 // Note: this tends to be an all or nothing thing currently, wrapping
@@ -100,7 +102,7 @@ struct Cartesian_wrap : public Base_
     // TODO: pass the 2 types Self and Derived to the wrappers, they can use Self for most purposes and Derived only for Kernel_traits' typedef R.
     typedef typename Default::Get<Derived_, Self>::type Derived;
     // FIXME: The list doesn't belong here.
-    typedef boost::mpl::vector<Point_tag,Segment_tag,Sphere_tag,Vector_tag> Wrapped_list;
+    typedef boost::mpl::vector<Point_tag,Segment_tag,Sphere_tag,Vector_tag,Hyperplane_tag> Wrapped_list;
 
     template <class T>
     struct Type : Map_wrapping_type<Base_, Derived, T> {};

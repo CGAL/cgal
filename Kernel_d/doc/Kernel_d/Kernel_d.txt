@@ -227,7 +227,7 @@ Note that it provides few interfaces in addition to those documented in the
 
 \subsection Kernel_dNamingconventions Naming conventions
 
-The use of representation classes not only avoids problems, it also
+The use of representation classes does not only avoid problems, it also
 makes all \cgal classes very uniform. Like `Cartesian_d<double>::Point_d`,
 they <B>always</B> consist of:
 <OL>

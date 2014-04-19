@@ -1,5 +1,7 @@
 #ifndef CGAL_KD_TYPE_HYPERPLANE_H
 #define CGAL_KD_TYPE_HYPERPLANE_H
+#include <CGAL/enum.h>
+#include <CGAL/number_utils.h>
 #include <CGAL/NewKernel_d/store_kernel.h>
 #include <boost/iterator/transform_iterator.hpp>
 #include <boost/iterator/counting_iterator.hpp>
@@ -21,6 +23,7 @@ namespace CartesianDKernelFunctors {
 template <class R_> struct Construct_hyperplane : Store_kernel<R_> {
   CGAL_FUNCTOR_INIT_STORE(Construct_hyperplane)
   typedef typename Get_type<R_, Hyperplane_tag>::type	result_type;
+  typedef typename Get_type<R_, Point_tag>::type	Point;
   typedef typename Get_type<R_, Vector_tag>::type	Vector;
   typedef typename Get_type<R_, FT_tag>::type FT;
   typedef typename R_::LA::Square_matrix Matrix;
@@ -42,7 +45,6 @@ template <class R_> struct Construct_hyperplane : Store_kernel<R_> {
     typedef typename R_::LA LA;
     typedef typename LA::Vector Vec;
     typedef typename LA::Construct_vector CVec;
-    typedef typename Get_type<R_, Point_tag>::type	Point;
     typename Get_functor<R_, Compute_point_cartesian_coordinate_tag>::type c(this->kernel());
     typename Get_functor<R_, Construct_ttag<Vector_tag> >::type cv(this->kernel());
     typename Get_functor<R_, Point_dimension_tag>::type pd(this->kernel());
@@ -66,6 +68,20 @@ template <class R_> struct Construct_hyperplane : Store_kernel<R_> {
     Vec res = typename CVec::Dimension()(d);
     LA::solve(res, CGAL_MOVE(m), CGAL_MOVE(one));
     return this->operator()(cv(d,LA::vector_begin(res),LA::vector_end(res)),1);
+  }
+  template <class Iter>
+  result_type operator()(Iter f, Iter e, Point const&p, CGAL::Oriented_side s)const{
+    result_type ret = this->operator()(f, e);
+    if (s == ON_ORIENTED_BOUNDARY)
+      return ret;
+    // TODO: I doubt this does the right thing wrt filtering...
+    typename Get_functor<R_, Value_at_tag>::type va(this->kernel());
+    CGAL::Oriented_side o = CGAL::compare(va(ret,p),ret.translation());
+    if (o == ON_ORIENTED_BOUNDARY || o == s)
+      return ret;
+    typename Get_functor<R_, Opposite_vector_tag>::type ov(this->kernel());
+    typename Get_functor<R_, Construct_ttag<Vector_tag> >::type cv(this->kernel());
+    return this->operator()(ov(ret.orthogonal_vector()), -ret.translation());
   }
 };
 template <class R_> struct Orthogonal_vector {
@@ -105,7 +121,7 @@ template <class R_> struct Value_at : Store_kernel<R_> {
 }
 //TODO: Add a condition that the hyperplane type is the one from this file.
 CGAL_KD_DEFAULT_TYPE(Hyperplane_tag,(CGAL::Hyperplane<K>),(Vector_tag),());
-CGAL_KD_DEFAULT_FUNCTOR(Construct_ttag<Hyperplane_tag>,(CartesianDKernelFunctors::Construct_hyperplane<K>),(Vector_tag,Hyperplane_tag),());
+CGAL_KD_DEFAULT_FUNCTOR(Construct_ttag<Hyperplane_tag>,(CartesianDKernelFunctors::Construct_hyperplane<K>),(Vector_tag,Hyperplane_tag),(Value_at_tag));
 CGAL_KD_DEFAULT_FUNCTOR(Orthogonal_vector_tag,(CartesianDKernelFunctors::Orthogonal_vector<K>),(Vector_tag,Hyperplane_tag),());
 CGAL_KD_DEFAULT_FUNCTOR(Hyperplane_translation_tag,(CartesianDKernelFunctors::Hyperplane_translation<K>),(Hyperplane_tag),());
 CGAL_KD_DEFAULT_FUNCTOR(Value_at_tag,(CartesianDKernelFunctors::Value_at<K>),(Point_tag,Vector_tag,Hyperplane_tag),(Scalar_product_tag,Point_to_vector_tag));

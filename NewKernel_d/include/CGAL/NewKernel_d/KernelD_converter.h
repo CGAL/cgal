@@ -91,8 +91,8 @@ class KernelD_converter_
 template<class Final_, class K1, class K2>
 class KernelD_converter_<Final_,K1,K2,typeset<> > {
 	public:
-	struct Do_not_use{};
-	void operator()(Do_not_use)const{}
+	struct Do_not_use2{};
+	void operator()(Do_not_use2)const{}
 	template<class T> struct result;
 	Final_& myself(){return *static_cast<Final_*>(this);}
 	Final_ const& myself()const{return *static_cast<Final_ const*>(this);}

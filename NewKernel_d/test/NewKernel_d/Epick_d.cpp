@@ -36,7 +36,7 @@ struct K0 : RC {};
 
 #if 0
 typedef K0 K2;
-#elif 0
+#elif 1
 typedef CGAL::Cartesian_filter_NT<K0> K2;
 #elif 0
 typedef CGAL::Cartesian_filter_K<K0,KA,KE> K2;
@@ -212,6 +212,10 @@ void test2(){
   assert(fabs(va(h,x2)-1)<.0001);
   assert(fabs(va(h,x3)-1)<.0001);
   assert(fabs(va(h,x1)+1)<.0001);
+  H h2=ch(tab2+1,tab2+3,x1,CGAL::ON_POSITIVE_SIDE);
+  assert(hops(h2,x1));
+  H h3=ch(tab2+1,tab2+3,x1,CGAL::ON_NEGATIVE_SIDE);
+  assert(!hops(h3,x1));
 #if 1
   // Doesn't compile with Lazy yet.
   FO fo=cfo(tab2+1,tab2+3);

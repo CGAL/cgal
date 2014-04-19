@@ -74,5 +74,29 @@ template <class K1, class K2> struct KO_converter<Segment_tag,K1,K2>{
 	}
 };
 
+template <class K1, class K2> struct KO_converter<Hyperplane_tag,K1,K2>{
+  typedef typename Get_type<K1, Hyperplane_tag>::type	argument_type;
+  typedef typename Get_type<K2, Hyperplane_tag>::type	result_type;
+  template <class C>
+    result_type operator()(K1 const& k1, K2 const& k2, C const& conv, argument_type const& h) const {
+      typename Get_functor<K1, Orthogonal_vector_tag>::type ov(k1);
+      typename Get_functor<K1, Hyperplane_translation_tag>::type ht(k1);
+      typename Get_functor<K2, Construct_ttag<Hyperplane_tag> >::type ch(k2);
+      return ch(conv(ov(h)),conv(ht(h)));
+    }
+};
+
+template <class K1, class K2> struct KO_converter<Sphere_tag,K1,K2>{
+  typedef typename Get_type<K1, Sphere_tag>::type	argument_type;
+  typedef typename Get_type<K2, Sphere_tag>::type	result_type;
+  template <class C>
+    result_type operator()(K1 const& k1, K2 const& k2, C const& conv, argument_type const& s) const {
+      typename Get_functor<K1, Center_of_sphere_tag>::type cos(k1);
+      typename Get_functor<K1, Squared_radius_tag>::type sr(k1);
+      typename Get_functor<K2, Construct_ttag<Sphere_tag> >::type cs(k2);
+      return cs(conv(cos(s)),conv(sr(s)));
+    }
+};
+
 }
 #endif
