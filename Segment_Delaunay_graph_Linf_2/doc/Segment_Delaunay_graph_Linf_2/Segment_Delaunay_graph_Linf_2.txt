@@ -75,7 +75,7 @@ diagram is employed  \cite pl-svdlinf-2001.
 
 If two different points \f$ p \f$, \f$ q \f$ share one coordinate,
 then their \f$ L_{\infty} \f$ bisector is bi-dimensional as shown
-in figure \cgalFigureRef{figbispointsbidim}. In this special case,
+in \cgalFigureRef{figbispointsbidim}. In this special case,
 we 1-dimensionalize the bisector,
 by taking instead the Euclidean bisector of the two points.
 
@@ -86,7 +86,7 @@ The \f$ L_{\infty} \f$ bisector between two points with the same
 
 Similarly, the bisector between the interior of an axis-parallel
 segment and one of its endpoints is also bi-dimensional as shown
-in figure \cgalFigureRef{figbisspbidim}. We 1-dimensionalize this
+in \cgalFigureRef{figbisspbidim}. We 1-dimensionalize this
 bisector by taking instead the line passing through the endpoint
 that is perpendicular to the segment.
 
