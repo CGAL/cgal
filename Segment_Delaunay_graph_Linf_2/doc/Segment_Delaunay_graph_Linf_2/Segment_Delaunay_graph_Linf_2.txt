@@ -65,7 +65,7 @@ One very important difference in the \f$ L_{\infty} \f$ setting
 (in comparison to the \f$ L_{2} \f$ setting)
 is that in some special non-general position cases
 the \f$ L_{\infty} \f$ bisector
-between two sites can be bi-dimensional. Since this creates
+between two sites can be 2-dimensional. Since this creates
 problems when drawing the diagram, we resort to a
 1-dimensionalization of these bisectors, by assigning portions of
 two-dimensional regions of a bisector to the two sites of the
@@ -74,7 +74,7 @@ acceptable in the VLSI applications, where the \f$ L_{\infty} \f$
 diagram is employed  \cite pl-svdlinf-2001.
 
 If two different points \f$ p \f$, \f$ q \f$ share one coordinate,
-then their \f$ L_{\infty} \f$ bisector is bi-dimensional as shown
+then their \f$ L_{\infty} \f$ bisector is 2-dimensional as shown
 in \cgalFigureRef{figbispointsbidim}. In this special case,
 we 1-dimensionalize the bisector,
 by taking instead the Euclidean bisector of the two points.
@@ -85,7 +85,7 @@ The \f$ L_{\infty} \f$ bisector between two points with the same
 \cgalFigureEnd
 
 Similarly, the bisector between the interior of an axis-parallel
-segment and one of its endpoints is also bi-dimensional as shown
+segment and one of its endpoints is also 2-dimensional as shown
 in \cgalFigureRef{figbisspbidim}. We 1-dimensionalize this
 bisector by taking instead the line passing through the endpoint
 that is perpendicular to the segment.
@@ -113,10 +113,10 @@ manual for complexity analysis.
 
 \subsection Segment_Delaunay_graph_Linf_2_Graph Segment Delaunay Graph
 
-The  \f$ L_{\infty} \f$ Segment Delaunay graph class
+The  \f$ L_{\infty} \f$ Segment Delaunay graph template class
 `Segment_Delaunay_graph_Linf_2<SegmentDelaunayGraphLinfTraits_2,SegmentDelaunayGraphDataStructure_2>`
-is a subclass of the corresponding
-`Segment_Delaunay_graph_2<SegmentDelaunayGraphTraits_2,SegmentDelaunayGraphDataStructure_2>`.
+is a subclass of template class
+`Segment_Delaunay_graph_2`.
 In the \f$ L_{\infty} \f$ class, a few methods that
 are used when inserting a point in the interior of an existing
 segment are overridden. The details are not of interest to the end
@@ -136,11 +136,11 @@ on these filtering techniques, see the Segment Delaunay graph package manual.
 In analogy with the  \f$ L_{2} \f$ setting,
 there are four models of the `SegmentDelaunayGraphLinfTraits_2`
 concept, two of which supporting strongly intersecting sites
-(`Segment_Delaunay_graph_Linf_traits_2<K,MTag>`,
-`Segment_Delaunay_graph_Linf_filtered_traits_2<CK,CM,EK,EM,FK,FM>)
+(`Segment_Delaunay_graph_Linf_traits_2`,
+`Segment_Delaunay_graph_Linf_filtered_traits_2`)
 and two of which support sites without intersections
-(`Segment_Delaunay_graph_Linf_traits_without_intersections_2<K,MTag>`,
-`Segment_Delaunay_graph_Linf_filtered_traits_without_intersections_2<CK,CM,EK,EM,FK,FM>`).
+(`Segment_Delaunay_graph_Linf_traits_without_intersections_2`,
+`Segment_Delaunay_graph_Linf_filtered_traits_without_intersections_2`).
 For more details,
 see the Segment Delaunay graph package manual.
 
@@ -148,7 +148,7 @@ see the Segment Delaunay graph package manual.
 \subsection Segment_Delaunay_graph_Linf_2_Hierarchy Segment Delaunay Graph Hierarchy
 
 The
-`Segment_Delaunay_graph_Linf_hierarchy_2<SegmentDelaunayGraphLinfTraits_2, SSTag, SegmentDelaunayGraphDataStructure_2>`
+`Segment_Delaunay_graph_Linf_hierarchy_2`
 class is equivalent to the Segment_Delaunay_graph_hierarchy_2,
 but it uses the `Segment_Delaunay_graph_Linf_2` class in each
 level of the hierarchy instead of `Segment_Delaunay_graph_2`.
@@ -165,10 +165,9 @@ Segment Delaunay graph package.
 
 \subsection Segment_Delaunay_graph_Linf_2FirstExample First Example
 
-The following example shows how to use the segment Delaunay graph traits
-in conjunction with the `Filtered_exact<CT,ET>` mechanism. In
-addition it shows how to use a few of the iterators provided by the
-`Segment_Delaunay_graph_Linf_2` class in order to count a few
+The following example shows how to use the segment Delaunay graph filtered
+traits mechanism. In addition it shows how to use a few of the iterators
+provided by the `Segment_Delaunay_graph_Linf_2` class in order to count a few
 site-related quantities.
 
 \cgalExample{Segment_Delaunay_graph_Linf_2/sdg-count-sites.cpp}

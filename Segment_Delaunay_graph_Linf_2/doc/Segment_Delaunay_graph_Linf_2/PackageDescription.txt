@@ -28,14 +28,13 @@ L infinity metric.}
 \cgalPkgDemo{DEMO 2,demo2.zip}
 \cgalPkgShortInfoEnd
 
-\cgal provides geometric traits for computing the segment Delaunay 
+\cgal provides algorithms for computing the segment Delaunay
 graph, i.e., the dual of the
 Voronoi diagram of segments, under the \f$ L_{\infty}\f$
-distance.
-These geometric traits have to be used in place of the parameter Gt of
-the class `CGAL::Segment_Delaunay_graph_2<Gt,DS>` for
-computing the 2D Delaunay graph of segments and points,
-under the \f$ L_{\infty}\f$ distance.
+metric.
+The algorithms are implemented in the classes
+`CGAL::Segment_Delaunay_graph_Linf_2<Gt>` and
+`CGAL::Segment_Delaunay_graph_Linf_hierarchy_2<Gt>`.
 The template parameter Gt must be a model of the
 `SegmentDelaunayGraphLinfTraits_2` concept, which
 is related to the geometric objects and predicates associated with
