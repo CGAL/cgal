@@ -13,7 +13,7 @@ PkgSDGLinfSummary}
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Panagiotis Cheilaris,
 Sandeep Kumar Dey, Evanthia Papadopoulou}
-\cgalPkgDesc{Geometric traits for computing the dual of
+\cgalPkgDesc{Algorithms and geometric traits for computing the dual of
 the Voronoi diagram of a set of points and segments under the
 L infinity metric.}
 \cgalPkgManuals{Chapter_L_infinity_Segment_Delaunay_graph,PkgSDGLinf}
