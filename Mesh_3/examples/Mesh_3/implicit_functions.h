@@ -24,16 +24,13 @@ double sphere_function (double x, double y, double z) // (c=(0,0,0), r=Sq_radius
 
 
 
-template <typename FType, typename P>
-class FT_to_point_function_wrapper : public std::unary_function<P, FType>
+template <typename FT, typename P>
+class FT_to_point_function_wrapper : public std::unary_function<P, FT>
 {
-public:
-  typedef FType FT;
-  typedef P Point;
-private:
   typedef FT (*Implicit_function)(FT, FT, FT);
   Implicit_function function;
 public:
+  typedef P Point;
   FT_to_point_function_wrapper(Implicit_function f) : function(f) {}
   FT operator()(Point p) const { return function(p.x(), p.y(), p.z()); }
 };
