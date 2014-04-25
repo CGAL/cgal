@@ -1,0 +1,14 @@
+#
+# Test the compare_y_at_x functor for the polycurve
+# Format:
+# 1.<command> 2.<Point id> 3.<X-curve id> 4.<Expected result>
+#
+compare_y_at_x 0 0 LARGER
+#result incorrect
+#compare_y_at_x 1 0 EQUAL
+compare_y_at_x 2 0 SMALLER
+#
+#
+compare_y_at_x 3 1 LARGER
+compare_y_at_x 4 1 SMALLER
+compare_y_at_x 5 1 EQUAL

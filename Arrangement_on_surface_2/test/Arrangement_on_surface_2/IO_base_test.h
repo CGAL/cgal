@@ -9,19 +9,15 @@ public:
   typedef typename Geom_traits::X_monotone_curve_2      X_monotone_curve_2;
   typedef typename Geom_traits::Curve_2                 Curve_2;
 
-  #if TEST_GEOM_TRAITS == POLYCURVE_CONIC_GEOM_TRAITS
-
+#if TEST_GEOM_TRAITS == POLYCURVE_CONIC_GEOM_TRAITS || \
+      TEST_GEOM_TRAITS == POLYCURVE_CIRCULAR_ARC_GEOM_TRAITS
   // Poly curves needs some testing where Segments and X-monotone segments are required 
   // instead of polycurves/x-monotone polycurves.
-  typedef typename Geom_traits::Segment_2               Segment_2;
-  typedef typename Geom_traits::X_monotone_segment_2    X_monotone_segment_2;
-
   template <typename stream>
   bool read_segment(stream& is, Segment_2& seg);
   template <typename stream>
   bool read_xsegment(stream& is, X_monotone_segment_2& xseg);
-
-  #endif
+#endif
 
   /*! Constructor */
   IO_base_test(const Geom_traits& traits);
@@ -334,6 +330,12 @@ bool IO_base_test<Base_geom_traits>::read_xcurve(stream& is,
       conic_x_monotone_segments.push_back ( tmp_xcv );  
     }
 
+    else
+    {
+      std::cerr << "Illegal conic type specification: " << type << "." << std::endl;
+      return false;
+    }
+
   } //for loop
   
   //construct x-monotone polycurve
@@ -447,199 +449,262 @@ bool IO_base_test<Base_geom_traits>::read_xsegment(stream& is,
 }  
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 #elif TEST_GEOM_TRAITS == POLYCURVE_CIRCULAR_ARC_GEOM_TRAITS
 
-
-//for polycurves (THIS CAN BE COMBINED FOR ALL POLYCURVES IN ONE #IF PREPROCESSOR MACRO. DO IT LATER.)
-  typedef Geom_traits::Segment_2               Base_Segment_2;
-  typedef Geom_traits::X_monotone_segment_2    Base_X_monotone_segment_2;
-
+/*! */
 template <typename stream>
-bool read_ort_point(stream& is, Point_2& p)
+bool read_orientation(stream& is, CGAL::Orientation& orient)
 {
-  bool is_rat;
-  typename Point_2::CoordNT ort_x, ort_y;
-  Number_type alpha, beta, gamma;
-  is >> is_rat;
-  if (is_rat) {
-    is >> alpha;
-    ort_x = Point_2::CoordNT(alpha);
-  }
-  else {
-    is >> alpha >> beta >> gamma;
-    ort_x = Point_2::CoordNT(alpha,beta,gamma);
-  }
-  is >> is_rat;
-  if (is_rat) {
-    is >> alpha;
-    ort_y=Point_2::CoordNT(alpha);
-  }
-  else {
-    is >> alpha >> beta >> gamma;
-    ort_y = Point_2::CoordNT(alpha,beta,gamma);
-  }
-  p = Point_2(ort_x, ort_y);
+  int i_orient;
+  is >> i_orient;
+  orient = (i_orient > 0) ? CGAL::COUNTERCLOCKWISE :
+    (i_orient < 0) ? CGAL::CLOCKWISE : CGAL::COLLINEAR;
   return true;
 }
 
-/*! Read an x-monotone circle segment curve */
+/*! Read an x-monotone circle segment polycurve */
 template <>
 template <typename stream>
 bool IO_base_test<Base_geom_traits>::read_xcurve(stream& is,
                                                  X_monotone_curve_2& xcv)
 {
-  // bool ans = true;
-  // char type;
-  // is >> type;
-  // if ((type == 'z') || (type == 'Z')) {
-  //   Line_2 l;
-  //   Point_2 ps, pt;
-  //   is >> l;
-  //   ans &= read_ort_point(is, ps);
-  //   ans &= read_ort_point(is, pt);
-  //   xcv = X_monotone_curve_2(l, ps, pt);
-  //   return ans;
-  // }
-  // else if ((type == 'y') || (type == 'Y')) {
-  //   Rat_point_2 ps, pt;
-  //   is >> ps >> pt;
-  //   xcv = X_monotone_curve_2(ps, pt);
-  //   return true;
-  // }
-  // else if ((type == 'x') || (type == 'X')) {
-  //   Circle_2 c;
-  //   Point_2 ps,pt;
-  //   is >> c;
-  //   ans &= read_ort_point(is, ps);
-  //   ans &= read_ort_point(is, pt);
-  //   xcv = X_monotone_curve_2(c, ps, pt, c.orientation());
-  //   return ans;
-  // }
-  // // If we reached here, we have an unknown conic type:
-  // std::cerr << "Illegal circle segment type specification: " << type
-  //           << std::endl;
+   std::vector<X_monotone_segment_2> x_segments;
+
+   char type;
+   is >> type;
+
+   unsigned int number_of_segments;
+   is >> number_of_segments;
+
+   CGAL::Orientation orientation;
+
+  for(unsigned int i=0; i<number_of_segments; i++)
+  {
+  
+    if ((type == 'x') || (type == 'X')) 
+    {
+      Rat_point_2 circle_center;
+      Point_2 ps, pt;
+      Rat_nt circle_radius;
+      
+      int point_x, point_y;
+      is >> point_x >> point_y;
+      circle_center = Rat_point_2(point_x, point_y);
+
+      is >> circle_radius;
+
+      if(!read_orientation(is, orientation))
+        return false;
+
+      Circle_2 c = Circle_2 (circle_center, circle_radius, orientation);
+      
+      is >> point_x >> point_y;
+      ps = Point_2 ( Number_type(point_x, 1), Number_type(point_y, 1) );
+
+      is >> point_x >> point_y;
+      pt = Point_2 ( Number_type(point_x, 1), Number_type(point_y, 1) );
+
+      X_monotone_segment_2 x_seg (c, ps, pt, c.orientation());
+      x_segments.push_back( x_seg );
+    }
+
+    else
+    {
+      std::cerr << "Illegal Circle segment type specification: " << type << "." << std::endl;
+      return false;
+    }
+  } //for loop
+  
+  //construct x-monotone polycurve
+  xcv = m_geom_traits.construct_x_monotone_curve_2_object()(x_segments.begin(), x_segments.end());
+
   return true;
 }
 
-/*! Read a general circle segment curve */
 template <>
 template <typename stream>
 bool IO_base_test<Base_geom_traits>::read_curve(stream& is, Curve_2& cv)
 {
-  bool ans = true;
-  char type;
-  is >> type;
+  std::vector<Segment_2> segments;
 
-  unsigned int number_of_curves;
-  is >> number_of_curves;
+   char type;
+   is >> type;
 
-  Base_Segment_2 tmp_cv;
-  std::vector<Base_Segment_2> curves;
+   unsigned int number_of_segments;
+   is >> number_of_segments;
 
-  for(int i=0; i<number_of_curves; i++)
+   CGAL::Orientation orientation;
+
+  for(unsigned int i=0; i<number_of_segments; i++)
   {
-  
-    if ((type == 'a') || (type == 'A')) 
+
+    if ((type == 'c') || (type == 'C')) 
     {
-      Rat_point_2 ps, pt;
-      is >> ps >> pt;
-      Segment_2 s(ps, pt);
-      //tmp_cv = Base_Segment_2(s);
-      curves.push_back( Base_Segment_2(s) );
-      //return true;
-    }
-    
-    else if ((type == 'b') || (type == 'B')) 
-    {
-      Rat_point_2 ps, pt;
-      is >> ps >> pt;
-      //cv = Curve_2(ps, pt);
-      //return true;
-      curves.push_back( Base_Segment_2(ps, pt) );
-    }
-    
-    else if ((type == 'c') || (type == 'C')) 
-    {
-      Line_2 l;
+      Rat_point_2 circle_center;
       Point_2 ps, pt;
-      is >> l;
-      ans &= read_ort_point(is, ps);
-      ans &= read_ort_point(is, pt);
-      //cv = Curve_2(l, ps, pt);
-      //return ans;
-      curves.push_back( Base_Segment_2(l, ps, pt) );
-    }
-    
-    else if ((type == 'd') || (type == 'D')) 
-    {
-      Circle_2 c;
-      is >> c;
-      //cv = Curve_2(c);
-      curves.push_back( Base_Segment_2(c) );
-      //return true;
+      Rat_nt circle_radius;
+      
+      int point_x, point_y;
+      is >> point_x >> point_y;
+      circle_center = Rat_point_2(point_x, point_y);
+
+      is >> circle_radius;
+
+      if(!read_orientation(is, orientation))
+        return false;
+      
+      is >> point_x >> point_y;
+      ps = Point_2 ( Number_type(point_x, 1), Number_type(point_y, 1) );
+
+      is >> point_x >> point_y;
+      pt = Point_2 ( Number_type(point_x, 1), Number_type(point_y, 1) );
+
+      Segment_2 tmp_seg (circle_center, circle_radius, orientation, ps, pt);
+      segments.push_back( tmp_seg );
     }
 
-    else if ((type == 'e') || (type == 'E')) 
-    {
-      Rat_point_2 p;
-      Rat_nt r;
-      int orient;
-      is >> p >> r >> orient;
-      //cv = Curve_2(p, r, static_cast<CGAL::Orientation>(orient));
-      //return true;
-      curves.push_back( Base_Segment_2(p, r, static_cast<CGAL::Orientation>(orient)) );
-    }
-
-    else if ((type == 'f') || (type == 'F')) 
-    {
-      Circle_2 c;
-      Point_2 ps, pt;
-      is >> c;
-      ans &= read_ort_point(is, ps);
-      ans &= read_ort_point(is, pt);
-      //cv = Curve_2(c, ps, pt);
-      //return ans;
-      curves.push_back( Base_Segment_2(c, ps, pt) );
-    }
-
-     else if ((type == 'g') || (type == 'G')) 
-    {
-      Rat_point_2 p;
-      Rat_nt r;
-      int orient;
-      Point_2 ps, pt;
-      is >> p >> r >> orient;
-      ans &= read_ort_point(is, ps);
-      ans &= read_ort_point(is, pt);
-      //cv = Curve_2(p,r,static_cast<CGAL::Orientation>(orient), ps, pt);
-      //return ans;
-      curves.push_back( Base_Segment_2( p,r,static_cast<CGAL::Orientation>(orient), ps, pt ) );
-    }
-
-    else if ((type == 'h') || (type == 'H')) 
-    {
-      Rat_point_2 ps, pm, pt;
-      is >> ps >> pm >> pt;
-      //cv = Curve_2(ps, pm, pt);
-      //return true;
-     curves.push_back( Base_Segment_2( ps, pm, pt ) ); 
-    }
-
-    // If we reached here, we have an unknown conic type:
     else
     {
-      std::cerr << "Illegal circle segment type specification: " << type << std::endl;
+      std::cerr << "Illegal Circle segment type specification: " << type << "." << std::endl;
       return false;
     }
   } //for loop
-
-  //construct the polycurve 
-    cv = m_geom_traits.construct_curve_2_object()(curves.begin(), curves.end());
+  
+  //construct polycurve
+  cv = m_geom_traits.construct_curve_2_object()(segments.begin(), segments.end());
 
   return true;
 }
 
+template <>
+template <typename stream>
+bool IO_base_test<Base_geom_traits>::read_segment(stream& is, Segment_2& seg)
+{
+  //we dont need to check this type as it has already been checked in the IO_test.h
+  char type;
+  is >> type;
 
+
+  Rat_point_2 circle_center;
+  Point_2 ps, pt;
+  Rat_nt circle_radius;
+  
+  int point_x, point_y;
+  is >> point_x >> point_y;
+  circle_center = Rat_point_2(point_x, point_y);
+
+  is >> circle_radius;
+
+  CGAL::Orientation orientation;
+
+  if(!read_orientation(is, orientation))
+    return false;
+  
+  is >> point_x >> point_y;
+  ps = Point_2 ( Number_type(point_x, 1), Number_type(point_y, 1) );
+
+  is >> point_x >> point_y;
+  pt = Point_2 ( Number_type(point_x, 1), Number_type(point_y, 1) );
+
+  Segment_2 tmp_seg (circle_center, circle_radius, orientation, ps, pt);
+
+  seg = tmp_seg;
+
+  return true;
+}
+
+template <>
+template <typename stream>
+bool IO_base_test<Base_geom_traits>::read_xsegment(stream& is,
+                                                 X_monotone_segment_2& xseg)                               //read x-segment
+{
+  //we dont need to check this type as it has already been checked in the IO_test.h
+  char type;
+  is >> type;
+  
+  CGAL::Orientation orientation;
+
+  Rat_point_2 circle_center;
+  Point_2 ps, pt;
+  Rat_nt circle_radius;
+  
+  int point_x, point_y;
+  is >> point_x >> point_y;
+  circle_center = Rat_point_2(point_x, point_y);
+
+  is >> circle_radius;
+
+  if(!read_orientation(is, orientation))
+    return false;
+
+  Circle_2 c = Circle_2 (circle_center, circle_radius, orientation);
+  
+  is >> point_x >> point_y;
+  ps = Point_2 ( Number_type(point_x, 1), Number_type(point_y, 1) );
+
+  is >> point_x >> point_y;
+  pt = Point_2 ( Number_type(point_x, 1), Number_type(point_y, 1) );
+
+  X_monotone_segment_2 x_seg (c, ps, pt, c.orientation());
+  xseg = x_seg;
+
+
+  return true;
+} 
 
 
 

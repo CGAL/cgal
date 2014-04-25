@@ -67,11 +67,6 @@
 #include <CGAL/CORE_algebraic_number_traits.h>
 #include <CGAL/Arr_polyline_traits_2.h>
 #include <CGAL/Arr_conic_traits_2.h>
-// #include <CGAL/Cartesian.h>
-// #include <CGAL/Quotient.h>
-// #include <CGAL/MP_Float.h>
-// #include <vector>
-// #include <list>
 
 
 #elif TEST_GEOM_TRAITS == POLYCURVE_CIRCULAR_ARC_GEOM_TRAITS
@@ -215,14 +210,14 @@ typedef CGAL::Arr_polyline_traits_2<Conic_traits_2>                       Base_g
 typedef Conic_traits_2::Rat_point_2                   Rat_point;
 typedef Conic_traits_2::Rat_circle_2                  Rat_circle;
 typedef Conic_traits_2::Rat_segment_2                 Rat_segment;
+
+// Poly curves needs some testing where Segments and X-monotone segments are required 
+// instead of polycurves/x-monotone polycurves.
+typedef Base_geom_traits::Segment_2               Segment_2;
+typedef Base_geom_traits::X_monotone_segment_2    X_monotone_segment_2;
 #define GEOM_TRAITS_TYPE "Polycurves_conics"
 
 #elif TEST_GEOM_TRAITS == POLYCURVE_CIRCULAR_ARC_GEOM_TRAITS
-// typedef Kernel                                                		Linear_kernel;
-// typedef CGAL::Algebraic_kernel_for_circles_2_2<Number_type>   		Algebraic_kernel;
-// typedef CGAL::Circular_kernel_2<Linear_kernel,Algebraic_kernel>		Circular_kernel;
-// typedef CGAL::Arr_circular_arc_traits_2<Circular_kernel>      		Circular_arc_traits;
-// typedef CGAL::Arr_polyline_traits_2<Circular_arc_traits>      		Base_geom_traits;
 typedef CGAL::Cartesian<Number_type>                          	 Rat_kernel;
 typedef CGAL::Arr_circle_segment_traits_2<Kernel>             	 Circle_segment_traits_2;
 typedef CGAL::Arr_polyline_traits_2<Circle_segment_traits_2>     Base_geom_traits;
@@ -230,8 +225,14 @@ typedef CGAL::Arr_polyline_traits_2<Circle_segment_traits_2>     Base_geom_trait
 typedef Rat_kernel::FT                                        Rat_nt;
 typedef Rat_kernel::Circle_2                                  Circle_2;
 typedef Rat_kernel::Line_2                                    Line_2;
-typedef Rat_kernel::Segment_2                                 Segment_2;
+// typedef Rat_kernel::Segment_2                                 Segment_2;
 typedef Rat_kernel::Point_2                                   Rat_point_2;
+typedef Circle_segment_traits_2::Point_2 					  Point_2;
+
+// Poly curves needs some testing where Segments and X-monotone segments are required 
+// instead of polycurves/x-monotone polycurves.
+typedef Base_geom_traits::Segment_2               Segment_2;
+typedef Base_geom_traits::X_monotone_segment_2    X_monotone_segment_2;
 #define GEOM_TRAITS_TYPE "Polycurves_circular_arcs"
 
 #else

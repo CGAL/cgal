@@ -1,0 +1,4 @@
+## -*- comment-start: "#"; -*-
+#
+# Format: <command> <x-curve id> <expected x-curve id>
+construct_opposite 2 3

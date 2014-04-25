@@ -14,5 +14,6 @@ equal_points 2 1 false
 # <command> <curve 1> <curve 2> <expected result>
 #
 equal_curves 0 1 false
-equal_curves 3 3 true
-equal_curves 1 2 false
+equal_curves 1 0 false
+equal_curves 1 1 true
+equal_curves 0 0 true
