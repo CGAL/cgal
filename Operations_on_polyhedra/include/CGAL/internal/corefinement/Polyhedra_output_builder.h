@@ -39,36 +39,6 @@ namespace CGAL{
 
 namespace internal_IOP{
 
-
-template <class Halfedge_handle,class Marked_set>
-Halfedge_handle
-next_marked_halfedge_around_target_vertex(Halfedge_handle h, const Marked_set& is_marked)
-{
-  CGAL_assertion( is_marked.find(h)!=is_marked.end() );
-  Halfedge_handle next=h->next();
-  while( is_marked.find(next)==is_marked.end() )
-  {
-    next=next->opposite()->next();
-  }
-  while(is_marked.find(next)==is_marked.end());
-  CGAL_assertion(next!=h);
-  return next;
-}
-
-template <class Halfedge_handle,class Marked_set>
-Halfedge_handle
-next_marked_halfedge_around_source_vertex(Halfedge_handle h, const Marked_set& is_marked)
-{
-  CGAL_assertion( is_marked.find(h)!=is_marked.end() );
-  Halfedge_handle prev=h->prev();
-  while(is_marked.find(prev)==is_marked.end())
-  {
-    prev=prev->opposite()->prev();
-  }
-  CGAL_assertion(prev!=h);
-  return prev;
-}
-
 #ifdef DEFINE_UNUSED_CLASSES
 template <class Polyhedron, bool reverse_patch_orientation>
 struct Import_patch_helper;

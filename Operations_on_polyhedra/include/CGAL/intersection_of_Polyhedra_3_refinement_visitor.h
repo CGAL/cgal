@@ -31,6 +31,7 @@
 #include <CGAL/property_map.h>
 #include <boost/optional.hpp>
 #include <boost/next_prior.hpp>
+#include <boost/foreach.hpp>
 
 #include <fstream>
 #include <sstream>
@@ -238,6 +239,35 @@ namespace CGAL
       }
     }
   };
+
+  template <class Halfedge_handle,class Marked_set>
+  Halfedge_handle
+  next_marked_halfedge_around_target_vertex(Halfedge_handle h, const Marked_set& is_marked)
+  {
+    CGAL_assertion( is_marked.find(h)!=is_marked.end() );
+    Halfedge_handle next=h->next();
+    while( is_marked.find(next)==is_marked.end() )
+    {
+      next=next->opposite()->next();
+    }
+    while(is_marked.find(next)==is_marked.end());
+    CGAL_assertion(next!=h);
+    return next;
+  }
+
+  template <class Halfedge_handle,class Marked_set>
+  Halfedge_handle
+  next_marked_halfedge_around_source_vertex(Halfedge_handle h, const Marked_set& is_marked)
+  {
+    CGAL_assertion( is_marked.find(h)!=is_marked.end() );
+    Halfedge_handle prev=h->prev();
+    while(is_marked.find(prev)==is_marked.end())
+    {
+      prev=prev->opposite()->prev();
+    }
+    CGAL_assertion(prev!=h);
+    return prev;
+  }
 
   } //namespace internal_IOP
 
@@ -1095,6 +1125,39 @@ public:
     }
     output_builder(border_halfedges, nodes, an_edge_per_polyline, polyhedron_to_map_node_to_polyhedron_vertex);
   }
+
+  template <class PolylineOfHalfedgeOutputIterator, class Marked_set>
+  PolylineOfHalfedgeOutputIterator
+  explicitly_compute_polylines(
+    Polyhedron* P,
+    const Marked_set& is_marked,
+    PolylineOfHalfedgeOutputIterator out)
+  {
+    typedef std::pair< const std::pair<int,int>,
+                       std::pair< std::map<Polyhedron*,Halfedge_handle>,
+                                  std::pair<bool,int> > >  Complicated_pair;
+    BOOST_FOREACH(
+      Complicated_pair& p,
+      an_edge_per_polyline)
+    {
+      const std::pair<bool,int>& reversed_and_nbpts = p.second.second;
+      Halfedge_handle hedge = p.second.first[P];
+      std::vector<Halfedge_handle> polyline;
+      int nbsegments=reversed_and_nbpts.second-1;
+      polyline.reserve( nbsegments );
+      polyline.push_back( reversed_and_nbpts.first?hedge->opposite():hedge );
+      for (int i=1; i<nbsegments; ++i)
+      {
+        hedge = internal_IOP::
+          next_marked_halfedge_around_target_vertex (hedge, is_marked);
+        polyline.push_back( hedge );
+      }
+      *out++=polyline;
+    }
+
+    return out;
+  }
+
 };
 
 }//namespace CGAL
