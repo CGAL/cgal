@@ -33,6 +33,8 @@
 #include <vector>
 #include <stack>
 
+#include <boost/unordered_set.hpp>
+
 #include <CGAL/utility.h>
 #include <CGAL/iterator.h>
 
@@ -820,7 +822,11 @@ public:
   template<class Treatment, class OutputIterator, class Filter>
   class Vertex_extractor {
     Vertex_handle v;
+#ifdef CGAL_VERTEX_EXTRACTOR_USE_UNORDERED_SET
+    boost::unordered_set<Vertex_handle, Handle_hash_function> tmp_vertices;
+#else
     std::set<Vertex_handle> tmp_vertices;
+#endif
     Treatment treat;
     const Tds* t;
     Filter filter;
