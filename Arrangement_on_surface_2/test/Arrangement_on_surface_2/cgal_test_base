@@ -1111,7 +1111,8 @@ test_polycurve_conic_traits()
       NUMBER_OF_POINTS \
       VERTEX \
       CONSTRUCT_OPPOSITE \
-      MERGE
+      MERGE \
+      COMPARE_ENDPOINTS_XY
 
   else
     echo "   ERROR:    not executed   test_traits polyline_traits" >> $ERRORFILE
@@ -1137,7 +1138,15 @@ test_polycurve_circular_arc_traits()
     ARE_MERGEABLE \
     CONSTRUCT_OPPOSITE \
     PUSH_BACK \
-    PUSH_FRONT
+    PUSH_FRONT \
+    COMPARE_X_POLYCURVE \
+    COMPARE_XY_POLYCURVE \
+    NUMBER_OF_POINTS \
+    COMPARE_ENDPOINTS_XY \
+    IS_VERTICAL \
+    VERTEX
+
+
     
   else
    echo "   ERROR:    not executed   test_traits polyline_traits" >> $ERRORFILE

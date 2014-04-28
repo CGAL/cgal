@@ -570,11 +570,11 @@ compare_xy_polycurve_wrapper (std::istringstream& str_stream)
   unsigned int expected_answer = this->get_expected_enum(str_stream);
   
   std::cout << "Test: compare_xy( " << this->m_xsegments[id1] << "at " << ((end1 == 0) ? "MIN_END" : "MAX_END") << " vs "
-                                   << this->m_xsegments[id2] << "at " << ((end2 == 0) ? "MIN_END" : "MAX_END") << " ) ? " 
-                                   << expected_answer << " ";
+                                    << this->m_xsegments[id2] << "at " << ((end2 == 0) ? "MIN_END" : "MAX_END") << " ) ? " 
+                                    << expected_answer << " ";
 
   unsigned int real_answer =
-    this->m_geom_traits.compare_x_2_object()(this->m_xsegments[id1], ((end1 == 0) ? CGAL::ARR_MIN_END : CGAL::ARR_MAX_END),
+    this->m_geom_traits.compare_xy_2_object()(this->m_xsegments[id1], ((end1 == 0) ? CGAL::ARR_MIN_END : CGAL::ARR_MAX_END),
                                              this->m_xsegments[id2], ((end2 == 0) ? CGAL::ARR_MIN_END : CGAL::ARR_MAX_END) );
 
   return this->compare(expected_answer, real_answer);
@@ -586,6 +586,8 @@ number_of_points_wrapper (std::istringstream& str_stream)
 {
   unsigned int id, expected_result;
   str_stream >> id >> expected_result;
+
+  std::cout << "Test: Number_of_points( " << this->m_curves[id] << " ) ? " ;
 
   unsigned int real_answer = 
       this->m_geom_traits.number_of_points_2_object()(this->m_curves[id]);

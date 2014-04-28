@@ -32,8 +32,8 @@ x 2 0 0 1 -1 -1 0 1 0 3 0 2 -1 1 0 5 0
 x 2 6 0 1 -1 5 0 7 0 8 0 1 -1 7 0 9 0
 #
 # Fourth Quadrant (opposite of polycurve id 2)
-# Curve 1: Circle center: (8,0), Radius: 1, Source: (9,0), Target: (7,0) (Clockwise)
-# Curve 2: Circle center: (6,0), Radius: 1, Source: (7,0), Target: (5,0) (Clockwise)
+# Curve 1: Circle center: (8,0), Radius: 1, Source: (9,0), Target: (7,0) (Counter-Clockwise)
+# Curve 2: Circle center: (6,0), Radius: 1, Source: (7,0), Target: (5,0) (Counter-Clockwise)
 # Polycurve id: 3
 x 2 8 0 1 1 9 0 7 0 6 0 1 1 7 0 5 0 
 #
@@ -64,3 +64,7 @@ s 10 0 5 -1 5 0 15 0
 # Curve : Circle center: (-10,5), Radius: 1, Source: (-11,5), Target: (-10,6) (Clockwise)
 # Segment Id: 1
 s -10 5 1 -1 -11 5 -10 6
+#
+# Curve: Circle center: (10,10),Radius: 5, Source: (5,10),  Target: (15,10)(Clockwise)
+# Segment Id: 2
+s 10 10 5 -1 5 10 15 10
