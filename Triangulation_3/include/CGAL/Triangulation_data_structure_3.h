@@ -822,11 +822,11 @@ public:
   template<class Treatment, class OutputIterator, class Filter>
   class Vertex_extractor {
     Vertex_handle v;
-#ifdef CGAL_VERTEX_EXTRACTOR_USE_UNORDERED_SET
+#if defined( CGAL_VERTEX_EXTRACTOR_USE_UNORDERED_SET )
     boost::unordered_set<Vertex_handle, Handle_hash_function> tmp_vertices;
-#elif defined (CGAL_VERTEX_EXTRACTOR_USE_FLAT_SET)
+#elif defined( CGAL_VERTEX_EXTRACTOR_USE_FLAT_SET )
     boost::container::flat_set<Vertex_handle> tmp_vertices;
-#else
+#elif defined( CGAL_VERTEX_EXTRACTOR_USE_SET )
     std::set<Vertex_handle> tmp_vertices;
 #endif
     Treatment treat;
@@ -845,10 +845,18 @@ public:
 	Vertex_handle w = c->vertex(j);
 	if(filter(w))
 	  continue;
-	if (w != v)
+	if (w != v){
+#if defined (CGAL_VERTEX_EXTRACTOR_USE_BOOL_IN_VERTEX)
+          if(! w->visited){
+            w->visited = true;
+	    treat(c, v, j);
+          }
+#else
 	  if(tmp_vertices.insert(w).second) {
 	    treat(c, v, j);
 	  }
+#endif
+        }
       }
     }
 
@@ -1046,6 +1054,15 @@ public:
     {
       (*cit)->tds_data().clear();
       visit(*cit);
+    } 
+    for(cit = tmp_cells.begin();
+	cit != tmp_cells.end();
+	++cit)
+    {
+      (*cit)->vertex(0)->visited = false;
+      (*cit)->vertex(1)->visited = false;
+      (*cit)->vertex(2)->visited = false;
+      (*cit)->vertex(3)->visited = false;
     }
     return visit.result();
   }

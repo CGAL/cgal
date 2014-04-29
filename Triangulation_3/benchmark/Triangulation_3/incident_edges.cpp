@@ -1,6 +1,7 @@
 
 //#define CGAL_VERTEX_EXTRACTOR_USE_UNORDERED_SET
-#define CGAL_VERTEX_EXTRACTOR_USE_FLAT_SET
+// #define CGAL_VERTEX_EXTRACTOR_USE_FLAT_SET
+#define CGAL_VERTEX_EXTRACTOR_USE_BOOL_IN_VERTEX
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Delaunay_triangulation_3.h>

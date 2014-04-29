@@ -37,10 +37,10 @@ public:
   struct Rebind_TDS { typedef Triangulation_ds_vertex_base_3<TDS2> Other; };
 
   Triangulation_ds_vertex_base_3()
-    : _c() {}
+    : _c(), visited(false) {}
 
   Triangulation_ds_vertex_base_3(Cell_handle c)
-    : _c(c) {}
+    : _c(c), visited(false) {}
 
   Cell_handle cell() const
   { return _c; }
@@ -64,6 +64,8 @@ public:
 
 private:
   Cell_handle _c;
+  public:
+  bool visited;
 };
 
 template < class TDS >
