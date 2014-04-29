@@ -70,7 +70,6 @@ public:
   typedef typename BGT::Sphere_3   Sphere_3;
   typedef CGAL::Bbox_3             Bbox_3;
 
-protected:
   typedef typename BGT::Iso_cuboid_3 Iso_cuboid_3;
 
 public:
@@ -455,12 +454,6 @@ private:
     return Iso_cuboid_3(p_min,p_max);
   }
   
-<<<<<<< HEAD
-public:
-  const Iso_cuboid_3& periodic_cuboid() const { return bounding_box(); }
-
-=======
->>>>>>> Labeled_mesh_domain_3 has a new constructor taking an Iso_cuboid.
 protected:
   /// Returns bounding box
   const Iso_cuboid_3& bounding_box() const { return bbox_; }
