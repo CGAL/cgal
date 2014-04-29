@@ -34,7 +34,7 @@
 #include <stack>
 
 #include <boost/unordered_set.hpp>
-
+#include <boost/container/flat_set.hpp>
 #include <CGAL/utility.h>
 #include <CGAL/iterator.h>
 
@@ -824,6 +824,8 @@ public:
     Vertex_handle v;
 #ifdef CGAL_VERTEX_EXTRACTOR_USE_UNORDERED_SET
     boost::unordered_set<Vertex_handle, Handle_hash_function> tmp_vertices;
+#elif defined (CGAL_VERTEX_EXTRACTOR_USE_FLAT_SET)
+    boost::container::flat_set<Vertex_handle> tmp_vertices;
 #else
     std::set<Vertex_handle> tmp_vertices;
 #endif
@@ -832,7 +834,12 @@ public:
     Filter filter;
   public:
     Vertex_extractor(Vertex_handle _v, OutputIterator _output, const Tds* _t, Filter _filter):
-    v(_v), treat(_output), t(_t), filter(_filter) {}
+    v(_v), treat(_output), t(_t), filter(_filter) {
+#ifdef CGAL_VERTEX_EXTRACTOR_USE_FLAT_MAP
+      tmp_vertices.reserve(64);
+#endif
+    }
+
     void operator()(Cell_handle c) {
       for (int j=0; j<= t->dimension(); ++j) {
 	Vertex_handle w = c->vertex(j);
