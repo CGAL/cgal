@@ -421,6 +421,7 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 #
   if(TARGET CGAL_Qt4)
     export(TARGETS CGAL_Qt4 FILE polyhedron_demo_targets.cmake NAMESPACE Polyhedron_)
+    export(TARGETS CGAL CGAL_Qt4 FILE polyhedron_demo_targets.cmake NAMESPACE Polyhedron_)
   else()
     export(TARGETS FILE polyhedron_demo_targets.cmake)
   endif()
