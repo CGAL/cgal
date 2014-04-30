@@ -163,7 +163,11 @@ void test2(){
   PoL pol Kinit(position_on_line_d_object);
 
   P a=cp(3,4);
-  P b=cp(5,6,7);
+  assert(pv(a)[1]==4);
+  P b=vp(cv(5,6,7));
+  assert(fabs(b[0]-5./7)<.0001);
+  assert(lc(b,a,1));
+  assert(!lc(a,b,0));
   int rr[]={3,5,2};
   int* r=rr;
   P c=cp(r,r+2);
@@ -284,6 +288,7 @@ template<class CP> struct Construct_point3_helper {
 template<class Ker>
 void test3(){
   typedef Ker K1;
+  //typedef typename K1::FT FT;
   typedef typename K1::Point_d P;
   typedef typename K1::Cartesian_const_iterator_d CI;
   typedef typename K1::Vector_d V;
@@ -341,6 +346,12 @@ void test3(){
   P a; // Triangulation needs this :-(
   a=cp(2,3,4);
   P b=cp(5,6,7,8);
+  assert(ed(a,a));
+  assert(!ed(a,b));
+  assert(ca.dimension(a)==3);
+  assert(ca.cartesian(a,1)==3);
+  assert(ca.homogeneous(a,1)==3);
+  assert(ca.homogeneous(a,3)==1);
   int rr[]={3,5,2,3};
   int* r=rr;
   P c=cp_(3,r,r+3);
@@ -354,6 +365,7 @@ void test3(){
     std::cout << *i << ' ';
   std::cout << '\n';
   P e=cp(-2,3,0);
+  assert(fabs(sd(e,a)-32)<.0001);
   P tab[]={a,b,c,d,e};
   std::cout << po (&tab[0],tab+4) << ' ';
   std::cout << sos(&tab[0],tab+5) << ' ';

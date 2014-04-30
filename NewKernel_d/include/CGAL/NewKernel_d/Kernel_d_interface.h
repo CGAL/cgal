@@ -62,7 +62,8 @@ template <class Base_> struct Kernel_d_interface : public Base_ {
 	typedef typename Get_functor<Base, Construct_ttag<Iso_box_tag> >::type Construct_iso_box_d;
 	typedef typename Get_functor<Base, Construct_ttag<Aff_transformation_tag> >::type Construct_aff_transformation_d;
 	typedef typename Get_functor<Base, Midpoint_tag>::type Midpoint_d;
-	struct Component_accessor_d : private Store_kernel<R_> {
+	struct Component_accessor_d : private Store_kernel<Kernel> {
+	  typedef Kernel R_; // for the macro
 	  CGAL_FUNCTOR_INIT_STORE(Component_accessor_d)
 	  int dimension(Point_d const&p){
 	    return this->kernel().point_dimension_d_object()(p);
