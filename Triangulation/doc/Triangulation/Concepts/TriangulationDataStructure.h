@@ -82,16 +82,12 @@ public:
 // @{
 
 /*!
-
 The vertex type. A model of the concept `TriangulationDSVertex`.
-
 */
 typedef Hidden_type Vertex;
 
 /*!
-
 The full cell type. A model of the concept `TriangulationDSFullCell`.
-
 */
 typedef Hidden_type Full_cell;
 
@@ -101,15 +97,14 @@ A model of the concept `FullCellData`.
 \cgalModifEnd
 */ 
 typedef Hidden_type Full_cell_data; 
-/*!
 
+/*!
 The concept `TriangulationDataStructure` also defines a type for
 describing faces of the triangulation with codimension 1.
 
 The constructor `Facet(c,i)` constructs a `Facet` representing the facet of
 full cell `c` opposite to its `i`-th vertex. Its dimension is
 `current_dimension()-1`.
-
 */
 typedef Hidden_type Facet;
 
@@ -127,16 +122,12 @@ typedef Hidden_type Face;
 /// operators and `operator->`. 
 
 /*!
-
 Handle to a `Vertex`.
-
 */
 typedef Hidden_type Vertex_handle;
 
 /*!
-
 Handle to a `Full_cell`.
-
 */
 typedef Hidden_type Full_cell_handle;
 
@@ -171,21 +162,17 @@ typedef Hidden_type template <typename Fcb2> struct Rebind_full_cell;
 /// @{
 
 /*!
-
 Iterator over the list of vertices.
-
 */
 typedef Hidden_type Vertex_iterator;
 
-/*!
-
+/*!?
 Iterator over the list of full cells.
 
 */
 typedef Hidden_type Full_cell_iterator;
 
-/*!
-
+/*!?
 Iterator over the facets of the complex.
 
 */
@@ -352,17 +339,13 @@ and `c!=Full_cell_handle()`.
 */
 Vertex_handle mirror_vertex(Full_cell_handle c, int i) const;
 
-/*!
-
+/*
 The first vertex of `tds`. User has no control on the order.
-
 */
 Vertex_iterator vertices_begin();
 
 /*!
-
 The beyond vertex of `tds`.
-
 */
 Vertex_iterator vertices_end();
 
@@ -389,16 +372,12 @@ and `c != Full_cell_handle()`
 Full_cell_handle neighbor(Full_cell_handle c, int i) const;
 
 /*!
-
 The first full cell of `tds`. User has no control on the order.
-
 */
 Full_cell_iterator full_cells_begin();
 
 /*!
-
 The beyond full cell of `tds`.
-
 */
 Full_cell_iterator full_cells_end();
 

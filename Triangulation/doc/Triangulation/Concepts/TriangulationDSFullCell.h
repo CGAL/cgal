@@ -274,7 +274,6 @@ bool has_neighbor(Full_cell_handle n, int & ret) const;
 /// @{
 
 /*!
-
 Performs some validity checks on the full cell `c`.
 
 \cgalDebug It must <I>at least</I> check that for each <I>existing</I> neighbor `n`,
