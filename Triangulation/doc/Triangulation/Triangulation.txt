@@ -334,6 +334,21 @@ As long as no <I>advanced</I> class method is called, it is guaranteed
 that all finite full cells have positive orientation. The infinite full cells are
 oriented as if the infinite vertex have been on the the other side
 of the hyperplane supported by the convex hull facets that the other points.
+
+## Dimensions ##
+
+In a triangulation, we can distinguish three dimensions:
+<UL>
+<LI>The <i>ambient</i> dimension, which is the dimension of the ambient 
+    space, i.e. the dimension of the points.
+<LI>The <i>maximal</i> dimension, which is the maximal dimension the 
+    triangulation can achieve. It is the same as the maximal dimension of the
+    triangulation data structure and also the same as the dimension of the 
+    `TriangulationTraits`.
+<LI>The <i>current</i> dimension, which is the current dimension of 
+    the triangulation.
+</UL>
+
 \cgalModifEnd
 
 ## Implementation ##
@@ -348,8 +363,8 @@ The template parameter `TriangulationTraits` must be a model of the concept
 as various geometric predicates used by the `Triangulation` class.
 
 \cgalModifBegin
-The dimension of the predicates provided by `TriangulationTraits` must match
-the dimension of the `TriangulationDataStructure`.
+`TriangulationTraits::Dimension` must match
+the maximal dimension of the `TriangulationDataStructure`.
 \cgalModifEnd
 
 \cgalModifBegin

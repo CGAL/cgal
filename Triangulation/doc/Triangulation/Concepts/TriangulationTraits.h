@@ -31,12 +31,15 @@ public:
 /*!
 \cgalModifBegin
 A type representing the dimension of the `Orientation_d` predicate 
-(but not necessarily the one of `Point_d`). 
-Tt can be static (`Dimension`=`CGAL::``Dimension_tag<int dim>`) or 
+(but not necessarily the one of `Point_d`). If \f$ n \f$ is the number of
+points required by the `Orientation_d` predicate, then 
+`Dimension` \f$ = n - 1\f$. See the User Manual for more information about
+dimensions.
+It can be static (`Dimension`=`CGAL::``Dimension_tag<int dim>`) or 
 dynamic (`Dimension`=`CGAL::``Dynamic_dimension_tag`).
 \cgalModifEnd
 */ 
-typedef Hidden_type Dimension; 
+typedef Hidden_type Dimension;
 
 /*! 
 A type representing a point in Euclidean space. It must be 
@@ -86,16 +89,13 @@ typedef Hidden_type Contained_in_affine_hull_d;
 /// use the following classes:
 /// @{
 
-/*! 
-
+/*!
 A type representing an orientation of an affine subspace of 
 dimension \f$ k\f$ strictly smaller than the maximal dimension. 
-
 */ 
 typedef Hidden_type Flat_orientation_d; 
 
-/*! 
-
+/*!
 A construction object that must 
 provide the templated operator 
 `template<typename ForwardIterator> Flat_orientation_d operator()(ForwardIterator start, ForwardIterator end)`. 
@@ -112,12 +112,10 @@ The points in range
 `[start,end)` must be affinely independent.
 \cgalModifEnd
 \f$ 2\leq k\leq D\f$. 
-
 */ 
 typedef Hidden_type Construct_flat_orientation_d; 
 
-/*! 
-
+/*!
 A predicate object that must provide the 
 templated operator 
 `template<typename ForwardIterator> Orientation operator()(Flat_orientation_d orient,ForwardIterator start, ForwardIterator end)`. 
@@ -130,11 +128,10 @@ whose orientation is given by `orient`.
 \pre `std::distance(start,end)=k` where \f$ k\f$ is the number of 
 points used to construct `orient`. 
 \f$ 2\leq k\leq D\f$. 
-
 */ 
 typedef Hidden_type In_flat_orientation_d; 
 
-/*! 
+/*!
 A predicate object that must 
 provide the operator 
 `Comparison_result operator()(const Point_d & p, const Point_d & q)`. 
