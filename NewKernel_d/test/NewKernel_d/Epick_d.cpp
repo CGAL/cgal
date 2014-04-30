@@ -112,6 +112,8 @@ void test2(){
   typedef typename K1::Construct_iso_box_d CIB;
   typedef typename K1::Construct_aff_transformation_d CAT;
   typedef typename K1::Position_on_line_d PoL;
+  typedef typename K1::Equal_d E;
+  typedef typename K1::Squared_distance_d SD;
 
   // FIXME: really test everything at least once (clang warnings can list untested things).
   USE_TYPE(FO);
@@ -161,8 +163,11 @@ void test2(){
   CIB cib Kinit(construct_iso_box_d_object);
   CAT cat Kinit(construct_aff_transformation_d_object);
   PoL pol Kinit(position_on_line_d_object);
+  E ed Kinit(equal_d_object);
+  SD sd Kinit(squared_distance_d_object);
 
   P a=cp(3,4);
+  assert(pd(a)==2);
   assert(pv(a)[1]==4);
   P b=vp(cv(5,6,7));
   assert(fabs(b[0]-5./7)<.0001);
@@ -171,6 +176,16 @@ void test2(){
   int rr[]={3,5,2};
   int* r=rr;
   P c=cp(r,r+2);
+  assert(!ll(a,a));
+  assert(lel(a,a));
+  assert(cl(a,a)==CGAL::EQUAL);
+  assert(ll(a,c));
+  assert(!lel(c,a));
+  assert(cl(a,c)==CGAL::SMALLER);
+  assert(ll(b,c));
+  assert(cl(c,b)==CGAL::LARGER);
+  assert(fabs(m(a,c)[0]-3)<.0001);
+  assert(fabs(m(a,c)[1]-4.5)<.0001);
   P d=cp(r,r+3,CGAL::Homogeneous_tag());
   S s=cs(c,d);
   std::cout << cc(a,1) << std::endl;
@@ -268,6 +283,15 @@ void test2(){
   assert(fabs(cent1[0]-2)<.0001);
   assert(fabs(cent1[1]+3)<.0001);
   assert(fabs(sp.squared_radius()-25)<.0001);
+  P psp0=ps(sp,0);
+  P psp1=ps(sp,1);
+  P psp2=ps(sp,2);
+  assert(!ed(psp0,psp1));
+  assert(!ed(psp0,psp2));
+  assert(!ed(psp2,psp1));
+  assert(fabs(sd(cent0,psp0)-25)<.0001);
+  assert(fabs(sd(cent0,psp1)-25)<.0001);
+  assert(fabs(sd(cent0,psp2)-25)<.0001);
 }
 
 template<class CP> struct Construct_point3_helper {
@@ -315,6 +339,7 @@ void test3(){
   typedef typename K1::Component_accessor_d CA;
   typedef typename K1::Equal_d E;
   typedef typename K1::Squared_distance_d SD;
+  typedef typename K1::Point_dimension_d PD;
 
   USE_TYPE(V);
   USE_TYPE(CV);
@@ -343,8 +368,10 @@ void test3(){
   CA ca Kinit(component_accessor_d_object);
   E ed Kinit(equal_d_object);
   SD sd Kinit(squared_distance_d_object);
+  PD pd Kinit(point_dimension_d_object);
   P a; // Triangulation needs this :-(
   a=cp(2,3,4);
+  assert(pd(a)==3);
   P b=cp(5,6,7,8);
   assert(ed(a,a));
   assert(!ed(a,b));

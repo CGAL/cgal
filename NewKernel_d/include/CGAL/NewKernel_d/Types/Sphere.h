@@ -120,8 +120,9 @@ template<class R_> struct Point_of_sphere : private Store_kernel<R_> {
     Point const&c = s.center();
     int d=pd(c);
     bool last = (i == d);
-    Trans t(last ? 0 : i, sqrt(s.radius()), !last);
-    return CP(this->kernel())(make_transforming_pair_iterator(ci(c,Begin_tag()),Count(0),t),make_transforming_pair_iterator(ci(c,End_tag()),Count(d+1),t));
+    FT r = sqrt(s.squared_radius());
+    Trans t(last ? 0 : i, r, !last);
+    return CP(this->kernel())(make_transforming_pair_iterator(ci(c,Begin_tag()),Count(0),t),make_transforming_pair_iterator(ci(c,End_tag()),Count(d),t));
   }
 };
 }
