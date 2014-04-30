@@ -184,6 +184,7 @@ TDS_data & tds_data();
 
 /*!
 Returns a handle to the mirror vertex of the `i`-th vertex of full cell `c`. 
+`cur_dim` is the current dimension of the triangulation data structure.
 \cgalAdvancedBegin
 This function works even if the adjacency information stored in the
 neighbor full cell `*c.neighbor(i)` is corrupted. This is useful

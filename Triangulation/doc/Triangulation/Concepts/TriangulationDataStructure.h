@@ -252,7 +252,7 @@ bool is_full_cell(const Full_cell_handle & c) const;
 /*!
 This function computes (<I>gathers</I>) a connected set of full cells
 satifying a common criterion. Call them <I>good</I> full cells. It is assumed
-that the argument `c` is a good full cell. The full cells are then
+that the argument `start` is a good full cell. The full cells are then
 recursively explored by examining if, from a given good full cell, its adjacent
 full cells are also good.
 
@@ -263,11 +263,11 @@ The predicate must return `true`
 if the traversal of that `Facet` leads to a good full cell.
 
 All the good full cells are output into the last argument `out`.
-\pre `c!=Full_cell_handle()` and `tp(c)==true`.
+\pre `start != Full_cell_handle()` and `start` is a good cell.
 
 */
 template< typename TraversalPredicate, typename OutputIterator >
-void full_cells(Full_cell_handle c, TraversalPredicate & tp,
+void gather_full_cells(Full_cell_handle start, TraversalPredicate & tp,
 OutputIterator & out) const;
 
 /*!
@@ -568,7 +568,7 @@ full cells containing `star` and `v` loose vertex `v`
 (see Figure \cgalFigureRef{triangulationfiginsertincreasedim}).
 \pre All cells contain either `star` or `v`.
 Edge `star-v` exists in the triangulation
-and `current_dimension()!=2`.
+and `current_dimension() != -2`.
 
 */
 void remove_decrease_dimension(Vertex_handle v, Vertex_handle star);
