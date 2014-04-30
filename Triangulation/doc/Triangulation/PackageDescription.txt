@@ -2,9 +2,14 @@
 /// \defgroup PkgTriangulationsConcepts Concepts
 /// \ingroup PkgTriangulations
 
+/// \defgroup PkgTriangulationsTriangulationClasses Triangulation Classes
+/// \ingroup PkgTriangulations
+
+/// \defgroup PkgTriangulationsVertexCellClasses Vertex, Face and Cell Classes
+/// \ingroup PkgTriangulations
+
 /*!
 \addtogroup PkgTriangulations
-\todo check generated documentation
 \cgalPkgDescriptionBegin{Triangulations,PkgTriangulationsSummary}
 \cgalPkgPicture{detail.png}
 \cgalPkgSummaryBegin

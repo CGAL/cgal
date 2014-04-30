@@ -20,7 +20,6 @@ operator of class `TriangulationDataStructure`.
 \sa `TriangulationDSFullCell`
 \sa `TriangulationDSFace`
 \sa `TriangulationDataStructure`
-\sa `Triangulation`
 
 */
 
@@ -40,7 +39,7 @@ Must be a model of the `TriangulationDataStructure` concept.
 typedef Hidden_type Triangulation_data_structure;
 
 /*!
-A handle to a cell. It must be the same as the
+A handle to a cell, which must be the same as the
 nested type `TriangulationDataStructure::Full_cell_handle`.
 */
 typedef Hidden_type Full_cell_handle;

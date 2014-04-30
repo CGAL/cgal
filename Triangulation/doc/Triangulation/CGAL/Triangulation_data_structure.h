@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgTriangulations
+\ingroup PkgTriangulationsTriangulationClasses
 
 This class is used for storing the combinatorial information of a triangulation 
 of dimension \f$ d\leq D\f$ (`D` is the maximal dimension).
@@ -42,9 +42,8 @@ third parameter. In both cases, `TriangulationDSFullCell` defaults to
 `Triangulation_data_structure` provides the following types and
 methods.
 
-\sa `Triangulation_ds_vertex` 
-\sa `Triangulation_ds_full_cell` 
-\sa `Triangulation` 
+\sa `Triangulation_ds_vertex`
+\sa `Triangulation_ds_full_cell`
 */
 template< typename Dimensionality, typename TriangulationDSVertex, typename TriangulationDSFullCell >
 class Triangulation_data_structure {

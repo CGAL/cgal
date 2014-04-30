@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgTriangulations
+\ingroup PkgTriangulationsTriangulationClasses
 
 The class `Delaunay_triangulation` is used to maintain the full cells and vertices of a
 Delaunay triangulation in \f$ \mathcal R^D\f$. It permits point insertion and
@@ -13,27 +13,27 @@ means.
 Parameters
 --------------
 
-`DelaunayTriangulationTraits_` is the geometric traits class that provides the geometric types
-and predicates needed by Delaunay triangulations. `DelaunayTriangulationTraits_` must be a model of
+`Traits` is the geometric traits class that provides the geometric types
+and predicates needed by Delaunay triangulations. `Traits` must be a model of
 the concept `DelaunayTriangulationTraits`.
 
-`TriangulationDataStructure_` is the class used to store the underlying triangulation data
-structure. `TriangulationDataStructure_` must be a model of the concept
+`Tds` is the class used to store the underlying triangulation data
+structure. `Tds` must be a model of the concept
 `TriangulationDataStructure`. The class template `Delaunay_triangulation` can
 be defined by specifying only the first parameter, or by using the
 tag `CGAL::Default` as
-the second parameter. In both cases, `TriangulationDataStructure_` defaults to
-`Triangulation_data_structure<DelaunayTriangulationTraits_::Dimension, Triangulation_vertex<DelaunayTriangulationTraits_>, Triangulation_full_cell<DelaunayTriangulationTraits_> >`.
+the second parameter. In both cases, `Tds` defaults to
+`Triangulation_data_structure<Traits::Dimension, Triangulation_vertex<Traits>, Triangulation_full_cell<Traits> >`.
 
-The class `Delaunay_triangulation<DelaunayTriangulationTraits_, TriangulationDataStructure_>` inherits all the types
-defined in the base class `Triangulation<DelaunayTriangulationTraits_, TriangulationDataStructure_>`. Additionally, it
+The class `Delaunay_triangulation<Traits, Tds>` inherits all the types
+defined in the base class `Triangulation<Traits, Tds>`. Additionally, it
 defines or overloads the following methods:
 
 \sa `Triangulation_data_structure<Dimensionality, TriangulationDSVertex, TriangulationDSFullCell>`
 
 */
-template< typename DelaunayTriangulationTraits_, typename TriangulationDataStructure_ >
-class Delaunay_triangulation : public Triangulation<DelaunayTriangulationTraits_, TriangulationDataStructure_> {
+template< typename Traits, typename Tds >
+class Delaunay_triangulation : public Triangulation<Traits, Tds> {
 public:
 
 /// \name Creation
@@ -133,7 +133,8 @@ const Face & f, const Facet & ft, const Full_cell_handle c);
 /*!
 \cgalAdvancedBegin
 Inserts the point `p` in the Delaunay triangulation. Returns a handle to the
-(possibly newly created) vertex at that position. \pre The point `p`
+(possibly newly created) vertex at that position. 
+\pre The point `p`
 must lie outside the affine hull of the Delaunay triangulation. This implies that
 `dt`.`current_dimension()` must be less that
 `dt`.`maximal_dimension()`.
@@ -145,8 +146,7 @@ Vertex_handle insert_outside_affine_hull(const Point & p);
 \cgalAdvancedBegin
 Inserts the point `p` in the Delaunay triangulation. Returns a handle to the
 (possibly newly created) vertex at that position.
-\pre The point `p`
-must be in conflict with the full cell `c`.
+\pre The point `p` must be in conflict with the full cell `c`.
 \cgalAdvancedEnd
 */
 Vertex_handle insert_in_conflicting_cell(const Point & p, const

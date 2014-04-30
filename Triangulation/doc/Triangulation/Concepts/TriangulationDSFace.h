@@ -20,7 +20,6 @@ The dimension of a face is automatically set when
 \sa `TriangulationDSFullCell`
 \sa `TriangulationDSVertex`
 \sa `TriangulationDataStructure`
-\sa `Triangulation`
 
 */
 
@@ -62,23 +61,23 @@ typedef Hidden_type Vertex_handle;
 /*!
 Copy constructor.
 */
-Triangulation_face(Triangulation_face g);
+TriangulationDSFace(TriangulationDSFace g);
 
 /*!
-Sets the `Face`'s
+Sets the face's
 full cell to `c` and the maximal dimension to
 `c.maximal_dimension()`.
 \pre `c!=Full_cell_handle()`
 
 */
-Triangulation_face(Full_cell_handle c);
+TriangulationDSFace(Full_cell_handle c);
 
 /*!
-Setup the `Face` knowing
-the maximal dimension `md`. Sets the `Face`'s full cell to the
+Setup the face knowing
+the maximal dimension `md`. Sets the face's full cell to the
 default-constructed one.
 */
-Triangulation_face(const int md);
+TriangulationDSFace(const int md);
 
 /// @}
 
@@ -99,7 +98,8 @@ int face_dimension() const;
 
 /*!
 Returns the index of the `i`-th vertex
-of the face in the cell `f`.`full_cell()`. \pre \f$0 \leq i \leq \f$`f`.`face_dimension()`.
+of the face in the cell `f.full_cell()`.
+\pre \f$0 \leq i \leq \f$`f.face_dimension()`.
 */
 int index(int i) const;
 

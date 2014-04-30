@@ -18,8 +18,7 @@ spatial sorting). This is not required if the points are inserted one by one.
 \cgalHasModel `CGAL::Cartesian_d<FT, Dim, LA>`
 \cgalHasModel `CGAL::Epick_d<Dim>` (recommended)
 
-\sa `DelaunayTriangulationTraits` 
-\sa `Triangulation` 
+\sa `DelaunayTriangulationTraits`
 */
 
 class TriangulationTraits {

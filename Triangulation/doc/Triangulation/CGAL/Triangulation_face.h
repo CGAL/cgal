@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgTriangulations
+\ingroup PkgTriangulationsVertexCellClasses
 
 A `Triangulation_face` is a model of the concept `TriangulationDSFace`. 
 

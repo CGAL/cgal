@@ -12,12 +12,6 @@ additional specific requirements of ::TriangulationFullCell.
 
 \cgalHasModel CGAL::Triangulation_full_cell<TriangulationTraits, TriangulationDSFullCell>
 
-Input/Output
---------------
-
-These operators can be used directly and are called by the I/O
-operator of class `Triangulation`.
-
 \sa `Triangulation_full_cell<TriangulationTraits, TriangulationDSFullCell>`
 \sa `TriangulationVertex`
 \sa `Triangulation<TriangulationTraits, TriangulationDataStructure>`
@@ -25,6 +19,12 @@ operator of class `Triangulation`.
 */
 
 class TriangulationFullCell {
+public:
+/// \name Input/Output
+/// These operators can be used directly and are called by the I/O
+/// operator of class `Triangulation`.
+/// @{
+
 /*!
 Inputs additional information stored in the full cell.
 */

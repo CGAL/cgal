@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgTriangulations
+\ingroup PkgTriangulationsTriangulationClasses
 
 \cgalModifBegin
 The class `Triangulation` is used to store and query the full cells and vertices of
@@ -16,17 +16,17 @@ hull of the points in so called <I>infinite cells</I>.
 Parameters
 --------------
 
-`TriangulationTraits_` is the geometric traits class that provides the geometric types
-and predicates needed by triangulations. `TriangulationTraits_` must be a model of the
+`Traits` is the geometric traits class that provides the geometric types
+and predicates needed by triangulations. `Traits` must be a model of the
 concept `TriangulationTraits`.
 
-`TriangulationDataStructure_` is the class used to store the underlying triangulation data
-structure. `TriangulationDataStructure_` must be a model of the concept
+`Tds` is the class used to store the underlying triangulation data
+structure. `Tds` must be a model of the concept
 `TriangulationDataStructure`. The class template `Triangulation` can
 be defined by specifying only the first parameter, or by using the
 tag `CGAL::Default` as
-the second parameter. In both cases, `TriangulationDataStructure_` defaults to
-`Triangulation_data_structure<TriangulationTraits_::Dimension, Triangulation_vertex<TriangulationTraits_>, Triangulation_full_cell<TriangulationTraits_> >`.
+the second parameter. In both cases, `Tds` defaults to
+`Triangulation_data_structure<Traits::Dimension, Triangulation_vertex<Traits>, Triangulation_full_cell<Traits> >`.
 
 Input/Output
 --------------
@@ -42,7 +42,7 @@ preceding list of full cells.
 \sa `Delaunay_triangulation<DelaunayTriangulationTraits, TriangulationDataStructure>`
 
 */
-template< typename TriangulationTraits_, typename TriangulationDataStructure_ >
+template< typename Traits, typename Tds >
 class Triangulation {
 public:
 /// \name Types
@@ -51,12 +51,12 @@ public:
 /*!
 Type for the model of the `TriangulationTraits` concept.
 */
-typedef TriangulationTraits Geom_traits;
+typedef Traits Geom_traits;
 
 /*!
 A point in Euclidean space.
 */
-typedef TriangulationTraits::Point_d Point;
+typedef Traits::Point_d Point;
 
 /*!
 This indicates whether the maximal dimension is static
@@ -66,35 +66,34 @@ or dynamic (i.e.\ if the type of `Maximal_dimension` is
 In the latter case, the `dim` parameter passed to the class's constructor
 is used.
 */
-typedef TriangulationTraits::Dimension Maximal_dimension;
+typedef Traits::Dimension Maximal_dimension;
 
 /*!
-The second template parameter.
+The second template parameter: the triangulation data structure.
 */
-typedef TriangulationDataStructure Triangulation_ds;
+typedef Tds Triangulation_ds;
 
 /*!
-A model of the concept
-`TriangulationVertex`.
+A model of the concept `TriangulationVertex`.
 */
-typedef TriangulationDataStructure::Vertex Vertex;
+typedef Tds::Vertex Vertex;
 
 /*!
 A model of the concept
 `TriangulationFullCell`.
 */
-typedef TriangulationDataStructure::Full_cell Full_cell;
+typedef Tds::Full_cell Full_cell;
 
 /*!
 The facet
 class
 */
-typedef TriangulationDataStructure::Facet Facet;
+typedef Tds::Facet Facet;
 
 /*!
 A model of the concept `TriangulationDSFace`.
 */
-typedef TriangulationDataStructure::Face Face;
+typedef Tds::Face Face;
 
 /// @}
 
@@ -112,13 +111,13 @@ typedef TriangulationDataStructure::Face Face;
 /*!
 handle to a a vertex
 */
-typedef TriangulationDataStructure::Vertex_handle
+typedef Tds::Vertex_handle
 Vertex_handle;
 
 /*!
 iterator over all vertices (including the infinite one)
 */
-typedef TriangulationDataStructure::Vertex_iterator
+typedef Tds::Vertex_iterator
 Vertex_iterator;
 
 \cgalModifBegin
@@ -131,14 +130,14 @@ typedef unspecified_type Finite_vertex_iterator;
 /*!
 handle to a full cell
 */
-typedef TriangulationDataStructure::Full_cell_handle
+typedef Tds::Full_cell_handle
 Full_cell_handle;
 
 /*!
 iterator over all full cells (including the infinite ones)
 */
 typedef
-TriangulationDataStructure::Full_cell_iterator
+Tds::Full_cell_iterator
 Full_cell_iterator;
 
 \cgalModifBegin
@@ -151,7 +150,7 @@ typedef unspecified_type Finite_full_cell_iterator;
 /*!
 iterator over all facets (including the infinite ones)
 */
-typedef TriangulationDataStructure::Facet_iterator
+typedef Tds::Facet_iterator
 Facet_iterator;
 
 \cgalModifBegin
@@ -165,13 +164,13 @@ typedef unspecified_type Finite_facet_iterator;
 Size type (an unsigned integral
 type).
 */
-typedef TriangulationDataStructure::size_type size_type;
+typedef Tds::size_type size_type;
 
 /*!
 Difference
 type (a signed integral type).
 */
-typedef TriangulationDataStructure::difference_type difference_type;
+typedef Tds::difference_type difference_type;
 
 /*!
 The enum `Locate_type` is defined by the class `Triangulation` to specify

@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgTriangulations
+\ingroup PkgTriangulationsVertexCellClasses
 
 The class `Triangulation_full_cell` is a model of the concept `TriangulationFullCell`. It 
 is used by default for representing full cells in the class 
@@ -23,11 +23,11 @@ class template `Triangulation_full_cell` accepts that no second parameter be spe
 this case, `Data` defaults to `CGAL::No_full_cell_data`. 
 `CGAL::No_full_cell_data` can explicitely be specified to access the third parameter. 
 
-Parameter `TriangulationDSFullCell` must be a model of the concept 
-`TriangulationDSFullCell`. 
+Parameter `TriangulationDSFullCell_` must be a model of the concept 
+`TriangulationDSFullCell_`. 
 The class template `Triangulation_full_cell` accepts that no third parameter be specified. 
 It also accepts the tag `CGAL::Default` as third parameter. In both 
-cases, `TriangulationDSFullCell` defaults to `CGAL::Triangulation_ds_full_cell<>`. 
+cases, `TriangulationDSFullCell_` defaults to `CGAL::Triangulation_ds_full_cell<>`. 
 
 \cgalModels ::TriangulationFullCell Additionally, the class
 `Triangulation_full_cell` provides the following types,
@@ -39,8 +39,8 @@ constructors and methods:
 \sa `Delaunay_triangulation<DelaunayTriangulationTraits, TriangulationDataStructure>` 
 
 */
-template< typename TriangulationTraits, typename Data, typename TriangulationDSFullCell >
-class Triangulation_full_cell : public TriangulationDSFullCell {
+template< typename TriangulationTraits, typename Data, typename TriangulationDSFullCell_ >
+class Triangulation_full_cell : public TriangulationDSFullCell_ {
 public:
 
 /// \name Types 

@@ -49,9 +49,7 @@ typedef Hidden_type Side_of_oriented_sphere_d;
 /*!
 A predicate object that must
 provide the templated operator
-
 `template<typename ForwardIterator> Oriented_side operator()(Flat_orientation_d orient, ForwardIterator start, ForwardIterator end, const Point_d & p)`.
-
 The operator returns `ON_POSITIVE_SIDE`,
 `ON_NEGATIVE_SIDE`
 or `ON_ORIENTED_BOUNDARY` depending of the side of the query

@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgTriangulations
+\ingroup PkgTriangulationsVertexCellClasses
 
 The class `Triangulation_ds_full_cell` serves as the default full cell template parameter in the 
 class `Triangulation_data_structure<Dimensionality, TriangulationDSVertex, TriangulationDSFullCell>`. 

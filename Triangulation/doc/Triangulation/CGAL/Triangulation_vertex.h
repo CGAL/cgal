@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgTriangulations
+\ingroup PkgTriangulationsVertexCellClasses
 
 The class `Triangulation_vertex` is a model of the concept `TriangulationVertex`. It is
 used by default for representing vertices in the class
@@ -25,22 +25,22 @@ this case, `Data` defaults to `CGAL::No_vertex_data`.
 third parameter.
 
 Parameter
-`TriangulationDSVertex` must be a model of the concept `TriangulationDSVertex`. The
+`TriangulationDSVertex_` must be a model of the concept `TriangulationDSVertex_`. The
 class template `Triangulation_vertex` accepts that no third parameter be specified. It
 also accepts the tag `CGAL::Default` as third parameter. In both cases,
-`TriangulationDSVertex` defaults to `CGAL::Triangulation_ds_vertex<>`.
+`TriangulationDSVertex_` defaults to `CGAL::Triangulation_ds_vertex<>`.
 
 \cgalModels ::TriangulationVertex Additionally, the class
 `Triangulation_vertex` provides the following types, constructors
 and methods:
 
 \sa `Triangulation_full_cell<TriangulationTraits, Data, TriangulationDSFullCell>`
-\sa `Triangulation_data_structure<Dimensionality, TriangulationDSVertex, TriangulationDSFullCell>`
+\sa `Triangulation_data_structure<Dimensionality, TriangulationDSVertex_, TriangulationDSFullCell>`
 \sa `Triangulation<TriangulationTraits,TriangulationDataStructure>`
 \sa `Delaunay_triangulation<DelaunayTriangulationTraits, TriangulationDataStructure>`
 */
-template< typename TriangulationTraits, typename Data, typename TriangulationDSVertex >
-class Triangulation_vertex : public TriangulationDSVertex {
+template< typename TriangulationTraits, typename Data, typename TriangulationDSVertex_ >
+class Triangulation_vertex : public TriangulationDSVertex_ {
 public:
 
 /// \name Types

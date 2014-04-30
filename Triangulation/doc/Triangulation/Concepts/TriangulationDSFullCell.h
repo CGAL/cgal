@@ -25,8 +25,6 @@ operator of class `TriangulationDataStructure`.
 \sa `TriangulationDSVertex`
 \sa `TriangulationDSFace`
 \sa `TriangulationDataStructure`
-\sa `Triangulation`
-
 */
 
 class TriangulationDSFullCell {
@@ -45,7 +43,7 @@ Must be a model of the `TriangulationDataStructure` concept.
 typedef Hidden_type Triangulation_data_structure;
 
 /*!
-A handle to a vertex. It must be the same as the
+A handle to a vertex, which must be the same as the
 nested type `TriangulationDataStructure::Vertex_handle`.
 */
 typedef Hidden_type Vertex_handle;
@@ -57,7 +55,7 @@ the vertices of the full cell.
 typedef Hidden_type Vertex_handle_iterator;
 
 /*!
-A handle to a full cell. It must be the same as the
+A handle to a full cell, which must be the same as the
 nested type `TriangulationDataStructure::Full_cell_handle`.
 */
 typedef Hidden_type Full_cell_handle;
@@ -138,24 +136,24 @@ full cell opposite to the `i`-th vertex of the full cell `c`. \pre \f$0 \leq i \
 Full_cell_handle neighbor(const int i) const;
 
 /*!
-Returns the index `j` of
-the full cell `c`as a neighbor in the full cell `c``.neighbor(i);`. If the
-returned integer is not negative, it holds that `c.neighbor(i)->neighbor(j) == c`. Returns
-`-1` if `c`has no adjacent full cell of index `i`.
+Returns the index of `c` in its \f$ i^{th}\f$ neighbor (`c.neighbor(i)`). 
+If the returned integer is not negative, 
+it holds that `c.neighbor(i)->neighbor(j) == c`. Returns
+`-1` if `c` has no adjacent full cell of index `i`.
 \pre \f$0 \leq i \leq \f$ `maximal_dimension()`.
 */
 int mirror_index(const int i) const;
 
 /*!
 Returns the index `i`
-such that `c``.neighbor(i)==n`. \pre `n`
-must be a neighbor of `c`.
+such that `c.neighbor(i)==n`.
+\pre `n` must be a neighbor of `c`.
 */
 int index(Full_cell_handle n) const;
 
 /*!
 Returns the index `i` of
-the vertex `v` such that `c``.vertex(i)==v`. \pre `v` must be
+the vertex `v` such that `c.vertex(i)==v`. \pre `v` must be
 a vertex of the `c`.
 */
 int index(Vertex_handle v) const;
@@ -220,7 +218,7 @@ void set_neighbor(const int i, Full_cell_handle n);
 /*!
 Sets the
 mirror index of the \f$ i\f$-th vertex of `c` to `index`. This corresponds
-to the index, in `c``->neighbor(i)`, of the full cell `c`.
+to the index, in `c->neighbor(i)`, of the full cell `c`.
 
 Note: a model of this concept may choose not to store mirror
 indices, in which case this function should do nothing.

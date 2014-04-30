@@ -48,7 +48,7 @@ Input/Output
 
 The information stored in the `iostream` is:
 
-- the current dimension (which must be `<=``tds`.`maximal_dimension()`),
+- the current dimension (which must be `<=tds.maximal_dimension()`),
 
 - the number of vertices,
 
@@ -71,7 +71,6 @@ The classes `Vertex` and
 \sa `TriangulationDSVertex`
 \sa `TriangulationDSFullCell`
 \sa `TriangulationDSFace`
-\sa `Triangulation`
 
 */
 
@@ -82,12 +81,12 @@ public:
 // @{
 
 /*!
-The vertex type. A model of the concept `TriangulationDSVertex`.
+The vertex type, which must be a model of the concept `TriangulationDSVertex`.
 */
 typedef Hidden_type Vertex;
 
 /*!
-The full cell type. A model of the concept `TriangulationDSFullCell`.
+The full cell type, which must be a model of the concept `TriangulationDSFullCell`.
 */
 typedef Hidden_type Full_cell;
 
@@ -99,9 +98,7 @@ A model of the concept `FullCellData`.
 typedef Hidden_type Full_cell_data; 
 
 /*!
-The concept `TriangulationDataStructure` also defines a type for
-describing faces of the triangulation with codimension 1.
-
+The facet type, for describing faces of the triangulation with codimension 1.
 The constructor `Facet(c,i)` constructs a `Facet` representing the facet of
 full cell `c` opposite to its `i`-th vertex. Its dimension is
 `current_dimension()-1`.
@@ -109,7 +106,7 @@ full cell `c` opposite to its `i`-th vertex. Its dimension is
 typedef Hidden_type Facet;
 
 /*!
-A model of the concept `TriangulationDSFace`.
+The face type, which must be a model of the concept `TriangulationDSFace`.
 */
 typedef Hidden_type Face;
 
@@ -137,7 +134,7 @@ typedef Hidden_type Full_cell_handle;
 /// @{
 
 /*!
-This nested template class allows to get the type of a triangulation
+Nested template class which allows to get the type of a triangulation
 data structure that only changes the vertex type. It has to define a type
 `Other` which is a <I>rebound</I> triangulation data structure with `Vb2`
 as vertex type.
@@ -145,7 +142,7 @@ as vertex type.
 typedef Hidden_type template <typename Vb2> struct Rebind_vertex;
 
 /*!
-This nested template class allows to get the type of a triangulation
+Nested template class which allows to get the type of a triangulation
 data structure that only changes the full cell type. It has to define a type
 `Other` which is a <I>rebound</I> triangulation data structure with `Fcb2`
 as full cell type.
@@ -166,25 +163,25 @@ Iterator over the list of vertices.
 */
 typedef Hidden_type Vertex_iterator;
 
-/*!?
+/*!
 Iterator over the list of full cells.
 
 */
 typedef Hidden_type Full_cell_iterator;
 
-/*!?
+/*!
 Iterator over the facets of the complex.
 
 */
 typedef Hidden_type Facet_iterator;
 
 /*!
-Size type (an unsigned integral type)
+Size type (an unsigned integral type).
 */
 typedef Hidden_type size_type;
 
 /*!
-Difference type (a signed integral type)
+Difference type (a signed integral type).
 */
 typedef Hidden_type difference_type;
 
@@ -211,7 +208,8 @@ TriangulationDataStructure(int dim = 0);
 
 /*!
 Returns the maximal dimension of
-the full dimensional cells that can be stored in the triangulation `tds`. \post the
+the full dimensional cells that can be stored in the triangulation `tds`. 
+\post the
 returned value is positive.
 */
 int maximal_dimension() const;
@@ -226,8 +224,8 @@ full dimensional cells stored in the triangulation. It holds that
 int current_dimension() const;
 
 /*!
-Returns `true` if thetriangulation
-contains nothing. Returns `false` otherwise.
+Returns `true` if the triangulation
+contains nothing, returns `false` otherwise.
 */
 bool empty() const;
 
@@ -339,7 +337,7 @@ and `c!=Full_cell_handle()`.
 */
 Vertex_handle mirror_vertex(Full_cell_handle c, int i) const;
 
-/*
+/*!
 The first vertex of `tds`. User has no control on the order.
 */
 Vertex_iterator vertices_begin();
@@ -402,7 +400,7 @@ Returns a full cell containing the facet `f`
 Full_cell_handle full_cell(const Facet & f) const;
 
 /*!
-Returns the index of vertex of the full cell `c=``tds`.`full_cell(f)`
+Returns the index of vertex of the full cell `c=tds.full_cell(f)`
 which does not belong to `c`.
 */
 int index_of_covertex(const Facet & f) const;
@@ -449,7 +447,7 @@ The
 full cells in the range \f$ C=\f$`[start, end)` are removed, thus
 forming a hole \f$ H\f$.
 A `Vertex` is inserted and connected to the boundary of the hole in order
-to ``fill it''. A `Vertex_handle` to the new `Vertex` is returned.
+to "fill it". A `Vertex_handle` to the new `Vertex` is returned.
 \pre `c` belongs to \f$ C\f$ and `c->neighbor(i)`
 does not, with `f=(c,i)`.
 \f$ H\f$ the union of full cells in \f$ C\f$ is simply connected and its
@@ -630,7 +628,7 @@ std::istream & operator>>(std::istream & is, TriangulationDataStructure &
 tds);
 
 /*!
-Writes `tds` into the output stream `os`
+Writes `tds` into the output stream `os`.
 */
 std::ostream & operator<<(std::ostream & os, const TriangulationDataStructure
 & tds);

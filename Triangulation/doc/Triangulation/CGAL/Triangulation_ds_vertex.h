@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgTriangulations
+\ingroup PkgTriangulationsVertexCellClasses
 
 The class `Triangulation_ds_vertex` serves as the default vertex template parameter in the 
 class `Triangulation_data_structure<Dimensionality, TriangulationDSVertex, TriangulationDSFullCell>`. 
