@@ -796,7 +796,7 @@ template<class R_> struct Midpoint : private Store_kernel<R_> {
 	typedef Point first_argument_type;
 	typedef Point second_argument_type;
 	// There is a division, but it will be cast to RT afterwards anyway, so maybe we could use RT.
-	struct Average : std::binary_function<FT,FT,RT> {
+	struct Average : std::binary_function<FT,RT,FT> {
 		FT operator()(FT const&a, RT const&b)const{
 			return (a+b)/2;
 		}

@@ -106,7 +106,7 @@ template<class R_> struct Point_of_sphere : private Store_kernel<R_> {
   typedef Point result_type;
   typedef Sphere first_argument_type;
   typedef int second_argument_type;
-  struct Trans : std::binary_function<FT,FT,int> {
+  struct Trans : std::binary_function<FT,int,FT> {
     FT const& r_; int idx; bool sgn;
     Trans (int n, FT const& r, bool b) : r_(r), idx(n), sgn(b) {}
     FT operator()(FT const&x, int i)const{
