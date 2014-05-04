@@ -17,6 +17,7 @@ typedef Traits_2::Ray_2                                 Ray_2;
 typedef Traits_2::Line_2                                Line_2;
 typedef Traits_2::X_monotone_curve_2                    X_monotone_curve_2;
 typedef CGAL::Arrangement_2<Traits_2>                   Arrangement_2;
+typedef Arrangement_2::Vertex_handle                    Vertex_handle;
 typedef Arrangement_2::Halfedge_handle                  Halfedge_handle;
 
 int main()
@@ -60,10 +61,41 @@ int main()
             << ",  E = " << arr.number_of_edges()
             << ",  F = " << arr.number_of_faces() << std::endl;
 
+  if (arr.number_of_vertices() != 0) {
+    std::cerr << "(A) Number of vertices (" << arr.number_of_vertices()
+              << ") not 0!" << std::endl;
+    return 1;
+  }
+
   // Check the validity more thoroughly.
-  valid = is_valid(arr);
-  std::cout << "Arrangement is "
-              << (valid ? "valid." : "NOT valid!") << std::endl;
+  if (! CGAL::is_valid(arr)) {
+    std::cerr << "The arrangement is NOT valid!" << std::endl;
+    return 1;
+  }
+
+  // Construct another arrangement of a segment connected to a ray
+  Segment_2 s1(Point_2(0, 0), Point_2(1, 1));
+  Halfedge_handle eh1 =
+    arr.insert_in_face_interior(X_monotone_curve_2(s1), arr.unbounded_face());
+  Vertex_handle vh = eh1->target();
+  Ray_2 ray(Point_2(1, 1), Point_2(2, 2));
+  Halfedge_handle eh2 =
+    arr.insert_from_left_vertex(X_monotone_curve_2(ray), vh);
+
+  // Remove the edges
+  arr.remove_edge(eh2);
+  arr.remove_edge(eh1);
+
+  if (arr.number_of_vertices() != 0) {
+    std::cerr << "(B) Number of vertices (" << arr.number_of_vertices()
+              << ") not 0!" << std::endl;
+    return 1;
+  }
+
+  if (! CGAL::is_valid(arr)) {
+    std::cerr << "The arrangement is NOT valid!" << std::endl;
+    return 1;
+  }
 
   return (0);
 }
