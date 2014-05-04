@@ -80,6 +80,16 @@ void check_intersect(const Curve& cv1, const Curve& cv2)
 
 }
 
+template<typename Curve>
+void check_make_x_monotone(Curve cv)
+{
+   Polycurve_arc_traits_2 traits;
+   std::vector<CGAL::Object> object_vec;
+
+   traits.make_x_monotone_2_object()(cv, std::back_inserter(object_vec) );
+   std::cout << "Number of x-monotone curves: " << object_vec.size() << std::endl; 
+}
+
 int main ()
 {
 
@@ -138,15 +148,39 @@ int main ()
   x_curves.clear();
   x_curves.push_back(x_segment);
   X_monotone_polycurve x_polycurve_3 = traits.construct_x_monotone_curve_2_object()( x_curves.begin(), x_curves.end() );  
-  std::cout<< "x_polycurve_3: " << x_polycurve_3 << std::endl;
+  //std::cout<< "x_polycurve_3: " << x_polycurve_3 << std::endl;
 
+
+  //Another polycurve
+  curves.clear();
+  
+  Kernel::Point_2  center = Kernel::Point_2 (-10, 10);
+  Point_2          source = Point_2 ( Number_type (-10, 1), Number_type (13, 1) );
+  Point_2          target = Point_2 ( Number_type (-7, 1), Number_type (10, 1));
+  Arc_section_2    circ_arc (center, 3, CGAL::CLOCKWISE, source, target);
+  curves.push_back( circ_arc );
+
+  center = Kernel::Point_2 (-20, 10);
+  source = Point_2 ( Number_type (-7, 1), Number_type (10, 1) );
+  target = Point_2 ( Number_type (-20, 1), Number_type (23, 1));
+  circ_arc =  Arc_section_2(center, 13, CGAL::CLOCKWISE, source, target);
+  curves.push_back( circ_arc );
+
+  center = Kernel::Point_2 (-20, 25);
+  source = Point_2 ( Number_type (-20, 1), Number_type (23, 1) );
+  target = Point_2 ( Number_type (-20, 1), Number_type (27, 1));
+  circ_arc =  Arc_section_2(center, 2, CGAL::CLOCKWISE, source, target);
+  curves.push_back( circ_arc );
+
+  Polycurve curve_1 = traits.construct_curve_2_object()(curves.begin(), curves.end() );
 
   //////////////////////
   //Functor testing
   //////////////////////
 
-  check_compare_y_at_x_2(x_polycurve_1);
-  //check_intersect(x_polycurve_1, x_polycurve_2);
+  // check_compare_y_at_x_2(x_polycurve_1);
+  // check_intersect(x_polycurve_1, x_polycurve_2);
+  check_make_x_monotone(curve_1);
 
 
   return 0;

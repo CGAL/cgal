@@ -868,7 +868,49 @@ public:
     if (res == SMALLER)
       _info = (_info | IS_DIRECTED_RIGHT_MASK);
   }
-     
+
+  // waqar
+  // Adding an almost duplicate constructor as the original one is cause conflict when used with 
+  // polycurve_circular_arcs
+    /*!
+   * Construct a segment arc from two kernel points
+   * \param source the source point.
+   * \ param target the target point.
+   * \pre source and target are not equal.
+   */
+  _X_monotone_circle_segment_2 (const Point_2& source,
+                                const Point_2& target) :
+    _source(source.x(), source.y()),
+    _target(target.x(), target.y()),
+    _info (0)
+  {
+    //std:: cout << source.x();
+    typename Kernel::Point_2 kernel_source (source.x(), source.y());
+    typename Kernel::Point_2 kernel_target; //(target.x(), target.y());
+
+    // Line_2 line(kernel_source, kernel_target);
+    // _first  = line.a();
+    // _second = line.b();
+    // _third  = line.c();
+    
+    // // Check if the segment is directed left or right:
+    // Comparison_result   res = CGAL::compare (kernel_source.x(), kernel_target.x());
+
+    // if (res == EQUAL)
+    // {
+    //   CGAL_precondition (CGAL::sign(_second) == ZERO);
+
+    //   // We have a vertical segment - compare the points by their
+    //   // y-coordinates:
+    //   _info = (_info | IS_VERTICAL_SEGMENT_MASK);
+    //   res = CGAL::compare (kernel_source.y(), kernel_target.y());
+    // }
+
+    // CGAL_precondition (res != EQUAL);
+    // if (res == SMALLER)
+    //   _info = (_info | IS_DIRECTED_RIGHT_MASK);
+  } 
+  //end of duplicate contructor
 
   /*! 
    * Construct a circular arc.

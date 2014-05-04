@@ -3,5 +3,5 @@
 # Format
 # < command >	< xcurve 1 > < xcurve 2 > < expected merged X-curve > 
 #
-merge 0 1 8
-merge 5 0 3
+merge 1 2 11
+merge 12 1 13
