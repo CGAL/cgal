@@ -60,7 +60,7 @@ private:
 
 class Gmpq
   : Handle_for<Gmpq_rep>,
-    boost::ordered_field_operators1< Gmpq
+    boost::totally_ordered1< Gmpq
   , boost::ordered_field_operators2< Gmpq, int
   , boost::ordered_field_operators2< Gmpq, long
   , boost::ordered_field_operators2< Gmpq, double
@@ -269,43 +269,71 @@ Gmpq::operator+() const
 }
 
 inline
+Gmpq
+operator+(const Gmpq &x, const Gmpq &y)
+{
+    Gmpq Res;
+    mpq_add(Res.mpq(), x.mpq(), y.mpq());
+    return Res;
+}
+
+inline
 Gmpq&
 Gmpq::operator+=(const Gmpq &z)
 {
-    Gmpq Res;
-    mpq_add(Res.mpq(), mpq(), z.mpq());
-    swap(Res);
+    (*this + z).swap(*this);
     return *this;
+}
+
+inline
+Gmpq
+operator-(const Gmpq &x, const Gmpq &y)
+{
+    Gmpq Res;
+    mpq_sub(Res.mpq(), x.mpq(), y.mpq());
+    return Res;
 }
 
 inline
 Gmpq&
 Gmpq::operator-=(const Gmpq &z)
 {
-    Gmpq Res;
-    mpq_sub(Res.mpq(), mpq(), z.mpq());
-    swap(Res);
+    (*this - z).swap(*this);
     return *this;
+}
+
+inline
+Gmpq
+operator*(const Gmpq &x, const Gmpq &y)
+{
+    Gmpq Res;
+    mpq_mul(Res.mpq(), x.mpq(), y.mpq());
+    return Res;
 }
 
 inline
 Gmpq&
 Gmpq::operator*=(const Gmpq &z)
 {
-    Gmpq Res;
-    mpq_mul(Res.mpq(), mpq(), z.mpq());
-    swap(Res);
+    (*this * z).swap(*this);
     return *this;
+}
+
+inline
+Gmpq
+operator/(const Gmpq &x, const Gmpq &y)
+{
+    CGAL_precondition(y != 0);
+    Gmpq Res;
+    mpq_div(Res.mpq(), x.mpq(), y.mpq());
+    return Res;
 }
 
 inline
 Gmpq&
 Gmpq::operator/=(const Gmpq &z)
 {
-    CGAL_precondition(z != 0);
-    Gmpq Res;
-    mpq_div(Res.mpq(), mpq(), z.mpq());
-    swap(Res);
+    (*this / z).swap(*this);
     return *this;
 }
 
