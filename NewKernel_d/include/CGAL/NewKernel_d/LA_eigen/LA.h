@@ -106,7 +106,10 @@ template<class NT_,class Dim_,class Max_dim_=Dim_> struct LA_eigen {
 
 	template<class Mat_> static int rank(Mat_ const&m){
 		// return m.rank();
-		Eigen::ColPivHouseholderQR<Mat_> decomp(m);
+		// This one uses sqrt so cannot be used with Gmpq
+		// TODO: use different algo for different NT?
+		// Eigen::ColPivHouseholderQR<Mat_> decomp(m);
+		Eigen::FullPivLU<Mat_> decomp(m);
 		// decomp.setThreshold(0);
 		return decomp.rank();
 	}

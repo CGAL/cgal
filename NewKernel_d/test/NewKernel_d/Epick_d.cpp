@@ -227,6 +227,7 @@ void test2(){
   std::back_insert_iterator<std::vector<V> > bii(v);
   lb(tab3+0,tab3+2,bii);
   assert(v.size()==1);
+  assert(lr(tab3+0,tab3+2)==1);
   H h=ch(tab2+1,tab2+3);
   assert(fabs(va(h,x2)-1)<.0001);
   assert(fabs(va(h,x3)-1)<.0001);
