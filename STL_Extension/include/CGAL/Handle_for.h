@@ -60,25 +60,28 @@ public:
     typedef std::ptrdiff_t Id_type ;
 
     Handle_for()
-      : ptr_(allocator.allocate(1))
     {
-        new (&(ptr_->t)) element_type(); // we get the warning here 
-        ptr_->count = 1;
+        pointer p = allocator.allocate(1);
+        new (&(p->t)) element_type(); // we get the warning here
+        p->count = 1;
+        ptr_ = p;
     }
 
     Handle_for(const element_type& t)
-      : ptr_(allocator.allocate(1))
     {
-        new (&(ptr_->t)) element_type(t);
-        ptr_->count = 1;
+        pointer p = allocator.allocate(1);
+        new (&(p->t)) element_type(t);
+        p->count = 1;
+        ptr_ = p;
     }
 
 #ifndef CGAL_CFG_NO_CPP0X_RVALUE_REFERENCE
     Handle_for(element_type && t)
-      : ptr_(allocator.allocate(1))
     {
-        new (&(ptr_->t)) element_type(std::move(t));
-        ptr_->count = 1;
+        pointer p = allocator.allocate(1);
+        new (&(p->t)) element_type(std::move(t));
+        p->count = 1;
+        ptr_ = p;
     }
 #endif
 
@@ -86,44 +89,49 @@ public:
    to take place.  We'll see if it's a problem later.
     template < typename T1 >
     Handle_for(const T1& t1)
-      : ptr_(allocator.allocate(1))
     {
-        new (&(ptr_->t)) T(t1);
-        ptr_->count = 1;
+        pointer p = allocator.allocate(1);
+        new (&(p->t)) T(t1);
+        p->count = 1;
+        ptr_ = p;
     }
 */
 
 #if !defined CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES && !defined CGAL_CFG_NO_CPP0X_RVALUE_REFERENCE
     template < typename T1, typename T2, typename... Args >
     Handle_for(T1 && t1, T2 && t2, Args && ... args)
-      : ptr_(allocator.allocate(1))
     {
-        new (&(ptr_->t)) element_type(std::forward<T1>(t1), std::forward<T2>(t2), std::forward<Args>(args)...);
-        ptr_->count = 1;
+        pointer p = allocator.allocate(1);
+        new (&(p->t)) element_type(std::forward<T1>(t1), std::forward<T2>(t2), std::forward<Args>(args)...);
+        p->count = 1;
+        ptr_ = p;
     }
 #else
     template < typename T1, typename T2 >
     Handle_for(const T1& t1, const T2& t2)
-      : ptr_(allocator.allocate(1))
     {
-        new (&(ptr_->t)) element_type(t1, t2);
-        ptr_->count = 1;
+        pointer p = allocator.allocate(1);
+        new (&(p->t)) element_type(t1, t2);
+        p->count = 1;
+        ptr_ = p;
     }
 
     template < typename T1, typename T2, typename T3 >
     Handle_for(const T1& t1, const T2& t2, const T3& t3)
-      : ptr_(allocator.allocate(1))
     {
-        new (&(ptr_->t)) element_type(t1, t2, t3);
-        ptr_->count = 1;
+        pointer p = allocator.allocate(1);
+        new (&(p->t)) element_type(t1, t2, t3);
+        p->count = 1;
+        ptr_ = p;
     }
 
     template < typename T1, typename T2, typename T3, typename T4 >
     Handle_for(const T1& t1, const T2& t2, const T3& t3, const T4& t4)
-      : ptr_(allocator.allocate(1))
     {
-        new (&(ptr_->t)) element_type(t1, t2, t3, t4);
-        ptr_->count = 1;
+        pointer p = allocator.allocate(1);
+        new (&(p->t)) element_type(t1, t2, t3, t4);
+        p->count = 1;
+        ptr_ = p;
     }
 #endif // CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
 
