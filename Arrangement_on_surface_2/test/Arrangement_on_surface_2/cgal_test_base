@@ -99,6 +99,13 @@ IS_IN_X_RANGE=24
 COMPARE_Y_POSITION=25
 IS_BETWEEN_CW=26
 COMPARE_CW_AROUND_POINT=27
+PUSH_BACK=28
+PUSH_FRONT=29
+COMPARE_X_POLYCURVE=30
+COMPARE_XY_POLYCURVE=31
+NUMBER_OF_POINTS=32
+COMPARE_ENDPOINTS_XY=33
+CONSTRUCT_OPPOSITE=34
 
 #---------------------------------------------------------------------#
 #                    configure
@@ -1135,21 +1142,21 @@ test_polycurve_circular_arc_traits()
    execute_commands_new_structure Polycurves_circular_arcs polycurve_circular_arc_traits \
     COMPARE_Y_AT_X \
     EQUAL \
-    IS_VERTICAL \
-    SPLIT \
-    ARE_MERGEABLE \
-    COMPARE_Y_AT_X_LEFT \
-    COMPARE_Y_AT_X_RIGHT \
-    MAKE_X_MONOTONE \
-    PUSH_BACK \
-    PUSH_FRONT \
-    COMPARE_X_POLYCURVE \
-    COMPARE_XY_POLYCURVE \
-    NUMBER_OF_POINTS \
-    VERTEX \
-    CONSTRUCT_OPPOSITE \
-    MERGE \
-    COMPARE_ENDPOINTS_XY
+    # IS_VERTICAL \
+    # SPLIT \
+    # ARE_MERGEABLE \
+    # COMPARE_Y_AT_X_LEFT \
+    # COMPARE_Y_AT_X_RIGHT \
+    # MAKE_X_MONOTONE \
+    # PUSH_BACK \
+    # PUSH_FRONT \
+    # COMPARE_X_POLYCURVE \
+    # COMPARE_XY_POLYCURVE \
+    # NUMBER_OF_POINTS \
+    # VERTEX \
+    # CONSTRUCT_OPPOSITE \
+    # MERGE \
+    # COMPARE_ENDPOINTS_XY
 #INTERSECT
     
   else
