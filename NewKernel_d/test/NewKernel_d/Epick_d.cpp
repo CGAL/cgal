@@ -409,6 +409,7 @@ void test3(){
   FO fo2=cfo(&x[0],x+3);
   std::cout << fo2;
   P y[]={cp(0,2,4),cp(3,1,2),cp(3,3,6),cp(0,4,8)};
+  assert(!cis(x+0,x+3,y[0]));
   V yv[]={cv(0,2,4),cv(3,1,2),cv(3,3,6),cv(0,4,8)};
   assert( clh(yv+0,yv+1,yv[3]));
   assert( clh(yv+0,yv+2,yv[2]));
@@ -450,6 +451,7 @@ void test3(){
   P x5=cp(0,0,0);
   P x6=cp(0,0,-1);
   P tab2[]={x1,x2,x3,x4,x5};
+  assert(cis(tab2+0,tab2+4,x5));
   assert(po(tab2+0,tab2+4)==CGAL::POSITIVE);
   assert(sos(tab2+0,tab2+4,x5)==CGAL::ON_POSITIVE_SIDE);
   assert(sbs(tab2+0,tab2+4,x5)==CGAL::ON_BOUNDED_SIDE);

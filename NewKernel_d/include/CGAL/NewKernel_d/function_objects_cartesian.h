@@ -353,7 +353,8 @@ template<class R_> struct Contained_in_simplex : private Store_kernel<R_> {
 	typedef R_ R;
 	typedef typename Get_type<R, Point_tag>::type Point;
 	// Computing a sensible Uncertain<*> is not worth it
-	typedef typename Get_type<R, Bounded_side_tag>::type result_type;
+	// typedef typename Get_type<R, Boolean_tag>::type result_type;
+	typedef bool result_type;
 	typedef typename Increment_dimension<typename R::Default_ambient_dimension>::type D1;
 	typedef typename Increment_dimension<typename R::Max_ambient_dimension>::type D2;
 	typedef typename R::LA::template Rebind_dimension<D1,D2>::Other LA;
@@ -375,20 +376,18 @@ template<class R_> struct Contained_in_simplex : private Store_kernel<R_> {
 		for(int j=0;j<d;++j) b[j]=c(q,j);
 		b[d]=1;
 
-		for(int i=0; ++f!=e; ++i){
+		for(int i=0; f!=e; ++i,++f){
 		  Point const& p = *f;
 		  for(int j=0;j<d;++j){
-		    m(i,j)=c(p,j);
+		    m(j,i)=c(p,j);
 		  }
-		  m(i,d)=1;
+		  m(d,i)=1;
 		}
 		if (!LA::solve(a,CGAL_MOVE(m),CGAL_MOVE(b))) return false;
-		result_type res = ON_BOUNDED_SIDE;
 		for(int i=0;i<n;++i){
-		  if (a[i]<0) return ON_UNBOUNDED_SIDE;
-		  if (a[i]==0) res = ON_BOUNDARY;
+		  if (a[i]<0) return false;
 		}
-		return res;
+		return true;
 	}
 };
 }
