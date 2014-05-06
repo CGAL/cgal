@@ -93,7 +93,6 @@ void test2(){
   typedef typename K1::Affine_rank_d AR;
   typedef typename K1::Linear_rank_d LR;
   typedef typename K1::Affinely_independent_d AI;
-  typedef typename K1::Linearly_independent_d LI;
   typedef typename K1::Has_on_positive_side_d HOPS;
   typedef typename K1::Less_coordinate_d LC;
   typedef typename K1::Less_lexicographically_d LL;
@@ -143,7 +142,6 @@ void test2(){
   LR lr Kinit(linear_rank_d_object);
   AR ar Kinit(affine_rank_d_object);
   AI ai Kinit(affinely_independent_d_object);
-  LI li Kinit(linearly_independent_d_object);
   HOPS hops Kinit(has_on_positive_side_d_object);
   LC lc Kinit(less_coordinate_d_object);
   CL cl Kinit(compare_lexicographically_d_object);
@@ -322,11 +320,12 @@ void test3(){
 
   //typedef K1::Construct_point CP;
   typedef typename K1::Construct_point_d CP_;
-  typedef typename K1::Construct_vector_d CV;
+  typedef typename K1::Construct_vector_d CV_;
   typedef typename K1::Construct_segment_d CS;
   typedef typename CGAL::Get_functor<K1, CGAL::Segment_extremity_tag>::type CSE;
   typedef typename K1::Construct_cartesian_const_iterator_d CCI;
   typedef typename K1::Orientation_d PO;
+  typedef typename K1::Linearly_independent_d LI;
   typedef typename K1::Side_of_oriented_sphere_d SOS;
   typedef typename K1::Side_of_bounded_sphere_d SBS;
   typedef typename K1::Compute_coordinate_d CC;
@@ -342,22 +341,22 @@ void test3(){
   typedef typename K1::Squared_distance_d SD;
   typedef typename K1::Point_dimension_d PD;
 
-  USE_TYPE(V);
-  USE_TYPE(CV);
-  USE_TYPE(FO);
   Ker k
 #if 1
     (3)
 #endif
     ;
   CP_ cp_ Kinit(construct_point_d_object);
+  CV_ cv_ Kinit(construct_vector_d_object);
   typename boost::mpl::if_<boost::is_same<typename Ker::Default_ambient_dimension,CGAL::Dynamic_dimension_tag>,Construct_point3_helper<CP_>,CP_>::type cp(cp_);
+  typename boost::mpl::if_<boost::is_same<typename Ker::Default_ambient_dimension,CGAL::Dynamic_dimension_tag>,Construct_point3_helper<CV_>,CV_>::type cv(cv_);
   CCI ci Kinit(construct_cartesian_const_iterator_d_object);
   CC cc Kinit(compute_coordinate_d_object);
   CL cl Kinit(compare_lexicographically_d_object);
   PO po Kinit(orientation_d_object);
   CS cs Kinit(construct_segment_d_object);
   CSE cse (k);
+  LI li Kinit(linearly_independent_d_object);
   SOS sos Kinit(side_of_oriented_sphere_d_object);
   SBS sbs Kinit(side_of_bounded_sphere_d_object);
   CFO cfo Kinit(construct_flat_orientation_d_object);
@@ -404,9 +403,12 @@ void test3(){
   FO fo2=cfo(&x[0],x+3);
   std::cout << fo2;
   P y[]={cp(0,2,4),cp(3,1,2),cp(3,3,6),cp(0,4,8)};
-  assert(clh(y+0,y+1,y[3]));
-  assert(clh(y+0,y+2,y[2]));
-  assert(!clh(y+0,y+1,y[2]));
+  V yv[]={cv(0,2,4),cv(3,1,2),cv(3,3,6),cv(0,4,8)};
+  assert( clh(yv+0,yv+1,yv[3]));
+  assert( clh(yv+0,yv+2,yv[2]));
+  assert(!clh(yv+0,yv+1,yv[2]));
+  assert( li(yv+0,yv+2));
+  assert(!li(yv+0,yv+3));
   FO fo3=cfo(&y[0],y+3);
   assert(fo3.rest.size()==1 && fo3.rest[0]!=3);
   std::cout << fo3;
