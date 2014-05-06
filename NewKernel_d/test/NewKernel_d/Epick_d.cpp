@@ -10,10 +10,8 @@
 #include <CGAL/NewKernel_d/Kernel_d_interface.h>
 #include <CGAL/Gmpq.h>
 #include <CGAL/Interval_nt.h>
+#include <CGAL/use.h>
 #include <iostream>
-
-template<class>void marc_use(){}
-#define USE_TYPE(T) marc_use<T>()
 
 //typedef CGAL::Cartesian_base_d<double,CGAL::Dimension_tag<2> > K0;
 //typedef CGAL::Cartesian_base_d<CGAL::Interval_nt_advanced,CGAL::Dimension_tag<2> > KA;
@@ -68,6 +66,11 @@ void test2(){
   typedef typename K1::Sphere_d Sp;
   typedef typename K1::Vector_d V;
   typedef typename K1::Segment_d S;
+  typedef typename K1::Aff_transformation_d AT;
+  typedef typename K1::Direction_d D;
+  typedef typename K1::Line_d L;
+  typedef typename K1::Ray_d R;
+  typedef typename K1::Iso_box_d IB;
   typedef typename K1::Flat_orientation_d FO;
 
   //typedef K1::Construct_point CP;
@@ -113,8 +116,12 @@ void test2(){
   typedef typename K1::Equal_d E;
   typedef typename K1::Squared_distance_d SD;
 
-  // FIXME: really test everything at least once (clang warnings can list untested things).
-  USE_TYPE(FO);
+  CGAL_USE_TYPE(AT);
+  CGAL_USE_TYPE(D);
+  CGAL_USE_TYPE(L);
+  CGAL_USE_TYPE(R);
+  CGAL_USE_TYPE(IB);
+
   Ker k
 #if 0
     (2)
@@ -162,6 +169,13 @@ void test2(){
   E ed Kinit(equal_d_object);
   SD sd Kinit(squared_distance_d_object);
 
+  CGAL_USE(bc);
+  CGAL_USE(pol);
+  CGAL_USE(cat);
+  CGAL_USE(cd);
+  CGAL_USE(cli);
+  CGAL_USE(cr);
+  CGAL_USE(cib);
   P a=cp(3,4);
   assert(pd(a)==2);
   assert(pv(a)[1]==4);
@@ -230,8 +244,10 @@ void test2(){
   assert(fabs(va(h,x1)+1)<.0001);
   H h2=ch(tab2+1,tab2+3,x1,CGAL::ON_POSITIVE_SIDE);
   assert(hops(h2,x1));
+  assert(os(h2,x1)==CGAL::ON_POSITIVE_SIDE);
   H h3=ch(tab2+1,tab2+3,x1,CGAL::ON_NEGATIVE_SIDE);
   assert(!hops(h3,x1));
+  V hv=ov(h); CGAL_USE(hv);
 #if 1
   // Doesn't compile with Lazy yet.
   FO fo=cfo(tab2+1,tab2+3);
