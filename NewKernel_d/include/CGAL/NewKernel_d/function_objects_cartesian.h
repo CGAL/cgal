@@ -277,17 +277,18 @@ template<class R_> struct Contained_in_linear_hull : private Store_kernel<R_> {
 		for(int i=0; f!=e; ++f,++i){
 		  Vector const& v = *f;
 		  for(int j=0;j<d;++j){
-		    m(i,j)=c(v,j);
+		    m(j,i)=c(v,j);
 		  }
 		}
 		for(int j=0;j<d;++j){
-		  m(n+1,j)=c(w,j);
+		  m(j,n)=c(w,j);
 		}
 		int r1 = R::LA::rank(m);
+		// FIXME: Don't use eigen directly, go through an interface in LA...
 		m.conservativeResize(Eigen::NoChange, n);
 		int r2 = R::LA::rank(CGAL_MOVE(m));
 		return r1 == r2;
-		// This is very very far from optimal...
+		// TODO: This is very very far from optimal...
 	}
 };
 }
