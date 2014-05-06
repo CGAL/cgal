@@ -238,6 +238,8 @@ void test2(){
   assert(ifo(fo,tab2+1,tab2+3)==CGAL::POSITIVE);
   assert(ifsos(fo,tab2+1,tab2+3,x5)==CGAL::ON_POSITIVE_SIDE);
   P tab_h[]={P(0,42),P(1,42),P(4,42),P(2,42),P(3,42)};
+  assert(cah(tab_h+0,tab_h+2,tab_h[4]));
+  assert(!cah(tab_h+0,tab_h+2,y2));
   FO fo_hp = cfo (tab_h+0, tab_h+2);
   FO fo_hn = cfo (tab_h+2, tab_h+4);
   assert(ifo(fo_hp, tab_h+1, tab_h+3)==CGAL::POSITIVE);
@@ -253,6 +255,10 @@ void test2(){
   assert(ifsos(fo_hp, tab_h+2, tab_h+4, tab_h[4])==CGAL::ON_NEGATIVE_SIDE);
   assert(ifsos(fo_hn, tab_h+2, tab_h+4, tab_h[4])==CGAL::ON_POSITIVE_SIDE);
   P tab_v[]={P(42,0),P(42,1),P(42,4),P(42,2),P(42,3)};
+  assert(ar(tab_v+0,tab_v+5)==1);
+  // FIXME: Triangulation says cah is only for independent range, but not Kernel_d
+  // assert(cah(tab_v+0,tab_v+4,tab_v[4]));
+  assert(cah(tab_v+0,tab_v+2,tab_v[4]));
   FO fo_vp = cfo (tab_v+0, tab_v+2);
   FO fo_vn = cfo (tab_v+2, tab_v+4);
   assert(ifo(fo_vp, tab_v+1, tab_v+3)==CGAL::POSITIVE);

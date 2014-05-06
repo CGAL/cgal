@@ -118,6 +118,7 @@ template<class R_> struct Contained_in_affine_hull : private Store_kernel<R_> {
 	// mostly copied from Construct_flat_orientation. TODO: dedup this code or use LA.
         template<class Iter>
         result_type operator()(Iter f, Iter e, Point const&x) const {
+	  // FIXME: are the points in (f,e) required to be affinely independent?
 		PD pd (this->kernel());
 		CCC ccc (this->kernel());
 		int dim=pd(*f);

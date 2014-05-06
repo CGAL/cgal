@@ -309,8 +309,7 @@ template<class R_> struct Affine_rank : private Store_kernel<R_> {
 		typename Get_functor<R, Compute_point_cartesian_coordinate_tag>::type c(this->kernel());
 		typename Get_functor<R, Point_dimension_tag>::type pd(this->kernel());
 		int n=std::distance(f,e);
-		if (n<=1) return n;
-		--n;
+		if (--n<=0) return n;
 		Point const& p0 = *f;
 		int d=pd(p0);
 		Matrix m(d,n);
@@ -321,7 +320,7 @@ template<class R_> struct Affine_rank : private Store_kernel<R_> {
 		    // TODO: cache p0[j] in case it is computed?
 		  }
 		}
-		return R::LA::rank(CGAL_MOVE(m))+1;
+		return R::LA::rank(CGAL_MOVE(m));
 	}
 };
 }
@@ -339,7 +338,7 @@ template<class R_> struct Affinely_independent : private Store_kernel<R_> {
 		typename Get_functor<R, Point_dimension_tag>::type pd(this->kernel());
 		int n=std::distance(f,e);
 		int d=pd(*f);
-		if (n>d+1) return false;
+		if (--n>d) return false;
 		typename Get_functor<R, Affine_rank_tag>::type ar(this->kernel());
 		return ar(f,e) == n;
 	}
