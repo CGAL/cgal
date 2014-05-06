@@ -317,7 +317,7 @@ template<class R_> struct Affine_rank : private Store_kernel<R_> {
 		for(int i=0; ++f!=e; ++i){
 		  Point const& p = *f;
 		  for(int j=0;j<d;++j){
-		    m(i,j)=c(p,j)-cp(p0,j);
+		    m(j,i)=c(p,j)-c(p0,j);
 		    // TODO: cache p0[j] in case it is computed?
 		  }
 		}

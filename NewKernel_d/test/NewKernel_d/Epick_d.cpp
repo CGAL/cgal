@@ -92,7 +92,6 @@ void test2(){
   typedef typename K1::Center_of_sphere_d COS;
   typedef typename K1::Affine_rank_d AR;
   typedef typename K1::Linear_rank_d LR;
-  typedef typename K1::Affinely_independent_d AI;
   typedef typename K1::Has_on_positive_side_d HOPS;
   typedef typename K1::Less_coordinate_d LC;
   typedef typename K1::Less_lexicographically_d LL;
@@ -141,7 +140,6 @@ void test2(){
   COS cos Kinit(center_of_sphere_d_object);
   LR lr Kinit(linear_rank_d_object);
   AR ar Kinit(affine_rank_d_object);
-  AI ai Kinit(affinely_independent_d_object);
   HOPS hops Kinit(has_on_positive_side_d_object);
   LC lc Kinit(less_coordinate_d_object);
   CL cl Kinit(compare_lexicographically_d_object);
@@ -340,6 +338,7 @@ void test3(){
   typedef typename K1::Equal_d E;
   typedef typename K1::Squared_distance_d SD;
   typedef typename K1::Point_dimension_d PD;
+  typedef typename K1::Affinely_independent_d AI;
 
   Ker k
 #if 1
@@ -369,6 +368,7 @@ void test3(){
   E ed Kinit(equal_d_object);
   SD sd Kinit(squared_distance_d_object);
   PD pd Kinit(point_dimension_d_object);
+  AI ai Kinit(affinely_independent_d_object);
   P a; // Triangulation needs this :-(
   a=cp(2,3,4);
   assert(pd(a)==3);
@@ -409,6 +409,10 @@ void test3(){
   assert(!clh(yv+0,yv+1,yv[2]));
   assert( li(yv+0,yv+2));
   assert(!li(yv+0,yv+3));
+  assert( cah(y+0,y+3,y[3]));
+  assert(!cah(y+0,y+2,y[2]));
+  assert( ai(y+0,y+3));
+  assert(!ai(y+0,y+4));
   FO fo3=cfo(&y[0],y+3);
   assert(fo3.rest.size()==1 && fo3.rest[0]!=3);
   std::cout << fo3;
