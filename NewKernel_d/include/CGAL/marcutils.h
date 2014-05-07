@@ -49,8 +49,8 @@ struct Has_type_different_from <T, No, true>
 	// forget the first argument. Useful to make something dependant
 	// (and thus usable in SFINAE), although that's not a great design.
 	template<class A,class B> struct Second_arg {
-		typedef B type; 
-	};      
+		typedef B type;
+	};
 
 	// like std::forward, except for basic types where it does a cast, to
 	// avoid issues with narrowing conversions

@@ -101,7 +101,7 @@ public:
 
   BOOST_PP_REPEAT_FROM_TO(1,11,CODE,_)
 #undef CODE
- 
+
   // this one should be implicit
   Vector_d(Null_vector const& v)
     : Rep(CVBase()(v)) {}

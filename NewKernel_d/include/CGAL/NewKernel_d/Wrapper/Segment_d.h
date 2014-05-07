@@ -93,7 +93,7 @@ public:
 
   BOOST_PP_REPEAT_FROM_TO(1,11,CODE,_)
 #undef CODE
- 
+
 #endif
 
 	  //TODO: if CSEBase returns a reference to a base point, cast it to a

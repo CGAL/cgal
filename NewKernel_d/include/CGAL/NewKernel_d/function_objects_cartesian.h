@@ -437,7 +437,7 @@ template<class R_> struct Linear_base : private Store_kernel<R_> {
 		Matrix b = R::LA::basis(CGAL_MOVE(m));
 		for(int i=0; i < R::LA::columns(b); ++i){
 		  //*o++ = Vector(b.col(i));
-		  typedef 
+		  typedef
 #ifdef CGAL_CXX11
 		    decltype(std::declval<const Matrix>()(0,0))
 #else

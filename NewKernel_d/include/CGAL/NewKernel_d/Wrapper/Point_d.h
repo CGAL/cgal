@@ -105,7 +105,7 @@ public:
 
   BOOST_PP_REPEAT_FROM_TO(1,11,CODE,_)
 #undef CODE
- 
+
   // this one should be implicit
   Point_d(Origin const& o)
     : Rep(CPBase()(o)) {}

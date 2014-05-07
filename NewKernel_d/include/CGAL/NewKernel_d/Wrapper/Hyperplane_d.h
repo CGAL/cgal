@@ -90,7 +90,7 @@ public:
 
   BOOST_PP_REPEAT_FROM_TO(1,11,CODE,_)
 #undef CODE
- 
+
 #endif
 
   //TODO: if OVBase returns a reference to a base vector, cast it to a
