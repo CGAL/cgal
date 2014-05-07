@@ -1,0 +1,17 @@
+\begin{ccRefClass}{typeset<...>}
+\ccInclude{CGAL/typeset.h}
+
+\ccDefinition
+This class provides a set of types, where each type appears at most once. Iterating through the set should be done by looking at \ccc{head} and recursing on \ccc{tail}, testing whether a set is empty by comparing it to \ccc{typeset<>}.
+
+\ccNestedType{head}{One element from the list.}
+\ccNestedType{tail}{A typeset of the other elements from list.}
+\ccNestedType{add<X>::type}{A typeset with \ccc{X} added to the list.}
+\ccNestedType{contains<X>::value}{A boolean that says whether \ccc{X} is in the list.}
+
+In C++11, \ccc{add<X>} is already a typeset so one can omit \ccc{::type}, and \ccc{contains<X>} derives from \ccc{true_type} or \ccc{false_type}.
+
+\ccImplementation
+In C++11, the list looks like \ccc{typeset<type1,type2,type3>} whereas in C++03 it looks like \ccc{typeset<type1,typeset<type2,typeset<type3,typeset<> > > >} (an alternative would have been \ccc{typeset<type1,type2,type3,void,void,void,void>}, as in \ccc{boost::tuple}).
+
+\end{ccRefClass}
