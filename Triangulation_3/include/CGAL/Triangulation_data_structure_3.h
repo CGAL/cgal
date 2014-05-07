@@ -34,7 +34,6 @@
 #include <stack>
 
 #include <boost/unordered_set.hpp>
-#include <boost/container/flat_set.hpp>
 #include <CGAL/utility.h>
 #include <CGAL/iterator.h>
 
@@ -824,22 +823,15 @@ public:
   template<class Treatment, class OutputIterator, class Filter>
   class Vertex_extractor<Treatment,OutputIterator,Filter,false> {
     Vertex_handle v;
-#if defined( CGAL_VERTEX_EXTRACTOR_USE_UNORDERED_SET )
+
     boost::unordered_set<Vertex_handle, Handle_hash_function> tmp_vertices;
-#elif defined( CGAL_VERTEX_EXTRACTOR_USE_FLAT_SET )
-    boost::container::flat_set<Vertex_handle> tmp_vertices;
-#else
-    std::set<Vertex_handle> tmp_vertices;
-#endif
+
     Treatment treat;
     const Tds* t;
     Filter filter;
   public:
     Vertex_extractor(Vertex_handle _v, OutputIterator _output, const Tds* _t, Filter _filter):
     v(_v), treat(_output), t(_t), filter(_filter) {
-#if defined( CGAL_VERTEX_EXTRACTOR_USE_FLAT_MAP )
-      tmp_vertices.reserve(64);
-#endif
     }
 
     void operator()(Cell_handle c) {
@@ -885,8 +877,8 @@ public:
 	  continue;
 	if (w != v){
 
-          if(! w->visited){
-            w->visited = true;
+          if(! w->visited_for_vertex_extractor){
+            w->visited_for_vertex_extractor = true;
             tmp_vertices.push_back(w);
 	    treat(c, v, j);
           }
@@ -897,7 +889,7 @@ public:
     ~Vertex_extractor()
     {
       for(int i=0; i < tmp_vertices.size(); ++i){
-        tmp_vertices[i]->visited = false;
+        tmp_vertices[i]->visited_for_vertex_extractor = false;
       }
     }
 
@@ -987,7 +979,7 @@ public:
     return incident_facets<False_filter>(v, facets);
   }
 
-  BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(Has_member_visited,Has_visited,false)
+  BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(Has_member_visited,Has_visited_for_vertex_extractor,false)
 
   template <class Filter, class OutputIterator>
   OutputIterator
@@ -1101,17 +1093,7 @@ public:
       (*cit)->tds_data().clear();
       visit(*cit);
     } 
-#if 0 // this is now done in ~Vertex_extractor()
-    for(cit = tmp_cells.begin();
-	cit != tmp_cells.end();
-	++cit)
-    {
-      (*cit)->vertex(0)->visited = false;
-      (*cit)->vertex(1)->visited = false;
-      (*cit)->vertex(2)->visited = false;
-      (*cit)->vertex(3)->visited = false;
-    }
-#endif
+
     return visit.result();
   }
 
