@@ -40,14 +40,6 @@ const int UNKNOWN_DIMENSION=(unsigned)-1/2;
 
 // Check that dimension d1 is fine for a kernel of dimension d2.
 // If d2 is unknown, any d1 is fine.
-inline bool check_dimension_lt(int d1, int d2){
-	//return (d2==UNKNOWN_DIMENSION)||(d1<d2);
-	return d1<d2;
-}
-inline bool check_dimension_le(int d1, int d2){
-	//return (d2==UNKNOWN_DIMENSION)||(d1<=d2);
-	return d1<=d2;
-}
 inline bool check_dimension_eq(int d1, int d2){
 	return d2==UNKNOWN_DIMENSION || d1==d2;
 }

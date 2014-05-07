@@ -23,7 +23,6 @@ namespace CGAL {
     static void check_dim(int CGAL_assertion_code(d)){
       CGAL_assertion_code(int m = result_type::MaxSizeAtCompileTime;)
       CGAL_assertion((m == Eigen::Dynamic) || (d <= m));
-      // could omit the first check since they use a big value for Dynamic.
     }
     public:
 
