@@ -8,7 +8,6 @@
 
 
 
-#include "debug.h"
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <CGAL/Mesh_triangulation_3.h>
@@ -48,15 +47,16 @@ int main()
   // Define functions
   Function f1(&torus_function);
   Function f2(&sphere_function<5>);
-  Function f3(&sphere_function<2>);
 
   Function_vector v;
   v.push_back(f1);
   v.push_back(f2);
-  //v.push_back(&f3);
+
+  std::vector<std::string> vps;
+  vps.push_back("--");
 
   // Domain (Warning: Sphere_3 constructor uses square radius !)
-  Mesh_domain domain(v, K::Sphere_3(CGAL::ORIGIN, 5.*5.), 1e-6);
+  Mesh_domain domain(Function_wrapper(v, vps), K::Sphere_3(CGAL::ORIGIN, 5.*5.));
 
   // Set mesh criteria
   Facet_criteria facet_criteria(30, 0.2, 0.02); // angle, size, approximation
