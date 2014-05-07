@@ -20,8 +20,8 @@
 //
 //******************************************************************************
 // File Description :
-// Implicit_to_labeling_function_wrapper and
-// Implicit_vector_to_labeling_function_wrapper class declaration
+// Implicit_to_labeled_function_wrapper and
+// Implicit_vector_to_labeled_function_wrapper class declaration
 // and implementation.
 //
 // See classes description to have more information.
@@ -30,14 +30,11 @@
 #ifndef CGAL_MESH_3_IMPLICIT_TO_LABELED_FUNCTION_WRAPPER_H
 #define CGAL_MESH_3_IMPLICIT_TO_LABELED_FUNCTION_WRAPPER_H
 
+
 #if defined(BOOST_MSVC)
 #  pragma warning(push)
 #  pragma warning(disable:4180) // qualifier applied to function type has no meaning; ignored
 #endif
-
-#warning deprecated : use <CGAL/Implicit_to_labeling_function_wrapper.h> instead.
-
-#include <vector>
 
 namespace CGAL {
 
@@ -84,8 +81,6 @@ private:
 
 
 /**
- * \deprecated
- *
  * @class Implicit_vector_to_labeled_function_wrapper
  *
  * Wraps a set of implicit function [f1,f2,...] to one function F which
@@ -139,6 +134,7 @@ private:
   const Function_vector function_vector_;
 
 };  // end class Implicit_to_labeled_function_wrapper
+
 
 }  // end namespace Mesh_3
 

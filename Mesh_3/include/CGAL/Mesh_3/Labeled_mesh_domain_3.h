@@ -26,8 +26,6 @@
 #ifndef CGAL_MESH_3_LABELED_MESH_DOMAIN_3_H
 #define CGAL_MESH_3_LABELED_MESH_DOMAIN_3_H
 
-#warning deprecated : use <CGAL/Labeled_mesh_domain_3.h> instead.
-
 #include <CGAL/Mesh_3/config.h>
 
 #include <CGAL/Bbox_3.h>
@@ -70,9 +68,6 @@ public:
   typedef typename BGT::Sphere_3   Sphere_3;
   typedef CGAL::Bbox_3             Bbox_3;
 
-  typedef typename BGT::Iso_cuboid_3 Iso_cuboid_3;
-
-public:
   // Kernel_traits compatibility
   typedef BGT R;
 
@@ -414,6 +409,9 @@ public:
 
 
 private:
+  typedef typename BGT::Iso_cuboid_3 Iso_cuboid_3;
+
+private:
   /// Returns Surface_patch_index from \c i and \c j
   Surface_patch_index make_surface_index(const Subdomain_index i,
                                    const Subdomain_index j) const
@@ -504,6 +502,7 @@ Labeled_mesh_domain_3<F,BGT>::Labeled_mesh_domain_3(
 {
   // TODO : CGAL_ASSERT(0 < f(bounding_sphere.get_center()) ) ?
 }
+
 
 
 template<class F, class BGT>

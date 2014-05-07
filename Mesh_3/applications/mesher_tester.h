@@ -570,7 +570,7 @@ void mesh(const std::string& data, const std::string& output_dir, const int nb_t
     //Load the domain
     std::stringstream cout_loc;
     cout_loc << "+ [" << filename << "] Create domain...";
-    std::tr1::shared_ptr<Domain_builder<Domain> > pdomain_builder(new Domain_builder<Domain>(it->path().string()));
+    std::tr1::shared_ptr<Domain_builder<Domain> > pdomain_builder(new Domain_builder<Domain>(it->string()));     
     cout_loc << "done (" << timer.time() << "s)\n";
     std::cout << cout_loc.str();
     

@@ -31,8 +31,8 @@
 #  pragma warning(disable:4180) // qualifier applied to function type has no meaning; ignored
 #endif
 
-#include <CGAL/Labeled_mesh_domain_3.h>
-#include <CGAL/Implicit_to_labeling_function_wrapper.h>
+#include <CGAL/Mesh_3/Labeled_mesh_domain_3.h>
+#include <CGAL/Mesh_3/Implicit_to_labeled_function_wrapper.h>
 
 namespace CGAL {
 
@@ -45,13 +45,13 @@ namespace CGAL {
  */
 template<class Function,
   class BGT,
-  class Wrapper = Implicit_to_labeling_function_wrapper<Function,BGT> >
+  class Wrapper = Mesh_3::Implicit_to_labeled_function_wrapper<Function,BGT> >
 class Implicit_mesh_domain_3
- : public Labeled_mesh_domain_3<Wrapper, BGT >
+ : public Mesh_3::Labeled_mesh_domain_3<Wrapper, BGT >
 {
 public:
   /// Base type
-  typedef Labeled_mesh_domain_3<Wrapper, BGT> Base;
+  typedef Mesh_3::Labeled_mesh_domain_3<Wrapper, BGT> Base;
 
   /// Public types
   typedef typename Base::Sphere_3 Sphere_3;
