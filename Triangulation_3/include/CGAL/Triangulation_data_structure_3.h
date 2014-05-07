@@ -831,7 +831,9 @@ public:
     Filter filter;
   public:
     Vertex_extractor(Vertex_handle _v, OutputIterator _output, const Tds* _t, Filter _filter):
-    v(_v), treat(_output), t(_t), filter(_filter) {
+    v(_v), treat(_output), t(_t), filter(_filter) 
+    {
+      tmp_vertices.reserve(64);
     }
 
     void operator()(Cell_handle c) {
