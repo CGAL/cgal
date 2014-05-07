@@ -112,18 +112,21 @@ and <code>src/</code> directories).
 <h2 id="release4.5">Release 4.5 </h2>
 <div>
   <p>Release date: September 2014 </p>
+
   <h3>Snap_rounding_2</h3>
   <ul>
     <li> Replaced use of private <code>kd_tree</code> with CGAL's official <code>Kd_tree</code> from <code>Spatial_searching</code> package;
       results in a small performance gain. Removed the private <code>kd_tree</code> package.
     </li>
   </ul>
+
   <h3>Spatial_searching</h3>
   <ul>
     <li> Added methods <code>reserve(size_t size)</code> and <code>size_t capacity()</code> to class <code>Kd_tree</code> to allocate
       memory to store <code>size</code> points and to report that number (STL compliance).
     </li>
   </ul>
+
   <h3>STL_extension</h3>
   <ul>
     <li> Added Compact_container::operator[], allowing a direct access to the ith element of a compact container.
@@ -137,6 +140,14 @@ and <code>src/</code> directories).
     </li>
     <li> ... And the price</li>
   </ul>
+
+  <h3>3D Mesh Generation</h3>
+  <ul>
+    <li>Add a new constructor for the class <code>Labeled_mesh_domain_3</code> which
+    takes an <code>Iso_cuboid_3</code>.</li>
+    <li>Add a new labeling function wrapper for meshing multi-domain.</li>
+  </ul>
+
 </div>
 
 <h2 id="release4.4">Release 4.4 </h2>
@@ -261,6 +272,9 @@ and <code>src/</code> directories).
     <li>Improve the use of cache values in <code>Mesh_cell_base_3</code> to
           (re)compute circumcenters and sliver criterion values only when
           needed.
+    </li>
+    <li>Add a new constructor for the class Labeled_mesh_domain_3 which takes an Iso_cuboid_3.
+	Add a new labeling function wrapper for meshing multi-domain.
     </li>
   </ul>
 

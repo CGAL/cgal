@@ -1,14 +1,11 @@
 
 //******************************************************************************
 // File Description :
-// Outputs to out.mesh a mesh of implicit domains. These domains are defined
-// by a vector of functions. Each n-uplet of sign of function values defines a
-// subdomain.
+// Outputs to out.mesh a mesh of implicit domains.
 //******************************************************************************
 
 
 
-#include "debug.h"
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <CGAL/Mesh_triangulation_3.h>
@@ -18,7 +15,6 @@
 #include <CGAL/Implicit_to_labeling_function_wrapper.h>
 #include <CGAL/Labeled_mesh_domain_3.h>
 #include <CGAL/make_mesh_3.h>
-#include "implicit_functions.h"
 
 // IO
 #include <CGAL/IO/File_medit.h>
@@ -27,7 +23,9 @@ using namespace CGAL::parameters;
 
 // Domain
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
-typedef FT_to_point_function_wrapper<K::FT, K::Point_3> Function;
+typedef K::Point_3 Point;
+typedef K::FT FT;
+typedef FT (*Function)(const Point&);
 typedef CGAL::Implicit_multi_domain_to_labeling_function_wrapper<Function>
                                                         Function_wrapper;
 typedef Function_wrapper::Function_vector Function_vector;
@@ -43,25 +41,44 @@ typedef Mesh_criteria::Facet_criteria    Facet_criteria;
 typedef Mesh_criteria::Cell_criteria     Cell_criteria;
 
 
+double cube_function_1 (const Point& p)
+{
+  if( p.x() >= 0 && p.x() <= 2 &&
+      p.y() >= 0 && p.y() <= 2 &&
+      p.z() >= 0 && p.z() <= 2 )
+    return -1.;
+  return 1.;
+}
+
+double cube_function_2 (const Point& p)
+{
+  if( p.x() >= 1 && p.x() <= 3 &&
+      p.y() >= 1 && p.y() <= 3 &&
+      p.z() >= 1 && p.z() <= 3 )
+    return -1.;
+  return 1.;
+}
+
 int main()
 {
   // Define functions
-  Function f1(&torus_function);
-  Function f2(&sphere_function<5>);
-  Function f3(&sphere_function<2>);
+  Function f1 = cube_function_1;
+  Function f2 = cube_function_2;
 
   Function_vector v;
   v.push_back(f1);
   v.push_back(f2);
-  //v.push_back(&f3);
+
+  std::vector<std::string> vps;
+  vps.push_back("--");
 
   // Domain (Warning: Sphere_3 constructor uses square radius !)
-  Mesh_domain domain(v, K::Sphere_3(CGAL::ORIGIN, 5.*5.), 1e-6);
+  Mesh_domain domain(Function_wrapper(v, vps), K::Sphere_3(CGAL::ORIGIN, 5.*5.));
 
   // Set mesh criteria
-  Facet_criteria facet_criteria(30, 0.2, 0.02); // angle, size, approximation
-  Cell_criteria cell_criteria(2., 0.4); // radius-edge ratio, size
-  Mesh_criteria criteria(facet_criteria, cell_criteria);
+  Mesh_criteria criteria(edge_size = 0.15,
+      facet_angle = 30, facet_size = 0.2,
+      cell_radius_edge_ratio = 2, cell_size = 0.4);
 
   // Mesh generation
   C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria, no_exude(), no_perturb());
@@ -73,7 +90,7 @@ int main()
   CGAL::exude_mesh_3(c3t3,12);
   
   // Output
-  std::ofstream medit_file("out.mesh");
+  std::ofstream medit_file("out_cubes_intersection.mesh");
   CGAL::output_to_medit(medit_file, c3t3);
 
   return 0;
