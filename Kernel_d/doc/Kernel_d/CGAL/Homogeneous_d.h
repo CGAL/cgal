@@ -4,7 +4,7 @@ namespace CGAL {
 /*!
 \ingroup PkgKernelDKernels
 
-A model for a `Kernel_d` (and even `KernelWithLifting_d`) using homogeneous coordinates to represent the 
+A model for a `Kernel_d` (and even `KernelWithLifting_d`) using homogeneous coordinates to represent the
 geometric objects. In order for `Homogeneous` to model Euclidean geometry 
 in \f$ E^d\f$, for some mathematical ring \f$ E\f$ (<I>e.g.</I>, 
 the integers \f$\mathbb{Z}\f$ or the rationals \f$\mathbb{Q}\f$), the template parameter `RT` 

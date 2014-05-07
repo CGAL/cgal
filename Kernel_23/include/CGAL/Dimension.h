@@ -60,9 +60,7 @@ struct Dimension_tag
   static const int value = dim;
 };
 
-struct Dynamic_dimension_tag {
-  static const int value = UNKNOWN_DIMENSION;
-};
+struct Dynamic_dimension_tag {};
 
 
 namespace internal {

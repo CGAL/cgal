@@ -7,16 +7,17 @@
 #include <CGAL/Kernel/Return_base_tag.h>
 #include <CGAL/transforming_iterator.h>
 #include <CGAL/NewKernel_d/store_kernel.h>
+#include <CGAL/Dimension.h>
 
 namespace CGAL {
 namespace CartesianDVectorBase {
 #ifndef CGAL_CXX11
 namespace internal {
-template<class R_,int dim_> struct Construct_LA_vector_ {
+template<class R_,class Dim_> struct Construct_LA_vector_ {
 	struct Never_use {};
 	void operator()(Never_use)const;
 };
-#define CODE(Z,N,_) template<class R> struct Construct_LA_vector_<R,N> { \
+#define CODE(Z,N,_) template<class R> struct Construct_LA_vector_<R,Dimension_tag<N> > { \
 	typedef typename R::Constructor Constructor; \
 	typedef typename Get_type<R, RT_tag>::type RT; \
 	typedef typename R::Vector_ result_type; \
@@ -37,7 +38,7 @@ BOOST_PP_REPEAT_FROM_TO(2, 11, CODE, _ )
 template<class R_,class Zero_> struct Construct_LA_vector
 : private Store_kernel<R_>
 #ifndef CGAL_CXX11
-, public internal::Construct_LA_vector_<R_,R_::Default_ambient_dimension::value>
+, public internal::Construct_LA_vector_<R_,typename R_::Default_ambient_dimension>
 #endif
 {
 	//CGAL_FUNCTOR_INIT_IGNORE(Construct_LA_vector)
@@ -48,7 +49,6 @@ template<class R_,class Zero_> struct Construct_LA_vector
 	typedef typename Get_type<R, FT_tag>::type FT;
 	typedef typename R::Vector_ result_type;
 	typedef typename R_::Default_ambient_dimension Dimension;
-	static const int static_dim=Dimension::value;
 	result_type operator()(int d)const{
 		CGAL_assertion(check_dimension_eq(d,this->kernel().dimension()));
 		return typename Constructor::Dimension()(d);
@@ -75,19 +75,21 @@ template<class R_,class Zero_> struct Construct_LA_vector
 #ifdef CGAL_CXX11
 	template<class...U>
 	typename std::enable_if<Constructible_from_each<RT,U...>::value &&
-		(sizeof...(U)==static_dim), result_type>::type
+		boost::is_same<Dimension_tag<sizeof...(U)>, Dimension>::value,
+	  result_type>::type
 	operator()(U&&...u)const{
 		return typename Constructor::Values()(std::forward<U>(u)...);
 	}
 	//template<class...U,class=typename std::enable_if<Constructible_from_each<RT,U...>::value>::type,class=typename std::enable_if<(sizeof...(U)==static_dim+1)>::type,class=void>
 	template<class...U>
 	typename std::enable_if<Constructible_from_each<RT,U...>::value &&
-		(sizeof...(U)==static_dim+1), result_type>::type
+		boost::is_same<Dimension_tag<sizeof...(U)-1>, Dimension>::value,
+	  result_type>::type
 	operator()(U&&...u)const{
 		return Apply_to_last_then_rest()(typename Constructor::Values_divide(),std::forward<U>(u)...);
 	}
 #else
-	using internal::Construct_LA_vector_<R_,R::Default_ambient_dimension::value>::operator();
+	using internal::Construct_LA_vector_<R_,typename R::Default_ambient_dimension>::operator();
 #endif
 	template<class Iter> inline
 	  typename boost::enable_if<is_iterator_type<Iter,std::forward_iterator_tag>,result_type>::type operator()
