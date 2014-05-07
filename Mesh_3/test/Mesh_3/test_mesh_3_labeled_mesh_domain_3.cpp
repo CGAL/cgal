@@ -16,15 +16,15 @@
 // $Id$
 //
 //
-// Author(s)     : Stephane Tayeb
+// Author(s)     : Aymeric PELLE
 //
 //******************************************************************************
 // File Description : 
 //******************************************************************************
 
 #include "test_meshing_utilities.h"
-#include <CGAL/Labeled_mesh_domain_3.h>
-#include <CGAL/Implicit_to_labeling_function_wrapper.h>
+#include <CGAL/Mesh_3/Labeled_mesh_domain_3.h>
+#include <CGAL/Mesh_3/Implicit_to_labeled_function_wrapper.h>
 
 
 template <typename K>
@@ -34,8 +34,8 @@ struct LM3_tester
   typedef typename K::FT FT;
 
   typedef FT (Function)(const Point_3&);
-  typedef CGAL::Implicit_to_labeling_function_wrapper<Function, K> Function_wrapper;
-  typedef CGAL::Labeled_mesh_domain_3<Function_wrapper, K> Mesh_domain;
+  typedef CGAL::Mesh_3::Implicit_to_labeled_function_wrapper<Function, K> Function_wrapper;
+  typedef CGAL::Mesh_3::Labeled_mesh_domain_3<Function_wrapper, K> Mesh_domain;
 
   static FT shape_function (const Point_3& p)
   {
@@ -54,11 +54,10 @@ struct LM3_tester
   void operator() () const
   {
    	  typedef typename K::Sphere_3 Sphere_3;
-   	  typedef typename K::Iso_cuboid_3 Iso_cuboid_3;
 
    	  test_domain(Sphere_3(CGAL::ORIGIN, 4.));
    	  test_domain(CGAL::Bbox_3(-2.,-2.,-2., 2.,2.,2.));
-   	  test_domain(Iso_cuboid_3(Point_3(-2.,-2.,-2.), Point_3(2.,2.,2.)));
+//   	  test_domain(Iso_cuboid_3(Point_3(-2.,-2.,-2.), Point_3(2.,2.,2.)));
   }
 
 private:

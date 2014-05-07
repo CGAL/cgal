@@ -28,7 +28,7 @@
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef CGAL::Polyhedron_3<K> Polyhedron;
 typedef CGAL::Mesh_3::Polyhedral_edge_tolerance_to_labeled_function_wrapper<Polyhedron, K> Polyhedral_wrapper;
-typedef CGAL::Mesh_3::Labeled_mesh_domain_3<Polyhedral_wrapper, K> Mesh_domain;
+typedef CGAL::Labeled_mesh_domain_3<Polyhedral_wrapper, K> Mesh_domain;
 
 // Triangulation
 typedef CGAL::Mesh_triangulation_3<Mesh_domain>::type Tr;
