@@ -65,6 +65,7 @@ public:
 private:
   Cell_handle _c;
   public:
+  //typedef bool Has_visited;
   bool visited;
 };
 

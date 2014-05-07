@@ -816,17 +816,19 @@ public:
     }
   };
 
+  template<class Treatment, class OutputIterator, class Filter, bool hasVisited>
+  class Vertex_extractor;
 
 	// Visitor for visit_incident_cells:
 	// outputs the result of Treatment applied to the vertices
   template<class Treatment, class OutputIterator, class Filter>
-  class Vertex_extractor {
+  class Vertex_extractor<Treatment,OutputIterator,Filter,false> {
     Vertex_handle v;
 #if defined( CGAL_VERTEX_EXTRACTOR_USE_UNORDERED_SET )
     boost::unordered_set<Vertex_handle, Handle_hash_function> tmp_vertices;
 #elif defined( CGAL_VERTEX_EXTRACTOR_USE_FLAT_SET )
     boost::container::flat_set<Vertex_handle> tmp_vertices;
-#elif defined( CGAL_VERTEX_EXTRACTOR_USE_SET )
+#else
     std::set<Vertex_handle> tmp_vertices;
 #endif
     Treatment treat;
@@ -835,7 +837,7 @@ public:
   public:
     Vertex_extractor(Vertex_handle _v, OutputIterator _output, const Tds* _t, Filter _filter):
     v(_v), treat(_output), t(_t), filter(_filter) {
-#ifdef CGAL_VERTEX_EXTRACTOR_USE_FLAT_MAP
+#if defined( CGAL_VERTEX_EXTRACTOR_USE_FLAT_MAP )
       tmp_vertices.reserve(64);
 #endif
     }
@@ -846,25 +848,67 @@ public:
 	if(filter(w))
 	  continue;
 	if (w != v){
-#if defined (CGAL_VERTEX_EXTRACTOR_USE_BOOL_IN_VERTEX)
-          if(! w->visited){
-            w->visited = true;
-	    treat(c, v, j);
-          }
-#else
+
 	  if(tmp_vertices.insert(w).second) {
 	    treat(c, v, j);
 	  }
-#endif
+
         }
       }
     }
+
 
     CGAL::Emptyset_iterator facet_it() {return CGAL::Emptyset_iterator();}
     OutputIterator result() {
       return treat.result();
     }
   };
+
+  template<class Treatment, class OutputIterator, class Filter>
+  class Vertex_extractor<Treatment,OutputIterator,Filter,true> {
+    Vertex_handle v;
+    std::vector<Vertex_handle> tmp_vertices;
+
+    Treatment treat;
+    const Tds* t;
+    Filter filter;
+  public:
+    Vertex_extractor(Vertex_handle _v, OutputIterator _output, const Tds* _t, Filter _filter):
+    v(_v), treat(_output), t(_t), filter(_filter) {
+      tmp_vertices.reserve(64);
+    }
+
+    void operator()(Cell_handle c) {
+      for (int j=0; j<= t->dimension(); ++j) {
+	Vertex_handle w = c->vertex(j);
+	if(filter(w))
+	  continue;
+	if (w != v){
+
+          if(! w->visited){
+            w->visited = true;
+            tmp_vertices.push_back(w);
+	    treat(c, v, j);
+          }
+        }
+      }
+    }
+
+    ~Vertex_extractor()
+    {
+      for(int i=0; i < tmp_vertices.size(); ++i){
+        tmp_vertices[i]->visited = false;
+      }
+    }
+
+
+    CGAL::Emptyset_iterator facet_it() {return CGAL::Emptyset_iterator();}
+    OutputIterator result() {
+      return treat.result();
+    }
+  };
+
+
 
   // Treatment for Vertex_extractor:
   // outputs the vertices
@@ -943,6 +987,8 @@ public:
     return incident_facets<False_filter>(v, facets);
   }
 
+  BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(Has_member_visited,Has_visited,false)
+
   template <class Filter, class OutputIterator>
   OutputIterator
   incident_edges(Vertex_handle v, OutputIterator edges, Filter f = Filter()) const
@@ -965,7 +1011,7 @@ public:
       return edges;
     }
     return visit_incident_cells<Vertex_extractor<Edge_feeder_treatment<OutputIterator>,
-    OutputIterator, Filter>,
+                                                 OutputIterator, Filter, Has_member_visited<Vertex>::value>,
     OutputIterator>(v, edges, f);
   }
 
@@ -1008,7 +1054,7 @@ public:
       return vertices;
     }
     return visit_incident_cells<Vertex_extractor<Vertex_feeder_treatment<OutputIterator>,
-    OutputIterator, Filter>,
+    OutputIterator, Filter, Has_member_visited<Vertex>::value>,
     OutputIterator>(v, vertices, f);
   }
 
@@ -1055,6 +1101,7 @@ public:
       (*cit)->tds_data().clear();
       visit(*cit);
     } 
+#if 0 // this is now done in ~Vertex_extractor()
     for(cit = tmp_cells.begin();
 	cit != tmp_cells.end();
 	++cit)
@@ -1064,6 +1111,7 @@ public:
       (*cit)->vertex(2)->visited = false;
       (*cit)->vertex(3)->visited = false;
     }
+#endif
     return visit.result();
   }
 
