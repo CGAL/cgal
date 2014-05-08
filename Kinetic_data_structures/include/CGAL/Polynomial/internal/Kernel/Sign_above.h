@@ -42,7 +42,7 @@ public:
   }
   Sign_above(){}
 
-#if defined(_MSC_VER) && ( _MSC_VER >= 1600 )
+#if defined(_MSC_VER) && ( _MSC_VER >= 1700 )
   template<typename... Args>
   auto operator()(Args&&... args) ->
       decltype(P::operator()(std::forward<Args>(args)...))
