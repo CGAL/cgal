@@ -12,6 +12,7 @@
 #include <boost/utility/result_of.hpp>
 
 namespace CGAL {
+namespace Wrap {
 
 template <class R_>
 class Hyperplane_d : public Get_type<typename R_::Kernel_base, Hyperplane_tag>::type
@@ -105,6 +106,7 @@ public:
 
 };
 
+} //namespace Wrap
 } //namespace CGAL
 
 #endif // CGAL_WRAPPER_SPHERE_D_H

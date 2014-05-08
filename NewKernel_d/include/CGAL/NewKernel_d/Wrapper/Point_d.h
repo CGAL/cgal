@@ -14,6 +14,7 @@
 #include <boost/utility/result_of.hpp>
 
 namespace CGAL {
+namespace Wrap {
 
 template <class R_>
 class Point_d : public Get_type<typename R_::Kernel_base, Point_tag>::type
@@ -255,6 +256,7 @@ template <class R_> Point_d<R_>::Point_d(Point_d &)=default;
 //	return typename R::template Construct<Difference_of_vectors_tag>::type()(v,w);
 //}
 
+} //namespace Wrap
 } //namespace CGAL
 
 #endif // CGAL_WRAPPER_POINT_D_H

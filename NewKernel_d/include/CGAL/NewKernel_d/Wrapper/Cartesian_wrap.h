@@ -80,7 +80,7 @@ struct Map_wrapping_type : Get_type<B, T> {};
 #define CGAL_REGISTER_OBJECT_WRAPPER(X) \
   template <class B, class K> \
   struct Map_wrapping_type <B, K, X##_tag, true> { \
-    typedef X##_d<K> type; \
+    typedef Wrap::X##_d<K> type; \
   }
 CGAL_REGISTER_OBJECT_WRAPPER(Point);
 CGAL_REGISTER_OBJECT_WRAPPER(Vector);

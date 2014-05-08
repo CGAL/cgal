@@ -14,6 +14,7 @@
 #include <boost/utility/result_of.hpp>
 
 namespace CGAL {
+namespace Wrap {
 
 template <class R_>
 class Vector_d : public Get_type<typename R_::Kernel_base, Vector_tag>::type
@@ -245,6 +246,7 @@ Vector_d<R_> operator-(const Vector_d<R_>& v,const Vector_d<R_>& w)
 	return typename Get_functor<R_, Difference_of_vectors_tag>::type()(v,w);
 }
 
+} //namespace Wrap
 } //namespace CGAL
 
 #endif // CGAL_WRAPPER_VECTOR_D_H
