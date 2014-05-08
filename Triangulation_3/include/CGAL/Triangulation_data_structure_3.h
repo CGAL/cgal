@@ -890,7 +890,7 @@ public:
 
     ~Vertex_extractor()
     {
-      for(int i=0; i < tmp_vertices.size(); ++i){
+      for(std::size_t i=0; i < tmp_vertices.size(); ++i){
         tmp_vertices[i]->visited_for_vertex_extractor = false;
       }
     }
