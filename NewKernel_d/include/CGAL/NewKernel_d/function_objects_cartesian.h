@@ -671,7 +671,7 @@ template<class R_> struct Vector_to_point : private Store_kernel<R_> {
 	typedef Vector argument_type;
 	result_type operator()(argument_type const&v)const{
 		CI ci(this->kernel());
-		return CV(this->kernel())(ci(v,Begin_tag(),ci(v,End_tag())));
+		return CV(this->kernel())(ci(v,Begin_tag()),ci(v,End_tag()));
 	}
 };
 }
