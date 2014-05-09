@@ -42,7 +42,8 @@ public:
   }
   Sign_above(){}
 
-#if defined(_MSC_VER) && ( _MSC_VER >= 1700 )
+#if defined(_MSC_VER) && ( _MSC_VER >= 1800 )
+  // == VC12 == Visual Studio 2013
   template<typename... Args>
   auto operator()(Args&&... args) ->
       decltype(P::operator()(std::forward<Args>(args)...))
