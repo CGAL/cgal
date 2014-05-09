@@ -69,10 +69,11 @@ class Gmpq
     boost::totally_ordered1< Gmpq
   , boost::ordered_field_operators2< Gmpq, int
   , boost::ordered_field_operators2< Gmpq, long
+  , boost::ordered_field_operators2< Gmpq, long long
   , boost::ordered_field_operators2< Gmpq, double
   , boost::ordered_field_operators2< Gmpq, Gmpz
   , boost::ordered_field_operators2< Gmpq, Gmpfr
-    > > > > > >
+    > > > > > > >
 {
   typedef Handle_for<Gmpq_rep> Base;
 public:
@@ -257,6 +258,15 @@ public:
   bool  operator==(long z) const {return mpq_cmp_si(mpq(),z,1)==0;}
   bool  operator< (long z) const {return mpq_cmp_si(mpq(),z,1)<0;}
   bool  operator> (long z) const {return mpq_cmp_si(mpq(),z,1)>0;}
+
+  // Interoperability with long long
+  Gmpq& operator+=(long long z){return (*this)+= Gmpq(z);}
+  Gmpq& operator-=(long long z){return (*this)-= Gmpq(z);}
+  Gmpq& operator*=(long long z){return (*this)*= Gmpq(z);}
+  Gmpq& operator/=(long long z){return (*this)/= Gmpq(z);}
+  bool  operator==(long long z) const {return (*this)== Gmpq(z);}
+  bool  operator< (long long z) const {return (*this)<  Gmpq(z);}
+  bool  operator> (long long z) const {return (*this)>  Gmpq(z);}
 
   // Interoperability with double
   Gmpq& operator+=(double d){return (*this)+= Gmpq(d);}
