@@ -386,7 +386,7 @@ template<class R_> struct Contained_in_simplex : private Store_kernel<R_> {
 		typename Get_functor<R, Compute_point_cartesian_coordinate_tag>::type c(this->kernel());
 		typename Get_functor<R, Point_dimension_tag>::type pd(this->kernel());
 		int n=std::distance(f,e);
-		if (n==0) return ON_UNBOUNDED_SIDE;
+		if (n==0) return false;
 		int d=pd(q);
 		Matrix m(d+1,n);
 		DynVec a(n);
