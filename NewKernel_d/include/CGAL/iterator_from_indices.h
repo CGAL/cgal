@@ -25,7 +25,7 @@ namespace CGAL {
 template <class Ref_>
 struct Default_coordinate_access {
 	typedef Ref_ result_type;
-	template<class T> Ref_ operator()(T const& t, std::size_t i)const{
+	template<class T> Ref_ operator()(T const& t, std::ptrdiff_t i)const{
 		return t[i];
 	}
 };
@@ -45,9 +45,8 @@ class Iterator_from_indices
 {
 	friend class boost::iterator_core_access;
 	//FIXME: use int to save space
-	//FIXME: use a signed type
 	//TODO: use a tuple to save space when Coord_access is empty
-	typedef std::size_t index_t;
+	typedef std::ptrdiff_t index_t;
 	Container_* cont;
 	index_t index;
 	Coord_access ca;
@@ -55,8 +54,7 @@ class Iterator_from_indices
 	void decrement(){ --index; }
 	void advance(std::ptrdiff_t n){ index+=n; }
 	ptrdiff_t distance_to(Iterator_from_indices const& other)const{
-		return static_cast<ptrdiff_t>(other.index)
-			-static_cast<ptrdiff_t>(index);
+		return other.index-index;
 	}
 	bool equal(Iterator_from_indices const& other)const{
 		return index==other.index;

@@ -130,7 +130,7 @@ template<class NT_,class Dim_,class Max_dim_=Dim_> struct LA_eigen {
 		// Eigen::ColPivHouseholderQR<Mat_> decomp(m);
 		Eigen::FullPivLU<Mat_> decomp(m);
 		// decomp.setThreshold(0);
-		return decomp.rank();
+		return static_cast<int>(decomp.rank());
 	}
 
 	// m*a==b

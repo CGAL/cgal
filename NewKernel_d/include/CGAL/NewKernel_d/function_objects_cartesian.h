@@ -232,7 +232,7 @@ template<class R_> struct Linear_rank : private Store_kernel<R_> {
 	result_type operator()(Iter f, Iter e)const{
 		typename Get_functor<R, Compute_vector_cartesian_coordinate_tag>::type c(this->kernel());
 		typename Get_functor<R, Point_dimension_tag>::type vd(this->kernel());
-		int n=std::distance(f,e);
+		std::ptrdiff_t n=std::distance(f,e);
 		if (n==0) return 0;
 		Vector const& v0 = *f;
 		// FIXME: Uh? Using it on a vector ?!
@@ -263,7 +263,7 @@ template<class R_> struct Linearly_independent : private Store_kernel<R_> {
 	template<class Iter>
 	result_type operator()(Iter f, Iter e)const{
 		typename Get_functor<R, Point_dimension_tag>::type vd(this->kernel());
-		int n=std::distance(f,e);
+		std::ptrdiff_t n=std::distance(f,e);
 		// FIXME: Uh? Using it on a vector ?!
 		int d=vd(*f);
 		if (n>d) return false;
@@ -288,7 +288,7 @@ template<class R_> struct Contained_in_linear_hull : private Store_kernel<R_> {
 	result_type operator()(Iter f, Iter e,V const&w)const{
 		typename Get_functor<R, Compute_vector_cartesian_coordinate_tag>::type c(this->kernel());
 		typename Get_functor<R, Point_dimension_tag>::type vd(this->kernel());
-		int n=std::distance(f,e);
+		std::ptrdiff_t n=std::distance(f,e);
 		if (n==0) return false;
 		// FIXME: Uh? Using it on a vector ?!
 		int d=vd(w);
@@ -327,7 +327,7 @@ template<class R_> struct Affine_rank : private Store_kernel<R_> {
 	result_type operator()(Iter f, Iter e)const{
 		typename Get_functor<R, Compute_point_cartesian_coordinate_tag>::type c(this->kernel());
 		typename Get_functor<R, Point_dimension_tag>::type pd(this->kernel());
-		int n=std::distance(f,e);
+		int n=(int)std::distance(f,e);
 		if (--n<=0) return n;
 		Point const& p0 = *f;
 		int d=pd(p0);
@@ -355,7 +355,7 @@ template<class R_> struct Affinely_independent : private Store_kernel<R_> {
 	template<class Iter>
 	result_type operator()(Iter f, Iter e)const{
 		typename Get_functor<R, Point_dimension_tag>::type pd(this->kernel());
-		int n=std::distance(f,e);
+		std::ptrdiff_t n=std::distance(f,e);
 		int d=pd(*f);
 		if (--n>d) return false;
 		typename Get_functor<R, Affine_rank_tag>::type ar(this->kernel());
@@ -385,7 +385,7 @@ template<class R_> struct Contained_in_simplex : private Store_kernel<R_> {
 	result_type operator()(Iter f, Iter e, P const&q)const{
 		typename Get_functor<R, Compute_point_cartesian_coordinate_tag>::type c(this->kernel());
 		typename Get_functor<R, Point_dimension_tag>::type pd(this->kernel());
-		int n=std::distance(f,e);
+		std::ptrdiff_t n=std::distance(f,e);
 		if (n==0) return false;
 		int d=pd(q);
 		Matrix m(d+1,n);
@@ -420,7 +420,7 @@ namespace CartesianDKernelFunctors {
       typedef Ref_ result_type;
       int col;
       Matrix_col_access(int r):col(r){}
-      template<class Mat> Ref_ operator()(Mat const& m, int row)const{
+      template<class Mat> Ref_ operator()(Mat const& m, std::ptrdiff_t row)const{
 	return m(row,col);
       }
     };
@@ -438,7 +438,7 @@ template<class R_> struct Linear_base : private Store_kernel<R_> {
 		typename Get_functor<R, Compute_vector_cartesian_coordinate_tag>::type c(this->kernel());
 		typename Get_functor<R, Point_dimension_tag>::type vd(this->kernel());
 		typename Get_functor<R, Construct_ttag<Vector_tag> >::type cv(this->kernel());
-		int n=(int)std::distance(f,e);
+		std::ptrdiff_t n=std::distance(f,e);
 		if (n==0) return;
 		Vector const& v0 = *f;
 		// FIXME: Uh? Using it on a vector ?!
