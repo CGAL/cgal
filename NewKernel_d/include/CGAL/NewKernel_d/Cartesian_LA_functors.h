@@ -73,7 +73,7 @@ template<class R_,class Zero_> struct Construct_LA_vector
 		return typename Constructor::Dimension()(d);
 	}
 	result_type operator()()const{
-		return typename Constructor::Dimension()(std::max(0,this->kernel().dimension()));
+		return typename Constructor::Dimension()((std::max)(0,this->kernel().dimension()));
 	}
 	result_type operator()(int d, Zero_ const&)const{
 		CGAL_assertion(check_dimension_eq(d,this->kernel().dimension()));
