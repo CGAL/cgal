@@ -126,10 +126,11 @@ public:
   weighted_circumcenter(const Geom_traits& gt = Geom_traits()) const
   {
       if (weighted_circumcenter_ == NULL) {
-    	  weighted_circumcenter_ = new Bare_point(this->Cb::weighted_circumcenter());
+    	  weighted_circumcenter_ 
+            = new Bare_point(this->Cb::weighted_circumcenter(gt));
       } else {
         CGAL_expensive_assertion(
-          this->Cb::weighted_circumcenter() == *weighted_circumcenter_);
+          this->Cb::weighted_circumcenter(gt) == *weighted_circumcenter_);
       }
 
       return *weighted_circumcenter_;

@@ -124,10 +124,10 @@ public:
   circumcenter(const Geom_traits& gt = Geom_traits()) const
   {
       if (circumcenter_ == NULL) {
-    	  circumcenter_ = new Point_3(this->Cb::circumcenter());
+    	  circumcenter_ = new Point_3(this->Cb::circumcenter(gt));
       } else {
         CGAL_expensive_assertion(
-          this->Cb::circumcenter() == *circumcenter);
+          this->Cb::circumcenter(gt) == *circumcenter);
       }
 
       return *circumcenter_;
