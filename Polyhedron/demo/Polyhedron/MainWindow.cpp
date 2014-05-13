@@ -788,7 +788,7 @@ void MainWindow::open(QString filename)
 
   Scene_item* scene_item = load_item(fileinfo, find_loader(load_pair.first));
   if(scene_item != 0) {
-    this->addToRecentFiles(filename);
+    this->addToRecentFiles(fileinfo.absoluteFilePath());
   }
   selectSceneItem(scene->addItem(scene_item));
 }
