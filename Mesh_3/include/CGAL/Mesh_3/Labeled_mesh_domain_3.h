@@ -26,7 +26,11 @@
 #ifndef CGAL_MESH_3_LABELED_MESH_DOMAIN_3_H
 #define CGAL_MESH_3_LABELED_MESH_DOMAIN_3_H
 
+#ifdef __GNUG__
 #warning deprecated : use <CGAL/Labeled_mesh_domain_3.h> instead.
+#else
+#pragma message "WARNING (deprecated) : use <CGAL/Labeled_mesh_domain_3.h> instead."
+#endif
 
 #include <CGAL/Mesh_3/config.h>
 

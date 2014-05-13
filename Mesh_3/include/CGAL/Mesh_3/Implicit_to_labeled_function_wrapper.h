@@ -35,7 +35,11 @@
 #  pragma warning(disable:4180) // qualifier applied to function type has no meaning; ignored
 #endif
 
-#warning deprecated : use <CGAL/Implicit_to_labeling_function_wrapper.h> instead.
+#ifdef __GNUG__
+#warning deprecated : use <CGAL/Labeled_mesh_domain_3.h> instead.
+#else
+#pragma message "WARNING (deprecated) : use <CGAL/Labeled_mesh_domain_3.h> instead."
+#endif
 
 #include <vector>
 
