@@ -33,7 +33,18 @@ struct LM3_tester
   typedef typename K::Point_3 Point_3;
   typedef typename K::FT FT;
 
-  typedef FT (Function)(const Point_3&);
+  struct Function
+  {
+    typedef Point_3 Point;
+    typedef FT (*Func)(const Point_3&);
+
+    Function (Func f) : f_(f) {}
+    FT operator() (const Point_3& p) const { return f_(p); }
+
+  private:
+    Func f_;
+  };
+
   typedef CGAL::Mesh_3::Implicit_to_labeled_function_wrapper<Function, K> Function_wrapper;
   typedef CGAL::Mesh_3::Labeled_mesh_domain_3<Function_wrapper, K> Mesh_domain;
 
@@ -57,7 +68,6 @@ struct LM3_tester
 
    	  test_domain(Sphere_3(CGAL::ORIGIN, 4.));
    	  test_domain(CGAL::Bbox_3(-2.,-2.,-2., 2.,2.,2.));
-//   	  test_domain(Iso_cuboid_3(Point_3(-2.,-2.,-2.), Point_3(2.,2.,2.)));
   }
 
 private:
@@ -66,11 +76,13 @@ private:
   {
     FT error_bound(1e-3);
 
-    Function_wrapper wrapper_1(sphere_function);
+    Function f_sphere(&sphere_function);
+    Function_wrapper wrapper_1(f_sphere);
     Mesh_domain domain(wrapper_1, bounding_shape, error_bound);
     test_construct_initial_points(domain, error_bound);
 
-    Function_wrapper wrapper_2(shape_function);
+    Function f_shape(&shape_function);
+    Function_wrapper wrapper_2(f_shape);
     Mesh_domain domain_2(wrapper_2, bounding_shape, error_bound);
     test_is_in_domain(domain_2);
     test_do_intersect_surface(domain_2);
