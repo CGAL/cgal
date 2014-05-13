@@ -1,5 +1,5 @@
-#ifndef CGAL_EFFICIENT_RANSAC_PRIMITIVE_H
-#define CGAL_EFFICIENT_RANSAC_PRIMITIVE_H
+#ifndef CGAL_SHAPE_DETECTION_3_SHAPE_BASE_H
+#define CGAL_SHAPE_DETECTION_3_SHAPE_BASE_H
 
 #include <vector>
 #include <set>
@@ -7,259 +7,105 @@
 #include <CGAL/Kd_tree.h>
 #include <CGAL/Fuzzy_sphere.h>
 #include <CGAL/Search_traits_3.h>
+#include <CGAL/squared_distance_3.h>
+#include <CGAL/property_map.h>
+
+/*!
+ \file Shape_base.h
+ */
 
 namespace CGAL {
+  namespace internal {
+    template<class PointAccessor>
+    class Octree;
+  }
+    
+    /*!
+     \brief Base class of shape types. Provides access to assigned points.
+     */
+  template <class Sd_traits>
+  class Shape_base {
+      /// \cond SKIP_IN_MANUAL
+    template <class T>
+    friend class Shape_detection_3;
+    template<class PointAccessor>
+    friend class internal::Octree;
+      /// \endcond
 
-  namespace Efficient_ransac {
+  public:
+    /// \name Types 
+    /// @{
 
-    template <typename Kernel, class inputDataType>
-    class Primitive_ab
-    {
-      template <typename K, class DT>
-      friend class Efficient_ransac;
-      template <typename K, class PA, class DT>
-      friend class Octree;
-    public:
-      //--------------------------------------------typedef
-      typedef typename std::vector<inputDataType>::iterator inputIterator;
-      typedef typename std::vector<inputDataType>::const_iterator InputConstIterator;
+    typedef typename Sd_traits::inputIterator inputIterator; ///< random access iterator for input data.
+    typedef typename Sd_traits::Geom_Traits::FT FT; ///< number type.
+    typedef typename Sd_traits::Geom_Traits::Point_3 Point; ///< point type.
+    typedef typename Sd_traits::Geom_Traits::Vector_3 Vector; ///< vector type.
+    typedef typename Sd_traits::PointPMap PointPMap;  ///< property map to access the location of an input point.
+    typedef typename Sd_traits::NormalPMap NormalPMap; ///< property map to access the unoriented normal of an input point.
 
-      typedef typename Kernel::FT FT;
+    typedef Shape_base<Sd_traits> Shape; ///< own type.
 
-      // basic geometric types
-      typedef typename Kernel::Point_3 Point;
-      typedef typename Kernel::Vector_3 Vector;
-      typedef typename Kernel::Vector_2 Vector2;
-      typedef typename Kernel::Plane_3 Plane_3;
+    Shape_base() :
+    m_isValid(true),
+      m_lowerBound(std::numeric_limits<FT>::min()),
+      m_upperBound(std::numeric_limits<FT>::min()),
+      m_score(0),
+      m_sum_ExpectedValue(0),
+      m_nb_subset_used(0),
+      m_hasconnected_component(false) {
+    }
+
+    virtual ~Shape_base() {}
       
-      //more advance container for geometric types
-      typedef typename std::pair<Point, Vector> Pwn;
+      /*!
+       Indices into the input data of all points assigned to this shape.
+    */
 
-      typedef Primitive_ab<Kernel, inputDataType> Primitive;
-
-      Primitive_ab() {init();}
-      Primitive_ab(FT _ep, FT _t) {m_epsilon=_ep; m_normalThresh =_t; init();}
-      static Primitive_ab* create(int id, FT _m_epsilon = 0.9f, FT _normalThresh = 0.9f);
-
-      enum TYPE : int {PLANE = 0, SPHERE = 1, CYLINDER = 2, CONE = 3, TORUS = 4};
-
-    public:
-      FT m_epsilon;
-      FT m_normalThresh;	 //deviation of normal, used during first check of the 3 normal
-
-    protected:
-      TYPE m_type;
-      std::string m_type_name;
-      bool m_isValid;
-      FT m_lowerBound;
-      FT m_upperBound;
-
-      unsigned int m_score;
-
-      FT m_sum_ExpectedValue;
-      int m_nb_subset_used;		//count the number of subset used so far for the score, and thus indicate the next one to use
-      bool m_hasConnectedComponent;
-
-      std::vector<int> m_indices;	//indices of the points fitting to the candidate
-
-    public:
-
-      TYPE type() {return m_type;}
-      FT ExpectedValue() const {return (m_lowerBound + m_upperBound) / 2.f;}
-      FT inline minBound() const {return  m_lowerBound;}
-      FT inline maxBound() const {return  m_upperBound;}
-      FT inline score() const {return m_score;} //return last computed score, or -1 if no score yet
-      int inline subsets() const {return m_nb_subset_used;}
-
-      operator FT() const {return ExpectedValue();}//so we can sort by expected value
-
-      void updatePoints(const std::vector<int> &shapeIndex);
-      bool equals(InputConstIterator first, const Primitive *other) const {
-        FT e2 = m_epsilon * m_epsilon;
-        int fit = 0;
-        int tested = 0;
-        int toTest = std::min<unsigned int>(9, m_indices.size());
-        for (unsigned int i = 0;i<toTest;i++) {
-          int idx = getRandomInt() % m_indices.size();
-          if (other->squared_distance(first[m_indices[idx]].first) <= e2)
-            if (other->cos_to_normal(first[m_indices[idx]].first, first[m_indices[idx]].second) > m_normalThresh)
-              fit++;
-        }
-        tested = toTest;
-        toTest = std::min<unsigned int>(9, other->m_indices.size());
-
-        for (unsigned int i = 0;i<toTest;i++) {
-          int idx = getRandomInt() % other->m_indices.size();
-          if (squared_distance(first[other->m_indices[idx]].first) <= e2)
-            if (cos_to_normal(first[other->m_indices[idx]].first, first[other->m_indices[idx]].second) > m_normalThresh)
-              fit++;
-        }
-        tested += toTest;
-
-        return fit >= 2 * tested / 3;
-      }
-
-      bool isValid() const {return m_isValid;}
-      std::vector<int> *getPointsIndices() {return &m_indices;}
-
-      void save(const char* _n, const inputIterator _data/*, const bool _withAllPoints = false*/)
-      {
-        std::ofstream plyFile(_n);
-
-        plyFile << "ply" << std::endl;
-        plyFile << "format ascii 1.0" << std::endl;
-        plyFile << "element vertex " << m_indices.size() << std::endl;
-        plyFile << "property float x" << std::endl;
-        plyFile << "property float y" << std::endl;
-        plyFile << "property float z" << std::endl;
-        plyFile << "property uchar red" << std::endl;
-        plyFile << "property uchar green" << std::endl;
-        plyFile << "property uchar blue" << std::endl;
-        plyFile << "end_header" << std::endl;
-
-        plyFile << std::setprecision(6);
-        unsigned char r, g, b;
-        r = 64 + getRandomInt()%192;
-        g = 64 + getRandomInt()%192;
-        b = 64 + getRandomInt()%192;
-
-        for (unsigned int i = 0;i<m_indices.size();i++) {
-          Point p = (*(_data+ m_indices[i])).first;
-          plyFile << p[0] << " " << p[1] << " " << p[2];
-          plyFile << " " << (int)r << " " << (int)g << " " << (int)b;
-          plyFile << std::endl;
-        }
-
-        plyFile.close();
-      }
-
-      virtual FT squared_distance(const Point &_p) const = 0;
-      virtual void squared_distance(InputConstIterator first, std::vector<FT> &dists, const std::vector<int> &shapeIndex, const std::vector<unsigned int> &indices) = 0;
-      virtual FT cos_to_normal(const Point &_p, const Vector &_n) const = 0;
-      virtual void cos_to_normal(InputConstIterator first, std::vector<FT> &angles, const std::vector<int> &shapeIndex, const std::vector<unsigned int> &indices) const = 0;
-
-      virtual void parameterExtend(const Point &center, FT width, FT min[2], FT max[2]) const = 0;
-      virtual void parameters(InputConstIterator first, std::vector<std::pair<FT, FT>> &parameterSpace, const std::vector<int> &indices, FT min[2], FT max[2]) const = 0;
+    const std::vector<int> *assigned_points() {
+      return &m_indices;
+    }
       
-      unsigned int connectedComponent(InputConstIterator first, FT m_bitmapEpsilon, const Point &center, FT width);
+    /*!
+      Helper function writing shape type and numerical parameters into a string.
+     */
+    
+    virtual std::string info() const = 0;
 
-      virtual void compute(std::set<int> &l_list_index_selected, InputConstIterator &m_it_Point_Normal) = 0;
-      virtual std::string info() = 0;
-      virtual std::string type_str() const = 0;
-      inline bool operator<(const Primitive &c) const {
-        return ExpectedValue() < c.ExpectedValue();
-      }
-      
-    protected:
-      unsigned int cost_function(InputConstIterator &first, const std::vector<int> &shapeIndex, FT epsilon, FT normal_threshold, const std::vector<unsigned int> &indices);
-
-      static bool default_cost_function (const Primitive_ab<Kernel, inputDataType> *_this, 
-        const Point &_p, const Vector &_n, const FT epsilon_distance, const FT delta_dev_normal);
-
-      template<typename T> bool isfinite(T arg)
-      {
-        return arg == arg && 
-          arg != std::numeric_limits<T>::infinity() &&
-          arg != -std::numeric_limits<T>::infinity();
-      }
-
-      void init()
-      {
-        m_isValid = true;
-        m_hasConnectedComponent = false;
-        m_score = 0;
-        m_nb_subset_used = 0;
-        m_sum_ExpectedValue = 0;
-        m_lowerBound = std::numeric_limits<FT>::min();
-        m_upperBound = std::numeric_limits<FT>::min();
+  protected:
+      /// \cond SKIP_IN_MANUAL
+      struct Compare_by_max_bound {
+          bool operator() (Shape *a, Shape *b) {
+              return a->max_bound() < b->max_bound();
+          }
       };
-
-      void computeBound(const int sizeS1, const int sizeP) {
-        hypergeometricalDist(-2 - sizeS1, -2 - sizeP, -1 - signed(m_indices.size()), m_lowerBound, m_upperBound);
-        m_lowerBound = -1 - m_lowerBound;
-        m_upperBound = -1 - m_upperBound;
-      }
-
-      void hypergeometricalDist(const int UN, const int x, const FT n, FT &low, FT &high) 
-      {
-        if (UN == 1 || UN == 0)
-          printf("something wrong here, denominator is zero (UN %d)!! \n", UN);
-        if (x > UN)
-          printf("SizeP1 smaller than sizeP, something wrong (and sqrt may be negative !!!!");
-        FT sq = sqrtf(x * n * (UN- x) * (UN - n) / (UN - 1));
-        low  = (x * n - sq) / UN;
-        high = (x * n + sq)/UN;
-
-        if (!isfinite<FT>( low ) || !isfinite<FT>( high ))
-        {
-          low = high = 0;
-        }
-      }
-
-      virtual bool supportsConnectedComponent() = 0;
-      virtual bool wrapsU() const = 0;
-      virtual bool wrapsV() const = 0;
-    };
-
-
-    template <typename Kernel, class inputDataType>
-    Primitive_ab<Kernel, inputDataType>* Primitive_ab<Kernel, inputDataType>::create(int id, FT _epsilon, FT _normalThresh)
-    {
-      switch (id)
-      {
-      case CONE:
-        return new Cone<Kernel, inputDataType>(_epsilon, _normalThresh);
-
-      case TORUS:
-        return new Torus<Kernel, inputDataType>(_epsilon, _normalThresh);
-
-      case PLANE:
-        return new Plane<Kernel, inputDataType>(_epsilon, _normalThresh);
-
-      case SPHERE:
-        return new Sphere<Kernel, inputDataType>(_epsilon, _normalThresh);
-
-      case CYLINDER:
-        return new Cylinder<Kernel, inputDataType>(_epsilon, _normalThresh);
-
-      default:
-        return NULL;
-      }
-    };
-
-    template <typename Kernel, class inputDataType>
-    unsigned int Primitive_ab<Kernel, inputDataType>::cost_function(InputConstIterator &first, const std::vector<int> &shapeIndex, FT epsilon, FT normal_threshold, const std::vector<unsigned int> &indices) {
-      std::vector<FT> dists, angles;
-      dists.resize(indices.size());
-      squared_distance(first, dists, shapeIndex, indices);
-      angles.resize(indices.size());
-      cos_to_normal(first, angles, shapeIndex, indices);
-
-      unsigned int scoreBefore = m_indices.size();
-
-      FT eps = epsilon * epsilon;
-      int i = 0;
-      for (unsigned int i = 0;i<indices.size();i++) {
-        if (shapeIndex[indices[i]] == -1) {
-          if (dists[i] <= eps && angles[i] > normal_threshold)
-            m_indices.push_back(indices[i]);
-        }
-      }
-
-      return m_indices.size() - scoreBefore;
+      
+    FT expected_value() const {
+      return (m_lowerBound + m_upperBound) / 2.f;
     }
 
-    template <typename Kernel, class inputDataType>
-    bool Primitive_ab<Kernel, inputDataType>::default_cost_function( const Primitive_ab<Kernel, inputDataType> *_this, 
-      const Point &_p, const Vector &_n, const FT epsilon_distance, const FT delta_dev_normal)
-    {
-      if (_this->squared_distance(_p)  > epsilon_distance * epsilon_distance) return false;
-      if (_this->cos_to_normal(_p, _n) >  delta_dev_normal ) return false;
-      return true;
+    FT inline min_bound() const {
+      return  m_lowerBound;
     }
 
-    template <typename Kernel, class inputDataType>
-    void Primitive_ab<Kernel, inputDataType>::updatePoints(const std::vector<int> &shapeIndex) {
+    FT inline max_bound() const {
+      return  m_upperBound;
+    }
+
+    //return last computed score, or -1 if no score yet
+    FT inline score() const {
+      return m_score;
+    } 
+
+    int inline subsets() const {
+      return m_nb_subset_used;
+    }
+
+    //so we can sort by expected value
+    operator FT() const {
+      return expected_value();
+    }
+
+    void update_points(const std::vector<int> &shapeIndex) {
       if (!m_indices.size())
         return;
       int start = 0, end = m_indices.size() - 1;
@@ -275,25 +121,40 @@ namespace CGAL {
       m_indices.resize(end);
       m_score = m_indices.size();
     }
-    
-    template <typename Kernel, class inputDataType>
-    unsigned int Primitive_ab<Kernel, inputDataType>::connectedComponent(InputConstIterator first, FT m_bitmapEpsilon, const Point &center, FT width) {
+
+    bool is_valid() const {
+      return m_isValid;
+    }
+
+    virtual FT squared_distance(const Point &p) const = 0;
+    virtual void squared_distance(std::vector<FT> &dists, const std::vector<int> &shapeIndex, const std::vector<unsigned int> &indices) = 0;
+    virtual FT cos_to_normal(const Point &p, const Vector &n) const = 0;
+    virtual void cos_to_normal(std::vector<FT> &angles, const std::vector<int> &shapeIndex, const std::vector<unsigned int> &indices) const = 0;
+
+    virtual void parameter_extend(const Point &center, FT width, FT min[2], FT max[2]) const = 0;
+    virtual void parameters(std::vector<std::pair<FT, FT> > &parameterSpace, const std::vector<int> &indices, FT min[2], FT max[2]) const = 0;
+
+    unsigned int connected_component(FT m_bitmapEpsilon, const Point &center, FT width) {
       if (m_indices.size() == 0)
         return 0;
 
-//       if (m_hasConnectedComponent)
-//         return m_score;
+      //       if (m_hasconnected_component)
+      //         return m_score;
 
-      m_hasConnectedComponent = true;
-      if (!supportsConnectedComponent())
+      m_hasconnected_component = true;
+      if (!supports_connected_component())
         return m_indices.size();
-      
+
+      //ccCount++;
+      //clock_t s, e;
+      //s = clock();
+
       FT min[2], max[2];
       //parameterExtend(center, width, min, max);
-      std::vector<std::pair<FT, FT>> parameterSpace;
+      std::vector<std::pair<FT, FT> > parameterSpace;
       parameterSpace.resize(m_indices.size());
 
-      parameters(first, parameterSpace, m_indices, min, max);
+      parameters(parameterSpace, m_indices, min, max);
       int iMin[2], iMax[2];
       iMin[0] = min[0] / m_bitmapEpsilon;
       iMin[1] = min[1] / m_bitmapEpsilon;
@@ -303,15 +164,13 @@ namespace CGAL {
       int uExtend = abs(iMax[0] - iMin[0]) + 2;
       int vExtend = abs(iMax[1] - iMin[1]) + 2;
 
-      std::vector<std::vector<int>> bitmap;
+      std::vector<std::vector<int> > bitmap;
       std::vector<bool> visited;
       bitmap.resize(uExtend * vExtend);
       visited.resize(uExtend * vExtend, false);
 
-      int maxIndex = uExtend * vExtend;
-
-      bool wrapU = wrapsU();
-      bool wrapV = wrapsV();
+      bool wrapU = wraps_u();
+      bool wrapV = wraps_v();
 
       for (unsigned int i = 0;i<parameterSpace.size();i++) {
         int u = (parameterSpace[i].first - min[0]) / m_bitmapEpsilon;
@@ -339,7 +198,7 @@ namespace CGAL {
         bitmap[v * uExtend + u].push_back(m_indices[i]);
       }
 
-      std::vector<std::vector<int>> cluster;
+      std::vector<std::vector<int> > cluster;
       for (unsigned int i = 0;i<(uExtend * vExtend);i++) {
         cluster.push_back(std::vector<int>());
         if (bitmap[i].empty())
@@ -418,8 +277,126 @@ namespace CGAL {
 
       m_indices = cluster[maxCluster];
 
+      //e = clock();
+      //ccTime += e - s;
+
       return m_score = m_indices.size();
     }
+
+    void compute(const std::set<int> &indices, inputIterator first, PointPMap pointPMap, NormalPMap normalPMap, FT epsilon, FT normal_threshold) {
+      if (indices.size() < required_samples())
+        return;
+
+      m_first = first;
+      m_pointPMap = pointPMap;
+      m_normalPMap = normalPMap;
+      m_epsilon = epsilon;
+      m_normal_threshold = normal_threshold;
+
+      std::vector<int> output(indices.begin(), indices.end());
+
+      create_shape(output);
+    }
+
+    virtual void create_shape(const std::vector<int> &indices) = 0;
+
+    inline bool operator<(const Shape &c) const {
+      return expected_value() < c.expected_value();
+    }
+
+    unsigned int cost_function(const std::vector<int> &shapeIndex, FT epsilon, FT normal_threshold, const std::vector<unsigned int> &indices) {
+      std::vector<FT> dists, angles;
+      dists.resize(indices.size());
+      squared_distance(dists, shapeIndex, indices);
+      angles.resize(indices.size());
+      cos_to_normal(angles, shapeIndex, indices);
+
+      unsigned int scoreBefore = m_indices.size();
+
+      FT eps = epsilon * epsilon;
+      for (unsigned int i = 0;i<indices.size();i++) {
+        if (shapeIndex[indices[i]] == -1) {
+          if (dists[i] <= eps && angles[i] > normal_threshold)
+            m_indices.push_back(indices[i]);
+        }
+      }
+
+      return m_indices.size() - scoreBefore;
+    }
+
+    template<typename T> bool is_finite(T arg) {
+      return arg == arg && 
+        arg != std::numeric_limits<T>::infinity() &&
+        arg != -std::numeric_limits<T>::infinity();
+    }
+
+    void compute_bound(const int sizeS1, const int sizeP) {
+      hypergeometrical_dist(-2 - sizeS1, -2 - sizeP, -1 - signed(m_indices.size()), m_lowerBound, m_upperBound);
+      m_lowerBound = -1 - m_lowerBound;
+      m_upperBound = -1 - m_upperBound;
+    }
+
+    void hypergeometrical_dist(const int UN, const int x, const FT n, FT &low, FT &high) {
+      if (UN == 1 || UN == 0)
+        printf("something wrong here, denominator is zero (UN %d)!! \n", UN);
+      if (x > UN)
+        printf("SizeP1 smaller than sizeP, something wrong (and sqrt may be negative !!!!");
+      FT sq = sqrtf(x * n * (UN- x) * (UN - n) / (UN - 1));
+      low  = (x * n - sq) / UN;
+      high = (x * n + sq)/UN;
+
+      if (!is_finite<FT>(low) || !is_finite<FT>(high)) {
+        low = high = 0;
+      }
+    }
+
+    virtual int required_samples() const = 0;
+
+    virtual bool supports_connected_component() const = 0;
+    virtual bool wraps_u() const = 0;
+    virtual bool wraps_v() const = 0;
+
+  protected:
+    FT m_epsilon;
+    FT m_normal_threshold;	 //deviation of normal, used during first check of the 3 normal
+
+    bool m_isValid;
+    FT m_lowerBound;
+    FT m_upperBound;
+
+    unsigned int m_score;
+
+    FT m_sum_ExpectedValue;
+    int m_nb_subset_used;		//count the number of subset used so far for the score, and thus indicate the next one to use
+    bool m_hasconnected_component;
+
+    std::vector<int> m_indices;	//indices of the points fitting to the candidate
+    inputIterator m_first;
+    PointPMap m_pointPMap;
+      NormalPMap m_normalPMap;
+      /// \endcond
+  };
+
+  namespace internal {
+    class Shape_factory_base {
+    public:
+    virtual ~Shape_factory_base() {}
+      virtual void *create() = 0;
+    };
   }
+    
+    /*!
+     \brief Template class for creating a factory for a shape type.
+     */
+  template<class Shape>
+  class Shape_factory : public internal::Shape_factory_base {
+  public:
+      /*!
+       Returns a new instance of the shape type.
+       */
+    virtual void *create() {
+      return new Shape;
+    }
+  };
 }
 #endif

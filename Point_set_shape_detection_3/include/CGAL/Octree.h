@@ -1,32 +1,37 @@
-#ifndef CGAL_EFFICIENT_RANSAC_OCTREE_H
-#define CGAL_EFFICIENT_RANSAC_OCTREE_H
+#ifndef CGAL_SHAPE_DETECTION_3_OCTREE_H
+#define CGAL_SHAPE_DETECTION_3_OCTREE_H
 
 #include <limits>
+#include <random>
 #include <stack>
 
 #include <CGAL/Bbox_3.h>
 
 #include "Shape_base.h"
-#include "Types.h"
+
+extern int scoreTime;
 
 namespace CGAL {
-
-  namespace Efficient_ransac {
-
-    template<class T> 
+  
+    template<class Sd_traits> 
+    class Shape_detection_3;
+    
+  namespace internal {
+  
+    template<class Sdt>
     class DirectPointAccessor {
+      // think if constructor could be protected (and the rest of the methods)
     public:
-      typedef typename T DataType;
-      typedef typename std::vector<DataType>::iterator inputIterator;
+      typedef Sdt Sd_traits;
+      typedef typename Sd_traits::inputIterator inputIterator;
 
-    public:
       DirectPointAccessor() {}
-      DirectPointAccessor(inputIterator &begin, inputIterator &beyond, unsigned int offset) : m_begin(begin), m_offset(offset) {
-        m_end = (beyond == begin) ? begin : beyond - 1;
+      DirectPointAccessor(const inputIterator &begin, const inputIterator &beyond, unsigned int offset) : m_first(begin), m_offset(offset) {
+        m_beyond = (beyond == begin) ? begin : beyond - 1;
       }
 
-      T &at(unsigned int i) {
-        return *(m_begin + i);
+      inputIterator at(unsigned int i) {
+        return m_first + i;
       }
 
       unsigned int index(unsigned int i) {
@@ -38,50 +43,52 @@ namespace CGAL {
       }
 
       unsigned int size() {
-        return m_end - m_begin + 1;
+        return m_beyond - m_first + 1;
       }
 
-      inputIterator begin() {
-        return m_begin;
+      inputIterator first() {
+        return m_first;
       }
 
-      inputIterator end() {
-        return m_end;
+      inputIterator beyond() {
+        return m_beyond;
       }
 
       void setData(inputIterator &begin, inputIterator &beyond) {
-        m_end = (beyond == begin) ? begin : beyond - 1;
+        m_beyond = (beyond == begin) ? begin : beyond - 1;
       }
 
       void swap(unsigned int a, unsigned int b) {
-        DataType tmp = m_begin[a];
-        m_begin[a] = m_begin[b];
-        m_begin[b] = tmp;
+        typename std::iterator_traits<inputIterator>::value_type tmp;
+        tmp = m_first[a];
+        m_first[a] = m_first[b];
+        m_first[b] = tmp;
       }
 
+    protected:
+      inputIterator m_first;
+
     private:
-      inputIterator m_begin;
-      inputIterator m_end;
+      inputIterator m_beyond;
       unsigned int m_offset;
     };
 
-    template<class T>
+    template<class Sdt>
     class IndexedPointAccessor {
     public:
-      typedef typename T DataType;
-      typedef typename std::vector<DataType>::iterator inputIterator;
+      typedef Sdt Sd_traits;
+      typedef typename Sd_traits::inputIterator inputIterator;
 
-    public:
       IndexedPointAccessor() {}
-      IndexedPointAccessor(inputIterator &begin, inputIterator &beyond, unsigned int) : m_begin(begin) {
-        m_end = (beyond == begin) ? begin : beyond - 1;
+      IndexedPointAccessor(const inputIterator &begin, const inputIterator &beyond, unsigned int) : m_first(begin) {
+        m_beyond = (beyond == begin) ? begin : beyond - 1;
         m_indices.resize(size());
         for (unsigned int i = 0;i<size();i++)
           m_indices[i] = i;
       }
 
-      T &at(unsigned int i) {
-        return *(m_begin + m_indices[i]);
+      inputIterator at(unsigned int i) {
+        return m_first + m_indices[i];
       }
 
       unsigned int index(unsigned int i) {
@@ -92,23 +99,23 @@ namespace CGAL {
         return 0;
       }
 
-      inputIterator begin() {
-        return m_begin;
+      inputIterator first() {
+        return m_first;
       }
 
-      inputIterator end() {
-        return m_end;
+      inputIterator beyond() {
+        return m_beyond;
       }
 
       void setData(inputIterator &begin, inputIterator &beyond) {
-        m_end = (beyond == begin) ? begin : beyond - 1;
+        m_beyond = (beyond == begin) ? begin : beyond - 1;
         m_indices.resize(size());
         for (unsigned int i = 0;i<size();i++)
           m_indices[i] = i;
       }
 
       unsigned int size() {
-        return m_end - m_begin + 1;
+        return m_beyond - m_first + 1;
       }
 
       void swap(unsigned int a, unsigned int b) {
@@ -117,30 +124,35 @@ namespace CGAL {
         m_indices[b] = tmp;
       }
 
+    protected:
+      inputIterator m_first;
+
     private:
       std::vector<unsigned int> m_indices;
-      inputIterator m_begin;
-      inputIterator m_end;
+      inputIterator m_beyond;
     };
 
-    template<typename Kernel, class PointAccessor, class inputDataType>
+    template<class PointAccessor>
     class Octree : public PointAccessor {
-      template <typename K, class DT>
-      friend class Efficient_ransac;
 
-      typedef typename Primitive_ab<Kernel, inputDataType> Primitive;
-      typedef typename Kernel::Point_3 Point;
-      typedef typename Kernel::Point_2 Point_2d;
-      typedef typename Kernel::Vector_3 Vector;
-      typedef typename Kernel::Plane_3 Plane_3;
-      typedef typename Kernel::FT FT;
+      typedef typename PointAccessor::Sd_traits Sd_traits;
+      typedef typename Sd_traits::inputIterator inputIterator;
+      typedef Shape_base<Sd_traits> Primitive;
+      typedef typename Sd_traits::Geom_Traits::Point_3 Point;
+      typedef typename Sd_traits::Geom_Traits::Vector_3 Vector;
+      typedef typename Sd_traits::Geom_Traits::FT FT;
+      typedef typename Sd_traits::PointPMap PointPMap;
+      typedef typename Sd_traits::NormalPMap NormalPMap;
 
-      typedef struct Cell {
+      template<class Sd_traits>
+        friend class ::CGAL::Shape_detection_3;
+
+      struct Cell {
         int first, last;
         Cell *child[8];
         Point center;
         unsigned int level;
-        Cell(int first, int last, Point center, unsigned int level) : first(first), last(last), level(level), center(center) {memset(child, 0, sizeof(Cell *) * 8);}
+        Cell(int first, int last, Point center, unsigned int level) : first(first), last(last), center(center), level(level) {memset(child, 0, sizeof(Cell *) * 8);}
         bool isLeaf() const {
           for (unsigned int i = 0;i<8;i++) {
             if (child[i])
@@ -158,9 +170,10 @@ namespace CGAL {
           else return (last - first + 1);
         }
       };
+        
     public:
       Octree() : m_bucketSize(20), m_setMaxLevel(10), m_root(NULL) {}
-      Octree(typename PointAccessor::inputIterator &begin, typename PointAccessor::inputIterator &beyond, unsigned int offset = 0, unsigned int bucketSize = 20, unsigned int maxLevel = 10) : PointAccessor(begin, beyond, offset), m_bucketSize(bucketSize), m_setMaxLevel(maxLevel), m_root(NULL) {}
+      Octree(const inputIterator &first, const inputIterator &beyond, unsigned int offset = 0, unsigned int bucketSize = 20, unsigned int maxLevel = 10) : PointAccessor(first, beyond, offset), m_root(NULL), m_bucketSize(bucketSize), m_setMaxLevel(maxLevel) {}
       ~Octree() {
         if (!m_root)
           return;
@@ -192,7 +205,7 @@ namespace CGAL {
         m_maxLevel = 0;
 
         std::stack<Cell *> stack;
-        m_root = new Cell(0, size() - 1, m_center, 0); 
+        m_root = new Cell(0, this->size() - 1, m_center, 0);
         stack.push(m_root);
         while (!stack.empty()) {
           Cell *cell= stack.top();
@@ -407,41 +420,11 @@ namespace CGAL {
         }
       }
 
-      bool getPointsInCellContainingPoint(const Point &p, unsigned int level, std::vector<unsigned int> &indices, const std::vector<int> &shapeIndex) {
-        bool upperZ, upperY, upperX;
-        Cell *cur = m_root;
-
-        while (cur && cur->level < level) {
-          upperX = cur->center[0] <= p[0];
-          upperY = cur->center[1] <= p[1];
-          upperZ = cur->center[2] <= p[2];
-
-          if (upperZ) {
-            if (upperY)
-              cur = (upperX) ? cur->child[0] : cur->child[1];
-            else cur = (upperX) ? cur->child[2] : cur->child[3];
-          }
-          else {
-            if (upperY)
-              cur = (upperX) ? cur->child[4] : cur->child[5];
-            else cur = (upperX) ? cur->child[6] : cur->child[7];
-          }
-        }
-
-        if (cur) {
-          for (unsigned int i = cur->first;i<=cur->last;i++) {
-            int j = index(i);
-            if (shapeIndex[j] == -1)
-              indices.push_back(j);
-          }
-
-          return true;
-        }
-        else return false;
-      }
-
-
       bool drawSamplesFromCellContainingPoint(const Point &p, unsigned int level, std::set<int> &indices, const std::vector<int> &shapeIndex, int requiredSamples) {
+        static std::random_device rd;
+        static std::mt19937 rng(rd());
+        static std::uniform_int_distribution<> dis(0, this->size() - 1);
+
         bool upperZ, upperY, upperX;
         Cell *cur = m_root;
 
@@ -465,7 +448,7 @@ namespace CGAL {
         if (cur) {
           int enough = 0;
           for (unsigned int i = cur->first;i<=cur->last;i++) {
-            int j = index(i);
+            int j = this->index(i);
             if (shapeIndex[j] == -1) {
               enough++;
               if (enough >= requiredSamples)
@@ -474,8 +457,8 @@ namespace CGAL {
           }
           if (enough >= requiredSamples) {
             do {
-              int p = getRandomInt() % cur->size();
-              int j = index(cur->first + p);
+              int p = dis(rng) % cur->size();
+              int j = this->index(cur->first + p);
               if (shapeIndex[j] == -1)
                 indices.insert(j);
             } while (indices.size() < requiredSamples);
@@ -496,12 +479,14 @@ namespace CGAL {
         for (unsigned int i = 0;i<m_root->size();i++) {
           indices[i] = index(m_root->first + i);
         }
-        unsigned int sum = candidate->cost_function(begin() + m_root->first, begin() + m_root->last, shapeIndex, epsilon, normal_threshold, indices);
+        
+        candidate->cost_function(this->begin() + m_root->first, this->begin() + m_root->last, shapeIndex, epsilon, normal_threshold, indices);
 
         return candidate->m_indices.size();
       }
 
-      unsigned int score(Primitive *candidate, typename PointAccessor::inputIterator first, std::vector<int> &shapeIndex, FT epsilon, FT normal_threshold) {
+      unsigned int score(Primitive *candidate, std::vector<int> &shapeIndex, FT epsilon, FT normal_threshold) {
+        //clock_t s = clock();
         std::stack<Cell *> stack;
         stack.push(m_root);
 
@@ -511,7 +496,7 @@ namespace CGAL {
 
           FT width = m_width / (1<<(cell->level));
 
-          FT diag = sqrt(3 * width * width) + epsilon;
+          FT diag = ::sqrt(3 * width * width) + epsilon;
 
           FT dist = candidate->squared_distance(cell->center);
 
@@ -524,12 +509,12 @@ namespace CGAL {
             std::vector<unsigned int> indices;
             indices.reserve(cell->size());
             for (unsigned int i = 0;i<cell->size();i++) {
-              if (shapeIndex[index(cell->first + i)] == -1) {
-                indices.push_back(index(cell->first + i));
+              if (shapeIndex[this->index(cell->first + i)] == -1) {
+                indices.push_back(this->index(cell->first + i));
               }
             }
 
-            candidate->cost_function(first, shapeIndex, epsilon, normal_threshold, indices);
+            candidate->cost_function(shapeIndex, epsilon, normal_threshold, indices);
           }
           else {
             for (unsigned int i = 0;i<8;i++)
@@ -538,6 +523,8 @@ namespace CGAL {
           }
 
         }
+
+        //scoreTime += clock() - s;
 
         return candidate->m_indices.size();
       }
@@ -549,7 +536,7 @@ namespace CGAL {
       void verify() {
         std::set<unsigned int> indices;
         for (unsigned int i = m_root->first;i<=m_root->last;i++) {
-          indices.insert(index(i));
+          indices.insert(this->index(i));
         }
         std::cout << "size: " << m_root->size() << " unique indices: " << indices.size() << std::endl;
         std::stack<Cell *> stack;
@@ -567,7 +554,7 @@ namespace CGAL {
           FT diag = sqrt(3 * width * width);
 
           for (unsigned int i = cell->first;i<cell->last;i++) {
-            FT d = sqrt(CGAL::squared_distance(cell->center, at(i).first));
+            FT d = sqrt(CGAL::squared_distance(cell->center, this->at(i).first));
             if (d > diag) {
               std::cout << "points out of range" << std::endl;
             }
@@ -589,8 +576,7 @@ namespace CGAL {
         Point c = cell->center;
 
         for (int i = cell->first;i<cell->last;i++) {
-          Point p = at(i).first;
-          FT d = sqrt(CGAL::squared_distance(cell->center, at(i).first));
+          FT d = sqrt(CGAL::squared_distance(cell->center, get(m_pointPMap, this->at(i).first)));
           if (d > diag) {
             std::cout << "points out of range" << std::endl;
           }
@@ -608,14 +594,14 @@ namespace CGAL {
 
         for (;first <= last;first++) {
           bool fail = false;
-          p = at(first).first;
+          p = get(m_pointPMap, this->at(first));
           v = p[dimension];
           if (below){
-            if (at(first).first[dimension] > threshold)
+            if (get(m_pointPMap, this->at(first))[dimension] > threshold)
               fail = true;
           }
           else
-            if (at(first).first[dimension] <= threshold)
+            if (get(m_pointPMap, this->at(first))[dimension] <= threshold)
               fail = true;
 
           if (fail) {
@@ -624,18 +610,19 @@ namespace CGAL {
         }
       }
 
-    private:
+        
       void buildBoundingCube() {
         FT min[] = {std::numeric_limits<FT>::max(), std::numeric_limits<FT>::max(), std::numeric_limits<FT>::max()};
         FT max[] = {std::numeric_limits<FT>::min(), std::numeric_limits<FT>::min(), std::numeric_limits<FT>::min()};
 
-        for (unsigned int i = 0;i<size();i++) {
-          min[0] = std::min<FT>(min[0], at(i).first.x());
-          min[1] = std::min<FT>(min[1], at(i).first.y());
-          min[2] = std::min<FT>(min[2], at(i).first.z());
-          max[0] = std::max<FT>(max[0], at(i).first.x());
-          max[1] = std::max<FT>(max[1], at(i).first.y());
-          max[2] = std::max<FT>(max[2], at(i).first.z());
+        for (unsigned int i = 0;i<this->size();i++) {
+            Point p = get(m_pointPMap, *this->at(i));
+          min[0] = std::min<FT>(min[0], p.x());
+          min[1] = std::min<FT>(min[1], p.y());
+          min[2] = std::min<FT>(min[2], p.z());
+          max[0] = std::max<FT>(max[0], p.x());
+          max[1] = std::max<FT>(max[1], p.y());
+          max[2] = std::max<FT>(max[2], p.z());
         }
 
         m_width = std::max(max[0] - min[0], std::max(max[1] - min[1], max[2] - min[2])) * 0.5;
@@ -647,15 +634,6 @@ namespace CGAL {
         m_center = Point((min[0] + max[0]) * 0.5, (min[1] + max[1]) * 0.5, (min[2] + max[2]) * 0.5);
 
         //m_bBox = Bbox_3(m_center[0] - m_width, m_center[1] - m_width, m_center[2] - m_width, m_center[0] + m_width, m_center[1] + m_width, m_center[2] + m_width);
-      }
-
-      unsigned int score(const Cell *cell, Primitive *candidate, std::vector<int> &shapeIndex) {
-        unsigned int score = 0;
-        std::cout << "Octree::score(cell, primitive, shapeindex) is not yet implemented" << std::endl;
-        for (unsigned int i = cell->first;i<=cell->last;i++) {
-
-        }
-        return 0;
       }
 
       // returns index of last point below threshold
@@ -671,47 +649,43 @@ namespace CGAL {
 
         while(first < last) {
           // find first above threshold
-          Point p1 = at(first).first;
+          Point p1 = get(m_pointPMap, *this->at(first));
           FT v1 = p1[dimension];
-          while (at(first).first[dimension] < threshold && first < last) {
+          while (get(m_pointPMap, *this->at(first))[dimension] < threshold && first < last) {
             first++;
-            Point p2 = at(first).first;
-            FT v2 = p2[dimension];
           }
 
           // check if last has been reached
           if (first == last) {
-            return (at(first).first[dimension] < threshold) ? first : (first == origFirst) ? -1 : first - 1;
+            return (get(m_pointPMap, *this->at(first))[dimension] < threshold) ? first : (first == origFirst) ? -1 : first - 1;
           }
 
           // find last below threshold
-          p1 = at(last).first;
+          p1 = get(m_pointPMap, *this->at(last));
           v1 = p1[dimension];
-          while (at(last).first[dimension] >= threshold && last > first) {
+          while (get(m_pointPMap, *this->at(last))[dimension] >= threshold && last > first) {
             last--;
-            Point p2 = at(last).first;
-            FT v2 = p2[dimension];
           }
 
           // check if first has been reached
           if (last == first) {
-            return (at(first).first[dimension] < threshold) ? first : (first == origFirst) ? -1 : first - 1;
+            return (get(m_pointPMap, *this->at(first))[dimension] < threshold) ? first : (first == origFirst) ? -1 : first - 1;
           }
 
           // swap entries
           if (first < origFirst || first > origLast || last < origFirst || last > origLast) {
             std::cout << "split: swap out of bounds!" << std::endl;
           }
-          swap(first, last);
-          p1 = at(first).first;
+          this->swap(first, last);
+          p1 = get(m_pointPMap, *this->at(first));
           v1 = p1[dimension];
-          p1 = at(last).first;
+          p1 = get(m_pointPMap, *this->at(last));
           v1 = p1[dimension];
           first++;
           last--;
         }
 
-        return (at(first).first[dimension] < threshold) ? first : (first == origFirst) ? -1 : first - 1;
+        return (get(m_pointPMap, *this->at(first))[dimension] < threshold) ? first : (first == origFirst) ? -1 : first - 1;
       }
 
       //Bbox_3 m_bBox;
@@ -721,6 +695,8 @@ namespace CGAL {
       unsigned int m_bucketSize;
       unsigned int m_setMaxLevel;
       unsigned int m_maxLevel;
+      PointPMap m_pointPMap;
+      NormalPMap m_normalPMap;
     };
   }
 }
