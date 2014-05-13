@@ -6,7 +6,7 @@
 
 #include <CGAL/Bbox_3.h>
 
-#include "Primitive.h"
+#include "Shape_base.h"
 #include "Types.h"
 
 namespace CGAL {

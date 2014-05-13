@@ -1,7 +1,7 @@
 #ifndef CGAL_EFFICIENT_RANSAC_CYLINDER_H
 #define CGAL_EFFICIENT_RANSAC_CYLINDER_H
 
-#include "Primitive.h"
+#include "Shape_base.h"
 #include <set>
 #include <math.h>
 

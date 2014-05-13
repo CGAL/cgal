@@ -1,7 +1,7 @@
 #ifndef CGAL_EFFICIENT_RANSAC_TORUS_H
 #define CGAL_EFFICIENT_RANSAC_TORUS_H
 
-#include "Primitive.h"
+#include "Shape_base.h"
 #include <set>
 #include <math.h>
 #include <cmath>

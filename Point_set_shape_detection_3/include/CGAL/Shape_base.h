@@ -8,9 +8,6 @@
 #include <CGAL/Fuzzy_sphere.h>
 #include <CGAL/Search_traits_3.h>
 
-extern int ccTime;
-extern int ccCount;
-
 namespace CGAL {
 
   namespace Efficient_ransac {
@@ -290,11 +287,7 @@ namespace CGAL {
       m_hasConnectedComponent = true;
       if (!supportsConnectedComponent())
         return m_indices.size();
-
-      ccCount++;
-      clock_t s, e;
-      s = clock();
-
+      
       FT min[2], max[2];
       //parameterExtend(center, width, min, max);
       std::vector<std::pair<FT, FT>> parameterSpace;
@@ -424,9 +417,6 @@ namespace CGAL {
       }
 
       m_indices = cluster[maxCluster];
-
-      e = clock();
-      ccTime += e - s;
 
       return m_score = m_indices.size();
     }

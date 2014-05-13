@@ -29,13 +29,13 @@
 
 #include "Types.h"
 #include "Octree.h"
-#include "Primitive.h"
+#include "Shape_base.h"
 
-#include "Cone.h"
-#include "Cylinder.h"
-#include "Plane.h"
-#include "Sphere.h"
-#include "Torus.h"
+#include "Cone_shape.h"
+#include "Cylinder_shape.h"
+#include "Plane_shape.h"
+#include "Sphere_shape.h"
+#include "Torus_shape.h"
 
 //for octree ------------------------------
 #include <CGAL/Kd_tree.h>
@@ -66,15 +66,6 @@
 #include <boost/foreach.hpp>
 #include <boost/tuple/tuple.hpp>
 //---------------------
-
-extern int octTime;
-extern int runTime;
-extern int candGenCount;
-extern int candGenTime;
-extern int findBestCount;
-extern int findBestTime;
-extern int improveCount;
-extern int improveTime;
 
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
@@ -179,9 +170,7 @@ namespace CGAL {
     Efficient_ransac<Kernel, inputDataType>::Efficient_ransac(inputIterator first, inputIterator beyond)
     {
       srand ( time(NULL) );
-
-      clock_t s = clock();
-
+      
       m_global_octree = new IndexedOctree(first, beyond, 0);
       m_numAvailablePoints = beyond - first;
       
@@ -239,7 +228,6 @@ namespace CGAL {
 
       m_global_octree = new IndexedOctree(first, beyond);
       m_global_octree->createTree();
-       octTime = clock() - s;
       //m_global_octree->verify();
 
       printd("init Ransac done\n");
@@ -254,7 +242,6 @@ namespace CGAL {
     template <typename Kernel, class inputDataType>
     Primitive_ab<Kernel, inputDataType>* Efficient_ransac<Kernel, inputDataType>::getBestCandidate(std::vector<Primitive* >& l_list_candidates, const int _SizeP) {
       if (l_list_candidates.size() == 1)	return l_list_candidates.back();
-      clock_t s = clock();
 
       int index_worse_candidate = 0;
       bool improved = true;
@@ -292,9 +279,6 @@ namespace CGAL {
 
       if (index_worse_candidate == l_list_candidates.size()-1 && improved) printf("delete everything, should never happen (%d) !!!!!!\n", index_worse_candidate);
 
-      findBestTime += clock() - s;
-      findBestCount++;
-
       return l_list_candidates.back();
     };
     
@@ -304,9 +288,6 @@ namespace CGAL {
         return false;
       if (candidate->m_nb_subset_used >= m_num_subsets)
         return false;
-
-      improveCount++;
-      clock_t s = clock();
 
       candidate->m_nb_subset_used = (candidate->m_nb_subset_used >= m_num_subsets) ? m_num_subsets - 1 : candidate->m_nb_subset_used;
       
@@ -352,8 +333,6 @@ namespace CGAL {
 
       candidate->computeBound(l_nb_total_points_subsets, _SizeP);//estimate the bound
 
-      improveTime += clock() - s;
-
       return true;
     }
 
@@ -361,9 +340,7 @@ namespace CGAL {
     void Efficient_ransac<Kernel, inputDataType>::run(bool save) {
       //no primitives added, exit
       if (m_list_sought_primitives.size() == 0) return;
-
-      clock_t s = clock();
-
+      
       // initializing the shape index
       m_shapeIndex.resize(m_numAvailablePoints, -1);
 
@@ -431,8 +408,6 @@ namespace CGAL {
             }
           }
 
-          candGenCount++;
-
           if (nbFailedCandidates >= 10000)
             forceExit = true;
 
@@ -440,7 +415,6 @@ namespace CGAL {
           && StopProbability(bestExp, m_numAvailablePoints - numInvalid, nbNewCandidates /*l_list_candidates.size()*/, scm_max_depth_octree)                 > m_options.m_probability 
           && StopProbability(m_options.m_minNbPoints, m_numAvailablePoints - numInvalid, nbNewCandidates /*l_list_candidates.size()*/, scm_max_depth_octree) > m_options.m_probability);
         // end of generate candidate
-        candGenTime += clock() - sti;
 
         if (forceExit) break;
 
@@ -566,8 +540,6 @@ namespace CGAL {
       std::cout << "run Ransac done" << std::endl;
 
       m_numAvailablePoints -= numInvalid;
-
-      runTime = clock() - s;
     };
   }
 }
