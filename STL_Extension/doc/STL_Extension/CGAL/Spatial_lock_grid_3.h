@@ -10,7 +10,7 @@ The point type is called `P3` here. `P3` must provide x(), y() and z() functions
 returning the respective point coordinates as numbers whose type is a 
 model of the concept of `CGAL::RealEmbeddable`.
 
-It is a model of `SurjectiveLockDataStructure`, with `Object` being
+It is a model of `SurjectiveLockDataStructure`, with `T` being
 `P3` and `S` being the function that maps a point to 
 the cell of the 3D grid containing this point.
 
