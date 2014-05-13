@@ -30,13 +30,15 @@ The base cell of a regular triangulation
 has to be a model 
 of the concept `RegularTriangulationCellBase_3`, which refines 
 the concept `TriangulationCellBase_3` by adding 
-in the cell a container to store hidden points. 
+in the cell a container to store hidden points 
+and an operator to compute its weighted circumcenter. 
 
-\cgalRefines `TriangulationCellBase_3` 
+\cgalRefines `TriangulationCellBase_3`
 
 \cgalHasModel CGAL::Regular_triangulation_cell_base_3 
+\cgalHasModel CGAL::Regular_triangulation_cell_base_with_weighted_circumcenter_3
 
-\sa `TriangulationCellBase_3` 
+\sa `RegularTriangulationTraits_3`
 
 */
 
@@ -47,15 +49,16 @@ public:
 /// @{
 
 /*!
-Must be the same as the point type `TriangulationTraits_3::Point_3` 
+Must be the same as the point type `RegularTriangulationTraits_3::Weighted_point_3` 
 defined by the geometric traits class of the triangulation. 
 */ 
-typedef unspecified_type Point; 
+typedef unspecified_type Weighted_point; 
 
 /*!
 Iterator of value type Point 
 */ 
 typedef unspecified_type Point_iterator; 
+
 
 /// @} 
 
@@ -83,6 +86,18 @@ Adds `p` to the set of hidden points of the cell.
 void hide_point(const Point & p); 
 
 /// @}
+
+/// \name Access functions
+/// @{
+/*!
+Returns the weighted circumcenter of the cell, with no weight. 
+`RegularTriangulationTraits_3` is the geometric traits class of the triangulation.
+This operator is required only when the dual functions are called.
+*/ 
+const RegularTriangulationTraits_3::Bare_point& weighted_circumcenter( 
+const RegularTriangulationTraits_3&gt = RegularTriangulationTraits_3()) const; 
+/// @} 
+
 
 }; /* end RegularTriangulationCellBase_3 */
 

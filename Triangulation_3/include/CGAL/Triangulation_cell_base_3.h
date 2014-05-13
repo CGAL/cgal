@@ -67,6 +67,9 @@ public:
   Point_iterator hidden_points_end() const { return NULL; }
   void hide_point (const Point &) const { }
 
+  // note the circumcenter() function is not part of the concept TriangulationCellBase_3
+  // it is requested only by DelaunayTriangulartionCellBase_3
+  // we keep it here for backward compatibility
   typename Geom_traits::Point_3
   circumcenter(const Geom_traits& gt = Geom_traits()) const
   {
