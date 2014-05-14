@@ -710,8 +710,9 @@ public:
     Voronoi_vertex_2 v(p, q, r);
 
 #ifndef CGAL_NO_ASSERTIONS
-    Point_2 temppt = v.point();
-    CGAL_SDG_DEBUG(std::cout
+    CGAL_SDG_DEBUG(
+      Point_2 temppt = v.point();
+      std::cout
         << "debug Voronoi_vertex_2 v=" << temppt << std::endl; );
 #endif
 
