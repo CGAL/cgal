@@ -559,6 +559,71 @@ private:
   // the Voronoi vertex of two points and a segment
   //--------------------------------------------------------------------------
 
+  inline void
+  compute_pps_endp_hv(const Site_2& p, const Site_2& q, const Site_2& r,
+                   const bool p_endp_r, const bool is_r_horizontal) const
+  {
+    const Site_2 & A = p_endp_r ? p : q;
+    const Site_2 & B = p_endp_r ? q : p;
+    const FT Apar = is_r_horizontal ? A.point().x() : A.point().y();
+    const FT Aort = is_r_horizontal ? A.point().y() : A.point().x();
+    const FT Bpar = is_r_horizontal ? B.point().x() : B.point().y();
+    const FT Bort = is_r_horizontal ? B.point().y() : B.point().x();
+    const FT dpar = Apar - Bpar;
+    const FT dort = Aort - Bort;
+    const FT absdpar = CGAL::abs(dpar);
+    FT vx_, vy_;
+    FT & vpar = is_r_horizontal ? vx_ : vy_;
+    FT & vort = is_r_horizontal ? vy_ : vx_;
+
+    if (2*absdpar < CGAL::abs(dort)) {
+      vpar = Apar;
+      vort = Aort - (dort)/(FT(2));
+    } else {
+      vpar = Apar;
+      vort = Aort - CGAL::sign(dort)*absdpar;
+    }
+    vv = Point_2(vx_, vy_);
+  }
+
+  inline void
+  compute_pps_endp_slope(const Site_2& p, const Site_2& q, const Site_2& r,
+                   const bool p_endp_r, const bool pos_slope) const
+  {
+    const Site_2 & A = p_endp_r ? p : q;
+    const Site_2 & B = p_endp_r ? q : p;
+    const FT Ax = A.point().x();
+    const FT Ay = A.point().y();
+    const FT Bx = B.point().x();
+    const FT By = B.point().y();
+    const FT dx = Ax - Bx;
+    const FT dy = Ay - By;
+    const FT absdx = CGAL::abs(dx);
+    const FT absdy = CGAL::abs(dy);
+    FT x_, y_;
+    if (absdx > absdy) {
+      x_ = FT(2)*Ax - dx;
+      y_ = FT(2)*Ay - FT(pos_slope? -1 : +1)*dx;
+    } else {
+      x_ = FT(2)*Ax - FT(pos_slope? -1 : +1)*dy;
+      y_ = FT(2)*Ay - dy;
+    }
+    vv = Point_2(x_/FT(2), y_/FT(2));
+  }
+
+  inline void
+  compute_pps_endp(const Site_2& p, const Site_2& q, const Site_2& r,
+                   const bool p_endp_r) const
+  {
+    const bool is_r_horizontal = is_site_horizontal(r);
+    if (is_r_horizontal or is_site_vertical(r)) {
+      return compute_pps_endp_hv(p, q, r, p_endp_r, is_r_horizontal);
+    } else {
+      const bool pos_slope = has_positive_slope(r);
+      return compute_pps_endp_slope(p, q, r, p_endp_r, pos_slope);
+    }
+  }
+
   void
   compute_vv(const Site_2& sp, const Site_2& sq, const Site_2& sr,
 	     const PPS_Type&) const
@@ -572,6 +637,13 @@ private:
 
     if ( is_vv_computed ) { return; }
     is_vv_computed = true;
+
+    const bool p_endp_r = is_endpoint_of(sp, sr);
+    const bool q_endp_r = is_endpoint_of(sq, sr);
+
+    if (p_endp_r or q_endp_r) {
+      return compute_pps_endp(sp, sq, sr, p_endp_r);
+    }
 
     Polychainline_2 bpq = bisector_linf(sp, sq);
     CGAL_SDG_DEBUG(std::cout << "debug: bpq p=" << sp << " q=" << sq << std::endl;);
