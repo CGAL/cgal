@@ -38,7 +38,7 @@
 #ifdef __GNUG__
 #warning deprecated : use <CGAL/Labeled_mesh_domain_3.h> instead.
 #else
-#pragma message "WARNING (deprecated) : use <CGAL/Labeled_mesh_domain_3.h> instead."
+#pragma message("WARNING (deprecated) : use <CGAL/Labeled_mesh_domain_3.h> instead.")
 #endif
 
 #include <vector>
@@ -121,7 +121,7 @@ public:
   /// Operator ()
   return_type operator()(const Point_3& p, const bool = true) const
   {
-    int nb_func = function_vector_.size();
+    int nb_func = static_cast<int>(function_vector_.size());
     if ( nb_func > 8 )
     {
       CGAL_error_msg("We support at most 8 functions !");
