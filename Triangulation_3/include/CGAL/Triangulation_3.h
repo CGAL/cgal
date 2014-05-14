@@ -51,6 +51,7 @@
 #include <CGAL/Iterator_project.h>
 #include <CGAL/Default.h>
 
+#include <CGAL/Bbox_3.h>
 #include <CGAL/Spatial_lock_grid_3.h>
 
 #include <boost/bind.hpp>
