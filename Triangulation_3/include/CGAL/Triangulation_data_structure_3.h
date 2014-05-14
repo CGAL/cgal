@@ -33,6 +33,7 @@
 #include <vector>
 #include <stack>
 
+#include <boost/unordered_set.hpp>
 #include <CGAL/utility.h>
 #include <CGAL/iterator.h>
 
@@ -814,36 +815,96 @@ public:
     }
   };
 
+  template<class Treatment, class OutputIterator, class Filter, bool hasVisited>
+  class Vertex_extractor;
 
 	// Visitor for visit_incident_cells:
 	// outputs the result of Treatment applied to the vertices
   template<class Treatment, class OutputIterator, class Filter>
-  class Vertex_extractor {
+  class Vertex_extractor<Treatment,OutputIterator,Filter,false> {
     Vertex_handle v;
-    std::set<Vertex_handle> tmp_vertices;
+
+    boost::unordered_set<Vertex_handle, Handle_hash_function> tmp_vertices;
+
     Treatment treat;
     const Tds* t;
     Filter filter;
   public:
     Vertex_extractor(Vertex_handle _v, OutputIterator _output, const Tds* _t, Filter _filter):
-    v(_v), treat(_output), t(_t), filter(_filter) {}
+    v(_v), treat(_output), t(_t), filter(_filter) 
+    {
+#if ( BOOST_VERSION >= 105000 )
+      tmp_vertices.reserve(64);
+#endif
+    }
+
     void operator()(Cell_handle c) {
       for (int j=0; j<= t->dimension(); ++j) {
 	Vertex_handle w = c->vertex(j);
 	if(filter(w))
 	  continue;
-	if (w != v)
+	if (w != v){
+
 	  if(tmp_vertices.insert(w).second) {
 	    treat(c, v, j);
 	  }
+
+        }
       }
     }
+
 
     CGAL::Emptyset_iterator facet_it() {return CGAL::Emptyset_iterator();}
     OutputIterator result() {
       return treat.result();
     }
   };
+
+  template<class Treatment, class OutputIterator, class Filter>
+  class Vertex_extractor<Treatment,OutputIterator,Filter,true> {
+    Vertex_handle v;
+    std::vector<Vertex_handle> tmp_vertices;
+
+    Treatment treat;
+    const Tds* t;
+    Filter filter;
+  public:
+    Vertex_extractor(Vertex_handle _v, OutputIterator _output, const Tds* _t, Filter _filter):
+    v(_v), treat(_output), t(_t), filter(_filter) {
+      tmp_vertices.reserve(64);
+    }
+
+    void operator()(Cell_handle c) {
+      for (int j=0; j<= t->dimension(); ++j) {
+	Vertex_handle w = c->vertex(j);
+	if(filter(w))
+	  continue;
+	if (w != v){
+
+          if(! w->visited_for_vertex_extractor){
+            w->visited_for_vertex_extractor = true;
+            tmp_vertices.push_back(w);
+	    treat(c, v, j);
+          }
+        }
+      }
+    }
+
+    ~Vertex_extractor()
+    {
+      for(std::size_t i=0; i < tmp_vertices.size(); ++i){
+        tmp_vertices[i]->visited_for_vertex_extractor = false;
+      }
+    }
+
+
+    CGAL::Emptyset_iterator facet_it() {return CGAL::Emptyset_iterator();}
+    OutputIterator result() {
+      return treat.result();
+    }
+  };
+
+
 
   // Treatment for Vertex_extractor:
   // outputs the vertices
@@ -922,6 +983,8 @@ public:
     return incident_facets<False_filter>(v, facets);
   }
 
+  BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(Has_member_visited,Has_visited_for_vertex_extractor,false)
+
   template <class Filter, class OutputIterator>
   OutputIterator
   incident_edges(Vertex_handle v, OutputIterator edges, Filter f = Filter()) const
@@ -944,7 +1007,7 @@ public:
       return edges;
     }
     return visit_incident_cells<Vertex_extractor<Edge_feeder_treatment<OutputIterator>,
-    OutputIterator, Filter>,
+                                                 OutputIterator, Filter, Has_member_visited<Vertex>::value>,
     OutputIterator>(v, edges, f);
   }
 
@@ -987,7 +1050,7 @@ public:
       return vertices;
     }
     return visit_incident_cells<Vertex_extractor<Vertex_feeder_treatment<OutputIterator>,
-    OutputIterator, Filter>,
+    OutputIterator, Filter, Has_member_visited<Vertex>::value>,
     OutputIterator>(v, vertices, f);
   }
 
@@ -1033,7 +1096,8 @@ public:
     {
       (*cit)->tds_data().clear();
       visit(*cit);
-    }
+    } 
+
     return visit.result();
   }
 
