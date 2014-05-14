@@ -539,6 +539,71 @@ private:
 
   //--------------------------------------------------------------------------
 
+  inline void
+  compute_pps_endp_hv(const Site_2& p, const Site_2& q, const Site_2& r,
+                   const bool p_endp_r, const bool is_r_horizontal)
+  {
+    const Site_2 & A = p_endp_r ? p : q;
+    const Site_2 & B = p_endp_r ? q : p;
+    const RT Apar = is_r_horizontal ? A.point().x() : A.point().y();
+    const RT Aort = is_r_horizontal ? A.point().y() : A.point().x();
+    const RT Bpar = is_r_horizontal ? B.point().x() : B.point().y();
+    const RT Bort = is_r_horizontal ? B.point().y() : B.point().x();
+    const RT dpar = Apar - Bpar;
+    const RT dort = Aort - Bort;
+    const RT absdpar = CGAL::abs(dpar);
+
+    RT & upar = is_r_horizontal ? ux_ : uy_;
+    RT & uort = is_r_horizontal ? uy_ : ux_;
+
+    if (2*absdpar < CGAL::abs(dort)) {
+      upar = RT(2)*Apar;
+      uort = RT(2)*Aort - dort;
+      uz_ = RT(2);
+    } else {
+      upar = Apar;
+      uort = Aort - CGAL::sign(dort)*absdpar;
+      uz_ = RT(1);
+    }
+  }
+
+  inline void
+  compute_pps_endp_slope(const Site_2& p, const Site_2& q, const Site_2& r,
+                   const bool p_endp_r, const bool pos_slope)
+  {
+    const Site_2 & A = p_endp_r ? p : q;
+    const Site_2 & B = p_endp_r ? q : p;
+    const RT Ax = A.point().x();
+    const RT Ay = A.point().y();
+    const RT Bx = B.point().x();
+    const RT By = B.point().y();
+    const RT dx = Ax - Bx;
+    const RT dy = Ay - By;
+    const RT absdx = CGAL::abs(dx);
+    const RT absdy = CGAL::abs(dy);
+
+    if (absdx > absdy) {
+      ux_ = RT(2)*Ax - dx;
+      uy_ = RT(2)*Ay - RT(pos_slope? -1 : +1)*dx;
+    } else {
+      ux_ = RT(2)*Ax - RT(pos_slope? -1 : +1)*dy;
+      uy_ = RT(2)*Ay - dy;
+    }
+    uz_ = RT(2);
+  }
+
+  inline void
+  compute_pps_endp(const Site_2& p, const Site_2& q, const Site_2& r,
+                   const bool p_endp_r)
+  {
+    const bool is_r_horizontal = is_site_horizontal(r);
+    if (is_r_horizontal or is_site_vertical(r)) {
+      return compute_pps_endp_hv(p, q, r, p_endp_r, is_r_horizontal);
+    } else {
+      const bool pos_slope = has_positive_slope(r);
+      return compute_pps_endp_slope(p, q, r, p_endp_r, pos_slope);
+    }
+  }
 
   void
   compute_pps(const Site_2& p, const Site_2& q, const Site_2& r)
@@ -554,6 +619,10 @@ private:
 
     bool p_endp_r = is_endpoint_of(p, r);
     bool q_endp_r = is_endpoint_of(q, r);
+
+    if (p_endp_r or q_endp_r) {
+      return compute_pps_endp(p, q, r, p_endp_r);
+    }
 
     Polychainline_2 bpq = bisector_linf(p, q);
     CGAL_SDG_DEBUG(std::cout << "debug: bpq p="
