@@ -28,7 +28,7 @@ int main()
   }
   Timer timer;
   timer.start();
-  int N = 0;
+  size_t N = 0;
   for(int i = 0; i < 5; i++){
     DT dt;
     dt.insert(points.begin(), points.end());

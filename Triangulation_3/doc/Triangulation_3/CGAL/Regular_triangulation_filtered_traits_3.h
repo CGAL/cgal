@@ -6,7 +6,7 @@ namespace CGAL {
 
 \deprecated This class is deprecated since \cgal 3.6. 
 The class `CGAL::Regular_triangulation_euclidean_traits_3` should be used instead. 
-Filtered predicates are automatically used if the boolean `Has_filtered_predicates` 
+Filtered predicates are automatically used if the Boolean `Has_filtered_predicates` 
 in the kernel provided as template parameter of that class is set to `true`. 
 
 The class `Regular_triangulation_filtered_traits_3` is designed as a traits class for the 

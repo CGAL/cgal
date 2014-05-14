@@ -10,7 +10,8 @@ geometric functionalities to be used as a parameter for a
 3D-geometric triangulation (see Chapter \ref chapterTriangulation3 "3D Triangulations"). 
 
 The vertices and cells are stored in two nested containers, which are 
-implemented using `Compact_container`. The class may offer some 
+implemented using `Compact_container` (or `Concurrent_compact_container`,
+see below). The class may offer some 
 flexibility for the choice of container in the future, in the form of 
 additional template parameters. 
 
@@ -22,6 +23,14 @@ the requirements for the concepts `TriangulationDSCellBase_3` and
 
 They have the default values `Triangulation_ds_vertex_base_3<TDS>` and 
 `Triangulation_ds_cell_base_3<TDS>` respectively. 
+
+The `Concurrency_tag` parameter allows to enable the use of a concurrent
+container to store vertices and cells. It can be `Sequential_tag` (use of a 
+`Compact_container` to store vertices and cells) or `Parallel_tag` 
+(use of a `Concurrent_compact_container`). If it is 
+`Parallel_tag`, the following functions can be called concurrently:
+`create_vertex`, `create_cell`, `delete_vertex`, `delete_cell`.
+`Sequential_tag` is the default value.
 
 \cgalModels `TriangulationDataStructure_3`
 
@@ -36,7 +45,9 @@ specified by the concept.
 \sa `CGAL::Triangulation_vertex_base_with_info_3` 
 \sa `CGAL::Triangulation_cell_base_with_info_3` 
 */
-template< typename TriangulationDSVertexBase_3, typename TriangulationDSCellBase_3 >
+template< typename TriangulationDSVertexBase_3, 
+          typename TriangulationDSCellBase_3,
+          typename Concurrency_tag >
 class Triangulation_data_structure_3 : public CGAL::Triangulation_utils_3 {
 public:
 
@@ -44,15 +55,16 @@ public:
 /// @{
 
 /*!
-Vertex container type. 
+Vertex container type. If Concurrency_tag is Parallel_tag, a
+`Concurrent_compact_container` is used instead of a `Compact_container`.
 */ 
-typedef Compact_container<Vertex> Vertex_range; 
+typedef Compact_container<Vertex, Default> Vertex_range; 
 
 /*!
-Cell container type. 
+Cell container type. If Concurrency_tag is Parallel_tag, a
+`Concurrent_compact_container` is used instead of a `Compact_container`.
 */ 
-typedef Compact_container<Cell> Cell_range; 
-
+typedef Compact_container<Cell, Default> Cell_range; 
 /// @} 
 
 /// \name Operations 

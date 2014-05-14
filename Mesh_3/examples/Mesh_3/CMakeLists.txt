@@ -11,12 +11,26 @@ else()
   cmake_policy(VERSION 2.6)
 endif()
 
+## Compiler flags: C++11
+if(CMAKE_COMPILER_IS_GNUCXX)
+    set(CGAL_CXX_FLAGS "${CGAL_CXX_FLAGS} -std=c++0x")
+endif()
+
 include_directories(../../include)
 include_directories(../../../Triangulation_3/include)
 include_directories(../../../STL_Extension/include)
 include_directories(../../../AABB_tree/include)
 add_definitions(-DCGAL_MESH_3_NO_DEPRECATED_SURFACE_INDEX
                 -DCGAL_MESH_3_NO_DEPRECATED_C3T3_ITERATORS)
+
+if(MSVC)
+  # Disable warning 4503 in MSVC ("The decorated name was longer than the 
+  # compiler limit and was truncated")
+  add_definitions( "/wd4503" )
+  # Add /bigobj to the compiler options
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /bigobj")
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /bigobj")
+endif()
 
 if ( MESH_3_VERBOSE )
   add_definitions(-DCGAL_MESH_3_VERBOSE)
@@ -26,17 +40,45 @@ find_package(CGAL COMPONENTS ImageIO)
 
 if ( CGAL_FOUND )
   include( ${CGAL_USE_FILE} )
-  find_package(Boost)
+
+  # Activate concurrency ? (turned OFF by default)
+  option(ACTIVATE_CONCURRENT_MESH_3
+    "Activate parallelism in Mesh_3"
+    OFF)
+    
+  # And add -DCONCURRENT_MESH_3 if that option is ON
+  if( ACTIVATE_CONCURRENT_MESH_3 )
+    add_definitions( -DCGAL_CONCURRENT_MESH_3 )
+    find_package( TBB REQUIRED )
+  else( ACTIVATE_CONCURRENT_MESH_3 )
+    option( LINK_WITH_TBB
+      "Link with TBB anyway so we can use TBB timers for profiling"
+      ON)
+    if( LINK_WITH_TBB )
+      find_package( TBB )
+    endif( LINK_WITH_TBB )
+  endif()
+  
+  if( TBB_FOUND )
+    include(${TBB_USE_FILE})
+    list(APPEND CGAL_3RD_PARTY_LIBRARIES ${TBB_LIBRARIES})
+  endif()
+  
+  find_package(Boost COMPONENTS program_options REQUIRED)
 
   if ( Boost_FOUND AND Boost_VERSION GREATER 103400 )
     include( CGAL_CreateSingleSourceCGALProgram )
+
+    add_definitions( "-DCGAL_USE_BOOST_PROGRAM_OPTIONS" )
+    link_libraries( ${Boost_PROGRAM_OPTIONS_LIBRARY} )
 
     # Compilable examples
     create_single_source_cgal_program( "mesh_implicit_sphere.cpp" )
     create_single_source_cgal_program( "mesh_implicit_sphere_variable_size.cpp" )
     create_single_source_cgal_program( "mesh_two_implicit_spheres_with_balls.cpp" )
 #    create_single_source_cgal_program( "mesh_implicit_domains.cpp" "implicit_functions.cpp" )
-   create_single_source_cgal_program( "mesh_polyhedral_domain.cpp" )
+    create_single_source_cgal_program( "mesh_polyhedral_domain.cpp" )
+    create_single_source_cgal_program( "mesh_polyhedral_domain_TEST_ANDREW.cpp" )
     create_single_source_cgal_program( "mesh_polyhedral_domain_with_features.cpp" )
     if( WITH_CGAL_ImageIO )
       create_single_source_cgal_program( "mesh_optimization_example.cpp" )
