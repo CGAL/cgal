@@ -4,7 +4,6 @@
 //#define CGAL_DEBUG_GLOBAL_LOCK_DS // CJTODO TEMP
 
 #if defined(CHECK_MEMORY_LEAKS_ON_MSVC) && defined(_MSC_VER)
-  //#include <vld.h> // CJTODO: test it
   #define _CRTDBG_MAP_ALLOC
   #include <stdlib.h>
   #include <crtdbg.h>
@@ -27,20 +26,10 @@
 namespace po = boost::program_options;
 
 #include <CGAL/Mesh_3/config.h>
+#include <CGAL/Memory_sizer.h>
 
-#ifdef WINVER
-  const char * const BENCHMARK_CONFIG_FILENAME =
-    "D:/INRIA/CGAL/workingcopy/Mesh_3/benchmark/Mesh_3/concurrency_config.cfg"; // CJTODO
-
-  const char * const BENCHMARK_SCRIPT_FILENAME =
-    "D:/INRIA/CGAL/workingcopy/Mesh_3/benchmark/Mesh_3/concurrency_script.txt"; // CJTODO
-#else
-  const char * const BENCHMARK_CONFIG_FILENAME =
-    "/home/cjamin/CGAL/Mesh_3-parallel-cjamin/Mesh_3/benchmark/Mesh_3/concurrency_config.cfg"; // CJTODO
-
-  const char * const BENCHMARK_SCRIPT_FILENAME =
-    "/home/cjamin/CGAL/Mesh_3-parallel-cjamin/Mesh_3/benchmark/Mesh_3/concurrency_script.txt"; // CJTODO
-#endif
+const char * const BENCHMARK_CONFIG_FILENAME = "concurrency_config.cfg";
+const char * const BENCHMARK_SCRIPT_FILENAME = "concurrency_script.txt";
 
 // ==========================================================================
 // BENCHMARK GENERAL PARAMETERS
@@ -63,7 +52,7 @@ namespace po = boost::program_options;
 //#define CGAL_MESH_3_VERBOSE
 //#define CGAL_MESH_3_PERTURBER_VERBOSE
 //#define CGAL_MESH_3_PERTURBER_HIGH_VERBOSITY
-#define CGAL_MESH_3_EXUDER_VERBOSE
+//#define CGAL_MESH_3_EXUDER_VERBOSE
 //#define CGAL_MESH_3_EXUDER_HIGH_VERBOSITY
 //#define CGAL_MESH_3_VERY_VERBOSE
 //#define CGAL_MESHES_DEBUG_REFINEMENT_POINTS
@@ -102,13 +91,7 @@ const int     TET_SHAPE                = 3;
   // Concurrency config
   // ==========================================================================
 
-# ifdef WINVER
-  const char * const CONFIG_FILENAME =
-    "D:/INRIA/CGAL/workingcopy/Mesh_3/demo/Mesh_3/concurrent_mesher_config.cfg"; // CJTODO
-# else
-  const char * const CONFIG_FILENAME =
-    "/home/cjamin/CGAL/Mesh_3-parallel-cjamin/Mesh_3/demo/Mesh_3/concurrent_mesher_config.cfg"; // CJTODO
-# endif
+  const char * const CONFIG_FILENAME = "concurrent_mesher_config.cfg";
 
   // =================
   // Locking strategy
@@ -156,11 +139,7 @@ const int     TET_SHAPE                = 3;
 // ==========================================================================
 // ==========================================================================
 
-#ifdef WINVER
-  const char * const DEFAULT_INPUT_FILE_NAME = "D:/INRIA/CGAL/workingcopy/Mesh_3/examples/Mesh_3/data/elephant.off"; // CJTODO
-#else
-  const char * const DEFAULT_INPUT_FILE_NAME = "/home/cjamin/CGAL/Mesh_3-parallel-cjamin/Mesh_3/examples/Mesh_3/data/elephant.off"; // CJTODO
-#endif
+const char * const DEFAULT_INPUT_FILE_NAME = "elephant.off";
 
 // ==========================================================================
 // ==========================================================================
@@ -234,6 +213,7 @@ protected:
     subelements.push_back("Odt_optim_time");
     subelements.push_back("Perturber_optim_time");
     subelements.push_back("Exuder_optim_time");
+    subelements.push_back("Mem");
 
     return subelements;
   }
@@ -375,53 +355,6 @@ struct Sphere_function
 protected:
   FT m_squared_radius;
 };
-
-/*const double PANCAKE_HEIGHT = 0.1;
-const double PANCAKE_RADIUS = 3.;
-
-struct Pancake_function
-{
-  typedef ::FT           FT;
-  typedef ::Point        Point;
-
-  FT operator()(const Point& query) const
-  {
-    const FT x = query.x();
-    const FT y = query.y();
-    const FT z = query.z();
-
-    if (z > 0.5*PANCAKE_HEIGHT)
-      return z - 0.5*PANCAKE_HEIGHT;
-    else if (z < -0.5*PANCAKE_HEIGHT)
-      return -z + 0.5*PANCAKE_HEIGHT;
-    else
-      return (x*x + y*y - PANCAKE_RADIUS*PANCAKE_RADIUS);
-  }
-};*/
-
-/*const double THIN_CYLINDER_HEIGHT = 3.;
-const double THIN_CYLINDER_RADIUS = 0.05;
-
-struct Thin_cylinder_function
-{
-  typedef ::FT           FT;
-  typedef ::Point        Point;
-
-
-  FT operator()(const Point& query) const
-  {
-    const FT x = query.x();
-    const FT y = query.y();
-    const FT z = query.z();
-
-    if (z > 0.5*THIN_CYLINDER_HEIGHT)
-      return z - 0.5*THIN_CYLINDER_HEIGHT;
-    else if (z < -0.5*THIN_CYLINDER_HEIGHT)
-      return -z + 0.5*THIN_CYLINDER_HEIGHT;
-    else
-      return (x*x + y*y - THIN_CYLINDER_RADIUS*THIN_CYLINDER_RADIUS);
-  }
-};*/
 
 struct Cylinder_function
 {
@@ -641,6 +574,7 @@ bool make_mesh_polyhedron(const std::string &input_filename,
   CGAL_MESH_3_SET_PERFORMANCE_DATA("V", c3t3.triangulation().number_of_vertices());
   CGAL_MESH_3_SET_PERFORMANCE_DATA("F", c3t3.number_of_facets_in_complex());
   CGAL_MESH_3_SET_PERFORMANCE_DATA("T", c3t3.number_of_cells_in_complex());
+  CGAL_MESH_3_SET_PERFORMANCE_DATA("Mem", CGAL::Memory_sizer().virtual_size() >> 20);
 
 #ifdef MESH_3_BENCHMARK_EXPORT_TO_MAYA
   std::cerr << "Exporting to maya file format (*.maya)... ";
@@ -746,6 +680,7 @@ bool make_mesh_3D_images(const std::string &input_filename,
   CGAL_MESH_3_SET_PERFORMANCE_DATA("V", c3t3.triangulation().number_of_vertices());
   CGAL_MESH_3_SET_PERFORMANCE_DATA("F", c3t3.number_of_facets_in_complex());
   CGAL_MESH_3_SET_PERFORMANCE_DATA("T", c3t3.number_of_cells_in_complex());
+  CGAL_MESH_3_SET_PERFORMANCE_DATA("Mem", CGAL::Memory_sizer().virtual_size() >> 20);
 
 #ifdef MESH_3_BENCHMARK_EXPORT_TO_MAYA
   std::cerr << "Exporting to maya file format (*.maya)... ";
@@ -882,6 +817,7 @@ bool make_mesh_implicit(double facet_approx,
   CGAL_MESH_3_SET_PERFORMANCE_DATA("V", c3t3.triangulation().number_of_vertices());
   CGAL_MESH_3_SET_PERFORMANCE_DATA("F", c3t3.number_of_facets_in_complex());
   CGAL_MESH_3_SET_PERFORMANCE_DATA("T", c3t3.number_of_cells_in_complex());
+  CGAL_MESH_3_SET_PERFORMANCE_DATA("Mem", CGAL::Memory_sizer().virtual_size() >> 20);
 
 #ifdef MESH_3_BENCHMARK_EXPORT_TO_MAYA
   std::cerr << "Exporting to maya file format (*.maya)... ";
@@ -1083,8 +1019,8 @@ int main()
     {
       std::cerr << "Refinement #" << i << "..." << std::endl;
       display_info(num_threads);
-      //make_mesh_polyhedron(filename, facet_approx, facet_sizing, cell_sizing);
-      make_mesh_implicit(facet_approx, facet_sizing, cell_sizing, Klein_function(), "Klein_function");
+      make_mesh_polyhedron(filename, facet_approx, facet_sizing, cell_sizing);
+      //make_mesh_implicit(facet_approx, facet_sizing, cell_sizing, Klein_function(), "Klein_function");
       std::cerr << "Refinement #" << i << " done." << std::endl;
       std::cerr << std::endl << "---------------------------------" << std::endl << std::endl;
     }
