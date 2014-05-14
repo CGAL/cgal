@@ -1209,7 +1209,6 @@ conflicts_zone_impl(const Point& point
 
     if (p_facet != 0 && !facet_is_in_its_cz)
     {
-      CGAL_error_msg("Info: the facet is not in its conflict zone."); // CJTODO TEMP
 # ifdef CGAL_MESH_3_VERBOSE
       std::cerr << "Info: the facet is not in its conflict zone. "
         "Switching to exact computation." << std::endl;
@@ -1271,7 +1270,6 @@ conflicts_zone_impl(const Point& point
 
     if (could_lock_zone && p_facet != 0 && !facet_is_in_its_cz)
     {
-      CGAL_error_msg("Info: the facet is not in its conflict zone."); // CJTODO TEMP
 #ifdef CGAL_MESH_3_VERBOSE
       std::cerr << "Info: the facet is not in its conflict zone. "
         "Switching to exact computation." << std::endl;
