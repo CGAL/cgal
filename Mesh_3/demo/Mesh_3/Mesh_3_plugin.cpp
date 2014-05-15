@@ -43,7 +43,8 @@ Meshing_thread* cgal_code_mesh_3(const Polyhedron*,
                                  const double sizing,
                                  const double approx,
                                  const double tets_sizing,
-                                 const double tet_shape);
+                                 const double tet_shape,
+                                 const bool protect_features);
 
 Meshing_thread* cgal_code_mesh_3(const Image*,
                                  const double angle,
@@ -155,6 +156,7 @@ void Mesh_3_plugin::mesh_3()
   QDialog dialog(mw);
   Ui::Meshing_dialog ui;
   ui.setupUi(&dialog);
+  ui.sharpFeaturesGroup->setVisible(poly_item != 0);
   connect(ui.buttonBox, SIGNAL(accepted()),
           &dialog, SLOT(accept()));
   connect(ui.buttonBox, SIGNAL(rejected()),
@@ -218,7 +220,7 @@ void Mesh_3_plugin::mesh_3()
   const double facet_sizing = !ui.noFacetSizing->isChecked() ? 0 : ui.facetSizing->value();
   const double radius_edge = !ui.noTetShape->isChecked() ? 0 : ui.tetShape->value();
   const double tet_sizing = !ui.noTetSizing->isChecked() ? 0  : ui.tetSizing->value();
-    
+  const bool protect_features = ui.protect->isChecked();
 
   // -----------------------------------
   // Dispatch mesh process
@@ -239,7 +241,8 @@ void Mesh_3_plugin::mesh_3()
 
     thread = cgal_code_mesh_3(pMesh,
                               angle, facet_sizing, approx,
-                              tet_sizing, radius_edge);
+                              tet_sizing, radius_edge,
+                              protect_features);
   }
   // Image
   else if( NULL != image_item )

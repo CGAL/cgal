@@ -47,6 +47,7 @@ struct Mesh_parameters
   
   double tet_shape;
   double tet_sizing;
+  bool protect_features;
   
   inline QStringList log() const;
 };
@@ -129,7 +130,8 @@ log() const
   << QString("facet max size: %1").arg(facet_sizing)
   << QString("facet approx error: %1").arg(facet_approx)
   << QString("tet shape (radius-edge): %1").arg(tet_shape)
-  << QString("tet max size: %1").arg(tet_sizing);
+  << QString("tet max size: %1").arg(tet_sizing)
+  << QString("protect features: %1").arg(protect_features);
 }
 
 
@@ -181,10 +183,11 @@ launch()
     C3t3,
     Domain,
     Mesh_criteria,
-    CGAL::internal::Mesh_3::has_Has_features<Domain>::value >()(c3t3_,
-                                                                *domain_,
-                                                                criteria,
-                                                                true);
+    CGAL::internal::Mesh_3::has_Has_features<Domain>::value >()
+    (c3t3_,
+     *domain_,
+     criteria,
+     p_.protect_features);
 
   // Build mesher and launch refinement process
   mesher_ = new Mesher(c3t3_, *domain_, criteria);

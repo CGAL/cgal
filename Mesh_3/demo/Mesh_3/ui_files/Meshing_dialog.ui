@@ -1,8 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
  <class>Meshing_dialog</class>
  <widget class="QDialog" name="Meshing_dialog">
   <property name="enabled">
    <bool>true</bool>
+  </property>
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>414</width>
+    <height>355</height>
+   </rect>
   </property>
   <property name="windowTitle">
    <string>Meshing criteria</string>
@@ -30,6 +39,28 @@
     </widget>
    </item>
    <item>
+    <widget class="QGroupBox" name="sharpFeaturesGroup">
+     <property name="layoutDirection">
+      <enum>Qt::RightToLeft</enum>
+     </property>
+     <property name="title">
+      <string>Sharp features</string>
+     </property>
+     <layout class="QGridLayout" name="gridLayout" columnstretch="2,0">
+      <item row="0" column="0">
+       <widget class="QCheckBox" name="protect">
+        <property name="text">
+         <string>&amp;Protect sharp edges</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
     <spacer name="verticalSpacer">
      <property name="orientation">
       <enum>Qt::Vertical</enum>
@@ -40,7 +71,7 @@
      <property name="sizeHint" stdset="0">
       <size>
        <width>20</width>
-       <height>10</height>
+       <height>0</height>
       </size>
      </property>
     </spacer>
@@ -90,7 +121,7 @@
       <item row="1" column="0">
        <widget class="QLabel" name="sizingLabel">
         <property name="text">
-         <string>Facet max. size</string>
+         <string>&amp;Facet max. size</string>
         </property>
         <property name="alignment">
          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -129,7 +160,7 @@
       <item row="2" column="0">
        <widget class="QLabel" name="angleLabel">
         <property name="text">
-         <string>Facet min. angle (deg)</string>
+         <string>Facet min. &amp;angle (deg)</string>
         </property>
         <property name="alignment">
          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -175,22 +206,6 @@
     </widget>
    </item>
    <item>
-    <spacer name="verticalSpacer_2">
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
-     </property>
-     <property name="sizeType">
-      <enum>QSizePolicy::Fixed</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>20</width>
-       <height>10</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
-   <item>
     <widget class="QGroupBox" name="groupBox_2">
      <property name="title">
       <string>Volume</string>
@@ -199,10 +214,13 @@
       <item row="0" column="0">
        <widget class="QLabel" name="label">
         <property name="text">
-         <string>Tetrahedron max. size</string>
+         <string>&amp;Tetrahedron max. size</string>
         </property>
         <property name="alignment">
          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+        <property name="buddy">
+         <cstring>tetSizing</cstring>
         </property>
        </widget>
       </item>
@@ -225,11 +243,14 @@
          <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Lucida Grande'; font-size:13pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Tetrahedron shape &lt;span style=&quot; font-size:10pt; font-style:italic;&quot;&gt;(radius-edge ratio)&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Sans Serif'; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Lucida Grande';&quot;&gt;Tetrahedron &amp;amp;shape&lt;/span&gt;&lt;span style=&quot; font-family:'Lucida Grande'; font-size:13pt;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-family:'Lucida Grande'; font-style:italic;&quot;&gt;(radius-edge ratio)&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
         <property name="alignment">
          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+        <property name="buddy">
+         <cstring>tetShape</cstring>
         </property>
        </widget>
       </item>
@@ -279,22 +300,6 @@ p, li { white-space: pre-wrap; }
     </widget>
    </item>
    <item>
-    <spacer name="verticalSpacer_3">
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
-     </property>
-     <property name="sizeType">
-      <enum>QSizePolicy::Fixed</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>20</width>
-       <height>10</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
-   <item>
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
@@ -306,6 +311,19 @@ p, li { white-space: pre-wrap; }
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>approx</tabstop>
+  <tabstop>noApprox</tabstop>
+  <tabstop>facetSizing</tabstop>
+  <tabstop>noFacetSizing</tabstop>
+  <tabstop>facetAngle</tabstop>
+  <tabstop>noAngle</tabstop>
+  <tabstop>tetSizing</tabstop>
+  <tabstop>noTetSizing</tabstop>
+  <tabstop>tetShape</tabstop>
+  <tabstop>noTetShape</tabstop>
+  <tabstop>buttonBox</tabstop>
+ </tabstops>
  <resources/>
  <connections>
   <connection>
@@ -315,8 +333,8 @@ p, li { white-space: pre-wrap; }
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>384</x>
-     <y>191</y>
+     <x>388</x>
+     <y>288</y>
     </hint>
     <hint type="destinationlabel">
      <x>157</x>
@@ -331,8 +349,8 @@ p, li { white-space: pre-wrap; }
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>384</x>
-     <y>191</y>
+     <x>388</x>
+     <y>288</y>
     </hint>
     <hint type="destinationlabel">
      <x>286</x>
