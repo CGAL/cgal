@@ -63,6 +63,7 @@ public:
   using Base::compute_neg_45_line_at;
   using Base::compute_pos_45_line_at;
   using Base::has_positive_slope;
+  using Base::are_in_same_open_halfspace_of;
 
 private:
   typedef SegmentDelaunayGraph_2::Are_same_points_C2<K>
@@ -623,7 +624,25 @@ private:
     if (p_endp_r or q_endp_r) {
       return compute_pps_endp(p, q, r, p_endp_r);
     }
+    CGAL_assertion(are_in_same_open_halfspace_of(p, q, r));
+    compute_pps_bisectors(p, q, r);
+  }
 
+
+  void
+  compute_pps_bisectors(const Site_2& p, const Site_2& q, const Site_2& r)
+  {
+    CGAL_precondition( p.is_point() && q.is_point() &&
+		       r.is_segment() );
+
+    CGAL_SDG_DEBUG(std::cout
+        << "debug: vring compute_pps_bisectors entering p=" << p
+        << " q=" << q << " r=" << r << std::endl;);
+
+    v_type = PPS;
+
+    bool p_endp_r = is_endpoint_of(p, r);
+    bool q_endp_r = is_endpoint_of(q, r);
     Polychainline_2 bpq = bisector_linf(p, q);
     CGAL_SDG_DEBUG(std::cout << "debug: bpq p="
         << p << " q=" << q << std::endl;);
