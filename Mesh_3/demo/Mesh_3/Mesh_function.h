@@ -36,6 +36,7 @@
 
 #include "C3t3_type.h"
 #include "Meshing_thread.h"
+#include <CGAL/make_mesh_3.h> // for C3t3_initializer
 
 
 struct Mesh_parameters
@@ -57,7 +58,7 @@ struct Edge_criteria_sizing_field_wrapper
   typedef typename EdgeCriteria::Index    Index;
   typedef typename EdgeCriteria::FT       FT;
   typedef typename EdgeCriteria::Point_3  Point_3;
-  
+
   Edge_criteria_sizing_field_wrapper(const EdgeCriteria& ec) : ec_(ec) {}
   FT operator()(const Point_3& p, const int dim, const Index& index) const
   { return ec_.sizing_field(p,dim,index); }
@@ -165,7 +166,7 @@ launch()
 #ifdef CGAL_MESH_3_INITIAL_POINTS_NO_RANDOM_SHOOTING
   CGAL::default_random = CGAL::Random(0);
 #endif
-    
+
   // Create mesh criteria
   Mesh_criteria criteria(Edge_criteria(p_.facet_sizing),
                          Facet_criteria(p_.facet_angle,
@@ -173,27 +174,17 @@ launch()
                                         p_.facet_approx),
                          Cell_criteria(p_.tet_shape,
                                        p_.tet_sizing));
-  
-#ifndef CGAL_MESH_3_DEMO_ACTIVATE_SHARP_FEATURES_IN_POLYHEDRAL_DOMAIN
-  // Mesh initialization : get some points and add them to the mesh
-  Initial_points_vector initial_points;
-  domain_->construct_initial_points_object()(std::back_inserter(initial_points),20);
-  
-  // Insert points and set their index and dimension
-  for ( Ipv_iterator it = initial_points.begin() ;
-       it != initial_points.end() ;
-       ++it )
-  {
-    Vertex_handle v = c3t3_.triangulation().insert(it->first);
-    c3t3_.set_dimension(v,2); // by construction, points are on surface
-    c3t3_.set_index(v,it->second);
-  }
-#else
-  typedef Edge_criteria_sizing_field_wrapper<Edge_criteria> Sizing_field;
-  CGAL::Mesh_3::Protect_edges_sizing_field<C3t3,D_,Sizing_field>     
-    protect_edges(c3t3_, *domain_, Sizing_field(criteria.edge_criteria_object()));
-  protect_edges(true);
-#endif
+
+  // Initialization of the mesh, either with the protection of sharp
+  // features, or with the initial points (or both).
+  CGAL::internal::Mesh_3::C3t3_initializer<
+    C3t3,
+    Domain,
+    Mesh_criteria,
+    CGAL::internal::Mesh_3::has_Has_features<Domain>::value >()(c3t3_,
+                                                                *domain_,
+                                                                criteria,
+                                                                true);
 
   // Build mesher and launch refinement process
   mesher_ = new Mesher(c3t3_, *domain_, criteria);
