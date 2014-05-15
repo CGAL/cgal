@@ -64,6 +64,8 @@ public:
   using Base::compute_pos_45_line_at;
   using Base::has_positive_slope;
   using Base::are_in_same_open_halfspace_of;
+  using Base::horseg_y_coord;
+  using Base::verseg_x_coord;
 
 private:
   typedef SegmentDelaunayGraph_2::Are_same_points_C2<K>
@@ -100,7 +102,12 @@ private:
     Point_2 p = sp.point(), q = sq.point(), r = sr.point();
 
     v_type = PPP;
+    compute_ppp(p, q, r);
+  }
 
+  void
+  compute_ppp(const Point_2& p, const Point_2& q, const Point_2& r)
+  {
     RT x_min, x_max, y_min, y_max;
     RT x_center, y_center;
     RT half(0.5);
@@ -569,6 +576,43 @@ private:
   }
 
   inline void
+  compute_pps_nonendp_hv_samecoord(
+      const Site_2& p, const Site_2& q, const Site_2& r,
+      const bool is_r_horizontal)
+  {
+    const RT ppar = is_r_horizontal ? p.point().x() : p.point().y();
+    const RT port = is_r_horizontal ? p.point().y() : p.point().x();
+    const RT qpar = is_r_horizontal ? q.point().x() : q.point().y();
+    const RT qort = is_r_horizontal ? q.point().y() : q.point().x();
+    RT & upar = is_r_horizontal ? ux_ : uy_;
+    RT & uort = is_r_horizontal ? uy_ : ux_;
+    const RT segort = (is_r_horizontal)?
+      horseg_y_coord(r) : verseg_x_coord(r);
+    const RT sumort = port + qort;
+    uort = sumort;
+    RT distsign = CGAL::abs(segort-qort) < CGAL::abs(segort-port) ?
+      RT(+1): RT(-1);
+    upar = RT(2)*ppar - distsign*(RT(2)*segort-sumort);
+    uz_ = RT(2);
+  }
+
+  inline void
+  compute_pps_nonendp_hv(const Site_2& p, const Site_2& q, const Site_2& r,
+                         const bool is_r_horizontal)
+  {
+    if ((is_r_horizontal       and (scmpx(p, q) == EQUAL)) or
+        ((not is_r_horizontal) and (scmpy(p, q) == EQUAL))   ) {
+      return compute_pps_nonendp_hv_samecoord(p, q, r, is_r_horizontal);
+    }
+    const Point_2 pp = p.point();
+    const Point_2 qq = q.point();
+    const Point_2 rrep = (is_r_horizontal) ?
+      Point_2(pp.x() + qq.x(), RT(2)*horseg_y_coord(r), RT(2)) :
+      Point_2(RT(2)*verseg_x_coord(r), pp.y() + qq.y(), RT(2)) ;
+    return compute_ppp(pp, qq, rrep);
+  }
+
+  inline void
   compute_pps_endp_slope(const Site_2& p, const Site_2& q, const Site_2& r,
                    const bool p_endp_r, const bool pos_slope)
   {
@@ -606,6 +650,17 @@ private:
     }
   }
 
+  inline void
+  compute_pps_nonendp(const Site_2& p, const Site_2& q, const Site_2& r)
+  {
+    const bool is_r_horizontal = is_site_horizontal(r);
+    if (is_r_horizontal or is_site_vertical(r)) {
+      return compute_pps_nonendp_hv(p, q, r, is_r_horizontal);
+    } else {
+      return compute_pps_bisectors(p, q, r);
+    }
+  }
+
   void
   compute_pps(const Site_2& p, const Site_2& q, const Site_2& r)
   {
@@ -625,7 +680,7 @@ private:
       return compute_pps_endp(p, q, r, p_endp_r);
     }
     CGAL_assertion(are_in_same_open_halfspace_of(p, q, r));
-    compute_pps_bisectors(p, q, r);
+    return compute_pps_nonendp(p, q, r);
   }
 
 
