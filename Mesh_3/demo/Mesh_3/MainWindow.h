@@ -21,8 +21,6 @@ namespace Ui {
   class MainWindow;
 }
 
-#include "Polyhedron_type_fwd.h"
-
 #include <CGAL_demo/Messages_interface.h>
 
 class MainWindow : 
