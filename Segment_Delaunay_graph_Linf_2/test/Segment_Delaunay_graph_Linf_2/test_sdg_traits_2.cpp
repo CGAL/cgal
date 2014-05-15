@@ -172,63 +172,68 @@ F_Gmpq_Field_Gt;
 //----------------------------------------------------------------------
 //----------------------------------------------------------------------
 
-template<class Gt>
-struct Get_sites
-{
-  template<class OutputIterator>
-  OutputIterator operator()(OutputIterator it) const
-  {
-    typedef typename Gt::Point_2  Point_2;
-    typedef typename Gt::Site_2   Site_2;
-    Point_2 p1(400, 500);
-    Point_2 p2(300, 500);
-    Point_2 p3(500, 200);
-    Point_2 p4(500, 500);
-
-    Site_2 s1 = Site_2::construct_site_2(p1);
-    Site_2 s2 = Site_2::construct_site_2(p1, p2);
-    Site_2 s3 = Site_2::construct_site_2(p3);
-    Site_2 s4 = Site_2::construct_site_2(p4, p1);
-
-    *it++ = s1;
-    *it++ = s2;
-    *it++ = s3;
-    *it++ = s4;
-    return it;
-  }
-};
 
 template<class Gt>
-bool test_traits(const char* title)
+typename Gt::Site_2 to_site(typename Gt::Point_2 p)
 {
-  typedef typename Gt::Site_2              Site_2;
+  return Gt::Site_2::construct_site_2(p);
+}
+
+template<class Gt>
+typename Gt::Site_2 to_site(typename Gt::Segment_2 s)
+{
+  return Gt::Site_2::construct_site_2(s.source(), s.target());
+}
+
+template<class Gt, typename A, typename B, typename C, typename D>
+void test_incircle(const A & p, const B & q, const C & r, const D & t,
+    const CGAL::Sign & sign)
+{
   typedef typename Gt::Vertex_conflict_2   Vertex_conflict_2;
-
-  typedef Get_sites<Gt> Site_creator;
-
+  typedef typename Gt::Site_2   Site_2;
   Gt gt;
   Vertex_conflict_2 incircle = gt.vertex_conflict_2_object();
-  Site_creator creator;
+  Site_2 sp = to_site<Gt>(p);
+  Site_2 sq = to_site<Gt>(q);
+  Site_2 sr = to_site<Gt>(r);
+  Site_2 st = to_site<Gt>(t);
+  CGAL::Sign s = incircle(sp, sq, sr, st);
+  std::cout << "test: " << sp << " " << sq << " " << sr << "  " << st;
+  std::cout << "   " << sign << " " << s;
+  std::cout << std::endl;
+  assert(s == sign);
+}
 
-  std::vector<Site_2>  svec;
-  creator(std::back_inserter(svec));
+
+template<class Gt>
+void test_traits(const char* title)
+{
+  typedef typename Gt::Point_2             Point_2;
+  typedef typename Gt::Segment_2           Segment_2;
+  typedef typename Gt::Site_2              Site_2;
 
   std::cout << "====================================" << std::endl;
   std::cout << title << std::endl;
-  std::cout << "------------------------------------" << std::endl
-	    << std::endl;
-  std::cout << "Sites: " << std::endl;
-  for (unsigned int i = 0; i < svec.size(); i++) {
-    std::cout << "   " << svec[i] << std::endl;
-  }
-  CGAL::Sign s = incircle(svec[0], svec[1], svec[2], svec[3]);
-  std::cout << "    incircle: " << s << std::endl;
+  std::cout << "------------------------------------" << std::endl;
+
+  test_incircle<Gt>(Point_2(400, 500),
+                    Segment_2(Point_2(400, 500), Point_2(300, 500)),
+                    Point_2(500, 200),
+                    Segment_2(Point_2(500, 500), Point_2(400, 500)),
+                    CGAL::POSITIVE);
+
+  test_incircle<Gt>(Point_2(20, 0), Point_2(60, 0),
+                    Segment_2(Point_2(0, -80), Point_2(0, 80)),
+                    Point_2(40, 40),
+                    CGAL::NEGATIVE);
+
+  test_incircle<Gt>(Point_2(20, 0), Point_2(60, 0),
+                    Segment_2(Point_2(0, -80), Point_2(0, 80)),
+                    Point_2(40, -40),
+                    CGAL::POSITIVE);
+
   std::cout << "====================================" << std::endl;
-
   std::cout << std::endl;
-
-  assert( s == CGAL::POSITIVE );
-  return s == CGAL::POSITIVE;
 }
 
 
