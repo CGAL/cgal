@@ -3,46 +3,66 @@
 \ingroup PkgTriangulationsConcepts
 \cgalConcept
 
-The concept `TriangulationDSVertex` describes what a vertex is in a model of the concept
-`TriangulationDataStructure`. It sets requirements of combinatorial nature
-only, as geometry is not concerned here. In particular, we only require that
-the vertex holds a handle to a full cell incident to it in the triangulation.
+\cgalModifBegin
+The concept `TriangulationDSVertex` describes the requirements for the 
+vertex base class of a `CGAL::Triangulation_data_structure`. It refines
+the concept `TriangulationDataStructure::Vertex`.
 
-\cgalHasModel CGAL::Triangulation_ds_vertex<TriangulationDataStructure>
+Since the `CGAL::Triangulation_data_structure` is the class 
+which defines the handle
+types, the vertex base class has to be somehow
+parameterized by the triangulation
+data structure. But since the `CGAL::Triangulation_data_structure` 
+itself is parameterized by the cell and vertex 
+base classes, there is a cycle in the definition of these classes. 
+In order 
+to break the cycle, the base classes for cells and vertices 
+which are plugged in to instantiate a 
+`Triangulation_data_structure` 
+use a `void` as triangulation 
+data structure parameter. Then, 
+the `CGAL::Triangulation_data_structure` 
+uses a <I>rebind</I> mechanism (similar to the one specified in 
+`std::allocator`) in order to plug itself 
+as parameter in the face and vertex base classes. 
+This mechanism requires that the base class provides 
+a templated nested class `Rebind_TDS` that 
+itself provides 
+the subtype `Rebind_TDS::Other` 
+which is the <I>rebound</I> version of the base class. 
+This <I>rebound</I> base class is the class 
+that the `CGAL::Triangulation_data_structure` 
+actually uses as a base class for the class 
+of `CGAL::Triangulation_data_structure::Vertex`.
+\cgalModifEnd
+
+\cgalRefines `TriangulationDataStructure::Vertex`
+
+\cgalHasModel CGAL::Triangulation_ds_vertex<Tds>
 \cgalHasModel CGAL::Triangulation_vertex<TriangulationTraits, Data, TriangulationDSVertex>
-
-Input/Output
---------------
-
-These operators can be used directly and are called by the I/O
-operator of class `TriangulationDataStructure`.
 
 \sa `TriangulationDSFullCell`
 \sa `TriangulationDSFace`
 \sa `TriangulationDataStructure`
-
+\sa `TriangulationDataStructure::Vertex` 
 */
 
 class TriangulationDSVertex {
 public:
-
+   
 /// \name Types
 /// @{
   
 /*!
+
 \cgalModifBegin
-The `Triangulation_data_structure` in which the `TriangulationDSVertex` is
+The `Triangulation_data_structure` in which the vertex is
 defined/used.
 Must be a model of the `TriangulationDataStructure` concept.
 \cgalModifEnd
+
 */
 typedef Hidden_type Triangulation_data_structure;
-
-/*!
-A handle to a cell, which must be the same as the
-nested type `TriangulationDataStructure::Full_cell_handle`.
-*/
-typedef Hidden_type Full_cell_handle;
 
 /*!
 This nested template class has to define a type `Rebind_TDS<TDS2>::%Other` 
@@ -75,41 +95,6 @@ TriangulationDSVertex(Full_cell_handle c);
 
 /// @}
 
-/// \name Operations
-/// @{
-
-/*!
-Set `c` as the vertex's
-incident full cell. \pre `c` must not be the default-constructed
-`Full_cell_handle`.
-*/
-void set_full_cell(Full_cell_handle c);
-
-/*!
-Returns a handle to a
-full cell incident to the vertex.
-*/
-Full_cell_handle full_cell() const;
-
-/// @}
-
-/// \name Validity check
-/// @{
-
-/*!
-\cgalDebug Performs some validity checks on the vertex `v`.
-
-It must <I>at least</I> check that `v` has an incident full cell, which in
-turn must contain `v` as one of its vertices.
-
-Returns `true` if all the tests pass, `false` if any test fails. See
-the documentation for the models of this concept to see the additionnal (if
-any) validity checks that they implement.
-*/
-bool is_valid(bool verbose=false) const;
-
-/// @}
-
 /// \name Memory management
 /// These member functions are required by
 /// `Triangulation_data_structure` because it uses `CGAL::Compact_container`
@@ -126,23 +111,6 @@ void * for_compact_container() const;
 
 */
 void * & for_compact_container();
-
-/*!
-\cgalModifBegin
-Writes (possibly) non-combinatorial information about vertex `v` to the stream
-`os`.
-\cgalModifEnd
-*/
-template<class TriangulationDataStructure> 
-std::ostream& operator<<(std::ostream & os, const Triangulation_ds_vertex<TriangulationDataStructure> & v);
-
-/*!
-\cgalModifBegin
-Reads from stream `is` the vertex information written by `operator<<`.
-\cgalModifEnd
-*/
-template<class TriangulationDataStructure> 
-std::istream& operator>>(std::istream & is, Triangulation_ds_vertex<TriangulationDataStructure> & v);
 
 /// @}
 

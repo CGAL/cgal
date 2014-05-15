@@ -67,29 +67,20 @@ is opposite to the vertex with the same index.
 
 ## Triangulation data structure ##
 
-`TriangulationDataStructure`
-
-The above concept defines three types,
-`Vertex`, `Full_cell` and `Face`, that must respectively fulfill the
-following concepts:
-
-`TriangulationDSVertex`
-
-`TriangulationDSFullCell`
-
-`TriangulationDSFace`
-
-`FullCellData`
+- `TriangulationDataStructure`
+- `TriangulationDataStructure_2::FullCell`
+- `TriangulationDataStructure_2::Vertex`
+- `TriangulationDSVertex`
+- `TriangulationDSFullCell`
+- `TriangulationDSFace`
+- `FullCellData`
 
 ## Triangulations ##
 
-`TriangulationTraits`
-
-`DelaunayTriangulationTraits`
-
-`TriangulationVertex`
-
-`TriangulationFullCell`
+- `TriangulationTraits`
+- `DelaunayTriangulationTraits`
+- `TriangulationVertex`
+- `TriangulationFullCell`
 
 The latter two concepts are also abbreviated respectively as `TrVertex` and `TrFullCell`.
 
@@ -98,21 +89,15 @@ The latter two concepts are also abbreviated respectively as `TrVertex` and `TrF
 ## Triangulation data structure ##
 
 - `CGAL::Triangulation_data_structure<Dimensionality, TriangulationDSVertex, TriangulationDSFullCell>`
-
 - `CGAL::Triangulation_ds_vertex<TriangulationDataStructure>`
-
 - `CGAL::Triangulation_ds_full_cell<TriangulationDataStructure, TDSFullCellStoragePolicy>`
-
 - `CGAL::Triangulation_face<TriangulationDataStructure>`
 
 ## (Geometric) triangulations ##
 
 - `CGAL::Triangulation<TriangulationTraits, TriangulationDataStructure>`
-
 - `CGAL::Delaunay_triangulation<DelaunayTriangulationTraits, TriangulationDataStructure>`
-
 - `CGAL::Triangulation_vertex<TriangulationTraits, Data, TriangulationDSVertex>`
-
 - `CGAL::Triangulation_full_cell<TriangulationTraits, Data, TriangulationDSFullCell>`
 
 ## Enums ##
