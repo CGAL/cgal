@@ -1102,6 +1102,22 @@ public:
     return os_lseg_p == os_lseg_q;
   }
 
+  inline
+  static
+  RT horseg_y_coord(const Site_2 & s) {
+    CGAL_assertion(s.is_segment());
+    CGAL_assertion(is_site_horizontal(s));
+    return s.supporting_site().source_site().point().y();
+  }
+
+  inline
+  static
+  RT verseg_x_coord(const Site_2 & s) {
+    CGAL_assertion(s.is_segment());
+    CGAL_assertion(is_site_vertical(s));
+    return s.supporting_site().source_site().point().x();
+  }
+
 };
 
 
