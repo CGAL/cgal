@@ -1,0 +1,73 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: PolylineSimplificationCostFunction.tex
+% +------------------------------------------------------------------------+
+% | April 2009   Fernando Cacciola
+% | Package: Package
+% |
+\RCSdef{\RCSPolylineSimplificationCostFunctionRev}{$Id: header.tex 40270 2007-09-07 15:29:10Z lsaboret $}
+\RCSdefDate{\RCSPolylineSimplificationCostFunctionDate}{$Date: 2007-09-07 12:29:10 -0300 (Fri, 07 Sep 2007) $}
+% |
+\ccRefPageBegin
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{PolylineSimplificationCostFunction}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+\ccDefinition
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccDefinition)
+
+Models of this concept are passed to the polyline simplification algorithm to calculate the {\em cost} of removing a vertex. Such a cost represents some measure of the deviation error between the polyline sets before and after removal. The smaller the error the lower the cost. The algoritm processes vertices in increasing cost order to preserve the overall polyline set shape as much as possible.
+
+%END-AUTO(\ccDefinition)
+ 
+\ccCreationVariable{cost}  %% choose variable name
+
+\ccOperations
+
+% Reduce left margin
+\ccThree{12}{12}{}
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccOperations)
+
+\ccMethod{boost::optional<Polyline_constrained_triangulation_2<Tr>::Geom_traits::FT> 
+          operator()(Polyline_constrained_triangulation_2<Tr> const& pct, 
+                     Polyline_constrained_triangulation_2<Tr>::Vertices_in_constraint_iterator vip, 
+                     Polyline_constrained_triangulation_2<Tr>::Vertices_in_constraint_iterator viq, 
+                     Polyline_constrained_triangulation_2<Tr>::Vertices_in_constraint_iterator vir) const;}
+{
+Given three consecutive polyline vertices \ccc{*vip, *viq, *vir}, calculates the cost of removing vertex \ccc{*viq}, replacing edges \ccc{(*vip,*viq)} and \ccc{(*viq,*vir)} with edge \ccc{(*vip,*vir)}. 
+\ccCommentHeading{Parameters}  \\
+\ccc{pct}: The underlying polyline constrained  triangulation which embeds the polyline set.
+\ccCommentHeading{Returns} The cost for removing \ccc{*viq}. A result of {\em \ccc{boost::none}} can be used to indicate an infinite or uncomputable cost.\\
+\ccc{Tr::Geom_traits} must provide a functor \ccc{Compute_squared_distance} with an operator \ccc{Tr::Geom_traits::FT operator()(Tr::Point, Tr::Point)}.
+}
+\ccGlue
+
+%END-AUTO(\ccOperations)
+
+\ccHasModels
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccHasModels)
+
+\ccc{Polyline_simplification_2::Hybrid_squared_distance_cost}  \\
+\ccc{Polyline_simplification_2::Scaled_squared_distance_cost}  \\
+\ccc{Polyline_simplification_2::Squared_distance_cost}
+
+%END-AUTO(\ccHasModels)
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+
