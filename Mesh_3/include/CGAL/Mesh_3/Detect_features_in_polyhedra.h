@@ -53,6 +53,7 @@ public:
   typedef typename Polyhedron::Facet_handle     Facet_handle;
   typedef typename Polyhedron::Halfedge         Halfedge;
   typedef typename Polyhedron::Facet            Facet;
+  typedef typename Facet::Patch_id              Patch_id;
   
   typedef std::set<Facet*>      Facet_handle_set;
   typedef std::set<Halfedge*>   He_handle_set;
@@ -68,8 +69,14 @@ public:
 private:
   Vector_3 facet_normal(const Facet_handle& f) const;
   bool is_sharp(const Halfedge_handle& he, FT cos_angle) const;
-  void flood(Facet& f, const int index,
+  void flood(Facet& f, const Patch_id id,
              Facet_handle_set& unsorted_faces) const;
+
+  template <typename Int>
+  Int generate_patch_id(Int, int);
+
+  template <typename Int>
+  std::pair<Int, Int> generate_patch_id(std::pair<Int, Int>, int);
   
 private:
   // Stores the current surface index (usefull to detect different patches
@@ -109,6 +116,24 @@ detect_sharp_edges(Polyhedron& polyhedron, FT angle_in_deg) const
 
 
 template <typename P_>
+template <typename Int>
+Int
+Detect_features_in_polyhedra<P_>::
+generate_patch_id(Int, int i)
+{
+  return Int(i);
+}
+
+template <typename P_>
+template <typename Int>
+std::pair<Int, Int>
+Detect_features_in_polyhedra<P_>::
+generate_patch_id(std::pair<Int, Int>, int i)
+{
+  return std::pair<Int, Int>(i, 0);
+}
+
+template <typename P_>
 void
 Detect_features_in_polyhedra<P_>::
 detect_surface_patches(Polyhedron& polyhedron)
@@ -127,13 +152,15 @@ detect_surface_patches(Polyhedron& polyhedron)
     Facet& f = **(unsorted_faces.begin());
     unsorted_faces.erase(unsorted_faces.begin());
     
-    f.set_patch_id(current_surface_index_);
-    flood(f,current_surface_index_,unsorted_faces);
+    const Patch_id patch_id = generate_patch_id(Patch_id(),
+                                                current_surface_index_);
+    f.set_patch_id(patch_id);
+    flood(f,patch_id,unsorted_faces);
     ++current_surface_index_;
   }
 }
-  
-  
+
+
 template <typename P_>
 void
 Detect_features_in_polyhedra<P_>::
@@ -218,7 +245,7 @@ is_sharp(const Halfedge_handle& he, FT cos_angle) const
 template <typename P_>
 void
 Detect_features_in_polyhedra<P_>::
-flood(Facet& f, const int index, Facet_handle_set& unsorted_faces) const
+flood(Facet& f, const Patch_id patch_id, Facet_handle_set& unsorted_faces) const
 {
   typedef typename Facet::Halfedge_around_facet_circulator Facet_he_circ;
   
@@ -245,7 +272,7 @@ flood(Facet& f, const int index, Facet_handle_set& unsorted_faces) const
       Facet& explored_facet = *(he.facet());
       
       // Mark facet and delete it from unsorted
-      explored_facet.set_patch_id(index);
+      explored_facet.set_patch_id(patch_id);
       unsorted_faces.erase(&explored_facet);
       
       // Add/Remove facet's halfedge to/from explore list
