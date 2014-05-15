@@ -42,6 +42,9 @@ public:
   using Base::test_star;
   using Base::compute_neg_45_line_at;
   using Base::compute_pos_45_line_at;
+  using Base::are_in_same_open_halfspace_of;
+  using Base::horseg_y_coord;
+  using Base::verseg_x_coord;
 
   typedef enum {PPP = 0, PPS, PSS, SSS} vertex_t;
   struct PPP_Type {};
@@ -174,6 +177,15 @@ private:
 
     Point_2 p = sp.point(), q = sq.point(), r = sr.point();
 
+    return compute_vv_points(p, q, r);
+  }
+
+  inline
+  void
+  compute_vv_points(
+      const Point_2 & p, const Point_2 & q, const Point_2 & r)
+  const
+  {
     //CGAL_SDG_DEBUG(std::cout << "debug vsqrnew (p q r) = " <<
     //  p << ' ' << q << ' ' << r << std::endl;);
 
@@ -624,9 +636,58 @@ private:
     }
   }
 
+  inline void
+  compute_pps_nonendp_hv_samecoord(
+      const Site_2& p, const Site_2& q, const Site_2& r,
+      const bool is_r_horizontal) const
+  {
+    const FT ppar = is_r_horizontal ? p.point().x() : p.point().y();
+    const FT port = is_r_horizontal ? p.point().y() : p.point().x();
+    const FT qort = is_r_horizontal ? q.point().y() : q.point().x();
+    FT vx_, vy_;
+    RT & vpar = is_r_horizontal ? vx_ : vy_;
+    RT & vort = is_r_horizontal ? vy_ : vx_;
+    const FT segort = (is_r_horizontal)?
+      horseg_y_coord(r) : verseg_x_coord(r);
+    const FT sumort = port + qort;
+    vort = sumort/FT(2);
+    RT distsign = CGAL::abs(segort-qort) < CGAL::abs(segort-port) ?
+      FT(+1): FT(-1);
+    vpar = ppar - distsign*(segort-vort);
+    vv = Point_2(vx_, vy_);
+  }
+
+  inline void
+  compute_pps_nonendp_hv(const Site_2& p, const Site_2& q, const Site_2& r,
+                         const bool is_r_horizontal) const
+  {
+    if ((is_r_horizontal       and (scmpx(p, q) == EQUAL)) or
+        ((not is_r_horizontal) and (scmpy(p, q) == EQUAL))   ) {
+      return compute_pps_nonendp_hv_samecoord(p, q, r, is_r_horizontal);
+    }
+    const Point_2 pp = p.point();
+    const Point_2 qq = q.point();
+    const Point_2 rrep = (is_r_horizontal) ?
+      Point_2((pp.x() + qq.x())/FT(2), horseg_y_coord(r)) :
+      Point_2(verseg_x_coord(r), (pp.y() + qq.y())/FT(2)) ;
+    return compute_vv_points(pp, qq, rrep);
+  }
+
+  inline void
+  compute_pps_nonendp(const Site_2& p, const Site_2& q, const Site_2& r)
+  const
+  {
+    const bool is_r_horizontal = is_site_horizontal(r);
+    if (is_r_horizontal or is_site_vertical(r)) {
+      return compute_pps_nonendp_hv(p, q, r, is_r_horizontal);
+    } else {
+      return compute_vv_bisectors(p, q, r, PPS_Type());
+    }
+  }
+
   void
   compute_vv(const Site_2& sp, const Site_2& sq, const Site_2& sr,
-	     const PPS_Type&) const
+	     const PPS_Type& type) const
   {
     CGAL_precondition( sp.is_point() && sq.is_point() &&
 		       sr.is_segment() );
@@ -644,7 +705,14 @@ private:
     if (p_endp_r or q_endp_r) {
       return compute_pps_endp(sp, sq, sr, p_endp_r);
     }
+    CGAL_assertion(are_in_same_open_halfspace_of(sp, sq, sr));
+    return compute_pps_nonendp(sp, sq, sr);
+  }
 
+  void compute_vv_bisectors(
+      const Site_2& sp, const Site_2& sq, const Site_2& sr,
+      const PPS_Type&) const
+  {
     Polychainline_2 bpq = bisector_linf(sp, sq);
     CGAL_SDG_DEBUG(std::cout << "debug: bpq p=" << sp << " q=" << sq << std::endl;);
     CGAL_SDG_DEBUG(std::cout << "debug: bpq =" << bpq << std::endl;);
