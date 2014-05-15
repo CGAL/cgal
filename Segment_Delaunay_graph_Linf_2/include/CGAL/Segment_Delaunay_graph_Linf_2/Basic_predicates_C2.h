@@ -1087,6 +1087,21 @@ public:
     return (oupt == LEFT_TURN) and (otpv == LEFT_TURN);
   }
 
+  static
+  Boolean
+  are_in_same_open_halfspace_of(
+      const Site_2 & p, const Site_2 & q, const Site_2 & r)
+  {
+    CGAL_precondition(p.is_point() and q.is_point() and r.is_segment());
+    Line_2 lseg = compute_supporting_line(r.supporting_site());
+    Oriented_side os_lseg_p = oriented_side_of_line(lseg, p.point());
+    if ( os_lseg_p == ON_ORIENTED_BOUNDARY ) {
+      return false;
+    }
+    Oriented_side os_lseg_q = oriented_side_of_line(lseg, q.point());
+    return os_lseg_p == os_lseg_q;
+  }
+
 };
 
 
