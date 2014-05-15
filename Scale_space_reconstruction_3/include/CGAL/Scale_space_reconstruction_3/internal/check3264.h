@@ -24,34 +24,44 @@ namespace CGAL {
 
 namespace internal {
 
-/// A general system parameters definition.
-template< int sz > struct _EnvDef{
+/// General system environment types.
+template< int sz > struct _EnvTypes{
+/// \name Types
+/// \{
     typedef void s_ptr_type;                        ///< The pointer size type.
     typedef void ptr_type;                          ///< The pointer type.
-}; // struct _EnvDef
+/// \}
+}; // struct _EnvTypes
 
-/// The x32 system parameters definition.
-template<> struct _EnvDef<4> {
-    typedef int s_ptr_type;                         ///< The pointer size type.
-    typedef unsigned int ptr_type;                  ///< The pointer type.
-}; // struct _EnvDef<4>
+// The x32 system environment types.
+template<> struct _EnvTypes<4> {
+    typedef int s_ptr_type;
+    typedef unsigned int ptr_type;
+}; // struct _EnvTypes<4>
 
-/// The x64 system parameters definition.
-template<> struct _EnvDef<8> {
-    typedef long long s_ptr_type;                   ///< The pointer size type.
-    typedef unsigned long long ptr_type;            ///< The pointer type.
-}; // struct _EnvDef<8>
+// The x64 system environment types.
+template<> struct _EnvTypes<8> {
+    typedef long long s_ptr_type;
+    typedef unsigned long long ptr_type;
+}; // struct _EnvTypes<8>
 
-/// The current system configuration.
-struct _Env {
-    typedef _EnvDef< sizeof( void* ) > _DEF;        ///< The system definitions.
+/// The current system environment.
+struct _Env
+: public _EnvTypes< sizeof( void* ) > {
+/// \name Types
+/// \{
+    typedef _EnvTypes< sizeof( void* ) > Types;     ///< The system environment types.
 
-    typedef _DEF::s_ptr_type    s_ptr_type;         ///< The pointer size type.
-    typedef _DEF::ptr_type      ptr_type;           ///< The pointer type.
+    typedef Types::s_ptr_type    s_ptr_type;        ///< The pointer size type.
+    typedef Types::ptr_type      ptr_type;          ///< The pointer type.
+/// \}
 
+/// \name Environment Parameters
+/// \{
     static const int ptr_size = sizeof(ptr_type)*8; ///< The size of a pointer.
     static const bool is_x32 = ( ptr_size == 32 );  ///< Whether the system is 32-bit.
     static const bool is_x64 = ( ptr_size == 64 );  ///< Whether the system is 64-bit.
+/// \}
 }; // struct _Env
 
 typedef _Env _ENVIRONMENT;                          ///< The system environment.

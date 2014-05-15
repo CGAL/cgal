@@ -37,7 +37,7 @@ typedef CGAL::Scale_space_surface_reconstructer_3< Kernel > Reconstructer;
 typedef Reconstructer::Point                                Point;
 typedef std::vector< Point >                                Pointset;
 
-typedef Reconstructer::Tripleset	                        Tripleset;
+typedef Reconstructer::Const_triple_iterator	            TripleIterator;
 
 const unsigned int LINE_SIZE = 1024;
 
@@ -78,18 +78,18 @@ bool readOFF( std::string input, Pointset& points ) {
     return true;
 }
 
-bool writeOFF( std::string output, const Pointset& points, const Tripleset& triples ) {
+bool writeOFF( std::string output, const Pointset& points, TripleIterator triples_begin, TripleIterator triples_end, size_t n_triples ) {
     // Write the output file.
 	std::ofstream fout( output );
 	fout << "OFF" << std::endl;
-    fout << points.size() << " " << triples.size() << " 0" << std::endl;
+    fout << points.size() << " " << n_triples << " 0" << std::endl;
 
 	// Write the points.
 	for( Pointset::const_iterator pit = points.begin(); pit != points.end(); ++pit)
 		fout << *pit << std::endl;
 
 	// Write the triples.
-    for( Tripleset::const_iterator tit = triples.begin(); tit != triples.end(); ++tit )
+    for( TripleIterator tit = triples_begin; tit != triples_end; ++tit )
 		fout << "3  " << *tit << std::endl;
 
 	return true;
@@ -125,12 +125,14 @@ int main(int argc, char** argv) {
 	// Construct the mesh in a scale space.
 	Reconstructer reconstruct;
 
-	reconstruct.compute_surface( points.begin(), points.end(), neighbors, iterations, samples );
+    reconstruct.set_mean_neighbors( neighbors );
+    reconstruct.set_number_neighborhood_samples( samples );
+	reconstruct.construct_surface( points.begin(), points.end(), iterations );
     std::cout << "Reconstruction done." << std::endl;
 
     // Write the reconstruction.
     std::cout << "Output: " << output_ss << std::flush;
-    if( !writeOFF( output_ss, points, reconstruct.surface() ) ) {
+    if( !writeOFF( output_ss, points, reconstruct.surface_begin(), reconstruct.surface_end(), reconstruct.get_surface_size() ) ) {
         std::cerr << std::endl << "Error writing " << output_ss << std::endl;
         exit(-1);
     }
@@ -139,7 +141,7 @@ int main(int argc, char** argv) {
     // Write the reconstruction.
     std::cout << "Output: " << output_sm << std::flush;
     Pointset smoothed( reconstruct.scale_space_begin(), reconstruct.scale_space_end() );
-    if( !writeOFF( output_sm, smoothed, reconstruct.surface() ) ) {
+    if( !writeOFF( output_sm, smoothed, reconstruct.surface_begin(), reconstruct.surface_end(), reconstruct.get_surface_size() ) ) {
         std::cerr << std::endl << "Error writing " << output_ss << std::endl;
         exit(-1);
     }

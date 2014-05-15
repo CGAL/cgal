@@ -1,5 +1,5 @@
 //A method to construct a surface.
-//Copyright (C) 2013  INRIA - Sophia Antipolis
+//Copyright (C) 2014  INRIA - Sophia Antipolis
 //
 //This program is free software: you can redistribute it and/or modify
 //it under the terms of the GNU General Public License as published by
@@ -15,7 +15,6 @@
 //along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // Author(s):      Thijs van Lankveld
-
 
 #ifndef CGAL_SCALE_SPACE_SURFACE_RECONSTRUCTER_H
 #define CGAL_SCALE_SPACE_SURFACE_RECONSTRUCTER_H
@@ -37,153 +36,346 @@
 #include <CGAL/Random.h>
 
 #include <CGAL/Scale_space_reconstruction_3/internal/check3264.h>
-#include <CGAL/Scale_space_reconstruction_3/Shape_type.h>
+#include <CGAL/Scale_space_reconstruction_3/Shape_of_points_3.h>
 
 #include <Eigen/Dense>
 
 
 namespace CGAL {
 
-/// Compute a smoothed surface mesh from a collection of points.
+/// Compute a triangular surface mesh from a collection of points.
 /** An appropriate neighborhood size is estimated, followed by a
- *  number of smoothing iterations. Finally, the surface of the
- *  smoothed point set is computed.
+ *  number of smoothing iterations on the point cloud. Finally, the surface of the
+ *  smoothed point set is computed and its connectivity is stored
+ *  as triples of indices to the point set. These tasks can either
+ *  be performed individually, or as a batch process.
  *
  *  The order of the point set remains the same, meaning that
- *  the smoothed surface can be transposed back to its unsmoothed
- *  version by overwriting the smoothed point collection with its
- *  unsmoothed version.
- *  \tparam Kernel the geometric traits class. This class
- *  specifies, amongst other things, the number types and
- *  predicates used.
- *  \tparam Fixed_shape indicates whether shape of the object
- *  should be constructed for a fixed neighborhood size.
+ *  the surface on the smoothed point set can interpolate the unsmoothed
+ *  point set by applying the indices of the surface triangles to the
+ *  unsmoothed point set. There are no guarantees on the correctness
+ *  of the resulting surface. However, depending on the geometry of the point set,
+ *  the number of iterations and the neighborhood size, the surface will generally
+ *  not self-intersect.
  *
- *  Generally, constructing for a fixed neighborhood size is more
- *  efficient. This is not the case if the surface should be
- *  constructed for different neighborhood sizes without changing
- *  the point set or recomputing the scale-space.
- *  \tparam Shells indicates whether to collect the surface per shell.
+ *  The shape can be constructed either at a fixed predefined scale,
+ *  or at a dynamic scale. The first option is faster when constructing
+ *  a single shape. It is undefined whether a shape with fixed scale may
+ *  have its scale changed, but if so, this will likely require more time
+ *  than changing a dynamic scale. In either case, it is possible to change
+ *  the point set while maintaining the same scale.
+ *
+ *  The surface can be given either as an unordered collection of triangles,
+ *  or as a collection of shells. A shell is a connected component of the
+ *  surface where connected facets are locally oriented towards the same
+ *  side of the surface. Shells are separated by a (0,0,0) triple.
  *  
- *  A shell is a connected component of the surface where connected
- *  facets are locally oriented towards the same side of the surface.
- *  \sa Mean_neighborhood_ball.
- *  \sa Scale_space_transform.
- *  \sa Surface_mesher.
+ *  \tparam Kernel the geometric traits class. It should be a model of
+ *  DelaunayTriangulationTraits_3.
+ *  \tparam Fixed_scale whether the shape is constructed for a fixed scale.
+ *  It should be a model of Boolean_tags. The default value is Tag_true.
+ *  \tparam Shells whether to collect the surface per shell. It should be
+ *  a model of Boolean_tags. The default value is Tag_true.
  */
-template < class Kernel, class Fixed_shape = Tag_true, class Shells = Tag_true >
+#ifdef DOXYGEN_RUNNING
+template < class Kernel, class Fixed_scale, class Shells >
+#else
+template < class Kernel, class Fixed_scale = Tag_true, class Shells = Tag_true >
+#endif
 class Scale_space_surface_reconstructer_3 {
     // Searching for neighbors.
-	typedef typename Search_traits_3< Kernel >    Search_traits;
-	typedef typename Orthogonal_k_neighbor_search< Search_traits >
-                                                        Static_search;
-	typedef typename Orthogonal_incremental_neighbor_search< Search_traits >
-                                                        Dynamic_search;
-	typedef typename Dynamic_search::Tree               Search_tree;
+    typedef typename Search_traits_3< Kernel >      Search_traits;
+    typedef typename Orthogonal_k_neighbor_search< Search_traits >
+                                                    Static_search;
+    typedef typename Orthogonal_incremental_neighbor_search< Search_traits >
+                                                    Dynamic_search;
+    typedef typename Dynamic_search::Tree           Search_tree;
 
-	typedef Random                                Random;
+    typedef Random                                  Random;
 
     // Constructing the surface.
-    typedef Shape_type< Kernel, Fixed_shape >           Shape_generator;
+    typedef Shape_of_points_3< Kernel, Fixed_scale >    Shape_of_points_3;
 
- 	typedef typename Shape_generator::Shape             Shape;
-	typedef typename Shape::Vertex_handle				Vertex_handle;
-	typedef typename Shape::Cell_handle					Cell_handle;
-	typedef typename Shape::Facet						Facet;
+    typedef typename Shape_of_points_3::Shape       Shape;
 
-	typedef typename Shape::All_cells_iterator          All_cells_iterator;
-	typedef typename Shape::Finite_facets_iterator      Finite_facets_iterator;
-	typedef typename Shape::Classification_type         Classification_type;
+    typedef typename Shape::Vertex_handle           Vertex_handle;
+    typedef typename Shape::Cell_handle             Cell_handle;
+    typedef typename Shape::Facet                   Facet;
+    
+    typedef typename Shape::Vertex_iterator         Vertex_iterator;
+    typedef typename Shape::Cell_iterator           Cell_iterator;
+    typedef typename Shape::Facet_iterator          Facet_iterator;
+    typedef typename Shape::Edge_iterator           Edge_iterator;
+
+    typedef typename Shape::All_cells_iterator      All_cells_iterator;
+    typedef typename Shape::Finite_facets_iterator  Finite_facets_iterator;
+    typedef typename Shape::Classification_type     Classification_type;
 
 public:
-    typedef Shells                                      Collect_per_shell;      ///< Whether to collect the surface per shell.
+/// \name Types
+/// \{
+    typedef Shells                                  Collect_per_shell;      ///< Whether to collect the surface per shell.
 
-	typedef typename Kernel::FT                         Scalar;                 ///< The number type.
+	typedef typename Kernel::FT                     FT;                     ///< The number field type.
 
-	typedef typename Kernel::Point_3                    Point;                  ///< The point type.
-	typedef typename Kernel::Triangle_3                 Triangle;               ///< The triangle type.
+	typedef typename Kernel::Point_3                Point;                  ///< The point type.
+	typedef typename Kernel::Triangle_3             Triangle;               ///< The triangle type.
+
+#ifdef DOXYGEN_RUNNING
+    typedef unspecified_type                        Point_iterator;         ///< An iterator over the points.
+    typedef const unspecified_type                  Const_point_iterator;   ///< A constant iterator over the points.
+#else
+    typedef typename Search_tree::iterator          Point_iterator;
+    typedef typename Search_tree::const_iterator    Const_point_iterator;
+#endif // DOXYGEN_RUNNING
 
     typedef Triple< unsigned int, unsigned int, unsigned int >
-                                                        Triple;                 ///< A triangle of the surface.
-    typedef std::list< Triple >                         Tripleset;              ///< A collection of triples.
+                                                    Triple;                 ///< A triple indicating a triangle of the surface.
+private:
+    typedef std::list< Triple >                     Tripleset;              ///< A collection of triples.
 
-    typedef typename Search_tree::iterator              Point_iterator;         ///< An iterator over the points.
-    typedef typename Search_tree::const_iterator        Point_const_iterator;   ///< A constant iterator over the points.
+public:
+#ifdef DOXYGEN_RUNNING
+    typedef unspecified_type                        Triple_iterator;        ///< An iterator over the triples.
+    typedef const unspecified_type                  Const_triple_iterator;  ///< A constant iterator over the triples.
+#else
+    typedef Tripleset::iterator                     Triple_iterator;
+    typedef Tripleset::const_iterator               Const_triple_iterator;
+#endif // DOXYGEN_RUNNING
+/// \}
 
 private:
-	typedef typename std::vector<Point>                 Pointset;               ///< A collection of points.
+    class Insurface_tester;
+    typedef Filter_iterator< Facet_iterator, Insurface_tester >
+                                                    Surface_facets_iterator;
 
 private:
-    Search_tree _tree;              // To quickly search for nearest neighbors.
+    Search_tree     _tree;              // To quickly search for nearest neighbors.
 
-	Random      _generator;         // For sampling random points.
+	Random          _generator;         // For sampling random points.
 
-    unsigned int _mean_neighbors;   // The number of nearest neighbors in the mean neighborhood.
-    unsigned int _samples;          // The number of sample points for estimating the mean neighborhood.
+    unsigned int    _mean_neighbors;    // The number of nearest neighbors in the mean neighborhood.
+    unsigned int    _samples;           // The number of sample points for estimating the mean neighborhood.
 
-    Scalar      _squared_radius;    // The squared mean neighborhood radius.
+    FT              _squared_radius;    // The squared mean neighborhood radius.
 
     // The shape must be a pointer, because the alpha of
     // a Fixed_alpha_shape_3 can only be set at
     // construction and its assignment operator is private.
-	Shape* _shape;
+    // We want to be able to set the alpha after constructing
+    // the scale-space reconstructer object.
+	Shape*          _shape;
 
     // The surface. If the surface is collected per shell,
     // consecutive triples belong to the same shell and
     // different shells are separated by a (0,0,0) triple.
     Tripleset       _surface;
 
-private:
-    void clear_tree() { _tree.clear(); }
-
 public:
-    /// Default constructor.
-    /** \param sq_radius the squared radius of the
+/// \name Constructors
+/// \{
+    /// Construct a surface reconstructor.
+    /** \param neighbors the number of neighbors a neighborhood should contain on average.
+     *  \param samples the number of points sampled to estimate the mean neighborhood size.
+     *  \param sq_radius the squared radius of the
      *  neighborhood size. If this value is negative when
      *  the point set is smoothed or when the surface is computed,
      *  the neighborhood size will be computed automatically.
      */
-	Scale_space_surface_reconstructer_3(unsigned int neighbors = 30, unsigned int samples = 200, Scalar sq_radius = -1 ): _mean_neighbors(neighbors), _samples(samples), _squared_radius( sq_radius ), _shape(0) {}
+	Scale_space_surface_reconstructer_3( unsigned int neighbors = 30, unsigned int samples = 200, FT sq_radius = -1 );
+/// \}
 	~Scale_space_surface_reconstructer_3() { deinit_shape(); }
 
 private:
     void deinit_shape() { if( _shape != 0 ) { delete _shape; _shape = 0; } }
+    
+    void clear_tree() { _tree.clear(); }
+	void clear_surface() { if( has_shape() ) { _shape->clear(); } }
+    
+	// Once a facet is added to the surface, it is marked as handled.
+	bool is_handled( Cell_handle c, unsigned int li ) const;
+	inline bool is_handled( const Facet& f ) const { return is_handled( f.first, f.second ); }
+	void set_handled( Cell_handle c, unsigned int li );
+	inline void set_handled( Facet f ) { set_handled( f.first, f.second ); }
 
 public:
-    Point_iterator scale_space_begin() { return _tree.begin(); }
-    Point_iterator scale_space_end() { return _tree.end(); }
-    
-    Point_const_iterator scale_space_begin() const { return _tree.begin(); }
-    Point_const_iterator scale_space_end() const { return _tree.begin(); }
-
-    /// Check whether the spatial structure has been constructed.
-    /** \return true if the structure exists and false otherwise.
-     *  \sa construct_shape(InputIterator start, InputIterator end).
+/// \name Accessors
+/// \{
+    /// Gives the squared radius of the neighborhood ball.
+    /** The neighborhood ball is used by
+     *  `smooth_scale_space( unsigned int iterations )` to
+     *  compute the scale-space and by
+     *  `construct_shape()` to construct the shape of
+     *  the scale-space.
+     *  \return the squared radius of the mean neighborhood,
+     *  or -1 if the mean neighborhood has not yet been set.
      */
-	bool has_surface() const { return _shape != 0; }
+    FT get_neighborhood_squared_radius() const { return _squared_radius; }
 
-	void clear_surface() {
-        if( has_surface() ) {
-            _shape->clear();
-        }
+    /// Gives the mean number of neighbors an estimated neighborhood should contain.
+    /** This number is only used if the neighborhood radius
+     *  has not been set manually.
+     *
+     *  If the neighborhood ball radius is estimated, it should
+     *  on average contain this many neighbors, not counting the
+     *  ball center.
+     *  \return the number of neighbors a neighborhood ball centered
+     *  on a point should contain on average when the radius is estimated.
+     */
+    unsigned int get_mean_neighbors() const { return _mean_neighbors; }
+
+    /// Gives the number of sample points the neighborhood estimation uses.
+    /** This number is only used if the neighborhood radius
+     *  has not been set manually.
+     *
+     *  If the number of samples is larger than the point cloud,
+     *  every point is used and the optimal neighborhood radius
+     *  is computed exactly in stead of estimated.
+     *  \return the number of sample points used for neighborhood estimation.
+     */
+    unsigned int get_number_neighborhood_samples() const { return _samples; }
+
+    /// Get the shape of the scale space.
+    /** If the shape does not exist, it is  constructed first.
+     *  \return the shape of the scale space.
+     */
+    const Shape& get_shape() const;
+    
+    /// Get the number of triangles of the surface.
+    unsigned int get_surface_size() const { return (unsigned int)_surface.size(); }
+/// \}
+
+/// \name Mutators
+/// \{
+    /// Reset the scale-space surface reconstructer.
+    void clear() {
+		clear_tree();
+        clear_surface();
     }
     
+    /// Sets the radius of the neighborhood ball.
+    /** The neighborhood ball is used by
+     *  `smooth_scale_space( unsigned int iterations )` to
+     *  compute the scale-space and by
+     *  `construct_shape()` to construct the shape of
+     *  the scale-space.
+     *
+     *  If the reconstructor has already constructed a
+     *  shape for the scale-space, this may cause the
+     *  construction of a new shape.
+     *  \param radius the new radius of the mean neighborhood.
+     */
+    void set_neighborhood_radius( const FT& radius ) {
+        _squared_radius = radius * radius;
+		if( has_shape() )
+            Shape_of_points_3().set_scale( _shape, _squared_radius );
+    }
+    
+    /// Sets the squared radius of the neighborhood ball.
+    /** The neighborhood ball is used by
+     *  `smooth_scale_space( unsigned int iterations )` to
+     *  compute the scale-space and by
+     *  `construct_shape()` to construct the shape of
+     *  the scale-space.
+     *
+     *  If the reconstructor has already constructed a
+     *  shape for the scale-space, this may cause the
+     *  construction of a new shape.
+     *  \param radius the new squared radius of the mean neighborhood,
+     *  or -1 if the mean neighborhood should be estimated automatically.
+     */
+    void set_neighborhood_squared_radius( const FT& sq_radius ) {
+        _squared_radius = sq_radius;
+		if( has_shape() )
+            Shape_of_points_3().set_scale( _shape, _squared_radius );
+    }
+    
+    /// Sets the mean number of neighbors an estimated neighborhood should contain.
+    /** This number is only used if the neighborhood radius
+     *  has not been set manually.
+     *
+     *  If the neighborhood ball radius is estimated, it should
+     *  on average contain this many neighbors, not counting the
+     *  ball center.
+     */
+    void set_mean_neighbors( unsigned int neighbors ) { _mean_neighbors = neighbors; }
+    
+    /// Sets the number of sample points the neighborhood estimation uses.
+    /** This number is only used if the neighborhood radius
+     *  has not been set manually.
+     *
+     *  If the number of samples is larger than the point cloud,
+     *  every point is used and the optimal neighborhood radius
+     *  is computed exactly in stead of estimated.
+     */
+    void set_number_neighborhood_samples( unsigned int samples ) { _samples = samples; }
+
     /// Insert a collection of points.
-    /** \tparam InputIterator an iterator over a collection of points.
-     *  The iterator must point to a Point type.
+    /** Note that inserting the points does not automatically construct
+     *  the surface.
+     *
+     *  In order to construct the surface, either run
+     *  `construct_surface(unsigned int iterations)` or both
+     *  `smooth_scale_space( unsigned int iterations )` and
+     *  `collect_surface()`.
+     *  \tparam InputIterator an iterator over a collection of points.
+     *  The iterator must point to a Point.
      *  \param start an iterator to the first point of the collection.
      *  \param end a past-the-end iterator for the point collection.
-     *  \sa compute_surface(InputIterator start, InputIterator end).
+     *  \sa compute_surface( InputIterator start, InputIterator end ).
      */
 	template < class InputIterator >
 	void insert_points( InputIterator start, InputIterator end ) {
 		_tree.insert( start, end );
 	}
+/// \}
 
-    void clear() {
-		clear_tree();
-        clear_surface();
+/// \name Query
+/// \{
+    /// Check whether the neighborhood ball radius has been set.
+    /** \return true iff the radius has been set manually or estimated.
+     */
+    bool has_neighborhood_radius() const {
+        return sign( _squared_radius ) == POSITIVE;
     }
+
+    /// Check whether the shape has been constructed.
+    /** The shape contains the structure of the point cloud.
+     *
+     *  Until the shape is constructed, the surface is undefined.
+     *  \return true if the shape exists and false otherwise.
+     *  \sa construct_shape(InputIterator start, InputIterator end).
+     */
+	bool has_shape() const { return _shape != 0; }
+/// \}
+
+/// \name Iterators
+/// \{
+    /// Gives an iterator to the first point in the current scale space.
+    Const_point_iterator scale_space_begin() const { return _tree.begin(); }
+    /// Gives an iterator to the first point in the current scale space.
+    Point_iterator scale_space_begin() { return _tree.begin(); }
+
+    /// Gives a past-the-end iterator of the points in the current scale space.
+    Const_point_iterator scale_space_end() const { return _tree.begin(); }
+    /// Gives a past-the-end iterator of the points in the current scale space.
+    Point_iterator scale_space_end() { return _tree.end(); }
+
+    /// Gives an iterator to the first triple in the surface.
+    Const_triple_iterator surface_begin() const { return _surface.begin(); }
+    /// Gives an iterator to the first triple in the surface.
+    Triple_iterator surface_begin() { return _surface.begin(); }
+    
+    /// Gives a past-the-end iterator of the triples in the surface.
+    Const_triple_iterator surface_end() const { return _surface.end(); }
+    /// Gives a past-the-end iterator of the triples in the surface.
+    Triple_iterator surface_end() { return _surface.end(); }
+/// \}
+
+public:
+
+    
+
     
     /// Estimate the mean neighborhood size based on a number of sample points.
     /** A neighborhood size is expressed as the radius of the smallest
@@ -196,56 +388,11 @@ public:
      *  \sa handlePoint(const Point& p).
      *  \sa operator()(InputIterator start, InputIterator end).
      */
-	Scalar estimate_mean_neighborhood( unsigned int neighbors = 30, unsigned int samples = 200 ) {
-        Kernel::Compute_squared_distance_3 squared_distance = Kernel().compute_squared_distance_3_object();
+	FT estimate_mean_neighborhood( unsigned int neighbors = 30, unsigned int samples = 200 );
 
-        _mean_neighbors = neighbors;
-        _samples = samples;
-
-		unsigned int handled = 0;
-		unsigned int checked = 0;
-		Scalar radius = 0;
-        
-		if( !_tree.is_built() )
-            _tree.build();
-
-		for (typename Search_tree::const_iterator it = _tree.begin(); it != _tree.end(); ++it) {
-			if (samples >= (_tree.size() - handled) || _generator.get_double() < double(samples - checked) / (_tree.size() - handled)) {
-                // The neighborhood should contain the point itself as well.
-		        Static_search search( _tree, *it, _mean_neighbors+1 );
-		        radius += sqrt( to_double( squared_distance( *it, ( search.end()-1 )->first ) ) );
-				++checked;
-			}
-			++handled;
-		}
-		radius /= double(checked);
-
-        set_mean_neighborhood( radius );
-		return radius;
-	}
-
-    
 	template < class InputIterator >
-	Scalar estimate_mean_neighborhood(InputIterator start, InputIterator end, unsigned int neighbors = 30, unsigned int samples = 200) {
-		insert_points(start, end);
-		return estimate_mean_neighborhood(neighbors, samples);
-	}
+	FT estimate_mean_neighborhood(InputIterator start, InputIterator end, unsigned int neighbors = 30, unsigned int samples = 200);
 
-    // -1 if not yet set.
-    Scalar get_squared_mean_neighborhood() const { return _squared_radius; }
-    void set_mean_neighborhood( const Scalar& radius ) {
-        _squared_radius = radius * radius;
-		if( has_surface() )
-            _shape = Shape_generator().construct( _shape, _squared_radius );
-    }
-    bool has_squared_mean_neighborhood() const {
-        return sign( _squared_radius ) == POSITIVE;
-    }
-
-    unsigned int get_mean_neighbors() const { return _mean_neighbors; }
-    unsigned int get_number_samples() const { return _samples; }
-    void set_mean_neighbors(unsigned int neighbors) { _mean_neighbors = neighbors;}
-    void set_number_samples(unsigned int samples) { _samples = samples; }
 
 
     /// Compute a number of iterations of scale-space transforming.
@@ -255,123 +402,8 @@ public:
      *  If the mean neighborhood is negative, it will be computed first.
      *  \param iterations the number of iterations to perform.
      */
-	void smooth_scale_space(unsigned int iterations = 1) {
-		typedef std::vector< unsigned int >					CountVec;
-		typedef typename std::map<Point, size_t>			PIMap;
+	void smooth_scale_space(unsigned int iterations = 1);
 
-		typedef Eigen::Matrix<double, 3, Eigen::Dynamic>	EMatrix3D;
-		typedef Eigen::Array<double, 1, Eigen::Dynamic>		EArray1D;
-		typedef Eigen::Matrix3d								EMatrix3;
-		typedef Eigen::Vector3d								EVector3;
-		typedef Eigen::SelfAdjointEigenSolver<EMatrix3>		EigenSolver;
-
-		typedef internal::_ENVIRONMENT::s_ptr_type			p_size_t;
-		
-		// This method must be called after filling the point collection.
-		CGAL_assertion(!_tree.empty());
-        
-        if( !has_squared_mean_neighborhood() )
-            estimate_mean_neighborhood( _mean_neighbors, _samples );
-
-        // In order to reduce memory consumption, we maintain two data structures:
-        // a local tree (because openMP cannot work on global members), and
-        // a vector for the points after smoothing.
-        Pointset points;
-		points.assign( _tree.begin(), _tree.end() );
-        _tree.clear();
-        Search_tree tree;
-
-		// Construct a search tree of the points.
-        // Note that the tree has to be local for openMP.
-		for (unsigned int iter = 0; iter < iterations; ++iter) {
-            tree.insert( points.begin(), points.end() );
-		    if(!tree.is_built())
-			    tree.build();
-
-		    // Collect the number of neighbors of each point.
-		    // This can be done parallel.
-		    CountVec neighbors(tree.size(), 0);
-		    Kernel::Compare_squared_distance_3 compare;
-		    p_size_t count = tree.size(); // openMP can only use signed variables.
-            const Scalar squared_radius = _squared_radius; // openMP can only use local variables.
-#pragma omp parallel for shared(count,tree,points,squared_radius,neighbors) firstprivate(compare)
-		    for (p_size_t i = 0; i < count; ++i) {
-			    // Iterate over the neighbors until the first one is found that is too far.
-			    Dynamic_search search(tree, points[i]);
-			    for (Dynamic_search::iterator nit = search.begin(); nit != search.end() && compare(points[i], nit->first, squared_radius) != LARGER; ++nit)
-				    ++neighbors[i];
-		    }
-            
-		    // Construct a mapping from each point to its index.
-		    PIMap indices;
-            p_size_t index = 0;
-		    for( Pointset::const_iterator pit = points.begin(); pit != points.end(); ++pit, ++index)
-			    indices[ *pit ] = index;
-
-		    // Compute the tranformed point locations.
-		    // This can be done parallel.
-#pragma omp parallel for shared(count,neighbors,tree,squared_radius) firstprivate(compare)
-		    for (p_size_t i = 0; i < count; ++i) {
-			    // If the neighborhood is too small, the vertex is not moved.
-			    if (neighbors[i] < 4)
-				    continue;
-
-			    // Collect the vertices within the ball and their weights.
-			    Dynamic_search search(tree, points[i]);
-			    EMatrix3D pts(3, neighbors[i]);
-			    EArray1D wts(1, neighbors[i]);
-			    unsigned int column = 0;
-			    for (Dynamic_search::iterator nit = search.begin(); nit != search.end() && column < neighbors[i]; ++nit, ++column) {
-				    pts(0, column) = to_double(nit->first[0]);
-				    pts(1, column) = to_double(nit->first[1]);
-				    pts(2, column) = to_double(nit->first[2]);
-				    wts(column) = 1.0 / neighbors[indices[nit->first]];
-			    }
-                CGAL_assertion( column == neighbors[i] );
-
-			    // Construct the barycenter.
-			    EVector3 bary = (pts.array().rowwise() * wts).rowwise().sum() / wts.sum();
-			
-			    // Replace the points by their difference with the barycenter.
-			    pts = (pts.colwise() - bary).array().rowwise() * wts;
-
-			    // Construct the weighted covariance matrix.
-			    EMatrix3 covariance = EMatrix3::Zero();
-			    for (column = 0; column < pts.cols(); ++column)
-				    covariance += wts.matrix()(column) * pts.col(column) * pts.col(column).transpose();
-
-			    // Construct the Eigen system.
-			    EigenSolver solver(covariance);
-
-			    // If the Eigen system does not converge, the vertex is not moved.
-			    if (solver.info() != Eigen::Success)
-				    continue;
-
-			    // Find the Eigen vector with the smallest Eigen value.
-			    std::ptrdiff_t index;
-			    solver.eigenvalues().minCoeff(&index);
-			    if (solver.eigenvectors().col(index).imag() != EVector3::Zero()) {
-				    // This should actually never happen!
-				    CGAL_assertion(false);
-				    continue;
-			    }
-			    EVector3 n = solver.eigenvectors().col(index).real();
-
-			    // The vertex is moved by projecting it onto the plane
-			    // through the barycenter and orthogonal to the Eigen vector with smallest Eigen value.
-			    EVector3 bv = EVector3(to_double(points[i][0]), to_double(points[i][1]), to_double(points[i][2])) - bary;
-			    EVector3 per = bary + bv - (n.dot(bv) * n);
-
-			    points[i] = Point(per(0), per(1), per(2));
-		    }
-            
-            tree.clear();
-        }
-
-        _tree.insert( points.begin(), points.end() );
-	}
-
-    
     /// Compute a number of transform iterations on a collection of points.
     /** This method is equivalent to running [insert_points(start, end)](\ref insert_points)
      *  followed by [smooth_scale_space(iterations)](\ref smooth_scale_space).
@@ -390,28 +422,6 @@ public:
 		smooth_scale_space(iterations);
 	}
 
-private:
-	// Once a facet is added to the surface, it is marked as handled.
-	inline bool is_handled( Cell_handle c, unsigned int li ) const {
-		switch( li ) {
-		case 0: return ( c->info()&1 ) != 0;
-		case 1: return ( c->info()&2 ) != 0;
-		case 2: return ( c->info()&4 ) != 0;
-		case 3: return ( c->info()&8 ) != 0;
-		}
-		return false;
-	}
-	inline bool is_handled( const Facet& f ) const { return is_handled( f.first, f.second ); }
-	inline void set_handled( Cell_handle c, unsigned int li ) {
-		switch( li ) {
-		case 0: c->info() |= 1; return;
-		case 1: c->info() |= 2; return;
-		case 2: c->info() |= 4; return;
-		case 3: c->info() |= 8; return;
-		}
-	}
-	inline void set_handled( Facet f ) { set_handled( f.first, f.second ); }
-
 public:
 
     // make new construct_shape() method for when pts already known...
@@ -420,11 +430,11 @@ public:
     }
 
     /*// For if you already have a Delaunay triangulation of the points.
-    void construct_shape(Shape_generator::Structure& tr ) {
+    void construct_shape(Shape_of_points_3::Triangulation& tr ) {
         deinit_shape();
-        if( !has_squared_mean_neighborhood() )
+        if( !has_neighborhood_radius() )
             estimate_mean_neighborhood( _mean_neighbors, _samples );
-        _shape = Shape_generator().construct( *tr, r2 );
+        _shape = Shape_of_points_3()( *tr, r2 );
 	}*/
 
     // If you don't want to smooth the point set.
@@ -436,31 +446,17 @@ public:
      *  \sa is_constructed().
      */
 	template < class InputIterator >
-	void construct_shape(InputIterator start, InputIterator end) {
-		deinit_shape();
-        if( !has_squared_mean_neighborhood() )
-            estimate_mean_neighborhood( _mean_neighbors, _samples );
-        _shape = Shape_generator().construct( start, end, _squared_radius );
-	}
+	void construct_shape(InputIterator start, InputIterator end);
 
 private:
-    Triple ordered_facet_indices( const Facet& f ) const {
-		if( (f.second&1) == 0 )
-            return Triple( f.first->vertex( (f.second+2)&3 )->info(),
-                           f.first->vertex( (f.second+1)&3 )->info(),
-                           f.first->vertex( (f.second+3)&3 )->info() );
-		else
-            return Triple( f.first->vertex( (f.second+1)&3 )->info(),
-                           f.first->vertex( (f.second+2)&3 )->info(),
-                           f.first->vertex( (f.second+3)&3 )->info() );
-    }
+    Triple ordered_facet_indices( const Facet& f ) const;
 
     /// Collect the triangles of one shell of the surface.
     /** A shell is a maximal collection of triangles that are
      *  connected and locally facing towards the same side of the
      *  surface.
      *  \tparam OutputIterator an output iterator for a collection
-     *  of triangles. The iterator must point to a Triangle type.
+     *  of triangles. The iterator must point to a Triple type.
      *  \param c a cell touching a triangle of the shell from the
      *  outside of the object.
      *  \param li the index of the vertex of the cell opposite to
@@ -469,68 +465,7 @@ private:
      *  \sa collect_shell(const Facet& f, OutputIterator out).
      *  \sa collect_surface(OutputIterator out).
      */
-	void collect_shell( Cell_handle c, unsigned int li ) {
-		// Collect one surface mesh from the alpha-shape in a fashion similar to ball-pivoting.
-		// Invariant: the facet is regular or singular.
-
-		// To stop stack overflows: use own stack.
-		std::stack<Facet> stack;
-		stack.push( Facet(c, li) );
-
-		Facet f;
-		Cell_handle n, p;
-        int ni, pi;
-		Vertex_handle a;
-		Classification_type cl;
-        bool processed = false;
-        while( !stack.empty() ) {
-			f = stack.top();
-			stack.pop();
-
-			// Check if the cell was already handled.
-			// Note that this is an extra check that in many cases is not necessary.
-			if( is_handled(f) )
-				continue;
-
-			// The facet is part of the surface.
-			CGAL_triangulation_assertion( !_shape->is_infinite(f) );
-			set_handled(f);
-
-            // Output the facet as a triple of indices.
-			_surface.push_back( ordered_facet_indices(f) );
-		
-            if( Shells::value ) {
-			    // Pivot over each of the facet's edges and continue the surface at the next regular or singular facet.
-			    for( unsigned int i = 0; i < 4; ++i ) {
-				    // Skip the current facet.
-				    if( i == f.second || is_handled(f.first, i) )
-					    continue;
-
-				    // Rotate around the edge (starting from the shared facet in the current cell) until a regular or singular facet is found.
-				    n = f.first;
-				    ni = i;
-				    a = f.first->vertex(f.second);
-				    cl = _shape->classify( Facet(n, ni) );
-				    while( cl != Shape::REGULAR && cl != Shape::SINGULAR ) {
-					    p = n;
-					    n = n->neighbor(ni);
-					    ni = n->index(a);
-					    pi = n->index(p);
-					    a = n->vertex(pi);
-					    cl = _shape->classify( Facet(n, ni) );
-				    }
-
-				    // Continue the surface at the next regular or singular facet.
-				    stack.push( Facet(n, ni) );
-			    }
-                processed = true;
-            }
-		}
-        
-        // We indicate the end of a shell by the (0,0,0) triple.
-        if( Shells::value && processed )
-            _surface.push_back( Triple(0,0,0) );
-	}
+	void collect_shell( Cell_handle c, unsigned int li );
 
     /// Collect the triangles of one shell of the surface.
     /** A shell is a maximal collection of triangles that are
@@ -547,7 +482,6 @@ private:
 		collect_shell( f.first, f.second );
 	}
 
-public:
     /// Compute a surface mesh from a collection of points.
     /** The surface mesh indicates the boundary of a sampled
      *  object. The point sample must be dense enough, such
@@ -573,7 +507,7 @@ public:
      *  \tparam Kernel the geometric traits class. This class
      *  specifies, amongst other things, the number types and
      *  predicates used.
-     *  \tparam Vb the vertex base used in the internal data
+     *  \tparam  the vertex base used in the internal data
      *  structure that spatially orders the point set.
      *  \tparam Cb the cell base used in the internal data
      *  structure that spatially orders the point set.
@@ -589,46 +523,11 @@ public:
      *  \sa collect_shell(const Facet& f, OutputIterator out).
      *  \sa collect_shell(Cell_handle c, unsigned int li, OutputIterator out).
      */
-	template < class OutputIterator >
-	OutputIterator collect_surface( OutputIterator out ) {
-        if( !has_squared_mean_neighborhood() )
-            estimate_mean_neighborhood( _mean_neighbors, _samples );
+	void collect_facets( Tag_true );
+	void collect_facets( Tag_false );
+    void collect_facets() { collect_facets( Shells() ); }
 
-		// Collect all surface meshes from the alpha-shape in a fashion similar to ball-pivoting.
-		// Reset the facet handled markers.
-		for( All_cells_iterator cit = _shape->all_cells_begin(); cit != _shape->all_cells_end(); ++cit )
-			cit->info() = 0;
-
-		// We check each of the facets: if it is not handled and either regular or singular,
-		// we start collecting the next surface from here.
-		Facet m;
-		int ns = 0;
-		for( Finite_facets_iterator fit = _shape->finite_facets_begin(); fit != _shape->finite_facets_end(); ++fit ) {
-			m = _shape->mirror_facet( *fit );
-			switch( _shape->classify( *fit ) ) {
-			case Shape::REGULAR:
-				if( !is_handled(*fit) && !is_handled(m) )
-					++ns;
-				// Build a surface from the outer cell.
-				if( _shape->classify(fit->first) == Shape::EXTERIOR )
-					collect_shell( *fit );
-				else
-					collect_shell( m );
-				break;
-			case Shape::SINGULAR:
-				if( !is_handled( *fit ) )
-					++ns;
-				// Build a surface from both incident cells.
-				collect_shell( *fit );
-				if( !is_handled(m) )
-					++ns;
-				collect_shell( m );
-				break;
-			}
-		}
-
-		return out;
-	}
+public:
 
     /// Construct the surface triangles from a set of sample points.
     /** These triangles are given ordered per shell.
@@ -648,26 +547,8 @@ public:
      *  \sa construct_shape(InputIterator start, InputIterator end).
      *  \sa collect_surface(OutputIterator out).
      */
-	template < class InputIterator, class OutputIterator >
-	OutputIterator collect_surface( InputIterator start, InputIterator end, OutputIterator out ) {
-		construct_shape( start, end );
-		return collect_surface( out );
-	}
 
-	template < class InputIterator >
-	void collect_surface( InputIterator start, InputIterator end ) {
-		construct_shape( start, end );
-		collect_surface( std::back_inserter(_surface) );
-	}
-
-    void collect_surface() {
-		construct_shape();
-		collect_surface( std::back_inserter(_surface) );
-    }
-
-    const Tripleset& surface() const { return _surface; }
-    Tripleset& surface() { return _surface; }
-
+    void collect_surface();
 
 	
 	/// Compute a smoothed surface mesh from a collection of points.
@@ -685,20 +566,10 @@ public:
      *  \sa surface() const.
      */
 	template < class InputIterator >
-	void compute_surface(InputIterator start, InputIterator end, unsigned int neighbors = 30, unsigned int iterations = 4, unsigned int samples = 200) {
-		// Compute the radius for which the mean ball would contain the required number of neighbors.
-        clear();
-		insert_points( start, end );
+	void construct_surface(InputIterator start, InputIterator end, unsigned int iterations = 4);
 
-        _mean_neighbors = neighbors;
-        _samples = samples;
-
-		// Smooth the scale space.
-		smooth_scale_space( iterations );
-
-		// Mesh the perturbed points.
-        collect_surface();
-	}
+    
+	void construct_surface( unsigned int iterations = 4 );
 }; // class Scale_space_surface_reconstructer_3
 
 
@@ -715,5 +586,7 @@ operator>>( std::istream& is, Triple< T1, T2, T3 >& t ) {
 }
 
 } // namespace CGAL
+
+#include <CGAL/Scale_space_surface_reconstructer_3_impl.h>
 
 #endif // CGAL_SCALE_SPACE_SURFACE_RECONSTRUCTER_H
