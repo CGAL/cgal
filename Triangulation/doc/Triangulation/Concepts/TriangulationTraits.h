@@ -70,7 +70,8 @@ in the range.
 \pre If `Dimension`=`CGAL::``Dimension_tag<D>`, 
 then `std::distance(start,end)=D+1`.
 The points in the range 
-must be affinely independent. 
+must be affinely independent. Note that in the CGAL kernels, this predicate
+works also with affinely dependent points.
 \cgalModifEnd
 \f$ 2\leq k\leq D\f$. 
 
