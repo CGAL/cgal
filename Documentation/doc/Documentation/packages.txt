@@ -46,6 +46,7 @@ h1 {
 \package_listing{Partition_2}
 \package_listing{Straight_skeleton_2}
 \package_listing{Minkowski_sum_2}
+\package_listing{Polyline_simplification_2}
 
 
 \section PartPolyhedra Cell Complexes and Polyhedra
