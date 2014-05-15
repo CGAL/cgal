@@ -645,16 +645,18 @@ private:
     const FT port = is_r_horizontal ? p.point().y() : p.point().x();
     const FT qort = is_r_horizontal ? q.point().y() : q.point().x();
     FT vx_, vy_;
-    RT & vpar = is_r_horizontal ? vx_ : vy_;
-    RT & vort = is_r_horizontal ? vy_ : vx_;
+    FT & vpar = is_r_horizontal ? vx_ : vy_;
+    FT & vort = is_r_horizontal ? vy_ : vx_;
     const FT segort = (is_r_horizontal)?
       horseg_y_coord(r) : verseg_x_coord(r);
     const FT sumort = port + qort;
     vort = sumort/FT(2);
-    RT distsign = CGAL::abs(segort-qort) < CGAL::abs(segort-port) ?
-      FT(+1): FT(-1);
-    vpar = ppar - distsign*(segort-vort);
+    const int vhsign = is_r_horizontal ? +1 : -1;
+    const int distsign = CGAL::abs(segort-qort) < CGAL::abs(segort-port) ?
+      +1: -1;
+    vpar = ppar - FT(vhsign*distsign)*(segort-vort);
     vv = Point_2(vx_, vy_);
+    CGAL_SDG_DEBUG(std::cout << "debug: PPS returns with vv=" << vv << std::endl;);
   }
 
   inline void
@@ -670,7 +672,10 @@ private:
     const Point_2 rrep = (is_r_horizontal) ?
       Point_2((pp.x() + qq.x())/FT(2), horseg_y_coord(r)) :
       Point_2(verseg_x_coord(r), (pp.y() + qq.y())/FT(2)) ;
-    return compute_vv_points(pp, qq, rrep);
+    CGAL_SDG_DEBUG(std::cout << "debug: PPS relegating to compute_ppp with "
+        << pp << "  " << qq << " " << rrep << std::endl;);
+    compute_vv_points(pp, qq, rrep);
+    CGAL_SDG_DEBUG(std::cout << "debug: PPS returns with vv=" << vv << std::endl;);
   }
 
   inline void

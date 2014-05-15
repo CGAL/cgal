@@ -589,9 +589,10 @@ private:
       horseg_y_coord(r) : verseg_x_coord(r);
     const RT sumort = port + qort;
     uort = sumort;
-    RT distsign = CGAL::abs(segort-qort) < CGAL::abs(segort-port) ?
-      RT(+1): RT(-1);
-    upar = RT(2)*ppar - distsign*(RT(2)*segort-sumort);
+    const int vhsign = is_r_horizontal ? +1 : -1;
+    const int distsign = CGAL::abs(segort-qort) < CGAL::abs(segort-port) ?
+      +1: -1;
+    upar = RT(2)*ppar - RT(vhsign*distsign)*(RT(2)*segort-sumort);
     uz_ = RT(2);
   }
 
