@@ -667,8 +667,8 @@ only, as geometry is not concerned here. In particular, we only require that
 the vertex holds a handle to a full cell incident to it in the triangulation.
 \cgalModifEnd
 
-\cgalHasModel CGAL::Triangulation_ds_vertex<TriangulationDataStructure>
-\cgalHasModel CGAL::Triangulation_vertex<TriangulationTraits, Data, TriangulationDSVertex>
+\cgalHasModel `CGAL::Triangulation_ds_vertex<TriangulationDataStructure>`
+\cgalHasModel `CGAL::Triangulation_vertex<TriangulationTraits, Data, TriangulationDSVertex>`
 
 \sa `TriangulationDataStructure::FullCell`
 \sa `TriangulationDataStructure::Face`
@@ -779,8 +779,8 @@ storing handles to the vertices of a
 full cell as well as handles to its neighbors.
 \cgalModifEnd
 
-\cgalHasModel CGAL::Triangulation_ds_full_cell<TriangulationDataStructure,DSFullCellStoragePolicy>
-\cgalHasModel CGAL::Triangulation_full_cell<TriangulationTraits, Data, TriangulationDSFullCell>
+\cgalHasModel `CGAL::Triangulation_ds_full_cell<TriangulationDataStructure,DSFullCellStoragePolicy>`
+\cgalHasModel `CGAL::Triangulation_full_cell<TriangulationTraits, Data, TriangulationDSFullCell>`
 
 \sa `TriangulationDataStructure::FullCell`
 \sa `TriangulationDataStructure::Face`
