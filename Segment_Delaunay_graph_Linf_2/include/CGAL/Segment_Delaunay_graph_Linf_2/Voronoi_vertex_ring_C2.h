@@ -582,7 +582,6 @@ private:
   {
     const RT ppar = is_r_horizontal ? p.point().x() : p.point().y();
     const RT port = is_r_horizontal ? p.point().y() : p.point().x();
-    const RT qpar = is_r_horizontal ? q.point().x() : q.point().y();
     const RT qort = is_r_horizontal ? q.point().y() : q.point().x();
     RT & upar = is_r_horizontal ? ux_ : uy_;
     RT & uort = is_r_horizontal ? uy_ : ux_;
