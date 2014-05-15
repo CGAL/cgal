@@ -33,6 +33,7 @@
 #include <CGAL/tuple.h>
 #include <CGAL/iterator.h>
 #include <CGAL/array.h>
+#include <CGAL/Handle_hash_function.h>
 
 #ifdef MESH_3_PROFILING
   #include <CGAL/Mesh_3/Profiling_tools.h>
@@ -47,6 +48,7 @@
 #include <boost/lambda/bind.hpp>
 #include <boost/type_traits/is_same.hpp>
 #include <boost/type_traits/is_convertible.hpp>
+#include <boost/unordered_set.hpp>
 
 #ifdef CGAL_LINKED_WITH_TBB
 # include <tbb/parallel_do.h>
@@ -3285,7 +3287,7 @@ C3T3_helpers<C3T3,MD>::
 get_incident_cells_without_using_tds_data(const Vertex_handle& v,
                                           Cell_vector &cells) const
 {
-  std::set<Cell_handle> found_cells;
+  boost::unordered_set<Cell_handle, Handle_hash_function> found_cells;
   Cell_handle d = v->cell();
 
   cells.push_back(d);
