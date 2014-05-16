@@ -190,11 +190,9 @@ load_cin_file(std::istream& ifs) {
   CGAL::Timer timer;
   timer.start();
   bool not_first = false;
-  int n;
   if(!ifs.good())
     return false;
   Point_2 p, q, qold;
-  char c;
   int point_counter = 0;
   SDG2::Site_2 site;
   while (ifs >> site) {
