@@ -581,6 +581,26 @@ void MainWindow::addAction(QString actionName,
 #endif
 }
 
+void MainWindow::viewerShow(float xmin,
+                            float ymin,
+                            float zmin,
+                            float xmax,
+                            float ymax,
+                            float zmax)
+{
+  qglviewer::Vec
+    min(xmin, ymin, zmin),
+    max(xmax, ymax, zmax);
+  viewer->camera()->setRevolveAroundPoint((min+max)*0.5);
+
+  qglviewer::ManipulatedCameraFrame backup_frame(*viewer->camera()->frame());
+  viewer->camera()->fitBoundingBox(min, max);
+  qglviewer::ManipulatedCameraFrame new_frame(*viewer->camera()->frame());
+  *viewer->camera()->frame() = backup_frame;
+  viewer->camera()->interpolateTo(new_frame, 1.f);
+  viewer->setVisualHintsMask(1);
+}
+
 void MainWindow::viewerShow(float x, float y, float z) {
   viewer->camera()->setRevolveAroundPoint(qglviewer::Vec(x, y, z));
   // viewer->camera()->lookAt(qglviewer::Vec(x, y, z));
@@ -979,6 +999,10 @@ void MainWindow::showSceneContextMenu(int selectedItemIndex,
       saveas->setData(qVariantFromValue(selectedItemIndex));
       connect(saveas,  SIGNAL(triggered()),
               this, SLOT(on_actionSaveAs_triggered()));
+      QAction* showobject = menu->addAction(tr("&Zoom to this object"));
+      showobject->setData(qVariantFromValue(selectedItemIndex));
+      connect(showobject, SIGNAL(triggered()),
+              this, SLOT(viewerShowObject()));
 
       menu->setProperty(prop_name, true);
     }
@@ -1344,6 +1368,20 @@ void MainWindow::on_action_Look_at_triggered()
     viewerShow((float)dialog.get_x(),
                (float)dialog.get_y(),
                (float)dialog.get_z());
+  }
+}
+
+void MainWindow::viewerShowObject()
+{
+  int index = -1;
+  QAction* sender_action = qobject_cast<QAction*>(sender());
+  if(sender_action && !sender_action->data().isNull()) {
+    index = sender_action->data().toInt();
+  }
+  if(index >= 0) {
+    const Scene::Bbox bbox = scene->item(index)->bbox();
+    viewerShow((float)bbox.xmin, (float)bbox.ymin, (float)bbox.zmin,
+               (float)bbox.xmax, (float)bbox.ymax, (float)bbox.zmax);
   }
 }
 

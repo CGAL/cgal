@@ -89,6 +89,8 @@ public slots:
                  QString actionText,
                  QString menuName);
   void viewerShow(float, float, float);
+  void viewerShow(float, float, float, float, float, float);
+  void viewerShowObject();
 
   void information(QString);
   void warning(QString);
