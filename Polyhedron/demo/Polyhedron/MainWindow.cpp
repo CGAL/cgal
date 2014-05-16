@@ -13,6 +13,8 @@
 #include <QMenuBar>
 #include <QChar>
 #include <QAction>
+#include <QShortcut>
+#include <QKeySequence>
 #include <QLibrary>
 #include <QPluginLoader>
 #include <QMessageBox>
@@ -23,6 +25,7 @@
 #include <QCloseEvent>
 #include <QInputDialog>
 #include <QTreeView>
+#include <QSortFilterProxyModel>
 #include <QMap>
 #include <QStandardItemModel>
 #include <QStandardItem>
@@ -136,7 +139,19 @@ MainWindow::MainWindow(QWidget* parent)
   // setup scene
   scene = new Scene(this);
   viewer->setScene(scene);
-  sceneView->setModel(scene);
+
+  {
+    QShortcut* shortcut = new QShortcut(QKeySequence(Qt::ALT+Qt::Key_Q), this);
+    connect(shortcut, SIGNAL(activated()),
+            this, SLOT(setFocusToQuickSearch()));
+  }
+
+  proxyModel = new QSortFilterProxyModel(this);
+  proxyModel->setSourceModel(scene);
+
+  connect(ui->searchEdit, SIGNAL(textChanged(QString)),
+          proxyModel, SLOT(setFilterFixedString(QString)));
+  sceneView->setModel(proxyModel);
 
   // setup the sceneview: delegation and columns sizing...
   sceneView->setItemDelegate(new SceneDelegate(this));
@@ -828,6 +843,11 @@ Scene_item* MainWindow::load_item(QFileInfo fileinfo, Polyhedron_demo_io_plugin_
   return item;
 }
 
+void MainWindow::setFocusToQuickSearch()
+{
+  ui->searchEdit->setFocus(Qt::ShortcutFocusReason);
+}
+
 void MainWindow::selectSceneItem(int i)
 {
   if(i < 0 || i >= scene->numberOfEntries()) {
@@ -836,8 +856,10 @@ void MainWindow::selectSceneItem(int i)
     updateDisplayInfo();
   }
   else {
-    sceneView->selectionModel()->select(scene->createSelection(i),
-                                       QItemSelectionModel::ClearAndSelect);
+    QItemSelection s =
+      proxyModel->mapSelectionFromSource(scene->createSelection(i));
+    sceneView->selectionModel()->select(s,
+                                        QItemSelectionModel::ClearAndSelect);
   }
 }
 
@@ -857,22 +879,27 @@ void MainWindow::unSelectSceneItem(int i)
 
 void MainWindow::addSceneItemInSelection(int i)
 {
-  sceneView->selectionModel()->select(scene->createSelection(i),
-                                     QItemSelectionModel::Select);
+  QItemSelection s =
+    proxyModel->mapSelectionFromSource(scene->createSelection(i));
+  sceneView->selectionModel()->select(s, QItemSelectionModel::Select);
   scene->itemChanged(i);
 }
 
 void MainWindow::removeSceneItemFromSelection(int i)
 {
-  sceneView->selectionModel()->select(scene->createSelection(i),
-                                     QItemSelectionModel::Deselect);
+  QItemSelection s =
+    proxyModel->mapSelectionFromSource(scene->createSelection(i));
+  sceneView->selectionModel()->select(s,
+                                      QItemSelectionModel::Deselect);
   scene->itemChanged(i);
 }
 
 void MainWindow::selectAll()
 {
-  sceneView->selectionModel()->select(scene->createSelectionAll(), 
-                                     QItemSelectionModel::ClearAndSelect);
+  QItemSelection s =
+    proxyModel->mapSelectionFromSource(scene->createSelectionAll());
+  sceneView->selectionModel()->select(s, 
+                                      QItemSelectionModel::ClearAndSelect);
 }
 
 int MainWindow::getSelectedSceneItemIndex() const
@@ -880,8 +907,10 @@ int MainWindow::getSelectedSceneItemIndex() const
   QModelIndexList selectedRows = sceneView->selectionModel()->selectedRows();
   if(selectedRows.size() != 1)
     return -1;
-  else
-    return selectedRows.first().row();
+  else {
+    QModelIndex i = proxyModel->mapToSource(selectedRows.first());
+    return i.row();
+  }
 }
 
 QList<int> MainWindow::getSelectedSceneItemIndices() const
@@ -889,7 +918,7 @@ QList<int> MainWindow::getSelectedSceneItemIndices() const
   QModelIndexList selectedRows = sceneView->selectionModel()->selectedRows();
   QList<int> result;
   Q_FOREACH(QModelIndex index, selectedRows) {
-    result << index.row();
+    result << proxyModel->mapToSource(index).row();
   }
   return result;
 }
@@ -962,7 +991,7 @@ void MainWindow::showSceneContextMenu(const QPoint& p) {
     QModelIndex modelIndex = sceneView->indexAt(p);
     if(!modelIndex.isValid()) return;
 
-    index = modelIndex.row();
+    index = proxyModel->mapToSource(modelIndex).row();
   }
   else {
     index = scene->mainSelectionIndex();
@@ -1211,7 +1240,7 @@ void MainWindow::on_actionShowHide_triggered()
 {
   Q_FOREACH(QModelIndex index, sceneView->selectionModel()->selectedRows())
   {
-    int i = index.row();
+    int i = proxyModel->mapToSource(index).row();
     Scene_item* item = scene->item(i);
     item->setVisible(!item->visible());
     scene->itemChanged(i);
