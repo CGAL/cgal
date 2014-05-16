@@ -43,9 +43,9 @@
 #include <boost/type_traits.hpp>
 
 #ifdef CGAL_CXX11
-#define BOOSTD std::
+#define CGAL_BOOSTD std::
 #else
-#define BOOSTD boost::
+#define CGAL_BOOSTD boost::
 #endif
 
 namespace CGAL {
@@ -219,19 +219,19 @@ struct Has_type_different_from <T, No, true>
 				typename N_increasing_indices<sizeof...(U)>::type());
 	}
 #else
-#define VAR(Z,N,_) cpp0x::get<N>(t)
-#define CODE(Z,N,_) template<class Res, class F BOOST_PP_COMMA_IF(N) BOOST_PP_ENUM_PARAMS(N,class U)> \
+#define CGAL_VAR(Z,N,_) cpp0x::get<N>(t)
+#define CGAL_CODE(Z,N,_) template<class Res, class F BOOST_PP_COMMA_IF(N) BOOST_PP_ENUM_PARAMS(N,class U)> \
 	inline Res call_on_tuple_elements(F const&f, \
 			cpp0x::tuple<BOOST_PP_ENUM_PARAMS(N,U)> const&t) { \
-		return f(BOOST_PP_ENUM(N,VAR,)); \
+		return f(BOOST_PP_ENUM(N,CGAL_VAR,)); \
 	}
 	template<class Res, class F>
 	inline Res call_on_tuple_elements(F const&f, cpp0x::tuple<>) {
 		return f();
 	}
-BOOST_PP_REPEAT_FROM_TO(1, 8, CODE, _ )
-#undef CODE
-#undef VAR
+BOOST_PP_REPEAT_FROM_TO(1, 8, CGAL_CODE, _ )
+#undef CGAL_CODE
+#undef CGAL_VAR
 #endif
 
 	template<class A> struct Factory {
@@ -244,12 +244,12 @@ BOOST_PP_REPEAT_FROM_TO(1, 8, CODE, _ )
 	  result_type operator()()const{
 	    return A();
 	  }
-#define CODE(Z,N,_) template<BOOST_PP_ENUM_PARAMS(N,class U)> \
+#define CGAL_CODE(Z,N,_) template<BOOST_PP_ENUM_PARAMS(N,class U)> \
 	  result_type operator()(BOOST_PP_ENUM_BINARY_PARAMS(N,U,const&u))const{ \
 	    return A(BOOST_PP_ENUM_PARAMS(N,u)); \
 	  }
-BOOST_PP_REPEAT_FROM_TO(1, 8, CODE, _ )
-#undef CODE
+BOOST_PP_REPEAT_FROM_TO(1, 8, CGAL_CODE, _ )
+#undef CGAL_CODE
 #endif
 	};
 }

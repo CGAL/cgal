@@ -36,7 +36,7 @@ template<class R_,class Dim_> struct Construct_LA_vector_ {
 	struct Never_use {};
 	void operator()(Never_use)const;
 };
-#define CODE(Z,N,_) template<class R> struct Construct_LA_vector_<R,Dimension_tag<N> > { \
+#define CGAL_CODE(Z,N,_) template<class R> struct Construct_LA_vector_<R,Dimension_tag<N> > { \
 	typedef typename R::Constructor Constructor; \
 	typedef typename Get_type<R, RT_tag>::type RT; \
 	typedef typename R::Vector_ result_type; \
@@ -49,8 +49,8 @@ template<class R_,class Dim_> struct Construct_LA_vector_ {
 	return typename Constructor::Values_divide()(t##N,BOOST_PP_ENUM_PARAMS(N,t)); \
 	} \
 	};
-BOOST_PP_REPEAT_FROM_TO(2, 11, CODE, _ )
-#undef CODE
+BOOST_PP_REPEAT_FROM_TO(2, 11, CGAL_CODE, _ )
+#undef CGAL_CODE
 }
 #endif
 

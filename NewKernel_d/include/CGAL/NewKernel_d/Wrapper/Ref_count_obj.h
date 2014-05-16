@@ -93,7 +93,7 @@ public:
 
   Ref_count_obj(Rep const& v) : data(v) {} // try not to use it
 
-#define CODE(Z,N,_) template<BOOST_PP_ENUM_PARAMS(N,class T)> \
+#define CGAL_CODE(Z,N,_) template<BOOST_PP_ENUM_PARAMS(N,class T)> \
   explicit Ref_count_obj(BOOST_PP_ENUM_BINARY_PARAMS(N,T,const&t)) \
   : data(Eval_functor(),CBase(),BOOST_PP_ENUM_PARAMS(N,t)) {} \
   \
@@ -101,8 +101,8 @@ public:
   Ref_count_obj(Eval_functor,F const& f,BOOST_PP_ENUM_BINARY_PARAMS(N,T,const&t)) \
   : data(Eval_functor(),f,BOOST_PP_ENUM_PARAMS(N,t)) {}
 
-  BOOST_PP_REPEAT_FROM_TO(1,11,CODE,_)
-#undef CODE
+  BOOST_PP_REPEAT_FROM_TO(1,11,CGAL_CODE,_)
+#undef CGAL_CODE
   template<class F>
   Ref_count_obj(Eval_functor,F const& f)
   : data(Eval_functor(),f) {}

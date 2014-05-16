@@ -137,13 +137,13 @@ namespace CGAL {
 	  typedef Null_tag type;
 	};
 
-#define DECL_OBJ_(X,Y) \
+#define CGAL_DECL_OBJ_(X,Y) \
   template<class Obj,class Base> \
   struct Typedef_tag_type<X##_tag, Obj, Base> : Base { typedef Obj X; }; \
   template<class K, class D> \
   struct Get_type_category <K, X##_tag, D> { typedef Y##_tag type; }
-#define DECL_OBJ(X,Y) struct X##_tag {}; \
-  DECL_OBJ_(X,Y)
+#define CGAL_DECL_OBJ(X,Y) struct X##_tag {}; \
+  CGAL_DECL_OBJ_(X,Y)
 
   //namespace has_object { BOOST_MPL_HAS_XXX_TRAIT_DEF(X) }
   //template<class Kernel>
@@ -152,47 +152,47 @@ namespace CGAL {
   //struct Read_tag_type<Kernel, X##_tag> { typedef typename Kernel::X type; }
 
 	// Not exactly objects, but the extras can't hurt.
-	DECL_OBJ(FT, Number);
-	DECL_OBJ(RT, Number);
+	CGAL_DECL_OBJ(FT, Number);
+	CGAL_DECL_OBJ(RT, Number);
 
-	DECL_OBJ(Bool, Discrete); // Boolean_tag is already taken, and is a template :-(
-	DECL_OBJ(Comparison_result, Discrete);
-	DECL_OBJ(Sign, Discrete);
-	DECL_OBJ(Orientation, Discrete); // Note: duplicate with the functor tag!
-	DECL_OBJ(Oriented_side, Discrete);
-	DECL_OBJ(Bounded_side, Discrete);
-	DECL_OBJ(Angle, Discrete);
-	DECL_OBJ(Flat_orientation, Discrete);
+	CGAL_DECL_OBJ(Bool, Discrete); // Boolean_tag is already taken, and is a template :-(
+	CGAL_DECL_OBJ(Comparison_result, Discrete);
+	CGAL_DECL_OBJ(Sign, Discrete);
+	CGAL_DECL_OBJ(Orientation, Discrete); // Note: duplicate with the functor tag!
+	CGAL_DECL_OBJ(Oriented_side, Discrete);
+	CGAL_DECL_OBJ(Bounded_side, Discrete);
+	CGAL_DECL_OBJ(Angle, Discrete);
+	CGAL_DECL_OBJ(Flat_orientation, Discrete);
 
-	DECL_OBJ(Vector, Object);
-	DECL_OBJ(Point, Object);
-	DECL_OBJ(Segment, Object);
-	DECL_OBJ(Sphere, Object);
-	DECL_OBJ(Line, Object);
-	DECL_OBJ(Direction, Object);
-	DECL_OBJ(Hyperplane, Object);
-	DECL_OBJ(Ray, Object);
-	DECL_OBJ(Iso_box, Object);
-	DECL_OBJ(Bbox, Object);
-	DECL_OBJ(Aff_transformation, Object);
-#undef DECL_OBJ_
-#undef DECL_OBJ
+	CGAL_DECL_OBJ(Vector, Object);
+	CGAL_DECL_OBJ(Point, Object);
+	CGAL_DECL_OBJ(Segment, Object);
+	CGAL_DECL_OBJ(Sphere, Object);
+	CGAL_DECL_OBJ(Line, Object);
+	CGAL_DECL_OBJ(Direction, Object);
+	CGAL_DECL_OBJ(Hyperplane, Object);
+	CGAL_DECL_OBJ(Ray, Object);
+	CGAL_DECL_OBJ(Iso_box, Object);
+	CGAL_DECL_OBJ(Bbox, Object);
+	CGAL_DECL_OBJ(Aff_transformation, Object);
+#undef CGAL_DECL_OBJ_
+#undef CGAL_DECL_OBJ
 
 // Intel fails with those, and they are not so useful.
 //	CGAL_KD_DEFAULT_TYPE(RT_tag,(typename Get_type<K, FT_tag>::type),(),());
 //	CGAL_KD_DEFAULT_TYPE(FT_tag,(CGAL::Quotient<typename Get_type<K, RT_tag>::type>),(),());
 
-#define SMURF2(A,B) CGAL_KD_DEFAULT_TYPE(A##_tag,(typename Same_uncertainty_nt<B, typename Get_type<K,RT_tag>::type>::type),(RT_tag),())
-#define SMURF1(A) SMURF2(A,CGAL::A)
-	SMURF2(Bool, bool);
-	SMURF1(Sign);
-	SMURF1(Comparison_result);
-	SMURF1(Orientation);
-	SMURF1(Oriented_side);
-	SMURF1(Bounded_side);
-	SMURF1(Angle);
-#undef SMURF1
-#undef SMURF2
+#define CGAL_SMURF2(A,B) CGAL_KD_DEFAULT_TYPE(A##_tag,(typename Same_uncertainty_nt<B, typename Get_type<K,RT_tag>::type>::type),(RT_tag),())
+#define CGAL_SMURF1(A) CGAL_SMURF2(A,CGAL::A)
+	CGAL_SMURF2(Bool, bool);
+	CGAL_SMURF1(Sign);
+	CGAL_SMURF1(Comparison_result);
+	CGAL_SMURF1(Orientation);
+	CGAL_SMURF1(Oriented_side);
+	CGAL_SMURF1(Bounded_side);
+	CGAL_SMURF1(Angle);
+#undef CGAL_SMURF1
+#undef CGAL_SMURF2
 
 	// TODO: replace with Get_type_category
 	template<class> struct is_NT_tag { enum { value = false }; };
@@ -204,21 +204,21 @@ namespace CGAL {
 	  typedef Null_tag value_tag;
 	};
 
-#define DECL_COMPUTE(X) struct X##_tag {}; \
+#define CGAL_DECL_COMPUTE(X) struct X##_tag {}; \
 	template<class A,class B,class C>struct Get_functor_category<A,X##_tag,B,C>{typedef Compute_tag type;}
-	DECL_COMPUTE(Compute_point_cartesian_coordinate);
-	DECL_COMPUTE(Compute_vector_cartesian_coordinate);
-	DECL_COMPUTE(Compute_homogeneous_coordinate);
-	DECL_COMPUTE(Squared_distance);
-	DECL_COMPUTE(Squared_distance_to_origin);
-	DECL_COMPUTE(Squared_length);
-	DECL_COMPUTE(Squared_radius);
-	DECL_COMPUTE(Scalar_product);
-	DECL_COMPUTE(Hyperplane_translation);
-	DECL_COMPUTE(Value_at);
-#undef DECL_COMPUTE
+	CGAL_DECL_COMPUTE(Compute_point_cartesian_coordinate);
+	CGAL_DECL_COMPUTE(Compute_vector_cartesian_coordinate);
+	CGAL_DECL_COMPUTE(Compute_homogeneous_coordinate);
+	CGAL_DECL_COMPUTE(Squared_distance);
+	CGAL_DECL_COMPUTE(Squared_distance_to_origin);
+	CGAL_DECL_COMPUTE(Squared_length);
+	CGAL_DECL_COMPUTE(Squared_radius);
+	CGAL_DECL_COMPUTE(Scalar_product);
+	CGAL_DECL_COMPUTE(Hyperplane_translation);
+	CGAL_DECL_COMPUTE(Value_at);
+#undef CGAL_DECL_COMPUTE
 
-#define DECL_ITER_OBJ(X,Y,Z,C) struct X##_tag {}; \
+#define CGAL_DECL_ITER_OBJ(X,Y,Z,C) struct X##_tag {}; \
   template<>struct iterator_tag_traits<X##_tag> { \
     enum { is_iterator = true, has_nth_element = true }; \
     typedef Y##_tag value_tag; \
@@ -234,9 +234,9 @@ namespace CGAL {
   //template<class Kernel>
   //struct Read_tag_type<Kernel, X##_tag> { typedef typename Kernel::X type; }
 
-	DECL_ITER_OBJ(Vector_cartesian_const_iterator, FT, Compute_vector_cartesian_coordinate, Vector);
-	DECL_ITER_OBJ(Point_cartesian_const_iterator, FT, Compute_point_cartesian_coordinate, Point);
-#undef DECL_ITER_OBJ
+	CGAL_DECL_ITER_OBJ(Vector_cartesian_const_iterator, FT, Compute_vector_cartesian_coordinate, Vector);
+	CGAL_DECL_ITER_OBJ(Point_cartesian_const_iterator, FT, Compute_point_cartesian_coordinate, Point);
+#undef CGAL_DECL_ITER_OBJ
 
 	template<class>struct map_result_tag{typedef Null_type type;};
 	template<class T>struct map_result_tag<Construct_ttag<T> >{typedef T type;};
@@ -249,72 +249,72 @@ namespace CGAL {
 	// Really?
 	template<class A,class T,class B,class C>struct Get_functor_category<A,Convert_ttag<T>,B,C>{typedef Misc_tag type;};
 
-#define DECL_CONSTRUCT(X,Y) struct X##_tag {}; \
+#define CGAL_DECL_CONSTRUCT(X,Y) struct X##_tag {}; \
 	template<>struct map_result_tag<X##_tag>{typedef Y##_tag type;}; \
 	template<class A,class B,class C>struct Get_functor_category<A,X##_tag,B,C>{typedef Construct_tag type;}
-	DECL_CONSTRUCT(Midpoint,Point);
-	DECL_CONSTRUCT(Center_of_sphere,Point);
-	DECL_CONSTRUCT(Point_of_sphere,Point);
-	DECL_CONSTRUCT(Segment_extremity,Point);
-	DECL_CONSTRUCT(Sum_of_vectors,Vector);
-	DECL_CONSTRUCT(Difference_of_vectors,Vector);
-	DECL_CONSTRUCT(Opposite_vector,Vector);
-	DECL_CONSTRUCT(Scaled_vector,Vector);
-	DECL_CONSTRUCT(Orthogonal_vector,Vector);
-	DECL_CONSTRUCT(Difference_of_points,Vector);
-	DECL_CONSTRUCT(Translated_point,Point);
-	DECL_CONSTRUCT(Point_to_vector,Vector);
-	DECL_CONSTRUCT(Vector_to_point,Point);
-#undef DECL_CONSTRUCT
+	CGAL_DECL_CONSTRUCT(Midpoint,Point);
+	CGAL_DECL_CONSTRUCT(Center_of_sphere,Point);
+	CGAL_DECL_CONSTRUCT(Point_of_sphere,Point);
+	CGAL_DECL_CONSTRUCT(Segment_extremity,Point);
+	CGAL_DECL_CONSTRUCT(Sum_of_vectors,Vector);
+	CGAL_DECL_CONSTRUCT(Difference_of_vectors,Vector);
+	CGAL_DECL_CONSTRUCT(Opposite_vector,Vector);
+	CGAL_DECL_CONSTRUCT(Scaled_vector,Vector);
+	CGAL_DECL_CONSTRUCT(Orthogonal_vector,Vector);
+	CGAL_DECL_CONSTRUCT(Difference_of_points,Vector);
+	CGAL_DECL_CONSTRUCT(Translated_point,Point);
+	CGAL_DECL_CONSTRUCT(Point_to_vector,Vector);
+	CGAL_DECL_CONSTRUCT(Vector_to_point,Point);
+#undef CGAL_DECL_CONSTRUCT
 #if 0
-#define DECL_ITER_CONSTRUCT(X,Y) struct X##_tag {}; \
+#define CGAL_DECL_ITER_CONSTRUCT(X,Y) struct X##_tag {}; \
 	template<>struct map_result_tag<X##_tag>{typedef Y##_tag type;}; \
 	template<>struct map_functor_type<X##_tag>{typedef Construct_iterator_tag type;}
-	DECL_ITER_CONSTRUCT(Construct_point_cartesian_const_iterator,Point_cartesian_const_iterator);
-	DECL_ITER_CONSTRUCT(Construct_vector_cartesian_const_iterator,Vector_cartesian_const_iterator);
-#undef DECL_ITER_CONSTRUCT
+	CGAL_DECL_ITER_CONSTRUCT(Construct_point_cartesian_const_iterator,Point_cartesian_const_iterator);
+	CGAL_DECL_ITER_CONSTRUCT(Construct_vector_cartesian_const_iterator,Vector_cartesian_const_iterator);
+#undef CGAL_DECL_ITER_CONSTRUCT
 #endif
 
 	//FIXME: choose a convention: prefix with Predicate_ ?
-#define DECL_PREDICATE_(X) \
+#define CGAL_DECL_PREDICATE_(X) \
 	template<class A,class B,class C>struct Get_functor_category<A,X##_tag,B,C>{typedef Predicate_tag type;}
-#define DECL_PREDICATE(X) struct X##_tag {}; \
-	DECL_PREDICATE_(X)
-	DECL_PREDICATE(Less_point_cartesian_coordinate);
-	DECL_PREDICATE(Compare_point_cartesian_coordinate);
-	DECL_PREDICATE(Compare_distance);
-	DECL_PREDICATE(Compare_lexicographically);
-	DECL_PREDICATE(Less_lexicographically);
-	DECL_PREDICATE(Less_or_equal_lexicographically);
-	DECL_PREDICATE(Equal_points);
-	DECL_PREDICATE(Has_on_positive_side);
-	DECL_PREDICATE_(Orientation); // duplicate with the type
-	DECL_PREDICATE_(Oriented_side); // duplicate with the type
-	DECL_PREDICATE(Orientation_of_points);
-	DECL_PREDICATE(Orientation_of_vectors);
-	DECL_PREDICATE(Side_of_oriented_sphere);
-	DECL_PREDICATE(Side_of_bounded_sphere);
-	DECL_PREDICATE(Contained_in_affine_hull);
-	DECL_PREDICATE(In_flat_orientation);
-	DECL_PREDICATE(In_flat_side_of_oriented_sphere);
-	DECL_PREDICATE(Construct_flat_orientation); // Making it a predicate is a questionable choice, it should be possible to let it be a construction for some implementations. Not sure how to do that... TODO
-	DECL_PREDICATE(Linear_rank);
-	DECL_PREDICATE(Affine_rank);
-	DECL_PREDICATE(Linearly_independent);
-	DECL_PREDICATE(Affinely_independent);
-	DECL_PREDICATE(Contained_in_linear_hull);
-	DECL_PREDICATE(Contained_in_simplex);
-#undef DECL_PREDICATE
+#define CGAL_DECL_PREDICATE(X) struct X##_tag {}; \
+	CGAL_DECL_PREDICATE_(X)
+	CGAL_DECL_PREDICATE(Less_point_cartesian_coordinate);
+	CGAL_DECL_PREDICATE(Compare_point_cartesian_coordinate);
+	CGAL_DECL_PREDICATE(Compare_distance);
+	CGAL_DECL_PREDICATE(Compare_lexicographically);
+	CGAL_DECL_PREDICATE(Less_lexicographically);
+	CGAL_DECL_PREDICATE(Less_or_equal_lexicographically);
+	CGAL_DECL_PREDICATE(Equal_points);
+	CGAL_DECL_PREDICATE(Has_on_positive_side);
+	CGAL_DECL_PREDICATE_(Orientation); // duplicate with the type
+	CGAL_DECL_PREDICATE_(Oriented_side); // duplicate with the type
+	CGAL_DECL_PREDICATE(Orientation_of_points);
+	CGAL_DECL_PREDICATE(Orientation_of_vectors);
+	CGAL_DECL_PREDICATE(Side_of_oriented_sphere);
+	CGAL_DECL_PREDICATE(Side_of_bounded_sphere);
+	CGAL_DECL_PREDICATE(Contained_in_affine_hull);
+	CGAL_DECL_PREDICATE(In_flat_orientation);
+	CGAL_DECL_PREDICATE(In_flat_side_of_oriented_sphere);
+	CGAL_DECL_PREDICATE(Construct_flat_orientation); // Making it a predicate is a questionable choice, it should be possible to let it be a construction for some implementations. Not sure how to do that... TODO
+	CGAL_DECL_PREDICATE(Linear_rank);
+	CGAL_DECL_PREDICATE(Affine_rank);
+	CGAL_DECL_PREDICATE(Linearly_independent);
+	CGAL_DECL_PREDICATE(Affinely_independent);
+	CGAL_DECL_PREDICATE(Contained_in_linear_hull);
+	CGAL_DECL_PREDICATE(Contained_in_simplex);
+#undef CGAL_DECL_PREDICATE
 
-#define DECL_MISC(X) struct X##_tag {}; \
+#define CGAL_DECL_MISC(X) struct X##_tag {}; \
 	template<class A,class B,class C>struct Get_functor_category<A,X##_tag,B,C>{typedef Misc_tag type;}
 	//TODO: split into _begin and _end ?
-	//DECL_MISC(Construct_point_cartesian_const_iterator);
-	//DECL_MISC(Construct_vector_cartesian_const_iterator);
-	DECL_MISC(Point_dimension);
-	DECL_MISC(Vector_dimension);
-	DECL_MISC(Linear_base); // Find a more appropriate category?
-#undef DECL_MISC
+	//CGAL_DECL_MISC(Construct_point_cartesian_const_iterator);
+	//CGAL_DECL_MISC(Construct_vector_cartesian_const_iterator);
+	CGAL_DECL_MISC(Point_dimension);
+	CGAL_DECL_MISC(Vector_dimension);
+	CGAL_DECL_MISC(Linear_base); // Find a more appropriate category?
+#undef CGAL_DECL_MISC
 
 
 	// Properties for LA

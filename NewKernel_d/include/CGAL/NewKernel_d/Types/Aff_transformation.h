@@ -42,12 +42,12 @@ template<class R_> struct Construct_aff_transformation {
   result_type operator()()const{
     return result_type();
   }
-#define CODE(Z,N,_) template<BOOST_PP_ENUM_PARAMS(N,class U)> \
+#define CGAL_CODE(Z,N,_) template<BOOST_PP_ENUM_PARAMS(N,class U)> \
   result_type operator()(BOOST_PP_ENUM_BINARY_PARAMS(N,U,const& BOOST_PP_INTERCEPT))const{ \
     return result_type(); \
   }
-  BOOST_PP_REPEAT_FROM_TO(1, 9, CODE, _ )
-#undef CODE
+  BOOST_PP_REPEAT_FROM_TO(1, 9, CGAL_CODE, _ )
+#undef CGAL_CODE
 
 #endif
 };

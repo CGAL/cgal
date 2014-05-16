@@ -143,23 +143,23 @@ struct Cartesian_wrap : public Base_
 			    return b(internal::Forward_rep()(u)...);
 		    }
 #else
-#define VAR(Z,N,_) internal::Forward_rep()(u##N)
-#define CODE(Z,N,_) template<BOOST_PP_ENUM_PARAMS(N,class U)> result_type \
+#define CGAL_VAR(Z,N,_) internal::Forward_rep()(u##N)
+#define CGAL_CODE(Z,N,_) template<BOOST_PP_ENUM_PARAMS(N,class U)> result_type \
 		    operator()(BOOST_PP_ENUM_BINARY_PARAMS(N,U,const&u))const{ \
-			    return b(BOOST_PP_ENUM(N,VAR,)); \
+			    return b(BOOST_PP_ENUM(N,CGAL_VAR,)); \
 		    }
-		    BOOST_PP_REPEAT_FROM_TO(1,11,CODE,_)
-#undef CODE
-#undef VAR
+		    BOOST_PP_REPEAT_FROM_TO(1,11,CGAL_CODE,_)
+#undef CGAL_CODE
+#undef CGAL_VAR
 // In case the last argument needs to be non-const. Fragile...
-#define VAR(Z,N,_) internal::Forward_rep()(u##N)
-#define CODE(Z,N,_) template<BOOST_PP_ENUM_PARAMS(N,class U),class V> result_type \
+#define CGAL_VAR(Z,N,_) internal::Forward_rep()(u##N)
+#define CGAL_CODE(Z,N,_) template<BOOST_PP_ENUM_PARAMS(N,class U),class V> result_type \
 		    operator()(BOOST_PP_ENUM_BINARY_PARAMS(N,U,const&u),V&v)const{ \
-			    return b(BOOST_PP_ENUM(N,VAR,),internal::Forward_rep()(v)); \
+			    return b(BOOST_PP_ENUM(N,CGAL_VAR,),internal::Forward_rep()(v)); \
 		    }
-		    BOOST_PP_REPEAT_FROM_TO(1,8,CODE,_)
-#undef CODE
-#undef VAR
+		    BOOST_PP_REPEAT_FROM_TO(1,8,CGAL_CODE,_)
+#undef CGAL_CODE
+#undef CGAL_VAR
 #endif
 	    };
     };
@@ -185,14 +185,14 @@ struct Cartesian_wrap : public Base_
 			    return result_type(Eval_functor(),b,internal::Forward_rep()(u)...);
 		    }
 #else
-#define VAR(Z,N,_) internal::Forward_rep()(u##N)
-#define CODE(Z,N,_) template<BOOST_PP_ENUM_PARAMS(N,class U)> result_type \
+#define CGAL_VAR(Z,N,_) internal::Forward_rep()(u##N)
+#define CGAL_CODE(Z,N,_) template<BOOST_PP_ENUM_PARAMS(N,class U)> result_type \
 		    operator()(BOOST_PP_ENUM_BINARY_PARAMS(N,U,const&u))const{ \
-			    return result_type(Eval_functor(),b,BOOST_PP_ENUM(N,VAR,)); \
+			    return result_type(Eval_functor(),b,BOOST_PP_ENUM(N,CGAL_VAR,)); \
 		    }
-		    BOOST_PP_REPEAT_FROM_TO(1,11,CODE,_)
-#undef CODE
-#undef VAR
+		    BOOST_PP_REPEAT_FROM_TO(1,11,CGAL_CODE,_)
+#undef CGAL_CODE
+#undef CGAL_VAR
 #endif
 	    };
     };
@@ -242,14 +242,14 @@ struct Cartesian_refcount : public Base_
 		    result_type operator()()const{
 			    return b();
 		    }
-#define VAR(Z,N,_) internal::Forward_rep()(u##N)
-#define CODE(Z,N,_) template<BOOST_PP_ENUM_PARAMS(N,class U)> result_type \
+#define CGAL_VAR(Z,N,_) internal::Forward_rep()(u##N)
+#define CGAL_CODE(Z,N,_) template<BOOST_PP_ENUM_PARAMS(N,class U)> result_type \
 		    operator()(BOOST_PP_ENUM_BINARY_PARAMS(N,U,const&u))const{ \
-			    return b(BOOST_PP_ENUM(N,VAR,)); \
+			    return b(BOOST_PP_ENUM(N,CGAL_VAR,)); \
 		    }
-		    BOOST_PP_REPEAT_FROM_TO(1,11,CODE,_)
-#undef CODE
-#undef VAR
+		    BOOST_PP_REPEAT_FROM_TO(1,11,CGAL_CODE,_)
+#undef CGAL_CODE
+#undef CGAL_VAR
 #endif
 	    };
     };
@@ -275,14 +275,14 @@ struct Cartesian_refcount : public Base_
 		    result_type operator()()const{
 			     return result_type(Eval_functor(),b);
 		    }
-#define VAR(Z,N,_) internal::Forward_rep()(u##N)
-#define CODE(Z,N,_) template<BOOST_PP_ENUM_PARAMS(N,class U)> result_type \
+#define CGAL_VAR(Z,N,_) internal::Forward_rep()(u##N)
+#define CGAL_CODE(Z,N,_) template<BOOST_PP_ENUM_PARAMS(N,class U)> result_type \
 		    operator()(BOOST_PP_ENUM_BINARY_PARAMS(N,U,const&u))const{ \
-			    return result_type(Eval_functor(),b,BOOST_PP_ENUM(N,VAR,)); \
+			    return result_type(Eval_functor(),b,BOOST_PP_ENUM(N,CGAL_VAR,)); \
 		    }
-		    BOOST_PP_REPEAT_FROM_TO(1,11,CODE,_)
-#undef CODE
-#undef VAR
+		    BOOST_PP_REPEAT_FROM_TO(1,11,CGAL_CODE,_)
+#undef CGAL_CODE
+#undef CGAL_VAR
 #endif
 	    };
     };

@@ -109,7 +109,7 @@ public:
 
   Point_d(Rep const& v) : Rep(v) {} // try not to use it
 
-#define CODE(Z,N,_) template<BOOST_PP_ENUM_PARAMS(N,class T)> \
+#define CGAL_CODE(Z,N,_) template<BOOST_PP_ENUM_PARAMS(N,class T)> \
   explicit Point_d(BOOST_PP_ENUM_BINARY_PARAMS(N,T,const&t)) \
   : Rep(CPBase()( \
 	BOOST_PP_ENUM_PARAMS(N,t))) {} \
@@ -123,8 +123,8 @@ public:
   : Rep(Eval_functor(), BOOST_PP_ENUM_PARAMS(N,t)) {}
   */
 
-  BOOST_PP_REPEAT_FROM_TO(1,11,CODE,_)
-#undef CODE
+  BOOST_PP_REPEAT_FROM_TO(1,11,CGAL_CODE,_)
+#undef CGAL_CODE
 
   // this one should be implicit
   Point_d(Origin const& o)

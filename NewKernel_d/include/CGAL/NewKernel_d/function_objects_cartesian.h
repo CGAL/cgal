@@ -87,21 +87,21 @@ template<class R_,class D_=typename R_::Default_ambient_dimension,bool=internal:
 #else
 	//should we make it template to avoid instantiation for wrong dim?
 	//or iterate outside the class?
-#define VAR(Z,J,I) m(I,J)=c(p##I,J)-c(x,J);
-#define VAR2(Z,I,N) BOOST_PP_REPEAT(N,VAR,I)
-#define CODE(Z,N,_) \
+#define CGAL_VAR(Z,J,I) m(I,J)=c(p##I,J)-c(x,J);
+#define CGAL_VAR2(Z,I,N) BOOST_PP_REPEAT(N,CGAL_VAR,I)
+#define CGAL_CODE(Z,N,_) \
 	result_type operator()(Point const&x, BOOST_PP_ENUM_PARAMS(N,Point const&p)) const { \
 		typename Get_functor<R, Compute_point_cartesian_coordinate_tag>::type c(this->kernel()); \
 		Matrix m(N,N); \
-		BOOST_PP_REPEAT(N,VAR2,N) \
+		BOOST_PP_REPEAT(N,CGAL_VAR2,N) \
 		return R::LA::sign_of_determinant(CGAL_MOVE(m)); \
 	}
 
-BOOST_PP_REPEAT_FROM_TO(7, 10, CODE, _ )
+BOOST_PP_REPEAT_FROM_TO(7, 10, CGAL_CODE, _ )
 	// No need to do it for <=6, since that uses a different code path
-#undef CODE
-#undef VAR2
-#undef VAR
+#undef CGAL_CODE
+#undef CGAL_VAR2
+#undef CGAL_VAR
 #endif
 };
 
@@ -138,11 +138,11 @@ template<class R_,int d> struct Orientation_of_points<R_,Dimension_tag<d>,true> 
 	}
 };
 #else
-#define VAR(Z,J,I) c(p##I,J)-x##J
-#define VAR2(Z,I,N) BOOST_PP_ENUM(N,VAR,I)
-#define VAR3(Z,N,_) Point const&p##N=*++f;
-#define VAR4(Z,N,_) RT const&x##N=c(x,N);
-#define CODE(Z,N,_) \
+#define CGAL_VAR(Z,J,I) c(p##I,J)-x##J
+#define CGAL_VAR2(Z,I,N) BOOST_PP_ENUM(N,CGAL_VAR,I)
+#define CGAL_VAR3(Z,N,_) Point const&p##N=*++f;
+#define CGAL_VAR4(Z,N,_) RT const&x##N=c(x,N);
+#define CGAL_CODE(Z,N,_) \
 template<class R_> struct Orientation_of_points<R_,Dimension_tag<N>,true> : private Store_kernel<R_> { \
 	CGAL_FUNCTOR_INIT_STORE(Orientation_of_points) \
 	typedef R_ R; \
@@ -151,22 +151,24 @@ template<class R_> struct Orientation_of_points<R_,Dimension_tag<N>,true> : priv
 	typedef typename Get_type<R, Orientation_tag>::type result_type; \
 	result_type operator()(Point const&x, BOOST_PP_ENUM_PARAMS(N,Point const&p)) const { \
 		typename Get_functor<R, Compute_point_cartesian_coordinate_tag>::type c(this->kernel()); \
-		BOOST_PP_REPEAT(N,VAR4,) \
-		return sign_of_determinant(BOOST_PP_ENUM(N,VAR2,N)); \
+		BOOST_PP_REPEAT(N,CGAL_VAR4,) \
+		return sign_of_determinant(BOOST_PP_ENUM(N,CGAL_VAR2,N)); \
 	} \
 	template<class Iter> \
 	result_type operator()(Iter f, Iter CGAL_assertion_code(e))const{ \
 		Point const&x=*f; \
-		BOOST_PP_REPEAT(N,VAR3,) \
+		BOOST_PP_REPEAT(N,CGAL_VAR3,) \
 		CGAL_assertion(++f==e); \
 		return operator()(x,BOOST_PP_ENUM_PARAMS(N,p)); \
 	} \
 };
 
-	BOOST_PP_REPEAT_FROM_TO(2, 7, CODE, _ )
-#undef CODE
-#undef VAR2
-#undef VAR
+	BOOST_PP_REPEAT_FROM_TO(2, 7, CGAL_CODE, _ )
+#undef CGAL_CODE
+#undef CGAL_VAR4
+#undef CGAL_VAR3
+#undef CGAL_VAR2
+#undef CGAL_VAR
 
 #endif
 }

@@ -108,16 +108,16 @@ template<class NT_,class Dim_,class Max_dim_=Dim_> struct Vector_vector {
 				}
 #else
 
-#define VAR(Z,N,_) a.push_back(t##N);
-#define CODE(Z,N,_) Vector operator()(BOOST_PP_ENUM_PARAMS(N,NT const& t)) const { \
+#define CGAL_VAR(Z,N,_) a.push_back(t##N);
+#define CGAL_CODE(Z,N,_) Vector operator()(BOOST_PP_ENUM_PARAMS(N,NT const& t)) const { \
 	Vector a; \
 	a.reserve(N); \
-	BOOST_PP_REPEAT(N,VAR,) \
+	BOOST_PP_REPEAT(N,CGAL_VAR,) \
 	return a; \
 }
-BOOST_PP_REPEAT_FROM_TO(1, 11, CODE, _ )
-#undef CODE
-#undef VAR
+BOOST_PP_REPEAT_FROM_TO(1, 11, CGAL_CODE, _ )
+#undef CGAL_CODE
+#undef CGAL_VAR
 
 #endif
 		};
@@ -134,17 +134,17 @@ BOOST_PP_REPEAT_FROM_TO(1, 11, CODE, _ )
 				}
 #else
 
-#define VAR(Z,N,_) a.push_back(Rational_traits<NT>().make_rational( t##N ,h));
-#define CODE(Z,N,_) template<class H> Vector \
+#define CGAL_VAR(Z,N,_) a.push_back(Rational_traits<NT>().make_rational( t##N ,h));
+#define CGAL_CODE(Z,N,_) template<class H> Vector \
 			operator()(H const&h, BOOST_PP_ENUM_PARAMS(N,NT const& t)) const { \
 				Vector a; \
 				a.reserve(N); \
-				BOOST_PP_REPEAT(N,VAR,) \
+				BOOST_PP_REPEAT(N,CGAL_VAR,) \
 				return a; \
 			}
-			BOOST_PP_REPEAT_FROM_TO(1, 11, CODE, _ )
-#undef CODE
-#undef VAR
+			BOOST_PP_REPEAT_FROM_TO(1, 11, CGAL_CODE, _ )
+#undef CGAL_CODE
+#undef CGAL_VAR
 
 #endif
 		};

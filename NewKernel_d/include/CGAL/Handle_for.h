@@ -109,24 +109,24 @@ public:
         ptr_->count = 1;
     }
 #else
-#define CODE(Z,N,_) template <BOOST_PP_ENUM_PARAMS(N,class T)> \
+#define CGAL_CODE(Z,N,_) template <BOOST_PP_ENUM_PARAMS(N,class T)> \
     Handle_for(BOOST_PP_ENUM_BINARY_PARAMS(N,T,const&t)) \
       : ptr_(allocator.allocate(1)) \
     { \
         new (&(ptr_->t)) element_type(BOOST_PP_ENUM_PARAMS(N,t)); \
         ptr_->count = 1; \
     }
-    BOOST_PP_REPEAT_FROM_TO(2,11,CODE,_)
-#undef CODE
-#define CODE(Z,N,_) template <class F,BOOST_PP_ENUM_PARAMS(N,class T)> \
+    BOOST_PP_REPEAT_FROM_TO(2,11,CGAL_CODE,_)
+#undef CGAL_CODE
+#define CGAL_CODE(Z,N,_) template <class F,BOOST_PP_ENUM_PARAMS(N,class T)> \
     Handle_for(Eval_functor,F const&f,BOOST_PP_ENUM_BINARY_PARAMS(N,T,const&t)) \
       : ptr_(allocator.allocate(1)) \
     { \
         new (&(ptr_->t)) element_type(f(BOOST_PP_ENUM_PARAMS(N,t))); \
         ptr_->count = 1; \
     }
-    BOOST_PP_REPEAT_FROM_TO(1,11,CODE,_)
-#undef CODE
+    BOOST_PP_REPEAT_FROM_TO(1,11,CGAL_CODE,_)
+#undef CGAL_CODE
     template <class F>
     Handle_for(Eval_functor,F const&f)
       : ptr_(allocator.allocate(1))

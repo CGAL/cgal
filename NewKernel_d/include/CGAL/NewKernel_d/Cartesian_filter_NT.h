@@ -70,7 +70,7 @@ struct Cartesian_filter_NT : public Base_
 			    }
 			    return p2();
 		    }
-#define CODE(Z,N,_) template<BOOST_PP_ENUM_PARAMS(N,class T)> result_type operator()(BOOST_PP_ENUM_BINARY_PARAMS(N,T,const&t))const{ \
+#define CGAL_CODE(Z,N,_) template<BOOST_PP_ENUM_PARAMS(N,class T)> result_type operator()(BOOST_PP_ENUM_BINARY_PARAMS(N,T,const&t))const{ \
 			    { \
 			          Protect_FPU_rounding<true> p; \
 				  try { \
@@ -80,8 +80,8 @@ struct Cartesian_filter_NT : public Base_
 			    } \
 			    return p2(BOOST_PP_ENUM_PARAMS(N,t)); \
 		    }
-		    BOOST_PP_REPEAT_FROM_TO(1,11,CODE,_)
-#undef CODE
+		    BOOST_PP_REPEAT_FROM_TO(1,11,CGAL_CODE,_)
+#undef CGAL_CODE
 
 #endif
 	    };

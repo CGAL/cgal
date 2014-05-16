@@ -112,13 +112,13 @@ template<class NT_,class Dim_,class Max_dim_=Dim_> struct Array_vector {
 				}
 #else
 
-#define CODE(Z,N,_) Vector operator()(BOOST_PP_ENUM_PARAMS(N,NT const& t)) const { \
+#define CGAL_CODE(Z,N,_) Vector operator()(BOOST_PP_ENUM_PARAMS(N,NT const& t)) const { \
 	CGAL_assertion(N<=d_); \
 	Vector a={{BOOST_PP_ENUM_PARAMS(N,t)}}; \
 	return a; \
 }
-BOOST_PP_REPEAT_FROM_TO(1, 11, CODE, _ )
-#undef CODE
+BOOST_PP_REPEAT_FROM_TO(1, 11, CGAL_CODE, _ )
+#undef CGAL_CODE
 
 #endif
 		};
@@ -133,16 +133,16 @@ BOOST_PP_REPEAT_FROM_TO(1, 11, CODE, _ )
 				}
 #else
 
-#define VAR(Z,N,_) Rational_traits<NT>().make_rational( t##N , h)
-#define CODE(Z,N,_) template <class H> Vector \
+#define CGAL_VAR(Z,N,_) Rational_traits<NT>().make_rational( t##N , h)
+#define CGAL_CODE(Z,N,_) template <class H> Vector \
 			operator()(H const&h, BOOST_PP_ENUM_PARAMS(N,NT const& t)) const { \
 				CGAL_assertion(N<=d_); \
-				Vector a={{BOOST_PP_ENUM(N,VAR,_)}}; \
+				Vector a={{BOOST_PP_ENUM(N,CGAL_VAR,_)}}; \
 				return a; \
 			}
-			BOOST_PP_REPEAT_FROM_TO(1, 11, CODE, _ )
-#undef CODE
-#undef VAR
+			BOOST_PP_REPEAT_FROM_TO(1, 11, CGAL_CODE, _ )
+#undef CGAL_CODE
+#undef CGAL_VAR
 
 #endif
 		};

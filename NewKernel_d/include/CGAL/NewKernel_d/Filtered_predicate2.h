@@ -104,8 +104,8 @@ public:
   }
 #else
 
-#define VAR(Z,N,C) C(a##N)
-#define CODE(Z,N,_) \
+#define CGAL_VAR(Z,N,C) C(a##N)
+#define CGAL_CODE(Z,N,_) \
   template <BOOST_PP_ENUM_PARAMS(N,class A)> \
   result_type \
   operator()(BOOST_PP_ENUM_BINARY_PARAMS(N, A, const& a)) const \
@@ -115,7 +115,7 @@ public:
       Protect_FPU_rounding<Protection> p; \
       try \
 	{ \
-	  Ares res = ap(BOOST_PP_ENUM(N,VAR,c2a)); \
+	  Ares res = ap(BOOST_PP_ENUM(N,CGAL_VAR,c2a)); \
 	  if (is_certain(res)) \
 	    return get_certain(res); \
 	} \
@@ -123,11 +123,11 @@ public:
     } \
     CGAL_BRANCH_PROFILER_BRANCH(tmp); \
     Protect_FPU_rounding<!Protection> p(CGAL_FE_TONEAREST); \
-    return ep(BOOST_PP_ENUM(N,VAR,c2e)); \
+    return ep(BOOST_PP_ENUM(N,CGAL_VAR,c2e)); \
   }
-  BOOST_PP_REPEAT_FROM_TO(1, 10, CODE, _ )
-#undef CODE
-#undef VAR
+  BOOST_PP_REPEAT_FROM_TO(1, 10, CGAL_CODE, _ )
+#undef CGAL_CODE
+#undef CGAL_VAR
 
 #endif
 };
