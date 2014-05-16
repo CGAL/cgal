@@ -966,20 +966,28 @@ private:
       bool is_q_hv = is_site_h_or_v(sq);
       bool is_r_hv = is_site_h_or_v(sr);
 
+#ifndef CGAL_NO_ASSERTIONS
+      const bool is_qsrc_r = is_endpoint_of(sq.source_site(), sr);
+      const bool is_qtrg_r = is_endpoint_of(sq.target_site(), sr);
+      const bool have_common_qr = is_qsrc_r or is_qtrg_r;
+
+      const unsigned int num_common =
+        ((have_common_pq) ? 1 : 0) +
+        ((have_common_qr) ? 1 : 0) +
+        ((have_common_rp) ? 1 : 0)  ;
+
+      CGAL_assertion(num_common <= 2);
+
+      const unsigned int num_hv =
+        ((is_p_hv) ? 1 : 0) +
+        ((is_q_hv) ? 1 : 0) +
+        ((is_r_hv) ? 1 : 0)  ;
+
+      if (num_common == 2) {
+        CGAL_assertion(num_hv > 0);
+      }
+
       CGAL_SDG_DEBUG(
-        bool is_qsrc_r = is_endpoint_of(sq.source_site(), sr);
-        bool is_qtrg_r = is_endpoint_of(sq.target_site(), sr);
-        bool have_common_qr = is_qsrc_r or is_qtrg_r;
-
-        unsigned int num_common =
-          ((have_common_pq) ? 1 : 0) +
-          ((have_common_qr) ? 1 : 0) +
-          ((have_common_rp) ? 1 : 0)  ;
-
-        unsigned int num_hv =
-          ((is_p_hv) ? 1 : 0) +
-          ((is_q_hv) ? 1 : 0) +
-          ((is_r_hv) ? 1 : 0)  ;
         std::cout
             << "debug: vsqr num_common=" << num_common
             << " pq=" << have_common_pq
@@ -988,6 +996,7 @@ private:
             << " num_hv=" << num_hv
             << std::endl;
       );
+#endif
 
       bool bpqset(false);
       bool bqrset(false);
