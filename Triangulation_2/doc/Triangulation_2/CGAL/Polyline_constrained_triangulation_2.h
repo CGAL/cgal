@@ -5,9 +5,8 @@ namespace CGAL {
 \ingroup PkgTriangulation2TriangulationClasses
 
 The class `Polyline_constrained_triangulation_2` 
-implements a constrained triangulation 
-with an additional data 
-structure called the constraint hierarchy 
+implements a constrained triangulation where the constraints are polylines.
+It maintains an additional data structure, called the constraint hierarchy, 
 that keeps track of the input constraints and of their refinement 
 in the triangulation. 
 
@@ -21,17 +20,17 @@ When intersections of input constraints are supported,
 the base class constructs a triangulation of the arrangement 
 of the constraints, 
 introducing new vertices at each proper intersection 
-point and refining the input constraints into sub-constraints 
-which are edges (more precisely constrained edges) of the 
+point and refining the input constraints into sub-constraints. 
+These sub-constraints are constrained edges of the 
 triangulation. 
-In this context, the constraint hierarchy 
+The constraint hierarchy 
 keeps track of the input constraints and of their refinement 
 in the triangulation. This data structure 
 maintains for each input constraints 
 the sequence of intersection vertices added on this constraint. 
 The constraint hierarchy also allows the user to retrieve the set 
 of constrained edges of the triangulation, and for each 
-constrained edge, the set of input constraints that overlap it. 
+constrained edge, the set of input constraints it overlaps with. 
 
 \tparam Tr must be either a CGAL::Constrained_triangulation_2 or a CGAL::Constrained_Delaunay_triangulation_2
 
