@@ -866,13 +866,16 @@ private:
 		       r.is_segment() );
     v_type = SSS;
 
+    const bool is_psrc_q = is_endpoint_of(p.source_site(), q);
+    const bool is_psrc_r = is_endpoint_of(p.source_site(), r);
+    const bool is_ptrg_q = is_endpoint_of(p.target_site(), q);
+    const bool is_ptrg_r = is_endpoint_of(p.target_site(), r);
+
     uz_ = RT(1);
-    if (is_endpoint_of(p.source_site(), q) and
-        is_endpoint_of(p.source_site(), r)    ) {
+    if (is_psrc_q and is_psrc_r) {
       ux_ = p.source().x();
       uy_ = p.source().y();
-    } else if (is_endpoint_of(p.target_site(), q) and
-               is_endpoint_of(p.target_site(), r)    ) {
+    } else if (is_ptrg_q and is_ptrg_r) {
       ux_ = p.target().x();
       uy_ = p.target().y();
     } else {
