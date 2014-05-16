@@ -1029,6 +1029,7 @@ public:
     }
   }
 
+  inline
   static
   Boolean
   is_site_h_or_v(const Site_2 & s)
@@ -1036,6 +1037,7 @@ public:
     return is_site_horizontal(s) or is_site_vertical(s);
   }
 
+  inline
   static
   Boolean
   is_site_horizontal(const Site_2 & s)
@@ -1044,6 +1046,7 @@ public:
     return s.supporting_site().segment().is_horizontal();
   }
 
+  inline
   static
   Boolean
   is_site_vertical(const Site_2 & s)
@@ -1052,6 +1055,7 @@ public:
     return s.supporting_site().segment().is_vertical();
   }
 
+  inline
   static
   Boolean
   is_line_h_or_v(const Line_2 & l)
