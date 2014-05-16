@@ -47,8 +47,8 @@ public:
 private:
   class Node {
   public:
-    explicit Node(Vertex_handle vh)
-    : vertex_(vh), point_(vh->point()), id(-1)
+    explicit Node(Vertex_handle vh, bool input = false)
+      : vertex_(vh), point_(vh->point()), id(-1), input(input)
     {}
     Point& point() { return point_; }
     const Point& point() const { return point_; }
@@ -58,6 +58,7 @@ private:
     Point point_;
   public:
     int id;
+    bool input;
   };
 
   typedef CGAL::Skiplist<Node>  Vertex_list;
@@ -93,6 +94,7 @@ public:
     Vertex_it() : Vertex_it::iterator_adaptor_() {}
     Vertex_it(typename Vertex_list::skip_iterator it) : Vertex_it::iterator_adaptor_(it) {}
     operator Point_it() const { return Point_it(this->base()); }
+    bool& input() { return this->base()->input; }
   private:
     friend class boost::iterator_core_access;
     Vertex_handle dereference() const { return this->base()->vertex(); }
@@ -379,8 +381,26 @@ enclosing_constraint(T  vaa, T  vbb, T& va, T& vb) const
 {
   Context_iterator hcit, past;
   if ( !get_contexts(vaa,vbb, hcit ,past)) return false;
-  va = hcit->enclosing->front().vertex();
-  vb = hcit->enclosing->back().vertex();
+  // va = hcit->enclosing->front().vertex();
+  // vb = hcit->enclosing->back().vertex();
+  Vertex_list* vl = hcit->enclosing;
+  Vertex_it pos = hcit->pos;
+  if(vaa != *pos){
+    std::swap(vaa,vbb);
+  }
+  while(!pos.input()){
+    std::cerr << "decrement\n";
+    --pos;
+  }
+  va = *pos;
+  pos = hcit->pos;
+  ++pos;
+  assert(vbb == *pos);
+  while(!pos.input()){
+    std::cerr << "increment\n";
+    ++pos;
+  }
+  vb = *pos;
   return true;
 }
 
@@ -551,6 +571,10 @@ void Polyline_constraint_hierarchy_2<T,Data>::simplify(Vertex_it uc,
     CGAL_assertion_msg(uv_hcl->size() == 1, "more than one constraint passing through the subconstraint" );
   }
   // now u,v, and w are ordered along the polyline constraint
+  if(vc.input()){
+    uc.input() = true;
+    wc.input() = true;
+  }
   typename Sc_to_c_map::iterator vw_sc_iter = sc_to_c_map.find(make_edge(v, w));
   CGAL_assertion_msg( vw_sc_iter != sc_to_c_map.end(), "not a subconstraint" );
   Context_list*  vw_hcl = vw_sc_iter->second;
@@ -716,6 +740,8 @@ Polyline_constraint_hierarchy_2<T,Data>::split(Constraint_id first, Vertex_it vc
   Vertex_list* second = new Vertex_list;
   second->splice(second->end(), *first, vcit, first->end());
   first->push_back(second->front()); // Duplicate the common vertex
+  second->front().input() = true;
+  first->back().input() = true;
   constraint_set.insert(first);
   constraint_set.insert(second);
  // We have to look at all subconstraints
@@ -746,6 +772,8 @@ Polyline_constraint_hierarchy_2<T,Data>::split2(Constraint_id first, Vertex_it v
   Vertex_list* second = new Vertex_list;
   second->splice(second->end(), *first, first->begin(), vcit);
   second->push_back(first->front()); // Duplicate the common vertex
+  second->back().input() = true;
+  first->front().input() = true;
   constraint_set.insert(first);
   constraint_set.insert(second);
  // We have to look at all subconstraints
@@ -787,8 +815,8 @@ insert_constraint(T va, T vb){
     fathers = scit->second;
   }
 
-  children->push_front(Node(va));  // was he.first
-  children->push_back(Node(vb));   // was he.second
+  children->push_front(Node(va, true));  // was he.first
+  children->push_back(Node(vb, true));   // was he.second
   constraint_set.insert(children);
   Context ctxt;
   ctxt.enclosing = children;
@@ -816,7 +844,7 @@ append_constraint(Vertex_list* vl, T va, T vb){
 
   typename Vertex_list::skip_iterator bit = vl->skip_end();
   --bit;
-  vl->push_back(Node(vb));
+  vl->push_back(Node(vb, true));
   Context ctxt;
   ctxt.enclosing = vl;
   ctxt.pos     = bit;
