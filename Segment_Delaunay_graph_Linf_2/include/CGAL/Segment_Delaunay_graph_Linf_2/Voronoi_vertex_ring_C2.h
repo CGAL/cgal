@@ -865,27 +865,33 @@ private:
     CGAL_precondition( p.is_segment() && q.is_segment() &&
 		       r.is_segment() );
     v_type = SSS;
-    Point_2 vv;
 
+    uz_ = RT(1);
     if (is_endpoint_of(p.source_site(), q) and
         is_endpoint_of(p.source_site(), r)    ) {
-      vv = p.source();
+      ux_ = p.source().x();
+      uy_ = p.source().y();
     } else if (is_endpoint_of(p.target_site(), q) and
                is_endpoint_of(p.target_site(), r)    ) {
-      vv = p.target();
+      ux_ = p.target().x();
+      uy_ = p.target().y();
     } else {
       // here, not all segments have a common point
-      CGAL_SDG_DEBUG(std::cout << "debug vring compute_sss p="
-        << p << " q=" << q  << " r=" << r << std::endl;);
-      Polychainline_2 bpq = bisector_linf(p, q);
-      Polychainline_2 bqr = bisector_linf(q, r);
-      vv = bpq.first_intersection_point_with(bqr);
+      compute_sss_bisectors(p, q, r);
     }
+  }
 
+  inline void
+  compute_sss_bisectors(const Site_2& p, const Site_2& q, const Site_2& r)
+  {
+    CGAL_SDG_DEBUG(std::cout << "debug vring compute_sss_bisectors"
+        << " p=" << p << " q=" << q  << " r=" << r << std::endl;);
+    Polychainline_2 bpq = bisector_linf(p, q);
+    Polychainline_2 bqr = bisector_linf(q, r);
+    Point_2 vv = bpq.first_intersection_point_with(bqr);
     ux_ = vv.x();
     uy_ = vv.y();
     uz_ = RT(1);
-
   }
 
   //--------------------------------------------------------------------------
