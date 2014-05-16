@@ -101,11 +101,9 @@ private:
       npts = 2;
 
       // compute length of middle segment
-      FT half(0.5);
-      FT seglenhalf ( half *
-                     CGAL::abs(
+      FT seglenhalf (CGAL::abs(
                                CGAL::abs(pp.x()-pq.x()) -
-                               CGAL::abs(pp.y()-pq.y()))   );
+                               CGAL::abs(pp.y()-pq.y()))  /FT(2) );
 
       // construct endpoints of middle segment of bisector
       Point_2 p1, p2;
@@ -196,8 +194,7 @@ private:
         pver = Point_2(pnt.x(), lseg.y_at_x(pnt.x()));
 
         Point_2 m = midpoint(pnt, pver);
-        FT half = FT(0.5);
-        FT seglenhalf ( half * CGAL::abs(pnt.y()-pver.y()) );
+        FT seglenhalf ( CGAL::abs(pnt.y()-pver.y()) / FT(2) );
 
         Direction_2 dinc, dout;
 
@@ -226,8 +223,7 @@ private:
         phor = Point_2(lseg.x_at_y(pnt.y()), pnt.y());
 
         Point_2 m = midpoint(pnt, phor);
-        FT half = FT(0.5);
-        FT seglenhalf ( half * CGAL::abs(pnt.x()-phor.x()) );
+        FT seglenhalf ( CGAL::abs(pnt.x()-phor.x()) / FT(2) );
 
         Direction_2 dinc, dout;
 
@@ -263,17 +259,17 @@ private:
         pfirst = has_lseg_pos_slope ? phor : pver;
         plast  = has_lseg_pos_slope ? pver : phor;
 
-        FT half = FT(0.5);
+        FT two = FT(2);
         Point_2 pmid_pfirst_pnt = midpoint(pfirst, pnt);
         Point_2 pmid_plast_pnt = midpoint(plast, pnt);
-        FT seglenhalffirst ( half *
-                            CGAL::abs(
+        FT seglenhalffirst (CGAL::abs(
                                       CGAL::abs(pnt.x()-pfirst.x()) -
-                                      CGAL::abs(pnt.y()-pfirst.y()))   );
-        FT seglenhalflast ( half *
-                           CGAL::abs(
+                                      CGAL::abs(pnt.y()-pfirst.y()))
+                            / two );
+        FT seglenhalflast (CGAL::abs(
                                      CGAL::abs(pnt.x()-plast.x()) -
-                                     CGAL::abs(pnt.y()-plast.y()))   );
+                                     CGAL::abs(pnt.y()-plast.y()))
+                           / two );
 
         if (has_lseg_pos_slope) {
           //segment with positive slope
