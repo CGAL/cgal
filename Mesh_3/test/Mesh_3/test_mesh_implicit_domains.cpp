@@ -7,6 +7,7 @@
 //******************************************************************************
 
 
+#define CGAL_NO_DEPRECATION_WARNINGS 1
 
 #include "debug.h"
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>

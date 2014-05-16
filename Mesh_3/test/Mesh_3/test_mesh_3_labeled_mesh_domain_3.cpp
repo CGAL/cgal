@@ -22,10 +22,11 @@
 // File Description : 
 //******************************************************************************
 
+#define CGAL_NO_DEPRECATION_WARNINGS 1
+
 #include "test_meshing_utilities.h"
 #include <CGAL/Mesh_3/Labeled_mesh_domain_3.h>
 #include <CGAL/Mesh_3/Implicit_to_labeled_function_wrapper.h>
-
 
 template <typename K>
 struct LM3_tester
