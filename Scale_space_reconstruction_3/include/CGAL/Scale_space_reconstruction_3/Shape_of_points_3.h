@@ -38,7 +38,8 @@
 namespace CGAL {
 
 /// The standard type for the shape of a set of points.
-/** The shape of a set of points is ill-defined. Specifically,
+/** \ingroup PkgScaleSpaceReconstruction3Classes
+ *  The shape of a set of points is ill-defined. Specifically,
  *  because a set of points has no inherent notion of connectivity,
  *  the contour or outline of a set of points is no more descriptive than
  *  the set itself.

@@ -123,11 +123,8 @@ int main(int argc, char** argv) {
 	std::cout << " loaded: " << points.size() << " points." << std::endl;
 
 	// Construct the mesh in a scale space.
-	Reconstructer reconstruct;
-
-    reconstruct.set_mean_neighbors( neighbors );
-    reconstruct.set_number_neighborhood_samples( samples );
-	reconstruct.construct_surface( points.begin(), points.end(), iterations );
+	Reconstructer reconstruct( neighbors, samples );
+	reconstruct.reconstruct_surface( points.begin(), points.end(), iterations );
     std::cout << "Reconstruction done." << std::endl;
 
     // Write the reconstruction.

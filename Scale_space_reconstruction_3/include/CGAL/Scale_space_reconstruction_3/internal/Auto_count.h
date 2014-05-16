@@ -29,7 +29,8 @@ namespace CGAL {
 namespace internal {
 
 /// Construct a pair containing the object and the number of these pairs previously constructed.
-/** \tparam T the type of object to count.
+/** \ingroup PkgScaleSpaceReconstruction3Auxiliary
+ *  \tparam T the type of object to count.
  *  \tparam C the number type of the counter.
  *  \todo Make thread-safe.
  */

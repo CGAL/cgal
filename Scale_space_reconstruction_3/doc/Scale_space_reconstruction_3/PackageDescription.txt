@@ -1,7 +1,4 @@
 /// \defgroup PkgScaleSpaceReconstruction3 Scale-space surface reconstruction Reference
-/// \defgroup PkgScaleSpaceReconstruction3Concepts Concepts
-/// \ingroup PkgScaleSpaceReconstruction3
-
 
 /// \defgroup PkgScaleSpaceReconstruction3Classes Reconstruction Classes
 /// \ingroup PkgScaleSpaceReconstruction3
@@ -12,12 +9,11 @@
 
 /*!
 \addtogroup PkgScaleSpaceReconstruction3
-\todo check generated documentation
 \cgalPkgDescriptionBegin{Scale-space surface reconstruction,PkgScaleSpaceReconstruction3Summary}
 \cgalPkgPicture{knot_thumb.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Thijs van Lankveld}
-\cgalPkgDesc{This method allows to reconstruct a surface in 3D from a set of points. This method provides an efficient alternative to the poisson surface reconstruction method. The main difference in output is that this method reconstructs a surface that interpolates the point set (as opposed to approximating the point set). How the surface connects the points depends on a scale variable, which can be estimated semi-automatically.}
+\cgalPkgDesc{This method allows to reconstruct a surface that interpolates a set of 3D points. This method provides an efficient alternative to the Poisson surface reconstruction method. The main difference in output is that this method reconstructs a surface that interpolates the point set (as opposed to approximating the point set). How the surface connects the points depends on a scale variable, which can be estimated semi-automatically.}
 \cgalPkgManuals{Chapter_Scale_space_reconstruction,PkgScaleSpaceReconstruction3}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
@@ -27,29 +23,36 @@
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd
 
-The scale-space surface reconstruction method is twofold: first the point set is transformed into a coarse scale while maintaining point references to the original point set, then the mesh is reconstructed at this coarse scale (where reconstruction problem is less ill-posed) and transported back to the original reference points.
+The scale-space surface reconstruction method is twofold. Firstly, a scale-space of the point set is constructed. This scale-space contains a smoothed representation of the point set, which makes the surface reconstruction problem less ill-posed. Then, a triangular surface mesh of the points in the scale-space is computed.
 
-The transformation to the coarse scale is done by projecting each point to the `density`-weighted principal component analysis (PCA) of the local (\f$ \delta \f$-distance) neighborhood. If the high-frequency deformation is significantly smaller than the neighborhood size, the scale is coarse enough for mesh reconstruction after a few iterations of the tranformation step. For the PCA procedure, we use the efficient Eigen libraries. The mesh reconstruction at the coarse scale is performed by filtering a 3D alpha-shape. The result is returned as a collection of triples on the indices of the points. This collection may be sorted per `shell`, where a shell is a collection of connected triangles that are locally oriented towards the same side of the surface.
+The resulting surface in non-self-intersecting, i.e. its triangles cannot pairwise intersect in their interior. Additionally, the surface need not be manifold and in many cases where the points sample the surface of an object, the computed surface will contain both an 'outward-facing' and a similar 'inward-facing' surface, with a thin volume between them. If the object is not densely sampled or has disconnected components, a separate surface is constructed per connected component.
 
-This method requires a user-specified parameter related to the resolution of the data, but we may be able to estimate this parameter through statistical analysis. Specifically, we use a kD-tree to estimate the mean distance to the n-th nearest neighbor and we use this distance as an approximator for the resolution. Generally a neighborhood containing 30 points is a good estimate. The method generally works well as long as this estimate is not too small and the amount of iterations necessary to reduce the high-frequency signals does not disturb the topology of the data such that back-transportation to the original scale produces too many self-intersections.
+The surface cannot have holes and its triangles are all oriented towards the outside of the object sampled. This orientation is expressed using the 'right-hand rule' on the ordered vertices of each triangle. Note that a surface may contain a triangle twice if the surface 'loops around' to incorporate both facings of the triangles.
 
-The method provides access to intermediate results and the user can adjust these to better suit his needs. These intermediate results are the estimate of the scale variable, the smoothed point set, and the final collection of surface triangles.
+The order of the points in the scale-space is the same as the order of the original points, meaning that the surface of the scale-space can interpolate the original point set by applying the indices of the surface triangles to the original point set. There are no guarantees on the topology of the resulting surface, e.g. the triangles of the surface may pairwise intersect in their interior. However, when using appropriate parameter settings for the number of iterations and neighborhood size the surface will generally not self-intersect. The appropriate parameter settings depend on the geometry of the point set.
+
+The scale-space is constructed by projecting each point to the 'density'-weighted principal component analysis (PCA) of the local (\f$ \delta \f$-distance) neighborhood. If the point set was sampled from a surface for which any high-frequency deformation and sampling noise is smaller than the neighborhood size, the scale is coarse enough for mesh reconstruction after a few iterations of advancing the scale-space.
+
+For the PCA procedure, we use the efficient Eigen libraries. The mesh reconstruction of the scale-space is performed by filtering a 3D alpha-shape. The result is returned as a collection of triples on the indices of the points of the surface triangles. This collection may be sorted per 'shell', where a shell is a collection of connected triangles that are locally oriented towards the same side of the surface.
+
+The reconstruction method requires a user-specified neighborhood size parameter, related to the resolution of the data. This parameter can be estimated through statistical analysis. Specifically, we use a kD-tree to estimate the mean distance to the n-th nearest neighbor and we use this distance as an approximator for the resolution. Generally a neighborhood containing 30 points is a good estimate. The method generally works well as long as this estimate is not too small and the amount of iterations necessary to reduce the high-frequency signals does not disturb the topology of the data so much that applying the surface connectivity to the original point set produces too many self-intersections.
+
+The method provides access to intermediate results and the user can adjust these to better suit his needs. These intermediate results are the estimate of the resolution, the scale-space, and the final collection of surface triangles.
 
 \cgalClassifedRefPages
-
-## Concepts ##
 
 ## Classes ##
 
 ### Main Classes ###
 
 - `CGAL::Scale_space_surface_reconstructer_3<DelaunayTriangulationTraits_3,Boolean_tags,Boolean_tags>`
-- `CGAL::Shape_type<DelaunayTriangulationTraits_3,Boolean_tags>`
+- `CGAL::Shape_of_points_3<DelaunayTriangulationTraits_3,Boolean_tags>`
 
 ### Auxiliary Classes ###
 
-- `CGAL::internal::Auto_count<T>`
-- `CGAL::internal::_Env<T>`
+- `CGAL::internal::Auto_count<T,C>`
+- `CGAL::internal::_EnvTypes<sz>`
+- `CGAL::internal::_Env`
 
 */
 

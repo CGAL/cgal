@@ -25,6 +25,7 @@ namespace CGAL {
 namespace internal {
 
 /// General system environment types.
+/// \ingroup PkgScaleSpaceReconstruction3Auxiliary
 template< int sz > struct _EnvTypes{
 /// \name Types
 /// \{
@@ -46,6 +47,7 @@ template<> struct _EnvTypes<8> {
 }; // struct _EnvTypes<8>
 
 /// The current system environment.
+/// \ingroup PkgScaleSpaceReconstruction3Auxiliary
 struct _Env
 : public _EnvTypes< sizeof( void* ) > {
 /// \name Types
