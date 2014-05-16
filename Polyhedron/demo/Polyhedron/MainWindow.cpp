@@ -971,10 +971,15 @@ void MainWindow::showSceneContextMenu(int selectedItemIndex,
     bool menuChanged = menu->property(prop_name).toBool();
     if(!menuChanged) {
       menu->addSeparator();
-      QAction* reload = menu->addAction(tr("Reload item from file"));
+      QAction* reload = menu->addAction(tr("&Reload item from file"));
       reload->setData(qVariantFromValue(selectedItemIndex));
       connect(reload, SIGNAL(triggered()),
               this, SLOT(reload_item()));
+      QAction* saveas = menu->addAction(tr("&Save as..."));
+      saveas->setData(qVariantFromValue(selectedItemIndex));
+      connect(saveas,  SIGNAL(triggered()),
+              this, SLOT(on_actionSaveAs_triggered()));
+
       menu->setProperty(prop_name, true);
     }
   }
@@ -1170,10 +1175,19 @@ void MainWindow::on_actionLoad_triggered()
 
 void MainWindow::on_actionSaveAs_triggered()
 {
-  QModelIndexList selectedRows = sceneView->selectionModel()->selectedRows();
-  if(selectedRows.size() != 1)
-    return;
-  Scene_item* item = scene->item(getSelectedSceneItemIndex());
+  int index = -1;
+  QAction* sender_action = qobject_cast<QAction*>(sender());
+  if(sender_action && !sender_action->data().isNull()) {
+    index = sender_action->data().toInt();
+  }
+
+  if(index < 0) {
+    QModelIndexList selectedRows = sceneView->selectionModel()->selectedRows();
+    if(selectedRows.size() != 1)
+      return;
+    index = getSelectedSceneItemIndex();
+  }
+  Scene_item* item = scene->item(index);
 
   if(!item)
     return;
@@ -1196,9 +1210,10 @@ void MainWindow::on_actionSaveAs_triggered()
     return;
   }
 
+  QString caption = tr("Save %1 to File...").arg(item->name());
   QString filename = 
     QFileDialog::getSaveFileName(this,
-                                 tr("Save to File..."),
+                                 caption,
                                  QString(),
                                  filters.join(";;"));
   save(filename, item);
