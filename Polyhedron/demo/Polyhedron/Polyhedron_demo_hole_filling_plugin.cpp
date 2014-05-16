@@ -444,9 +444,6 @@ void Polyhedron_demo_hole_filling_plugin::dock_widget_closed() {
 }
 // creates a Scene_hole_visualizer and associate it with active Scene_polyhedron_item
 void Polyhedron_demo_hole_filling_plugin::on_Visualize_holes_button() {
-  typedef Polyhedron::Halfedge_iterator Halfedge_iterator;
-  typedef Polyhedron::Halfedge_around_facet_circulator Halfedge_around_facet_circulator;
-
   Scene_polyhedron_item* poly_item = get_selected_item<Scene_polyhedron_item>();
   if(!poly_item) {
     print_message("Error: please select a polyhedron item from Geometric Objects list!");
