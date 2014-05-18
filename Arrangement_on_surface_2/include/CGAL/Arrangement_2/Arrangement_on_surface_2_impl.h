@@ -3801,12 +3801,16 @@ _is_smaller(const DHalfedge* he1,
   CGAL_precondition(he2->direction() == ARR_RIGHT_TO_LEFT);
   CGAL_precondition(he1->vertex() != he2->vertex());
 
-  // If he1 points to the bottom left vertex, then it is the smaller.
-  if ((ps_x1 == ARR_LEFT_BOUNDARY) && (ps_y1 == ARR_BOTTOM_BOUNDARY))
+  /* If he1 points to a vertex on the left or the bottom boundary, then it
+   * is the smaller.
+   */
+  if ((ps_x1 == ARR_LEFT_BOUNDARY) || (ps_y1 == ARR_BOTTOM_BOUNDARY))
     return true;
 
-  // If he2 points to the bottom left vertex, then it is the smaller.
-  if ((ps_x2 == ARR_LEFT_BOUNDARY) && (ps_y2 == ARR_BOTTOM_BOUNDARY))
+  /* If he2 points to a vertex on the left or the bottom boundary, then it
+   * is the smaller.
+   */
+  if ((ps_x2 == ARR_LEFT_BOUNDARY) || (ps_y2 == ARR_BOTTOM_BOUNDARY))
     return false;
 
   return _is_smaller(he1->curve(), he1->vertex()->point(), ps_x1, ps_y1,
