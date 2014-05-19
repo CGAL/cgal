@@ -44,6 +44,7 @@
 #include <boost/bind.hpp>
 #include <boost/next_prior.hpp>
 #include <boost/type_traits/is_floating_point.hpp>
+#include <boost/type_traits/is_same.hpp>
 #include <CGAL/internal/Exact_type_selector.h>
 
 
@@ -85,13 +86,18 @@ template <class Traits,
           class Is_floating_point=
             typename boost::is_floating_point<typename Kernel_traits<typename Traits::Point_3>::Kernel::FT>::type,
           class Has_filtered_predicates_tag=typename Kernel_traits<typename Traits::Point_3>::Kernel::Has_filtered_predicates_tag,
-          class Has_cartesian_tag=typename Kernel_traits<typename Traits::Point_3>::Kernel::Kernel_tag >
+          class Has_cartesian_tag=typename Kernel_traits<typename Traits::Point_3>::Kernel::Kernel_tag,
+          class Has_classical_point_type =
+              typename boost::is_same<
+                typename Kernel_traits<typename Traits::Point_3>::Kernel::Point_3,
+                typename Traits::Point_3  >::type
+         >
 struct Use_advanced_filtering{
   typedef CGAL::Tag_false type;
 };
 
 template <class Traits>
-struct Use_advanced_filtering<Traits,boost::true_type,Tag_true,Cartesian_tag>{
+struct Use_advanced_filtering<Traits,boost::true_type,Tag_true,Cartesian_tag,boost::true_type>{
   typedef typename Kernel_traits<typename Traits::Point_3>::Kernel K;
   typedef CGAL::Boolean_tag<K::Has_static_filters> type;
 };
@@ -670,10 +676,9 @@ ch_quickhull_polyhedron_3(std::list<typename Traits::Point_3>& points,
   typedef typename Traits::Plane_3		      	  Plane_3;
   typedef typename std::list<Point_3>::iterator           P3_iterator;
 
-  typedef typename Kernel_traits<typename Traits::Point_3>::Kernel R;
   typedef Triangulation_data_structure_2<
-    Triangulation_vertex_base_with_info_2<int, GT3_for_CH3<R> >,
-    Convex_hull_face_base_2<int, R> >                           Tds;  
+    Triangulation_vertex_base_with_info_2<int, GT3_for_CH3<Traits> >,
+    Convex_hull_face_base_2<int, Traits> >                           Tds;
   typedef typename Tds::Vertex_handle                     Vertex_handle;
   typedef typename Tds::Face_handle                     Face_handle;
 
