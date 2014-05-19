@@ -255,6 +255,20 @@ void test_traits(const char* title)
                     Point_2(50, 0),
                     CGAL::NEGATIVE);
 
+  test_incircle<Gt>(
+      Segment_2(Point_2(60, 40), Point_2(70, 60)),
+      Point_2(100, 40),
+      Segment_2(Point_2(30, 110), Point_2(100, 40)),
+      Point_2(60, 20),
+      CGAL::ZERO);
+
+  test_incircle<Gt>(
+      Segment_2(Point_2(60, 40), Point_2(70, 60)),
+      Point_2(60, 20),
+      Point_2(100, 40),
+      Segment_2(Point_2(30, 110), Point_2(100, 40)),
+      CGAL::ZERO);
+
   std::cout << "====================================" << std::endl;
   std::cout << std::endl;
 }
