@@ -37,7 +37,7 @@ typedef R::Triangle_3 Triangle_3;
 /*!
 A triple of points, in order to avoid the need for exact constructions. 
 */ 
-typedef unspecified_type Plane_3;; 
+typedef unspecified_type Plane_3;
 
 /*!
 
@@ -47,17 +47,7 @@ typedef R::Vector_3 Vector_3;
 /*!
 
 */ 
-typedef Polyhedron_default_traits_3<R> Poly_traits; 
-
-/*!
-
-*/ 
-typedef Halfedge_data_structure_polyhedron_default_3<R> HDS; 
-
-/*!
-
-*/ 
-typedef Polyhedron_3<Poly_traits, HDS> Polyhedron_3; 
+typedef Polyhedron_3<R> Polyhedron_3;
 
 /*!
 
@@ -72,7 +62,7 @@ typedef R::Construct_ray_3 Construct_ray_3;
 /*!
 
 */ 
-typedef R::Construct_plane_3 Construct_plane_3; 
+typedef unspecified_type Construct_plane_3;
 
 /*!
 
@@ -92,8 +82,7 @@ typedef R::Construct_centroid_3 Construct_centroid_3;
 /*!
 
 */ 
-typedef R::Construct_orthogonal_vector_3 
-Construct_orthogonal_vector_3; 
+typedef unspecified_type Construct_orthogonal_vector_3;
 
 /*!
 
@@ -118,13 +107,12 @@ R::Less_distance_to_point_3 Less_distance_to_point_3;
 /*!
 
 */ 
-R::Has_on_positive_side_3 Has_on_positive_side_3; 
+unspecified_type Has_on_positive_side_3;
 
 /*!
 
 */ 
-R::Less_signed_dist_to_plane_3 
-Less_signed_distance_to_plane_3; 
+unspecified_type Less_signed_distance_to_plane_3;
 
 /*!
 
