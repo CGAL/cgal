@@ -23,7 +23,7 @@
 #include <vector>
 #include <iterator>
 #include <boost/optional.hpp>
-#include <AABB_node_mod.h>
+#include "AABB_node_mod.h"
 //#include <CGAL/AABB_search_tree.h>
 
 namespace CGAL {

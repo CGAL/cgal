@@ -34,7 +34,7 @@ class AABB_segment_2_primitive
 public:
         typedef typename GeomTraits::Point_2 Point; // point type
         typedef typename GeomTraits::Segment_2 Datum; // datum type
-		typedef typename Container_type Container;
+		typedef Container_type Container;
         typedef Iterator Id; // Id type
 
         // member data

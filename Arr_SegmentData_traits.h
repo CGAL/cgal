@@ -1,6 +1,6 @@
 #ifndef ARR_SEGMENTDATA_HEADER
 #define ARR_SEGMENTDATA_HEADER
-#include <CGAL\basic.h>
+#include <CGAL/basic.h>
 #include <CGAL/Arr_curve_data_traits_2.h>
 #include <CGAL/Arr_consolidated_curve_data_traits_2.h>
 #include <utility>
@@ -63,10 +63,10 @@ public:
 //	typedef typename Base::compare_x_2_object			compare_x_2_object;
 //	typedef typename Base::compare_endpoints_xy_2_object			compare_endpoints_xy_2_object;
 
-	typedef typename Base::Arr_top_side_category			Arr_top_side_category;
-	typedef typename Base::Arr_right_side_category			Arr_right_side_category;
-	typedef typename Base::Arr_left_side_category			Arr_left_side_category;
-	typedef typename Base::Arr_bottom_side_category			Arr_bottom_side_category;
+	//typedef typename Base::Arr_top_side_category			Arr_top_side_category;
+	//typedef typename Base::Arr_right_side_category			Arr_right_side_category;
+	//typedef typename Base::Arr_left_side_category			Arr_left_side_category;
+	//typedef typename Base::Arr_bottom_side_category			Arr_bottom_side_category;
 
 	typedef typename Base::Has_left_category      Has_left_category;
 	typedef Tag_false                                      Has_merge_category;

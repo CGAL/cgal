@@ -1,14 +1,21 @@
+// Global counters
+int _my_global_counter =0;	
+double rc_time =0;
+double arr_build_time =0;
+double final_stage_time =0;
+double degenerate_stage =0;
+
 #include "MyMink.h"
 
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Gps_segment_traits_2.h>
-#include <Graphics.h>
+//#include <Graphics.h>
 #include <iostream>
 #include <fstream>
-#include <boost\timer.hpp>
+#include <boost/timer.hpp>
 
 #include <CGAL/minkowski_sum_2.h>
-#include <SweepCollisionDetection.h>
+#include "SweepCollisionDetection.h"
 //#include <CGAL/Filtered_kernel.h>
 using namespace std;
 using namespace CGAL;
@@ -34,13 +41,6 @@ std::istream &operator>>(std::istream & is, Polygon& pl)
 
     return is;
 }
-
-// Global counters
-int _my_global_counter =0;	
-double rc_time =0;
-double arr_build_time =0;
-double final_stage_time =0;
-double degenerate_stage =0;
 
 int main(int argc,char* argv[]){
 	Polygon a;
@@ -99,6 +99,7 @@ int main(int argc,char* argv[]){
 	double topy = (CGAL::to_double(a.top_vertex()->y())+CGAL::to_double(b.top_vertex()->y()));
 	double rightx = (CGAL::to_double(a.right_vertex()->x())+CGAL::to_double(b.right_vertex()->x()));
 	//double righty = (CGAL::to_double(a.bottom_vertex()->x())+CGAL::to_double(b.bottom_vertex()->x()));
+    /*
 	global_graphics = new Graphics(0,0,leftx,rightx,bottomy,topy); 
 	QColor c(0,255,0);
 
@@ -113,6 +114,7 @@ if (SHOW_STAGES)
 	global_graphics->display();
 	global_graphics->clear();
 }
+*/
 //#endif
 	
 

@@ -8,6 +8,7 @@ template <class Kernel_, class Container_> class NaiveCollisionDetector : public
 {
 public:
 	NaiveCollisionDetector(){}
+    typedef CGAL::Polygon_2<Kernel_> Polygon_2;
 	typedef typename Polygon_2::Edge_const_iterator           Edge_iterator ;
 	typedef typename Polygon_2::Traits::Segment_2           Segment_2 ;
 	//typedef typename Polygon_2::Vertex_circulator          Vertex_circulator;

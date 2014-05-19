@@ -15,13 +15,14 @@ template <class Kernel_, class Container_> class AABBCollisionDetector : public 
 
 public:
 	typedef typename Kernel_::Point_2						Point;
+	typedef typename CGAL::Polygon_2<Kernel_>						Polygon_2;
 	//typedef typename Polygon_2::Edge_const_iterator           Edge_iterator ;
 	typedef typename Polygon_2::Traits::Segment_2           Segment_2 ;
 	typedef typename Polygon_2::Edge_const_iterator           Edge_iterator;
 	typedef typename Polygon_2::Edge_const_circulator		Edge_circulator;
-	typedef typename AABB_segment_2_primitive<Kernel_,Edge_iterator,Polygon_2> Tree_Segment_2;
-	typedef typename AABB_traits_2<Kernel_,Tree_Segment_2> Tree_Traits;
-	typedef typename AABB_tree<Tree_Traits>				   AABB_Tree;
+	typedef AABB_segment_2_primitive<Kernel_,Edge_iterator,Polygon_2> Tree_Segment_2;
+	typedef AABB_traits_2<Kernel_,Tree_Segment_2> Tree_Traits;
+	typedef AABB_tree<Tree_Traits>				   AABB_Tree;
 	typedef CGAL::Arr_segment_traits_2<Kernel_>                    Traits_2;
 protected:
 	Traits_2 m_traits;

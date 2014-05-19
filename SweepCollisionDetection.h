@@ -128,7 +128,7 @@ public:
 			Sweep_line_2* sl = reinterpret_cast<Sweep_line_2*> (this->sweep_line());
 			const Traits_2* traits =  sl->traits();
 			
-			Traits_2::Compare_endpoints_xy_2 t_compare_endpoints_xy_2_obj = traits->compare_endpoints_xy_2_object();
+			typename Traits_2::Compare_endpoints_xy_2 t_compare_endpoints_xy_2_obj = traits->compare_endpoints_xy_2_object();
 			CGAL::Comparison_result c1 =t_compare_endpoints_xy_2_obj(sc1->last_curve());
 			CGAL::Comparison_result c2 = t_compare_endpoints_xy_2_obj(sc2->last_curve());
 			bool same_dir = (c1==c2);
@@ -155,7 +155,7 @@ public:
 	  if (((event->is_intersection() || event->is_weak_intersection() || (event->is_left_end() && event->is_right_end()  )))&& (event->number_of_left_curves()+event->number_of_right_curves()==4)  ){
 		  Sweep_line_2* sl = reinterpret_cast<Sweep_line_2*> (this->sweep_line());
 		  const Traits_2* traits =  sl->traits();  
-		  Traits_2::Compare_endpoints_xy_2 t_compare_endpoints_xy_2_obj = traits->compare_endpoints_xy_2_object();
+		  typename Traits_2::Compare_endpoints_xy_2 t_compare_endpoints_xy_2_obj = traits->compare_endpoints_xy_2_object();
 
 		  // get all curves ordered by cyclic order. from left top counter clockwise.
 		  std::list<Subcurve*> ordered_list;
@@ -164,7 +164,7 @@ public:
 
 		  // mark for each edge whether it's incoming or outgoing.
 		  std::vector<bool> incoming_edges(ordered_list.size(),false);
-		  std::list<Subcurve*>::iterator itr = ordered_list.begin();
+		  typename std::list<Subcurve*>::iterator itr = ordered_list.begin();
 		  int i=0;
 		  for (;itr!= ordered_list.end();++itr){
 			  if (i<event->number_of_left_curves())
@@ -183,7 +183,7 @@ public:
 		  if (ordered_list.size() == 4)
 		  { // normal intersection case
 			  // check for alterations
-			  std::list<Subcurve*>::iterator itr1,itr2,itr3;
+			  typename std::list<Subcurve*>::iterator itr1,itr2,itr3;
 			  itr1 = ordered_list.begin();
 			  itr2 = itr1; ++itr2;
 			  itr3 = itr2; ++itr3;
@@ -292,7 +292,7 @@ public:
       //if (xcv1.data().front() == xcv2.data().front())
 		if (xcv1.data().front()._color == xcv2.data().front()._color)
         return (oi);
-	  Base::Intersect_2 int_obj = Base::Intersect_2(m_traits);
+	  typename Base::Intersect_2 int_obj = typename Base::Intersect_2(m_traits);
 	  //OutputIterator oi_temp;
 	  OutputIterator oi_end = int_obj(xcv1,xcv2,oi);
 	  if (oi == oi_end)
@@ -444,6 +444,7 @@ public:
 
     //! Allow its functor obtaining function calling the protected constructor.
     friend class Colored_traits<Traits_>;
+	typedef typename Colored_traits::X_monotone_curve_2 X_monotone_curve_2;
     
   public:
     Point_2 operator() (const X_monotone_curve_2& xcv) 
@@ -483,6 +484,7 @@ public:
 
     //! Allow its functor obtaining function calling the protected constructor.
    friend class Colored_traits<Traits_>;
+   typedef typename Colored_traits::X_monotone_curve_2 X_monotone_curve_2;
     
   public:
     Point_2 operator() (const X_monotone_curve_2 & xcv) const
@@ -524,8 +526,8 @@ public:
 
 	typedef typename Data_traits_2::Curve_2							Colored_segment_2;
 	typedef Arrangement_2<Data_traits_2>					Colored_arr_2;
-	typedef typename Polygon_2::Edge_const_iterator           Edge_iterator ;
-	typedef typename Polygon_2::Traits::Segment_2           Segment_2 ;
+	typedef typename CGAL::Polygon_2<Kernel_>::Edge_const_iterator           Edge_iterator ;
+	typedef typename CGAL::Polygon_2<Kernel_>::Traits::Segment_2           Segment_2 ;
 	//typedef typename Polygon_2::Vertex_circulator          Vertex_circulator;
 	//typedef typename 
 
@@ -535,9 +537,9 @@ public:
 
 public:
 
-	virtual bool checkCollision(const Polygon_2& p,const Polygon_2& q)
+	virtual bool checkCollision(const typename CGAL::Polygon_2<Kernel_>& p,const typename CGAL::Polygon_2<Kernel_>& q)
 	{
-		Traits_2::Compare_endpoints_xy_2 cmp_obj = m_traits.compare_endpoints_xy_2_object();
+		typename Traits_2::Compare_endpoints_xy_2 cmp_obj = m_traits.compare_endpoints_xy_2_object();
 		if (p.has_on_bounded_side(*(q.vertices_begin())) || q.has_on_bounded_side(*(p.vertices_begin())))
 				return true;
 

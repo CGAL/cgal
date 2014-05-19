@@ -207,7 +207,7 @@ public:
   bool operator()(const Bounding_box& q, const Primitive& pr) const
   {
 	  
-    Primitive::Datum tr_pr = pr.datum().transform(GeomTraits::Aff_transformation_2(CGAL::Translation(), Vector_2(CGAL::ORIGIN,m_traits->getTPoint())));
+    typename Primitive::Datum tr_pr = pr.datum().transform(typename GeomTraits::Aff_transformation_2(CGAL::Translation(), Vector_2(CGAL::ORIGIN,m_traits->getTPoint())));
     return CGAL::do_overlap(q, tr_pr.bbox()); 
   }
 
@@ -215,7 +215,7 @@ public:
   bool operator()(const Primitive& q, const Primitive& pr) const
   {
 	  
-    Primitive::Datum tr_pr =  pr.datum().transform(GeomTraits::Aff_transformation_2(CGAL::Translation(), Vector_2(CGAL::ORIGIN,m_traits->getTPoint())));
+    typename Primitive::Datum tr_pr =  pr.datum().transform(typename GeomTraits::Aff_transformation_2(CGAL::Translation(), Vector_2(CGAL::ORIGIN,m_traits->getTPoint())));
 	if (!CGAL::do_overlap(q.datum().bbox(),tr_pr.bbox()))
 		return false;
 	CGAL::Object intersection_object = GeomTraits().intersect_2_object()(q.datum(), tr_pr);
@@ -309,7 +309,7 @@ public:
 		  Id itr_q = q.id();
 		  Id p_other = getOtherSegment(p_intersect_start,itr_p, m_traits->get_p());
 		  Id q_other = getOtherSegment(q_intersect_start,itr_q, m_traits->get_q());
-		  Datum p_other_translated = (*p_other).transform(GeomTraits::Aff_transformation_2(CGAL::Translation(), Vector_2(CGAL::ORIGIN,m_traits->getTPoint())));
+		  Datum p_other_translated = (*p_other).transform(typename GeomTraits::Aff_transformation_2(CGAL::Translation(), Vector_2(CGAL::ORIGIN,m_traits->getTPoint())));
 		  if (p_intersect && !q_intersect){
 			  if (p_intersect_start)
 				  return handle_one_weak_int(p_other_translated,tr_pr_datum,*itr_q);
@@ -440,7 +440,8 @@ Intersection intersection_object() {return Do_intersect(this);}
   public:
       Point operator()(const Point& p, const Primitive& pr, const Point& bound) const
       {
-          return CGAL::nearest_point_2(p, pr.datum(), bound);
+          //return CGAL::nearest_point_2(p, pr.datum(), bound); TODO
+          return p;
       }
   };
 

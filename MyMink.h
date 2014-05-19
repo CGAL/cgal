@@ -13,7 +13,7 @@
 #include <CGAL/Arr_curve_data_traits_2.h>
 #include "Arr_SegmentData_traits.h"
 #include <fstream>
-#include "Graphics.h"
+//#include "Graphics.h"
 
 #include <list>
 #include <set>
@@ -30,6 +30,7 @@
 #include "SweepCollisionDetection.h"
 #include "AABB_Collision_detector.h"
 #include <boost/unordered_map.hpp>
+#include <boost/timer.hpp>
 #include "mem_log.h"
 
 // OMP
@@ -62,24 +63,6 @@ struct Convseg_Less_than{
 
 };
 */
-template <class Kernel, class Container>
-Polygon_with_holes_2<Kernel,Container>
-minkowski_sum_2_ (const Polygon_2<Kernel,Container>& pgn1,
-                 const Polygon_2<Kernel,Container>& pgn2)
-{
-  Minkowski_sum_by_convolution_lien_2<Kernel, Container>  mink_sum;
-  Polygon_2<Kernel,Container>                        sum_bound;
-  std::list<Polygon_2<Kernel,Container> >            sum_holes;
-
-  if (pgn1.size() > pgn2.size())
-    mink_sum (pgn1, pgn2, sum_bound, std::back_inserter(sum_holes));
-  else
-    mink_sum (pgn2, pgn1, sum_bound, std::back_inserter(sum_holes));
-
-  return (Polygon_with_holes_2<Kernel,Container> (sum_bound,
-                                                  sum_holes.begin(),
-                                                  sum_holes.end()));
-}
 
 template <class HalfedgeBase_>
 	class Arr_map_halfedge : public HalfedgeBase_{
@@ -181,7 +164,6 @@ public:
   typedef typename Arrangement_history_2::Halfedge_iterator 					Halfedge_iterator;
   typedef typename Arrangement_history_2::Edge_iterator 					Edge_iterator;
   typedef typename Arrangement_history_2::Halfedge_handle 					Halfedge_handle; 
-  typedef typename Arrangement_history_2::Vertex_iterator 					Vertex_iterator;
    typedef typename Arrangement_history_2::Vertex_handle					Vertex_handle;
   typedef typename Arrangement_history_2::Face_iterator 					Face_iterator;
   typedef typename Arrangement_history_2::Face_handle 					Face_handle;
@@ -298,7 +280,7 @@ public:
 	  {
 		  std::list<Halfedge_handle> inList,outList;
 		  _mink->getEdgesFromVertex(*_arr,v,inList,outList);
-		  std::list<Halfedge_iterator>::const_iterator itr;
+		  typename std::list<Halfedge_iterator>::const_iterator itr;
 
 		  for (itr = inList.begin();itr!= inList.end();++itr)
 		  {
@@ -390,7 +372,7 @@ public:
 	  void removeRangeFromArr(std::list<ConvSegment>& segsToRemove)
 	  {
 		  //for_each(segsToRemove.begin(),segsToRemove.end(),&ConvSegMapper::removeSegFromArr);
-		  for (std::list<ConvSegment>::iterator itr = segsToRemove.begin();itr!=segsToRemove.end();++itr)
+		  for (typename std::list<ConvSegment>::iterator itr = segsToRemove.begin();itr!=segsToRemove.end();++itr)
 		  {
 				removeSegFromArr(*itr);
 		  }
@@ -440,7 +422,7 @@ public:
 					ConvSegment c = _mapperInstance->getMaximalEdge(filteredSegments,_currEdge);
 					// Check that there is no visited outgoing edge, with diffrenet loop id (ie closed loop),
 					// which is better than c.
-					std::list<ConvSegment>::iterator itr = visitedSegments.begin();
+					typename std::list<ConvSegment>::iterator itr = visitedSegments.begin();
 					for (;itr != visitedSegments.end();++itr)
 					{
 						if (_mapperInstance->isBBiggerThenAWithReagrdToC(c,*itr,_currEdge) && itr->getLoopNum() != _id && itr->getLoopNum() != FIRST_LOOP)
@@ -503,18 +485,20 @@ public:
 			_traversing = false;
 		}
 
+    /*
 		void drawTraversal()
 		{
 		
 			global_graphics->clear();
 
-			for (std::list<ConvSegment>::iterator itr = _traversedEdges.begin();itr != _traversedEdges.end(); ++itr)
+			for (typename std::list<ConvSegment>::iterator itr = _traversedEdges.begin();itr != _traversedEdges.end(); ++itr)
 			{
 				global_graphics->draw_edge<Kernel>((itr->_he)->curve(),QColor(0,255,0),true);
 			}
 			global_graphics->display();
 		
 		}
+        */
 
 		std::list<ConvSegment>& getTraversedEdges()
 		{
@@ -592,7 +576,7 @@ public:
 		  if (_activeLoopTracker->hasLoops())
 		  {
 			  bool stopItrating = true;
-			  for (std::list<ConvSegment>::iterator itr = outGoingOptions.begin();itr != outGoingOptions.end();++itr)
+			  for (typename std::list<ConvSegment>::iterator itr = outGoingOptions.begin();itr != outGoingOptions.end();++itr)
 			  {
 				  if (_mapperInstance->isBBiggerThenAWithReagrdToC(loop.first,*itr,loop.second))
 				  {
@@ -641,8 +625,8 @@ public:
 
 		void addLoop(std::pair<ConvSegment,ConvSegment>& loop)
 		{
-			std::list<ConvSegment>::iterator loop_begin = find(_segmentsList->begin(),_segmentsList->end(),(loop.first));
-			std::list<ConvSegment>::iterator loop_end = find(_segmentsList->begin(),_segmentsList->end(),(loop.second));
+			typename std::list<ConvSegment>::iterator loop_begin = find(_segmentsList->begin(),_segmentsList->end(),(loop.first));
+			typename std::list<ConvSegment>::iterator loop_end = find(_segmentsList->begin(),_segmentsList->end(),(loop.second));
 /*			if (!_hasLoop)
 			{
 				_loopBegin = loop_begin;
@@ -683,7 +667,7 @@ public:
 			//copy(_loopBegin,_loopEnd+1,_loopSegmentsList.begin());
 			if (!_loopsCreated)
 				createLoopsSegmentsLists();
-			return _loopsSegmentsList;
+			return _loopSegmentsList;
 		}
 
 		std::list<ConvSegment>& getNonLoopSegmentsList()
@@ -708,8 +692,8 @@ public:
 			if (_hasLoop)
 			{
 				/*std::list<ConvSegment>*/ 
-				std::list<ConvSegment>::iterator loop_begin = find(_nonLoopSegmentsList.begin(),_nonLoopSegmentsList.end(),*_loopBegin);
-				std::list<ConvSegment>::iterator loop_end = find(_nonLoopSegmentsList.begin(),_nonLoopSegmentsList.end(),*_loopEnd);
+				typename std::list<ConvSegment>::iterator loop_begin = find(_nonLoopSegmentsList.begin(),_nonLoopSegmentsList.end(),*_loopBegin);
+				typename std::list<ConvSegment>::iterator loop_end = find(_nonLoopSegmentsList.begin(),_nonLoopSegmentsList.end(),*_loopEnd);
 				//std::list<ConvSegment> _nonLoopSegmentsList(*_segmentsList);
 				_loopSegmentsList.splice(_loopSegmentsList.begin(),_nonLoopSegmentsList,loop_begin,++loop_end);
 			}
@@ -760,10 +744,10 @@ public:
 
 	  template <typename InputIterator> void removeRange_bak(InputIterator start,InputIterator end)
 	  {
-		  std::vector<InputIterator::value_type> vec(start,end);
+		  std::vector<typename InputIterator::value_type> vec(start,end);
 		  sort(vec.begin(),vec.end());
 		  //sort(start,end);
-		  std::vector<InputIterator::value_type>* seg_set = new std::vector<InputIterator::value_type>();
+		  std::vector<typename InputIterator::value_type>* seg_set = new std::vector<typename InputIterator::value_type>();
 		  set_difference(_edgesSet->begin(),_edgesSet->end(),vec.begin(),vec.end(),back_inserter(*seg_set));
 		  delete _edgesSet;
 		  _edgesSet = new std::set<ConvSegment>(seg_set->begin(),seg_set->end());
@@ -877,7 +861,7 @@ public:
 
 	  void addDegenerateVerticesToArr()
 	  {
-		  std::list<Point_2>::iterator itr = _degenerate_points_list.begin();
+		  typename std::list<Point_2>::iterator itr = _degenerate_points_list.begin();
 		  for (;itr != _degenerate_points_list.end();++itr)
 		  {
 				CGAL::insert_point(*_arr,*itr);
@@ -964,21 +948,25 @@ public:
 	degHandler.markDegenerateEdges();
 	constructOrientableLoops(arr);
 
+/*
 	if (SHOW_STAGES)
 	{
 		global_graphics->clear();
 		draw_arr(arr);
 		global_graphics->display();
 	}
-	Polygon_2 reverse_pgn1 = transform(Kernel::Aff_transformation_2(CGAL::Rotation(), 0, -1), pgn1);
+    */
+	Polygon_2 reverse_pgn1 = transform(typename Kernel::Aff_transformation_2(CGAL::Rotation(), 0, -1), pgn1);
 	nestedLoopsFilter(arr,reverse_pgn1,pgn2);
 	degHandler.addDegenerateVerticesToArr();
+    /*
 	if (SHOW_STAGES)
 	{
 		global_graphics->clear();	
 		draw_arr(arr);
 		global_graphics->display();
 	}
+    */
 	//collisionDetectionFilter(arr);
 
 	//global_graphics->clear();
@@ -1031,7 +1019,7 @@ public:
 	buildArrangementFromConv(reduced_conv,arr);
 	arr_build_time =  t2.elapsed();
 	std::cout << "buildArrangementFromConv : " << arr_build_time << std::endl; 
-	LogMyMemoryUsage();
+	//LogMyMemoryUsage();
 	std::cout << "sizeOfReducedConvArrangement : " << arr.number_of_edges() << std::endl;
 
 	const Minkowski_sum_by_convolution_lien_2* ptr = this;
@@ -1043,13 +1031,15 @@ public:
 	degenerate_stage = t4.elapsed();
 
 	boost::timer t3;
+    /*
 	if (SHOW_STAGES)
 	{
 		global_graphics->clear();
 		draw_arr(arr);
 		global_graphics->display();
 	}
-	Polygon_2 reverse_pgn1 = transform(Kernel::Aff_transformation_2(CGAL::Rotation(), 0, -1), pgn1);
+    */
+	Polygon_2 reverse_pgn1 = transform(typename Kernel::Aff_transformation_2(CGAL::Rotation(), 0, -1), pgn1);
 
 	// trace outer loop
 	markOutsideLoop(arr,sum_bound);
@@ -1077,7 +1067,7 @@ public:
 	}
 
 	
-	list<Halfedge_handle> removeList;
+	std::list<Halfedge_handle> removeList;
 
 	// remove all non marked edges
 	for (Edge_iterator itr = arr.edges_begin();itr != arr.edges_end();++itr)
@@ -1086,19 +1076,21 @@ public:
 			removeList.push_back(itr);		
 	}
 
-	for (list<Halfedge_handle>::iterator itr = removeList.begin();itr!=removeList.end();++itr)
+	for (typename std::list<Halfedge_handle>::iterator itr = removeList.begin();itr!=removeList.end();++itr)
 		arr.remove_edge(*itr);
 
 	degHandler.addDegenerateVerticesToArr();
 	final_stage_time = t3.elapsed();
 	std::cout << "degenerate stage : " <<degenerate_stage << std::endl; 
 	std::cout << "final stage : " <<final_stage_time << std::endl; 
+    /*
 	if (SHOW_STAGES)
 	{
 		global_graphics->clear();
 		draw_arr(arr);
 		global_graphics->display();
 	}
+    */
 
 	/*constructOrientableLoops(arr);
 
@@ -1517,7 +1509,7 @@ public:
 
 						CGAL::Comparison_result cres = f_compare_xy(start_point,end_point);
 						//Segment_2 conv_seg = Segment_2(Traits_2_A::Segment_2(start_point,end_point),Segment_Data_Label(state(i1,i2),state(i1,next_p2),cres));
-						Segment_2 conv_seg = Segment_2(Traits_2_A::Segment_2(start_point,end_point),Segment_Data_Label(state(i1,i2),state(i1,next_p2),cres,1));
+						Segment_2 conv_seg = Segment_2(typename Traits_2_A::Segment_2(start_point,end_point),Segment_Data_Label(state(i1,i2),state(i1,next_p2),cres,1));
 						//Segment_2 conv_seg = Segment_2(Traits_2_A::Segment_2(start_point,end_point),cres);
 						
 						reduced_conv.push_back(conv_seg);
@@ -1536,7 +1528,7 @@ public:
 							Point_2 end_point = addGetPoint(next_p1,i2,points_map,pgn1,pgn2);
 
 							CGAL::Comparison_result cres = f_compare_xy(start_point,end_point);
-							Segment_2 conv_seg = Segment_2(Traits_2_A::Segment_2(start_point,end_point),Segment_Data_Label(state(i1,i2),state(next_p1,i2),cres,0));
+							Segment_2 conv_seg = Segment_2(typename Traits_2_A::Segment_2(start_point,end_point),Segment_Data_Label(state(i1,i2),state(next_p1,i2),cres,0));
 							//Segment_2 conv_seg = Segment_2(Traits_2_A::Segment_2(start_point,end_point),cres);
 							reduced_conv.push_back(conv_seg);
 						//}
@@ -1820,7 +1812,7 @@ private:
 			Face_handle curr_sec_face = curr->twin()->face();
 			if (curr_sec_face != outside_face)
 			{
-				Faces_set::iterator itr = faces_in_face.find(curr_sec_face);
+				typename Faces_set::iterator itr = faces_in_face.find(curr_sec_face);
 			
 				if (itr == faces_in_face.end())
 				{
@@ -1828,7 +1820,7 @@ private:
 				}
 			}
 		}while(++curr!=circ);
-		for (Faces_set::iterator itr = faces_in_face.begin();itr!= faces_in_face.end();++itr)
+		for (typename Faces_set::iterator itr = faces_in_face.begin();itr!= faces_in_face.end();++itr)
 		{
 			Face_handle h = *itr;
 			semi_holes.push_back((h->outer_ccb()->twin()));
@@ -1885,7 +1877,7 @@ private:
 	Polygon_2 revPoly(const Polygon_2& input) const
 	{
 		Polygon_2 out;
-		Polygon_2::Vertex_iterator itr = input.vertices_begin();
+		typename Polygon_2::Vertex_iterator itr = input.vertices_begin();
 		for (;itr!= input.vertices_end();++itr)
 		{
 			out.push_back(Point_2(-itr->x(),-itr->y()));
@@ -1893,8 +1885,10 @@ private:
 		if (out.orientation()==CGAL::CLOCKWISE)
 			out.reverse_orientation();
 
+/*
 		QColor c1(0,255,0);
 		QColor c2(0,0,255);
+        */
 	
 		
 		return out;
@@ -1933,7 +1927,7 @@ private:
 		Point_2 mid_point = CGAL::midpoint(p,p2);*/
 		Point_2 mid_point = findInsidePoint(arr,handle);
 		//Polygon_2 r_pgn1 = CGAL::transform(Kernel::Aff_transformation_2(CGAL::Rotation(),0,-1), pgn1);
-		Polygon_2 t_pgn1 = transform(Kernel::Aff_transformation_2(CGAL::Translation(), Vector_2(CGAL::ORIGIN,mid_point)), pgn1);
+		Polygon_2 t_pgn1 = transform(typename Kernel::Aff_transformation_2(CGAL::Translation(), Vector_2(CGAL::ORIGIN,mid_point)), pgn1);
 		collision_detector->setTranslationPoint(mid_point);		
 		//QColor c1(0,255,0);
 		//QColor c2(0,0,255);
@@ -2021,31 +2015,31 @@ private:
 		if (best_edge->curve().is_vertical())
 		{
 			Base_Segment_2 best_edge_curve = best_edge->curve();
-			Kernel::FT x0 =  f_compute_x(work_point);
-			Kernel::FT y_point = f_compute_y(work_point); 
+			typename Kernel::FT x0 =  f_compute_x(work_point);
+			typename Kernel::FT y_point = f_compute_y(work_point); 
 			
 			if (shoot_upwards){
-				Kernel::FT y_best = f_compute_y(best_edge_curve.min());
-				Kernel::FT y = (y_best-y_point)/2 + y_point;
+				typename Kernel::FT y_best = f_compute_y(best_edge_curve.min());
+				typename Kernel::FT y = (y_best-y_point)/2 + y_point;
 				return Point_2(x0,y);
 			}
 			else
 			{
-				Kernel::FT y_best = f_compute_y(best_edge_curve.min());
-				Kernel::FT y = (y_point - y_best)/2 + y_best;
+				typename Kernel::FT y_best = f_compute_y(best_edge_curve.min());
+				typename Kernel::FT y = (y_point - y_best)/2 + y_best;
 				return Point_2(x0,y);
 			}
 			return work_point;
 		}
 		Base_Segment_2 best_edge_curve = best_edge->curve();
-		Kernel::FT x0 =  f_compute_x(work_point);
-		Kernel::FT x1 =  f_compute_x(best_edge_curve.min());
-		Kernel::FT x2 =  f_compute_x(best_edge_curve.max());
-		Kernel::FT alpha = (x0-x2)/(x1-x2);
+		typename Kernel::FT x0 =  f_compute_x(work_point);
+		typename Kernel::FT x1 =  f_compute_x(best_edge_curve.min());
+		typename Kernel::FT x2 =  f_compute_x(best_edge_curve.max());
+		typename Kernel::FT alpha = (x0-x2)/(x1-x2);
 
-		Kernel::FT y_best = alpha*f_compute_y(best_edge_curve.min())+ (1-alpha)*f_compute_y(best_edge_curve.max());
-		Kernel::FT y_point = f_compute_y(work_point); 
-		Kernel::FT y = (y_best-y_point)/2 + y_point;
+		typename Kernel::FT y_best = alpha*f_compute_y(best_edge_curve.min())+ (1-alpha)*f_compute_y(best_edge_curve.max());
+		typename Kernel::FT y_point = f_compute_y(work_point); 
+		typename Kernel::FT y = (y_best-y_point)/2 + y_point;
 
 
 		return Point_2(x0,y);
@@ -2064,7 +2058,7 @@ private:
 		Point_2 p = point;
 		//Polygon_2 r_pgn1 = CGAL::transform(Kernel::Aff_transformation_2(CGAL::Rotation(),0,-1), pgn1);
 		Polygon_2 r_pgn1 = revPoly(pgn1);
-		Polygon_2 t_pgn1 = transform(Kernel::Aff_transformation_2(CGAL::Translation(), Vector_2(CGAL::ORIGIN,p)), r_pgn1);
+		Polygon_2 t_pgn1 = transform(typename Kernel::Aff_transformation_2(CGAL::Translation(), Vector_2(CGAL::ORIGIN,p)), r_pgn1);
 		collision_detector->setTranslationPoint(p);		
 	/*	QColor c1(0,255,0);
 		QColor c2(0,0,255);
@@ -2095,7 +2089,7 @@ private:
 			++circ;
 		}
 
-		for (std::list<Halfedge_handle>::iterator itr = remove_list.begin();itr != remove_list.end();++itr)
+		for (typename std::list<Halfedge_handle>::iterator itr = remove_list.begin();itr != remove_list.end();++itr)
 		{
 			arr.remove_edge(*itr);
 		}
@@ -2109,15 +2103,17 @@ private:
 	void constructOrientableLoops(Arrangement_history_2& arr) const 
 	{
 	
+        /*
 		if (SHOW_STAGES)
 		{
 			draw_arr(arr);
 			global_graphics->display();
 		}
+        */
 
 		if (WRITE_ARR)
 		{
-			ofstream file("arr.txt");
+            std::ofstream file("arr.txt");
 			file << arr;
 		}
 		const Minkowski_sum_by_convolution_lien_2* ptr = this;
@@ -2175,7 +2171,7 @@ private:
 
 		//Direction_2 start_dir = segments_dir_list.begin();
 		segments_dir_list.sort();
-		std::list<Direction_2>::iterator end = unique(segments_dir_list.begin(),segments_dir_list.end());
+		typename std::list<Direction_2>::iterator end = unique(segments_dir_list.begin(),segments_dir_list.end());
 		int i =distance(segments_dir_list.begin(),end);
 		return i>1;
 	
@@ -2208,7 +2204,7 @@ private:
 				}
 			} while(++itr!=start);
 			orig_segments_list.sort();
-			std::list<Segment_2*>::iterator end = unique(orig_segments_list.begin(),orig_segments_list.end());
+			typename std::list<Segment_2*>::iterator end = unique(orig_segments_list.begin(),orig_segments_list.end());
 			int i =distance(orig_segments_list.begin(),end);
 			if (i==2) // this is two curves crossing case. 
 				return false;
@@ -2240,7 +2236,7 @@ private:
 		
 
 		segments_dir_list.sort();
-		std::list<Direction_2>::iterator end = unique(segments_dir_list.begin(),segments_dir_list.end());
+		typename std::list<Direction_2>::iterator end = unique(segments_dir_list.begin(),segments_dir_list.end());
 		int i =distance(segments_dir_list.begin(),end);
 		return i>2;
 		//orig_segments_list.sort();
@@ -2324,6 +2320,7 @@ private:
 		return sign*ang;
 	}
 
+    /*
 	void traceOrientableLoopNew(Arrangement_history_2& arr,Halfedge_handle& start_halfedge,bool is_outer_loop,int loop_counter,Edges_set& edges_set) const
 	{
 		std::list<Halfedge_handle> temp_segments;
@@ -2364,6 +2361,7 @@ private:
 			}
 		}
 	}
+    */
 
 	Halfedge_handle traverseNextHalfedge()
 	{
@@ -2455,13 +2453,13 @@ private:
 				Halfedge_handle temp_twin = next_halfedge->twin();
 				if ((next_halfedge->loopNumber == loop_counter) && (next_halfedge != curr_halfedge)  && (temp_twin != curr_halfedge)){ 
 					#ifdef SHOW_LOOPS_CONST
-					global_graphics->clear();
+					//global_graphics->clear();
 
 					for (std::list<Halfedge_iterator>::iterator itr = temp_segments.begin();itr != temp_segments.end(); ++itr)
 					{
-						global_graphics->draw_edge<Kernel>((*itr)->curve(),QColor(0,255,0),true);
+						//global_graphics->draw_edge<Kernel>((*itr)->curve(),QColor(0,255,0),true);
 					}
-					global_graphics->display();
+					//global_graphics->display();
 					#endif
 					// a loop closes with part of the edges. we have to remove edges till next_halfedge from arrangment,
 					// and clear the list.
@@ -2475,13 +2473,13 @@ private:
 					if (close_loop_found)
 					{
 						#ifdef SHOW_LOOPS_CONST
-						global_graphics->clear();
+						//global_graphics->clear();
 
 						for (std::list<Halfedge_iterator>::iterator itr = temp_segments.begin();itr != temp_segments.end(); ++itr)
 						{
-							global_graphics->draw_edge<Kernel>((*itr)->curve(),QColor(0,255,0),true);
+							//global_graphics->draw_edge<Kernel>((*itr)->curve(),QColor(0,255,0),true);
 						}
-						global_graphics->display();
+						//global_graphics->display();
 						#endif
 						removeHalfEdgesArrPartEnd(arr,edges_set,temp_segments,close_loop_handle,before_close_loop_handle);
 						nextLoop(temp_segments, arr,edges_set, curr_halfedge,start_halfedge,isOrientable,loop_counter);
@@ -2490,14 +2488,14 @@ private:
 					else
 					{// we are stuck.
 						#ifdef SHOW_LOOPS_CONST
-						global_graphics->clear();
+						//global_graphics->clear();
 
 						for (std::list<Halfedge_iterator>::iterator itr = temp_segments.begin();itr != temp_segments.end(); ++itr)
 						{
-							global_graphics->draw_edge<Kernel>((*itr)->curve(),QColor(0,255,0),true);
+							//global_graphics->draw_edge<Kernel>((*itr)->curve(),QColor(0,255,0),true);
 						}
 						
-						global_graphics->display();
+						//global_graphics->display();
 						#endif
 						removeHalfEdgesArr(arr,edges_set,temp_segments);
 						nextLoop(temp_segments, arr,edges_set, curr_halfedge,start_halfedge,isOrientable,loop_counter);
@@ -2523,13 +2521,13 @@ private:
 
 
 						#ifdef SHOW_LOOPS_CONST
-						global_graphics->clear();
+						//global_graphics->clear();
 
 						for (std::list<Halfedge_iterator>::iterator itr = temp_segments.begin();itr != temp_segments.end(); ++itr)
 						{
-							global_graphics->draw_edge<Kernel>((*itr)->curve(),QColor(0,255,0),true);
+							//global_graphics->draw_edge<Kernel>((*itr)->curve(),QColor(0,255,0),true);
 						}
-						global_graphics->display();
+						//global_graphics->display();
 						#endif
 						removeHalfEdgesArrPartEnd(arr,edges_set,temp_segments,close_loop_handle,before_close_loop_handle);
 						nextLoop(temp_segments, arr,edges_set, curr_halfedge,start_halfedge,isOrientable,loop_counter);
@@ -2545,14 +2543,14 @@ private:
 					if (next_halfedge== start_halfedge)
 					{ 
 						#ifdef SHOW_LOOPS_CONST
-						global_graphics->clear();
+						//global_graphics->clear();
 
 						for (std::list<Halfedge_iterator>::iterator itr = temp_segments.begin();itr != temp_segments.end(); ++itr)
 						{
-							global_graphics->draw_edge<Kernel>((*itr)->curve(),QColor(0,255,0),true);
+							//global_graphics->draw_edge<Kernel>((*itr)->curve(),QColor(0,255,0),true);
 						}
 
-						global_graphics->display();
+						//global_graphics->display();
 						#endif
 						removeHalfedgesSet(arr,edges_set,temp_segments);
 						nextLoop(temp_segments, arr,edges_set, curr_halfedge,start_halfedge,isOrientable,loop_counter);					
@@ -2575,7 +2573,7 @@ private:
 			curr_halfedge =  (*edges_set.begin());
 			while (curr_halfedge->visited && edges_set.size()>0 )
 			{
-				Edges_set::iterator testItem = edges_set.find(curr_halfedge);
+				typename Edges_set::iterator testItem = edges_set.find(curr_halfedge);
 				if (testItem == edges_set.end()){
 					testItem = edges_set.find(((curr_halfedge)->twin()));
 					if (testItem != edges_set.end()){
@@ -2652,12 +2650,12 @@ private:
 	{
 		bool part_reached = false;
 		 
-		Edges_set::iterator partItem = edges_set.find(partition_itr);
+		typename Edges_set::iterator partItem = edges_set.find(partition_itr);
 		if (partItem == edges_set.end()){
 			partItem = edges_set.find(((*partition_itr).twin()));
 		}
 
-		Edges_set::iterator part_item_end = edges_set.find(partition_end_itr);
+		typename Edges_set::iterator part_item_end = edges_set.find(partition_end_itr);
 		if (part_item_end == edges_set.end()){
 			part_item_end = edges_set.find(((*partition_end_itr).twin()));
 		}
@@ -2676,7 +2674,7 @@ private:
 
 		bool mark_change_part = false;
 
-		for (std::list<Halfedge_iterator>::iterator itr = temp_segments.begin();itr != temp_segments.end();++itr)
+		for (typename std::list<Halfedge_iterator>::iterator itr = temp_segments.begin();itr != temp_segments.end();++itr)
 		{
 			//int a =  edges_set.size();
 			//int b = temp_segments.size();
@@ -2693,7 +2691,7 @@ private:
 
 			
 			
-			Edges_set::iterator testItem = edges_set.find(*itr);
+			typename Edges_set::iterator testItem = edges_set.find(*itr);
 			if (testItem == edges_set.end()){
 				testItem = edges_set.find(((*itr)->twin()));
 				if (testItem != edges_set.end()){
@@ -3041,10 +3039,10 @@ private:
 
 	void draw_arr(Arrangement_history_2& arr) const
 	{
-		QColor c(0,255,0);
+		//QColor c(0,255,0);
 		for (Edge_iterator itr = arr.edges_begin();itr!=arr.edges_end();++itr){
 			 printSegment(itr->curve());
-			global_graphics->draw_edge<Kernel>(itr->curve(),c,true);
+			//global_graphics->draw_edge<Kernel>(itr->curve(),c,true);
 			
 		}
 
@@ -3058,12 +3056,12 @@ private:
 		}
 		hi->*/
 		Vertex_iterator vit;
-		QColor c2(0,255,255);
+		//QColor c2(0,255,255);
 		for (vit = arr.vertices_begin(); vit != arr.vertices_end(); ++vit) {
 		
 		  if (vit->is_isolated())
 		  {
-			  global_graphics->draw_cross<Kernel>(vit->point(),c2,0.1);
+			  //global_graphics->draw_cross<Kernel>(vit->point(),c2,0.1);
 		  }
     
 		}
@@ -3075,6 +3073,25 @@ private:
 
 
 };
+
+template <class Kernel, class Container>
+Polygon_with_holes_2<Kernel,Container>
+minkowski_sum_2_ (const Polygon_2<Kernel,Container>& pgn1,
+                 const Polygon_2<Kernel,Container>& pgn2)
+{
+  Minkowski_sum_by_convolution_lien_2<Kernel, Container>  mink_sum;
+  Polygon_2<Kernel,Container>                        sum_bound;
+  std::list<Polygon_2<Kernel,Container> >            sum_holes;
+
+  if (pgn1.size() > pgn2.size())
+    mink_sum (pgn1, pgn2, sum_bound, std::back_inserter(sum_holes));
+  else
+    mink_sum (pgn2, pgn1, sum_bound, std::back_inserter(sum_holes));
+
+  return (Polygon_with_holes_2<Kernel,Container> (sum_bound,
+                                                  sum_holes.begin(),
+                                                  sum_holes.end()));
+}
 
 };
 
