@@ -297,7 +297,7 @@ public:
 
 	  Construct_min_vertex_2 min_vertex_obj = m_traits->construct_min_vertex_2_object();
 	  Construct_max_vertex_2 max_vertex_obj = m_traits->construct_max_vertex_2_object();
-	  ++_my_global_counter;
+	  //++_my_global_counter;
       int endp_coll =0;
 	  
 	  if ((xcv1.data()._min_id == xcv2.data()._min_id) && (xcv2.data()._min_id != no_state)){

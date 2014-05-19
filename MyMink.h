@@ -1004,23 +1004,23 @@ public:
 	boost::timer t_abb;
 	_aabb_collision_detector = new AABBCollisionDetector<Kernel_,Container_>(p2,revP1);
 	double aabb_build_time = t_abb.elapsed();
-	std::cout << "aabb tree build : " <<aabb_build_time << std::endl;
+	//std::cout << "aabb tree build : " <<aabb_build_time << std::endl;
 	Segments_list reduced_conv;
 	//buildReducedConvolution(pgn1,pgn2,reduced_conv);
 	boost::timer t1;
 	buildReducedConvolutionFiberGrid(pgn1,pgn2,reduced_conv);
-	rc_time = t1.elapsed();
+	//rc_time = t1.elapsed();
 	
-	_my_global_counter = reduced_conv.size();
-	std::cout << "Number of convolution segments : " << _my_global_counter << std::endl;
-	std::cout << "reduced conv build : " <<rc_time << std::endl;
+	//_my_global_counter = reduced_conv.size();
+	//std::cout << "Number of convolution segments : " << _my_global_counter << std::endl;
+	//std::cout << "reduced conv build : " <<rc_time << std::endl;
 	Arrangement_history_2 arr;
 	boost::timer t2;
 	buildArrangementFromConv(reduced_conv,arr);
-	arr_build_time =  t2.elapsed();
-	std::cout << "buildArrangementFromConv : " << arr_build_time << std::endl; 
+	//arr_build_time =  t2.elapsed();
+	//std::cout << "buildArrangementFromConv : " << arr_build_time << std::endl; 
 	//LogMyMemoryUsage();
-	std::cout << "sizeOfReducedConvArrangement : " << arr.number_of_edges() << std::endl;
+	//std::cout << "sizeOfReducedConvArrangement : " << arr.number_of_edges() << std::endl;
 
 	const Minkowski_sum_by_convolution_lien_2* ptr = this;
 	//	ConvSegMapper mapper( &arr,const_cast <Minkowski_sum_by_convolution_lien_2*>(ptr));*/
@@ -1028,7 +1028,7 @@ public:
 	DegenerateCassesManager degHandler(&arr,const_cast <Minkowski_sum_by_convolution_lien_2*>(ptr),const_cast <Polygon_2*>(&pgn1),const_cast <Polygon_2*>(&pgn2),true);
 	degHandler.findDegenerateBorderVertices();
 	degHandler.markDegenerateEdges();
-	degenerate_stage = t4.elapsed();
+	//degenerate_stage = t4.elapsed();
 
 	boost::timer t3;
     /*
@@ -1080,9 +1080,9 @@ public:
 		arr.remove_edge(*itr);
 
 	degHandler.addDegenerateVerticesToArr();
-	final_stage_time = t3.elapsed();
-	std::cout << "degenerate stage : " <<degenerate_stage << std::endl; 
-	std::cout << "final stage : " <<final_stage_time << std::endl; 
+	//final_stage_time = t3.elapsed();
+	//std::cout << "degenerate stage : " <<degenerate_stage << std::endl; 
+	//std::cout << "final stage : " <<final_stage_time << std::endl; 
     /*
 	if (SHOW_STAGES)
 	{
