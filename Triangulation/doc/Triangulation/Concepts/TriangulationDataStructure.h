@@ -144,20 +144,28 @@ typedef Hidden_type Full_cell_handle;
 /// @{
 
 /*!
-Nested template class which allows to get the type of a triangulation
+\cgalAdvancedBegin
+This template class allows to get the type of a triangulation
 data structure that only changes the vertex type. It has to define a type
 `Other` which is a <I>rebound</I> triangulation data structure with `Vb2`
 as vertex type.
+\note It can be implemented using a nested template class.
+\cgalAdvancedEnd
 */
-typedef Hidden_type template <typename Vb2> struct Rebind_vertex;
+template <typename Vb2> 
+using Rebind_vertex = unspecified_type;
 
 /*!
-Nested template class which allows to get the type of a triangulation
+\cgalAdvancedBegin
+This template class allows to get the type of a triangulation
 data structure that only changes the full cell type. It has to define a type
 `Other` which is a <I>rebound</I> triangulation data structure with `Fcb2`
 as full cell type.
+\note It can be implemented using a nested template class.
+\cgalAdvancedEnd
 */
-typedef Hidden_type template <typename Fcb2> struct Rebind_full_cell;
+template <typename Fcb2> 
+using Rebind_full_cell = unspecified_type;
 
 
 /// @}
@@ -584,20 +592,28 @@ and `current_dimension() != -2`.
 void remove_decrease_dimension(Vertex_handle v, Vertex_handle star);
 
 /*!
+\cgalAdvancedFunction
+\cgalAdvancedBegin
 Remove the vertex `v` from the triangulation.
-
+\cgalAdvancedEnd
+\pre `v` is a vertex of `tds`. 
 */
 void delete_vertex(Vertex_handle v);
 
 /*!
+\cgalAdvancedFunction
+\cgalAdvancedBegin
 Remove the full cell `c` from the triangulation.
-
+\cgalAdvancedEnd
+\pre `c` is a full cell of `tds`.
 */
 void delete_full_cell(Full_cell_handle c);
 
 /*!
-Remove the full cells in the range `[start,end)` from the triangulation.
-
+\cgalAdvancedFunction
+\cgalAdvancedBegin
+Calls `delete_full_cell` over an iterator range of value type `Full_cell_handle`. 
+\cgalAdvancedEnd
 */
 template< typename ForwardIterator > void
 delete_full_cells(ForwardIterator start, ForwardIterator end);
