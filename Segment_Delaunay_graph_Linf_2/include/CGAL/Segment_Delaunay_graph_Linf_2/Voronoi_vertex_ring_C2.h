@@ -1336,31 +1336,31 @@ private:
   Sign incircle_p_no_easy(const Site_2& st, PSS_Type ) const
   {
     CGAL_precondition( st.is_point() );
-    Point_2 t = st.point();
+    const Point_2 t = st.point();
 
-    Point_2 pref = p_ref().point();
+    const Point_2 pref = p_ref().point();
 
-    RT xref = pref.x();
-    RT yref = pref.y();
+    const RT xref = pref.x();
+    const RT yref = pref.y();
 
-    RT vx = ux_ - xref * uz_;
-    RT vy = uy_ - yref * uz_;
+    const RT vx = ux_ - xref * uz_;
+    const RT vy = uy_ - yref * uz_;
 
-    RT Rs =
+    const RT Rs =
       CGAL::max ( CGAL::abs(vx), CGAL::abs(vy) );
 
-    RT tx = t.x() ;
-    RT ty = t.y() ;
+    const RT tx = t.x() ;
+    const RT ty = t.y() ;
 
-    RT scalediffdvtx = ux_ - tx * uz_;
-    RT scalediffdvty = uy_ - ty * uz_;
+    const RT scalediffdvtx = ux_ - tx * uz_;
+    const RT scalediffdvty = uy_ - ty * uz_;
 
-    RT Rs1 =
+    const RT Rs1 =
       CGAL::max(
         CGAL::abs(scalediffdvtx),
         CGAL::abs(scalediffdvty) );
 
-    Sign s_Q = CGAL::sign(Rs1 - Rs);
+    const Sign s_Q = CGAL::sign(Rs1 - Rs);
 
     if (s_Q != ZERO) {
       return s_Q;
@@ -1374,11 +1374,6 @@ private:
       // we might have to refine
 
       // tocheck
-
-      Sign retval = ZERO;
-
-      RT d_fine = CGAL::min(CGAL::abs(scalediffdvtx),
-                            CGAL::abs(scalediffdvty));
 
       const Site_2 & pt_site =
         p_.is_point() ? p_ : (q_.is_point() ? q_ : r_);
@@ -1439,9 +1434,12 @@ private:
         }
       }
 
-      Point_2 pref = pt_site.point();
-      RT scalediffdvpx = ux_ - pref.x() * uz_;
-      RT scalediffdvpy = uy_ - pref.y() * uz_;
+      const RT d_fine = CGAL::min(CGAL::abs(scalediffdvtx),
+                            CGAL::abs(scalediffdvty));
+      const Point_2 pref = pt_site.point();
+      const RT scalediffdvpx = ux_ - pref.x() * uz_;
+      const RT scalediffdvpy = uy_ - pref.y() * uz_;
+      Comparison_result retval = EQUAL;
       if (CGAL::compare(scalediffdvpx, scalediffdvtx) == EQUAL) {
         if (CGAL::compare(CGAL::abs(scalediffdvpx), Rs1) == EQUAL) {
           retval = CGAL::compare(d_fine, CGAL::abs(scalediffdvpy));
@@ -1452,15 +1450,19 @@ private:
           retval = CGAL::compare(d_fine, CGAL::abs(scalediffdvpx));
         }
       }
+      CGAL_SDG_DEBUG(std::cout << "debug: PSS temporary retval = "
+          << retval << std::endl;);
       if (retval == SMALLER) {
         return NEGATIVE;
       } else if (retval == LARGER) {
         return POSITIVE;
       } else {
-        //if p and t lies on the same side of the square touching
-        //p,q,r return positive
-        if (  (CGAL::compare(pref.x() - vx, t.x() - vx) == EQUAL)
-            or(CGAL::compare(pref.y() - vy, t.y() - vy) == EQUAL) ) {
+        if (  (CGAL::compare(pref.x(), t.x()) == EQUAL)
+            or(CGAL::compare(pref.y(), t.y()) == EQUAL) ) {
+          CGAL_assertion(
+               (CGAL::compare(scalediffdvpx, scalediffdvtx) == EQUAL)
+            or (CGAL::compare(scalediffdvpy, scalediffdvty) == EQUAL)
+              );
           return POSITIVE;
         }
       }
