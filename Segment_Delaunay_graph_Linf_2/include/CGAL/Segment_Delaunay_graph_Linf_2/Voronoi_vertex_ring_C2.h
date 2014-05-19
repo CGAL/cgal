@@ -1380,42 +1380,31 @@ private:
       RT d_fine = CGAL::min(CGAL::abs(scalediffdvtx),
                             CGAL::abs(scalediffdvty));
 
-      const Site_2 * s1_ptr;
-      const Site_2 * s2_ptr;
+      const Site_2 & pt_site =
+        p_.is_point() ? p_ : (q_.is_point() ? q_ : r_);
+      const Site_2 & s1 = p_.is_point() ? q_ : (q_.is_point() ? r_ : p_);
+      const Site_2 & s2 = p_.is_point() ? r_ : (q_.is_point() ? p_ : q_);
 
-      if (p_.is_point()) {
-        s1_ptr = &q_;
-        s2_ptr = &r_;
-      } else if (q_.is_point()) {
-        s1_ptr = &r_;
-        s2_ptr = &p_;
-      } else {
-        CGAL_assertion(r_.is_point());
-        s1_ptr = &p_;
-        s2_ptr = &q_;
-      }
-
-
-      bool is_s1src_s2 = is_endpoint_of((*s1_ptr).source_site(), *s2_ptr);
-      bool is_s1trg_s2 = is_endpoint_of((*s1_ptr).target_site(), *s2_ptr);
+      const bool is_s1src_s2 = is_endpoint_of(s1.source_site(), s2);
+      const bool is_s1trg_s2 = is_endpoint_of(s1.target_site(), s2);
 
       if (is_s1src_s2 or is_s1trg_s2) {
-        if ((is_site_h_or_v(*s1_ptr) and (not is_site_h_or_v(*s2_ptr))) or
-            (is_site_h_or_v(*s2_ptr) and (not is_site_h_or_v(*s1_ptr)))   )
+        if ((is_site_h_or_v(s1) and (not is_site_h_or_v(s2))) or
+            (is_site_h_or_v(s2) and (not is_site_h_or_v(s1)))   )
         {
           CGAL_SDG_DEBUG(std::cout << "debug vring "
               << "s1, s2 candidates" << std::endl; );
-          if (is_site_horizontal(*s1_ptr) or is_site_horizontal(*s2_ptr)) {
+          if (is_site_horizontal(s1) or is_site_horizontal(s2)) {
             Site_2 s1test = is_s1src_s2?
-                       ((*s1_ptr).source_site()):
-                       ((*s1_ptr).target_site());
+                       (s1.source_site()):
+                       (s1.target_site());
             if (scmpx(s1test, st)
                 == EQUAL)
             {
               // return NEGATIVE or ZERO
               Point_2 s1ref =
                       (is_s1src_s2?
-                       (*s1_ptr).source_site(): (*s1_ptr).target_site())
+                       s1.source_site(): s1.target_site())
                       .point();
               RT scalediffdvs1y = uy_ - s1ref.y() * uz_;
               Comparison_result test =
@@ -1426,7 +1415,7 @@ private:
             }
           } else { // one of q, r is vertical
             if (scmpy(is_s1src_s2?
-                      (*s1_ptr).source_site(): (*s1_ptr).target_site(), st)
+                      s1.source_site(): s1.target_site(), st)
                 == EQUAL)
             {
               // return NEGATIVE or ZERO
@@ -1434,7 +1423,7 @@ private:
                   << "vertical case" << std::endl; );
               Point_2 s1ref =
                       (is_s1src_s2?
-                       (*s1_ptr).source_site(): (*s1_ptr).target_site())
+                       s1.source_site(): s1.target_site())
                       .point();
               RT scalediffdvs1x = ux_ - s1ref.x() * uz_;
               CGAL_SDG_DEBUG(std::cout << "debug vring "
@@ -1450,119 +1439,29 @@ private:
         }
       }
 
-
-      Point_2 pref;
-
-      if (p_.is_point()) {
-        pref = p_.point();
-
-        RT scalediffdvpx = ux_ - pref.x() * uz_;
-        RT scalediffdvpy = uy_ - pref.y() * uz_;
-
-        if (CGAL::compare(scalediffdvpx, scalediffdvtx) == EQUAL) {
-          if (CGAL::compare(CGAL::abs(scalediffdvpx), Rs1) == EQUAL) {
-            retval = CGAL::compare(d_fine, CGAL::abs(scalediffdvpy));
-          }
-        }
-        if (CGAL::compare(scalediffdvpy, scalediffdvty) == EQUAL) {
-          if (CGAL::compare(CGAL::abs(scalediffdvpy), Rs1) == EQUAL) {
-            retval = CGAL::compare(d_fine, CGAL::abs(scalediffdvpx));
-          }
-        }
-        if (retval == SMALLER) {
-          return NEGATIVE;
-        } else if (retval == LARGER) {
-          return POSITIVE;
-        } else {//retval == ZERO
-          //if p and t lies on the same side of the square touching
-          //p,q,r return positive
-          if (  (CGAL::compare(pref.x() - vx, t.x() - vx) == EQUAL)
-              or(CGAL::compare(pref.y() - vy, t.y() - vy) == EQUAL) ) {
-            return POSITIVE;
-          }
-
+      Point_2 pref = pt_site.point();
+      RT scalediffdvpx = ux_ - pref.x() * uz_;
+      RT scalediffdvpy = uy_ - pref.y() * uz_;
+      if (CGAL::compare(scalediffdvpx, scalediffdvtx) == EQUAL) {
+        if (CGAL::compare(CGAL::abs(scalediffdvpx), Rs1) == EQUAL) {
+          retval = CGAL::compare(d_fine, CGAL::abs(scalediffdvpy));
         }
       }
-
-      Point_2 qref;
-
-      if (q_.is_point()) {
-        qref = q_.point();
-
-        RT scalediffdvqx = ux_ - qref.x() * uz_;
-        RT scalediffdvqy = uy_ - qref.y() * uz_;
-
-        if (CGAL::compare(scalediffdvqx, scalediffdvtx) == EQUAL) {
-          if (CGAL::compare(CGAL::abs(scalediffdvqx), Rs1) == EQUAL) {
-            retval = CGAL::compare(d_fine, CGAL::abs(scalediffdvqy));
-          }
-        }
-        if (CGAL::compare(scalediffdvqy, scalediffdvty) == EQUAL) {
-          if (CGAL::compare(CGAL::abs(scalediffdvqy), Rs1) == EQUAL) {
-            retval = CGAL::compare(d_fine, CGAL::abs(scalediffdvqx));
-          }
-        }
-        CGAL_SDG_DEBUG(std::cout << "debug vring q point, "
-            << "retval=" << retval << std::endl; );
-        if (retval == SMALLER) {
-          return NEGATIVE;
-        } else if (retval == LARGER) {
-          return POSITIVE;
-        } else {//retval == ZERO
-          //if p and t lies on the same side of the square touching
-          //p,q,r return positive
-          if (  (CGAL::compare(qref.x() - vx, t.x() - vx) == EQUAL)
-              or(CGAL::compare(qref.y() - vy, t.y() - vy) == EQUAL) ) {
-            return POSITIVE;
-          }
-
+      if (CGAL::compare(scalediffdvpy, scalediffdvty) == EQUAL) {
+        if (CGAL::compare(CGAL::abs(scalediffdvpy), Rs1) == EQUAL) {
+          retval = CGAL::compare(d_fine, CGAL::abs(scalediffdvpx));
         }
       }
-
-      Point_2 rref;
-
-      if (r_.is_point()) {
-        rref = r_.point();
-
-        RT scalediffdvrx = ux_ - rref.x() * uz_;
-        RT scalediffdvry = uy_ - rref.y() * uz_;
-
-        if (CGAL::compare(scalediffdvrx, scalediffdvtx) == EQUAL) {
-          if (CGAL::compare(CGAL::abs(scalediffdvrx), Rs1) == EQUAL) {
-            retval = CGAL::compare(d_fine, CGAL::abs(scalediffdvry));
-          }
-        }
-        if (CGAL::compare(scalediffdvry, scalediffdvty) == EQUAL) {
-          if (CGAL::compare(CGAL::abs(scalediffdvry), Rs1) == EQUAL) {
-            retval = CGAL::compare(d_fine, CGAL::abs(scalediffdvrx));
-          }
-        }
-        if (retval == SMALLER) {
-          return NEGATIVE;
-        } else if (retval == LARGER) {
+      if (retval == SMALLER) {
+        return NEGATIVE;
+      } else if (retval == LARGER) {
+        return POSITIVE;
+      } else {
+        //if p and t lies on the same side of the square touching
+        //p,q,r return positive
+        if (  (CGAL::compare(pref.x() - vx, t.x() - vx) == EQUAL)
+            or(CGAL::compare(pref.y() - vy, t.y() - vy) == EQUAL) ) {
           return POSITIVE;
-        } else {//retval == ZERO
-          //if p and t lies on the same side of the square touching
-          //p,q,r return positive
-          if (  (CGAL::compare(rref.x() - vx, t.x() - vx) == EQUAL)
-              or(CGAL::compare(rref.y() - vy, t.y() - vy) == EQUAL) ) {
-            return POSITIVE;
-          }
-
-        }
-
-      }
-      else {
-        // here r is segment
-        if (not is_site_h_or_v(r_)) {
-          // here q is non-axis parallel
-          // therefore, it touches the square at a corner
-          CGAL_SDG_DEBUG(std::cout
-              << "debug vring non-hv r=" << r_
-              << std::endl;);
-          if (point_inside_touching_sides(st, r_)) {
-            return NEGATIVE;
-          }
         }
       }
 
