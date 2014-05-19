@@ -101,8 +101,25 @@ public:
   };
 
   typedef typename Constraint_list::iterator Constraint_it;
-  
-  typedef Vertex_list* Constraint_id;
+
+  struct Constraint_id {
+    Vertex_list* vl;
+
+    Constraint_id(Vertex_list* vl)
+      : vl(vl)
+    {}
+
+    operator std::pair<Vertex_handle, Vertex_handle>() 
+    {
+      return std::make_pair(vl->skip_begin(), vl->skip_end());
+    }
+    const Vertex_list& operator*() const { return *vl; }
+    Vertex_list& operator*() { return *vl; }
+    const Vertex_list* operator->() const { return vl; }
+    Vertex_list* operator->() { return vl; }
+
+    operator Vertex_list* (){ return vl; }
+  };
   
   class Context {
     friend class Polyline_constraint_hierarchy_2<T,Data>;
@@ -186,7 +203,7 @@ public:
   // insert/remove
   void add_Steiner(T va, T vb, T vx);
   Vertex_list* insert_constraint(T va, T vb);
-  void append_constraint(Vertex_list* vl, T va, T vb);
+  void append_constraint(Constraint_id vl, T va, T vb);
   void swap(Constraint_id first, Constraint_id second);
   void remove_constraint(Constraint_id cid);
   void split_constraint(T va, T vb, T vc);
@@ -830,7 +847,7 @@ insert_constraint(T va, T vb){
 template <class T, class Data>
 void
 Polyline_constraint_hierarchy_2<T,Data>::
-append_constraint(Vertex_list* vl, T va, T vb){
+append_constraint(Constraint_id vl, T va, T vb){
   Edge        he = make_edge(va, vb);
   Context_list* fathers;
 

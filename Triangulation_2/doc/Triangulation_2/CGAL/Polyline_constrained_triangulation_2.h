@@ -288,7 +288,7 @@ Context context(Vertex_handle va, Vertex_handle vb) const;
 
 /*! 
 Returns an iterator pointing on the first `Context` 
-of the sequence of `Contexts` 
+of the sequence of contexts
 corresponding to the constraints enclosing the sub-constraint`(va,vb)`. 
 \pre `va` and `vb` refer to the vertices of a constrained edge of the triangulation. 
 */ 
@@ -297,7 +297,7 @@ Vertex_handle vb) const;
 
 /*! 
 Returns an iterator past the last `Context` 
-of the sequence of `Contexts` 
+of the sequence of contexts
 corresponding to the constraints enclosing the `(va,vb)`. 
 \pre `va` and `vb` refer to the vertices of a constrained edge of the triangulation. 
 */ 
