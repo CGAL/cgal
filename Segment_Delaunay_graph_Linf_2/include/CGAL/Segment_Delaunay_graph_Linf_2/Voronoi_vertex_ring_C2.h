@@ -1516,7 +1516,6 @@ private:
             return POSITIVE;
           }
 
-          return ZERO;
         }
       }
 
@@ -1550,7 +1549,6 @@ private:
             return POSITIVE;
           }
 
-          return ZERO;
         }
 
       }
@@ -2736,6 +2734,8 @@ private:
 
     } // end of case: is_r_endp_of_t
 
+    CGAL_SDG_DEBUG(std::cout << "debug compute_helper about to return false"
+        << std::endl;);
     return false;
 
   }
