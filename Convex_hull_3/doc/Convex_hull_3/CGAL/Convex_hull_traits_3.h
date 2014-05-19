@@ -117,17 +117,17 @@ unspecified_type Less_signed_distance_to_plane_3;
 /*!
 
 */ 
-Projection_traits_xy_3<R> Traits_xy; 
+Projection_traits_xy_3<R> Traits_xy_3;
 
 /*!
 
 */ 
-Projection_traits_xz_3<R> Traits_xz; 
+Projection_traits_xz_3<R> Traits_xz_3;
 
 /*!
 
 */ 
-Projection_traits_yz_3<R> Traits_yz; 
+Projection_traits_yz_3<R> Traits_yz_3;
 
 /*!
 

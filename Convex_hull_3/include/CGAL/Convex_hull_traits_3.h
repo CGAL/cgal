@@ -202,8 +202,10 @@ class Convex_hull_traits_3
                                                Less_signed_distance_to_plane_3;
 
   // required for degenerate case of all points coplanar
-  typedef CGAL::Max_coordinate_3<Vector_3>             Max_coordinate_3;
-
+  typedef CGAL::Max_coordinate_3<Vector_3>              Max_coordinate_3;
+  typedef CGAL::Projection_traits_xy_3<R>               Traits_xy_3;
+  typedef CGAL::Projection_traits_yz_3<R>               Traits_yz_3;
+  typedef CGAL::Projection_traits_xz_3<R>               Traits_xz_3;
   // for postcondition checking 
   typedef typename R::Ray_3                      Ray_3; 
 
