@@ -98,12 +98,8 @@ in the concept `TriangulationDataStructure::FullCell`.
 */
 typedef unspecified_type Full_cell;
 
-/*! 
-
-\cgalModifBegin
+/*!
 A model of the concept `FullCellData`.
-\cgalModifEnd
-
 */ 
 typedef unspecified_type Full_cell_data; 
 
@@ -745,22 +741,14 @@ bool is_valid(bool verbose=false) const;
 /// 
 /// @{
 /*!
-
-\cgalModifBegin
 Writes (possibly) non-combinatorial information about vertex `v` to the stream
 `os`.
-\cgalModifEnd
-
 */
 template<class TriangulationDataStructure> 
 std::ostream& operator<<(std::ostream & os, const Triangulation_ds_vertex<TriangulationDataStructure> & v);
 
 /*!
-
-\cgalModifBegin
 Reads from stream `is` the vertex information written by `operator<<`.
-\cgalModifEnd
-
 */
 template<class TriangulationDataStructure> 
 std::istream& operator>>(std::istream & is, Triangulation_ds_vertex<TriangulationDataStructure> & v);
@@ -1026,23 +1014,15 @@ bool is_valid(bool verbose=false) const;
 /// @{
                   
 /*!
-
-\cgalModifBegin
 Writes (possibly) non-combinatorial information about full cell `c` to the stream
 `os`.
-\cgalModifEnd
-
 */
 template<class TriangulationDataStructure> 
 std::ostream& operator<<(std::ostream & os, const Triangulation_ds_full_cell<TriangulationDataStructure> & c);
 
 /*!
-
-\cgalModifBegin
 Reads from stream `is` the full cell information written 
 by `operator<<`.
-\cgalModifEnd
-
 */
 template<class TriangulationDataStructure> 
 std::istream& operator>>(std::istream & is, Triangulation_ds_full_cell<TriangulationDataStructure> & c);

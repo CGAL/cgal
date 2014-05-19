@@ -4,14 +4,12 @@ namespace CGAL {
 /*!
 \ingroup PkgTriangulationsTriangulationClasses
 
-\cgalModifBegin
 The class `Triangulation` is used to store and query the full cells and vertices of
 a triangulationin dimension \f$ d\f$(see the 
 \ref Chapter_Triangulations "User Manual" for
 a definition of "triangulation"). A special vertex, named
 <I>infinite vertex</I>, is used to triangulate the outside of the convex
 hull of the points in so called <I>infinite cells</I>.
-\cgalModifEnd
 
 Parameters
 --------------
@@ -120,12 +118,10 @@ iterator over all vertices (including the infinite one)
 typedef Tds::Vertex_iterator
 Vertex_iterator;
 
-\cgalModifBegin
 /*!
 iterator over finite vertices 
 */ 
 typedef unspecified_type Finite_vertex_iterator;
-\cgalModifEnd
 
 /*!
 handle to a full cell
@@ -140,12 +136,10 @@ typedef
 Tds::Full_cell_iterator
 Full_cell_iterator;
 
-\cgalModifBegin
 /*!
 iterator over finite full cells
 */
 typedef unspecified_type Finite_full_cell_iterator;
-\cgalModifEnd
 
 /*!
 iterator over all facets (including the infinite ones)
@@ -153,12 +147,10 @@ iterator over all facets (including the infinite ones)
 typedef Tds::Facet_iterator
 Facet_iterator;
 
-\cgalModifBegin
 /*!
 iterator over finite facets
 */
 typedef unspecified_type Finite_facet_iterator;
-\cgalModifEnd
 
 /*!
 Size type (an unsigned integral

@@ -36,10 +36,8 @@ defined by the points in range `[start,end)`.
 If the simplex is positively
 oriented, then the positive side of sphere corresponds geometrically
 to its bounded side.
-\cgalModifBegin
 \pre If `Dimension`=`CGAL::``Dimension_tag<D>`, 
 then `std::distance(start,end)=D+1`.
-\cgalModifEnd
 The points in range
 `[start,end)` must be affinely independent, i.e., the simplex must
 not be flat.

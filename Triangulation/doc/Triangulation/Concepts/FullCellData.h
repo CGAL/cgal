@@ -3,11 +3,9 @@
 \ingroup PkgTriangulationsConcepts
 \cgalConcept
 
-\cgalModifBegin
 The concept `FullCellData` describes the requirements on the type which 
 is used to mark some full cells, during modifications of the triangulation data
 structure.
-\cgalModifEnd
 
 \sa `TriangulationDataStructure`
 \sa `TriangulationDSFullCell`
