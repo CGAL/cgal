@@ -185,7 +185,6 @@ class Convex_hull_traits_3
     }
   };
 
-  typedef typename R::Construct_vector_3         Construct_vector_3;
   typedef typename R::Construct_triangle_3       Construct_triangle_3;
   typedef typename R::Construct_centroid_3       Construct_centroid_3;
   typedef Point_triple_construct_orthogonal_vector_3<Self, R>
@@ -211,7 +210,6 @@ class Convex_hull_traits_3
 
   typedef typename R::Has_on_3                   Has_on_3;
   typedef Point_triple_oriented_side_3<Self>     Oriented_side_3;
-  typedef typename R::Intersect_3                Intersect_3;
   typedef typename R::Do_intersect_3             Do_intersect_3;
 
   Construct_segment_3
@@ -229,10 +227,6 @@ class Convex_hull_traits_3
   Construct_triangle_3
   construct_triangle_3_object() const
   { return Construct_triangle_3(); }
-
-  Construct_vector_3
-  construct_vector_3_object() const
-  { return Construct_vector_3(); }
 
   Construct_centroid_3  
   construct_centroid_3_object() const
@@ -269,10 +263,6 @@ class Convex_hull_traits_3
   Equal_3
   equal_3_object() const
   { return Equal_3(); }
-
-  Intersect_3
-  intersect_3_object() const
-  { return Intersect_3(); }
 
   Do_intersect_3
   do_intersect_3_object() const

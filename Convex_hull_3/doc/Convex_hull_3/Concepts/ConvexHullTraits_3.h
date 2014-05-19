@@ -60,14 +60,7 @@ Function object type that provides
 constructs and returns the triangle with vertices `p`, `q`, and 
 `r`. 
 */ 
-typedef unspecified_type Construct_triangle_3; 
-
-/*!
-Function object type that provides 
-`Vector_3 operator()(Point_3 p, Point_3 q)`, which constructs and 
-returns the vector `q`-`p`. 
-*/ 
-typedef unspecified_type Construct_vector_3; 
+typedef unspecified_type Construct_triangle_3;  
 
 /*!
 Predicate object type that provides 

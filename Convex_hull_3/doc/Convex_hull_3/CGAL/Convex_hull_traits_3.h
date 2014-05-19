@@ -67,11 +67,6 @@ typedef unspecified_type Construct_plane_3;
 /*!
 
 */ 
-typedef R::Construct_vector_3 Construct_vector_3; 
-
-/*!
-
-*/ 
 typedef R::Construct_triangle_3 Construct_triangle_3; 
 
 /*!
