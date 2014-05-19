@@ -1468,9 +1468,6 @@ private:
       if (not is_site_h_or_v(s1)) {
         // here s1 is non-axis parallel
         // therefore, it touches the square at a corner
-        CGAL_SDG_DEBUG(std::cout
-            << "debug vring non-hv s1=" << s1
-            << std::endl;);
         if (points_inside_touching_sides(s1, pt_site, s2, st)) {
           return NEGATIVE;
         }
@@ -1479,9 +1476,6 @@ private:
       if (not is_site_h_or_v(s2)) {
         // here s2 is non-axis parallel
         // therefore, it touches the square at a corner
-        CGAL_SDG_DEBUG(std::cout
-            << "debug vring non-hv s2=" << s2
-            << std::endl;);
         if (points_inside_touching_sides(s2, pt_site, s1, st)) {
           return NEGATIVE;
         }
@@ -3281,6 +3275,9 @@ private:
       const Site_2 & other_seg, const Site_2 & t)
   const
   {
+    CGAL_SDG_DEBUG(std::cout << "debug vring non-hv s=" << s
+        << " pt_site=" << pt_site << " other_seg=" << other_seg
+        << " t=" << t << std::endl;);
     CGAL_assertion(not is_site_h_or_v(s));
     CGAL_assertion(t.is_point());
     CGAL_assertion(s.is_segment());
@@ -3288,22 +3285,25 @@ private:
         is_endpoint_of(pt_site, other_seg)) {
       return false;
     }
-    Line_2 ls = compute_supporting_line(s.supporting_site());
-    Point_2 v(ux_,uy_,uz_);
-    Point_2 corner =
+    const Line_2 ls = compute_supporting_line(s.supporting_site());
+    const Point_2 v(ux_,uy_,uz_);
+    const Point_2 corner =
       compute_linf_projection_nonhom(ls, v);
-    Line_2 ltest;
-    if (has_positive_slope(s)) {
-      ltest = compute_pos_45_line_at(v);
-    } else {
-      ltest = compute_neg_45_line_at(v);
-    }
-    Oriented_side ost = oriented_side_of_line(ltest, t.point());
-    Oriented_side osx = oriented_side_of_line(ltest, corner);
+    const Line_2 ltest = has_positive_slope(s) ?
+      compute_pos_45_line_at(v): compute_neg_45_line_at(v);
+    CGAL_assertion(
+        oriented_side_of_line(ltest, v) == ON_ORIENTED_BOUNDARY);
+    const Oriented_side ost = oriented_side_of_line(ltest, t.point());
+    const Oriented_side osx = oriented_side_of_line(ltest, corner);
     CGAL_assertion(scmpx(t, pt_site) != EQUAL);
     CGAL_assertion(scmpy(t, pt_site) != EQUAL);
+    CGAL_SDG_DEBUG(std::cout << "debug points_inside_touching_sides"
+        << " ltest: " << ltest.a() << ' ' << ltest.b() << ' ' <<  ltest.c()
+        << " v=" << v << " ost=" << ost
+        << " corner=" << corner << " osx=" << osx << std::endl;);
     if (ost == osx) {
-      Oriented_side osp = oriented_side_of_line(ltest, pt_site.point());
+      const Oriented_side osp = oriented_side_of_line(
+          ltest, pt_site.point());
       if (ost == osp) {
         return true;
       }
