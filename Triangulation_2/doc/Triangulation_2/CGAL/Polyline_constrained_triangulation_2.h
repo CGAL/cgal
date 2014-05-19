@@ -60,7 +60,7 @@ typedef Itag Intersection_tag;
 /*!
 The identifier of a polyline constraint.
 */
-  typedef Hidden_type Constraint_id;
+  typedef unspecified_type Constraint_id;
 
 /*! 
 An iterator to visit 
@@ -68,7 +68,7 @@ all the input constraints. The order of visit is undefined.
 The value type of this iterator is `Constraint_id` corresponding to the 
 endpoints of the constraint. 
 */ 
-typedef Hidden_type Constraint_iterator; 
+typedef unspecified_type Constraint_iterator; 
 
 /*! 
 An iterator 
@@ -79,14 +79,14 @@ The value type of this iterator is a pair
 corresponding to the vertices of the 
 sub-constraint. 
 */ 
-typedef Hidden_type Subconstraint_iterator; 
+typedef unspecified_type Subconstraint_iterator; 
 
 /*! 
 An iterator on the 
-vertices of the chain of triangulation edges representing a 
+vertices of the chain of sub-constraints representing a 
 constraint. The value type of this iterator is `Vertex_handle`. 
 */ 
-typedef Hidden_type Vertices_in_constraint_iterator; 
+typedef unspecified_type Vertices_in_constraint_iterator; 
 
 /*! 
 This type allows to access the vertices of a constraint that passes 
@@ -119,7 +119,7 @@ constraints enclosing a given sub-constraint. The value type of this
 iterator 
 is `Context`. 
 */ 
-typedef Hidden_type Context_iterator; 
+typedef unspecified_type Context_iterator; 
 
 /// @} 
 
@@ -335,27 +335,27 @@ The simplification algorithm uses the following types and functions.
 /// @{
 
 /*!
-An iterator on the points of the chain of triangulation edges representing a
+An iterator on the points of the chain of sub-constraints representing a
 constraint. The value type of this iterator is `Point`.
-A `Vertices_in_constraint_iterator` can be converted into
+A \link Polyline_constrained_triangulation_2::Vertices_in_constraint_iterator `Vertices_in_constraint_iterator`\endlink can be converted into
 a `Points_in_constraint_iterator`, but not the other way round.
 */
-typedef Hidden_type Points_in_constraint_iterator;
+typedef unspecified_type Points_in_constraint_iterator;
 
 /*! 
-Removes the vertex at `viq` from the constraint and the triangulation.
+Removes the vertex at `vicq` from the constraint and the triangulation.
 Only the vertex but not the point is removed from the constraint `cid`.
-\pre The vertices `vip`, `viq`, and `vir` must be three successive 
+\pre The vertices `vicp`, `vicq`, and `vicr` must be three successive 
 vertices in a constraint.
-\pre No other constraint must pass through `viq`.
-\pre The line segment between `vip` and `vir` must not intersect any constraint.
+\pre No other constraint must pass through `vicq`.
+\pre The line segment between `vicp` and `vicr` must not intersect any constraint.
 \pre All vertices of the triangulation must be a vertex of a constaint.
  */
 
 void
-  simplify(Vertices_in_constraint_iterator vip,
-           Vertices_in_constraint_iterator viq,
-           Vertices_in_constraint_iterator vir);
+  simplify(Vertices_in_constraint_iterator vicp,
+           Vertices_in_constraint_iterator vicq,
+           Vertices_in_constraint_iterator vicr);
 
 /*!
 Removes the points that were kept in the constraint `cid`.
