@@ -44,6 +44,7 @@
 #include <boost/bind.hpp>
 #include <boost/next_prior.hpp>
 #include <boost/type_traits/is_floating_point.hpp>
+#include <boost/type_traits/is_same.hpp>
 #include <CGAL/internal/Exact_type_selector.h>
 
 
@@ -85,13 +86,18 @@ template <class Traits,
           class Is_floating_point=
             typename boost::is_floating_point<typename Kernel_traits<typename Traits::Point_3>::Kernel::FT>::type,
           class Has_filtered_predicates_tag=typename Kernel_traits<typename Traits::Point_3>::Kernel::Has_filtered_predicates_tag,
-          class Has_cartesian_tag=typename Kernel_traits<typename Traits::Point_3>::Kernel::Kernel_tag >
+          class Has_cartesian_tag=typename Kernel_traits<typename Traits::Point_3>::Kernel::Kernel_tag,
+          class Has_classical_point_type =
+              typename boost::is_same<
+                typename Kernel_traits<typename Traits::Point_3>::Kernel::Point_3,
+                typename Traits::Point_3  >::type
+         >
 struct Use_advanced_filtering{
   typedef CGAL::Tag_false type;
 };
 
 template <class Traits>
-struct Use_advanced_filtering<Traits,boost::true_type,Tag_true,Cartesian_tag>{
+struct Use_advanced_filtering<Traits,boost::true_type,Tag_true,Cartesian_tag,boost::true_type>{
   typedef typename Kernel_traits<typename Traits::Point_3>::Kernel K;
   typedef CGAL::Boolean_tag<K::Has_static_filters> type;
 };
