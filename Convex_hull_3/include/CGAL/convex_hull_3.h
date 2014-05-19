@@ -676,10 +676,9 @@ ch_quickhull_polyhedron_3(std::list<typename Traits::Point_3>& points,
   typedef typename Traits::Plane_3		      	  Plane_3;
   typedef typename std::list<Point_3>::iterator           P3_iterator;
 
-  typedef typename Kernel_traits<typename Traits::Point_3>::Kernel R;
   typedef Triangulation_data_structure_2<
-    Triangulation_vertex_base_with_info_2<int, GT3_for_CH3<R> >,
-    Convex_hull_face_base_2<int, R> >                           Tds;  
+    Triangulation_vertex_base_with_info_2<int, GT3_for_CH3<Traits> >,
+    Convex_hull_face_base_2<int, Traits> >                           Tds;
   typedef typename Tds::Vertex_handle                     Vertex_handle;
   typedef typename Tds::Face_handle                     Face_handle;
 
