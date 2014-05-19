@@ -38,7 +38,7 @@ the same as the point type `TriangulationTraits::Point` (or its refined
 concepts) when the `TriangulationVertex` is used in the class 
 `Triangulation<TriangulationTraits, TriangulationDataStructure>` (or its derived classes). 
 */ 
-typedef Hidden_type Point; 
+typedef unspecified_type Point; 
 
 /// @} 
 

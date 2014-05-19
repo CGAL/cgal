@@ -60,7 +60,7 @@ defined/used.
 Must be a model of the `TriangulationDataStructure` concept.
 \cgalModifEnd
 */
-typedef Hidden_type Triangulation_data_structure;
+typedef unspecified_type Triangulation_data_structure;
 
 /*!
 This nested template class has to define a type `Rebind_TDS<TDS2>::%Other` 

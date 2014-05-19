@@ -38,13 +38,13 @@ It can be static (`Dimension`=`CGAL::``Dimension_tag<int dim>`) or
 dynamic (`Dimension`=`CGAL::``Dynamic_dimension_tag`).
 \cgalModifEnd
 */ 
-typedef Hidden_type Dimension;
+typedef unspecified_type Dimension;
 
 /*! 
 A type representing a point in Euclidean space. It must be 
 `DefaultConstructible`, `CopyConstructible` and `Assignable`.
 */ 
-typedef Hidden_type Point_d; 
+typedef unspecified_type Point_d; 
 
 /*! 
 A predicate object that must provide the 
@@ -57,7 +57,7 @@ in the range `[start, end)`; the value can be
 \pre If `Dimension`=`CGAL::``Dimension_tag<D>`, then `std::distance(start,end)=D+1`.
 \cgalModifEnd
 */ 
-typedef Hidden_type Orientation_d; 
+typedef unspecified_type Orientation_d; 
 
 /*! 
 A predicate object that must provide 
@@ -76,7 +76,7 @@ works also with affinely dependent points.
 \f$ 2\leq k\leq D\f$. 
 
 */ 
-typedef Hidden_type Contained_in_affine_hull_d; 
+typedef unspecified_type Contained_in_affine_hull_d; 
 
 /// @}
 
@@ -93,7 +93,7 @@ typedef Hidden_type Contained_in_affine_hull_d;
 A type representing an orientation of an affine subspace of 
 dimension \f$ k\f$ strictly smaller than the maximal dimension. 
 */ 
-typedef Hidden_type Flat_orientation_d; 
+typedef unspecified_type Flat_orientation_d; 
 
 /*!
 A construction object that must 
@@ -113,7 +113,7 @@ The points in range
 \cgalModifEnd
 \f$ 2\leq k\leq D\f$. 
 */ 
-typedef Hidden_type Construct_flat_orientation_d; 
+typedef unspecified_type Construct_flat_orientation_d; 
 
 /*!
 A predicate object that must provide the 
@@ -129,7 +129,7 @@ whose orientation is given by `orient`.
 points used to construct `orient`. 
 \f$ 2\leq k\leq D\f$. 
 */ 
-typedef Hidden_type In_flat_orientation_d; 
+typedef unspecified_type In_flat_orientation_d; 
 
 /*!
 A predicate object that must 
@@ -139,7 +139,7 @@ The operator returns `SMALLER` if `p` is
 lexicographically smaller than point `q`, `EQUAL` if both points are 
 the same and `LARGER` otherwise. 
 */ 
-typedef Hidden_type Compare_lexicographically_d; 
+typedef unspecified_type Compare_lexicographically_d; 
 
 /// @} 
 

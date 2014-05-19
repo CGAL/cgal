@@ -90,13 +90,13 @@ public:
 The vertex type, requirements for this type are described 
 in the concept `TriangulationDataStructure::Vertex`.
 */ 
-typedef Hidden_type Vertex;
+typedef unspecified_type Vertex;
 
 /*!
 The full cell type, requirements for this type are described 
 in the concept `TriangulationDataStructure::FullCell`.
 */
-typedef Hidden_type Full_cell;
+typedef unspecified_type Full_cell;
 
 /*! 
 
@@ -105,7 +105,7 @@ A model of the concept `FullCellData`.
 \cgalModifEnd
 
 */ 
-typedef Hidden_type Full_cell_data; 
+typedef unspecified_type Full_cell_data; 
 
 /*!
 The facet type, for describing faces of the triangulation with codimension 1.
@@ -113,12 +113,12 @@ The constructor `Facet(c,i)` constructs a `Facet` representing the facet of
 full cell `c` opposite to its `i`-th vertex. Its dimension is
 `current_dimension()-1`.
 */
-typedef Hidden_type Facet;
+typedef unspecified_type Facet;
 
 /*!
 The face type, which must be a model of the concept `TriangulationDSFace`.
 */
-typedef Hidden_type Face;
+typedef unspecified_type Face;
 
 /// @}
 
@@ -131,12 +131,12 @@ typedef Hidden_type Face;
 /*!
 Handle to a `Vertex`.
 */
-typedef Hidden_type Vertex_handle;
+typedef unspecified_type Vertex_handle;
 
 /*!
 Handle to a `Full_cell`.
 */
-typedef Hidden_type Full_cell_handle;
+typedef unspecified_type Full_cell_handle;
 
 /// @}
 
@@ -179,29 +179,29 @@ using Rebind_full_cell = unspecified_type;
 /*!
 Iterator over the list of vertices.
 */
-typedef Hidden_type Vertex_iterator;
+typedef unspecified_type Vertex_iterator;
 
 /*!
 Iterator over the list of full cells.
 
 */
-typedef Hidden_type Full_cell_iterator;
+typedef unspecified_type Full_cell_iterator;
 
 /*!
 Iterator over the facets of the complex.
 
 */
-typedef Hidden_type Facet_iterator;
+typedef unspecified_type Facet_iterator;
 
 /*!
 Size type (an unsigned integral type).
 */
-typedef Hidden_type size_type;
+typedef unspecified_type size_type;
 
 /*!
 Difference type (a signed integral type).
 */
-typedef Hidden_type difference_type;
+typedef unspecified_type difference_type;
 
 /// @}
 
@@ -700,7 +700,7 @@ public:
 A handle to a cell, which must be the same as the
 nested type `TriangulationDataStructure::Full_cell_handle`.
 */
-typedef Hidden_type Full_cell_handle;
+typedef unspecified_type Full_cell_handle;
 
 /// @}
 
@@ -812,19 +812,19 @@ public:
 A handle to a cell, which must be the same as the
 nested type `TriangulationDataStructure::Full_cell_handle`.
 */
-typedef Hidden_type Vertex_handle;
+typedef unspecified_type Vertex_handle;
 
 /*!
 An iterator over the handles to
 the vertices of the full cell.
 */
-typedef Hidden_type Vertex_handle_iterator;
+typedef unspecified_type Vertex_handle_iterator;
 
 /*!
 A handle to a full cell, which must be the same as the
 nested type `TriangulationDataStructure::Full_cell_handle`.
 */
-typedef Hidden_type Full_cell_handle;
+typedef unspecified_type Full_cell_handle;
 
 /*!
 A data member of this type has to be stored and accessible through

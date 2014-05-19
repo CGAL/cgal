@@ -38,19 +38,19 @@ defined/used.
 Must be a model of the `TriangulationDataStructure` concept.
 \cgalModifEnd
 */
-typedef Hidden_type Triangulation_data_structure;
+typedef unspecified_type Triangulation_data_structure;
 
 /*!
 Must be the same as the nested type
 `Triangulation_data_structure::Full_cell_handle`.
 */
-typedef Hidden_type Full_cell_handle;
+typedef unspecified_type Full_cell_handle;
 
 /*!
 Must be the same as the nested type
 `Triangulation_data_structure::Vertex_handle`.
 */
-typedef Hidden_type Vertex_handle;
+typedef unspecified_type Vertex_handle;
 
 /// @}
 
