@@ -7,7 +7,7 @@
 #include <CGAL/Mesh_complex_3_in_triangulation_3.h>
 #include <CGAL/Mesh_criteria_3.h>
 
-#include <CGAL/Polyhedral_mesh_domain_3.h>
+#include <CGAL/Polyhedral_mesh_domain_with_features_3.h>
 #include <CGAL/make_mesh_3.h>
 
 #include <fstream>
@@ -15,8 +15,8 @@
 #include <CGAL/Timer.h>
 
 
-// @TODO: Is that the right kernel?!
-typedef CGAL::Polyhedral_mesh_domain_3<Polyhedron, Kernel> Mesh_domain;
+typedef CGAL::Polyhedral_mesh_domain_with_features_3<Kernel,
+                                                     Polyhedron> Mesh_domain;
 
 // Triangulation
 typedef CGAL::Mesh_triangulation_3<Mesh_domain>::type Tr;
@@ -26,6 +26,7 @@ typedef CGAL::Mesh_complex_3_in_triangulation_3<Tr> C3t3;
 
 // Mesh Criteria
 typedef CGAL::Mesh_criteria_3<Tr> Mesh_criteria;
+typedef Mesh_criteria::Edge_criteria Edge_criteria;
 typedef Mesh_criteria::Facet_criteria Facet_criteria;
 typedef Mesh_criteria::Cell_criteria Cell_criteria;
 
@@ -279,37 +280,48 @@ private:
 };
 
 Scene_item* cgal_code_mesh_3(const Polyhedron* pMesh,
-                             const QString filename,
+                             QString filename,
                              const double angle,
-                             const double sizing,
+                             const double facet_sizing,
                              const double approx,
-                             const double tets_sizing)
+                             const double tet_sizing,
+                             const double tet_shape,
+                             const bool protect_features)
 {
   if(!pMesh) return 0;
 
   // remesh
 
   // Set mesh criteria
-  Facet_criteria facet_criteria(angle, sizing, approx); // angle, size, approximation
-  Cell_criteria cell_criteria(4, tets_sizing); // radius-edge ratio, size
-  Mesh_criteria criteria(facet_criteria, cell_criteria);
+  Edge_criteria edge_criteria(facet_sizing);
+  Facet_criteria facet_criteria(angle, facet_sizing, approx); // angle, size, approximation
+  Cell_criteria cell_criteria(tet_shape, tet_sizing); // radius-edge ratio, size
+  Mesh_criteria criteria(edge_criteria, facet_criteria, cell_criteria);
 
   CGAL::Timer timer;
   timer.start();
   std::cerr << "Meshing file \"" << qPrintable(filename) << "\"\n";
   std::cerr << "  angle: " << angle << std::endl
-            << "  facets size bound: " << sizing << std::endl
+            << "  facets size bound: " << facet_sizing << std::endl
             << "  approximation bound: " << approx << std::endl
-            << "  tetrahedra size bound: " << tets_sizing << std::endl;
+            << "  tetrahedra size bound: " << tet_sizing << std::endl;
   std::cerr << "Build AABB tree...";
   // Create domain
   Mesh_domain domain(*pMesh);
+  if(protect_features) {
+    domain.detect_features();
+  }
   std::cerr << "done (" << timer.time() << " ms)" << std::endl;
 
   // Meshing
   std::cerr << "Mesh...";
+  CGAL::parameters::internal::Features_options features =
+    protect_features ?
+    CGAL::parameters::features(domain) :
+    CGAL::parameters::no_features();
+
   Scene_c3t3_item* new_item = 
-    new Scene_c3t3_item(CGAL::make_mesh_3<C3t3>(domain, criteria));
+    new Scene_c3t3_item(CGAL::make_mesh_3<C3t3>(domain, criteria, features));
 
   std::cerr << "done (" << timer.time() << " ms, " << new_item->c3t3().triangulation().number_of_vertices() << " vertices)" << std::endl;
 

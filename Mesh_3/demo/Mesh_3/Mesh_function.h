@@ -32,9 +32,11 @@
 
 #include <CGAL/Mesh_3/Mesher_3.h>
 #include <CGAL/Mesh_criteria_3.h>
+#include <CGAL/Mesh_3/Protect_edges_sizing_field.h>
 
 #include "C3t3_type.h"
 #include "Meshing_thread.h"
+#include <CGAL/make_mesh_3.h> // for C3t3_initializer
 
 
 struct Mesh_parameters
@@ -45,8 +47,26 @@ struct Mesh_parameters
   
   double tet_shape;
   double tet_sizing;
+  bool protect_features;
   
   inline QStringList log() const;
+};
+
+
+template < typename EdgeCriteria >
+struct Edge_criteria_sizing_field_wrapper
+{
+  typedef typename EdgeCriteria::Index    Index;
+  typedef typename EdgeCriteria::FT       FT;
+  typedef typename EdgeCriteria::Point_3  Point_3;
+
+  Edge_criteria_sizing_field_wrapper(const EdgeCriteria& ec) : ec_(ec) {}
+  FT operator()(const Point_3& p, const int dim, const Index& index) const
+  { return ec_.sizing_field(p,dim,index); }
+
+private:
+  // No need to copy EdgeCriteria here
+  const EdgeCriteria& ec_;
 };
 
 
@@ -80,6 +100,7 @@ private:
   
   typedef C3t3::Triangulation                       Tr;
   typedef CGAL::Mesh_criteria_3<Tr>                 Mesh_criteria;
+  typedef Mesh_criteria::Edge_criteria              Edge_criteria;
   typedef Mesh_criteria::Facet_criteria             Facet_criteria;
   typedef Mesh_criteria::Cell_criteria              Cell_criteria;
   
@@ -109,7 +130,8 @@ log() const
   << QString("facet max size: %1").arg(facet_sizing)
   << QString("facet approx error: %1").arg(facet_approx)
   << QString("tet shape (radius-edge): %1").arg(tet_shape)
-  << QString("tet max size: %1").arg(tet_sizing);
+  << QString("tet max size: %1").arg(tet_sizing)
+  << QString("protect features: %1").arg(protect_features);
 }
 
 
@@ -143,27 +165,30 @@ void
 Mesh_function<D_>::
 launch()
 {
-  // Mesh initialization : get some points and add them to the mesh
-  Initial_points_vector initial_points;
-  domain_->construct_initial_points_object()(std::back_inserter(initial_points),20);
-  
-  // Insert points and set their index and dimension
-  for ( Ipv_iterator it = initial_points.begin() ;
-       it != initial_points.end() ;
-       ++it )
-  {
-    Vertex_handle v = c3t3_.triangulation().insert(it->first);
-    c3t3_.set_dimension(v,2); // by construction, points are on surface
-    c3t3_.set_index(v,it->second);
-  }
-  
+#ifdef CGAL_MESH_3_INITIAL_POINTS_NO_RANDOM_SHOOTING
+  CGAL::default_random = CGAL::Random(0);
+#endif
+
   // Create mesh criteria
-  Mesh_criteria criteria(Facet_criteria(p_.facet_angle,
+  Mesh_criteria criteria(Edge_criteria(p_.facet_sizing),
+                         Facet_criteria(p_.facet_angle,
                                         p_.facet_sizing,
                                         p_.facet_approx),
                          Cell_criteria(p_.tet_shape,
                                        p_.tet_sizing));
-  
+
+  // Initialization of the mesh, either with the protection of sharp
+  // features, or with the initial points (or both).
+  CGAL::internal::Mesh_3::C3t3_initializer<
+    C3t3,
+    Domain,
+    Mesh_criteria,
+    CGAL::internal::Mesh_3::has_Has_features<Domain>::value >()
+    (c3t3_,
+     *domain_,
+     criteria,
+     p_.protect_features);
+
   // Build mesher and launch refinement process
   mesher_ = new Mesher(c3t3_, *domain_, criteria);
   mesher_->initialize();
