@@ -18,8 +18,8 @@
 //
 // Author(s)     : Andreas Fabri, Mariette Yvinec
 
-#ifndef CGAL_POLYLINE_CONSTRAINED_TRIANGULATION_2_H
-#define CGAL_POLYLINE_CONSTRAINED_TRIANGULATION_2_H
+#ifndef CGAL_CONSTRAINED_TRIANGULATION_PLUS_2_H
+#define CGAL_CONSTRAINED_TRIANGULATION_PLUS_2_H
 
 #include <CGAL/triangulation_assertions.h>
 #include <CGAL/Polygon_2.h>
@@ -33,10 +33,10 @@
 namespace CGAL {
 
 // Tr the base triangulation class 
-// Tr has to be Constrained or Constrained_Delaunay with Polyline_constrained_triangulation_vertex_base
+// Tr has to be Constrained or Constrained_Delaunay with Constrained_triangulation_plus_vertex_base
 
 template < class Tr_ = Default >
-class Polyline_constrained_triangulation_2  
+class Constrained_triangulation_plus_2  
   : public  
 Default::Get< Tr_, Constrained_Delaunay_triangulation_2< 
                       Exact_predicates_inexact_constructions_kernel
@@ -121,25 +121,26 @@ public:
   typedef typename Triangulation::List_vertices    List_vertices;
   typedef typename Triangulation::List_constraints List_constraints;
 
-  typedef Polyline_constraint_hierarchy_2<Vertex_handle, Point> Polyline_constraint_hierarchy;
+  typedef Polyline_constraint_hierarchy_2<Vertex_handle, Point> Constraint_hierarchy;
 public:
-  typedef Tag_true                                Polyline_constraint_hierarchy_tag;
+  typedef Tag_true                                Constraint_hierarchy_tag;
 
   // for user interface with the constraint hierarchy
 
-  typedef typename Polyline_constraint_hierarchy::Vertex_it 
+  typedef typename Constraint_hierarchy::Vertex_it 
                                             Vertices_in_constraint_iterator;
   
-  typedef typename Polyline_constraint_hierarchy::Point_it
+  typedef typename Constraint_hierarchy::Point_it
                                             Points_in_constraint_iterator;
 
-  typedef typename Polyline_constraint_hierarchy::Context      Context;
-  typedef typename Polyline_constraint_hierarchy::Context_iterator  Context_iterator;
-  typedef typename Polyline_constraint_hierarchy::C_iterator   Constraint_iterator;
-  typedef typename Polyline_constraint_hierarchy::Subconstraint_iterator  Subconstraint_iterator;
- 
-  typedef typename Polyline_constraint_hierarchy::Constraint_id Constraint_id;   
+  typedef typename Constraint_hierarchy::Context      Context;
+  typedef typename Constraint_hierarchy::Context_iterator  Context_iterator;
+  typedef typename Constraint_hierarchy::C_iterator   Constraint_iterator;
+  typedef typename Constraint_hierarchy::Subconstraint_iterator  Subconstraint_iterator;
+  typedef typename Constraint_hierarchy::Constraint_id Constraint_id;   
                                             
+  typedef std::pair<Vertex_handle, Vertex_handle> Subconstraint;
+  
   //for backward compatibility
   typedef Vertices_in_constraint_iterator     Vertices_in_constraint;
 
@@ -148,30 +149,30 @@ public:
   using Triangulation::ccw;
 
 protected:
-  Polyline_constraint_hierarchy hierarchy;
+  Constraint_hierarchy hierarchy;
  
 public:
-  Polyline_constraint_hierarchy& hierarchy_ref()
+  Constraint_hierarchy& hierarchy_ref()
   {
     return hierarchy;
   }
 
-  Polyline_constrained_triangulation_2(const Geom_traits& gt=Geom_traits()) 
+  Constrained_triangulation_plus_2(const Geom_traits& gt=Geom_traits()) 
     : Triangulation(gt) { }
 
-  Polyline_constrained_triangulation_2(const Polyline_constrained_triangulation_2& ctp)
+  Constrained_triangulation_plus_2(const Constrained_triangulation_plus_2& ctp)
     : Triangulation()    { copy_triangulation(ctp);}
 
-  virtual ~Polyline_constrained_triangulation_2() {}
+  virtual ~Constrained_triangulation_plus_2() {}
 
-  Polyline_constrained_triangulation_2 & operator=(const Polyline_constrained_triangulation_2& ctp)
+  Constrained_triangulation_plus_2 & operator=(const Constrained_triangulation_plus_2& ctp)
   {
     copy_triangulation(ctp);
     return *this;
   }
 
   template<class InputIterator>
-  Polyline_constrained_triangulation_2(InputIterator first,
+  Constrained_triangulation_plus_2(InputIterator first,
                                        InputIterator last,
                                        const Geom_traits& gt=Geom_traits() )
      : Triangulation(gt)
@@ -180,10 +181,17 @@ public:
     CGAL_triangulation_postcondition( this->is_valid() );
   }
 
+
+  Constrained_triangulation_plus_2(std::list<std::pair<Point,Point> > constraints,
+                                       const Geom_traits& gt=Geom_traits() )
+  {
+    insert_constraints(constraints.begin(), constraints.end());
+    CGAL_triangulation_postcondition( this->is_valid() );
+  }
   //Helping
   void clear() { Base::clear(); hierarchy.clear(); }
-  void copy_triangulation(const Polyline_constrained_triangulation_2 &ctp);
-  void swap(Polyline_constrained_triangulation_2 &ctp);
+  void copy_triangulation(const Constrained_triangulation_plus_2 &ctp);
+  void swap(Constrained_triangulation_plus_2 &ctp);
 
   // INSERTION
   Vertex_handle insert(const Point& a, 
@@ -211,7 +219,7 @@ public:
   {
     // protects against inserting twice the same constraint
     Constraint_id cid = hierarchy.insert_constraint(va, vb);
-    if (va != vb && (cid != NULL) )  insert_subconstraint(va,vb); 
+    if (va != vb && (cid != Constraint_id(NULL)) )  insert_subconstraint(va,vb); 
 
     return cid;
   }
@@ -241,7 +249,7 @@ public:
 
     for(; first != last; ++first)
     {
-      if(insert_constraint(*first++))
+      if(insert_constraint(*first))
         ++n;
     }
     return n;
@@ -260,8 +268,8 @@ public:
   // for backward compatibility
   // not const Point&, because otherwise VC6/7 messes it up with 
   // the insert that takes an iterator range
-  Constraint_id insert(Point a, Point b) { insert_constraint(a, b); }
-  Constraint_id insert(Vertex_handle va, Vertex_handle  vb) { insert_constraint(va,vb); }
+  Constraint_id insert(Point a, Point b) { return insert_constraint(a, b); }
+  Constraint_id insert(Vertex_handle va, Vertex_handle  vb) { return insert_constraint(va,vb); }
 
   Vertices_in_constraint_iterator
   insert_vertex_in_constraint(Constraint_id cid, Vertices_in_constraint_iterator pos, 
@@ -307,7 +315,7 @@ public:
     --it;
     Vertices_in_constraint_iterator beg = vertices_in_constraint_begin(cid);
     ++beg;
-    Face_container<Polyline_constrained_triangulation_2> fc(*this);
+    Face_container<Constrained_triangulation_plus_2> fc(*this);
 
     Constraint_id head = 0, tail = 0;
     if(pos != beg){
@@ -371,7 +379,7 @@ public:
     --pos;    
     Vertex_handle a = *pos;
     ++pos;
-    Face_container<Polyline_constrained_triangulation_2> fc(*this);
+    Face_container<Constrained_triangulation_plus_2> fc(*this);
     Vertices_in_constraint_iterator beg = vertices_in_constraint_begin(cid), vcit;
     ++beg;
     vcit = beg;
@@ -438,7 +446,7 @@ public:
   Constraint_id insert_constraint(InputIterator first, InputIterator last, OutputIterator out)
   {
     Face_handle hint;
-    Face_container<Polyline_constrained_triangulation_2> fc(*this);
+    Face_container<Constrained_triangulation_plus_2> fc(*this);
     std::vector<Vertex_handle> vertices;
     for(;first!= last; first++){
       Vertex_handle vh = insert(*first, hint);
@@ -517,7 +525,7 @@ private:
   }
 public:
   template <class OutputIterator>
-  typename Polyline_constrained_triangulation_2<Tr>::Constraint_id
+  typename Constrained_triangulation_plus_2<Tr>::Constraint_id
   insert_constraint(Vertex_handle va, Vertex_handle vb, OutputIterator out)
   {
     // protects against inserting twice the same constraint
@@ -575,6 +583,10 @@ public:
     remove_constraint(cid, Emptyset_iterator());
   }
 
+  void remove_constraint(Vertex_handle va, Vertex_handle vb)
+  {
+    hierarchy.remove_constraint(va,vb);
+  }
 
   void simplify(Vertices_in_constraint_iterator u,
                 Vertices_in_constraint_iterator v,
@@ -617,7 +629,7 @@ public:
   Constraint_iterator constraints_end()   const;
   Subconstraint_iterator subconstraints_begin() const;
   Subconstraint_iterator subconstraints_end() const;
-  Context   context(Vertex_handle va, Vertex_handle vb) const; 
+  Context   context(Vertex_handle va, Vertex_handle vb); //AF: const; 
 
   bool is_subconstraint(Vertex_handle va, 
 			Vertex_handle vb);
@@ -629,7 +641,9 @@ public:
 				  Vertex_handle vb) const;
 
   Vertices_in_constraint_iterator vertices_in_constraint_begin(Constraint_id cid) const;
-  Vertices_in_constraint_iterator vertices_in_constraint_end(Constraint_id cid) const ;
+  Vertices_in_constraint_iterator vertices_in_constraint_end(Constraint_id cid) const ;  
+  Vertices_in_constraint_iterator vertices_in_constraint_begin(Vertex_handle va, Vertex_handle vb) const;
+  Vertices_in_constraint_iterator vertices_in_constraint_end(Vertex_handle va, Vertex_handle vb) const ;
   Points_in_constraint_iterator points_in_constraint_begin(Constraint_id cid) const;
   Points_in_constraint_iterator points_in_constraint_end(Constraint_id cid) const ;
 
@@ -649,7 +663,7 @@ protected:
   template <class OutputItertator>
   void insert_incident_faces(Vertices_in_constraint_iterator vcit, OutputItertator out)
   {
-    Vertex_handle vh = vcit->vertex;
+    Vertex_handle vh = *vcit;
     Face_circulator fc = incident_faces(vh), done = fc;
     Face_circulator null ;
     if ( fc != null )
@@ -772,12 +786,12 @@ public:
 
 template <class Tr>
 void
-Polyline_constrained_triangulation_2<Tr>::
-copy_triangulation(const Polyline_constrained_triangulation_2 &ctp)
+Constrained_triangulation_plus_2<Tr>::
+copy_triangulation(const Constrained_triangulation_plus_2 &ctp)
 {
   Base::copy_triangulation(ctp);
-  //the following assume that the triangulation and its copy
-  // iterates on their vertices on the same order 
+  //the following assumes that the triangulation and its copy
+  // iterate on their vertices in the same order 
   std::map<Vertex_handle,Vertex_handle> vmap;
   Vertex_iterator vit = ctp.vertices_begin();
   Vertex_iterator vvit = this->vertices_begin();
@@ -790,8 +804,8 @@ copy_triangulation(const Polyline_constrained_triangulation_2 &ctp)
 
 template <class Tr>
 void
-Polyline_constrained_triangulation_2<Tr>::
-swap(Polyline_constrained_triangulation_2 &ctp)
+Constrained_triangulation_plus_2<Tr>::
+swap(Constrained_triangulation_plus_2 &ctp)
 {
   Base::swap(ctp);
   hierarchy.swap(ctp.hierarchy);
@@ -799,8 +813,8 @@ swap(Polyline_constrained_triangulation_2 &ctp)
 
 template < class Tr >
 inline 
-typename Polyline_constrained_triangulation_2<Tr>::Vertex_handle
-Polyline_constrained_triangulation_2<Tr>::
+typename Constrained_triangulation_plus_2<Tr>::Vertex_handle
+Constrained_triangulation_plus_2<Tr>::
 insert(const Point& a, Face_handle start)
 {
   Locate_type lt;
@@ -810,8 +824,8 @@ insert(const Point& a, Face_handle start)
 }
 
 template < class Tr>
-typename Polyline_constrained_triangulation_2<Tr>::Vertex_handle
-Polyline_constrained_triangulation_2<Tr>::
+typename Constrained_triangulation_plus_2<Tr>::Vertex_handle
+Constrained_triangulation_plus_2<Tr>::
 insert(const Point& a, Locate_type lt, Face_handle loc, int li)
 {
   Vertex_handle v1, v2;
@@ -831,8 +845,8 @@ insert(const Point& a, Locate_type lt, Face_handle loc, int li)
 }
 
 template <class Tr>
-typename Polyline_constrained_triangulation_2<Tr>:: Vertex_handle 
-Polyline_constrained_triangulation_2<Tr>::
+typename Constrained_triangulation_plus_2<Tr>:: Vertex_handle 
+Constrained_triangulation_plus_2<Tr>::
 intersect(Face_handle f, int i, 
 	  Vertex_handle vaa,
 	  Vertex_handle vbb) 
@@ -841,8 +855,8 @@ intersect(Face_handle f, int i,
 }
 
 template <class Tr>
-typename Polyline_constrained_triangulation_2<Tr>:: Vertex_handle 
-Polyline_constrained_triangulation_2<Tr>::
+typename Constrained_triangulation_plus_2<Tr>:: Vertex_handle 
+Constrained_triangulation_plus_2<Tr>::
 
 intersect(Face_handle , int , 
 	  Vertex_handle ,
@@ -857,8 +871,8 @@ intersect(Face_handle , int ,
 }
 
 template <class Tr>
-typename Polyline_constrained_triangulation_2<Tr>:: Vertex_handle 
-Polyline_constrained_triangulation_2<Tr>::
+typename Constrained_triangulation_plus_2<Tr>:: Vertex_handle 
+Constrained_triangulation_plus_2<Tr>::
 intersect(Face_handle f, int i, 
 	  Vertex_handle vaa,
 	  Vertex_handle vbb,
@@ -895,8 +909,8 @@ intersect(Face_handle f, int i,
 }
 
 template <class Tr>
-typename Polyline_constrained_triangulation_2<Tr>::Vertex_handle 
-Polyline_constrained_triangulation_2<Tr>::
+typename Constrained_triangulation_plus_2<Tr>::Vertex_handle 
+Constrained_triangulation_plus_2<Tr>::
 intersect(Face_handle f, int i, 
 	  Vertex_handle vaa,
 	  Vertex_handle vbb,
@@ -950,8 +964,8 @@ intersect(Face_handle f, int i,
 
   // concatenates two constraints
 template <class Tr>
-typename Polyline_constrained_triangulation_2<Tr>::Constraint_id
-Polyline_constrained_triangulation_2<Tr>::concatenate(Constraint_id first, Constraint_id second)
+typename Constrained_triangulation_plus_2<Tr>::Constraint_id
+Constrained_triangulation_plus_2<Tr>::concatenate(Constraint_id first, Constraint_id second)
 {
   return hierarchy.concatenate(first,second);
 }
@@ -960,8 +974,8 @@ Polyline_constrained_triangulation_2<Tr>::concatenate(Constraint_id first, Const
   // vertex of the new constraint
   // returns the new constraint 
 template <class Tr>
-typename Polyline_constrained_triangulation_2<Tr>::Constraint_id
-Polyline_constrained_triangulation_2<Tr>::split(Constraint_id first, Vertices_in_constraint_iterator vcit)
+typename Constrained_triangulation_plus_2<Tr>::Constraint_id
+Constrained_triangulation_plus_2<Tr>::split(Constraint_id first, Vertices_in_constraint_iterator vcit)
 {
   return hierarchy.split(first, vcit);
 }
@@ -970,7 +984,7 @@ Polyline_constrained_triangulation_2<Tr>::split(Constraint_id first, Vertices_in
 template <class Tr>
 std::ostream &
 operator<<(std::ostream& os, 
-	   const Polyline_constrained_triangulation_2<Tr> &ct)
+	   const Constrained_triangulation_plus_2<Tr> &ct)
 {
   ct.file_output(os);
   return os ;
@@ -981,8 +995,8 @@ operator<<(std::ostream& os,
 template <class Tr>
 inline
 typename
-Polyline_constrained_triangulation_2<Tr>::Constraint_iterator
-Polyline_constrained_triangulation_2<Tr>::
+Constrained_triangulation_plus_2<Tr>::Constraint_iterator
+Constrained_triangulation_plus_2<Tr>::
 constraints_begin() const
 {
   return hierarchy.c_begin();
@@ -991,8 +1005,8 @@ constraints_begin() const
 template <class Tr>
 inline
 typename
-Polyline_constrained_triangulation_2<Tr>::Constraint_iterator
-Polyline_constrained_triangulation_2<Tr>::
+Constrained_triangulation_plus_2<Tr>::Constraint_iterator
+Constrained_triangulation_plus_2<Tr>::
 constraints_end() const
 {
   return hierarchy.c_end();
@@ -1001,8 +1015,8 @@ constraints_end() const
 template <class Tr>
 inline
 typename
-Polyline_constrained_triangulation_2<Tr>::Subconstraint_iterator
-Polyline_constrained_triangulation_2<Tr>::
+Constrained_triangulation_plus_2<Tr>::Subconstraint_iterator
+Constrained_triangulation_plus_2<Tr>::
 subconstraints_begin() const
 {
   return hierarchy.subconstraint_begin();
@@ -1011,8 +1025,8 @@ subconstraints_begin() const
 template <class Tr>
 inline
 typename
-Polyline_constrained_triangulation_2<Tr>::Subconstraint_iterator
-Polyline_constrained_triangulation_2<Tr>::
+Constrained_triangulation_plus_2<Tr>::Subconstraint_iterator
+Constrained_triangulation_plus_2<Tr>::
 subconstraints_end() const
 {
   return hierarchy.subconstraint_end();
@@ -1021,9 +1035,9 @@ subconstraints_end() const
 
 template <class Tr>
 inline
-typename Polyline_constrained_triangulation_2<Tr>::Context
-Polyline_constrained_triangulation_2<Tr>::
-context(Vertex_handle va, Vertex_handle vb) const
+typename Constrained_triangulation_plus_2<Tr>::Context
+Constrained_triangulation_plus_2<Tr>::
+context(Vertex_handle va, Vertex_handle vb) // AF: const
 {
   return hierarchy.context(va,vb);
 }
@@ -1031,8 +1045,8 @@ context(Vertex_handle va, Vertex_handle vb) const
 
 template <class Tr>
 inline 
-typename Polyline_constrained_triangulation_2<Tr>::size_type
-Polyline_constrained_triangulation_2<Tr>::
+typename Constrained_triangulation_plus_2<Tr>::size_type
+Constrained_triangulation_plus_2<Tr>::
 number_of_enclosing_constraints(Vertex_handle va, Vertex_handle vb) const
 {
  return static_cast<size_type> 
@@ -1041,7 +1055,7 @@ number_of_enclosing_constraints(Vertex_handle va, Vertex_handle vb) const
 
 template <class Tr>
 inline bool
-Polyline_constrained_triangulation_2<Tr>::
+Constrained_triangulation_plus_2<Tr>::
 is_subconstraint(Vertex_handle va, Vertex_handle vb)
 {
  return hierarchy.is_subconstrained_edge(va,vb); 
@@ -1050,8 +1064,8 @@ is_subconstraint(Vertex_handle va, Vertex_handle vb)
 
 template <class Tr>
 inline
-typename Polyline_constrained_triangulation_2<Tr>::Context_iterator
-Polyline_constrained_triangulation_2<Tr>::
+typename Constrained_triangulation_plus_2<Tr>::Context_iterator
+Constrained_triangulation_plus_2<Tr>::
 contexts_begin(Vertex_handle va, Vertex_handle vb) const
 {
   return hierarchy.contexts_begin(va,vb);
@@ -1059,8 +1073,8 @@ contexts_begin(Vertex_handle va, Vertex_handle vb) const
 
 template <class Tr>
 inline
-typename Polyline_constrained_triangulation_2<Tr>::Context_iterator
-Polyline_constrained_triangulation_2<Tr>::
+typename Constrained_triangulation_plus_2<Tr>::Context_iterator
+Constrained_triangulation_plus_2<Tr>::
 contexts_end(Vertex_handle va, Vertex_handle vb) const
 {
   return hierarchy.contexts_end(va,vb);
@@ -1068,8 +1082,8 @@ contexts_end(Vertex_handle va, Vertex_handle vb) const
 
 template <class Tr>
 inline
-typename Polyline_constrained_triangulation_2<Tr>::Vertices_in_constraint_iterator
-Polyline_constrained_triangulation_2<Tr>::
+typename Constrained_triangulation_plus_2<Tr>::Vertices_in_constraint_iterator
+Constrained_triangulation_plus_2<Tr>::
 vertices_in_constraint_begin(Constraint_id cid) const
 {
   return  hierarchy.vertices_in_constraint_begin(cid);
@@ -1077,17 +1091,34 @@ vertices_in_constraint_begin(Constraint_id cid) const
 
 template <class Tr>
 inline
-typename Polyline_constrained_triangulation_2<Tr>::Vertices_in_constraint_iterator
-Polyline_constrained_triangulation_2<Tr>::
+typename Constrained_triangulation_plus_2<Tr>::Vertices_in_constraint_iterator
+Constrained_triangulation_plus_2<Tr>::
 vertices_in_constraint_end(Constraint_id cid) const
 {
   return  hierarchy.vertices_in_constraint_end(cid);
 }
+template <class Tr>
+inline
+typename Constrained_triangulation_plus_2<Tr>::Vertices_in_constraint_iterator
+Constrained_triangulation_plus_2<Tr>::
+vertices_in_constraint_begin(Vertex_handle va, Vertex_handle vb) const
+{
+  return  hierarchy.vertices_in_constraint_begin(va,vb);
+}
 
 template <class Tr>
 inline
-typename Polyline_constrained_triangulation_2<Tr>::Points_in_constraint_iterator
-Polyline_constrained_triangulation_2<Tr>::
+typename Constrained_triangulation_plus_2<Tr>::Vertices_in_constraint_iterator
+Constrained_triangulation_plus_2<Tr>::
+vertices_in_constraint_end(Vertex_handle va, Vertex_handle vb) const
+{
+  return  hierarchy.vertices_in_constraint_end(va,vb);
+}
+
+template <class Tr>
+inline
+typename Constrained_triangulation_plus_2<Tr>::Points_in_constraint_iterator
+Constrained_triangulation_plus_2<Tr>::
 points_in_constraint_begin(Constraint_id cid) const
 {
   return  hierarchy.points_in_constraint_begin(cid);
@@ -1095,8 +1126,8 @@ points_in_constraint_begin(Constraint_id cid) const
 
 template <class Tr>
 inline
-typename Polyline_constrained_triangulation_2<Tr>::Points_in_constraint_iterator
-Polyline_constrained_triangulation_2<Tr>::
+typename Constrained_triangulation_plus_2<Tr>::Points_in_constraint_iterator
+Constrained_triangulation_plus_2<Tr>::
 points_in_constraint_end(Constraint_id cid) const
 {
   return  hierarchy.points_in_constraint_end(cid);
@@ -1104,4 +1135,4 @@ points_in_constraint_end(Constraint_id cid) const
 
 } //namespace CGAL
 
-#endif //CGAL_POLYLINE_CONSTRAINED_TRIANGULATION_2_H
+#endif //CGAL_CONSTRAINED_TRIANGULATION_PLUS_2_H

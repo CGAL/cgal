@@ -240,6 +240,12 @@ public:
     skip_.push_front(all_.front());
   }
 
+  void pop_back()
+  {
+    all_.pop_back();
+    skip_.pop_back();
+  }
+
   /// Insert \c t before \c pos in the all_view. \t will not be inserted into the skip view.
   /// @returns an skip_iterator to the inserted element.
   all_iterator insert(all_iterator pos, const value_type& t)
