@@ -1,7 +1,9 @@
 #include <CGAL/Triangulation_data_structure.h>
 #include <CGAL/internal/Combination_enumerator.h>
 #include <CGAL/assertions.h>
+
 #include <iostream>
+#include <iterator>
 #include <vector>
 
 template< typename TDS >

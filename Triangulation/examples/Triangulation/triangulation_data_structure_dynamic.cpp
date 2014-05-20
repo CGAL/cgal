@@ -1,6 +1,6 @@
 #include <CGAL/Triangulation_data_structure.h>
 #include <CGAL/assertions.h>
-#include <iostream>
+
 #include <vector>
 
 int main()

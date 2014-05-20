@@ -4,6 +4,10 @@
 #include <CGAL/algorithm.h>
 #include <CGAL/assertions.h>
 
+#include <iostream>
+#include <iterator>
+#include <vector>
+
 typedef CGAL::Epick_d< CGAL::Dynamic_dimension_tag >  K;
 typedef CGAL::Triangulation<K>                        Triangulation;
 

@@ -4,6 +4,11 @@
 #include <CGAL/algorithm.h>
 #include <CGAL/Timer.h>
 #include <CGAL/assertions.h>
+
+#include <iostream>
+#include <iterator>
+#include <vector>
+
 const int D=5;
 
 typedef CGAL::Epick_d< CGAL::Dynamic_dimension_tag >          K;
