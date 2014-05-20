@@ -1128,141 +1128,74 @@ private:
 
       // tocheck
 
-      Sign retval = ZERO;
+      const Site_2 & p1 = r_.is_segment() ? p_ :
+        (p_.is_segment() ? q_ : r_);
+      const Site_2 & p2 = r_.is_segment() ? q_ :
+        (p_.is_segment() ? r_ : p_);
+      const Site_2 & s  = r_.is_segment() ? r_ :
+        (p_.is_segment() ? p_ : q_);
 
-      RT d_fine = CGAL::min(CGAL::abs(scalediffdvtx),
+      const RT d_fine = CGAL::min(CGAL::abs(scalediffdvtx),
                             CGAL::abs(scalediffdvty));
+      for (size_t i = 0; i < 2; ++i) {
+        const Site_2 & cur = (i == 0) ? p1 : p2;
+        const Point_2 pref = cur.point();
+        const RT scalediffdvpx = ux_ - pref.x() * uz_;
+        const RT scalediffdvpy = uy_ - pref.y() * uz_;
 
-      Point_2 pref;
-
-      if (p_.is_point()) {
-        pref = p_.point();
-
-        RT scalediffdvpx = ux_ - pref.x() * uz_;
-        RT scalediffdvpy = uy_ - pref.y() * uz_;
-
-        if (CGAL::compare(scalediffdvpx, scalediffdvtx) == EQUAL) {
-          if (CGAL::compare(CGAL::abs(scalediffdvpx), Rs1) == EQUAL) {
-            retval = CGAL::compare(d_fine, CGAL::abs(scalediffdvpy));
-          }
+        Comparison_result sidecmp = EQUAL;
+        const bool p_t_samex =
+          CGAL::compare(scalediffdvpx, scalediffdvtx) == EQUAL;
+        const bool p_t_on_same_ver_side =
+          (p_t_samex) and
+          (CGAL::compare(CGAL::abs(scalediffdvpx), Rs1) == EQUAL) ;
+        if (p_t_on_same_ver_side) {
+          sidecmp = CGAL::compare(d_fine, CGAL::abs(scalediffdvpy));
         }
-        if (CGAL::compare(scalediffdvpy, scalediffdvty) == EQUAL) {
-          if (CGAL::compare(CGAL::abs(scalediffdvpy), Rs1) == EQUAL) {
-            retval = CGAL::compare(d_fine, CGAL::abs(scalediffdvpx));
-          }
+        const bool p_t_samey =
+          CGAL::compare(scalediffdvpy, scalediffdvty) == EQUAL;
+        const bool p_t_on_same_hor_side =
+          (p_t_samey) and
+          (CGAL::compare(CGAL::abs(scalediffdvpy), Rs1) == EQUAL) ;
+        if (p_t_on_same_hor_side) {
+          sidecmp = CGAL::compare(d_fine, CGAL::abs(scalediffdvpx));
         }
-        CGAL_SDG_DEBUG(std::cout << "vring test with p, retval="
-            << retval << std::endl; );
-        if (retval == SMALLER) {
+        CGAL_SDG_DEBUG(std::cout << "vring test with p=" << cur
+            << ", sidecmp=" << sidecmp << std::endl; );
+        if (sidecmp == SMALLER) {
           return NEGATIVE;
-        }
-        if (retval == LARGER) {
+        } else if (sidecmp == LARGER) {
           return POSITIVE;
         }
       }
 
-      Point_2 qref;
+      const bool is_s_hor = is_site_horizontal(s);
+      const bool is_s_ver = is_site_vertical(s);
 
-      if (q_.is_point()) {
-        qref = q_.point();
-
-        RT scalediffdvqx = ux_ - qref.x() * uz_;
-        RT scalediffdvqy = uy_ - qref.y() * uz_;
-
-        if (CGAL::compare(scalediffdvqx, scalediffdvtx) == EQUAL) {
-          if (CGAL::compare(CGAL::abs(scalediffdvqx), Rs1) == EQUAL) {
-            retval = CGAL::compare(d_fine, CGAL::abs(scalediffdvqy));
-          }
-        }
-        if (CGAL::compare(scalediffdvqy, scalediffdvty) == EQUAL) {
-          if (CGAL::compare(CGAL::abs(scalediffdvqy), Rs1) == EQUAL) {
-            retval = CGAL::compare(d_fine, CGAL::abs(scalediffdvqx));
-          }
-        }
-        if (retval == SMALLER) {
-          return NEGATIVE;
-        }
-        if (retval == LARGER) {
-          return POSITIVE;
-        }
-      }
-
-      Point_2 rref;
-
-      if (r_.is_point()) {
-        rref = r_.point();
-
-        RT scalediffdvrx = ux_ - rref.x() * uz_;
-        RT scalediffdvry = uy_ - rref.y() * uz_;
-
-        if (CGAL::compare(scalediffdvrx, scalediffdvtx) == EQUAL) {
-          if (CGAL::compare(CGAL::abs(scalediffdvrx), Rs1) == EQUAL) {
-            retval = CGAL::compare(d_fine, CGAL::abs(scalediffdvry));
-          }
-        }
-        if (CGAL::compare(scalediffdvry, scalediffdvty) == EQUAL) {
-          if (CGAL::compare(CGAL::abs(scalediffdvry), Rs1) == EQUAL) {
-            retval = CGAL::compare(d_fine, CGAL::abs(scalediffdvrx));
-          }
-        }
-        if (retval == SMALLER) {
-          return NEGATIVE;
-        }
-      }
-
-      if (retval == LARGER) {
-        return POSITIVE;
-      }
-
-      const Site_2 * p_ptr;
-      const Site_2 * q_ptr;
-      const Site_2 * r_ptr;
-
-      // renaming so that p_ptr, q_ptr, r_ptr are such that
-      // p_ptr, q_ptr point to points and r_ptr to the segment
-
-      if (p_.is_segment()) {
-        r_ptr = &p_;
-        p_ptr = &q_;
-        q_ptr = &r_;
-      } else if (q_.is_segment()) {
-        r_ptr = &q_;
-        p_ptr = &r_;
-        q_ptr = &p_;
-      } else {
-        CGAL_assertion(r_.is_segment());
-        r_ptr = &r_;
-        p_ptr = &p_;
-        q_ptr = &q_;
-      }
-
-      bool is_r_hor = is_site_horizontal(*r_ptr);
-      bool is_r_ver = is_site_vertical(*r_ptr);
-
-      bool is_p_endp_of_r = is_endpoint_of(*p_ptr, *r_ptr);
-      bool is_q_endp_of_r = is_endpoint_of(*q_ptr, *r_ptr);
+      const bool is_p1_endp_of_s = is_endpoint_of(p1, s);
+      const bool is_p2_endp_of_s = is_endpoint_of(p2, s);
 
       // check for p, q with same coordinate and r non-hv segment
-      if ((not (is_r_hor or is_r_ver)) and
-          (not (is_p_endp_of_r or is_q_endp_of_r))
+      if ((not (is_s_hor or is_s_ver)) and
+          (not (is_p1_endp_of_s or is_p2_endp_of_s))
          ) {
-        CGAL_SDG_DEBUG(std::cout << "debug vring r=" << *r_ptr
+        CGAL_SDG_DEBUG(std::cout << "debug vring seg=" << s
             << "is non-axis parallel"
             << " and no points are its endpoints" << std::endl;);
-        bool pqsamex = scmpx(*p_ptr, *q_ptr) == EQUAL;
+        const bool pqsamex = scmpx(p1, p2) == EQUAL;
         bool pqsamey (false);
         if (pqsamex) {
           CGAL_SDG_DEBUG(std::cout << "debug vring points on same vertical side"
               << std::endl;);
         } else {
-          pqsamey = scmpy(*p_ptr, *q_ptr) == EQUAL;
+          pqsamey = scmpy(p1, p2) == EQUAL;
           if (pqsamey) {
             CGAL_SDG_DEBUG(std::cout << "debug points on "
                 << "same horizontal side" << std::endl;);
           }
         }
         if (pqsamex or pqsamey) {
-          Line_2 lr = compute_supporting_line((*r_ptr).supporting_site());
+          Line_2 lr = compute_supporting_line(s.supporting_site());
           Homogeneous_point_2 rref = compute_linf_projection_hom(lr, point());
           if (pqsamex) {
             RT scalediffdvry = uy_ - rref.y() * uz_;
@@ -1287,29 +1220,30 @@ private:
 
 
       // check for p or q endpoint of non-hv r
-      if ((not (is_r_hor or is_r_ver)) and
-          ((is_p_endp_of_r or is_q_endp_of_r))
+      if ((not (is_s_hor or is_s_ver)) and
+          ((is_p1_endp_of_s or is_p2_endp_of_s))
          ) {
-        CGAL_SDG_DEBUG(std::cout << "debug r is non-axis parallel"
-            << " and either p or q is r's endpoint" << std::endl;);
-        CGAL_SDG_DEBUG(std::cout << "debug per=" << is_p_endp_of_r
-            << " qer=" << is_q_endp_of_r << std::endl;);
+        CGAL_SDG_DEBUG(std::cout << "debug seg is non-axis parallel"
+            << " and either p1 or p2 is seg's endpoint" << std::endl;);
+        CGAL_SDG_DEBUG(std::cout << "debug p1es=" << is_p1_endp_of_s
+            << " p2es=" << is_p2_endp_of_s << std::endl;);
 
         // if new point t is on the same side of line pq
         // as the other endpoint of r, then CONFLICT
 
-        Line_2 l = compute_line_from_to(p_ptr->point(), q_ptr->point());
+        Line_2 l = compute_line_from_to(p1.point(), p2.point());
         Oriented_side ost = oriented_side_of_line(l, st.point());
         CGAL_assertion(ost != ON_ORIENTED_BOUNDARY);
-        Point_2 other_of_r;
-        if (is_p_endp_of_r) {
-          other_of_r = (same_points(*p_ptr, r_ptr->source_site()))?
-            ((*r_ptr).target_site().point()) : ((*r_ptr).source_site().point());
-        } else { // is_q_endp_of_r
-          other_of_r = (same_points(*q_ptr, r_ptr->source_site()))?
-            ((*r_ptr).target_site().point()) : ((*r_ptr).source_site().point());
+        Point_2 other_of_s;
+        if (is_p1_endp_of_s) {
+          other_of_s = (same_points(p1, s.source_site()))?
+            (s.target_site().point()) : (s.source_site().point());
+        } else { // is_p2_endp_of_s
+          CGAL_assertion(is_p2_endp_of_s);
+          other_of_s = (same_points(p2, s.source_site()))?
+            (s.target_site().point()) : (s.source_site().point());
         }
-        Oriented_side osother = oriented_side_of_line(l, other_of_r);
+        Oriented_side osother = oriented_side_of_line(l, other_of_s);
 
         CGAL_assertion(osother != ON_ORIENTED_BOUNDARY);
 
