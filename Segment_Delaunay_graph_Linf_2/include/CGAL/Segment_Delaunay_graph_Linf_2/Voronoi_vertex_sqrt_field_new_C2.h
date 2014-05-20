@@ -991,8 +991,9 @@ private:
         ((is_q_hv) ? 1 : 0) +
         ((is_r_hv) ? 1 : 0)  ;
 
+      // this is a trivial assertion
       if (num_common == 2) {
-        CGAL_assertion(num_hv > 0);
+        CGAL_assertion(num_hv >= 0);
       }
 
       CGAL_SDG_DEBUG(
