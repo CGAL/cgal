@@ -70,16 +70,19 @@ nature.
 
 The class `CGAL::Triangulation<TriangulationTraits, TriangulationDataStructure>` 
 describes an embedded triangulation that has as vertices a given set of points
-and which fills the convex hull of these points.
+and which covers the convex hull of these points.
 Methods are
 provided for the insertion of points in the triangulation, the
 traversal of various elements of the triangulation, as well as the localization of a
 query point inside the triangulation.
-The convex hull of the points is part of the triangulation, the fact
-that there is no boundary is ensured by adding an infinite vertex and
-infinite full cells to triangulate the outside of the convex hull.
+The convex hull of the points is part of the triangulation.
+The fact that there is no boundary is ensured by adding a
+fictitious vertex, called the <i>infinite vertex</i>, as well as infinite 
+simplices incident to it. Each infinite \f$ i\f$-simplex is 
+incident to the infinite vertex and to \f$ i\f$ vertices of the convex hull.
 
-See Chapter \ref Chapter_3D_Triangulations "3D Triangulations" for more details
+See Chapters \ref Chapter_2D_Triangulations "2D Triangulations" and 
+\ref Chapter_3D_Triangulations "3D Triangulations" for more details
 about infinite vertices and cells.
 
 The class `CGAL::Delaunay_triangulation<DelaunayTriangulationTraits, TriangulationDataStructure>` adds further

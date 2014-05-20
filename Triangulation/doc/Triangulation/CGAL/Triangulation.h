@@ -7,9 +7,11 @@ namespace CGAL {
 The class `Triangulation` is used to store and query the full cells and vertices of
 a triangulationin dimension \f$ d\f$(see the 
 \ref Chapter_Triangulations "User Manual" for
-a definition of "triangulation"). A special vertex, named
-<I>infinite vertex</I>, is used to triangulate the outside of the convex
-hull of the points in so called <I>infinite cells</I>.
+a definition of "triangulation"). 
+The fact that there is no boundary is ensured by adding a
+fictitious vertex, called the <i>infinite vertex</i>, as well as infinite 
+simplices incident to it. Each infinite \f$ i\f$-simplex is 
+incident to the infinite vertex and to \f$ i\f$ vertices of the convex hull.
 
 Parameters
 --------------
