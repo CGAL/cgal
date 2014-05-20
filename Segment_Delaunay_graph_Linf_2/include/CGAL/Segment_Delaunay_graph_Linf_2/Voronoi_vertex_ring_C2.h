@@ -1218,43 +1218,6 @@ private:
         } // end of case: pqsamex or pqsamey
       } // end of non-hv segment r case with p, q non-endpoints of r
 
-
-      // check for p or q endpoint of non-hv r
-      if ((not (is_s_hor or is_s_ver)) and
-          ((is_p1_endp_of_s or is_p2_endp_of_s))
-         ) {
-        CGAL_SDG_DEBUG(std::cout << "debug seg is non-axis parallel"
-            << " and either p1 or p2 is seg's endpoint" << std::endl;);
-        CGAL_SDG_DEBUG(std::cout << "debug p1es=" << is_p1_endp_of_s
-            << " p2es=" << is_p2_endp_of_s << std::endl;);
-
-        // if new point t is on the same side of line pq
-        // as the other endpoint of r, then CONFLICT
-
-        Line_2 l = compute_line_from_to(p1.point(), p2.point());
-        Oriented_side ost = oriented_side_of_line(l, st.point());
-        CGAL_assertion(ost != ON_ORIENTED_BOUNDARY);
-        Point_2 other_of_s;
-        if (is_p1_endp_of_s) {
-          other_of_s = (same_points(p1, s.source_site()))?
-            (s.target_site().point()) : (s.source_site().point());
-        } else { // is_p2_endp_of_s
-          CGAL_assertion(is_p2_endp_of_s);
-          other_of_s = (same_points(p2, s.source_site()))?
-            (s.target_site().point()) : (s.source_site().point());
-        }
-        Oriented_side osother = oriented_side_of_line(l, other_of_s);
-
-        CGAL_assertion(osother != ON_ORIENTED_BOUNDARY);
-
-        if (osother == ost) {
-          return NEGATIVE;
-        } else {
-          return POSITIVE;
-        }
-
-      } // case r is non-hv and has endpoint p or q
-
       return ZERO;
 
       //FT radius_fine = linf_fine_radius(vv, p, q, r, type);
