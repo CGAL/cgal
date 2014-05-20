@@ -44,7 +44,7 @@
 #include <CGAL/Mesh_3/Concurrent_mesher_config.h>
 #include <CGAL/Timer.h>
 
-#ifdef MESH_3_PROFILING
+#ifdef CGAL_MESH_3_PROFILING
   #include <CGAL/Mesh_3/Profiling_tools.h>
 #endif
 
@@ -386,12 +386,12 @@ Mesher_3<C3T3,MC,MD>::refine_mesh(std::string dump_after_refine_surface_prefix)
   // Scan surface and refine it
   initialize();
 
-#ifdef MESH_3_PROFILING
+#ifdef CGAL_MESH_3_PROFILING
   std::cerr << "Refining facets..." << std::endl;
   WallClockTimer t;
 #endif
   facets_mesher_.refine(facets_visitor_);
-#ifdef MESH_3_PROFILING
+#ifdef CGAL_MESH_3_PROFILING
   double facet_ref_time = t.elapsed();
   std::cerr << "==== Facet refinement: " << facet_ref_time << " seconds ===="
             << std::endl << std::endl;
@@ -422,12 +422,12 @@ Mesher_3<C3T3,MC,MD>::refine_mesh(std::string dump_after_refine_surface_prefix)
 
   // Then scan volume and refine it
   cells_mesher_.scan_triangulation();
-#ifdef MESH_3_PROFILING
+#ifdef CGAL_MESH_3_PROFILING
   std::cerr << "Refining cells..." << std::endl;
   t.reset();
 #endif
   cells_mesher_.refine(cells_visitor_);
-#ifdef MESH_3_PROFILING
+#ifdef CGAL_MESH_3_PROFILING
   double cell_ref_time = t.elapsed();
   std::cerr << "==== Cell refinement: " << cell_ref_time << " seconds ===="
             << std::endl << std::endl;
@@ -440,7 +440,7 @@ Mesher_3<C3T3,MC,MD>::refine_mesh(std::string dump_after_refine_surface_prefix)
 # endif
 #endif
 
-#if defined(CGAL_MESH_3_VERBOSE) || defined(MESH_3_PROFILING)
+#if defined(CGAL_MESH_3_VERBOSE) || defined(CGAL_MESH_3_PROFILING)
   std::cerr
     << "Vertices: " << r_c3t3_.triangulation().number_of_vertices() << std::endl
     << "Facets  : " << r_c3t3_.number_of_facets_in_complex() << std::endl
@@ -542,7 +542,7 @@ void
 Mesher_3<C3T3,MC,MD>::
 initialize()
 {
-#ifdef MESH_3_PROFILING
+#ifdef CGAL_MESH_3_PROFILING
   std::cerr << "Initializing... ";
   WallClockTimer t;
 #endif
@@ -605,7 +605,7 @@ initialize()
 
 # endif // CGAL_PARALLEL_MESH_3_DO_NOT_ADD_OUTSIDE_POINTS_ON_A_FAR_SPHERE
 
-#ifdef MESH_3_PROFILING
+#ifdef CGAL_MESH_3_PROFILING
     double init_time = t.elapsed();
     std::cerr << "done in " << init_time << " seconds." << std::endl;
 #endif
@@ -662,7 +662,7 @@ initialize()
 
 #endif // CGAL_SEQUENTIAL_MESH_3_ADD_OUTSIDE_POINTS_ON_A_FAR_SPHERE
 
-#ifdef MESH_3_PROFILING
+#ifdef CGAL_MESH_3_PROFILING
     double init_time = t.elapsed();
     std::cerr << "done in " << init_time << " seconds." << std::endl;
 #endif

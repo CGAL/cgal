@@ -38,7 +38,7 @@
 
 #include <CGAL/Mesh_3/Concurrent_mesher_config.h>
 
-#ifdef MESH_3_PROFILING
+#ifdef CGAL_MESH_3_PROFILING
   #include <CGAL/Mesh_3/Profiling_tools.h>
 #endif
 
@@ -426,7 +426,7 @@ operator()(int nb_iterations, Visitor visitor)
   running_time_.reset();
   running_time_.start();
 
-#ifdef MESH_3_PROFILING
+#ifdef CGAL_MESH_3_PROFILING
   WallClockTimer t;
 #endif
 
@@ -511,7 +511,7 @@ operator()(int nb_iterations, Visitor visitor)
   }
   running_time_.stop();
 
-#ifdef MESH_3_PROFILING
+#ifdef CGAL_MESH_3_PROFILING
   double optim_time = t.elapsed();
 # ifdef CGAL_MESH_3_EXPORT_PERFORMANCE_DATA
   CGAL_MESH_3_SET_PERFORMANCE_DATA(std::string(Mf::name()) + "_optim_time", optim_time);
@@ -534,7 +534,7 @@ operator()(int nb_iterations, Visitor visitor)
             << "s" << std::endl << std::endl;
 #endif
 
-#ifdef MESH_3_PROFILING
+#ifdef CGAL_MESH_3_PROFILING
   std::cerr << std::endl << "Total optimization 'wall-clock' time: "
             << optim_time << "s" << std::endl;
 #endif
@@ -579,7 +579,7 @@ compute_moves(Moving_vertices_set& moving_vertices)
   // reset worst_move list
   this->clear_big_moves();
 
-#ifdef MESH_3_PROFILING
+#ifdef CGAL_MESH_3_PROFILING
   std::cerr << "Computing moves...";
   WallClockTimer t;
 #endif
@@ -662,7 +662,7 @@ compute_moves(Moving_vertices_set& moving_vertices)
     }
   }
 
-#ifdef MESH_3_PROFILING
+#ifdef CGAL_MESH_3_PROFILING
   std::cerr << "done in " << t.elapsed() << " seconds." << std::endl;
 #endif
 
@@ -739,7 +739,7 @@ update_mesh(const Moves_vector& moves,
   // Cells which have to be updated
   Outdated_cell_set outdated_cells;
 
-#ifdef MESH_3_PROFILING
+#ifdef CGAL_MESH_3_PROFILING
   std::cerr << "Moving vertices...";
   WallClockTimer t;
 #endif
@@ -834,12 +834,12 @@ update_mesh(const Moves_vector& moves,
 
   visitor.after_move_points();
 
-#ifdef MESH_3_PROFILING
+#ifdef CGAL_MESH_3_PROFILING
   std::cerr << "done in " << t.elapsed() << " seconds." << std::endl;
 #endif
 
 
-#ifdef MESH_3_PROFILING
+#ifdef CGAL_MESH_3_PROFILING
   std::cerr << "Updating C3T3 (rebuilding restricted Delaunay)...";
   t.reset();
 #endif
@@ -859,7 +859,7 @@ update_mesh(const Moves_vector& moves,
 
   visitor.after_rebuild_restricted_delaunay();
 
-#ifdef MESH_3_PROFILING
+#ifdef CGAL_MESH_3_PROFILING
   std::cerr << "Updating C3T3 done in " << t.elapsed() << " seconds." << std::endl;
 #endif
 

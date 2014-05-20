@@ -38,7 +38,7 @@
 
 #include <CGAL/Meshes/Triangulation_mesher_level_traits_3.h>
 
-#ifdef MESH_3_PROFILING
+#ifdef CGAL_MESH_3_PROFILING
   #include <CGAL/Mesh_3/Profiling_tools.h>
 #endif
 
@@ -853,7 +853,7 @@ scan_triangulation_impl()
 {
   typedef typename Tr::Finite_facets_iterator Finite_facet_iterator;
 
-#ifdef MESH_3_PROFILING
+#ifdef CGAL_MESH_3_PROFILING
   WallClockTimer t;
 #endif
 
@@ -868,7 +868,7 @@ scan_triangulation_impl()
   // Parallel
   if (boost::is_convertible<Ct, Parallel_tag>::value)
   {
-# if defined(CGAL_MESH_3_VERBOSE) || defined(MESH_3_PROFILING)
+# if defined(CGAL_MESH_3_VERBOSE) || defined(CGAL_MESH_3_PROFILING)
     std::cerr << "Scanning triangulation for bad facets (in parallel) - "
       "number of finite facets = "
       << r_c3t3_.triangulation().number_of_finite_facets() << "..."
@@ -889,7 +889,7 @@ scan_triangulation_impl()
   else
 #endif // CGAL_LINKED_WITH_TBB
   {
-#if defined(CGAL_MESH_3_VERBOSE) || defined(MESH_3_PROFILING)
+#if defined(CGAL_MESH_3_VERBOSE) || defined(CGAL_MESH_3_PROFILING)
     std::cerr << "Scanning triangulation for bad facets (sequential) - "
       "number of finite facets = "
       << r_c3t3_.triangulation().number_of_finite_facets() << "..."
@@ -908,16 +908,16 @@ scan_triangulation_impl()
     }
   }
 
-#ifdef MESH_3_PROFILING
+#ifdef CGAL_MESH_3_PROFILING
   std::cerr << "==== Facet scan: " << t.elapsed() << " seconds ===="
             << std::endl << std::endl;
 #endif
 
-#if defined(CGAL_MESH_3_VERBOSE) || defined(MESH_3_PROFILING)
+#if defined(CGAL_MESH_3_VERBOSE) || defined(CGAL_MESH_3_PROFILING)
   std::cerr << "Number of bad facets: " << C_::size() << std::endl;
 #endif
 
-#ifdef MESH_3_PROFILING
+#ifdef CGAL_MESH_3_PROFILING
   std::cerr << "Refining... ";
   Base_ML::m_timer.reset();
 #endif
@@ -934,7 +934,7 @@ get_number_of_bad_elements_impl()
 
   int count = 0, count_num_bad_surface_facets = 0;
   int num_internal_facets_that_should_be_on_surface = 0;
-#if defined(CGAL_MESH_3_VERBOSE) || defined(MESH_3_PROFILING)
+#if defined(CGAL_MESH_3_VERBOSE) || defined(CGAL_MESH_3_PROFILING)
   std::cerr << "Scanning triangulation for bad facets - "
     "number of finite facets = "
     << r_c3t3_.triangulation().number_of_finite_facets() << "...";

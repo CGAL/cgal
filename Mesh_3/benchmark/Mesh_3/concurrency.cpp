@@ -36,13 +36,13 @@ const char * const BENCHMARK_SCRIPT_FILENAME = "concurrency_script.txt";
 // ==========================================================================
 
 //#define BENCHMARK_WITH_1_TO_MAX_THREADS
-//#define MESH_3_POLYHEDRON_WITH_FEATURES
-//#define MESH_3_IMPLICIT_WITH_FEATURES
-//#define MESH_3_BENCHMARK_EXPORT_TO_MAYA
-//#define MESH_3_BENCHMARK_EXPORT_TO_MESH
-//#define MESH_3_BENCHMARK_LLOYD
-//#define MESH_3_BENCHMARK_PERTURB
-//#define MESH_3_BENCHMARK_EXUDE
+//#define CGAL_MESH_3_POLYHEDRON_WITH_FEATURES
+//#define CGAL_MESH_3_IMPLICIT_WITH_FEATURES
+//#define CGAL_MESH_3_BENCHMARK_EXPORT_TO_MAYA
+//#define CGAL_MESH_3_BENCHMARK_EXPORT_TO_MESH
+//#define CGAL_MESH_3_BENCHMARK_LLOYD
+//#define CGAL_MESH_3_BENCHMARK_PERTURB
+//#define CGAL_MESH_3_BENCHMARK_EXUDE
 
 // ==========================================================================
 // MESH_3 GENERAL PARAMETERS
@@ -59,7 +59,7 @@ const char * const BENCHMARK_SCRIPT_FILENAME = "concurrency_script.txt";
 //#define CGAL_MESH_3_OPTIMIZER_VERBOSE
 #define CGAL_MESH_3_INITIAL_POINTS_NO_RANDOM_SHOOTING
 
-#define MESH_3_PROFILING
+#define CGAL_MESH_3_PROFILING
 //#define CHECK_AND_DISPLAY_THE_NUMBER_OF_BAD_ELEMENTS_IN_THE_END
 
 const int     FACET_ANGLE              = 25;
@@ -262,7 +262,7 @@ protected:
 #include <CGAL/make_mesh_3.h>
 #include <CGAL/refine_mesh_3.h>
 
-#ifdef MESH_3_POLYHEDRON_WITH_FEATURES
+#ifdef CGAL_MESH_3_POLYHEDRON_WITH_FEATURES
 # include <CGAL/Mesh_polyhedron_3.h>
 #endif
 
@@ -475,7 +475,7 @@ bool make_mesh_polyhedron(const std::string &input_filename,
   // Domain
   typedef Kernel K;
 
-#ifdef MESH_3_POLYHEDRON_WITH_FEATURES
+#ifdef CGAL_MESH_3_POLYHEDRON_WITH_FEATURES
   typedef CGAL::Mesh_polyhedron_3<K>::type Polyhedron;
   typedef CGAL::Polyhedral_mesh_domain_with_features_3<K> Mesh_domain;
 #else
@@ -512,7 +512,7 @@ bool make_mesh_polyhedron(const std::string &input_filename,
   Mesh_domain domain(polyhedron);
   std::cerr << "done." << std::endl;
 
-#ifdef MESH_3_POLYHEDRON_WITH_FEATURES
+#ifdef CGAL_MESH_3_POLYHEDRON_WITH_FEATURES
   std::cerr << "Detecting features... ";
   domain.detect_features();
   std::cerr << "done." << std::endl;
@@ -551,19 +551,19 @@ bool make_mesh_polyhedron(const std::string &input_filename,
 
   C3t3 c3t3 = CGAL::make_mesh_3<C3t3>( domain
                                      , criteria
-# ifdef MESH_3_BENCHMARK_LLOYD
+# ifdef CGAL_MESH_3_BENCHMARK_LLOYD
                                      , lloyd(time_limit=timelimit)
 # else
                                      , no_lloyd()
 # endif
                                      , no_odt()
-# ifdef MESH_3_BENCHMARK_PERTURB
+# ifdef CGAL_MESH_3_BENCHMARK_PERTURB
                                      , perturb(time_limit = timelimit,
                                                sliver_bound = sliverbound)
 # else
                                      , no_perturb()
 #endif
-#ifdef MESH_3_BENCHMARK_EXUDE
+#ifdef CGAL_MESH_3_BENCHMARK_EXUDE
                                      , exude(time_limit = timelimit,
                                              sliver_bound = sliverbound)
 #else
@@ -576,13 +576,13 @@ bool make_mesh_polyhedron(const std::string &input_filename,
   CGAL_MESH_3_SET_PERFORMANCE_DATA("T", c3t3.number_of_cells_in_complex());
   CGAL_MESH_3_SET_PERFORMANCE_DATA("Mem", CGAL::Memory_sizer().virtual_size() >> 20);
 
-#ifdef MESH_3_BENCHMARK_EXPORT_TO_MAYA
+#ifdef CGAL_MESH_3_BENCHMARK_EXPORT_TO_MAYA
   std::cerr << "Exporting to maya file format (*.maya)... ";
   c3t3.output_to_maya(std::ofstream(input_filename + ".maya"), true);
   std::cerr << "done." << std::endl;
 #endif
 
-#ifdef MESH_3_BENCHMARK_EXPORT_TO_MESH
+#ifdef CGAL_MESH_3_BENCHMARK_EXPORT_TO_MESH
   std::cerr << "Exporting to Medit file format (*.mesh)... ";
   c3t3.output_to_medit(std::ofstream(input_filename + ".mesh"), true);
   std::cerr << "done." << std::endl;
@@ -657,19 +657,19 @@ bool make_mesh_3D_images(const std::string &input_filename,
 
   C3t3 c3t3 = CGAL::make_mesh_3<C3t3>( domain
                                      , criteria
-# ifdef MESH_3_BENCHMARK_LLOYD
+# ifdef CGAL_MESH_3_BENCHMARK_LLOYD
                                      , lloyd(time_limit=timelimit)
 # else
                                      , no_lloyd()
 # endif
                                      , no_odt()
-# ifdef MESH_3_BENCHMARK_PERTURB
+# ifdef CGAL_MESH_3_BENCHMARK_PERTURB
                                      , perturb(time_limit = timelimit,
                                                sliver_bound = sliverbound)
 # else
                                      , no_perturb()
 #endif
-#ifdef MESH_3_BENCHMARK_EXUDE
+#ifdef CGAL_MESH_3_BENCHMARK_EXUDE
                                      , exude(time_limit = timelimit,
                                              sliver_bound = sliverbound)
 #else
@@ -682,13 +682,13 @@ bool make_mesh_3D_images(const std::string &input_filename,
   CGAL_MESH_3_SET_PERFORMANCE_DATA("T", c3t3.number_of_cells_in_complex());
   CGAL_MESH_3_SET_PERFORMANCE_DATA("Mem", CGAL::Memory_sizer().virtual_size() >> 20);
 
-#ifdef MESH_3_BENCHMARK_EXPORT_TO_MAYA
+#ifdef CGAL_MESH_3_BENCHMARK_EXPORT_TO_MAYA
   std::cerr << "Exporting to maya file format (*.maya)... ";
   c3t3.output_to_maya(std::ofstream(input_filename + ".maya"), true);
   std::cerr << "done." << std::endl;
 #endif
 
-#ifdef MESH_3_BENCHMARK_EXPORT_TO_MESH
+#ifdef CGAL_MESH_3_BENCHMARK_EXPORT_TO_MESH
   std::cerr << "Exporting to Medit file format (*.mesh)... ";
   c3t3.output_to_medit(std::ofstream(input_filename + ".mesh"), true);
   std::cerr << "done." << std::endl;
@@ -706,7 +706,7 @@ bool make_mesh_implicit(double facet_approx,
                         const std::string &function_name)
 {
   // Domain
-#ifdef MESH_3_IMPLICIT_WITH_FEATURES
+#ifdef CGAL_MESH_3_IMPLICIT_WITH_FEATURES
   typedef CGAL::Implicit_mesh_domain_3<const ImplicitFunction, Kernel> Implicit_domain;
   typedef CGAL::Mesh_domain_with_polyline_features_3<Implicit_domain> Mesh_domain;
 #else
@@ -731,7 +731,7 @@ bool make_mesh_implicit(double facet_approx,
   Sphere bounding_sphere(CGAL::ORIGIN, 10.0 * 10.0);
   Mesh_domain domain(func, bounding_sphere/*, 1e-7*/);
 
-#ifdef MESH_3_IMPLICIT_WITH_FEATURES
+#ifdef CGAL_MESH_3_IMPLICIT_WITH_FEATURES
   // Add 12 feature creases
   Creases creases;
   Point p1(-1.0, -1.0, -1.0);
@@ -794,19 +794,19 @@ bool make_mesh_implicit(double facet_approx,
 
   C3t3 c3t3 = CGAL::make_mesh_3<C3t3>( domain
                                      , criteria
-# ifdef MESH_3_BENCHMARK_LLOYD
+# ifdef CGAL_MESH_3_BENCHMARK_LLOYD
                                      , lloyd(time_limit=timelimit)
 # else
                                      , no_lloyd()
 # endif
                                      , no_odt()
-# ifdef MESH_3_BENCHMARK_PERTURB
+# ifdef CGAL_MESH_3_BENCHMARK_PERTURB
                                      , perturb(time_limit = timelimit,
                                                sliver_bound = sliverbound)
 # else
                                      , no_perturb()
 #endif
-#ifdef MESH_3_BENCHMARK_EXUDE
+#ifdef CGAL_MESH_3_BENCHMARK_EXUDE
                                      , exude(time_limit = timelimit,
                                              sliver_bound = sliverbound)
 #else
@@ -819,13 +819,13 @@ bool make_mesh_implicit(double facet_approx,
   CGAL_MESH_3_SET_PERFORMANCE_DATA("T", c3t3.number_of_cells_in_complex());
   CGAL_MESH_3_SET_PERFORMANCE_DATA("Mem", CGAL::Memory_sizer().virtual_size() >> 20);
 
-#ifdef MESH_3_BENCHMARK_EXPORT_TO_MAYA
+#ifdef CGAL_MESH_3_BENCHMARK_EXPORT_TO_MAYA
   std::cerr << "Exporting to maya file format (*.maya)... ";
   c3t3.output_to_maya(std::ofstream(function_name + ".maya"), true);
   std::cerr << "done." << std::endl;
 #endif
 
-#ifdef MESH_3_BENCHMARK_EXPORT_TO_MESH
+#ifdef CGAL_MESH_3_BENCHMARK_EXPORT_TO_MESH
   std::cerr << "Exporting to Medit file format (*.mesh)... ";
   c3t3.output_to_medit(std::ofstream(function_name + ".mesh"), true);
   std::cerr << "done." << std::endl;

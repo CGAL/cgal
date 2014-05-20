@@ -35,7 +35,7 @@
 #include <CGAL/array.h>
 #include <CGAL/Handle_hash_function.h>
 
-#ifdef MESH_3_PROFILING
+#ifdef CGAL_MESH_3_PROFILING
   #include <CGAL/Mesh_3/Profiling_tools.h>
 #endif
 
@@ -2474,7 +2474,7 @@ rebuild_restricted_delaunay(OutdatedCells& outdated_cells,
   typename OutdatedCells::iterator last_cell = outdated_cells.end();
   Update_c3t3 updater(domain_,c3t3_);
 
-#ifdef MESH_3_PROFILING
+#ifdef CGAL_MESH_3_PROFILING
   std::cerr << std::endl << "  Updating cells...";
   WallClockTimer t;
   size_t num_cells = c3t3_.number_of_cells_in_complex();
@@ -2513,7 +2513,7 @@ rebuild_restricted_delaunay(OutdatedCells& outdated_cells,
       });*/
 
 
-#ifdef MESH_3_PROFILING
+#ifdef CGAL_MESH_3_PROFILING
     std::cerr << " done in " << t.elapsed() << " seconds (#cells from "
       << num_cells << " to " << c3t3_.number_of_cells_in_complex() << ")."
       << std::endl;
@@ -2543,7 +2543,7 @@ rebuild_restricted_delaunay(OutdatedCells& outdated_cells,
       updater(cell);
     }
 
-#ifdef MESH_3_PROFILING
+#ifdef CGAL_MESH_3_PROFILING
     std::cerr << " done in " << t.elapsed() << " seconds (#cells from "
       << num_cells << " to " << c3t3_.number_of_cells_in_complex() << ")."
       << std::endl;
@@ -2562,7 +2562,7 @@ rebuild_restricted_delaunay(OutdatedCells& outdated_cells,
   }
 
 
-#ifdef MESH_3_PROFILING
+#ifdef CGAL_MESH_3_PROFILING
   std::cerr << " done in " << t.elapsed() << " seconds ("
             << vertex_to_proj.size() << " vertices to project)." << std::endl;
   std::cerr << "  Projecting interior vertices...";
@@ -2593,7 +2593,7 @@ rebuild_restricted_delaunay(OutdatedCells& outdated_cells,
     }
   }
 
-#ifdef MESH_3_PROFILING
+#ifdef CGAL_MESH_3_PROFILING
   std::cerr << " done in " << t.elapsed() << " seconds." << std::endl;
 #endif
 }

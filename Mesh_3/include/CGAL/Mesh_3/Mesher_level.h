@@ -23,7 +23,7 @@
 
 #include <string>
 
-#ifdef MESH_3_PROFILING
+#ifdef CGAL_MESH_3_PROFILING
   #include <CGAL/Mesh_3/Profiling_tools.h>
 #endif
 
@@ -192,7 +192,7 @@ protected:
   Previous_level& previous_level; /**< The previous level of the refinement
                                     process. */
 
-#ifdef MESH_3_PROFILING
+#ifdef CGAL_MESH_3_PROFILING
 protected:
   WallClockTimer m_timer;
 #endif
@@ -378,7 +378,7 @@ public:
    */
   bool is_algorithm_done()
   {
-#ifdef MESH_3_PROFILING
+#ifdef CGAL_MESH_3_PROFILING
     bool done = ( previous_level.is_algorithm_done() &&
                   no_longer_element_to_refine() );
     /*if (done)
@@ -938,7 +938,7 @@ public:
 
     m_empty_root_task->wait_for_all();
 
-#if defined(CGAL_MESH_3_VERBOSE) || defined(MESH_3_PROFILING)
+#if defined(CGAL_MESH_3_VERBOSE) || defined(CGAL_MESH_3_PROFILING)
     std::cerr << " Flushing";
 #endif
     bool keep_flushing = true;
@@ -947,7 +947,7 @@ public:
       m_empty_root_task->set_ref_count(1);
       keep_flushing = m_worksharing_ds->flush_work_buffers(*m_empty_root_task);
       m_empty_root_task->wait_for_all();
-#if defined(CGAL_MESH_3_VERBOSE) || defined(MESH_3_PROFILING)
+#if defined(CGAL_MESH_3_VERBOSE) || defined(CGAL_MESH_3_PROFILING)
       std::cerr << ".";
 #endif
     }

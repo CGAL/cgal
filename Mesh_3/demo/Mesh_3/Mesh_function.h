@@ -213,7 +213,7 @@ launch()
   mesher_->refine_mesh();
   /*mesher_->initialize();
   
-#ifdef MESH_3_PROFILING
+#ifdef CGAL_MESH_3_PROFILING
   WallClockTimer t;
 #endif
 
@@ -222,7 +222,7 @@ launch()
     mesher_->one_step();
   }
 
-#ifdef MESH_3_PROFILING
+#ifdef CGAL_MESH_3_PROFILING
   std::cerr << "Full refinement time (without fix_c3t3): " << t.elapsed() << " seconds." << std::endl;
 #endif
   */

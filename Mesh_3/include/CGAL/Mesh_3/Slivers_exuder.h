@@ -450,7 +450,7 @@ public: // methods
   Mesh_optimization_return_code
   operator()(Visitor visitor = Visitor())
   {
-#ifdef MESH_3_PROFILING
+#ifdef CGAL_MESH_3_PROFILING
   WallClockTimer t;
 #endif
 
@@ -466,7 +466,7 @@ public: // methods
     Mesh_optimization_return_code ret =
       pump_vertices<true>(sliver_criteria_.sliver_bound(), visitor);
 
-#ifdef MESH_3_PROFILING
+#ifdef CGAL_MESH_3_PROFILING
     double exudation_time = t.elapsed();
     std::cerr << std::endl << "==== Total exudation 'wall-clock' time: "
               << exudation_time << "s ====" << std::endl;
@@ -866,13 +866,13 @@ Slivers_exuder<C3T3,Md,SC,V_,FT>::
 pump_vertices(double sliver_criterion_limit,
               Visitor& visitor)
 {
-#ifdef MESH_3_PROFILING
+#ifdef CGAL_MESH_3_PROFILING
   WallClockTimer t;
 #endif
 
   init(sliver_criterion_limit);
 
-#ifdef MESH_3_PROFILING
+#ifdef CGAL_MESH_3_PROFILING
   std::cerr << std::endl << "==== Init time: "
             << t.elapsed() << "s ====" << std::endl;
 #endif
@@ -888,7 +888,7 @@ pump_vertices(double sliver_criterion_limit,
   running_time_.reset();
   running_time_.start();
 
-#ifdef MESH_3_PROFILING
+#ifdef CGAL_MESH_3_PROFILING
   t.reset();
 #endif
 
@@ -912,14 +912,14 @@ pump_vertices(double sliver_criterion_limit,
 
     this->wait_for_all();
 
-# if defined(CGAL_MESH_3_EXUDER_VERBOSE) || defined(MESH_3_PROFILING)
+# if defined(CGAL_MESH_3_EXUDER_VERBOSE) || defined(CGAL_MESH_3_PROFILING)
     std::cerr << " Flushing";
 # endif
     bool keep_flushing = true;
     while (keep_flushing)
     {
       keep_flushing = this->flush_work_buffers();
-# if defined(CGAL_MESH_3_EXUDER_VERBOSE) || defined(MESH_3_PROFILING)
+# if defined(CGAL_MESH_3_EXUDER_VERBOSE) || defined(CGAL_MESH_3_PROFILING)
       std::cerr << ".";
 # endif
     }
@@ -975,7 +975,7 @@ pump_vertices(double sliver_criterion_limit,
 
   running_time_.stop();
 
-#ifdef MESH_3_PROFILING
+#ifdef CGAL_MESH_3_PROFILING
   std::cerr << std::endl << "==== Iterations time: "
             << t.elapsed() << "s ====" << std::endl;
 #endif

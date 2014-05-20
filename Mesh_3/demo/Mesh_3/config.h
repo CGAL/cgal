@@ -124,6 +124,6 @@
 
 #endif // CONCURRENT_MESH_3
   
-#define MESH_3_PROFILING
+#define CGAL_MESH_3_PROFILING
 
 #endif // CGAL_DEMO_MESH_3_CONFIG_H

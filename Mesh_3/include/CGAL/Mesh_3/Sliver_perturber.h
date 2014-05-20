@@ -728,7 +728,7 @@ operator()(Visitor visitor)
   running_time_.reset();
   running_time_.start();
 
-#ifdef MESH_3_PROFILING
+#ifdef CGAL_MESH_3_PROFILING
   WallClockTimer t;
 #endif
 
@@ -740,7 +740,7 @@ operator()(Visitor visitor)
 
 
 #if defined(CGAL_MESH_3_PERTURBER_VERBOSE) \
- || defined(MESH_3_PROFILING)
+ || defined(CGAL_MESH_3_PROFILING)
   std::cerr << "Running sliver perturbation..." << std::endl;
 #endif
 
@@ -770,7 +770,7 @@ operator()(Visitor visitor)
     }
   }
 
-#ifdef MESH_3_PROFILING
+#ifdef CGAL_MESH_3_PROFILING
   double perturbation_time = t.elapsed();
 #endif
 
@@ -785,7 +785,7 @@ operator()(Visitor visitor)
   print_final_perturbations_statistics();
 #endif
 
-#ifdef MESH_3_PROFILING
+#ifdef CGAL_MESH_3_PROFILING
   std::cerr << std::endl << "Total perturbation 'wall-clock' time: "
             << perturbation_time << "s" << std::endl;
 #endif
@@ -793,27 +793,27 @@ operator()(Visitor visitor)
   Mesh_optimization_return_code ret;
 
   if ( is_time_limit_reached() ) {
-#if defined(CGAL_MESH_3_PERTURBER_VERBOSE) || defined(MESH_3_PROFILING)
+#if defined(CGAL_MESH_3_PERTURBER_VERBOSE) || defined(CGAL_MESH_3_PROFILING)
     std::cerr << "Perturbation return code: TIME_LIMIT_REACHED\n\n";
 #endif // CGAL_MESH_3_PERTURBER_VERBOSE
     ret = TIME_LIMIT_REACHED;
   }
   else if ( !perturbation_ok ) {
-#if defined(CGAL_MESH_3_PERTURBER_VERBOSE) || defined(MESH_3_PROFILING)
+#if defined(CGAL_MESH_3_PERTURBER_VERBOSE) || defined(CGAL_MESH_3_PROFILING)
     std::cerr << "Perturbation return code: CANT_IMPROVE_ANYMORE\n\n";
 #endif // CGAL_MESH_3_PERTURBER_VERBOSE
     ret = CANT_IMPROVE_ANYMORE;
   }
   else
   {
-#if defined(CGAL_MESH_3_PERTURBER_VERBOSE) || defined(MESH_3_PROFILING)
+#if defined(CGAL_MESH_3_PERTURBER_VERBOSE) || defined(CGAL_MESH_3_PROFILING)
     std::cerr << "Perturbation return code: BOUND_REACHED\n\n";
 #endif // CGAL_MESH_3_PERTURBER_VERBOSE
     ret = BOUND_REACHED;
   }
 
 #if defined(CGAL_MESH_3_EXPORT_PERFORMANCE_DATA) \
- && defined(MESH_3_PROFILING)
+ && defined(CGAL_MESH_3_PROFILING)
   if (ret == BOUND_REACHED)
   {
     CGAL_MESH_3_SET_PERFORMANCE_DATA("Perturber_optim_time", perturbation_time);
@@ -908,14 +908,14 @@ perturb(const FT& sliver_bound, PQueue& pqueue, Visitor& visitor) const
 
     this->wait_for_all();
 
-# if defined(CGAL_MESH_3_PERTURBER_VERBOSE) || defined(MESH_3_PROFILING)
+# if defined(CGAL_MESH_3_PERTURBER_VERBOSE) || defined(CGAL_MESH_3_PROFILING)
     std::cerr << " Flushing";
 # endif
     bool keep_flushing = true;
     while (keep_flushing)
     {
       keep_flushing = this->flush_work_buffers();
-# if defined(CGAL_MESH_3_PERTURBER_VERBOSE) || defined(MESH_3_PROFILING)
+# if defined(CGAL_MESH_3_PERTURBER_VERBOSE) || defined(CGAL_MESH_3_PROFILING)
       std::cerr << ".";
 # endif
     }
