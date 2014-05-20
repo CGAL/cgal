@@ -95,8 +95,9 @@ protected:
       std::ifstream in(filename);
       if (in.fail())
       {
-        std::string err = "could not open file ";
+        std::string err = "could not open file '";
         err += filename;
+        err += "'. Using default values.";
         throw std::runtime_error(err);
       }
 
@@ -119,7 +120,8 @@ protected:
     }
     catch (std::exception &e)
     {
-      std::cerr << "Config file ERROR: " << e.what() << std::endl;
+      std::cerr << "Concurrency configuration file error: " 
+        << e.what() << std::endl;
       return false;
     }
 
