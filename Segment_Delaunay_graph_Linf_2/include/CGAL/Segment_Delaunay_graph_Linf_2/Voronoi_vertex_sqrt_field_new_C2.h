@@ -124,30 +124,37 @@ private:
   }
 
   inline
-  bool point_inside_touching_sides_v(
-      const Site_2 & t, const Site_2 & s, const Point_2 & v)
+  bool points_inside_touching_sides_v(
+      const Site_2 & s, const Site_2 & pt_site,
+      const Site_2 & other_seg, const Site_2 & t, const Point_2 & v)
   const
   {
     CGAL_assertion(not is_site_h_or_v(s));
     CGAL_assertion(t.is_point());
+    CGAL_assertion(pt_site.is_point());
     CGAL_assertion(s.is_segment());
-    Line_2 ls = compute_supporting_line(s.supporting_site());
-    Point_2 corner =
-      compute_linf_projection_nonhom(ls, v);
-    Line_2 ltest;
-    if (has_positive_slope(s)) {
-      ltest = compute_pos_45_line_at(v);
-    } else {
-      ltest = compute_neg_45_line_at(v);
-    }
-    Oriented_side ost = oriented_side_of_line(ltest, t.point());
-    Oriented_side osx = oriented_side_of_line(ltest, corner);
-    if (ost == osx) {
-      return true;
-    }
-    else {
+    CGAL_assertion(other_seg.is_segment());
+    if ((not is_site_h_or_v(other_seg)) and
+        is_endpoint_of(pt_site, other_seg)) {
       return false;
     }
+    const Line_2 ls = compute_supporting_line(s.supporting_site());
+    const Point_2 corner =
+      compute_linf_projection_nonhom(ls, v);
+    const Line_2 ltest = has_positive_slope(s) ?
+      compute_pos_45_line_at(v): compute_neg_45_line_at(v);
+    CGAL_assertion(
+        oriented_side_of_line(ltest, v) == ON_ORIENTED_BOUNDARY);
+    const Oriented_side ost = oriented_side_of_line(ltest, t.point());
+    const Oriented_side osx = oriented_side_of_line(ltest, corner);
+    if (ost == osx) {
+      const Oriented_side osp = oriented_side_of_line(
+          ltest, pt_site.point());
+      if (ost == osp) {
+        return true;
+      }
+    }
+    return false;
   }
 
 
@@ -2263,40 +2270,48 @@ private:
         diffdvqy = vv.y() - hqref.y();
       }
 
-      CGAL_SDG_DEBUG(std::cout << "debug diffdvqx=" << diffdvqx
-        << " diffdvqy=" << diffdvqy << std::endl;);
+      if (q.is_point()) {
+        CGAL_SDG_DEBUG(std::cout << "debug diffdvqx=" << diffdvqx
+            << " diffdvqy=" << diffdvqy << std::endl;);
 
-      if (CGAL::compare(diffdvqx, diffdvtx) == EQUAL) {
-        CGAL_SDG_DEBUG(std::cout << "debug diffdvqx="
-            << " diffdvtx=" << diffdvtx
-            << std::endl;);
-        if (CGAL::compare(CGAL::abs(diffdvqx), d) == EQUAL) {
-          retval = CGAL::compare(d_fine, CGAL::abs(diffdvqy));
-          CGAL_SDG_DEBUG(std::cout << "debug d_fine=" << d_fine
-            << " absdiffdvqy=" << CGAL::abs(diffdvqy)
-            << " comparison=" << retval << std::endl;);
+        if (CGAL::compare(diffdvqx, diffdvtx) == EQUAL) {
+          CGAL_SDG_DEBUG(std::cout << "debug diffdvqx="
+              << " diffdvtx=" << diffdvtx
+              << std::endl;);
+          if (CGAL::compare(CGAL::abs(diffdvqx), d) == EQUAL) {
+            retval = CGAL::compare(d_fine, CGAL::abs(diffdvqy));
+            CGAL_SDG_DEBUG(std::cout << "debug d_fine=" << d_fine
+                << " absdiffdvqy=" << CGAL::abs(diffdvqy)
+                << " comparison=" << retval << std::endl;);
+          }
         }
-      }
-      if (CGAL::compare(diffdvqy, diffdvty) == EQUAL) {
-        if (CGAL::compare(CGAL::abs(diffdvqy), d) == EQUAL) {
-          retval = CGAL::compare(d_fine, CGAL::abs(diffdvqx));
-          CGAL_SDG_DEBUG(std::cout << "debug d_fine=" << d_fine
-            << " absdiffdvqx=" << CGAL::abs(diffdvqx)
-            << " comparison=" << retval << std::endl;);
+        if (CGAL::compare(diffdvqy, diffdvty) == EQUAL) {
+          if (CGAL::compare(CGAL::abs(diffdvqy), d) == EQUAL) {
+            retval = CGAL::compare(d_fine, CGAL::abs(diffdvqx));
+            CGAL_SDG_DEBUG(std::cout << "debug d_fine=" << d_fine
+                << " absdiffdvqx=" << CGAL::abs(diffdvqx)
+                << " comparison=" << retval << std::endl;);
+          }
         }
-      }
-      if (retval == SMALLER) {
-        return NEGATIVE;
-      }
+        if (retval == SMALLER) {
+          return NEGATIVE;
+        }
 
-      if (retval == LARGER) {
-        return POSITIVE;
+        if (retval == LARGER) {
+          return POSITIVE;
+        }
       }
 
       if (q.is_segment() and (not is_q_hv)) {
         if (CGAL::compare(d_fine, d) == SMALLER) {
-          if (point_inside_touching_sides_v(t, q, vv)) {
+          CGAL_assertion(p.is_point());
+          if (points_inside_touching_sides_v(q, p, r, t, vv)) {
             return NEGATIVE;
+          }
+          if (not is_r_hv) {
+            if (points_inside_touching_sides_v(r, p, q, t, vv)) {
+              return NEGATIVE;
+            }
           }
         }
       }
@@ -2344,49 +2359,6 @@ private:
           } // end of pqsamey case
         } // end of case: pqsamex or pqsamey
       } // end of non-hv segment r case with p, q non-endpoints of r
-
-      // check for p or q endpoint of non-hv r
-      if ((not (is_r_hor or is_r_ver)) and
-          ((is_p_endp_of_r or is_q_endp_of_r))
-         ) {
-        CGAL_SDG_DEBUG(std::cout << "debug r is non-axis parallel"
-            << " and either p or q is r's endpoint" << std::endl;);
-        CGAL_SDG_DEBUG(std::cout << "debug per=" << is_p_endp_of_r
-            << " qer=" << is_q_endp_of_r << std::endl;);
-
-        CGAL_assertion((v_type == PPS) or pt_endps_of_diff_qr);
-
-        if (pt_endps_of_diff_qr) {
-          CGAL_assertion(not is_q_hv);
-          CGAL_assertion(not is_r_hv);
-          return ZERO;
-        }
-
-        // if new point t is on the same side of line pq
-        // as the other endpoint of r, then CONFLICT
-
-        Line_2 l = compute_line_from_to(p.point(), q.point());
-        Oriented_side ost = oriented_side_of_line(l, t.point());
-        CGAL_assertion(ost != ON_ORIENTED_BOUNDARY);
-        Point_2 other_of_r;
-        if (is_p_endp_of_r) {
-          other_of_r = (same_points(p, r.source_site()))?
-            (r.target_site().point()) : (r.source_site().point());
-        } else { // is_q_endp_of_r
-          other_of_r = (same_points(q, r.source_site()))?
-            (r.target_site().point()) : (r.source_site().point());
-        }
-        Oriented_side osother = oriented_side_of_line(l, other_of_r);
-
-        CGAL_assertion(osother != ON_ORIENTED_BOUNDARY);
-
-        if (osother == ost) {
-          return NEGATIVE;
-        } else {
-          return POSITIVE;
-        }
-
-      } // case r is non-hv and has endpoint p or q
 
       CGAL_SDG_DEBUG(std::cout
           << "debug in refinement return final zero" << std::endl;);
