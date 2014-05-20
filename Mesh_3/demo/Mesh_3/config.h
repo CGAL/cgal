@@ -83,8 +83,7 @@
   // Concurrency config
   // ==========================================================================
 
-  const char * const CONFIG_FILENAME = 
-    "D:/INRIA/CGAL/workingcopy/Mesh_3/demo/Mesh_3/concurrent_mesher_config.cfg"; // CJTODO
+  const char * const CONFIG_FILENAME = "concurrent_mesher_config.cfg";
   
   // =================
   // Locking strategy
