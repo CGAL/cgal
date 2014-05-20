@@ -983,7 +983,8 @@ private:
         ((have_common_qr) ? 1 : 0) +
         ((have_common_rp) ? 1 : 0)  ;
 
-      CGAL_assertion(num_common <= 2);
+      // num_common can be 3 if the three segments create a triangle
+      CGAL_assertion(num_common <= 3);
 
       const unsigned int num_hv =
         ((is_p_hv) ? 1 : 0) +
