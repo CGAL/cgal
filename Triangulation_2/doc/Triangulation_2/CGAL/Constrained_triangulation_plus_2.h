@@ -4,13 +4,13 @@ namespace CGAL {
 /*!
 \ingroup PkgTriangulation2TriangulationClasses
 
-The class `Polyline_constrained_triangulation_2` 
+The class `Constrained_triangulation_plus_2` 
 implements a constrained triangulation where the constraints are polylines.
 It maintains an additional data structure, called the constraint hierarchy, 
 that keeps track of the input constraints and of their refinement 
 in the triangulation. 
 
-The class `Polyline_constrained_triangulation_2<Tr>` 
+The class `Constrained_triangulation_plus_2<Tr>` 
 inherits from its template parameter Tr, which has to be instantiated 
 by a constrained or constrained Delaunay triangulation. 
 
@@ -41,7 +41,7 @@ constrained edge, the set of input constraints it overlaps with.
 
 */
 template< typename Tr >
-class Polyline_constrained_triangulation_2 : public Tr {
+class Constrained_triangulation_plus_2 : public Tr {
 public:
 
 /// \name Types 
@@ -129,13 +129,13 @@ typedef unspecified_type Context_iterator;
 /*! 
 Introduces an empty triangulation.
 */ 
-Polyline_constrained_triangulation_2(const Geom_traits& gt=Geom_traits()); 
+Constrained_triangulation_plus_2(const Geom_traits& gt=Geom_traits()); 
 
 /*! 
 Copy constructor. 
 */ 
-Polyline_constrained_triangulation_2(const 
-Polyline_constrained_triangulation_2& ct); 
+Constrained_triangulation_plus_2(const 
+Constrained_triangulation_plus_2& ct); 
 
 
 /*! 
@@ -145,7 +145,7 @@ from the constraints in the range `[first,last)`.
 \todo Formalize range of points. 
 */ 
 template<class InputIterator> 
-Polyline_constrained_triangulation_2( 
+Constrained_triangulation_plus_2( 
 InputIterator first, 
 InputIterator last,
 const Geom_traits& gt= Geom_traits()); 
@@ -159,20 +159,20 @@ const Geom_traits& gt= Geom_traits());
 Assignment. All the vertices and faces are duplicated. 
 The constraint hierarchy is also duplicated. 
 */ 
-Polyline_constrained_triangulation_2 operator=(const 
-Polyline_constrained_triangulation_2& tr); 
+Constrained_triangulation_plus_2 operator=(const 
+Constrained_triangulation_plus_2& tr); 
 
 /*! 
 The triangulations `tr` and this triangulation are swapped. 
 This operation should be preferred to the assignment or to 
 the copy constructor if `tr` is deleted after that. 
 */ 
-void swap(Polyline_constrained_triangulation_2 tr); 
+void swap(Constrained_triangulation_plus_2 tr); 
 
 /// @} 
 
 /// \name Insertion and Removal 
-/// The class `Polyline_constrained_triangulation_2` overwrites the
+/// The class `Constrained_triangulation_plus_2` overwrites the
 /// following insertion and removal member functions for points and
 /// constraints.
 /// @{
@@ -337,7 +337,7 @@ The simplification algorithm uses the following types and functions.
 /*!
 An iterator on the points of the chain of sub-constraints representing a
 constraint. The value type of this iterator is `Point`.
-A \link Polyline_constrained_triangulation_2::Vertices_in_constraint_iterator `Vertices_in_constraint_iterator`\endlink can be converted into
+A \link Constrained_triangulation_plus_2::Vertices_in_constraint_iterator `Vertices_in_constraint_iterator`\endlink can be converted into
 a `Points_in_constraint_iterator`, but not the other way round.
 */
 typedef unspecified_type Points_in_constraint_iterator;
@@ -376,5 +376,5 @@ remove_points_from_constraints();
 /// @}
 
 
-}; /* end Polyline_constrained_triangulation_2 */
+}; /* end Constrained_triangulation_plus_2 */
 } /* end namespace CGAL */
