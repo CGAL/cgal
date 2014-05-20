@@ -1439,32 +1439,33 @@ private:
       const Point_2 pref = pt_site.point();
       const RT scalediffdvpx = ux_ - pref.x() * uz_;
       const RT scalediffdvpy = uy_ - pref.y() * uz_;
-      Comparison_result retval = EQUAL;
-      if (CGAL::compare(scalediffdvpx, scalediffdvtx) == EQUAL) {
-        if (CGAL::compare(CGAL::abs(scalediffdvpx), Rs1) == EQUAL) {
-          retval = CGAL::compare(d_fine, CGAL::abs(scalediffdvpy));
-        }
+      Comparison_result sidecmp = EQUAL;
+      const bool p_t_samex =
+        CGAL::compare(scalediffdvpx, scalediffdvtx) == EQUAL;
+      const bool p_t_on_same_ver_side =
+        (p_t_samex) and
+        (CGAL::compare(CGAL::abs(scalediffdvpx), Rs1) == EQUAL) ;
+      if (p_t_on_same_ver_side) {
+        sidecmp = CGAL::compare(d_fine, CGAL::abs(scalediffdvpy));
       }
-      if (CGAL::compare(scalediffdvpy, scalediffdvty) == EQUAL) {
-        if (CGAL::compare(CGAL::abs(scalediffdvpy), Rs1) == EQUAL) {
-          retval = CGAL::compare(d_fine, CGAL::abs(scalediffdvpx));
-        }
+      const bool p_t_samey =
+        CGAL::compare(scalediffdvpy, scalediffdvty) == EQUAL;
+      const bool p_t_on_same_hor_side =
+        (p_t_samey) and
+        (CGAL::compare(CGAL::abs(scalediffdvpy), Rs1) == EQUAL) ;
+      if (p_t_on_same_hor_side) {
+        sidecmp = CGAL::compare(d_fine, CGAL::abs(scalediffdvpx));
       }
-      CGAL_SDG_DEBUG(std::cout << "debug: PSS temporary retval = "
-          << retval << std::endl;);
-      if (retval == SMALLER) {
+      CGAL_SDG_DEBUG(std::cout << "debug: PSS temporary sidecmp = "
+          << sidecmp << std::endl;);
+      if (sidecmp == SMALLER) {
         return NEGATIVE;
-      } else if (retval == LARGER) {
+      } else if (sidecmp == LARGER) {
         return POSITIVE;
-      } else {
-        if (  (CGAL::compare(pref.x(), t.x()) == EQUAL)
-            or(CGAL::compare(pref.y(), t.y()) == EQUAL) ) {
-          CGAL_assertion(
-               (CGAL::compare(scalediffdvpx, scalediffdvtx) == EQUAL)
-            or (CGAL::compare(scalediffdvpy, scalediffdvty) == EQUAL)
-              );
-          return POSITIVE;
-        }
+      }
+
+      if (p_t_samex or p_t_samey) {
+        return ZERO;
       }
 
       if (not is_site_h_or_v(s1)) {
@@ -3297,8 +3298,6 @@ private:
         oriented_side_of_line(ltest, v) == ON_ORIENTED_BOUNDARY);
     const Oriented_side ost = oriented_side_of_line(ltest, t.point());
     const Oriented_side osx = oriented_side_of_line(ltest, corner);
-    CGAL_assertion(scmpx(t, pt_site) != EQUAL);
-    CGAL_assertion(scmpy(t, pt_site) != EQUAL);
     CGAL_SDG_DEBUG(std::cout << "debug points_inside_touching_sides"
         << " ltest: " << ltest.a() << ' ' << ltest.b() << ' ' <<  ltest.c()
         << " v=" << v << " ost=" << ost
