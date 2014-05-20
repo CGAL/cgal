@@ -15,9 +15,14 @@ if [ -d "$1/.git" ]; then
     git clean --quiet -f
 
     ln -s -n -f "$1" $HOME/latest-internal-release-branch
-    # Hard-reset integration "every day" even if today's "$branch" is not integration
+
+    # Hard-reset integration "every day", if today's "$branch" is integration
     # and create testsuite-Monday, testsuite-Tuesday, and so on...
-    git push --quiet -f origin origin/$branch:refs/heads/`date '+testsuite-%A'` origin/master:integration
+    if [ x"$branch" = "xintegration" ]; then
+        git push --quiet -f origin origin/$branch:refs/heads/`date '+testsuite-%A'` origin/master:integration
+    else
+        git push --quiet -f origin origin/$branch:refs/heads/`date '+testsuite-%A'`
+    fi
 
     popd > /dev/null
 else
