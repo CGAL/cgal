@@ -1,5 +1,6 @@
 #include <CGAL/Triangulation_data_structure.h>
 #include <CGAL/internal/Combination_enumerator.h>
+#include <CGAL/assertions.h>
 #include <iostream>
 #include <vector>
 
@@ -92,7 +93,7 @@ void find_face_from_vertices( const TDS & tds,
         }
     }
     std::cerr << "Could not build a face from vertices"<<std::endl;
-    assert(false);
+    CGAL_assertion(false);
 }
 
 
@@ -108,9 +109,9 @@ int main()
         tds.insert_increase_dimension(one_vertex);
     // we get a triangulation of space of dim sdim homeomorphic to
     // the boundary of simplex of dimension sdim+1 with sdim+2 vertices
-    assert( sdim   == tds.current_dimension() );
-    assert( 2+sdim == tds.number_of_vertices() );
-    assert( 2+sdim == tds.number_of_full_cells() );
+    CGAL_assertion( sdim   == tds.current_dimension() );
+    CGAL_assertion( 2+sdim == tds.number_of_vertices() );
+    CGAL_assertion( 2+sdim == tds.number_of_full_cells() );
 
     barycentric_subdivide(tds, tds.full_cells_begin());
 
@@ -118,7 +119,7 @@ int main()
     // |tds.current_dimension()+1|. Eg, 1440 for dimension 5.
     std::cout << "Triangulation has " 
         << tds.number_of_full_cells() << " full cells";
-    assert( tds.is_valid() );
+    CGAL_assertion( tds.is_valid() );
     std::cout << " and is valid!"<<std::endl;
     return 0;
 }

@@ -3,6 +3,7 @@
 #include <CGAL/Delaunay_triangulation.h>
 #include <CGAL/algorithm.h>
 #include <CGAL/Timer.h>
+#include <CGAL/assertions.h>
 const int D=5;
 
 typedef CGAL::Epick_d< CGAL::Dynamic_dimension_tag >          K;
@@ -30,14 +31,14 @@ int main(int argc, char **argv)
   CGAL::cpp11::copy_n(rand_it, N, std::back_inserter(points));
   
   T t(D);
-  assert(t.empty());
+  CGAL_assertion(t.empty());
   
   // insert the points in the triangulation
   cost.reset();cost.start();
   std::cout << "  Delaunay triangulation of "<<N<<" points in dim "<<D<< std::flush;
   t.insert(points.begin(), points.end());
   std::cout << " done in "<<cost.time()<<" seconds." << std::endl;
-  assert( t.is_valid() );
+  CGAL_assertion( t.is_valid() );
 
   // insert with special operations in conflict zone and new created cells
   cost.reset();
@@ -57,7 +58,7 @@ int main(int argc, char **argv)
     T::Facet ftc = t.compute_conflict_zone(*rand_it, c, out); 
     std::cout<<i<<"     conflict zone of size "<<zone.size()<<" -> "<<std::flush;
     out = std::back_inserter(new_full_cells);
-    assert( t.is_valid() );
+    CGAL_assertion( t.is_valid() );
     v = t.insert_in_hole(*rand_it, zone.begin(), zone.end(), ftc, out);
     std::cout<<new_full_cells.size()<<" new cells"<<std::endl;
     for (Full_cells::iterator it=new_full_cells.begin();
