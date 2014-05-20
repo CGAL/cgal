@@ -426,6 +426,8 @@ public:
                                segment_indices.end() );
   }
 
+
+
   template <class OutputItFaces, class OutputItBoundaryEdges> 
   std::pair<OutputItFaces,OutputItBoundaryEdges>
   get_conflicts_and_boundary(const Point  &p, 

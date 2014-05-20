@@ -5,9 +5,9 @@ namespace CGAL {
 \ingroup PkgTriangulation2TriangulationClasses
 
 The class `Constrained_triangulation_plus_2` 
-implements a constrained triangulation where the constraints are polylines.
-It maintains an additional data structure, called the constraint hierarchy, 
-that keeps track of the input constraints and of their refinement 
+implements a constrained triangulation that
+maintains an additional data structure, called the constraint hierarchy, 
+which keeps track of the input constraints and of their refinement 
 in the triangulation. 
 
 The class `Constrained_triangulation_plus_2<Tr>` 
@@ -225,17 +225,18 @@ void insert_constraint(Vertex_handle va, Vertex_handle vb);
 Inserts a polyline defined by the points in the range `[first,last)`.
 Returns the constraint id.
 
-\tparam InputIterator must be an input iterator with the value type `Point`. 
+\tparam PointIterator must be an `InputIterator` with the value type `Point`. 
 */
-template < class InputIterator>
-Constraint_id insert_constraint(InputIterator first, InputIterator last);
+template < class PointIterator>
+Constraint_id insert_constraint(PointIterator first, PointIterator last);
 
 /*!
-Inserts the polyline defined by the iterator range `range`. 
-\tparam IteratorRange must be an iterator range with value type `Point`.
+Inserts the polygon. Returns the constraint id.
+
 */
-template <typename IteratorRange>
-void insert_constraint(IteratorRange range);
+template < class Polygon_2>
+Constraint_id insert_constraint(const Polygon_2& polygon); 
+
 
 /*! 
 Removes the constraint `cid`, without removing the points from the triangulation.

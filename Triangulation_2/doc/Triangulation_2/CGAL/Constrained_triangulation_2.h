@@ -33,8 +33,8 @@ A constrained triangulation is a triangulation of a set of points
 which has to include among its edges 
 a given set of polylines 
 joining the points. The given polylines are 
-called <I>constraints</I> and the corresponding 
-edges in the triangulation are called <I>constrained edges</I>. 
+called *constraints* and the corresponding 
+edges in the triangulation are called *constrained edges* or *sub-constraints*. 
 
 The endpoints of constrained edges are of course vertices of the 
 triangulation. However the triangulation may include 
@@ -57,23 +57,22 @@ is a proper intersection point of two
 constraints. A single constraint intersecting other 
 constraints will then appear as the union of several 
 constrained edges of the triangulation. 
-The two versions dealing with intersecting constraints, slightly differ 
-in the way intersecting constraints are dealt with. 
+There are two ways to deal with intersecting constraints. 
 <UL> 
-<LI>One of them is 
-designed to be robust when predicates are evaluated exactly but 
+<LI>The first one is robust when predicates are evaluated exactly but 
 constructions (i. e. intersection computations) are 
 approximate. 
-<LI>The other one is designed to be used 
-with an exact arithmetic (meaning exact 
-evaluation of predicates and exact computation of intersections.) 
-This last version finds its full efficiency when used in conjunction 
-with a constraint hierarchy data structure 
-as provided in the class 
-`Polylne_constrained_triangulation_2`. See 
-Section \ref Section_2D_Triangulations_Constrained_Plus. 
+<LI>The second one should be used with exact arithmetic (meaning exact
+evaluation of predicates and exact computation of intersections.)
 </UL> 
 </UL> 
+In order to retrieve the constrained edges of a constraint, or
+the constraints overlapping with a constrained edge, we provide
+the class `Constrained_triangulation_plus_2`. This class maintains
+a constraint hierarchy data structure. See
+Section \ref Section_2D_Triangulations_Constrained_Plus for details.
+This class should also be used when doing exact intersection computations
+as it avoids the cascading of intersection computations.
 
 \image html constraints.png
 \image latex constraints.png
@@ -277,22 +276,18 @@ are removed and new ones are created.
 void insert_constraint(const Vertex_handle & va, const Vertex_handle & vb); 
 
 /*!
-Inserts the polyline defined by the iterator range `[begin,end)`. 
-\tparam InputIterator must be an input iterator with value type `Point`.
+Inserts a polyline defined by the points in the range `[first,last)`.
+
+\tparam PointIterator must be an `InputIterator` with the value type `Point`. 
 */
-template <typename InputIterator>
-void insert_constraint(InputIterator begin, InputIterator end);
+template < class PointIterator>
+void insert_constraint(PointIterator first, PointIterator last);
+
 
 /*!
-Inserts the polyline defined by the iterator range `range`. 
-\tparam IteratorRange must be an iterator range with value type `Point`.
+Inserts the polygon.
 */
-template <typename IteratorRange>
-void insert_constraint(IteratorRange range);
-
-/*!
-Inserts the polygon. 
-*/
+template <typename Polygon_2>
 void insert_constraint(const Polygon_2& polygon);
 
 

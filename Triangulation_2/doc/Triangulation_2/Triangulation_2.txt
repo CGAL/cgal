@@ -820,8 +820,7 @@ There are two ways to deal with intersecting constraints.
 <UL>
 <LI>The first one is robust when predicates are evaluated exactly but
 constructions (i. e. intersection computations) are approximate.
-<LI>The second one is designed to be used 
-with exact arithmetic (meaning exact
+<LI>The second one should be used with exact arithmetic (meaning exact
 evaluation of predicates and exact computation of intersections.)
 </UL>
 </UL>

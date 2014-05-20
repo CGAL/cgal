@@ -111,7 +111,7 @@ Constrained_Delaunay_triangulation_2& cdt1);
 A templated constructor which introduces and builds 
 a constrained triangulation with constrained edges in the range 
 `[first,last)`. 
-\tparam InputIterator must be an input iterator with the value type `Constraint`. 
+\tparam InputIterator must be an input iterator with the value type `std::pair<Point,Point>`. 
 */ 
 template<class InputIterator> Constrained_Delaunay_triangulation_2( 
 InputIterator first, 
@@ -186,7 +186,7 @@ Once endpoints have been inserted, the segments are inserted in the order of the
 using the vertex handles of its endpoints
 
 \return the number of inserted points.
-\tparam ConstraintIterator must be an input iterator with `Constraint` or `Segment_2` as value type.
+\tparam ConstraintIterator must be an input iterator with `std::pair<Point,Point>` or `Segment_2` as value type.
 */
 template <class ConstraintIterator>
 std::size_t insert_constraints(ConstraintIterator first, ConstraintIterator beyond);
@@ -194,7 +194,7 @@ std::size_t insert_constraints(ConstraintIterator first, ConstraintIterator beyo
 /*!
 Same as above except that each constraints is given as a pair of indices of the points
 in the range [points_first, points_beyond). The indices must go from 0 to `std::distance(points_first, points_beyond)`
-\tparam PointIterator is an input iterator with `Point_2` as value type.
+\tparam PointIterator is an input iterator with `Point` as value type.
 \tparam IndicesIterator is an input iterator with `std::pair<Int, Int>` where `Int` is an integral type implicitly convertible to `std::size_t`
 */
 template <class PointIterator, class IndicesIterator>
@@ -204,13 +204,29 @@ std::size_t insert_constraints(PointIterator points_first, PointIterator points_
 /*!
 Inserts the line segment between the points `c.first` and `c.second` as  a constrained edge in the triangulation.
 */ 
-void push_back(const Constraint& c); 
+  void push_back(const std::pair<Point,Point>& c); 
 
 /*!
 Inserts the line segment whose endpoints are the vertices `va` and 
 `vb` as a constrained edge e in the triangulation. 
 */ 
 void insert_constraint(Vertex_handle va, Vertex_handle vb); 
+
+/*!
+Inserts a polyline defined by the points in the range `[first,last)`.
+
+\tparam PointIterator must be an `InputIterator` with the value type `Point`. 
+*/
+template < class PointIterator>
+void insert_constraint(PointIterator first, PointIterator last);
+
+
+/*!
+Inserts the polygon.
+*/
+template <typename Polygon_2>
+void insert_constraint(const Polygon_2& polygon);
+
 
 /*!
 Removes vertex v. 
