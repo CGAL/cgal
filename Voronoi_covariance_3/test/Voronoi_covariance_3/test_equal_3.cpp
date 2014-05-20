@@ -1,3 +1,5 @@
+#include <cassert>
+
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Voronoi_covariance_3/predicates.h>
 
@@ -11,20 +13,24 @@ int main (void) {
 
     // True test with equal planes
     Plane p(1, 1, 1, 1), q(1, 1, 1, 1);
-    std::cout << equal_plane(p, q) << std::endl;
+    std::cout << equal(p, q) << std::endl;
+    assert(equal(p, q) == true);
 
     // True test with planes whose coefficients are multiple of the other
     Plane pp(1, 1, 1, 1), qq(2, 2, 2, 2);
-    std::cout << equal_plane(pp, qq) << std::endl;
+    std::cout << equal(pp, qq) << std::endl;
+    assert(equal(pp, qq) == true);
 
     // False test with non equal planes
     Plane p2(1, 2, 1, 1), q2(2, 2, 2, 2);
-    std::cout << equal_plane(p2, q2) << std::endl;
+    std::cout << equal(p2, q2) << std::endl;
+    assert(equal(p2, q2) == false);
 
     // True test using exact computation
     double x = 1.123456789, y = 1.987654321, e=1e-15;
     Plane ppp(x, x, x, x), qqq(y+e, y+e, y+e, y+e);
-    std::cout << equal_plane(ppp, qqq) << std::endl;
+    std::cout << equal(ppp, qqq) << std::endl;
+    assert(equal(ppp, qqq) == true);
 
     return 0;
 }
