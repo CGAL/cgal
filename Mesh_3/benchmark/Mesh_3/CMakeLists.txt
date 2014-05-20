@@ -48,15 +48,6 @@ include_directories(../../../AABB_tree/include)
 add_definitions(-DCGAL_MESH_3_NO_DEPRECATED_SURFACE_INDEX
                 -DCGAL_MESH_3_NO_DEPRECATED_C3T3_ITERATORS)
 
-if(MSVC)
-  # Disable warning 4503 in MSVC ("The decorated name was longer than the 
-  # compiler limit and was truncated")
-  add_definitions( "/wd4503" )
-  # Add /bigobj to the compiler options
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /bigobj")
-  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /bigobj")
-endif()
-
 if ( MESH_3_VERBOSE )
   add_definitions(-DCGAL_MESH_3_VERBOSE)
 endif()

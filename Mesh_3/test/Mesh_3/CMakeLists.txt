@@ -11,15 +11,6 @@ else()
   cmake_policy(VERSION 2.6)
 endif()
 
-if(MSVC)
-  # Disable warning 4503 in MSVC ("The decorated name was longer than the 
-  # compiler limit and was truncated")
-  add_definitions( "/wd4503" )
-  # Add /bigobj to the compiler options
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /bigobj")
-  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /bigobj")
-endif()
-
 find_package(CGAL QUIET COMPONENTS Core ImageIO)
 
 if ( CGAL_FOUND )
