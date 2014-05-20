@@ -68,6 +68,7 @@ The class `CGAL::Triangulation_data_structure<Dimensionality, TriangulationDSVer
 class are not embedded in Euclidean space but are only of combinatorial
 nature.
 
+\cgalModifBegin
 The class `CGAL::Triangulation<TriangulationTraits, TriangulationDataStructure>` 
 describes an embedded triangulation that has as vertices a given set of points
 and which covers the convex hull of these points.
@@ -80,6 +81,7 @@ The fact that there is no boundary is ensured by adding a
 fictitious vertex, called the <i>infinite vertex</i>, as well as infinite 
 simplices incident to it. Each infinite \f$ i\f$-simplex is 
 incident to the infinite vertex and to \f$ i\f$ vertices of the convex hull.
+\cgalModifEnd
 
 See Chapters \ref Chapter_2D_Triangulations "2D Triangulations" and 
 \ref Chapter_3D_Triangulations "3D Triangulations" for more details
@@ -99,13 +101,13 @@ vertices. When these vertices are embedded in Euclidean space, they must be
 affinely independent.
 
 If the maximal dimension of a simplex in the triangulation is
-\f$ d\f$, we call:<UL>
-<LI>an \f$ i\f$-face for some \f$ i\in[0,d]\f$ a <I>face</I>;
-<LI>a \f$ 0\f$-face a <I>vertex</I>;
-<LI>a \f$ 1\f$-face an <I>edge</I>;
-<LI>a \f$ (d-2)\f$-face a <I>ridge</I>;
-<LI>a \f$ (d-1)\f$-face a <I>facet</I>; and
-<LI>a \f$ d\f$-face a <I>full cell</I>.
+\f$ d\f$, we use the following terminology:<UL>
+<LI><I>face</I>: an \f$ i\f$-face for some \f$ i\in[0,d]\f$;
+<LI><I>vertex</I>: a \f$ 0\f$-face;
+<LI><I>edge</I>: a \f$ 1\f$-face;
+<LI><I>ridge</I>: a \f$ (d-2)\f$-face;
+<LI><I>facet</I>: a \f$ (d-1)\f$-face;
+<LI><I>full cell</I>: a \f$ d\f$-face.
 </UL>
 
 Two faces \f$ \sigma\f$ and \f$ \sigma'\f$ are <I>incident</I> if and only if
@@ -154,7 +156,7 @@ each corresponding to a full cell;
 the two full cells being neighbors of each other. This is the unique
 triangulation of the \f$ 0\f$-sphere.
 <!--- (geometrically, the finite vertex and the infinite vertex),--->
-<DT><B>\f$ 0< d \le D\f$</B><DD> This corresponds to a standard triangulation of
+<DT><B>\f$ 0< d \le D\f$</B><DD> This corresponds to a triangulation of
 the sphere \f$ \mathcal S^d\f$.
 </DL>
 </BLOCKQUOTE> 
@@ -317,6 +319,7 @@ of the hyperplane supported by the convex hull facets that the other points.
 
 ## Dimensions ##
 
+\cgalModifBegin
 In a triangulation, we can distinguish three dimensions:
 <UL>
 <LI>The <i>ambient</i> dimension, which is the dimension of the ambient 
@@ -328,7 +331,7 @@ In a triangulation, we can distinguish three dimensions:
 <LI>The <i>current</i> dimension, which is the current dimension of 
     the triangulation.
 </UL>
-
+\cgalModifEnd
 
 ## Implementation ##
 
