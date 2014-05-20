@@ -113,7 +113,7 @@ If the maximal dimension of a simplex in the triangulation is
 Two faces \f$ \sigma\f$ and \f$ \sigma'\f$ are <I>incident</I> if and only if
 \f$ \sigma'\f$ is a proper sub-face of \f$ \sigma\f$ or <I>vice versa</I>.
 
-# Triangulation Data Structure #
+# %Triangulation Data Structure #
 
 In this section, we describe the concept `TriangulationDataStructure` for
 which \cgal provides one model class:
@@ -313,8 +313,8 @@ a finite facet on the convex hull of the triangulation and to a unique
 The ordering of the vertices of a full cell defines an orientation of
 that full cell.
 As long as no <I>advanced</I> class method is called, it is guaranteed
-that all finite full cells have positive orientation. The infinite full cells are
-oriented as if the infinite vertex have been on the the other side
+that all finite full cells have positive orientation. The infinite full 
+cells are oriented as if the infinite vertex was on the other side
 of the hyperplane supported by the convex hull facets that the other points.
 
 ## Dimensions ##

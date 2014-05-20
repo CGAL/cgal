@@ -6,10 +6,10 @@
 The `TriangulationDataStructure` concept describes objects responsible for 
 storing and maintaining the combinatorial part of a
 \f$ d\f$-dimensional pure simplicial complex that has the topology
-of the \f$ d\f$-dimensional sphere \f$ \mathcal S^d\f$ with \f$ d\in[-2,D]\f$.
+of the \f$ d\f$-dimensional sphere \f$ \mathbb{S}^d\f$ with \f$ d\in[-2,D]\f$.
 Since the simplicial \f$ d\f$-complex is pure, all
 faces are sub-faces of some \f$ d\f$-simplex. And since it has the 
-topology of the sphere \f$ \mathcal S^d\f$, it is manifold, thus 
+topology of the sphere \f$ \mathbb{S}^d\f$, it is manifold, thus 
 any \f$ d-1\f$-face belongs to exactly two \f$ d\f$-dimensional full cells.
 
 The concept `TriangulationDataStructure` includes two sub-concepts 
@@ -35,7 +35,7 @@ the two full cells being neighbors of each other. This is the unique
 triangulation of the \f$ 0\f$-sphere.
 
 <DT><B>\f$ d>0\f$</B><DD> This corresponds to a standard triangulation of the sphere
-\f$ \mathcal S^d\f$.
+\f$ \mathbb{S}^d\f$.
 </DL>
 
 An \f$ i\f$-simplex is a simplex with \f$ i+1\f$ vertices. An \f$ i\f$-simplex \f$ \sigma\f$ is
@@ -52,7 +52,7 @@ Input/Output
 
 The information stored in the `iostream` is:
 
-- the current dimension (which must be `<=tds.maximal_dimension()`),
+- the current dimension (which must be smaller than or equal to `tds.maximal_dimension()`),
 
 - the number of vertices,
 
@@ -466,7 +466,7 @@ to "fill it". A `Vertex_handle` to the new `Vertex` is returned.
 does not, with `f=(c,i)`.
 \f$ H\f$ the union of full cells in \f$ C\f$ is simply connected and its
 boundary \f$ \partial H\f$ is a
-combinatorial triangulation of the sphere \f$ \mathcal S^{d-1}\f$.
+combinatorial triangulation of the sphere \f$ \mathbb{S}^{d-1}\f$.
 All vertices of cells of \f$ C\f$ are on \f$ \partial H\f$.
 
 \cgalFigureBegin{triangulationfiginserthole,insert-in-hole.png}
@@ -485,11 +485,11 @@ Vertex_handle insert_in_hole(ForwardIterator start, ForwardIterator end, Facet
 f, OutputIterator out);
 
 /*!
-Transforms a triangulation of the sphere \f$ \mathcal S^d\f$ into the
-triangulation of the sphere \f$ \mathcal S^{d+1}\f$ by adding a new vertex
+Transforms a triangulation of the sphere \f$ \mathbb{S}^d\f$ into the
+triangulation of the sphere \f$ \mathbb{S}^{d+1}\f$ by adding a new vertex
 `v`.
 `v` is used to triangulate one of the two half-spheres of
-\f$ \mathcal S^{d+1}\f$ (\f$ v\f$ is added as \f$ (d+2)^{th}\f$ vertex to all
+\f$ \mathbb{S}^{d+1}\f$ (\f$ v\f$ is added as \f$ (d+2)^{th}\f$ vertex to all
 full cells)
 and `star` is used to triangulate the other half-sphere
 (all full cells that do not already have star as vertex are duplicated,

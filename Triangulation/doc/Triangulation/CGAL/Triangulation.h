@@ -5,7 +5,7 @@ namespace CGAL {
 \ingroup PkgTriangulationsTriangulationClasses
 
 The class `Triangulation` is used to store and query the full cells and vertices of
-a triangulationin dimension \f$ d\f$(see the 
+a triangulation in dimension \f$ d\f$ (see the 
 \ref Chapter_Triangulations "User Manual" for
 a definition of "triangulation"). 
 The fact that there is no boundary is ensured by adding a
@@ -539,7 +539,7 @@ to the newly created full cells are output in the `out` output iterator.
 interior and not contain any vertex all of whose incident full cells are in
 \f$C\f$ . (This implies that `t.current_dimension()`\f$ \geq 2\f$ if
 \f$|C|>1\f$ .) The boundary of \f$C\f$ must be a triangulation of the sphere
-\f$ \mathcal S ^d-1\f$.
+\f$ \mathbb{S}^d-1\f$.
 \cgalAdvancedEnd
 */
 template < typename ForwardIterator, typename OutputIterator >
