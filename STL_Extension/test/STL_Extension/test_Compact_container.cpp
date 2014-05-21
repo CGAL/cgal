@@ -249,7 +249,7 @@ int main()
 
   typedef CGAL::Compact_container<T2,
                                   CGAL::Default,
-                                  CGAL::CC_time_stamper<T2> > C4;
+                                  CGAL::Time_stamper<T2> > C4;
                                           //    with timestamps
 
   typedef Node_2 T3;
@@ -261,22 +261,22 @@ int main()
   C4 c4;  test(c4);
 
   // Check the time stamper policies
-  if(! boost::is_base_of<CGAL::CC_time_stamper<T1>,
+  if(! boost::is_base_of<CGAL::Time_stamper<T1>,
      C1::Time_stamper_impl>::value)
   {
     std::cerr << "Error timestamper of C1\n"; return 1;
   }
-  if(! boost::is_base_of<CGAL::CC_no_time_stamp<T2>,
+  if(! boost::is_base_of<CGAL::No_time_stamp<T2>,
      C2::Time_stamper_impl>::value)
   {
     std::cerr << "Error timestamper of C2\n"; return 1;
   }
-  if(! boost::is_base_of<CGAL::CC_no_time_stamp<T3>,
+  if(! boost::is_base_of<CGAL::No_time_stamp<T3>,
      C3::Time_stamper_impl>::value)
   {
     std::cerr << "Error timestamper of C3\n"; return 1;
   }
-  if(! boost::is_base_of<CGAL::CC_time_stamper<T2>,
+  if(! boost::is_base_of<CGAL::Time_stamper<T2>,
      C4::Time_stamper_impl>::value)
   {
     std::cerr << "Error timestamper of C4\n"; return 1;
