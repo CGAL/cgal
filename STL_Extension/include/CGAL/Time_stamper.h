@@ -16,6 +16,8 @@
 //
 // Author(s)     : Jane Tournois
 
+#include <CGAL/Has_timestamp.h>
+
 #ifndef CGAL_TIME_STAMPER_H
 #define CGAL_TIME_STAMPER_H
 
@@ -51,13 +53,38 @@ template <typename T>
 struct No_time_stamp
 {
 public:
-  void set_time_stamp(T* pt)  {}
+  void set_time_stamp(T*)  {}
   static bool less(T* p_t1, T* p_t2) {
     return p_t1 < p_t2;
   }
   void reset()                {}
 }; // end class template No_time_stamp<T>
 
-} //end of CGAL namespace
+// That class template is an auxiliary class.  It has a
+// specialization for the case where `T::Has_timestamp` does not exists.
+// The non-specialized template, when `T::Has_timestamp` exists, derives
+// from `Time_stamper<T>` or `No_time_stamp<T>` depending on the
+// value of the Boolean constant `T::Has_timestamp`.
+// The declaration of that class template requires `T` to be a complete type.
+template <class T, bool has_timestamp = internal::Has_timestamp<T>::value>
+struct Get_time_stamper{
+  typedef Time_stamper<T> type;
+};
+
+// Specialization when `T::Has_timestamp` does not exist, derives from
+// `TimeStamper_`, or from `No_time_stamp<T>`.
+template <class T>
+struct Get_time_stamper<T,false>{
+  typedef No_time_stamp<T> type;
+};
+
+// Implementation of the timestamp policy. It is very important that the
+// declaration of that class template does not require `T` to be a complete
+// type.  That way, the declaration of a pointer of type `Time_stamper_impl<T, Ts>
+// in `Compact_container` for example is possible with an incomplete type.
+template <class T>
+struct Time_stamper_impl : public Get_time_stamper<T>::type {};
+
+} //end of namespace CGAL
 
 #endif // CGAL_TIME_STAMPER_H

@@ -31,10 +31,8 @@
 
 #include <CGAL/memory.h>
 #include <CGAL/iterator.h>
-#include <CGAL/Has_timestamp.h>
 #include <CGAL/Time_stamper.h>
 
-#include <boost/mpl/if.hpp>
 
 // An STL like container with the following properties :
 // - to achieve compactness, it requires access to a pointer stored in T,
@@ -110,44 +108,6 @@ struct Compact_container_traits {
   static void * & pointer(T &t)       { return t.for_compact_container(); }
 };
 
-// That class template is an auxiliary class for `CC_ts_impl`.  It has a
-// specialization for the case where `T::Has_timestamp` does not exists.
-// The non-specialized template, when `T::Has_timestamp` exists, derives
-// from `<<T>` or `No_time_stamp<T>` depending on the
-// value of the Boolean constant `T::Has_timestamp`.  If `TimeSpamper_` is
-// not `CGAL::Default`, derives from it.  The declaration of that class
-// template requires `T` to be a complete type.
-template <class T,
-          class TimeStamper_,
-          bool has_ts = CGAL::internal::Has_timestamp<T>::value>
-struct CC_ts_impl_aux
-  : public Default::Get<
-      TimeStamper_,
-      typename boost::mpl::if_c<
-        CGAL::internal::Has_timestamp<T>::value,
-        Time_stamper<T>,
-        No_time_stamp<T>
-      >::type // closes mpl::if_c
-    >::type // closes Default::Get
-{};
-
-// Specialization when `T::Has_timestamp` does not exist, derives from
-// `TimeStamper_`, or from `No_time_stamp<T>` if `TimeSpamper_` is
-// `CGAL::Default`.
-template <class T, class TimeStamper_>
-struct CC_ts_impl_aux<T, TimeStamper_, false>
-  : public Default::Get<TimeStamper_, No_time_stamp<T> >::type
-{};
-
-// Implementation of the timestamp policy. It is very important that the
-// declaration of that class template does not require `T` to be a complete
-// type.  That way, the declaration of a pointer of type `CC_ts_impl<T, Ts>
-// in `Compact_container` is possible with an incomplete type.
-template <class T,
-          class TimeStamper_>
-struct CC_ts_impl : public CC_ts_impl_aux<T, TimeStamper_>
-{};
-
 namespace internal {
   template < class DSC, bool Const >
   class CC_iterator;
@@ -166,7 +126,9 @@ class Compact_container
   typedef Compact_container <T, Al, Ts>             Self;
   typedef Compact_container_traits <T>              Traits;
 public:
-  typedef CC_ts_impl<T, Ts>                         Time_stamper_impl;
+  typedef typename Default::Get< TimeStamper_,
+                                 CGAL::Time_stamper_impl<T> >::type
+                                                    Time_stamper_impl;
 
   typedef T                                         value_type;
   typedef Allocator                                 allocator_type;
