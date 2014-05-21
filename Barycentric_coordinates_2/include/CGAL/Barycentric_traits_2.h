@@ -76,7 +76,7 @@ public:
 
 	/// @}
 
-    /// \name Projecting a sequaence of points
+    /// \name Projecting a sequence of points
     /// @{
 
 	/// This function is required to convert a sequence of the polygon's vertices of the user-defined type to the sequence of points of the type `CGAL::Point_2`.

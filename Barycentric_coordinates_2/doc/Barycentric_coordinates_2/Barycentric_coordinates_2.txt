@@ -17,7 +17,7 @@ In particular, the package includes an implementation of \ref wp_example "Wachsp
 
 \section gbc_interface Interface
 
-Each class to compute barycentric coordinates is parameterized by a traits class that specifies the types and geometric primitives to be used in the computation. The default traits class for the package is  `CGAL::Barycentric_coordinates::Barycentric_traits_2` that presents the two-dimensional CGAL kernel and gives the default two-dimensional input to the class.
+Each class to compute barycentric coordinates is parameterized by a traits class that specifies the types and geometric primitives to be used in the computation. The default traits class for the package is  `CGAL::Barycentric_coordinates::Barycentric_traits_2` that presents the two-dimensional \cgal kernel and gives the default two-dimensional input to the class.
 
 The main entry point to the component is an input iterator over the vertices of a polygon. The polygon's vertices must be ordered and can be of any type. However, internally the classes with coordinate functions use the type `CGAL::Point_2`, that is why an appropriate traits class that converts the user's type to the `CGAL::Point_2` must be provided. The same argument holds for query points.
 
@@ -57,7 +57,7 @@ Example's point pattern.
 \cgalExample{Barycentric_coordinates_2/Mean_value_coordinates_example.cpp}
 
 \subsection tri_example Triangle Coordinates
-In this example we show how to use the class `CGAL::Barycentric_coordinates::Triangle_coordinates_2` with the `Simple_cartesian` kernel for a double type. We compute coordinates for three sets of points: <span style="color:#00CC00">interior</span>, <span style="color:#FF0033">boundary</span>, and <span style="color:#0099FF">exterior</span>. Note that some of the coordinate values for the exterior points are negative. We use a standard <a href="http://en.cppreference.com/w/cpp/container/vector">`std::vector`</a> container and the <a href="http://en.cppreference.com/w/cpp/iterator/insert_iterator">std::insert_iterator</a> to access and store the resulting values.
+In this example we show how to use the class `CGAL::Barycentric_coordinates::Triangle_coordinates_2` with the `Simple_cartesian` kernel for a double type. We compute coordinates for three sets of points: <span style="color:#00CC00">interior</span>, <span style="color:#FF0033">boundary</span>, and <span style="color:#0099FF">exterior</span>. Note that some of the coordinate values for the exterior points are negative. We use a standard <a href="http://en.cppreference.com/w/cpp/container/vector">`std::vector`</a> container and the <a href="http://en.cppreference.com/w/cpp/iterator/insert_iterator">`std::insert_iterator`</a> to access and store the resulting values.
 
 \anchor tri_coord_example
 \cgalFigureBegin{tri__example,triangle_coordinates_example.png}
@@ -97,7 +97,7 @@ With inexact data types, these coordinates give the correct result up to the pre
 These coordinates can be computed exactly if an exact data type is chosen, for any query point in the plane and with respect to any non-degenerate triangle. No special cases are handled. The computation always gives the correct result. The notion of correctness depends on the precision of the used data type. Note that for exterior points some coordinate values will be negative.
 
 \subsection gbc_deg_wachspress_coordinates Wachspress Coordinates
-Wachspress coordinates are well-defined in the closure of any <b>strictly convex polygon</b>. Therefore, for any query point from the polygon's closure with an exact data type, these coordinates are computed exactly and no false result is expected. For inexact data types, the resulting precision of the computation is due to the involved algorithm and chosen data type. In the following paragraph we discuss two available algorithms for computing Wachspress coordinate functions. One of them is CGAL::Barycentric_coordinates::PRECISE, the other is CGAL::Barycentric_coordinates::FAST. 
+Wachspress coordinates are well-defined in the closure of any <b>strictly convex polygon</b>. Therefore, for any query point from the polygon's closure with an exact data type, these coordinates are computed exactly and no false result is expected. For inexact data types, the resulting precision of the computation is due to the involved algorithm and chosen data type. In the following paragraph we discuss two available algorithms for computing Wachspress coordinate functions. One of them is `CGAL::Barycentric_coordinates::PRECISE`, the other is `CGAL::Barycentric_coordinates::FAST`. 
 
 \anchor wp_polygon
 \cgalFigureBegin{wp__notations,wp_notations.png}
@@ -152,7 +152,7 @@ After the normalization as above, this gives us the precise algorithm to compute
 
 \subsection gbc_deg_mean_value_coordinates Mean Value Coordinates
 
-Unlike all the previous coordinates, mean value coordinates cannot be computed exactly due to an inevitable square root operation. Although, if an exact data type is used, the precision of the computation depends only on two CGAL functions: `CGAL::to_double()` and `CGAL::sqrt()`. On the other hand, mean value coordinates are well-defined everywhere in the plane for any simple polygon.
+Unlike all the previous coordinates, mean value coordinates cannot be computed exactly due to an inevitable square root operation. Although, if an exact data type is used, the precision of the computation depends only on two \cgal functions: `CGAL::to_double()` and `CGAL::sqrt()`. On the other hand, mean value coordinates are well-defined everywhere in the plane for any simple polygon.
 
 \cgalFigureBegin{mv__notations,mv_notations.png}
 Notation for mean value coordinates.
@@ -178,7 +178,7 @@ The structure of the speed test that we ran for all the functions consists of co
 
 \cgalExample{Barycentric_coordinates_2/Triangle_coordinates_speed_test.cpp}
 
-The time to compute coordinates depends on many factors such as memory allocation, input kernel, output container, number of points, and so on. In our tests we used the most standard C++ and CGAL features with minimum memory allocation. Therefore, the final time presented is the average time that can be expected without deep optimization but still with efficient memory allocation. It also means that it may vary depending on the usage of the package.
+The time to compute coordinates depends on many factors such as memory allocation, input kernel, output container, number of points, and so on. In our tests we used the most standard C++ and \cgal features with minimum memory allocation. Therefore, the final time presented is the average time that can be expected without deep optimization but still with efficient memory allocation. It also means that it may vary depending on the usage of the package.
 
 The machine used in all the tests is a MacBook Pro 2011 with 2 GHz Intel Core i7 processor (2 cores) and 8 GB 1333 MHz DDR3 memory. The installed operating system is OS X 10.9 Maverick. In order to compile the speed test suite, we used the Clang 5.0 64bit compiler. The resulting timings can be found in the figure below.
 
