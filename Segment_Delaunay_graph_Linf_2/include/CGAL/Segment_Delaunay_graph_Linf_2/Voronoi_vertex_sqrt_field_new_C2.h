@@ -686,6 +686,13 @@ private:
   }
 
   inline void
+  compute_pps_nonendp_nonhv(const Site_2& p, const Site_2& q, const Site_2& r)
+  const
+  {
+    return compute_vv_bisectors(p, q, r, PPS_Type());
+  }
+
+  inline void
   compute_pps_nonendp(const Site_2& p, const Site_2& q, const Site_2& r)
   const
   {
@@ -693,7 +700,7 @@ private:
     if (is_r_horizontal or is_site_vertical(r)) {
       return compute_pps_nonendp_hv(p, q, r, is_r_horizontal);
     } else {
-      return compute_vv_bisectors(p, q, r, PPS_Type());
+      return compute_pps_nonendp_nonhv(p, q, r);
     }
   }
 
