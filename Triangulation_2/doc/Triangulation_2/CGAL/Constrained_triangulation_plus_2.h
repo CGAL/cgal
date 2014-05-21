@@ -58,15 +58,16 @@ The intersection tag.
 typedef Itag Intersection_tag; 
   
 /*!
-The identifier of a polyline constraint.
+The identifier of a polyline constraint. For reasons of backward compatibility of
+function that returned `std::pair<Vertex_handle,Vertex_handle>` instead of `Constraint_id`
+the id class has a conversion operator for the pair.
 */
   typedef unspecified_type Constraint_id;
 
 /*! 
 An iterator to visit 
 all the input constraints. The order of visit is undefined. 
-The value type of this iterator is `Constraint_id` corresponding to the 
-endpoints of the constraint. 
+The value type of this iterator is `Constraint_id`. 
 */ 
 typedef unspecified_type Constraint_iterator; 
 
@@ -89,7 +90,7 @@ constraint. The value type of this iterator is `Vertex_handle`.
 typedef unspecified_type Vertices_in_constraint_iterator; 
 
 /*! 
-This type allows to access the vertices of a constraint that passes 
+A context allows to access the vertices of a constraint that passes 
 through a sub-constraint.
 
 */ 
@@ -141,13 +142,12 @@ Constrained_triangulation_plus_2& ct);
 /*! 
 Introduces a constrained triangulation 
 from the constraints in the range `[first,last)`.
-\tparam InputIterator must be an input iterator with the value type `std::pair<Point,Point>`, `Polygon_2`, or range of points.
-\todo Formalize range of points. 
+\tparam ConstraintIterator must be an InputIterator` with the value type `std::pair<Point,Point>` or `Segment`. 
 */ 
-template<class InputIterator> 
+template<class ConstraintIterator> 
 Constrained_triangulation_plus_2( 
-InputIterator first, 
-InputIterator last,
+ConstraintIterator first, 
+ConstraintIterator last,
 const Geom_traits& gt= Geom_traits()); 
 
 /// @} 
@@ -199,11 +199,11 @@ Vertex_handle push_back(const Point& p);
 /*! 
 Inserts the points in the range `[first,last)`.
 Returns the number of inserted points. 
-\tparam InputIterator must be an input iterator with the value type `Point`. 
+\tparam PointIterator must be an `InputIterator` with the value type `Point`. 
 */ 
-template < class InputIterator > 
+template < class PointIterator > 
 size_type 
-insert(InputIterator first, InputIterator last); 
+insert(PointIterator first, PointIterator last); 
 
 /*! 
 Inserts the constraint segment `ab` in the triangulation. 
@@ -224,18 +224,36 @@ void insert_constraint(Vertex_handle va, Vertex_handle vb);
 /*!
 Inserts a polyline defined by the points in the range `[first,last)`.
 Returns the constraint id.
-
+The polyline is considered as a polygon if the first and last point are equal or if  `close = true`. This allows for example to pass the vertex range of a `Polygon_2`.
 \tparam PointIterator must be an `InputIterator` with the value type `Point`. 
 */
 template < class PointIterator>
-Constraint_id insert_constraint(PointIterator first, PointIterator last);
+Constraint_id insert_constraint(PointIterator first, PointIterator last, bool close=false);
 
 /*!
-Inserts the polygon. Returns the constraint id.
+inserts the constraints in the range `[first,last)`.
+Note that this function is not guaranteed to insert the constraints
+following the order of `ConstraintIterator`, as `spatial_sort()`
+is used to improve efficiency.
+More precisely, all endpoints are inserted prior to the segments and according to the order provided by the spatial sort.
+Once endpoints have been inserted, the segments are inserted in the order of the input iterator,
+using the vertex handles of its endpoints.
 
+\return the number of inserted points.
+\tparam ConstraintIterator must be an `InputIterator` with the value type `std::pair<Point,Point>` or `Segment`.
 */
-template < class Polygon_2>
-Constraint_id insert_constraint(const Polygon_2& polygon); 
+template <class ConstraintIterator>
+std::size_t insert_constraints(ConstraintIterator first, ConstraintIterator last);
+
+/*!
+Same as above except that each constraints is given as a pair of indices of the points
+in the range [points_first, points_last). The indices must go from 0 to `std::distance(points_first, points_last)`
+\tparam PointIterator is an `InputIterator` with the value type `Point`.
+\tparam IndicesIterator is an `InputIterator` with `std::pair<Int, Int>` where `Int` is an integral type implicitly convertible to `std::size_t`
+*/
+template <class PointIterator, class IndicesIterator>
+std::size_t insert_constraints(PointIterator points_first, PointIterator points_last,
+                               IndicesIterator indices_first, IndicesIterator indices_last);
 
 
 /*! 
@@ -255,7 +273,7 @@ constraint.
 Constraint_iterator constraints_begin() const; 
 
 /*! 
-Returns a `Constraint_iterator` pointing past the last 
+Returns a `Constraint_iterator` pointing past the end 
 constraint. 
 */ 
 Constraint_iterator constraints_end() const; 
@@ -267,7 +285,7 @@ sub-constraint.
 Subconstraint_iterator subconstraints_begin() const; 
 
 /*! 
-Returns a `Subconstraint_iterator` pointing past the last 
+Returns a `Subconstraint_iterator` pointing past the end 
 sub-constraint. 
 */ 
 Subconstraint_iterator subconstraints_end() const; 
@@ -297,9 +315,9 @@ Context_iterator contexts_begin(Vertex_handle va,
 Vertex_handle vb) const; 
 
 /*! 
-Returns an iterator past the last `Context` 
+Returns an iterator past the end `Context` 
 of the sequence of contexts
-corresponding to the constraints enclosing the `(va,vb)`. 
+corresponding to the constraints enclosing the sub-constraint `(va,vb)`. 
 \pre `va` and `vb` refer to the vertices of a constrained edge of the triangulation. 
 */ 
 Context_iterator contexts_end(Vertex_handle va, 
