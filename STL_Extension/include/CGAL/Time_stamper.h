@@ -19,6 +19,8 @@
 #ifndef CGAL_TIME_STAMPER_H
 #define CGAL_TIME_STAMPER_H
 
+namespace CGAL {
+
 template <typename T>
 struct Time_stamper
 {
@@ -55,5 +57,7 @@ public:
   }
   void reset()                {}
 }; // end class template No_time_stamp<T>
+
+} //end of CGAL namespace
 
 #endif // CGAL_TIME_STAMPER_H
