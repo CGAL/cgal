@@ -728,6 +728,7 @@ private:
     return compute_pps_nonendp(sp, sq, sr);
   }
 
+  inline
   void compute_vv_bisectors(
       const Site_2& sp, const Site_2& sq, const Site_2& sr,
       const PPS_Type&) const
