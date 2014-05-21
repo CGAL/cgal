@@ -51,8 +51,6 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with three arguments) 
-
 \sa `angle_grp`
 
 */
@@ -65,13 +63,29 @@ public:
 
   /*!
     returns \ref CGAL::OBTUSE, \ref CGAL::RIGHT or \ref CGAL::ACUTE depending 
+  on the angle formed by the two vectors `u` and `v`. 
+  */ 
+  Angle operator()(const Kernel::Vector_3&u, 
+                   const Kernel::Vector_3&v); 
+
+  /*!
+    returns \ref CGAL::OBTUSE, \ref CGAL::RIGHT or \ref CGAL::ACUTE depending 
     on the angle formed by the three points `p`, `q`, `r` (`q` being the vertex of 
-    the angle). 
+    the angle). The returned value is the same as `operator()(p - q, r - q)`.
   */ 
   Angle operator()(const Kernel::Point_3&p, 
                    const Kernel::Point_3&q, 
                    const Kernel::Point_3&r); 
 
+  /*!
+    returns \ref CGAL::OBTUSE, \ref CGAL::RIGHT or \ref CGAL::ACUTE depending 
+    on the angle formed by the two vectors `pq`, `rs`. The returned value is 
+    the same as `operator()(q - p, s - r)`. 
+  */ 
+  Angle operator()(const Kernel::Point_3&p, 
+                   const Kernel::Point_3&q, 
+                   const Kernel::Point_3&r, 
+                   const Kernel::Point_3&s); 
   /// @}
 
 }; /* end Kernel::Angle_3 */
