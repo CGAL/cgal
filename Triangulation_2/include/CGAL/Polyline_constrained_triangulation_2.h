@@ -29,7 +29,7 @@
 #include <CGAL/Default.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-
+#include <CGAL/Triangulation_2/insert_constraints.h>
 namespace CGAL {
 
 // Tr the base triangulation class 
@@ -241,7 +241,7 @@ public:
   {
     return insert_constraint_seq_impl(polygon.vertices_begin(), polygon.vertices_end(), true);
   }
-
+  /*
   template<typename InputIterator>
   size_type insert_constraints(InputIterator first, InputIterator last)
   {
@@ -254,7 +254,7 @@ public:
     }
     return n;
   }
-
+  */
   Vertex_handle push_back(const Point& p)
   {
     return insert(p);
@@ -270,6 +270,27 @@ public:
   // the insert that takes an iterator range
   Constraint_id insert(Point a, Point b) { return insert_constraint(a, b); }
   Constraint_id insert(Vertex_handle va, Vertex_handle  vb) { return insert_constraint(va,vb); }
+
+
+
+  template <class PointIterator, class IndicesIterator>
+  std::size_t insert_constraints(PointIterator points_first,
+                                 PointIterator points_beyond,
+                                 IndicesIterator indices_first,
+                                 IndicesIterator indices_beyond)
+  {
+    std::vector<Point> points(points_first, points_beyond);
+    return internal::insert_constraints(*this,points, indices_first, indices_beyond);
+  }
+
+
+ template <class ConstraintIterator>
+  std::size_t insert_constraints(ConstraintIterator first,
+                                 ConstraintIterator beyond)
+  {
+    return internal::insert_constraints(*this,first,beyond);
+  }
+
 
   Vertices_in_constraint_iterator
   insert_vertex_in_constraint(Constraint_id cid, Vertices_in_constraint_iterator pos, 

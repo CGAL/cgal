@@ -186,6 +186,23 @@ public:
 
   }
 
+#if 1
+  template <class Segment_2>
+  static const Point& get_source(const Segment_2& segment){
+    return segment.source();
+  }
+  template <class Segment_2>
+  static const Point& get_target(const Segment_2& segment){
+    return segment.target();
+  }
+
+  static const Point& get_source(const Constraint& cst){
+    return cst.first;
+  }
+  static const Point& get_target(const Constraint& cst){
+    return cst.second;
+  }
+#endif
 
   // A version of insert_constraint, that additionally writes
   // the new faces in an output iterator
@@ -579,10 +596,10 @@ template <class Gt, class Tds, class Itag >
 inline void
 Constrained_triangulation_2<Gt,Tds,Itag>::
 insert_constraint(Vertex_handle  vaa, Vertex_handle vbb)
-// forces the constrained [va,vb]
-// [va,vb] will eventually be splitted into several edges
+// forces the constraint [va,vb]
+// [va,vb] will eventually be split into several edges
 // if a vertex vc of t lies on segment ab
-// of if ab intersect some constrained edges
+// or if ab intersect some constrained edges
 {
   CGAL_triangulation_precondition( vaa != vbb);
   Vertex_handle vi;
