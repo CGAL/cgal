@@ -589,12 +589,12 @@ void MainWindow::viewerShow(float xmin,
                             float zmax)
 {
   qglviewer::Vec
-    min(xmin, ymin, zmin),
-    max(xmax, ymax, zmax);
-  viewer->camera()->setRevolveAroundPoint((min+max)*0.5);
+    min_(xmin, ymin, zmin),
+    max_(xmax, ymax, zmax);
+  viewer->camera()->setRevolveAroundPoint((min_+max_)*0.5);
 
   qglviewer::ManipulatedCameraFrame backup_frame(*viewer->camera()->frame());
-  viewer->camera()->fitBoundingBox(min, max);
+  viewer->camera()->fitBoundingBox(min_, max_);
   qglviewer::ManipulatedCameraFrame new_frame(*viewer->camera()->frame());
   *viewer->camera()->frame() = backup_frame;
   viewer->camera()->interpolateTo(new_frame, 1.f);
