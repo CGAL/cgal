@@ -36,7 +36,7 @@ struct Time_stamper
     pt->set_time_stamp(time_stamp_++);
   }
 
-  static bool less(T* p_t1, T* p_t2) {
+  static bool less(const T* p_t1, const T* p_t2) {
     if(p_t1 == NULL)      return (p_t2 != NULL);
     else if(p_t2 == NULL) return false;
     else                  return p_t1->time_stamp() < p_t2->time_stamp();
@@ -54,7 +54,7 @@ struct No_time_stamp
 {
 public:
   void set_time_stamp(T*)  {}
-  static bool less(T* p_t1, T* p_t2) {
+  static bool less(const T* p_t1,const T* p_t2) {
     return p_t1 < p_t2;
   }
   void reset()                {}
