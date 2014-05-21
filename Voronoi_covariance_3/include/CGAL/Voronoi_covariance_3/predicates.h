@@ -12,12 +12,17 @@ namespace CGAL
             struct Plane_dual
             {
                 typedef typename K::Plane_3 Plane_3;
+
                 Plane_3 p1;
                 Plane_3 p2;
                 Plane_3 p3;
-                Plane_dual (Plane_3 p1, Plane_3 p2, Plane_3 p3) : p1(p1), p2(p2), p3(p3)
+
+                Plane_dual (Plane_3 p1, Plane_3 p2, Plane_3 p3) :
+                    p1(p1), p2(p2), p3(p3)
                 {}
-                Plane_dual () {}
+
+                Plane_dual ()
+                {}
             };
 
         // Segment in the dual space : 2 dual points = 2 planes
@@ -25,24 +30,13 @@ namespace CGAL
             struct Segment_dual
             {
                 typedef typename K::Plane_3 Plane_3;
+
                 Plane_3 p;
                 Plane_3 q;
-                Segment_dual (Plane_3 p, Plane_3 q) : p(p), q(q) {}
+
+                Segment_dual (Plane_3 p, Plane_3 q) : p(p), q(q)
+                {}
             };
-
-        // Convert K1 to K2
-        template <class K1, class K2>
-            struct Cartesian_converter_dual : public CGAL::Cartesian_converter<K1, K2>
-        {
-            using CGAL::Cartesian_converter<K1, K2>::operator();
-
-            Plane_dual<K2> operator() (const Plane_dual<K1> &in) const
-            {
-                return Plane_dual<K2>(operator()(in.p1),
-                                      operator()(in.p2),
-                                      operator()(in.p3));
-            }
-        };
 
         // Predicates for dual points
         // Equal
@@ -76,7 +70,9 @@ namespace CGAL
                 typedef bool                  result_type;
 
                 result_type
-                    operator()(const Plane_3 &p, const Plane_3 &q, const Plane_3 &r) const
+                    operator()(const Plane_3 &p,
+                               const Plane_3 &q,
+                               const Plane_3 &r) const
                     {
                         RT diffapq = p.d() * q.a() - q.d() * p.a();
                         RT diffbpq = p.d() * q.b() - q.d() * p.b();
@@ -98,7 +94,6 @@ namespace CGAL
             };
 
         // Coplanar
-
         template < typename K >
             struct Coplanar_3_dual_point
             {
@@ -107,7 +102,10 @@ namespace CGAL
                 typedef bool                  result_type;
 
                 result_type
-                    operator()(const Plane_3 &p, const Plane_3 &q, const Plane_3 &r, const Plane_3 &s) const
+                    operator()(const Plane_3 &p,
+                               const Plane_3 &q,
+                               const Plane_3 &r,
+                               const Plane_3 &s) const
                     {
                         RT diffapq = p.d() * q.a() - q.d() * p.a();
                         RT diffbpq = p.d() * q.b() - q.d() * p.b();
@@ -121,9 +119,10 @@ namespace CGAL
                         RT diffbps = p.d() * s.b() - s.d() * p.b();
                         RT diffcps = p.d() * s.c() - s.d() * p.c();
 
-                        return CGAL::sign_of_determinant(diffapq, diffapr, diffaps,
-                                                         diffbpq, diffbpr, diffbps,
-                                                         diffcpq, diffcpr, diffcps) == CGAL::ZERO;
+                        return (CGAL::sign_of_determinant(diffapq, diffapr, diffaps,
+                                                          diffbpq, diffbpr, diffbps,
+                                                          diffcpq, diffcpr, diffcps)
+                            == CGAL::ZERO);
                     }
             };
 
@@ -143,12 +142,25 @@ namespace CGAL
                         Plane_3 p3 = p.p3;
 
                         // Compute the normal to the plane
-                        RT alpha = (p1.d() * p2.b() - p2.d() * p1.b()) * (p1.d() * p3.c() - p3.d() * p1.c()) - (p1.d() * p2.d() - p2.d() * p1.c()) * (p1.d() * p3.b() - p3.d() * p1.b());
-                        RT beta  = (p1.d() * p2.c() - p2.d() * p1.c()) * (p1.d() * p3.a() - p3.d() * p1.a()) - (p1.d() * p2.a() - p2.d() * p1.a()) * (p1.d() * p3.c() - p3.d() * p1.c());
-                        RT gamma = (p1.d() * p2.a() - p2.d() * p1.a()) * (p1.d() * p3.b() - p3.d() * p1.b()) - (p1.d() * p2.b() - p2.d() * p1.b()) * (p1.d() * p3.a() - p3.d() * p1.a());
+                        RT alpha = (p1.d() * p2.b() - p2.d() * p1.b()) *
+                            (p1.d() * p3.c() - p3.d() * p1.c()) -
+                            (p1.d() * p2.d() - p2.d() * p1.c()) *
+                            (p1.d() * p3.b() - p3.d() * p1.b());
+
+                        RT beta  = (p1.d() * p2.c() - p2.d() * p1.c()) *
+                            (p1.d() * p3.a() - p3.d() * p1.a()) -
+                            (p1.d() * p2.a() - p2.d() * p1.a()) *
+                            (p1.d() * p3.c() - p3.d() * p1.c());
+
+                        RT gamma = (p1.d() * p2.a() - p2.d() * p1.a()) *
+                            (p1.d() * p3.b() - p3.d() * p1.b()) -
+                            (p1.d() * p2.b() - p2.d() * p1.b()) *
+                            (p1.d() * p3.a() - p3.d() * p1.a());
 
                         // Test if q is on the positive side of p
-                        RT prod = alpha * (p1.a() * q.d() - q.a() * p1.d()) + beta * (p1.b() * q.d() - q.b() * p1.d()) + gamma * (p1.c() * q.d() - q.c() * p1.d());
+                        RT prod = alpha * (p1.a() * q.d() - q.a() * p1.d()) +
+                            beta * (p1.b() * q.d() - q.b() * p1.d()) +
+                            gamma * (p1.c() * q.d() - q.c() * p1.d());
 
                         if (CGAL::is_positive(p1.d() * q.d())) {
                             return CGAL::is_positive(prod);
@@ -167,7 +179,9 @@ namespace CGAL
                 typedef bool                  result_type;
 
                 result_type
-                    operator()(const Plane_3 &p, const Plane_3 &q, const Plane_3 &r) const
+                    operator()(const Plane_3 &p,
+                               const Plane_3 &q,
+                               const Plane_3 &r) const
                     {
                         RT diffapq = p.a() * q.d() - q.a() * p.d();
                         RT diffbpq = p.b() * q.d() - q.b() * p.d();
@@ -177,10 +191,16 @@ namespace CGAL
                         RT diffbpr = p.b() * r.d() - r.b() * r.d();
                         RT diffcpr = p.c() * r.d() - r.c() * r.d();
 
-                        RT distpq = diffapq * diffapq + diffbpq * diffbpq + diffcpq * diffcpq;
-                        RT distpr = diffapr * diffapr + diffbpr * diffbpr + diffcpr * diffcpr;
+                        RT distpq = diffapq * diffapq +
+                            diffbpq * diffbpq +
+                            diffcpq * diffcpq;
 
-                        return CGAL::is_positive(q.d() * q.d() * distpr - r.d() * r.d() * distpq);
+                        RT distpr = diffapr * diffapr +
+                            diffbpr * diffbpr +
+                            diffcpr * diffcpr;
+
+                        return CGAL::is_positive(q.d() * q.d() *
+                                                 distpr - r.d() * r.d() * distpq);
                     }
             };
 
@@ -193,16 +213,29 @@ namespace CGAL
                 typedef bool                   result_type;
 
                 result_type
-                    operator()(const Plane_dual<K> &p, const Plane_3 &q, const Plane_3 &r) const
+                    operator()(const Plane_dual<K> &p,
+                               const Plane_3 &q,
+                               const Plane_3 &r) const
                     {
                         Plane_3 p1 = p.p1;
                         Plane_3 p2 = p.p2;
                         Plane_3 p3 = p.p3;
 
                         // Compute the normal to the plane
-                        RT alpha = (p1.d() * p2.b() - p2.d() * p1.b()) * (p1.d() * p3.c() - p3.d() * p1.c()) - (p1.d() * p2.d() - p2.d() * p1.c()) * (p1.d() * p3.b() - p3.d() * p1.b());
-                        RT beta  = (p1.d() * p2.c() - p2.d() * p1.c()) * (p1.d() * p3.a() - p3.d() * p1.a()) - (p1.d() * p2.a() - p2.d() * p1.a()) * (p1.d() * p3.c() - p3.d() * p1.c());
-                        RT gamma = (p1.d() * p2.a() - p2.d() * p1.a()) * (p1.d() * p3.b() - p3.d() * p1.b()) - (p1.d() * p2.b() - p2.d() * p1.b()) * (p1.d() * p3.a() - p3.d() * p1.a());
+                        RT alpha = (p1.d() * p2.b() - p2.d() * p1.b()) *
+                            (p1.d() * p3.c() - p3.d() * p1.c()) -
+                            (p1.d() * p2.d() - p2.d() * p1.c()) *
+                            (p1.d() * p3.b() - p3.d() * p1.b());
+
+                        RT beta  = (p1.d() * p2.c() - p2.d() * p1.c()) *
+                            (p1.d() * p3.a() - p3.d() * p1.a()) -
+                            (p1.d() * p2.a() - p2.d() * p1.a()) *
+                            (p1.d() * p3.c() - p3.d() * p1.c());
+
+                        RT gamma = (p1.d() * p2.a() - p2.d() * p1.a()) *
+                            (p1.d() * p3.b() - p3.d() * p1.b()) -
+                            (p1.d() * p2.b() - p2.d() * p1.b()) *
+                            (p1.d() * p3.a() - p3.d() * p1.a());
 
                         RT sumpq = alpha * q.a() + beta * q.b() + gamma * q.c();
                         RT sumpr = alpha * r.a() + beta * r.b() + gamma * r.c();
@@ -232,12 +265,25 @@ namespace CGAL
                         Plane_3 p3 = p.p3;
 
                         // Compute the normal to the plane
-                        RT alpha = (p1.d() * p2.b() - p2.d() * p1.b()) * (p1.d() * p3.c() - p3.d() * p1.c()) - (p1.d() * p2.d() - p2.d() * p1.c()) * (p1.d() * p3.b() - p3.d() * p1.b());
-                        RT beta  = (p1.d() * p2.c() - p2.d() * p1.c()) * (p1.d() * p3.a() - p3.d() * p1.a()) - (p1.d() * p2.a() - p2.d() * p1.a()) * (p1.d() * p3.c() - p3.d() * p1.c());
-                        RT gamma = (p1.d() * p2.a() - p2.d() * p1.a()) * (p1.d() * p3.b() - p3.d() * p1.b()) - (p1.d() * p2.b() - p2.d() * p1.b()) * (p1.d() * p3.a() - p3.d() * p1.a());
+                        RT alpha = (p1.d() * p2.b() - p2.d() * p1.b()) *
+                            (p1.d() * p3.c() - p3.d() * p1.c()) -
+                            (p1.d() * p2.d() - p2.d() * p1.c()) *
+                            (p1.d() * p3.b() - p3.d() * p1.b());
+
+                        RT beta  = (p1.d() * p2.c() - p2.d() * p1.c()) *
+                            (p1.d() * p3.a() - p3.d() * p1.a()) -
+                            (p1.d() * p2.a() - p2.d() * p1.a()) *
+                            (p1.d() * p3.c() - p3.d() * p1.c());
+
+                        RT gamma = (p1.d() * p2.a() - p2.d() * p1.a()) *
+                            (p1.d() * p3.b() - p3.d() * p1.b()) -
+                            (p1.d() * p2.b() - p2.d() * p1.b()) *
+                            (p1.d() * p3.a() - p3.d() * p1.a());
 
                         // Test if q is on the positive side of p
-                        RT prod = alpha * (p1.a() * q.d() - q.a() * p1.d()) + beta * (p1.b() * q.d() - q.b() * p1.d()) + gamma * (p1.c() * q.d() - q.c() * p1.d());
+                        RT prod = alpha * (p1.a() * q.d() - q.a() * p1.d()) +
+                            beta * (p1.b() * q.d() - q.b() * p1.d()) +
+                            gamma * (p1.c() * q.d() - q.c() * p1.d());
 
                         if (CGAL::is_positive(p1.d() * q.d())) {
                             if (CGAL::is_positive(prod)) {
