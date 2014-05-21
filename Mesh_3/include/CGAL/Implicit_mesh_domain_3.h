@@ -31,6 +31,7 @@
 #  pragma warning(disable:4180) // qualifier applied to function type has no meaning; ignored
 #endif
 
+#include <CGAL/Random.h>
 #include <CGAL/Mesh_3/Labeled_mesh_domain_3.h>
 #include <CGAL/Mesh_3/Implicit_to_labeled_function_wrapper.h>
 
@@ -47,7 +48,7 @@ template<class Function,
   class BGT,
   class Wrapper = Mesh_3::Implicit_to_labeled_function_wrapper<Function,BGT> >
 class Implicit_mesh_domain_3
- : public Mesh_3::Labeled_mesh_domain_3<Wrapper, BGT >
+ : public Mesh_3::Labeled_mesh_domain_3<Wrapper, BGT>
 {
 public:
   /// Base type
@@ -66,8 +67,9 @@ public:
    */
   Implicit_mesh_domain_3(const Function& f,
                          const Sphere_3& bounding_sphere,
-                         const FT& error_bound = FT(1e-3))
-    : Base(Wrapper(f), bounding_sphere, error_bound)  {}
+                         const FT& error_bound = FT(1e-3),
+                         CGAL::Random* p_rng = NULL)
+    : Base(Wrapper(f), bounding_sphere, error_bound, p_rng)  {}
 
   /// Destructor
   virtual ~Implicit_mesh_domain_3() {}

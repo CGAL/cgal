@@ -55,8 +55,8 @@ public:
   typedef typename Polyhedron::Facet            Facet;
   typedef typename Facet::Patch_id              Patch_id;
   
-  typedef std::set<Facet*>      Facet_handle_set;
-  typedef std::set<Halfedge*>   He_handle_set;
+  typedef std::set<Facet_handle>      Facet_handle_set;
+  typedef std::set<Halfedge_handle>   He_handle_set;
   
 public:
   Detect_features_in_polyhedra() : current_surface_index_(1) {}
@@ -69,7 +69,7 @@ public:
 private:
   Vector_3 facet_normal(const Facet_handle& f) const;
   bool is_sharp(const Halfedge_handle& he, FT cos_angle) const;
-  void flood(Facet& f, const Patch_id id,
+  void flood(Facet_handle f, const Patch_id id,
              Facet_handle_set& unsorted_faces) const;
 
   template <typename Int>
@@ -143,18 +143,19 @@ detect_surface_patches(Polyhedron& polyhedron)
   for ( typename Polyhedron::Facet_iterator fit = polyhedron.facets_begin(),
        end = polyhedron.facets_end() ; fit != end ; ++fit )
   {
-    unsorted_faces.insert(&*fit);
+    Facet_handle fh = fit;
+    unsorted_faces.insert(fh);
   }
   
   // Flood
   while ( ! unsorted_faces.empty() )
   {
-    Facet& f = **(unsorted_faces.begin());
+    Facet_handle f = *(unsorted_faces.begin());
     unsorted_faces.erase(unsorted_faces.begin());
     
     const Patch_id patch_id = generate_patch_id(Patch_id(),
                                                 current_surface_index_);
-    f.set_patch_id(patch_id);
+    f->set_patch_id(patch_id);
     flood(f,patch_id,unsorted_faces);
     ++current_surface_index_;
   }
@@ -245,52 +246,52 @@ is_sharp(const Halfedge_handle& he, FT cos_angle) const
 template <typename P_>
 void
 Detect_features_in_polyhedra<P_>::
-flood(Facet& f, const Patch_id patch_id, Facet_handle_set& unsorted_faces) const
+flood(Facet_handle f, const Patch_id patch_id, Facet_handle_set& unsorted_faces) const
 {
   typedef typename Facet::Halfedge_around_facet_circulator Facet_he_circ;
   
-  Facet_he_circ begin = f.facet_begin();
+  Facet_he_circ begin = f->facet_begin();
   Facet_he_circ done = begin;
   
   // Initialize he_to_explore with halfedges of the starting facet
   He_handle_set he_to_explore;
   CGAL_For_all(begin,done)
   {
-    he_to_explore.insert(&*(begin->opposite()));
+    he_to_explore.insert(begin->opposite());
   }
   
   // While there is something to explore
   while ( ! he_to_explore.empty() )
   {
     // Get next halfedge to explore
-    Halfedge& he = **(he_to_explore.begin());
+    Halfedge_handle he = *(he_to_explore.begin());
     he_to_explore.erase(he_to_explore.begin());
     
     // If we don't go through a border of the patch
-    if ( ! he.is_feature_edge() && ! he.is_border() )
+    if ( ! he->is_feature_edge() && ! he->is_border() )
     {
-      Facet& explored_facet = *(he.facet());
+      Facet_handle explored_facet = he->facet();
       
       // Mark facet and delete it from unsorted
-      explored_facet.set_patch_id(patch_id);
-      unsorted_faces.erase(&explored_facet);
+      explored_facet->set_patch_id(patch_id);
+      unsorted_faces.erase(explored_facet);
       
       // Add/Remove facet's halfedge to/from explore list
-      Facet_he_circ he_begin = explored_facet.facet_begin();
+      Facet_he_circ he_begin = explored_facet->facet_begin();
       Facet_he_circ he_done = he_begin;
       
       CGAL_For_all(he_begin,he_done)
       {
-        Halfedge& current_he = *he_begin;
+        Halfedge_handle current_he = he_begin;
         
         // do not explore heh again
-        if ( &current_he == &he ) { continue; }
+        if ( current_he == he ) { continue; }
         
         // if current_he is not in to_explore set, add it, otherwise remove it
         // (because we just explore the facet he_begin is pointing to)
-        if ( he_to_explore.erase(&current_he) == 0 )
+        if ( he_to_explore.erase(current_he) == 0 )
         {
-          he_to_explore.insert(&*(current_he.opposite()));
+          he_to_explore.insert(current_he->opposite());
         }
       }
     }

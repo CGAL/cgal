@@ -918,6 +918,9 @@ insert_balls(const Vertex_handle& vp,
     std::cerr << "Number of to-be-inserted balls is: " 
               << n << "\n  between points ("
               << vp->point() << ") and (" << vq->point()
+              << ") (geodesic distance: "
+              << domain_.geodesic_distance(vp->point(), vq->point(),
+                                           curve_index)
               << ")\n";
 #endif
     const Bare_point new_point =
