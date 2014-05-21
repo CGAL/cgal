@@ -63,6 +63,9 @@ _test_angle(const R&)
   assert( CGAL::angle( org3, sy, sx, sz) == CGAL::RIGHT );
   assert( CGAL::angle( org3, sz, sz, sy) == CGAL::OBTUSE );
   assert( CGAL::angle( org3, sx, sy, sx) == CGAL::ACUTE );
+  assert( CGAL::angle( org3 - sy, sx - sz) == CGAL::RIGHT );
+  assert( CGAL::angle( org3 - sz, sz - sy) == CGAL::OBTUSE );
+  assert( CGAL::angle( org3 - sx, sy - sx) == CGAL::ACUTE );
 
   return true;
 }

@@ -141,7 +141,16 @@ orientationC3(const FT &ux, const FT &uy, const FT &uz,
 }
 
 template < class FT >
-inline
+CGAL_KERNEL_MEDIUM_INLINE
+typename Same_uncertainty_nt<Angle, FT>::type
+angleC3(const FT &ux, const FT &uy, const FT &uz,
+        const FT &vx, const FT &vy, const FT &vz)
+{
+  return enum_cast<Angle>(CGAL_NTS sign(ux*vx + uy*vy + uz*vz));
+}
+
+template < class FT >
+CGAL_KERNEL_MEDIUM_INLINE
 typename Same_uncertainty_nt<Angle, FT>::type
 angleC3(const FT &px, const FT &py, const FT &pz,
         const FT &qx, const FT &qy, const FT &qz,
@@ -153,7 +162,7 @@ angleC3(const FT &px, const FT &py, const FT &pz,
 }
 
 template < class FT >
-inline
+CGAL_KERNEL_MEDIUM_INLINE
 typename Same_uncertainty_nt<Angle, FT>::type
 angleC3(const FT &px, const FT &py, const FT &pz,
         const FT &qx, const FT &qy, const FT &qz,

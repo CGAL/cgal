@@ -37,6 +37,14 @@ namespace CGAL {
 template <typename K>
 inline
 Angle
+angle(const Vector_3<K> &u, const Vector_3<K> &v)
+{
+  return internal::angle(u, v, K());
+}
+
+template <typename K>
+inline
+Angle
 angle(const Point_3<K> &p, const Point_3<K> &q, const Point_3<K> &r)
 {
   return internal::angle(p, q, r, K());
