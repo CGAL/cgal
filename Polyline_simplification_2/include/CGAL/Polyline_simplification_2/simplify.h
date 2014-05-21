@@ -37,14 +37,14 @@
 // Needed for Polygon_2
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
-#include <CGAL/Polyline_constrained_triangulation_2.h>
+#include <CGAL/Constrained_triangulation_plus_2.h>
 #include <list>
 
 
 namespace CGAL {
 
 template < class Tr >
-class Polyline_constrained_triangulation_2;
+class Constrained_triangulation_plus_2;
 
 
 template <class PolygonTraits_2, class Container>
@@ -320,7 +320,7 @@ template <class PolygonTraits_2, class Container, class CostFunction, class Stop
   typedef CGAL::Constrained_triangulation_face_base_2<K> Fb;
   typedef CGAL::Triangulation_data_structure_2<Vb,Fb> TDS;
   typedef CGAL::Constrained_Delaunay_triangulation_2<K, TDS, CGAL::Exact_predicates_tag> CDT;
-  typedef CGAL::Polyline_constrained_triangulation_2<CDT>       PCT;
+  typedef CGAL::Constrained_triangulation_plus_2<CDT>       PCT;
   typedef PCT::Constraint_id Constraint_id;
   typedef PCT::Vertices_in_constraint_iterator Vertices_in_constraint_iterator;
 
@@ -349,13 +349,13 @@ Simplifies a single polyline in a triangulation with polylines as constraints.
 */
 template <class Tr, class CostFunction, class StopFunction>
 std::size_t
-simplify(CGAL::Polyline_constrained_triangulation_2<Tr>& pct,
-         typename CGAL::Polyline_constrained_triangulation_2<Tr>::Constraint_id cid,
+simplify(CGAL::Constrained_triangulation_plus_2<Tr>& pct,
+         typename CGAL::Constrained_triangulation_plus_2<Tr>::Constraint_id cid,
          CostFunction cost,
          StopFunction stop,
          bool keep_points = false)
 {
-  typedef CGAL::Polyline_constrained_triangulation_2<Tr> PCT;
+  typedef CGAL::Constrained_triangulation_plus_2<Tr> PCT;
   Polyline_simplification_2<PCT, CostFunction, StopFunction> simplifier(pct, cid, cost, stop);
 
   while(simplifier()){}
@@ -373,12 +373,12 @@ The vertex type must be a model of `PolylineSimplificationVertexBase_2`.
 
 template <class Tr, class CostFunction, class StopFunction>
 std::size_t
-simplify(CGAL::Polyline_constrained_triangulation_2<Tr>& pct,
+simplify(CGAL::Constrained_triangulation_plus_2<Tr>& pct,
          CostFunction cost,
          StopFunction stop,
          bool keep_points = false)
 {
-  typedef CGAL::Polyline_constrained_triangulation_2<Tr> PCT;
+  typedef CGAL::Constrained_triangulation_plus_2<Tr> PCT;
   Polyline_simplification_2<PCT, CostFunction, StopFunction> simplifier(pct, cost, stop);
 
   while(simplifier()){}

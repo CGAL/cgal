@@ -1,7 +1,7 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Polygon_2.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
-#include <CGAL/Polyline_constrained_triangulation_2.h>
+#include <CGAL/Constrained_triangulation_plus_2.h>
 #include <CGAL/Polyline_simplification_2/simplify.h>
 #include <CGAL/Polyline_simplification_2/Squared_distance_cost.h>
 
@@ -14,7 +14,7 @@ typedef PS::Vertex_base_2<K> Vb;
 typedef CGAL::Constrained_triangulation_face_base_2<K> Fb;
 typedef CGAL::Triangulation_data_structure_2<Vb, Fb> TDS;
 typedef CGAL::Constrained_Delaunay_triangulation_2<K, TDS, CGAL::Exact_predicates_tag> CDT;
-typedef CGAL::Polyline_constrained_triangulation_2<CDT>     PCT;
+typedef CGAL::Constrained_triangulation_plus_2<CDT>     PCT;
 typedef PCT::Point                           Point;
 typedef PCT::Constraint_iterator             Constraint_iterator;
 typedef PCT::Vertices_in_constraint_iterator Vertices_in_constraint_iterator;

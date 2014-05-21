@@ -23,7 +23,7 @@
 namespace CGAL {
 
 template < class Tr >
-class Polyline_constrained_triangulation_2;
+class Constrained_triangulation_plus_2;
 
 namespace Polyline_simplification_2 {
 
@@ -33,10 +33,10 @@ Fix the leftmost, rightmost, topmost and bottommost vertex of a polyline.
 */
 template <typename Tr>
 void
-mark_vertices_unremovable(CGAL::Polyline_constrained_triangulation_2<Tr>& pct,
-                          typename CGAL::Polyline_constrained_triangulation_2<Tr>::Constraint_id cid)
+mark_vertices_unremovable(CGAL::Constrained_triangulation_plus_2<Tr>& pct,
+                          typename CGAL::Constrained_triangulation_plus_2<Tr>::Constraint_id cid)
 {
-  typedef typename CGAL::Polyline_constrained_triangulation_2<Tr> PCT;
+  typedef typename CGAL::Constrained_triangulation_plus_2<Tr> PCT;
   typedef typename PCT::Vertices_in_constraint_iterator Vertices_in_constraint_iterator;
   typename PCT::Vertex_handle l,r,b,t;
   l = r = b = t = *(pct.vertices_in_constraint_begin(cid));
@@ -55,9 +55,9 @@ mark_vertices_unremovable(CGAL::Polyline_constrained_triangulation_2<Tr>& pct,
 /// Fix the leftmost, rightmost, topmost and bottommost vertex of each polyline.
 template <typename Tr>
 void
-mark_vertices_unremovable(CGAL::Polyline_constrained_triangulation_2<Tr>& pct)
+mark_vertices_unremovable(CGAL::Constrained_triangulation_plus_2<Tr>& pct)
 {
-  typedef typename CGAL::Polyline_constrained_triangulation_2<Tr> PCT;
+  typedef typename CGAL::Constrained_triangulation_plus_2<Tr> PCT;
   typedef typename PCT::Constraint_iterator Constraint_iterator;
   typedef typename PCT::Constraint_id Constraint_id;
 
