@@ -7,6 +7,7 @@
 //******************************************************************************
 
 
+#define CGAL_NO_DEPRECATION_WARNINGS 1
 
 #include "debug.h"
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
@@ -15,8 +16,8 @@
 #include <CGAL/Mesh_complex_3_in_triangulation_3.h>
 #include <CGAL/Mesh_criteria_3.h>
 
-#include <CGAL/Implicit_to_labeling_function_wrapper.h>
-#include <CGAL/Labeled_mesh_domain_3.h>
+#include <CGAL/Mesh_3/Implicit_to_labeled_function_wrapper.h>
+#include <CGAL/Mesh_3/Labeled_mesh_domain_3.h>
 #include <CGAL/make_mesh_3.h>
 #include "implicit_functions.h"
 
@@ -28,10 +29,10 @@ using namespace CGAL::parameters;
 // Domain
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef FT_to_point_function_wrapper<K::FT, K::Point_3> Function;
-typedef CGAL::Implicit_multi_domain_to_labeling_function_wrapper<Function>
+typedef CGAL::Mesh_3::Implicit_vector_to_labeled_function_wrapper<Function, K>
                                                         Function_wrapper;
 typedef Function_wrapper::Function_vector Function_vector;
-typedef CGAL::Labeled_mesh_domain_3<Function_wrapper, K> Mesh_domain;
+typedef CGAL::Mesh_3::Labeled_mesh_domain_3<Function_wrapper, K> Mesh_domain;
 
 // Triangulation
 typedef CGAL::Mesh_triangulation_3<Mesh_domain>::type Tr;
@@ -51,8 +52,8 @@ int main()
   Function f3(&sphere_function<2>);
 
   Function_vector v;
-  v.push_back(f1);
-  v.push_back(f2);
+  v.push_back(&f1);
+  v.push_back(&f2);
   //v.push_back(&f3);
 
   // Domain (Warning: Sphere_3 constructor uses square radius !)

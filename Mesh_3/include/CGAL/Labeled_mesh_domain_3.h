@@ -16,19 +16,15 @@
 // $Id$
 //
 //
-// Author(s)     : Stéphane Tayeb
+// Author(s)     : Stéphane Tayeb, Aymeric PELLE
 //
 //******************************************************************************
 // File Description :
 // class Labeled_mesh_domain_3. See class description.
 //******************************************************************************
 
-#ifndef CGAL_MESH_3_LABELED_MESH_DOMAIN_3_H
-#define CGAL_MESH_3_LABELED_MESH_DOMAIN_3_H
-
-#define CGAL_DEPRECATED_HEADER "<CGAL/Mesh_3/Labeled_mesh_domain_3.h>"
-#define CGAL_REPLACEMENT_HEADER "<CGAL/Labeled_mesh_domain_3.h>"
-#include <CGAL/internal/deprecation_warning.h>
+#ifndef CGAL_LABELED_MESH_DOMAIN_3_H
+#define CGAL_LABELED_MESH_DOMAIN_3_H
 
 #include <CGAL/Mesh_3/config.h>
 
@@ -44,8 +40,6 @@
 #include <CGAL/Origin.h>
 
 namespace CGAL {
-
-namespace Mesh_3 {
 
 /**
  * \class Labeled_mesh_domain_3
@@ -72,6 +66,7 @@ public:
   typedef typename BGT::Sphere_3   Sphere_3;
   typedef CGAL::Bbox_3             Bbox_3;
 
+protected:
   typedef typename BGT::Iso_cuboid_3 Iso_cuboid_3;
 
 public:
@@ -105,6 +100,10 @@ public:
 
   Labeled_mesh_domain_3(const Function& f,
                          const Bbox_3& bbox,
+                         const FT& error_bound = FT(1e-3));
+
+  Labeled_mesh_domain_3(const Function& f,
+                         const Iso_cuboid_3& bbox,
                          const FT& error_bound = FT(1e-3));
 
   /// Destructor
@@ -455,7 +454,7 @@ private:
 
     return Iso_cuboid_3(p_min,p_max);
   }
-  
+
 protected:
   /// Returns bounding box
   const Iso_cuboid_3& bounding_box() const { return bbox_; }
@@ -506,6 +505,19 @@ Labeled_mesh_domain_3<F,BGT>::Labeled_mesh_domain_3(
 {
   // TODO : CGAL_ASSERT(0 < f(bounding_sphere.get_center()) ) ?
 }
+
+template<class F, class BGT>
+Labeled_mesh_domain_3<F,BGT>::Labeled_mesh_domain_3(
+                       const F& f,
+                       const Iso_cuboid_3& bbox,
+                       const FT& error_bound )
+: function_(f)
+, bbox_(bbox)
+, squared_error_bound_(squared_error_bound(bbox_,error_bound))
+{
+  // TODO : CGAL_ASSERT(0 < f( bbox.get_center()) ) ?
+}
+
 
 
 template<class F, class BGT>
@@ -587,8 +599,6 @@ Labeled_mesh_domain_3<F,BGT>::Construct_initial_points::operator()(
   return pts;
 }
 
-
-}  // end namespace Mesh_3
 
 }  // end namespace CGAL
 
