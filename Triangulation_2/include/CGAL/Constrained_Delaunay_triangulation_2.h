@@ -23,6 +23,7 @@
 
 #include <CGAL/triangulation_assertions.h>
 #include <CGAL/Constrained_triangulation_2.h>
+#include <CGAL/Triangulation_2/insert_constraints.h>
 
 #ifndef CGAL_TRIANGULATION_2_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
 #include <CGAL/Spatial_sort_traits_adapter_2.h>
@@ -199,7 +200,35 @@ public:
  
   //for backward compatibility
   void insert(Point a, Point b) { insert_constraint(a, b);}
+
   void insert(Vertex_handle va, Vertex_handle  vb) {insert_constraint(va,vb);}
+
+
+  template <class PointIterator>
+  void insert_constraint(PointIterator first, PointIterator last, bool close=false)
+  {
+    if(first == last){
+      return;
+    }
+    const Point& p0 = *first;
+    Point p = p0;
+    Vertex_handle v0 = insert(p0), v(v0), w(v0);
+    ++first;
+    for(; first!=last; ++first){
+      const Point& q = *first;
+      if(p != q){
+        w = insert(q);
+        insert_constraint(v,w);
+        v = w;
+        p = q;
+      }
+    }
+    if(close && (p != p0)){
+      insert(w,v0);
+    }
+  }
+
+
   void remove_constraint(Face_handle f, int i){remove_constrained_edge(f,i);}
 
   // CHECK

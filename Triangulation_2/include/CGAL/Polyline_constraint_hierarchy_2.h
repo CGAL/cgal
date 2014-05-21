@@ -670,7 +670,7 @@ template <class T, class Data>
 std::size_t
 Polyline_constraint_hierarchy_2<T,Data>::remove_points_from_constraints()
 {
-  int n = 0;
+  std::size_t n = 0;
   for(C_iterator it = constraint_set.begin(); it!= constraint_set.end(); ++it){
     n+= remove_points_from_constraint(*it);
   }

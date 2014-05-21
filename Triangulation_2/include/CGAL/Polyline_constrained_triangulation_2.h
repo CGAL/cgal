@@ -30,6 +30,7 @@
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Triangulation_2/insert_constraints.h>
+
 namespace CGAL {
 
 // Tr the base triangulation class 
@@ -225,9 +226,9 @@ public:
   }
 
   template < class InputIterator>
-  Constraint_id insert_constraint(InputIterator first, InputIterator last)
+  Constraint_id insert_constraint(InputIterator first, InputIterator last, bool close=false)
   {
-    return insert_constraint_seq_impl(first, last, false);
+    return insert_constraint_seq_impl(first, last, close);
   }
 
   template<typename Range>
