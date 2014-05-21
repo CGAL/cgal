@@ -9,12 +9,18 @@
 #include <CGAL/Segment_Delaunay_graph_2/Compare_y_2.h>
 #include <CGAL/Side_of_bounded_square_2.h>
 #include <CGAL/Segment_Delaunay_graph_Linf_2/Bisector_Linf.h>
+#include <CGAL/tuple.h>
 
 
 namespace CGAL {
 
 namespace SegmentDelaunayGraphLinf_2 {
 
+#if __cplusplus >= 201103L
+#define tuple_maker std::forward_as_tuple
+#else
+#define tuple_maker cpp11::make_tuple
+#endif
 
 template<class K>
 class Voronoi_vertex_ring_C2
@@ -1128,12 +1134,15 @@ private:
 
       // tocheck
 
-      const Site_2 & p1 = r_.is_segment() ? p_ :
-        (p_.is_segment() ? q_ : r_);
-      const Site_2 & p2 = r_.is_segment() ? q_ :
-        (p_.is_segment() ? r_ : p_);
-      const Site_2 & s  = r_.is_segment() ? r_ :
-        (p_.is_segment() ? p_ : q_);
+      const cpp11::tuple<
+        const Site_2 &, const Site_2 &, const Site_2 &> sites =
+         r_.is_segment() ? tuple_maker(p_, q_, r_) :
+        (p_.is_segment() ? tuple_maker(q_, r_, p_) :
+                           tuple_maker(r_, p_, q_) );
+
+      const Site_2 & p1 = cpp11::get<0>(sites);
+      const Site_2 & p2 = cpp11::get<1>(sites);
+      const Site_2 & s  = cpp11::get<2>(sites);
 
       const RT d_fine = CGAL::min(CGAL::abs(scalediffdvtx),
                             CGAL::abs(scalediffdvty));
@@ -1272,10 +1281,15 @@ private:
 
       // tocheck
 
-      const Site_2 & pt_site =
-        p_.is_point() ? p_ : (q_.is_point() ? q_ : r_);
-      const Site_2 & s1 = p_.is_point() ? q_ : (q_.is_point() ? r_ : p_);
-      const Site_2 & s2 = p_.is_point() ? r_ : (q_.is_point() ? p_ : q_);
+      const cpp11::tuple<
+        const Site_2 &, const Site_2 &, const Site_2 &> sites =
+         p_.is_point() ? tuple_maker(p_, q_, r_) :
+        (q_.is_point() ? tuple_maker(q_, r_, p_) :
+                         tuple_maker(r_, p_, q_) );
+
+      const Site_2 & pt_site = cpp11::get<0>(sites);
+      const Site_2 & s1 = cpp11::get<1>(sites);
+      const Site_2 & s2 = cpp11::get<2>(sites);
 
       const bool is_s1src_s2 = is_endpoint_of(s1.source_site(), s2);
       const bool is_s1trg_s2 = is_endpoint_of(s1.target_site(), s2);
