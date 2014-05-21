@@ -1,11 +1,9 @@
-// Author(s) : Dmitry Anisimov.
-
 #include <CGAL/Real_timer.h>
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Barycentric_traits_2.h>
 #include <CGAL/Triangle_coordinates_2.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
-// Construct an iterator that takes as an input current data type and pointer to the first element in the standard C++ array.
-
+// Construct an iterator that takes as input the current data type and pointer to the first element in the standard C++ array.
 template<typename Scalar>
     class overwrite_iterator
 {
@@ -13,9 +11,9 @@ private:
     Scalar* pointer;
 
 public:
-    explicit overwrite_iterator(Scalar* _pointer) : pointer(_pointer) { }
+    explicit overwrite_iterator(Scalar* new_pointer) : pointer(new_pointer) { }
 
-    // There are only two operations that we need to overload in order to use the Triangle coordinates class.
+    // There are only two operations that we need to overload in order to use the class Triangle_coordinates_2.
 
     // This operation is intended to return the current coordinate value.
     inline Scalar& operator* () { return *pointer; }
@@ -24,19 +22,22 @@ public:
     inline void operator++ () { ++pointer; }
 };
 
-// Some convenient typedefs.
+// Namespace alias.
+namespace BC = CGAL::Barycentric_coordinates;
 
+// Some convenient typedefs.
 typedef CGAL::Real_timer Timer;
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 
-typedef Kernel::FT         Scalar;
-typedef Kernel::Point_2    Point;
-typedef Kernel::Triangle_2 Triangle;
+typedef BC::Barycentric_traits_2<Kernel> Barycentric_traits;
+
+typedef Barycentric_traits::FT      Scalar;
+typedef Barycentric_traits::Point_2 Point;
 
 typedef overwrite_iterator<Scalar> Overwrite_iterator;
 
-typedef CGAL::Barycentric_coordinates::Triangle_coordinates_2<Triangle, Overwrite_iterator> Triangle_coordinates;
+typedef BC::Triangle_coordinates_2<Barycentric_traits> Triangle_coordinates;
 
 using std::cout; using std::endl; using std::string;
 
@@ -57,19 +58,21 @@ int main()
     const Scalar y_step = one / Scalar(number_of_y_coordinates);
 
     // Create a right triangle with a slight offset from zero.
-    const Triangle right_triangle( Point(zero - x_step, zero - x_step), Point(two + y_step, zero - x_step), Point(zero - x_step, two + y_step) );
+    const Point vertex_1 = Point(zero - x_step, zero - x_step);
+    const Point vertex_2 = Point(two + y_step , zero - x_step);
+    const Point vertex_3 = Point(zero - x_step, two + y_step );
 
-    // Instantiate the Triangle coordinates class for the right triangle defined above.
-    Triangle_coordinates triangle_coordinates(right_triangle);
+    // Instantiate the class Triangle_coordinates_2 for the right triangle defined above.
+    Triangle_coordinates triangle_coordinates(vertex_1, vertex_2, vertex_3);
 
-    // Create an instance of a standard C++ array to store coordinates.
-    // It has fixed size = 3 = number of vertices.
+    // Create an instance of the standard C++ array to store coordinates.
+    // It has the fixed size = 3 = number of vertices.
     Scalar coordinates [3] = {0, 0, 0};
 
     // Pass pointer to the first element of the array with coordinates in order to overwrite them.
     Overwrite_iterator it( &(coordinates[0]) );
 
-    // Create timer.
+    // Create a timer.
     Timer time_to_compute;
 
     double time = 0.0;
@@ -90,9 +93,9 @@ int main()
     // Compute the arithmetic mean of all the runs.
     const double mean_time = time / number_of_runs;
 
-    // Output resulting time.
+    // Output the resulting time.
     cout.precision(10);
-    cout << endl << "CPU time to compute Triangle coordinates for "
+    cout << endl << "CPU time to compute triangle coordinates for "
          << number_of_x_coordinates * number_of_y_coordinates << " points = " << mean_time << " seconds.";
     cout << endl << endl;
 

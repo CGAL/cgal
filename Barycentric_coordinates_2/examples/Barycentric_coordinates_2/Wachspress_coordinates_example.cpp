@@ -1,25 +1,30 @@
-// Author(s) : Dmitry Anisimov.
-
-#include <CGAL/Polygon_2.h>
-#include <CGAL/Cartesian.h>
-#include <CGAL/Random.h>
+#include <CGAL/Simple_cartesian.h>
 #include <CGAL/convex_hull_2.h>
-
+#include <CGAL/point_generators_2.h>
+#include <CGAL/Barycentric_traits_2.h>
 #include <CGAL/Wachspress_coordinates_2.h>
+#include <CGAL/Barycentric_coordinates_2.h>
+
+// Namespace alias.
+namespace BC = CGAL::Barycentric_coordinates;
 
 // Some convenient typedefs.
+typedef CGAL::Simple_cartesian<double> Kernel;
 
-typedef CGAL::Cartesian<double> Kernel;
+typedef BC::Barycentric_traits_2<Kernel> Barycentric_traits;
 
-typedef Kernel::FT      Scalar;
-typedef Kernel::Point_2 Point;
-
-typedef CGAL::Polygon_2<Kernel> Polygon;
+typedef Barycentric_traits::FT      Scalar;
+typedef Barycentric_traits::Point_2 Point;
 
 typedef std::vector<Scalar> Scalar_vector;
 typedef std::vector<Point>  Point_vector;
 
-typedef CGAL::Barycentric_coordinates::WP_coordinates_2<Polygon> Wachspress_coordinates;
+typedef CGAL::Creator_uniform_2<double,Point> Creator;
+
+typedef Point_vector::iterator InputIterator;
+
+typedef BC::Wachspress_coordinates_2<Barycentric_traits> Wachspress;
+typedef BC::Barycentric_coordinates_2<InputIterator, Wachspress, Barycentric_traits> Wachspress_coordinates;
 
 using std::cout; using std::endl; using std::string;
 
@@ -28,43 +33,24 @@ int main()
     // Choose how many random points we want to generate.
     const int number_of_points = 1000;
 
-    // Create a random numbers generator.
-    CGAL::Random rand;
-
-    // Create vectors to store x and y coordinates of generated points.
-    Scalar_vector x, y;
-
-    x.resize(number_of_points);
-    y.resize(number_of_points);
-
     // Create vectors to store generated points and vertices of a convex polygon.
     Point_vector points, vertices;
 
-    points.resize(number_of_points);
-
-    // Generate a set of random points between 0 and 1.
-    for(int i = 0; i < number_of_points; ++i) {
-
-        x[i] = rand.get_double(0.0, 1.0);
-        y[i] = rand.get_double(0.0, 1.0);
-
-        points[i] = Point(Scalar(x[i]), Scalar(y[i]));
-    }
+    // Generate a set of random points.
+    CGAL::Random_points_in_square_2<Point,Creator> point_generator(1.0);
+    CGAL::cpp11::copy_n(point_generator, number_of_points, std::back_inserter(points));
 
     // Find the convex hull of the generated set of points.
     // This convex hull gives us vertices of a convex polygon that contains all the generated points.
     CGAL::convex_hull_2(points.begin(), points.end(), std::back_inserter(vertices));
 
-    const int number_of_vertices = vertices.size();
+    const size_t number_of_vertices = vertices.size();
 
-    // Construct a convex polygon.
-    const Polygon convex_polygon(vertices.begin(), vertices.end());
-
-    // Instantiate Wachspress coordinates class for the convex polygon defined above.
-    Wachspress_coordinates wachspress_coordinates(convex_polygon);
+    // Instantiate the class Wachspress_coordinates_2 for the convex polygon defined above.
+    Wachspress_coordinates wachspress_coordinates(vertices.begin(), vertices.end());
 
     // Print some information about the polygon and coordinate functions.
-    wachspress_coordinates.print_info();
+    wachspress_coordinates.print_information();
     
     // Compute Wachspress coordinates for all the randomly defined points.
     cout << endl << "Computed Wachspress coordinates are " << endl << endl;
@@ -72,11 +58,11 @@ int main()
         // Compute coordinates.
         Scalar_vector coordinates;
         coordinates.reserve(number_of_vertices);
-        wachspress_coordinates.compute(points[i], coordinates);
+        wachspress_coordinates.compute(points[i], std::back_inserter(coordinates));
 
-        // Output computed coordinates.
+        // Output the computed coordinates.
         cout << "Point " << i + 1 << ": " << endl;
-        for(int j = 0; j < number_of_vertices; ++j)  cout << "Coordinate " << j + 1 << " = " << coordinates[j] << "; " << endl;
+        for(int j = 0; j < int(number_of_vertices); ++j)  cout << "Coordinate " << j + 1 << " = " << coordinates[j] << "; " << endl;
         cout << endl;
     }
 

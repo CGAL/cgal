@@ -1,4 +1,4 @@
-// Copyright (c) 2013 INRIA Sophia-Antipolis (France).
+// Copyright (c) 2014 INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
 // This file is a part of CGAL (www.cgal.org).
@@ -28,108 +28,124 @@
 #include <CGAL/assertions.h>
 #include <CGAL/squared_distance_2.h>
 
-// Barycentric coordinates headers.
-#include <CGAL/barycentric_enum.h>
-
 // CGAL namespace.
 namespace CGAL {
 
 // Barycentric coordinates namespace.
 namespace Barycentric_coordinates {
 
-// Examples: See User Manual here - http://doc.cgal.org/latest/Manual/index.html.
+// Examples: see the User Manual - http://doc.cgal.org/latest/Manual/index.html.
 
 /*!
  * \ingroup PkgBarycentric_coordinates_2
- * The class Segment_coordinates_2 implements barycentric coordinates with respect to an arbitrary
- * non-degenerate segment along an arbitrary line in the plane. This class is parameterized by the 
- * `CGAL::Segment_2` and the `Iterator` class. The latter can be any class that fulfills
- * the requirements for an STL iterator.
+ * The class Segment_coordinates_2 implements barycentric coordinates with respect to an arbitrary non-degenerate segment along an arbitrary line in the plane.
+ * This class is parameterized by a traits class `Traits`.
  *
- * \sa `Iterator`
- *
+ * \pre The segment's vertices must be ordered.
+
+ \cgalHeading{Requirements}
+
+ <OL>
+ <LI> `Traits` class must contain the following subset of types:
+ <UL>
+ <LI> `Traits::Point_2` - the type of a point used internally in the class, which is equivalent to the type `CGAL::Point_2`;
+ <LI> `Traits::Point_d` - the user-defined type of a point;
+ <LI> `Traits::FT` - the type of a coordinate value;
+ </UL>
+ </OL>
+
  */
 
-// This class does not allow the user to use different iterators to output coordinates after
-// it has been created. In order to do so, we need to move template parameter Iterator in declaration of the function compute().
-// Can we also use reference in front of iterator like OutputIterator &output when passing it to the function? 
-template<typename Segment_2, typename Iterator> 
+template<class Traits> 
     class Segment_coordinates_2
 {
 
 public:
 
-    // Creation.
-
     /// \name Types
     /// @{
 
-    /// Type of 2D segment.
-    typedef Segment_2                Segment;
+    /// Number type.
+    typedef typename Traits::FT      Scalar;
 
-    /// Type of the used kernel.
-    typedef typename Segment::R      Kernel;
+    /// Type of a general point.
+    typedef typename Traits::Point_d Point_d;
 
     /// Type of 2D point.
-    typedef typename Kernel::Point_2 Point;
-
-    /// Number type.
-    typedef typename Kernel::FT      Scalar;
-
-    /// Type of the used output iterator.
-    typedef Iterator                 OutputIterator;
+    typedef typename Traits::Point_2 Point_2;
 
     /// @}
 
     /// \name Creation
     /// @{
 
-    /// Creates an instance of the class Segment_coordinates_2 for a provided segment passed as a reference.
-    /// \pre `!_segment.is_degenerate()`
-    Segment_coordinates_2(const Segment &_segment) : segment(_segment)
+    /// Creates the class `Segment_coordinates_2` that implements the behaviour of segment coordinates with respect to an arbitrary non-degenerate segment along an arbitrary line in the plane.
+    /// The segment is given by its two vertices.
+    /// \pre Segment is not degenerate.
+    Segment_coordinates_2(const Point_d &first_vertex, const Point_d &second_vertex) :
+        barycentric_traits(Traits()),
+        vertex_0(barycentric_traits.project(first_vertex)),
+        vertex_1(barycentric_traits.project(second_vertex)) 
     {
-        CGAL_precondition( !_segment.is_degenerate() );
+        CGAL_precondition( vertex_0 != vertex_1 );
     }
 
     /// @}
-
-    // Coordinates.
 
     /// \name Computation of basis functions
     /// @{
 
-    /// Computes Segment barycentric coordinates for the current query point with
-    /// respect to both vertices of the segment.
-    inline std::pair<OutputIterator, bool> compute(const Point &query_point, OutputIterator output)
+    /// Computes segment barycentric coordinates for a chosen query point with respect to both vertices of the segment.
+    /// This function accepts any STL like iterator, which complies with the `Iterator` concept.
+    template<class Iterator> 
+        inline std::pair<Iterator, bool> compute(const Point_d &query_point, Iterator output)
     {
-        return segment_coordinates_2(query_point, output);
+        return segment_coordinates_2(barycentric_traits.project(query_point), output);
+    }
+
+    /// Computes segment barycentric coordinates for a chosen query point with respect to both vertices of the segment.
+    /// This function accepts a container of the type <a href="http://en.cppreference.com/w/cpp/container/vector">`std::vector`</a> 
+    /// and returns an iterator of the type <a href="http://en.cppreference.com/w/cpp/iterator/back_insert_iterator">`std::back_insert_iterator`</a>
+    /// that is placed past-the-end of the resulting sequence of coordinate values.
+    inline std::pair<std::back_insert_iterator<std::vector<Scalar> >, bool> compute(const Point_d &query_point, std::vector<Scalar> &output_vector)
+    {
+        output_vector.reserve(output_vector.size() + 2); 
+        typedef typename std::back_insert_iterator<std::vector<Scalar> > Iterator;
+        Iterator output = std::back_inserter(output_vector);
+        return segment_coordinates_2(barycentric_traits.project(query_point), output);
+    }
+
+    /// This is a static function, which takes both vertices of a segment and computes segment coordinates at a given query point with respect to these vertices.
+    /// These two coordinate values are returned as a point of the type `CGAL::Point_2`.
+    /// The function also requires a traits class that converts a user-defined type `Traits::Point_d` of the segment's vertices and query point to the type `CGAL::Point_2` used internally.
+    static inline typename Traits::Point_2 static_compute(const typename Traits::Point_d &first_vertex, const typename Traits::Point_d &second_vertex, const typename Traits::Point_d &query_point, const Traits &traits_class)
+    {
+        return static_segment_coordinates_2(traits_class.project(first_vertex), traits_class.project(second_vertex), traits_class.project(query_point));
     }
 
     /// @}
 
-    // Information about computed coordinates.
-
     /// \name Information functions
     /// @{
 
-    /// Print some information about the currently used segment and Segment coordinates.
-    void print_info() const
+    /// Print some information about the used segment and segment coordinates.
+    void print_information(std::ostream &output_stream = std::cout) const
     {
-        std::cout << std::endl << "INFORMATION: " << std::endl;
+        output_stream << std::endl << "INFORMATION: " << std::endl;
 
-        std::cout << std::endl << "DATA STRUCTURE: " << std::endl << std::endl;
-        std::cout << "The used data structure is segment." << std::endl;
+        output_stream << std::endl << "DATA STRUCTURE: " << std::endl << std::endl;
+        output_stream << "The internal data structure is segment." << std::endl;
 
-        std::cout << std::endl << "DEGENERACY: " << std::endl << std::endl;
-        if(!segment.is_degenerate()) std::cout << "Current segment is not degenerate." << std::endl;
-        else std::cout << "Current segment is degenerate. The correct computation is not expected!" << std::endl;
+        output_stream << std::endl << "DEGENERACY: " << std::endl << std::endl;
+        if(vertex_0 != vertex_1) output_stream << "This segment is not degenerate." << std::endl;
+        else output_stream << "This segment is degenerate. The correct computation is not expected!" << std::endl;
 
-        std::cout << std::endl << "TYPE OF COORDINATES: " << std::endl << std::endl;
-        std::cout << "Currently computed coordinate functions are Segment coordinates." << std::endl;
+        output_stream << std::endl << "TYPE OF COORDINATES: " << std::endl << std::endl;
+        output_stream << "The coordinate functions to compute are segment coordinates." << std::endl;
 
-        std::cout << std::endl << "INFORMATION ABOUT COORDINATES: " << std::endl << std::endl;
-        std::cout << "Segment coordinates can be computed exactly for an arbitrary point along the line supporting the used segment." << std::endl;
-        std::cout << "The slight offset from the line is allowed." << std::endl;
+        output_stream << std::endl << "INFORMATION ABOUT COORDINATES: " << std::endl << std::endl;
+        output_stream << "Segment coordinates can be computed exactly for an arbitrary point along the line supporting the used segment." << std::endl;
+        output_stream << "A slight offset from the line is allowed." << std::endl;
     }
 
     /// @}
@@ -137,113 +153,46 @@ public:
 private:
 
     // Internal global variables.
-    const Segment &segment;
+    const Traits barycentric_traits;
+
+    const Point_2 vertex_0;
+    const Point_2 vertex_1;
 
     Scalar b_first;
     Scalar opposite_scalar_product;
 
-    // Compute Segment coordinates.
-    // Can we somehow use a referenced output: &output?
-    std::pair<OutputIterator, bool> segment_coordinates_2(const Point &query_point, OutputIterator output)
-    {
+    // Compute segment coordinates.
+    template<class Iterator> 
+        std::pair<Iterator, bool> segment_coordinates_2(const Point_2 &query_point, Iterator &output)
+    {   
         // Project point on the segment and compute the first coordinate.
-        opposite_scalar_product = (query_point - segment.vertex(1))*(segment.vertex(0) - segment.vertex(1));
-        b_first = opposite_scalar_product / CGAL::squared_distance(segment.vertex(0), segment.vertex(1));
+        opposite_scalar_product       = (query_point - vertex_1)*(vertex_0 - vertex_1);
+        b_first = opposite_scalar_product / CGAL::squared_distance(vertex_0, vertex_1);
 
-        // Compute second coordinate using the partition of unity property.
+        // Compute the second coordinate using the partition of unity property.
         *output = b_first;
         ++output;
         *output = Scalar(1) - b_first;
 
-        // Output coordinates.
+        // Output both coordinates.
         return std::make_pair(output, true);
     }
-};
 
-// Class Segment_coordinates_2 with particular std::back_insert_iterator instead of a general one.
-
-/*!
- * \ingroup PkgBarycentric_coordinates_2
- * The class Seg_coordinates_2 implements barycentric coordinates with respect to an arbitrary
- * non-degenerate segment along an arbitrary line in the plane. This class is parameterized by the 
- * `CGAL::Segment_2` and a Container class. The latter can be any class that fulfills
- * the requirements for the <a href="http://en.cppreference.com/w/cpp/iterator/back_insert_iterator">`std::back_insert_iterator`</a>. 
- * It defaults to <a href="http://en.cppreference.com/w/cpp/container/vector">`std::vector`</a> container.
- *
- * \sa <a href="http://en.cppreference.com/w/cpp/iterator/back_insert_iterator">`std::back_insert_iterator`</a>
- *
- */
-
-template<typename Segment_2, typename InputContainer = std::vector<typename Segment_2::R::FT> > 
-    class Seg_coordinates_2 : public Segment_coordinates_2<Segment_2, std::back_insert_iterator<InputContainer> >
-{
-
-public:
-
-    // Creation.
-
-    /// \name Types
-    /// @{
-
-    /// Type of the used container.
-    typedef InputContainer Container;
-
-    /// Type of the base class.
-    typedef Segment_coordinates_2<Segment_2, std::back_insert_iterator<Container> > Base;
-
-    /// @}
-
-    /// \name Creation
-    /// @{
-
-    /// Creates an instance of the class Segment_coordinates_2 for a provided segment passed as a reference.
-    /// The used iterator is <a href="http://en.cppreference.com/w/cpp/iterator/back_insert_iterator">`std::back_insert_iterator`</a>.
-    Seg_coordinates_2(const Segment_2 &_segment) : Base(_segment) { }
-
-    /// @}
-
-    // Coordinates.
-
-    /// \name Computation of basis functions
-    /// @{
-
-    /// Computes Segment barycentric coordinates for the current query point with
-    /// respect to both vertices of the segment.
-    inline std::pair<std::back_insert_iterator<Container>, bool> compute(const typename Segment_2::R::Point_2 &query_point, Container &container)
+    // ...detailed description...
+    static typename Traits::Point_2 static_segment_coordinates_2(const typename Traits::Point_2 &vertex_0, const typename Traits::Point_2 &vertex_1, const typename Traits::Point_2 &query_point)
     {
-        return Base::compute(query_point, std::back_inserter(container));
-    }
+        // Number type.
+        typedef typename Traits::FT      Scalar;
 
-    /// Static function, which gets a `CGAL::Segment_2` and returns a `CGAL::Point_2` type of coordinates.
-    static inline typename Segment_2::R::Point_2 Compute(const Segment_2 &_segment, const typename Segment_2::R::Point_2 &query_point)
-    {
-        return static_segment_coordinates_2(_segment, query_point);
-    }
-
-    /// @}
-
-private:
-
-    // Static function, which gets a CGAL::Segment_2 and returns a CGAL::Point_2 with coordinates.
-    static typename Segment_2::R::Point_2 static_segment_coordinates_2(const Segment_2 &_segment, const typename Segment_2::R::Point_2 &query_point)
-    {
         // Point type.
-        typedef typename Segment_2::R::Point_2 Point;
+        typedef typename Traits::Point_2 Point_2;
 
-        // Segment coordinates type.
-        typedef typename CGAL::Barycentric_coordinates::Seg_coordinates_2<Segment_2, Container> Segment_coordinates;
+        // Project point on the segment and compute the first coordinate.
+        const Scalar opposite_scalar_product       = (query_point - vertex_1)*(vertex_0 - vertex_1);
+        const Scalar b_first = opposite_scalar_product / CGAL::squared_distance(vertex_0, vertex_1);
 
-        // Instantiate Segment coordinates class for the segment defined above.
-        Segment_coordinates segment_coordinates(_segment);
-
-        // Create a container to store coordinates.
-        Container coordinates;
-
-        // Compute coordinates.
-        segment_coordinates.compute(query_point, coordinates);
-
-        // Return CGAL::Point_2 type of coordinates.
-        return Point(coordinates[0], coordinates[1]);
+        // Return the CGAL::Point_2 type of coordinates.
+        return Point_2(b_first, Scalar(1) - b_first);
     }
 };
 

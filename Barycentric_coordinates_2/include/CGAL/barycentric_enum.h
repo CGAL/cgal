@@ -1,4 +1,4 @@
-// Copyright (c) 2013 INRIA Sophia-Antipolis (France).
+// Copyright (c) 2014 INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
 // This file is a part of CGAL (www.cgal.org).
@@ -29,32 +29,23 @@ namespace CGAL {
 
 /*!
  * \ingroup PkgBarycentric_coordinates_2
- * Barycentric_coordinates namespace contains implementations of all the generalized barycentric
- * coordinates: 2D, 3D, related enumerations, and so on.
- * It has an alies (short name) called `BC`.
+ * Barycentric_coordinates namespace contains implementations of all the generalized barycentric coordinates: 2D, 3D, related enumerations, and so on.
  */
 
+// Barycentric_coordinates namespace.
 namespace Barycentric_coordinates {
-
-// Possible locations of the query point provided by the user.
-// UNSPECIFIED_LOCATION - Location is not known apriori, and it is defined automatically by the algorithm.
-// AT_VERTEX - Query point is located at one of the polygon's vertices.
-// ON_BOUNDARY - Query point is located on the boundary of the polygon.
-// ON_BOUNDED_SIDE - Query point is located in the interior of the polygon excluding boundary.
-// ON_UNBOUNDED_SIDE - Query point is located in the exterior of the polygon.
 
 /// \name Locations of a query point
 /// @{
 
-/// Query_point_location is enumeration with possible locations of a
-/// query point provided by the user.
+/// Query_point_location is enumeration with possible locations of a query point provided by the user.
 enum Query_point_location
 {
-    /// Location is not known apriori, and it is defined automatically by the algorithm.
+    /// Location is not known apriori and is defined automatically by the algorithm.
     UNSPECIFIED_LOCATION,
 
     /// Query point is located at one of the polygon's vertices.
-    AT_VERTEX,
+    ON_VERTEX,
 
     /// Query point is located on the boundary of the polygon.
     ON_BOUNDARY,
@@ -67,10 +58,6 @@ enum Query_point_location
 };
 
 /// @}
-
-// We can have two different algorithms to compute coordinates.
-// PRECISE - Default slow algorithm, which is as precise as possible.
-// FAST - Fast algorithm, which is less precise but much faster.
 
 /// \name Types of an algorithm
 /// @{
@@ -86,11 +73,6 @@ enum Type_of_algorithm
 };
 
 /// @}
-
-// Possible types of the input polygon.
-// CONCAVE - Concave polygon = Non-convex polygon.
-// WEAKLY_CONVEX - This is a convex polygon with collinear vertices.
-// STRICTLY_CONVEX - This is a convex polygon without collinear vertices.
 
 /// \name Types of a polygon
 /// @{
@@ -109,19 +91,9 @@ enum Type_of_polygon
     STRICTLY_CONVEX
 };
 
+/// @}
+
 } // namespace Barycentric_coordinates
-
-/// @}
-
-// Create a short alias for the Barycentric_coordinates namespace.
-
-/// \name Namespace alias
-/// @{
-
-/// A short name (alias) of the namespace `CGAL::Barycentric_coordinates`.
-namespace BC = Barycentric_coordinates;
-
-/// @}
 
 } // namespace CGAL
 
