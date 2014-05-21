@@ -98,6 +98,12 @@ namespace HomogeneousKernelFunctors {
     operator()(const Point_3& p, const Point_3& q, const Point_3& r) const
     { return enum_cast<Angle>(CGAL_NTS sign(c(q,p) * c(q,r))); }
     // FIXME: scalar product
+
+    result_type
+    operator()(const Point_3& p, const Point_3& q,
+               const Point_3& r, const Point_3& s) const
+    { return enum_cast<Angle>(CGAL_NTS sign(c(q,p) * c(s,r))); }
+    // FIXME: scalar product
   };
 
 

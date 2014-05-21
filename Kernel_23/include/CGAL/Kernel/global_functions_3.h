@@ -42,6 +42,15 @@ angle(const Point_3<K> &p, const Point_3<K> &q, const Point_3<K> &r)
   return internal::angle(p, q, r, K());
 }
 
+template <typename K>
+inline
+Angle
+angle(const Point_3<K> &p, const Point_3<K> &q,
+      const Point_3<K> &r, const Point_3<K> &s)
+{
+  return internal::angle(p, q, r, s, K());
+}
+
 template < typename K >
 inline
 typename K::Boolean

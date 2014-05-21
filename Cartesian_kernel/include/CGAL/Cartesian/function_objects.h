@@ -79,6 +79,16 @@ namespace CartesianKernelFunctors {
 		     q.x(), q.y(), q.z(),
 		     r.x(), r.y(), r.z());
     }
+
+    result_type
+    operator()(const Point_3& p, const Point_3& q,
+               const Point_3& r, const Point_3& s) const
+    {
+      return angleC3(p.x(), p.y(), p.z(),
+		     q.x(), q.y(), q.z(),
+		     r.x(), r.y(), r.z(),
+		     s.x(), s.y(), s.z());
+    }
   };
 
   template <typename K>
