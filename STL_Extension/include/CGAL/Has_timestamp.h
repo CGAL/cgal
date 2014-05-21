@@ -1,4 +1,3 @@
-// Copyright (c) 2009 INRIA Sophia-Antipolis (France).
 // Copyright (c) 2014 GeometryFactory Sarl (France)
 // All rights reserved.
 //
@@ -29,17 +28,19 @@ namespace internal {
 
   BOOST_MPL_HAS_XXX_TRAIT_DEF(Has_timestamp)
 
-  // to have Mesh_3 deterministic,
-  // a partial specialization of this class should be written next to
-  // every class that implements concepts MeshCellBase_3 or MeshVertexBase_3
+  // Used by Compact container to make the comparison of iterator
+  // depending on the insertion order rather than the object address
+  // when the object class defines a Has_timestamp tag
+  // This is for example used in to make Mesh_3 deterministic, see
+  // classes implementing concepts MeshCellBase_3 and MeshVertexBase_3
   template <typename T, bool has_ts = has_Has_timestamp<T>::value>
   struct Has_timestamp : public T::Has_timestamp
-    // when T does not have a partial specialization of Has_timestamp
+    // when T has a Has_timestamp tag
   {};
 
   template <typename T>
   struct Has_timestamp<T, false> : public Tag_false
-    // when T does not have a partial specialization of Has_timestamp
+    // when T does not have a Has_timestamp tag
   {};
 
 } // end namespace internal
