@@ -150,13 +150,14 @@ protected:
     m_config_file_loaded = true;
 
 #else // CGAL_USE_BOOST_PROGRAM_OPTIONS not defined
-    std:cerr << "Warning: could not load concurrency configuration file '"
+    std::cerr << "Warning: could not load concurrency configuration file '"
       << filename << "'. Default values will be used."
       << std::endl;
 #endif // CGAL_USE_BOOST_PROGRAM_OPTIONS
     return true;
   }
 
+#ifdef CGAL_USE_BOOST_PROGRAM_OPTIONS
   template <typename OptionType>
   OptionType get_config_file_option_value(const char *option_name)
   {
@@ -165,6 +166,7 @@ protected:
     else
       return OptionType();
   }
+#endif
   
 #ifdef CGAL_USE_BOOST_PROGRAM_OPTIONS
   po::variables_map m_variables_map;
