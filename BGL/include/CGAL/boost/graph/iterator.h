@@ -799,8 +799,8 @@ template<typename Graph>
 std::pair<Halfedge_around_face_iterator<Graph>,Halfedge_around_face_iterator<Graph> >
 halfedges_around_face(typename boost::graph_traits<Graph>::halfedge_descriptor h, const Graph& g)
 {
-  Halfedge_around_face_iterator<Graph> b(h,g), e(h,g,1);
-  return std::make_pair(b,e);
+  typedef Halfedge_around_face_iterator<Graph> I;
+  return std::make_pair(I(h,g), I(h,g,1));
 }
 
 
