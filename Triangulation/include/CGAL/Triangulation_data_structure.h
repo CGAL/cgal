@@ -421,7 +421,7 @@ public:
 
     void set_current_dimension(const int d) /* Concept */
     {
-        CGAL_precondition(-1<=d && d<=maximal_dimension());
+        CGAL_precondition(-2<=d && d<=maximal_dimension());
         dcur_ = d;
     }
 

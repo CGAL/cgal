@@ -542,7 +542,7 @@ j);
 /*!
 Forces the current dimension
 of the complex to `d`.
-\pre \f$-1 \leq d \leq \f$`maximal_dimension()`.
+\pre \f$-2 \leq d \leq \f$`maximal_dimension()`.
 */
 void set_current_dimension(int d);
 
