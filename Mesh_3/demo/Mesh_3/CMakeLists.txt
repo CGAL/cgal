@@ -79,9 +79,9 @@ else( ACTIVATE_CONCURRENT_MESH_3 )
 endif()
 
 if( TBB_FOUND )
-    include(${TBB_USE_FILE})
+  include(${TBB_USE_FILE})
 endif()
-  
+
 # Creates a new CMake option, turned ON by default
 option(ACTIVATE_MSVC_PRECOMPILED_HEADERS
   "Activate precompiled headers in MSVC"
@@ -237,7 +237,7 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND AND Boost_F
       ${DEMO_SRC_DIR}/Scene.cpp
       MainWindow_moc.cpp
       Scene_moc.cpp)
-	  #ADD_MSVC_PRECOMPILED_HEADER("StdAfx.h" "StdAfx.cpp" MESH_3_SOURCE_FILES)
+    #ADD_MSVC_PRECOMPILED_HEADER("StdAfx.h" "StdAfx.cpp" MESH_3_SOURCE_FILES)
     LIST(APPEND MESH_3_SOURCE_FILES ${UI_FILES} ${RESOURCE_FILES})
     add_executable( Mesh_3 ${MESH_3_SOURCE_FILES} )
     add_to_cached_list( CGAL_EXECUTABLE_TARGETS Mesh_3 )
@@ -302,7 +302,7 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND AND Boost_F
   if(GLEW_FOUND)
     set(VOLUME_PLANES_PLUGIN_LIB "${MESH_3_LIB_PREFIX}volume_planes_plugin")
     polyhedron_demo_plugin(${VOLUME_PLANES_PLUGIN_LIB} Volume_planes_plugin
-	                   ${VOLUME_MOC_OUTFILES}
+                           ${VOLUME_MOC_OUTFILES}
                            Volume_plane_intersection.cpp)                      
     target_link_libraries(${VOLUME_PLANES_PLUGIN_LIB} ${SCENE_SEGMENTED_IMAGE_ITEM_LIB} ${VIEWER_LIB})
   else()
@@ -352,13 +352,13 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND AND Boost_F
                         ${QGLVIEWER_LIBRARIES}
                         ${OPENGL_gl_LIBRARY}
                         ${OPENGL_glu_LIBRARY}
-						${TBB_LIBRARIES})
+                        ${TBB_LIBRARIES})
 
   set(MESH_3_OPTIMIZATION_PLUGIN_LIB "${MESH_3_LIB_PREFIX}mesh_3_optimization_plugin")
   set(MESH_3_OPTIMIZATION_PLUGIN_SOURCE_FILES
     Mesh_3_optimization_plugin.cpp
     Mesh_3_optimization_plugin_cgal_code.cpp
-	Optimizer_thread.cpp)
+    Optimizer_thread.cpp)
   ADD_MSVC_PRECOMPILED_HEADER("StdAfx.h" "StdAfx.cpp" MESH_3_OPTIMIZATION_PLUGIN_SOURCE_FILES)
   LIST(REMOVE_AT MESH_3_OPTIMIZATION_PLUGIN_SOURCE_FILES 0) # Remove Mesh_3_optimization_plugin.cpp since it's added by polyhedron_demo_plugin
   LIST(APPEND MESH_3_OPTIMIZATION_PLUGIN_SOURCE_FILES "Scene_c3t3_item.moc" ${optimUI_FILES})
@@ -372,7 +372,7 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND AND Boost_F
                         ${QGLVIEWER_LIBRARIES}
                         ${OPENGL_gl_LIBRARY}
                         ${OPENGL_glu_LIBRARY}
-						${TBB_LIBRARIES})
+                        ${TBB_LIBRARIES})
 
 
 else (CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND AND Boost_FOUND)
