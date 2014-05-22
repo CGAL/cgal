@@ -84,14 +84,21 @@ if ( CGAL_FOUND )
     include(${TBB_USE_FILE})
     list(APPEND CGAL_3RD_PARTY_LIBRARIES ${TBB_LIBRARIES})
   endif()
-  
-  find_package(Boost COMPONENTS program_options REQUIRED)
 
-  if ( Boost_FOUND AND Boost_PROGRAM_OPTIONS_FOUND AND Boost_VERSION GREATER 103400 )
-    include( CGAL_CreateSingleSourceCGALProgram )
-
+  # Link with Boost.ProgramOptions (optional)
+  find_package(Boost QUIET COMPONENTS program_options)
+  if(Boost_PROGRAM_OPTIONS_FOUND)
+    if( CGAL_AUTO_LINK_ENABLED )
+      message( STATUS "Boost.ProgramOptions library: found" )
+    else()
+      message( STATUS "Boost.ProgramOptions library: ${Boost_PROGRAM_OPTIONS_LIBRARY}" )
+    endif()
     add_definitions( "-DCGAL_USE_BOOST_PROGRAM_OPTIONS" )
-    link_libraries( ${Boost_PROGRAM_OPTIONS_LIBRARY} )
+    list(APPEND CGAL_3RD_PARTY_LIBRARIES ${Boost_LIBRARIES})
+  endif()
+
+  if ( Boost_FOUND AND Boost_VERSION GREATER 103400 )
+    include( CGAL_CreateSingleSourceCGALProgram )
 
     # Compilable benchmark
     set (BENCHMARK_SOURCE_FILES "concurrency.cpp")
@@ -99,7 +106,7 @@ if ( CGAL_FOUND )
     create_single_source_cgal_program( ${BENCHMARK_SOURCE_FILES} )
     
   else()
-    message(STATUS "NOTICE: This program requires Boost >= 1.34.1 with the program_options component, and will not be compiled.")
+    message(STATUS "NOTICE: This program requires Boost >= 1.34.1, and will not be compiled.")
   endif()
 
 else()

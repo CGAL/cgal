@@ -22,8 +22,10 @@
 #include <ctime>
 
 #include <boost/thread.hpp>
-#include <boost/program_options.hpp>
-namespace po = boost::program_options;
+#ifdef CGAL_USE_BOOST_PROGRAM_OPTIONS
+# include <boost/program_options.hpp>
+  namespace po = boost::program_options;
+#endif
 
 #include <CGAL/Mesh_3/config.h>
 #include <CGAL/Memory_sizer.h>
@@ -839,7 +841,8 @@ int main()
 #if defined(CHECK_MEMORY_LEAKS_ON_MSVC) && defined(_MSC_VER)
   _CrtSetDbgFlag ( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF );
 #endif
-
+  
+#ifdef CGAL_USE_BOOST_PROGRAM_OPTIONS
   // Program options
   po::variables_map vm;
   try
@@ -867,6 +870,15 @@ int main()
   double facet_sizing = vm["facet_sizing"].as<double>();
   double cell_sizing = vm["cell_sizing"].as<double>();
   std::string filename = vm["filename"].as<std::string>();
+
+#else // no CGAL_USE_BOOST_PROGRAM_OPTIONS
+  int num_threads       = -1;
+  double facet_approx   = 0.0068;
+  double facet_sizing   = 0.005;
+  double cell_sizing    = 0.005;
+  std::string filename  = DEFAULT_INPUT_FILE_NAME;
+
+#endif
 
 #ifdef CONCURRENT_MESH_3
   Concurrent_mesher_config::load_config_file(CONFIG_FILENAME, true);
