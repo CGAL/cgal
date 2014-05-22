@@ -100,8 +100,17 @@ public:
     CGAL::Random* p_rng = NULL);
 
   template <typename T1, typename T2, typename T3>
-  Polyhedral_mesh_domain_with_features_3(const T1& a, const T2& b, const T3& c)
-    : Base(a, b, c) {}
+  Polyhedral_mesh_domain_with_features_3(const T1& a, const T2& b,
+                                         CGAL::Random* p_rng = NULL)
+    : Base(a, b)
+  { this->set_random_generator(p_rng); }
+
+
+  template <typename T1, typename T2, typename T3>
+  Polyhedral_mesh_domain_with_features_3(const T1& a, const T2& b, const T3& c,
+                                         CGAL::Random* p_rng = NULL)
+    : Base(a, b, c)
+  { this->set_random_generator(p_rng); }
 
   /// Destructor
   ~Polyhedral_mesh_domain_with_features_3() {}
