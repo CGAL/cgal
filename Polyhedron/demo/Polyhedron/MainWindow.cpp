@@ -987,14 +987,16 @@ void MainWindow::showSceneContextMenu(int selectedItemIndex,
   const char* prop_name = "Menu modified by MainWindow.";
 
   QMenu* menu = item->contextMenu();
-  if(menu && !item->property("source filename").toString().isEmpty()) {
+  if(menu) {
     bool menuChanged = menu->property(prop_name).toBool();
     if(!menuChanged) {
       menu->addSeparator();
-      QAction* reload = menu->addAction(tr("&Reload item from file"));
-      reload->setData(qVariantFromValue(selectedItemIndex));
-      connect(reload, SIGNAL(triggered()),
-              this, SLOT(reload_item()));
+      if(!item->property("source filename").toString().isEmpty()) {
+        QAction* reload = menu->addAction(tr("&Reload item from file"));
+        reload->setData(qVariantFromValue(selectedItemIndex));
+        connect(reload, SIGNAL(triggered()),
+                this, SLOT(reload_item()));
+      }
       QAction* saveas = menu->addAction(tr("&Save as..."));
       saveas->setData(qVariantFromValue(selectedItemIndex));
       connect(saveas,  SIGNAL(triggered()),
