@@ -423,7 +423,7 @@ public:
 #ifndef CGAL_MESH_3_NO_LONGER_CALLS_DO_INTERSECT_3
       if(r_domain_.query_is_cached(q))
       {
-        const AABB_primitive_id primitive_id = r_domain_.get_cached_primitive_id();
+        const AABB_primitive_id primitive_id = r_domain_.cached_primitive_id();
         typename cpp11::result_of<
           typename IGT::Intersect_3(typename Primitive::Datum, Query)>::type o
             = IGT().intersect_3_object()(Primitive(primitive_id).datum(),q);
@@ -633,7 +633,7 @@ public:
 #endif
   }
 
-  AABB_primitive_id get_cached_primitive_id() const {
+  AABB_primitive_id cached_primitive_id() const {
 #ifdef CGAL_LINKED_WITH_TBB
     return query_cache.local().cached_primitive_id;
 #else
