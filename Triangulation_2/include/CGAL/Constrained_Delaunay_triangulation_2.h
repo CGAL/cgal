@@ -33,8 +33,6 @@
 #include <boost/iterator/zip_iterator.hpp>
 #include <boost/mpl/and.hpp>
 
-#include <boost/iterator/counting_iterator.hpp>
-
 namespace CGAL {
 
 namespace internal{

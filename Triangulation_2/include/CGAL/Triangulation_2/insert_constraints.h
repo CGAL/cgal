@@ -2,6 +2,9 @@
 #define CGAL_INTERNAL_TRIANGULATION_2_IMSERT_CONSTRAINTS_H
 
 #include <CGAL/Spatial_sort_traits_adapter_2.h>
+#include <boost/iterator/counting_iterator.hpp>
+#include <vector>
+#include <iterator>
 
 namespace CGAL {
   namespace internal {
