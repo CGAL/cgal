@@ -3,7 +3,7 @@
 #include <CGAL/IO/Polyhedron_iostream.h>
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/boost/graph/properties_Polyhedron_3.h>
-#include <CGAL/Halfedge_iterator.h>
+#include <CGAL/boost/graph/iterator.h>
 
 #include <boost/foreach.hpp>
 

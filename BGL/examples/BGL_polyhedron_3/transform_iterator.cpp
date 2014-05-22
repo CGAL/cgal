@@ -14,7 +14,7 @@ typedef CGAL::Polyhedron_3<Kernel>     Polyhedron;
 typedef boost::graph_traits<Polyhedron> GraphTraits;
 typedef GraphTraits::vertex_descriptor vertex_descriptor;
 typedef GraphTraits::halfedge_descriptor halfedge_descriptor;
-typedef CGAL::Halfedge_around_vertex_iterator<Graph> halfedge_around_vertex_iterator;
+typedef CGAL::Halfedge_around_target_iterator<Polyhedron> halfedge_around_target_iterator;
 
 
 template <typename G>
@@ -44,10 +44,10 @@ int main()
   std::cin >> P;
   GraphTraits::vertex_descriptor vd = *(vertices(P).first);
 
-  typedef boost::transform_iterator<Source<Polyhedron>,halfedge_around_vertex_iterator> adjacent_vertex_iterator; 
+  typedef boost::transform_iterator<Source<Polyhedron>,halfedge_around_target_iterator> adjacent_vertex_iterator; 
 
-  halfedge_around_vertex_iterator hb,he;
-  boost::tie(hb,he) = halfedges_around_vertex(halfedge(vd,P),P);
+  halfedge_around_target_iterator hb,he;
+  boost::tie(hb,he) = halfedges_around_target(halfedge(vd,P),P);
   adjacent_vertex_iterator avib, avie;
   avib = boost::make_transform_iterator(hb, Source<Polyhedron>(P));
   avie = boost::make_transform_iterator(he, Source<Polyhedron>(P));

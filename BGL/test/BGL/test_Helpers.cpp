@@ -6,6 +6,7 @@
 
 #include <CGAL/BGL/Helper.h>
 
+#if defined(CGAL_USE_SURFACE_MESH)
 BOOST_AUTO_TEST_CASE(constant_vertex_is_border_surface_mesh)
 {
   Surface_fixture_1<SM> f1;
@@ -26,6 +27,7 @@ BOOST_AUTO_TEST_CASE(constant_vertex_is_border_surface_mesh)
   CGAL::internal::set_constant_vertex_is_border(f1.m);
   BOOST_CHECK(CGAL::internal::constant_vertex_is_border(f1.m));
 }
+#endif 
 
 BOOST_AUTO_TEST_CASE(constant_vertex_is_border_polyhedron)
 {

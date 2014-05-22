@@ -43,7 +43,7 @@ void index_uniqueness_poly(const Polyhedron& g)
   index_uniqueness(g, faces(g),     get(boost::face_external_index, g));
   index_uniqueness(g, halfedges(g), get(boost::halfedge_external_index, g));
 }
-
+#if defined(CGAL_USE_SURFACE_MESH)
 void index_uniqueness_sm(const SM& g)
 {
   index_uniqueness(g, edges(g) ,    get(boost::edge_index, g));
@@ -51,7 +51,7 @@ void index_uniqueness_sm(const SM& g)
   index_uniqueness(g, faces(g),     get(boost::face_index, g));
   index_uniqueness(g, halfedges(g), get(boost::halfedge_index, g));
 }
-
+#endif
 
 #if defined(CGAL_USE_OPENMESH)
 void index_uniqueness_omesh(const OMesh& g)
@@ -74,10 +74,12 @@ init_unit_test_suite( int, char** const )
   framework::master_test_suite().
     add( BOOST_PARAM_TEST_CASE(&index_uniqueness_poly, polys.begin(), polys.end() ) );
 
+#if defined(CGAL_USE_SURFACE_MESH)
   std::vector<SM> sms = sm_data();
 
   framework::master_test_suite().
     add( BOOST_PARAM_TEST_CASE(&index_uniqueness_sm, sms.begin(), sms.end() ) );
+#endif 
 
 #if defined(CGAL_USE_OPENMESH)
   std::vector<OMesh> omeshs = omesh_data();

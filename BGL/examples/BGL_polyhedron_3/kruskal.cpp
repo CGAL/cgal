@@ -39,7 +39,7 @@ kruskal(const Polyhedron& P)
   // boost::tie assigns the first and second element of the std::pair
   // returned by boost::vertices to the variables vb and ve
   for(boost::tie(vb, ve)=vertices(P); vb!=ve; ++vb){
-    vertex_id_map[*vb]= index++;
+    vertex_index_pmap[*vb]= index++;
   }
 
   
@@ -75,7 +75,7 @@ kruskal(const Polyhedron& P)
     edge_descriptor e = *it ;
     vertex_descriptor s = source(e,P);
     vertex_descriptor t = target(e,P);
-    std::cout << "      " << vertex_id_map[s] << ", " << vertex_id_map[t] <<  ", -1\n";
+    std::cout << "      " << vertex_index_pmap[s] << ", " << vertex_index_pmap[t] <<  ", -1\n";
   }
 
   std::cout << "]\n"

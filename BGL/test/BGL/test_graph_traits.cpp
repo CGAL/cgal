@@ -254,7 +254,6 @@ test_suite*
 init_unit_test_suite( int , char** const)
 {
   std::vector<Polyhedron> polys = poly_data();
-  std::vector<SM> sms = sm_data();
 
   framework::master_test_suite().p_name.value = "test_graph_traits test suite";
 
@@ -280,8 +279,10 @@ init_unit_test_suite( int , char** const)
     add( BOOST_PARAM_TEST_CASE( &test_halfedge_around_vertex_iterator<Polyhedron>, polys.begin(), polys.end()) );
   framework::master_test_suite().
     add( BOOST_PARAM_TEST_CASE( &test_halfedge_around_face_iterator<Polyhedron>, polys.begin(), polys.end()) );
-  
+#if defined(CGAL_USE_SURFACE_MESH)
   // Surface_mesh
+  std::vector<SM> sms = sm_data();
+
   framework::master_test_suite().
     add( BOOST_PARAM_TEST_CASE( &test_vertex_iterators<SM>, sms.begin(), sms.end() ) );
   framework::master_test_suite().
@@ -300,6 +301,7 @@ init_unit_test_suite( int , char** const)
     add( BOOST_PARAM_TEST_CASE( &test_halfedge_around_vertex_iterator<SM>, sms.begin(), sms.end()) );
   framework::master_test_suite().
     add( BOOST_PARAM_TEST_CASE( &test_halfedge_around_face_iterator<SM>, sms.begin(), sms.end()) );
+#endif 
 
 #if defined(CGAL_USE_OPENMESH)
   std::vector<OMesh> omeshs = omesh_data();

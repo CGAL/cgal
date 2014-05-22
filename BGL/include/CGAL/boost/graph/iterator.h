@@ -26,6 +26,7 @@
 #include <boost/graph/graph_traits.hpp>
 
 #include <CGAL/assertions.h>
+#include <CGAL/circulator_bases.h>
 #include <CGAL/BGL/Helper.h>
 
 namespace CGAL {
@@ -192,8 +193,92 @@ struct Face {
  */
 template <typename Graph>
 class Halfedge_around_source_iterator {
+  typedef Halfedge_around_source_iterator Self;
 public:
+#ifndef DOXYGEN_RUNNING
   typedef typename boost::graph_traits<Graph>::halfedge_descriptor halfedge_descriptor;
+  typedef typename boost::graph_traits<Graph>::halfedge_descriptor vertex_descriptor;
+  typedef std::bidirectional_iterator_tag     iterator_category;
+  typedef halfedge_descriptor                 value_type;
+  typedef value_type*                         pointer;
+  typedef const value_type&                   reference;
+  typedef std::ptrdiff_t                      difference_type;
+
+private:  
+  halfedge_descriptor anchor, pos;
+  const Graph* g;
+  int      winding;
+#endif 
+  
+public:
+  Halfedge_around_source_iterator()
+    : anchor(), pos(), g(0)
+  {}
+
+  Halfedge_around_source_iterator(halfedge_descriptor hd, const Graph& g, int n=0)
+    : anchor(hd), pos(hd), g(&g), winding((hd==halfedge_descriptor())?1:n)
+  {}
+
+#ifndef DOXYGEN_RUNNING
+  // design patter: "safe bool"
+  // will be replaced by explicit operator bool with C++11
+  typedef void (Halfedge_around_source_iterator::*bool_type)() const;
+
+  void this_type_does_not_support_comparisons() const {}
+
+  operator bool_type() const
+  {
+    return (! (this->base() == NULL)) ?
+      &Halfedge_around_source_iterator::this_type_does_not_support_comparisons : 0;
+  }
+
+  bool operator==( const Self& i) const {
+    CGAL_assertion( anchor == anchor);
+    return  ( g == i.g) && ( pos == i.pos) && ( winding == i.winding);
+  }
+  
+  bool operator!=( const Self& i) const {
+    return !(*this == i);
+  }
+
+  bool operator== (void* ) const
+  {
+    return g == NULL;
+  }
+
+  reference operator*() const
+  {
+    return pos;
+  }
+
+  pointer operator->() const
+  {
+    return &pos;
+  }
+
+  Self& operator++() {
+    pos = next(opposite(pos,*g),*g);
+    if ( pos == anchor)
+      ++winding;
+    return *this;
+  }
+  Self  operator++(int) {
+    Self tmp = *this;
+    ++*this;
+    return tmp;
+  }
+  Self& operator--() {
+    if ( pos == anchor)
+      --winding;
+    pos = opposite(prev(pos,*g),*g);
+    return *this;
+  }
+  Self  operator--(int) {
+    Self tmp = *this;
+    --*this;
+    return tmp;
+  }
+#endif
 };
 
 /**
@@ -414,21 +499,25 @@ class Halfedge_around_source_circulator
   : public boost::transform_iterator<internal::Opposite<Graph>, Halfedge_around_target_circulator<Graph> >
 #endif
 {
+#ifndef DOXYGEN_RUNNING
   typedef boost::transform_iterator<internal::Opposite<Graph>, Halfedge_around_target_circulator<Graph> > Base;
   typedef typename boost::graph_traits<Graph>::halfedge_descriptor halfedge_descriptor;
+#endif
 
 public:
 
+#ifndef DOXYGEN_RUNNING
   typedef Bidirectional_circulator_tag iterator_category;
   typedef std::size_t size_type;
-#ifdef DOXYGEN_RUNNING
+#endif
+
   Halfedge_around_source_circulator()
   {}
 
   Halfedge_around_source_circulator(halfedge_descriptor hd, const Graph& g)
     : Base(Halfedge_around_target_circulator<Graph>(hd,g), internal::Opposite<Graph>(g))
   {}
-#endif
+
 }; 
 
 
@@ -708,10 +797,10 @@ halfedges_around_target(typename boost::graph_traits<Graph>::halfedge_descriptor
  */
 template<typename Graph>
 std::pair<Halfedge_around_face_iterator<Graph>,Halfedge_around_face_iterator<Graph> >
-halfedges_around_face(typename boost::graph_traits<Graph>::halfedge_descriptor h, Graph& g)
+halfedges_around_face(typename boost::graph_traits<Graph>::halfedge_descriptor h, const Graph& g)
 {
-  typedef Halfedge_around_face_iterator<Graph> I;
-  return std::make_pair(I(h,g), I(h,g,1));
+  Halfedge_around_face_iterator<Graph> b(h,g), e(h,g,1);
+  return std::make_pair(b,e);
 }
 
 
