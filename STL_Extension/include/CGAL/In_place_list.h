@@ -33,7 +33,6 @@
 #include <functional>
 #include <algorithm>
 #include <CGAL/memory.h>
-#include <CGAL/Time_stamper.h>
 
 namespace CGAL {
 
@@ -88,10 +87,10 @@ namespace internal {
 
     bool  operator==( const Self& x) const { return node == x.node; }
     bool  operator!=( const Self& x) const { return node != x.node; }
-    bool  operator< ( const Self& x) const { return Get_time_stamper<T>::type::less(node, x.node);   }
-    bool  operator<=( const Self& x) const { return Get_time_stamper<T>::type::less(node, x.node) || node==x.node; }
-    bool  operator> ( const Self& x) const { return Get_time_stamper<T>::type::less(x.node, node);   }
-    bool  operator>=( const Self& x) const { return Get_time_stamper<T>::type::less(x.node, node) || node==x.node; }
+    bool  operator< ( const Self& x) const { return node< x.node;   }
+    bool  operator<=( const Self& x) const { return node<= x.node;  }
+    bool  operator> ( const Self& x) const { return node> x.node;   }
+    bool  operator>=( const Self& x) const { return node>= x.node;  }
     T&    operator*()  const { return *node; }
     T*    operator->() const { return  node; }
     Self& operator++() {
@@ -139,12 +138,12 @@ namespace internal {
     In_place_list_const_iterator( Iterator i) : node(&*i) {}
     In_place_list_const_iterator(const T* x) : node(x) {}
 
-    bool  operator==( const Self& x) const { return node == x.node; }
-    bool  operator!=( const Self& x) const { return node != x.node; }
-    bool  operator< ( const Self& x) const { return Get_time_stamper<T>::type::less(node, x.node);   }
-    bool  operator<=( const Self& x) const { return Get_time_stamper<T>::type::less(node, x.node) || node==x.node; }
-    bool  operator> ( const Self& x) const { return Get_time_stamper<T>::type::less(x.node, node);   }
-    bool  operator>=( const Self& x) const { return Get_time_stamper<T>::type::less(x.node, node) || node==x.node; }
+    bool     operator==( const Self& x) const { return node == x.node; }
+    bool     operator!=( const Self& x) const { return node != x.node; }
+    bool     operator< ( const Self& x) const { return node< x.node;   }
+    bool     operator<=( const Self& x) const { return node<= x.node;  }
+    bool     operator> ( const Self& x) const { return node> x.node;   }
+    bool     operator>=( const Self& x) const { return node>= x.node;  }
     const T& operator*()  const { return *node; }
     const T* operator->() const { return  node; }
     Self& operator++() {
@@ -234,7 +233,6 @@ protected:
   pointer      node;
   size_type    length;
 
-  Time_stamper_impl<T>* time_stamper_ptr;
   // These are the only places where the allocator gets called.
   pointer get_node() {
     pointer p = allocator.allocate(1);
@@ -267,10 +265,8 @@ public:
   // CREATION
   //
   // New creation variable is: `l'
-  explicit In_place_list()
-    : length(0)
-    , time_stamper_ptr(new Time_stamper_impl<T>())
-  {
+
+  explicit In_place_list() : length(0) {
     // introduces an empty list.
     node = get_node();
     (*node).next_link = node;
@@ -318,7 +314,6 @@ public:
     (*((*position.node).prev_link)).next_link = &x;
     (*position.node).prev_link = &x;
     ++length;
-    time_stamper_ptr->set_time_stamp(&x);
     return &x;
   }
   iterator insert(T* pos, T& x) {
@@ -390,17 +385,11 @@ public:
     erase( iterator(first), iterator(last));
   }
 
-  void clear() {
-    erase( begin(), end());
-    time_stamper_ptr->reset();
-  }
+  void clear() { erase( begin(), end()); }
 
   // CREATION (Continued)
 
-  explicit In_place_list(size_type n, const T& value = T())
-    : length(0)
-    , time_stamper_ptr(new Time_stamper_impl<T>())
-  {
+  explicit In_place_list(size_type n, const T& value = T()) : length(0) {
     // introduces a list with n items, all initialized with copies of
     // value.
     node = get_node();
@@ -410,10 +399,7 @@ public:
   }
 
   template <class InputIterator>
-  In_place_list( InputIterator first, InputIterator last)
-    : length(0)
-    , time_stamper_ptr(new Time_stamper_impl<T>())
-  {
+  In_place_list( InputIterator first, InputIterator last) : length(0) {
     // a list with copies from the range [`first,last').
     node = get_node();
     (*node).next_link = node;
@@ -421,21 +407,14 @@ public:
     insert( begin(), first, last);
   }
 
-  In_place_list(const T* first, const T* last)
-    : length(0)
-    , time_stamper_ptr(new Time_stamper_impl<T>())
-  {
+  In_place_list(const T* first, const T* last) : length(0) {
     // a list with copies from the range [`first,last').
     node = get_node();
     (*node).next_link = node;
     (*node).prev_link = node;
     insert(begin(), first, last);
   }
-
-  In_place_list(const Self& x)
-    : length(0)
-    , time_stamper_ptr(new Time_stamper_impl<T>())
-  {
+  In_place_list(const Self& x) : length(0) {
     // copy constructor. Each item in `l1' is copied.
     node = get_node();
     (*node).next_link = node;
@@ -445,7 +424,6 @@ public:
   ~In_place_list() {
     erase(begin(), end());
     put_node(node);
-    delete time_stamper_ptr;
   }
 
   Self& operator=(const Self& x);
@@ -508,8 +486,6 @@ protected:
 
 public:
   void splice(iterator position, Self& x) {
-    // make sure splice is not called if time stamps are used
-    CGAL_static_assertion( !internal::Has_timestamp<T>::value );
     // inserts the list x before position `pos' and x becomes empty.
     // It takes constant time. Precondition: `&l != &x'.
     if (!x.empty()) {
@@ -522,8 +498,6 @@ public:
     splice( iterator(position), x);
   }
   void splice( iterator position, Self& x, iterator i) {
-    // make sure splice is not called if time stamps are used
-    CGAL_static_assertion( !internal::Has_timestamp<T>::value );
     // inserts an element pointed to by i from list x before position
     // `pos' and removes the element from x. It takes constant time. i
     // is a valid dereferenceable iterator of x. The result is
@@ -538,8 +512,6 @@ public:
     splice( iterator(position), x, iterator(i));
   }
   void splice(iterator pos, Self& x, iterator first, iterator last) {
-    // make sure splice is not called if time stamps are used
-    CGAL_static_assertion( !internal::Has_timestamp<T>::value );
     // inserts elements in the range [`first, last') before position
     // `pos' and removes the elements from x. It takes constant time
     // if `&x == $l'; otherwise, it takes linear time. [`first,
