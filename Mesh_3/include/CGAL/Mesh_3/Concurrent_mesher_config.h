@@ -25,8 +25,10 @@
 #ifndef CGAL_MESH_3_CONCURRENT_MESHER_CONFIG_H
 #define CGAL_MESH_3_CONCURRENT_MESHER_CONFIG_H
 
-#include <boost/program_options.hpp>
-namespace po = boost::program_options;
+#ifdef CGAL_USE_BOOST_PROGRAM_OPTIONS
+# include <boost/program_options.hpp>
+  namespace po = boost::program_options;
+#endif
 
 #include <iostream>
 #include <fstream>
@@ -87,6 +89,7 @@ protected:
     const char *filename,
     bool reload_if_already_loaded = false)
   {
+#ifdef CGAL_USE_BOOST_PROGRAM_OPTIONS
     if (m_config_file_loaded && reload_if_already_loaded == false)
       return true;
 
@@ -146,6 +149,11 @@ protected:
 
     m_config_file_loaded = true;
 
+#else // CGAL_USE_BOOST_PROGRAM_OPTIONS not defined
+    std:cerr << "Warning: could not load concurrency configuration file '"
+      << filename << "'. Default values will be used."
+      << std::endl;
+#endif // CGAL_USE_BOOST_PROGRAM_OPTIONS
     return true;
   }
 
@@ -157,8 +165,10 @@ protected:
     else
       return OptionType();
   }
-
+  
+#ifdef CGAL_USE_BOOST_PROGRAM_OPTIONS
   po::variables_map m_variables_map;
+#endif
   bool              m_config_file_loaded;
 };
 
