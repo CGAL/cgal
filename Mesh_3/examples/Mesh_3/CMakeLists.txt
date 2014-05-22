@@ -31,6 +31,7 @@ find_package(CGAL COMPONENTS ImageIO)
 
 if ( CGAL_FOUND )
   include( ${CGAL_USE_FILE} )
+  find_package(Boost)
 
   # Activate concurrency ? (turned OFF by default)
   option(ACTIVATE_CONCURRENT_MESH_3
@@ -54,14 +55,10 @@ if ( CGAL_FOUND )
     include(${TBB_USE_FILE})
     list(APPEND CGAL_3RD_PARTY_LIBRARIES ${TBB_LIBRARIES})
   endif()
-  
-  find_package(Boost COMPONENTS program_options REQUIRED)
+
 
   if ( Boost_FOUND AND Boost_VERSION GREATER 103400 )
     include( CGAL_CreateSingleSourceCGALProgram )
-
-    add_definitions( "-DCGAL_USE_BOOST_PROGRAM_OPTIONS" )
-    link_libraries( ${Boost_PROGRAM_OPTIONS_LIBRARY} )
 
     # Compilable examples
     create_single_source_cgal_program( "mesh_implicit_sphere.cpp" )
