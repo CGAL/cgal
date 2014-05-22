@@ -37,14 +37,14 @@ class Delaunay_triangulation
                              Triangulation_full_cell<DCTraits> >
                     >::type >
 {
-    typedef typename DCTraits::Dimension Maximal_dimension_;
+    typedef typename DCTraits::Dimension            Maximal_dimension_;
     typedef typename Default::Get<_TDS, Triangulation_data_structure<
                          Maximal_dimension_,
                          Triangulation_vertex<DCTraits>,
                          Triangulation_full_cell<DCTraits> >
-                >::type                         TDS;
-    typedef Triangulation<DCTraits, TDS>        Base;
-    typedef Delaunay_triangulation<DCTraits, _TDS>   Self;
+                >::type                             TDS;
+    typedef Triangulation<DCTraits, TDS>            Base;
+    typedef Delaunay_triangulation<DCTraits, _TDS>  Self;
 
     typedef typename DCTraits::Side_of_oriented_sphere_d
                                                     Side_of_oriented_sphere_d;
