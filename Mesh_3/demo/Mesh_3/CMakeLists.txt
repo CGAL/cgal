@@ -36,7 +36,11 @@ MACRO(ADD_MSVC_PRECOMPILED_HEADER PrecompiledHeader PrecompiledSource SourcesVar
     LIST(APPEND ${SourcesVar} ${PrecompiledSource})
   ENDIF(MSVC AND ACTIVATE_MSVC_PRECOMPILED_HEADERS)
 ENDMACRO(ADD_MSVC_PRECOMPILED_HEADER)
-
+# The compiler might need more memory because of precompiled headers
+if(MSVC AND ACTIVATE_MSVC_PRECOMPILED_HEADERS AND NOT(MSVC_VERSION LESS 1310))
+  set(CGAL_C_FLAGS "${CGAL_C_FLAGS} /Zm1000")
+  set(CGAL_CXX_FLAGS "${CGAL_CXX_FLAGS} /Zm1000")
+endif()
 
 # Let plugins be compiled in the same directory as the executable.
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")

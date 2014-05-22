@@ -22,7 +22,7 @@ endif()
 option(ACTIVATE_MSVC_PRECOMPILED_HEADERS
   "Activate precompiled headers in MSVC"
   ON)
-  
+
 # Macro to add precompiled headers for MSVC
 # This function does two things:
 # 1. Enable precompiled headers on each file which is listed in "SourcesVar".
@@ -40,6 +40,11 @@ MACRO(ADD_MSVC_PRECOMPILED_HEADER PrecompiledHeader PrecompiledSource SourcesVar
     LIST(APPEND ${SourcesVar} ${PrecompiledSource})
   ENDIF(MSVC AND ACTIVATE_MSVC_PRECOMPILED_HEADERS)
 ENDMACRO(ADD_MSVC_PRECOMPILED_HEADER)
+# The compiler might need more memory because of precompiled headers
+if(MSVC AND ACTIVATE_MSVC_PRECOMPILED_HEADERS AND NOT(MSVC_VERSION LESS 1310))
+  set(CGAL_C_FLAGS "${CGAL_C_FLAGS} /Zm1000")
+  set(CGAL_CXX_FLAGS "${CGAL_CXX_FLAGS} /Zm1000")
+endif()
 
 include_directories(../../include)
 include_directories(../../../Triangulation_3/include)
