@@ -99,7 +99,7 @@ public:
   Polyhedral_mesh_domain_with_features_3(const std::string& filename,
     CGAL::Random* p_rng = NULL);
 
-  template <typename T1, typename T2, typename T3>
+  template <typename T1, typename T2>
   Polyhedral_mesh_domain_with_features_3(const T1& a, const T2& b,
                                          CGAL::Random* p_rng = NULL)
     : Base(a, b)
