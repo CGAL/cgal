@@ -663,6 +663,7 @@ public:
      */
 	template < class InputIterator >
 	void construct_scale_space( InputIterator begin, InputIterator end, unsigned int iterations = 1 ) {
+        clear_tree();
 		insert_points( begin, end );
 		advance_scale_space( iterations );
 	}

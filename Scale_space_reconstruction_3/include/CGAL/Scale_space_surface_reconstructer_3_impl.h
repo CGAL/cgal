@@ -219,14 +219,14 @@ collect_facets( Tag_false ) {
             case Shape::REGULAR:
                 // Collect the outer cell.
                 if( _shape->classify(fit->first) == Shape::EXTERIOR )
-                    _surface.push_back( *fit );
+                    _surface.push_back( ordered_facet_indices( *fit ) );
                 else
-                    _surface.push_back( _shape->mirror_facet( *fit ) );
+                    _surface.push_back( ordered_facet_indices( _shape->mirror_facet( *fit ) ) );
                 break;
             case Shape::SINGULAR:
                 // Collect both incident cells.
-                _surface.push_back( *fit );
-                _surface.push_back( m );
+                _surface.push_back( ordered_facet_indices( *fit ) );
+                _surface.push_back( ordered_facet_indices( _shape->mirror_facet( *fit ) ) );
             break;
         }
     }
@@ -275,6 +275,7 @@ template < class InputIterator >
 typename Scale_space_surface_reconstructer_3<Kernel,Fixed_scale,Shells>::FT
 Scale_space_surface_reconstructer_3<Kernel,Fixed_scale,Shells>::
 estimate_neighborhood_radius( InputIterator begin, InputIterator end, unsigned int neighbors, unsigned int samples ) {
+    clear_tree();
 	insert_points( begin, end );
 	return estimate_neighborhood_radius( neighbors, samples );
 }
