@@ -951,19 +951,13 @@ namespace internal {
       m_ptr.p = &(*it);
       return *this;
     }
-    
-    // CJTODO: TEMP (see parallel scan_triangulation)
-    CC_iterator(value_type *p)
-    {
-      m_ptr.p = p;
-    }
 
     // Construction from NULL
-    /*CC_iterator (Nullptr_t CGAL_assertion_code(n))
+    CC_iterator (Nullptr_t CGAL_assertion_code(n))
     {
       CGAL_assertion (n == NULL);
       m_ptr.p = NULL;
-    }*/
+    }
 
   private:
 

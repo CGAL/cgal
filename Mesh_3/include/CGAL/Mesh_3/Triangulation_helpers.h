@@ -260,7 +260,8 @@ no_topological_change__without_set_point(
         if (c_copy.has_vertex(v0, i_v0))
         {
           v.set_point(p);
-          c_copy.set_vertex(i_v0, &v);
+          c_copy.set_vertex(i_v0, 
+            Tr::Triangulation_data_structure::Vertex_range::s_iterator_to(v));
         }
 
         if(tr.side_of_power_sphere(&c_copy, pg(cj->vertex(mj)), false)
@@ -279,7 +280,8 @@ no_topological_change__without_set_point(
         if (cj_copy.has_vertex(v0, i_v0))
         {
           v.set_point(p);
-          cj_copy.set_vertex(i_v0, &v);
+          cj_copy.set_vertex(i_v0,
+            Tr::Triangulation_data_structure::Vertex_range::s_iterator_to(v));
         }
 
         if(tr.side_of_power_sphere(&cj_copy, pg(v1), false)

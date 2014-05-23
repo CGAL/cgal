@@ -849,18 +849,12 @@ namespace CCC_internal {
       return *this;
     }
 
-    // CJTODO: TEMP (see parallel scan_triangulation)
-    CCC_iterator(value_type *p)
-    {
-      m_ptr.p = p;
-    }
-
     // Construction from NULL
-    /*CCC_iterator (Nullptr_t CGAL_assertion_code(n))
+    CCC_iterator (Nullptr_t CGAL_assertion_code(n))
     {
       CGAL_assertion (n == NULL);
       m_ptr.p = NULL;
-    }*/
+    }
 
   private:
 
