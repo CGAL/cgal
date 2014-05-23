@@ -256,9 +256,9 @@ no_topological_change__without_set_point(
         // Build a copy of c, and replace V0 by a temporary vertex (position "p")
         typename Cell_handle::value_type c_copy (*c);
         int i_v0;
+        typename Vertex_handle::value_type v;
         if (c_copy.has_vertex(v0, i_v0))
         {
-          typename Vertex_handle::value_type v;
           v.set_point(p);
           c_copy.set_vertex(i_v0, &v);
         }
@@ -275,9 +275,9 @@ no_topological_change__without_set_point(
         // Build a copy of cj, and replace V0 by a temporary vertex (position "p")
         typename Cell_handle::value_type cj_copy (*cj);
         int i_v0;
+        typename Vertex_handle::value_type v;
         if (cj_copy.has_vertex(v0, i_v0))
         {
-          typename Vertex_handle::value_type v;
           v.set_point(p);
           cj_copy.set_vertex(i_v0, &v);
         }
