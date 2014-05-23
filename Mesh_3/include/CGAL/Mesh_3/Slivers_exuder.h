@@ -454,12 +454,6 @@ public: // methods
   WallClockTimer t;
 #endif
 
-#ifdef CGAL_LINKED_WITH_TBB
-    // Warning: this doesn't work for the benchmark
-    // (because the benchmark creates the scheduler instance upstream...)
-    //tbb::task_scheduler_init tsi(1); //CJTODO TEST
-#endif
-
     // Reset sliver value cache
     helper_.reset_cache();
 

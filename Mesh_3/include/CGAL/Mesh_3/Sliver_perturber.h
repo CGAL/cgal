@@ -894,8 +894,6 @@ perturb(const FT& sliver_bound, PQueue& pqueue, Visitor& visitor) const
     int iteration_nb = 0;
 # endif
 
-    //tbb::task_scheduler_init tsi(1); //CJTODO TEST
-
     this->create_root_task();
 
     while (pqueue.size() > 0)
