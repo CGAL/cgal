@@ -139,7 +139,7 @@ refer to schnabels paper
     typedef typename Sd_traits::NormalPMap NormalPMap; ///< property map to access the unoriented normal of an input point.
 
     typedef Shape_base<Sd_traits> Shape; ///< shape type.
-    typedef typename std::vector<const Shape *>::const_iterator Shape_iterator; ///< iterator for extracted shapes.
+    typedef typename std::vector<Shape *>::const_iterator Shape_iterator; ///< iterator for extracted shapes.
     typedef boost::filter_iterator<Filter_unassigned_points, boost::counting_iterator<int> > Point_index_iterator; ///< iterator for indices of points.
     /// @}
 
@@ -615,7 +615,7 @@ refer to schnabels paper
     }
 
     inline FT StopProbability(FT _sizeC, FT _np, FT _dC, FT _l) const {
-      return std::min<float>(std::pow(1.f - _sizeC / (_np * _l * 2), _dC), 1.);		//4 is (1 << (m_reqSamples - 1))) with m_reqSamples=3 (min number of points to create a candidate)
+      return std::min<float>(std::pow(1.f - _sizeC / (_np * _l * 3), _dC), 1.);		//4 is (1 << (m_reqSamples - 1))) with m_reqSamples=3 (min number of points to create a candidate)
     }
 
     static bool candComp(const Shape* a, const Shape* b) {

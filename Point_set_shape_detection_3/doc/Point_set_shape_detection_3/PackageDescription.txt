@@ -19,7 +19,13 @@
 
 \cgalPkgDescriptionEnd
 ## Classes ##
+- `CGAL::Cone_shape<Sd_traits>`
+- `CGAL::Cylinder_shape<Sd_traits>`
+- `CGAL::Shape_base<Sd_traits>`
 - `CGAL::Shape_detection_3<Sd_traits>`
-
+- `CGAL::Shape_detection_traits_3`
+- `CGAL::Shape_factory<Shape>`
+- `CGAL::Sphere_shape<Sd_traits>`
+- `CGAL::Torus_shape<Sd_traits>`
 */
 

@@ -19,7 +19,8 @@
 namespace CGAL {
     /*!
      \brief Cylinder_shape implements Shape_base. The cylinder is parameterized by the axis, i.e. point and direction, and the radius.
-     */  template <class Sd_traits>
+     */
+  template <class Sd_traits>
   class Cylinder_shape : public Shape_base<Sd_traits> {
   public:
     typedef typename Sd_traits::inputIterator inputIterator;///< random access iterator for input data.
