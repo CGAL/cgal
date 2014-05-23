@@ -31,7 +31,7 @@ namespace CGAL {
               boost::counting_iterator<std::ptrdiff_t>(points.size()),
               std::back_inserter(vertex_indices));
 
-    T::size_type n = t.number_of_vertices();
+    typename T::size_type n = t.number_of_vertices();
     CGAL::Spatial_sort_traits_adapter_2<Geom_traits, const Point*> sort_traits(&(points[0]));
 
     spatial_sort(vertex_indices.begin(), vertex_indices.end(), sort_traits);
