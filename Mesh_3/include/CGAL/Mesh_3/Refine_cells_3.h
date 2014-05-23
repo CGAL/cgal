@@ -366,7 +366,7 @@ public:
   // Initialization function
   void scan_triangulation_impl();
 
-  int get_number_of_bad_elements_impl();
+  int number_of_bad_elements_impl();
 
   Point circumcenter_impl(const Cell_handle& cell) const
   {
@@ -695,7 +695,7 @@ scan_triangulation_impl()
 template<class Tr, class Cr, class MD, class C3T3_, class P_, class Ct, class C_>
 int
 Refine_cells_3<Tr,Cr,MD,C3T3_,P_,Ct,C_>::
-get_number_of_bad_elements_impl()
+number_of_bad_elements_impl()
 {
   typedef typename MD::Subdomain Subdomain;
   typedef typename Tr::Finite_cells_iterator Finite_cell_iterator;

@@ -424,7 +424,7 @@ public:
   /// Initialization function
   void scan_triangulation_impl();
 
-  int get_number_of_bad_elements_impl();
+  int number_of_bad_elements_impl();
 
   Point circumcenter_impl(const Facet& facet) const
   {
@@ -928,7 +928,7 @@ scan_triangulation_impl()
 template<class Tr, class Cr, class MD, class C3T3_, class P_, class Ct, class C_>
 int
 Refine_facets_3<Tr,Cr,MD,C3T3_,P_,Ct,C_>::
-get_number_of_bad_elements_impl()
+number_of_bad_elements_impl()
 {
   typedef typename Tr::Finite_facets_iterator Finite_facet_iterator;
 
@@ -960,7 +960,6 @@ get_number_of_bad_elements_impl()
       {
         std::cerr << "\n\n*** The facet f is on surface but is NOT MARKED ON SURFACE. " << std::endl;
 
-        // CJTODO DEBUG
         Cell_handle c = facet.first;
         int ind = facet.second;
         Cell_handle mc = mirror_facet(facet).first;

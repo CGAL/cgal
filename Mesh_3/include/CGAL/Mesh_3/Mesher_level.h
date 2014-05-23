@@ -255,9 +255,9 @@ public:
   }
 
   /** For diagnostics. */
-  int get_number_of_bad_elements()
+  int number_of_bad_elements()
   {
-    return derived().get_number_of_bad_elements_impl();
+    return derived().number_of_bad_elements_impl();
   }
 
   /** Tells if, as regards the elements of type \c Element, the refinement is

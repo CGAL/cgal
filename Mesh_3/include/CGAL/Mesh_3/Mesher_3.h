@@ -620,8 +620,8 @@ void
 Mesher_3<C3T3,MC,MD>::
 display_number_of_bad_elements()
 {
-  int nf = facets_mesher_.get_number_of_bad_elements();
-  int nc = cells_mesher_.get_number_of_bad_elements();
+  int nf = facets_mesher_.number_of_bad_elements();
+  int nc = cells_mesher_.number_of_bad_elements();
   std::cerr << "Bad facets: " << nf << " - Bad cells: " << nc << std::endl;
 }
 
