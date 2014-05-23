@@ -1584,7 +1584,7 @@ enqueue_task(const PVertex &pv,
              ) const
 {
   this->enqueue_work(
-    [&, sliver_bound, pv /*, pqueue, visitor, bad_vertices*/]()
+    [&, sliver_bound, pv /*, pqueue, visitor, bad_vertices*/]() // CJTODO: lambdas ok?
     {
       bool could_lock_zone;
       do

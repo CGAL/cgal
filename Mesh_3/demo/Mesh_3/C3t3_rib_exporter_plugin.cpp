@@ -763,12 +763,10 @@ write_surface_cells(const C3t3& c3t3, const Plane& plane, std::ofstream& out)
             && c3t3.in_dimension(c->vertex((i+2)%4)) == 2
             && c3t3.in_dimension(c->vertex((i+3)%4)) == 2)
         {
-          facecolor.setAlpha(TRANSPARENCY_ALPHA_VALUE); // CJTODO TEMP
           edgecolor.setAlpha(TRANSPARENCY_ALPHA_VALUE);
         }
         else
         {
-          facecolor.setAlpha(255); // CJTODO TEMP
           edgecolor.setAlpha(255);
         }
 
@@ -796,16 +794,13 @@ write_surface_cells(const C3t3& c3t3, const Plane& plane, std::ofstream& out)
       if(   s0 == CGAL::ON_NEGATIVE_SIDE && s1 == CGAL::ON_NEGATIVE_SIDE 
          && s2 == CGAL::ON_NEGATIVE_SIDE && s3 == CGAL::ON_NEGATIVE_SIDE )
       {
-        facecolor.setAlpha(TRANSPARENCY_ALPHA_VALUE); // CJTODO TEMP
         edgecolor.setAlpha(TRANSPARENCY_ALPHA_VALUE);
       }
       else
       {
-        facecolor.setAlpha(255); // CJTODO TEMP
         edgecolor.setAlpha(255);
       }*/
       
-      facecolor.setAlphaF(TRANSPARENCY_ALPHA_VALUE); // CJTODO TEMP
       edgecolor.setAlphaF(TRANSPARENCY_ALPHA_VALUE);
          
       for (int i = 0 ; i < 4 ; ++i)
@@ -826,12 +821,10 @@ write_surface_cells(const C3t3& c3t3, const Plane& plane, std::ofstream& out)
       {
         if (i == last_2D_vertex_index)
         {
-          facecolor.setAlphaF(TRANSPARENCY_ALPHA_VALUE); // CJTODO TEMP
           edgecolor.setAlpha(TRANSPARENCY_ALPHA_VALUE);
         }
         else
         {
-          facecolor.setAlphaF(TRANSPARENCY_ALPHA_VALUE); // CJTODO TEMP
           edgecolor.setAlphaF(TRANSPARENCY_ALPHA_VALUE);
         }
 
@@ -872,7 +865,6 @@ write_cells_intersecting_a_plane(const C3t3& c3t3, const Plane& plane, std::ofst
       QColor facecolor = basecolor.darker(150);
       QColor edgecolor = facecolor.darker(150);
 
-      facecolor.setAlpha(20); // CJTODO TEMP
       edgecolor.setAlpha(20);
       
       // Don't write facet twice
@@ -923,7 +915,6 @@ write_cells_on_the_positive_side_of_a_plane(const C3t3& c3t3, const Plane& plane
       QColor facecolor = basecolor.darker(150);
       QColor edgecolor = facecolor.darker(150);
 
-      facecolor.setAlpha(10); // CJTODO TEMP
       edgecolor.setAlpha(10);
       
       // Don't write facet twice

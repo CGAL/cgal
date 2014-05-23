@@ -241,7 +241,7 @@ void test(const Cont &)
   std::vector<Cont::iterator> iterators(v11.size());
   tbb::parallel_for(
     tbb::blocked_range<size_t>( 0, v11.size() ),
-    [&] (const tbb::blocked_range<size_t>& r)
+    [&] (const tbb::blocked_range<size_t>& r) // CJTODO: lambdas ok?
     {
       for( size_t i = r.begin() ; i != r.end() ; ++i)
       {
@@ -253,7 +253,7 @@ void test(const Cont &)
   std::cout << "Testing parallel erasure" << std::endl;
   tbb::parallel_for(
     tbb::blocked_range<size_t>( 0, v11.size() ),
-    [&] (const tbb::blocked_range<size_t>& r)
+    [&] (const tbb::blocked_range<size_t>& r) // CJTODO: lambdas ok?
     {
       for( size_t i = r.begin() ; i != r.end() ; ++i)
       {
@@ -278,7 +278,7 @@ void test(const Cont &)
   std::vector<Cont::iterator> iterators(v12.size());
   tbb::parallel_for(
     tbb::blocked_range<size_t>( 0, v12.size() ),
-    [&] (const tbb::blocked_range<size_t>& r)
+    [&] (const tbb::blocked_range<size_t>& r) // CJTODO: lambdas ok?
     {
       for( size_t i = r.begin() ; i != r.end() ; ++i)
       {
@@ -311,7 +311,7 @@ int main()
   CCC cc1, cc2;
   tbb::parallel_for(
     tbb::blocked_range<size_t>( 0, 100, 1 ),
-    [&] (const tbb::blocked_range<size_t>& r)
+    [&] (const tbb::blocked_range<size_t>& r) // CJTODO: lambdas ok?
     {
       for( size_t i = r.begin() ; i != r.end() ; ++i)
       {

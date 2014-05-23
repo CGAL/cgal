@@ -872,7 +872,7 @@ public:
     CGAL_assertion(m_empty_root_task != 0);
 
     m_worksharing_ds->enqueue_work(
-      [&, ce, quality, visitor]()
+      [&, ce, quality, visitor]() // CJTODO: lambdas ok?
       {
         Mesher_level_conflict_status status;
         do

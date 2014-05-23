@@ -3636,7 +3636,7 @@ get_conflict_zone_topo_change(const Vertex_handle& v,
                               bool *could_lock_zone) const
 {
   // Get triangulation_vertex incident cells : removal conflict zone
-  // CJTODO: hasn't it already been computed in "perturb_vertex" (when getting the slivers)?
+  // TODO: hasn't it already been computed in "perturb_vertex" (when getting the slivers)?
   tr_.incident_cells(v, removal_conflict_cells);
 
   // Get conflict_point conflict zone

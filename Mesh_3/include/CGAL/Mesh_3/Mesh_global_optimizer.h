@@ -651,7 +651,7 @@ compute_moves(Moving_vertices_set& moving_vertices)
   	  else // CGAL::NULL_VECTOR == move
       {
         if(do_freeze_)
-          moving_vertices.erase(oldv); // CJTODO: if non-intrusive,
+          moving_vertices.erase(oldv); // TODO: if non-intrusive,
                                        // we can optimize since we have the iterator,
                                        // don't forget to do "vit = mv.erase(vit)" instead ++vit
       }

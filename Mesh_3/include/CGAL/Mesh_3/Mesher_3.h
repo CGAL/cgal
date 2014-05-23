@@ -62,78 +62,7 @@
 #include <string>
 
 namespace CGAL {
-
-//====== CJTODO TEMP
-#include <set>
-#include <CGAL/Point_3.h>
-
-class Tag_facet{};
-class Tag_cell{};
-
-class Explicit_simplex
-{
-public:
-
-  typedef std::multiset<
-    CGAL::Exact_predicates_inexact_constructions_kernel::Point_3> Point_container;
-  Point_container points;
-
-  template<typename Facet>
-  Explicit_simplex(const Facet &f, Tag_facet)
-  {
-    for (int i = 0, j = 0; i < 4; ++i)
-    {
-      if (i != f.second)
-      {
-        points.insert(f.first->vertex(i)->point());
-      }
-    }
-  }
-
-  template<typename Cell>
-  Explicit_simplex(const Cell &c, Tag_cell)
-  {
-    for (int i = 0, j = 0; i < 4; ++i)
-    {
-      points.insert(c.vertex(i)->point());
-    }
-  }
-
-  bool operator<(const Explicit_simplex& other) const
-  {
-    if (points.size() != other.points.size())
-    {
-      std::cerr << "************************ ERROR: points.size() != other.points.size() ************" << std::endl;
-      return true;
-    }
-
-    for (Point_container::const_iterator it = points.begin(), it_other = other.points.begin() ;
-      it != points.end() ; ++it)
-    {
-      if (*it > *it_other)
-        return false;
-      if (*it < *it_other)
-        return true;
-    }
-    return false;
-  }
-};
-
-static std::ostream & operator<< (std::ostream &os, const Explicit_simplex &f)
-{
-  for (Explicit_simplex::Point_container::const_iterator it = f.points.begin() ;
-    it != f.points.end() ; ++it)
-  {
-    os << "(" << it->x() << "; " << it->y() << "; " << it->z() << ") ";
-  }
-  return os;
-}
-
-//====== /CJTODO TEMP
-
-
 namespace Mesh_3 {
-
 
 /************************************************
 // Class Mesher_3_base

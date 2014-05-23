@@ -1478,7 +1478,7 @@ Slivers_exuder<C3T3,Md,SC,V_,FT>::
 enqueue_task(Cell_handle ch, unsigned int erase_counter, double value)
 {
   this->enqueue_work(
-    [&, ch, erase_counter]()
+    [&, ch, erase_counter]() // CJTODO: lambdas ok?
     {
 #ifdef CGAL_CONCURRENT_MESH_3_PROFILING
       static Profile_branch_counter_3 bcounter(
