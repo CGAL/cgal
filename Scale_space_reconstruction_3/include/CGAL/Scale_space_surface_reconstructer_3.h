@@ -122,7 +122,7 @@ class Scale_space_surface_reconstructer_3 {
     typedef ::CGAL::Random                              Random;
 
     // Constructing the surface.
-    typedef Shape_of_points_3< Kernel, Fixed_scale >    Shape_of_points_3;
+    typedef ::CGAL::Shape_of_points_3< Kernel, Fixed_scale >    Shape_of_points_3;
 
     typedef typename Shape_of_points_3::Shape           Shape;
     typedef typename Shape_of_points_3::Triangulation   Triangulation;
@@ -161,7 +161,7 @@ public:
     typedef typename Search_tree::const_iterator        Const_point_iterator;
 #endif // DOXYGEN_RUNNING
 
-    typedef Triple< unsigned int, unsigned int, unsigned int >
+    typedef ::CGAL::Triple< unsigned int, unsigned int, unsigned int >
                                                         Triple;                 ///< A triple indicating a triangle of the surface.
 private:
     typedef std::list< Triple >                         Tripleset;              ///< A collection of triples.
