@@ -119,6 +119,21 @@ and <code>src/</code> directories).
     </li>
     <li> ... And the price</li>
   </ul>
+
+  <h3>Triangulated Surface Mesh Simplification</h3>
+  <ul>
+    <li>Add some optimization in the code making the implementation faster
+        (depending on the cost and the placement chosen). However, for an edge which
+        collapse is not topologically valid, the vector of vertices of the link provided
+        by its profile might contains duplicates, thus also breaking the orientation
+        guarantee in the vector.
+        This must not be a problem for users as the edge is not collapsible anyway
+        but if it is a absolute requirement for user defined cost/placement, defining
+        the macro <code>CGAL_SMS_EDGE_PROFILE_ALWAYS_NEED_UNIQUE_VERTEX_IN_LINK</code>
+        will restore the former behavior.
+        </li>
+
+  </ul>
 </div>
 
 
