@@ -1,0 +1,133 @@
+// (LicenseStuffHere)
+//
+// $URL$
+// $Id$
+// 
+//
+// Author(s)     : Stephen Kiazyk
+
+#ifndef CGAL_POLYHEDRON_SHORTEST_PATH_TRAITS_H
+#define CGAL_POLYHEDRON_SHORTEST_PATH_TRAITS_H
+
+#include <CGAL/Polyhedron_shortest_path/Internal/Barycentric.h>
+#include <CGAL/Polyhedron_shortest_path/Internal/function_objects.h>
+
+namespace CGAL {
+
+template <class K, class P>
+class Polyhedron_shortest_path_default_traits
+{
+public:
+  typedef K Kernel;
+  typedef P Polyhedron;
+
+  // Types
+public:
+  typedef typename Kernel::FT FT;
+  
+  typedef typename Kernel::Point_2 Point_2;
+  typedef typename Kernel::Vector_2 Vector_2;
+  typedef typename Kernel::Ray_2 Ray_2;
+  typedef typename Kernel::Line_2 Line_2;
+  typedef typename Kernel::Segment_2 Segment_2;
+  typedef typename Kernel::Triangle_2 Triangle_2;
+  typedef typename Kernel::Vector_3 Barycentric_coordinate;
+  
+  typedef typename Kernel::Point_3 Point_3;
+  typedef typename Kernel::Vector_3 Vector_3;
+  typedef typename Kernel::Triangle_3 Triangle_3;
+
+  // Predicates
+public:
+  typedef typename Kernel::Orientation_2 Orientation_2;
+  typedef typename Kernel::Bounded_side_2 Bounded_side_2;
+  typedef typename Kernel::Collinear_are_ordered_along_line_2 Collinear_are_ordered_along_line_2;
+  
+  // Constructions
+public:
+  typedef typename Kernel::Intersect_2 Intersect_2;
+  typedef typename Kernel::Construct_projected_point_2 Construct_projected_point_2;
+  typedef typename Kernel::Compute_squared_distance_2 Compute_squared_distance_2;
+  typedef typename Kernel::Compute_squared_distance_3 Compute_squared_distance_3;
+
+  typedef typename internal::Project_triangle_3_to_triangle_2<K> Project_triangle_3_to_triangle_2;
+  typedef typename internal::Flatten_triangle_3_along_segment_2<K> Flatten_triangle_3_along_segment_2;
+
+  class Construct_barycentric_coordinate_2
+  {
+  public:
+    Barycentric_coordinate operator()(const Triangle_2& t, const Point_2& p) const
+    {
+      return Internal::Construct_barycentric_coordinate_any<FT, Barycentric_coordinate, Point_2, Vector_2, Triangle_2>(t, p);
+    }
+  };
+  
+  class Construct_triangle_location_2
+  {
+  public:
+    Point_2 operator()(const Triangle_2& t, const Barycentric_coordinate& a) const
+    {
+      return Internal::Construct_triangle_location_any<FT, Barycentric_coordinate, Point_2, Triangle_2>(t, a);
+    }
+  };
+  
+  class Construct_barycentric_coordinate_3
+  {
+  public:
+    Barycentric_coordinate operator()(const Triangle_3& t, const Point_3& p) const
+    {
+      return Internal::Construct_barycentric_coordinate_any<FT, Barycentric_coordinate, Point_3, Vector_3, Triangle_3>(t, p);
+    }
+  };
+  
+  class Construct_triangle_location_3
+  {
+  public:
+    Point_3 operator()(const Triangle_3& t, const Barycentric_coordinate& a) const
+    {
+      return Internal::Construct_triangle_location_any<FT, Barycentric_coordinate, Point_3, Triangle_3>(t, a);
+    }
+  };
+  
+private:
+  Kernel m_kernel;
+  Project_triangle_3_to_triangle_2 m_project_triangle_3_to_triangle_2_object;
+  Flatten_triangle_3_along_segment_2 m_flatten_triangle_3_along_segment_2_object;
+  Construct_barycentric_coordinate_2 m_construct_barycentric_coordinate_2_object;
+  Construct_triangle_location_2 m_construct_triangle_location_2_object;
+  Construct_barycentric_coordinate_3 m_construct_barycentric_coordinate_3_object;
+  Construct_triangle_location_3 m_construct_triangle_location_3_object;
+  
+public:
+
+  Polyhedron_shortest_path_default_traits()
+  {
+  }
+  
+  Polyhedron_shortest_path_default_traits(const Kernel& kernel)
+    : m_kernel(kernel)
+    , m_project_triangle_3_to_triangle_2_object(m_kernel.compute_squared_distance_3_object())
+    , m_flatten_triangle_3_along_segment_2_object(m_kernel.compute_squared_distance_3_object())
+  {
+  }
+  
+  Orientation_2 orientation_2_object() const { return m_kernel.orientation_2_object(); }
+  Bounded_side_2 bounded_side_2_object() const { return m_kernel.bounded_side_2_object(); }
+  Collinear_are_ordered_along_line_2 collinear_are_ordered_along_line_2_object() const { return m_kernel.collinear_are_ordered_along_line_2_object(); }
+  
+  Intersect_2 intersect_2_object() const { return m_kernel.intersect_2_object(); }
+  Construct_projected_point_2 construct_projected_point_2_object() const { return m_kernel.construct_projected_point_2_object(); }
+  Compute_squared_distance_2 compute_squared_distance_2_object() const { return m_kernel.compute_squared_distance_2_object(); }
+  Compute_squared_distance_3 compute_squared_distance_3_object() const { return m_kernel.compute_squared_distance_3_object(); }
+  
+  Project_triangle_3_to_triangle_2 project_triangle_3_to_triangle_2_object() { return m_project_triangle_3_to_triangle_2_object; }
+  Flatten_triangle_3_along_segment_2 flatten_triangle_3_along_segment_2_object() { return m_flatten_triangle_3_along_segment_2_object; }
+  Construct_barycentric_coordinate_2 construct_barycentric_coordinate_2_object() { return m_construct_barycentric_coordinate_2_object; }
+  Construct_triangle_location_2 construct_triangle_location_2_object() { return m_construct_triangle_location_2_object; }
+  Construct_barycentric_coordinate_3 construct_barycentric_coordinate_3_object() { return m_construct_barycentric_coordinate_3_object; }
+  Construct_triangle_location_3 construct_triangle_location_3_object() { return m_construct_triangle_location_3_object; }
+};
+
+} // namespace CGAL
+
+#endif // CGAL_POLYHEDRON_SHORTEST_PATH_TRAITS_H
