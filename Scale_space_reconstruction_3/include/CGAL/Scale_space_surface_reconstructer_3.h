@@ -112,14 +112,14 @@ template < class Kernel, class Fixed_scale = Tag_true, class Shells = Tag_true >
 #endif
 class Scale_space_surface_reconstructer_3 {
     // Searching for neighbors.
-    typedef typename Search_traits_3< Kernel >          Search_traits;
-    typedef typename Orthogonal_k_neighbor_search< Search_traits >
+    typedef Search_traits_3< Kernel >                   Search_traits;
+    typedef Orthogonal_k_neighbor_search< Search_traits >
                                                         Static_search;
-    typedef typename Orthogonal_incremental_neighbor_search< Search_traits >
+    typedef Orthogonal_incremental_neighbor_search< Search_traits >
                                                         Dynamic_search;
     typedef typename Dynamic_search::Tree               Search_tree;
 
-    typedef Random                                      Random;
+    typedef ::CGAL::Random                              Random;
 
     // Constructing the surface.
     typedef Shape_of_points_3< Kernel, Fixed_scale >    Shape_of_points_3;
@@ -703,7 +703,7 @@ private:
         deinit_shape();
         if( !has_neighborhood_radius() )
             estimate_neighborhood_radius();
-        _shape = Shape_of_points_3()( *tr, r2 );
+        _shape = Shape_of_points_3()( *tr, _squared_radius );
 	}
 
     /// Construct the shape from a collection of points.

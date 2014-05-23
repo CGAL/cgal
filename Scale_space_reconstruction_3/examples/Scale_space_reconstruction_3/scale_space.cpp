@@ -80,7 +80,7 @@ bool readOFF( std::string input, Pointset& points ) {
 
 bool writeOFF( std::string output, const Pointset& points, TripleIterator triples_begin, TripleIterator triples_end, size_t n_triples ) {
     // Write the output file.
-	std::ofstream fout( output );
+	std::ofstream fout( output.c_str() );
 	fout << "OFF" << std::endl;
     fout << points.size() << " " << n_triples << " 0" << std::endl;
 

@@ -51,12 +51,12 @@ public:
     }
 
     inline bool operator()( const Edge_iterator& e ) const {
-        Shape::Classification_type cl = _s->classify( e );
+        typename Shape::Classification_type cl = _s->classify( e );
         return cl == Shape::REGULAR || cl == Shape::SINGULAR;
     }
 
     inline bool operator()( const Facet_iterator& f ) const {
-        Shape::Classification_type cl = _s->classify( f );
+        typename Shape::Classification_type cl = _s->classify( f );
         return cl == Shape::REGULAR || cl == Shape::SINGULAR;
     }
 
@@ -245,7 +245,7 @@ template < class Kernel, class Fixed_scale, class Shells >
 typename Scale_space_surface_reconstructer_3<Kernel,Fixed_scale,Shells>::FT
 Scale_space_surface_reconstructer_3<Kernel,Fixed_scale,Shells>::
 estimate_neighborhood_radius( unsigned int neighbors, unsigned int samples ) {
-    Kernel::Compute_squared_distance_3 squared_distance = Kernel().compute_squared_distance_3_object();
+    typename Kernel::Compute_squared_distance_3 squared_distance = Kernel().compute_squared_distance_3_object();
 
     unsigned int handled = 0;
     unsigned int checked = 0;
@@ -255,7 +255,7 @@ estimate_neighborhood_radius( unsigned int neighbors, unsigned int samples ) {
         _tree.build();
 
     for( Const_point_iterator it = _tree.begin(); it != _tree.end(); ++it ) {
-        unsigned int left = unsigned int( _tree.size() - handled );
+        unsigned int left = (unsigned int)( _tree.size() - handled );
         if( samples >= left || _generator.get_double() < double(samples - checked) / left ) {
             // The neighborhood should contain the point itself as well.
             Static_search search( _tree, *it, neighbors+1 );
@@ -320,26 +320,30 @@ advance_scale_space( unsigned int iterations ) {
         // Collect the number of neighbors of each point.
         // This can be done parallel.
         CountVec neighbors( tree.size(), 0 );
-        Kernel::Compare_squared_distance_3 compare;
+        typename Kernel::Compare_squared_distance_3 compare;
         p_size_t count = tree.size(); // openMP can only use signed variables.
         const FT squared_radius = _squared_radius; // openMP can only use local variables.
+#ifdef _OPENMP_
 #pragma omp parallel for shared(count,tree,points,squared_radius,neighbors) firstprivate(compare)
+#endif
         for( p_size_t i = 0; i < count; ++i ) {
             // Iterate over the neighbors until the first one is found that is too far.
             Dynamic_search search( tree, points[i] );
-            for( Dynamic_search::iterator nit = search.begin(); nit != search.end() && compare( points[i], nit->first, squared_radius ) != LARGER; ++nit )
+            for( typename Dynamic_search::iterator nit = search.begin(); nit != search.end() && compare( points[i], nit->first, squared_radius ) != LARGER; ++nit )
                 ++neighbors[i];
         }
             
         // Construct a mapping from each point to its index.
         PIMap indices;
         p_size_t index = 0;
-        for( Pointset::const_iterator pit = points.begin(); pit != points.end(); ++pit, ++index)
+        for( typename Pointset::const_iterator pit = points.begin(); pit != points.end(); ++pit, ++index)
             indices[ *pit ] = index;
 
         // Compute the tranformed point locations.
         // This can be done parallel.
+#ifdef _OPENMP_
 #pragma omp parallel for shared(count,neighbors,tree,squared_radius) firstprivate(compare)
+#endif
         for( p_size_t i = 0; i < count; ++i ) {
             // If the neighborhood is too small, the vertex is not moved.
             if( neighbors[i] < 4 )
@@ -350,7 +354,7 @@ advance_scale_space( unsigned int iterations ) {
             EMatrix3D pts( 3, neighbors[i] );
             EArray1D wts( 1, neighbors[i] );
             unsigned int column = 0;
-            for( Dynamic_search::iterator nit = search.begin(); nit != search.end() && column < neighbors[i]; ++nit, ++column ) {
+            for( typename Dynamic_search::iterator nit = search.begin(); nit != search.end() && column < neighbors[i]; ++nit, ++column ) {
                 pts( 0, column ) = to_double( nit->first[0] );
                 pts( 1, column ) = to_double( nit->first[1] );
                 pts( 2, column ) = to_double( nit->first[2] );

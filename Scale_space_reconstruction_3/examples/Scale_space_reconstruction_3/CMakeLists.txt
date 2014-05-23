@@ -34,9 +34,13 @@ if ( CGAL_FOUND )
 
   include( CGAL_CreateSingleSourceCGALProgram )
 
-  include_directories (BEFORE "../../include" $ENV{EIGEN3_DIR}/ )
-
-  create_single_source_cgal_program( "scale_space.cpp" )
+  find_package(Eigen3 3.1.0)
+  if (EIGEN3_FOUND)
+    include( ${EIGEN3_USE_FILE} )
+    create_single_source_cgal_program( "scale_space.cpp" )
+  else()
+    message(STATUS "NOTICE: The example need Eigen 3.1 (or greater) and will not be compiled.")
+  endif()
 
 else()
   
