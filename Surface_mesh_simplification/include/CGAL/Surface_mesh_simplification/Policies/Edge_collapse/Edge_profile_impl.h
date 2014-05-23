@@ -133,6 +133,9 @@ void Edge_profile<ECM>::Extract_borders()
 template<class ECM>
 void Edge_profile<ECM>::Extract_triangles_and_link()
 {
+  #ifdef CGAL_SMS_EDGE_PROFILE_ALWAYS_NEED_UNIQUE_VERTEX_IN_LINK
+  std::set<vertex_descriptor> vertex_already_inserted;
+  #endif
   // look at the two faces or holes adjacent to edge (v0,v1)
   // and at the opposite vertex if it exists
   edge_descriptor endleft = next_edge(v1_v0(), surface_mesh());
@@ -147,6 +150,9 @@ void Edge_profile<ECM>::Extract_triangles_and_link()
   edge_descriptor e02 = opposite_edge(prev_edge(v0_v1(),surface_mesh()), surface_mesh());
   vertex_descriptor v, v2 =target(e02,surface_mesh());
   while(e02 != endleft) {
+    #ifdef CGAL_SMS_EDGE_PROFILE_ALWAYS_NEED_UNIQUE_VERTEX_IN_LINK
+    if (vertex_already_inserted.insert(v2).second)
+    #endif
     mLink.push_back(v2);
     bool is_b = is_border(e02);
     e02 = opposite_edge(prev_edge(e02,surface_mesh()), surface_mesh());
@@ -157,6 +163,9 @@ void Edge_profile<ECM>::Extract_triangles_and_link()
     v2 = v;
   }
   if(v != vR() && (v!= vertex_descriptor())){
+    #ifdef CGAL_SMS_EDGE_PROFILE_ALWAYS_NEED_UNIQUE_VERTEX_IN_LINK
+    if (vertex_already_inserted.insert(v).second)
+    #endif
     mLink.push_back(v);
   }
 
@@ -164,6 +173,9 @@ void Edge_profile<ECM>::Extract_triangles_and_link()
   e02 = opposite_edge(prev_edge(v1_v0(),surface_mesh()), surface_mesh());
   v2 = target(e02,surface_mesh());
   while(e02 != endright) {
+    #ifdef CGAL_SMS_EDGE_PROFILE_ALWAYS_NEED_UNIQUE_VERTEX_IN_LINK
+    if (vertex_already_inserted.insert(v2).second)
+    #endif
     mLink.push_back(v2);
     bool is_b = is_border(e02);
     e02 = opposite_edge(prev_edge(e02,surface_mesh()), surface_mesh());
@@ -174,6 +186,9 @@ void Edge_profile<ECM>::Extract_triangles_and_link()
     v2 = v;
   }
   if(v != vL() && (v!= vertex_descriptor())){
+    #ifdef CGAL_SMS_EDGE_PROFILE_ALWAYS_NEED_UNIQUE_VERTEX_IN_LINK
+    if (vertex_already_inserted.insert(v).second)
+    #endif
     mLink.push_back(v);
   }
   
