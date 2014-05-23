@@ -595,8 +595,6 @@ scan_triangulation_impl()
   typedef typename Tr::All_cells_iterator All_cells_iterator;
 
 #ifdef CGAL_MESH_3_PROFILING
-  // Facet refinement done
-  //std::cerr << "==== Facet refinement: " << Base_ML::m_timer.elapsed() << " seconds ====" << std::endl;
   WallClockTimer t;
 #endif
 
@@ -611,19 +609,18 @@ scan_triangulation_impl()
     add_to_TLS_lists(true);
 
     // WITH PARALLEL_FOR
-
-    //WallClockTimer t2;
-
+    // Copy cells into an std::vector to allow the use of tbb::parallel_for
+    // which requires random-access.
+    // Note that we're using all_cells_begin() instead of finite_cells_begin()
+    // because it's faster to do the is_infinite() test in parallel.
     std::vector<Cell_handle> cells;
+    cells.reserve(r_tr_.number_of_cells());
     for(All_cells_iterator cell_it = r_tr_.all_cells_begin();
         cell_it != r_tr_.all_cells_end();
         ++cell_it)
     {
       cells.push_back(cell_it);
     }
-
-    //std::cerr << "Parallel_for - push_backs done: " << t2.elapsed() << " seconds." << std::endl;
-    //t2.reset();
 
 # if defined(CGAL_MESH_3_VERBOSE) || defined(CGAL_MESH_3_PROFILING)
     std::cerr << " - Num cells to scan = " << cells.size() << "..." << std::endl;
@@ -639,20 +636,15 @@ scan_triangulation_impl()
         }
     });
 
-    //std::cerr << "Parallel_for - iterations done: " << t2.elapsed() << " seconds." << std::endl;
-    //t2.reset();
-
     // WITH PARALLEL_DO
     /*tbb::parallel_do(r_tr_.finite_cells_begin(), r_tr_.finite_cells_end(),
       [=]( Cell &cell ) { // CJTODO: lambdas ok?
-        // CJTODO: should use Compact_container::s_iterator_to,
-        // but we don't know the exact Compact_container type here
-        Cell_handle c(&cell);
+        Cell_handle c
+         = Tr::Triangulation_data_structure::Cell_range::s_iterator_to(cell);
         treat_new_cell( c );
     });*/
 
     splice_local_lists();
-    //std::cerr << "Parallel_for - splice done: " << t2.elapsed() << " seconds." << std::endl;
     add_to_TLS_lists(false);
   }
   // Sequential

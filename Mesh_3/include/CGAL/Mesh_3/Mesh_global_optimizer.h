@@ -884,9 +884,8 @@ fill_sizing_field()
     tbb::parallel_do(tr_.finite_vertices_begin(), tr_.finite_vertices_end(),
       [&]( Vertex& v ) // CJTODO: lambdas ok?
     {
-      // CJTODO: should use Compact_container::s_iterator_to,
-      // but we don't know the exact Compact_container type here
-      Vertex_handle vh(&v);
+      Vertex_handle vh 
+        = Tr::Triangulation_data_structure::Vertex_range::s_iterator_to(v);
       local_lists.local().push_back(
         std::make_pair(v.point(), this->average_circumradius_length(vh)));
     });
