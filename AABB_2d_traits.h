@@ -440,7 +440,8 @@ Intersection intersection_object() {return Do_intersect(this);}
   public:
       Point operator()(const Point& p, const Primitive& pr, const Point& bound) const
       {
-          //return CGAL::nearest_point_2(p, pr.datum(), bound); TODO
+          // seems to be unused:
+          //return CGAL::nearest_point_2(p, pr.datum(), bound);
           return p;
       }
   };
