@@ -132,12 +132,12 @@ us denote the maximal dimension with \f$ D \f$ and the current dimension with \f
 The inequalities \f$ -2 \leq d \leq D\f$ and \f$ 0 \le D\f$ always hold.
 The special meaning of negative values for \f$d\f$ is explained below.
 
-### The data structure triangulates \f$ \mathcal S^d\f$ ###
+### The data structure triangulates \f$ \mathbb{S}^d\f$ ###
 
 A `TriangulationDataStructure` can be viewed as
-a triangulation of the topological sphere \f$ \mathcal S^d\f$,
+a triangulation of the topological sphere \f$ \mathbb{S}^d\f$,
 i.e., its faces can be embedded to form a partition of
-\f$ \mathcal S^d\f$ into \f$d\f$-simplices.
+\f$ \mathbb{S}^d\f$ into \f$d\f$-simplices.
 
 One nice consequence of the above important fact is that a full cell has
 always exactly \f$ d+1\f$ neighbors.
@@ -157,7 +157,7 @@ the two full cells being neighbors of each other. This is the unique
 triangulation of the \f$ 0\f$-sphere.
 <!--- (geometrically, the finite vertex and the infinite vertex),--->
 <DT><B>\f$ 0< d \le D\f$</B><DD> This corresponds to a triangulation of
-the sphere \f$ \mathcal S^d\f$.
+the sphere \f$ \mathbb{S}^d\f$.
 </DL>
 </BLOCKQUOTE> 
 
@@ -357,7 +357,7 @@ structure as described in the previous section.
 
 The following example shows how to construct a triangulation in which we insert
 random points. In `STEP 1`, we generate one hundred random points in
-\f$ \mathcal R^5\f$, which we then insert into a triangulation. In `STEP 2`, we
+\f$ \mathbb{R}^5\f$, which we then insert into a triangulation. In `STEP 2`, we
 ask the triangulation to construct the set of edges
 (\f$ 1\f$ dimensional faces) incident to the vertex at infinity. It is easy to see that
 these edges are in bijection with the vertices on the convex hull of the

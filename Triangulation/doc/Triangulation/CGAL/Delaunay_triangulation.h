@@ -161,7 +161,6 @@ Full_cell_handle c);
 Returns `true` if and only if the point `p` is in (Delaunay)
 conflict with full cell `c` (i.e., the circumscribing ball of
 \f$ c\f$ contains \f$ p\f$ in its interior).
-
 */
 bool is_in_conflict(const Point & p, Full_cell_const_handle c)
 const;

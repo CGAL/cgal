@@ -9,7 +9,9 @@ It brings the geometric ingredient to the
 definition of a triangulation, while the combinatorial ingredient is brought by 
 the second template parameter, `TriangulationDataStructure`. 
 
-\cgalRefines `SpatialSortingTraits_d` If a range of points is inserted, the 
+\cgalRefines `SpatialSortingTraits_d`
+
+If a range of points is inserted, the 
 traits must refine `SpatialSortingTraits_d` (this operation is optimized using 
 spatial sorting). This is not required if the points are inserted one by one.
 

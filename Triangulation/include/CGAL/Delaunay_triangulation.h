@@ -178,7 +178,7 @@ public:
     // the user can specify a Flat_orientation_d object to be used for 
     // orienting simplices of a specific dimension 
     // (= preset_flat_orientation_.first)
-    // It it used for by dark triangulations created by DT::remove
+    // It it used by the dark triangulations created by DT::remove
     Delaunay_triangulation(
       int dim, 
       const std::pair<int, const Flat_orientation_d *> &preset_flat_orientation,
