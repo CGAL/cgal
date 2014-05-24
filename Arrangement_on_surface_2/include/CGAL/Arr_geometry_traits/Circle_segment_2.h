@@ -796,7 +796,8 @@ public:
     _first(), 
     _second(),
     _third(),
-    _source(), _target(),
+    _source(), 
+    _target(),
     _info (0)
   {}
 
@@ -868,50 +869,6 @@ public:
     if (res == SMALLER)
       _info = (_info | IS_DIRECTED_RIGHT_MASK);
   }
-
-  // waqar
-  // Adding an almost duplicate constructor as the original one is cause conflict when used with 
-  // polycurve_circular_arcs
-    /*!
-   * Construct a segment arc from two kernel points
-   * \param source the source point.
-   * \ param target the target point.
-   * \pre source and target are not equal.
-   */
-   //bad idea
-  // _X_monotone_circle_segment_2 (const Point_2& source,
-  //                               const Point_2& target) :
-  //   _source(source.x(), source.y()),
-  //   _target(target.x(), target.y()),
-  //   _info (0)
-  // {
-  //   //std:: cout << source.x();
-  //   typename Kernel::Point_2 kernel_source (source.x(), source.y());
-  //   typename Kernel::Point_2 kernel_target; //(target.x(), target.y());
-
-  //   // Line_2 line(kernel_source, kernel_target);
-  //   // _first  = line.a();
-  //   // _second = line.b();
-  //   // _third  = line.c();
-    
-  //   // // Check if the segment is directed left or right:
-  //   // Comparison_result   res = CGAL::compare (kernel_source.x(), kernel_target.x());
-
-  //   // if (res == EQUAL)
-  //   // {
-  //   //   CGAL_precondition (CGAL::sign(_second) == ZERO);
-
-  //   //   // We have a vertical segment - compare the points by their
-  //   //   // y-coordinates:
-  //   //   _info = (_info | IS_VERTICAL_SEGMENT_MASK);
-  //   //   res = CGAL::compare (kernel_source.y(), kernel_target.y());
-  //   // }
-
-  //   // CGAL_precondition (res != EQUAL);
-  //   // if (res == SMALLER)
-  //   //   _info = (_info | IS_DIRECTED_RIGHT_MASK);
-  // } 
-  //end of duplicate contructor
 
   /*! 
    * Construct a circular arc.
@@ -2476,6 +2433,57 @@ protected:
     }
     *oi = std::make_pair(x_right, y_right);   // The right point.
     ++oi;
+  }
+
+  //waqar
+  /*
+   * check if the point lies on the circular arc.
+   *
+   * I could have skipped this function and used circ_point_position() instead
+   * but I think the implementation of that function is wrong as it is not squaring the radius
+   * in order to check whether the point satisfies the circle equation. 
+   */
+  Comparison_result contain_point(const Point_2& p) const
+  {
+    Comparison_result   res = CGAL::compare (CGAL::square (p.x() - x0()),
+                                             CGAL::square(sqr_r()) - CGAL::square (p.y() - y0()));
+    return res;
+  }
+  /*!
+   * Trim the arc given its new endpoints.
+   * \param ps The new source point.
+   * \param pt The new target point.
+   * \return The new trimmed arc.
+   * \pre Both ps and pt lies on the arc and must conform with the current
+   *      direction of the arc.
+   */
+  Self trim (const Point_2& ps,
+             const Point_2& pt) const
+  {
+    Self         arc = *this;
+    Kernel   ker;
+    // Make sure that both ps and pt lie on the arc.
+    CGAL_precondition (this->contain_point (ps) == EQUAL);
+    CGAL_precondition (this->contain_point (pt) == EQUAL );
+
+    //make sure ps and pt are not the same
+    CGAL_precondition(CGAL::compare(ps.x(), pt.x()) != EQUAL &&
+                      CGAL::compare(ps.y(), pt.y()) != EQUAL);
+
+    // Make sure that the endpoints conform with the direction of the arc.
+    Point_2 source = ps;
+    Point_2 target = pt;
+    if( this->is_directed_right() && (ps.x() > pt.x()) )
+    {
+      //since the direction of the arc should not be changed. we will interchange the source and the target.
+      source = pt;
+      target = ps;
+    }
+
+    arc._source = source;
+    arc._target = target;
+
+    return (arc);
   }
 
   //@}

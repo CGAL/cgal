@@ -73,6 +73,8 @@ public:
   typedef Tag_true                        Has_left_category;
   typedef Tag_true                        Has_merge_category;
   typedef Tag_false                       Has_do_intersect_category;
+  //typedef boost::true_type                Has_line_segment_constructor;
+  typedef Tag_true                        Has_construct_x_monotone_curve_from_two_points_category;
 
   typedef Arr_oblivious_side_tag          Left_side_category;
   typedef Arr_oblivious_side_tag          Bottom_side_category;
@@ -814,9 +816,38 @@ public:
   {
     return Construct_opposite_2();
   }
+
+  class Trim_2
+  {
+    /*!\brief
+     * Returns a trimmed version of an arc
+     * 
+     * \param cv The arc
+     * \param p the new first endpoint
+     * \param q the new second endpoint
+     * \return The trimmed arc
+     *
+     * \pre p != q
+     * \pre both points must be interior and must lie on \c cv
+     */
+  public:
+
+    X_monotone_curve_2 operator()(const X_monotone_curve_2& xcv, 
+                                const Point_2& src,
+                                const Point_2 tgt)const
+    {
+      return (xcv.trim(src, tgt));
+    }
+
+  };
+
+  //get a Trim_2 functor object
+  Trim_2 trim_2_object() const
+  {
+    return Trim_2();
+  }
   //@}
 };
 
 } //namespace CGAL
-
 #endif

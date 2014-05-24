@@ -910,7 +910,7 @@ bool Traits_test<Geom_traits_T>::
 intersect_wrapper(std::istringstream& str_stream)
 {
   //I am disabling this test only for polycurve_circular_arc tarits until it is resolved
-  #if TEST_GEOM_TRAITS != POLYCURVE_CIRCULAR_ARC_GEOM_TRAITS
+  //#if TEST_GEOM_TRAITS != POLYCURVE_CIRCULAR_ARC_GEOM_TRAITS
 
   typedef Geom_traits_T                         Traits;
   typedef typename Traits::Point_2              Point_2;
@@ -965,7 +965,7 @@ intersect_wrapper(std::istringstream& str_stream)
 
   object_vec.clear();
 
-  #endif
+  //#endif
 
   return true;
 }

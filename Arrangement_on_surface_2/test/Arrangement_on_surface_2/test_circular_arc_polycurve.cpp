@@ -40,6 +40,8 @@ typedef Polycurve_arc_traits_2::X_monotone_curve_2                        X_mono
 typedef Polycurve_arc_traits_2::Curve_2                                   Polycurve;
 typedef Kernel::Circle_2                                                  Circle_2;
 
+typedef Arc_traits_2::Has_construct_x_monotone_curve_from_two_points_category    Has_construct_x_monotone_curve_from_two_points_category;
+
 
 template<typename Curve>
 bool check_compare_y_at_x_2(Curve& cv)
@@ -144,10 +146,10 @@ int main ()
   X_monotone_polycurve x_polycurve_2 = traits.construct_x_monotone_curve_2_object()( x_curves.begin(), x_curves.end() );
 
   //testing for arc construction from two points.
-  Arc_x_monotone_section_2 x_segment( Kernel::Point_2(0, 0), Kernel::Point_2(2, 0) );
-  x_curves.clear();
-  x_curves.push_back(x_segment);
-  X_monotone_polycurve x_polycurve_3 = traits.construct_x_monotone_curve_2_object()( x_curves.begin(), x_curves.end() );  
+  //Arc_x_monotone_section_2 x_segment( Kernel::Point_2(0, 0), Kernel::Point_2(2, 0) );
+  //x_curves.clear();
+  //x_curves.push_back(x_segment);
+  //X_monotone_polycurve x_polycurve_3 = traits.construct_x_monotone_curve_2_object()( x_curves.begin(), x_curves.end() );  
   //std::cout<< "x_polycurve_3: " << x_polycurve_3 << std::endl;
 
 
@@ -180,7 +182,25 @@ int main ()
 
   // check_compare_y_at_x_2(x_polycurve_1);
   // check_intersect(x_polycurve_1, x_polycurve_2);
-  check_make_x_monotone(curve_1);
+  //check_make_x_monotone(curve_1);
+
+  //checking if the cgal_assertion for curve construction for two points work or not.
+  //Point_2 push_back_point( Number_type (10, 1), Number_type (0, 1));
+  //traits.push_back_2_object()(x_polycurve_1, push_back_point);
+
+
+  if(Has_construct_x_monotone_curve_from_two_points_category())
+    std::cout << "It has a line segment constructor. " << std::endl;
+
+  //checking for trim.
+ Arc_traits_2 arc_traits;
+ source = Point_2 ( Number_type (1, 1), Number_type (0, 1) );
+ target = Point_2 ( Number_type (3, 1), Number_type (2, 1));
+ // source = Point_2 ( Number_type (2, 1), Number_type (-2, 1) );
+ // target = Point_2 ( Number_type (3, 1), Number_type (4, 1));
+ std::cout << " curve is : " << xc2 << std::endl;
+ Arc_x_monotone_section_2 trimmed_curve = arc_traits.trim_2_object()(xc2, source, target);
+ std::cout << "trimmed conic curve is : " << trimmed_curve << std::endl; 
 
 
   return 0;

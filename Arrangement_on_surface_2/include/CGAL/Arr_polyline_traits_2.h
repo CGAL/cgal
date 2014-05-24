@@ -30,6 +30,7 @@
 
 #include <iterator>
 #include <boost/type_traits/is_same.hpp>
+#include <boost/utility/enable_if.hpp>
 
 #include <CGAL/basic.h>
 #include <CGAL/tags.h>
@@ -54,6 +55,8 @@ namespace CGAL {
     typedef typename Segment_traits_2::Bottom_side_category Bottom_side_category;
     typedef typename Segment_traits_2::Top_side_category    Top_side_category;
     typedef typename Segment_traits_2::Right_side_category  Right_side_category;
+
+    typedef typename Segment_traits_2::Has_construct_x_monotone_curve_from_two_points_category  Has_construct_x_monotone_curve_from_two_points_category;
 
     typedef typename Arr_are_all_sides_oblivious_tag
     <Left_side_category, Bottom_side_category,
@@ -1117,6 +1120,9 @@ namespace CGAL {
       /* Append a point `p` to an existing polyline `cv` at the back. */
       void operator()(Curve_2& cv, const Point_2& p) const
       {
+        //waqar
+        //CGAL_static_assertion_msg((Has_construct_x_monotone_curve_from_two_points_category()), "X_monotone_curve_2 does not support construction from two points!");
+        //typename boost::enable_if_c< Has_construct_x_monotone_curve_from_two_points_category::value >::type* = 0
         typedef typename Curve_2::Segments_size_type size_type;
         size_type num_seg = cv.number_of_segments();
         CGAL_precondition(num_seg > 0);
@@ -1153,6 +1159,8 @@ namespace CGAL {
       /* Append a point `p` to an existing polyline `xcv` at the back. */
       void operator()(X_monotone_curve_2& xcv, const Point_2& p) const
       {
+        //waqar
+        //CGAL_static_assertion_msg((Has_construct_x_monotone_curve_from_two_points_category()), "X_monotone_curve_2 does not support construction from two points!");
         typedef typename X_monotone_curve_2::Segments_size_type size_type;
         size_type num_seg = xcv.number_of_segments();
         CGAL_precondition(num_seg > 0);
@@ -1269,6 +1277,9 @@ namespace CGAL {
       /* Append a point `p` to an existing polyline `cv` at the front. */
       void operator()(Curve_2& cv, const Point_2& p) const
       {
+        //waqar
+        //CGAL_static_assertion_msg((Has_construct_x_monotone_curve_from_two_points_category()), "X_monotone_curve_2 does not support construction from two points!");
+
         CGAL_precondition_code
           (
            typedef typename Curve_2::Segments_size_type size_type;
@@ -1300,6 +1311,9 @@ namespace CGAL {
       /* Append a point `p` to an existing polyline `xcv` at the front. */
       void operator()(const X_monotone_curve_2& xcv, Point_2& p) const
       {
+        //waqar
+        //CGAL_static_assertion_msg((Has_construct_x_monotone_curve_from_two_points_category()), "X_monotone_curve_2 does not support construction from two points!");
+
         const Segment_traits_2* seg_traits = m_poly_traits.segment_traits_2();
         CGAL_precondition_code
           (
@@ -1545,10 +1559,16 @@ namespace CGAL {
        * \return The past-the-end iterator.
        */
       template <typename OutputIterator>
-      OutputIterator operator()(const X_monotone_curve_2& cv1,
-                                const X_monotone_curve_2& cv2,
-                                OutputIterator oi) const
+       OutputIterator
+       //waqar
+      //typename boost::enable_if_c<Has_line_segment_constructor::value, OutputIterator>::type
+      operator()(const X_monotone_curve_2& cv1,
+                 const X_monotone_curve_2& cv2,
+                 OutputIterator oi) const
+                 //typename boost::enable_if_c< Has_line_segment_constructor::value >::type* = 0) const
       {
+        //waqar
+        //CGAL_static_assertion_msg((Has_line_segment_constructor::value), "X_monotone_curve_2 does not support construction from Line_segment!");
         const Segment_traits_2* seg_traits = m_poly_traits.segment_traits_2();
         Compare_y_at_x_2 cmp_y_at_x = m_poly_traits.compare_y_at_x_2_object();
         typename Segment_traits_2::Equal_2 equal = seg_traits->equal_2_object();
@@ -1794,7 +1814,8 @@ namespace CGAL {
             *oi++ = make_object(ip);
           }
         }
-        return oi;
+
+        return oi;  
       }
     };
 
@@ -2803,6 +2824,28 @@ namespace CGAL {
       CGAL_assertion(from == to);
       return from;
     }
+
+    class Trim_2
+    {
+      /*!\brief
+       * add comments
+       */
+    public:
+
+      X_monotone_curve_2 operator()(const X_monotone_curve_2& xcv, 
+                                  const Point_2& src,
+                                  const Point_2 tgt)const
+      {
+        return (xcv);
+      }
+
+    };
+    
+    //get a Trim_2 functor object
+    Trim_2 trim_2_object() const
+    {
+      return Trim_2();
+    }    
 
     // A utility class that compare a curve-end with a point.
     template <typename Comparer>

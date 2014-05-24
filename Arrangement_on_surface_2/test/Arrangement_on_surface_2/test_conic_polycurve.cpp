@@ -21,6 +21,9 @@ int main ()
 #include <CGAL/Arr_polyline_traits_2.h>
 #include <CGAL/Arr_conic_traits_2.h>
 #include <CGAL/Arrangement_2.h>
+#include <CGAL/tags.h>
+#include <CGAL/Arr_tags.h>
+#include <boost/type_traits/is_same.hpp>
 
 //#include <CGAL/Arr_geometry_traits/Polyline_2.h>
 
@@ -43,6 +46,8 @@ typedef Conic_traits_2::X_monotone_curve_2                                Conic_
 typedef CGAL::Arr_polyline_traits_2<Conic_traits_2>                       Polycurve_conic_traits_2;
 typedef Polycurve_conic_traits_2::X_monotone_curve_2                      Pc_x_monotone_curve_2;
 //typedef Polycurve_conic_traits_2::Point_2                                 polypoint;
+
+typedef Conic_traits_2::Has_construct_x_monotone_curve_from_two_points_category      Has_construct_x_monotone_curve_from_two_points_category;
 
 
 // typedef CGAL::Arr_polyline_traits_2<
@@ -641,6 +646,11 @@ void check_compare_points(Curve& cv)
   CGAL::Arr_parameter_space result = traits.parameter_space_in_x_2_object()(cv, CGAL::ARR_MAX_END);
 }
 
+// void check_enable_if(int a, int b,  boost::enable_if<boost::is_same<Has_construct_x_monotone_curve_from_two_points_category(), boost::true_type>::type > )
+// {
+//   std::cout << a+b << std::endl;
+// }
+
 int main ()
 {
   Polycurve_conic_traits_2 traits;
@@ -732,6 +742,19 @@ int main ()
    Polycurve_conic_traits_2::Curve_2 Expected_push_back_result = construct_polycurve( conic_curves.begin(), conic_curves.end() );
 
 
+  // //checking the orientattion consistency
+  //  Conic_curve_2     c21(0,1,0,1,0,0,CGAL::CLOCKWISE, Conic_point_2( Algebraic(9), Algebraic(-3) ), Conic_point_2( Algebraic(0), Algebraic(0) ) );
+  //  Conic_curve_2     c20(1,0,0,0,-1,0,CGAL::COUNTERCLOCKWISE, Conic_point_2( Algebraic(0), Algebraic(0) ), Conic_point_2( Algebraic(3), Algebraic(9) ) );
+  //  Conic_x_monotone_curve_2 xc20 (c20);
+  // Conic_x_monotone_curve_2 xc21 (c21);
+  //  xmono_conic_curves_2.clear();
+  //  xmono_conic_curves_2.push_back(xc20);
+  // xmono_conic_curves_2.push_back(xc21);
+   // Pc_x_monotone_curve_2    eric_polycurve = construct_x_mono_polycurve(xmono_conic_curves_2.begin(), xmono_conic_curves_2.end());
+   // std::cout << "the polycurve is: " << eric_polycurve << std::endl;
+
+
+
 
 
   // std::cout<< std::endl;
@@ -782,10 +805,21 @@ int main ()
 
   // check_compare_y_at_x_left();
   // std::cout<< std::endl;
-   check_compare_points(conic_x_mono_polycurve_1);
+   //check_compare_points(conic_x_mono_polycurve_1);
 
    //number of segments
     //std::cout<< "Number of segments: " << traits.number_of_points_2_object()(base_curve_push_back) << std::endl;
+
+   Conic_traits_2 con_traits;
+   Conic_point_2       ps2 (1, 1);
+   Conic_point_2       pt2 (2, 4);
+   std::cout << "conic curve is : " << xc3 << std::endl;
+   Conic_x_monotone_curve_2 trimmed_curve = con_traits.trim_2_object()(xc3, ps2, pt2);
+   std::cout << "trimmed conic curve is : " << trimmed_curve << std::endl;  
+
+   if(Has_construct_x_monotone_curve_from_two_points_category())
+    std::cout << "It has a line segment constructor. " << std::endl;
+ 
 
   return 0;
 }

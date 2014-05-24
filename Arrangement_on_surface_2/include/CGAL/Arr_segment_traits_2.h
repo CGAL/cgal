@@ -33,6 +33,8 @@
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <fstream>
 
+
+
 namespace CGAL {
 
 template <class Kernel_ = Exact_predicates_exact_constructions_kernel>
@@ -65,6 +67,7 @@ public:
   typedef Tag_true                        Has_left_category;
   typedef Tag_true                        Has_merge_category;
   typedef Tag_false                       Has_do_intersect_category;
+  typedef Tag_true                        Has_construct_x_monotone_curve_from_two_points_category;
 
   typedef Arr_oblivious_side_tag          Left_side_category;
   typedef Arr_oblivious_side_tag          Bottom_side_category;
@@ -1182,5 +1185,6 @@ InputStream& operator>> (InputStream& is, Arr_segment_2<Kernel>& seg)
 }
 
 } //namespace CGAL
+
 
 #endif
