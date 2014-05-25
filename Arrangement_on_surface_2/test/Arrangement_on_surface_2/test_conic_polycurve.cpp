@@ -652,12 +652,14 @@ void check_compare_points(Curve& cv)
 // }
 
 template <typename curve>
-void check_trim(curve& xcv)
+void check_trim(curve& xcv, int sx, int sy, int tx, int ty)
 {
   Polycurve_conic_traits_2 traits;
 
-  Conic_point_2 source ( Algebraic(-25), Algebraic(-5) ); 
-  Conic_point_2 target ( Algebraic(4), Algebraic(16));
+  // Conic_point_2 source ( Algebraic(-16), Algebraic(-4) ); 
+  // Conic_point_2 target ( Algebraic(4), Algebraic(16));
+  Conic_point_2 source ( sx, sy ); 
+  Conic_point_2 target ( tx, ty);
 
   Polycurve_conic_traits_2::Trim_2  trim_polycurve = traits.trim_2_object();
   Pc_x_monotone_curve_2 trimmed_curve = trim_polycurve(xcv, source, target);
@@ -667,7 +669,7 @@ void check_trim(curve& xcv)
 
 }
 
-int main ()
+int main (int argc, char* argv[])
 {
   Polycurve_conic_traits_2 traits;
     //polycurve constructors
@@ -826,18 +828,18 @@ int main ()
    //number of segments
     //std::cout<< "Number of segments: " << traits.number_of_points_2_object()(base_curve_push_back) << std::endl;
 
-    check_trim(conic_x_mono_polycurve_1);
+    check_trim(conic_x_mono_polycurve_1, atoi(argv[1]), atoi(argv[2]), atoi(argv[3]), atoi(argv[4]));
     std::cout<< std::endl;
 
+   //std::cout << (atoi(argv[1]) + atoi(argv[2])) << std::endl;
    // Conic_traits_2 con_traits;
    //   Conic_curve_2     cc3(1,0,0,0,-1,0,CGAL::COUNTERCLOCKWISE, Conic_point_2( Algebraic(0), Algebraic(0) ), Conic_point_2( Algebraic(3), Algebraic(9) ) );
    //   Conic_x_monotone_curve_2 xcc3 (cc3);
-   // Conic_point_2       ps2 (1, 1);
-   // Conic_point_2       pt2 (2, 4);
+   // Conic_point_2       ps2 (0, 0);
+   // Conic_point_2       pt2 (3, 9);
    // std::cout << "conic curve is : " << xcc3 << std::endl;
-   // //Conic_x_monotone_curve_2 trimmed_curve = con_traits.trim_2_object()(xc3, ps2, pt2);
-   // //std::cout << "trimmed conic curve is : " << trimmed_curve << std::endl;  
-   // std::cout << "Max_vertex: " << con_traits.construct_max_vertex_2_object()(xcc3) << std::endl;
+   // Conic_x_monotone_curve_2 trimmed_curve = con_traits.trim_2_object()(xc3, ps2, pt2);
+   // std::cout << "trimmed conic curve is : " << trimmed_curve << std::endl;  
 
    // if(Has_construct_x_monotone_curve_from_two_points_category())
    //  std::cout << "It has a line segment constructor. " << std::endl;

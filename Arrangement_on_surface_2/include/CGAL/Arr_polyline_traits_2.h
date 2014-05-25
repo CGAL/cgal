@@ -2676,18 +2676,32 @@ namespace CGAL {
          */
         std::size_t source_segment_number = m_poly_traits.locate(xcv, src);
         std::size_t target_segment_number = m_poly_traits.locate(xcv, tgt);
+        //std::cout << "source number: " << source_segment_number << "  Target number : " << target_segment_number << std::endl;
 
         std::vector<X_monotone_segment_2> trimmed_segments;
 
         Comparison_result orientation = m_poly_traits.compare_endpoints_xy_2_object()(xcv);
+        
+        Point_2 source_max_vertex = seg_traits->construct_max_vertex_2_object()(xcv[source_segment_number]);
+        Point_2 source_min_vertex = seg_traits->construct_min_vertex_2_object()(xcv[source_segment_number]);
+        Point_2 target_min_vertex = seg_traits->construct_min_vertex_2_object()(xcv[target_segment_number]);
+        Point_2 target_max_vertex = seg_traits->construct_max_vertex_2_object()(xcv[target_segment_number]);
 
         //push the trimmed version of the source segment
-        if(orientation == SMALLER)
-          trimmed_segments.push_back( trim(xcv[source_segment_number], source, 
-                                           seg_traits->construct_max_vertex_2_object()(xcv[source_segment_number])) );
-        else
-          trimmed_segments.push_back( trim(xcv[source_segment_number], source, 
-                                           seg_traits->construct_min_vertex_2_object()(xcv[source_segment_number])) );
+        if(orientation == SMALLER && source != source_max_vertex)
+        {
+          if(source_segment_number != target_segment_number)
+            trimmed_segments.push_back( trim(xcv[source_segment_number], source, source_max_vertex) );
+          else
+            trimmed_segments.push_back( trim(xcv[source_segment_number], source, target) );
+        }
+        else if(orientation == LARGER && source != source_min_vertex)
+        {
+          if(source_segment_number != target_segment_number)
+            trimmed_segments.push_back( trim(xcv[source_segment_number], source, source_min_vertex) );
+          else
+            trimmed_segments.push_back( trim(xcv[source_segment_number], source, target) );
+        }
         
         //push the middle segments as they are.
         for(size_t i=source_segment_number+1; i<target_segment_number; ++i)
@@ -2696,14 +2710,11 @@ namespace CGAL {
         //push the appropriately trimmed target segment.
         if(source_segment_number != target_segment_number)
         {
-          if(orientation == SMALLER)
-          trimmed_segments.push_back( trim( xcv[target_segment_number], 
-                                            seg_traits->construct_min_vertex_2_object()(xcv[target_segment_number]), 
-                                            target) );
-        else
-          trimmed_segments.push_back( trim( xcv[target_segment_number], 
-                                            seg_traits->construct_max_vertex_2_object()(xcv[target_segment_number]), 
-                                            target) );
+          if(orientation == SMALLER && target != target_min_vertex)
+            trimmed_segments.push_back( trim( xcv[target_segment_number], target_min_vertex, target) );
+          
+          else if (orientation == LARGER && target != target_max_vertex)
+            trimmed_segments.push_back( trim( xcv[target_segment_number], target_max_vertex, target) );
         }
 
         return X_monotone_curve_2(trimmed_segments.begin(), trimmed_segments.end());
