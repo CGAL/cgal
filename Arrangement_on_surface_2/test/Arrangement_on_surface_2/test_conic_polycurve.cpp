@@ -651,6 +651,22 @@ void check_compare_points(Curve& cv)
 //   std::cout << a+b << std::endl;
 // }
 
+template <typename curve>
+void check_trim(curve& xcv)
+{
+  Polycurve_conic_traits_2 traits;
+
+  Conic_point_2 source ( Algebraic(-25), Algebraic(-5) ); 
+  Conic_point_2 target ( Algebraic(4), Algebraic(16));
+
+  Polycurve_conic_traits_2::Trim_2  trim_polycurve = traits.trim_2_object();
+  Pc_x_monotone_curve_2 trimmed_curve = trim_polycurve(xcv, source, target);
+
+  std::cout << "polycurvecurve: " << xcv << std::endl<<std::endl;
+  std::cout << "Trimmed curve: " << trimmed_curve << std::endl;
+
+}
+
 int main ()
 {
   Polycurve_conic_traits_2 traits;
@@ -810,15 +826,21 @@ int main ()
    //number of segments
     //std::cout<< "Number of segments: " << traits.number_of_points_2_object()(base_curve_push_back) << std::endl;
 
-   Conic_traits_2 con_traits;
-   Conic_point_2       ps2 (1, 1);
-   Conic_point_2       pt2 (2, 4);
-   std::cout << "conic curve is : " << xc3 << std::endl;
-   Conic_x_monotone_curve_2 trimmed_curve = con_traits.trim_2_object()(xc3, ps2, pt2);
-   std::cout << "trimmed conic curve is : " << trimmed_curve << std::endl;  
+    check_trim(conic_x_mono_polycurve_1);
+    std::cout<< std::endl;
 
-   if(Has_construct_x_monotone_curve_from_two_points_category())
-    std::cout << "It has a line segment constructor. " << std::endl;
+   // Conic_traits_2 con_traits;
+   //   Conic_curve_2     cc3(1,0,0,0,-1,0,CGAL::COUNTERCLOCKWISE, Conic_point_2( Algebraic(0), Algebraic(0) ), Conic_point_2( Algebraic(3), Algebraic(9) ) );
+   //   Conic_x_monotone_curve_2 xcc3 (cc3);
+   // Conic_point_2       ps2 (1, 1);
+   // Conic_point_2       pt2 (2, 4);
+   // std::cout << "conic curve is : " << xcc3 << std::endl;
+   // //Conic_x_monotone_curve_2 trimmed_curve = con_traits.trim_2_object()(xc3, ps2, pt2);
+   // //std::cout << "trimmed conic curve is : " << trimmed_curve << std::endl;  
+   // std::cout << "Max_vertex: " << con_traits.construct_max_vertex_2_object()(xcc3) << std::endl;
+
+   // if(Has_construct_x_monotone_curve_from_two_points_category())
+   //  std::cout << "It has a line segment constructor. " << std::endl;
  
 
   return 0;

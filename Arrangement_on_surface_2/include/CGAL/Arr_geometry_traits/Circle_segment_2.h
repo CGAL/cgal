@@ -2479,6 +2479,12 @@ protected:
       source = pt;
       target = ps;
     }
+    else if( !this->is_directed_right() && (pt.x() > ps.x()) )
+    {
+      //since the direction of the arc should not be changed. we will interchange the source and the target.
+      source = pt;
+      target = ps;
+    }
 
     arc._source = source;
     arc._target = target;

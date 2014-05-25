@@ -698,7 +698,7 @@ public:
     return Construct_opposite_2();
   } 
 
-    class Trim_2
+  class Trim_2
   {
     /*!\brief
      * Returns a trimmed version of an arc

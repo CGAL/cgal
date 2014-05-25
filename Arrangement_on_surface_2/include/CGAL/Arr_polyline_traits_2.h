@@ -2615,6 +2615,107 @@ namespace CGAL {
     Compare_x_on_boundary_2 compare_x_on_boundary_2_object() const
     { return Compare_x_on_boundary_2(*this); }
 
+    class Trim_2
+    {
+    protected:  
+      typedef Arr_polyline_traits_2<Segment_traits_2>     Polyline_traits_2;
+      /* The polyline traits (in case it has state) */
+      const Polyline_traits_2& m_poly_traits;
+
+      /*!\brief
+       * returns a trimmed version of the polyline with src and tgt as end points.
+       */
+    public:
+      /*! Constructor. */
+      Trim_2(const Polyline_traits_2& traits) :
+        m_poly_traits(traits)
+      {}
+
+      X_monotone_curve_2 operator()(const X_monotone_curve_2& xcv, 
+                                  const Point_2& src,
+                                  const Point_2& tgt)const
+      {
+         const Segment_traits_2* seg_traits = m_poly_traits.segment_traits_2();
+         typename Segment_traits_2::Trim_2 trim = seg_traits->trim_2_object();
+
+        //check whether src and tgt lies on the polyline/polycurve.
+        CGAL_precondition(m_poly_traits.compare_y_at_x_2_object()(src, xcv) == EQUAL);
+        CGAL_precondition(m_poly_traits.compare_y_at_x_2_object()(tgt, xcv) == EQUAL);
+
+        /*
+         * Check whether the source and the target conform with the 
+         * direction of the polyline.
+         * since the direction of the arc should not be changed. we will interchange the source and the target.
+         */
+        Point_2 source = src;
+        Point_2 target = tgt;
+        
+        /*
+         * If curve is oriented from right to left but points are left to right.
+         */
+        if (m_poly_traits.compare_endpoints_xy_2_object()(xcv) == LARGER && 
+           m_poly_traits.compare_x_2_object()(src, tgt) == SMALLER )
+        {
+          source = tgt;
+          target = src;
+        }
+
+        /*
+         * If curve is oriented from left to right but points are from right to left.
+         */
+        else if (m_poly_traits.compare_endpoints_xy_2_object()(xcv) == SMALLER && 
+                 m_poly_traits.compare_x_2_object()(src, tgt) == LARGER )
+        {
+          source = tgt;
+          target = src;
+        }
+        /*
+         * Get the source and target segment numbers from the polyline.
+         * The trimmed polyline will have trimmed end segments(containing source and target) along with complete 
+         * segments in between them.
+         */
+        std::size_t source_segment_number = m_poly_traits.locate(xcv, src);
+        std::size_t target_segment_number = m_poly_traits.locate(xcv, tgt);
+
+        std::vector<X_monotone_segment_2> trimmed_segments;
+
+        Comparison_result orientation = m_poly_traits.compare_endpoints_xy_2_object()(xcv);
+
+        //push the trimmed version of the source segment
+        if(orientation == SMALLER)
+          trimmed_segments.push_back( trim(xcv[source_segment_number], source, 
+                                           seg_traits->construct_max_vertex_2_object()(xcv[source_segment_number])) );
+        else
+          trimmed_segments.push_back( trim(xcv[source_segment_number], source, 
+                                           seg_traits->construct_min_vertex_2_object()(xcv[source_segment_number])) );
+        
+        //push the middle segments as they are.
+        for(size_t i=source_segment_number+1; i<target_segment_number; ++i)
+          trimmed_segments.push_back( xcv[i] );
+
+        //push the appropriately trimmed target segment.
+        if(source_segment_number != target_segment_number)
+        {
+          if(orientation == SMALLER)
+          trimmed_segments.push_back( trim( xcv[target_segment_number], 
+                                            seg_traits->construct_min_vertex_2_object()(xcv[target_segment_number]), 
+                                            target) );
+        else
+          trimmed_segments.push_back( trim( xcv[target_segment_number], 
+                                            seg_traits->construct_max_vertex_2_object()(xcv[target_segment_number]), 
+                                            target) );
+        }
+
+        return X_monotone_curve_2(trimmed_segments.begin(), trimmed_segments.end());
+      }
+    };
+    
+    //get a Trim_2 functor object
+    Trim_2 trim_2_object() const
+    {
+      return Trim_2(*this);
+    }    
+
     /*! A functor that compares the y-coordinate of two given points
      * that lie on the vertical identification curve.
      */
@@ -2824,28 +2925,6 @@ namespace CGAL {
       CGAL_assertion(from == to);
       return from;
     }
-
-    class Trim_2
-    {
-      /*!\brief
-       * add comments
-       */
-    public:
-
-      X_monotone_curve_2 operator()(const X_monotone_curve_2& xcv, 
-                                  const Point_2& src,
-                                  const Point_2 tgt)const
-      {
-        return (xcv);
-      }
-
-    };
-    
-    //get a Trim_2 functor object
-    Trim_2 trim_2_object() const
-    {
-      return Trim_2();
-    }    
 
     // A utility class that compare a curve-end with a point.
     template <typename Comparer>
