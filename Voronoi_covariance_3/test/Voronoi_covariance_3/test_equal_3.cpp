@@ -1,36 +1,56 @@
 #include <cassert>
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Voronoi_covariance_3/predicates.h>
+
+#include <CGAL/Voronoi_covariance_3/Convex_hull_traits_dual_3.h>
+#include <CGAL/Convex_hull_traits_3.h>
+
+#include "include/to_dual.h"
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef K::Plane_3 Plane;
 
-typedef CGAL::Voronoi_covariance_3::Equal_3_dual_point<K> Equal_3_dual;
+typedef CGAL::Voronoi_covariance_3::Convex_hull_traits_dual_3<K> Hull_traits_dual;
+typedef Hull_traits_dual::Equal_3 Equal_3_dual;
+
+typedef CGAL::Convex_hull_traits_3<K> Hull_traits;
+typedef Hull_traits::Equal_3 Equal_3;
 
 int main (void) {
-    Equal_3_dual equal;
+    Hull_traits_dual traits_dual;
+    Hull_traits traits;
+
+    Equal_3_dual equal_dual = traits_dual.equal_3_object();
+    Equal_3 equal = traits.equal_3_object();
 
     // True test with equal planes
     Plane p(1, 1, 1, 1), q(1, 1, 1, 1);
-    std::cout << equal(p, q) << std::endl;
-    assert(equal(p, q) == true);
+    /* std::cout << equal_dual(p, q) << std::endl; */
+    /* std::cout << equal(to_dual<K>(p), to_dual<K>(q)) << std::endl; */
+    assert(equal_dual(p, q) == true);
+    assert(equal_dual(p, q) == equal(to_dual<K>(p), to_dual<K>(q)));
 
     // True test with planes whose coefficients are multiple of the other
     Plane pp(1, 1, 1, 1), qq(2, 2, 2, 2);
-    std::cout << equal(pp, qq) << std::endl;
-    assert(equal(pp, qq) == true);
+    /* std::cout << equal_dual(pp, qq) << std::endl; */
+    /* std::cout << equal(to_dual<K>(pp), to_dual<K>(qq)) << std::endl; */
+    assert(equal_dual(pp, qq) == true);
+    assert(equal_dual(pp, qq) == equal(to_dual<K>(pp), to_dual<K>(qq)));
 
     // False test with non equal planes
     Plane p2(1, 2, 1, 1), q2(2, 2, 2, 2);
-    std::cout << equal(p2, q2) << std::endl;
-    assert(equal(p2, q2) == false);
+    /* std::cout << equal_dual(p2, q2) << std::endl; */
+    /* std::cout << equal(to_dual<K>(p2), to_dual<K>(q2)) << std::endl; */
+    assert(equal_dual(p2, q2) == false);
+    assert(equal_dual(p2, 2) == equal(to_dual<K>(p2), to_dual<K>(q2)));
 
     // True test using exact computation
     double x = 1.123456789, y = 1.987654321, e=1e-15;
     Plane ppp(x, x, x, x), qqq(y+e, y+e, y+e, y+e);
-    std::cout << equal(ppp, qqq) << std::endl;
-    assert(equal(ppp, qqq) == true);
+    /* std::cout << equal_dual(ppp, qqq) << std::endl; */
+    /* std::cout << equal(to_dual<K>(ppp), to_dual<K>(qqq)) << std::endl; */
+    assert(equal_dual(ppp, qqq) == true);
+    assert(equal_dual(ppp, qqq) == equal(to_dual<K>(ppp), to_dual<K>(qqq)));
 
     return 0;
 }

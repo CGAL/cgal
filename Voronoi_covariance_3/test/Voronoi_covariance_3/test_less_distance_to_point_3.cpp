@@ -1,34 +1,54 @@
 #include <cassert>
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Voronoi_covariance_3/predicates.h>
+
+#include <CGAL/Voronoi_covariance_3/Convex_hull_traits_dual_3.h>
+#include <CGAL/Convex_hull_traits_3.h>
+
+#include "include/to_dual.h"
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef K::Plane_3 Plane;
 
-typedef CGAL::Voronoi_covariance_3::Less_distance_to_point_3_dual_point<K>
-    Less_distance_to_point_3;
+typedef CGAL::Voronoi_covariance_3::Convex_hull_traits_dual_3<K> Hull_traits_dual;
+typedef Hull_traits_dual::Less_distance_to_point_3 Less_distance_to_point_3_dual;
+
+typedef CGAL::Convex_hull_traits_3<K> Hull_traits;
+typedef Hull_traits::Less_distance_to_point_3 Less_distance_to_point_3;
 
 int main () {
-    Less_distance_to_point_3 less_distance_to_point;
+    Hull_traits_dual traits_dual;
+    Hull_traits traits;
+
+    Less_distance_to_point_3_dual less_distance_to_point_dual = traits_dual.less_distance_to_point_3_object();
+    Less_distance_to_point_3 less_distance_to_point = traits.less_distance_to_point_3_object();
 
     Plane p(1, 0, 0, -1), q(3, 0, 0, -1);
     Plane r(2, 0, 0, -1), rr(4, 0, 0, -1);
 
     // True
-    std::cout << less_distance_to_point(p, q, rr) << std::endl;
-    assert(less_distance_to_point(p, q, rr) == true);
+    /* std::cout << less_distance_to_point_dual(p, q, rr) << std::endl; */
+    /* std::cout << less_distance_to_point(to_dual<K>(p), to_dual<K>(q), to_dual<K>(rr)) << std::endl; */
+    assert(less_distance_to_point_dual(p, q, rr) == true);
+    assert(less_distance_to_point_dual(p, q, rr) == less_distance_to_point(to_dual<K>(p), to_dual<K>(q), to_dual<K>(rr)));
 
     // False
-    std::cout << less_distance_to_point(p, q, r) << std::endl;
-    assert(less_distance_to_point(p, q, r) == false);
+    /* std::cout << less_distance_to_point_dual(p, q, r) << std::endl; */
+    /* std::cout << less_distance_to_point(to_dual<K>(p), to_dual<K>(q), to_dual<K>(r)) << std::endl; */
+    assert(less_distance_to_point_dual(p, q, r) == false);
+    assert(less_distance_to_point_dual(p, q, r) == less_distance_to_point(to_dual<K>(p), to_dual<K>(q), to_dual<K>(r)));
 
     // Tests if r is one of the two first points
     // False
-    std::cout << less_distance_to_point(p, q, p) << std::endl;
-    assert(less_distance_to_point(p, q, p) == false);
-    std::cout << less_distance_to_point(p, q, q) << std::endl;
-    assert(less_distance_to_point(p, q, q) == false);
+    /* std::cout << less_distance_to_point_dual(p, q, p) << std::endl; */
+    /* std::cout << less_distance_to_point(to_dual<K>(p), to_dual<K>(q), to_dual<K>(p)) << std::endl; */
+    assert(less_distance_to_point_dual(p, q, p) == false);
+    assert(less_distance_to_point_dual(p, q, p) == less_distance_to_point(to_dual<K>(p), to_dual<K>(q), to_dual<K>(p)));
+
+    /* std::cout << less_distance_to_point_dual(p, q, q) << std::endl; */
+    /* std::cout << less_distance_to_point(to_dual<K>(p), to_dual<K>(q), to_dual<K>(q)) << std::endl; */
+    assert(less_distance_to_point_dual(p, q, q) == false);
+    assert(less_distance_to_point_dual(p, q, q) == less_distance_to_point(to_dual<K>(p), to_dual<K>(q), to_dual<K>(q)));
 
     return 0;
 }

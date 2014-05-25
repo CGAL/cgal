@@ -16,9 +16,6 @@ namespace CGAL
           typedef R_                                     R;
           typedef Convex_hull_traits_base_dual_3<R>      Self;
 
-          // For ch_quickhull_polyhedron
-          typedef typename R::Plane_3 Point_2;
-
           // Dual
           typedef typename R::Plane_3         Point_3;
           typedef Plane_dual<R>               Plane_3;
@@ -146,28 +143,6 @@ namespace CGAL
             : public Convex_hull_traits_base_dual_3<R_>
     {} ;
 
-    // TODO : remove after confirmation it works
-    template <typename Converter>
-        struct Plane_dual_converter : Converter
-    {
-        typedef typename Converter::Source_kernel Source_kernel;
-        typedef typename Converter::Target_kernel Target_kernel;
-
-        typedef typename Convex_hull_traits_base_dual_3<Source_kernel>::Triangle_3
-            Source_triangle;
-
-        typedef typename Convex_hull_traits_base_dual_3<Target_kernel>::Triangle_3
-            Target_triangle;
-
-        Target_triangle
-        operator() (const Source_triangle &t) const
-        {
-            return Target_triangle(Converter::operator()(t.p1),
-                                   Converter::operator()(t.p2),
-                                   Converter::operator()(t.p3));
-        }
-    };
-
     // Converter for dual planes
     template <class K1, class K2>
         struct Cartesian_converter_dual : public CGAL::Cartesian_converter<K1, K2>
@@ -189,7 +164,7 @@ namespace CGAL
         {
             public:
                 // Exact traits is based on the exact kernel.
-                typedef Convex_hull_traits_dual_3<typename R_::Exact_kernel>
+                typedef Convex_hull_traits_dual_3<typename R_::Exact_kernel_rt>
                     Exact_traits;
 
                 // Filtering traits is based on the filtering kernel.
@@ -197,37 +172,33 @@ namespace CGAL
                     Filtering_traits;
 
                 // Converters
-                typedef typename R_::C2E C2E;
-                typedef typename R_::C2F C2F;
-
-                typedef Cartesian_converter_dual<R_, typename R_::Exact_kernel> Converter_exact_dual;
-
+                typedef Cartesian_converter_dual<R_, typename R_::Exact_kernel_rt> Converter_exact_dual;
                 typedef Cartesian_converter_dual<R_, typename R_::Approximate_kernel> Converter_approx_dual;
 
                 // Filtered predicates
                 typedef Filtered_predicate<
                     typename Exact_traits::Equal_3,
                     typename Filtering_traits::Equal_3,
-                    C2E,
-                    C2F > Equal_3;
+                    Converter_exact_dual ,
+                    Converter_approx_dual > Equal_3;
 
                 typedef Filtered_predicate<
                     typename Exact_traits::Collinear_3,
                     typename Filtering_traits::Collinear_3,
-                    C2E,
-                    C2F > Collinear_3;
+                    Converter_exact_dual,
+                    Converter_approx_dual > Collinear_3;
 
                 typedef Filtered_predicate<
                     typename Exact_traits::Coplanar_3,
                     typename Filtering_traits::Coplanar_3,
-                    C2E,
-                    C2F > Coplanar_3;
+                    Converter_exact_dual,
+                    Converter_approx_dual > Coplanar_3;
 
                 typedef Filtered_predicate<
                     typename Exact_traits::Less_distance_to_point_3,
                     typename Filtering_traits::Less_distance_to_point_3,
-                    C2E,
-                    C2F > Less_distance_to_point_3;
+                    Converter_exact_dual,
+                    Converter_approx_dual > Less_distance_to_point_3;
 
                 typedef Filtered_predicate<
                     typename Exact_traits::Has_on_positive_side_3,
@@ -272,3 +243,4 @@ namespace CGAL
 } // namespace CGAL
 
 #endif // CGAL_CONVEX_HULL_TRAITS_DUAL_3_H
+

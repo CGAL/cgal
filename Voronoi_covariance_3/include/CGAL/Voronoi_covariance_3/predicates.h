@@ -144,7 +144,7 @@ namespace CGAL
                         // Compute the normal to the plane
                         RT alpha = (p1.d() * p2.b() - p2.d() * p1.b()) *
                             (p1.d() * p3.c() - p3.d() * p1.c()) -
-                            (p1.d() * p2.d() - p2.d() * p1.c()) *
+                            (p1.d() * p2.c() - p2.d() * p1.c()) *
                             (p1.d() * p3.b() - p3.d() * p1.b());
 
                         RT beta  = (p1.d() * p2.c() - p2.d() * p1.c()) *
@@ -187,9 +187,9 @@ namespace CGAL
                         RT diffbpq = p.b() * q.d() - q.b() * p.d();
                         RT diffcpq = p.c() * q.d() - q.c() * p.d();
 
-                        RT diffapr = p.a() * r.d() - r.a() * r.d();
-                        RT diffbpr = p.b() * r.d() - r.b() * r.d();
-                        RT diffcpr = p.c() * r.d() - r.c() * r.d();
+                        RT diffapr = p.a() * r.d() - r.a() * p.d();
+                        RT diffbpr = p.b() * r.d() - r.b() * p.d();
+                        RT diffcpr = p.c() * r.d() - r.c() * p.d();
 
                         RT distpq = diffapq * diffapq +
                             diffbpq * diffbpq +
@@ -224,7 +224,7 @@ namespace CGAL
                         // Compute the normal to the plane
                         RT alpha = (p1.d() * p2.b() - p2.d() * p1.b()) *
                             (p1.d() * p3.c() - p3.d() * p1.c()) -
-                            (p1.d() * p2.d() - p2.d() * p1.c()) *
+                            (p1.d() * p2.c() - p2.d() * p1.c()) *
                             (p1.d() * p3.b() - p3.d() * p1.b());
 
                         RT beta  = (p1.d() * p2.c() - p2.d() * p1.c()) *
@@ -267,7 +267,7 @@ namespace CGAL
                         // Compute the normal to the plane
                         RT alpha = (p1.d() * p2.b() - p2.d() * p1.b()) *
                             (p1.d() * p3.c() - p3.d() * p1.c()) -
-                            (p1.d() * p2.d() - p2.d() * p1.c()) *
+                            (p1.d() * p2.c() - p2.d() * p1.c()) *
                             (p1.d() * p3.b() - p3.d() * p1.b());
 
                         RT beta  = (p1.d() * p2.c() - p2.d() * p1.c()) *
