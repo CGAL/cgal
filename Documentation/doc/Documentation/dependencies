@@ -62,6 +62,7 @@ TDS_3
 Triangulation_3
 Ridges_3
 Point_set_processing_3
+Point_set_shape_detection_3
 Property_map
 Kinetic_framework
 Kinetic_data_structures
