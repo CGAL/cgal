@@ -18,6 +18,8 @@
 
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
+#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
+#include <CGAL/boost/graph/properties_Polyhedron_3.h>
 
 #include <CGAL/Random.h>
 #include <CGAL/point_generators_3.h>
@@ -68,7 +70,7 @@ boost::tuple<std::size_t, std::size_t, std::size_t, long> test(const char* name)
   typedef typename K::Segment_3 Segment;
   typedef CGAL::Polyhedron_3<K> Polyhedron;
 
-  typedef CGAL::AABB_face_graph_triangle_primitive<const Polyhedron> Primitive;
+  typedef CGAL::AABB_face_graph_triangle_primitive<Polyhedron> Primitive;
   typedef CGAL::AABB_traits<K, Primitive> Traits;
   typedef CGAL::AABB_tree<Traits> Tree;
 
@@ -112,7 +114,7 @@ boost::tuple<std::size_t, std::size_t, std::size_t, long> test(const char* name)
     segments.push_back(Segment(points[i], points[j]));
   }
 
-  Tree tree(polyhedron.facets_begin(), polyhedron.facets_end(), polyhedron);
+  Tree tree(faces(polyhedron).first, faces(polyhedron).second, polyhedron);
 
   // filter all primitives that do not intersect
 
