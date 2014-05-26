@@ -25,6 +25,8 @@
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/properties.hpp>
 
+#include <CGAL/Triangulation_2.h>
+
 // The functions and classes in this file allows the user to
 // treat a CGAL Triangulation_2 object as a boost graph "as is". No
 // wrapper is needed for the Triangulation_2 object.

@@ -68,8 +68,6 @@ namespace CGAL {
   enum get_cost_policy_params_t      { get_cost_policy_params      } ;
   enum get_placement_policy_t        { get_placement_policy        } ;
   enum get_placement_policy_params_t { get_placement_policy_params } ;
-  enum edge_is_constrained_t         { edge_is_constrained        } ;
-  enum edge_is_constrained_params_t  { edge_is_constrained_params } ;
   
 #if BOOST_VERSION >= 105100
   template <typename T, typename Tag, typename Base = boost::no_property>
@@ -113,13 +111,13 @@ namespace CGAL {
       return Params(p, *this);
     }
     
-    template <typename IsBorderMap>
-    cgal_bgl_named_params<IsBorderMap, edge_is_border_t, self>
-    edge_is_border_map(const IsBorderMap& p) const 
-    {
-      typedef cgal_bgl_named_params<IsBorderMap, edge_is_border_t, self> Params;
-      return Params(p, *this);
-    }
+    // template <typename IsBorderMap>
+    // cgal_bgl_named_params<IsBorderMap, edge_is_border_t, self>
+    // edge_is_border_map(const IsBorderMap& p) const 
+    // {
+    //   typedef cgal_bgl_named_params<IsBorderMap, edge_is_border_t, self> Params;
+    //   return Params(p, *this);
+    // }
 
     template <typename Visitor>
     cgal_bgl_named_params<Visitor, boost::graph_visitor_t, self>
@@ -167,22 +165,6 @@ namespace CGAL {
     {
       typedef cgal_bgl_named_params<GetPlacementParams, get_placement_policy_params_t, self> Params;
       return Params(p, *this);
-    }
-
-    template <typename EdgeIsConstrained>
-    cgal_bgl_named_params<EdgeIsConstrained, edge_is_constrained_t, self>
-    edge_is_constrained_map(const EdgeIsConstrained& em) const
-    {
-      typedef cgal_bgl_named_params<EdgeIsConstrained, edge_is_constrained_t, self> Params;
-      return Params(em, *this);
-    }
-
-    template <typename EdgeIsConstrainedParams>
-    cgal_bgl_named_params<EdgeIsConstrainedParams, edge_is_constrained_params_t, self>
-    edge_is_constrained_map_params(const EdgeIsConstrainedParams& em) const
-    {
-      typedef cgal_bgl_named_params<EdgeIsConstrainedParams, edge_is_constrained_params_t, self> Params;
-      return Params(em, *this);
     }
   };
 #else
@@ -234,10 +216,10 @@ namespace CGAL {
     }
     
     template <typename IsBorderMap>
-    cgal_bgl_named_params<IsBorderMap, edge_is_border_t, self>
-    edge_is_border_map(const IsBorderMap& p) const 
+    cgal_bgl_named_params<IsBorderMap, halfedge_is_border_t, self>
+    halfedge_is_border_map(const IsBorderMap& p) const 
     {
-      typedef cgal_bgl_named_params<IsBorderMap, edge_is_border_t, self> Params;
+      typedef cgal_bgl_named_params<IsBorderMap, halfedge_is_border_t, self> Params;
       return Params(p, *this);
     }
 
@@ -288,22 +270,6 @@ namespace CGAL {
       typedef cgal_bgl_named_params<GetPlacementParams, get_placement_policy_params_t, self> Params;
       return Params(p, *this);
     }
-
-    template <typename EdgeIsConstrained>
-    cgal_bgl_named_params<EdgeIsConstrained, edge_is_constrained_t, self>
-    edge_is_constrained_map(const EdgeIsConstrained& em) const
-    {
-      typedef cgal_bgl_named_params<EdgeIsConstrained, edge_is_constrained_t, self> Params;
-      return Params(em, *this);
-    }
-
-    template <typename EdgeIsConstrainedParams>
-    cgal_bgl_named_params<EdgeIsConstrainedParams, edge_is_constrained_params_t, self>
-    edge_is_constrained_map_params(const EdgeIsConstrainedParams& em) const
-    {
-      typedef cgal_bgl_named_params<EdgeIsConstrainedParams, edge_is_constrained_params_t, self> Params;
-      return Params(em, *this);
-    }
   };
 
   template <class Tag1, class Tag2, class T1, class Base>
@@ -353,10 +319,10 @@ namespace CGAL {
   }
   
   template <typename IsBorderMap>
-  cgal_bgl_named_params<IsBorderMap, edge_is_border_t>
-  edge_is_border_map(IsBorderMap const& p) 
+  cgal_bgl_named_params<IsBorderMap, halfedge_is_border_t>
+  halfedge_is_border_map(IsBorderMap const& p) 
   {
-    typedef cgal_bgl_named_params<IsBorderMap, edge_is_border_t> Params;
+    typedef cgal_bgl_named_params<IsBorderMap, halfedge_is_border_t> Params;
     return Params(p);
   }
   
@@ -406,22 +372,6 @@ namespace CGAL {
   {
     typedef cgal_bgl_named_params<GetPlacementParams, get_placement_policy_params_t> Params;
     return Params(p);
-  }
-
-  template <typename EdgeIsConstrained>
-  cgal_bgl_named_params<EdgeIsConstrained, edge_is_constrained_t>
-  edge_is_constrained_map(const EdgeIsConstrained& em)
-  {
-    typedef cgal_bgl_named_params<EdgeIsConstrained, edge_is_constrained_t> Params;
-    return Params(em);
-  }
-
-  template <typename EdgeIsConstrainedParams>
-  cgal_bgl_named_params<EdgeIsConstrainedParams, edge_is_constrained_params_t>
-  edge_is_constrained_map_params(const EdgeIsConstrainedParams& em)
-  {
-    typedef cgal_bgl_named_params<EdgeIsConstrainedParams, edge_is_constrained_params_t> Params;
-    return Params(em);
   }
 } //namespace CGAL
 

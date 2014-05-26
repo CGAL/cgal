@@ -60,23 +60,33 @@ template < class FaceGraph,
            class CacheDatum=Tag_false >
 class AABB_face_graph_triangle_primitive
 #ifndef DOXYGEN_RUNNING
-: public AABB_primitive<  typename boost::mpl::if_<
-                            typename boost::is_const<FaceGraph>::type,
-                            typename FaceGraph::Facet_const_handle,
-                            typename FaceGraph::Facet_handle
-                           >::type,
-                         Triangle_from_facet_handle_property_map<FaceGraph>,
-                         One_point_from_facet_handle_property_map<FaceGraph>,
-                         OneFaceGraphPerTree,
-                         CacheDatum >
+: public AABB_primitive<typename boost::mpl::if_<
+                          typename boost::is_const<FaceGraph>::type,
+                          typename FaceGraph::Facet_const_handle,
+                          typename FaceGraph::Facet_handle
+                          >::type,
+                        Triangle_from_facet_handle_property_map<
+                          FaceGraph,
+                          typename Default::Get<VertexPointPMap,
+                                                typename boost::property_map< FaceGraph,
+                                                                              vertex_point_t>::type >::type>,
+                        One_point_from_facet_handle_property_map<
+                          FaceGraph,
+                          typename Default::Get<VertexPointPMap,
+                                                typename boost::property_map< FaceGraph,
+                                                                              vertex_point_t>::type >::type>,
+                        OneFaceGraphPerTree,
+                        CacheDatum >
 #endif
 {
+  typedef typename Default::Get<VertexPointPMap, typename boost::property_map< FaceGraph, vertex_point_t>::type >::type VertexPointPMap_;
+
   typedef typename boost::mpl::if_<
                           typename boost::is_const<FaceGraph>::type,
                           typename FaceGraph::Facet_const_handle,
                           typename FaceGraph::Facet_handle >::type  Id_;
-  typedef Triangle_from_facet_handle_property_map<FaceGraph>  Triangle_property_map;
-  typedef One_point_from_facet_handle_property_map<FaceGraph> Point_property_map;
+  typedef Triangle_from_facet_handle_property_map<FaceGraph,VertexPointPMap_>  Triangle_property_map;
+  typedef One_point_from_facet_handle_property_map<FaceGraph,VertexPointPMap_> Point_property_map;
 
   typedef AABB_primitive< Id_,
                           Triangle_property_map,
@@ -91,7 +101,7 @@ public:
   /*!
   The point type.
   */
-  typedef boost::property_traits< boost::property_map< FaceGraph, vertex_point_t>::type >::value_type Point;
+  typedef boost::property_traits<VertexPointPMap>::value_type Point;
   /*!
   Geometric data type.
   */
@@ -114,10 +124,28 @@ public:
     Constructs a primitive.
   */
   template <class Iterator>
+  AABB_face_graph_triangle_primitive(Iterator it, FaceGraph& graph, VertexPointPMap vppm)
+    : Base( Id_(*it),
+            Triangle_property_map(&graph,vppm),
+            Point_property_map(&graph,vppm) )
+  {}
+
+#ifndef DOXYGEN_RUNNING
+  template <class Iterator>
   AABB_face_graph_triangle_primitive(Iterator it, FaceGraph& graph)
-    : Base( Id_(it),
+    : Base( Id_(*it),
             Triangle_property_map(&graph),
-            Point_property_map(&graph) ){}
+            Point_property_map(&graph) )
+  {}
+#if 0
+  // for backward compatibility with Polyhedron::facets_begin()
+  AABB_face_graph_triangle_primitive(typename boost::graph_traits<FaceGraph>::face_descriptor fd, FaceGraph& graph)
+    : Base( Id_(fd),
+            Triangle_property_map(&graph),
+            Point_property_map(&graph) )
+  {}
+#endif
+#endif
 
   /// \internal
   typedef internal::Cstr_shared_data<FaceGraph, Base, Triangle_property_map, Point_property_map, OneFaceGraphPerTree> Cstr_shared_data;
