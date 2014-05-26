@@ -45,10 +45,21 @@ EdgeCollapse<M,SP,VIM,EIM,EBM,ECTM,CF,PF,V>::EdgeCollapse( ECM&                 
   ,Get_cost           (aGet_cost)
   ,Get_placement      (aGet_placement)
   ,Visitor            (aVisitor)
+  ,m_has_border       (false)
 {
   const FT cMaxDihedralAngleCos = std::cos( 1.0 * CGAL_PI / 180.0 ) ;
   
   mcMaxDihedralAngleCos2 = cMaxDihedralAngleCos * cMaxDihedralAngleCos ;
+
+  undirected_edge_iterator eb, ee ;
+  for ( boost::tie(eb,ee) = undirected_edges(mSurface); eb!=ee; ++eb )
+    {
+      edge_descriptor ed = *eb;
+      if(is_border(ed)){
+        m_has_border = true;
+        break;
+      }
+    }
   
   CGAL_ECMS_TRACE(0,"EdgeCollapse of ECM with " << (num_edges(aSurface)/2) << " edges" ); 
   
@@ -59,7 +70,6 @@ EdgeCollapse<M,SP,VIM,EIM,EBM,ECTM,CF,PF,V>::EdgeCollapse( ECM&                 
     for ( boost::tie(vb,ve) = boost::vertices(mSurface) ; vb != ve ; ++ vb )  
       CGAL_ECMS_TRACE(1, vertex_to_string(*vb) ) ;
       
-    undirected_edge_iterator eb, ee ;
     for ( boost::tie(eb,ee) = undirected_edges(mSurface); eb!=ee; ++eb )
       CGAL_ECMS_TRACE(1, edge_to_string(*eb) ) ;
 #endif
@@ -395,7 +405,7 @@ bool EdgeCollapse<M,SP,VIM,EIM,EBM,ECTM,CF,PF,V>::Is_collapse_topologically_vali
             if ( lIsFace )
             {
               // Is k_v1 the halfedge bounding the face 'k-v1-v0'?
-              if ( !k_v1->is_border() && k_v1->next()->vertex() == aProfile.v0() )
+              if ( ! is_border(k_v1) && k_v1->next()->vertex() == aProfile.v0() )
               {
                 CGAL_SURF_SIMPL_TEST_assertion( !k_v1->is_border() ) ;
                 CGAL_SURF_SIMPL_TEST_assertion(  k_v1                ->vertex() == aProfile.v1() ) ;
