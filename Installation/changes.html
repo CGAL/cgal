@@ -112,6 +112,7 @@ and <code>src/</code> directories).
 <h2 id="release4.5">Release 4.5 </h2>
 <div>
   <p>Release date: September 2014 </p>
+
   <h3>Installation</h3>
   <ul>
     <li>Changes in the set of supported platforms:
@@ -121,7 +122,14 @@ and <code>src/</code> directories).
       </ul>
     </li>
   </ul>
-  <h3>Snap_rounding_2</h3>
+
+  <h3>2D Arrangements</h3>
+  <ul>
+    <li>Fixed a bug in removing an unbounded curve (e.g., a ray) from
+      an arrangement induced by unbounded curves.</li>
+  </ul>
+
+  <h3>2D Snap Rounding</h3>
   <ul>
     <li> Replaced use of private <code>kd_tree</code> with CGAL's official <code>Kd_tree</code> from <code>Spatial_searching</code> package;
       results in a small performance gain. Removed the private <code>kd_tree</code> package.
