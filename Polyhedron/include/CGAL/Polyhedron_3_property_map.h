@@ -32,31 +32,31 @@
 namespace CGAL{
 
 //property map
-template <class Polyhedron,
+template <class FaceGraph,
            class VertexPointPMap >
 struct Triangle_from_facet_handle_property_map{  
-  typename boost::remove_const<Polyhedron>::type* g;
+  typename boost::remove_const<FaceGraph>::type* m_graph;
   VertexPointPMap m_vppm;
 
   Triangle_from_facet_handle_property_map()
   {}
 
-  Triangle_from_facet_handle_property_map(Polyhedron* p)
-    : g( const_cast<typename boost::remove_const<Polyhedron>::type*>(p) ),
-      m_vppm( get(vertex_point, *g) )
+  Triangle_from_facet_handle_property_map(FaceGraph* g)
+    : m_graph( const_cast<typename boost::remove_const<FaceGraph>::type*>(g) ),
+      m_vppm( get(vertex_point, *m_graph) )
   {}
 
-  Triangle_from_facet_handle_property_map(Polyhedron* g,
+  Triangle_from_facet_handle_property_map(FaceGraph* g,
                                           VertexPointPMap vppm )
-    : g(const_cast<typename boost::remove_const<Polyhedron>::type*>(g)),
+    : m_graph(const_cast<typename boost::remove_const<FaceGraph>::type*>(g)),
       m_vppm(vppm)
   {}
 
   typedef typename boost::property_traits< VertexPointPMap >::value_type Point_3;
   typedef typename Kernel_traits<Point_3>::Kernel::Triangle_3 Triangle_3;
-  //classical typedefs
  
-  typedef typename boost::graph_traits<Polyhedron>::face_descriptor key_type;
+  //classical typedefs
+  typedef typename boost::graph_traits<FaceGraph>::face_descriptor key_type;
   typedef Triangle_3 value_type;
   typedef value_type reference;
   typedef boost::readable_property_map_tag category;
@@ -64,16 +64,17 @@ struct Triangle_from_facet_handle_property_map{
   //get function for property map
   inline friend
   Triangle_3
-  get(const Triangle_from_facet_handle_property_map<Polyhedron,VertexPointPMap>& m,
-      typename Triangle_from_facet_handle_property_map<Polyhedron,VertexPointPMap>::key_type f)
+  get(const Triangle_from_facet_handle_property_map<FaceGraph,VertexPointPMap>& pmap,
+      typename Triangle_from_facet_handle_property_map<FaceGraph,VertexPointPMap>::key_type f)
   {
     typedef typename boost::property_traits< VertexPointPMap >::value_type Point_3;
     typedef typename Kernel_traits<Point_3>::Kernel::Triangle_3 Triangle_3;
+    typename boost::remove_const<FaceGraph>::type & g = *(pmap.m_graph);
 
-    CGAL_precondition(halfedge(f,*m.g) == next(next(next(halfedge(f,*m.g),*m.g),*m.g),*m.g));
-    const Point_3& a = get(m.m_vppm, target(halfedge(f,*m.g),*m.g));
-    const Point_3& b = get(m.m_vppm, target(next(halfedge(f,*m.g),*m.g),*m.g));
-    const Point_3& c = get(m.m_vppm,target(next(next(halfedge(f,*m.g),*m.g),*m.g),*m.g));
+    CGAL_precondition(halfedge(f,g) == next(next(next(halfedge(f,g),g),g),g));
+    const Point_3& a = get(pmap.m_vppm, target(halfedge(f,g),g));
+    const Point_3& b = get(pmap.m_vppm, target(next(halfedge(f,g),g),g));
+    const Point_3& c = get(pmap.m_vppm,target(next(next(halfedge(f,g),g),g),g));
  
     return Triangle_3(a,b,c);
   }
@@ -92,11 +93,10 @@ Segment_from_edge_descriptor_property_map(HalfedgeGraph* g)
     m_vppm( get(vertex_point, *m_graph) )
   {}
 
-  Segment_from_edge_descriptor_property_map(
-    HalfedgeGraph* g,
-    VertexPointPMap vppm ) :
-  m_graph( const_cast<typename boost::remove_const<HalfedgeGraph>::type*>(g) ),
-  m_vppm(vppm)
+  Segment_from_edge_descriptor_property_map(HalfedgeGraph* g,
+                                            VertexPointPMap vppm )
+    : m_graph( const_cast<typename boost::remove_const<HalfedgeGraph>::type*>(g) ),
+      m_vppm(vppm)
   {}
 
   //classical typedefs
@@ -125,26 +125,26 @@ Segment_from_edge_descriptor_property_map(HalfedgeGraph* g)
 };
 
 //property map to access a point from a facet handle
-template <class Polyhedron,
+template <class FaceGraph,
           class VertexPointPMap>
 struct One_point_from_facet_handle_property_map{
 
-  One_point_from_facet_handle_property_map(Polyhedron* g = NULL)
-    : m_graph( const_cast<typename boost::remove_const<Polyhedron>::type*>(g) )
+  One_point_from_facet_handle_property_map(FaceGraph* g = NULL)
+    : m_graph( const_cast<typename boost::remove_const<FaceGraph>::type*>(g) )
   {}
 
-template <class Polyhedron,
+template <class FaceGraph,
           class VertexPointPMap>
-  One_point_from_facet_handle_property_map(Polyhedron* gm, VertexPointPMap vppm )
-    : m_graph( const_cast<typename boost::remove_const<Polyhedron>::type*>(g) ),
+  One_point_from_facet_handle_property_map(FaceGraph* gm, VertexPointPMap vppm )
+    : m_graph( const_cast<typename boost::remove_const<FaceGraph>::type*>(g) ),
       m_vppm(vppm)
   {}
 
-  typename boost::remove_const<Polyhedron>::type* m_graph;
+  typename boost::remove_const<FaceGraph>::type* m_graph;
   VertexPointPMap m_vppm;
 
   //classical typedefs
-  typedef typename boost::graph_traits<Polyhedron>::face_descriptor key_type;
+  typedef typename boost::graph_traits<FaceGraph>::face_descriptor key_type;
   typedef typename boost::property_traits< VertexPointPMap >::value_type value_type;
   typedef const value_type& reference;
   typedef boost::lvalue_property_map_tag category;
@@ -152,7 +152,7 @@ template <class Polyhedron,
   //get function for property map
   inline friend
   reference
-  get(const One_point_from_facet_handle_property_map<Polyhedron,VertexPointPMap>& m,
+  get(const One_point_from_facet_handle_property_map<FaceGraph,VertexPointPMap>& m,
       key_type f)
   {
     return get(m.m_vppm, target(halfedge(f, *m.m_graph), *m.m_graph));
