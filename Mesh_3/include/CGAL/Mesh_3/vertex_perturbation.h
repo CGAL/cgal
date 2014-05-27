@@ -476,13 +476,6 @@ protected:
       || Th().inside_protecting_balls(c3t3.triangulation(), v, final_loc))
       return std::make_pair(false,v);
 
-    // CJTODO TEST
-    if (could_lock_zone && !helper.try_lock_point(final_loc))
-    {
-      *could_lock_zone = false;
-      return std::make_pair(false,v);
-    }
-       
     // we know that there will be a combinatorial change
     return helper.update_mesh_topo_change(final_loc,
                                           v,
@@ -1243,13 +1236,6 @@ private:
       if(Th().inside_protecting_balls(c3t3.triangulation(), 
                                       moving_vertex, new_location))
         continue;
-
-      // CJTODO TEST
-      if (could_lock_zone && !helper.try_lock_point(new_location))
-      {
-        *could_lock_zone = false;
-        return std::make_pair(false,v);
-      }
 
       // try to move vertex
       std::vector<Vertex_handle> tmp_mod_vertices;
