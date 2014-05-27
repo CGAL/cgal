@@ -661,12 +661,33 @@ private:
   }
 
   inline void
+  compute_pps_nonendp_nonhv_nonsamec
+  (const Site_2& p, const Site_2& q, const Site_2& r)
+  {
+    Line_2 l = compute_supporting_line(r);
+    if (oriented_side_of_line(l, p.point()) == NEGATIVE) {
+      l = opposite_line(l);
+    }
+    CGAL_assertion(oriented_side_of_line(l, p.point()) == POSITIVE);
+    CGAL_assertion(oriented_side_of_line(l, q.point()) == POSITIVE);
+    const Line_2 ltest1(+1, +1, 0);
+    CGAL_assertion(oriented_side_of_line(ltest1, Point_2(1,1)) == POSITIVE);
+    const Line_2 ltest2(-1, -1, 4);
+    CGAL_assertion(oriented_side_of_line(ltest2, Point_2(1,1)) == POSITIVE);
+    const Line_2 ltest3(-1, +1, +1);
+    CGAL_assertion(oriented_side_of_line(ltest3, Point_2(1,1)) == POSITIVE);
+    const Line_2 ltest4(1, -1, +1);
+    CGAL_assertion(oriented_side_of_line(ltest4, Point_2(1,1)) == POSITIVE);
+    return compute_pps_bisectors(p, q, r);
+  }
+
+  inline void
   compute_pps_nonendp_nonhv(const Site_2& p, const Site_2& q, const Site_2& r)
   {
     const bool samexpq = scmpx(p, q) == EQUAL;
     const bool sameypq = (samexpq)? false : make_certain(scmpy(p, q) == EQUAL);
     if (not (samexpq or sameypq)) {
-      return compute_pps_bisectors(p, q, r);
+      return compute_pps_nonendp_nonhv_nonsamec(p, q, r);
     } else {
       // samexpq or sameypq
       CGAL_assertion(samexpq != sameypq);
