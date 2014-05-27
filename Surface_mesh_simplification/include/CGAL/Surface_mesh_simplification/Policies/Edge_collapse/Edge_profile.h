@@ -35,11 +35,7 @@ class Edge_profile
 public:
 
   typedef ECM_ ECM ;
-  
-  typedef boost::graph_traits<ECM const> ConstGraphTraits ;
-  typedef boost::graph_traits<ECM>       GraphTraits ;
-  
-  typedef typename ConstGraphTraits::vertex_descriptor const_vertex_descriptor ;
+    typedef boost::graph_traits<ECM>       GraphTraits ;
   
   typedef typename GraphTraits::vertex_descriptor vertex_descriptor ;
   typedef typename GraphTraits::halfedge_descriptor   halfedge_descriptor ;

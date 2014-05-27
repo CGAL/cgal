@@ -550,9 +550,9 @@ void LindstromTurkCore<ECM,K>::Add_constraint_from_gradient ( Matrix const& H, V
         
         CGAL_assertion( A0 != NULL_VECTOR ) ;
         
-        Vector AbsA0( CGAL_NTS abs(A0.x())
-                    , CGAL_NTS abs(A0.y())
-                    , CGAL_NTS abs(A0.z())
+        Vector AbsA0( CGAL::abs(A0.x())
+                      , CGAL::abs(A0.y())
+                      , CGAL::abs(A0.z())
                     );
            
         Vector Q0;      

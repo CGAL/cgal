@@ -61,7 +61,7 @@ Edge_profile<ECM>::Edge_profile ( halfedge_descriptor  const& aV0V1
   
   if ( left_face_exists() ) 
   {
-    CGAL_SURF_SIMPL_TEST_assertion( !mV0V1->is_border() ) ;
+    CGAL_SURF_SIMPL_TEST_assertion( ! is_border(mV0V1) ) ;
 
     mVLV0 = prev(v0_v1(),surface_mesh());
     mV1VL = next(v0_v1(),surface_mesh());
@@ -72,12 +72,12 @@ Edge_profile<ECM>::Edge_profile ( halfedge_descriptor  const& aV0V1
   }
   else
   {
-    CGAL_SURF_SIMPL_TEST_assertion( mV0V1->is_border() ) ;
+    CGAL_SURF_SIMPL_TEST_assertion( is_border(mV0V1) ) ;
   }
   
   if ( right_face_exists() )
   {
-    CGAL_SURF_SIMPL_TEST_assertion( !mV1V0->is_border() ) ;
+    CGAL_SURF_SIMPL_TEST_assertion( ! is_border(mV1V0) ) ;
 
     mV0VR = next(v1_v0(),surface_mesh());
     mVRV1 = prev(v1_v0(),surface_mesh());
@@ -88,7 +88,7 @@ Edge_profile<ECM>::Edge_profile ( halfedge_descriptor  const& aV0V1
   }
   else
   {
-    CGAL_SURF_SIMPL_TEST_assertion( mV1V0->is_border() ) ;
+    CGAL_SURF_SIMPL_TEST_assertion( is_border(mV1V0) ) ;
   }
   
   if(has_border){

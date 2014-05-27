@@ -62,24 +62,24 @@ An external property map can be easily obtained by calling
 `get(vertex_external_index,surface_mesh)`. This constructs on the fly, and returns, 
 a property map which non-intrusively associates a proper id with each vertex. 
 
-\cgalHeading{edge_index_map(EdgeIndexMap eim)}
+\cgalHeading{halfedge_index_map(HalfedgeIndexMap eim)}
 
-Maps each <I>directed</I> edge in the surface mesh into an unsigned integer number 
-in the range `[0,num_edges(surface_mesh))`. 
+Maps each halfedge in the surface mesh into an unsigned integer number 
+in the range `[0,num_halfedges(surface_mesh))`. 
 
-`EdgeIndexMap` must be a model of
+`HalfedgeIndexMap` must be a model of
 `ReadablePropertyMap` whose `key_type` is 
-`boost::graph_traits<EdgeCollapsableSurfaceMesh const>::%edge_descriptor` 
-and whose `value_type` is 
+`boost::graph_traits<EdgeCollapsableSurfaceMesh const>::%halfedge_descriptor` 
+with value type 
 `boost::graph_traits<EdgeCollapsableSurfaceMesh>::%size_type` 
 
-<B>%Default</B>: the property map obtained by calling `get(edge_index,surface_mesh)`, 
+<B>%Default</B>: the property map obtained by calling `get(halfedge_index,surface_mesh)`, 
 which requires the surface mesh edges to have an `id()` member properly initialized to the 
 require value. 
 
 If the edges don't have such an `id()`, you must pass some property map explicitly. 
 An external property map can be easily obtained by calling 
-`get(edge_external_index,surface_mesh)`. This constructs on the fly, and returns, 
+`get(halfedge_external_index,surface_mesh)`. This constructs on the fly, and returns, 
 a property map which non-intrusively associates a proper id with each edge. 
 
 \cgalHeading{edge_is_border_map(EdgeIsBorderMap ebm)}
@@ -96,12 +96,12 @@ and whose `value_type` is `bool`.
 
 \cgalHeading{edge_is_constrained_map(EdgeIsConstrainedMap ecm)}
 
-Maps each <I>undirected</I> edge in the surface mesh into a Boolean value
+Maps each edge in the surface mesh into a Boolean value
 which indicates if the edge is constrained.
 `EdgeIsConstrainedMap` must be a model
 `ReadablePropertyMap` whose `key_type` is
 `boost::graph_traits<EdgeCollapsableSurfaceMesh const>::%edge_descriptor`
-and whose `value_type` is `bool`.
+with value type `bool`.
 
 \attention If this parameter is provided, `surface_mesh` must be a model of the
 `EdgeCollapsableSurfaceMeshWithConstraints` concept.

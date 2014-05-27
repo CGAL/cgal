@@ -73,11 +73,11 @@ halfedge_collapse( typename boost::graph_traits< Polyhedron_3<Gt,I,HDS,A> >::hal
   bool lTopFaceExists         = !pq->is_border() ;
   bool lBottomFaceExists      = !qp->is_border() ;
 
-  CGAL_precondition( !lTopFaceExists    || (lTopFaceExists    && ( target(pt,aSurface)->vertex_degree() > 2 ) ) ) ;
-  CGAL_precondition( !lBottomFaceExists || (lBottomFaceExists && ( target(qb,aSurface)->vertex_degree() > 2 ) ) ) ;
+  CGAL_precondition( !lTopFaceExists    || (lTopFaceExists    && ( degree(target(pt,aSurface),aSurface) > 2 ) ) ) ;
+  CGAL_precondition( !lBottomFaceExists || (lBottomFaceExists && ( degree(target(qb,aSurface),aSurface) > 2 ) ) ) ;
 
-  vertex_descriptor q = pq->vertex();
-  vertex_descriptor p = pq->opposite()->vertex();
+  vertex_descriptor q = target(pq,aSurface);
+  vertex_descriptor p = source(pq,aSurface);
 
   CGAL_ECMS_TRACE(3, "Collapsing p-q E" << pq->id() << " (V" << p->id() << "->V" << q->id() << ")" ) ;
 
