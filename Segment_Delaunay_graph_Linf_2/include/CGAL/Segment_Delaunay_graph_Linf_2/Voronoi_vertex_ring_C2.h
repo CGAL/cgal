@@ -670,14 +670,6 @@ private:
     }
     CGAL_assertion(oriented_side_of_line(l, p.point()) == POSITIVE);
     CGAL_assertion(oriented_side_of_line(l, q.point()) == POSITIVE);
-    const Line_2 ltest1(+1, +1, 0);
-    CGAL_assertion(oriented_side_of_line(ltest1, Point_2(1,1)) == POSITIVE);
-    const Line_2 ltest2(-1, -1, 4);
-    CGAL_assertion(oriented_side_of_line(ltest2, Point_2(1,1)) == POSITIVE);
-    const Line_2 ltest3(-1, +1, +1);
-    CGAL_assertion(oriented_side_of_line(ltest3, Point_2(1,1)) == POSITIVE);
-    const Line_2 ltest4(1, -1, +1);
-    CGAL_assertion(oriented_side_of_line(ltest4, Point_2(1,1)) == POSITIVE);
     return compute_pps_bisectors(p, q, r);
   }
 
