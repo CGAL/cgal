@@ -30,7 +30,7 @@ typedef FT (Function)(const Point&);
 
 // Domain
 typedef CGAL::Mesh_3::Implicit_to_labeled_function_wrapper<Function, K> Wrapper;
-typedef CGAL::Periodic_implicit_mesh_domain_3<Wrapper, K>                 Periodic_mesh_domain;
+typedef CGAL::Periodic_implicit_mesh_domain_3<Function, K, Wrapper>                 Periodic_mesh_domain;
 
 // Triangulation
 typedef CGAL::Mesh_3_periodic_triangulation_3_generator<Periodic_mesh_domain>::type Mesh_3_periodic_triangulation_3;
@@ -76,8 +76,7 @@ int main(int argc, char** argv)
 //  funcs.push_back(&sphere_function_1);
 //  funcs.push_back(&sphere_function_2);
 //  Periodic_mesh_domain domain(Wrapper(funcs, "--"), CGAL::Bbox_3(0, 0, 0, domain_size, domain_size, domain_size));
-  Wrapper wrapper(sphere_function_1);
-  Periodic_mesh_domain domain(wrapper, CGAL::Iso_cuboid_3<K>(0, 0, 0, domain_size, domain_size, domain_size));
+  Periodic_mesh_domain domain(sphere_function_1, CGAL::Iso_cuboid_3<K>(0, 0, 0, domain_size, domain_size, domain_size));
   
   Mesh_criteria criteria(domain
 //  , facet_angle=30, facet_size=0.05 * domain_size, facet_distance=0.025 * domain_size,
