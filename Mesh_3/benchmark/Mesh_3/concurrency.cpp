@@ -75,8 +75,8 @@ const int     TET_SHAPE                = 3;
 # endif
 
 //# define CGAL_MESH_3_USE_LAZY_SORTED_REFINEMENT_QUEUE // default behavior
-# define CGAL_MESH_3_USE_LAZY_UNSORTED_REFINEMENT_QUEUE // CJTODO: TEST performance avec et sans
-# define CGAL_MESH_3_IF_UNSORTED_QUEUE_JUST_SORT_AFTER_SCAN
+//# define CGAL_MESH_3_USE_LAZY_UNSORTED_REFINEMENT_QUEUE
+//# define CGAL_MESH_3_IF_UNSORTED_QUEUE_JUST_SORT_AFTER_SCAN // recommended
 //#define CGAL_PARALLEL_MESH_3_DO_NOT_ADD_OUTSIDE_POINTS_ON_A_FAR_SPHERE // not recommended
 
   // ==========================================================================
@@ -123,9 +123,9 @@ const int     TET_SHAPE                = 3;
 
 #else // !CONCURRENT_MESH_3
 
-# define CGAL_MESH_3_USE_LAZY_SORTED_REFINEMENT_QUEUE
+//# define CGAL_MESH_3_USE_LAZY_SORTED_REFINEMENT_QUEUE // default behavior
 //# define CGAL_MESH_3_USE_LAZY_UNSORTED_REFINEMENT_QUEUE
-# define CGAL_MESH_3_IF_UNSORTED_QUEUE_JUST_SORT_AFTER_SCAN
+//# define CGAL_MESH_3_IF_UNSORTED_QUEUE_JUST_SORT_AFTER_SCAN // recommended
 
 #endif // CONCURRENT_MESH_3
 
