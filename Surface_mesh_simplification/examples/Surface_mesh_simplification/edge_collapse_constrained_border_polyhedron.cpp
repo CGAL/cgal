@@ -31,7 +31,7 @@ namespace SMS = CGAL::Surface_mesh_simplification ;
 // BGL property map which indicates whether an edge is marked as non-removable
 //
 struct Border_is_constrained_edge_map{
-  typedef boost::graph_traits<Surface_mesh>::edge_descriptor key_type;
+  typedef boost::graph_traits<Surface_mesh>::halfedge_descriptor key_type;
   typedef bool value_type;
   typedef value_type reference;
   typedef boost::readable_property_map_tag category;
@@ -89,8 +89,8 @@ int main( int argc, char** argv )
   int r = SMS::edge_collapse
             (surface_mesh
             ,stop
-            ,CGAL::vertex_index_map(boost::get(CGAL::vertex_external_index,surface_mesh))
-                  .edge_index_map  (boost::get(CGAL::edge_external_index  ,surface_mesh))
+            ,CGAL::vertex_index_map(get(CGAL::vertex_external_index,surface_mesh))
+                  .halfedge_index_map  (get(CGAL::halfedge_external_index  ,surface_mesh))
                   .edge_is_constrained_map(Border_is_constrained_edge_map())
                   .get_placement(Placement())
             );

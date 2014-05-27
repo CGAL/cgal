@@ -113,9 +113,9 @@ int edge_collapse ( ECM& aSurface
   return edge_collapse(aSurface
                       ,aShould_stop
                       ,choose_const_pmap(get_param(aParams,boost::vertex_index),aSurface,boost::vertex_index)
-                      ,choose_const_pmap(get_param(aParams,boost::edge_index),aSurface,boost::edge_index)
-                      ,choose_const_pmap(get_param(aParams,edge_is_border),aSurface,edge_is_border)
-                      ,choose_param     (get_param(aParams,edge_is_constrained),No_constrained_edge_map<ECM>())
+                      ,choose_const_pmap(get_param(aParams,boost::halfedge_index),aSurface,boost::halfedge_index)
+                      ,choose_const_pmap(get_param(aParams,halfedge_is_border),aSurface,halfedge_is_border)
+                       ,No_constrained_edge_map<ECM>() // AF choose_param     (get_param(aParams,edge_is_constrained),No_constrained_edge_map<ECM>())
                       ,choose_param     (get_param(aParams,get_cost_policy), LindstromTurk_cost<ECM>())
                       ,choose_param     (get_param(aParams,get_placement_policy), LindstromTurk_placement<ECM>())
                       ,choose_param     (get_param(aParams,vis), Dummy_visitor())
@@ -126,7 +126,7 @@ int edge_collapse ( ECM& aSurface
 template<class ECM, class ShouldStop>
 int edge_collapse ( ECM& aSurface, ShouldStop const& aShould_stop ) 
 {
-  return edge_collapse(aSurface,aShould_stop, edge_index_map(get(boost::edge_index,aSurface)));
+  return edge_collapse(aSurface,aShould_stop, halfedge_index_map(get(boost::halfedge_index,aSurface)));
 }
 
 } // namespace Surface_mesh_simplification

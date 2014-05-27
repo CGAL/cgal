@@ -18,7 +18,7 @@
 typedef CGAL::Simple_cartesian<double> Kernel;
 typedef Kernel::Point_3 Point_3;
 typedef CGAL::Polyhedron_3<Kernel> Surface_mesh;
-typedef boost::graph_traits<Surface_mesh const>::edge_descriptor edge_descriptor;
+typedef boost::graph_traits<Surface_mesh const>::halfedge_descriptor halfedge_descriptor;
 
 namespace SMS = CGAL::Surface_mesh_simplification ;
 
@@ -36,7 +36,7 @@ struct Constrained_edge_map : public boost::put_get_helper<bool,Constrained_edge
   typedef boost::readable_property_map_tag      category;
   typedef bool                                  value_type;
   typedef bool                                  reference;
-  typedef edge_descriptor                       key_type;
+  typedef halfedge_descriptor                       key_type;
 
   Constrained_edge_map(const CGAL::Unique_hash_map<key_type,bool>& aConstraints)
     : mConstraints(aConstraints) {}
@@ -52,7 +52,7 @@ private:
 
 int main( int argc, char** argv )
 {
-  CGAL::Unique_hash_map<edge_descriptor,bool> constraint_hmap(false);
+  CGAL::Unique_hash_map<halfedge_descriptor,bool> constraint_hmap(false);
 
   Surface_mesh surface_mesh;
 
@@ -117,8 +117,8 @@ int main( int argc, char** argv )
   int r
   = SMS::edge_collapse(surface_mesh
                        ,stop
-                       ,CGAL::vertex_index_map(boost::get(CGAL::vertex_external_index,surface_mesh))
-                       .edge_index_map  (boost::get(CGAL::edge_external_index  ,surface_mesh))
+                       ,CGAL::vertex_index_map(get(CGAL::vertex_external_index,surface_mesh))
+                       .halfedge_index_map  (get(CGAL::halfedge_external_index  ,surface_mesh))
                        .edge_is_constrained_map(constraints_map)
                        .get_placement(placement)
    );
@@ -156,8 +156,8 @@ int main( int argc, char** argv )
   std::cout << "Check that no removable edge has been forgotten..." << std::endl;
   r = SMS::edge_collapse(surface_mesh
                          ,stop
-                         ,CGAL::vertex_index_map(boost::get(CGAL::vertex_external_index, surface_mesh))
-                         .edge_index_map  (boost::get(CGAL::edge_external_index, surface_mesh))
+                         ,CGAL::vertex_index_map(get(CGAL::vertex_external_index, surface_mesh))
+                         .halfedge_index_map  (get(CGAL::halfedge_external_index, surface_mesh))
                          .edge_is_constrained_map(constraints_map)
                          .get_placement(placement)
    );

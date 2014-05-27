@@ -40,12 +40,11 @@ public:
   typedef boost::graph_traits<ECM>       GraphTraits ;
   
   typedef typename ConstGraphTraits::vertex_descriptor const_vertex_descriptor ;
-  typedef typename ConstGraphTraits::edge_descriptor   const_edge_descriptor ;
   
   typedef typename GraphTraits::vertex_descriptor vertex_descriptor ;
-  typedef typename GraphTraits::edge_descriptor   edge_descriptor ;
+  typedef typename GraphTraits::halfedge_descriptor   halfedge_descriptor ;
 
-  typedef typename halfedge_graph_traits<ECM>::Point Point ;
+  typedef typename ECM::Vertex::Point Point ;
     
 public:
 
@@ -69,7 +68,7 @@ public:
   } ;
   
   typedef std::vector<vertex_descriptor> vertex_descriptor_vector ;
-  typedef std::vector<edge_descriptor>   edge_descriptor_vector ;
+  typedef std::vector<halfedge_descriptor>   halfedge_descriptor_vector ;
   
   typedef std::vector<Triangle> Triangle_vector ;
   
@@ -79,7 +78,7 @@ public :
           ,class EdgeIdxMap
           ,class EdgeIsBorderMap
           >
-  Edge_profile ( edge_descriptor  const& aV0V1
+  Edge_profile ( halfedge_descriptor  const& aV0V1
                , ECM&                    aSurface
                , VertexIdxMap     const& aVertex_index_map
                , EdgeIdxMap       const& aEdge_index_map
@@ -89,21 +88,21 @@ public :
      
 public :
 
-  edge_descriptor const& v0_v1() const { return mV0V1; }
-  edge_descriptor const& v1_v0() const { return mV1V0; }
+  halfedge_descriptor const& v0_v1() const { return mV0V1; }
+  halfedge_descriptor const& v1_v0() const { return mV1V0; }
   
   vertex_descriptor const& v0() const { return mV0; }
   vertex_descriptor const& v1() const { return mV1; }
 
   // These are null if v0v1 is a border (thius there is no face to its left)  
   vertex_descriptor const&  vL() const { return mVL; } 
-  edge_descriptor const& v1_vL() const { return mV1VL; }
-  edge_descriptor const& vL_v0() const { return mVLV0; }
+  halfedge_descriptor const& v1_vL() const { return mV1VL; }
+  halfedge_descriptor const& vL_v0() const { return mVLV0; }
   
   // These are null if v1v0 is a border (thius there is no face to its left)  
   vertex_descriptor const&  vR() const { return mVR; } 
-  edge_descriptor const& v0_vR() const { return mV0VR; }
-  edge_descriptor const& vR_v1() const { return mVRV1; }
+  halfedge_descriptor const& v0_vR() const { return mV0VR; }
+  halfedge_descriptor const& vR_v1() const { return mVRV1; }
 
   Triangle_vector const& triangles() const {
 
@@ -122,7 +121,7 @@ public :
     }
     return mLink ; }
   
-  edge_descriptor_vector const& border_edges() const {
+  halfedge_descriptor_vector const& border_edges() const {
     return mBorderEdges ; 
   }
   ECM& surface() const { return *mSurface ; } 
@@ -144,9 +143,9 @@ private:
 
   typedef typename GraphTraits::in_edge_iterator  in_edge_iterator ;
   
-  bool is_border(edge_descriptor e) const
+  bool is_border(halfedge_descriptor e) const
   {
-    return get(CGAL::edge_is_border, surface_mesh(), e);
+    return get(CGAL::halfedge_is_border, surface_mesh(), e);
   }
    
 
@@ -156,8 +155,8 @@ private:
     
 private:
  
-  edge_descriptor mV0V1;
-  edge_descriptor mV1V0;
+  halfedge_descriptor mV0V1;
+  halfedge_descriptor mV1V0;
 
   bool mIsBorderV0V1 ;
   bool mIsBorderV1V0 ;
@@ -171,13 +170,13 @@ private:
   vertex_descriptor mVL;
   vertex_descriptor mVR;
 
-  edge_descriptor mV1VL;
-  edge_descriptor mVLV0;
-  edge_descriptor mV0VR;
-  edge_descriptor mVRV1;
+  halfedge_descriptor mV1VL;
+  halfedge_descriptor mVLV0;
+  halfedge_descriptor mV0VR;
+  halfedge_descriptor mVRV1;
   
   vertex_descriptor_vector mLink ;
-  edge_descriptor_vector   mBorderEdges ;
+  halfedge_descriptor_vector   mBorderEdges ;
   Triangle_vector          mTriangles ;
   
   ECM* mSurface ;

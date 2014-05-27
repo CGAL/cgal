@@ -40,7 +40,7 @@ public:
   
   typedef Edge_profile<ECM> Profile ;
   
-  typedef typename halfedge_graph_traits<ECM>::Point Point ;
+  typedef typename ECM::Vertex::Point Point ;
   
   typedef typename Kernel_traits<Point>::Kernel Kernel ;
 

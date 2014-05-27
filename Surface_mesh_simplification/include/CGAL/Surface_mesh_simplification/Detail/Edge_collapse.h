@@ -60,23 +60,18 @@ public:
   
   typedef boost::graph_traits  <ECM>       GraphTraits ;
   typedef boost::graph_traits  <ECM const> ConstGraphTraits ;
-  typedef halfedge_graph_traits<ECM>       HalfedgeGraphTraits ; 
   
   typedef typename GraphTraits::vertex_descriptor      vertex_descriptor ;
   typedef typename GraphTraits::vertex_iterator        vertex_iterator ;
-  typedef typename GraphTraits::edge_descriptor        edge_descriptor ;
-  typedef typename GraphTraits::edge_iterator          edge_iterator ;
-  typedef typename GraphTraits::out_edge_iterator      out_edge_iterator ;
-  typedef typename GraphTraits::in_edge_iterator       in_edge_iterator ;
+  typedef typename GraphTraits::halfedge_descriptor    halfedge_descriptor ;
+  typedef typename GraphTraits::halfedge_iterator      halfedge_iterator ;
+  typedef typename CGAL::Halfedge_around_source_iterator<ECM> out_edge_iterator ;
+  typedef typename CGAL::Halfedge_around_target_iterator<ECM> in_edge_iterator ;
   typedef typename GraphTraits::traversal_category     traversal_category ;
   typedef typename GraphTraits::edges_size_type        size_type ;
   
-  typedef typename ConstGraphTraits::vertex_descriptor const_vertex_descriptor ;
-  typedef typename ConstGraphTraits::edge_descriptor   const_edge_descriptor ;
-  typedef typename ConstGraphTraits::in_edge_iterator  const_in_edge_iterator ;
-  
-  typedef typename HalfedgeGraphTraits::undirected_edge_iterator undirected_edge_iterator ;
-  typedef typename HalfedgeGraphTraits::Point                    Point ;
+  typedef typename GraphTraits::edge_iterator edge_iterator ;
+  typedef typename ECM::Vertex::Point                    Point ;
 
   typedef typename GetCost     ::result_type Cost_type ;
   typedef typename GetPlacement::result_type Placement_type ;
@@ -94,9 +89,9 @@ public:
     
     Compare_id( Self const* aAlgorithm ) : mAlgorithm(aAlgorithm) {}
     
-    bool operator() ( edge_descriptor const& a, edge_descriptor const& b ) const 
+    bool operator() ( halfedge_descriptor const& a, halfedge_descriptor const& b ) const 
     {
-      return mAlgorithm->get_directed_edge_id(a) < mAlgorithm->get_directed_edge_id(b);
+      return mAlgorithm->get_halfedge_id(a) < mAlgorithm->get_halfedge_id(b);
     }
     
     Self const* mAlgorithm ;
@@ -108,7 +103,7 @@ public:
     
     Compare_cost( Self const* aAlgorithm ) : mAlgorithm(aAlgorithm) {}
     
-    bool operator() ( edge_descriptor const& a, edge_descriptor const& b ) const
+    bool operator() ( halfedge_descriptor const& a, halfedge_descriptor const& b ) const
     { 
       // NOTE: A cost is an optional<> value.
       // Absent optionals are ordered first; that is, "none < T" and "T > none" for any defined T != none.
@@ -119,27 +114,27 @@ public:
     Self const* mAlgorithm ;
   } ;
   
-  struct Undirected_edge_id : boost::put_get_helper<size_type, Undirected_edge_id>
+  struct edge_id : boost::put_get_helper<size_type, edge_id>
   {
     typedef boost::readable_property_map_tag category;
     typedef size_type                        value_type;
     typedef size_type                        reference;
-    typedef edge_descriptor                  key_type;
+    typedef halfedge_descriptor                  key_type;
     
-    Undirected_edge_id() : mAlgorithm(0) {}
+    edge_id() : mAlgorithm(0) {}
     
-    Undirected_edge_id( Self const* aAlgorithm ) : mAlgorithm(aAlgorithm) {}
+    edge_id( Self const* aAlgorithm ) : mAlgorithm(aAlgorithm) {}
     
-    size_type operator[] ( edge_descriptor const& e ) const { return mAlgorithm->get_undirected_edge_id(e); }
+    size_type operator[] ( halfedge_descriptor const& e ) const { return mAlgorithm->get_edge_id(e); }
     
     Self const* mAlgorithm ;
   } ;
   
   
-  typedef Modifiable_priority_queue<edge_descriptor,Compare_cost,Undirected_edge_id> PQ ;
+  typedef Modifiable_priority_queue<halfedge_descriptor,Compare_cost,edge_id> PQ ;
   typedef typename PQ::handle pq_handle ;
   
-  // An Edge_data is associated with EVERY _undirected_ edge in the mesh (collapsable or not).
+  // An Edge_data is associated with EVERY _ edge in the mesh (collapsable or not).
   // It relates the edge with the PQ-handle needed to update the priority queue
   // It also relates the edge with a policy-based cache
   class Edge_data
@@ -188,70 +183,62 @@ private:
   void Collect();
   void Loop();
   bool Is_collapse_topologically_valid( Profile const& aProfile ) ;
-  bool Is_tetrahedron( edge_descriptor const& h1 ) ;
-  bool Is_open_triangle( edge_descriptor const& h1 ) ;
+  bool Is_tetrahedron( halfedge_descriptor const& h1 ) ;
+  bool Is_open_triangle( halfedge_descriptor const& h1 ) ;
   bool Is_collapse_geometrically_valid( Profile const& aProfile, Placement_type aPlacement ) ;
   void Collapse( Profile const& aProfile, Placement_type aPlacement ) ;
   void Update_neighbors( vertex_descriptor const& aKeptV ) ;
   
-  Profile create_profile ( edge_descriptor const& aEdge )
+  Profile create_profile ( halfedge_descriptor const& aEdge )
   { 
     return Profile(aEdge,mSurface,Vertex_index_map,Edge_index_map,Edge_is_border_map, m_has_border);
   }  
   
-  size_type get_directed_edge_id   ( const_edge_descriptor const& aEdge ) const { return Edge_index_map[aEdge]; }
-  size_type get_undirected_edge_id ( const_edge_descriptor const& aEdge ) const { return get_directed_edge_id(aEdge) / 2 ; }
+  size_type get_halfedge_id   ( halfedge_descriptor const& aEdge ) const { return Edge_index_map[aEdge]; }
+  size_type get_edge_id ( halfedge_descriptor const& aEdge ) const { return get_halfedge_id(aEdge) / 2 ; }
 
-  bool is_primary_edge ( const_edge_descriptor const& aEdge ) const { return ( get_directed_edge_id(aEdge) % 2 ) == 0 ; }
+  bool is_primary_edge ( halfedge_descriptor const& aEdge ) const { return ( get_halfedge_id(aEdge) % 2 ) == 0 ; }
   
-  edge_descriptor primary_edge ( edge_descriptor const& aEdge ) 
+  halfedge_descriptor primary_edge ( halfedge_descriptor const& aEdge ) 
   { 
-    return is_primary_edge(aEdge) ? aEdge : opposite_edge(aEdge,mSurface) ;
+    return is_primary_edge(aEdge) ? aEdge : opposite(aEdge,mSurface) ;
   }  
     
-  bool is_border ( const_edge_descriptor const& aEdge ) const { return get(CGAL::edge_is_border, mSurface, aEdge) ; }    
+  bool is_border ( halfedge_descriptor const& aEdge ) const { return get(CGAL::halfedge_is_border, mSurface, aEdge) ; }    
   
-  bool is_constrained( const_edge_descriptor const& aEdge ) const { return get(Edge_is_constrained_map,aEdge); }
-  bool is_constrained( const_vertex_descriptor const& aVertex ) const;
+  bool is_constrained( halfedge_descriptor const& aEdge ) const { return get(Edge_is_constrained_map,aEdge); }
+  bool is_constrained( vertex_descriptor const& aVertex ) const;
 
-  bool is_border_or_constrained( const_edge_descriptor const& aEdge ) const { return Edge_is_border_map[aEdge] ||
+  bool is_border_or_constrained( halfedge_descriptor const& aEdge ) const { return Edge_is_border_map[aEdge] ||
                                                                                      Edge_is_constrained_map[aEdge];}
 
-  bool is_undirected_edge_a_border ( const_edge_descriptor const& aEdge ) const
+  bool is_edge_a_border ( halfedge_descriptor const& aEdge ) const
   {
-    return is_border(aEdge) || is_border(opposite_edge(aEdge,mSurface)) ;
+    return is_border(aEdge) || is_border(opposite(aEdge,mSurface)) ;
   }    
   
-  bool is_border ( const_vertex_descriptor const& aV ) const ;
+  bool is_border ( vertex_descriptor const& aV ) const ;
   
-  bool is_border_or_constrained ( const_vertex_descriptor const& aV ) const ;
+  bool is_border_or_constrained ( vertex_descriptor const& aV ) const ;
 
   bool are_shared_triangles_valid( Point const& p0, Point const& p1, Point const& p2, Point const& p3 ) const ;
   
-  edge_descriptor find_connection ( const_vertex_descriptor const& v0, const_vertex_descriptor const& v1 ) const ;
+  halfedge_descriptor find_connection ( vertex_descriptor const& v0, vertex_descriptor const& v1 ) const ;
   
-  vertex_descriptor find_exterior_link_triangle_3rd_vertex ( const_edge_descriptor const& e, const_vertex_descriptor const& v0, const_vertex_descriptor const& v1 ) const ;
+  vertex_descriptor find_exterior_link_triangle_3rd_vertex ( halfedge_descriptor const& e, vertex_descriptor const& v0, vertex_descriptor const& v1 ) const ;
   
-  Edge_data& get_data ( edge_descriptor const& aEdge ) const 
+  Edge_data& get_data ( halfedge_descriptor const& aEdge ) const 
   { 
     CGAL_assertion( is_primary_edge(aEdge) ) ;
-    return mEdgeDataArray[get_undirected_edge_id(aEdge)];
+    return mEdgeDataArray[get_edge_id(aEdge)];
   }
   
-  Point const& get_point ( const_vertex_descriptor const& aV ) const
+  Point const& get_point ( vertex_descriptor const& aV ) const
   {
     return get(vertex_point,mSurface,aV);
   }
   
-  boost::tuple<const_vertex_descriptor,const_vertex_descriptor> get_vertices( const_edge_descriptor const& aEdge ) const
-  {
-    const_vertex_descriptor p,q ;
-    p = boost::source(aEdge,mSurface);
-    q = boost::target(aEdge,mSurface);
-    return boost::make_tuple(p,q);
-  }
-  
-  boost::tuple<vertex_descriptor,vertex_descriptor> get_vertices( edge_descriptor const& aEdge ) 
+  boost::tuple<vertex_descriptor,vertex_descriptor> get_vertices( halfedge_descriptor const& aEdge ) const
   {
     vertex_descriptor p,q ;
     p = boost::source(aEdge,mSurface);
@@ -259,15 +246,23 @@ private:
     return boost::make_tuple(p,q);
   }
   
-  std::string vertex_to_string( const_vertex_descriptor const& v ) const
+  boost::tuple<vertex_descriptor,vertex_descriptor> get_vertices( halfedge_descriptor const& aEdge ) 
+  {
+    vertex_descriptor p,q ;
+    p = boost::source(aEdge,mSurface);
+    q = boost::target(aEdge,mSurface);
+    return boost::make_tuple(p,q);
+  }
+  
+  std::string vertex_to_string( vertex_descriptor const& v ) const
   {
     Point const& p = get_point(v);
     return boost::str( boost::format("[V%1%:%2%]") % get(Vertex_index_map,v) % xyz_to_string(p) ) ;
   }
     
-  std::string edge_to_string ( const_edge_descriptor const& aEdge ) const
+  std::string edge_to_string ( halfedge_descriptor const& aEdge ) const
   {
-    const_vertex_descriptor p,q ; boost::tie(p,q) = get_vertices(aEdge);
+    vertex_descriptor p,q ; boost::tie(p,q) = get_vertices(aEdge);
     return boost::str( boost::format("{E%1% %2%->%3%}%4%") % get(Edge_index_map,aEdge) % vertex_to_string(p) % vertex_to_string(q) % ( is_border(aEdge) ? " (BORDER)" : ( is_border(aEdge->opposite()) ? " (~BORDER)": "" ) ) ) ;
   }
   
@@ -281,7 +276,7 @@ private:
     return Get_placement(aProfile);
   }
   
-  void insert_in_PQ( edge_descriptor const& aEdge, Edge_data& aData ) 
+  void insert_in_PQ( halfedge_descriptor const& aEdge, Edge_data& aData ) 
   {
     CGAL_SURF_SIMPL_TEST_assertion(is_primary_edge(aEdge)) ;
     CGAL_SURF_SIMPL_TEST_assertion(!aData.is_in_PQ());
@@ -293,7 +288,7 @@ private:
     CGAL_SURF_SIMPL_TEST_assertion(mPQ->contains(aEdge) ) ;
   }
   
-  void update_in_PQ( edge_descriptor const& aEdge, Edge_data& aData )
+  void update_in_PQ( halfedge_descriptor const& aEdge, Edge_data& aData )
   {
     CGAL_SURF_SIMPL_TEST_assertion(is_primary_edge(aEdge)) ;
     CGAL_SURF_SIMPL_TEST_assertion(aData.is_in_PQ());
@@ -305,7 +300,7 @@ private:
     CGAL_SURF_SIMPL_TEST_assertion(mPQ->contains(aEdge) ) ;
   }   
   
-  void remove_from_PQ( edge_descriptor const& aEdge, Edge_data& aData )
+  void remove_from_PQ( halfedge_descriptor const& aEdge, Edge_data& aData )
   {
     CGAL_SURF_SIMPL_TEST_assertion(is_primary_edge(aEdge)) ;
     CGAL_SURF_SIMPL_TEST_assertion(aData.is_in_PQ());
@@ -317,9 +312,9 @@ private:
     CGAL_SURF_SIMPL_TEST_assertion(!mPQ->contains(aEdge) ) ;
   }   
   
-  optional<edge_descriptor> pop_from_PQ() 
+  optional<halfedge_descriptor> pop_from_PQ() 
   {
-    optional<edge_descriptor> rEdge = mPQ->extract_top();
+    optional<halfedge_descriptor> rEdge = mPQ->extract_top();
     if ( rEdge )
     {
       CGAL_SURF_SIMPL_TEST_assertion(is_primary_edge(*rEdge) ) ;
@@ -337,7 +332,7 @@ private:
   template<class AEdgeIsConstrainedMap>
   vertex_descriptor
   halfedge_collapse_bk_compatibility(
-    edge_descriptor const& pq, AEdgeIsConstrainedMap aEdge_is_constrained_map)
+    halfedge_descriptor const& pq, AEdgeIsConstrainedMap aEdge_is_constrained_map)
   {
     return halfedge_collapse(pq, mSurface, aEdge_is_constrained_map);
   }
@@ -345,7 +340,7 @@ private:
   template<class ECM>
   vertex_descriptor
   halfedge_collapse_bk_compatibility(
-    edge_descriptor const& pq, No_constrained_edge_map<ECM> )
+    halfedge_descriptor const& pq, No_constrained_edge_map<ECM> )
   {
     return halfedge_collapse(pq, mSurface);
   }
@@ -363,7 +358,7 @@ private:
   template<class ECM>
   bool
   is_edge_adjacent_to_a_constrained_edge(
-    edge_descriptor const&, No_constrained_edge_map<ECM> )
+    halfedge_descriptor const&, No_constrained_edge_map<ECM> )
   {
     return false;
   }

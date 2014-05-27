@@ -779,6 +779,13 @@ halfedges_around_source(typename boost::graph_traits<Graph>::halfedge_descriptor
   return std::make_pair(I(h,g), I(h,g,1));
 }
 
+template<typename Graph>
+std::pair<Halfedge_around_source_iterator<Graph>,Halfedge_around_source_iterator<Graph> >
+halfedges_around_source(typename boost::graph_traits<Graph>::vertex_descriptor v, Graph& g)
+{
+  return halfedges_around_source(opposite(halfedge(v,g),g),g);
+}
+
 /**  
  * \ingroup PkgBGLIterators
  * returns an iterator range over all halfedges with vertex `target(h,g)` as target. 
@@ -789,6 +796,13 @@ halfedges_around_target(typename boost::graph_traits<Graph>::halfedge_descriptor
 {
   typedef Halfedge_around_target_iterator<Graph> I;
   return std::make_pair(I(h,g), I(h,g,1));
+}
+
+template<typename Graph>
+std::pair<Halfedge_around_target_iterator<Graph>,Halfedge_around_target_iterator<Graph> >
+halfedges_around_target(typename boost::graph_traits<Graph>::vertex_descriptor v, Graph& g)
+{
+  return halfedges_around_target(halfedge(v,g),g);
 }
 
 /**  

@@ -30,7 +30,7 @@ template<class VertexIdxMap
         ,class EdgeIdxMap
         ,class EdgeIsBorderMap
         >
-Edge_profile<ECM>::Edge_profile ( edge_descriptor  const& aV0V1
+Edge_profile<ECM>::Edge_profile ( halfedge_descriptor  const& aV0V1
                                 , ECM&                    aSurface
                                 , VertexIdxMap     const& 
                                 , EdgeIdxMap       const&
@@ -46,7 +46,7 @@ Edge_profile<ECM>::Edge_profile ( edge_descriptor  const& aV0V1
 
   mLink.reserve(12);
   mTriangles.reserve(16);
-  mV1V0 = opposite_edge(v0_v1(),surface_mesh());
+  mV1V0 = opposite(v0_v1(),surface_mesh());
   
   mV0 = source(v0_v1(),surface_mesh());
   mV1 = target(v0_v1(),surface_mesh());
@@ -63,8 +63,8 @@ Edge_profile<ECM>::Edge_profile ( edge_descriptor  const& aV0V1
   {
     CGAL_SURF_SIMPL_TEST_assertion( !mV0V1->is_border() ) ;
 
-    mVLV0 = prev_edge(v0_v1(),surface_mesh());
-    mV1VL = next_edge(v0_v1(),surface_mesh());
+    mVLV0 = prev(v0_v1(),surface_mesh());
+    mV1VL = next(v0_v1(),surface_mesh());
     mVL   = target(v1_vL(),surface_mesh());
     
     CGAL_SURF_SIMPL_TEST_assertion( mV0 != mVL );
@@ -79,8 +79,8 @@ Edge_profile<ECM>::Edge_profile ( edge_descriptor  const& aV0V1
   {
     CGAL_SURF_SIMPL_TEST_assertion( !mV1V0->is_border() ) ;
 
-    mV0VR = next_edge(v1_v0(),surface_mesh());
-    mVRV1 = prev_edge(v1_v0(),surface_mesh());
+    mV0VR = next(v1_v0(),surface_mesh());
+    mVRV1 = prev(v1_v0(),surface_mesh());
     mVR   = target(v0_vR(),surface_mesh());
     
     CGAL_SURF_SIMPL_TEST_assertion( mV0 != mVR );
@@ -100,29 +100,29 @@ Edge_profile<ECM>::Edge_profile ( edge_descriptor  const& aV0V1
 template<class ECM>
 void Edge_profile<ECM>::Extract_borders()
 {
-  edge_descriptor e = mV0V1;
-  edge_descriptor oe = opposite_edge(e, surface_mesh());
+  halfedge_descriptor e = mV0V1;
+  halfedge_descriptor oe = opposite(e, surface_mesh());
   bool b;
   if((b = is_border(e)) || is_border(oe)){
     mBorderEdges.push_back(b?e:oe);
   }
-  e = next_edge(oe,surface_mesh());
-  oe = opposite_edge(e,surface_mesh());
+  e = next(oe,surface_mesh());
+  oe = opposite(e,surface_mesh());
   while(e != mV0V1){
     if((b = is_border(e)) || is_border(oe)){
       mBorderEdges.push_back(b?e:oe);
     }
-    e = next_edge(oe,surface_mesh());
-    oe = opposite_edge(e,surface_mesh());
+    e = next(oe,surface_mesh());
+    oe = opposite(e,surface_mesh());
   }
-  e = opposite_edge(next_edge(e,surface_mesh()),surface_mesh());
-  oe = opposite_edge(e,surface_mesh());
+  e = opposite(next(e,surface_mesh()),surface_mesh());
+  oe = opposite(e,surface_mesh());
     while(e != mV0V1){
     if((b = is_border(e)) || is_border(oe)){
       mBorderEdges.push_back(b?e:oe);
     } 
-    e = opposite_edge(next_edge(e,surface_mesh()),surface_mesh());
-    oe = opposite_edge(e,surface_mesh());
+    e = opposite(next(e,surface_mesh()),surface_mesh());
+    oe = opposite(e,surface_mesh());
     }
 }
 
@@ -138,8 +138,8 @@ void Edge_profile<ECM>::Extract_triangles_and_link()
   #endif
   // look at the two faces or holes adjacent to edge (v0,v1)
   // and at the opposite vertex if it exists
-  edge_descriptor endleft = next_edge(v1_v0(), surface_mesh());
-  edge_descriptor endright = next_edge(v0_v1(), surface_mesh());
+  halfedge_descriptor endleft = next(v1_v0(), surface_mesh());
+  halfedge_descriptor endright = next(v0_v1(), surface_mesh());
 
   if( left_face_exists() )
     mTriangles.push_back(Triangle(v0(),v1(),vL()) ) ;
@@ -147,7 +147,7 @@ void Edge_profile<ECM>::Extract_triangles_and_link()
     mTriangles.push_back(Triangle(v1(),v0(),vR()) ) ;
 
   // counterclockwise around v0
-  edge_descriptor e02 = opposite_edge(prev_edge(v0_v1(),surface_mesh()), surface_mesh());
+  halfedge_descriptor e02 = opposite(prev(v0_v1(),surface_mesh()), surface_mesh());
   vertex_descriptor v, v2 =target(e02,surface_mesh());
   while(e02 != endleft) {
     #ifdef CGAL_SMS_EDGE_PROFILE_ALWAYS_NEED_UNIQUE_VERTEX_IN_LINK
@@ -155,7 +155,7 @@ void Edge_profile<ECM>::Extract_triangles_and_link()
     #endif
     mLink.push_back(v2);
     bool is_b = is_border(e02);
-    e02 = opposite_edge(prev_edge(e02,surface_mesh()), surface_mesh());
+    e02 = opposite(prev(e02,surface_mesh()), surface_mesh());
     v = target(e02,surface_mesh());
     if(! is_b){
       mTriangles.push_back(Triangle(v,v0(),v2) ) ;
@@ -170,7 +170,7 @@ void Edge_profile<ECM>::Extract_triangles_and_link()
   }
 
   // counterclockwise around v1
-  e02 = opposite_edge(prev_edge(v1_v0(),surface_mesh()), surface_mesh());
+  e02 = opposite(prev(v1_v0(),surface_mesh()), surface_mesh());
   v2 = target(e02,surface_mesh());
   while(e02 != endright) {
     #ifdef CGAL_SMS_EDGE_PROFILE_ALWAYS_NEED_UNIQUE_VERTEX_IN_LINK
@@ -178,7 +178,7 @@ void Edge_profile<ECM>::Extract_triangles_and_link()
     #endif
     mLink.push_back(v2);
     bool is_b = is_border(e02);
-    e02 = opposite_edge(prev_edge(e02,surface_mesh()), surface_mesh());
+    e02 = opposite(prev(e02,surface_mesh()), surface_mesh());
     v = target(e02,surface_mesh());
     if(! is_b){
       mTriangles.push_back(Triangle(v,v1(),v2) ) ;

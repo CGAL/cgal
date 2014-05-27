@@ -22,6 +22,7 @@
 #include <CGAL/Surface_mesh_simplification/Detail/Common.h>
 #include <CGAL/Polyhedron_3.h>
 
+
 #  define CGAL_HDS_PARAM_ template < class Traits, class Items, class Alloc> class HDS
 
 namespace CGAL {
@@ -52,7 +53,7 @@ p-q is not constrained
 */
 template<class Gt, class I, CGAL_HDS_PARAM_, class A, class EdgeIsConstrainedMap>
 typename boost::graph_traits< Polyhedron_3<Gt,I,HDS,A> >::vertex_descriptor
-halfedge_collapse( typename boost::graph_traits< Polyhedron_3<Gt,I,HDS,A> >::edge_descriptor const& pq
+halfedge_collapse( typename boost::graph_traits< Polyhedron_3<Gt,I,HDS,A> >::halfedge_descriptor const& pq
                  , Polyhedron_3<Gt,I,HDS,A>& aSurface
                  , EdgeIsConstrainedMap Edge_is_constrained_map
                  )
@@ -61,19 +62,19 @@ halfedge_collapse( typename boost::graph_traits< Polyhedron_3<Gt,I,HDS,A> >::edg
   typedef Polyhedron_3<Gt,I,HDS,A> Surface ;
 
   typedef typename boost::graph_traits<Surface>::vertex_descriptor vertex_descriptor ;
-  typedef typename boost::graph_traits<Surface>::edge_descriptor   edge_descriptor ;
+  typedef typename boost::graph_traits<Surface>::halfedge_descriptor   halfedge_descriptor ;
 
-  edge_descriptor qp = opposite_edge(pq,aSurface);
-  edge_descriptor pt = opposite_edge(prev_edge(pq,aSurface),aSurface);
-  edge_descriptor qb = opposite_edge(prev_edge(qp,aSurface),aSurface);
-  edge_descriptor tq = pq->next()->opposite();
-  edge_descriptor bp = qp->next()->opposite();
+  halfedge_descriptor qp = opposite(pq,aSurface);
+  halfedge_descriptor pt = opposite(prev(pq,aSurface),aSurface);
+  halfedge_descriptor qb = opposite(prev(qp,aSurface),aSurface);
+  halfedge_descriptor tq = opposite(next(pq,aSurface),aSurface);
+  halfedge_descriptor bp = opposite(next(qp,aSurface),aSurface);
 
   bool lTopFaceExists         = !pq->is_border() ;
   bool lBottomFaceExists      = !qp->is_border() ;
 
-  CGAL_precondition( !lTopFaceExists    || (lTopFaceExists    && ( pt->vertex()->vertex_degree() > 2 ) ) ) ;
-  CGAL_precondition( !lBottomFaceExists || (lBottomFaceExists && ( qb->vertex()->vertex_degree() > 2 ) ) ) ;
+  CGAL_precondition( !lTopFaceExists    || (lTopFaceExists    && ( target(pt,aSurface)->vertex_degree() > 2 ) ) ) ;
+  CGAL_precondition( !lBottomFaceExists || (lBottomFaceExists && ( target(qb,aSurface)->vertex_degree() > 2 ) ) ) ;
 
   vertex_descriptor q = pq->vertex();
   vertex_descriptor p = pq->opposite()->vertex();
@@ -81,8 +82,8 @@ halfedge_collapse( typename boost::graph_traits< Polyhedron_3<Gt,I,HDS,A> >::edg
   CGAL_ECMS_TRACE(3, "Collapsing p-q E" << pq->id() << " (V" << p->id() << "->V" << q->id() << ")" ) ;
 
   //used to collect edges to remove from the surface
-  edge_descriptor edges_to_erase[2];
-  edge_descriptor* edges_to_erase_ptr=edges_to_erase;
+  halfedge_descriptor edges_to_erase[2];
+  halfedge_descriptor* edges_to_erase_ptr=edges_to_erase;
 
   // If the top facet exists, we need to choose one out of the two edges which one disappears:
   //   p-t if it is not constrained and t-q otherwise
@@ -126,7 +127,7 @@ halfedge_collapse( typename boost::graph_traits< Polyhedron_3<Gt,I,HDS,A> >::edg
       // the vertex is of valence 3 and we simply need to remove the vertex
       // and its indicent edges
       bool lP_Erased=false;
-      edge_descriptor edge =
+      halfedge_descriptor edge =
         edges_to_erase[0]->next()==edges_to_erase[1]?
           edges_to_erase[0]:edges_to_erase[1];
       if (edge->vertex()==p)
@@ -176,7 +177,7 @@ halfedge_collapse( typename boost::graph_traits< Polyhedron_3<Gt,I,HDS,A> >::edg
 
 template<class Gt, class I, CGAL_HDS_PARAM_, class A>
 typename boost::graph_traits< Polyhedron_3<Gt,I,HDS,A> >::vertex_descriptor
-halfedge_collapse( typename boost::graph_traits< Polyhedron_3<Gt,I,HDS,A> >::edge_descriptor const& pq
+halfedge_collapse( typename boost::graph_traits< Polyhedron_3<Gt,I,HDS,A> >::halfedge_descriptor const& pq
                  , Polyhedron_3<Gt,I,HDS,A>& aSurface
                  )
 {

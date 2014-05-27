@@ -50,7 +50,7 @@ public:
   typedef typename boost::graph_traits<ECM>::edge_descriptor edge_descriptor ;
   typedef typename boost::graph_traits<ECM>::edges_size_type size_type ;
   
-  typedef typename halfedge_graph_traits<ECM>::Point Point ;
+  typedef typename ECM::Vertex::Point Point ;
   typedef typename Kernel_traits<Point>::Kernel      Kernel ;
   typedef typename Kernel::FT                        FT ;
   
