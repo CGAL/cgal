@@ -380,6 +380,45 @@ public:    //    compute_supporting_line(q.supporting_segment(), a1, b1, c1);
     hw = l1.a() * l2.b() - l1.b() * l2.a();
   }
 
+  inline
+  static
+  RT coord_at(const Line_2 &l, const RT & val, const bool return_y_coord)
+  {
+    return (return_y_coord)?
+      (l.a() * val + l.c()) / (- l.b()) :
+      (l.b() * val + l.c()) / (- l.a()) ;
+  }
+
+  inline
+  static
+  bool touch_same_side(
+      const Site_2 & p, const Site_2 & q, const Line_2 & l,
+      const bool samexpq, const bool pos_slope)
+  {
+    const RT common_coord = (samexpq) ? p.point().x() : p.point().y();
+    const RT otherp = (samexpq) ? p.point().y() : p.point().x();
+    const RT otherq = (samexpq) ? q.point().y() : q.point().x();
+    const RT lineval = coord_at(l, common_coord, samexpq);
+    return (CGAL::sign(lineval - otherp) == CGAL::sign(otherp - otherq)) ?
+      samexpq == pos_slope :
+      samexpq != pos_slope ;
+  }
+
+  inline
+  static
+  bool is_orth_dist_smaller_than_pt_dist(
+      const RT & closest_coord, const Line_2 & l,
+      const Site_2 & p, const Site_2 & q,
+      const bool samexpq)
+  {
+    const RT lineval = coord_at(l, closest_coord, not samexpq);
+    return CGAL::abs(lineval - ((samexpq) ? p.point().x() : p.point().y()))
+           <
+           CGAL::abs((samexpq)? p.point().y() - q.point().y() :
+                                p.point().x() - q.point().x()  ) ;
+  }
+
+
 public:
   //-------------------------------------------------------------------
   // BASIC PREDICATES

@@ -45,6 +45,10 @@ public:
   using Base::are_in_same_open_halfspace_of;
   using Base::horseg_y_coord;
   using Base::verseg_x_coord;
+  using Base::coord_at;
+  using Base::touch_same_side;
+  using Base::is_orth_dist_smaller_than_pt_dist;
+  using Base::compute_intersection_of_lines;
 
   typedef enum {PPP = 0, PPS, PSS, SSS} vertex_t;
   struct PPP_Type {};
@@ -689,7 +693,48 @@ private:
   compute_pps_nonendp_nonhv(const Site_2& p, const Site_2& q, const Site_2& r)
   const
   {
-    return compute_vv_bisectors(p, q, r, PPS_Type());
+    const bool samexpq = scmpx(p, q) == EQUAL;
+    const bool sameypq = (samexpq)? false : make_certain(scmpy(p, q) == EQUAL);
+    if (not (samexpq or sameypq)) {
+      return compute_vv_bisectors(p, q, r, PPS_Type());
+    } else {
+      // samexpq or sameypq
+      CGAL_assertion(samexpq != sameypq);
+      Line_2 l = compute_supporting_line(r);
+      const FT common_coord = (samexpq) ? p.point().x() : p.point().y();
+      const FT sumdiffpq = (samexpq) ?
+        p.point().y() + q.point().y() :
+        p.point().x() + q.point().x();
+      const bool pos_slope = has_positive_slope(r);
+      FT vsamecoord;
+      if (touch_same_side(p, q, l, samexpq, pos_slope)) {
+        vsamecoord = common_coord +
+          (pos_slope? +1: -1)*
+            (coord_at(l, common_coord, samexpq) - (sumdiffpq/FT(2)));
+      } else {
+        const FT closest_coord =
+          (samexpq)? ((pos_slope)? q.point().y() : p.point().y()):
+                     ((pos_slope)? p.point().x() : q.point().x());
+        if (is_orth_dist_smaller_than_pt_dist(
+              closest_coord, l, p, q, samexpq)) {
+          vsamecoord =
+            coord_at(l, closest_coord, sameypq) +
+            (((samexpq) ? (q.point().y() - p.point().y()) :
+                          (p.point().x() - q.point().x())  ) / FT(2)) ;
+        } else {
+          const Line_2 lc (
+              (samexpq) ? 1 : (2 * ((pos_slope) ? +1 : -1)),
+              (samexpq) ? (2 * ((pos_slope) ? +1 : -1)) : 1 ,
+              ((pos_slope)? -1 : +1 ) * sumdiffpq - common_coord);
+          RT hx, hy, hz;
+          compute_intersection_of_lines(l, lc, hx, hy, hz);
+          vsamecoord = ((samexpq ? hx/hz : hy/hz) + common_coord)/ FT(2);
+        }
+      }
+      const FT vdiffcoord = sumdiffpq/FT(2);
+      vv = (samexpq) ? Point_2(vsamecoord, vdiffcoord) :
+                       Point_2(vdiffcoord, vsamecoord) ;
+    }
   }
 
   inline void
