@@ -290,6 +290,51 @@ void test_traits(const char* title)
       Point_2(0, 0),
       CGAL::ZERO);
 
+  // 1seg1hsegnoseg.cin validity test
+  test_incircle<Gt>(
+      Point_2(60, 40),
+      Segment_2(Point_2(10, 120), Point_2(60, 20)),
+      Point_2(70, 40),
+      Point_2(60, 20),
+      CGAL::POSITIVE);
+
+  // 3segstepnosegbef3.cin validity test
+  test_incircle<Gt>(
+      Point_2(0, 50),
+      Segment_2(Point_2(-50, 50), Point_2(50, -50)),
+      Point_2(0, 100),
+      Point_2(-50, 50),
+      CGAL::POSITIVE);
+
+  // 2a0minimalbeforenoseg.cin validity test
+  test_incircle<Gt>(
+      Segment_2(Point_2(0, 0), Point_2(-50, 150)),
+      Point_2(0, 100),
+      Point_2(100, 100),
+      Point_2(0, 0),
+      CGAL::POSITIVE);
+
+  test_incircle<Gt>(
+      Segment_2(Point_2(-100, 50), Point_2(100, 250)),
+      Point_2(50, 0),
+      Point_2(100, 0),
+      Point_2(200, -50),
+      CGAL::POSITIVE);
+
+  test_incircle<Gt>(
+      Segment_2(Point_2(-100, 50), Point_2(100, 250)),
+      Point_2(50, 0),
+      Point_2(100, 0),
+      Point_2(150, 100),
+      CGAL::ZERO);
+
+  test_incircle<Gt>(
+      Segment_2(Point_2(-100, 50), Point_2(100, 250)),
+      Point_2(50, 0),
+      Point_2(100, 0),
+      Point_2(50, 100),
+      CGAL::NEGATIVE);
+
   std::cout << "====================================" << std::endl;
   std::cout << std::endl;
 }
