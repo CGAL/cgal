@@ -1275,9 +1275,7 @@ perturb_vertex( PVertex pv
     {
       return;
     }
-
-    CGAL_assertion(slivers.size() == pv.sliver_nb());
-
+    
     // Perturb vertex
     Vertex_vector modified_vertices;
 
