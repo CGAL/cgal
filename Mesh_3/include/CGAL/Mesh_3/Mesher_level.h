@@ -698,6 +698,10 @@ class Mesher_level<Tr, Derived, Element, Previous,
   : public Mesher_level_base<Tr, Derived, Element, Previous,
                              Triangulation_traits>
 {
+private:
+  typedef Derived Derived_;
+  template <typename ML, typename Container_element, 
+            typename Quality, typename Mesh_visitor> class Enqueue_element;
 public:
 
   typedef Mesher_level<Tr,
@@ -712,6 +716,7 @@ public:
                             Element,
                             Previous,
                             Triangulation_traits> Base;
+
 
   typedef typename Base::Lock_data_structure  Lock_data_structure;
   typedef typename Base::Zone                 Zone;
@@ -868,37 +873,11 @@ public:
   void enqueue_task(
     const Container_element &ce, const Quality &quality, Mesh_visitor visitor)
   {
-    typedef typename Derived::Container::value_type Container_quality_and_element;
     CGAL_assertion(m_empty_root_task != 0);
 
     m_worksharing_ds->enqueue_work(
-      [&, ce, quality, visitor]() // CJTODO: lambdas ok?
-      {
-        Mesher_level_conflict_status status;
-        do
-        {
-          status = this->try_lock_and_refine_element(ce, visitor);
-        }
-        while (status != NO_CONFLICT
-          && status != CONFLICT_AND_ELEMENT_SHOULD_BE_DROPPED
-          && status != CONFLICT_BUT_ELEMENT_CAN_BE_RECONSIDERED
-          && status != ELEMENT_WAS_A_ZOMBIE);
-
-        // Refine the new bad facets
-        this->before_next_element_refinement(visitor);
-
-        // We can now reconsider the element if requested
-        if (status == CONFLICT_BUT_ELEMENT_CAN_BE_RECONSIDERED)
-          this->enqueue_task(ce, quality, visitor);
-
-        // Finally we add the new local bad_elements to the feeder
-        while (this->no_longer_local_element_to_refine() == false)
-        {
-          Container_quality_and_element qe = this->derived().get_next_local_raw_element_impl();
-          this->pop_next_local_element();
-          this->enqueue_task(qe.second, qe.first, visitor);
-        }
-      },
+      Enqueue_element<Self, Container_element, Quality, Mesh_visitor>(
+        *this, ce, quality, visitor),
       quality,
       *m_empty_root_task
       // NOTE: if you uncomment this line (Load_based_worksharing_ds), the element may
@@ -1170,6 +1149,66 @@ protected:
   WorksharingDataStructureType *m_worksharing_ds;
 
   tbb::task *m_empty_root_task;
+
+private:
+
+  // Functor for enqueue_task function
+  template <typename ML, typename Container_element, typename Quality, typename Mesh_visitor>
+  class Enqueue_element
+  {
+    ML                & m_mesher_level;
+    Container_element   m_container_element;
+    Quality             m_quality;
+    Mesh_visitor        m_visitor;
+
+  public:
+    // Constructor
+    Enqueue_element(ML &ml,
+                    const Container_element &ce, 
+                    const Quality &quality, 
+                    Mesh_visitor visitor)
+    : m_mesher_level(ml), 
+      m_container_element(ce), 
+      m_quality(quality), 
+      m_visitor(visitor)
+    {
+    }
+
+    // operator()
+    void operator()()
+    {
+      typedef typename ML::Derived_::Container::value_type 
+                                                 Container_quality_and_element;
+
+      Mesher_level_conflict_status status;
+      do
+      {
+        status = m_mesher_level.try_lock_and_refine_element(m_container_element, 
+                                                            m_visitor);
+      }
+      while (status != NO_CONFLICT
+        && status != CONFLICT_AND_ELEMENT_SHOULD_BE_DROPPED
+        && status != CONFLICT_BUT_ELEMENT_CAN_BE_RECONSIDERED
+        && status != ELEMENT_WAS_A_ZOMBIE);
+
+      // Refine the new bad facets
+      m_mesher_level.before_next_element_refinement(m_visitor);
+
+      // We can now reconsider the element if requested
+      if (status == CONFLICT_BUT_ELEMENT_CAN_BE_RECONSIDERED)
+        m_mesher_level.enqueue_task(m_container_element, m_quality, m_visitor);
+
+      // Finally we add the new local bad_elements to the feeder
+      while (m_mesher_level.no_longer_local_element_to_refine() == false)
+      {
+        Container_quality_and_element qe = 
+          m_mesher_level.derived().get_next_local_raw_element_impl();
+        m_mesher_level.pop_next_local_element();
+        m_mesher_level.enqueue_task(qe.second, qe.first, m_visitor);
+      }
+    }
+  };
+
 };
 #endif // CGAL_LINKED_WITH_TBB
 
