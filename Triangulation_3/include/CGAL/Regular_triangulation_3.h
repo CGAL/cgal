@@ -42,8 +42,9 @@
 #include <boost/iterator/zip_iterator.hpp>
 #include <boost/mpl/and.hpp>
 #endif //CGAL_TRIANGULATION_3_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
-
-#include <CGAL/Mesh_3/Profiling_tools.h> // CJTODO TEMP
+#ifdef CGAL_TRIANGULATION_3_PROFILING
+# include <CGAL/Mesh_3/Profiling_tools.h>
+#endif
 
 #if defined(BOOST_MSVC)
 #  pragma warning(push)
@@ -206,9 +207,9 @@ namespace CGAL {
       static Profile_branch_counter_3 bcounter(
         "early withdrawals / late withdrawals / successes [Regular_tri_3::insert]");
 #endif
-      
+
 #ifdef CGAL_TRIANGULATION_3_PROFILING
-      WallClockTimer t; // CJTODO TEMP
+      WallClockTimer t;
 #endif
 
       size_type n = number_of_vertices();
@@ -220,11 +221,6 @@ namespace CGAL {
       if (this->is_parallel())
       {
         size_t num_points = points.size();
-      
-#ifdef CGAL_TRIANGULATION_3_PROFILING
-        WallClockTimer t1; // CJTODO TEMP
-#endif
-
         Cell_handle hint;
         std::vector<Vertex_handle> far_sphere_vertices;
         
@@ -237,7 +233,6 @@ namespace CGAL {
 
           // Get bbox
           const Bbox_3 &bbox = *this->get_bbox();
-          //Bbox_3 bbox(0., 0., 0., 1., 1., 1.); // CJTODO TEMP
           // Compute radius for far sphere
           const double& xdelta = bbox.xmax() - bbox.xmin();
           const double& ydelta = bbox.ymax() - bbox.ymin();
@@ -274,11 +269,6 @@ namespace CGAL {
 
             far_sphere_vertices.push_back(v);
           }
-
-# ifdef CGAL_TRIANGULATION_3_PROFILING
-          std::cerr << "  Far sphere points inserted: " << t1.elapsed() << " seconds." << std::endl; // CJTODO TEMP
-          t1.reset();
-# endif
         }
 #endif // CGAL_CONCURRENT_TRIANGULATION_3_ADD_TEMPORARY_POINTS_ON_FAR_SPHERE
       
@@ -352,20 +342,12 @@ namespace CGAL {
             }
           }
         );
-      
-#ifdef CGAL_TRIANGULATION_3_PROFILING
-        std::cerr << "  Input points inserted in: " << t1.elapsed() << " seconds." << std::endl; // CJTODO TEMP
-        t1.reset();
-#endif
-      
+
 #ifdef CGAL_CONCURRENT_TRIANGULATION_3_ADD_TEMPORARY_POINTS_ON_FAR_SPHERE
         if (num_points >= MIN_NUM_POINTS_FOR_FAR_SPHERE_POINTS)
         {
           // Remove the temporary vertices on far sphere
           remove(far_sphere_vertices.begin(), far_sphere_vertices.end());
-#ifdef CGAL_TRIANGULATION_3_PROFILING
-          std::cerr << "  Far sphere points removed in: " << t1.elapsed() << " seconds." << std::endl; // CJTODO TEMP
-#endif
         }
 #endif // CGAL_CONCURRENT_TRIANGULATION_3_ADD_TEMPORARY_POINTS_ON_FAR_SPHERE
       }
@@ -681,13 +663,15 @@ namespace CGAL {
       CGAL_triangulation_precondition(!this->does_repeat_in_range(first, beyond));
       size_type n = number_of_vertices();
 
-      WallClockTimer t; // CJTODO TEMP
+#ifdef CGAL_TRIANGULATION_3_PROFILING
+      WallClockTimer t;
+#endif
 
       // Parallel
 #ifdef CGAL_LINKED_WITH_TBB
       if (this->is_parallel())
       {
-        // CJTODO: avoid that by asking for ramdom-access iterators?
+        // TODO: avoid that by asking for ramdom-access iterators?
         std::vector<Vertex_handle> vertices(first, beyond);
         tbb::concurrent_vector<Vertex_handle> vertices_to_remove_sequentially;
 

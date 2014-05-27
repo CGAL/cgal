@@ -83,12 +83,6 @@
   // ==========================================================================
 
   const char * const CONFIG_FILENAME = "concurrent_mesher_config.cfg";
-  
-  // =================
-  // Locking strategy
-  // =================
-
-//# define CGAL_MESH_3_CONCURRENT_REFINEMENT_LOCK_ADJ_CELLS // USELESS, FOR TESTS ONLY
 
   // =====================
   // Worksharing strategy

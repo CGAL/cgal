@@ -677,7 +677,7 @@ public:
 #ifdef CGAL_LINKED_WITH_TBB
     if (this->is_parallel())
     {
-      // CJTODO: avoid that by asking for random-access iterators?
+      // TODO: avoid that by asking for random-access iterators?
       std::vector<Vertex_handle> vertices(first, beyond);
       tbb::concurrent_vector<Vertex_handle> vertices_to_remove_sequentially;
 

@@ -1,7 +1,4 @@
-//#undef CGAL_LINKED_WITH_TBB
-
 //#define CHECK_MEMORY_LEAKS_ON_MSVC
-//#define CGAL_DEBUG_GLOBAL_LOCK_DS // CJTODO TEMP
 
 #if defined(CHECK_MEMORY_LEAKS_ON_MSVC) && defined(_MSC_VER)
   #define _CRTDBG_MAP_ALLOC
@@ -94,12 +91,6 @@ const int     TET_SHAPE                = 3;
   // ==========================================================================
 
   const char * const CONFIG_FILENAME = "concurrent_mesher_config.cfg";
-
-  // =================
-  // Locking strategy
-  // =================
-
-//# define CGAL_MESH_3_CONCURRENT_REFINEMENT_LOCK_ADJ_CELLS // CJTODO: USELESS, FOR TESTS ONLY
 
   // =====================
   // Worksharing strategy

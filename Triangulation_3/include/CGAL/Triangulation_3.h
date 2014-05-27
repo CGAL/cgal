@@ -1246,18 +1246,6 @@ protected:
 
         // "test" is either in the conflict zone,
         // either facet-adjacent to the CZ
-        // IF WE WANT TO LOCK ADJACENT CELLS
-        // CJTODO: remove this #ifdef?
-#ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT_LOCK_ADJ_CELLS
-        if (could_lock_zone)
-        {
-          if (!this->try_lock_cell(test))
-          {
-            *could_lock_zone = false;
-            return it;
-          }
-        }
-#endif // CGAL_MESH_3_CONCURRENT_REFINEMENT_LOCK_ADJ_CELLS
 
         if (test->tds_data().is_in_conflict()) {
 
@@ -1278,9 +1266,6 @@ protected:
             if (tester(test)) {
 
             // "test" is in the conflict zone
-            // IF WE DO NOT WANT TO LOCK ADJACENT CELLS
-            // CJTODO: remove this #ifdef?
-#if !defined(CGAL_MESH_3_CONCURRENT_REFINEMENT_LOCK_ADJ_CELLS)
             if (could_lock_zone)
             {
               if (!this->try_lock_cell(test))
@@ -1290,7 +1275,6 @@ protected:
                 return it;
               }
             }
-#endif // !CGAL_MESH_3_CONCURRENT_REFINEMENT_LOCK_ADJ_CELLS
 
 
             Facet f(c, i); // Internal facet.

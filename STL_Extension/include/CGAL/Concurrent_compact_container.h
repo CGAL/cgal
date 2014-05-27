@@ -514,7 +514,7 @@ public:
   /** Reserve method to ensure that the capacity of the Concurrent_compact_container be
    * greater or equal than a given value n.
    */
-  // CJTODO?
+  // TODO?
   //void reserve(size_type n)
   //{
     // Does it really make sense: it will reserve size for the current
@@ -522,7 +522,7 @@ public:
     /*Mutex::scoped_lock lock;
     if ( m_capacity >= n ) return;
     size_type tmp = m_block_size;
-    // CJTODO: use a tmpBlockSize instead of m_block_size
+    // TODO: use a tmpBlockSize instead of m_block_size
     m_block_size = (std::max)( n - m_capacity, m_block_size );
     allocate_new_block(free_list());
     m_block_size = tmp + CGAL_INCREMENT_CONCURRENT_COMPACT_CONTAINER_BLOCK_SIZE;*/
