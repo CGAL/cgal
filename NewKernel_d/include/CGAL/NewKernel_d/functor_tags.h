@@ -156,6 +156,7 @@ namespace CGAL {
 	DECL_OBJ(Iso_box, Object);
 	DECL_OBJ(Bbox, Object);
 	DECL_OBJ(Aff_transformation, Object);
+	DECL_OBJ(Weighted_point, Object);
 #undef DECL_OBJ_
 #undef DECL_OBJ
 
@@ -197,6 +198,7 @@ namespace CGAL {
 	DECL_COMPUTE(Scalar_product);
 	DECL_COMPUTE(Hyperplane_translation);
 	DECL_COMPUTE(Value_at);
+	DECL_COMPUTE(Point_weight);
 #undef DECL_COMPUTE
 
 #define DECL_ITER_OBJ(X,Y,Z,C) struct X##_tag {}; \
@@ -246,6 +248,7 @@ namespace CGAL {
 	DECL_CONSTRUCT(Translated_point,Point);
 	DECL_CONSTRUCT(Point_to_vector,Vector);
 	DECL_CONSTRUCT(Vector_to_point,Point);
+	DECL_CONSTRUCT(Point_drop_weight,Point);
 #undef DECL_CONSTRUCT
 #if 0
 #define DECL_ITER_CONSTRUCT(X,Y) struct X##_tag {}; \
