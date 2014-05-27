@@ -53,30 +53,7 @@ struct Tag_priority_blocking {};
 template <typename Derived>
 class Spatial_lock_grid_base_3
 {
-
-#ifdef CGAL_DEBUG_GLOBAL_LOCK_DS
-// Just a simple way to store a global pointer to a grid locking data structure
-// for debugging purpose...
-
 private:
-  static Derived*& debug_global_lock_ds()
-  {
-    static Derived *p_g_lock_ds = NULL;
-    return p_g_lock_ds;
-  }
-public:
-  static Derived* get_global_lock_ds()
-  {
-    return debug_global_lock_ds();
-  }
-  static void set_global_lock_ds(Derived *ds)
-  {
-    debug_global_lock_ds() = ds;
-  }
-#endif
-
-private:
-
   static bool *init_TLS_grid(int num_cells_per_axis)
   {
     int num_cells = num_cells_per_axis*

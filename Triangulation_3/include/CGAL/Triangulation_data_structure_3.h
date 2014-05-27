@@ -453,28 +453,6 @@ private:
 
 public:
 
-#ifdef CGAL_LINKED_WITH_TBB
-  // CJTODO TEMP
-#ifdef CGAL_DEBUG_GLOBAL_LOCK_DS
-  template <typename Cell_handle>
-  bool is_cell_locked_by_this_thread(const Cell_handle &cell_handle) const
-  {
-    CGAL::Spatial_lock_grid_3<Tag_priority_blocking> *lock_ds = 
-      CGAL::Spatial_lock_grid_3::get_global_lock_ds();
-    bool locked = true;
-    if (lock_ds)
-    {
-      for (int iVertex = 0 ; locked && iVertex < 4 ; ++iVertex)
-      {
-        locked = lock_ds->is_locked_by_this_thread(
-          cell_handle->vertex(iVertex)->point());
-      }
-    }
-    return locked;
-  }
-#endif
-#endif
-
   // Internal function : assumes the conflict cells are marked.
   template <class CellIt>
   Vertex_handle _insert_in_hole(CellIt cell_begin, CellIt cell_end,
