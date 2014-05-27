@@ -1200,7 +1200,7 @@ get_best_weight(const Vertex_handle& v, bool *could_lock_zone) const
 
   double worst_criterion_value = get_min_value(criterion_values);
   double best_weight = 0;
-  // CJTODO: this computes the incident cells again!
+  // TODO: it seems that this computes the incident cells again
   double sq_d_v = get_closest_vertice_squared_distance(v);
 
   // If that boolean is set to false, it means that a facet in the complex
@@ -1219,7 +1219,7 @@ get_best_weight(const Vertex_handle& v, bool *could_lock_zone) const
     // expand prestar (insert opposite_cell facets in pre_star)
     Facet link = pre_star.front()->second;
     const Cell_handle& opposite_cell = tr_.mirror_facet(link).first;
-    // CJTODO: useless?
+    
     if (could_lock_zone && !tr_.try_lock_cell(opposite_cell))
     {
       *could_lock_zone = false;

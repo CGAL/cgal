@@ -305,7 +305,7 @@ template < typename Tr >
 void do_benchmarks(string name)
 {
   cout << "\n\nBenchmarking configuration : " << name << endl;
-  tbb::task_scheduler_init tbb_init(10); // CJTODO TEMP
+  // tbb::task_scheduler_init tbb_init(10); // Set number of threads
   benchmark_construction<Tr>();
   if (input_file_selected)
     return;

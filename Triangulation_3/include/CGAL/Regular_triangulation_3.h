@@ -229,7 +229,7 @@ namespace CGAL {
         std::vector<Vertex_handle> far_sphere_vertices;
         
 #ifdef CGAL_CONCURRENT_TRIANGULATION_3_ADD_TEMPORARY_POINTS_ON_FAR_SPHERE
-        const size_t MIN_NUM_POINTS_FOR_FAR_SPHERE_POINTS = 1000000; // CJTODO: ADJUST THIS
+        const size_t MIN_NUM_POINTS_FOR_FAR_SPHERE_POINTS = 1000000;
         if (num_points >= MIN_NUM_POINTS_FOR_FAR_SPHERE_POINTS)
         {
           // Add temporary vertices on a "far sphere" to reduce contention on

@@ -96,7 +96,7 @@ namespace Meshes {
     Element get_next_local_element_impl()
     {
       CGAL_assertion(!m_local_lists.local().empty());
-      // CJTODO BUG: add this? It shouldn't be necessary as user
+      // Add this? It shouldn't be necessary as user
       // is supposed to call "no_longer_element_to_refine_impl" first
       /*while( !test(container.front()) )
       {
@@ -252,7 +252,7 @@ namespace Meshes {
     Element get_next_element_impl() const
     {
       CGAL_assertion(!container.empty());
-      // CJTODO BUG: add this? It shouldn't be necessary as user
+      // Add this? It shouldn't be necessary as user
       // is supposed to call "no_longer_element_to_refine_impl" first
       /*while( !test(container.front()) )
       {

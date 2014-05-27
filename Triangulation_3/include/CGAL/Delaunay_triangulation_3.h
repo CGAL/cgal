@@ -37,7 +37,6 @@
 #include <CGAL/Triangulation_3.h>
 #include <CGAL/iterator.h>
 #include <CGAL/Location_policy.h>
-#include <CGAL/Mesh_3/Profiling_tools.h> // CJTODO TEMP
 
 #ifndef CGAL_TRIANGULATION_3_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
 #include <CGAL/Spatial_sort_traits_adapter_3.h>
@@ -284,10 +283,6 @@ public:
     static Profile_branch_counter_3 bcounter(
       "early withdrawals / late withdrawals / successes [Delaunay_tri_3::insert]");
 #endif
-    
-#ifdef CGAL_TRIANGULATION_3_PROFILING
-    WallClockTimer t; // CJTODO TEMP
-#endif
 
     size_type n = number_of_vertices();
     std::vector<Point> points (first, last);
@@ -298,16 +293,12 @@ public:
     if (this->is_parallel())
     {
       size_t num_points = points.size();
-      
-#ifdef CGAL_TRIANGULATION_3_PROFILING
-      WallClockTimer t1; // CJTODO TEMP
-#endif
 
       Vertex_handle hint;
       std::vector<Vertex_handle> far_sphere_vertices;
       
 #ifdef CGAL_CONCURRENT_TRIANGULATION_3_ADD_TEMPORARY_POINTS_ON_FAR_SPHERE
-      const size_t MIN_NUM_POINTS_FOR_FAR_SPHERE_POINTS = 1000000; // CJTODO: ADJUST THIS
+      const size_t MIN_NUM_POINTS_FOR_FAR_SPHERE_POINTS = 1000000;
       if (num_points >= MIN_NUM_POINTS_FOR_FAR_SPHERE_POINTS)
       {
         // Add temporary vertices on a "far sphere" to reduce contention on
