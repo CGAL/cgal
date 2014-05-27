@@ -37,6 +37,9 @@
 #include <CGAL/Triangulation_3.h>
 #include <CGAL/iterator.h>
 #include <CGAL/Location_policy.h>
+#ifdef CGAL_TRIANGULATION_3_PROFILING
+# include <CGAL/Mesh_3/Profiling_tools.h>
+#endif
 
 #ifndef CGAL_TRIANGULATION_3_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
 #include <CGAL/Spatial_sort_traits_adapter_3.h>
@@ -284,6 +287,10 @@ public:
       "early withdrawals / late withdrawals / successes [Delaunay_tri_3::insert]");
 #endif
 
+#ifdef CGAL_TRIANGULATION_3_PROFILING
+    WallClockTimer t;
+#endif
+
     size_type n = number_of_vertices();
     std::vector<Point> points (first, last);
     spatial_sort (points.begin(), points.end(), geom_traits());
@@ -306,7 +313,6 @@ public:
 
         // Get bbox
         const Bbox_3 &bbox = *this->get_bbox();
-        //Bbox_3 bbox(0., 0., 0., 1., 1., 1.); // CJTODO TEMP
         // Compute radius for far sphere
         const double& xdelta = bbox.xmax() - bbox.xmin();
         const double& ydelta = bbox.ymax() - bbox.ymin();
@@ -336,11 +342,6 @@ public:
           hint = insert(*it_p, hint);
           far_sphere_vertices.push_back(hint);
         }
-
-# ifdef CGAL_TRIANGULATION_3_PROFILING
-        std::cerr << "  Far sphere points inserted: " << t1.elapsed() << " seconds." << std::endl; // CJTODO TEMP
-        t1.reset();
-# endif
       }
 #endif // CGAL_CONCURRENT_TRIANGULATION_3_ADD_TEMPORARY_POINTS_ON_FAR_SPHERE
       
@@ -402,20 +403,12 @@ public:
           }
         }
       );
-
-#ifdef CGAL_TRIANGULATION_3_PROFILING
-      std::cerr << "  Input points inserted in: " << t1.elapsed() << " seconds." << std::endl; // CJTODO TEMP
-      t1.reset();
-#endif
       
 #ifdef CGAL_CONCURRENT_TRIANGULATION_3_ADD_TEMPORARY_POINTS_ON_FAR_SPHERE
       if (num_points >= MIN_NUM_POINTS_FOR_FAR_SPHERE_POINTS)
       {
         // Remove the temporary vertices on far sphere
         remove(far_sphere_vertices.begin(), far_sphere_vertices.end());
-#ifdef CGAL_TRIANGULATION_3_PROFILING
-        std::cerr << "  Far sphere points removed in: " << t1.elapsed() << " seconds." << std::endl; // CJTODO TEMP
-#endif
       }
 #endif // CGAL_CONCURRENT_TRIANGULATION_3_ADD_TEMPORARY_POINTS_ON_FAR_SPHERE
     }
@@ -430,7 +423,7 @@ public:
     }
 
 #ifdef CGAL_TRIANGULATION_3_PROFILING
-    std::cerr << "Triangulation computed in " << t.elapsed() << " seconds." << std::endl; // CJTODO TEMP
+    std::cerr << "Triangulation computed in " << t.elapsed() << " seconds." << std::endl;
 #endif
 
     return number_of_vertices() - n;
@@ -676,7 +669,9 @@ public:
     CGAL_triangulation_precondition(!this->does_repeat_in_range(first, beyond));
     size_type n = number_of_vertices();
 
-    WallClockTimer t; // CJTODO TEMP
+#ifdef CGAL_TRIANGULATION_3_PROFILING
+    WallClockTimer t;
+#endif
 
     // Parallel
 #ifdef CGAL_LINKED_WITH_TBB
