@@ -41,7 +41,7 @@ namespace CGAL {
 namespace Surface_mesh_simplification
 {
 
-  template<class ECM_, class Kernel_ = typename Kernel_traits< typename ECM_::Vertex::Point>::Kernel >
+  template<class ECM_, class Kernel_ = typename Kernel_traits<typename boost::property_traits<typename boost::property_map<ECM_, CGAL::vertex_point_t>::type>::value_type>::Kernel >
 class LindstromTurkCore
 {
 public:
@@ -61,7 +61,8 @@ public:
   
   typedef typename Kernel::Point_3 Point ;
 
-  typedef typename ECM::Vertex::Point ECM_Point ;
+  typedef typename boost::property_map<ECM, CGAL::vertex_point_t>::type Vertex_point_pmap;
+  typedef typename boost::property_traits<Vertex_point_pmap>::value_type ECM_Point;
   
   typedef typename Kernel_traits<ECM_Point>::Kernel ECM_Kernel ;
   

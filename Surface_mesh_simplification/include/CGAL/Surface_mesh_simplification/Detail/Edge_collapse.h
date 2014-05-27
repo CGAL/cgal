@@ -71,7 +71,8 @@ public:
   typedef typename GraphTraits::edges_size_type        size_type ;
   
   typedef typename GraphTraits::edge_iterator edge_iterator ;
-  typedef typename ECM::Vertex::Point                    Point ;
+  typedef typename boost::property_map<ECM, CGAL::vertex_point_t>::type Vertex_point_pmap;
+  typedef typename boost::property_traits<Vertex_point_pmap>::value_type Point;
 
   typedef typename GetCost     ::result_type Cost_type ;
   typedef typename GetPlacement::result_type Placement_type ;

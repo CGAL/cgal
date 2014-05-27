@@ -49,7 +49,8 @@ public:
   
 private :
 
-  typedef typename ECM::Vertex::Point Point ;
+  typedef typename boost::property_map<ECM, CGAL::vertex_point_t>::type Vertex_point_pmap;
+  typedef typename boost::property_traits<Vertex_point_pmap>::value_type Point;
   typedef typename Kernel_traits<Point>::Kernel      Kernel ;
 
 public :
