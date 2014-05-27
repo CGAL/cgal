@@ -284,7 +284,9 @@ no_topological_change__without_set_point(
             Tr::Triangulation_data_structure::Vertex_range::s_iterator_to(v));
         }
 
-        if(tr.side_of_power_sphere(&cj_copy, pg(v1), false)
+        Cell_handle cj_copy_h = 
+          Tr::Triangulation_data_structure::Cell_range::s_iterator_to(cj_copy);
+        if(tr.side_of_power_sphere(cj_copy_h, pg(v1), false)
            != CGAL::ON_UNBOUNDED_SIDE)
         {
           np = false;
