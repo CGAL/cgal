@@ -50,7 +50,8 @@ template <class R_> struct Construct_weighted_point : Store_kernel<R_> {
 template <class R_> struct Point_drop_weight {
   CGAL_FUNCTOR_INIT_IGNORE(Point_drop_weight)
   typedef typename Get_type<R_, Weighted_point_tag>::type	argument_type;
-  typedef typename Get_type<R_, Point_tag>::type const&		result_type;
+  typedef typename Get_type<R_, Point_tag>::type		result_type;
+  // Returning a reference would be too fragile
 
   result_type operator()(argument_type const&s)const{
     return s.point();
@@ -60,11 +61,30 @@ template <class R_> struct Point_drop_weight {
 template <class R_> struct Point_weight {
   CGAL_FUNCTOR_INIT_IGNORE(Point_weight)
   typedef typename Get_type<R_, Weighted_point_tag>::type	argument_type;
-  typedef typename Get_type<R_, FT_tag>::type const&		result_type;
+  typedef typename Get_type<R_, FT_tag>::type			result_type;
 
   result_type operator()(argument_type const&s)const{
     return s.weight();
   }
+};
+
+template<class R_> struct Power_test : private Store_kernel<R_> {
+  CGAL_FUNCTOR_INIT_STORE(Power_test)
+  typedef R_ R;
+  typedef typename Get_type<R, Oriented_side_tag>::type result_type;
+
+  template<class Iter, class Pt>
+    result_type operator()(Iter const& f, Iter const& e, Pt const& p0) const {
+      typename Get_functor<R, Power_test_raw_tag>::type ptr(this->kernel());
+      typename Get_functor<R, Point_drop_weight_tag>::type pdw(this->kernel());
+      typename Get_functor<R, Point_weight_tag>::type pw(this->kernel());
+      return ptr (
+	  make_transforming_iterator (f, pdw),
+	  make_transforming_iterator (e, pdw),
+	  make_transforming_iterator (f, pw),
+	  pdw (p0),
+	  pw (p0));
+    }
 };
 
 }
@@ -72,5 +92,6 @@ CGAL_KD_DEFAULT_TYPE(Weighted_point_tag,(CGAL::Weighted_point<K>),(Point_tag),()
 CGAL_KD_DEFAULT_FUNCTOR(Construct_ttag<Weighted_point_tag>,(CartesianDKernelFunctors::Construct_weighted_point<K>),(Weighted_point_tag,Point_tag),());
 CGAL_KD_DEFAULT_FUNCTOR(Point_drop_weight_tag,(CartesianDKernelFunctors::Point_drop_weight<K>),(Weighted_point_tag,Point_tag),());
 CGAL_KD_DEFAULT_FUNCTOR(Point_weight_tag,(CartesianDKernelFunctors::Point_weight<K>),(Weighted_point_tag,Point_tag),());
+CGAL_KD_DEFAULT_FUNCTOR(Power_test_tag,(CartesianDKernelFunctors::Power_test<K>),(Weighted_point_tag),(Power_test_raw_tag,Point_drop_weight_tag,Point_weight_tag));
 } // namespace CGAL
 #endif

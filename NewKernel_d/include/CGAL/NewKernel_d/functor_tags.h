@@ -307,6 +307,8 @@ namespace CGAL {
 	CGAL_DECL_PREDICATE(Affinely_independent);
 	CGAL_DECL_PREDICATE(Contained_in_linear_hull);
 	CGAL_DECL_PREDICATE(Contained_in_simplex);
+	CGAL_DECL_PREDICATE(Power_test_raw);
+	CGAL_DECL_PREDICATE(Power_test);
 #undef CGAL_DECL_PREDICATE
 
 #define CGAL_DECL_MISC(X) struct X##_tag {}; \

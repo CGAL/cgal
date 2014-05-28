@@ -520,12 +520,16 @@ void test3(){
   typedef typename CGAL::Get_functor<K1, CGAL::Construct_ttag<CGAL::Weighted_point_tag> >::type CWP;
   typedef typename CGAL::Get_functor<K1, CGAL::Point_drop_weight_tag>::type PDW;
   typedef typename CGAL::Get_functor<K1, CGAL::Point_weight_tag>::type PW;
+  typedef typename CGAL::Get_functor<K1, CGAL::Power_test_tag>::type PT;
   CWP cwp (k);
   PDW pdw (k);
   PW pw (k);
+  PT pt (k);
   WP wp = cwp (x1, 2);
   assert (pw(wp) == 2);
   assert (ed(pdw(wp), x1));
+  WP tabw[]={cwp(x1,0),cwp(x2,0),cwp(x3,0),cwp(x4,0),cwp(x5,0)};
+  assert(pt(tabw+0,tabw+4,tabw[4])==CGAL::ON_POSITIVE_SIDE);
 }
 template struct CGAL::Epick_d<CGAL::Dimension_tag<2> >;
 template struct CGAL::Epick_d<CGAL::Dimension_tag<3> >;
