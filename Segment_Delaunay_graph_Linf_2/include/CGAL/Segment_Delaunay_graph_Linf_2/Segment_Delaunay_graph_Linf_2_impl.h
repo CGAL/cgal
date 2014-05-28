@@ -1026,12 +1026,11 @@ insert_exact_point_on_segment(const Storage_site_2& ss, const Site_2& t,
 #endif
     unsigned int remaining_nop = flips_nop;
     Face_handle current_face, next_face;
-    int current_i, next_i;
     next_face = otherf;
-    next_i = f_i;
+    int next_i = f_i;
     while (remaining_nop > 0) {
       current_face = next_face;
-      current_i = next_i;
+      const int current_i = next_i;
       if (remaining_nop > 1) {
         next_face = current_face->neighbor(ccw(current_i));
         next_i = this->_tds.mirror_index(current_face, ccw(current_i));
@@ -1055,12 +1054,11 @@ insert_exact_point_on_segment(const Storage_site_2& ss, const Site_2& t,
 #endif
     unsigned int remaining_pon = flips_pon;
     Face_handle current_face, next_face;
-    int current_i, next_i;
     next_face = otherg;
-    next_i = g_i;
+    int next_i = g_i;
     while (remaining_pon > 0) {
       current_face = next_face;
-      current_i = next_i;
+      const int current_i = next_i;
       if (remaining_pon > 1) {
         next_face = current_face->neighbor(ccw(current_i));
         next_i = this->_tds.mirror_index(current_face, ccw(current_i));
@@ -1176,12 +1174,11 @@ insert_point_on_segment(const Storage_site_2& ss, const Site_2& ,
 #endif
     unsigned int remaining_nop = flips_nop;
     Face_handle current_face, next_face;
-    int current_i, next_i;
     next_face = otherf;
-    next_i = f_i;
+    int next_i = f_i;
     while (remaining_nop > 0) {
       current_face = next_face;
-      current_i = next_i;
+      const int current_i = next_i;
       if (remaining_nop > 1) {
         next_face = current_face->neighbor(ccw(current_i));
         next_i = this->_tds.mirror_index(current_face, ccw(current_i));
@@ -1205,12 +1202,11 @@ insert_point_on_segment(const Storage_site_2& ss, const Site_2& ,
 #endif
     unsigned int remaining_pon = flips_pon;
     Face_handle current_face, next_face;
-    int current_i, next_i;
     next_face = otherg;
-    next_i = g_i;
+    int next_i = g_i;
     while (remaining_pon > 0) {
       current_face = next_face;
-      current_i = next_i;
+      const int current_i = next_i;
       if (remaining_pon > 1) {
         next_face = current_face->neighbor(ccw(current_i));
         next_i = this->_tds.mirror_index(current_face, ccw(current_i));

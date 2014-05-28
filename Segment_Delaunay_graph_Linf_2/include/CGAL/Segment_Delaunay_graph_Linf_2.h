@@ -1215,8 +1215,8 @@ public:
       }
     }
 
-    //Sandeep: A counterclockwise traversal of the vertices adjacent to the infinite_vertex
-    //is a clockwise traversal of the convex hull.
+    // a counterclockwise traversal of the vertices adjacent to the
+    // infinite_vertex is a clockwise traversal of the convex hull
     os << std::endl;
     os << "Convex-hull of sdg:" << std::endl;
     os << "-------------------" << std::endl;
@@ -1227,8 +1227,8 @@ public:
     /*if (is_infinite(v_inf)){
       os << "vertex 0 : " << inf_vertex << std::endl;
     }*/
-    int cnt = 0;
     if (vc1 != 0) {
+      unsigned int cnt = 0;
       do {
         vh = vc1;
         CGAL_assertion(not is_infinite(vh));
