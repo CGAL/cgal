@@ -810,9 +810,9 @@ collapse_edge(typename boost::graph_traits<Graph>::edge_descriptor v0v1,
 
   vertex_descriptor q = target(pq, g);
   vertex_descriptor p = source(pq, g);
-
+#if 0
   if(lTopLeftFaceExists && lBottomRightFaceExists){
-    // do it low level
+    std::cerr <<    " // do it low level" << std::endl;
     halfedge_descriptor qt = next(pq,g);
     halfedge_descriptor pb = next(qp,g);
     halfedge_descriptor ppt = prev(pt,g);
@@ -820,8 +820,18 @@ collapse_edge(typename boost::graph_traits<Graph>::edge_descriptor v0v1,
     if(halfedge(q,g) == pq){
       set_halfedge(q, pqb,g);
     }
+    vertex_descriptor t = target(qt,g);
+    if(halfedge(t,g) == pt){
+      set_halfedge(t, qt,g);
+    } 
+    vertex_descriptor b = target(pb,g);
+    if(halfedge(b,g) == qb){
+      set_halfedge(t, pb,g);
+    }
     set_face(qt, face(pt,g),g);
+    set_halfedge(face(qt,g),qt,g);
     set_face(pb, face(qb,g),g);
+    set_halfedge(face(pb,g),pb,g);
     set_next(qt, next(pt,g),g);
     set_next(pb, next(qb,g),g);
     set_next(ppt, qt,g);
@@ -832,9 +842,12 @@ collapse_edge(typename boost::graph_traits<Graph>::edge_descriptor v0v1,
     remove_edge(v0v1,g);
     remove_edge(edge(pt,g),g);
     remove_edge(edge(qb,g),g);
+    remove_vertex(p,g);
     return q;
     // return the vertex kept
   }
+#endif
+
   bool lP_Erased = false, lQ_Erased = false ;
 
   if ( lTopFaceExists )
