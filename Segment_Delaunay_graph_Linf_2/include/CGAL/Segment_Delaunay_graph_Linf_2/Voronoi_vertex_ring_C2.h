@@ -2335,11 +2335,11 @@ private:
   {
     CGAL_assertion(t.is_segment());
 
-    bool is_p_point = p.is_point();
-    bool is_q_point = q.is_point();
-    bool is_r_point = r.is_point();
+    const bool is_p_point = p.is_point();
+    const bool is_q_point = q.is_point();
+    const bool is_r_point = r.is_point();
 
-    unsigned int numpts =
+    const unsigned int numpts =
       ((is_p_point)? 1 : 0) +
       ((is_q_point)? 1 : 0) +
       ((is_r_point)? 1 : 0)  ;
@@ -2355,12 +2355,10 @@ private:
 
 
     bool is_p_tsrc(false);
-    bool is_p_ttrg(false);
     bool is_p_endp_of_t(false);
-
     if (is_p_point) {
       is_p_tsrc = same_points(p, t.source_site());
-      is_p_ttrg = same_points(p, t.target_site());
+      const bool is_p_ttrg = same_points(p, t.target_site());
       is_p_endp_of_t = is_p_tsrc or is_p_ttrg;
 
       if (is_p_endp_of_t) {
@@ -2369,12 +2367,10 @@ private:
     }
 
     bool is_q_tsrc(false);
-    bool is_q_ttrg(false);
     bool is_q_endp_of_t(false);
-
     if (is_q_point) {
       is_q_tsrc = same_points(q, t.source_site());
-      is_q_ttrg = same_points(q, t.target_site());
+      const bool is_q_ttrg = same_points(q, t.target_site());
       is_q_endp_of_t = is_q_tsrc or is_q_ttrg;
       if (is_q_endp_of_t) {
         sqpnt = q;
@@ -2382,19 +2378,18 @@ private:
     }
 
     bool is_r_tsrc(false);
-    bool is_r_ttrg(false);
     bool is_r_endp_of_t(false);
 
     if (is_r_point) {
       is_r_tsrc = same_points(r, t.source_site());
-      is_r_ttrg = same_points(r, t.target_site());
+      const bool is_r_ttrg = same_points(r, t.target_site());
       is_r_endp_of_t = is_r_tsrc or is_r_ttrg;
       if (is_r_endp_of_t) {
         sqpnt = r;
       }
     }
 
-    unsigned int numendpts_of_t =
+    const unsigned int numendpts_of_t =
       ((is_p_endp_of_t)? 1 : 0) +
       ((is_q_endp_of_t)? 1 : 0) +
       ((is_r_endp_of_t)? 1 : 0)  ;
@@ -2404,64 +2399,56 @@ private:
 
     if (numendpts_of_t == 0) {
 
-      bool is_psrc_tsrc(false),
-           is_ptrg_tsrc(false),
-           is_psrc_ttrg(false),
-           is_ptrg_ttrg(false),
-           have_common_p_tsrc(false),
+      bool have_common_p_tsrc(false),
            have_common_p_ttrg(false),
            have_common_p_t(false);
 
       if (not is_p_point) {
         CGAL_assertion( not same_segments(p, t) );
-        is_psrc_tsrc = same_points(p.source_site(), t.source_site());
-        is_ptrg_tsrc = same_points(p.target_site(), t.source_site());
-        is_psrc_ttrg = same_points(p.source_site(), t.target_site());
-        is_ptrg_ttrg = same_points(p.target_site(), t.target_site());
+        const bool is_psrc_tsrc =
+          same_points(p.source_site(), t.source_site());
+        const bool is_ptrg_tsrc =
+          same_points(p.target_site(), t.source_site());
+        const bool is_psrc_ttrg =
+          same_points(p.source_site(), t.target_site());
+        const bool is_ptrg_ttrg =
+          same_points(p.target_site(), t.target_site());
         have_common_p_tsrc = is_psrc_tsrc or is_ptrg_tsrc;
         have_common_p_ttrg = is_psrc_ttrg or is_ptrg_ttrg;
         have_common_p_t = have_common_p_tsrc or have_common_p_ttrg;
       }
 
-      bool is_qsrc_tsrc(false),
-           is_qtrg_tsrc(false),
-           is_qsrc_ttrg(false),
-           is_qtrg_ttrg(false),
-           have_common_q_tsrc(false),
+      bool have_common_q_tsrc(false),
            have_common_q_ttrg(false),
            have_common_q_t(false);
 
       if (not is_q_point) {
         CGAL_assertion( not same_segments(q, t) );
-        is_qsrc_tsrc = same_points(q.source_site(), t.source_site());
-        is_qtrg_tsrc = same_points(q.target_site(), t.source_site());
-        is_qsrc_ttrg = same_points(q.source_site(), t.target_site());
-        is_qtrg_ttrg = same_points(q.target_site(), t.target_site());
+        const bool is_qsrc_tsrc = same_points(q.source_site(), t.source_site());
+        const bool is_qtrg_tsrc = same_points(q.target_site(), t.source_site());
+        const bool is_qsrc_ttrg = same_points(q.source_site(), t.target_site());
+        const bool is_qtrg_ttrg = same_points(q.target_site(), t.target_site());
         have_common_q_tsrc = is_qsrc_tsrc or is_qtrg_tsrc;
         have_common_q_ttrg = is_qsrc_ttrg or is_qtrg_ttrg;
         have_common_q_t = have_common_q_tsrc or have_common_q_ttrg;
       }
 
-      bool is_rsrc_tsrc(false),
-           is_rtrg_tsrc(false),
-           is_rsrc_ttrg(false),
-           is_rtrg_ttrg(false),
-           have_common_r_tsrc(false),
+      bool have_common_r_tsrc(false),
            have_common_r_ttrg(false),
            have_common_r_t(false);
 
       if (not is_r_point) {
         CGAL_assertion( not same_segments(r, t) );
-        is_rsrc_tsrc = same_points(r.source_site(), t.source_site());
-        is_rtrg_tsrc = same_points(r.target_site(), t.source_site());
-        is_rsrc_ttrg = same_points(r.source_site(), t.target_site());
-        is_rtrg_ttrg = same_points(r.target_site(), t.target_site());
+        const bool is_rsrc_tsrc = same_points(r.source_site(), t.source_site());
+        const bool is_rtrg_tsrc = same_points(r.target_site(), t.source_site());
+        const bool is_rsrc_ttrg = same_points(r.source_site(), t.target_site());
+        const bool is_rtrg_ttrg = same_points(r.target_site(), t.target_site());
         have_common_r_tsrc = is_rsrc_tsrc or is_rtrg_tsrc;
         have_common_r_ttrg = is_rsrc_ttrg or is_rtrg_ttrg;
         have_common_r_t = have_common_r_tsrc or have_common_r_ttrg;
       }
 
-      unsigned int numcommon =
+      const unsigned int numcommon =
       ((have_common_p_t)? 1 : 0) +
       ((have_common_q_t)? 1 : 0) +
       ((have_common_r_t)? 1 : 0)  ;
@@ -2477,12 +2464,12 @@ private:
 
       // here, numcommon == 2
 
-      unsigned int numcommon_tsrc =
+      const unsigned int numcommon_tsrc =
       ((have_common_p_tsrc)? 1 : 0) +
       ((have_common_q_tsrc)? 1 : 0) +
       ((have_common_r_tsrc)? 1 : 0)  ;
 
-      unsigned int numcommon_ttrg =
+      const unsigned int numcommon_ttrg =
       ((have_common_p_ttrg)? 1 : 0) +
       ((have_common_q_ttrg)? 1 : 0) +
       ((have_common_r_ttrg)? 1 : 0)  ;
