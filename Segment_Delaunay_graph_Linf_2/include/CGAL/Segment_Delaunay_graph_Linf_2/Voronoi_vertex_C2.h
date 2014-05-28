@@ -28,10 +28,6 @@
 #include <CGAL/Segment_Delaunay_graph_Linf_2/Voronoi_vertex_ring_C2.h>
 #include <CGAL/Segment_Delaunay_graph_Linf_2/Voronoi_vertex_sqrt_field_new_C2.h>
 
-#ifdef CGAL_SDG_USE_OLD_INCIRCLE
-#include <CGAL/Segment_Delaunay_graph_Linf_2/Voronoi_vertex_sqrt_field_C2.h>
-#endif // CGAL_SDG_USE_OLD_INCIRCLE
-
 namespace CGAL {
 
 namespace SegmentDelaunayGraphLinf_2 {
@@ -49,11 +45,7 @@ namespace Internal {
   template<class K>
   struct Which_Voronoi_vertex_base_C2<K,Field_with_sqrt_tag>
   {
-#ifdef CGAL_SDG_USE_OLD_INCIRCLE
-    typedef Voronoi_vertex_sqrt_field_C2<K>        Base;
-#else
     typedef Voronoi_vertex_sqrt_field_new_C2<K>    Base;
-#endif // CGAL_SDG_USE_OLD_INCIRCLE
   };
 } // namespace Internal
 

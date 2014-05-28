@@ -9,12 +9,6 @@
 #include <CGAL/Segment_Delaunay_graph_2/basic.h>
 #include <CGAL/Orientation_Linf_2.h>
 
-#ifdef CGAL_SDG_CHECK_INCIRCLE_CONSISTENCY
-#ifndef CGAL_SDG_USE_OLD_INCIRCLE
-#include <CGAL/Segment_Delaunay_graph_Linf_2/Voronoi_vertex_sqrt_field_C2.h>
-#endif // CGAL_SDG_USE_OLD_INCIRCLE
-#endif // CGAL_SDG_CHECK_INCIRCLE_CONSISTENCY
-
 namespace CGAL {
 
 namespace SegmentDelaunayGraphLinf_2_hv {
@@ -682,31 +676,6 @@ public:
     }
 #endif
 
-#ifdef CGAL_SDG_CHECK_INCIRCLE_CONSISTENCY
-#ifdef CGAL_SDG_USE_OLD_INCIRCLE
-    typedef Voronoi_vertex_sqrt_field_new_C2<K>   Alt_Voronoi_vertex_2;
-#else
-    typedef Voronoi_vertex_sqrt_field_C2<K>       Alt_Voronoi_vertex_2;
-#endif
-
-    Voronoi_vertex_2 v(p, q, r);
-    Alt_Voronoi_vertex_2 v_alt(p, q, r);
-
-    Sign s = v.incircle(t);
-    Sign s_alt = v_alt.incircle(t);
-
-    if ( s != s_alt ) {
-      std::cerr << "different results" << std::endl;
-      std::cerr << p << std::endl;
-      std::cerr << q << std::endl;
-      std::cerr << r << std::endl;
-      std::cerr << t << std::endl;
-      CGAL_assertion( s == s_alt );
-      exit(1);
-    }
-
-    return s;
-#else
     Voronoi_vertex_2 v(p, q, r);
 
 #ifndef CGAL_NO_ASSERTIONS
@@ -725,7 +694,6 @@ public:
                   << std::endl; );
 
     return retval;
-#endif // CGAL_SDG_CHECK_INCIRCLE_CONSISTENCY
   }
 
 

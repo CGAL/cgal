@@ -19,12 +19,6 @@
 // add this to dump quadruples of sites for which the incircle test is called
 //#define CGAL_PROFILE_SDG_DUMP_INCIRCLE 1
 
-// add this to test if both old and new incircle tests give the same result
-//#define CGAL_SDG_CHECK_INCIRCLE_CONSISTENCY 1
-
-// add this to use the old incircle test
-//#define CGAL_SDG_USE_OLD_INCIRCLE 1
-
 #define CGAL_SDG_NO_FACE_MAP 1
 #define USE_INPLACE_LIST 1
 #define CGAL_SDG_USE_SIMPLIFIED_ARRANGEMENT_TYPE_PREDICATE 1
