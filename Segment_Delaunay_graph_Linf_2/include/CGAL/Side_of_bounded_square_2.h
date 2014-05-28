@@ -434,9 +434,22 @@ namespace CGAL {
 
         // comparison of query point t with lrbt
         Comparison_result cxmint = compare_x_2(*lft_p, t);
+        if (cxmint == LARGER) {
+          return ON_UNBOUNDED_SIDE;
+        }
         Comparison_result cxtmax = compare_x_2(t, *rgt_p);
+        if (cxtmax == LARGER) {
+          return ON_UNBOUNDED_SIDE;
+        }
         Comparison_result cymint = compare_y_2(*bot_p, t);
+        if (cymint == LARGER) {
+          return ON_UNBOUNDED_SIDE;
+        }
         Comparison_result cytmax = compare_y_2(t, *top_p);
+        if (cytmax == LARGER) {
+          return ON_UNBOUNDED_SIDE;
+        }
+        // here, each comparison value is either SMALLER or EQUAL
         if( cxmint == SMALLER and
             cxtmax == SMALLER and
             cymint == SMALLER and
@@ -444,16 +457,7 @@ namespace CGAL {
           CGAL_SDG_DEBUG(std::cout
               << "debug Side_of_bs return ON_BOUNDED_SIDE" << std::endl;);
           return ON_BOUNDED_SIDE;
-        }
-        else if (cxmint == LARGER or
-                 cxtmax == LARGER or
-                 cymint == LARGER or
-                 cytmax == LARGER   ) {
-          CGAL_SDG_DEBUG(std::cout
-              << "debug Side_of_bs return ON_UNBOUNDED_SIDE" << std::endl;);
-          return ON_UNBOUNDED_SIDE;
-        }
-        else {
+        } else {
           CGAL_SDG_DEBUG(std::cout << "debug Side_of_bs on boundary, "
               << "left=" << cxmint << " right=" << cxtmax
               << " bot=" << cymint << " top  =" << cytmax
