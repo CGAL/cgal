@@ -12,6 +12,7 @@
 #include <CGAL/Interval_nt.h>
 #include <CGAL/use.h>
 #include <iostream>
+#include <CGAL/NewKernel_d/Types/Weighted_point.h>
 
 //typedef CGAL::Cartesian_base_d<double,CGAL::Dimension_tag<2> > K0;
 //typedef CGAL::Cartesian_base_d<CGAL::Interval_nt_advanced,CGAL::Dimension_tag<2> > KA;
@@ -466,6 +467,7 @@ void test3(){
   P x4=cp(0,0,1);
   P x5=cp(0,0,0);
   P x6=cp(0,0,-1);
+  assert(!ed(x1,x2));
   P tab2[]={x1,x2,x3,x4,x5};
   assert(cis(tab2+0,tab2+4,x5));
   assert(po(tab2+0,tab2+4)==CGAL::POSITIVE);
@@ -513,6 +515,17 @@ void test3(){
   assert(ifsos(fozn, tz+0, tz+3, tz[4]) == CGAL::ON_NEGATIVE_SIDE);
   assert(ifsos(fozp, tz+0, tz+3, tz[5]) == CGAL::ON_NEGATIVE_SIDE);
   assert(ifsos(fozn, tz+0, tz+3, tz[5]) == CGAL::ON_POSITIVE_SIDE);
+
+  typedef typename CGAL::Get_type<K1, CGAL::Weighted_point_tag>::type WP;
+  typedef typename CGAL::Get_functor<K1, CGAL::Construct_ttag<CGAL::Weighted_point_tag> >::type CWP;
+  typedef typename CGAL::Get_functor<K1, CGAL::Point_drop_weight_tag>::type PDW;
+  typedef typename CGAL::Get_functor<K1, CGAL::Point_weight_tag>::type PW;
+  CWP cwp (k);
+  PDW pdw (k);
+  PW pw (k);
+  WP wp = cwp (x1, 2);
+  assert (pw(wp) == 2);
+  assert (ed(pdw(wp), x1));
 }
 template struct CGAL::Epick_d<CGAL::Dimension_tag<2> >;
 template struct CGAL::Epick_d<CGAL::Dimension_tag<3> >;
