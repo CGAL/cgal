@@ -28,18 +28,19 @@ void Construct_polyhedron_planes(Polyhedron& out)
 }
 
 template <class Polyhedron>
-void Make_regular_tetrahedron(Polyhedron& out)
+typename Polyhedron::Halfedge_handle Make_regular_tetrahedron(Polyhedron& out)
 {
-  typedef typename Polyhedron::Kernel::FT FT;
+  typedef typename Polyhedron::Traits::FT FT;
   
   FT rsqrt2 = FT(1.0) / CGAL::sqrt(FT(2.0));
   out.clear();
-  out.make_tetrahedron(
-    Polyhedron::Point_3(FT(1.0), FT(0.0), -rsqrt2),
-    Polyhedron::Point_3(-FT(1.0), FT(0.0), -rsqrt2),
-    Polyhedron::Point_3(FT(0.0), FT(1.0), rsqrt2),
-    Polyhedron::Point_3(FT(0.0), FT(1.0), rsqrt2));
+  typename Polyhedron::Halfedge_handle result = out.make_tetrahedron(
+    typename Polyhedron::Point_3(FT(1.0), FT(0.0), -rsqrt2),
+    typename Polyhedron::Point_3(-FT(1.0), FT(0.0), -rsqrt2),
+    typename Polyhedron::Point_3(FT(0.0), FT(1.0), rsqrt2),
+    typename Polyhedron::Point_3(FT(0.0), -FT(1.0), rsqrt2));
   Construct_polyhedron_planes(out);
+  return result;
 }
 
 } // namespace util

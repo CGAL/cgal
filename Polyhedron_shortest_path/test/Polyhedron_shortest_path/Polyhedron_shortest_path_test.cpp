@@ -2,10 +2,13 @@
 #include <CGAL/Exact_predicates_exact_constructions_kernel_with_sqrt.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Polyhedron_shortest_path/Polyhedron_shortest_path_traits.h>
+#include <CGAL/Polyhedron_3.h>
+#include <CGAL/IO/Polyhedron_iostream.h>
+
 #include <CGAL/test_macros.h>
 #include <CGAL/test_util.h>
-#include <CGAL/Polyhedron_3.h>
 #include <iostream>
+#include <sstream>
 
 #define CHECK_CLOSE(expected, result, e) (CGAL::abs((expected) - (result)) < (e))
 
@@ -226,6 +229,69 @@ int main(int argc, char** argv)
       CGAL_TEST(CHECK_CLOSE(compute_squared_distance_3(sourceTriangle[0], sourceTriangle[2]), compute_squared_distance_2(flattened[0], flattened[2]), Kernel::FT(0.000001)));
       CGAL_TEST(CHECK_CLOSE(compute_squared_distance_3(sourceTriangle[1], sourceTriangle[2]), compute_squared_distance_2(flattened[1], flattened[2]), Kernel::FT(0.000001)));
     }
+  }
+  
+  // Test check for 'saddle' vertices on a polyhedron(vertices with negative discrete curvature)
+  {
+    typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
+    typedef CGAL::Polyhedron_3<Kernel> Polyhedron_3;
+    typedef CGAL::Polyhedron_shortest_path_default_traits<Kernel, Polyhedron_3> Traits;
+    
+    Traits traits;
+    Traits::Construct_triangle_location_3 construct_triangle_location_3(traits.construct_triangle_location_3_object());
+    Traits::Project_triangle_3_to_triangle_2 project_triangle_3_to_triangle_2(traits.project_triangle_3_to_triangle_2_object());
+    Traits::Flatten_triangle_3_along_segment_2 flatten_triangle_3_along_segment_2(traits.flatten_triangle_3_along_segment_2_object());
+    Traits::Orientation_2 orientation_2(traits.orientation_2_object());
+    
+    Traits::Is_saddle_vertex is_saddle_vertex(traits.is_saddle_vertex_object());
+  
+    // This is a regular tetrahedron (edge length 3) with a regular tetrahedron (edge length 1) glued onto one of its faces, such that it has exactly 3 saddle vertices, specifically vertices 4, 5, and 6.
+    const char* saddleVertexMesh =
+      "OFF\n"
+      "8 12 0\n"
+      "0.0 -3.0 0.0\n"
+      "-3.0 0.0 -1.73205\n"
+      "3.0 0.0 -1.73205\n"
+      "0.0 0.0 3.4641\n"
+      "-1.0 0.0 0.57735\n"
+      "1.0 0.0 0.57735\n"
+      "0.0 0.0 -1.1547\n"
+      "0.0 3.0 0.0\n"
+      "3 0 2 1\n"
+      "3 0 3 2\n"
+      "3 0 1 3\n"
+      "3 1 2 6\n"
+      "3 2 5 6\n"
+      "3 2 3 5\n"
+      "3 3 4 5\n"
+      "3 3 1 4\n"
+      "3 1 6 4\n"
+      "3 4 6 7\n"
+      "3 6 5 7\n"
+      "3 5 4 7\n";
+      
+    std::istringstream iss(saddleVertexMesh);
+    
+    Polyhedron_3 P;
+    
+    iss >> P;
+    
+    size_t currentVertex = 0;
+    
+    for (Polyhedron_3::Vertex_iterator it = P.vertices_begin(); it != P.vertices_end(); ++it)
+    {
+      if (currentVertex <= 3 || currentVertex == 7)
+      {
+        CGAL_TEST(!is_saddle_vertex(it));
+      }
+      else
+      {
+        CGAL_TEST(is_saddle_vertex(it));
+      }
+
+      ++currentVertex;
+    }
+    
   }
   
   CGAL_TEST_END;
