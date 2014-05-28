@@ -63,7 +63,7 @@ struct Polyhedron_tester : public Tester<K>
     this->verify_c3t3_volume(c3t3, vol*0.95, vol*1.05);
 
     this->verify_c3t3(c3t3,domain,Polyhedral_tag(),
-                      55, 65, 110, 125, 85, 98);
+                      55, 65, 110, 125, 85, 120);
   }
 };
 

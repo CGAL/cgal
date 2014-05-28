@@ -37,8 +37,8 @@ int main( int argc, char** argv )
   int r = SMS::edge_collapse
             (surface_mesh
             ,stop
-            ,CGAL::vertex_index_map(boost::get(CGAL::vertex_external_index,surface_mesh)) 
-                  .edge_index_map  (boost::get(CGAL::edge_external_index  ,surface_mesh)) 
+            ,CGAL::vertex_index_map(get(CGAL::vertex_external_index,surface_mesh)) 
+             .halfedge_index_map  (get(CGAL::halfedge_external_index  ,surface_mesh)) 
             );
   
   std::cout << "\nFinished...\n" << r << " edges removed.\n" 

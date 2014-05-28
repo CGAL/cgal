@@ -41,7 +41,7 @@ namespace CGAL {
 namespace Surface_mesh_simplification
 {
 
-template<class ECM_, class Kernel_ = typename Kernel_traits< typename halfedge_graph_traits<ECM_>::Point>::Kernel >
+  template<class ECM_, class Kernel_ = typename Kernel_traits<typename boost::property_traits<typename boost::property_map<ECM_, CGAL::vertex_point_t>::type>::value_type>::Kernel >
 class LindstromTurkCore
 {
 public:
@@ -54,14 +54,15 @@ public:
   typedef boost::graph_traits<ECM> GraphTraits ;
   
   typedef typename GraphTraits::vertex_descriptor vertex_descriptor ;
-  typedef typename GraphTraits::edge_descriptor   edge_descriptor ;
+  typedef typename GraphTraits::halfedge_descriptor   halfedge_descriptor ;
   typedef typename GraphTraits::in_edge_iterator  in_edge_iterator ;
   
   typedef LindstromTurk_params Params ;
   
   typedef typename Kernel::Point_3 Point ;
 
-  typedef typename halfedge_graph_traits<ECM>::Point ECM_Point ;
+  typedef typename boost::property_map<ECM, CGAL::vertex_point_t>::type Vertex_point_pmap;
+  typedef typename boost::property_traits<Vertex_point_pmap>::value_type ECM_Point;
   
   typedef typename Kernel_traits<ECM_Point>::Kernel ECM_Kernel ;
   
@@ -78,7 +79,7 @@ public:
   typedef typename Profile::vertex_descriptor_vector vertex_descriptor_vector ;
   
   typedef typename Profile::Triangle_vector       ::const_iterator const_triangle_iterator ;
-  typedef typename Profile::edge_descriptor_vector::const_iterator const_border_edge_iterator ;
+  typedef typename Profile::halfedge_descriptor_vector::const_iterator const_border_edge_iterator ;
   
 public:
   

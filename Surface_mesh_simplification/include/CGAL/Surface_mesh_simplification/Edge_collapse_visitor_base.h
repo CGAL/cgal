@@ -35,11 +35,11 @@ struct Edge_collapse_visitor_base
   typedef Edge_profile<ECM> Profile ;
   
   typedef boost::graph_traits  <ECM> GraphTraits ; 
-  typedef halfedge_graph_traits<ECM> HalfedgeGraphTraits ; 
   
   typedef typename GraphTraits::edges_size_type   size_type ;
   typedef typename GraphTraits::vertex_descriptor vertex_descriptor ;
-  typedef typename HalfedgeGraphTraits::Point     Point ;
+  typedef typename boost::property_map<ECM, CGAL::vertex_point_t>::type Vertex_point_pmap;
+  typedef typename boost::property_traits<Vertex_point_pmap>::value_type Point;
   typedef typename Kernel_traits<Point>::Kernel   Kernel ;
   typedef typename Kernel::FT                     FT ;
   

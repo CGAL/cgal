@@ -49,10 +49,10 @@ public:
   {
     typedef typename Profile::ECM                                ECM;
     typedef typename boost::graph_traits<ECM>            GraphTraits;
-    typedef typename GraphTraits::in_edge_iterator  in_edge_iterator;
+    typedef typename CGAL::Halfedge_around_target_iterator<ECM>  in_edge_iterator;
 
     in_edge_iterator eb, ee ;
-    for ( boost::tie(eb,ee) = in_edges(aProfile.v0(),aProfile.surface_mesh());
+    for ( boost::tie(eb,ee) = halfedges_around_target(aProfile.v0(),aProfile.surface_mesh());
       eb != ee ; ++ eb )
     {
       if( get(Edge_is_constrained_map, *eb) )
@@ -60,7 +60,7 @@ public:
                    aProfile.surface_mesh(),
                    aProfile.v0());
     }
-    for ( boost::tie(eb,ee) = in_edges(aProfile.v1(),aProfile.surface_mesh());
+    for ( boost::tie(eb,ee) = halfedges_around_target(aProfile.v1(),aProfile.surface_mesh());
       eb != ee ; ++ eb )
     {
       if( get(Edge_is_constrained_map, *eb) )

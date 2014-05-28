@@ -10,7 +10,8 @@ Delaunay triangulation.
 \tparam DelaunayTriangulationTraits_3 is the geometric traits class. 
 
 \tparam TriangulationDataStructure_3 is the triangulation data structure. 
-It has the default value `Triangulation_data_structure_3<Triangulation_vertex_base_3<DelaunayTriangulationTraits_3>, Triangulation_cell_base_3<DelaunayTriangulationTraits_3> >`. 
+It has the default value `Triangulation_data_structure_3<Triangulation_vertex_base_3<DelaunayTriangulationTraits_3>, 
+								  Delaunay_triangulation_cell_base_3<DelaunayTriangulationTraits_3> >`. 
 
 \tparam LocationPolicy is a tag which must be a `Location_policy<Tag>`: 
 either `Fast_location` or `Compact_location`. 

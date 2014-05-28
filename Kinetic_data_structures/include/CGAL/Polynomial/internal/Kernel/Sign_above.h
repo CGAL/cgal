@@ -42,13 +42,23 @@ public:
   }
   Sign_above(){}
 
+#if defined(_MSC_VER) && ( _MSC_VER >= 1800 )
+  // == VC12 == Visual Studio 2013
+  template<typename... Args>
+  auto operator()(Args&&... args) ->
+      decltype(P::operator()(std::forward<Args>(args)...))
+  {
+    return P::operator()(std::forward<Args>(args)...);
+  }
+#else
   using P::operator();
+#endif
 
   typedef CGAL::Sign result_type;
   typedef Poly first_argument_type;
   typedef typename K::Root second_argument_type;
-  typename P::result_type operator()(const first_argument_type &f,
-				     const second_argument_type &v) const
+ typename P::result_type operator()(const first_argument_type &f,
+                                    const second_argument_type &v) const
   {
     CGAL_Polynomial_expensive_precondition(k_.sign_at_root_object(p_)(v)==CGAL::ZERO);
     return eval(f, v);

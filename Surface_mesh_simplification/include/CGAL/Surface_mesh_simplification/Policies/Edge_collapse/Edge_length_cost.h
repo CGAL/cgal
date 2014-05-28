@@ -40,8 +40,9 @@ public:
   
   typedef Edge_profile<ECM> Profile ;
   
-  typedef typename halfedge_graph_traits<ECM>::Point Point ;
-  
+  typedef typename boost::property_map<ECM, CGAL::vertex_point_t>::type Vertex_point_pmap;
+  typedef typename boost::property_traits<Vertex_point_pmap>::value_type Point;
+ 
   typedef typename Kernel_traits<Point>::Kernel Kernel ;
 
   typedef typename Kernel::FT FT ;

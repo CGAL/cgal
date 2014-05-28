@@ -34,7 +34,7 @@ int main()
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 
 #include <CGAL/Delaunay_triangulation_3.h>
-#include <CGAL/Triangulation_cell_base_with_circumcenter_3.h>
+#include <CGAL/Delaunay_triangulation_cell_base_with_circumcenter_3.h>
 
 #include <CGAL/IO/Triangulation_geomview_ostream_3.h>
 
@@ -45,7 +45,7 @@ int main()
 typedef CGAL::Exact_predicates_exact_constructions_kernel K;
 
 typedef CGAL::Triangulation_vertex_base_3<K>                 Vb;
-typedef CGAL::Triangulation_cell_base_with_circumcenter_3<K> Cb;
+typedef CGAL::Delaunay_triangulation_cell_base_with_circumcenter_3<K> Cb;
 typedef CGAL::Triangulation_data_structure_3<Vb, Cb>         TDS;
 typedef CGAL::Delaunay_triangulation_3<K, TDS>               Triangulation;
 // typedef CGAL::Delaunay_triangulation_3<K> Triangulation;

@@ -306,24 +306,16 @@ public:
   }
 
   const Point &
-  circumcenter(const Geom_traits& gt = Geom_traits()) const
+  weighted_circumcenter(const Geom_traits& gt = Geom_traits()) const
   {
     if (circumcenter_ == NULL) {
-#ifndef CGAL_REGULAR_TRIANGULATION_3_USE_CIRCUMCENTER_CACHE
-      circumcenter_ = new Point(gt.construct_circumcenter_3_object()
-                                (this->vertex(0)->point(),
-                                 this->vertex(1)->point(),
-                                 this->vertex(2)->point(),
-                                 this->vertex(3)->point()));
-#else // CGAL_REGULAR_TRIANGULATION_3_USE_CIRCUMCENTER_CACHE
       circumcenter_ = new Point(gt.construct_weighted_circumcenter_3_object()
                                 (this->vertex(0)->point(),
                                  this->vertex(1)->point(),
                                  this->vertex(2)->point(),
                                  this->vertex(3)->point()));
-#endif // CGAL_REGULAR_TRIANGULATION_3_USE_CIRCUMCENTER_CACHE
     } else {
-      CGAL_expensive_assertion(gt.construct_circumcenter_3_object()
+      CGAL_expensive_assertion(gt.construct_weighted_circumcenter_3_object()
                                 (this->vertex(0)->point(),
                                  this->vertex(1)->point(),
                                  this->vertex(2)->point(),

@@ -178,7 +178,7 @@ bool division_test()
 {
   IA_nt a (1), b(0);
   IA_nt c = a/b;
-  IA_nt d = IA_nt(-1,1)/-2+1; // aka (0.5,1.5);
+  IA_nt d = IA_nt(-1,1)/-2+1L; // aka (0.5,1.5);
   IA_nt e (-d);
   int i=0;
 

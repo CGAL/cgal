@@ -31,7 +31,7 @@
 // vertex and cell bases
 #include <CGAL/Surface_mesh_vertex_base_3.h>
 #include <CGAL/Surface_mesh_cell_base_3.h>
-#include <CGAL/Triangulation_cell_base_with_circumcenter_3.h>
+#include <CGAL/Delaunay_triangulation_cell_base_with_circumcenter_3.h>
 
 namespace CGAL {
   namespace Surface_mesher {
@@ -45,7 +45,8 @@ namespace CGAL {
       // vertex and cell types
       typedef Surface_mesh_vertex_base_3<K> Vb;
       typedef Surface_mesh_cell_base_3<K> Cb;
-      typedef Triangulation_cell_base_with_circumcenter_3<K, Cb> Cb_with_circumcenter;
+      typedef Delaunay_triangulation_cell_base_with_circumcenter_3<K, Cb>
+        Cb_with_circumcenter;
 
       // triangulation
       typedef Triangulation_data_structure_3<Vb, Cb_with_circumcenter> Tds;

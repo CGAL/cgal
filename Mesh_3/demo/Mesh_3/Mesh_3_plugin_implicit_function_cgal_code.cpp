@@ -31,6 +31,7 @@ Meshing_thread* cgal_code_mesh_3(const Implicit_function_interface* pfunction,
   Scene_c3t3_item* p_new_item = new Scene_c3t3_item();
   
   Mesh_parameters param;
+  param.protect_features = false;
   param.facet_angle = facet_angle;
   param.facet_sizing = facet_sizing;
   param.facet_approx = facet_approx;

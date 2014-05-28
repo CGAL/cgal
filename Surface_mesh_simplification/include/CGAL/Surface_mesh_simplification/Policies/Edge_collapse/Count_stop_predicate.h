@@ -49,12 +49,13 @@ public:
   
 private :
 
-  typedef typename halfedge_graph_traits<ECM>::Point Point ;
+  typedef typename boost::property_map<ECM, CGAL::vertex_point_t>::type Vertex_point_pmap;
+  typedef typename boost::property_traits<Vertex_point_pmap>::value_type Point;
   typedef typename Kernel_traits<Point>::Kernel      Kernel ;
 
 public :
   
-  typedef typename boost::graph_traits<ECM>::edge_descriptor edge_descriptor ;
+  typedef typename boost::graph_traits<ECM>::halfedge_descriptor halfedge_descriptor ;
   typedef typename boost::graph_traits<ECM>::edges_size_type size_type ;
   
   typedef typename Kernel::FT FT ;

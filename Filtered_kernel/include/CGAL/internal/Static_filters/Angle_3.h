@@ -59,6 +59,13 @@ public:
   {
     return Base()(t1,t2);
   }
+
+  template <typename T1, typename T2, typename T3, typename T4>
+  result_type
+  operator()(const T1& t1, const T2& t2, const T3& t3, const T4& t4) const
+  {
+    return Base()(t1,t2,t3,t4);
+  }
 #endif // CGAL_CFG_MATCHING_BUG_6
 
 
