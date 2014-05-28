@@ -21,6 +21,7 @@
 
 #include <CGAL/Surface_mesh_simplification/Detail/Common.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Edge_profile.h>
+#include <CGAL/boost/graph/Euler_operations.h>
 
 namespace CGAL {
 
@@ -335,18 +336,22 @@ private:
   halfedge_collapse_bk_compatibility(
     halfedge_descriptor const& pq, AEdgeIsConstrainedMap aEdge_is_constrained_map)
   {
-    return halfedge_collapse(pq, mSurface, aEdge_is_constrained_map);
+    return CGAL::Euler::collapse_edge(edge(pq,mSurface), mSurface, aEdge_is_constrained_map);
   }
+
 
   template<class ECM>
   vertex_descriptor
   halfedge_collapse_bk_compatibility(
     halfedge_descriptor const& pq, No_constrained_edge_map<ECM> )
   {
-    return halfedge_collapse(pq, mSurface);
+    //std::cerr << "call CGAL::Euler::collapse_edge()"<< std::endl;
+    vertex_descriptor vd = CGAL::Euler::collapse_edge(edge(pq,mSurface), mSurface);
+    //std::cerr << "after CGAL::Euler::collapse_edge()"<< std::endl;
+    return vd;
   }
-  ///
 
+  
   /// We wrap this test to avoid penalizing runtime when no constraints are present
   template<class AEdgeIsConstrainedMap>
   bool

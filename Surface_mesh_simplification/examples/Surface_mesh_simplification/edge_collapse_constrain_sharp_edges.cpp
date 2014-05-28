@@ -56,8 +56,8 @@ int main( int argc, char** argv )
 
   Surface_mesh surface_mesh;
 
-  if (argc!=2){
-    std::cerr<< "Usage: " << argv[0] << " input.off\n";
+  if (argc < 2){
+    std::cerr<< "Usage: " << argv[0] << " input.off [out.off]\n";
     return 1;
   }
 
@@ -75,7 +75,7 @@ int main( int argc, char** argv )
 
   // map used to check that constrained_edges and the points of its vertices
   // are preserved at the end of the simplification
-  // Warning: the computation of the diedral angle is only an approximation and can
+  // Warning: the computation of the dihedral angle is only an approximation and can
   //          be far from the real value and could influence the detection of sharp
   //          edges after the simplification
   std::map<Surface_mesh::Halfedge_handle,std::pair<Point_3, Point_3> >constrained_edges;

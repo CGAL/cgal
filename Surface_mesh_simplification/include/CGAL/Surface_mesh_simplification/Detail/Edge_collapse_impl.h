@@ -757,7 +757,7 @@ template<class M,class SP, class VIM,class EIM,class EBM,class ECTM, class CF,cl
 void EdgeCollapse<M,SP,VIM,EIM,EBM,ECTM,CF,PF,V>::Collapse( Profile const& aProfile, Placement_type aPlacement )
 {
 
-  CGAL_ECMS_TRACE(1,"S" << mStep << ". Collapsig " << edge_to_string(aProfile.v0_v1()) ) ;
+  CGAL_ECMS_TRACE(1,"S" << mStep << ". Collapsing " << edge_to_string(aProfile.v0_v1()) ) ;
   
   vertex_descriptor rResult ;
     

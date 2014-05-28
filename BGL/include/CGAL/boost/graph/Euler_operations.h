@@ -919,6 +919,121 @@ collapse_edge(typename boost::graph_traits<Graph>::edge_descriptor v0v1,
   return lP_Erased ? q : p ;
 }
 
+
+template<typename Graph, typename EdgeIsConstrainedMap>
+typename boost::graph_traits<Graph>::vertex_descriptor
+collapse_edge(typename boost::graph_traits<Graph>::edge_descriptor v0v1,
+              Graph& g
+              , EdgeIsConstrainedMap Edge_is_constrained_map)
+{
+  CGAL_assertion( !get(Edge_is_constrained_map,pq) );
+
+  typedef boost::graph_traits< Graph > Traits;
+  typedef typename Traits::vertex_descriptor          vertex_descriptor;
+  typedef typename Traits::edge_descriptor            edge_descriptor;
+  typedef typename Traits::halfedge_descriptor            halfedge_descriptor;
+
+  halfedge_descriptor pq = halfedge(v0v1,g);
+
+  halfedge_descriptor qp = opposite(pq,g);
+  halfedge_descriptor pt = opposite(prev(pq,g),g);
+  halfedge_descriptor qb = opposite(prev(qp,g),g);
+  halfedge_descriptor tq = opposite(next(pq,g),g);
+  halfedge_descriptor bp = opposite(next(qp,g),g);
+
+  bool lTopFaceExists         = ! internal::is_border(pq,g) ;
+  bool lBottomFaceExists      = ! internal::is_border(qp,g) ;
+
+  vertex_descriptor q = target(pq,g);
+  vertex_descriptor p = source(pq,g);
+
+  //used to collect edges to remove from the surface
+  halfedge_descriptor edges_to_erase[2];
+  halfedge_descriptor* edges_to_erase_ptr=edges_to_erase;
+
+  // If the top facet exists, we need to choose one out of the two edges which one disappears:
+  //   p-t if it is not constrained and t-q otherwise
+  if ( lTopFaceExists )
+  {
+    if ( !get(Edge_is_constrained_map,pt) )
+    {
+      *edges_to_erase_ptr++=pt;
+    }
+    else
+    {
+      *edges_to_erase_ptr++=tq;
+    }
+  }
+
+  // If the bottom facet exists, we need to choose one out of the two edges which one disappears:
+  //   q-b if it is not constrained and b-p otherwise
+  if ( lBottomFaceExists )
+  {
+    if ( !get(Edge_is_constrained_map,qb) )
+    {
+      *edges_to_erase_ptr++=qb;
+    }
+    else{
+      *edges_to_erase_ptr++=bp;
+    }
+  }
+
+  if (lTopFaceExists && lBottomFaceExists)
+  {
+    if ( face(edges_to_erase[0],g) == face(edges_to_erase[1],g)
+         && (! internal::is_border(edges_to_erase[0],g)) )
+    {
+      // the vertex is of valence 3 and we simply need to remove the vertex
+      // and its indicent edges
+      bool lP_Erased = false;
+      halfedge_descriptor edge =
+        next(edges_to_erase[0],g) == edges_to_erase[1]?
+          edges_to_erase[0]:edges_to_erase[1];
+      if (target(edge,g) == p)
+        lP_Erased = true;
+      remove_center_vertex(edge,g);
+      return lP_Erased? q : p;
+    }
+    else
+    {
+      if (!(internal::is_border(edges_to_erase[0],g)))
+        join_face(edges_to_erase[0],g);
+      else
+        g.erase_facet(edges_to_erase[0]->opposite());
+      if (!edges_to_erase[1]->is_border())
+        join_face(edges_to_erase[1],g);
+      else
+        remove_face(opposite(edges_to_erase[1],g),g);
+      join_vertex(pq,g);
+      return q;
+    }
+  }
+  else
+  {
+      if (lTopFaceExists)
+      {
+        if (!(internal::is_border(edges_to_erase[0],g))){
+          join_face(edges_to_erase[0],g);
+          join_vertex(pq,g);
+          return q;
+        }
+        bool lQ_Erased = internal::is_border(opposite(next(pq,g),g),g);
+        remove_face(opposite(edges_to_erase[0],g),g);
+        return lQ_Erased?p:q;
+      }
+
+      if (! (internal::is_border(edges_to_erase[0],g))){
+        join_face(edges_to_erase[0],g);
+        join_vertex(qp,g);
+        return p;
+      }
+      bool lP_Erased= internal::is_border(opposite(next(qp,g),g),g);
+      remove_face(opposite(edges_to_erase[0],g),g);
+      return lP_Erased?q:p;
+  };
+}
+
+
 template<typename Graph>
 void
 flip_edge(typename boost::graph_traits<Graph>::halfedge_descriptor h,

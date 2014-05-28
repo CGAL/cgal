@@ -73,13 +73,8 @@ halfedge_collapse( typename boost::graph_traits< Polyhedron_3<Gt,I,HDS,A> >::hal
   bool lTopFaceExists         = !pq->is_border() ;
   bool lBottomFaceExists      = !qp->is_border() ;
 
-  CGAL_precondition( !lTopFaceExists    || (lTopFaceExists    && ( degree(target(pt,aSurface),aSurface) > 2 ) ) ) ;
-  CGAL_precondition( !lBottomFaceExists || (lBottomFaceExists && ( degree(target(qb,aSurface),aSurface) > 2 ) ) ) ;
-
   vertex_descriptor q = target(pq,aSurface);
   vertex_descriptor p = source(pq,aSurface);
-
-  CGAL_ECMS_TRACE(3, "Collapsing p-q E" << pq->id() << " (V" << p->id() << "->V" << q->id() << ")" ) ;
 
   //used to collect edges to remove from the surface
   halfedge_descriptor edges_to_erase[2];
@@ -89,16 +84,12 @@ halfedge_collapse( typename boost::graph_traits< Polyhedron_3<Gt,I,HDS,A> >::hal
   //   p-t if it is not constrained and t-q otherwise
   if ( lTopFaceExists )
   {
-    CGAL_precondition( !pt->opposite()->is_border() ) ; // p-q-t is a face of the mesh
     if ( !get(Edge_is_constrained_map,pt) )
     {
-      CGAL_ECMS_TRACE(3, "Removing p-t E" << pt->id() << " (V" << p->id() << "->V" << pt->vertex()->id()) ;
       *edges_to_erase_ptr++=pt;
     }
     else
     {
-      CGAL_ECMS_TRACE(3, "Removing t-q E" << pt->id() << " (V" << pt->vertex()->id() << "->V" << q->id() ) ;
-      CGAL_assertion( !get(Edge_is_constrained_map,tq) );
       *edges_to_erase_ptr++=tq;
     }
   }
@@ -109,12 +100,9 @@ halfedge_collapse( typename boost::graph_traits< Polyhedron_3<Gt,I,HDS,A> >::hal
   {
     if ( !get(Edge_is_constrained_map,qb) )
     {
-      CGAL_ECMS_TRACE(3, "Removing q-b E" << qb->id() << " (V" << q->id() << "->V" << qb->vertex()->id() ) ;
       *edges_to_erase_ptr++=qb;
     }
     else{
-      CGAL_ECMS_TRACE(3, "Removing b-p E" << qb->id() << " (V" << qb->vertex()->id() << "->V" << p->id() ) ;
-      CGAL_assertion( !get(Edge_is_constrained_map,bp) );
       *edges_to_erase_ptr++=bp;
     }
   }
@@ -163,7 +151,6 @@ halfedge_collapse( typename boost::graph_traits< Polyhedron_3<Gt,I,HDS,A> >::hal
         return lQ_Erased?p:q;
       }
 
-      CGAL_assertion(lBottomFaceExists);
       if (!edges_to_erase[0]->is_border()){
         aSurface.join_facet(edges_to_erase[0]);
         aSurface.join_vertex(qp);
