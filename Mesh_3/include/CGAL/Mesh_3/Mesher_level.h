@@ -1175,7 +1175,7 @@ private:
     }
 
     // operator()
-    void operator()()
+    void operator()() const
     {
       typedef typename ML::Derived_::Container::value_type 
                                                  Container_quality_and_element;

@@ -89,7 +89,7 @@ public:
 #ifdef CGAL_CONSTRUCT_INTRUSIVE_LIST_RANGE_CONSTRUCTOR
   template <typename IT>
   Intrusive_list(IT first, IT last)
-	: f(), b(), n(0)
+  : f(), b(), n(0)
   {
     if(first == last){
       return;
@@ -99,7 +99,7 @@ public:
     Type_handle ch = f;
     ++n;
     ++first;
-	while(first != last){
+    while(first != last){
       if((ch != Type(*first)) && ((*first)->next_intrusive()==Type_handle())){
         // not yet inserted
         ch->set_next_intrusive(*first);
@@ -204,9 +204,9 @@ public:
       if(pos != Type_handle()){
         if(pos == b){
           pos = Type_handle(); // past the end
-		    }else {
+        }else {
           pos = pos->next_intrusive();
-		    }
+        }
       }
       return *this;
     }
@@ -962,7 +962,7 @@ private:
       Facet mirror = tr_.mirror_facet(facet);
       return ( (mirror<facet)?mirror:facet );
 #else
-  	  Cell_handle n = c->neighbor(i);
+      Cell_handle n = c->neighbor(i);
       if(c < n){
         return Facet(c,i);
       }else{
@@ -1820,214 +1820,59 @@ private:
   template <typename FacetUpdater>
   void update_facets(Intrusive_list<Cell_handle>& outdated_cells, FacetUpdater updater)
   {
-#ifdef CGAL_LINKED_WITH_TBB
+# ifdef CGAL_LINKED_WITH_TBB
     // Parallel
     if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
     {
-      tbb::parallel_do(outdated_cells.begin(), outdated_cells.end(),
-        [&]( const Cell_handle& cell ) // CJTODO: lambdas ok?
-      {
-        Cell_handle null_cell;
-        bool inf = false;
-        for (int i=0 ; i<4 && (!inf) ; ++i ){
-          if ( tr_.is_infinite(cell->vertex(i)) ){
-            inf = true;
-            Cell_handle n = cell->neighbor(i);
-            if(n->next_intrusive() != null_cell){// the neighbor is also outdated
-              if(cell < n){ // otherwise n will report it later
-                Facet f(cell,i);
-                updater(f);
-              }
-            } else { // report it now or never
-              if(cell < n){
-                Facet f(cell,i);
-                updater(f);
-              }else {
-                Facet f(n,n->index(cell));
-                updater(f);
-              }
-            }
-          }
-        }
-        if(! inf){
-          for ( int i=0 ; i<4 ; ++i ){
-            Cell_handle n = cell->neighbor(i);
-            if(n->next_intrusive() != null_cell){// the neighbor is also outdated
-              if(cell < n){ // otherwise n will report it later
-                Facet f(cell,i);
-                updater(f);
-              }
-            } else { // report it now or never
-              if(cell < n){
-                Facet f(cell,i);
-                updater(f);
-              }else {
-                Facet f(n,n->index(cell));
-                updater(f);
-              }
-            }
-          }
-        }
-      });
+      tbb::parallel_do(
+        outdated_cells.begin(), outdated_cells.end(),
+        Update_cell_facets<Self, FacetUpdater>(tr_, updater));
     }
     // Sequential
     else
-#endif // CGAL_LINKED_WITH_TBB
+# endif // CGAL_LINKED_WITH_TBB
     {
       typename Intrusive_list<Cell_handle>::iterator it;
       for(it = outdated_cells.begin();
           it != outdated_cells.end();
           ++it)
       {
-        Cell_handle cell = *it;
-
-        int i=0;
-        bool inf = false;
-        for ( ; i<4 && (!inf) ; ++i ){
-          if ( tr_.is_infinite(cell->vertex(i)) ){
-            inf = true;
-            Cell_handle n = cell->neighbor(i);
-            if(n->next_intrusive() != Cell_handle()){// the neighbor is also outdated
-              if(cell < n){ // otherwise n will report it later
-                updater(Facet(cell,i));
-              }
-            } else { // report it now or never
-              if(cell < n){
-                updater(Facet(cell,i));
-              }else {
-                updater(Facet(n,n->index(cell)));
-              }
-            }
-          }
-        }
-        if(! inf){
-          for ( i=0 ; i<4 ; ++i ){
-            Cell_handle n = cell->neighbor(i);
-            if(n->next_intrusive() != Cell_handle()){// the neighbor is also outdated
-              if(cell < n){ // otherwise n will report it later
-                updater(Facet(cell,i));
-              }
-            } else { // report it now or never
-              if(cell < n){
-                updater(Facet(cell,i));
-              }else {
-                updater(Facet(n,n->index(cell)));
-              }
-            }
-          }
-        }
+        Update_cell_facets<Self, FacetUpdater> ucf(tr_, updater);
+        ucf(*it);
       }
     }
   }
+#endif //CGAL_INTRUSIVE_LIST
 
   // Used by the parallel version
   template <typename FacetUpdater>
   void update_facets(std::vector<Cell_handle>& outdated_cells_vector, FacetUpdater updater)
   {
-#ifdef CGAL_LINKED_WITH_TBB
+# ifdef CGAL_LINKED_WITH_TBB
     // Parallel
     if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
     {
-      tbb::parallel_for(tbb::blocked_range<size_t>(0, outdated_cells_vector.size()),
-        [&]( const tbb::blocked_range<size_t>& r ) // CJTODO: lambdas ok?
-      {
-        for( size_t i = r.begin() ; i != r.end() ; ++i)
-        {
-          const Cell_handle cell = outdated_cells_vector[i];
-          Cell_handle null_cell;
-          bool inf = false;
-          for (int i=0 ; i<4 && (!inf) ; ++i ){
-            if ( tr_.is_infinite(cell->vertex(i)) ){
-              inf = true;
-              Cell_handle n = cell->neighbor(i);
-              if(n->next_intrusive() != null_cell){// the neighbor is also outdated
-                if(cell < n){ // otherwise n will report it later
-                  Facet f(cell,i);
-                  updater(f);
-                }
-              } else { // report it now or never
-                if(cell < n){
-                  Facet f(cell,i);
-                  updater(f);
-                }else {
-                  Facet f(n,n->index(cell));
-                  updater(f);
-                }
-              }
-            }
-          }
-          if(! inf){
-            for ( int i=0 ; i<4 ; ++i ){
-              Cell_handle n = cell->neighbor(i);
-              if(n->next_intrusive() != null_cell){// the neighbor is also outdated
-                if(cell < n){ // otherwise n will report it later
-                  Facet f(cell,i);
-                  updater(f);
-                }
-              } else { // report it now or never
-                if(cell < n){
-                  Facet f(cell,i);
-                  updater(f);
-                }else {
-                  Facet f(n,n->index(cell));
-                  updater(f);
-                }
-              }
-            }
-          }
-        }
-      });
+      tbb::parallel_for
+      (
+        tbb::blocked_range<size_t>(0, outdated_cells_vector.size()),
+        Update_cell_facets_for_parallel_for<Self, FacetUpdater>(
+          tr_, updater, outdated_cells_vector)
+      );
     }
     // Sequential
     else
-#endif // CGAL_LINKED_WITH_TBB
+# endif // CGAL_LINKED_WITH_TBB
     {
       typename std::vector<Cell_handle>::iterator it;
       for(it = outdated_cells_vector.begin();
           it != outdated_cells_vector.end();
           ++it)
       {
-        Cell_handle cell = *it;
-
-        int i=0;
-        bool inf = false;
-        for ( ; i<4 && (!inf) ; ++i ){
-          if ( tr_.is_infinite(cell->vertex(i)) ){
-            inf = true;
-            Cell_handle n = cell->neighbor(i);
-            if(n->next_intrusive() != Cell_handle()){// the neighbor is also outdated
-              if(cell < n){ // otherwise n will report it later
-                updater(Facet(cell,i));
-              }
-            } else { // report it now or never
-              if(cell < n){
-                updater(Facet(cell,i));
-              }else {
-                updater(Facet(n,n->index(cell)));
-              }
-            }
-          }
-        }
-        if(! inf){
-          for ( i=0 ; i<4 ; ++i ){
-            Cell_handle n = cell->neighbor(i);
-            if(n->next_intrusive() != Cell_handle()){// the neighbor is also outdated
-              if(cell < n){ // otherwise n will report it later
-                updater(Facet(cell,i));
-              }
-            } else { // report it now or never
-              if(cell < n){
-                updater(Facet(cell,i));
-              }else {
-                updater(Facet(n,n->index(cell)));
-              }
-            }
-          }
-        }
+        Update_cell_facets<Self, FacetUpdater> ucf(tr_, updater);
+        ucf(*it);
       }
     }
   }
-#endif //CGAL_INTRUSIVE_LIST
 
 
   /**
@@ -2206,6 +2051,249 @@ private:
 
 
 private:
+
+  // Functor for update_facets function (base)
+  template <typename C3T3_helpers_, typename FacetUpdater_>
+  class Update_cell_facets
+  {
+    Tr                        & m_tr;
+    FacetUpdater_             & m_facet_updater;
+    
+  protected:
+    typedef typename C3T3_helpers_::Tr          Tr;
+    typedef typename C3T3_helpers_::Facet       Facet;
+    typedef typename C3T3_helpers_::Cell_handle Cell_handle;
+
+    void update(const Cell_handle& cell) const
+    {
+      Cell_handle null_cell;
+      bool inf = false;
+      for (int i=0 ; i<4 && (!inf) ; ++i ){
+        if ( m_tr.is_infinite(cell->vertex(i)) ){
+          inf = true;
+          Cell_handle n = cell->neighbor(i);
+          if(n->next_intrusive() != null_cell){// the neighbor is also outdated
+            if(cell < n){ // otherwise n will report it later
+              Facet f(cell,i);
+              m_facet_updater(f);
+            }
+          } else { // report it now or never
+            if(cell < n){
+              Facet f(cell,i);
+              m_facet_updater(f);
+            }else {
+              Facet f(n,n->index(cell));
+              m_facet_updater(f);
+            }
+          }
+        }
+      }
+      if(! inf){
+        for ( int i=0 ; i<4 ; ++i ){
+          Cell_handle n = cell->neighbor(i);
+          if(n->next_intrusive() != null_cell){// the neighbor is also outdated
+            if(cell < n){ // otherwise n will report it later
+              Facet f(cell,i);
+              m_facet_updater(f);
+            }
+          } else { // report it now or never
+            if(cell < n){
+              Facet f(cell,i);
+              m_facet_updater(f);
+            }else {
+              Facet f(n,n->index(cell));
+              m_facet_updater(f);
+            }
+          }
+        }
+      }
+    }
+
+  public:
+    // Constructor
+    Update_cell_facets(Tr &tr, 
+                  FacetUpdater_& fu)
+    : m_tr(tr), m_facet_updater(fu)
+    {}
+
+    // Constructor
+    Update_cell_facets(const Update_cell_facets &uf)
+    : m_tr(uf.m_tr), m_facet_updater(uf.m_facet_updater)
+    {}
+
+    // operator()
+    void operator()(const Cell_handle& cell) const
+    {
+      update(cell);
+    }
+  };
+
+#ifdef CGAL_LINKED_WITH_TBB
+  // Same functor: special version for tbb:parallel_for
+  template <typename C3T3_helpers_, typename FacetUpdater_>
+  class Update_cell_facets_for_parallel_for
+  : Update_cell_facets<C3T3_helpers, FacetUpdater_>
+  {
+    typedef Update_cell_facets<C3T3_helpers, FacetUpdater_> Base;
+
+    const std::vector<Cell_handle>  & m_outdated_cells;
+
+  public:
+    // Constructor
+    Update_cell_facets_for_parallel_for(
+      Tr &tr, 
+      FacetUpdater_& fu,
+      const std::vector<Cell_handle> &oc)
+    : Base(tr, fu), m_outdated_cells(oc)
+    {}
+
+    // Constructor
+    Update_cell_facets_for_parallel_for(
+      const Update_cell_facets_for_parallel_for &uf)
+    : Base(uf), m_outdated_cells(uf.m_outdated_cells)
+    {}
+    
+    // operator()
+    void operator()(const tbb::blocked_range<size_t>& r) const
+    {
+      for( size_t i = r.begin() ; i != r.end() ; ++i)
+        update(m_outdated_cells[i]);
+    }
+  };
+
+  // -----------------------------------
+  // -----------------------------------
+  // -----------------------------------
+  
+  // Functor for rebuild_restricted_delaunay function
+  template <typename C3T3_, typename Update_c3t3_>
+  class Update_cell
+  {
+    C3T3                      & m_c3t3;
+    Update_c3t3_              & m_updater;
+    
+  protected:
+    typedef typename C3T3_::Cell_handle Cell_handle;
+
+    void update(const Cell_handle& cell) const
+    {
+      m_c3t3.remove_from_complex(cell);
+      m_updater(cell);
+    }
+
+  public:
+    // Constructor
+    Update_cell(C3T3_ &c3t3, Update_c3t3_& updater)
+    : m_c3t3(c3t3), m_updater(updater)
+    {}
+
+    // Constructor
+    Update_cell(const Update_cell &uc)
+    : m_c3t3(uc.m_c3t3), m_updater(uc.m_updater)
+    {}
+
+    // operator()
+    void operator()(const Cell_handle& cell) const
+    {
+      update(cell);
+    }
+  };
+
+  
+  // Same functor: special version for tbb:parallel_for
+  template <typename C3T3_, typename Update_c3t3_>
+  class Update_cell_for_parallel_for
+  : Update_cell<C3T3_, Update_c3t3_>
+  {
+    typedef Update_cell<C3T3_, Update_c3t3_> Base;
+
+    const std::vector<Cell_handle>  & m_outdated_cells;
+
+  public:
+    // Constructor
+    Update_cell_for_parallel_for(
+      C3T3_ &c3t3, 
+      Update_c3t3_& updater,
+      const std::vector<Cell_handle> &oc)
+    : Base(c3t3, updater), m_outdated_cells(oc)
+    {}
+
+    // Constructor
+    Update_cell_for_parallel_for(
+      const Update_cell_for_parallel_for &uc)
+    : Base(uc), m_outdated_cells(uc.m_outdated_cells)
+    {}
+    
+    // operator()
+    void operator()(const tbb::blocked_range<size_t>& r) const
+    {
+      for( size_t i = r.begin() ; i != r.end() ; ++i)
+        update(m_outdated_cells[i]);
+    }
+  };
+#endif
+  
+  // -----------------------------------
+  // -----------------------------------
+  // -----------------------------------
+  
+  // Functor for rebuild_restricted_delaunay function
+#ifdef CGAL_LINKED_WITH_TBB
+  template <typename C3T3_helpers_, typename C3T3_, typename Update_c3t3_>
+  class Update_facet
+  {
+    const C3T3_helpers_        & m_c3t3_helpers;
+    C3T3_                     & m_c3t3;
+    Update_c3t3_              & m_updater;
+    std::set<Vertex_handle>   & m_vertex_to_proj;
+    
+    typedef typename C3T3_::Vertex_handle       Vertex_handle;
+    typedef typename C3T3_::Cell_handle         Cell_handle;
+    typedef typename C3T3_::Facet               Facet;
+    typedef typename C3T3::Surface_patch_index  Surface_patch_index;
+
+  public:
+    // Constructor
+    Update_facet(const C3T3_helpers_ & c3t3_helpers,
+                 C3T3_ &c3t3, Update_c3t3_& updater, 
+                 std::set<Vertex_handle> &vertex_to_proj)
+    : m_c3t3_helpers(c3t3_helpers), m_c3t3(c3t3), m_updater(updater)
+    {}
+
+    // Constructor
+    Update_facet(const Update_facet &uc)
+    : m_c3t3(uc.m_c3t3), m_updater(uc.m_updater)
+    {}
+
+    // operator()
+    void operator()( const Facet& facet ) const
+    {
+      // Update facet
+      m_c3t3.remove_from_complex(facet);
+      m_updater(facet);
+
+      // Update m_vertex_to_proj
+      if ( m_c3t3.is_in_complex(facet) )
+      {
+        // Iterate on vertices
+        int k = facet.second;
+        for ( int i=1 ; i<4 ; ++i )
+        {
+          const Vertex_handle& v = facet.first->vertex((k+i)&3);
+          if ( m_c3t3.in_dimension(v) > 2 )
+          {
+            std::pair<Vertex_handle, Surface_patch_index> p
+              = std::make_pair(v, m_c3t3.surface_patch_index(facet));
+            m_c3t3_helpers.lock_vertex_to_proj();
+            m_vertex_to_proj.insert(p);
+            m_c3t3_helpers.unlock_vertex_to_proj();
+          }
+        }
+      }
+    }
+  };
+#endif
+
   // -----------------------------------
   // Private data
   // -----------------------------------
@@ -2474,18 +2562,18 @@ rebuild_restricted_delaunay(OutdatedCells& outdated_cells,
   typename OutdatedCells::iterator last_cell = outdated_cells.end();
   Update_c3t3 updater(domain_,c3t3_);
 
-#ifdef CGAL_MESH_3_PROFILING
+# ifdef CGAL_MESH_3_PROFILING
   std::cerr << std::endl << "  Updating cells...";
   WallClockTimer t;
   size_t num_cells = c3t3_.number_of_cells_in_complex();
-#endif
+# endif
 
   // Updates cells
   // Note: ~58% of rebuild_restricted_delaunay time
 
   std::set<Vertex_handle> vertex_to_proj;
 
-#ifdef CGAL_LINKED_WITH_TBB
+# ifdef CGAL_LINKED_WITH_TBB
   // Parallel
   if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
   {
@@ -2496,30 +2584,18 @@ rebuild_restricted_delaunay(OutdatedCells& outdated_cells,
       outdated_cells_vector.push_back(*first_cell);
     }
 
-    tbb::parallel_for(tbb::blocked_range<size_t>(0, outdated_cells_vector.size()),
-      [&]( const tbb::blocked_range<size_t>& r ) // CJTODO: lambdas ok?
-      {
-        for( size_t i = r.begin() ; i != r.end() ; ++i)
-        {
-          c3t3_.remove_from_complex(outdated_cells_vector[i]);
-          updater(outdated_cells_vector[i]);
-        }
-      });
-    /*tbb::parallel_do(first_cell, last_cell,
-      [&]( OutdatedCells::const_reference cell ) // CJTODO: lambdas ok?
-      {
-        c3t3_.remove_from_complex(cell);
-        updater(cell);
-      });*/
+    tbb::parallel_for(
+      tbb::blocked_range<size_t>(0, outdated_cells_vector.size()),
+      Update_cell_for_parallel_for<C3T3, Update_c3t3>(
+        c3t3_, updater, outdated_cells_vector));
 
-
-#ifdef CGAL_MESH_3_PROFILING
+#   ifdef CGAL_MESH_3_PROFILING
     std::cerr << " done in " << t.elapsed() << " seconds (#cells from "
       << num_cells << " to " << c3t3_.number_of_cells_in_complex() << ")."
       << std::endl;
     std::cerr << "  Updating facets...";
     t.reset();
-#endif
+#   endif
 
     // Get facets (returns each canonical facet only once)
     // Note: ~42% of rebuild_restricted_delaunay time
@@ -2534,7 +2610,7 @@ rebuild_restricted_delaunay(OutdatedCells& outdated_cells,
   }
   // Sequential
   else
-#endif // CGAL_LINKED_WITH_TBB
+# endif // CGAL_LINKED_WITH_TBB
   {
     while ( first_cell != last_cell )
     {
@@ -2543,13 +2619,13 @@ rebuild_restricted_delaunay(OutdatedCells& outdated_cells,
       updater(cell);
     }
 
-#ifdef CGAL_MESH_3_PROFILING
+# ifdef CGAL_MESH_3_PROFILING
     std::cerr << " done in " << t.elapsed() << " seconds (#cells from "
       << num_cells << " to " << c3t3_.number_of_cells_in_complex() << ")."
       << std::endl;
     std::cerr << "  Updating facets...";
     t.reset();
-#endif
+# endif
 
     // Get facets (returns each canonical facet only once)
     // Note: ~42% of rebuild_restricted_delaunay time
@@ -2561,13 +2637,12 @@ rebuild_restricted_delaunay(OutdatedCells& outdated_cells,
     outdated_cells.clear();
   }
 
-
-#ifdef CGAL_MESH_3_PROFILING
+# ifdef CGAL_MESH_3_PROFILING
   std::cerr << " done in " << t.elapsed() << " seconds ("
             << vertex_to_proj.size() << " vertices to project)." << std::endl;
   std::cerr << "  Projecting interior vertices...";
   t.reset();
-#endif
+# endif
 
     CGAL_HISTOGRAM_PROFILER("|vertex_to_proj|=", vertex_to_proj.size());
   // Project interior vertices
@@ -2593,9 +2668,9 @@ rebuild_restricted_delaunay(OutdatedCells& outdated_cells,
     }
   }
 
-#ifdef CGAL_MESH_3_PROFILING
+# ifdef CGAL_MESH_3_PROFILING
   std::cerr << " done in " << t.elapsed() << " seconds." << std::endl;
-#endif
+# endif
 }
 #endif //CGAL_INTRUSIVE_LIST
 
@@ -2619,11 +2694,7 @@ rebuild_restricted_delaunay(ForwardIterator first_cell,
   if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
   {
     tbb::parallel_do(first_cell, last_cell,
-      [&]( typename ForwardIterator::reference cell ) // CJTODO: lambdas ok?
-      {
-        c3t3_.remove_from_complex(cell);
-        updater(cell);
-      });
+      Update_cell<C3T3, Update_c3t3>(c3t3_, updater));
   }
   // Sequential
   else
@@ -2631,9 +2702,8 @@ rebuild_restricted_delaunay(ForwardIterator first_cell,
   {
     while ( first_cell != last_cell )
     {
-      const Cell_handle& cell = *first_cell++;
-      c3t3_.remove_from_complex(cell);
-      updater(cell);
+      Update_cell<C3T3, Update_c3t3> uc(c3t3_, updater);
+      uc(*first_cell++);
     }
   }
 
@@ -2643,32 +2713,11 @@ rebuild_restricted_delaunay(ForwardIterator first_cell,
   // Parallel
   if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
   {
-    tbb::parallel_do(facets.begin(), facets.end(),
-      [&]( const Facet& facet ) // CJTODO: lambdas ok?
-    {
-      // Update facet
-      c3t3_.remove_from_complex(facet);
-      updater(facet);
-
-      // Update vertex_to_proj
-      if ( c3t3_.is_in_complex(facet) )
-      {
-        // Iterate on vertices
-        int k = facet.second;
-        for ( int i=1 ; i<4 ; ++i )
-        {
-          const Vertex_handle& v = facet.first->vertex((k+i)&3);
-          if ( c3t3_.in_dimension(v) > 2 )
-          {
-            std::pair<Vertex_handle, Surface_patch_index> p
-              = std::make_pair(v, c3t3_.surface_patch_index(facet));
-            this->lock_vertex_to_proj();
-            vertex_to_proj.insert(p);
-            this->unlock_vertex_to_proj();
-          }
-        }
-      }
-    });
+    tbb::parallel_do(
+      facets.begin(), facets.end(),
+      Update_facet<C3T3_helpers, C3T3, Update_c3t3>(
+        c3t3_helpers, c3t3_, updater, vertex_to_proj)
+    );
   }
   // Sequential
   else
@@ -3557,7 +3606,7 @@ fill_modified_vertices(InputIterator cells_begin,
   {
     for ( int i=0 ; i<4 ; ++i )
     {
-	  // Insert vertices if not already inserted
+      // Insert vertices if not already inserted
       const Vertex_handle& current_vertex = (*it)->vertex(i);
       if ( !tr_.is_infinite(current_vertex)
           && already_inserted_vertices.insert(current_vertex).second )
