@@ -502,6 +502,7 @@ class Halfedge_around_source_circulator
 #ifndef DOXYGEN_RUNNING
   typedef boost::transform_iterator<internal::Opposite<Graph>, Halfedge_around_target_circulator<Graph> > Base;
   typedef typename boost::graph_traits<Graph>::halfedge_descriptor halfedge_descriptor;
+  typedef typename boost::graph_traits<Graph>::vertex_descriptor vertex_descriptor;
 #endif
 
 public:
@@ -518,6 +519,9 @@ public:
     : Base(Halfedge_around_target_circulator<Graph>(hd,g), internal::Opposite<Graph>(g))
   {}
 
+  Halfedge_around_source_circulator(vertex_descriptor vd, const Graph& g)
+    : Base(Halfedge_around_target_circulator<Graph>(halfedge(vd,g),g), internal::Opposite<Graph>(g))
+  {}
 }; 
 
 
@@ -606,6 +610,11 @@ public:
   Halfedge_around_target_circulator(halfedge_descriptor pos, const Graph& g)
     : pos(pos), g(&g)
   {}
+
+  Halfedge_around_target_circulator(vertex_descriptor vd, const Graph& g)
+    : pos(halfedge(vd,g)), g(&g)
+  {}
+
 #ifndef DOXYGEN_RUNNING
   reference         operator *  ( )       { return  pos; }
   const value_type& operator *  ( ) const { return  pos; }
@@ -779,6 +788,10 @@ halfedges_around_source(typename boost::graph_traits<Graph>::halfedge_descriptor
   return std::make_pair(I(h,g), I(h,g,1));
 }
 
+/**  
+ * \ingroup PkgBGLIterators
+ * returns an iterator range over all halfedges with vertex `v` as source.
+ */
 template<typename Graph>
 std::pair<Halfedge_around_source_iterator<Graph>,Halfedge_around_source_iterator<Graph> >
 halfedges_around_source(typename boost::graph_traits<Graph>::vertex_descriptor v, Graph& g)
@@ -798,6 +811,10 @@ halfedges_around_target(typename boost::graph_traits<Graph>::halfedge_descriptor
   return std::make_pair(I(h,g), I(h,g,1));
 }
 
+/**  
+ * \ingroup PkgBGLIterators
+ * returns an iterator range over all halfedges with vertex `v` as target. 
+ */
 template<typename Graph>
 std::pair<Halfedge_around_target_iterator<Graph>,Halfedge_around_target_iterator<Graph> >
 halfedges_around_target(typename boost::graph_traits<Graph>::vertex_descriptor v, Graph& g)
