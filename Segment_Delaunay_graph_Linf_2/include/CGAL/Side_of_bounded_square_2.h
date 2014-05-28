@@ -513,14 +513,14 @@ namespace CGAL {
         }
       }
 
-    inline Comparison_result test1d(
-        const FT& A, const FT& B, const FT&C, const FT& D) const
-    {
-      const FT two(2);
-      CGAL_SDG_DEBUG( std::cout << "debug bs test1d entering with ABCD "
-          << A << " " << B << " " << C << " " << D << std::endl; );
-      return CGAL::compare(CGAL::abs(A+B-two*D), CGAL::abs(A+B-two*C));
-    }
+      inline Comparison_result test1d(
+          const FT& A, const FT& B, const FT&C, const FT& D) const
+      {
+        const FT two(2);
+        CGAL_SDG_DEBUG( std::cout << "debug bs test1d entering with ABCD "
+            << A << " " << B << " " << C << " " << D << std::endl; );
+        return CGAL::compare(CGAL::abs(A+B-two*D), CGAL::abs(A+B-two*C));
+      }
 
     public:
 
