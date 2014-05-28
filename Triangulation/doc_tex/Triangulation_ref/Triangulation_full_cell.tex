@@ -1,0 +1,79 @@
+\begin{ccRefClass}{Triangulation_full_cell<TriangulationTraits, Data, TriangulationDSFullCell>}
+
+\ccDefinition
+
+The class \ccRefName\ is a model of the concept \ccc{TriangulationFullCell}. It
+is used by default for representing full cells in the class
+\ccc{Triangulation<TriangulationTraits, TriangulationDataStructure>}.
+
+A \ccRefName\ stores handles to the vertices of the cell as well as handles
+to its adjacent cells.
+
+\ccInclude{CGAL/Triangulation_full_cell.h}
+
+\ccParameters
+
+\ccc{TriangulationTraits} must be a model of the concept \ccc{TriangulationTraits}. It
+provides geometric types and predicates for use in the
+\ccc{Triangulation<TriangulationTraits, TriangulationDataStructure>} class.
+
+\ccc{Data} is an optional type of data to be stored in the full cell class. The
+class template \ccRefName\ accepts that no second parameter be specified. In
+this case, \ccc{Data} defaults to \ccc{CGAL::No_full_cell_data}.
+\ccc{CGAL::No_full_cell_data} can explicitely be specified to access the third parameter.
+
+Parameter \ccc{TriangulationDSFullCell} must be a model of the concept
+\ccc{TriangulationDSFullCell}.
+The class template \ccRefName\ accepts that no third parameter be specified.
+It also accepts the tag \ccc{CGAL::Default} as third parameter. In both
+cases, \ccc{TriangulationDSFullCell} defaults to \ccc{CGAL::Triangulation_ds_full_cell<>}.
+
+\ccInheritsFrom
+
+\ccc{TriangulationDSFullCell} (the third template parameter)
+
+\ccIsModel
+
+\ccc{TriangulationFullCell}
+
+Additionally, the class \ccRefName\ also provides the following type,
+constructors and methods:
+
+\ccTypes
+
+\ccTypedef{typedef Data Data;}{The type of the additional data stored in the
+cell. If you read a \ccRefName\ from a stream (a file) or write a \ccRefName
+to a stream, then streaming operators \ccc{<<} and \ccc{>>} must be provided for this
+type.}
+
+\ccCreation
+\ccCreationVariable{c}
+
+\ccConstructor{template< typename T> Triangulation_full_cell(int dmax, const T
+& t);}{Sets the maximum possible dimension of the cell to \ccc{dmax}.
+The parameter \ccc{t} is passed to the \ccc{Data} constructor.}
+
+\ccHeading{Data access}
+
+\ccMethod{const Data & data() const;}{Returns a const reference to the stored data.}
+\ccGlue\ccMethod{Data & data();}{Returns a non-const reference to the stored data.}
+
+\ccHeading{Input/Output}
+
+\ccFunction{istream & operator>>(istream & is, Triangulation_full_cell & v);}%
+{Inputs the non-combinatorial information given by the cell, {i.e.},
+the point and other possible information. The data of type \ccc{Data} is
+{also} read.}
+
+\ccFunction{ostream & operator<<(ostream & os, const Triangulation_full_cell & v);}%
+{Outputs the non-combinatorial information given by the cell, {i.e.},
+the point and other possible information. The data of type \ccc{Data} is
+{also} written.}
+
+\ccSeeAlso
+
+\ccc{Triangulation_vertex<TriangulationTraits, Data, TriangulationDSVertex>}\\
+\ccc{Triangulation_data_structure<Dimensionality, TriangulationDSVertex, TriangulationDSFullCell>}\\
+\ccc{Triangulation<TriangulationTraits,TriangulationDataStructure>}\\
+\ccc{Delaunay_triangulation<DelaunayTriangulationTraits, TriangulationDataStructure>}
+\end{ccRefClass}
