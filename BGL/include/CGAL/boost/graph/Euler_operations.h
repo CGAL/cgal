@@ -835,7 +835,6 @@ collapse_edge(typename boost::graph_traits<Graph>::edge_descriptor v0v1,
     set_next(qt, next(pt,g),g);
     set_next(pb, next(qb,g),g);
     set_next(ppt, qt,g);
-    set_target(ppt,q,g);
     set_next(pqb,pb,g);
     remove_face(face(pq,g),g);
     remove_face(face(qp,g),g);
@@ -843,6 +842,13 @@ collapse_edge(typename boost::graph_traits<Graph>::edge_descriptor v0v1,
     remove_edge(edge(pt,g),g);
     remove_edge(edge(qb,g),g);
     remove_vertex(p,g);
+    Halfedge_around_target_circulator<Graph> beg(ppt,g), end(pqb,g);
+    while(beg != end){
+      assert(target(*beg,g) == p);
+      set_target(*beg,q,g);
+      --beg;
+    }
+
     return q;
     // return the vertex kept
   }
