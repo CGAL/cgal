@@ -594,7 +594,7 @@ class Halfedge_around_target_circulator {
 public:
 #ifndef DOXYGEN_RUNNING
   typedef typename boost::graph_traits<Graph>::halfedge_descriptor halfedge_descriptor;
-  typedef typename boost::graph_traits<Graph>::halfedge_descriptor vertex_descriptor;
+  typedef typename boost::graph_traits<Graph>::vertex_descriptor vertex_descriptor;
   typedef Bidirectional_circulator_tag        iterator_category;
   typedef halfedge_descriptor                 value_type;
   typedef value_type*                         pointer;
