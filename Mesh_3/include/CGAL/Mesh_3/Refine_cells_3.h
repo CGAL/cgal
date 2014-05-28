@@ -173,6 +173,43 @@ protected:
     return make_cc_safe_handle(ch);
   }
 
+  // -----------------------------------
+  // -----------------------------------
+  // -----------------------------------
+  
+  // Functor for scan_triangulation_impl function
+  template <typename Refine_cells_>
+  class Scan_cell
+  {
+    Refine_cells_                   & m_refine_cells;
+    const std::vector<Cell_handle>  & m_cells;
+
+    typedef typename Refine_cells_::Cell_handle Cell_handle;
+
+  public:
+    // Constructor
+    Scan_cell(Refine_cells_ & rc,
+              const std::vector<Cell_handle> & cells)
+    : m_refine_cells(rc), m_cells(cells)
+    {}
+
+    // Constructor
+    Scan_cell(const Scan_cell &sc)
+    : m_refine_cells(sc.m_refine_cells), m_cells(sc.m_cells)
+    {}
+
+    // operator()
+    void operator()( const tbb::blocked_range<size_t>& r ) const
+    {
+      for( size_t i = r.begin() ; i != r.end() ; ++i)
+      {
+        Cell_handle c = m_cells[i];
+        if (!m_refine_cells.triangulation().is_infinite(c))
+          m_refine_cells.treat_new_cell(c);
+      }
+    }
+  };
+
 public:
   template<typename Container_element>
   Cell_handle extract_element_from_container_value(const Container_element &e) const
@@ -479,14 +516,15 @@ public:
 
     return sstr.str();
   }
+  
+  /// Adds \c cell to the refinement queue if needed
+  void treat_new_cell(const Cell_handle& cell);
 
 #ifdef CGAL_MESH_3_MESHER_STATUS_ACTIVATED
   std::size_t queue_size() const { return this->size(); }
 #endif
 
 private:
-  /// Adds \c cell to the refinement queue if needed
-  void treat_new_cell(const Cell_handle& cell);
 
   /// Computes badness and add to queue if needed
   void compute_badness(const Cell_handle& cell);
@@ -625,24 +663,9 @@ scan_triangulation_impl()
 # if defined(CGAL_MESH_3_VERBOSE) || defined(CGAL_MESH_3_PROFILING)
     std::cerr << " - Num cells to scan = " << cells.size() << "..." << std::endl;
 # endif
-    tbb::parallel_for(tbb::blocked_range<size_t>(0, cells.size(), 1000),
-      [&]( const tbb::blocked_range<size_t>& r ) // CJTODO: lambdas ok?
-      {
-        for( size_t i = r.begin() ; i != r.end() ; ++i)
-        {
-          Cell_handle c = cells[i];
-          if (!r_tr_.is_infinite(c))
-            this->treat_new_cell(c);
-        }
-    });
-
-    // WITH PARALLEL_DO
-    /*tbb::parallel_do(r_tr_.finite_cells_begin(), r_tr_.finite_cells_end(),
-      [=]( Cell &cell ) { // CJTODO: lambdas ok?
-        Cell_handle c
-         = Tr::Triangulation_data_structure::Cell_range::s_iterator_to(cell);
-        treat_new_cell( c );
-    });*/
+    tbb::parallel_for(
+      tbb::blocked_range<size_t>(0, cells.size(), 1000),
+      Scan_cell<Self>(*this, cells));
 
     splice_local_lists();
     add_to_TLS_lists(false);
