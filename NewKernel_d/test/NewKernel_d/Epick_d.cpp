@@ -516,17 +516,17 @@ void test3(){
   assert(ifsos(fozp, tz+0, tz+3, tz[5]) == CGAL::ON_NEGATIVE_SIDE);
   assert(ifsos(fozn, tz+0, tz+3, tz[5]) == CGAL::ON_POSITIVE_SIDE);
 
-  typedef typename CGAL::Get_type<K1, CGAL::Weighted_point_tag>::type WP;
-  typedef typename CGAL::Get_functor<K1, CGAL::Construct_ttag<CGAL::Weighted_point_tag> >::type CWP;
-  typedef typename CGAL::Get_functor<K1, CGAL::Point_drop_weight_tag>::type PDW;
-  typedef typename CGAL::Get_functor<K1, CGAL::Point_weight_tag>::type PW;
-  typedef typename CGAL::Get_functor<K1, CGAL::Power_test_tag>::type PT;
-  typedef typename CGAL::Get_functor<K1, CGAL::In_flat_power_test_tag>::type IFPT;
-  CWP cwp (k);
-  PDW pdw (k);
-  PW pw (k);
-  PT pt (k);
-  IFPT ifpt (k);
+  typedef typename K1::Weighted_point_d WP;
+  typedef typename K1::Construct_weighted_point_d CWP;
+  typedef typename K1::Point_drop_weight_d PDW;
+  typedef typename K1::Point_weight_d PW;
+  typedef typename K1::Power_test_d PT;
+  typedef typename K1::In_flat_power_test_d IFPT;
+  CWP cwp Kinit(construct_weighted_point_d_object);
+  PDW pdw Kinit(point_drop_weight_d_object);
+  PW pw Kinit(point_weight_d_object);
+  PT pt Kinit(power_test_d_object);
+  IFPT ifpt Kinit(in_flat_power_test_d_object);
   WP wp = cwp (x1, 2);
   WP xw6 = cwp (x6, 0);
   assert (pw(wp) == 2);
