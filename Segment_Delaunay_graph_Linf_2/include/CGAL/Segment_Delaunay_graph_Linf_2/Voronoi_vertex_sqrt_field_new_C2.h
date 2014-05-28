@@ -1036,7 +1036,8 @@ private:
         ((have_common_qr) ? 1 : 0) +
         ((have_common_rp) ? 1 : 0)  ;
 
-      // num_common can be 3 if the three segments create a triangle
+      // num_common can be 3 if the three segments create a triangle;
+      // trivial assertion
       CGAL_assertion(num_common <= 3);
 
       const unsigned int num_hv =
@@ -1045,9 +1046,7 @@ private:
         ((is_r_hv) ? 1 : 0)  ;
 
       // this is a trivial assertion
-      if (num_common == 2) {
-        CGAL_assertion(num_hv >= 0);
-      }
+      CGAL_assertion(num_hv <= 3);
 
       CGAL_SDG_DEBUG(
         std::cout
