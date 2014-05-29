@@ -1025,11 +1025,10 @@ insert_exact_point_on_segment(const Storage_site_2& ss, const Site_2& t,
     std::cout << " at f_i=" << f_i << std::endl;
 #endif
     unsigned int remaining_nop = flips_nop;
-    Face_handle current_face, next_face;
-    next_face = otherf;
+    Face_handle next_face = otherf;
     int next_i = f_i;
     while (remaining_nop > 0) {
-      current_face = next_face;
+      const Face_handle current_face = next_face;
       const int current_i = next_i;
       if (remaining_nop > 1) {
         next_face = current_face->neighbor(ccw(current_i));
@@ -1053,11 +1052,10 @@ insert_exact_point_on_segment(const Storage_site_2& ss, const Site_2& t,
     std::cout << " at g_i=" << g_i << std::endl;
 #endif
     unsigned int remaining_pon = flips_pon;
-    Face_handle current_face, next_face;
-    next_face = otherg;
+    Face_handle next_face = otherg;
     int next_i = g_i;
     while (remaining_pon > 0) {
-      current_face = next_face;
+      const Face_handle current_face = next_face;
       const int current_i = next_i;
       if (remaining_pon > 1) {
         next_face = current_face->neighbor(ccw(current_i));
@@ -1173,11 +1171,10 @@ insert_point_on_segment(const Storage_site_2& ss, const Site_2& ,
     std::cout << " at f_i=" << f_i << std::endl;
 #endif
     unsigned int remaining_nop = flips_nop;
-    Face_handle current_face, next_face;
-    next_face = otherf;
+    Face_handle next_face = otherf;
     int next_i = f_i;
     while (remaining_nop > 0) {
-      current_face = next_face;
+      const Face_handle current_face = next_face;
       const int current_i = next_i;
       if (remaining_nop > 1) {
         next_face = current_face->neighbor(ccw(current_i));
@@ -1201,11 +1198,10 @@ insert_point_on_segment(const Storage_site_2& ss, const Site_2& ,
     std::cout << " at g_i=" << g_i << std::endl;
 #endif
     unsigned int remaining_pon = flips_pon;
-    Face_handle current_face, next_face;
-    next_face = otherg;
+    Face_handle next_face = otherg;
     int next_i = g_i;
     while (remaining_pon > 0) {
-      current_face = next_face;
+      const Face_handle current_face = next_face;
       const int current_i = next_i;
       if (remaining_pon > 1) {
         next_face = current_face->neighbor(ccw(current_i));
