@@ -44,6 +44,7 @@ class Vector_d : public Get_type<typename R_::Kernel_base, Vector_tag>::type
   typedef typename Get_type<R_, Point_tag>::type	Point_;
   typedef typename Get_functor<Kbase, Construct_ttag<Vector_tag> >::type CVBase;
   typedef typename Get_functor<Kbase, Compute_vector_cartesian_coordinate_tag>::type CCBase;
+  typedef typename Get_functor<Kbase, Construct_ttag<Vector_cartesian_const_iterator_tag> >::type CVI;
 
   typedef Vector_d                            Self;
   BOOST_STATIC_ASSERT((boost::is_same<Self, typename Get_type<R_, Vector_tag>::type>::value));
@@ -130,6 +131,18 @@ public:
 
   typename boost::result_of<CCBase(Rep,int)>::type cartesian(int i)const{
 	  return CCBase()(rep(),i);
+  }
+
+  typename boost::result_of<CCBase(Rep,int)>::type operator[](int i)const{
+	  return CCBase()(rep(),i);
+  }
+
+  typename boost::result_of<CVI(Rep,Begin_tag)>::type cartesian_begin()const{
+	  return CVI()(rep(),Begin_tag());
+  }
+
+  typename boost::result_of<CVI(Rep,End_tag)>::type cartesian_end()const{
+	  return CVI()(rep(),End_tag());
   }
 
   Vector_d operator-() const
@@ -222,22 +235,6 @@ public:
   int dimension() const // bad idea?
   {
       return rep.dimension();
-  }
-
-  typename Qualified_result_of<typename R::Compute_x_3, Vector_3>::type
-  operator[](int i) const
-  {
-      return cartesian(i);
-  }
-
-  Cartesian_const_iterator cartesian_begin() const
-  {
-    return typename R::Construct_cartesian_const_iterator_3()(*this);
-  }
-
-  Cartesian_const_iterator cartesian_end() const
-  {
-    return typename R::Construct_cartesian_const_iterator_3()(*this,3);
   }
 
   typename Qualified_result_of<typename R::Compute_squared_length_3, Vector_3>::type

@@ -230,9 +230,9 @@ void test2(){
   assert(po(tab2+0,tab2+3)==CGAL::COUNTERCLOCKWISE);
   assert(sos(tab2+0,tab2+3,x4)==CGAL::ON_POSITIVE_SIDE);
   assert(sbs(tab2+0,tab2+3,x4)==CGAL::ON_BOUNDED_SIDE);
-  V y1=cp(1,-1);
-  V y2=cp(3,-3);
-  P tab3[]={y1,y2};
+  V y1=cv(1,-1);
+  V y2=cv(3,-3);
+  V tab3[]={y1,y2};
   std::vector<V> v;
   std::back_insert_iterator<std::vector<V> > bii(v);
   lb(tab3+0,tab3+2,bii);
