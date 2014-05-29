@@ -612,7 +612,7 @@ file( WRITE ${CMAKE_BINARY_DIR}/include/CGAL/compiler_config.h "//\n// compiler_
 cache_get(CONFIG_CXX_FLAGS)
 
 foreach(config_test_cpp ${all_config_tests})
-    
+
     # Test's name is .cpp's base name
     get_filename_component(config_test_name ${config_test_cpp} NAME_WE)
     
@@ -773,6 +773,7 @@ endif()
 # Set CGAL_LIBRARY_INSTALLED, CGAL_Qt3_LIBRARY_INSTALLED and so on. Those
 # variables are the path to the libraries installed by the install
 # target. Used in the generation of the installed CGALConfig.cmake
+
 foreach(lib ${CGAL_CONFIGURED_LIBRARIES} CGAL) # note the added fake 'CGAL'
  if(${lib}_LIBRARY)
     get_filename_component(lib_name "${${lib}_LIBRARY}" NAME)

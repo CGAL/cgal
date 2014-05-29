@@ -27,43 +27,103 @@ endif()
 add_definitions(-DCGAL_PROFILE_LCC_DEMO)
 
 ##################
-find_package(CGAL COMPONENTS Qt4)
-include(${CGAL_USE_FILE})
+
+option (USE_QT5 "Use Qt5 version instead of Qt4" OFF)
+
+if(USE_QT5)
+	if(WIN32)
+	message("Qt5 on Windows needs Windows SDK.")
+	
+	set(CMAKE_LIBRARY_PATH "C:\\Program Files (x86)\\Windows Kits\\8.1\\Lib\\winv6.3\\um\\x64")
+	
+	endif()
+	find_package(CGAL)
+	include(${CGAL_USE_FILE})
+
+	FIND_PACKAGE(Qt5Core REQUIRED)
+	FIND_PACKAGE(Qt5Gui REQUIRED)
+	FIND_PACKAGE(Qt5OpenGL REQUIRED)
+	FIND_PACKAGE(Qt5Widgets REQUIRED)
+	FIND_PACKAGE(Qt5Xml REQUIRED)
+	# FIND_PACKAGE(Qt5Quick REQUIRED)
+	# FIND_PACKAGE(Qt5Xml REQUIRED)
+	
+	if (Qt5Core_FOUND AND Qt5Gui_FOUND AND Qt5OpenGL_FOUND AND Qt5Widgets_FOUND AND Qt5Xml_FOUND)
+		message("Qt5 found")
+		set(QT5 TRUE)
+		set(CMAKE_AUTOMOC ON)
+		# list(APPEND QT_LIBRARIES ${Qt5Widgets_LIBRARIES} ${Qt5Quick_LIBRARIES} ${Qt5Xml_LIBRARIES})
+list(APPEND QT_INCLUDE_DIR ${Qt5Core_INCLUDE_DIRS} ${Qt5Gui_INCLUDE_DIRS} ${Qt5Widgets_INCLUDE_DIRS} ${Qt5OpenGL_INCLUDE_DIRS} ${Qt5Xml_INCLUDE_DIRS}) 
+
+list(APPEND QT_LIBRARIES ${Qt5Core_LIBRARIES} ${Qt5Gui_LIBRARIES} ${Qt5Widgets_LIBRARIES} ${Qt5OpenGL_LIBRARIES} ${Qt5Xml_LIBRARIES})
+
+list(APPEND QT_DEFINITIONS ${Qt5Core_DEFINITIONS} ${Qt5Gui_DEFINITIONS} ${Qt5Widgets_DEFINITIONS} ${Qt5OpenGL_DEFINITIONS} ${Qt5Xml_DEFINITIONS})
+	endif ()
+else ()
+	find_package(CGAL COMPONENTS Qt4)
+
+	include(${CGAL_USE_FILE})
+
+	find_package(Qt4)
+	include(${QT_USE_FILE})
+
+	if(CGAL_Qt4_FOUND AND QT4_FOUND)
+		message("Qt4 found")
+		set(QT4 TRUE)
+	endif()
+endif (USE_QT5)
+
 
 set( QT_USE_QTXML    TRUE )
 set( QT_USE_QTMAIN   TRUE )
 set( QT_USE_QTSCRIPT  TRUE )
 set( QT_USE_QTOPENGL  TRUE )
-find_package(Qt4)
 
 find_package(OpenGL)
 find_package(QGLViewer)
 
-if ( NOT (CGAL_FOUND AND CGAL_Qt4_FOUND AND QT4_FOUND AND
-      OPENGL_FOUND AND QGLVIEWER_FOUND) )
+if ( NOT CGAL_FOUND )
 
-  MESSAGE(STATUS "NOTICE: This demo requires CGAL, QGLViewer, OpenGL "
-    "and Qt4, and will not be compiled.")
+  MESSAGE(STATUS "NOTICE: This demo requires CGAL "
+    "and will not be compiled.")
+elseif ( NOT (QT4 OR QT5) )
+	
+  MESSAGE(STATUS "NOTICE: This demo requires "
+    "Qt4 or Qt5, and will not be compiled.")
+elseif ( NOT OPENGL_FOUND )
 
-else()
+  MESSAGE(STATUS "NOTICE: This demo requires OpenGL "
+    "and will not be compiled.")
+elseif (QGL_VIEWER_FOUND )
 
-include(${QT_USE_FILE})
+  MESSAGE(STATUS "NOTICE: This demo requires QGLViewer "
+    " and will not be compiled. TODO correct this error")
+else ()
 include_directories(${QGLVIEWER_INCLUDE_DIR})
 include_directories(BEFORE . ../../include/)
 
-# ui file, created wih Qt Designer
-qt4_wrap_ui(uis MainWindow.ui CreateMesh.ui CreateMenger.ui)
+FILE (GLOB CPP *.cpp)
 
-# qrc files (resources files, that contain icons, at least)
-qt4_add_resources (RESOURCE_FILES ./Linear_cell_complex_3.qrc)
+if(QT4)
+	# ui file, created wih Qt Designer
+	qt4_wrap_ui(uis MainWindow.ui CreateMesh.ui CreateMenger.ui)
 
-qt4_automoc(MainWindow.cpp Viewer.cpp)
+	# qrc files (resources files, that contain icons, at least)
+	qt4_add_resources (RESOURCE_FILES ./Linear_cell_complex_3.qrc)
 
+	qt4_automoc(MainWindow.cpp Viewer.cpp)
+endif()
+if(QT5)
+
+	qt5_wrap_ui(uis MainWindow.ui CreateMesh.ui CreateMenger.ui)
+
+	qt5_add_resources (RESOURCE_FILES ./Linear_cell_complex_3.qrc)
+
+endif()
 add_executable(Linear_cell_complex_3_demo
-  Linear_cell_complex_3_demo.cpp MainWindow.cpp
-  Viewer.cpp Linear_cell_complex_3_subdivision.cpp
-  Linear_cell_complex_pqq_subdivision.cpp
-  ${uis} ${RESOURCE_FILES} )
+			   ${CPP}
+			   ${uis} 
+			   ${RESOURCE_FILES} )
 
 add_to_cached_list(CGAL_EXECUTABLE_TARGETS Linear_cell_complex_3_demo)
 
@@ -73,5 +133,4 @@ target_link_libraries(Linear_cell_complex_3_demo ${QT_LIBRARIES}
                                                  ${QGLVIEWER_LIBRARIES} )
 target_link_libraries(Linear_cell_complex_3_demo ${OPENGL_gl_LIBRARY}
                                                  ${OPENGL_glu_LIBRARY} )
-
 endif()

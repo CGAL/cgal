@@ -122,7 +122,7 @@ foreach(package ${CGAL_CONFIGURED_PACKAGES})
      message(STATUS "Sources for CGAL component library '${CGAL_CONFIGURED_LIBRARY_NAME}' detected")
       list(APPEND CGAL_CONFIGURED_LIBRARIES ${CGAL_CONFIGURED_LIBRARY_NAME})
       #message(STATUS "Library config detected: ${CGAL_CONFIGURED_LIBRARIES}")
-
+	
       cache_set(${CGAL_CONFIGURED_LIBRARY_NAME}_LIBRARY                  "" )
       cache_set(${CGAL_CONFIGURED_LIBRARY_NAME}_3RD_PARTY_DEFINITIONS    "" )
       cache_set(${CGAL_CONFIGURED_LIBRARY_NAME}_3RD_PARTY_INCLUDE_DIRS   "" )

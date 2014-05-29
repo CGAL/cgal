@@ -296,6 +296,24 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
         find_package( Qt4 )
       endif()
 
+      #New for Qt5 version !
+      if (${component} STREQUAL "Qt5")
+        find_package( OpenGL )
+
+        FIND_PACKAGE( Qt5Core )
+	FIND_PACKAGE( Qt5Gui  )
+	FIND_PACKAGE( Qt5OpenGL )
+	FIND_PACKAGE( Qt5Widgets )
+	FIND_PACKAGE( Qt5Xml )
+
+	list(APPEND QT_INCLUDE_DIR ${Qt5Core_INCLUDE_DIRS} ${Qt5Gui_INCLUDE_DIRS} ${Qt5Widgets_INCLUDE_DIRS} ${Qt5OpenGL_INCLUDE_DIRS} ${Qt5Xml_INCLUDE_DIRS}) 
+
+	list(APPEND QT_LIBRARIES ${Qt5Core_LIBRARIES} ${Qt5Gui_LIBRARIES} ${Qt5Widgets_LIBRARIES} ${Qt5OpenGL_LIBRARIES} ${Qt5Xml_LIBRARIES})
+
+	list(APPEND QT_DEFINITIONS ${Qt5Core_DEFINITIONS} ${Qt5Gui_DEFINITIONS} ${Qt5Widgets_DEFINITIONS} ${Qt5OpenGL_DEFINITIONS} ${Qt5Xml_DEFINITIONS})
+
+      endif()
+
     else(WITH_CGAL_${component})
 
       # now we are talking about 3rd party libs
@@ -425,10 +443,11 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
     # There is also a version of CGALConfig.cmake that is prepared in case CGAL in installed in CMAKE_INSTALL_PREFIX.
     configure_file("${CGAL_MODULES_DIR}/CGALConfig_install.cmake.in" "${CMAKE_BINARY_DIR}/config/CGALConfig.cmake" @ONLY)
 
+	
     #write prefix exceptions
     file( APPEND ${CMAKE_BINARY_DIR}/CGALConfig.cmake "${SPECIAL_PREFIXES}\n")
     file( APPEND ${CMAKE_BINARY_DIR}/config/CGALConfig.cmake "${SPECIAL_PREFIXES}")
-
+	
      foreach( lib ${CGAL_SUPPORTING_3RD_PARTY_LIBRARIES} )
 
        list( FIND CGAL_ESSENTIAL_3RD_PARTY_LIBRARIES "${lib}" POSITION )
@@ -436,6 +455,7 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
        if ( ("${POSITION}" STRGREATER "-1") OR ( CGAL_ENABLE_PRECONFIG AND WITH_${lib} ))
 
          set (vlib ${CGAL_EXT_LIB_${lib}_PREFIX} )
+
          #the next 'if' is needed to avoid ${vlib} config variables to be overidden in case of a local configuration change
          file( APPEND ${CMAKE_BINARY_DIR}/CGALConfig.cmake "if (NOT CGAL_IGNORE_PRECONFIGURED_${lib})\n")
          file( APPEND ${CMAKE_BINARY_DIR}/CGALConfig.cmake "  set( ${vlib}_FOUND           \"${${vlib}_FOUND}\" )\n")
