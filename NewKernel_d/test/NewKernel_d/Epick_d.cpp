@@ -255,7 +255,8 @@ void test2(){
   assert(ifsos(fo,tab2+1,tab2+3,x5)==CGAL::ON_POSITIVE_SIDE);
   P tab_h[]={P(0,42),P(1,42),P(4,42),P(2,42),P(3,42)};
   assert(cah(tab_h+0,tab_h+2,tab_h[4]));
-  assert(!cah(tab_h+0,tab_h+2,y2));
+  P py2=cp(3,-3);
+  assert(!cah(tab_h+0,tab_h+2,py2));
   FO fo_hp = cfo (tab_h+0, tab_h+2);
   FO fo_hn = cfo (tab_h+2, tab_h+4);
   assert(ifo(fo_hp, tab_h+1, tab_h+3)==CGAL::POSITIVE);
