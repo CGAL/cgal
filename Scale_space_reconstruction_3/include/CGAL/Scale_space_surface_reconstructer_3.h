@@ -99,11 +99,11 @@ namespace CGAL {
  *  of the surface. Shells are separated by a (0,0,0) triple.
  *  
  *  \tparam Kernel the geometric traits class. It should be a model of
- *  DelaunayTriangulationTraits_3.
+ *  `DelaunayTriangulationTraits_3`.
  *  \tparam Fixed_scale whether the shape is constructed at a fixed scale.
- *  It should be a model of Boolean_tags. The default value is Tag_true.
+ *  It should be a model of `Boolean_tags`. The default value is `Tag_true`.
  *  \tparam Shells whether to collect the surface per shell. It should be
- *  a model of Boolean_tags. The default value is Tag_true.
+ *  a model of `Boolean_tags`. The default value is `Tag_true`.
  */
 #ifdef DOXYGEN_RUNNING
 template < class Kernel, class Fixed_scale, class Shells >
