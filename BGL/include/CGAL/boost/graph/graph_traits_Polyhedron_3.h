@@ -473,6 +473,14 @@ num_faces(const CGAL::Polyhedron_3<Gt,I,HDS,A>& p)
   return p.size_of_facets();
 }
 
+
+
+template<class Gt, class I, CGAL_HDS_PARAM_, class A>
+bool is_valid(const CGAL::Polyhedron_3<Gt,I,HDS,A>& p)
+{
+  return p.is_valid();
+}
+
 } // namespace CGAL
 
 
