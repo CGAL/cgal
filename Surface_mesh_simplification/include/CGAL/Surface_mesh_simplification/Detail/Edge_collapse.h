@@ -32,6 +32,7 @@ namespace Surface_mesh_simplification
 // Implementation of the vertex-pair collapse triangulated surface mesh simplification algorithm
 //
 template<class ECM_
+        ,class Traits_
         ,class ShouldStop_
         ,class VertexIndexMap_
         ,class EdgeIndexMap_
@@ -46,6 +47,7 @@ class EdgeCollapse
 public:
 
   typedef ECM_              ECM ;
+  typedef Traits_           Traits;
   typedef ShouldStop_       ShouldStop ;
   typedef VertexIndexMap_   VertexIndexMap ;
   typedef EdgeIndexMap_     EdgeIndexMap ;
@@ -78,12 +80,10 @@ public:
   typedef typename GetCost     ::result_type Cost_type ;
   typedef typename GetPlacement::result_type Placement_type ;
   
-  typedef typename Kernel_traits<Point>::Kernel Kernel ;
+  typedef typename Traits::Equal_3 Equal_3 ;
   
-  typedef typename Kernel::Equal_3 Equal_3 ;
-  
-  typedef typename Kernel::Vector_3 Vector ;
-  typedef typename Kernel::FT       FT ;
+  typedef typename Traits::Vector_3 Vector ;
+  typedef typename Traits::FT       FT ;
 
   struct Compare_id
   {
@@ -169,6 +169,7 @@ public:
 
   EdgeCollapse( ECM&                        aSurface
               , ShouldStop           const& aShouldStop
+              , Traits               const& aGeomTraits
               , VertexIndexMap       const& aVertex_index_map
               , EdgeIndexMap         const& aEdge_index_map
               , EdgeIsBorderMap      const& aEdge_is_border_map

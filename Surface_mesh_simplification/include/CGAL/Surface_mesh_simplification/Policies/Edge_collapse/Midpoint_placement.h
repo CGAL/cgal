@@ -27,7 +27,7 @@ namespace CGAL {
 namespace Surface_mesh_simplification
 {
 
-template<class ECM_>
+  template<class ECM_, class Traits = typename ECM_::Traits>
 class Midpoint_placement
 {
 public:
@@ -36,9 +36,7 @@ public:
   
   typedef Edge_profile<ECM> Profile ;
   
-  typedef typename boost::property_map<ECM, CGAL::vertex_point_t>::type Vertex_point_pmap;
-  typedef typename boost::property_traits<Vertex_point_pmap>::value_type Point;
-   
+  typedef typename Traits::Point_3 Point;
   typedef optional<Point> result_type ;
     
 public:
@@ -47,7 +45,7 @@ public:
   
   result_type operator()( Profile const& aProfile ) const
   {
-    return result_type(midpoint(aProfile.p0(),aProfile.p1()));
+    return result_type(Traits().construct_midpoint_3_object()(aProfile.p0(),aProfile.p1()));
   }
 
 };

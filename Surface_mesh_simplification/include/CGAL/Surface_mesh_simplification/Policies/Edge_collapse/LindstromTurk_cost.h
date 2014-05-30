@@ -27,7 +27,7 @@ namespace CGAL {
 namespace Surface_mesh_simplification  
 {
 
-template<class ECM_>
+  template<class ECM_, class Traits>
 class LindstromTurk_cost
 {
 public:
@@ -35,12 +35,8 @@ public:
   typedef ECM_ ECM ;
 
   typedef Edge_profile<ECM> Profile ;
-     
-  typedef typename boost::property_map<ECM, CGAL::vertex_point_t>::type Vertex_point_pmap;
-  typedef typename boost::property_traits<Vertex_point_pmap>::value_type Point;
- 
-  typedef typename Kernel_traits<Point>::Kernel      Kernel ;
-  typedef typename Kernel::FT                        FT ;
+  typedef typename Traits::Point_3 Point;
+  typedef typename Traits::FT FT ;
   
   typedef optional<FT> result_type ;
   
