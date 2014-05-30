@@ -210,6 +210,7 @@ inline int clz (boost::uint64_t x) {
   _BitScanReverse64(&ret, x);
   return 63 - (int)ret;
 #elif defined(__xlC__)
+  // Macro supposedly not defined on z/OS.
   return __cntlz8 (x);
 #else
   return __builtin_clzll (x);
