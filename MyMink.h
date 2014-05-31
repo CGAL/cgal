@@ -31,7 +31,6 @@
 #include "AABB_Collision_detector.h"
 #include <boost/unordered_map.hpp>
 #include <boost/timer.hpp>
-#include "mem_log.h"
 
 // OMP
 //#include <omp.h>
