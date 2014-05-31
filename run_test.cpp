@@ -25,27 +25,36 @@ bool are_equal(const Polygon_with_holes_2& ph1, const Polygon_with_holes_2& ph2)
 
 
 int main(int argc, char* argv[]) {
-    if (argc < 3) {
-        cout << "Usage: <program> file1 file2" << endl;
+    if (argc < 4) {
+        cout << "Usage: <program> polygon-file polygon-file result-file" << endl;
         return 0;
     }
 
-    Polygon_2 polygon_a, polygon_b;
+    Polygon_2 a, b;
+    Polygon_with_holes_2 c;
 
     fstream data1(argv[1]);
-    data1 >> polygon_a;
+    data1 >> a;
     fstream data2(argv[2]);
-    data2 >> polygon_b;
+    data2 >> b;
+    fstream data3(argv[3]);
+    data3 >> c;
 
-    Polygon_with_holes_2 sum = minkowski_sum_2_(polygon_a,polygon_b);
-    cout << sum << endl << endl;
-
-    Polygon_with_holes_2 sum2 = CGAL::minkowski_sum_2(polygon_a,polygon_b);
-    cout << sum2 << endl;
-
-    if (are_equal(sum, sum2)) {
-        cout << "Polygons are equal\n";
+    Polygon_with_holes_2 sum2 = CGAL::minkowski_sum_2(a, b);
+    if (are_equal(sum2, c)) {
+        cout << "minkowski_sum_2 OK" << endl;
     } else {
-        cout << "Polygons are NOT equal\n";
+        cerr << "minkowski_sum_2 NOT OK" << endl;
+        return 1;
     }
+
+    Polygon_with_holes_2 sum = minkowski_sum_2_(a, b);
+    if (are_equal(sum, c)) {
+        cout << "New minkowski_sum_2 OK" << endl;
+    } else {
+        cerr << "New minkowski_sum_2 NOT OK" << endl;
+        return 1;
+    }
+
+    return 0;
 }
