@@ -1,0 +1,10 @@
+#!/bin/sh
+
+for test in $(ls tests); do
+    echo -n "Running test "$test"... "
+    if ./run_test tests/$test/a.dat tests/$test/b.dat tests/$test/result.dat; then
+        echo "OK."
+    else
+        echo "Failed."
+    fi
+done

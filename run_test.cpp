@@ -41,18 +41,22 @@ int main(int argc, char* argv[]) {
     data3 >> c;
 
     Polygon_with_holes_2 sum2 = CGAL::minkowski_sum_2(a, b);
-    if (are_equal(sum2, c)) {
-        cout << "minkowski_sum_2 OK" << endl;
-    } else {
+    if (!are_equal(sum2, c)) {
         cerr << "minkowski_sum_2 NOT OK" << endl;
+        cerr << "Expected:" << endl;
+        cerr << c;
+        cerr << "Got:" << endl;
+        cerr << sum2;
         return 1;
     }
 
     Polygon_with_holes_2 sum = minkowski_sum_2_(a, b);
-    if (are_equal(sum, c)) {
-        cout << "New minkowski_sum_2 OK" << endl;
-    } else {
+    if (!are_equal(sum, c)) {
         cerr << "New minkowski_sum_2 NOT OK" << endl;
+        cerr << "Expected:" << endl;
+        cerr << c;
+        cerr << "Got:" << endl;
+        cerr << sum;
         return 1;
     }
 
