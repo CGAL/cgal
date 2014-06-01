@@ -10,30 +10,65 @@ else()
   cmake_policy(VERSION 2.6)
 endif()
 
-find_package(CGAL  COMPONENTS Qt4)
-include(${CGAL_USE_FILE})
+#New for Qt5 version !
+option (USE_QT5 "Use Qt5 version instead of Qt4" OFF)
+
+if(USE_QT5)
+	if(WIN32)
+	message("Qt5 on Windows needs Windows SDK.")
+	
+	set(CMAKE_LIBRARY_PATH "C:\\Program Files (x86)\\Windows Kits\\8.1\\Lib\\winv6.3\\um\\x64")
+	
+	endif()
+	find_package(CGAL COMPONENTS Qt5)
+	include(${CGAL_USE_FILE})
+
+	FIND_PACKAGE(Qt5Core REQUIRED)
+	FIND_PACKAGE(Qt5Gui REQUIRED)
+	FIND_PACKAGE(Qt5OpenGL REQUIRED)
+	FIND_PACKAGE(Qt5Widgets REQUIRED)
+	FIND_PACKAGE(Qt5Xml REQUIRED)
+	#FIND_PACKAGE(Qt5Quick REQUIRED)
+	
+	if (Qt5Core_FOUND AND Qt5Gui_FOUND AND Qt5OpenGL_FOUND AND Qt5Widgets_FOUND AND Qt5Xml_FOUND)
+		message("Qt5 found")
+		set(QT5 TRUE)
+		set(CMAKE_AUTOMOC ON)
+
+	list(APPEND QT_INCLUDE_DIR ${Qt5Core_INCLUDE_DIRS} ${Qt5Gui_INCLUDE_DIRS} ${Qt5Widgets_INCLUDE_DIRS} ${Qt5OpenGL_INCLUDE_DIRS} ${Qt5Xml_INCLUDE_DIRS}) 
+
+	list(APPEND QT_LIBRARIES ${Qt5Core_LIBRARIES} ${Qt5Gui_LIBRARIES} ${Qt5Widgets_LIBRARIES} ${Qt5OpenGL_LIBRARIES} ${Qt5Xml_LIBRARIES})
+
+	list(APPEND QT_DEFINITIONS ${Qt5Core_DEFINITIONS} ${Qt5Gui_DEFINITIONS} ${Qt5Widgets_DEFINITIONS} ${Qt5OpenGL_DEFINITIONS} ${Qt5Xml_DEFINITIONS})
+	endif ()
+else(USE_QT5)
+	find_package(CGAL  COMPONENTS Qt4)
+	include(${CGAL_USE_FILE})
 
 
-set( QT_USE_QTXML    TRUE )
-set( QT_USE_QTMAIN   TRUE )
-set( QT_USE_QTSCRIPT  TRUE )
-set( QT_USE_QTOPENGL  TRUE )
-find_package(Qt4)
+	set( QT_USE_QTXML    TRUE )
+	set( QT_USE_QTMAIN   TRUE )
+	set( QT_USE_QTSCRIPT  TRUE )
+	set( QT_USE_QTOPENGL  TRUE )
+	find_package(Qt4)
+	if(QT4_FOUND)
+		message("Qt4 found")
+		set(QT4 TRUE) 
+                include( ${QT_USE_FILE} )
+	endif(QT4_FOUND)
+endif (USE_QT5)
 
 find_package(OpenGL)
+find_package(QGLViewer)
 
-if(QT4_FOUND)
-  include( ${QT_USE_FILE} )
-  find_package(QGLViewer)
-endif(QT4_FOUND)
-
-if ( CGAL_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND )
-
-  include(${QT_USE_FILE})
+if ( CGAL_FOUND AND (QT4 OR QT5) AND OPENGL_FOUND AND QGLVIEWER_FOUND )
 
   include_directories (${QGLVIEWER_INCLUDE_DIR})
   include_directories (BEFORE ../../include ./ )
 
+  FILE (GLOB CPP *.cpp)
+
+  if(QT4)
   # ui files, created with Qt Designer
   qt4_wrap_ui( uis MainWindow.ui )
 
@@ -42,13 +77,19 @@ if ( CGAL_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND )
 
   # moc files (meta object compiler files, run moc preprocessor on the files with Widget defs)
   qt4_automoc( MainWindow.cpp Viewer.cpp PreferenceDlg.cpp )
+ endif(QT4)
+ 
+ if(QT5)
+  qt5_wrap_ui(uis MainWindow.ui)
 
+  qt5_add_resources (RESOURCE_FILES ./T3_demo.qrc)
+ endif(QT5)
 
   # cpp files
-  add_executable  ( T3_demo T3_demo.cpp
-                    MainWindow.cpp Viewer.cpp
-                    PreferenceDlg.cpp
-                    Scene.cpp ${uis}  ${RESOURCE_FILES} )
+  add_executable  ( T3_demo
+			${CPP} 
+			${uis}  
+			${RESOURCE_FILES} )
 
   add_to_cached_list( CGAL_EXECUTABLE_TARGETS T3_demo )
 
@@ -56,17 +97,21 @@ if ( CGAL_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND )
   target_link_libraries( T3_demo ${QT_LIBRARIES} ${QGLVIEWER_LIBRARIES} )
   target_link_libraries( T3_demo ${OPENGL_gl_LIBRARY} ${OPENGL_glu_LIBRARY} )
 
-else( CGAL_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND )
+else( CGAL_FOUND AND (QT4 OR QT5) AND OPENGL_FOUND AND QGLVIEWER_FOUND )
 
   set(TRIANGULATION_3_MISSING_DEPS "")
 
   if(NOT CGAL_FOUND)
-    set(TRIANGULATION_3_MISSING_DEPS "the CGAL Qt4 library, ${TRIANGULATION_3_MISSING_DEPS}")
+    set(TRIANGULATION_3_MISSING_DEPS "the CGAL Qt library, ${TRIANGULATION_3_MISSING_DEPS}")
   endif()      	   
 
-  if(NOT QT4_FOUND)
+  if(NOT QT4)
     set(TRIANGULATION_3_MISSING_DEPS "Qt4, ${TRIANGULATION_3_MISSING_DEPS}")
-  endif()      	   
+  endif() 
+
+  if(NOT QT5)
+    set(TRIANGULATION_3_MISSING_DEPS "Qt5, ${TRIANGULATION_3_MISSING_DEPS}")  
+  endif()     	   
 
   if(NOT OPENGL_FOUND)
     set(TRIANGULATION_3_MISSING_DEPS "OpenGL, ${TRIANGULATION_3_MISSING_DEPS}")
@@ -79,4 +124,4 @@ else( CGAL_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND )
 
   message(STATUS "NOTICE: This demo requires ${TRIANGULATION_3_MISSING_DEPS}and will not be compiled.")
 
-endif( CGAL_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND )
+endif( CGAL_FOUND AND (QT4 OR QT5) AND OPENGL_FOUND AND QGLVIEWER_FOUND )

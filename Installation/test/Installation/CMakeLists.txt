@@ -64,7 +64,7 @@ if ( CGAL_FOUND )
   if ( WITH_CGAL_Qt3 )
     create_link_to_program(CGAL_Qt3)
   endif()
-  
+
   if ( WITH_CGAL_Qt4 )
     find_package(Qt4 QUIET)
     if( QT4_FOUND )
@@ -72,6 +72,7 @@ if ( CGAL_FOUND )
       create_link_to_program(CGAL_Qt4)
     endif()  
   endif()
+
 
   if(WIN32) 
     add_executable(test_gmp_mpfr_dll test_gmp_mpfr_dll.cpp)

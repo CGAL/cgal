@@ -70,5 +70,4 @@ protected:
   void draw_one_vol(Dart_const_handle ADart, bool filled);
   CGAL::Bbox_3 bbox();
 };
-
 #endif
