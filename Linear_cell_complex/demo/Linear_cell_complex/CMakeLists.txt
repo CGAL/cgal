@@ -28,7 +28,10 @@ add_definitions(-DCGAL_PROFILE_LCC_DEMO)
 
 ##################
 
+<<<<<<< HEAD
 #New for Qt5 version !
+=======
+>>>>>>> 1f669ad498d664482b6b486e3e95a50a56076759
 option (USE_QT5 "Use Qt5 version instead of Qt4" OFF)
 
 if(USE_QT5)
@@ -38,7 +41,11 @@ if(USE_QT5)
 	set(CMAKE_LIBRARY_PATH "C:\\Program Files (x86)\\Windows Kits\\8.1\\Lib\\winv6.3\\um\\x64")
 	
 	endif()
+<<<<<<< HEAD
 	find_package(CGAL COMPONENTS Qt5)
+=======
+	find_package(CGAL)
+>>>>>>> 1f669ad498d664482b6b486e3e95a50a56076759
 	include(${CGAL_USE_FILE})
 
 	FIND_PACKAGE(Qt5Core REQUIRED)
@@ -46,20 +53,33 @@ if(USE_QT5)
 	FIND_PACKAGE(Qt5OpenGL REQUIRED)
 	FIND_PACKAGE(Qt5Widgets REQUIRED)
 	FIND_PACKAGE(Qt5Xml REQUIRED)
+<<<<<<< HEAD
 	FIND_PACKAGE(Qt5Quick REQUIRED)
+=======
+	# FIND_PACKAGE(Qt5Quick REQUIRED)
+	# FIND_PACKAGE(Qt5Xml REQUIRED)
+>>>>>>> 1f669ad498d664482b6b486e3e95a50a56076759
 	
 	if (Qt5Core_FOUND AND Qt5Gui_FOUND AND Qt5OpenGL_FOUND AND Qt5Widgets_FOUND AND Qt5Xml_FOUND)
 		message("Qt5 found")
 		set(QT5 TRUE)
 		set(CMAKE_AUTOMOC ON)
+<<<<<<< HEAD
 
+=======
+		# list(APPEND QT_LIBRARIES ${Qt5Widgets_LIBRARIES} ${Qt5Quick_LIBRARIES} ${Qt5Xml_LIBRARIES})
+>>>>>>> 1f669ad498d664482b6b486e3e95a50a56076759
 list(APPEND QT_INCLUDE_DIR ${Qt5Core_INCLUDE_DIRS} ${Qt5Gui_INCLUDE_DIRS} ${Qt5Widgets_INCLUDE_DIRS} ${Qt5OpenGL_INCLUDE_DIRS} ${Qt5Xml_INCLUDE_DIRS}) 
 
 list(APPEND QT_LIBRARIES ${Qt5Core_LIBRARIES} ${Qt5Gui_LIBRARIES} ${Qt5Widgets_LIBRARIES} ${Qt5OpenGL_LIBRARIES} ${Qt5Xml_LIBRARIES})
 
 list(APPEND QT_DEFINITIONS ${Qt5Core_DEFINITIONS} ${Qt5Gui_DEFINITIONS} ${Qt5Widgets_DEFINITIONS} ${Qt5OpenGL_DEFINITIONS} ${Qt5Xml_DEFINITIONS})
 	endif ()
+<<<<<<< HEAD
 else (USE_QT5)
+=======
+else ()
+>>>>>>> 1f669ad498d664482b6b486e3e95a50a56076759
 	find_package(CGAL COMPONENTS Qt4)
 
 	include(${CGAL_USE_FILE})
@@ -94,12 +114,20 @@ elseif ( NOT OPENGL_FOUND )
 
   MESSAGE(STATUS "NOTICE: This demo requires OpenGL "
     "and will not be compiled.")
+<<<<<<< HEAD
 elseif ( NOT QGLVIEWER_FOUND )
 
   MESSAGE(STATUS "NOTICE: This demo requires QGLViewer "
     " and will not be compiled. TODO correct this error")
 else ()
 
+=======
+elseif (QGL_VIEWER_FOUND )
+
+  MESSAGE(STATUS "NOTICE: This demo requires QGLViewer "
+    " and will not be compiled. TODO correct this error")
+else ()
+>>>>>>> 1f669ad498d664482b6b486e3e95a50a56076759
 include_directories(${QGLVIEWER_INCLUDE_DIR})
 include_directories(BEFORE . ../../include/)
 
@@ -134,5 +162,9 @@ target_link_libraries(Linear_cell_complex_3_demo ${QT_LIBRARIES}
                                                  ${QGLVIEWER_LIBRARIES} )
 target_link_libraries(Linear_cell_complex_3_demo ${OPENGL_gl_LIBRARY}
                                                  ${OPENGL_glu_LIBRARY} )
+<<<<<<< HEAD
 
 endif()
+=======
+endif()
+>>>>>>> 1f669ad498d664482b6b486e3e95a50a56076759
