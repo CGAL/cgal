@@ -71,7 +71,6 @@ public:
         return m_datum.source();
     }
 };
-
 } // end namespace CGAL
 
 #endif // CGAL_AABB_SEGMENT_PRIMITIVE_H_

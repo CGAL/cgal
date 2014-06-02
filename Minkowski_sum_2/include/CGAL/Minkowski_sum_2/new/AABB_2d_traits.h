@@ -61,7 +61,6 @@ public:
     };
 
     AABB_traits_2(): m_p(Container()), m_q(Container()) {
-
     };
 
     /// Non-virtual Destructor
@@ -239,7 +238,6 @@ public:
                         has_weak_intersection = true;
                         p_intersect = true;
                     }
-
                 }
 
                 if (*ipoint == q.datum().source()) {
@@ -251,7 +249,6 @@ public:
                         q_intersect = true;
                         has_weak_intersection = true;
                     }
-
                 }
 
                 if (has_weak_intersection) {
@@ -262,11 +259,9 @@ public:
                         int k = 4;
                         k = k + 4;
                         k++;
-
                     }
 
                     return val;
-
                 } else {
                     return true;
                 }
@@ -309,7 +304,6 @@ public:
                 } else {
                     return handle_one_weak_int(tr_pr_datum, p_other_translated, *itr_q);
                 }
-
             } else {
                 if (!p_intersect && q_intersect) {
                     if (q_intersect_start) {
@@ -340,7 +334,6 @@ public:
                     return check_overlapping(first_p, second_p, first_q, second_q);
                 }
             }
-
         }
 
         bool handle_one_weak_int(const Datum &incoming, const Datum &outgoing, const Datum &other_segment) const {
@@ -348,7 +341,6 @@ public:
             //return (other_segment.direction()).counterclockwise_in_between(outgoing.direction(),incoming.opposite().direction());
             return (other_segment.direction()).counterclockwise_in_between(outgoing.direction(), incoming.opposite().direction()) ||
                    outgoing.direction().counterclockwise_in_between(other_segment.direction(), other_segment.opposite().direction());
-
         }
 
         bool check_overlapping(const Datum &incoming_p, const Datum &outgoing_p, const Datum &incoming_q, const Datum &outgoing_q) const {
@@ -373,7 +365,6 @@ public:
 
                     --p_other;
                 }
-
             } else {
                 p_other = cont.edges_end();
                 --p_other;
@@ -392,7 +383,6 @@ public:
 
             return p_other;
         }
-
     };
 
     Do_intersect do_intersect_object() {
@@ -489,7 +479,6 @@ private:
     }
     /* static bool less_z(const Primitive& pr1, const Primitive& pr2)
      { return pr1.reference_point().z() < pr2.reference_point().z(); }*/
-
 };
 
 template<typename GT, typename P>
@@ -528,6 +517,5 @@ AABB_traits_2<GT, P>::longest_axis(const Bounding_box &bbox) {
     //  }
     //}
 }
-
 }
 #endif

@@ -27,7 +27,6 @@ protected:
 public:
     AABBCollisionDetector(Polygon_2 &p, Polygon_2 &q)//:m_stationary_tree((q.edges_begin()),(q.edges_end())),m_translating_tree((p.edges_begin()),(p.edges_end())),m_p(p),m_q(q)
         : m_stationary_tree((p.edges_begin()), (p.edges_end())), m_translating_tree((q.edges_begin()), (q.edges_end())), m_p(q), m_q(p) {
-
     }
     //typedef typename Polygon_2::Vertex_circulator Vertex_circulator;
     //typedef typename
@@ -40,7 +39,6 @@ public:
 
         return (p.has_on_bounded_side(*(q.vertices_begin())) || q.has_on_bounded_side(*(p.vertices_begin())));
         //return true;
-
     }
 
     void setTranslationPoint(const Point &t) {
@@ -55,7 +53,6 @@ private:
     Polygon_2 &m_p;
     Polygon_2 &m_q;
 };
-
 }
 
 #endif

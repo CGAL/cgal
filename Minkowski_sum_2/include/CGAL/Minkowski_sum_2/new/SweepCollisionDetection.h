@@ -129,7 +129,6 @@ public:
         }
 
         //m_found_x = true;
-
     }
 
     bool after_handle_event(Event *event ,
@@ -210,7 +209,6 @@ public:
                             return true;
                         }
                     }
-
                 }
             } else {
                 // Maybe a bug here when we have 2 overlap not overlapping and two outgoing which cause overlap.
@@ -223,7 +221,6 @@ public:
                       ++k;
                       */
             }
-
         }
 
         return true;
@@ -300,7 +297,6 @@ public:
             //if (xcv1.color() == RB_OVERLAP || xcv2.color() == RB_OVERLAP)
             return (oi);
         }
-
     };
 
     /*! Obtain an Intersect_2 functor object. */
@@ -350,7 +346,6 @@ public:
         operator Base_p &() {
             return (m_base_pt);
         }
-
     };
 
     typedef Ex_point_2 Point_2;
@@ -482,7 +477,6 @@ public:
         return
             (Construct_max_vertex_2(((Base *)this)->construct_max_vertex_2_object()));
     }
-
 };
 
 template <class Kernel_, class Container_> class SweepCollisionDetector : public ICollisionDetector< Kernel_, Container_> {
@@ -539,7 +533,6 @@ public:
                     edges.push_back(Colored_segment_2(*itr, Segment_Data(MY_RED, i, i + 1)));
                 }
             }
-
         }
 
         itr = q.edges_begin();
@@ -622,17 +615,13 @@ public:
                 if (intersect)
                     return intersect;
             }
-
         }
 
         if (p.bounded_side(*q.vertices_begin())== CGAL::ON_BOUNDED_SIDE || q.bounded_side(*p.vertices_begin())== CGAL::ON_BOUNDED_SIDE)
             return true;
         return intersect;
         */
-
     }
-
 };
-
 }
 #endif

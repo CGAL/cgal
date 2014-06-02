@@ -16,12 +16,10 @@ public:
     virtual void calc_sum(Polygon_2 &a, Polygon_2 &b, Polygon_2 &res_poly) {
         Segments_list reduced_conv;
         _mink->buildReducedConvolution(a, b, reduced_conv);
-
     }
 
 private:
 
     Minkowski_sum_by_convolution_lien_2<Kernel, Container_> *_mink;
-
 };
 #endif

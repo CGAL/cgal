@@ -109,7 +109,6 @@ public:
         operator Base_p &() {
             return (m_base_pt);
         }
-
     };
 
     typedef Ex_point_2 Point_2;
@@ -433,7 +432,6 @@ public:
             //if (xcv1.color() == RB_OVERLAP || xcv2.color() == RB_OVERLAP)
             return (oi);
         }
-
     };
 
     /*! Obtain an Intersect_2 functor object. */
@@ -853,6 +851,5 @@ public:
 //
 //
 //};
-
 };
 #endif

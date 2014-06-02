@@ -47,14 +47,12 @@ public:
                 if (intersect)
                     return intersect;
             }
-
         }
 
         if (p.bounded_side(*q.vertices_begin())== CGAL::ON_BOUNDED_SIDE || q.bounded_side(*p.vertices_begin())== CGAL::ON_BOUNDED_SIDE)
             return true;
         return intersect;
         */
-
     }
 };
 

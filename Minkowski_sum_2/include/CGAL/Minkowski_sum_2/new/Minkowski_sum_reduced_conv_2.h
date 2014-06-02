@@ -59,7 +59,6 @@ struct Less_than_handle {
 /*
 struct Convseg_Less_than{
     bool operator()(ConvS s1, Type s2) const { return (&(*s1) < &(*s2)); }
-
 };
 */
 
@@ -92,7 +91,6 @@ public:
 
         typedef Arr_my_extended_dcel<T, Halfedge_base> other;
     };
-
 };
 
 template <class Kernel_, class Container_>
@@ -228,7 +226,6 @@ public:
         bool operator==(const ConvSegment &rhs) const {
             return !Less_than_handle()(_he, rhs._he) && !Less_than_handle()(rhs._he, _he);
         }
-
     };
 
 #define FIRST_LOOP 0
@@ -236,7 +233,6 @@ public:
         Arrangement_history_2 *_arr;
         Minkowski_sum_by_convolution_lien_2 *_mink;
         ConvSegMapper(Arrangement_history_2 *arr, Minkowski_sum_by_convolution_lien_2 *mink): _arr(arr), _mink(mink) {
-
         }
 
         ConvSegment getSegment(const Halfedge_handle &he) {
@@ -349,7 +345,6 @@ public:
                 removeSegFromArr(*itr);
             }
         }
-
     };
 
     class TraversalManager;
@@ -377,7 +372,6 @@ public:
                 /* if (outList.size()>1)
                     {
                         drawTraversal();
-
                     }*/
                 if (checkCloseLoop()) {
                     closeLoopEvent(filteredSegments);
@@ -462,7 +456,6 @@ public:
                     global_graphics->draw_edge<Kernel>((itr->_he)->curve(),QColor(0,255,0),true);
                 }
                 global_graphics->display();
-
             }
             */
 
@@ -506,7 +499,6 @@ public:
                 startEdge = edges_db.getEdge();
                 traceLoop(edges_db, startEdge, false);
             }
-
         }
 
         void traceLoop(EdgesStore &edgesDB, ConvSegment &startSeg, bool isOuter) {
@@ -650,7 +642,6 @@ public:
                 //std::list<ConvSegment> _nonLoopSegmentsList(*_segmentsList);
                 _loopSegmentsList.splice(_loopSegmentsList.begin(), _nonLoopSegmentsList, loop_begin, ++loop_end);
             }
-
         }
 
         bool hasLoops() {
@@ -687,7 +678,6 @@ public:
             for (InputIterator itr = start; itr != end; ++itr) {
                 _edgesSet->erase(*itr);
             }
-
         }
 
         template <typename InputIterator> void removeRange_bak(InputIterator start, InputIterator end) {
@@ -719,7 +709,6 @@ public:
     friend class DegenerateCassesManager;
     struct DegenerateCassesManager {
         DegenerateCassesManager(Arrangement_history_2 *arr, Minkowski_sum_by_convolution_lien_2 *mink, Polygon_2 *poly1, Polygon_2 *poly2, bool isActive): _arr(arr), _mink(mink), _poly1(poly1), _poly2(poly2), _active(isActive) {
-
         }
 
         /*
@@ -744,7 +733,6 @@ public:
                 } else {
                     _mink->setEdgeDegenerate(*itr, false);
                 }
-
             }
         }
 
@@ -803,7 +791,6 @@ public:
 
             for (; itr != _degenerate_points_list.end(); ++itr) {
                 CGAL::insert_point(*_arr, *itr);
-
             }
         }
 
@@ -1075,7 +1062,6 @@ public:
             setEdgeVisited(*circ, true, 0);
             ++circ;
         } while (circ != circ_start);
-
     }
 
     void markOutsideLoop(Arrangement_history_2 &arr, Polygon_2 &out_bound) {
@@ -1089,7 +1075,6 @@ public:
             out_bound.push_back(circ->source()->point());
             --circ;
         } while (circ != circ_start);
-
     }
     /*
     void handleFace(Arrangement_history_2& arr,Face_handle itr,const Polygon_2& reverse_pgn1,const Polygon_2& pgn2)
@@ -1121,7 +1106,6 @@ public:
        // pgn_hole.push_back (circ->source()->point());
         --circ;
       }while (circ!=start);
-
     }*/
 
     template <class OutputIterator>
@@ -1166,7 +1150,6 @@ public:
         *holes = pgn_hole;
         ++holes;
 //    }
-
     }
 
     /*!
@@ -1224,7 +1207,6 @@ public:
 
         for (int i = 0; i < (n1 - 1); ++i) {
             outVec[i] = f_direction(f_vector(pgn1[i], pgn1[i + 1]));
-
         }
 
         outVec[n1 - 1] = f_direction(f_vector(pgn1[n1 - 1], pgn1[0]));
@@ -1347,14 +1329,12 @@ public:
                 prev_p2 = vert_p2;
                 vert_p2 = next_p2;
                 ++next_p2;
-
             }
 
             prev_p1 = vert_p1;
             vert_p1 = next_p1;
             ++next_p1;
         }
-
     }
 
     // Increse a cyclic integer counter with limit lim.
@@ -1483,7 +1463,6 @@ public:
                 }
             }
         }
-
     }
 
 private:
@@ -1504,7 +1483,6 @@ private:
 
             Halfedge_handle inside_face_edge = hi->twin();
             Face_handle container_face = inside_face_edge->face();
-
         }
     */
     /*
@@ -1573,7 +1551,6 @@ private:
                 int bla = holesEdges.size();
                 std::cout << "in holes: " << bla << "\n";
             }*/
-
         }
 
         Hole_iterator hi;
@@ -1620,7 +1597,6 @@ private:
                 int bla = holesEdges.size();
                 std::cout << "in holes: " << bla << "\n";
             }*/
-
         }
 
         //  std::list<Halfedge_handle> semi_holes;
@@ -1769,7 +1745,6 @@ private:
 
         Face_handle inside_face = inside_face_edge->face();
         Faces_set visited_faces;*/
-
     }
 
     bool removeAllNonConformingLoops(Arrangement_history_2 &arr, Halfedge_handle &handle, bool inwards, std::list<Halfedge_handle> &holesEdges, const Polygon_2 &pgn1, const Polygon_2 &pgn2) const {
@@ -1809,7 +1784,6 @@ private:
         }
 
         return false;
-
     }
 
     Polygon_2 revPoly(const Polygon_2 &input) const {
@@ -1830,13 +1804,11 @@ private:
                 */
 
         return out;
-
     }
 
     /*void buildCollisionDetector(const Polygon_2& pgn1,const Polygon_2& pgn2)
     {
         q = revPoly(pgn2);
-
     }*/
 
     /*ICollisionDetector<Kernel,Container_>* getColDetect() const
@@ -1934,7 +1906,6 @@ private:
 
                     if (f_compare_x(best_edge_curve.min(), circ_curve.min()) != f_compare_x(best_edge_curve.max(), circ_curve.min())) {
                         under_best = f_compare_y_at_x(circ_curve.min(), best_edge_curve) == SMALLER;
-
                     } else {
                         under_best = f_compare_y_at_x(best_edge_curve.min(), circ_curve) != SMALLER;
                     }
@@ -2058,7 +2029,6 @@ private:
             for (itr = arr.edges_begin();itr!=arr.edges_end();++itr){
                 setEdgeVisited(*itr,false,-1);
                 edges_set.insert(itr);
-
             }
 
             // trace orientable loops:
@@ -2074,7 +2044,6 @@ private:
             printHe(itr);
         }*/
         //typename iterator_traits<InputIterator>::value_type seg;
-
     }
 
     bool checkDegenerateEdgeOppositeSegments(Arrangement_history_2 &arr, Halfedge_handle he) const {
@@ -2092,7 +2061,6 @@ private:
             Direction_2 seg_dir = f_direction(f_vector(segment.source(), segment.target()));
             segments_dir_list.push_back(seg_dir);
             //Direction_2 start_he_dir = f_direction((f_vector(he->source()->point(),he->target()->point())));
-
         }
 
         //Direction_2 start_dir = segments_dir_list.begin();
@@ -2100,7 +2068,6 @@ private:
         typename std::list<Direction_2>::iterator end = unique(segments_dir_list.begin(), segments_dir_list.end());
         int i = distance(segments_dir_list.begin(), end);
         return i > 1;
-
     }
 
     bool checkDegenarateVertexIsIntersectionOfThreeSegments(Arrangement_history_2 &arr, Vertex_handle vh) {
@@ -2154,9 +2121,7 @@ private:
                 //orig_segments_list.push_back(&(*segment_itr));
                 Direction_2 seg_dir = f_direction(f_vector(segment.source(), segment.target()));
                 segments_dir_list.push_back(seg_dir);
-
             }
-
         } while (++itr != start);
 
         segments_dir_list.sort();
@@ -2197,7 +2162,6 @@ private:
             } else {
                 inList.push_back(curr_edge);
             }
-
         } while (++itr != start);
     }
 
@@ -2274,20 +2238,17 @@ private:
                         removeHalfEdgesArrPart(arr,edges_set,temp_segments,loop_start_handle);
                         //removeHalfEdgesArrPart(arr,edges_set,temp_segments,curr_halfedge);
                         nextLoop(temp_segments, arr,edges_set, curr_halfedge,start_halfedge,done,loop_counter);
-
                     }
                 }
             }
             else
             {
-
             }
         }
     }
     */
 
     Halfedge_handle traverseNextHalfedge() {
-
     }
 
     void traceOrientableLoops(Arrangement_history_2 &arr, Edges_set &edges_set) const {
@@ -2335,7 +2296,6 @@ private:
             printHe(curr_halfedge);
             /*for (Originating_curve_iterator itr = arr.originating_curves_begin ( curr_halfedge);itr!=arr.originating_curves_end( curr_halfedge);++itr ){
                 Segment_2 segment = *itr;
-
             }*/
             /////////////////////////DEBUG
             //Segment_2 temp = curr_halfedge->curve();
@@ -2472,11 +2432,9 @@ private:
                     }
                 }
             }
-
         }
 
         //printHe(curr_halfedge);
-
     }
 
     void nextLoop(std::list<Halfedge_iterator> &temp_segments, Arrangement_history_2 &arr, Edges_set &edges_set, Halfedge_iterator &curr_halfedge, Halfedge_iterator &start_halfedge, bool &isOrientable, int &loop_counter) const {
@@ -2723,7 +2681,6 @@ private:
 
         next_edge_found = true;
         return itr->twin();
-
     }
 
     //bool isDirImproving(Direction_2& min_edge_dir,Direction_2& entering_dir,Direction_2& new_edge_dir) const
@@ -2794,7 +2751,6 @@ private:
 
             if (start_seg_dir == start_he_dir) {
                 return true;
-
             }
         }
 
@@ -2829,7 +2785,6 @@ private:
             if (same_dir) {
                 return true;
             }
-
         }
 
         return false;
@@ -2864,7 +2819,6 @@ private:
             if (same_dir) {
                 return true;
             }
-
         }
 
         return false;
@@ -2942,7 +2896,6 @@ private:
         for (Edge_iterator itr = arr.edges_begin(); itr != arr.edges_end(); ++itr) {
             printSegment(itr->curve());
             //global_graphics->draw_edge<Kernel>(itr->curve(),c,true);
-
         }
 
         // draw isolated vertices
@@ -2962,11 +2915,8 @@ private:
             if (vit->is_isolated()) {
                 //global_graphics->draw_cross<Kernel>(vit->point(),c2,0.1);
             }
-
         }
-
     }
-
 };
 
 template <class Kernel, class Container>
@@ -2987,7 +2937,6 @@ minkowski_sum_2_(const Polygon_2<Kernel, Container> &pgn1,
             sum_holes.begin(),
             sum_holes.end()));
 }
-
 };
 
 #endif

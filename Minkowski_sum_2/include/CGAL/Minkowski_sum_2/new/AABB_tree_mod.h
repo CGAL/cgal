@@ -516,7 +516,6 @@ private:
     typedef AABB_tree<AABBTraits> Self;
     AABB_tree(const Self &src);
     Self &operator=(const Self &src);
-
 }; // end class AABB_tree
 
 template<typename Tr>
@@ -735,7 +734,6 @@ AABB_tree<Tr>::closest_point_and_primitive(const Point &query,
     this->traversal(query, distance_traits);
     return distance_traits.closest_point_and_primitive();
 }
-
 } // end namespace CGAL
 
 #endif // CGAL_AABB_TREE_H

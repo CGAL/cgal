@@ -132,7 +132,6 @@ private:
     typedef AABB_node<AABBTraits> Self;
     AABB_node(const Self &src);
     Self &operator=(const Self &src);
-
 }; // end class AABB_node
 
 template<typename Tr>
@@ -268,9 +267,7 @@ AABB_node<Tr>::join_traversal(const AABB_node &other_node,
                         other_node.right_child().join_traversal(*this, traits, 2, 3, !first_stationary);
                     }
                 }
-
             }
-
         }
     }
 
@@ -317,11 +314,8 @@ AABB_node<Tr>::join_traversal(const AABB_node &other_node,
         if (traits.go_further() && traits.do_intersect(right_child(), other_node.right_child(), !first_stationary)) {
             right_child().join_traversal(other_node.right_child(), traits, nb_primitives_this - nb_primitives_this / 2, nb_primitives_other - nb_primitives_other / 2, first_stationary);
         }
-
     }
-
 }
-
 } // end namespace CGAL
 
 #endif // CGAL_AABB_NODE_H

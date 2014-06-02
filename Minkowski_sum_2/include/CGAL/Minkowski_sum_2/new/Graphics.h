@@ -38,7 +38,6 @@ public:
                                    to_file_double_x<K::FT> (p2.x()),
                                    to_file_double_y<K::FT> (p2.y())),
                             QPen(color));
-
     }
 
     template <typename K> void draw_edge(const typename K::Point_2 &p1, const typename K::Point_2 &p2, const QColor &color, const QColor &color2) {
