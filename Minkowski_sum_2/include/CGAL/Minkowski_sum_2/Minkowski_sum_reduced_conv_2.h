@@ -1,5 +1,5 @@
-#ifndef MY_MINSK_HEADER
-#define MY_MINSK_HEADER
+#ifndef CGAL_MINKOWSKI_SUM_REDUCED_CONV_H
+#define CGAL_MINKOWSKI_SUM_REDUCED_CONV_H
 
 #include <CGAL/basic.h>
 #include <CGAL/Polygon_with_holes_2.h>
@@ -11,10 +11,9 @@
 #include <CGAL/Boolean_set_operations_2.h>
 #include <CGAL/Arr_consolidated_curve_data_traits_2.h>
 #include <CGAL/Arr_curve_data_traits_2.h>
-#include "Arr_SegmentData_traits.h"
-#include <fstream>
-//#include "Graphics.h"
 
+#include <fstream>
+#include <ostream>
 #include <list>
 #include <set>
 #include <utility>
@@ -24,11 +23,12 @@
 #include <boost/unordered_set.hpp>
 #include <queue>
 
-#include <ostream>
-#include "ICollisionDetector.h"
-#include "NaiveCollisionDetector.h"
-#include "SweepCollisionDetection.h"
-#include "AABB_Collision_detector.h"
+#include <CGAL/Minkowski_sum_2/Arr_SegmentData_traits.h>
+#include <CGAL/Minkowski_sum_2/ICollisionDetector.h>
+#include <CGAL/Minkowski_sum_2/NaiveCollisionDetector.h>
+#include <CGAL/Minkowski_sum_2/SweepCollisionDetection.h>
+#include <CGAL/Minkowski_sum_2/AABB_Collision_detector.h>
+
 #include <boost/unordered_map.hpp>
 #include <boost/timer.hpp>
 
@@ -48,7 +48,7 @@
 
 #define WRITE_ARR 0
 
-namespace CGAL{
+namespace CGAL {
 
 struct Less_than_handle {
   template <typename Type>
