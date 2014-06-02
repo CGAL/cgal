@@ -4,13 +4,13 @@
 #include <CGAL/basic.h>
 #include <CGAL/Polygon_2.h>
 
-template <class Kernel_, class Container_> class IBounderySumCalculator{
+template <class Kernel_, class Container_> class IBounderySumCalculator {
 
 protected:
-	typedef Kernel_                                        Kernel;
-	typedef CGAL::Polygon_2<Kernel, Container_>            Polygon_2;
+    typedef Kernel_                                        Kernel;
+    typedef CGAL::Polygon_2<Kernel, Container_>            Polygon_2;
 public:
-	virtual void calc_sum(Polygon_2& a,Polygon_2& b,Polygon_2& res_poly)=0;
+    virtual void calc_sum(Polygon_2 &a, Polygon_2 &b, Polygon_2 &res_poly) = 0;
 
 
 };

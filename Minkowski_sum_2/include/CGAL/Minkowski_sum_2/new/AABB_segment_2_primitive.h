@@ -27,42 +27,49 @@
 
 namespace CGAL {
 
-template <class GeomTraits, class Iterator,class Container_type>
-class AABB_segment_2_primitive
-{
-        // types
+template <class GeomTraits, class Iterator, class Container_type>
+class AABB_segment_2_primitive {
+    // types
 public:
-        typedef typename GeomTraits::Point_2 Point; // point type
-        typedef typename GeomTraits::Segment_2 Datum; // datum type
-		typedef Container_type Container;
-        typedef Iterator Id; // Id type
+    typedef typename GeomTraits::Point_2 Point; // point type
+    typedef typename GeomTraits::Segment_2 Datum; // datum type
+    typedef Container_type Container;
+    typedef Iterator Id; // Id type
 
-        // member data
+    // member data
 private:
-        Id m_it;
-        Datum m_datum;
+    Id m_it;
+    Datum m_datum;
 
 public:
-        // constructors
-        AABB_segment_2_primitive() {}
-        AABB_segment_2_primitive(Id it)
-                : m_it(it)
-        {
-                m_datum = *it; // copy segment
-        }
-        AABB_segment_2_primitive(const AABB_segment_2_primitive& primitive)
-        {
-                m_it = primitive.id();
-                m_datum = primitive.datum();
-        }
+    // constructors
+    AABB_segment_2_primitive() {}
+    AABB_segment_2_primitive(Id it)
+        : m_it(it) {
+        m_datum = *it; // copy segment
+    }
+    AABB_segment_2_primitive(const AABB_segment_2_primitive &primitive) {
+        m_it = primitive.id();
+        m_datum = primitive.datum();
+    }
 public:
-        Id& id() { return m_it; }
-        const Id& id() const { return m_it; }
-        Datum& datum() { return m_datum; }
-        const Datum& datum() const { return m_datum; }
+    Id &id() {
+        return m_it;
+    }
+    const Id &id() const {
+        return m_it;
+    }
+    Datum &datum() {
+        return m_datum;
+    }
+    const Datum &datum() const {
+        return m_datum;
+    }
 
-        /// Returns a point on the primitive
-        Point reference_point() const { return m_datum.source(); }
+    /// Returns a point on the primitive
+    Point reference_point() const {
+        return m_datum.source();
+    }
 };
 
 }  // end namespace CGAL
