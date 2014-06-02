@@ -674,6 +674,46 @@ private:
     }
     CGAL_assertion(oriented_side_of_line(l, p.point()) == POSITIVE);
     CGAL_assertion(oriented_side_of_line(l, q.point()) == POSITIVE);
+
+    const bool pos_slope = has_positive_slope(r);
+    const Comparison_result first_comp =
+      (pos_slope) ? scmpy(p, q) : scmpx(p, q);
+    const Comparison_result second_comp =
+      (pos_slope) ? scmpx(p, q) : scmpy(p, q);
+
+    const Sign signla = CGAL::sign(l.a());
+    const Sign signlb = CGAL::sign(l.b());
+    const Comparison_result first_value =
+      (signlb == POSITIVE)? SMALLER : LARGER;
+
+    const Comparison_result second_value =
+      (signla == NEGATIVE)? SMALLER : LARGER;
+
+    if (first_comp == first_value) {
+      const RT pcoord = pos_slope ? p.point().x() : p.point().y();
+      const RT lineval = coord_at(l, pcoord, pos_slope);
+      const Point_2 corner = pos_slope?
+        Point_2(pcoord, lineval) : Point_2(lineval, pcoord);
+      const RT sidelen = CGAL::max(CGAL::abs(corner.x() - q.point().x()),
+                                   CGAL::abs(corner.y() - q.point().y()));
+      ux_ = RT(2)*corner.x() + signla*sidelen;
+      uy_ = RT(2)*corner.y() + signlb*sidelen;
+      uz_ = RT(2);
+      return;
+    }
+    if (second_comp == second_value) {
+      const RT qcoord = pos_slope ? q.point().y() : q.point().x();
+      const RT lineval = coord_at(l, qcoord, not pos_slope);
+      const Point_2 corner = pos_slope?
+        Point_2(lineval, qcoord) : Point_2(qcoord, lineval);
+      const RT sidelen = CGAL::max(CGAL::abs(corner.x() - p.point().x()),
+                                   CGAL::abs(corner.y() - p.point().y()));
+      ux_ = RT(2)*corner.x() + signla*sidelen;
+      uy_ = RT(2)*corner.y() + signlb*sidelen;
+      uz_ = RT(2);
+      return;
+    }
+
     return compute_pps_bisectors(p, q, r);
   }
 
