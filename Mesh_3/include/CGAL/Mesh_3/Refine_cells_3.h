@@ -173,43 +173,6 @@ protected:
     return make_cc_safe_handle(ch);
   }
 
-  // -----------------------------------
-  // -----------------------------------
-  // -----------------------------------
-  
-  // Functor for scan_triangulation_impl function
-  template <typename Refine_cells_>
-  class Scan_cell
-  {
-    Refine_cells_                   & m_refine_cells;
-    const std::vector<Cell_handle>  & m_cells;
-
-    typedef typename Refine_cells_::Cell_handle Cell_handle;
-
-  public:
-    // Constructor
-    Scan_cell(Refine_cells_ & rc,
-              const std::vector<Cell_handle> & cells)
-    : m_refine_cells(rc), m_cells(cells)
-    {}
-
-    // Constructor
-    Scan_cell(const Scan_cell &sc)
-    : m_refine_cells(sc.m_refine_cells), m_cells(sc.m_cells)
-    {}
-
-    // operator()
-    void operator()( const tbb::blocked_range<size_t>& r ) const
-    {
-      for( size_t i = r.begin() ; i != r.end() ; ++i)
-      {
-        Cell_handle c = m_cells[i];
-        if (!m_refine_cells.triangulation().is_infinite(c))
-          m_refine_cells.treat_new_cell(c);
-      }
-    }
-  };
-
 public:
   template<typename Container_element>
   Cell_handle extract_element_from_container_value(const Container_element &e) const
@@ -526,6 +489,43 @@ public:
 
 private:
 
+  // Functor for scan_triangulation_impl function
+  template <typename Refine_cells_>
+  class Scan_cell
+  {
+    Refine_cells_                   & m_refine_cells;
+    const std::vector<Cell_handle>  & m_cells;
+
+    typedef typename Refine_cells_::Cell_handle Cell_handle;
+
+  public:
+    // Constructor
+    Scan_cell(Refine_cells_ & rc,
+              const std::vector<Cell_handle> & cells)
+    : m_refine_cells(rc), m_cells(cells)
+    {}
+
+    // Constructor
+    Scan_cell(const Scan_cell &sc)
+    : m_refine_cells(sc.m_refine_cells), m_cells(sc.m_cells)
+    {}
+
+    // operator()
+    void operator()( const tbb::blocked_range<size_t>& r ) const
+    {
+      for( size_t i = r.begin() ; i != r.end() ; ++i)
+      {
+        Cell_handle c = m_cells[i];
+        if (!m_refine_cells.triangulation().is_infinite(c))
+          m_refine_cells.treat_new_cell(c);
+      }
+    }
+  };
+  
+  // -----------------------------------
+  // -----------------------------------
+  // -----------------------------------
+
   /// Computes badness and add to queue if needed
   void compute_badness(const Cell_handle& cell);
 
@@ -665,7 +665,8 @@ scan_triangulation_impl()
 # endif
     tbb::parallel_for(
       tbb::blocked_range<size_t>(0, cells.size(), 1000),
-      Scan_cell<Self>(*this, cells));
+      Scan_cell<Self>(*this, cells)
+    );
 
     splice_local_lists();
     add_to_TLS_lists(false);
