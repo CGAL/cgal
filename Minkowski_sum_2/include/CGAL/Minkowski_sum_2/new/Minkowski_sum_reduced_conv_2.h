@@ -23,11 +23,11 @@
 #include <boost/unordered_set.hpp>
 #include <queue>
 
-#include <CGAL/Minkowski_sum_2/Arr_SegmentData_traits.h>
-#include <CGAL/Minkowski_sum_2/ICollisionDetector.h>
-#include <CGAL/Minkowski_sum_2/NaiveCollisionDetector.h>
-#include <CGAL/Minkowski_sum_2/SweepCollisionDetection.h>
-#include <CGAL/Minkowski_sum_2/AABB_Collision_detector.h>
+#include <CGAL/Minkowski_sum_2/new/Arr_SegmentData_traits.h>
+#include <CGAL/Minkowski_sum_2/new/ICollisionDetector.h>
+#include <CGAL/Minkowski_sum_2/new/NaiveCollisionDetector.h>
+#include <CGAL/Minkowski_sum_2/new/SweepCollisionDetection.h>
+#include <CGAL/Minkowski_sum_2/new/AABB_Collision_detector.h>
 
 #include <boost/unordered_map.hpp>
 #include <boost/timer.hpp>

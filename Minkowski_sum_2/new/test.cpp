@@ -1,6 +1,6 @@
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/minkowski_sum_2.h>
-#include <CGAL/Minkowski_sum_2/Minkowski_sum_reduced_conv_2.h>
+#include <CGAL/Minkowski_sum_2/new/Minkowski_sum_reduced_conv_2.h>
 
 #include <iostream>
 #include <vector>
