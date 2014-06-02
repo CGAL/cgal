@@ -593,6 +593,35 @@ public:
 
 
 private:
+
+  // Functor for scan_triangulation_impl function
+  template <typename Refine_facets_>
+  class Scan_facet
+  {
+    Refine_facets_ & m_refine_facets;
+
+    typedef typename Refine_facets_::Facet Facet;
+
+  public:
+    // Constructor
+    Scan_facet(Refine_facets_ & rf)
+    : m_refine_facets(rf)
+    {}
+
+    // Constructor
+    Scan_facet(const Scan_facet &sf)
+    : m_refine_facets(sf.m_refine_facets)
+    {}
+
+    // operator()
+    // f cannot be const, see treat_new_facet signature
+    void operator()( Facet f ) const
+    {
+      m_refine_facets.treat_new_facet(f);
+    }
+  };
+
+
   //-------------------------------------------------------
   // Private types
   //-------------------------------------------------------
@@ -875,13 +904,13 @@ scan_triangulation_impl()
       << std::endl;
 # endif
     add_to_TLS_lists(true);
+
     // PARALLEL_DO
-    tbb::parallel_do(r_tr_.finite_facets_begin(), r_tr_.finite_facets_end(),
-      [=]( const Facet &facet ) { // CJTODO: lambdas ok?
-        // Cannot be const, see treat_new_facet signature
-        Facet f = facet;
-        this->treat_new_facet( f );
-    });
+    tbb::parallel_do(
+      r_tr_.finite_facets_begin(), r_tr_.finite_facets_end(),
+      Scan_facet<Self>(*this) 
+    );
+
     splice_local_lists();
     add_to_TLS_lists(false);
   }

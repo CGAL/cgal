@@ -664,6 +664,60 @@ private:
 #endif
 
 private:
+
+#ifdef CGAL_LINKED_WITH_TBB
+  
+  // Functor for enqueue_task function
+  template <typename SP, typename Visitor_, typename Bad_vertices_vector_>
+  class Perturb_vertex
+  {
+    const SP              & m_sliver_perturber;
+    PVertex                 m_pv;
+    FT                      m_sliver_bound;
+    Visitor_              & m_visitor;
+    Bad_vertices_vector_  & m_bad_vertices;
+
+  public:
+    // Constructor
+    Perturb_vertex(const SP &sp,
+                   const PVertex &pv,
+                   FT sliver_bound,
+                   Visitor_& visitor,
+                   Bad_vertices_vector_ &bad_vertices)
+    : m_sliver_perturber(sp), 
+      m_pv(pv),
+      m_sliver_bound(sliver_bound),
+      m_visitor(visitor),
+      m_bad_vertices(bad_vertices)
+    {
+    }
+    
+    // Constructor
+    Perturb_vertex(const Perturb_vertex &pvx)
+    : m_sliver_perturber(pvx.m_sliver_perturber),
+      m_pv(pvx.m_pv),
+      m_sliver_bound(pvx.m_sliver_bound),
+      m_visitor(pvx.m_visitor),
+      m_bad_vertices(pvx.m_bad_vertices)
+    {}
+
+    // operator()
+    void operator()() const
+    {
+      bool could_lock_zone;
+      do
+      {
+        m_sliver_perturber.perturb_vertex(
+          m_pv, m_sliver_bound, m_visitor, m_bad_vertices, &could_lock_zone);
+        m_sliver_perturber.unlock_all_elements();
+      } while (!could_lock_zone);
+
+      if ( m_sliver_perturber.is_time_limit_reached() )
+        tbb::task::self().cancel_group_execution();
+    }
+  };
+#endif
+
   // -----------------------------------
   // Private data
   // -----------------------------------
@@ -1580,18 +1634,8 @@ enqueue_task(const PVertex &pv,
              ) const
 {
   this->enqueue_work(
-    [&, sliver_bound, pv /*, pqueue, visitor, bad_vertices*/]() // CJTODO: lambdas ok?
-    {
-      bool could_lock_zone;
-      do
-      {
-        this->perturb_vertex(pv, sliver_bound, visitor, bad_vertices, &could_lock_zone);
-        this->unlock_all_elements();
-      } while (!could_lock_zone);
-
-      if ( this->is_time_limit_reached() )
-        tbb::task::self().cancel_group_execution();
-    },
+    Perturb_vertex<Self, Visitor, Bad_vertices_vector>(
+      *this, pv, sliver_bound, visitor, bad_vertices),
     pv);
 }
 #endif

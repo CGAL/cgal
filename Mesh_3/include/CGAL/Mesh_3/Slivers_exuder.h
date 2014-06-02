@@ -370,12 +370,16 @@ class Slivers_exuder
 : public Slivers_exuder_base<typename C3T3::Triangulation,
                              typename C3T3::Concurrency_tag>
 {
-  // Types
+  
+public: // Types
+  
   typedef typename C3T3::Concurrency_tag Concurrency_tag;
-
-  typedef Slivers_exuder<C3T3, SliverCriteria, Visitor_, FT> Self;
   typedef Slivers_exuder_base<
-    typename C3T3::Triangulation, Concurrency_tag>           Base;
+    typename C3T3::Triangulation, Concurrency_tag> Base;
+
+private: // Types
+
+  typedef Slivers_exuder<C3T3, MeshDomain, SliverCriteria, Visitor_, FT> Self;
 
   typedef typename C3T3::Triangulation Tr;
   typedef typename Tr::Weighted_point Weighted_point;
@@ -753,6 +757,103 @@ private:
 #endif
 
 private:
+
+  
+#ifdef CGAL_LINKED_WITH_TBB
+  
+  // Functor for enqueue_task function
+  template <typename SE, typename C3T3, typename Cell_handle, 
+            bool pump_vertices_on_surfaces>
+  class Pump_vertex
+  {
+    SE                    & m_sliver_exuder;
+    const C3T3            & m_c3t3;
+    Cell_handle             m_cell_handle;
+    unsigned int            m_erase_counter;
+
+
+  public:
+    // Constructor
+    Pump_vertex(SE &sliver_exuder,
+                const C3T3 &c3t3,
+                Cell_handle cell_handle,
+                unsigned int erase_counter)
+    : m_sliver_exuder(sliver_exuder),
+      m_c3t3(c3t3),
+      m_cell_handle(cell_handle),
+      m_erase_counter(erase_counter)
+    {
+    }
+    
+    // Constructor
+    Pump_vertex(const Pump_vertex &pvx)
+    : m_sliver_exuder(pvx.m_sliver_exuder),
+      m_c3t3(pvx.m_c3t3),
+      m_cell_handle(pvx.m_cell_handle),
+      m_erase_counter(pvx.m_erase_counter)
+    {}
+
+    // operator()
+    void operator()() const
+    {
+#ifdef CGAL_CONCURRENT_MESH_3_PROFILING
+      static Profile_branch_counter_3 bcounter(
+        "early withdrawals / late withdrawals / successes [Exuder]");
+#endif
+
+      for( int i = 0; i < 4; ++i )
+      {
+        bool could_lock_zone;
+        do
+        {
+          could_lock_zone = true;
+
+          if (m_sliver_exuder.erase_counter(m_cell_handle) != m_erase_counter)
+            break;
+
+          if (!m_c3t3.triangulation().try_lock_cell(m_cell_handle))
+          {
+#ifdef CGAL_CONCURRENT_MESH_3_PROFILING
+            bcounter.increment_branch_2(); // THIS is an early withdrawal!
+#endif
+            could_lock_zone = false;
+            m_sliver_exuder.unlock_all_elements();
+            continue;
+          }
+
+          if (m_sliver_exuder.erase_counter(m_cell_handle) != m_erase_counter)
+          {
+            m_sliver_exuder.unlock_all_elements();
+            break;
+          }
+
+          // pump_vertices_on_surfaces is a boolean template parameter.  The
+          // following condition is pruned at compiled time, if
+          // pump_vertices_on_surfaces==false.
+          if (pump_vertices_on_surfaces 
+           || m_c3t3.in_dimension(m_cell_handle->vertex(i)) > 2)
+          {
+            m_sliver_exuder.pump_vertex<pump_vertices_on_surfaces>(
+              m_cell_handle->vertex(i), &could_lock_zone);
+
+#ifdef CGAL_CONCURRENT_MESH_3_PROFILING
+            if (!could_lock_zone)
+              bcounter.increment_branch_1(); // THIS is a late withdrawal!
+            else
+              ++bcounter; // Success!
+#endif
+          }
+
+          m_sliver_exuder.unlock_all_elements();
+        } while (!could_lock_zone);
+      }
+
+      if ( m_sliver_exuder.is_time_limit_reached() )
+        tbb::task::self().cancel_group_execution();
+    }
+  };
+#endif
+
   // -----------------------------------
   // Private data
   // -----------------------------------
@@ -1472,62 +1573,8 @@ Slivers_exuder<C3T3,Md,SC,V_,FT>::
 enqueue_task(Cell_handle ch, unsigned int erase_counter, double value)
 {
   this->enqueue_work(
-    [&, ch, erase_counter]() // CJTODO: lambdas ok?
-    {
-#ifdef CGAL_CONCURRENT_MESH_3_PROFILING
-      static Profile_branch_counter_3 bcounter(
-        "early withdrawals / late withdrawals / successes [Exuder]");
-#endif
-
-      for( int i = 0; i < 4; ++i )
-      {
-        bool could_lock_zone;
-        do
-        {
-          could_lock_zone = true;
-
-          if (this->erase_counter(ch) != erase_counter)
-            break;
-
-          if (!tr_.try_lock_cell(ch))
-          {
-#ifdef CGAL_CONCURRENT_MESH_3_PROFILING
-            bcounter.increment_branch_2(); // THIS is an early withdrawal!
-#endif
-            could_lock_zone = false;
-            this->unlock_all_elements();
-            continue;
-          }
-
-          if (this->erase_counter(ch) != erase_counter)
-          {
-            this->unlock_all_elements();
-            break;
-          }
-
-          // pump_vertices_on_surfaces is a boolean template parameter.  The
-          // following condition is pruned at compiled time, if
-          // pump_vertices_on_surfaces==false.
-          if (pump_vertices_on_surfaces || c3t3_.in_dimension(ch->vertex(i)) > 2)
-          {
-            this->pump_vertex<pump_vertices_on_surfaces>(
-              ch->vertex(i), &could_lock_zone);
-
-#ifdef CGAL_CONCURRENT_MESH_3_PROFILING
-            if (!could_lock_zone)
-              bcounter.increment_branch_1(); // THIS is a late withdrawal!
-            else
-              ++bcounter; // Success!
-#endif
-          }
-
-          this->unlock_all_elements();
-        } while (!could_lock_zone);
-      }
-
-      if ( this->is_time_limit_reached() )
-        tbb::task::self().cancel_group_execution();
-    },
+    Pump_vertex<Self, C3T3, Cell_handle, pump_vertices_on_surfaces>(
+      *this, c3t3_, ch, erase_counter),
     value);
 }
 #endif
