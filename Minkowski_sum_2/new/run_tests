@@ -1,0 +1,17 @@
+#!/bin/sh
+
+echo -e "name\talgo\ttime\tmemory\tresult"
+
+for test in $(ls tests); do
+    for algo in $(echo -e "0\n1"); do
+        echo -ne "$test\t$algo\t"
+        if test -f tests/$test/result.dat; then
+            /usr/bin/time -f "%e %M" ./test $algo tests/$test/a.dat tests/$test/b.dat tests/$test/result.dat 2> /tmp/cgal-test
+        else
+            /usr/bin/time -f "%e %M" ./test $algo tests/$test/a.dat tests/$test/b.dat 2> /tmp/cgal-test
+        fi
+        RESULT="$?"
+        cat /tmp/cgal-test | tail -1 | head -c -1 -q
+        echo -e "\t$RESULT"
+    done
+done
