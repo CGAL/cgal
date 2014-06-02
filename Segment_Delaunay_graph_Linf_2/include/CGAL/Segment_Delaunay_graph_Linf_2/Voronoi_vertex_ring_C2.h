@@ -660,6 +660,10 @@ private:
     }
   }
 
+  /* compute pps vertex when the point p, q are not endpoints of
+   * segment r, when segment r is not axis-parallel, and when the
+   * two points p and q do not share any coordinate
+   */
   inline void
   compute_pps_nonendp_nonhv_nonsamec
   (const Site_2& p, const Site_2& q, const Site_2& r)
