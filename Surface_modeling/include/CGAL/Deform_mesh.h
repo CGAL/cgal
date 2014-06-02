@@ -1257,7 +1257,7 @@ private:
       }
       else 
       {// constrained vertex
-        Bx[vi_id] = solution[vi_id].x(); By[vi_id] = solution[vi_id].y(); Bz[vi_id] = solution[vi_id].z();
+        Bx[vi_id] = solution[vi_id][0]; By[vi_id] = solution[vi_id][1]; Bz[vi_id] = solution[vi_id][2];
       }
     }
 
@@ -1326,7 +1326,7 @@ private:
       }
       else 
       {// constrained vertices
-        Bx[vi_id] = solution[vi_id].x(); By[vi_id] = solution[vi_id].y(); Bz[vi_id] = solution[vi_id].z();
+        Bx[vi_id] = solution[vi_id][0]; By[vi_id] = solution[vi_id][1]; Bz[vi_id] = solution[vi_id][2];
       }
     }
     // solve "A*X = B".
@@ -1443,17 +1443,17 @@ private:
   /// p1 - p2, return CR_vector
   CR_vector sub_to_CR_vector(const Point& p1, const Point& p2) const
   {
-    return Closest_rotation_traits().vector(p1.x() - p2.x(), p1.y() - p2.y(), p1.z() - p2.z());
+    return Closest_rotation_traits().vector(p1[0] - p2[0], p1[1] - p2[1], p1[2] - p2[2]);
   }
 
   template<class Vect>
   Point add_to_point(const Point& p, const Vect& v) {
-    return Point(p.x() + v[0], p.y() + v[1], p.z() + v[2]);
+    return Point(p[0] + v[0], p[1] + v[1], p[2] + v[2]);
   }
 
   template<class Vect>
   Vect sub_to_vect(const Point& p, const Vect& v) {
-    return Vect(p.x() - v[0], p.y() - v[1], p.z() - v[2]);
+    return Vect(p[0] - v[0], p[1] - v[1], p[2] - v[2]);
   }
 
   /// shorthand of get(vertex_index_map, v)

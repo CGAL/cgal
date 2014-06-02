@@ -14,9 +14,6 @@ public:
 
 /// \name Coordinates Accessors
 /// @{
-  double x() const;
-  double y() const;
-  double z() const;
   /// `i<=0 && i<3`
   double& operator[](int i);
   /// `i<=0 && i<3`
