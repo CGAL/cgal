@@ -1,36 +1,23 @@
 #ifndef CGAL_MINKOWSKI_SUM_REDUCED_CONV_H
 #define CGAL_MINKOWSKI_SUM_REDUCED_CONV_H
 
-#include <CGAL/basic.h>
-#include <CGAL/Polygon_with_holes_2.h>
 #include <CGAL/Arr_segment_traits_2.h>
 #include <CGAL/Origin.h>
 #include <CGAL/Arrangement_with_history_2.h>
-#include <CGAL/Arr_extended_dcel.h>
-#include <CGAL/IO/Arr_with_history_iostream.h>
-#include <CGAL/Boolean_set_operations_2.h>
-#include <CGAL/Arr_consolidated_curve_data_traits_2.h>
-#include <CGAL/Arr_curve_data_traits_2.h>
-
-#include <fstream>
-#include <ostream>
-#include <list>
-#include <set>
-#include <utility>
-#include <algorithm>
-#include <iterator>
-#include <valarray>
-#include <boost/unordered_set.hpp>
-#include <queue>
 
 #include <CGAL/Minkowski_sum_2/new/Arr_SegmentData_traits.h>
-#include <CGAL/Minkowski_sum_2/new/ICollisionDetector.h>
-#include <CGAL/Minkowski_sum_2/new/NaiveCollisionDetector.h>
 #include <CGAL/Minkowski_sum_2/new/SweepCollisionDetection.h>
 #include <CGAL/Minkowski_sum_2/new/AABB_Collision_detector.h>
 
+#include <vector>
+#include <list>
+#include <set>
+#include <utility>
+#include <iterator>
+#include <queue>
+
 #include <boost/unordered_map.hpp>
-#include <boost/timer.hpp>
+#include <boost/unordered_set.hpp>
 
 namespace CGAL {
 
@@ -692,22 +679,16 @@ public:
         CGAL_precondition(pgn2.orientation() == CGAL::COUNTERCLOCKWISE);
         Polygon_2 revP1 = revPoly(pgn1);
         Polygon_2 p2 = pgn2;
-        boost::timer t_abb;
         _aabb_collision_detector = new AABBCollisionDetector<Kernel_, Container_>(p2, revP1);
-        double aabb_build_time = t_abb.elapsed();
         Segments_list reduced_conv;
-        boost::timer t1;
         buildReducedConvolutionFiberGrid(pgn1, pgn2, reduced_conv);
         Arrangement_history_2 arr;
-        boost::timer t2;
         buildArrangementFromConv(reduced_conv, arr);
         const Minkowski_sum_by_convolution_lien_2 *ptr = this;
-        boost::timer t4;
         DegenerateCassesManager degHandler(&arr, const_cast <Minkowski_sum_by_convolution_lien_2 *>(ptr), const_cast <Polygon_2 *>(&pgn1), const_cast <Polygon_2 *>(&pgn2), true);
         degHandler.findDegenerateBorderVertices();
         degHandler.markDegenerateEdges();
 
-        boost::timer t3;
         Polygon_2 reverse_pgn1 = transform(typename Kernel::Aff_transformation_2(CGAL::Rotation(), 0, -1), pgn1);
 
         // trace outer loop
