@@ -10,8 +10,6 @@
 namespace CGAL {
 template <class Kernel_, class Container_> class AABBCollisionDetector : public ICollisionDetector< Kernel_, Container_> {
 
-
-
 public:
     typedef typename Kernel_::Point_2 Point;
     typedef typename CGAL::Polygon_2<Kernel_> Polygon_2;

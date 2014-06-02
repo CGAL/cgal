@@ -126,7 +126,6 @@ public:
         return Sort_primitives();
     }
 
-
     /**
      * Computes the bounding box of a set of primitives
      * @param first an iterator on the first primitive
@@ -153,14 +152,12 @@ public:
         return Compute_bbox();
     }
 
-
     class Do_intersect {
     private:
         AABB_traits_2 *m_traits;
         typedef typename Primitive::Datum Datum;
     public:
         Do_intersect(AABB_traits_2 *_traits): m_traits(_traits) {}
-
 
         bool operator()(const Bounding_box &q, const Bounding_box &bbox) const {
 
@@ -183,10 +180,8 @@ public:
             Bounding_box t_box(t_left, t_bottom, t_right, t_top);
             //double x_max = m_traits->getIntX().inf();
 
-
             return CGAL::do_overlap(q, t_box);
         }
-
 
         bool operator()(const Primitive &q, const Bounding_box &bbox) const {
             /* Code for faster bbox, needs to be tested
@@ -201,14 +196,12 @@ public:
             Bounding_box t_box(t_left,t_bottom,t_right,t_top);
             */
 
-
             double t_left = (m_traits->getIntX() + bbox.xmin()).inf();
             double t_right = (m_traits->getIntX() + bbox.xmax()).sup();
             double t_bottom = (m_traits->getIntY() + bbox.ymin()).inf();
             double t_top = (m_traits->getIntY() + bbox.ymax()).sup();
             Bounding_box t_box(t_left, t_bottom, t_right, t_top);
             ////double x_max = m_traits->getIntX().inf();
-
 
             return CGAL::do_overlap(q.datum().bbox(), t_box);
         }
@@ -218,7 +211,6 @@ public:
             typename Primitive::Datum tr_pr = pr.datum().transform(typename GeomTraits::Aff_transformation_2(CGAL::Translation(), Vector_2(CGAL::ORIGIN, m_traits->getTPoint())));
             return CGAL::do_overlap(q, tr_pr.bbox());
         }
-
 
         bool operator()(const Primitive &q, const Primitive &pr) const {
 
@@ -261,7 +253,6 @@ public:
                     }
 
                 }
-
 
                 if (has_weak_intersection) {
 
@@ -402,7 +393,6 @@ public:
             return p_other;
         }
 
-
     };
 
     Do_intersect do_intersect_object() {
@@ -430,7 +420,6 @@ public:
     Intersection intersection_object() {
         return Do_intersect(this);
     }
-
 
     // This should go down to the GeomTraits, i.e. the kernel
     class Closest_point {
@@ -467,7 +456,6 @@ public:
     Compare_distance compare_distance_object() {
         return Compare_distance();
     }
-
 
 private:
 
@@ -540,7 +528,6 @@ AABB_traits_2<GT, P>::longest_axis(const Bounding_box &bbox) {
     //  }
     //}
 }
-
 
 }
 #endif

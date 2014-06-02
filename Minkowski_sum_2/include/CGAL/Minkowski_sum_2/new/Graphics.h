@@ -294,7 +294,6 @@ private:
         return (-CGAL::to_double(y));
     }
 
-
 private:
     QApplication app;
     QGraphicsScene _scene;

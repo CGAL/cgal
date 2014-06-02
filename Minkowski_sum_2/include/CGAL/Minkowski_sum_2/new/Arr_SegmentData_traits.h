@@ -33,8 +33,6 @@ struct Segment_Data_Label {
     }
 };
 
-
-
 template <class Traits_> class Arr_SegmentData_traits : public Traits_ { //protected Arr_curve_data_traits_2<Traits_,Segment_Data_Label>
 
 public:
@@ -92,7 +90,6 @@ public:
 
         {}
 
-
         /*! Get the base point (const version). */
         const Base_p &base() const {
             return (m_base_pt);
@@ -112,7 +109,6 @@ public:
         operator Base_p &() {
             return (m_base_pt);
         }
-
 
     };
 
@@ -236,7 +232,6 @@ public:
         return (Split_2(this));
     }
 
-
     class Intersect_2 {
     protected:
         //! The base traits.
@@ -334,7 +329,6 @@ public:
                 // ++endp_coll;
             }
 
-
             if (endp_coll == 1) {
                 return oi;
             }
@@ -381,8 +375,6 @@ public:
                     ++oi;
                 }
             }
-
-
 
             // CGAL::Object temp_obj;
             // CGAL::Object* output = &temp_obj;
@@ -449,7 +441,6 @@ public:
         return Intersect_2(this);
     }
 
-
     //class Ex_point_2 : public Point_2
     //{
     //public:
@@ -496,8 +487,6 @@ public:
         //Base::Compare_xy_2 obj();
         return (Compare_xy_2(((Base *)this)->compare_xy_2_object()));
     }
-
-
 
     /*! A functor that obtains the left endpoint of an x-monotone curve. */
     class Construct_min_vertex_2 {
@@ -547,7 +536,6 @@ public:
     protected:
         //! The base operators.
         Base_construct_max_vertex_2 m_base_max_v;
-
 
         /*! Constructor.
          * The constructor is declared protected to allow only the functor
@@ -606,8 +594,6 @@ public:
         return (Compare_y_at_x_right_2(((Base *)this)->compare_y_at_x_right_2_object()));
     }
 };
-
-
 
 //template <class Traits_ > class Arr_SegmentData_traits : public Arr_curve_data_traits_2<Traits_,Segment_Data_Label>
 //{
@@ -867,9 +853,6 @@ public:
 //
 //
 //};
-
-
-
 
 };
 #endif

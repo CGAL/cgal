@@ -185,7 +185,6 @@ public:
 
 private:
 
-
     //-------------------------------------------------------
     // Traits classes for traversal computation
     //-------------------------------------------------------
@@ -224,7 +223,6 @@ private:
         Result m_result;
     };
 
-
     /**
     * @class Counting_traits
     */
@@ -257,7 +255,6 @@ private:
         size_type m_nb_intersections;
     };
 
-
     /**
     * @class Listing_intersection_traits
     */
@@ -288,7 +285,6 @@ private:
         Output_iterator m_out_it;
     };
 
-
     /**
     * @class Listing_primitive_traits
     */
@@ -315,7 +311,6 @@ private:
     private:
         Output_iterator m_out_it;
     };
-
 
     /**
     * @class First_primitive_traits
@@ -449,8 +444,6 @@ private:
         //Primitive_type& m_p,m_q;
         AABBTraits *m_traits_ptr;
     };
-
-
 
     /**
     * @class Distance_traits
@@ -587,7 +580,6 @@ void AABB_tree<Tr>::rebuild(ConstPrimitiveIterator first,
     m_p_root_node->expand(m_primitives.begin(), m_primitives.end(), m_primitives.size());
 }
 
-
 // constructs the search KD tree from given points
 // to accelerate the distance queries
 template<typename Tr>
@@ -634,7 +626,6 @@ AABB_tree<Tr>::do_intersect(const Query &query) const {
     this->traversal(query, traversal_traits);
     return traversal_traits.is_intersection_found();
 }
-
 
 template<typename Tr>
 template<typename Primitive_type>

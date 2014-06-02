@@ -35,7 +35,6 @@
 // OMP
 //#include <omp.h>
 
-
 #define HE_WRITE 0
 
 //#ifdef _DEBUG
@@ -57,7 +56,6 @@ struct Less_than_handle {
     }
 };
 
-
 /*
 struct Convseg_Less_than{
     bool operator()(ConvS s1, Type s2) const { return (&(*s1) < &(*s2)); }
@@ -73,7 +71,6 @@ public:
     bool isDegenerate;
     int loopNumber;
 };
-
 
 template <class Traits_,
           class HalfedgeBase_ = Arr_halfedge_base<typename Traits_::X_monotone_curve_2> > class Arr_my_extended_dcel :
@@ -149,8 +146,6 @@ public:
     //typedef typename Traits_2::X_monotone_curve_2 Labeled_segment_2;
     typedef std::list<Segment_2> Segments_list;
     //typedef std::list<Segments_list::iterator> Segments_itr_list;
-
-
 
     //typedef CGAL::Arr_default_dcel<Traits_2> Dcel;
     typedef CGAL::Arr_my_extended_dcel<Traits_2> Dcel;
@@ -338,7 +333,6 @@ public:
             }
         }
 
-
         ConvSegment getOuterSegment() {
             Face_iterator startFace = _arr->unbounded_face();
             Halfedge_iterator perimiterFace = *(startFace -> holes_begin());
@@ -355,7 +349,6 @@ public:
                 removeSegFromArr(*itr);
             }
         }
-
 
     };
 
@@ -567,7 +560,6 @@ public:
             _mapperInstance->removeRangeFromArr(toRemoveFromArr);
         }
 
-
     private:
         ConvSegMapper *_mapperInstance;
         ConvMovement *_activeMovment;
@@ -756,7 +748,6 @@ public:
             }
         }
 
-
         /*
         Goes over each vertex and checks if it is degenerate.
         */
@@ -806,7 +797,6 @@ public:
                 //}
             }
         }
-
 
         void addDegenerateVerticesToArr() {
             typename std::list<Point_2>::iterator itr = _degenerate_points_list.begin();
@@ -934,7 +924,6 @@ public:
         return (sum_holes);
     }
 
-
     template <class OutputIterator>
     OutputIterator operator()(const Polygon_2 &pgn1,
                               const Polygon_2 &pgn2,
@@ -1006,12 +995,10 @@ public:
 //          handleFace(arr,faces_itrs[i],reverse_pgn1,pgn2,sum_holes);
 //      }
 
-
 //  Original code here !
         for (Face_iterator itr = arr.faces_begin(); itr != arr.faces_end(); ++itr) {
             handleFace(arr, itr, reverse_pgn1, pgn2, sum_holes);
         }
-
 
         std::list<Halfedge_handle> removeList;
 
@@ -1113,7 +1100,6 @@ public:
       Ccb_halfedge_circulator start = itr->outer_ccb();
       Ccb_halfedge_circulator circ = start;
 
-
       // orientation check
       do{
         if (!checkTripNotSameDirWithSegment(arr,circ))
@@ -1146,7 +1132,6 @@ public:
 
         Ccb_halfedge_circulator start = itr->outer_ccb();
         Ccb_halfedge_circulator circ = start;
-
 
         // orientation check
         do {
@@ -1233,7 +1218,6 @@ public:
             }
             */
     }
-
 
     void fillPolyDirs(const Polygon_2 &pgn1, std::vector<Direction_2> &outVec) const {
         unsigned int n1 = pgn1.size();
@@ -1345,7 +1329,6 @@ public:
 
                     Point_2 end_point = points_map[std::pair<int, int>(cyc_ind, i2)];
 
-
                     //Segment_2 conv_seg = Segment_2(Traits_2_A::Segment_2(start_point,end_point),f_compare_xy(start_point,end_point));
                     CGAL::Comparison_result cres = f_compare_xy(start_point, end_point);
                     Segment_2 conv_seg = Segment_2(Traits_2_A::Segment_2(start_point, end_point), cres);
@@ -1354,7 +1337,6 @@ public:
                         conv_seg = Segment_2(Traits_2_A::Segment_2(start_point,end_point),Segment_Data_Label(i1+i2*n1,cyc_ind+i2*n1,cres));
                     else
                         conv_seg = Segment_2(Traits_2_A::Segment_2(start_point,end_point),Segment_Data_Label(cyc_ind+i2*n1,i1+i2*n1,cres));*/
-
 
                     //Segment_2 conv_seg = Segment_2(start_point,end_point,f_compare_xy(start_point,end_point));
                     if (!is_start_coincide) {
@@ -1430,7 +1412,6 @@ public:
         fillPolyDirs(pgn1, p1_dirs);
         fillPolyDirs(pgn2, p2_dirs);
 
-
         boost::unordered_set<StatePair > visited_vertices_set;
         std::queue<StatePair > state_queue;
         boost::unordered_map<std::pair<int, int>, Point_2> points_map;
@@ -1439,7 +1420,6 @@ public:
         for (int i = n1 - 1; i >= 0; --i) {
             state_queue.push(StatePair(i, 0));
         }
-
 
         while (state_queue.size() > 0) {
             StatePair curr_state = state_queue.front();
@@ -1460,14 +1440,10 @@ public:
             int prev_p1 = cyclicDec(i1, n1);
             int prev_p2 = cyclicDec(i2, n2);
 
-
             StatePair next_state_p1 = StatePair(next_p1, i2);
             StatePair next_state_p2 = StatePair(i1, next_p2);
 
-
-
             // add geometric entites of the transition from state (i,j) to (i+1,j) and (i,j+1), if they are in the reduced convolution.
-
 
             // Add an edge from Q
             if (checkSwept(p1_dirs[prev_p1], p1_dirs[i1], p2_dirs[i2], is_start_coincide, is_end_coincide) && !is_end_coincide) {
@@ -1581,7 +1557,6 @@ private:
             if (!he->isDegenerate) {
                 if (!removeAllNonConformingLoops(arr, he, inwards, holesEdges, pgn1, pgn2)) {
 
-
                     /*for (hi = startFace->holes_begin(); hi != startFace->holes_end(); ++hi) {
                      perimiterFace = *hi;
                     }*/
@@ -1657,7 +1632,6 @@ private:
         /* std::cout << "number of hole edges " << holesEdges.size() << "\n";
             std::cout << arr.number_of_faces() << " faces:" << std::endl;
 
-
             std::cout << arr.number_of_faces() << " faces:" << std::endl;*/
         /* global_graphics->clear();
 
@@ -1680,8 +1654,6 @@ private:
         //  holesEdges.push_back(h_e);
         }*/
     }
-
-
 
 //  /*
 //      For each loop we represent it by the halfedge which is the twin of the face loop.
@@ -1857,7 +1829,6 @@ private:
                 QColor c2(0,0,255);
                 */
 
-
         return out;
 
     }
@@ -2008,7 +1979,6 @@ private:
         typename Kernel::FT y_point = f_compute_y(work_point);
         typename Kernel::FT y = (y_best - y_point) / 2 + y_point;
 
-
         return Point_2(x0, y);
         //return work_point;
     }
@@ -2091,7 +2061,6 @@ private:
 
             }
 
-
             // trace orientable loops:
 
             while (edges_set.size() != 0)
@@ -2108,7 +2077,6 @@ private:
 
     }
 
-
     bool checkDegenerateEdgeOppositeSegments(Arrangement_history_2 &arr, Halfedge_handle he) const {
         Originating_curve_iterator segment_itr;// = arr.originating_curves_begin ( *he);
         //bool found = false;
@@ -2124,7 +2092,6 @@ private:
             Direction_2 seg_dir = f_direction(f_vector(segment.source(), segment.target()));
             segments_dir_list.push_back(seg_dir);
             //Direction_2 start_he_dir = f_direction((f_vector(he->source()->point(),he->target()->point())));
-
 
         }
 
@@ -2172,7 +2139,6 @@ private:
             }
         }
 
-
         /* DEBUG
         if ( != 4)
             {
@@ -2193,14 +2159,11 @@ private:
 
         } while (++itr != start);
 
-
-
         segments_dir_list.sort();
         typename std::list<Direction_2>::iterator end = unique(segments_dir_list.begin(), segments_dir_list.end());
         int i = distance(segments_dir_list.begin(), end);
         return i > 2;
         //orig_segments_list.sort();
-
 
         /*std::list<Segment_2*>::iterator end = unique(orig_segments_list.begin(),orig_segments_list.end());
         int i =distance(orig_segments_list.begin(),end);
@@ -2327,8 +2290,6 @@ private:
 
     }
 
-
-
     void traceOrientableLoops(Arrangement_history_2 &arr, Edges_set &edges_set) const {
         //#define SHOW_LOOPS_CONST
         int loop_counter = 0;
@@ -2354,7 +2315,6 @@ private:
         if (!checkTripSameDirWithSegment(arr, curr_halfedge)) {
             curr_halfedge = curr_halfedge->twin();
         }
-
 
         Halfedge_iterator start_halfedge = curr_halfedge;
         temp_segments.push_back(curr_halfedge);
@@ -2478,7 +2438,6 @@ private:
                     // THIS IS WRONG ??????????????????????????????????????????????????????????????????????????????????????????????
                     // THIS IS WRONG ??????????????????????????????????????????????????????????????????????????????????????????????
 
-
 #ifdef SHOW_LOOPS_CONST
                     //global_graphics->clear();
 
@@ -2513,8 +2472,6 @@ private:
                     }
                 }
             }
-
-
 
         }
 
@@ -2576,8 +2533,6 @@ private:
     bool getEdgeVisited(Halfedge_handle &he) const {
         return he.visited;
     }
-
-
 
     // Removes the edges matching to halfedges from the set
     void removeHalfedgesSet(Arrangement_history_2 &arr, Edges_set &edges_set, std::list<Halfedge_iterator> &temp_segments) const {
@@ -2647,8 +2602,6 @@ private:
                 mark_change_part = true;
             }
 
-
-
             typename Edges_set::iterator testItem = edges_set.find(*itr);
 
             if (testItem == edges_set.end()) {
@@ -2674,7 +2627,6 @@ private:
             }
         }
     }
-
 
     Halfedge_handle getLargestExitingClockwiseEdge(Arrangement_history_2 &arr, Halfedge_iterator &curr_halfedge, Vertex &v_target, bool &next_edge_found, int loop_number, bool &close_loop_found, Halfedge_handle &handle_close_loop) const {
         Point_2 p_source = v_target.point();
@@ -2772,7 +2724,6 @@ private:
         next_edge_found = true;
         return itr->twin();
 
-
     }
 
     //bool isDirImproving(Direction_2& min_edge_dir,Direction_2& entering_dir,Direction_2& new_edge_dir) const
@@ -2808,7 +2759,6 @@ private:
         }
     }
 
-
     /*
         Checks that the edge leads to a vertex which an outgoing visited edge has been ie returns false if we close a loop.
         h returns the edge which begins the loop
@@ -2842,7 +2792,6 @@ private:
             printHe(he);*/
             Direction_2 start_seg_dir = f_direction(f_vector(segment.source(), segment.target()));
 
-
             if (start_seg_dir == start_he_dir) {
                 return true;
 
@@ -2865,7 +2814,6 @@ private:
             printHe(he);*/
             //Vector_2 start_seg_dir = f_vector(segment.source(),segment.target());
 
-
             //if (CGAL::angle(start_he_dir,start_seg_dir)==CGAL::ACUTE){
             //if (f_angle(start_he_dir,start_seg_dir)==CGAL::ACUTE){
 
@@ -2874,7 +2822,6 @@ private:
                 return true;}
             */
 
-
             CGAL::Comparison_result c1 = f_compare_endpoints_xy(segment);
             CGAL::Comparison_result c2 = (CGAL::Comparison_result)he->direction();//f_compare_xy(he->source()->point(),he->target()->point());
             bool same_dir = (c1 == c2);
@@ -2882,7 +2829,6 @@ private:
             if (same_dir) {
                 return true;
             }
-
 
         }
 
@@ -2902,7 +2848,6 @@ private:
             printHe(he);*/
             //Vector_2 start_seg_dir = f_vector(segment.source(),segment.target());
 
-
             //if (CGAL::angle(start_he_dir,start_seg_dir)==CGAL::ACUTE){
             //if (f_angle(start_he_dir,start_seg_dir)==CGAL::ACUTE){
 
@@ -2910,7 +2855,6 @@ private:
             if (CGAL::collinear_are_ordered_along_line(segment.source(),he->source()->point(),he->target()->point())){
                 return true;}
             */
-
 
             CGAL::Comparison_result c1 = segment.label()._orientation;//f_compare_endpoints_xy(segment);
             //CGAL::Comparison_result c1 = segment.data();//f_compare_endpoints_xy(segment);
@@ -2921,13 +2865,10 @@ private:
                 return true;
             }
 
-
         }
 
         return false;
     }
-
-
 
     bool checkReflex(const Point_2 &prev, const Point_2 &curr, const Point_2 &next) const {
         CGAL::Orientation res_ori = f_orientation(prev, curr, next);
@@ -3024,11 +2965,7 @@ private:
 
         }
 
-
     }
-
-
-
 
 };
 

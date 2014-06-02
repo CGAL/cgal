@@ -12,7 +12,6 @@ protected:
 public:
     virtual void calc_sum(Polygon_2 &a, Polygon_2 &b, Polygon_2 &res_poly) = 0;
 
-
 };
 
 #endif

@@ -135,7 +135,6 @@ private:
 
 }; // end class AABB_node
 
-
 template<typename Tr>
 template<typename ConstPrimitiveIterator>
 void
@@ -167,7 +166,6 @@ AABB_node<Tr>::expand(ConstPrimitiveIterator first,
         right_child().expand(first + new_range, beyond, range - new_range);
     }
 }
-
 
 template<typename Tr>
 template<class Traversal_traits, class Query>
@@ -208,7 +206,6 @@ AABB_node<Tr>::traversal(const Query &query,
     }
 }
 
-
 template<typename Tr>
 template<class Traversal_traits>
 void
@@ -220,7 +217,6 @@ AABB_node<Tr>::join_traversal(const AABB_node &other_node,
     bool second_tree_small = nb_primitives_other <= 3;
     bool first_tree_even = nb_primitives_this == 2;
     bool second_tree_even = nb_primitives_other == 2;
-
 
     if (first_tree_small && second_tree_small) {
         traits.intersection(left_data(), other_node.left_data(), !first_stationary);
@@ -323,7 +319,6 @@ AABB_node<Tr>::join_traversal(const AABB_node &other_node,
         }
 
     }
-
 
 }
 

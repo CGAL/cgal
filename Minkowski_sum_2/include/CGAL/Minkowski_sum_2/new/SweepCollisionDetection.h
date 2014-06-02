@@ -128,7 +128,6 @@ public:
             m_had_overlap_no_cross = !same_dir;
         }
 
-
         //m_found_x = true;
 
     }
@@ -212,7 +211,6 @@ public:
                         }
                     }
 
-
                 }
             } else {
                 // Maybe a bug here when we have 2 overlap not overlapping and two outgoing which cause overlap.
@@ -227,7 +225,6 @@ public:
             }
 
         }
-
 
         return true;
     }
@@ -334,7 +331,6 @@ public:
 
         {}
 
-
         /*! Get the base point (const version). */
         const Base_p &base() const {
             return (m_base_pt);
@@ -355,11 +351,9 @@ public:
             return (m_base_pt);
         }
 
-
     };
 
     typedef Ex_point_2 Point_2;
-
 
     //class Ex_point_2 : public Point_2
     //{
@@ -408,8 +402,6 @@ public:
         return (Compare_xy_2(((Base *)this)->compare_xy_2_object()));
     }
 
-
-
     /*! A functor that obtains the left endpoint of an x-monotone curve. */
     class Construct_min_vertex_2 {
     protected:
@@ -457,7 +449,6 @@ public:
         //! The base operators.
         Base_construct_max_vertex_2 m_base_max_v;
 
-
         /*! Constructor.
          * The constructor is declared protected to allow only the functor
          * obtaining function, which is a member of the nesting class,
@@ -492,17 +483,11 @@ public:
             (Construct_max_vertex_2(((Base *)this)->construct_max_vertex_2_object()));
     }
 
-
-
 };
-
 
 template <class Kernel_, class Container_> class SweepCollisionDetector : public ICollisionDetector< Kernel_, Container_> {
 
-
-
 public:
-
 
     SweepCollisionDetector() {}
     //typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
@@ -519,7 +504,6 @@ public:
 
 protected:
     Traits_2 m_traits;
-
 
 public:
 
@@ -580,7 +564,6 @@ public:
                     edges.push_back(Colored_segment_2(*itr, Segment_Data(MY_BLUE, i, i + 1)));
                 }
             }
-
 
             //edges.push_back(Colored_segment_2(*itr,Segment_Data(MY_BLUE,2*i,2*i+1)));
         }
@@ -648,11 +631,6 @@ public:
         */
 
     }
-
-
-
-
-
 
 };
 
