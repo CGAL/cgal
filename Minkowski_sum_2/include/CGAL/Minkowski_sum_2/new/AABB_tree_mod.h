@@ -1,4 +1,4 @@
-// Copyright (c) 2008  INRIA Sophia-Antipolis (France), ETH Zurich (Switzerland).
+// Copyright (c) 2008 INRIA Sophia-Antipolis (France), ETH Zurich (Switzerland).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -157,7 +157,7 @@ private:
 
     // clears internal KD tree
     void clear_search_tree() {
-        /*  delete m_p_search_tree;
+        /* delete m_p_search_tree;
             m_p_search_tree = NULL;
             m_search_tree_constructed = false;*/
     }
@@ -503,7 +503,7 @@ public:
 
 public:
     Point_and_primitive_id best_hint(const Point &query) const {
-        /*  if(m_search_tree_constructed)
+        /* if(m_search_tree_constructed)
                 return m_p_search_tree->closest_point(query);
             else
                 return this->any_reference_point_and_id();*/
@@ -524,7 +524,7 @@ private:
     AABB_tree(const Self &src);
     Self &operator=(const Self &src);
 
-};  // end class AABB_tree
+}; // end class AABB_tree
 
 template<typename Tr>
 AABB_tree<Tr>::AABB_tree()
@@ -597,7 +597,7 @@ bool AABB_tree<Tr>::accelerate_distance_queries(ConstPointIterator first,
     // clears current KD tree
     //clear_search_tree();
 
-    /*  m_p_search_tree = new Search_tree(first, beyond);
+    /* m_p_search_tree = new Search_tree(first, beyond);
         if(m_p_search_tree != NULL)
         {
             m_search_tree_constructed = true;

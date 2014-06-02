@@ -4,13 +4,13 @@
 #include <CGAL/intersections.h>
 #include <CGAL/Boolean_set_operations_2.h>
 
-template <class Kernel_, class Container_> class NaiveCollisionDetector : public ICollisionDetector< Kernel_,  Container_> {
+template <class Kernel_, class Container_> class NaiveCollisionDetector : public ICollisionDetector< Kernel_, Container_> {
 public:
     NaiveCollisionDetector() {}
     typedef CGAL::Polygon_2<Kernel_> Polygon_2;
-    typedef typename Polygon_2::Edge_const_iterator           Edge_iterator ;
-    typedef typename Polygon_2::Traits::Segment_2           Segment_2 ;
-    //typedef typename Polygon_2::Vertex_circulator          Vertex_circulator;
+    typedef typename Polygon_2::Edge_const_iterator Edge_iterator ;
+    typedef typename Polygon_2::Traits::Segment_2 Segment_2 ;
+    //typedef typename Polygon_2::Vertex_circulator Vertex_circulator;
     //typedef typename
     virtual bool checkCollision(const Polygon_2 &p, const Polygon_2 &q) {
         bool intersect = false;

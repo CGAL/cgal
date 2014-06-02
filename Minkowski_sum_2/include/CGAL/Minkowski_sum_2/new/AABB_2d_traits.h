@@ -222,7 +222,7 @@ public:
 
         bool operator()(const Primitive &q, const Primitive &pr) const {
 
-            typename Primitive::Datum tr_pr =  pr.datum().transform(typename GeomTraits::Aff_transformation_2(CGAL::Translation(), Vector_2(CGAL::ORIGIN, m_traits->getTPoint())));
+            typename Primitive::Datum tr_pr = pr.datum().transform(typename GeomTraits::Aff_transformation_2(CGAL::Translation(), Vector_2(CGAL::ORIGIN, m_traits->getTPoint())));
 
             if (!CGAL::do_overlap(q.datum().bbox(), tr_pr.bbox())) {
                 return false;
@@ -255,7 +255,7 @@ public:
                     q_intersect = true;
                     q_intersect_start = true;
                 } else {
-                    if (*ipoint ==  q.datum().target()) {
+                    if (*ipoint == q.datum().target()) {
                         q_intersect = true;
                         has_weak_intersection = true;
                     }
@@ -299,13 +299,13 @@ public:
                 bool same_dir = (c1 == c2);
                 return same_dir;
             } else {
-                return false;    // no intersection
+                return false; // no intersection
             }
         }
 
     private:
 
-        bool  handleWeakIntersections(bool p_intersect, bool q_intersect, bool p_intersect_start, bool q_intersect_start, const Primitive &p, const Primitive &q, const Datum &tr_pr_datum) const {
+        bool handleWeakIntersections(bool p_intersect, bool q_intersect, bool p_intersect_start, bool q_intersect_start, const Primitive &p, const Primitive &q, const Datum &tr_pr_datum) const {
             Id itr_p = p.id();
             Id itr_q = q.id();
             Id p_other = getOtherSegment(p_intersect_start, itr_p, m_traits->get_p());
@@ -320,7 +320,7 @@ public:
                 }
 
             } else {
-                if (!p_intersect &&  q_intersect) {
+                if (!p_intersect && q_intersect) {
                     if (q_intersect_start) {
                         return handle_one_weak_int(*q_other, *itr_q, tr_pr_datum);
                     } else {
@@ -534,7 +534,7 @@ AABB_traits_2<GT, P>::longest_axis(const Bounding_box &bbox) {
     //  {
     //    return CGAL_AXIS_Y;
     //  }
-    //  else  // dz>dy and dy>dx
+    //  else // dz>dy and dy>dx
     //  {
     //    return CGAL_AXIS_Z;
     //  }

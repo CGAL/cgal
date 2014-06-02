@@ -15,7 +15,7 @@
 // $Id: AABB_segment_primitive.h 52790 2009-10-29 10:42:53Z palliez $
 //
 //
-// Author(s)     : Pierre Alliez, Stephane Tayeb
+// Author(s) : Pierre Alliez, Stephane Tayeb
 //
 //******************************************************************************
 // File Description :
@@ -72,7 +72,7 @@ public:
     }
 };
 
-}  // end namespace CGAL
+} // end namespace CGAL
 
 #endif // CGAL_AABB_SEGMENT_PRIMITIVE_H_
 

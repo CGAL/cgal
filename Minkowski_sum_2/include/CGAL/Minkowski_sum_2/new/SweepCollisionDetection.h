@@ -34,25 +34,25 @@ struct Segment_Data {
     }
 };
 
-template <class Traits_> class Sweep_line_do_curves_x_visitor_ :  public Sweep_line_empty_visitor<Traits_> {
-    typedef Traits_                                      Traits_2;
-    typedef Sweep_line_do_curves_x_visitor_<Traits_2>     Self;
+template <class Traits_> class Sweep_line_do_curves_x_visitor_ : public Sweep_line_empty_visitor<Traits_> {
+    typedef Traits_ Traits_2;
+    typedef Sweep_line_do_curves_x_visitor_<Traits_2> Self;
 
-    typedef typename Traits_2::X_monotone_curve_2        X_monotone_curve_2;
-    typedef typename Traits_2::Point_2                   Point_2;
+    typedef typename Traits_2::X_monotone_curve_2 X_monotone_curve_2;
+    typedef typename Traits_2::Point_2 Point_2;
 
-    typedef Sweep_line_empty_visitor<Traits_2>           Base;
-    typedef typename Base::Event                         Event;
-    typedef typename Base::Subcurve                      Subcurve;
-    typedef typename Base::Status_line_iterator          Status_line_iterator;
+    typedef Sweep_line_empty_visitor<Traits_2> Base;
+    typedef typename Base::Event Event;
+    typedef typename Base::Subcurve Subcurve;
+    typedef typename Base::Status_line_iterator Status_line_iterator;
 
-    typedef CGAL::Sweep_line_2<Traits_2, Self>           Sweep_line_2;
+    typedef CGAL::Sweep_line_2<Traits_2, Self> Sweep_line_2;
 
 protected:
 
     // Data members:
-    bool     m_found_x;           // Have we found an intersection so far.
-    bool     m_had_overlap_no_cross;
+    bool m_found_x; // Have we found an intersection so far.
+    bool m_had_overlap_no_cross;
 public:
 
     Sweep_line_do_curves_x_visitor_() :
@@ -61,8 +61,8 @@ public:
 
     template <class CurveIterator>
     void sweep(CurveIterator begin, CurveIterator end) {
-        std::vector<X_monotone_curve_2>  curves_vec;
-        std::vector<Point_2>             points_vec;
+        std::vector<X_monotone_curve_2> curves_vec;
+        std::vector<Point_2> points_vec;
 
         curves_vec.reserve(std::distance(begin, end));
         make_x_monotone(begin,
@@ -72,7 +72,7 @@ public:
                         this-> traits());
 
         // Perform the sweep.
-        Sweep_line_2  *sl = reinterpret_cast<Sweep_line_2 *>(this->sweep_line());
+        Sweep_line_2 *sl = reinterpret_cast<Sweep_line_2 *>(this->sweep_line());
 
         sl->sweep(curves_vec.begin(),
                   curves_vec.end(),
@@ -80,10 +80,10 @@ public:
                   points_vec.end());
     }
 
-    void update_event(Event  *e ,
-                      Subcurve  *sc1 ,
-                      Subcurve  *sc2 ,
-                      bool  is_new) {
+    void update_event(Event *e ,
+                      Subcurve *sc1 ,
+                      Subcurve *sc2 ,
+                      bool is_new) {
         //m_found_x = true;
     }
 
@@ -107,18 +107,18 @@ public:
     template <class XCurveIterator>
     void sweep_xcurves(XCurveIterator begin, XCurveIterator end) {
         // Perform the sweep.
-        Sweep_line_2  *sl = reinterpret_cast<Sweep_line_2 *>(this->sweep_line());
+        Sweep_line_2 *sl = reinterpret_cast<Sweep_line_2 *>(this->sweep_line());
 
         sl->sweep(begin, end);
     }
 
-    void found_overlap(Subcurve  *sc1 ,
-                       Subcurve  *sc2 ,
-                       Subcurve  *ov_sc) {
+    void found_overlap(Subcurve *sc1 ,
+                       Subcurve *sc2 ,
+                       Subcurve *ov_sc) {
 
         if (sc1->last_curve().data().front()._color != sc2->last_curve().data().front()._color) {
             Sweep_line_2 *sl = reinterpret_cast<Sweep_line_2 *>(this->sweep_line());
-            const Traits_2 *traits =  sl->traits();
+            const Traits_2 *traits = sl->traits();
 
             typename Traits_2::Compare_endpoints_xy_2 t_compare_endpoints_xy_2_obj = traits->compare_endpoints_xy_2_object();
             CGAL::Comparison_result c1 = t_compare_endpoints_xy_2_obj(sc1->last_curve());
@@ -133,10 +133,10 @@ public:
 
     }
 
-    bool after_handle_event(Event  *event ,
+    bool after_handle_event(Event *event ,
                             Status_line_iterator iter,
-                            bool  flag) {
-        Sweep_line_2  *sl = reinterpret_cast<Sweep_line_2 *>(this->sweep_line());
+                            bool flag) {
+        Sweep_line_2 *sl = reinterpret_cast<Sweep_line_2 *>(this->sweep_line());
 
         if (m_found_x) {
             sl->stop_sweep();
@@ -146,7 +146,7 @@ public:
         // check if there was an intersection event:
         if (((event->is_intersection() || event->is_weak_intersection() || (event->is_left_end() && event->is_right_end()))) && (event->number_of_left_curves() + event->number_of_right_curves() == 4)) {
             Sweep_line_2 *sl = reinterpret_cast<Sweep_line_2 *>(this->sweep_line());
-            const Traits_2 *traits =  sl->traits();
+            const Traits_2 *traits = sl->traits();
             typename Traits_2::Compare_endpoints_xy_2 t_compare_endpoints_xy_2_obj = traits->compare_endpoints_xy_2_object();
 
             // get all curves ordered by cyclic order. from left top counter clockwise.
@@ -184,7 +184,7 @@ public:
                 ++itr3;
                 bool c = ((*itr1)->last_curve().data().front()._color != (*itr2)->last_curve().data().front()._color);
 
-                if (((*itr1)->last_curve().data().front()._color != (*itr2)->last_curve().data().front()._color)  &&
+                if (((*itr1)->last_curve().data().front()._color != (*itr2)->last_curve().data().front()._color) &&
                         ((*itr2)->last_curve().data().front()._color != (*itr3)->last_curve().data().front()._color)) {
                     // we have alternating edges
                     m_found_x = true;
@@ -195,16 +195,16 @@ public:
                     //Subcurve* r1,r2,b1,b2;
                     if ((*itr1)->last_curve().data().front()._color == (*itr2)->last_curve().data().front()._color) {
                         // 1==2
-                        /*    std::list<Subcurve>::iterator itr =ordered_list.front();
-                              r1 = itr; r2 = ++itr;  b1 = ++itr; b2 = ++itr;*/
+                        /* std::list<Subcurve>::iterator itr =ordered_list.front();
+                              r1 = itr; r2 = ++itr; b1 = ++itr; b2 = ++itr;*/
                         if (incoming_edges[0] || incoming_edges[2]) {
                             m_found_x = true;
                             sl->stop_sweep();
                             return true;
                         }
                     } else {// 1 == 4
-                        /*  std::list<Subcurve>::iterator itr =ordered_list.front();
-                          r2 = itr; b1 = ++itr;  b2 = ++itr; r1 = ++itr;*/
+                        /* std::list<Subcurve>::iterator itr =ordered_list.front();
+                          r2 = itr; b1 = ++itr; b2 = ++itr; r1 = ++itr;*/
                         if (incoming_edges[1] || incoming_edges[3]) {
                             m_found_x = true;
                             sl->stop_sweep();
@@ -221,7 +221,7 @@ public:
                 //   ----
                 //       \
                 //
-                /*    int k=7;
+                /* int k=7;
                       ++k;
                       */
             }
@@ -241,18 +241,18 @@ public:
     }
 };
 
-template <class Traits_> class Colored_traits : public  Arr_consolidated_curve_data_traits_2<Traits_, Segment_Data> {
+template <class Traits_> class Colored_traits : public Arr_consolidated_curve_data_traits_2<Traits_, Segment_Data> {
 
 public:
     typedef Arr_consolidated_curve_data_traits_2<Traits_, Segment_Data> Base;
-    typedef typename Base::Intersect_2            Base_intersect_2;
+    typedef typename Base::Intersect_2 Base_intersect_2;
     //typedef CGAL::Arr_consolidated_curve_data_traits_2<Traits_,Segment_color> Data_traits_2;
-    typedef typename Colored_traits::Curve_2                            Colored_segment_2;
-    typedef typename Colored_traits::X_monotone_curve_2                 X_monotone_colored_segment_2;
-    typedef typename Base::Compare_xy_2           Base_compare_xy_2;
+    typedef typename Colored_traits::Curve_2 Colored_segment_2;
+    typedef typename Colored_traits::X_monotone_curve_2 X_monotone_colored_segment_2;
+    typedef typename Base::Compare_xy_2 Base_compare_xy_2;
     typedef typename Base::Construct_min_vertex_2 Base_construct_min_vertex_2;
     typedef typename Base::Construct_max_vertex_2 Base_construct_max_vertex_2;
-    typedef typename Base::Point_2                Base_point_2;
+    typedef typename Base::Point_2 Base_point_2;
 
     class Intersect_2 {
     protected:
@@ -289,7 +289,7 @@ public:
                 return oi_end;
             }
 
-            const std::pair<Base_point_2, unsigned int>  *xp_point;
+            const std::pair<Base_point_2, unsigned int> *xp_point;
 
             for (; oi != oi_end; ++oi) {
                 xp_point = object_cast<std::pair<Base_point_2, unsigned int> > (&(*oi));
@@ -314,11 +314,11 @@ public:
     class Ex_point_2 {
     public:
 
-        typedef Base_point_2    Base_p;
+        typedef Base_point_2 Base_p;
 
     protected:
 
-        Base_p          m_base_pt;        // The base point.
+        Base_p m_base_pt; // The base point.
 
     public:
         int id;
@@ -358,7 +358,7 @@ public:
 
     };
 
-    typedef Ex_point_2                                Point_2;
+    typedef Ex_point_2 Point_2;
 
 
     //class Ex_point_2 : public Point_2
@@ -392,8 +392,8 @@ public:
         Comparison_result operator()(const Point_2 &p1, const Point_2 &p2) const {
 //      if (&p1 == &p2)
             //Ex_point_2 p1_e,p2_e;
-            //p1_e =  *dynamic_cast<const Ex_point_2 *>(&p1);
-            //p2_e =  *dynamic_cast<const Ex_point_2 *>(&p2);
+            //p1_e = *dynamic_cast<const Ex_point_2 *>(&p1);
+            //p2_e = *dynamic_cast<const Ex_point_2 *>(&p2);
             if ((p1.id == p2.id) && (p1.id != -1)) {
                 return EQUAL;
             }
@@ -414,8 +414,8 @@ public:
     class Construct_min_vertex_2 {
     protected:
         //! The base operators.
-        Base_construct_min_vertex_2  m_base_min_v;
-        //Base_equal_2                 m_base_equal;
+        Base_construct_min_vertex_2 m_base_min_v;
+        //Base_equal_2 m_base_equal;
 
         /*! Constructor.
          * The constructor is declared protected to allow only the functor
@@ -433,7 +433,7 @@ public:
 
     public:
         Point_2 operator()(const X_monotone_curve_2 &xcv) {
-            Point_2 min_p =  m_base_min_v(xcv);
+            Point_2 min_p = m_base_min_v(xcv);
 
             if (xcv.data().size() > 1) {
                 min_p.id = -1;
@@ -455,7 +455,7 @@ public:
     class Construct_max_vertex_2 {
     protected:
         //! The base operators.
-        Base_construct_max_vertex_2  m_base_max_v;
+        Base_construct_max_vertex_2 m_base_max_v;
 
 
         /*! Constructor.
@@ -474,7 +474,7 @@ public:
 
     public:
         Point_2 operator()(const X_monotone_curve_2 &xcv) const {
-            Point_2 max_p =  m_base_max_v(xcv);
+            Point_2 max_p = m_base_max_v(xcv);
 
             if (xcv.data().size() > 1) {
                 max_p.id = -1;
@@ -497,7 +497,7 @@ public:
 };
 
 
-template <class Kernel_, class Container_> class SweepCollisionDetector : public ICollisionDetector< Kernel_,  Container_> {
+template <class Kernel_, class Container_> class SweepCollisionDetector : public ICollisionDetector< Kernel_, Container_> {
 
 
 
@@ -506,15 +506,15 @@ public:
 
     SweepCollisionDetector() {}
     //typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
-    typedef CGAL::Arr_segment_traits_2<Kernel_>                    Traits_2;
+    typedef CGAL::Arr_segment_traits_2<Kernel_> Traits_2;
     typedef Colored_traits<Traits_2> Data_traits_2;
     //typedef CGAL::Arr_consolidated_curve_data_traits_2<Traits_2,Segment_color> Data_traits_2;
 
-    typedef typename Data_traits_2::Curve_2                         Colored_segment_2;
-    typedef Arrangement_2<Data_traits_2>                    Colored_arr_2;
-    typedef typename CGAL::Polygon_2<Kernel_>::Edge_const_iterator           Edge_iterator ;
-    typedef typename CGAL::Polygon_2<Kernel_>::Traits::Segment_2           Segment_2 ;
-    //typedef typename Polygon_2::Vertex_circulator          Vertex_circulator;
+    typedef typename Data_traits_2::Curve_2 Colored_segment_2;
+    typedef Arrangement_2<Data_traits_2> Colored_arr_2;
+    typedef typename CGAL::Polygon_2<Kernel_>::Edge_const_iterator Edge_iterator ;
+    typedef typename CGAL::Polygon_2<Kernel_>::Traits::Segment_2 Segment_2 ;
+    //typedef typename Polygon_2::Vertex_circulator Vertex_circulator;
     //typedef typename
 
 protected:

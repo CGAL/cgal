@@ -8,21 +8,21 @@
 #include "AABB_2d_traits.h"
 #include "AABB_segment_2_primitive.h"
 namespace CGAL {
-template <class Kernel_, class Container_> class AABBCollisionDetector : public ICollisionDetector< Kernel_,  Container_> {
+template <class Kernel_, class Container_> class AABBCollisionDetector : public ICollisionDetector< Kernel_, Container_> {
 
 
 
 public:
-    typedef typename Kernel_::Point_2                       Point;
-    typedef typename CGAL::Polygon_2<Kernel_>                       Polygon_2;
-    //typedef typename Polygon_2::Edge_const_iterator           Edge_iterator ;
-    typedef typename Polygon_2::Traits::Segment_2           Segment_2 ;
-    typedef typename Polygon_2::Edge_const_iterator           Edge_iterator;
-    typedef typename Polygon_2::Edge_const_circulator       Edge_circulator;
+    typedef typename Kernel_::Point_2 Point;
+    typedef typename CGAL::Polygon_2<Kernel_> Polygon_2;
+    //typedef typename Polygon_2::Edge_const_iterator Edge_iterator ;
+    typedef typename Polygon_2::Traits::Segment_2 Segment_2 ;
+    typedef typename Polygon_2::Edge_const_iterator Edge_iterator;
+    typedef typename Polygon_2::Edge_const_circulator Edge_circulator;
     typedef AABB_segment_2_primitive<Kernel_, Edge_iterator, Polygon_2> Tree_Segment_2;
     typedef AABB_traits_2<Kernel_, Tree_Segment_2> Tree_Traits;
-    typedef AABB_tree<Tree_Traits>                 AABB_Tree;
-    typedef CGAL::Arr_segment_traits_2<Kernel_>                    Traits_2;
+    typedef AABB_tree<Tree_Traits> AABB_Tree;
+    typedef CGAL::Arr_segment_traits_2<Kernel_> Traits_2;
 protected:
     Traits_2 m_traits;
 
@@ -31,7 +31,7 @@ public:
         : m_stationary_tree((p.edges_begin()), (p.edges_end())), m_translating_tree((q.edges_begin()), (q.edges_end())), m_p(q), m_q(p) {
 
     }
-    //typedef typename Polygon_2::Vertex_circulator          Vertex_circulator;
+    //typedef typename Polygon_2::Vertex_circulator Vertex_circulator;
     //typedef typename
     virtual bool checkCollision(const Polygon_2 &p, const Polygon_2 &q) {
         //Traits_2::Compare_endpoints_xy_2 cmp_obj = m_traits.compare_endpoints_xy_2_object();

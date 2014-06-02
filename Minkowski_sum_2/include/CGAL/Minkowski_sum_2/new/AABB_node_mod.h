@@ -1,4 +1,4 @@
-// Copyright (c) 2008  INRIA Sophia-Antipolis (France), ETH Zurich (Switzerland).
+// Copyright (c) 2008 INRIA Sophia-Antipolis (France), ETH Zurich (Switzerland).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -42,7 +42,7 @@ public:
     AABB_node()
         : m_bbox()
         , m_p_left_child(NULL)
-        , m_p_right_child(NULL)      { };
+        , m_p_right_child(NULL) { };
 
     /// Non virtual Destructor
     /// Do not delete children because the tree hosts and delete them
@@ -133,7 +133,7 @@ private:
     AABB_node(const Self &src);
     Self &operator=(const Self &src);
 
-};  // end class AABB_node
+}; // end class AABB_node
 
 
 template<typename Tr>
@@ -217,7 +217,7 @@ AABB_node<Tr>::join_traversal(const AABB_node &other_node,
                               const std::size_t nb_primitives_this, const std::size_t nb_primitives_other, bool first_stationary) const {
     // Recursive traversal
     bool first_tree_small = nb_primitives_this <= 3;
-    bool second_tree_small =  nb_primitives_other <= 3;
+    bool second_tree_small = nb_primitives_other <= 3;
     bool first_tree_even = nb_primitives_this == 2;
     bool second_tree_even = nb_primitives_other == 2;
 
@@ -239,7 +239,7 @@ AABB_node<Tr>::join_traversal(const AABB_node &other_node,
                         traits.intersection(left_data(), other_node.right_data(), !first_stationary);
                     }
                 } else { // 2 and 3
-                    if (traits.do_intersect(right_data(), other_node.right_child(), !first_stationary) ||  traits.do_intersect(left_data(), other_node.right_child(), !first_stationary)) {
+                    if (traits.do_intersect(right_data(), other_node.right_child(), !first_stationary) || traits.do_intersect(left_data(), other_node.right_child(), !first_stationary)) {
                         other_node.right_child().join_traversal(*this, traits, 2, 2, !first_stationary);
                     }
 

@@ -85,15 +85,15 @@ public:
     template<typename T>
     class rebind {
         //typedef typename VertexBase_::template rebind
-        //                  <typename T::Point_2>              Rebind_vertex;
-        //typedef typename Rebind_vertex::other                  Vertex_base;
+        //                  <typename T::Point_2> Rebind_vertex;
+        //typedef typename Rebind_vertex::other Vertex_base;
         typedef typename HalfedgeBase_::template rebind
-        <typename T::X_monotone_curve_2>   Rebind_halfedge;
-        typedef typename Rebind_halfedge::other                Halfedge_base;
+        <typename T::X_monotone_curve_2> Rebind_halfedge;
+        typedef typename Rebind_halfedge::other Halfedge_base;
 
     public:
 
-        typedef Arr_my_extended_dcel<T, Halfedge_base>          other;
+        typedef Arr_my_extended_dcel<T, Halfedge_base> other;
     };
 
 };
@@ -102,98 +102,98 @@ template <class Kernel_, class Container_>
 class Minkowski_sum_by_convolution_lien_2 {
 public:
 
-    typedef Kernel_                                        Kernel;
-    typedef CGAL::Polygon_2<Kernel, Container_>            Polygon_2;
+    typedef Kernel_ Kernel;
+    typedef CGAL::Polygon_2<Kernel, Container_> Polygon_2;
 
 public:
 
     // Kernel types:
-    typedef typename Kernel::Point_2                       Point_2;
-    typedef typename Kernel::Vector_2                      Vector_2;
-    typedef typename Kernel::Direction_2                   Direction_2;
+    typedef typename Kernel::Point_2 Point_2;
+    typedef typename Kernel::Vector_2 Vector_2;
+    typedef typename Kernel::Direction_2 Direction_2;
 
     // Kernel functors:
-    typedef typename Kernel::Equal_2                       Equal_2;
-    typedef typename Kernel::Construct_translated_point_2  Translate_point_2;
-    typedef typename Kernel::Construct_vector_2            Construct_vector_2;
-    typedef typename Kernel::Construct_direction_2         Construct_direction_2;
-    typedef typename Kernel::Construct_opposite_line_2     Opposite_line_2;
-    typedef typename Kernel::Orientation_2                 Compute_orientation_2;
-    typedef typename Kernel::Compare_xy_2                  Compare_xy_2;
+    typedef typename Kernel::Equal_2 Equal_2;
+    typedef typename Kernel::Construct_translated_point_2 Translate_point_2;
+    typedef typename Kernel::Construct_vector_2 Construct_vector_2;
+    typedef typename Kernel::Construct_direction_2 Construct_direction_2;
+    typedef typename Kernel::Construct_opposite_line_2 Opposite_line_2;
+    typedef typename Kernel::Orientation_2 Compute_orientation_2;
+    typedef typename Kernel::Compare_xy_2 Compare_xy_2;
     typedef typename Kernel::Counterclockwise_in_between_2 Ccw_in_between_2;
-    typedef typename Kernel::Angle_2                       Compute_Angle_2;
-    typedef typename Kernel::Compare_x_2                   Compare_x_2;
-    typedef typename Kernel::Is_vertical_2                     Is_vertical_2;
-    typedef typename Kernel::Compute_x_2                   Compute_x_2;
-    typedef typename Kernel::Compute_y_2                   Compute_y_2;
+    typedef typename Kernel::Angle_2 Compute_Angle_2;
+    typedef typename Kernel::Compare_x_2 Compare_x_2;
+    typedef typename Kernel::Is_vertical_2 Is_vertical_2;
+    typedef typename Kernel::Compute_x_2 Compute_x_2;
+    typedef typename Kernel::Compute_y_2 Compute_y_2;
 
     // Polygon-related types:
-    typedef typename Polygon_2::Vertex_circulator          Vertex_circulator;
-    typedef std::pair<Vertex_circulator, unsigned int>     Vertex_ref;
-    typedef std::pair<Vertex_ref, Vertex_ref>              Anchor;
-    typedef std::list<Anchor>                              Anchors_queue;
+    typedef typename Polygon_2::Vertex_circulator Vertex_circulator;
+    typedef std::pair<Vertex_circulator, unsigned int> Vertex_ref;
+    typedef std::pair<Vertex_ref, Vertex_ref> Anchor;
+    typedef std::list<Anchor> Anchors_queue;
 
     // Traits-related types:
-    //typedef Arr_segment_traits_2<Kernel>                    Traits_2;//Segment_traits_2;
-    typedef Arr_segment_traits_2<Kernel>                    Traits_2_A;//Segment_traits_2;
-    typedef Arr_SegmentData_traits<Traits_2_A>                Traits_2;
+    //typedef Arr_segment_traits_2<Kernel> Traits_2;//Segment_traits_2;
+    typedef Arr_segment_traits_2<Kernel> Traits_2_A;//Segment_traits_2;
+    typedef Arr_SegmentData_traits<Traits_2_A> Traits_2;
     //typedef Arr_curve_data_traits_2<Traits_2_B,CGAL::Comparison_result> Traits_2;
     // used
     // typedef Arr_curve_data_traits_2<Traits_2_A,CGAL::Comparison_result> Traits_2;
 
-    //typedef Arr_SegmentData_traits<Traits_2_B>             Traits_2;
-//  typedef Arr_labeled_traits_2<Segment_traits_2>          Traits_2;
+    //typedef Arr_SegmentData_traits<Traits_2_B> Traits_2;
+//  typedef Arr_labeled_traits_2<Segment_traits_2> Traits_2;
 
-    typedef typename Traits_2_A::Segment_2          Base_Segment_2;
-    typedef typename Traits_2::X_monotone_curve_2   Segment_2;
-    //typedef typename Traits_2::X_monotone_curve_2           Labeled_segment_2;
-    typedef std::list<Segment_2>                    Segments_list;
-    //typedef std::list<Segments_list::iterator>                Segments_itr_list;
+    typedef typename Traits_2_A::Segment_2 Base_Segment_2;
+    typedef typename Traits_2::X_monotone_curve_2 Segment_2;
+    //typedef typename Traits_2::X_monotone_curve_2 Labeled_segment_2;
+    typedef std::list<Segment_2> Segments_list;
+    //typedef std::list<Segments_list::iterator> Segments_itr_list;
 
 
 
     //typedef CGAL::Arr_default_dcel<Traits_2> Dcel;
     typedef CGAL::Arr_my_extended_dcel<Traits_2> Dcel;
 
-//  typedef Arr_face_extended_dcel<Traits_2, int>          Dcel;
-    typedef CGAL::Arrangement_with_history_2<Traits_2, Dcel>            Arrangement_history_2;
-    typedef typename Arrangement_history_2::Halfedge                  Halfedge;
-    typedef typename Arrangement_history_2::Vertex                    Vertex;
-    typedef typename Arrangement_history_2::Vertex_iterator                   Vertex_iterator;
-    typedef typename Arrangement_history_2::Halfedge_iterator                     Halfedge_iterator;
-    typedef typename Arrangement_history_2::Edge_iterator                     Edge_iterator;
-    typedef typename Arrangement_history_2::Halfedge_handle                   Halfedge_handle;
-    typedef typename Arrangement_history_2::Vertex_handle                    Vertex_handle;
-    typedef typename Arrangement_history_2::Face_iterator                     Face_iterator;
-    typedef typename Arrangement_history_2::Face_handle                   Face_handle;
-    //typedef typename Arrangement_history_2::Face_const                  Face_handle;
-    typedef typename Arrangement_history_2::Hole_iterator                     Hole_iterator;
+//  typedef Arr_face_extended_dcel<Traits_2, int> Dcel;
+    typedef CGAL::Arrangement_with_history_2<Traits_2, Dcel> Arrangement_history_2;
+    typedef typename Arrangement_history_2::Halfedge Halfedge;
+    typedef typename Arrangement_history_2::Vertex Vertex;
+    typedef typename Arrangement_history_2::Vertex_iterator Vertex_iterator;
+    typedef typename Arrangement_history_2::Halfedge_iterator Halfedge_iterator;
+    typedef typename Arrangement_history_2::Edge_iterator Edge_iterator;
+    typedef typename Arrangement_history_2::Halfedge_handle Halfedge_handle;
+    typedef typename Arrangement_history_2::Vertex_handle Vertex_handle;
+    typedef typename Arrangement_history_2::Face_iterator Face_iterator;
+    typedef typename Arrangement_history_2::Face_handle Face_handle;
+    //typedef typename Arrangement_history_2::Face_const Face_handle;
+    typedef typename Arrangement_history_2::Hole_iterator Hole_iterator;
     typedef typename Arrangement_history_2::Halfedge_around_vertex_circulator Halfedge_around_vertex_circulator;
-    typedef typename Arrangement_history_2::Ccb_halfedge_circulator           Ccb_halfedge_circulator;
+    typedef typename Arrangement_history_2::Ccb_halfedge_circulator Ccb_halfedge_circulator;
 
-    typedef typename Arrangement_history_2::Originating_curve_iterator  Originating_curve_iterator;
+    typedef typename Arrangement_history_2::Originating_curve_iterator Originating_curve_iterator;
     typedef std::pair<int, int> StatePair;
 
     typedef std::set<Halfedge_handle, Less_than_handle> Edges_set;
     typedef std::set<Face_handle, Less_than_handle> Faces_set;
-//  typedef Union_of_segment_cycles_2<Traits_2, Polygon_2>  Union_2;
+//  typedef Union_of_segment_cycles_2<Traits_2, Polygon_2> Union_2;
 
     // Data members:
-    Equal_2                 f_equal;
-    Translate_point_2       f_add;
-    Construct_vector_2      f_vector;
-    Construct_direction_2   f_direction;
-    Opposite_line_2         f_opp_line;
-    Compute_orientation_2   f_orientation;
-    Compare_xy_2            f_compare_xy;
-    Ccw_in_between_2        f_ccw_in_between;
-    Compute_Angle_2         f_angle;
-    Is_vertical_2           f_is_vertical;
-    Compute_x_2             f_compute_x;
-    Compute_y_2             f_compute_y;
+    Equal_2 f_equal;
+    Translate_point_2 f_add;
+    Construct_vector_2 f_vector;
+    Construct_direction_2 f_direction;
+    Opposite_line_2 f_opp_line;
+    Compute_orientation_2 f_orientation;
+    Compare_xy_2 f_compare_xy;
+    Ccw_in_between_2 f_ccw_in_between;
+    Compute_Angle_2 f_angle;
+    Is_vertical_2 f_is_vertical;
+    Compute_x_2 f_compute_x;
+    Compute_y_2 f_compute_y;
 
-// Compare_x_2           f_compare_x;
-    //Traits_2::Compare_endpoints_xy_2  f_compare_endpoints_xy;
+// Compare_x_2 f_compare_x;
+    //Traits_2::Compare_endpoints_xy_2 f_compare_endpoints_xy;
     typename Traits_2::Compare_endpoints_xy_2 f_compare_endpoints_xy;
     typename Traits_2::Compare_y_at_x_2 f_compare_y_at_x;
     typename Traits_2::Compare_x_2 f_compare_x;
@@ -323,7 +323,7 @@ public:
         }
 
         template<typename T> void fillEdgesSet(T &edges_set) {
-            Edge_iterator  itr;
+            Edge_iterator itr;
 
             //Edges_set edges_set;
             for (itr = _arr->edges_begin(); itr != _arr->edges_end(); ++itr) {
@@ -381,7 +381,7 @@ public:
                 std::list<ConvSegment> filteredSegments, visitedSegments;
                 _mapperInstance->filterNonVisitedSegments(outList, filteredSegments, visitedSegments);
 
-                /*  if (outList.size()>1)
+                /* if (outList.size()>1)
                     {
                         drawTraversal();
 
@@ -446,7 +446,7 @@ public:
                     delete _loop;
                 }
 
-                _loop =  new std::pair<ConvSegment, ConvSegment>(loopStart, _currEdge);
+                _loop = new std::pair<ConvSegment, ConvSegment>(loopStart, _currEdge);
                 double angle = _mapperInstance->getSignedAngle(_currEdge, loopStart);
                 _angles.push_back(angle);
             }
@@ -585,7 +585,7 @@ public:
         void addLoop(std::pair<ConvSegment, ConvSegment> &loop) {
             typename std::list<ConvSegment>::iterator loop_begin = find(_segmentsList->begin(), _segmentsList->end(), (loop.first));
             typename std::list<ConvSegment>::iterator loop_end = find(_segmentsList->begin(), _segmentsList->end(), (loop.second));
-            /*          if (!_hasLoop)
+            /* if (!_hasLoop)
                         {
                             _loopBegin = loop_begin;
                             _loopEnd = loop_end;
@@ -767,7 +767,7 @@ public:
 
             Vertex_iterator itr = _arr->vertices_begin();
 
-            /*  int vertices_num = _arr->number_of_vertices();
+            /* int vertices_num = _arr->number_of_vertices();
               std::valarray<Vertex_iterator> vertices_arr(vertices_num);
               int i=0;
               for (;itr != _arr->vertices_end();++itr)
@@ -790,7 +790,7 @@ public:
                     Point_2 p_end = itr->point();
 
                     //  p_end = vertices_arr[i]->point();
-                    /*          double x2 = CGAL::to_double(p_end.x());
+                    /* double x2 = CGAL::to_double(p_end.x());
                                 double y2 = CGAL::to_double(p_end.y());
                                 std::cout << x2 << "," << y2 << std::endl;*/
                     if (!_mink->checkCollisionDetection(*_arr, itr->point(), *_poly1, *_poly2))
@@ -833,7 +833,7 @@ public:
     /*! Default constructor. */
     Minkowski_sum_by_convolution_lien_2() {
         // Obtain kernel functors.
-        Kernel                ker;
+        Kernel ker;
 
         f_equal = ker.equal_2_object();
         f_add = ker.construct_translated_point_2_object();
@@ -846,10 +846,10 @@ public:
         f_angle = ker.angle_2_object();
         f_compare_endpoints_xy = Traits_2().compare_endpoints_xy_2_object();
         f_is_vertical = ker.is_vertical_2_object();
-        f_compare_x =  Traits_2().compare_x_2_object();
+        f_compare_x = Traits_2().compare_x_2_object();
         f_compare_y_at_x = Traits_2().compare_y_at_x_2_object();
-        f_compute_x  = ker.compute_x_2_object();
-        f_compute_y  = ker.compute_y_2_object();
+        f_compute_x = ker.compute_x_2_object();
+        f_compute_y = ker.compute_y_2_object();
     }
 
     /*!
@@ -862,9 +862,9 @@ public:
     * \param pgn1 The first polygon.
     * \param pgn2 The second polygon.
     * \param sum_bound Output: A polygon respresenting the outer boundary
-    *                          of the Minkowski sum.
+    * of the Minkowski sum.
     * \param sum_holes Output: An output iterator for the holes in the sum,
-    *                          represented as simple polygons.
+    * represented as simple polygons.
     * \pre Both input polygons are simple.
     * \return A past-the-end iterator for the holes in the sum.
     */
@@ -962,7 +962,7 @@ public:
         Arrangement_history_2 arr;
         boost::timer t2;
         buildArrangementFromConv(reduced_conv, arr);
-        //arr_build_time =  t2.elapsed();
+        //arr_build_time = t2.elapsed();
         //std::cout << "buildArrangementFromConv : " << arr_build_time << std::endl;
 
         //LogMyMemoryUsage();
@@ -1191,7 +1191,7 @@ public:
      * \param pgn1 The first polygon.
      * \param pgn2 The second polygon.
      * \param sum_bound Output: A polygon respresenting the outer boundary
-     *                          of the Minkowski sum.
+     * of the Minkowski sum.
      *
      * \pre Both input polygons are simple.
      * \return A past-the-end iterator for the holes in the sum.
@@ -1206,12 +1206,12 @@ public:
         Segments_list reduced_conv;
         buildReducedConvolution(pgn1, pgn2, reduced_conv);
 
-        /*  Arrangement_history_2 arr;
+        /* Arrangement_history_2 arr;
             buildArrangementFromConv(reduced_conv,arr);
         */
         const Minkowski_sum_by_convolution_lien_2 *ptr = this;
         //  ConvSegMapper mapper( &arr,const_cast <Minkowski_sum_by_convolution_lien_2*>(ptr));*/
-        /*  DegenerateCassesManager degHandler(&arr,const_cast <Minkowski_sum_by_convolution_lien_2*>(ptr),const_cast <Polygon_2*>(&pgn1),const_cast <Polygon_2*>(&pgn2));
+        /* DegenerateCassesManager degHandler(&arr,const_cast <Minkowski_sum_by_convolution_lien_2*>(ptr),const_cast <Polygon_2*>(&pgn1),const_cast <Polygon_2*>(&pgn2));
             degHandler.findDegenerateBorderVertices();
             degHandler.markDegenerateEdges();
             constructOrientableLoops(arr);
@@ -1282,8 +1282,8 @@ public:
         for (unsigned int i1 = 0; i1 < n1; ++i1) {
             for (unsigned int i2 = 0; i2 < n2; ++i2) {
 
-                //Point_2 start_point =  f_add(*vert_p1,Vector_2(Point_2(ORIGIN),*vert_p2));
-                Point_2 start_point =  points_map[std::pair<int, int>(i1, i2)];
+                //Point_2 start_point = f_add(*vert_p1,Vector_2(Point_2(ORIGIN),*vert_p2));
+                Point_2 start_point = points_map[std::pair<int, int>(i1, i2)];
                 int prev_i1 = i1 - 1;
 
                 if (prev_i1 == -1) {
@@ -1308,7 +1308,7 @@ public:
 
                     Point_2 end_point = points_map[std::pair<int, int>(i1, cyc_ind)];
 
-                    /*      double x1 = CGAL::to_double(start_point.x());
+                    /* double x1 = CGAL::to_double(start_point.x());
                             double y1 = CGAL::to_double(start_point.y());
                             double x2 = CGAL::to_double(end_point.x());
                             double y2 = CGAL::to_double(end_point.y());
@@ -1516,7 +1516,7 @@ private:
     /*
         Perform final stage of filtering : collision detection.
     */
-    /*  void collisionDetectionFilter(Arrangement_history_2& arr) const
+    /* void collisionDetectionFilter(Arrangement_history_2& arr) const
         {
             ICollisionDetector& collision_detector = new NaiveCollisionDetector();
             Face_iterator startFace = arr.unbounded_face();
@@ -1605,7 +1605,7 @@ private:
         //Ccb_halfedge_circulator perimiterFace;
         hi = startFace->holes_begin();
         container_face = (*hi)->twin()->face();
-        /*  global_graphics->clear();
+        /* global_graphics->clear();
 
             draw_arr(arr);
             global_graphics->display();*/
@@ -1620,7 +1620,7 @@ private:
         }
 
         while (holesEdges.size() > 0) {
-            /*  int bla = holesEdges.size();
+            /* int bla = holesEdges.size();
                 std::cout << "in holes: " << bla << "\n";*/
             Halfedge_handle he = holesEdges.front();
             //  printHe(he);
@@ -1630,9 +1630,9 @@ private:
                 if (!removeAllNonConformingLoops(arr, he, inwards, holesEdges, pgn1, pgn2)) {
                     Hole_iterator hi;
                     //Ccb_halfedge_circulator perimiterFace;
-                    /*      hi = startFace->holes_begin();
+                    /* hi = startFace->holes_begin();
                             container_face = (*hi)->twin()->face();*/
-                    /*  std::cout << "not removed";
+                    /* std::cout << "not removed";
                         int bla = holesEdges.size();
                         std::cout << "in holes: " << bla << "\n";*/
                     after_removal_hole_edges.push_back(he);
@@ -1654,18 +1654,18 @@ private:
 
         // while we still have holes , leave only loops orientable with current direction.
 
-        /*  std::cout << "number of hole edges " << holesEdges.size() << "\n";
+        /* std::cout << "number of hole edges " << holesEdges.size() << "\n";
             std::cout << arr.number_of_faces() << " faces:" << std::endl;
 
 
             std::cout << arr.number_of_faces() << " faces:" << std::endl;*/
-        /*      global_graphics->clear();
+        /* global_graphics->clear();
 
                 draw_arr(arr);
                 global_graphics->display();
             */
 
-        /*      for (std::list<Halfedge_handle>::iterator itr = after_removal_hole_edges.begin();itr != after_removal_hole_edges.end() ; ++itr)
+        /* for (std::list<Halfedge_handle>::iterator itr = after_removal_hole_edges.begin();itr != after_removal_hole_edges.end() ; ++itr)
                 {
                     nestedLoopsFilterRec(arr,*itr, !inwards,pgn1,pgn2);
                 }
@@ -1719,7 +1719,7 @@ private:
 //      std::cout << arr.number_of_faces() << " faces:" << std::endl;
 //      while(holesEdges.size() > 0)
 //      {
-//      /*  int bla = holesEdges.size();
+//      /* int bla = holesEdges.size();
 //          std::cout << "in holes: " << bla << "\n";*/
 //          Halfedge_handle he = holesEdges.front();
 //      //  printHe(he);
@@ -1745,7 +1745,7 @@ private:
 //      }
 //
 //      std::cout << arr.number_of_faces() << " faces:" << std::endl;
-///*        global_graphics->clear();
+///* global_graphics->clear();
 //
 //      draw_arr(arr);
 //      global_graphics->display();
@@ -1805,12 +1805,12 @@ private:
         bool a = !checkTripSameDirWithSegment(arr, handle);
         bool b = inwards;
         // nor a,b
-        bool conforming_loop =  !((a || b) && !(a && b));
+        bool conforming_loop = !((a || b) && !(a && b));
 
         if (!conforming_loop) {
             //std::cout << "start remove\n";
 
-            /*      Halfedge_handle inside_face_edge = handle->twin();
+            /* Halfedge_handle inside_face_edge = handle->twin();
                     Face_handle container_face = inside_face_edge->face();
                     Hole_iterator hi;
                     Ccb_halfedge_circulator outside_face_itr;
@@ -1982,7 +1982,7 @@ private:
 
         if (best_edge->curve().is_vertical()) {
             Base_Segment_2 best_edge_curve = best_edge->curve();
-            typename Kernel::FT x0 =  f_compute_x(work_point);
+            typename Kernel::FT x0 = f_compute_x(work_point);
             typename Kernel::FT y_point = f_compute_y(work_point);
 
             if (shoot_upwards) {
@@ -1999,9 +1999,9 @@ private:
         }
 
         Base_Segment_2 best_edge_curve = best_edge->curve();
-        typename Kernel::FT x0 =  f_compute_x(work_point);
-        typename Kernel::FT x1 =  f_compute_x(best_edge_curve.min());
-        typename Kernel::FT x2 =  f_compute_x(best_edge_curve.max());
+        typename Kernel::FT x0 = f_compute_x(work_point);
+        typename Kernel::FT x1 = f_compute_x(best_edge_curve.min());
+        typename Kernel::FT x2 = f_compute_x(best_edge_curve.max());
         typename Kernel::FT alpha = (x0 - x2) / (x1 - x2);
 
         typename Kernel::FT y_best = alpha * f_compute_y(best_edge_curve.min()) + (1 - alpha) * f_compute_y(best_edge_curve.max());
@@ -2026,7 +2026,7 @@ private:
         Polygon_2 r_pgn1 = revPoly(pgn1);
         Polygon_2 t_pgn1 = transform(typename Kernel::Aff_transformation_2(CGAL::Translation(), Vector_2(CGAL::ORIGIN, p)), r_pgn1);
         collision_detector->setTranslationPoint(p);
-        /*  QColor c1(0,255,0);
+        /* QColor c1(0,255,0);
             QColor c2(0,0,255);
 
             global_graphics->draw_polygon(t_pgn1,c1);
@@ -2083,7 +2083,7 @@ private:
         manager.traverseLoops();
 
         /* OLD Version 10/7/11
-            Edge_iterator  itr;
+            Edge_iterator itr;
             Edges_set edges_set;
             for (itr = arr.edges_begin();itr!=arr.edges_end();++itr){
                 setEdgeVisited(*itr,false,-1);
@@ -2247,8 +2247,8 @@ private:
     double getSignedAngle(const Halfedge_handle &h_enter, const Halfedge_handle &h_exit) const {
         Direction_2 dir_enter = getHalfedgeDir(h_enter);
         Direction_2 dir_exit = getHalfedgeDir(h_exit);
-        Vector_2 vec_enter =  dir_enter.vector();
-        Vector_2 vec_exit =  dir_exit.vector();
+        Vector_2 vec_enter = dir_enter.vector();
+        Vector_2 vec_exit = dir_exit.vector();
         Point_2 org(CGAL::ORIGIN);
         Vector_2 origin_vec(org, org);
         Orientation sign_or = f_orientation(vec_enter, vec_exit);
@@ -2344,7 +2344,7 @@ private:
              perimiterFace = *hi;
         }*/
         // change we trace outer loop first
-        Halfedge_iterator curr_halfedge =  perimiterFace;//(*edges_set.begin());
+        Halfedge_iterator curr_halfedge = perimiterFace;//(*edges_set.begin());
 
         //Originating_curve_iterator first_segment_itr = arr.originating_curves_begin ( *curr_halfedge);
         //Segment_2 first_segment = *first_segment_itr;
@@ -2415,7 +2415,7 @@ private:
             if (!next_edge_found) {
                 Halfedge_handle temp_twin = next_halfedge->twin();
 
-                if ((next_halfedge->loopNumber == loop_counter) && (next_halfedge != curr_halfedge)  && (temp_twin != curr_halfedge)) {
+                if ((next_halfedge->loopNumber == loop_counter) && (next_halfedge != curr_halfedge) && (temp_twin != curr_halfedge)) {
 #ifdef SHOW_LOOPS_CONST
                     //global_graphics->clear();
 
@@ -2580,7 +2580,7 @@ private:
 
 
     // Removes the edges matching to halfedges from the set
-    void removeHalfedgesSet(Arrangement_history_2 &arr, Edges_set  &edges_set, std::list<Halfedge_iterator> &temp_segments) const {
+    void removeHalfedgesSet(Arrangement_history_2 &arr, Edges_set &edges_set, std::list<Halfedge_iterator> &temp_segments) const {
         removeHalfEdgesInner(arr, edges_set, temp_segments, false, false, false, *(temp_segments.begin()), *(temp_segments.begin()));
     }
 
@@ -2632,7 +2632,7 @@ private:
         bool mark_change_part = false;
 
         for (typename std::list<Halfedge_iterator>::iterator itr = temp_segments.begin(); itr != temp_segments.end(); ++itr) {
-            //int a =  edges_set.size();
+            //int a = edges_set.size();
             //int b = temp_segments.size();
             //Halfedge_handle h1 = *itr;
             //Halfedge_handle h2 = *partItem;
@@ -2750,7 +2750,7 @@ private:
                 if (isDirImproving(min_edge_dir, entering_dir, new_edge_dir) &&
                         (!next_edge_itr->visited)
                    ) {
-                    //(f_ccw_in_between(new_edge_dir,-entering_dir,min_edge_dir) &&  f_ccw_in_between(new_edge_dir,min_edge_dir,entering_dir))){
+                    //(f_ccw_in_between(new_edge_dir,-entering_dir,min_edge_dir) && f_ccw_in_between(new_edge_dir,min_edge_dir,entering_dir))){
                     itr = next_edge_itr;
                     min_edge_dir = f_direction((f_vector(itr->twin()->source()->point(), itr->twin()->target()->point())));
                 }
@@ -2777,8 +2777,8 @@ private:
 
     //bool isDirImproving(Direction_2& min_edge_dir,Direction_2& entering_dir,Direction_2& new_edge_dir) const
     //{
-    ///*    return (( ((entering_dir == new_edge_dir ) || (f_ccw_in_between(entering_dir,new_edge_dir,min_edge_dir) || (min_edge_dir == entering_dir) )) && (!f_ccw_in_between(min_edge_dir,-entering_dir,new_edge_dir)))  ||
-    //                (f_ccw_in_between(min_edge_dir,new_edge_dir,-entering_dir) &&  !f_ccw_in_between(entering_dir,min_edge_dir,new_edge_dir) && (min_edge_dir!=entering_dir)));*/
+    ///* return (( ((entering_dir == new_edge_dir ) || (f_ccw_in_between(entering_dir,new_edge_dir,min_edge_dir) || (min_edge_dir == entering_dir) )) && (!f_ccw_in_between(min_edge_dir,-entering_dir,new_edge_dir))) ||
+    //                (f_ccw_in_between(min_edge_dir,new_edge_dir,-entering_dir) && !f_ccw_in_between(entering_dir,min_edge_dir,new_edge_dir) && (min_edge_dir!=entering_dir)));*/
     //  //
     //  if ((entering_dir == min_edge_dir ) || f_ccw_in_between(min_edge_dir,-entering_dir,entering_dir)) // if minimal dir is to the right
     //  {
@@ -2793,16 +2793,16 @@ private:
     //}
 
     bool isDirImproving(Direction_2 &min_edge_dir, Direction_2 &entering_dir, Direction_2 &new_edge_dir) const {
-        /*  return (( ((entering_dir == new_edge_dir ) || (f_ccw_in_between(entering_dir,new_edge_dir,min_edge_dir) || (min_edge_dir == entering_dir) )) && (!f_ccw_in_between(min_edge_dir,-entering_dir,new_edge_dir)))  ||
-                          (f_ccw_in_between(min_edge_dir,new_edge_dir,-entering_dir) &&  !f_ccw_in_between(entering_dir,min_edge_dir,new_edge_dir) && (min_edge_dir!=entering_dir)));*/
+        /* return (( ((entering_dir == new_edge_dir ) || (f_ccw_in_between(entering_dir,new_edge_dir,min_edge_dir) || (min_edge_dir == entering_dir) )) && (!f_ccw_in_between(min_edge_dir,-entering_dir,new_edge_dir))) ||
+                          (f_ccw_in_between(min_edge_dir,new_edge_dir,-entering_dir) && !f_ccw_in_between(entering_dir,min_edge_dir,new_edge_dir) && (min_edge_dir!=entering_dir)));*/
         //
-        Direction_2 opp_enter =  -entering_dir;
+        Direction_2 opp_enter = -entering_dir;
 
         if ((opp_enter == min_edge_dir)) { // if minimal dir equals -entering dir
-            return  true;
+            return true;
         } else { //
             return f_ccw_in_between(new_edge_dir, opp_enter, min_edge_dir);
-            /*  if (f_ccw_in_between(new_edge_dir,-entering_dir,entering_dir) || (entering_dir == new_edge_dir ) ) // if new dir is to the right it is better.
+            /* if (f_ccw_in_between(new_edge_dir,-entering_dir,entering_dir) || (entering_dir == new_edge_dir ) ) // if new dir is to the right it is better.
                     return true;
                 return f_ccw_in_between(new_edge_dir,min_edge_dir,-entering_dir); // else check improvment on left side.*/
         }
@@ -2955,7 +2955,7 @@ private:
     }
 
     bool checkSwept(Direction_2 &dir_start, Direction_2 &dir_end, Direction_2 &dir_new, bool &isStartConcide, bool &isEndConcide) const {
-        /*  Direction_2 dir_start = f_direction(f_vector(prev,curr));
+        /* Direction_2 dir_start = f_direction(f_vector(prev,curr));
             Direction_2 dir_end = f_direction(f_vector(curr,next));
             Direction_2 dir_new = f_direction(f_vector(start,end));*/
         isStartConcide = dir_new == dir_start;
@@ -3005,7 +3005,7 @@ private:
         }
 
         // draw isolated vertices
-        /*  Face_handle unbounded_face = arr.unbounded_face();
+        /* Face_handle unbounded_face = arr.unbounded_face();
 
             Hole_iterator hi;
             Ccb_halfedge_circulator perimiterFace;
@@ -3036,9 +3036,9 @@ template <class Kernel, class Container>
 Polygon_with_holes_2<Kernel, Container>
 minkowski_sum_2_(const Polygon_2<Kernel, Container> &pgn1,
                  const Polygon_2<Kernel, Container> &pgn2) {
-    Minkowski_sum_by_convolution_lien_2<Kernel, Container>  mink_sum;
-    Polygon_2<Kernel, Container>                        sum_bound;
-    std::list<Polygon_2<Kernel, Container> >            sum_holes;
+    Minkowski_sum_by_convolution_lien_2<Kernel, Container> mink_sum;
+    Polygon_2<Kernel, Container> sum_bound;
+    std::list<Polygon_2<Kernel, Container> > sum_holes;
 
     if (pgn1.size() > pgn2.size()) {
         mink_sum(pgn1, pgn2, sum_bound, std::back_inserter(sum_holes));

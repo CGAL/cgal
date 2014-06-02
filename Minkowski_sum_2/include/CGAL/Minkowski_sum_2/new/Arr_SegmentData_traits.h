@@ -35,48 +35,48 @@ struct Segment_Data_Label {
 
 
 
-template <class Traits_> class Arr_SegmentData_traits : public Traits_ { //protected  Arr_curve_data_traits_2<Traits_,Segment_Data_Label>
+template <class Traits_> class Arr_SegmentData_traits : public Traits_ { //protected Arr_curve_data_traits_2<Traits_,Segment_Data_Label>
 
 public:
     //typedef Arr_curve_data_traits_2<Traits_,Segment_Data_Label> Base;
     typedef Traits_ Base;
-    typedef typename Base::Intersect_2            Base_intersect_2;
-    typedef typename Base::Split_2                Base_split_2;
+    typedef typename Base::Intersect_2 Base_intersect_2;
+    typedef typename Base::Split_2 Base_split_2;
     //typedef CGAL::Arr_consolidated_curve_data_traits_2<Traits_,Segment_color> Data_traits_2;
-    //typedef typename Arr_SegmentData_traits::Curve_2                          Colored_segment_2;
-    //typedef typename Arr_SegmentData_traits::X_monotone_curve_2               X_monotone_colored_segment_2;
-    typedef typename Base::Compare_xy_2           Base_compare_xy_2;
+    //typedef typename Arr_SegmentData_traits::Curve_2 Colored_segment_2;
+    //typedef typename Arr_SegmentData_traits::X_monotone_curve_2 X_monotone_colored_segment_2;
+    typedef typename Base::Compare_xy_2 Base_compare_xy_2;
     typedef typename Base::Construct_min_vertex_2 Base_construct_min_vertex_2;
     typedef typename Base::Construct_max_vertex_2 Base_construct_max_vertex_2;
-    typedef typename Base::Point_2                Base_point_2;
+    typedef typename Base::Point_2 Base_point_2;
 
-    typedef typename Base::Curve_2          Base_Curve_2;
-    typedef typename Base::X_monotone_curve_2       Base_x_monotone_curve_2;
-    typedef typename Base::Compare_y_at_x_2         Compare_y_at_x_2;
-    typedef typename Base::Compare_x_2          Compare_x_2;
-    typedef typename Base::Compare_endpoints_xy_2           Compare_endpoints_xy_2;
-    typedef typename Base::Compare_y_at_x_right_2  Compare_y_at_x_right_2;
-//  typedef typename Base::compare_y_at_x_2_object          compare_y_at_x_2_object;
-//  typedef typename Base::compare_x_2_object           compare_x_2_object;
-//  typedef typename Base::compare_endpoints_xy_2_object            compare_endpoints_xy_2_object;
+    typedef typename Base::Curve_2 Base_Curve_2;
+    typedef typename Base::X_monotone_curve_2 Base_x_monotone_curve_2;
+    typedef typename Base::Compare_y_at_x_2 Compare_y_at_x_2;
+    typedef typename Base::Compare_x_2 Compare_x_2;
+    typedef typename Base::Compare_endpoints_xy_2 Compare_endpoints_xy_2;
+    typedef typename Base::Compare_y_at_x_right_2 Compare_y_at_x_right_2;
+//  typedef typename Base::compare_y_at_x_2_object compare_y_at_x_2_object;
+//  typedef typename Base::compare_x_2_object compare_x_2_object;
+//  typedef typename Base::compare_endpoints_xy_2_object compare_endpoints_xy_2_object;
 
-    //typedef typename Base::Arr_top_side_category          Arr_top_side_category;
-    //typedef typename Base::Arr_right_side_category            Arr_right_side_category;
-    //typedef typename Base::Arr_left_side_category         Arr_left_side_category;
-    //typedef typename Base::Arr_bottom_side_category           Arr_bottom_side_category;
+    //typedef typename Base::Arr_top_side_category Arr_top_side_category;
+    //typedef typename Base::Arr_right_side_category Arr_right_side_category;
+    //typedef typename Base::Arr_left_side_category Arr_left_side_category;
+    //typedef typename Base::Arr_bottom_side_category Arr_bottom_side_category;
 
-    typedef typename Base::Has_left_category      Has_left_category;
-    typedef Tag_false                                      Has_merge_category;
+    typedef typename Base::Has_left_category Has_left_category;
+    typedef Tag_false Has_merge_category;
 //  static int count;
 
     class Ex_point_2 {
     public:
 
-        typedef Base_point_2    Base_p;
+        typedef Base_point_2 Base_p;
 
     protected:
 
-        Base_p          m_base_pt;        // The base point.
+        Base_p m_base_pt; // The base point.
 
     public:
         state id;
@@ -116,12 +116,12 @@ public:
 
     };
 
-    typedef Ex_point_2                                Point_2;
+    typedef Ex_point_2 Point_2;
 
     class X_monotone_curve_2 : public Base_x_monotone_curve_2 {
     private:
 
-        Segment_Data_Label         _label;
+        Segment_Data_Label _label;
 
     public:
 
@@ -339,7 +339,7 @@ public:
                 return oi;
             }
 
-            // state temp =  xcv1.data()._min_id;
+            // state temp = xcv1.data()._min_id;
 
             //  Base::Intersect_2 int_obj = Base::Intersect_2(m_traits);
             // std::vector<CGAL::Object > temp_container;
@@ -348,9 +348,9 @@ public:
             //OutputIterator oi_temp;
 
             //OutputIterator oi_end =
-            // code ONLY FOR SEGMENTS  !!!!!!!!
+            // code ONLY FOR SEGMENTS !!!!!!!!
 
-            std::list<CGAL::Object>            base_objs;
+            std::list<CGAL::Object> base_objs;
 
             m_traits->intersect_2_object()(xcv1, xcv2, std::back_inserter(base_objs));
 
@@ -359,9 +359,9 @@ public:
             }
 
             // Attach labels to the intersection objects.
-            std::list<CGAL::Object>::iterator             obj_it;
-            const std::pair<Base_point_2, unsigned int>  *base_pt;
-            const Base_x_monotone_curve_2                *base_xcv;
+            std::list<CGAL::Object>::iterator obj_it;
+            const std::pair<Base_point_2, unsigned int> *base_pt;
+            const Base_x_monotone_curve_2 *base_xcv;
 
             for (obj_it = base_objs.begin(); obj_it != base_objs.end(); ++obj_it) {
                 base_pt =
@@ -377,7 +377,7 @@ public:
                     CGAL_assertion(base_xcv != NULL);
 
                     // Attach a merged label to the overlapping curve.
-                    *oi =  CGAL::make_object(X_monotone_curve_2(*base_xcv, Segment_Data_Label(no_state, no_state, xcv1.data()._orientation, -1)));
+                    *oi = CGAL::make_object(X_monotone_curve_2(*base_xcv, Segment_Data_Label(no_state, no_state, xcv1.data()._orientation, -1)));
                     ++oi;
                 }
             }
@@ -387,8 +387,8 @@ public:
             // CGAL::Object temp_obj;
             // CGAL::Object* output = &temp_obj;
             // int_obj(xcv1,xcv2,output);
-            // const std::pair<Base_point_2,unsigned int>  *xp_point;
-            // const Base_x_monotone_curve_2                *base_xcv;
+            // const std::pair<Base_point_2,unsigned int> *xp_point;
+            // const Base_x_monotone_curve_2 *base_xcv;
 
             // xp_point = object_cast<std::pair<Base_point_2,unsigned int> > (output);
             //  if (xp_point!=NULL)
@@ -412,9 +412,9 @@ public:
             }*/
             //if (oi == oi_end)
             //    return oi_end;
-            /*      if (temp_container.size() == 0)
+            /* if (temp_container.size() == 0)
                         return oi;
-                  const std::pair<Base_point_2,unsigned int>  *xp_point;
+                  const std::pair<Base_point_2,unsigned int> *xp_point;
                   for (std::vector<CGAL::Object >::iterator itr = temp_container.begin();itr != temp_container.end();++itr)
                   {
                          xp_point = object_cast<std::pair<Base_point_2,unsigned int> > (&(*itr));
@@ -481,8 +481,8 @@ public:
         Comparison_result operator()(const Point_2 &p1, const Point_2 &p2) const {
 //      if (&p1 == &p2)
             //Ex_point_2 p1_e,p2_e;
-            //p1_e =  *dynamic_cast<const Ex_point_2 *>(&p1);
-            //p2_e =  *dynamic_cast<const Ex_point_2 *>(&p2);
+            //p1_e = *dynamic_cast<const Ex_point_2 *>(&p1);
+            //p2_e = *dynamic_cast<const Ex_point_2 *>(&p2);
             if ((p1.id == p2.id) && (p1.id != state(-1, -1))) {
                 return EQUAL;
             }
@@ -503,8 +503,8 @@ public:
     class Construct_min_vertex_2 {
     protected:
         //! The base operators.
-        Base_construct_min_vertex_2  m_base_min_v;
-        //Base_equal_2                 m_base_equal;
+        Base_construct_min_vertex_2 m_base_min_v;
+        //Base_equal_2 m_base_equal;
 
         /*! Constructor.
          * The constructor is declared protected to allow only the functor
@@ -521,9 +521,9 @@ public:
 
     public:
         Point_2 operator()(const X_monotone_curve_2 &xcv) {
-            Point_2 min_p =  m_base_min_v(xcv);
+            Point_2 min_p = m_base_min_v(xcv);
 
-            /*  if (xcv.data().size()>1)
+            /* if (xcv.data().size()>1)
                     min_p.id = -1;
                 else*/
             if (xcv.label()._orientation == CGAL::SMALLER) {
@@ -546,7 +546,7 @@ public:
     class Construct_max_vertex_2 {
     protected:
         //! The base operators.
-        Base_construct_max_vertex_2  m_base_max_v;
+        Base_construct_max_vertex_2 m_base_max_v;
 
 
         /*! Constructor.
@@ -564,9 +564,9 @@ public:
 
     public:
         Point_2 operator()(const X_monotone_curve_2 &xcv) const {
-            Point_2 max_p =  m_base_max_v(xcv);
+            Point_2 max_p = m_base_max_v(xcv);
 
-            /*  if (xcv.data().size()>1)
+            /* if (xcv.data().size()>1)
                     max_p.id = -1;
                 else*/
             if (xcv.label()._orientation == CGAL::SMALLER) {
@@ -609,21 +609,21 @@ public:
 
 
 
-//template <class Traits_ > class Arr_SegmentData_traits : public  Arr_curve_data_traits_2<Traits_,Segment_Data_Label>
+//template <class Traits_ > class Arr_SegmentData_traits : public Arr_curve_data_traits_2<Traits_,Segment_Data_Label>
 //{
 //
 //public:
 //  typedef Arr_curve_data_traits_2<Traits_,Segment_Data_Label> Base;
-//  typedef typename Base::Intersect_2            Base_intersect_2;
+//  typedef typename Base::Intersect_2 Base_intersect_2;
 //  //typedef CGAL::Arr_consolidated_curve_data_traits_2<Traits_,Segment_color> Data_traits_2;
-//  typedef typename Arr_SegmentData_traits::Curve_2                            Colored_segment_2;
-//  typedef typename Arr_SegmentData_traits::X_monotone_curve_2                 X_monotone_colored_segment_2;
-//  typedef typename Arr_SegmentData_traits::X_monotone_curve_2                 X_monotone_curve_2;
-//  typedef typename Base::Compare_xy_2           Base_compare_xy_2;
+//  typedef typename Arr_SegmentData_traits::Curve_2 Colored_segment_2;
+//  typedef typename Arr_SegmentData_traits::X_monotone_curve_2 X_monotone_colored_segment_2;
+//  typedef typename Arr_SegmentData_traits::X_monotone_curve_2 X_monotone_curve_2;
+//  typedef typename Base::Compare_xy_2 Base_compare_xy_2;
 //  typedef typename Base::Construct_min_vertex_2 Base_construct_min_vertex_2;
 //  typedef typename Base::Construct_max_vertex_2 Base_construct_max_vertex_2;
-//  typedef typename Base::Point_2                Base_point_2;
-//  typedef typename Base::Curve_2                Base_curve_2;
+//  typedef typename Base::Point_2 Base_point_2;
+//  typedef typename Base::Curve_2 Base_curve_2;
 //
 //    class Intersect_2 {
 //  protected:
@@ -658,7 +658,7 @@ public:
 //    OutputIterator oi_end = int_obj(xcv1,xcv2,oi);
 //    if (oi == oi_end)
 //        return oi_end;
-//    const std::pair<Base_point_2,unsigned int>  *xp_point;
+//    const std::pair<Base_point_2,unsigned int> *xp_point;
 //    for (;oi!=oi_end;++oi)
 //    {
 //         xp_point = object_cast<std::pair<Base_point_2,unsigned int> > (&(*oi));
@@ -685,11 +685,11 @@ public:
 //  {
 //  public:
 //
-//    typedef Base_point_2    Base_p;
+//    typedef Base_point_2 Base_p;
 //
 //  protected:
 //
-//    Base_p          m_base_pt;        // The base point.
+//    Base_p m_base_pt; // The base point.
 //
 //  public:
 //    int id;
@@ -733,7 +733,7 @@ public:
 //
 //  };
 //
-//  typedef Ex_point_2                                Point_2;
+//  typedef Ex_point_2 Point_2;
 //
 //
 //  //class Ex_point_2 : public Point_2
@@ -768,8 +768,8 @@ public:
 //  {
 ////        if (&p1 == &p2)
 //      //Ex_point_2 p1_e,p2_e;
-//      //p1_e =  *dynamic_cast<const Ex_point_2 *>(&p1);
-//      //p2_e =  *dynamic_cast<const Ex_point_2 *>(&p2);
+//      //p1_e = *dynamic_cast<const Ex_point_2 *>(&p1);
+//      //p2_e = *dynamic_cast<const Ex_point_2 *>(&p2);
 //      if ((p1.id == p2.id) && (p1.id != -1))
 //          return EQUAL;
 //
@@ -790,8 +790,8 @@ public:
 //  class Construct_min_vertex_2 {
 //  protected:
 //    //! The base operators.
-//    Base_construct_min_vertex_2  m_base_min_v;
-//    //Base_equal_2                 m_base_equal;
+//    Base_construct_min_vertex_2 m_base_min_v;
+//    //Base_equal_2 m_base_equal;
 //
 //    /*! Constructor.
 //     * The constructor is declared protected to allow only the functor
@@ -809,8 +809,8 @@ public:
 //  public:
 //    Point_2 operator() (const X_monotone_curve_2& xcv)
 //    {
-//      Point_2 min_p =  m_base_min_v (xcv);
-//  /*  if (xcv.data().size()>1)
+//      Point_2 min_p = m_base_min_v (xcv);
+//  /* if (xcv.data().size()>1)
 //          min_p.id = -1;
 //      else*/
 //      min_p.id = xcv.data()._min_id;
@@ -829,7 +829,7 @@ public:
 //  class Construct_max_vertex_2 {
 //  protected:
 //    //! The base operators.
-//    Base_construct_max_vertex_2  m_base_max_v;
+//    Base_construct_max_vertex_2 m_base_max_v;
 //
 //
 //    /*! Constructor.
@@ -848,8 +848,8 @@ public:
 //  public:
 //    Point_2 operator() (const X_monotone_curve_2 & xcv) const
 //    {
-//      Point_2 max_p =  m_base_max_v (xcv);
-//  /*  if (xcv.data().size()>1)
+//      Point_2 max_p = m_base_max_v (xcv);
+//  /* if (xcv.data().size()>1)
 //          max_p.id = -1;
 //      else*/
 //          max_p.id = xcv.data()._max_id;

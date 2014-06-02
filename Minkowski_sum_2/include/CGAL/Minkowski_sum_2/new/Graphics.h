@@ -12,7 +12,7 @@
 //#include "BasicPolygonManipulation_T.h"
 class Graphics {
 public:
-    typedef QGraphicsLineItem        *Line_handle;
+    typedef QGraphicsLineItem *Line_handle;
     typedef std::vector< Line_handle> Object_handle;
 
 public:
@@ -89,7 +89,7 @@ public:
     }
     //polgon drawing functions
     template <typename K> void draw_polygon(const CGAL::Polygon_2<K> &polygon, const QColor &color) {
-        typedef CGAL::Polygon_2<K>::Edge_const_iterator  E_iter;
+        typedef CGAL::Polygon_2<K>::Edge_const_iterator E_iter;
 
         for (E_iter ei(polygon.edges_begin()) ; ei != polygon.edges_end(); ++ei) {
             draw_edge<K>(*ei, color);
@@ -145,9 +145,9 @@ public:
     }
     */
     //utils
-    template <typename K> void draw_axis(const QColor &color  = BLUE) {
-        draw_edge<K> (typename K::Segment_2(typename  K::Point_2(0, 0), typename  K::Point_2(0, 1)), color);
-        draw_edge<K> (typename K::Segment_2(typename  K::Point_2(0, 0), typename  K::Point_2(1, 0)), color);
+    template <typename K> void draw_axis(const QColor &color = BLUE) {
+        draw_edge<K> (typename K::Segment_2(typename K::Point_2(0, 0), typename K::Point_2(0, 1)), color);
+        draw_edge<K> (typename K::Segment_2(typename K::Point_2(0, 0), typename K::Point_2(1, 0)), color);
         return;
     }
     /* template <typename K>
@@ -163,7 +163,7 @@ public:
        Reference_point_t<K> ref_p;
        BOOST_FOREACH (ref_p,path)
        {
-         int red   = d_red;
+         int red = d_red;
          int green = d_green;
          polygon.move_absolute(ref_p);
          if (to_draw_polygon)
@@ -197,7 +197,7 @@ public:
        Reference_point_t<K> ref_p;
        BOOST_FOREACH (ref_p,path)
        {
-         int red   = d_red;
+         int red = d_red;
          int green = d_green;
          polygon.move_absolute(ref_p);
 
@@ -229,7 +229,7 @@ public:
        Reference_point_t<K> ref_p;
        BOOST_FOREACH (ref_p,path)
        {
-         int red   = d_red;
+         int red = d_red;
          int green = d_green;
 
          K::Point_2 rotated (rotate_point<K> (v,ref_p.get_rotation()));
@@ -257,7 +257,7 @@ public:
        Reference_point_t<K> ref_p;
        BOOST_FOREACH (ref_p,path)
        {
-         int red   = d_red;
+         int red = d_red;
          int green = d_green;
 
          K::Point_2 rotated1,moved1,rotated2,moved2;
@@ -296,9 +296,9 @@ private:
 
 
 private:
-    QApplication    app;
-    QGraphicsScene  _scene;
-    QGraphicsScene  _file_scene;
+    QApplication app;
+    QGraphicsScene _scene;
+    QGraphicsScene _file_scene;
 
     double _min_x;
     double _max_x;
@@ -310,4 +310,4 @@ private:
 
 extern Graphics *global_graphics;
 
-#endif  //Graphics_H
+#endif //Graphics_H
