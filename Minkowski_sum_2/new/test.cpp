@@ -1,6 +1,5 @@
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/minkowski_sum_2.h>
-#include <CGAL/Minkowski_sum_2/new/Minkowski_sum_reduced_conv_2.h>
 
 #include <iostream>
 #include <vector>
@@ -38,7 +37,7 @@ int main(int argc, char* argv[]) {
             algo = &CGAL::minkowski_sum_2;
             break;
         case 1:
-            algo = &CGAL::minkowski_sum_2_;
+            algo = &CGAL::minkowski_sum_2_new;
             break;
         default:
             cerr << "Unknown algorithm" << endl;
