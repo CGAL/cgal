@@ -1,12 +1,14 @@
 #ifndef AABBCOLLISIONDETECTOR_HEADER
 #define AABBCOLLISIONDETECTOR_HEADER
-#include "ICollisionDetector.h"
-#include <CGAL/Arrangement_on_surface_2.h>
-#include <CGAL/Polygon_2.h>
-#include <CGAL/intersections.h>
-#include "AABB_tree_mod.h"
-#include "AABB_2d_traits.h"
-#include "AABB_segment_2_primitive.h"
+
+#include <CGAL/Arr_segment_traits_2.h>  // for Arr_segment_traits_2
+#include <CGAL/Polygon_2.h>             // for Polygon_2
+
+#include "AABB_2d_traits.h"             // for AABB_traits_2
+#include "AABB_segment_2_primitive.h"   // for AABB_segment_2_primitive
+#include "AABB_tree_mod.h"              // for AABB_tree
+#include "ICollisionDetector.h"         // for ICollisionDetector
+
 namespace CGAL {
 template <class Kernel_, class Container_> class AABBCollisionDetector : public ICollisionDetector< Kernel_, Container_> {
 

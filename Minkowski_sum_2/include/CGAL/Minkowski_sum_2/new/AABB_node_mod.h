@@ -20,11 +20,7 @@
 #ifndef CGAL_AABB_NODE_H
 #define CGAL_AABB_NODE_H
 
-#include <CGAL/Profile_counter.h>
-#include <CGAL/Cartesian_converter.h>
-#include <CGAL/intersections.h>
-#include <CGAL/Bbox_2.h>
-#include <vector>
+#include <cstddef>                      // for size_t, NULL
 
 namespace CGAL {
 

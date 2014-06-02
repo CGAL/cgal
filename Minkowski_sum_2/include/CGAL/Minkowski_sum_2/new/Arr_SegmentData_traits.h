@@ -1,9 +1,15 @@
 #ifndef ARR_SEGMENTDATA_HEADER
 #define ARR_SEGMENTDATA_HEADER
-#include <CGAL/basic.h>
-#include <CGAL/Arr_curve_data_traits_2.h>
-#include <CGAL/Arr_consolidated_curve_data_traits_2.h>
-#include <utility>
+
+#include <CGAL/Object.h>                // for make_object, Object, etc
+#include <CGAL/assertions.h>            // for CGAL_assertion
+#include <CGAL/enum.h>                  // for Sign::SMALLER, etc
+#include <CGAL/tags.h>                  // for Tag_false
+
+#include <stddef.h>                     // for NULL
+#include <iterator>                     // for back_inserter
+#include <list>                         // for list, _List_iterator, etc
+#include <utility>                      // for make_pair, pair
 
 namespace CGAL {
 typedef std::pair<int, int> state;

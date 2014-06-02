@@ -1,7 +1,6 @@
 #ifndef IBOUNDERY_SUM_CALCULATOR_HEADER
 #define IBOUNDERY_SUM_CALCULATOR_HEADER
 
-#include <CGAL/basic.h>
 #include <CGAL/Polygon_2.h>
 
 template <class Kernel_, class Container_> class IBounderySumCalculator {

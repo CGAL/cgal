@@ -1,8 +1,10 @@
 #ifndef NAIVECOLLISIONDETECTOR_HEADER
 #define NAIVECOLLISIONDETECTOR_HEADER
-#include "ICollisionDetector.h"
+
 #include <CGAL/intersections.h>
-#include <CGAL/Boolean_set_operations_2.h>
+#include <CGAL/Polygon_2.h>
+
+#include "ICollisionDetector.h"
 
 template <class Kernel_, class Container_> class NaiveCollisionDetector : public ICollisionDetector< Kernel_, Container_> {
 public:

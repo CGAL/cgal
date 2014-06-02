@@ -1,22 +1,24 @@
 #ifndef SWEEPCOLLISIONDETECTOR_HEADER
 #define SWEEPCOLLISIONDETECTOR_HEADER
-#include "ICollisionDetector.h"
-#include <CGAL/intersections.h>
-#include <CGAL/Boolean_set_operations_2.h>
 
-#include <CGAL/Arrangement_on_surface_2.h>
-#include <CGAL/Sweep_line_2.h>
-#include <CGAL/Sweep_line_2/Arr_default_overlay_traits_base.h>
-#include <CGAL/Object.h>
-#include <CGAL/Sweep_line_2/Sweep_line_event.h>
-#include <CGAL/Sweep_line_2/Sweep_line_subcurve.h>
-#include <CGAL/Sweep_line_2/Sweep_line_2_utils.h>
-#include <CGAL/Sweep_line_empty_visitor.h>
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Arrangement_2.h>         // for Arrangement_2
 #include <CGAL/Arr_consolidated_curve_data_traits_2.h>
+#include <CGAL/Arr_enums.h>             // for Arr_curve_end
+#include <CGAL/Arr_segment_traits_2.h>  // for Arr_segment_traits_2
+#include <CGAL/Object.h>                // for make_object, object_cast
+#include <CGAL/Polygon_2.h>             // for Polygon_2
+#include <CGAL/Sweep_line_2.h>          // for Sweep_line_2
+#include <CGAL/Sweep_line_2/Sweep_line_2_utils.h>  // for make_x_monotone
+#include <CGAL/Sweep_line_empty_visitor.h>
+#include <CGAL/enum.h>                  // for Comparison_result, etc
 
-#include <list>
-#include <algorithm>
+#include "ICollisionDetector.h"         // for ICollisionDetector
+
+#include <stddef.h>                     // for NULL
+#include <iterator>                     // for back_inserter, distance
+#include <list>                         // for list
+#include <utility>                      // for pair, make_pair
+#include <vector>                       // for vector<>::reference, vector
 
 /* A simple sweep-line visitor that determines if there are intersections
 * in the interiors of the given curve set.

@@ -20,11 +20,12 @@
 #ifndef CGAL_AABB_TREE_H
 #define CGAL_AABB_TREE_H
 
-#include <vector>
-#include <iterator>
-#include <boost/optional.hpp>
-#include "AABB_node_mod.h"
-//#include <CGAL/AABB_search_tree.h>
+#include <CGAL/enum.h>                  // for Sign::SMALLER
+#include <stddef.h>                     // for NULL
+#include <boost/optional/optional.hpp>  // for optional
+#include <iostream>                     // for operator<<, basic_ostream, etc
+#include <vector>                       // for vector
+#include "AABB_node_mod.h"              // for AABB_node
 
 namespace CGAL {
 

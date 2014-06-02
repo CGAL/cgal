@@ -1,23 +1,34 @@
 #ifndef CGAL_MINKOWSKI_SUM_REDUCED_CONV_H
 #define CGAL_MINKOWSKI_SUM_REDUCED_CONV_H
 
-#include <CGAL/Arr_segment_traits_2.h>
-#include <CGAL/Origin.h>
+#include <CGAL/Arrangement_2/Arrangement_on_surface_2_global.h>
 #include <CGAL/Arrangement_with_history_2.h>
+#include <CGAL/Arr_dcel_base.h>         // for Arr_dcel_base, etc
+#include <CGAL/Arr_enums.h>
+#include <CGAL/Arr_segment_traits_2.h>  // for Arr_segment_traits_2
+#include <CGAL/Origin.h>                // for ORIGIN
+#include <CGAL/Polygon_2.h>             // for Polygon_2
+#include <CGAL/aff_transformation_tags.h>  // for Translation, Rotation
+#include <CGAL/assertions.h>            // for CGAL_precondition
+#include <CGAL/enum.h>                  // for Comparison_result, etc
+#include <CGAL/number_utils.h>          // for to_double, sqrt
+#include <CGAL/utils.h>                 // for max, min
 
-#include <CGAL/Minkowski_sum_2/new/Arr_SegmentData_traits.h>
-#include <CGAL/Minkowski_sum_2/new/SweepCollisionDetection.h>
 #include <CGAL/Minkowski_sum_2/new/AABB_Collision_detector.h>
+#include <CGAL/Minkowski_sum_2/new/Arr_SegmentData_traits.h>  // for state, etc
+#include <CGAL/Minkowski_sum_2/new/SweepCollisionDetection.h>
 
-#include <vector>
-#include <list>
-#include <set>
-#include <utility>
-#include <iterator>
-#include <queue>
+#include <math.h>                       // for acos
+#include <stddef.h>                     // for NULL
+#include <iterator>                     // for advance, distance
+#include <list>                         // for list, list<>::iterator, etc
+#include <queue>                        // for queue
+#include <set>                          // for set
+#include <utility>                      // for pair
+#include <vector>                       // for vector
 
-#include <boost/unordered_map.hpp>
-#include <boost/unordered_set.hpp>
+#include <boost/unordered_map.hpp>  // for unordered_map
+#include <boost/unordered_set.hpp>  // for unordered_set
 
 namespace CGAL {
 
