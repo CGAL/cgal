@@ -1018,6 +1018,7 @@ public:
 	buildArrangementFromConv(reduced_conv,arr);
 	//arr_build_time =  t2.elapsed();
 	//std::cout << "buildArrangementFromConv : " << arr_build_time << std::endl; 
+
 	//LogMyMemoryUsage();
 	//std::cout << "sizeOfReducedConvArrangement : " << arr.number_of_edges() << std::endl;
 

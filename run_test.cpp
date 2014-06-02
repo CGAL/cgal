@@ -26,38 +26,49 @@ bool are_equal(const Polygon_with_holes_2& ph1, const Polygon_with_holes_2& ph2)
 
 int main(int argc, char* argv[]) {
     if (argc < 4) {
-        cout << "Usage: <program> polygon-file polygon-file result-file" << endl;
+        cerr << "Usage: <program> (0=old|1=new) polygon-file polygon-file [result-file]" << endl;
         return 0;
     }
 
     Polygon_2 a, b;
     Polygon_with_holes_2 c;
 
-    fstream data1(argv[1]);
-    data1 >> a;
-    fstream data2(argv[2]);
-    data2 >> b;
-    fstream data3(argv[3]);
-    data3 >> c;
-
-    Polygon_with_holes_2 sum2 = CGAL::minkowski_sum_2(a, b);
-    if (!are_equal(sum2, c)) {
-        cerr << "minkowski_sum_2 NOT OK" << endl;
-        cerr << "Expected:" << endl;
-        cerr << c;
-        cerr << "Got:" << endl;
-        cerr << sum2;
-        return 1;
+    Polygon_with_holes_2 (*algo)(const Polygon_2&, const Polygon_2&);
+    switch (atoi(argv[1])) {
+        case 0:
+            algo = &CGAL::minkowski_sum_2;
+            break;
+        case 1:
+            algo = &CGAL::minkowski_sum_2_;
+            break;
+        default:
+            cerr << "Unknown algorithm" << endl;
+            return 1;
     }
 
-    Polygon_with_holes_2 sum = minkowski_sum_2_(a, b);
-    if (!are_equal(sum, c)) {
-        cerr << "New minkowski_sum_2 NOT OK" << endl;
-        cerr << "Expected:" << endl;
-        cerr << c;
-        cerr << "Got:" << endl;
-        cerr << sum;
-        return 1;
+    fstream data1(argv[2]);
+    data1 >> a;
+    fstream data2(argv[3]);
+    data2 >> b;
+
+    bool verify = argc > 4;
+    if (verify) {
+        fstream data3(argv[4]);
+        data3 >> c;
+    }
+
+    Polygon_with_holes_2 sum2 = algo(a, b);
+
+    if (verify) {
+        if (!are_equal(sum2, c)) {
+            cerr << "Expected:" << endl;
+            cerr << c;
+            cerr << "Got:" << endl;
+            cerr << sum2;
+            return 1;
+        }
+    } else {
+        return 2;
     }
 
     return 0;
