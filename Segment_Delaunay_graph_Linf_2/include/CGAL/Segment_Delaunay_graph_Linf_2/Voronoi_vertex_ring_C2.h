@@ -714,7 +714,66 @@ private:
       return;
     }
 
-    return compute_pps_bisectors(p, q, r);
+    CGAL_assertion((first_comp  == -first_value ) and
+                   (second_comp == -second_value)    );
+
+    const RT px = p.point().x();
+    const RT py = p.point().y();
+    const RT qx = q.point().x();
+    const RT qy = q.point().y();
+    const RT pqdist = CGAL::max(CGAL::abs(px - qx), CGAL::abs(py - qy));
+
+    CGAL_SDG_DEBUG(std::cout
+        << "debug: vring pqdist=" << pqdist << std::endl;);
+
+    const RT & pcoord = pos_slope ? px : py;
+    const RT plineval = coord_at(l, pcoord, pos_slope);
+    const RT & pothercoord = pos_slope ? py : px;
+    const RT plen = CGAL::abs(plineval -  pothercoord);
+    CGAL_SDG_DEBUG(std::cout
+        << "debug: vring plen=" << plen << std::endl;);
+    if (pqdist > plen) {
+      // here, appropriate projection of p on supporting line of segment r
+      // is shorter than Linf p, q distance
+      const Point_2 corner = pos_slope?
+        Point_2(pcoord, plineval) : Point_2(plineval, pcoord);
+      ux_ = RT(2)*corner.x() + signla*pqdist;
+      uy_ = RT(2)*corner.y() + signlb*pqdist;
+      uz_ = RT(2);
+      return;
+    }
+
+    const RT & qcoord = pos_slope ? qy : qx;
+    const RT qlineval = coord_at(l, qcoord, not pos_slope);
+    const RT & qothercoord = pos_slope ? qx : qy;
+    const RT qlen = CGAL::abs(qlineval -  qothercoord);
+    CGAL_SDG_DEBUG(std::cout
+        << "debug: vring qlen=" << qlen << std::endl;);
+    if (pqdist > qlen) {
+      // here, appropriate projection of q on supporting line of segment r
+      // is shorter than Linf p, q distance
+      const Point_2 corner = pos_slope?
+        Point_2(qlineval, qcoord) : Point_2(qcoord, qlineval);
+      ux_ = RT(2)*corner.x() + signla*pqdist;
+      uy_ = RT(2)*corner.y() + signlb*pqdist;
+      uz_ = RT(2);
+      return;
+    }
+
+    CGAL_assertion((pqdist <= plen) and (pqdist <= qlen));
+
+    // here, compute corner opposite of corner on line of segment r
+    const Point_2 opposite_corner = pos_slope ?
+      Point_2(qx, py) : Point_2(px, qy);
+    CGAL_SDG_DEBUG(std::cout << "debug: vring opposite_corner="
+        << opposite_corner << std::endl;);
+
+    const Point_2 corner =
+      compute_linf_projection_nonhom(l, opposite_corner);
+
+    ux_ = corner.x() + opposite_corner.x();
+    uy_ = corner.y() + opposite_corner.y();
+    uz_ = RT(2);
   }
 
   inline void
