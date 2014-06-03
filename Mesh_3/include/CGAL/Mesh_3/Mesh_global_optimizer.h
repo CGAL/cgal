@@ -133,11 +133,9 @@ protected:
 
   void update_big_moves(const FT& new_sq_move)
   {
-    static tbb::mutex mut;
-
     if (++big_moves_current_size_ <= big_moves_size_ )
     {
-      tbb::mutex::scoped_lock lock(mut);
+      tbb::mutex::scoped_lock lock(m_big_moves_mutex);
       typename std::multiset<FT>::const_iterator it = big_moves_.insert(new_sq_move);
 
       // New smallest move of all big moves?
@@ -150,7 +148,7 @@ protected:
 
       if( new_sq_move > big_moves_smallest_ )
       {
-        tbb::mutex::scoped_lock lock(mut);
+        tbb::mutex::scoped_lock lock(m_big_moves_mutex);
         // Test it again since it may have been modified by another
         // thread in the meantime
         if( new_sq_move > big_moves_smallest_ )
@@ -190,6 +188,7 @@ protected:
   tbb::atomic<FT>           big_moves_smallest_;
   std::size_t               big_moves_size_;
   std::multiset<FT>         big_moves_;
+  tbb::mutex                m_big_moves_mutex;
 
   /// Lock data structure
   Lock_data_structure m_lock_ds;
@@ -348,6 +347,109 @@ private:
   }
 
 private:
+
+#ifdef CGAL_LINKED_WITH_TBB
+  // Functor for update_facets function (base)
+  template <typename MGO, typename Sizing_field_, typename Moves_vector_,
+            typename CTOP3>
+  class Compute_move
+  {
+    typedef tbb::concurrent_vector<Vertex_handle> Vertex_conc_vector;
+
+    MGO                  & m_mgo;
+    const Sizing_field_  & m_sizing_field;
+    Moves_vector_        & m_moves;
+    bool                   m_do_freeze;
+    Vertex_conc_vector   & m_vertices_not_moving_any_more;
+    const CTOP3          & m_translate;
+
+  public:
+    // Constructor
+    Compute_move(MGO &mgo, 
+                 const Sizing_field_ &sizing_field,
+                 Moves_vector_ &moves,
+                 bool do_freeze,
+                 Vertex_conc_vector & vertices_not_moving_any_more,
+                 const CTOP3 & translate)
+    : m_mgo(mgo),
+      m_sizing_field(sizing_field),
+      m_moves(moves),
+      m_do_freeze(do_freeze),
+      m_vertices_not_moving_any_more(vertices_not_moving_any_more),
+      m_translate(translate)
+    {}
+
+    // Constructor
+    Compute_move(const Compute_move &cm)
+    : m_mgo(cm.m_mgo), 
+      m_sizing_field(cm.m_sizing_field), 
+      m_moves(cm.m_moves),
+      m_do_freeze(cm.m_do_freeze),
+      m_vertices_not_moving_any_more(cm.m_vertices_not_moving_any_more),
+      m_translate(cm.m_translate)
+    {}
+
+    // operator()
+    void operator()(const Vertex_handle& oldv) const
+    {
+      Vector_3 move = m_mgo.compute_move(oldv);
+
+      if ( CGAL::NULL_VECTOR != move )
+      {
+        Point_3 new_position = m_translate(oldv->point(), move);
+        FT size = (MGO::Sizing_field::is_vertex_update_needed ?
+          m_sizing_field(new_position, oldv) : 0);
+        // typedef Triangulation_helpers<typename C3T3::Triangulation> Th;
+        //if( !Th().inside_protecting_balls(tr_, oldv, new_position))
+        //note : this is not happening for Lloyd and ODT so it's commented
+        //       maybe for a new global optimizer it should be de-commented
+        m_moves.push_back(cpp11::make_tuple(oldv, new_position, size));
+      }
+      else // CGAL::NULL_VECTOR == move
+      {
+        if(m_do_freeze)
+        {
+          m_vertices_not_moving_any_more.push_back(oldv);
+        }
+      }
+
+      if ( m_mgo.is_time_limit_reached() )
+        tbb::task::self().cancel_group_execution();
+    }
+  };
+
+  // Functor for update_facets function (base)
+  template <typename MGO, typename Tr_, typename Local_list_>
+  class Compute_sizing_field_value
+  {
+    MGO                  & m_mgo;
+    Local_list_          & m_local_lists;
+
+  public:
+    // Constructor
+    Compute_sizing_field_value(MGO &mgo, 
+                               Local_list_ & local_lists)
+    : m_mgo(mgo),
+      m_local_lists(local_lists)
+    {}
+
+    // Constructor
+    Compute_sizing_field_value(const Compute_sizing_field_value &csfv)
+    : m_mgo(csfv.m_mgo), 
+      m_local_lists(csfv.m_local_lists)
+    {}
+
+    // operator()
+    void operator()(Vertex& v) const
+    {
+      Vertex_handle vh 
+        = Tr_::Triangulation_data_structure::Vertex_range::s_iterator_to(v);
+      m_local_lists.local().push_back(
+        std::make_pair(v.point(), m_mgo.average_circumradius_length(vh)));
+    }
+  };
+#endif // CGAL_LINKED_WITH_TBB
+
   // -----------------------------------
   // Private data
   // -----------------------------------
@@ -592,33 +694,12 @@ compute_moves(Moving_vertices_set& moving_vertices)
     tbb::concurrent_vector<Vertex_handle> vertices_not_moving_any_more;
 
     // Get move for each moving vertex
-    tbb::parallel_do(moving_vertices.begin(), moving_vertices.end(),
-      [&]( const Vertex_handle& oldv ) // CJTODO: lambdas ok?
-    {
-      Vector_3 move = this->compute_move(oldv);
-
-	    if ( CGAL::NULL_VECTOR != move )
-      {
-        Point_3 new_position = translate(oldv->point(),move);
-        FT size = (Mesh_global_optimizer<C3T3,Md,Mf,V_>::Sizing_field::is_vertex_update_needed ?
-          sizing_field_(new_position, oldv) : 0);
-        // typedef Triangulation_helpers<typename C3T3::Triangulation> Th;
-        //if( !Th().inside_protecting_balls(tr_, oldv, new_position))
-        //note : this is not happening for Lloyd and ODT so it's commented
-        //       maybe for a new global optimizer it should be de-commented
-        moves.push_back(cpp11::make_tuple(oldv,new_position,size));
-      }
-  	  else // CGAL::NULL_VECTOR == move
-      {
-        if(this->do_freeze_)
-        {
-          vertices_not_moving_any_more.push_back(oldv);
-        }
-      }
-
-      if ( this->is_time_limit_reached() )
-        tbb::task::self().cancel_group_execution();
-    });
+    tbb::parallel_do(
+      moving_vertices.begin(), moving_vertices.end(),
+      Compute_move<Self, Sizing_field, Moves_vector, Gt::Construct_translated_point_3>(
+        *this, sizing_field_, moves, do_freeze_, vertices_not_moving_any_more,
+        translate)
+    );
 
     typename tbb::concurrent_vector<Vertex_handle>::const_iterator it
       = vertices_not_moving_any_more.begin();
@@ -641,14 +722,14 @@ compute_moves(Moving_vertices_set& moving_vertices)
       ++vit;
       Vector_3 move = compute_move(oldv);
 
-	    if ( CGAL::NULL_VECTOR != move )
+      if ( CGAL::NULL_VECTOR != move )
       {
         Point_3 new_position = translate(oldv->point(),move);
         FT size = (Sizing_field::is_vertex_update_needed ?
           sizing_field_(new_position, oldv) : 0);
         moves.push_back(cpp11::make_tuple(oldv,new_position,size));
       }
-  	  else // CGAL::NULL_VECTOR == move
+      else // CGAL::NULL_VECTOR == move
       {
         if(do_freeze_)
           moving_vertices.erase(oldv); // TODO: if non-intrusive,
@@ -881,14 +962,10 @@ fill_sizing_field()
       std::vector< std::pair<Point_3, FT> > > Local_list;
     Local_list local_lists;
 
-    tbb::parallel_do(tr_.finite_vertices_begin(), tr_.finite_vertices_end(),
-      [&]( Vertex& v ) // CJTODO: lambdas ok?
-    {
-      Vertex_handle vh 
-        = Tr::Triangulation_data_structure::Vertex_range::s_iterator_to(v);
-      local_lists.local().push_back(
-        std::make_pair(v.point(), this->average_circumradius_length(vh)));
-    });
+    tbb::parallel_do(
+      tr_.finite_vertices_begin(), tr_.finite_vertices_end(),
+      Compute_sizing_field_value<Self, Tr, Local_list>(*this, local_lists)
+    );
 
     for(typename Local_list::iterator it_list = local_lists.begin() ;
           it_list != local_lists.end() ;

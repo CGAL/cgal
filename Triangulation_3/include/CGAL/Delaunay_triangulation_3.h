@@ -282,11 +282,6 @@ public:
   insert( InputIterator first, InputIterator last)
 #endif //CGAL_TRIANGULATION_3_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
   {
-#ifdef CGAL_CONCURRENT_TRIANGULATION_3_PROFILING
-    static Profile_branch_counter_3 bcounter(
-      "early withdrawals / late withdrawals / successes [Delaunay_tri_3::insert]");
-#endif
-
 #ifdef CGAL_TRIANGULATION_3_PROFILING
     WallClockTimer t;
 #endif
@@ -356,52 +351,9 @@ public:
       }
 
       tbb::enumerable_thread_specific<Vertex_handle> tls_hint(hint);
-      // CJTODO: lambda functions OK?
       tbb::parallel_for(
         tbb::blocked_range<size_t>( i, num_points ),
-        [&] (const tbb::blocked_range<size_t>& r)
-        {
-          Vertex_handle &hint = tls_hint.local();
-          for( size_t i_point = r.begin() ; i_point != r.end() ; ++i_point)
-          {
-            bool success = false;
-            while(!success)
-            {
-              if (try_lock_vertex(hint) && try_lock_point(points[i_point]))
-              {
-                bool could_lock_zone;
-                Vertex_handle new_hint = insert(
-                  points[i_point], hint, &could_lock_zone);
-
-                this->unlock_all_elements();
-
-                if (could_lock_zone)
-                {
-                  hint = new_hint;
-                  success = true;
-#ifdef CGAL_CONCURRENT_TRIANGULATION_3_PROFILING
-                  ++bcounter;
-#endif
-                }
-#ifdef CGAL_CONCURRENT_TRIANGULATION_3_PROFILING
-                else
-                {
-                  bcounter.increment_branch_1(); // THIS is a late withdrawal!
-                }
-#endif
-              }
-              else
-              {
-                this->unlock_all_elements();
-
-#ifdef CGAL_CONCURRENT_TRIANGULATION_3_PROFILING
-                bcounter.increment_branch_2(); // THIS is an early withdrawal!
-#endif
-              }
-            }
-
-          }
-        }
+        Insert_point<Self>(*this, points, tls_hint)
       );
       
 #ifdef CGAL_CONCURRENT_TRIANGULATION_3_ADD_TEMPORARY_POINTS_ON_FAR_SPHERE
@@ -681,26 +633,10 @@ public:
       std::vector<Vertex_handle> vertices(first, beyond);
       tbb::concurrent_vector<Vertex_handle> vertices_to_remove_sequentially;
 
-      // CJTODO: lambda functions OK?
       tbb::parallel_for(
         tbb::blocked_range<size_t>( 0, vertices.size()),
-        [&] (const tbb::blocked_range<size_t>& r)
-        {
-          for( size_t i_vertex = r.begin() ; i_vertex != r.end() ; ++i_vertex)
-          {
-            Vertex_handle v = vertices[i_vertex];
-            bool could_lock_zone, needs_to_be_done_sequentially;
-            do
-            {
-              needs_to_be_done_sequentially =
-                !remove(v, &could_lock_zone);
-              this->unlock_all_elements();
-            } while (!could_lock_zone);
-
-            if (needs_to_be_done_sequentially)
-              vertices_to_remove_sequentially.push_back(v);
-          }
-        });
+        Remove_point<Self>(*this, vertices, vertices_to_remove_sequentially)
+      );
 
       // Do the rest sequentially
       for ( typename tbb::concurrent_vector<Vertex_handle>::const_iterator
@@ -906,6 +842,130 @@ protected:
           return t->compare_xyz(*p, *q) == SMALLER;
       }
   };
+
+#ifdef CGAL_LINKED_WITH_TBB
+  // Functor for parallel insert(begin, end) function
+  template <typename DT>
+  class Insert_point
+  {
+    typedef typename DT::Point                          Point;
+    typedef typename DT::Vertex_handle                  Vertex_handle;
+
+    DT                                                  & m_dt;
+    const std::vector<Point>                            & m_points;
+    tbb::enumerable_thread_specific<Vertex_handle>      & m_tls_hint;
+
+  public:
+    // Constructor
+    Insert_point(DT & dt,
+                 const std::vector<Point> & points,
+                 tbb::enumerable_thread_specific<Vertex_handle> & tls_hint)
+    : m_dt(dt), m_points(points), m_tls_hint(tls_hint)
+    {}
+
+    // Constructor
+    Insert_point(const Insert_point &ip)
+    : m_dt(ip.m_dt), m_points(ip.m_points), m_tls_hint(ip.m_tls_hint)
+    {}
+
+    // operator()
+    void operator()( const tbb::blocked_range<size_t>& r ) const
+    {
+#ifdef CGAL_CONCURRENT_TRIANGULATION_3_PROFILING
+      static Profile_branch_counter_3 bcounter(
+        "early withdrawals / late withdrawals / successes [Delaunay_tri_3::insert]");
+#endif
+
+      Vertex_handle &hint = m_tls_hint.local();
+      for( std::size_t i_point = r.begin() ; i_point != r.end() ; ++i_point)
+      {
+        bool success = false;
+        while(!success)
+        {
+          if (m_dt.try_lock_vertex(hint) && m_dt.try_lock_point(m_points[i_point]))
+          {
+            bool could_lock_zone;
+            Vertex_handle new_hint = m_dt.insert(
+              m_points[i_point], hint, &could_lock_zone);
+
+            m_dt.unlock_all_elements();
+
+            if (could_lock_zone)
+            {
+              hint = new_hint;
+              success = true;
+#ifdef CGAL_CONCURRENT_TRIANGULATION_3_PROFILING
+              ++bcounter;
+#endif
+            }
+#ifdef CGAL_CONCURRENT_TRIANGULATION_3_PROFILING
+            else
+            {
+              bcounter.increment_branch_1(); // THIS is a late withdrawal!
+            }
+#endif
+          }
+          else
+          {
+            m_dt.unlock_all_elements();
+
+#ifdef CGAL_CONCURRENT_TRIANGULATION_3_PROFILING
+            bcounter.increment_branch_2(); // THIS is an early withdrawal!
+#endif
+          }
+        }
+
+      }
+    }
+  };
+
+  // Functor for parallel remove(begin, end) function
+  template <typename DT>
+  class Remove_point
+  {
+    typedef typename DT::Point                          Point;
+    typedef typename DT::Vertex_handle                  Vertex_handle;
+
+    DT                                    & m_dt;
+    const std::vector<Vertex_handle>      & m_vertices;
+    tbb::concurrent_vector<Vertex_handle> & m_vertices_to_remove_sequentially;
+
+  public:
+    // Constructor
+    Remove_point(DT & dt,
+                 const std::vector<Vertex_handle> & vertices,
+                 tbb::concurrent_vector<Vertex_handle> & 
+                   vertices_to_remove_sequentially)
+    : m_dt(dt), m_vertices(vertices), 
+      m_vertices_to_remove_sequentially(vertices_to_remove_sequentially)
+    {}
+
+    // Constructor
+    Remove_point(const Remove_point &rp)
+    : m_dt(rp.m_dt), m_vertices(rp.m_vertices),
+      m_vertices_to_remove_sequentially(rp.m_vertices_to_remove_sequentially)
+    {}
+
+    // operator()
+    void operator()( const tbb::blocked_range<size_t>& r ) const
+    {
+      for( size_t i_vertex = r.begin() ; i_vertex != r.end() ; ++i_vertex)
+      {
+        Vertex_handle v = m_vertices[i_vertex];
+        bool could_lock_zone, needs_to_be_done_sequentially;
+        do
+        {
+          needs_to_be_done_sequentially =
+            !m_dt.remove(v, &could_lock_zone);
+          m_dt.unlock_all_elements();
+        } while (!could_lock_zone);
+
+        if (needs_to_be_done_sequentially)
+          m_vertices_to_remove_sequentially.push_back(v);
+      }
+    }
+  };
+#endif // CGAL_LINKED_WITH_TBB
 
   template < class DelaunayTriangulation_3 >
   class Vertex_remover;

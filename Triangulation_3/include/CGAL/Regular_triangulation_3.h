@@ -290,57 +290,9 @@ namespace CGAL {
         }
 
         tbb::enumerable_thread_specific<Vertex_handle> tls_hint(hint->vertex(0));
-        // CJTODO: lambda functions OK?
         tbb::parallel_for(
           tbb::blocked_range<size_t>( i, num_points ),
-          [&] (const tbb::blocked_range<size_t>& r)
-          {
-            Vertex_handle &hint = tls_hint.local();
-            for( size_t i_point = r.begin() ; i_point != r.end() ; ++i_point)
-            {
-              bool success = false;
-              const Weighted_point &p = points[i_point];
-              while(!success)
-              {
-                if (try_lock_vertex(hint) && try_lock_point(p))
-                {
-                  bool could_lock_zone;
-                  Locate_type lt;
-                  int li, lj;
-
-                  Cell_handle c = locate (p, lt, li, lj, hint->cell(), &could_lock_zone);
-                  Vertex_handle v;
-                  if (could_lock_zone)
-                    v = insert (p, lt, c, li, lj, &could_lock_zone);
-
-                  if (could_lock_zone)
-                  {
-                    hint = (v == Vertex_handle() ? c->vertex(0) : v);
-                    this->unlock_all_elements();
-                    success = true;
-#ifdef CGAL_CONCURRENT_TRIANGULATION_3_PROFILING
-                    ++bcounter;
-#endif
-                  }
-                  else
-                  {
-                    this->unlock_all_elements();
-#ifdef CGAL_CONCURRENT_TRIANGULATION_3_PROFILING
-                    bcounter.increment_branch_1(); // THIS is a late withdrawal!
-#endif
-                  }
-                }
-                else
-                {
-                  this->unlock_all_elements();
-#ifdef CGAL_CONCURRENT_TRIANGULATION_3_PROFILING
-                  bcounter.increment_branch_2(); // THIS is an early withdrawal!
-#endif
-                }
-              }
-
-            }
-          }
+          Insert_point<Self>(*this, points, tls_hint)
         );
 
 #ifdef CGAL_CONCURRENT_TRIANGULATION_3_ADD_TEMPORARY_POINTS_ON_FAR_SPHERE
@@ -675,26 +627,10 @@ namespace CGAL {
         std::vector<Vertex_handle> vertices(first, beyond);
         tbb::concurrent_vector<Vertex_handle> vertices_to_remove_sequentially;
 
-        // CJTODO: lambda functions OK?
         tbb::parallel_for(
           tbb::blocked_range<size_t>( 0, vertices.size()),
-          [&] (const tbb::blocked_range<size_t>& r)
-          {
-            for( size_t i_vertex = r.begin() ; i_vertex != r.end() ; ++i_vertex)
-            {
-              Vertex_handle v = vertices[i_vertex];
-              bool could_lock_zone, needs_to_be_done_sequentially;
-              do
-              {
-                needs_to_be_done_sequentially =
-                  !remove(v, &could_lock_zone);
-                this->unlock_all_elements();
-              } while (!could_lock_zone);
-
-              if (needs_to_be_done_sequentially)
-                vertices_to_remove_sequentially.push_back(v);
-            }
-          });
+          Remove_point<Self>(*this, vertices, vertices_to_remove_sequentially)
+        );
 
         // Do the rest sequentially
         for ( typename tbb::concurrent_vector<Vertex_handle>::const_iterator
@@ -1188,6 +1124,133 @@ namespace CGAL {
         c->hide_point(p);
       }
     };
+
+  // Functor for parallel insert(begin, end) function
+  template <typename RT>
+  class Insert_point
+  {
+    typedef typename RT::Weighted_point                 Weighted_point;
+    typedef typename RT::Vertex_handle                  Vertex_handle;
+
+    RT                                                  & m_rt;
+    const std::vector<Weighted_point>                   & m_points;
+    tbb::enumerable_thread_specific<Vertex_handle>      & m_tls_hint;
+
+  public:
+    // Constructor
+    Insert_point(RT & rt,
+                 const std::vector<Weighted_point> & points,
+                 tbb::enumerable_thread_specific<Vertex_handle> & tls_hint)
+    : m_rt(rt), m_points(points), m_tls_hint(tls_hint)
+    {}
+
+    // Constructor
+    Insert_point(const Insert_point &ip)
+    : m_rt(ip.m_rt), m_points(ip.m_points), m_tls_hint(ip.m_tls_hint)
+    {}
+
+    // operator()
+    void operator()( const tbb::blocked_range<size_t>& r ) const
+    {
+#ifdef CGAL_CONCURRENT_TRIANGULATION_3_PROFILING
+      static Profile_branch_counter_3 bcounter(
+        "early withdrawals / late withdrawals / successes [Delaunay_tri_3::insert]");
+#endif
+
+      Vertex_handle &hint = m_tls_hint.local();
+      for( size_t i_point = r.begin() ; i_point != r.end() ; ++i_point)
+      {
+        bool success = false;
+        const Weighted_point &p = m_points[i_point];
+        while(!success)
+        {
+          if (m_rt.try_lock_vertex(hint) && m_rt.try_lock_point(p))
+          {
+            bool could_lock_zone;
+            Locate_type lt;
+            int li, lj;
+
+            Cell_handle c = m_rt.locate (p, lt, li, lj, hint->cell(), 
+                                         &could_lock_zone);
+            Vertex_handle v;
+            if (could_lock_zone)
+              v = m_rt.insert (p, lt, c, li, lj, &could_lock_zone);
+
+            if (could_lock_zone)
+            {
+              hint = (v == Vertex_handle() ? c->vertex(0) : v);
+              m_rt.unlock_all_elements();
+              success = true;
+#ifdef CGAL_CONCURRENT_TRIANGULATION_3_PROFILING
+              ++bcounter;
+#endif
+            }
+            else
+            {
+              m_rt.unlock_all_elements();
+#ifdef CGAL_CONCURRENT_TRIANGULATION_3_PROFILING
+              bcounter.increment_branch_1(); // THIS is a late withdrawal!
+#endif
+            }
+          }
+          else
+          {
+            m_rt.unlock_all_elements();
+#ifdef CGAL_CONCURRENT_TRIANGULATION_3_PROFILING
+            bcounter.increment_branch_2(); // THIS is an early withdrawal!
+#endif
+          }
+        }
+      }
+    }
+  };
+
+  // Functor for parallel remove(begin, end) function
+  template <typename RT>
+  class Remove_point
+  {
+    typedef typename RT::Weighted_point                 Weighted_point;
+    typedef typename RT::Vertex_handle                  Vertex_handle;
+
+    RT                                    & m_rt;
+    const std::vector<Vertex_handle>      & m_vertices;
+    tbb::concurrent_vector<Vertex_handle> & m_vertices_to_remove_sequentially;
+
+  public:
+    // Constructor
+    Remove_point(RT & rt,
+                 const std::vector<Vertex_handle> & vertices,
+                 tbb::concurrent_vector<Vertex_handle> & 
+                   vertices_to_remove_sequentially)
+    : m_rt(rt), m_vertices(vertices), 
+      m_vertices_to_remove_sequentially(vertices_to_remove_sequentially)
+    {}
+
+    // Constructor
+    Remove_point(const Remove_point &rp)
+    : m_rt(rp.m_rt), m_vertices(rp.m_vertices),
+      m_vertices_to_remove_sequentially(rp.m_vertices_to_remove_sequentially)
+    {}
+
+    // operator()
+    void operator()( const tbb::blocked_range<size_t>& r ) const
+    {
+      for( size_t i_vertex = r.begin() ; i_vertex != r.end() ; ++i_vertex)
+      {
+        Vertex_handle v = m_vertices[i_vertex];
+        bool could_lock_zone, needs_to_be_done_sequentially;
+        do
+        {
+          needs_to_be_done_sequentially =
+            !m_rt.remove(v, &could_lock_zone);
+          m_rt.unlock_all_elements();
+        } while (!could_lock_zone);
+
+        if (needs_to_be_done_sequentially)
+          m_vertices_to_remove_sequentially.push_back(v);
+      }
+    }
+  };
 #endif // CGAL_LINKED_WITH_TBB
 
     Hidden_point_visitor<Concurrency_tag> &get_hidden_point_visitor()
