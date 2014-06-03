@@ -106,7 +106,7 @@ public:
   typedef boost::read_write_property_map_tag category;
 #if !defined(CGAL_BGL_TESTSUITE)
   typedef typename OpenMesh::PolyMesh_ArrayKernelT<K>::Point             value_type;
-  typedef typename OpenMesh::PolyMesh_ArrayKernelT<K>::Point             reference;
+  typedef typename const OpenMesh::PolyMesh_ArrayKernelT<K>::Point&      reference;
 #else
   typedef typename CGAL::Simple_cartesian<double>::Point_3               value_type;
   typedef typename CGAL::Simple_cartesian<double>::Point_3               reference;
@@ -327,7 +327,7 @@ get(boost::halfedge_is_border_t, const OpenMesh::PolyMesh_ArrayKernelT<K>& g)
   CGAL_OM_INTRINSIC_PROPERTY(int, boost::halfedge_index_t, halfedge_descriptor)
   CGAL_OM_INTRINSIC_PROPERTY(std::size_t, boost::face_index_t, face_descriptor)
   //  CGAL_OM_INTRINSIC_PROPERTY(std::size_t, boost::halfedge_index_t, face_descriptor)
-  CGAL_OM_INTRINSIC_PROPERTY(typename OpenMesh::PolyMesh_ArrayKernelT<K>::Point, boost::vertex_point_t, vertex_descriptor)
+  CGAL_OM_INTRINSIC_PROPERTY(typename OpenMesh::PolyMesh_ArrayKernelT<K>::Point const&, boost::vertex_point_t, vertex_descriptor)
   CGAL_OM_INTRINSIC_PROPERTY(bool, boost::vertex_is_border_t, vertex_descriptor)
   CGAL_OM_INTRINSIC_PROPERTY(bool, boost::halfedge_is_border_t, halfedge_descriptor)
 
