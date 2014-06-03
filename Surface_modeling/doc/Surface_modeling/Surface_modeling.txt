@@ -131,6 +131,30 @@ The original positions can be updated by calling `Deform_mesh::overwrite_initial
 which will also require a new preprocessing step).
 This behavior is illustrated in the video \ref Surface_Modeling_Demo_Tutorial.
 
+\subsection Surface_modeling_arap_or_spokes_and_rims As-Rigid-As-Possible and Spokes-and-Rims Deformation Techniques
+Two deformation techniques are provided by this package. This section summarizes from the user point of view what is
+explained in details in the section \ref Surface_Modeling_Overview.
+
+The As-Rigid-As-Possible deformation technique requires the use of a positive weighting scheme to garantee
+the correct minimization of the energy. When using the default cotangent weighting scheme, this means that
+the input surface mesh must be <em>clean</em>. That is, that for all edges in the surface mesh
+the sum of the angles opposite to the edge in the incident triangles is less that \f$ \pi \f$.
+If this is not the case and the targeted application allows the modification of the surface mesh connectivity,
+subdividing the problematic edges will solve the issue. See \cgalFigureRef{Cotangent_bisect_fig}.
+
+\cgalFigureBegin{Cotangent_bisect_fig, cotangent_bisect.png}
+Cotangent weight of edges. (Left) The sum of the opposite angles to the edge \f$ e \f$, \f$ \alpha + \beta \f$
+is greater than \f$ \pi \f$. The cotangent weight of \f$ e \f$ is negative.
+(Right) The edge \f$ e \f$ was split so that the sum of the angles opposite
+to each sub-edge \f$ e_1 \f$ and \f$ e_2 \f$ is less than \f$ \pi \f$. The corresponding
+cotangent weights are positive.
+\cgalFigureEnd
+
+If the mesh connectivity must be preserved, the Spokes and Rims deformation technique
+is guaranteed to always correctly minimize the energy even if the weights are negative.
+However, this technique is more dependent on the discretization of the deformed surface
+(See \cgalFigureRef{Arap_spokes_comparison}).
+
 \subsection Surface_modeling_examples Examples
 
 \subsubsection Example_1 Using the Whole Surface Mesh as Region-of-Interest
@@ -169,7 +193,7 @@ Using a custom weighting scheme for edges is also possible if one provides a mod
 In this example, the weight of each edge is pre-computed and an internal map is used for storing and accessing them.
 
 
-Another example is given on the manual page of the concept `::SurfaceModelingWeights`.
+Another example is given in the manual page of the concept `::SurfaceModelingWeights`.
 
 \cgalExample{Surface_modeling/custom_weight_for_edges_example.cpp}
 
@@ -196,14 +220,14 @@ A plugin for the polyhedron demo is available to test the algorithm. The followi
 @endhtmlonly
 
 
-\section Surface_Modeling_Overview Energies and Weighting Scheme
+\section Surface_Modeling_Overview Deformations Techniques, Energies and Weighting Scheme
 This section gives the theorical background to make the user manual self-contained
 and at the same time explains where the weights comes in. This allows advanced users
 of this package to tune the weighting scheme by developing a model of the concept
 `SurfaceModelingWeights` used in the class `Deform_mesh`.
-This section is not a tutorial on how to design your own weighting scheme.
 
-\subsection Surface_Modeling_Overview_Laplacian Laplacian Representation
+\subsection Surface_Modeling_Overview_Preliminaries Preliminaries
+\subsubsection Surface_Modeling_Overview_Laplacian Laplacian Representation
 The <em>Laplacian representation</em> (referred to as <em>Laplace coordinates</em> in \cgalCite{botsch2010polygon})
 of a vertex in a surface mesh is one way to <em>encode</em> the local neighborhood of a vertex in the surface mesh.
 In this representation, a vertex \f$ \mathbf{v}_i \f$ is associated a 3D vector defined as:
@@ -250,9 +274,9 @@ where:
 - \f$\mathbf{V}\f$ is a \f$n \times 3\f$ matrix made of the %Cartesian coordinates of the vertices.
 
 
-\subsection Surface_Modeling_Overview_Laplacian_Deformation Naive Laplacian Deformation
+\subsubsection Surface_Modeling_Overview_Laplacian_Deformation Laplacian Deformation
 
-This sub-section is an introduction to provide the background for the next two sub-sections describing the algorithms implemented
+This section is an introduction to provide the background for the next two sub-sections describing the algorithms implemented
 in this package. A system relying only on the approach described below results in non-smooth transitions in the neighborhood of
 the control vertices. For a survey on different Laplacian-based editing techniques we refer to
 \cgalCite{Botsch2008OnLinearVariational}.
