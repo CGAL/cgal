@@ -79,10 +79,9 @@ namespace Surface_mesh_simplification
   template<class M,class T,class SP, class VIM,class EIM,class EBM,class ECTM, class CF,class PF,class V>
   int EdgeCollapse<M,T,SP,VIM,EIM,EBM,ECTM,CF,PF,V>::run()
 {
-  CGAL_SURF_SIMPL_TEST_assertion( mSurface.is_valid() && mSurface.is_pure_triangle() ) ;
+  //CGAL_SURF_SIMPL_TEST_assertion( mSurface.is_valid() && mSurface.is_pure_triangle() ) ;
 
   Visitor.OnStarted(mSurface);
-   
   // First collect all candidate edges in a PQ
   Collect(); 
   
@@ -235,11 +234,11 @@ namespace Surface_mesh_simplification
     Cost_type lCost = get_data(*lEdge).cost();
     
     Visitor.OnSelected(lProfile,lCost,mInitialEdgeCount,mCurrentEdgeCount);
-
     if ( lCost ) 
     {
       if ( Should_stop(*lCost,lProfile,mInitialEdgeCount,mCurrentEdgeCount) )
       {
+
         Visitor.OnStopConditionReached(lProfile);
           
         CGAL_ECMS_TRACE(0,"Stop condition reached with InitialEdgeCount=" << mInitialEdgeCount
@@ -441,7 +440,9 @@ bool EdgeCollapse<M,T,SP,VIM,EIM,EBM,ECTM,CF,PF,V>::Is_collapse_topologically_va
   {
     /// ensure two constrained edges cannot get merged
     if ( is_edge_adjacent_to_a_constrained_edge(
-          aProfile, Edge_is_constrained_map) ) return false ;
+                                                aProfile, Edge_is_constrained_map) ){
+      return false ;
+    }
 
     if ( aProfile.is_v0_v1_a_border() )
     {
@@ -480,7 +481,6 @@ bool EdgeCollapse<M,T,SP,VIM,EIM,EBM,ECTM,CF,PF,V>::Is_collapse_topologically_va
       }
     }
   }
-  
   return rR ;
 }
 
@@ -598,7 +598,6 @@ bool EdgeCollapse<M,T,SP,VIM,EIM,EBM,ECTM,CF,PF,V>::are_shared_triangles_valid( 
   {
     FT l0123 = Traits().compute_scalar_product_3_object()(n012, n023) ;
     CGAL_ECMS_TRACE(4,"\n      l0123=" << n_to_string(l0123) );
-    
     if ( CGAL_NTS is_positive(l0123) )
     {
       rR = true ;
@@ -694,7 +693,7 @@ bool EdgeCollapse<M,T,SP,VIM,EIM,EBM,ECTM,CF,PF,V>::Is_collapse_geometrically_va
       vertex_descriptor k1 = *pv ;
       vertex_descriptor k2 = * l ;
       vertex_descriptor k3 = *nx ;
-      
+
       CGAL_ECMS_TRACE(4,"  Screening link vertices k1=V" << get(Vertex_index_map,k1) << " k2=V" << get(Vertex_index_map,k2) << " k3=V" << get(Vertex_index_map,k3) ) ;
       
       halfedge_descriptor e12 = find_connection(k1,k2);
@@ -765,11 +764,11 @@ void EdgeCollapse<M,T,SP,VIM,EIM,EBM,ECTM,CF,PF,V>::Collapse( Profile const& aPr
   Visitor.OnCollapsing(aProfile,aPlacement);
 
   -- mCurrentEdgeCount ;
-      
+  /*
   CGAL_SURF_SIMPL_TEST_assertion_code( size_type lResultingVertexCount = mSurface.size_of_vertices() ;
                                        size_type lResultingEdgeCount   = mSurface.size_of_halfedges() / 2 ;
                                      ) ; 
-
+  */
   // If the top/bottom facets exists, they are removed and the edges v0vt and Q-B along with them.
   // In that case their corresponding pairs must be pop off the queue
   
@@ -791,7 +790,7 @@ void EdgeCollapse<M,T,SP,VIM,EIM,EBM,ECTM,CF,PF,V>::Collapse( Profile const& aPr
     }
 
     -- mCurrentEdgeCount ;
-    CGAL_SURF_SIMPL_TEST_assertion_code( -- lResultingEdgeCount ) ; 
+    //CGAL_SURF_SIMPL_TEST_assertion_code( -- lResultingEdgeCount ) ; 
   }
   
   if ( aProfile.right_face_exists() )
@@ -811,12 +810,11 @@ void EdgeCollapse<M,T,SP,VIM,EIM,EBM,ECTM,CF,PF,V>::Collapse( Profile const& aPr
       remove_from_PQ(lVRV1,lData) ;
     }
     -- mCurrentEdgeCount ;
-    CGAL_SURF_SIMPL_TEST_assertion_code( -- lResultingEdgeCount ) ; 
+    //CGAL_SURF_SIMPL_TEST_assertion_code( -- lResultingEdgeCount ) ; 
   }
 
   CGAL_ECMS_TRACE(1,"Removing:\n  v0v1: E" << get(Edge_index_map,aProfile.v0_v1()) << "(V" << get(Vertex_index_map,aProfile.v0()) << "->V" << get(Vertex_index_map,aProfile.v1()) << ")" );
   
-    
   // Perform the actuall collapse.
   // This is an external function.
   // It's REQUIRED to remove ONLY 1 vertex (P or Q) and edges PQ,PT and QB
@@ -825,15 +823,15 @@ void EdgeCollapse<M,T,SP,VIM,EIM,EBM,ECTM,CF,PF,V>::Collapse( Profile const& aPr
   // All directed edges incident to vertex removed are relink to the vertex kept.
   rResult = halfedge_collapse_bk_compatibility(aProfile.v0_v1(), Edge_is_constrained_map);
 
-  CGAL_SURF_SIMPL_TEST_assertion_code( -- lResultingEdgeCount ) ; 
+  // CGAL_SURF_SIMPL_TEST_assertion_code( -- lResultingEdgeCount ) ; 
 
-  CGAL_SURF_SIMPL_TEST_assertion_code( -- lResultingVertexCount ) ; 
+  // CGAL_SURF_SIMPL_TEST_assertion_code( -- lResultingVertexCount ) ; 
 
-  CGAL_SURF_SIMPL_TEST_assertion( lResultingEdgeCount * 2 == mSurface.size_of_halfedges() ) ;
+  // CGAL_SURF_SIMPL_TEST_assertion( lResultingEdgeCount * 2 == mSurface.size_of_halfedges() ) ;
 
-  CGAL_SURF_SIMPL_TEST_assertion( lResultingVertexCount == mSurface.size_of_vertices() ) ;
+  // CGAL_SURF_SIMPL_TEST_assertion( lResultingVertexCount == mSurface.size_of_vertices() ) ;
 
-  CGAL_SURF_SIMPL_TEST_assertion( mSurface.is_valid() && mSurface.is_pure_triangle() ) ;
+  // CGAL_SURF_SIMPL_TEST_assertion( mSurface.is_valid() && mSurface.is_pure_triangle() ) ;
   
   CGAL_ECMS_TRACE(1,"V" << get(Vertex_index_map,rResult) << " kept." ) ;
                  
