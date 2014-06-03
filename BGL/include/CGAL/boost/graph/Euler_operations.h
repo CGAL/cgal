@@ -932,14 +932,13 @@ collapse_edge(typename boost::graph_traits<Graph>::edge_descriptor v0v1,
               Graph& g
               , EdgeIsConstrainedMap Edge_is_constrained_map)
 {
-  CGAL_assertion( !get(Edge_is_constrained_map,pq) );
-
   typedef boost::graph_traits< Graph > Traits;
   typedef typename Traits::vertex_descriptor          vertex_descriptor;
   typedef typename Traits::edge_descriptor            edge_descriptor;
   typedef typename Traits::halfedge_descriptor            halfedge_descriptor;
 
   halfedge_descriptor pq = halfedge(v0v1,g);
+  CGAL_assertion( !get(Edge_is_constrained_map,pq) );
 
   halfedge_descriptor qp = opposite(pq,g);
   halfedge_descriptor pt = opposite(prev(pq,g),g);
