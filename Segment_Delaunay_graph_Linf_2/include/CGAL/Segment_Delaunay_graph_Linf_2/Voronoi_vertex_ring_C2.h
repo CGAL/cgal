@@ -732,7 +732,7 @@ private:
     const RT plen = CGAL::abs(plineval -  pothercoord);
     CGAL_SDG_DEBUG(std::cout
         << "debug: vring plen=" << plen << std::endl;);
-    if (pqdist > plen) {
+    if (CGAL::compare(pqdist, plen) != SMALLER) {
       // here, appropriate projection of p on supporting line of segment r
       // is shorter than Linf p, q distance
       const Point_2 corner = pos_slope?
@@ -749,7 +749,7 @@ private:
     const RT qlen = CGAL::abs(qlineval -  qothercoord);
     CGAL_SDG_DEBUG(std::cout
         << "debug: vring qlen=" << qlen << std::endl;);
-    if (pqdist > qlen) {
+    if (CGAL::compare(pqdist, qlen) != SMALLER) {
       // here, appropriate projection of q on supporting line of segment r
       // is shorter than Linf p, q distance
       const Point_2 corner = pos_slope?
@@ -760,7 +760,7 @@ private:
       return;
     }
 
-    CGAL_assertion((pqdist <= plen) and (pqdist <= qlen));
+    CGAL_assertion((pqdist < plen) and (pqdist < qlen));
 
     // here, compute corner opposite of corner on line of segment r
     const Point_2 opposite_corner = pos_slope ?
