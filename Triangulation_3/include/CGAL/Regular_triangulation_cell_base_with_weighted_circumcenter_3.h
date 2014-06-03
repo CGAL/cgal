@@ -31,7 +31,7 @@
 
 namespace CGAL {
 
-template < typename GT, typename Cb = Triangulation_cell_base_3<GT> >
+template < typename GT, typename Cb = Regular_triangulation_cell_base_3<GT> >
 class Regular_triangulation_cell_base_with_weighted_circumcenter_3
   : public Cb
 {
@@ -78,8 +78,17 @@ public:
   operator=
     (const Regular_triangulation_cell_base_with_weighted_circumcenter_3 &c)
   {
-      RT_cell_base_with_weighted_circumcenter_3 tmp=c;
-      std::swap(tmp, *this);
+      if (this != &c)
+      {
+        if (weighted_circumcenter_ != NULL)
+        {
+            delete weighted_circumcenter_;
+            weighted_circumcenter_ = NULL;
+        }
+        if (c.weighted_circumcenter_ != NULL)
+            weighted_circumcenter_ = new Bare_point(*(c.weighted_circumcenter_));
+        Cb::operator=(c);
+      }
       return *this;
   }
 

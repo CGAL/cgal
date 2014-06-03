@@ -18,7 +18,7 @@ circumcenter.
 \tparam Cb is a cell base class from which 
 `Regular_triangulation_cell_base_with_weighted_circumcenter_3` derives. Cb should
 be a model of `RegularTriangulationCellBase_3`.
-It has the default value `Triangulation_cell_base_3<RegularTriangulationTraits_3>`. 
+It has the default value `Regular_triangulation_cell_base_3<RegularTriangulationTraits_3>`.
 
 \cgalModels `RegularTriangulationCellBase_3`
 
