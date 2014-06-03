@@ -36,9 +36,11 @@ LindstromTurk_cost<ECM>( FT const& factor = FT(0.5) );
 /*!
 Returns the cost of collapsing the edge (represented by its profile) considering 
 the new `placement` computed for it. 
-*/ 
-result_type operator()( Profile const& profile 
-, boost::optional<Point> const& placement ) const; 
+*/   
+template <typename Profile>
+optional<typename Profile::FT>
+operator()( Profile const& profile 
+            , boost::optional<typename Profile::Point> const& placement ) const; 
 
 /// @}
 

@@ -27,26 +27,22 @@ namespace CGAL {
 namespace Surface_mesh_simplification  
 {
 
-  template<class ECM_, class Traits>
+  template<class ECM_>
 class LindstromTurk_placement
 {
 public:
     
   typedef ECM_ ECM ;
   
-  typedef Edge_profile<ECM> Profile ;
-  
-  typedef typename Traits::Point_3 Point;
-  typedef typename Traits::FT FT ;
-  typedef optional<Point> result_type ;
-
 public:
 
   LindstromTurk_placement( LindstromTurk_params const& aParams = LindstromTurk_params() ) : mParams(aParams) {}
      
-  result_type operator()( Profile const& aProfile) const
+  template <typename Profile> 
+  optional<typename Profile::Point>
+  operator()( Profile const& aProfile) const
   {
-    return LindstromTurkCore<ECM>(mParams,aProfile).compute_placement() ;
+    return LindstromTurkCore<ECM,Profile>(mParams,aProfile).compute_placement() ;
   }
   
 private:

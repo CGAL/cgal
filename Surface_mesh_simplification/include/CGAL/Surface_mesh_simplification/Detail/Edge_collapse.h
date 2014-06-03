@@ -32,9 +32,9 @@ namespace Surface_mesh_simplification
 // Implementation of the vertex-pair collapse triangulated surface mesh simplification algorithm
 //
 template<class ECM_
-        ,class Traits_
         ,class ShouldStop_
         ,class VertexIndexMap_
+        ,class VertexPointMap_
         ,class EdgeIndexMap_
         ,class EdgeIsBorderMap_
         ,class EdgeIsConstrainedMap_
@@ -47,9 +47,9 @@ class EdgeCollapse
 public:
 
   typedef ECM_              ECM ;
-  typedef Traits_           Traits;
   typedef ShouldStop_       ShouldStop ;
   typedef VertexIndexMap_   VertexIndexMap ;
+  typedef VertexPointMap_   VertexPointMap ;
   typedef EdgeIndexMap_     EdgeIndexMap ;
   typedef EdgeIsBorderMap_  EdgeIsBorderMap ;
   typedef EdgeIsConstrainedMap_ EdgeIsConstrainedMap;
@@ -59,7 +59,7 @@ public:
   
   typedef EdgeCollapse Self ;
   
-  typedef Edge_profile<ECM> Profile ;
+  typedef Edge_profile<ECM,VertexPointMap> Profile ;
   
   typedef boost::graph_traits  <ECM>       GraphTraits ;
   typedef boost::graph_traits  <ECM const> ConstGraphTraits ;
@@ -74,16 +74,17 @@ public:
   typedef typename GraphTraits::edges_size_type        size_type ;
   
   typedef typename GraphTraits::edge_iterator edge_iterator ;
-  typedef typename boost::property_map<ECM, CGAL::vertex_point_t>::type Vertex_point_pmap;
+  typedef VertexPointMap Vertex_point_pmap;
   typedef typename boost::property_traits<Vertex_point_pmap>::value_type Point;
-
-  typedef typename GetCost     ::result_type Cost_type ;
-  typedef typename GetPlacement::result_type Placement_type ;
+  typedef typename Kernel_traits<Point>::Kernel Traits;
   
   typedef typename Traits::Equal_3 Equal_3 ;
   
   typedef typename Traits::Vector_3 Vector ;
   typedef typename Traits::FT       FT ;
+
+  typedef optional<FT> Cost_type ;
+  typedef optional<Point> Placement_type ;
 
   struct Compare_id
   {
@@ -169,8 +170,8 @@ public:
 
   EdgeCollapse( ECM&                        aSurface
               , ShouldStop           const& aShouldStop
-              , Traits               const& aGeomTraits
               , VertexIndexMap       const& aVertex_index_map
+              , VertexPointMap       const& aVertex_point_map
               , EdgeIndexMap         const& aEdge_index_map
               , EdgeIsBorderMap      const& aEdge_is_border_map
               , EdgeIsConstrainedMap const& aEdge_is_constrained_map
@@ -194,7 +195,7 @@ private:
   
   Profile create_profile ( halfedge_descriptor const& aEdge )
   { 
-    return Profile(aEdge,mSurface,Vertex_index_map,Edge_index_map,Edge_is_border_map, m_has_border);
+    return Profile(aEdge,mSurface,Vertex_index_map,Vertex_point_map,Edge_index_map,Edge_is_border_map, m_has_border);
   }  
   
   size_type get_halfedge_id   ( halfedge_descriptor const& aEdge ) const { return Edge_index_map[aEdge]; }
@@ -238,7 +239,7 @@ private:
   
   Point const& get_point ( vertex_descriptor const& aV ) const
   {
-    return get(vertex_point,mSurface,aV);
+    return get(Vertex_point_map,aV);
   }
   
   boost::tuple<vertex_descriptor,vertex_descriptor> get_vertices( halfedge_descriptor const& aEdge ) const
@@ -377,6 +378,7 @@ private:
   
   ShouldStop           const& Should_stop ;
   VertexIndexMap       const& Vertex_index_map ;
+  VertexPointMap       const& Vertex_point_map ;
   EdgeIndexMap         const& Edge_index_map ;
   EdgeIsBorderMap      const& Edge_is_border_map;
   EdgeIsConstrainedMap const& Edge_is_constrained_map;

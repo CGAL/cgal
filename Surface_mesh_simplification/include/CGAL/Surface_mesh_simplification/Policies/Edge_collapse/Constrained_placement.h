@@ -64,8 +64,7 @@ public:
       eb != ee ; ++ eb )
     {
       if( get(Edge_is_constrained_map, *eb) )
-        return get(vertex_point,
-                   aProfile.surface_mesh(),
+        return get(aProfile.vertex_point_map(),
                    aProfile.v1());
     }
 

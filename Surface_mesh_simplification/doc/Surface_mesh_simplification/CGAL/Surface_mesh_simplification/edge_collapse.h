@@ -48,19 +48,31 @@ in the range `[0,num_vertices(surface_mesh))`.
 
 `VertexIndexMap` must be a model of
 `ReadablePropertyMap` 
-whose `key_type` is 
+with key type 
 `boost::graph_traits<EdgeCollapsableSurfaceMesh const>::%vertex_descriptor` 
-and whose `value_type` is 
-`boost::graph_traits<EdgeCollapsableSurfaceMesh>::%size_type`, 
+and with value type `boost::graph_traits<EdgeCollapsableSurfaceMesh>::%size_type`, 
 
-<B>%Default</B>: the property map obtained by calling `get(vertex_index,surface_mesh)`, 
+<B>%Default</B>: the property map obtained by calling `get(CGAL::vertex_index,surface_mesh)`, 
 which requires the surface mesh vertices to have an `id()` member properly initialized to the 
 required value. 
 
 If the vertices don't have such an `id()`, you must pass some property map explicitly. 
 An external property map can be easily obtained by calling 
-`get(vertex_external_index,surface_mesh)`. This constructs on the fly, and returns, 
+`get(CGAL::vertex_external_index,surface_mesh)`. This constructs on the fly, and returns, 
 a property map which non-intrusively associates a proper id with each vertex. 
+
+\cgalHeading{vertex_point_map(VertexPointMap vpm)}
+
+Maps each vertex in the surface mesh into a 3D \cgal point. 
+
+`VertexPointMap` must be a model of
+`ReadWritePropertyMap` 
+with key type
+`boost::graph_traits<EdgeCollapsableSurfaceMesh const>::%vertex_descriptor` 
+and with value type is any model of `Kernel::Point_3`.
+
+<B>%Default</B>: the property map obtained by calling `get(CGAL::vertex_point,surface_mesh)`, 
+ 
 
 \cgalHeading{halfedge_index_map(HalfedgeIndexMap eim)}
 
@@ -68,18 +80,18 @@ Maps each halfedge in the surface mesh into an unsigned integer number
 in the range `[0,num_halfedges(surface_mesh))`. 
 
 `HalfedgeIndexMap` must be a model of
-`ReadablePropertyMap` whose `key_type` is 
+`ReadablePropertyMap` with key type
 `boost::graph_traits<EdgeCollapsableSurfaceMesh const>::%halfedge_descriptor` 
-with value type 
+and with value type 
 `boost::graph_traits<EdgeCollapsableSurfaceMesh>::%size_type` 
 
-<B>%Default</B>: the property map obtained by calling `get(halfedge_index,surface_mesh)`, 
+<B>%Default</B>: the property map obtained by calling `get(CGAL::halfedge_index,surface_mesh)`, 
 which requires the surface mesh edges to have an `id()` member properly initialized to the 
 require value. 
 
 If the edges don't have such an `id()`, you must pass some property map explicitly. 
 An external property map can be easily obtained by calling 
-`get(halfedge_external_index,surface_mesh)`. This constructs on the fly, and returns, 
+`get(CGAL::halfedge_external_index,surface_mesh)`. This constructs on the fly, and returns, 
 a property map which non-intrusively associates a proper id with each edge. 
 
 \cgalHeading{edge_is_border_map(EdgeIsBorderMap ebm)}
@@ -88,20 +100,20 @@ Maps each <I>directed</I> edge in the surface mesh into a Boolean value
 which indicates if the edge belongs to the boundary of the surface mesh 
 (facing the outside). 
 `EdgeIsBorderMap` must be a model
-`ReadablePropertyMap` whose `key_type` is 
+`ReadablePropertyMap` with key type
 `boost::graph_traits<EdgeCollapsableSurfaceMesh const>::%edge_descriptor` 
-and whose `value_type` is `bool`. 
+and with value type is `bool`. 
 
-<B>%Default</B>: the property map obtained by calling `get(edge_is_border,surface_mesh)`. 
+<B>%Default</B>: the property map obtained by calling `get(CGAL::edge_is_border,surface_mesh)`. 
 
 \cgalHeading{edge_is_constrained_map(EdgeIsConstrainedMap ecm)}
 
 Maps each edge in the surface mesh into a Boolean value
 which indicates if the edge is constrained.
 `EdgeIsConstrainedMap` must be a model
-`ReadablePropertyMap` whose `key_type` is
+`ReadablePropertyMap` with key type
 `boost::graph_traits<EdgeCollapsableSurfaceMesh const>::%edge_descriptor`
-with value type `bool`.
+and with value type `bool`.
 
 \attention If this parameter is provided, `surface_mesh` must be a model of the
 `EdgeCollapsableSurfaceMeshWithConstraints` concept.

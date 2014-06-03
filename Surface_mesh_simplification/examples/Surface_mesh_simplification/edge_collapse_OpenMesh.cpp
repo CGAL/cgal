@@ -1,3 +1,4 @@
+#define CGAL_BGL_TESTSUITE
 #include <iostream>
 #include <fstream>
 
@@ -17,107 +18,41 @@
 
 typedef OpenMesh::PolyMesh_ArrayKernelT</* MyTraits*/> Surface_mesh;
 
-typedef CGAL::Simple_cartesian<double> Kern;
-typedef Kern::Point_3 Point_3;
-typedef Kern::Vector_3 Vector_3;
 
-struct OM_Squared_distance_3 {
-  double operator()(const Surface_mesh::Point& p, const Surface_mesh::Point& q) const
-  {
-    return CGAL::squared_distance(Point_3(p[0],p[1],p[2]),Point_3(q[0],q[1],q[2]));
-  }
-};
 
-struct OM_Midpoint_3 {
-  Surface_mesh::Point operator()(const Surface_mesh::Point& p, const Surface_mesh::Point& q) const
-  {
-    Point_3 m = CGAL::midpoint(Point_3(p[0],p[1],p[2]),Point_3(q[0],q[1],q[2]));
-    std::cerr << m << std::endl;
-    return Surface_mesh::Point(m.x(), m.y(), m.z());
-  }
-};
-
-struct OM_Construct_cross_product_vector_3 {
-  Surface_mesh::Point operator()(const Surface_mesh::Point& p, const Surface_mesh::Point& q) const
-  {
-    Vector_3 v = CGAL::cross_product(Point_3(p[0],p[1],p[2]) - CGAL::ORIGIN,Point_3(q[0],q[1],q[2])-CGAL::ORIGIN);
-    return Surface_mesh::Point(v.x(), v.y(), v.z());
-  }
-};
-
-struct OM_Compute_scalar_product_3 {
-  double operator()(const Surface_mesh::Point& p, const Surface_mesh::Point& q) const
-  {
-    return (Point_3(p[0],p[1],p[2]) - CGAL::ORIGIN) * (Point_3(q[0],q[1],q[2])-CGAL::ORIGIN);
-  }
-};
-
-struct OM_Construct_vector_3 {
-  Surface_mesh::Point operator()(const Surface_mesh::Point& p, const Surface_mesh::Point& q) const
-  {
-    return Surface_mesh::Point(p[0]-q[0],p[1]-q[1],p[2]-q[2]);
-  }
-};
-
-struct OM_Equal_3 {
-  bool operator()(const Surface_mesh::Point& p, const Surface_mesh::Point& q) const
-  {
-    return p[0]==q[0] && p[1]==q[1] && p[2]==q[2];
-  }
-};
-
-class OM_kernel {
-  
+class OM_vertex_CGAL_point_pmap
+{
 public:
-  typedef Surface_mesh::Point Point_3;
-  typedef Surface_mesh::Point Vector_3;
-  typedef double  FT;
+  typedef boost::read_write_property_map_tag category;
 
-  typedef OM_Squared_distance_3 Squared_distance_3;
-  typedef OM_Midpoint_3 Midpoint_3;
-  typedef OM_Construct_vector_3 Construct_vector_3;
-  typedef OM_Construct_cross_product_vector_3 Construct_cross_product_vector_3;
-  typedef OM_Compute_scalar_product_3 Compute_scalar_product_3;
-  typedef OM_Equal_3 Equal_3;
+  typedef CGAL::Simple_cartesian<double>::Point_3               value_type;
+  typedef CGAL::Simple_cartesian<double>::Point_3               reference;
 
-  Squared_distance_3
-  compute_squared_distance_3_object() const
+  typedef boost::graph_traits<Surface_mesh>::vertex_descriptor key_type;
+
+  OM_vertex_CGAL_point_pmap(const Surface_mesh& sm)
+    : sm_(sm)
+    {}
+    
+  OM_vertex_CGAL_point_pmap(const OM_vertex_CGAL_point_pmap& pm)
+    : sm_(pm.sm_)
+    {}
+
+  inline friend reference get(const OM_vertex_CGAL_point_pmap& pm, key_type v)
   {
-    return Squared_distance_3();
+    Surface_mesh::Point const& omp = pm.sm_.point(v);
+    return value_type(omp[0], omp[1], omp[2]);
   }
 
-  Midpoint_3
-  construct_midpoint_3_object() const
+  inline friend void put(const OM_vertex_CGAL_point_pmap& pm, key_type v, const value_type& p)
   {
-    return Midpoint_3();
+    const_cast<Surface_mesh&>(pm.sm_).set_point
+      (v, Surface_mesh::Point(p[0], p[1], p[2]));
   }
 
-  Construct_vector_3
-  construct_vector_3_object() const
-  {
-    return Construct_vector_3();
-  }
-
-  Construct_cross_product_vector_3
-  construct_cross_product_vector_3_object() const
-  {
-    return Construct_cross_product_vector_3();
-  }
-
-
-  Compute_scalar_product_3
-  compute_scalar_product_3_object() const
-  {
-    return Compute_scalar_product_3();
-  }
-
-Equal_3
-  equal_3_object() const
-  {
-    return Equal_3();
-  }
+  private:
+  const Surface_mesh& sm_;
 };
-
 
 
 
@@ -132,7 +67,7 @@ int main( int argc, char** argv )
   // This is a stop predicate (defines when the algorithm terminates).
   // In this example, the simplification stops when the number of undirected edges
   // left in the surface mesh drops below the specified number (1000)
-  SMS::Count_stop_predicate<Surface_mesh> stop(100);
+  SMS::Count_stop_predicate<Surface_mesh> stop(1000);
      
   // This the actual call to the simplification algorithm.
   // The surface mesh and stop conditions are mandatory arguments.
@@ -140,11 +75,11 @@ int main( int argc, char** argv )
   int r = SMS::edge_collapse
             (surface_mesh
             ,stop
-             , OM_kernel()
-                          , CGAL::get_cost (SMS::Edge_length_cost <Surface_mesh, OM_kernel>())
-                          .get_placement(SMS::Midpoint_placement<Surface_mesh,OM_kernel>())
+             ,CGAL::halfedge_index_map  (get(CGAL::halfedge_index  ,surface_mesh)) 
+             .vertex_point_map(OM_vertex_CGAL_point_pmap(surface_mesh)) 
              );
   
+  surface_mesh.garbage_collection();
   std::cout << "\nFinished...\n" << r << " edges removed.\n" 
             << num_edges(surface_mesh) << " final edges.\n" ;
         

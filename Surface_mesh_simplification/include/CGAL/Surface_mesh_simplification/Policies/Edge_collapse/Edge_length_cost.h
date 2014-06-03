@@ -30,26 +30,29 @@ namespace Surface_mesh_simplification
 //
 // Edge-length cost: the squared length of the collapsing edge
 //
-  template<class ECM_, class Traits = typename ECM_::Traits>
+  template<class ECM>
 class Edge_length_cost
 {
-  
 public:
-    
+  /*  
   typedef ECM_ ECM ;
   
   typedef Edge_profile<ECM> Profile ;
-  typedef typename Traits::Point_3 Point;
-  typedef typename Traits::FT FT ;
+  typedef typename Profile::Point Point;  
+  typedef typename Kernel_traits<Point>::Kernel Kernel ;
+  typedef typename Kernel::FT FT ;
   typedef optional<FT> result_type ;
-  
+  */
 public:
 
-  Edge_length_cost() {}
-  
-  result_type operator()( Profile const& aProfile, optional<Point> const& /*aPlacement*/ ) const
+  Edge_length_cost()
+  {}
+
+  template <typename Profile, typename T> 
+  optional<typename Profile::FT> operator()( Profile const& aProfile, T const& /*aPlacement*/ ) const
   {
-    return result_type(Traits().compute_squared_distance_3_object()(aProfile.p0(),aProfile.p1()));
+    typedef optional<typename Profile::FT> result_type;
+    return result_type(squared_distance(aProfile.p0(),aProfile.p1()));
   }
   
 };

@@ -35,7 +35,9 @@ Returns the <I>placement</I> (vertex position) as the midpoint between
 the points of the source and target vertices 
 (`profile.p0()` and `profile.p1()`) 
 */ 
-result_type operator()( Profile const& edge_profile ) const; 
+template <typename Profile>
+optional<typename Profile::Point> 
+operator()( Profile const& profile ) const; 
 
 /// @}
 

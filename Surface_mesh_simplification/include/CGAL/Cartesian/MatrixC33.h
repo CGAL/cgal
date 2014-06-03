@@ -35,7 +35,7 @@ public:
   
   typedef R_ R ;
   
-  typedef typename R::RT       RT ;
+  typedef typename R::FT       RT ;
   typedef typename R::Vector_3 Vector_3;
 
   MatrixC33 ( Null_matrix )

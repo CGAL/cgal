@@ -38,8 +38,10 @@ LindstromTurk_placement<ECM>( FT const& factor = FT(0.5) );
 /*!
 Returns the new position for the remaining vertex after collapsing the edge 
 (represented by its profile). 
-*/ 
-result_type operator()( Profile const& edge_profile ) const; 
+*/   
+template <typename Profile> 
+optional<typename Profile::Point>
+operator()( Profile const& profile ) const; 
 
 /// @}
 
