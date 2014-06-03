@@ -689,6 +689,123 @@ private:
     CGAL_SDG_DEBUG(std::cout << "debug: PPS returns with vv=" << vv << std::endl;);
   }
 
+  /* compute pps vertex when the points p, q are not endpoints of
+   * segment r, when segment r is not axis-parallel, and when the
+   * two points p and q do not share any coordinate
+   */
+  inline void
+  compute_pps_nonendp_nonhv_nonsamec
+  (const Site_2& p, const Site_2& q, const Site_2& r)
+  const
+  {
+    Line_2 l = compute_supporting_line(r);
+    if (oriented_side_of_line(l, p.point()) == NEGATIVE) {
+      l = opposite_line(l);
+    }
+    CGAL_assertion(oriented_side_of_line(l, p.point()) == POSITIVE);
+    CGAL_assertion(oriented_side_of_line(l, q.point()) == POSITIVE);
+
+    const bool pos_slope = has_positive_slope(r);
+    const Comparison_result first_comp =
+      (pos_slope) ? scmpy(p, q) : scmpx(p, q);
+    const Comparison_result second_comp =
+      (pos_slope) ? scmpx(p, q) : scmpy(p, q);
+
+    const Sign signla = CGAL::sign(l.a());
+    const Sign signlb = CGAL::sign(l.b());
+    const Comparison_result first_value =
+      (signlb == POSITIVE)? SMALLER : LARGER;
+
+    const Comparison_result second_value =
+      (signla == NEGATIVE)? SMALLER : LARGER;
+
+    if (first_comp == first_value) {
+      const FT pcoord = pos_slope ? p.point().x() : p.point().y();
+      const FT lineval = coord_at(l, pcoord, pos_slope);
+      const Point_2 corner = pos_slope?
+        Point_2(pcoord, lineval) : Point_2(lineval, pcoord);
+      const FT sidelen = CGAL::max(CGAL::abs(corner.x() - q.point().x()),
+                                   CGAL::abs(corner.y() - q.point().y()));
+      vv = Point_2(FT(2)*corner.x() + signla*sidelen,
+                   FT(2)*corner.y() + signlb*sidelen,
+                   FT(2));
+      return;
+    }
+    if (second_comp == second_value) {
+      const FT qcoord = pos_slope ? q.point().y() : q.point().x();
+      const FT lineval = coord_at(l, qcoord, not pos_slope);
+      const Point_2 corner = pos_slope?
+        Point_2(lineval, qcoord) : Point_2(qcoord, lineval);
+      const FT sidelen = CGAL::max(CGAL::abs(corner.x() - p.point().x()),
+                                   CGAL::abs(corner.y() - p.point().y()));
+      vv = Point_2(FT(2)*corner.x() + signla*sidelen,
+                   FT(2)*corner.y() + signlb*sidelen,
+                   FT(2));
+      return;
+    }
+
+    CGAL_assertion((first_comp  == -first_value ) and
+                   (second_comp == -second_value)    );
+
+    const FT px = p.point().x();
+    const FT py = p.point().y();
+    const FT qx = q.point().x();
+    const FT qy = q.point().y();
+    const FT pqdist = CGAL::max(CGAL::abs(px - qx), CGAL::abs(py - qy));
+
+    CGAL_SDG_DEBUG(std::cout
+        << "debug: vsqrt pqdist=" << pqdist << std::endl;);
+
+    const FT & pcoord = pos_slope ? px : py;
+    const FT plineval = coord_at(l, pcoord, pos_slope);
+    const FT & pothercoord = pos_slope ? py : px;
+    const FT plen = CGAL::abs(plineval -  pothercoord);
+    CGAL_SDG_DEBUG(std::cout
+        << "debug: vsqrt plen=" << plen << std::endl;);
+    if (CGAL::compare(pqdist, plen) != SMALLER) {
+      // here, appropriate projection of p on supporting line of segment r
+      // is shorter than Linf p, q distance
+      const Point_2 corner = pos_slope?
+        Point_2(pcoord, plineval) : Point_2(plineval, pcoord);
+      vv = Point_2(FT(2)*corner.x() + signla*pqdist,
+                   FT(2)*corner.y() + signlb*pqdist,
+                   FT(2));
+      return;
+    }
+
+    const FT & qcoord = pos_slope ? qy : qx;
+    const FT qlineval = coord_at(l, qcoord, not pos_slope);
+    const FT & qothercoord = pos_slope ? qx : qy;
+    const FT qlen = CGAL::abs(qlineval -  qothercoord);
+    CGAL_SDG_DEBUG(std::cout
+        << "debug: vsqrt qlen=" << qlen << std::endl;);
+    if (CGAL::compare(pqdist, qlen) != SMALLER) {
+      // here, appropriate projection of q on supporting line of segment r
+      // is shorter than Linf p, q distance
+      const Point_2 corner = pos_slope?
+        Point_2(qlineval, qcoord) : Point_2(qcoord, qlineval);
+      vv = Point_2(FT(2)*corner.x() + signla*pqdist,
+                   FT(2)*corner.y() + signlb*pqdist,
+                   FT(2));
+      return;
+    }
+
+    CGAL_assertion((pqdist < plen) and (pqdist < qlen));
+
+    // here, compute corner opposite of corner on line of segment r
+    const Point_2 opposite_corner = pos_slope ?
+      Point_2(qx, py) : Point_2(px, qy);
+    CGAL_SDG_DEBUG(std::cout << "debug: vsqrt opposite_corner="
+        << opposite_corner << std::endl;);
+
+    const Point_2 corner =
+      compute_linf_projection_nonhom(l, opposite_corner);
+
+    vv = Point_2(corner.x() + opposite_corner.x(),
+                 corner.y() + opposite_corner.y(),
+                 FT(2));
+  }
+
   inline void
   compute_pps_nonendp_nonhv(const Site_2& p, const Site_2& q, const Site_2& r)
   const
@@ -696,7 +813,7 @@ private:
     const bool samexpq = scmpx(p, q) == EQUAL;
     const bool sameypq = (samexpq)? false : make_certain(scmpy(p, q) == EQUAL);
     if (not (samexpq or sameypq)) {
-      return compute_vv_bisectors(p, q, r, PPS_Type());
+      return compute_pps_nonendp_nonhv_nonsamec(p, q, r);
     } else {
       // samexpq or sameypq
       CGAL_assertion(samexpq != sameypq);
