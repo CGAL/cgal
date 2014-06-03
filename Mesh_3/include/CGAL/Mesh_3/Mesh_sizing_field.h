@@ -53,6 +53,7 @@ protected:
     last_cell_ = c;
   }
 
+private:
   /// A cell that is used to accelerate location queries
   mutable Cell_handle last_cell_;
 };
@@ -76,6 +77,7 @@ protected:
     last_cell_.local() = c;
   }
 
+private:
   /// A cell that is used to accelerate location queries
   mutable tbb::enumerable_thread_specific<Cell_handle> last_cell_;
 };
