@@ -348,6 +348,24 @@ namespace CGAL {
       return valid;
     }
 
+    /** validate the lcc
+     */
+    void validate_scene()
+    {
+      Base::validate_scene();
+
+      // On vérifie que chaque brin a un 0-plongement
+      for (typename Dart_range::iterator it(this->darts().begin()),
+             itend(this->darts().end()); it != itend; ++it)
+      {
+        if ( vertex_attribute(it)==null_handle )
+        {
+          // sinon on crée un point à l'origine
+          set_vertex_attribute(it, create_vertex_attribute(CGAL::ORIGIN));
+        }
+      }
+    }
+
     /** test if the two given facets have the same geometry
      * @return true iff the two facets have the same geometry.
      */
@@ -686,10 +704,11 @@ namespace CGAL {
      * @param p the point to insert
      * @return a dart handle to the new vertex containing p.
      */
-    Dart_handle insert_point_in_cell_1(Dart_handle dh, const Point& p)
+    Dart_handle insert_point_in_cell_1(Dart_handle dh, const Point& p, bool update_attribute)
     {
       return CGAL::insert_cell_0_in_cell_1(*this, dh,
-                                           create_vertex_attribute(p));
+                                           create_vertex_attribute(p),
+                                           update_attribute);
     }
 
     /** Insert a point in a given 2-cell.
@@ -697,11 +716,11 @@ namespace CGAL {
      * @param p the point to insert
      * @return a dart handle to the new vertex containing p.
      */
-    Dart_handle insert_point_in_cell_2(Dart_handle dh, const Point& p)
+    Dart_handle insert_point_in_cell_2(Dart_handle dh, const Point& p, bool update_attribute)
     {
       Vertex_attribute_handle v = create_vertex_attribute(p);
 
-      Dart_handle first = CGAL::insert_cell_0_in_cell_2(*this, dh, v);
+      Dart_handle first = CGAL::insert_cell_0_in_cell_2(*this, dh, v, update_attribute);
 
       if ( first==null_handle ) // If the triangulated facet was made of one dart
         erase_vertex_attribute(v);
@@ -719,11 +738,11 @@ namespace CGAL {
      * @return a dart handle to the new vertex containing p.
      */
     template <unsigned int i>
-    Dart_handle insert_point_in_cell(Dart_handle dh, const Point& p)
+    Dart_handle insert_point_in_cell(Dart_handle dh, const Point& p, bool update_attributes = true)
     {
       CGAL_static_assertion(1<=i && i<=2);
-      if (i==1) return insert_point_in_cell_1(dh, p);
-      return insert_point_in_cell_2(dh, p);
+      if (i==1) return insert_point_in_cell_1(dh, p, update_attributes);
+      return insert_point_in_cell_2(dh, p, update_attributes);
     }
 
     /** Insert a dangling edge in a given facet.

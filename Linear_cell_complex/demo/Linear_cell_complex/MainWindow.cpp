@@ -35,7 +35,9 @@ void subdivide_lcc_pqq (LCC & m);
 MainWindow::MainWindow (QWidget * parent):CGAL::Qt::DemosMainWindow (parent),
   nbcube      (0),
   dialogmesh  (this),
-  dialogmenger(this)
+  dialogmenger(this),
+  dialogsierpinskicarpet(this),
+  dialogsierpinskitriangle(this)
 {
   setupUi (this);
 
@@ -100,10 +102,40 @@ void MainWindow::connect_actions ()
 
   QObject::connect(dialogmenger.mengerLevel, SIGNAL(valueChanged(int)),
                    this, SLOT(onMengerChange(int)));
+  QObject::connect(dialogmenger.updateAttributes, SIGNAL(clicked(bool)),
+                   this, SLOT(onMengerUpdateAttributes(bool)));
   QObject::connect(&dialogmenger, SIGNAL(accepted()),
                    this, SLOT(onMengerOk()));
   QObject::connect(&dialogmenger, SIGNAL(rejected()),
                    this, SLOT(onMengerCancel()));
+
+  QObject::connect(dialogsierpinskicarpet.level, SIGNAL(valueChanged(int)),
+                   this, SLOT(onSierpinskiCarpetChangeLevel(int)));
+  QObject::connect(dialogsierpinskicarpet.never, SIGNAL(clicked(bool)),
+                   this, SLOT(onSierpinskiCarpetNeverUpdateAttributes(bool)));
+  QObject::connect(dialogsierpinskicarpet.during, SIGNAL(clicked(bool)),
+                   this, SLOT(onSierpinskiCarpetDuringConstructionUpdateAttributes(bool)));
+  QObject::connect(dialogsierpinskicarpet.after, SIGNAL(clicked(bool)),
+                   this, SLOT(onSierpinskiCarpetAfterConstructionUpdateAttributes(bool)));
+  QObject::connect(dialogsierpinskicarpet.stdmap, SIGNAL(clicked(bool)),
+                   this, SLOT(onSierpinskiCarpetUpdateAttributesMethodStdMap(bool)));
+  QObject::connect(dialogsierpinskicarpet.traversal, SIGNAL(clicked(bool)),
+                   this, SLOT(onSierpinskiCarpetUpdateAttributesMethodTraversal(bool)));
+  QObject::connect(dialogsierpinskicarpet.computeGeometry, SIGNAL(clicked(bool)),
+                   this, SLOT(onSierpinskiCarpetComputeGeometry(bool)));
+  QObject::connect(&dialogsierpinskicarpet, SIGNAL(accepted()),
+                   this, SLOT(onSierpinskiCarpetOk()));
+  QObject::connect(&dialogsierpinskicarpet, SIGNAL(rejected()),
+                   this, SLOT(onSierpinskiCarpetCancel()));
+
+  QObject::connect(dialogsierpinskitriangle.level, SIGNAL(valueChanged(int)),
+                   this, SLOT(onSierpinskiTriangleChangeLevel(int)));
+  QObject::connect(dialogsierpinskitriangle.updateAttributes, SIGNAL(clicked(bool)),
+                   this, SLOT(onSierpinskiTriangleUpdateAttributes(bool)));
+  QObject::connect(&dialogsierpinskitriangle, SIGNAL(accepted()),
+                   this, SLOT(onSierpinskiTriangleOk()));
+  QObject::connect(&dialogsierpinskitriangle, SIGNAL(rejected()),
+                   this, SLOT(onSierpinskiTriangleCancel()));
 }
 
 void MainWindow::connectVolumeListHandlers()
@@ -1108,6 +1140,8 @@ void MainWindow::on_actionCreate_Menger_Sponge_triggered ()
 {
   dialogmenger.mengerLevel->disconnect(this);
 
+  mengerUpdateAttributes = dialogmenger.updateAttributes->isChecked();
+
   dialogmenger.mengerLevel->setValue(0);
   mengerLevel=0;
   CGAL_assertion( mengerVolumes.empty() );
@@ -1143,6 +1177,11 @@ void MainWindow::onMengerChange(int newLevel)
 {
   while ( newLevel > mengerLevel ) onMengerInc();
   while ( newLevel < mengerLevel ) onMengerDec();
+}
+
+void MainWindow::onMengerUpdateAttributes(bool newValue)
+{
+  mengerUpdateAttributes = newValue;
 }
 
 void MainWindow::onMengerInc()
@@ -1224,6 +1263,25 @@ void MainWindow::onMengerInc()
     split_vol_in_twentyseven(mengerVolumes[i]);
   }
 
+  if (!mengerUpdateAttributes)
+  {
+    for(unsigned int i = nbvolinit; i < (unsigned int)mengerVolumes.size(); i++)
+    {
+      LCC::Attribute_handle<3>::type ah = (scene.lcc)->create_attribute<3>();
+        CGAL::Set_i_attribute_functor<LCC, 3>::
+            run(scene.lcc, mengerVolumes[i], ah);
+        scene.lcc->info<3>(mengerVolumes[i]).color()=
+          (CGAL::Color(myrandom.get_int(0,256),
+                       myrandom.get_int(0,256),
+                       myrandom.get_int(0,256)));
+
+        update_volume_list_add(scene.lcc->attribute<3>(mengerVolumes[i]));
+    }
+
+    std::cout << "validate scene..." << std::endl;
+    scene.lcc->validate_scene();
+  }
+
 #ifdef CGAL_PROFILE_LCC_DEMO
   timer.stop();
   std::cout<<"Time to increase the level of menger sponge ("
@@ -1248,16 +1306,16 @@ void MainWindow::split_edge_in_three(Dart_handle dh)
   LCC::Point p3 = LCC::Traits::Construct_translated_point() (p1,v2);
   LCC::Point p4 = LCC::Traits::Construct_translated_point() (p1,v3);
 
-  (scene.lcc)->insert_point_in_cell<1>(dh,p4);
-  (scene.lcc)->insert_point_in_cell<1>(dh,p3);
+  (scene.lcc)->insert_point_in_cell<1>(dh,p4,mengerUpdateAttributes);
+  (scene.lcc)->insert_point_in_cell<1>(dh,p3,mengerUpdateAttributes);
 }
 
 void MainWindow::split_face_in_three(Dart_handle dh)
 {
   CGAL::insert_cell_1_in_cell_2(*(scene.lcc),scene.lcc->beta(dh,1,1,1),
-                                scene.lcc->beta(dh,0,0));
+                                scene.lcc->beta(dh,0,0),mengerUpdateAttributes);
   CGAL::insert_cell_1_in_cell_2(*(scene.lcc),scene.lcc->beta(dh,1,1),
-                                scene.lcc->beta(dh,0));
+                                scene.lcc->beta(dh,0),mengerUpdateAttributes);
 }
 
 void MainWindow::split_face_in_nine(Dart_handle dh)
@@ -1265,10 +1323,10 @@ void MainWindow::split_face_in_nine(Dart_handle dh)
   Dart_handle d2 = scene.lcc->beta(dh,1,1,1,1,1,1,1);
 
   Dart_handle e2= CGAL::insert_cell_1_in_cell_2(*(scene.lcc),
-                                                scene.lcc->beta(dh,1,1),d2);
+                                                scene.lcc->beta(dh,1,1),d2,mengerUpdateAttributes);
   Dart_handle e1= CGAL::insert_cell_1_in_cell_2(*(scene.lcc),
                                                 scene.lcc->beta(dh,1),
-                                                scene.lcc->beta(d2,1));
+                                                scene.lcc->beta(d2,1),mengerUpdateAttributes);
 
   split_edge_in_three(e1);
   split_edge_in_three(e2);
@@ -1301,28 +1359,33 @@ void MainWindow::split_vol_in_three(Dart_handle dh, bool removecenter)
                   scene.lcc->beta(dh,2,1,1,2,1,1,2) );
 
   Dart_handle f1=
-      insert_cell_2_in_cell_3(*(scene.lcc),edges1.begin(),edges1.end());
+      insert_cell_2_in_cell_3(*(scene.lcc),edges1.begin(),edges1.end(),mengerUpdateAttributes);
 
   Dart_handle f2=
-      insert_cell_2_in_cell_3(*(scene.lcc),edges2.begin(),edges2.end());
+      insert_cell_2_in_cell_3(*(scene.lcc),edges2.begin(),edges2.end(),mengerUpdateAttributes);
 
-  scene.lcc->info<3>(f1).color()=
-    (CGAL::Color(myrandom.get_int(0,256),
-                 myrandom.get_int(0,256),
-                 myrandom.get_int(0,256)));
-  scene.lcc->info<3>(f2).color()=
+  if (mengerUpdateAttributes)
+  {
+    scene.lcc->info<3>(f1).color()=
+      (CGAL::Color(myrandom.get_int(0,256),
+                   myrandom.get_int(0,256),
+                   myrandom.get_int(0,256)));
+    scene.lcc->info<3>(f2).color()=
       (CGAL::Color(myrandom.get_int(0,256),
                    myrandom.get_int(0,256),
                    myrandom.get_int(0,256)));
 
-  update_volume_list_add(scene.lcc->attribute<3>(dh));
+    update_volume_list_add(scene.lcc->attribute<3>(dh));
+  }
 
   if ( removecenter )
-    CGAL::remove_cell<LCC,3>(*scene.lcc,f1);
+    CGAL::remove_cell<LCC,3>(*scene.lcc,f1,mengerUpdateAttributes);
   else
   {
     mengerVolumes.push_back(f1);
-    update_volume_list_add(scene.lcc->attribute<3>(f1));
+
+    if (mengerUpdateAttributes)
+      update_volume_list_add(scene.lcc->attribute<3>(f1));
   }
 
   mengerVolumes.push_back(f2);
@@ -1350,23 +1413,26 @@ void MainWindow::split_vol_in_nine(Dart_handle dh, bool removecenter)
   CGAL_assertion( curd==scene.lcc->beta(dh,1,2,1,1,2) );
 
   Dart_handle f1=
-      insert_cell_2_in_cell_3(*(scene.lcc),edges1.begin(),edges1.end());
+      insert_cell_2_in_cell_3(*(scene.lcc),edges1.begin(),edges1.end(),mengerUpdateAttributes);
 
   Dart_handle f2=
-      insert_cell_2_in_cell_3(*(scene.lcc),edges2.begin(),edges2.end());
+      insert_cell_2_in_cell_3(*(scene.lcc),edges2.begin(),edges2.end(),mengerUpdateAttributes);
 
-  scene.lcc->info<3>(f1).color()=
-    (CGAL::Color(myrandom.get_int(0,256),
-                 myrandom.get_int(0,256),
-                 myrandom.get_int(0,256)));
-  scene.lcc->info<3>(f2).color()=
-    (CGAL::Color(myrandom.get_int(0,256),
-                 myrandom.get_int(0,256),
-                 myrandom.get_int(0,256)));
+  if (mengerUpdateAttributes)
+  {
+    scene.lcc->info<3>(f1).color()=
+      (CGAL::Color(myrandom.get_int(0,256),
+                   myrandom.get_int(0,256),
+                   myrandom.get_int(0,256)));
+    scene.lcc->info<3>(f2).color()=
+      (CGAL::Color(myrandom.get_int(0,256),
+                   myrandom.get_int(0,256),
+                   myrandom.get_int(0,256)));
 
-  update_volume_list_add(scene.lcc->attribute<3>(dh));
-  if ( !removecenter)
-    update_volume_list_add(scene.lcc->attribute<3>(f1));
+    update_volume_list_add(scene.lcc->attribute<3>(dh));
+    if ( !removecenter)
+      update_volume_list_add(scene.lcc->attribute<3>(f1));
+  }
 
   split_face_in_three(f1);
   split_face_in_three(f2);
@@ -1377,7 +1443,7 @@ void MainWindow::split_vol_in_nine(Dart_handle dh, bool removecenter)
   split_vol_in_three(scene.lcc->beta(f2,2,1),removecenter);
 
   if ( removecenter )
-    CGAL::remove_cell<LCC,3>(*scene.lcc,f1);
+    CGAL::remove_cell<LCC,3>(*scene.lcc,f1,mengerUpdateAttributes);
   else
   {
     mengerVolumes.push_back(scene.lcc->beta(f1,2,1));
@@ -1407,22 +1473,25 @@ void MainWindow::split_vol_in_twentyseven(Dart_handle dh)
   CGAL_assertion( curd==scene.lcc->beta(dh,1,1,2,1,1,2) );
 
   Dart_handle f1=
-      insert_cell_2_in_cell_3(*(scene.lcc),edges1.begin(),edges1.end());
+      insert_cell_2_in_cell_3(*(scene.lcc),edges1.begin(),edges1.end(),mengerUpdateAttributes);
 
   Dart_handle f2=
-      insert_cell_2_in_cell_3(*(scene.lcc),edges2.begin(),edges2.end());
+      insert_cell_2_in_cell_3(*(scene.lcc),edges2.begin(),edges2.end(),mengerUpdateAttributes);
 
-  scene.lcc->info<3>(f1).color()=
-    (CGAL::Color(myrandom.get_int(0,256),
-                 myrandom.get_int(0,256),
-                 myrandom.get_int(0,256)));
-  scene.lcc->info<3>(f2).color()=
-    (CGAL::Color(myrandom.get_int(0,256),
-                 myrandom.get_int(0,256),
-                 myrandom.get_int(0,256)));
+  if (mengerUpdateAttributes)
+  {
+    scene.lcc->info<3>(f1).color()=
+      (CGAL::Color(myrandom.get_int(0,256),
+                   myrandom.get_int(0,256),
+                   myrandom.get_int(0,256)));
+    scene.lcc->info<3>(f2).color()=
+      (CGAL::Color(myrandom.get_int(0,256),
+                   myrandom.get_int(0,256),
+                   myrandom.get_int(0,256)));
+    update_volume_list_add(scene.lcc->attribute<3>(dh));
+    update_volume_list_add(scene.lcc->attribute<3>(f1));
 
-  update_volume_list_add(scene.lcc->attribute<3>(dh));
-  update_volume_list_add(scene.lcc->attribute<3>(f1));
+  }
 
   mengerVolumes.push_back(scene.lcc->beta(f1,2));
   mengerVolumes.push_back(scene.lcc->beta(f2,2));
@@ -1551,7 +1620,7 @@ void MainWindow::onMengerDec()
 
   for(unsigned int i = 0; i < faces.size(); i++)
   {
-    CGAL::remove_cell<LCC,2>(*scene.lcc, faces[i]);
+    CGAL::remove_cell<LCC,2>(*scene.lcc, faces[i],mengerUpdateAttributes);
   }
   faces.clear();
 
@@ -1577,9 +1646,9 @@ void MainWindow::onMengerDec()
 
   for(unsigned int i = 0; i < edges.size(); i++)
   {
-    CGAL::remove_cell<LCC,1>(*scene.lcc, scene.lcc->beta(edges[i],0));
-    CGAL::remove_cell<LCC,1>(*scene.lcc, scene.lcc->beta(edges[i],1));
-    CGAL::remove_cell<LCC,1>(*scene.lcc, edges[i]);
+    CGAL::remove_cell<LCC,1>(*scene.lcc, scene.lcc->beta(edges[i],0),mengerUpdateAttributes);
+    CGAL::remove_cell<LCC,1>(*scene.lcc, scene.lcc->beta(edges[i],1),mengerUpdateAttributes);
+    CGAL::remove_cell<LCC,1>(*scene.lcc, edges[i],mengerUpdateAttributes);
   }
   edges.clear();
 
@@ -1623,12 +1692,17 @@ void MainWindow::onMengerDec()
 
   for(unsigned int i = 0; i < vertices.size(); i++)
   {
-    CGAL::remove_cell<LCC,0>(*scene.lcc, vertices[i]);
+    CGAL::remove_cell<LCC,0>(*scene.lcc, vertices[i],mengerUpdateAttributes);
   }
   vertices.clear();
 
   (scene.lcc)->free_mark(markVols);
   (scene.lcc)->free_mark(markVertices);
+
+  if (!mengerUpdateAttributes)
+  {
+    scene.lcc->validate_scene();
+  }
 
 #ifdef CGAL_PROFILE_LCC_DEMO
   timer.stop();
@@ -1642,6 +1716,1462 @@ void MainWindow::onMengerDec()
   statusBar ()->showMessage (QString ("Menger Dec"),DELAY_STATUSMSG);
   emit(sceneChanged());
 }
+
+///////////////////////////////////////////////////////////////////////////////////
+// SIERPINSKI CARPET
+///////////////////////////////////////////////////////////////////////////////////
+
+void MainWindow::on_actionCreate_Sierpinski_Carpet_triggered ()
+{
+  std::cout << "on_actionCreate_Sierpinski_Carpet_triggered" << std::endl;
+
+  neverUpdateAttributes = dialogsierpinskicarpet.never->isChecked();
+  duringConstructionUpdateAttributes = dialogsierpinskicarpet.during->isChecked();
+  afterConstructionUpdateAttributes = dialogsierpinskicarpet.after->isChecked();
+  updateAttributesMethodStdMap = dialogsierpinskicarpet.stdmap->isChecked();
+  updateAttributesMethodTraversal = dialogsierpinskicarpet.traversal->isChecked();
+  computeGeometry = false;
+  // par défaut la géométrie peut être calculée après construction
+  isComputableGeometry = true;
+
+  dialogsierpinskicarpet.level->disconnect(this);
+
+  dialogsierpinskicarpet.level->setValue(0);
+  sierpinskiCarpetLevel=0;
+  CGAL_assertion( sierpinskiCarpetSurfaces.empty() );
+
+  Point_3 basepoint(nbcube%5, (nbcube/5)%5, nbcube/25);
+
+  Dart_handle d = scene.lcc->make_quadrangle(basepoint,
+                                             LCC::Traits::Construct_translated_point()
+                                             (basepoint,LCC::Traits::Vector(1,0,0)),
+                                             LCC::Traits::Construct_translated_point()
+                                             (basepoint,LCC::Traits::Vector(1,1,0)),
+                                             LCC::Traits::Construct_translated_point()
+                                             (basepoint,LCC::Traits::Vector(0,1,0)));
+
+  on_new_volume(d);
+
+  ++nbcube;
+
+  statusBar ()->showMessage (QString ("Square created"),DELAY_STATUSMSG);
+
+  emit (sceneChanged ());
+
+  sierpinskiCarpetSurfaces.push_back(d);
+  update_operations_entries(false);
+
+  QObject::connect(dialogsierpinskicarpet.level, SIGNAL(valueChanged(int)),
+                   this, SLOT(onSierpinskiCarpetChangeLevel(int)));
+
+  dialogsierpinskicarpet.show();
+}
+
+void MainWindow::onSierpinskiCarpetCancel()
+{
+  for(std::vector<Dart_handle>::iterator it=sierpinskiCarpetSurfaces.begin();
+      it!=sierpinskiCarpetSurfaces.end(); ++it)
+  {
+    CGAL::remove_cell<LCC,2>(*scene.lcc, *it);
+  }
+
+  recreate_whole_volume_list();
+  sierpinskiCarpetSurfaces.clear();
+  emit(sceneChanged());
+}
+
+void MainWindow::onSierpinskiCarpetOk()
+{
+  update_operations_entries(true);
+  sierpinskiCarpetSurfaces.clear();
+}
+
+void MainWindow::onSierpinskiCarpetChangeLevel(int newLevel)
+{
+  // std::cout << "onSierpinskiCarpetChangeLevel, newLevel=" << newLevel << std::endl;
+  while ( newLevel > sierpinskiCarpetLevel ) onSierpinskiCarpetInc();
+  while ( newLevel < sierpinskiCarpetLevel ) onSierpinskiCarpetDec();
+}
+
+void MainWindow::onSierpinskiCarpetNeverUpdateAttributes(bool newValue)
+{
+  std::cout << "onSierpinskiCarpetNeverUpdateAttributes, newValue=" << newValue << std::endl;
+
+  if (afterConstructionUpdateAttributes)
+  {
+    dialogsierpinskicarpet.groupBox2->setEnabled(false);
+  }
+
+  neverUpdateAttributes = true;
+  duringConstructionUpdateAttributes = false;
+  afterConstructionUpdateAttributes = false;
+}
+
+void MainWindow::onSierpinskiCarpetDuringConstructionUpdateAttributes(bool newValue)
+{
+  std::cout << "onSierpinskiCarpetDuringConstructionUpdateAttributes, newValue=" << newValue << std::endl;
+
+  if (afterConstructionUpdateAttributes)
+  {
+    dialogsierpinskicarpet.groupBox2->setEnabled(false);
+  }
+
+  neverUpdateAttributes = false;
+  duringConstructionUpdateAttributes = true;
+  afterConstructionUpdateAttributes = false;
+}
+
+void MainWindow::onSierpinskiCarpetAfterConstructionUpdateAttributes(bool newValue)
+{
+  std::cout << "onSierpinskiCarpetAfterConstructionUpdateAttributes, newValue=" << newValue << std::endl;
+
+  if (!afterConstructionUpdateAttributes)
+  {
+    dialogsierpinskicarpet.groupBox2->setEnabled(true);
+  }
+
+  neverUpdateAttributes = false;
+  duringConstructionUpdateAttributes = false;
+  afterConstructionUpdateAttributes = true;
+}
+
+void MainWindow::onSierpinskiCarpetUpdateAttributesMethodStdMap(bool newValue)
+{
+  std::cout << "onSierpinskiCarpetUpdateAttributesMethodStdMap, newValue=" << newValue << std::endl;
+
+  updateAttributesMethodStdMap = true;
+  updateAttributesMethodTraversal = false;
+}
+
+void MainWindow::onSierpinskiCarpetUpdateAttributesMethodTraversal(bool newValue)
+{
+  std::cout << "onSierpinskiCarpetUpdateAttributesMethodTraversal, newValue=" << newValue << std::endl;
+
+  updateAttributesMethodStdMap = false;
+  updateAttributesMethodTraversal = true;
+}
+
+
+void MainWindow::onSierpinskiCarpetComputeGeometry(bool newValue)
+{
+  std::cout << "onSierpinskiComputeGeometry, newValue=" << newValue << std::endl;
+
+  sierpinski_carpet_compute_geometry();
+
+  computeGeometry = false;
+  dialogsierpinskicarpet.computeGeometry->setEnabled(false);
+
+  emit(sceneChanged());
+}
+
+
+void MainWindow::onSierpinskiCarpetInc()
+{
+#ifdef CGAL_PROFILE_LCC_DEMO
+  CGAL::Timer timer;
+  timer.start();
+#endif
+
+  this->sierpinskiCarpetLevel++;
+
+  if (computeGeometry)
+  {
+    // ça veut dire que la géométrie pouvait être calculée après construction mais qu'elle ne l'a pas été
+    computeGeometry = false;
+    dialogsierpinskicarpet.computeGeometry->setEnabled(false);
+    //  => on ne pourra plus jamais la calculer (seul endroit où ce booléen est modifié)
+    isComputableGeometry = false;
+  }
+
+  std::vector<Dart_handle> edges;
+  nbfacesinit = (unsigned int)sierpinskiCarpetSurfaces.size();
+
+  int markEdges = (scene.lcc)->get_new_mark();
+  int markFaces = (scene.lcc)->get_new_mark();
+
+  for(std::vector<Dart_handle>::iterator itfaces=sierpinskiCarpetSurfaces.begin();
+        itfaces!=sierpinskiCarpetSurfaces.end(); ++itfaces)
+  {
+    CGAL_assertion( !(scene.lcc)->is_marked(*itfaces, markFaces) );
+    for (LCC::Dart_of_cell_basic_range<2>::iterator
+         it=(scene.lcc)->darts_of_cell_basic<2>(*itfaces, markFaces).begin(),
+         itend=(scene.lcc)->darts_of_cell_basic<2>(*itfaces, markFaces).end();
+         it!=itend; ++it)
+    {
+      if ( !(scene.lcc)->is_marked(it, markEdges) )
+      {
+        edges.push_back(it);
+        CGAL::mark_cell<LCC,1>(*(scene.lcc), it, markEdges);
+      }
+    }
+  }
+
+  (scene.lcc)->negate_mark(markFaces);
+  for(std::vector<Dart_handle>::iterator itfaces=sierpinskiCarpetSurfaces.begin();
+        itfaces!=sierpinskiCarpetSurfaces.end(); ++itfaces)
+  {
+    for (LCC::Dart_of_cell_basic_range<2>::iterator
+         it=(scene.lcc)->darts_of_cell_basic<2>(*itfaces, markFaces).begin(),
+         itend=(scene.lcc)->darts_of_cell_basic<2>(*itfaces, markFaces).end();
+         it!=itend; ++it)
+    {
+      (scene.lcc)->unmark(it, markEdges);
+    }
+  }
+
+  (scene.lcc)->negate_mark(markFaces);
+  CGAL_assertion( (scene.lcc)->is_whole_map_unmarked(markFaces) );
+  CGAL_assertion( (scene.lcc)->is_whole_map_unmarked(markEdges) );
+
+  (scene.lcc)->free_mark(markEdges);
+  (scene.lcc)->free_mark(markFaces);
+
+  // std::cout << "nb_edges=" << edges.size() << std::endl;
+
+  if (afterConstructionUpdateAttributes)
+  {
+    if (updateAttributesMethodStdMap)
+    {
+      // on crée une map pour associer les plongements créés aux brins
+      // std::cout << "nbdarts=" << dart_map.size() << std::endl;
+      // on y fout les plongements existants déjà
+      for(unsigned int i = 0; i < (unsigned int)edges.size(); i++)
+      {
+        dart_map.insert(std::pair<Dart_handle, LCC::Point>(edges[i], scene.lcc->point(edges[i])));
+        if (!(scene.lcc)->is_free(edges[i],2))
+        {
+          dart_map.insert(std::pair<Dart_handle, LCC::Point>((scene.lcc)->beta(edges[i],2), scene.lcc->point((scene.lcc)->beta(edges[i],2))));
+        }
+      }
+      // std::cout << "nbdarts=" << dart_map.size() << std::endl;
+    }
+  }
+
+  for(unsigned int i = 0; i < (unsigned int)edges.size(); i++)
+  {
+    sierpinski_carpet_split_edge_in_three(edges[i]);
+  }
+  edges.clear();
+
+  // std::cout << "phase 1" << std::endl;
+  // std::cout << "nbfacesinit=" << nbfacesinit << std::endl;
+
+  for(unsigned int i = 0; i < nbfacesinit; i++)
+  {
+    sierpinski_carpet_split_face_in_nine(sierpinskiCarpetSurfaces[i]);
+  }
+
+  if (afterConstructionUpdateAttributes)
+  {
+    sierpinski_carpet_update_geometry();
+  }
+
+  if (neverUpdateAttributes)
+  {
+    std::cout << "validate scene..." << std::endl;
+    std::cout << "BOOST_VERSION=" << BOOST_VERSION << std::endl;
+#if defined(BOOST_NO_VARIADIC_TEMPLATES)
+    std::cout << "BOOST_NO_VARIADIC_TEMPLATES" << " defined" << std::endl;
+#else
+    std::cout << "BOOST_NO_VARIADIC_TEMPLATES" << " not defined" << std::endl;
+#endif
+
+    scene.lcc->validate_scene();
+
+    // maintenant que la scène est valide, on offre la possibilité de calculer une géométrie qui correspond à un tapis de Sierpinski
+    if (isComputableGeometry)
+    {
+      computeGeometry = true;
+      dialogsierpinskicarpet.computeGeometry->setEnabled(true);
+    }
+  }
+
+#ifdef CGAL_PROFILE_LCC_DEMO
+  timer.stop();
+  std::cout<<"Time to increase the level of sierpinski carpet ("
+           <<this->sierpinskiCarpetLevel-1<<" -> "<<this->sierpinskiCarpetLevel<<") "
+           <<(duringConstructionUpdateAttributes ? "DURING" : "AFTER") << " construction update attributes: "
+           <<timer.time()<<" seconds."<<std::endl;
+#endif
+
+  CGAL_assertion( (scene.lcc)->is_valid() );
+
+  emit(sceneChanged());
+}
+
+void MainWindow::sierpinski_carpet_update_geometry()
+{
+  // std::cout << "phase 2" << std::endl;
+  // std::cout << "nbfaces=" << sierpinskiCarpetSurfaces.size() << std::endl;
+
+  if (updateAttributesMethodStdMap)
+  {
+    // std::cout << "nbdarts=" << dart_map.size() << std::endl;
+    for(unsigned int i = 0; i < (unsigned int)new_darts.size(); i++) {
+      // if (dart_map.find(new_darts[i]) == dart_map.end())
+      //   std::cout << "key not found" << std::endl;
+      sierpinski_carpet_copy_attributes_and_embed_vertex(new_darts[i], dart_map[new_darts[i]]);
+    }
+
+    dart_map.clear();
+    new_darts.clear();
+  }
+
+  if (updateAttributesMethodTraversal)
+  {
+    int markVertices = (scene.lcc)->get_new_mark();
+
+    for(unsigned int i = 0; i < nbfacesinit; i++)
+    {
+      // on récupère la géométrie des 4 coins de la face courante
+      LCC::Point p[4][4];
+      Dart_handle d00 = sierpinskiCarpetSurfaces[i];
+      Dart_handle d03 = scene.lcc->beta(d00,1,2,1,1,2,1,1);
+      Dart_handle d33 = scene.lcc->beta(d03,1,2,1,1,2,1,1);
+      Dart_handle d30 = scene.lcc->beta(d33,1,2,1,1,2,1,1);
+      sierpinski_carpet_compute_4x4_geometry_matrix(p, scene.lcc->point(d00), scene.lcc->point(d03), scene.lcc->point(d33), scene.lcc->point(d30));
+
+      Dart_handle dh = sierpinskiCarpetSurfaces[i];
+
+      // bord du bas
+      dh = scene.lcc->beta(dh,1,2,1);
+      if ( ! (scene.lcc)->is_marked(dh, markVertices) )
+      {
+        sierpinski_carpet_copy_attributes_and_embed_vertex(dh, p[0][1]);
+        CGAL::mark_cell<LCC,0>(*(scene.lcc), dh, markVertices);
+      }
+      dh = scene.lcc->beta(dh,1,2,1);
+      if ( ! (scene.lcc)->is_marked(dh, markVertices) )
+      {
+        sierpinski_carpet_copy_attributes_and_embed_vertex(dh, p[0][2]);
+        CGAL::mark_cell<LCC,0>(*(scene.lcc), dh, markVertices);
+      }
+
+      // bord de droite
+      dh = scene.lcc->beta(dh,1,1,2,1);
+      if ( ! (scene.lcc)->is_marked(dh, markVertices) )
+      {
+        sierpinski_carpet_copy_attributes_and_embed_vertex(dh, p[1][3]);
+        CGAL::mark_cell<LCC,0>(*(scene.lcc), dh, markVertices);
+      }
+      dh = scene.lcc->beta(dh,1,2,1);
+      if ( ! (scene.lcc)->is_marked(dh, markVertices) )
+      {
+        sierpinski_carpet_copy_attributes_and_embed_vertex(dh, p[2][3]);
+        CGAL::mark_cell<LCC,0>(*(scene.lcc), dh, markVertices);
+      }
+
+      // bord du haut
+      dh = scene.lcc->beta(dh,1,1,2,1);
+      if ( ! (scene.lcc)->is_marked(dh, markVertices) )
+      {
+        sierpinski_carpet_copy_attributes_and_embed_vertex(dh, p[3][2]);
+        CGAL::mark_cell<LCC,0>(*(scene.lcc), dh, markVertices);
+      }
+      dh = scene.lcc->beta(dh,1,2,1);
+      if ( ! (scene.lcc)->is_marked(dh, markVertices) )
+      {
+        sierpinski_carpet_copy_attributes_and_embed_vertex(dh, p[3][1]);
+        CGAL::mark_cell<LCC,0>(*(scene.lcc), dh, markVertices);
+      }
+
+      // bord de gauche
+      dh = scene.lcc->beta(dh,1,1,2,1);
+      if ( ! (scene.lcc)->is_marked(dh, markVertices) )
+      {
+        sierpinski_carpet_copy_attributes_and_embed_vertex(dh, p[2][0]);
+        CGAL::mark_cell<LCC,0>(*(scene.lcc), dh, markVertices);
+      }
+      dh = scene.lcc->beta(dh,1,2,1);
+      if ( ! (scene.lcc)->is_marked(dh, markVertices) )
+      {
+        sierpinski_carpet_copy_attributes_and_embed_vertex(dh, p[1][0]);
+        CGAL::mark_cell<LCC,0>(*(scene.lcc), dh, markVertices);
+      }
+
+      dh = sierpinskiCarpetSurfaces[i];
+
+      // milieu sommet en bas à gauche
+      dh = scene.lcc->beta(dh,1,1);
+      sierpinski_carpet_copy_attributes_and_embed_vertex(dh, p[1][1]);
+
+      // milieu sommet en haut à gauche
+      dh = scene.lcc->beta(dh,2,1,1);
+      sierpinski_carpet_copy_attributes_and_embed_vertex(dh, p[2][1]);
+
+      // milieu sommet en haut à droite
+      dh = scene.lcc->beta(dh,2,1,2,1,1,2,1);
+      sierpinski_carpet_copy_attributes_and_embed_vertex(dh, p[2][2]);
+
+      // milieu sommet en bas à droite
+      dh = scene.lcc->beta(dh,2,1,1);
+      sierpinski_carpet_copy_attributes_and_embed_vertex(dh, p[1][2]);
+
+
+      /*
+      Dart_handle dh = sierpinskiCarpetSurfaces[i];
+
+      LCC::Point p[4][4];
+      p[0][0] = scene.lcc->point(dh);
+      dh = scene.lcc->beta(dh,1,2,1,1,2,1,1);
+      p[0][3] = scene.lcc->point(dh);
+      dh = scene.lcc->beta(dh,1,2,1,1,2,1,1);
+      p[3][3] = scene.lcc->point(dh);
+      dh = scene.lcc->beta(dh,1,2,1,1,2,1,1);
+      p[3][0] = scene.lcc->point(dh);
+      // std::cout << "  p00= " << p[0][0] << std::endl;
+      // std::cout << "  p03= " << p[0][3] << std::endl;
+      // std::cout << "  p33= " << p[3][3] << std::endl;
+      // std::cout << "  p30= " << p[3][0] << std::endl;
+
+      dh = sierpinskiCarpetSurfaces[i];
+
+      LCC::Vector v1, v2, v3;
+
+      // bord du bas
+      dh = scene.lcc->beta(dh,1,2,1);
+      if ( (scene.lcc)->is_marked(dh, markVertices) )
+      {
+        p[0][1] = scene.lcc->point(dh);
+      }
+      else
+      {
+        v1 = LCC::Traits::Construct_vector() (p[0][0],p[0][3]);
+        v2 = LCC::Traits::Construct_scaled_vector() (v1,1.0/3);
+        p[0][1] = LCC::Traits::Construct_translated_point() (p[0][0],v2);
+        copy_attributes_and_embed_vertex(dh, p[0][1]);
+        CGAL::mark_cell<LCC,0>(*(scene.lcc), dh, markVertices);
+      }
+      dh = scene.lcc->beta(dh,1,2,1);
+      if ( (scene.lcc)->is_marked(dh, markVertices) )
+      {
+        p[0][2] = scene.lcc->point(dh);
+      }
+      else
+      {
+        v1 = LCC::Traits::Construct_vector() (p[0][0],p[0][3]);
+        v3 = LCC::Traits::Construct_scaled_vector() (v1,2.0/3);
+        p[0][2] = LCC::Traits::Construct_translated_point() (p[0][0],v3);
+        copy_attributes_and_embed_vertex(dh, p[0][2]);
+        CGAL::mark_cell<LCC,0>(*(scene.lcc), dh, markVertices);
+      }
+
+      // bord de droite
+      dh = scene.lcc->beta(dh,1,1,2,1);
+      if ( (scene.lcc)->is_marked(dh, markVertices) )
+      {
+        p[1][3] = scene.lcc->point(dh);
+      }
+      else
+      {
+        v1 = LCC::Traits::Construct_vector() (p[0][3],p[3][3]);
+        v2 = LCC::Traits::Construct_scaled_vector() (v1,1.0/3);
+        p[1][3] = LCC::Traits::Construct_translated_point() (p[0][3],v2);
+        copy_attributes_and_embed_vertex(dh, p[1][3]);
+        CGAL::mark_cell<LCC,0>(*(scene.lcc), dh, markVertices);
+      }
+      dh = scene.lcc->beta(dh,1,2,1);
+      if ( (scene.lcc)->is_marked(dh, markVertices) )
+      {
+        p[2][3] = scene.lcc->point(dh);
+      }
+      else
+      {
+        v1 = LCC::Traits::Construct_vector() (p[0][3],p[3][3]);
+        v3 = LCC::Traits::Construct_scaled_vector() (v1,2.0/3);
+        p[2][3] = LCC::Traits::Construct_translated_point() (p[0][3],v3);
+        copy_attributes_and_embed_vertex(dh, p[2][3]);
+        CGAL::mark_cell<LCC,0>(*(scene.lcc), dh, markVertices);
+      }
+
+      // bord du haut
+      dh = scene.lcc->beta(dh,1,1,2,1);
+      if ( (scene.lcc)->is_marked(dh, markVertices) )
+      {
+        p[3][2] = scene.lcc->point(dh);
+      }
+      else
+      {
+        v1 = LCC::Traits::Construct_vector() (p[3][3],p[3][0]);
+        v2 = LCC::Traits::Construct_scaled_vector() (v1,1.0/3);
+        p[3][2] = LCC::Traits::Construct_translated_point() (p[3][3],v2);
+        copy_attributes_and_embed_vertex(dh, p[3][2]);
+        CGAL::mark_cell<LCC,0>(*(scene.lcc), dh, markVertices);
+      }
+      dh = scene.lcc->beta(dh,1,2,1);
+      if ( (scene.lcc)->is_marked(dh, markVertices) )
+      {
+        p[3][1] = scene.lcc->point(dh);
+      }
+      else
+      {
+        v1 = LCC::Traits::Construct_vector() (p[3][3],p[3][0]);
+        v3 = LCC::Traits::Construct_scaled_vector() (v1,2.0/3);
+        p[3][1] = LCC::Traits::Construct_translated_point() (p[3][3],v3);
+        copy_attributes_and_embed_vertex(dh, p[3][1]);
+        CGAL::mark_cell<LCC,0>(*(scene.lcc), dh, markVertices);
+      }
+
+      // bord de gauche
+      dh = scene.lcc->beta(dh,1,1,2,1);
+      if ( (scene.lcc)->is_marked(dh, markVertices) )
+      {
+        p[2][0] = scene.lcc->point(dh);
+      }
+      else
+      {
+        v1 = LCC::Traits::Construct_vector() (p[3][0],p[0][0]);
+        v2 = LCC::Traits::Construct_scaled_vector() (v1,1.0/3);
+        p[2][0] = LCC::Traits::Construct_translated_point() (p[3][0],v2);
+        copy_attributes_and_embed_vertex(dh, p[2][0]);
+        CGAL::mark_cell<LCC,0>(*(scene.lcc), dh, markVertices);
+      }
+      dh = scene.lcc->beta(dh,1,2,1);
+      if ( (scene.lcc)->is_marked(dh, markVertices) )
+      {
+        p[1][0] = scene.lcc->point(dh);
+      }
+      else
+      {
+        v1 = LCC::Traits::Construct_vector() (p[3][0],p[0][0]);
+        v3 = LCC::Traits::Construct_scaled_vector() (v1,2.0/3);
+        p[1][0] = LCC::Traits::Construct_translated_point() (p[3][0],v3);
+        copy_attributes_and_embed_vertex(dh, p[1][0]);
+        CGAL::mark_cell<LCC,0>(*(scene.lcc), dh, markVertices);
+      }
+
+      dh = sierpinskiCarpetSurfaces[i];
+
+      // milieu sommet en bas à gauche
+      dh = scene.lcc->beta(dh,1,1);
+      v1 = LCC::Traits::Construct_vector() (p[0][1],p[3][1]);
+      v2 = LCC::Traits::Construct_scaled_vector() (v1,1.0/3);
+      p[1][1] = LCC::Traits::Construct_translated_point() (p[0][1],v2);
+      copy_attributes_and_embed_vertex(dh, p[1][1]);
+
+      // milieu sommet en haut à gauche
+      dh = scene.lcc->beta(dh,2,1,1);
+      v1 = LCC::Traits::Construct_vector() (p[0][1],p[3][1]);
+      v3 = LCC::Traits::Construct_scaled_vector() (v1,2.0/3);
+      p[2][1] = LCC::Traits::Construct_translated_point() (p[0][1],v3);
+      copy_attributes_and_embed_vertex(dh, p[2][1]);
+
+      // milieu sommet en haut à droite
+      dh = scene.lcc->beta(dh,2,1,2,1,1,2,1);
+      v1 = LCC::Traits::Construct_vector() (p[3][2],p[0][2]);
+      v2 = LCC::Traits::Construct_scaled_vector() (v1,1.0/3);
+      p[2][2] = LCC::Traits::Construct_translated_point() (p[3][2],v2);
+      copy_attributes_and_embed_vertex(dh, p[2][2]);
+
+      // milieu sommet en bas à droite
+      dh = scene.lcc->beta(dh,2,1,1);
+      v1 = LCC::Traits::Construct_vector() (p[3][2],p[0][2]);
+      v3 = LCC::Traits::Construct_scaled_vector() (v1,2.0/3);
+      p[1][2] = LCC::Traits::Construct_translated_point() (p[3][2],v3);
+      copy_attributes_and_embed_vertex(dh, p[1][2]);
+      */
+
+    }
+
+    scene.lcc->unmark_all(markVertices);
+    CGAL_assertion( (scene.lcc)->is_whole_map_unmarked(markVertices) );
+  }
+}
+
+void MainWindow::sierpinski_carpet_compute_geometry()
+{
+  int markVertices = (scene.lcc)->get_new_mark();
+
+  for(unsigned int i = 0; i < nbfacesinit; i++)
+  {
+    // on récupère la géométrie des 4 coins de la face courante
+    LCC::Point p[4][4];
+    Dart_handle d00 = sierpinskiCarpetSurfaces[i];
+    Dart_handle d03 = scene.lcc->beta(d00,1,2,1,1,2,1,1);
+    Dart_handle d33 = scene.lcc->beta(d03,1,2,1,1,2,1,1);
+    Dart_handle d30 = scene.lcc->beta(d33,1,2,1,1,2,1,1);
+    sierpinski_carpet_compute_4x4_geometry_matrix(p, scene.lcc->point(d00), scene.lcc->point(d03), scene.lcc->point(d33), scene.lcc->point(d30));
+
+    Dart_handle dh = sierpinskiCarpetSurfaces[i];
+
+    // bord du bas
+    dh = scene.lcc->beta(dh,1,2,1);
+    if ( ! (scene.lcc)->is_marked(dh, markVertices) )
+    {
+      scene.lcc->point(dh) = p[0][1];
+      CGAL::mark_cell<LCC,0>(*(scene.lcc), dh, markVertices);
+    }
+    dh = scene.lcc->beta(dh,1,2,1);
+    if ( ! (scene.lcc)->is_marked(dh, markVertices) )
+    {
+      scene.lcc->point(dh) = p[0][2];
+      CGAL::mark_cell<LCC,0>(*(scene.lcc), dh, markVertices);
+    }
+
+    // bord de droite
+    dh = scene.lcc->beta(dh,1,1,2,1);
+    if ( ! (scene.lcc)->is_marked(dh, markVertices) )
+    {
+      scene.lcc->point(dh) = p[1][3];
+      CGAL::mark_cell<LCC,0>(*(scene.lcc), dh, markVertices);
+    }
+    dh = scene.lcc->beta(dh,1,2,1);
+    if ( ! (scene.lcc)->is_marked(dh, markVertices) )
+    {
+      scene.lcc->point(dh) = p[2][3];
+      CGAL::mark_cell<LCC,0>(*(scene.lcc), dh, markVertices);
+    }
+
+    // bord du haut
+    dh = scene.lcc->beta(dh,1,1,2,1);
+    if ( ! (scene.lcc)->is_marked(dh, markVertices) )
+    {
+      scene.lcc->point(dh) = p[3][2];
+      CGAL::mark_cell<LCC,0>(*(scene.lcc), dh, markVertices);
+    }
+    dh = scene.lcc->beta(dh,1,2,1);
+    if ( ! (scene.lcc)->is_marked(dh, markVertices) )
+    {
+      scene.lcc->point(dh) = p[3][1];
+      CGAL::mark_cell<LCC,0>(*(scene.lcc), dh, markVertices);
+    }
+
+    // bord de gauche
+    dh = scene.lcc->beta(dh,1,1,2,1);
+    if ( ! (scene.lcc)->is_marked(dh, markVertices) )
+    {
+      scene.lcc->point(dh) = p[2][0];
+      CGAL::mark_cell<LCC,0>(*(scene.lcc), dh, markVertices);
+    }
+    dh = scene.lcc->beta(dh,1,2,1);
+    if ( ! (scene.lcc)->is_marked(dh, markVertices) )
+    {
+      scene.lcc->point(dh) = p[1][0];
+      CGAL::mark_cell<LCC,0>(*(scene.lcc), dh, markVertices);
+    }
+
+    dh = sierpinskiCarpetSurfaces[i];
+
+    // milieu sommet en bas à gauche
+    dh = scene.lcc->beta(dh,1,1);
+    scene.lcc->point(dh) = p[1][1];
+
+    // milieu sommet en haut à gauche
+    dh = scene.lcc->beta(dh,2,1,1);
+    scene.lcc->point(dh) = p[2][1];
+
+    // milieu sommet en haut à droite
+    dh = scene.lcc->beta(dh,2,1,2,1,1,2,1);
+    scene.lcc->point(dh) = p[2][2];
+
+    // milieu sommet en bas à droite
+    dh = scene.lcc->beta(dh,2,1,1);
+    scene.lcc->point(dh) = p[1][2];
+
+    }
+
+  scene.lcc->unmark_all(markVertices);
+  CGAL_assertion( (scene.lcc)->is_whole_map_unmarked(markVertices) );
+}
+
+void MainWindow::sierpinski_carpet_compute_4x4_geometry_matrix(LCC::Point p[4][4], LCC::Point& p00, LCC::Point& p03, LCC::Point& p33, LCC::Point& p30)
+{
+  p[0][0] = p00;
+  p[0][3] = p03;
+  p[3][3] = p33;
+  p[3][0] = p30;
+
+  LCC::Vector v1, v2, v3;
+
+  // bord du bas
+  v1 = LCC::Traits::Construct_vector() (p[0][0],p[0][3]);
+  v2 = LCC::Traits::Construct_scaled_vector() (v1,1.0/3);
+  v3 = LCC::Traits::Construct_scaled_vector() (v1,2.0/3);
+  p[0][1] = LCC::Traits::Construct_translated_point() (p[0][0],v2);
+  p[0][2] = LCC::Traits::Construct_translated_point() (p[0][0],v3);
+  // bord de droite
+  v1 = LCC::Traits::Construct_vector() (p[0][3],p[3][3]);
+  v2 = LCC::Traits::Construct_scaled_vector() (v1,1.0/3);
+  v3 = LCC::Traits::Construct_scaled_vector() (v1,2.0/3);
+  p[1][3] = LCC::Traits::Construct_translated_point() (p[0][3],v2);
+  p[2][3] = LCC::Traits::Construct_translated_point() (p[0][3],v3);
+  // bord du haut
+  v1 = LCC::Traits::Construct_vector() (p[3][3],p[3][0]);
+  v2 = LCC::Traits::Construct_scaled_vector() (v1,1.0/3);
+  v3 = LCC::Traits::Construct_scaled_vector() (v1,2.0/3);
+  p[3][2] = LCC::Traits::Construct_translated_point() (p[3][3],v2);
+  p[3][1] = LCC::Traits::Construct_translated_point() (p[3][3],v3);
+  // bord de gauche
+  v1 = LCC::Traits::Construct_vector() (p[3][0],p[0][0]);
+  v2 = LCC::Traits::Construct_scaled_vector() (v1,1.0/3);
+  v3 = LCC::Traits::Construct_scaled_vector() (v1,2.0/3);
+  p[2][0] = LCC::Traits::Construct_translated_point() (p[3][0],v2);
+  p[1][0] = LCC::Traits::Construct_translated_point() (p[3][0],v3);
+  // milieu colonne de gauche
+  v1 = LCC::Traits::Construct_vector() (p[0][1],p[3][1]);
+  v2 = LCC::Traits::Construct_scaled_vector() (v1,1.0/3);
+  v3 = LCC::Traits::Construct_scaled_vector() (v1,2.0/3);
+  p[1][1] = LCC::Traits::Construct_translated_point() (p[0][1],v2);
+  p[2][1] = LCC::Traits::Construct_translated_point() (p[0][1],v3);
+  // milieu colonne de droite
+  v1 = LCC::Traits::Construct_vector() (p[3][2],p[0][2]);
+  v2 = LCC::Traits::Construct_scaled_vector() (v1,1.0/3);
+  v3 = LCC::Traits::Construct_scaled_vector() (v1,2.0/3);
+  p[2][2] = LCC::Traits::Construct_translated_point() (p[3][2],v2);
+  p[1][2] = LCC::Traits::Construct_translated_point() (p[3][2],v3);
+}
+
+void MainWindow::sierpinski_carpet_copy_attributes_and_embed_vertex(Dart_handle dh, LCC::Point& p)
+{
+  LCC::Attribute_handle<0>::type ah = (scene.lcc)->create_vertex_attribute(p);
+  // std::cout << "one dart... " << dart_map[new_darts[i]] << " -- " << dart_map[scene.lcc->beta(new_darts[i],1)] << std::endl;
+  for ( LCC::Dart_of_cell_range<0>::iterator
+        it=(scene.lcc)->darts_of_cell<0>(dh).begin();
+        it != (scene.lcc)->darts_of_cell<0>(dh).end(); ++it )
+  {
+    // std::cout << "dart of the orbit" << std::endl;
+    // We copy all the attributes except for dim=0
+    // on recopie les attributs du premier brin de la première face ...
+    LCC::Helper::Foreach_enabled_attributes_except
+      <CGAL::internal::Group_attribute_functor_of_dart<LCC>, 0>::
+      run(scene.lcc,sierpinskiCarpetSurfaces[0],it);
+    // We initialise the 0-atttrib to ah
+    CGAL::internal::Set_i_attribute_of_dart_functor<LCC, 0>::
+        run(scene.lcc, it, ah);
+  }
+}
+
+void MainWindow::sierpinski_carpet_split_edge_in_three(Dart_handle dh)
+{
+  if (duringConstructionUpdateAttributes)
+  {
+    LCC::Point p1 = scene.lcc->point(dh);
+    LCC::Point p2 = scene.lcc->point(scene.lcc->other_extremity(dh));
+
+    LCC::Vector v1 = LCC::Traits::Construct_vector() (p1,p2);
+    LCC::Vector v2 = LCC::Traits::Construct_scaled_vector() (v1,1.0/3);
+    LCC::Vector v3 = LCC::Traits::Construct_scaled_vector() (v1,2.0/3);
+
+    LCC::Point p3 = LCC::Traits::Construct_translated_point() (p1,v2);
+    LCC::Point p4 = LCC::Traits::Construct_translated_point() (p1,v3);
+
+    (scene.lcc)->insert_point_in_cell<1>(dh,p4);
+    (scene.lcc)->insert_point_in_cell<1>(dh,p3);
+  }
+  else
+  {
+    LCC::Point p3, p4;
+
+    if (afterConstructionUpdateAttributes && updateAttributesMethodStdMap)
+    {
+      // std::cout << "sierpinski_carpet_split_edge_in_three" << std::endl;
+      // std::cout << "nbdarts=" << dart_map.size() << std::endl;
+      // LCC::Point p1 = scene.lcc->point(dh);
+      // LCC::Point p2 = scene.lcc->point(scene.lcc->other_extremity(dh));
+      LCC::Point p1 = dart_map[dh];
+      // std::cout << "nbdarts=" << dart_map.size() << std::endl;
+      LCC::Point p2 = dart_map[scene.lcc->other_extremity(dh)];
+      // std::cout << "nbdarts=" << dart_map.size() << std::endl;
+      // std::cout << "p1 = " << p1 << std::endl;
+      // std::cout << "p2 = " << p2 << std::endl;
+
+      LCC::Vector v1 = LCC::Traits::Construct_vector() (p1,p2);
+      LCC::Vector v2 = LCC::Traits::Construct_scaled_vector() (v1,1.0/3);
+      LCC::Vector v3 = LCC::Traits::Construct_scaled_vector() (v1,2.0/3);
+
+      p3 = LCC::Traits::Construct_translated_point() (p1,v2);
+      p4 = LCC::Traits::Construct_translated_point() (p1,v3);
+      // std::cout << "p3 = " << p3 << std::endl;
+      // std::cout << "p4 = " << p4 << std::endl;
+
+      /*
+      (scene.lcc)->insert_point_in_cell<1>(dh,p4);
+      (scene.lcc)->insert_point_in_cell<1>(dh,p3);
+      */
+
+      /*
+      LCC::Attribute_handle<0>::type ah_p4 = (scene.lcc)->create_vertex_attribute(p4);
+      LCC::Attribute_handle<0>::type ah_p3 = (scene.lcc)->create_vertex_attribute(p3);
+      */
+    }
+
+    Dart_handle d1=
+        CGAL::insert_cell_0_in_cell_1(*(scene.lcc),
+                                      dh,
+                                      LCC::null_handle,
+                                      false);
+
+    if (afterConstructionUpdateAttributes && updateAttributesMethodStdMap)
+    {
+      // dart_map.insert(std::pair<Dart_handle, LCC::Point>((scene.lcc)->beta(dh,1), p4));
+      // std::cout << "--> nbdarts=" << dart_map.size() << std::endl;
+      dart_map.insert(std::pair<Dart_handle, LCC::Point>(d1, p4));
+      // std::cout << "--> nbdarts=" << dart_map.size() << std::endl;
+      if (!(scene.lcc)->is_free(d1,2))
+      {
+        // std::cout << "d1 not 2-free" << std::endl;
+        //std::cout << dart_map[(scene.lcc)->beta(d1,2,1)] << std::endl;
+        dart_map.insert(std::pair<Dart_handle, LCC::Point>((scene.lcc)->beta(d1,2,1), p4));
+      }
+      // std::cout << "--> nbdarts=" << dart_map.size() << std::endl;
+      new_darts.push_back((scene.lcc)->beta(dh,1));
+      // dart_map.insert(std::pair<Dart_handle, LCC::Point>(dh, p3));
+      // new_darts.push_back(dh);
+    }
+    /*
+    int m=(scene.lcc)->get_new_mark();
+    for ( LCC::Dart_of_cell_basic_range<1>::iterator
+          it=(scene.lcc)->darts_of_cell_basic<1>(dh, m).begin();
+          it != (scene.lcc)->darts_of_cell_basic<1>(dh, m).end(); ++it )
+    {
+      std::cout << "dart of the orbit" << std::endl;
+      // We copy all the attributes except for dim=0
+      LCC::Helper::Foreach_enabled_attributes_except
+        <CGAL::internal::Group_attribute_functor_of_dart<LCC>, 0>::
+        run(scene.lcc,it,(scene.lcc)->beta(it,1));
+      // We initialise the 0-atttrib to ah
+      CGAL::internal::Set_i_attribute_of_dart_functor<LCC, 0>::
+          run(scene.lcc, (scene.lcc)->beta(it,1), ah_p4);
+    }
+    CGAL::internal::Degroup_attribute_functor_run<LCC, 1>::
+        run(scene.lcc, dh, (scene.lcc)->beta(dh,1));
+    CGAL_assertion((scene.lcc)->is_whole_map_unmarked(m));
+    (scene.lcc)->free_mark(m);
+    */
+
+    Dart_handle d2=
+        CGAL::insert_cell_0_in_cell_1(*(scene.lcc),
+                                      dh,
+                                      LCC::null_handle,
+                                      false);
+
+    if (afterConstructionUpdateAttributes && updateAttributesMethodStdMap)
+    {
+      // dart_map.insert(std::pair<Dart_handle, LCC::Point>((scene.lcc)->beta(dh,1), p3));
+      dart_map.insert(std::pair<Dart_handle, LCC::Point>(d2, p3));
+      // std::cout << "--> nbdarts=" << dart_map.size() << std::endl;
+      if (!(scene.lcc)->is_free(d2,2))
+      {
+        // std::cout << "d2 not 2-free" << std::endl;
+        dart_map.insert(std::pair<Dart_handle, LCC::Point>((scene.lcc)->beta(d2,2,1), p3));
+      }
+      // std::cout << "--> nbdarts=" << dart_map.size() << std::endl;
+      new_darts.push_back((scene.lcc)->beta(dh,1));
+      // dart_map.insert(std::pair<Dart_handle, LCC::Point>(dh, p3));
+      // new_darts.push_back(dh);
+    }
+    /*
+    m=(scene.lcc)->get_new_mark();
+    for ( LCC::Dart_of_cell_basic_range<1>::iterator
+          it=(scene.lcc)->darts_of_cell_basic<1>(dh, m).begin();
+          it != (scene.lcc)->darts_of_cell_basic<1>(dh, m).end(); ++it )
+    {
+      // We copy all the attributes except for dim=0
+      LCC::Helper::Foreach_enabled_attributes_except
+        <CGAL::internal::Group_attribute_functor_of_dart<LCC>, 0>::
+        run(scene.lcc,it,(scene.lcc)->beta(it,1));
+      // We initialise the 0-atttrib to ah
+      CGAL::internal::Set_i_attribute_of_dart_functor<LCC, 0>::
+          run(scene.lcc, (scene.lcc)->beta(it,1), ah_p3);
+    }
+    CGAL::internal::Degroup_attribute_functor_run<LCC, 1>::
+        run(scene.lcc, dh, (scene.lcc)->beta(dh,1));
+    CGAL_assertion((scene.lcc)->is_whole_map_unmarked(m));
+    (scene.lcc)->free_mark(m);
+    */
+  }
+}
+
+void MainWindow::sierpinski_carpet_split_face_in_three(Dart_handle dh, bool removecenter)
+{
+  Dart_handle d1=
+  CGAL::insert_cell_1_in_cell_2(*(scene.lcc),
+                                scene.lcc->beta(dh,1,1,1),
+                                scene.lcc->beta(dh,0,0),
+                                duringConstructionUpdateAttributes);
+  Dart_handle d2=
+  CGAL::insert_cell_1_in_cell_2(*(scene.lcc),
+                                scene.lcc->beta(dh,1,1),
+                                scene.lcc->beta(dh,0),
+                                duringConstructionUpdateAttributes);
+
+  if ( removecenter )
+  {
+    CGAL::remove_cell<LCC,2>(*scene.lcc,d2,duringConstructionUpdateAttributes);
+  }
+  else
+  {
+    sierpinskiCarpetSurfaces.push_back(d2);
+  }
+
+  sierpinskiCarpetSurfaces.push_back(d1);
+}
+
+void MainWindow::sierpinski_carpet_split_face_in_nine(Dart_handle dh)
+{
+  Dart_handle d1 = scene.lcc->beta(dh,1,1);
+  Dart_handle d2 = scene.lcc->beta(dh,1,1,1,1,1,1,1);
+  Dart_handle d3 = scene.lcc->beta(dh,1);
+  Dart_handle d4 = scene.lcc->beta(d2,1);
+
+  Dart_handle e2=
+  CGAL::insert_cell_1_in_cell_2(*(scene.lcc),
+                                d1,
+                                d2,
+                                duringConstructionUpdateAttributes);
+
+  if (afterConstructionUpdateAttributes && updateAttributesMethodStdMap)
+  {
+    dart_map.insert(std::pair<Dart_handle, LCC::Point>(e2, dart_map[d2]));
+    dart_map.insert(std::pair<Dart_handle, LCC::Point>((scene.lcc)->beta(e2,2), dart_map[d1]));
+  }
+
+  Dart_handle e1=
+  CGAL::insert_cell_1_in_cell_2(*(scene.lcc),
+                                d3,
+                                d4,
+                                duringConstructionUpdateAttributes);
+
+  if (afterConstructionUpdateAttributes && updateAttributesMethodStdMap)
+  {
+    dart_map.insert(std::pair<Dart_handle, LCC::Point>(e1, dart_map[d4]));
+    dart_map.insert(std::pair<Dart_handle, LCC::Point>((scene.lcc)->beta(e1,2), dart_map[d3]));
+  }
+
+  sierpinskiCarpetSurfaces.push_back(e2);
+  sierpinskiCarpetSurfaces.push_back(e1);
+
+  // on transmet le beta2 pour ne pas insérer dans new_darts un brin qui sera supprimé lors de la suppression de la face du milieu
+  sierpinski_carpet_split_edge_in_three(scene.lcc->beta(e1,2));
+  sierpinski_carpet_split_edge_in_three(e2);
+
+  sierpinski_carpet_split_face_in_three(dh, false);
+  sierpinski_carpet_split_face_in_three(d2, true);
+  sierpinski_carpet_split_face_in_three(scene.lcc->beta(e2,0), false);
+}
+
+
+void MainWindow::onSierpinskiCarpetDec()
+{
+#ifdef CGAL_PROFILE_LCC_DEMO
+  CGAL::Timer timer;
+  timer.start();
+#endif
+
+  this->sierpinskiCarpetLevel--;
+
+  // We know here the number of Sierpinski surfaces: 8^sierpinskiCarpetLevel
+  // thus we can directly "cut" the std::vector to the correct size.
+  sierpinskiCarpetSurfaces.resize(CGAL::ipower(8,sierpinskiCarpetLevel));
+
+  int markSurfaces = (scene.lcc)->get_new_mark();
+  int markVertices = (scene.lcc)->get_new_mark();
+
+  std::vector<Dart_handle> edges;
+  std::vector<Dart_handle> vertices;
+
+  // First we remove edges.
+  for ( std::vector<Dart_handle>::iterator itsurfaces=sierpinskiCarpetSurfaces.begin();
+        itsurfaces!=sierpinskiCarpetSurfaces.end(); ++itsurfaces)
+  {
+    Dart_handle dh = *itsurfaces;
+    dh = scene.lcc->beta(dh,1,1,2,1);
+    edges.push_back(dh);
+    dh = scene.lcc->beta(dh,1,2,1,2,1);
+    edges.push_back(dh);
+    dh = scene.lcc->beta(dh,1,2,1,2,1);
+    edges.push_back(dh);
+    dh = scene.lcc->beta(dh,1,2,1,2,1);
+    edges.push_back(dh);
+  }
+
+  for(unsigned int i = 0; i < edges.size(); i++)
+  {
+    CGAL::remove_cell<LCC,1>(*scene.lcc, scene.lcc->beta(edges[i],0), duringConstructionUpdateAttributes);
+    CGAL::remove_cell<LCC,1>(*scene.lcc, scene.lcc->beta(edges[i],1), duringConstructionUpdateAttributes);
+    CGAL::remove_cell<LCC,1>(*scene.lcc, edges[i], duringConstructionUpdateAttributes);
+  }
+  edges.clear();
+
+  // Lastly we remove vertices.
+  for ( std::vector<Dart_handle>::iterator itsurfaces=sierpinskiCarpetSurfaces.begin();
+        itsurfaces!=sierpinskiCarpetSurfaces.end(); ++itsurfaces)
+  {
+    Dart_handle dh = scene.lcc->beta(*itsurfaces,1);
+    // we proceed side by side
+    for (unsigned int i = 0; i < 4; i++)
+    {
+      if ( !(scene.lcc)->is_marked(dh, markVertices) )
+      {
+        vertices.push_back(dh);
+        CGAL::mark_cell<LCC, 0>(*scene.lcc, dh, markVertices);
+      }
+      dh = scene.lcc->beta(dh,1);
+      if ( !(scene.lcc)->is_marked(dh, markVertices) )
+      {
+        vertices.push_back(dh);
+        CGAL::mark_cell<LCC, 0>(*scene.lcc, dh, markVertices);
+      }
+      dh = scene.lcc->beta(dh,1,1);
+    }
+  }
+
+  (scene.lcc)->negate_mark(markSurfaces);
+  for ( std::vector<Dart_handle>::iterator itsurfaces=sierpinskiCarpetSurfaces.begin();
+        itsurfaces!=sierpinskiCarpetSurfaces.end(); ++itsurfaces)
+  {
+    Dart_handle dh = scene.lcc->beta(*itsurfaces,1);
+    for (unsigned int i = 0; i < 4; i++)
+    {
+      if ( (scene.lcc)->is_marked(dh, markVertices) )
+        CGAL::unmark_cell<LCC, 0>(*scene.lcc, dh, markVertices);
+      dh = scene.lcc->beta(dh,1);
+      if ( (scene.lcc)->is_marked(dh, markVertices) )
+        CGAL::unmark_cell<LCC, 0>(*scene.lcc, dh, markVertices);
+      dh = scene.lcc->beta(dh,1,1);
+    }
+  }
+
+  (scene.lcc)->negate_mark(markSurfaces);
+  CGAL_assertion( (scene.lcc)->is_whole_map_unmarked(markSurfaces) );
+  CGAL_assertion( (scene.lcc)->is_whole_map_unmarked(markVertices) );
+
+  for(unsigned int i = 0; i < vertices.size(); i++)
+  {
+    CGAL::remove_cell<LCC,0>(*scene.lcc, vertices[i], duringConstructionUpdateAttributes);
+  }
+  vertices.clear();
+
+  (scene.lcc)->free_mark(markSurfaces);
+  (scene.lcc)->free_mark(markVertices);
+
+  if (!duringConstructionUpdateAttributes)
+  {
+    scene.lcc->validate_scene();
+  }
+
+#ifdef CGAL_PROFILE_LCC_DEMO
+  timer.stop();
+  std::cout<<"Time to decrease the level of sierpinski carpet ("
+           <<this->sierpinskiCarpetLevel+1<<" -> "<<this->sierpinskiCarpetLevel<<"): "
+           <<timer.time()<<" seconds."<<std::endl;
+#endif
+
+  recreate_whole_volume_list();
+
+  // statusBar ()->showMessage (QString ("Menger Dec"),DELAY_STATUSMSG);
+  emit(sceneChanged());
+
+}
+
+///////////////////////////////////////////////////////////////////////////////////
+// SIERPINSKI TRIANGLE
+///////////////////////////////////////////////////////////////////////////////////
+
+void MainWindow::on_actionCreate_Sierpinski_Triangle_triggered ()
+{
+  std::cout << "on_actionCreate_Sierpinski_Triangle_triggered" << std::endl;
+
+  sierpinskiTriangleUpdateAttributes = dialogsierpinskitriangle.updateAttributes->isChecked();
+
+  dialogsierpinskitriangle.level->disconnect(this);
+
+  dialogsierpinskitriangle.level->setValue(0);
+  sierpinskiTriangleLevel=0;
+  CGAL_assertion( sierpinskiTriangleSurfaces.empty() );
+
+  CGAL_assertion( removedTriangles.empty() );
+
+  Point_3 basepoint(nbcube%5, (nbcube/5)%5, nbcube/25);
+
+  Dart_handle d = scene.lcc->make_triangle(basepoint,
+                                           LCC::Traits::Construct_translated_point()
+                                           (basepoint,LCC::Traits::Vector(1,0,0)),
+                                           LCC::Traits::Construct_translated_point()
+                                           (basepoint,LCC::Traits::Vector(0.5f,CGAL::sqrt(3.f)/2.f,0)));
+
+  on_new_volume(d);
+
+  ++nbcube;
+
+  statusBar ()->showMessage (QString ("Triangle created"),DELAY_STATUSMSG);
+
+  emit (sceneChanged ());
+
+  sierpinskiTriangleSurfaces.push_back(d);
+  update_operations_entries(false);
+
+  QObject::connect(dialogsierpinskitriangle.level, SIGNAL(valueChanged(int)),
+                   this, SLOT(onSierpinskiTriangleChangeLevel(int)));
+
+  dialogsierpinskitriangle.show();
+}
+
+void MainWindow::onSierpinskiTriangleCancel()
+{
+  for(std::vector<Dart_handle>::iterator it=sierpinskiTriangleSurfaces.begin();
+      it!=sierpinskiTriangleSurfaces.end(); ++it)
+  {
+    CGAL::remove_cell<LCC,2>(*scene.lcc, *it);
+  }
+
+  recreate_whole_volume_list();
+  sierpinskiTriangleSurfaces.clear();
+  emit(sceneChanged());
+}
+
+void MainWindow::onSierpinskiTriangleOk()
+{
+  update_operations_entries(true);
+  sierpinskiTriangleSurfaces.clear();
+}
+
+void MainWindow::onSierpinskiTriangleChangeLevel(int newLevel)
+{
+  // std::cout << "onSierpinskiTriangleChangeLevel, newLevel=" << newLevel << std::endl;
+  while ( newLevel > sierpinskiTriangleLevel ) onSierpinskiTriangleInc();
+  while ( newLevel < sierpinskiTriangleLevel ) onSierpinskiTriangleDec();
+}
+
+void MainWindow::onSierpinskiTriangleUpdateAttributes(bool newValue)
+{
+  std::cout << "onSierpinskiTriangleUpdateAttributes, newValue=" << newValue << std::endl;
+
+  sierpinskiTriangleUpdateAttributes = newValue;
+}
+
+void MainWindow::onSierpinskiTriangleInc()
+{
+#ifdef CGAL_PROFILE_LCC_DEMO
+  CGAL::Timer timer;
+  timer.start();
+#endif
+
+  this->sierpinskiTriangleLevel++;
+
+  std::vector<Dart_handle> edges;
+  nbfacesinit = (unsigned int)sierpinskiTriangleSurfaces.size();
+
+  int markEdges = (scene.lcc)->get_new_mark();
+  int markFaces = (scene.lcc)->get_new_mark();
+
+  for(std::vector<Dart_handle>::iterator itfaces=sierpinskiTriangleSurfaces.begin();
+        itfaces!=sierpinskiTriangleSurfaces.end(); ++itfaces)
+  {
+    CGAL_assertion( !(scene.lcc)->is_marked(*itfaces, markFaces) );
+    for (LCC::Dart_of_cell_basic_range<2>::iterator
+         it=(scene.lcc)->darts_of_cell_basic<2>(*itfaces, markFaces).begin(),
+         itend=(scene.lcc)->darts_of_cell_basic<2>(*itfaces, markFaces).end();
+         it!=itend; ++it)
+    {
+      if ( !(scene.lcc)->is_marked(it, markEdges) )
+      {
+        edges.push_back(it);
+        CGAL::mark_cell<LCC,1>(*(scene.lcc), it, markEdges);
+      }
+    }
+  }
+
+  (scene.lcc)->negate_mark(markFaces);
+  for(std::vector<Dart_handle>::iterator itfaces=sierpinskiTriangleSurfaces.begin();
+        itfaces!=sierpinskiTriangleSurfaces.end(); ++itfaces)
+  {
+    for (LCC::Dart_of_cell_basic_range<2>::iterator
+         it=(scene.lcc)->darts_of_cell_basic<2>(*itfaces, markFaces).begin(),
+         itend=(scene.lcc)->darts_of_cell_basic<2>(*itfaces, markFaces).end();
+         it!=itend; ++it)
+    {
+      (scene.lcc)->unmark(it, markEdges);
+    }
+  }
+
+  (scene.lcc)->negate_mark(markFaces);
+  CGAL_assertion( (scene.lcc)->is_whole_map_unmarked(markFaces) );
+  CGAL_assertion( (scene.lcc)->is_whole_map_unmarked(markEdges) );
+
+  (scene.lcc)->free_mark(markEdges);
+  (scene.lcc)->free_mark(markFaces);
+
+  std::cout << "nb_edges=" << edges.size() << std::endl;
+
+  for(unsigned int i = 0; i < (unsigned int)edges.size(); i++)
+  {
+    sierpinski_triangle_split_edge_in_two(edges[i]);
+  }
+  edges.clear();
+
+  std::cout << "nbfacesinit=" << nbfacesinit << std::endl;
+
+  for(unsigned int i = 0; i < nbfacesinit; i++)
+  {
+    sierpinski_triangle_split_face_in_four(sierpinskiTriangleSurfaces[i],true);
+  }
+
+  if (!sierpinskiTriangleUpdateAttributes)
+  {
+    std::cout << "validate scene..." << std::endl;
+    std::cout << "BOOST_VERSION=" << BOOST_VERSION << std::endl;
+#if defined(BOOST_NO_VARIADIC_TEMPLATES)
+    std::cout << "BOOST_NO_VARIADIC_TEMPLATES" << " defined" << std::endl;
+#else
+    std::cout << "BOOST_NO_VARIADIC_TEMPLATES" << " not defined" << std::endl;
+#endif
+
+    std::cout << "set 3-attributes on all 3-cells" << std::endl;
+    for(unsigned int i = nbfacesinit; i < (unsigned int)sierpinskiTriangleSurfaces.size(); i++)
+    {
+      LCC::Attribute_handle<3>::type ah = (scene.lcc)->create_attribute<3>();
+        CGAL::Set_i_attribute_functor<LCC, 3>::
+            run(scene.lcc, sierpinskiTriangleSurfaces[i], ah);
+        scene.lcc->info<3>(sierpinskiTriangleSurfaces[i]).color()=
+          (CGAL::Color(myrandom.get_int(0,256),
+                       myrandom.get_int(0,256),
+                       myrandom.get_int(0,256)));
+
+        update_volume_list_add(scene.lcc->attribute<3>(sierpinskiTriangleSurfaces[i]));
+    }
+
+    scene.lcc->validate_scene();
+  }
+
+  // std::cout << removedTriangles.size() << std::endl;
+
+#ifdef CGAL_PROFILE_LCC_DEMO
+  timer.stop();
+  std::cout<<"Time to increase the level of sierpinski triangle ("
+           <<this->sierpinskiTriangleLevel-1<<" -> "<<this->sierpinskiTriangleLevel<<") "
+           <<(sierpinskiTriangleUpdateAttributes ? "DURING" : "AFTER") << " construction update attributes: "
+           <<timer.time()<<" seconds."<<std::endl;
+#endif
+
+  //CGAL_assertion( (scene.lcc)->is_valid() );
+
+  emit(sceneChanged());
+}
+
+void MainWindow::sierpinski_triangle_split_edge_in_two(Dart_handle dh)
+{
+  LCC::Point p1 = scene.lcc->point(dh);
+  LCC::Point p2 = scene.lcc->point(scene.lcc->other_extremity(dh));
+
+  LCC::Vector v1 = LCC::Traits::Construct_vector() (p1,p2);
+  LCC::Vector v2 = LCC::Traits::Construct_scaled_vector() (v1,1.0/2);
+
+  LCC::Point p3 = LCC::Traits::Construct_translated_point() (p1,v2);
+
+  (scene.lcc)->insert_point_in_cell<1>(dh,p3,sierpinskiTriangleUpdateAttributes);
+}
+
+void MainWindow::sierpinski_triangle_split_face_in_four(Dart_handle dh, bool removecenter)
+{
+  Dart_handle d1=
+  CGAL::insert_cell_1_in_cell_2(*(scene.lcc),
+                                scene.lcc->beta(dh,1),
+                                scene.lcc->beta(dh,1,1,1),
+                                sierpinskiTriangleUpdateAttributes);
+
+  Dart_handle d2=
+  CGAL::insert_cell_1_in_cell_2(*(scene.lcc),
+                                scene.lcc->beta(d1,2,1),
+                                scene.lcc->beta(d1,2,1,1,1),
+                                sierpinskiTriangleUpdateAttributes);
+
+  Dart_handle d3=
+  CGAL::insert_cell_1_in_cell_2(*(scene.lcc),
+                                scene.lcc->beta(d2,2,1),
+                                scene.lcc->beta(d2,2,1,1,1),
+                                sierpinskiTriangleUpdateAttributes);
+  if ( removecenter )
+  {
+    Triplet <Dart_handle, Dart_handle, Dart_handle> triplet(d1,d2,d3);
+    removedTriangles.push_back(triplet);
+
+    // at this step, the map is correctly 0-embedded, any other attribute is set
+    //  (call of insert_point_in_cell<1> with update_attributes set to true)
+
+    CGAL::remove_cell<LCC,2>(*scene.lcc,scene.lcc->beta(d3,2),sierpinskiTriangleUpdateAttributes); // BUG HERE
+
+    if (sierpinskiTriangleUpdateAttributes)
+    {
+      update_volume_list_add(scene.lcc->attribute<3>(scene.lcc->beta(d2,0)));
+      update_volume_list_add(scene.lcc->attribute<3>(scene.lcc->beta(d1,0)));
+    }
+    else
+    {
+      // we dupplicate all 0-embeddings to set them to the splitted vertices
+      (scene.lcc)->set_dart_attribute<0>(scene.lcc->beta(d2,1),(scene.lcc)->create_vertex_attribute(scene.lcc->point(d1)));
+      (scene.lcc)->set_dart_attribute<0>(scene.lcc->beta(d3,1),(scene.lcc)->create_vertex_attribute(scene.lcc->point(d2)));
+      (scene.lcc)->set_dart_attribute<0>(scene.lcc->beta(d1,1),(scene.lcc)->create_vertex_attribute(scene.lcc->point(d3)));
+
+      /*
+      // this treatment is now performed in onSierpinskiTriangleInc, just before validate_scene
+      LCC::Attribute_handle<3>::type a2 = (scene.lcc)->create_attribute<3>();
+      (scene.lcc)->set_dart_attribute<3>(d1,a2);
+      (scene.lcc)->set_dart_attribute<3>(scene.lcc->beta(d1,1),a2);
+      (scene.lcc)->set_dart_attribute<3>(scene.lcc->beta(d1,1,1),a2);
+      scene.lcc->info<3>(d1).color()=
+        (CGAL::Color(myrandom.get_int(0,256),
+                     myrandom.get_int(0,256),
+                     myrandom.get_int(0,256)));
+      LCC::Attribute_handle<3>::type a3 = (scene.lcc)->create_attribute<3>();
+      (scene.lcc)->set_dart_attribute<3>(d2,a3);
+      (scene.lcc)->set_dart_attribute<3>(scene.lcc->beta(d2,1),a3);
+      (scene.lcc)->set_dart_attribute<3>(scene.lcc->beta(d2,1,1),a3);
+      scene.lcc->info<3>(d2).color()=
+        (CGAL::Color(myrandom.get_int(0,256),
+                     myrandom.get_int(0,256),
+                     myrandom.get_int(0,256)));
+      */
+    }
+  }
+  else
+  {
+    sierpinskiTriangleSurfaces.push_back(scene.lcc->beta(d3,2));
+  }
+
+  sierpinskiTriangleSurfaces.push_back(scene.lcc->beta(d2,0));
+  sierpinskiTriangleSurfaces.push_back(scene.lcc->beta(d1,0));
+}
+
+void MainWindow::onSierpinskiTriangleDec()
+{
+#ifdef CGAL_PROFILE_LCC_DEMO
+  CGAL::Timer timer;
+  timer.start();
+#endif
+
+  // std::cout << sierpinskiTriangleLevel << std::endl;
+  this->sierpinskiTriangleLevel--;
+
+  int nbt = CGAL::ipower(3,this->sierpinskiTriangleLevel);
+  // std::cout << removedTriangles.size() << " " << nbt << std::endl;
+
+  // First we add triangles removed during construction process
+  for ( unsigned int i = removedTriangles.size() - nbt; i < removedTriangles.size(); i++)
+  {
+    /*
+    Dart_handle d = scene.lcc->make_triangle(scene.lcc->point(scene.lcc->beta(sierpinskiTriangleSurfaces[i],0)),
+                                             scene.lcc->point(scene.lcc->beta(sierpinskiTriangleSurfaces[i+1],0)),
+                                             scene.lcc->point(scene.lcc->beta(sierpinskiTriangleSurfaces[i+2],0)));
+    scene.lcc->sew<2>(scene.lcc->beta(d,1,1), scene.lcc->beta(sierpinskiTriangleSurfaces[i],1));
+    scene.lcc->sew<2>(scene.lcc->beta(d,1,1,1), scene.lcc->beta(sierpinskiTriangleSurfaces[i+1],1));
+    scene.lcc->sew<2>(scene.lcc->beta(d,1,1,1,1), scene.lcc->beta(sierpinskiTriangleSurfaces[i+2],1));
+    */
+    Dart_handle d1 = scene.lcc->create_dart();
+    Dart_handle d2 = scene.lcc->create_dart();
+    Dart_handle d3 = scene.lcc->create_dart();
+    scene.lcc->sew<1>(d1,d2);
+    scene.lcc->sew<1>(d2,d3);
+    scene.lcc->sew<1>(d3,d1);
+    scene.lcc->sew<2>(d1, removedTriangles[i].first);
+    scene.lcc->sew<2>(d2, removedTriangles[i].second);
+    scene.lcc->sew<2>(d3, removedTriangles[i].third);
+  }
+
+  removedTriangles.resize(removedTriangles.size() - nbt);
+
+  // We know here the number of Sierpinski surfaces: 3^sierpinskiTriangleLevel
+  // thus we can directly "cut" the std::vector to the correct size.
+  sierpinskiTriangleSurfaces.resize(CGAL::ipower(3,sierpinskiTriangleLevel));
+
+  int markSurfaces = (scene.lcc)->get_new_mark();
+  int markVertices = (scene.lcc)->get_new_mark();
+
+  std::vector<Dart_handle> edges;
+  std::vector<Dart_handle> vertices;
+
+  // Now we remove edges.
+  for ( std::vector<Dart_handle>::iterator itsurfaces=sierpinskiTriangleSurfaces.begin();
+        itsurfaces!=sierpinskiTriangleSurfaces.end(); ++itsurfaces)
+  {
+    Dart_handle dh = *itsurfaces;
+    dh = scene.lcc->beta(dh,1);
+    edges.push_back(dh);
+    dh = scene.lcc->beta(dh,2,1,2);
+    edges.push_back(dh);
+    dh = scene.lcc->beta(dh,2,1,2);
+    edges.push_back(dh);
+  }
+
+  for(unsigned int i = 0; i < edges.size(); i++)
+  {
+    CGAL::remove_cell<LCC,1>(*scene.lcc, edges[i], duringConstructionUpdateAttributes);
+  }
+  edges.clear();
+
+  // Lastly we remove vertices.
+  for ( std::vector<Dart_handle>::iterator itsurfaces=sierpinskiTriangleSurfaces.begin();
+        itsurfaces!=sierpinskiTriangleSurfaces.end(); ++itsurfaces)
+  {
+    Dart_handle dh = scene.lcc->beta(*itsurfaces,1);
+    if ( !(scene.lcc)->is_marked(dh, markVertices) )
+    {
+      vertices.push_back(dh);
+      CGAL::mark_cell<LCC, 0>(*scene.lcc, dh, markVertices);
+    }
+    dh = scene.lcc->beta(dh,1,1);
+    if ( !(scene.lcc)->is_marked(dh, markVertices) )
+    {
+      vertices.push_back(dh);
+      CGAL::mark_cell<LCC, 0>(*scene.lcc, dh, markVertices);
+    }
+    dh = scene.lcc->beta(dh,1,1);
+    if ( !(scene.lcc)->is_marked(dh, markVertices) )
+    {
+      vertices.push_back(dh);
+      CGAL::mark_cell<LCC, 0>(*scene.lcc, dh, markVertices);
+    }
+  }
+
+  (scene.lcc)->negate_mark(markSurfaces);
+  for ( std::vector<Dart_handle>::iterator itsurfaces=sierpinskiTriangleSurfaces.begin();
+        itsurfaces!=sierpinskiTriangleSurfaces.end(); ++itsurfaces)
+  {
+    Dart_handle dh = scene.lcc->beta(*itsurfaces,1);
+    if ( (scene.lcc)->is_marked(dh, markVertices) )
+      CGAL::unmark_cell<LCC, 0>(*scene.lcc, dh, markVertices);
+    dh = scene.lcc->beta(dh,1,1);
+    if ( (scene.lcc)->is_marked(dh, markVertices) )
+      CGAL::unmark_cell<LCC, 0>(*scene.lcc, dh, markVertices);
+    dh = scene.lcc->beta(dh,1,1);
+    if ( (scene.lcc)->is_marked(dh, markVertices) )
+      CGAL::unmark_cell<LCC, 0>(*scene.lcc, dh, markVertices);
+  }
+
+  (scene.lcc)->negate_mark(markSurfaces);
+  CGAL_assertion( (scene.lcc)->is_whole_map_unmarked(markSurfaces) );
+  CGAL_assertion( (scene.lcc)->is_whole_map_unmarked(markVertices) );
+
+  for(unsigned int i = 0; i < vertices.size(); i++)
+  {
+    CGAL::remove_cell<LCC,0>(*scene.lcc, vertices[i], duringConstructionUpdateAttributes);
+  }
+  vertices.clear();
+
+  (scene.lcc)->free_mark(markSurfaces);
+  (scene.lcc)->free_mark(markVertices);
+
+  if (!sierpinskiTriangleUpdateAttributes)
+  {
+    scene.lcc->validate_scene();
+  }
+
+#ifdef CGAL_PROFILE_LCC_DEMO
+  timer.stop();
+  std::cout<<"Time to decrease the level of sierpinski triangle ("
+           <<this->sierpinskiTriangleLevel+1<<" -> "<<this->sierpinskiTriangleLevel<<"): "
+           <<timer.time()<<" seconds."<<std::endl;
+#endif
+
+  recreate_whole_volume_list();
+
+  // statusBar ()->showMessage (QString ("Sirpinski Triangle Dec"),DELAY_STATUSMSG);
+  emit(sceneChanged());
+
+}
+
+
+
 
 
 #undef DELAY_STATUSMSG

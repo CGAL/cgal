@@ -1159,6 +1159,34 @@ namespace CGAL {
       return valid;
     }
 
+    /// validate the map
+    void validate_scene()
+    {
+      std::vector<int> marks(dimension+1);
+      for ( int i=0; i<=dimension; ++i)
+        marks[i] = -1;
+
+      Helper::template
+        Foreach_enabled_attributes<Reserve_mark_functor<Self> >::
+          run(this,&marks);
+
+      for ( typename Dart_range::iterator it(darts().begin()),
+             itend(darts().end()); it!=itend; ++it)
+      {
+        Helper::template Foreach_enabled_attributes
+          <internal::Validate_attribute_functor<Self> >::
+          run(this,it,&marks);
+
+      }
+
+      for ( int i=0; i<=dimension; ++i)
+        if ( marks[i]!=-1 )
+        {
+          CGAL_assertion( is_whole_map_marked(marks[i]) );
+          free_mark(marks[i]);
+        }
+    }
+
     /// @return the number of darts.
     size_type number_of_darts() const
     { return mdarts.size(); }

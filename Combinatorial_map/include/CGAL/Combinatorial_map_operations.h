@@ -87,7 +87,7 @@ namespace CGAL
   template<class CMap, unsigned int i, unsigned int nmi>
   struct Remove_cell_functor
   {
-    static size_t run(CMap& amap, typename CMap::Dart_handle adart)
+    static size_t run(CMap& amap, typename CMap::Dart_handle adart, bool update_attributes)
     {
       CGAL_static_assertion ( 1<=i && i<CMap::dimension );
       CGAL_assertion( (is_removable<CMap,i>(amap, adart)) );
@@ -115,10 +115,13 @@ namespace CGAL
         ++res;
       }
 
-      // We group the two (i+1)-cells incident if they exist.
-      if ( dg1!=amap.null_handle )
-        CGAL::internal::Group_attribute_functor_run<CMap, i+1>::
-            run(&amap, dg1, dg2);
+      if (update_attributes)
+      {
+        // We group the two (i+1)-cells incident if they exist.
+        if ( dg1!=amap.null_handle )
+          CGAL::internal::Group_attribute_functor_run<CMap, i+1>::
+              run(&amap, dg1, dg2);
+      }
 
       // During the operation, we store in modified_darts the darts modified
       // to test after the loop the non void attributes that are split.
@@ -211,17 +214,20 @@ namespace CGAL
         }
       }
 
-      // We test the split of all the incident cells for all the non
-      // void attributes.
-      if ( i==1 )
-        CMap::Helper::template Foreach_enabled_attributes_except
-            <CGAL::internal::Test_split_attribute_functor<CMap,i>, i>::
-            run(&amap, modified_darts, modified_darts2,
-                mark_modified_darts);
-      else
-        CMap::Helper::template Foreach_enabled_attributes_except
-            <CGAL::internal::Test_split_attribute_functor<CMap,i>, i>::
-            run(&amap, modified_darts, mark_modified_darts);
+      if (update_attributes)
+      {
+        // We test the split of all the incident cells for all the non
+        // void attributes.
+        if ( i==1 )
+          CMap::Helper::template Foreach_enabled_attributes_except
+              <CGAL::internal::Test_split_attribute_functor<CMap,i>, i>::
+              run(&amap, modified_darts, modified_darts2,
+                  mark_modified_darts);
+        else
+          CMap::Helper::template Foreach_enabled_attributes_except
+              <CGAL::internal::Test_split_attribute_functor<CMap,i>, i>::
+              run(&amap, modified_darts, mark_modified_darts);
+      }
 
       // We remove all the darts of the i-cell.
       for ( it=to_erase.begin(); it!=to_erase.end(); ++it )
@@ -268,7 +274,7 @@ namespace CGAL
   template<class CMap,unsigned int i>
   struct Remove_cell_functor<CMap,i,0>
   {
-    static size_t run(CMap& amap, typename CMap::Dart_handle adart)
+    static size_t run(CMap& amap, typename CMap::Dart_handle adart, bool update_attributes)
     {
       int mark = amap.get_new_mark();
       std::deque<typename CMap::Dart_handle> to_erase;
@@ -298,11 +304,14 @@ namespace CGAL
         }
       }
 
-      // We test the split of all the incident cells for all the non
-      // void attributes.
-      CMap::Helper::template Foreach_enabled_attributes_except
-          <CGAL::internal::Test_split_attribute_functor<CMap,i>,
-          CMap::dimension>::run(&amap, modified_darts);
+      if (update_attributes)
+      {
+        // We test the split of all the incident cells for all the non
+        // void attributes.
+        CMap::Helper::template Foreach_enabled_attributes_except
+            <CGAL::internal::Test_split_attribute_functor<CMap,i>,
+            CMap::dimension>::run(&amap, modified_darts);
+      }
 
       // We remove all the darts of the d-cell.
       for ( it = to_erase.begin(); it != to_erase.end(); ++it )
@@ -327,7 +336,7 @@ namespace CGAL
   template<class CMap,unsigned int nmi>
   struct Remove_cell_functor<CMap,0,nmi>
   {
-    static size_t run(CMap& amap, typename CMap::Dart_handle adart)
+    static size_t run(CMap& amap, typename CMap::Dart_handle adart, bool update_attributes)
     {
       CGAL_assertion( (is_removable<CMap,0>(amap,adart)) );
 
@@ -351,10 +360,13 @@ namespace CGAL
         ++res;
       }
 
-      // We group the two edges incident if they exist.
-      if ( dg1!=amap.null_handle )
-        CGAL::internal::Group_attribute_functor_run<CMap, 1>::
-            run(&amap, dg1, dg2);
+      if (update_attributes)
+      {
+        // We group the two edges incident if they exist.
+        if ( dg1!=amap.null_handle )
+          CGAL::internal::Group_attribute_functor_run<CMap, 1>::
+              run(&amap, dg1, dg2);
+      }
 
       // During the operation, we store in modified_darts the darts modified
       // by beta0 to test after the loop non void attributes that are split.
@@ -410,11 +422,14 @@ namespace CGAL
         }
       }
 
-      // We test the split of all the incident cells for all the non
-      // void attributes.
-      CMap::Helper::template Foreach_enabled_attributes_except
-          <CGAL::internal::Test_split_attribute_functor<CMap,0>, 1>::
-          run(&amap,modified_darts, modified_darts2);
+      if (update_attributes)
+      {
+        // We test the split of all the incident cells for all the non
+        // void attributes.
+        CMap::Helper::template Foreach_enabled_attributes_except
+            <CGAL::internal::Test_split_attribute_functor<CMap,0>, 1>::
+            run(&amap,modified_darts, modified_darts2);
+      }
 
       // We remove all the darts of the 0-cell.
       for ( it=to_erase.begin(); it!=to_erase.end(); ++it )
@@ -437,10 +452,10 @@ namespace CGAL
    * @return the number of deleted darts.
    */
   template < class CMap, unsigned int i >
-  size_t remove_cell(CMap& amap, typename CMap::Dart_handle adart)
+  size_t remove_cell(CMap& amap, typename CMap::Dart_handle adart, bool update_attributes = true)
   {
     return
-        CGAL::Remove_cell_functor<CMap,i,CMap::dimension-i>::run(amap,adart);
+        CGAL::Remove_cell_functor<CMap,i,CMap::dimension-i>::run(amap,adart,update_attributes);
   }
 
   /** Test if an i-cell can be contracted.

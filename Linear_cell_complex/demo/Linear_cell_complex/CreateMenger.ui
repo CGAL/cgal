@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>227</width>
-    <height>76</height>
+    <width>264</width>
+    <height>106</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -16,8 +16,8 @@
   <widget class="QDialogButtonBox" name="buttonBox">
    <property name="geometry">
     <rect>
-     <x>-142</x>
-     <y>40</y>
+     <x>-90</x>
+     <y>70</y>
      <width>341</width>
      <height>32</height>
     </rect>
@@ -65,6 +65,22 @@
    </property>
    <property name="text">
     <string>Menger Complexity</string>
+   </property>
+  </widget>
+  <widget class="QCheckBox" name="updateAttributes">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>40</y>
+     <width>241</width>
+     <height>18</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Update attributes during construction</string>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
    </property>
   </widget>
  </widget>
