@@ -1004,8 +1004,8 @@ collapse_edge(typename boost::graph_traits<Graph>::edge_descriptor v0v1,
       if (!(internal::is_border(edges_to_erase[0],g)))
         join_face(edges_to_erase[0],g);
       else
-        g.erase_facet(edges_to_erase[0]->opposite());
-      if (!edges_to_erase[1]->is_border())
+        remove_face(opposite(edges_to_erase[0],g),g);
+      if (!internal::is_border(edges_to_erase[1],g))
         join_face(edges_to_erase[1],g);
       else
         remove_face(opposite(edges_to_erase[1],g),g);
