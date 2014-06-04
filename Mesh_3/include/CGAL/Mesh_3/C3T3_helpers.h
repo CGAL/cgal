@@ -769,12 +769,12 @@ public:
   Vertex_handle move_point(const Vertex_handle& old_vertex,
                            const Point_3& new_position,
                            Outdated_cell_set& outdated_cells_set,
-                           Moving_vertices_set& moving_vertices);
+                           Moving_vertices_set& moving_vertices) const;
   Vertex_handle move_point(const Vertex_handle& old_vertex,
                            const Point_3& new_position,
                            Outdated_cell_set& outdated_cells_set,
                            Moving_vertices_set& moving_vertices,
-                           bool *could_lock_zone);
+                           bool *could_lock_zone) const;
 
   /**
    * Try to lock the incident cells and return them in \c cells
@@ -1495,7 +1495,7 @@ private:
    * Removes objects of [begin,end[ range from \c c3t3_
    */
   template<typename ForwardIterator>
-  void remove_from_c3t3(ForwardIterator begin, ForwardIterator end)
+  void remove_from_c3t3(ForwardIterator begin, ForwardIterator end) const
   {
     while ( begin != end )
       c3t3_.remove_from_complex(*begin++);
@@ -1506,7 +1506,7 @@ private:
    */
   template < typename ForwardIterator >
   void remove_cells_and_facets_from_c3t3(ForwardIterator cells_begin,
-                                         ForwardIterator cells_end)
+                                         ForwardIterator cells_end) const
   {
     Facet_vector facets = get_facets_not_inplace(cells_begin,cells_end);
     remove_from_c3t3(facets.begin(), facets.end());
@@ -1554,13 +1554,13 @@ private:
   Vertex_handle move_point(const Vertex_handle& old_vertex,
                            const Point_3& new_position,
                            OutdatedCellsOutputIterator outdated_cells,
-                           DeletedCellsOutputIterator deleted_cells);
+                           DeletedCellsOutputIterator deleted_cells) const;
 
   Vertex_handle
   move_point_topo_change(const Vertex_handle& old_vertex,
                          const Point_3& new_position,
                          Outdated_cell_set& outdated_cells_set,
-                         bool *could_lock_zone = NULL);
+                         bool *could_lock_zone = NULL) const;
 
   template < typename OutdatedCellsOutputIterator,
              typename DeletedCellsOutputIterator >
@@ -1568,20 +1568,20 @@ private:
   move_point_topo_change(const Vertex_handle& old_vertex,
                          const Point_3& new_position,
                          OutdatedCellsOutputIterator outdated_cells,
-                         DeletedCellsOutputIterator deleted_cells);
+                         DeletedCellsOutputIterator deleted_cells) const;
 
   Vertex_handle move_point_topo_change(const Vertex_handle& old_vertex,
-                                       const Point_3& new_position);
+                                       const Point_3& new_position) const;
 
   template < typename OutdatedCellsOutputIterator >
   Vertex_handle
   move_point_no_topo_change(const Vertex_handle& old_vertex,
                             const Point_3& new_position,
-                            OutdatedCellsOutputIterator outdated_cells);
+                            OutdatedCellsOutputIterator outdated_cells) const;
 
   Vertex_handle
   move_point_no_topo_change(const Vertex_handle& old_vertex,
-                            const Point_3& new_position);
+                            const Point_3& new_position) const;
 
   /**
    * Returns the least square plane from v, using adjacent surface points
@@ -1687,7 +1687,7 @@ private:
                                              ConflictCellsInputIterator removal_conflict_cells_begin,
                                              ConflictCellsInputIterator removal_conflict_cells_end,
                                              OutdatedCellsOutputIterator outdated_cells,
-                                             DeletedCellsOutputIterator deleted_cells);
+                                             DeletedCellsOutputIterator deleted_cells) const;
 
   /**
    * Updates \c boundary wrt \c edge: if edge is already in boundary we remove
@@ -2782,7 +2782,7 @@ C3T3_helpers<C3T3,MD>::
 move_point(const Vertex_handle& old_vertex,
            const Point_3& new_position,
            OutdatedCellsOutputIterator outdated_cells,
-           DeletedCellsOutputIterator deleted_cells)
+           DeletedCellsOutputIterator deleted_cells) const
 {
   // std::cerr << "C3T3_helpers::move_point[v2]("
   //           << (void*)(&*old_vertex) << " = " << old_vertex->point()
@@ -2814,7 +2814,7 @@ C3T3_helpers<C3T3,MD>::
 move_point(const Vertex_handle& old_vertex,
            const Point_3& new_position,
            Outdated_cell_set& outdated_cells_set,
-           Moving_vertices_set& moving_vertices)
+           Moving_vertices_set& moving_vertices) const
 {
   Cell_vector incident_cells_;
   incident_cells_.reserve(64);
@@ -2849,7 +2849,7 @@ move_point(const Vertex_handle& old_vertex,
            const Point_3& new_position,
            Outdated_cell_set& outdated_cells_set,
            Moving_vertices_set& moving_vertices,
-           bool *could_lock_zone)
+           bool *could_lock_zone) const
 {
   CGAL_assertion(could_lock_zone != NULL);
   *could_lock_zone = true;
@@ -2924,7 +2924,7 @@ C3T3_helpers<C3T3,MD>::
 move_point_topo_change(const Vertex_handle& old_vertex,
                        const Point_3& new_position,
                        Outdated_cell_set& outdated_cells_set,
-                       bool *could_lock_zone)
+                       bool *could_lock_zone) const
 {
   Cell_set insertion_conflict_cells;
   Cell_set removal_conflict_cells;
@@ -2980,7 +2980,7 @@ C3T3_helpers<C3T3,MD>::
 move_point_topo_change(const Vertex_handle& old_vertex,
                        const Point_3& new_position,
                        OutdatedCellsOutputIterator outdated_cells,
-                       DeletedCellsOutputIterator deleted_cells)
+                       DeletedCellsOutputIterator deleted_cells) const
 {
   Cell_set insertion_conflict_cells;
   Cell_set removal_conflict_cells;
@@ -3026,6 +3026,7 @@ move_point_topo_change_conflict_zone_known(
     OutdatedCellsOutputIterator outdated_cells,
     DeletedCellsOutputIterator deleted_cells)//warning : this should not be an iterator to Intrusive_list
                                              //o.w. deleted_cells will point to null pointer or so and crash
+                                             const
 {
   Point_3 old_position = old_vertex->point();
   // make one set with conflict zone
@@ -3082,7 +3083,7 @@ template <typename C3T3, typename MD>
 typename C3T3_helpers<C3T3,MD>::Vertex_handle 
 C3T3_helpers<C3T3,MD>::
 move_point_topo_change(const Vertex_handle& old_vertex,
-                       const Point_3& new_position)
+                       const Point_3& new_position) const
 {
   // Insert new_vertex, remove old_vertex
   int dimension = c3t3_.in_dimension(old_vertex);
@@ -3110,7 +3111,7 @@ typename C3T3_helpers<C3T3,MD>::Vertex_handle
 C3T3_helpers<C3T3,MD>::
 move_point_no_topo_change(const Vertex_handle& old_vertex,
                           const Point_3& new_position,
-                          OutdatedCellsOutputIterator outdated_cells)
+                          OutdatedCellsOutputIterator outdated_cells) const
 {
 
   this->lock_outdated_cells();
@@ -3125,7 +3126,7 @@ template <typename C3T3, typename MD>
 typename C3T3_helpers<C3T3,MD>::Vertex_handle
 C3T3_helpers<C3T3,MD>::
 move_point_no_topo_change(const Vertex_handle& old_vertex,
-                          const Point_3& new_position)
+                          const Point_3& new_position) const
 {
   // Change vertex position
   old_vertex->set_point(new_position);
