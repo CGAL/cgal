@@ -80,10 +80,10 @@ private:
 
   typedef typename Polyhedron::Facet  Facet;
 
-  typedef typename Polyhedron::Facet_const_iterator Facet_const_iterator;
-  typedef typename Polyhedron::Facet_const_handle   Facet_const_handle;
+  typedef typename boost::graph_traits<Polyhedron>::face_iterator Facet_const_iterator;
+  typedef typename boost::graph_traits<Polyhedron>::face_descriptor   Facet_const_handle;
 
-  typedef AABB_face_graph_triangle_primitive<const Polyhedron> Primitive;
+  typedef AABB_face_graph_triangle_primitive<Polyhedron> Primitive;
   typedef AABB_traits_SDF<GeomTraits, Primitive, fast_bbox_intersection>
   AABB_traits_internal;
   typedef typename CGAL::AABB_tree<AABB_traits_internal>                 Tree;
@@ -135,7 +135,7 @@ public:
     translated_point_functor(traits.construct_translated_point_3_object()),
     centroid_functor(traits.construct_centroid_3_object()),
     use_diagonal(use_diagonal) {
-    tree.insert(mesh.facets_begin(), mesh.facets_end(), mesh);
+    tree.insert(faces(mesh).first, faces(mesh).second, mesh);
     tree.build();
 
     if(build_kd_tree) {
@@ -172,8 +172,8 @@ public:
       centroid_functor(traits.construct_centroid_3_object()),
       use_diagonal(false) {
     for( ; polyhedron_begin != polyhedron_end; ++polyhedron_begin) {
-      tree.insert((*polyhedron_begin)->facets_begin(),
-                  (*polyhedron_begin)->facets_end());
+      tree.insert(faces(*polyhedron_begin).first,
+                  faces(*polyhedron_begin).second);
     }
     tree.build();
 
@@ -204,13 +204,13 @@ public:
     disk_sampler(number_of_rays, std::back_inserter(disk_samples));
 
     for( ; facet_begin != facet_end; ++facet_begin) {
-      boost::optional<double> sdf_value = calculate_sdf_value_of_facet(facet_begin,
+      boost::optional<double> sdf_value = calculate_sdf_value_of_facet(*facet_begin,
                                           cone_angle, true, disk_samples);
 
       if(sdf_value) {
-        sdf_values[facet_begin] = *sdf_value;
+        sdf_values[*facet_begin] = *sdf_value;
       } else          {
-        sdf_values[facet_begin] = -1.0;
+        sdf_values[*facet_begin] = -1.0;
       }
     }
   }
@@ -386,9 +386,9 @@ private:
     normal=scale_functor(normal,
                          FT(1.0/std::sqrt(to_double(normal.squared_length()))));
 
-    CGAL::internal::SkipPrimitiveFunctor<typename Polyhedron::Facet_const_handle>
+    CGAL::internal::SkipPrimitiveFunctor<Facet_const_handle>
     skip(facet);
-    CGAL::internal::FirstIntersectionVisitor<typename Polyhedron::Facet_const_handle>
+    CGAL::internal::FirstIntersectionVisitor<Facet_const_handle>
     visitor;
 
     return calculate_sdf_value_of_point(center, normal, skip, visitor, cone_angle,

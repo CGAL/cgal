@@ -137,7 +137,7 @@ public:
             Triangle_property_map(&graph),
             Point_property_map(&graph) )
   {}
-#if 0
+#if 1
   // for backward compatibility with Polyhedron::facets_begin()
   AABB_face_graph_triangle_primitive(typename boost::graph_traits<FaceGraph>::face_descriptor fd, FaceGraph& graph)
     : Base( Id_(fd),

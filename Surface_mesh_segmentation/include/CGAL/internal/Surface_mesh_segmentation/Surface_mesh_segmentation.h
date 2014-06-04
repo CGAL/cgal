@@ -246,7 +246,7 @@ public:
                        SDFPropertyMap sdf_pmap, bool postprocess_req) {
     // calculate sdf values
     SDF_calculation_class sdf_calculator(mesh, false, true, traits);
-    sdf_calculator.calculate_sdf_values(mesh.facets_begin(), mesh.facets_end(),
+    sdf_calculator.calculate_sdf_values(faces(mesh).first, faces(mesh).second,
                                         cone_angle, number_of_rays, sdf_pmap);
 
     Postprocess_sdf_values<Polyhedron> p;
