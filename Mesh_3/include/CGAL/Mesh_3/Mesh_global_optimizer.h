@@ -349,7 +349,7 @@ private:
 private:
 
 #ifdef CGAL_LINKED_WITH_TBB
-  // Functor for update_facets function (base)
+  // Functor for compute_moves function
   template <typename MGO, typename Sizing_field_, typename Moves_vector_,
             typename CTOP3>
   class Compute_move
@@ -418,7 +418,7 @@ private:
     }
   };
 
-  // Functor for update_facets function (base)
+  // Functor for fill_sizing_field function
   template <typename MGO, typename Tr_, typename Local_list_>
   class Compute_sizing_field_value
   {
@@ -446,6 +446,84 @@ private:
         = Tr_::Triangulation_data_structure::Vertex_range::s_iterator_to(v);
       m_local_lists.local().push_back(
         std::make_pair(v.point(), m_mgo.average_circumradius_length(vh)));
+    }
+  };
+
+  // Functor for update_mesh function
+  template <typename MGO, typename Helper, typename Tr_, typename Moves_vector,
+            typename Moving_vertices_set_, typename Outdated_cell_set_>
+  class Move_vertex
+  {
+    MGO                                  & m_mgo;
+    const Helper                         & m_helper;
+    const Moves_vector                   & m_moves;
+    Moving_vertices_set_                 & m_moving_vertices;
+    Outdated_cell_set_                   & m_outdated_cells;
+  
+    typedef typename Tr_::Point            Point_3;
+    typedef typename Tr_::Vertex_handle    Vertex_handle;
+
+  public:
+    // Constructor
+    Move_vertex(MGO &mgo, const Helper &helper, const Moves_vector &moves,
+                Moving_vertices_set_ &moving_vertices,
+                Outdated_cell_set_ &outdated_cells)
+    : m_mgo(mgo), m_helper(helper), m_moves(moves), 
+      m_moving_vertices(moving_vertices), m_outdated_cells(outdated_cells)
+    {}
+
+    // Constructor
+    Move_vertex(const Move_vertex &mv)
+    : m_mgo(mv.m_mgo), m_helper(mv.m_helper), m_moves(mv.m_moves),
+      m_moving_vertices(mv.m_moving_vertices),
+      m_outdated_cells(mv.m_outdated_cells)
+    {}
+
+    // operator()
+    void operator()( const tbb::blocked_range<size_t>& r ) const
+    {
+      for( size_t i = r.begin() ; i != r.end() ; ++i)
+      {
+        const Vertex_handle& v = cpp11::get<0>(m_moves[i]);
+        const Point_3& new_position = cpp11::get<1>(m_moves[i]);
+        // Get size at new position
+        if ( MGO::Sizing_field::is_vertex_update_needed )
+        {
+          //FT size = sizing_field_(new_position,v);
+          FT size = cpp11::get<2>(m_moves[i]);
+
+          // Move point
+          bool could_lock_zone;
+          Vertex_handle new_v = m_helper.move_point(
+            v, new_position, m_outdated_cells, m_moving_vertices, &could_lock_zone);
+          while (could_lock_zone == false)
+          {
+            new_v = m_helper.move_point(
+              v, new_position, m_outdated_cells, m_moving_vertices, &could_lock_zone);
+          }
+
+          // Restore size in meshing_info data
+          new_v->set_meshing_info(size);
+        }
+        else // Move point
+        {
+          bool could_lock_zone;
+          do {
+            m_helper.move_point(
+              v, new_position, m_outdated_cells, m_moving_vertices, &could_lock_zone);
+          } while (!could_lock_zone);
+        }
+
+        m_mgo.unlock_all_elements();
+
+        // Stop if time_limit_ is reached, here we can't return without rebuilding
+        // restricted delaunay
+        if ( m_mgo.is_time_limit_reached() )
+        {
+          tbb::task::self().cancel_group_execution();
+          break;
+        }
+      }
     }
   };
 #endif // CGAL_LINKED_WITH_TBB
@@ -831,51 +909,11 @@ update_mesh(const Moves_vector& moves,
   {
     // Apply moves in triangulation
     tbb::parallel_for(tbb::blocked_range<size_t>(0, moves.size()),
-      [&]( const tbb::blocked_range<size_t>& r ) // CJTODO: lambdas ok?
-    {
-      for( size_t i = r.begin() ; i != r.end() ; ++i)
-      {
-        const Vertex_handle& v = cpp11::get<0>(moves[i]);
-        const Point_3& new_position = cpp11::get<1>(moves[i]);
-        // Get size at new position
-        if ( Self::Sizing_field::is_vertex_update_needed )
-        {
-          //FT size = sizing_field_(new_position,v);
-          FT size = cpp11::get<2>(moves[i]);
-
-          // Move point
-          bool could_lock_zone;
-          Vertex_handle new_v = helper_.move_point(
-            v, new_position, outdated_cells, moving_vertices, &could_lock_zone);
-          while (could_lock_zone == false)
-          {
-            new_v = helper_.move_point(
-              v, new_position, outdated_cells, moving_vertices, &could_lock_zone);
-          }
-
-          // Restore size in meshing_info data
-          new_v->set_meshing_info(size);
-        }
-        else // Move point
-        {
-          bool could_lock_zone;
-          do {
-            helper_.move_point(
-              v, new_position, outdated_cells, moving_vertices, &could_lock_zone);
-          } while (!could_lock_zone);
-        }
-
-        this->unlock_all_elements();
-
-        // Stop if time_limit_ is reached, here we can't return without rebuilding
-        // restricted delaunay
-        if ( this->is_time_limit_reached() )
-        {
-          tbb::task::self().cancel_group_execution();
-          break;
-        }
-      }
-    });
+      Move_vertex<
+        Self, C3T3_helpers, Tr, Moves_vector,
+        Moving_vertices_set, Outdated_cell_set>(
+          *this, helper_, moves, moving_vertices, outdated_cells)
+    );
   }
   // Sequential
   else
