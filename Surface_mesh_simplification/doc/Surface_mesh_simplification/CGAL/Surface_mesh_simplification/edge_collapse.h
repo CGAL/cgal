@@ -94,17 +94,6 @@ An external property map can be easily obtained by calling
 `get(CGAL::halfedge_external_index,surface_mesh)`. This constructs on the fly, and returns, 
 a property map which non-intrusively associates a proper id with each edge. 
 
-\cgalHeading{edge_is_border_map(EdgeIsBorderMap ebm)}
-
-Maps each <I>directed</I> edge in the surface mesh into a Boolean value 
-which indicates if the edge belongs to the boundary of the surface mesh 
-(facing the outside). 
-`EdgeIsBorderMap` must be a model
-`ReadablePropertyMap` with key type
-`boost::graph_traits<EdgeCollapsableSurfaceMesh const>::%edge_descriptor` 
-and with value type is `bool`. 
-
-<B>%Default</B>: the property map obtained by calling `get(CGAL::edge_is_border,surface_mesh)`. 
 
 \cgalHeading{edge_is_constrained_map(EdgeIsConstrainedMap ecm)}
 

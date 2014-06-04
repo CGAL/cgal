@@ -132,6 +132,7 @@ int main( int argc, char** argv )
   }
   cst_output.close();
 
+
   // Contract the surface mesh as much as possible
   SMS::Count_stop_predicate<Surface_mesh> stop(0);
 
@@ -166,7 +167,7 @@ int main( int argc, char** argv )
                                                   point(target(next(hd,surface_mesh),surface_mesh),surface_mesh),
                                                   point(target(next(opposite(hd,surface_mesh),surface_mesh),surface_mesh),surface_mesh));
       if ( CGAL::abs(angle)<100 ){
-        ++nb_sharp_edges;
+        --nb_sharp_edges;
       assert(
         Point_3 p = point(source(hd,surface_mesh),surface_mesh);
         Point_3 q = point(target(hd,surface_mesh),surface_mesh);
@@ -175,6 +176,7 @@ int main( int argc, char** argv )
     }
   }
   std::cout  << "OK\n";
+  std::cerr << "# sharp edges = " << nb_sharp_edges << std::endl;
 
   std::cout << "Check that no removable edge has been forgotten..." << std::endl;
   r = SMS::edge_collapse(surface_mesh
