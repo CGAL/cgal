@@ -39,7 +39,9 @@ public:
   typedef boost::graph_traits<ECM>       GraphTraits ;
   
   typedef typename GraphTraits::vertex_descriptor vertex_descriptor ;
-  typedef typename GraphTraits::halfedge_descriptor   halfedge_descriptor ;
+  typedef typename GraphTraits::face_descriptor face_descriptor ;
+  typedef typename GraphTraits::halfedge_descriptor halfedge_descriptor ;
+
 
   //typedef typename boost::property_map<ECM, CGAL::vertex_point_t>::type Vertex_point_pmap;
   typedef typename boost::property_traits<VertexPointMap>::value_type Point;
@@ -76,14 +78,12 @@ public :
   
   template<class VertexIdxMap
           ,class EdgeIdxMap
-          ,class EdgeIsBorderMap
           >
   Edge_profile ( halfedge_descriptor  const& aV0V1
                , ECM&                    aSurface
                , VertexIdxMap     const& aVertex_index_map
                , VertexPointMap   const& aVertex_point_map
                , EdgeIdxMap       const& aEdge_index_map
-               , EdgeIsBorderMap  const& aEdge_is_border_map
                , bool has_border 
                ) ;
      
@@ -147,7 +147,7 @@ private:
   
   bool is_border(halfedge_descriptor e) const
   {
-    return get(CGAL::halfedge_is_border, surface_mesh(), e);
+    return face(e,*mSurface) == boost::graph_traits<ECM>::null_face();
   }
    
 

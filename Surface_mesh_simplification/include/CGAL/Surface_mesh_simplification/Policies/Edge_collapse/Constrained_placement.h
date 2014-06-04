@@ -53,14 +53,14 @@ public:
     for ( boost::tie(eb,ee) = halfedges_around_target(aProfile.v0(),aProfile.surface_mesh());
       eb != ee ; ++ eb )
     {
-      if( get(Edge_is_constrained_map, *eb) )
+      if( get(Edge_is_constrained_map, edge(*eb,aProfile.surface_mesh())) )
         return get(aProfile.vertex_point_map(),
                    aProfile.v0());
     }
     for ( boost::tie(eb,ee) = halfedges_around_target(aProfile.v1(),aProfile.surface_mesh());
       eb != ee ; ++ eb )
     {
-      if( get(Edge_is_constrained_map, *eb) )
+      if( get(Edge_is_constrained_map, edge(*eb,aProfile.surface_mesh())) )
         return get(aProfile.vertex_point_map(),
                    aProfile.v1());
     }

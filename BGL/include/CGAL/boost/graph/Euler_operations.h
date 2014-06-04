@@ -938,7 +938,7 @@ collapse_edge(typename boost::graph_traits<Graph>::edge_descriptor v0v1,
   typedef typename Traits::halfedge_descriptor            halfedge_descriptor;
 
   halfedge_descriptor pq = halfedge(v0v1,g);
-  CGAL_assertion( !get(Edge_is_constrained_map,pq) );
+  CGAL_assertion( !get(Edge_is_constrained_map,v0v1) );
 
   halfedge_descriptor qp = opposite(pq,g);
   halfedge_descriptor pt = opposite(prev(pq,g),g);
@@ -960,7 +960,7 @@ collapse_edge(typename boost::graph_traits<Graph>::edge_descriptor v0v1,
   //   p-t if it is not constrained and t-q otherwise
   if ( lTopFaceExists )
   {
-    if ( !get(Edge_is_constrained_map,pt) )
+    if ( !get(Edge_is_constrained_map,edge(pt,g)) )
     {
       *edges_to_erase_ptr++=pt;
     }
@@ -974,7 +974,7 @@ collapse_edge(typename boost::graph_traits<Graph>::edge_descriptor v0v1,
   //   q-b if it is not constrained and b-p otherwise
   if ( lBottomFaceExists )
   {
-    if ( !get(Edge_is_constrained_map,qb) )
+    if ( !get(Edge_is_constrained_map,edge(qb,g)) )
     {
       *edges_to_erase_ptr++=qb;
     }

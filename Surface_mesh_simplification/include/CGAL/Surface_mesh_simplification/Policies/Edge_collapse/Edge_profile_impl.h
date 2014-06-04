@@ -28,14 +28,12 @@ namespace Surface_mesh_simplification
 
 template<class VertexIdxMap
         ,class EdgeIdxMap
-        ,class EdgeIsBorderMap
         >
   Edge_profile<ECM,VertexPointMap>::Edge_profile ( halfedge_descriptor  const& aV0V1
                                 , ECM&                    aSurface
                                 , VertexIdxMap     const& 
                                 , VertexPointMap const& aVertex_point_map
                                 , EdgeIdxMap       const&
-                                , EdgeIsBorderMap  const&
                                 , bool has_border
 
                                 )

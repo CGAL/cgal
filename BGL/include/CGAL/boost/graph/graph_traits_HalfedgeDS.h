@@ -85,6 +85,11 @@ struct HDS_edge {
     return !(*this == other);
   }
 
+  friend bool operator<(const HDS_edge& a,const HDS_edge& b)
+  {
+    if(a==b) return false;
+    return a.halfedge_ < b.halfedge_;
+  }
 
   // forward some function to avoid boilerplate and typedefs inside
   // the free functions

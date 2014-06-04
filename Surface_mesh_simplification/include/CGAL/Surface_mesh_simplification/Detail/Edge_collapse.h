@@ -36,7 +36,6 @@ template<class ECM_
         ,class VertexIndexMap_
         ,class VertexPointMap_
         ,class EdgeIndexMap_
-        ,class EdgeIsBorderMap_
         ,class EdgeIsConstrainedMap_
         ,class GetCost_
         ,class GetPlacement_
@@ -51,7 +50,6 @@ public:
   typedef VertexIndexMap_   VertexIndexMap ;
   typedef VertexPointMap_   VertexPointMap ;
   typedef EdgeIndexMap_     EdgeIndexMap ;
-  typedef EdgeIsBorderMap_  EdgeIsBorderMap ;
   typedef EdgeIsConstrainedMap_ EdgeIsConstrainedMap;
   typedef GetCost_          GetCost ;
   typedef GetPlacement_     GetPlacement ;
@@ -173,7 +171,6 @@ public:
               , VertexIndexMap       const& aVertex_index_map
               , VertexPointMap       const& aVertex_point_map
               , EdgeIndexMap         const& aEdge_index_map
-              , EdgeIsBorderMap      const& aEdge_is_border_map
               , EdgeIsConstrainedMap const& aEdge_is_constrained_map
               , GetCost              const& aGetCost
               , GetPlacement         const& aGetPlacement
@@ -195,7 +192,7 @@ private:
   
   Profile create_profile ( halfedge_descriptor const& aEdge )
   { 
-    return Profile(aEdge,mSurface,Vertex_index_map,Vertex_point_map,Edge_index_map,Edge_is_border_map, m_has_border);
+    return Profile(aEdge,mSurface,Vertex_index_map,Vertex_point_map,Edge_index_map, m_has_border);
   }  
   
   size_type get_halfedge_id   ( halfedge_descriptor const& aEdge ) const { return Edge_index_map[aEdge]; }
@@ -208,13 +205,12 @@ private:
     return is_primary_edge(aEdge) ? aEdge : opposite(aEdge,mSurface) ;
   }  
     
-  bool is_border ( halfedge_descriptor const& aEdge ) const { return get(CGAL::halfedge_is_border, mSurface, aEdge) ; }    
+  bool is_border ( halfedge_descriptor const& aEdge ) const { return face(aEdge,mSurface) == boost::graph_traits<ECM>::null_face() ; }    
   
-  bool is_constrained( halfedge_descriptor const& aEdge ) const { return get(Edge_is_constrained_map,aEdge); }
+  bool is_constrained( halfedge_descriptor const& aEdge ) const { return get(Edge_is_constrained_map,edge(aEdge,mSurface)); }
   bool is_constrained( vertex_descriptor const& aVertex ) const;
 
-  bool is_border_or_constrained( halfedge_descriptor const& aEdge ) const { return Edge_is_border_map[aEdge] ||
-                                                                                     Edge_is_constrained_map[aEdge];}
+  bool is_border_or_constrained( halfedge_descriptor const& aEdge ) const { return is_border(aEdge) || is_constrained(aEdge); }
 
   bool is_edge_a_border ( halfedge_descriptor const& aEdge ) const
   {
@@ -347,9 +343,7 @@ private:
   halfedge_collapse_bk_compatibility(
     halfedge_descriptor const& pq, No_constrained_edge_map<ECM> )
   {
-    //std::cerr << "call CGAL::Euler::collapse_edge()"<< std::endl;
     vertex_descriptor vd = CGAL::Euler::collapse_edge(edge(pq,mSurface), mSurface);
-    //std::cerr << "after CGAL::Euler::collapse_edge()"<< std::endl;
     return vd;
   }
 
@@ -380,7 +374,6 @@ private:
   VertexIndexMap       const& Vertex_index_map ;
   VertexPointMap       const& Vertex_point_map ;
   EdgeIndexMap         const& Edge_index_map ;
-  EdgeIsBorderMap      const& Edge_is_border_map;
   EdgeIsConstrainedMap const& Edge_is_constrained_map;
   GetCost              const& Get_cost ;
   GetPlacement         const& Get_placement ;

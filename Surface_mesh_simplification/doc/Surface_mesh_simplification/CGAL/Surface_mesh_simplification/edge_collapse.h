@@ -27,10 +27,10 @@ the name of each function matches the name of an argument and wraps the actual p
 
 This is an example with 2 arguments: 
 
-`vertex_index_map(the_actual_vertex_index_map).edge_index_map(the_actual_edge_index_map)` 
+`vertex_index_map(the_actual_vertex_index_map).halfedge_index_map(the_actual_halfedge_index_map)` 
 
-`the_actual_vertex_index_map` and `the_actual_edge_index_map` are 
-the actual parameters, while `vertex_index_map()` and `edge_index_map()` 
+`the_actual_vertex_index_map` and `the_actual_halfedge_index_map` are 
+the actual parameters, while `vertex_index_map()` and `halfedge_index_map()` 
 are wrapper functions used to designate each formal argument. 
 
 All named parameters have default values so you only need to compose those for which the default 
@@ -69,7 +69,7 @@ Maps each vertex in the surface mesh into a 3D \cgal point.
 `ReadWritePropertyMap` 
 with key type
 `boost::graph_traits<EdgeCollapsableSurfaceMesh const>::%vertex_descriptor` 
-and with value type is any model of `Kernel::Point_3`.
+and with any model of `Kernel::Point_3` as value type.
 
 <B>%Default</B>: the property map obtained by calling `get(CGAL::vertex_point,surface_mesh)`, 
  

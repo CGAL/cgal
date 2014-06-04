@@ -61,7 +61,14 @@ namespace CGAL{
     
     return edge(prev(opposite(h, g), g), g);
   }
-
+  /*
+   template<class Graph>
+   std:pair<boost::graph_traits<Graph>::edge_iterator,boost::graph_traits<Graph>::edge_iterator>
+   undirected_edges(const Graph& g)
+   {
+     return edges(g);
+   }
+  */
 }  //end of namespace CGAL
 
 #endif //CGAL_BOOST_GRAPH_BACKWARD_COMPATIBILITY_FUNCTIONS_H
