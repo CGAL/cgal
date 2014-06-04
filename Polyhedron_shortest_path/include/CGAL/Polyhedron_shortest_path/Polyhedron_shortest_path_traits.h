@@ -49,6 +49,7 @@ public:
   typedef typename Kernel::Orientation_2 Orientation_2;
   typedef typename Kernel::Bounded_side_2 Bounded_side_2;
   typedef typename Kernel::Collinear_are_ordered_along_line_2 Collinear_are_ordered_along_line_2;
+  typedef typename internal::Compare_relative_intersection_along_segment_2<K> Compare_relative_intersection_along_segment_2;
   typedef typename internal::Is_saddle_vertex<K,P> Is_saddle_vertex;
   
   // Constructions
@@ -67,7 +68,7 @@ public:
   public:
     Barycentric_coordinate operator()(const Triangle_2& t, const Point_2& p) const
     {
-      return Internal::Construct_barycentric_coordinate_any<FT, Barycentric_coordinate, Point_2, Vector_2, Triangle_2>(t, p);
+      return internal::Construct_barycentric_coordinate_any<FT, Barycentric_coordinate, Point_2, Vector_2, Triangle_2>(t, p);
     }
   };
   
@@ -76,7 +77,7 @@ public:
   public:
     Point_2 operator()(const Triangle_2& t, const Barycentric_coordinate& a) const
     {
-      return Internal::Construct_triangle_location_any<FT, Barycentric_coordinate, Point_2, Triangle_2>(t, a);
+      return internal::Construct_triangle_location_any<FT, Barycentric_coordinate, Point_2, Triangle_2>(t, a);
     }
   };
   
@@ -85,7 +86,7 @@ public:
   public:
     Barycentric_coordinate operator()(const Triangle_3& t, const Point_3& p) const
     {
-      return Internal::Construct_barycentric_coordinate_any<FT, Barycentric_coordinate, Point_3, Vector_3, Triangle_3>(t, p);
+      return internal::Construct_barycentric_coordinate_any<FT, Barycentric_coordinate, Point_3, Vector_3, Triangle_3>(t, p);
     }
   };
   
@@ -94,7 +95,7 @@ public:
   public:
     Point_3 operator()(const Triangle_3& t, const Barycentric_coordinate& a) const
     {
-      return Internal::Construct_triangle_location_any<FT, Barycentric_coordinate, Point_3, Triangle_3>(t, a);
+      return internal::Construct_triangle_location_any<FT, Barycentric_coordinate, Point_3, Triangle_3>(t, a);
     }
   };
   
@@ -106,6 +107,7 @@ private:
   Construct_triangle_location_2 m_construct_triangle_location_2_object;
   Construct_barycentric_coordinate_3 m_construct_barycentric_coordinate_3_object;
   Construct_triangle_location_3 m_construct_triangle_location_3_object;
+  Compare_relative_intersection_along_segment_2 m_compare_relative_intersection_along_segment_2_object;
   Is_saddle_vertex m_is_saddle_vertex_object;
   
 public:
@@ -119,6 +121,7 @@ public:
     , m_project_triangle_3_to_triangle_2_object(m_kernel.compute_squared_distance_3_object())
     , m_flatten_triangle_3_along_segment_2_object(m_kernel.compute_squared_distance_3_object())
     , m_is_saddle_vertex_object(m_project_triangle_3_to_triangle_2_object, m_flatten_triangle_3_along_segment_2_object, m_kernel.orientation_2_object())
+    , m_compare_relative_intersection_along_segment_2_object(m_kernel.compute_squared_distance_2_object(), m_kernel.intersect_2_object())
   {
   }
   
@@ -130,6 +133,7 @@ public:
   Construct_projected_point_2 construct_projected_point_2_object() const { return m_kernel.construct_projected_point_2_object(); }
   Compute_squared_distance_2 compute_squared_distance_2_object() const { return m_kernel.compute_squared_distance_2_object(); }
   Compute_squared_distance_3 compute_squared_distance_3_object() const { return m_kernel.compute_squared_distance_3_object(); }
+  Compare_relative_intersection_along_segment_2 compare_relative_intersection_along_segment_2_object() const { return m_compare_relative_intersection_along_segment_2_object; }
   Is_saddle_vertex is_saddle_vertex_object() const { return m_is_saddle_vertex_object; }
   
   Project_triangle_3_to_triangle_2 project_triangle_3_to_triangle_2_object() { return m_project_triangle_3_to_triangle_2_object; }

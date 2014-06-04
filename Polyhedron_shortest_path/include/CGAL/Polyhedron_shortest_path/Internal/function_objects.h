@@ -9,8 +9,6 @@
 #include <CGAL/boost/graph/properties.h>
 #include <CGAL/boost/graph/properties_Polyhedron_3.h>
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
-//#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
-//#include <CGAL/boost/graph/iterator.h>
 
 namespace CGAL {
 
@@ -70,9 +68,10 @@ public:
   typedef typename K::Triangle_2 Triangle_2;
   typedef typename K::Point_2 Point_2;
   typedef typename K::Point_3 Point_3;
-  typedef typename K::Compute_squared_distance_3 Compute_squared_distance_3;
   typedef typename K::Segment_2 Segment_2;
   
+  typedef typename K::Compute_squared_distance_3 Compute_squared_distance_3;
+
 private:
   Compute_squared_distance_3 m_compute_squared_distance_3;
 
@@ -109,64 +108,104 @@ public:
   }
 };
 
-/*
-// TODO: test these in isoloation at least
-// This is BGL based, but I'm not really convinced that makes a lot of sense...
-template <class P>
-class Is_vertex_convex_BGL
+template <class K>
+class Compare_relative_intersection_along_segment_2
 {
 public:
-  typedef P Polyhedron;
+  typedef typename K::FT FT;
+  typedef typename K::Ray_2 Ray_2;
+  typedef typename K::Vector_2 Vector_2;
+  typedef typename K::Triangle_2 Triangle_2;
+  typedef typename K::Point_2 Point_2;
+  typedef typename K::Segment_2 Segment_2;
   
-  typedef typename Polyhedron::FT FT;
-  typedef typename Polyhedron::Point_3 Point_3;
-  typedef typename Polyhedron::Vector_3 Vector_3;
+  typedef typename K::Compute_squared_distance_2 Compute_squared_distance_2;
+  typedef typename K::Intersect_2 Intersect_2;
+ 
   
-  // typedef typename boost::graph_traits<Polyhedron>::face_descriptor Face_descriptor;
-  typedef typename boost::graph_traits<Polyhedron> GraphTraits;
-  typedef typename GraphTraits::vertex_descriptor Vertex_descriptor;
-  typedef typename GraphTraits::vertex_iterator Vertex_iterator;
-  typedef typename GraphTraits::adjacency_iterator Adjacency_iterator;
-  typedef typename GraphTraits::vertex_descriptor Edge_descriptor;
+private:
+  Compute_squared_distance_2 m_compute_squared_distance_2;
+  Intersect_2 m_intersect_2;
   
-  bool operator() (Vertex_descriptor v, Polyhedron& polyhedron)
+public:
+  Compare_relative_intersection_along_segment_2()
   {
-    Adjacency_iterator begin, end;
-    boost::tie(begin, end) = boost::adjacent_vertices(v, polyhedron);
-    
-    Adjacency_iterator beforeEnd = end;
-    --beforeEnd;
-    
-    Vector_3 previousEdge = (*beforeEnd)->point() - v->point();
-    Vector_3 currentEdge = (*begin)->point() - v->point();
-    
-    for (Adjacency_iterator current = begin; current != end; ++current)
+  }
+  
+  Compare_relative_intersection_along_segment_2(const Compute_squared_distance_2& cds, const Intersect_2& i2)
+    : m_compute_squared_distance_2(cds)
+    , m_intersect_2(i2)
+  {
+  }
+
+  CGAL::Comparison_result operator () (const Segment_2& s1, const Ray_2& r1, const Segment_2& s2, const Ray_2& r2)
+  {
+    typedef typename cpp11::result_of<Intersect_2(Segment_2, Ray_2)>::type SegmentRayIntersectResult;
+
+    SegmentRayIntersectResult s1r1Intersection = m_intersect_2(s1, r1);
+    Point_2 p1;
+
+    if (s1r1Intersection)
     {
-      Adjacency_iterator next = current;
-      ++next;
+      Point_2* result = boost::get<Point_2>(&*s1r1Intersection);
       
-      if (next == end)
+      if (result)
       {
-        next = begin;
+        p1 = *result;
+       
       }
-      
-      Vector_3 nextEdge = (*next)->point() - v->point();
-      
-      Vector_3 currentPlane = CGAL::cross_product(previousEdge, currentEdge);
-      
-      if (CGAL::is_positive(currentPlane * nextEdge))
+      else
       {
-        return false;
+        assert(false && "Ray entering triangle must not be parallel to entry segment.");
       }
-      
-      previousEdge = currentEdge;
-      nextEdge = currentEdge;
+    }
+    else
+    {
+      // TODO: figure out what is causing this, i.e. is it just out of range, or is the algorithm incorrect
+      assert(s1r1Intersection && "Ray must enter triangle via entry segment.");
     }
     
-    return true;
+    SegmentRayIntersectResult s2r2Intersection = m_intersect_2(s2, r2);
+    Point_2 p2;
+
+    if (s2r2Intersection)
+    {
+      Point_2* result = boost::get<Point_2>(&*s2r2Intersection);
+      
+      if (result)
+      {
+        p2 = *result;
+       
+      }
+      else
+      {
+        assert(false && "Ray entering triangle must not be parallel to entry segment.");
+      }
+    }
+    else
+    {
+      // TODO: same as above
+      assert(s2r2Intersection && "Ray must enter triangle via entry segment.");
+    }
+    
+    FT d1 = m_compute_squared_distance_2(s1[0], p1);
+    FT d2 = m_compute_squared_distance_2(s2[0], p2);
+    
+    if (d1 == d2)
+    {
+      return CGAL::EQUAL;
+    }
+    else if (d1 < d2)
+    {
+      return CGAL::SMALLER;
+    }
+    else if (d1 > d2)
+    {
+      return CGAL::LARGER;
+    }
+    
   }
 };
-*/
 
 template <class Kernel, class Polyhedron>
 class Is_saddle_vertex
