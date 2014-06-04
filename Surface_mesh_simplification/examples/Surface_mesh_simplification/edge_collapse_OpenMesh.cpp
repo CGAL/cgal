@@ -37,7 +37,8 @@ public:
 
   inline friend reference get(const Constrained_edge_map& em, key_type e)
   {
-    return em.sm_.property(em.constraint,em.sm_.edge_handle(e.idx())); 
+    bool b = em.sm_.property(em.constraint,em.sm_.edge_handle(e.idx())); 
+    return b;
   }
   
   inline friend void put(const Constrained_edge_map& em, key_type e, value_type b)
@@ -98,13 +99,13 @@ int main( int argc, char** argv )
   // For the pupose of the example we mark 10 edges as constrained edges
   edge_iterator b,e;
   int count=0;
-  for(boost::tie(b,e); b!= e; ++b){
-      put(constraints_map,*b,(count++ <10));
+  for(boost::tie(b,e) = edges(surface_mesh); b!= e; ++b){
+      put(constraints_map,*b,(count++ <100));
   }
   // This is a stop predicate (defines when the algorithm terminates).
   // In this example, the simplification stops when the number of undirected edges
   // left in the surface mesh drops below the specified number (1000)
-  SMS::Count_stop_predicate<Surface_mesh> stop(1000);
+  SMS::Count_stop_predicate<Surface_mesh> stop(0);
      
   // This the actual call to the simplification algorithm.
   // The surface mesh and stop conditions are mandatory arguments.
@@ -121,7 +122,7 @@ int main( int argc, char** argv )
   std::cout << "\nFinished...\n" << r << " edges removed.\n" 
             << num_edges(surface_mesh) << " final edges.\n" ;
         
-  //  std::ofstream os( argc > 2 ? argv[2] : "out.off" ) ; os << surface_mesh ;
+   OpenMesh::IO::write_mesh(surface_mesh, "out.off");
   
   return 0 ;      
 }
