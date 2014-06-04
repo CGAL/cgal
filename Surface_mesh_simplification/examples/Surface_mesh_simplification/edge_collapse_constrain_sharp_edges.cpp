@@ -31,12 +31,15 @@ namespace SMS = CGAL::Surface_mesh_simplification ;
 
 struct Hash
 {
-
   typedef std::size_t result_type;
+ 
   result_type operator()(const edge_descriptor& ed) const
   {
+    // although two edge_descriptors may be equal, they may store any of its two halfedges
     CGAL::Handle_hash_function hhf;
-    return hhf(halfedge(ed,Surface_mesh()));
+    std::size_t st1 = hhf(halfedge(ed,Surface_mesh()));
+    std::size_t st2 = hhf(opposite(halfedge(ed,Surface_mesh()),Surface_mesh()));
+    return (std::min)(st1,st2);
   }
 };
 
@@ -48,12 +51,14 @@ struct Constrained_edge_map : public boost::put_get_helper<bool,Constrained_edge
   typedef edge_descriptor                       key_type;
 
   Constrained_edge_map(const CGAL::Unique_hash_map<key_type,bool,Hash>& aConstraints)
-    : mConstraints(aConstraints) {}
+    : mConstraints(aConstraints)
+  {}
 
   reference operator[](key_type const& e) const { return  is_constrained(e); }
 
   bool is_constrained( key_type const& e ) const {
-    return mConstraints.is_defined(e) ? mConstraints[e] : false ; }
+    return mConstraints.is_defined(e);
+  }
 
 private:
   const CGAL::Unique_hash_map<key_type,bool,Hash>& mConstraints;
@@ -111,12 +116,11 @@ int main( int argc, char** argv )
       std::cerr << "border" << std::endl;
       ++nb_sharp_edges;
       constraint_hmap[*eb]=true;
-      constrained_edges[*eb]=std::make_pair( point(source(hd,surface_mesh),surface_mesh),
+      constrained_edges[*eb]=std::make_pair(point(source(hd,surface_mesh),surface_mesh),
                                             point(target(hd,surface_mesh),surface_mesh));
     }
     else{
-      double angle = CGAL::Mesh_3::dihedral_angle(
-                                                  point(target(opposite(hd,surface_mesh),surface_mesh),surface_mesh),
+      double angle = CGAL::Mesh_3::dihedral_angle(point(target(opposite(hd,surface_mesh),surface_mesh),surface_mesh),
                                                   point(target(hd,surface_mesh),surface_mesh),
                                                   point(target(next(hd,surface_mesh),surface_mesh),surface_mesh),
                                                   point(target(next(opposite(hd,surface_mesh),surface_mesh),surface_mesh),surface_mesh));
@@ -132,6 +136,7 @@ int main( int argc, char** argv )
   }
   cst_output.close();
 
+  std::cerr << "# sharp edges = " << nb_sharp_edges << std::endl;
 
   // Contract the surface mesh as much as possible
   SMS::Count_stop_predicate<Surface_mesh> stop(0);
@@ -161,8 +166,7 @@ int main( int argc, char** argv )
                                                      point(target(hd,surface_mesh),surface_mesh)));
     }
     else{
-      double angle = CGAL::Mesh_3::dihedral_angle(
-                                                  point(target(opposite(hd,surface_mesh),surface_mesh),surface_mesh),
+      double angle = CGAL::Mesh_3::dihedral_angle(point(target(opposite(hd,surface_mesh),surface_mesh),surface_mesh),
                                                   point(target(hd,surface_mesh),surface_mesh),
                                                   point(target(next(hd,surface_mesh),surface_mesh),surface_mesh),
                                                   point(target(next(opposite(hd,surface_mesh),surface_mesh),surface_mesh),surface_mesh));
