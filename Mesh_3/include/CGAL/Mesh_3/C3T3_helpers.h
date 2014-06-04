@@ -2878,19 +2878,17 @@ move_point(const Vertex_handle& old_vertex,
     return Vertex_handle();
   }
   if ( Th().no_topological_change(tr_, old_vertex, new_position, incident_cells_) )
-  {
-    BOOST_FOREACH(Cell_handle& ch, std::make_pair(incident_cells_.begin(),
-                                                  incident_cells_.end()))
-    {
-      ch->invalidate_circumcenter();
-    }
+  {    
+    reset_circumcenter_cache(incident_cells_);
+    reset_sliver_cache(incident_cells_);
 
     this->lock_outdated_cells();
     std::copy(incident_cells_.begin(),incident_cells_.end(),
       std::inserter(outdated_cells_set, outdated_cells_set.end()));
     this->unlock_outdated_cells();
 
-    Vertex_handle new_vertex =  move_point_no_topo_change(old_vertex, new_position);
+    Vertex_handle new_vertex =
+      move_point_no_topo_change(old_vertex, new_position);
 
     // Don't "unlock_all_elements" here, the caller may need it to do it himself
     return new_vertex;
