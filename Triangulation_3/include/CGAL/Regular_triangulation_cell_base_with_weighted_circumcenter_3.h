@@ -78,17 +78,8 @@ public:
   operator=
     (const Regular_triangulation_cell_base_with_weighted_circumcenter_3 &c)
   {
-      if (this != &c)
-      {
-        if (weighted_circumcenter_ != NULL)
-        {
-            delete weighted_circumcenter_;
-            weighted_circumcenter_ = NULL;
-        }
-        if (c.weighted_circumcenter_ != NULL)
-            weighted_circumcenter_ = new Bare_point(*(c.weighted_circumcenter_));
-        Cb::operator=(c);
-      }
+      Regular_triangulation_cell_base_with_weighted_circumcenter_3 tmp=c;
+      tmp.swap(*this);
       return *this;
   }
 
@@ -143,6 +134,12 @@ public:
       }
 
       return *weighted_circumcenter_;
+  }
+
+  void swap (Regular_triangulation_cell_base_with_weighted_circumcenter_3& rhs) throw()
+  {
+    std::swap(static_cast<Cb&>(*this), static_cast<Cb&>(rhs));
+    std::swap(weighted_circumcenter_, rhs.weighted_circumcenter_);
   }
 };
 
