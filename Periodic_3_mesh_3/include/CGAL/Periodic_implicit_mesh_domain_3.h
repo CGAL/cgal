@@ -26,8 +26,8 @@
 #define CGAL_PERIODIC_IMPLICIT_MESH_DOMAIN_3_H
 
 
-#include <CGAL/Mesh_3/Labeled_mesh_domain_3.h>
-#include <CGAL/Mesh_3/Implicit_to_labeled_function_wrapper.h>
+#include <CGAL/Periodic_labeled_mesh_domain_3.h>
+#include <CGAL/Implicit_to_labeling_function_wrapper.h>
 
 #include <CGAL/Periodic_mesh_3/config.h>
 
@@ -42,13 +42,13 @@ namespace CGAL {
  */
 template<class Function,
   class BGT,
-  class Wrapper = Mesh_3::Implicit_to_labeled_function_wrapper<Function,BGT> >
+  class Wrapper = Implicit_to_labeling_function_wrapper<Function,BGT> >
 class Periodic_implicit_mesh_domain_3
- : public Mesh_3::Labeled_mesh_domain_3<Wrapper, BGT >
+ : public Periodic_labeled_mesh_domain_3<Wrapper, BGT >
 {
 public:
   /// Base type
-  typedef Mesh_3::Labeled_mesh_domain_3<Wrapper, BGT> Base;
+  typedef Periodic_labeled_mesh_domain_3<Wrapper, BGT> Base;
 
   /// Public types
   typedef typename Base::Bbox_3 Bbox_3;
@@ -62,17 +62,13 @@ public:
    * @param cuboid a bounding box of the domain, periodic domain
    * @param error_bound the error bound relative to the sphere radius
    */
-  Periodic_implicit_mesh_domain_3(Function& f,
+  Periodic_implicit_mesh_domain_3(const Function& f,
                          const Iso_cuboid_3& cuboid,
                          const FT& error_bound = FT(1e-3))
     : Base(Wrapper(f), cuboid, error_bound) {}
 
   /// Destructor
   virtual ~Periodic_implicit_mesh_domain_3() {}
-
-  /// returns periodic cuboid
-  const Iso_cuboid_3& periodic_bounding_box() const { return Base::bounding_box(); }
-
 
 private:
   // Disabled copy constructor & assignment operator
