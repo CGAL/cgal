@@ -62,6 +62,12 @@ The returned point has no weight.
 const Bare_point& weighted_circumcenter( 
 	const RegularTriangulationTraits_3&gt = RegularTriangulationTraits_3()) const; 
 
+/*!
+Swaps the Regular_triangulation_cell_base_with_weighted_circumcenter_3 and other.
+Should be preferred to an assignment or copy constructor when other is deleted after that.
+*/
+void swap (Regular_triangulation_cell_base_with_weighted_circumcenter_3& other) throw();
+
 /// @}
 
 }; /* end Regular_triangulation_cell_base_with_weighted_circumcenter_3 */
