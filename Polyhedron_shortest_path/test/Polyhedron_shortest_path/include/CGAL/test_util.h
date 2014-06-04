@@ -22,13 +22,13 @@ struct Plane_from_facet {
 };
 
 template <class Polyhedron>
-void Construct_polyhedron_planes(Polyhedron& out)
+void construct_polyhedron_planes(Polyhedron& out)
 {
   std::transform( out.facets_begin(), out.facets_end(), out.planes_begin(), Plane_from_facet<Polyhedron>());
 }
 
 template <class Polyhedron>
-typename Polyhedron::Halfedge_handle Make_regular_tetrahedron(Polyhedron& out)
+typename Polyhedron::Halfedge_handle make_regular_tetrahedron(Polyhedron& out)
 {
   typedef typename Polyhedron::Traits::FT FT;
   
@@ -39,7 +39,7 @@ typename Polyhedron::Halfedge_handle Make_regular_tetrahedron(Polyhedron& out)
     typename Polyhedron::Point_3(-FT(1.0), FT(0.0), -rsqrt2),
     typename Polyhedron::Point_3(FT(0.0), FT(1.0), rsqrt2),
     typename Polyhedron::Point_3(FT(0.0), -FT(1.0), rsqrt2));
-  Construct_polyhedron_planes(out);
+  construct_polyhedron_planes(out);
   return result;
 }
 
