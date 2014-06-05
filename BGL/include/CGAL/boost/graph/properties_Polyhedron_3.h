@@ -465,6 +465,11 @@ struct vertex_property_type<CGAL::Polyhedron_3<Gt,I,HDS,A> >
   typedef CGAL::vertex_point_t type;
 };
 
+template<class Gt, class I, CGAL_HDS_PARAM_, class A>
+struct vertex_property_type<const CGAL::Polyhedron_3<Gt,I,HDS,A> >
+{
+  typedef CGAL::vertex_point_t type;
+};
 } // namespace boost
 
 

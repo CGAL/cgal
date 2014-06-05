@@ -42,9 +42,10 @@ sdf_values( const Polyhedron& polyhedron,
             bool postprocess = true,
             GeomTraits traits = GeomTraits())
 {
-  typedef boost::property_map<Polyhedron, boost::vertex_point_t>::type VPMap;
+  typedef boost::property_map<Polyhedron, vertex_point_t>::type VPMap;
+  VPMap vpm = get(vertex_point,const_cast<Polyhedron&>(polyhedron));
   internal::Surface_mesh_segmentation<Polyhedron, GeomTraits, VPMap,Fast_sdf_calculation_mode>
-    algorithm(polyhedron, traits, get(vertex_point,polyhedron));
+    algorithm(polyhedron, traits,vpm);
   return algorithm.calculate_sdf_values(cone_angle, number_of_rays,
                                         sdf_values_map, postprocess);
 }
@@ -177,7 +178,7 @@ segmentation_from_sdf_values( const Polyhedron& polyhedron,
 {
   typedef boost::property_map<Polyhedron, boost::vertex_point_t>::type VPMap;
   internal::Surface_mesh_segmentation<Polyhedron, GeomTraits, VPMap> algorithm(
-    polyhedron, traits, get(vertex_point,polyhedron));
+                                                                               polyhedron, traits, get(vertex_point,const_cast<Polyhedron&>(polyhedron)));
   return algorithm.partition(number_of_clusters, smoothing_lambda, sdf_values_map,
                              segment_ids, !output_cluster_ids);
 }
