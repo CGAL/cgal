@@ -55,6 +55,9 @@ public:
   Change_array_functor(Array_t &v)
     : m_v(v) {}
 
+  Change_array_functor(const Change_array_functor &caf)
+    : m_v(caf.m_v) {}
+
   void operator() (const tbb::blocked_range<size_t>& r) const
   {
     for(size_t i = r.begin(); i != r.end(); i++ )
@@ -74,6 +77,9 @@ class Change_array_functor<std::vector<Truc> >
 public:
   Change_array_functor(std::vector<Truc> &v)
     : m_v(v) {}
+  
+  Change_array_functor(const Change_array_functor &caf)
+    : m_v(caf.m_v) {}
 
   void operator() (const tbb::blocked_range<size_t>& r) const
   {
