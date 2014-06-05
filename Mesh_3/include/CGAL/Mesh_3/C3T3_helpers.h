@@ -2239,13 +2239,14 @@ private:
   
   // Functor for rebuild_restricted_delaunay function
 #ifdef CGAL_LINKED_WITH_TBB
-  template <typename C3T3_helpers_, typename C3T3_, typename Update_c3t3_>
+  template <typename C3T3_helpers_, typename C3T3_, typename Update_c3t3_,
+            typename Vertex_to_proj_set_>
   class Update_facet
   {
-    const C3T3_helpers_        & m_c3t3_helpers;
+    const C3T3_helpers_       & m_c3t3_helpers;
     C3T3_                     & m_c3t3;
     Update_c3t3_              & m_updater;
-    std::set<Vertex_handle>   & m_vertex_to_proj;
+    Vertex_to_proj_set_       & m_vertex_to_proj;
     
     typedef typename C3T3_::Vertex_handle       Vertex_handle;
     typedef typename C3T3_::Cell_handle         Cell_handle;
@@ -2256,13 +2257,15 @@ private:
     // Constructor
     Update_facet(const C3T3_helpers_ & c3t3_helpers,
                  C3T3_ &c3t3, Update_c3t3_& updater, 
-                 std::set<Vertex_handle> &vertex_to_proj)
-    : m_c3t3_helpers(c3t3_helpers), m_c3t3(c3t3), m_updater(updater)
+                 Vertex_to_proj_set_ &vertex_to_proj)
+    : m_c3t3_helpers(c3t3_helpers), m_c3t3(c3t3), m_updater(updater),
+      m_vertex_to_proj(vertex_to_proj)
     {}
 
     // Constructor
     Update_facet(const Update_facet &uc)
-    : m_c3t3(uc.m_c3t3), m_updater(uc.m_updater)
+    : m_c3t3_helpers(uc.m_c3t3_helpers), m_c3t3(uc.m_c3t3), 
+      m_updater(uc.m_updater), m_vertex_to_proj(uc.m_vertex_to_proj)
     {}
 
     // operator()
@@ -2706,17 +2709,19 @@ rebuild_restricted_delaunay(ForwardIterator first_cell,
       uc(*first_cell++);
     }
   }
-
+  
   // Updates facets
-  std::set<std::pair<Vertex_handle, Surface_patch_index> > vertex_to_proj;
+  typedef std::set<std::pair<Vertex_handle, Surface_patch_index> > 
+    Vertex_to_proj_set;
+  Vertex_to_proj_set vertex_to_proj;
 #ifdef CGAL_LINKED_WITH_TBB
   // Parallel
   if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
   {
     tbb::parallel_do(
       facets.begin(), facets.end(),
-      Update_facet<C3T3_helpers, C3T3, Update_c3t3>(
-        c3t3_helpers, c3t3_, updater, vertex_to_proj)
+      Update_facet<Self, C3T3, Update_c3t3, Vertex_to_proj_set>(
+        *this, c3t3_, updater, vertex_to_proj)
     );
   }
   // Sequential
