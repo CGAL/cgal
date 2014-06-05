@@ -225,7 +225,7 @@ template<class Polyhedron>
 class Neighbor_selector_by_edge
 {
 private:
-  typedef Halfedge_around_face_circulator<Polyhedron> Halfedge_around_face_circulator;
+  typedef ::CGAL::Halfedge_around_face_circulator<Polyhedron> Halfedge_around_face_circulator;
 public:
     typedef typename boost::graph_traits<Polyhedron>::face_descriptor face_descriptor;
   /**
@@ -275,7 +275,7 @@ template<class Polyhedron>
 class Neighbor_selector_by_vertex
 {
 private:
-  typedef Halfedge_around_target_circulator<Polyhedron> Halfedge_around_target_circulator;
+  typedef ::CGAL::Halfedge_around_target_circulator<Polyhedron> Halfedge_around_target_circulator;
   typedef typename boost::graph_traits<Polyhedron>::halfedge_iterator halfedge_iterator;
   typedef typename boost::graph_traits<Polyhedron>::vertex_iterator   vertex_iterator;
 public:
@@ -304,12 +304,12 @@ public:
       const Facet_level_pair& pair = facet_queue.front();
 
       face_descriptor facet_front = pair.first;
-      halfedge_iterator edge = halfedge(facet_front,polyhedron)
+      halfedge_iterator edge = halfedge(facet_front,polyhedron);
       do { // loop on three vertices of the facet
         Halfedge_around_target_circulator vertex_circulator(*edge,polyhedron), done(vertex_circulator);
 
         do { // for each vertex loop on incoming edges (through those edges loop on neighbor facets which includes the vertex)
-          if(!(face(*vertex_circulator,polyhedron) == graph_traits<Polyhedron::null_face())) {
+          if(!(face(*vertex_circulator,polyhedron) == boost::graph_traits<Polyhedron>::null_face())) {
             Facet_level_pair new_pair(face(opposite(*vertex_circulator),polyhedron,polyhedron),
                                       pair.second + 1);
             if(neighbors.insert(new_pair).second

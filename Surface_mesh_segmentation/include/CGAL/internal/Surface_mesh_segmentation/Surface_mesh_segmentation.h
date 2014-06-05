@@ -89,7 +89,7 @@ public:
         continue;
       }
 
-      typename Halfedge_around_face_circulator<Polyhedron> facet_circulator(halfedge(*facet_it,mesh),mesh), done(facet_circulator);
+      Halfedge_around_face_circulator<Polyhedron> facet_circulator(halfedge(*facet_it,mesh),mesh), done(facet_circulator);
 
       double total_neighbor_sdf = 0.0;
       std::size_t nb_valid_neighbors = 0;
@@ -513,7 +513,7 @@ private:
     while(!facet_queue.empty()) {
       face_descriptor facet = facet_queue.front();
 
-      typename Halfedge_around_face_circulator<Polyhedron> facet_circulator(halfedge(facet,mesh),mesh), done(facet_circulator);
+      Halfedge_around_face_circulator<Polyhedron> facet_circulator(halfedge(facet,mesh),mesh), done(facet_circulator);
       do {
         if(face(opposite(*facet_circulator,mesh),mesh)==boost::graph_traits<Polyhedron>::null_face()) {
           continue;  // no facet to traversal

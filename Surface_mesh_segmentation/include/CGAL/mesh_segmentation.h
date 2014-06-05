@@ -42,7 +42,7 @@ sdf_values( const Polyhedron& polyhedron,
             bool postprocess = true,
             GeomTraits traits = GeomTraits())
 {
-  typedef boost::property_map<Polyhedron, vertex_point_t>::type VPMap;
+  typedef typename boost::property_map<Polyhedron, vertex_point_t>::type VPMap;
   VPMap vpm = get(vertex_point,const_cast<Polyhedron&>(polyhedron));
   internal::Surface_mesh_segmentation<Polyhedron, GeomTraits, VPMap,Fast_sdf_calculation_mode>
     algorithm(polyhedron, traits,vpm);
@@ -176,7 +176,7 @@ segmentation_from_sdf_values( const Polyhedron& polyhedron,
                               bool output_cluster_ids = false,
                               GeomTraits traits = GeomTraits())
 {
-  typedef boost::property_map<Polyhedron, boost::vertex_point_t>::type VPMap;
+  typedef typename boost::property_map<Polyhedron, boost::vertex_point_t>::type VPMap;
   internal::Surface_mesh_segmentation<Polyhedron, GeomTraits, VPMap> algorithm(
                                                                                polyhedron, traits, get(vertex_point,const_cast<Polyhedron&>(polyhedron)));
   return algorithm.partition(number_of_clusters, smoothing_lambda, sdf_values_map,
@@ -200,7 +200,7 @@ segmentation_via_sdf_values(const Polyhedron& polyhedron,
                             bool output_cluster_ids = false,
                             GeomTraits traits = GeomTraits())
 {
-  typedef boost::graph_traits<Polyhedron>::face_descriptor face_descriptor;
+  typedef typename boost::graph_traits<Polyhedron>::face_descriptor face_descriptor;
   typedef std::map<face_descriptor, double>
   Facet_double_map;
   Facet_double_map internal_sdf_map;

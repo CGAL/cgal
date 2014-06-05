@@ -133,9 +133,7 @@ struct One_point_from_facet_handle_property_map{
     : m_graph( const_cast<typename boost::remove_const<FaceGraph>::type*>(g) )
   {}
 
-template <class FaceGraph,
-          class VertexPointPMap>
-  One_point_from_facet_handle_property_map(FaceGraph* gm, VertexPointPMap vppm )
+  One_point_from_facet_handle_property_map(FaceGraph* g, VertexPointPMap vppm )
     : m_graph( const_cast<typename boost::remove_const<FaceGraph>::type*>(g) ),
       m_vppm(vppm)
   {}
