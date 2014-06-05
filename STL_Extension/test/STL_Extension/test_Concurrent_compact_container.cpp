@@ -64,6 +64,108 @@ inline bool check_empty(const Cont &c)
   return c.empty() && c.size() == 0 && c.begin() == c.end();
 }
 
+// For parallel_for
+template <typename Values_vec, typename Cont>
+class Insert_in_CCC_functor
+{
+  typedef std::vector<typename Cont::iterator> Iterators_vec;
+
+public:
+  Insert_in_CCC_functor(
+    const Values_vec &values, Cont &cont, Iterators_vec &iterators)
+    : m_values(values), m_cont(cont), m_iterators(iterators) 
+  {}
+  
+  Insert_in_CCC_functor(const Insert_in_CCC_functor &other)
+    : m_values(other.m_values), m_cont(other.m_cont), 
+      m_iterators(other.m_iterators)
+  {}
+
+  void operator() (const tbb::blocked_range<size_t>& r) const
+  {
+    for( size_t i = r.begin() ; i != r.end() ; ++i)
+      m_iterators[i] = m_cont.insert(m_values[i]);
+  }
+
+private:
+  const Values_vec    & m_values;
+  Cont                & m_cont;
+  Iterators_vec       & m_iterators;
+};
+
+// For parallel_for
+template <typename Cont>
+class Erase_in_CCC_functor
+{
+  typedef std::vector<typename Cont::iterator> Iterators_vec;
+
+public:
+  Erase_in_CCC_functor(
+    Cont &cont, Iterators_vec &iterators)
+    : m_cont(cont), m_iterators(iterators) 
+  {}
+  
+  Erase_in_CCC_functor(const Erase_in_CCC_functor &other)
+    : m_cont(other.m_cont), 
+      m_iterators(other.m_iterators)
+  {}
+
+  void operator() (const tbb::blocked_range<size_t>& r) const
+  {
+    for( size_t i = r.begin() ; i != r.end() ; ++i)
+      m_cont.erase(m_iterators[i]);
+  }
+
+private:
+  Cont                & m_cont;
+  Iterators_vec       & m_iterators;
+};
+
+// For parallel_for
+template <typename Values_vec, typename Cont>
+class Insert_and_erase_in_CCC_functor
+{
+  typedef std::vector<typename Cont::iterator>  Iterators_vec;
+  typedef std::vector<tbb::atomic<bool> >       Free_elts_vec;
+
+public:
+  Insert_and_erase_in_CCC_functor(
+    const Values_vec &values, Cont &cont, Iterators_vec &iterators,
+    Free_elts_vec &free_elements, tbb::atomic<unsigned int> &num_erasures)
+  : m_values(values), m_cont(cont), m_iterators(iterators),
+    m_free_elements(free_elements), m_num_erasures(num_erasures)
+  {}
+  
+  Insert_and_erase_in_CCC_functor(const Insert_and_erase_in_CCC_functor &other)
+    : m_values(other.m_values), m_cont(other.m_cont), 
+      m_iterators(other.m_iterators), m_free_elements(other.m_free_elements),
+      m_num_erasures(other.m_num_erasures)
+  {}
+
+  void operator() (const tbb::blocked_range<size_t>& r) const
+  {
+    for( size_t i = r.begin() ; i != r.end() ; ++i)
+    {
+      m_iterators[i] = m_cont.insert(m_values[i]);
+      // Random-pick an element to erase
+      int index_to_erase = rand() % m_values.size();
+      // If it exists
+      if (m_free_elements[index_to_erase].compare_and_swap(true, false) == false)
+      {
+        m_cont.erase(m_iterators[index_to_erase]);
+        ++m_num_erasures;
+      }
+    }
+  }
+
+private:
+  const Values_vec          & m_values;
+  Cont                      & m_cont;
+  Iterators_vec             & m_iterators;
+  Free_elts_vec             & m_free_elements;
+  tbb::atomic<unsigned int> & m_num_erasures;
+};
+
 template < class Cont >
 void test(const Cont &)
 {
@@ -241,25 +343,15 @@ void test(const Cont &)
   std::vector<Cont::iterator> iterators(v11.size());
   tbb::parallel_for(
     tbb::blocked_range<size_t>( 0, v11.size() ),
-    [&] (const tbb::blocked_range<size_t>& r) // CJTODO: lambdas ok?
-    {
-      for( size_t i = r.begin() ; i != r.end() ; ++i)
-      {
-        iterators[i] = c11.insert(v11[i]);
-      }
-    });
+    Insert_in_CCC_functor<Vect, Cont>(v11, c11, iterators)
+  );
   assert(c11.size() == v11.size());
   
   std::cout << "Testing parallel erasure" << std::endl;
   tbb::parallel_for(
     tbb::blocked_range<size_t>( 0, v11.size() ),
-    [&] (const tbb::blocked_range<size_t>& r) // CJTODO: lambdas ok?
-    {
-      for( size_t i = r.begin() ; i != r.end() ; ++i)
-      {
-        c11.erase(iterators[i]);
-      }
-    });
+    Erase_in_CCC_functor<Cont>(c11, iterators)
+  );
   assert(c11.empty());
   }
 
@@ -274,25 +366,14 @@ void test(const Cont &)
     *it = true;
   }
     
-  tbb::atomic<unsigned int> num_erasures; num_erasures = 0;
+  tbb::atomic<unsigned int> num_erasures; 
+  num_erasures = 0;
   std::vector<Cont::iterator> iterators(v12.size());
   tbb::parallel_for(
     tbb::blocked_range<size_t>( 0, v12.size() ),
-    [&] (const tbb::blocked_range<size_t>& r) // CJTODO: lambdas ok?
-    {
-      for( size_t i = r.begin() ; i != r.end() ; ++i)
-      {
-        iterators[i] = c12.insert(v12[i]);
-        // Random-pick an element to erase
-        int index_to_erase = rand() % v12.size();
-        // If it exists
-        if (free_elements[index_to_erase].compare_and_swap(true, false) == false)
-        {
-          c12.erase(iterators[index_to_erase]);
-          ++num_erasures;
-        }
-      }
-    });
+    Insert_and_erase_in_CCC_functor<Vect, Cont>(
+      v12, c12, iterators, free_elements, num_erasures)
+  );
   assert(c12.size() == v12.size() - num_erasures);
   }
 }
@@ -311,7 +392,7 @@ int main()
   CCC cc1, cc2;
   tbb::parallel_for(
     tbb::blocked_range<size_t>( 0, 100, 1 ),
-    [&] (const tbb::blocked_range<size_t>& r) // CJTODO: lambdas ok?
+    [&] (const tbb::blocked_range<size_t>& r) // TODO: lambdas ok?
     {
       for( size_t i = r.begin() ; i != r.end() ; ++i)
       {
