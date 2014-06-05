@@ -47,8 +47,8 @@ class Postprocess_sdf_values
 {
 
   typedef typename Polyhedron::Facet                Facet;
-  typedef typename Polyhedron::Facet_const_handle   Facet_const_handle;
-  typedef typename Polyhedron::Facet_const_iterator Facet_const_iterator;
+  typedef typename boost::graph_traits<Polyhedron>::face_descriptor   face_descriptor;
+  typedef typename boost::graph_traits<Polyhedron>::face_iterator face_iterator;
 
   typedef Bilateral_filtering<Polyhedron>           Default_filter;
 
@@ -73,48 +73,49 @@ public:
    * Sdf values on these facets are assigned to average sdf value of its neighbors.
    * If still there is any facet which has no sdf value, assigns minimum sdf value to it.
    * This is meaningful since (being an outlier) zero sdf values might effect normalization & log extremely.
-   * @param[in, out] sdf_values `ReadWritePropertyMap` with `Polyhedron::Facet_const_handle` as key and `double` as value type
+   * @param[in, out] sdf_values `ReadWritePropertyMap` with `Polyhedron::face_descriptor` as key and `double` as value type
    */
   template<class SDFPropertyMap>
   void check_missing_sdf_values(const Polyhedron& mesh,
                                 SDFPropertyMap sdf_values) {
-    std::vector<Facet_const_handle> still_missing_facets;
+    std::vector<face_descriptor> still_missing_facets;
     double min_sdf = (std::numeric_limits<double>::max)();
     // If there is any facet which has no sdf value, assign average sdf value of its neighbors
-    for(Facet_const_iterator facet_it = mesh.facets_begin();
-        facet_it != mesh.facets_end(); ++facet_it) {
-      double sdf_value = sdf_values[facet_it];
+    face_iterator facet_it, fend;
+    for(boost::tie(facet_it,fend) = faces(mesh);
+        facet_it != fend; ++facet_it) {
+      double sdf_value = sdf_values[*facet_it];
       CGAL_assertion(sdf_value == -1 || sdf_value >= 0); // validity check
       if(sdf_value != -1.0) {
         min_sdf = (std::min)(sdf_value, min_sdf);
         continue;
       }
 
-      typename Facet::Halfedge_around_facet_const_circulator facet_circulator =
-        facet_it->facet_begin();
+      typename Halfedge_around_face_circulator<Polyhedron> facet_circulator(halfedge(*facet_it,mesh),mesh), done(facet_circulator);
+
       double total_neighbor_sdf = 0.0;
       std::size_t nb_valid_neighbors = 0;
       do {
-        if(!facet_circulator->opposite()->is_border()) {
-          double neighbor_sdf = sdf_values[facet_circulator->opposite()->facet()];
+        if(!(*facet_circulator)->opposite()->is_border()) {
+          double neighbor_sdf = sdf_values[(*facet_circulator)->opposite()->facet()];
           if(neighbor_sdf != -1) {
             total_neighbor_sdf += neighbor_sdf;
             ++nb_valid_neighbors;
           }
         }
-      } while( ++facet_circulator !=  facet_it->facet_begin());
+      } while( ++facet_circulator != done);
 
       if(nb_valid_neighbors == 0) {
-        still_missing_facets.push_back(facet_it);
+        still_missing_facets.push_back(*facet_it);
       } else {
         sdf_value = total_neighbor_sdf / nb_valid_neighbors;
-        sdf_values[facet_it] = sdf_value;
+        sdf_values[*facet_it] = sdf_value;
         // trying to update min_sdf is pointless, since it is interpolated one of the neighbors sdf will be smaller than it
       }
     }
     // If still there is any facet which has no sdf value, assign minimum sdf value.
     // This is meaningful since (being an outlier) 0 sdf values might effect normalization & log extremely.
-    for(typename std::vector<Facet_const_handle>::iterator it =
+    for(typename std::vector<face_descriptor>::iterator it =
           still_missing_facets.begin();
         it != still_missing_facets.end(); ++it) {
       sdf_values[*it] = min_sdf;
@@ -126,9 +127,10 @@ public:
                                           SDFPropertyMap sdf_values) {
     double min_sdf = (std::numeric_limits<double>::max)();
     double max_sdf = -min_sdf;
-    for(Facet_const_iterator facet_it = mesh.facets_begin();
-        facet_it != mesh.facets_end(); ++facet_it) {
-      double sdf_value = sdf_values[facet_it];
+    face_iterator facet_it, fend;
+    for(boost::tie(facet_it,fend) = faces(mesh);
+        facet_it != fend; ++facet_it) {
+      double sdf_value = sdf_values[*facet_it];
       max_sdf = (std::max)(sdf_value, max_sdf);
       min_sdf = (std::min)(sdf_value, min_sdf);
     }
@@ -136,7 +138,7 @@ public:
   }
   /**
    * Normalize sdf values between [0-1].
-   * @param sdf_values `ReadWritePropertyMap` with `Polyhedron::Facet_const_handle` as key and `double` as value type
+   * @param sdf_values `ReadWritePropertyMap` with `Polyhedron::face_descriptor` as key and `double` as value type
    * @return minimum and maximum SDF values before normalization
    */
   template<class SDFPropertyMap>
@@ -151,9 +153,10 @@ public:
     }
 
     const double max_min_dif = max_sdf - min_sdf;
-    for(Facet_const_iterator facet_it = mesh.facets_begin();
-        facet_it != mesh.facets_end(); ++facet_it) {
-      sdf_values[facet_it] = (sdf_values[facet_it] - min_sdf) / max_min_dif;
+    face_iterator facet_it, fend;
+    for(boost::tie(facet_it,fend) = faces(mesh);
+        facet_it != fend; ++facet_it) {
+      sdf_values[*facet_it] = (sdf_values[*facet_it] - min_sdf) / max_min_dif;
     }
     return std::make_pair(min_sdf, max_sdf);
   }
@@ -207,19 +210,17 @@ class Surface_mesh_segmentation
 {
 //type definitions
 public:
-  typedef typename Polyhedron::Facet_const_handle      Facet_const_handle;
+  typedef typename boost::graph_traits<Polyhedron>::face_descriptor      face_descriptor;
 
 private:
   //typedef typename Polyhedron::Traits Kernel;
   typedef typename GeomTraits::Point_3 Point;
 
-  typedef typename Polyhedron::Facet  Facet;
-
-  typedef typename Polyhedron::Edge_const_iterator     Edge_const_iterator;
-  typedef typename Polyhedron::Halfedge_const_handle   Halfedge_const_handle;
-  typedef typename Polyhedron::Halfedge_const_iterator Halfedge_const_iterator;
-  typedef typename Polyhedron::Facet_const_iterator    Facet_const_iterator;
-  typedef typename Polyhedron::Vertex_const_iterator   Vertex_const_iterator;
+  typedef typename boost::graph_traits<Polyhedron>::edge_iterator     edge_iterator;
+  typedef typename boost::graph_traits<Polyhedron>::halfedge_descriptor  halfedge_descriptor;
+  typedef typename boost::graph_traits<Polyhedron>::halfedge_iterator halfedge_iterator;
+  typedef typename boost::graph_traits<Polyhedron>::face_iterator    face_iterator;
+  typedef typename boost::graph_traits<Polyhedron>::vertex_iterator   vertex_iterator;
 
   typedef SDF_calculation<Polyhedron, GeomTraits, fast_bbox_intersection>
   SDF_calculation_class;
@@ -287,10 +288,11 @@ public:
     // apply graph cut
     GraphCut()(edges, edge_weights, probability_matrix, labels);
     std::vector<std::size_t>::iterator label_it = labels.begin();
-    for(Facet_const_iterator facet_it = mesh.facets_begin();
-        facet_it != mesh.facets_end();
+    face_iterator facet_it, fend;
+    for(boost::tie(facet_it,fend) = faces(mesh);
+        facet_it != fend;
         ++facet_it, ++label_it) {
-      segment_pmap[facet_it] = *label_it; // fill with cluster-ids
+      segment_pmap[*facet_it] = *label_it; // fill with cluster-ids
     }
     if(clusters_to_segments) {
       // assign a segment id for each facet
@@ -310,7 +312,7 @@ private:
    * @param edge whose dihedral angle is computed using incident facets
    * @return computed dihedral angle
    */
-  double calculate_dihedral_angle_of_edge(Halfedge_const_handle edge) const {
+  double calculate_dihedral_angle_of_edge(halfedge_descriptor edge) const {
     CGAL_precondition(!edge->is_border_edge());
     const Point& a = edge->vertex()->point();
     const Point& b = edge->prev()->vertex()->point();
@@ -333,7 +335,7 @@ private:
   /**
    * Normalize sdf values using function:
    * normalized_sdf = log( alpha * ( current_sdf - min_sdf ) / ( max_sdf - min_sdf ) + 1 ) / log( alpha + 1 )
-   * @param sdf_values `ReadablePropertyMap` with `Polyhedron::Facet_const_handle` as key and `double` as value type
+   * @param sdf_values `ReadablePropertyMap` with `Polyhedron::face_descriptor` as key and `double` as value type
    * @param[out] normalized_sdf_values normalized values stored in facet iteration order
    * Important note: @a sdf_values parameter should contain linearly normalized values between [0-1]
    */
@@ -341,9 +343,10 @@ private:
   void log_normalize_sdf_values(SDFPropertyMap sdf_values,
                                 std::vector<double>& normalized_sdf_values) {
     normalized_sdf_values.reserve(mesh.size_of_facets());
-    for(Facet_const_iterator facet_it = mesh.facets_begin();
-        facet_it != mesh.facets_end(); ++facet_it) {
-      double log_normalized = log(sdf_values[facet_it] * CGAL_NORMALIZATION_ALPHA +
+    face_iterator facet_it, fend;
+    for(boost::tie(facet_it,fend) = faces(mesh);
+        facet_it != fend; ++facet_it) {
+      double log_normalized = log(sdf_values[*facet_it] * CGAL_NORMALIZATION_ALPHA +
                                   1) / log(CGAL_NORMALIZATION_ALPHA + 1);
       normalized_sdf_values.push_back(log_normalized);
     }
@@ -382,26 +385,31 @@ private:
     // important note: ids should be compatible with iteration order of facets:
     // [0 <- facet_begin(),...., size_of_facets() -1 <- facet_end()]
     // Why ? it is send to graph cut algorithm where other data associated with facets are also sorted according to iteration order.
-    std::map<Facet_const_handle, std::size_t> facet_index_map;
+    std::map<face_descriptor, std::size_t> facet_index_map;
     std::size_t facet_index = 0;
-    for(Facet_const_iterator facet_it = mesh.facets_begin();
-        facet_it != mesh.facets_end();
+    face_iterator facet_it, fend;
+    for(boost::tie(facet_it,fend) = faces(mesh);
+        facet_it != fend;
         ++facet_it, ++facet_index) {
-      facet_index_map[facet_it] = facet_index;
+      facet_index_map[*facet_it] = facet_index;
     }
 
     const double epsilon = 5e-6;
     // edges and their weights. pair<std::size_t, std::size_t> stores facet-id pairs (see above) (may be using boost::tuple can be more suitable)
-    for(Edge_const_iterator edge_it = mesh.edges_begin();
-        edge_it != mesh.edges_end(); ++edge_it) {
-      if(edge_it->is_border_edge()) {
+    edge_iterator edge_it, eend;
+    for(boost::tie(edge_it,eend) = CGAL::edges(mesh); // AF: get rid of CGAL::
+        edge_it != eend; ++edge_it) {
+      halfedge_descriptor hd = halfedge(*edge_it,mesh);
+      halfedge_descriptor ohd = opposite(hd,mesh);
+      if((face(hd,mesh)==boost::graph_traits<Polyhedron>::null_face())
+         || (face(ohd,mesh)==boost::graph_traits<Polyhedron>::null_face()))  {
         continue;  // if edge does not contain two neighbor facets then do not include it in graph-cut
       }
-      const std::size_t index_f1 = facet_index_map[edge_it->facet()];
-      const std::size_t index_f2 = facet_index_map[edge_it->opposite()->facet()];
+      const std::size_t index_f1 = facet_index_map[hd->facet()];
+      const std::size_t index_f2 = facet_index_map[ohd->facet()];
       edges.push_back(std::make_pair(index_f1, index_f2));
 
-      double angle = calculate_dihedral_angle_of_edge(edge_it);
+      double angle = calculate_dihedral_angle_of_edge(hd);
 
       angle = (std::max)(angle, epsilon);
       angle = -log(angle);
@@ -432,8 +440,8 @@ private:
    * set of connected facets which are placed under same cluster. Note that returned segment-ids are ordered by average sdf value of segment ascen.
    *
    * @param number_of_clusters cluster-ids in @a segments should be between [0, number_of_clusters -1]
-   * @param sdf_values `ReadablePropertyMap` with `Polyhedron::Facet_const_handle` as key and `double` as value type
-   * @param[in, out] segments `ReadWritePropertyMap` with `Polyhedron::Facet_const_handle` as key and `std::size_t` as value type.
+   * @param sdf_values `ReadablePropertyMap` with `Polyhedron::face_descriptor` as key and `double` as value type
+   * @param[in, out] segments `ReadWritePropertyMap` with `Polyhedron::face_descriptor` as key and `std::size_t` as value type.
    * @return number of segments
    */
   template<class SegmentPropertyMap, class SDFProperyMap>
@@ -442,12 +450,12 @@ private:
     // assign a segment-id to each facet
     std::size_t segment_id = number_of_clusters;
     std::vector<std::pair<std::size_t, double> > segments_with_average_sdf_values;
-
-    for(Facet_const_iterator facet_it = mesh.facets_begin();
-        facet_it != mesh.facets_end(); ++facet_it) {
-      if(segments[facet_it] <
+    face_iterator facet_it, fend;
+    for(boost::tie(facet_it,fend) = faces(mesh);
+        facet_it != fend; ++facet_it) {
+      if(segments[*facet_it] <
           number_of_clusters) { // not visited by depth_first_traversal
-        double average_sdf_value = breadth_first_traversal(facet_it, segment_id,
+        double average_sdf_value = breadth_first_traversal(*facet_it, segment_id,
                                    sdf_values, segments);
 
         segments_with_average_sdf_values.push_back(std::make_pair(segment_id,
@@ -470,10 +478,10 @@ private:
     }
     // make one-pass on facets. First make segment-id zero based by subtracting number_of_clusters
     //                        . Then place its sorted index to pmap
-    for(Facet_const_iterator facet_it = mesh.facets_begin();
-        facet_it != mesh.facets_end(); ++facet_it) {
-      std::size_t segment_id = segments[facet_it] - number_of_clusters;
-      segments[facet_it] = segment_id_to_sorted_id_map[segment_id];
+    for(boost::tie(facet_it,fend) = faces(mesh);
+        facet_it != fend; ++facet_it) {
+      std::size_t segment_id = segments[*facet_it] - number_of_clusters;
+      segments[*facet_it] = segment_id_to_sorted_id_map[segment_id];
     }
     return segment_id - number_of_clusters;
   }
@@ -483,15 +491,15 @@ private:
    * Each visited facet assigned to @a segment_id.
    * @param facet root facet
    * @param segment_id segment-id of root facet
-   * @param sdf_values `ReadablePropertyMap` with `Polyhedron::Facet_const_handle` as key and `double` as value type
-   * @param[in, out] segments `ReadWritePropertyMap` with `Polyhedron::Facet_const_handle` as key and `std::size_t` as value type.
+   * @param sdf_values `ReadablePropertyMap` with `Polyhedron::face_descriptor` as key and `double` as value type
+   * @param[in, out] segments `ReadWritePropertyMap` with `Polyhedron::face_descriptor` as key and `std::size_t` as value type.
    * @return average sdf value for segment
    */
   template<class SegmentPropertyMap, class SDFProperyMap>
   double
-  breadth_first_traversal(Facet_const_handle root, std::size_t segment_id,
+  breadth_first_traversal(face_descriptor root, std::size_t segment_id,
                           SDFProperyMap sdf_values, SegmentPropertyMap segments) {
-    std::queue<Facet_const_handle> facet_queue;
+    std::queue<face_descriptor> facet_queue;
     facet_queue.push(root);
 
     std::size_t prev_segment_id = segments[root];
@@ -501,15 +509,14 @@ private:
     std::size_t    visited_facet_count = 1;
 
     while(!facet_queue.empty()) {
-      Facet_const_handle facet = facet_queue.front();
+      face_descriptor facet = facet_queue.front();
 
-      typename Facet::Halfedge_around_facet_const_circulator facet_circulator =
-        facet->facet_begin();
+      typename Halfedge_around_face_circulator<Polyhedron> facet_circulator(halfedge(facet,mesh),mesh), done(facet_circulator);
       do {
-        if(facet_circulator->opposite()->is_border()) {
+        if((*facet_circulator)->opposite()->is_border()) {
           continue;  // no facet to traversal
         }
-        Facet_const_handle neighbor = facet_circulator->opposite()->facet();
+        face_descriptor neighbor = (*facet_circulator)->opposite()->facet();
         if(prev_segment_id == segments[neighbor]) {
           segments[neighbor] = segment_id;
           facet_queue.push(neighbor);
@@ -517,7 +524,7 @@ private:
           total_sdf_value += sdf_values[neighbor];
           ++visited_facet_count;
         }
-      } while( ++facet_circulator !=  facet->facet_begin());
+      } while( ++facet_circulator != done);
 
       facet_queue.pop();
     }

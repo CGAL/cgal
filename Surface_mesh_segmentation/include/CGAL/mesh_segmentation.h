@@ -60,7 +60,7 @@ sdf_values( const Polyhedron& polyhedron,
  * @pre @a polyhedron.is_pure_triangle()
  *
  * @tparam Polyhedron a %CGAL polyhedron
- * @tparam SDFPropertyMap  a `ReadWritePropertyMap` with `Polyhedron::Facet_const_handle` as key and `double` as value type
+ * @tparam SDFPropertyMap  a `ReadWritePropertyMap` with `boost::graph_traits<Polyhedron>::face_handle` as key and `double` as value type
  * @tparam GeomTraits a model of SegmentationGeomTraits
  *
  * @param polyhedron surface mesh on which SDF values are computed
@@ -107,7 +107,7 @@ sdf_values( const Polyhedron& polyhedron,
  * @pre Raw values should be greater or equal to 0. -1 indicates when no value could be computed
  *
  * @tparam Polyhedron a %CGAL polyhedron
- * @tparam SDFPropertyMap  a `ReadWritePropertyMap` with `Polyhedron::Facet_const_handle` as key and `double` as value type
+ * @tparam SDFPropertyMap  a `ReadWritePropertyMap` with `boost::graph_traits<Polyhedron>::face_handle` as key and `double` as value type
  *
  * @param polyhedron surface mesh on which SDF values are computed
  * @param[in, out] sdf_values_map the SDF value of each facet
@@ -145,8 +145,8 @@ sdf_values_postprocessing(const Polyhedron& polyhedron,
  * @pre @a number_of_clusters > 0
  *
  * @tparam Polyhedron a %CGAL polyhedron
- * @tparam SDFPropertyMap  a `ReadablePropertyMap` with `Polyhedron::Facet_const_handle` as key and `double` as value type
- * @tparam SegmentPropertyMap a `ReadWritePropertyMap` with `Polyhedron::Facet_const_handle` as key and `std::size_t` as value type
+ * @tparam SDFPropertyMap  a `ReadablePropertyMap` with `boost::graph_traits<Polyhedron>::face_handle` as key and `double` as value type
+ * @tparam SegmentPropertyMap a `ReadWritePropertyMap` with `boost::graph_traits<Polyhedron>::face_handle` as key and `std::size_t` as value type
  * @tparam GeomTraits a model of SegmentationGeomTraits
  *
  * @param polyhedron surface mesh corresponding to the SDF values
@@ -197,7 +197,8 @@ segmentation_via_sdf_values(const Polyhedron& polyhedron,
                             bool output_cluster_ids = false,
                             GeomTraits traits = GeomTraits())
 {
-  typedef std::map< typename Polyhedron::Facet_const_handle, double>
+  typedef boost::graph_traits<Polyhedron>::face_descriptor face_descriptor;
+  typedef std::map<face_descriptor, double>
   Facet_double_map;
   Facet_double_map internal_sdf_map;
   boost::associative_property_map<Facet_double_map> sdf_property_map(
@@ -229,7 +230,7 @@ segmentation_via_sdf_values(const Polyhedron& polyhedron,
  * @pre @a number_of_clusters > 0
  *
  * @tparam Polyhedron a %CGAL polyhedron
- * @tparam SegmentPropertyMap a `ReadWritePropertyMap` with `Polyhedron::Facet_const_handle` as key and `std::size_t` as value type
+ * @tparam SegmentPropertyMap a `ReadWritePropertyMap` with `boost::graph_traits<Polyhedron>::face_handle` as key and `std::size_t` as value type
  * @tparam GeomTraits a model of SegmentationGeomTraits
  *
  * @param polyhedron surface mesh on which SDF values are computed
