@@ -108,13 +108,17 @@ public:
   typedef typename OpenMesh::PolyMesh_ArrayKernelT<K>::Point             value_type;
   typedef typename const OpenMesh::PolyMesh_ArrayKernelT<K>::Point&      reference;
 #else
-  typedef typename CGAL::Simple_cartesian<double>::Point_3               value_type;
-  typedef typename CGAL::Simple_cartesian<double>::Point_3               reference;
+  typedef typename CGAL::Exact_predicates_inexact_constructions_kernel::Point_3               value_type;
+  typedef typename CGAL::Exact_predicates_inexact_constructions_kernel::Point_3               reference;
 #endif
   typedef typename boost::graph_traits< OpenMesh::PolyMesh_ArrayKernelT<K> >::vertex_descriptor key_type;
     
+  OM_point_pmap()
+    : sm_(NULL)
+  {}
+
   OM_point_pmap(const OpenMesh::PolyMesh_ArrayKernelT<K>& sm)
-    : sm_(sm)
+    : sm_(&sm)
     {}
     
   OM_point_pmap(const OM_point_pmap& pm)
@@ -124,9 +128,9 @@ public:
   inline friend reference get(const OM_point_pmap<K>& pm, key_type v)
   {
 #if !defined(CGAL_BGL_TESTSUITE)
-    return pm.sm_.point(v);
+    return pm.sm->.point(v);
 #else
-    typename OpenMesh::PolyMesh_ArrayKernelT<K>::Point const& omp = pm.sm_.point(v);
+    typename OpenMesh::PolyMesh_ArrayKernelT<K>::Point const& omp = pm.sm_->point(v);
     return value_type(omp[0], omp[1], omp[2]);
 #endif
   }
@@ -134,15 +138,15 @@ public:
   inline friend void put(const OM_point_pmap<K>& pm, key_type v, const value_type& p)
   {
 #if !defined(CGAL_BGL_TESTSUITE)
-    const_cast<OpenMesh::PolyMesh_ArrayKernelT<K>&>(pm.sm_).set_point(v,p);
+    const_cast<OpenMesh::PolyMesh_ArrayKernelT<K>&>(*pm.sm_)->set_point(v,p);
 #else
-    const_cast<OpenMesh::PolyMesh_ArrayKernelT<K>&>(pm.sm_).set_point
+    const_cast<OpenMesh::PolyMesh_ArrayKernelT<K>&>(*pm.sm_)->set_point
       (v, typename OpenMesh::PolyMesh_ArrayKernelT<K>::Point(p[0], p[1], p[2]));
 #endif
   }
 
   private:
-  const OpenMesh::PolyMesh_ArrayKernelT<K>& sm_;
+  const OpenMesh::PolyMesh_ArrayKernelT<K>* sm_;
 };
 
 

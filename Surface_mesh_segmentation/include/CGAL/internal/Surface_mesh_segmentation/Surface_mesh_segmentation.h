@@ -45,8 +45,6 @@ namespace internal
 template<class Polyhedron>
 class Postprocess_sdf_values
 {
-
-  typedef typename Polyhedron::Facet                Facet;
   typedef typename boost::graph_traits<Polyhedron>::face_descriptor   face_descriptor;
   typedef typename boost::graph_traits<Polyhedron>::face_iterator face_iterator;
 
@@ -96,8 +94,8 @@ public:
       double total_neighbor_sdf = 0.0;
       std::size_t nb_valid_neighbors = 0;
       do {
-        if(!(*facet_circulator)->opposite()->is_border()) {
-          double neighbor_sdf = sdf_values[(*facet_circulator)->opposite()->facet()];
+        if(!(face(opposite(*facet_circulator,mesh),mesh) == boost::graph_traits<Polyhedron>::null_face())) {
+            double neighbor_sdf = sdf_values[face(opposite(*facet_circulator,mesh),mesh)];
           if(neighbor_sdf != -1) {
             total_neighbor_sdf += neighbor_sdf;
             ++nb_valid_neighbors;
@@ -171,7 +169,7 @@ public:
    *  - ...
    */
   std::size_t get_window_size(const Polyhedron& mesh) {
-    double facet_sqrt = std::sqrt(mesh.size_of_facets() / 2000.0);
+    double facet_sqrt = std::sqrt(num_faces(mesh) / 2000.0);
     return static_cast<std::size_t>(facet_sqrt) + 1;
   }
 };
@@ -198,6 +196,7 @@ public:
 template <
 class Polyhedron,
       class GeomTraits,
+  class VertexPointPmap,
       bool fast_bbox_intersection = true,
 #ifndef CGAL_DO_NOT_USE_BOYKOV_KOLMOGOROV_MAXFLOW_SOFTWARE
       class GraphCut = Alpha_expansion_graph_cut_boykov_kolmogorov,
@@ -222,22 +221,23 @@ private:
   typedef typename boost::graph_traits<Polyhedron>::face_iterator    face_iterator;
   typedef typename boost::graph_traits<Polyhedron>::vertex_iterator   vertex_iterator;
 
-  typedef SDF_calculation<Polyhedron, GeomTraits, fast_bbox_intersection>
+  typedef SDF_calculation<Polyhedron, VertexPointPmap, GeomTraits, fast_bbox_intersection>
   SDF_calculation_class;
 
 // member variables
 private:
   const Polyhedron& mesh;
   GeomTraits traits;
+  VertexPointPmap vertex_point_pmap;
 // member functions
 public:
   /**
    * @pre @a polyhedron.is_pure_triangle()
    * @param mesh `CGAL Polyhedron` on which other functions operate.
    */
-  Surface_mesh_segmentation(const Polyhedron& mesh, GeomTraits traits)
-    : mesh(mesh), traits(traits) {
-    CGAL_precondition(mesh.is_pure_triangle());
+  Surface_mesh_segmentation(const Polyhedron& mesh, GeomTraits traits, VertexPointPmap vertex_point_pmap)
+    : mesh(mesh), traits(traits), vertex_point_pmap(vertex_point_pmap) {
+    //    CGAL_precondition(is_pure_triangle(mesh));
   }
 
 // Use these two functions together
@@ -246,7 +246,7 @@ public:
   calculate_sdf_values(double cone_angle, std::size_t number_of_rays,
                        SDFPropertyMap sdf_pmap, bool postprocess_req) {
     // calculate sdf values
-    SDF_calculation_class sdf_calculator(mesh, false, true, traits);
+    SDF_calculation_class sdf_calculator(mesh, vertex_point_pmap, false, true, traits);
     sdf_calculator.calculate_sdf_values(faces(mesh).first, faces(mesh).second,
                                         cone_angle, number_of_rays, sdf_pmap);
 
@@ -313,11 +313,13 @@ private:
    * @return computed dihedral angle
    */
   double calculate_dihedral_angle_of_edge(halfedge_descriptor edge) const {
-    CGAL_precondition(!edge->is_border_edge());
-    const Point& a = edge->vertex()->point();
-    const Point& b = edge->prev()->vertex()->point();
-    const Point& c = edge->next()->vertex()->point();
-    const Point& d = edge->opposite()->next()->vertex()->point();
+
+    CGAL_precondition( (! (face(edge,mesh)==boost::graph_traits<Polyhedron>::null_face()))
+                       && (! (face(opposite(edge,mesh),mesh)==boost::graph_traits<Polyhedron>::null_face())) );
+    const Point a = get(vertex_point_pmap,target(edge,mesh));
+    const Point b = get(vertex_point_pmap,target(prev(edge,mesh),mesh));
+    const Point c = get(vertex_point_pmap,target(next(edge,mesh),mesh));
+    const Point d = get(vertex_point_pmap,target(next(opposite(edge,mesh),mesh),mesh));
     // As far as I check: if, say, dihedral angle is 5, this returns 175,
     // if dihedral angle is -5, this returns -175.
     // Another words this function returns angle between planes.
@@ -342,7 +344,7 @@ private:
   template<class SDFPropertyMap>
   void log_normalize_sdf_values(SDFPropertyMap sdf_values,
                                 std::vector<double>& normalized_sdf_values) {
-    normalized_sdf_values.reserve(mesh.size_of_facets());
+    normalized_sdf_values.reserve(num_faces(mesh));
     face_iterator facet_it, fend;
     for(boost::tie(facet_it,fend) = faces(mesh);
         facet_it != fend; ++facet_it) {
@@ -397,7 +399,7 @@ private:
     const double epsilon = 5e-6;
     // edges and their weights. pair<std::size_t, std::size_t> stores facet-id pairs (see above) (may be using boost::tuple can be more suitable)
     edge_iterator edge_it, eend;
-    for(boost::tie(edge_it,eend) = CGAL::edges(mesh); // AF: get rid of CGAL::
+    for(boost::tie(edge_it,eend) = edges(mesh); // AF: get rid of CGAL::
         edge_it != eend; ++edge_it) {
       halfedge_descriptor hd = halfedge(*edge_it,mesh);
       halfedge_descriptor ohd = opposite(hd,mesh);
@@ -405,8 +407,8 @@ private:
          || (face(ohd,mesh)==boost::graph_traits<Polyhedron>::null_face()))  {
         continue;  // if edge does not contain two neighbor facets then do not include it in graph-cut
       }
-      const std::size_t index_f1 = facet_index_map[hd->facet()];
-      const std::size_t index_f2 = facet_index_map[ohd->facet()];
+      const std::size_t index_f1 = facet_index_map[face(hd,mesh)];
+      const std::size_t index_f2 = facet_index_map[face(ohd,mesh)];
       edges.push_back(std::make_pair(index_f1, index_f2));
 
       double angle = calculate_dihedral_angle_of_edge(hd);
@@ -513,10 +515,10 @@ private:
 
       typename Halfedge_around_face_circulator<Polyhedron> facet_circulator(halfedge(facet,mesh),mesh), done(facet_circulator);
       do {
-        if((*facet_circulator)->opposite()->is_border()) {
+        if(face(opposite(*facet_circulator,mesh),mesh)==boost::graph_traits<Polyhedron>::null_face()) {
           continue;  // no facet to traversal
         }
-        face_descriptor neighbor = (*facet_circulator)->opposite()->facet();
+        face_descriptor neighbor = face(opposite(*facet_circulator,mesh),mesh);
         if(prev_segment_id == segments[neighbor]) {
           segments[neighbor] = segment_id;
           facet_queue.push(neighbor);

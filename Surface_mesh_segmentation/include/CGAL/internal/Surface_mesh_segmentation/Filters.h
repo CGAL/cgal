@@ -76,7 +76,7 @@ public:
     }
 
     std::vector<double> smoothed_values; // holds smoothed values
-    smoothed_values.reserve(mesh.size_of_facets());
+    smoothed_values.reserve(num_faces(mesh));
 
     face_iterator facet_it, fend;
     for(boost::tie(facet_it,fend) = faces(mesh);
@@ -158,7 +158,7 @@ public:
     typedef typename boost::graph_traits<Polyhedron>::face_iterator face_iterator;
 
     std::vector<double> smoothed_values;
-    smoothed_values.reserve(mesh.size_of_facets());
+    smoothed_values.reserve(num_faces(mesh));
     face_iterator facet_it, fend;
     for(boost::tie(facet_it,fend) = faces(mesh);
         facet_it != fend; ++facet_it) {

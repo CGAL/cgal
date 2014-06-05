@@ -1,4 +1,3 @@
-#define CGAL_BGL_TESTSUITE
 #include <iostream>
 #include <fstream>
 

@@ -62,7 +62,8 @@ struct FirstIntersectionVisitor {
  * @tparam GeomTraits a model of SegmentationGeomTraits
  */
 template <
-class Polyhedron,
+      class Polyhedron,
+      class VertexPointPmap,
       class GeomTraits = typename Polyhedron::Traits,
       bool fast_bbox_intersection = true
       >
@@ -102,6 +103,8 @@ private:
 // member variables
 private:
   GeomTraits traits;
+  const Polyhedron& mesh;
+  VertexPointPmap vertex_point_map;
 
   typename GeomTraits::Angle_3                         angle_functor;
   typename GeomTraits::Construct_scaled_vector_3       scale_functor;
@@ -122,10 +125,14 @@ public:
    * @param use_diagonal if true: calculates diagonal of AABB tree and cast segments instead of rays using diagonal length
    * @param traits trait object
    */
-  SDF_calculation(const Polyhedron& mesh, bool build_kd_tree = false,
+  SDF_calculation(const Polyhedron& mesh,
+                  VertexPointPmap vertex_point_map,
+                  bool build_kd_tree = false,
                   bool use_diagonal = true, GeomTraits traits = GeomTraits())
     :
     traits(traits),
+    mesh(mesh),
+    vertex_point_map(vertex_point_map),
     angle_functor(traits.angle_3_object()),
     scale_functor(traits.construct_scaled_vector_3_object()),
     sum_functor(traits.construct_sum_of_vectors_3_object()),
@@ -160,8 +167,10 @@ public:
    */
   template<class InputIterator>
   SDF_calculation(InputIterator polyhedron_begin, InputIterator polyhedron_end,
+                  VertexPointPmap vertex_point_map,
                   bool build_kd_tree = false, GeomTraits traits = GeomTraits())
     : traits(traits),
+      vertex_point_map(vertex_point_map),
       angle_functor(traits.angle_3_object()),
       scale_functor(traits.construct_scaled_vector_3_object()),
       sum_functor(traits.construct_sum_of_vectors_3_object()),
@@ -376,9 +385,10 @@ private:
     double cone_angle,
     bool accept_if_acute,
     const Disk_samples_list& disk_samples) const {
-    const Point& p1 = facet->halfedge()->vertex()->point();
-    const Point& p2 = facet->halfedge()->next()->vertex()->point();
-    const Point& p3 = facet->halfedge()->prev()->vertex()->point();
+    
+    const Point p1 = get(vertex_point_map,target(halfedge(facet,mesh),mesh));
+    const Point p2 = get(vertex_point_map,target(next(halfedge(facet,mesh),mesh),mesh));
+    const Point p3 = get(vertex_point_map,target(prev(halfedge(facet,mesh),mesh),mesh));
     const Point center  = centroid_functor(p1, p2, p3);
     Vector normal = normal_functor(p2, p1, p3);
     normal=scale_functor(normal,
@@ -452,9 +462,9 @@ private:
 
     if(accept_if_acute) {
       // check whether the ray makes acute angle with intersected facet
-      const Point& min_v1 = min_id->halfedge()->vertex()->point();
-      const Point& min_v2 = min_id->halfedge()->next()->vertex()->point();
-      const Point& min_v3 = min_id->halfedge()->prev()->vertex()->point();
+      const Point& min_v1 = get(vertex_point_map,target(halfedge(min_id,mesh),mesh));
+      const Point& min_v2 = get(vertex_point_map,target(next(halfedge(min_id,mesh),mesh),mesh));
+      const Point& min_v3 = get(vertex_point_map,target(prev(halfedge(min_id,mesh),mesh),mesh));
       Vector min_normal = scale_functor(normal_functor(min_v1, min_v2, min_v3), -1.0);
 
       if(angle_functor(translated_point_functor(Point(ORIGIN), min_i_ray),
