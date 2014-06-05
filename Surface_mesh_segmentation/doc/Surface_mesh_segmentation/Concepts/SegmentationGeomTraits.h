@@ -26,7 +26,7 @@ typedef Hidden_type FT;
 /// @{
 
 /*!
-The vector type.
+The point type.
 */
 typedef Hidden_type Point_3;
 
