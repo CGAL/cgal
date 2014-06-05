@@ -286,32 +286,6 @@ void test_assignment_operator_2 ()
   assert(&circumcenter != &ccircumcenter);
 }
 
-void test_invalidate_circumcenter ()
-{
-  Weighted_point p0(Point(0,0,0),1);
-  Weighted_point p1(Point(2,0,0),1);
-  Weighted_point p2(Point(0,2,0),1);
-  Weighted_point p3(Point(0,0,2),1);
-  Tds::Vertex v0(p0), v1(p1), v2(p2), v3(p3);
-  Tds tds;
-  Vertex_handle vh0 = tds.create_vertex(v0);
-  Vertex_handle vh1 = tds.create_vertex(v1);
-  Vertex_handle vh2 = tds.create_vertex(v2);
-  Vertex_handle vh3 = tds.create_vertex(v3);
-
-  Cell_type cell(vh0, vh1, vh2, vh3);
-
-  const Bare_point& circumcenter = cell.weighted_circumcenter();
-  assert(circumcenter == Bare_point(1,1,1));
-  cell.invalidate_circumcenter();
-
-  Cell_type dummy_cell(cell);
-  dummy_cell.weighted_circumcenter();
-  const Bare_point& circumcenter_2 = cell.weighted_circumcenter();
-  assert(circumcenter_2 == Bare_point(1,1,1));
-  assert(&circumcenter != &circumcenter_2);
-}
-
 void test_set_vertex ()
 {
   Weighted_point p0(Point(0,0,0),1);
@@ -332,13 +306,10 @@ void test_set_vertex ()
 
   Vertex_handle vh0_bis = tds.create_vertex(v0);
   cell.set_vertex(0, vh0_bis);
-  assert(cell.vertex(0) == vh0_bis && cell.vertex(0) != Vertex_handle());
+  assert(cell.vertex(0) == vh0_bis && cell.vertex(0) != vh0 && cell.vertex(0) != Vertex_handle());
 
-  Cell_type dummy_cell(cell);
-  dummy_cell.weighted_circumcenter();
   const Bare_point& circumcenter_2 = cell.weighted_circumcenter();
   assert(circumcenter_2 == Bare_point(1,1,1));
-  assert(&circumcenter != &circumcenter_2);
 }
 
 void test_set_vertices ()
@@ -386,16 +357,13 @@ void test_set_vertices_with_parameters ()
   Vertex_handle vh2_bis = tds.create_vertex(v3);
   Vertex_handle vh3_bis = tds.create_vertex(v2);
   cell.set_vertices(vh0_bis, vh1_bis, vh2_bis, vh3_bis);
-  assert(cell.vertex(0) == vh0_bis && cell.vertex(0) != Vertex_handle());
-  assert(cell.vertex(1) == vh1_bis && cell.vertex(1) != Vertex_handle());
-  assert(cell.vertex(2) == vh2_bis && cell.vertex(2) != Vertex_handle());
-  assert(cell.vertex(3) == vh3_bis && cell.vertex(3) != Vertex_handle());
+  assert(cell.vertex(0) == vh0_bis && cell.vertex(0) != vh0 && cell.vertex(0) != Vertex_handle());
+  assert(cell.vertex(1) == vh1_bis && cell.vertex(1) != vh1 && cell.vertex(1) != Vertex_handle());
+  assert(cell.vertex(2) == vh2_bis && cell.vertex(2) != vh2 && cell.vertex(2) != Vertex_handle());
+  assert(cell.vertex(3) == vh3_bis && cell.vertex(3) != vh3 && cell.vertex(3) != Vertex_handle());
 
-  Cell_type dummy_cell(cell);
-  dummy_cell.weighted_circumcenter();
   const Bare_point& circumcenter_2 = cell.weighted_circumcenter();
   assert(circumcenter_2 == Bare_point(1,1,1));
-  assert(&circumcenter != &circumcenter_2);
 }
 
 int main()
@@ -408,7 +376,6 @@ int main()
   test_copy_constructor_2();
   test_assignment_operator();
   test_assignment_operator_2();
-  test_invalidate_circumcenter();
   test_set_vertex();
   test_set_vertices();
   test_set_vertices_with_parameters();
