@@ -34,19 +34,19 @@ namespace CGAL{
 //property map
 template <class FaceGraph,
            class VertexPointPMap >
-struct Triangle_from_facet_handle_property_map{  
+struct Triangle_from_face_descriptor_property_map{
   typename boost::remove_const<FaceGraph>::type* m_graph;
   VertexPointPMap m_vppm;
 
-  Triangle_from_facet_handle_property_map()
+  Triangle_from_face_descriptor_property_map()
   {}
 
-  Triangle_from_facet_handle_property_map(FaceGraph* g)
+  Triangle_from_face_descriptor_property_map(FaceGraph* g)
     : m_graph( const_cast<typename boost::remove_const<FaceGraph>::type*>(g) ),
       m_vppm( get(vertex_point, *m_graph) )
   {}
 
-  Triangle_from_facet_handle_property_map(FaceGraph* g,
+  Triangle_from_face_descriptor_property_map(FaceGraph* g,
                                           VertexPointPMap vppm )
     : m_graph(const_cast<typename boost::remove_const<FaceGraph>::type*>(g)),
       m_vppm(vppm)
@@ -64,8 +64,8 @@ struct Triangle_from_facet_handle_property_map{
   //get function for property map
   inline friend
   Triangle_3
-  get(const Triangle_from_facet_handle_property_map<FaceGraph,VertexPointPMap>& pmap,
-      typename Triangle_from_facet_handle_property_map<FaceGraph,VertexPointPMap>::key_type f)
+  get(const Triangle_from_face_descriptor_property_map<FaceGraph,VertexPointPMap>& pmap,
+      typename Triangle_from_face_descriptor_property_map<FaceGraph,VertexPointPMap>::key_type f)
   {
     typedef typename boost::property_traits< VertexPointPMap >::value_type Point_3;
     typedef typename Kernel_traits<Point_3>::Kernel::Triangle_3 Triangle_3;
@@ -127,13 +127,13 @@ Segment_from_edge_descriptor_property_map(HalfedgeGraph* g)
 //property map to access a point from a facet handle
 template <class FaceGraph,
           class VertexPointPMap>
-struct One_point_from_facet_handle_property_map{
+struct One_point_from_face_descriptor_property_map{
 
-  One_point_from_facet_handle_property_map(FaceGraph* g = NULL)
+  One_point_from_face_descriptor_property_map(FaceGraph* g = NULL)
     : m_graph( const_cast<typename boost::remove_const<FaceGraph>::type*>(g) )
   {}
 
-  One_point_from_facet_handle_property_map(FaceGraph* g, VertexPointPMap vppm )
+  One_point_from_face_descriptor_property_map(FaceGraph* g, VertexPointPMap vppm )
     : m_graph( const_cast<typename boost::remove_const<FaceGraph>::type*>(g) ),
       m_vppm(vppm)
   {}
@@ -150,7 +150,7 @@ struct One_point_from_facet_handle_property_map{
   //get function for property map
   inline friend
   reference
-  get(const One_point_from_facet_handle_property_map<FaceGraph,VertexPointPMap>& m,
+  get(const One_point_from_face_descriptor_property_map<FaceGraph,VertexPointPMap>& m,
       key_type f)
   {
     return get(m.m_vppm, target(halfedge(f, *m.m_graph), *m.m_graph));

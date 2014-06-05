@@ -61,12 +61,12 @@ template < class FaceGraph,
 class AABB_face_graph_triangle_primitive
 #ifndef DOXYGEN_RUNNING
   : public AABB_primitive<typename boost::graph_traits<FaceGraph>::face_descriptor,
-                        Triangle_from_facet_handle_property_map<
+                        Triangle_from_face_descriptor_property_map<
                           FaceGraph,
                           typename Default::Get<VertexPointPMap,
                                                 typename boost::property_map< FaceGraph,
                                                                               vertex_point_t>::type >::type>,
-                        One_point_from_facet_handle_property_map<
+                        One_point_from_face_descriptor_property_map<
                           FaceGraph,
                           typename Default::Get<VertexPointPMap,
                                                 typename boost::property_map< FaceGraph,
@@ -78,8 +78,8 @@ class AABB_face_graph_triangle_primitive
   typedef typename Default::Get<VertexPointPMap, typename boost::property_map< FaceGraph, vertex_point_t>::type >::type VertexPointPMap_;
 
   typedef typename boost::graph_traits<FaceGraph>::face_descriptor Id_;
-  typedef Triangle_from_facet_handle_property_map<FaceGraph,VertexPointPMap_>  Triangle_property_map;
-  typedef One_point_from_facet_handle_property_map<FaceGraph,VertexPointPMap_> Point_property_map;
+  typedef Triangle_from_face_descriptor_property_map<FaceGraph,VertexPointPMap_>  Triangle_property_map;
+  typedef One_point_from_face_descriptor_property_map<FaceGraph,VertexPointPMap_> Point_property_map;
 
   typedef AABB_primitive< Id_,
                           Triangle_property_map,
