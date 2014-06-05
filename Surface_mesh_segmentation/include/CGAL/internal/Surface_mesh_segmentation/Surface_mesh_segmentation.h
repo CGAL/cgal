@@ -381,7 +381,7 @@ private:
    * @param[out] edge_weights calculated weight for each edge in @a edges
    */
   void calculate_and_log_normalize_dihedral_angles(double smoothing_lambda,
-      std::vector<std::pair<std::size_t, std::size_t> >& edges,
+      std::vector<std::pair<std::size_t, std::size_t> >& a_edges,
       std::vector<double>& edge_weights) const {
     // associate each facet with an id
     // important note: ids should be compatible with iteration order of facets:
@@ -399,7 +399,7 @@ private:
     const double epsilon = 5e-6;
     // edges and their weights. pair<std::size_t, std::size_t> stores facet-id pairs (see above) (may be using boost::tuple can be more suitable)
     edge_iterator edge_it, eend;
-    for(boost::tie(edge_it,eend) = edges(mesh); // AF: get rid of CGAL::
+    for(boost::tie(edge_it,eend) = edges(mesh);
         edge_it != eend; ++edge_it) {
       halfedge_descriptor hd = halfedge(*edge_it,mesh);
       halfedge_descriptor ohd = opposite(hd,mesh);
@@ -409,7 +409,7 @@ private:
       }
       const std::size_t index_f1 = facet_index_map[face(hd,mesh)];
       const std::size_t index_f2 = facet_index_map[face(ohd,mesh)];
-      edges.push_back(std::make_pair(index_f1, index_f2));
+      a_edges.push_back(std::make_pair(index_f1, index_f2));
 
       double angle = calculate_dihedral_angle_of_edge(hd);
 
