@@ -153,7 +153,12 @@ inline double IA_opacify(double x)
   asm volatile ("" : "+m"(x) );
 # endif
   return x;
-#elif defined __GNUG__ || defined __xlC__
+#elif defined __xlC__
+  // PowerPC - XL C++ (the z/OS version supposedly does not define this macro)
+  // If we give it an alternative "+fm", it gets confused and generates worse code.
+  asm volatile ("" : "+f"(x) );
+  return x;
+#elif defined __GNUG__
   // Intel used not to emulate this perfectly, we'll see.
   // If we create a version of IA_opacify for vectors, note that gcc < 4.8
   // fails with "+g" and we need to use "+mx" instead.
@@ -179,10 +184,6 @@ inline double IA_opacify(double x)
 # elif (defined __VFP_FP__ && !defined __SOFTFP__) || defined __aarch64__
   // ARM
   asm volatile ("" : "+gw"(x) );
-# elif defined __xlC__
-  // PowerPC - XL C++ (the z/OS version supposedly does not define this macro)
-  // If we give it an alternative "+fm", it gets confused and generates worse code.
-  asm volatile ("" : "+f"(x) );
 # elif defined __powerpc__ || defined __POWERPC__
   // PowerPC
   asm volatile ("" : "+gd"(x) );
