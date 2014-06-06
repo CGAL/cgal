@@ -1163,6 +1163,16 @@ public:
     return s.supporting_site().source_site().point().x();
   }
 
+  inline
+  static
+  RT hvseg_coord(const Site_2 & s, const bool is_hor) {
+    CGAL_assertion(s.is_segment());
+    CGAL_assertion(is_site_horizontal(s) == is_hor);
+    CGAL_assertion(is_site_vertical(s) == (not is_hor));
+    return is_hor ? s.supporting_site().source_site().point().y() :
+                    s.supporting_site().source_site().point().x() ;
+  }
+
 };
 
 
