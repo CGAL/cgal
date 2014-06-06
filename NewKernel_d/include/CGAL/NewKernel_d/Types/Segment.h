@@ -64,8 +64,8 @@ template <class R_> class Segment {
 
 namespace CartesianDKernelFunctors {
 
-template<class R_> struct Construct_segment {
-	CGAL_FUNCTOR_INIT_IGNORE(Construct_segment)
+template<class R_> struct Construct_segment : Store_kernel<R_> {
+	CGAL_FUNCTOR_INIT_STORE(Construct_segment)
 	typedef R_ R;
 	typedef typename Get_type<R_, Point_tag>::type	Point;
 	typedef typename Get_type<R_, Segment_tag>::type	Segment;
@@ -73,6 +73,11 @@ template<class R_> struct Construct_segment {
 	typedef Segment result_type;
 	result_type operator()(Point const&a, Point const&b)const{
 		return result_type(a,b);
+	}
+	// Not really needed, especially since it forces us to store the kernel
+	result_type operator()()const{
+		Point p = typename Get_functor<R_, Construct_ttag<Point_tag> >::type (this->kernel()) ();
+		return result_type (p, p);
 	}
 	// T should only be std::piecewise_construct_t, but we shouldn't fail if it doesn't exist.
 	template<class T,class U,class V>

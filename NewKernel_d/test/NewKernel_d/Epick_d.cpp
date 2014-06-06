@@ -312,6 +312,16 @@ void test2(){
   assert(fabs(sd(cent0,psp0)-25)<.0001);
   assert(fabs(sd(cent0,psp1)-25)<.0001);
   assert(fabs(sd(cent0,psp2)-25)<.0001);
+  Sp un1; CGAL_USE(un1);
+  H un2; CGAL_USE(un2);
+  S un3; CGAL_USE(un3);
+  P un4; CGAL_USE(un4);
+  V un5; CGAL_USE(un5);
+  CI un6; CGAL_USE(un6);
+  FO un7; CGAL_USE(un7);
+  L un8; CGAL_USE(un8);
+  R un9; CGAL_USE(un9);
+  D un10; CGAL_USE(un10);
 }
 
 template<class CP> struct Construct_point3_helper {

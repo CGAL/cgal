@@ -59,6 +59,12 @@ template <class R_> struct Construct_hyperplane : Store_kernel<R_> {
   result_type operator()(Vector const&a, FT const&b)const{
     return result_type(a,b);
   }
+  // Not really needed
+  result_type operator()()const{
+    typename Get_functor<R_, Construct_ttag<Vector_tag> >::type cv(this->kernel());
+    return result_type(cv(),0);
+  }
+
   template <class Iter>
   result_type operator()(Iter f, Iter e)const{
     typedef typename R_::LA LA;

@@ -45,6 +45,11 @@ template <class R_> struct Construct_sphere : Store_kernel<R_> {
   result_type operator()(Point const&a, FT const&b)const{
     return result_type(a,b);
   }
+  // Not really needed
+  result_type operator()()const{
+    typename Get_functor<R_, Construct_ttag<Point_tag> >::type cp(this->kernel());
+    return result_type(cp(),0);
+  }
   template <class Iter>
   result_type operator()(Iter f, Iter e)const{
     // 2*(x-y).c == x^2-y^2
