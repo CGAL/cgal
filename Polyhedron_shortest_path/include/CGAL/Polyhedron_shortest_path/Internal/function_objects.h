@@ -9,6 +9,7 @@
 #include <CGAL/boost/graph/properties.h>
 #include <CGAL/boost/graph/properties_Polyhedron_3.h>
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
+#include <CGAL/result_of.h>
 
 namespace CGAL {
 
@@ -118,6 +119,7 @@ public:
   typedef typename K::Triangle_2 Triangle_2;
   typedef typename K::Point_2 Point_2;
   typedef typename K::Segment_2 Segment_2;
+  typedef typename K::Line_2 Line_2;
   
   typedef typename K::Compute_squared_distance_2 Compute_squared_distance_2;
   typedef typename K::Intersect_2 Intersect_2;
@@ -140,9 +142,9 @@ public:
 
   CGAL::Comparison_result operator () (const Segment_2& s1, const Ray_2& r1, const Segment_2& s2, const Ray_2& r2)
   {
-    typedef typename cpp11::result_of<Intersect_2(Segment_2, Ray_2)>::type SegmentRayIntersectResult;
+    typedef typename cpp11::result_of<Intersect_2(Segment_2, Line_2)>::type SegmentLineIntersectResult;
 
-    SegmentRayIntersectResult s1r1Intersection = m_intersect_2(s1, r1);
+    SegmentLineIntersectResult s1r1Intersection = m_intersect_2(s1, r1.supporting_line());
     Point_2 p1;
 
     if (s1r1Intersection)
@@ -162,10 +164,33 @@ public:
     else
     {
       // TODO: figure out what is causing this, i.e. is it just out of range, or is the algorithm incorrect
+      std::cout << "Segment = " << s1 << std::endl;
+      std::cout << "Ray = " << r1 << std::endl;
+      Point_2 projection = s1.supporting_line().projection(r1.source());
+      std::cout << "Proj = " << projection << std::endl;
+      std::cout << "Dist_0^2 = " << m_compute_squared_distance_2(projection, s1[0]) << std::endl;
+      std::cout << "Dist_1^2 = " << m_compute_squared_distance_2(projection, s1[1]) << std::endl;
+      
+      typedef typename K::Line_2 Line_2;
+      typedef typename cpp11::result_of<Intersect_2(Line_2, Ray_2)>::type LineRayIntersectResult;
+
+      LineRayIntersectResult lri = m_intersect_2(s1.supporting_line(), r1);
+      
+      if (lri)
+      {
+        Point_2* result = boost::get<Point_2>(&*lri);
+      
+        if (result)
+        {
+          std::cout << "Line Intersection = " << *result << std::endl;
+         
+        }
+      }
+      
       assert(s1r1Intersection && "Ray must enter triangle via entry segment.");
     }
     
-    SegmentRayIntersectResult s2r2Intersection = m_intersect_2(s2, r2);
+    SegmentLineIntersectResult s2r2Intersection = m_intersect_2(s2, r2.supporting_line());
     Point_2 p2;
 
     if (s2r2Intersection)
@@ -185,6 +210,29 @@ public:
     else
     {
       // TODO: same as above
+      std::cout << "Segment = " << s2 << std::endl;
+      std::cout << "Ray = " << r2 << std::endl;
+      Point_2 projection = s2.supporting_line().projection(r1.source());
+      std::cout << "Proj = " << projection << std::endl;
+      std::cout << "Dist_0^2 = " << m_compute_squared_distance_2(projection, s2[0]) << std::endl;
+      std::cout << "Dist_1^2 = " << m_compute_squared_distance_2(projection, s2[1]) << std::endl;
+      
+      typedef typename K::Line_2 Line_2;
+      typedef typename cpp11::result_of<Intersect_2(Line_2, Ray_2)>::type LineRayIntersectResult;
+
+      LineRayIntersectResult lri = m_intersect_2(s2.supporting_line(), r2);
+      
+      if (lri)
+      {
+        Point_2* result = boost::get<Point_2>(&*lri);
+      
+        if (result)
+        {
+          std::cout << "Line Intersection = " << *result << std::endl;
+         
+        }
+      }
+      
       assert(s2r2Intersection && "Ray must enter triangle via entry segment.");
     }
     
@@ -219,8 +267,9 @@ public:
   typedef typename Kernel::Vector_2 Vector_2;
   typedef typename Kernel::Point_2 Point_2;
   
-  typedef typename Polyhedron::Vertex_handle Vertex_handle;
-  typedef typename Polyhedron::Halfedge_handle Halfedge_handle;
+  typedef typename boost::graph_traits<Polyhedron> GraphTraits;
+  typedef typename GraphTraits::vertex_descriptor vertex_descriptor;
+  typedef typename GraphTraits::halfedge_descriptor halfedge_descriptor;
   
   typedef typename CGAL::internal::Project_triangle_3_to_triangle_2<Kernel> Project_triangle_3_to_triangle_2;
   typedef typename CGAL::internal::Flatten_triangle_3_along_segment_2<Kernel> Flatten_triangle_3_along_segment_2;
@@ -244,18 +293,26 @@ public:
   {
   }
   
-  bool operator() (Vertex_handle v)
+  bool operator() (vertex_descriptor v, Polyhedron& P)
   {
-    Halfedge_handle startEdge = v->halfedge();
+    return (*this)(v, P, CGAL::get(CGAL::vertex_point, P));
+  }
+  
+  template<class VertexPointMap>
+  bool operator() (vertex_descriptor v, Polyhedron& P, VertexPointMap const& pointMap)
+  {
+    halfedge_descriptor startEdge = CGAL::halfedge(v, P);
     
-    Halfedge_handle currentEdge = startEdge;
+    Point_3 rootPoint(pointMap[v]);
+    Point_3 prevPoint(pointMap[CGAL::source(startEdge, P)]);
     
-    Point_3 rootPoint(v->point());
-    Point_3 nextPoint(currentEdge->next()->vertex()->point());
-    Point_3 prevPoint(currentEdge->prev()->vertex()->point());
+    halfedge_descriptor currentEdge = currentEdge = CGAL::next(startEdge, P);
+    
+    Point_3 nextPoint(pointMap[CGAL::target(currentEdge, P)]);
+    
     Triangle_3 baseFace3(rootPoint, nextPoint, prevPoint);
     
-    currentEdge = currentEdge->next()->opposite();
+    currentEdge = CGAL::opposite(currentEdge, P);
     
     Triangle_2 baseFace2(m_project_triangle_3_to_triangle_2(baseFace3));
     
@@ -273,9 +330,9 @@ public:
     do
     {
       prevPoint = nextPoint;
-      currentEdge = currentEdge->next();
-      nextPoint = currentEdge->vertex()->point();
-      currentEdge = currentEdge->opposite();
+      currentEdge = CGAL::next(currentEdge, P);
+      nextPoint = pointMap[CGAL::target(currentEdge, P)];
+      currentEdge = CGAL::opposite(currentEdge, P);
       
       Triangle_3 currentFace3(rootPoint, nextPoint, prevPoint);
       Triangle_2 currentFace2(m_flatten_triangle_3_along_segment_2(currentFace3, 2, nextSegment));

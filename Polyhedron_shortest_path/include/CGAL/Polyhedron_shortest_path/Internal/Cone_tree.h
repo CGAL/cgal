@@ -14,6 +14,8 @@
 #include <CGAL/boost/graph/properties_Polyhedron_3.h>
 #include <CGAL/boost/graph/iterator.h>
 
+#include <CGAL/Polyhedron_shortest_path/Internal/Cone_expansion_event.h>
+
 #include <vector>
 
 namespace CGAL
@@ -80,6 +82,16 @@ public:
 template<class Traits>
 class Cone_tree_node
 {
+public:
+  enum Node_type
+  {
+    ROOT,
+    FACE_SOURCE,
+    EDGE_SOURCE,
+    VERTEX_SOURCE,
+    INTERVAL,
+  };
+
 private:
   typedef typename Traits::Polyhedron Polyhedron;
   typedef typename Traits::FT FT;
@@ -94,6 +106,7 @@ private:
   typedef typename Traits::Orientation_2 Orientation_2;
   typedef typename Traits::Compute_squared_distance_2 Compute_squared_distance_2;
   typedef typename Traits::Construct_triangle_location_2 Construct_triangle_location_2;
+  typedef typename CGAL::internal::Cone_expansion_event<Traits> Cone_expansion_event;
 
 private:
   Orientation_2 m_orientation_2;
@@ -115,8 +128,7 @@ private:
   Point_2 m_windowLeft;
   Point_2 m_windowRight;
 
-  bool m_isSourceNode;
-  bool m_isRootNode;
+  Node_type m_nodeType;
   size_t m_treeId;
   size_t m_level;
   
@@ -135,11 +147,12 @@ public:
     , m_layoutFace(Point_2(CGAL::ORIGIN),Point_2(CGAL::ORIGIN),Point_2(CGAL::ORIGIN))
     , m_level(0)
     , m_treeId(treeId)
-    , m_isRootNode(true)
-    , m_hasLeftSubtree(false)
-    , m_hasRightSubtree(false)
-    , m_hasMiddleSubtree(false)
-    , m_isSourceNode(false)
+    , m_nodeType(ROOT)
+    , m_pendingLeftSubtree(NULL)
+    , m_pendingRightSubtree(NULL)
+    , m_pendingMiddleSubtree(NULL)
+    , m_leftChild(NULL)
+    , m_rightChild(NULL)
   {
   }
   
@@ -150,15 +163,16 @@ public:
     , m_layoutFace(Point_2(CGAL::ORIGIN),Point_2(CGAL::ORIGIN),Point_2(CGAL::ORIGIN))
     , m_level(0)
     , m_treeId(treeId)
-    , m_isRootNode(true)
-    , m_hasLeftSubtree(false)
-    , m_hasRightSubtree(false)
-    , m_hasMiddleSubtree(false)
-    , m_isSourceNode(false)
+    , m_nodeType(ROOT)
+    , m_pendingLeftSubtree(NULL)
+    , m_pendingRightSubtree(NULL)
+    , m_pendingMiddleSubtree(NULL)
+    , m_leftChild(NULL)
+    , m_rightChild(NULL)
   {
   }
 
-  Cone_tree_node(Polyhedron* polyhedron, halfedge_descriptor entryEdge, const Triangle_2& layoutFace, const Point_2& sourceImage, const FT& pseudoSourceDistance, const Point_2& windowLeft, const Point_2& windowRight, bool isSourceNode)
+  Cone_tree_node(Polyhedron* polyhedron, halfedge_descriptor entryEdge, const Triangle_2& layoutFace, const Point_2& sourceImage, const FT& pseudoSourceDistance, const Point_2& windowLeft, const Point_2& windowRight, Node_type nodeType = INTERVAL)
     : m_polyhedron(polyhedron)
     , m_entryEdge(entryEdge)
     , m_layoutFace(layoutFace)
@@ -166,11 +180,12 @@ public:
     , m_pseudoSourceDistance(pseudoSourceDistance)
     , m_windowLeft(windowLeft)
     , m_windowRight(windowRight)
-    , m_isRootNode(false)
-    , m_hasLeftSubtree(false)
-    , m_hasRightSubtree(false)
-    , m_hasMiddleSubtree(false)
-    , m_isSourceNode(isSourceNode)
+    , m_nodeType(nodeType)
+    , m_pendingLeftSubtree(NULL)
+    , m_pendingRightSubtree(NULL)
+    , m_pendingMiddleSubtree(NULL)
+    , m_leftChild(NULL)
+    , m_rightChild(NULL)
   {
   }
 
@@ -184,9 +199,19 @@ public:
     return m_level;
   }
   
+  bool is_source_node()
+  {
+    return m_nodeType == FACE_SOURCE || m_nodeType == EDGE_SOURCE || m_nodeType == VERTEX_SOURCE;
+  }
+  
+  bool is_vertex_node()
+  {
+    return m_nodeType == VERTEX_SOURCE;
+  }
+  
   bool is_root_node()
   {
-    return m_isRootNode;
+    return m_nodeType == ROOT;
   }
   
   Triangle_2 layout_face()
@@ -224,9 +249,9 @@ public:
     return m_sourceImage;
   }
   
-  bool is_source_node()
+  Node_type node_type()
   {
-    return m_isSourceNode;
+    return m_nodeType;
   }
   
   FT distance_to_root(const Point_2& point)
@@ -329,6 +354,12 @@ public:
 
   void push_middle_child(Cone_tree_node* child)
   {
+    if (m_pendingMiddleSubtree != NULL)
+    {
+      m_pendingMiddleSubtree->m_cancelled = true;
+      m_pendingMiddleSubtree = NULL;
+    }
+  
     m_middleChildren.push_back(child);
     on_child_link(child);
   }
@@ -342,6 +373,12 @@ public:
   
   void set_left_child(Cone_tree_node* child)
   {
+    if (m_pendingLeftSubtree != NULL)
+    {
+      m_pendingLeftSubtree->m_cancelled = true;
+      m_pendingLeftSubtree = NULL;
+    }
+    
     m_leftChild = child;
     on_child_link(child);
   }
@@ -360,6 +397,12 @@ public:
   
   void set_right_child(Cone_tree_node* child)
   {
+    if (m_pendingRightSubtree != NULL)
+    {
+      m_pendingRightSubtree->m_cancelled = true;
+      m_pendingRightSubtree = NULL;
+    }
+  
     m_rightChild = child;
     on_child_link(child);
   }
@@ -377,59 +420,10 @@ public:
   }
   
 public:
-  bool m_hasLeftSubtree;
-  bool m_hasRightSubtree;
-  bool m_hasMiddleSubtree;
+  Cone_expansion_event* m_pendingLeftSubtree;
+  Cone_expansion_event* m_pendingRightSubtree;
+  Cone_expansion_event* m_pendingMiddleSubtree;
   
-};
-
-template <class Traits>
-struct Cone_expansion_event
-{
-public:
-  typedef typename Traits::Segment_2 Segment_2;
-  typedef typename Traits::FT FT;
-
-public:
-  enum Expansion_type
-  {
-    LEFT_CHILD,
-    RIGHT_CHILD,
-    PSEUDO_SOURCE,
-  };
-
-public:
-  Cone_tree_node<Traits>* m_parent;
-  FT m_distanceEstimate;
-  Expansion_type m_type;
-  Segment_2 m_windowSegment;
-  
-public:
-  Cone_expansion_event(Cone_tree_node<Traits>* parent, const FT& distanceEstimate, Expansion_type type)
-    : m_parent(parent)
-    , m_distanceEstimate(distanceEstimate)
-    , m_type(type)
-  {
-  }
-  
-  Cone_expansion_event(Cone_tree_node<Traits>* parent, const FT& distanceEstimate, Expansion_type type, const Segment_2& windowSegment)
-    : m_parent(parent)
-    , m_distanceEstimate(distanceEstimate)
-    , m_type(type)
-    , m_windowSegment(windowSegment)
-  {
-  }
-};
-
-// Does the opposite of what you would expect in order to implement a min-priority queue
-template <class Traits>
-struct Cone_expansion_event_min_priority_queue_comparator
-{
-public:
-  bool operator () (const Cone_expansion_event<Traits>& lhs, const Cone_expansion_event<Traits>& rhs) const
-  {
-    return rhs.m_distanceEstimate < lhs.m_distanceEstimate;
-  }
 };
 
 } // namespace internal

@@ -17,7 +17,7 @@
 
 #define CHECK_CLOSE(expected, result, e) (CGAL::abs((expected) - (result)) < (e))
 
-// This is a regular tetrahedron (edge length 3) with another regular tetrahedron (edge length 1) glued onto one of its faces, such that it has exactly 3 saddle vertices, specifically vertices 4, 5, and 6.
+// This is a tetrahedron (edge length 6) with another tetrahedron (edge length 2) glued onto one of its faces, such that it has exactly 3 saddle vertices, specifically vertices 4, 5, and 6.
 const char* SADDLE_VERTEX_MESH_OFF =
   "OFF\n"
   "8 12 0\n"
@@ -287,6 +287,10 @@ int main(int argc, char** argv)
     typedef CGAL::Polyhedron_3<Kernel> Polyhedron_3;
     typedef CGAL::Polyhedron_shortest_path_default_traits<Kernel, Polyhedron_3> Traits;
     
+    typedef boost::graph_traits<Polyhedron_3> GraphTraits;
+    typedef GraphTraits::vertex_descriptor vertex_descriptor;
+    typedef GraphTraits::vertex_iterator vertex_iterator;
+    
     Traits traits;
     Traits::Construct_triangle_location_3 construct_triangle_location_3(traits.construct_triangle_location_3_object());
     Traits::Project_triangle_3_to_triangle_2 project_triangle_3_to_triangle_2(traits.project_triangle_3_to_triangle_2_object());
@@ -301,23 +305,26 @@ int main(int argc, char** argv)
     
     iss >> P;
     
-    size_t currentVertex = 0;
+    size_t currentVertexIndex = 0;
     
-    for (Polyhedron_3::Vertex_iterator it = P.vertices_begin(); it != P.vertices_end(); ++it)
+    vertex_iterator currentVertex;
+    vertex_iterator endVertex;
+
+    for (boost::tie(currentVertex, endVertex) = boost::vertices(P); currentVertex != endVertex; ++currentVertex)
     {
-      if (currentVertex <= 3 || currentVertex == 7)
+      if (currentVertexIndex <= 3 || currentVertexIndex == 7)
       {
-        CGAL_TEST(!is_saddle_vertex(it));
+        CGAL_TEST(!is_saddle_vertex(*currentVertex, P));
       }
       else
       {
-        CGAL_TEST(is_saddle_vertex(it));
+        CGAL_TEST(is_saddle_vertex(*currentVertex, P));
       }
 
-      ++currentVertex;
+      ++currentVertexIndex;
     }
   }
-  
+ 
   // very simple test of the algorithm on a regular tetrahedron
   {
     typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
@@ -351,7 +358,7 @@ int main(int argc, char** argv)
     
     face_descriptor firstFace = *startFace;
     
-    shortestPaths.m_debugOutput = true;
+    //shortestPaths.m_debugOutput = true;
     shortestPaths.compute_shortest_paths(P, firstFace, b);
     
     vertex_iterator currentVertex;
@@ -362,8 +369,7 @@ int main(int argc, char** argv)
     Kernel::FT sideLength = Kernel::FT(2.0);
     Kernel::FT halfSideLength = sideLength / Kernel::FT(2.0);
     Kernel::FT triangleHeight = CGAL::sqrt((sideLength*sideLength) - (halfSideLength*halfSideLength));
-    
-    
+
     for (boost::tie(currentVertex, endVertex) = CGAL::vertices(P); currentVertex != endVertex; ++currentVertex)
     {
       if (vertexIndex == 0)
@@ -378,6 +384,158 @@ int main(int argc, char** argv)
       ++vertexIndex;
     }
   
+  }
+  
+  // Slightly more complicated test, originating from a vertex, and involving saddle vertices
+  {
+    typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
+    typedef CGAL::Polyhedron_3<Kernel> Polyhedron_3;
+    typedef CGAL::Polyhedron_shortest_path_default_traits<Kernel, Polyhedron_3> Traits;
+    typedef Traits::Barycentric_coordinate Barycentric_coordinate;
+    typedef Traits::FT FT;
+    typedef Traits::Point_3 Point_3;
+    typedef Traits::Point_2 Point_2;
+    typedef Traits::Triangle_3 Triangle_3;
+    typedef Traits::Triangle_2 Triangle_2;
+    typedef Traits::Segment_2 Segment_2;
+    typedef boost::graph_traits<Polyhedron_3> GraphTraits;
+    typedef GraphTraits::vertex_descriptor vertex_descriptor;
+    typedef GraphTraits::vertex_iterator vertex_iterator;
+    typedef GraphTraits::halfedge_descriptor halfedge_descriptor;
+    typedef GraphTraits::halfedge_iterator halfedge_iterator;
+    typedef GraphTraits::face_descriptor face_descriptor;
+    typedef GraphTraits::face_iterator face_iterator;
+    typedef CGAL::Polyhedron_shortest_path<Traits> Polyhedron_shortest_path;
+    typedef boost::property_map<Polyhedron_3, CGAL::vertex_point_t>::type VPM;
+
+    Traits traits;
+  
+    Traits::Compute_squared_distance_3 compute_squared_distance_3(traits.compute_squared_distance_3_object());
+    Traits::Compute_squared_distance_2 compute_squared_distance_2(traits.compute_squared_distance_2_object());
+    Traits::Flatten_triangle_3_along_segment_2 flatten_triangle_3_along_segment_2(traits.flatten_triangle_3_along_segment_2_object());
+    
+    std::istringstream iss(SADDLE_VERTEX_MESH_OFF);
+    
+    Polyhedron_3 P;
+    
+    iss >> P;
+
+    vertex_iterator startVertex;
+    vertex_iterator endVertex;
+    boost::tie(startVertex, endVertex) = CGAL::vertices(P);
+    
+    vertex_iterator currentVertex = startVertex;
+    
+    ++currentVertex;
+    vertex_descriptor rootSearchVertex = *currentVertex;
+    
+    face_descriptor currentFace = CGAL::face(CGAL::halfedge(rootSearchVertex, P), P);
+    size_t vertexIndex = CGAL::test::face_vertex_index(currentFace, rootSearchVertex, P);
+    Barycentric_coordinate baryCoord(vertexIndex == 0 ? FT(1.0) : FT(0.0), vertexIndex == 1 ? FT(1.0) : FT(0.0), vertexIndex == 2 ? FT(1.0) : FT(0.0));
+    
+    Polyhedron_shortest_path shortestPaths(traits);
+
+    //shortestPaths.m_debugOutput = true;
+    shortestPaths.compute_shortest_paths(P, currentFace, baryCoord);
+    
+    VPM vpm = CGAL::get(CGAL::vertex_point, P);
+    
+    Point_3 vertexLocations[8];
+    
+    currentVertex = startVertex;
+    
+    for (size_t i = 0; i < 8; ++i)
+    {
+      vertexLocations[i] = vpm[*currentVertex];
+      ++currentVertex;
+    }
+    
+    FT distanceToBottom = CGAL::sqrt(compute_squared_distance_3(vertexLocations[1], vertexLocations[0]));
+    FT largerSideLength = CGAL::sqrt(compute_squared_distance_3(vertexLocations[1], vertexLocations[2]));
+    FT distanceToSaddle = CGAL::sqrt(compute_squared_distance_3(vertexLocations[1], vertexLocations[4]));
+    FT shorterSideLength = CGAL::sqrt(compute_squared_distance_3(vertexLocations[4], vertexLocations[6]));
+    
+    Triangle_3 lower(vertexLocations[6], vertexLocations[4], vertexLocations[1]);
+    Triangle_3 upper(vertexLocations[4], vertexLocations[6], vertexLocations[7]);
+    
+    Segment_2 base(Point_2(CGAL::ORIGIN), Point_2(shorterSideLength, FT(0.0)));
+    
+    Triangle_2 flatLower(flatten_triangle_3_along_segment_2(lower, 0, base));
+    Triangle_2 flatUpper(flatten_triangle_3_along_segment_2(upper, 0, Segment_2(base[1], base[0])));
+    
+    FT distanceToApex = CGAL::sqrt(compute_squared_distance_2(flatLower[2], flatUpper[2]));
+    
+    FT expectedDistances[8] = 
+    {
+      distanceToBottom, // a vertex of the larger tetrahedron
+      FT(0.0), // the initial vertex
+      largerSideLength, // a vertex of the larger tetrahedron
+      largerSideLength, // a vertex of the larger tetrahedron
+      distanceToSaddle,  // direct line of sight from root
+      distanceToSaddle + shorterSideLength,  // around the corner from a pseudo-source (not in direct line of geodesic sight)
+      distanceToSaddle, // direct line of sight from root
+      distanceToApex,
+    };
+    
+    currentVertex = startVertex;
+    
+    for (size_t i = 0; i < 8; ++i)
+    {
+      CGAL_TEST(CHECK_CLOSE(shortestPaths.shortest_distance_to_vertex(*currentVertex), expectedDistances[i], Kernel::FT(0.00001)));
+      ++currentVertex;
+    }
+    
+    // Now test with 2 source vertices
+    currentVertex = startVertex;
+    
+    for (size_t i = 0; i < 5; ++i)
+    {
+      ++currentVertex;
+    }
+    
+    vertex_descriptor rootSearchVertex2 = *currentVertex;
+    
+    face_descriptor currentFace2 = CGAL::face(CGAL::halfedge(rootSearchVertex2, P), P);
+    size_t vertexIndex2 = CGAL::test::face_vertex_index(currentFace2, rootSearchVertex2, P);
+    Barycentric_coordinate baryCoord2(vertexIndex2 == 0 ? FT(1.0) : FT(0.0), vertexIndex2 == 1 ? FT(1.0) : FT(0.0), vertexIndex2 == 2 ? FT(1.0) : FT(0.0));
+    
+    std::vector<Polyhedron_shortest_path::FaceLocationPair> faceLocations;
+    faceLocations.push_back(Polyhedron_shortest_path::FaceLocationPair(currentFace, baryCoord));
+    faceLocations.push_back(Polyhedron_shortest_path::FaceLocationPair(currentFace2, baryCoord2));
+    
+    shortestPaths.compute_shortest_paths(P, faceLocations.begin(), faceLocations.end());
+    
+    FT distanceToApexFrom2 = CGAL::sqrt(compute_squared_distance_3(vertexLocations[5], vertexLocations[7]));
+
+    Triangle_3 lower2(vertexLocations[2], vertexLocations[3], vertexLocations[5]);
+    Triangle_3 upper2(vertexLocations[3], vertexLocations[2], vertexLocations[0]);
+    
+    Segment_2 base2(Point_2(CGAL::ORIGIN), Point_2(largerSideLength, FT(0.0)));
+    
+    Triangle_2 flatLower2(flatten_triangle_3_along_segment_2(lower2, 0, base2));
+    Triangle_2 flatUpper2(flatten_triangle_3_along_segment_2(upper2, 0, Segment_2(base2[1], base2[0])));
+    
+    FT distanceToBottom2 = CGAL::sqrt(compute_squared_distance_2(flatLower2[2], flatUpper2[2]));
+    
+    FT expectedDistances2[8] = 
+    {
+      distanceToBottom2, // a vertex of the larger tetrahedron
+      FT(0.0), // an initial vertex
+      distanceToSaddle, // a vertex of the larger tetrahedron
+      distanceToSaddle, // a vertex of the larger tetrahedron
+      shorterSideLength,  // direct line of sight from root
+      FT(0.0),  // around the corner from a pseudo-source (not in direct line of geodesic sight)
+      shorterSideLength, // direct line of sight from root
+      distanceToApexFrom2,
+    };
+    
+    currentVertex = startVertex;
+    
+    for (size_t i = 0; i < 8; ++i)
+    {
+      CGAL_TEST(CHECK_CLOSE(shortestPaths.shortest_distance_to_vertex(*currentVertex), expectedDistances2[i], Kernel::FT(0.00001)));
+      ++currentVertex;
+    }
   }
 
   CGAL_TEST_END;

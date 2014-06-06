@@ -17,6 +17,7 @@
 
 namespace CGAL {
 
+
 template<class Traits>
 class Polyhedron_shortest_path
 {
@@ -45,7 +46,7 @@ public:
   typedef typename internal::Cone_expansion_event<Traits> Cone_expansion_event;
   typedef typename Traits::Intersect_2 Intersect_2;
 
-  typedef typename std::priority_queue<Cone_expansion_event, std::vector<Cone_expansion_event>, internal::Cone_expansion_event_min_priority_queue_comparator<Traits> > Expansion_priqueue;
+  typedef typename std::priority_queue<Cone_expansion_event, std::vector<Cone_expansion_event*>, internal::Cone_expansion_event_min_priority_queue_comparator<Traits> > Expansion_priqueue;
   
   typedef typename std::pair<face_descriptor, Barycentric_coordinate> FaceLocationPair;
   
@@ -157,47 +158,41 @@ private:
     
   void expand_left_child(Cone_tree_node* cone, Segment_2 windowSegment)
   {
-    if (cone->m_hasLeftSubtree && window_distance_filter(cone, windowSegment, false))
+    assert(cone->m_pendingLeftSubtree != NULL);
+    
+    cone->m_pendingLeftSubtree = NULL;
+    
+    if (window_distance_filter(cone, windowSegment, false))
     {
       Triangle_3 adjacentFace = triangle_from_halfedge(cone->left_child_edge());
       Triangle_2 layoutFace = m_traits.flatten_triangle_3_along_segment_2_object()(adjacentFace, 0, cone->left_child_base_segment());
-      Cone_tree_node* child = new Cone_tree_node(m_polyhedron, cone->left_child_edge(), layoutFace, cone->source_image(), cone->distance_from_source_to_root(), windowSegment[0], windowSegment[1], false);
+      Cone_tree_node* child = new Cone_tree_node(m_polyhedron, cone->left_child_edge(), layoutFace, cone->source_image(), cone->distance_from_source_to_root(), windowSegment[0], windowSegment[1], Cone_tree_node::INTERVAL);
       cone->set_left_child(child);
       process_node(child);
     }
-    else
+    else if (m_debugOutput)
     {
-      if (!cone->m_hasLeftSubtree)
-      {
-        std::cout << "\tNode was evicted." << std::endl;
-      }
-      else
-      {
-        std::cout << "\tNode was filtered." << std::endl;
-      }
+      std::cout << "\tNode was filtered." << std::endl;
     }
   }
   
   void expand_right_child(Cone_tree_node* cone, Segment_2 windowSegment)
   {
-    if (cone->m_hasRightSubtree && window_distance_filter(cone, windowSegment, true))
+    assert(cone->m_pendingRightSubtree != NULL);
+    
+    cone->m_pendingRightSubtree = NULL;
+    
+    if (window_distance_filter(cone, windowSegment, true))
     {
       Triangle_3 adjacentFace = triangle_from_halfedge(cone->right_child_edge());
       Triangle_2 layoutFace = m_traits.flatten_triangle_3_along_segment_2_object()(adjacentFace, 0, cone->right_child_base_segment());
-      Cone_tree_node* child = new Cone_tree_node(m_polyhedron, cone->right_child_edge(), layoutFace, cone->source_image(), cone->distance_from_source_to_root(), windowSegment[0], windowSegment[1], false);
+      Cone_tree_node* child = new Cone_tree_node(m_polyhedron, cone->right_child_edge(), layoutFace, cone->source_image(), cone->distance_from_source_to_root(), windowSegment[0], windowSegment[1], Cone_tree_node::INTERVAL);
       cone->set_right_child(child);
       process_node(child);
     }
-    else
+    else if (m_debugOutput)
     {
-      if (!cone->m_hasRightSubtree)
-      {
-        std::cout << "\tNode was evicted." << std::endl;
-      }
-      else
-      {
-        std::cout << "\tNode was filtered." << std::endl;
-      }
+      std::cout << "\tNode was filtered." << std::endl;
     }
   }
   
@@ -257,7 +252,7 @@ private:
       Barycentric_coordinate rotatedFaceLocation(faceLocation[currentVertex], faceLocation[(currentVertex + 1) % 3], faceLocation[(currentVertex + 2) % 3]);
       Point_2 sourcePoint(m_traits.construct_triangle_location_2_object()(layoutFace, rotatedFaceLocation));
       
-      Cone_tree_node* child = new Cone_tree_node(m_polyhedron, current, layoutFace, sourcePoint, FT(0.0), layoutFace[0], layoutFace[2], true);
+      Cone_tree_node* child = new Cone_tree_node(m_polyhedron, current, layoutFace, sourcePoint, FT(0.0), layoutFace[0], layoutFace[2], Cone_tree_node::FACE_SOURCE);
       faceRoot->push_middle_child(child);
       
       if (m_debugOutput)
@@ -266,6 +261,7 @@ private:
         std::cout << "\t\tFace = " << layoutFace << std::endl;
         std::cout << "\t\tLocation = " << sourcePoint << std::endl;
       }
+      
       process_node(child);
 
       current = CGAL::next(current, *m_polyhedron);
@@ -274,8 +270,11 @@ private:
 
   void expand_edge_root(halfedge_descriptor baseEdge, FT t0, FT t1)
   {
-    std::cout << "\tEdge Root Expansion: faceA = " << m_facesMap[CGAL::face(baseEdge, *m_polyhedron)] << " , faceB = " << m_facesMap[CGAL::face(CGAL::opposite(baseEdge, *m_polyhedron), *m_polyhedron)] << " , t0 = " << t0 << " , t1 = " << t1 << std::endl;
-  
+    if (m_debugOutput)
+    {
+      std::cout << "\tEdge Root Expansion: faceA = " << m_facesMap[CGAL::face(baseEdge, *m_polyhedron)] << " , faceB = " << m_facesMap[CGAL::face(CGAL::opposite(baseEdge, *m_polyhedron), *m_polyhedron)] << " , t0 = " << t0 << " , t1 = " << t1 << std::endl;
+    }
+    
     halfedge_descriptor baseEdges[2];
     baseEdges[0] = baseEdge;
     baseEdges[1] = CGAL::opposite(baseEdge, *m_polyhedron);
@@ -298,15 +297,18 @@ private:
     
     for (size_t side = 0; side < 2; ++side)
     {
-      std::cout << "\tExpanding edge root #" << side << " : " << std::endl;;
-      std::cout << "\t\tFace = " << layoutFaces[side] << std::endl;
-      std::cout << "\t\tLocation = " << sourcePoints[side] << std::endl;
-    
-      Cone_tree_node* mainChild = new Cone_tree_node(m_polyhedron, baseEdges[side], layoutFaces[side], sourcePoints[side], FT(0.0), layoutFaces[side][0], layoutFaces[side][2], true);
+      if (m_debugOutput)
+      {
+        std::cout << "\tExpanding edge root #" << side << " : " << std::endl;;
+        std::cout << "\t\tFace = " << layoutFaces[side] << std::endl;
+        std::cout << "\t\tLocation = " << sourcePoints[side] << std::endl;
+      }
+      
+      Cone_tree_node* mainChild = new Cone_tree_node(m_polyhedron, baseEdges[side], layoutFaces[side], sourcePoints[side], FT(0.0), layoutFaces[side][0], layoutFaces[side][2], Cone_tree_node::EDGE_SOURCE);
       edgeRoot->push_middle_child(mainChild);
       process_node(mainChild);
 
-      Cone_tree_node* oppositeChild = new Cone_tree_node(m_polyhedron, baseEdges[side], Triangle_2(layoutFaces[side][2], layoutFaces[side][1], layoutFaces[side][2]), sourcePoints[side], FT(0.0), layoutFaces[side][1], layoutFaces[side][2], true);
+      Cone_tree_node* oppositeChild = new Cone_tree_node(m_polyhedron, baseEdges[side], Triangle_2(layoutFaces[side][2], layoutFaces[side][1], layoutFaces[side][2]), sourcePoints[side], FT(0.0), layoutFaces[side][1], layoutFaces[side][2], Cone_tree_node::EDGE_SOURCE);
       edgeRoot->push_middle_child(oppositeChild);
       process_node(oppositeChild);
     }
@@ -314,12 +316,14 @@ private:
 
   void expand_vertex_root(vertex_descriptor vertex)
   {
-    std::cout << "\tVertex Root Expansion: Vertex = " << m_vertexMap[vertex] << std::endl;
-
-    Cone_tree_node* vertexRoot = new Cone_tree_node(m_polyhedron, m_rootNodes.size(), CGAL::halfedge(vertex, *m_polyhedron));
+    if (m_debugOutput)
+    {
+      std::cout << "\tVertex Root Expansion: Vertex = " << m_vertexMap[vertex] << std::endl;
+    }
+    
+    Cone_tree_node* vertexRoot = new Cone_tree_node(m_polyhedron, m_rootNodes.size(), CGAL::prev(CGAL::halfedge(vertex, *m_polyhedron), *m_polyhedron));
     m_rootNodes.push_back(vertexRoot);
     
-    vertexRoot->m_hasMiddleSubtree = true;
     m_closestToVertices[vertex] = NodeDistancePair(vertexRoot, FT(0.0));
     
     expand_psuedo_source(vertexRoot);
@@ -327,35 +331,38 @@ private:
 
   void expand_psuedo_source(Cone_tree_node* parent)
   {
-    if (parent->m_hasMiddleSubtree)
-    {
-      vertex_descriptor expansionVertex = parent->target_vertex();
+    parent->m_pendingMiddleSubtree = NULL;
     
-      halfedge_descriptor startEdge = CGAL::halfedge(expansionVertex, *m_polyhedron);
-      halfedge_descriptor currentEdge = CGAL::halfedge(expansionVertex, *m_polyhedron);
-          
-      do
-      {
-        Triangle_3 face3d(triangle_from_halfedge(currentEdge));
-        Triangle_2 layoutFace(m_traits.project_triangle_3_to_triangle_2_object()(face3d));
+    vertex_descriptor expansionVertex = parent->target_vertex();
+  
+    halfedge_descriptor startEdge = CGAL::halfedge(expansionVertex, *m_polyhedron);
+    halfedge_descriptor currentEdge = CGAL::halfedge(expansionVertex, *m_polyhedron);
         
-        if (m_debugOutput)
-        {
-          std::cout << "\tExpanding PsuedoSource: id = " << m_facesMap[CGAL::face(currentEdge, *m_polyhedron)] << " , face = " << layoutFace << std::endl;
-        }
-        
-        Cone_tree_node* child = new Cone_tree_node(m_polyhedron, currentEdge, layoutFace, layoutFace[1], FT(0.0), layoutFace[0], layoutFace[2], true);
-        parent->push_middle_child(child);
-        process_node(child);
-        
-        currentEdge = CGAL::opposite(CGAL::next(currentEdge, *m_polyhedron), *m_polyhedron);
-      }
-      while (currentEdge != startEdge);
-    }
-    else if (m_debugOutput)
+    FT distanceFromTargetToRoot = parent->distance_from_target_to_root();
+      
+    if (m_debugOutput)
     {
-      std::cout << "\tNode was evicted." << std::endl;
+      std::cout << "Distance from target to root: " << distanceFromTargetToRoot << std::endl;
     }
+    
+    do
+    {
+      Triangle_3 face3d(triangle_from_halfedge(currentEdge));
+      Triangle_2 layoutFace(m_traits.project_triangle_3_to_triangle_2_object()(face3d));
+      
+      if (m_debugOutput)
+      {
+        std::cout << "Expanding PsuedoSource: id = " << m_facesMap[CGAL::face(currentEdge, *m_polyhedron)] << " , face = " << layoutFace << std::endl;
+      }
+      
+      Cone_tree_node* child = new Cone_tree_node(m_polyhedron, currentEdge, layoutFace, layoutFace[1], distanceFromTargetToRoot, layoutFace[0], layoutFace[2], Cone_tree_node::VERTEX_SOURCE);
+      parent->push_middle_child(child);
+      process_node(child);
+      
+      currentEdge = CGAL::opposite(CGAL::next(currentEdge, *m_polyhedron), *m_polyhedron);
+    }
+    while (currentEdge != startEdge);
+
   }
 
   Segment_2 clip_to_bounds(Segment_2 segment, Ray_2 leftBoundary, Ray_2 rightBoundary)
@@ -409,6 +416,10 @@ private:
   {
     bool leftSide = node->has_left_side();
     bool rightSide = node->has_right_side();
+    
+    bool propagateLeft = false;
+    bool propagateRight = false;
+    bool propagateMiddle = false;
   
     if (m_debugOutput)
     {
@@ -439,16 +450,27 @@ private:
       
       if (currentOccupier.first != NULL)
       {
-        CGAL::Comparison_result comparison = m_traits.compare_relative_intersection_along_segment_2_object()(
-          node->entry_segment(), 
-          node->ray_to_target_vertex(), 
-          currentOccupier.first->entry_segment(),
-          currentOccupier.first->ray_to_target_vertex()
-        );
-        
-        if (comparison == CGAL::SMALLER)
+        if (node->is_vertex_node())
+        {
+          isLeftOfCurrent = false;
+        }
+        else if (currentOccupier.first->is_vertex_node())
         {
           isLeftOfCurrent = true;
+        }
+        else
+        {
+          CGAL::Comparison_result comparison = m_traits.compare_relative_intersection_along_segment_2_object()(
+            node->entry_segment(), 
+            node->ray_to_target_vertex(), 
+            currentOccupier.first->entry_segment(),
+            currentOccupier.first->ray_to_target_vertex()
+          );
+          
+          if (comparison == CGAL::SMALLER)
+          {
+            isLeftOfCurrent = true;
+          }
         }
         
         if (m_debugOutput)
@@ -473,32 +495,38 @@ private:
         
         m_vertexOccupiers[node->entry_edge()] = std::make_pair(node, currentNodeDistance);
         
-        node->m_hasLeftSubtree = true;
-        node->m_hasRightSubtree = true;
+        propagateLeft = true;
+        propagateRight = true;
         
-        if (node->is_source_node())
+        if (node->node_type() != Cone_tree_node::INTERVAL)
         {
-          node->m_hasRightSubtree = false;
+          propagateRight = false;
         }
         
         if (currentOccupier.first != NULL)
         {
           if (isLeftOfCurrent)
           {
-            currentOccupier.first->m_hasLeftSubtree = false;
-            
             if (currentOccupier.first->get_left_child())
             {
               delete_node(currentOccupier.first->remove_left_child());
             }
+            else if (currentOccupier.first->m_pendingLeftSubtree != NULL)
+            {
+              currentOccupier.first->m_pendingLeftSubtree->m_cancelled = true;
+              currentOccupier.first->m_pendingLeftSubtree = NULL;
+            }
           }
           else
           {
-            currentOccupier.first->m_hasRightSubtree = false;
-            
             if (currentOccupier.first->get_right_child())
             {
               delete_node(currentOccupier.first->remove_right_child());
+            }
+            else if (currentOccupier.first->m_pendingRightSubtree != NULL)
+            {
+              currentOccupier.first->m_pendingRightSubtree->m_cancelled = true;
+              currentOccupier.first->m_pendingRightSubtree = NULL;
             }
           }
         }
@@ -517,21 +545,35 @@ private:
           {
             std::cout << "\t Current node is now the closest" << std::endl;
           }
-          
+
           // if this is a saddle vertex, then evict previous closest vertex
           if (m_vertexIsPsuedoSource[node->target_vertex()])
           {
             if (currentClosest.first != NULL)
             {
-              currentClosest.first->m_hasMiddleSubtree = false;
+              if (m_debugOutput)
+              {
+                std::cout << "\tEvicting old pseudo-source: " << currentClosest.first << std::endl;
+              }
               
+              if (currentClosest.first->m_pendingMiddleSubtree != NULL)
+              {
+                currentClosest.first->m_pendingMiddleSubtree->m_cancelled = true;
+                currentClosest.first->m_pendingMiddleSubtree = NULL;
+              }
+
               while (currentClosest.first->has_middle_children())
               {
                 delete_node(currentClosest.first->pop_middle_child());
               }
+              
+              if (m_debugOutput)
+              {
+                std::cout << "\tFinished Evicting" << std::endl;
+              }
             }
 
-            node->m_hasMiddleSubtree = true;
+            propagateMiddle = true;
           }
           
           m_closestToVertices[node->target_vertex()] = NodeDistancePair(node, currentNodeDistance);
@@ -541,33 +583,33 @@ private:
       {
         if (isLeftOfCurrent)
         {
-          node->m_hasLeftSubtree = true;
+          propagateLeft = true;
         }
         else
         {
-          node->m_hasRightSubtree = true;
+          propagateRight = true;
         }
       }
     }
     else
     {
-      node->m_hasLeftSubtree = leftSide;
-      node->m_hasRightSubtree = rightSide;
+      propagateLeft = leftSide;
+      propagateRight = rightSide;
     }
     
     if (node->level() < num_faces(*m_polyhedron))
     {
-      if (node->m_hasLeftSubtree)
+      if (propagateLeft)
       {
         push_left_child(node);
       }
       
-      if (node->m_hasRightSubtree)
+      if (propagateRight)
       {
         push_right_child(node);
       }
       
-      if (node->m_hasMiddleSubtree)
+      if (propagateMiddle)
       {
         push_middle_child(node);
       }
@@ -588,7 +630,10 @@ private:
       std::cout << "\tPushing Left Child, Segment = " << parent->left_child_base_segment() << " , clipped = " << leftWindow << " , Estimate = " << distanceEstimate << std::endl;
     }
 
-    m_expansionPriqueue.push(Cone_expansion_event(parent, distanceEstimate, Cone_expansion_event::LEFT_CHILD, leftWindow));
+    Cone_expansion_event* event = new Cone_expansion_event(parent, distanceEstimate, Cone_expansion_event::LEFT_CHILD, leftWindow);
+    parent->m_pendingLeftSubtree = event;
+    
+    m_expansionPriqueue.push(event);
   }
 
   void push_right_child(Cone_tree_node* parent)
@@ -600,8 +645,11 @@ private:
     {
       std::cout << "\tPushing Right Child, Segment = " << parent->right_child_base_segment() << " , clipped = " << rightWindow << " , Estimate = " << distanceEstimate << std::endl;
     }
+    
+    Cone_expansion_event* event = new Cone_expansion_event(parent, distanceEstimate, Cone_expansion_event::RIGHT_CHILD, rightWindow);
+    parent->m_pendingRightSubtree = event;
 
-    m_expansionPriqueue.push(Cone_expansion_event(parent, distanceEstimate, Cone_expansion_event::RIGHT_CHILD, rightWindow));
+    m_expansionPriqueue.push(event);
   }
 
   void push_middle_child(Cone_tree_node* parent)
@@ -610,8 +658,11 @@ private:
     {
       std::cout << "\tPushing Middle Child, Estimate = " << parent->distance_from_target_to_root() << std::endl;
     }
-  
-    m_expansionPriqueue.push(Cone_expansion_event(parent, parent->distance_from_target_to_root(), Cone_expansion_event::PSEUDO_SOURCE));
+    
+    Cone_expansion_event* event = new Cone_expansion_event(parent, parent->distance_from_target_to_root(), Cone_expansion_event::PSEUDO_SOURCE);
+    parent->m_pendingMiddleSubtree = event;
+    
+    m_expansionPriqueue.push(event);
   }
   
   void delete_node(Cone_tree_node* node)
@@ -623,8 +674,49 @@ private:
         std::cout << "Deleting node " << node << std::endl;
       }
       
-      delete_node(node->remove_left_child());
-      delete_node(node->remove_right_child());
+      if (node->m_pendingLeftSubtree != NULL)
+      {
+        node->m_pendingLeftSubtree->m_cancelled = true;
+        node->m_pendingLeftSubtree = NULL;
+      }
+
+      if (node->get_left_child() != NULL)
+      {
+        if (m_debugOutput)
+        {
+          std::cout << "\t"  << node << " Descending left." << std::endl;
+        }
+      
+        delete_node(node->remove_left_child());
+      }
+      
+      
+      if (node->m_pendingRightSubtree != NULL)
+      {
+        node->m_pendingRightSubtree->m_cancelled = true;
+        node->m_pendingRightSubtree = NULL;
+      }
+
+      if (node->get_right_child() != NULL)
+      {
+        if (m_debugOutput)
+        {
+          std::cout << "\t"  << node << " Descending right." << std::endl;
+        }
+        
+        delete_node(node->remove_right_child());
+      }
+      
+      if (node->m_pendingMiddleSubtree != NULL)
+      {
+        node->m_pendingMiddleSubtree->m_cancelled = true;
+        node->m_pendingMiddleSubtree = NULL;
+      }
+      
+      if (node->has_middle_children() && m_debugOutput)
+      {
+        std::cout << "\t"  << node << " Descending middle." << std::endl;
+      }
       
       while (node->has_middle_children())
       {
@@ -648,6 +740,7 @@ private:
     vertex_iterator current, end;
     
     m_vertexIsPsuedoSource.clear();
+    m_closestToVertices.clear();
     
     for (boost::tie(current, end) = boost::vertices(*m_polyhedron); current != end; ++current)
     {
@@ -659,12 +752,23 @@ private:
       {
         m_vertexIsPsuedoSource[*current] = false;
       }
+      
+      m_closestToVertices[*current] = NodeDistancePair(NULL, FT(0.0));
+    }
+    
+    halfedge_iterator currHe, endHe;
+    
+    m_vertexOccupiers.clear();
+    
+    for (boost::tie(currHe, endHe) = CGAL::halfedges(*m_polyhedron); currHe != endHe; ++currHe)
+    {
+      m_vertexOccupiers[*currHe] = NodeDistancePair(NULL, FT(0.0));
     }
   }
   
   bool is_saddle_vertex(vertex_descriptor v)
   {
-    return m_traits.is_saddle_vertex_object()(v);
+    return m_traits.is_saddle_vertex_object()(v, *m_polyhedron);
   }
   
   bool is_boundary_vertex(vertex_descriptor v) // TODO: confirm that this actually works
@@ -693,6 +797,7 @@ private:
     
     while (!m_expansionPriqueue.empty())
     {
+      delete m_expansionPriqueue.top();
       m_expansionPriqueue.pop();
     }
     
@@ -735,12 +840,13 @@ public:
     for (typename PsuedoSourceMap::iterator it = m_vertexIsPsuedoSource.begin(); it != m_vertexIsPsuedoSource.end(); ++it)
     {
       m_vertexMap[it->first] = vertexCount;
-      ++vertexCount;
-    
+
       if (m_debugOutput)
       {
         std::cout << "Vertex#" << vertexCount << ": p = " << it->first->point() << " , Concave: " << (it->second ? "yes" : "no") << std::endl;
       }
+      
+      ++vertexCount;
     }
     
     face_iterator facesCurrent;
@@ -753,10 +859,11 @@ public:
       for (boost::tie(facesCurrent, facesEnd) = CGAL::faces(*m_polyhedron); facesCurrent != facesEnd; ++facesCurrent)
       {
         m_facesMap[*facesCurrent] = faceCount;
-        ++faceCount;
 
         std::cout << "Face#" << faceCount << ": Vertices = (";
 
+        ++faceCount;
+        
         halfedge_iterator faceEdgesStart = CGAL::halfedge(*facesCurrent, *m_polyhedron);
         halfedge_iterator faceEdgesCurrent = faceEdgesStart;
         
@@ -800,47 +907,53 @@ public:
 
       std::cout << "Num face locations: " << m_faceLocations.size() << std::endl;
       std::cout << "Num root nodes: " << m_rootNodes.size() << " (Hint: these should be the same size)" << std::endl;
-    
-      for (size_t i = 0; i < m_rootNodes.size(); ++i)
-      {
-        std::cout << "Root Node #" << i << ": " << std::endl;
-      }
+   
     }
     
     while (m_expansionPriqueue.size() > 0)
     {
-      Cone_expansion_event event = m_expansionPriqueue.top();
+      Cone_expansion_event* event = m_expansionPriqueue.top();
       m_expansionPriqueue.pop();
-      typename Cone_expansion_event::Expansion_type type = event.m_type;
-      Cone_tree_node* parent = event.m_parent;
-
-      switch (type)
+      
+      if (!event->m_cancelled)
       {
-        case Cone_expansion_event::PSEUDO_SOURCE:
-          if (m_debugOutput)
-          {
-            std::cout << "PseudoSource Expansion: Parent = " << parent << " , Vertex = " << m_vertexMap[event.m_parent->target_vertex()] << " , Distance = " << event.m_distanceEstimate << " , Level = " << event.m_parent->level() + 1 << std::endl;
-          }
-          
-          expand_psuedo_source(parent);
-          break;
-        case Cone_expansion_event::LEFT_CHILD:
-          if (m_debugOutput)
-          {
-            std::cout << "Left Expansion: Parent = " << parent << " Edge = (" << m_vertexMap[CGAL::source(event.m_parent->left_child_edge(), *m_polyhedron)] << "," << m_vertexMap[CGAL::target(event.m_parent->left_child_edge(), *m_polyhedron)] << ") , Distance = " << event.m_distanceEstimate << " , Level = " << event.m_parent->level() + 1 << std::endl;
-          }
-          
-          expand_left_child(parent, event.m_windowSegment);
-          break;
-        case Cone_expansion_event::RIGHT_CHILD:
-          if (m_debugOutput)
-          {
-            std::cout << "Right Expansion: Parent = " << parent << " , Edge = (" << m_vertexMap[CGAL::source(event.m_parent->right_child_edge(), *m_polyhedron)] << "," << m_vertexMap[CGAL::target(event.m_parent->right_child_edge(), *m_polyhedron)] << ") , Distance = " << event.m_distanceEstimate << " , Level = " << event.m_parent->level() + 1 << std::endl;
-          }
-          
-          expand_right_child(parent, event.m_windowSegment);
-          break;
+        typename Cone_expansion_event::Expansion_type type = event->m_type;
+        Cone_tree_node* parent = event->m_parent;
+
+        switch (type)
+        {
+          case Cone_expansion_event::PSEUDO_SOURCE:
+            if (m_debugOutput)
+            {
+              std::cout << "PseudoSource Expansion: Parent = " << parent << " , Vertex = " << m_vertexMap[event->m_parent->target_vertex()] << " , Distance = " << event->m_distanceEstimate << " , Level = " << event->m_parent->level() + 1 << std::endl;
+            }
+            
+            expand_psuedo_source(parent);
+            break;
+          case Cone_expansion_event::LEFT_CHILD:
+            if (m_debugOutput)
+            {
+              std::cout << "Left Expansion: Parent = " << parent << " Edge = (" << m_vertexMap[CGAL::source(event->m_parent->left_child_edge(), *m_polyhedron)] << "," << m_vertexMap[CGAL::target(event->m_parent->left_child_edge(), *m_polyhedron)] << ") , Distance = " << event->m_distanceEstimate << " , Level = " << event->m_parent->level() + 1 << std::endl;
+            }
+            
+            expand_left_child(parent, event->m_windowSegment);
+            break;
+          case Cone_expansion_event::RIGHT_CHILD:
+            if (m_debugOutput)
+            {
+              std::cout << "Right Expansion: Parent = " << parent << " , Edge = (" << m_vertexMap[CGAL::source(event->m_parent->right_child_edge(), *m_polyhedron)] << "," << m_vertexMap[CGAL::target(event->m_parent->right_child_edge(), *m_polyhedron)] << ") , Distance = " << event->m_distanceEstimate << " , Level = " << event->m_parent->level() + 1 << std::endl;
+            }
+            
+            expand_right_child(parent, event->m_windowSegment);
+            break;
+        }
       }
+      else if (m_debugOutput)
+      {
+        std::cout << "Found cancelled event for node: " << event->m_parent << std::endl;
+      }
+      
+      delete event;
     }
     
     if (m_debugOutput)
@@ -866,6 +979,8 @@ public:
     
     return FT(-1.0);
   }
+  
+  
 
 };
 
