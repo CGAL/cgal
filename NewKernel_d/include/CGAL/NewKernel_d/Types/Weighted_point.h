@@ -22,6 +22,7 @@
 #include <CGAL/NewKernel_d/store_kernel.h>
 #include <boost/iterator/counting_iterator.hpp>
 namespace CGAL {
+namespace KerD {
 template <class R_> class Weighted_point {
 	typedef typename Get_type<R_, FT_tag>::type FT_;
 	typedef typename Get_type<R_, Point_tag>::type	Point_;
@@ -35,6 +36,7 @@ template <class R_> class Weighted_point {
 	Point_ const& point()const{return c_;}
 	FT_ const& weight()const{return w_;}
 };
+}
 
 namespace CartesianDKernelFunctors {
 template <class R_> struct Construct_weighted_point : Store_kernel<R_> {
@@ -108,7 +110,7 @@ template<class R_> struct In_flat_power_test : private Store_kernel<R_> {
 };
 
 }
-CGAL_KD_DEFAULT_TYPE(Weighted_point_tag,(CGAL::Weighted_point<K>),(Point_tag),());
+CGAL_KD_DEFAULT_TYPE(Weighted_point_tag,(CGAL::KerD::Weighted_point<K>),(Point_tag),());
 CGAL_KD_DEFAULT_FUNCTOR(Construct_ttag<Weighted_point_tag>,(CartesianDKernelFunctors::Construct_weighted_point<K>),(Weighted_point_tag,Point_tag),());
 CGAL_KD_DEFAULT_FUNCTOR(Point_drop_weight_tag,(CartesianDKernelFunctors::Point_drop_weight<K>),(Weighted_point_tag,Point_tag),());
 CGAL_KD_DEFAULT_FUNCTOR(Point_weight_tag,(CartesianDKernelFunctors::Point_weight<K>),(Weighted_point_tag,Point_tag),());
