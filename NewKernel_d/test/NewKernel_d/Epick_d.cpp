@@ -527,7 +527,8 @@ void test3(){
   PW pw Kinit(point_weight_d_object);
   PT pt Kinit(power_test_d_object);
   IFPT ifpt Kinit(in_flat_power_test_d_object);
-  WP wp = cwp (x1, 2);
+  WP wp;
+  wp = cwp (x1, 2);
   WP xw6 = cwp (x6, 0);
   assert (pw(wp) == 2);
   assert (ed(pdw(wp), x1));

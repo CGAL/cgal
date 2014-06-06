@@ -47,6 +47,11 @@ template <class R_> struct Construct_weighted_point : Store_kernel<R_> {
   result_type operator()(Point const&a, FT const&b)const{
     return result_type(a,b);
   }
+  // Not really needed
+  result_type operator()()const{
+    typename Get_functor<R_, Construct_ttag<Point_tag> >::type cp(this->kernel());
+    return result_type(cp(),0);
+  }
 };
 
 template <class R_> struct Point_drop_weight {
