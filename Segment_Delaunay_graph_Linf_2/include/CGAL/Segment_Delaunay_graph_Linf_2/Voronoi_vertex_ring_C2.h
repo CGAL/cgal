@@ -72,6 +72,7 @@ public:
   using Base::are_in_same_open_halfspace_of;
   using Base::horseg_y_coord;
   using Base::verseg_x_coord;
+  using Base::hvseg_coord;
   using Base::compute_intersection_of_lines;
   using Base::is_orth_dist_smaller_than_pt_dist;
   using Base::touch_same_side;
@@ -606,6 +607,9 @@ private:
     uz_ = RT(2);
   }
 
+  /* compute pps vertex when the points p, q are not endpoints of
+   * segment r, and when segment r is axis-parallel
+   */
   inline void
   compute_pps_nonendp_hv(const Site_2& p, const Site_2& q, const Site_2& r,
                          const bool is_r_horizontal)
@@ -614,8 +618,43 @@ private:
         ((not is_r_horizontal) and (scmpy(p, q) == EQUAL))   ) {
       return compute_pps_nonendp_hv_samecoord(p, q, r, is_r_horizontal);
     }
+
+    // here, the segment is axis-parallel and the two points:
+    // either: are not sharing a coordinate
+    // or: they share a coordinate AND
+    //     the line connecting the two points is parallel to the segment
     const Point_2 pp = p.point();
     const Point_2 qq = q.point();
+    Line_2 l = compute_supporting_line(r);
+    if (oriented_side_of_line(l, pp) == NEGATIVE) {
+      l = opposite_line(l);
+    }
+    CGAL_assertion(oriented_side_of_line(l, pp) == POSITIVE);
+    CGAL_assertion(oriented_side_of_line(l, qq) == POSITIVE);
+
+    const Comparison_result perpcomp =
+      is_r_horizontal ? scmpy(p, q) : scmpx(p, q);
+
+    const RT coordr = hvseg_coord(r, is_r_horizontal);
+
+    RT & upar = is_r_horizontal ? ux_ : uy_;
+    RT & uort = is_r_horizontal ? uy_ : ux_;
+
+    if (perpcomp == EQUAL) {
+      const RT pqdist = is_r_horizontal ?
+        CGAL::abs(pp.x()-qq.x()) : CGAL::abs(pp.y()-qq.y());
+      const RT signrdist = (is_r_horizontal ? pp.y() : pp.x()) - coordr;
+      Comparison_result comp = CGAL::compare(pqdist, CGAL::abs(signrdist));
+      upar = is_r_horizontal ? pp.x() + qq.x() : pp.y() + qq.y();
+      if (comp == LARGER) {
+        uort = RT(2)*coordr + CGAL::sign(signrdist)*pqdist;
+      } else {
+        uort = coordr + (is_r_horizontal ? pp.y() : pp.x());
+      }
+      uz_ = RT(2);
+      return;
+    }
+
     const Point_2 rrep = (is_r_horizontal) ?
       Point_2(pp.x() + qq.x(), RT(2)*horseg_y_coord(r), RT(2)) :
       Point_2(RT(2)*verseg_x_coord(r), pp.y() + qq.y(), RT(2)) ;
@@ -660,7 +699,7 @@ private:
     }
   }
 
-  /* compute pps vertex when the point p, q are not endpoints of
+  /* compute pps vertex when the points p, q are not endpoints of
    * segment r, when segment r is not axis-parallel, and when the
    * two points p and q do not share any coordinate
    */
