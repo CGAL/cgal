@@ -429,6 +429,13 @@ public:
     return true;
   }
 
+  
+  bool is_point_locked_by_this_thread(const Point_3 &p) const
+  { return false; }
+
+  bool is_cell_locked_by_this_thread(const Cell_handle &cell_handle) const
+  { return false; }
+
   void unlock_all_elements() const {}
 
   // Dummy locks/unlocks
@@ -525,6 +532,30 @@ public:
     }
 
     return success;
+  }
+
+  bool is_point_locked_by_this_thread(const Point_3 &p) const
+  {
+    bool locked = true;
+    if (m_lock_ds)
+    {
+      locked = m_lock_ds->is_locked_by_this_thread(p);
+    }
+    return locked;
+  }
+
+  bool is_cell_locked_by_this_thread(const Cell_handle &cell_handle) const
+  {
+    bool locked = true;
+    if (m_lock_ds)
+    {
+      for (int iVertex = 0 ; locked && iVertex < 4 ; ++iVertex)
+      {
+        locked = m_lock_ds->is_locked_by_this_thread(
+          cell_handle->vertex(iVertex)->point());
+      }
+    }
+    return locked;
   }
 
   void unlock_all_elements() const
@@ -3405,6 +3436,10 @@ C3T3_helpers<C3T3,MD>::
 try_lock_and_get_incident_cells(const Vertex_handle& v,
                                 Cell_vector &cells) const
 {
+  // We need to lock v individually first, to be sure v->cell() is valid
+  if (!try_lock_vertex(v))
+    return false;
+
   Cell_handle d = v->cell();
   if (!this->try_lock_element(d)) // LOCK
   {
@@ -3690,6 +3725,7 @@ get_conflict_zone_topo_change(const Vertex_handle& v,
 {
   // Get triangulation_vertex incident cells : removal conflict zone
   // TODO: hasn't it already been computed in "perturb_vertex" (when getting the slivers)?
+  // We don't try to lock the incident cells since they've already been locked
   tr_.incident_cells(v, removal_conflict_cells);
 
   // Get conflict_point conflict zone
