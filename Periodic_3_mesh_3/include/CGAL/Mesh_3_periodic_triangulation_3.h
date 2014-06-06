@@ -527,7 +527,7 @@ Stream &write_complex_to_medit(Stream &out, C3t3 &c3t3, unsigned occurence_count
   Triangulation& t = c3t3.triangulation();
   int number_of_facets = c3t3.number_of_facets();
   int number_of_cells = c3t3.number_of_cells();
-  int number_of_vertices = 3 * number_of_facets + 4 * number_of_cells + 8;
+  int number_of_vertices = 3 * number_of_facets + 4 * number_of_cells;
   
   out << std::setprecision(20);
   out << "MeshVersionFormatted 1\nDimension 3\nVertices"
@@ -575,7 +575,7 @@ Stream &write_complex_to_medit(Stream &out, C3t3 &c3t3, unsigned occurence_count
     }
   }
   
-  const int shift = number_of_vertices_on_facets * 8;
+  const int shift = number_of_vertices_on_facets * occurence_count;
   out << "Tetrahedra\n"
   << number_of_cells * occurence_count
   << std::endl;
