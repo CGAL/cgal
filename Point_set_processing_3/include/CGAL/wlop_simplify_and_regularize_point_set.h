@@ -348,7 +348,7 @@ wlop_simplify_and_regularize_point_set(
                                ///< The algorithm is very slow for large values.
                                ///< Default: 0.05 * diameter of bounding box.
   unsigned int iter_number,    ///< number of iterations. Default: 35.
-  bool need_compute_density,   ///< if needed to compute density when the
+  bool compute_density,   ///< if needed to compute density when the
                                ///< input is nonuniform. Default: false. 
   const Kernel&                ///< geometric traits.
 )
@@ -434,7 +434,7 @@ wlop_simplify_and_regularize_point_set(
   // Compute original density weight for original points if user needed
   std::vector<FT> original_density_weights;
 
-  if (need_compute_density)
+  if (compute_density)
   {
     //parallel
 #ifdef CGAL_LINKED_WITH_TBB
@@ -592,7 +592,7 @@ wlop_simplify_and_regularize_point_set(
   const double retain_percentage,     ///< percentage of points to retain
   double neighbor_radius,       ///< size of neighbors.
   const unsigned int max_iter_number, ///< number of iterations.
-  const bool need_compute_density     ///< if needed to compute density 
+  const bool compute_density     ///< if needed to compute density 
                                       ///  to generate more rugularized result.                                 
 ) 
 {
@@ -608,7 +608,7 @@ wlop_simplify_and_regularize_point_set(
       retain_percentage,
       neighbor_radius,
       max_iter_number,
-      need_compute_density,
+      compute_density,
       Kernel());
 }
 /// @endcond
@@ -629,7 +629,7 @@ wlop_simplify_and_regularize_point_set(
   const double retain_percentage = 5, ///< percentage of points to retain
   double neighbor_radius = -1, ///< size of neighbors.
   const unsigned int max_iter_number = 35, ///< number of iterations.
-  const bool need_compute_density = false ///< if needed to compute density to   
+  const bool compute_density = false ///< if needed to compute density to   
                                           /// generate more uniform result. 
 )
 {
@@ -646,7 +646,7 @@ wlop_simplify_and_regularize_point_set(
             retain_percentage, 
             neighbor_radius, 
             max_iter_number, 
-            need_compute_density);
+            compute_density);
 }
 /// @endcond
 
@@ -664,7 +664,7 @@ wlop_simplify_and_regularize_point_set(
   const double retain_percentage = 5, ///< percentage of points to retain
   double neighbor_radius = -1,  ///< size of neighbors.
   const unsigned int max_iter_number = 35, ///< number of iterations.
-  const bool need_compute_density = false  ///< if needed to compute density to   
+  const bool compute_density = false  ///< if needed to compute density to   
                                            /// generate more uniform result. 
 )
 {
@@ -683,7 +683,7 @@ wlop_simplify_and_regularize_point_set(
           retain_percentage, 
           neighbor_radius, 
           max_iter_number, 
-          need_compute_density);
+          compute_density);
 }
 /// @endcond
 
