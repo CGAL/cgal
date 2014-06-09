@@ -2,8 +2,6 @@
 #include <CGAL/wlop_simplify_and_regularize_point_set.h>
 #include <CGAL/IO/read_xyz_points.h>
 #include <CGAL/IO/write_xyz_points.h>
-#include <CGAL/tags.h>
-#include <CGAL/Simple_cartesian.h>
 
 #include <vector>
 #include <fstream>
