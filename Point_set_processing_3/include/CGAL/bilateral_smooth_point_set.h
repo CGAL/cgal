@@ -99,7 +99,7 @@ public:
 /// Compute bilateral projection for each point
 /// according to their KNN neighborhood points
 /// 
-/// \pre `k >= 2`, radius > 0 , sharpness_sigma > 0 && sharpness_sigma < 90
+/// \pre `k >= 2`, radius > 0 , sharpness_angle > 0 && sharpness_angle < 90
 ///
 /// @tparam Kernel Geometric traits class.
 /// @tparam Tree KD-tree.
@@ -113,12 +113,12 @@ compute_denoise_projection(
   const std::vector<CGAL::Point_with_normal_3<Kernel>,tbb::
     scalable_allocator<CGAL::Point_with_normal_3<Kernel> > >& neighbor_pwns,  //
   typename Kernel::FT radius,                   ///< accept neighborhood radius
-  typename Kernel::FT sharpness_sigma           ///< control sharpness(0-90)
+  typename Kernel::FT sharpness_angle           ///< control sharpness(0-90)
 )
 {
   CGAL_point_set_processing_precondition(radius > 0);
-  CGAL_point_set_processing_precondition(sharpness_sigma > 0
-                                         && sharpness_sigma < 90);
+  CGAL_point_set_processing_precondition(sharpness_angle > 0
+                                         && sharpness_angle < 90);
 
   // basic geometric types
   typedef typename Kernel::FT FT;
@@ -132,7 +132,7 @@ compute_denoise_projection(
   FT project_weight_sum = FT(0.0);
   Vector normal_sum = CGAL::NULL_VECTOR; 
 
-  FT cos_sigma = cos(sharpness_sigma / 180.0 * 3.1415926);
+  FT cos_sigma = cos(sharpness_angle / 180.0 * 3.1415926);
   FT sharpness_bandwidth = std::pow((CGAL::max)(1e-8, 1 - cos_sigma), 2);
 
   std::vector<Pwn,tbb::scalable_allocator<Pwn>>::const_iterator 
@@ -281,7 +281,7 @@ class Pwn_updater
   typedef typename std::vector<Pwn,tbb::scalable_allocator<Pwn>> Pwns;
   typedef typename Kernel::FT FT;
 
-  FT sharpness_sigma;
+  FT sharpness_angle;
   Pwns* pwns;
   Pwns* update_pwns;
   std::vector<Pwns,tbb::scalable_allocator<Pwns>>* pwns_neighbors;
@@ -291,7 +291,7 @@ public:
               Pwns *in,
               Pwns *out, 
               std::vector<Pwns,tbb::scalable_allocator<Pwns>>* neighbors): 
-                                             sharpness_sigma(s), 
+                                             sharpness_angle(s), 
                                              pwns(in),
                                              update_pwns(out),
                                              pwns_neighbors(neighbors){} 
@@ -305,7 +305,7 @@ public:
         compute_denoise_projection<Kernel>((*pwns)[i], 
                                            (*pwns_neighbors)[i], 
                                            0.15,
-                                           sharpness_sigma);  
+                                           sharpness_angle);  
  
     }
   }
@@ -352,7 +352,7 @@ bilateral_smooth_point_set(
   PointPMap point_pmap,     ///< property map: value_type of ForwardIterator -> Point_3.
   NormalPMap normal_pmap,   ///< property map: value_type of ForwardIterator -> Vector_3.
   unsigned int k,           ///< number of neighbors.
-  typename Kernel::FT sharpness_sigma,  ///< control sharpness(0-90)
+  typename Kernel::FT sharpness_angle,  ///< control sharpness(0-90)
   const Kernel& /*kernel*/) ///< geometric traits.
 {
   // basic geometric types
@@ -508,7 +508,7 @@ bilateral_smooth_point_set(
    {
      //tbb::task_scheduler_init init(4);
      tbb::blocked_range<size_t> block(0, nb_points);
-     Pwn_updater<Kernel> pwn_updater(sharpness_sigma,
+     Pwn_updater<Kernel> pwn_updater(sharpness_angle,
                                      &pwns,
                                      &update_pwns,
                                      &pwns_neighbors);
@@ -529,7 +529,7 @@ bilateral_smooth_point_set(
          (*pwn_iter, 
           *neighbor_iter, 
           guess_neighbor_radius, 
-          sharpness_sigma);
+          sharpness_angle);
      }
    }
 #ifdef CGAL_DEBUG_MODE
@@ -572,7 +572,7 @@ bilateral_smooth_point_set(
   PointPMap point_pmap,      ///< property map OutputIterator -> Point_3.
   NormalPMap normal_pmap,    ///< property map ForwardIterator -> Vector_3.
   const unsigned int k,      ///< number of neighbors.
-  double sharpness_sigma     ///< control sharpness(0-90)
+  double sharpness_angle     ///< control sharpness(0-90)
 ) ///< property map OutputIterator -> Vector_3.
 {
   typedef typename boost::property_traits<PointPMap>::value_type Point;
@@ -582,7 +582,7 @@ bilateral_smooth_point_set(
     point_pmap,
     normal_pmap,
     k,
-    sharpness_sigma,
+    sharpness_angle,
     Kernel());
 }
 /// @endcond
@@ -597,7 +597,7 @@ bilateral_smooth_point_set(
   ForwardIterator first,        ///< first input point.
   ForwardIterator beyond,       ///< past-the-end input point.
   const unsigned int k,         ///< number of neighbors.
-  double sharpness_sigma,       ///< control sharpness(0-90)
+  double sharpness_angle,       ///< control sharpness(0-90)
   NormalPMap normal_pmap)       ///< property map OutputIterator -> Vector_3.
 {
   return bilateral_smooth_point_set<Concurrency_tag>(
@@ -610,7 +610,7 @@ bilateral_smooth_point_set(
 #endif
     normal_pmap, 
     k,
-    sharpness_sigma);
+    sharpness_angle);
 }
 /// @endcond
 

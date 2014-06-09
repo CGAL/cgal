@@ -41,11 +41,11 @@ int main(void)
 
                                // Algorithm parameters
   int k = 120;                 // neighborhood size
-  double sharpness_sigma = 25; // control sharpness(0-90), 
-                               // the bigger, the result will be smoother.
+  double sharpness_angle = 25; // control sharpness(0-90)
+                               // the bigger the smoother the result will be
   int iter_number = 3;         // times of projection
   
-  for (int i = 0; i < iter_number; i++)
+  for (int i = 0; i < iter_number; ++i)
   {
     double error = 
     CGAL::bilateral_smooth_point_set <CGAL::Parallel_tag>(
@@ -54,7 +54,7 @@ int main(void)
           CGAL::First_of_pair_property_map<PointVectorPair>(),
           CGAL::Second_of_pair_property_map<PointVectorPair>(),
           k,
-          sharpness_sigma);
+          sharpness_angle);
   }
   
   //// Save point set.

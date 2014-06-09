@@ -203,7 +203,7 @@ projecting each point onto a smooth parametric surface patch
 Function `bilateral_smooth_point_set()` smooths the input point set by
 iteratively projecting each point onto the implicit surface patch fitted over its `k` nearest neighbors.
 Bilateral projection preserves sharp features according to the normal (gradient) information. Normals are thus required as input. 
-The parallel version of the algorithm requires the executable to be linked against the 
+A parallel version is provided and requires the executable to be linked against the 
 <a href="http://www.threadingbuildingblocks.org">Intel TBB library</a>.
 The number of threads used is controlled through the tbb::task_scheduler_init class.
 See the <a href="http://www.threadingbuildingblocks.org/documentation">TBB documentation</a> for more details.
