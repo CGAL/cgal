@@ -24,61 +24,6 @@ namespace CGAL
 namespace internal
 {
 
-// Computes the conditions of Theorem 3.2 of "Improving Chen and Han's Algorithm on the Discrete Geodesic Problem" 
-// Shi-Qing Xin and Guo-Jin Wang
-// ACM Transactions on Graph Algorithms, Volume 28, No. 4, Article 104 (August 2009)
-// http://doi.acm.org/10.1145/1559755.1559761
-template <class Traits>
-class Xin_wang_window_distance_filter
-{
-  typedef typename Traits::Point_2 Point_2;
-  typedef typename Traits::FT FT;
-  typedef typename Traits::Compute_squared_distance_2 Compute_squared_distance_2;
-  
-  Compute_squared_distance_2 compute_squared_distance_2;
-  
-public:
-  Xin_wang_window_distance_filter()
-  {
-  }
-  
-  Xin_wang_window_distance_filter(const Compute_squared_distance_2& cds)
-    : compute_squared_distance_2(cds)
-  {
-  }
-
-  bool operator()(
-    Point_2 v1,                         // Near vertex
-    FT d1,                      // Near vertex distance 
-    Point_2 v2,                         // Far vertex
-    FT d2,                      // Far vertex distance 
-    Point_2 v3,                         // Opposite vertex
-    FT d3,                      // Opposite vertex distance 
-    Point_2 A,                          // Near intersection
-    Point_2 B,                          // Far intersection
-    Point_2 I,                          // Source image
-    FT d                        // Distance to source image 
-  )    
-  {
-    if (d + CGAL::sqrt(compute_squared_distance_2(I, B)) > d1 + CGAL::sqrt(compute_squared_distance_2(v1, B)))
-    {
-      return false;
-    }
-    
-    if (d + CGAL::sqrt(compute_squared_distance_2(I, A)) > d2 + CGAL::sqrt(compute_squared_distance_2(v2, A)))
-    {
-      return false;
-    }
-    
-    if (d + CGAL::sqrt(compute_squared_distance_2(I, A)) > d3 + CGAL::sqrt(compute_squared_distance_2(v3, A)))
-    {
-      return false;
-    }
-    
-    return true;
-  }
-};
-
 template<class Traits>
 class Cone_tree_node
 {
@@ -113,7 +58,7 @@ private:
   Compute_squared_distance_2 m_compute_squared_distance_2;
   Construct_triangle_location_2 m_construct_triangle_location_2;
   
-  Polyhedron* m_polyhedron;
+  Polyhedron& m_polyhedron;
   halfedge_descriptor m_entryEdge;
   
   Triangle_2 m_layoutFace;
@@ -141,7 +86,7 @@ private:
   }
   
 public:
-  Cone_tree_node(Polyhedron* polyhedron, size_t treeId)
+  Cone_tree_node(Polyhedron& polyhedron, size_t treeId)
     : m_polyhedron(polyhedron)
     , m_sourceImage(Point_2(CGAL::ORIGIN))
     , m_layoutFace(Point_2(CGAL::ORIGIN),Point_2(CGAL::ORIGIN),Point_2(CGAL::ORIGIN))
@@ -156,7 +101,7 @@ public:
   {
   }
   
-  Cone_tree_node(Polyhedron* polyhedron, size_t treeId, halfedge_descriptor entryEdge)
+  Cone_tree_node(Polyhedron& polyhedron, size_t treeId, halfedge_descriptor entryEdge)
     : m_polyhedron(polyhedron)
     , m_entryEdge(entryEdge)
     , m_sourceImage(Point_2(CGAL::ORIGIN))
@@ -172,7 +117,7 @@ public:
   {
   }
 
-  Cone_tree_node(Polyhedron* polyhedron, halfedge_descriptor entryEdge, const Triangle_2& layoutFace, const Point_2& sourceImage, const FT& pseudoSourceDistance, const Point_2& windowLeft, const Point_2& windowRight, Node_type nodeType = INTERVAL)
+  Cone_tree_node(Polyhedron& polyhedron, halfedge_descriptor entryEdge, const Triangle_2& layoutFace, const Point_2& sourceImage, const FT& pseudoSourceDistance, const Point_2& windowLeft, const Point_2& windowRight, Node_type nodeType = INTERVAL)
     : m_polyhedron(polyhedron)
     , m_entryEdge(entryEdge)
     , m_layoutFace(layoutFace)
@@ -231,17 +176,17 @@ public:
   
   halfedge_descriptor left_child_edge()
   {
-    return CGAL::opposite(CGAL::prev(m_entryEdge, *m_polyhedron), *m_polyhedron);
+    return CGAL::opposite(CGAL::prev(m_entryEdge, m_polyhedron), m_polyhedron);
   }
   
   halfedge_descriptor right_child_edge()
   {
-    return CGAL::opposite(CGAL::next(m_entryEdge, *m_polyhedron), *m_polyhedron);
+    return CGAL::opposite(CGAL::next(m_entryEdge, m_polyhedron), m_polyhedron);
   }
   
   vertex_descriptor target_vertex()
   {
-    return CGAL::target(CGAL::next(m_entryEdge, *m_polyhedron), *m_polyhedron);
+    return CGAL::target(CGAL::next(m_entryEdge, m_polyhedron), m_polyhedron);
   }
   
   Point_2 source_image()

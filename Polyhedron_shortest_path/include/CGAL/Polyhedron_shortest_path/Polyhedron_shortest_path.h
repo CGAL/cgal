@@ -18,10 +18,19 @@
 namespace CGAL {
 
 
-template<class Traits>
+template<class Traits, 
+  class VIM = typename boost::property_map<typename Traits::Polyhedron, CGAL::vertex_external_index_t>::type,
+  class HIM = typename boost::property_map<typename Traits::Polyhedron, CGAL::halfedge_external_index_t>::type,
+  class FIM = typename boost::property_map<typename Traits::Polyhedron, face_external_index_t>::type,
+  class VPM = typename boost::property_map<typename Traits::Polyhedron, CGAL::vertex_point_t>::type>
 class Polyhedron_shortest_path
 {
 public:
+  typedef VIM VertexIndexMap;
+  typedef HIM HalfedgeIndexMap;
+  typedef FIM FaceIndexMap;
+  typedef VPM VertexPointMap;
+
   typedef typename Traits::Polyhedron Polyhedron;
   typedef typename Traits::Triangle_3 Triangle_3;
   typedef typename Traits::Triangle_2 Triangle_2;
@@ -49,19 +58,17 @@ public:
   typedef typename std::priority_queue<Cone_expansion_event, std::vector<Cone_expansion_event*>, internal::Cone_expansion_event_min_priority_queue_comparator<Traits> > Expansion_priqueue;
   
   typedef typename std::pair<face_descriptor, Barycentric_coordinate> FaceLocationPair;
-  
+
+private:
   typedef typename std::pair<Cone_tree_node*, FT> NodeDistancePair;
 
 private:
   Traits m_traits;
 
-private:
-  typedef typename std::map<vertex_descriptor, bool> PsuedoSourceMap;
-
-  PsuedoSourceMap m_vertexIsPsuedoSource;
+  std::vector<bool> m_vertexIsPseudoSource;
   
-  std::map<halfedge_descriptor, NodeDistancePair> m_vertexOccupiers;
-  std::map<vertex_descriptor, NodeDistancePair> m_closestToVertices;
+  std::vector<NodeDistancePair> m_vertexOccupiers;
+  std::vector<NodeDistancePair> m_closestToVertices;
   
   std::vector<Cone_tree_node*> m_rootNodes;
   
@@ -69,9 +76,15 @@ private:
   
   std::vector<FaceLocationPair> m_faceLocations;
   
-  Polyhedron* m_polyhedron;
+  VertexIndexMap m_vertexIndexMap;
+  FaceIndexMap m_faceIndexMap;
+  HalfedgeIndexMap m_halfedgeIndexMap;
+  VertexPointMap m_vertexPointMap;
+  
+  Polyhedron& m_polyhedron;
   
 public:
+
   bool m_debugOutput;
   
 private:
@@ -86,8 +99,8 @@ private:
     
     do
     {
-      points[currentPoint] = boost::source(current, *m_polyhedron)->point();
-      current = CGAL::next(current, *m_polyhedron);
+      points[currentPoint] = m_vertexPointMap[boost::source(current, m_polyhedron)];
+      current = CGAL::next(current, m_polyhedron);
       ++currentPoint;
     }
     while (current != start);
@@ -110,9 +123,13 @@ private:
     Point_2 v1;
     Point_2 v3;
     
-    NodeDistancePair v1Distance = m_closestToVertices[CGAL::source(cone->entry_edge(), *m_polyhedron)];
-    NodeDistancePair v2Distance = m_closestToVertices[cone->target_vertex()];
-    NodeDistancePair v3Distance = m_closestToVertices[CGAL::target(cone->entry_edge(), *m_polyhedron)];
+    size_t v1Index = m_vertexIndexMap[CGAL::source(cone->entry_edge(), m_polyhedron)];
+    size_t v2Index = m_vertexIndexMap[cone->target_vertex()];
+    size_t v3Index = m_vertexIndexMap[CGAL::target(cone->entry_edge(), m_polyhedron)];
+    
+    NodeDistancePair v1Distance = m_closestToVertices[v1Index];
+    NodeDistancePair v2Distance = m_closestToVertices[v2Index];
+    NodeDistancePair v3Distance = m_closestToVertices[v3Index];
     
     if (reversed)
     {
@@ -208,22 +225,22 @@ private:
         break;
       case CGAL::internal::BARYCENTRIC_COORDINATE_EDGE:
         {
-          halfedge_descriptor he = CGAL::halfedge(face, *m_polyhedron);
+          halfedge_descriptor he = CGAL::halfedge(face, m_polyhedron);
           for (size_t i = 0; i < associatedEdge; ++i)
           {
-            he = CGAL::next(he, *m_polyhedron);
+            he = CGAL::next(he, m_polyhedron);
           }
           expand_edge_root(he, location[associatedEdge], location[(associatedEdge + 1) % 3]);
         }
         break;
       case CGAL::internal::BARYCENTRIC_COORDINATE_VERTEX:
         {
-          halfedge_descriptor he = CGAL::halfedge(face, *m_polyhedron);
+          halfedge_descriptor he = CGAL::halfedge(face, m_polyhedron);
           for (size_t i = 0; i < associatedEdge; ++i)
           {
-            he = CGAL::next(he, *m_polyhedron);
+            he = CGAL::next(he, m_polyhedron);
           }
-          expand_vertex_root(CGAL::source(he, *m_polyhedron));
+          expand_vertex_root(CGAL::source(he, m_polyhedron));
         }
         break;
       default:
@@ -234,7 +251,7 @@ private:
   
   void expand_face_root(face_descriptor faceId, Barycentric_coordinate faceLocation)
   {
-    halfedge_descriptor start = CGAL::halfedge(faceId, *m_polyhedron);
+    halfedge_descriptor start = CGAL::halfedge(faceId, m_polyhedron);
     halfedge_descriptor current = start;
     
     Cone_tree_node* faceRoot = new Cone_tree_node(m_polyhedron, m_rootNodes.size());
@@ -242,7 +259,7 @@ private:
     
     if (m_debugOutput)
     {
-      std::cout << "\tFace Root Expansion: face = " << m_facesMap[faceId] << " , Location = " << faceLocation << std::endl;
+      std::cout << "\tFace Root Expansion: face = " << m_faceIndexMap[faceId] << " , Location = " << faceLocation << std::endl;
     }
     
     for (size_t currentVertex = 0; currentVertex < 3; ++currentVertex)
@@ -264,7 +281,7 @@ private:
       
       process_node(child);
 
-      current = CGAL::next(current, *m_polyhedron);
+      current = CGAL::next(current, m_polyhedron);
     }
   }
 
@@ -272,12 +289,12 @@ private:
   {
     if (m_debugOutput)
     {
-      std::cout << "\tEdge Root Expansion: faceA = " << m_facesMap[CGAL::face(baseEdge, *m_polyhedron)] << " , faceB = " << m_facesMap[CGAL::face(CGAL::opposite(baseEdge, *m_polyhedron), *m_polyhedron)] << " , t0 = " << t0 << " , t1 = " << t1 << std::endl;
+      std::cout << "\tEdge Root Expansion: faceA = " << m_faceIndexMap[CGAL::face(baseEdge, m_polyhedron)] << " , faceB = " << m_faceIndexMap[CGAL::face(CGAL::opposite(baseEdge, m_polyhedron), m_polyhedron)] << " , t0 = " << t0 << " , t1 = " << t1 << std::endl;
     }
     
     halfedge_descriptor baseEdges[2];
     baseEdges[0] = baseEdge;
-    baseEdges[1] = CGAL::opposite(baseEdge, *m_polyhedron);
+    baseEdges[1] = CGAL::opposite(baseEdge, m_polyhedron);
     
     Triangle_3 faces3d[2];
     Triangle_2 layoutFaces[2];
@@ -318,13 +335,13 @@ private:
   {
     if (m_debugOutput)
     {
-      std::cout << "\tVertex Root Expansion: Vertex = " << m_vertexMap[vertex] << std::endl;
+      std::cout << "\tVertex Root Expansion: Vertex = " << m_vertexIndexMap[vertex] << std::endl;
     }
     
-    Cone_tree_node* vertexRoot = new Cone_tree_node(m_polyhedron, m_rootNodes.size(), CGAL::prev(CGAL::halfedge(vertex, *m_polyhedron), *m_polyhedron));
+    Cone_tree_node* vertexRoot = new Cone_tree_node(m_polyhedron, m_rootNodes.size(), CGAL::prev(CGAL::halfedge(vertex, m_polyhedron), m_polyhedron));
     m_rootNodes.push_back(vertexRoot);
     
-    m_closestToVertices[vertex] = NodeDistancePair(vertexRoot, FT(0.0));
+    m_closestToVertices[m_vertexIndexMap[vertex]] = NodeDistancePair(vertexRoot, FT(0.0));
     
     expand_psuedo_source(vertexRoot);
   }
@@ -335,8 +352,8 @@ private:
     
     vertex_descriptor expansionVertex = parent->target_vertex();
   
-    halfedge_descriptor startEdge = CGAL::halfedge(expansionVertex, *m_polyhedron);
-    halfedge_descriptor currentEdge = CGAL::halfedge(expansionVertex, *m_polyhedron);
+    halfedge_descriptor startEdge = CGAL::halfedge(expansionVertex, m_polyhedron);
+    halfedge_descriptor currentEdge = CGAL::halfedge(expansionVertex, m_polyhedron);
         
     FT distanceFromTargetToRoot = parent->distance_from_target_to_root();
       
@@ -352,14 +369,14 @@ private:
       
       if (m_debugOutput)
       {
-        std::cout << "Expanding PsuedoSource: id = " << m_facesMap[CGAL::face(currentEdge, *m_polyhedron)] << " , face = " << layoutFace << std::endl;
+        std::cout << "Expanding PsuedoSource: id = " << m_faceIndexMap[CGAL::face(currentEdge, m_polyhedron)] << " , face = " << layoutFace << std::endl;
       }
       
       Cone_tree_node* child = new Cone_tree_node(m_polyhedron, currentEdge, layoutFace, layoutFace[1], distanceFromTargetToRoot, layoutFace[0], layoutFace[2], Cone_tree_node::VERTEX_SOURCE);
       parent->push_middle_child(child);
       process_node(child);
       
-      currentEdge = CGAL::opposite(CGAL::next(currentEdge, *m_polyhedron), *m_polyhedron);
+      currentEdge = CGAL::opposite(CGAL::next(currentEdge, m_polyhedron), m_polyhedron);
     }
     while (currentEdge != startEdge);
 
@@ -438,14 +455,16 @@ private:
         std::cout << "\tContains target vertex" << std::endl;
       }
       
-      NodeDistancePair currentOccupier = m_vertexOccupiers[node->entry_edge()];
+      size_t entryEdgeIndex = m_halfedgeIndexMap[node->entry_edge()];
+      
+      NodeDistancePair currentOccupier = m_vertexOccupiers[entryEdgeIndex];
       FT currentNodeDistance = node->distance_from_target_to_root();
 
       bool isLeftOfCurrent = false;
       
       if (m_debugOutput)
       {
-        std::cout << "\t Target vertex = " << m_vertexMap[node->target_vertex()] << std::endl;
+        std::cout << "\t Target vertex = " << m_vertexIndexMap[node->target_vertex()] << std::endl;
       }
       
       if (currentOccupier.first != NULL)
@@ -493,7 +512,7 @@ private:
           std::cout << "\t Current node is now the occupier" << std::endl;
         }
         
-        m_vertexOccupiers[node->entry_edge()] = std::make_pair(node, currentNodeDistance);
+        m_vertexOccupiers[entryEdgeIndex] = std::make_pair(node, currentNodeDistance);
         
         propagateLeft = true;
         propagateRight = true;
@@ -531,8 +550,10 @@ private:
           }
         }
         
+        size_t targetVertexIndex = m_vertexIndexMap[node->target_vertex()];
+        
         // Check if this is now the absolute closest node, and replace the current closest as appropriate
-        NodeDistancePair currentClosest = m_closestToVertices[node->target_vertex()];
+        NodeDistancePair currentClosest = m_closestToVertices[targetVertexIndex];
         
         if (m_debugOutput && currentClosest.first != NULL)
         {
@@ -547,7 +568,7 @@ private:
           }
 
           // if this is a saddle vertex, then evict previous closest vertex
-          if (m_vertexIsPsuedoSource[node->target_vertex()])
+          if (m_vertexIsPseudoSource[targetVertexIndex])
           {
             if (currentClosest.first != NULL)
             {
@@ -576,7 +597,7 @@ private:
             propagateMiddle = true;
           }
           
-          m_closestToVertices[node->target_vertex()] = NodeDistancePair(node, currentNodeDistance);
+          m_closestToVertices[targetVertexIndex] = NodeDistancePair(node, currentNodeDistance);
         }
       }
       else
@@ -597,7 +618,7 @@ private:
       propagateRight = rightSide;
     }
     
-    if (node->level() < num_faces(*m_polyhedron))
+    if (node->level() < num_faces(m_polyhedron))
     {
       if (propagateLeft)
       {
@@ -723,13 +744,17 @@ private:
         delete_node(node->pop_middle_child());
       }
       
-      if (m_vertexOccupiers[node->entry_edge()].first == node)
+      size_t entryEdgeIndex = m_halfedgeIndexMap[node->entry_edge()];
+      
+      if (m_vertexOccupiers[entryEdgeIndex].first == node)
       {
-        m_vertexOccupiers[node->entry_edge()].first = NULL;
+        m_vertexOccupiers[entryEdgeIndex].first = NULL;
         
-        if (m_closestToVertices[node->target_vertex()].first == node)
+        size_t targetVertexIndex = m_vertexIndexMap[node->target_vertex()];
+        
+        if (m_closestToVertices[targetVertexIndex].first == node)
         {
-          m_closestToVertices[node->target_vertex()].first = NULL;
+          m_closestToVertices[targetVertexIndex].first = NULL;
         }
       }
     }
@@ -739,51 +764,50 @@ private:
   {
     vertex_iterator current, end;
     
-    m_vertexIsPsuedoSource.clear();
-    m_closestToVertices.clear();
-    
-    for (boost::tie(current, end) = boost::vertices(*m_polyhedron); current != end; ++current)
+    for (boost::tie(current, end) = boost::vertices(m_polyhedron); current != end; ++current)
     {
+      size_t vertexIndex = m_vertexIndexMap[*current];
+    
       if (is_saddle_vertex(*current) || is_boundary_vertex(*current))
       {
-        m_vertexIsPsuedoSource[*current] = true;
+        m_vertexIsPseudoSource[vertexIndex] = true;
       }
       else
       {
-        m_vertexIsPsuedoSource[*current] = false;
+        m_vertexIsPseudoSource[vertexIndex] = false;
       }
       
-      m_closestToVertices[*current] = NodeDistancePair(NULL, FT(0.0));
+      m_closestToVertices[vertexIndex] = NodeDistancePair(NULL, FT(0.0));
     }
     
     halfedge_iterator currHe, endHe;
     
     m_vertexOccupiers.clear();
     
-    for (boost::tie(currHe, endHe) = CGAL::halfedges(*m_polyhedron); currHe != endHe; ++currHe)
+    for (boost::tie(currHe, endHe) = CGAL::halfedges(m_polyhedron); currHe != endHe; ++currHe)
     {
-      m_vertexOccupiers[*currHe] = NodeDistancePair(NULL, FT(0.0));
+      m_vertexOccupiers[m_halfedgeIndexMap[*currHe]] = NodeDistancePair(NULL, FT(0.0));
     }
   }
   
   bool is_saddle_vertex(vertex_descriptor v)
   {
-    return m_traits.is_saddle_vertex_object()(v, *m_polyhedron);
+    return m_traits.is_saddle_vertex_object()(v, m_polyhedron);
   }
   
   bool is_boundary_vertex(vertex_descriptor v) // TODO: confirm that this actually works
   {
-    halfedge_descriptor h = CGAL::halfedge(v, *m_polyhedron);
+    halfedge_descriptor h = CGAL::halfedge(v, m_polyhedron);
     halfedge_descriptor first = h;
     
     do
     {
-      if (h->is_border_edge())
+      if (CGAL::face(h, m_polyhedron) == GraphTraits::null_face() || CGAL::face(CGAL::opposite(h, m_polyhedron), m_polyhedron) == GraphTraits::null_face())
       {
         return true;
       }
       
-      h = CGAL::opposite(CGAL::next(h, *m_polyhedron), *m_polyhedron);
+      h = CGAL::opposite(CGAL::next(h, m_polyhedron), m_polyhedron);
     }
     while(h != first);
     
@@ -792,8 +816,8 @@ private:
   
   void reset_containers()
   {
-    m_closestToVertices.clear();
-    m_vertexOccupiers.clear();
+    m_closestToVertices.resize(boost::num_vertices(m_polyhedron));
+    m_vertexOccupiers.resize(CGAL::num_halfedges(m_polyhedron));
     
     while (!m_expansionPriqueue.empty())
     {
@@ -803,50 +827,61 @@ private:
     
     m_faceLocations.clear();
     m_rootNodes.clear();
-    m_vertexMap.clear();
-    m_vertexIsPsuedoSource.clear();
+    m_vertexIsPseudoSource.resize(boost::num_vertices(m_polyhedron));
   }
   
-  std::map<vertex_descriptor, size_t> m_vertexMap;
-  std::map<face_descriptor, size_t> m_facesMap;
-  
 public:
-
-  Polyhedron_shortest_path(const Traits& traits)
+  
+  Polyhedron_shortest_path(const Traits& traits, Polyhedron& p)
     : m_traits(traits)
-    , m_polyhedron(NULL)
+    , m_polyhedron(p)
+    , m_vertexIndexMap(CGAL::get(boost::vertex_external_index, p))
+    , m_halfedgeIndexMap(CGAL::get(CGAL::halfedge_external_index, p))
+    , m_faceIndexMap(CGAL::get(CGAL::face_external_index, p))
+    , m_vertexPointMap(CGAL::get(CGAL::vertex_point, p))
     , m_debugOutput(false)
   {
   }
   
-  void compute_shortest_paths(Polyhedron& p, face_descriptor face, Barycentric_coordinate location)
+  Polyhedron_shortest_path(const Traits& traits, Polyhedron& p, VertexIndexMap& vertexIndexMap, HalfedgeIndexMap& halfedgeIndexMap, FaceIndexMap& faceIndexMap, VertexPointMap& vertexPointMap)
+    : m_traits(traits)
+    , m_polyhedron(p)
+    , m_vertexIndexMap(vertexIndexMap)
+    , m_halfedgeIndexMap(halfedgeIndexMap)
+    , m_faceIndexMap(faceIndexMap)
+    , m_vertexPointMap(vertexPointMap)
+    , m_debugOutput(false)
+  {
+  }
+  
+  void compute_shortest_paths(face_descriptor face, Barycentric_coordinate location)
   {
     typedef FaceLocationPair* FaceLocationPairIterator;
 
     FaceLocationPair faceLocation(std::make_pair(face, location));
-    compute_shortest_paths<FaceLocationPairIterator>(p, &faceLocation, (&faceLocation) + 1);
+    compute_shortest_paths<FaceLocationPairIterator>(&faceLocation, (&faceLocation) + 1);
   }
   
   template<class InputIterator>
-  void compute_shortest_paths(Polyhedron& p, InputIterator faceLocationsBegin, InputIterator faceLocationsEnd)
+  void compute_shortest_paths(InputIterator faceLocationsBegin, InputIterator faceLocationsEnd)
   {
-    m_polyhedron = &p;
-    
     reset_containers();
     set_vertex_types();
-
-    size_t vertexCount = 0;
     
-    for (typename PsuedoSourceMap::iterator it = m_vertexIsPsuedoSource.begin(); it != m_vertexIsPsuedoSource.end(); ++it)
-    {
-      m_vertexMap[it->first] = vertexCount;
+    m_vertexOccupiers.resize(CGAL::num_halfedges(m_polyhedron));
+    m_closestToVertices.resize(CGAL::num_vertices(m_polyhedron));
 
-      if (m_debugOutput)
-      {
-        std::cout << "Vertex#" << vertexCount << ": p = " << it->first->point() << " , Concave: " << (it->second ? "yes" : "no") << std::endl;
-      }
+    if (m_debugOutput)
+    {
+      vertex_iterator current, end;
       
-      ++vertexCount;
+      size_t numVertices = 0;
+
+      for (boost::tie(current,end) = boost::vertices(m_polyhedron); current != end; ++current)
+      {
+        std::cout << "Vertex#" << numVertices << ": p = " << m_vertexPointMap[*current] << " , Concave: " << (m_vertexIsPseudoSource[numVertices] ? "yes" : "no") << std::endl;
+        ++numVertices;
+      }
     }
     
     face_iterator facesCurrent;
@@ -854,24 +889,20 @@ public:
     
     if (m_debugOutput)
     {
-      size_t faceCount = 0;
+      size_t numFaces = 0;
       
-      for (boost::tie(facesCurrent, facesEnd) = CGAL::faces(*m_polyhedron); facesCurrent != facesEnd; ++facesCurrent)
+      for (boost::tie(facesCurrent, facesEnd) = CGAL::faces(m_polyhedron); facesCurrent != facesEnd; ++facesCurrent)
       {
-        m_facesMap[*facesCurrent] = faceCount;
-
-        std::cout << "Face#" << faceCount << ": Vertices = (";
-
-        ++faceCount;
-        
-        halfedge_iterator faceEdgesStart = CGAL::halfedge(*facesCurrent, *m_polyhedron);
+        std::cout << "Face#" << numFaces << ": Vertices = (";
+        ++numFaces;
+        halfedge_iterator faceEdgesStart = CGAL::halfedge(*facesCurrent, m_polyhedron);
         halfedge_iterator faceEdgesCurrent = faceEdgesStart;
         
         do
         {
-          std::cout << m_vertexMap[CGAL::source(*faceEdgesCurrent, *m_polyhedron)];
+          std::cout << m_vertexIndexMap[CGAL::source(*faceEdgesCurrent, m_polyhedron)];
             
-          faceEdgesCurrent = CGAL::next(*faceEdgesCurrent, *m_polyhedron);
+          faceEdgesCurrent = CGAL::next(*faceEdgesCurrent, m_polyhedron);
           
           if (faceEdgesCurrent != faceEdgesStart)
           {
@@ -895,7 +926,7 @@ public:
       
       if (m_debugOutput)
       {
-        std::cout << "Root: " << m_facesMap[it->first] << " , " << it->second << std::endl;
+        std::cout << "Root: " << m_faceIndexMap[it->first] << " , " << it->second << std::endl;
       }
       
       expand_root(it->first, it->second);
@@ -925,7 +956,7 @@ public:
           case Cone_expansion_event::PSEUDO_SOURCE:
             if (m_debugOutput)
             {
-              std::cout << "PseudoSource Expansion: Parent = " << parent << " , Vertex = " << m_vertexMap[event->m_parent->target_vertex()] << " , Distance = " << event->m_distanceEstimate << " , Level = " << event->m_parent->level() + 1 << std::endl;
+              std::cout << "PseudoSource Expansion: Parent = " << parent << " , Vertex = " << m_vertexIndexMap[event->m_parent->target_vertex()] << " , Distance = " << event->m_distanceEstimate << " , Level = " << event->m_parent->level() + 1 << std::endl;
             }
             
             expand_psuedo_source(parent);
@@ -933,7 +964,7 @@ public:
           case Cone_expansion_event::LEFT_CHILD:
             if (m_debugOutput)
             {
-              std::cout << "Left Expansion: Parent = " << parent << " Edge = (" << m_vertexMap[CGAL::source(event->m_parent->left_child_edge(), *m_polyhedron)] << "," << m_vertexMap[CGAL::target(event->m_parent->left_child_edge(), *m_polyhedron)] << ") , Distance = " << event->m_distanceEstimate << " , Level = " << event->m_parent->level() + 1 << std::endl;
+              std::cout << "Left Expansion: Parent = " << parent << " Edge = (" << m_vertexIndexMap[CGAL::source(event->m_parent->left_child_edge(), m_polyhedron)] << "," << m_vertexIndexMap[CGAL::target(event->m_parent->left_child_edge(), m_polyhedron)] << ") , Distance = " << event->m_distanceEstimate << " , Level = " << event->m_parent->level() + 1 << std::endl;
             }
             
             expand_left_child(parent, event->m_windowSegment);
@@ -941,7 +972,7 @@ public:
           case Cone_expansion_event::RIGHT_CHILD:
             if (m_debugOutput)
             {
-              std::cout << "Right Expansion: Parent = " << parent << " , Edge = (" << m_vertexMap[CGAL::source(event->m_parent->right_child_edge(), *m_polyhedron)] << "," << m_vertexMap[CGAL::target(event->m_parent->right_child_edge(), *m_polyhedron)] << ") , Distance = " << event->m_distanceEstimate << " , Level = " << event->m_parent->level() + 1 << std::endl;
+              std::cout << "Right Expansion: Parent = " << parent << " , Edge = (" << m_vertexIndexMap[CGAL::source(event->m_parent->right_child_edge(), m_polyhedron)] << "," << m_vertexIndexMap[CGAL::target(event->m_parent->right_child_edge(), m_polyhedron)] << ") , Distance = " << event->m_distanceEstimate << " , Level = " << event->m_parent->level() + 1 << std::endl;
             }
             
             expand_right_child(parent, event->m_windowSegment);
@@ -960,22 +991,19 @@ public:
     {   
       std::cout << "Closest distances: " << std::endl;
       
-      for (typename std::map<vertex_descriptor, NodeDistancePair>::iterator it = m_closestToVertices.begin(); it != m_closestToVertices.end(); ++it)
+      for (size_t i = 0; i < m_closestToVertices.size(); ++i)
       {
-        std::cout << "\tVertex = " << m_vertexMap[it->first] << std::endl;
-        std::cout << "\tDistance = " << it->second.second << std::endl;
+        std::cout << "\tVertex = " << i << std::endl;
+        std::cout << "\tDistance = " << m_closestToVertices[i].second << std::endl;
       }
       
       std::cout << std::endl << "Done!" << std::endl;
     }
   }
-  
+
   FT shortest_distance_to_vertex(vertex_descriptor v)
   {
-    if (m_polyhedron != NULL)
-    {
-      return m_closestToVertices[v].second;
-    }
+    return m_closestToVertices[m_vertexIndexMap[v]].second;
     
     return FT(-1.0);
   }

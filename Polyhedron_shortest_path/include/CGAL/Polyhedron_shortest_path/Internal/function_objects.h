@@ -11,6 +11,9 @@
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/result_of.h>
 
+#ifndef CGAL_POLYHEDRON_SHORTEST_PATH_INTERNAL_FUNCTION_OBJECTS_H
+#define CGAL_POLYHEDRON_SHORTEST_PATH_INTERNAL_FUNCTION_OBJECTS_H
+
 namespace CGAL {
 
 namespace internal {
@@ -353,3 +356,5 @@ public:
 } // namespace internal
 
 } // namespace CGAL
+
+#endif /* CGAL_POLYHEDRON_SHORTEST_PATH_INTERNAL_FUNCTION_OBJECTS_H */
