@@ -177,12 +177,12 @@ A flow chart of the WLOP algorithm
 Comparison for three simplification methods: Left: Random simplification result. Middle: Grid simplification result. Right: WLOP simplification result.
 \cgalFigureEnd
 
-\subsubsection Point_set_processing_3WLOP_Parameter Parameter: compute_density
-Computing density weights for each point is an optional preprocessing. For example, as shown in the following figure, if <code>`compute_density=false`</code>, WLOP preserves the intrinsic non-uniform sampling of the original points; if <code>`compute_density=true`</code>, WLOP is resilient to non-uniform sampling and generate sample points with more uniform distribution, at the expense of computational time.
+\subsubsection Point_set_processing_3WLOP_Parameter Parameter: require_uniform_sampling
+Computing density weights for each point is an optional preprocessing. For example, as shown in the following figure, if <code>`require_uniform_sampling=false`</code>, WLOP preserves the intrinsic non-uniform sampling of the original points; if <code>`require_uniform_sampling=true`</code>, WLOP is resilient to non-uniform sampling and generate sample points with more uniform distribution, at the expense of computational time.
 
 
 \cgalFigureBegin{Point_set_processing_3figWLOP_parameter_density, WLOP_parameter_density.jpg}
-Comparison between with and without density: Left: input. Middle: <code>`compute_density = false`</code>. Right: <code>`compute_density=true`</code>. 
+Comparison between with and without density: Left: input. Middle: <code>`require_uniform_sampling = false`</code>. Right: <code>`require_uniform_sampling=true`</code>. 
 \cgalFigureEnd
 
 \subsubsection Point_set_processing_3WLOP_parallel_performance Parallel Performance: 
