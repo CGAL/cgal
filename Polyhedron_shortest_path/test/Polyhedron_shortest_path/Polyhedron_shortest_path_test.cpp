@@ -8,6 +8,7 @@
 #include <CGAL/Polyhedron_shortest_path/Polyhedron_shortest_path.h>
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/boost/graph/iterator.h>
+#include <CGAL/Polyhedron_shortest_path/Internal/function_objects.h>
 
 #include <CGAL/test_macros.h>
 #include <CGAL/test_util.h>
@@ -342,9 +343,7 @@ int main(int argc, char** argv)
     typedef CGAL::Polyhedron_shortest_path<Traits> Polyhedron_shortest_path;
     
     Traits traits;
-    
-    Polyhedron_shortest_path shortestPaths(traits);
-    
+
     Polyhedron_3 P;
     
     CGAL::test::make_regular_tetrahedron(P);
@@ -358,9 +357,10 @@ int main(int argc, char** argv)
     
     face_descriptor firstFace = *startFace;
     
+    Polyhedron_shortest_path shortestPaths(traits, P);
     //shortestPaths.m_debugOutput = true;
-    shortestPaths.compute_shortest_paths(P, firstFace, b);
-    
+    shortestPaths.compute_shortest_paths(firstFace, b);
+
     vertex_iterator currentVertex;
     vertex_iterator endVertex;
     
@@ -432,12 +432,11 @@ int main(int argc, char** argv)
     face_descriptor currentFace = CGAL::face(CGAL::halfedge(rootSearchVertex, P), P);
     size_t vertexIndex = CGAL::test::face_vertex_index(currentFace, rootSearchVertex, P);
     Barycentric_coordinate baryCoord(vertexIndex == 0 ? FT(1.0) : FT(0.0), vertexIndex == 1 ? FT(1.0) : FT(0.0), vertexIndex == 2 ? FT(1.0) : FT(0.0));
-    
-    Polyhedron_shortest_path shortestPaths(traits);
 
+    Polyhedron_shortest_path shortestPaths(traits, P);
     //shortestPaths.m_debugOutput = true;
-    shortestPaths.compute_shortest_paths(P, currentFace, baryCoord);
-    
+    shortestPaths.compute_shortest_paths(currentFace, baryCoord);
+
     VPM vpm = CGAL::get(CGAL::vertex_point, P);
     
     Point_3 vertexLocations[8];
@@ -503,7 +502,7 @@ int main(int argc, char** argv)
     faceLocations.push_back(Polyhedron_shortest_path::FaceLocationPair(currentFace, baryCoord));
     faceLocations.push_back(Polyhedron_shortest_path::FaceLocationPair(currentFace2, baryCoord2));
     
-    shortestPaths.compute_shortest_paths(P, faceLocations.begin(), faceLocations.end());
+    shortestPaths.compute_shortest_paths(faceLocations.begin(), faceLocations.end());
     
     FT distanceToApexFrom2 = CGAL::sqrt(compute_squared_distance_3(vertexLocations[5], vertexLocations[7]));
 

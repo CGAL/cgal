@@ -18,7 +18,9 @@
 
 namespace CGAL {
 
-template <class K, class P>
+template <
+  class K, 
+  class P>
 class Polyhedron_shortest_path_default_traits
 {
 public:
