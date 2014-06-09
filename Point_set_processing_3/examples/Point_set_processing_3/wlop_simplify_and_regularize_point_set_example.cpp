@@ -41,7 +41,7 @@ int main(void)
   const double retain_percentage = 2;       // percentage of points to retain.
   const double neighbor_radius = 0.03;      // neighbors size.
   const unsigned int iter_number = 30;      // number of iterations.
-  const bool need_compute_density = true;  // if needed to compute density.
+  const bool compute_density = true;      //compute density of input point set.
   CGAL::wlop_simplify_and_regularize_point_set<CGAL::Parallel_tag>(
                                                points.begin(),
                                                points.end(),
@@ -49,7 +49,7 @@ int main(void)
                                                retain_percentage, 
                                                neighbor_radius,
                                                iter_number,
-                                               need_compute_density);
+                                               compute_density);
   */
   //with all parameters ends
   
