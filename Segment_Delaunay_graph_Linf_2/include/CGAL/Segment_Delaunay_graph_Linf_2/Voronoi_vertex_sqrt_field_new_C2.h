@@ -720,13 +720,43 @@ private:
       return;
     }
 
-    const Point_2 rrep = (is_r_horizontal) ?
-      Point_2((pp.x() + qq.x())/FT(2), horseg_y_coord(r)) :
-      Point_2(verseg_x_coord(r), (pp.y() + qq.y())/FT(2)) ;
-    CGAL_SDG_DEBUG(std::cout << "debug: PPS relegating to compute_ppp with "
-        << pp << "  " << qq << " " << rrep << std::endl;);
-    compute_vv_points(pp, qq, rrep);
-    CGAL_SDG_DEBUG(std::cout << "debug: PPS returns with vv=" << vv << std::endl;);
+    // here, perpcomp is not EQUAL
+    const Sign signla = CGAL::sign(l.a());
+    const Sign signlb = CGAL::sign(l.b());
+    const Sign & testsign = is_r_horizontal ? signlb : signla;
+    CGAL_assertion(testsign != ZERO);
+    const Point_2 & farp =
+      testsign == POSITIVE ?
+        (perpcomp == SMALLER ? qq : pp) :
+        (perpcomp == SMALLER ? pp : qq) ;
+    CGAL_assertion(Base::compare_linf_distances_to_line(
+          l, farp == pp ? qq : pp , farp) == SMALLER);
+    const RT pqdist = CGAL::max(
+      CGAL::abs(pp.x()-qq.x()), CGAL::abs(pp.y()-qq.y()));
+
+    const RT sdistf = (is_r_horizontal ? farp.y() : farp.x()) - coordr;
+    CGAL_assertion(CGAL::sign(sdistf) == testsign);
+
+    if (CGAL::compare(CGAL::abs(sdistf), pqdist) == LARGER) {
+      const bool is_p_farthest = farp == pp;
+      const Point_2 & closep = (is_p_farthest)? qq : pp;
+      vv = Point_2(is_r_horizontal ?
+                   RT(2) * closep.x() - (is_p_farthest? -1 : +1) * sdistf :
+                   RT(2)*coordr + sdistf,
+                   is_r_horizontal ?
+                   RT(2)*coordr + sdistf :
+                   RT(2) * closep.y() + (is_p_farthest? -1 : +1) * sdistf,
+                   RT(2));
+    } else {
+      vv = Point_2(is_r_horizontal ?
+                   pp.x() + qq.x() :
+                   RT(2)*coordr + CGAL::sign(sdistf)*pqdist,
+                   is_r_horizontal ?
+                   RT(2)*coordr + CGAL::sign(sdistf)*pqdist :
+                   pp.y() + qq.y(),
+                   RT(2));
+    }
+    return;
   }
 
   /* compute pps vertex when the points p, q are not endpoints of
