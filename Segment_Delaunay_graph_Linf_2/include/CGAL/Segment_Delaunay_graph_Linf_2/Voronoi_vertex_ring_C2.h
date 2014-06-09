@@ -654,11 +654,35 @@ private:
       uz_ = RT(2);
       return;
     }
+    // here, perpcomp is not EQUAL
+    const Sign signla = CGAL::sign(l.a());
+    const Sign signlb = CGAL::sign(l.b());
+    const Sign & testsign = is_r_horizontal ? signlb : signla;
+    CGAL_assertion(testsign != ZERO);
+    const Point_2 & farp =
+      testsign == POSITIVE ?
+        (perpcomp == SMALLER ? qq : pp) :
+        (perpcomp == SMALLER ? pp : qq) ;
+    CGAL_assertion(Base::compare_linf_distances_to_line(
+          l, farp == pp ? qq : pp , farp) == SMALLER);
+    const RT pqdist = CGAL::max(
+      CGAL::abs(pp.x()-qq.x()), CGAL::abs(pp.y()-qq.y()));
 
-    const Point_2 rrep = (is_r_horizontal) ?
-      Point_2(pp.x() + qq.x(), RT(2)*horseg_y_coord(r), RT(2)) :
-      Point_2(RT(2)*verseg_x_coord(r), pp.y() + qq.y(), RT(2)) ;
-    return compute_ppp(pp, qq, rrep);
+    const RT sdistf = (is_r_horizontal ? farp.y() : farp.x()) - coordr;
+    CGAL_assertion(CGAL::sign(sdistf) == testsign);
+
+    if (CGAL::compare(CGAL::abs(sdistf), pqdist) == LARGER) {
+      const bool is_p_farthest = farp == pp;
+      const Point_2 & closep = (is_p_farthest)? qq : pp;
+      upar = RT(2)* (is_r_horizontal ? closep.x() : closep.y()) +
+        (is_r_horizontal? -1 : +1) * (is_p_farthest? -1 : +1) * sdistf;
+      uort = RT(2)*coordr + sdistf;
+    } else {
+      upar = is_r_horizontal ? pp.x() + qq.x() : pp.y() + qq.y();
+      uort = RT(2)*coordr + CGAL::sign(sdistf)*pqdist;
+    }
+    uz_ = RT(2);
+    return;
   }
 
   inline void
