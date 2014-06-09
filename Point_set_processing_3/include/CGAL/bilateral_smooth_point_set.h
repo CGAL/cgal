@@ -320,7 +320,8 @@ public:
 /// \ingroup PkgPointSetProcessing
 /// 
 /// This algorithm performs a bilateral point set denoising (smoothing) 
-/// while preserving sharp features.
+///  with sharp features preservation. Both point positions and normals will be
+/// modeifed.
 /// For more information, see: http://web.siat.ac.cn/~huihuang/EAR/EAR_page.html
 /// \pre Normals must be unit vectors
 ///
@@ -337,7 +338,9 @@ public:
 /// @tparam Kernel Geometric traits class.
 ///      It can be omitted and deduced automatically from PointPMap value_type.
 ///
-/// @return Average point movement error.
+/// @return Average point movement error. The change after on execution.
+///         This value could help user decide how many times of iteration is
+///         sufficient.          
 
 // This variant requires all parameters.
 template <typename Concurrency_tag,

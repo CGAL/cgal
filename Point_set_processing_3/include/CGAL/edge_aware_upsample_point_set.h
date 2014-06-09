@@ -270,7 +270,7 @@ update_new_point(
 // ----------------------------------------------------------------------------
 
 /// \ingroup PkgPointSetProcessing
-/// Upsampling Algorithm:  progressively upsample the point set while 
+/// Progressively upsample the point set while 
 /// approaching the edge singularities. 
 /// For more details, please see: http://web.siat.ac.cn/~huihuang/EAR/EAR_page.html
 ///
