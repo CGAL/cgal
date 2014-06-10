@@ -23,16 +23,13 @@ namespace CGAL { template <class R_> class Segment_2; }
 namespace CGAL {
 
 double eps(double x) {
-    //return nextafter(x, DBL_MAX) - x;
     return CGAL::abs(CGAL::nextafter(x, DBL_MAX) - x);
-    //CGAL::nextafter(
 }
 
 template<typename GeomTraits, typename AABB_primitive>
 class AABB_traits_2 {
 public:
     typedef AABB_traits_2<GeomTraits, AABB_primitive> AT;
-    /// AABBTraits concept types
     typedef typename CGAL::Bbox_2 Bounding_box;
     typedef typename CGAL::Object Object;
 
@@ -62,10 +59,7 @@ public:
     typedef typename GeomTraits::Construct_cartesian_const_iterator_2
     Construct_cartesian_const_iterator_3;
 
-    /// Constructor
     AABB_traits_2(const Point &point, const Container &p, const Container &q): m_t_point(point), m_p(p), m_q(q) {
-        //GeomTraits::ComputeX_2 c_x_o;
-        //GeomTraits::ComputeY_2 c_y_o;
         m_x_interval = Interval_nt<true>(CGAL::to_interval(point.x()));
         m_y_interval = Interval_nt<true>(CGAL::to_interval(point.y()));
         m_px = CGAL::to_double(point.x());
@@ -75,7 +69,6 @@ public:
     AABB_traits_2(): m_p(Container()), m_q(Container()) {
     };
 
-    /// Non-virtual Destructor
     ~AABB_traits_2() { };
 
     Interval_nt<true> getIntX() const {
@@ -94,7 +87,7 @@ public:
     const Container &get_q() const {
         return m_q;
     }
-    ///
+
     /**
      * @brief Sorts [first,beyond[
      * @param first iterator on first element
@@ -104,9 +97,10 @@ public:
      * Sorts the range defined by [first,beyond[. Sort is achieved on bbox longuest
      * axis, using the comparison function <dim>_less_than (dim in {x,y,z})
      */
-
     class Sort_primitives {
+
     public:
+
         template<typename PrimitiveIterator>
         void operator()(PrimitiveIterator first,
                         PrimitiveIterator beyond,
@@ -124,7 +118,6 @@ public:
 
             case AT::CGAL_AXIS_Z: // sort along z
                 CGAL_error();
-                //std::nth_element(first, middle, beyond, less_z);
                 break;
 
             default:
@@ -143,9 +136,10 @@ public:
      * @param beyond an iterator on the past-the-end primitive
      * @return the bounding box of the primitives of the iterator range
      */
-
     class Compute_bbox {
+
     public:
+
         template<typename ConstPrimitiveIterator>
         typename AT::Bounding_box operator()(ConstPrimitiveIterator first,
                                              ConstPrimitiveIterator beyond) const {
@@ -164,10 +158,14 @@ public:
     }
 
     class Do_intersect {
+
     private:
+
         AABB_traits_2 *m_traits;
         typedef typename Primitive::Datum Datum;
+
     public:
+
         Do_intersect(AABB_traits_2 *_traits): m_traits(_traits) {}
 
         bool operator()(const Bounding_box &q, const Bounding_box &bbox) const {
@@ -189,7 +187,6 @@ public:
             double t_bottom = (m_traits->getIntY() + bbox.ymin()).inf();
             double t_top = (m_traits->getIntY() + bbox.ymax()).sup();
             Bounding_box t_box(t_left, t_bottom, t_right, t_top);
-            //double x_max = m_traits->getIntX().inf();
 
             return CGAL::do_overlap(q, t_box);
         }
@@ -212,7 +209,6 @@ public:
             double t_bottom = (m_traits->getIntY() + bbox.ymin()).inf();
             double t_top = (m_traits->getIntY() + bbox.ymax()).sup();
             Bounding_box t_box(t_left, t_bottom, t_right, t_top);
-            ////double x_max = m_traits->getIntX().inf();
 
             return CGAL::do_overlap(q.datum().bbox(), t_box);
         }
@@ -280,17 +276,6 @@ public:
             }
 
             if (const CGAL::Segment_2<GeomTraits> *iseg = CGAL::object_cast<CGAL::Segment_2<GeomTraits> >(&intersection_object)) { // we have overlapping segments
-                //GeomTraits::CompareXY_2 t_compare_endpoints_xy_2_obj = GeomTraits().CompareXY_2();
-                //CGAL::Comparison_result c1 =t_compare_endpoints_xy_2_obj(tr_pr);
-                //CGAL::Comparison_result c2 = t_compare_endpoints_xy_2_obj(q.datum());
-                //double x1 = CGAL::to_double(tr_pr.source().x());
-                //double y1 = CGAL::to_double(tr_pr.source().y());
-                //double x2 = CGAL::to_double(tr_pr.target().x());
-                //double y2 = CGAL::to_double(tr_pr.target().y());
-                //double x3 = CGAL::to_double(q.datum().source().x());
-                //double y3 = CGAL::to_double(q.datum().source().y());
-                //double x4 = CGAL::to_double(q.datum().target().x());
-                //double y4 = CGAL::to_double(q.datum().target().y());
                 CGAL::Comparison_result c1 = CGAL::compare_xy(tr_pr.source(), tr_pr.target());
                 CGAL::Comparison_result c2 = CGAL::compare_xy(q.datum().source(), q.datum().target());
 
@@ -383,7 +368,6 @@ public:
 
                 if (p_other == itr_p) {
                     p_other = cont.edges_begin();
-                    //  ++p_other;
                 } else {
                     while (p_other != itr_p) {
                         --p_other;
@@ -402,7 +386,9 @@ public:
     }
 
     class Intersection {
+
     public:
+
         template<typename Query>
         boost::optional<typename AT::Object_and_primitive_id>
         operator()(const Query &query, const typename AT::Primitive &primitive) const {
@@ -418,16 +404,18 @@ public:
         }
     };
 
-//Intersection intersection_object() {return Intersection();}
     Intersection intersection_object() {
         return Do_intersect(this);
     }
 
     // This should go down to the GeomTraits, i.e. the kernel
     class Closest_point {
+
         typedef typename AT::Point Point;
         typedef typename AT::Primitive Primitive;
+
     public:
+
         Point operator()(const Point &p, const Primitive &pr, const Point &bound) const {
             // seems to be unused:
             //return CGAL::nearest_point_2(p, pr.datum(), bound);
@@ -440,9 +428,12 @@ public:
     // do_intersect to something like does_contain (this is what we compute,
     // this is not the same do_intersect as the spherical kernel)
     class Compare_distance {
+
         typedef typename AT::Point Point;
         typedef typename AT::Primitive Primitive;
+
     public:
+
         template <class Solid>
         CGAL::Comparison_result operator()(const Point &p, const Solid &pr, const Point &bound) const {
             return GeomTraits().do_intersect_2_object()
@@ -467,6 +458,7 @@ private:
     Interval_nt<true> m_y_interval;
     const Container &m_p;
     const Container &m_q;
+
     /**
      * @brief Computes bounding box of one primitive
      * @param pr the primitive
@@ -476,12 +468,14 @@ private:
         return pr.datum().bbox();
     }
 
-    typedef enum { CGAL_AXIS_X = 0,
-                   CGAL_AXIS_Y = 1,
-                   CGAL_AXIS_Z = 2
-                 } Axis;
+    typedef enum {
+        CGAL_AXIS_X = 0,
+        CGAL_AXIS_Y = 1,
+        CGAL_AXIS_Z = 2
+    } Axis;
 
     static Axis longest_axis(const Bounding_box &bbox);
+
     /// Comparison functions
     static bool less_x(const Primitive &pr1, const Primitive &pr2) {
         return pr1.reference_point().x() < pr2.reference_point().x();
@@ -489,8 +483,6 @@ private:
     static bool less_y(const Primitive &pr1, const Primitive &pr2) {
         return pr1.reference_point().y() < pr2.reference_point().y();
     }
-    /* static bool less_z(const Primitive& pr1, const Primitive& pr2)
-     { return pr1.reference_point().z() < pr2.reference_point().z(); }*/
 };
 
 template<typename GT, typename P>
@@ -499,35 +491,14 @@ AABB_traits_2<GT, P>::longest_axis(const Bounding_box &bbox) {
     const double dx = bbox.xmax() - bbox.xmin();
     const double dy = bbox.ymax() - bbox.ymin();
 
-//  const double dz = bbox.zmax() - bbox.zmin();
     if (dx >= dy) {
         return CGAL_AXIS_X;
     } else {
         return CGAL_AXIS_Y;
     }
 
-    //if(dx>=dy)
-    //{
-    //  if(dx>=dz)
-    //  {
-    //    return CGAL_AXIS_X;
-    //  }
-    //  else // dz>dx and dx>=dy
-    //  {
-    //    return CGAL_AXIS_Z;
-    //  }
-    //}
-    //else // dy>dx
-    //{
-    //  if(dy>=dz)
-    //  {
-    //    return CGAL_AXIS_Y;
-    //  }
-    //  else // dz>dy and dy>dx
-    //  {
-    //    return CGAL_AXIS_Z;
-    //  }
-    //}
 }
+
 }
+
 #endif

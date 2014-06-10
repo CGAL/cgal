@@ -17,18 +17,13 @@
 //
 // Author(s) : Camille Wormser, Pierre Alliez, Stephane Tayeb
 
-#ifndef CGAL_AABB_NODE_H
-#define CGAL_AABB_NODE_H
+#ifndef CGAL_AABB_NODE_MOD_H
+#define CGAL_AABB_NODE_MOD_H
 
 #include <cstddef>                      // for size_t, NULL
 
 namespace CGAL {
 
-/**
- * @class AABB_node
- *
- *
- */
 template<typename AABBTraits>
 class AABB_node {
 public:
@@ -233,11 +228,6 @@ AABB_node<Tr>::join_traversal(const AABB_node &other_node,
                     if (traits.do_intersect(right_data(), other_node.right_child(), !first_stationary) || traits.do_intersect(left_data(), other_node.right_child(), !first_stationary)) {
                         other_node.right_child().join_traversal(*this, traits, 2, 2, !first_stationary);
                     }
-
-                    /*if (traits.go_further() && traits.do_intersect(other_node.right_child(), left_data(),!first_stationary))
-                    {
-                        other_node.right_child().join_traversal(left_data(),traits,2,1,!first_stationary);
-                    }*/
                 }
             } else {
 
@@ -245,11 +235,6 @@ AABB_node<Tr>::join_traversal(const AABB_node &other_node,
                     if (traits.do_intersect(right_child(), other_node.right_data(), !first_stationary) || traits.do_intersect(right_child(), other_node.left_data(), !first_stationary)) {
                         right_child().join_traversal(other_node, traits, 2, 2, first_stationary);
                     }
-
-                    /*if (traits.go_further() && traits.do_intersect(right_child(), other_node.left_data(),first_stationary))
-                    {
-                        right_child().join_traversal(other_node.left_data(),traits,2,1,first_stationary);
-                    }*/
                 } else { //3 and 3
                     if (traits.do_intersect(right_child(), other_node.right_child(), !first_stationary)) {
                         right_child().join_traversal(other_node.right_child(), traits, 2, 2, first_stationary);
@@ -312,6 +297,7 @@ AABB_node<Tr>::join_traversal(const AABB_node &other_node,
         }
     }
 }
+
 } // end namespace CGAL
 
-#endif // CGAL_AABB_NODE_H
+#endif // CGAL_AABB_NODE_MOD_H

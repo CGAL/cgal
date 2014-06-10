@@ -17,8 +17,8 @@
 //
 // Author(s) : Camille Wormser, Pierre Alliez, Stephane Tayeb
 
-#ifndef CGAL_AABB_TREE_H
-#define CGAL_AABB_TREE_H
+#ifndef CGAL_AABB_TREE_MOD_H
+#define CGAL_AABB_TREE_MOD_H
 
 #include <CGAL/enum.h>                  // for Sign::SMALLER
 #include <stddef.h>                     // for NULL
@@ -737,4 +737,4 @@ AABB_tree<Tr>::closest_point_and_primitive(const Point &query,
 }
 } // end namespace CGAL
 
-#endif // CGAL_AABB_TREE_H
+#endif // CGAL_AABB_TREE_MOD_H

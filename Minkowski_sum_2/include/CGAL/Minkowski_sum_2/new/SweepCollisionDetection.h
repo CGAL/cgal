@@ -23,6 +23,7 @@
 /* A simple sweep-line visitor that determines if there are intersections
 * in the interiors of the given curve set.
 */
+
 namespace CGAL {
 
 enum Segment_color {MY_RED, MY_BLUE};
@@ -31,7 +32,6 @@ struct Segment_Data {
     Segment_color _color;
     int _min_id, _max_id;
     bool operator==(const Segment_Data &rhs) const {
-        //return _color == rhs._color;
         return (this == &rhs);
     }
 };
@@ -86,12 +86,10 @@ public:
                       Subcurve *sc1 ,
                       Subcurve *sc2 ,
                       bool is_new) {
-        //m_found_x = true;
     }
 
     void update_event(Event * /* e */,
                       Subcurve * /* sc1 */) {
-        // m_found_x = true;
     }
 
     void update_event(Event * /* e */,
@@ -129,8 +127,6 @@ public:
             m_found_x = same_dir;
             m_had_overlap_no_cross = !same_dir;
         }
-
-        //m_found_x = true;
     }
 
     bool after_handle_event(Event *event ,
@@ -192,19 +188,14 @@ public:
                     return true;
                 } else {
                     // either 1 and 2 are the same or 1 and for are the same colors.
-                    //Subcurve* r1,r2,b1,b2;
                     if ((*itr1)->last_curve().data().front()._color == (*itr2)->last_curve().data().front()._color) {
                         // 1==2
-                        /* std::list<Subcurve>::iterator itr =ordered_list.front();
-                              r1 = itr; r2 = ++itr; b1 = ++itr; b2 = ++itr;*/
                         if (incoming_edges[0] || incoming_edges[2]) {
                             m_found_x = true;
                             sl->stop_sweep();
                             return true;
                         }
                     } else {// 1 == 4
-                        /* std::list<Subcurve>::iterator itr =ordered_list.front();
-                          r2 = itr; b1 = ++itr; b2 = ++itr; r1 = ++itr;*/
                         if (incoming_edges[1] || incoming_edges[3]) {
                             m_found_x = true;
                             sl->stop_sweep();
@@ -242,7 +233,6 @@ template <class Traits_> class Colored_traits : public Arr_consolidated_curve_da
 public:
     typedef Arr_consolidated_curve_data_traits_2<Traits_, Segment_Data> Base;
     typedef typename Base::Intersect_2 Base_intersect_2;
-    //typedef CGAL::Arr_consolidated_curve_data_traits_2<Traits_,Segment_color> Data_traits_2;
     typedef typename Colored_traits::Curve_2 Colored_segment_2;
     typedef typename Colored_traits::X_monotone_curve_2 X_monotone_colored_segment_2;
     typedef typename Base::Compare_xy_2 Base_compare_xy_2;
@@ -278,7 +268,6 @@ public:
             }
 
             typename Base::Intersect_2 int_obj = typename Base::Intersect_2(m_traits);
-            //OutputIterator oi_temp;
             OutputIterator oi_end = int_obj(xcv1, xcv2, oi);
 
             if (oi == oi_end) {
@@ -296,7 +285,6 @@ public:
                 }
             }
 
-            //if (xcv1.color() == RB_OVERLAP || xcv2.color() == RB_OVERLAP)
             return (oi);
         }
     };
@@ -352,16 +340,6 @@ public:
 
     typedef Ex_point_2 Point_2;
 
-    //class Ex_point_2 : public Point_2
-    //{
-    //public:
-    // Ex_point_2(Point_2& p)
-    // {
-
-    // }
-    // int id;
-    //};
-
     class Compare_xy_2 {
     protected:
         //! The base operator.
@@ -381,10 +359,6 @@ public:
 
     public:
         Comparison_result operator()(const Point_2 &p1, const Point_2 &p2) const {
-//      if (&p1 == &p2)
-            //Ex_point_2 p1_e,p2_e;
-            //p1_e = *dynamic_cast<const Ex_point_2 *>(&p1);
-            //p2_e = *dynamic_cast<const Ex_point_2 *>(&p2);
             if ((p1.id == p2.id) && (p1.id != -1)) {
                 return EQUAL;
             }
@@ -395,7 +369,6 @@ public:
 
     /*! Obtain a Construct_min_vertex_2 functor object. */
     Compare_xy_2 compare_xy_2_object() const {
-        //Base::Compare_xy_2 obj();
         return (Compare_xy_2(((Base *)this)->compare_xy_2_object()));
     }
 
@@ -404,7 +377,6 @@ public:
     protected:
         //! The base operators.
         Base_construct_min_vertex_2 m_base_min_v;
-        //Base_equal_2 m_base_equal;
 
         /*! Constructor.
          * The constructor is declared protected to allow only the functor
@@ -486,19 +458,16 @@ template <class Kernel_, class Container_> class SweepCollisionDetector : public
 public:
 
     SweepCollisionDetector() {}
-    //typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
     typedef CGAL::Arr_segment_traits_2<Kernel_> Traits_2;
     typedef Colored_traits<Traits_2> Data_traits_2;
-    //typedef CGAL::Arr_consolidated_curve_data_traits_2<Traits_2,Segment_color> Data_traits_2;
 
     typedef typename Data_traits_2::Curve_2 Colored_segment_2;
     typedef Arrangement_2<Data_traits_2> Colored_arr_2;
     typedef typename CGAL::Polygon_2<Kernel_>::Edge_const_iterator Edge_iterator ;
     typedef typename CGAL::Polygon_2<Kernel_>::Traits::Segment_2 Segment_2 ;
-    //typedef typename Polygon_2::Vertex_circulator Vertex_circulator;
-    //typedef typename
 
 protected:
+
     Traits_2 m_traits;
 
 public:
@@ -510,16 +479,12 @@ public:
             return true;
         }
 
-        //std::list<Segment_2> edges(p.edges_begin(),p.edges_end());
         std::list<Colored_segment_2> edges;
         Edge_iterator itr = p.edges_begin();
         int i = 0;
         int n = p.size();
 
         for (; itr != p.edges_end(); ++itr, ++i) {
-            //Traits_2::
-
-            //CGAL::Comparison_result res = CGAL::compare((itr)->source(),(itr)->target());
             CGAL::Comparison_result res = cmp_obj(*itr);
 
             if (res != CGAL::SMALLER) {
@@ -543,7 +508,6 @@ public:
         int q_first = i;
 
         for (; itr != q.edges_end(); ++itr, ++i, ++j) {
-            //CGAL::Comparison_result res = CGAL::compare((itr)->source(),(itr)->target());
             CGAL::Comparison_result res = cmp_obj(*itr);
 
             if (res != CGAL::SMALLER) {
@@ -559,11 +523,8 @@ public:
                     edges.push_back(Colored_segment_2(*itr, Segment_Data(MY_BLUE, i, i + 1)));
                 }
             }
-
-            //edges.push_back(Colored_segment_2(*itr,Segment_Data(MY_BLUE,2*i,2*i+1)));
         }
 
-        //edges.insert(edges.begin(),q.edges_begin(),q.edges_end());
         CGAL::Sweep_line_do_curves_x_visitor_<Data_traits_2> visitor;
         Sweep_line_2<Data_traits_2, Sweep_line_do_curves_x_visitor_<Data_traits_2> > sweep_line(&visitor);
         visitor.attach((void *)&sweep_line);
@@ -577,53 +538,10 @@ public:
             return false;
         }
 
-        //else
-        //{
-        //
-        //  //if (CGAL::do_intersect(p,q))
-        //  //  return true;
-        //  //else return false;
-        //
-        //}
         return false;
-        /*bool intersect = false;
-        if (CGAL::do_intersect(p,q))
-            return true;
-        else return false;*/
-
-        /*
-        for (Edge_iterator itr1 = p.edges_begin();itr1!=p.edges_end();++itr1)
-        {
-            for (Edge_iterator itr2 = q.edges_begin();itr2!=q.edges_end();++itr2)
-            {
-                //intersect = intersect CGAL::Do_intersect(*itr1,*itr2);
-                 CGAL::Object result = CGAL::intersection(*itr1,*itr2);
-                 if (const CGAL::Point_2<Kernel> *ipoint = CGAL::object_cast<CGAL::Point_2<Kernel> >(&result)) {
-                    // handle the point intersection case with *ipoint.
-                    // check if the intersection point is the vertex of one of the edges
-                     if (((*ipoint)==itr1->source()) || ((*ipoint)==itr1->target())
-                         ||((*ipoint)==itr2->source()) || ((*ipoint)==itr2->target()))
-                        intersect = false;
-                     else
-                        intersect = true;
-                 } else
-                if (const CGAL::Segment_2<Kernel> *iseg = CGAL::object_cast<CGAL::Segment_2<Kernel> >(&result)) {
-                    // handle the segment intersection case with *iseg. this is the case where the edges are touching
-                    intersect = false;
-                } else {
-                // handle the no intersection case.
-                }
-
-                if (intersect)
-                    return intersect;
-            }
-        }
-
-        if (p.bounded_side(*q.vertices_begin())== CGAL::ON_BOUNDED_SIDE || q.bounded_side(*p.vertices_begin())== CGAL::ON_BOUNDED_SIDE)
-            return true;
-        return intersect;
-        */
     }
 };
+
 }
+
 #endif
