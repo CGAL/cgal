@@ -1,9 +1,6 @@
 /// \defgroup PkgScaleSpaceReconstruction3 Scale-space surface reconstruction Reference
 
-/// \defgroup PkgScaleSpaceReconstruction3Classes Reconstruction Classes
-/// \ingroup PkgScaleSpaceReconstruction3
-
-/// \defgroup PkgScaleSpaceReconstruction3Auxiliary Auxiliary Classes
+/// \defgroup PkgScaleSpaceReconstruction3Classes Classes
 /// \ingroup PkgScaleSpaceReconstruction3
 
 
@@ -43,16 +40,8 @@ The method provides access to intermediate results and the user can adjust these
 
 ## Classes ##
 
-### Main Classes ###
-
-- `CGAL::Scale_space_surface_reconstruction_3<DelaunayTriangulationTraits_3,Boolean_tags,Boolean_tags>`
-- `CGAL::Shape_of_points_3<DelaunayTriangulationTraits_3,Boolean_tags>`
-
-### Auxiliary Classes ###
-
-- `CGAL::internal::Auto_count<T,C>`
-- `CGAL::internal::_EnvTypes<sz>`
-- `CGAL::internal::_Env`
+- `CGAL::Scale_space_surface_reconstruction_3<DelaunayTriangulationTraits_3,Boolean_tag,Boolean_tag>`
+- `CGAL::Shape_construction_3<DelaunayTriangulationTraits_3,Boolean_tag>`
 
 */
 

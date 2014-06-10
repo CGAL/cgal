@@ -47,7 +47,7 @@ The method provides access to intermediate results and the user can adjust these
 
 \section ScaleSpaceReconstruction3secDesign Software Design
 
-The main class Scale_space_surface_reconstruction_3 contains all the functionality to estimate the neighborhood size, compute the scale-space, and reconstruct the surface from the scale-space.
+The main class `Scale_space_surface_reconstruction_3` contains all the functionality to estimate the neighborhood size, compute the scale-space, and reconstruct the surface from the scale-space.
 
 The neighborhood size is estimated using Orthogonal_k_neighbor_search. The point set is generally stored in a Orthogonal_k_neighbor_search::Tree. When the neighborhood size is estimated, this tree is searched for nearest neighbors.
 
