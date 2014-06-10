@@ -187,6 +187,7 @@ public:
   typedef vertices_size_type      faces_size_type;
 
   static vertex_descriptor null_vertex() { return vertex_descriptor(); }
+  static halfedge_descriptor null_halfedge() { return halfedge_descriptor(); }
   static face_descriptor null_face() { return face_descriptor(); }
 };
 

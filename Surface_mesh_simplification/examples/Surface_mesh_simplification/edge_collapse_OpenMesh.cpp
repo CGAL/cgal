@@ -1,7 +1,7 @@
 #include <iostream>
 #include <fstream>
 
-#include <CGAL/Simple_cartesian.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <OpenMesh/Core/IO/MeshIO.hh>
 #include <OpenMesh/Core/Mesh/PolyMesh_ArrayKernelT.hh>
@@ -14,6 +14,8 @@
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Count_stop_predicate.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Edge_length_cost.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Midpoint_placement.h>
+
+typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 
 typedef OpenMesh::PolyMesh_ArrayKernelT</* MyTraits*/> Surface_mesh;
 
@@ -51,41 +53,6 @@ private:
 };
 
 
-class OM_vertex_CGAL_point_pmap
-{
-public:
-  typedef boost::read_write_property_map_tag category;
-
-  typedef CGAL::Simple_cartesian<double>::Point_3               value_type;
-  typedef CGAL::Simple_cartesian<double>::Point_3               reference;
-
-  typedef boost::graph_traits<Surface_mesh>::vertex_descriptor key_type;
-
-  OM_vertex_CGAL_point_pmap(const Surface_mesh& sm)
-    : sm_(sm)
-    {}
-    
-  OM_vertex_CGAL_point_pmap(const OM_vertex_CGAL_point_pmap& pm)
-    : sm_(pm.sm_)
-    {}
-
-  inline friend reference get(const OM_vertex_CGAL_point_pmap& pm, key_type v)
-  {
-    Surface_mesh::Point const& omp = pm.sm_.point(v);
-    return value_type(omp[0], omp[1], omp[2]);
-  }
-
-  inline friend void put(const OM_vertex_CGAL_point_pmap& pm, key_type v, const value_type& p)
-  {
-    const_cast<Surface_mesh&>(pm.sm_).set_point
-      (v, Surface_mesh::Point(p[0], p[1], p[2]));
-  }
-
-  private:
-  const Surface_mesh& sm_;
-};
-
-
 
 namespace SMS = CGAL::Surface_mesh_simplification ;
 
@@ -113,7 +80,7 @@ int main( int argc, char** argv )
             (surface_mesh
             ,stop
              ,CGAL::halfedge_index_map  (get(CGAL::halfedge_index  ,surface_mesh)) 
-             .vertex_point_map(OM_vertex_CGAL_point_pmap(surface_mesh))
+             .vertex_point_map(get(boost::vertex_point, surface_mesh))
              .edge_is_constrained_map(constraints_map) 
              );
   

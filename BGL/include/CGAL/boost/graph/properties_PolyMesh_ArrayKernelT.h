@@ -99,17 +99,17 @@ public:
 };
 
 
-template<typename K>
+  template<typename K, typename P>
 class OM_point_pmap //: public boost::put_get_helper<bool, OM_point_pmap<K> >
 {
 public:
   typedef boost::read_write_property_map_tag category;
-#if !defined(CGAL_BGL_TESTSUITE)
+#if defined(CGAL_USE_OM_POINTS)
   typedef typename OpenMesh::PolyMesh_ArrayKernelT<K>::Point             value_type;
   typedef typename const OpenMesh::PolyMesh_ArrayKernelT<K>::Point&      reference;
 #else
-  typedef typename CGAL::Exact_predicates_inexact_constructions_kernel::Point_3               value_type;
-  typedef typename CGAL::Exact_predicates_inexact_constructions_kernel::Point_3               reference;
+  typedef P value_type;
+  typedef P reference;
 #endif
   typedef typename boost::graph_traits< OpenMesh::PolyMesh_ArrayKernelT<K> >::vertex_descriptor key_type;
     
@@ -125,9 +125,9 @@ public:
     : sm_(pm.sm_)
     {}
 
-  inline friend reference get(const OM_point_pmap<K>& pm, key_type v)
+  inline friend reference get(const OM_point_pmap<K,P>& pm, key_type v)
   {
-#if !defined(CGAL_BGL_TESTSUITE)
+#if defined(CGAL_USE_OM_POINTS)
     return pm.sm->.point(v);
 #else
     typename OpenMesh::PolyMesh_ArrayKernelT<K>::Point const& omp = pm.sm_->point(v);
@@ -135,12 +135,12 @@ public:
 #endif
   }
 
-  inline friend void put(const OM_point_pmap<K>& pm, key_type v, const value_type& p)
+  inline friend void put(const OM_point_pmap<K,P>& pm, key_type v, const value_type& p)
   {
-#if !defined(CGAL_BGL_TESTSUITE)
-    const_cast<OpenMesh::PolyMesh_ArrayKernelT<K>&>(*pm.sm_)->set_point(v,p);
+#if defined(CGAL_USE_OM_POINTS)
+    const_cast<OpenMesh::PolyMesh_ArrayKernelT<K>&>(*pm.sm_).set_point(v,p);
 #else
-    const_cast<OpenMesh::PolyMesh_ArrayKernelT<K>&>(*pm.sm_)->set_point
+    const_cast<OpenMesh::PolyMesh_ArrayKernelT<K>&>(*pm.sm_).set_point
       (v, typename OpenMesh::PolyMesh_ArrayKernelT<K>::Point(p[0], p[1], p[2]));
 #endif
   }
@@ -218,7 +218,8 @@ struct property_map<OpenMesh::PolyMesh_ArrayKernelT<K>, boost::halfedge_index_t 
 template<typename K>
 struct property_map<OpenMesh::PolyMesh_ArrayKernelT<K>, boost::vertex_point_t >
 {
-  typedef CGAL::OM_point_pmap<K> type;
+  typedef CGAL::Exact_predicates_inexact_constructions_kernel::Point_3 P;
+  typedef CGAL::OM_point_pmap<K,P> type;
   typedef type const_type;
 };
 
@@ -297,10 +298,11 @@ get(const boost::halfedge_index_t&, const OpenMesh::PolyMesh_ArrayKernelT<K>&)
 }
 
 template<typename K>
-CGAL::OM_point_pmap<K>
+CGAL::OM_point_pmap<K,typename CGAL::Exact_predicates_inexact_constructions_kernel::Point_3>
 get(boost::vertex_point_t, const OpenMesh::PolyMesh_ArrayKernelT<K>& g) 
 {
- return CGAL::OM_point_pmap<K>(g);
+  typedef typename CGAL::Exact_predicates_inexact_constructions_kernel::Point_3 P;
+  return CGAL::OM_point_pmap<K,P>(g);
 }
 
 

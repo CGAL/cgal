@@ -31,7 +31,7 @@ namespace CGAL
 template <bool Fast_sdf_calculation_mode, class Polyhedron,
          class SDFPropertyMap, class GeomTraits
 #ifndef CGAL_CFG_NO_CPP0X_DEFAULT_TEMPLATE_ARGUMENTS_FOR_FUNCTION_TEMPLATES
-         = typename Polyhedron::Traits
+         = typename Kernel_traits<boost::property_traits<PointPropertyMap>::value_type>::Kernel
 #endif
          , class PointPropertyMap
 #ifndef CGAL_CFG_NO_CPP0X_DEFAULT_TEMPLATE_ARGUMENTS_FOR_FUNCTION_TEMPLATES
@@ -82,7 +82,7 @@ sdf_values( const Polyhedron& polyhedron,
  */
 template <class Polyhedron, class SDFPropertyMap, class GeomTraits
 #ifndef CGAL_CFG_NO_CPP0X_DEFAULT_TEMPLATE_ARGUMENTS_FOR_FUNCTION_TEMPLATES
-= typename Polyhedron::Traits
+=  typename Kernel_traits<boost::property_traits<PointPropertyMap>::value_type>::Kernel
 #endif
          , class PointPropertyMap
 #ifndef CGAL_CFG_NO_CPP0X_DEFAULT_TEMPLATE_ARGUMENTS_FOR_FUNCTION_TEMPLATES
@@ -177,7 +177,7 @@ sdf_values_postprocessing(const Polyhedron& polyhedron,
 template <class Polyhedron, class SDFPropertyMap, class SegmentPropertyMap,
          class GeomTraits
 #ifndef CGAL_CFG_NO_CPP0X_DEFAULT_TEMPLATE_ARGUMENTS_FOR_FUNCTION_TEMPLATES
-         = typename Polyhedron::Traits
+         = typename Kernel_traits<boost::property_traits<PointPropertyMap>::value_type>::Kernel
 #endif
          , class PointPropertyMap
 #ifndef CGAL_CFG_NO_CPP0X_DEFAULT_TEMPLATE_ARGUMENTS_FOR_FUNCTION_TEMPLATES
@@ -204,7 +204,7 @@ segmentation_from_sdf_values( const Polyhedron& polyhedron,
 template < bool Fast_sdf_calculation_mode, class Polyhedron,
          class SegmentPropertyMap, class GeomTraits
 #ifndef CGAL_CFG_NO_CPP0X_DEFAULT_TEMPLATE_ARGUMENTS_FOR_FUNCTION_TEMPLATES
-         = typename Polyhedron::Traits
+         = typename Kernel_traits<boost::property_traits<PointPropertyMap>::value_type>::Kernel
 #endif
          , class PointPropertyMap
 #ifndef CGAL_CFG_NO_CPP0X_DEFAULT_TEMPLATE_ARGUMENTS_FOR_FUNCTION_TEMPLATES
@@ -273,7 +273,7 @@ segmentation_via_sdf_values(const Polyhedron& polyhedron,
  */
 template < class Polyhedron, class SegmentPropertyMap, class GeomTraits
 #ifndef CGAL_CFG_NO_CPP0X_DEFAULT_TEMPLATE_ARGUMENTS_FOR_FUNCTION_TEMPLATES
-= typename Polyhedron::Traits
+= typename Kernel_traits<boost::property_traits<PointPropertyMap>::value_type>::Kernel
 #endif
          , class PointPropertyMap
 #ifndef CGAL_CFG_NO_CPP0X_DEFAULT_TEMPLATE_ARGUMENTS_FOR_FUNCTION_TEMPLATES
