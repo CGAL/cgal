@@ -190,14 +190,21 @@ load_cin_file(std::istream& ifs) {
   int point_counter = 0;
   SDG2::Site_2 site;
   while (ifs >> site) {
+    //std::cout << site << std::endl;
     if (site.is_point()) {
       //std::cout << "site is point" << std::endl;
       p = site.point();
       q = site.point();
-    } else {
+    } else if (site.is_segment()) {
       //std::cout << "site is seg" << std::endl;
       p = site.source();
       q = site.target();
+    } else {
+      if (not_first) {
+        return false;
+      } else {
+        continue;
+      }
     }
     if(not_first && p == q) {
       points.push_back(q);
