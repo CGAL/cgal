@@ -15,6 +15,7 @@
 #include <CGAL/boost/graph/iterator.h>
 
 #include <CGAL/Polyhedron_shortest_path/Internal/Cone_expansion_event.h>
+#include <CGAL/Polyhedron_shortest_path/Internal/misc_functions.h>
 
 #include <vector>
 
@@ -167,6 +168,11 @@ public:
   face_descriptor current_face()
   {
     return CGAL::face(m_entryEdge, m_polyhedron);
+  }
+  
+  size_t edge_face_index()
+  {
+    return CGAL::internal::edge_index(entry_edge(), m_polyhedron);
   }
   
   halfedge_descriptor entry_edge()
@@ -362,6 +368,21 @@ public:
     Cone_tree_node* temp = m_rightChild;
     m_rightChild = NULL;
     return temp;
+  }
+  
+  Cone_tree_node* parent()
+  {
+    return m_parent;
+  }
+  
+  bool is_left_child()
+  {
+    return m_parent != NULL && m_parent->m_leftChild == this;
+  }
+  
+  bool is_right_child()
+  {
+    return m_parent != NULL && m_parent->m_rightChild == this;
   }
   
 public:

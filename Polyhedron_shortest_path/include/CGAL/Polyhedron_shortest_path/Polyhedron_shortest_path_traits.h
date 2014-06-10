@@ -63,7 +63,7 @@ public:
 
   typedef typename internal::Project_triangle_3_to_triangle_2<K> Project_triangle_3_to_triangle_2;
   typedef typename internal::Flatten_triangle_3_along_segment_2<K> Flatten_triangle_3_along_segment_2;
-  
+  typedef typename internal::Parameteric_distance_along_segment_2<K> Parameteric_distance_along_segment_2;
 
   class Construct_barycentric_coordinate_2
   {
@@ -111,6 +111,7 @@ private:
   Construct_triangle_location_3 m_construct_triangle_location_3_object;
   Compare_relative_intersection_along_segment_2 m_compare_relative_intersection_along_segment_2_object;
   Is_saddle_vertex m_is_saddle_vertex_object;
+  Parameteric_distance_along_segment_2 m_parameteric_distance_along_segment_2_object;
   
 public:
 
@@ -144,6 +145,7 @@ public:
   Construct_triangle_location_2 construct_triangle_location_2_object() { return m_construct_triangle_location_2_object; }
   Construct_barycentric_coordinate_3 construct_barycentric_coordinate_3_object() { return m_construct_barycentric_coordinate_3_object; }
   Construct_triangle_location_3 construct_triangle_location_3_object() { return m_construct_triangle_location_3_object; }
+  Parameteric_distance_along_segment_2 parameteric_distance_along_segment_2_object() { return m_parameteric_distance_along_segment_2_object; }
 };
 
 } // namespace CGAL

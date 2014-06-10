@@ -12,6 +12,7 @@
 #include <boost/array.hpp>
 #include <CGAL/Polyhedron_shortest_path/Internal/Cone_tree.h>
 #include <CGAL/Polyhedron_shortest_path/Internal/Barycentric.h>
+#include <CGAL/Polyhedron_shortest_path/Internal/misc_functions.h>
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/boost/graph/iterator.h>
 
@@ -21,7 +22,7 @@ namespace CGAL {
 template<class Traits, 
   class VIM = typename boost::property_map<typename Traits::Polyhedron, CGAL::vertex_external_index_t>::type,
   class HIM = typename boost::property_map<typename Traits::Polyhedron, CGAL::halfedge_external_index_t>::type,
-  class FIM = typename boost::property_map<typename Traits::Polyhedron, face_external_index_t>::type,
+  class FIM = typename boost::property_map<typename Traits::Polyhedron, CGAL::face_external_index_t>::type,
   class VPM = typename boost::property_map<typename Traits::Polyhedron, CGAL::vertex_point_t>::type>
 class Polyhedron_shortest_path
 {
@@ -58,9 +59,39 @@ public:
   typedef typename std::priority_queue<Cone_expansion_event, std::vector<Cone_expansion_event*>, internal::Cone_expansion_event_min_priority_queue_comparator<Traits> > Expansion_priqueue;
   
   typedef typename std::pair<face_descriptor, Barycentric_coordinate> FaceLocationPair;
+  typedef typename std::pair<Cone_tree_node*, FT> NodeDistancePair;
 
 private:
-  typedef typename std::pair<Cone_tree_node*, FT> NodeDistancePair;
+
+  template <class Visitor>
+  struct Point_path_visitor_wrapper
+  {
+    Visitor& m_visitor;
+    Polyhedron& m_polyhedron;
+    VertexPointMap& m_vertexPointMap;
+    
+    Point_path_visitor_wrapper(Visitor& visitor, Polyhedron& polyhedron, VertexPointMap& vertexPointMap)
+      : m_visitor(visitor)
+      , m_polyhedron(polyhedron)
+      , m_vertexPointMap(vertexPointMap)
+    {
+    }
+    
+    void edge(halfedge_descriptor he, FT alpha)
+    {
+      return m_visitor.point(CGAL::internal::interpolate_points<Point_3, Vector_3, FT>(m_vertexPointMap[CGAL::source(he, m_polyhedron)], m_vertexPointMap[CGAL::target(he, m_polyhedron)], alpha));
+    }
+    
+    void vertex(vertex_descriptor v)
+    {
+      return m_vertexPointMap[v];
+    }
+    
+    void face(face_descriptor face, Barycentric_coordinate alpha)
+    {
+      return m_traits.construct_barycentric_coordinate_3_object()(triangle_from_halfedge(CGAL::halfedge(face, m_polyhedron)), alpha);
+    }
+  };
 
 private:
   Traits m_traits;
@@ -71,11 +102,12 @@ private:
   std::vector<NodeDistancePair> m_closestToVertices;
   
   std::vector<Cone_tree_node*> m_rootNodes;
-  
-  Expansion_priqueue m_expansionPriqueue;
-  
   std::vector<FaceLocationPair> m_faceLocations;
   
+  std::vector<std::vector<Cone_tree_node*> > m_faceOccupiers;
+  
+  Expansion_priqueue m_expansionPriqueue;
+
   VertexIndexMap m_vertexIndexMap;
   FaceIndexMap m_faceIndexMap;
   HalfedgeIndexMap m_halfedgeIndexMap;
@@ -830,6 +862,83 @@ private:
     m_vertexIsPseudoSource.resize(boost::num_vertices(m_polyhedron));
   }
   
+  template <class Visitor>
+  void visit_shortest_path(Cone_tree_node* startNode, const Point_2& startLocation, Visitor& visitor)
+  {
+    typedef typename Traits::Intersect_2 Intersect_2;
+    typedef typename cpp11::result_of<Intersect_2(Segment_2, Ray_2)>::type SegmentRayIntersectResult;
+    
+    Cone_tree_node* current = startNode;
+    Point_2 currentLocation(startLocation);
+    
+    while (!current->is_root_node())
+    {
+      switch (current->node_type())
+      {
+        case Cone_tree_node::INTERVAL:
+        case Cone_tree_node::EDGE_SOURCE:
+        {
+          Segment_2 entrySegment = current->entry_segment();
+          Ray_2 rayToLocation(current->source_image(), currentLocation);
+          SegmentRayIntersectResult intersection = m_traits.intersect_2_object()(entrySegment, rayToLocation);
+          assert(intersection && "Line from source did not cross entry segment");
+          Point_2* result = boost::get<Point_2>(&*intersection);
+          assert(result != NULL && "Intersection with entry segment was not a single point");
+          FT parametricLocation = m_traits.parameteric_distance_along_segment_2_object()(entrySegment[0], entrySegment[1], *result);
+          visitor.edge(current->entry_edge(), parametricLocation);
+
+          if (current->is_left_child())
+          {
+            Segment_2 baseSegment = current->parent()->left_child_base_segment();
+            currentLocation = CGAL::internal::interpolate_points<Point_2, Vector_2, FT>(baseSegment[0], baseSegment[1], parametricLocation);
+          }
+          else if (current->is_right_child())
+          {
+            Segment_2 baseSegment = current->parent()->right_child_base_segment();
+            currentLocation = CGAL::internal::interpolate_points<Point_2, Vector_2, FT>(baseSegment[0], baseSegment[1], parametricLocation);
+          }
+          
+          current = current->parent();
+        }
+          break;
+        case Cone_tree_node::VERTEX_SOURCE:
+          visitor.vertex(CGAL::target(current->entry_edge(), m_polyhedron));
+          currentLocation = current->parent()->target_vertex_location();
+          current = current->parent();
+          break;
+        case Cone_tree_node::FACE_SOURCE:
+          // This is guaranteed to be the final node in any sequence
+          visitor.face(m_faceLocations[current->tree_id()].first, m_faceLocations[current->tree_id()].second);
+          current = current->parent();
+          break;
+      }
+    }
+  }
+  
+  void add_to_face_list(Cone_tree_node* node)
+  {
+    if (!node->is_root_node())
+    {
+      size_t faceIndex = m_faceIndexMap[node->current_face()];
+      m_faceOccupiers[faceIndex].push_back(node);
+    }
+    
+    if (node->get_left_child() != NULL)
+    {
+      add_to_face_list(node->get_left_child());
+    }
+    
+    if (node->get_right_child() != NULL)
+    {
+      add_to_face_list(node->get_right_child());
+    }
+    
+    for (size_t i = 0; node->num_middle_children(); ++i)
+    {
+      add_to_face_list(node->get_middle_child(i));
+    }
+  }
+  
 public:
   
   Polyhedron_shortest_path(const Traits& traits, Polyhedron& p)
@@ -999,16 +1108,34 @@ public:
       
       std::cout << std::endl << "Done!" << std::endl;
     }
+    
+    m_faceOccupiers.clear();
+    m_faceOccupiers.resize(CGAL::num_faces(m_polyhedron));
+    
+    for (size_t i = 0; i < m_rootNodes.size(); ++i)
+    {
+      add_to_face_list(m_rootNodes[i]);
+    }
   }
 
   FT shortest_distance_to_vertex(vertex_descriptor v)
   {
     return m_closestToVertices[m_vertexIndexMap[v]].second;
-    
-    return FT(-1.0);
   }
   
+  template <class Visitor>
+  void shortest_edge_sequence(vertex_descriptor v, Visitor& visitor)
+  {
+    Cone_tree_node* current = m_closestToVertices[m_vertexIndexMap[v]].first;
+    
+    visit_shortest_path(current, current->target_vertex_location(), visitor);
+  }
   
+  template <class Visitor>
+  void shortest_path_points(vertex_descriptor v, Visitor& visitor)
+  {
+    shortest_edge_sequence(v, Point_path_visitor_wrapper<Visitor>(visitor, m_polyhedron, m_vertexPointMap));
+  }
 
 };
 
