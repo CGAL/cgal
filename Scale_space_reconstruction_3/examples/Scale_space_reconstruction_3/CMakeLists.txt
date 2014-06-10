@@ -39,7 +39,7 @@ if ( CGAL_FOUND )
     include( ${EIGEN3_USE_FILE} )
     create_single_source_cgal_program( "scale_space.cpp" )
   else()
-    message(STATUS "NOTICE: The example need Eigen 3.1 (or greater) and will not be compiled.")
+    message(STATUS "NOTICE: The example needs Eigen 3.1 (or greater) and will not be compiled.")
   endif()
 
 else()

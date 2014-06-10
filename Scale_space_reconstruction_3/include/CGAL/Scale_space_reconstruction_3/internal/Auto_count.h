@@ -28,10 +28,10 @@ namespace CGAL {
 
 namespace internal {
 
-/// Construct a pair containing the object and the number of these pairs previously constructed.
-/** \ingroup PkgScaleSpaceReconstruction3Auxiliary
- *  \tparam T the type of object to count.
- *  \tparam C the number type of the counter.
+//  constructs a pair containing the object and the number of these pairs previously constructed.
+/*  \ingroup PkgScaleSpaceReconstruction3Auxiliary
+ *  \tparam T is the type of object to count.
+ *  \tparam C is the number type of the counter.
  *  \todo Make thread-safe.
  */
 template < class T, class C = unsigned int >
@@ -41,14 +41,14 @@ class Auto_count
 public:
 /// \name Constructors
 /// \{
-    /// Start a new count.
+    /// starts a new count.
     Auto_count(): i(0) {}
 /// \}
 
 /// \name Operations
 /// \{
-    /// Construct a pair with the object and the number of pairs previously constructed.
-    /** \param t the current object.
+    /// constructs a pair with the object and the number of pairs previously constructed.
+    /** \param t is the current object.
      *  \return a pair containing the object and the number of pairs previously constructed.
      */
     std::pair< T, C > operator()( const T& t ) const { return std::make_pair( t, i++ ); }

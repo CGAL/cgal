@@ -47,13 +47,13 @@ The method provides access to intermediate results and the user can adjust these
 
 \section ScaleSpaceReconstruction3secDesign Software Design
 
-The main class Scale_space_surface_reconstructer_3 contains all the functionality to estimate the neighborhood size, compute the scale-space, and reconstruct the surface from the scale-space.
+The main class Scale_space_surface_reconstruction_3 contains all the functionality to estimate the neighborhood size, compute the scale-space, and reconstruct the surface from the scale-space.
 
-The neighborhood size is estimated using Orthogonal_k_neighbor_search. The point set is generally stored in a Orthogonal_k_neighbor_search::Tree and when the neighborhood size should be estimated, this tree is searched for nearest neighbors.
+The neighborhood size is estimated using Orthogonal_k_neighbor_search. The point set is generally stored in a Orthogonal_k_neighbor_search::Tree. When the neighborhood size is estimated, this tree is searched for nearest neighbors.
 
 The scale-space is computed using a weighted PCA procedure. For this procedure, we use the efficient Eigen 3 libraries. Because this procedure is performed locally per point, it is performed with parallel computing when openMP is enabled.
 
-The mesh reconstruction of the scale-space is performed by filtering an Alpha_shape_3 or Fixed_alpha_shape_3. Which of these is used is captured in the Fixed_scale template parameter of Scale_space_surface_reconstructer_3.
+The mesh reconstruction of the scale-space is performed by filtering an Alpha_shape_3 or Fixed_alpha_shape_3. Which of these is used is captured in the Fixed_scale template parameter of Scale_space_surface_reconstruction_3.
 
 The resulting surface is stored as a collection of triples. Each triple contains three indices to the point set. Because the scale-space does not change the order of the points, these triples can be applied on the original point set to get an interpolating surface. The triples may also be applied to the scale-space to get a smoothed surface.
 
@@ -111,7 +111,7 @@ Left: An irregularly sampling of a surface with the topology of a sphere. Right:
 Many point sets contain point attributes such as normals or colors. Because the scale-space surface reconstruction constructs the connectivity between the original points any appropriate point attributes can be applied to the surface. \cgalFigureRef{chapterScaleSpaceReconstruction3figColor} shows the surface reconstructed for a set of points with colors.
 
 \cgalFigureBegin{chapterScaleSpaceReconstruction3figColor, trophime.png, trophime_detail.png}
-Left: A reconstructed surface with vertex coloring using the colors of the point set. Right: detail of the surface shown as wire-frame.
+Left: A reconstructed surface with vertex coloring using the colors of the point set. Right: detail of the surface shown as wire-frame. Images or image-based modeling: MAP (Modèles et simulations pour l’Architecture et le Patrimoine) - UMR CNRS/MCC 3495.
 \cgalFigureEnd
 
 

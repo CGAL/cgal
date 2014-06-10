@@ -1,22 +1,3 @@
-//A demo for the scale space.
-//Copyright (C) 2013  INRIA - Sophia Antipolis
-//
-//This program is free software: you can redistribute it and/or modify
-//it under the terms of the GNU General Public License as published by
-//the Free Software Foundation, either version 3 of the License, or
-//(at your option) any later version.
-//
-//This program is distributed in the hope that it will be useful,
-//but WITHOUT ANY WARRANTY; without even the implied warranty of
-//MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//GNU General Public License for more details.
-//
-//You should have received a copy of the GNU General Public License
-//along with this program.  If not, see <http://www.gnu.org/licenses/>.
-//
-// Author(s):      Thijs van Lankveld
-
-
 #include <algorithm>
 #include <fstream>
 #include <iostream>
@@ -24,20 +5,20 @@
 #include <string>
 #include <vector>
 
-#include <CGAL/Scale_space_surface_reconstructer_3.h>
+#include <CGAL/Scale_space_surface_reconstruction_3.h>
 
 //#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
-//typedef CGAL::Exact_predicates_exact_constructions_kernel Kernel;
-typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
+//typedef CGAL::Exact_predicates_exact_constructions_kernel     Kernel;
+typedef CGAL::Exact_predicates_inexact_constructions_kernel     Kernel;
 
-typedef CGAL::Scale_space_surface_reconstructer_3< Kernel > Reconstructer;
+typedef CGAL::Scale_space_surface_reconstruction_3< Kernel >    Reconstruction;
 
-typedef Reconstructer::Point                                Point;
-typedef std::vector< Point >                                Pointset;
+typedef Reconstruction::Point                                   Point;
+typedef std::vector< Point >                                    Pointset;
 
-typedef Reconstructer::Const_triple_iterator	            TripleIterator;
+typedef Reconstruction::Const_triple_iterator	                TripleIterator;
 
 const unsigned int LINE_SIZE = 1024;
 
@@ -89,8 +70,9 @@ bool writeOFF( std::string output, const Pointset& points, TripleIterator triple
 		fout << *pit << std::endl;
 
 	// Write the triples.
-    for( TripleIterator tit = triples_begin; tit != triples_end; ++tit )
+    for( TripleIterator tit = triples_begin; tit != triples_end; ++tit ) {
 		fout << "3  " << *tit << std::endl;
+    }
 
 	return true;
 }
@@ -123,13 +105,13 @@ int main(int argc, char** argv) {
 	std::cout << " loaded: " << points.size() << " points." << std::endl;
 
 	// Construct the mesh in a scale space.
-	Reconstructer reconstruct( neighbors, samples );
+	Reconstruction reconstruct( neighbors, samples );
 	reconstruct.reconstruct_surface( points.begin(), points.end(), iterations );
     std::cout << "Reconstruction done." << std::endl;
 
     // Write the reconstruction.
     std::cout << "Output: " << output_ss << std::flush;
-    if( !writeOFF( output_ss, points, reconstruct.surface_begin(), reconstruct.surface_end(), reconstruct.get_surface_size() ) ) {
+    if( !writeOFF( output_ss, points, reconstruct.surface_begin(), reconstruct.surface_end(), reconstruct.number_of_triangles() ) ) {
         std::cerr << std::endl << "Error writing " << output_ss << std::endl;
         exit(-1);
     }
@@ -138,7 +120,7 @@ int main(int argc, char** argv) {
     // Write the reconstruction.
     std::cout << "Output: " << output_sm << std::flush;
     Pointset smoothed( reconstruct.scale_space_begin(), reconstruct.scale_space_end() );
-    if( !writeOFF( output_sm, smoothed, reconstruct.surface_begin(), reconstruct.surface_end(), reconstruct.get_surface_size() ) ) {
+    if( !writeOFF( output_sm, smoothed, reconstruct.surface_begin(), reconstruct.surface_end(), reconstruct.number_of_triangles() ) ) {
         std::cerr << std::endl << "Error writing " << output_ss << std::endl;
         exit(-1);
     }

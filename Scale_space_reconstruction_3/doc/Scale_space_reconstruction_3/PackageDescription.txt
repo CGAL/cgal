@@ -45,7 +45,7 @@ The method provides access to intermediate results and the user can adjust these
 
 ### Main Classes ###
 
-- `CGAL::Scale_space_surface_reconstructer_3<DelaunayTriangulationTraits_3,Boolean_tags,Boolean_tags>`
+- `CGAL::Scale_space_surface_reconstruction_3<DelaunayTriangulationTraits_3,Boolean_tags,Boolean_tags>`
 - `CGAL::Shape_of_points_3<DelaunayTriangulationTraits_3,Boolean_tags>`
 
 ### Auxiliary Classes ###
