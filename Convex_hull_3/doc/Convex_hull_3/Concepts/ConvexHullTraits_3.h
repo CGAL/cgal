@@ -128,8 +128,25 @@ Same as above but in the `xz`-plane
 */
 typedef unspecified_type Traits_xz_3;
 
+/*!
+Function object type that provides 
+`Vector_3 operator()(Point_3 p1, Point_3 p2)`, which 
+constructs and returns the vector `p1p2`, and
+`Vector_3 operator()(int x,int y,int z)` which constructs and returns
+a vector with integer Cartesian coordinates. 
+*/
+typedef unspecified_type Construct_vector_3;
 
-/// @} 
+/*!
+Predicate object type that
+provides `CGAL::Orientation operator()(Vector_3 u, Vector_3 v, Vector_3 w)`
+which returns `CGAL::NEGATIVE` if u, v and w are negatively oriented,
+`CGAL::POSITIVE` if u, v and w are positively oriented and
+`CGAL::COPLANAR` if u, v and w are coplanar. 
+*/
+typedef unspecified_type Orientation_3;
+
+/// @}
 
 /// \name Creation 
 /// Only a copy constructor is required. 

@@ -130,29 +130,6 @@ public:
     }
   };
 
-
-
-template <class T>
-class Max_coordinate_3 
-{
-public:
-
-    int operator()(const T& v)
-    {
-      if (CGAL_NTS abs(v.x()) >= CGAL_NTS abs(v.y()))
-      {
-         if (CGAL_NTS abs(v.x()) >= CGAL_NTS abs(v.z())) return 0;
-         return 2;
-      }
-      else
-      {
-         if (CGAL_NTS abs(v.y()) >= CGAL_NTS abs(v.z())) return 1;
-         return 2;
-      }
-    }
-};
-
-
 template <typename GT>
 struct GT3_for_CH3 {
   typedef typename GT::Point_3 Point_2;
@@ -198,13 +175,13 @@ class Convex_hull_traits_3
   typedef Point_triple_has_on_positive_side_3<Self>     Has_on_positive_side_3;
 
   typedef  Point_triple_less_signed_distance_to_plane_3<Self, R>
-                                               Less_signed_distance_to_plane_3;
+                                                  Less_signed_distance_to_plane_3;
 
   // required for degenerate case of all points coplanar
-  typedef CGAL::Max_coordinate_3<Vector_3>              Max_coordinate_3;
-  typedef CGAL::Projection_traits_xy_3<R>               Traits_xy_3;
-  typedef CGAL::Projection_traits_yz_3<R>               Traits_yz_3;
-  typedef CGAL::Projection_traits_xz_3<R>               Traits_xz_3;
+  typedef CGAL::Projection_traits_xy_3<R>         Traits_xy_3;
+  typedef CGAL::Projection_traits_yz_3<R>         Traits_yz_3;
+  typedef CGAL::Projection_traits_xz_3<R>         Traits_xz_3;
+  typedef typename R::Construct_vector_3          Construct_vector_3;
   // for postcondition checking 
   typedef typename R::Ray_3                      Ray_3; 
 
@@ -272,9 +249,14 @@ class Convex_hull_traits_3
   less_signed_distance_to_plane_3_object() const
   { return Less_signed_distance_to_plane_3(); }
 
-  Max_coordinate_3  
-  max_coordinate_3_object() const
-  { return Max_coordinate_3(); }
+  Orientation_3
+  orientation_3_object() const
+  { return Orientation_3(); }
+
+  Construct_vector_3
+  construct_vector_3_object() const
+  { return Construct_vector_3(); }
+
 };
 
 } // namespace CGAL

@@ -77,7 +77,11 @@ typedef R::Construct_centroid_3 Construct_centroid_3;
 /*!
 
 */ 
-typedef unspecified_type Construct_orthogonal_vector_3;
+typedef R::Construct_vector_3 Construct_vector_3;
+/*!
+
+*/ 
+typedef R::Orientation_3 Orientation_3;
 
 /*!
 
