@@ -15,6 +15,7 @@
 #include <iostream>
 #include <sstream>
 #include <fstream>
+#include <utility>
 
 #define CHECK_CLOSE(expected, result, e) (CGAL::abs((expected) - (result)) < (e))
 
@@ -42,6 +43,91 @@ const char* SADDLE_VERTEX_MESH_OFF =
   "3 4 6 7\n"
   "3 6 5 7\n"
   "3 5 4 7\n";
+  
+enum Sequence_item_type
+{
+  SEQUENCE_ITEM_VERTEX,
+  SEQUENCE_ITEM_EDGE,
+  SEQUENCE_ITEM_FACE,
+};
+
+template <class Traits>
+struct Sequence_item
+{
+  typedef typename Traits::Barycentric_coordinate Barycentric_coordinate;
+  typedef typename Traits::FT FT;
+  
+  Sequence_item_type type;
+  size_t index;
+  Barycentric_coordinate faceAlpha;
+  FT edgeAlpha;
+};
+  
+
+  
+template <class Traits, 
+  class VIM = typename boost::property_map<typename Traits::Polyhedron, CGAL::vertex_external_index_t>::type,
+  class HIM = typename boost::property_map<typename Traits::Polyhedron, CGAL::halfedge_external_index_t>::type,
+  class FIM = typename boost::property_map<typename Traits::Polyhedron, CGAL::face_external_index_t>::type>
+struct Edge_sequence_collector
+{
+  typedef typename Traits::Polyhedron Polyhedron;
+  typedef typename Traits::FT FT;
+  typedef typename Traits::Barycentric_coordinate Barycentric_coordinate;
+  typedef VIM VertexIndexMap;
+  typedef HIM HalfedgeIndexMap;
+  typedef FIM FaceIndexMap;
+  typedef typename boost::graph_traits<Polyhedron> GraphTraits;
+  typedef typename GraphTraits::vertex_descriptor vertex_descriptor;
+  typedef typename GraphTraits::halfedge_descriptor halfedge_descriptor;
+  typedef typename GraphTraits::face_descriptor face_descriptor;
+
+  VertexIndexMap m_vertexIndexMap;
+  HalfedgeIndexMap m_halfedgeIndexMap;
+  FaceIndexMap m_faceIndexMap;
+  
+  std::vector<Sequence_item<Traits> > m_sequence;
+  
+  Edge_sequence_collector(Polyhedron& p)
+    : m_vertexIndexMap(CGAL::get(boost::vertex_external_index, p))
+    , m_halfedgeIndexMap(CGAL::get(CGAL::halfedge_external_index, p))
+    , m_faceIndexMap(CGAL::get(CGAL::face_external_index, p))
+  {
+  }
+
+  Edge_sequence_collector(VertexIndexMap& vertexIndexMap, HalfedgeIndexMap& halfedgeIndexMap, FaceIndexMap& faceIndexMap)
+    : m_vertexIndexMap(vertexIndexMap)
+    , m_halfedgeIndexMap(halfedgeIndexMap)
+    , m_faceIndexMap(faceIndexMap)
+  {
+  }
+  
+  void edge(halfedge_descriptor he, FT alpha)
+  {
+    Sequence_item<Traits> item;
+    item.type = SEQUENCE_ITEM_EDGE;
+    item.index = m_halfedgeIndexMap[he];
+    item.edgeAlpha = alpha;
+    m_sequence.push_back(item);
+  }
+  
+  void vertex(vertex_descriptor v)
+  {
+    Sequence_item<Traits> item;
+    item.type = SEQUENCE_ITEM_VERTEX;
+    item.index = m_vertexIndexMap[v];
+    m_sequence.push_back(item);
+  }
+  
+  void face(face_descriptor f, Barycentric_coordinate alpha)
+  {
+    Sequence_item<Traits> item;
+    item.type = SEQUENCE_ITEM_FACE;
+    item.index = m_faceIndexMap[f];
+    item.faceAlpha = alpha;
+    m_sequence.push_back(item);
+  }
+};
 
 int main(int argc, char** argv)
 {
@@ -383,7 +469,6 @@ int main(int argc, char** argv)
       
       ++vertexIndex;
     }
-  
   }
   
   // Slightly more complicated test, originating from a vertex, and involving saddle vertices
@@ -440,11 +525,13 @@ int main(int argc, char** argv)
     VPM vpm = CGAL::get(CGAL::vertex_point, P);
     
     Point_3 vertexLocations[8];
+    vertex_descriptor vertexHandles[8];
     
     currentVertex = startVertex;
     
     for (size_t i = 0; i < 8; ++i)
     {
+      vertexHandles[i] = *currentVertex;
       vertexLocations[i] = vpm[*currentVertex];
       ++currentVertex;
     }
@@ -483,6 +570,32 @@ int main(int argc, char** argv)
       CGAL_TEST(CHECK_CLOSE(shortestPaths.shortest_distance_to_vertex(*currentVertex), expectedDistances[i], Kernel::FT(0.00001)));
       ++currentVertex;
     }
+    
+    // test the edge sequence reporting
+    Edge_sequence_collector<Traits> collector(P);
+    
+    shortestPaths.shortest_edge_sequence(vertexHandles[5], collector);
+    
+    CGAL_TEST(collector.m_sequence.size() == 2);
+    CGAL_TEST(collector.m_sequence[0].type == SEQUENCE_ITEM_VERTEX);
+    CGAL_TEST(collector.m_sequence[0].index == 4 || collector.m_sequence[0].index == 6);
+    CGAL_TEST(collector.m_sequence[1].type == SEQUENCE_ITEM_VERTEX);
+    CGAL_TEST(collector.m_sequence[1].index == 1);
+    
+    collector.m_sequence.clear();
+    
+    typedef boost::property_map<Polyhedron_3, CGAL::halfedge_external_index_t>::type HalfedgeIndexMap;
+    
+    HalfedgeIndexMap halfedgeIndexMap(CGAL::get(CGAL::halfedge_external_index, P));
+    
+    shortestPaths.shortest_edge_sequence(vertexHandles[7], collector);
+    
+    CGAL_TEST(collector.m_sequence.size() == 2);
+    CGAL_TEST(collector.m_sequence[0].type == SEQUENCE_ITEM_EDGE);
+    CGAL_TEST(collector.m_sequence[0].index == halfedgeIndexMap[CGAL::halfedge(vertexHandles[4], vertexHandles[6], P).first]);
+    CGAL_TEST(CHECK_CLOSE(collector.m_sequence[0].edgeAlpha, FT(0.5), 0.000001));
+    CGAL_TEST(collector.m_sequence[1].type == SEQUENCE_ITEM_VERTEX);
+    CGAL_TEST(collector.m_sequence[1].index == 1);
     
     // Now test with 2 source vertices
     currentVertex = startVertex;
@@ -535,6 +648,8 @@ int main(int argc, char** argv)
       CGAL_TEST(CHECK_CLOSE(shortestPaths.shortest_distance_to_vertex(*currentVertex), expectedDistances2[i], Kernel::FT(0.00001)));
       ++currentVertex;
     }
+
+    
   }
 
   CGAL_TEST_END;

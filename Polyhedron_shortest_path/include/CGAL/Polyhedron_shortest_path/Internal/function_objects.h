@@ -166,30 +166,6 @@ public:
     }
     else
     {
-      // TODO: figure out what is causing this, i.e. is it just out of range, or is the algorithm incorrect
-      std::cout << "Segment = " << s1 << std::endl;
-      std::cout << "Ray = " << r1 << std::endl;
-      Point_2 projection = s1.supporting_line().projection(r1.source());
-      std::cout << "Proj = " << projection << std::endl;
-      std::cout << "Dist_0^2 = " << m_compute_squared_distance_2(projection, s1[0]) << std::endl;
-      std::cout << "Dist_1^2 = " << m_compute_squared_distance_2(projection, s1[1]) << std::endl;
-      
-      typedef typename K::Line_2 Line_2;
-      typedef typename cpp11::result_of<Intersect_2(Line_2, Ray_2)>::type LineRayIntersectResult;
-
-      LineRayIntersectResult lri = m_intersect_2(s1.supporting_line(), r1);
-      
-      if (lri)
-      {
-        Point_2* result = boost::get<Point_2>(&*lri);
-      
-        if (result)
-        {
-          std::cout << "Line Intersection = " << *result << std::endl;
-         
-        }
-      }
-      
       assert(s1r1Intersection && "Ray must enter triangle via entry segment.");
     }
     
@@ -212,30 +188,6 @@ public:
     }
     else
     {
-      // TODO: same as above
-      std::cout << "Segment = " << s2 << std::endl;
-      std::cout << "Ray = " << r2 << std::endl;
-      Point_2 projection = s2.supporting_line().projection(r1.source());
-      std::cout << "Proj = " << projection << std::endl;
-      std::cout << "Dist_0^2 = " << m_compute_squared_distance_2(projection, s2[0]) << std::endl;
-      std::cout << "Dist_1^2 = " << m_compute_squared_distance_2(projection, s2[1]) << std::endl;
-      
-      typedef typename K::Line_2 Line_2;
-      typedef typename cpp11::result_of<Intersect_2(Line_2, Ray_2)>::type LineRayIntersectResult;
-
-      LineRayIntersectResult lri = m_intersect_2(s2.supporting_line(), r2);
-      
-      if (lri)
-      {
-        Point_2* result = boost::get<Point_2>(&*lri);
-      
-        if (result)
-        {
-          std::cout << "Line Intersection = " << *result << std::endl;
-         
-        }
-      }
-      
       assert(s2r2Intersection && "Ray must enter triangle via entry segment.");
     }
     
@@ -255,6 +207,37 @@ public:
       return CGAL::LARGER;
     }
     
+  }
+};
+
+template <class Kernel>
+class Parameteric_distance_along_segment_2
+{
+public:
+  typedef typename Kernel::FT FT;
+  typedef typename Kernel::Point_2 Point_2;
+  typedef typename Kernel::Vector_2 Vector_2;
+  typedef typename Kernel::Segment_2 Segment_2;
+  
+  typedef typename Kernel::Intersect_2 Intersect_2;
+  
+private:
+  Intersect_2 m_intersect_2;
+  
+public:
+  FT operator () (const Point_2& x0, const Point_2& x1, const Point_2& point)
+  {
+    Vector_2 lineDiff = x1 - x0;
+    Vector_2 pointDiff = point - x0;
+    
+    if (!CGAL::is_zero(lineDiff[0]))
+    {
+      return pointDiff[0] / lineDiff[0];
+    }
+    else 
+    {
+      return pointDiff[1] / lineDiff[1];
+    }
   }
 };
 
