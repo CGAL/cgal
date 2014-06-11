@@ -141,8 +141,8 @@ int edge_collapse ( ECM& aSurface
                       ,choose_const_pmap(get_param(aParams,boost::vertex_point),aSurface,boost::vertex_point)
                       ,choose_const_pmap(get_param(aParams,boost::halfedge_index),aSurface,boost::halfedge_index)
                       ,choose_param     (get_param(aParams,edge_is_constrained),No_constrained_edge_map<ECM>())
-                      ,choose_param     (get_param(aParams,get_cost_policy), LindstromTurk_cost<ECM,GT>())
-                      ,choose_param     (get_param(aParams,get_placement_policy), LindstromTurk_placement<ECM,GT>())
+                      ,choose_param     (get_param(aParams,get_cost_policy), LindstromTurk_cost<ECM>())
+                      ,choose_param     (get_param(aParams,get_placement_policy), LindstromTurk_placement<ECM>())
                       ,choose_param     (get_param(aParams,vis), Dummy_visitor())
                       );
 
