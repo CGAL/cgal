@@ -65,7 +65,7 @@ sdf_values( const Polyhedron& polyhedron,
  *
  * @pre @a polyhedron.is_pure_triangle()
  *
- * @tparam Polyhedron a %CGAL polyhedron
+ * @tparam Polyhedron a model of `FaceGraph`
  * @tparam SDFPropertyMap  a `ReadWritePropertyMap` with `boost::graph_traits<Polyhedron>::%face_descriptor` as key and `double` as value type
  * @tparam GeomTraits a model of SegmentationGeomTraits
  * @tparam PointPropertyMap a `ReadablePropertyMap` with `boost::graph_traits<Polyhedron>::%vertex_descriptor` as key and `GeomTraits::Point_3` as value type.
@@ -119,7 +119,7 @@ sdf_values( const Polyhedron& polyhedron,
  * @pre @a polyhedron.is_pure_triangle()
  * @pre Raw values should be greater or equal to 0. -1 indicates when no value could be computed
  *
- * @tparam Polyhedron a %CGAL polyhedron
+ * @tparam Polyhedron a model of `FaceGraph`
  * @tparam SDFPropertyMap  a `ReadWritePropertyMap` with `boost::graph_traits<Polyhedron>::%face_descriptor` as key and `double` as value type
  *
  * @param polyhedron surface mesh on which SDF values are computed
@@ -157,7 +157,7 @@ sdf_values_postprocessing(const Polyhedron& polyhedron,
  * @pre @a polyhedron.is_pure_triangle()
  * @pre @a number_of_clusters > 0
  *
- * @tparam Polyhedron a %CGAL polyhedron
+ * @tparam Polyhedron a model of `FaceGraph`
  * @tparam SDFPropertyMap  a `ReadablePropertyMap` with `boost::graph_traits<Polyhedron>::%face_descriptor` as key and `double` as value type
  * @tparam SegmentPropertyMap a `ReadWritePropertyMap` with `boost::graph_traits<Polyhedron>::%face_descriptor` as key and `std::size_t` as value type
  * @tparam GeomTraits a model of SegmentationGeomTraits
@@ -254,7 +254,7 @@ segmentation_via_sdf_values(const Polyhedron& polyhedron,
  * @pre @a polyhedron.is_pure_triangle()
  * @pre @a number_of_clusters > 0
  *
- * @tparam Polyhedron a %CGAL polyhedron
+ * @tparam Polyhedron a model of `FaceGraph`
  * @tparam SegmentPropertyMap a `ReadWritePropertyMap` with `boost::graph_traits<Polyhedron>::%face_descriptor` as key and `std::size_t` as value type
  * @tparam GeomTraits a model of SegmentationGeomTraits
  * @tparam PointPropertyMap a `ReadablePropertyMap` with `boost::graph_traits<Polyhedron>::%vertex_descriptor` as key and `GeomTraits::Point_3` as value type.
