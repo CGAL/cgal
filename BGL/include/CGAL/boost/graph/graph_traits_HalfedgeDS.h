@@ -30,6 +30,10 @@
 #include <CGAL/basic.h>
 #include <CGAL/boost/graph/iterator.h>
 
+#ifndef CGAL_NO_DEPRECATED_CODE
+#include <CGAL/boost/graph/halfedge_graph_traits.h>
+#endif
+
 namespace CGAL {
 
 namespace internal {

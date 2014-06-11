@@ -480,13 +480,20 @@ bool is_valid(const CGAL::Polyhedron_3<Gt,I,HDS,A>& p)
 {
   return p.is_valid();
 }
-
 } // namespace CGAL
 
 
-#undef CGAL_HDS_PARAM_
-
 #ifndef CGAL_NO_DEPRECATED_CODE
+
+namespace CGAL {
+template<class Gt, class I, CGAL_HDS_PARAM_, class A>
+struct halfedge_graph_traits< CGAL::Polyhedron_3<Gt,I,HDS,A> >
+   : CGAL::HDS_graph_traits< CGAL::Polyhedron_3<Gt,I,HDS,A> >
+{
+  typedef typename Gt::Point_3 Point;
+  typedef edge_iterator undirected_edge_iterator;
+};
+} // namespace CGAL
 #include <CGAL/boost/graph/backward_compatibility_functions.h>
 
 namespace boost {
@@ -500,7 +507,9 @@ namespace boost {
   using CGAL::target;
   using CGAL::source;
 } // namespace boost
+
 #endif //CGAL_NO_DEPRECATED_CODE
 
+#undef CGAL_HDS_PARAM_
 
 #endif // CGAL_BOOST_GRAPH_GRAPH_TRAITS_POLYHEDRON_3_H
