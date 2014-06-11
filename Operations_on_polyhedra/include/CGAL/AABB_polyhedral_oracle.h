@@ -50,7 +50,7 @@ namespace CGAL {
     typedef Self Surface_3;
 
     // AABB tree
-    typedef AABB_face_graph_triangle_primitive<const Polyhedron> AABB_primitive;
+    typedef AABB_face_graph_triangle_primitive<Polyhedron> AABB_primitive;
     typedef class AABB_traits<Kernel,AABB_primitive> AABB_traits;
     typedef AABB_tree<AABB_traits> Tree;
     typedef typename AABB_traits::Bounding_box Bounding_box;
@@ -65,8 +65,8 @@ namespace CGAL {
     // Surface constructor
     AABB_polyhedral_oracle(const Polyhedron& poly)
     {
-      m_pTree = Tree_shared_ptr(new Tree(poly.facets_begin(),
-                                         poly.facets_end(),
+      m_pTree = Tree_shared_ptr(new Tree(faces(poly).first,
+                                         faces(poly).second,
                                          poly ));
     }
 
