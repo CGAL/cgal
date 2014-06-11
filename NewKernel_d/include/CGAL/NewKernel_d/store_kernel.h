@@ -26,17 +26,21 @@
 namespace CGAL {
 namespace internal {
 BOOST_MPL_HAS_XXX_TRAIT_DEF(Do_not_store_kernel)
-template<class T,bool=has_Do_not_store_kernel<T>::value> struct Do_not_store_kernel {
+template<class T,bool=boost::is_empty<T>::value,bool=has_Do_not_store_kernel<T>::value> struct Do_not_store_kernel {
 	enum { value=false };
 	typedef Tag_false type;
 };
-template<class T> struct Do_not_store_kernel<T,true> {
+template<class T> struct Do_not_store_kernel<T,true,false> {
+	enum { value=true };
+	typedef Tag_true type;
+};
+template<class T,bool b> struct Do_not_store_kernel<T,b,true> {
 	typedef typename T::Do_not_store_kernel type;
 	enum { value=type::value };
 };
 }
 
-template<class R_,bool=boost::is_empty<R_>::value||internal::Do_not_store_kernel<R_>::value>
+template<class R_,bool=internal::Do_not_store_kernel<R_>::value>
 struct Store_kernel {
 	Store_kernel(){}
 	Store_kernel(R_ const&){}
@@ -63,7 +67,7 @@ struct Store_kernel<R_,false> {
 };
 
 //For a second kernel. TODO: find something more elegant
-template<class R_,bool=boost::is_empty<R_>::value||internal::Do_not_store_kernel<R_>::value>
+template<class R_,bool=internal::Do_not_store_kernel<R_>::value>
 struct Store_kernel2 {
 	Store_kernel2(){}
 	Store_kernel2(R_ const&){}

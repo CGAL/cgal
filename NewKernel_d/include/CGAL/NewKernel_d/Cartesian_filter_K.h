@@ -24,6 +24,7 @@
 #include <CGAL/NewKernel_d/KernelD_converter.h>
 #include <CGAL/NewKernel_d/Filtered_predicate2.h>
 #include <boost/mpl/if.hpp>
+#include <boost/mpl/and.hpp>
 
 namespace CGAL {
 
@@ -44,6 +45,12 @@ struct Cartesian_filter_K : public Base_,
     AK_rt approximate_kernel()const{return this->kernel();}
     typedef typename Store_kernel2<EK_>::reference2_type EK_rt;
     EK_rt exact_kernel()const{return this->kernel2();}
+
+    // MSVC is too dumb to perform the empty base optimization.
+    typedef boost::mpl::and_<
+      internal::Do_not_store_kernel<Kernel_base>,
+      internal::Do_not_store_kernel<AK>,
+      internal::Do_not_store_kernel<EK> > Do_not_store_kernel;
 
     //TODO: C2A/C2E could be able to convert *this into this->kernel() or this->kernel2().
     typedef KernelD_converter<Kernel_base,AK> C2A;
