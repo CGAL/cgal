@@ -110,8 +110,6 @@ bool read_a_mesh(Polyhedron& p, const std::string& str) {
   bool success = in.good();
   if(success)
     set_halfedgeds_items_id(p);
-  // we also need to fix up the halfedge of each vertex
-  CGAL::internal::set_constant_vertex_is_border(p);
   return success;
 }
 
