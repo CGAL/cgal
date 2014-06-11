@@ -59,6 +59,7 @@ private:
   typedef typename Kernel::Segment_3  Segment;
   typedef typename Kernel::Point_3    Point;
 
+  typedef typename boost::graph_traits<Polyhedron>::edge_descriptor   Edge_const_handle;
   typedef typename boost::graph_traits<Polyhedron>::edge_iterator   Edge_const_iterator;
   typedef typename boost::graph_traits<Polyhedron>::halfedge_descriptor Halfedge_const_handle;
   typedef typename boost::graph_traits<Polyhedron>::face_descriptor    Facet_const_handle;
@@ -238,17 +239,17 @@ private:
     node_graph.clear();
 
     // find out intersecting halfedges (note that tree contains edges only with custom comparator)
-    std::vector<Halfedge_const_handle> intersected_edges;
+    std::vector<Edge_const_handle> intersected_edges;
     tree.all_intersected_primitives(plane, std::back_inserter(intersected_edges));
 
     // create node graph from segments
     // each node is associated with multiple edges
     Edge_node_map edge_node_map;
     Edge_intersection_map edge_intersection_map;
-    for(typename std::vector<Halfedge_const_handle>::iterator it = intersected_edges.begin();
+    for(typename std::vector<Edge_const_handle>::iterator it = intersected_edges.begin();
       it != intersected_edges.end(); ++it)
     {
-      Halfedge_const_handle hf = *it;
+      Halfedge_const_handle hf = halfedge(*it,polyhedron);
       Node_pair& assoc_nodes = edge_node_map[hf];
       CGAL_assertion(assoc_nodes.vertex_count < 3); // every Node_pair can at most contain 2 nodes
 
@@ -298,10 +299,10 @@ private:
     } // for(typename std::vector<Halfedge_const_handle>::iterator it = intersected_edges.begin()...
     
     // introduce node connectivity
-    for(typename std::vector<Halfedge_const_handle>::iterator it = intersected_edges.begin();
+    for(typename std::vector<Edge_const_handle>::iterator it = intersected_edges.begin();
       it != intersected_edges.end(); ++it)
     {
-      Halfedge_const_handle hf = *it;
+      Halfedge_const_handle hf = halfedge(*it,polyhedron);
       Edge_intersection_map_iterator intersection_it = edge_intersection_map.find(hf);
       CGAL_assertion(intersection_it != edge_intersection_map.end());
 
