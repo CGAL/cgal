@@ -1,7 +1,7 @@
 # Created by the script cgal_create_cmake_script_with_options
 # This is the CMake script for compiling a set of CGAL applications.
 
-project( Surface_mesh_simplification )
+project( Surface_mesh_segmentation )
 
 
 cmake_minimum_required(VERSION 2.6.2)
@@ -46,7 +46,6 @@ if ( NOT Boost_FOUND )
 
 endif()
 
-
 find_package( OpenMesh QUIET )
 
 if ( OpenMesh_FOUND )
@@ -55,7 +54,6 @@ else()
   message(STATUS "Examples that use OpenMesh will not be compiled.")
 endif()
 
-# include for local directory
 
 # include for local package
 include_directories( BEFORE ../../include )
@@ -67,18 +65,16 @@ include_directories( BEFORE ../../include )
 
 include( CGAL_CreateSingleSourceCGALProgram )
 
+create_single_source_cgal_program( "sdf_values_example.cpp" )
 
-create_single_source_cgal_program( "edge_collapse_constrain_sharp_edges.cpp" )
+create_single_source_cgal_program( "segmentation_from_sdf_values_example.cpp" )
 
-create_single_source_cgal_program( "edge_collapse_constrained_border_polyhedron.cpp" )
+create_single_source_cgal_program( "segmentation_via_sdf_values_example.cpp" )
 
-create_single_source_cgal_program( "edge_collapse_enriched_polyhedron.cpp" )
-
-create_single_source_cgal_program( "edge_collapse_polyhedron.cpp" )
-
+create_single_source_cgal_program( "segmentation_with_facet_ids_example.cpp" )
 
 if(OpenMesh_FOUND)
-create_single_source_cgal_program( "edge_collapse_OpenMesh.cpp" )
-
-target_link_libraries( edge_collapse_OpenMesh ${OPENMESH_LIBRARIES} )
+  create_single_source_cgal_program( "segmentation_from_sdf_values_OpenMesh_example.cpp" )
+  target_link_libraries( segmentation_from_sdf_values_OpenMesh_example ${OPENMESH_LIBRARIES} )
 endif()
+
