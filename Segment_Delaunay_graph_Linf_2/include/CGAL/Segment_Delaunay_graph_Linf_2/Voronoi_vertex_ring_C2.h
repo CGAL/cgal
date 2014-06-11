@@ -507,22 +507,27 @@ private:
 
     v_type = PSS;
 
-    bool pq =
+    const bool pq =
       same_points(p, q.source_site()) || same_points(p, q.target_site());
-    bool pr =
+    const bool pr =
       same_points(p, r.source_site()) || same_points(p, r.target_site());
-
-    Point_2 pp = p.point();
 
     if ( pq && pr ) {
       // philaris: result should be point p
-
+      const Point_2 pp = p.point();
       ux_ = pp.x();
       uy_ = pp.y();
       uz_ = RT(1);
       return;
     }
+    return compute_pss_bisectors(p, q, r);
+  }
 
+  inline void
+  compute_pss_bisectors(const Site_2& p, const Site_2& q, const Site_2& r)
+  {
+    const bool pq =
+      same_points(p, q.source_site()) || same_points(p, q.target_site());
     Polychainline_2 goodbisector;
     if (pq) {
       goodbisector = bisector_linf(p, q);
