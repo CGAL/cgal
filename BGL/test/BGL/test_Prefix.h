@@ -50,7 +50,7 @@ typedef CGAL::Surface_mesh<Point_3> SM;
 typedef OpenMesh::PolyMesh_ArrayKernelT</* MyTraits*/> OMesh;
 #endif
 
-#include <CGAL/BGL/Helper.h>
+#include <CGAL/boost/graph/helpers.h>
 
 // helper to easily define all graph_traits members
 #define CGAL_GRAPH_TRAITS_MEMBERS(T)                                    \

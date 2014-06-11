@@ -22,8 +22,6 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( join_face_test, T, test_graphs )
   set_halfedge(f.f1, e, f.m);
   CGAL::Euler::join_face(e,f.m);
 
-  CGAL::internal::set_constant_vertex_is_border(f.m);
-
   BOOST_CHECK(CGAL::internal::exact_num_faces(f.m) == 2);
   BOOST_CHECK(CGAL::internal::exact_num_edges(f.m) == 6);
   

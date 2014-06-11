@@ -28,7 +28,7 @@
 
 #include <CGAL/assertions.h>
 #include <CGAL/circulator_bases.h>
-#include <CGAL/BGL/Helper.h>
+#include <CGAL/boost/graph/internal/helpers.h>
 
 namespace CGAL {
 

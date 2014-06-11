@@ -7,15 +7,12 @@
 namespace CGAL {
 
 
-#if 0
-todo: cleanup as this also is in CGAL/BGL/Helpers.h
 
 template <typename FaceGraph>
 bool is_border(typename boost::graph_traits<FaceGraph>::halfedge_descriptor hd, const FaceGraph& g)
 {
   return face(hd,g) == boost::graph_traits<FaceGraph>::null_face();
 }
-#endif
 
  /*!
     returns `true` if there are no 

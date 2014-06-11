@@ -26,7 +26,8 @@
 #include <boost/graph/graph_traits.hpp>
 
 #include <CGAL/assertions.h>
-#include <CGAL/BGL/Helper.h>
+#include <CGAL/boost/graph/helpers.h>
+#include <CGAL/boost/graph/internal/helpers.h>
 
 namespace CGAL {
 
@@ -51,10 +52,10 @@ join_face(typename boost::graph_traits<Graph>::halfedge_descriptor h,
 
   internal::remove_tip(gprev, g);
 
-  if(! internal::is_border(hop,g)){
+  if(! is_border(hop,g)){
     remove_face(f2, g);
   }
-  bool fnull = internal::is_border(h,g);
+  bool fnull = is_border(h,g);
 
   
   halfedge_descriptor hprev2 = hprev;
@@ -322,10 +323,10 @@ join_loop(typename boost::graph_traits<Graph>::halfedge_descriptor h1,
   typedef typename Traits::halfedge_descriptor             halfedge_descriptor;
   typedef typename Traits::face_descriptor                 face_descriptor;
 
-  CGAL_precondition( internal::is_border(h1,g) || face(h1, g) != face(h2, g));
-  if (! internal::is_border(h1,g))
+  CGAL_precondition( is_border(h1,g) || face(h1, g) != face(h2, g));
+  if (! is_border(h1,g))
     remove_face(face(h1, g), g);
-  if (! internal::is_border(h2,g))
+  if (! is_border(h2,g))
     remove_face(face(h2,g), g);
   halfedge_descriptor hi = h1;
   halfedge_descriptor gi = h2;
@@ -497,15 +498,15 @@ void remove_face(typename boost::graph_traits<Graph>::halfedge_descriptor h,
   typedef typename Traits::halfedge_descriptor           halfedge_descriptor;
   typedef typename Traits::face_descriptor               face_descriptor;
 
-  CGAL_precondition(! internal::is_border(h,g));
+  CGAL_precondition(! is_border(h,g));
   face_descriptor f = face(h, g);
 
   halfedge_descriptor end = h;
   do {
     internal::set_border(h,g);
     halfedge_descriptor nh = next(h, g);
-    bool h_border = internal::is_border(opposite(h, g),g);
-    bool nh_bborder = internal::is_border(opposite(nh, g),g);
+    bool h_border = is_border(opposite(h, g),g);
+    bool nh_bborder = is_border(opposite(nh, g),g);
 
     if(h_border && nh_bborder && next(opposite(nh, g), g) == opposite(h, g)) {
       remove_vertex(target(h, g), g);
@@ -528,7 +529,7 @@ void remove_face(typename boost::graph_traits<Graph>::halfedge_descriptor h,
     h = nh;
   } while(h != end);
   remove_face(f, g);
-  if(internal::is_border(opposite(h, g),g))
+  if(is_border(opposite(h, g),g))
     remove_edge(edge(h, g), g);
 }
 
@@ -547,13 +548,13 @@ void make_hole(typename boost::graph_traits<Graph>::halfedge_descriptor h,
   typedef typename Traits::face_descriptor               face_descriptor;
   typedef Halfedge_around_face_iterator<Graph>                   halfedge_around_face_iterator;
 
-  CGAL_precondition(! internal::is_border(h,g));
+  CGAL_precondition(! is_border(h,g));
   face_descriptor fd = face(h, g);
   halfedge_around_face_iterator hafib, hafie;
   for(boost::tie(hafib, hafie) = halfedges_around_face(h, g); 
       hafib != hafie; 
       ++hafib){
-    CGAL_assertion(! internal::is_border(opposite(*hafib,g),g));
+    CGAL_assertion(! is_border(opposite(*hafib,g),g));
     internal::set_border(*hafib, g);
   }
   remove_face(fd,g);  
@@ -718,8 +719,8 @@ add_face_to_border(typename boost::graph_traits<Graph>::halfedge_descriptor h1,
                    typename boost::graph_traits<Graph>::halfedge_descriptor h2,
                    Graph& g)
 {
-  CGAL_precondition(internal::is_border(h1,g) == true);
-  CGAL_precondition(internal::is_border(h2,g) == true);
+  CGAL_precondition(is_border(h1,g) == true);
+  CGAL_precondition(is_border(h2,g) == true);
   CGAL_precondition(h1 != h2);
   CGAL_precondition(next(h1, g) != h2);
 
@@ -800,10 +801,10 @@ collapse_edge(typename boost::graph_traits<Graph>::edge_descriptor v0v1,
   halfedge_descriptor pt = opposite(prev(pq, g), g);
   halfedge_descriptor qb = opposite(prev(qp, g), g);
   
-  bool lTopFaceExists         = ! internal::is_border(pq,g);
-  bool lBottomFaceExists      = ! internal::is_border(qp,g);
-  bool lTopLeftFaceExists     = lTopFaceExists    && ! internal::is_border(pt,g);
-  bool lBottomRightFaceExists = lBottomFaceExists && ! internal::is_border(qb,g);
+  bool lTopFaceExists         = ! is_border(pq,g);
+  bool lBottomFaceExists      = ! is_border(qp,g);
+  bool lTopLeftFaceExists     = lTopFaceExists    && ! is_border(pt,g);
+  bool lBottomRightFaceExists = lBottomFaceExists && ! is_border(qb,g);
 
   CGAL_precondition( !lTopFaceExists    || (lTopFaceExists    && ( degree(target(pt, g), g) > 2 ) ) ) ;
   CGAL_precondition( !lBottomFaceExists || (lBottomFaceExists && ( degree(target(qb, g), g) > 2 ) ) ) ;
@@ -858,7 +859,7 @@ collapse_edge(typename boost::graph_traits<Graph>::edge_descriptor v0v1,
 
   if ( lTopFaceExists )
   { 
-    CGAL_precondition( ! internal::is_border(opposite(pt, g),g) ) ; // p-q-t is a face of the mesh
+    CGAL_precondition( ! is_border(opposite(pt, g),g) ) ; // p-q-t is a face of the mesh
     if ( lTopLeftFaceExists )
     {
       //CGAL_ECMS_TRACE(3, "Removing p-t E" << pt.idx() << " (V" 
@@ -885,7 +886,7 @@ collapse_edge(typename boost::graph_traits<Graph>::edge_descriptor v0v1,
 
   if ( lBottomFaceExists )
   {   
-    CGAL_precondition( ! internal::is_border(opposite(qb, g),g) ) ; // p-q-b is a face of the mesh
+    CGAL_precondition( ! is_border(opposite(qb, g),g) ) ; // p-q-b is a face of the mesh
     if ( lBottomRightFaceExists )
     {
       //CGAL_ECMS_TRACE(3, "Removing q-b E" << qb.idx() << " (V" 
@@ -946,8 +947,8 @@ collapse_edge(typename boost::graph_traits<Graph>::edge_descriptor v0v1,
   halfedge_descriptor tq = opposite(next(pq,g),g);
   halfedge_descriptor bp = opposite(next(qp,g),g);
 
-  bool lTopFaceExists         = ! internal::is_border(pq,g) ;
-  bool lBottomFaceExists      = ! internal::is_border(qp,g) ;
+  bool lTopFaceExists         = ! is_border(pq,g) ;
+  bool lBottomFaceExists      = ! is_border(qp,g) ;
 
   vertex_descriptor q = target(pq,g);
   vertex_descriptor p = source(pq,g);
@@ -986,7 +987,7 @@ collapse_edge(typename boost::graph_traits<Graph>::edge_descriptor v0v1,
   if (lTopFaceExists && lBottomFaceExists)
   {
     if ( face(edges_to_erase[0],g) == face(edges_to_erase[1],g)
-         && (! internal::is_border(edges_to_erase[0],g)) )
+         && (! is_border(edges_to_erase[0],g)) )
     {
       // the vertex is of valence 3 and we simply need to remove the vertex
       // and its indicent edges
@@ -1001,11 +1002,11 @@ collapse_edge(typename boost::graph_traits<Graph>::edge_descriptor v0v1,
     }
     else
     {
-      if (!(internal::is_border(edges_to_erase[0],g)))
+      if (!(is_border(edges_to_erase[0],g)))
         join_face(edges_to_erase[0],g);
       else
         remove_face(opposite(edges_to_erase[0],g),g);
-      if (!internal::is_border(edges_to_erase[1],g))
+      if (!is_border(edges_to_erase[1],g))
         join_face(edges_to_erase[1],g);
       else
         remove_face(opposite(edges_to_erase[1],g),g);
@@ -1017,22 +1018,22 @@ collapse_edge(typename boost::graph_traits<Graph>::edge_descriptor v0v1,
   {
       if (lTopFaceExists)
       {
-        if (!(internal::is_border(edges_to_erase[0],g))){
+        if (!(is_border(edges_to_erase[0],g))){
           join_face(edges_to_erase[0],g);
           join_vertex(pq,g);
           return q;
         }
-        bool lQ_Erased = internal::is_border(opposite(next(pq,g),g),g);
+        bool lQ_Erased = is_border(opposite(next(pq,g),g),g);
         remove_face(opposite(edges_to_erase[0],g),g);
         return lQ_Erased?p:q;
       }
 
-      if (! (internal::is_border(edges_to_erase[0],g))){
+      if (! (is_border(edges_to_erase[0],g))){
         join_face(edges_to_erase[0],g);
         join_vertex(qp,g);
         return p;
       }
-      bool lP_Erased= internal::is_border(opposite(next(qp,g),g),g);
+      bool lP_Erased= is_border(opposite(next(qp,g),g),g);
       remove_face(opposite(edges_to_erase[0],g),g);
       return lP_Erased?q:p;
   };

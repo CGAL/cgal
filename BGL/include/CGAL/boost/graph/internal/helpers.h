@@ -1,5 +1,5 @@
-#ifndef CGAL_BGL_HELPERS_H
-#define CGAL_BGL_HELPERS_H
+#ifndef CGAL_BOOST_GRAPH_INTERNAL_HELPERS_H
+#define CGAL_BOOST_GRAPH_INTERNAL_HELPERS_H
 
 #include <boost/graph/graph_traits.hpp>
 #include <boost/optional.hpp>
@@ -7,22 +7,11 @@
 
 namespace CGAL {
 
-// breaks a dependency loop between <CGAL/BGL/Helper.h> and
-// <CGAL/boost/graph/iterator.h>
+// breaks a dependency loop between <CGAL/boost/graph/helpers.h>
+// and <CGAL/boost/graph/iterator.h>
 template <typename Graph> class Halfedge_around_target_iterator;
 
 namespace internal {
-
-
-
-
-template <typename Graph>
-bool
-is_border(typename boost::graph_traits<Graph>::halfedge_descriptor const& h
-          , const Graph& g)
-{
-  return face(h,g) == boost::graph_traits<Graph>::null_face();
-}
 
 template <typename Graph>
 void
@@ -278,4 +267,4 @@ bool is_valid(const Graph& g)
 } // CGAL
 
 
-#endif /* CGAL_BGL_HELPERS_H */
+#endif // CGAL_BOOST_GRAPH_INTERNAL_HELPERS_H
