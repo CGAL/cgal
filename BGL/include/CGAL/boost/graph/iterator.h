@@ -24,6 +24,7 @@
 #include <stdexcept>
 
 #include <boost/graph/graph_traits.hpp>
+#include <boost/iterator/transform_iterator.hpp>
 
 #include <CGAL/assertions.h>
 #include <CGAL/circulator_bases.h>

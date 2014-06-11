@@ -163,7 +163,7 @@ public:
     for(boost::tie(facet_it,fend) = faces(mesh);
         facet_it != fend; ++facet_it) {
       std::map<face_descriptor, std::size_t> neighbors;
-      NeighborSelector()(*facet_it, window_size,
+      NeighborSelector()(mesh, *facet_it, window_size,
                          neighbors); // gather neighbors in the window
 
       std::vector<double> neighbor_values;
@@ -188,7 +188,7 @@ public:
     std::vector<double>::iterator smoothed_value_it = smoothed_values.begin();
     for(boost::tie(facet_it,fend) = faces(mesh);
         facet_it != fend; ++facet_it) {
-      values[facet_it] = *smoothed_value_it;
+      values[*facet_it] = *smoothed_value_it;
     }
   }
 };
@@ -276,7 +276,7 @@ class Neighbor_selector_by_vertex
 {
 private:
   typedef ::CGAL::Halfedge_around_target_circulator<Polyhedron> Halfedge_around_target_circulator;
-  typedef typename boost::graph_traits<Polyhedron>::halfedge_iterator halfedge_iterator;
+  typedef typename boost::graph_traits<Polyhedron>::halfedge_descriptor halfedge_descriptor;
   typedef typename boost::graph_traits<Polyhedron>::vertex_iterator   vertex_iterator;
 public:
   typedef typename boost::graph_traits<Polyhedron>::face_descriptor face_descriptor;
@@ -304,13 +304,13 @@ public:
       const Facet_level_pair& pair = facet_queue.front();
 
       face_descriptor facet_front = pair.first;
-      halfedge_iterator edge = halfedge(facet_front,polyhedron);
+      halfedge_descriptor edge = halfedge(facet_front,polyhedron);
       do { // loop on three vertices of the facet
-        Halfedge_around_target_circulator vertex_circulator(*edge,polyhedron), done(vertex_circulator);
+        Halfedge_around_target_circulator vertex_circulator(edge,polyhedron), done(vertex_circulator);
 
         do { // for each vertex loop on incoming edges (through those edges loop on neighbor facets which includes the vertex)
           if(!(face(*vertex_circulator,polyhedron) == boost::graph_traits<Polyhedron>::null_face())) {
-            Facet_level_pair new_pair(face(opposite(*vertex_circulator),polyhedron,polyhedron),
+            Facet_level_pair new_pair(face(opposite(*vertex_circulator,polyhedron),polyhedron),
                                       pair.second + 1);
             if(neighbors.insert(new_pair).second
                 && new_pair.second < max_level) { // first insert new_pair to map
