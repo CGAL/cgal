@@ -14,3 +14,5 @@
 ./data/F.dat ./data/A.dat -sohg
 ./data/A.dat ./data/G.dat -sohg
 ./data/B.dat ./data/G.dat -sohg
+./data/dangling_edge_part1.dat ./data/dangling_edge_part2.dat -sohg
+./data/isolated_vertex_part1.dat ./data/isolated_vertex_part2.dat -sohg
