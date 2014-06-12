@@ -1,14 +1,18 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel_with_sqrt.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Polyhedron_shortest_path/Polyhedron_shortest_path_traits.h>
+
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
-#include <CGAL/Polyhedron_shortest_path/Internal/Barycentric.h>
+
+#include <CGAL/Polyhedron_shortest_path/Polyhedron_shortest_path_traits.h>
 #include <CGAL/Polyhedron_shortest_path/Polyhedron_shortest_path.h>
+#include <CGAL/Polyhedron_shortest_path/Internal/function_objects.h>
+#include <CGAL/Polyhedron_shortest_path/Internal/Barycentric.h>
+#include <CGAL/Polyhedron_shortest_path/Internal/misc_functions.h>
+
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/boost/graph/iterator.h>
-#include <CGAL/Polyhedron_shortest_path/Internal/function_objects.h>
 
 #include <CGAL/test_macros.h>
 #include <CGAL/test_util.h>
@@ -44,6 +48,29 @@ const char* SADDLE_VERTEX_MESH_OFF =
   "3 6 5 7\n"
   "3 5 4 7\n";
   
+const char* BOUNDARY_MESH_OFF = 
+  "OFF\n"
+  "10 8 0\n"
+  "0.08 0.08 0.0\n"
+  "4.04 4.96 0.0\n"
+  "7.04 0.04 0.0\n"
+  "9.04 12.04 0.0\n" 
+  "0.08 17.08 0.0\n" 
+  "24.84 12.88 0.0\n"
+  "30.84 17.48 0.0\n" 
+  "33.56 9.44 0.0\n" 
+  "25.08 4.52 0.0\n" 
+  "31.8 1.64 0.0\n"
+  "3 0 2 1\n"
+  "3 2 3 1\n"
+  "3 1 3 4\n"
+  "3 3 5 4\n"
+  "3 4 5 6\n"
+  "3 5 7 6\n"
+  "3 5 8 7\n"
+  "3 7 8 9\n";
+  
+  
 enum Sequence_item_type
 {
   SEQUENCE_ITEM_VERTEX,
@@ -62,9 +89,7 @@ struct Sequence_item
   Barycentric_coordinate faceAlpha;
   FT edgeAlpha;
 };
-  
 
-  
 template <class Traits, 
   class VIM = typename boost::property_map<typename Traits::Polyhedron, CGAL::vertex_external_index_t>::type,
   class HIM = typename boost::property_map<typename Traits::Polyhedron, CGAL::halfedge_external_index_t>::type,
@@ -411,7 +436,68 @@ int main(int argc, char** argv)
       ++currentVertexIndex;
     }
   }
- 
+  /*
+  // Test check for 'saddle' vertices on a polyhedron(vertices with negative discrete curvature)
+  {
+    typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
+    typedef CGAL::Polyhedron_3<Kernel> Polyhedron_3;
+    typedef CGAL::Polyhedron_shortest_path_default_traits<Kernel, Polyhedron_3> Traits;
+    
+    typedef boost::graph_traits<Polyhedron_3> GraphTraits;
+    typedef GraphTraits::vertex_descriptor vertex_descriptor;
+    typedef GraphTraits::vertex_iterator vertex_iterator;
+    typedef GraphTraits::face_descriptor face_descriptor;
+    typedef GraphTraits::face_iterator face_iterator;
+    typedef boost::property_map<Polyhedron_3, CGAL::vertex_point_t>::type VPM;
+    
+    Traits traits;
+    Traits::Construct_triangle_location_3 construct_triangle_location_3(traits.construct_triangle_location_3_object());
+    Traits::Project_triangle_3_to_triangle_2 project_triangle_3_to_triangle_2(traits.project_triangle_3_to_triangle_2_object());
+    Traits::Flatten_triangle_3_along_segment_2 flatten_triangle_3_along_segment_2(traits.flatten_triangle_3_along_segment_2_object());
+    Traits::Orientation_2 orientation_2(traits.orientation_2_object());
+    
+    Traits::Is_saddle_vertex is_saddle_vertex(traits.is_saddle_vertex_object());
+
+    std::istringstream iss(SADDLE_VERTEX_MESH_OFF);
+    
+    Polyhedron_3 P;
+    
+    iss >> P;
+    
+    size_t currentVertexIndex = 0;
+    
+    vertex_iterator currentVertex;
+    vertex_iterator endVertex;
+    
+    Traits::Point_3 vertexLocations[8];
+    
+    VPM vpm = CGAL::get(CGAL::vertex_point, P);
+
+    for (boost::tie(currentVertex, endVertex) = boost::vertices(P); currentVertex != endVertex; ++currentVertex)
+    {
+      vertexLocations[currentVertexIndex] = vpm(*currentVertex);
+      ++currentVertexIndex;
+    }
+    
+    face_iterator currentFace;
+    face_iterator endFace;
+    
+    boost::tie(currentFace, endFace) = CGAL::faces(P);
+    
+    Traits::Triangle_3 triangle0 = CGAL::internal::triangle_from_face<Traits::Triangle_3, Polyhedron_3, VPM>(*currentFace, P, vpm);
+    
+    Traits::Point_3 expectedVertices[3] = { vertexLocations[2], vertexLocations[1], vertexLocations[0] };
+    
+    for (size_t i = 0; i < 3; ++i)
+    {
+      for (size_t j = 0; j < 3; ++j)
+      {
+        CGAL_TEST(triangle0[i][j] == expectedVertices[i][j]);
+      }
+    }
+  }
+  */
+  
   // very simple test of the algorithm on a regular tetrahedron
   {
     typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
@@ -597,6 +683,24 @@ int main(int argc, char** argv)
     CGAL_TEST(collector.m_sequence[1].type == SEQUENCE_ITEM_VERTEX);
     CGAL_TEST(collector.m_sequence[1].index == 1);
     
+    // Now test an internal face location sequence
+    halfedge_descriptor firstCrossing = CGAL::halfedge(vertexHandles[4], vertexHandles[7], P).first;
+    
+    size_t edgeIndex = CGAL::internal::edge_index(firstCrossing, P);
+    
+    Barycentric_coordinate location(0.25, 0.5, 0.25);
+    
+    collector.m_sequence.clear();
+    shortestPaths.shortest_edge_sequence(CGAL::face(firstCrossing, P), CGAL::internal::shift_vector_3(location, edgeIndex), collector);
+    
+    CGAL_TEST(collector.m_sequence.size() == 3);
+    CGAL_TEST(collector.m_sequence[0].type == SEQUENCE_ITEM_EDGE);
+    CGAL_TEST(collector.m_sequence[0].index == halfedgeIndexMap[firstCrossing]);
+    CGAL_TEST(collector.m_sequence[1].type == SEQUENCE_ITEM_EDGE);
+    CGAL_TEST(collector.m_sequence[1].index == halfedgeIndexMap[CGAL::halfedge(vertexHandles[4], vertexHandles[6], P).first]);
+    CGAL_TEST(collector.m_sequence[2].type == SEQUENCE_ITEM_VERTEX);
+    CGAL_TEST(collector.m_sequence[2].index == 1);
+    
     // Now test with 2 source vertices
     currentVertex = startVertex;
     
@@ -648,9 +752,143 @@ int main(int argc, char** argv)
       CGAL_TEST(CHECK_CLOSE(shortestPaths.shortest_distance_to_vertex(*currentVertex), expectedDistances2[i], Kernel::FT(0.00001)));
       ++currentVertex;
     }
-
-    
   }
+  
+  // Test mesh with boundary vertices
+  {
+    typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
+    typedef CGAL::Polyhedron_3<Kernel> Polyhedron_3;
+    typedef CGAL::Polyhedron_shortest_path_default_traits<Kernel, Polyhedron_3> Traits;
+    typedef Traits::Barycentric_coordinate Barycentric_coordinate;
+    typedef Traits::FT FT;
+    typedef Traits::Point_3 Point_3;
+    typedef Traits::Point_2 Point_2;
+    typedef Traits::Triangle_3 Triangle_3;
+    typedef Traits::Triangle_2 Triangle_2;
+    typedef Traits::Segment_2 Segment_2;
+    typedef boost::graph_traits<Polyhedron_3> GraphTraits;
+    typedef GraphTraits::vertex_descriptor vertex_descriptor;
+    typedef GraphTraits::vertex_iterator vertex_iterator;
+    typedef GraphTraits::halfedge_descriptor halfedge_descriptor;
+    typedef GraphTraits::halfedge_iterator halfedge_iterator;
+    typedef GraphTraits::face_descriptor face_descriptor;
+    typedef GraphTraits::face_iterator face_iterator;
+    typedef CGAL::Polyhedron_shortest_path<Traits> Polyhedron_shortest_path;
+    typedef boost::property_map<Polyhedron_3, CGAL::vertex_point_t>::type VPM;
 
+    Traits traits;
+    
+    Traits::Project_triangle_3_to_triangle_2 project_triangle_3_to_triangle_2(traits.project_triangle_3_to_triangle_2_object());
+    Traits::Compute_squared_distance_3 compute_squared_distance_3(traits.compute_squared_distance_3_object());
+    Traits::Compute_squared_distance_2 compute_squared_distance_2(traits.compute_squared_distance_2_object());
+    Traits::Construct_triangle_location_3 construct_triangle_location_3(traits.construct_triangle_location_3_object());
+    Traits::Flatten_triangle_3_along_segment_2 flatten_triangle_3_along_segment_2(traits.flatten_triangle_3_along_segment_2_object());
+    
+    std::istringstream iss(BOUNDARY_MESH_OFF);
+    
+    Polyhedron_3 P;
+    
+    iss >> P;
+    
+    face_iterator startFace;
+    face_iterator endFace;
+    
+    boost::tie(startFace, endFace) = CGAL::faces(P);
+    
+    vertex_iterator currentVertex;
+    vertex_iterator endVertex;
+    
+    VPM vpm = CGAL::get(CGAL::vertex_point, P);
+    
+    vertex_descriptor vertexHandles[10];
+    Point_3 vertexLocations[10];
+    size_t currentVertexIndex = 0;
+    
+    for (boost::tie(currentVertex, endVertex) = CGAL::vertices(P); currentVertex != endVertex; ++currentVertex)
+    {
+      vertexHandles[currentVertexIndex] = *currentVertex;
+      vertexLocations[currentVertexIndex] = vpm[*currentVertex];
+      ++currentVertexIndex;
+    }
+    
+    Barycentric_coordinate startLocation(FT(0.1), FT(0.8), FT(0.1));
+    
+    typedef boost::property_map<Polyhedron_3, CGAL::face_external_index_t>::type FaceIndexMap;
+    
+    FaceIndexMap faceIndexMap(CGAL::get(CGAL::face_external_index, P));
+    
+    face_descriptor face = *startFace;
+
+    Polyhedron_shortest_path shortestPaths(traits, P);
+    //shortestPaths.m_debugOutput = true;
+    shortestPaths.compute_shortest_paths(*startFace, startLocation);
+    
+    Triangle_3 firstTriangle(vertexLocations[1], vertexLocations[0], vertexLocations[2]);
+    
+    Point_3 locationInTriangle(construct_triangle_location_3(firstTriangle, startLocation));
+    
+    FT dist0 = shortestPaths.shortest_distance_to_vertex(vertexHandles[0]);
+    CGAL_TEST(CHECK_CLOSE(dist0, CGAL::sqrt(compute_squared_distance_3(locationInTriangle, vertexLocations[0])), 0.000001));
+    
+    FT dist1 = shortestPaths.shortest_distance_to_vertex(vertexHandles[1]);
+    CGAL_TEST(CHECK_CLOSE(dist1, CGAL::sqrt(compute_squared_distance_3(locationInTriangle, vertexLocations[1])), 0.000001));
+    
+    FT dist2 = shortestPaths.shortest_distance_to_vertex(vertexHandles[2]);
+    CGAL_TEST(CHECK_CLOSE(dist2, CGAL::sqrt(compute_squared_distance_3(locationInTriangle, vertexLocations[2])), 0.000001));
+    
+    FT dist3 = shortestPaths.shortest_distance_to_vertex(vertexHandles[3]);
+    CGAL_TEST(CHECK_CLOSE(dist3, CGAL::sqrt(compute_squared_distance_3(locationInTriangle, vertexLocations[3])), 0.000001));
+    
+    FT dist4 = shortestPaths.shortest_distance_to_vertex(vertexHandles[4]);
+    CGAL_TEST(CHECK_CLOSE(dist4, CGAL::sqrt(compute_squared_distance_3(locationInTriangle, vertexLocations[1])) + CGAL::sqrt(compute_squared_distance_3(vertexLocations[1], vertexLocations[4])), 0.000001));
+
+    FT dist5 = shortestPaths.shortest_distance_to_vertex(vertexHandles[5]);
+    CGAL_TEST(CHECK_CLOSE(dist5, CGAL::sqrt(compute_squared_distance_3(locationInTriangle, vertexLocations[3])) + CGAL::sqrt(compute_squared_distance_3(vertexLocations[3], vertexLocations[5])), 0.000001));
+
+  }
+  
+  {
+    typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
+    typedef CGAL::Polyhedron_3<Kernel> Polyhedron_3;
+    typedef CGAL::Polyhedron_shortest_path_default_traits<Kernel, Polyhedron_3> Traits;
+    typedef Traits::Barycentric_coordinate Barycentric_coordinate;
+    typedef Traits::FT FT;
+    typedef Traits::Point_3 Point_3;
+    typedef Traits::Point_2 Point_2;
+    typedef Traits::Triangle_3 Triangle_3;
+    typedef Traits::Triangle_2 Triangle_2;
+    typedef Traits::Segment_2 Segment_2;
+    typedef boost::graph_traits<Polyhedron_3> GraphTraits;
+    typedef GraphTraits::vertex_descriptor vertex_descriptor;
+    typedef GraphTraits::vertex_iterator vertex_iterator;
+    typedef GraphTraits::halfedge_descriptor halfedge_descriptor;
+    typedef GraphTraits::halfedge_iterator halfedge_iterator;
+    typedef GraphTraits::face_descriptor face_descriptor;
+    typedef GraphTraits::face_iterator face_iterator;
+    typedef CGAL::Polyhedron_shortest_path<Traits> Polyhedron_shortest_path;
+    typedef boost::property_map<Polyhedron_3, CGAL::vertex_point_t>::type VPM;
+
+    Traits traits;
+    Polyhedron_3 P;
+    
+    std::ifstream in("data/elephant.off");
+    
+    in >> P;
+    
+    in.close();
+    
+    face_iterator startFace;
+    face_iterator endFace;
+    
+    boost::tie(startFace, endFace) = CGAL::faces(P);
+    
+    Barycentric_coordinate location(0.25, 0.5, 0.25);
+    
+    Polyhedron_shortest_path shortestPaths(traits, P);
+    //shortestPaths.m_debugOutput = true;
+    shortestPaths.compute_shortest_paths(*startFace, location);
+
+  }
+  
   CGAL_TEST_END;
 }

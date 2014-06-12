@@ -9,7 +9,10 @@
 #include <map>
 #include <utility>
 #include <queue>
+#include <algorithm>
+
 #include <boost/array.hpp>
+
 #include <CGAL/Polyhedron_shortest_path/Internal/Cone_tree.h>
 #include <CGAL/Polyhedron_shortest_path/Internal/Barycentric.h>
 #include <CGAL/Polyhedron_shortest_path/Internal/misc_functions.h>
@@ -77,9 +80,9 @@ private:
     {
     }
     
-    void edge(halfedge_descriptor he, FT alpha)
+    void edge(halfedge_descriptor e, FT alpha)
     {
-      return m_visitor.point(CGAL::internal::interpolate_points<Point_3, Vector_3, FT>(m_vertexPointMap[CGAL::source(he, m_polyhedron)], m_vertexPointMap[CGAL::target(he, m_polyhedron)], alpha));
+      return m_visitor.point(CGAL::internal::interpolate_points<Point_3, Vector_3, FT>(m_vertexPointMap[CGAL::source(e, m_polyhedron)], m_vertexPointMap[CGAL::target(e, m_polyhedron)], alpha));
     }
     
     void vertex(vertex_descriptor v)
@@ -123,21 +126,10 @@ private:
 
   Triangle_3 triangle_from_halfedge(halfedge_descriptor edge)
   {
-    halfedge_descriptor start = edge;
-    halfedge_descriptor current = edge;
-    
-    Point_3 points[3];
-    size_t currentPoint = 0;
-    
-    do
-    {
-      points[currentPoint] = m_vertexPointMap[boost::source(current, m_polyhedron)];
-      current = CGAL::next(current, m_polyhedron);
-      ++currentPoint;
-    }
-    while (current != start);
-    
-    return Triangle_3(points[0], points[1], points[2]);
+    halfedge_descriptor e0 = edge;
+    halfedge_descriptor e1 = CGAL::next(edge, m_polyhedron);
+
+    return Triangle_3(m_vertexPointMap[boost::source(e0, m_polyhedron)], m_vertexPointMap[boost::target(e0, m_polyhedron)], m_vertexPointMap[boost::target(e1, m_polyhedron)]);
   }
 
   bool window_distance_filter(Cone_tree_node* cone, Segment_2 windowSegment, bool reversed)
@@ -257,22 +249,22 @@ private:
         break;
       case CGAL::internal::BARYCENTRIC_COORDINATE_EDGE:
         {
-          halfedge_descriptor he = CGAL::halfedge(face, m_polyhedron);
+          halfedge_descriptor halfedge = CGAL::halfedge(face, m_polyhedron);
           for (size_t i = 0; i < associatedEdge; ++i)
           {
-            he = CGAL::next(he, m_polyhedron);
+            halfedge = CGAL::next(halfedge, m_polyhedron);
           }
-          expand_edge_root(he, location[associatedEdge], location[(associatedEdge + 1) % 3]);
+          expand_edge_root(halfedge, location[associatedEdge], location[(associatedEdge + 1) % 3]);
         }
         break;
       case CGAL::internal::BARYCENTRIC_COORDINATE_VERTEX:
         {
-          halfedge_descriptor he = CGAL::halfedge(face, m_polyhedron);
+          halfedge_descriptor halfedge = CGAL::halfedge(face, m_polyhedron);
           for (size_t i = 0; i < associatedEdge; ++i)
           {
-            he = CGAL::next(he, m_polyhedron);
+            halfedge = CGAL::next(halfedge, m_polyhedron);
           }
-          expand_vertex_root(CGAL::source(he, m_polyhedron));
+          expand_vertex_root(CGAL::source(halfedge, m_polyhedron));
         }
         break;
       default:
@@ -375,10 +367,10 @@ private:
     
     m_closestToVertices[m_vertexIndexMap[vertex]] = NodeDistancePair(vertexRoot, FT(0.0));
     
-    expand_psuedo_source(vertexRoot);
+    expand_pseudo_source(vertexRoot);
   }
 
-  void expand_psuedo_source(Cone_tree_node* parent)
+  void expand_pseudo_source(Cone_tree_node* parent)
   {
     parent->m_pendingMiddleSubtree = NULL;
     
@@ -394,16 +386,27 @@ private:
       std::cout << "Distance from target to root: " << distanceFromTargetToRoot << std::endl;
     }
     
+    // A potential optimization could be made by only expanding in the 'necessary' range (i.e. the range outside of geodesic visibility), but the
+    // benefits may be small, since the node filtering would prevent more than one-level propagation.
     do
     {
       Triangle_3 face3d(triangle_from_halfedge(currentEdge));
       Triangle_2 layoutFace(m_traits.project_triangle_3_to_triangle_2_object()(face3d));
-      
+
       if (m_debugOutput)
       {
-        std::cout << "Expanding PsuedoSource: id = " << m_faceIndexMap[CGAL::face(currentEdge, m_polyhedron)] << " , face = " << layoutFace << std::endl;
+        std::cout << "Expanding PsuedoSource: id = ";
+        if (CGAL::face(currentEdge, m_polyhedron) != GraphTraits::null_face())
+        {
+          std::cout << m_faceIndexMap[CGAL::face(currentEdge, m_polyhedron)];
+        }
+        else
+        {
+          std::cout << "EXTERNAL";
+        }
+        std::cout << " , face = " << layoutFace << std::endl;
       }
-      
+
       Cone_tree_node* child = new Cone_tree_node(m_polyhedron, currentEdge, layoutFace, layoutFace[1], distanceFromTargetToRoot, layoutFace[0], layoutFace[2], Cone_tree_node::VERTEX_SOURCE);
       parent->push_middle_child(child);
       process_node(child);
@@ -488,7 +491,7 @@ private:
       }
       
       size_t entryEdgeIndex = m_halfedgeIndexMap[node->entry_edge()];
-      
+
       NodeDistancePair currentOccupier = m_vertexOccupiers[entryEdgeIndex];
       FT currentNodeDistance = node->distance_from_target_to_root();
 
@@ -549,11 +552,21 @@ private:
         propagateLeft = true;
         propagateRight = true;
         
+        // This is a consequence of using the same basic node type for source and interval nodes
+        // If this is a source node, it is only pointing to one of the two opposite edges (the left one by convention)
         if (node->node_type() != Cone_tree_node::INTERVAL)
         {
           propagateRight = false;
+          
+          // Propagating a pseudo-source on a boundary vertex can result in a cone on a null face
+          // In such a case, we only care about the part of the cone pointing at the vertex (i.e. the middle child),
+          // so we can avoid propagating over the (non-existant) left opposite edge
+          if (node->is_null_face())
+          {
+            propagateLeft = false;
+          }
         }
-        
+
         if (currentOccupier.first != NULL)
         {
           if (isLeftOfCurrent)
@@ -675,34 +688,40 @@ private:
 
   void push_left_child(Cone_tree_node* parent)
   {
-    Segment_2 leftWindow(clip_to_bounds(parent->left_child_base_segment(), parent->left_boundary(), parent->right_boundary()));
-    FT distanceEstimate = std::min(parent->distance_to_root(leftWindow[0]), parent->distance_to_root(leftWindow[1]));
-    
-    if (m_debugOutput)
+    if (CGAL::face(parent->left_child_edge(), m_polyhedron) != GraphTraits::null_face())
     {
-      std::cout << "\tPushing Left Child, Segment = " << parent->left_child_base_segment() << " , clipped = " << leftWindow << " , Estimate = " << distanceEstimate << std::endl;
-    }
+      Segment_2 leftWindow(clip_to_bounds(parent->left_child_base_segment(), parent->left_boundary(), parent->right_boundary()));
+      FT distanceEstimate = std::min(parent->distance_to_root(leftWindow[0]), parent->distance_to_root(leftWindow[1]));
+      
+      if (m_debugOutput)
+      {
+        std::cout << "\tPushing Left Child, Segment = " << parent->left_child_base_segment() << " , clipped = " << leftWindow << " , Estimate = " << distanceEstimate << std::endl;
+      }
 
-    Cone_expansion_event* event = new Cone_expansion_event(parent, distanceEstimate, Cone_expansion_event::LEFT_CHILD, leftWindow);
-    parent->m_pendingLeftSubtree = event;
-    
-    m_expansionPriqueue.push(event);
+      Cone_expansion_event* event = new Cone_expansion_event(parent, distanceEstimate, Cone_expansion_event::LEFT_CHILD, leftWindow);
+      parent->m_pendingLeftSubtree = event;
+      
+      m_expansionPriqueue.push(event);
+    }
   }
 
   void push_right_child(Cone_tree_node* parent)
   {
-    Segment_2 rightWindow(clip_to_bounds(parent->right_child_base_segment(), parent->left_boundary(), parent->right_boundary()));
-    FT distanceEstimate = std::min(parent->distance_to_root(rightWindow[0]), parent->distance_to_root(rightWindow[1]));
-    
-    if (m_debugOutput)
+    if (CGAL::face(parent->right_child_edge(), m_polyhedron) != GraphTraits::null_face())
     {
-      std::cout << "\tPushing Right Child, Segment = " << parent->right_child_base_segment() << " , clipped = " << rightWindow << " , Estimate = " << distanceEstimate << std::endl;
-    }
-    
-    Cone_expansion_event* event = new Cone_expansion_event(parent, distanceEstimate, Cone_expansion_event::RIGHT_CHILD, rightWindow);
-    parent->m_pendingRightSubtree = event;
+      Segment_2 rightWindow(clip_to_bounds(parent->right_child_base_segment(), parent->left_boundary(), parent->right_boundary()));
+      FT distanceEstimate = std::min(parent->distance_to_root(rightWindow[0]), parent->distance_to_root(rightWindow[1]));
+      
+      if (m_debugOutput)
+      {
+        std::cout << "\tPushing Right Child, Segment = " << parent->right_child_base_segment() << " , clipped = " << rightWindow << " , Estimate = " << distanceEstimate << std::endl;
+      }
+      
+      Cone_expansion_event* event = new Cone_expansion_event(parent, distanceEstimate, Cone_expansion_event::RIGHT_CHILD, rightWindow);
+      parent->m_pendingRightSubtree = event;
 
-    m_expansionPriqueue.push(event);
+      m_expansionPriqueue.push(event);
+    }
   }
 
   void push_middle_child(Cone_tree_node* parent)
@@ -812,13 +831,13 @@ private:
       m_closestToVertices[vertexIndex] = NodeDistancePair(NULL, FT(0.0));
     }
     
-    halfedge_iterator currHe, endHe;
+    halfedge_iterator currentEdge, endEdge;
     
     m_vertexOccupiers.clear();
     
-    for (boost::tie(currHe, endHe) = CGAL::halfedges(m_polyhedron); currHe != endHe; ++currHe)
+    for (boost::tie(currentEdge, endEdge) = CGAL::halfedges(m_polyhedron); currentEdge != endEdge; ++currentEdge)
     {
-      m_vertexOccupiers[m_halfedgeIndexMap[*currHe]] = NodeDistancePair(NULL, FT(0.0));
+      m_vertexOccupiers[m_halfedgeIndexMap[*currentEdge]] = NodeDistancePair(NULL, FT(0.0));
     }
   }
   
@@ -917,7 +936,7 @@ private:
   
   void add_to_face_list(Cone_tree_node* node)
   {
-    if (!node->is_root_node())
+    if (!node->is_root_node() && !node->is_null_face())
     {
       size_t faceIndex = m_faceIndexMap[node->current_face()];
       m_faceOccupiers[faceIndex].push_back(node);
@@ -933,10 +952,51 @@ private:
       add_to_face_list(node->get_right_child());
     }
     
-    for (size_t i = 0; node->num_middle_children(); ++i)
+    for (size_t i = 0; i < node->num_middle_children(); ++i)
     {
       add_to_face_list(node->get_middle_child(i));
     }
+  }
+  
+  Point_2 face_location_with_normalized_coordinate(Cone_tree_node* node, Barycentric_coordinate alpha)
+  {
+    return m_traits.construct_triangle_location_2_object()(node->layout_face(), CGAL::internal::shift_vector_3(alpha, node->edge_face_index()));
+  }
+  
+  NodeDistancePair nearest_on_face(face_descriptor face, Barycentric_coordinate alpha)
+  {
+    size_t faceIndex = m_faceIndexMap[face];
+    
+    Cone_tree_node* closest = NULL;
+    FT closestDistance;
+    
+    std::vector<Cone_tree_node*>& currentFaceList = m_faceOccupiers[faceIndex];
+    
+    for (size_t i = 0; i < currentFaceList.size(); ++i)
+    {
+      Cone_tree_node* current = currentFaceList[i];
+      
+      if (closest != NULL && current->distance_from_source_to_root() >= closestDistance)
+      {
+        continue;
+      }
+      
+      Point_2 locationInContext = face_location_with_normalized_coordinate(current, alpha);
+      FT currentDistance = current->distance_to_root(locationInContext);
+      
+      if (closest == NULL || currentDistance < closestDistance)
+      {
+        closest = current;
+        closestDistance = currentDistance;
+      }
+    }
+    
+    return NodeDistancePair(closest, closestDistance);
+  }
+  
+  static bool cone_comparator(const Cone_tree_node* lhs, const Cone_tree_node* rhs)
+  {
+    return lhs->distance_from_source_to_root() < rhs->distance_from_source_to_root();
   }
   
 public:
@@ -1068,7 +1128,7 @@ public:
               std::cout << "PseudoSource Expansion: Parent = " << parent << " , Vertex = " << m_vertexIndexMap[event->m_parent->target_vertex()] << " , Distance = " << event->m_distanceEstimate << " , Level = " << event->m_parent->level() + 1 << std::endl;
             }
             
-            expand_psuedo_source(parent);
+            expand_pseudo_source(parent);
             break;
           case Cone_expansion_event::LEFT_CHILD:
             if (m_debugOutput)
@@ -1096,6 +1156,20 @@ public:
       delete event;
     }
     
+    m_faceOccupiers.clear();
+    m_faceOccupiers.resize(CGAL::num_faces(m_polyhedron));
+    
+    for (size_t i = 0; i < m_rootNodes.size(); ++i)
+    {
+      add_to_face_list(m_rootNodes[i]);
+    }
+    
+    for (size_t i = 0; i < m_faceOccupiers.size(); ++i)
+    {
+      std::vector<Cone_tree_node*>& currentFaceList = m_faceOccupiers[i];
+      std::sort(currentFaceList.begin(), currentFaceList.end(), cone_comparator);
+    }
+    
     if (m_debugOutput)
     {   
       std::cout << "Closest distances: " << std::endl;
@@ -1106,29 +1180,48 @@ public:
         std::cout << "\tDistance = " << m_closestToVertices[i].second << std::endl;
       }
       
+      std::cout << std::endl;
+      
+      for (size_t i = 0; i < m_faceOccupiers.size(); ++i)
+      {
+        std::cout << "\tFace = " << i << std::endl;
+        std::cout << "\t#Occupiers = " << m_faceOccupiers[i].size() << std::endl;
+      }
+      
       std::cout << std::endl << "Done!" << std::endl;
     }
     
-    m_faceOccupiers.clear();
-    m_faceOccupiers.resize(CGAL::num_faces(m_polyhedron));
-    
-    for (size_t i = 0; i < m_rootNodes.size(); ++i)
-    {
-      add_to_face_list(m_rootNodes[i]);
-    }
   }
-
+  
   FT shortest_distance_to_vertex(vertex_descriptor v)
   {
     return m_closestToVertices[m_vertexIndexMap[v]].second;
+  }
+  
+  FT shortest_distance_to_location(face_descriptor face, Barycentric_coordinate alpha)
+  {
+    return nearest_on_face(face, alpha).second;
+  }
+  
+  template <class Visitor>
+  void shortest_edge_sequence(face_descriptor face, Barycentric_coordinate alpha, Visitor& visitor)
+  {
+    Cone_tree_node* current = nearest_on_face(face, alpha).first;
+    Point_2 locationInContext = face_location_with_normalized_coordinate(current, alpha);
+    visit_shortest_path(current, locationInContext, visitor);
   }
   
   template <class Visitor>
   void shortest_edge_sequence(vertex_descriptor v, Visitor& visitor)
   {
     Cone_tree_node* current = m_closestToVertices[m_vertexIndexMap[v]].first;
-    
     visit_shortest_path(current, current->target_vertex_location(), visitor);
+  }
+  
+  template <class Visitor>
+  void shortest_path_points(face_descriptor face, Barycentric_coordinate alpha, Visitor& visitor)
+  {
+    shortest_edge_sequence(face, alpha, Point_path_visitor_wrapper<Visitor>(visitor, m_polyhedron, m_vertexPointMap));
   }
   
   template <class Visitor>

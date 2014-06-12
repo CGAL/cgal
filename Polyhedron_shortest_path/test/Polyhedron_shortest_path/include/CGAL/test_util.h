@@ -11,6 +11,12 @@ namespace test {
 #include <CGAL/boost/graph/properties_Polyhedron_3.h>
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 
+template <class FT>
+FT squared(FT in)
+{
+  return in * in;
+}
+
 template<class Polyhedron>
 struct Plane_from_facet {
   typedef typename Polyhedron::Plane_3 Plane_3;
