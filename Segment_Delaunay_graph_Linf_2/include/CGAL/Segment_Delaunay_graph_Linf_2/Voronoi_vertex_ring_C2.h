@@ -564,9 +564,9 @@ private:
       const bool pq, const bool pr)
   {
     CGAL_precondition(is_q_hor != is_r_hor);
-    const RT q_coord = hvseg_coord(q, is_q_hor);
-    const RT r_coord = hvseg_coord(r, is_r_hor);
     if (pq or pr) {
+      const RT q_coord = hvseg_coord(q, is_q_hor);
+      const RT r_coord = hvseg_coord(r, is_r_hor);
       const bool is_touched_hor = pq ? is_q_hor : is_r_hor;
       const RT coord_c = is_touched_hor ? p.point().x() : p.point().y();
       const RT radius = CGAL::abs(coord_c - (pq ? r_coord : q_coord));
@@ -591,8 +591,18 @@ private:
           CGAL::left_turn(pother, p.point(), Point_2(ux_,uy_,uz_)) );
       return;
     } else {
-      return compute_pss_bisectors(p, q, r);
+      return compute_pss_both_hv_nonpar_nonendp(
+               p, q, r, is_q_hor, is_r_hor, pq, pr);
     }
+  }
+
+  inline void
+  compute_pss_both_hv_nonpar_nonendp(
+      const Site_2& p, const Site_2& q, const Site_2& r,
+      const bool is_q_hor, const bool is_r_hor,
+      const bool pq, const bool pr)
+  {
+    return compute_pss_bisectors(p, q, r);
   }
 
   inline void
