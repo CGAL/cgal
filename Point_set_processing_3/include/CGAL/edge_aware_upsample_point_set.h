@@ -287,6 +287,8 @@ update_new_point(
 ///                    with a value_type = Vector_3<Kernel>.
 /// @tparam Kernel Geometric traits class.
 ///      It can be omitted and deduced automatically from PointPMap value_type.
+/// @param output output iterator 
+///      
 ///
 
 // This variant requires all parameters.
@@ -300,9 +302,8 @@ void
 edge_aware_upsample_point_set(
   ForwardIterator first,  ///< iterator over the first input point.
   ForwardIterator beyond, ///< past-the-end iterator over the input points.
-  OutputIterator output, ///< output iterator over points. User could choose 
-                         /// where to put the output points: the back of input
-                         /// points, or the begin of an empty point set.
+  OutputIterator output, ///< output iterator over points, 
+                         /// where the first output point will be stored in.
   PointPMap point_pmap, ///< property map: value_type of ForwardIterator -> Point_3
   NormalPMap normal_pmap, ///< property map: value_type of ForwardIterator -> Vector_3.
   const typename Kernel::FT sharpness_angle,  ///<  (0-90)
@@ -313,7 +314,7 @@ edge_aware_upsample_point_set(
                     /// to inserting points along the sharp features.
   const typename Kernel::FT neighbor_radius, ///< initial size of neighbors.
                     /// the radius of the biggest hole that will be filled in.
-  const unsigned int number_of_output,///< number of iterations.                            
+  const unsigned int number_of_output,///< points number of the output.                            
   const Kernel& /*kernel*/ ///< geometric traits.
 )
 {
