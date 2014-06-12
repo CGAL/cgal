@@ -224,6 +224,32 @@ public:
     {
         return tds().index_of_covertex(f);
     }
+    
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - UTILITIES
+
+    // A co-dimension 2 sub-simplex. called a Rotor because we can rotate
+    // the two "covertices" around the sub-simplex. Useful for traversing the
+    // boundary of a hole. NOT DOCUMENTED
+    typedef cpp11::tuple<Full_cell_handle, int, int>    Rotor;
+    Full_cell_handle full_cell(const Rotor & r) const // NOT DOCUMENTED
+    {
+        return cpp11::get<0>(r);
+    }
+    int index_of_covertex(const Rotor & r) const // NOT DOCUMENTED
+    {
+        return cpp11::get<1>(r);
+    }
+    int index_of_second_covertex(const Rotor & r) const // NOT DOCUMENTED
+    {
+        return cpp11::get<2>(r);
+    }
+    Rotor rotate_rotor(Rotor & r) // NOT DOCUMENTED...
+    {
+        int opposite = full_cell(r)->mirror_index(index_of_covertex(r));
+        Full_cell_handle s = full_cell(r)->neighbor(index_of_covertex(r));
+        int new_second = s->index(full_cell(r)->vertex(index_of_second_covertex(r)));
+        return Rotor(s, new_second, opposite);
+    }
 
     // - - - - - - - - - - - - - - - - - - - - - - - - CREATION / CONSTRUCTORS
 
@@ -568,7 +594,7 @@ public:
         }
         else
         {
-            return coaffine_orientation_predicate()(points_begin(s), points_begin(s) + 1 + current_dimension());
+          return coaffine_orientation_predicate()(points_begin(s), points_begin(s) + 1 + current_dimension());
         }
     }
 
@@ -701,6 +727,28 @@ public:
 
     // make sure all full_cells have positive orientation
     void reorient_full_cells();
+
+protected:
+  // This is used in the |remove(v)| member function to manage sets of Full_cell_handles
+  template< typename FCH >
+  struct Full_cell_set : public std::vector<FCH>
+  {
+    typedef std::vector<FCH> Base_set;
+    using Base_set::begin;
+    using Base_set::end;
+    void make_searchable()
+    {   // sort the full cell handles
+      std::sort(begin(), end());
+    }
+    bool contains(const FCH & fch) const
+    {
+      return std::binary_search(begin(), end(), fch);
+    }
+    bool contains_1st_and_not_2nd(const FCH & fst, const FCH & snd) const
+    {
+      return ( ! contains(snd) ) && ( contains(fst) );
+    }
+  };
 
 }; // Triangulation<...>
 

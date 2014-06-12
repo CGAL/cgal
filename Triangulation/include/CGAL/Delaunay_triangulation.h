@@ -53,7 +53,7 @@ class Delaunay_triangulation
 public: // PUBLIC NESTED TYPES
 
     typedef DCTraits                                Geom_traits;
-    typedef typename Base::Triangulation_ds          Triangulation_ds;
+    typedef typename Base::Triangulation_ds         Triangulation_ds;
 
     typedef typename Base::Vertex                   Vertex;
     typedef typename Base::Full_cell                Full_cell;
@@ -69,15 +69,18 @@ public: // PUBLIC NESTED TYPES
     typedef typename Base::Vertex_const_handle      Vertex_const_handle;
     typedef typename Base::Vertex_const_iterator    Vertex_const_iterator;
 
-    typedef typename Base::Full_cell_handle           Full_cell_handle;
-    typedef typename Base::Full_cell_iterator         Full_cell_iterator;
-    typedef typename Base::Full_cell_const_handle     Full_cell_const_handle;
-    typedef typename Base::Full_cell_const_iterator   Full_cell_const_iterator;
+    typedef typename Base::Full_cell_handle         Full_cell_handle;
+    typedef typename Base::Full_cell_iterator       Full_cell_iterator;
+    typedef typename Base::Full_cell_const_handle   Full_cell_const_handle;
+    typedef typename Base::Full_cell_const_iterator Full_cell_const_iterator;
 
     typedef typename Base::size_type                size_type;
     typedef typename Base::difference_type          difference_type;
 
     typedef typename Base::Locate_type              Locate_type;
+
+  //Tag to distinguish triangulations with weighted_points
+  typedef Tag_false                                 Weighted_tag;
 
 protected: // DATA MEMBERS
 
@@ -93,6 +96,8 @@ public:
     //using Base::incident_full_cells;
     using Base::geom_traits;
     using Base::index_of_covertex;
+    using Base::index_of_second_covertex;
+    using Base::rotate_rotor;
     using Base::infinite_vertex;
     using Base::insert_in_hole;
     using Base::insert_outside_convex_hull_1;
@@ -140,32 +145,6 @@ private:
       }
     };
 public:
-
-// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - UTILITIES
-
-    // A co-dimension 2 sub-simplex. called a Rotor because we can rotate
-    // the two "covertices" around the sub-simplex. Useful for traversing the
-    // boundary of a hole. NOT DOCUMENTED
-    typedef cpp11::tuple<Full_cell_handle, int, int>    Rotor;
-    Full_cell_handle full_cell(const Rotor & r) const // NOT DOCUMENTED
-    {
-        return cpp11::get<0>(r);
-    }
-    int index_of_covertex(const Rotor & r) const // NOT DOCUMENTED
-    {
-        return cpp11::get<1>(r);
-    }
-    int index_of_second_covertex(const Rotor & r) const // NOT DOCUMENTED
-    {
-        return cpp11::get<2>(r);
-    }
-    Rotor rotate_rotor(Rotor & r) // NOT DOCUMENTED...
-    {
-        int opposite = full_cell(r)->mirror_index(index_of_covertex(r));
-        Full_cell_handle s = full_cell(r)->neighbor(index_of_covertex(r));
-        int new_second = s->index(full_cell(r)->vertex(index_of_second_covertex(r)));
-        return Rotor(s, new_second, opposite);
-    }
     
 // - - - - - - - - - - - - - - - - - - - - - - - - - - CREATION / CONSTRUCTORS
 
@@ -350,27 +329,6 @@ private:
             Conflict_traversal_pred_in_subspace;
     typedef Conflict_traversal_predicate<Conflict_pred_in_fullspace>
             Conflict_traversal_pred_in_fullspace;
-
-    // This is used in the |remove(v)| member function to manage sets of Full_cell_handles
-    template< typename FCH >
-    struct Full_cell_set : public std::vector<FCH>
-    {
-        typedef std::vector<FCH> Base_set;
-        using Base_set::begin;
-        using Base_set::end;
-        void make_searchable()
-        {   // sort the full cell handles
-            std::sort(begin(), end());
-        }
-        bool contains(const FCH & fch) const
-        {
-            return std::binary_search(begin(), end(), fch);
-        }
-        bool contains_1st_and_not_2nd(const FCH & fst, const FCH & snd) const
-        {
-            return ( ! contains(snd) ) && ( contains(fst) );
-        }
-    };
 };
 
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = 
@@ -425,7 +383,7 @@ Delaunay_triangulation<DCTraits, TDS>
 
     // THE CASE cur_dim >= 2
     // Gather the finite vertices sharing an edge with |v|
-    typedef Full_cell_set<Full_cell_handle> Simplices;
+    typedef Base::Full_cell_set<Full_cell_handle> Simplices;
     Simplices simps;
     std::back_insert_iterator<Simplices> out(simps);
     tds().incident_full_cells(v, out);
@@ -561,7 +519,7 @@ Delaunay_triangulation<DCTraits, TDS>
     Dark_s_handle dark_ret_s = dark_s;
     Full_cell_handle ret_s;
 
-    typedef Full_cell_set<Dark_s_handle> Dark_full_cells;
+    typedef Base::Full_cell_set<Dark_s_handle> Dark_full_cells;
     Dark_full_cells conflict_zone;
     std::back_insert_iterator<Dark_full_cells> dark_out(conflict_zone);
     
