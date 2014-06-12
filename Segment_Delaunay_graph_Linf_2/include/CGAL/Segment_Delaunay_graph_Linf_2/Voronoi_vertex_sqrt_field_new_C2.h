@@ -1095,7 +1095,121 @@ private:
       vv = pp;
       return;
     }
+    const bool is_q_hor = is_site_horizontal(sq);
+    const bool is_q_ver = is_site_vertical(sq);
+    const bool is_r_hor = is_site_horizontal(sr);
+    const bool is_r_ver = is_site_vertical(sr);
+    const bool is_q_hv = is_q_hor or is_q_ver;
+    const bool is_r_hv = is_r_hor or is_r_ver;
+    if (is_q_hv and is_r_hv) {
+      compute_pss_both_hv(sp, sq, sr, is_q_hor, is_r_hor, pq, pr);
+    }
     return compute_vv_bisectors(sp, sq, sr, PSS_Type());
+  }
+
+  // both segments are axis-parallel
+  inline void
+  compute_pss_both_hv(const Site_2& p, const Site_2& q, const Site_2& r,
+      const bool is_q_hor, const bool is_r_hor,
+      const bool pq, const bool pr) const
+  {
+    CGAL_precondition(not (pq and pr));
+    if (is_q_hor == is_r_hor) {
+      // parallel segments
+      const RT q_coord = hvseg_coord(q, is_q_hor);
+      const RT r_coord = hvseg_coord(r, is_r_hor);
+      RT ux_, uy_, uz_;
+      RT & upar = is_q_hor ? ux_ : uy_;
+      RT & uort = is_q_hor ? uy_ : ux_;
+      upar = RT(2)*(is_q_hor ? p.point().x() : p.point().y())
+        + (( pq or pr ) ? RT(0) :
+                          RT(is_q_hor ? +1 : -1)*(r_coord - q_coord));
+      uort = q_coord + r_coord;
+      uz_ = RT(2);
+      vv = Point_2(ux_, uy_, uz_);
+    } else {
+      return compute_pss_both_hv_nonpar(
+          p, q, r, is_q_hor, is_r_hor, pq, pr);
+    }
+  }
+
+  // one segment is horizontal and the other is vertical
+  inline void
+  compute_pss_both_hv_nonpar(
+      const Site_2& p, const Site_2& q, const Site_2& r,
+      const bool is_q_hor, const bool is_r_hor,
+      const bool pq, const bool pr) const
+  {
+    CGAL_precondition(is_q_hor != is_r_hor);
+    if (pq or pr) {
+      const RT q_coord = hvseg_coord(q, is_q_hor);
+      const RT r_coord = hvseg_coord(r, is_r_hor);
+      const bool is_touched_hor = pq ? is_q_hor : is_r_hor;
+      const RT coord_c = is_touched_hor ? p.point().x() : p.point().y();
+      const RT radius = CGAL::abs(coord_c - (pq ? r_coord : q_coord));
+      RT ux_, uy_, uz_;
+      RT & upar = is_touched_hor ? ux_ : uy_;
+      RT & uort = is_touched_hor ? uy_ : ux_;
+      const Site_2 & sother =
+        pq ? (same_points(p, q.source_site()) ?
+              q.target_site() : q.source_site()) :
+             (same_points(p, r.source_site()) ?
+              r.target_site() : r.source_site());
+      const bool test = is_touched_hor ?
+        (scmpx(p, sother) == LARGER) : (scmpy(p, sother) == SMALLER);
+      const RT sgn = RT( (pq ? +1: -1)* (test ? -1 : +1) );
+      upar = coord_c;
+      uort = (pq ? q_coord : r_coord) + sgn*radius;
+      uz_ = RT(1);
+      CGAL_SDG_DEBUG(std::cout << "debug: vring compute_pss vv="
+          << Point_2(ux_, uy_, uz_) << " radius=" << radius << std::endl;);
+      CGAL_assertion_code( const Point_2 pother = sother.point() );
+      CGAL_assertion(pq ?
+          CGAL::left_turn(Point_2(ux_,uy_,uz_), p.point(), pother) :
+          CGAL::left_turn(pother, p.point(), Point_2(ux_,uy_,uz_)) );
+      vv = Point_2(ux_, uy_, uz_);
+      return;
+    } else {
+      return compute_pss_both_hv_nonpar_nonendp(
+               p, q, r, is_q_hor, is_r_hor, pq, pr);
+    }
+  }
+
+  // one segment is horizontal and the other is vertical and
+  // the point p is not an endpoint of the segments
+  inline void
+  compute_pss_both_hv_nonpar_nonendp(
+      const Site_2& p, const Site_2& q, const Site_2& r,
+      const bool is_q_hor, const bool is_r_hor,
+      const bool pq, const bool pr) const
+  {
+    CGAL_precondition(not (pq or pr));
+    const RT q_coord = hvseg_coord(q, is_q_hor);
+    const RT r_coord = hvseg_coord(r, is_r_hor);
+    const RT p_coord_q = is_q_hor ? p.point().y() : p.point().x();
+    const RT p_coord_r = is_r_hor ? p.point().y() : p.point().x();
+    const RT sdistq = p_coord_q - q_coord;
+    const RT sdistr = p_coord_r - r_coord;
+    const RT distq = CGAL::abs(sdistq);
+    const RT distr = CGAL::abs(sdistr);
+    const RT & dx = is_r_hor ? distq : distr;
+    const RT & dy = is_r_hor ? distr : distq;
+    const Comparison_result cmp = CGAL::compare(dx, dy);
+    RT ux_, uy_, uz_;
+    if (cmp == LARGER) {
+      ux_ = is_q_hor ? r_coord + p_coord_r : q_coord + p_coord_q;
+      uy_ = RT(2)*( is_q_hor ? q_coord + CGAL::sign(sdistq)*dx :
+                               r_coord + CGAL::sign(sdistr)*dx );
+    } else if (cmp == SMALLER) {
+      uy_ = is_r_hor ? r_coord + p_coord_r : q_coord + p_coord_q;
+      ux_ = RT(2)*( is_r_hor ? q_coord + CGAL::sign(sdistq)*dy :
+                               r_coord + CGAL::sign(sdistr)*dy );
+    } else {
+      ux_ = is_q_hor ? r_coord + p_coord_r : q_coord + p_coord_q;
+      uy_ = is_q_hor ? q_coord + p_coord_q : r_coord + p_coord_r;
+    }
+    uz_ = RT(2);
+    vv = Point_2(ux_, uy_, uz_);
   }
 
   inline void
