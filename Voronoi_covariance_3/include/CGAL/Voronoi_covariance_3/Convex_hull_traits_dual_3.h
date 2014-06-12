@@ -2,6 +2,7 @@
 #define CGAL_CONVEX_HULL_TRAITS_DUAL_3_H
 
 #include <CGAL/Voronoi_covariance_3/predicates.h>
+#include <CGAL/Voronoi_covariance_3/Convex_hull_traits_dual_2.h>
 #include <CGAL/Filtered_predicate.h>
 #include <CGAL/Cartesian_converter.h>
 
@@ -34,6 +35,11 @@ namespace CGAL
           typedef Plane_dual<R>               Triangle_3;
           typedef Vector_dual<R>              Vector_3;
 
+          // Traits for convex_hull_2
+          typedef typename CGAL::Voronoi_covariance_3::Traits_xy_dual<R> Traits_xy_3;
+          typedef typename CGAL::Voronoi_covariance_3::Traits_yz_dual<R> Traits_yz_3;
+          typedef typename CGAL::Voronoi_covariance_3::Traits_xz_dual<R> Traits_xz_3;
+
           // Construct objects
           class Construct_segment_3 {
             public:
@@ -65,7 +71,7 @@ namespace CGAL
                                    int y,
                                    int z)
               {
-                  // TODO
+                  // TODO: find planes which dual vector have (x, y, z) coordinates
                   Point_3 p(1, 1, 1, 1);
                   Point_3 q(1, 1, 1, 1);
 
@@ -74,52 +80,6 @@ namespace CGAL
           };
 
           typedef typename R::RT                         RT;
-
-          class Construct_orthogonal_vector_3 {
-              private:
-                  // Origin
-                  typedef typename R_::Point_3 Primal_point_3;
-                  Primal_point_3 origin;
-
-              public:
-              typedef typename R::Plane_3 Primal_plane_3;
-
-              Construct_orthogonal_vector_3 (Primal_point_3 o =
-                                             Primal_point_3(0, 0, 0)) : origin(o)
-              {}
-
-              Vector_3 operator ()(const Plane_3& plane)
-              {
-                Primal_plane_3 p1 = plane.p1;
-                Primal_plane_3 p2 = plane.p2;
-                Primal_plane_3 p3 = plane.p3;
-
-                RT dp1 = p1.d() + origin.x() * p1.a()
-                    + origin.y() * p1.b() + origin.z() * p1.c();
-                RT dp2 = p2.d() + origin.x() * p2.a()
-                    + origin.y() * p2.b() + origin.z() * p2.c();
-                RT dp3 = p3.d() + origin.x() * p3.a()
-                    + origin.y() * p3.b() + origin.z() * p3.c();
-
-                // Normal to the dual plane
-                RT alpha = (dp1 * p2.b() - dp2 * p1.b()) *
-                    (dp1 * p3.c() - dp3 * p1.c()) -
-                    (dp1 * p2.c() - dp2 * p1.c()) *
-                    (dp1 * p3.b() - dp3 * p1.b());
-
-                RT beta  = (dp1 * p2.c() - dp2 * p1.c()) *
-                    (dp1 * p3.a() - dp3 * p1.a()) -
-                    (dp1 * p2.a() - dp2 * p1.a()) *
-                    (dp1 * p3.c() - dp3 * p1.c());
-
-                RT gamma = (dp1 * p2.a() - dp2 * p1.a()) *
-                    (dp1 * p3.b() - dp3 * p1.b()) -
-                    (dp1 * p2.b() - dp2 * p1.b()) *
-                    (dp1 * p3.a() - dp3 * p1.a());
-
-                return Vector_3(alpha, beta, gamma);
-              }
-          };
 
           class Construct_plane_3 {
               public:
@@ -155,10 +115,6 @@ namespace CGAL
           Construct_vector_3
               construct_vector_3_object() const
               { return Construct_vector_3(); }
-
-          Construct_orthogonal_vector_3
-              construct_orthogonal_vector_3_object() const
-              { return Construct_orthogonal_vector_3(origin); }
 
           Collinear_3
               collinear_3_object() const

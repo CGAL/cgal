@@ -459,6 +459,8 @@ namespace CGAL
                         Plane_3 p3 = v3.p;
                         Plane_3 q3 = v3.q;
 
+                        // TODO
+
                         return CGAL::COPLANAR;
                     }
 

@@ -183,7 +183,7 @@ int main (int argc, char *argv[]) {
 
     // traits
     // TODO
-    Point origin(0, 1.5, 0);
+    Point origin(0, 0, 0);
     Hull_traits_dual_3 dual_traits(origin);
 
     // Cube
@@ -197,12 +197,12 @@ int main (int argc, char *argv[]) {
     planes.push_back(Plane(0, 0, -1, -1));
 
     // Translated cube
-    planes.push_back(Plane(1, 0, 0, -1));
-    planes.push_back(Plane(-1, 0, 0, -1));
-    planes.push_back(Plane(0, 1, 0, -1));
-    planes.push_back(Plane(0, -0.5, 0, -1));
-    planes.push_back(Plane(0, 0, 1, -1));
-    planes.push_back(Plane(0, 0, -1, -1));
+    /* planes.push_back(Plane(1, 0, 0, -1)); */
+    /* planes.push_back(Plane(-1, 0, 0, -1)); */
+    /* planes.push_back(Plane(0, 1, 0, -1)); */
+    /* planes.push_back(Plane(0, -0.5, 0, -1)); */
+    /* planes.push_back(Plane(0, 0, 1, -1)); */
+    /* planes.push_back(Plane(0, 0, -1, -1)); */
 
     // Random points on a sphere
     std::list<Plane> sphere_planes;
