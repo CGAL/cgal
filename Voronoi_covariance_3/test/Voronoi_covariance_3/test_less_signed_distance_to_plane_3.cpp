@@ -30,17 +30,15 @@ int main () {
 
     Plane q(2, 0, 0, -1), r(3, 0, 0, -1), rr(0.5, 0, 0, -1);
 
-    // TODO: issue with the normal (outer, inner)
+    // False
+    /* std::cout << less_signed_distance_dual(p, q, r) << std::endl; */
+    /* std::cout << less_signed_distance(to_dual_plane<K>(p), to_dual<K>(q), to_dual<K>(r)) << std::endl; */
+    assert(less_signed_distance_dual(p, q, r) == false);
 
     // True
-    std::cout << less_signed_distance_dual(p, q, r) << std::endl;
-    std::cout << less_signed_distance(to_dual_plane<K>(p), to_dual<K>(q), to_dual<K>(r)) << std::endl;
+    /* std::cout << less_signed_distance_dual(p, q, rr) << std::endl; */
+    /* std::cout << less_signed_distance(to_dual_plane<K>(p), to_dual<K>(q), to_dual<K>(rr)) << std::endl; */
     assert(less_signed_distance_dual(p, q, r) == true);
-
-    // False
-    std::cout << less_signed_distance_dual(p, q, rr) << std::endl;
-    std::cout << less_signed_distance(to_dual_plane<K>(p), to_dual<K>(q), to_dual<K>(rr)) << std::endl;
-    assert(less_signed_distance_dual(p, q, r) == false);
 
     return 0;
 }

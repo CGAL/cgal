@@ -9,6 +9,7 @@
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef K::Plane_3 Plane;
+typedef K::Point_3 Point;
 
 typedef CGAL::Voronoi_covariance_3::Convex_hull_traits_dual_3<K> Hull_traits_dual;
 typedef Hull_traits_dual::Equal_3 Equal_3_dual;
@@ -17,7 +18,9 @@ typedef CGAL::Convex_hull_traits_3<K> Hull_traits;
 typedef Hull_traits::Equal_3 Equal_3;
 
 int main (void) {
-    Hull_traits_dual traits_dual;
+    Point origin(0, 0, 0);
+
+    Hull_traits_dual traits_dual(origin);
     Hull_traits traits;
 
     Equal_3_dual equal_dual = traits_dual.equal_3_object();

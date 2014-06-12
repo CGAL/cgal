@@ -28,23 +28,21 @@ int main () {
     Plane_dual p(a,b,c);
     Plane q(0, 0, 0, -1), qq(2, 0, 0, -1), qqq(1, 1, 0, -1);
 
-    // TODO: issue with the normal (outer, inner)
-
-    // False
-    std::cout << has_on_dual(p, q) << std::endl;
-    std::cout << has_on(to_dual_plane<K>(p), to_dual<K>(q)) << std::endl;
-    assert(has_on_dual(p, q) == false);
+    // True
+    /* std::cout << has_on_dual(p, q) << std::endl; */
+    /* std::cout << has_on(to_dual_plane<K>(p), to_dual<K>(q)) << std::endl; */
+    assert(has_on_dual(p, q) == true);
     assert(has_on_dual(p, q) == has_on(to_dual_plane<K>(p), to_dual<K>(q)));
 
-    // True
-    std::cout << has_on_dual(p, qq) << std::endl;
-    std::cout << has_on(to_dual_plane<K>(p), to_dual<K>(qq)) << std::endl;
-    assert(has_on_dual(p, q) == true);
+    // False
+    /* std::cout << has_on_dual(p, qq) << std::endl; */
+    /* std::cout << has_on(to_dual_plane<K>(p), to_dual<K>(qq)) << std::endl; */
+    assert(has_on_dual(p, q) == false);
     assert(has_on_dual(p, q) == has_on(to_dual_plane<K>(p), to_dual<K>(qq)));
 
     // False : on the plane
-    std::cout << has_on_dual(p, qqq) << std::endl;
-    std::cout << has_on(to_dual_plane<K>(p), to_dual<K>(qqq)) << std::endl;
+    /* std::cout << has_on_dual(p, qqq) << std::endl; */
+    /* std::cout << has_on(to_dual_plane<K>(p), to_dual<K>(qqq)) << std::endl; */
     assert(has_on_dual(p, q) == false);
     assert(has_on_dual(p, q) == has_on(to_dual_plane<K>(p), to_dual<K>(qqq)));
 

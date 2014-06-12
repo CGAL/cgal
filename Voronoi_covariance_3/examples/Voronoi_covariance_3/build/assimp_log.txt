@@ -1,0 +1,10 @@
+Info,  T0: Load dual_cube_convex_hull.off
+Info,  T0: Found a matching importer for this file format
+Info,  T0: Import root directory is './'
+Info,  T0: Entering post processing pipeline
+Info,  T0: Points: 0, Lines: 0, Triangles: 1, Polygons: 0 (Meshes, X = removed)
+Info,  T0: GenVertexNormalsProcess finished. Vertex normals have been calculated
+Error, T0: Failed to compute tangents; need UV data in channel0
+Info,  T0: JoinVerticesProcess finished | Verts in: 24 out: 6 | ~75.0%
+Info,  T0: Cache relevant are 0 meshes (0 faces). Average output ACMR is nan
+Info,  T0: Leaving post processing pipeline

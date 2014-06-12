@@ -33,24 +33,22 @@ int main (void) {
     Plane_dual p(a,b,c);
     Plane q(0, 0, 0, -1), qq(2, 0, 0, -1), qqq(1, 1, 0, -1);
 
-    // TODO: issue with the normal (outer, inner)
-
     // p1.d() * q.d() > 0
-    // Negative
-    printOrientation(oriented_dual(p, q));
-    printOrientation(oriented(to_dual_plane<K>(p), to_dual<K>(q)));
-    assert(oriented_dual(p, q) == CGAL::ON_NEGATIVE_SIDE);
+    // Positive
+    /* printOrientation(oriented_dual(p, q)); */
+    /* printOrientation(oriented(to_dual_plane<K>(p), to_dual<K>(q))); */
+    assert(oriented_dual(p, qq) == CGAL::ON_POSITIVE_SIDE);
     assert(oriented_dual(p, q) == oriented(to_dual_plane<K>(p), to_dual<K>(q)));
 
-    // Positive
-    printOrientation(oriented_dual(p, qq));
-    printOrientation(oriented(to_dual_plane<K>(p), to_dual<K>(qq)));
-    assert(oriented_dual(p, qq) == CGAL::ON_POSITIVE_SIDE);
+    // Negative
+    /* printOrientation(oriented_dual(p, qq)); */
+    /* printOrientation(oriented(to_dual_plane<K>(p), to_dual<K>(qq))); */
+    assert(oriented_dual(p, q) == CGAL::ON_NEGATIVE_SIDE);
     assert(oriented_dual(p, qq) == oriented(to_dual_plane<K>(p), to_dual<K>(qq)));
 
     // Boundary
-    printOrientation(oriented_dual(p, qqq));
-    printOrientation(oriented(to_dual_plane<K>(p), to_dual<K>(qqq)));
+    /* printOrientation(oriented_dual(p, qqq)); */
+    /* printOrientation(oriented(to_dual_plane<K>(p), to_dual<K>(qqq))); */
     assert(oriented_dual(p, qqq) == CGAL::ON_oriented_dual_BOUNDARY);
     assert(oriented_dual(p, qqq) == oriented(to_dual_plane<K>(p), to_dual<K>(qqq)));
 
@@ -58,21 +56,21 @@ int main (void) {
     Plane aa(-1, -1, 0, 1);
     Plane_dual pp(aa, b, c);
 
-    // Negative
-    printOrientation(oriented_dual(pp, q));
-    printOrientation(oriented(to_dual_plane<K>(pp), to_dual<K>(q)));
-    assert(oriented_dual(pp, q) == CGAL::ON_NEGATIVE_SIDE);
+    // Positive
+    /* printOrientation(oriented_dual(pp, q)); */
+    /* printOrientation(oriented(to_dual_plane<K>(pp), to_dual<K>(q))); */
+    assert(oriented_dual(pp, qq) == CGAL::ON_POSITIVE_SIDE);
     assert(oriented_dual(pp, q) == oriented(to_dual_plane<K>(pp), to_dual<K>(q)));
 
-    // Positive
-    printOrientation(oriented_dual(pp, qq));
-    printOrientation(oriented(to_dual_plane<K>(pp), to_dual<K>(qq)));
-    assert(oriented_dual(pp, qq) == CGAL::ON_POSITIVE_SIDE);
+    // Negative
+    /* printOrientation(oriented_dual(pp, qq)); */
+    /* printOrientation(oriented(to_dual_plane<K>(pp), to_dual<K>(qq))); */
+    assert(oriented_dual(pp, q) == CGAL::ON_NEGATIVE_SIDE);
     assert(oriented_dual(pp, qq) == oriented(to_dual_plane<K>(pp), to_dual<K>(qq)));
 
     // Boundary
-    printOrientation(oriented_dual(pp, qqq));
-    printOrientation(oriented(to_dual_plane<K>(pp), to_dual<K>(qqq)));
+    /* printOrientation(oriented_dual(pp, qqq)); */
+    /* printOrientation(oriented(to_dual_plane<K>(pp), to_dual<K>(qqq))); */
     assert(oriented_dual(pp, qqq) == CGAL::ON_oriented_dual_BOUNDARY);
     assert(oriented_dual(pp, qqq) == oriented(to_dual_plane<K>(pp), to_dual<K>(qqq)));
 

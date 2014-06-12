@@ -38,6 +38,19 @@ namespace CGAL
                 {}
             };
 
+        // Vector in the dual space : 2 dual points = 2 planes
+        template <typename K>
+            struct Vector_dual
+            {
+                typedef typename K::Plane_3 Plane_3;
+
+                Plane_3 p;
+                Plane_3 q;
+
+                Vector_dual (Plane_3 p, Plane_3 q) : p(p), q(q)
+                {}
+            };
+
         // Predicates for dual points
         // Equal
         template < typename K >
@@ -45,19 +58,32 @@ namespace CGAL
             {
                 typedef typename K::RT        RT;
                 typedef typename K::Plane_3   Plane_3;
+                typedef typename K::Point_3   Point_3;
                 typedef bool                  result_type;
+
+                Equal_3_dual_point (Point_3 const& o = Point_3(0, 0, 0)) :
+                    origin(o)
+                {}
 
                 result_type
                     operator()(const Plane_3 &p, const Plane_3 &q) const
                     {
-                        RT diffa = p.a() * q.d() - p.d() * q.a();
-                        RT diffb = p.b() * q.d() - p.d() * q.b();
-                        RT diffc = p.c() * q.d() - p.d() * q.c();
+                        RT dp = p.d() + origin.x() * p.a()
+                            + origin.y() * p.b() + origin.z() * p.c();
+                        RT dq = q.d() + origin.x() * q.a()
+                            + origin.y() * q.b() + origin.z() * q.c();
+
+                        RT diffa = p.a() * dq - dp * q.a();
+                        RT diffb = p.b() * dq - dp * q.b();
+                        RT diffc = p.c() * dq - dp * q.c();
 
                         return CGAL_AND_3(CGAL::is_zero(diffa),
                                           CGAL::is_zero(diffb),
                                           CGAL::is_zero(diffc));
                     }
+
+                private:
+                    Point_3 origin;
             };
 
         // Collinear
@@ -66,21 +92,32 @@ namespace CGAL
             {
                 typedef typename K::RT        RT;
                 typedef typename K::Plane_3   Plane_3;
-                typedef typename K::Vector_3  Vector_3;
+                typedef typename K::Point_3   Point_3;
                 typedef bool                  result_type;
+
+                Collinear_3_dual_point (Point_3 const& o = Point_3(0, 0, 0)) :
+                    origin(o)
+                {}
 
                 result_type
                     operator()(const Plane_3 &p,
                                const Plane_3 &q,
                                const Plane_3 &r) const
                     {
-                        RT diffapq = p.d() * q.a() - q.d() * p.a();
-                        RT diffbpq = p.d() * q.b() - q.d() * p.b();
-                        RT diffcpq = p.d() * q.c() - q.d() * p.c();
+                        RT dp = p.d() + origin.x() * p.a()
+                            + origin.y() * p.b() + origin.z() * p.c();
+                        RT dq = q.d() + origin.x() * q.a()
+                            + origin.y() * q.b() + origin.z() * q.c();
+                        RT dr = r.d() + origin.x() * r.a()
+                            + origin.y() * r.b() + origin.z() * r.c();
 
-                        RT diffapr = p.d() * r.a() - r.d() * p.a();
-                        RT diffbpr = p.d() * r.b() - r.d() * p.b();
-                        RT diffcpr = p.d() * r.c() - r.d() * p.c();
+                        RT diffapq = dp * q.a() - dq * p.a();
+                        RT diffbpq = dp * q.b() - dq * p.b();
+                        RT diffcpq = dp * q.c() - dq * p.c();
+
+                        RT diffapr = dp * r.a() - dr * p.a();
+                        RT diffbpr = dp * r.b() - dr * p.b();
+                        RT diffcpr = dp * r.c() - dr * p.c();
 
                         // Cross product
                         RT cross1 = diffbpq * diffcpr - diffcpq * diffbpr;
@@ -91,6 +128,9 @@ namespace CGAL
                                           CGAL::is_zero(cross2),
                                           CGAL::is_zero(cross3));
                     }
+
+                private:
+                    Point_3 origin;
             };
 
         // Coplanar
@@ -99,7 +139,12 @@ namespace CGAL
             {
                 typedef typename K::RT        RT;
                 typedef typename K::Plane_3   Plane_3;
+                typedef typename K::Point_3   Point_3;
                 typedef bool                  result_type;
+
+                Coplanar_3_dual_point (Point_3 const& o = Point_3(0, 0, 0)) :
+                    origin(o)
+                {}
 
                 result_type
                     operator()(const Plane_3 &p,
@@ -107,23 +152,35 @@ namespace CGAL
                                const Plane_3 &r,
                                const Plane_3 &s) const
                     {
-                        RT diffapq = p.d() * q.a() - q.d() * p.a();
-                        RT diffbpq = p.d() * q.b() - q.d() * p.b();
-                        RT diffcpq = p.d() * q.c() - q.d() * p.c();
+                        RT dp = p.d() + origin.x() * p.a()
+                            + origin.y() * p.b() + origin.z() * p.c();
+                        RT dq = q.d() + origin.x() * q.a()
+                            + origin.y() * q.b() + origin.z() * q.c();
+                        RT dr = r.d() + origin.x() * r.a()
+                            + origin.y() * r.b() + origin.z() * r.c();
+                        RT ds = s.d() + origin.x() * s.a()
+                            + origin.y() * s.b() + origin.z() * s.c();
 
-                        RT diffapr = p.d() * r.a() - r.d() * p.a();
-                        RT diffbpr = p.d() * r.b() - r.d() * p.b();
-                        RT diffcpr = p.d() * r.c() - r.d() * p.c();
+                        RT diffapq = dp * q.a() - dq * p.a();
+                        RT diffbpq = dp * q.b() - dq * p.b();
+                        RT diffcpq = dp * q.c() - dq * p.c();
 
-                        RT diffaps = p.d() * s.a() - s.d() * p.a();
-                        RT diffbps = p.d() * s.b() - s.d() * p.b();
-                        RT diffcps = p.d() * s.c() - s.d() * p.c();
+                        RT diffapr = dp * r.a() - dr * p.a();
+                        RT diffbpr = dp * r.b() - dr * p.b();
+                        RT diffcpr = dp * r.c() - dr * p.c();
+
+                        RT diffaps = dp * s.a() - ds * p.a();
+                        RT diffbps = dp * s.b() - ds * p.b();
+                        RT diffcps = dp * s.c() - ds * p.c();
 
                         return (CGAL::sign_of_determinant(diffapq, diffapr, diffaps,
                                                           diffbpq, diffbpr, diffbps,
                                                           diffcpq, diffcpr, diffcps)
                             == CGAL::ZERO);
                     }
+
+                private:
+                    Point_3 origin;
             };
 
         // Has on positive side
@@ -132,7 +189,13 @@ namespace CGAL
             {
                 typedef typename K::RT         RT;
                 typedef typename K::Plane_3    Plane_3;
+                typedef typename K::Point_3   Point_3;
                 typedef bool                   result_type;
+
+                Has_on_positive_side_3_dual_point (Point_3 const& o =
+                                                   Point_3(0, 0, 0)) :
+                    origin(o)
+                {}
 
                 result_type
                     operator()(const Plane_dual<K> p, const Plane_3 &q) const
@@ -141,33 +204,45 @@ namespace CGAL
                         Plane_3 p2 = p.p2;
                         Plane_3 p3 = p.p3;
 
+                        RT dp1 = p1.d() + origin.x() * p1.a()
+                            + origin.y() * p1.b() + origin.z() * p1.c();
+                        RT dp2 = p2.d() + origin.x() * p2.a()
+                            + origin.y() * p2.b() + origin.z() * p2.c();
+                        RT dp3 = p3.d() + origin.x() * p3.a()
+                            + origin.y() * p3.b() + origin.z() * p3.c();
+                        RT dq = q.d() + origin.x() * q.a()
+                            + origin.y() * q.b() + origin.z() * q.c();
+
                         // Compute the normal to the plane
-                        RT alpha = (p1.d() * p2.b() - p2.d() * p1.b()) *
-                            (p1.d() * p3.c() - p3.d() * p1.c()) -
-                            (p1.d() * p2.c() - p2.d() * p1.c()) *
-                            (p1.d() * p3.b() - p3.d() * p1.b());
+                        RT alpha = (dp1 * p2.b() - dp2 * p1.b()) *
+                            (dp1 * p3.c() - dp3 * p1.c()) -
+                            (dp1 * p2.c() - dp2 * p1.c()) *
+                            (dp1 * p3.b() - dp3 * p1.b());
 
-                        RT beta  = (p1.d() * p2.c() - p2.d() * p1.c()) *
-                            (p1.d() * p3.a() - p3.d() * p1.a()) -
-                            (p1.d() * p2.a() - p2.d() * p1.a()) *
-                            (p1.d() * p3.c() - p3.d() * p1.c());
+                        RT beta  = (dp1 * p2.c() - dp2 * p1.c()) *
+                            (dp1 * p3.a() - dp3 * p1.a()) -
+                            (dp1 * p2.a() - dp2 * p1.a()) *
+                            (dp1 * p3.c() - dp3 * p1.c());
 
-                        RT gamma = (p1.d() * p2.a() - p2.d() * p1.a()) *
-                            (p1.d() * p3.b() - p3.d() * p1.b()) -
-                            (p1.d() * p2.b() - p2.d() * p1.b()) *
-                            (p1.d() * p3.a() - p3.d() * p1.a());
+                        RT gamma = (dp1 * p2.a() - dp2 * p1.a()) *
+                            (dp1 * p3.b() - dp3 * p1.b()) -
+                            (dp1 * p2.b() - dp2 * p1.b()) *
+                            (dp1 * p3.a() - dp3 * p1.a());
 
                         // Test if q is on the positive side of p
-                        RT prod = alpha * (p1.a() * q.d() - q.a() * p1.d()) +
-                            beta * (p1.b() * q.d() - q.b() * p1.d()) +
-                            gamma * (p1.c() * q.d() - q.c() * p1.d());
+                        RT prod = alpha * (p1.a() * dq - q.a() * dp1) +
+                            beta * (p1.b() * dq - q.b() * dp1) +
+                            gamma * (p1.c() * dq - q.c() * dp1);
 
-                        if (CGAL::is_positive(p1.d() * q.d())) {
+                        if (CGAL::is_positive(dp1 * dq)) {
                             return CGAL::is_positive(prod);
                         } else {
                             return CGAL::is_negative(prod);
                         }
                     }
+
+                private:
+                    Point_3 origin;
             };
 
         // Less distance to point
@@ -176,20 +251,33 @@ namespace CGAL
             {
                 typedef typename K::RT        RT;
                 typedef typename K::Plane_3   Plane_3;
+                typedef typename K::Point_3   Point_3;
                 typedef bool                  result_type;
+
+                Less_distance_to_point_3_dual_point (Point_3 const& o =
+                                                     Point_3(0, 0, 0)) :
+                    origin(o)
+                {}
 
                 result_type
                     operator()(const Plane_3 &p,
                                const Plane_3 &q,
                                const Plane_3 &r) const
                     {
-                        RT diffapq = p.a() * q.d() - q.a() * p.d();
-                        RT diffbpq = p.b() * q.d() - q.b() * p.d();
-                        RT diffcpq = p.c() * q.d() - q.c() * p.d();
+                        RT dp = p.d() + origin.x() * p.a()
+                            + origin.y() * p.b() + origin.z() * p.c();
+                        RT dq = q.d() + origin.x() * q.a()
+                            + origin.y() * q.b() + origin.z() * q.c();
+                        RT dr = r.d() + origin.x() * r.a()
+                            + origin.y() * r.b() + origin.z() * r.c();
 
-                        RT diffapr = p.a() * r.d() - r.a() * p.d();
-                        RT diffbpr = p.b() * r.d() - r.b() * p.d();
-                        RT diffcpr = p.c() * r.d() - r.c() * p.d();
+                        RT diffapq = p.a() * dq - q.a() * dp;
+                        RT diffbpq = p.b() * dq - q.b() * dp;
+                        RT diffcpq = p.c() * dq - q.c() * dp;
+
+                        RT diffapr = p.a() * dr - r.a() * dp;
+                        RT diffbpr = p.b() * dr - r.b() * dp;
+                        RT diffcpr = p.c() * dr - r.c() * dp;
 
                         RT distpq = diffapq * diffapq +
                             diffbpq * diffbpq +
@@ -202,6 +290,9 @@ namespace CGAL
                         return CGAL::is_positive(q.d() * q.d() *
                                                  distpr - r.d() * r.d() * distpq);
                     }
+
+                private:
+                    Point_3 origin;
             };
 
         // Less signed distance to plane
@@ -210,7 +301,13 @@ namespace CGAL
             {
                 typedef typename K::RT         RT;
                 typedef typename K::Plane_3    Plane_3;
+                typedef typename K::Point_3   Point_3;
                 typedef bool                   result_type;
+
+                Less_signed_distance_to_plane_3_dual_point (Point_3 const& o =
+                                                            Point_3(0, 0, 0)) :
+                    origin(o)
+                {}
 
                 result_type
                     operator()(const Plane_dual<K> &p,
@@ -221,32 +318,46 @@ namespace CGAL
                         Plane_3 p2 = p.p2;
                         Plane_3 p3 = p.p3;
 
+                        RT dp1 = p1.d() + origin.x() * p1.a()
+                            + origin.y() * p1.b() + origin.z() * p1.c();
+                        RT dp2 = p2.d() + origin.x() * p2.a()
+                            + origin.y() * p2.b() + origin.z() * p2.c();
+                        RT dp3 = p3.d() + origin.x() * p3.a()
+                            + origin.y() * p3.b() + origin.z() * p3.c();
+                        RT dq = q.d() + origin.x() * q.a()
+                            + origin.y() * q.b() + origin.z() * q.c();
+                        RT dr = r.d() + origin.x() * r.a()
+                            + origin.y() * r.b() + origin.z() * r.c();
+
                         // Compute the normal to the plane
-                        RT alpha = (p1.d() * p2.b() - p2.d() * p1.b()) *
-                            (p1.d() * p3.c() - p3.d() * p1.c()) -
-                            (p1.d() * p2.c() - p2.d() * p1.c()) *
-                            (p1.d() * p3.b() - p3.d() * p1.b());
+                        RT alpha = (dp1 * p2.b() - dp2 * p1.b()) *
+                            (dp1 * p3.c() - dp3 * p1.c()) -
+                            (dp1 * p2.c() - dp2 * p1.c()) *
+                            (dp1 * p3.b() - dp3 * p1.b());
 
-                        RT beta  = (p1.d() * p2.c() - p2.d() * p1.c()) *
-                            (p1.d() * p3.a() - p3.d() * p1.a()) -
-                            (p1.d() * p2.a() - p2.d() * p1.a()) *
-                            (p1.d() * p3.c() - p3.d() * p1.c());
+                        RT beta  = (dp1 * p2.c() - dp2 * p1.c()) *
+                            (dp1 * p3.a() - dp3 * p1.a()) -
+                            (dp1 * p2.a() - dp2 * p1.a()) *
+                            (dp1 * p3.c() - dp3 * p1.c());
 
-                        RT gamma = (p1.d() * p2.a() - p2.d() * p1.a()) *
-                            (p1.d() * p3.b() - p3.d() * p1.b()) -
-                            (p1.d() * p2.b() - p2.d() * p1.b()) *
-                            (p1.d() * p3.a() - p3.d() * p1.a());
+                        RT gamma = (dp1 * p2.a() - dp2 * p1.a()) *
+                            (dp1 * p3.b() - dp3 * p1.b()) -
+                            (dp1 * p2.b() - dp2 * p1.b()) *
+                            (dp1 * p3.a() - dp3 * p1.a());
 
                         RT sumpq = alpha * q.a() + beta * q.b() + gamma * q.c();
                         RT sumpr = alpha * r.a() + beta * r.b() + gamma * r.c();
-                        RT diff = r.d() * sumpq - q.d() * sumpr;
+                        RT diff = dr * sumpq - dq * sumpr;
 
-                        if (CGAL::is_positive(q.d() * r.d())) {
+                        if (CGAL::is_positive(dq * dr)) {
                             return CGAL::is_positive(diff);
                         } else {
                             return CGAL::is_negative(diff);
                         }
                     }
+
+                private:
+                    Point_3 origin;
             };
 
         // Oriented side
@@ -255,7 +366,13 @@ namespace CGAL
             {
                 typedef typename K::RT         RT;
                 typedef typename K::Plane_3    Plane_3;
+                typedef typename K::Point_3   Point_3;
                 typedef CGAL::Oriented_side    result_type;
+
+                Oriented_side_3_dual_point (Point_3 const& o =
+                                                   Point_3(0, 0, 0)) :
+                    origin(o)
+                {}
 
                 result_type
                     operator()(const Plane_dual<K> p, const Plane_3 &q) const
@@ -264,28 +381,37 @@ namespace CGAL
                         Plane_3 p2 = p.p2;
                         Plane_3 p3 = p.p3;
 
+                        RT dp1 = p1.d() + origin.x() * p1.a()
+                            + origin.y() * p1.b() + origin.z() * p1.c();
+                        RT dp2 = p2.d() + origin.x() * p2.a()
+                            + origin.y() * p2.b() + origin.z() * p2.c();
+                        RT dp3 = p3.d() + origin.x() * p3.a()
+                            + origin.y() * p3.b() + origin.z() * p3.c();
+                        RT dq = q.d() + origin.x() * q.a()
+                            + origin.y() * q.b() + origin.z() * q.c();
+
                         // Compute the normal to the plane
-                        RT alpha = (p1.d() * p2.b() - p2.d() * p1.b()) *
-                            (p1.d() * p3.c() - p3.d() * p1.c()) -
-                            (p1.d() * p2.c() - p2.d() * p1.c()) *
-                            (p1.d() * p3.b() - p3.d() * p1.b());
+                        RT alpha = (dp1 * p2.b() - dp2 * p1.b()) *
+                            (dp1 * p3.c() - dp3 * p1.c()) -
+                            (dp1 * p2.c() - dp2 * p1.c()) *
+                            (dp1 * p3.b() - dp3 * p1.b());
 
-                        RT beta  = (p1.d() * p2.c() - p2.d() * p1.c()) *
-                            (p1.d() * p3.a() - p3.d() * p1.a()) -
-                            (p1.d() * p2.a() - p2.d() * p1.a()) *
-                            (p1.d() * p3.c() - p3.d() * p1.c());
+                        RT beta  = (dp1 * p2.c() - dp2 * p1.c()) *
+                            (dp1 * p3.a() - dp3 * p1.a()) -
+                            (dp1 * p2.a() - dp2 * p1.a()) *
+                            (dp1 * p3.c() - dp3 * p1.c());
 
-                        RT gamma = (p1.d() * p2.a() - p2.d() * p1.a()) *
-                            (p1.d() * p3.b() - p3.d() * p1.b()) -
-                            (p1.d() * p2.b() - p2.d() * p1.b()) *
-                            (p1.d() * p3.a() - p3.d() * p1.a());
+                        RT gamma = (dp1 * p2.a() - dp2 * p1.a()) *
+                            (dp1 * p3.b() - dp3 * p1.b()) -
+                            (dp1 * p2.b() - dp2 * p1.b()) *
+                            (dp1 * p3.a() - dp3 * p1.a());
 
                         // Test if q is on the positive side of p
-                        RT prod = alpha * (p1.a() * q.d() - q.a() * p1.d()) +
-                            beta * (p1.b() * q.d() - q.b() * p1.d()) +
-                            gamma * (p1.c() * q.d() - q.c() * p1.d());
+                        RT prod = alpha * (p1.a() * dq - q.a() * dp1) +
+                            beta * (p1.b() * dq - q.b() * dp1) +
+                            gamma * (p1.c() * dq - q.c() * dp1);
 
-                        if (CGAL::is_positive(p1.d() * q.d())) {
+                        if (CGAL::is_positive(dp1 * dq)) {
                             if (CGAL::is_positive(prod)) {
                                 return CGAL::ON_POSITIVE_SIDE;
                             } else if (CGAL::is_negative(prod)) {
@@ -303,6 +429,41 @@ namespace CGAL
                             }
                         }
                     }
+
+                private:
+                    Point_3 origin;
+            };
+
+        // Orientation
+        template < typename K >
+            struct Orientation_3_dual_point
+            {
+                typedef typename K::RT         RT;
+                typedef typename K::Plane_3    Plane_3;
+                typedef typename K::Point_3   Point_3;
+                typedef typename CGAL::Orientation result_type;
+
+                Orientation_3_dual_point (Point_3 const& o = Point_3(0, 0, 0)) :
+                    origin(o)
+                {}
+
+                result_type
+                    operator()(Vector_dual<K> const& v1,
+                               Vector_dual<K> const& v2,
+                               Vector_dual<K> const& v3) const
+                    {
+                        Plane_3 p1 = v1.p;
+                        Plane_3 q1 = v1.q;
+                        Plane_3 p2 = v2.p;
+                        Plane_3 q2 = v2.q;
+                        Plane_3 p3 = v3.p;
+                        Plane_3 q3 = v3.q;
+
+                        return CGAL::COPLANAR;
+                    }
+
+                private:
+                    Point_3 origin;
             };
     } // namespace Voronoi_covariance_3
 } // namespace CGAL
