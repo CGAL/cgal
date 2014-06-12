@@ -680,14 +680,22 @@ public:
     }
 
     template <class OutputIterator>
-    OutputIterator operator()(const Polygon_2 &pgn1,
-                              const Polygon_2 &pgn2,
+    OutputIterator operator()(const Polygon_2 &polygon1,
+                              const Polygon_2 &polygon2,
                               Polygon_2 &sum_bound,
                               OutputIterator sum_holes) {
-        CGAL_precondition(pgn1.is_simple());
-        CGAL_precondition(pgn2.is_simple());
-        CGAL_precondition(pgn1.orientation() == CGAL::COUNTERCLOCKWISE);
-        CGAL_precondition(pgn2.orientation() == CGAL::COUNTERCLOCKWISE);
+        CGAL_precondition(polygon1.is_simple());
+        CGAL_precondition(polygon2.is_simple());
+
+        Polygon_2 pgn1 = polygon1;
+        Polygon_2 pgn2 = polygon2;
+
+        if (pgn1.orientation() == CGAL::CLOCKWISE) {
+            pgn1.reverse_orientation();
+        }
+        if (pgn2.orientation() == CGAL::CLOCKWISE) {
+            pgn2.reverse_orientation();
+        }
         Polygon_2 revP1 = revPoly(pgn1);
         Polygon_2 p2 = pgn2;
         _aabb_collision_detector = new AABBCollisionDetector<Kernel_, Container_>(p2, revP1);
