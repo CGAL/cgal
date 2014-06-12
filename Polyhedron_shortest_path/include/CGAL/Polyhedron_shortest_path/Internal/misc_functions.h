@@ -17,9 +17,10 @@ namespace CGAL {
 
 namespace internal {
 
-template <class GraphTraits>
-size_t edge_index(typename GraphTraits::halfedge_descriptor he, GraphTraits& p)
+template <class Polyhedron>
+size_t edge_index(typename boost::graph_traits<Polyhedron>::halfedge_descriptor he, Polyhedron& p)
 {
+  typedef typename boost::graph_traits<Polyhedron> GraphTraits;
   typedef typename GraphTraits::face_descriptor face_descriptor;
   typedef typename GraphTraits::halfedge_descriptor halfedge_descriptor;
   
