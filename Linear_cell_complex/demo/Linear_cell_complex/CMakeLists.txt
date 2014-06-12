@@ -43,7 +43,7 @@ if(USE_QT5)
 	include(${CGAL_USE_FILE})
 	
 	find_package(Qt5)
-
+	
 else (USE_QT5)
 	find_package(CGAL COMPONENTS Qt4)
 	include(${CGAL_USE_FILE})
@@ -72,12 +72,13 @@ elseif ( NOT OPENGL_FOUND )
 
   MESSAGE(STATUS "NOTICE: This demo requires OpenGL "
     "and will not be compiled.")
+
 elseif ( NOT QGLVIEWER_FOUND )
 
   MESSAGE(STATUS "NOTICE: This demo requires QGLViewer "
     " and will not be compiled. TODO correct this error")
-else ()
 
+else()
 include_directories(${QGLVIEWER_INCLUDE_DIR})
 include_directories(BEFORE . ../../include/)
 

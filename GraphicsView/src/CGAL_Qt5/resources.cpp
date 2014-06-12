@@ -22,7 +22,11 @@
 #include <CGAL/Qt/resources.h>
 
 // cannot use namespaces because of the Q_INIT_RESOURCE macro
+<<<<<<< HEAD
 void CGAL_Qt_init_resources() {
+=======
+void CGAL_Qt5_init_resources() {
+>>>>>>> 1f669ad498d664482b6b486e3e95a50a56076759
   Q_INIT_RESOURCE(File);
   Q_INIT_RESOURCE(Triangulation_2); 
   Q_INIT_RESOURCE(Input);
