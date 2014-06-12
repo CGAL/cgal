@@ -270,14 +270,14 @@ update_new_point(
 // ----------------------------------------------------------------------------
 
 /// \ingroup PkgPointSetProcessing
-/// Progressively upsample the point set while 
+/// This method progressively upsample the point set while 
 /// approaching the edge singularities. 
 /// For more details, please see: http://web.siat.ac.cn/~huihuang/EAR/EAR_page.html
 ///
 /// @tparam OutputIteratorValueType type of objects that in `OutputIterator`.
 ///         It is default to `value_type_traits<OutputIterator>::%type` 
 ///         and can be omitted when the default is fine.
-/// @tparam OutputIterator iterator over output points.
+/// @tparam OutputIterator output iterator where output points are put.
 /// @tparam ForwardIterator iterator over input points.
 /// @tparam PointPMap is a model of `ReadablePropertyMap` 
 ///         with a value_type = Point_3<Kernel>.
@@ -300,12 +300,19 @@ void
 edge_aware_upsample_point_set(
   ForwardIterator first,  ///< iterator over the first input point.
   ForwardIterator beyond, ///< past-the-end iterator over the input points.
-  OutputIterator output, ///< output iterator over points.
+  OutputIterator output, ///< output iterator over points. User could choose 
+                         /// where to put the output points: the back of input
+                         /// points, or the begin of an empty point set.
   PointPMap point_pmap, ///< property map: value_type of ForwardIterator -> Point_3
   NormalPMap normal_pmap, ///< property map: value_type of ForwardIterator -> Vector_3.
-  const typename Kernel::FT sharpness_sigma,  ///< control sharpness(0-90)
-  const typename Kernel::FT edge_senstivity,  ///< edge senstivity(0-5)
+  const typename Kernel::FT sharpness_angle,  ///<  (0-90)
+                    /// Controlthe preservation of sharp features. The bigger
+                    /// the value is, the smoother the result will be.
+  const typename Kernel::FT edge_senstivity,  ///<  
+                    /// Larger values of edge-sensitivity give higher priority 
+                    /// to inserting points along the sharp features.
   const typename Kernel::FT neighbor_radius, ///< initial size of neighbors.
+                    /// the radius of the biggest hole that will be filled in.
   const unsigned int number_of_output,///< number of iterations.                            
   const Kernel& /*kernel*/ ///< geometric traits.
 )
@@ -320,8 +327,8 @@ edge_aware_upsample_point_set(
 
   // preconditions
   CGAL_point_set_processing_precondition(first != beyond);
-  CGAL_point_set_processing_precondition(sharpness_sigma >= 0 
-                                       &&sharpness_sigma <= 90);
+  CGAL_point_set_processing_precondition(sharpness_angle >= 0 
+                                       &&sharpness_angle <= 90);
   CGAL_point_set_processing_precondition(edge_senstivity >= 0 
                                        &&edge_senstivity <= 5);
   CGAL_point_set_processing_precondition(neighbor_radius > 0);
@@ -355,7 +362,7 @@ edge_aware_upsample_point_set(
                                                       neighbor_radius);
 
 
-  FT cos_sigma = std::cos(sharpness_sigma / 180.0 * 3.1415926);
+  FT cos_sigma = std::cos(sharpness_angle / 180.0 * 3.1415926);
   FT sharpness_bandwidth = std::pow((CGAL::max)((FT)1e-8, (FT)1.0 - cos_sigma), 2);
 
   FT sum_density = 0.0;
@@ -547,7 +554,7 @@ edge_aware_upsample_point_set(
   OutputIterator output, ///< output iterator over points.
   PointPMap point_pmap, ///< property map:  OutputIterator -> Point_3.
   NormalPMap normal_pmap, ///< property map: OutputIterator -> Vector_3.
-  double sharpness_sigma,  ///< control sharpness(0-90)
+  double sharpness_angle,  ///< control sharpness(0-90)
   double edge_senstivity,  ///< edge senstivity(0-5)
   double neighbor_radius, ///< initial size of neighbors.
   const unsigned int number_of_output_points,///< number of iterations. 
@@ -560,7 +567,7 @@ edge_aware_upsample_point_set(
     output,
     point_pmap,
     normal_pmap,
-    sharpness_sigma, 
+    sharpness_angle, 
     edge_senstivity,
     neighbor_radius, 
     number_of_output_points,
@@ -584,7 +591,7 @@ edge_aware_upsample_point_set(
   OutputIterator output, ///< output iterator over points.
   PointPMap point_pmap, ///< property map: OutputIterator -> Point_3.
   NormalPMap normal_pmap, ///< property map: OutputIterator -> Vector_3.
-  double sharpness_sigma,  ///< control sharpness(0-90)
+  double sharpness_angle,  ///< control sharpness(0-90)
   double edge_senstivity,  ///< edge senstivity(0-5)
   double neighbor_radius, ///< initial size of neighbors.
   const unsigned int number_of_output_points///< number of iterations.   
@@ -598,7 +605,7 @@ edge_aware_upsample_point_set(
     output,
     point_pmap,
     normal_pmap,
-    sharpness_sigma, 
+    sharpness_angle, 
     edge_senstivity,
     neighbor_radius, 
     number_of_output_points,
@@ -619,7 +626,7 @@ edge_aware_upsample_point_set(
   OutputIterator output, ///< output iterator over points.
   PointPMap point_pmap, ///< property map: OutputIterator -> Point_3.
   NormalPMap normal_pmap, ///< property map: OutputIterator -> Vector_3.
-  double sharpness_sigma,  ///< control sharpness(0-90)
+  double sharpness_angle,  ///< control sharpness(0-90)
   double edge_senstivity,  ///< edge senstivity(0-5)
   double neighbor_radius, ///< initial size of neighbors.
   const unsigned int number_of_output_points///< number of iterations.    
@@ -632,7 +639,7 @@ edge_aware_upsample_point_set(
     output,
     point_pmap,
     normal_pmap,
-    sharpness_sigma, 
+    sharpness_angle, 
     edge_senstivity,
     neighbor_radius, 
     number_of_output_points);
@@ -652,7 +659,7 @@ edge_aware_upsample_point_set(
   ForwardIterator beyond, ///< past-the-end iterator
   OutputIterator output, ///< output iterator over points.
   NormalPMap normal_pmap,///< property map: OutputIterator->Vector_3.
-  double sharpness_sigma,  ///< control sharpness(0-90)
+  double sharpness_angle,  ///< control sharpness(0-90)
   double edge_senstivity,  ///< edge senstivity(0-5)
   double neighbor_radius, ///< initial size of neighbors.
   const unsigned int number_of_output_points///< number of iterations.   
@@ -668,7 +675,7 @@ edge_aware_upsample_point_set(
     make_identity_property_map(OutputIteratorValueType()),
 #endif
     normal_pmap,
-    sharpness_sigma, 
+    sharpness_angle, 
     edge_senstivity,
     neighbor_radius, 
     number_of_output_points);
@@ -687,7 +694,7 @@ edge_aware_upsample_point_set(
   ForwardIterator beyond, ///< past-the-end iterator
   OutputIterator output, ///< output iterator over points.
   NormalPMap normal_pmap, ///< property map:  OutputIterator -> Vector_3.
-  double sharpness_sigma,  ///< control sharpness(0-90)
+  double sharpness_angle,  ///< control sharpness(0-90)
   double edge_senstivity,  ///< edge senstivity(0-5)
   double neighbor_radius, ///< initial size of neighbors.
   const unsigned int number_of_output_points///< number of iterations.     
@@ -699,7 +706,7 @@ edge_aware_upsample_point_set(
     first, beyond,
     output,
     normal_pmap,
-    sharpness_sigma, 
+    sharpness_angle, 
     edge_senstivity,
     neighbor_radius, 
     number_of_output_points);
