@@ -1,6 +1,6 @@
-set ( prj Surface_mesher )
+#set ( prj Surface_mesher )
 
-project ( ${prj} )
+project ( Surface_mesher )
 
 cmake_minimum_required(VERSION 2.6.2)
 if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}.${CMAKE_PATCH_VERSION}" VERSION_GREATER 2.8.3)
@@ -26,23 +26,61 @@ endforeach()
 
 include_directories( ./ )
 
+#New for Qt5 version !
+option (USE_QT5 "Use Qt5 version instead of Qt4" OFF)
+
+if(USE_QT5)
+	if(WIN32)
+	message("Qt5 on Windows needs Windows SDK.")
+	
+	set(CMAKE_LIBRARY_PATH "C:\\Program Files (x86)\\Windows Kits\\8.1\\Lib\\winv6.3\\um\\x64")
+	
+	endif()
+	find_package(CGAL COMPONENTS ImageIO Qt5)
+	include(${CGAL_USE_FILE})
+	
+	FIND_PACKAGE(Qt5Core REQUIRED)
+	FIND_PACKAGE(Qt5OpenGL REQUIRED)
+	FIND_PACKAGE(Qt5Xml REQUIRED)
+	
+	if (Qt5Core_FOUND AND Qt5OpenGL_FOUND AND Qt5Xml_FOUND)
+		message("Qt5 found")
+		set(QT5 TRUE)
+		set(CMAKE_AUTOMOC ON)
+
+list(APPEND QT_INCLUDE_DIR ${Qt5Core_INCLUDE_DIRS}${Qt5OpenGL_INCLUDE_DIRS} ${Qt5Xml_INCLUDE_DIRS}) 
+
+list(APPEND QT_LIBRARIES ${Qt5Core_LIBRARIES} ${Qt5OpenGL_LIBRARIES} ${Qt5Xml_LIBRARIES})
+
+list(APPEND QT_DEFINITIONS ${Qt5Core_DEFINITIONS}${Qt5OpenGL_DEFINITIONS} ${Qt5Xml_DEFINITIONS})
+	endif ()
+else (USE_QT5)
+	find_package(CGAL COMPONENTS ImageIO Qt4)
+
+	include(${CGAL_USE_FILE})
+
+	find_package(Qt4)
+	include(${QT_USE_FILE})
+
+	if(CGAL_Qt4_FOUND AND QT4_FOUND)
+		message("Qt4 found")
+		set(QT4 TRUE)
+	endif()
+endif (USE_QT5)
+
 # QGLViwer needs Qt4 configured with QtOpenGL and QtXml support
 
 set( QT_USE_QTOPENGL TRUE )
 set( QT_USE_QTXML    TRUE )
 set( QT_USE_QTMAIN   TRUE )
 
-find_package(CGAL COMPONENTS ImageIO Qt4)
-if ( CGAL_FOUND AND CGAL_Qt4_FOUND)
+if ( CGAL_FOUND AND (QT4 OR QT5))
   include( ${CGAL_USE_FILE} )
 
-  find_package(Qt4 )
   find_package(QGLViewer )
   find_package(OpenGL    )
   
   if ( QGLVIEWER_FOUND )
-
-    include( ${QT_USE_FILE})
         
     include_directories( ${QGLVIEWER_INCLUDE_DIR} )
     add_definitions(${QGLVIEWER_DEFINITIONS})
@@ -77,6 +115,7 @@ if ( CGAL_FOUND AND CGAL_Qt4_FOUND)
       add_definitions(-DCGAL_SURFACE_MESH_DEMO_USE_MARCHING_CUBE)
     endif()
     
+    if(QT4)	
     qt4_automoc( ${sources} )
 
     qt4_generate_moc( "surface.h" "${CMAKE_CURRENT_BINARY_DIR}/moc_surface.cpp" )
@@ -86,23 +125,43 @@ if ( CGAL_FOUND AND CGAL_Qt4_FOUND)
     qt4_wrap_ui( uis ui/values_list.ui ui/mainwindow.ui ui/optionsdialog.ui ui/raw_image.ui )
     
     qt4_add_resources( qrc_sources values_list.qrc surface_mesher.qrc  ) 
+    endif()
 
-    add_executable  ( ${prj}  ${sources} ${uis} ${qrc_sources} )
+    if(QT5)
+	qt5_generate_moc( "surface.h" "${CMAKE_CURRENT_BINARY_DIR}/moc_surface.cpp" )
+
+	set( sources ${sources} moc_surface.cpp)
+
+	qt5_wrap_ui(uis ui/values_list.ui ui/mainwindow.ui ui/optionsdialog.ui ui/raw_image.ui)
+
+	qt5_add_resources (qrc_sources values_list.qrc surface_mesher.qrc)
+
+    endif()
+    add_executable  ( Surface_mesher  
+		      ${sources} 
+                      ${uis} 
+                      ${qrc_sources} )
     
-    add_to_cached_list( CGAL_EXECUTABLE_TARGETS ${prj} )
+    add_to_cached_list( CGAL_EXECUTABLE_TARGETS Surface_mesher )
 
     # Link the executable to CGAL and third-party libraries
-    target_link_libraries( ${prj} ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES})
+    target_link_libraries( Surface_mesher 
+			   ${CGAL_LIBRARIES} 				   ${CGAL_3RD_PARTY_LIBRARIES})
     
-    target_link_libraries( ${prj} ${QT_LIBRARIES} ${QGLVIEWER_LIBRARIES} ${OPENGL_gl_LIBRARY} ${OPENGL_glu_LIBRARY} )
+    target_link_libraries( Surface_mesher 
+		           ${QT_LIBRARIES} 
+			   ${QGLVIEWER_LIBRARIES})
+
+    target_link_libraries( Surface_mesher 
+			   ${OPENGL_gl_LIBRARY} 
+		   	   ${OPENGL_glu_LIBRARY} )
     
   else( QGLVIEWER_FOUND)
     message(STATUS "NOTICE: This demo needs libQGLViewer, and will not be compiled.")
   endif( QGLVIEWER_FOUND)
-else(CGAL_FOUND AND CGAL_Qt4_FOUND)
+else(CGAL_FOUND AND (QT4 OR QT5))
   if(RUNNING_CGAL_AUTO_TEST)
     # Just to avoid a warning from CMake if that variable is set on the command line...
   endif()
-
-  message(STATUS "NOTICE: This demo needs Qt4, and will not be compiled.")
-endif(CGAL_FOUND AND CGAL_Qt4_FOUND)
+  message(STATUS "NOTICE: This demo needs Qt4 or Qt5, and will not be compiled.")
+endif(CGAL_FOUND AND (QT4 OR QT5))

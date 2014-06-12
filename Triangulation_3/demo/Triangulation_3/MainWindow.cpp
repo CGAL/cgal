@@ -125,7 +125,13 @@ void MainWindow::on_actionLoad_Points_triggered()
   viewer->clear();
 
   // parse fileName to get the file type
+  //New for Qt5 version.
+  #if QT_VERSION > 0x0500
+  std::string fname = fileName.toLatin1().data();//toAscii() deprecated with Qt5.
+  #else
   std::string fname = fileName.toAscii().data();
+  #endif
+
   std::string ftype = fname.substr( fname.find_last_of('.')+1 );
 
   if ( ftype.compare("off")==0 || ftype.compare("OFF")==0 ) { // read from OFF file
@@ -158,7 +164,13 @@ void MainWindow::on_actionSave_Points_triggered()
   if( fileName.isEmpty() )  return;
 
   // parse fileName to get the file type
+  //New for Qt5 version.
+  #if QT_VERSION > 0x0500
+  std::string fname = fileName.toLatin1().data();//toAscii() deprecated with Qt5.
+  #else
   std::string fname = fileName.toAscii().data();
+  #endif
+
   std::string ftype = fname.substr( fname.find_last_of('.')+1 );
 
   if ( ftype.compare("off")==0 || ftype.compare("OFF")==0 ) { // save to OFF file
@@ -173,13 +185,26 @@ void MainWindow::on_actionSave_Points_triggered()
 void MainWindow::on_actionGenerate_Points_triggered()
 {
   bool isOk;
-  int nPoints = QInputDialog::getInteger(this,
+ 
+  //New for Qt5 version !
+  #if QT_VERSION > 0x0500
+    int nPoints = QInputDialog::getInt(this,
 		"3D Triangulation demo", "Number of points: ",	// caption and label
 		100,	// default value
 		4,	// min value
 		2147483647,	// max value
         1,	// step value of arrow button
 		&isOk);	// if OK is pressed
+  #else//Deprecated with Qt4.5.
+    int nPoints = QInputDialog::getInteger(this,
+		"3D Triangulation demo", "Number of points: ",	// caption and label
+		100,	// default value
+		4,	// min value
+		2147483647,	// max value
+        1,	// step value of arrow button
+		&isOk);	// if OK is pressed
+  #endif
+
 
   if ( isOk) {
     // erase old data
