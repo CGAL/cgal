@@ -23,6 +23,7 @@
 #include <boost/config.hpp>
 #include <boost/iterator/iterator_adaptor.hpp>
 #include <boost/iterator/transform_iterator.hpp>
+#include <boost/type_traits/remove_const.hpp>
 
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/properties.hpp>
@@ -58,7 +59,7 @@ public:
   Prevent_deref(const I& i) : Base(i) {};
 private:
   friend class boost::iterator_core_access;
-  reference dereference() const { return const_cast<reference&>(this->base_reference()); }
+  reference dereference() const { return const_cast<typename boost::remove_reference<reference>::type&>(this->base_reference()); }
 };
 
 // a HDS_halfedge pretending to be an Edge

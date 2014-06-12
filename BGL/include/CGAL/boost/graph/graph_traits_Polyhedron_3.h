@@ -490,8 +490,9 @@ template<class Gt, class I, CGAL_HDS_PARAM_, class A>
 struct halfedge_graph_traits< CGAL::Polyhedron_3<Gt,I,HDS,A> >
    : CGAL::HDS_graph_traits< CGAL::Polyhedron_3<Gt,I,HDS,A> >
 {
+  typedef CGAL::HDS_graph_traits< CGAL::Polyhedron_3<Gt,I,HDS,A> > Base;
   typedef typename Gt::Point_3 Point;
-  typedef edge_iterator undirected_edge_iterator;
+  typedef typename Base::edge_iterator undirected_edge_iterator;
 };
 } // namespace CGAL
 #include <CGAL/boost/graph/backward_compatibility_functions.h>
