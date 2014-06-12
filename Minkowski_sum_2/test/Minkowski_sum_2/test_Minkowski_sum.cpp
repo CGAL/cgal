@@ -21,10 +21,7 @@
 
 #include <list>
 
-// instead of
-//typedef CGAL::Cartesian<Rational>                   Kernel;
-// workaround for VC++ 
-struct Kernel : public CGAL::Cartesian<Rational> {};
+typedef CGAL::Cartesian<Rational>                   Kernel;
 
 typedef Kernel::Point_2                             Point_2;
 typedef Kernel::Segment_2                           Segment_2;
@@ -98,6 +95,19 @@ int main (int argc, char **argv)
     std::cout << "Using the convolution method ... ";
     sum_conv = minkowski_sum_2 (pgn1, pgn2);
     std::cout << "Done." << std::endl;
+
+    Polygon_with_holes_2                                     sum_conv_new;
+    std::cout << "Using the reduced convolution method ... ";
+    sum_conv_new = minkowski_sum_2_new (pgn1, pgn2);
+    if (are_equal (sum_conv, sum_conv_new))
+    {
+        std::cout << "OK." << std::endl;
+    }
+    else
+    {
+        std::cout << "ERROR (different result)." << std::endl;
+        return 1;
+    }
     
     // Define auxiliary polygon-decomposition objects.
     CGAL::Small_side_angle_bisector_decomposition_2<Kernel>  ssab_decomp;
