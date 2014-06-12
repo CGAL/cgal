@@ -173,9 +173,8 @@ int main( int argc, char** argv )
       if ( CGAL::abs(angle)<100 ){
         --nb_sharp_edges;
       assert(
-        Point_3 p = point(source(hd,surface_mesh),surface_mesh);
-        Point_3 q = point(target(hd,surface_mesh),surface_mesh);
-        constrained_edges[*eb]==std::make_pair(p,q));
+        constrained_edges[*eb]==std::make_pair( point(source(hd,surface_mesh),surface_mesh),
+                                                point(target(hd,surface_mesh),surface_mesh)));
       }
     }
   }
