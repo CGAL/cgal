@@ -1083,8 +1083,8 @@ private:
     if ( is_vv_computed ) { return; }
     is_vv_computed = true;
 
-    bool pq = is_endpoint_of(sp, sq);
-    bool pr = is_endpoint_of(sp, sr);
+    const bool pq = is_endpoint_of(sp, sq);
+    const bool pr = is_endpoint_of(sp, sr);
 
     Point_2 pp = sp.point();
 
@@ -1095,7 +1095,15 @@ private:
       vv = pp;
       return;
     }
+    return compute_vv_bisectors(sp, sq, sr, PSS_Type());
+  }
 
+  inline void
+  compute_vv_bisectors(
+      const Site_2& sp, const Site_2& sq, const Site_2& sr,
+      const PSS_Type&) const
+  {
+    const bool pq = is_endpoint_of(sp, sq);
     Polychainline_2 goodbisector;
     if (pq) {
       goodbisector = bisector_linf(sp, sq);
@@ -1120,7 +1128,6 @@ private:
     vv = goodbisector.first_intersection_point_with(bqr);
     CGAL_SDG_DEBUG(std::cout
         << "debug: computevv PSS vv=" << vv << std::endl;);
-
   }
 
 
