@@ -370,9 +370,9 @@ class Slivers_exuder
 : public Slivers_exuder_base<typename C3T3::Triangulation,
                              typename C3T3::Concurrency_tag>
 {
-  
+
 public: // Types
-  
+
   typedef typename C3T3::Concurrency_tag Concurrency_tag;
   typedef Slivers_exuder_base<
     typename C3T3::Triangulation, Concurrency_tag> Base;
@@ -600,7 +600,7 @@ private:
         cit != c3t3_.cells_in_complex_end() ;
         ++cit)
     {
-      const double value 
+      const double value
         = sliver_criteria_(cit);
 
       if( value < sliver_criteria_.sliver_bound() )
@@ -739,7 +739,7 @@ private:
         cit != c3t3_.cells_in_complex_end() ;
         ++cit)
     {
-      const double value = 
+      const double value =
         sliver_criteria_(cit);
 
       if( value < sliver_criteria_.sliver_bound() )
@@ -758,12 +758,11 @@ private:
 
 private:
 
-  
+
 #ifdef CGAL_LINKED_WITH_TBB
-  
+
   // Functor for enqueue_task function
-  template <typename SE, typename C3T3, typename Cell_handle, 
-            bool pump_vertices_on_surfaces>
+  template <typename SE, bool pump_vertices_on_surfaces>
   class Pump_vertex
   {
     SE                    & m_sliver_exuder;
@@ -784,7 +783,7 @@ private:
       m_erase_counter(erase_counter)
     {
     }
-    
+
     // Constructor
     Pump_vertex(const Pump_vertex &pvx)
     : m_sliver_exuder(pvx.m_sliver_exuder),
@@ -830,7 +829,7 @@ private:
           // pump_vertices_on_surfaces is a boolean template parameter.  The
           // following condition is pruned at compiled time, if
           // pump_vertices_on_surfaces==false.
-          if (pump_vertices_on_surfaces 
+          if (pump_vertices_on_surfaces
            || m_c3t3.in_dimension(m_cell_handle->vertex(i)) > 2)
           {
             m_sliver_exuder.pump_vertex<pump_vertices_on_surfaces>(
@@ -1320,7 +1319,7 @@ get_best_weight(const Vertex_handle& v, bool *could_lock_zone) const
     // expand prestar (insert opposite_cell facets in pre_star)
     Facet link = pre_star.front()->second;
     const Cell_handle& opposite_cell = tr_.mirror_facet(link).first;
-    
+
     if (could_lock_zone && !tr_.try_lock_cell(opposite_cell))
     {
       *could_lock_zone = false;
@@ -1432,9 +1431,9 @@ restore_cells_and_boundary_facets(
     // the maximum, push it in the cells queue.
     if( c3t3_.is_in_complex(*cit) )
     {
-      double criterion_value 
+      double criterion_value
         = sliver_criteria_(*cit);
-      
+
       if( criterion_value < sliver_criteria_.sliver_bound() )
         add_cell_to_queue<pump_vertices_on_surfaces>(*cit, criterion_value);
     }
@@ -1573,7 +1572,7 @@ Slivers_exuder<C3T3,Md,SC,V_,FT>::
 enqueue_task(Cell_handle ch, unsigned int erase_counter, double value)
 {
   this->enqueue_work(
-    Pump_vertex<Self, C3T3, Cell_handle, pump_vertices_on_surfaces>(
+    Pump_vertex<Self, pump_vertices_on_surfaces>(
       *this, c3t3_, ch, erase_counter),
     value);
 }

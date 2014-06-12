@@ -473,7 +473,7 @@ class Sliver_perturber
 public:
   typedef Abstract_perturbation<C3T3,MeshDomain,SliverCriterion> Perturbation;
   typedef boost::ptr_vector<Perturbation>                 Perturbation_vector;
-  
+
 private:
   // Relaxed heap
 
@@ -666,15 +666,15 @@ private:
 private:
 
 #ifdef CGAL_LINKED_WITH_TBB
-  
+
   // Functor for enqueue_task function
-  template <typename SP, typename Visitor_, typename Bad_vertices_vector_>
+  template <typename SP, typename Bad_vertices_vector_>
   class Perturb_vertex
   {
     const SP              & m_sliver_perturber;
     PVertex                 m_pv;
     FT                      m_sliver_bound;
-    Visitor_              & m_visitor;
+    Visitor               & m_visitor;
     Bad_vertices_vector_  & m_bad_vertices;
 
   public:
@@ -682,16 +682,16 @@ private:
     Perturb_vertex(const SP &sp,
                    const PVertex &pv,
                    FT sliver_bound,
-                   Visitor_& visitor,
+                   Visitor& visitor,
                    Bad_vertices_vector_ &bad_vertices)
-    : m_sliver_perturber(sp), 
+    : m_sliver_perturber(sp),
       m_pv(pv),
       m_sliver_bound(sliver_bound),
       m_visitor(visitor),
       m_bad_vertices(bad_vertices)
     {
     }
-    
+
     // Constructor
     Perturb_vertex(const Perturb_vertex &pvx)
     : m_sliver_perturber(pvx.m_sliver_perturber),
@@ -771,7 +771,7 @@ operator()(Visitor visitor)
 {
   //check criterion bound
   if ( sliver_criterion_.sliver_bound() == 0 )
-    sliver_criterion_.set_sliver_bound(Sc::default_value);  
+    sliver_criterion_.set_sliver_bound(Sc::default_value);
 
   // Reset sliver value cache
   helper_.reset_cache();
@@ -831,7 +831,7 @@ operator()(Visitor visitor)
   running_time_.stop();
   helper_.reset_cache();//in case we re-use caches in another operation
                                // after this perturbation
-  
+
 #ifdef CGAL_MESH_3_PERTURBER_VERBOSE
   std::cerr << std::endl
             << "Total perturbation time: " << running_time_.time() << "s";
@@ -1329,7 +1329,7 @@ perturb_vertex( PVertex pv
     {
       return;
     }
-    
+
     // Perturb vertex
     Vertex_vector modified_vertices;
 
@@ -1634,7 +1634,7 @@ enqueue_task(const PVertex &pv,
              ) const
 {
   this->enqueue_work(
-    Perturb_vertex<Self, Visitor, Bad_vertices_vector>(
+    Perturb_vertex<Self, Bad_vertices_vector>(
       *this, pv, sliver_bound, visitor, bad_vertices),
     pv);
 }
