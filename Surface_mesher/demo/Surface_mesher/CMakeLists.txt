@@ -27,33 +27,20 @@ endforeach()
 include_directories( ./ )
 
 #New for Qt5 version !
+
+# QGLViwer needs Qt4 configured with QtOpenGL and QtXml support
+
+set( QT_USE_QTOPENGL TRUE )
+set( QT_USE_QTXML    TRUE )
+set( QT_USE_QTMAIN   TRUE )
+
 option (USE_QT5 "Use Qt5 version instead of Qt4" OFF)
 
 if(USE_QT5)
-	if(WIN32)
-	message("Qt5 on Windows needs Windows SDK.")
-	
-	set(CMAKE_LIBRARY_PATH "C:\\Program Files (x86)\\Windows Kits\\8.1\\Lib\\winv6.3\\um\\x64")
-	
-	endif()
 	find_package(CGAL COMPONENTS ImageIO Qt5)
 	include(${CGAL_USE_FILE})
 	
-	FIND_PACKAGE(Qt5Core REQUIRED)
-	FIND_PACKAGE(Qt5OpenGL REQUIRED)
-	FIND_PACKAGE(Qt5Xml REQUIRED)
-	
-	if (Qt5Core_FOUND AND Qt5OpenGL_FOUND AND Qt5Xml_FOUND)
-		message("Qt5 found")
-		set(QT5 TRUE)
-		set(CMAKE_AUTOMOC ON)
-
-list(APPEND QT_INCLUDE_DIR ${Qt5Core_INCLUDE_DIRS}${Qt5OpenGL_INCLUDE_DIRS} ${Qt5Xml_INCLUDE_DIRS}) 
-
-list(APPEND QT_LIBRARIES ${Qt5Core_LIBRARIES} ${Qt5OpenGL_LIBRARIES} ${Qt5Xml_LIBRARIES})
-
-list(APPEND QT_DEFINITIONS ${Qt5Core_DEFINITIONS}${Qt5OpenGL_DEFINITIONS} ${Qt5Xml_DEFINITIONS})
-	endif ()
+	find_package(Qt5)
 else (USE_QT5)
 	find_package(CGAL COMPONENTS ImageIO Qt4)
 
@@ -67,12 +54,6 @@ else (USE_QT5)
 		set(QT4 TRUE)
 	endif()
 endif (USE_QT5)
-
-# QGLViwer needs Qt4 configured with QtOpenGL and QtXml support
-
-set( QT_USE_QTOPENGL TRUE )
-set( QT_USE_QTXML    TRUE )
-set( QT_USE_QTMAIN   TRUE )
 
 if ( CGAL_FOUND AND (QT4 OR QT5))
   include( ${CGAL_USE_FILE} )
@@ -146,7 +127,8 @@ if ( CGAL_FOUND AND (QT4 OR QT5))
 
     # Link the executable to CGAL and third-party libraries
     target_link_libraries( Surface_mesher 
-			   ${CGAL_LIBRARIES} 				   ${CGAL_3RD_PARTY_LIBRARIES})
+			   ${CGAL_LIBRARIES} 				   
+			   ${CGAL_3RD_PARTY_LIBRARIES})
     
     target_link_libraries( Surface_mesher 
 		           ${QT_LIBRARIES} 

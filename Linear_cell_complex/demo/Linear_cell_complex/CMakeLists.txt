@@ -28,40 +28,24 @@ add_definitions(-DCGAL_PROFILE_LCC_DEMO)
 
 ##################
 
+set( QT_USE_QTXML    TRUE )
+set( QT_USE_QTMAIN   TRUE )
+set( QT_USE_QTSCRIPT  TRUE )
+set( QT_USE_QTOPENGL  TRUE )
+
 #New for Qt5 version !
 option (USE_QT5 "Use Qt5 version instead of Qt4" OFF)
 
 if(USE_QT5)
-	if(WIN32)
-	message("Qt5 on Windows needs Windows SDK.")
-	
-	set(CMAKE_LIBRARY_PATH "C:\\Program Files (x86)\\Windows Kits\\8.1\\Lib\\winv6.3\\um\\x64")
-	
-	endif()
+
 	find_package(CGAL COMPONENTS Qt5)
+
 	include(${CGAL_USE_FILE})
-
-	FIND_PACKAGE(Qt5Core REQUIRED)
-	FIND_PACKAGE(Qt5Gui REQUIRED)
-	FIND_PACKAGE(Qt5OpenGL REQUIRED)
-	FIND_PACKAGE(Qt5Widgets REQUIRED)
-	FIND_PACKAGE(Qt5Xml REQUIRED)
-	FIND_PACKAGE(Qt5Quick REQUIRED)
 	
-	if (Qt5Core_FOUND AND Qt5Gui_FOUND AND Qt5OpenGL_FOUND AND Qt5Widgets_FOUND AND Qt5Xml_FOUND)
-		message("Qt5 found")
-		set(QT5 TRUE)
-		set(CMAKE_AUTOMOC ON)
+	find_package(Qt5)
 
-list(APPEND QT_INCLUDE_DIR ${Qt5Core_INCLUDE_DIRS} ${Qt5Gui_INCLUDE_DIRS} ${Qt5Widgets_INCLUDE_DIRS} ${Qt5OpenGL_INCLUDE_DIRS} ${Qt5Xml_INCLUDE_DIRS}) 
-
-list(APPEND QT_LIBRARIES ${Qt5Core_LIBRARIES} ${Qt5Gui_LIBRARIES} ${Qt5Widgets_LIBRARIES} ${Qt5OpenGL_LIBRARIES} ${Qt5Xml_LIBRARIES})
-
-list(APPEND QT_DEFINITIONS ${Qt5Core_DEFINITIONS} ${Qt5Gui_DEFINITIONS} ${Qt5Widgets_DEFINITIONS} ${Qt5OpenGL_DEFINITIONS} ${Qt5Xml_DEFINITIONS})
-	endif ()
 else (USE_QT5)
 	find_package(CGAL COMPONENTS Qt4)
-
 	include(${CGAL_USE_FILE})
 
 	find_package(Qt4)
@@ -72,12 +56,6 @@ else (USE_QT5)
 		set(QT4 TRUE)
 	endif()
 endif (USE_QT5)
-
-
-set( QT_USE_QTXML    TRUE )
-set( QT_USE_QTMAIN   TRUE )
-set( QT_USE_QTSCRIPT  TRUE )
-set( QT_USE_QTOPENGL  TRUE )
 
 find_package(OpenGL)
 find_package(QGLViewer)
@@ -115,7 +93,6 @@ if(QT4)
 	qt4_automoc(MainWindow.cpp Viewer.cpp)
 endif()
 if(QT5)
-
 	qt5_wrap_ui(uis MainWindow.ui CreateMesh.ui CreateMenger.ui)
 
 	qt5_add_resources (RESOURCE_FILES ./Linear_cell_complex_3.qrc)
