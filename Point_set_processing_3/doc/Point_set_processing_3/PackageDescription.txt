@@ -2,7 +2,6 @@
 
 /*!
 \addtogroup PkgPointSetProcessing
-\todo check generated documentation
 \cgalPkgDescriptionBegin{Point Set Processing,PkgPointSetProcessingSummary}
 \cgalPkgPicture{point_set_processing_detail.png}
 \cgalPkgSummaryBegin
