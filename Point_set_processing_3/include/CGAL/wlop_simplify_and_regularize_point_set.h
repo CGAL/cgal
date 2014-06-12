@@ -340,16 +340,20 @@ wlop_simplify_and_regularize_point_set(
                                ///< RandomAccessIterator -> Point_3
   PointPMapOut point_pmap_output, ///< property map: value_type of 
                                ///< OutputIterator -> Point_3
-  double retain_percentage,    ///< percentage of points to retain. 
+  double select_percentage,    ///< percentage of points to retain. 
                                ///< Default: 5%.
   double radius,               ///< neighbors radius.
-                               ///< main user parameter.  
-                               ///< The result is irregular for small values.
-                               ///< The algorithm is very slow for large values.
+                               ///< key parameter that need to be fine tune.  
+                               ///< The result will be irregular if this value is too small. 
+                               ///< The process will be slow, and the result will be
+                               ///< too smooth if this value is too big.
+                               ///< Usually, a radius that containing "4 rings" of 
+                               ///< neighbor points is a good start.
                                ///< Default: 0.05 * diameter of bounding box.
   unsigned int iter_number,    ///< number of iterations. Default: 35.
-  bool require_uniform_sampling,///< if needed to compute density when the
-                               ///< input is nonuniform. Default: false. 
+                               ///< the more iterations, the more regular the result will be.
+  bool require_uniform_sampling,///< an optional preprocessing, turn it on if the distribution
+                               ///< of input is highly nonuniform. Default: false. 
   const Kernel&                ///< geometric traits.
 )
 {
@@ -369,8 +373,8 @@ wlop_simplify_and_regularize_point_set(
   // to fix: should have at least three distinct points
   // but this is costly to check
   CGAL_point_set_processing_precondition(first != beyond);
-  CGAL_point_set_processing_precondition(retain_percentage >= 0 
-                                         && retain_percentage <= 100);
+  CGAL_point_set_processing_precondition(select_percentage >= 0 
+                                         && select_percentage <= 100);
 
   // Random shuffle
   std::random_shuffle (first, beyond);
@@ -378,7 +382,7 @@ wlop_simplify_and_regularize_point_set(
   // Computes original(input) and sample points size 
   std::size_t number_of_original = std::distance(first, beyond);
   std::size_t number_of_sample = (std::size_t)(FT(number_of_original) * 
-                                 (retain_percentage / FT(100.0)));
+                                 (select_percentage / FT(100.0)));
   std::size_t first_index_to_sample = number_of_original - number_of_sample;
 
   // The first point iter of original and sample points
@@ -589,7 +593,7 @@ wlop_simplify_and_regularize_point_set(
   OutputIterator output,        ///< add back-inserter
   PointPMapIn point_pmap_input, ///< property map RandomAccessIterator  -> Point_3
   PointPMapOut point_pmap_output,  ///< property map OutputIterator
-  const double retain_percentage,     ///< percentage of points to retain
+  const double select_percentage,     ///< percentage of points to retain
   double neighbor_radius,       ///< size of neighbors.
   const unsigned int max_iter_number, ///< number of iterations.
   const bool require_uniform_sampling     ///< if needed to compute density 
@@ -605,7 +609,7 @@ wlop_simplify_and_regularize_point_set(
       output,
       point_pmap_input,
       point_pmap_output,
-      retain_percentage,
+      select_percentage,
       neighbor_radius,
       max_iter_number,
       require_uniform_sampling,
@@ -626,7 +630,7 @@ wlop_simplify_and_regularize_point_set(
   RandomAccessIterator  beyond, ///< past-the-end iterator
   OutputIterator output,        ///< add back-inserter
   PointPMap point_pmap_input,   ///< property map RandomAccessIterator  -> Point_3
-  const double retain_percentage = 5, ///< percentage of points to retain
+  const double select_percentage = 5, ///< percentage of points to retain
   double neighbor_radius = -1, ///< size of neighbors.
   const unsigned int max_iter_number = 35, ///< number of iterations.
   const bool require_uniform_sampling = false ///< if needed to compute density   
@@ -643,7 +647,7 @@ wlop_simplify_and_regularize_point_set(
         #else
             make_identity_property_map(OutputIteratorValueType()),
         #endif
-            retain_percentage, 
+            select_percentage, 
             neighbor_radius, 
             max_iter_number, 
             require_uniform_sampling);
@@ -661,7 +665,7 @@ wlop_simplify_and_regularize_point_set(
   RandomAccessIterator  first,  ///< iterator over the first input point
   RandomAccessIterator  beyond, ///< past-the-end iterator
   OutputIterator output,        ///< add back-inserter
-  const double retain_percentage = 5, ///< percentage of points to retain
+  const double select_percentage = 5, ///< percentage of points to retain
   double neighbor_radius = -1,  ///< size of neighbors.
   const unsigned int max_iter_number = 35, ///< number of iterations.
   const bool require_uniform_sampling = false ///< if needed to compute density   
@@ -680,7 +684,7 @@ wlop_simplify_and_regularize_point_set(
                                      <RandomAccessIterator >::
                                      value_type()),
         #endif
-          retain_percentage, 
+          select_percentage, 
           neighbor_radius, 
           max_iter_number, 
           require_uniform_sampling);

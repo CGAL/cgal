@@ -40,7 +40,7 @@ int main(void)
   //with all parameters begins
   /*
   //Algorithm parameters
-  const double retain_percentage = 2;       // percentage of points to retain.
+  const double select_percentage = 2;       // percentage of points to retain.
   const double neighbor_radius = 0.03;      // neighbors size.
   const unsigned int iter_number = 30;      // number of iterations.
   const bool require_uniform_sampling = true;  // Optional pre-processing. 
@@ -50,7 +50,7 @@ int main(void)
                           (points.begin(),
                            points.end(),
                            back_inserter(output),
-                           retain_percentage, 
+                           select_percentage, 
                            neighbor_radius,
                            iter_number,
                            require_uniform_sampling);
