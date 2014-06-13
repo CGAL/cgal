@@ -5,7 +5,9 @@
 #include <CGAL/function_objects.h>
 #include <CGAL/Join_input_iterator.h>
 #include <CGAL/algorithm.h>
+#ifndef Q_MOC_RUN
 #include <CGAL/random_convex_hull_in_disc_2.h>
+#endif
 
 
 // Qt headers
@@ -311,8 +313,7 @@ MainWindow::on_actionGeneratePolytopeInDisc_triggered()
 
 
     // default cursor
-    QApplication::restoreOverrideCursor();
-
+    QApplication::restoreOverrideCursor();std::cout<<"OK";
     
     emit(changed());
 }
