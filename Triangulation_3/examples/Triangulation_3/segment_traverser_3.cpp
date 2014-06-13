@@ -34,12 +34,15 @@ void main() {
     Traverser st( dt, Point_3(-3,0,0), Point_3(3,0,0) );
 
     // Count the number of finite cells traversed.
-	unsigned int cells = 0;
+	unsigned int inf = 0, fin = 0;
     while( st.has_next() ) {
-        if( !dt.is_infinite(st) )
-            ++cells;
+        if( dt.is_infinite(st) )
+            ++inf;
+        else
+            ++fin;
         ++st;
     }
 
-	std::cout << "The number of finite cells between " << st.source() << " and " << st.target() << " is " << cells << std::endl;
+    std::cout << "While traversing from " << st.source() << " to " << st.target() << std::endl;
+    std::cout << inf << " infinite and " << fin << " finite cells were visited." << std::endl;
 }

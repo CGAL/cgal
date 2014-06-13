@@ -517,6 +517,14 @@ simplices can be stored in a set.
 
 \cgalExample{Triangulation_3/fast_location_3.cpp}
 
+\cgalModifBegin
+\subsection Triangulation3exsegmenttraverser Traversing the Triangulation Along a Segment
+
+The package provides a utility class that can be used to traverse the triangulation along a segment. All cells visited by this traverser are guaranteed to intersect the interior of the segment.
+\cgalModifEnd
+
+\cgalExample{Triangulation_3/segment_traverser_3.cpp}
+
 \subsection Triangulation_3FindingtheCellsinConflict Finding the Cells in Conflict with a Point in a Delaunay Triangulation
 
 \cgalExample{Triangulation_3/find_conflicts_3.cpp}
@@ -1092,6 +1100,10 @@ displacement in release 3.7.
 In 2011, Pedro de Castro and Olivier Devillers implemented in release
 3.8 the
 structural filtering method, improving the efficiency of point location.
+
+\cgalModifBegin
+In 2014, Thijs van Lankveld added the segment traverser utility class.
+\cgalModifEnd
 
 A new demo of this package was introduced in \cgal 3.8, coded by Fei
 (Sophie) Che, who was co-mentored by Manuel Caroli and Monique

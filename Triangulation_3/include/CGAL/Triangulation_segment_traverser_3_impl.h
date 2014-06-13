@@ -220,7 +220,7 @@ increment_3() {
     int li = rng.template get_bits<2>();
 
     CGAL_triangulation_assertion_code( bool incell = true; )
-    for( int k = 0; k < 4; ++k, li = _tr.incr_ind(li) ) {
+    for( int k = 0; k < 4; ++k, li = _tr.increment_index(li) ) {
         Cell_handle next = _pos->neighbor(li);
         if( next == _prev )
             continue;
@@ -245,7 +245,7 @@ increment_3() {
         // Check if the target is inside the pyramid.
         int lj = rng.template get_bits<2>();
         int Or = 0;
-        for( int l = 0; l < 4; ++l, lj = _tr.incr_ind(lj) ) {
+        for( int l = 0; l < 4; ++l, lj = _tr.increment_index(lj) ) {
             if( li == lj )
                 continue;
 
@@ -364,7 +364,7 @@ increment_3_inf( int inf ) {
     // Check if the line enters an adjacent infinite cell.
     // This occurs if the target lies on the other side of
     // a plane through one of the finite edges and the source point.
-    for( int j = 0; j != 4; ++j, li = _tr.incr_ind(li) ) {
+    for( int j = 0; j != 4; ++j, li = _tr.increment_index(li) ) {
         if( li == inf ) {
             o[li] = COPLANAR;
             continue;
