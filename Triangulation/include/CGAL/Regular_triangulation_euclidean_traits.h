@@ -94,7 +94,10 @@ public:
     template <typename ForwardIterator> 
     result_type operator()(ForwardIterator start, ForwardIterator end) const
     {
-      std::cerr << "start->point()[0]=" << start->point()[0] << std::endl; // CJTODO DEBUG
+      std::cerr << "Traits flat orientation - points: " ; // CJTODO DEBUG          
+      for (ForwardIterator it = start ; it != end ; ++it)
+        std::cerr << (*it).point()[0] << " ";
+      std::cerr << std::endl; // CJTODO DEBUG
       Point_drop_weight_d pdw = m_kernel.point_drop_weight_d_object();
       return m_kernel.construct_flat_orientation_d_object() (
         boost::make_transform_iterator(start, pdw),
