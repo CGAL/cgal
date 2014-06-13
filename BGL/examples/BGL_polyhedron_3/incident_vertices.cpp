@@ -46,10 +46,10 @@ adjacent_vertices_V2(const Polyhedron& g,
 }
 
 
-int main()
+int main(int argc, char** argv)
 { 
+  std::ifstream in(argv[1]);
   Polyhedron P;
-  std::ifstream in("cube.off");
   in >> P;
   GraphTraits::vertex_iterator vi = vertices(P).first;
   std::list<vertex_descriptor> V;

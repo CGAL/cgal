@@ -38,10 +38,11 @@ struct Source {
   }
 };
 
-int main()
+int main(int argc, char** argv)
 { 
+  std::ifstream in(argv[1]);
   Polyhedron P;
-  std::cin >> P;
+  in >> P;
   GraphTraits::vertex_descriptor vd = *(vertices(P).first);
 
   typedef boost::transform_iterator<Source<Polyhedron>,halfedge_around_target_iterator> adjacent_vertex_iterator; 
