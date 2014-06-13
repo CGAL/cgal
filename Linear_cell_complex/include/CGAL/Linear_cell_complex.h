@@ -350,17 +350,17 @@ namespace CGAL {
 
     /** validate the lcc
      */
-    void validate_scene()
+    void validate_attributes()
     {
-      Base::validate_scene();
+      Base::validate_attributes();
 
-      // On vérifie que chaque brin a un 0-plongement
+      // Each dart needs to have a 0-embedding
       for (typename Dart_range::iterator it(this->darts().begin()),
              itend(this->darts().end()); it != itend; ++it)
       {
         if ( vertex_attribute(it)==null_handle )
         {
-          // sinon on crée un point à l'origine
+          // If a dart don't have a 0-attribute, we create a Point at the origin
           set_vertex_attribute(it, create_vertex_attribute(CGAL::ORIGIN));
         }
       }
@@ -702,25 +702,27 @@ namespace CGAL {
     /** Insert a point in a given 1-cell.
      * @param dh a dart handle to the 1-cell
      * @param p the point to insert
+     * @param update_attributes a boolean to update the enabled attributes
      * @return a dart handle to the new vertex containing p.
      */
-    Dart_handle insert_point_in_cell_1(Dart_handle dh, const Point& p, bool update_attribute)
+    Dart_handle insert_point_in_cell_1(Dart_handle dh, const Point& p, bool update_attributes)
     {
       return CGAL::insert_cell_0_in_cell_1(*this, dh,
                                            create_vertex_attribute(p),
-                                           update_attribute);
+                                           update_attributes);
     }
 
     /** Insert a point in a given 2-cell.
      * @param dh a dart handle to the 2-cell
      * @param p the point to insert
+     * @param update_attributes a boolean to update the enabled attributes
      * @return a dart handle to the new vertex containing p.
      */
-    Dart_handle insert_point_in_cell_2(Dart_handle dh, const Point& p, bool update_attribute)
+    Dart_handle insert_point_in_cell_2(Dart_handle dh, const Point& p, bool update_attributes)
     {
       Vertex_attribute_handle v = create_vertex_attribute(p);
 
-      Dart_handle first = CGAL::insert_cell_0_in_cell_2(*this, dh, v, update_attribute);
+      Dart_handle first = CGAL::insert_cell_0_in_cell_2(*this, dh, v, update_attributes);
 
       if ( first==null_handle ) // If the triangulated facet was made of one dart
         erase_vertex_attribute(v);
@@ -735,6 +737,7 @@ namespace CGAL {
     /** Insert a point in a given i-cell.
      * @param dh a dart handle to the i-cell
      * @param p the point to insert
+     * @param update_attributes a boolean to update the enabled attributes
      * @return a dart handle to the new vertex containing p.
      */
     template <unsigned int i>
@@ -748,23 +751,26 @@ namespace CGAL {
     /** Insert a dangling edge in a given facet.
      * @param dh a dart of the facet (!=NULL).
      * @param p the coordinates of the new vertex.
+     * @param update_attributes a boolean to update the enabled attributes
      * @return a dart of the new edge, incident to the new vertex.
      */
     Dart_handle insert_dangling_cell_1_in_cell_2(Dart_handle dh,
-                                                 const Point& p)
+                                                 const Point& p,
+                                                 bool update_attributes = true)
     {
       return CGAL::insert_dangling_cell_1_in_cell_2
-          (*this, dh, create_vertex_attribute(p));
+          (*this, dh, create_vertex_attribute(p), update_attributes);
     }
 
     /** Insert a point in a given i-cell.
      * @param dh a dart handle to the i-cell
      * @param p the point to insert
+     * @param update_attributes a boolean to update the enabled attributes
      * @return a dart handle to the new vertex containing p.
      */
     template <unsigned int i>
-    Dart_handle insert_barycenter_in_cell(Dart_handle dh)
-    { return insert_point_in_cell<i>(dh, barycenter<i>(dh)); }
+    Dart_handle insert_barycenter_in_cell(Dart_handle dh, bool update_attributes = true)
+    { return insert_point_in_cell<i>(dh, barycenter<i>(dh), update_attributes); }
 
     /** Compute the dual of a Linear_cell_complex.
      * @param alcc the lcc in which we build the dual of this lcc.

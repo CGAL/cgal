@@ -29,6 +29,7 @@ namespace CGAL
 /** Insert a vertex in a given edge.
  * @param amap the used combinatorial map.
  * @param adart a dart of the edge (!=NULL && !=null_dart_handle).
+ * @param update_attributes a boolean to update the enabled attributes
  * @return a dart of the new vertex.
  */
 template<class CMap>
@@ -116,6 +117,7 @@ insert_cell_0_in_cell_1( CMap& amap, typename CMap::Dart_handle adart,
  * once for each inital edge of the facet.
  * @param amap the used combinatorial map.
  * @param adart a dart of the facet to triangulate.
+ * @param update_attributes a boolean to update the enabled attributes
  * @return A dart incident to the new vertex.
  */
 template < class CMap >
@@ -259,8 +261,11 @@ insert_cell_0_in_cell_2( CMap& amap, typename CMap::Dart_handle adart,
         amap.unmark(amap.beta(*itd, dim), treated);
     }
     if ( *itd!=adart )
-      CGAL::internal::Degroup_attribute_functor_run<CMap, 2>::
-          run(&amap, adart, *itd);
+      if (update_attributes)
+      {
+        CGAL::internal::Degroup_attribute_functor_run<CMap, 2>::
+            run(&amap, adart, *itd);
+      }
   }
 
   CGAL_assertion(amap.is_whole_map_unmarked(treated));
@@ -275,6 +280,7 @@ insert_cell_0_in_cell_2( CMap& amap, typename CMap::Dart_handle adart,
 /** Insert a dangling edge in a 2-cell between given by a dart.
  * @param amap the used combinatorial map.
  * @param adart1 a first dart of the facet (!=NULL && !=null_dart_handle).
+ * @param update_attributes a boolean to update the enabled attributes
  * @return a dart of the new edge, not incident to the vertex of adart1.
  */
 template<class CMap>
@@ -398,6 +404,7 @@ bool is_insertable_cell_1_in_cell_2(const CMap& amap,
  * @param amap the used combinatorial map.
  * @param adart1 a first dart of the facet (!=NULL && !=null_dart_handle).
  * @param adart2 a second dart of the facet. If NULL insert a dangling edge.
+ * @param update_attributes a boolean to update the enabled attributes
  * @return a dart of the new edge, and not incident to the
  *         same vertex than adart1.
  */
@@ -487,6 +494,7 @@ insert_cell_1_in_cell_2(CMap& amap,
   {
     CGAL::internal::Degroup_attribute_functor_run<CMap, 2>::run(&amap, d1, d2);
   }
+
   amap.negate_mark(m1);
   amap.negate_mark(m2);
   it1.rewind(); it2.rewind();
@@ -571,6 +579,7 @@ bool is_insertable_cell_2_in_cell_3(const CMap& amap,
  * @param amap the used combinatorial map.
  * @param afirst iterator on the begining of the path.
  * @param alast  iterator on the end of the path.
+ * @param update_attributes a boolean to update the enabled attributes
  * @return a dart of the new 2-cell.
  */
 template<class CMap, class InputIterator>

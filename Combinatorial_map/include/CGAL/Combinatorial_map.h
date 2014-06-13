@@ -1160,7 +1160,7 @@ namespace CGAL {
     }
 
     /// validate the map
-    void validate_scene()
+    void validate_attributes()
     {
       std::vector<int> marks(dimension+1);
       for ( int i=0; i<=dimension; ++i)

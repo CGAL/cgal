@@ -331,6 +331,7 @@ namespace CGAL
   /** Remove a vertex, and merge eventually both incident edges.
    * @param amap the used combinatorial map.
    * @param adart a dart of the vertex to remove.
+   * @param update_attributes a boolean to update the enabled attributes
    * @return the number of deleted darts.
    */
   template<class CMap,unsigned int nmi>
@@ -449,6 +450,7 @@ namespace CGAL
   /** Remove an i-cell, 0<=i<=dimension.
    * @param amap the used combinatorial map.
    * @param adart a dart of the i-cell to remove.
+   * @param update_attributes a boolean to update the enabled attributes
    * @return the number of deleted darts.
    */
   template < class CMap, unsigned int i >

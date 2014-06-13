@@ -1279,7 +1279,7 @@ void MainWindow::onMengerInc()
     }
 
     std::cout << "validate scene..." << std::endl;
-    scene.lcc->validate_scene();
+    scene.lcc->validate_attributes();
   }
 
 #ifdef CGAL_PROFILE_LCC_DEMO
@@ -1701,7 +1701,7 @@ void MainWindow::onMengerDec()
 
   if (!mengerUpdateAttributes)
   {
-    scene.lcc->validate_scene();
+    scene.lcc->validate_attributes();
   }
 
 #ifdef CGAL_PROFILE_LCC_DEMO
@@ -1976,7 +1976,7 @@ void MainWindow::onSierpinskiCarpetInc()
     std::cout << "BOOST_NO_VARIADIC_TEMPLATES" << " not defined" << std::endl;
 #endif
 
-    scene.lcc->validate_scene();
+    scene.lcc->validate_attributes();
 
     // maintenant que la scène est valide, on offre la possibilité de calculer une géométrie qui correspond à un tapis de Sierpinski
     if (isComputableGeometry)
@@ -2747,7 +2747,7 @@ void MainWindow::onSierpinskiCarpetDec()
 
   if (!duringConstructionUpdateAttributes)
   {
-    scene.lcc->validate_scene();
+    scene.lcc->validate_attributes();
   }
 
 #ifdef CGAL_PROFILE_LCC_DEMO
@@ -2931,7 +2931,7 @@ void MainWindow::onSierpinskiTriangleInc()
         update_volume_list_add(scene.lcc->attribute<3>(sierpinskiTriangleSurfaces[i]));
     }
 
-    scene.lcc->validate_scene();
+    scene.lcc->validate_attributes();
   }
 
   // std::cout << removedTriangles.size() << std::endl;
@@ -3153,7 +3153,7 @@ void MainWindow::onSierpinskiTriangleDec()
 
   if (!sierpinskiTriangleUpdateAttributes)
   {
-    scene.lcc->validate_scene();
+    scene.lcc->validate_attributes();
   }
 
 #ifdef CGAL_PROFILE_LCC_DEMO
