@@ -193,39 +193,31 @@ load_cin_file(std::istream& ifs) {
     //std::cout << site << std::endl;
     if (site.is_point()) {
       //std::cout << "site is point" << std::endl;
-      p = site.point();
       q = site.point();
+      points.push_back(q);
+      ++point_counter;
     } else if (site.is_segment()) {
       //std::cout << "site is seg" << std::endl;
       p = site.source();
       q = site.target();
+      if(not_first and (p == qold)) {
+        points.push_back(q);
+        //std::cout << "push pq old" << std::endl;
+        constraints.push_back(std::make_pair(point_counter-1, point_counter));
+        ++point_counter;
+      }
+      else {
+        points.push_back(p);
+        points.push_back(q);
+        //std::cout << "push pq new" << std::endl;
+        constraints.push_back(std::make_pair(point_counter, point_counter+1));
+        point_counter += 2;
+      }
     } else {
       if (not_first) {
         return false;
       } else {
         continue;
-      }
-    }
-    if(not_first && p == q) {
-      points.push_back(q);
-      ++point_counter;
-      qold = q;
-      continue;
-    }
-    if ((p == qold) and site.is_segment()) {
-      points.push_back(q);
-      constraints.push_back(std::make_pair(point_counter-1, point_counter));
-      ++point_counter;
-    }
-    else {
-      if (p == q) {
-        points.push_back(q);
-        ++point_counter;
-      } else {
-        points.push_back(p);
-        points.push_back(q);
-        constraints.push_back(std::make_pair(point_counter, point_counter+1));
-        point_counter += 2;
       }
     }
     qold = q;
