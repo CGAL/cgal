@@ -48,7 +48,8 @@ namespace CGAL
     struct Convert_void<void>
     { typedef CGAL::Void type; };
 
-#ifndef CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
+#if ! defined(CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES) && \
+    ! defined(CGAL_CFG_NO_CPP0X_TUPLE)
     // Convert a tuple in a same tuple where each void type was replaced into
     // CGAL::Void.
     template<typename ... Items>
