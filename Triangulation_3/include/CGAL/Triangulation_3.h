@@ -539,6 +539,7 @@ protected:
   GT  _gt;
   Vertex_handle infinite; //infinite vertex
 
+public:
   Comparison_result
   compare_xyz(const Point &p, const Point &q) const
   {
@@ -557,6 +558,9 @@ protected:
   {
       return geom_traits().orientation_3_object()(p, q, r, s);
   }
+  
+    // Compute the orientation of a point compared to the oriented plane supporting a half-facet.
+    Orientation orientation( const Facet& f, const Point& p ) const;
 
   bool
   coplanar(const Point &p, const Point &q,
@@ -564,6 +568,21 @@ protected:
   {
       return orientation(p, q, r, s) == COPLANAR;
   }
+
+    // Check whether the points of four vertices `a`, `b`, `c`, and `d` are coplanar.
+    bool coplanar( Vertex_handle a, Vertex_handle b, Vertex_handle c, Vertex_handle d ) const {
+        return coplanar( a->point(), b->point(), c->point(), d->point() );
+    }
+    
+    // Check whether the points of facet `f` and point `p` are coplanar.
+    bool coplanar( const Facet& f, const Point& p ) const {
+        return orientation(f, p) == COPLANAR;
+    }
+
+    // Check whether the points of facet `f` and vertex `v` are coplanar.
+    bool coplanar( const Facet& f, Vertex_handle v ) const{
+        return orientation(f, v->point()) == COPLANAR;
+    }
 
   Orientation
   coplanar_orientation(const Point &p, const Point &q, const Point &r) const
@@ -577,6 +596,7 @@ protected:
       return coplanar_orientation(p, q, r) == COLLINEAR;
   }
 
+protected:
   Segment
   construct_segment(const Point &p, const Point &q) const
   {
@@ -1033,6 +1053,22 @@ public:
 
   Facet mirror_facet(Facet f) const
   { return _tds.mirror_facet(f);}
+
+
+    // Gives the edge incident to the same cell that is not incident to any of the input vertices.
+    Edge opposite_edge( Cell_handle c, int li, int lj ) const;
+    
+    // Gives the edge incident to the same cell that is not incident to any of the vertices of the input edge.
+    Edge opposite_edge( const Edge& e ) const           { return opposite_edge( e.first, e.second, e.third ); }
+
+    // Gives the half-facet incident to the opposite cell.
+    Facet mirror_facet( Cell_handle c, int li ) const   { return Facet( c->neighbor(li), c->neighbor(li)->index(c) ); }
+
+    // Gives the opposite half-facet.
+    Facet mirror_facet( const Facet& f ) const          { return mirror_facet( f.first, f.second ); }
+
+
+
 
   // MODIFIERS
   bool flip(const Facet &f)
@@ -2244,9 +2280,23 @@ operator<< (std::ostream& os, const Triangulation_3<GT, Tds, Lds> &tr)
   return os ;
 }
 
-template < class GT, class Tds, class Lds >
-typename Triangulation_3<GT,Tds,Lds>::size_type
-Triangulation_3<GT,Tds,Lds>::
+
+
+
+
+template <class Gt, class Tds>
+inline Orientation Triangulation_3<Gt,Tds>::
+orientation( const Facet& f, const Point& p ) const {
+    return Gt().orientation_3_object()( f.first->vertex( vertex_triple_index(f.second, 0) )->point(),
+                                        f.first->vertex( vertex_triple_index(f.second, 1) )->point(),
+                                        f.first->vertex( vertex_triple_index(f.second, 2) )->point(),
+                                        p );
+}
+
+
+template < class GT, class Tds >
+typename Triangulation_3<GT,Tds>::size_type
+Triangulation_3<GT,Tds>::
 number_of_finite_cells() const
 {
   if ( dimension() < 3 ) return 0;
@@ -3339,7 +3389,30 @@ side_of_edge(const Point & p,
   }
 }
 
-template < class GT, class Tds, class Lds >
+
+template <class Gt, class Tds>
+inline
+typename Triangulation_3<Gt,Tds>::Edge
+Triangulation_3<Gt,Tds>::
+opposite_edge( Cell_handle c, int li, int lj ) const {
+    CGAL_triangulation_precondition( li >= 0 && li < 4 );
+    CGAL_triangulation_precondition( lj >= 0 && lj < 4 );
+    CGAL_triangulation_precondition( li != lj );
+
+    switch( 6-li-lj ) { // i + j + missing indices = 6.
+        case 1: return Edge( c, 0, 1 );
+        case 2: return Edge( c, 0, 2 );
+        case 3: return ( li == 0 || lj == 0 ) ? Edge( c, 1, 2 ) : Edge( c, 0, 3 );
+        case 4: return Edge( c, 1, 3 );
+        case 5: return Edge( c, 2, 3 );
+    }
+
+    CGAL_triangulation_assertion( false );
+    return Edge();
+}
+
+
+template < class GT, class Tds >
 bool
 Triangulation_3<GT,Tds,Lds>::
 flip( Cell_handle c, int i )
