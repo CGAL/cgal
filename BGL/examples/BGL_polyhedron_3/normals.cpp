@@ -1,7 +1,7 @@
 #include <fstream>
 
 #include <boost/graph/graph_traits.hpp>
-#include <boost/property_map/vector_property_map.hpp>
+#include <CGAL/property_map.h>
 
 #include <CGAL/basic.h>
 #include <CGAL/Kernel/global_functions.h>
