@@ -1230,8 +1230,60 @@ private:
       uy_ = p.target().y();
     } else {
       // here, not all segments have a common point
+
+      const bool is_p_hor = is_site_horizontal(p);
+      const bool is_q_hor = is_site_horizontal(q);
+      const bool is_r_hor = is_site_horizontal(r);
+
+      const bool is_p_hv = is_p_hor or is_site_vertical(p);
+      const bool is_q_hv = is_q_hor or is_site_vertical(q);
+      const bool is_r_hv = is_r_hor or is_site_vertical(r);
+
+      if (is_p_hv and is_q_hv and is_r_hv) {
+        return compute_sss_hv(p, q, r, is_p_hor, is_q_hor, is_r_hor);
+      }
+
       compute_sss_bisectors(p, q, r);
     }
+  }
+
+  // SSS: all sites are axis-parallel
+  inline void
+  compute_sss_hv(const Site_2 & p, const Site_2 & q, const Site_2 & r,
+      const bool is_p_hor, const bool is_q_hor, const bool is_r_hor)
+  {
+    CGAL_precondition(not (is_p_hor and is_q_hor and is_r_hor));
+    CGAL_precondition(is_p_hor or is_q_hor or is_r_hor);
+    const unsigned int num_hor =
+      (is_p_hor ? 1 : 0) + (is_q_hor ? 1 : 0) + (is_r_hor ? 1 : 0);
+    CGAL_assertion((num_hor == 1) or (num_hor == 2));
+    const bool are_common_hor = num_hor == 2;
+    const bool is_odd_hor = not are_common_hor;
+
+    const Site_2 & odd = (is_odd_hor) ?
+      (is_p_hor ? p : (is_q_hor ? q : r)) :
+      (is_p_hor ? (is_q_hor ? r : q) : p);
+    CGAL_assertion( (not (num_hor == 1)) or is_site_horizontal(odd) );
+    CGAL_assertion( (not (num_hor == 2)) or is_site_vertical(odd) );
+    const Site_2 & prev = (is_odd_hor) ?
+      (is_p_hor ? r : (is_q_hor ? p : q)) :
+      (is_p_hor ? (is_q_hor ? q : p) : r);
+    CGAL_assertion( (not (num_hor == 1)) or is_site_vertical(prev) );
+    CGAL_assertion( (not (num_hor == 2)) or is_site_horizontal(prev) );
+    const Site_2 & next = (is_odd_hor) ?
+      (is_p_hor ? q : (is_q_hor ? r : p)) :
+      (is_p_hor ? (is_q_hor ? p : r) : q);
+    CGAL_assertion( (not (num_hor == 1)) or is_site_vertical(next) );
+    CGAL_assertion( (not (num_hor == 2)) or is_site_horizontal(next) );
+
+    const RT prevc = hvseg_coord(prev, are_common_hor);
+    const RT nextc = hvseg_coord(next, are_common_hor);
+    RT & umid = is_odd_hor ? ux_ : uy_;
+    RT & udis = is_odd_hor ? uy_ : ux_;
+    umid = prevc + nextc;
+    udis = RT(2)*hvseg_coord(odd, is_odd_hor) +
+           RT(are_common_hor ? +1 : -1) * (prevc - nextc);
+    uz_ = RT(2);
   }
 
   inline void

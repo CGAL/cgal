@@ -1330,9 +1330,17 @@ private:
       const bool have_common_pq = is_psrc_q or is_ptrg_q;
       const bool have_common_rp = is_psrc_r or is_ptrg_r;
 
-      const bool is_p_hv = is_site_h_or_v(sp);
-      const bool is_q_hv = is_site_h_or_v(sq);
-      const bool is_r_hv = is_site_h_or_v(sr);
+      const bool is_p_hor = is_site_horizontal(sp);
+      const bool is_q_hor = is_site_horizontal(sq);
+      const bool is_r_hor = is_site_horizontal(sr);
+
+      const bool is_p_hv = is_p_hor or is_site_vertical(sp);
+      const bool is_q_hv = is_q_hor or is_site_vertical(sq);
+      const bool is_r_hv = is_r_hor or is_site_vertical(sr);
+
+      if (is_p_hv and is_q_hv and is_r_hv) {
+        return compute_vv_sss_hv(sp, sq, sr, is_p_hor, is_q_hor, is_r_hor);
+      }
 
 #ifndef CGAL_NO_ASSERTIONS
       const bool is_qsrc_r = is_endpoint_of(sq.source_site(), sr);
@@ -1422,6 +1430,45 @@ private:
       CGAL_SDG_DEBUG(std::cout
           << "debug: vsqr SSS vv=" << vv << std::endl;);
     }
+  }
+
+  // SSS: all sites are axis-parallel
+  inline void
+  compute_vv_sss_hv(const Site_2 & p, const Site_2 & q, const Site_2 & r,
+      const bool is_p_hor, const bool is_q_hor, const bool is_r_hor)
+  const
+  {
+    CGAL_precondition(not (is_p_hor and is_q_hor and is_r_hor));
+    CGAL_precondition(is_p_hor or is_q_hor or is_r_hor);
+    const unsigned int num_hor =
+      (is_p_hor ? 1 : 0) + (is_q_hor ? 1 : 0) + (is_r_hor ? 1 : 0);
+    CGAL_assertion((num_hor == 1) or (num_hor == 2));
+    const bool are_common_hor = num_hor == 2;
+    const bool is_odd_hor = not are_common_hor;
+
+    const Site_2 & odd = (is_odd_hor) ?
+      (is_p_hor ? p : (is_q_hor ? q : r)) :
+      (is_p_hor ? (is_q_hor ? r : q) : p);
+    CGAL_assertion( (not (num_hor == 1)) or is_site_horizontal(odd) );
+    CGAL_assertion( (not (num_hor == 2)) or is_site_vertical(odd) );
+    const Site_2 & prev = (is_odd_hor) ?
+      (is_p_hor ? r : (is_q_hor ? p : q)) :
+      (is_p_hor ? (is_q_hor ? q : p) : r);
+    CGAL_assertion( (not (num_hor == 1)) or is_site_vertical(prev) );
+    CGAL_assertion( (not (num_hor == 2)) or is_site_horizontal(prev) );
+    const Site_2 & next = (is_odd_hor) ?
+      (is_p_hor ? q : (is_q_hor ? r : p)) :
+      (is_p_hor ? (is_q_hor ? p : r) : q);
+    CGAL_assertion( (not (num_hor == 1)) or is_site_vertical(next) );
+    CGAL_assertion( (not (num_hor == 2)) or is_site_horizontal(next) );
+
+    const RT prevc = hvseg_coord(prev, are_common_hor);
+    const RT nextc = hvseg_coord(next, are_common_hor);
+    const RT umid = prevc + nextc;
+    const RT udis = RT(2)*hvseg_coord(odd, is_odd_hor) +
+      RT(are_common_hor ? +1 : -1) * (prevc - nextc);
+    vv = is_odd_hor ? Point_2(umid, udis, RT(2)) :
+                      Point_2(udis, umid, RT(2)) ;
   }
 
 
