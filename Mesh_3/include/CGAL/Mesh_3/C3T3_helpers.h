@@ -2177,6 +2177,7 @@ private:
   : Update_cell_facets<C3T3_helpers, FacetUpdater_>
   {
     typedef Update_cell_facets<C3T3_helpers, FacetUpdater_> Base;
+    using Base::update;
 
     const std::vector<Cell_handle>  & m_outdated_cells;
 
@@ -2248,6 +2249,7 @@ private:
   : Update_cell<C3T3_, Update_c3t3_>
   {
     typedef Update_cell<C3T3_, Update_c3t3_> Base;
+    using Base::update;
 
     const std::vector<Cell_handle>  & m_outdated_cells;
 

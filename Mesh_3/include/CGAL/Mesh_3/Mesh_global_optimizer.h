@@ -774,7 +774,8 @@ compute_moves(Moving_vertices_set& moving_vertices)
     // Get move for each moving vertex
     tbb::parallel_do(
       moving_vertices.begin(), moving_vertices.end(),
-      Compute_move<Self, Sizing_field, Moves_vector, Gt::Construct_translated_point_3>(
+      Compute_move<Self, Sizing_field, Moves_vector,
+                   typename Gt::Construct_translated_point_3>(
         *this, sizing_field_, moves, do_freeze_, vertices_not_moving_any_more,
         translate)
     );

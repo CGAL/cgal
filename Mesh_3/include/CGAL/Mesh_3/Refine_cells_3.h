@@ -496,8 +496,6 @@ private:
     Refine_cells_                   & m_refine_cells;
     const std::vector<Cell_handle>  & m_cells;
 
-    typedef typename Refine_cells_::Cell_handle Cell_handle;
-
   public:
     // Constructor
     Scan_cell(Refine_cells_ & rc,
