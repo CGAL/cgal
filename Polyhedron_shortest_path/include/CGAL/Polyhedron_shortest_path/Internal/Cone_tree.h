@@ -90,8 +90,11 @@ private:
   }
   
 public:
-  Cone_tree_node(Polyhedron& polyhedron, size_t treeId)
-    : m_polyhedron(polyhedron)
+  Cone_tree_node(Traits& traits, Polyhedron& polyhedron, size_t treeId)
+    : m_orientation_2(traits.orientation_2_object())
+    , m_compute_squared_distance_2(traits.compute_squared_distance_2_object())
+    , m_construct_triangle_location_2(traits.construct_triangle_location_2_object())
+    , m_polyhedron(polyhedron)
     , m_sourceImage(Point_2(CGAL::ORIGIN))
     , m_layoutFace(Point_2(CGAL::ORIGIN),Point_2(CGAL::ORIGIN),Point_2(CGAL::ORIGIN))
     , m_level(0)
@@ -105,8 +108,11 @@ public:
   {
   }
   
-  Cone_tree_node(Polyhedron& polyhedron, size_t treeId, halfedge_descriptor entryEdge)
-    : m_polyhedron(polyhedron)
+  Cone_tree_node(Traits& traits, Polyhedron& polyhedron, size_t treeId, halfedge_descriptor entryEdge)
+    : m_orientation_2(traits.orientation_2_object())
+    , m_compute_squared_distance_2(traits.compute_squared_distance_2_object())
+    , m_construct_triangle_location_2(traits.construct_triangle_location_2_object())
+    , m_polyhedron(polyhedron)
     , m_entryEdge(entryEdge)
     , m_sourceImage(Point_2(CGAL::ORIGIN))
     , m_layoutFace(Point_2(CGAL::ORIGIN),Point_2(CGAL::ORIGIN),Point_2(CGAL::ORIGIN))
@@ -121,8 +127,11 @@ public:
   {
   }
 
-  Cone_tree_node(Polyhedron& polyhedron, halfedge_descriptor entryEdge, const Triangle_2& layoutFace, const Point_2& sourceImage, const FT& pseudoSourceDistance, const Point_2& windowLeft, const Point_2& windowRight, Node_type nodeType = INTERVAL)
-    : m_polyhedron(polyhedron)
+  Cone_tree_node(Traits& traits, Polyhedron& polyhedron, halfedge_descriptor entryEdge, const Triangle_2& layoutFace, const Point_2& sourceImage, const FT& pseudoSourceDistance, const Point_2& windowLeft, const Point_2& windowRight, Node_type nodeType = INTERVAL)
+    : m_orientation_2(traits.orientation_2_object())
+    , m_compute_squared_distance_2(traits.compute_squared_distance_2_object())
+    , m_construct_triangle_location_2(traits.construct_triangle_location_2_object())
+    , m_polyhedron(polyhedron)
     , m_entryEdge(entryEdge)
     , m_layoutFace(layoutFace)
     , m_sourceImage(sourceImage)

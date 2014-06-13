@@ -1,3 +1,11 @@
+// (LicenseStuffHere)
+//
+// $URL$
+// $Id$
+// 
+//
+// Author(s)     : Stephen Kiazyk
+
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel_with_sqrt.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
@@ -844,6 +852,49 @@ int main(int argc, char** argv)
 
     FT dist5 = shortestPaths.shortest_distance_to_vertex(vertexHandles[5]);
     CGAL_TEST(CHECK_CLOSE(dist5, CGAL::sqrt(compute_squared_distance_3(locationInTriangle, vertexLocations[3])) + CGAL::sqrt(compute_squared_distance_3(vertexLocations[3], vertexLocations[5])), 0.000001));
+
+  }
+  
+  {
+    typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
+    typedef CGAL::Polyhedron_3<Kernel> Polyhedron_3;
+    typedef CGAL::Polyhedron_shortest_path_default_traits<Kernel, Polyhedron_3> Traits;
+    typedef Traits::Barycentric_coordinate Barycentric_coordinate;
+    typedef Traits::FT FT;
+    typedef Traits::Point_3 Point_3;
+    typedef Traits::Point_2 Point_2;
+    typedef Traits::Triangle_3 Triangle_3;
+    typedef Traits::Triangle_2 Triangle_2;
+    typedef Traits::Segment_2 Segment_2;
+    typedef boost::graph_traits<Polyhedron_3> GraphTraits;
+    typedef GraphTraits::vertex_descriptor vertex_descriptor;
+    typedef GraphTraits::vertex_iterator vertex_iterator;
+    typedef GraphTraits::halfedge_descriptor halfedge_descriptor;
+    typedef GraphTraits::halfedge_iterator halfedge_iterator;
+    typedef GraphTraits::face_descriptor face_descriptor;
+    typedef GraphTraits::face_iterator face_iterator;
+    typedef CGAL::Polyhedron_shortest_path<Traits> Polyhedron_shortest_path;
+    typedef boost::property_map<Polyhedron_3, CGAL::vertex_point_t>::type VPM;
+
+    Traits traits;
+    Polyhedron_3 P;
+    
+    std::ifstream in("data/elephant.off");
+    
+    in >> P;
+    
+    in.close();
+    
+    face_iterator startFace;
+    face_iterator endFace;
+    
+    boost::tie(startFace, endFace) = CGAL::faces(P);
+    
+    Barycentric_coordinate location(0.25, 0.5, 0.25);
+    
+    Polyhedron_shortest_path shortestPaths(traits, P);
+    shortestPaths.m_debugOutput = true;
+    shortestPaths.compute_shortest_paths(*startFace, startLocation);
 
   }
   
