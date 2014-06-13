@@ -52,6 +52,7 @@ public:
   typedef typename K::Power_test_d                  Power_test_d;
   typedef typename K::In_flat_power_test_d          In_flat_power_test_d;
   typedef typename K::Flat_orientation_d            Flat_orientation_d;
+  typedef typename K::Point_drop_weight_d           Point_drop_weight_d;
   
   //=============================================================================
   // Custom types
@@ -85,7 +86,7 @@ public:
     const K &m_kernel;
 
   public:
-    typedef typename Flat_orientation_d result_type;
+    typedef Flat_orientation_d result_type;
     
     Construct_flat_orientation_d(const K &kernel)
       : m_kernel(kernel) {}

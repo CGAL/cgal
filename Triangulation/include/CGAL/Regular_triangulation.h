@@ -91,7 +91,8 @@ protected: // DATA MEMBERS
 
 
 public:
-  
+
+  using typename Base::Rotor;
   using Base::maximal_dimension;
   using Base::are_incident_full_cells_valid;
   using Base::coaffine_orientation_predicate;
@@ -99,6 +100,8 @@ public:
   using Base::current_dimension;
   using Base::geom_traits;
   using Base::index_of_covertex;
+  using Base::index_of_second_covertex;
+  using Base::rotate_rotor;
   using Base::infinite_vertex;
   using Base::insert_in_hole;
   using Base::insert_outside_convex_hull_1;
@@ -120,9 +123,6 @@ public:
 
 private:
   //*** Power_test_in_flat_d *** CJTODO: better name?
-  typedef typename Base::Flat_orientation_d Flat_orientation_d;
-  typedef typename Base::Construct_flat_orientation_d Construct_flat_orientation_d;
-  typedef typename RTTraits::In_flat_power_test_d In_flat_power_test_d;
   // Wrapper
   struct Power_test_in_flat_d
   {
@@ -215,16 +215,16 @@ public:
     size_type n = number_of_vertices();
     typedef std::vector<Weighted_point> WP_vec;
     WP_vec points(start, end);
-    Geom_traits::Point_drop_weight_d pdw = 
+    typename Geom_traits::Point_drop_weight_d pdw =
       geom_traits().point_drop_weight_d_object();
     spatial_sort(
       boost::make_transform_iterator(points.begin(), pdw),
       boost::make_transform_iterator(points.end(), pdw),
-      Geom_traits::Base());
+      typename Geom_traits::Base());
     //spatial_sort(points.begin(), points.end(), geom_traits()); // CJTODO TEMP A REMETTRE
     //spatial_sort(points.begin(), points.end(), Geom_traits::Base());
     Full_cell_handle hint;
-    for(WP_vec::const_iterator p = points.begin(); p != points.end(); ++p )
+    for(typename WP_vec::const_iterator p = points.begin(); p != points.end(); ++p )
     {
       Locate_type lt;
       Face f(maximal_dimension());
@@ -408,7 +408,7 @@ Regular_triangulation<RTTraits, TDS>
 
   // THE CASE cur_dim >= 2
   // Gather the finite vertices sharing an edge with |v|
-  typedef Base::Full_cell_set<Full_cell_handle> Simplices;
+  typedef typename Base::template Full_cell_set<Full_cell_handle> Simplices;
   Simplices simps;
   std::back_insert_iterator<Simplices> out(simps);
   tds().incident_full_cells(v, out);
@@ -548,7 +548,7 @@ Regular_triangulation<RTTraits, TDS>
   Dark_s_handle dark_ret_s = dark_s;
   Full_cell_handle ret_s;
 
-  typedef Base::Full_cell_set<Dark_s_handle> Dark_full_cells;
+  typedef typename Base::template Full_cell_set<Dark_s_handle> Dark_full_cells;
   Dark_full_cells conflict_zone;
   std::back_insert_iterator<Dark_full_cells> dark_out(conflict_zone);
   
@@ -885,4 +885,4 @@ Regular_triangulation<RTTraits, TDS>
 
 } //namespace CGAL
 
-#endif CGAL_REGULAR_TRIANGULATION_H
+#endif //CGAL_REGULAR_TRIANGULATION_H

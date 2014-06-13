@@ -86,7 +86,8 @@ protected: // DATA MEMBERS
 
 
 public:
-    
+
+    using typename Base::Rotor;
     using Base::maximal_dimension;
     using Base::are_incident_full_cells_valid;
     using Base::coaffine_orientation_predicate;
@@ -383,7 +384,7 @@ Delaunay_triangulation<DCTraits, TDS>
 
     // THE CASE cur_dim >= 2
     // Gather the finite vertices sharing an edge with |v|
-    typedef Base::Full_cell_set<Full_cell_handle> Simplices;
+    typedef typename Base::template Full_cell_set<Full_cell_handle> Simplices;
     Simplices simps;
     std::back_insert_iterator<Simplices> out(simps);
     tds().incident_full_cells(v, out);
@@ -519,7 +520,7 @@ Delaunay_triangulation<DCTraits, TDS>
     Dark_s_handle dark_ret_s = dark_s;
     Full_cell_handle ret_s;
 
-    typedef Base::Full_cell_set<Dark_s_handle> Dark_full_cells;
+    typedef typename Base::template Full_cell_set<Dark_s_handle> Dark_full_cells;
     Dark_full_cells conflict_zone;
     std::back_insert_iterator<Dark_full_cells> dark_out(conflict_zone);
     

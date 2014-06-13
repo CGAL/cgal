@@ -93,7 +93,7 @@ class KernelD_converter_
 	//typedef typename KOC::argument_type K1_Obj;
 	//typedef typename KOC::result_type K2_Obj;
 	public:
-  void disp(const std::array<double,2> &o) const // CJTODO DEBUG
+  /*void disp(const std::array<double,2> &o) const // CJTODO DEBUG
   {
     std::cerr << o[0]; 
   }
@@ -101,7 +101,7 @@ class KernelD_converter_
   void disp(const P &o) const // CJTODO DEBUG
   {
     std::cerr << o.point()[0] ;
-  }
+  }*/
 	using Base::operator(); // don't use directly, just make it accessible to the next level
 	K2_Obj helper(K1_Obj const& o,CGAL_BOOSTD true_type)const{
 		return KOC()(this->myself().kernel(),this->myself().kernel2(),this->myself(),o);
@@ -110,9 +110,9 @@ class KernelD_converter_
 		return K1_Conv(this->myself().kernel())(this->myself().kernel2(),this->myself(),o);
 	}
 	K2_Obj operator()(argument_type const& o)const{
-    std::cerr << "KernelD_converter_::operator() "; // CJTODO DEBUG
-    disp(o);
-    std::cerr << std::endl;
+    //std::cerr << "KernelD_converter_::operator() "; // CJTODO DEBUG
+    //disp(o);
+    //std::cerr << std::endl;
 	  return helper(o,no_converter());
 	}
 	template<class X,int=0> struct result:Base::template result<X>{};
