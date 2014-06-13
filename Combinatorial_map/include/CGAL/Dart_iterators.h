@@ -1246,7 +1246,6 @@ namespace CGAL {
         else
         {
           this->mprev_op = OP_END;
-          this->set_current_dart(this->mmap->null_handle);
         }
       }
       
@@ -1343,7 +1342,6 @@ namespace CGAL {
         else
         {
           this->mprev_op = OP_END;
-          this->set_current_dart(this->mmap->null_handle);
         }
       }
       
@@ -1484,7 +1482,6 @@ namespace CGAL {
         else
         {
           this->mprev_op = OP_END;
-          this->set_current_dart(this->mmap->null_handle);
         }
       }
       
@@ -1977,7 +1974,6 @@ namespace CGAL {
         else
         {
           this->mprev_op = OP_END;
-          this->set_current_dart(this->mmap->null_handle);
         }
       }
       
@@ -2098,7 +2094,6 @@ namespace CGAL {
         else
         {
           this->mprev_op = OP_END;
-          this->set_current_dart(this->mmap->null_handle);
         }
       }
       
@@ -2197,7 +2192,6 @@ namespace CGAL {
         else
         {
           this->mprev_op = OP_END;
-          this->set_current_dart(this->mmap->null_handle);
         }
       }
       
@@ -2323,7 +2317,6 @@ namespace CGAL {
         else
         {
           this->mprev_op = OP_END;
-          this->set_current_dart(this->mmap->null_handle);
         }
       }
       
