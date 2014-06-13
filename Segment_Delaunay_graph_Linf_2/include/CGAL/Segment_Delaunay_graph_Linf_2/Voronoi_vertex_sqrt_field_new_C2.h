@@ -1315,10 +1315,10 @@ private:
     if ( is_vv_computed ) { return; }
     is_vv_computed = true;
 
-    bool is_psrc_q = is_endpoint_of(sp.source_site(), sq);
-    bool is_psrc_r = is_endpoint_of(sp.source_site(), sr);
-    bool is_ptrg_q = is_endpoint_of(sp.target_site(), sq);
-    bool is_ptrg_r = is_endpoint_of(sp.target_site(), sr);
+    const bool is_psrc_q = is_endpoint_of(sp.source_site(), sq);
+    const bool is_psrc_r = is_endpoint_of(sp.source_site(), sr);
+    const bool is_ptrg_q = is_endpoint_of(sp.target_site(), sq);
+    const bool is_ptrg_r = is_endpoint_of(sp.target_site(), sr);
 
     if (is_psrc_q and is_psrc_r) {
       vv = sp.source();
@@ -1327,12 +1327,12 @@ private:
     } else {
       // here, not all segments have a common point
 
-      bool have_common_pq = is_psrc_q or is_ptrg_q;
-      bool have_common_rp = is_psrc_r or is_ptrg_r;
+      const bool have_common_pq = is_psrc_q or is_ptrg_q;
+      const bool have_common_rp = is_psrc_r or is_ptrg_r;
 
-      bool is_p_hv = is_site_h_or_v(sp);
-      bool is_q_hv = is_site_h_or_v(sq);
-      bool is_r_hv = is_site_h_or_v(sr);
+      const bool is_p_hv = is_site_h_or_v(sp);
+      const bool is_q_hv = is_site_h_or_v(sq);
+      const bool is_r_hv = is_site_h_or_v(sr);
 
 #ifndef CGAL_NO_ASSERTIONS
       const bool is_qsrc_r = is_endpoint_of(sq.source_site(), sr);
