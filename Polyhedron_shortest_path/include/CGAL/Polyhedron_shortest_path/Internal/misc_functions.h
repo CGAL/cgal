@@ -17,6 +17,17 @@ namespace CGAL {
 
 namespace internal {
 
+template <class Triangle_3, class Polyhedron, class VertexPointMap>
+Triangle_3 triangle_from_halfedge(typename boost::graph_traits<Polyhedron>::halfedge_descriptor edge, Polyhedron& polyhedron, VertexPointMap vertexPointMap)
+{
+  typedef typename boost::graph_traits<Polyhedron>::halfedge_descriptor halfedge_descriptor;
+  
+  halfedge_descriptor e0 = edge;
+  halfedge_descriptor e1 = CGAL::next(edge, polyhedron);
+
+  return Triangle_3(vertexPointMap[boost::source(e0, polyhedron)], vertexPointMap[boost::target(e0, polyhedron)], vertexPointMap[boost::target(e1, polyhedron)]);
+}
+
 template <class Polyhedron>
 size_t edge_index(typename boost::graph_traits<Polyhedron>::halfedge_descriptor he, Polyhedron& p)
 {
@@ -40,7 +51,7 @@ size_t edge_index(typename boost::graph_traits<Polyhedron>::halfedge_descriptor 
   return count;
 }
 
-template <class P, class V, class FT>
+template <class P, class FT>
 P interpolate_points(const P& p0, const P& p1, FT t)
 {
   FT t0 = FT(1.0) - t;

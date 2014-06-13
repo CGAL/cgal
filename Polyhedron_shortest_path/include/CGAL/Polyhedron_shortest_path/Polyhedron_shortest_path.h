@@ -16,11 +16,11 @@
 #include <CGAL/Polyhedron_shortest_path/Internal/Cone_tree.h>
 #include <CGAL/Polyhedron_shortest_path/Internal/Barycentric.h>
 #include <CGAL/Polyhedron_shortest_path/Internal/misc_functions.h>
+
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/boost/graph/iterator.h>
 
 namespace CGAL {
-
 
 template<class Traits, 
   class VIM = typename boost::property_map<typename Traits::Polyhedron, CGAL::vertex_external_index_t>::type,
@@ -69,12 +69,14 @@ private:
   template <class Visitor>
   struct Point_path_visitor_wrapper
   {
+    Traits& m_traits;
     Visitor& m_visitor;
     Polyhedron& m_polyhedron;
     VertexPointMap& m_vertexPointMap;
     
-    Point_path_visitor_wrapper(Visitor& visitor, Polyhedron& polyhedron, VertexPointMap& vertexPointMap)
+    Point_path_visitor_wrapper(Visitor& visitor, Traits& traits, Polyhedron& polyhedron, VertexPointMap& vertexPointMap)
       : m_visitor(visitor)
+      , m_traits(traits)
       , m_polyhedron(polyhedron)
       , m_vertexPointMap(vertexPointMap)
     {
@@ -82,17 +84,18 @@ private:
     
     void edge(halfedge_descriptor e, FT alpha)
     {
-      return m_visitor.point(CGAL::internal::interpolate_points<Point_3, Vector_3, FT>(m_vertexPointMap[CGAL::source(e, m_polyhedron)], m_vertexPointMap[CGAL::target(e, m_polyhedron)], alpha));
+      Point_3 location = CGAL::internal::interpolate_points(m_vertexPointMap[CGAL::source(e, m_polyhedron)], m_vertexPointMap[CGAL::target(e, m_polyhedron)], alpha);
+      m_visitor.point(location);
     }
     
     void vertex(vertex_descriptor v)
     {
-      return m_vertexPointMap[v];
+      m_visitor.point(m_vertexPointMap[v]);
     }
     
     void face(face_descriptor face, Barycentric_coordinate alpha)
     {
-      return m_traits.construct_barycentric_coordinate_3_object()(triangle_from_halfedge(CGAL::halfedge(face, m_polyhedron)), alpha);
+      m_visitor.point(m_traits.construct_triangle_location_3_object()(CGAL::internal::triangle_from_halfedge<Triangle_3, Polyhedron, VertexPointMap>(CGAL::halfedge(face, m_polyhedron), m_polyhedron, m_vertexPointMap), alpha));
     }
   };
 
@@ -207,7 +210,7 @@ private:
     {
       Triangle_3 adjacentFace = triangle_from_halfedge(cone->left_child_edge());
       Triangle_2 layoutFace = m_traits.flatten_triangle_3_along_segment_2_object()(adjacentFace, 0, cone->left_child_base_segment());
-      Cone_tree_node* child = new Cone_tree_node(m_polyhedron, cone->left_child_edge(), layoutFace, cone->source_image(), cone->distance_from_source_to_root(), windowSegment[0], windowSegment[1], Cone_tree_node::INTERVAL);
+      Cone_tree_node* child = new Cone_tree_node(m_traits, m_polyhedron, cone->left_child_edge(), layoutFace, cone->source_image(), cone->distance_from_source_to_root(), windowSegment[0], windowSegment[1], Cone_tree_node::INTERVAL);
       cone->set_left_child(child);
       process_node(child);
     }
@@ -227,7 +230,7 @@ private:
     {
       Triangle_3 adjacentFace = triangle_from_halfedge(cone->right_child_edge());
       Triangle_2 layoutFace = m_traits.flatten_triangle_3_along_segment_2_object()(adjacentFace, 0, cone->right_child_base_segment());
-      Cone_tree_node* child = new Cone_tree_node(m_polyhedron, cone->right_child_edge(), layoutFace, cone->source_image(), cone->distance_from_source_to_root(), windowSegment[0], windowSegment[1], Cone_tree_node::INTERVAL);
+      Cone_tree_node* child = new Cone_tree_node(m_traits, m_polyhedron, cone->right_child_edge(), layoutFace, cone->source_image(), cone->distance_from_source_to_root(), windowSegment[0], windowSegment[1], Cone_tree_node::INTERVAL);
       cone->set_right_child(child);
       process_node(child);
     }
@@ -278,7 +281,7 @@ private:
     halfedge_descriptor start = CGAL::halfedge(faceId, m_polyhedron);
     halfedge_descriptor current = start;
     
-    Cone_tree_node* faceRoot = new Cone_tree_node(m_polyhedron, m_rootNodes.size());
+    Cone_tree_node* faceRoot = new Cone_tree_node(m_traits, m_polyhedron, m_rootNodes.size());
     m_rootNodes.push_back(faceRoot);
     
     if (m_debugOutput)
@@ -293,7 +296,7 @@ private:
       Barycentric_coordinate rotatedFaceLocation(faceLocation[currentVertex], faceLocation[(currentVertex + 1) % 3], faceLocation[(currentVertex + 2) % 3]);
       Point_2 sourcePoint(m_traits.construct_triangle_location_2_object()(layoutFace, rotatedFaceLocation));
       
-      Cone_tree_node* child = new Cone_tree_node(m_polyhedron, current, layoutFace, sourcePoint, FT(0.0), layoutFace[0], layoutFace[2], Cone_tree_node::FACE_SOURCE);
+      Cone_tree_node* child = new Cone_tree_node(m_traits, m_polyhedron, current, layoutFace, sourcePoint, FT(0.0), layoutFace[0], layoutFace[2], Cone_tree_node::FACE_SOURCE);
       faceRoot->push_middle_child(child);
       
       if (m_debugOutput)
@@ -333,7 +336,7 @@ private:
     sourcePoints[0] = Point_2(layoutFaces[0][0][0] * t0 + layoutFaces[0][1][0] * t1, layoutFaces[0][0][1] * t0 + layoutFaces[0][1][1] * t1); 
     sourcePoints[1] = Point_2(layoutFaces[1][0][0] * t0 + layoutFaces[1][1][0] * t1, layoutFaces[1][0][1] * t0 + layoutFaces[1][1][1] * t1); 
     
-    Cone_tree_node* edgeRoot = new Cone_tree_node(m_polyhedron, m_rootNodes.size());
+    Cone_tree_node* edgeRoot = new Cone_tree_node(m_traits, m_polyhedron, m_rootNodes.size());
     m_rootNodes.push_back(edgeRoot);
     
     for (size_t side = 0; side < 2; ++side)
@@ -345,11 +348,11 @@ private:
         std::cout << "\t\tLocation = " << sourcePoints[side] << std::endl;
       }
       
-      Cone_tree_node* mainChild = new Cone_tree_node(m_polyhedron, baseEdges[side], layoutFaces[side], sourcePoints[side], FT(0.0), layoutFaces[side][0], layoutFaces[side][2], Cone_tree_node::EDGE_SOURCE);
+      Cone_tree_node* mainChild = new Cone_tree_node(m_traits, m_polyhedron, baseEdges[side], layoutFaces[side], sourcePoints[side], FT(0.0), layoutFaces[side][0], layoutFaces[side][2], Cone_tree_node::EDGE_SOURCE);
       edgeRoot->push_middle_child(mainChild);
       process_node(mainChild);
 
-      Cone_tree_node* oppositeChild = new Cone_tree_node(m_polyhedron, baseEdges[side], Triangle_2(layoutFaces[side][2], layoutFaces[side][1], layoutFaces[side][2]), sourcePoints[side], FT(0.0), layoutFaces[side][1], layoutFaces[side][2], Cone_tree_node::EDGE_SOURCE);
+      Cone_tree_node* oppositeChild = new Cone_tree_node(m_traits, m_polyhedron, baseEdges[side], Triangle_2(layoutFaces[side][2], layoutFaces[side][1], layoutFaces[side][2]), sourcePoints[side], FT(0.0), layoutFaces[side][1], layoutFaces[side][2], Cone_tree_node::EDGE_SOURCE);
       edgeRoot->push_middle_child(oppositeChild);
       process_node(oppositeChild);
     }
@@ -362,7 +365,7 @@ private:
       std::cout << "\tVertex Root Expansion: Vertex = " << m_vertexIndexMap[vertex] << std::endl;
     }
     
-    Cone_tree_node* vertexRoot = new Cone_tree_node(m_polyhedron, m_rootNodes.size(), CGAL::prev(CGAL::halfedge(vertex, m_polyhedron), m_polyhedron));
+    Cone_tree_node* vertexRoot = new Cone_tree_node(m_traits, m_polyhedron, m_rootNodes.size(), CGAL::prev(CGAL::halfedge(vertex, m_polyhedron), m_polyhedron));
     m_rootNodes.push_back(vertexRoot);
     
     m_closestToVertices[m_vertexIndexMap[vertex]] = NodeDistancePair(vertexRoot, FT(0.0));
@@ -407,7 +410,7 @@ private:
         std::cout << " , face = " << layoutFace << std::endl;
       }
 
-      Cone_tree_node* child = new Cone_tree_node(m_polyhedron, currentEdge, layoutFace, layoutFace[1], distanceFromTargetToRoot, layoutFace[0], layoutFace[2], Cone_tree_node::VERTEX_SOURCE);
+      Cone_tree_node* child = new Cone_tree_node(m_traits, m_polyhedron, currentEdge, layoutFace, layoutFace[1], distanceFromTargetToRoot, layoutFace[0], layoutFace[2], Cone_tree_node::VERTEX_SOURCE);
       parent->push_middle_child(child);
       process_node(child);
       
@@ -909,12 +912,12 @@ private:
           if (current->is_left_child())
           {
             Segment_2 baseSegment = current->parent()->left_child_base_segment();
-            currentLocation = CGAL::internal::interpolate_points<Point_2, Vector_2, FT>(baseSegment[0], baseSegment[1], parametricLocation);
+            currentLocation = CGAL::internal::interpolate_points(baseSegment[0], baseSegment[1], parametricLocation);
           }
           else if (current->is_right_child())
           {
             Segment_2 baseSegment = current->parent()->right_child_base_segment();
-            currentLocation = CGAL::internal::interpolate_points<Point_2, Vector_2, FT>(baseSegment[0], baseSegment[1], parametricLocation);
+            currentLocation = CGAL::internal::interpolate_points(baseSegment[0], baseSegment[1], parametricLocation);
           }
           
           current = current->parent();
@@ -1221,13 +1224,16 @@ public:
   template <class Visitor>
   void shortest_path_points(face_descriptor face, Barycentric_coordinate alpha, Visitor& visitor)
   {
-    shortest_edge_sequence(face, alpha, Point_path_visitor_wrapper<Visitor>(visitor, m_polyhedron, m_vertexPointMap));
+    Point_path_visitor_wrapper<Visitor> wrapper(visitor, m_traits, m_polyhedron, m_vertexPointMap);
+    
+    shortest_edge_sequence(face, alpha, wrapper);
   }
   
   template <class Visitor>
   void shortest_path_points(vertex_descriptor v, Visitor& visitor)
   {
-    shortest_edge_sequence(v, Point_path_visitor_wrapper<Visitor>(visitor, m_polyhedron, m_vertexPointMap));
+    Point_path_visitor_wrapper<Visitor> wrapper(visitor, m_traits, m_polyhedron, m_vertexPointMap);
+    shortest_edge_sequence(v, wrapper);
   }
 
 };
