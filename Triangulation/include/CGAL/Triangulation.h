@@ -594,10 +594,10 @@ public:
         }
         else
         {
-          std::cerr << "orientation points: " ; // CJTODO DEBUG          
+          /*std::cerr << "orientation points: " ; // CJTODO DEBUG          
           for (auto it = points_begin(s) ; it != points_begin(s) + 1 + current_dimension() ; ++it)
             std::cerr << (*it).point()[0] << " ";
-          std::cerr << std::endl; // CJTODO DEBUG          
+          std::cerr << std::endl; // CJTODO DEBUG*/
           return coaffine_orientation_predicate()(points_begin(s), points_begin(s) + 1 + current_dimension());
         }
     }
