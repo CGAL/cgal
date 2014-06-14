@@ -41,14 +41,15 @@ void test(const int d, const string & type, const int N)
   {
     vector<double> coords(d);
     for( int j = 0; j < d; ++j )
-    coords[j] = static_cast<double>(rand() % 100000)/10000;
-    points.push_back(
-    Point(Bare_point(d, coords.begin(), coords.end()), 
-      rand() % 10));
+      coords[j] = static_cast<double>(rand() % 100000)/10000;
+    points.push_back(Point(
+      Bare_point(d, coords.begin(), coords.end()), 
+      static_cast<double>(rand() % 100000)/100000
+    ));
   }
   pc.insert(points.begin(),  points.end());
   cerr << "\nChecking topology and geometry...";
-  assert( pc.is_valid() );
+  assert( pc.is_valid(true) );
 
   cerr << "\nTraversing finite full_cells... ";
   size_t nbfs(0), nbis(0);
