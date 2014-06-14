@@ -1,9 +1,10 @@
-#ifndef HALFSPACES_INTERSECTION_H
-#define HALFSPACES_INTERSECTION_H
+#ifndef CGAL_HALFSPACES_INTERSECTION_H
+#define CGAL_HALFSPACES_INTERSECTION_H
 
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Polyhedron_incremental_builder_3.h>
 #include <CGAL/Voronoi_covariance_3/Convex_hull_traits_dual_3.h>
+#include <CGAL/Convex_hull_3.h>
 
 namespace CGAL
 {
@@ -17,8 +18,14 @@ namespace CGAL
                         typedef typename Polyhedron::HalfedgeDS HDS;
                         const Polyhedron_dual & _dual;
 
+                        // Origin
+                        typedef typename K::Point_3 Primal_point_3;
+                        Primal_point_3 origin;
+
                         public:
-                        Build_primal_polyhedron (const Polyhedron_dual & dual) : _dual (dual)
+                        Build_primal_polyhedron (const Polyhedron_dual & dual,
+                                                 Primal_point_3 o =
+                                                 Primal_point_3(0, 0, 0)) : _dual (dual), origin(o)
                         {}
 
                         // Compute the primal point associated to a triple of dual planes
@@ -115,7 +122,7 @@ namespace CGAL
                 Hull_traits_dual_3 dual_traits;
 
                 Polyhedron_dual_3 dual_convex_hull;
-                /* convex_hull_3(begin, end, dual_convex_hull, dual_traits); */
+                CGAL::convex_hull_3(begin, end, dual_convex_hull, dual_traits);
                 Builder build_primal(dual_convex_hull);
                 P.delegate(build_primal);
             }
@@ -123,5 +130,5 @@ namespace CGAL
     } // namespace Voronoi_covariance_3
 } // namespace CGAL
 
-#endif
+#endif // CGAL_HALFSPACES_INTERSECTION_H
 

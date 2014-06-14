@@ -71,9 +71,8 @@ namespace CGAL
                                    int y,
                                    int z)
               {
-                  // TODO: find planes which dual vector have (x, y, z) coordinates
-                  Point_3 p(1, 1, 1, 1);
-                  Point_3 q(1, 1, 1, 1);
+                  Point_3 p(0, 0, 0, -1);
+                  Point_3 q(x, y, z, -1);
 
                   return Vector_3(p, q);
               }

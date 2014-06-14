@@ -459,9 +459,21 @@ namespace CGAL
                         Plane_3 p3 = v3.p;
                         Plane_3 q3 = v3.q;
 
-                        // TODO
+                        RT diff1a = p1.a() * q1.d() - q1.a() * p1.d();
+                        RT diff1b = p1.b() * q1.d() - q1.b() * p1.d();
+                        RT diff1c = p1.c() * q1.d() - q1.c() * p1.d();
 
-                        return CGAL::COPLANAR;
+                        RT diff2a = p2.a() * q2.d() - q2.a() * p2.d();
+                        RT diff2b = p2.b() * q2.d() - q2.b() * p2.d();
+                        RT diff2c = p2.c() * q2.d() - q2.c() * p2.d();
+
+                        RT diff3a = p3.a() * q3.d() - q3.a() * p3.d();
+                        RT diff3b = p3.b() * q3.d() - q3.b() * p3.d();
+                        RT diff3c = p3.c() * q3.d() - q3.c() * p3.d();
+
+                        return (CGAL::sign_of_determinant(diff1a, diff2a, diff3a,
+                                                          diff1b, diff2b, diff3b,
+                                                          diff1c, diff2c, diff3c));
                     }
 
                 private:
