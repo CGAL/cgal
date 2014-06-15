@@ -421,6 +421,15 @@ void test_traits(const char* title)
       CGAL::POSITIVE);
   
   //End: Tests for pps case with vertical segment and two points with same y coordinate
+
+  // PSS case vertex computation, pssprob1.cin
+  test_incircle<Gt>(
+      Segment_2(Point_2(0, 100), Point_2(100, 100)),
+      Segment_2(Point_2(0, 100), Point_2(  0,   0)),
+      Point_2(20, -40),
+      Point_2(150, 30),
+      CGAL::POSITIVE);
+
   std::cout << "====================================" << std::endl;
   std::cout << std::endl;
 }
