@@ -1102,7 +1102,7 @@ private:
     const bool is_q_hv = is_q_hor or is_q_ver;
     const bool is_r_hv = is_r_hor or is_r_ver;
     if (is_q_hv and is_r_hv) {
-      compute_pss_both_hv(sp, sq, sr, is_q_hor, is_r_hor, pq, pr);
+      return compute_pss_both_hv(sp, sq, sr, is_q_hor, is_r_hor, pq, pr);
     }
     return compute_vv_bisectors(sp, sq, sr, PSS_Type());
   }
