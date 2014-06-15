@@ -459,17 +459,30 @@ namespace CGAL
                         Plane_3 p3 = v3.p;
                         Plane_3 q3 = v3.q;
 
-                        RT diff1a = p1.a() * q1.d() - q1.a() * p1.d();
-                        RT diff1b = p1.b() * q1.d() - q1.b() * p1.d();
-                        RT diff1c = p1.c() * q1.d() - q1.c() * p1.d();
+                        RT dp1 = p1.d() + origin.x() * p1.a()
+                            + origin.y() * p1.b() + origin.z() * p1.c();
+                        RT dp2 = p2.d() + origin.x() * p2.a()
+                            + origin.y() * p2.b() + origin.z() * p2.c();
+                        RT dp3 = p3.d() + origin.x() * p3.a()
+                            + origin.y() * p3.b() + origin.z() * p3.c();
+                        RT dq1 = q1.d() + origin.x() * q1.a()
+                            + origin.y() * q1.b() + origin.z() * q1.c();
+                        RT dq2 = q2.d() + origin.x() * q2.a()
+                            + origin.y() * q2.b() + origin.z() * q2.c();
+                        RT dq3 = q3.d() + origin.x() * q3.a()
+                            + origin.y() * q3.b() + origin.z() * q3.c();
 
-                        RT diff2a = p2.a() * q2.d() - q2.a() * p2.d();
-                        RT diff2b = p2.b() * q2.d() - q2.b() * p2.d();
-                        RT diff2c = p2.c() * q2.d() - q2.c() * p2.d();
+                        RT diff1a = p1.a() * dq1 - q1.a() * dp1;
+                        RT diff1b = p1.b() * dq1 - q1.b() * dp1;
+                        RT diff1c = p1.c() * dq1 - q1.c() * dp1;
 
-                        RT diff3a = p3.a() * q3.d() - q3.a() * p3.d();
-                        RT diff3b = p3.b() * q3.d() - q3.b() * p3.d();
-                        RT diff3c = p3.c() * q3.d() - q3.c() * p3.d();
+                        RT diff2a = p2.a() * dq2 - q2.a() * dp2;
+                        RT diff2b = p2.b() * dq2 - q2.b() * dp2;
+                        RT diff2c = p2.c() * dq2 - q2.c() * dp2;
+
+                        RT diff3a = p3.a() * dq3 - q3.a() * dp3;
+                        RT diff3b = p3.b() * dq3 - q3.b() * dp3;
+                        RT diff3c = p3.c() * dq3 - q3.c() * dp3;
 
                         return (CGAL::sign_of_determinant(diff1a, diff2a, diff3a,
                                                           diff1b, diff2b, diff3b,

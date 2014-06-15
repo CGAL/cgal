@@ -85,9 +85,8 @@ namespace CGAL
                                 RT d = (alpha * p1.a() + beta * p1.b() + gamma * p1.c()) / p1.d();
 
                                 // Primal vertex associated to the current dual plane
-                                // TODO: add origin
                                 // TODO: replace by CGAL::intersection
-                                Point_3 p(-alpha / d, -beta / d, -gamma / d);
+                                Point_3 p(origin.x() - alpha / d, origin.y() - beta / d, origin.z() - gamma / d);
 
                                 B.add_vertex(p);
                                 primal_vertices[it] = n;
@@ -119,11 +118,11 @@ namespace CGAL
                 typedef Polyhedron_3<Hull_traits_dual_3> Polyhedron_dual_3;
                 typedef internal::Build_primal_polyhedron<K, Polyhedron_dual_3, Polyhedron> Builder;
 
-                Hull_traits_dual_3 dual_traits;
+                Hull_traits_dual_3 dual_traits(origin);
 
                 Polyhedron_dual_3 dual_convex_hull;
                 CGAL::convex_hull_3(begin, end, dual_convex_hull, dual_traits);
-                Builder build_primal(dual_convex_hull);
+                Builder build_primal(dual_convex_hull, origin);
                 P.delegate(build_primal);
             }
 
