@@ -618,12 +618,12 @@ private:
     const Comparison_result cmp = CGAL::compare(dx, dy);
     if (cmp == LARGER) {
       ux_ = is_q_hor ? r_coord + p_coord_r : q_coord + p_coord_q;
-      uy_ = RT(2)*( is_q_hor ? q_coord + CGAL::sign(sdistq)*dx :
-                               r_coord + CGAL::sign(sdistr)*dx );
+      uy_ = is_q_hor ? RT(2)*q_coord + CGAL::sign(sdistq)*dx :
+                       RT(2)*r_coord + CGAL::sign(sdistr)*dx ;
     } else if (cmp == SMALLER) {
       uy_ = is_r_hor ? r_coord + p_coord_r : q_coord + p_coord_q;
-      ux_ = RT(2)*( is_r_hor ? q_coord + CGAL::sign(sdistq)*dy :
-                               r_coord + CGAL::sign(sdistr)*dy );
+      ux_ = is_r_hor ? RT(2)*q_coord + CGAL::sign(sdistq)*dy :
+                       RT(2)*r_coord + CGAL::sign(sdistr)*dy ;
     } else {
       ux_ = is_q_hor ? r_coord + p_coord_r : q_coord + p_coord_q;
       uy_ = is_q_hor ? q_coord + p_coord_q : r_coord + p_coord_r;
