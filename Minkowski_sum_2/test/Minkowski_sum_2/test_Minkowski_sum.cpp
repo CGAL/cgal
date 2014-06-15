@@ -45,12 +45,12 @@ int main (int argc, char **argv)
 {
   // Read the input file. Because of the structure of the *.cmd file 
   // (which is concatenated to the command line) we need to get all the
-  // inputs in one command line. This is the reason we read triplets/pairs of
-  // arguments. Each triplet/double is one input for the program.
+  // inputs in one command line. This is the reason we read triplets/quadruplets of
+  // arguments. Each triplet/quadruplet is one input for the program.
   if (argc < 3)
   {
-    std::cerr << "Usage: " << argv[0] << ". The input are triplets of:"
-	      << " <polygon#1> <polygon#2> [decomposition flags]" 
+    std::cerr << "Usage: " << argv[0] << ". The input are triplets/quadruplets of:"
+	      << "<compare|verify> <polygon#1> <polygon#2> [polygon#3]" 
 	      << std::endl;
     return (1);
   }
@@ -58,37 +58,35 @@ int main (int argc, char **argv)
   int i = 1;
   while (i < argc)
   {
+    bool verify = strcmp(argv[i], "verify") == 0;
+
     // Read the polygons from the input files.
     Polygon_2   pgn1, pgn2;
+    Polygon_with_holes_2 result;
     
-    if (! read_polygon (argv[i], pgn1))
-    {
-      std::cerr << "Failed to read: <" << argv[i] << ">." << std::endl;
-      return (1);
-    }
-    
-    if (! read_polygon (argv[i+1], pgn2))
+    if (! read_polygon (argv[i+1], pgn1))
     {
       std::cerr << "Failed to read: <" << argv[i+1] << ">." << std::endl;
       return (1);
     }
-
-    std::cout << "Testing " << argv[i] << " and " << argv[i+1] << std::endl;
-
-    // Read the decomposition flags.
-    bool         use_ssab = true;
-    bool         use_opt = true;
-    bool         use_hm = true;
-    bool         use_greene = true;
     
-    if (i+2 < argc && argv[i+2][0] == '-')
+    if (! read_polygon (argv[i+2], pgn2))
     {
-      use_ssab = (std::strchr (argv[i+2], 's') != NULL);
-      use_opt = (std::strchr (argv[i+2], 'o') != NULL);
-      use_hm = (std::strchr (argv[i+2], 'h') != NULL);
-      use_greene = (std::strchr (argv[i+2], 'g') != NULL);
+      std::cerr << "Failed to read: <" << argv[i+2] << ">." << std::endl;
+      return (1);
     }
-    
+
+    if (verify)
+    {
+      if (! read_polygon_with_holes (argv[i+3], result))
+      {
+        std::cerr << "Failed to read: <" << argv[i+3] << ">." << std::endl;
+        return (1);
+      }
+    }
+
+    std::cout << "Testing " << argv[i+1] << " and " << argv[i+2] << std::endl;
+
     // Compute the Minkowski sum using the convolution method.
     Polygon_with_holes_2                                     sum_conv;
     
@@ -96,17 +94,34 @@ int main (int argc, char **argv)
     sum_conv = minkowski_sum_2 (pgn1, pgn2);
     std::cout << "Done." << std::endl;
 
-    Polygon_with_holes_2                                     sum_conv_new;
-    std::cout << "Using the reduced convolution method ... ";
-    sum_conv_new = minkowski_sum_2_new (pgn1, pgn2);
-    if (are_equal (sum_conv, sum_conv_new))
+    if (verify)
     {
+      if (are_equal (result, sum_conv))
+      {
         std::cout << "OK." << std::endl;
+      }
+      else
+      {
+        std::cout << "ERROR (different result)." << std::endl;
+        return 1;
+      }
     }
     else
     {
-        std::cout << "ERROR (different result)." << std::endl;
-        return 1;
+      result = sum_conv;
+    }
+
+    Polygon_with_holes_2                                     sum_conv_new;
+    std::cout << "Using the reduced convolution method ... ";
+    sum_conv_new = minkowski_sum_2_new (pgn1, pgn2);
+    if (are_equal (result, sum_conv_new))
+    {
+      std::cout << "OK." << std::endl;
+    }
+    else
+    {
+      std::cout << "ERROR (different result)." << std::endl;
+      return 1;
     }
     
     // Define auxiliary polygon-decomposition objects.
@@ -116,70 +131,60 @@ int main (int argc, char **argv)
     CGAL::Greene_convex_decomposition_2<Kernel>              greene_decomp;
     Polygon_with_holes_2                                     sum_decomp;
     
-    if (use_ssab)
+    std::cout << "Using the small-side angle-bisector decomposition ... ";
+    sum_decomp = minkowski_sum_2 (pgn1, pgn2, ssab_decomp);
+    if (are_equal (result, sum_decomp))
     {
-      std::cout << "Using the small-side angle-bisector decomposition ... ";
-      sum_decomp = minkowski_sum_2 (pgn1, pgn2, ssab_decomp);
-      if (are_equal (sum_conv, sum_decomp))
-      {
-        std::cout << "OK." << std::endl;
-      }
-      else
-      {
-        std::cout << "ERROR (different result)." << std::endl;
-        return 1;
-      }
+      std::cout << "OK." << std::endl;
     }
-    
-    if (use_opt)
-    {
-      std::cout << "Using the optimal convex decomposition ... ";
-      sum_decomp = minkowski_sum_2 (pgn1, pgn2, opt_decomp);
-      if (are_equal (sum_conv, sum_decomp))
-      {
-        std::cout << "OK." << std::endl;
-      }
-      else
-      {
-        std::cout << "ERROR (different result)." << std::endl;
-        return 1;
-      }
-    }
-    
-    if (use_hm)
-    {
-      std::cout << "Using the Hertel--Mehlhorn decomposition ... ";
-      sum_decomp = minkowski_sum_2 (pgn1, pgn2, hm_approx_decomp);
-      if (are_equal (sum_conv, sum_decomp))
-      {
-        std::cout << "OK." << std::endl;
-      }
-      else
-      {
-        std::cout << "ERROR (different result)." << std::endl;
-        return 1;
-      }
-    }
-    
-    if (use_greene)
-    {
-      std::cout << "Using the Greene decomposition ... ";
-      sum_decomp = minkowski_sum_2 (pgn1, pgn2, greene_decomp);
-      if (are_equal (sum_conv, sum_decomp))
-      {
-        std::cout << "OK." << std::endl;
-      }
-      else
-      {
-        std::cout << "ERROR (different result)." << std::endl;
-        return 1;
-      }
-    }
-    
-    if (i+2 < argc && argv[i+2][0] == '-')
-      i += 3;
     else
-      i += 2;
+    {
+      std::cout << "ERROR (different result)." << std::endl;
+      return 1;
+    }
+    
+    std::cout << "Using the optimal convex decomposition ... ";
+    sum_decomp = minkowski_sum_2 (pgn1, pgn2, opt_decomp);
+    if (are_equal (result, sum_decomp))
+    {
+      std::cout << "OK." << std::endl;
+    }
+    else
+    {
+      std::cout << "ERROR (different result)." << std::endl;
+      return 1;
+    }
+    
+    std::cout << "Using the Hertel--Mehlhorn decomposition ... ";
+    sum_decomp = minkowski_sum_2 (pgn1, pgn2, hm_approx_decomp);
+    if (are_equal (result, sum_decomp))
+    {
+      std::cout << "OK." << std::endl;
+    }
+    else
+    {
+      std::cout << "ERROR (different result)." << std::endl;
+      return 1;
+    }
+    
+    std::cout << "Using the Greene decomposition ... ";
+    sum_decomp = minkowski_sum_2 (pgn1, pgn2, greene_decomp);
+    if (are_equal (result, sum_decomp))
+    {
+      std::cout << "OK." << std::endl;
+    }
+    else
+    {
+      std::cout << "ERROR (different result)." << std::endl;
+      return 1;
+    }
+    
+    if (verify)
+    {
+      i += 4;
+    }
+    else
+      i += 3;
   }
 
   return (0);

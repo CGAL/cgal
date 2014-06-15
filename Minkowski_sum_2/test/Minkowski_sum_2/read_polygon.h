@@ -53,4 +53,13 @@ bool read_polygon (const char *filename, CGAL::Polygon_2<Kernel>& pgn)
   return (true);
 }
 
+template <class Kernel>
+bool read_polygon_with_holes (const char *filename, CGAL::Polygon_with_holes_2<Kernel>& pgn)
+{
+  std::ifstream ifile(filename);
+  ifile >> pgn;
+  // TODO: what can go wrong?
+  return true;
+}
+
 #endif

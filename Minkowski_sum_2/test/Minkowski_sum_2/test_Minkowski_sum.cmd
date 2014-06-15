@@ -1,18 +1,17 @@
-./data/rooms_part1.dat ./data/rooms_part2.dat -sohg
-./data/comb_part1.dat ./data/comb_part2.dat -sohg
-./data/fork_part1.dat ./data/fork_part2.dat -soh
-./data/knife_part1.dat ./data/knife_part2.dat -so
-./data/mchain_part1.dat ./data/mchain_part2.dat -sh
-./data/random_part1.dat ./data/random_part2.dat -sg
-./data/wheels_part1.dat ./data/wheels_part2.dat -hg
-./data/r35975_part1.dat ./data/r35975_part2.dat -sohg
-./data/r38305_part1.dat ./data/r38305_part2.dat -sohg
-./data/D.dat ./data/E.dat -sohg
-./data/F.dat ./data/G.dat -sohg
-./data/F.dat ./data/E.dat -sohg
-./data/F.dat ./data/D.dat -sohg
-./data/F.dat ./data/A.dat -sohg
-./data/A.dat ./data/G.dat -sohg
-./data/B.dat ./data/G.dat -sohg
-./data/dangling_edge_part1.dat ./data/dangling_edge_part2.dat -sohg
-./data/isolated_vertex_part1.dat ./data/isolated_vertex_part2.dat -sohg
+compare ./data/rooms_part1.dat ./data/rooms_part2.dat
+compare ./data/comb_part1.dat ./data/comb_part2.dat
+compare ./data/knife_part1.dat ./data/knife_part2.dat
+compare ./data/mchain_part1.dat ./data/mchain_part2.dat
+compare ./data/random_part1.dat ./data/random_part2.dat
+compare ./data/wheels_part1.dat ./data/wheels_part2.dat
+compare ./data/r35975_part1.dat ./data/r35975_part2.dat
+compare ./data/r38305_part1.dat ./data/r38305_part2.dat
+compare ./data/D.dat ./data/E.dat
+compare ./data/F.dat ./data/G.dat
+compare ./data/F.dat ./data/E.dat
+compare ./data/F.dat ./data/D.dat
+compare ./data/F.dat ./data/A.dat
+compare ./data/A.dat ./data/G.dat
+compare ./data/B.dat ./data/G.dat
+verify ./data/dangling_edge_part1.dat ./data/dangling_edge_part2.dat ./data/dangling_edge_result.dat
+verify ./data/isolated_vertex_part1.dat ./data/isolated_vertex_part2.dat ./data/isolated_vertex_result.dat
