@@ -72,7 +72,7 @@ int main(int argc, char** argv)
   Traits::Barycentric_coordinate faceLocation(Traits::FT(0.25), Traits::FT(0.5), Traits::FT(0.25));
   
   Traits traits;
-  Polyhedron_shortest_path shortestPaths(traits, polyhedron);
+  Polyhedron_shortest_path shortestPaths(polyhedron, traits);
 
   shortestPaths.compute_shortest_paths(targetFace, faceLocation);
   

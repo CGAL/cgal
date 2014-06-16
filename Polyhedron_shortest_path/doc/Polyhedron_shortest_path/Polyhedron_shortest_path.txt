@@ -2,12 +2,12 @@ namespace CGAL {
 /*!
 
 \mainpage User Manual
-\anchor Chapter_PACKAGE_NAME
+\anchor Chapter_Polyhedron_shortest_path
 \anchor chaptermine
 \cgalAutoToc
-\author AUTHOR1, AUTHOR2
+\author Stephen Kiazyk
 
-This chapter describes the ...
+This chapter describes the Shortest path on Polyhedra algorithm, or it would if I'd written the documentation yet...
 
 \section secmydefinitions Definitions
 
@@ -17,7 +17,9 @@ Section on definitions here ...
 
 \subsection myFirstExample First Example
 
-The following example shows ...
+The following example shows how to get the shortest path to every vertex from an arbitrary source point on the surface.
+
+\cgalExample{Polyhedron_shortest_path/shortest_paths_elephant.cpp}
 
 */
 } /* namespace CGAL */

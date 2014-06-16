@@ -18,17 +18,28 @@
 
 namespace CGAL {
 
+/*!
+\ingroup PkgPolyhedronShortestPathTraitsClasses
+
+\brief Provides an implementation of the PolyhedronShortestPathTraits 
+model as required by the Polyhedron_shortest_path algorithm
+
+\tparam K The kernel type whose geometric primitives to use
+
+\tparam P The polyhedron type the algorithm is to act on
+
+\cgalModels `PolyhedronShortestPathTraits`
+*/
 template <
   class K, 
   class P>
 class Polyhedron_shortest_path_default_traits
 {
 public:
+
   typedef K Kernel;
   typedef P Polyhedron;
 
-  // Types
-public:
   typedef typename Kernel::FT FT;
   
   typedef typename Kernel::Point_2 Point_2;
@@ -37,20 +48,15 @@ public:
   typedef typename Kernel::Line_2 Line_2;
   typedef typename Kernel::Segment_2 Segment_2;
   typedef typename Kernel::Triangle_2 Triangle_2;
-  typedef typename Kernel::Vector_3 Barycentric_coordinate;
   
+  typedef typename Kernel::Vector_3 Barycentric_coordinate;
   typedef typename Kernel::Point_3 Point_3;
   typedef typename Kernel::Vector_3 Vector_3;
   typedef typename Kernel::Triangle_3 Triangle_3;
   
-  // typedef typename boost::graph_traits<Polyhedron>::face_descriptor Face_descriptor;
-  typedef typename Polyhedron::Facet_handle Face_descriptor;
-
   // Predicates
 public:
   typedef typename Kernel::Orientation_2 Orientation_2;
-  typedef typename Kernel::Bounded_side_2 Bounded_side_2;
-  typedef typename Kernel::Collinear_are_ordered_along_line_2 Collinear_are_ordered_along_line_2;
   typedef typename internal::Compare_relative_intersection_along_segment_2<K> Compare_relative_intersection_along_segment_2;
   typedef typename internal::Is_saddle_vertex<K,P> Is_saddle_vertex;
   
@@ -60,7 +66,6 @@ public:
   typedef typename Kernel::Construct_projected_point_2 Construct_projected_point_2;
   typedef typename Kernel::Compute_squared_distance_2 Compute_squared_distance_2;
   typedef typename Kernel::Compute_squared_distance_3 Compute_squared_distance_3;
-
   typedef typename internal::Project_triangle_3_to_triangle_2<K> Project_triangle_3_to_triangle_2;
   typedef typename internal::Flatten_triangle_3_along_segment_2<K> Flatten_triangle_3_along_segment_2;
   typedef typename internal::Parameteric_distance_along_segment_2<K> Parameteric_distance_along_segment_2;
@@ -129,9 +134,6 @@ public:
   }
   
   Orientation_2 orientation_2_object() const { return m_kernel.orientation_2_object(); }
-  Bounded_side_2 bounded_side_2_object() const { return m_kernel.bounded_side_2_object(); }
-  Collinear_are_ordered_along_line_2 collinear_are_ordered_along_line_2_object() const { return m_kernel.collinear_are_ordered_along_line_2_object(); }
-  
   Intersect_2 intersect_2_object() const { return m_kernel.intersect_2_object(); }
   Construct_projected_point_2 construct_projected_point_2_object() const { return m_kernel.construct_projected_point_2_object(); }
   Compute_squared_distance_2 compute_squared_distance_2_object() const { return m_kernel.compute_squared_distance_2_object(); }

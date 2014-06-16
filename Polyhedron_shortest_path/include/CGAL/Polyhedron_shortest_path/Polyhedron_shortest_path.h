@@ -22,6 +22,26 @@
 
 namespace CGAL {
 
+/*!
+\ingroup PkgPolyhedronShortestPath
+
+\brief Computes shortest surface paths from one or more source points on a polyhedral surface
+
+\details Uses an optimized variation of Chen and Han's O(n^2) algorithm by Xin and Wang. 
+Refer to those respective papers for the details of the implementation.
+ 
+\tparam Traits The geometric traits for this algorithm, a model of PolyhedronShortestPathTraits concept.
+
+\tparam VIM A model of the boost ReadablePropertyMap concept, provides a vertex index property map.
+
+\tparam HIM A model of the boost ReadablePropertyMap concept, provides a halfedges index property map.
+
+\tparam FIM A model of the boost ReadablePropertyMap concept, provides a face index property map.
+
+\tparam VPM A model of the boost ReadablePropertyMap concept, provides a vertex point property map.
+
+ */
+ 
 template<class Traits, 
   class VIM = typename boost::property_map<typename Traits::Polyhedron, CGAL::vertex_external_index_t>::type,
   class HIM = typename boost::property_map<typename Traits::Polyhedron, CGAL::halfedge_external_index_t>::type,
@@ -30,21 +50,27 @@ template<class Traits,
 class Polyhedron_shortest_path
 {
 public:
+/// \name Types
+/// @{
+
+  /// The vertex index property map class
   typedef VIM VertexIndexMap;
+  
+  /// The halfedge index property map class
   typedef HIM HalfedgeIndexMap;
+  
+  /// The face index property map class
   typedef FIM FaceIndexMap;
+  
+  /// The vertex point property map class
   typedef VPM VertexPointMap;
 
+  /// The polyhedron type which this algorithm acts on.
   typedef typename Traits::Polyhedron Polyhedron;
-  typedef typename Traits::Triangle_3 Triangle_3;
-  typedef typename Traits::Triangle_2 Triangle_2;
-  typedef typename Traits::Segment_2 Segment_2;
-  typedef typename Traits::Ray_2 Ray_2;
-  typedef typename Traits::Point_3 Point_3;
-  typedef typename Traits::Point_2 Point_2;
-  typedef typename Traits::Vector_2 Vector_2;
 
+  /// The BGL graph traits for this polyhedron
   typedef typename boost::graph_traits<Polyhedron> GraphTraits;
+
   typedef typename GraphTraits::vertex_descriptor vertex_descriptor;
   typedef typename GraphTraits::vertex_iterator vertex_iterator;
   typedef typename GraphTraits::halfedge_descriptor halfedge_descriptor;
@@ -52,17 +78,35 @@ public:
   typedef typename GraphTraits::face_descriptor face_descriptor;
   typedef typename GraphTraits::face_iterator face_iterator;
   
-  typedef typename Traits::Barycentric_coordinate Barycentric_coordinate;
+  /// The numeric type used by this algorithm.
   typedef typename Traits::FT FT;
   
+  /// The 3-dimensional point type of the polyhedron.
+  typedef typename Traits::Point_3 Point_3;
+  
+  /// An ordered triple which specifies the location within a triangle as
+  /// a convex combination of its three vertices.
+  typedef typename Traits::Barycentric_coordinate Barycentric_coordinate;
+
+  /// An ordered pair specifying a location on the surface of the polyhedron.
+  typedef typename std::pair<face_descriptor, Barycentric_coordinate> Face_location_pair;
+  
+/// @}
+  
+private:
+  typedef typename Traits::Triangle_3 Triangle_3;
+  typedef typename Traits::Triangle_2 Triangle_2;
+  typedef typename Traits::Segment_2 Segment_2;
+  typedef typename Traits::Ray_2 Ray_2;
+  typedef typename Traits::Point_2 Point_2;
+  typedef typename Traits::Vector_2 Vector_2;
+
   typedef typename internal::Cone_tree_node<Traits> Cone_tree_node;
   typedef typename internal::Cone_expansion_event<Traits> Cone_expansion_event;
   typedef typename Traits::Intersect_2 Intersect_2;
 
   typedef typename std::priority_queue<Cone_expansion_event, std::vector<Cone_expansion_event*>, internal::Cone_expansion_event_min_priority_queue_comparator<Traits> > Expansion_priqueue;
-  
-  typedef typename std::pair<face_descriptor, Barycentric_coordinate> FaceLocationPair;
-  typedef typename std::pair<Cone_tree_node*, FT> NodeDistancePair;
+  typedef typename std::pair<Cone_tree_node*, FT> Node_distance_pair;
 
 private:
 
@@ -104,11 +148,11 @@ private:
 
   std::vector<bool> m_vertexIsPseudoSource;
   
-  std::vector<NodeDistancePair> m_vertexOccupiers;
-  std::vector<NodeDistancePair> m_closestToVertices;
+  std::vector<Node_distance_pair> m_vertexOccupiers;
+  std::vector<Node_distance_pair> m_closestToVertices;
   
   std::vector<Cone_tree_node*> m_rootNodes;
-  std::vector<FaceLocationPair> m_faceLocations;
+  std::vector<Face_location_pair> m_faceLocations;
   
   std::vector<std::vector<Cone_tree_node*> > m_faceOccupiers;
   
@@ -123,6 +167,7 @@ private:
   
 public:
 
+  /// This is just a placeholder for a proper debug output verbosity switch method
   bool m_debugOutput;
   
 private:
@@ -154,9 +199,9 @@ private:
     size_t v2Index = m_vertexIndexMap[cone->target_vertex()];
     size_t v3Index = m_vertexIndexMap[CGAL::target(cone->entry_edge(), m_polyhedron)];
     
-    NodeDistancePair v1Distance = m_closestToVertices[v1Index];
-    NodeDistancePair v2Distance = m_closestToVertices[v2Index];
-    NodeDistancePair v3Distance = m_closestToVertices[v3Index];
+    Node_distance_pair v1Distance = m_closestToVertices[v1Index];
+    Node_distance_pair v2Distance = m_closestToVertices[v2Index];
+    Node_distance_pair v3Distance = m_closestToVertices[v3Index];
     
     if (reversed)
     {
@@ -368,7 +413,7 @@ private:
     Cone_tree_node* vertexRoot = new Cone_tree_node(m_traits, m_polyhedron, m_rootNodes.size(), CGAL::prev(CGAL::halfedge(vertex, m_polyhedron), m_polyhedron));
     m_rootNodes.push_back(vertexRoot);
     
-    m_closestToVertices[m_vertexIndexMap[vertex]] = NodeDistancePair(vertexRoot, FT(0.0));
+    m_closestToVertices[m_vertexIndexMap[vertex]] = Node_distance_pair(vertexRoot, FT(0.0));
     
     expand_pseudo_source(vertexRoot);
   }
@@ -495,7 +540,7 @@ private:
       
       size_t entryEdgeIndex = m_halfedgeIndexMap[node->entry_edge()];
 
-      NodeDistancePair currentOccupier = m_vertexOccupiers[entryEdgeIndex];
+      Node_distance_pair currentOccupier = m_vertexOccupiers[entryEdgeIndex];
       FT currentNodeDistance = node->distance_from_target_to_root();
 
       bool isLeftOfCurrent = false;
@@ -519,9 +564,9 @@ private:
         {
           CGAL::Comparison_result comparison = m_traits.compare_relative_intersection_along_segment_2_object()(
             node->entry_segment(), 
-            node->ray_to_target_vertex(), 
+            node->ray_to_target_vertex().supporting_line(), 
             currentOccupier.first->entry_segment(),
-            currentOccupier.first->ray_to_target_vertex()
+            currentOccupier.first->ray_to_target_vertex().supporting_line()
           );
           
           if (comparison == CGAL::SMALLER)
@@ -601,7 +646,7 @@ private:
         size_t targetVertexIndex = m_vertexIndexMap[node->target_vertex()];
         
         // Check if this is now the absolute closest node, and replace the current closest as appropriate
-        NodeDistancePair currentClosest = m_closestToVertices[targetVertexIndex];
+        Node_distance_pair currentClosest = m_closestToVertices[targetVertexIndex];
         
         if (m_debugOutput && currentClosest.first != NULL)
         {
@@ -645,7 +690,7 @@ private:
             propagateMiddle = true;
           }
           
-          m_closestToVertices[targetVertexIndex] = NodeDistancePair(node, currentNodeDistance);
+          m_closestToVertices[targetVertexIndex] = Node_distance_pair(node, currentNodeDistance);
         }
       }
       else
@@ -831,7 +876,7 @@ private:
         m_vertexIsPseudoSource[vertexIndex] = false;
       }
       
-      m_closestToVertices[vertexIndex] = NodeDistancePair(NULL, FT(0.0));
+      m_closestToVertices[vertexIndex] = Node_distance_pair(NULL, FT(0.0));
     }
     
     halfedge_iterator currentEdge, endEdge;
@@ -840,13 +885,13 @@ private:
     
     for (boost::tie(currentEdge, endEdge) = CGAL::halfedges(m_polyhedron); currentEdge != endEdge; ++currentEdge)
     {
-      m_vertexOccupiers[m_halfedgeIndexMap[*currentEdge]] = NodeDistancePair(NULL, FT(0.0));
+      m_vertexOccupiers[m_halfedgeIndexMap[*currentEdge]] = Node_distance_pair(NULL, FT(0.0));
     }
   }
   
   bool is_saddle_vertex(vertex_descriptor v)
   {
-    return m_traits.is_saddle_vertex_object()(v, m_polyhedron);
+    return m_traits.is_saddle_vertex_object()(v, m_polyhedron, m_vertexPointMap);
   }
   
   bool is_boundary_vertex(vertex_descriptor v) // TODO: confirm that this actually works
@@ -966,7 +1011,7 @@ private:
     return m_traits.construct_triangle_location_2_object()(node->layout_face(), CGAL::internal::shift_vector_3(alpha, node->edge_face_index()));
   }
   
-  NodeDistancePair nearest_on_face(face_descriptor face, Barycentric_coordinate alpha)
+  Node_distance_pair nearest_on_face(face_descriptor face, Barycentric_coordinate alpha)
   {
     size_t faceIndex = m_faceIndexMap[face];
     
@@ -994,7 +1039,7 @@ private:
       }
     }
     
-    return NodeDistancePair(closest, closestDistance);
+    return Node_distance_pair(closest, closestDistance);
   }
   
   static bool cone_comparator(const Cone_tree_node* lhs, const Cone_tree_node* rhs)
@@ -1004,20 +1049,52 @@ private:
   
 public:
   
-  Polyhedron_shortest_path(const Traits& traits, Polyhedron& p)
+  /// \name Constructors
+  /// @{
+  
+  /*!
+  \brief Creates a shortest paths object associated with a specific polyhedron.
+  
+  \details No copy of the polyhedron is made, only a reference to the polyhedron is held.
+  Default versions of the necessary polyhedron property maps are created and
+  used with this constructor.
+  
+  \param polyhedron The polyhedral surface to use.  Note that it must be triangulated.
+  
+  \param traits An optional instance of the traits class to use.
+  
+  */
+  Polyhedron_shortest_path(Polyhedron& polyhedron, const Traits& traits = Traits())
     : m_traits(traits)
-    , m_polyhedron(p)
-    , m_vertexIndexMap(CGAL::get(boost::vertex_external_index, p))
-    , m_halfedgeIndexMap(CGAL::get(CGAL::halfedge_external_index, p))
-    , m_faceIndexMap(CGAL::get(CGAL::face_external_index, p))
-    , m_vertexPointMap(CGAL::get(CGAL::vertex_point, p))
+    , m_polyhedron(polyhedron)
+    , m_vertexIndexMap(CGAL::get(boost::vertex_external_index, polyhedron))
+    , m_halfedgeIndexMap(CGAL::get(CGAL::halfedge_external_index, polyhedron))
+    , m_faceIndexMap(CGAL::get(CGAL::face_external_index, polyhedron))
+    , m_vertexPointMap(CGAL::get(CGAL::vertex_point, polyhedron))
     , m_debugOutput(false)
   {
   }
   
-  Polyhedron_shortest_path(const Traits& traits, Polyhedron& p, VertexIndexMap& vertexIndexMap, HalfedgeIndexMap& halfedgeIndexMap, FaceIndexMap& faceIndexMap, VertexPointMap& vertexPointMap)
+  /*!
+  \brief Creates a shortest paths object associated with a specific polyhedron.
+  
+  \details No copy of the polyhedron is made, only a reference to the polyhedron is held.
+  
+  \param polyhedron The polyhedral surface to use.  Note that it must be triangulated.
+  
+  \param vertexIndexMap Maps between vertices and their index.
+  
+  \param halfedgeIndexMap Maps between halfedges and their index.
+  
+  \param faceIndexMap Maps between faces and their index.
+  
+  \param vertexPointMap Maps between vertices and their 3-dimensional coordinates.
+  
+  \param traits An optional instance of the traits class to use.
+  */
+  Polyhedron_shortest_path(Polyhedron& polyhedron, VertexIndexMap& vertexIndexMap, HalfedgeIndexMap& halfedgeIndexMap, FaceIndexMap& faceIndexMap, VertexPointMap& vertexPointMap, const Traits& traits = Traits())
     : m_traits(traits)
-    , m_polyhedron(p)
+    , m_polyhedron(polyhedron)
     , m_vertexIndexMap(vertexIndexMap)
     , m_halfedgeIndexMap(halfedgeIndexMap)
     , m_faceIndexMap(faceIndexMap)
@@ -1026,14 +1103,41 @@ public:
   {
   }
   
+  /// @}
+  
+  /// \name Methods
+  /// @{
+  
+  /*!
+  \brief Compute shortest paths from a single source location
+  
+  \details Constructs a shortest paths sequence tree that covers shortest surface paths
+  to all locations on the polyhedron.
+  
+  \param face Handle to the face on which the source originates.
+  
+  \param location Barycentric coordinate on face specifying the source location.
+  */
   void compute_shortest_paths(face_descriptor face, Barycentric_coordinate location)
   {
-    typedef FaceLocationPair* FaceLocationPairIterator;
+    typedef Face_location_pair* Face_location_pairIterator;
 
-    FaceLocationPair faceLocation(std::make_pair(face, location));
-    compute_shortest_paths<FaceLocationPairIterator>(&faceLocation, (&faceLocation) + 1);
+    Face_location_pair faceLocation(std::make_pair(face, location));
+    compute_shortest_paths<Face_location_pairIterator>(&faceLocation, (&faceLocation) + 1);
   }
   
+  /*!
+  \brief Compute shortest paths from multiple source locations
+  
+  \details Constructs a shortest paths sequence tree that covers shortest surface paths
+  to all locations on the polyhedron, from multiple source locations.
+  
+  \tparam InputIterator a ForwardIterator type which dereferences to Face_location_pair.
+  
+  \param faceLocationsBegin iterator to the first in the list of face location pairs.
+  
+  \param faceLocationsEnd iterator to one past the end of the list of face location pairs.
+  */
   template<class InputIterator>
   void compute_shortest_paths(InputIterator faceLocationsBegin, InputIterator faceLocationsEnd)
   {
@@ -1196,45 +1300,108 @@ public:
     
   }
   
+  /*!
+  Computes the shortest surface distance from a vertex to any source point
+  
+  \param v The vertex to act as the query point
+  */
   FT shortest_distance_to_vertex(vertex_descriptor v)
   {
     return m_closestToVertices[m_vertexIndexMap[v]].second;
   }
   
+  /*!
+  \brief Computes the shortest surface distance from any surface location to any source point
+  
+  \param face Face of the polyhedron of the query point
+  
+  \param alpha Barycentric coordinate on face of the query point
+  */
   FT shortest_distance_to_location(face_descriptor face, Barycentric_coordinate alpha)
   {
     return nearest_on_face(face, alpha).second;
   }
   
-  template <class Visitor>
-  void shortest_edge_sequence(face_descriptor face, Barycentric_coordinate alpha, Visitor& visitor)
-  {
-    Cone_tree_node* current = nearest_on_face(face, alpha).first;
-    Point_2 locationInContext = face_location_with_normalized_coordinate(current, alpha);
-    visit_shortest_path(current, locationInContext, visitor);
-  }
+  /*!
+  \brief Visits the sequence of edges, vertices and faces traversed by the shortest path
+  from a vertex to any source point.
   
+  \param v The vertex to act as the query point
+  
+  \param visitor A model of PolyhedronShortestPathVisitor to receive the shortest path
+  */
   template <class Visitor>
-  void shortest_edge_sequence(vertex_descriptor v, Visitor& visitor)
+  void shortest_path_sequence(vertex_descriptor v, Visitor& visitor)
   {
     Cone_tree_node* current = m_closestToVertices[m_vertexIndexMap[v]].first;
     visit_shortest_path(current, current->target_vertex_location(), visitor);
   }
   
-  template <class Visitor>
-  void shortest_path_points(face_descriptor face, Barycentric_coordinate alpha, Visitor& visitor)
-  {
-    Point_path_visitor_wrapper<Visitor> wrapper(visitor, m_traits, m_polyhedron, m_vertexPointMap);
-    
-    shortest_edge_sequence(face, alpha, wrapper);
-  }
+  /*!
+  \brief Visits the sequence of edges, vertices and faces traversed by the shortest path
+  from any surface location to any source point.
   
+  \param face Face of the polyhedron of the query point
+  
+  \param alpha Barycentric coordinate on face of the query point
+  
+  \param visitor A model of PolyhedronShortestPathVisitor to receive the shortest path
+  */
+  template <class Visitor>
+  void shortest_path_sequence(face_descriptor face, Barycentric_coordinate alpha, Visitor& visitor)
+  {
+    Cone_tree_node* current = nearest_on_face(face, alpha).first;
+    Point_2 locationInContext = face_location_with_normalized_coordinate(current, alpha);
+    visit_shortest_path(current, locationInContext, visitor);
+  }
+
+  /*!
+  \brief Visits the sequence of points in the surface-restricted polyline from a vertex
+  to any source point (used for visualization of the shortest path).
+  
+  \param v The vertex to act as the query point
+  
+  \param visitor A model of PolyhedronShortestPathPointsVisitor to receive the shortest path points
+  */
   template <class Visitor>
   void shortest_path_points(vertex_descriptor v, Visitor& visitor)
   {
     Point_path_visitor_wrapper<Visitor> wrapper(visitor, m_traits, m_polyhedron, m_vertexPointMap);
-    shortest_edge_sequence(v, wrapper);
+    wrapper.vertex(v);
+    shortest_path_sequence(v, wrapper);
   }
+  
+  /*!
+  \brief Visits the sequence of points in the surface-restricted polyline from any surface location
+  to any source point (used for visualization of the shortest path).
+ 
+  \param face Face of the polyhedron of the query point
+  
+  \param alpha Barycentric coordinate on face of the query point
+  
+  \param visitor A model of PolyhedronShortestPathPointsVisitor to receive the shortest path points
+  */
+  template <class Visitor>
+  void shortest_path_points(face_descriptor face, Barycentric_coordinate alpha, Visitor& visitor)
+  {
+    Point_path_visitor_wrapper<Visitor> wrapper(visitor, m_traits, m_polyhedron, m_vertexPointMap);
+    wrapper.face(face, alpha);
+    shortest_path_sequence(face, alpha, wrapper);
+  }
+  
+  /*!
+  \brief Returns the 3-dimensional coordinate of the given face and face location on the polyhedron.
+  
+  \param face Face of the polyhedron of the query point
+  
+  \param alpha Barycentric coordinate on face of the query point
+  */
+  Point_3 get_face_location(face_descriptor face, Barycentric_coordinate alpha)
+  {
+    return m_traits.construct_triangle_location_3_object()(CGAL::internal::triangle_from_halfedge<Triangle_3, Polyhedron, VertexPointMap>(CGAL::halfedge(face, m_polyhedron), m_polyhedron, m_vertexPointMap), alpha);
+  }
+  
+/// @}
 
 };
 
