@@ -16,6 +16,7 @@
 #include <CGAL/Small_side_angle_bisector_decomposition_2.h>
 #include <CGAL/Polygon_convex_decomposition_2.h>
 #include <CGAL/Boolean_set_operations_2.h>
+#include <CGAL/Timer.h>
 #include "read_polygon.h"
 #include <cstring>
 
@@ -63,6 +64,7 @@ int main (int argc, char **argv)
     // Read the polygons from the input files.
     Polygon_2   pgn1, pgn2;
     Polygon_with_holes_2 result;
+    CGAL::Timer timer;
     
     if (! read_polygon (argv[i+1], pgn1))
     {
@@ -91,8 +93,11 @@ int main (int argc, char **argv)
     Polygon_with_holes_2                                     sum_conv;
     
     std::cout << "Using the convolution method ... ";
+    timer.reset();
+    timer.start();
     sum_conv = minkowski_sum_2 (pgn1, pgn2);
-    std::cout << "Done." << std::endl;
+    timer.stop();
+    std::cout << "Done (" << timer.time() << " s)" << std::endl;
 
     if (verify)
     {
@@ -113,10 +118,13 @@ int main (int argc, char **argv)
 
     Polygon_with_holes_2                                     sum_conv_new;
     std::cout << "Using the reduced convolution method ... ";
+    timer.reset();
+    timer.start();
     sum_conv_new = minkowski_sum_2_new (pgn1, pgn2);
+    timer.stop();
     if (are_equal (result, sum_conv_new))
     {
-      std::cout << "OK." << std::endl;
+      std::cout << "OK (" << timer.time() << " s)" << std::endl;
     }
     else
     {
@@ -132,10 +140,13 @@ int main (int argc, char **argv)
     Polygon_with_holes_2                                     sum_decomp;
     
     std::cout << "Using the small-side angle-bisector decomposition ... ";
+    timer.reset();
+    timer.start();
     sum_decomp = minkowski_sum_2 (pgn1, pgn2, ssab_decomp);
+    timer.stop();
     if (are_equal (result, sum_decomp))
     {
-      std::cout << "OK." << std::endl;
+      std::cout << "OK (" << timer.time() << " s)" << std::endl;
     }
     else
     {
@@ -144,10 +155,13 @@ int main (int argc, char **argv)
     }
     
     std::cout << "Using the optimal convex decomposition ... ";
+    timer.reset();
+    timer.start();
     sum_decomp = minkowski_sum_2 (pgn1, pgn2, opt_decomp);
+    timer.stop();
     if (are_equal (result, sum_decomp))
     {
-      std::cout << "OK." << std::endl;
+      std::cout << "OK (" << timer.time() << " s)" << std::endl;
     }
     else
     {
@@ -156,10 +170,13 @@ int main (int argc, char **argv)
     }
     
     std::cout << "Using the Hertel--Mehlhorn decomposition ... ";
+    timer.reset();
+    timer.start();
     sum_decomp = minkowski_sum_2 (pgn1, pgn2, hm_approx_decomp);
+    timer.stop();
     if (are_equal (result, sum_decomp))
     {
-      std::cout << "OK." << std::endl;
+      std::cout << "OK (" << timer.time() << " s)" << std::endl;
     }
     else
     {
@@ -168,10 +185,13 @@ int main (int argc, char **argv)
     }
     
     std::cout << "Using the Greene decomposition ... ";
+    timer.reset();
+    timer.start();
     sum_decomp = minkowski_sum_2 (pgn1, pgn2, greene_decomp);
+    timer.stop();
     if (are_equal (result, sum_decomp))
     {
-      std::cout << "OK." << std::endl;
+      std::cout << "OK (" << timer.time() << " s)" << std::endl;
     }
     else
     {
