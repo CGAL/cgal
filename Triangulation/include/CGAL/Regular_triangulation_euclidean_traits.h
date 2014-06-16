@@ -72,14 +72,9 @@ public:
     result_type operator()(ForwardIterator start, ForwardIterator end) const
     {
       Point_drop_weight_d pdw = m_kernel.point_drop_weight_d_object();
-      std::vector<typename Point_drop_weight_d::result_type> points;
-      while (start != end)
-      {
-        points.push_back(pdw(*start));
-        ++start;
-      }
       return m_kernel.orientation_d_object() (
-        points.begin(), points.end()
+        boost::make_transform_iterator(start, pdw),
+        boost::make_transform_iterator(end, pdw)
       );
     }
   };
@@ -104,14 +99,10 @@ public:
         std::cerr << (*it).point()[0] << " ";
       std::cerr << std::endl; // CJTODO DEBUG*/
       Point_drop_weight_d pdw = m_kernel.point_drop_weight_d_object();
-      std::vector<typename Point_drop_weight_d::result_type> points;
-      while (start != end)
-      {
-        points.push_back(pdw(*start));
-        ++start;
-      }
       return m_kernel.construct_flat_orientation_d_object() (
-        points.begin(), points.end());
+        boost::make_transform_iterator(start, pdw),
+        boost::make_transform_iterator(end, pdw)
+      );
     }
   };
 
@@ -133,15 +124,10 @@ public:
       ForwardIterator start, ForwardIterator end) const
     {
       Point_drop_weight_d pdw = m_kernel.point_drop_weight_d_object();
-      std::vector<typename Point_drop_weight_d::result_type> points;
-      while (start != end)
-      {
-        points.push_back(pdw(*start));
-        ++start;
-      }
       return m_kernel.in_flat_orientation_d_object() (
         orient,
-        points.begin(), points.end()
+        boost::make_transform_iterator(start, pdw),
+        boost::make_transform_iterator(end, pdw)
       );
     }
   };
@@ -163,14 +149,9 @@ public:
                            const Weighted_point_d & p) const
     {
       Point_drop_weight_d pdw = m_kernel.point_drop_weight_d_object();
-      std::vector<typename Point_drop_weight_d::result_type> points;
-      while (start != end)
-      {
-        points.push_back(pdw(*start));
-        ++start;
-      }
       return m_kernel.contained_in_affine_hull_d_object() (
-        points.begin(), points.end(),
+        boost::make_transform_iterator(start, pdw),
+        boost::make_transform_iterator(end, pdw),
         pdw(p)
       );
     }
