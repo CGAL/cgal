@@ -140,7 +140,8 @@ the correct minimization of the energy. When using the default cotangent weighti
 the input surface mesh must be <em>clean</em>. That is, that for all edges in the surface mesh
 the sum of the angles opposite to the edge in the incident triangles is less that \f$ \pi \f$.
 If this is not the case and the targeted application allows the modification of the surface mesh connectivity,
-subdividing the problematic edges will solve the issue. See \cgalFigureRef{Cotangent_bisect_fig}.
+a solution (amongst other) is to bissect (possibly recursively) the problematic edges
+See \cgalFigureRef{Cotangent_bisect_fig}.
 
 \cgalFigureBegin{Cotangent_bisect_fig, cotangent_bisect.png}
 Cotangent weight of edges. (Left) The sum of the opposite angles to the edge \f$ e \f$, \f$ \alpha + \beta \f$
