@@ -695,9 +695,11 @@ public:
         Polygon_2 p2 = pgn2;
         _aabb_collision_detector = new AABBCollisionDetector<Kernel_, Container_>(p2, revP1);
 
+        // compute the reduced convolution
         Segments_list reduced_conv;
         buildReducedConvolutionFiberGrid(pgn1, pgn2, reduced_conv);
 
+        // split the segments at their intersection points
         Arrangement_history_2 arr;
         buildArrangementFromConv(reduced_conv, arr);
 
@@ -733,6 +735,7 @@ public:
         degHandler.addDegenerateVerticesToArr();
 
         delete _aabb_collision_detector;
+
         return (sum_holes);
     }
 
@@ -800,29 +803,6 @@ public:
         ++holes;
     }
 
-    /*!
-     * Compute the boundery Minkowski sum of two simple polygons.
-     * The result is represented as
-     * the outer boundary of the Minkowski sum (which is always a simple polygon).
-     * \param pgn1 The first polygon.
-     * \param pgn2 The second polygon.
-     * \param sum_bound Output: A polygon respresenting the outer boundary
-     * of the Minkowski sum.
-     *
-     * \pre Both input polygons are simple.
-     * \return A past-the-end iterator for the holes in the sum.
-     */
-    template <class OutputIterator>
-    OutputIterator operator()(const Polygon_2 &pgn1,
-                              const Polygon_2 &pgn2,
-                              Polygon_2 &sum_bound) const {
-        CGAL_precondition(pgn1.is_simple());
-        CGAL_precondition(pgn2.is_simple());
-
-        Segments_list reduced_conv;
-        buildReducedConvolution(pgn1, pgn2, reduced_conv);
-    }
-
     void fillPolyDirs(const Polygon_2 &pgn1, std::vector<Direction_2> &outVec) const {
         unsigned int n1 = pgn1.size();
 
@@ -831,102 +811,6 @@ public:
         }
 
         outVec[n1 - 1] = f_direction(f_vector(pgn1[n1 - 1], pgn1[0]));
-    }
-    void buildReducedConvolution(const Polygon_2 &pgn1, const Polygon_2 &pgn2, Segments_list &reduced_conv) const {
-        unsigned int n1 = pgn1.size();
-        unsigned int n2 = pgn2.size();
-        Vertex_circulator vert_p1, vert_p2, prev_p1, prev_p2, next_p1, next_p2;
-        vert_p1 = prev_p1 = next_p1 = pgn1.vertices_circulator();
-        vert_p2 = prev_p2 = next_p2 = pgn2.vertices_circulator();
-
-        --prev_p1;
-        --prev_p2;
-        ++next_p1;
-        ++next_p2;
-        bool is_end_coincide;
-        bool is_start_coincide;
-
-        boost::unordered_map<std::pair<int, int>, Point_2> points_map;
-
-        for (unsigned int i1 = 0; i1 < n1; ++i1) {
-            for (unsigned int i2 = 0; i2 < n2; ++i2) {
-                points_map[std::pair<int, int>(i1, i2)] = f_add(*vert_p1, Vector_2(Point_2(ORIGIN), *vert_p2));
-                ++vert_p2;
-            }
-
-            ++vert_p1;
-        }
-
-        std::vector<Direction_2> p1_dirs(n1);
-        std::vector<Direction_2> p2_dirs(n2);
-
-        fillPolyDirs(pgn1, p1_dirs);
-        fillPolyDirs(pgn2, p2_dirs);
-
-        vert_p1 = pgn1.vertices_circulator();
-        vert_p2 = pgn2.vertices_circulator();
-
-        for (unsigned int i1 = 0; i1 < n1; ++i1) {
-            for (unsigned int i2 = 0; i2 < n2; ++i2) {
-
-                Point_2 start_point = points_map[std::pair<int, int>(i1, i2)];
-                int prev_i1 = i1 - 1;
-
-                if (prev_i1 == -1) {
-                    prev_i1 = n1 - 1;
-                }
-
-                int prev_i2 = i2 - 1;
-
-                if (prev_i2 == -1) {
-                    prev_i2 = n2 - 1;
-                }
-
-                if (!checkReflex(*prev_p1, *vert_p1, *next_p1) && checkSwept(p1_dirs[prev_i1], p1_dirs[i1], p2_dirs[i2], is_start_coincide, is_end_coincide)) {
-                    int cyc_ind = i2;
-                    ++cyc_ind;
-
-                    if (cyc_ind == n2) {
-                        cyc_ind = 0;
-                    }
-
-                    Point_2 end_point = points_map[std::pair<int, int>(i1, cyc_ind)];
-
-                    CGAL::Comparison_result cres = f_compare_xy(start_point, end_point);
-                    Segment_2 conv_seg = Segment_2(Traits_2_A::Segment_2(start_point, end_point), cres);
-
-                    if (!is_end_coincide) {
-                        reduced_conv.push_back(conv_seg);
-                    }
-                }
-
-                if (!checkReflex(*prev_p2, *vert_p2, *next_p2) && checkSwept(p2_dirs[prev_i2], p2_dirs[i2], p1_dirs[i1], is_start_coincide, is_end_coincide)) {
-                    int cyc_ind = i1;
-                    ++cyc_ind;
-
-                    if (cyc_ind == n1) {
-                        cyc_ind = 0;
-                    }
-
-                    Point_2 end_point = points_map[std::pair<int, int>(cyc_ind, i2)];
-
-                    CGAL::Comparison_result cres = f_compare_xy(start_point, end_point);
-                    Segment_2 conv_seg = Segment_2(Traits_2_A::Segment_2(start_point, end_point), cres);
-
-                    if (!is_start_coincide) {
-                        reduced_conv.push_back(conv_seg);
-                    }
-                }
-
-                prev_p2 = vert_p2;
-                vert_p2 = next_p2;
-                ++next_p2;
-            }
-
-            prev_p1 = vert_p1;
-            vert_p1 = next_p1;
-            ++next_p1;
-        }
     }
 
     // Increse a cyclic integer counter with limit lim.
@@ -965,17 +849,14 @@ public:
         return result;
     }
 
-    // Builds the reduced convolution using the fiber grid approach. for each starting vertex, try to add out-going next states(two states).
-    // If a visited vertex is reached then do not explore. This is a BFS like iteration beggining from each vertex in the first column of the
-    // fiber grid.
+    // Builds the reduced convolution using the fiber grid approach. For each
+    // starting vertex, try to add out-going next states (two states). If a
+    // visited vertex is reached then do not explore. This is a BFS like
+    // iteration beginning from each vertex in the first column of the fiber
+    // grid.
     void buildReducedConvolutionFiberGrid(const Polygon_2 &pgn1, const Polygon_2 &pgn2, Segments_list &reduced_conv) const {
         unsigned int n1 = pgn1.size();
         unsigned int n2 = pgn2.size();
-        int i1 = 0;
-        int i2 = 0;
-
-        bool is_end_coincide;
-        bool is_start_coincide;
 
         // Init the direcions of both polygons.
         std::vector<Direction_2> p1_dirs(n1);
@@ -984,8 +865,8 @@ public:
         fillPolyDirs(pgn1, p1_dirs);
         fillPolyDirs(pgn2, p2_dirs);
 
-        boost::unordered_set<StatePair > visited_vertices_set;
-        std::queue<StatePair > state_queue;
+        boost::unordered_set<StatePair> visited_vertices_set;
+        std::queue<StatePair> state_queue;
         boost::unordered_map<std::pair<int, int>, Point_2> points_map;
 
         // init the queue with vertices from the first column
@@ -997,8 +878,8 @@ public:
             StatePair curr_state = state_queue.front();
             state_queue.pop();
 
-            i1 = curr_state.first;
-            i2 = curr_state.second;
+            int i1 = curr_state.first;
+            int i2 = curr_state.second;
 
             if (visited_vertices_set.count(curr_state) > 0) {
                 continue;
@@ -1016,6 +897,9 @@ public:
             StatePair next_state_p2 = StatePair(i1, next_p2);
 
             // add geometric entites of the transition from state (i,j) to (i+1,j) and (i,j+1), if they are in the reduced convolution.
+
+            bool is_end_coincide;
+            bool is_start_coincide;
 
             // Add an edge from Q
             if (checkSwept(p1_dirs[prev_p1], p1_dirs[i1], p2_dirs[i2], is_start_coincide, is_end_coincide) && !is_end_coincide) {
