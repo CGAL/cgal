@@ -111,7 +111,7 @@ Left: An irregularly sampling of a surface with the topology of a sphere. Right:
 Many point sets contain point attributes such as normals or colors. Because the scale-space surface reconstruction constructs the connectivity between the original points any appropriate point attributes can be applied to the surface. \cgalFigureRef{chapterScaleSpaceReconstruction3figColor} shows the surface reconstructed for a set of points with colors.
 
 \cgalFigureBegin{chapterScaleSpaceReconstruction3figColor, trophime.png, trophime_detail.png}
-Left: A reconstructed surface with vertex coloring using the colors of the point set. Right: detail of the surface shown as wire-frame. Images or image-based modeling: MAP (Modèles et simulations pour l’Architecture et le Patrimoine) - UMR CNRS/MCC 3495.
+Left: A reconstructed surface with vertex coloring using the colors of the point set. Right: detail of the surface shown as wire-frame. Images or image-based modeling: MAP (ModÃ¨les et simulations pour l'Architecture et le Patrimoine) - UMR CNRS/MCC 3495.
 \cgalFigureEnd
 
 
