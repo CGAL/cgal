@@ -219,6 +219,11 @@ Concurrency tag (from the TDS).
 */ 
 typedef TriangulationDataStructure_3::Concurrency_tag Concurrency_tag;
 
+/*!
+Iterator over the cells intersected by a line segment.
+*/
+typedef unspecified_type Segment_walk_iterator;
+
 /// @} 
 
 /// \name Creation 
@@ -1135,6 +1140,71 @@ Past-the-end iterator
 Point_iterator points_end() const; 
 
 /// @} 
+
+/*!\name Walk Iterator
+\cgalModifBegin
+
+The triangulation defines an iterator that visits the cells intersected by a given line segment. It is non-mutable and unidirectional. It is invalidated by any modification of one of the cells traversed.  
+
+The cells visited comprise a connected region containing both source and target point of the line segment `s`. Each cell falls within one or more of the following categories:
+1. a finite cell whose interior intersects `s`.
+2. a finite cell with a facet `f` whose interior intersects `s`. If such a cell is visited, its neighbor incident to `f` is not visited.
+3. a finite cell with an edge `e` whose interior (partially) ovelaps `s`. If such a cell is visited, none of the other cells incident to `e` are visited.
+4. a finite cell with an edge `e` whose interior intersects `s` in a point. This cell must form a connected component together with a number of cells incident to `e`. Exactly two of these cells must also fall in category 1 or 2.
+5. a finite cell with a vertex `v` that is an endpoint of `s`. This cell must also fit in either category 1 or 2.
+6. a finite cell with a vertex `v` that lies on the iterior of `s`. This cell must form a connected component together with a number of cells incident to `v`. Exactly two of these cells must also fall in category 1 or 2.
+7. an infinite cell with a finite facet whose interior intersects the interior of `s`.
+8. an infinite cell with a finite edge `e` whose interior intersects the interior of `s`. If such a cell is visited, its infinite neighbor incident to `e` is not visited.
+9. an infinite cell with a finite vertex `v` that lies on the interior of `s`. If such a cell is visited, none of the other infinite cells incident to `v` are visited.
+
+In the special case the segment does not intersect any finite facets, exactly one infinite cell is visited. This cell shares a facet `f` with a finite cell `c` such that `f` is intersected by the line through the source of `s` and the vertex of `c` opposite of `f`.
+
+Note that for categories 4 and 6, it is not predetermined which incident cells are visited. However, exactly two of the incident cells `c0,c1` visited also fall in category 1 or 2. The remaining incident cells visited make a facet-connected sequence connecting `c0` to `c1`.
+
+\cgalModifEnd
+*/
+/// @{
+/*!
+returns an iterator over the cells intersected by the line segment `st`.
+
+If there is no such cell, the iterator visits exactly one infinite cell.
+
+\pre `s` and `t` must be different points and neither can be the infinite vertex.
+\pre The triangulation must mave dimension at least 2.
+*/
+Segment_walk_iterator segment_walk(Vertex_handle s, Vertex_handle t) const;
+
+/*!
+returns an iterator over the cells intersected by the line segment `st`.
+
+If there is no such cell, the iterator visits exactly one infinite cell.
+
+\pre `s` and `t` must be different points and `s` cannot be the infinite vertex.
+\pre The triangulation must mave dimension at least 2. If the dimension is 2, `t` must lie in the affine hull.
+*/
+Segment_walk_iterator segment_walk(Vertex_handle s, const Point& t) const;
+
+/*!
+returns an iterator over the cells intersected by the line segment `st`.
+
+If there is no such cell, the iterator visits exactly one infinite cell.
+
+\pre `s` and `t` must be different points.
+\pre The triangulation must mave dimension at least 2. If the dimension is 2, both `s` and `t` must lie in the affine hull.
+*/
+Segment_walk_iterator segment_walk(const Point& s, const Point& t, Cell_handle hint = Cell_handle()) const;
+
+/*!
+returns an iterator over the cells intersected by the line segment `seg`.
+
+If there is no such cell, the iterator visits exactly one infinite cell.
+
+\pre `seg` cannot be degenerate, i.e. it cannot have the same source and target.
+\pre The triangulation must mave dimension at least 2. If the dimension is 2, `seg` must lie completely in the affine hull.
+*/
+Segment_walk_iterator segment_walk(const Segment& seg,  Cell_handle hint = Cell_handle()) const;
+
+/// @}
 
 /*!\name Cell and Facet Circulators 
 The following circulators respectively visit all cells or all facets incident to a given edge. They are non-mutable and bidirectional. They are invalidated by any modification of one of the cells traversed.  

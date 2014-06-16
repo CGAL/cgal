@@ -19,6 +19,27 @@
 #ifndef CGAL_TRIANGULATION_SEGMENT_TRAVERSER_3_H
 #define CGAL_TRIANGULATION_SEGMENT_TRAVERSER_3_H
 
+
+#include <CGAL/basic.h>
+
+#include <iostream>
+#include <list>
+#include <set>
+#include <map>
+#include <utility>
+#include <stack>
+
+#include <CGAL/Unique_hash_map.h>
+#include <CGAL/triangulation_assertions.h>
+#include <CGAL/Triangulation_utils_3.h>
+
+#include <CGAL/Triangulation_data_structure_3.h>
+#include <CGAL/Triangulation_cell_base_3.h>
+#include <CGAL/Triangulation_vertex_base_3.h>
+
+
+
+
 #include <CGAL/internal/Dummy_gt.h>
 #include <CGAL/Random.h>
 
@@ -299,6 +320,12 @@ inline bool operator==( typename Tr::Cell_handle ch, Triangulation_segment_trave
  */
 template <class Tr>
 inline bool operator!=( typename Tr::Cell_handle ch, Triangulation_segment_traverser_3<Tr> tci ) { return tci != ch; }
+
+
+#ifndef CGAL_TRIANGULATION_3_H
+template < class GT, class Tds >
+class Triangulation_3;
+#endif // CGAL_TRIANGULATION_3_H
 
 // Specialization for void
 template <>

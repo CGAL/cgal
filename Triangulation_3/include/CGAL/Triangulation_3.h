@@ -19,6 +19,8 @@
 //                 Sylvain Pion
 //                 Clement Jamin
 
+#include <CGAL/Triangulation_segment_traverser_3.h>
+
 #ifndef CGAL_TRIANGULATION_3_H
 #define CGAL_TRIANGULATION_3_H
 
@@ -422,6 +424,8 @@ public:
   typedef Facet_iterator                       All_facets_iterator;
   typedef Edge_iterator                        All_edges_iterator;
   typedef Vertex_iterator                      All_vertices_iterator;
+
+  typedef Triangulation_segment_traverser_3<Self> Segment_walk_iterator;
 
   typedef typename Tds::Simplex                Simplex;
 private:
@@ -2128,6 +2132,26 @@ public:
   finite_incident_edges(Vertex_handle v, OutputIterator edges) const
   {
     return _tds.incident_edges(v, edges, Finite_filter(this));
+  }
+
+  Segment_walk_iterator
+  segment_walk(Vertex_handle s, Vertex_handle t) const {
+      return Segment_walk_iterator( *this, s, t );
+  }
+
+  Segment_walk_iterator
+  segment_walk(Vertex_handle s, const Point& t) const {
+      return Segment_walk_iterator( *this, s, t );
+  }
+
+  Segment_walk_iterator
+  segment_walk(const Point& s, const Point& t, Cell_handle hint = Cell_handle()) const {
+      return Segment_walk_iterator( *this, s, t, hint );
+  }
+
+  Segment_walk_iterator
+  segment_walk(const Segment& seg,  Cell_handle hint = Cell_handle()) const {
+      return Segment_walk_iterator( *this, seg, hint );
   }
 
   size_type degree(Vertex_handle v) const
