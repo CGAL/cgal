@@ -591,9 +591,9 @@ public:
         std::set<ConvSegment> *_edgesSet;
     };
 
-    friend class DegenerateCassesManager;
-    struct DegenerateCassesManager {
-        DegenerateCassesManager(Arrangement_history_2 *arr, Minkowski_sum_by_convolution_lien_2 *mink, Polygon_2 *poly1, Polygon_2 *poly2, bool isActive): _arr(arr), _mink(mink), _poly1(poly1), _poly2(poly2), _active(isActive) {
+    friend class DegenerateCasesManager;
+    struct DegenerateCasesManager {
+        DegenerateCasesManager(Arrangement_history_2 *arr, Minkowski_sum_by_convolution_lien_2 *mink, Polygon_2 *poly1, Polygon_2 *poly2, bool isActive): _arr(arr), _mink(mink), _poly1(poly1), _poly2(poly2), _active(isActive) {
         }
 
         void markDegenerateEdges() {
@@ -694,24 +694,25 @@ public:
         Polygon_2 revP1 = transform(Aff_transformation_2<Kernel>(SCALING, -1), pgn1);
         Polygon_2 p2 = pgn2;
         _aabb_collision_detector = new AABBCollisionDetector<Kernel_, Container_>(p2, revP1);
+
         Segments_list reduced_conv;
         buildReducedConvolutionFiberGrid(pgn1, pgn2, reduced_conv);
+
         Arrangement_history_2 arr;
         buildArrangementFromConv(reduced_conv, arr);
+
         const Minkowski_sum_by_convolution_lien_2 *ptr = this;
-        DegenerateCassesManager degHandler(&arr, const_cast <Minkowski_sum_by_convolution_lien_2 *>(ptr), const_cast <Polygon_2 *>(&pgn1), const_cast <Polygon_2 *>(&pgn2), true);
+        DegenerateCasesManager degHandler(&arr, const_cast <Minkowski_sum_by_convolution_lien_2 *>(ptr), const_cast <Polygon_2 *>(&pgn1), const_cast <Polygon_2 *>(&pgn2), true);
         degHandler.findDegenerateBorderVertices();
         degHandler.markDegenerateEdges();
-
-        // turn pgn1 by 180 degrees
-        Polygon_2 reverse_pgn1 = transform(typename Kernel::Aff_transformation_2(CGAL::Rotation(), 0, -1), pgn1);
 
         // trace outer loop
         markOutsideLoop(arr, sum_bound);
 
-        // trace holes
+        // turn pgn1 by 180 degrees
+        Polygon_2 reverse_pgn1 = transform(Aff_transformation_2<Kernel>(ROTATION, 0, -1), pgn1);
 
-        // Original code here !
+        // trace holes
         for (Face_iterator itr = arr.faces_begin(); itr != arr.faces_end(); ++itr) {
             handleFace(arr, itr, reverse_pgn1, pgn2, sum_holes);
         }
