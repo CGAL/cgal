@@ -26,6 +26,7 @@
 #include <set>                          // for set
 #include <utility>                      // for pair
 #include <vector>                       // for vector
+#include <iostream> // TODO remove
 
 #include <boost/unordered_map.hpp>  // for unordered_map
 #include <boost/unordered_set.hpp>  // for unordered_set
@@ -68,6 +69,7 @@ public:
 
 template <class Kernel_, class Container_>
 class Minkowski_sum_by_convolution_lien_2 {
+
 public:
 
     typedef Kernel_ Kernel;
@@ -136,12 +138,9 @@ public:
     Translate_point_2 f_add;
     Construct_vector_2 f_vector;
     Construct_direction_2 f_direction;
-    Opposite_line_2 f_opp_line;
     Compute_orientation_2 f_orientation;
     Compare_xy_2 f_compare_xy;
     Ccw_in_between_2 f_ccw_in_between;
-    Compute_Angle_2 f_angle;
-    Is_vertical_2 f_is_vertical;
     Compute_x_2 f_compute_x;
     Compute_y_2 f_compute_y;
 
@@ -657,7 +656,6 @@ public:
 
 public:
 
-    /*! Default constructor. */
     Minkowski_sum_by_convolution_lien_2() {
         // Obtain kernel functors.
         Kernel ker;
@@ -666,13 +664,10 @@ public:
         f_add = ker.construct_translated_point_2_object();
         f_vector = ker.construct_vector_2_object();
         f_direction = ker.construct_direction_2_object();
-        f_opp_line = ker.construct_opposite_line_2_object();
         f_orientation = ker.orientation_2_object();
         f_compare_xy = ker.compare_xy_2_object();
         f_ccw_in_between = ker.counterclockwise_in_between_2_object();
-        f_angle = ker.angle_2_object();
         f_compare_endpoints_xy = Traits_2().compare_endpoints_xy_2_object();
-        f_is_vertical = ker.is_vertical_2_object();
         f_compare_x = Traits_2().compare_x_2_object();
         f_compare_y_at_x = Traits_2().compare_y_at_x_2_object();
         f_compute_x = ker.compute_x_2_object();
@@ -680,10 +675,9 @@ public:
     }
 
     template <class OutputIterator>
-    OutputIterator operator()(const Polygon_2 &polygon1,
-                              const Polygon_2 &polygon2,
-                              Polygon_2 &sum_bound,
-                              OutputIterator sum_holes) {
+    OutputIterator operator()(const Polygon_2 &polygon1, const Polygon_2 &polygon2,
+                              Polygon_2 &sum_bound, OutputIterator sum_holes) {
+
         CGAL_precondition(polygon1.is_simple());
         CGAL_precondition(polygon2.is_simple());
 
@@ -696,7 +690,8 @@ public:
         if (pgn2.orientation() == CGAL::CLOCKWISE) {
             pgn2.reverse_orientation();
         }
-        Polygon_2 revP1 = revPoly(pgn1);
+
+        Polygon_2 revP1 = transform(Aff_transformation_2<Kernel>(SCALING, -1), pgn1);
         Polygon_2 p2 = pgn2;
         _aabb_collision_detector = new AABBCollisionDetector<Kernel_, Container_>(p2, revP1);
         Segments_list reduced_conv;
@@ -708,6 +703,7 @@ public:
         degHandler.findDegenerateBorderVertices();
         degHandler.markDegenerateEdges();
 
+        // turn pgn1 by 180 degrees
         Polygon_2 reverse_pgn1 = transform(typename Kernel::Aff_transformation_2(CGAL::Rotation(), 0, -1), pgn1);
 
         // trace outer loop
@@ -1177,21 +1173,6 @@ private:
         return false;
     }
 
-    Polygon_2 revPoly(const Polygon_2 &input) const {
-        Polygon_2 out;
-        typename Polygon_2::Vertex_iterator itr = input.vertices_begin();
-
-        for (; itr != input.vertices_end(); ++itr) {
-            out.push_back(Point_2(-itr->x(), -itr->y()));
-        }
-
-        if (out.orientation() == CGAL::CLOCKWISE) {
-            out.reverse_orientation();
-        }
-
-        return out;
-    }
-
     AABBCollisionDetector<Kernel, Container_> *getColDetect() const {
         return _aabb_collision_detector;
     }
@@ -1313,7 +1294,7 @@ private:
     bool checkCollisionDetection(Arrangement_history_2 &arr, Point_2 &point, const Polygon_2 &pgn1, const Polygon_2 &pgn2) const {
         AABBCollisionDetector<Kernel, Container_> *collision_detector = getColDetect();
         Point_2 p = point;
-        Polygon_2 r_pgn1 = revPoly(pgn1);
+        Polygon_2 r_pgn1 = transform(Aff_transformation_2<Kernel>(SCALING, -1), pgn1);
         Polygon_2 t_pgn1 = transform(typename Kernel::Aff_transformation_2(CGAL::Translation(), Vector_2(CGAL::ORIGIN, p)), r_pgn1);
         collision_detector->setTranslationPoint(p);
         return collision_detector->checkCollision(t_pgn1, pgn2);
