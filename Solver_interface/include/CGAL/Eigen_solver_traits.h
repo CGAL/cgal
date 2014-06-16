@@ -22,6 +22,10 @@
 #include <CGAL/basic.h> // include basic.h before testing #defines
 
 #include <Eigen/Sparse>
+#include <Eigen/src/Core/util/Macros.h>
+#if EIGEN_VERSION_AT_LEAST(3,2,0)
+#include <Eigen/SparseLU>
+#endif
 #include <CGAL/Eigen_matrix.h>
 #include <CGAL/Eigen_vector.h>
 #include <boost/shared_ptr.hpp>
@@ -44,6 +48,13 @@ namespace internal {
   struct Get_eigen_matrix< ::Eigen::SimplicialCholesky<EigenMatrix>,FT>{
     typedef Eigen_sparse_symmetric_matrix<FT> type;
   };
+
+  #if EIGEN_VERSION_AT_LEAST(3,2,0)
+  template <class FT, class EigenMatrix, class EigenOrdering>
+  struct Get_eigen_matrix< ::Eigen::SparseLU<EigenMatrix, EigenOrdering >, FT> {
+    typedef Eigen_sparse_matrix<FT> type;
+  };
+  #endif
 } //internal 
   
 /// The class Eigen_solver_traits
@@ -68,7 +79,7 @@ public:
 // Public operations
 public:
 
-   Eigen_solver_traits(): m_solver_sptr(new EigenSolverT)
+   Eigen_solver_traits():m_mat(NULL), m_solver_sptr(new EigenSolverT)
    {
    }
    
@@ -93,7 +104,24 @@ public:
 
       return m_solver_sptr->info() == Eigen::Success;
    }
+
+  bool pre_factor (const Matrix& A, NT& D)
+  {
+    D = 1;
+    
+    m_mat = &A.eigen_object();
+    solver().compute(*m_mat);
+    return solver().info() == Eigen::Success;
+  }
+	
+  bool linear_solver(const Vector& B, Vector& X)
+  {
+    CGAL_precondition(m_mat!=NULL); //pre_factor should have been called first
+    X = solver().solve(B);
+    return solver().info() == Eigen::Success;
+  }
 protected:
+  const typename Matrix::EigenType* m_mat;
   boost::shared_ptr<EigenSolverT> m_solver_sptr;
 
 };

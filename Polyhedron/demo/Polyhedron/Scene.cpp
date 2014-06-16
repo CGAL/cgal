@@ -37,11 +37,36 @@ Scene::Scene(QObject* parent)
 Scene::Item_id
 Scene::addItem(Scene_item* item)
 {
+  // If bbox of new item is inside the scene bbox, then do not emit updated_bbox
+  const Bbox& item_bbox = item->bbox();
+  bool need_updated_bbox = item->isFinite() && !item->isEmpty();
+  Bbox scene_bbox;
+  bool scene_bbox_initialized = false;
+
+  for(QList<Scene_item*>::const_iterator m_it = m_entries.begin();
+      m_it != m_entries.end() && need_updated_bbox; ++m_it) 
+  {
+    if(!(*m_it)->isFinite() || (*m_it)->isEmpty()) { continue; }
+
+    if(scene_bbox_initialized) { 
+      scene_bbox = scene_bbox + (*m_it)->bbox(); 
+    }
+    else {
+      scene_bbox_initialized = true;
+      scene_bbox = (*m_it)->bbox(); 
+    }
+
+    if(scene_bbox + item_bbox == scene_bbox) { // inside scene bbox
+      need_updated_bbox = false;               // early exit
+    }
+  }
+
   m_entries.push_back(item);
 
   connect(item, SIGNAL(itemChanged()),
           this, SLOT(itemChanged()));
-  emit updated_bbox();
+
+  if(need_updated_bbox) { emit updated_bbox(); }
   emit updated();
   QAbstractListModel::reset();
   Item_id id = m_entries.size() - 1;
@@ -109,12 +134,17 @@ Scene::erase(QList<int> indices)
     max_index = (std::max)(max_index, index);
     Scene_item* item = m_entries[index];
     to_be_removed.push_back(item);
-    emit itemAboutToBeDestroyed(item);
-    delete item;
   }
 
   Q_FOREACH(Scene_item* item, to_be_removed) {
-    m_entries.removeAll(item);
+    // in slots of itemAboutToBeDestroyed, another erase function can be called 
+    // (which might remove items inside to_be_removed)
+    // so to prevent deleting items multiple times this check is added
+    if(m_entries.contains(item)) {
+      emit itemAboutToBeDestroyed(item);
+      delete item;
+      m_entries.removeAll(item);
+    }
   }
 
   selected_item = -1;
@@ -145,6 +175,12 @@ Scene_item*
 Scene::item(Item_id index) const
 {
   return m_entries.value(index); // QList::value checks bounds
+}
+
+Scene::Item_id 
+Scene::item_id(Scene_item* scene_item) const
+{
+  return m_entries.indexOf(scene_item);
 }
 
 int

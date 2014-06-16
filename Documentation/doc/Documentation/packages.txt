@@ -51,6 +51,7 @@ h1 {
 \section PartPolyhedra Cell Complexes and Polyhedra
 
 \package_listing{Polyhedron}
+\package_listing{Hole_filling}
 \package_listing{HalfedgeDS}
 \package_listing{Combinatorial_map}
 \package_listing{Linear_cell_complex}
@@ -102,6 +103,7 @@ h1 {
 \package_listing{Ridges_3}
 \package_listing{Jet_fitting_3}
 \package_listing{Point_set_processing_3}
+\package_listing{Hole_filling}
 
 \section PartSearchStructures Spatial Searching and Sorting
 

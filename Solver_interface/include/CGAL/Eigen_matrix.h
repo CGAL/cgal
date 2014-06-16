@@ -44,7 +44,7 @@ struct Eigen_sparse_matrix
 // Public types
 public:
 
-  typedef Eigen::SparseMatrix<T> EigenType;
+	typedef Eigen::SparseMatrix<T> EigenType;
   typedef T NT;
 
 // Public operations
@@ -72,7 +72,7 @@ public:
   {
     CGAL_precondition(rows > 0);
     CGAL_precondition(columns > 0);
-    if (is_symmetric) {
+    if (m_is_symmetric) {
         CGAL_precondition(rows == columns);
     }
 

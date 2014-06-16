@@ -107,6 +107,9 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   qt4_wrap_ui( point_inside_polyhedronUI_FILES Point_inside_polyhedron_widget.ui)
   qt4_wrap_ui( polyhedron_slicerUI_FILES Polyhedron_slicer_widget.ui)
   qt4_wrap_ui( segmentationUI_FILES Mesh_segmentation_widget.ui)
+  qt4_wrap_ui( hole_fillingUI_FILES Hole_filling_widget.ui)
+  qt4_wrap_ui( fairingUI_FILES Fairing_widget.ui)
+  qt4_wrap_ui( selectionUI_FILES Selection_widget.ui)
   qt4_wrap_ui( funcUI_FILES Function_dialog.ui )
 
   qt4_generate_moc( "MainWindow.h" "${CMAKE_CURRENT_BINARY_DIR}/MainWindow_moc.cpp" )
@@ -139,6 +142,9 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
               Mesher_base.cpp
               Camera_positions_list.cpp
               Scene_points_with_normal_item.cpp
+			  Scene_polyhedron_item_decorator.cpp
+			  Scene_polyhedron_selection_item.cpp
+			  Scene_polyhedron_item_k_ring_selection.cpp
               )
   qt4_automoc( Scene_implicit_function_item.cpp )
 
@@ -198,7 +204,16 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   add_item(scene_edit_polyhedron_item Scene_edit_polyhedron_item.cpp Scene_edit_polyhedron_item.moc)
   # special
   target_link_libraries(scene_edit_polyhedron_item scene_polyhedron_item)
-
+	
+  add_item(scene_polyhedron_item_decorator Scene_polyhedron_item_decorator.cpp Scene_polyhedron_item_decorator.moc)
+  target_link_libraries(scene_polyhedron_item_decorator scene_polyhedron_item)
+  
+  add_item(scene_polyhedron_item_k_ring_selection Scene_polyhedron_item_k_ring_selection.cpp Scene_polyhedron_item_k_ring_selection.moc)
+  target_link_libraries(scene_polyhedron_item_k_ring_selection scene_polyhedron_item)
+  
+  add_item(scene_polyhedron_selection_item Scene_polyhedron_selection_item.cpp Scene_polyhedron_selection_item.moc)
+  target_link_libraries(scene_polyhedron_selection_item scene_polyhedron_item_decorator scene_polyhedron_item_k_ring_selection)
+  
   if(EIGEN3_FOUND OR TAUCS_FOUND)
     add_item(scene_textured_polyhedron_item Scene_textured_polyhedron_item.cpp texture.cpp Scene_textured_polyhedron_item.moc)
   endif(EIGEN3_FOUND OR TAUCS_FOUND)
@@ -314,6 +329,9 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
   polyhedron_demo_plugin(xyz_plugin Polyhedron_demo_xyz_plugin)
   target_link_libraries(xyz_plugin scene_points_with_normal_item)
+  
+  polyhedron_demo_plugin(selection_io_plugin Polyhedron_demo_selection_io_plugin)
+  target_link_libraries(selection_io_plugin scene_polyhedron_selection_item)
 
   polyhedron_demo_plugin(orient_soup_plugin Polyhedron_demo_orient_soup_plugin)
   target_link_libraries(orient_soup_plugin scene_polygon_soup_item scene_polyhedron_item)
@@ -328,7 +346,7 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   target_link_libraries(off_to_xyz_plugin scene_points_with_normal_item)
 
   polyhedron_demo_plugin(convex_hull_plugin Polyhedron_demo_convex_hull_plugin)
-  target_link_libraries(convex_hull_plugin scene_polyhedron_item scene_points_with_normal_item scene_polylines_item)
+  target_link_libraries(convex_hull_plugin scene_polyhedron_item scene_points_with_normal_item scene_polylines_item scene_polyhedron_selection_item)
 
   polyhedron_demo_plugin(kernel_plugin Polyhedron_demo_kernel_plugin)
   target_link_libraries(kernel_plugin scene_polyhedron_item)
@@ -376,7 +394,7 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   endif(EIGEN3_FOUND OR LAPACK_FOUND)
 
   polyhedron_demo_plugin(self_intersection_plugin Polyhedron_demo_self_intersection_plugin)
-  target_link_libraries(self_intersection_plugin scene_polyhedron_item)
+  target_link_libraries(self_intersection_plugin scene_polyhedron_item scene_polyhedron_selection_item)
 
   polyhedron_demo_plugin(polyhedron_stitching_plugin Polyhedron_demo_polyhedron_stitching_plugin)
   target_link_libraries(polyhedron_stitching_plugin scene_polyhedron_item scene_polylines_item)
@@ -426,7 +444,22 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   qt4_wrap_ui( ps_outliers_removal_UI_FILES Polyhedron_demo_point_set_outliers_removal_plugin.ui)
   polyhedron_demo_plugin(point_set_outliers_removal_plugin Polyhedron_demo_point_set_outliers_removal_plugin ${ps_outliers_removal_UI_FILES}) 
   target_link_libraries(point_set_outliers_removal_plugin scene_points_with_normal_item)
+  
+  if(EIGEN3_FOUND AND ${EIGEN3_VERSION} VERSION_GREATER "3.1.90")
+    polyhedron_demo_plugin(hole_filling_plugin Polyhedron_demo_hole_filling_plugin ${hole_fillingUI_FILES})
+    target_link_libraries(hole_filling_plugin scene_polyhedron_item scene_polylines_item)
 
+    polyhedron_demo_plugin(hole_filling_polyline_plugin Polyhedron_demo_hole_filling_polyline_plugin)
+    target_link_libraries(hole_filling_polyline_plugin scene_polyhedron_item scene_polylines_item)
+
+    polyhedron_demo_plugin(fairing_plugin Polyhedron_demo_fairing_plugin ${fairingUI_FILES})
+    target_link_libraries(fairing_plugin scene_polyhedron_selection_item)
+  else()
+    message(STATUS "NOTICE: Eigen 3.2 was not found, hole filling and fairing plugins will not be available.")
+  endif()
+
+  polyhedron_demo_plugin(selection_plugin Polyhedron_demo_selection_plugin ${selectionUI_FILES})
+  target_link_libraries(selection_plugin scene_polyhedron_selection_item scene_points_with_normal_item)
 #
 # Exporting
 #
