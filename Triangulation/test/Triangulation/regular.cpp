@@ -1,5 +1,4 @@
 #include <CGAL/Epick_d.h>
-#include <CGAL/io/Triangulation_io.h>
 #include <CGAL/point_generators_d.h>
 #include <CGAL/Regular_triangulation.h>
 #include <CGAL/Regular_triangulation_euclidean_traits.h>
@@ -46,7 +45,7 @@ void test(const int d, const string & type, const int N)
       coords[j] = static_cast<double>(rand() % 100000)/10000;
     points.push_back(Point(
       Bare_point(d, coords.begin(), coords.end()), 
-      static_cast<double>(rand() % 100000)/100000
+      /*static_cast<double>(rand() % 100000)/100000*/static_cast<double>(i)/20
     ));
   }
   rt.insert(points.begin(),  points.end());
@@ -93,8 +92,6 @@ void test(const int d, const string & type, const int N)
     cout << "\nThere are " << cells.size() << " vertices on the convex hull.";
     cells.clear();
   }
-
-  cout << rt.tds() << std::endl;
 
   // Remove all !
   cerr << "\nBefore removal: " << rt.number_of_vertices() << " vertices. After: ";

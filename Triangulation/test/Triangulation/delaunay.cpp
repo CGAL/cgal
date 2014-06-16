@@ -1,5 +1,4 @@
 #include <CGAL/Epick_d.h>
-#include <CGAL/io/Triangulation_io.h>
 #include <CGAL/point_generators_d.h>
 #include <CGAL/Delaunay_triangulation.h>
 #include <CGAL/spatial_sort.h>
@@ -94,8 +93,6 @@ void test(const int d, const string & type, const int N)
         cout << "\nThere are " << cells.size() << " vertices on the convex hull.";
         cells.clear();
     }
-    
-    cout << dt.tds() << std::endl;
 
     // Remove all !
     cerr << "\nBefore removal: " << dt.number_of_vertices() << " vertices. After: ";
