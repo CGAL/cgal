@@ -60,6 +60,7 @@ public:
   int numberOfEntries() const;
   const QList<Scene_item*>& entries() const { return m_entries; }
   Q_INVOKABLE Scene_item* item(int) const ;
+  Item_id item_id(Scene_item*) const;
   
   //! \todo Replace Index based selection functionality with those
   //! functions.
