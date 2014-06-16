@@ -257,8 +257,8 @@ public:
         : tds_(dim)
         , kernel_(k)
         , infinity_()
-        , rng_((long)0)
         , preset_flat_orientation_(std::numeric_limits<int>::max(), NULL)
+        , rng_((long)0)
 #ifdef CGAL_TRIANGULATION_STATISTICS
         ,walk_size_(0)
 #endif
@@ -278,8 +278,8 @@ public:
         : tds_(dim)
         , kernel_(k)
         , infinity_()
-        , rng_((long)0)
         , preset_flat_orientation_(preset_flat_orientation)
+        , rng_((long)0)
 #ifdef CGAL_TRIANGULATION_STATISTICS
         ,walk_size_(0)
 #endif
@@ -291,8 +291,8 @@ public:
         : tds_(t2.tds_)
         , kernel_(t2.kernel_)
         , infinity_()
-        , rng_(t2.rng_)
         , preset_flat_orientation_(std::numeric_limits<int>::max(), NULL)
+        , rng_(t2.rng_)
 #ifdef CGAL_TRIANGULATION_STATISTICS
         ,walk_size_(t2.walk_size_)
 #endif
