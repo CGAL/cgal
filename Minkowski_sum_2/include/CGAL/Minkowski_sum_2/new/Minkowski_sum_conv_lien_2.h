@@ -803,36 +803,16 @@ public:
         ++holes;
     }
 
-    void fillPolyDirs(const Polygon_2 &pgn1, std::vector<Direction_2> &outVec) const {
-        unsigned int n1 = pgn1.size();
+    std::vector<Direction_2> fillPolyDirs(const Polygon_2 &pgn1) const {
+        std::vector<Direction_2> outVec;
+        unsigned int n = pgn1.size();
 
-        for (int i = 0; i < (n1 - 1); ++i) {
-            outVec[i] = f_direction(f_vector(pgn1[i], pgn1[i + 1]));
+        for (int i = 0; i < n-1; ++i) {
+            outVec.push_back(f_direction(f_vector(pgn1[i], pgn1[i+1])));
         }
+        outVec.push_back(f_direction(f_vector(pgn1[n-1], pgn1[0])));
 
-        outVec[n1 - 1] = f_direction(f_vector(pgn1[n1 - 1], pgn1[0]));
-    }
-
-    // Increse a cyclic integer counter with limit lim.
-    int cyclicInc(int i, int lim) const {
-        i = i + 1;
-
-        if (i >= lim) {
-            i = 0;
-        }
-
-        return i;
-    }
-
-    // Decrease a cyclic integer counter with limit lim.
-    int cyclicDec(int i, int lim) const {
-        i = i - 1;
-
-        if (i < 0) {
-            i = lim - 1;
-        }
-
-        return i;
+        return outVec;
     }
 
     // Gets point corresponding to a state (i,j) if exists, creates this point if asked for first time.
@@ -858,19 +838,16 @@ public:
         unsigned int n1 = pgn1.size();
         unsigned int n2 = pgn2.size();
 
-        // Init the direcions of both polygons.
-        std::vector<Direction_2> p1_dirs(n1);
-        std::vector<Direction_2> p2_dirs(n2);
-
-        fillPolyDirs(pgn1, p1_dirs);
-        fillPolyDirs(pgn2, p2_dirs);
+        // Init the direcions of both polygons
+        std::vector<Direction_2> p1_dirs = fillPolyDirs(pgn1);
+        std::vector<Direction_2> p2_dirs = fillPolyDirs(pgn2);
 
         boost::unordered_set<StatePair> visited_vertices_set;
         std::queue<StatePair> state_queue;
         boost::unordered_map<std::pair<int, int>, Point_2> points_map;
 
-        // init the queue with vertices from the first column
-        for (int i = n1 - 1; i >= 0; --i) {
+        // Init the queue with vertices from the first column
+        for (int i = n1-1; i >= 0; --i) {
             state_queue.push(StatePair(i, 0));
         }
 
@@ -884,14 +861,13 @@ public:
             if (visited_vertices_set.count(curr_state) > 0) {
                 continue;
             }
-
             visited_vertices_set.insert(curr_state);
 
             // add two outgoing edges:
-            int next_p1 = cyclicInc(i1, n1);
-            int next_p2 = cyclicInc(i2, n2);
-            int prev_p1 = cyclicDec(i1, n1);
-            int prev_p2 = cyclicDec(i2, n2);
+            int next_p1 = (i1+1) % n1;
+            int next_p2 = (i2+1) % n2;
+            int prev_p1 = (n1+i1-1) % n1;
+            int prev_p2 = (n2+i2-1) % n2;
 
             StatePair next_state_p1 = StatePair(next_p1, i2);
             StatePair next_state_p2 = StatePair(i1, next_p2);
