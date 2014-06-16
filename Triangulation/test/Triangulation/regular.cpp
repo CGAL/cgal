@@ -1,4 +1,5 @@
 #include <CGAL/Epick_d.h>
+#include <CGAL/io/Triangulation_io.h>
 #include <CGAL/point_generators_d.h>
 #include <CGAL/Regular_triangulation.h>
 #include <CGAL/Regular_triangulation_euclidean_traits.h>
@@ -29,14 +30,15 @@ void test(const int d, const string & type, const int N)
 
   typedef CGAL::Random_points_in_cube_d<Bare_point> Random_points_iterator;
 
-  RTri pc(d);
+  RTri rt(d);
   cerr << "\nBuilding Regular triangulation of (" << type << d << ") dimension with " << N << " points";
-  assert(pc.empty());
+  assert(rt.empty());
 
   vector<Point> points;
-  CGAL::Random rng;
-  Random_points_iterator rand_it(d, 2.0, rng); // CJTODO: unused
+  //CGAL::Random rng;
+  //Random_points_iterator rand_it(d, 2.0, rng); // CJTODO: unused
 
+  srand(10);
   for( int i = 0; i < N; ++i )
   {
     vector<double> coords(d);
@@ -47,63 +49,65 @@ void test(const int d, const string & type, const int N)
       static_cast<double>(rand() % 100000)/100000
     ));
   }
-  pc.insert(points.begin(),  points.end());
+  rt.insert(points.begin(),  points.end());
   cerr << "\nChecking topology and geometry...";
-  assert( pc.is_valid(true) );
+  assert( rt.is_valid(true) );
 
   cerr << "\nTraversing finite full_cells... ";
   size_t nbfs(0), nbis(0);
-  Finite_full_cell_const_iterator fsit = pc.finite_full_cells_begin();
-  while( fsit != pc.finite_full_cells_end() )
+  Finite_full_cell_const_iterator fsit = rt.finite_full_cells_begin();
+  while( fsit != rt.finite_full_cells_end() )
     ++fsit, ++nbfs;
   cerr << nbfs << " + ";
   vector<Full_cell_handle> infinite_full_cells;
-  pc.tds().incident_full_cells(pc.infinite_vertex(), back_inserter(infinite_full_cells));
+  rt.tds().incident_full_cells(rt.infinite_vertex(), back_inserter(infinite_full_cells));
   nbis = infinite_full_cells.size();
   cerr << nbis << " = " << (nbis+nbfs)
-  << " = " << pc.number_of_full_cells();
-  cerr << "\nThe triangulation has current dimension " << pc.current_dimension();
-  CGAL_assertion( pc.number_of_full_cells() == nbis+nbfs);
+  << " = " << rt.number_of_full_cells();
+  cerr << "\nThe triangulation has current dimension " << rt.current_dimension();
+  CGAL_assertion( rt.number_of_full_cells() == nbis+nbfs);
 
   cerr << "\nTraversing finite vertices... ";
   size_t nbfv(0);
-  Finite_vertex_iterator fvit = pc.finite_vertices_begin();
-  while( fvit != pc.finite_vertices_end() )
+  Finite_vertex_iterator fvit = rt.finite_vertices_begin();
+  while( fvit != rt.finite_vertices_end() )
     ++fvit, ++nbfv;
   cerr << nbfv <<endl;
 
   // Count convex hull vertices:
-  if( pc.maximal_dimension() > 1 )
+  if( rt.maximal_dimension() > 1 )
   {
     typedef vector<Face> Faces;
     Faces edges;
     back_insert_iterator<Faces> out(edges);
-    pc.tds().incident_faces(pc.infinite_vertex(), 1, out);
+    rt.tds().incident_faces(rt.infinite_vertex(), 1, out);
     cout << "\nThere are " << edges.size() << " vertices on the convex hull.";
     edges.clear();
   }
-  else // pc.maximal_dimension() == 1
+  else // rt.maximal_dimension() == 1
   {
     typedef vector<Full_cell_handle> Cells;
     Cells cells;
     back_insert_iterator<Cells> out(cells);
-    pc.tds().incident_full_cells(pc.infinite_vertex(), out);
+    rt.tds().incident_full_cells(rt.infinite_vertex(), out);
     cout << "\nThere are " << cells.size() << " vertices on the convex hull.";
     cells.clear();
   }
 
+  cout << rt.tds() << std::endl;
+
   // Remove all !
-  cerr << "\nBefore removal: " << pc.number_of_vertices() << " vertices. After: ";
+  cerr << "\nBefore removal: " << rt.number_of_vertices() << " vertices. After: ";
   random_shuffle(points.begin(),  points.end());
-  pc.remove(points.begin(),  points.end());
-  assert( pc.is_valid() );
-  cerr << pc.number_of_vertices() << " vertices.";
-  // assert( pc.empty() ); NOT YET !
+  rt.remove(points.begin(),  points.end());
+  assert( rt.is_valid() );
+  cerr << rt.number_of_vertices() << " vertices.";
+  // assert( rt.empty() ); NOT YET !
   // CLEAR
-  pc.clear();
-  assert( -1 == pc.current_dimension() );
-  assert( pc.empty() );
-  assert( pc.is_valid() );
+  rt.clear();
+  assert( -1 == rt.current_dimension() );
+  assert( rt.empty() );
+  assert( rt.is_valid() );
 }
 
 template< int D >
