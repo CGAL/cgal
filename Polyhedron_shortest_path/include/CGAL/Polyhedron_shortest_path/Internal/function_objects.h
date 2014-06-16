@@ -143,16 +143,16 @@ public:
   {
   }
 
-  CGAL::Comparison_result operator () (const Segment_2& s1, const Ray_2& r1, const Segment_2& s2, const Ray_2& r2)
+  CGAL::Comparison_result operator () (const Segment_2& s1, const Line_2& l1, const Segment_2& s2, const Line_2& l2)
   {
     typedef typename cpp11::result_of<Intersect_2(Segment_2, Line_2)>::type SegmentLineIntersectResult;
 
-    SegmentLineIntersectResult s1r1Intersection = m_intersect_2(s1, r1.supporting_line());
+    SegmentLineIntersectResult s1l1Intersection = m_intersect_2(s1, l1);
     Point_2 p1;
 
-    if (s1r1Intersection)
+    if (s1l1Intersection)
     {
-      Point_2* result = boost::get<Point_2>(&*s1r1Intersection);
+      Point_2* result = boost::get<Point_2>(&*s1l1Intersection);
       
       if (result)
       {
@@ -166,15 +166,15 @@ public:
     }
     else
     {
-      assert(s1r1Intersection && "Ray must enter triangle via entry segment.");
+      assert(s1l1Intersection && "Ray must enter triangle via entry segment.");
     }
     
-    SegmentLineIntersectResult s2r2Intersection = m_intersect_2(s2, r2.supporting_line());
+    SegmentLineIntersectResult s2l2Intersection = m_intersect_2(s2, l2);
     Point_2 p2;
 
-    if (s2r2Intersection)
+    if (s2l2Intersection)
     {
-      Point_2* result = boost::get<Point_2>(&*s2r2Intersection);
+      Point_2* result = boost::get<Point_2>(&*s2l2Intersection);
       
       if (result)
       {
@@ -188,25 +188,29 @@ public:
     }
     else
     {
-      assert(s2r2Intersection && "Ray must enter triangle via entry segment.");
+      assert(s2l2Intersection && "Ray must enter triangle via entry segment.");
     }
     
-    FT d1 = m_compute_squared_distance_2(s1[0], p1);
-    FT d2 = m_compute_squared_distance_2(s2[0], p2);
+    FT distance1 = m_compute_squared_distance_2(s1[0], p1);
+    FT length1 = m_compute_squared_distance_2(s1[0], s1[1]);
+    FT distance2 = m_compute_squared_distance_2(s2[0], p2);
+    FT length2 = m_compute_squared_distance_2(s2[0], s2[1]);
     
-    if (d1 == d2)
+    FT parametricDistance1 = distance1 / length1;
+    FT parametricDistance2 = distance2 / length2;
+    
+    if (parametricDistance1 == parametricDistance2)
     {
       return CGAL::EQUAL;
     }
-    else if (d1 < d2)
+    else if (parametricDistance1 < parametricDistance2)
     {
       return CGAL::SMALLER;
     }
-    else if (d1 > d2)
+    else if (parametricDistance1 > parametricDistance2)
     {
       return CGAL::LARGER;
     }
-    
   }
 };
 

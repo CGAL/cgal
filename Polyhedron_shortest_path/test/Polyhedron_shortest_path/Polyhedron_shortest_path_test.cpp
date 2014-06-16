@@ -537,7 +537,7 @@ int main(int argc, char** argv)
     
     face_descriptor firstFace = *startFace;
     
-    Polyhedron_shortest_path shortestPaths(traits, P);
+    Polyhedron_shortest_path shortestPaths(P, traits);
     //shortestPaths.m_debugOutput = true;
     shortestPaths.compute_shortest_paths(firstFace, b);
 
@@ -612,7 +612,7 @@ int main(int argc, char** argv)
     size_t vertexIndex = CGAL::test::face_vertex_index(currentFace, rootSearchVertex, P);
     Barycentric_coordinate baryCoord(vertexIndex == 0 ? FT(1.0) : FT(0.0), vertexIndex == 1 ? FT(1.0) : FT(0.0), vertexIndex == 2 ? FT(1.0) : FT(0.0));
 
-    Polyhedron_shortest_path shortestPaths(traits, P);
+    Polyhedron_shortest_path shortestPaths(P, traits);
     //shortestPaths.m_debugOutput = true;
     shortestPaths.compute_shortest_paths(currentFace, baryCoord);
 
@@ -668,7 +668,7 @@ int main(int argc, char** argv)
     // test the edge sequence reporting
     Edge_sequence_collector<Traits> collector(P);
     
-    shortestPaths.shortest_edge_sequence(vertexHandles[5], collector);
+    shortestPaths.shortest_path_sequence(vertexHandles[5], collector);
     
     CGAL_TEST(collector.m_sequence.size() == 2);
     CGAL_TEST(collector.m_sequence[0].type == SEQUENCE_ITEM_VERTEX);
@@ -682,7 +682,7 @@ int main(int argc, char** argv)
     
     HalfedgeIndexMap halfedgeIndexMap(CGAL::get(CGAL::halfedge_external_index, P));
     
-    shortestPaths.shortest_edge_sequence(vertexHandles[7], collector);
+    shortestPaths.shortest_path_sequence(vertexHandles[7], collector);
     
     CGAL_TEST(collector.m_sequence.size() == 2);
     CGAL_TEST(collector.m_sequence[0].type == SEQUENCE_ITEM_EDGE);
@@ -699,7 +699,7 @@ int main(int argc, char** argv)
     Barycentric_coordinate location(0.25, 0.5, 0.25);
     
     collector.m_sequence.clear();
-    shortestPaths.shortest_edge_sequence(CGAL::face(firstCrossing, P), CGAL::internal::shift_vector_3(location, edgeIndex), collector);
+    shortestPaths.shortest_path_sequence(CGAL::face(firstCrossing, P), CGAL::internal::shift_vector_3(location, edgeIndex), collector);
     
     CGAL_TEST(collector.m_sequence.size() == 3);
     CGAL_TEST(collector.m_sequence[0].type == SEQUENCE_ITEM_EDGE);
@@ -723,9 +723,9 @@ int main(int argc, char** argv)
     size_t vertexIndex2 = CGAL::test::face_vertex_index(currentFace2, rootSearchVertex2, P);
     Barycentric_coordinate baryCoord2(vertexIndex2 == 0 ? FT(1.0) : FT(0.0), vertexIndex2 == 1 ? FT(1.0) : FT(0.0), vertexIndex2 == 2 ? FT(1.0) : FT(0.0));
     
-    std::vector<Polyhedron_shortest_path::FaceLocationPair> faceLocations;
-    faceLocations.push_back(Polyhedron_shortest_path::FaceLocationPair(currentFace, baryCoord));
-    faceLocations.push_back(Polyhedron_shortest_path::FaceLocationPair(currentFace2, baryCoord2));
+    std::vector<Polyhedron_shortest_path::Face_location_pair> faceLocations;
+    faceLocations.push_back(Polyhedron_shortest_path::Face_location_pair(currentFace, baryCoord));
+    faceLocations.push_back(Polyhedron_shortest_path::Face_location_pair(currentFace2, baryCoord2));
     
     shortestPaths.compute_shortest_paths(faceLocations.begin(), faceLocations.end());
     
@@ -827,7 +827,7 @@ int main(int argc, char** argv)
     
     face_descriptor face = *startFace;
 
-    Polyhedron_shortest_path shortestPaths(traits, P);
+    Polyhedron_shortest_path shortestPaths(P, traits);
     //shortestPaths.m_debugOutput = true;
     shortestPaths.compute_shortest_paths(*startFace, startLocation);
     
@@ -890,10 +890,10 @@ int main(int argc, char** argv)
     
     boost::tie(startFace, endFace) = CGAL::faces(P);
     
-    Barycentric_coordinate location(0.25, 0.5, 0.25);
+    Barycentric_coordinate startLocation(0.25, 0.5, 0.25);
     
-    Polyhedron_shortest_path shortestPaths(traits, P);
-    shortestPaths.m_debugOutput = true;
+    Polyhedron_shortest_path shortestPaths(P, traits);
+    //shortestPaths.m_debugOutput = true;
     shortestPaths.compute_shortest_paths(*startFace, startLocation);
 
   }
