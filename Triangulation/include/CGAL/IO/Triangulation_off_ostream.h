@@ -108,7 +108,7 @@ template < class GT, class TDS >
 std::ostream &
 export_triangulation_to_off(std::ostream & os, 
                             const Triangulation<GT,TDS> & tr,
-                            bool in_3D_export_surface_only = true)
+                            bool in_3D_export_surface_only = false)
 {
   typedef Triangulation<GT,TDS>                         Tr;
   typedef typename Tr::Vertex_const_handle              Vertex_handle;

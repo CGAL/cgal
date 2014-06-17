@@ -31,7 +31,7 @@ void test(int dim)
   std::stringstream output_filename;
   output_filename << "data/rt_dim" << dim << ".off";
   std::ofstream off_stream(output_filename.str());
-  CGAL::export_triangulation_to_off(off_stream, rt, false);
+  CGAL::export_triangulation_to_off(off_stream, rt);
 }
 
 int main()
