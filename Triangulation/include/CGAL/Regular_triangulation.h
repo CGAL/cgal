@@ -229,7 +229,6 @@ public:
       Locate_type lt;
       Face f(maximal_dimension());
       Facet ft;
-      std::cerr << "Inserting " << p->point()[0] << " " << p->point()[1] << std::endl;
       Full_cell_handle c = locate (*p, lt, f, ft, hint);
       Vertex_handle v = insert (*p, lt, f, ft, c);
 
