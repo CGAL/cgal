@@ -21,9 +21,9 @@
 
 namespace CGAL {
     
-template < class Kernel, class FixedScale, class Shells >
+template < class GeomTraits, class FixedScale, class Shells >
 class
-Scale_space_surface_reconstruction_3<Kernel,FixedScale,Shells>::
+Scale_space_surface_reconstruction_3<GeomTraits,FixedScale,Shells>::
 Finite_point_iterator: public Finite_vertices_iterator {
     typedef Finite_vertices_iterator    Base;
     typedef Finite_point_iterator       Self;
@@ -36,9 +36,9 @@ public:
 }; // class Finite_point_iterator
 
 
-template < class Kernel, class FixedScale, class Shells >
+template < class GeomTraits, class FixedScale, class Shells >
 class
-Scale_space_surface_reconstruction_3<Kernel,FixedScale,Shells>::
+Scale_space_surface_reconstruction_3<GeomTraits,FixedScale,Shells>::
 In_surface_tester {
     const Shape* _s;
 
@@ -66,23 +66,23 @@ public:
 }; // In_surface_tester
 
 
-template < class Kernel, class FixedScale, class Shells >
-Scale_space_surface_reconstruction_3<Kernel,FixedScale,Shells>::
+template < class GeomTraits, class FixedScale, class Shells >
+Scale_space_surface_reconstruction_3<GeomTraits,FixedScale,Shells>::
 Scale_space_surface_reconstruction_3( unsigned int neighbors, unsigned int samples )
 : _mean_neighbors(neighbors), _samples(samples), _squared_radius(-1), _shape(0) {
     _separator = make_array<unsigned int>(0,0,0);
 }
 
-template < class Kernel, class FixedScale, class Shells >
-Scale_space_surface_reconstruction_3<Kernel,FixedScale,Shells>::
+template < class GeomTraits, class FixedScale, class Shells >
+Scale_space_surface_reconstruction_3<GeomTraits,FixedScale,Shells>::
 Scale_space_surface_reconstruction_3( FT sq_radius )
 : _mean_neighbors(30), _samples(200), _squared_radius(sq_radius), _shape(0) {
     _separator = make_array<unsigned int>(0,0,0);
 }
 
-template < class Kernel, class FixedScale, class Shells >
+template < class GeomTraits, class FixedScale, class Shells >
 inline bool
-Scale_space_surface_reconstruction_3<Kernel,FixedScale,Shells>::
+Scale_space_surface_reconstruction_3<GeomTraits,FixedScale,Shells>::
 is_handled( Cell_handle c, unsigned int li ) const {
     switch( li ) {
     case 0: return ( c->info()&1 ) != 0;
@@ -93,9 +93,9 @@ is_handled( Cell_handle c, unsigned int li ) const {
     return false;
 }
 
-template < class Kernel, class FixedScale, class Shells >
+template < class GeomTraits, class FixedScale, class Shells >
 inline void
-Scale_space_surface_reconstruction_3<Kernel,FixedScale,Shells>::
+Scale_space_surface_reconstruction_3<GeomTraits,FixedScale,Shells>::
 mark_handled( Cell_handle c, unsigned int li ) {
     switch( li ) {
     case 0: c->info() |= 1; return;
@@ -105,9 +105,9 @@ mark_handled( Cell_handle c, unsigned int li ) {
     }
 }
 
-template < class Kernel, class FixedScale, class Shells >
-inline typename Scale_space_surface_reconstruction_3<Kernel,FixedScale,Shells>::Triple
-Scale_space_surface_reconstruction_3<Kernel,FixedScale,Shells>::
+template < class GeomTraits, class FixedScale, class Shells >
+inline typename Scale_space_surface_reconstruction_3<GeomTraits,FixedScale,Shells>::Triple
+Scale_space_surface_reconstruction_3<GeomTraits,FixedScale,Shells>::
 ordered_facet_indices( const Facet& f ) const {
     if( (f.second&1) == 0 )
         return make_array<unsigned int>( f.first->vertex( (f.second+2)&3 )->info(),
@@ -119,9 +119,9 @@ ordered_facet_indices( const Facet& f ) const {
                                          f.first->vertex( (f.second+3)&3 )->info() );
 }
 
-template < class Kernel, class FixedScale, class Shells >
+template < class GeomTraits, class FixedScale, class Shells >
 void
-Scale_space_surface_reconstruction_3<Kernel,FixedScale,Shells>::
+Scale_space_surface_reconstruction_3<GeomTraits,FixedScale,Shells>::
 collect_shell( Cell_handle c, unsigned int li ) {
     // Collect one surface mesh from the alpha-shape in a fashion similar to ball-pivoting.
     // Invariant: the facet is regular or singular.
@@ -184,9 +184,9 @@ collect_shell( Cell_handle c, unsigned int li ) {
         _surface.push_back( _separator );
 }
 
-template < class Kernel, class FixedScale, class Shells >
+template < class GeomTraits, class FixedScale, class Shells >
 void
-Scale_space_surface_reconstruction_3<Kernel,FixedScale,Shells>::
+Scale_space_surface_reconstruction_3<GeomTraits,FixedScale,Shells>::
 collect_facets( Tag_true ) {
     // Collect all surface meshes from the alpha-shape in a fashion similar to ball-pivoting.
     // Reset the facet handled markers.
@@ -213,9 +213,9 @@ collect_facets( Tag_true ) {
     }
 }
 
-template < class Kernel, class FixedScale, class Shells >
+template < class GeomTraits, class FixedScale, class Shells >
 void
-Scale_space_surface_reconstruction_3<Kernel,FixedScale,Shells>::
+Scale_space_surface_reconstruction_3<GeomTraits,FixedScale,Shells>::
 collect_facets( Tag_false ) {
     // Collect all facets from the alpha-shape in an unordered fashion.
     for( Finite_facets_iterator fit = _shape->finite_facets_begin(); fit != _shape->finite_facets_end(); ++fit ) {
@@ -236,20 +236,20 @@ collect_facets( Tag_false ) {
     }
 }
 
-template < class Kernel, class FixedScale, class Shells >
-const typename Scale_space_surface_reconstruction_3<Kernel,FixedScale,Shells>::Shape&
-Scale_space_surface_reconstruction_3<Kernel,FixedScale,Shells>::
+template < class GeomTraits, class FixedScale, class Shells >
+const typename Scale_space_surface_reconstruction_3<GeomTraits,FixedScale,Shells>::Shape&
+Scale_space_surface_reconstruction_3<GeomTraits,FixedScale,Shells>::
 shape() const {
 	if( !has_shape() )
         _shape = Shape_construction_3().construct( _shape, _squared_radius );
     return *_shape;
 }
 
-template < class Kernel, class FixedScale, class Shells >
-typename Scale_space_surface_reconstruction_3<Kernel,FixedScale,Shells>::FT
-Scale_space_surface_reconstruction_3<Kernel,FixedScale,Shells>::
+template < class GeomTraits, class FixedScale, class Shells >
+typename Scale_space_surface_reconstruction_3<GeomTraits,FixedScale,Shells>::FT
+Scale_space_surface_reconstruction_3<GeomTraits,FixedScale,Shells>::
 estimate_neighborhood_radius( unsigned int neighbors, unsigned int samples ) {
-    typename Kernel::Compute_squared_distance_3 squared_distance = Kernel().compute_squared_distance_3_object();
+    typename GeomTraits::Compute_squared_distance_3 squared_distance = GeomTraits().compute_squared_distance_3_object();
 
     unsigned int handled = 0;
     unsigned int checked = 0;
@@ -270,17 +270,17 @@ estimate_neighborhood_radius( unsigned int neighbors, unsigned int samples ) {
     }
     radius /= double(checked);
 
-    set_neighborhood_radius( radius );
+    set_neighborhood_squared_radius( radius * radius );
     return radius;
 }
 
 // Doxygen has a bug where it cannot link the declaration and implementation
 // of methods with a templated parameter.
 #ifndef DOXYGEN_RUNNING
-template < class Kernel, class FixedScale, class Shells >
+template < class GeomTraits, class FixedScale, class Shells >
 template < class InputIterator >
-typename Scale_space_surface_reconstruction_3<Kernel,FixedScale,Shells>::FT
-Scale_space_surface_reconstruction_3<Kernel,FixedScale,Shells>::
+typename Scale_space_surface_reconstruction_3<GeomTraits,FixedScale,Shells>::FT
+Scale_space_surface_reconstruction_3<GeomTraits,FixedScale,Shells>::
 estimate_neighborhood_radius( InputIterator begin, InputIterator end, unsigned int neighbors, unsigned int samples ) {
     clear_tree();
 	insert_points( begin, end );
@@ -288,9 +288,9 @@ estimate_neighborhood_radius( InputIterator begin, InputIterator end, unsigned i
 }
 #endif // DOXYGEN_RUNNING
 
-template < class Kernel, class FixedScale, class Shells >
+template < class GeomTraits, class FixedScale, class Shells >
 void
-Scale_space_surface_reconstruction_3<Kernel,FixedScale,Shells>::
+Scale_space_surface_reconstruction_3<GeomTraits,FixedScale,Shells>::
 advance_scale_space( unsigned int iterations ) {
     typedef std::vector< unsigned int >					CountVec;
     typedef std::map<Point, size_t>			            PIMap;
@@ -328,7 +328,7 @@ advance_scale_space( unsigned int iterations ) {
         // Collect the number of neighbors of each point.
         // This can be done parallel.
         CountVec neighbors( tree.size(), 0 );
-        typename Kernel::Compare_squared_distance_3 compare;
+        typename GeomTraits::Compare_squared_distance_3 compare;
         p_size_t count = tree.size(); // openMP can only use signed variables.
         const FT squared_radius = _squared_radius; // openMP can only use local variables.
 #ifdef _OPENMP_
@@ -412,10 +412,10 @@ advance_scale_space( unsigned int iterations ) {
     _tree.insert( points.begin(), points.end() );
 }
 
-template < class Kernel, class FixedScale, class Shells >
+template < class GeomTraits, class FixedScale, class Shells >
 template < class InputIterator >
 void
-Scale_space_surface_reconstruction_3<Kernel,FixedScale,Shells>::
+Scale_space_surface_reconstruction_3<GeomTraits,FixedScale,Shells>::
 construct_shape( InputIterator begin, InputIterator end ) {
     deinit_shape();
     if( !has_neighborhood_radius() )
@@ -423,9 +423,9 @@ construct_shape( InputIterator begin, InputIterator end ) {
     _shape = Shape_construction_3().construct( begin, end, _squared_radius );
 }
 
-template < class Kernel, class FixedScale, class Shells >
+template < class GeomTraits, class FixedScale, class Shells >
 void
-Scale_space_surface_reconstruction_3<Kernel,FixedScale,Shells>::
+Scale_space_surface_reconstruction_3<GeomTraits,FixedScale,Shells>::
 collect_surface() {
     _surface.clear();
     if( !has_shape() )
@@ -433,9 +433,9 @@ collect_surface() {
     collect_facets();
 }
 
-template < class Kernel, class FixedScale, class Shells >
+template < class GeomTraits, class FixedScale, class Shells >
 void
-Scale_space_surface_reconstruction_3<Kernel,FixedScale,Shells>::
+Scale_space_surface_reconstruction_3<GeomTraits,FixedScale,Shells>::
 reconstruct_surface( unsigned int iterations ) {
     // Smooth the scale space.
     advance_scale_space( iterations );
@@ -444,10 +444,10 @@ reconstruct_surface( unsigned int iterations ) {
     collect_surface();
 }
 
-template < class Kernel, class FixedScale, class Shells >
+template < class GeomTraits, class FixedScale, class Shells >
 template < class InputIterator >
 void
-Scale_space_surface_reconstruction_3<Kernel,FixedScale,Shells>::
+Scale_space_surface_reconstruction_3<GeomTraits,FixedScale,Shells>::
 reconstruct_surface( InputIterator begin, InputIterator end, unsigned int iterations ) {
     // Compute the radius for which the mean ball would contain the required number of neighbors.
     clear();

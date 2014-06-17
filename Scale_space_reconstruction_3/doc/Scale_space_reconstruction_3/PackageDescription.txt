@@ -17,24 +17,11 @@
 \cgalPkgSince{4.5}
 \cgalPkgBib{cgal:ssr3}
 \cgalPkgLicense{\ref licensesGPL "GPL" }
+\cgalPkgDependsOn{\ref PkgAlphaShapes3Summary}
+\cgalPkgDependsOn{\ref PkgSpatialSearchingD}
+\cgalPkgDependsOn{\ref thirdpartyEigen}
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd
-
-The scale-space surface reconstruction method is twofold. Firstly, a scale-space of the point set is constructed. This scale-space contains a smoothed representation of the point set, which makes the surface reconstruction problem less ill-posed. Then, a triangular surface mesh of the points in the scale-space is computed.
-
-The resulting surface in non-self-intersecting, i.e. its triangles cannot pairwise intersect in their interior. Additionally, the surface need not be manifold and in many cases where the points sample the surface of an object, the computed surface will contain both an 'outward-facing' and a similar 'inward-facing' surface, with a thin volume between them. If the object is not densely sampled or has disconnected components, a separate surface is constructed per connected component.
-
-The surface cannot have holes and its triangles are all oriented towards the outside of the object sampled. This orientation is expressed using the 'right-hand rule' on the ordered vertices of each triangle. Note that a surface may contain a triangle twice if the surface 'loops around' to incorporate both facings of the triangles.
-
-The order of the points in the scale-space is the same as the order of the original points, meaning that the surface of the scale-space can interpolate the original point set by applying the indices of the surface triangles to the original point set. There are no guarantees on the topology of the resulting surface, e.g. the triangles of the surface may pairwise intersect in their interior. However, when using appropriate parameter settings for the number of iterations and neighborhood size the surface will generally not self-intersect. The appropriate parameter settings depend on the geometry of the point set.
-
-The scale-space is constructed by projecting each point to the 'density'-weighted principal component analysis (PCA) of the local (\f$ \delta \f$-distance) neighborhood. If the point set was sampled from a surface for which any high-frequency deformation and sampling noise is smaller than the neighborhood size, the scale is coarse enough for mesh reconstruction after a few iterations of advancing the scale-space.
-
-For the PCA procedure, we use the efficient Eigen libraries. The mesh reconstruction of the scale-space is performed by filtering a 3D alpha-shape. The result is returned as a collection of triples on the indices of the points of the surface triangles. This collection may be sorted per 'shell', where a shell is a collection of connected triangles that are locally oriented towards the same side of the surface.
-
-The reconstruction method requires a user-specified neighborhood size parameter, related to the resolution of the data. This parameter can be estimated through statistical analysis. Specifically, we use a kD-tree to estimate the mean distance to the n-th nearest neighbor and we use this distance as an approximator for the resolution. Generally a neighborhood containing 30 points is a good estimate. The method generally works well as long as this estimate is not too small and the amount of iterations necessary to reduce the high-frequency signals does not disturb the topology of the data so much that applying the surface connectivity to the original point set produces too many self-intersections.
-
-The method provides access to intermediate results and the user can adjust these to better suit his needs. These intermediate results are the estimate of the resolution, the scale-space, and the final collection of surface triangles.
 
 \cgalClassifedRefPages
 

@@ -59,30 +59,31 @@ namespace CGAL {
  *  the point set while maintaining the same scale.
  *
  *  A shape is generally stored as a subset of the elements of a triangulation.
- *  \tparam Kernel is the geometric traits class. It must be a model of
- *  `DelaunayTriangulationTraits_3`.
+ *  \tparam GeomTraits is the geometric traits class. It must be a model of
+ *  `DelaunayTriangulationTraits_3`. Generally,
+ *  `Exact_predicates_inexact_constructions_kernel` is preferred.
  *  \tparam FixedScale determines whether the shape is constructed for a fixed
  *  scale. It must be a Boolean_tag type.
  */
-template < class Kernel, class FixedScale >
+template < class GeomTraits, class FixedScale >
 class Shape_construction_3 {
-    typedef Triangulation_vertex_base_with_info_3< unsigned int, Kernel >   Vb;
-    typedef Alpha_shape_vertex_base_3< Kernel, Vb >                         aVb;
-    typedef Triangulation_cell_base_with_info_3< unsigned int, Kernel >     Cb;
-    typedef Alpha_shape_cell_base_3< Kernel, Cb >                           aCb;
+    typedef Triangulation_vertex_base_with_info_3< unsigned int, GeomTraits >   Vb;
+    typedef Alpha_shape_vertex_base_3< GeomTraits, Vb >                     aVb;
+    typedef Triangulation_cell_base_with_info_3< unsigned int, GeomTraits >     Cb;
+    typedef Alpha_shape_cell_base_3< GeomTraits, Cb >                       aCb;
     typedef Triangulation_data_structure_3<aVb,aCb>                         Tds;
 
 public:
 /// \name Types
 /// \{
-	typedef typename Kernel::FT                                             FT;                 ///< defines the number field type.
-	typedef typename Kernel::Point_3                                        Point;              ///< defines the point type.
+	typedef typename GeomTraits::FT                                         FT;                 ///< defines the number field type.
+	typedef typename GeomTraits::Point_3                                    Point;              ///< defines the point type.
 #ifdef DOXYGEN_RUNNING
     typedef unspecified_type                  Triangulation_data_structure;                     ///< defines the triangulation data structure type.
-    typedef Delaunay_triangulation_3< Kernel, Triangulation_data_structure >    Triangulation;  ///< defines the triangulation type.
+    typedef Delaunay_triangulation_3< GeomTraits, Triangulation_data_structure >    Triangulation;  ///< defines the triangulation type.
 #else
     typedef Tds                                                             Triangulation_data_structure;
-    typedef Delaunay_triangulation_3< Kernel, Tds >                         Triangulation;
+    typedef Delaunay_triangulation_3< GeomTraits, Tds >                         Triangulation;
 #endif // DOXYGEN_RUNNING
     typedef Alpha_shape_3< Triangulation >                                  Shape;              ///< defines the shape type.
 
@@ -149,23 +150,23 @@ public:
 }; // class Shape_construction_3
 
 // The type for the shape of a set of points with fixed scale.
-template < class Kernel >
-class Shape_construction_3 < Kernel, Tag_true > {
+template < class GeomTraits >
+class Shape_construction_3 < GeomTraits, Tag_true > {
     
-    typedef Triangulation_vertex_base_with_info_3< unsigned int, Kernel >   Vb;
-    typedef Fixed_alpha_shape_vertex_base_3< Kernel, Vb >                   aVb;
-    typedef Triangulation_cell_base_with_info_3< unsigned int, Kernel >     Cb;
-    typedef Fixed_alpha_shape_cell_base_3< Kernel, Cb >                     aCb;
+    typedef Triangulation_vertex_base_with_info_3< unsigned int, GeomTraits >   Vb;
+    typedef Fixed_alpha_shape_vertex_base_3< GeomTraits, Vb >               aVb;
+    typedef Triangulation_cell_base_with_info_3< unsigned int, GeomTraits >     Cb;
+    typedef Fixed_alpha_shape_cell_base_3< GeomTraits, Cb >                 aCb;
 
     typedef Triangulation_data_structure_3<aVb,aCb>                         Tds;
 
 public:
     typedef Tds                                                             Triangulation_data_structure;
-    typedef Delaunay_triangulation_3< Kernel, Tds >                         Triangulation;
+    typedef Delaunay_triangulation_3< GeomTraits, Tds >                     Triangulation;
     typedef Fixed_alpha_shape_3< Triangulation >                            Shape;
 
-	typedef typename Kernel::FT                                             FT;
-	typedef typename Kernel::Point_3                                        Point;
+	typedef typename GeomTraits::FT                                         FT;
+	typedef typename GeomTraits::Point_3                                    Point;
 private:
     typedef internal::Auto_count<Point>                                     PointIndex;
        
