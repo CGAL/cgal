@@ -45,52 +45,91 @@ namespace CGAL {
 
 /// computes a triangulated surface mesh interpolating a point set.
 /** \ingroup PkgScaleSpaceReconstruction3Classes
- *  The scale-space surface reconstruction method is twofold. Firstly, a scale-space of the point set is constructed. This scale-space contains a smoothed representation
- of the point set, which makes the surface reconstruction problem less ill-posed. Then, a triangulated surface mesh of the points in the scale-space is computed. This mesh is
- represented as triples of indices of the point set.
+ *  The scale-space surface reconstruction method is twofold. Firstly, a
+ *  scale-space of the point set is constructed. This scale-space contains a
+ *  smoothed representation of the point set, which makes the surface
+ *  reconstruction problem less ill-posed. Then, a triangulated surface mesh of
+ *  the points in the scale-space is computed. This mesh is represented as
+ *  triples of indices of the point set.
  * 
- *  The points maintain their original order in the scale-space. This means it is straightforward to revert the scale-space on the triangulated surface mesh. In essence,
- the method can reconstruct a smooted surface or a surface interpolating the original points. The only change it whether to apply the index triples to the scale-space or to the original point set.
+ *  The points maintain their original order in the scale-space. This means it
+ *  is straightforward to revert the scale-space on the triangulated surface
+ *  mesh. In essence, the method can reconstruct a smooted surface or a surface
+ *  interpolating the original points. The only change it whether to apply the
+ *  index triples to the scale-space or to the original point set.
  *
- *  When applied to the scale-space, the surface mesh is non-self-intersecting. The interior of the triangles cannot pairwise intersect in a line segment. However, the surface does
- not need to be manifold. An edge may be incident to more than two triangles and triangles may overlap exactly if the regions on both sides of the triangle are not part of the object. In many cases where the points
- sample the surface of an object, the computed surface will contain both an '<em>outward-facing</em>' and a similar '<em>inward-facing</em>' surface, with a thin volume between them.
+ *  When applied to the scale-space, the surface mesh is non-self-intersecting.
+ *  The interior of the triangles cannot pairwise intersect in a line segment.
+ *  However, the surface does not need to be manifold. An edge may be incident
+ *  to more than two triangles and triangles may overlap exactly if the regions
+ *  on both sides of the triangle are not part of the object. In many cases
+ *  where the points sample the surface of an object, the computed surface will
+ *  contain both an '<em>outward-facing</em>' and a similar
+ *  '<em>inward-facing</em>' surface, with a thin volume between them.
  *
- *  The surface mesh will not have holes or edges incident to only one triangle and its triangles are all oriented towards the outside of the object sampled. If the point sample has holes, it is likely that the surface mesh
- will contain overlapping triangles with opposite orientation touching this hole. The orientation of a triangle is expressed using the
- '<em>right-hand rule</em>' on the ordered vertices of the triangle.
+ *  The surface mesh will not have holes or edges incident to only one triangle
+ *  and its triangles are all oriented towards the outside of the object
+ *  sampled. If the point sample has holes, it is likely that the surface mesh
+ *  will contain overlapping triangles with opposite orientation touching this
+ *  hole. The orientation of a triangle is expressed using the
+ *  '<em>right-hand rule</em>' on the ordered vertices of the triangle.
  *
- *  If the object is not densely sampled or has disconnected components, the surface may have several disconnected components. The surface may be presented as
- an unordered collection of triangles, or as a collection sorted per \em shell. A shell is a collection of connected triangles that are locally oriented towards the same side of the surface.
+ *  If the object is not densely sampled or has disconnected components, the
+ *  surface may have several disconnected components. The surface may be
+ *  presented as an unordered collection of triangles, or as a collection
+ *  sorted per \em shell. A shell is a collection of connected triangles that
+ *  are locally oriented towards the same side of the surface.
  *
- *  When applied to the original points, we are unable to guarantee the same topology of the surface. The triangles of this surface may
- *  pairwise intersect in their interior and the surface could have boundary edges. However, when using appropriate
- *  parameter settings for the number of iterations and neighborhood size the
- *  surface will generally not self-intersect. The appropriate parameter
- *  settings depend on the geometry of the point set and generally need to be fine-tuned per data set.
+ *  When applied to the original points, we are unable to guarantee the same
+ *  topology of the surface. The triangles of this surface may pairwise
+ *  intersect in their interior and the surface could have boundary edges.
+ *  However, when using appropriate parameter settings for the number of
+ *  iterations and neighborhood size the surface will generally not
+ *  self-intersect. The appropriate parameter settings depend on the geometry
+ *  of the point set and generally need to be fine-tuned per data set.
  *
- *  Both the smoothing operator and the mesh reconstruction assume that points near each other belong to the same part of the object. This is expressed in the notion of balls with a fixed size, the neighborhood radius. If such a ball
- contains multiple points, these points are near each other and will influence each other while advancing the scale-space. If such a ball is empty, it lies outside the object. Note that \em outside is based on regions empty of points, not
- on whether a volume is enclosed by the surface.
+ *  Both the smoothing operator and the mesh reconstruction assume that points
+ *  near each other belong to the same part of the object. This is expressed in
+ *  the notion of balls with a fixed size, the neighborhood radius. If such a
+ *  ball contains multiple points, these points are near each other and will
+ *  influence each other while advancing the scale-space. If such a ball is
+ *  empty, it lies outside the object. Note that \em outside is based on
+ *  regions empty of points, not on whether a volume is enclosed by the
+ *  surface.
  *
- *  The scale-space is constructed by projecting each point to the '<em>density</em>'-weighted principal component analysis (PCA) of the local (\f$ \delta \f$-distance)
- neighborhood. If the point set was sampled from a surface for which any high-frequency deformation and sampling noise is smaller than the neighborhood size, the
- scale is coarse enough for mesh reconstruction after a few iterations of advancing the scale-space.
+ *  The scale-space is constructed by projecting each point to the
+ *  '<em>density</em>'-weighted principal component analysis (PCA) of the local
+ *  (\f$ \delta \f$-distance) neighborhood. If the point set was sampled from a
+ *  surface for which any high-frequency deformation and sampling noise is
+ *  smaller than the neighborhood size, the scale is coarse enough for mesh
+ *  reconstruction after a few iterations of advancing the scale-space.
  *
- *  For the PCA procedure, we use the efficient \ref thirdpartyEigen library. The mesh reconstruction of the scale-space is performed by filtering a 3D \f$ \alpha \f$-shape. The result is
- returned as a collection of triples on the indices of the points of the surface triangles. Recall that this collection may be sorted per shell, where a shell is a collection of
- connected triangles that are locally oriented towards the same side of the surface.
+ *  For the PCA procedure, we use the efficient \ref thirdpartyEigen library.
+ *  The mesh reconstruction of the scale-space is performed by filtering a 3D
+ *  \f$ \alpha \f$-shape. The result is returned as a collection of triples on
+ *  the indices of the points of the surface triangles. Recall that this
+ *  collection may be sorted per shell, where a shell is a collection of
+ *  connected triangles that are locally oriented towards the same side of the
+ *  surface.
  *
- *  The reconstruction method requires a neighborhood radius, related to the resolution of the data. This parameter can be estimated through
- statistical analysis. Specifically, we use a kD-tree to estimate the mean distance to the n-th nearest neighbor and we use this distance as an approximator for the
- resolution.
+ *  The reconstruction method requires a neighborhood radius, related to the
+ *  resolution of the data. This parameter can be estimated through statistical
+ *  analysis. Specifically, we use a kD-tree to estimate the mean distance to
+ *  the n-th nearest neighbor and we use this distance as an approximator for
+ *  the resolution.
  *
- *  The method generally works well as long as this neighborhood radius is not too small and the
- number of scale-space advancement iterations necessary to reduce the high-frequency signals does not disturb the topology of the data so much that applying the surface connectivity to
- the original point set produces too many self-intersections. As a general rule of thumb, a neighborhood containg 30 points on average provides a good estimate for the radius and 4 iterations of smoothing proved a nice scale-space.
+ *  The method generally works well as long as this neighborhood radius is not
+ *  too small and the number of scale-space advancement iterations necessary to
+ *  reduce the high-frequency signals does not disturb the topology of the data
+ *  so much that applying the surface connectivity to the original point set
+ *  produces too many self-intersections. As a general rule of thumb, a
+ *  neighborhood containg 30 points on average provides a good estimate for the
+ *  radius and 4 iterations of smoothing proved a nice scale-space.
  *
- *  The method provides access to intermediate results and the user can adjust these to better suit his needs. These intermediate results are the estimate of the
- optimal scale, the scale-space, and the final collection of surface triangles.
+ *  The method provides access to intermediate results and the user can adjust
+ *  these to better suit his needs. These intermediate results are the estimate
+ *  of the optimal scale, the scale-space, and the final collection of surface
+ *  triangles.
  *
  *  The shape can be constructed either at a fixed scale, or at a dynamic
  *  scale, as defined by Shape_construction_3. The first option is faster when
