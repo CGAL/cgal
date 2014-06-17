@@ -103,7 +103,6 @@ public:
     using Base::insert_in_hole;
     using Base::insert_outside_convex_hull_1;
     using Base::is_infinite;
-    using Base::is_valid;
     using Base::locate;
     using Base::points_begin;
     using Base::set_neighbors;
@@ -317,6 +316,10 @@ public:
             return pred_(dc_.full_cell(f)->neighbor(dc_.index_of_covertex(f)));
         }
     };
+    
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  VALIDITY
+    
+    bool is_valid(bool verbose = false, int level = 0) const;
 
 private:
     // Some internal types to shorten notation
@@ -734,7 +737,6 @@ Delaunay_triangulation<DCTraits, TDS>
 ::insert_in_conflicting_cell(const Point & p, const Full_cell_handle s)
 {
     typedef std::vector<Full_cell_handle> Full_cell_h_vector;
-    typedef typename Full_cell_h_vector::iterator SHV_iterator;
     static Full_cell_h_vector cs; // for storing conflicting full_cells.
     cs.clear();
     // cs.reserve(64);
@@ -844,6 +846,48 @@ Delaunay_triangulation<DCTraits, TDS>
         return tds().gather_full_cells(s, tp, out);
     }
 }
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - VALIDITY
+
+template< typename DCTraits, typename TDS >
+bool
+Delaunay_triangulation<DCTraits, TDS>
+::is_valid(bool verbose, int level) const
+{ 
+  if (!Base::is_valid(verbose, level))
+    return false;
+
+  int dim = current_dimension();
+  if (dim == maximal_dimension())
+  {
+    for (Finite_full_cell_const_iterator cit = finite_full_cells_begin() ;
+         cit != finite_full_cells_end() ; ++cit )
+    {
+      Full_cell_const_handle ch = cit.base();
+      for(int i = 0; i < dim+1 ; ++i ) 
+      {
+        // If the i-th neighbor is not an infinite cell
+        Vertex_handle opposite_vh = 
+          ch->neighbor(i)->vertex(ch->neighbor(i)->index(ch));
+        if (!is_infinite(opposite_vh))
+        {
+          Side_of_oriented_sphere_d side = 
+            geom_traits().side_of_oriented_sphere_d_object();
+          if (side(Point_const_iterator(ch->vertices_begin()), 
+                   Point_const_iterator(ch->vertices_end()),
+                   opposite_vh->point()) == ON_BOUNDED_SIDE)
+          {
+            if (verbose)
+              CGAL_warning_msg(false, "Non-empty sphere");
+            return false;
+          }
+        }
+      }
+    }
+  }
+  return true;
+}
+
 
 } //namespace CGAL
 
