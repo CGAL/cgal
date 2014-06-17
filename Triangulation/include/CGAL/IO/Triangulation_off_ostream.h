@@ -107,7 +107,8 @@ operator>>(std::istream &is, typename Wrap::Weighted_point_d<K> & wp)
 template < class GT, class TDS >
 std::ostream &
 export_triangulation_to_off(std::ostream & os, 
-                            const Triangulation<GT,TDS> & tr)
+                            const Triangulation<GT,TDS> & tr,
+                            bool in_3D_export_surface_only = true)
 {
   typedef Triangulation<GT,TDS>                         Tr;
   typedef typename Tr::Vertex_const_handle              Vertex_handle;
@@ -162,21 +163,53 @@ export_triangulation_to_off(std::ostream & os,
   }
   else if (tr.maximal_dimension() == 3)
   {
-    // Parse boundary facets
-    for (Full_cell_iterator fch = tr.full_cells_begin() ;
-         fch != tr.full_cells_end() ; ++fch)
+    if (in_3D_export_surface_only)
     {
-      if (tr.is_infinite(fch))
+      // Parse boundary facets
+      for (Full_cell_iterator fch = tr.full_cells_begin() ;
+           fch != tr.full_cells_end() ; ++fch)
       {
-        output << "3 ";
-        for (Full_cell_vertex_iterator vit = fch->vertices_begin() ;
-             vit != fch->vertices_end() ; ++vit, ++i)
+        if (tr.is_infinite(fch))
         {
-          if (!tr.is_infinite(*vit))
-            output << index_of_vertex[*vit] << " ";
+          output << "3 ";
+          for (Full_cell_vertex_iterator vit = fch->vertices_begin() ;
+               vit != fch->vertices_end() ; ++vit)
+          {
+            if (!tr.is_infinite(*vit))
+              output << index_of_vertex[*vit] << " ";
+          }
+          output << std::endl;
+          ++number_of_triangles; 
         }
-        output << std::endl;
-        ++number_of_triangles; 
+      }
+    }
+    else
+    {
+      // Parse boundary facets
+      for (Finite_full_cell_iterator fch = tr.finite_full_cells_begin() ;
+           fch != tr.finite_full_cells_end() ; ++fch)
+      {
+        output << "3 "
+               << index_of_vertex[fch->vertex(0)] << " "
+               << index_of_vertex[fch->vertex(1)] << " "
+               << index_of_vertex[fch->vertex(2)]
+               << std::endl;
+        output << "3 "
+               << index_of_vertex[fch->vertex(0)] << " "
+               << index_of_vertex[fch->vertex(2)] << " "
+               << index_of_vertex[fch->vertex(3)]
+               << std::endl;
+        output << "3 "
+               << index_of_vertex[fch->vertex(1)] << " "
+               << index_of_vertex[fch->vertex(2)] << " "
+               << index_of_vertex[fch->vertex(3)]
+               << std::endl;
+        output << "3 "
+               << index_of_vertex[fch->vertex(0)] << " "
+               << index_of_vertex[fch->vertex(1)] << " "
+               << index_of_vertex[fch->vertex(3)]
+               << std::endl;
+        number_of_triangles += 4;
       }
     }
   }
