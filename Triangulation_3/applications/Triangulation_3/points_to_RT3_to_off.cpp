@@ -14,14 +14,11 @@ int main()
   std::ifstream in("data/points.cin");
 
   Regular_triangulation::Weighted_point wp;
-  int count = 0;
   std::vector<Regular_triangulation::Weighted_point> wpoints;
 
   while(in >> wp)
-  {
-    count++;
     wpoints.push_back(wp);
-  }
+
   Regular_triangulation rt(wpoints.begin(), wpoints.end());
   std::ofstream off_stream("data/rt3.off");
   CGAL::export_triangulation_3_to_off(off_stream, rt);
