@@ -947,6 +947,7 @@ private:
         {
           Segment_2 entrySegment = current->entry_segment();
           Ray_2 rayToLocation(current->source_image(), currentLocation);
+          
           SegmentRayIntersectResult intersection = m_traits.intersect_2_object()(entrySegment, rayToLocation);
           assert(intersection && "Line from source did not cross entry segment");
           Point_2* result = boost::get<Point_2>(&*intersection);
@@ -1008,7 +1009,7 @@ private:
   
   Point_2 face_location_with_normalized_coordinate(Cone_tree_node* node, Barycentric_coordinate alpha)
   {
-    return m_traits.construct_triangle_location_2_object()(node->layout_face(), CGAL::internal::shift_vector_3(alpha, node->edge_face_index()));
+    return m_traits.construct_triangle_location_2_object()(node->layout_face(), CGAL::internal::shift_vector_3_left(alpha, node->edge_face_index()));
   }
   
   Node_distance_pair nearest_on_face(face_descriptor face, Barycentric_coordinate alpha)
@@ -1030,12 +1031,16 @@ private:
       }
       
       Point_2 locationInContext = face_location_with_normalized_coordinate(current, alpha);
-      FT currentDistance = current->distance_to_root(locationInContext);
       
-      if (closest == NULL || currentDistance < closestDistance)
+      if (current->inside_window(locationInContext))
       {
-        closest = current;
-        closestDistance = currentDistance;
+        FT currentDistance = current->distance_to_root(locationInContext);
+        
+        if (closest == NULL || currentDistance < closestDistance)
+        {
+          closest = current;
+          closestDistance = currentDistance;
+        }
       }
     }
     
@@ -1297,7 +1302,6 @@ public:
       
       std::cout << std::endl << "Done!" << std::endl;
     }
-    
   }
   
   /*!

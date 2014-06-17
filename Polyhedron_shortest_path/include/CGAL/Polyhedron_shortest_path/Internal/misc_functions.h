@@ -28,6 +28,13 @@ Triangle_3 triangle_from_halfedge(typename boost::graph_traits<Polyhedron>::half
   return Triangle_3(vertexPointMap[boost::source(e0, polyhedron)], vertexPointMap[boost::target(e0, polyhedron)], vertexPointMap[boost::target(e1, polyhedron)]);
 }
 
+template <class Triangle_3, class Polyhedron>
+Triangle_3 triangle_from_halfedge(typename boost::graph_traits<Polyhedron>::halfedge_descriptor edge, Polyhedron& polyhedron)
+{
+  return triangle_from_halfedge<Triangle_3, Polyhedron, typename boost::property_map<Polyhedron, CGAL::vertex_point_t>::type>(edge, polyhedron, CGAL::get(CGAL::vertex_point, polyhedron));
+}
+
+
 template <class Polyhedron>
 size_t edge_index(typename boost::graph_traits<Polyhedron>::halfedge_descriptor he, Polyhedron& p)
 {
@@ -60,9 +67,16 @@ P interpolate_points(const P& p0, const P& p1, FT t)
 }
 
 template <class V>
-V shift_vector_3(const V& v, size_t by)
+V shift_vector_3_left(const V& v, size_t by)
 {
   return V(v[by], v[(by + 1) % 3], v[(by + 2) % 3]);
+}
+
+template <class V>
+V shift_vector_3_right(const V& v, size_t by)
+{
+  by %= 3;
+  return V(v[(3 - by) % 3], v[(4 - by) % 3], v[(5 - by) % 3]);
 }
 
 } // namespace internal
