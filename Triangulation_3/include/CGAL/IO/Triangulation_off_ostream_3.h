@@ -30,12 +30,14 @@ namespace CGAL {
 template < class GT, class TDS >
 std::ostream &
 export_triangulation_3_to_off(std::ostream & os, 
-                              const Triangulation_3<GT,TDS> & tr)
+                              const Triangulation_3<GT,TDS> & tr,
+                              bool export_surface_only = false)
 {
   typedef Triangulation_3<GT,TDS>                       Tr;
   typedef typename Tr::Vertex_handle                    Vertex_handle;
   typedef typename Tr::Vertex_iterator                  Vertex_iterator;
   typedef typename Tr::Finite_vertices_iterator         Finite_vertex_iterator;
+  typedef typename Tr::All_cells_iterator               Cells_iterator;
   typedef typename Tr::Finite_cells_iterator            Finite_cells_iterator;
 
   size_t n = tr.number_of_vertices();
@@ -57,30 +59,51 @@ export_triangulation_3_to_off(std::ostream & os,
   
   size_t number_of_triangles = 0;
 
-  for (Finite_cells_iterator cit = tr.finite_cells_begin() ;
-        cit != tr.finite_cells_end() ; ++cit)
+  if (export_surface_only)
   {
-    output << "3 "
-           << index_of_vertex[cit->vertex(0)] << " "
-           << index_of_vertex[cit->vertex(1)] << " "
-           << index_of_vertex[cit->vertex(2)]
-           << std::endl;
-    output << "3 "
-           << index_of_vertex[cit->vertex(0)] << " "
-           << index_of_vertex[cit->vertex(2)] << " "
-           << index_of_vertex[cit->vertex(3)]
-           << std::endl;
-    output << "3 "
-           << index_of_vertex[cit->vertex(1)] << " "
-           << index_of_vertex[cit->vertex(2)] << " "
-           << index_of_vertex[cit->vertex(3)]
-           << std::endl;
-    output << "3 "
-           << index_of_vertex[cit->vertex(0)] << " "
-           << index_of_vertex[cit->vertex(1)] << " "
-           << index_of_vertex[cit->vertex(3)]
-           << std::endl;
-    ++number_of_triangles;
+    for (Cells_iterator cit = tr.cells_begin() ;
+          cit != tr.cells_end() ; ++cit)
+    {
+      if (tr.is_infinite(cit))
+      {
+        output << "3 ";
+        for (int i = 0 ; i < 4 ; ++i)
+        {
+          if (!tr.is_infinite(cit->vertex(i)))
+            output << index_of_vertex[cit->vertex(i)] << " ";
+        }
+        output << std::endl;
+        ++number_of_triangles;
+      }
+    }
+  }
+  else
+  {
+    for (Finite_cells_iterator cit = tr.finite_cells_begin() ;
+          cit != tr.finite_cells_end() ; ++cit)
+    {
+      output << "3 "
+             << index_of_vertex[cit->vertex(0)] << " "
+             << index_of_vertex[cit->vertex(1)] << " "
+             << index_of_vertex[cit->vertex(2)]
+             << std::endl;
+      output << "3 "
+             << index_of_vertex[cit->vertex(0)] << " "
+             << index_of_vertex[cit->vertex(2)] << " "
+             << index_of_vertex[cit->vertex(3)]
+             << std::endl;
+      output << "3 "
+             << index_of_vertex[cit->vertex(1)] << " "
+             << index_of_vertex[cit->vertex(2)] << " "
+             << index_of_vertex[cit->vertex(3)]
+             << std::endl;
+      output << "3 "
+             << index_of_vertex[cit->vertex(0)] << " "
+             << index_of_vertex[cit->vertex(1)] << " "
+             << index_of_vertex[cit->vertex(3)]
+             << std::endl;
+      number_of_triangles += 4;
+    }
   }
 
   os << "OFF \n"
