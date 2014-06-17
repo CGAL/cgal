@@ -1458,9 +1458,6 @@ operator>>(std::istream & is, Triangulation_data_structure<Dimen, Vb, Fcb> & tr)
 {
     typedef Triangulation_data_structure<Dimen, Vb, Fcb> TDS;
     typedef typename TDS::Vertex_handle         Vertex_handle;
-    typedef typename TDS::Vertex_iterator       Vertex_iterator;
-    typedef typename TDS::Full_cell_handle        Full_cell_handle;
-    typedef typename TDS::Full_cell_iterator      Full_cell_iterator;
 
     // read current dimension and number of vertices
     size_t n;
@@ -1512,8 +1509,6 @@ operator<<(std::ostream & os, const Triangulation_data_structure<Dimen, Vb, Fcb>
     typedef Triangulation_data_structure<Dimen, Vb, Fcb> TDS;
     typedef typename TDS::Vertex_const_handle         Vertex_handle;
     typedef typename TDS::Vertex_const_iterator       Vertex_iterator;
-    typedef typename TDS::Full_cell_const_handle        Full_cell_handle;
-    typedef typename TDS::Full_cell_const_iterator      Full_cell_iterator;
 
     // outputs dimension and number of vertices
     size_t n = tr.number_of_vertices();
