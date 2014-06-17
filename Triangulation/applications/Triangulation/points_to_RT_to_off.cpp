@@ -26,6 +26,7 @@ void test(int dim)
   // Build the Regular Triangulation
   RT rt(dim_from_file);
   rt.insert(wpoints.begin(), wpoints.end());
+  CGAL_assertion(rt.is_valid(true));
   
   // Export
   std::stringstream output_filename;
