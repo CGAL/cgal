@@ -695,12 +695,12 @@ int main(int argc, char** argv)
     halfedge_descriptor firstCrossing = CGAL::halfedge(vertexHandles[4], vertexHandles[7], P).first;
     
     size_t edgeIndex = CGAL::internal::edge_index(firstCrossing, P);
-    
+
     Barycentric_coordinate location(0.25, 0.5, 0.25);
-    
+
     collector.m_sequence.clear();
-    shortestPaths.shortest_path_sequence(CGAL::face(firstCrossing, P), CGAL::internal::shift_vector_3(location, edgeIndex), collector);
-    
+    shortestPaths.shortest_path_sequence(CGAL::face(firstCrossing, P), CGAL::internal::shift_vector_3_left(location, edgeIndex), collector);
+
     CGAL_TEST(collector.m_sequence.size() == 3);
     CGAL_TEST(collector.m_sequence[0].type == SEQUENCE_ITEM_EDGE);
     CGAL_TEST(collector.m_sequence[0].index == halfedgeIndexMap[firstCrossing]);
@@ -809,6 +809,7 @@ int main(int argc, char** argv)
     VPM vpm = CGAL::get(CGAL::vertex_point, P);
     
     vertex_descriptor vertexHandles[10];
+    face_descriptor faceHandles[8];
     Point_3 vertexLocations[10];
     size_t currentVertexIndex = 0;
     
@@ -817,6 +818,14 @@ int main(int argc, char** argv)
       vertexHandles[currentVertexIndex] = *currentVertex;
       vertexLocations[currentVertexIndex] = vpm[*currentVertex];
       ++currentVertexIndex;
+    }
+    
+    size_t currentFaceIndex = 0;
+    
+    for (face_iterator currentFace = startFace; currentFace != endFace; ++currentFace)
+    {
+      faceHandles[currentFaceIndex] = *currentFace;
+      ++currentFaceIndex;
     }
     
     Barycentric_coordinate startLocation(FT(0.1), FT(0.8), FT(0.1));
@@ -853,6 +862,33 @@ int main(int argc, char** argv)
     FT dist5 = shortestPaths.shortest_distance_to_vertex(vertexHandles[5]);
     CGAL_TEST(CHECK_CLOSE(dist5, CGAL::sqrt(compute_squared_distance_3(locationInTriangle, vertexLocations[3])) + CGAL::sqrt(compute_squared_distance_3(vertexLocations[3], vertexLocations[5])), 0.000001));
 
+    Barycentric_coordinate somewhereElseInFirstTriangle(0.8, 0.05, 0.15);
+    
+    FT distT0 = shortestPaths.shortest_distance_to_location(faceHandles[0], somewhereElseInFirstTriangle);
+    CGAL_TEST(CHECK_CLOSE(distT0, CGAL::sqrt(compute_squared_distance_3(locationInTriangle, construct_triangle_location_3(firstTriangle, somewhereElseInFirstTriangle))), 0.000001));
+    
+    Triangle_3 oneStepTriangle(vertexLocations[4], vertexLocations[1], vertexLocations[3]);
+    Barycentric_coordinate locationInOneStepTriangle(0.1, 0.8, 0.1);
+    
+    Edge_sequence_collector<Traits> collector(P);
+    shortestPaths.shortest_path_sequence(faceHandles[2], locationInOneStepTriangle, collector);
+
+    FT distT2 = shortestPaths.shortest_distance_to_location(faceHandles[2], locationInOneStepTriangle);
+    CGAL_TEST(CHECK_CLOSE(distT2, dist1 + CGAL::sqrt(compute_squared_distance_3(vertexLocations[1], construct_triangle_location_3(oneStepTriangle, locationInOneStepTriangle))), 0.000001));
+
+    Triangle_3 twoStepTriangle(vertexLocations[6], vertexLocations[5], vertexLocations[7]);
+    Barycentric_coordinate locationInTwoStepTriangle(0.8, 0.1, 0.1);
+    
+    FT distT5 = shortestPaths.shortest_distance_to_location(faceHandles[5], locationInTwoStepTriangle);
+    CGAL_TEST(CHECK_CLOSE(distT5, dist3 + CGAL::sqrt(compute_squared_distance_3(vertexLocations[3], construct_triangle_location_3(twoStepTriangle, locationInTwoStepTriangle))), 0.000001));
+    
+    Triangle_3 threeStepTriangle(vertexLocations[7], vertexLocations[5], vertexLocations[8]);
+    Barycentric_coordinate locationInThreeStepTriangle(0.2, 0.6, 0.2);
+    
+    FT distT6 = shortestPaths.shortest_distance_to_location(faceHandles[6], locationInThreeStepTriangle);
+    CGAL_TEST(CHECK_CLOSE(distT6, dist5 + CGAL::sqrt(compute_squared_distance_3(vertexLocations[5], construct_triangle_location_3(threeStepTriangle, locationInThreeStepTriangle))), 0.000001));
+
+    
   }
   
   {
