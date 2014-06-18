@@ -38,17 +38,19 @@ void fct(const Polyhedron& p)
 {
   vertex_range vr(vertices(p));
   
+#ifndef BOOST_NO_CXX11_RANGE_BASED_FOR
   std::cout << "new for loop" << std::endl;
   for(vertex_descriptor vd : vr){
     std::cout << vd->point() << std::endl;
   }
+#endif
   
   std::cout << "BOOST_FOREACH" << std::endl;
   BOOST_FOREACH(vertex_descriptor vd, vr){
     std::cout << vd->point() << std::endl;
   }
   
-  std::cout << "std::for_each" << std::endl;
+  std::cout << "boost::tie + std::for_each" << std::endl;
   vertex_iterator vb, ve;
   
   boost::tie(vb,ve) = vertices_range(p);
