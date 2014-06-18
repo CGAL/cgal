@@ -230,6 +230,7 @@ void Scene_polyhedron_item::enable_facets_picking(bool b)
 
 void Scene_polyhedron_item::set_erase_next_picked_facet(bool b)
 {
+  if(b) { facet_picking_m = true; } // automatically activate facet_picking
   erase_next_picked_facet_m = b;
 }
 
@@ -299,6 +300,7 @@ void
 Scene_polyhedron_item::
 changed()
 {
+  emit item_is_about_to_be_changed();
   delete_aabb_tree(this);
   init();
   Base::changed();
@@ -377,7 +379,7 @@ Scene_polyhedron_item::select(double orig_x,
                 nearest_v = v;
               }
             }
-            // std::cerr << "Selected vertex: " << v->point() << std::endl;
+
             emit selected_vertex((void*)(&*nearest_v));
           }
 
@@ -409,12 +411,10 @@ Scene_polyhedron_item::select(double orig_x,
           if(erase_next_picked_facet_m) {
             polyhedron()->erase_facet(selected_fh->halfedge());
             polyhedron()->normalize_border();
-            set_erase_next_picked_facet(false);
+            //set_erase_next_picked_facet(false);
             changed();
             emit itemChanged();
           }
-          // std::cerr << "Facet selected. patch_id="
-          //           << selected_fh->patch_id() << std::endl;
         }
       }
     }

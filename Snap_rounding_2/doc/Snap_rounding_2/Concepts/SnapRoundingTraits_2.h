@@ -41,6 +41,11 @@ Models the concept `SRTraits_2::IsoRectangle_2`
 */ 
 typedef unspecified_type Iso_rectangle_2; 
 
+/*!
+Models the concept `SearchTraits::Cartesian_const_iterator_2`
+*/ 
+typedef unspecified_type Cartesian_const_iterator_2;
+
 /// @}
 
 /// \name Functor Types
@@ -92,6 +97,21 @@ typedef unspecified_type Integer_grid_point_2;
 Models the concept `SRTraits_2::MinkowskiSumWithPixel_2`.
 */ 
 typedef unspecified_type Minkowski_sum_with_pixel_2; 
+
+/*!
+Models the concept `ArrTraits::ConstructMinVertex_2`. 
+*/ 
+typedef unspecified_type Construct_min_vertex_2;
+
+/*!
+Models the concept `ArrTraits::ConstructMaxVertex_2`. 
+*/ 
+typedef unspecified_type Construct_max_vertex_2;
+
+/*!
+Models the concept `SearchTraits::Construct_cartesian_const_iterator_2`. 
+*/ 
+typedef unspecified_type Construct_cartesian_const_iterator_2;
 
 /// @} 
 

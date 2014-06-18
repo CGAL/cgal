@@ -68,16 +68,33 @@ namespace CartesianKernelFunctors {
   template <typename K>
   class Angle_3
   {
-    typedef typename K::Point_3 Point_3;
+    typedef typename K::Point_3  Point_3;
+    typedef typename K::Vector_3 Vector_3;
   public:
-    typedef typename K::Angle   result_type;
+    typedef typename K::Angle    result_type;
 
+    result_type
+    operator()(const Vector_3& u, const Vector_3& v) const
+    {
+      return angleC3(u.x(), u.y(), u.z(),
+		     v.x(), v.y(), v.z());
+    }
     result_type
     operator()(const Point_3& p, const Point_3& q, const Point_3& r) const
     {
       return angleC3(p.x(), p.y(), p.z(),
 		     q.x(), q.y(), q.z(),
 		     r.x(), r.y(), r.z());
+    }
+
+    result_type
+    operator()(const Point_3& p, const Point_3& q,
+               const Point_3& r, const Point_3& s) const
+    {
+      return angleC3(p.x(), p.y(), p.z(),
+		     q.x(), q.y(), q.z(),
+		     r.x(), r.y(), r.z(),
+		     s.x(), s.y(), s.z());
     }
   };
 

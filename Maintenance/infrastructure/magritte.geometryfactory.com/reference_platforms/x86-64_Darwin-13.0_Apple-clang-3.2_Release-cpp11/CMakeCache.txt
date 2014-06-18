@@ -169,7 +169,7 @@ CMAKE_COLOR_MAKEFILE:BOOL=ON
 CMAKE_CXX_COMPILER:FILEPATH=/usr/bin/clang++
 
 //Flags used by the compiler during all build types.
-CMAKE_CXX_FLAGS:STRING=-Wall -Wextra -std=c++11 -stdlib=libc++ -pipe -I/Users/cgaltester/boost-cpp11/boost_1_54_0
+CMAKE_CXX_FLAGS:STRING=-Wall -Wextra -std=c++11 -stdlib=libc++ -pipe -isystem /Users/cgaltester/boost-cpp11/boost_1_54_0
 
 //Flags used by the compiler during debug builds.
 CMAKE_CXX_FLAGS_DEBUG:STRING=-g
@@ -1388,7 +1388,7 @@ CMAKE_USE_RELATIVE_PATHS-ADVANCED:INTERNAL=1
 CMAKE_VERBOSE_MAKEFILE-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_XCODE_SELECT
 CMAKE_XCODE_SELECT-ADVANCED:INTERNAL=1
-CONFIG_CXX_FLAGS:INTERNAL=-Wall -Wextra -std=c++11 -stdlib=libc++ -pipe -I/Users/cgaltester/boost-cpp11/boost_1_54_0
+CONFIG_CXX_FLAGS:INTERNAL=-Wall -Wextra -std=c++11 -stdlib=libc++ -pipe -isystem /Users/cgaltester/boost-cpp11/boost_1_54_0
 //Variable hidden from user
 Core_LIBRARY_INSTALLED:INTERNAL=
 //Variable hidden from user

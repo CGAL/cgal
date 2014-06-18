@@ -497,6 +497,41 @@ reallocation.
 size_type capacity() const; 
 
 
+/// \name Access Member Functions 
+/// @{ 
+/*!
+returns true if the element at position `i` in the container is used
+(i.e.\ valid).
+
+\pre \f$ 0 \leq \f$ `i` \f$ < \f$ `capacity()`
+*/
+
+bool is_used(size_type i) const;
+
+/// @} 
+
+/// \name Access Member Functions 
+/// @{ 
+/*!
+returns the element at pos `i` in the container. 
+
+\pre `is_used(i) == true` and \f$ 0 \leq \f$ `i` \f$ < \f$ `capacity()`
+*/ 
+
+const T& operator[] (size_type i) const;
+
+/// @}
+
+
+/// \name Access Member Functions 
+/// @{ 
+/*!
+returns the element at pos `i` in the container. 
+
+\pre `is_used(i) == true` and \f$ 0 \leq \f$ `i` \f$ < \f$ `capacity()`
+*/ 
+
+T& operator[] (size_type i);
 
 /// @} 
 

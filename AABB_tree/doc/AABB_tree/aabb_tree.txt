@@ -123,7 +123,7 @@ hence faster than computing all intersections. We also compute the
 first encountered intersection with a plane query, which is generally
 a segment.
 
-\include AABB_polyhedron_facet_intersection_example.cpp
+\cgalExample{AABB_tree/AABB_polyhedron_facet_intersection_example.cpp}
 
 \subsection aabb_tree_examples_3 Tree of Polyhedron Triangle Facets for Distance Queries
 
@@ -134,7 +134,7 @@ squared distance, the closest point as well as the closest point and
 primitive id. The latter returns a pair composed of a point and a face
 handle.
 
-\include AABB_polyhedron_facet_distance_example.cpp
+\cgalExample{AABB_tree/AABB_polyhedron_facet_distance_example.cpp}
 
 \subsection aabb_tree_examples_4 Tree of Segments for Intersection and Distance Queries
 
@@ -142,7 +142,7 @@ handle.
 AABB primitive wraps a segment as `datum` and an iterator in the
 list as `id`. We compute the number of intersections with plane
 and triangles queries, and the closest point from a point query.
-\include AABB_segment_3_example.cpp
+\cgalExample{AABB_tree/AABB_segment_3_example.cpp}
 
 \subsection aabb_tree_examples_5 Tree of Polyhedron Edge Segments for Intersection and Distance Queries
 
@@ -150,7 +150,7 @@ In the following example the AABB primitive wraps a halfedge handle as
 `id` and generates a 3D segment on the fly, each time its method
 `datum` is called. We compute the number of intersections with a
 triangle query and the closest point from a point query.
-\include AABB_polyhedron_edge_example.cpp
+\cgalExample{AABB_tree/AABB_polyhedron_edge_example.cpp}
 
 \subsection aabb_tree_examples_6 Incremental Insertion of Primitives
 
@@ -159,7 +159,7 @@ primitives, and will internally rebuild triggered by the first query,
 or because the user calls the `AABB_tree::build()` method.  The following
 example illustrates this for two polyhedral surfaces.
 
-\include AABB_insertion_example.cpp
+\cgalExample{AABB_tree/AABB_insertion_example.cpp}
 
 \subsection aabb_tree_examples_7 Trees of Custom Primitives
 

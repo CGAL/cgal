@@ -25,6 +25,7 @@
 #ifndef CGAL_MAKE_MESH_3_H
 #define CGAL_MAKE_MESH_3_H
 
+#include <CGAL/Mesh_3/config.h>
 #include <CGAL/Mesh_3/global_parameters.h>
 #include <CGAL/refine_mesh_3.h>
 #include <CGAL/tags.h>
@@ -113,7 +114,15 @@ namespace parameters {
   // -----------------------------------
   // Parameters
   // -----------------------------------
+
+// see <CGAL/config.h>
+CGAL_PRAGMA_DIAG_PUSH
+// see <CGAL/Mesh_3/config.h>
+CGAL_MESH_3_IGNORE_BOOST_PARAMETER_NAME_WARNINGS
+
   BOOST_PARAMETER_NAME( features_param )
+
+CGAL_PRAGMA_DIAG_POP
   
 } // end namespace parameters::internal
 

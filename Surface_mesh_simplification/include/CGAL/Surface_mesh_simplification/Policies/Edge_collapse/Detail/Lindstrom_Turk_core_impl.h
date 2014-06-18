@@ -56,6 +56,7 @@ LindstromTurkCore<ECM,K>::LindstromTurkCore( Params const& aParams, Profile cons
 template<class ECM, class K>
 void LindstromTurkCore<ECM,K>::Extract_boundary_data()
 {
+  mBdry_data.reserve(mProfile.border_edges().size());
   for ( const_border_edge_iterator it = mProfile.border_edges().begin(), eit = mProfile.border_edges().end() ; it != eit ; ++ it )
   {
     edge_descriptor border_edge = *it ;
@@ -82,6 +83,7 @@ void LindstromTurkCore<ECM,K>::Extract_boundary_data()
 template<class ECM, class K>
 void LindstromTurkCore<ECM,K>::Extract_triangle_data()
 {
+  mTriangle_data.reserve(mProfile.triangles().size());
   for ( const_triangle_iterator it = mProfile.triangles().begin(), eit = mProfile.triangles().end() ; it != eit ; ++ it )
   {
     Triangle const& tri = *it ;

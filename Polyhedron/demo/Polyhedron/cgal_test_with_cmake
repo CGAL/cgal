@@ -109,6 +109,8 @@ else
       inside_out_plugin \
       intersection_plugin \
       io_implicit_function_plugin \
+      jet_fitting_plugin \
+      join_polyhedra_plugin \
       kernel_plugin \
       mesh_3_plugin \
       mesh_segmentation_plugin \
@@ -123,11 +125,14 @@ else
       parameterization_plugin \
       pca_plugin \
       point_dialog \
+      point_inside_polyhedron_plugin \
       point_set_average_spacing_plugin \
       point_set_outliers_removal_plugin \
       point_set_simplification_plugin \
       point_set_smoothing_plugin \
       poisson_plugin \
+      polyhedron_slicer_plugin \
+      polyhedron_stitching_plugin \
       polylines_io_plugin \
       remeshing_plugin \
       scene_basic_objects \
@@ -139,9 +144,14 @@ else
       scene_points_with_normal_item \
       scene_polygon_soup_item \
       scene_polyhedron_item \
+      scene_polyhedron_item_decorator \
+      scene_polyhedron_item_k_ring_selection \
+      scene_polyhedron_selection_item \
       scene_polyhedron_transform_item \
       scene_polylines_item \
       scene_textured_polyhedron_item \
+      selection_io_plugin \
+      selection_plugin \
       self_intersection_plugin \
       stl_plugin \
       subdivision_methods_plugin \
@@ -151,7 +161,8 @@ else
       xyz_plugin \
       p_klein_function_plugin \
       p_sphere_function_plugin \
-      p_tanglecube_function_plugin
+      p_tanglecube_function_plugin \
+      all
   do
       if  ${MAKE_CMD} -f Makefile help | grep "$target" > /dev/null; then 
           compile_and_run "$target"

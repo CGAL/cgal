@@ -112,8 +112,9 @@ edge_descriptor vR_v1() const;
 
 /*!
 The unique sequence of the vertices 
-around ` v0v1` in topological order (<I>ccw</I> or <I>ccw</I> depending 
+around ` v0v1` in topological order (<I>ccw</I> or <I>cw</I> depending 
 on the relative ordering of `v0` and `v1` in the profile). 
+The sequence may have duplicates, but when this happens the edge is not collapsible.
 */ 
 std::vector<vertex_descriptor> link() const; 
 

@@ -80,6 +80,29 @@ public:
   void hide_point (const Point &p) { _hidden.push_back(p); }
   //  void unhide_point (Point_iterator i) { _hidden.delete(i); }
 
+  //note this function is not requested by the RegularTriangulationCellBase_3
+  //it should be replaced everywhere by weighted_circumcenter()
+  // but remains here for backward compatibility
+  typename Geom_traits::Point_3
+  circumcenter(const Geom_traits& gt = Geom_traits()) const
+  {
+      return gt.construct_weighted_circumcenter_3_object()
+        (this->vertex(0)->point(),
+         this->vertex(1)->point(),
+         this->vertex(2)->point(),
+         this->vertex(3)->point());
+  }
+
+  typename Geom_traits::Bare_point
+  weighted_circumcenter(const Geom_traits& gt = Geom_traits()) const
+  {
+      return gt.construct_weighted_circumcenter_3_object()
+        (this->vertex(0)->point(),
+         this->vertex(1)->point(),
+         this->vertex(2)->point(),
+         this->vertex(3)->point());
+  }
+
 private:
   Point_container _hidden;
 };

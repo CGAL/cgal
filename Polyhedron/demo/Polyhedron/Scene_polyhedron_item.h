@@ -75,6 +75,7 @@ signals:
   void selected_facet(void*);
   void selected_edge(void*);
   void selected_halfedge(void*);
+  void item_is_about_to_be_changed(); // emitted in changed()
 
 private:
   // Initialization

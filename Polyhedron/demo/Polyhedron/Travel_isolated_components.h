@@ -1,12 +1,21 @@
 #ifndef TRAVEL_ISOLATED_COMPONENTS_H
 #define TRAVEL_ISOLATED_COMPONENTS_H
+
 #include <boost/optional.hpp>
 #include <vector>
 #include "One_ring_iterators.h"
-
-class Travel_isolated_components 
-{
+#include <CGAL/Default.h>
+class Travel_isolated_components {
 public:
+  // for transform iterator
+  template<class HandleType>
+  struct Get_handle {
+    typedef HandleType result_type;
+    template<class Iterator>
+    result_type operator()(Iterator it) const
+    { return it; }
+  };
+
   // to be used in get_minimum_isolated_component function
   struct Minimum_visitor
   {
@@ -56,6 +65,7 @@ public:
     for(; begin != end; ++begin) 
     {
       HandleType h = begin;
+
       if(mark[h->id()] || selection.is_selected(h)) { continue; }
 
       std::vector<HandleType> C;
@@ -63,20 +73,21 @@ public:
       mark[h->id()] = true;
       std::size_t current_index = 0;
 
+      bool neigh_to_selection = false;
       while(current_index < C.size()) {
         HandleType current = C[current_index++];
 
         for(One_ring_iterator<HandleType> circ(current); circ; ++circ)
         {
           HandleType nv = circ;
+          neigh_to_selection |= selection.is_selected(nv);
           if(!mark[nv->id()] && !selection.is_selected(nv)) {
             mark[nv->id()] = true; 
             C.push_back(nv);
           }
         }
       }
-
-      visitor(C);
+      if(neigh_to_selection) { visitor(C); }
     }
   }
 };

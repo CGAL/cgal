@@ -880,14 +880,14 @@ vary according to the user choice.} for answering queries:
 <LI> `Arr_naive_point_location<Arrangement>` employes the
   <I>naive</I> strategy. It locates the query point naively,
   exhaustively scanning all arrangement cells.
-  %
-<LI> `Arr_walk_along_a_line_point_location<Arrangement>`} employs
+
+<LI> `Arr_walk_along_line_point_location<Arrangement>` employs
   the <I>walk-along-a-line</I> (or <I>walk</I> for short) strategy.
   It simulates a traversal, in reverse order, along an imaginary
   vertical ray emanating from the query point. It starts from the
   unbounded face of the arrangement and moves downward toward the
   query point until it locates the arrangement cell containing it.
-  %
+  
 <LI>`Arr_landmarks_point_location<Arrangement,Generator>`
   uses a set of <I>landmark</I> points, the location of which in the
   arrangement is known. It employs the <I>landmark</I> strategy. Given a
@@ -914,7 +914,7 @@ vary according to the user choice.} for answering queries:
   Section \ref arr_sssectr_lanmarks_concept for details. Most traits
   classes included in the <I>2D Arrangement</I> package are models of
   this refined concept.
-  %
+
 <LI>`Arr_trapezoid_ric_point_location<Arrangement>` implements an
   improved variant of Mulmuley's point-location algorithm
   \cgalCite{m-fppa-90}; see also \cgalCite{bkos-cgaa-00}, Chapter 6.
@@ -926,7 +926,6 @@ vary according to the user choice.} for answering queries:
   query point in expected logarithmic time. The trapezoidal map and
   the search structure are built by a randomized incremental construction
   algorithm (RIC).
-  %
 
 </UL>
 

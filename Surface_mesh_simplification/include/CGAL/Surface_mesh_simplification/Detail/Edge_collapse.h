@@ -196,7 +196,7 @@ private:
   
   Profile create_profile ( edge_descriptor const& aEdge )
   { 
-    return Profile(aEdge,mSurface,Vertex_index_map,Edge_index_map,Edge_is_border_map);
+    return Profile(aEdge,mSurface,Vertex_index_map,Edge_index_map,Edge_is_border_map, m_has_border);
   }  
   
   size_type get_directed_edge_id   ( const_edge_descriptor const& aEdge ) const { return Edge_index_map[aEdge]; }
@@ -209,7 +209,7 @@ private:
     return is_primary_edge(aEdge) ? aEdge : opposite_edge(aEdge,mSurface) ;
   }  
     
-  bool is_border ( const_edge_descriptor const& aEdge ) const { return Edge_is_border_map[aEdge] ; }    
+  bool is_border ( const_edge_descriptor const& aEdge ) const { return get(CGAL::edge_is_border, mSurface, aEdge) ; }    
   
   bool is_constrained( const_edge_descriptor const& aEdge ) const { return get(Edge_is_constrained_map,aEdge); }
   bool is_constrained( const_vertex_descriptor const& aVertex ) const;
@@ -381,7 +381,7 @@ private:
   GetCost              const& Get_cost ;
   GetPlacement         const& Get_placement ;
   VisitorT                    Visitor ;
-  
+  bool                        m_has_border ;
   
 private:
 

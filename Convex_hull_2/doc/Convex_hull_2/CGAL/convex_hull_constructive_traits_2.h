@@ -13,9 +13,10 @@ the orientation-determinant for three points.
 
 \cgalModels `ConvexHullTraits_2`
 
-\sa `CGAL::Convex_hull_projective_xy_traits_2<Point_3>` 
-\sa `CGAL::Convex_hull_projective_xz_traits_2<Point_3>` 
-\sa `CGAL::Convex_hull_projective_yz_traits_2<Point_3>` 
+\sa `CGAL::Projection_traits_xy_3<K>`
+\sa `CGAL::Projection_traits_yz_3<K>`
+\sa `CGAL::Projection_traits_xz_3<K>`
+
 \sa `CGAL::Convex_hull_traits_2<R>` 
 
 */

@@ -84,6 +84,7 @@ public :
                , VertexIdxMap     const& aVertex_index_map
                , EdgeIdxMap       const& aEdge_index_map
                , EdgeIsBorderMap  const& aEdge_is_border_map
+               , bool has_border 
                ) ;
      
 public :
@@ -104,13 +105,26 @@ public :
   edge_descriptor const& v0_vR() const { return mV0VR; }
   edge_descriptor const& vR_v1() const { return mVRV1; }
 
-  Triangle_vector const& triangles() const { return mTriangles ; }
+  Triangle_vector const& triangles() const {
+
+    if(mTriangles.empty()){
+      const_cast<Edge_profile*>(this)->Extract_triangles_and_link();
+    }
+    CGAL_HISTOGRAM_PROFILER("triangles.size()", mTriangles.size());
+    return mTriangles ; }
   
   // The cycle of vertices around the edge  
-  vertex_descriptor_vector const& link() const { return mLink ; }
-  
-  edge_descriptor_vector const& border_edges() const { return mBorderEdges ; }
+  vertex_descriptor_vector const& link() const {
+    CGAL_PROFILER("link calls");
+    if(mLink.empty()){
 
+      const_cast<Edge_profile*>(this)->Extract_triangles_and_link();
+    }
+    return mLink ; }
+  
+  edge_descriptor_vector const& border_edges() const {
+    return mBorderEdges ; 
+  }
   ECM& surface() const { return *mSurface ; } 
   ECM& surface_mesh() const { return *mSurface ; } 
  
@@ -130,30 +144,15 @@ private:
 
   typedef typename GraphTraits::in_edge_iterator  in_edge_iterator ;
   
-  typedef std::set<std::size_t> IdxSet;
+  bool is_border(edge_descriptor e) const
+  {
+    return get(CGAL::edge_is_border, surface_mesh(), e);
+  }
+   
 
-private:
+  void Extract_borders() ;
    
-  template<class EdgeIdxMap, class EdgeIsBorderMap>
-  void Extract_borders( vertex_descriptor const& v
-                      , IdxSet&                  rCollected 
-                      , EdgeIdxMap        const& edge_idx
-                      , EdgeIsBorderMap   const& is_border
-                      ) ;
-   
-   template<class EdgeIdxMap, class EdgeIsBorderMap>
-   void Extract_borders( EdgeIdxMap const& edge_idx, EdgeIsBorderMap  const& is_border) ;
-   
-   template<class EdgeIsBorderMap>
-   void Extract_triangle( vertex_descriptor const& v0
-                        , vertex_descriptor const& v1
-                        , vertex_descriptor const& v2 
-                        , edge_descriptor   const& e02
-                        , EdgeIsBorderMap   const& is_border
-                        ) ;
-                        
-   template<class VertexIdxMap, class EdgeIsBorderMap>
-   void Extract_triangles_and_link( VertexIdxMap const& vertex_idx, EdgeIsBorderMap const& is_border ) ;
+  void Extract_triangles_and_link() ;
     
 private:
  

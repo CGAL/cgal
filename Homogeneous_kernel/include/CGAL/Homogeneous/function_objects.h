@@ -86,6 +86,7 @@ namespace HomogeneousKernelFunctors {
   class Angle_3
   {
     typedef typename K::Point_3             Point_3;
+    typedef typename K::Vector_3            Vector_3;
     typedef typename K::Construct_vector_3  Construct_vector_3;
     Construct_vector_3 c;
   public:
@@ -95,8 +96,19 @@ namespace HomogeneousKernelFunctors {
     Angle_3(const Construct_vector_3& c_) : c(c_) {}
 
     result_type
+    operator()(const Vector_3& u, const Vector_3& v) const
+    { return enum_cast<Angle>(CGAL_NTS sign(u * v)); }
+    // FIXME: scalar product
+
+    result_type
     operator()(const Point_3& p, const Point_3& q, const Point_3& r) const
     { return enum_cast<Angle>(CGAL_NTS sign(c(q,p) * c(q,r))); }
+    // FIXME: scalar product
+
+    result_type
+    operator()(const Point_3& p, const Point_3& q,
+               const Point_3& r, const Point_3& s) const
+    { return enum_cast<Angle>(CGAL_NTS sign(c(q,p) * c(s,r))); }
     // FIXME: scalar product
   };
 
