@@ -8,19 +8,12 @@
 #define VEC_DIM 10
 #define MAT_DIM 10
 
-#ifdef CGAL_USE_LEDA
+#include <CGAL/Arithmetic_kernel.h>
 
-#include <CGAL/leda_integer.h>
-#include <CGAL/leda_rational.h>
-typedef leda_integer  RT;
-typedef leda_rational FT;
+#if defined( CGAL_USE_LEDA) || defined ( CGAL_USE_GMP )
 
-#elif defined CGAL_USE_GMP
-
-#include <CGAL/Gmpz.h>
-#include <CGAL/Gmpq.h>
-typedef CGAL::Gmpz RT;
-typedef CGAL::Gmpq FT;
+typedef CGAL::Arithmetic_kernel::Integer RT;
+typedef CGAL::Arithmetic_kernel::Rational FT;
 
 #else
 

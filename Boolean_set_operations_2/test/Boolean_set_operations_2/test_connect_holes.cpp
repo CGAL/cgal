@@ -5,18 +5,9 @@
 #ifndef CGAL_BSO_RATIONAL_NT_H
 #define CGAL_BSO_RATIONAL_NT_H
 
-#include <CGAL/basic.h>
-
-#ifdef CGAL_USE_GMP
-  // GMP is installed. Use the GMP rational number-type.
-  #include <CGAL/Gmpq.h>
-  typedef CGAL::Gmpq                                    Number_type;
-#else
-  // GMP is not installed. Use CGAL's exact rational number-type.
-  #include <CGAL/MP_Float.h>
-  #include <CGAL/Quotient.h>
-  typedef CGAL::Quotient<CGAL::MP_Float>                Number_type;
-#endif
+#include <CGAL/Arithmetic_kernel.h>
+// leda_rational, or Gmpq, or Quotient<MP_float>
+typedef CGAL::Arithmetic_kernel::Rational         Number_type;
 #endif
 
 #include <CGAL/Cartesian.h>

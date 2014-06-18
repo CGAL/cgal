@@ -1163,7 +1163,7 @@ usage of \sc{Gmp} and of \sc{Mpfr} will be disabled.
 
 | Variable              | Description                                                           | Type        |
 | :-                    | :-                    | :-             |
-| `WITH_GMP`            | Indicates whether to search and use \sc{Gmp}/\sc{Mpfr} or not  | CMake | 
+| `CGAL_DISABLE_GMP`    | Indicates whether to search and use \sc{Gmp}/\sc{Mpfr} or not  | CMake | 
 | `GMP_DIR`  | Directory of \sc{Gmp} default installation  | Environment |
 | `GMP_INCLUDE_DIR`  | Directory containing the `gmp.h` file  | CMake | 
 | `GMP_INC_DIR` | Idem | Environment |

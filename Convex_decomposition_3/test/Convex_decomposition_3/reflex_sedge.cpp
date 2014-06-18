@@ -1,5 +1,5 @@
+#include <CGAL/Arithmetic_kernel.h>
 #include <CGAL/Homogeneous.h>
-#include <CGAL/Gmpz.h>
 #include <CGAL/Nef_S2/Sphere_point.h>
 #include <CGAL/Nef_S2/Sphere_circle.h>
 #include <CGAL/Nef_S2/Sphere_segment.h>
@@ -60,7 +60,8 @@ int main()
 
   //  CGAL_NEF_SETDTHREAD(239);
 
-  typedef CGAL::Homogeneous<CGAL::Gmpz> Kernel;
+  typedef CGAL::Arithmetic_kernel::Integer  RT;
+  typedef CGAL::Homogeneous<RT> Kernel;
   typedef Test_SNC<Kernel> SNC;
   typedef SNC::Point_3 Point_3;
   typedef SNC::Sphere_point Sphere_point;

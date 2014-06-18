@@ -39,7 +39,7 @@
 
 #include <boost/type_traits/is_same.hpp>
 
-#ifndef CGAL_USE_LEDA
+#ifndef CGAL_USE_LEDA_LIBRARY
 #define LEDA_MEMORY(t) 
 #endif
 
