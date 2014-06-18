@@ -371,6 +371,17 @@ public:    //    compute_supporting_line(q.supporting_segment(), a1, b1, c1);
   }
 
   static
+  std::pair<RT,RT>
+  compute_linf_distance(const Point_2& p, const Line_2& l)
+  {
+    const RT nomin = CGAL::abs(l.a() * p.x() + l.b() * p.y() + l.c());
+    const RT denom = CGAL::abs(
+          l.a() +
+          ( CGAL::sign(l.a()) == CGAL::sign(l.b())? l.b() : -l.b() ) );
+    return std::pair<RT,RT>(nomin, denom);
+  }
+
+  static
   void compute_intersection_of_lines(
       const Line_2& l1, const Line_2& l2,
       RT& hx, RT& hy, RT& hw)
