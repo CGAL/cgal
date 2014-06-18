@@ -591,7 +591,11 @@ void MainWindow::viewerShow(float xmin,
   qglviewer::Vec
     min_(xmin, ymin, zmin),
     max_(xmax, ymax, zmax);
+#if QGLVIEWER_VERSION >= 0x020502
+  viewer->camera()->setPivotPoint((min_+max_)*0.5);
+#else
   viewer->camera()->setRevolveAroundPoint((min_+max_)*0.5);
+#endif
 
   qglviewer::ManipulatedCameraFrame backup_frame(*viewer->camera()->frame());
   viewer->camera()->fitBoundingBox(min_, max_);
@@ -602,7 +606,11 @@ void MainWindow::viewerShow(float xmin,
 }
 
 void MainWindow::viewerShow(float x, float y, float z) {
+#if QGLVIEWER_VERSION >= 0x020502
+  viewer->camera()->setPivotPoint(qglviewer::Vec(x, y, z));
+#else
   viewer->camera()->setRevolveAroundPoint(qglviewer::Vec(x, y, z));
+#endif
   // viewer->camera()->lookAt(qglviewer::Vec(x, y, z));
 
   qglviewer::ManipulatedCameraFrame backup_frame(*viewer->camera()->frame());
