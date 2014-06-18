@@ -19,6 +19,7 @@
 // Author(s)     : Efi Fogel <efif@post.tau.ac.il>
 //                 Ron Wein  <wein@post.tau.ac.il>
 //                 Dror Atariah <dror.atariah@fu-berlin.de>
+//                 Waqar Khan <wkhan@mpi-inf.mpg.de>
 
 #ifndef CGAL_ARR_POLYLINE_TRAITS_2_H
 #define CGAL_ARR_POLYLINE_TRAITS_2_H
@@ -1684,27 +1685,51 @@ namespace CGAL {
               // An overlap exists between the current segments of the
               // polylines: Output the overlapping segment.
               right_overlap = true;
+
+              typename Segment_traits_2::Trim_2 trim = seg_traits->trim_2_object();
+              typename Segment_traits_2::Construct_opposite_2 construct_opposite = seg_traits->construct_opposite_2_object();
+
               if (left_res == SMALLER) {
                 if (right_res == SMALLER) {
-                  X_monotone_segment_2 seg(min_vertex(cv2[i2]),
-                                           max_vertex(cv1[i1]));
+
+                  X_monotone_segment_2 seg = trim(cv2[i2], min_vertex(cv2[i2]), max_vertex(cv1[i1]));
+                  
+                  //since the overlapping curve should only be directed right.
+                  if( !seg.is_directed_right() )
+                    seg = construct_opposite(seg);
+
                   ocv.push_back(seg);
                 }
                 else {
-                  X_monotone_segment_2 seg(min_vertex(cv2[i2]),
-                                           max_vertex(cv2[i2]));
+
+                  X_monotone_segment_2 seg = cv2[i2];
+
+                  //since the overlapping curve should only be directed right.
+                  if( !seg.is_directed_right() )
+                    seg = construct_opposite(seg);
+
                   ocv.push_back(seg);
                 }
               }
               else {
                 if (right_res == SMALLER) {
-                  X_monotone_segment_2 seg(min_vertex(cv1[i1]),
-                                           max_vertex(cv1[i1]));
+
+                  X_monotone_segment_2 seg = cv1[i1];
+
+                  //since the overlapping curve should only be directed right.
+                  if( !seg.is_directed_right() )
+                    seg = construct_opposite(seg);
+                  
                   ocv.push_back(seg);
+
                 }
                 else {
-                  X_monotone_segment_2 seg(min_vertex(cv1[i1]),
-                                           max_vertex(cv2[i2]));
+                  X_monotone_segment_2 seg = trim(cv1[i1], min_vertex(cv1[i1]), max_vertex(cv2[i2]));
+
+                  //since the overlapping curve should only be directed right.
+                  if( !seg.is_directed_right() )
+                    seg = construct_opposite(seg);
+                  
                   ocv.push_back(seg);
                 }
               }
@@ -2645,7 +2670,7 @@ namespace CGAL {
         /*
          * Check whether the source and the target conform with the 
          * direction of the polyline.
-         * since the direction of the arc should not be changed. we will interchange the source and the target.
+         * since the direction of the poly-line/curve should not be changed. we will interchange the source and the target.
          */
         Point_2 source = src;
         Point_2 target = tgt;
