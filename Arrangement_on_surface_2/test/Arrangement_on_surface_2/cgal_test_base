@@ -1156,8 +1156,8 @@ test_polycurve_circular_arc_traits()
     VERTEX \
     CONSTRUCT_OPPOSITE \
     MERGE \
-    COMPARE_ENDPOINTS_XY
-#INTERSECT
+    COMPARE_ENDPOINTS_XY \
+    INTERSECT
     
   else
    echo "   ERROR:    not executed   test_traits polyline_traits" >> $ERRORFILE
@@ -1591,10 +1591,10 @@ fi
 
 # waqar start
 
-#test_polycurve_conic_traits
+test_polycurve_conic_traits
 test_polycurve_circular_arc_traits
 #test_circle_segments_traits
-#test_polyline_traits
+test_polyline_traits
 #test_circular_arc_traits
 #test_conic_traits
 
