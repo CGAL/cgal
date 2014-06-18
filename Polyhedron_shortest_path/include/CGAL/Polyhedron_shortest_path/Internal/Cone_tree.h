@@ -33,11 +33,11 @@ class Cone_tree_node
 public:
   enum Node_type
   {
-    ROOT,
-    FACE_SOURCE,
-    EDGE_SOURCE,
-    VERTEX_SOURCE,
-    INTERVAL,
+    ROOT = 0,
+    FACE_SOURCE = 1,
+    EDGE_SOURCE = 2,
+    VERTEX_SOURCE = 3,
+    INTERVAL = 4,
   };
 
 private:
@@ -65,22 +65,24 @@ private:
   
   halfedge_descriptor m_entryEdge;
   
-  Triangle_2 m_layoutFace;
-  Cone_tree_node* m_leftChild;
-  Cone_tree_node* m_rightChild;
-  std::vector<Cone_tree_node*> m_middleChildren;
-  Cone_tree_node* m_parent;
-  
   Point_2 m_sourceImage;
+  Triangle_2 m_layoutFace;
   FT m_pseudoSourceDistance;
 
   Point_2 m_windowLeft;
   Point_2 m_windowRight;
 
-  Node_type m_nodeType;
-  size_t m_treeId;
   size_t m_level;
+  size_t m_treeId;
+
+  Node_type m_nodeType;
   
+  Cone_tree_node* m_leftChild;
+  Cone_tree_node* m_rightChild;
+  
+  std::vector<Cone_tree_node*> m_middleChildren;
+  Cone_tree_node* m_parent;
+
 private:
   void on_child_link(Cone_tree_node* child)
   {
@@ -100,11 +102,11 @@ public:
     , m_level(0)
     , m_treeId(treeId)
     , m_nodeType(ROOT)
+    , m_leftChild(NULL)
+    , m_rightChild(NULL)
     , m_pendingLeftSubtree(NULL)
     , m_pendingRightSubtree(NULL)
     , m_pendingMiddleSubtree(NULL)
-    , m_leftChild(NULL)
-    , m_rightChild(NULL)
   {
   }
   
@@ -119,11 +121,11 @@ public:
     , m_level(0)
     , m_treeId(treeId)
     , m_nodeType(ROOT)
+    , m_leftChild(NULL)
+    , m_rightChild(NULL)
     , m_pendingLeftSubtree(NULL)
     , m_pendingRightSubtree(NULL)
     , m_pendingMiddleSubtree(NULL)
-    , m_leftChild(NULL)
-    , m_rightChild(NULL)
   {
   }
 
@@ -133,17 +135,17 @@ public:
     , m_construct_triangle_location_2(traits.construct_triangle_location_2_object())
     , m_polyhedron(polyhedron)
     , m_entryEdge(entryEdge)
-    , m_layoutFace(layoutFace)
     , m_sourceImage(sourceImage)
+    , m_layoutFace(layoutFace)
     , m_pseudoSourceDistance(pseudoSourceDistance)
     , m_windowLeft(windowLeft)
     , m_windowRight(windowRight)
     , m_nodeType(nodeType)
+    , m_leftChild(NULL)
+    , m_rightChild(NULL)
     , m_pendingLeftSubtree(NULL)
     , m_pendingRightSubtree(NULL)
     , m_pendingMiddleSubtree(NULL)
-    , m_leftChild(NULL)
-    , m_rightChild(NULL)
   {
   }
 

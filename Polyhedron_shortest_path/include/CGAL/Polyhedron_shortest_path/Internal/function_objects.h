@@ -207,7 +207,7 @@ public:
     {
       return CGAL::SMALLER;
     }
-    else if (parametricDistance1 > parametricDistance2)
+    else
     {
       return CGAL::LARGER;
     }
@@ -296,7 +296,7 @@ public:
     Point_3 rootPoint(pointMap[v]);
     Point_3 prevPoint(pointMap[CGAL::source(startEdge, P)]);
     
-    halfedge_descriptor currentEdge = currentEdge = CGAL::next(startEdge, P);
+    halfedge_descriptor currentEdge = CGAL::next(startEdge, P);
     
     Point_3 nextPoint(pointMap[CGAL::target(currentEdge, P)]);
     

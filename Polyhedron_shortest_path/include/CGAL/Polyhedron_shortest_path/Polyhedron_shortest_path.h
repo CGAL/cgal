@@ -98,6 +98,7 @@ private:
   typedef typename Traits::Triangle_2 Triangle_2;
   typedef typename Traits::Segment_2 Segment_2;
   typedef typename Traits::Ray_2 Ray_2;
+  typedef typename Traits::Line_2 Line_2;
   typedef typename Traits::Point_2 Point_2;
   typedef typename Traits::Vector_2 Vector_2;
 
@@ -113,8 +114,8 @@ private:
   template <class Visitor>
   struct Point_path_visitor_wrapper
   {
-    Traits& m_traits;
     Visitor& m_visitor;
+    Traits& m_traits;
     Polyhedron& m_polyhedron;
     VertexPointMap& m_vertexPointMap;
     
@@ -145,6 +146,11 @@ private:
 
 private:
   Traits m_traits;
+  Polyhedron& m_polyhedron;
+  VertexIndexMap m_vertexIndexMap;
+  HalfedgeIndexMap m_halfedgeIndexMap;
+  FaceIndexMap m_faceIndexMap;
+  VertexPointMap m_vertexPointMap;
 
   std::vector<bool> m_vertexIsPseudoSource;
   
@@ -158,13 +164,6 @@ private:
   
   Expansion_priqueue m_expansionPriqueue;
 
-  VertexIndexMap m_vertexIndexMap;
-  FaceIndexMap m_faceIndexMap;
-  HalfedgeIndexMap m_halfedgeIndexMap;
-  VertexPointMap m_vertexPointMap;
-  
-  Polyhedron& m_polyhedron;
-  
 public:
 
   /// This is just a placeholder for a proper debug output verbosity switch method
@@ -699,7 +698,7 @@ private:
         {
           propagateLeft = true;
         }
-        else
+        else if (!node->is_source_node())
         {
           propagateRight = true;
         }
@@ -718,7 +717,7 @@ private:
         push_left_child(node);
       }
       
-      if (propagateRight)
+      if (propagateRight && !node->is_source_node())
       {
         push_right_child(node);
       }
@@ -933,7 +932,7 @@ private:
   void visit_shortest_path(Cone_tree_node* startNode, const Point_2& startLocation, Visitor& visitor)
   {
     typedef typename Traits::Intersect_2 Intersect_2;
-    typedef typename cpp11::result_of<Intersect_2(Segment_2, Ray_2)>::type SegmentRayIntersectResult;
+    typedef typename cpp11::result_of<Intersect_2(Segment_2, Line_2)>::type SegmentRayIntersectResult;
     
     Cone_tree_node* current = startNode;
     Point_2 currentLocation(startLocation);
@@ -947,8 +946,9 @@ private:
         {
           Segment_2 entrySegment = current->entry_segment();
           Ray_2 rayToLocation(current->source_image(), currentLocation);
+
+          SegmentRayIntersectResult intersection = m_traits.intersect_2_object()(entrySegment, rayToLocation.supporting_line());
           
-          SegmentRayIntersectResult intersection = m_traits.intersect_2_object()(entrySegment, rayToLocation);
           assert(intersection && "Line from source did not cross entry segment");
           Point_2* result = boost::get<Point_2>(&*intersection);
           assert(result != NULL && "Intersection with entry segment was not a single point");
@@ -979,6 +979,8 @@ private:
           visitor.face(m_faceLocations[current->tree_id()].first, m_faceLocations[current->tree_id()].second);
           current = current->parent();
           break;
+        default:
+          assert(false && "Unhanded node type found in tree");
       }
     }
   }

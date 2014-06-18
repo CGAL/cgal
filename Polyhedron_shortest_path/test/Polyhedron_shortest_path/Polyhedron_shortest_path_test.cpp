@@ -887,8 +887,6 @@ int main(int argc, char** argv)
     
     FT distT6 = shortestPaths.shortest_distance_to_location(faceHandles[6], locationInThreeStepTriangle);
     CGAL_TEST(CHECK_CLOSE(distT6, dist5 + CGAL::sqrt(compute_squared_distance_3(vertexLocations[5], construct_triangle_location_3(threeStepTriangle, locationInThreeStepTriangle))), 0.000001));
-
-    
   }
   
   {
