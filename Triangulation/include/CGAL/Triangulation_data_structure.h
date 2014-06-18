@@ -389,9 +389,34 @@ public:
 
 private:
 
-    // NOT DOCUMENTED
-    void clear_visited_marks(Full_cell_handle) const;
+  // Used by insert_in_tagged_hole
+  struct IITH_task
+  {
+    IITH_task(
+      Facet boundary_facet_,
+      int index_of_inside_cell_in_outside_cell_,
+      Full_cell_handle future_neighbor_ = Full_cell_handle(),
+      int new_cell_index_in_future_neighbor_ = -1,
+      int index_of_future_neighbor_in_new_cell_ = -1)
+    : boundary_facet(boundary_facet_),
+      index_of_inside_cell_in_outside_cell(index_of_inside_cell_in_outside_cell_),
+      future_neighbor(future_neighbor_),
+      new_cell_index_in_future_neighbor(new_cell_index_in_future_neighbor_),
+      index_of_future_neighbor_in_new_cell(index_of_future_neighbor_in_new_cell_)
+    {}
 
+    // "new_cell" is the cell about to be created
+    Facet boundary_facet;
+    int index_of_inside_cell_in_outside_cell;
+    Full_cell_handle future_neighbor;
+    int new_cell_index_in_future_neighbor;
+    int index_of_future_neighbor_in_new_cell;
+  };
+
+  // NOT DOCUMENTED
+  void clear_visited_marks(Full_cell_handle) const;
+
+  //  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  DANGEROUS UPDATE OPERATIONS
     //  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  DANGEROUS UPDATE OPERATIONS
 
 private:
@@ -943,57 +968,96 @@ Triangulation_data_structure<Dim, Vb, Fcb>
     CGAL_assertion_msg(is_boundary_facet(f), "starting facet should be on the hole boundary");
 
     const int cur_dim = current_dimension();
+  Full_cell_handle new_s;
 
-    Full_cell_handle old_s = full_cell(f);
-    Full_cell_handle new_s = new_full_cell();
-    const int facet_index = index_of_covertex(f);
+  std::queue<IITH_task> task_queue;
+  task_queue.push(
+    IITH_task(f, mirror_index(full_cell(f), index_of_covertex(f))) );
 
-    int i(0);
-    for( ; i < facet_index; ++i )
+  while (!task_queue.empty())
+  {
+    IITH_task task = task_queue.front();
+    task_queue.pop();
+    
+    Full_cell_handle old_s = full_cell(task.boundary_facet);
+    const int facet_index = index_of_covertex(task.boundary_facet);
+    
+    Full_cell_handle outside_neighbor = neighbor(old_s, facet_index);
+    // Here, "new_s" might actually be a new cell, but it might also be "old_s"
+    // if it has not been treated already in the meantime
+    new_s = neighbor(outside_neighbor, task.index_of_inside_cell_in_outside_cell);
+    // If the cell has not been treated yet
+    if (old_s == new_s)
+    {
+      new_s = new_full_cell();
+
+      int i(0);
+      for ( ; i < facet_index ; ++i)
         associate_vertex_with_full_cell(new_s, i, old_s->vertex(i));
-    ++i; // skip facet_index
-    for( ; i <= cur_dim; ++i )
+      ++i; // skip facet_index
+      for ( ; i <= cur_dim ; ++i)
         associate_vertex_with_full_cell(new_s, i, old_s->vertex(i));
-    associate_vertex_with_full_cell(new_s, facet_index, v);
-    set_neighbors(  new_s,
+      associate_vertex_with_full_cell(new_s, facet_index, v);
+      set_neighbors(new_s,
                     facet_index,
                     neighbor(old_s, facet_index),
                     mirror_index(old_s, facet_index));
 
-    // add the new full_cell to the list of new full_cells
-    *new_full_cells++ = new_s;
-
-    // check all of |Facet f|'s neighbors
-    for( i = 0; i <= cur_dim; ++i )
-    {
-        if( facet_index == i )
-            continue;
+      // add the new full_cell to the list of new full_cells
+      *new_full_cells++ = new_s;
+  
+      // check all of |Facet f|'s neighbors
+      for (i = 0 ; i <= cur_dim ; ++i)
+      {
+        if (facet_index == i)
+          continue;
         // we define a |Rotor| because it makes it easy to rotate around
         // in a self contained fashion. The corresponding potential
         // boundary facet is Facet(full_cell(rot), index_of_covertex(rot))
         Rotor rot(old_s, i, facet_index);
         // |rot| on line above, stands for Candidate Facet
-        while( ! is_boundary_facet(rot) )
-            rot = rotate_rotor(rot);
+        while (!is_boundary_facet(rot))
+          rot = rotate_rotor(rot);
 
         // we did find the |i|-th neighbor of Facet(old_s, facet_index)...
         // has it already been extruded to center point |v| ?
-        Full_cell_handle outside = neighbor(full_cell(rot), index_of_covertex(rot));
         Full_cell_handle inside  = full_cell(rot);
-        Vertex_handle m = inside->mirror_vertex(index_of_covertex(rot), current_dimension());
+        Full_cell_handle outside = neighbor(inside, index_of_covertex(rot));
+        // "m" is the vertex of outside which is not on the boundary
+        Vertex_handle m = inside->mirror_vertex(index_of_covertex(rot), current_dimension()); // CJTODO: use mirror_index?
+        // "index" is the index of m in "outside"
         int index = outside->index(m);
+        // new_neighbor is the inside cell which is registered as the neighbor
+        // of the outside cell => it's either a newly created inside cell or an
+        // old inside cell which we are about to delete
         Full_cell_handle new_neighbor = outside->neighbor(index);
 
-        if( new_neighbor == inside )
-        {   // not already extruded... we do it recursively
-            new_neighbor = insert_in_tagged_hole(   v,
-                                                    Facet(full_cell(rot), index_of_covertex(rot)),
-                                                    new_full_cells);
+        // Is new_neighbor still the old neighbor?
+        if (new_neighbor == inside)
+        {
+          task_queue.push(IITH_task(
+            Facet(inside, index_of_covertex(rot)), // boundary facet
+            index,                        // index_of_inside_cell_in_outside_cell
+            new_s,                        // future_neighbor
+            i,                            // new_cell_index_in_future_neighbor
+            index_of_second_covertex(rot) // index_of_future_neighbor_in_new_cell 
+          ));
         }
-        // now the new neighboring full_cell exists, we link both
-        set_neighbors(new_s, i, new_neighbor, index_of_second_covertex(rot));
+      }
     }
-    return new_s;
+
+    // If there is some neighbor stories to fix
+    if (task.future_neighbor != Full_cell_handle())
+    {
+      // now the new neighboring full_cell exists, we link both
+      set_neighbors(new_s, 
+                    task.index_of_future_neighbor_in_new_cell, 
+                    task.future_neighbor, 
+                    task.new_cell_index_in_future_neighbor);
+    }
+  }
+
+  return new_s;
 }
 
 template< class Dim, class Vb, class Fcb >
