@@ -16,8 +16,9 @@
 // $Id$
 // 
 //
-// Author(s)     : Ron Wein        <wein@post.tau.ac.il>
+// Author(s)     : Ron Wein <wein@post.tau.ac.il>
 //                 Baruch Zukerman <baruchzu@post.tau.ac.il>
+//                 Waqar Khan <wkhan@mpi-inf.mpg.de>
 
 #ifndef CGAL_CIRCLE_SEGMENT_2_H
 #define CGAL_CIRCLE_SEGMENT_2_H
@@ -132,12 +133,16 @@ public:
     return (CGAL::compare (this->ptr()->_x, p.ptr()->_x) == EQUAL &&
             CGAL::compare (this->ptr()->_y, p.ptr()->_y) == EQUAL);
   }
-/*
+
   bool operator != (const Self& p) const
   {
     return !equals(p);
   }
-*/
+
+  bool operator == (const Self& p)
+  {
+    return equals(p);
+  }
   /*! Set the point coordinates. */
   void set (const NT& x, const NT& y)
   {
@@ -2435,20 +2440,6 @@ protected:
     ++oi;
   }
 
-  //waqar
-  /*
-   * check if the point lies on the circular arc.
-   *
-   * I could have skipped this function and used circ_point_position() instead
-   * but I think the implementation of that function is wrong as it is not squaring the radius
-   * in order to check whether the point satisfies the circle equation. 
-   */
-  Comparison_result contain_point(const Point_2& p) const
-  {
-    Comparison_result   res = CGAL::compare (CGAL::square (p.x() - x0()),
-                                             CGAL::square(sqr_r()) - CGAL::square (p.y() - y0()));
-    return res;
-  }
   /*!
    * Trim the arc given its new endpoints.
    * \param ps The new source point.
@@ -2460,36 +2451,29 @@ protected:
   Self trim (const Point_2& ps,
              const Point_2& pt) const
   {
-    Self         arc = *this;
-    Kernel   ker;
+    Self  arc = *this;
+
     // Make sure that both ps and pt lie on the arc.
-    CGAL_precondition (this->contain_point (ps) == EQUAL);
-    CGAL_precondition (this->contain_point (pt) == EQUAL );
+    CGAL_precondition (this->_circ_point_position (ps) == EQUAL);
+    CGAL_precondition (this->_circ_point_position (pt) == EQUAL );
 
     //make sure ps and pt are not the same
-    CGAL_precondition(CGAL::compare(ps.x(), pt.x()) != EQUAL &&
-                      CGAL::compare(ps.y(), pt.y()) != EQUAL);
+    CGAL_precondition(!ps.equals(pt));
 
     // Make sure that the endpoints conform with the direction of the arc.
-    Point_2 source = ps;
-    Point_2 target = pt;
-    if( this->is_directed_right() && (ps.x() > pt.x()) )
+    if( this->is_directed_right() )
     {
-      //since the direction of the arc should not be changed. we will interchange the source and the target.
-      source = pt;
-      target = ps;
+      CGAL_precondition( ps.x() < pt.x() );
     }
     else if( !this->is_directed_right() && (pt.x() > ps.x()) )
     {
-      //since the direction of the arc should not be changed. we will interchange the source and the target.
-      source = pt;
-      target = ps;
+      CGAL_precondition( ps.x() > pt.x() );
     }
 
-    arc._source = source;
-    arc._target = target;
+    arc._source = ps;
+    arc._target = pt;
 
-    return (arc);
+    return arc;
   }
 
   //@}

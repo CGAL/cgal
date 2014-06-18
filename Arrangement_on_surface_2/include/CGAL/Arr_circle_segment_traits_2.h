@@ -18,6 +18,7 @@
 //
 // Author(s)     : Ron Wein          <wein@post.tau.ac.il>
 //                 Baruch Zukerman   <baruchzu@post.tau.ac.il>
+//                 Waqar Khan <wkhan@mpi-inf.mpg.de>
 
 #ifndef CGAL_ARR_CIRCLE_SEGMENT_TRAITS_2_H
 #define CGAL_ARR_CIRCLE_SEGMENT_TRAITS_2_H
@@ -700,22 +701,22 @@ public:
 
   class Trim_2
   {
-    /*!\brief
+        /*!\brief
      * Returns a trimmed version of an arc
      * 
-     * \param cv The arc
-     * \param p the new first endpoint
-     * \param q the new second endpoint
+     * \param xcv The arc
+     * \param src the new first endpoint
+     * \param tgt the new second endpoint
      * \return The trimmed arc
      *
-     * \pre p != q
+     * \pre src != tgt
      * \pre both points must be interior and must lie on \c cv
      */
   public:
 
     X_monotone_curve_2 operator()(const X_monotone_curve_2& xcv, 
                                 const Point_2& src,
-                                const Point_2 tgt)const
+                                const Point_2& tgt)const
     {
       return (xcv.trim(src, tgt));
     }
