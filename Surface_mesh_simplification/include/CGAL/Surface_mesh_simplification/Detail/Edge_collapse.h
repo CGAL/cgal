@@ -66,8 +66,8 @@ public:
   typedef typename GraphTraits::vertex_iterator        vertex_iterator ;
   typedef typename GraphTraits::halfedge_descriptor    halfedge_descriptor ;
   typedef typename GraphTraits::halfedge_iterator      halfedge_iterator ;
-  typedef typename CGAL::Halfedge_around_source_iterator<ECM> out_edge_iterator ;
-  typedef typename CGAL::Halfedge_around_target_iterator<ECM> in_edge_iterator ;
+  typedef CGAL::Halfedge_around_source_iterator<ECM> out_edge_iterator ;
+  typedef CGAL::Halfedge_around_target_iterator<ECM> in_edge_iterator ;
   typedef typename GraphTraits::traversal_category     traversal_category ;
   typedef typename GraphTraits::edges_size_type        size_type ;
   
