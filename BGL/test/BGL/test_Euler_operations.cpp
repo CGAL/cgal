@@ -296,7 +296,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( remove_center_vertex_test, T, test_graphs )
  std::size_t nf = num_faces(f.m);
  std::size_t nh = num_halfedges(f.m);
 
- boost::graph_traits<T>::degree_size_type deg = degree(target(f.h,f.m),f.m);
+ typename boost::graph_traits<T>::degree_size_type deg = degree(target(f.h,f.m),f.m);
  CGAL::Euler::remove_center_vertex(f.h,f.m);
 
  BOOST_CHECK_EQUAL(CGAL::internal::exact_num_vertices(f.m), nv-1);
