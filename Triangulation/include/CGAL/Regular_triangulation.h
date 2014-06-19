@@ -69,6 +69,7 @@ public: // PUBLIC NESTED TYPES
   typedef typename RTTraits::Bare_point           Bare_point;
   typedef typename RTTraits::Weighted_point       Weighted_point;
 
+  typedef typename Base::Point_const_iterator     Point_const_iterator;
   typedef typename Base::Vertex_handle            Vertex_handle;
   typedef typename Base::Vertex_iterator          Vertex_iterator;
   typedef typename Base::Vertex_const_handle      Vertex_const_handle;
@@ -78,6 +79,8 @@ public: // PUBLIC NESTED TYPES
   typedef typename Base::Full_cell_iterator       Full_cell_iterator;
   typedef typename Base::Full_cell_const_handle   Full_cell_const_handle;
   typedef typename Base::Full_cell_const_iterator Full_cell_const_iterator;
+  typedef typename Base::Finite_full_cell_const_iterator
+                                                  Finite_full_cell_const_iterator;
 
   typedef typename Base::size_type                size_type;
   typedef typename Base::difference_type          difference_type;
@@ -117,6 +120,8 @@ public:
   using Base::full_cell;
   using Base::full_cells_begin;
   using Base::full_cells_end;
+  using Base::finite_full_cells_begin;
+  using Base::finite_full_cells_end;
   using Base::vertices_begin;
   using Base::vertices_end;
 
@@ -767,7 +772,6 @@ Regular_triangulation<RTTraits, TDS>
 ::insert_in_conflicting_cell(const Weighted_point & p, const Full_cell_handle s)
 {
   typedef std::vector<Full_cell_handle> Full_cell_h_vector;
-  typedef typename Full_cell_h_vector::iterator SHV_iterator;
   static Full_cell_h_vector cs; // for storing conflicting full_cells.
   cs.clear();
   // cs.reserve(64);
@@ -804,7 +808,7 @@ Regular_triangulation<RTTraits, TDS>
       // because the full_cell "s" is assumed to be positively oriented
       return ON_NEGATIVE_SIDE; // we consider |p| to lie outside the sphere
     test_points.clear();
-    typename Base::Point_const_iterator spit = points_begin(s);
+    Point_const_iterator spit = points_begin(s);
     int adjust_sign = -1;
     for( i = 0; i < current_dimension(); ++i )
     {
@@ -914,7 +918,7 @@ Regular_triangulation<RTTraits, TDS>
             geom_traits().power_test_d_object();
           if (side(Point_const_iterator(ch->vertices_begin()), 
                    Point_const_iterator(ch->vertices_end()),
-                   opposite_vh->point()) == ON_BOUNDED_SIDE)
+                   opposite_vh->point()) == ON_POSITIVE_SIDE)
           {
             if (verbose)
               CGAL_warning_msg(false, "Non-empty sphere");
