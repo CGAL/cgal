@@ -99,8 +99,8 @@ private:
     if ( same_points(q, s.target_site()) ) { return SMALLER; }
 
 
-    bool is_src = same_points(p, s.source_site());
-    bool is_trg = same_points(p, s.target_site());
+    const bool is_src = same_points(p, s.source_site());
+    const bool is_trg = same_points(p, s.target_site());
 
     if ( is_src || is_trg ) {
       Line_2 ls = compute_supporting_line(s.supporting_site());
@@ -110,7 +110,7 @@ private:
 	lp = opposite_line(lp);
       }
 
-      Oriented_side os = oriented_side_of_line(lp, q.point());
+      const Oriented_side os = oriented_side_of_line(lp, q.point());
 
       CGAL_SDG_DEBUG(std::cout << "debug compare_distances_sp "
           << " is_src=" << is_src << " is_trg=" << is_trg
@@ -127,58 +127,26 @@ private:
       }
     }
 
-    Point_2 pp = p.point(), qq = q.point();
+    const Point_2 pp = p.point(), qq = q.point();
+    const Line_2 ls = compute_supporting_line(s.supporting_site());
 
-    // here, we have to compute closest point of segment to q
-
-    //CGAL_SDG_DEBUG(std::cout << "debug compare_distances_sp compute closest " << std::endl;);
-
-    Point_2 closest = Point_2(0, 0);
-    bool set_closest = false;
-
-    Point_2 ssrc = s.source(), strg = s.target();
-
-    Line_2 ls = compute_supporting_line(s.supporting_site());
-    //CGAL_SDG_DEBUG(std::cout << "debug compare_distances_sp ls="
-    //  << ls.a() << ' ' << ls.b() << ' ' << ls.c() << std::endl;);
-
-    Line_2 lsrc = compute_linf_perpendicular(ls, ssrc);
-    //CGAL_SDG_DEBUG(std::cout << "debug compare_distances_sp lsrc="
-    //  << lsrc.a() << ' ' << lsrc.b() << ' ' << lsrc.c() << std::endl;);
-
-    Line_2 ltrg = compute_linf_perpendicular(ls, strg);
-    //CGAL_SDG_DEBUG(std::cout << "debug compare_distances_sp lstrg="
-    //  << ltrg.a() << ' ' << ltrg.b() << ' ' << ltrg.c() << std::endl;);
-
-    Oriented_side os_src = oriented_side_of_line(lsrc, qq);
+    const Point_2 ssrc = s.source();
+    const Line_2 lsrc = compute_linf_perpendicular(ls, ssrc);
+    const Oriented_side os_src = oriented_side_of_line(lsrc, qq);
     if ( os_src != ON_NEGATIVE_SIDE ) {
-      // ssrc is closest point to q
-      //CGAL_SDG_DEBUG(std::cout << "debug compare_distances_sp closest=ssrc" << std::endl;);
-      closest = ssrc;
-      set_closest = true;
+      return compare_distance_to_point_linf(qq, ssrc, pp);
     }
 
-    Oriented_side os_trg = oriented_side_of_line(ltrg, qq);
+    const Point_2 strg = s.target();
+    const Line_2 ltrg = compute_linf_perpendicular(ls, strg);
+    const Oriented_side os_trg = oriented_side_of_line(ltrg, qq);
     if ( os_trg != ON_POSITIVE_SIDE ) {
-      // strg is closest point to q
-      //CGAL_SDG_DEBUG(std::cout << "debug compare_distances_sp closest=strg" << std::endl;);
-      closest = strg;
-      set_closest = true;
+      return compare_distance_to_point_linf(qq, strg, pp);
     }
 
-    // here closest point of s to q is inside s
-    if (not set_closest) {
-      //CGAL_SDG_DEBUG(std::cout << "debug compare_distances_sp closest inside"
-      //  << std::endl;);
-      Homogeneous_point_2 hp = compute_linf_projection_hom(ls, qq);
-      closest = Point_2(hp.x(), hp.y());
-    }
-
-    //CGAL_SDG_DEBUG(std::cout << "debug compare_distances_sp closest="
-    //  << closest << std::endl;);
-
-    return
-      compare_distance_to_point_linf(qq, closest, pp);
+    const RT d2_p = compute_linf_distance(pp, qq);
+    const std::pair<RT,RT> d2_s = compute_linf_distance(qq, ls);
+    return CGAL::compare(d2_s.first, d2_p * d2_s.second);
   }
 
   //-----------------------------------------------------------------
