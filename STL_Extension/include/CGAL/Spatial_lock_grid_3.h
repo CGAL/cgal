@@ -433,7 +433,7 @@ protected:
     bool*,
     tbb::cache_aligned_allocator<bool*>,
     tbb::ets_key_per_instance>                               TLS_grid;
-  typedef tbb::enumerable_thread_specific<std::vector<int>>  TLS_locked_cells;
+  typedef tbb::enumerable_thread_specific<std::vector<int> > TLS_locked_cells;
 
   TLS_grid                                        m_tls_grids;
   TLS_locked_cells                                m_tls_locked_cells;
