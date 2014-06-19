@@ -309,6 +309,13 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( join_split_inverse, T, test_graphs )
   
 }
 
+BOOST_AUTO_TEST_CASE_TEMPLATE( satisfies_link_condition, T, test_graphs )
+{
+  Surface_fixture_7<T> f;
+
+  BOOST_CHECK(CGAL::Euler::safisfies_link_condition(*edges(f.m).first,f.m));
+}
+
 #endif
 // trick cgal_test_with_cmake
 // int main()

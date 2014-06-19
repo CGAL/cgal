@@ -150,7 +150,7 @@ exact_num_faces(const Graph& g)
   return std::distance(beg,end);
  }
 
-
+  /*
 template <typename Graph, typename BorderMap>
 boost::optional<typename boost::graph_traits<Graph>::halfedge_descriptor>
 is_border_vertex(const Graph& g
@@ -167,7 +167,7 @@ is_border_vertex(const Graph& g
   // empty
   return boost::optional<typename boost::graph_traits<Graph>::halfedge_descriptor>();
 }
-
+  */
 
 
 template <typename Graph>

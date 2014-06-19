@@ -14,6 +14,24 @@ bool is_border(typename boost::graph_traits<FaceGraph>::halfedge_descriptor hd, 
   return face(hd,g) == boost::graph_traits<FaceGraph>::null_face();
 }
 
+
+template <typename Graph>
+boost::optional<typename boost::graph_traits<Graph>::halfedge_descriptor>
+is_border(typename boost::graph_traits<Graph>::vertex_descriptor v,
+          const Graph& g)
+{
+  CGAL::Halfedge_around_target_iterator<Graph> havib, havie;
+  for(boost::tie(havib, havie) = halfedges_around_target(halfedge(v, g), g); havib != havie; ++havib) {
+    if(is_border(*havib,g)) {
+      typename boost::graph_traits<Graph>::halfedge_descriptor h = *havib;
+      return h;
+    }
+  }
+  // empty
+  return boost::optional<typename boost::graph_traits<Graph>::halfedge_descriptor>();
+}
+
+
  /*!
     returns `true` if there are no 
     border edges. 
