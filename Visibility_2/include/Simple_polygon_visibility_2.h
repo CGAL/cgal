@@ -413,24 +413,24 @@ private:
       if ( upcase == LEFT ) {
         Point_2 s_t = s.top();
         s.pop();
-        Segment_2 seg( s.top(), s_t );
-        if ( ( CGAL::Visibility_2::orientation_2
-               <Geometry_traits_2>
-               ( geom_traits, q, vertices[0], s.top() )
-                == CGAL::RIGHT_TURN )
-             && ( CGAL::Visibility_2::do_intersect_2 
-                  <Geometry_traits_2, Segment_2, Ray_2>
-                  (geom_traits, seg, ray_origin) ) ) {
-          Object_2 result = CGAL::Visibility_2::intersect_2
-                            <Geometry_traits_2, Segment_2, Ray_2>
-                            ( geom_traits, seg, ray_origin );
-          const Point_2 * ipoint = CGAL::object_cast<Point_2>(&result);
-          assert( ipoint != NULL );
-          s.push( *ipoint );
-          upcase = SCANB;
-        } else {
-          s.push( s_t );
+        if ( ( CGAL::Visibility_2::orientation_2 <Geometry_traits_2>
+               ( geom_traits, q, vertices[0], s.top() ) == CGAL::RIGHT_TURN ) &&
+             ( CGAL::Visibility_2::orientation_2 <Geometry_traits_2>
+               ( geom_traits, q, vertices[0],s_t ) == CGAL::LEFT_TURN ) ) {
+          Segment_2 seg( s.top(), s_t );
+          if ( CGAL::Visibility_2::do_intersect_2
+               <Geometry_traits_2, Segment_2, Ray_2>
+               ( geom_traits, seg, ray_origin ) ) {
+            Object_2 result = CGAL::Visibility_2::intersect_2
+                              <Geometry_traits_2, Segment_2, Ray_2>
+                              ( geom_traits, seg, ray_origin );
+            const Point_2 * ipoint = CGAL::object_cast<Point_2>(&result);
+            assert( ipoint != NULL );
+            s_t = *ipoint;
+            upcase = SCANB;
+          }
         }
+        s.push( s_t );
       }
     } while(upcase != FINISH);
   }
@@ -443,19 +443,14 @@ private:
     else {
        Point_2 s_t = s.top();
        s.pop();
+       Point_2 s_t_prev = s.top();
+       s.push( s_t );
        CGAL::Orientation orient1 = CGAL::Visibility_2::orientation_2
                                    <Geometry_traits_2>
                                    ( geom_traits,
                                      query_pt,
                                      vertices[i],
                                      vertices[i+1] );
-       CGAL::Orientation orient2 = CGAL::Visibility_2::orientation_2
-                                   <Geometry_traits_2>
-                                   ( geom_traits,
-                                     s.top(),
-                                     vertices[i],
-                                     vertices[i+1] );
-       s.push( s_t );
        if ( orient1 != CGAL::RIGHT_TURN ) {
          // Case L2
          upcase = LEFT;
@@ -463,6 +458,12 @@ private:
          w = vertices[i+1];
          i++;
        } else {
+         CGAL::Orientation orient2 = CGAL::Visibility_2::orientation_2
+                                     <Geometry_traits_2>
+                                     ( geom_traits,
+                                       s_t_prev,
+                                       vertices[i],
+                                       vertices[i+1] );
          if ( orient2 == CGAL::RIGHT_TURN ) {
            // Case L3
            upcase = SCANA;
@@ -485,23 +486,19 @@ private:
      Point_2 s_j_prev;
      Point_2 u;
      int mode = 0;
+     CGAL::Orientation orient1, orient2;
+
+     s_j_prev = s.top();
+     orient2 = CGAL::Visibility_2::orientation_2 <Geometry_traits_2>
+               ( geom_traits, query_pt, s_j_prev, vertices[i] );
      while ( s.size() > 1 ) {
-       s_j = s.top();
+       s_j = s_j_prev;
+       orient1 = orient2;
        s.pop();
        s_j_prev = s.top();
 
-       CGAL::Orientation orient1 = CGAL::Visibility_2::orientation_2
-                                   <Geometry_traits_2>
-                                   ( geom_traits,
-                                     query_pt,
-                                     s_j,
-                                     vertices[i] );
-       CGAL::Orientation orient2 = CGAL::Visibility_2::orientation_2
-                                   <Geometry_traits_2>
-                                   ( geom_traits,
-                                     query_pt,
-                                     s_j_prev,
-                                     vertices[i] );
+       orient2 = CGAL::Visibility_2::orientation_2 <Geometry_traits_2>
+                 ( geom_traits, query_pt, s_j_prev, vertices[i] );
        if ( orient1 != CGAL::LEFT_TURN && orient2 != CGAL::RIGHT_TURN ) {
          mode = 1;
          break;
@@ -522,20 +519,13 @@ private:
          break;
        }
      }
+
      assert( mode != 0 );
      if ( mode == 1 ) {
-       CGAL::Orientation orient1 = CGAL::Visibility_2::orientation_2
-                                   <Geometry_traits_2>
-                                   ( geom_traits,
-                                     query_pt,
-                                     vertices[i],
-                                     vertices[i+1] );
-       CGAL::Orientation orient2 = CGAL::Visibility_2::orientation_2
-                                   <Geometry_traits_2>
-                                   ( geom_traits,
-                                     vertices[i-1],
-                                     vertices[i],
-                                     vertices[i+1] );
+       orient1 = CGAL::Visibility_2::orientation_2 <Geometry_traits_2>
+                 ( geom_traits, query_pt, vertices[i], vertices[i+1] );
+       orient2 = CGAL::Visibility_2::orientation_2 <Geometry_traits_2>
+                 ( geom_traits, vertices[i-1], vertices[i], vertices[i+1] );
        if ( orient1 == CGAL::RIGHT_TURN ) {
          // Case R1
          // Since the next action is RIGHT, we do not compute the intersection
