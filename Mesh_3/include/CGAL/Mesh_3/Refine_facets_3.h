@@ -183,7 +183,7 @@ public:
   Facet extract_element_from_container_value(const Container_element &e) const
   {
     // We get the first Facet inside the tuple
-    return e.get<0>();
+    return CGAL::cpp11::get<0>(e);
   }
 
 #else
@@ -242,7 +242,7 @@ public:
   Facet extract_element_from_container_value(const Container_element &e) const
   {
     // We get the first Facet inside the tuple
-    return e.get<0>();
+    return CGAL::cpp11::get<0>(e);
   }
 
 protected:
@@ -1066,9 +1066,9 @@ number_of_bad_elements_impl()
 
       }
 
-      const Surface_patch_index& surface_index = CGAL::cpp0x::get<0>(*properties);
-      const Index& surface_center_index = CGAL::cpp0x::get<1>(*properties);
-      const Point& surface_center = CGAL::cpp0x::get<2>(*properties);
+      const Surface_patch_index& surface_index = CGAL::cpp11::get<0>(*properties);
+      const Index& surface_center_index = CGAL::cpp11::get<1>(*properties);
+      const Point& surface_center = CGAL::cpp11::get<2>(*properties);
 
       // Facet is on surface: set facet properties
       //set_facet_surface_center(facet, surface_center, surface_center_index);
@@ -1251,9 +1251,9 @@ conflicts_zone_impl(const Point& point
       compute_facet_properties(facet, properties, /*force_exact=*/true);
       if ( properties )
       {
-        const Surface_patch_index& surface_index = CGAL::cpp0x::get<0>(*properties);
-        const Index& surface_center_index = CGAL::cpp0x::get<1>(*properties);
-        const Point& surface_center = CGAL::cpp0x::get<2>(*properties);
+        const Surface_patch_index& surface_index = CGAL::cpp11::get<0>(*properties);
+        const Index& surface_center_index = CGAL::cpp11::get<1>(*properties);
+        const Point& surface_center = CGAL::cpp11::get<2>(*properties);
 
         // Facet is on surface: set facet properties
         set_facet_surface_center(facet, surface_center, surface_center_index);
@@ -1312,9 +1312,9 @@ conflicts_zone_impl(const Point& point
       compute_facet_properties(facet, properties, /*force_exact=*/true);
       if ( properties )
       {
-        const Surface_patch_index& surface_index = CGAL::cpp0x::get<0>(*properties);
-        const Index& surface_center_index = CGAL::cpp0x::get<1>(*properties);
-        const Point& surface_center = CGAL::cpp0x::get<2>(*properties);
+        const Surface_patch_index& surface_index = CGAL::cpp11::get<0>(*properties);
+        const Index& surface_center_index = CGAL::cpp11::get<1>(*properties);
+        const Point& surface_center = CGAL::cpp11::get<2>(*properties);
 
         // Facet is on surface: set facet properties
         set_facet_surface_center(facet, surface_center, surface_center_index);
@@ -1632,17 +1632,17 @@ compute_facet_properties(const Facet& facet,
 
       Intersection intersect = construct_intersection(segment);
 #ifdef CGAL_MESH_3_NO_LONGER_CALLS_DO_INTERSECT_3
-      // In the following, CGAL::cpp0x::get<2>(intersect) == 0 is a way to
+      // In the following, CGAL::cpp11::get<2>(intersect) == 0 is a way to
       // test "intersect == Intersection()" (aka empty intersection), but
       // the later does not work.
       Surface_patch surface =
-        (CGAL::cpp0x::get<2>(intersect) == 0) ? Surface_patch() :
-        r_oracle_.surface_patch_index(CGAL::cpp0x::get<1>(intersect));
+        (CGAL::cpp11::get<2>(intersect) == 0) ? Surface_patch() :
+        r_oracle_.surface_patch_index(CGAL::cpp11::get<1>(intersect));
       if(surface)
 #endif // CGAL_MESH_3_NO_LONGER_CALLS_DO_INTERSECT_3
-      fp =  Facet_properties(CGAL::cpp0x::make_tuple(*surface,
-                                                     CGAL::cpp0x::get<1>(intersect),
-                                                     CGAL::cpp0x::get<0>(intersect)));
+      fp =  Facet_properties(CGAL::cpp11::make_tuple(*surface,
+                                                     CGAL::cpp11::get<1>(intersect),
+                                                     CGAL::cpp11::get<0>(intersect)));
       return;
     }
   }
@@ -1668,14 +1668,14 @@ compute_facet_properties(const Facet& facet,
       Intersection intersect = construct_intersection(*p_ray);
 #ifdef CGAL_MESH_3_NO_LONGER_CALLS_DO_INTERSECT_3
       Surface_patch surface =
-        (CGAL::cpp0x::get<2>(intersect) == 0) ? Surface_patch() :
-        r_oracle_.surface_patch_index(CGAL::cpp0x::get<1>(intersect));
+        (CGAL::cpp11::get<2>(intersect) == 0) ? Surface_patch() :
+        r_oracle_.surface_patch_index(CGAL::cpp11::get<1>(intersect));
       if(surface)
 #endif // CGAL_MESH_3_NO_LONGER_CALLS_DO_INTERSECT_3
         {
-          fp = Facet_properties(CGAL::cpp0x::make_tuple(*surface,
-                                                        CGAL::cpp0x::get<1>(intersect),
-                                                        CGAL::cpp0x::get<0>(intersect)));
+          fp = Facet_properties(CGAL::cpp11::make_tuple(*surface,
+                                                        CGAL::cpp11::get<1>(intersect),
+                                                        CGAL::cpp11::get<0>(intersect)));
           return;
         }
       

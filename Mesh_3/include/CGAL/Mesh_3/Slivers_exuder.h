@@ -832,7 +832,7 @@ private:
           if (pump_vertices_on_surfaces
            || m_c3t3.in_dimension(m_cell_handle->vertex(i)) > 2)
           {
-            m_sliver_exuder.pump_vertex<pump_vertices_on_surfaces>(
+            m_sliver_exuder.template pump_vertex<pump_vertices_on_surfaces>(
               m_cell_handle->vertex(i), &could_lock_zone);
 
 #ifdef CGAL_CONCURRENT_MESH_3_PROFILING
