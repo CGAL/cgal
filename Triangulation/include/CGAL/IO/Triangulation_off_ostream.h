@@ -185,7 +185,7 @@ export_triangulation_to_off(std::ostream & os,
     }
     else
     {
-      // Parse boundary facets
+      // Parse finite cells
       for (Finite_full_cell_iterator fch = tr.finite_full_cells_begin() ;
            fch != tr.finite_full_cells_end() ; ++fch)
       {
