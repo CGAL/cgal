@@ -9,11 +9,6 @@ else()
   cmake_policy(VERSION 2.6)
 endif()
 
-## Compiler flags: C++11
-if(CMAKE_COMPILER_IS_GNUCXX)
-    set(CGAL_CXX_FLAGS "${CGAL_CXX_FLAGS} -std=c++0x")
-endif()
-
 # Creates a new CMake option, turned ON by default
 option(ACTIVATE_MSVC_PRECOMPILED_HEADERS
   "Activate precompiled headers in MSVC"

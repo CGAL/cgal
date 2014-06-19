@@ -13,11 +13,6 @@ if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}" VERSION_GREATER 2.6)
   endif()
 endif()
 
-## Compiler flags: C++11
-if(CMAKE_COMPILER_IS_GNUCXX)
-    set(CGAL_CXX_FLAGS "${CGAL_CXX_FLAGS} -std=c++0x")
-endif()
-
 find_package(CGAL QUIET COMPONENTS Core )
 
 if ( CGAL_FOUND )

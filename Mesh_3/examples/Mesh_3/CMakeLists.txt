@@ -11,11 +11,6 @@ else()
   cmake_policy(VERSION 2.6)
 endif()
 
-## Compiler flags: C++11
-if(CMAKE_COMPILER_IS_GNUCXX)
-    set(CGAL_CXX_FLAGS "${CGAL_CXX_FLAGS} -std=c++0x")
-endif()
-
 include_directories(../../include)
 include_directories(../../../Triangulation_3/include)
 include_directories(../../../STL_Extension/include)

@@ -13,11 +13,6 @@ if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}" VERSION_GREATER 2.6)
   endif()
 endif()
 
-## Compiler flags: C++11
-if(CMAKE_COMPILER_IS_GNUCXX)
-    set(CGAL_CXX_FLAGS "${CGAL_CXX_FLAGS} -std=c++0x")
-endif()
-
 # Creates a new CMake option, turned ON by default
 option(ACTIVATE_MSVC_PRECOMPILED_HEADERS
   "Activate precompiled headers in MSVC"
