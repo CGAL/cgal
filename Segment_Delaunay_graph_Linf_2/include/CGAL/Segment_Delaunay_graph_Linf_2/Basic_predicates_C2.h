@@ -490,35 +490,36 @@ public:
 
   using Base::is_on_positive_halfspace;
 
+  /* compares the Linf distances pq and pr;
+     if the Linf distances pq are the same, then try to break ties
+     by comparing the minima of the dx and dy distance components
+   */
   static
   Comparison_result
   compare_distance_to_point_linf(
       const Point_2& p, const Point_2& q, const Point_2& r)
   {
-    Comparison_result retval;
-    retval =
-      CGAL::compare(
-        CGAL::max( CGAL::abs(p.x()-q.x()), CGAL::abs(p.y()-q.y()) ),
-        CGAL::max( CGAL::abs(p.x()-r.x()), CGAL::abs(p.y()-r.y()) )
-        );
-    if (retval == EQUAL) {
+    const RT pqdx = CGAL::abs(p.x()-q.x());
+    const RT pqdy = CGAL::abs(p.y()-q.y());
+    const bool pqdxlarger = CGAL::compare(pqdx, pqdy) == LARGER;
+    const RT & pqmax = pqdxlarger ? pqdx : pqdy;
+    const RT & pqmin = pqdxlarger ? pqdy : pqdx;
+
+    const RT prdx = CGAL::abs(p.x()-r.x());
+    const RT prdy = CGAL::abs(p.y()-r.y());
+    const bool prdxlarger = CGAL::compare(prdx, prdy) == LARGER;
+    const RT & prmax = prdxlarger ? prdx : prdy;
+    const RT & prmin = prdxlarger ? prdy : prdx;
+
+    const Comparison_result resmax = CGAL::compare(pqmax, prmax);
+
+    if (resmax == EQUAL) {
       CGAL_SDG_DEBUG(std::cout <<
-          "debug cmpdistlinf maybe break ties" << std::endl;);
-      // here, p might be on the 2-dimensional bisector(q,r),
-      // therefore we have to break ties, based on one coordinate
-      if (CGAL::compare(q.x(), r.x()) == EQUAL) {
-        CGAL_SDG_DEBUG(std::cout <<
-            "debug cmpdistlinf try breaking with y" << std::endl;);
-        return CGAL::compare( CGAL::abs(p.y()-q.y()),
-                              CGAL::abs(p.y()-r.y()) ) ;
-      } else if (CGAL::compare(q.y(), r.y()) == EQUAL) {
-        CGAL_SDG_DEBUG(std::cout <<
-            "debug cmpdistlinf try breaking with x" << std::endl;);
-        return CGAL::compare( CGAL::abs(p.x()-q.x()),
-                              CGAL::abs(p.x()-r.x()) ) ;
-      }
+          "debug cmpdistlinf break ties with min" << std::endl;);
+      return CGAL::compare(pqmin, prmin);
+    } else {
+      return resmax;
     }
-    return retval;
   }
 
   static
