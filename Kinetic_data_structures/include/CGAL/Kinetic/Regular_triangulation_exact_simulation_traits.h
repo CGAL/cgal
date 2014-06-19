@@ -40,7 +40,7 @@ namespace CGAL { namespace Kinetic {
 struct Regular_triangulation_exact_simulation_traits {
   typedef Regular_triangulation_exact_simulation_traits This;
 #ifdef CGAL_KINETIC_DO_NOT_USE_LAZY_EXACT
-  typedef CGAL::Cartesian<CGAL::Gmpq> Static_kernel_base;
+  typedef CGAL::Cartesian<CGAL::internal::Exact_field_selector<double>::Type> Static_kernel_base;
 #else
   typedef CGAL::Exact_predicates_exact_constructions_kernel Static_kernel_base;
 #endif

@@ -2,13 +2,13 @@
 
 #include <vector>
 
-#include <CGAL/Gmpq.h>
+#include <CGAL/Arithmetic_kernel.h>
 #include <CGAL/Cartesian.h>
 #include <CGAL/Arr_linear_traits_2.h>
 #include <CGAL/Arrangement_2.h>
 #include <CGAL/IO/Arr_iostream.h>
 
-typedef CGAL::Gmpq                                      Number_type;
+typedef CGAL::Arithmetic_kernel::Rational               Number_type;
 typedef CGAL::Cartesian<Number_type>                    Kernel;
 typedef CGAL::Arr_linear_traits_2<Kernel>               Traits_2;
 typedef Traits_2::Point_2                               Point_2;

@@ -1,15 +1,14 @@
 #include <iostream>
 #include <cassert>
 
-#include <CGAL/Gmpz.h>
-#include <CGAL/Gmpq.h>
+#include <CGAL/internal/Exact_type_selector.h>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Apollonius_graph_2.h>
 #include <CGAL/Apollonius_graph_traits_2.h>
 
 #include "test_three_sites.h"
 
-typedef CGAL::Gmpz exact_nt;
+typedef CGAL::internal::Exact_ring_selector<double>::Type exact_nt;
 
 struct Rep : public CGAL::Simple_cartesian<exact_nt> {};
 
