@@ -486,53 +486,7 @@ bool EdgeCollapse<M,SP,VIM,VPM,EIM,ECTM,CF,PF,V>::Is_collapse_topologically_vali
 template<class M, class SP, class VIM, class VPM,class EIM,class ECTM, class CF,class PF,class V>
 bool EdgeCollapse<M,SP,VIM,VPM,EIM,ECTM,CF,PF,V>::Is_tetrahedron( halfedge_descriptor const& h1 )
 {
-  //
-  // Code copied from Polyhedron_3::is_tetrahedron()
-  //
-  halfedge_descriptor h2 = next(h1,mSurface);
-  halfedge_descriptor h3 = next(h2,mSurface);
-  
-  halfedge_descriptor h1o = opposite(h1,mSurface) ;
-  halfedge_descriptor h2o = opposite(h2,mSurface) ;
-  halfedge_descriptor h3o = opposite(h3,mSurface) ;
-  
-  halfedge_descriptor h4 = next(h1o,mSurface);
-  halfedge_descriptor h5 = next(h2o,mSurface);
-  halfedge_descriptor h6 = next(h3o,mSurface);
-  
-  halfedge_descriptor h4o = opposite(h4,mSurface) ;
-  halfedge_descriptor h5o = opposite(h5,mSurface) ;
-  halfedge_descriptor h6o = opposite(h6,mSurface) ;
-  
-  // check halfedge combinatorics.
-  // at least three edges at vertices 1, 2, 3.
-  if ( h4 == h3o ) return false;
-  if ( h5 == h1o ) return false;
-  if ( h6 == h2o ) return false;
-  
-  // exact three edges at vertices 1, 2, 3.
-  if ( next(h4o,mSurface) != h3o ) return false;
-  if ( next(h5o,mSurface) != h1o ) return false;
-  if ( next(h6o,mSurface) != h2o ) return false;
-  
-  // three edges at v4.
-  if ( opposite(next(h4,mSurface),mSurface) != h5) return false;
-  if ( opposite(next(h5,mSurface),mSurface) != h6) return false;
-  if ( opposite(next(h6,mSurface),mSurface) != h4) return false;
-  
-  // All facets are triangles.
-  if ( next(next(next(h1,mSurface),mSurface),mSurface) != h1) return false;
-  if ( next(next(next(h4,mSurface),mSurface),mSurface) != h4) return false;
-  if ( next(next(next(h5,mSurface),mSurface),mSurface) != h5) return false;
-  if ( next(next(next(h6,mSurface),mSurface),mSurface) != h6) return false;
-  
-  // all edges are non-border edges.
-  if ( is_border(h1)) return false;  // implies h2 and h3
-  if ( is_border(h4)) return false;
-  if ( is_border(h5)) return false;
-  if ( is_border(h6)) return false;
-
-  return true;
+  return is_tetrahedron(h1,mSurface);
 }
 
 template<class M, class SP, class VIM, class VPM,class EIM,class ECTM, class CF,class PF,class V>
