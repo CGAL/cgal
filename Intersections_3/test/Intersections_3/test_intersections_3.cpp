@@ -7,8 +7,15 @@
 #include <CGAL/Homogeneous.h>
 #include <CGAL/MP_Float.h>
 
+#include <CGAL/AABB_tree.h>
+#include <CGAL/AABB_traits.h>
+#include <CGAL/AABB_face_graph_triangle_primitive.h>
+#include <CGAL/Polyhedron_3.h>
+
 #include <iostream>
 #include <cassert>
+
+#include "create_bbox_mesh.h"
 
 const double epsilon = 0.001;
 
@@ -467,6 +474,30 @@ struct Test {
     check_intersection<S>  (box,R(P(0, 0.5,0),P(-0.5,0,0)));
   }
 
+  void Bbox_Tr() {
+    std::cout << "Bbox - Triangle\n";
+
+    typedef CGAL::Polyhedron_3<K> Polyhedron;
+    typedef CGAL::AABB_face_graph_triangle_primitive<const Polyhedron> Primitive;
+    typedef CGAL::AABB_traits<K, Primitive> Traits;
+    typedef CGAL::AABB_tree<Traits> Tree;
+
+    Bbox unit_bbox(-1., -1., -1.
+                   ,1.,  1.,  1.);
+    const Polyhedron unit_bbox_poly = create_bbox_mesh<Polyhedron>(unit_bbox);
+    const Tree tree(unit_bbox_poly.facets_begin(),
+                    unit_bbox_poly.facets_end(),
+                    unit_bbox_poly);
+
+    const Tr tr(P(-3. ,  0. ,   0.),
+                P(-2. ,  0.1,   0.),
+                P(-0.5,  3. ,   0.));
+
+    const bool b = CGAL::do_intersect(unit_bbox, tr);
+    assert(b == false);
+    assert(tree.do_intersect(tr) == b);
+  }
+
   void run()
   {
     std::cout << "3D Intersection tests\n";
@@ -486,6 +517,7 @@ struct Test {
     R_R();
     Bbox_L();
     Bbox_R();
+    Bbox_Tr();
   }
 
 };
