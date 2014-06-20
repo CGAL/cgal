@@ -11,6 +11,7 @@
 #include <CGAL/AABB_traits.h>
 #include <CGAL/AABB_face_graph_triangle_primitive.h>
 #include <CGAL/Polyhedron_3.h>
+#include <CGAL/point_generators_3.h>
 
 #include <iostream>
 #include <cassert>
@@ -496,7 +497,61 @@ struct Test {
     const bool b = CGAL::do_intersect(unit_bbox, tr);
     assert(b == false);
     assert(tree.do_intersect(tr) == b);
-  }
+
+    CGAL::Random_points_in_cube_3<P> r(10.);
+
+    std::size_t bbox_does_intersect_counter = 0;
+    std::size_t plane_does_intersect_counter = 0;
+    std::size_t do_intersect_counter = 0;
+    std::cerr << "Begin random testing...\n"
+              << "  (each 'o' in the following line is 1000 tests)\n  ";
+#if __OPTIMIZE__
+    const std::size_t nb_of_tests = 1000000;
+#else
+    const std::size_t nb_of_tests = 10000;
+#endif
+    for(std::size_t i = 0, end = nb_of_tests; i < end; ++i)
+    {
+      if(i % 1000 == 0) std::cerr << "o";
+      const P p0(*r++);
+      const P p1(*r++);
+      const P p2(*r++);
+      const Tr tr(p0, p1, p2);
+
+      const bool b = do_intersect(unit_bbox, tr);
+      if(b) ++do_intersect_counter;
+      const bool b_tree = tree.do_intersect(tr);
+      if(b != b_tree) {
+        std::stringstream err_msg;
+        err_msg.precision(17);
+        CGAL::set_pretty_mode(err_msg);
+        err_msg << "do_intersect(\n"
+                << "             " << unit_bbox << "\n,\n"
+                << "             " << tr
+                << "             ) = " << std::boolalpha << b << "\n"
+                << "but the same test with AABB tree gives: "
+                << std::boolalpha << b_tree << "\n";
+        CGAL_error_msg(err_msg.str().c_str());
+        std::exit(EXIT_FAILURE);
+      }
+      if(CGAL::do_overlap(unit_bbox, tr.bbox())) {
+        ++bbox_does_intersect_counter;
+        if(CGAL::do_intersect(unit_bbox, tr.supporting_plane())) {
+          ++plane_does_intersect_counter;
+        }
+      }
+      //      if();
+    } // end for-loop
+    std::cerr << "\n";
+    std::cerr << "                      Number of tests: "
+              << nb_of_tests << "\n";
+    std::cerr << "        Number of bbox-does-intersect: "
+              << bbox_does_intersect_counter << "\n";
+    std::cerr << "Number of bbox-and-plane-do-intersect: "
+              << plane_does_intersect_counter << "\n";
+    std::cerr << "              Number of intersections: "
+              << do_intersect_counter << "\n";
+  } // end function Bbox_Tr
 
   void run()
   {
