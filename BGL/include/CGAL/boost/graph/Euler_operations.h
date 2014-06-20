@@ -569,7 +569,7 @@ void make_hole(typename boost::graph_traits<Graph>::halfedge_descriptor h,
  * `h` remains incident to
  * the original face. The time complexity is linear in the size of the face.
  *
- * \image html euler_create_center.png
+ * \image html add_center_vertex.svg
  *
  * \returns the halfedge `next(h, g)` after the
  * operation, i.e., a halfedge pointing to the new vertex. 
@@ -622,7 +622,7 @@ add_center_vertex(typename boost::graph_traits<Graph>::halfedge_descriptor h,
  * The invariant `h == remove_center_vertex(g, add_center_vertex(g, h))` 
  * holds, if `h` is not a border halfedge. 
  *
- * \image html euler_erase_center.png
+ * \image html remove_center_vertex.svg
  *
  * \tparam Graph must be a model of `MutableFaceGraph`
  *
@@ -702,7 +702,7 @@ add_vertex_and_face_to_border(typename boost::graph_traits<Graph>::halfedge_desc
  * and the vertex `target(h1,g)` with a new halfedge, and filling this separated part of the hole 
  * with a new face, such that the new face is incident to `h2`. 
  *
- * \image html add_facet2.png
+ * \image html add_face_to_border.svg
  *
  * \tparam Graph must be a model of `MutableFaceGraph`
  *
