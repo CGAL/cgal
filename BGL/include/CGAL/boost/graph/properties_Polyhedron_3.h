@@ -135,11 +135,11 @@ struct Is_border_accessor
   typedef bool                             reference;
   typedef Handle                           key_type;
 
-  friend reference get(Is_border_accessor pm, Handle h)
+  friend reference get(const Is_border_accessor& , Handle h)
   {
     return h->is_border(); 
   }
-  friend void put(Is_border_accessor pm, Handle h, bool b)
+  friend void put(const Is_border_accessor& , Handle h, bool b)
   {
      typedef typename Polyhedron::Halfedge::Base Sneak;
      if(b){

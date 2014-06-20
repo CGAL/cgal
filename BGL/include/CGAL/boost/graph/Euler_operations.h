@@ -728,7 +728,7 @@ add_face_to_border(typename boost::graph_traits<Graph>::halfedge_descriptor h1,
   typename boost::graph_traits<Graph>::edge_descriptor e = add_edge(g);
   typename boost::graph_traits<Graph>::halfedge_descriptor 
       newh= halfedge(e, g)
-    , newhop = opposite(h1, g);
+    , newhop = opposite(newh, g);
 
   set_next(newhop, next(h2, g), g);
 
@@ -1085,6 +1085,7 @@ flip_edge(typename boost::graph_traits<Graph>::halfedge_descriptor h,
    *   \todo  implement
    *   \todo finish doc
    */  
+#if 0
 
 template<typename Graph>
 typename boost::graph_traits<Graph>::vertex_descriptor
@@ -1094,6 +1095,8 @@ collapse_edge(typename boost::graph_traits<Graph>::halfedge_descriptor coll,
               Graph& g)
 {}
 
+#endif
+
   ///\endcond
 
 	
@@ -1101,7 +1104,6 @@ collapse_edge(typename boost::graph_traits<Graph>::halfedge_descriptor coll,
 
 /**
  *  \returns `true` if e satisfy the *link condition* \cgalCite{degn-tpec-98}, which guarantees that the surface is also 2-manifold after the edge collapse.
- * \todo implement the function
  */
   template<typename Graph>
 bool

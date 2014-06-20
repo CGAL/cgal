@@ -322,18 +322,6 @@ set_halfedge(typename boost::graph_traits< CGAL::Polyhedron_3<Gt,I,HDS,A> >::ver
 }
 
 
-template<class Gt, class I, CGAL_HDS_PARAM_, class A>
-void
-adjust_border_halfedge(typename boost::graph_traits< CGAL::Polyhedron_3<Gt,I,HDS,A> >::vertex_descriptor v
-  , const CGAL::Polyhedron_3<Gt,I,HDS,A>&)
-{
-}
-
-template<class Gt, class I, CGAL_HDS_PARAM_, class A>
-void
-garbage_collection(const CGAL::Polyhedron_3<Gt,I,HDS,A>&)
-{}
-
 //
 // HalfedgeGraph
 //

@@ -8,6 +8,7 @@
 #include <boost/foreach.hpp>
 
 #include <iostream>
+#include <fstream>
 
 typedef CGAL::Simple_cartesian<double> Kernel;
 typedef CGAL::Polyhedron_3<Kernel>     Polyhedron;
@@ -28,10 +29,12 @@ typedef CGAL::Halfedge_around_source_circulator<Polyhedron> halfedge_around_sour
 typedef CGAL::Halfedge_around_target_iterator<Polyhedron> halfedge_around_target_iterator;
 typedef CGAL::Halfedge_around_face_iterator<Polyhedron> halfedge_around_face_iterator;
 
-int main()
-{ 
+int main(int argc, char* argv[])
+{
+  std::ifstream in(argv[1]);
   Polyhedron P;
-  std::cin >> P;
+  in >> P;
+
   halfedge_descriptor hd = *halfedges(P).first;
   {
     halfedge_around_face_circulator hafc(hd,P), done(hafc);

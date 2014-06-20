@@ -6,7 +6,7 @@
 
 #include <boost/unordered_set.hpp>
 
-typedef boost::unordered_set<unsigned int> id_map;
+typedef boost::unordered_set<std::size_t> id_map;
 
 template <typename Graph>
 void test_halfedge_around_vertex_iterator(const Graph& g)

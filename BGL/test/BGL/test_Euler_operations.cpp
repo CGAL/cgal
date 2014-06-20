@@ -80,7 +80,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( remove_face_test_1, T, test_graphs )
 }
 
 
-#if 1
+
 BOOST_AUTO_TEST_CASE_TEMPLATE( remove_face_test_2, T, test_graphs )
 {
   CGAL_GRAPH_TRAITS_MEMBERS(T);
@@ -116,7 +116,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( remove_face_test_2, T, test_graphs )
   }
 }
 
-#if 1
+
 BOOST_AUTO_TEST_CASE_TEMPLATE( add_face_to_border_test, T, test_graphs )
 {
   CGAL_GRAPH_TRAITS_MEMBERS(T);
@@ -128,7 +128,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( add_face_to_border_test, T, test_graphs )
   BOOST_CHECK(CGAL::is_valid(f.m));
 
 }
-#endif 
+
 
 BOOST_AUTO_TEST_CASE_TEMPLATE( join_vertex_interior_test, T, test_graphs )
 {
@@ -316,7 +316,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( satisfies_link_condition, T, test_graphs )
   BOOST_CHECK(CGAL::Euler::safisfies_link_condition(*edges(f.m).first,f.m));
 }
 
-#endif
+
 // trick cgal_test_with_cmake
 // int main()
 // {
