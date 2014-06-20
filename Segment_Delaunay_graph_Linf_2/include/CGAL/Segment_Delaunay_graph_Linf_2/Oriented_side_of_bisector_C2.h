@@ -163,8 +163,8 @@ private:
         << "entering with s1=" << s1 << " s2=" << s2
         << " q=" << q << std::endl;);
 
-    bool is_on_s1 = is_endpoint(q, s1);
-    bool is_on_s2 = is_endpoint(q, s2);
+    const bool is_on_s1 = is_endpoint(q, s1);
+    const bool is_on_s2 = is_endpoint(q, s2);
 
     if ( is_on_s1 && is_on_s2 ) {
       return EQUAL;
@@ -178,20 +178,19 @@ private:
       return EQUAL;
     }
 
+    const Point_2 qq = q.point();
 
-    Point_2 qq = q.point();
+    const Point_2 ssrc1 = s1.source(), strg1 = s1.target();
 
-    Point_2 ssrc1 = s1.source(), strg1 = s1.target();
+    const Line_2 ls1 = compute_supporting_line(s1.supporting_site());
+    const Line_2 lsrc1 = compute_linf_perpendicular(ls1, ssrc1);
+    const Line_2 ltrg1 = compute_linf_perpendicular(ls1, strg1);
 
-    Line_2 ls1 = compute_supporting_line(s1.supporting_site());
-    Line_2 lsrc1 = compute_linf_perpendicular(ls1, ssrc1);
-    Line_2 ltrg1 = compute_linf_perpendicular(ls1, strg1);
+    const Point_2 ssrc2 = s2.source(), strg2 = s2.target();
 
-    Point_2 ssrc2 = s2.source(), strg2 = s2.target();
-
-    Line_2 ls2 = compute_supporting_line(s2.supporting_site());
-    Line_2 lsrc2 = compute_linf_perpendicular(ls2, ssrc2);
-    Line_2 ltrg2 = compute_linf_perpendicular(ls2, strg2);
+    const Line_2 ls2 = compute_supporting_line(s2.supporting_site());
+    const Line_2 lsrc2 = compute_linf_perpendicular(ls2, ssrc2);
+    const Line_2 ltrg2 = compute_linf_perpendicular(ls2, strg2);
 
     // idx1 and idx2 indicate if q is to the left (source endpoint
     // side), the right side (target endpoint side) or inside
@@ -201,7 +200,7 @@ private:
     // right halfplane the value is 1.
     int idx1(0), idx2(0);
 
-    Oriented_side os_src1 = oriented_side_of_line(lsrc1, qq);
+    const Oriented_side os_src1 = oriented_side_of_line(lsrc1, qq);
     Oriented_side os_trg1;
     if ( os_src1 != ON_NEGATIVE_SIDE ) {
       idx1 = -1;
@@ -213,7 +212,7 @@ private:
       }
     }
 
-    Oriented_side os_src2 = oriented_side_of_line(lsrc2, qq);
+    const Oriented_side os_src2 = oriented_side_of_line(lsrc2, qq);
     Oriented_side os_trg2;
     if ( os_src2 != ON_NEGATIVE_SIDE ) {
       idx2 = -1;
@@ -235,87 +234,56 @@ private:
     CGAL_assertion( idx1 >= -1 && idx1 <= 1 );
     CGAL_assertion( idx2 >= -1 && idx2 <= 1 );
 
-    Point_2 closest1;
-    Point_2 closest2;
-
     if ( idx1 == -1 ) {
-      //RT d2_s1 = compute_linf_distance(qq, ssrc1);
-      closest1 = ssrc1;
       if ( idx2 == -1 ) {
 	if ( same_points(s1.source_site(), s2.source_site()) ) {
-          CGAL_SDG_DEBUG(std::cout << "debug compare_distances_ss"
-              << " same_s1src_s2src" << std::endl;);
 	  return EQUAL;
 	}
-	//RT d2_s2 = compute_linf_distance(qq, ssrc2);
-        closest2 = ssrc2;
-	//return CGAL::compare(d2_s1, d2_s2);
+	return compare_distance_to_point_linf(qq, ssrc1, ssrc2);
       } else if ( idx2 == 1 ) {
 	if ( same_points(s1.source_site(), s2.target_site()) ) {
-          CGAL_SDG_DEBUG(std::cout << "debug compare_distances_ss"
-              << " same_s1src_s2trg, closest1=" << closest1 << std::endl;);
 	  return EQUAL;
 	}
-	//RT d2_s2 = compute_linf_distance(qq, strg2);
-        closest2 = strg2;
-	//return CGAL::compare(d2_s1, d2_s2);
+	return compare_distance_to_point_linf(qq, ssrc1, strg2);
       } else {
-        // here closest2 is inside segment s2
-        Homogeneous_point_2 hp2 = compute_linf_projection_hom(ls2, qq);
-        closest2 = Point_2(hp2.x(), hp2.y());
-	//return CGAL::compare(d2_s1 * d2_s2.second, d2_s2.first);
+        const RT d2_s1 = compute_linf_distance(ssrc1, qq);
+        const std::pair<RT,RT> d2_s2 = compute_linf_distance(qq, ls2);
+        return CGAL::compare(d2_s1 * d2_s2.second, d2_s2.first);
       }
     } else if ( idx1 == 1 ) {
-      //RT d2_s1 = compute_linf_distance(qq, strg1);
-      closest1 = strg1;
       if ( idx2 == -1 ) {
 	if ( same_points(s1.target_site(), s2.source_site()) ) {
-          CGAL_SDG_DEBUG(std::cout << "debug compare_distances_ss"
-              << " same_s1trg_s2src" << std::endl;);
 	  return EQUAL;
 	}
-	//RT d2_s2 = compute_linf_distance(qq, ssrc2);
-        closest2 = ssrc2;
-	//return CGAL::compare(d2_s1, d2_s2);
+	return compare_distance_to_point_linf(qq, strg1, ssrc2);
       } else if ( idx2 == 1 ) {
 	if ( same_points(s1.target_site(), s2.target_site()) ) {
-          CGAL_SDG_DEBUG(std::cout << "debug compare_distances_ss"
-              << " same_s1trg_s2trg" << std::endl;);
 	  return EQUAL;
 	}
-	//RT d2_s2 = compute_linf_distance(qq, strg2);
-        closest2 = strg2;
-	//return CGAL::compare(d2_s1, d2_s2);
+	return compare_distance_to_point_linf(qq, strg1, strg2);
       } else {
         // here closest2 is inside segment s2
-        Homogeneous_point_2 hp2 = compute_linf_projection_hom(ls2, qq);
-        closest2 = Point_2(hp2.x(), hp2.y());
-	//return CGAL::compare(d2_s1 * d2_s2.second, d2_s2.first);
+        const RT d2_s1 = compute_linf_distance(strg1, qq);
+        const std::pair<RT,RT> d2_s2 = compute_linf_distance(qq, ls2);
+        return CGAL::compare(d2_s1 * d2_s2.second, d2_s2.first);
       }
     } else {
       // here closest1 is inside segment s1
       CGAL_assertion( idx1 == 0 );
-      Homogeneous_point_2 hp1 = compute_linf_projection_hom(ls1, qq);
-      closest1 = Point_2(hp1.x(), hp1.y());
+      const std::pair<RT,RT> d2_s1 = compute_linf_distance(qq, ls1);
       if ( idx2 == -1 ) {
-        //RT d2_s2 = compute_linf_distance(qq, ssrc2);
-        closest2 = ssrc2;
-        //return CGAL::compare(d2_s1.first, d2_s2 * d2_s1.second);
+        const RT d2_s2 = compute_linf_distance(qq, ssrc2);
+        return CGAL::compare(d2_s1.first, d2_s2 * d2_s1.second);
       } else if ( idx2 == 1 ) {
-        //RT d2_s2 = compute_linf_distance(qq, strg2);
-        closest2 = strg2;
-        //return CGAL::compare(d2_s1.first, d2_s2 * d2_s1.second);
+        const RT d2_s2 = compute_linf_distance(qq, strg2);
+        return CGAL::compare(d2_s1.first, d2_s2 * d2_s1.second);
       } else {
         CGAL_assertion( idx2 == 0 );
-        Homogeneous_point_2 hp2 = compute_linf_projection_hom(ls2, qq);
-        closest2 = Point_2(hp2.x(), hp2.y());
-        //return CGAL::compare(d2_s1.first * d2_s2.second,
-        //    d2_s2.first * d2_s1.second);
+        const std::pair<RT,RT> d2_s2 = compute_linf_distance(qq, ls2);
+        return CGAL::compare(d2_s1.first * d2_s2.second,
+                             d2_s2.first * d2_s1.second);
       }
     }
-
-    return
-      compare_distance_to_point_linf(qq, closest1, closest2);
   }
 
   //-----------------------------------------------------------------
