@@ -28,8 +28,7 @@
 // The code looks slightly different from his code because we avoid the translation at
 // a minimal cost (and we use C++ ;).
 
-#include <CGAL/number_utils.h>
-// ST: is this include really needed ?
+#include <CGAL/Uncertain.h>
 #include <CGAL/internal/Intersections_3/Bbox_3_Plane_3_do_intersect.h>
 
 namespace CGAL {
