@@ -1,5 +1,5 @@
 #define BOOST_TEST_MODULE graph_geometry test
-#include <boost/test/included/unit_test.hpp>
+#include <boost/test/unit_test.hpp>
 
 #include "test_Prefix.h"
 

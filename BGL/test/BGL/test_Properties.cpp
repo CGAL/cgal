@@ -1,4 +1,6 @@
-#include <boost/test/included/unit_test.hpp>
+
+#define BOOST_TEST_MAIN 1
+#include <boost/test/unit_test.hpp>
 #include <boost/test/parameterized_test.hpp>
 
 #include "test_Prefix.h"

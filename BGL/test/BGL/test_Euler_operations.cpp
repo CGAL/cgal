@@ -1,5 +1,5 @@
 #define BOOST_TEST_MODULE euler_operations test
-#include <boost/test/included/unit_test.hpp>
+#include <boost/test/unit_test.hpp>
 #include <boost/test/test_case_template.hpp>
 
 #include "test_Prefix.h"

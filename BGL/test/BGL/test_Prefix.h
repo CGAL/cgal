@@ -8,7 +8,6 @@
 #include <boost/assign.hpp>
 #include <boost/mpl/list.hpp>
 
-#include <CGAL/basic.h>
 #include <CGAL/Simple_cartesian.h>
 
 #include <CGAL/Polyhedron_items_with_id_3.h>
