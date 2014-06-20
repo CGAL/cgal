@@ -37,22 +37,9 @@
 #include <CGAL/Segment_Delaunay_graph_hierarchy_vertex_base_2.h>
 #include <CGAL/Segment_Delaunay_graph_face_base_2.h>
 
+#include <CGAL/Segment_Delaunay_graph_hierarchy_2.h>
 
 namespace CGAL {
-
-//--------------------------------------------------------------------
-//--------------------------------------------------------------------
-
-// parameterization of the hierarchy
-#ifdef CGAL_SDG_HIERARCHY_DEMO
-const unsigned int sdg_hierarchy_2__ratio    = 3;
-const unsigned int sdg_hierarchy_2__minsize  = 5;
-#else
-const unsigned int sdg_hierarchy_2__ratio    = 30;
-const unsigned int sdg_hierarchy_2__minsize  = 20;
-#endif
-const unsigned int sdg_hierarchy_2__maxlevel = 5;
-// maximal number of points is 30^5 = 24 millions !
 
 //--------------------------------------------------------------------
 //--------------------------------------------------------------------
