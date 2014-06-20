@@ -1,4 +1,5 @@
 // Copyright (c) 2008  INRIA Sophia-Antipolis (France), ETH Zurich (Switzerland).
+// Copyright (c) 2010, 2014  GeometryFactory Sarl (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
@@ -202,7 +203,7 @@ namespace internal {
       if (is_indeterminate(b))
         return b;
       if(b) std::swap(j,k);
-      return CGAL_OR( (do_axis_intersect_aux<K,AXE,SIDE>(p_min.y()-j->y(), p_min.z()-j->z(), sides) <= 0),
+      return CGAL_AND((do_axis_intersect_aux<K,AXE,SIDE>(p_min.y()-j->y(), p_min.z()-j->z(), sides) <= 0),
                       (do_axis_intersect_aux<K,AXE,SIDE>(p_max.y()-k->y(), p_max.z()-k->z(), sides) >= 0) );      
     }
     case 1: {
@@ -211,7 +212,7 @@ namespace internal {
       if (is_indeterminate(b))
         return b;
       if(b) std::swap(j,k);
-      return  CGAL_OR( (do_axis_intersect_aux<K,AXE,SIDE>(p_min.x()-j->x(), p_min.z()-j->z(), sides) <= 0),
+      return  CGAL_AND((do_axis_intersect_aux<K,AXE,SIDE>(p_min.x()-j->x(), p_min.z()-j->z(), sides) <= 0),
                        (do_axis_intersect_aux<K,AXE,SIDE>(p_max.x()-k->x(), p_max.z()-k->z(), sides) >= 0) );
 
     }
@@ -221,7 +222,7 @@ namespace internal {
       if ( is_indeterminate(b))
         return b;
       if(b) std::swap(j,k);
-      return  CGAL_OR( (do_axis_intersect_aux<K,AXE,SIDE>(p_min.x()-j->x(), p_min.y()-j->y(), sides) <= 0),
+      return  CGAL_AND((do_axis_intersect_aux<K,AXE,SIDE>(p_min.x()-j->x(), p_min.y()-j->y(), sides) <= 0),
                        (do_axis_intersect_aux<K,AXE,SIDE>(p_max.x()-k->x(), p_max.y()-k->y(), sides) >= 0) );
     }
     default:
