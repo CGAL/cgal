@@ -276,10 +276,11 @@ update_new_point(
 ///
 /// @tparam OutputIteratorValueType type of objects that in `OutputIterator`.
 ///         It is default to `value_type_traits<OutputIterator>::%type` 
-///         and can be omitted when the default is fine.
-/// @tparam OutputIterator output iterator where output points are put.
+///         and can be omitted when the default is fine. It should contain both 
+///         points position and normal information.
+/// @tparam OutputIterator output iterator where output points (and normals) are put.
 /// @tparam ForwardIterator iterator over input points.
-/// @tparam PointPMap is a model of `ReadablePropertyMap` 
+/// @tparam PointPMap is a model of `WritablePropertyMap` 
 ///         with a value_type = Point_3<Kernel>.
 ///         It can be omitted if ForwardIterator value_type is convertible to 
 ///         Point_3<Kernel>.
@@ -302,7 +303,7 @@ void
 edge_aware_upsample_point_set(
   ForwardIterator first,  ///< iterator over the first input point.
   ForwardIterator beyond, ///< past-the-end iterator over the input points.
-  OutputIterator output, ///< output iterator over points, 
+  OutputIterator output, ///< output iterator over points (and normals), 
                          /// where the first output point will be stored in.
   PointPMap point_pmap, ///< property map: value_type of ForwardIterator -> Point_3
   NormalPMap normal_pmap, ///< property map: value_type of ForwardIterator -> Vector_3.

@@ -34,7 +34,7 @@ int main(void)
                           <CGAL::Parallel_tag> // parallel version
                           (points.begin(), 
                            points.end(),
-                           back_inserter(output));
+                           std::back_inserter(output));
   //with default parameters ends
 
   //with all parameters begins

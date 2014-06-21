@@ -315,7 +315,7 @@ compute_density_weight_for_sample_point(
 ///         and can be omitted when the default is fine.
 /// @tparam OutputIterator iterator over output points.
 /// @tparam RandomAccessIterator iterator over input points.
-/// @tparam PointPMapIn is a model of `ReadablePropertyMap` 
+/// @tparam PointPMapIn is a model of `WritablePropertyMap` 
 ///         with a value_type = Point_3<Kernel>.
 ///         It can be omitted if RandomAccessIterator value_type is convertible  
 ///         to Point_3<Kernel>.
