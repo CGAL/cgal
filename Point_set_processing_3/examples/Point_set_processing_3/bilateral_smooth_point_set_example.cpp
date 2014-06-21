@@ -25,7 +25,7 @@ int main(void)
   const std::string INPUT_FILENAME = INPUT_FILENAME_WITHOUT_EXT + ".xyz";
   const std::string OUTPUT_FILENAME = INPUT_FILENAME_WITHOUT_EXT + "_bilateral_smoothed.xyz";
 
-  // Reads a .xyz point set file in points[].
+  // Reads a .xyz point set file in points[] * with normals *.
   std::vector<PointVectorPair> points;
   std::ifstream stream(INPUT_FILENAME.c_str());
   if (!stream ||
@@ -40,9 +40,10 @@ int main(void)
   }
 
   // Algorithm parameters
-  int k = 120;                 // size of neighborhood 
-  double sharpness_angle = 25; // control sharpness of the result
-                               // the bigger the smoother the result will be
+  int k = 120;                 // size of neighborhood. The bigger the smoother the result will be.
+                               // This value should bigger than 1.
+  double sharpness_angle = 25; // control sharpness of the result.
+                               // The bigger the smoother the result will be
   int iter_number = 3;         // number of times the projection is applied
   
   for (int i = 0; i < iter_number; ++i)

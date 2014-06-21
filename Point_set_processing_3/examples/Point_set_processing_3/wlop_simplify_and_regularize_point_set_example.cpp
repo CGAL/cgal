@@ -16,8 +16,7 @@ int main(void)
   const std::string INPUT_FILENAME = INPUT_FILENAME_WITHOUT_EXT + ".xyz";
   const std::string OUTPUT_FILENAME = INPUT_FILENAME_WITHOUT_EXT + "_WLOPED.xyz";
 
-  // Reads a .xyz point set file in points[], *with normals*.
-	// TOFIX: do we have an extension for points with normals?
+  // Reads a .xyz point set file in points[]
   std::vector<Point> points;
   std::ifstream stream(INPUT_FILENAME.c_str());
 
@@ -38,13 +37,14 @@ int main(void)
                            std::back_inserter(output));
   //with default parameters ends
 
+
   //with all parameters begins
   /*
   //Algorithm parameters
   const double select_percentage = 2;       // percentage of points to retain.
-  const double neighbor_radius = 0.03;      // neighbors size.
+  const double neighbor_radius = 0.03;      // size of neighbors.
   const unsigned int iter_number = 30;      // number of iterations.
-  const bool require_uniform_sampling = true;  // Optional pre-processing. 
+  const bool require_uniform_sampling = true;  // optional pre-processing. 
                                        
   CGAL::wlop_simplify_and_regularize_point_set
                           <CGAL::Parallel_tag> // parallel version

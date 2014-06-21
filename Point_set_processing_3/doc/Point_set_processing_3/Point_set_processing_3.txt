@@ -268,8 +268,7 @@ normals:
 
 \section Point_set_processing_3Upsampling Upsampling
 
-Function `edge_aware_upsample_point_set()` generates a much denser point set, 
-has applications in point-based rendering, hole filling, and sparse surface reconstruction.
+Function `edge_aware_upsample_point_set()` generates a much denser point set that has applications in point-based rendering, hole filling, and sparse surface reconstruction.
 The algorithm can progressively upsample the point set while approaching the edge singularities, 
 see <a href="http://web.siat.ac.cn/~huihuang/EAR/EAR_page.html">[Huang et al. 2013]</a>.
 
@@ -287,11 +286,11 @@ For example, as shown in the following figure, high value is preferable when one
 Upsample results for different edge-sensitivity parameter values. The input containing 850 points is upsampled to 1,500 points in all cases depicted.
 \cgalFigureEnd
 
-\subsubsection Point_set_processing_3Upsample_Parameter2 Parameter: sharpness_sigma
+\subsubsection Point_set_processing_3Upsample_Parameter2 Parameter: sharpness_angle
 This parameter controls the preservation of sharp features.
 
-\cgalFigureBegin{Point_set_processing_3figUpsample_sharpness_sigma, upsample_sharpness_sigma.jpg}
-Upsample results for different sharpness_sigma parameter values. The input containing 850 points is upsampled to 425K points in all cases depicted. 
+\cgalFigureBegin{Point_set_processing_3figUpsample_sharpness_angle, upsample_sharpness_angle.jpg}
+Upsample results for different sharpness_angle parameter values. The input containing 850 points is upsampled to 425K points in all cases depicted. 
 \cgalFigureEnd
 
 

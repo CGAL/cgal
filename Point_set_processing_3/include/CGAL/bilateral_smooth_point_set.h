@@ -323,7 +323,7 @@ public:
 ///  with sharp features preservation. Both point positions and normals will be
 /// modeifed.
 /// For more information, see: http://web.siat.ac.cn/~huihuang/EAR/EAR_page.html
-/// (Please cite the paper if you use this function).
+/// (please cite the paper if you use this function).
 /// \pre Normals must be unit vectors
 /// \pre k >= 2
 ///
@@ -356,7 +356,7 @@ bilateral_smooth_point_set(
   ForwardIterator beyond,   ///< past-the-end iterator over the input points.
   PointPMap point_pmap,     ///< property map: value_type of ForwardIterator -> Point_3.
   NormalPMap normal_pmap,   ///< property map: value_type of ForwardIterator -> Vector_3.
-  unsigned int k,           ///< size of neighborhood.
+  unsigned int k,           ///< size of neighborhood. The bigger the smoother the result will be.
   typename Kernel::FT sharpness_angle,  ///< control sharpness of the result, 
                             ///< the bigger the smoother the result will be.
                             ///< The range of possible value is [0, 90].

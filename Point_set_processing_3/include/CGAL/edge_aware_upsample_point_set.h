@@ -273,7 +273,7 @@ update_new_point(
 /// This method progressively upsample the point set while 
 /// approaching the edge singularities. 
 /// For more details, please see: http://web.siat.ac.cn/~huihuang/EAR/EAR_page.html
-/// (Please cite the paper if you use this function).
+/// (please cite the paper if you use this function).
 /// @tparam OutputIteratorValueType type of objects that in `OutputIterator`.
 ///         It is default to `value_type_traits<OutputIterator>::%type` 
 ///         and can be omitted when the default is fine. It should contain both 
