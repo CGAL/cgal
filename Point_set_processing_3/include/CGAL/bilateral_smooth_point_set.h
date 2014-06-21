@@ -323,7 +323,9 @@ public:
 ///  with sharp features preservation. Both point positions and normals will be
 /// modeifed.
 /// For more information, see: http://web.siat.ac.cn/~huihuang/EAR/EAR_page.html
+/// (Please cite the paper if you use this function).
 /// \pre Normals must be unit vectors
+/// \pre k >= 2
 ///
 /// @tparam Concurrency_tag enables sequential versus parallel algorithm.
 ///                         Possible values are `Sequential_tag`

@@ -177,8 +177,7 @@ Comparison between with and without density: Left: input. Middle: `require_unifo
 \cgalFigureEnd
 
 \subsubsection Point_set_processing_3WLOP_parallel_performance Parallel Performance: 
-A parallel version of WLOP is provided.
-It requires the executable to be linked against the 
+A parallel version of WLOP is provided and requires the executable to be linked against the 
 <a href="http://www.threadingbuildingblocks.org">Intel TBB library</a>.
 To control the number of threads used, the user may use the tbb::task_scheduler_init class.
 See the <a href="http://www.threadingbuildingblocks.org/documentation">TBB documentation</a> 
@@ -272,7 +271,7 @@ normals:
 Function `edge_aware_upsample_point_set()` generates a much denser point set, 
 has applications in point-based rendering, hole filling, and sparse surface reconstruction.
 The algorithm can progressively upsample the point set while approaching the edge singularities, 
-see paper <a href="http://web.siat.ac.cn/~huihuang/EAR/EAR_page.html">[Huang et al. 2013]</a>.
+see <a href="http://web.siat.ac.cn/~huihuang/EAR/EAR_page.html">[Huang et al. 2013]</a>.
 
 \subsection Point_set_processing_3Example_8 Example
 

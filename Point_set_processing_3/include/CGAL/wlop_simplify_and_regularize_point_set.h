@@ -306,7 +306,7 @@ compute_density_weight_for_sample_point(
 /// with a density uniformization term. 
 /// For more details, please see:
 /// http://web.siat.ac.cn/~huihuang/WLOP/WLOP_page.html
-///
+/// (Please cite the paper if you use this function).
 /// @tparam Concurrency_tag enables sequential versus parallel algorithm.
 ///                         Possible values are `Sequential_tag`
 ///                         and `Parallel_tag`.

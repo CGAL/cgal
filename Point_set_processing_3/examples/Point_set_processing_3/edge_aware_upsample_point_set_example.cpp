@@ -19,10 +19,12 @@ typedef std::pair<Point, Vector> PointVectorPair;
 int main(void)
 {
   const std::string INPUT_FILENAME_WITHOUT_EXT = "data/before_upsample";
- 
+  const std::string INPUT_FILENAME = INPUT_FILENAME_WITHOUT_EXT + ".xyz";
+  const std::string OUTPUT_FILENAME = INPUT_FILENAME_WITHOUT_EXT + "_UPSAMPLED.xyz";
+
   // Reads a .xyz point set file in points[], *with normals*.
   std::vector<PointVectorPair> points;
-  std::ifstream stream(INPUT_FILENAME_WITHOUT_EXT + ".xyz");
+  std::ifstream stream(INPUT_FILENAME.c_str());
 
   if (!stream ||
       !CGAL::read_xyz_points_and_normals(stream,
@@ -54,7 +56,7 @@ int main(void)
             number_of_output_points);
 
   // Saves point set.
-  std::ofstream out(INPUT_FILENAME_WITHOUT_EXT + "_UPSAMPLED.xyz");  
+  std::ofstream out(OUTPUT_FILENAME.c_str());  
 
   if (!out ||
      !CGAL::write_xyz_points_and_normals(

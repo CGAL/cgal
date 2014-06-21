@@ -14,6 +14,7 @@ int main(void)
 {
   const std::string INPUT_FILENAME_WITHOUT_EXT = "data/saint_jean_370K";
   const std::string INPUT_FILENAME = INPUT_FILENAME_WITHOUT_EXT + ".xyz";
+  const std::string OUTPUT_FILENAME = INPUT_FILENAME_WITHOUT_EXT + "_WLOPED.xyz";
 
   // Reads a .xyz point set file in points[], *with normals*.
 	// TOFIX: do we have an extension for points with normals?
@@ -57,7 +58,7 @@ int main(void)
   */
   //with all parameters ends
   
-  std::ofstream out(INPUT_FILENAME_WITHOUT_EXT + "_WLOPED.xyz"); 
+  std::ofstream out(OUTPUT_FILENAME.c_str()); 
   if (!out || !CGAL::write_xyz_points(
       out, output.begin(), output.end()))
   {
