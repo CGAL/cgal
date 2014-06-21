@@ -1,6 +1,4 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/pca_estimate_normals.h>
-#include <CGAL/mst_orient_normals.h>
 #include <CGAL/property_map.h>
 #include <CGAL/IO/read_xyz_points.h>
 #include <CGAL/IO/write_xyz_points.h>
@@ -43,7 +41,7 @@ int main(void)
   int k = 120;                 // neighborhood size
   double sharpness_angle = 25; // control sharpness(0-90)
                                // the bigger the smoother the result will be
-  int iter_number = 3;         // times of projection
+  int iter_number = 3;         // number of times the projection is applied
   
   for (int i = 0; i < iter_number; ++i)
   {
