@@ -287,8 +287,8 @@ namespace CGAL
                             diffbpr * diffbpr +
                             diffcpr * diffcpr;
 
-                        return CGAL::is_positive(q.d() * q.d() *
-                                                 distpr - r.d() * r.d() * distpq);
+                        return CGAL::is_positive(dq * dq *
+                                                 distpr - dr * dr * distpq);
                     }
 
                 private:

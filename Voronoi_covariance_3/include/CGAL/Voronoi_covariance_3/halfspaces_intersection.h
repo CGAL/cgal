@@ -5,6 +5,8 @@
 #include <CGAL/Polyhedron_incremental_builder_3.h>
 #include <CGAL/Voronoi_covariance_3/Convex_hull_traits_dual_3.h>
 #include <CGAL/Convex_hull_3.h>
+#include <CGAL/intersections.h>
+#include <CGAL/assertions.h>
 
 namespace CGAL
 {
@@ -37,8 +39,6 @@ namespace CGAL
 
                             // Typedefs for dual
                             typedef typename Polyhedron_dual::Facet Facet;
-                            typedef typename Polyhedron_dual::Vertex Vertex;
-                            typedef typename Vertex::Point_3 Plane;
                             typedef typename Polyhedron_dual::Facet_const_handle
                                 Facet_const_handle;
                             typedef typename Polyhedron_dual::Facet_const_iterator
@@ -48,6 +48,11 @@ namespace CGAL
 
                             // Typedefs for primal
                             typename CGAL::Polyhedron_incremental_builder_3<HDS> B(hds, true);
+
+                            // Typedefs for intersection
+                            typedef typename K::Plane_3 Plane_3;
+                            typedef typename K::Line_3 Line_3;
+                            typedef boost::optional< boost::variant< Point_3, Line_3, Plane_3 > > result_inter;
 
                             B.begin_surface(_dual.size_of_facets(),
                                             _dual.size_of_vertices(),
@@ -61,34 +66,36 @@ namespace CGAL
                                  it != _dual.facets_end(); ++it, ++n) {
                                 typename Facet::Halfedge_const_handle h = it->halfedge();
                                 // Build the dual plane corresponding to the current facet
-                                Plane p1 = h->vertex()->point();
-                                Plane p2 = h->next()->vertex()->point();
-                                Plane p3 = h->next()->next()->vertex()->point();
+                                Plane_3 p1 = h->vertex()->point();
+                                Plane_3 p2 = h->next()->vertex()->point();
+                                Plane_3 p3 = h->next()->next()->vertex()->point();
 
-                                // Normal to the dual plane
-                                RT alpha = (p1.d() * p2.b() - p2.d() * p1.b()) *
-                                    (p1.d() * p3.c() - p3.d() * p1.c()) -
-                                    (p1.d() * p2.c() - p2.d() * p1.c()) *
-                                    (p1.d() * p3.b() - p3.d() * p1.b());
+                                RT dp1 = p1.d() + origin.x() * p1.a()
+                                    + origin.y() * p1.b() + origin.z() * p1.c();
+                                RT dp2 = p2.d() + origin.x() * p2.a()
+                                    + origin.y() * p2.b() + origin.z() * p2.c();
+                                RT dp3 = p3.d() + origin.x() * p3.a()
+                                    + origin.y() * p3.b() + origin.z() * p3.c();
 
-                                RT beta  = (p1.d() * p2.c() - p2.d() * p1.c()) *
-                                    (p1.d() * p3.a() - p3.d() * p1.a()) -
-                                    (p1.d() * p2.a() - p2.d() * p1.a()) *
-                                    (p1.d() * p3.c() - p3.d() * p1.c());
+                                Plane_3 pp1(p1.a(), p1.b(), p1.c(), dp1);
+                                Plane_3 pp2(p2.a(), p2.b(), p2.c(), dp2);
+                                Plane_3 pp3(p3.a(), p3.b(), p3.c(), dp3);
 
-                                RT gamma = (p1.d() * p2.a() - p2.d() * p1.a()) *
-                                    (p1.d() * p3.b() - p3.d() * p1.b()) -
-                                    (p1.d() * p2.b() - p2.d() * p1.b()) *
-                                    (p1.d() * p3.a() - p3.d() * p1.a());
+                                // Compute the intersection
+                                result_inter result = CGAL::intersection(pp1, pp2, pp3);
+                                CGAL_assertion_msg(result,
+                                                   "halfspaces_intersection: no intersection");
+                                CGAL_assertion_msg(boost::get<Point_3>(& *result),
+                                                   "halfspaces_intersection: intersection is not a point");
 
-                                // last coefficient of the dual plane equation
-                                RT d = (alpha * p1.a() + beta * p1.b() + gamma * p1.c()) / p1.d();
+                                const Point_3* pp = boost::get<Point_3>(& *result);
 
                                 // Primal vertex associated to the current dual plane
-                                // TODO: replace by CGAL::intersection
-                                Point_3 p(origin.x() - alpha / d, origin.y() - beta / d, origin.z() - gamma / d);
+                                Point_3 ppp(origin.x() + pp->x(),
+                                            origin.y() + pp->y(),
+                                            origin.z() + pp->z());
 
-                                B.add_vertex(p);
+                                B.add_vertex(ppp);
                                 primal_vertices[it] = n;
                             }
 

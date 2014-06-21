@@ -21,8 +21,8 @@ typedef CGAL::Polyhedron_3<Hull_traits_dual_3>                      Polyhedron_d
 template <typename K>
 typename K::Plane_3 tangent_plane (typename K::Point_3 const& p) {
     typename K::Vector_3 v(p.x(), p.y(), p.z());
-    typename K::Plane_3 plane(v.x(), v.y(), v.z(), -(p - CGAL::ORIGIN) * v);
     v = v / sqrt(v.squared_length());
+    typename K::Plane_3 plane(v.x(), v.y(), v.z(), -(p - CGAL::ORIGIN) * v);
 
     return plane;
 }
@@ -37,9 +37,7 @@ int main (int argc, char *argv[]) {
     Polyhedron_3 poly_sphere;
 
     // traits
-    // TODO
-    Point origin(0, 0, 0);
-    Hull_traits_dual_3 dual_traits(origin);
+    Hull_traits_dual_3 dual_traits;
 
     // Cube
     // IMPORTANT: d <= 0
@@ -50,14 +48,6 @@ int main (int argc, char *argv[]) {
     planes.push_back(Plane(0, -1, 0, -1));
     planes.push_back(Plane(0, 0, 1, -1));
     planes.push_back(Plane(0, 0, -1, -1));
-
-    // Translated cube
-    /* planes.push_back(Plane(1, 0, 0, -1)); */
-    /* planes.push_back(Plane(-1, 0, 0, -1)); */
-    /* planes.push_back(Plane(0, 1, 0, -1)); */
-    /* planes.push_back(Plane(0, -0.5, 0, -1)); */
-    /* planes.push_back(Plane(0, 0, 1, -1)); */
-    /* planes.push_back(Plane(0, 0, -1, -1)); */
 
     // Random points on a sphere
     std::list<Plane> sphere_planes;
@@ -75,24 +65,24 @@ int main (int argc, char *argv[]) {
 
     // Compute dual convex hulls
     CGAL::convex_hull_3(planes.begin(), planes.end(), dual_poly_cube, dual_traits);
-    /* CGAL::convex_hull_3(sphere_planes.begin(), sphere_planes.end(), dual_poly_sphere, dual_traits); */
+    CGAL::convex_hull_3(sphere_planes.begin(), sphere_planes.end(), dual_poly_sphere, dual_traits);
 
-    // Print the dual polyhedron in an OFF file
+    // Print dual polyhedrons in an OFF file
     convert_dual_OFF<K>("dual_cube_convex_hull.off", dual_poly_cube);
-    /* convert_dual_OFF<K>("dual_sphere_convex_hull.off", dual_poly_sphere); */
+    convert_dual_OFF<K>("dual_sphere_convex_hull.off", dual_poly_sphere);
 
     // Compute associated primal polyhedrons
     typedef CGAL::Voronoi_covariance_3::internal::Build_primal_polyhedron<K, Polyhedron_dual_3, Polyhedron_3>
         Build_primal_polyhedron;
-    Build_primal_polyhedron bpp_cube(dual_poly_cube, origin);
-    /* Build_primal_polyhedron bpp_sphere(dual_poly_sphere, origin); */
+    Build_primal_polyhedron bpp_cube(dual_poly_cube);
+    Build_primal_polyhedron bpp_sphere(dual_poly_sphere);
 
     poly_cube.delegate(bpp_cube);
-    /* poly_sphere.delegate(bpp_sphere); */
+    poly_sphere.delegate(bpp_sphere);
 
-    // Print the primal polyhedrons into an OFF file
+    // Print primal polyhedrons into an OFF file
     convertToOFF<K, Polyhedron_3>("primal_cube.off", poly_cube);
-    /* convertToOFF<K, Polyhedron_3>("primal_sphere.off", poly_sphere); */
+    convertToOFF<K, Polyhedron_3>("primal_sphere.off", poly_sphere);
 
     return 0;
 }
