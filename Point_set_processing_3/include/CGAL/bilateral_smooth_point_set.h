@@ -354,8 +354,10 @@ bilateral_smooth_point_set(
   ForwardIterator beyond,   ///< past-the-end iterator over the input points.
   PointPMap point_pmap,     ///< property map: value_type of ForwardIterator -> Point_3.
   NormalPMap normal_pmap,   ///< property map: value_type of ForwardIterator -> Vector_3.
-  unsigned int k,           ///< number of neighbors.
-  typename Kernel::FT sharpness_angle,  ///< control sharpness(0-90)
+  unsigned int k,           ///< size of neighborhood.
+  typename Kernel::FT sharpness_angle,  ///< control sharpness of the result, 
+                            ///< the bigger the smoother the result will be.
+                            ///< The range of possible value is [0, 90].
   const Kernel& /*kernel*/) ///< geometric traits.
 {
   // basic geometric types

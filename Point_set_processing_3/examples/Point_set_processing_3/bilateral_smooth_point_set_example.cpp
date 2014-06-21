@@ -37,9 +37,9 @@ int main(void)
      return EXIT_FAILURE;
   }
 
-                               // Algorithm parameters
-  int k = 120;                 // neighborhood size
-  double sharpness_angle = 25; // control sharpness(0-90)
+  // Algorithm parameters
+  int k = 120;                 // size of neighborhood 
+  double sharpness_angle = 25; // control sharpness of the result
                                // the bigger the smoother the result will be
   int iter_number = 3;         // number of times the projection is applied
   

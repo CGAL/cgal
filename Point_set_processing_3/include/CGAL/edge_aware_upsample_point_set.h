@@ -307,14 +307,17 @@ edge_aware_upsample_point_set(
                          /// where the first output point will be stored in.
   PointPMap point_pmap, ///< property map: value_type of ForwardIterator -> Point_3
   NormalPMap normal_pmap, ///< property map: value_type of ForwardIterator -> Vector_3.
-  const typename Kernel::FT sharpness_angle,  ///<  (0-90)
-                    /// Controlthe preservation of sharp features. The bigger
-                    /// the value is, the smoother the result will be.
+  const typename Kernel::FT sharpness_angle,  ///< 
+                    ///< control the preservation of sharp features. The bigger
+                    ///< the smoother the result will be.
+                    ///< The range of possible value is [0, 90].
   const typename Kernel::FT edge_senstivity,  ///<  
-                    /// Larger values of edge-sensitivity give higher priority 
-                    /// to inserting points along the sharp features.
-  const typename Kernel::FT neighbor_radius, ///< initial size of neighbors.
-                    /// the radius of the biggest hole that will be filled in.
+                    ///< larger values of edge-sensitivity give higher priority 
+                    ///< to inserting points along the sharp features.
+                    ///< The range of possible value is [0, infinite).
+  const typename Kernel::FT neighbor_radius, ///< 
+                    ///< initial size of neighbors,
+                    ///< indicates the radius of the biggest hole that will be filled.
   const unsigned int number_of_output,///< points number of the output.                            
   const Kernel& /*kernel*/ ///< geometric traits.
 )

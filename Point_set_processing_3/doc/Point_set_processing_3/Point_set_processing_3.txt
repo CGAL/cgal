@@ -198,10 +198,7 @@ projecting each point onto a smooth parametric surface patch
 
 Function `bilateral_smooth_point_set()` smooths the input point set by
 iteratively projecting each point onto the implicit surface patch fitted over its `k` nearest neighbors.
-Bilateral projection preserves sharp features according to the normal (gradient) information. Normals are thus required as input. See formula (2) and (4) of paper <a href="http://web.siat.ac.cn/~huihuang/EAR/EAR_page.html">[Huang et al. 2013]</a>. A parallel version is provided and requires the executable to be linked against the 
-<a href="http://www.threadingbuildingblocks.org">Intel TBB library</a>.
-The number of threads used is controlled through the tbb::task_scheduler_init class.
-See the <a href="http://www.threadingbuildingblocks.org/documentation">TBB documentation</a> for more details.
+Bilateral projection preserves sharp features according to the normal (gradient) information. Normals are thus required as input. See formula (2) and (4) in paper <a href="http://web.siat.ac.cn/~huihuang/EAR/EAR_page.html">[Huang et al. 2013]</a>.
 
 \subsection Point_set_processing_3Example_5 Jet smoothing example
 
@@ -218,8 +215,13 @@ The following example reads a set of points with normals and smooths them via bi
 Comparison for two smoothing methods: Left: Input, 250K points, normal-color mapping. Middle: Jet smoothing result, 197 seconds. Right: Bilateral smoothing result, 110 seconds.
 \cgalFigureEnd
 
-\subsubsection Point_set_processing_3Bilateral_smoothing_parallel_performance Parallel Performance: 
-We provide below a speed-up chart generated using the parallel version of the bilateral smoothing algorithm. The machine used is a PC running Windows 7 64-bits with a 4-core i7-4700HQ@2.40GHz CPU with 8GB of RAM.
+\subsubsection Point_set_processing_3Bilateral_smoothing_parallel_performance Parallel
+
+Performance: 
+A parallel version of bilateral smoothing is provided and requires the executable to be linked against the 
+<a href="http://www.threadingbuildingblocks.org">Intel TBB library</a>.
+The number of threads used is controlled through the tbb::task_scheduler_init class.
+See the <a href="http://www.threadingbuildingblocks.org/documentation">TBB documentation</a> for more details. We provide below a speed-up chart generated using the parallel version of the bilateral smoothing algorithm. The machine used is a PC running Windows 7 64-bits with a 4-core i7-4700HQ@2.40GHz CPU with 8GB of RAM.
 
 \cgalFigureBegin{Point_set_processing_3Bilateral_smoothing_parallel_performance, parallel_bilateral_smooth_point_set_performance.jpg}
 Parallel bilateral smoothing speed-up, compared to the sequential version of the algorithm. 
@@ -280,7 +282,7 @@ The following example reads a point set from a file, upsamples it to get a much 
 
 \subsubsection Point_set_processing_3Upsample_Parameter1 Parameter: edge_sensitivity
 This parameter controls where the new points are inserted. Larger values of edge-sensitivity give higher priority to inserting points along the sharp features.
-For example, as shown in the following figure, high value is preferable when one wants to insert more points on sharp features, where the local gradient is high, e.g., darts, cusps, creases and corners. In contrast, points are evenly inserted when "edge_sensitivity = 0". The range of possible value is from 0 to infinite. 
+For example, as shown in the following figure, high value is preferable when one wants to insert more points on sharp features, where the local gradient is high, e.g., darts, cusps, creases and corners. In contrast, points are evenly inserted when edge_sensitivity is set to 0. The range of possible value is [0, infinite). 
 
 \cgalFigureBegin{Point_set_processing_3figUpsample_edge_sensitivity, upsample_edge_sensitivity.jpg}
 Upsample results for different edge-sensitivity parameter values. The input containing 850 points is upsampled to 1,500 points in all cases depicted.
