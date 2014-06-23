@@ -24,6 +24,8 @@ concepts for the rest.
 
 Known bugs: the functor `Intersect_d` is not yet implemented. `Contained_in_affine_hull` assumes that the iterators refer to an affinely independent family. `Orientation_d` only works for points, not vectors.
 
+This kernel requires the \ref thirdpartyEigen "Eigen" library.
+
 \cgalModels `Kernel_d`
 \cgalModels `DelaunayTriangulationTraits`
 
