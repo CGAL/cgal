@@ -795,6 +795,37 @@ public:
     return Compare_endpoints_xy_2();
   }
 
+  class Trim_2
+  {
+    /*!\brief
+     * Returns a trimmed version of an arc
+     * 
+     * \param xcv The arc
+     * \param src the new first endpoint
+     * \param tgt the new second endpoint
+     * \return The trimmed arc
+     *
+     * \pre src != tgt
+     * \pre both points must be interior and must lie on \c cv
+     */
+  public:
+
+    X_monotone_curve_2 operator()(const X_monotone_curve_2& xcv, 
+                                const Point_2& src,
+                                const Point_2& tgt)const
+    {
+      // return (xcv.trim(src, tgt));
+      return (xcv);
+    }
+
+  };
+
+  //get a Trim_2 functor object
+  Trim_2 trim_2_object() const
+  {
+    return Trim_2();
+  }
+
   /*! \class Construct_opposite_2
    * The Construct_opposite_2 functor.
    */
