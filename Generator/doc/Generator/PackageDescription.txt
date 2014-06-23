@@ -36,6 +36,7 @@ achieve random permutations for otherwise regular generators (
 - `PointGenerator`
 - `RandomConvexSetTraits_2`
 - `RandomPolygonTraits_2`
+- `RandomConvexHullTraits_2`
 
 ## Functions ##
 

@@ -54,7 +54,7 @@ class Random_convex_hull_traits_2
     Compare_y_2
     compare_y_2_object() const
     {
-    	return Compare_x_2();
+    	return Compare_y_2();
     }
 
     Orientation_2

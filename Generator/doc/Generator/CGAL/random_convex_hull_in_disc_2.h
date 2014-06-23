@@ -15,17 +15,20 @@ The generated polygon will have an average number of vertices \f$ n^\frac{1}{3}(
 
 - `Generator` has to be a Boost random generator, such as `boost::random::mt19937`.
 
-- `fast` is a Boolean value, `true` for a time efficiency behavior and `false` for a memory efficiency behavior.
+- `fast` is a Boolean value, `true` for a time-efficienct behavior and `false` for a memory-efficient behavior.
 
-- The `OutputIterator` must accept values of type `Point_2<Traits>`.
+- `Traits` is a model of the concept `RandomConvexHullTraits_2`. 
+
+
+- The `OutputIterator` must accept values of type `Traits::Point_2`.
 
 \cgalHeading{Implementation}
 
-The implementation is based on an incremental construction of a convex hull. At each step a quantity of points that won't be an extremal is evaluted using a binomial law. 
-Thus, all the points doesn't have to be generated, reducing the time and size complexity.
-A tradeoff between time and memory is provided with the option `fast`, true by default. Using the `fast` option, the expected time complexity is
- \f$O\left(n^\frac{1}{3}\right)\f$ and the expected size complexity is \f$O\left(n^\frac{1}{3}\log^2 n \right)\f$. 
- If this option is disabled, both time and size complexities become  \f$O\left(n^\frac{1}{3}\log^\frac{2}{3}n \right)\f$. 
+The implementation is based on an incremental construction of a convex hull. At each step a quantity of points that won't be change the convex hull is evaluted using a binomial law. 
+Thus, all the points doesn't have to be generated, reducing the time and size complexities.
+A tradeoff between time and memory is provided with the option `fast`, true by default. Using the `fast` option, the expected size complexity is
+ \f$O\left(n^\frac{1}{3}\right)\f$ and the expected time complexity is \f$O\left(n^\frac{1}{3}\log^2 n \right)\f$. 
+ If this option is disabled, both time and size expected complexities become  \f$O\left(n^\frac{1}{3}\log^\frac{2}{3}n \right)\f$. 
 
 \cgalHeading{Example}
 

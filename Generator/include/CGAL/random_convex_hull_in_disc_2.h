@@ -34,6 +34,7 @@ namespace internal {
 template <class P, class Traits>
 struct compare_points_angle {
   bool operator()(const P& p, const P& q) {
+    P zero(0,0);
     Traits traits;
     typedef typename Traits::Left_turn_2 Left_turn;
     Left_turn left_turn = traits.left_turn_2_object();
@@ -41,17 +42,17 @@ struct compare_points_angle {
     typedef typename Traits::Compare_y_2 Compare_y_2;
     Compare_y_2 compare_y_2=traits.compare_y_2_object();
 
-    if (compare_y_2(p, ORIGIN) == LARGER ){
-      if (compare_y_2(q,ORIGIN)==LARGER)
-        return left_turn(ORIGIN, p, q);
+    if (compare_y_2(p, zero) == LARGER ){
+      if (compare_y_2(q, zero)==LARGER)
+        return left_turn(zero, p, q);
       else
         return false;
 
     } else {
-      if (compare_y_2(q,ORIGIN)==LARGER)
+      if (compare_y_2(q,zero)==LARGER)
         return true;
       else
-        return left_turn(ORIGIN, p, q);
+        return left_turn(zero, p, q);
     }
   }
 };
@@ -189,7 +190,7 @@ void random_convex_hull_in_disc_2(std::size_t n, double radius, std::list<typena
     // points s.t the angles are from -pi to pi.
     {
       typename std::list<P>::iterator it = l.begin();
-      while (compare_y_2(*it,ORIGIN) == LARGER){
+      while (compare_y_2(*it,zero) == LARGER){
       //while (to_double((*it).y()) > 0) {
         l.push_back(*it);
         l.pop_front();
@@ -198,7 +199,7 @@ void random_convex_hull_in_disc_2(std::size_t n, double radius, std::list<typena
       it = l.end();
       --it;  // last element
      // while (to_double((*it).y()) < 0) {
-      while (compare_y_2(*it,ORIGIN) == SMALLER){
+      while (compare_y_2(*it,zero) == SMALLER){
         l.push_front(*it);
         l.pop_back();
         it = l.end();
@@ -261,5 +262,6 @@ void random_convex_hull_in_disc_2(std::size_t n, double radius, Generator& gen,
   internal::random_convex_hull_in_disc_2(n, radius, l, gen, traits, fast);
   cpp11::copy_n(l.begin(),l.size(),it);
 }
+
 }  // namespace CGAL
 #endif
