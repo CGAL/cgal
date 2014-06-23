@@ -1850,6 +1850,20 @@ public:
   {
     return _tds.incident_cells(v, cells);
   }
+  
+  void incident_cells_threadsafe(Vertex_handle v,
+                                 std::vector<Cell_handle> &cells) const
+  {
+    return _tds.incident_cells_threadsafe(v, cells);
+  }
+  
+  template <typename Filter>
+  void incident_cells_threadsafe(Vertex_handle v,
+                                 std::vector<Cell_handle> &cells,
+                                 const Filter &filter) const
+  {
+    return _tds.incident_cells_threadsafe(v, cells, filter);
+  }
 
   bool
   try_lock_and_get_incident_cells(Vertex_handle v,

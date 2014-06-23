@@ -857,20 +857,6 @@ public:
                                     const FT& sliver_bound,
                                     Cell_vector &cells) const;
 
-
-  /**
-   * Get the incident cells and return them in \c cells
-   */
-  void
-  get_incident_cells_without_using_tds_data(const Vertex_handle& v,
-                                            Cell_vector &cells) const;
-
-  template <typename Filter>
-  void
-  get_incident_cells_without_using_tds_data(const Vertex_handle& v,
-                                            Cell_vector &cells,
-                                            const Filter &filter) const;
-
   template <typename SliverCriterion>
   void
   get_incident_slivers_without_using_tds_data(const Vertex_handle& v,
@@ -3377,58 +3363,6 @@ struct Counter {
 
 };
 
-
-template <typename C3T3, typename MD>
-void
-C3T3_helpers<C3T3,MD>::
-get_incident_cells_without_using_tds_data(const Vertex_handle& v,
-                                          Cell_vector &cells) const
-{
-  boost::unordered_set<Cell_handle, Handle_hash_function> found_cells;
-  Cell_handle d = v->cell();
-
-  cells.push_back(d);
-  found_cells.insert(d);
-  int head=0;
-  int tail=1;
-  do {
-    Cell_handle c = cells[head];
-
-    for (int i=0; i<4; ++i) {
-      if (c->vertex(i) == v)
-        continue;
-      Cell_handle next = c->neighbor(i);
-      if (! found_cells.insert(next).second )
-        continue;
-      cells.push_back(next);
-      ++tail;
-    }
-    ++head;
-  } while(head != tail);
-}
-
-
-
-template <typename C3T3, typename MD>
-template <typename Filter>
-void
-C3T3_helpers<C3T3,MD>::
-get_incident_cells_without_using_tds_data(const Vertex_handle& v,
-                                          Cell_vector &cells,
-                                          const Filter &filter) const
-{
-  std::vector<Cell_handle> tmp_cells;
-  tmp_cells.reserve(64);
-  get_incident_cells_without_using_tds_data(v, tmp_cells);
-
-  BOOST_FOREACH(Cell_handle& ch,
-                std::make_pair(tmp_cells.begin(), tmp_cells.end()))
-  {
-    if (filter(ch))
-      cells.push_back(ch);
-  }
-}
-
 template <typename C3T3, typename MD>
 template <typename SliverCriterion>
 void
@@ -3439,7 +3373,7 @@ get_incident_slivers_without_using_tds_data(const Vertex_handle& v,
                                             Cell_vector &slivers) const
 {
   Is_sliver<SliverCriterion> i_s(c3t3_, criterion, sliver_bound);
-  get_incident_cells_without_using_tds_data(v, slivers, i_s);
+  tr_.incident_cells_threadsafe(v, slivers, i_s);
 }
 
 

@@ -1010,6 +1010,49 @@ public:
       (*cit)->tds_data().clear();
     }
   }
+  
+  void incident_cells_threadsafe(Vertex_handle v,
+                                 std::vector<Cell_handle> &cells) const
+  {
+    boost::unordered_set<Cell_handle, Handle_hash_function> found_cells;
+    Cell_handle d = v->cell();
+
+    cells.push_back(d);
+    found_cells.insert(d);
+    int head=0;
+    int tail=1;
+    do {
+      Cell_handle c = cells[head];
+
+      for (int i=0; i<4; ++i) {
+        if (c->vertex(i) == v)
+          continue;
+        Cell_handle next = c->neighbor(i);
+        if (! found_cells.insert(next).second )
+          continue;
+        cells.push_back(next);
+        ++tail;
+      }
+      ++head;
+    } while(head != tail);
+  }
+
+  template <typename Filter>
+  void incident_cells_threadsafe(Vertex_handle v,
+                                 std::vector<Cell_handle> &cells,
+                                 const Filter &filter) const
+  {
+    std::vector<Cell_handle> tmp_cells;
+    tmp_cells.reserve(64);
+    incident_cells_threadsafe(v, tmp_cells);
+
+    BOOST_FOREACH(Cell_handle& ch,
+                  std::make_pair(tmp_cells.begin(), tmp_cells.end()))
+    {
+      if (filter(ch))
+        cells.push_back(ch);
+    }
+  }
 
   template <class Filter, class OutputIterator>
   OutputIterator
