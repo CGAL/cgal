@@ -110,7 +110,7 @@ it is better to use an individual instance of the deformation object for each co
 \subsection Deform_section Deformation
 
 The deformation of the surface mesh is triggered by the displacement of the control vertices.
-This is achieve through setting the target positions of the control vertices (directly or by using an affine transformation
+This is achieved through setting the target positions of the control vertices (directly or by using an affine transformation
 to be applied to a control vertex or a range of control vertices).
 
 Note that a rotation or a translation of a control vertex is always applied on its last target position set:
