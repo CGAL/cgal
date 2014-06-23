@@ -1,8 +1,8 @@
 #ifndef RECONSTRUCTION_FACE_BASE_2_H_
 #define RECONSTRUCTION_FACE_BASE_2_H_
 
-#include "Cost.h"
-#include "Sample.h"
+#include <CGAL/Cost.h>
+#include <CGAL/Sample.h>
 #include <CGAL/Triangulation_face_base_2.h>
 
 #include <list>

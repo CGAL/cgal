@@ -20,7 +20,7 @@
 #ifndef _RECONSTRUCTION_EDGE_2_H_
 #define _RECONSTRUCTION_EDGE_2_H_
 
-#import "Dynamic_priority_queue.h"
+#include <CGAL/Dynamic_priority_queue.h>
 
 //---------------CLASS CPEDGE---------------------
 template <class FT, class Edge, class Vertex_handle, class Face_handle>

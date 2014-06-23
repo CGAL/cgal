@@ -22,17 +22,18 @@
 
 //#include <CGAL/property_map.h>
 
-#include "Reconstruction_triangulation_2.h"
-#include "Cost.h"
-#include "Reconstruction_edge_2.h"
-#include "Sample.h"
-#include "console_color.h"
+#include <CGAL/Reconstruction_triangulation_2.h>
+#include <CGAL/Cost.h>
+#include <CGAL/Reconstruction_edge_2.h>
+#include <CGAL/Sample.h>
+#include <CGAL/console_color.h>
 
 #include <CGAL/property_map.h>
 
 #include <iterator>
 #include <iostream>
 #include <list>
+#include <algorithm>
 
 #include <CGAL/property_map.h>
 
@@ -205,7 +206,7 @@ public:
 
 
 		    //TODO: IV find nicer way to handle m_ignore
-		    int nb_remove = std::min(m_ignore, int(queue.size()));
+		    int nb_remove = (std::min)(m_ignore, int(queue.size()));
 
 		    for (int i = 0; i < nb_remove; ++i)
 		    {

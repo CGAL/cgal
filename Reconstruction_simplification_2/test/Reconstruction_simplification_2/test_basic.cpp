@@ -5,18 +5,17 @@
 //----------------------------------------------------------
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include "Reconstruction_simplification_2.h"
+#include <CGAL/Reconstruction_simplification_2.h>
 
 #include <fstream>
 
 #include<iostream>
+#include <string>
 #include <iterator>
 #include <utility>      // std::pair
 
 #include <CGAL/property_map.h>
 #include <CGAL/value_type_traits.h>
-
-#include <QtOpenGL>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef K::Point_2                                          Point;
@@ -30,7 +29,7 @@ typedef CGAL::First_of_pair_property_map <PointMassPair> PointPMap;
 typedef CGAL::Second_of_pair_property_map <PointMassPair> MassPMap;
 
 
-PointMassList* load_xy_file(const QString& fileName);
+PointMassList* load_xy_file(const std::string& fileName);
 PointMassList* simple_point_set();
 
 
@@ -81,10 +80,10 @@ PointMassList* simple_point_set() {
 }
 
 
-PointMassList* load_xy_file(const QString& fileName)
+PointMassList* load_xy_file(const std::string& fileName)
 {
 	PointMassList *points = new PointMassList();
-       std::ifstream ifs(qPrintable(fileName));
+       std::ifstream ifs(fileName);
        std::cerr << "read xy...";
        Point point;
        unsigned int nb = 0;
