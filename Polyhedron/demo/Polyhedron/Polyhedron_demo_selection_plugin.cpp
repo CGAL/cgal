@@ -101,10 +101,10 @@ public slots:
       return; 
     }
 
-    boost::optional<std::size_t> minimum = 
+    boost::optional<std::size_t> minimum =
       selection_item->select_isolated_components(ui_widget.Threshold_size_spin_box->value());
     if(minimum) {
-      ui_widget.Threshold_size_spin_box->setValue(*minimum);
+      ui_widget.Threshold_size_spin_box->setValue((int) *minimum);
     }
   }
   void on_Get_minimum_button_clicked() {
@@ -115,7 +115,7 @@ public slots:
     }
     boost::optional<std::size_t> minimum = selection_item->get_minimum_isolated_component();
     if(minimum) {
-      ui_widget.Threshold_size_spin_box->setValue(*minimum);
+      ui_widget.Threshold_size_spin_box->setValue((int) *minimum);
     }
   }
   // Create selection item for selected polyhedron item
