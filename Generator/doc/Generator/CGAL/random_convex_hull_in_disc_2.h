@@ -11,7 +11,7 @@ The generated polygon will have an average number of vertices \f$ n^\frac{1}{3}(
 
 \pre \f$n \geq 3 \f$
 
-\cgalHeading{Requires}
+\cgalHeading{Requirements}
 
 - `Generator` has to be a Boost random generator, such as `boost::random::mt19937`.
 
@@ -19,8 +19,10 @@ The generated polygon will have an average number of vertices \f$ n^\frac{1}{3}(
 
 - `Traits` is a model of the concept `RandomConvexHullTraits_2`. 
 
-
 - The `OutputIterator` must accept values of type `Traits::Point_2`.
+
+\sa `CGAL::random_polygon_2()` 
+\sa `CGAL::random_convex_set_2()`
 
 \cgalHeading{Implementation}
 
