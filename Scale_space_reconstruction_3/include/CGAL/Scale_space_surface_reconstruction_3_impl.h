@@ -16,8 +16,12 @@
 //
 // Author(s):      Thijs van Lankveld
 
-#ifndef CGAL_SCALE_SPACE_SURFACE_RECONSTRUCTION_IMPL_H
-#define CGAL_SCALE_SPACE_SURFACE_RECONSTRUCTION_IMPL_H
+#ifndef CGAL_SCALE_SPACE_SURFACE_RECONSTRUCTION_3_IMPL_H
+#define CGAL_SCALE_SPACE_SURFACE_RECONSTRUCTION_3_IMPL_H
+
+#include <omp.h>
+
+#include <CGAL/Scale_space_reconstruction_3/Weighted_PCA_projection_3.h>
 
 namespace CGAL {
     
@@ -69,16 +73,12 @@ public:
 template < class GeomTraits, class FixedScale, class Shells >
 Scale_space_surface_reconstruction_3<GeomTraits,FixedScale,Shells>::
 Scale_space_surface_reconstruction_3( unsigned int neighbors, unsigned int samples )
-: _mean_neighbors(neighbors), _samples(samples), _squared_radius(-1), _shape(0) {
-    _separator = make_array<unsigned int>(0,0,0);
-}
+: _mean_neighbors(neighbors), _samples(samples), _squared_radius(-1), _shape(0) {}
 
 template < class GeomTraits, class FixedScale, class Shells >
 Scale_space_surface_reconstruction_3<GeomTraits,FixedScale,Shells>::
 Scale_space_surface_reconstruction_3( FT sq_radius )
-: _mean_neighbors(30), _samples(200), _squared_radius(sq_radius), _shape(0) {
-    _separator = make_array<unsigned int>(0,0,0);
-}
+: _mean_neighbors(30), _samples(200), _squared_radius(sq_radius), _shape(0) {}
 
 template < class GeomTraits, class FixedScale, class Shells >
 inline bool
@@ -151,6 +151,10 @@ collect_shell( Cell_handle c, unsigned int li ) {
 
         // Output the facet as a triple of indices.
         _surface.push_back( ordered_facet_indices(f) );
+        if( !processed ) {
+            _shells.push_back( --_surface.end() );
+            processed = true;
+        }
 		
         // Pivot over each of the facet's edges and continue the surface at the next regular or singular facet.
         for( unsigned int i = 0; i < 4; ++i ) {
@@ -174,14 +178,8 @@ collect_shell( Cell_handle c, unsigned int li ) {
 
             // Continue the surface at the next regular or singular facet.
             stack.push( Facet(n, ni) );
-			    
-            processed = true;
         }
     }
-        
-    // We indicate the end of a shell by the (0,0,0) triple.
-    if( processed )
-        _surface.push_back( _separator );
 }
 
 template < class GeomTraits, class FixedScale, class Shells >
@@ -282,7 +280,7 @@ template < class InputIterator >
 typename Scale_space_surface_reconstruction_3<GeomTraits,FixedScale,Shells>::FT
 Scale_space_surface_reconstruction_3<GeomTraits,FixedScale,Shells>::
 estimate_neighborhood_radius( InputIterator begin, InputIterator end, unsigned int neighbors, unsigned int samples ) {
-    clear_tree();
+    clear();
 	insert_points( begin, end );
 	return estimate_neighborhood_radius( neighbors, samples );
 }
@@ -296,11 +294,7 @@ advance_scale_space( unsigned int iterations ) {
     typedef std::map<Point, size_t>			            PIMap;
     typedef std::vector<Point>                          Pointset;
 
-    typedef Eigen::Matrix<double, 3, Eigen::Dynamic>	EMatrix3D;
-    typedef Eigen::Array<double, 1, Eigen::Dynamic>		EArray1D;
-    typedef Eigen::Matrix3d								EMatrix3;
-    typedef Eigen::Vector3d								EVector3;
-    typedef Eigen::SelfAdjointEigenSolver<EMatrix3>		EigenSolver;
+    typedef Weighted_PCA_projection_3< GeomTraits >     WPCAP;
 
     typedef internal::_ENVIRONMENT::s_ptr_type			p_size_t;
 		
@@ -331,7 +325,7 @@ advance_scale_space( unsigned int iterations ) {
         typename GeomTraits::Compare_squared_distance_3 compare;
         p_size_t count = tree.size(); // openMP can only use signed variables.
         const FT squared_radius = _squared_radius; // openMP can only use local variables.
-#ifdef _OPENMP_
+#ifdef _OPENMP
 #pragma omp parallel for shared(count,tree,points,squared_radius,neighbors) firstprivate(compare)
 #endif
         for( p_size_t i = 0; i < count; ++i ) {
@@ -349,7 +343,7 @@ advance_scale_space( unsigned int iterations ) {
 
         // Compute the tranformed point locations.
         // This can be done parallel.
-#ifdef _OPENMP_
+#ifdef _OPENMP
 #pragma omp parallel for shared(count,neighbors,tree,squared_radius) firstprivate(compare)
 #endif
         for( p_size_t i = 0; i < count; ++i ) {
@@ -359,51 +353,20 @@ advance_scale_space( unsigned int iterations ) {
 
             // Collect the vertices within the ball and their weights.
             Dynamic_search search( tree, points[i] );
-            EMatrix3D pts( 3, neighbors[i] );
-            EArray1D wts( 1, neighbors[i] );
+            WPCAP pca( neighbors[i] );
             unsigned int column = 0;
             for( typename Dynamic_search::iterator nit = search.begin(); nit != search.end() && column < neighbors[i]; ++nit, ++column ) {
-                pts( 0, column ) = to_double( nit->first[0] );
-                pts( 1, column ) = to_double( nit->first[1] );
-                pts( 2, column ) = to_double( nit->first[2] );
-                wts( column ) = 1.0 / neighbors[ indices[nit->first] ];
+                pca.set_point( column, nit->first, 1.0 / neighbors[ indices[nit->first] ] );
             }
             CGAL_assertion( column == neighbors[i] );
 
-            // Construct the barycenter.
-            EVector3 bary = ( pts.array().rowwise() * wts ).rowwise().sum() / wts.sum();
-			
-            // Replace the points by their difference with the barycenter.
-            pts = ( pts.colwise() - bary ).array().rowwise() * wts;
-
-            // Construct the weighted covariance matrix.
-            EMatrix3 covariance = EMatrix3::Zero();
-            for( column = 0; column < pts.cols(); ++column )
-                covariance += wts.matrix()(column) * pts.col(column) * pts.col(column).transpose();
-
-            // Construct the Eigen system.
-            EigenSolver solver( covariance );
-
-            // If the Eigen system does not converge, the vertex is not moved.
-            if( solver.info() != Eigen::Success )
+            // Compute the weighted least-squares planar approximation of the point set.
+            if( !pca.approximate() )
                 continue;
-
-            // Find the Eigen vector with the smallest Eigen value.
-            std::ptrdiff_t index;
-            solver.eigenvalues().minCoeff( &index );
-            if (solver.eigenvectors().col( index ).imag() != EVector3::Zero()) {
-                // This should actually never happen!
-                CGAL_assertion( false );
-                continue;
-            }
-            EVector3 n = solver.eigenvectors().col( index ).real();
 
             // The vertex is moved by projecting it onto the plane
             // through the barycenter and orthogonal to the Eigen vector with smallest Eigen value.
-            EVector3 bv = EVector3( to_double(points[i][0]), to_double(points[i][1]), to_double(points[i][2]) ) - bary;
-            EVector3 per = bary + bv - ( n.dot(bv) * n );
-
-            points[i] = Point( per(0), per(1), per(2) );
+            points[i] = pca.project( points[i] );
         }
             
         tree.clear();
@@ -460,6 +423,42 @@ reconstruct_surface( InputIterator begin, InputIterator end, unsigned int iterat
     collect_surface();
 }
 
+template < class GeomTraits, class FixedScale, class Shells >
+typename Scale_space_surface_reconstruction_3<GeomTraits,FixedScale,Shells>::Const_triple_iterator
+Scale_space_surface_reconstruction_3<GeomTraits,FixedScale,Shells>::shell_begin( std::size_t shell ) const {
+    CGAL_assertion( Shells::value == true );
+    CGAL_assertion( shell >= 0 && shell < _shells.size() );
+    return _shells[ shell ];
+}
+
+template < class GeomTraits, class FixedScale, class Shells >
+typename Scale_space_surface_reconstruction_3<GeomTraits,FixedScale,Shells>::Triple_iterator
+Scale_space_surface_reconstruction_3<GeomTraits,FixedScale,Shells>::shell_begin( std::size_t shell ) {
+    CGAL_assertion( Shells::value == true );
+    CGAL_assertion( shell >= 0 && shell < _shells.size() );
+    return _shells[ shell ];
+}
+
+template < class GeomTraits, class FixedScale, class Shells >
+typename Scale_space_surface_reconstruction_3<GeomTraits,FixedScale,Shells>::Const_triple_iterator
+Scale_space_surface_reconstruction_3<GeomTraits,FixedScale,Shells>::shell_end( std::size_t shell ) const {
+    CGAL_assertion( Shells::value == true );
+    CGAL_assertion( shell >= 0 && shell < _shells.size() );
+    if( shell == _shells.size()-1 )
+        return _surface.end();
+    return _shells[ shell+1 ];
+}
+
+template < class GeomTraits, class FixedScale, class Shells >
+typename Scale_space_surface_reconstruction_3<GeomTraits,FixedScale,Shells>::Triple_iterator
+Scale_space_surface_reconstruction_3<GeomTraits,FixedScale,Shells>::shell_end( std::size_t shell ) {
+    CGAL_assertion( Shells::value == true );
+    CGAL_assertion( shell >= 0 && shell < _shells.size() );
+    if( shell == _shells.size()-1 )
+        return _surface.end();
+    return _shells[ shell+1 ];
+}
+
 } // namespace CGAL
 
-#endif // CGAL_SCALE_SPACE_SURFACE_RECONSTRUCTION_IMPL_H
+#endif // CGAL_SCALE_SPACE_SURFACE_RECONSTRUCTION_3_IMPL_H

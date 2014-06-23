@@ -1,5 +1,8 @@
 /// \defgroup PkgScaleSpaceReconstruction3 Scale-space surface reconstruction Reference
 
+/// \defgroup PkgScaleSpaceReconstruction3Concepts Concepts
+/// \ingroup PkgScaleSpaceReconstruction3
+
 /// \defgroup PkgScaleSpaceReconstruction3Classes Classes
 /// \ingroup PkgScaleSpaceReconstruction3
 
@@ -19,16 +22,22 @@
 \cgalPkgLicense{\ref licensesGPL "GPL" }
 \cgalPkgDependsOn{\ref PkgAlphaShapes3Summary}
 \cgalPkgDependsOn{\ref PkgSpatialSearchingD}
+\cgalPkgDependsOn{\ref PkgStlExtension}
+\cgalPkgDependsOn{\ref PkgAlgebraicFoundationsSummary}
 \cgalPkgDependsOn{\ref thirdpartyEigen}
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd
 
 \cgalClassifedRefPages
 
+## Concepts ##
+
+- `WeightedPCAProjection_3<Kernel>`
+
 ## Classes ##
 
 - `CGAL::Scale_space_surface_reconstruction_3<DelaunayTriangulationTraits_3,Boolean_tag,Boolean_tag>`
-- `CGAL::Shape_construction_3<DelaunayTriangulationTraits_3,Boolean_tag>`
+- `CGAL::Weighted_PCA_projection_3<Kernel>`
 
 */
 

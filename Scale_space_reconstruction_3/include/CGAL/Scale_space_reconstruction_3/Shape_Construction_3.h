@@ -17,8 +17,8 @@
 // Author(s):      Thijs van Lankveld
 
 
-#ifndef CGAL_INTERNAL_SHAPE_TYPE_H
-#define CGAL_INTERNAL_SHAPE_TYPE_H
+#ifndef CGAL_SHAPE_CONSTRUCTION_3_H
+#define CGAL_SHAPE_CONSTRUCTION_3_H
 
 #include <CGAL/Scale_space_reconstruction_3/internal/Auto_count.h>
 
@@ -37,8 +37,8 @@
 
 namespace CGAL {
 
-/// provides a generalized constructor for the shape of a set of points. 
-/** \ingroup PkgScaleSpaceReconstruction3Classes
+// provides a generalized constructor for the shape of a set of points. 
+/* \ingroup PkgScaleSpaceReconstruction3Classes
  *  The shape of a set of points is ill-defined. Specifically,
  *  because a set of points has no inherent notion of connectivity,
  *  the contour or outline of a set of points is no more descriptive than
@@ -207,4 +207,4 @@ public:
 
 } // namespace CGAL
 
-#endif // CGAL_INTERNAL_SHAPE_TYPE_H
+#endif // CGAL_SHAPE_CONSTRUCTION_3_H

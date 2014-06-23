@@ -16,15 +16,13 @@
 //
 // Author(s):      Thijs van Lankveld
 
-#ifndef CGAL_SCALE_SPACE_SURFACE_RECONSTRUCTION_H
-#define CGAL_SCALE_SPACE_SURFACE_RECONSTRUCTION_H
+#ifndef CGAL_SCALE_SPACE_SURFACE_RECONSTRUCTION_3_H
+#define CGAL_SCALE_SPACE_SURFACE_RECONSTRUCTION_3_H
 
 #include <iostream>
 #include <list>
 #include <map>
 #include <vector>
-
-#include <omp.h>
 
 #include <boost/iterator/transform_iterator.hpp>
 
@@ -38,8 +36,6 @@
 #include <CGAL/Scale_space_reconstruction_3/internal/check3264.h>
 #include <CGAL/Scale_space_reconstruction_3/Shape_construction_3.h>
 
-#include <Eigen/Dense>
-
 
 namespace CGAL {
 
@@ -50,29 +46,31 @@ namespace CGAL {
  *  smoothed representation of the point set, which makes the surface
  *  reconstruction problem less ill-posed. Then, a triangulated surface mesh of
  *  the points in the scale-space is computed. This mesh is represented as
- *  triples of indices of the point set.
+ *  triples of indices of the point set. Neighboring triples have consistent
+ *  orientation, as expressed using the '<em>right-hand rule</em>' on the
+ *  ordered vertices of the triple.
  * 
  *  The points maintain their original order in the scale-space. This means it
  *  is straightforward to revert the scale-space on the triangulated surface
  *  mesh. In essence, the method can reconstruct a smooted surface or a surface
- *  interpolating the original points. The only change it whether to apply the
+ *  interpolating the original points. The only change is whether to apply the
  *  index triples to the scale-space or to the original point set.
  *
  *  When applied to the scale-space, the surface mesh is non-self-intersecting.
  *  The interior of the triangles cannot pairwise intersect in a line segment.
  *  However, the surface does not need to be manifold. An edge may be incident
  *  to more than two triangles and triangles may overlap exactly if the regions
- *  on both sides of the triangle are not part of the object. In many cases
- *  where the points sample the surface of an object, the computed surface will
- *  contain both an '<em>outward-facing</em>' and a similar
- *  '<em>inward-facing</em>' surface, with a thin volume between them.
+ *  on both sides of the triangle are not part of the object. Note that we
+ *  count overlapping triangles with opposite orientations as separate
+ *  triangles. In many cases where the points sample the surface of an object,
+ *  the computed surface will contain both an '<em>outward-facing</em>' and a
+ *  similar '<em>inward-facing</em>' surface, with a thin volume between them.
  *
- *  The surface mesh will not have holes or edges incident to only one triangle
- *  and its triangles are all oriented towards the outside of the object
- *  sampled. If the point sample has holes, it is likely that the surface mesh
- *  will contain overlapping triangles with opposite orientation touching this
- *  hole. The orientation of a triangle is expressed using the
- *  '<em>right-hand rule</em>' on the ordered vertices of the triangle.
+ *  The surface mesh will not have edges incident to only one triangle or
+ *  holes, loops of such edges, and the triangles are all oriented towards the
+ *  outside of the object sampled. If the point sample has '<em>holes</em>', it
+ *  is likely that the surface mesh will contain overlapping triangles with
+ *  opposite orientation touching this hole.
  *
  *  If the object is not densely sampled or has disconnected components, the
  *  surface may have several disconnected components. The surface may be
@@ -104,7 +102,7 @@ namespace CGAL {
  *  smaller than the neighborhood size, the scale is coarse enough for mesh
  *  reconstruction after a few iterations of advancing the scale-space.
  *
- *  For the PCA procedure, we use the efficient \ref thirdpartyEigen library.
+ *  For the PCA procedure, we use a `Weighted_PCA_projection_3<GeomTraits>`.
  *  The mesh reconstruction of the scale-space is performed by filtering a 3D
  *  \f$ \alpha \f$-shape. The result is returned as a collection of triples on
  *  the indices of the points of the surface triangles. Recall that this
@@ -132,11 +130,15 @@ namespace CGAL {
  *  triangles.
  *
  *  The shape can be constructed either at a fixed scale, or at a dynamic
- *  scale, as defined by Shape_construction_3. The first option is faster when
- *  constructing a single shape. It is undefined whether a shape with fixed
- *  scale may have its scale changed, but if so, this will likely require more
- *  computation time than changing a dynamic scale. In either case, it is
- *  possible to change the point set while maintaining the same scale.
+ *  scale. When constructing the surface for exactly one neighborhood radius,
+ *  it is faster to set `FixedScale` to `Tag_true`. If the correct neighborhood
+ *  radius should be changed or estimated multiple times, it is faster to set
+ *  `FixedScale` to `Tag_false`.
+ *
+ *  It is undefined whether a shape with fixed scale may have its scale
+ *  changed, but if so, this will likely require more computation time than
+ *  changing a dynamic scale. In either case, it is possible to change the
+ *  point set while maintaining the same scale.
  *
  *  The surface can be stored either as an unordered collection of triangles, 
  *  or as a collection of shells. A shell is a connected component of the 
@@ -211,6 +213,7 @@ public:
     typedef CGAL::cpp11::array< unsigned int, 3 >       Triple;                 ///< defines a triple of point indices indicating a triangle of the surface.
 private:
     typedef std::list< Triple >                         Tripleset;              ///< defines a collection of triples.
+    // Note that this is a list for two reasons: iterator validity for the shell iterators, and memory requirements for the expected huge collections.
 
 public:
 #ifdef DOXYGEN_RUNNING
@@ -222,6 +225,9 @@ public:
 #endif // DOXYGEN_RUNNING
 
 /// \}
+
+private:
+    typedef std::vector< Triple_iterator >              TripleIterSet;
 
 private:
     class Finite_point_iterator;
@@ -245,10 +251,12 @@ private:
     // reconstructer object.
 	Shape*          _shape;
 
-    // The surface. If the surface is collected per shell, consecutive triples
-    // belong to the same shell and different shells are separated by _separator.
+    // The surface. If the surface is collected per shell, the triples of the
+    // same shell are stored consecutively.
     Tripleset       _surface;
-    Triple          _separator;
+
+    // The shells can be accessed through iterators to the surface.
+    TripleIterSet   _shells;
 
 public:
 /// \name Constructors
@@ -263,6 +271,7 @@ public:
 
     /// constructs a surface reconstructor with a given neighborhood radius.
     /** \param sq_radius is stored as the squared radius of the neighborhood.
+     *
      *  \note If the neighborhood squared radius is negative when the point set
      *  is smoothed or when the surface is computed, the neighborhood radius
      *  will be computed automatically.
@@ -317,37 +326,44 @@ public:
 /// \name Point Set Manipulation
 /// \{
     /// inserts a point into the scale-space.
-    /** Note that inserting the point does not automatically construct or
+    /** \param p is the point to insert.
+     *
+     *  \note Inserting the point does not automatically construct or
      *  update the surface.
      *
-     *  In order to construct the surface, call
-     *  reconstruct_surface(unsigned int iterations).
+     *  \note In order to construct the surface, call
+     *  `reconstruct_surface(unsigned int iterations)`.
      *
-     *  \param p is the point to insert.
+     *  \warning Inserting a new point may invalidate the neighborhood radius
+     *  if it was previously estimated.
      *
-     *  \sa insert_points(InputIterator begin, InputIterator end).
+     *  \sa `insert_points(InputIterator begin, InputIterator end)`.
      */
 	void insert_point( const Point& p ) {
 		_tree.insert( p );
 	}
 
     /// inserts a collection of points into the scale-space.
-    /** Note that inserting the points does not automatically construct or
-     *  update the surface.
-     *
-     *  In order to construct the surface, either call
-     *  reconstruct_surface(unsigned int iterations) after inserting the
-     *  points, or insert the points using
-     *  reconstruct_surface(InputIterator begin, InputIterator end, unsigned int iterations).
-     *
-     *  \tparam InputIterator is an iterator over the point collection.
+    /** \tparam InputIterator is an iterator over the point collection.
      *  The iterator must point to a `Point`.
+     *
      *  \param begin is an iterator to the first point of the collection.
      *  \param end is a past-the-end iterator for the point collection.
      *
-     *  \sa insert_point(const Point& p).
-     *  \sa construct_scale_space(InputIterator begin, InputIterator end, unsigned int iterations).
-     *  \sa reconstruct_surface(InputIterator begin, InputIterator end, unsigned int iterations).
+     *  \note Inserting the points does not automatically construct or
+     *  update the surface.
+     *
+     *  \note In order to construct the surface, either call
+     *  `reconstruct_surface(unsigned int iterations)` after inserting the
+     *  points, or insert the points using
+     *  `reconstruct_surface(InputIterator begin, InputIterator end, unsigned int iterations)`.
+     *
+     *  \warning Inserting new points may invalidate the neighborhood radius if
+     *  it was previously estimated.
+     *
+     *  \sa `insert_point(const Point& p)`.
+     *  \sa `construct_scale_space(InputIterator begin, InputIterator end, unsigned int iterations)`.
+     *  \sa `reconstruct_surface(InputIterator begin, InputIterator end, unsigned int iterations)`.
      */
 	template < class InputIterator >
 	void insert_points( InputIterator begin, InputIterator end ) {
@@ -382,10 +398,10 @@ public:
     /// checks whether the neighborhood radius has been set.
     /** The radius can be set manually, or estimated automatically.
      *
-     *  \return true iff the radius has been either set manually or estimated.
+     *  \return `true` iff the radius has been either set manually or estimated.
      *
-     *  \sa set_neighborhood_squared_radius().
-     *  \sa estimate_neighborhood_radius().
+     *  \sa `set_neighborhood_squared_radius()`.
+     *  \sa `estimate_neighborhood_radius()`.
      */
     bool has_neighborhood_radius() const {
         return sign( _squared_radius ) == POSITIVE;
@@ -393,18 +409,19 @@ public:
 
     /// gives the squared radius of the neighborhood.
     /** The neighborhood radius is used by
-     *  [advance_scale_space](\ref advance_scale_space) and
-     *  [construct_scale_space](\ref construct_scale_space) to compute the
-     *  scale-space and by [reconstruct_surface](\ref reconstruct_surface) to
+     *  <code>[advance_scale_space](\ref advance_scale_space)</code> and
+     *  <code>[construct_scale_space](\ref construct_scale_space)</code> to
+     *  compute the scale-space and by
+     *  <code>[reconstruct_surface](\ref reconstruct_surface)</code> to
      *  construct the shape of the scale-space.
      *
      *  \return the squared radius of the neighborhood, or -1 if the
      *  neighborhood radius has not yet been set.
      *
-     *  \sa advance_scale_space(unsigned int iterations).
-     *  \sa construct_scale_space(InputIterator begin, InputIterator end, unsigned int iterations).
-     *  \sa reconstruct_surface(unsigned int iterations).
-     *  \sa reconstruct_surface(InputIterator begin, InputIterator end, unsigned int iterations).
+     *  \sa `advance_scale_space(unsigned int iterations)`.
+     *  \sa `construct_scale_space(InputIterator begin, InputIterator end, unsigned int iterations)`.
+     *  \sa `reconstruct_surface(unsigned int iterations)`.
+     *  \sa `reconstruct_surface(InputIterator begin, InputIterator end, unsigned int iterations)`.
      */
     FT neighborhood_squared_radius() const { return _squared_radius; }
 
@@ -419,11 +436,11 @@ public:
      *  should contain on average when the radius is estimated, not counting
      *  the point itself.
      *
-     *  \sa set_mean_number_of_neighbors(unsigned int neighbors).
-     *  \sa has_neighborhood_radius().
-     *  \sa neighborhood_sample_size().
-     *  \sa estimate_neighborhood_radius().
-     *  \sa estimate_neighborhood_radius(InputIterator begin, InputIterator end).
+     *  \sa `set_mean_number_of_neighbors(unsigned int neighbors)`.
+     *  \sa `has_neighborhood_radius()`.
+     *  \sa `neighborhood_sample_size()`.
+     *  \sa `estimate_neighborhood_radius()`.
+     *  \sa `estimate_neighborhood_radius(InputIterator begin, InputIterator end)`.
      */
     unsigned int mean_number_of_neighbors() const { return _mean_neighbors; }
 
@@ -437,36 +454,41 @@ public:
      *
      *  \return the number of points sampled for neighborhood estimation.
      *
-     *  \sa set_neighborhood_sample_size(unsigned int samples).
-     *  \sa has_neighborhood_radius().
-     *  \sa mean_number_of_neighbors().
-     *  \sa estimate_neighborhood_radius().
-     *  \sa estimate_neighborhood_radius(InputIterator begin, InputIterator end).
+     *  \sa `set_neighborhood_sample_size(unsigned int samples)`.
+     *  \sa `has_neighborhood_radius()`.
+     *  \sa `mean_number_of_neighbors()`.
+     *  \sa `estimate_neighborhood_radius()`.
+     *  \sa `estimate_neighborhood_radius(InputIterator begin, InputIterator end)`.
      */
     unsigned int neighborhood_sample_size() const { return _samples; }
     
     /// sets the squared radius of the neighborhood.
     /** The neighborhood radius is used by
-     *  [advance_scale_space](\ref advance_scale_space) and
-     *  [construct_scale_space](\ref construct_scale_space) to compute the
-     *  scale-space and by [reconstruct_surface](\ref reconstruct_surface) to
+     *  <code>[advance_scale_space](\ref advance_scale_space)</code> and
+     *  <code>[construct_scale_space](\ref construct_scale_space)</code> to
+     *  compute the scale-space and by
+     *  <code>[reconstruct_surface](\ref reconstruct_surface)</code> to
      *  construct the shape of the scale-space.
      *
      *  \param sq_radius is stored as the squared radius of the neighborhood.
+     *
      *  \note If the neighborhood squared radius is negative when the point set
      *  is smoothed or when the surface is computed, the neighborhood radius
      *  will be computed automatically.
      *
-     *  \sa neighborhood_squared_radius().
-     *  \sa has_neighborhood_radius().
-     *  \sa advance_scale_space(unsigned int iterations).
-     *  \sa construct_scale_space(InputIterator begin, InputIterator end, unsigned int iterations).
-     *  \sa reconstruct_surface(unsigned int iterations).
-     *  \sa reconstruct_surface(InputIterator begin, InputIterator end, unsigned int iterations).
+     *  \warning If the surface was already constructed, changing the
+     *  neighborhood radius will automatically adjust the surface.
+     *
+     *  \sa `neighborhood_squared_radius()`.
+     *  \sa `has_neighborhood_radius()`.
+     *  \sa `advance_scale_space(unsigned int iterations)`.
+     *  \sa `construct_scale_space(InputIterator begin, InputIterator end, unsigned int iterations)`.
+     *  \sa `reconstruct_surface(unsigned int iterations)`.
+     *  \sa `reconstruct_surface(InputIterator begin, InputIterator end, unsigned int iterations)`.
      */
     void set_neighborhood_squared_radius( const FT& sq_radius ) {
         _squared_radius = sq_radius;
-		if( has_shape() )
+		if( has_neighborhood_radius() && has_shape() )
             Shape_construction_3().change_scale( _shape, _squared_radius );
     }
 
@@ -481,9 +503,11 @@ public:
      *  should contain on average when the radius is estimated, not counting
      *  the point itself.
      *
-     *  \sa mean_number_of_neighbors().
-     *  \sa has_neighborhood_radius().
-     *  \sa set_neighborhood_sample_size(unsigned int samples).
+     *  \note This does not start the estimation process.
+     *
+     *  \sa `mean_number_of_neighbors()`.
+     *  \sa `has_neighborhood_radius()`.
+     *  \sa `set_neighborhood_sample_size(unsigned int samples)`.
      */
     void set_mean_number_of_neighbors( unsigned int neighbors ) { _mean_neighbors = neighbors; }
     
@@ -498,29 +522,34 @@ public:
      *  \param samples is the number of points to sample for neighborhood
      *  estimation.
      *
-     *  \sa neighborhood_sample_size().
-     *  \sa has_neighborhood_radius().
-     *  \sa set_mean_number_of_neighbors(unsigned int neighbors).
-     *  \sa estimate_neighborhood_radius().
-     *  \sa estimate_neighborhood_radius(InputIterator begin, InputIterator end).
+     *  \note This does not start the estimation process.
+     *
+     *  \sa `neighborhood_sample_size()`.
+     *  \sa `has_neighborhood_radius()`.
+     *  \sa `set_mean_number_of_neighbors(unsigned int neighbors)`.
+     *  \sa `estimate_neighborhood_radius()`.
+     *  \sa `estimate_neighborhood_radius(InputIterator begin, InputIterator end)`.
      */
     void set_neighborhood_sample_size( unsigned int samples ) { _samples = samples; }
 
     /// estimates the neighborhood radius.
     /** This method is equivalent to running
-     *  [estimate_neighborhood_radius( mean_number_of_neighbors(), neighborhood_sample_size() )](\ref estimate_neighborhood_radius).
+     *  <code>[estimate_neighborhood_radius( mean_number_of_neighbors(), neighborhood_sample_size() )](\ref estimate_neighborhood_radius)</code>.
      *
      *  This method will be called by the scale-space and surface construction
      *  methods if the neighborhood radius is not set when they are called.
      *
      *  \return the estimated neighborhood radius.
      *
-     *  \sa set_mean_number_of_neighbors(unsigned int neighbors).
-     *  \sa set_neighborhood_sample_size(unsigned int samples).
-     *  \sa estimate_neighborhood_radius(unsigned int neighbors, unsigned int samples).
-     *  \sa estimate_neighborhood_radius(InputIterator begin, InputIterator end).
-     *  \sa advance_scale_space(unsigned int iterations).
-     *  \sa reconstruct_surface(unsigned int iterations).
+     *  \warning If the surface was already constructed, estimating the
+     *  neighborhood radius will automatically adjust the surface.
+     *
+     *  \sa `set_mean_number_of_neighbors(unsigned int neighbors)`.
+     *  \sa `set_neighborhood_sample_size(unsigned int samples)`.
+     *  \sa `estimate_neighborhood_radius(unsigned int neighbors, unsigned int samples)`.
+     *  \sa `estimate_neighborhood_radius(InputIterator begin, InputIterator end)`.
+     *  \sa `advance_scale_space(unsigned int iterations)`.
+     *  \sa `reconstruct_surface(unsigned int iterations)`.
      */
     inline FT estimate_neighborhood_radius() {
         return estimate_neighborhood_radius( mean_number_of_neighbors(), neighborhood_sample_size() );
@@ -540,15 +569,19 @@ public:
      *  neighborhood radius.
      *  \return the estimated neighborhood radius.
      *
-     *  \sa estimate_neighborhood_radius().
-     *  \sa estimate_neighborhood_radius(InputIterator begin, InputIterator end, unsigned int neighbors, unsigned int samples).
+     *  \warning If the surface was already constructed, estimating the
+     *  neighborhood radius will automatically adjust the surface.
+     *
+     *  \sa `estimate_neighborhood_radius()`.
+     *  \sa `estimate_neighborhood_radius(InputIterator begin, InputIterator end, unsigned int neighbors, unsigned int samples)`.
      */
 	FT estimate_neighborhood_radius( unsigned int neighbors, unsigned int samples );
     
     /// estimates the neighborhood radius of a collection of points.
     /** This method is equivalent to running
-     *  [insert_points(begin, end)](\ref insert_points) followed by
-     *  estimate_neighborhood_radius().
+     *  `clear()` followed by
+     *  <code>[insert_points(begin, end)](\ref insert_points)</code> and
+     *  finally `estimate_neighborhood_radius()`.
      *
      *  This method will be called by the scale-space and surface construction
      *  methods if the neighborhood radius is not set when they are called.
@@ -559,13 +592,13 @@ public:
      *  \param end is a past-the-end iterator for the point collection.
      *  \return the estimated neighborhood radius.
      *
-     *  \sa set_mean_number_of_neighbors(unsigned int neighbors).
-     *  \sa set_neighborhood_sample_size(unsigned int samples).
-     *  \sa estimate_neighborhood_radius(InputIterator begin, InputIterator end, unsigned int neighbors, unsigned int samples).
-     *  \sa estimate_neighborhood_radius().
-     *  \sa insert_points(InputIterator begin, InputIterator end).
-     *  \sa construct_scale_space(InputIterator begin, InputIterator end, unsigned int iterations).
-     *  \sa reconstruct_surface(InputIterator begin, InputIterator end, unsigned int iterations).
+     *  \sa `set_mean_number_of_neighbors(unsigned int neighbors)`.
+     *  \sa `set_neighborhood_sample_size(unsigned int samples)`.
+     *  \sa `estimate_neighborhood_radius(InputIterator begin, InputIterator end, unsigned int neighbors, unsigned int samples)`.
+     *  \sa `estimate_neighborhood_radius()`.
+     *  \sa `insert_points(InputIterator begin, InputIterator end)`.
+     *  \sa `construct_scale_space(InputIterator begin, InputIterator end, unsigned int iterations)`.
+     *  \sa `reconstruct_surface(InputIterator begin, InputIterator end, unsigned int iterations)`.
      */
 	template < class InputIterator >
     FT estimate_neighborhood_radius( InputIterator begin, InputIterator end ) {
@@ -581,11 +614,13 @@ public:
      *  number of point samples.
      *  
      *  This method is equivalent to running
-     *  [insert_points(begin, end)](\ref insert_points) followed by
-     *  [estimate_neighborhood_radius(neighbors, samples)](\ref estimate_neighborhood_radius).
+     *  `clear()` followed by
+     *  <code>[insert_points(begin, end)](\ref insert_points)</code> and finally
+     *  <code>[estimate_neighborhood_radius(neighbors, samples)](\ref estimate_neighborhood_radius)</code>.
      *
      *  \tparam InputIterator is an iterator over the point collection.
      *  The iterator must point to a `Point`.
+     *
      *  \param begin is an iterator to the first point of the collection.
      *  \param end is a past-the-end iterator for the point collection.
      *  \param neighbors is the number of neighbors a point's neighborhood
@@ -594,8 +629,8 @@ public:
      *  neighborhood radius.
      *  \return the estimated neighborhood radius.
      *
-     *  \sa estimate_neighborhood_radius(InputIterator begin, InputIterator end).
-     *  \sa estimate_neighborhood_radius(unsigned int neighbors, unsigned int samples).
+     *  \sa `estimate_neighborhood_radius(InputIterator begin, InputIterator end)`.
+     *  \sa `estimate_neighborhood_radius(unsigned int neighbors, unsigned int samples)`.
      */
 	template < class InputIterator >
 	FT estimate_neighborhood_radius( InputIterator begin, InputIterator end, unsigned int neighbors, unsigned int samples );
@@ -610,7 +645,7 @@ public:
      *  representation of the point set.
      *
      *  In case the scale-space is not at the scale of the original point set,
-     *  calling [advance_scale_space(iterations)](\ref advance_scale_space)
+     *  calling <code>[advance_scale_space(iterations)](\ref advance_scale_space)</code>
      *  with `iterations > 0` will advance the scale-space further.
      *
      *  If the neighborhood radius has not been set before, it is automatically
@@ -619,9 +654,12 @@ public:
      *  \param iterations is the number of iterations to perform. If
      *  `iterations` is 0, nothing happens.
      *
-     *  \sa construct_scale_space(InputIterator begin, InputIterator end, unsigned int iterations).
-     *  \sa estimate_neighborhood_radius().
-     *  \sa reconstruct_surface(unsigned int iterations).
+     *  \note If the surface was already constructed, advancing the scale-space
+     *  will not automatically adjust the surface.
+     *
+     *  \sa `construct_scale_space(InputIterator begin, InputIterator end, unsigned int iterations)`.
+     *  \sa `estimate_neighborhood_radius()`.
+     *  \sa `reconstruct_surface(unsigned int iterations)`.
      */
 	void advance_scale_space( unsigned int iterations = 1 );
     
@@ -630,24 +668,26 @@ public:
      *  estimated.
      *
      *  This method is equivalent to running
-     *  [insert_points(begin, end)](\ref insert_points) followed by
-     *  [advance_scale_space(iterations)](\ref advance_scale_space).
+     *  `clear()` followed by
+     *  <code>[insert_points(begin, end)](\ref insert_points)</code> and finally
+     *  <code>[advance_scale_space(iterations)](\ref advance_scale_space)</code>.
      *
      *  \tparam InputIterator is an iterator over the point collection.
      *  The iterator must point to a `Point`.
+     *
      *  \param begin is an iterator to the first point of the collection.
      *  \param end is a past-the-end iterator for the point collection.
      *  \param iterations is the number of iterations to perform. If
      *  `iteations` is 0, nothing happens.
      *
-     *  \sa insert_points(InputIterator begin, InputIterator end).
-     *  \sa estimate_neighborhood_radius(InputIterator begin, InputIterator end).
-     *  \sa advance_scale_space(unsigned int iterations).
-     *  \sa reconstruct_surface(InputIterator begin, InputIterator end, unsigned int iterations).
+     *  \sa `insert_points(InputIterator begin, InputIterator end)`.
+     *  \sa `estimate_neighborhood_radius(InputIterator begin, InputIterator end)`.
+     *  \sa `advance_scale_space(unsigned int iterations)`.
+     *  \sa `reconstruct_surface(InputIterator begin, InputIterator end, unsigned int iterations)`.
      */
 	template < class InputIterator >
 	void construct_scale_space( InputIterator begin, InputIterator end, unsigned int iterations = 1 ) {
-        clear_tree();
+        clear();
 		insert_points( begin, end );
 		advance_scale_space( iterations );
 	}
@@ -677,12 +717,13 @@ private:
     /** The shape contains geometric and connectivity information
      *  of the scale space.
      *
-     *  Note that this does not set the current scale-space.
+     *  \param tr is the triangulation to construct the shape of.
+     *
+     *  \note This does not set the current scale-space.
      *  To set this as well, use `construct_scale_space(Triangulation& tr)`.
      *
-     *  If the neighborhood radius has not been set before, it is automatically
+     *  \note If the neighborhood radius has not been set before, it is automatically
      *  estimated.
-     *  \param tr is the triangulation to construct the shape of.
      */
     void construct_shape(Triangulation& tr ) {
         deinit_shape();
@@ -695,16 +736,18 @@ private:
     /** The shape contains geometric and connectivity information
      *  of the scale space.
      *
-     *  Note that this does not set the current scale-space.
-     *  To set this as well, use `insert_points( InputIterator begin, InputIterator end )`.
-     *
-     *  If the neighborhood radius has not been set before, it is automatically
-     *  estimated.
      *  \tparam InputIterator is an iterator over the point sample.
      *  The iterator must point to a `Point`.
      *  \param begin is an iterator to the first point of the collection.
      *  \param end is a past-the-end iterator for the point collection.
-     *  \sa is_constructed().
+     *
+     *  \note This does not set the current scale-space.
+     *  To set this as well, use `insert_points( InputIterator begin, InputIterator end )`.
+     *
+     *  \note If the neighborhood radius has not been set before, it is automatically
+     *  estimated.
+     *
+     *  \sa `is_constructed()`.
      */
 	template < class InputIterator >
 	void construct_shape( InputIterator begin, InputIterator end );
@@ -719,14 +762,14 @@ public:
 /// \name Surface Reconstruction
 /// \{
     /// gives the number of triangles of the surface.
-    unsigned int number_of_triangles() const { return (unsigned int)_surface.size(); }
+    std::size_t number_of_triangles() const { return _surface.size(); }
     
-    /// gives the triple separating two shells of the surface.
-    /** Note that this triple is not part of either of the shells it separates.
-     *  \return the triple used to indicate the end of each shell.
-     */
-    const Triple& shell_separator() const { return _separator; }
-
+    /// gives the number of shells of the surface.
+    std::size_t number_of_shells() const {
+        CGAL_assertion( Shells::value == true );
+        return _shells.size();
+    }
+    
     /// constructs a triangle mesh from the scale-space.
     /** The order of the points in the scale-space is the same as the order of
      *  the original points, meaning that the surface of the scale-space can
@@ -734,7 +777,7 @@ public:
      *  surface triangles to the original point set.
      *
      *  After construction, the triangles of the surface can be iterated using
-     *  surface_begin() and surface_end().
+     *  `surface_begin()` and `surface_end()`.
      *
      *  If the neighborhood radius has not been set before, it is automatically
      *  estimated.
@@ -742,31 +785,33 @@ public:
      *  \param iterations is the number of scale-space advancement iterations to
      *  apply. If `iterations` is 0, the current scale-space is used.
      *
-     *  \sa reconstruct_surface(InputIterator begin, InputIterator end, unsigned int iterations).
-     *  \sa estimate_neighborhood_radius().
-     *  \sa advance_scale_space(unsigned int iterations).
+     *  \sa `reconstruct_surface(InputIterator begin, InputIterator end, unsigned int iterations)`.
+     *  \sa `estimate_neighborhood_radius()`.
+     *  \sa `advance_scale_space(unsigned int iterations)`.
      */
 	void reconstruct_surface( unsigned int iterations = 0 );
     
     /// constructs a surface mesh from the scale-space of a collection of points.
     /** This method is equivalent to running
-     *  [insert_points(begin, end)](\ref insert_points) followed by
-     *  [reconstruct_surface(iterations)](\ref reconstruct_surface).
+     *  `clear()` followed by
+     *  <code>[insert_points(begin, end)](\ref insert_points)</code> and finally
+     *  <code>[reconstruct_surface(iterations)](\ref reconstruct_surface)</code>.
      *
      *  If the neighborhood radius has not been set before, it is automatically
      *  estimated.
      *
      *  \tparam InputIterator is an iterator over the point collection.
      *  The iterator must point to a `Point`.
+     *
      *  \param begin is an iterator to the first point of the collection.
      *  \param end is a past-the-end iterator for the point collection.
      *  \param iterations is the number of scale-space advancement iterations to
      *  apply. If `iterations` is 0, the current scale-space is used.
      *  
-     *  \sa reconstruct_surface(unsigned int iterations).
-     *  \sa insert_points(InputIterator begin, InputIterator end).
-     *  \sa estimate_neighborhood_radius(InputIterator begin, InputIterator end).
-     *  \sa construct_scale_space(InputIterator begin, InputIterator end, unsigned int iterations).
+     *  \sa `reconstruct_surface(unsigned int iterations)`.
+     *  \sa `insert_points(InputIterator begin, InputIterator end)`.
+     *  \sa `estimate_neighborhood_radius(InputIterator begin, InputIterator end)`.
+     *  \sa `construct_scale_space(InputIterator begin, InputIterator end, unsigned int iterations)`.
      */
 	template < class InputIterator >
 	void reconstruct_surface( InputIterator begin, InputIterator end, unsigned int iterations = 0 );
@@ -779,22 +824,63 @@ public:
     /// gives an iterator to the first point in the current scale space.
     Const_point_iterator scale_space_begin() const { return _tree.begin(); }
     /// gives an iterator to the first point in the current scale space.
+    /** \warning Changes to the scale-space do not cause an automatic update to
+     *  the surface.
+     */
     Point_iterator scale_space_begin() { return _tree.begin(); }
 
     /// gives a past-the-end iterator of the points in the current scale space.
     Const_point_iterator scale_space_end() const { return _tree.begin(); }
     /// gives a past-the-end iterator of the points in the current scale space.
+    /** \warning Changes to the scale-space do not cause an automatic update to
+     *  the surface.
+     */
     Point_iterator scale_space_end() { return _tree.end(); }
 
     /// gives an iterator to the first triple in the surface.
     Const_triple_iterator surface_begin() const { return _surface.begin(); }
     /// gives an iterator to the first triple in the surface.
+    /** \warning Changes to the surface may change its topology.
+     */
     Triple_iterator surface_begin() { return _surface.begin(); }
     
     /// gives a past-the-end iterator of the triples in the surface.
     Const_triple_iterator surface_end() const { return _surface.end(); }
     /// gives a past-the-end iterator of the triples in the surface.
+    /** \warning Changes to the surface may change its topology.
+     */
     Triple_iterator surface_end() { return _surface.end(); }
+
+    /// gives an iterator to the first triple in a given shell.
+    /** \param shell is the index of the shell to access.
+     *
+     *  \pre `shell` is in the range [ 0, `number_of_shells()` ).
+     */
+    Const_triple_iterator shell_begin( std::size_t shell ) const;
+    /// gives an iterator to the first triple in a given shell.
+    /** \param shell is the index of the shell to access.
+     *
+     *  \pre `shell` is in the range [ 0, `number_of_shells()` ).
+     *
+     *  \warning Changes to a shell may invalidate the topology of the surface.
+     */
+    Triple_iterator shell_begin( std::size_t shell );
+
+    /// gives a past-the-end iterator of the triples in a given shell.
+    /** \param shell is the index of the shell to access.
+     *
+     *  \pre `shell` is in the range [ 0, `number_of_shells()` ).
+     */
+    Const_triple_iterator shell_end( std::size_t shell ) const;
+
+    /// gives a past-the-end iterator of the triples in a given shell.
+    /** \param shell is the index of the shell to access.
+     *
+     *  \pre `shell` is in the range [ 0, `number_of_shells()` ).
+     *
+     *  \warning Changes to a shell may invalidate the topology of the surface.
+     */
+    Triple_iterator shell_end( std::size_t shell );
 
 /// \}
 }; // class Scale_space_surface_reconstruction_3
@@ -815,4 +901,4 @@ operator>>( std::istream& is, CGAL::cpp11::array< T, 3 >& t ) {
 
 #include <CGAL/Scale_space_surface_reconstruction_3_impl.h>
 
-#endif // CGAL_SCALE_SPACE_SURFACE_RECONSTRUCTION_H
+#endif // CGAL_SCALE_SPACE_SURFACE_RECONSTRUCTION_3_H
