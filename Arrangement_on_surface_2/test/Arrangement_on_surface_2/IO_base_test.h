@@ -10,7 +10,8 @@ public:
   typedef typename Geom_traits::Curve_2                 Curve_2;
 
 #if TEST_GEOM_TRAITS == POLYCURVE_CONIC_GEOM_TRAITS || \
-      TEST_GEOM_TRAITS == POLYCURVE_CIRCULAR_ARC_GEOM_TRAITS
+    TEST_GEOM_TRAITS == POLYCURVE_CIRCULAR_ARC_GEOM_TRAITS || \
+    TEST_GEOM_TRAITS == POLYCURVE_BEZIER_GEOM_TRAITS
   // Poly curves needs some testing where Segments and X-monotone segments are required 
   // instead of polycurves/x-monotone polycurves.
   template <typename stream>
@@ -720,6 +721,56 @@ bool IO_base_test<Base_geom_traits>::read_xsegment(stream& is,
 
 
 
+
+
+
+
+
+
+#elif TEST_GEOM_TRAITS == POLYCURVE_BEZIER_GEOM_TRAITS
+
+template <>
+template <typename stream>
+bool IO_base_test<Base_geom_traits>::read_point(stream& is, Point_2& p)
+{
+
+  return true;
+}
+
+template <>
+template <typename stream>
+bool IO_base_test<Base_geom_traits>::read_segment(stream& is, Segment_2& seg)
+{
+
+  return true;
+}
+
+template <>
+template <typename stream>
+bool IO_base_test<Base_geom_traits>::read_xsegment(stream& is,
+                                                 X_monotone_segment_2& xseg)                               //read x-segment
+{
+
+  return true;
+} 
+
+
+template <>
+template <typename stream>
+bool IO_base_test<Base_geom_traits>::read_xcurve(stream& is,
+                                                 X_monotone_curve_2& xcv)
+{
+
+  return true;
+}
+
+template <>
+template <typename stream>
+bool IO_base_test<Base_geom_traits>::read_curve(stream& is, Curve_2& cv)
+{
+
+  return true;
+}
 
 
 

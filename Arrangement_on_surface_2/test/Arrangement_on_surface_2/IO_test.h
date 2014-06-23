@@ -24,7 +24,8 @@ public:
 
 
   #if TEST_GEOM_TRAITS == POLYCURVE_CONIC_GEOM_TRAITS || \
-      TEST_GEOM_TRAITS == POLYCURVE_CIRCULAR_ARC_GEOM_TRAITS
+      TEST_GEOM_TRAITS == POLYCURVE_CIRCULAR_ARC_GEOM_TRAITS || \
+      TEST_GEOM_TRAITS == POLYCURVE_BEZIER_GEOM_TRAITS
 
   typedef typename Geom_traits_T::X_monotone_segment_2             X_monotone_segment_2;
   typedef typename Geom_traits_T::Segment_2                        Segment_2;
@@ -288,7 +289,8 @@ bool IO_test<Geom_traits_T>::read_xcurves(const char* filename,
   while (skip_comments(xcv_stream, line)) 
   {
     #if TEST_GEOM_TRAITS == POLYCURVE_CONIC_GEOM_TRAITS || \
-      TEST_GEOM_TRAITS == POLYCURVE_CIRCULAR_ARC_GEOM_TRAITS
+        TEST_GEOM_TRAITS == POLYCURVE_CIRCULAR_ARC_GEOM_TRAITS || \
+        TEST_GEOM_TRAITS == POLYCURVE_BEZIER_GEOM_TRAITS
 
       if (line[0] == 's') //segment (see segment in 'Arr_polyline_traits.h')
       {
@@ -344,7 +346,8 @@ IO_test<Geom_traits_T>::read_curves(const char* filename,
   while (skip_comments(cv_stream, line)) 
   {
      #if TEST_GEOM_TRAITS == POLYCURVE_CONIC_GEOM_TRAITS || \
-      TEST_GEOM_TRAITS == POLYCURVE_CIRCULAR_ARC_GEOM_TRAITS
+         TEST_GEOM_TRAITS == POLYCURVE_CIRCULAR_ARC_GEOM_TRAITS || \
+         TEST_GEOM_TRAITS == POLYCURVE_BEZIER_GEOM_TRAITS
 
        if (line[0] == 's') //segment (see segment in 'Arr_polyline_traits.h')
         {

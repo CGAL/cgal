@@ -70,12 +70,13 @@
 
 
 #elif TEST_GEOM_TRAITS == POLYCURVE_CIRCULAR_ARC_GEOM_TRAITS
-// #include <CGAL/Algebraic_kernel_for_circles_2_2.h>
-// #include <CGAL/Circular_kernel_2.h>
-// #include <CGAL/Arr_circular_arc_traits_2.h>
 #include <CGAL/Arr_polyline_traits_2.h>
 #include <CGAL/Arr_circle_segment_traits_2.h>
 
+#elif TEST_GEOM_TRAITS == POLYCURVE_BEZIER_GEOM_TRAITS
+#include <CGAL/CORE_algebraic_number_traits.h>
+#include <CGAL/Arr_Bezier_curve_traits_2.h>
+#include <CGAL/Arr_polyline_traits_2.h>
 
 #else
 #error No geometry traits (GEOM_TRAITS) specified!
@@ -234,6 +235,24 @@ typedef Circle_segment_traits_2::Point_2 					  Point_2;
 typedef Base_geom_traits::Segment_2               Segment_2;
 typedef Base_geom_traits::X_monotone_segment_2    X_monotone_segment_2;
 #define GEOM_TRAITS_TYPE "Polycurves_circular_arcs"
+
+#elif TEST_GEOM_TRAITS == POLYCURVE_BEZIER_GEOM_TRAITS
+typedef CGAL::CORE_algebraic_number_traits                    							Nt_traits;
+typedef Nt_traits::Rational                                   							Rational;
+typedef Nt_traits::Algebraic                                  							Algebraic;
+typedef CGAL::Cartesian<Rational>                             							Rat_kernel;
+typedef CGAL::Cartesian<Algebraic>                            							Alg_kernel;
+typedef CGAL::Arr_Bezier_curve_traits_2<Rat_kernel, Alg_kernel, Nt_traits>				Bezier_tratis;
+typedef Bezier_tratis::Bezier_cache                       		 						Bezier_cache;
+
+typedef CGAL::Arr_polyline_traits_2<Bezier_tratis>     									Base_geom_traits;
+// Poly curves needs some testing where Segments and X-monotone segments are required 
+// instead of polycurves/x-monotone polycurves.
+typedef Base_geom_traits::Segment_2               										Segment_2;
+typedef Base_geom_traits::X_monotone_segment_2    										X_monotone_segment_2;
+
+
+#define GEOM_TRAITS_TYPE "polycurve_bezier"
 
 #else
 #error No geometry traits (GEOM_TRAITS) specified!
