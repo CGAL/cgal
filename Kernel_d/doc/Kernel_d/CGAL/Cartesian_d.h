@@ -4,7 +4,7 @@ namespace CGAL {
 /*!
 \ingroup PkgKernelDKernels
 
-A model for `Kernel_d` that uses %Cartesian coordinates to represent the 
+A model for `Kernel_d` (and even `KernelWithLifting_d`) that uses %Cartesian coordinates to represent the
 geometric objects. In order for `Cartesian_d` to model Euclidean geometry 
 in \f$ E^d\f$ , for some mathematical field \f$ E\f$ (<I>e.g.</I>, 
 the rationals \f$\mathbb{Q}\f$ or the reals \f$\mathbb{R}\f$), the template parameter `FieldNumberType` 
@@ -14,7 +14,7 @@ type provided as a model for `FieldNumberType` is only an approximation of a
 field (such as the built-in type `double`), then the geometry provided by 
 the kernel is only an approximation of Euclidean geometry. 
 
-\cgalModels `Kernel_d`
+\cgalModels `KernelWithLifting_d`
 
 \sa `CGAL::Homogeneous_d<RingNumberType>`
 
