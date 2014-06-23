@@ -10,7 +10,7 @@ typedef Exact_predicates_inexact_constructions_kernel 	 K;
 typedef K::Point_2                                       Point;
 typedef K::FT								        	 FT;
 
-const FT RADIUS=1.0;
+const double RADIUS=1.0;
 int main( )
 {
    int N=10000;

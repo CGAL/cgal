@@ -15,7 +15,7 @@ The generated polygon will have an average number of vertices \f$ n^\frac{1}{3}(
 
 - `Generator` has to be a Boost random generator, such as `boost::random::mt19937`.
 
-- `fast` is a Boolean value, `true` for a time-efficienct behavior and `false` for a memory-efficient behavior.
+- `fast` is a Boolean value, `true` for a time-efficient behavior and `false` for a memory-efficient behavior.
 
 - `Traits` is a model of the concept `RandomConvexHullTraits_2`. 
 
