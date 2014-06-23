@@ -746,24 +746,12 @@ private:
   {
       CGAL_triangulation_precondition(dimension() == 2);
 
-      // TODO : in 2D, there's no real need for tds_data, we could use
-      // a smarter algorithm.  We could use the 2D Face_circulator.
-      // Should we just have this Face_circulator ?
-
-      // Flag values :
-      // 1 : incident cell already visited
-      // 0 : unknown
-      c->tds_data().mark_in_conflict();
-      *cells++ = c;
-
-      for (int i=0; i<3; ++i) {
-          if (c->vertex(i) == v)
-              continue;
-          Cell_handle next = c->neighbor(i);
-          if (! next->tds_data().is_clear())
-              continue;
-          incident_cells_2(v, next, cells);
-      }
+      Face_circulator fc = incident_faces(v);
+      Face_circulator done(fc);
+      do {
+        *cells++ = fc;
+        ++fc;
+      } while (fc != done);
   }
 
 public:
