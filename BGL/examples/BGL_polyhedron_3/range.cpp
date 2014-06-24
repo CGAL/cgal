@@ -8,7 +8,7 @@
 
 
 #include <iostream>
-#include <ifstream>
+#include <fstream>
 #include <list>
 #include <algorithm>
 
@@ -64,6 +64,6 @@ int main(int argc, char** argv)
   std::ifstream in(argv[1]);
   in >> P ;
 
-  fct(p);
+  fct(P);
   return 0;
 }
