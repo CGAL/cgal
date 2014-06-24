@@ -1,6 +1,8 @@
 #include <iostream>
 #include <CGAL/basic.h>
 #include <CGAL/Arithmetic_kernel.h>
+#include <CGAL/CORE_arithmetic_kernel.h>
+#include <CGAL/LEDA_arithmetic_kernel.h>
 #include <CGAL/Counted_number.h>
 #include <CGAL/Algebraic_structure_traits.h>
 

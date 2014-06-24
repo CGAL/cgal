@@ -1,5 +1,6 @@
 
 #include "test_polynomial.h"
+#include <CGAL/CORE_arithmetic_kernel.h>
 
 int main() {
   

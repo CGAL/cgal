@@ -9,6 +9,7 @@
 #include <CGAL/Test/_test_fraction_traits.h>
 #include <CGAL/Test/_test_rational_traits.h>
 #include <CGAL/number_utils.h>
+#include <CGAL/CORE_Expr.h>
 
 template< class AK >
 void test_lazy_exact_nt() {

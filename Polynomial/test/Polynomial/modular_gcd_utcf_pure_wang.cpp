@@ -36,6 +36,8 @@
 #define MY_FUNCTION_CALL modular_gcd_utcf_pure_wang
 
 #include <CGAL/Arithmetic_kernel.h>
+#include <CGAL/CORE_arithmetic_kernel.h>
+#include <CGAL/LEDA_arithmetic_kernel.h>
 #include <CGAL/test_modular_gcd.h>
 
 int main(){
