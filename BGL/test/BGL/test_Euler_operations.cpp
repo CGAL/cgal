@@ -1,5 +1,5 @@
 #define BOOST_TEST_MODULE euler_operations test
-#include <boost/test/included/unit_test.hpp>
+#include <boost/test/unit_test.hpp>
 #include <boost/test/test_case_template.hpp>
 
 #include "test_Prefix.h"
@@ -21,8 +21,6 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( join_face_test, T, test_graphs )
   // removed to provoke a special case
   set_halfedge(f.f1, e, f.m);
   CGAL::Euler::join_face(e,f.m);
-
-  CGAL::internal::set_constant_vertex_is_border(f.m);
 
   BOOST_CHECK(CGAL::internal::exact_num_faces(f.m) == 2);
   BOOST_CHECK(CGAL::internal::exact_num_edges(f.m) == 6);
@@ -82,7 +80,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( remove_face_test_1, T, test_graphs )
 }
 
 
-#if 1
+
 BOOST_AUTO_TEST_CASE_TEMPLATE( remove_face_test_2, T, test_graphs )
 {
   CGAL_GRAPH_TRAITS_MEMBERS(T);
@@ -118,7 +116,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( remove_face_test_2, T, test_graphs )
   }
 }
 
-#if 1
+
 BOOST_AUTO_TEST_CASE_TEMPLATE( add_face_to_border_test, T, test_graphs )
 {
   CGAL_GRAPH_TRAITS_MEMBERS(T);
@@ -130,7 +128,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( add_face_to_border_test, T, test_graphs )
   BOOST_CHECK(CGAL::is_valid(f.m));
 
 }
-#endif 
+
 
 BOOST_AUTO_TEST_CASE_TEMPLATE( join_vertex_interior_test, T, test_graphs )
 {
@@ -298,7 +296,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( remove_center_vertex_test, T, test_graphs )
  std::size_t nf = num_faces(f.m);
  std::size_t nh = num_halfedges(f.m);
 
- boost::graph_traits<T>::degree_size_type deg = degree(target(f.h,f.m),f.m);
+ typename boost::graph_traits<T>::degree_size_type deg = degree(target(f.h,f.m),f.m);
  CGAL::Euler::remove_center_vertex(f.h,f.m);
 
  BOOST_CHECK_EQUAL(CGAL::internal::exact_num_vertices(f.m), nv-1);
@@ -311,7 +309,14 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( join_split_inverse, T, test_graphs )
   
 }
 
-#endif
+BOOST_AUTO_TEST_CASE_TEMPLATE( satisfies_link_condition, T, test_graphs )
+{
+  Surface_fixture_7<T> f;
+
+  BOOST_CHECK(CGAL::Euler::safisfies_link_condition(*edges(f.m).first,f.m));
+}
+
+
 // trick cgal_test_with_cmake
 // int main()
 // {

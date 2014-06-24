@@ -37,6 +37,7 @@
 #include <CGAL/IO/Verbose_ostream.h>
 #include <CGAL/Polyhedron_traits_3.h>
 
+//  at the end of this file: #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 namespace CGAL {
 
 template <class VertexBase>
@@ -1532,5 +1533,7 @@ public:
 };
 
 } //namespace CGAL
+
+#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 
 #endif // CGAL_POLYHEDRON_3_H //

@@ -266,8 +266,8 @@ void Polyhedron_demo_cut_plugin::cut() {
     if(it == trees.end()) {
       it = trees.insert(trees.begin(),
                         std::make_pair(poly_item,
-                                       new AABB_tree(poly_item->polyhedron()->facets_begin(),
-                                                     poly_item->polyhedron()->facets_end(),
+                                       new AABB_tree(faces(*(poly_item->polyhedron())).first,
+                                                     faces(*(poly_item->polyhedron())).second,
                                                      *poly_item->polyhedron() )));
       Scene_aabb_item* aabb_item = new Scene_aabb_item(*it->second);
       aabb_item->setName(tr("AABB tree of %1").arg(poly_item->name()));

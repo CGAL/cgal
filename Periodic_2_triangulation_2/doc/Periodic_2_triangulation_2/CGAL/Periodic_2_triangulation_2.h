@@ -259,7 +259,7 @@ public:
   of periodic copies the `Unique_vertex_iterator` iterates over
   exactly one representative.
   */
-  typedef Hidden_type Unique_vertex_iterator;
+  typedef unspecified_type Unique_vertex_iterator;
 
   /*
   \cgalAdvancedBegin
@@ -292,17 +292,17 @@ public:
   /*!
   circulator over all faces incident to a given vertex.
   */
-  typedef Hidden_type Face_circulator;
+  typedef unspecified_type Face_circulator;
 
   /*!
   circulator over all edges incident to a given vertex.
   */
-  typedef Hidden_type Edge_circulator;
+  typedef unspecified_type Edge_circulator;
 
   /*!
   circulator over all vertices adjacent to a given vertex.
   */
-  typedef Hidden_type Vertex_circulator;
+  typedef unspecified_type Vertex_circulator;
 
 /// @}
 
@@ -313,19 +313,19 @@ public:
   iterator over the triangles
   corresponding to faces of the triangulation.
   */
-  typedef Hidden_type Periodic_triangle_iterator;
+  typedef unspecified_type Periodic_triangle_iterator;
 
   /*!
   iterator over the segments
   corresponding to edges of the triangulation.
   */
-  typedef Hidden_type Periodic_segment_iterator;
+  typedef unspecified_type Periodic_segment_iterator;
 
   /*!
   iterator over the points
   corresponding to vertices of the triangulation.
   */
-  typedef Hidden_type Periodic_point_iterator;
+  typedef unspecified_type Periodic_point_iterator;
 
 /// @}
 

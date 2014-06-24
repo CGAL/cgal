@@ -41,15 +41,13 @@ namespace CGAL {
 namespace Surface_mesh_simplification
 {
 
-  template<class ECM_, class Kernel_ = typename Kernel_traits<typename boost::property_traits<typename boost::property_map<ECM_, CGAL::vertex_point_t>::type>::value_type>::Kernel >
+  template<class ECM_, class Profile_>
 class LindstromTurkCore
 {
 public:
     
   typedef ECM_    ECM ;
-  typedef Kernel_ Kernel ;
-  
-  typedef Edge_profile<ECM> Profile ;
+  typedef Profile_ Profile ;
   
   typedef boost::graph_traits<ECM> GraphTraits ;
   
@@ -59,13 +57,14 @@ public:
   
   typedef LindstromTurk_params Params ;
   
-  typedef typename Kernel::Point_3 Point ;
+  typedef typename Profile::Point Point ;
 
-  typedef typename boost::property_map<ECM, CGAL::vertex_point_t>::type Vertex_point_pmap;
+  typedef typename Profile::VertexPointMap Vertex_point_pmap;
   typedef typename boost::property_traits<Vertex_point_pmap>::value_type ECM_Point;
   
   typedef typename Kernel_traits<ECM_Point>::Kernel ECM_Kernel ;
   
+  typedef typename Kernel_traits<Point>::Kernel Kernel;
   typedef typename Kernel::Vector_3 Vector ;
   typedef typename Kernel::FT       FT ;
  
@@ -123,7 +122,7 @@ private :
 
   Point get_point ( vertex_descriptor const& v ) const 
   {
-    return convert(get(vertex_point,surface(),v));
+    return convert(get(mProfile.vertex_point_map(),v));
   }
 
   static Vector Point_cross_product ( Point const& a, Point const& b ) 

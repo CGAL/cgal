@@ -59,13 +59,13 @@ class Polyhedron_edge_index_map_external
   : public boost::put_get_helper<std::size_t, Polyhedron_edge_index_map_external<Polyhedron> >
 {
 public:
-  typedef boost::readable_property_map_tag                              category;
-  typedef std::size_t                                                   value_type;
-  typedef std::size_t                                                   reference;
-  typedef typename boost::graph_traits<Polyhedron>::halfedge_descriptor key_type;
+  typedef boost::readable_property_map_tag                          category;
+  typedef std::size_t                                               value_type;
+  typedef std::size_t                                               reference;
+  typedef typename boost::graph_traits<Polyhedron>::edge_descriptor key_type;
 
   Polyhedron_edge_index_map_external(Polyhedron& p)
-    : map_(std::size_t(-1), num_halfedges(p))
+    : map_(std::size_t(-1), num_halfedges(p)), p(p)
   {
     unsigned int data = 0;
     typename boost::graph_traits<Polyhedron>::edge_iterator it, end;
@@ -75,10 +75,11 @@ public:
     }
   }
 
-  reference operator[](const key_type& k) const { return map_[k]; }
+  reference operator[](const key_type& k) const { return map_[halfedge(k,p)]; }
 private:
   CGAL::Unique_hash_map<typename boost::graph_traits<Polyhedron>::halfedge_descriptor,
                         std::size_t> map_;
+  Polyhedron& p;
 };
 
 template<typename Handle>
@@ -134,11 +135,11 @@ struct Is_border_accessor
   typedef bool                             reference;
   typedef Handle                           key_type;
 
-  friend reference get(Is_border_accessor pm, Handle h)
+  friend reference get(const Is_border_accessor& , Handle h)
   {
     return h->is_border(); 
   }
-  friend void put(Is_border_accessor pm, Handle h, bool b)
+  friend void put(const Is_border_accessor& , Handle h, bool b)
   {
      typedef typename Polyhedron::Halfedge::Base Sneak;
      if(b){
@@ -465,6 +466,11 @@ struct vertex_property_type<CGAL::Polyhedron_3<Gt,I,HDS,A> >
   typedef CGAL::vertex_point_t type;
 };
 
+template<class Gt, class I, CGAL_HDS_PARAM_, class A>
+struct vertex_property_type<const CGAL::Polyhedron_3<Gt,I,HDS,A> >
+{
+  typedef CGAL::vertex_point_t type;
+};
 } // namespace boost
 
 

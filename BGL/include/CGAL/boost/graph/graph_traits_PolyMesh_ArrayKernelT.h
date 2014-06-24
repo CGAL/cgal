@@ -26,8 +26,8 @@
 #include <boost/iterator/transform_iterator.hpp>
 
 #include <CGAL/boost/graph/properties_PolyMesh_ArrayKernelT.h>
-#include <CGAL/BGL/OM_iterator_from_circulator.h>
-#include <CGAL/Halfedge_iterator.h>
+#include <CGAL/boost/graph/internal/OM_iterator_from_circulator.h>
+#include <CGAL/boost/graph/iterator.h>
 
 #include <OpenMesh/Core/Mesh/PolyMesh_ArrayKernelT.hh>
 
@@ -633,6 +633,12 @@ add_face(InputIterator begin, InputIterator end, OpenMesh::PolyMesh_ArrayKernelT
   std::vector<typename boost::graph_traits<OpenMesh::PolyMesh_ArrayKernelT<K> >::vertex_descriptor> 
     v(begin, end);
   return sm.add_face(v);
+}
+
+template<typename K>
+bool is_valid(OpenMesh::PolyMesh_ArrayKernelT<K>& sm)
+{
+  return true;
 }
 
 } // namespace OpenMesh

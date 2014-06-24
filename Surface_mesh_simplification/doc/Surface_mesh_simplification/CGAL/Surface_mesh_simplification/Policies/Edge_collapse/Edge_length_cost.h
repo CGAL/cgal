@@ -37,9 +37,10 @@ of the source and target vertices (that is, `profile.p0()` and `profile.p1()`.
 
 The `placement` argument is ignored. 
 
-*/ 
-result_type operator()( Profile const& profile 
-, boost::optional<Point> const& placement ) const; 
+*/   
+template <typename Profile, typename T> 
+optional<typename Profile::FT> operator()( Profile const& profile 
+, T const& placement ) const; 
 
 /// @}
 

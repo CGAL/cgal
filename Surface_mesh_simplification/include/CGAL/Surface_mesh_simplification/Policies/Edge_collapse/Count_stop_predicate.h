@@ -45,29 +45,21 @@ public:
 
   typedef ECM_ ECM ;
 
-  typedef Edge_profile<ECM> Profile ;
+  //  typedef Edge_profile<ECM> Profile ;
   
-private :
-
-  typedef typename boost::property_map<ECM, CGAL::vertex_point_t>::type Vertex_point_pmap;
-  typedef typename boost::property_traits<Vertex_point_pmap>::value_type Point;
-  typedef typename Kernel_traits<Point>::Kernel      Kernel ;
-
-public :
-  
-  typedef typename boost::graph_traits<ECM>::halfedge_descriptor halfedge_descriptor ;
   typedef typename boost::graph_traits<ECM>::edges_size_type size_type ;
   
-  typedef typename Kernel::FT FT ;
+  // typedef typename Kernel::FT FT ;
 
 public :
   
-  Count_stop_predicate( size_type aThres ) : mThres(aThres) {}
+  Count_stop_predicate( std::size_t aThres ) : mThres(aThres) {}
   
-  bool operator()( FT const&      // aCurrentCost
+  template <typename F, typename Profile> 
+  bool operator()( F const&      // aCurrentCost
                  , Profile const& //aEdgeProfile
-		 , size_type      //aInitialCount
-                 , size_type      aCurrentCount
+                   , std::size_t      //aInitialCount
+                   , std::size_t      aCurrentCount
                  ) const 
   {
     return aCurrentCount < mThres ;
@@ -75,7 +67,7 @@ public :
   
 private:
   
-  size_type mThres ;
+  std::size_t mThres ;
 };    
 
 } // namespace Surface_mesh_simplification

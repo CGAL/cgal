@@ -1,7 +1,7 @@
 #include <fstream>
 
 #include <boost/graph/graph_traits.hpp>
-#include <boost/property_map/vector_property_map.hpp>
+#include <CGAL/property_map.h>
 
 #include <CGAL/basic.h>
 #include <CGAL/Kernel/global_functions.h>
@@ -69,19 +69,17 @@ void calculate_face_normals(const HalfedgeGraph& g,
   }
 }
 
-int main()
+int main(int argc, char** argv)
 {
   typedef boost::property_map< 
     Polyhedron,
     CGAL::face_index_t 
     >::const_type Face_index_map;
 
+  std::ifstream in(argv[1]);
   Polyhedron P;
-  {
-    std::ifstream in("cube.off");
-    in >> P ;
-  }
-
+  in >> P ;
+  
   // initialize facet indices
   std::size_t i = 0;
   for(Polyhedron::Facet_iterator it = P.facets_begin(); it != P.facets_end(); ++it, ++i) 

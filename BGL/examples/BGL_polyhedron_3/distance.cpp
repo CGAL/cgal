@@ -18,12 +18,10 @@ typedef boost::graph_traits<Polyhedron>::vertex_iterator   vertex_iterator;
 
 
 
-int main() {
+int main(int argc, char** argv) {
 
-  Polyhedron P;
-  
-  std::ifstream in("cube.off");
-  
+  Polyhedron P;  
+  std::ifstream in(argv[1]);
   in >> P ;
   
   // associate indices to the vertices using the "id()" field of the vertex.

@@ -61,7 +61,7 @@ public:
   This type is required only if the function
   `side_of_oriented_circle(Face_handle f, Point p)` is called.
   */
-  typedef Hidden_type Side_of_oriented_circle_2;
+  typedef unspecified_type Side_of_oriented_circle_2;
 
   /*!
   Constructor
@@ -78,7 +78,7 @@ public:
 
   This type is required only if the function `Point circumcenter(Face_handle f)`is called.
   */
-  typedef Hidden_type Construct_circumcenter_2;
+  typedef unspecified_type Construct_circumcenter_2;
 
   /*!
   Predicate type. Provides
@@ -97,7 +97,7 @@ public:
   This type is only require if
   `nearest_vertex` queries are issued.
   */
-  typedef Hidden_type Compare_distance_2;
+  typedef unspecified_type Compare_distance_2;
 
 /// @}
 

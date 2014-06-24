@@ -208,8 +208,10 @@ struct Test_is_valid_attribute_functor
         a=amap->template attribute<i>(adart);
 
     unsigned int nb = 0;
-    for ( CGAL::CMap_dart_const_iterator_basic_of_cell<CMap,i>
-          it(*amap, adart, amark); it.cont(); ++it )
+    for ( typename
+            CMap::template Dart_of_cell_basic_const_range<i>::const_iterator
+            it=amap->template darts_of_cell_basic<i>(adart, amark).begin();
+          it.cont(); ++it )
     {
       if ( amap->template attribute<i>(it) != a )
       {
