@@ -20,15 +20,12 @@
 #ifndef RECONSTRUCTION_SIMPLIFICATION_2_H_
 #define RECONSTRUCTION_SIMPLIFICATION_2_H_
 
-//#include <CGAL/property_map.h>
-
 #include "Reconstruction_triangulation_2.h"
 #include "Cost.h"
 #include "Reconstruction_edge_2.h"
 #include "Sample.h"
 #include "console_color.h"
 
-#include <CGAL/property_map.h>
 
 #include <iterator>
 #include <iostream>
