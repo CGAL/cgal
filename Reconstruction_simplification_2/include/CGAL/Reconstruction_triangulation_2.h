@@ -41,11 +41,6 @@
 #include <CGAL/Reconstruction_vertex_base_2.h>
 #include <CGAL/Reconstruction_face_base_2.h>
 
-#undef min
-#undef max
-
-#define MINN -1e100
-#define MAXN  1e100
 #define EPS   1e-15
 
 namespace CGAL {
@@ -97,9 +92,11 @@ public:
 
 	typedef std::map<Vertex_handle, Vertex_handle,
 			less_Vertex_handle<Vertex_handle> > Vertex_handle_map;
-	typedef std::map<Face_handle, Face_handle, less_Face_handle<Face_handle> > Face_handle_map;
+	typedef std::map<Face_handle, Face_handle, less_Face_handle<Face_handle> >
+			Face_handle_map;
 
-	typedef std::set<Vertex_handle, less_Vertex_handle<Vertex_handle> > Vertex_handle_set;
+	typedef std::set<Vertex_handle, less_Vertex_handle<Vertex_handle> >
+			Vertex_handle_set;
 	typedef std::set<Edge, less_Edge<Edge> > Edge_set;
 
 	typedef std::list<Edge> Edge_list;
@@ -116,7 +113,8 @@ public:
 	typedef std::priority_queue<PSample, std::vector<PSample>,
 			greater_priority<PSample> > SQueue;
 
-	typedef Reconstruction_edge_2<FT, Edge, Vertex_handle, Face_handle> Reconstruction_edge_2;
+	typedef Reconstruction_edge_2<FT, Edge, Vertex_handle, Face_handle>
+	Reconstruction_edge_2;
 	typedef Dynamic_priority_queue_edges<Reconstruction_edge_2> PQueue;
 
 	double m_factor; // ghost vs solid
@@ -549,7 +547,7 @@ public:
 
 			FT Ds = CGAL::squared_distance(query, ps);
 			FT Dt = CGAL::squared_distance(query, pt);
-			FT dist2 = std::min(Ds, Dt);
+			FT dist2 = (std::min)(Ds, Dt);
 
 			FT norm2 = sample->distance2();
 			FT tang2 = dist2 - norm2;
@@ -650,7 +648,7 @@ public:
 	}
 
 	Edge find_nearest_edge(const Point& point, Face_handle face) const {
-		FT min_dist2 = MAXN;
+		FT min_dist2 = std::numeric_limits<FT>::max();
 		Edge nearest(Face_handle(), 0);
 		for (int i = 0; i < 3; ++i) {
 			Edge edge(face, i);
@@ -755,7 +753,7 @@ public:
 		Line lab(pa, pb - pa);
 		Line lts(pt, ps - pt);
 
-		FT Dqt = MAXN;
+		FT Dqt = std::numeric_limits<FT>::max();
 		CGAL::Object result = CGAL::intersection(lab, lts);
 		const Point* iq = CGAL::object_cast<Point>(&result);
 		if (iq)
@@ -979,22 +977,23 @@ public:
 			Vertex_handle c = target_vertex(bc);
 			Vertex_handle d = target_vertex(cd);
 
-			FT Dac = MINN;
+			FT Dac = std::numeric_limits<FT>::min();
 			if (a != c && is_triangle_ccw(a, b, c))
 				Dac = signed_distance_from_intersection(a, c, target, source);
 
-			FT Dbd = MINN;
+			FT Dbd = std::numeric_limits<FT>::min();
 			if (b != d && is_triangle_ccw(b, c, d))
 				Dbd = signed_distance_from_intersection(b, d, target, source);
 
-			if (Dac == MINN && Dbd == MINN) {
+			if (Dac == std::numeric_limits<FT>::min() &&
+					Dbd == std::numeric_limits<FT>::min()) {
 				// TODO: IV comment in std::cerr << red << "---
 				//No flips available ---" << white << std::endl;
 				std::cerr << "--- No flips available ---" << std::endl;
 				return false;
 			}
 
-			if (std::max(Dac, Dbd) + EPS < Dbc) {
+			if ((std::max)(Dac, Dbd) + EPS < Dbc) {
 				std::cerr.precision(10);
 				// TODO: IV comment in std::cerr << red << "---
 				//Flip makes kernel worse ---" << white << std::endl;
@@ -1005,7 +1004,7 @@ public:
 				std::cerr << "c: " << c->point() << std::endl;
 				std::cerr << "d: " << d->point() << std::endl;
 				std::cerr << "t: " << target->point() << std::endl;
-				std::cerr << "diff = " << Dbc - std::max(Dac, Dbd) << std::endl;
+				std::cerr << "diff = " << Dbc - (std::max)(Dac, Dbd) << std::endl;
 				return false;
 			}
 

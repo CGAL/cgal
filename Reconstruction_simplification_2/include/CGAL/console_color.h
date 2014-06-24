@@ -11,7 +11,8 @@ inline std::ostream& blue(std::ostream &s)
 {
 #if defined(WIN32)
     HANDLE hStdout = GetStdHandle(STD_OUTPUT_HANDLE); 
-    SetConsoleTextAttribute(hStdout, FOREGROUND_BLUE|FOREGROUND_GREEN|FOREGROUND_INTENSITY);
+    SetConsoleTextAttribute(hStdout,
+    		FOREGROUND_BLUE|FOREGROUND_GREEN|FOREGROUND_INTENSITY);
 #else
     s << "\e[0;34m";
 #endif
@@ -44,7 +45,8 @@ inline std::ostream& yellow(std::ostream &s)
 {
 #if defined(WIN32)
     HANDLE hStdout = GetStdHandle(STD_OUTPUT_HANDLE); 
-    SetConsoleTextAttribute(hStdout, FOREGROUND_GREEN|FOREGROUND_RED|FOREGROUND_INTENSITY);
+    SetConsoleTextAttribute(hStdout,
+    		FOREGROUND_GREEN|FOREGROUND_RED|FOREGROUND_INTENSITY);
 #else
     s << "\e[0;33m";
 #endif
@@ -55,7 +57,8 @@ inline std::ostream& white(std::ostream &s)
 {
 #if defined(WIN32)
     HANDLE hStdout = GetStdHandle(STD_OUTPUT_HANDLE); 
-    SetConsoleTextAttribute(hStdout, FOREGROUND_RED|FOREGROUND_GREEN|FOREGROUND_BLUE);
+    SetConsoleTextAttribute(hStdout,
+    		FOREGROUND_RED|FOREGROUND_GREEN|FOREGROUND_BLUE);
 #else
     s << "\e[0;37m";
 #endif

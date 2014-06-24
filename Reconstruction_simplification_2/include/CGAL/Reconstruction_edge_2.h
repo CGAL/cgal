@@ -22,7 +22,6 @@
 
 #include <CGAL/Dynamic_priority_queue.h>
 
-//---------------CLASS CPEDGE---------------------
 template <class FT, class Edge, class Vertex_handle, class Face_handle>
 class Reconstruction_edge_2
 {
@@ -138,7 +137,6 @@ protected:
 
 
 
-//---------------CLASS CPQUEUE---------------------
 template <class T>
 class Dynamic_priority_queue_edges : public Dynamic_priority_queue<T> {
 public:

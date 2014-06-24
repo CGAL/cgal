@@ -11,7 +11,8 @@
 #include <CGAL/Triangulation_vertex_base_2.h>
 #include <CGAL/sample.h>
 
-/// The Reconstruction_vertex_base_2 class (corresponding to Reconstruction_vertex_base_2 in prototype) is the default
+/// The Reconstruction_vertex_base_2 class (corresponding to
+//Reconstruction_vertex_base_2 in prototype) is the default
 /// vertex class of the Reconstruction_triangulation_2 class.
 ///
 /// - Each vertex stores a CSample as well as the corresponding relocated point

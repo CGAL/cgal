@@ -8,7 +8,8 @@
 #include <list>
 
 
-/// The Reconstruction_face_base_2 class (corresponding to Reconstruction_face_base_2 in prototype) is the default
+/// The Reconstruction_face_base_2 class (corresponding to
+//Reconstruction_face_base_2 in prototype) is the default
 /// vertex class of the Reconstruction_face_base_2 class.
 ///
 /// - Each vertex stores a CSample as well as the corresponding relocated point

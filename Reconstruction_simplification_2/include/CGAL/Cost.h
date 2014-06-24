@@ -1,9 +1,6 @@
 #ifndef COST_H_
 #define COST_H_
 
-#undef min
-#undef max
-
 template <class FT>
 class Cost
 {
@@ -75,14 +72,14 @@ public:
 
     void update_max(const Cost& cost)
     {
-        m_max_norm = std::max(m_max_norm, cost.max_norm());
-        m_max_tang = std::max(m_max_tang, cost.max_tang());
+        m_max_norm = (std::max)(m_max_norm, cost.max_norm());
+        m_max_tang = (std::max)(m_max_tang, cost.max_tang());
     }
 
     void compute_max(const FT norm, const FT tang)
     {
-        m_max_norm = std::max(m_max_norm, norm);
-        m_max_tang = std::max(m_max_tang, tang);
+        m_max_norm = (std::max)(m_max_norm, norm);
+        m_max_tang = (std::max)(m_max_tang, tang);
     }
 };
 

@@ -51,7 +51,8 @@ public:
 	typedef typename Triangulation::Vertex_handle Vertex_handle;
 	typedef typename Triangulation::Vertex_iterator Vertex_iterator;
 	typedef typename Triangulation::Vertex_circulator Vertex_circulator;
-	typedef typename Triangulation::Finite_vertices_iterator Finite_vertices_iterator;
+	typedef typename Triangulation::Finite_vertices_iterator
+			Finite_vertices_iterator;
 
 	typedef typename Triangulation::Edge Edge;
 	typedef typename Triangulation::Edge_iterator Edge_iterator;
@@ -75,10 +76,12 @@ public:
 	typedef typename Triangulation::Cost Cost;
 	typedef typename Triangulation::Sample Sample;
 	typedef typename Triangulation::Sample_list Sample_list;
-	typedef typename Triangulation::Sample_list_const_iterator Sample_list_const_iterator;
+	typedef typename Triangulation::Sample_list_const_iterator
+			Sample_list_const_iterator;
 
 	typedef typename Triangulation::Point_list Point_list;
-	typedef typename Triangulation::Point_list_const_iterator Point_list_const_iterator;
+	typedef typename Triangulation::Point_list_const_iterator
+			Point_list_const_iterator;
 
 	typedef typename Triangulation::PSample PSample;
 	typedef typename Triangulation::SQueue SQueue;
@@ -168,10 +171,11 @@ public:
 	//TODO: determine suitable way of storing them
 	void extract_solid_eges() {
 
-	    std::cout <<  "------------extracted_solid_eges----------------------" << std::endl;
+	    std::cout <<  "---------extracted_solid_eges------------" << std::endl;
 
 		PQueue queue;
-		    for (Finite_edges_iterator ei = m_dt.finite_edges_begin(); ei != m_dt.finite_edges_end(); ++ei)
+		    for (Finite_edges_iterator ei = m_dt.finite_edges_begin();
+		    		ei != m_dt.finite_edges_end(); ++ei)
 		    {
 		        Edge edge = *ei;
 		        if (m_dt.is_ghost(edge)) continue;
@@ -1246,7 +1250,8 @@ public:
 	{
 	    int nb_solid = 0;
 	    int nb_ghost = 0;
-	    for (Finite_edges_iterator ei = m_dt.finite_edges_begin(); ei != m_dt.finite_edges_end(); ++ei)
+	    for (Finite_edges_iterator ei = m_dt.finite_edges_begin();
+	    		ei != m_dt.finite_edges_end(); ++ei)
 	    {
 	        Edge edge = *ei;
 	        if (m_dt.is_ghost(edge)) nb_ghost++;
