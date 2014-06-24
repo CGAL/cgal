@@ -18,7 +18,7 @@ circumcenter.
 \tparam Cb is a cell base class from which 
 `Regular_triangulation_cell_base_with_weighted_circumcenter_3` derives. Cb should
 be a model of `RegularTriangulationCellBase_3`.
-It has the default value `Triangulation_cell_base_3<RegularTriangulationTraits_3>`. 
+It has the default value `Regular_triangulation_cell_base_3<RegularTriangulationTraits_3>`.
 
 \cgalModels `RegularTriangulationCellBase_3`
 
@@ -61,6 +61,12 @@ The returned point has no weight.
 */ 
 const Bare_point& weighted_circumcenter( 
 	const RegularTriangulationTraits_3&gt = RegularTriangulationTraits_3()) const; 
+
+/*!
+Swaps the Regular_triangulation_cell_base_with_weighted_circumcenter_3 and other.
+Should be preferred to an assignment or copy constructor when other is deleted after that.
+*/
+void swap (Regular_triangulation_cell_base_with_weighted_circumcenter_3& other) throw();
 
 /// @}
 

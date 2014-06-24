@@ -67,6 +67,10 @@
 #pragma intrinsic(_BitScanReverse64)
 #endif
 
+#ifdef __xlC__
+#include <builtins.h>
+#endif
+
 #if defined(BOOST_MSVC)
 #  pragma warning(push)
 #  pragma warning(disable:4146 4244 4267 4800)
@@ -189,20 +193,25 @@ template <class T, class = void> struct no_pool {
 
 // Only used with an argument known not to be 0.
 inline int ctz (boost::uint64_t x) {
-#ifdef _MSC_VER
+#if defined(_MSC_VER)
   unsigned long ret;
   _BitScanForward64(&ret, x);
   return (int)ret;
+#elif defined(__xlC__)
+  return __cnttz8 (x);
 #else
   // Assume long long is 64 bits
   return __builtin_ctzll (x);
 #endif
 }
 inline int clz (boost::uint64_t x) {
-#ifdef _MSC_VER
+#if defined(_MSC_VER)
   unsigned long ret;
   _BitScanReverse64(&ret, x);
   return 63 - (int)ret;
+#elif defined(__xlC__)
+  // Macro supposedly not defined on z/OS.
+  return __cntlz8 (x);
 #else
   return __builtin_clzll (x);
 #endif

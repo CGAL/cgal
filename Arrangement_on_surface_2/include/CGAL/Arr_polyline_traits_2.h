@@ -2742,8 +2742,7 @@ namespace CGAL {
      *         If q is not in the x-range of cv, returns INVALID_INDEX.
      */
     template <typename Compare>
-    std::size_t locate_gen(const X_monotone_curve_2& cv,
-                            Compare compare) const
+    std::size_t locate_gen(const X_monotone_curve_2& cv, Compare compare) const
     {
       // The direction of cv. SMALLER means left-to-right and
       // otherwise right-to-left
@@ -2766,7 +2765,14 @@ namespace CGAL {
       Comparison_result res_to = compare(cv[to], ARR_MAX_END);
       if (res_to == EQUAL) return to;
 
-      if (res_to == res_from) return INVALID_INDEX;
+      // Check whether the point is either lexicographically to the left of
+      // the curve or lexicographically to the right of the curve.
+      if (res_to == res_from)
+        // If the x-monotone polyline is vertical, return the index of the
+        // segment that is closest to the point. Otherwise, the point is not
+        // in the x-range of the polyline.
+        return (is_vertical_2_object()(cv)) ?
+          ((res_to == SMALLER) ? from : to) : INVALID_INDEX;
 
       // Perform a binary search to locate the segment that contains q in its
       // range:
