@@ -12,6 +12,7 @@
 #include <utility>                      // for make_pair, pair
 
 namespace CGAL {
+namespace internal {
 
 typedef std::pair<int, int> state;
 
@@ -498,6 +499,7 @@ public:
     }
 };
 
-};
+} // namespace internal
+} // namespace CGAL
 
 #endif

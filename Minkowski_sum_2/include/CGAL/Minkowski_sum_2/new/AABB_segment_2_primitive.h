@@ -26,6 +26,7 @@
 #define CGAL_AABB_SEGMENT_2_PRIMITIVE_H_
 
 namespace CGAL {
+namespace internal {
 
 template <class GeomTraits, class Iterator, class Container_type>
 class AABB_segment_2_primitive {
@@ -71,7 +72,9 @@ public:
         return m_datum.source();
     }
 };
-} // end namespace CGAL
+
+} // namespace internal
+} // namespace CGAL
 
 #endif // CGAL_AABB_SEGMENT_PRIMITIVE_H_
 

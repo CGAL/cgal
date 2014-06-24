@@ -31,6 +31,7 @@
 #include <boost/unordered_set.hpp>  // for unordered_set
 
 namespace CGAL {
+namespace internal {
 
 struct Less_than_handle {
     template <typename Type>
@@ -111,7 +112,7 @@ public:
     typedef typename Traits_2::X_monotone_curve_2 Segment_2;
     typedef std::list<Segment_2> Segments_list;
 
-    typedef CGAL::Arr_my_extended_dcel<Traits_2> Dcel;
+    typedef Arr_my_extended_dcel<Traits_2> Dcel;
 
     typedef CGAL::Arrangement_with_history_2<Traits_2, Dcel> Arrangement_history_2;
     typedef typename Arrangement_history_2::Halfedge Halfedge;
@@ -1614,6 +1615,7 @@ private:
     }
 };
 
-}
+} // namespace internal
+} // namespace CGAL
 
 #endif

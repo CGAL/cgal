@@ -65,7 +65,7 @@ Polygon_with_holes_2<Kernel,Container>
 minkowski_sum_2_new (const Polygon_2<Kernel,Container>& pgn1,
                      const Polygon_2<Kernel,Container>& pgn2)
 {
-  Minkowski_sum_by_convolution_lien_2<Kernel, Container>  mink_sum;
+  internal::Minkowski_sum_by_convolution_lien_2<Kernel, Container>  mink_sum;
   Polygon_2<Kernel,Container>                             sum_bound;
   std::list<Polygon_2<Kernel,Container> >                 sum_holes;
 

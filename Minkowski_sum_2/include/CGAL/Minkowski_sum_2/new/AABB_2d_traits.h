@@ -17,10 +17,11 @@
 #include <boost/optional/optional.hpp>  // for optional
 #include <utility>                      // for pair
 
-namespace CGAL { template <class R_> class Point_2; }
-namespace CGAL { template <class R_> class Segment_2; }
-
 namespace CGAL {
+namespace internal {
+
+template <class R_> class Point_2;
+template <class R_> class Segment_2;
 
 double eps(double x) {
     return CGAL::abs(CGAL::nextafter(x, DBL_MAX) - x);
@@ -499,6 +500,7 @@ AABB_traits_2<GT, P>::longest_axis(const Bounding_box &bbox) {
 
 }
 
-}
+} // namespace internal
+} // namespace CGAL
 
 #endif

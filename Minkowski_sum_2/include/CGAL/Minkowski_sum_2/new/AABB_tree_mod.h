@@ -28,6 +28,7 @@
 #include "AABB_node_mod.h"              // for AABB_node
 
 namespace CGAL {
+namespace internal {
 
 /**
 * @class AABB_tree
@@ -735,6 +736,8 @@ AABB_tree<Tr>::closest_point_and_primitive(const Point &query,
     this->traversal(query, distance_traits);
     return distance_traits.closest_point_and_primitive();
 }
-} // end namespace CGAL
+
+} // namespace internal
+} // namespace CGAL
 
 #endif // CGAL_AABB_TREE_MOD_H

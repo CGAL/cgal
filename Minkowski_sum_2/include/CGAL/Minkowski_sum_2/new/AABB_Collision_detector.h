@@ -9,6 +9,8 @@
 #include "AABB_tree_mod.h"              // for AABB_tree
 
 namespace CGAL {
+namespace internal {
+
 template <class Kernel_, class Container_> class AABBCollisionDetector {
 
 public:
@@ -53,6 +55,7 @@ private:
     Polygon_2 &m_q;
 };
 
-}
+} // namespace internal
+} // namespace CGAL
 
 #endif

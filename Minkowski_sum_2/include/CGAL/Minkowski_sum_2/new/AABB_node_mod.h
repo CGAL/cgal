@@ -23,6 +23,7 @@
 #include <cstddef>                      // for size_t, NULL
 
 namespace CGAL {
+namespace internal {
 
 template<typename AABBTraits>
 class AABB_node {
@@ -298,6 +299,7 @@ AABB_node<Tr>::join_traversal(const AABB_node &other_node,
     }
 }
 
-} // end namespace CGAL
+} // namespace internal
+} // namespace CGAL
 
 #endif // CGAL_AABB_NODE_MOD_H
