@@ -14,7 +14,7 @@
 #include <CGAL/number_utils.h>          // for to_double, sqrt
 #include <CGAL/utils.h>                 // for max, min
 
-#include <CGAL/Minkowski_sum_2/new/AABB_Collision_detector.h>
+#include <CGAL/Minkowski_sum_2/new/aabb/AABB_Collision_detector.h>
 #include <CGAL/Minkowski_sum_2/new/Arr_SegmentData_traits.h>  // for state, etc
 
 #include <math.h>                       // for acos
