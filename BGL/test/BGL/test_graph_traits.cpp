@@ -1,5 +1,4 @@
 
-#define BOOST_TEST_MAIN 1
 
 #include <boost/test/parameterized_test.hpp>
 #include <boost/test/test_case_template.hpp>
@@ -252,8 +251,7 @@ void test_read(const G& g)
 
 using namespace boost::unit_test;
 
-test_suite*
-init_unit_test_suite( int , char** const)
+bool init()
 {
   std::vector<Polyhedron> polys = poly_data();
 
@@ -327,7 +325,13 @@ init_unit_test_suite( int , char** const)
     add( BOOST_PARAM_TEST_CASE( &test_halfedge_around_face_iterator<OMesh>, omeshs.begin(), omeshs.end()) );
 #endif
 
-  return 0;
+  return true;
+}
+
+int
+main( int argc, char* argv[] )
+{
+  return ::boost::unit_test::unit_test_main( &init, argc, argv);
 }
 
 

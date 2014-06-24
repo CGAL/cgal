@@ -1,5 +1,3 @@
-
-#define BOOST_TEST_MAIN 1
 #include <boost/test/unit_test.hpp>
 #include <boost/test/parameterized_test.hpp>
 
@@ -67,11 +65,10 @@ void index_uniqueness_omesh(const OMesh& g)
 
 using namespace boost::unit_test;
 
-test_suite*
-init_unit_test_suite( int, char** const )
+bool
+init()
 {
   std::vector<Polyhedron> polys = poly_data();
-
 
   framework::master_test_suite().
     add( BOOST_PARAM_TEST_CASE(&index_uniqueness_poly, polys.begin(), polys.end() ) );
@@ -89,7 +86,13 @@ init_unit_test_suite( int, char** const )
     add( BOOST_PARAM_TEST_CASE(&index_uniqueness_omesh, omeshs.begin(), omeshs.end() ) );
 #endif
 
-  return 0;
+  return true;
+}
+
+int
+main( int argc, char* argv[] )
+{
+  return ::boost::unit_test::unit_test_main( &init, argc, argv);
 }
 
 

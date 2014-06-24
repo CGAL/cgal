@@ -119,7 +119,6 @@ std::vector<T> t_data()
   for(unsigned int i = 0; i < sizeof(data) / sizeof(data[0]); ++i) {
     vs.push_back(T());
     T& s = vs.back();
-    
     if(!read_a_mesh(s, std::string(data[i])))
       throw std::runtime_error(std::string("Failed to read test data: ") + data[i]);
   }

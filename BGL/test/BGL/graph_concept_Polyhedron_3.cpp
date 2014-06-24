@@ -18,7 +18,6 @@
 //
 // Author(s)     : Philipp Möller
 
-#define BOOST_TEST_MAIN 1
 #include <boost/test/unit_test.hpp>
 
 #include <CGAL/Simple_cartesian.h>
@@ -134,8 +133,8 @@ void runtime_check_halfedgegraph()
 
 
 
-boost::unit_test::test_suite*
-init_unit_test_suite( int, char** const)
+bool
+init()
 {
   boost::unit_test::framework::master_test_suite().
     add( BOOST_TEST_CASE( &concept_check_polyhedron<Polyhedron> ) );
@@ -143,12 +142,12 @@ init_unit_test_suite( int, char** const)
   boost::unit_test::framework::master_test_suite().
     add( BOOST_TEST_CASE( &runtime_check_halfedgegraph<Polyhedron> ) );
 
-    return 0;
+    return true;
 }
 
 
-
-// int main()
-// {
-//   return 0;
-// }
+int
+main( int argc, char* argv[] )
+{
+  return ::boost::unit_test::unit_test_main( &init, argc, argv);
+}
