@@ -33,12 +33,12 @@
 
 
 // local
-#include "Dynamic_priority_queue.h"
-#include "Sample.h"
-#include "Reconstruction_edge_2.h"
-#include "Cost.h"
-#include "Reconstruction_vertex_base_2.h"
-#include "Reconstruction_face_base_2.h"
+#include <CGAL/Dynamic_priority_queue.h>
+#include <CGAL/Sample.h>
+#include <CGAL/Reconstruction_edge_2.h>
+#include <CGAL/Cost.h>
+#include <CGAL/Reconstruction_vertex_base_2.h>
+#include <CGAL/Reconstruction_face_base_2.h>
 
 
 #undef min
