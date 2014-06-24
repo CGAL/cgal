@@ -166,7 +166,44 @@ public:
     }
     else
     {
-      assert(s1l1Intersection && "Ray must enter triangle via entry segment.");
+      std::cerr << "Segment-Line intersection failed: " << std::endl;
+      std::cerr << s1 << std::endl;
+      std::cerr << l1.projection(s1.source()) << std::endl;
+      std::cerr << l1.projection(s1.target()) << std::endl;
+      
+      if (m_compute_squared_distance_2(l1.projection(s1.source()), s1.source()) < 0.0000001)
+      {
+        p1 = s1.source();
+      }
+      else if (m_compute_squared_distance_2(l1.projection(s1.target()), s1.target()) < 0.0000001)
+      {
+        p1 = s1.target();
+      }
+      else
+      {
+        typedef typename cpp11::result_of<Intersect_2(Line_2, Line_2)>::type LineLineIntersectResult;
+
+        LineLineIntersectResult left2 = m_intersect_2(s1.supporting_line(), l1);
+        
+        if (left2)
+        {
+          Point_2* result = boost::get<Point_2>(&*left2);
+        
+          if (result)
+          {
+            std::cerr << "Point of Line-Line intersection: " << *result << std::endl;
+            p1 = *result;
+          }
+          else
+          {
+            assert(false && "This is dumb");
+          }
+        }
+        else
+        {
+          assert(s1l1Intersection && "Ray must enter triangle via entry segment.");
+        }
+      }
     }
     
     SegmentLineIntersectResult s2l2Intersection = m_intersect_2(s2, l2);
@@ -188,7 +225,44 @@ public:
     }
     else
     {
-      assert(s2l2Intersection && "Ray must enter triangle via entry segment.");
+      std::cerr << "Segment-Line intersection failed: " << std::endl;
+      std::cerr << s2 << std::endl;
+      std::cerr << l2.projection(s2.source()) << std::endl;
+      std::cerr << l2.projection(s2.target()) << std::endl;
+
+      if (m_compute_squared_distance_2(l2.projection(s2.source()), s2.source()) < 0.0000001)
+      {
+        p2 = s2.source();
+      }
+      else if (m_compute_squared_distance_2(l2.projection(s2.target()), s2.target()) < 0.0000001)
+      {
+        p2 = s2.target();
+      }
+      else
+      {
+        typedef typename cpp11::result_of<Intersect_2(Line_2, Line_2)>::type LineLineIntersectResult;
+
+        LineLineIntersectResult right2 = m_intersect_2(s2.supporting_line(), l2);
+        
+        if (right2)
+        {
+          Point_2* result = boost::get<Point_2>(&*right2);
+        
+          if (result)
+          {
+            std::cerr << "Point of Line-Line intersection: " << *result << std::endl;
+            p2 = *result;
+          }
+          else
+          {
+            assert(false && "This is dumb");
+          }
+        }
+        else
+        {
+          assert(s2l2Intersection && "Ray must enter triangle via entry segment.");
+        }
+      }
     }
     
     FT distance1 = m_compute_squared_distance_2(s1[0], p1);
