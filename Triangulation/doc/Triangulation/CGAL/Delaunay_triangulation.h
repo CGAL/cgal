@@ -50,7 +50,7 @@ defines or overloads the following methods:
 */
 template< typename DelaunayTriangulationTraits, typename TriangulationDataStructure >
 class Delaunay_triangulation
-  : public Triangulation<TriangulationTraits, TriangulationDataStructure>
+  : public Triangulation<DelaunayTriangulationTraits, TriangulationDataStructure>
 {
 public:
 
