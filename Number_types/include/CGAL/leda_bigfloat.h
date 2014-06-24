@@ -154,13 +154,6 @@ namespace leda {
     inline bigfloat operator+( const bigfloat& i) { return i; }
 } // namespace leda
 
-//since types are included by leda_coercion_traits.h:
-#include <CGAL/leda_integer.h>
-#include <CGAL/leda_rational.h>
-#include <CGAL/leda_bigfloat.h>
-#include <CGAL/leda_real.h>
-#include <CGAL/LEDA_arithmetic_kernel.h>
-
 #endif // CGAL_USE_LEDA
 
 #endif // CGAL_LEDA_BIGFLOAT_H
