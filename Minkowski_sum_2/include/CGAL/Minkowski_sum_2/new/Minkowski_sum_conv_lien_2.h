@@ -36,7 +36,7 @@ namespace CGAL {
 struct Less_than_handle {
     template <typename Type>
     bool operator()(Type s1, Type s2) const {
-        return (&(*s1) < & (*s2));
+        return (&(*s1) < &(*s2));
     }
 };
 
@@ -53,6 +53,7 @@ template <class Traits_,
     public Arr_dcel_base<Arr_vertex_base<typename Traits_::Point_2>,
     Arr_map_halfedge<HalfedgeBase_>,
     Arr_face_base> {
+
 public:
 
     template<typename T>
@@ -693,7 +694,7 @@ public:
 
         // split the segments at their intersection points
         Arrangement_history_2 arr;
-        buildArrangementFromConv(reduced_conv, arr);
+        CGAL::insert(arr, reduced_conv.begin(), reduced_conv.end());
 
         DegenerateCasesManager degHandler(&arr, this, const_cast <Polygon_2*>(&pgn1), const_cast <Polygon_2*>(&pgn2), true);
         degHandler.findDegenerateBorderVertices();
@@ -728,18 +729,6 @@ public:
         delete _aabb_collision_detector;
 
         return (sum_holes);
-    }
-
-    void markOutsideLoop(Arrangement_history_2 &arr) {
-        Face_iterator ub_face = arr.unbounded_face();
-        Hole_iterator holes_itr = ub_face->holes_begin();
-        Ccb_halfedge_circulator circ_start = *holes_itr;
-        Ccb_halfedge_circulator circ = circ_start;
-
-        do {
-            setEdgeVisited(*circ, true, 0);
-            ++circ;
-        } while (circ != circ_start);
     }
 
     void markOutsideLoop(Arrangement_history_2 &arr, Polygon_2 &out_bound) {
@@ -902,128 +891,6 @@ public:
 private:
     SweepCollisionDetector<Kernel, Container_> collision_detector;
     AABBCollisionDetector<Kernel, Container_> *_aabb_collision_detector;
-    /*
-        Performs the stage 3 of filtering: removing nested loops which are not in the correct orientation.
-    */
-    void nestedLoopsFilter(Arrangement_history_2 &arr, const Polygon_2 &pgn1, const Polygon_2 &pgn2) const {
-        Face_iterator startFace = arr.unbounded_face();
-        Hole_iterator hi;
-        Ccb_halfedge_circulator perimiterFace;
-
-        for (hi = startFace->holes_begin(); hi != startFace->holes_end(); ++hi) {
-            perimiterFace = *hi;
-        }
-
-        // now for each hole in main face we will determine it's orientation.
-        nestedLoopsFilterRec(arr, perimiterFace, false, pgn1, pgn2);
-    }
-
-    /*
-    For each loop we represent it by the halfedge which is the twin of the face loop.
-    ie this edge is part of the clockwise oriented halfedges loop outside the face.
-    */
-    void nestedLoopsFilterRec(Arrangement_history_2 &arr, Halfedge_handle &handle, bool inwards, const Polygon_2 &pgn1, const Polygon_2 &pgn2) const {
-        std::list<Halfedge_handle> holesEdges;
-        std::list<Halfedge_handle> after_removal_hole_edges;
-        std::list<Face_handle> faces_list;
-
-        Face_iterator startFace = arr.unbounded_face();
-        Halfedge_handle inside_face_edge = handle->twin();
-        Face_handle container_face = inside_face_edge->face();
-
-        Face_iterator face_itr = arr.faces_begin();
-
-        for (; face_itr != arr.faces_end(); ++face_itr) {
-            if (!(face_itr->is_unbounded()) && face_itr != container_face) {
-                Halfedge_handle h_e = face_itr->outer_ccb()->twin();
-                holesEdges.push_back(h_e);
-            }
-        }
-
-        while (holesEdges.size() > 0) { // remove loops from faces
-            Halfedge_handle he = holesEdges.front();
-            holesEdges.pop_front();
-
-            if (!he->isDegenerate) {
-                if (!removeAllNonConformingLoops(arr, he, inwards, holesEdges, pgn1, pgn2)) {
-                    after_removal_hole_edges.push_back(he);
-                }
-            }
-        }
-
-        Hole_iterator hi;
-        hi = startFace->holes_begin();
-        container_face = (*hi)->twin()->face();
-        Ccb_halfedge_circulator outside_face_itr;
-
-        // push initial list of holes to list.
-        for (hi = container_face->holes_begin(); hi != container_face->holes_end(); ++hi) { // remove degenrate cases which are false
-            outside_face_itr = *hi;
-            Halfedge_handle h_e = outside_face_itr; //->twin();
-            holesEdges.push_back(h_e);
-        }
-
-        while (holesEdges.size() > 0) {
-            Halfedge_handle he = holesEdges.front();
-            holesEdges.pop_front();
-
-            if (!he->isDegenerate) {
-                if (!removeAllNonConformingLoops(arr, he, inwards, holesEdges, pgn1, pgn2)) {
-                    Hole_iterator hi;
-                    after_removal_hole_edges.push_back(he);
-                }
-            }
-        }
-    }
-
-    // find all faces who has handle's face sorrounding them, but are not holes.
-    void findSemiHoles(Arrangement_history_2 &arr, Halfedge_handle &handle, std::list<Halfedge_handle> &semi_holes) const {
-        Faces_set faces_in_face;
-        Face_handle outside_face = handle->face();
-        Ccb_halfedge_circulator circ = handle->twin()->ccb();
-        Ccb_halfedge_circulator curr = circ;
-
-        do {
-            // check if the twin edge is the regular outside face or a different one. if so we are in half island.
-            Face_handle curr_sec_face = curr->twin()->face();
-
-            if (curr_sec_face != outside_face) {
-                typename Faces_set::iterator itr = faces_in_face.find(curr_sec_face);
-
-                if (itr == faces_in_face.end()) {
-                    faces_in_face.insert(curr_sec_face);
-                }
-            }
-        } while (++curr != circ);
-
-        for (typename Faces_set::iterator itr = faces_in_face.begin(); itr != faces_in_face.end(); ++itr) {
-            Face_handle h = *itr;
-            semi_holes.push_back((h->outer_ccb()->twin()));
-        }
-    }
-
-    bool removeAllNonConformingLoops(Arrangement_history_2 &arr, Halfedge_handle &handle, bool inwards, std::list<Halfedge_handle> &holesEdges, const Polygon_2 &pgn1, const Polygon_2 &pgn2) const {
-        // check if loop is in the right direction ((a || b) && !(a && b))
-        bool a = !checkTripSameDirWithSegment(arr, handle);
-        bool b = inwards;
-        // nor a,b
-        bool conforming_loop = !((a || b) && !(a && b));
-
-        if (!conforming_loop) {
-            removeFaceLoop(arr, handle->twin());
-            return true;
-        }
-
-        // Check collision detection criterion
-        bool coll_detect = checkCollisionDetection(arr, handle, pgn1, pgn2);
-
-        if (coll_detect) {
-            removeFaceLoop(arr, handle->twin());
-            return true;
-        }
-
-        return false;
-    }
 
     AABBCollisionDetector<Kernel, Container_> *getColDetect() const {
         return _aabb_collision_detector;
@@ -1171,10 +1038,6 @@ private:
         for (typename std::list<Halfedge_handle>::iterator itr = remove_list.begin(); itr != remove_list.end(); ++itr) {
             arr.remove_edge(*itr);
         }
-    }
-    void buildArrangementFromConv(const Segments_list &reduced_conv, Arrangement_history_2 &arr) const {
-        CGAL_precondition(arr.is_empty());
-        CGAL::insert(arr, reduced_conv.begin(), reduced_conv.end());
     }
 
     void constructOrientableLoops(Arrangement_history_2 &arr) const {
@@ -1744,16 +1607,6 @@ private:
     bool checkReflex(const Point_2 &prev, const Point_2 &curr, const Point_2 &next) const {
         CGAL::Orientation res_ori = f_orientation(prev, curr, next);
         return ((res_ori == RIGHT_TURN) || (res_ori == COLLINEAR));
-    }
-
-    bool checkSwept(const Point_2 &prev, const Point_2 &curr, const Point_2 &next, const Point_2 &start, const Point_2 &end, bool &isStartConcide, bool &isEndConcide) const {
-        Direction_2 dir_start = f_direction(f_vector(prev, curr));
-        Direction_2 dir_end = f_direction(f_vector(curr, next));
-        Direction_2 dir_new = f_direction(f_vector(start, end));
-        isStartConcide = dir_new == dir_start;
-        isEndConcide = dir_end == dir_new;
-
-        return isStartConcide || f_ccw_in_between(dir_new, dir_start, dir_end) || isEndConcide;
     }
 
     bool checkSwept(Direction_2 &dir_start, Direction_2 &dir_end, Direction_2 &dir_new, bool &isStartConcide, bool &isEndConcide) const {
