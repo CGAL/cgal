@@ -675,21 +675,13 @@ public:
     }
 
     template <class OutputIterator>
-    OutputIterator operator()(const Polygon_2 &polygon1, const Polygon_2 &polygon2,
+    OutputIterator operator()(const Polygon_2 &pgn1, const Polygon_2 &pgn2,
                               Polygon_2 &sum_bound, OutputIterator sum_holes) {
 
-        CGAL_precondition(polygon1.is_simple());
-        CGAL_precondition(polygon2.is_simple());
-
-        Polygon_2 pgn1 = polygon1;
-        Polygon_2 pgn2 = polygon2;
-
-        if (pgn1.orientation() == CGAL::CLOCKWISE) {
-            pgn1.reverse_orientation();
-        }
-        if (pgn2.orientation() == CGAL::CLOCKWISE) {
-            pgn2.reverse_orientation();
-        }
+        CGAL_precondition(pgn1.is_simple());
+        CGAL_precondition(pgn2.is_simple());
+        CGAL_precondition(pgn1.orientation() == CGAL::COUNTERCLOCKWISE);
+        CGAL_precondition(pgn2.orientation() == CGAL::COUNTERCLOCKWISE);
 
         Polygon_2 revP1 = transform(Aff_transformation_2<Kernel>(SCALING, -1), pgn1);
         Polygon_2 p2 = pgn2;
@@ -703,8 +695,7 @@ public:
         Arrangement_history_2 arr;
         buildArrangementFromConv(reduced_conv, arr);
 
-        const Minkowski_sum_by_convolution_lien_2 *ptr = this;
-        DegenerateCasesManager degHandler(&arr, const_cast <Minkowski_sum_by_convolution_lien_2 *>(ptr), const_cast <Polygon_2 *>(&pgn1), const_cast <Polygon_2 *>(&pgn2), true);
+        DegenerateCasesManager degHandler(&arr, this, const_cast <Polygon_2*>(&pgn1), const_cast <Polygon_2*>(&pgn2), true);
         degHandler.findDegenerateBorderVertices();
         degHandler.markDegenerateEdges();
 
