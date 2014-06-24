@@ -9,7 +9,7 @@ is used by default for representing full cells in the class
 `Triangulation<TriangulationTraits, TriangulationDataStructure>`. 
 
 A `Triangulation_full_cell` stores handles to the vertices of the cell as well as handles 
-to its adjacent cells. 
+to its adjacent cells.
 
 Parameters 
 -------------- 
@@ -24,7 +24,7 @@ this case, `Data` defaults to `CGAL::No_full_cell_data`.
 `CGAL::No_full_cell_data` can explicitely be specified to access the third parameter. 
 
 Parameter `TriangulationDSFullCell_` must be a model of the concept 
-`TriangulationDSFullCell_`. 
+`TriangulationDSFullCell`. 
 The class template `Triangulation_full_cell` accepts that no third parameter be specified. 
 It also accepts the tag `CGAL::Default` as third parameter. In both 
 cases, `TriangulationDSFullCell_` defaults to `CGAL::Triangulation_ds_full_cell<>`. 

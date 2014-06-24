@@ -24,7 +24,7 @@ data structure parameter. Then,
 the `CGAL::Triangulation_data_structure` 
 uses a <I>rebind</I> mechanism (similar to the one specified in 
 `std::allocator`) in order to plug itself 
-as parameter in the face and vertex base classes. 
+as parameter in the full cell and vertex base classes. 
 This mechanism requires that the base class provides 
 a templated nested class `Rebind_TDS` that 
 itself provides 

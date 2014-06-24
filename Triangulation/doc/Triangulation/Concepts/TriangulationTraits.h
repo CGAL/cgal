@@ -3,17 +3,16 @@
 \ingroup PkgTriangulationsConcepts
 \cgalConcept
 
-The concept `TriangulationTraits` is the first template parameter of the class 
+This concept describes the geometric types and predicates required to build
+a triangulation. It corresponds to the first template parameter of the class 
 `Triangulation<TriangulationTraits, TriangulationDataStructure>`.
-It brings the geometric ingredient to the 
-definition of a triangulation, while the combinatorial ingredient is brought by 
-the second template parameter, `TriangulationDataStructure`. 
 
 \cgalRefines `SpatialSortingTraits_d`
 
 If a range of points is inserted, the 
-traits must refine `SpatialSortingTraits_d` (this operation is optimized using 
-spatial sorting). This is not required if the points are inserted one by one.
+traits must refine `SpatialSortingTraits_d`. The insertion is 
+then optimized using spatial sorting. 
+This is not required if the points are inserted one by one.
 
 \cgalHasModel `CGAL::Cartesian_d<FT, Dim, LA>`
 \cgalHasModel `CGAL::Epick_d<Dim>` (recommended)
@@ -28,11 +27,10 @@ public:
 /// @{
 
 /*!
-A type representing the dimension of the `Orientation_d` predicate 
+A type representing the dimension of the predicates 
 (but not necessarily the one of `Point_d`). If \f$ n \f$ is the number of
 points required by the `Orientation_d` predicate, then 
-`Dimension` \f$ = n - 1\f$. See the User Manual for more information about
-dimensions.
+`Dimension` \f$ = n - 1\f$.
 It can be static (`Dimension`=`CGAL::``Dimension_tag<int dim>`) or 
 dynamic (`Dimension`=`CGAL::``Dynamic_dimension_tag`).
 */ 
@@ -78,14 +76,15 @@ typedef unspecified_type Contained_in_affine_hull_d;
 /// In the \f$ D\f$-dimensional oriented space, a \f$ k-1\f$
 /// dimensional subspace (flat) defined by \f$ k\f$ points can be
 /// oriented in two different ways. Choosing the orientation of any
-/// simplex defined by \f$ k\f$ points fixes the orientation of all
-/// other simplices. To be able to orient lower dimensional flats, we
+/// simplex defined by \f$ k\f$ points in a flat fixes the orientation of
+/// the flat and therefore the orientation of all other simplices in this flat.
+/// To be able to orient lower dimensional flats, we
 /// use the following classes:
 /// @{
 
 /*!
 A type representing an orientation of an affine subspace of 
-dimension \f$ k\f$ strictly smaller than the maximal dimension. 
+dimension \f$ k\f$ strictly smaller than the dimension of the traits. 
 */ 
 typedef unspecified_type Flat_orientation_d; 
 

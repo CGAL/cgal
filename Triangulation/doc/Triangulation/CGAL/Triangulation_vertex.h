@@ -25,22 +25,22 @@ this case, `Data` defaults to `CGAL::No_vertex_data`.
 third parameter.
 
 Parameter
-`TriangulationDSVertex_` must be a model of the concept `TriangulationDSVertex_`. The
+`TriangulationDSVertex` must be a model of the concept `TriangulationDSVertex`. The
 class template `Triangulation_vertex` accepts that no third parameter be specified. It
 also accepts the tag `CGAL::Default` as third parameter. In both cases,
-`TriangulationDSVertex_` defaults to `CGAL::Triangulation_ds_vertex<>`.
+`TriangulationDSVertex` defaults to `CGAL::Triangulation_ds_vertex<>`.
 
 \cgalModels ::TriangulationVertex Additionally, the class
 `Triangulation_vertex` provides the following types, constructors
 and methods:
 
 \sa `Triangulation_full_cell<TriangulationTraits, Data, TriangulationDSFullCell>`
-\sa `Triangulation_data_structure<Dimensionality, TriangulationDSVertex_, TriangulationDSFullCell>`
+\sa `Triangulation_data_structure<Dimensionality, TriangulationDSVertex, TriangulationDSFullCell>`
 \sa `Triangulation<TriangulationTraits,TriangulationDataStructure>`
 \sa `Delaunay_triangulation<DelaunayTriangulationTraits, TriangulationDataStructure>`
 */
-template< typename TriangulationTraits, typename Data, typename TriangulationDSVertex_ >
-class Triangulation_vertex : public TriangulationDSVertex_ {
+template< typename TriangulationTraits, typename Data, typename TriangulationDSVertex >
+class Triangulation_vertex : public TriangulationDSVertex {
 public:
 
 /// \name Types

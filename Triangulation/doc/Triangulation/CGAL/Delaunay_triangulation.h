@@ -4,36 +4,54 @@ namespace CGAL {
 /*!
 \ingroup PkgTriangulationsTriangulationClasses
 
-The class `Delaunay_triangulation` is used to maintain the full cells and vertices of a
-Delaunay triangulation in \f$ \mathbb{R}^D \f$. It permits point insertion and
-removal. The dimension \f$ D\f$ should be kept reasonably small,
+This class is used to maintain the
+Delaunay triangulation of a set of points in \f$ \mathbb{R}^D \f$.
+It permits point insertion and
+removal. The dimension \f$ D\f$ can be specified at compile-time or
+run-time. It should be kept reasonably small,
 see the performance section in the user manual for what reasonable
 means.
+
+In a Delaunay triangulation, each face has the so-called
+<I>Delaunay</I> or <I>empty-ball</I> property: there exists a
+circumscribing ball whose interior does not contain 
+any vertex of the triangulation.
+A <I>circumscribing ball</I> of a simplex is a ball
+having all vertices of the simplex on its boundary.
 
 Parameters
 --------------
 
-`Traits` is the geometric traits class that provides the geometric types
-and predicates needed by Delaunay triangulations. `Traits` must be a model of
+`DelaunayTriangulationTraits` is the geometric traits class that provides the geometric types
+and predicates needed by Delaunay triangulations. `DelaunayTriangulationTraits` must be a model of
 the concept `DelaunayTriangulationTraits`.
 
-`Tds` is the class used to store the underlying triangulation data
-structure. `Tds` must be a model of the concept
-`TriangulationDataStructure`. The class template `Delaunay_triangulation` can
-be defined by specifying only the first parameter, or by using the
-tag `CGAL::Default` as
-the second parameter. In both cases, `Tds` defaults to
-`Triangulation_data_structure<Traits::Dimension, Triangulation_vertex<Traits>, Triangulation_full_cell<Traits> >`.
+The parameter `TriangulationDataStructure` must be a model of the concept
+`TriangulationDataStructure`. This model is used to store 
+the faces of the triangulation. The parameter `TriangulationDataStructure` defaults to
+`Triangulation_data_structure` whose template parameters are instantiated as
+follows:
+<UL>
+<LI>`DelaunayTriangulationTraits::Dimension`</LI>
+<LI>`Triangulation_vertex<DelaunayTriangulationTraits>`</LI>
+<LI>`Triangulation_full_cell<DelaunayTriangulationTraits>`.</LI>
+</UL>
 
-The class `Delaunay_triangulation<Traits, Tds>` inherits all the types
-defined in the base class `Triangulation<Traits, Tds>`. Additionally, it
+The class template `Delaunay_triangulation` can
+be defined by specifying only the first parameter, or by using the
+tag `CGAL::Default` as the second parameter. 
+
+The class `Delaunay_triangulation<DelaunayTriangulationTraits, TriangulationDataStructure>` inherits all the types
+defined in the base class `Triangulation<DelaunayTriangulationTraits, TriangulationDataStructure>`. Additionally, it
 defines or overloads the following methods:
 
 \sa `Triangulation_data_structure<Dimensionality, TriangulationDSVertex, TriangulationDSFullCell>`
 
 */
-template< typename Traits, typename Tds >
-class Delaunay_triangulation : public Triangulation<Traits, Tds> {
+template< typename DelaunayTriangulationTraits, typename TriangulationDataStructure >
+class Delaunay_triangulation
+  : public Triangulation<TriangulationTraits, TriangulationDataStructure>
+{
 public:
 
 /// \name Creation
@@ -65,13 +83,11 @@ Otherwise, the default-constructed `Full_cell_handle` is returned.
 Full_cell_handle remove(Vertex_handle v);
 
 /*!
-Remove the points or the vertices (through their
-`Vertex_handle`) in the range `[start, end)`.
-`ForwardIterator::value_type` must be `Vertex_handle`.
-
+Remove the vertices pointed by the vertex handles in the range `[start, end)`.
+\tparam ForwardIterator must be an input iterator with the value type `Vertex_handle`.
 */
-template< typename ForwardIterator > void remove(ForwardIterator
-start, ForwardIterator end);
+template< typename ForwardIterator > 
+void remove(ForwardIterator start, ForwardIterator end);
 
 /// @}
 
@@ -83,6 +99,7 @@ Inserts the points found in range `[s,e)` in the Delaunay triangulation
 and ensures that the empty-ball property is preserved.
 Returns the number of vertices actually inserted. (If more than one vertex share
 the same position in space, only one insertion is counted.)
+\tparam ForwardIterator must be an input iterator with the value type `Point`. 
 */
 template< typename ForwardIterator >
 size_type insert(ForwardIterator s, ForwardIterator e);

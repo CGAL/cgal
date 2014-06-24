@@ -34,7 +34,7 @@ corresponds to <I>the vertex at infinity</I>.
 the two full cells being neighbors of each other. This is the unique
 triangulation of the \f$ 0\f$-sphere.
 
-<DT><B>\f$ d>0\f$</B><DD> This corresponds to a standard triangulation of the sphere
+<DT><B>\f$ d>0\f$</B><DD> This corresponds to a triangulation of the sphere
 \f$ \mathbb{S}^d\f$.
 </DL>
 
@@ -130,39 +130,19 @@ Handle to a `Vertex`.
 typedef unspecified_type Vertex_handle;
 
 /*!
+Const handle to a `Vertex`.
+*/
+typedef unspecified_type Vertex_const_handle;
+
+/*!
 Handle to a `Full_cell`.
 */
 typedef unspecified_type Full_cell_handle;
 
-/// @}
-
-/// \name Rebind
-/// @{
-
 /*!
-\cgalAdvancedBegin
-This template class allows to get the type of a triangulation
-data structure that only changes the vertex type. It has to define a type
-`Other` which is a <I>rebound</I> triangulation data structure with `Vb2`
-as vertex type.
-\note It can be implemented using a nested template class.
-\cgalAdvancedEnd
+Const handle to a `Full_cell`.
 */
-template <typename Vb2> 
-using Rebind_vertex = unspecified_type;
-
-/*!
-\cgalAdvancedBegin
-This template class allows to get the type of a triangulation
-data structure that only changes the full cell type. It has to define a type
-`Other` which is a <I>rebound</I> triangulation data structure with `Fcb2`
-as full cell type.
-\note It can be implemented using a nested template class.
-\cgalAdvancedEnd
-*/
-template <typename Fcb2> 
-using Rebind_full_cell = unspecified_type;
-
+typedef unspecified_type Full_cell_const_handle;
 
 /// @}
 
@@ -285,7 +265,7 @@ void gather_full_cells(Full_cell_handle start, TraversalPredicate & tp,
 OutputIterator & out) const;
 
 /*!
-Insert in `out` all the full cells that are incident to the vertex
+Inserts in `out` all the full cells that are incident to the vertex
 `v`, i.e., the full cells that have the `Vertex v` as a vertex.
 Returns the output iterator.
 \pre `v!=Vertex_handle()`.
@@ -295,7 +275,7 @@ template< typename OutputIterator > OutputIterator
 incident_full_cells(Vertex_handle v, OutputIterator out) const;
 
 /*!
-Insert in `out` all the full cells that are incident to the face `f`,
+Inserts in `out` all the full cells that are incident to the face `f`,
 i.e., the full cells that have the `Face f` as a subface.
 Returns the output iterator.
 \pre `f.full_cell()!=Full_cell_handle()`.
@@ -305,7 +285,7 @@ template< typename OutputIterator > OutputIterator
 incident_full_cells(const Face & f, OutputIterator out) const;
 
 /*!
-Insert in `out` all the full cells that share at least one vertex with the `Face f`. Returns the output iterator.
+Inserts in `out` all the full cells that share at least one vertex with the `Face f`. Returns the output iterator.
 \pre `f.full_cell()!=Full_cell_handle()`.
 
 */
@@ -352,12 +332,12 @@ and `c!=Full_cell_handle()`.
 Vertex_handle mirror_vertex(Full_cell_handle c, int i) const;
 
 /*!
-The first vertex of `tds`. User has no control on the order.
+Iterator to the first vertex of `tds`. User has no control on the order.
 */
 Vertex_iterator vertices_begin();
 
 /*!
-The beyond vertex of `tds`.
+Iterator refering beyond the last vertex of `tds`.
 */
 Vertex_iterator vertices_end();
 
@@ -384,12 +364,12 @@ and `c != Full_cell_handle()`
 Full_cell_handle neighbor(Full_cell_handle c, int i) const;
 
 /*!
-The first full cell of `tds`. User has no control on the order.
+Iterator to the first full cell of `tds`. User has no control on the order.
 */
 Full_cell_iterator full_cells_begin();
 
 /*!
-The beyond full cell of `tds`.
+Iterator refering beyond the last full cell of `tds`.
 */
 Full_cell_iterator full_cells_end();
 
@@ -404,7 +384,7 @@ Iterator to the first facet of the triangulation.
 Facet_iterator facets_begin();
 
 /*!
-Iterator to the beyond facet of the triangulation.
+Iterator refering beyond the last facet of the triangulation.
 */
 Facet_iterator facets_end();
 
@@ -457,14 +437,17 @@ Inserts a vertex in the triangulation data structure by subdividing the
 Vertex_handle insert_in_facet(const Facet & ft);
 
 /*!
-The
-full cells in the range \f$ C=\f$`[start, end)` are removed, thus
-forming a hole \f$ H\f$.
-A `Vertex` is inserted and connected to the boundary of the hole in order
-to "fill it". A `Vertex_handle` to the new `Vertex` is returned.
+\cgalAdvancedBegin
+Removes the full cells in the range \f$ C=\f$`[s, e)`, inserts a vertex 
+at position `p` and fills the hole by connecting
+each face of the boundary to `p`.
+A `Vertex_handle` to the new `Vertex` is
+returned. The facet `ft` must lie on the boundary of \f$ C\f$ and its
+defining full cell, `tr`.`full_cell(ft)` must lie inside \f$ C\f$. Handles
+to the newly created full cells are output in the `out` output iterator.
 \pre `c` belongs to \f$ C\f$ and `c->neighbor(i)`
 does not, with `f=(c,i)`.
-\f$ H\f$ the union of full cells in \f$ C\f$ is simply connected and its
+\f$ H\f$, the union of full cells in \f$ C\f$, is simply connected and its
 boundary \f$ \partial H\f$ is a
 combinatorial triangulation of the sphere \f$ \mathbb{S}^{d-1}\f$.
 All vertices of cells of \f$ C\f$ are on \f$ \partial H\f$.
@@ -778,9 +761,11 @@ In the context of triangulation, the term full cell refers to a face of
 <I>maximal</I> dimension. This maximality characteristic is emphasized by using
 the adjective <I>full</I>.
 
-A `TriangulationDataStructure::Vertex` is responsible for 
-storing handles to the vertices of a
-full cell as well as handles to its neighbors.
+A `TriangulationDataStructure::FullCell` is responsible for 
+storing handles to the vertices of the
+full cell as well as handles to the adjacent full cells. Two full cells
+are said to be adjacent when they share a facet. Adjacent full cells are
+called hereafter neighbors.
 \cgalModifEnd
 
 \cgalHasModel `CGAL::Triangulation_ds_full_cell<TriangulationDataStructure,DSFullCellStoragePolicy>`

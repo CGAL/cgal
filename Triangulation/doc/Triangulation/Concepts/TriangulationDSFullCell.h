@@ -6,11 +6,11 @@
 \cgalModifBegin
 The concept `TriangulationDSFullCell` describes the requirements for the 
 full cell class of a `CGAL::Triangulation_data_structure`. It refines
-the concept `TriangulationDataStructure::Vertex`.
+the concept `TriangulationDataStructure::FullCell`.
 
 Since the `CGAL::Triangulation_data_structure` is the class 
 which defines the handle
-types, the vertex base class has to be somehow
+types, the full cell base class has to be somehow
 parameterized by the triangulation
 data structure. But since the `CGAL::Triangulation_data_structure` 
 itself is parameterized by the cell and vertex 
@@ -24,7 +24,7 @@ data structure parameter. Then,
 the `CGAL::Triangulation_data_structure` 
 uses a <I>rebind</I> mechanism (similar to the one specified in 
 `std::allocator`) in order to plug itself 
-as parameter in the face and vertex base classes. 
+as parameter in the full cell and vertex base classes. 
 This mechanism requires that the base class provides 
 a templated nested class `Rebind_TDS` that 
 itself provides 

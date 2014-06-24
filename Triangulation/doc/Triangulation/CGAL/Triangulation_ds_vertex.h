@@ -31,7 +31,7 @@ Rebind mechanism
 In case of derivation from that class, the nested class 
 `Rebind_TDS` need to be provided in the derived class. 
 
-\sa `Triangulation_ds_full_cell<TriangulationDataStructure, TDSFullCellStoragePolicy>` 
+\sa `Triangulation_ds_full_cell<TriangulationDataStructure, TriangulationDSFullCellStoragePolicy>` 
 \sa `Triangulation_data_structure<Dimensionality, TriangulationDSVertex, TriangulationDSFullCell>>` 
 
 */

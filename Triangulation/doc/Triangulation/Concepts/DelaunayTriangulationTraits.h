@@ -3,11 +3,9 @@
 \ingroup PkgTriangulationsConcepts
 \cgalConcept
 
-The concept `DelaunayTriangulationTraits` is the first template parameter of the class 
+This concept describes the geometric types and predicates required to build
+a Delaunay triangulation. It corresponds to the first template parameter of the class 
 `Delaunay_triangulation<DelaunayTriangulationTraits, TriangulationDataStructure>`.
-It brings the geometric ingredients to the definition of a Delaunay
-complex, while the combinatorial ingredients are brought by the second
-template parameter, `TriangulationDataStructure`.
 
 \cgalRefines ::TriangulationTraits.
 

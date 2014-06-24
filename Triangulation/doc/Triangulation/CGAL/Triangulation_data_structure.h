@@ -4,7 +4,7 @@ namespace CGAL {
 /*!
 \ingroup PkgTriangulationsTriangulationClasses
 
-This class is used for storing the combinatorial information of a triangulation 
+This class is a data structure used for storing a triangulation 
 of dimension \f$ d\leq D\f$ (`D` is the maximal dimension).
 
 Parameters 
@@ -77,7 +77,31 @@ bool is_valid(bool verbose = true) const;
 /// \name Types 
 /// @{
 
-/// @} 
+/*!
+\cgalAdvancedBegin
+This template class allows to get the type of a triangulation
+data structure that only changes the vertex type. It has to define a type
+`Other` which is a <I>rebound</I> triangulation data structure with `Vb2`
+as vertex type.
+\note It can be implemented using a nested template class.
+\cgalAdvancedEnd
+*/
+template <typename Vb2> 
+using Rebind_vertex = unspecified_type;
+
+/*!
+\cgalAdvancedBegin
+This template class allows to get the type of a triangulation
+data structure that only changes the full cell type. It has to define a type
+`Other` which is a <I>rebound</I> triangulation data structure with `Fcb2`
+as full cell type.
+\note It can be implemented using a nested template class.
+\cgalAdvancedEnd
+*/
+template <typename Fcb2> 
+using Rebind_full_cell = unspecified_type;
+
+/// @}
 
 /// \name Vertex insertion 
 /// @{
@@ -90,7 +114,7 @@ method creates new full cells from vertex `v` to the boundary of `C`.
 The boundary is recognized by checking the mark of the full cells. 
 This method is used by `Triangulation_data_structure::insert_in_hole()`. 
 s
-\pre same as `Triangulation_data_structure::insert_in_hole()` 
+\pre same as `TriangulationDataStructure::insert_in_hole()` 
 \cgalAdvancedEnd
 
 */ 

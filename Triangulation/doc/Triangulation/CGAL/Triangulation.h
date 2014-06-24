@@ -4,29 +4,40 @@ namespace CGAL {
 /*!
 \ingroup PkgTriangulationsTriangulationClasses
 
-The class `Triangulation` is used to store and query the full cells and vertices of
-a triangulation in dimension \f$ d\f$ (see the 
-\ref Chapter_Triangulations "User Manual" for
-a definition of "triangulation"). 
-The fact that there is no boundary is ensured by adding a
+This class implements triangulations of point sets in dimensions \f$ d \f$.
+The triangulation covers the convex hull of the input points 
+(the embedded vertices of the triangulation).
+
+To store this triangulation in a triangulation data structure, we turn the set
+of its faces into a topological sphere by adding a
 fictitious vertex, called the <i>infinite vertex</i>, as well as infinite 
-simplices incident to it. Each infinite \f$ i\f$-simplex is 
-incident to the infinite vertex and to \f$ i\f$ vertices of the convex hull.
+simplices incident to boundary faces of the convex hull. 
+Each infinite \f$ i\f$-simplex is 
+incident to the infinite vertex and to an \f$ (i-1)\f$-simplex of the 
+convex hull boundary.
 
 Parameters
 --------------
 
-`Traits` is the geometric traits class that provides the geometric types
-and predicates needed by triangulations. `Traits` must be a model of the
+`TriangulationTraits` is the geometric traits class that provides the geometric types
+and predicates needed by triangulations. `TriangulationTraits` must be a model of the
 concept `TriangulationTraits`.
 
-`Tds` is the class used to store the underlying triangulation data
-structure. `Tds` must be a model of the concept
-`TriangulationDataStructure`. The class template `Triangulation` can
-be defined by specifying only the first parameter, or by using the
-tag `CGAL::Default` as
-the second parameter. In both cases, `Tds` defaults to
-`Triangulation_data_structure<Traits::Dimension, Triangulation_vertex<Traits>, Triangulation_full_cell<Traits> >`.
+The parameter `TriangulationDataStructure` must be a model of the concept
+`TriangulationDataStructure`. This model is used to store 
+the faces of the triangulation. The parameter `TriangulationDataStructure` defaults to
+`Triangulation_data_structure` whose template parameters are instantiated as
+follows:
+<UL>
+<LI>`DelaunayTriangulationTraits::Dimension`</LI>
+<LI>`Triangulation_vertex<DelaunayTriangulationTraits>`</LI>
+<LI>`Triangulation_full_cell<DelaunayTriangulationTraits>`.</LI>
+</UL>
+
+The triangulation deduces its maximal dimension from the type
+`TriangulationTraits::Dimension`. This dimension has to match
+the dimension returned by
+`TriangulationDataStructure::maximal_dimension()`.
 
 Input/Output
 --------------
@@ -42,7 +53,7 @@ preceding list of full cells.
 \sa `Delaunay_triangulation<DelaunayTriangulationTraits, TriangulationDataStructure>`
 
 */
-template< typename Traits, typename Tds >
+template< typename TriangulationTraits, typename TriangulationDataStructure >
 class Triangulation {
 public:
 /// \name Types
@@ -51,12 +62,12 @@ public:
 /*!
 Type for the model of the `TriangulationTraits` concept.
 */
-typedef Traits Geom_traits;
+typedef TriangulationTraits Geom_traits;
 
 /*!
 A point in Euclidean space.
 */
-typedef Traits::Point_d Point;
+typedef TriangulationTraits::Point_d Point;
 
 /*!
 This indicates whether the maximal dimension is static
@@ -66,44 +77,43 @@ or dynamic (i.e.\ if the type of `Maximal_dimension` is
 In the latter case, the `dim` parameter passed to the class's constructor
 is used.
 */
-typedef Traits::Dimension Maximal_dimension;
+typedef TriangulationTraits::Dimension Maximal_dimension;
 
 /*!
 The second template parameter: the triangulation data structure.
 */
-typedef Tds Triangulation_ds;
+typedef TriangulationDataStructure Triangulation_ds;
 
 /*!
 A model of the concept `TriangulationVertex`.
 */
-typedef Tds::Vertex Vertex;
+typedef TriangulationDataStructure::Vertex Vertex;
 
 /*!
 A model of the concept
 `TriangulationFullCell`.
 */
-typedef Tds::Full_cell Full_cell;
+typedef TriangulationDataStructure::Full_cell Full_cell;
 
 /*!
 The facet
 class
 */
-typedef Tds::Facet Facet;
+typedef TriangulationDataStructure::Facet Facet;
 
 /*!
 A model of the concept `TriangulationDSFace`.
 */
-typedef Tds::Face Face;
+typedef TriangulationDataStructure::Face Face;
 
 /// @}
 
-/// \name Handles, Iterators and Circulators
+/// \name Handles and Iterators
 /// The vertices and full cells of triangulations are accessed through
-/// handles, iterators and circulators. A handle is a model of the
-/// `Handle` concept, and supports the two dereference operators and
-/// `operator->`. A circulator is a model of the concept
-/// `Circulator`. Iterators and circulators are bidirectional and
-/// non-mutable. Iterators and circulators are convertible to the
+/// handles and iterators. A handle is a model of the
+/// `Handle` concept, and supports the two dereference operators: 
+/// `operator*` and `operator->`. Iterators are bidirectional and
+/// non-mutable. They are convertible to the
 /// corresponding handles, thus the user can pass them directly as
 /// arguments to the functions.
 /// @{
@@ -111,32 +121,62 @@ typedef Tds::Face Face;
 /*!
 handle to a a vertex
 */
-typedef Tds::Vertex_handle
+typedef TriangulationDataStructure::Vertex_handle
 Vertex_handle;
+
+/*!
+const handle to a a vertex
+*/
+typedef TriangulationDataStructure::Vertex_const_handle
+Vertex_const_handle;
 
 /*!
 iterator over all vertices (including the infinite one)
 */
-typedef Tds::Vertex_iterator
+typedef TriangulationDataStructure::Vertex_iterator
 Vertex_iterator;
 
 /*!
-iterator over finite vertices 
+const iterator over all vertices (including the infinite one)
+*/
+typedef TriangulationDataStructure::Vertex_const_iterator
+Vertex_const_iterator;
+
+/*!
+iterator over finite vertices
 */ 
 typedef unspecified_type Finite_vertex_iterator;
 
 /*!
+const iterator over finite vertices
+*/ 
+typedef unspecified_type Finite_vertex_const_iterator;
+
+/*!
 handle to a full cell
 */
-typedef Tds::Full_cell_handle
+typedef TriangulationDataStructure::Full_cell_handle
 Full_cell_handle;
+
+/*!
+const handle to a full cell
+*/
+typedef TriangulationDataStructure::Full_cell_const_handle
+Full_cell_const_handle;
 
 /*!
 iterator over all full cells (including the infinite ones)
 */
 typedef
-Tds::Full_cell_iterator
+TriangulationDataStructure::Full_cell_iterator
 Full_cell_iterator;
+
+/*!
+const iterator over all full cells (including the infinite ones)
+*/
+typedef
+TriangulationDataStructure::Full_cell_const_iterator
+Full_cell_const_iterator;
 
 /*!
 iterator over finite full cells
@@ -144,9 +184,14 @@ iterator over finite full cells
 typedef unspecified_type Finite_full_cell_iterator;
 
 /*!
+const iterator over finite full cells
+*/
+typedef unspecified_type Finite_full_cell_const_iterator;
+
+/*!
 iterator over all facets (including the infinite ones)
 */
-typedef Tds::Facet_iterator
+typedef TriangulationDataStructure::Facet_iterator
 Facet_iterator;
 
 /*!
@@ -158,25 +203,23 @@ typedef unspecified_type Finite_facet_iterator;
 Size type (an unsigned integral
 type).
 */
-typedef Tds::size_type size_type;
+typedef TriangulationDataStructure::size_type size_type;
 
 /*!
 Difference
 type (a signed integral type).
 */
-typedef Tds::difference_type difference_type;
+typedef TriangulationDataStructure::difference_type difference_type;
 
 /*!
-The enum `Locate_type` is defined by the class `Triangulation` to specify
-in what kind of face a point has been located in a triangulation.
+specifies which case occurs when locating a point in the triangulation. 
 */
-enum Locate_type {
-  ON_VERTEX
-  , IN_FACE
-  , IN_FACET
-  , IN_FULL_CELL
-  , OUTSIDE_CONVEX_HULL
-  , OUTSIDE_AFFINE_HULL
+enum Locate_type { ON_VERTEX=0, /*!< when the located point coincides with a vertex of the triangulation */
+                   IN_FACE, /*!< when the point is in the interior of a face of dimension equal or less than `maximal_dimension()` - 2 */
+                   IN_FACET, /*!< when the point is in the interior of a facet */
+                   IN_FULL_CELL, /*!< when the point is in the interior of a full cell */
+                   OUTSIDE_CONVEX_HULL, /*!< when the point is outside the convex hull but in the affine hull of the current triangulation */
+                   OUTSIDE_AFFINE_HULL /*!< when the point is outside the affine hull of the current triangulation. */
 };
 
 /// @}
@@ -489,6 +532,7 @@ Vertex_handle collapse_face(const Point & p, const Face & f);
 Inserts the points found in range `[s,e)` in the triangulation. Returns
 the number of vertices actually inserted. (If several vertices share the
 same position in space, only the vertex that was actually inserted is counted.)
+\tparam ForwardIterator must be an input iterator with the value type `Point`.
 */
 template< typename ForwardIterator >
 size_type insert(ForwardIterator s, ForwardIterator e);
@@ -528,18 +572,15 @@ Vertex_handle insert(const Point p, Locate_type loc_type, Face & f, Facet & ft, 
 
 /*!
 \cgalAdvancedBegin
-The full cells in the range \f$ C=\f$`[s, e)` are removed, 
-thus forming a hole. A `Vertex` is
-inserted at position `p` and connected to the boundary of the hole in
-order to ``fill it''. A `Vertex_handle` to the new `Vertex` is
+Removes the full cells in the range \f$ C=\f$`[s, e)`, inserts a vertex 
+at position `p` and fills the hole by connecting
+each face of the boundary to `p`.
+A `Vertex_handle` to the new `Vertex` is
 returned. The facet `ft` must lie on the boundary of \f$ C\f$ and its
 defining full cell, `tr`.`full_cell(ft)` must lie inside \f$ C\f$. Handles
 to the newly created full cells are output in the `out` output iterator.
-\pre \f$C\f$ must be a (geometric) ball, must contain `p` in its
-interior and not contain any vertex all of whose incident full cells are in
-\f$C\f$ . (This implies that `t.current_dimension()`\f$ \geq 2\f$ if
-\f$|C|>1\f$ .) The boundary of \f$C\f$ must be a triangulation of the sphere
-\f$ \mathbb{S}^d-1\f$.
+\pre \f$C\f$ must be a topological ball, must contain `p` in its
+interior and must not contain any vertex of the triangulation.
 \cgalAdvancedEnd
 */
 template < typename ForwardIterator, typename OutputIterator >
@@ -607,7 +648,7 @@ Vertex_handle insert_outside_affine_hull(const Point &);
 /*!
 \cgalDebug Partially checks whether `tr` is a triangulation. This function returns
 `true` if the combinatorial triangulation data structure's `is_valid()`
-test returns `true` and if some geometric tests are passed with success: It
+test returns `true` and if some geometric tests are passed with success. It
 is checked that the orientation of each finite full cell is positive and that
 the orientation of each infinite full cell is consistent with their finite
 adjacent full cells.
@@ -622,6 +663,11 @@ The `verbose` parameter is not used.
 */
 bool are_incident_full_cells_valid(Vertex_const_handle v, bool
 verbose = false) const;
+
+/// @}
+
+/// \name Input/output
+/// @{
 
 /*!
 Reads the underlying combinatorial triangulation from `is` by
