@@ -1,5 +1,5 @@
-#ifndef _CONSOLE_COLOR_H_
-#define _CONSOLE_COLOR_H_
+#ifndef CONSOLE_COLOR_H_
+#define CONSOLE_COLOR_H_
 
 #include <iostream>
 

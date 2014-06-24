@@ -1,5 +1,5 @@
-#ifndef _SAMPLE_H
-#define _SAMPLE_H
+#ifndef SAMPLE_H
+#define SAMPLE_H
 
 template <class Kernel>
 class Sample

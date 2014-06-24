@@ -17,8 +17,8 @@
 //
 // Author(s)     : TODO: WHO? and Ivo Vigan
 
-#ifndef _RECONSTRUCTION_EDGE_2_H_
-#define _RECONSTRUCTION_EDGE_2_H_
+#ifndef RECONSTRUCTION_EDGE_2_H_
+#define RECONSTRUCTION_EDGE_2_H_
 
 #include <CGAL/Dynamic_priority_queue.h>
 

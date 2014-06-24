@@ -17,6 +17,9 @@
 //
 // Author(s)     : Fernando de Goes and Ivo Vigan
 
+#ifndef RECONSTRUCTION_TRIANGULATION_2_H
+#define RECONSTRUCTION_TRIANGULATION_2_H
+
 
 // STL
 #include <map>
@@ -30,7 +33,6 @@
 #include <CGAL/intersections.h>
 #include <CGAL/Delaunay_triangulation_2.h>
 #include <CGAL/Delaunay_triangulation_2.h>
-
 
 // local
 #include <CGAL/Dynamic_priority_queue.h>

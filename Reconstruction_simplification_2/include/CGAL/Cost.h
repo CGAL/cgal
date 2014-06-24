@@ -1,5 +1,5 @@
-#ifndef _COST_H_
-#define _COST_H_
+#ifndef COST_H_
+#define COST_H_
 
 #undef min
 #undef max

@@ -21,21 +21,18 @@
 #define RECONSTRUCTION_SIMPLIFICATION_2_H_
 
 
-//#include <CGAL/property_map.h>
-
 #include <CGAL/Reconstruction_triangulation_2.h>
 #include <CGAL/Cost.h>
 #include <CGAL/Reconstruction_edge_2.h>
 #include <CGAL/Sample.h>
 #include <CGAL/console_color.h>
 
+#include <CGAL/property_map.h>
 
 #include <iterator>
 #include <iostream>
 #include <list>
 #include <algorithm>
-
-#include <CGAL/property_map.h>
 
 
 namespace CGAL {
@@ -90,11 +87,6 @@ public:
 	typedef typename Triangulation::PQueue PQueue;
 
 
-	//-------
-
-
-
-	//typedef Point_list_const_iterator InputIterator;
 
 protected:
 	Triangulation m_dt;
@@ -109,8 +101,6 @@ protected:
 	double m_ghost; // ghost vs solid
 	unsigned m_relocation; // # relocations
 
-	//TODO: IV NEW
-
     // bbox
     double m_bbox_x;
     double m_bbox_y;
@@ -123,16 +113,6 @@ protected:
 
 
 public:
-
-	//Constructor
-	//Reconstruction_simplicifaction_2(InputIterator start, InputIterator beyond, PropertyMap point_mass_map);
-
-	/*	Reconstruction_simplification_2(InputIterator start, InputIterator beyond) {
-	 std::cout << "Reconstruction_simplification_2() " << std::flush;
-	 for (InputIterator it = start; it != beyond; ++it)
-	 std::cout << ' ' << *it;
-	 std::cout << '\n';
-	 */
 
 	Reconstruction_simplification_2(InputIterator start_itr,
 									InputIterator beyond_itr,
@@ -170,11 +150,8 @@ public:
 		clear();
 		insert_loose_bbox(m_bbox_x, m_bbox_y, 2 * m_bbox_size);
 
-
-
 		init(start, beyond);
 
-		//----THIS WAS BEFORE PROPERTY MAPS
 		std::list<Sample*> m_samples;
 		for (InputIterator it = start; it != beyond; it++) {
 			Point point = get(point_pmap, *it);
@@ -193,8 +170,6 @@ public:
 
 	    std::cout <<  "------------extracted_solid_eges----------------------" << std::endl;
 
-
-
 		PQueue queue;
 		    for (Finite_edges_iterator ei = m_dt.finite_edges_begin(); ei != m_dt.finite_edges_end(); ++ei)
 		    {
@@ -203,7 +178,6 @@ public:
 		        FT value = m_dt.get_edge_relevance(edge); // >= 0
 		        queue.push(Reconstruction_edge_2(edge, value));
 		    }
-
 
 		    //TODO: IV find nicer way to handle m_ignore
 		    int nb_remove = (std::min)(m_ignore, int(queue.size()));
@@ -218,13 +192,12 @@ public:
 		    {
 		        Reconstruction_edge_2 pedge = queue.top();
 		        queue.pop();
-		        //---
-				int i = (pedge.edge()).second;
+
+		        int i = (pedge.edge()).second;
 				Face_handle face = (pedge.edge()).first;
 				Point a = face->vertex((i+1)%3)->point();
 				Point b = face->vertex((i+2)%3)->point();
 				std::cout <<  "( " << a << " , " << b << " )" << std::endl;
-		        //---
 		    }
 
 		    std::cout <<  "---------------------------------------------------" << std::endl;
@@ -273,9 +246,6 @@ public:
         if (scale == 0.0) scale = 1.0;
     }
 
-
-    //-----------OLD CODE-----------
-
 	void clear() {
 		m_dt.clear();
 		m_pqueue.clean();
@@ -284,8 +254,6 @@ public:
 	double time_duration(const double init) {
 		return (clock() - init) / CLOCKS_PER_SEC;
 	}
-
-	// PARAMETERS //
 
 	void set_mchoice(const int mchoice) {
 		m_mchoice = mchoice;

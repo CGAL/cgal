@@ -223,6 +223,4 @@ struct less_Edge
 
 } //end namespace
 
-
-
 #endif /* RECONSTRUCTION_FACE_BASE_2_H_ */

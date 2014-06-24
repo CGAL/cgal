@@ -1,5 +1,5 @@
-#ifndef _DYNAMICS_PRIORITY_QUEUE_H_
-#define _DYNAMICS_PRIORITY_QUEUE_H_ 1
+#ifndef DYNAMICS_PRIORITY_QUEUE_H_
+#define DYNAMICS_PRIORITY_QUEUE_H_
 
 /*
  * class DynamicPriorityQueue
