@@ -449,61 +449,6 @@ bool IO_base_test<Base_geom_traits>::read_xsegment(stream& is,
   return true;
 }  
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 #elif TEST_GEOM_TRAITS == POLYCURVE_CIRCULAR_ARC_GEOM_TRAITS
 
 /*! */
@@ -760,7 +705,53 @@ template <typename stream>
 bool IO_base_test<Base_geom_traits>::read_xcurve(stream& is,
                                                  X_monotone_curve_2& xcv)
 {
+  std::vector<X_monotone_segment_2> x_segments;
+  std::vector<Control_point_2> point_vector;
 
+  Bezier_tratis bezier_traits;
+
+  char type;
+  is >> type;
+
+  unsigned int number_of_segments;
+  is >> number_of_segments;
+
+  if ((type == 'x') || (type == 'X')) 
+  {
+    for(unsigned int i=0; i<number_of_segments; i++)
+    {
+      unsigned int num_control_points;
+      is >> num_control_points;
+
+      point_vector.clear();
+
+      for (unsigned int j=0; j<num_control_points; ++j)
+      {
+        int point_x, point_y;
+        is >> point_x >> point_y;
+        point_vector.push_back( Control_point_2(point_x, point_y) );
+      } 
+      //get the non x-monotone bezier segment
+      Segment_2 seg (point_vector.begin(), point_vector.end());
+
+      //convert it into x-monotone bezier segment.
+      std::vector<CGAL::Object> obj_vector;
+      bezier_traits.make_x_monotone_2_object()( seg, std::back_inserter(obj_vector));
+      X_monotone_segment_2 x_seg = CGAL::object_cast<X_monotone_segment_2>( (obj_vector[0]) );
+
+      x_segments.push_back( x_seg );
+
+    } //for loop (number of segments) 
+  }
+
+  else
+  {
+    std::cerr << "Illegal Bezier segment type specification: " << type << "." << std::endl;
+    return false;
+  }
+
+  //construct x-monotone polycurve
+  xcv = m_geom_traits.construct_x_monotone_curve_2_object()(x_segments.begin(), x_segments.end());
   return true;
 }
 
@@ -768,7 +759,48 @@ template <>
 template <typename stream>
 bool IO_base_test<Base_geom_traits>::read_curve(stream& is, Curve_2& cv)
 {
+  std::vector<Segment_2> segments;
+  std::vector<Control_point_2> point_vector;
 
+  Bezier_tratis bezier_traits;
+
+  char type;
+  is >> type;
+
+  unsigned int number_of_segments;
+  is >> number_of_segments;
+
+  if ((type == 's') || (type == 'S')) 
+  {
+    for(unsigned int i=0; i<number_of_segments; i++)
+    {
+      unsigned int num_control_points;
+      is >> num_control_points;
+
+      point_vector.clear();
+
+      for (unsigned int j=0; j<num_control_points; ++j)
+      {
+        int point_x, point_y;
+        is >> point_x >> point_y;
+        point_vector.push_back( Control_point_2(point_x, point_y) );
+      } 
+      //get the non x-monotone bezier segment
+      Segment_2 seg (point_vector.begin(), point_vector.end());
+
+      segments.push_back( seg );
+
+    } //for loop (number of segments) 
+  }
+
+  else
+  {
+    std::cerr << "Illegal Bezier segment type specification: " << type << "." << std::endl;
+    return false;
+  }
+
+  //construct x-monotone polycurve
+  cv = m_geom_traits.construct_curve_2_object()(segments.begin(), segments.end());
   return true;
 }
 
