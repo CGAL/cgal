@@ -7,10 +7,9 @@
 #include "AABB_2d_traits.h"             // for AABB_traits_2
 #include "AABB_segment_2_primitive.h"   // for AABB_segment_2_primitive
 #include "AABB_tree_mod.h"              // for AABB_tree
-#include "ICollisionDetector.h"         // for ICollisionDetector
 
 namespace CGAL {
-template <class Kernel_, class Container_> class AABBCollisionDetector : public ICollisionDetector< Kernel_, Container_> {
+template <class Kernel_, class Container_> class AABBCollisionDetector {
 
 public:
 
@@ -33,7 +32,7 @@ public:
     AABBCollisionDetector(Polygon_2 &p, Polygon_2 &q)
         : m_stationary_tree((p.edges_begin()), (p.edges_end())), m_translating_tree((q.edges_begin()), (q.edges_end())), m_p(q), m_q(p) {
     }
-    virtual bool checkCollision(const Polygon_2 &p, const Polygon_2 &q) {
+    bool checkCollision(const Polygon_2 &p, const Polygon_2 &q) {
         if (m_stationary_tree.do_intersect_join(m_translating_tree, m_translation_point, m_p, m_q)) {
             return true;
         }
