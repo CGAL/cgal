@@ -10,23 +10,16 @@
 #include <vector>
 
 const int D=5;
-
-typedef CGAL::Epick_d< CGAL::Dynamic_dimension_tag >          K;
-typedef CGAL::Triangulation_ds_vertex< void >                 TDS_vertex;
-typedef CGAL::Triangulation_vertex< K, int, TDS_vertex >      Vertex;
-typedef CGAL::Triangulation_ds_full_cell                      
-        < void, CGAL::TDS_full_cell_default_storage_policy >  TDS_cell;
-typedef CGAL::Triangulation_full_cell< K, int, TDS_cell >     Cell;
-typedef CGAL::Triangulation_data_structure<                   
-   CGAL::Dimension_tag<D>, Vertex, Cell >                     TDS;
-typedef CGAL::Delaunay_triangulation<K, TDS>                  T;
-
+typedef CGAL::Epick_d< CGAL::Dimension_tag<D> >               K;
+typedef CGAL::Delaunay_triangulation<K>                       T;
+// The triangulation uses the default instanciation of the 
+// TriangulationDataStructure template parameter
 
 int main(int argc, char **argv)
 {
   int N = 100; if( argc > 2 )N = atoi(argv[1]); // number of points
   CGAL::Timer cost;  // timer
-  
+
   // Instanciate a random point generator
   CGAL::Random rng(0);
   typedef CGAL::Random_points_in_cube_d<T::Point> Random_points_iterator;
@@ -69,9 +62,7 @@ int main(int argc, char **argv)
     for (Full_cells::iterator it=new_full_cells.begin();
       it!=new_full_cells.end(); ++it) (*it)->data() = zone.size();
   }
+
   std::cout << " done in "<<cost.time()<<" seconds." << std::endl;
-
-
-
   return 0;
 }

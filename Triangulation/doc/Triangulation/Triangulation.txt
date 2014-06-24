@@ -6,15 +6,15 @@ namespace CGAL {
 \anchor Chapter_Triangulations
 
 \cgalAutoToc
-\authors Samuel Hornus and Olivier Devillers
+\authors Samuel Hornus, Olivier Devillers and Clément Jamin.
 
-This package proposes data structure and algorithms to compute
+This package proposes data structures and algorithms to compute
 triangulations of points in any dimensions.
-The `Triangulation_data_structure` allows to store and manipulate the
-combinatorial part of a triangulation while the geometric classes
+The `Triangulation_data_structure` handles the
+combinatorial aspect of triangulations while the geometric classes
 `Triangulation` and `Delaunay_triangulation` allows to
-compute a (Delaunay) triangulation of a set of points and to maintain
-it under insertions (and deletions in the Delaunay case).
+compute and maintain triangulations and Delaunay triangulations of 
+sets of points.
 
 # Introduction #
 
@@ -36,12 +36,11 @@ The simplicial complex is <I>pure</I> if all the maximal simplices
 have the same dimension.
 <!--- cardinality, i.e., they have the same number of vertices.--->
 In the sequel, we will call these maximal simplices <I>full cells</I>.
-A <I>face</I> of a simplex is a subset of it.
-A <I>proper face</I> of a simplex is a strict subset of it.
+A <I>face</I> of a simplex is a subset of this simplex.
+A <I>proper face</I> of a simplex is a strict subset of this simplex.
 
 A complex has <i>no boundaries</i> if any proper face of a simplex is also a 
-proper face of another simplex. A pure complex is <i>manifold</i> if all faces
-of dimension \f$ d-1 \f$ are proper faces of exactly two simplices.
+proper face of another simplex.
 
 If the vertices are embedded into Euclidean space \f$ \mathbb{R}^d\f$, 
 we deal with
@@ -59,33 +58,22 @@ entry</A> for more about simplicial complexes.
 
 ## What's in this package? ##
 
-This \cgal package deals with pure manifold simplicial complexes which are connected 
-and have no boundaries, which
-we will simply call in the sequel <I>triangulations</I>. It provides three main classes
+This \cgal package provides three main classes
 for creating and manipulating triangulations.
 
-The class `CGAL::Triangulation_data_structure<Dimensionality, TriangulationDSVertex, TriangulationDSFullCell>` models an <I>abstract triangulation</I>: vertices in this
+The class `CGAL::Triangulation_data_structure<Dimensionality, TriangulationDSVertex, TriangulationDSFullCell>` 
+models an <I>abstract triangulation</I>: vertices in this
 class are not embedded in Euclidean space but are only of combinatorial
-nature.
+nature. It deals with simplicial complexes 
+which are pure, connected and without boundaries nor singularities. 
 
 \cgalModifBegin
 The class `CGAL::Triangulation<TriangulationTraits, TriangulationDataStructure>` 
-describes an embedded triangulation that has as vertices a given set of points
-and which covers the convex hull of these points.
-Methods are
-provided for the insertion of points in the triangulation, the
+describes an embedded triangulation that has as vertices a given set of points.
+Methods are provided for the insertion of points in the triangulation, the
 traversal of various elements of the triangulation, as well as the localization of a
-query point inside the triangulation.
-The convex hull of the points is part of the triangulation.
-The fact that there is no boundary is ensured by adding a
-fictitious vertex, called the <i>infinite vertex</i>, as well as infinite 
-simplices incident to it. Each infinite \f$ i\f$-simplex is 
-incident to the infinite vertex and to \f$ i\f$ vertices of the convex hull.
-\cgalModifEnd
-
-See Chapters \ref Chapter_2D_Triangulations "2D Triangulations" and 
-\ref Chapter_3D_Triangulations "3D Triangulations" for more details
-about infinite vertices and cells.
+query point inside the triangulation. 
+The triangulation covers the convex hull of the set of points.
 
 The class `CGAL::Delaunay_triangulation<DelaunayTriangulationTraits, TriangulationDataStructure>` adds further
 constraints to a triangulation, in that all its simplices must have the
@@ -132,27 +120,25 @@ us denote the maximal dimension with \f$ D \f$ and the current dimension with \f
 The inequalities \f$ -2 \leq d \leq D\f$ and \f$ 0 \le D\f$ always hold.
 The special meaning of negative values for \f$d\f$ is explained below.
 
-### The data structure triangulates \f$ \mathbb{S}^d\f$ ###
+### The Set of Faces ###
 
-A `TriangulationDataStructure` can be viewed as
-a triangulation of the topological sphere \f$ \mathbb{S}^d\f$,
-i.e., its faces can be embedded to form a partition of
-\f$ \mathbb{S}^d\f$ into \f$d\f$-simplices.
+The set of faces of a `TriangulationDataStructure` with 
+current dimension \f$ d \f$ forms a triangulation of the 
+topological sphere \f$ \mathbb{S}^d\f$.
 
-One nice consequence of the above important fact is that a full cell has
-always exactly \f$ d+1\f$ neighbors.
 Two full cells \f$ \sigma\f$ and \f$ \sigma'\f$ sharing a facet are called
-<I>neighbors</I>.
+<I>neighbors</I>. A full cell has always exactly \f$ d+1\f$ neighbors.
 
 Possible values of \f$d\f$ (the <I>current dimension</I> of the triangulation) include
 <BLOCKQUOTE>
 <DL>
-<DT><B>\f$d=-2\f$</B><DD> This corresponds to the non-existence of any object in
-the `TriangulationDataStructure`.
-<DT><B>\f$d=-1\f$</B><DD> This corresponds to a single vertex.
+<DT><B>\f$d=-2\f$</B><DD> This corresponds to an empty
+`TriangulationDataStructure`.
+<DT><B>\f$d=-1\f$</B><DD> This corresponds to an abstract simplicial 
+complex reduced to a single vertex.
  <!---  and a single full cell. In a geometric triangulation, this vertex corresponds to the vertex at infinity.--->
-<DT><B>\f$d=0\f$</B><DD> This corresponds to two vertices,
-each corresponding to a full cell;
+<DT><B>\f$d=0\f$</B><DD> This corresponds to an abstract simplicial 
+complex including two vertices, each corresponding to a full cell;
 the two full cells being neighbors of each other. This is the unique
 triangulation of the \f$ 0\f$-sphere.
 <!--- (geometrically, the finite vertex and the infinite vertex),--->
@@ -171,8 +157,7 @@ implementing the concept `TriangulationDataStructure`.
 
 A `TriangulationDataStructure` explicitly stores its vertices and full cells.
 
-Each vertex stores a reference (a `handle`) to one of its incident
-full cells.
+Each vertex stores a reference to one of its incident full cells.
 
 Each full cell stores references to its \f$ d+1\f$ vertices and
 neighbors. Its vertices and neighbors are indexed from \f$ 0\f$ to \f$ d \f$. The indices
@@ -180,12 +165,21 @@ of its neighbors have the following meaning: the \f$ i\f$-th neighbor of \f$ \si
 is the unique neighbor of \f$ \sigma\f$ that does not contain the \f$ i\f$-th vertex of
 \f$ \sigma\f$; in other words, it is the neighbor of \f$ \sigma\f$ <I>opposite</I> to
 the \f$ i\f$-th vertex of \f$ \sigma\f$ (Figure \cgalFigureRef{triangulationfigfullcell}).
-Faces of dimension between 0 and \f$ d-1 \f$ can be accessed as
-subfaces of a full cell.
+
+The vertices and full cells of the triangulations are accessed through
+`handles` and `iterators`. A handle is a model of the
+`Handle` concept, and supports the two dereference operators and
+`operator->`.
 
 \cgalFigureBegin{triangulationfigfullcell,simplex-structure.png}
 Indexing the vertices and neighbors of a full cell \f$ c\f$ in dimension \f$ d=2\f$.
 \cgalFigureEnd
+
+Faces of dimension between 0 and \f$ d-1 \f$ can be accessed as
+subfaces of a full cell, through the nested type `Face`. The `Face` instance 
+corresponding to a face \f$ f \f$ stores a reference to a full cell `c`
+containing \f$ f \f$, and the indices of the vertices of `c` that belong
+to \f$ f \f$.
 
 <!---
 \cgalAdvanced The index of a full cell \f$ c\f$ in the \f$ i\f$-th
@@ -208,7 +202,7 @@ documentation of that class template for specific details.
 ###Template parameters###
 
 The `Triangulation_data_structure<Dimensionality, TriangulationDSVertex, TriangulationDSFullCell>`
-class template is designed in such a way that its user can choose
+class is designed in such a way that its user can choose
 <UL>
 <LI>the maximal dimension of the triangulation data structure by specifying the `Dimensionality` template parameter,
 <LI>the type used to represent vertices by specifying the `TriangulationDSVertex`
@@ -294,21 +288,26 @@ Barycentric subdivision in dimension \f$ d=2\f$.
 # Triangulations #
 
 The class `CGAL::Triangulation<TriangulationTraits, TriangulationDataStructure>` 
-maintains a geometric 
-triangulation in  Euclidean space. More precisely, it
-maintains a triangulation (a partition into pairwise interior-disjoint
-full cells) of the convex hull of the points (the embedded vertices) of the
-triangulation. A special vertex at infinity is added to the convex
-hull facets to create infinite full cells and make the triangulation
-homeomorphic to a sphere of one dimension higher.
+maintains a triangulation embedded in Euclidean space. The triangulation 
+covers the convex hull of the input points (the embedded vertices) of the
+triangulation.
+
+To store this triangulation in a triangulation data structure, we turn the set
+of its faces into a topological sphere by adding a
+fictitious vertex, called the <i>infinite vertex</i>, as well as infinite 
+simplices incident to boundary faces of the convex hull. 
+Each infinite \f$ i\f$-simplex is 
+incident to the infinite vertex and to an \f$ (i-1)\f$-simplex of the 
+convex hull boundary.
+\cgalModifEnd
+
+See Chapters \ref Chapter_2D_Triangulations "2D Triangulations" and 
+\ref Chapter_3D_Triangulations "3D Triangulations" for more details
+about infinite vertices and cells.
 
 Methods are provided for the insertion of points in the triangulation, the
 contraction of faces, the traversal of various elements of the triangulation
 as well as the localization of a query point inside the triangulation.
-
-Infinite full cells outside the convex hull are each incident to
-a finite facet on the convex hull of the triangulation and to a unique
-<I>vertex at infinity</I>.
 
 The ordering of the vertices of a full cell defines an orientation of
 that full cell.
@@ -335,16 +334,16 @@ In a triangulation, we can distinguish three dimensions:
 
 ## Implementation ##
 
-The class `CGAL::Triangulation<TriangulationTraits, TriangulationDataStructure>` stores a model
-of the concept `TriangulationDataStructure` which is instantiated with a
-vertex type that stores a point, and a full cell type that allows the retrieval
-of the point of its vertices.
+The class `CGAL::Triangulation<TriangulationTraits, TriangulationDataStructure>` 
+stores a model of the concept `TriangulationDataStructure` which is 
+instantiated with a vertex type that stores a point.
 
 The template parameter `TriangulationTraits` must be a model of the concept
-`TriangulationTraits` which provides the geometric `Point` type as well
+`TriangulationTraits` which provides the `Point` type as well
 as various geometric predicates used by the `Triangulation` class.
 
-`TriangulationTraits::Dimension` must match
+The `TriangulationTraits` concept includes a nested type 
+`TriangulationTraits::Dimension` which must match
 the maximal dimension of the `TriangulationDataStructure`.
 
 The template parameter `TriangulationDataStructure` must be a model of the concept
@@ -369,15 +368,15 @@ points. This gives us a handy way to count the convex hull vertices
 
 ### Traversing the facets of the convex hull ###
 
-Remember that a triangulation triangulates the convex hull of its
+Remember that a triangulation covers the convex hull of its
 vertices.
-Each
-facet of the convex hull is incident to one finite full cell and one infinite
+Each facet of the convex hull is incident 
+to one finite full cell and one infinite
 full cell. In fact there is a bijection between the infinite full cells and the
 facets of the convex hull.
 If vertices are not in general position, convex hull faces that are
 not simplices are triangulated.
-So, in order to traverse the convex hull facets,
+In order to traverse the convex hull facets,
 there are (at least) two possibilities:
 
 The first is to iterate over the full cells of the triangulation and check if they
@@ -400,27 +399,28 @@ visits <I>only</I> the infinite full cells but stores handles to them into the
 # Delaunay Triangulations #
 
 The class `CGAL::Delaunay_triangulation<DelaunayTriangulationTraits, TriangulationDataStructure>` derives from
-`CGAL::Triangulation<DelaunayTriangulationTraits, TriangulationDataStructure>` and adds further constraints to a
-triangulation, in that all its full cells must have the so-called
-<I>Delaunay</I> or <I>empty-ball</I> property: the interior of the ball
-circumscribing any full cell must be free from any vertex
-of the triangulation.
+`CGAL::Triangulation<DelaunayTriangulationTraits, TriangulationDataStructure>`
+and represent Delaunay triangulations.
 
-The <I>circumscribing ball</I> of a full cell is the ball
-having all vertices of the full cell on its boundary.
+A <I>circumscribing ball</I> of a simplex is a ball
+having all vertices of the simplex on its boundary.
+In a Delaunay triangulation, each face has the so-called
+<I>Delaunay</I> or <I>empty-ball</I> property: there exists a
+circumscribing ball whose interior does not contain 
+any vertex of the triangulation.
+
 In case of degeneracies (co-spherical points) the triangulation is not
-uniquely defined;
-Note however that the \cgal implementation computes a unique
+uniquely defined. Note however that the \cgal implementation computes a unique
 triangulation even in these cases.
 
 When a new point `p` is inserted into a Delaunay triangulation, the
-finite full cells whose circumscribing sphere contain `p` are said to
-<I>be in conflict</I> with point `p`. The set of full cells that are in
-conflict with `p` form the <I>conflict zone</I>. That conflict zone is
-augmented with the infinite full cells whose finite facet does not lie
-anymore on the convex hull of the triangulation (with `p` added). The full cells
+full cells whose circumscribing ball contains `p` are said to
+<I>be in conflict</I> with point `p`. Note that the circumscribing ball
+of an infinite full cell is the empty half-space bounded by the affine hull 
+of the finite facet of this cell. The set of full cells that are in
+conflict with `p` form the <I>conflict zone</I>. The full cells
 in the conflict zone are removed, leaving a hole that contains `p`. That
-hole is ``star shaped'' around `p` and thus is easily re-triangulated using
+hole is ``star shaped'' around `p` and thus is re-triangulated using
 `p` as a center vertex.
 
 Delaunay triangulations also support vertex removal.
@@ -441,7 +441,7 @@ for the computation of Delaunay triangulations.
 
 ## Examples ##
 
-### Access to the conflict zone and creating full cells during point insertion ###
+### Access to the conflict zone and to the full cells created during point insertion ###
 
 When using a full cell type containing additional custom information, it may be
 useful to get an efficient access to the full cells that are going to be erased
@@ -472,8 +472,8 @@ preferably with the new Kernel).
 This package is heavily inspired by the works of
 Monique Teillaud and Sylvain Pion (`Triangulation_3`)
 and Mariette Yvinec (`Triangulation_2`).
-The first version was written by Samuel Hornus and then
-pursued by Samuel Hornus and Olivier Devillers.
+The first version was written by Samuel Hornus. The final version is a joint 
+work by Samuel Hornus, Olivier Devillers and Clément Jamin.
 
 */ 
 } /* namespace CGAL */
