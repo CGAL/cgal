@@ -158,27 +158,27 @@ However, this technique is more dependent on the discretization of the deformed 
 
 \subsection Surface_modeling_examples Examples
 
-\subsubsection Example_1 Using the Whole Surface Mesh as Region-of-Interest
+\subsubsection SModelingExample_1 Using the Whole Surface Mesh as Region-of-Interest
 In this example, the whole surface mesh is used as ROI and a few vertices are added as control vertices.
 `Deform_mesh::set_target_position()` is used for setting the target positions of the control vertices.
 
 \cgalExample{Surface_modeling/all_roi_assign_example.cpp}
 
-\cgalFigureBegin{Example_1_results, example_1_results.png}
-Deformation results when running example \ref Example_1 : `deform_1.off` and `deform_2.off`.
+\cgalFigureBegin{SModelingExample_1_results, example_1_results.png}
+Deformation results when running example \ref SModelingExample_1 : `deform_1.off` and `deform_2.off`.
 \cgalFigureEnd
 
-\subsubsection Example_2 Using an Affine Transformation on a Range of Vertices
+\subsubsection SModelingExample_2 Using an Affine Transformation on a Range of Vertices
 In this example, we use the functions `translate()` and `rotate()` on a range of control vertices.
 Note that the translations and the rotations are defined using a 3D vector type and a quaternion type from the \ref thirdpartyEigen "Eigen library".
 
 \cgalExample{Surface_modeling/k_ring_roi_translate_rotate_example.cpp}
 
-\cgalFigureBegin{Example_2_results, example_2_results.png}
-Deformation results when running example \ref Example_2 : `deform_1.off` and `deform_2.off`.
+\cgalFigureBegin{SModelingExample_2_results, example_2_results.png}
+Deformation results when running example \ref SModelingExample_2 : `deform_1.off` and `deform_2.off`.
 \cgalFigureEnd
 
-\subsubsection Example_3 Using an Enriched Polyhedron with Ids
+\subsubsection SModelingExample_3 Using an Enriched Polyhedron with Ids
 In the previous examples, we used an <i>enriched</i> polyhedron storing an ID
 in its halfedges and vertices together with the default property maps
 in the deformation object to access them.
@@ -189,7 +189,7 @@ the former examples instead, as using a `std::map`
 to access indices increases the complexity from constant to logarithmic.
 \cgalExample{Surface_modeling/deform_polyhedron_with_custom_pmap_example.cpp}
 
-\subsubsection Example_4 Using a Custom Edge Weighting Scheme
+\subsubsection SModelingExample_4 Using a Custom Edge Weighting Scheme
 Using a custom weighting scheme for edges is also possible if one provides a model of `SurfaceModelingWeights`.
 In this example, the weight of each edge is pre-computed and an internal map is used for storing and accessing them.
 
