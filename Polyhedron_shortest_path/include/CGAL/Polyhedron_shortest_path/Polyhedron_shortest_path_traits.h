@@ -141,13 +141,13 @@ public:
   Compare_relative_intersection_along_segment_2 compare_relative_intersection_along_segment_2_object() const { return m_compare_relative_intersection_along_segment_2_object; }
   Is_saddle_vertex is_saddle_vertex_object() const { return m_is_saddle_vertex_object; }
   
-  Project_triangle_3_to_triangle_2 project_triangle_3_to_triangle_2_object() { return m_project_triangle_3_to_triangle_2_object; }
-  Flatten_triangle_3_along_segment_2 flatten_triangle_3_along_segment_2_object() { return m_flatten_triangle_3_along_segment_2_object; }
-  Construct_barycentric_coordinate_2 construct_barycentric_coordinate_2_object() { return m_construct_barycentric_coordinate_2_object; }
-  Construct_triangle_location_2 construct_triangle_location_2_object() { return m_construct_triangle_location_2_object; }
+  Project_triangle_3_to_triangle_2 project_triangle_3_to_triangle_2_object() const { return m_project_triangle_3_to_triangle_2_object; }
+  Flatten_triangle_3_along_segment_2 flatten_triangle_3_along_segment_2_object() const { return m_flatten_triangle_3_along_segment_2_object; }
+  Construct_barycentric_coordinate_2 construct_barycentric_coordinate_2_object() const { return m_construct_barycentric_coordinate_2_object; }
+  Construct_triangle_location_2 construct_triangle_location_2_object() const { return m_construct_triangle_location_2_object; }
   Construct_barycentric_coordinate_3 construct_barycentric_coordinate_3_object() { return m_construct_barycentric_coordinate_3_object; }
-  Construct_triangle_location_3 construct_triangle_location_3_object() { return m_construct_triangle_location_3_object; }
-  Parameteric_distance_along_segment_2 parameteric_distance_along_segment_2_object() { return m_parameteric_distance_along_segment_2_object; }
+  Construct_triangle_location_3 construct_triangle_location_3_object() const { return m_construct_triangle_location_3_object; }
+  Parameteric_distance_along_segment_2 parameteric_distance_along_segment_2_object() const { return m_parameteric_distance_along_segment_2_object; }
 };
 
 } // namespace CGAL

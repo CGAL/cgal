@@ -11,6 +11,8 @@
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
 
+#include <CGAL/Random.h>
+
 #include <CGAL/Polyhedron_shortest_path/Polyhedron_shortest_path_traits.h>
 #include <CGAL/Polyhedron_shortest_path/Polyhedron_shortest_path.h>
 
@@ -46,6 +48,13 @@ struct Point_sequence_collector
   }
 };
 
+Traits::Barycentric_coordinate random_coordinate(CGAL::Random& rand)
+{
+  Traits::FT u = rand.uniform_01<Traits::FT>();
+  Traits::FT v = rand.uniform_real(Traits::FT(0.0), Traits::FT(1.0) - u);
+  return Traits::Barycentric_coordinate(u, v, Traits::FT(1.0) - u - v);
+}
+
 int main(int argc, char** argv)
 {
   UNUSED(argc);
@@ -59,27 +68,30 @@ int main(int argc, char** argv)
   
   inStream.close();
 
-  const size_t targetFaceIndex = 432;
+  face_iterator facesStart, facesEnd;
+  boost::tie(facesStart, facesEnd) = CGAL::faces(polyhedron);
   
-  face_iterator facesCurrent, facesEnd;
-  boost::tie(facesCurrent, facesEnd) = CGAL::faces(polyhedron);
+  std::vector<face_descriptor> faceList;
   
-  size_t currentFaceIndex = 0;
-  
-  while (currentFaceIndex < targetFaceIndex)
+  for (face_iterator facesCurrent = facesStart; facesCurrent != facesEnd; ++facesCurrent)
   {
-    ++facesCurrent;
-    ++currentFaceIndex;
+    faceList.push_back(*facesCurrent);
   }
   
-  face_descriptor targetFace = *facesCurrent;
+  CGAL::Random rand(2379912);
+  const size_t numSamplePoints = 30;
   
-  Traits::Barycentric_coordinate faceLocation(Traits::FT(0.25), Traits::FT(0.5), Traits::FT(0.25));
+  std::vector<Polyhedron_shortest_path::Face_location_pair> faceLocations;
+  
+  for (size_t i = 0; i < numSamplePoints; ++i)
+  {
+    faceLocations.push_back(Polyhedron_shortest_path::Face_location_pair(faceList[rand.get_int(0, CGAL::num_faces(polyhedron))], random_coordinate(rand)));
+  }
   
   Traits traits;
   Polyhedron_shortest_path shortestPaths(polyhedron, traits);
 
-  shortestPaths.compute_shortest_paths(targetFace, faceLocation);
+  shortestPaths.compute_shortest_paths(faceLocations.begin(), faceLocations.end());
   
   vertex_iterator verticesCurrent, verticesEnd;
   
