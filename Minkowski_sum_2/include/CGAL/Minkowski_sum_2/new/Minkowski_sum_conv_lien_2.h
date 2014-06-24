@@ -16,7 +16,6 @@
 
 #include <CGAL/Minkowski_sum_2/new/AABB_Collision_detector.h>
 #include <CGAL/Minkowski_sum_2/new/Arr_SegmentData_traits.h>  // for state, etc
-#include <CGAL/Minkowski_sum_2/new/SweepCollisionDetection.h>
 
 #include <math.h>                       // for acos
 #include <stddef.h>                     // for NULL
@@ -719,7 +718,6 @@ public:
                 removeList.push_back(itr);
             }
         }
-
         for (typename std::list<Halfedge_handle>::iterator itr = removeList.begin(); itr != removeList.end(); ++itr) {
             arr.remove_edge(*itr);
         }
@@ -728,7 +726,7 @@ public:
 
         delete _aabb_collision_detector;
 
-        return (sum_holes);
+        return sum_holes;
     }
 
     void markOutsideLoop(Arrangement_history_2 &arr, Polygon_2 &out_bound) {
@@ -889,7 +887,6 @@ public:
     }
 
 private:
-    SweepCollisionDetector<Kernel, Container_> collision_detector;
     AABBCollisionDetector<Kernel, Container_> *_aabb_collision_detector;
 
     AABBCollisionDetector<Kernel, Container_> *getColDetect() const {
