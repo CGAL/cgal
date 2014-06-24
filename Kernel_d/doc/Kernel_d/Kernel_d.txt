@@ -222,13 +222,13 @@ be exact.
 
 Note that it provides few interfaces in addition to those documented in the
 `Kernel_d` concept. In particular, the type of a point is only available as
-`Epick_d<DimensionTag>::Point_d`, <B>not</B> `Point_d<Epick_d<DimensionTag>>`.
+`Epick_d<DimensionTag>::%Point_d`, <B>not</B> `Point_d<Epick_d<DimensionTag>>`.
 
 
 \subsection Kernel_dNamingconventions Naming conventions
 
 The use of representation classes does not only avoid problems, it also
-makes all \cgal classes very uniform. Like `Cartesian_d<double>::Point_d`,
+makes all \cgal classes very uniform. Like `Cartesian_d<double>::%Point_d`,
 they <B>always</B> consist of:
 <OL>
 
