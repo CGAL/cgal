@@ -115,8 +115,7 @@ Segment_from_edge_descriptor_property_map(HalfedgeGraph* g)
   get(Segment_from_edge_descriptor_property_map<HalfedgeGraph,VertexPointPMap> pmap,
       key_type h)
   {
-    typedef typename boost::property_map< HalfedgeGraph, vertex_point_t>::type Point_pmap;
-    typedef typename boost::property_traits< Point_pmap >::value_type Point;
+    typedef typename boost::property_traits< VertexPointPMap >::value_type Point;
     typedef typename Kernel_traits<Point>::Kernel::Segment_3 Segment_3;
 
     return Segment_3(get(pmap.m_vppm, source(h, *pmap.m_graph) ),
