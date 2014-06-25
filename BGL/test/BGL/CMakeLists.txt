@@ -61,7 +61,7 @@ include_directories( BEFORE ../../include )
 
 include( CGAL_CreateSingleSourceCGALProgram )
 
-if(OPENMESH_FOUND)
+if(OpenMesh_FOUND)
   create_single_source_cgal_program( "graph_concept_OpenMesh.cpp" )
   target_link_libraries( graph_concept_OpenMesh ${OPENMESH_LIBRARY} )
 endif()
@@ -73,28 +73,28 @@ create_single_source_cgal_program( "graph_concept_Polyhedron_3.cpp" )
 create_single_source_cgal_program( "graph_concept_Triangulation_2.cpp" )
 
 create_single_source_cgal_program( "test_graph_geometry.cpp" )
-if(OPENMESH_FOUND)
+if(OpenMesh_FOUND)
   target_link_libraries( test_graph_geometry ${OPENMESH_LIBRARIES})
 endif()
 
 create_single_source_cgal_program( "test_Euler_operations.cpp" )
-if(OPENMESH_FOUND)
+if(OpenMesh_FOUND)
   target_link_libraries( test_Euler_operations ${OPENMESH_LIBRARIES})
 endif()
 
 create_single_source_cgal_program( "test_graph_traits.cpp" )
 
-if(OPENMESH_FOUND)
+if(OpenMesh_FOUND)
   target_link_libraries( test_graph_traits ${OPENMESH_LIBRARIES} )
 endif()
 
 create_single_source_cgal_program( "test_Helpers.cpp" )
-if(OPENMESH_FOUND)
+if(OpenMesh_FOUND)
   target_link_libraries( test_Helpers ${OPENMESH_LIBRARIES})
 endif()
 
 create_single_source_cgal_program( "test_Properties.cpp" )
-if(OPENMESH_FOUND)
+if(OpenMesh_FOUND)
   target_link_libraries( test_Properties ${OPENMESH_LIBRARIES})
 endif()
 
