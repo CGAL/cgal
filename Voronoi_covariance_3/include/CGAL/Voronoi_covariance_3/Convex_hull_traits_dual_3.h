@@ -1,14 +1,14 @@
 #ifndef CGAL_CONVEX_HULL_TRAITS_DUAL_3_H
 #define CGAL_CONVEX_HULL_TRAITS_DUAL_3_H
 
-#include <CGAL/Voronoi_covariance_3/predicates.h>
+#include <CGAL/Voronoi_covariance_3/dual_predicates.h>
 #include <CGAL/Voronoi_covariance_3/Convex_hull_traits_dual_2.h>
 #include <CGAL/Filtered_predicate.h>
 #include <CGAL/Cartesian_converter.h>
 
 namespace CGAL
 {
-  namespace Voronoi_covariance_3
+  namespace Convex_hull_3
   {
     // Base traits class for dual predicates
     template <class R_>
@@ -36,9 +36,9 @@ namespace CGAL
           typedef Vector_dual<R>              Vector_3;
 
           // Traits for convex_hull_2
-          typedef typename CGAL::Voronoi_covariance_3::Traits_xy_dual<R> Traits_xy_3;
-          typedef typename CGAL::Voronoi_covariance_3::Traits_yz_dual<R> Traits_yz_3;
-          typedef typename CGAL::Voronoi_covariance_3::Traits_xz_dual<R> Traits_xz_3;
+          typedef typename CGAL::Convex_hull_3::Traits_xy_dual<R> Traits_xy_3;
+          typedef typename CGAL::Convex_hull_3::Traits_yz_dual<R> Traits_yz_3;
+          typedef typename CGAL::Convex_hull_3::Traits_xz_dual<R> Traits_xz_3;
 
           // Construct objects
           class Construct_segment_3 {
@@ -279,7 +279,7 @@ namespace CGAL
                                            Primal_point_3(0, 0, 0)) : Convex_hull_filtered_traits_dual_3<R_>(o)
                 {}
         } ;
-  } // namespace Voronoi_covariance_3
+  } // namespace Convex_hull_3
 } // namespace CGAL
 
 #endif // CGAL_CONVEX_HULL_TRAITS_DUAL_3_H

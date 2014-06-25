@@ -10,7 +10,7 @@
 
 namespace CGAL
 {
-    namespace Voronoi_covariance_3
+    namespace Convex_hull_3
     {
         namespace internal
         {
@@ -133,7 +133,7 @@ namespace CGAL
                 P.delegate(build_primal);
             }
 
-    } // namespace Voronoi_covariance_3
+    } // namespace Convex_hull_3
 } // namespace CGAL
 
 #endif // CGAL_HALFSPACES_INTERSECTION_H

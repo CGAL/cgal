@@ -3,7 +3,7 @@
 
 namespace CGAL
 {
-  namespace Voronoi_covariance_3
+  namespace Convex_hull_3
   {
       // Traits classes for Convex_hull_2
       // XY
@@ -492,7 +492,7 @@ namespace CGAL
                     return Orientation_2();
                 }
         };
-  } // namespace Voronoi_covariance_3
+  } // namespace Convex_hull_3
 } // namespace CGAL
 
 #endif // CGAL_CONVEX_HULL_TRAITS_DUAL_2_H

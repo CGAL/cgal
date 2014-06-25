@@ -65,10 +65,10 @@ int main (int argc, char *argv[]) {
 
     Polyhedron_3 P, PP;
 
-    CGAL::Voronoi_covariance_3::halfspaces_intersection(planes.begin(), planes.end(), P, K(), o);
+    CGAL::Convex_hull_3::halfspaces_intersection(planes.begin(), planes.end(), P, K(), o);
     convertToOFF<K, Polyhedron_3>("translated_cube.off", P);
 
-    CGAL::Voronoi_covariance_3::halfspaces_intersection(sphere_planes.begin(), sphere_planes.end(), PP, K(), os);
+    CGAL::Convex_hull_3::halfspaces_intersection(sphere_planes.begin(), sphere_planes.end(), PP, K(), os);
     convertToOFF<K, Polyhedron_3>("translated_sphere.off", PP);
 
     return 0;

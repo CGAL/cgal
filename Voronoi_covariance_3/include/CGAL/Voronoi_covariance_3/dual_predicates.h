@@ -5,7 +5,7 @@
 
 namespace CGAL
 {
-    namespace Voronoi_covariance_3
+    namespace Convex_hull_3
     {
         // Plane in the dual space : 3 dual points = 3 planes
         template <typename K>
@@ -492,7 +492,7 @@ namespace CGAL
                 private:
                     Point_3 origin;
             };
-    } // namespace Voronoi_covariance_3
+    } // namespace Convex_hull_3
 } // namespace CGAL
 
 #endif

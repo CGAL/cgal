@@ -13,7 +13,7 @@ typename R::Point_3 to_dual (typename R::Plane_3 const& p) {
 
 // Convert a dual plane to a plane
 template <typename R>
-CGAL::Point_triple<R> to_dual_plane (CGAL::Voronoi_covariance_3::Plane_dual<R> const& p) {
+CGAL::Point_triple<R> to_dual_plane (CGAL::Convex_hull_3::Plane_dual<R> const& p) {
     typename R::Plane_3 p1 = p.p1;
     typename R::Plane_3 p2 = p.p2;
     typename R::Plane_3 p3 = p.p3;

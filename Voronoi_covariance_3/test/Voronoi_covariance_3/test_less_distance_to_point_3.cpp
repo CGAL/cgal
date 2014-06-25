@@ -10,7 +10,7 @@
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef K::Plane_3 Plane;
 
-typedef CGAL::Voronoi_covariance_3::Convex_hull_traits_dual_3<K> Hull_traits_dual;
+typedef CGAL::Convex_hull_3::Convex_hull_traits_dual_3<K> Hull_traits_dual;
 typedef Hull_traits_dual::Less_distance_to_point_3 Less_distance_to_point_3_dual;
 
 typedef CGAL::Convex_hull_traits_3<K> Hull_traits;

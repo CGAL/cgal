@@ -9,7 +9,7 @@ typedef K::Plane_3 Plane;
 typedef K::Point_3 Point;
 typedef CGAL::Polyhedron_3<K> Polyhedron_3;
 
-typedef CGAL::Voronoi_covariance_3::Convex_hull_traits_dual_3<K>    Hull_traits_dual_3;
+typedef CGAL::Convex_hull_3::Convex_hull_traits_dual_3<K>    Hull_traits_dual_3;
 typedef CGAL::Polyhedron_3<Hull_traits_dual_3>                      Polyhedron_dual_3;
 
 #include <CGAL/convex_hull_3.h>
@@ -72,7 +72,7 @@ int main (int argc, char *argv[]) {
     convert_dual_OFF<K>("dual_sphere_convex_hull.off", dual_poly_sphere);
 
     // Compute associated primal polyhedrons
-    typedef CGAL::Voronoi_covariance_3::internal::Build_primal_polyhedron<K, Polyhedron_dual_3, Polyhedron_3>
+    typedef CGAL::Convex_hull_3::internal::Build_primal_polyhedron<K, Polyhedron_dual_3, Polyhedron_3>
         Build_primal_polyhedron;
     Build_primal_polyhedron bpp_cube(dual_poly_cube);
     Build_primal_polyhedron bpp_sphere(dual_poly_sphere);
