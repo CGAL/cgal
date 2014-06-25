@@ -88,10 +88,6 @@ if(OpenMesh_FOUND)
   target_link_libraries( test_graph_traits ${OPENMESH_LIBRARIES} )
 endif()
 
-create_single_source_cgal_program( "test_Helpers.cpp" )
-if(OpenMesh_FOUND)
-  target_link_libraries( test_Helpers ${OPENMESH_LIBRARIES})
-endif()
 
 create_single_source_cgal_program( "test_Properties.cpp" )
 if(OpenMesh_FOUND)

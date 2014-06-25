@@ -1,8 +1,7 @@
-#include <boost/test/unit_test.hpp>
-#include <boost/test/parameterized_test.hpp>
 
 #include "test_Prefix.h"
 #include <boost/unordered_set.hpp>
+#include <boost/foreach.hpp>
 
 template< typename G,
           typename ForwardRange,
@@ -24,10 +23,10 @@ void index_uniqueness(const G&,
   while(begin != end) {
     resultp r = m.insert(get(pm, *begin));
     ++begin;
-    BOOST_CHECK(r.second);
+    assert(r.second);
   }
 
-  BOOST_CHECK_EQUAL(std::distance(begin2, end), m.size());
+  assert(std::distance(begin2, end) == m.size());
 }
 
 
@@ -63,15 +62,17 @@ void index_uniqueness_omesh(const OMesh& g)
 }
 #endif
 
-using namespace boost::unit_test;
 
-bool
-init()
+int
+main( int argc, char* argv[] )
 {
   std::vector<Polyhedron> polys = poly_data();
 
-  framework::master_test_suite().
-    add( BOOST_PARAM_TEST_CASE(&index_uniqueness_poly, polys.begin(), polys.end() ) );
+  BOOST_FOREACH(Polyhedron p, polys){
+    index_uniqueness_poly(p); 
+  }
+
+
 
 #if defined(CGAL_USE_SURFACE_MESH)
   std::vector<SM> sms = sm_data();
@@ -86,18 +87,6 @@ init()
     add( BOOST_PARAM_TEST_CASE(&index_uniqueness_omesh, omeshs.begin(), omeshs.end() ) );
 #endif
 
-  return true;
+  std::cerr << "done\n";
+  return 0;
 }
-
-int
-main( int argc, char* argv[] )
-{
-  return ::boost::unit_test::unit_test_main( &init, argc, argv);
-}
-
-
-// trick cgal_test_with_cmake into adding this file to the test-suite
-// int main()
-// {
-//   return 0;
-// }

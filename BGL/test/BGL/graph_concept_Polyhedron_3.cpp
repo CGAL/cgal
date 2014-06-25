@@ -18,8 +18,6 @@
 //
 // Author(s)     : Philipp Möller
 
-#include <boost/test/unit_test.hpp>
-
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/boost/graph/graph_concepts.h>
@@ -125,29 +123,19 @@ void runtime_check_halfedgegraph()
   add_face(p);
 
 
-  BOOST_CHECK_EQUAL(num_edges(p), 8);
-  BOOST_CHECK_EQUAL(num_halfedges(p), 16);
-  BOOST_CHECK_EQUAL(num_faces(p), 4);
+  assert(num_edges(p) ==  8);
+  assert(num_halfedges(p) == 16);
+  assert(num_faces(p) == 4);
 }
 
 
-
-
-bool
-init()
-{
-  boost::unit_test::framework::master_test_suite().
-    add( BOOST_TEST_CASE( &concept_check_polyhedron<Polyhedron> ) );
-
-  boost::unit_test::framework::master_test_suite().
-    add( BOOST_TEST_CASE( &runtime_check_halfedgegraph<Polyhedron> ) );
-
-    return true;
-}
 
 
 int
 main( int argc, char* argv[] )
 {
-  return ::boost::unit_test::unit_test_main( &init, argc, argv);
+  concept_check_polyhedron<Polyhedron>();
+  runtime_check_halfedgegraph<Polyhedron>();
+  std::cerr << "done\n";
+  return 0;
 }

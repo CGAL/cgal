@@ -1,5 +1,5 @@
-#ifndef CGAL_TEST_SUFFIX_H
-#define CGAL_TEST_SUFFIX_H
+#ifndef CGAL_TEST_PREFIX_H
+#define CGAL_TEST_PREFIX_H
 
 #include <vector>
 #include <fstream>
@@ -73,16 +73,6 @@ typedef OpenMesh::PolyMesh_ArrayKernelT</* MyTraits*/> OMesh;
   do { } while(0)
 
 
-typedef boost::mpl::list< 
-   Polyhedron
-#if defined(CGAL_USE_SURFACE_MESH)
-                                                      , SM
-#endif
-#if defined(CGAL_USE_OPENMESH)
-
-                           //                         , OMesh
-#endif
-                         > test_graphs;
 
 static const char* data[] =
 { "data/7_faces_triangle.off", "data/genus3.off", "data/head.off",
@@ -142,8 +132,8 @@ std::vector<OMesh> omesh_data()
 template <typename Graph>
 struct Surface_fixture_1 {
   Surface_fixture_1() {
-    BOOST_CHECK(read_a_mesh(m, "data/fixture1.off"));
-    BOOST_CHECK(CGAL::is_valid(m));
+    assert(read_a_mesh(m, "data/fixture1.off"));
+    assert(CGAL::is_valid(m));
     typename boost::property_map<Graph, CGAL::vertex_point_t>::const_type
       pm = get(CGAL::vertex_point, const_cast<const Graph&>(m));
 
@@ -160,14 +150,14 @@ struct Surface_fixture_1 {
       else if(get(pm, *vb) == Point_3(2, 0, 0))
         y = *vb;
     }
-    BOOST_CHECK(u != boost::graph_traits<Graph>::null_vertex());
-    BOOST_CHECK(v != boost::graph_traits<Graph>::null_vertex());
-    BOOST_CHECK(w != boost::graph_traits<Graph>::null_vertex());
-    BOOST_CHECK(x != boost::graph_traits<Graph>::null_vertex());
-    BOOST_CHECK(y != boost::graph_traits<Graph>::null_vertex());
+    assert(u != boost::graph_traits<Graph>::null_vertex());
+    assert(v != boost::graph_traits<Graph>::null_vertex());
+    assert(w != boost::graph_traits<Graph>::null_vertex());
+    assert(x != boost::graph_traits<Graph>::null_vertex());
+    assert(y != boost::graph_traits<Graph>::null_vertex());
 
     f1 = is_border(halfedge(u, m),m) ? face(opposite(halfedge(u, m), m), m) : face(halfedge(u, m), m);
-    BOOST_CHECK(f1 != boost::graph_traits<Graph>::null_face());
+    assert(f1 != boost::graph_traits<Graph>::null_face());
     CGAL::Halfedge_around_face_iterator<Graph> hafib, hafie;
     for(boost::tie(hafib, hafie) = halfedges_around_face(halfedge(f1, m), m); hafib != hafie; ++hafib) 
     {
@@ -179,8 +169,8 @@ struct Surface_fixture_1 {
       if(*fb != f1 && *fb != f2)
         f3 = *fb;
     }
-    BOOST_CHECK(f2 != boost::graph_traits<Graph>::null_face());
-    BOOST_CHECK(f3 != boost::graph_traits<Graph>::null_face());
+    assert(f2 != boost::graph_traits<Graph>::null_face());
+    assert(f3 != boost::graph_traits<Graph>::null_face());
   }
 
   Graph m;
@@ -191,8 +181,8 @@ struct Surface_fixture_1 {
 template <typename Graph>
 struct Surface_fixture_2 {
   Surface_fixture_2() {
-    BOOST_CHECK(read_a_mesh(m, "data/fixture2.off"));
-    BOOST_CHECK(CGAL::is_valid(m));
+    assert(read_a_mesh(m, "data/fixture2.off"));
+    assert(CGAL::is_valid(m));
 
     typename boost::property_map<Graph, CGAL::vertex_point_t>::const_type
       pm = get(CGAL::vertex_point, const_cast<const Graph&>(m));
@@ -210,36 +200,36 @@ struct Surface_fixture_2 {
       else if(get(pm, *vb) == Point_3(1, 1, 0))
         y = *vb;
     }
-    BOOST_CHECK(u != boost::graph_traits<Graph>::null_vertex());
-    BOOST_CHECK(v != boost::graph_traits<Graph>::null_vertex());
-    BOOST_CHECK(w != boost::graph_traits<Graph>::null_vertex());
-    BOOST_CHECK(x != boost::graph_traits<Graph>::null_vertex());
-    BOOST_CHECK(y != boost::graph_traits<Graph>::null_vertex());
+    assert(u != boost::graph_traits<Graph>::null_vertex());
+    assert(v != boost::graph_traits<Graph>::null_vertex());
+    assert(w != boost::graph_traits<Graph>::null_vertex());
+    assert(x != boost::graph_traits<Graph>::null_vertex());
+    assert(y != boost::graph_traits<Graph>::null_vertex());
     typename boost::graph_traits<Graph>::halfedge_descriptor h;
     bool found;
     boost::tie(h, found) = halfedge(x, v, m);
-    BOOST_CHECK(found);
-    BOOST_CHECK(! is_border(h,m));
+    assert(found);
+    assert(! is_border(h,m));
     f1 = face(h, m);
-    BOOST_CHECK(f1 != boost::graph_traits<Graph>::null_face());
+    assert(f1 != boost::graph_traits<Graph>::null_face());
 
     boost::tie(h, found) = halfedge(v, u, m);
-    BOOST_CHECK(found);
-    BOOST_CHECK(!is_border(h,m));
+    assert(found);
+    assert(!is_border(h,m));
     f2 = face(h, m);
-    BOOST_CHECK(f2 != boost::graph_traits<Graph>::null_face());
+    assert(f2 != boost::graph_traits<Graph>::null_face());
 
     boost::tie(h, found) = halfedge(u, w, m);
-    BOOST_CHECK(found);
-    BOOST_CHECK(!is_border(h,m));
+    assert(found);
+    assert(!is_border(h,m));
     f3 = face(h, m);
-    BOOST_CHECK(f3 != boost::graph_traits<Graph>::null_face());
+    assert(f3 != boost::graph_traits<Graph>::null_face());
 
     boost::tie(h, found) = halfedge(w, x, m);
-    BOOST_CHECK(found);
-    BOOST_CHECK(!is_border(h,m));
+    assert(found);
+    assert(!is_border(h,m));
     f4 = face(h, m);
-    BOOST_CHECK(f4 != boost::graph_traits<Graph>::null_face());
+    assert(f4 != boost::graph_traits<Graph>::null_face());
   }
 
   Graph m;
@@ -252,8 +242,8 @@ struct Surface_fixture_2 {
 template <typename Graph>
 struct Surface_fixture_3 {
   Surface_fixture_3() {
-    BOOST_CHECK(read_a_mesh(m, "data/fixture3.off"));
-    BOOST_CHECK(CGAL::is_valid(m));
+    assert(read_a_mesh(m, "data/fixture3.off"));
+    assert(CGAL::is_valid(m));
 
     typename boost::property_map<Graph, CGAL::vertex_point_t>::const_type
       pm = get(CGAL::vertex_point, const_cast<const Graph&>(m));
@@ -273,18 +263,18 @@ struct Surface_fixture_3 {
       else if(get(pm, *vb) == Point_3(2, 1, 0))
         z = *vb;
     }
-    BOOST_CHECK(u != boost::graph_traits<Graph>::null_vertex());
-    BOOST_CHECK(v != boost::graph_traits<Graph>::null_vertex());
-    BOOST_CHECK(w != boost::graph_traits<Graph>::null_vertex());
-    BOOST_CHECK(x != boost::graph_traits<Graph>::null_vertex());
-    BOOST_CHECK(y != boost::graph_traits<Graph>::null_vertex());
-    BOOST_CHECK(z != boost::graph_traits<Graph>::null_vertex());
+    assert(u != boost::graph_traits<Graph>::null_vertex());
+    assert(v != boost::graph_traits<Graph>::null_vertex());
+    assert(w != boost::graph_traits<Graph>::null_vertex());
+    assert(x != boost::graph_traits<Graph>::null_vertex());
+    assert(y != boost::graph_traits<Graph>::null_vertex());
+    assert(z != boost::graph_traits<Graph>::null_vertex());
 
     f1 = is_border(halfedge(u, m),m) ? face(opposite(halfedge(u, m), m), m) : face(halfedge(u, m), m);
     f2 = is_border(halfedge(u, m),m) ? face(opposite(halfedge(z, m), m), m) : face(halfedge(z, m), m);
 
-    BOOST_CHECK(f1 != boost::graph_traits<Graph>::null_face());
-    BOOST_CHECK(f2 != boost::graph_traits<Graph>::null_face());
+    assert(f1 != boost::graph_traits<Graph>::null_face());
+    assert(f2 != boost::graph_traits<Graph>::null_face());
 
   }
 
@@ -298,8 +288,8 @@ struct Surface_fixture_3 {
 template <typename Graph>
 struct Surface_fixture_4 {
   Surface_fixture_4() {
-    BOOST_CHECK(read_a_mesh(m, "data/fixture4.off"));
-    BOOST_CHECK(CGAL::is_valid(m));
+    assert(read_a_mesh(m, "data/fixture4.off"));
+    assert(CGAL::is_valid(m));
 
    typename boost::property_map<Graph, CGAL::vertex_point_t>::const_type
       pm = get(CGAL::vertex_point, const_cast<const Graph&>(m));
@@ -333,8 +323,8 @@ struct Surface_fixture_4 {
 template <typename Graph>
 struct Surface_fixture_5 {
   Surface_fixture_5() {
-    BOOST_CHECK(read_a_mesh(m, "data/add_face_to_border.off"));
-    BOOST_CHECK(CGAL::is_valid(m));
+    assert(read_a_mesh(m, "data/add_face_to_border.off"));
+    assert(CGAL::is_valid(m));
 
    typename boost::property_map<Graph, CGAL::vertex_point_t>::const_type
       pm = get(CGAL::vertex_point, const_cast<const Graph&>(m));
@@ -363,8 +353,8 @@ struct Surface_fixture_5 {
 template <typename Graph>
 struct Surface_fixture_6 {
   Surface_fixture_6() {
-    BOOST_CHECK(read_a_mesh(m, "data/quad.off"));
-    BOOST_CHECK(CGAL::is_valid(m));
+    assert(read_a_mesh(m, "data/quad.off"));
+    assert(CGAL::is_valid(m));
 
     typename boost::graph_traits<Graph>::halfedge_descriptor h;
     
@@ -382,8 +372,8 @@ struct Surface_fixture_6 {
 template <typename Graph>
 struct Surface_fixture_7 {
   Surface_fixture_7() {
-    BOOST_CHECK(read_a_mesh(m, "data/cube.off"));
-    BOOST_CHECK(CGAL::is_valid(m));
+    assert(read_a_mesh(m, "data/cube.off"));
+    assert(CGAL::is_valid(m));
 
     h = *(halfedges(m).first);    
   }
@@ -395,8 +385,8 @@ struct Surface_fixture_7 {
 template <typename Graph>
 struct Surface_fixture_8 {
   Surface_fixture_8() {
-    BOOST_CHECK(read_a_mesh(m, "data/fixture5.off"));
-    BOOST_CHECK(CGAL::is_valid(m));
+    assert(read_a_mesh(m, "data/fixture5.off"));
+    assert(CGAL::is_valid(m));
 
    typename boost::property_map<Graph, CGAL::vertex_point_t>::const_type
       pm = get(CGAL::vertex_point, const_cast<const Graph&>(m));
@@ -427,14 +417,5 @@ struct Surface_fixture_8 {
 
 };
 
-// struct Cube_fixture {
-//   Cube_fixture() {
-//     m.read("data/cube.off");
-//   }
 
-//   Graph m;
-
-//   ~Cube_fixture() {}
-// };
-
-#endif /* CGAL_TEST_SUFFIX_H */
+#endif /* CGAL_TEST_PREFIX_H */

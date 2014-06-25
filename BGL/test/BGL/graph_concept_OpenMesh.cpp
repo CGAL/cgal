@@ -18,8 +18,6 @@
 //
 // Author(s)     : Philipp Möller, Andreas Fabri
 
-#include <boost/test/unit_test.hpp>
-
 #include <CGAL/basic.h>
 #include <OpenMesh/Core/IO/MeshIO.hh>
 #include <OpenMesh/Core/Mesh/PolyMesh_ArrayKernelT.hh>
@@ -72,16 +70,11 @@ void concept_check_polyhedron() {
   boost::graph_traits<Sm>::null_face();
 };
 
-boost::unit_test::test_suite*
-init_unit_test_suite( int, char** const ) 
+
+
+
+int main()
 {
-  boost::unit_test::framework::master_test_suite().
-    add( BOOST_TEST_CASE( &concept_check_polyhedron<OpenMesh::PolyMesh_ArrayKernelT<> > ) );
-
-    return 0;
+  concept_check_polyhedron<OpenMesh::PolyMesh_ArrayKernelT<> >();
+  return 0;
 }
-
-// int main()
-// {
-//   return 0;
-// }
