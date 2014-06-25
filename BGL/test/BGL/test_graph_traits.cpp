@@ -250,9 +250,9 @@ void test_read(const G& g)
 
 template <typename Graph>
 void
-test(std::vector<Graph>& graphs)
+test(const std::vector<Graph>& graphs)
 {
-  BOOST_FOREACH(Polyhedron p, graphs){
+  BOOST_FOREACH(Graph p, graphs){
     test_edge_iterators(p);
     test_read(p);
     test_vertex_iterators(p);
