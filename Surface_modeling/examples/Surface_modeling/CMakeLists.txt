@@ -33,11 +33,11 @@ if ( CGAL_FOUND )
     create_single_source_cgal_program( "k_ring_roi_translate_rotate_example.cpp" )
 
   else()
-    message(STATUS "This program requires the Eigen library, version 3.2 or later and will not be compiled.")
+    message(STATUS "NOTICE: These examples require the Eigen library, version 3.2 or later and will not be compiled.")
   endif()
 else()
   
-    message(STATUS "This program requires the CGAL library, and will not be compiled.")
+    message(STATUS "NOTICE: These exmaples require the CGAL library, and will not be compiled.")
   
 endif()
 

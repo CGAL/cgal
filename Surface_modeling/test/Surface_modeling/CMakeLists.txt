@@ -29,11 +29,11 @@ if ( CGAL_FOUND )
     create_single_source_cgal_program( "Cactus_performance_test.cpp" )
     create_single_source_cgal_program( "Symmetry_test.cpp" )
   else()
-    message(STATUS "This program requires the Eigen library, version 3.2 or later and will not be compiled.")
+    message(STATUS "NOTICE: These tests require the Eigen library, version 3.2 or later and will not be compiled.")
   endif()
 else()
   
-    message(STATUS "This program requires the CGAL library, and will not be compiled.")
+    message(STATUS "NOTICE: These tests require the CGAL library, and will not be compiled.")
   
 endif()
 
