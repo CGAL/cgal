@@ -245,6 +245,12 @@ private:
 
   Vertex_point_map vertex_point_map;
 
+#ifdef CGAL_DEFORM_MESH_USE_EXPERIMENTAL_SR_ARAP
+public:
+// SR-ARAP [Zohar13]
+  double m_sr_arap_alpha;
+private:
+#endif
 #ifdef CGAL_DEFORM_MESH_USE_EXPERIMENTAL_SCALE
   std::vector<double> scales;
 #endif
@@ -364,6 +370,9 @@ private:
       edge_weight.push_back(
         this->weight_calculator(*eb, m_halfedge_graph, vertex_point_map));
     }
+#ifdef CGAL_DEFORM_MESH_USE_EXPERIMENTAL_SR_ARAP
+    m_sr_arap_alpha=2;
+#endif
   }
 
 public:
@@ -1115,6 +1124,11 @@ private:
       cov = cr_traits.zero_matrix();
 
       in_edge_iterator e, e_end;
+
+#ifdef CGAL_DEFORM_MESH_USE_EXPERIMENTAL_SR_ARAP
+      boost::tie(e,e_end) = boost::in_edges(vi, m_halfedge_graph);
+      double ne_i=std::distance(e,e_end);
+#endif
       for (boost::tie(e,e_end) = boost::in_edges(vi, m_halfedge_graph); e != e_end; e++)
       {
         vertex_descriptor vj = boost::source(*e, m_halfedge_graph);
@@ -1125,6 +1139,11 @@ private:
         double wij = edge_weight[id(*e)];
 
         cr_traits.add_scalar_t_vector_t_vector_transpose(cov, wij, pij, qij); // cov += wij * (pij * qij)
+#ifdef CGAL_DEFORM_MESH_USE_EXPERIMENTAL_SR_ARAP
+        // add neighbor rotation
+        cov += m_sr_arap_alpha * rot_mtr[vj_id].transpose() / ne_i;
+#endif
+
       }
 
       cr_traits.compute_close_rotation(cov, rot_mtr[vi_id]);
