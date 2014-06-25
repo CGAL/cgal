@@ -3,12 +3,11 @@
 #include <iostream>
 
 #ifndef CGAL_LINKED_WITH_TBB
-# pragma message(" : Warning: CGAL_LINKED_WITH_TBB not defined: NOTHING TO TEST.")
 
 int main()
 {
   std::cout << 
-    "Warning: CGAL_LINKED_WITH_TBB not defined: NOTHING TO TEST. Quitting..." 
+    "NOTICE: this test needs CGAL_LINKED_WITH_TBB, and will not be tested."
     << std::endl;
   return 0;
 }
