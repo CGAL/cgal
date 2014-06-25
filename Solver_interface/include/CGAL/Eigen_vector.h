@@ -75,7 +75,7 @@ public:
        return this->size();
    }
 
-   /// Get TAUCS vector wrapped by this object.
+   /// Get vector wrapped by this object.
    const EigenType& eigen_object() const {
        return *this;
    }

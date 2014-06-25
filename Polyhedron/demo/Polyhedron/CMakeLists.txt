@@ -60,25 +60,7 @@ if(QT4_FOUND)
 endif(QT4_FOUND)
 
 
-
-# Eigen is now used by default
 find_package(Eigen3 3.1.0) #(requires 3.1.0 or greater)
-if (NOT EIGEN3_FOUND)
-  # Find LAPACK (optional), for curvatures estimation
-  find_package(LAPACK)
-  if(LAPACK_FOUND)
-    include( ${LAPACK_USE_FILE} )
-  endif(LAPACK_FOUND)
-
-  # Find TAUCS (optionnal), for parametrization
-  find_package(TAUCS)
-  if(TAUCS_FOUND)
-    include( ${TAUCS_USE_FILE} )
-  endif(TAUCS_FOUND)
-else()
-  include( ${EIGEN3_USE_FILE} )
-endif()
-
 
 if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
@@ -87,15 +69,12 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
   include_directories ( ${QGLVIEWER_INCLUDE_DIR} )
 
-  # Parameterization needs Eigen3 or TAUCS
-  if(NOT EIGEN3_FOUND AND NOT TAUCS_FOUND)
-    message(STATUS "NOTICE: Eigen 3.1 (or greater) and TAUCS is not found. parametrization will not be available.")
-  endif(NOT EIGEN3_FOUND AND NOT TAUCS_FOUND)
-
-  # Curvature estimation needs Eigen3 or LAPACK
-  if(NOT EIGEN3_FOUND AND NOT LAPACK_FOUND)
-    message(STATUS "NOTICE: Eigen 3.1 (or greater) and LAPACK is not found. curvatures estimation will not be available.")
-  endif(NOT EIGEN3_FOUND AND NOT LAPACK_FOUND)
+  # Parameterization and curvature estimation need Eigen3
+  if(NOT EIGEN3_FOUND)
+    message(STATUS "NOTICE: Eigen 3.1 library(or greater) was not found. parametrization and curvatures estimation will not be available.")
+  else()
+    include( ${EIGEN3_USE_FILE} )
+  endif()
 
   qt4_wrap_ui( MainWindowUI_files MainWindow.ui )
   qt4_wrap_ui( FileLoaderDialogUI_files FileLoaderDialog.ui )
@@ -199,9 +178,9 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   # special
   target_link_libraries(scene_edit_polyhedron_item scene_polyhedron_item)
 
-  if(EIGEN3_FOUND OR TAUCS_FOUND)
+  if(EIGEN3_FOUND)
     add_item(scene_textured_polyhedron_item Scene_textured_polyhedron_item.cpp texture.cpp Scene_textured_polyhedron_item.moc)
-  endif(EIGEN3_FOUND OR TAUCS_FOUND)
+  endif()
 
   add_item(scene_implicit_function_item Scene_implicit_function_item.cpp Scene_implicit_function_item.moc Color_ramp.cpp)
 
@@ -234,7 +213,7 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 #      Viewer_moc.cpp
        ${FileLoaderDialogUI_files} ${MainWindowUI_files} ${PreferencesUI_FILES} ${RESOURCE_FILES} )
     add_to_cached_list( CGAL_EXECUTABLE_TARGETS Polyhedron_3 )
-    if(EIGEN3_FOUND OR TAUCS_FOUND)
+    if(EIGEN3_FOUND)
 #      add_executable( Polyhedron_3 Scene_tex_rendering.cpp Scene_tex_polyhedron_operations.cpp )
     endif()
 #  else(POLYHEDRON_DEMO_ENABLE_FORWARD_DECL)
@@ -336,20 +315,20 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   polyhedron_demo_plugin(pca_plugin Polyhedron_demo_pca_plugin)
   target_link_libraries(pca_plugin scene_polyhedron_item scene_basic_objects)
 
-  if(EIGEN3_FOUND OR TAUCS_FOUND)
+  if(EIGEN3_FOUND)
     polyhedron_demo_plugin(parameterization_plugin Polyhedron_demo_parameterization_plugin)
     target_link_libraries(parameterization_plugin scene_polyhedron_item scene_textured_polyhedron_item )
-  else(EIGEN3_FOUND OR TAUCS_FOUND)
-    message(STATUS "NOTICE: Neither TAUCS nor Eigen 3.1 (or greater) libraries have been found. Parameterization will not be available.")
-  endif(EIGEN3_FOUND OR TAUCS_FOUND)
+  else(EIGEN3_FOUND)
+    message(STATUS "NOTICE: Eigen 3.1 (or greater) library has not been found. Parameterization will not be available.")
+  endif()
   
-  if(TAUCS_FOUND OR EIGEN3_FOUND)
+  if(EIGEN3_FOUND)
     qt4_wrap_ui( poissonUI_FILES Polyhedron_demo_poisson_plugin.ui)
     polyhedron_demo_plugin(poisson_plugin Polyhedron_demo_poisson_plugin Polyhedron_demo_poisson_plugin_impl.cpp ${poissonUI_FILES})
     target_link_libraries(poisson_plugin scene_polyhedron_item scene_points_with_normal_item)
-  else(TAUCS_FOUND OR EIGEN3_FOUND)
-    message(STATUS "NOTICE: Neither TAUCS nor Eigen 3.1 (or greater) libraries have been found. Poisson reconstruction will not be available.")
-  endif(TAUCS_FOUND OR EIGEN3_FOUND)
+  else()
+    message(STATUS "NOTICE: Eigen 3.1 (or greater) library has not been found. Poisson reconstruction will not be available.")
+  endif()
   
   
   # Link with BLAS and LAPACK only (optional), for Jet Fitting

@@ -34,9 +34,6 @@
 #ifdef CGAL_EIGEN3_ENABLED
     #include <CGAL/Eigen_solver_traits.h>
 #endif
-#ifdef CGAL_USE_TAUCS
-    #include <CGAL/Taucs_solver_traits.h>
-#endif
 
 // This test
 #include "Polyhedron_ex.h"
@@ -358,121 +355,6 @@ int main(int argc, char * argv[])
 
         std::cerr << "Parameterization: " << task_timer.time() << " seconds." << std::endl << std::endl;
         task_timer.reset();
-
-#ifdef CGAL_USE_TAUCS
-
-        //***************************************
-        // Discrete Conformal Map parameterization
-        // with circular arc length border parameterization
-        // TAUCS solver (if installed)
-        //***************************************
-
-        std::cerr << "Discrete Conformal Map parameterization" << std::endl;
-        std::cerr << "with circular arc length border parameterization" << std::endl;
-        std::cerr << "TAUCS solver" << std::endl;
-
-        err = CGAL::parameterize(
-            mesh_patch,
-            CGAL::Discrete_conformal_map_parameterizer_3<
-                Mesh_patch_polyhedron,
-                CGAL::Circular_border_arc_length_parameterizer_3<Mesh_patch_polyhedron>,
-                CGAL::Taucs_solver_traits<double>
-            >());
-        switch(err) {
-        case Parameterizer::OK: // Success
-            break;
-        case Parameterizer::ERROR_EMPTY_MESH: // Input mesh not supported
-        case Parameterizer::ERROR_NON_TRIANGULAR_MESH:
-        case Parameterizer::ERROR_NO_TOPOLOGICAL_DISC:
-        case Parameterizer::ERROR_BORDER_TOO_SHORT:
-            std::cerr << "Input mesh not supported: " << Parameterizer::get_error_message(err) << std::endl;
-            // this is not a bug => do not set accumulated_fatal_err
-            break;
-        default: // Error
-            std::cerr << "Error: " << Parameterizer::get_error_message(err) << std::endl;
-            accumulated_fatal_err = EXIT_FAILURE;
-            break;
-        };
-
-        std::cerr << "Parameterization: " << task_timer.time() << " seconds." << std::endl << std::endl;
-        task_timer.reset();
-
-        //***************************************
-        // Discrete Authalic Parameterization
-        // with square arc length border parameterization
-        // TAUCS solver (if installed)
-        //***************************************
-
-        std::cerr << "Discrete Authalic Parameterization" << std::endl;
-        std::cerr << "with square arc length border parameterization" << std::endl;
-        std::cerr << "TAUCS solver" << std::endl;
-
-        err = CGAL::parameterize(
-            mesh_patch,
-            CGAL::Discrete_authalic_parameterizer_3<
-                Mesh_patch_polyhedron,
-                CGAL::Square_border_arc_length_parameterizer_3<Mesh_patch_polyhedron>,
-                CGAL::Taucs_solver_traits<double>
-            >());
-        switch(err) {
-        case Parameterizer::OK: // Success
-            break;
-        case Parameterizer::ERROR_EMPTY_MESH: // Input mesh not supported
-        case Parameterizer::ERROR_NON_TRIANGULAR_MESH:
-        case Parameterizer::ERROR_NO_TOPOLOGICAL_DISC:
-        case Parameterizer::ERROR_BORDER_TOO_SHORT:
-            std::cerr << "Input mesh not supported: " << Parameterizer::get_error_message(err) << std::endl;
-            // this is not a bug => do not set accumulated_fatal_err
-            break;
-        default: // Error
-            std::cerr << "Error: " << Parameterizer::get_error_message(err) << std::endl;
-            accumulated_fatal_err = EXIT_FAILURE;
-            break;
-        };
-
-        std::cerr << "Parameterization: " << task_timer.time() << " seconds." << std::endl << std::endl;
-        task_timer.reset();
-
-        //***************************************
-        // Least Squares Conformal Maps parameterization
-        // TAUCS solver (if installed)
-        //***************************************
-
-        std::cerr << "Least Squares Conformal Maps parameterization" << std::endl;
-        std::cerr << "TAUCS solver" << std::endl;
-
-        err = CGAL::parameterize(
-            mesh_patch,
-            CGAL::LSCM_parameterizer_3<
-                Mesh_patch_polyhedron,
-                CGAL::Two_vertices_parameterizer_3<Mesh_patch_polyhedron>,
-                CGAL::Taucs_symmetric_solver_traits<double>
-            >());
-        switch(err) {
-        case Parameterizer::OK: // Success
-            break;
-        case Parameterizer::ERROR_EMPTY_MESH: // Input mesh not supported
-        case Parameterizer::ERROR_NON_TRIANGULAR_MESH:
-        case Parameterizer::ERROR_NO_TOPOLOGICAL_DISC:
-        case Parameterizer::ERROR_BORDER_TOO_SHORT:
-            std::cerr << "Input mesh not supported: " << Parameterizer::get_error_message(err) << std::endl;
-            // this is not a bug => do not set accumulated_fatal_err
-            break;
-        default: // Error
-            std::cerr << "Error: " << Parameterizer::get_error_message(err) << std::endl;
-            accumulated_fatal_err = EXIT_FAILURE;
-            break;
-        };
-
-        std::cerr << "Parameterization: " << task_timer.time() << " seconds." << std::endl << std::endl;
-        task_timer.reset();
-
-#else
-
-        std::cerr << "Skip TAUCS tests as TAUCS is not installed" << std::endl << std::endl;
-        // this is not a bug => do not set accumulated_fatal_err
-
-#endif // CGAL_USE_TAUCS
 
 #ifdef CGAL_EIGEN3_ENABLED
 

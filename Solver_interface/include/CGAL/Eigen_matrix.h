@@ -81,7 +81,7 @@ public:
     m_triplets.reserve(rows);
   }
 
-  /// Delete this object and the wrapped TAUCS matrix.
+  /// Delete this object and the wrapped matrix.
   ~Eigen_sparse_matrix()
   {
   }

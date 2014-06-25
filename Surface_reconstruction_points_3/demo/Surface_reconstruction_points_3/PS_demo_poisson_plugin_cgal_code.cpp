@@ -17,9 +17,6 @@
 #include <CGAL/Poisson_reconstruction_function.h>
 #include <CGAL/compute_average_spacing.h>
 
-#ifdef CGAL_TAUCS_ENABLED
-#include <CGAL/Taucs_solver_traits.h>
-#endif
 #ifdef CGAL_EIGEN3_ENABLED
 #include <CGAL/Eigen_solver_traits.h>
 #endif
@@ -98,25 +95,6 @@ Polyhedron* poisson_reconstruct(const Point_set& points,
                               );
 
     bool ok = false;
-    #ifdef CGAL_TAUCS_ENABLED
-    if(solver_name=="Taucs")
-    {
-      // Creates sparse linear solver: 
-      // TAUCS out-of-core Multifrontal Supernodal Cholesky Factorization
-      const char* OOC_SUPERNODAL_CHOLESKY_FACTORIZATION[] = 
-      {
-        "taucs.factor.LLT=true",
-        "taucs.factor.mf=true",
-        "taucs.factor.ordering=metis",
-        "taucs.ooc=true", "taucs.ooc.basename=taucs-ooc",
-        NULL
-      };
-      unlink("taucs-ooc.0"); // make sure TAUCS ooc file does not exist
-      CGAL::Taucs_symmetric_solver_traits<double> solver(OOC_SUPERNODAL_CHOLESKY_FACTORIZATION);
-      
-      ok = function.compute_implicit_function(solver);
-    }
-    #endif
     
     #ifdef CGAL_EIGEN3_ENABLED
     if(solver_name=="Eigen - built-in simplicial LDLt")

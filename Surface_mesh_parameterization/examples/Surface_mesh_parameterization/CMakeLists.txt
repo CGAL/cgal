@@ -26,10 +26,6 @@ if ( CGAL_FOUND )
 
   # VisualC++ optimization for applications dealing with large data
   if (MSVC)
-    # Use /EHa option to catch stack overflows.
-    # Note: TAUCS needs a stack >= 2MB. CGAL default is 10MB.
-    string(REGEX REPLACE "/EH[asc]*" "/EHa" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
-
     # Use /FR to turn on IntelliSense
     SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /FR")
 
@@ -70,41 +66,23 @@ if ( CGAL_FOUND )
     list(APPEND CGAL_3RD_PARTY_LIBRARIES ${Boost_PROGRAM_OPTIONS_LIBRARY})
  endif()
 
-  # Executables that do *not* use TAUCS
+  # Executables that do *not* require Eigen
   create_single_source_cgal_program( "Authalic_parameterization.cpp" )
   create_single_source_cgal_program( "Mesh_cutting_parameterization.cpp" )
   create_single_source_cgal_program( "Simple_parameterization.cpp" )
   create_single_source_cgal_program( "Square_border_parameterization.cpp" )
 
-
-  # use either Eigen or TAUCS BLAS/LAPACK
   find_package(Eigen3 3.1.0) #(requires 3.1.0 or greater)
-  if (EIGEN3_FOUND)
-    include( ${EIGEN3_USE_FILE} )
-  endif()
  
-  # Link with BLAS, LAPACK and TAUCS (optional)
-  find_package(TAUCS)
-  if(TAUCS_FOUND)
-    include( ${TAUCS_USE_FILE} )
-  endif(TAUCS_FOUND)
-
   if (EIGEN3_FOUND)
     # Executables that require Eigen 3.1
+    include( ${EIGEN3_USE_FILE} )
     create_single_source_cgal_program( "Complete_parameterization_example.cpp" )
     create_single_source_cgal_program( "Eigen_parameterization.cpp" )
   else(EIGEN3_FOUND)
-    message(STATUS "NOTICE: Example Complete_parameterization_example.cpp requires Eigen 3.1 (or greater) and will not be compiled.")  
+    message(STATUS "NOTICE: Some examples require Eigen 3.1 (or greater) and will not be compiled.")  
   endif(EIGEN3_FOUND)
-  
-  if (TAUCS_FOUND)
-    # Executables that require TAUCS (thus BLAS and LAPACK)
-    create_single_source_cgal_program( "Taucs_parameterization.cpp" )
-  else(TAUCS_FOUND)
-    message(STATUS "NOTICE: Example Taucs_parameterization.cpp requires TAUCS and will not be compiled.")
-  endif(TAUCS_FOUND)
 
-  # Executable that can use TAUCS or not, depending on the macro CGAL_USE_TAUCS
   create_single_source_cgal_program( "polyhedron_ex_parameterization.cpp" )
 
 else()
