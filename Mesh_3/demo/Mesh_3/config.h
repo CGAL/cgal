@@ -60,7 +60,7 @@
 // ==========================================================================
 // ==========================================================================
 
-#ifdef CONCURRENT_MESH_3
+#ifdef CGAL_CONCURRENT_MESH_3
 
 # ifndef CGAL_LINKED_WITH_TBB
 #   pragma message(" : Warning: CGAL_LINKED_WITH_TBB not defined: EVERYTHING WILL BE SEQUENTIAL.")
@@ -108,13 +108,13 @@
 // ==========================================================================
 // ==========================================================================
 
-#else // !CONCURRENT_MESH_3
+#else // !CGAL_CONCURRENT_MESH_3
 
 //# define CGAL_MESH_3_USE_LAZY_SORTED_REFINEMENT_QUEUE
 //# define CGAL_MESH_3_USE_LAZY_UNSORTED_REFINEMENT_QUEUE
 # define CGAL_MESH_3_IF_UNSORTED_QUEUE_JUST_SORT_AFTER_SCAN
 
-#endif // CONCURRENT_MESH_3
+#endif // CGAL_CONCURRENT_MESH_3
   
 #define CGAL_MESH_3_PROFILING
 

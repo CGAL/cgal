@@ -1,7 +1,7 @@
 #ifndef STDAFX_H
 #define STDAFX_H
 
-#ifdef CONCURRENT_MESH_3
+#ifdef CGAL_CONCURRENT_MESH_3
   // In case some code uses CGAL_PROFILE, it needs to be concurrent
   #define CGAL_CONCURRENT_PROFILE
 #endif

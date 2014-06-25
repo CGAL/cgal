@@ -68,7 +68,7 @@ const int     TET_SHAPE                = 3;
 // CONCURRENCY
 // ==========================================================================
 
-#ifdef CONCURRENT_MESH_3
+#ifdef CGAL_CONCURRENT_MESH_3
 
 # ifndef CGAL_LINKED_WITH_TBB
 #   pragma message(" : Warning: CGAL_LINKED_WITH_TBB not defined: EVERYTHING WILL BE SEQUENTIAL.")
@@ -121,13 +121,13 @@ const int     TET_SHAPE                = 3;
 // SEQUENTIAL
 // ==========================================================================
 
-#else // !CONCURRENT_MESH_3
+#else // !CGAL_CONCURRENT_MESH_3
 
 //# define CGAL_MESH_3_USE_LAZY_SORTED_REFINEMENT_QUEUE // default behavior
 //# define CGAL_MESH_3_USE_LAZY_UNSORTED_REFINEMENT_QUEUE
 //# define CGAL_MESH_3_IF_UNSORTED_QUEUE_JUST_SORT_AFTER_SCAN // recommended
 
-#endif // CONCURRENT_MESH_3
+#endif // CGAL_CONCURRENT_MESH_3
 
 // ==========================================================================
 // ==========================================================================
@@ -381,7 +381,7 @@ protected:
 std::string get_technique()
 {
   std::string tech;
-#ifdef CONCURRENT_MESH_3
+#ifdef CGAL_CONCURRENT_MESH_3
 
   tech += "Task-scheduler (auto";
 # if defined(CGAL_MESH_3_TASK_SCHEDULER_SORTED_BATCHES_WITH_MULTISET)
@@ -393,7 +393,7 @@ std::string get_technique()
 # endif
   tech += ")";
 
-#else // !CONCURRENT_MESH_3
+#else // !CGAL_CONCURRENT_MESH_3
 
   tech += "Sequential ";
 # if defined(CGAL_MESH_3_USE_LAZY_UNSORTED_REFINEMENT_QUEUE)
@@ -414,7 +414,7 @@ std::string get_technique()
   tech += ")";
 #endif
 
-#endif // CONCURRENT_MESH_3
+#endif // CGAL_CONCURRENT_MESH_3
 
   return tech;
 }
@@ -429,14 +429,14 @@ void display_info(int num_threads)
 {
   std::cerr << get_technique() << std::endl;
 
-#ifdef CONCURRENT_MESH_3
+#ifdef CGAL_CONCURRENT_MESH_3
 
   if (num_threads != -1)
     std::cerr << "Num threads = " << num_threads << std::endl;
   else
     std::cerr << "Num threads = AUTO" << std::endl;
 
-#else // !CONCURRENT_MESH_3
+#else // !CGAL_CONCURRENT_MESH_3
 
 # ifdef CGAL_MESH_3_INITIAL_POINTS_NO_RANDOM_SHOOTING
   std::cerr << "NO random shooting)" << std::endl;
@@ -444,7 +444,7 @@ void display_info(int num_threads)
   std::cerr << "WITH random shooting)" << std::endl;
 # endif
 
-#endif // CONCURRENT_MESH_3
+#endif // CGAL_CONCURRENT_MESH_3
 }
 
 // To add a crease (feature)
@@ -477,7 +477,7 @@ bool make_mesh_polyhedron(const std::string &input_filename,
 #endif
 
   // Triangulation
-#ifdef CONCURRENT_MESH_3
+#ifdef CGAL_CONCURRENT_MESH_3
   typedef CGAL::Mesh_triangulation_3<
     Mesh_domain,
     CGAL::Kernel_traits<Mesh_domain>::Kernel,
@@ -596,7 +596,7 @@ bool make_mesh_3D_images(const std::string &input_filename,
   typedef CGAL::Labeled_image_mesh_domain_3<CGAL::Image_3, K> Mesh_domain;
 
   // Triangulation
-#ifdef CONCURRENT_MESH_3
+#ifdef CGAL_CONCURRENT_MESH_3
   typedef CGAL::Mesh_triangulation_3<
     Mesh_domain,
     CGAL::Kernel_traits<Mesh_domain>::Kernel,
@@ -707,7 +707,7 @@ bool make_mesh_implicit(double facet_approx,
 #endif
 
   // Triangulation
-#ifdef CONCURRENT_MESH_3
+#ifdef CGAL_CONCURRENT_MESH_3
   typedef typename CGAL::Mesh_triangulation_3<
     Mesh_domain,
     typename CGAL::Kernel_traits<Mesh_domain>::Kernel,
@@ -871,7 +871,7 @@ int main()
 
 #endif
 
-#ifdef CONCURRENT_MESH_3
+#ifdef CGAL_CONCURRENT_MESH_3
   Concurrent_mesher_config::load_config_file(CONFIG_FILENAME, true);
 #endif
 
@@ -886,7 +886,7 @@ int main()
   if (script_file.is_open())
   {
     int i = 1;
-#ifdef CONCURRENT_MESH_3
+#ifdef CGAL_CONCURRENT_MESH_3
 # ifdef BENCHMARK_WITH_1_TO_MAX_THREADS
     for(num_threads = 1 ;
           num_threads <= tbb::task_scheduler_init::default_num_threads() ;
@@ -897,7 +897,7 @@ int main()
       Concurrent_mesher_config::get().num_work_items_per_batch += 5)*/
 #endif
     {
-#ifdef CONCURRENT_MESH_3
+#ifdef CGAL_CONCURRENT_MESH_3
       tbb::task_scheduler_init init(
         num_threads > 0 ? num_threads : tbb::task_scheduler_init::automatic);
 #endif
@@ -947,7 +947,7 @@ int main()
             CGAL_MESH_3_SET_PERFORMANCE_DATA("Cell_size", cell_sizing);
             CGAL_MESH_3_SET_PERFORMANCE_DATA("Cell_shape", TET_SHAPE);
             xml_perf_set_technique();
-#ifdef CONCURRENT_MESH_3
+#ifdef CGAL_CONCURRENT_MESH_3
             CGAL_MESH_3_SET_PERFORMANCE_DATA(
               "Num_threads",
               (num_threads == -1 ? boost::thread::hardware_concurrency() : num_threads));
