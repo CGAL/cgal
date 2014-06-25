@@ -13,7 +13,7 @@ under positional constraints of some of its vertices, without requiring any addi
 \cgalPkgManuals{Chapter_SurfaceModeling,PkgSurfaceModeling}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
-\cgalPkgSince{4.3}
+\cgalPkgSince{4.5}
 \cgalPkgDependsOn{Sparse symmetric solver such as those from \ref thirdpartyEigen}
 \cgalPkgBib{cgal:todo}
 \cgalPkgLicense{\ref licensesGPL "GPL"}

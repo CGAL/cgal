@@ -436,7 +436,7 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   polyhedron_demo_plugin(trivial_plugin Polyhedron_demo_trivial_plugin)
 
   # Edit polyhedron scene item and plugin
-  if ( TAUCS_FOUND OR ( EIGEN3_FOUND AND ( SUPERLU_FOUND OR ( "${EIGEN3_VERSION}" VERSION_GREATER "3.1.90" ) ) ) )
+  if ( EIGEN3_FOUND AND "${EIGEN3_VERSION}" VERSION_GREATER "3.1.90" )
     qt4_wrap_ui( editionUI_FILES Deform_mesh.ui )
     qt4_automoc( Scene_edit_polyhedron_item.cpp )
     add_item(scene_edit_polyhedron_item Scene_edit_polyhedron_item.cpp Scene_edit_polyhedron_item.moc ${editionUI_FILES})
