@@ -24,9 +24,6 @@
 #if EIGEN_VERSION_AT_LEAST(3, 1, 91)
 #include <Eigen/SparseLU>
 #endif
-#if defined(CGAL_SUPERLU_ENABLED)
-#include <Eigen/SuperLUSupport>
-#endif
 
 #include <CGAL/Eigen_matrix.h>
 #include <CGAL/Eigen_vector.h>

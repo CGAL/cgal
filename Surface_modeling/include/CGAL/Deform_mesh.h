@@ -148,14 +148,10 @@ public:
   typedef typename Default::Get<
     ST,
   #if defined(CGAL_EIGEN3_ENABLED)
-    #if defined(CGAL_SUPERLU_ENABLED)
-      CGAL::Eigen_solver_traits<Eigen::SuperLU<CGAL::Eigen_sparse_matrix<double>::EigenType> >
-    #else
       CGAL::Eigen_solver_traits<
           Eigen::SparseLU<
             CGAL::Eigen_sparse_matrix<double>::EigenType,
             Eigen::COLAMDOrdering<int> >  >
-    #endif
   #else
     ST // no parameter provided, and Eigen is not enabled: so don't compile!
   #endif
