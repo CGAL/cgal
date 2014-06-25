@@ -42,6 +42,8 @@
 #include <CGAL/Reconstruction_face_base_2.h>
 
 #define EPS   1e-15
+#define MINN -1e100
+#define MAXN  1e100
 
 namespace CGAL {
 
@@ -648,7 +650,7 @@ public:
 	}
 
 	Edge find_nearest_edge(const Point& point, Face_handle face) const {
-		FT min_dist2 = std::numeric_limits<FT>::max();
+		FT min_dist2 = MAXN;
 		Edge nearest(Face_handle(), 0);
 		for (int i = 0; i < 3; ++i) {
 			Edge edge(face, i);
@@ -753,7 +755,7 @@ public:
 		Line lab(pa, pb - pa);
 		Line lts(pt, ps - pt);
 
-		FT Dqt = std::numeric_limits<FT>::max();
+		FT Dqt = MAXN;
 		CGAL::Object result = CGAL::intersection(lab, lts);
 		const Point* iq = CGAL::object_cast<Point>(&result);
 		if (iq)
@@ -977,16 +979,16 @@ public:
 			Vertex_handle c = target_vertex(bc);
 			Vertex_handle d = target_vertex(cd);
 
-			FT Dac = std::numeric_limits<FT>::min();
+			FT Dac = MINN;
 			if (a != c && is_triangle_ccw(a, b, c))
 				Dac = signed_distance_from_intersection(a, c, target, source);
 
-			FT Dbd = std::numeric_limits<FT>::min();
+			FT Dbd = MINN;
 			if (b != d && is_triangle_ccw(b, c, d))
 				Dbd = signed_distance_from_intersection(b, d, target, source);
 
-			if (Dac == std::numeric_limits<FT>::min() &&
-					Dbd == std::numeric_limits<FT>::min()) {
+			if (Dac == MINN &&
+					Dbd == MINN) {
 				// TODO: IV comment in std::cerr << red << "---
 				//No flips available ---" << white << std::endl;
 				std::cerr << "--- No flips available ---" << std::endl;
