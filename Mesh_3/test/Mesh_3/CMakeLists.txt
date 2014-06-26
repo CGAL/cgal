@@ -16,24 +16,9 @@ find_package(CGAL QUIET COMPONENTS Core ImageIO)
 if ( CGAL_FOUND )
   include( ${CGAL_USE_FILE} )
 
-  # Activate concurrency ? (turned OFF by default)
-  option(ACTIVATE_CONCURRENT_MESH_3
-    "Activate parallelism in Mesh_3"
-    OFF)
-    
+  find_package( TBB QUIET )
+
   # And add -DCGAL_CONCURRENT_MESH_3 if that option is ON
-  if( ACTIVATE_CONCURRENT_MESH_3 )
-    add_definitions( -DCGAL_CONCURRENT_MESH_3 )
-    find_package( TBB REQUIRED )
-  else( ACTIVATE_CONCURRENT_MESH_3 )
-    option( LINK_WITH_TBB
-      "Link with TBB anyway so we can use TBB timers for profiling"
-      ON)
-    if( LINK_WITH_TBB )
-      find_package( TBB )
-    endif( LINK_WITH_TBB )
-  endif()
-  
   if( TBB_FOUND )
     include(${TBB_USE_FILE})
     list(APPEND CGAL_3RD_PARTY_LIBRARIES ${TBB_LIBRARIES})
