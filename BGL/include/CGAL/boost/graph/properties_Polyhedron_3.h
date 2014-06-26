@@ -47,9 +47,7 @@ public:
 
   reference operator[](key_type const& e) const
   {
-    return std::pow(e->vertex()->point().x()-e->opposite()->vertex()->point().x(),2) +
-           std::pow(e->vertex()->point().y()-e->opposite()->vertex()->point().y(), 2) +
-           std::pow(e->vertex()->point().z()-e->opposite()->vertex()->point().z(), 2);
+    return squared_distance(e->vertex()->point(), e->opposite()->vertex()->point());
   }
 };
 
