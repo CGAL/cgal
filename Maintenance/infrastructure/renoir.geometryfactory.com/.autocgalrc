@@ -36,3 +36,5 @@ USE_REFERENCE_PLATFORMS=yes
 ULIMIT_OPTIONS="-v 5000000 -c 0 -t 3600"
 
 NICE_OPTIONS="-15"
+
+UPLOAD_RESULT_DESTINATION="cgaltest@cgaltest.geometryfactory.com:incoming"

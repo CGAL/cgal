@@ -34,3 +34,4 @@ BUILD_ON_localhost=all
 REFERENCE_PLATFORMS_DIR=$CGAL_ROOT/reference_platforms
 USE_REFERENCE_PLATFORMS=yes
 
+UPLOAD_RESULT_DESTINATION="cgaltest@cgaltest.geometryfactory.com:incoming"

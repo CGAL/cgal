@@ -23,3 +23,6 @@ COMPILERS_localhost="$COMPILERS_localhost x64_Cygwin-Windows8_MSVC2010-Release-6
 MYSHELL="bash --login"
 FTP_OPTS="-v -n"
 PROCESSORS_localhost="7"
+
+UPLOAD_RESULT_DESTINATION="cgaltest@cgaltest.geometryfactory.com:incoming"
+WGET_OPTS="--no-verbose"

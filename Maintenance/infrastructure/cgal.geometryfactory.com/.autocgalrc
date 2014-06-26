@@ -35,3 +35,6 @@ MYSHELL="QTDIR=$QTDIR LC_ALL=C LANG=C /bin/sh -c"
 # ulimit -v 2000000
 # Maximum files size : 500MB
 ULIMIT_OPTIONS="-H -c 0 -t 10800 -v 2000000 -t 500000"
+
+
+UPLOAD_RESULT_DESTINATION="cgaltest@cgaltest.geometryfactory.com:incoming"
