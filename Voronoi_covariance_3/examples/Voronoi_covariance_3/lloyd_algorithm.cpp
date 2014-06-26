@@ -193,6 +193,10 @@ int main (int argc, char *argv[]) {
     CGAL::convex_hull_3(points.begin(), points.end(), P_before);
     convertToOFF<K, Polyhedron>("before.off", P_before);
 
+    std::ofstream bos("before.cloud");
+    std::copy(points.begin(), points.end(),
+              std::ostream_iterator<Point>(bos, "\n"));
+
     // Apply Lloyd algorithm
     std::chrono::time_point<std::chrono::system_clock> start, end;
     std::chrono::duration<double> elapsed_time;
@@ -216,6 +220,10 @@ int main (int argc, char *argv[]) {
 
     CGAL::convex_hull_3(points.begin(), points.end(), P_after);
     convertToOFF<K, Polyhedron>("after.off", P_after);
+
+    std::ofstream aos("after.cloud");
+    std::copy(points.begin(), points.end(),
+              std::ostream_iterator<Point>(aos, "\n"));
 
     return 0;
 }
