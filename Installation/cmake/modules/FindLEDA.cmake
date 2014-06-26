@@ -12,7 +12,7 @@ else()
             DOC "The directory containing the LEDA header files WITHOUT the LEDA prefix"
           )
 
-  find_library(LEDA_LIBRARY_RELEASE NAMES "leda_md" "leda" 
+  find_library(LEDA_LIBRARY_RELEASE NAMES "leda_md" "leda" "numbers"
                HINTS ENV LEDA_LIB_DIR
                      ENV LEDA_DIR
 #               PATH_SUFFIXES lib
