@@ -72,13 +72,6 @@ according to the
 */ 
 typedef unspecified_type Compare_y_2;
 
-/*!
-Predicate object type that must provide 
-`bool operator()(Point_2 p,Point_2 q,Point_2 r)`, which 
-returns `true` iff `r` lies to the left of the 
-oriented line through `p` and `q`. 
-*/ 
-typedef unspecified_type Left_turn_2; 
 
 /// @} 
 
@@ -98,10 +91,7 @@ Compare_y_2 compare_y_2_object();
 
 */ 
 Orientation_2 orientation_2_object(); 
-/*!
 
-*/
-Left_turn_2 left_turn_2_object();
 
 /// @}
 

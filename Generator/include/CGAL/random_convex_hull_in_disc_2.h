@@ -36,15 +36,16 @@ struct compare_points_angle {
   bool operator()(const P& p, const P& q) {
     P zero(0,0);
     Traits traits;
-    typedef typename Traits::Left_turn_2 Left_turn;
-    Left_turn left_turn = traits.left_turn_2_object();
-
+    //typedef typename Traits::Left_turn_2 Left_turn;
+    //Left_turn left_turn = traits.left_turn_2_object();
+    typedef typename Traits::Orientation_2 Orientation_2;
+    Orientation_2 orientation_2=traits.orientation_2_object();
     typedef typename Traits::Compare_y_2 Compare_y_2;
     Compare_y_2 compare_y_2=traits.compare_y_2_object();
 
     if (compare_y_2(p, zero) == LARGER ){
       if (compare_y_2(q, zero)==LARGER)
-        return left_turn(zero, p, q);
+        return (orientation_2(zero,p,q)==LEFT_TURN);//left_turn(zero, p, q);
       else
         return false;
 
@@ -52,7 +53,7 @@ struct compare_points_angle {
       if (compare_y_2(q,zero)==LARGER)
         return true;
       else
-        return left_turn(zero, p, q);
+        return (orientation_2(zero,p,q)==LEFT_TURN);//left_turn(zero, p, q);
     }
   }
 };
@@ -103,8 +104,10 @@ void Cyclic_increment(typename std::list<P>::iterator& it,
 template <class P, class Traits>
 void Graham_without_sort_2(std::list<P>& l, const Traits& traits) {
   if (l.size() > 3) {
-     typedef typename Traits::Left_turn_2 Left_turn;
-     Left_turn left_turn = traits.left_turn_2_object();
+     //typedef typename Traits::Left_turn_2 Left_turn;
+     //Left_turn left_turn = traits.left_turn_2_object();
+    typedef typename Traits::Orientation_2 Orientation_2;
+    Orientation_2 orientation_2=traits.orientation_2_object();
 
      typedef typename Traits::Compare_x_2 Compare_x_2;
      Compare_x_2 compare_x_2=traits.compare_x_2_object();
@@ -126,7 +129,8 @@ void Graham_without_sort_2(std::list<P>& l, const Traits& traits) {
 
     while (u_next != pmin) {
 
-      if (left_turn(*u, *u_next, *u_next_next)) {
+      //if (left_turn(*u, *u_next, *u_next_next)) {
+      if (orientation_2(*u,*u_next,*u_next_next)==LEFT_TURN){
         Cyclic_increment(u, l);
         Cyclic_increment(u_next, l);
         Cyclic_increment(u_next_next, l);
