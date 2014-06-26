@@ -51,9 +51,9 @@ public:
 public:
 
   /// Create a square matrix initialized with zeros.
-  Eigen_sparse_matrix(int  dim,                   ///< Matrix dimension.
+  Eigen_sparse_matrix(std::size_t  dim,                   ///< Matrix dimension.
                       bool is_symmetric = false)  ///< Symmetric/hermitian?
-    : m_is_already_built(false), m_matrix(dim,dim)
+    : m_is_already_built(false), m_matrix(static_cast<int>(dim),static_cast<int>(dim))
   {
     CGAL_precondition(dim > 0);
 
@@ -65,10 +65,10 @@ public:
   /// Create a rectangular matrix initialized with zeros.
   ///
   /// @commentheading Precondition: rows == columns if is_symmetric is true.
-  Eigen_sparse_matrix(int  rows,                 ///< Number of rows.
-                      int  columns,              ///< Number of columns.
+  Eigen_sparse_matrix(std::size_t  rows,                 ///< Number of rows.
+                      std::size_t  columns,              ///< Number of columns.
                       bool is_symmetric = false) ///< Symmetric/hermitian?
-    : m_is_already_built(false), m_matrix(rows,columns)
+    : m_is_already_built(false), m_matrix(static_cast<int>(rows),static_cast<int>(columns))
   {
     CGAL_precondition(rows > 0);
     CGAL_precondition(columns > 0);
@@ -103,8 +103,10 @@ public:
   /// @commentheading Preconditions:
   /// - 0 <= i < row_dimension().
   /// - 0 <= j < column_dimension().
-  void set_coef(int i, int j, T  val, bool new_coef = false)
+  void set_coef(std::size_t i_, std::size_t j_, T  val, bool new_coef = false)
   {
+    int i = static_cast<int>(i_);
+    int j = static_cast<int>(j_);
     CGAL_precondition(i < row_dimension());
     CGAL_precondition(j < column_dimension());
 

@@ -19,10 +19,20 @@
 #ifndef CGAL_EIGEN_SOLVER_TRAITS_H
 #define CGAL_EIGEN_SOLVER_TRAITS_H
 
-#include <CGAL/basic.h> // include basic.h before testing #defines
+#include <CGAL/config.h> // include basic.h before testing #defines
+#if defined(BOOST_MSVC)
+#  pragma warning(push)
+#  pragma warning(disable:4244)
+#endif
 #include <Eigen/Sparse>
 #if EIGEN_VERSION_AT_LEAST(3, 1, 91)
+
 #include <Eigen/SparseLU>
+#endif
+
+
+#if defined(BOOST_MSVC)
+#  pragma warning(pop)
 #endif
 
 #include <CGAL/Eigen_matrix.h>
