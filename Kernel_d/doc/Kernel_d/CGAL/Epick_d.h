@@ -26,6 +26,8 @@ Known bugs: the functor `Intersect_d` is not yet implemented. `Contained_in_affi
 
 This kernel requires the \ref thirdpartyEigen "Eigen" library.
 
+Ancient compilers like gcc-4.2 are not supported, but gcc-4.4 works.
+
 \cgalModels `Kernel_d`
 \cgalModels `DelaunayTriangulationTraits`
 
