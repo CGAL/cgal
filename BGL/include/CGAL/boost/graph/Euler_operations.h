@@ -231,13 +231,13 @@ split_edge(typename boost::graph_traits<Graph>::halfedge_descriptor h, Graph& g)
  * `join_face()` and `split_face()` are inverse operations, that is
  * `join_face(g, split_face(g,h))` returns `h`.
  *
- * \image html euler_join_face.png
+ * \image html join_face.svg
  *
  * \tparam Graph must be a model of `MutableFaceGraph`.
  * \param g the graph
  * \param h the halfedge incident to one of the faces to be joined.
  *
- * \returns `prev(h)`
+ * \returns `prev(h,g)`
  *
  * \pre `out_degree(source(h,g)), g)) >= 3`
  * \pre `out_degree(target(h,g)) >= 3`
@@ -262,7 +262,7 @@ join_face(typename boost::graph_traits<Graph>::halfedge_descriptor h,
  * If `Graph` is a model of `MutableFaceGraph` and if the update of faces is not disabled
  * a new face incident to `h4` is added. 
  *
- * \image html euler_split_face.png
+ * \image html split_face.svg
  *
  * \tparam Graph must be a model of `MutableFaceGraph`
  *
@@ -301,10 +301,11 @@ split_face(typename boost::graph_traits<Graph>::halfedge_descriptor h1,
  * glues the cycle of halfedges of `h1` and `h2` together.
  * The vertices in the cycle of `h2` get removed.
  * If `h1` or `h2` are not border halfedges their faces get removed.
- * The invariant `join_loop(g, h, split_loop(g, h, i, j))` returns `h` and keeps 
+ * The vertices on the face cycle of `h1` get removed.
+ * The invariant `join_loop(h1, split_loop(h1,h2,h3,g), g)` returns `h1` and keeps 
  * the graph unchanged.
  * 
- * \image html euler_loop.png
+ * \image html join_loop.svg
  *
  * \tparam Graph must be a `MutableFaceGraph`
  *
@@ -366,28 +367,31 @@ join_loop(typename boost::graph_traits<Graph>::halfedge_descriptor h1,
 
 
 /**
- * cuts the graph along the cycle `(h,i,j)` changing the genus 
- * (edge `j` runs on the backside of the three dimensional figure below).
- * Three new vertices and three new pairs of halfedges, and two new triangles are created.
+ * cuts the graph along the cycle `(h1,h2,h3)` changing the genus 
+ * (halfedge `h3` runs on the backside of the three dimensional figure below).
+ * Three new vertices, three new pairs of halfedges,
+ * and two new triangular faces are created.
  *
- * `h`, `i`, and `j` will be incident to the first new face. 
- * 
- * \image html euler_split_loop.png
+ * `h1`, `h2`, and `h3` will be incident to the first new face. 
+ *
+ * Note that `split_loop` does not deal with properties of new vertices, halfedges, and faces.
+ *
+ * \image html split_loop.svg
  * 
  * \tparam Graph must be a `MutableFaceGraph`
  *
  * \returns the halfedge incident to the second new face.
  *
- * \pre `h`, `i`, and `j` denote distinct, consecutive vertices of the graph 
- * and form a cycle: i.e., `target(h) == target(opposite(i,g),g)`, … , 
- * `target(j,g) == target(opposite(h,g),g)`. 
- * \pre The six faces incident to `h`, `i`, and `j` are all distinct.
+ * \pre `h1`, `h2`, and `h3` denote distinct, consecutive halfedges of the graph 
+ * and form a cycle: i.e., `target(h1) == target(opposite(h2,g),g)`, … , 
+ * `target(h3,g) == target(opposite(h1,g),g)`. 
+ * \pre The six faces incident to `h1`, `h2`, and `h3` are all distinct.
  */
   template<typename Graph>
 typename boost::graph_traits<Graph>::halfedge_descriptor
-split_loop(typename boost::graph_traits<Graph>::halfedge_descriptor h,
-           typename boost::graph_traits<Graph>::halfedge_descriptor i,
-           typename boost::graph_traits<Graph>::halfedge_descriptor j,
+split_loop(typename boost::graph_traits<Graph>::halfedge_descriptor h1,
+           typename boost::graph_traits<Graph>::halfedge_descriptor h2,
+           typename boost::graph_traits<Graph>::halfedge_descriptor h3,
            Graph& g)
 {
   typedef typename boost::graph_traits<Graph>              Traits;
@@ -395,6 +399,7 @@ split_loop(typename boost::graph_traits<Graph>::halfedge_descriptor h,
   typedef typename Traits::halfedge_descriptor             halfedge_descriptor;
   typedef typename Traits::face_descriptor                 face_descriptor;
 
+  halfedge_descriptor h = h1, i = h2, j = h3;
    CGAL_precondition( h != i);
         CGAL_precondition( h != j);
         CGAL_precondition( i != j);
@@ -574,6 +579,8 @@ void make_hole(typename boost::graph_traits<Graph>::halfedge_descriptor h,
  * \returns the halfedge `next(h, g)` after the
  * operation, i.e., a halfedge pointing to the new vertex. 
  *
+ * Note that `add_center_vertex` does not deal with properties of new vertices, 
+ * halfedges, and faces. 
  *  \pre `h` is not a border halfedge.
  *
  * \param g the graph
@@ -679,8 +686,10 @@ remove_center_vertex(typename boost::graph_traits<Graph>::halfedge_descriptor h,
  * appends a new face to the border halfedge `h2` by connecting 
  * the tip of `h2` with the tip of `h1` with two new halfedges and a new vertex 
  * and creating a new face that is incident to `h2`. 
- *
- * \image html add_facet1.png
+ * Note that `add_vertex_and_face_to_border` does not deal with properties of new 
+ * vertices, halfedges, and faces.
+ * 
+ * \image html add_vertex_and_face_to_border.svg
  *
  * \tparam Graph must be a model of `MutableFaceGraph`
  *
