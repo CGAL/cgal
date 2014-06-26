@@ -36,6 +36,8 @@ else(USE_QT5)
 	endif(QT4_FOUND)
 endif (USE_QT5)
 
+include(QtChoice)
+
 find_package(OpenGL)
 find_package(QGLViewer)
 
@@ -46,22 +48,15 @@ if ( CGAL_FOUND AND (QT4 OR QT5) AND OPENGL_FOUND AND QGLVIEWER_FOUND )
 
   FILE (GLOB CPP *.cpp)
 
-  if(QT4)
   # ui files, created with Qt Designer
-  qt4_wrap_ui( uis MainWindow.ui )
+  qt_wrap_ui( uis MainWindow.ui )
 
   # qrc files (resources files, that contain icons, at least)
-  qt4_add_resources ( RESOURCE_FILES ./T3_demo.qrc )
+  qt_add_resources ( RESOURCE_FILES ./T3_demo.qrc )
 
   # moc files (meta object compiler files, run moc preprocessor on the files with Widget defs)
-  qt4_automoc( MainWindow.cpp Viewer.cpp PreferenceDlg.cpp )
- endif(QT4)
- 
- if(QT5)
-  qt5_wrap_ui(uis MainWindow.ui)
+  qt_automoc( MainWindow.cpp Viewer.cpp PreferenceDlg.cpp )
 
-  qt5_add_resources (RESOURCE_FILES ./T3_demo.qrc)
- endif(QT5)
 
   # cpp files
   add_executable  ( T3_demo

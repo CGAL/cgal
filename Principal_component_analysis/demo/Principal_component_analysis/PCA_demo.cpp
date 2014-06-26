@@ -34,9 +34,11 @@ int main(int argc, char **argv)
   app.setOrganizationName("INRIA");
   app.setApplicationName("PCA demo");
 
-  // Import resources from libCGALQt4.
+  // Import resources from libCGALQt.
   // See http://doc.trolltech.com/4.4/qdir.html#Q_INIT_RESOURCE
-  CGAL_QT4_INIT_RESOURCES;
+
+  //New for Qt5 version ! 
+  CGAL_QT_INIT_RESOURCES;
 
   MainWindow mainWindow;
   mainWindow.show();

@@ -7,6 +7,10 @@ if(WIN32)
 	
 endif()
 
+if (QT_USE_QTMAIN )
+	find_package(Qt5Core)
+endif(QT_USE_QTMAIN )
+
 # Qt modules
 FOREACH(module Core GUI OpenGL Multimedia  
 		Network QML Quick SQL Test WebKit 
@@ -31,5 +35,8 @@ FOREACH(module Core GUI OpenGL Multimedia
   
 ENDFOREACH(module)
 
-SET(QT5 TRUE)
+set(QT5 TRUE)
 set(CMAKE_AUTOMOC ON)
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
+
+message("End of searching Qt5 modules.")

@@ -9,24 +9,47 @@ else()
   cmake_policy(VERSION 2.6)
 endif()
 
-find_package(CGAL COMPONENTS Core Qt4 )
-include( ${CGAL_USE_FILE} )
+#New for Qt5 version !
+option (USE_QT5 "Use Qt5 version instead of Qt4" ON)
 
-find_package( Qt4 )
+if(USE_QT5)
 
-if ( CGAL_FOUND AND CGAL_Qt4_FOUND AND QT4_FOUND)
-  include( ${QT_USE_FILE} )
+	find_package(CGAL COMPONENTS Core Qt5 )
+
+	include(${CGAL_USE_FILE})
+	
+	find_package(Qt5)
+
+else (USE_QT5)
+
+	find_package(CGAL COMPONENTS Core Qt4 )
+	include(${CGAL_USE_FILE})
+
+	find_package(Qt4)
+
+	if(CGAL_Qt4_FOUND AND QT4_FOUND)
+		include(${QT_USE_FILE})
+		message("Qt4 found")
+		set(QT4 TRUE)
+	endif()
+
+endif (USE_QT5)
+
+include(QtChoice)
+
+if ( CGAL_FOUND AND (QT4 OR QT5) )
+
   include_directories( ./ )
   # Arrangement package includes
   include_directories( BEFORE ../../include )
 
-  qt4_wrap_ui( arrangement_2_uis
+  qt_wrap_ui( arrangement_2_uis
     ArrangementDemoWindow.ui
     NewTabDialog.ui
     OverlayDialog.ui
     ArrangementDemoPropertiesDialog.ui
   )
-  qt4_wrap_cpp( arrangement_2_mocs
+  qt_wrap_cpp( arrangement_2_mocs
     ArrangementDemoWindow.h
     ArrangementDemoTab.h
     Callback.h
@@ -38,7 +61,7 @@ if ( CGAL_FOUND AND CGAL_Qt4_FOUND AND QT4_FOUND)
     PropertyValueDelegate.h
     #PropertyValueDelegate.cpp
   )
-  qt4_add_resources( arrangement_2_resources
+  qt_add_resources( arrangement_2_resources
     ArrangementDemoWindow.qrc
   )
   add_executable( arrangement_2
@@ -77,7 +100,7 @@ if ( CGAL_FOUND AND CGAL_Qt4_FOUND AND QT4_FOUND)
 
 else()
 
-  message(STATUS "NOTICE: This demo requires CGAL and Qt4, and will not be compiled.")
+  message(STATUS "NOTICE: This demo requires CGAL and Qt, and will not be compiled.")
 
 endif()
 

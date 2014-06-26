@@ -34,7 +34,7 @@ set( QT_USE_QTSCRIPT  TRUE )
 set( QT_USE_QTOPENGL  TRUE )
 
 #New for Qt5 version !
-option (USE_QT5 "Use Qt5 version instead of Qt4" OFF)
+option (USE_QT5 "Use Qt5 version instead of Qt4" ON)
 
 if(USE_QT5)
 
@@ -43,19 +43,23 @@ if(USE_QT5)
 	include(${CGAL_USE_FILE})
 	
 	find_package(Qt5)
-	
+
 else (USE_QT5)
+
 	find_package(CGAL COMPONENTS Qt4)
 	include(${CGAL_USE_FILE})
 
 	find_package(Qt4)
-	include(${QT_USE_FILE})
 
 	if(CGAL_Qt4_FOUND AND QT4_FOUND)
+		include(${QT_USE_FILE})
 		message("Qt4 found")
 		set(QT4 TRUE)
 	endif()
+
 endif (USE_QT5)
+
+include(QtChoice)
 
 find_package(OpenGL)
 find_package(QGLViewer)
@@ -84,21 +88,14 @@ include_directories(BEFORE . ../../include/)
 
 FILE (GLOB CPP *.cpp)
 
-if(QT4)
-	# ui file, created wih Qt Designer
-	qt4_wrap_ui(uis MainWindow.ui CreateMesh.ui CreateMenger.ui)
+# ui file, created wih Qt Designer
 
-	# qrc files (resources files, that contain icons, at least)
-	qt4_add_resources (RESOURCE_FILES ./Linear_cell_complex_3.qrc)
+qt_wrap_ui(uis MainWindow.ui CreateMesh.ui CreateMenger.ui)
 
-	qt4_automoc(MainWindow.cpp Viewer.cpp)
-endif()
-if(QT5)
-	qt5_wrap_ui(uis MainWindow.ui CreateMesh.ui CreateMenger.ui)
+qt_add_resources (RESOURCE_FILES ./Linear_cell_complex_3.qrc)
 
-	qt5_add_resources (RESOURCE_FILES ./Linear_cell_complex_3.qrc)
+qt_automoc(MainWindow.cpp Viewer.cpp)
 
-endif()
 add_executable(Linear_cell_complex_3_demo
 			   ${CPP}
 			   ${uis} 

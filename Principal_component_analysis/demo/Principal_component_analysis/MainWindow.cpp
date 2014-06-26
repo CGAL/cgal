@@ -13,6 +13,10 @@
 
 #include "ui_MainWindow.h"
 
+#if QT_VERSION >= 0x050000
+#include <QMimeData> 
+#endif
+
 MainWindow::MainWindow(QWidget* parent)
 : CGAL::Qt::DemosMainWindow(parent)
 {

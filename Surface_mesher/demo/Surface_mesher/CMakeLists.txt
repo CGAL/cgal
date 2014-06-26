@@ -37,10 +37,12 @@ set( QT_USE_QTMAIN   TRUE )
 option (USE_QT5 "Use Qt5 version instead of Qt4" OFF)
 
 if(USE_QT5)
+
 	find_package(CGAL COMPONENTS ImageIO Qt5)
 	include(${CGAL_USE_FILE})
 	
 	find_package(Qt5)
+
 else (USE_QT5)
 	find_package(CGAL COMPONENTS ImageIO Qt4)
 
@@ -54,6 +56,8 @@ else (USE_QT5)
 		set(QT4 TRUE)
 	endif()
 endif (USE_QT5)
+
+include(QtChoice)
 
 if ( CGAL_FOUND AND (QT4 OR QT5))
   include( ${CGAL_USE_FILE} )
@@ -95,29 +99,17 @@ if ( CGAL_FOUND AND (QT4 OR QT5))
       set(sources ${sources} ${PACKAGE_ROOT}/../Marching_cube/src/mc/ply.c)
       add_definitions(-DCGAL_SURFACE_MESH_DEMO_USE_MARCHING_CUBE)
     endif()
-    
-    if(QT4)	
-    qt4_automoc( ${sources} )
+	
+    qt_automoc( ${sources} )
 
-    qt4_generate_moc( "surface.h" "${CMAKE_CURRENT_BINARY_DIR}/moc_surface.cpp" )
+    qt_generate_moc( "surface.h" "${CMAKE_CURRENT_BINARY_DIR}/moc_surface.cpp" )
 
     set( sources ${sources} moc_surface.cpp)
     
-    qt4_wrap_ui( uis ui/values_list.ui ui/mainwindow.ui ui/optionsdialog.ui ui/raw_image.ui )
+    qt_wrap_ui( uis ui/values_list.ui ui/mainwindow.ui ui/optionsdialog.ui ui/raw_image.ui )
     
-    qt4_add_resources( qrc_sources values_list.qrc surface_mesher.qrc  ) 
-    endif()
+    qt_add_resources( qrc_sources values_list.qrc surface_mesher.qrc  ) 
 
-    if(QT5)
-	qt5_generate_moc( "surface.h" "${CMAKE_CURRENT_BINARY_DIR}/moc_surface.cpp" )
-
-	set( sources ${sources} moc_surface.cpp)
-
-	qt5_wrap_ui(uis ui/values_list.ui ui/mainwindow.ui ui/optionsdialog.ui ui/raw_image.ui)
-
-	qt5_add_resources (qrc_sources values_list.qrc surface_mesher.qrc)
-
-    endif()
     add_executable  ( Surface_mesher  
 		      ${sources} 
                       ${uis} 

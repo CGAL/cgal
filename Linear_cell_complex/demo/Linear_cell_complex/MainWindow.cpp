@@ -37,6 +37,7 @@ MainWindow::MainWindow (QWidget * parent):CGAL::Qt::DemosMainWindow (parent),
   dialogmesh  (this),
   dialogmenger(this)
 { 
+
   setupUi (this);
 
   scene.lcc = new LCC;
