@@ -181,10 +181,11 @@ void hyperbolicIpelet::protected_run(int fn)
     // translate so that Poincare : x^2+y^2=A
     // and selected : x^2+y^2 -2ax -2by +a^2+ b^2=C
     // look for l  so that l.Poincare + selected has zero radius
-    double a=selected.center().x().to_double()-poincare.center().x().to_double();
-    double b=selected.center().y().to_double()-poincare.center().y().to_double();
-    double C=selected.squared_radius().to_double();
-    double A=poincare.squared_radius().to_double();
+    using CGAL::to_double;
+    double a=to_double(selected.center().x())-to_double(poincare.center().x());
+    double b=to_double(selected.center().y())-to_double(poincare.center().y());
+    double C=to_double(selected.squared_radius());
+    double A=to_double(poincare.squared_radius());
     double B=A+C-a*a-b*b;
     double delta=B*B-4*A*C;
     double l=(-B+sqrt(delta))/2/A;
