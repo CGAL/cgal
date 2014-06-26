@@ -21,8 +21,11 @@
 #########################################################
 ##### Benchmark for refinement+optim
 #########################################################
- D:/INRIA/CGAL/workingcopy/Mesh_3/examples/Mesh_3/data/elephant.off       0.0068  0.002	  0.0025  1
-#D:/INRIA/CGAL/workingcopy/Mesh_3/examples/Mesh_3/data/fandisk.off        0.0068  0.003	  0.006	  1
+#../../examples/Mesh_3/data/elephant.off                                  0.05  0.04	  0.04  10000
+#../../examples/Mesh_3/data/elephant.off                                  0.01  0.004	  0.004  10000
+../../examples/Mesh_3/data/elephant.off                                  0.0068  0.002	  0.0025  10000 # typical timing (11 thr): 4.4 2.3 9.9
+#D:/INRIA/CGAL/workingcopy/Mesh_3/examples/Mesh_3/data/elephant.off       0.0068  0.002	  0.0025  10000
+#D:/INRIA/CGAL/workingcopy/Mesh_3/examples/Mesh_3/data/fandisk.off        0.0068  0.003	  0.006	  1     # typical timing (11 thr): 2.4 1.0 2.9
 #D:/INRIA/Data/_Models/BigOFF/lucy-100kt.off                              0.0068  0.0015  0.003	  1
 #D:/INRIA/Data/_Models/BigOFF/bimba_400kf.off                             0.0068  0.003	  0.006	  1
 #D:/INRIA/CGAL/workingcopy/Mesh_3/examples/Mesh_3/data/cheese.off         0.0068  0.002	  0.002	  1
@@ -241,7 +244,7 @@
 #D:/INRIA/CGAL/workingcopy/Mesh_3/examples/Mesh_3/data/elephant.off       0.0068  0.005	  0.005	  100000
 
 ####### Test crash "A facet is not in conflict with its refinement point!" - SOLVED ########
- D:/INRIA/CGAL/workingcopy/Mesh_3/examples/Mesh_3/data/elephant.off       0.0068  0.002	  10	    100000
+#D:/INRIA/CGAL/workingcopy/Mesh_3/examples/Mesh_3/data/elephant.off       0.0068  0.002	  10	    100000
 
 ####### Parallel optimizers ########
 #D:/INRIA/CGAL/workingcopy/Mesh_3/examples/Mesh_3/data/elephant.off       0.0068  0.005	  0.005	  1000
