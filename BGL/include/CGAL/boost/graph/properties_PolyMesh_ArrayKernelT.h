@@ -25,7 +25,7 @@
 #include <CGAL/assertions.h>
 #include <OpenMesh/Core/Mesh/PolyMesh_ArrayKernelT.hh>
 #include <CGAL/boost/graph/properties.h>
-
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 namespace CGAL {
 
@@ -333,7 +333,7 @@ get(boost::halfedge_is_border_t, const OpenMesh::PolyMesh_ArrayKernelT<K>& g)
   CGAL_OM_INTRINSIC_PROPERTY(int, boost::halfedge_index_t, halfedge_descriptor)
   CGAL_OM_INTRINSIC_PROPERTY(std::size_t, boost::face_index_t, face_descriptor)
   //  CGAL_OM_INTRINSIC_PROPERTY(std::size_t, boost::halfedge_index_t, face_descriptor)
-  CGAL_OM_INTRINSIC_PROPERTY(typename OpenMesh::PolyMesh_ArrayKernelT<K>::Point const&, boost::vertex_point_t, vertex_descriptor)
+  CGAL_OM_INTRINSIC_PROPERTY(typename CGAL::Exact_predicates_inexact_constructions_kernel::Point_3, boost::vertex_point_t, vertex_descriptor)
   CGAL_OM_INTRINSIC_PROPERTY(bool, boost::vertex_is_border_t, vertex_descriptor)
   CGAL_OM_INTRINSIC_PROPERTY(bool, boost::halfedge_is_border_t, halfedge_descriptor)
 

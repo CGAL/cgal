@@ -62,6 +62,9 @@ namespace CGAL {
     return edge(prev(opposite(h, g), g), g);
   }
   
+  template <class Graph>
+  struct halfedge_graph_traits;
+
    template<class Graph>
    std::pair<typename CGAL::halfedge_graph_traits<Graph>::undirected_edge_iterator, typename CGAL::halfedge_graph_traits<Graph>::undirected_edge_iterator>
    undirected_edges(const Graph& g)

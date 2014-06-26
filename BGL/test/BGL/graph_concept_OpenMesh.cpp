@@ -60,10 +60,10 @@ void concept_check_polyhedron() {
   boost::function_requires< boost::concepts::ReadablePropertyGraph<Sm, edge_descriptor,     boost::edge_weight_t> >();
   boost::function_requires< boost::concepts::ReadablePropertyGraph<Sm, vertex_descriptor,   boost::vertex_index_t> >();
   boost::function_requires< boost::concepts::ReadablePropertyGraph<Sm, edge_descriptor,     boost::edge_index_t> >();
-  boost::function_requires< boost::concepts::PropertyGraphConcept <Sm, vertex_descriptor,   boost::vertex_point_t> >();
+  //boost::function_requires< boost::concepts::PropertyGraphConcept <Sm, vertex_descriptor,   boost::vertex_point_t> >();
   boost::function_requires< boost::concepts::ReadablePropertyGraph<Sm, face_descriptor,     CGAL::face_index_t> >();
   boost::function_requires< boost::concepts::ReadablePropertyGraph<Sm, halfedge_descriptor, CGAL::halfedge_index_t> >();
-  boost::function_requires< boost::concepts::ReadablePropertyGraph<Sm, vertex_descriptor,   CGAL::vertex_is_border_t> >();
+  //  boost::function_requires< boost::concepts::ReadablePropertyGraph<Sm, vertex_descriptor,   CGAL::vertex_is_border_t> >();
   boost::function_requires< boost::concepts::ReadablePropertyGraph<Sm, halfedge_descriptor, CGAL::halfedge_is_border_t> >();
   // null
   boost::graph_traits<Sm>::null_vertex();

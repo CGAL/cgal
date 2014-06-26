@@ -63,7 +63,7 @@ include( CGAL_CreateSingleSourceCGALProgram )
 
 if(OpenMesh_FOUND)
   create_single_source_cgal_program( "graph_concept_OpenMesh.cpp" )
-  target_link_libraries( graph_concept_OpenMesh ${OPENMESH_LIBRARY} )
+  target_link_libraries( graph_concept_OpenMesh ${OPENMESH_LIBRARIES} )
 endif()
 
 create_single_source_cgal_program( "test_circulator.cpp" )
