@@ -34,16 +34,10 @@ class Random_convex_hull_traits_2
     typedef typename R::FT                FT;
     typedef typename R::Point_2           Point_2;
     typedef typename R::Segment_2		  Segment_2;
-    typedef typename R::Left_turn_2		  Left_turn_2;
    	typedef typename R::Compare_x_2		  Compare_x_2;
    	typedef typename R::Compare_y_2		  Compare_y_2;
    	typedef typename R::Orientation_2	  Orientation_2;
 
-    Left_turn_2
-    left_turn_2_object() const
-    {
-    	return Left_turn_2();
-    }
 
     Compare_x_2
     compare_x_2_object() const
