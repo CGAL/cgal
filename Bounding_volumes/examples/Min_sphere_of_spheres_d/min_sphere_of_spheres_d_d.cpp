@@ -4,7 +4,7 @@
 
 #include <CGAL/Cartesian_d.h>
 #include <CGAL/Random.h>
-#include <CGAL/Gmpq.h>
+#include <CGAL/Exact_rational.h>
 #include <CGAL/Min_sphere_of_spheres_d.h>
 #include <vector>
 
@@ -12,7 +12,7 @@ const int N = 1000;                       // number of spheres
 const int D = 3;                          // dimension of points
 const int LOW = 0, HIGH = 10000;          // range of coordinates and radii
 
-typedef CGAL::Gmpq                        FT;
+typedef CGAL::Exact_rational              FT;
 //typedef double                          FT;
 typedef CGAL::Cartesian_d<FT>             K;
 typedef CGAL::Min_sphere_of_spheres_d_traits_d<K,FT,D> Traits;

@@ -1,7 +1,7 @@
 //! \file examples/Example_2/ex_envelope_segments.cpp
 // Constructing the lower envelope of a set of segments.
 
-#include <CGAL/Gmpq.h>
+#include <CGAL/Exact_rational.h>
 #include <CGAL/Cartesian.h>
 #include <CGAL/Arr_segment_traits_2.h>
 #include <CGAL/Arr_curve_data_traits_2.h>
@@ -11,7 +11,7 @@
 #include <list>
 #include <iostream>
 
-typedef CGAL::Gmpq                                      Number_type;
+typedef CGAL::Exact_rational                            Number_type;
 typedef CGAL::Cartesian<Number_type>                    Kernel;
 typedef CGAL::Arr_segment_traits_2<Kernel>              Segment_traits_2;
 typedef Segment_traits_2::X_monotone_curve_2            Segment_2;

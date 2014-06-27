@@ -1,9 +1,9 @@
-#include <CGAL/Gmpq.h>
+#include <CGAL/Exact_rational.h>
 #include <CGAL/Cartesian.h>
 #include <CGAL/Nef_polyhedron_S2.h>
 #include <CGAL/Nef_S2/create_random_Nef_S2.h>
 
-typedef CGAL::Gmpq FT;
+typedef CGAL::Exact_rational FT;
 typedef CGAL::Cartesian<FT> Kernel;
 typedef CGAL::Nef_polyhedron_S2<Kernel> Nef_polyhedron_S2;
 typedef Nef_polyhedron_S2::SVertex_const_handle SVertex_const_handle;
