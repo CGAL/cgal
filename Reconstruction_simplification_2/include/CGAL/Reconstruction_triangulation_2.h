@@ -61,10 +61,8 @@ class Reconstruction_triangulation_2: public Delaunay_triangulation_2<Kernel,
 		Tds_> {
 public:
 
-	//TODO: IV rename Dt
 	typedef Reconstruction_triangulation_2 Rt_2;
 
-	//typedef typename Reconstruction_triangulation_2::Geom_traits    Kernel;
 	typedef typename Kernel::FT FT;
 	typedef typename Kernel::Point_2 Point;
 	typedef typename Kernel::Vector_2 Vector;
@@ -117,7 +115,11 @@ public:
 	Reconstruction_edge_2;
 	typedef Dynamic_priority_queue_edges<Reconstruction_edge_2> PQueue;
 
+	typedef std::set<Reconstruction_edge_2, less_Recon_Edge_2<Reconstruction_edge_2> >  PQueue_set;
+
 	double m_factor; // ghost vs solid
+
+
 
 public:
 	Reconstruction_triangulation_2() {
@@ -547,7 +549,7 @@ public:
 
 			FT Ds = CGAL::squared_distance(query, ps);
 			FT Dt = CGAL::squared_distance(query, pt);
-			FT dist2 = (std::min)(Ds, Dt);
+			FT dist2 = ((std::min))(Ds, Dt);
 
 			FT norm2 = sample->distance2();
 			FT tang2 = dist2 - norm2;
@@ -935,7 +937,6 @@ public:
 		ac.first->set_neighbor(ac.second, ca.first);
 		ca.first->set_neighbor(ca.second, ac.first);
 
-		//TODO: IV UNCOMMEN THIS
 		this->delete_face(abc);
 		this->delete_face(cba);
 		this->delete_vertex(b);
@@ -944,91 +945,106 @@ public:
 			std::cout << "done" << std::endl;
 	}
 
-	template<class Iterator> // value_type = Edge
-	bool make_collapsible(Edge& edge, Iterator begin, Iterator end,
-			int verbose = 0) {
-		Vertex_handle source = source_vertex(edge);
-		Vertex_handle target = target_vertex(edge);
-
-		PQueue pqueue;
-		for (Iterator it = begin; it != end; ++it) {
-			Edge ab = twin_edge(*it);
-			Vertex_handle a = source_vertex(ab);
-			Vertex_handle b = target_vertex(ab);
-			FT D = signed_distance_from_intersection(a, b, target, source);
-			if (D < 0.0)
-				pqueue.push(Reconstruction_edge_2(ab, D));
-		}
-
-		int nb_flips = 0;
-		while (!pqueue.empty()) {
-			Reconstruction_edge_2 pedge = pqueue.top();
-			FT Dbc = pedge.priority();
-			Edge bc = pedge.edge();
-			pqueue.pop();
-
-			Edge sb = prev_edge(bc);
-			Edge ab = prev_edge(twin_edge(sb));
-			Edge sc = twin_edge(next_edge(bc));
-			Edge cd = next_edge(sc);
-
-			Vertex_handle a = source_vertex(ab);
-			Vertex_handle b = source_vertex(bc);
-			Vertex_handle c = target_vertex(bc);
-			Vertex_handle d = target_vertex(cd);
-
-			FT Dac = std::numeric_limits<FT>::lowest();
-			if (a != c && is_triangle_ccw(a, b, c))
-				Dac = signed_distance_from_intersection(a, c, target, source);
-
-			FT Dbd = std::numeric_limits<FT>::lowest();
-			if (b != d && is_triangle_ccw(b, c, d))
-				Dbd = signed_distance_from_intersection(b, d, target, source);
-
-			if (Dac == std::numeric_limits<FT>::lowest() &&
-					Dbd == std::numeric_limits<FT>::lowest()) {
-				// TODO: IV comment in std::cerr << red << "---
-				//No flips available ---" << white << std::endl;
-				std::cerr << "--- No flips available ---" << std::flush;
-				return false;
-			}
-
-			if ((std::max)(Dac, Dbd) + EPS < Dbc) {
-				std::cerr.precision(10);
-				// TODO: IV comment in std::cerr << red << "---
-				//Flip makes kernel worse ---" << white << std::endl;
-				std::cerr << "--- Flip makes kernel worse ---" << std::flush;
-				std::cerr << Dac << " or " << Dbd << " vs " << Dbc << std::endl;
-				std::cerr << "a: " << a->point() << std::endl;
-				std::cerr << "b: " << b->point() << std::endl;
-				std::cerr << "c: " << c->point() << std::endl;
-				std::cerr << "d: " << d->point() << std::endl;
-				std::cerr << "t: " << target->point() << std::endl;
-				std::cerr << "diff = " << Dbc - (std::max)(Dac, Dbd) << std::endl;
-				return false;
-			}
-
-			if (Dac > Dbd) {
-				pqueue.remove(Reconstruction_edge_2(ab));
-				Edge ac = flip(sb, edge, verbose);
-				if (Dac < 0.0)
-					pqueue.push(Reconstruction_edge_2(ac, Dac));
-			} else {
-				pqueue.remove(Reconstruction_edge_2(cd));
-				Edge bd = flip(sc, edge, verbose);
-				if (Dbd < 0.0)
-					pqueue.push(Reconstruction_edge_2(bd, Dbd));
-			}
-			nb_flips++;
-		}
-
-		if (verbose > 1)
-			//TODO: IV Comment in std::cerr << red << "--- Flip makes kernel
-			//worse ---" << white << std::endl;
-			std::cerr << "Nb flips: " << nb_flips << std::endl;
-
-		return true;
+	//TODO IV remove --------
+	void print_edge(Reconstruction_edge_2 edge) {
+		int i = ((edge).edge()).second;
+		Point a = ((edge).edge()).first->vertex((i+1)%3)->point();
+		Point b = ((edge).edge()).first->vertex((i+2)%3)->point();
+		std::cout <<"( " << (edge).priority()  <<  ") ( " << a << " , " << b << " )" << std::endl;
 	}
+	//--------
+
+	template <class Iterator> // value_type = Edge
+		    bool make_collapsible(Edge& edge, Iterator begin, Iterator end, int verbose = 0)
+		    {
+		        Vertex_handle source = source_vertex(edge);
+		        Vertex_handle target = target_vertex(edge);
+
+		        PQueue pqueue;
+		        for (Iterator it = begin; it != end; ++it)
+		        {
+		            Edge ab = twin_edge(*it);
+		            Vertex_handle a = source_vertex(ab);
+		            Vertex_handle b = target_vertex(ab);
+		            FT D = signed_distance_from_intersection(a, b, target, source);
+		            if (D < 0.0) pqueue.push(Reconstruction_edge_2(ab, D));
+		        }
+
+		        int nb_flips = 0;
+		        while (!pqueue.empty())
+		        {
+		            Reconstruction_edge_2 pedge = pqueue.top();
+		            FT Dbc = pedge.priority();
+		            Edge bc = pedge.edge();
+		            pqueue.pop();
+
+		            Edge sb = prev_edge(bc);
+		            Edge ab = prev_edge(twin_edge(sb));
+		            Edge sc = twin_edge(next_edge(bc));
+		            Edge cd = next_edge(sc);
+
+		            Vertex_handle a = source_vertex(ab);
+		            Vertex_handle b = source_vertex(bc);
+		            Vertex_handle c = target_vertex(bc);
+		            Vertex_handle d = target_vertex(cd);
+
+		            FT Dac =  std::numeric_limits<FT>::lowest();
+		            if (a != c && is_triangle_ccw(a, b, c))
+		                Dac = signed_distance_from_intersection(a, c, target, source);
+
+		            FT Dbd =  std::numeric_limits<FT>::lowest();
+		            if (b != d && is_triangle_ccw(b, c, d))
+		                Dbd = signed_distance_from_intersection(b, d, target, source);
+
+		            if (Dac ==  std::numeric_limits<FT>::lowest() && Dbd ==
+		            		std::numeric_limits<FT>::lowest())
+		            {
+		                // TODO: IV comment in std::cerr << red << "---
+		            	//No flips available ---" << white << std::endl;
+		            	std::cerr << "--- No flips available ---"  << std::endl;
+		                return false;
+		            }
+
+		            if (std::max(Dac, Dbd) + EPS < Dbc)
+		            {
+		                std::cerr.precision(10);
+		                // TODO: IV comment in std::cerr << red << "--
+		                //- Flip makes kernel worse ---" << white << std::endl;
+		                std::cerr << "--- Flip makes kernel worse ---"
+		                		<< std::endl;
+		                std::cerr << Dac << " or " << Dbd << " vs "
+		                		<< Dbc << std::endl;
+		                std::cerr << "a: " << a->point() << std::endl;
+		                std::cerr << "b: " << b->point() << std::endl;
+		                std::cerr << "c: " << c->point() << std::endl;
+		                std::cerr << "d: " << d->point() << std::endl;
+		                std::cerr << "t: " << target->point() << std::endl;
+		                std::cerr << "diff = " << Dbc - std::max(Dac, Dbd) << std::endl;
+		                return false;
+		            }
+
+		            if (Dac > Dbd)
+		            {
+		                pqueue.remove(Reconstruction_edge_2(ab));
+		                Edge ac = flip(sb, edge, verbose);
+		                if (Dac < 0.0) pqueue.push(Reconstruction_edge_2(ac, Dac));
+		            }
+		            else
+		            {
+		                pqueue.remove(Reconstruction_edge_2(cd));
+		                Edge bd = flip(sc, edge, verbose);
+		                if (Dbd < 0.0) pqueue.push(Reconstruction_edge_2(bd, Dbd));
+		            }
+		            nb_flips++;
+		        }
+
+		        if (verbose > 1)
+		        	//TODO: IV Comment in std::cerr << red << "---
+		        	//Flip makes kernel worse ---" << white << std::endl;
+		            std::cerr  << "Nb flips: "  << nb_flips << std::endl;
+
+		        return true;
+		    }
 
 	int random_int(const int min, const int max) {
 		int range = max - min;

@@ -128,6 +128,23 @@ public:
 		point_pmap = in_point_pmap;
 		mass_pmap  = in_mass_pmap;
 
+		initialize_parameters();
+	}
+
+
+	Reconstruction_simplification_2() {
+		initialize_parameters();
+	}
+
+
+	~Reconstruction_simplification_2() {
+		clear();
+	}
+
+
+	void initialize_parameters() {
+
+
 		m_verbose = 0;
 		m_mchoice = 0;
 		m_use_flip = true;
@@ -144,8 +161,21 @@ public:
         m_ignore = 0;
 	}
 
-	~Reconstruction_simplification_2() {
-		clear();
+	//Function if one wants to create a Reconstruction_simplification_2
+	//without specifying the input yet in the constructor
+	void initialize(InputIterator start_itr,
+									InputIterator beyond_itr,
+									PointPMap in_point_pmap,
+									MassPMap  in_mass_pmap) {
+
+		start  = start_itr;
+		beyond = beyond_itr;
+
+		point_pmap = in_point_pmap;
+		mass_pmap  = in_mass_pmap;
+
+		initialize();
+
 	}
 
 	void initialize() {
@@ -167,11 +197,13 @@ public:
 
 	}
 
+
 	//Returns the solid edges present after the reconstruction process.
 	//TODO: determine suitable way of storing them
 	void extract_solid_eges() {
 
 	    std::cout <<  "---------extracted_solid_eges------------" << std::endl;
+
 
 		PQueue queue;
 		    for (Finite_edges_iterator ei = m_dt.finite_edges_begin();
@@ -207,9 +239,52 @@ public:
 		    std::cout <<  "---------------------------------------------------" << std::endl;
 	}
 
+	//Returns the solid edges present after the reconstruction process.
+	//TODO: determine suitable way of storing them
+	void extract_solid_eges(std::vector<Reconstruction_edge_2>& solid_edges) {
+
+	    std::cout <<  "---------extracted_solid_eges------------" << std::endl;
+
+
+		PQueue queue;
+		    for (Finite_edges_iterator ei = m_dt.finite_edges_begin();
+		    		ei != m_dt.finite_edges_end(); ++ei)
+		    {
+		        Edge edge = *ei;
+		        if (m_dt.is_ghost(edge)) continue;
+		        FT value = m_dt.get_edge_relevance(edge); // >= 0
+		        queue.push(Reconstruction_edge_2(edge, value));
+		    }
+
+		    //TODO: IV find nicer way to handle m_ignore
+		    int nb_remove = (std::min)(m_ignore, int(queue.size()));
+
+		    for (int i = 0; i < nb_remove; ++i)
+		    {
+		        Reconstruction_edge_2 pedge = queue.top();
+		        queue.pop();
+		    }
+
+		    while (!queue.empty())
+		    {
+		        Reconstruction_edge_2 pedge = queue.top();
+		        queue.pop();
+
+		        solid_edges.push_back(pedge);
+
+		        int i = (pedge.edge()).second;
+				Face_handle face = (pedge.edge()).first;
+				Point a = face->vertex((i+1)%3)->point();
+				Point b = face->vertex((i+2)%3)->point();
+				std::cout <<  "( " << a << " , " << b << " )" << std::endl;
+		    }
+
+		    std::cout <<  "---------------------------------------------------" << std::endl;
+	}
+
     void normalize_points()
     {
-        //noise(1e-5); TODO IV, removed the noise
+        //noise(1e-5); TODO IV, killed that noise
         compute_bbox(m_bbox_x, m_bbox_y, m_bbox_size);
         if (m_bbox_size == 0.0) return;
 

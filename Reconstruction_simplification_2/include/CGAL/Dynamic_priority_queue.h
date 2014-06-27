@@ -195,6 +195,7 @@ protected:
         }
         if (pos != i) place(moving, pos);
     }
+
 };
 
 
