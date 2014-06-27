@@ -29,6 +29,7 @@ public:
   }
   void print_message(QString message) { messages->information(message); }
   QList<QAction*> actions() const { return QList<QAction*>() << actionSelection; }
+  using Polyhedron_demo_plugin_helper::init;
   void init(QMainWindow* mainWindow, Scene_interface* scene_interface, Messages_interface* m) {
     mw = mainWindow;
     scene = scene_interface;

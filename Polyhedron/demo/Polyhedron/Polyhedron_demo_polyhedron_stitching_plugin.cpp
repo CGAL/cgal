@@ -22,6 +22,7 @@ class Polyhedron_demo_polyhedron_stitching_plugin :
   QAction* actionStitchBorders;
 public:
   QList<QAction*> actions() const { return QList<QAction*>() << actionDetectBorders << actionStitchBorders; }
+  using Polyhedron_demo_plugin_helper::init;
   void init(QMainWindow* mainWindow, Scene_interface* scene_interface, Messages_interface* /* m */)
   {
     actionDetectBorders= new QAction(tr("Detect polyhedron boundaries"), mainWindow);

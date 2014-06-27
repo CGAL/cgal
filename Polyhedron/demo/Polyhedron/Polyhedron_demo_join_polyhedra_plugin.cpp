@@ -21,6 +21,7 @@ class Polyhedron_demo_join_polyhedra_plugin:
   QAction* actionJoinPolyhedra;
 public:
   QList<QAction*> actions() const { return QList<QAction*>() << actionJoinPolyhedra; }
+  using Polyhedron_demo_plugin_helper::init;
   void init(QMainWindow* mainWindow, Scene_interface* scene_interface, Messages_interface* /* m */)
   {
     actionJoinPolyhedra= new QAction(tr("Join selected polyhedra"), mainWindow);
