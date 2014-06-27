@@ -217,6 +217,7 @@ namespace Eigen {
     typedef CGAL::Gmpz Nested;
 
     static inline Real epsilon() { return 0; }
+    static inline Real dummy_precision() { return 0; }
 
     enum {
       IsInteger = 1,
