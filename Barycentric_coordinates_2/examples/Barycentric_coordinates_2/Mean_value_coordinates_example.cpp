@@ -1,6 +1,6 @@
-#include <CGAL/Barycentric_traits_2.h>
-#include <CGAL/Mean_value_coordinates_2.h>
-#include <CGAL/Barycentric_coordinates_2.h>
+#include <CGAL/Barycentric_coordinates_2/Barycentric_traits_2.h>
+#include <CGAL/Barycentric_coordinates_2/Generalized_barycentric_coordinates_2.h>
+#include <CGAL/Barycentric_coordinates_2/Mean_value_2.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 // Namespace alias.
@@ -9,7 +9,7 @@ namespace BC = CGAL::Barycentric_coordinates;
 // Some convenient typedefs.
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 
-typedef BC::Barycentric_traits_2<Kernel> Barycentric_traits;
+typedef CGAL::Barycentric_coordinates::Barycentric_traits_2<Kernel> Barycentric_traits;
 
 typedef Barycentric_traits::FT      Scalar;
 typedef Barycentric_traits::Point_2 Point;
@@ -21,8 +21,8 @@ typedef Point_vector::iterator InputIterator;
 typedef std::back_insert_iterator<Scalar_vector> Vector_insert_iterator;
 typedef std::pair<Vector_insert_iterator, bool> Output_type;
 
-typedef BC::Mean_value_coordinates_2<Barycentric_traits> Mean_value;
-typedef BC::Barycentric_coordinates_2<InputIterator, Mean_value, Barycentric_traits> Mean_value_coordinates;
+typedef BC::Mean_value_2<Barycentric_traits> Mean_value;
+typedef BC::Generalized_barycentric_coordinates_2<InputIterator, Mean_value, Barycentric_traits> Mean_value_coordinates;
 
 using std::cout; using std::endl; using std::string;
 
@@ -30,16 +30,16 @@ int main()
 {    
     // Construct a star-shaped polygon.
     const int number_of_vertices = 10;
-    Point_vector vertex;
-    vertex.resize(number_of_vertices);
-    vertex[0] = Point(0.0, 0.0); vertex[1] = Point(0.1, -0.8); vertex[2] = Point(0.3, 0.0); vertex[4] = Point(0.6, -0.5); vertex[5]  = Point(0.6 , 0.1);
-    vertex[6] = Point(1.1, 0.6); vertex[7] = Point(0.3,  0.2); vertex[8] = Point(0.1, 0.8); vertex[9] = Point(0.1,  0.2); vertex[10] = Point(-0.7, 0.0);
+    Point_vector vertices;
+    vertices.resize(number_of_vertices);
+    vertices[0] = Point(0.0, 0.0); vertices[1] = Point(0.1, -0.8); vertices[2] = Point(0.3, 0.0); vertices[4] = Point(0.6, -0.5); vertices[5]  = Point(0.6 , 0.1);
+    vertices[6] = Point(1.1, 0.6); vertices[7] = Point(0.3,  0.2); vertices[8] = Point(0.1, 0.8); vertices[9] = Point(0.1,  0.2); vertices[10] = Point(-0.7, 0.0);
 
     // Create an std::vector to store coordinates.
     Scalar_vector coordinates;
 
-    // Instantiate the class Mean_value_coordinates_2 for the polygon defined above.
-    Mean_value_coordinates mean_value_coordinates(vertex.begin(),vertex.end());
+    // Instantiate the class with mean value coordinates for the polygon defined above.
+    Mean_value_coordinates mean_value_coordinates(vertices.begin(), vertices.end());
 
     // Print some information about the polygon and coordinate functions.
     mean_value_coordinates.print_information();

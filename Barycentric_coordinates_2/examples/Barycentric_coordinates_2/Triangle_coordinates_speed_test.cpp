@@ -1,6 +1,5 @@
 #include <CGAL/Real_timer.h>
-#include <CGAL/Barycentric_traits_2.h>
-#include <CGAL/Triangle_coordinates_2.h>
+#include <CGAL/Barycentric_coordinates_2/Triangle_coordinates_2.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 // Construct an iterator that takes as input the current data type and pointer to the first element in the standard C++ array.
@@ -30,14 +29,12 @@ typedef CGAL::Real_timer Timer;
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 
-typedef BC::Barycentric_traits_2<Kernel> Barycentric_traits;
-
-typedef Barycentric_traits::FT      Scalar;
-typedef Barycentric_traits::Point_2 Point;
+typedef Kernel::FT      Scalar;
+typedef Kernel::Point_2 Point;
 
 typedef overwrite_iterator<Scalar> Overwrite_iterator;
 
-typedef BC::Triangle_coordinates_2<Barycentric_traits> Triangle_coordinates;
+typedef BC::Triangle_coordinates_2<Kernel> Triangle_coordinates;
 
 using std::cout; using std::endl; using std::string;
 
@@ -58,12 +55,12 @@ int main()
     const Scalar y_step = one / Scalar(number_of_y_coordinates);
 
     // Create a right triangle with a slight offset from zero.
-    const Point vertex_1 = Point(zero - x_step, zero - x_step);
-    const Point vertex_2 = Point(two + y_step , zero - x_step);
-    const Point vertex_3 = Point(zero - x_step, two + y_step );
+    const Point first_vertex  = Point(zero - x_step, zero - x_step);
+    const Point second_vertex = Point(two + y_step , zero - x_step);
+    const Point third_vertex  = Point(zero - x_step, two + y_step );
 
     // Instantiate the class Triangle_coordinates_2 for the right triangle defined above.
-    Triangle_coordinates triangle_coordinates(vertex_1, vertex_2, vertex_3);
+    Triangle_coordinates triangle_coordinates(first_vertex, second_vertex, third_vertex);
 
     // Create an instance of the standard C++ array to store coordinates.
     // It has the fixed size = 3 = number of vertices.
@@ -87,7 +84,7 @@ int main()
 
         time += time_to_compute.time(); // Add time of the current run to the whole time
 
-        time_to_compute.reset(); // Reset time.
+        time_to_compute.reset(); // Reset time
     }
 
     // Compute the arithmetic mean of all the runs.

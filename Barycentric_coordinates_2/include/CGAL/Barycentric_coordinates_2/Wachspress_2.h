@@ -1,4 +1,4 @@
-// Copyright (c) 2013 INRIA Sophia-Antipolis (France).
+// Copyright (c) 2014 INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
 // This file is a part of CGAL (www.cgal.org).
@@ -18,19 +18,18 @@
 // Author(s) : Dmitry Anisimov, David Bommes, Kai Hormann, and Pierre Alliez.
 
 /*!
-  \file Wachspress_coordinates_2.h
+  \file Wachspress_2.h
 */
 
-#ifndef CGAL_WACHSPRESS_COORDINATES_2_H
-#define CGAL_WACHSPRESS_COORDINATES_2_H
+#ifndef CGAL_WACHSPRESS_2_H
+#define CGAL_WACHSPRESS_2_H
 
 // CGAL headers.
 #include <CGAL/assertions.h>
 #include <CGAL/Polygon_2_algorithms.h>
-#include <CGAL/Kernel/global_functions_2.h> 
 
 // Barycentric coordinates headers.
-#include <CGAL/barycentric_enum.h>
+#include <CGAL/Barycentric_coordinates_2/barycentric_enum_2.h>
 
 // CGAL namespace.
 namespace CGAL {
@@ -43,28 +42,19 @@ namespace Barycentric_coordinates {
 
 /*!
  * \ingroup PkgBarycentric_coordinates_2
- * The class Wachspress_coordinates_2 implements 2D Wachspress coordinates ( \cite cgal:bc:fhk-gcbcocp-06, \cite cgal:bc:mlbd-gbcip-02, \cite cgal:bc:w-rfeb-75 ).
- * This class is parameterized by a traits class `Traits`, and it is used as a coordinate class to complete the base class `Barycentric_coordinates_2`.
- * For a polygon with three vertices it is better to use the class `CGAL::Barycentric_coordinates::Triangle_coordinates_2`.
+ * The class `Wachspress_2` implements 2D Wachspress coordinates ( \cite cgal:bc:fhk-gcbcocp-06, \cite cgal:bc:mlbd-gbcip-02, \cite cgal:bc:w-rfeb-75 ).
+ * This class is parameterized by a traits class `Traits`, and it is used as a coordinate class to complete the class `Generalized_barycentric_coordinates_2`.
+ * For a polygon with three vertices it is better to use the class `Triangle_coordinates_2`.
  * Wachspress coordinates can be computed exactly, and they are always positive in the closure of a strictly convex polygon.
- *
- * \pre The polygon's vertices must be ordered.
  
- \cgalHeading{Requirements}
+\cgalHeading{Template parameters}
 
- <OL>
- <LI> `Traits` class must contain the following subset of types:
- <UL>
- <LI> `Traits::Point_2` - the type of a point used internally in the class, which is equivalent to the type `CGAL::Point_2`;
- <LI> `Traits::K` - the used kernel;
- <LI> `Traits::FT` - the type of a coordinate value;
- </UL>
- </OL>
+\tparam Traits must be a model of the concepts `BarycentricTraits_2` and `PolygonTraits_2`. In particular, it must provide the functions `Kernel::Compute_area_2` and `Kernel::Collinear_2`.
 
- */
+*/
  
 template<class Traits> 
-    class Wachspress_coordinates_2
+    class Wachspress_2
 {
 
 public:
@@ -75,22 +65,22 @@ public:
     /// Number type.
     typedef typename Traits::FT      Scalar;
 
-    /// Type of the used kernel.
-    typedef typename Traits::K       Kernel;
-
-    /// Type of 2D point.
-    typedef typename Traits::Point_2 Point_2;
+    /// Point type.
+    typedef typename Traits::Point_2 Point;
 
     /// @}
 
     /// \name Creation
     /// @{
 
-    /// Creates the class `Wachspress_coordinates_2` that implements the behaviour of Wachspress coordinates for any query point that does not belong to the polygon's boundary.
-    /// The polygon is given by a range of vertices of the type `CGAL::Point_2` stored in a container of the type <a href="http://en.cppreference.com/w/cpp/container/vector">`std::vector`</a>.
-    Wachspress_coordinates_2(const std::vector<Point_2> &vertices) :
+    /// Creates the class `Wachspress_2` that implements the behaviour of Wachspress coordinates for any query point that does not belong to the polygon's boundary.
+    /// The polygon is given by a range of vertices of the type `Traits::Point_2` stored in a container of the type <a href="http://en.cppreference.com/w/cpp/container/vector">`std::vector`</a>.
+    Wachspress_2(const std::vector<typename Traits::Point_2> &vertices, const Traits &b_traits) :
+        barycentric_traits(b_traits),
         vertex(vertices),
-        number_of_vertices(vertex.size())
+        number_of_vertices(vertex.size()),
+        area_2(barycentric_traits.compute_area_2_object()),
+        collinear_2(barycentric_traits.collinear_2_object())
     {
         // Resize all the internal containers.
         A.resize(number_of_vertices);
@@ -101,59 +91,59 @@ public:
 
     /// @}
 
-    /// \name Computation of Wachspress weight functions
+    /// \name Computation of Wachspress Weight Functions
     /// @{
 
-    /// This function is intended to compute Wachspress weights for a chosen query point.
+    /// This function computes Wachspress weights for a chosen query point.
     template<typename Iterator>
-        inline std::pair<Iterator, bool> weights(const Point_2 &query_point, Iterator &output)
+        inline std::pair<Iterator, bool> weights(const Point &query_point, Iterator &output)
     {
         return weights_2(query_point, output);
     }
 
     /// @}
 
-    /// \name Computation of Wachspress basis functions
+    /// \name Computation of Wachspress Basis Functions
     /// @{
 
-    /// This function is intended to compute Wachspress barycentric coordinates for a chosen query point on the bounded side of a strictly convex polygon with the O(n^2) precise algorithm.
+    /// This function computes Wachspress barycentric coordinates for a chosen query point on the bounded side of a strictly convex polygon with the O(n^2) precise algorithm.
     /// \pre The provided polygon is strictly convex that is it complies with the constant `CGAL::Barycentric_coordinates::STRICTLY_CONVEX`. 
     template<typename Iterator>
-        inline std::pair<Iterator, bool> coordinates_on_bounded_side_precise(const Point_2 &query_point, Iterator &output)
+        inline std::pair<Iterator, bool> coordinates_on_bounded_side_precise(const Point &query_point, Iterator &output)
     {   
         return coordinates_on_bounded_side_precise_2(query_point, output);
     }
 
-    /// This function is intended to compute Wachspress barycentric coordinates for a chosen query point on the bounded side of a strictly convex polygon with the O(n) fast algorithm.
+    /// This function computes Wachspress barycentric coordinates for a chosen query point on the bounded side of a strictly convex polygon with the O(n) fast algorithm.
     /// \pre The provided polygon is strictly convex that is it complies with the constant `CGAL::Barycentric_coordinates::STRICTLY_CONVEX`. 
     template<typename Iterator>
-        inline std::pair<Iterator, bool> coordinates_on_bounded_side_fast(const Point_2 &query_point, Iterator &output)
+        inline std::pair<Iterator, bool> coordinates_on_bounded_side_fast(const Point &query_point, Iterator &output)
     {   
         return coordinates_on_bounded_side_fast_2(query_point, output);
     }
 
-    /// This function is intended to compute Wachspress barycentric coordinates for a chosen query point on the unbounded side of a strictly convex polygon with the O(n^2) precise algorithm.
+    /// This function computes Wachspress barycentric coordinates for a chosen query point on the unbounded side of a strictly convex polygon with the O(n^2) precise algorithm.
     /// \pre The provided polygon is strictly convex that is it complies with the constant `CGAL::Barycentric_coordinates::STRICTLY_CONVEX`. 
     template<typename Iterator>
-        inline std::pair<Iterator, bool> coordinates_on_unbounded_side_precise(const Point_2 &query_point, Iterator &output)
+        inline std::pair<Iterator, bool> coordinates_on_unbounded_side_precise(const Point &query_point, Iterator &output, const bool warning_tag = true)
     {   
-        return coordinates_on_unbounded_side_precise_2(query_point, output);
+        return coordinates_on_unbounded_side_precise_2(query_point, output, warning_tag);
     }
 
-    /// This function is intended to compute Wachspress barycentric coordinates for a chosen query point on the unbounded side of a strictly convex polygon with the O(n) fast algorithm.
+    /// This function computes Wachspress barycentric coordinates for a chosen query point on the unbounded side of a strictly convex polygon with the O(n) fast algorithm.
     /// \pre The provided polygon is strictly convex that is it complies with the constant `CGAL::Barycentric_coordinates::STRICTLY_CONVEX`. 
     template<typename Iterator>
-        inline std::pair<Iterator, bool> coordinates_on_unbounded_side_fast(const Point_2 &query_point, Iterator &output)
+        inline std::pair<Iterator, bool> coordinates_on_unbounded_side_fast(const Point &query_point, Iterator &output, const bool warning_tag = true)
     {   
-        return coordinates_on_unbounded_side_fast_2(query_point, output);
+        return coordinates_on_unbounded_side_fast_2(query_point, output, warning_tag);
     }
 
     /// @}
 
-    /// \name Information functions
+    /// \name Information Functions
     /// @{
 
-    /// Print some information about 2D Wachspress coordinates.
+    /// This function prints some information about Wachspress coordinates.
     void print_coordinates_information(std::ostream &output_stream) const
     {
         return print_coordinates_information_2(output_stream);
@@ -165,9 +155,11 @@ private:
 
     // Some convenient typedefs.
     typedef typename std::vector<Scalar> Scalar_vector;
-    typedef typename std::vector<Point_2> Point_vector;
+    typedef typename std::vector<Point>  Point_vector;
 
     // Internal global variables.
+    const Traits &barycentric_traits;
+
     const Point_vector &vertex;
 
     const size_t number_of_vertices;
@@ -176,26 +168,29 @@ private:
 
     Scalar wp_denominator, inverted_wp_denominator;
 
+    typename Traits::Compute_area_2 area_2;
+    typename Traits::Collinear_2 collinear_2;
+
     // WEIGHTS.
 
-    // Compute 2D Wachspress weights without normalization.
+    // Compute Wachspress weights without normalization.
     template<typename Iterator> 
-        std::pair<Iterator, bool> weights_2(const Point_2 &query_point, Iterator &output)
+        std::pair<Iterator, bool> weights_2(const Point &query_point, Iterator &output)
     {
         // Get the number of vertices in the polygon.
         const int n = int(number_of_vertices);
 
         // Compute areas A and C following the area notation from [1]. Split the loop to make this computation faster.
-        A[0] = CGAL::area(vertex[0]  , vertex[1], query_point);
-        C[0] = CGAL::area(vertex[n-1], vertex[0], vertex[1]  );
+        A[0] = area_2(vertex[0]  , vertex[1], query_point);
+        C[0] = area_2(vertex[n-1], vertex[0], vertex[1]  );
 
         for(int i = 1; i < n-1; ++i) {
-            A[i] = CGAL::area(vertex[i]  , vertex[i+1], query_point);
-            C[i] = CGAL::area(vertex[i-1], vertex[i]  , vertex[i+1]);
+            A[i] = area_2(vertex[i]  , vertex[i+1], query_point);
+            C[i] = area_2(vertex[i-1], vertex[i]  , vertex[i+1]);
         }
 
-        A[n-1] = CGAL::area(vertex[n-1], vertex[0]  , query_point);
-        C[n-1] = CGAL::area(vertex[n-2], vertex[n-1], vertex[0]  );
+        A[n-1] = area_2(vertex[n-1], vertex[0]  , query_point);
+        C[n-1] = area_2(vertex[n-2], vertex[n-1], vertex[0]  );
 
         // Compute unnormalized weights following the formula (28) from [1].
         CGAL_precondition( A[n-1] != Scalar(0) && A[0] != Scalar(0) );
@@ -217,10 +212,10 @@ private:
 
     // COORDINATES ON BOUNDED SIDE.
 
-    // Compute 2D Wachspress coordinates on the bounded side of the polygon with the slow O(n^2) but precise algorithm.
+    // Compute Wachspress coordinates on the bounded side of the polygon with the slow O(n^2) but precise algorithm.
     // Here, n - is the number of the polygon's vertices.
     template<typename Iterator>
-        std::pair<Iterator, bool> coordinates_on_bounded_side_precise_2(const Point_2 &query_point, Iterator &output)
+        std::pair<Iterator, bool> coordinates_on_bounded_side_precise_2(const Point &query_point, Iterator &output)
     {
         CGAL_precondition( type_of_polygon() == STRICTLY_CONVEX );
 
@@ -228,22 +223,22 @@ private:
         const int n = int(number_of_vertices);
 
         // Compute areas A following the area notation from [1]. Split the loop to make this computation faster.
-        A[0] = CGAL::area(vertex[0], vertex[1], query_point);
-        for(int i = 1; i < n-1; ++i) A[i] = CGAL::area(vertex[i], vertex[i+1], query_point);
-        A[n-1] = CGAL::area(vertex[n-1], vertex[0], query_point);
+        A[0] = area_2(vertex[0], vertex[1], query_point);
+        for(int i = 1; i < n-1; ++i) A[i] = area_2(vertex[i], vertex[i+1], query_point);
+        A[n-1] = area_2(vertex[n-1], vertex[0], query_point);
 
         // Initialize weights with areas C following the area notation from [1].
         // Then we multiply them by areas A as in the formula (5) from [1]. We also split the loop.
-        weight[0] = CGAL::area(vertex[n-1], vertex[0], vertex[1]);
+        weight[0] = area_2(vertex[n-1], vertex[0], vertex[1]);
         for(int j = 1; j < n-1; ++j) weight[0] *= A[j];
 
         for(int i = 1; i < n-1; ++i) {
-            weight[i] = CGAL::area(vertex[i-1], vertex[i], vertex[i+1]);
+            weight[i] = area_2(vertex[i-1], vertex[i], vertex[i+1]);
             for(int j = 0; j < i-1; ++j) weight[i] *= A[j];
             for(int j = i+1; j < n; ++j) weight[i] *= A[j];
         }
 
-        weight[n-1] = CGAL::area(vertex[n-2], vertex[n-1], vertex[0]);
+        weight[n-1] = area_2(vertex[n-2], vertex[n-1], vertex[0]);
         for(int j = 0; j < n-2; ++j) weight[n-1] *= A[j];
 
         // Compute the sum of all weights - denominator of Wachspress coordinates.
@@ -265,10 +260,10 @@ private:
         return std::make_pair(output, true);
     }
 
-    // Compute 2D Wachspress coordinates on the bounded side of the polygon with the fast O(n) but less precise algorithm.
+    // Compute Wachspress coordinates on the bounded side of the polygon with the fast O(n) but less precise algorithm.
     // Here, n - is the number of the polygon's vertices. Precision is lost near the boundary (~ 1.0e-10 and closer).
     template<typename Iterator>
-        std::pair<Iterator, bool> coordinates_on_bounded_side_fast_2(const Point_2 &query_point, Iterator &output)
+        std::pair<Iterator, bool> coordinates_on_bounded_side_fast_2(const Point &query_point, Iterator &output)
     {
         CGAL_precondition( type_of_polygon() == STRICTLY_CONVEX );
 
@@ -276,16 +271,16 @@ private:
         const int n = int(number_of_vertices);
 
         // Compute areas A and C following the area notation from [1]. Split the loop to make this computation faster.
-        A[0] = CGAL::area(vertex[0]  , vertex[1], query_point);
-        C[0] = CGAL::area(vertex[n-1], vertex[0], vertex[1]  );
+        A[0] = area_2(vertex[0]  , vertex[1], query_point);
+        C[0] = area_2(vertex[n-1], vertex[0], vertex[1]  );
 
         for(int i = 1; i < n-1; ++i) {
-            A[i] = CGAL::area(vertex[i]  , vertex[i+1], query_point);
-            C[i] = CGAL::area(vertex[i-1], vertex[i]  , vertex[i+1]);
+            A[i] = area_2(vertex[i]  , vertex[i+1], query_point);
+            C[i] = area_2(vertex[i-1], vertex[i]  , vertex[i+1]);
         }
 
-        A[n-1] = CGAL::area(vertex[n-1], vertex[0]  , query_point);
-        C[n-1] = CGAL::area(vertex[n-2], vertex[n-1], vertex[0]  );
+        A[n-1] = area_2(vertex[n-1], vertex[0]  , query_point);
+        C[n-1] = area_2(vertex[n-2], vertex[n-1], vertex[0]  );
 
         // Compute the unnormalized weights following the formula (28) from [1].
         CGAL_precondition( A[n-1] != Scalar(0) && A[0] != Scalar(0) );
@@ -320,23 +315,25 @@ private:
 
     // COORDINATES ON UNBOUNDED SIDE.
 
-    // Compute 2D Wachspress coordinates on the unbounded side of the polygon with the slow O(n^2) but precise algorithm.
+    // Compute Wachspress coordinates on the unbounded side of the polygon with the slow O(n^2) but precise algorithm.
     // Here, n - is the number of the polygon's vertices.
     template<typename Iterator>
-        std::pair<Iterator, bool> coordinates_on_unbounded_side_precise_2(const Point_2 &query_point, Iterator &output)
+        std::pair<Iterator, bool> coordinates_on_unbounded_side_precise_2(const Point &query_point, Iterator &output, bool warning_tag)
     {
-        std::cout << std::endl << "WARNING: Wachspress coordinates might be not well-defined outside the polygon!" << std::endl;
+        if(warning_tag)
+            std::cout << std::endl << "WARNING: Wachspress coordinates might be not well-defined outside the polygon!" << std::endl;
 
         // Use the same formulas as for the bounded side since they are also valid on the unbounded side.
         return coordinates_on_bounded_side_precise_2(query_point, output);
     }
 
-    // Compute 2D Wachspress coordinates on the unbounded side of the polygon with the fast O(n) but less precise algorithm.
+    // Compute Wachspress coordinates on the unbounded side of the polygon with the fast O(n) but less precise algorithm.
     // Here, n - is the number of the polygon's vertices. Precision is lost near the boundary (~ 1.0e-10 and closer).
     template<typename Iterator>
-        std::pair<Iterator, bool> coordinates_on_unbounded_side_fast_2(const Point_2 &query_point, Iterator &output)
+        std::pair<Iterator, bool> coordinates_on_unbounded_side_fast_2(const Point &query_point, Iterator &output, bool warning_tag)
     {
-        std::cout << std::endl << "WARNING: Wachspress coordinates might be not well-defined outside the polygon!" << std::endl;
+        if(warning_tag)
+            std::cout << std::endl << "WARNING: Wachspress coordinates might be not well-defined outside the polygon!" << std::endl;
 
         // Use the same formulas as for the bounded side since they are also valid on the unbounded side.
         return coordinates_on_bounded_side_fast_2(query_point, output);
@@ -344,17 +341,21 @@ private:
 
     // OTHER FUNCTIONS.
 
-    // Print some information about 2D Wachspress coordinates.
+    // Print some information about Wachspress coordinates.
     void print_coordinates_information_2(std::ostream &output_stream) const
     {
         output_stream << std::endl << "CONVEXITY: " << std::endl << std::endl;
 
-        if(type_of_polygon() == CONCAVE)         output_stream << "This polygon is not convex. The correct computation is not expected!" << std::endl;
-        if(type_of_polygon() == WEAKLY_CONVEX)   output_stream << "This polygon is weakly convex. The correct computation is not expected!" << std::endl;
-        if(type_of_polygon() == STRICTLY_CONVEX) output_stream << "This polygon is strictly convex." << std::endl;
+        if(type_of_polygon() == STRICTLY_CONVEX) {
+            output_stream << "This polygon is strictly convex." << std::endl;
+        } else if(type_of_polygon() == WEAKLY_CONVEX) {
+            output_stream << "This polygon is weakly convex. The correct computation is not expected!" << std::endl;
+        } else if(type_of_polygon() == CONCAVE) {
+            output_stream << "This polygon polygon is not convex. The correct computation is not expected!" << std::endl;
+        }
 
         output_stream << std::endl << "TYPE OF COORDINATES: " << std::endl << std::endl;
-        output_stream << "The coordinate functions to compute are Wachspress coordinates." << std::endl;
+        output_stream << "The coordinate functions to be computed are Wachspress coordinates." << std::endl;
 
         output_stream << std::endl << "INFORMATION ABOUT COORDINATES: " << std::endl << std::endl;
         output_stream << "Wachspress coordinates are well-defined in the closure of an arbitrary strictly convex polygon and can be computed exactly." << std::endl;
@@ -371,7 +372,7 @@ private:
         output_stream << "8. Similarity invariance;" << std::endl;
 
         output_stream << std::endl;
-        output_stream << "For polygons whose vertices lie on a common circle, they coincide with Discrete Harmonic coordinates." << std::endl;
+        output_stream << "For polygons, whose vertices lie on a common circle, they coincide with discrete harmonic coordinates." << std::endl;
 
         output_stream << std::endl << "REFERENCE: " << std::endl << std::endl;
         output_stream << "M. S. Floater, K. Hormann, and G. Kos. A general construction of barycentric coordinates over convex polygons. Advances in Computational Mathematics, 24(1-4):311-331, 2006." << std::endl;
@@ -381,22 +382,22 @@ private:
     Type_of_polygon type_of_polygon() const
     {
         // First, test the polygon on convexity.
-        if(CGAL::is_convex_2(vertex.begin(), vertex.end(), Kernel())) {
+        if(CGAL::is_convex_2(vertex.begin(), vertex.end(), barycentric_traits)) {
 
             // Index of the last polygon's vertex.
             const int last = int(number_of_vertices) - 1;
 
             // Test all the consequent triplets of the polygon's vertices on collinearity. 
             // In case we find at least one, return WEAKLY_CONVEX polygon.
-            if(CGAL::collinear(vertex[last], vertex[0], vertex[1]))
+            if(collinear_2(vertex[last], vertex[0], vertex[1]))
                 return WEAKLY_CONVEX;
 
             for(int i = 1; i < last; ++i) {
-                if(CGAL::collinear(vertex[i-1], vertex[i], vertex[i+1]))
+                if(collinear_2(vertex[i-1], vertex[i], vertex[i+1]))
                     return WEAKLY_CONVEX;
             }
 
-            if(CGAL::collinear(vertex[last-1], vertex[last], vertex[0]))
+            if(collinear_2(vertex[last-1], vertex[last], vertex[0]))
                 return WEAKLY_CONVEX;
 
             // Otherwise, return STRICTLY_CONVEX polygon.
@@ -412,4 +413,4 @@ private:
 
 } // namespace CGAL
 
-#endif // CGAL_WACHSPRESS_COORDINATES_2_H
+#endif // CGAL_WACHSPRESS_2_H

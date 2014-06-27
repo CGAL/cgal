@@ -1,6 +1,5 @@
-#include <CGAL/Barycentric_traits_2.h>
-#include <CGAL/Barycentric_coordinates_2.h>
-#include <CGAL/Discrete_harmonic_coordinates_2.h>
+#include <CGAL/Barycentric_coordinates_2/Generalized_barycentric_coordinates_2.h>
+#include <CGAL/Barycentric_coordinates_2/Discrete_harmonic_2.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 
 // Namespace alias.
@@ -9,10 +8,8 @@ namespace BC = CGAL::Barycentric_coordinates;
 // Some convenient typedefs.
 typedef CGAL::Exact_predicates_exact_constructions_kernel Kernel;
 
-typedef BC::Barycentric_traits_2<Kernel> Barycentric_traits;
-
-typedef Barycentric_traits::FT      Scalar;
-typedef Barycentric_traits::Point_2 Point;
+typedef Kernel::FT      Scalar;
+typedef Kernel::Point_2 Point;
 
 typedef std::vector<Scalar> Scalar_vector;
 typedef std::vector<Point>  Point_vector;
@@ -21,8 +18,8 @@ typedef Point_vector::iterator InputIterator;
 typedef std::back_insert_iterator<Scalar_vector> Vector_insert_iterator;
 typedef std::pair<Vector_insert_iterator, bool> Output_type;
 
-typedef BC::Discrete_harmonic_coordinates_2<Barycentric_traits> Discrete_harmonic;
-typedef BC::Barycentric_coordinates_2<InputIterator, Discrete_harmonic, Barycentric_traits> Discrete_harmonic_coordinates;
+typedef BC::Discrete_harmonic_2<Kernel> Discrete_harmonic;
+typedef BC::Generalized_barycentric_coordinates_2<InputIterator, Discrete_harmonic, Kernel> Discrete_harmonic_coordinates;
 
 using std::cout; using std::endl; using std::string;
 
@@ -30,15 +27,15 @@ int main()
 {
     // Construct a unit square.
     const int number_of_vertices = 4;
-    Point_vector vertex;
-    vertex.resize(number_of_vertices);
-    vertex[0] = Point(0, 0); vertex[1] = Point(1, 0); vertex[2] = Point(1, 1); vertex[3] = Point(0, 1);
+    Point_vector vertices;
+    vertices.resize(number_of_vertices);
+    vertices[0] = Point(0, 0); vertices[1] = Point(1, 0); vertices[2] = Point(1, 1); vertices[3] = Point(0, 1);
 
     // Create an std::vector to store coordinates.
     Scalar_vector coordinates;
 
-    // Instantiate the class Discrete_harmonic_coordinates_2 for the unit square defined above.
-    Discrete_harmonic_coordinates discrete_harmonic_coordinates(vertex.begin(), vertex.end());
+    // Instantiate the class with discrete harmonic coordinates for the unit square defined above.
+    Discrete_harmonic_coordinates discrete_harmonic_coordinates(vertices.begin(), vertices.end());
 
     // Print some information about the polygon and coordinate functions.
     discrete_harmonic_coordinates.print_information();

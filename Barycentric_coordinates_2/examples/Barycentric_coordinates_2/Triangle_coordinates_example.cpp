@@ -1,6 +1,5 @@
+#include <CGAL/Barycentric_coordinates_2/Triangle_coordinates_2.h>
 #include <CGAL/Simple_cartesian.h>
-#include <CGAL/Barycentric_traits_2.h>
-#include <CGAL/Triangle_coordinates_2.h>
 
 // Namespace alias.
 namespace BC = CGAL::Barycentric_coordinates;
@@ -8,29 +7,27 @@ namespace BC = CGAL::Barycentric_coordinates;
 // Some convenient typedefs.
 typedef CGAL::Simple_cartesian<double> Kernel;
 
-typedef BC::Barycentric_traits_2<Kernel> Barycentric_traits;
-
-typedef Barycentric_traits::FT      Scalar;
-typedef Barycentric_traits::Point_2 Point;
+typedef Kernel::FT      Scalar;
+typedef Kernel::Point_2 Point;
 
 typedef std::vector<Scalar> Scalar_vector;
 
-typedef BC::Triangle_coordinates_2<Barycentric_traits> Triangle_coordinates;
+typedef BC::Triangle_coordinates_2<Kernel> Triangle_coordinates;
 
 using std::cout; using std::endl; using std::string;
 
 int main()
 {
     // Construct a triangle.
-    const Point vertex_1 = Point(0.0f, 0.0f);
-    const Point vertex_2 = Point(2.0f, 0.5f);
-    const Point vertex_3 = Point(1.0f, 2.0f);
+    const Point first_vertex  = Point(0.0f, 0.0f);
+    const Point second_vertex = Point(2.0f, 0.5f);
+    const Point third_vertex  = Point(1.0f, 2.0f);
 
     // Create an std::vector to store coordinates.
     Scalar_vector coordinates;
 
     // Instantiate the class Triangle_coordinates_2 for the triangle defined above.
-    Triangle_coordinates triangle_coordinates(vertex_1, vertex_2, vertex_3);
+    Triangle_coordinates triangle_coordinates(first_vertex, second_vertex, third_vertex);
 
     // Print some information about the triangle and coordinate functions.
     triangle_coordinates.print_information();
@@ -47,7 +44,7 @@ int main()
     coordinates.reserve(number_of_query_points * 3);
 
     // Compute triangle coordinates for these points.
-    cout << endl << "Computed triangle coordinates are " << endl << endl;
+    cout << endl << "Computed triangle coordinates are: " << endl << endl;
     for(int i = 0; i < number_of_query_points; ++i) {
 
         triangle_coordinates.compute(query_points[i], std::inserter(coordinates, coordinates.end()));

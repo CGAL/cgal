@@ -1,9 +1,8 @@
-#include <CGAL/Simple_cartesian.h>
 #include <CGAL/convex_hull_2.h>
 #include <CGAL/point_generators_2.h>
-#include <CGAL/Barycentric_traits_2.h>
-#include <CGAL/Wachspress_coordinates_2.h>
-#include <CGAL/Barycentric_coordinates_2.h>
+#include <CGAL/Barycentric_coordinates_2/Generalized_barycentric_coordinates_2.h>
+#include <CGAL/Barycentric_coordinates_2/Wachspress_2.h>
+#include <CGAL/Simple_cartesian.h>
 
 // Namespace alias.
 namespace BC = CGAL::Barycentric_coordinates;
@@ -11,20 +10,18 @@ namespace BC = CGAL::Barycentric_coordinates;
 // Some convenient typedefs.
 typedef CGAL::Simple_cartesian<double> Kernel;
 
-typedef BC::Barycentric_traits_2<Kernel> Barycentric_traits;
-
-typedef Barycentric_traits::FT      Scalar;
-typedef Barycentric_traits::Point_2 Point;
+typedef Kernel::FT      Scalar;
+typedef Kernel::Point_2 Point;
 
 typedef std::vector<Scalar> Scalar_vector;
 typedef std::vector<Point>  Point_vector;
 
-typedef CGAL::Creator_uniform_2<double,Point> Creator;
+typedef CGAL::Creator_uniform_2<double, Point> Creator;
 
 typedef Point_vector::iterator InputIterator;
 
-typedef BC::Wachspress_coordinates_2<Barycentric_traits> Wachspress;
-typedef BC::Barycentric_coordinates_2<InputIterator, Wachspress, Barycentric_traits> Wachspress_coordinates;
+typedef BC::Wachspress_2<Kernel> Wachspress;
+typedef BC::Generalized_barycentric_coordinates_2<InputIterator, Wachspress, Kernel> Wachspress_coordinates;
 
 using std::cout; using std::endl; using std::string;
 
@@ -41,19 +38,19 @@ int main()
     CGAL::cpp11::copy_n(point_generator, number_of_points, std::back_inserter(points));
 
     // Find the convex hull of the generated set of points.
-    // This convex hull gives us vertices of a convex polygon that contains all the generated points.
+    // This convex hull gives the vertices of a convex polygon that contains all the generated points.
     CGAL::convex_hull_2(points.begin(), points.end(), std::back_inserter(vertices));
 
     const size_t number_of_vertices = vertices.size();
 
-    // Instantiate the class Wachspress_coordinates_2 for the convex polygon defined above.
+    // Instantiate the class with Wachspress coordinates for the convex polygon defined above.
     Wachspress_coordinates wachspress_coordinates(vertices.begin(), vertices.end());
 
     // Print some information about the polygon and coordinate functions.
     wachspress_coordinates.print_information();
     
     // Compute Wachspress coordinates for all the randomly defined points.
-    cout << endl << "Computed Wachspress coordinates are " << endl << endl;
+    cout << endl << "Computed Wachspress coordinates are: " << endl << endl;
     for(int i = 0; i < number_of_points; ++i) {
         // Compute coordinates.
         Scalar_vector coordinates;

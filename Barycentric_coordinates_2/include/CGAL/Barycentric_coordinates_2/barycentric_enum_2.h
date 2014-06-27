@@ -18,24 +18,24 @@
 // Author(s) : Dmitry Anisimov, David Bommes, Kai Hormann, and Pierre Alliez.
 
 /*!
-  \file barycentric_enum.h
+  \file barycentric_enum_2.h
 */
 
-#ifndef CGAL_BARYCENTRIC_ENUM_H
-#define CGAL_BARYCENTRIC_ENUM_H
+#ifndef CGAL_BARYCENTRIC_ENUM_2_H
+#define CGAL_BARYCENTRIC_ENUM_2_H
 
 // CGAL namespace.
 namespace CGAL {
 
 /*!
  * \ingroup PkgBarycentric_coordinates_2
- * Barycentric_coordinates namespace contains implementations of all the generalized barycentric coordinates: 2D, 3D, related enumerations, and so on.
+ * The namespace Barycentric_coordinates contains implementations of all generalized barycentric coordinates: 2D, 3D, related enumerations, and so on.
  */
 
 // Barycentric_coordinates namespace.
 namespace Barycentric_coordinates {
 
-/// \name Locations of a query point
+/// \name Locations of a Query Point
 /// @{
 
 /// Query_point_location is enumeration with possible locations of a query point provided by the user.
@@ -50,31 +50,31 @@ enum Query_point_location
     /// Query point is located on the boundary of the polygon.
     ON_BOUNDARY,
 
-    /// Query point is located inside the polygon excluding boundary.
+    /// Query point is located inside the polygon, excluding the boundary.
     ON_BOUNDED_SIDE,
 
-    /// Query point is located outside the polygon excluding boundary.
+    /// Query point is located outside the polygon, excluding the boundary.
     ON_UNBOUNDED_SIDE
 };
 
 /// @}
 
-/// \name Types of an algorithm
+/// \name Types of an Algorithm
 /// @{
 
 /// Type_of_algorithm is enumeration with possible algorithms to compute coordinates.
 enum Type_of_algorithm
 {
-    /// Default slow algorithm, which is as precise as possible.
+    /// A default slow algorithm, which is as precise as possible.
     PRECISE,
 
-    /// Fast algorithm, which is less precise but much faster.
+    /// A fast algorithm, which is less precise but much faster.
     FAST
 };
 
 /// @}
 
-/// \name Types of a polygon
+/// \name Types of a Polygon
 /// @{
 
 /// Type_of_polygon is enumeration with possible types of the input polygon.
@@ -97,4 +97,4 @@ enum Type_of_polygon
 
 } // namespace CGAL
 
-#endif // CGAL_BARYCENTRIC_ENUM_H
+#endif // CGAL_BARYCENTRIC_ENUM_2_H
