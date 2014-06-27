@@ -536,8 +536,8 @@ void remove_face(typename boost::graph_traits<Graph>::halfedge_descriptor h,
 }
 
   /**
-   * removes the incident face of `h` and changes all halfedges incident to the face into border halfedges.
-   * \returns `h`. See `remove_face(g,h)` for a more generalized variant.
+   * removes the incident face of `h` and changes all halfedges incident to the face into border halfedges. See `remove_face(g,h)` for a more generalized variant.
+   * \returns `h`.
    *
    * \pre None of the incident halfedges of the face is a border halfedge.
    */
