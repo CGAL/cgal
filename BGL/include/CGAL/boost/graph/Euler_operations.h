@@ -483,8 +483,8 @@ split_loop(typename boost::graph_traits<Graph>::halfedge_descriptor h1,
  *
  * If this creates isolated vertices they get removed as well. 
  *
- * \image html erase_facet1.png
- * \image html erase_facet2.png
+ * \image html remove_face.svg
+ * \image html remove_face_and_vertex.svg
  *
  * \tparam Graph must be a model of `MutableFaceGraph`
  *
