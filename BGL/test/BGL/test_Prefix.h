@@ -70,6 +70,22 @@ typedef OpenMesh::PolyMesh_ArrayKernelT</* MyTraits*/> OMesh;
   typedef typename Traits::halfedges_size_type             halfedges_size_type;  \
   typedef CGAL::Halfedge_around_face_iterator<T>           halfedge_around_face_iterator; \
   typedef CGAL::Halfedge_around_target_iterator<T>           halfedge_around_target_iterator; \
+  CGAL_USE_TYPE(vertex_descriptor); \
+  CGAL_USE_TYPE(halfedge_descriptor); \
+  CGAL_USE_TYPE(edge_descriptor); \
+  CGAL_USE_TYPE(face_descriptor); \
+  CGAL_USE_TYPE(vertices_size_type); \
+  CGAL_USE_TYPE(halfedges_size_type); \
+  CGAL_USE_TYPE(edges_size_type); \
+  CGAL_USE_TYPE(faces_size_type); \
+  CGAL_USE_TYPE(vertex_iterator); \
+  CGAL_USE_TYPE(halfedge_iterator); \
+  CGAL_USE_TYPE(edge_iterator); \
+  CGAL_USE_TYPE(face_iterator);   \
+  CGAL_USE_TYPE(out_edge_iterator); \
+  CGAL_USE_TYPE(in_edge_iterator); \
+  CGAL_USE_TYPE(halfedge_around_target_iterator); \
+  CGAL_USE_TYPE(halfedge_around_face_iterator); \
   do { } while(0)
 
 
