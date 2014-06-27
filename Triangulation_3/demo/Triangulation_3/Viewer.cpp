@@ -69,7 +69,19 @@ void Viewer::init()
          tr("Cancel insertion in <u>Input-Point</u> mode;<br>")
          + tr("Cancel current selection in <u>Select</u> mode") );
   setKeyDescription( Qt::Key_Delete, tr("Delete selected vertices in <u>Select</u> mode") );
-
+#if QGLVIEWER_VERSION >= 0x020500
+  setMouseBindingDescription(Qt::NoModifier, Qt::LeftButton,
+         tr("Hold to move new point in <u>Input-Point</u> mode;<br>")
+         + tr("Hold to move a vertex in <u>Move</u> mode") );
+  setMouseBindingDescription(Qt::ShiftModifier, Qt::LeftButton,
+         tr("Click to insert a vertex in <u>Input-Vertex</u> mode;<br>")
+         + tr("Click to insert a point in <u>Input-Point</u> mode;<br>")
+         + tr("Click or Drag to select multiple points in <u>Select</u> mode;<br>")
+         + tr("Click to place a query point in <u>Find-Nearest-Neighbor</u> mode;<br>")
+         + tr("Click to place a query point in <u>Show-Empty-Sphere</u> mode") );
+  setMouseBindingDescription(Qt::ControlModifier, Qt::LeftButton,
+         tr("Drag to add vertices to current selection in <u>Select</u> mode") );
+#else
   setMouseBindingDescription( Qt::LeftButton,
          tr("Hold to move new point in <u>Input-Point</u> mode;<br>")
          + tr("Hold to move a vertex in <u>Move</u> mode") );
@@ -81,6 +93,7 @@ void Viewer::init()
          + tr("Click to place a query point in <u>Show-Empty-Sphere</u> mode") );
   setMouseBindingDescription( Qt::CTRL + Qt::LeftButton,
          tr("Drag to add vertices to current selection in <u>Select</u> mode") );
+#endif
 }
 
 QString Viewer::helpString() const
