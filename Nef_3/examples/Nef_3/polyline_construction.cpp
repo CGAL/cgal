@@ -1,9 +1,9 @@
-#include <CGAL/Gmpz.h>
+#include <CGAL/Exact_integer.h>
 #include <CGAL/Homogeneous.h>
 #include <CGAL/Nef_polyhedron_3.h>
 #include <CGAL/IO/Nef_polyhedron_iostream_3.h>
 
-typedef CGAL::Gmpz NT;
+typedef CGAL::Exact_integer NT;
 typedef CGAL::Homogeneous<NT> Kernel;
 typedef Kernel::Point_3 Point_3;
 typedef CGAL::Nef_polyhedron_3<Kernel> Nef_polyhedron;

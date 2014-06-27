@@ -1,8 +1,8 @@
-#include <CGAL/Gmpz.h>
+#include <CGAL/Exact_integer.h>
 #include <CGAL/Homogeneous.h>
 #include <CGAL/Nef_polyhedron_S2.h>
 
-typedef CGAL::Gmpz RT;
+typedef CGAL::Exact_integer RT;
 typedef CGAL::Homogeneous<RT> Kernel;
 typedef CGAL::Nef_polyhedron_S2<Kernel> Nef_polyhedron;
 typedef Nef_polyhedron::Sphere_point Sphere_point;
