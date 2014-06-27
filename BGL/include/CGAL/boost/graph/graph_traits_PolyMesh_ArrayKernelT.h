@@ -561,7 +561,7 @@ remove_edge(typename boost::graph_traits<OpenMesh::PolyMesh_ArrayKernelT<K> >::v
             typename boost::graph_traits<OpenMesh::PolyMesh_ArrayKernelT<K> >::vertex_descriptor v, 
             OpenMesh::PolyMesh_ArrayKernelT<K>& sm) 
 {
-  edge_descriptor e = edge(u, v, sm);
+  typename boost::graph_traits<OpenMesh::PolyMesh_ArrayKernelT<K> >::edge_descriptor e = edge(u, v, sm);
   remove_edge(e,sm);
 }
 
