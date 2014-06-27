@@ -47,7 +47,7 @@ typedef unspecified_type Exact_rational;
 
 #else // not DOXYGEN_RUNNING
 
-typedef internal::Exact_ring_selector<double>::Type Exact_rational;
+typedef internal::Exact_field_selector<double>::Type Exact_rational;
 
 #endif
 
