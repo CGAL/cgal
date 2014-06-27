@@ -43,16 +43,16 @@ int main()
     Sphere S(3,V.begin(),V.end());
     Line l1(p0,p1), l2(p0,Point(1,1,0,1)); 
     Ray r(p0,p1); Segment s(p0,p1);
-    CGAL_TEST(CGAL::reflect(p1,p0)==Point(-1,0,0,1));
-    CGAL_TEST(CGAL::reflect(p2,l1)==Point(1,0,-1,1));
-    CGAL_TEST(CGAL::reflect(S,p0)==S.opposite());
-    CGAL_TEST(CGAL::reflect(S,l1)==S);
-    CGAL_TEST(CGAL::reflect(l1,p0)==l1.opposite());
-    CGAL_TEST(CGAL::reflect(l1,l2)==Line(p0,Point(0,1,0,1)));
-    CGAL_TEST(CGAL::reflect(r,p0)==r.opposite());
-    CGAL_TEST(CGAL::reflect(r,l2)==Ray(p0,Point(0,1,0,1)));
-    CGAL_TEST(CGAL::reflect(s,p0)==Segment(p0,Point(-1,0,0,1)));
-    CGAL_TEST(CGAL::reflect(s,l2)==Segment(p0,Point(0,1,0,1)));
+    CGAL_TEST(CGAL::reflect(p1,p0)==Point(-1,0,0,1)){}
+    CGAL_TEST(CGAL::reflect(p2,l1)==Point(1,0,-1,1)){}
+    CGAL_TEST(CGAL::reflect(S,p0)==S.opposite()){}
+    CGAL_TEST(CGAL::reflect(S,l1)==S){}
+    CGAL_TEST(CGAL::reflect(l1,p0)==l1.opposite()){}
+    CGAL_TEST(CGAL::reflect(l1,l2)==Line(p0,Point(0,1,0,1))){}
+    CGAL_TEST(CGAL::reflect(r,p0)==r.opposite()){}
+    CGAL_TEST(CGAL::reflect(r,l2)==Ray(p0,Point(0,1,0,1))){}
+    CGAL_TEST(CGAL::reflect(s,p0)==Segment(p0,Point(-1,0,0,1))){}
+    CGAL_TEST(CGAL::reflect(s,l2)==Segment(p0,Point(0,1,0,1))){}
   }
 
   { 
@@ -76,24 +76,24 @@ int main()
     Afftrafo at10(2,CGAL::ROTATION,RT(1),RT(0),RT(1)); // rot(pi/2) in 2d
     Afftrafo at11(2,CGAL::ROTATION,rd,1,1000); // d2_rot approx
 
-    CGAL_TEST(at1==at4);
-    CGAL_TEST(at1!=at5);
-    CGAL_TEST(at1.dimension()==2);
-    CGAL_TEST(at1.matrix() == M1);
+    CGAL_TEST(at1==at4){}
+    CGAL_TEST(at1!=at5){}
+    CGAL_TEST(at1.dimension()==2){}
+    CGAL_TEST(at1.matrix() == M1){}
 
     CGAL_IO_TEST(at4,at0,CGAL::IO::ASCII);
 
     Afftrafo at12 = at2 * at2.inverse();
     Point p(1,1); 
-    CGAL_TEST(p.transform(at12)==p); 
-    CGAL_TEST(p.transform(at1)==Point(-1,-1));
-    CGAL_TEST(p.transform(at2)==Point(2,3));
-    CGAL_TEST(p.transform(at3)==Point(6,1));
-    CGAL_TEST(p.transform(at4)==Point(-1,-1));
-    CGAL_TEST(p.transform(at5)==Point(0,2));
-    CGAL_TEST(p.transform(at6)==p);
-    CGAL_TEST(p.transform(at9)==Point(3,3));
-    CGAL_TEST(p.transform(at10)==Point(-1,1));
+    CGAL_TEST(p.transform(at12)==p){} 
+    CGAL_TEST(p.transform(at1)==Point(-1,-1)){}
+    CGAL_TEST(p.transform(at2)==Point(2,3)){}
+    CGAL_TEST(p.transform(at3)==Point(6,1)){}
+    CGAL_TEST(p.transform(at4)==Point(-1,-1)){}
+    CGAL_TEST(p.transform(at5)==Point(0,2)){}
+    CGAL_TEST(p.transform(at6)==p){}
+    CGAL_TEST(p.transform(at9)==Point(3,3)){}
+    CGAL_TEST(p.transform(at10)==Point(-1,1)){}
 
     Vector v_approx = 
       Point(1,0).transform(at11) - CGAL::ORIGIN;
@@ -123,24 +123,24 @@ int main()
     FT sqr_bound = Kernel::make_FT(RT(1),CGAL_NTS square(RT(1000)));  
     // sqr(c)
     FT sqr_sum = sqr_sin_alpha + sqr_sin_piforth - sqr_bound;
-    CGAL_TEST( (sqr_sum*sqr_sum) < (FT(2)*sqr_sin_alpha) );
+    CGAL_TEST( (sqr_sum*sqr_sum) < (FT(2)*sqr_sin_alpha) ){}
 
     // and analogously:
     FT sqr_cos_alpha = CGAL_NTS square(v_approx.x())/
                        v_approx.squared_length();
     FT sqr_cos_piforth(1,2);
     sqr_sum = sqr_cos_alpha + sqr_cos_piforth - sqr_bound;
-    CGAL_TEST((sqr_sum*sqr_sum) < FT(2)*sqr_cos_alpha);
+    CGAL_TEST((sqr_sum*sqr_sum) < FT(2)*sqr_cos_alpha){}
 
     Vector v(2,2);
-    CGAL_TEST(v.transform(at9)==3*v);
-    CGAL_TEST(v.transform(at3)==v);
-    CGAL_TEST(v.transform(at1)==-v);
+    CGAL_TEST(v.transform(at9)==3*v){}
+    CGAL_TEST(v.transform(at3)==v){}
+    CGAL_TEST(v.transform(at1)==-v){}
 
     Direction dir(5,1); 
-    CGAL_TEST(dir.transform(at9)==dir);
-    CGAL_TEST(dir.transform(at3)==dir);
-    CGAL_TEST(dir.transform(at1)==-dir);
+    CGAL_TEST(dir.transform(at9)==dir){}
+    CGAL_TEST(dir.transform(at3)==dir){}
+    CGAL_TEST(dir.transform(at1)==-dir){}
 
     // 3 dim hyperplane:
     Afftrafo at20 = Afftrafo(CGAL::TRANSLATION,Vector(5,0,0,1));
@@ -150,7 +150,7 @@ int main()
     Afftrafo at22 = at21*at20; // composition of both
 
     Point p1(1,0,0,1), p2(0,1,0,1), p3(0,0,1,1), o(3);
-    CGAL_TEST(p1.transform(at22)==p1.transform(at20).transform(at21));
+    CGAL_TEST(p1.transform(at22)==p1.transform(at20).transform(at21)){}
 
     std::vector<Point> U = make_vector(p1,p2,p3);
     Hyperplane hyp(U.begin(),U.end(),o,CGAL::ON_NEGATIVE_SIDE);
@@ -164,18 +164,18 @@ int main()
     Hyperplane hyp_trafo(V.begin(),V.end(),o_trafo,
                          CGAL::ON_NEGATIVE_SIDE);
 
-    CGAL_TEST(hyp.transform(at22)==hyp_trafo);
+    CGAL_TEST(hyp.transform(at22)==hyp_trafo){}
 
     Segment s(p1,p2);
-    CGAL_TEST(s.transform(at22)==Segment(pp1,pp2));
+    CGAL_TEST(s.transform(at22)==Segment(pp1,pp2)){}
     Ray r(p1,p2);
-    CGAL_TEST(r.transform(at22)==Ray(pp1,pp2));
+    CGAL_TEST(r.transform(at22)==Ray(pp1,pp2)){}
     Line l(p1,p2);
-    CGAL_TEST(l.transform(at22)==Line(pp1,pp2));
+    CGAL_TEST(l.transform(at22)==Line(pp1,pp2)){}
     std::vector<Point> W = make_vector(p1,p2,p3,o);
     Sphere S(3,W.begin(),W.end());
     W = make_vector(pp1,pp2,pp3,o_trafo);
-    CGAL_TEST(S.transform(at22)==Sphere(3,W.begin(),W.end()));
+    CGAL_TEST(S.transform(at22)==Sphere(3,W.begin(),W.end())){}
   }
 
 
@@ -211,16 +211,16 @@ int main()
     Sphere S(3,V.begin(),V.end());
     Line l1(p0,p1), l2(p0,Point(1,1,0,1)); 
     Ray r(p0,p1); Segment s(p0,p1);
-    CGAL_TEST(CGAL::reflect(p1,p0)==Point(-1,0,0,1));
-    CGAL_TEST(CGAL::reflect(p2,l1)==Point(1,0,-1,1));
-    CGAL_TEST(CGAL::reflect(S,p0)==S.opposite());
-    CGAL_TEST(CGAL::reflect(S,l1)==S);
-    CGAL_TEST(CGAL::reflect(l1,p0)==l1.opposite());
-    CGAL_TEST(CGAL::reflect(l1,l2)==Line(p0,Point(0,1,0,1)));
-    CGAL_TEST(CGAL::reflect(r,p0)==r.opposite());
-    CGAL_TEST(CGAL::reflect(r,l2)==Ray(p0,Point(0,1,0,1)));
-    CGAL_TEST(CGAL::reflect(s,p0)==Segment(p0,Point(-1,0,0,1)));
-    CGAL_TEST(CGAL::reflect(s,l2)==Segment(p0,Point(0,1,0,1)));
+    CGAL_TEST(CGAL::reflect(p1,p0)==Point(-1,0,0,1)){}
+    CGAL_TEST(CGAL::reflect(p2,l1)==Point(1,0,-1,1)){}
+    CGAL_TEST(CGAL::reflect(S,p0)==S.opposite()){}
+    CGAL_TEST(CGAL::reflect(S,l1)==S){}
+    CGAL_TEST(CGAL::reflect(l1,p0)==l1.opposite()){}
+    CGAL_TEST(CGAL::reflect(l1,l2)==Line(p0,Point(0,1,0,1))){}
+    CGAL_TEST(CGAL::reflect(r,p0)==r.opposite()){}
+    CGAL_TEST(CGAL::reflect(r,l2)==Ray(p0,Point(0,1,0,1))){}
+    CGAL_TEST(CGAL::reflect(s,p0)==Segment(p0,Point(-1,0,0,1))){}
+    CGAL_TEST(CGAL::reflect(s,l2)==Segment(p0,Point(0,1,0,1))){}
   }
 
   { 
@@ -244,24 +244,24 @@ int main()
     Afftrafo at10(2,CGAL::ROTATION,RT(1),RT(0),RT(1)); // rot(pi/2) in 2d
     Afftrafo at11(2,CGAL::ROTATION,rd,1,1000); // d2_rot approx
 
-    CGAL_TEST(at1==at4);
-    CGAL_TEST(at1!=at5);
-    CGAL_TEST(at1.dimension()==2);
-    CGAL_TEST(at1.matrix() == M1);
+    CGAL_TEST(at1==at4){}
+    CGAL_TEST(at1!=at5){}
+    CGAL_TEST(at1.dimension()==2){}
+    CGAL_TEST(at1.matrix() == M1){}
 
     CGAL_IO_TEST(at4,at0,CGAL::IO::ASCII);
 
     Afftrafo at12 = at2 * at2.inverse();
     Point p(1,1); 
-    CGAL_TEST(p.transform(at12)==p); 
-    CGAL_TEST(p.transform(at1)==Point(-1,-1));
-    CGAL_TEST(p.transform(at2)==Point(2,3));
-    CGAL_TEST(p.transform(at3)==Point(6,1));
-    CGAL_TEST(p.transform(at4)==Point(-1,-1));
-    CGAL_TEST(p.transform(at5)==Point(0,2));
-    CGAL_TEST(p.transform(at6)==p);
-    CGAL_TEST(p.transform(at9)==Point(3,3));
-    CGAL_TEST(p.transform(at10)==Point(-1,1));
+    CGAL_TEST(p.transform(at12)==p){} 
+    CGAL_TEST(p.transform(at1)==Point(-1,-1)){}
+    CGAL_TEST(p.transform(at2)==Point(2,3)){}
+    CGAL_TEST(p.transform(at3)==Point(6,1)){}
+    CGAL_TEST(p.transform(at4)==Point(-1,-1)){}
+    CGAL_TEST(p.transform(at5)==Point(0,2)){}
+    CGAL_TEST(p.transform(at6)==p){}
+    CGAL_TEST(p.transform(at9)==Point(3,3)){}
+    CGAL_TEST(p.transform(at10)==Point(-1,1)){}
 
     Vector v_approx = 
       Point(1,0).transform(at11) - CGAL::ORIGIN;
@@ -291,24 +291,24 @@ int main()
     FT sqr_bound = Kernel::make_FT(RT(1),CGAL_NTS square(RT(1000)));  
     // sqr(c)
     FT sqr_sum = sqr_sin_alpha + sqr_sin_piforth - sqr_bound;
-    CGAL_TEST( (sqr_sum*sqr_sum) < (FT(2)*sqr_sin_alpha) );
+    CGAL_TEST( (sqr_sum*sqr_sum) < (FT(2)*sqr_sin_alpha) ){}
 
     // and analogously:
     FT sqr_cos_alpha = CGAL_NTS square(v_approx.x())/
                        v_approx.squared_length();
     FT sqr_cos_piforth(1,2);
     sqr_sum = sqr_cos_alpha + sqr_cos_piforth - sqr_bound;
-    CGAL_TEST((sqr_sum*sqr_sum) < FT(2)*sqr_cos_alpha);
+    CGAL_TEST((sqr_sum*sqr_sum) < FT(2)*sqr_cos_alpha){}
 
     Vector v(2,2);
-    CGAL_TEST(v.transform(at9)==3*v);
-    CGAL_TEST(v.transform(at3)==v);
-    CGAL_TEST(v.transform(at1)==-v);
+    CGAL_TEST(v.transform(at9)==3*v){}
+    CGAL_TEST(v.transform(at3)==v){}
+    CGAL_TEST(v.transform(at1)==-v){}
 
     Direction dir(5,1); 
-    CGAL_TEST(dir.transform(at9)==dir);
-    CGAL_TEST(dir.transform(at3)==dir);
-    CGAL_TEST(dir.transform(at1)==-dir);
+    CGAL_TEST(dir.transform(at9)==dir){}
+    CGAL_TEST(dir.transform(at3)==dir){}
+    CGAL_TEST(dir.transform(at1)==-dir){}
 
     // 3 dim hyperplane:
     Afftrafo at20 = Afftrafo(CGAL::TRANSLATION,Vector(5,0,0,1));
@@ -318,7 +318,7 @@ int main()
     Afftrafo at22 = at21*at20; // composition of both
 
     Point p1(1,0,0,1), p2(0,1,0,1), p3(0,0,1,1), o(3);
-    CGAL_TEST(p1.transform(at22)==p1.transform(at20).transform(at21));
+    CGAL_TEST(p1.transform(at22)==p1.transform(at20).transform(at21)){}
 
     std::vector<Point> U = make_vector(p1,p2,p3);
     Hyperplane hyp(U.begin(),U.end(),o,CGAL::ON_NEGATIVE_SIDE);
@@ -332,18 +332,18 @@ int main()
     Hyperplane hyp_trafo(V.begin(),V.end(),o_trafo,
                          CGAL::ON_NEGATIVE_SIDE);
 
-    CGAL_TEST(hyp.transform(at22)==hyp_trafo);
+    CGAL_TEST(hyp.transform(at22)==hyp_trafo){}
 
     Segment s(p1,p2);
-    CGAL_TEST(s.transform(at22)==Segment(pp1,pp2));
+    CGAL_TEST(s.transform(at22)==Segment(pp1,pp2)){}
     Ray r(p1,p2);
-    CGAL_TEST(r.transform(at22)==Ray(pp1,pp2));
+    CGAL_TEST(r.transform(at22)==Ray(pp1,pp2)){}
     Line l(p1,p2);
-    CGAL_TEST(l.transform(at22)==Line(pp1,pp2));
+    CGAL_TEST(l.transform(at22)==Line(pp1,pp2)){}
     std::vector<Point> W = make_vector(p1,p2,p3,o);
     Sphere S(3,W.begin(),W.end());
     W = make_vector(pp1,pp2,pp3,o_trafo);
-    CGAL_TEST(S.transform(at22)==Sphere(3,W.begin(),W.end()));
+    CGAL_TEST(S.transform(at22)==Sphere(3,W.begin(),W.end())){}
   }
 
 
