@@ -126,7 +126,7 @@ public:
 		for (it = m_samples.begin(); it != m_samples.end(); ++it) {
 			Sample& sample = *it;
 			sample.mass() = m_max_mass - sample.mass();
-			new_max_mass = std::max(new_max_mass, sample.mass());
+			new_max_mass = (std::max)(new_max_mass, sample.mass());
 		}
 		m_max_mass = new_max_mass;
 	}
@@ -179,7 +179,7 @@ public:
 
 	void add_sample(const Point& point, const FT mass = 1.0) {
 		m_samples.push_back(Sample(point, mass));
-		m_max_mass = std::max(m_max_mass, mass);
+		m_max_mass = (std::max)(m_max_mass, mass);
 	}
 
 	void add_outliers(const unsigned int nb) {
@@ -234,15 +234,15 @@ public:
 		++it;
 		for (; it != m_samples.end(); ++it) {
 			p = it->point();
-			x_min = std::min(x_min, p.x());
-			x_max = std::max(x_max, p.x());
-			y_min = std::min(y_min, p.y());
-			y_max = std::max(y_max, p.y());
+			x_min = (std::min)(x_min, p.x());
+			x_max = (std::max)(x_max, p.x());
+			y_min = (std::min)(y_min, p.y());
+			y_max = (std::max)(y_max, p.y());
 		}
 
 		x = 0.5 * (x_min + x_max);
 		y = 0.5 * (y_min + y_max);
-		scale = std::max(x_max - x_min, y_max - y_min);
+		scale = (std::max)(x_max - x_min, y_max - y_min);
 		if (scale == 0.0)
 			scale = 1.0;
 	}
@@ -716,7 +716,7 @@ public:
 		Sample_list vertices, samples;
 		select_samples(1.0, vertices, samples);
 		double percentage = 500.0 / double(vertices.size());
-		percentage = std::min(percentage, 1.0);
+		percentage = (std::min)(percentage, 1.0);
 
 		samples.clear();
 		vertices.clear();

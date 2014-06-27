@@ -26,6 +26,7 @@
 #include <list>
 #include <queue>
 #include <iostream>
+#include <limits>
 
 // CGAL
 #include <CGAL/basic.h>
@@ -648,7 +649,7 @@ public:
 	}
 
 	Edge find_nearest_edge(const Point& point, Face_handle face) const {
-		FT min_dist2 = std::numeric_limits<FT>::max();
+		FT min_dist2 = (std::numeric_limits<FT>::max)();
 		Edge nearest(Face_handle(), 0);
 		for (int i = 0; i < 3; ++i) {
 			Edge edge(face, i);
@@ -753,7 +754,7 @@ public:
 		Line lab(pa, pb - pa);
 		Line lts(pt, ps - pt);
 
-		FT Dqt = std::numeric_limits<FT>::max();
+		FT Dqt = (std::numeric_limits<FT>::max)();
 		CGAL::Object result = CGAL::intersection(lab, lts);
 		const Point* iq = CGAL::object_cast<Point>(&result);
 		if (iq)
@@ -1003,7 +1004,7 @@ public:
 		                return false;
 		            }
 
-		            if (std::max(Dac, Dbd) + EPS < Dbc)
+		            if ((std::max)(Dac, Dbd) + EPS < Dbc)
 		            {
 		                std::cerr.precision(10);
 		                // TODO: IV comment in std::cerr << red << "--
@@ -1017,7 +1018,7 @@ public:
 		                std::cerr << "c: " << c->point() << std::endl;
 		                std::cerr << "d: " << d->point() << std::endl;
 		                std::cerr << "t: " << target->point() << std::endl;
-		                std::cerr << "diff = " << Dbc - std::max(Dac, Dbd) << std::endl;
+		                std::cerr << "diff = " << Dbc - (std::max)(Dac, Dbd) << std::endl;
 		                return false;
 		            }
 

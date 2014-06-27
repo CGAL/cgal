@@ -313,15 +313,15 @@ public:
         for ( ; it != beyond; ++it)
         {
             p = it->point();
-            x_min = std::min(x_min, p.x());
-            x_max = std::max(x_max, p.x());
-            y_min = std::min(y_min, p.y());
-            y_max = std::max(y_max, p.y());
+            x_min = (std::min)(x_min, p.x());
+            x_max = (std::max)(x_max, p.x());
+            y_min = (std::min)(y_min, p.y());
+            y_max = (std::max)(y_max, p.y());
         }
 
         x = 0.5 * (x_min + x_max);
         y = 0.5 * (y_min + y_max);
-        scale = std::max(x_max - x_min, y_max - y_min);
+        scale = (std::max)(x_max - x_min, y_max - y_min);
         if (scale == 0.0) scale = 1.0;
     }
 
