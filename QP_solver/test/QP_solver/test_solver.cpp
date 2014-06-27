@@ -29,13 +29,12 @@
 #include <CGAL/basic.h>
 
 #ifndef CGAL_USE_GMP
-#include <CGAL/Gmpq.h>       // Quotient<MP_Float> is too slow, even
 #include <CGAL/MP_Float.h>   // with normalization switched on
 #else
 #include <CGAL/Gmpz.h>  
 #include <CGAL/Gmpzf.h>
-#include <CGAL/Gmpq.h>
 #endif
+#include <CGAL/Exact_rational.h>
 
 #include <CGAL/QP_solver/QP_solver.h>
 #include <CGAL/QP_solver/QP_full_exact_pricing.h>
@@ -82,13 +81,12 @@ typedef std::pair<std::string,int> Arg;
 #ifdef CGAL_USE_GMP
 typedef CGAL::Gmpzf Float; 
 typedef CGAL::Gmpz Integer;
-typedef CGAL::Gmpq Rational;
 #else
 typedef CGAL::MP_Float Float;  
-typedef CGAL::MP_Float Integer;
-typedef CGAL::Gmpq Rational; 
+typedef CGAL::MP_Float Integer; 
 //typedef CGAL::Quotient<CGAL::MP_Float> Rational;  // too slow
 #endif
+typedef CGAL::Exact_rational Rational;
 
 template<typename T>
 bool is_double(const T&)            { return false; }
