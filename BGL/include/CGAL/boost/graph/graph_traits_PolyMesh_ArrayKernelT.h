@@ -574,7 +574,7 @@ remove_edge(typename boost::graph_traits<OpenMesh::PolyMesh_ArrayKernelT<K> >::e
   sm.request_vertex_status();
   sm.request_halfedge_status();
   sm.request_edge_status();
- typedef typename boost::graph_traits<OpenMesh::PolyMesh_ArrayKernelT<K> >::edge_descriptor edge_descriptor;
+
   typedef typename boost::graph_traits<OpenMesh::PolyMesh_ArrayKernelT<K> >::halfedge_descriptor halfedge_descriptor;
 
   halfedge_descriptor h1 = halfedge(e,sm);

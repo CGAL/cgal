@@ -132,7 +132,7 @@ void runtime_check_halfedgegraph()
 
 
 int
-main( int argc, char* argv[] )
+main()
 {
   concept_check_polyhedron<Polyhedron>();
   runtime_check_halfedgegraph<Polyhedron>();

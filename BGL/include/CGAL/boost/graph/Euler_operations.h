@@ -320,9 +320,7 @@ join_loop(typename boost::graph_traits<Graph>::halfedge_descriptor h1,
           Graph& g)
 {
   typedef typename boost::graph_traits<Graph>              Traits;
-  typedef typename Traits::vertex_descriptor               vertex_descriptor;
   typedef typename Traits::halfedge_descriptor             halfedge_descriptor;
-  typedef typename Traits::face_descriptor                 face_descriptor;
 
   CGAL_precondition( is_border(h1,g) || face(h1, g) != face(h2, g));
   if (! is_border(h1,g))
@@ -395,7 +393,6 @@ split_loop(typename boost::graph_traits<Graph>::halfedge_descriptor h1,
            Graph& g)
 {
   typedef typename boost::graph_traits<Graph>              Traits;
-  typedef typename Traits::vertex_descriptor               vertex_descriptor;
   typedef typename Traits::halfedge_descriptor             halfedge_descriptor;
   typedef typename Traits::face_descriptor                 face_descriptor;
 
@@ -549,9 +546,8 @@ void make_hole(typename boost::graph_traits<Graph>::halfedge_descriptor h,
                Graph& g)
 {
   typedef typename boost::graph_traits<Graph>            Traits;
-  typedef typename Traits::halfedge_descriptor           halfedge_descriptor;
   typedef typename Traits::face_descriptor               face_descriptor;
-  typedef Halfedge_around_face_iterator<Graph>                   halfedge_around_face_iterator;
+  typedef Halfedge_around_face_iterator<Graph>           halfedge_around_face_iterator;
 
   CGAL_precondition(! is_border(h,g));
   face_descriptor fd = face(h, g);
@@ -654,9 +650,7 @@ remove_center_vertex(typename boost::graph_traits<Graph>::halfedge_descriptor h,
                      Graph& g) 
 {
   typedef typename boost::graph_traits<Graph>              Traits;
-  typedef typename Traits::vertex_descriptor               vertex_descriptor;
   typedef typename Traits::halfedge_descriptor             halfedge_descriptor;
-  typedef typename Traits::face_descriptor                 face_descriptor;
 
   assert(internal::is_valid(g));
   // h points to the vertex that gets removed
@@ -802,7 +796,6 @@ collapse_edge(typename boost::graph_traits<Graph>::edge_descriptor v0v1,
 {
   typedef boost::graph_traits< Graph > Traits;
   typedef typename Traits::vertex_descriptor          vertex_descriptor;
-  typedef typename Traits::edge_descriptor            edge_descriptor;
   typedef typename Traits::halfedge_descriptor            halfedge_descriptor;
 
   halfedge_descriptor pq = halfedge(v0v1,g);
@@ -944,7 +937,6 @@ collapse_edge(typename boost::graph_traits<Graph>::edge_descriptor v0v1,
 {
   typedef boost::graph_traits< Graph > Traits;
   typedef typename Traits::vertex_descriptor          vertex_descriptor;
-  typedef typename Traits::edge_descriptor            edge_descriptor;
   typedef typename Traits::halfedge_descriptor            halfedge_descriptor;
 
   halfedge_descriptor pq = halfedge(v0v1,g);
