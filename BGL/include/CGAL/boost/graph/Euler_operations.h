@@ -86,10 +86,10 @@ join_face(typename boost::graph_traits<Graph>::halfedge_descriptor h,
  * joins the two vertices incident to `h`, (that is `source(h, g)` and
  * `target(h, g)`) and removes `source(h,g)`. Returns the predecessor
  * of `h` around the vertex, i.e., `prev(opposite(h,g))`.  The
- * invariant `join_vertex(g, split_vertex(g,h)))` returns `h`.  The
+ * invariant `join_vertex(split_vertex(h,g),g)` returns `h`.  The
  * time complexity is linear in the degree of the vertex removed.
  *
- * \image html euler_join_vertex.png
+ * \image html join_vertex.svg
  *
  * \tparam Graph must be a model of `MutableFaceGraph`
  *
@@ -161,7 +161,7 @@ join_vertex(typename boost::graph_traits<Graph>::halfedge_descriptor h,
  * time is proportional to the distance from `h1` to `h2` around the
  * vertex.
  *
- * \image html euler_split_vertex.png
+ * \image html split_vertex.svg
  *
  * \tparam Graph must be a model of  `MutableFaceGraph`
  *
