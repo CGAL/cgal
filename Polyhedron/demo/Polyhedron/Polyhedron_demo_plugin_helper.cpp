@@ -6,6 +6,7 @@
 #include <QtDebug>
 #include <QVector>
 #include <QSet>
+#include <QDockWidget>
 
 QAction*
 Polyhedron_demo_plugin_helper::
@@ -106,4 +107,22 @@ void Polyhedron_demo_plugin_helper::autoConnectActions()
       qDebug("ERROR: Failed to autoconnect the action \"%s\"!",
              action->objectName().toUtf8().data());
   } // end foreach action of actions()
+}
+
+void Polyhedron_demo_plugin_helper::add_dock_widget(QDockWidget* dock_widget) 
+{
+  mw->addDockWidget(Qt::LeftDockWidgetArea, dock_widget);
+
+  QList<QDockWidget*> dockWidgets = mw->findChildren<QDockWidget*>();
+  int counter = 0;
+  foreach(QDockWidget* dock, dockWidgets) {
+    if( mw->dockWidgetArea(dock) != Qt::LeftDockWidgetArea ||
+        dock == dock_widget ) 
+    { continue; }
+
+    if(++counter > 1) {
+      mw->tabifyDockWidget(dock, dock_widget);
+      return;
+    }
+  }
 }
