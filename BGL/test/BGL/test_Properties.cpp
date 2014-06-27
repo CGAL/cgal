@@ -64,7 +64,7 @@ void index_uniqueness_omesh(const OMesh& g)
 
 
 int
-main( int argc, char* argv[] )
+main()
 {
   std::vector<Polyhedron> polys = poly_data();
 

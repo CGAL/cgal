@@ -98,10 +98,8 @@ void test_out_edges(const G& g)
 {
   typedef boost::graph_traits< G > Traits;
   typedef typename Traits::vertex_iterator vertex_iterator;
-  typedef typename Traits::in_edge_iterator in_edge_iterator;
   typedef typename Traits::out_edge_iterator out_edge_iterator;
   typedef typename Traits::vertex_descriptor vertex_descriptor;
-  typedef typename Traits::edge_descriptor edge_descriptor;
 
   vertex_iterator vb, ve;
   for(boost::tie(vb, ve) = vertices(g); vb != ve; ++vb) {
@@ -128,9 +126,7 @@ void test_in_edges(const G& g)
   typedef boost::graph_traits< G > Traits;
   typedef typename Traits::vertex_iterator vertex_iterator;
   typedef typename Traits::in_edge_iterator in_edge_iterator;
-  typedef typename Traits::out_edge_iterator out_edge_iterator;
   typedef typename Traits::vertex_descriptor vertex_descriptor;
-  typedef typename Traits::edge_descriptor edge_descriptor;
 
   vertex_iterator vb, ve;
   for(boost::tie(vb, ve) = vertices(g); vb != ve; ++vb) {
@@ -157,7 +153,6 @@ void test_in_out_edges(const G& g)
   typedef typename Traits::in_edge_iterator in_edge_iterator;
   typedef typename Traits::out_edge_iterator out_edge_iterator;
   typedef typename Traits::vertex_descriptor vertex_descriptor;
-  typedef typename Traits::edge_descriptor edge_descriptor;
 
   // check that the sets of in out edges are the same
   vertex_iterator vb, ve;
@@ -195,7 +190,6 @@ template<typename G>
 void test_edge_find(const G& g)
 {
   typedef boost::graph_traits<G>    Traits;
-  typedef typename Traits::vertex_iterator   vertex_iterator;
   typedef typename Traits::edge_iterator     edge_iterator;
   typedef typename Traits::vertex_descriptor vertex_descriptor;
   typedef typename Traits::edge_descriptor   edge_descriptor;
@@ -218,10 +212,7 @@ template<typename G>
 void test_faces(const G& g)
 {
   typedef boost::graph_traits<G>                         Traits;
-  typedef typename Traits::vertex_iterator               vertex_iterator;
-  typedef typename Traits::edge_iterator                 edge_iterator;
   typedef typename Traits::face_iterator                 face_iterator;
-  typedef typename Traits::vertex_descriptor             vertex_descriptor;
   typedef typename Traits::halfedge_descriptor           halfedge_descriptor;
   typedef CGAL::Halfedge_around_face_iterator<G>         halfedge_around_face_iterator;
 

@@ -13,7 +13,6 @@ void triangle_test()
   }
   typedef boost::graph_traits<Polyhedron> Traits;
   typedef Traits::face_iterator face_iterator;
-  typedef Traits::face_iterator edge_descriptor;
   typedef Traits::vertex_descriptor vertex_descriptor;
 
   face_iterator fb, fe;
