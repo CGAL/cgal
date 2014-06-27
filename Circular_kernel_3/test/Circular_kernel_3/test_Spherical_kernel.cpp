@@ -25,9 +25,8 @@
 #include <CGAL/Cartesian.h>
 #include <CGAL/Spherical_kernel_3.h>
 #include <CGAL/Algebraic_kernel_for_spheres_2_3.h>
-#include <CGAL/MP_Float.h>
 #include <CGAL/Quotient.h>
-#include <CGAL/Gmpq.h>
+#include <CGAL/Exact_rational.h>
 #include <CGAL/_test_sphere_predicates.h>
 #include <CGAL/_test_sphere_constructions.h>
 #include <CGAL/_test_sphere_compute.h>
@@ -35,11 +34,7 @@
 
 int main()
 {
-#ifdef CGAL_USE_GMP
-  typedef CGAL::Gmpq                                          FT;
-#else
-  typedef CGAL::Quotient< CGAL::MP_Float >                    FT;
-#endif
+  typedef CGAL::Exact_rational                                FT;
   typedef CGAL::Cartesian<FT>                                 Linear_k1;
   typedef CGAL::Algebraic_kernel_for_spheres_2_3<FT>          Algebraic_k1;
   typedef CGAL::Spherical_kernel_3<Linear_k1,Algebraic_k1>    SK1;
