@@ -97,7 +97,7 @@ create_cmake_script_with_options()
   # print makefile header
   #vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
   cat << 'EOF'
-# Created by the script cgal_create_cmake_script_with_options
+# Created by the script cgal_create_CMakeLists
 # This is the CMake script for compiling a set of CGAL applications.
 
 EOF
