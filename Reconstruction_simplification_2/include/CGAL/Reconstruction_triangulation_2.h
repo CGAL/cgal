@@ -115,8 +115,6 @@ public:
 	Reconstruction_edge_2;
 	typedef Dynamic_priority_queue_edges<Reconstruction_edge_2> PQueue;
 
-	typedef std::set<Reconstruction_edge_2, less_Recon_Edge_2<Reconstruction_edge_2> >  PQueue_set;
-
 	double m_factor; // ghost vs solid
 
 

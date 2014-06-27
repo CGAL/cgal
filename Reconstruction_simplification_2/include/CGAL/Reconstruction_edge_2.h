@@ -136,22 +136,6 @@ protected:
 };
 
 
-//---------------Reconstruction_edge_2---------------------
-template <class T>
-struct less_Recon_Edge_2
-{
-    bool operator() (const T& a, const T& b) const
-    {
-    	if (a.priority() < b.priority())
-    		return true;
-    	if (a.priority() > b.priority())
-    		return false;
-    	return a < b;
-    }
-};
-
-
-
 
 template <class T>
 class Dynamic_priority_queue_edges : public Dynamic_priority_queue<T> {
