@@ -34,12 +34,16 @@
 #include <list>
 #include <algorithm>
 
+#include <boost/multi_index_container.hpp>
+#include <boost/multi_index/mem_fun.hpp>
+#include <boost/multi_index/ordered_index.hpp>
+#include <boost/multi_index/identity.hpp>
+
 
 namespace CGAL {
 
 template<class Kernel, class InputIterator, class PointPMap, class MassPMap>
 class Reconstruction_simplification_2 {
-
 public:
 	typedef typename Kernel::FT FT;
 	typedef typename Kernel::Point_2 Point;
@@ -88,7 +92,20 @@ public:
 
 	typedef typename Triangulation::Reconstruction_edge_2 Reconstruction_edge_2;
 	typedef typename Triangulation::PQueue PQueue;
-
+  
+  // TODO: this is a test
+  typedef boost::multi_index_container<
+	  Reconstruction_edge_2,
+	  boost::multi_index::indexed_by<
+	  // sort by Reconstruction_edge_2::operator<
+	  boost::multi_index::ordered_unique< boost::multi_index::identity<
+		    Reconstruction_edge_2 > > ,
+		  // sort by Reconstruction_edge_2::priority()
+	  boost::multi_index::ordered_non_unique<
+		    boost::multi_index::const_mem_fun<
+		  	    Reconstruction_edge_2,const FT,&Reconstruction_edge_2::priority> >
+	    >
+  > Multi_index;
 
 
 protected:
@@ -121,6 +138,10 @@ public:
 									InputIterator beyond_itr,
 									PointPMap in_point_pmap,
 									MassPMap  in_mass_pmap) {
+
+    // TODO: THIS IS TEST
+    Multi_index mi;
+    mi.get<1>().begin();
 
 		start  = start_itr;
 		beyond = beyond_itr;
