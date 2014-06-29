@@ -1,7 +1,6 @@
 
 #include "test_Prefix.h"
 #include <CGAL/boost/graph/Euler_operations.h>
-#include <boost/range/algorithm.hpp>
 
 
 template <typename T>
