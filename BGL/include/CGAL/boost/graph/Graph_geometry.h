@@ -5,13 +5,13 @@
 #include <limits>
 
 #include <boost/graph/graph_traits.hpp>
-#include <boost/property_map/property_map.hpp>
 #include <boost/range/distance.hpp>
 
 #include <CGAL/basic.h>
 #include <CGAL/assertions.h>
 #include <CGAL/Kernel/global_functions.h>
 #include <CGAL/Origin.h>
+#include <CGAL/property_map.h>
 #include <CGAL/boost/graph/properties.h>
 #include <CGAL/boost/graph/graph_concepts.h>
 #include <boost/concept/assert.hpp>
