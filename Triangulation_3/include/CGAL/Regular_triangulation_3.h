@@ -1953,7 +1953,7 @@ dual(Cell_handle c) const
     bool removed = true;
 
     // Locking vertex v...
-    if (!try_lock_vertex(v))
+    if (!this->try_lock_vertex(v))
     {
       *could_lock_zone = false;
     }

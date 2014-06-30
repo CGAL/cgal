@@ -1871,7 +1871,7 @@ public:
                                   std::vector<Cell_handle>& cells) const
   {
     // We need to lock v individually first, to be sure v->cell() is valid
-    if (!try_lock_vertex(v))
+    if (!this->try_lock_vertex(v))
       return false;
 
     Cell_handle d = v->cell();
@@ -1924,7 +1924,7 @@ public:
   {
 
     // We need to lock v individually first, to be sure v->cell() is valid
-    if (!try_lock_vertex(v))
+    if (!this->try_lock_vertex(v))
       return false;
 
     Cell_handle d = v->cell();
@@ -5020,7 +5020,7 @@ remove(Vertex_handle v, VertexRemover &remover, bool *could_lock_zone)
   bool removed = true;
 
   // Locking vertex v is a good start
-  if (!try_lock_vertex(v))
+  if (!this->try_lock_vertex(v))
   {
     *could_lock_zone = false;
 #ifdef CGAL_CONCURRENT_TRIANGULATION_3_PROFILING

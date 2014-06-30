@@ -45,7 +45,7 @@ _test_cls_parallel_triangulation_3(const Parallel_triangulation &)
     points.push_back(*rnd++);
   
   // Construct the locking data-structure, using the bounding-box of the points
-  Cls::Lock_data_structure locking_ds(
+  typename Cls::Lock_data_structure locking_ds(
     CGAL::Bbox_3(-1., -1., -1., 1., 1., 1.), 50);
   // Contruct the triangulation in parallel
   std::cout << "Construction and parallel insertion" << std::endl;
@@ -55,7 +55,7 @@ _test_cls_parallel_triangulation_3(const Parallel_triangulation &)
   // Remove the first 100,000 vertices
   std::vector<Vertex_handle> vertices_to_remove;
   int i = 0;
-  Cls::Finite_vertices_iterator vit = tr.finite_vertices_begin();
+  typename Cls::Finite_vertices_iterator vit = tr.finite_vertices_begin();
   for (int i = 0 ; i < 100000 ; ++i)
     vertices_to_remove.push_back(vit++);
   // Parallel remove

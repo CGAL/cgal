@@ -47,13 +47,13 @@ void test_RT()
   typedef traits::Bare_point Point;
   typedef traits::Weighted_point Weighted_point;
 
-  typedef Cls::Vertex_handle                         Vertex_handle;
-  typedef Cls::Cell_handle                           Cell_handle; 
-  typedef Cls::Facet                                 Facet;
-  typedef Cls::Edge                                  Edge;
+  typedef typename Cls::Vertex_handle                Vertex_handle;
+  typedef typename Cls::Cell_handle                  Cell_handle; 
+  typedef typename Cls::Facet                        Facet;
+  typedef typename Cls::Edge                         Edge;
   
   typedef std::list<Weighted_point>                  list_point;
-  typedef Cls::Finite_cells_iterator                 Finite_cells_iterator;
+  typedef typename Cls::Finite_cells_iterator        Finite_cells_iterator;
 
   // temporary version
 
