@@ -10,7 +10,8 @@ CXXFLAGS="-Wall -Wextra -isystem $BOOST_INCLUDEDIR"
 export CXX CC CXXFLAGS
 
 LEDA_DIR=/Users/cgaltester/LEDA/leda-numbers
-export LEDA_DIR
+LEDA_LIBRARY_RELEASE=$LEDA_DIR/libnumbers.so
+export LEDA_DIR LEDA_LIBRARY_RELEASE
 
 CGAL_DISABLE_GMP=1
 export CGAL_DISABLE_GMP
