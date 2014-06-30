@@ -2836,7 +2836,7 @@ inexact_locate(const Point & t, Cell_handle start, int n_of_turns,
   if ( start == Cell_handle() )
     start = infinite_cell();
 
-  // CTODO: useless?
+  // CJTODO: useless?
   if (could_lock_zone)
   {
     if (!this->try_lock_cell(start))
@@ -6467,16 +6467,16 @@ is_valid_finite(Cell_handle c, bool verbose, int) const
 namespace internal {
 
 // Internal function used by operator==.
-template < class GT, class Tds1, class Tds2 >
+template < class GT, class Tds1, class Tds2, class Lds >
 bool
-test_next(const Triangulation_3<GT, Tds1> &t1,
-          const Triangulation_3<GT, Tds2> &t2,
-          typename Triangulation_3<GT, Tds1>::Cell_handle c1,
-          typename Triangulation_3<GT, Tds2>::Cell_handle c2,
-          std::map<typename Triangulation_3<GT, Tds1>::Cell_handle,
-                   typename Triangulation_3<GT, Tds2>::Cell_handle> &Cmap,
-          std::map<typename Triangulation_3<GT, Tds1>::Vertex_handle,
-                   typename Triangulation_3<GT, Tds2>::Vertex_handle> &Vmap)
+test_next(const Triangulation_3<GT, Tds1, Lds> &t1,
+          const Triangulation_3<GT, Tds2, Lds> &t2,
+          typename Triangulation_3<GT, Tds1, Lds>::Cell_handle c1,
+          typename Triangulation_3<GT, Tds2, Lds>::Cell_handle c2,
+          std::map<typename Triangulation_3<GT, Tds1, Lds>::Cell_handle,
+                   typename Triangulation_3<GT, Tds2, Lds>::Cell_handle> &Cmap,
+          std::map<typename Triangulation_3<GT, Tds1, Lds>::Vertex_handle,
+                   typename Triangulation_3<GT, Tds2, Lds>::Vertex_handle> &Vmap)
 {
 
     // This function tests and registers the 4 neighbors of c1/c2,
@@ -6493,8 +6493,8 @@ test_next(const Triangulation_3<GT, Tds1> &t1,
     CGAL_triangulation_precondition(t1.dimension() == 2 ||
                                     Vmap.find(c1->vertex(3)) != Vmap.end());
 
-    typedef Triangulation_3<GT, Tds1> Tr1;
-    typedef Triangulation_3<GT, Tds2> Tr2;
+    typedef Triangulation_3<GT, Tds1, Lds> Tr1;
+    typedef Triangulation_3<GT, Tds2, Lds> Tr2;
     typedef typename Tr1::Vertex_handle  Vertex_handle1;
     typedef typename Tr1::Cell_handle    Cell_handle1;
     typedef typename Tr2::Vertex_handle  Vertex_handle2;
@@ -6558,10 +6558,10 @@ test_next(const Triangulation_3<GT, Tds1> &t1,
 } // namespace internal
 
 
-template < class GT, class Tds1, class Tds2 >
+template < class GT, class Tds1, class Tds2, class Lds >
 bool
-operator==(const Triangulation_3<GT, Tds1> &t1,
-           const Triangulation_3<GT, Tds2> &t2)
+operator==(const Triangulation_3<GT, Tds1, Lds> &t1,
+           const Triangulation_3<GT, Tds2, Lds> &t2)
 {
     typedef typename Triangulation_3<GT, Tds1>::Vertex_handle Vertex_handle1;
     typedef typename Triangulation_3<GT, Tds1>::Cell_handle   Cell_handle1;
