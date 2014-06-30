@@ -11,7 +11,7 @@ else()
   cmake_policy(VERSION 2.6)
 endif()
 
-find_package(CGAL QUIET COMPONENTS Core ImageIO)
+find_package(CGAL QUIET COMPONENTS ImageIO)
 
 if ( CGAL_FOUND )
   include( ${CGAL_USE_FILE} )
