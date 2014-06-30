@@ -30,7 +30,7 @@
 #include <cmath>
 
 #include <boost/optional.hpp>
-
+#include <CGAL/boost/graph/iterator.h>
 namespace CGAL
 {
 
@@ -56,7 +56,7 @@ public:
    *   - domain : over value distances
    * @param mesh `CGAL Polyhedron` on which @a values are defined
    * @param window_size range of effective neighbors
-   * @param[in, out] values `ReadWritePropertyMap` with `Polyhedron::Facet_const_handle` as key and `double` as value type
+   * @param[in, out] values `ReadWritePropertyMap` with `boost::graph_traits<Polyhedron>::face_handle` as key and `double` as value type
    */
   template<class ValuePropertyMap>
   void operator()(const Polyhedron& mesh,
@@ -65,8 +65,8 @@ public:
                   boost::optional<double> spatial_parameter = boost::optional<double>(),
                   boost::optional<double> range_parameter = boost::optional<double>()
                  ) const {
-    typedef typename Polyhedron::Facet_const_handle Facet_const_handle;
-    typedef typename Polyhedron::Facet_const_iterator Facet_const_iterator;
+    typedef typename boost::graph_traits<Polyhedron>::face_descriptor face_descriptor;
+    typedef typename boost::graph_traits<Polyhedron>::face_iterator face_iterator;
 
     double spatial_parameter_actual;
     if(!spatial_parameter) {
@@ -76,20 +76,21 @@ public:
     }
 
     std::vector<double> smoothed_values; // holds smoothed values
-    smoothed_values.reserve(mesh.size_of_facets());
+    smoothed_values.reserve(num_faces(mesh));
 
-    for(Facet_const_iterator facet_it = mesh.facets_begin();
-        facet_it != mesh.facets_end(); ++facet_it) {
-      std::map<Facet_const_handle, std::size_t> neighbors;
-      NeighborSelector()(facet_it, window_size,
+    face_iterator facet_it, fend;
+    for(boost::tie(facet_it,fend) = faces(mesh);
+        facet_it != fend; ++facet_it) {
+      std::map<face_descriptor, std::size_t> neighbors;
+      NeighborSelector()(mesh,*facet_it, window_size,
                          neighbors); // gather neighbors in the window
-      double current_sdf_value = values[facet_it];
+      double current_sdf_value = values[*facet_it];
 
       double range_parameter_actual;
       if(!range_parameter) {
         // calculate deviation for range weighting.
         double deviation = 0.0;
-        for(typename std::map<Facet_const_handle, std::size_t>::iterator it =
+        for(typename std::map<face_descriptor, std::size_t>::iterator it =
               neighbors.begin(); it != neighbors.end(); ++it) {
           deviation += std::pow(values[it->first] - current_sdf_value, 2);
         }
@@ -107,7 +108,7 @@ public:
 
       // smooth
       double total_sdf_value = 0.0, total_weight = 0.0;
-      for(typename std::map<Facet_const_handle, std::size_t>::iterator it =
+      for(typename std::map<face_descriptor, std::size_t>::iterator it =
             neighbors.begin(); it != neighbors.end(); ++it) {
         double spatial_weight = gaussian_function(static_cast<double>(it->second),
                                 spatial_parameter_actual);
@@ -123,10 +124,10 @@ public:
     }
     // put smoothed values back again to values pmap.
     std::vector<double>::iterator smoothed_value_it = smoothed_values.begin();
-    for(Facet_const_iterator facet_it = mesh.facets_begin();
-        facet_it != mesh.facets_end();
+    for(boost::tie(facet_it,fend) = faces(mesh);
+        facet_it != fend;
         ++facet_it, ++smoothed_value_it) {
-      values[facet_it] = *smoothed_value_it;
+      values[*facet_it] = *smoothed_value_it;
     }
   }
 private:
@@ -147,26 +148,27 @@ public:
    *
    * @param mesh `CGAL Polyhedron` on which @a values are defined
    * @param window_size range of effective neighbors
-   * @param[in, out] values `ReadWritePropertyMap` with `Polyhedron::Facet_const_handle` as key and `double` as value type
+   * @param[in, out] values `ReadWritePropertyMap` with `boost::graph_traits<Polyhedron>::face_handle` as key and `double` as value type
    */
   template<class ValuePropertyMap>
   void operator()(const Polyhedron& mesh,
                   std::size_t window_size,
                   ValuePropertyMap values) const {
-    typedef typename Polyhedron::Facet_const_handle Facet_const_handle;
-    typedef typename Polyhedron::Facet_const_iterator Facet_const_iterator;
+    typedef typename boost::graph_traits<Polyhedron>::face_descriptor face_descriptor;
+    typedef typename boost::graph_traits<Polyhedron>::face_iterator face_iterator;
 
     std::vector<double> smoothed_values;
-    smoothed_values.reserve(mesh.size_of_facets());
-    for(Facet_const_iterator facet_it = mesh.facets_begin();
-        facet_it != mesh.facets_end(); ++facet_it) {
-      std::map<Facet_const_handle, std::size_t> neighbors;
-      NeighborSelector()(facet_it, window_size,
+    smoothed_values.reserve(num_faces(mesh));
+    face_iterator facet_it, fend;
+    for(boost::tie(facet_it,fend) = faces(mesh);
+        facet_it != fend; ++facet_it) {
+      std::map<face_descriptor, std::size_t> neighbors;
+      NeighborSelector()(mesh, *facet_it, window_size,
                          neighbors); // gather neighbors in the window
 
       std::vector<double> neighbor_values;
       neighbor_values.reserve(neighbors.size());
-      for(typename std::map<Facet_const_handle, std::size_t>::iterator it =
+      for(typename std::map<face_descriptor, std::size_t>::iterator it =
             neighbors.begin(); it != neighbors.end(); ++it) {
         neighbor_values.push_back(values[it->first]);
       }
@@ -184,10 +186,9 @@ public:
     }
     // put smoothed values back again to values pmap.
     std::vector<double>::iterator smoothed_value_it = smoothed_values.begin();
-    for(Facet_const_iterator facet_it = mesh.facets_begin();
-        facet_it != mesh.facets_end();
-        ++facet_it) {
-      values[facet_it] = *smoothed_value_it;
+    for(boost::tie(facet_it,fend) = faces(mesh);
+        facet_it != fend; ++facet_it) {
+      values[*facet_it] = *smoothed_value_it;
     }
   }
 };
@@ -224,20 +225,20 @@ template<class Polyhedron>
 class Neighbor_selector_by_edge
 {
 private:
-  typedef typename Polyhedron::Facet::Halfedge_around_facet_const_circulator
-  Halfedge_around_facet_const_circulator;
+  typedef ::CGAL::Halfedge_around_face_circulator<Polyhedron> Halfedge_around_face_circulator;
 public:
-  typedef typename Polyhedron::Facet_const_handle Facet_const_handle;
+    typedef typename boost::graph_traits<Polyhedron>::face_descriptor face_descriptor;
   /**
    * Breadth-first traversal on facets by treating facets, which share a common edge, are 1-level neighbors.
    * @param facet root facet
    * @param max_level maximum allowed distance (number of levels) between root facet and visited facet
    * @param[out] neighbors visited facets and their distances to root facet
    */
-  void operator()(Facet_const_handle facet,
+  void operator()(const Polyhedron& polyhedron,
+                  face_descriptor facet,
                   std::size_t max_level,
-                  std::map<Facet_const_handle, std::size_t>& neighbors) const {
-    typedef std::pair<Facet_const_handle, std::size_t> Facet_level_pair;
+                  std::map<face_descriptor, std::size_t>& neighbors) const {
+    typedef std::pair<face_descriptor, std::size_t> Facet_level_pair;
 
     std::queue<Facet_level_pair> facet_queue;
     facet_queue.push(Facet_level_pair(facet, 0));
@@ -250,11 +251,10 @@ public:
     while(!facet_queue.empty()) {
       const Facet_level_pair& pair = facet_queue.front();
 
-      Halfedge_around_facet_const_circulator facet_circulator =
-        pair.first->facet_begin();
+      Halfedge_around_face_circulator facet_circulator(halfedge(pair.first,polyhedron),polyhedron), done(facet_circulator);
       do {
-        if(!facet_circulator->opposite()->is_border()) {
-          Facet_level_pair new_pair(facet_circulator->opposite()->facet(),
+        if(!(face(opposite(*facet_circulator,polyhedron),polyhedron) == boost::graph_traits<Polyhedron>::null_face())) {
+          Facet_level_pair new_pair(face(opposite(*facet_circulator,polyhedron),polyhedron),
                                     pair.second + 1);
           if(neighbors.insert(new_pair).second
               && new_pair.second < max_level) { // first insert new_pair to map
@@ -263,7 +263,7 @@ public:
               new_pair);                                      // if its level is equal to max_level do not put it in
           }                                                                    // queue since we do not want to traverse its neighbors
         }
-      } while(++facet_circulator != pair.first->facet_begin());
+      } while(++facet_circulator != done);
 
       facet_queue.pop();
     }
@@ -275,22 +275,22 @@ template<class Polyhedron>
 class Neighbor_selector_by_vertex
 {
 private:
-  typedef typename Polyhedron::Facet::Halfedge_around_vertex_const_circulator
-  Halfedge_around_vertex_const_circulator;
-  typedef typename Polyhedron::Halfedge_const_iterator Halfedge_const_iterator;
-  typedef typename Polyhedron::Vertex_const_iterator   Vertex_const_iterator;
+  typedef ::CGAL::Halfedge_around_target_circulator<Polyhedron> Halfedge_around_target_circulator;
+  typedef typename boost::graph_traits<Polyhedron>::halfedge_descriptor halfedge_descriptor;
+  typedef typename boost::graph_traits<Polyhedron>::vertex_iterator   vertex_iterator;
 public:
-  typedef typename Polyhedron::Facet_const_handle Facet_const_handle;
+  typedef typename boost::graph_traits<Polyhedron>::face_descriptor face_descriptor;
   /**
    * Breadth-first traversal on facets by treating facets, which share a common vertex, are 1-level neighbors.
    * @param facet root facet
    * @param max_level maximum allowed distance (number of levels) between root facet and visited facet
    * @param[out] neighbors visited facets and their distances to root facet
    */
-  void operator()(Facet_const_handle facet,
+  void operator()(const Polyhedron& polyhedron,
+                  face_descriptor facet,
                   std::size_t max_level,
-                  std::map<Facet_const_handle, std::size_t>& neighbors) const {
-    typedef std::pair<Facet_const_handle, std::size_t> Facet_level_pair;
+                  std::map<face_descriptor, std::size_t>& neighbors) const {
+    typedef std::pair<face_descriptor, std::size_t> Facet_level_pair;
 
     std::queue<Facet_level_pair> facet_queue;
     facet_queue.push(Facet_level_pair(facet, 0));
@@ -303,15 +303,14 @@ public:
     while(!facet_queue.empty()) {
       const Facet_level_pair& pair = facet_queue.front();
 
-      Facet_const_handle facet_front = pair.first;
-      Halfedge_const_iterator edge = facet_front->halfedge();
+      face_descriptor facet_front = pair.first;
+      halfedge_descriptor edge = halfedge(facet_front,polyhedron);
       do { // loop on three vertices of the facet
-        Vertex_const_iterator vertex = edge->vertex();
-        Halfedge_around_vertex_const_circulator vertex_circulator =
-          vertex->vertex_begin();
+        Halfedge_around_target_circulator vertex_circulator(edge,polyhedron), done(vertex_circulator);
+
         do { // for each vertex loop on incoming edges (through those edges loop on neighbor facets which includes the vertex)
-          if(!vertex_circulator->is_border()) {
-            Facet_level_pair new_pair(vertex_circulator->opposite()->facet(),
+          if(!(face(*vertex_circulator,polyhedron) == boost::graph_traits<Polyhedron>::null_face())) {
+            Facet_level_pair new_pair(face(opposite(*vertex_circulator,polyhedron),polyhedron),
                                       pair.second + 1);
             if(neighbors.insert(new_pair).second
                 && new_pair.second < max_level) { // first insert new_pair to map
@@ -320,8 +319,8 @@ public:
                 new_pair);                                      // if its level is equal to max_level do not put it in
             }                                                                    // queue since we do not want to traverse its childs
           }
-        } while(++vertex_circulator != vertex->vertex_begin());
-      } while((edge = edge->next()) != facet_front->halfedge());
+        } while(++vertex_circulator != done);
+      } while((edge = next(edge,polyhedron)) != halfedge(facet_front,polyhedron));
 
       facet_queue.pop();
     }

@@ -59,7 +59,7 @@ int test()
 	typedef typename CGAL::AABB_traits<K,Primitive> Traits;
 	typedef typename CGAL::AABB_tree<Traits> Tree;
 	typedef typename Tree::Object_and_primitive_id Object_and_primitive_id;
-	Tree tree(polyhedron.facets_begin(),polyhedron.facets_end(), polyhedron);
+	Tree tree(faces(polyhedron).first, faces(polyhedron).second, polyhedron);
 
 	// segment intersection query
 	Point p((FT)-0.25,  (FT)0.251, (FT)0.255);

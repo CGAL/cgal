@@ -29,7 +29,7 @@ kruskal( const Polyhedron& P)
   
   // This function call requires a vertex_index_map named parameter which
   // when  ommitted defaults to "get(vertex_index,graph)".
-  // That default works here because the vertex type supports the "id()"
+  // That default works here because the vertex type has an "id()" method
   // field which is used by the vertex_index internal property.
   std::list<edge_descriptor> mst;
   boost::kruskal_minimum_spanning_tree(P,std::back_inserter(mst));
@@ -44,7 +44,7 @@ kruskal( const Polyhedron& P)
     "point [ \n";
   
   vertex_iterator vb, ve;
-  for(boost::tie(vb,ve) = boost::vertices(P); vb!=ve; ++vb){
+  for(boost::tie(vb,ve) = vertices(P); vb!=ve; ++vb){
     std::cout << (*vb)->point() << "\n";
   }
   
@@ -53,8 +53,8 @@ kruskal( const Polyhedron& P)
     "coordIndex [\n";
   
   for(std::list<edge_descriptor>::iterator it = mst.begin(); it != mst.end(); ++it){
-    std::cout << boost::source(*it,P)->id()
-	      << ", " << boost::target(*it,P)->id() <<  ", -1\n";
+    std::cout << source(*it,P)->id()
+	      << ", " << target(*it,P)->id() <<  ", -1\n";
   }
   
   std::cout << "]\n"
@@ -80,7 +80,7 @@ int main() {
   
   // boost::tie assigns the first and second element of the std::pair
   // returned by boost::vertices to the variables vit and ve
-  for(boost::tie(vb,ve)=boost::vertices(P); vb!=ve; ++vb ){
+  for(boost::tie(vb,ve)=vertices(P); vb!=ve; ++vb ){
     vertex_descriptor  vd = *vb;
     vd->id() = index++;
   }

@@ -31,7 +31,7 @@ int main()
     polyhedron.make_tetrahedron(p, q, r, s);
 
     // constructs AABB tree
-    Tree tree(polyhedron.facets_begin(),polyhedron.facets_end(),polyhedron);
+    Tree tree(faces(polyhedron).first, faces(polyhedron).second, polyhedron);
 
     // constructs segment query
     Point a(-0.2, 0.2, -0.2);
