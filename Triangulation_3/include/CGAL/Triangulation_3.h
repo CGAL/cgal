@@ -425,7 +425,7 @@ public:
   typedef Edge_iterator                        All_edges_iterator;
   typedef Vertex_iterator                      All_vertices_iterator;
 
-  typedef Triangulation_segment_traverser_3<Self> Segment_walk_iterator;
+  typedef Triangulation_segment_cell_iterator_3<Self> Segment_cell_iterator;
 
   typedef typename Tds::Simplex                Simplex;
 private:
@@ -2134,24 +2134,24 @@ public:
     return _tds.incident_edges(v, edges, Finite_filter(this));
   }
 
-  Segment_walk_iterator
-  segment_walk(Vertex_handle s, Vertex_handle t) const {
-      return Segment_walk_iterator( *this, s, t );
+  Segment_cell_iterator
+  segment_walk_begin(Vertex_handle s, Vertex_handle t) const {
+      return Segment_cell_iterator( *this, s, t );
   }
 
-  Segment_walk_iterator
-  segment_walk(Vertex_handle s, const Point& t) const {
-      return Segment_walk_iterator( *this, s, t );
+  Segment_cell_iterator
+  segment_walk_end(Vertex_handle s, Vertex_handle t) const {
+      return Segment_cell_iterator( *this, s, t ).end();
   }
 
-  Segment_walk_iterator
-  segment_walk(const Point& s, const Point& t, Cell_handle hint = Cell_handle()) const {
-      return Segment_walk_iterator( *this, s, t, hint );
+  Segment_cell_iterator
+  segment_walk_begin(const Point& s, const Point& t, Cell_handle hint = Cell_handle()) const {
+      return Segment_cell_iterator( *this, s, t, hint );
   }
 
-  Segment_walk_iterator
-  segment_walk(const Segment& seg,  Cell_handle hint = Cell_handle()) const {
-      return Segment_walk_iterator( *this, seg, hint );
+  Segment_cell_iterator
+  segment_walk_end(const Point& s, const Point& t, Cell_handle hint = Cell_handle()) const {
+      return Segment_cell_iterator( *this, s, t, hint ).end();
   }
 
   size_type degree(Vertex_handle v) const

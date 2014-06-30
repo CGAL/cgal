@@ -24,7 +24,7 @@ point location queries in a Delaunay triangulation.
 
 ------- segment_traverser_3 --------------------------------------------
 
-This example shows how to use a Triangulation_segment_traverser_3
+This example shows how to use a Triangulation_segment_cell_iterator_3
 to traverse the triangulation in a straight line.
 
 ------- tds --------------------------------------------------

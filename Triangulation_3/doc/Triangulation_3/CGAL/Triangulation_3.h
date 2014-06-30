@@ -220,9 +220,9 @@ Concurrency tag (from the TDS).
 typedef TriangulationDataStructure_3::Concurrency_tag Concurrency_tag;
 
 /*!
-Iterator over the cells intersected by a line segment.
+iterator over the cells intersected by a line segment.
 */
-typedef unspecified_type Segment_walk_iterator;
+typedef unspecified_type Segment_cell_iterator;
 
 /// @} 
 
@@ -1144,7 +1144,7 @@ Point_iterator points_end() const;
 /*!\name Walk Iterator
 \cgalModifBegin
 
-The triangulation defines an iterator that visits the cells intersected by a given line segment. It is non-mutable and unidirectional. It is invalidated by any modification of one of the cells traversed.  
+The triangulation defines an iterator that visits the cells intersected by a line segment. It is a non-mutable and forward iterator. It is invalidated by any modification of one of the cells traversed.  
 
 The cells visited comprise a connected region containing both source and target point of the line segment `s`. Each cell falls within one or more of the following categories:
 1. a finite cell whose interior intersects `s`.
@@ -1165,45 +1165,54 @@ Note that for categories 4 and 6, it is not predetermined which incident cells a
 */
 /// @{
 /*!
-returns an iterator over the cells intersected by the line segment `st`.
+returns the iterator that allows to visit the cells intersected by the line segment `st`.
 
-If there is no such cell, the iterator visits exactly one infinite cell.
+The starting point of the iterator is an arbitrary cell incident to `s`.
+
+The iterator remains valid until the first cell incident to `t` is passed.
 
 \pre `s` and `t` must be different points and neither can be the infinite vertex.
 \pre The triangulation must mave dimension at least 2.
 */
-Segment_walk_iterator segment_walk(Vertex_handle s, Vertex_handle t) const;
+Segment_walk_iterator segment_walk_begin(Vertex_handle s, Vertex_handle t) const;
 
 /*!
-returns an iterator over the cells intersected by the line segment `st`.
+returns the past-the-end iterator over the cells intersected by the line segment `st`.
 
-If there is no such cell, the iterator visits exactly one infinite cell.
+This iterator cannot be dereferenced. It indicates when `segment_walk_begin` has
+passed the target.
 
-\pre `s` and `t` must be different points and `s` cannot be the infinite vertex.
-\pre The triangulation must mave dimension at least 2. If the dimension is 2, `t` must lie in the affine hull.
+\pre `s` and `t` must be different points and neither can be the infinite vertex.
+\pre The triangulation must mave dimension at least 2.
 */
-Segment_walk_iterator segment_walk(Vertex_handle s, const Point& t) const;
+Segment_walk_iterator segment_walk_end(Vertex_handle s, Vertex_handle t) const;
 
 /*!
-returns an iterator over the cells intersected by the line segment `st`.
+returns the iterator that allows to visit the cells intersected by the line segment `st`.
 
 If there is no such cell, the iterator visits exactly one infinite cell.
+
+The starting point of the iterator is a cell containing `s`.
+
+The iterator remains valid until the first cell containing `t` is passed.
+
+The `hint` is used to locate `s`.
 
 \pre `s` and `t` must be different points.
 \pre The triangulation must mave dimension at least 2. If the dimension is 2, both `s` and `t` must lie in the affine hull.
 */
-Segment_walk_iterator segment_walk(const Point& s, const Point& t, Cell_handle hint = Cell_handle()) const;
+Segment_walk_iterator segment_walk_begin(const Point& s, const Point& t, Cell_handle hint = Cell_handle()) const;
 
 /*!
-returns an iterator over the cells intersected by the line segment `seg`.
+returns the past-the-end iterator over the cells intersected by the line segment `st`.
 
-If there is no such cell, the iterator visits exactly one infinite cell.
+This iterator cannot be dereferenced. It indicates when `segment_walk_begin` has
+passed the target.
 
-\pre `seg` cannot be degenerate, i.e. it cannot have the same source and target.
-\pre The triangulation must mave dimension at least 2. If the dimension is 2, `seg` must lie completely in the affine hull.
+\pre `s` and `t` must be different points and neither can be the infinite vertex.
+\pre The triangulation must mave dimension at least 2.
 */
-Segment_walk_iterator segment_walk(const Segment& seg,  Cell_handle hint = Cell_handle()) const;
-
+Segment_walk_iterator segment_walk_end(const Point& s, const Point& t, Cell_handle hint = Cell_handle()) const;
 /// @}
 
 /*!\name Cell and Facet Circulators 

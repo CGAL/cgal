@@ -6,9 +6,6 @@
 /// \defgroup PkgTriangulation3TriangulationClasses Triangulation Classes
 /// \ingroup PkgTriangulation3
 
-/// \defgroup PkgTriangulation3UtilityClasses Utility Classes
-/// \ingroup PkgTriangulation3
-
 /// \defgroup PkgTriangulation3TraitsClasses Traits Classes
 /// \ingroup PkgTriangulation3
 
@@ -100,12 +97,6 @@ is opposite to the vertex with the same index. See
 - `CGAL::Regular_triangulation_cell_base_3<RegularTriangulationTraits_3,Cb>`
 - `CGAL::Regular_triangulation_cell_base_with_weighted_circumcenter_3<RegularTriangulationTraits_3,Cb>`
 - `CGAL::Triangulation_simplex_3<Triangulation_3>`
-
-\cgalModifBegin
-### Utility Classes ###
-
-- `CGAL::Triangulation_segment_traverser_3<Triangulation_3>`
-\cgalModifEnd
 
 ### Traits Classes ###
 

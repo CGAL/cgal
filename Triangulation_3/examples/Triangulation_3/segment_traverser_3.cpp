@@ -14,7 +14,7 @@ typedef CGAL::Delaunay_triangulation_3< Kernel >                DT;
 
 typedef DT::Cell_handle                                         Cell_handle;
 
-typedef CGAL::Triangulation_segment_traverser_3< DT >           Traverser;
+typedef CGAL::Triangulation_segment_cell_iterator_3< DT >       Traverser;
 
 void main() {
 	std::vector< Point_3 > points;
@@ -35,12 +35,11 @@ void main() {
 
     // Count the number of finite cells traversed.
 	unsigned int inf = 0, fin = 0;
-    while( st.has_next() ) {
+    for( ; st != st.end(); ++st ) {
         if( dt.is_infinite(st) )
             ++inf;
         else
             ++fin;
-        ++st;
     }
 
     std::cout << "While traversing from " << st.source() << " to " << st.target() << std::endl;
