@@ -1326,10 +1326,6 @@ private:
       vv = sp.target();
     } else {
       // here, not all segments have a common point
-
-      const bool have_common_pq = is_psrc_q or is_ptrg_q;
-      const bool have_common_rp = is_psrc_r or is_ptrg_r;
-
       const bool is_p_hor = is_site_horizontal(sp);
       const bool is_q_hor = is_site_horizontal(sq);
       const bool is_r_hor = is_site_horizontal(sr);
@@ -1341,6 +1337,9 @@ private:
       if (is_p_hv and is_q_hv and is_r_hv) {
         return compute_vv_sss_hv(sp, sq, sr, is_p_hor, is_q_hor, is_r_hor);
       }
+
+      const bool have_common_pq = is_psrc_q or is_ptrg_q;
+      const bool have_common_rp = is_psrc_r or is_ptrg_r;
 
 #ifndef CGAL_NO_ASSERTIONS
       const bool is_qsrc_r = is_endpoint_of(sq.source_site(), sr);
