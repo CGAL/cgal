@@ -36,4 +36,17 @@ bool read_polygon_with_holes (const char *filename, CGAL::Polygon_with_holes_2<K
   return true;
 }
 
+template <class Kernel>
+bool write_polygon_with_holes (const char *filename, CGAL::Polygon_with_holes_2<Kernel>& pgn)
+{
+  std::cout << filename << std::endl;
+  std::ofstream ofile(filename);
+  if (ofile.is_open()) {
+      ofile << pgn;
+  } else {
+      exit(1);
+  }
+  return true;
+}
+
 #endif

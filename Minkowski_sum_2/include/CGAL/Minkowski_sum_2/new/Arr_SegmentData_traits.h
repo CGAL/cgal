@@ -51,7 +51,6 @@ public:
     typedef typename Base::Compare_y_at_x_2 Compare_y_at_x_2;
     typedef typename Base::Compare_x_2 Compare_x_2;
     typedef typename Base::Compare_endpoints_xy_2 Compare_endpoints_xy_2;
-    typedef typename Base::Compare_y_at_x_right_2 Compare_y_at_x_right_2;
 
     typedef typename Base::Has_left_category Has_left_category;
     typedef Tag_false Has_merge_category;
@@ -492,10 +491,6 @@ public:
 
     Compare_endpoints_xy_2 compare_endpoints_xy_2_object() const {
         return (Compare_endpoints_xy_2(((Base *)this)->compare_endpoints_xy_2_object()));
-    }
-
-    Compare_y_at_x_right_2 compare_y_at_x_right_2_object() const {
-        return (Compare_y_at_x_right_2(((Base *)this)->compare_y_at_x_right_2_object()));
     }
 };
 

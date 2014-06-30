@@ -1,3 +1,4 @@
+compare ./data/star_50_1.txt ./data/star_50_2.txt
 compare ./data/rooms_part1.dat ./data/rooms_part2.dat
 compare ./data/comb_part1.dat ./data/comb_part2.dat
 compare ./data/knife_part1.dat ./data/knife_part2.dat

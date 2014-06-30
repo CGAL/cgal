@@ -19,6 +19,7 @@
 #include <CGAL/Timer.h>
 #include "read_polygon.h"
 #include <cstring>
+#include <libgen.h>
 
 #include <list>
 
@@ -198,7 +199,9 @@ int main (int argc, char **argv)
       std::cout << "ERROR (different result)." << std::endl;
       return 1;
     }
-    
+
+    write_polygon_with_holes((std::string("./results/") + basename(argv[i+1]) + "-and-" + basename(argv[i+2]) + ".dat").c_str(), sum_conv_new);
+
     if (verify)
     {
       i += 4;
