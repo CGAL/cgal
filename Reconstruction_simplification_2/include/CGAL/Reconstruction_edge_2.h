@@ -20,8 +20,6 @@
 #ifndef RECONSTRUCTION_EDGE_2_H_
 #define RECONSTRUCTION_EDGE_2_H_
 
-#include <CGAL/Dynamic_priority_queue.h>
-
 template <class FT, class Edge, class Vertex_handle, class Face_handle>
 class Reconstruction_edge_2
 {
@@ -132,22 +130,6 @@ protected:
         int index = m_edge.second;
         m_source = m_edge.first->vertex( (index+1)%3 );
         m_target = m_edge.first->vertex( (index+2)%3 );
-    }
-};
-
-
-
-template <class T>
-class Dynamic_priority_queue_edges : public Dynamic_priority_queue<T> {
-public:
-	Dynamic_priority_queue_edges() { }
-
-    ~Dynamic_priority_queue_edges() { }
-
-    // a < b
-    bool compare(const T& a, const T& b) const
-    {
-        return (a.priority() < b.priority());
     }
 };
 

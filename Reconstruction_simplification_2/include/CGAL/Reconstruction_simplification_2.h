@@ -29,6 +29,7 @@
 
 #include <CGAL/property_map.h>
 
+
 #include <iterator>
 #include <iostream>
 #include <list>
@@ -87,13 +88,13 @@ public:
 	typedef typename Triangulation::SQueue SQueue;
 
 	typedef typename Triangulation::Reconstruction_edge_2 Reconstruction_edge_2;
-	typedef typename Triangulation::PQueue PQueue;
+	typedef typename Triangulation::MultiIndex MultiIndex;
 
 
 
 protected:
 	Triangulation m_dt;
-	PQueue m_pqueue;
+	MultiIndex m_mindex;
 	int m_ignore;
 	int m_verbose;
 	int m_mchoice;  // # Edges
@@ -121,6 +122,7 @@ public:
 									InputIterator beyond_itr,
 									PointPMap in_point_pmap,
 									MassPMap  in_mass_pmap) {
+
 
 		start  = start_itr;
 		beyond = beyond_itr;
@@ -205,29 +207,29 @@ public:
 	    std::cout <<  "---------extracted_solid_eges------------" << std::endl;
 
 
-		PQueue queue;
+		MultiIndex mindex;
 		    for (Finite_edges_iterator ei = m_dt.finite_edges_begin();
 		    		ei != m_dt.finite_edges_end(); ++ei)
 		    {
 		        Edge edge = *ei;
 		        if (m_dt.is_ghost(edge)) continue;
 		        FT value = m_dt.get_edge_relevance(edge); // >= 0
-		        queue.push(Reconstruction_edge_2(edge, value));
+		        mindex.insert(Reconstruction_edge_2(edge, value));
 		    }
 
 		    //TODO: IV find nicer way to handle m_ignore
-		    int nb_remove = (std::min)(m_ignore, int(queue.size()));
+		    int nb_remove = (std::min)(m_ignore, int(mindex.size()));
 
 		    for (int i = 0; i < nb_remove; ++i)
 		    {
-		        Reconstruction_edge_2 pedge = queue.top();
-		        queue.pop();
+		    	Reconstruction_edge_2 pedge = *(mindex.template get<1>()).begin();
+				(mindex.template get<0>()).erase(pedge);
 		    }
 
-		    while (!queue.empty())
+		    while (!mindex.empty())
 		    {
-		        Reconstruction_edge_2 pedge = queue.top();
-		        queue.pop();
+		    	Reconstruction_edge_2 pedge = *(mindex.template get<1>()).begin();
+				(mindex.template get<0>()).erase(pedge);
 
 		        int i = (pedge.edge()).second;
 				Face_handle face = (pedge.edge()).first;
@@ -246,29 +248,30 @@ public:
 	    std::cout <<  "---------extracted_solid_eges------------" << std::endl;
 
 
-		PQueue queue;
+	    MultiIndex mindex;
+
 		    for (Finite_edges_iterator ei = m_dt.finite_edges_begin();
 		    		ei != m_dt.finite_edges_end(); ++ei)
 		    {
 		        Edge edge = *ei;
 		        if (m_dt.is_ghost(edge)) continue;
 		        FT value = m_dt.get_edge_relevance(edge); // >= 0
-		        queue.push(Reconstruction_edge_2(edge, value));
+		        mindex.insert(Reconstruction_edge_2(edge, value));
 		    }
 
 		    //TODO: IV find nicer way to handle m_ignore
-		    int nb_remove = (std::min)(m_ignore, int(queue.size()));
+		    int nb_remove = (std::min)(m_ignore, int(mindex.size()));
 
 		    for (int i = 0; i < nb_remove; ++i)
 		    {
-		        Reconstruction_edge_2 pedge = queue.top();
-		        queue.pop();
+		    	Reconstruction_edge_2 pedge = *(mindex.template get<1>()).begin();
+				(mindex.template get<0>()).erase(pedge);
 		    }
 
-		    while (!queue.empty())
+		    while (!mindex.empty())
 		    {
-		        Reconstruction_edge_2 pedge = queue.top();
-		        queue.pop();
+		    	Reconstruction_edge_2 pedge = *(mindex.template get<1>()).begin();
+				(mindex.template get<0>()).erase(pedge);
 
 		        solid_edges.push_back(pedge);
 
@@ -327,7 +330,7 @@ public:
 
 	void clear() {
 		m_dt.clear();
-		m_pqueue.clean();
+		m_mindex.clear();
 	}
 
 	double time_duration(const double init) {
@@ -722,7 +725,7 @@ public:
 			ok = pick_edge_from_pqueue(best_pedge);
 			return ok;
 		}
-		m_pqueue.clean();
+		m_mindex.clear();
 
 		if (nb == ne) {
 			ok = pick_edge_brute_force(best_pedge);
@@ -734,58 +737,61 @@ public:
 	}
 
 	bool pick_edge_from_pqueue(Reconstruction_edge_2& best_pedge) {
-		if (m_pqueue.empty())
+		if (m_mindex.empty())
 			populate_pqueue();
-		if (m_pqueue.empty())
+		if (m_mindex.empty())
 			return false;
-		best_pedge = m_pqueue.top();
-		m_pqueue.pop();
+		best_pedge = *(m_mindex.template get<1>()).begin();
+		(m_mindex.template get<0>()).erase(best_pedge);
 		return true;
 	}
 
 	bool pick_edge_brute_force(Reconstruction_edge_2& best_pedge) {
-		PQueue pqueue;
+		MultiIndex mindex;
 		Finite_edges_iterator ei;
 		for (ei = m_dt.finite_edges_begin(); ei != m_dt.finite_edges_end();
 				++ei) {
 			Edge edge = *ei;
-			push_to_pqueue(edge, pqueue);
+			push_to_mindex(edge, mindex);
+
 
 			edge = m_dt.twin_edge(edge);
-			push_to_pqueue(edge, pqueue);
+			push_to_mindex(edge, mindex);
 		}
-		if (pqueue.empty())
+		if (mindex.empty())
 			return false;
-		best_pedge = pqueue.top();
+		best_pedge = *(mindex.template get<1>()).begin();
 		return true;
 	}
 
 	bool pick_edge_randomly(int nb, Reconstruction_edge_2& best_pedge) {
-		PQueue pqueue;
+		MultiIndex mindex;
 		for (int i = 0; i < nb; ++i) {
 			Reconstruction_edge_2 pedge;
 			if (random_pedge(pedge))
-				pqueue.push(pedge);
+				mindex.insert(pedge);
 		}
-		if (pqueue.empty())
+		if (mindex.empty())
 			return false;
-		best_pedge = pqueue.top();
+		best_pedge = *(mindex.template get<1>()).begin();
 		return true;
 	}
 
+	//TODO: IV Rename
 	void populate_pqueue() {
 		Finite_edges_iterator ei;
 		for (ei = m_dt.finite_edges_begin(); ei != m_dt.finite_edges_end();
 				++ei) {
 			Edge edge = *ei;
-			push_to_pqueue(edge, m_pqueue);
+			push_to_mindex(edge, m_mindex);
 
 			edge = m_dt.twin_edge(edge);
-			push_to_pqueue(edge, m_pqueue);
+			push_to_mindex(edge, m_mindex);
 		}
 	}
 
-	bool push_to_pqueue(const Edge& edge, PQueue& pqueue) {
+
+	bool push_to_mindex(const Edge& edge, MultiIndex& mindex) {
 		if (m_dt.is_pinned(edge))
 			return false;
 		if (m_dt.is_target_cyclic(edge))
@@ -795,9 +801,11 @@ public:
 		bool ok = create_pedge(edge, pedge);
 		if (!ok)
 			return false;
-		pqueue.push(pedge);
+		mindex.insert(pedge);
 		return true;
 	}
+
+
 
 	bool random_pedge(Reconstruction_edge_2& pedge) {
 		for (unsigned i = 0; i < 10; ++i) {
@@ -815,7 +823,7 @@ public:
 
 	template<class Iterator> // value_type = Edge
 	void remove_stencil_from_pqueue(Iterator begin, Iterator end) {
-		if (m_pqueue.empty())
+		if (m_mindex.empty())
 			return;
 
 		Edge_list edges;
@@ -824,7 +832,7 @@ public:
 		typename Edge_list::const_iterator ei;
 		for (ei = edges.begin(); ei != edges.end(); ++ei) {
 			Edge edge = *ei;
-			m_pqueue.remove(Reconstruction_edge_2(edge));
+			(m_mindex.template get<0>()).erase(Reconstruction_edge_2(edge));
 		}
 	}
 
@@ -836,7 +844,7 @@ public:
 		typename Edge_list::const_iterator ei;
 		for (ei = edges.begin(); ei != edges.end(); ++ei) {
 			Edge edge = *ei;
-			push_to_pqueue(edge, m_pqueue);
+			push_to_mindex(edge, m_mindex);
 		}
 	}
 
@@ -1104,7 +1112,7 @@ public:
 		double timer = clock();
 		std::cerr << yellow << "relocate all" << white << "...";
 
-		m_pqueue.clean(); // pqueue must be recomputed
+		m_mindex.clear(); // pqueue must be recomputed
 
 		for (Finite_vertices_iterator v = m_dt.finite_vertices_begin();
 				v != m_dt.finite_vertices_end(); ++v) {

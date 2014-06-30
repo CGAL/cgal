@@ -73,7 +73,6 @@ public:
 	typedef R_s_2::SQueue SQueue;
 
 	typedef R_s_2::Reconstruction_edge_2 PEdge;
-	typedef R_s_2::PQueue PQueue;
 
 private:
 	// data

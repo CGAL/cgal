@@ -19,10 +19,9 @@ if ( CGAL_FOUND )
 
   include_directories (BEFORE "../../include")
 
-    include_directories (BEFORE "include")
+  include_directories (BEFORE "include")
 
-  #create_single_source_cgal_program( "test_basic.cpp" )
-create_single_source_cgal_program( "test_priority_queue.cpp" )
+  create_single_source_cgal_program( "test_basic.cpp" )
 
 else()
   

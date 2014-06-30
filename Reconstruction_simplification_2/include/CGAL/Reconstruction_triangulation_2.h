@@ -34,12 +34,20 @@
 #include <CGAL/Delaunay_triangulation_2.h>
 
 // local
-#include <CGAL/Dynamic_priority_queue.h>
 #include <CGAL/Sample.h>
 #include <CGAL/Reconstruction_edge_2.h>
 #include <CGAL/Cost.h>
 #include <CGAL/Reconstruction_vertex_base_2.h>
 #include <CGAL/Reconstruction_face_base_2.h>
+
+
+// boost
+#include <boost/multi_index/mem_fun.hpp>
+#include <boost/multi_index_container.hpp>
+#include <boost/multi_index/ordered_index.hpp>
+#include <boost/multi_index/identity.hpp>
+#include <boost/multi_index/member.hpp>
+
 
 #define EPS   1e-15
 
@@ -113,10 +121,21 @@ public:
 
 	typedef Reconstruction_edge_2<FT, Edge, Vertex_handle, Face_handle>
 	Reconstruction_edge_2;
-	typedef Dynamic_priority_queue_edges<Reconstruction_edge_2> PQueue;
+
+	 typedef boost::multi_index_container<
+		  Reconstruction_edge_2,
+		  boost::multi_index::indexed_by<
+		  // sort by Reconstruction_edge_2::operator<
+		  boost::multi_index::ordered_unique< boost::multi_index::identity<
+		  	  Reconstruction_edge_2 > > ,
+		  	// sort by Reconstruction_edge_2::priority()
+		  boost::multi_index::ordered_non_unique<
+		  	  boost::multi_index::const_mem_fun<
+		  	  	  Reconstruction_edge_2,const FT,&Reconstruction_edge_2::priority> >
+	  	  >
+	  > MultiIndex;
 
 	double m_factor; // ghost vs solid
-
 
 
 public:
@@ -952,29 +971,32 @@ public:
 	}
 	//--------
 
-	template <class Iterator> // value_type = Edge
-		    bool make_collapsible(Edge& edge, Iterator begin, Iterator end, int verbose = 0)
-		    {
+		template <class Iterator> // value_type = Edge
+		bool make_collapsible(Edge& edge, Iterator begin, Iterator end, int verbose = 0)
+		{
 		        Vertex_handle source = source_vertex(edge);
 		        Vertex_handle target = target_vertex(edge);
 
-		        PQueue pqueue;
+		        MultiIndex multi_ind;
 		        for (Iterator it = begin; it != end; ++it)
 		        {
 		            Edge ab = twin_edge(*it);
 		            Vertex_handle a = source_vertex(ab);
 		            Vertex_handle b = target_vertex(ab);
 		            FT D = signed_distance_from_intersection(a, b, target, source);
-		            if (D < 0.0) pqueue.push(Reconstruction_edge_2(ab, D));
+		            if (D < 0.0) {
+		            	multi_ind.insert(Reconstruction_edge_2(ab, D));
+		            }
 		        }
 
+
 		        int nb_flips = 0;
-		        while (!pqueue.empty())
+		        while (!multi_ind.empty())
 		        {
-		            Reconstruction_edge_2 pedge = pqueue.top();
-		            FT Dbc = pedge.priority();
+		        	Reconstruction_edge_2 pedge = *(multi_ind.template get<1>()).begin();
+					FT Dbc = pedge.priority();
 		            Edge bc = pedge.edge();
-		            pqueue.pop();
+		            (multi_ind.template get<0>()).erase(pedge);
 
 		            Edge sb = prev_edge(bc);
 		            Edge ab = prev_edge(twin_edge(sb));
@@ -1023,15 +1045,20 @@ public:
 
 		            if (Dac > Dbd)
 		            {
-		                pqueue.remove(Reconstruction_edge_2(ab));
+		                (multi_ind.template get<0>()).erase(Reconstruction_edge_2(ab));
+
 		                Edge ac = flip(sb, edge, verbose);
-		                if (Dac < 0.0) pqueue.push(Reconstruction_edge_2(ac, Dac));
+		                if (Dac < 0.0) {
+		                	multi_ind.insert(Reconstruction_edge_2(ac, Dac));
+		                }
 		            }
 		            else
 		            {
-		                pqueue.remove(Reconstruction_edge_2(cd));
+		                (multi_ind.template get<0>()).erase(Reconstruction_edge_2(cd));
 		                Edge bd = flip(sc, edge, verbose);
-		                if (Dbd < 0.0) pqueue.push(Reconstruction_edge_2(bd, Dbd));
+		                if (Dbd < 0.0) {
+		                	multi_ind.insert(Reconstruction_edge_2(bd, Dbd));
+		                }
 		            }
 		            nb_flips++;
 		        }

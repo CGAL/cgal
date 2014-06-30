@@ -332,7 +332,8 @@ void R_s_k_2::draw_one_cost(const Edge& edge,
 
 void R_s_k_2::draw_relevance(const float line_width, const int nb, const bool incolors)
 {
-    PQueue queue;
+    MultiIndex mindex;
+
     FT min_value = std::numeric_limits<FT>::max();
     FT max_value = std::numeric_limits<FT>::lowest();
     unsigned nb_initial = 0;
@@ -345,26 +346,28 @@ void R_s_k_2::draw_relevance(const float line_width, const int nb, const bool in
         nb_initial++;
         min_value = std::min(min_value, value);
         max_value = std::max(max_value, value);
-        queue.push(PEdge(edge, value));
+        mindex.insert(PEdge(edge, value));
+
     }
     if (min_value == max_value) max_value += 1.0;
     
     ::glLineWidth(line_width);
-    int nb_remove = std::min(nb, int(queue.size()));
+    int nb_remove = std::min(nb, int(mindex.size()));
 
     ::glColor3d(0.5, 0.1, 0.1);
     for (int i = 0; i < nb_remove; ++i) 
     {
-        PEdge pedge = queue.top();
-        queue.pop();
+
+        PEdge pedge = *(mindex.get<1>()).begin();
+        (mindex.get<0>()).erase(pedge);
         if (incolors) draw_edge(pedge.edge());
     }
     
     ::glColor3d(0.0, 0.5, 0.0);
-    while (!queue.empty())
+    while (!mindex.empty())
     {
-        PEdge pedge = queue.top();
-        queue.pop();        
+        PEdge pedge = *(mindex.get<1>()).begin();
+        (mindex.get<0>()).erase(pedge);
         if (incolors) 
         {
             FT value = pedge.priority();
@@ -909,26 +912,27 @@ void R_s_k_2::draw_vertex_edges(Vertex_handle vertex,
 
 void R_s_k_2::save_edges(std::ofstream& ofs, const int nb)
 {
-    PQueue queue;
+    MultiIndex mindex;
     for (Finite_edges_iterator ei = m_dt.finite_edges_begin(); ei != m_dt.finite_edges_end(); ++ei)
     {
         Edge edge = *ei;
         if (m_dt.is_ghost(edge)) continue;
         FT value = m_dt.get_edge_relevance(edge); // >= 0
-        queue.push(PEdge(edge, value));
+        mindex.insert(PEdge(edge, value));
     }
 
-    int nb_remove = std::min(nb, int(queue.size()));
+    int nb_remove = std::min(nb, int(mindex.size()));
     for (int i = 0; i < nb_remove; ++i) 
     {
-        PEdge pedge = queue.top();
-        queue.pop();
+    	PEdge pedge = *(mindex.get<1>()).begin();
+    	(mindex.get<0>()).erase(pedge);
+
     }
     
-    while (!queue.empty())
+    while (!mindex.empty())
     {
-        PEdge pedge = queue.top();
-        queue.pop();        
+    	PEdge pedge = *(mindex.get<1>()).begin();
+    	(mindex.get<0>()).erase(pedge);
         save_one_edge(ofs, pedge.edge());
     }
 }
