@@ -37,12 +37,12 @@ public:
     typedef CGAL::Labeled_image_mesh_domain_3<Image, K> Mesh_domain;
     
 #ifdef CGAL_CONCURRENT_MESH_3
-    typedef CGAL::Mesh_triangulation_3<
+    typedef typename CGAL::Mesh_triangulation_3<
       Mesh_domain,
       CGAL::Kernel_traits<Mesh_domain>::Kernel,
       CGAL::Parallel_tag>::type Tr;
 #else
-    typedef CGAL::Mesh_triangulation_3<Mesh_domain>::type Tr;
+    typedef typename CGAL::Mesh_triangulation_3<Mesh_domain>::type Tr;
 #endif
     typedef CGAL::Mesh_complex_3_in_triangulation_3<Tr> C3t3;
     

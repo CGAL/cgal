@@ -339,7 +339,7 @@ void test(const Cont &)
   {
   Cont c11;
   Vect v11(1000000);
-  std::vector<Cont::iterator> iterators(v11.size());
+  std::vector<typename Cont::iterator> iterators(v11.size());
   tbb::parallel_for(
     tbb::blocked_range<size_t>( 0, v11.size() ),
     Insert_in_CCC_functor<Vect, Cont>(v11, c11, iterators)
@@ -367,7 +367,7 @@ void test(const Cont &)
     
   tbb::atomic<unsigned int> num_erasures; 
   num_erasures = 0;
-  std::vector<Cont::iterator> iterators(v12.size());
+  std::vector<typename Cont::iterator> iterators(v12.size());
   tbb::parallel_for(
     tbb::blocked_range<size_t>( 0, v12.size() ),
     Insert_and_erase_in_CCC_functor<Vect, Cont>(
