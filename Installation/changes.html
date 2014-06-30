@@ -112,6 +112,11 @@ and <code>src/</code> directories).
 <h2 id="release4.5">Release 4.5 </h2>
 <div>
   <p>Release date: September 2014 </p>
+  <h3>Mesh_3</h3>
+  <ul>
+    <li> Added a parallel version of the 3D mesh refinement and mesh optimization methods.
+    </li>
+  </ul>
   <h3>Snap_rounding_2</h3>
   <ul>
     <li> Replaced use of private <code>kd_tree</code> with CGAL's official <code>Kd_tree</code> from <code>Spatial_searching</code> package;
@@ -128,8 +133,14 @@ and <code>src/</code> directories).
   <ul>
     <li> Added Compact_container::operator[], allowing a direct access to the ith element of a compact container.
     </li>
+    <li> Added Concurrent_compact_container, a compact container which allows concurrent insertion and removal.
+    </li>
   </ul>
-
+  <h3>Triangulation_3</h3>
+  <ul>
+    <li> Added a parallel version of the Delaunay triangulation and the Regular triangulation algorithms, which allows parallel insertion and removal of point ranges.
+    </li>
+  </ul>
   <h3>Vanilla package (fake package, to be removed by the RM)</h3>
   <ul>
     <li> Blablabla
