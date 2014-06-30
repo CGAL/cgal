@@ -15,5 +15,5 @@ COMPILERS_localhost="i686_Linux-2.6_g++-3.4.6_CentOS-5.1-O2 i686_Linux-2.6_g++-4
 USE_REFERENCE_PLATFORMS=yes
 
 # TAUCS
-CGAL_TAUCS_DIR=$HOME/CGAL/taucs_full
-export CGAL_TAUCS_DIR
+#CGAL_TAUCS_DIR=$HOME/CGAL/taucs_full
+#export CGAL_TAUCS_DIR
