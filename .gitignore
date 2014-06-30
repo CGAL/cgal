@@ -757,7 +757,6 @@ Ridges_3/examples/Ridges_3/Compute_Ridges_Umbilics
 Ridges_3/examples/Ridges_3/Makefile
 Ridges_3/test/Ridges_3/Makefile
 Ridges_3/test/Ridges_3/ridge_test
-STL_Extension/test/STL_Extension/CMakeLists.txt
 STL_Extension/test/STL_Extension/cgal_test_with_cmake
 STL_Extension/test/STL_Extension/test_Cache
 STL_Extension/test/STL_Extension/test_Compact_container
