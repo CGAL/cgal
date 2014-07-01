@@ -143,7 +143,7 @@ struct One_point_from_face_descriptor_property_map{
   //classical typedefs
   typedef typename boost::graph_traits<FaceGraph>::face_descriptor key_type;
   typedef typename boost::property_traits< VertexPointPMap >::value_type value_type;
-  typedef const value_type& reference;
+  typedef typename boost::property_traits< VertexPointPMap >::reference reference;
   typedef boost::lvalue_property_map_tag category;
 
   //get function for property map
