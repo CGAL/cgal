@@ -49,6 +49,6 @@ public:
    * if `::CGAL_ARR_POINT_LOCATION_VERSION` == 2, which is the default, otherwise
    * `CGAL::Object`.
    */
-  typedef Hidden_type Type;
+  typedef unspecified_type Type;
 }; /* end Arr_point_location_result */
 } /* end namespace CGAL */

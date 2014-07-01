@@ -24,14 +24,13 @@
 #ifndef CGAL_REGULAR_TRIANGULATION_CELL_BASE_WITH_CIRCUMCENTER_3_H
 #define CGAL_REGULAR_TRIANGULATION_CELL_BASE_WITH_CIRCUMCENTER_3_H
 
-
 #include <CGAL/basic.h>
 #include <CGAL/triangulation_assertions.h>
 #include <CGAL/Triangulation_cell_base_3.h>
 
 namespace CGAL {
 
-template < typename GT, typename Cb = Triangulation_cell_base_3<GT> >
+template < typename GT, typename Cb = Regular_triangulation_cell_base_3<GT> >
 class Regular_triangulation_cell_base_with_weighted_circumcenter_3
   : public Cb
 {
@@ -78,8 +77,8 @@ public:
   operator=
     (const Regular_triangulation_cell_base_with_weighted_circumcenter_3 &c)
   {
-      RT_cell_base_with_weighted_circumcenter_3 tmp=c;
-      std::swap(tmp, *this);
+      Regular_triangulation_cell_base_with_weighted_circumcenter_3 tmp=c;
+      tmp.swap(*this);
       return *this;
   }
 
@@ -134,6 +133,12 @@ public:
       }
 
       return *weighted_circumcenter_;
+  }
+
+  void swap (Regular_triangulation_cell_base_with_weighted_circumcenter_3& other) throw()
+  {
+    std::swap(static_cast<Cb&>(*this), static_cast<Cb&>(other));
+    std::swap(weighted_circumcenter_, other.weighted_circumcenter_);
   }
 };
 

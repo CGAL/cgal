@@ -492,12 +492,12 @@ int & i);
 
 /*!
 `true` if the line segment from `va` to `vb` includes 
-an edge `e` incident to `va`. If `true`, `vb` becomes 
+an edge `e` incident to `va`. If `true`, `vbr` becomes
 the other vertex of `e`, `e` is the edge `(fr,i)` where 
 `fr` is a handle to the face incident to `e` and 
 on the right side `e` oriented from `va` to `vb`. 
 */ 
-bool includes_edge(Vertex_handle va, Vertex_handle & vb, 
+bool includes_edge(Vertex_handle va, Vertex_handle vb, Vertex_handle & vbr,
 Face_handle& fr, int & i); 
 
 /*!
