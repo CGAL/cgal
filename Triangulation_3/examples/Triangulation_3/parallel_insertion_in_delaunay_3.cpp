@@ -20,7 +20,7 @@ int main()
 
   typedef Triangulation::Point          Point;
   
-  const int NUM_INSERTED_POINTS = 100000;
+  const int NUM_INSERTED_POINTS = 5000;
 
   CGAL::Random_points_in_cube_3<Point> rnd(1.);
 

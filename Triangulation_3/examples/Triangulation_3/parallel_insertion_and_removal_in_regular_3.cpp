@@ -27,7 +27,7 @@ int main()
   typedef CGAL::Regular_triangulation_3<Traits, Tds>          Rt;
   typedef Rt::Vertex_handle                                   Vertex_handle;
 
-  const int NUM_INSERTED_POINTS = 100000;
+  const int NUM_INSERTED_POINTS = 5000;
 
   CGAL::Random_points_in_cube_3<Point> rnd(1.);
 
