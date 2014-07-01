@@ -640,7 +640,7 @@ public:
       previous_level.refine(visitor.previous_level());
       if(! no_longer_element_to_refine() )
       {
-        process_one_element(visitor);
+        this->process_one_element(visitor);
       }
     }
   }
@@ -670,7 +670,7 @@ public:
       previous_level.one_step(visitor.previous_level());
     else if( ! no_longer_element_to_refine() )
     {
-      process_one_element(visitor);
+      this->process_one_element(visitor);
     }
     return ! is_algorithm_done();
   }
@@ -856,7 +856,7 @@ public:
       previous_level.refine(visitor.previous_level());
       if(! no_longer_element_to_refine() )
       {
-        process_one_element(visitor);
+        this->process_one_element(visitor);
       }
     }
   }
