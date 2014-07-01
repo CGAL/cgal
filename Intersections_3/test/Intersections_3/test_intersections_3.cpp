@@ -486,8 +486,8 @@ struct Test {
     Bbox unit_bbox(-1., -1., -1.
                    ,1.,  1.,  1.);
     const Polyhedron unit_bbox_poly = create_bbox_mesh<Polyhedron>(unit_bbox);
-    const Tree tree(unit_bbox_poly.facets_begin(),
-                    unit_bbox_poly.facets_end(),
+    const Tree tree(faces(unit_bbox_poly).first,
+                    faces(unit_bbox_poly).second,
                     unit_bbox_poly);
 
     const Tr tr(P(-3. ,  0. ,   0.),
