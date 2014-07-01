@@ -421,7 +421,7 @@ void Scene::build_edge_tree()
     CGAL::Timer timer;
     timer.start();
     std::cout << "Construct Edge AABB tree...";
-    m_edge_tree.rebuild(boost::edges(*m_pPolyhedron).first,boost::edges(*m_pPolyhedron).second,*m_pPolyhedron);
+    m_edge_tree.rebuild(edges(*m_pPolyhedron).first,edges(*m_pPolyhedron).second,*m_pPolyhedron);
     m_edge_tree.accelerate_distance_queries();
     std::cout << "done (" << timer.time() << " s)" << std::endl;
 }
