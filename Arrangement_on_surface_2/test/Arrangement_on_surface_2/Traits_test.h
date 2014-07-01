@@ -35,7 +35,8 @@ private:
   // some polycurve functors needs Segment and x-monotone segment to be defined which are normally 
   // not found in other geom_traits. 
   #if TEST_GEOM_TRAITS == POLYCURVE_CONIC_GEOM_TRAITS || \
-      TEST_GEOM_TRAITS == POLYCURVE_CIRCULAR_ARC_GEOM_TRAITS
+      TEST_GEOM_TRAITS == POLYCURVE_CIRCULAR_ARC_GEOM_TRAITS || \
+      TEST_GEOM_TRAITS == POLYCURVE_BEZIER_GEOM_TRAITS
 
   typedef typename Traits::Segment_2                    Segment_2;
   typedef typename Traits::X_monotone_segment_2         X_monotone_segment_2;
@@ -250,7 +251,8 @@ private:
   // some polycurve functors needs Segment and x-monotone segment to be defined which are normally 
   // not found in other geom_traits. 
   #if TEST_GEOM_TRAITS == POLYCURVE_CONIC_GEOM_TRAITS || \
-      TEST_GEOM_TRAITS == POLYCURVE_CIRCULAR_ARC_GEOM_TRAITS
+      TEST_GEOM_TRAITS == POLYCURVE_CIRCULAR_ARC_GEOM_TRAITS || \
+      TEST_GEOM_TRAITS == POLYCURVE_BEZIER_GEOM_TRAITS
   bool push_back_wrapper (std::istringstream& str_stream);
   bool push_front_wrapper (std::istringstream& str_stream);
   bool compare_x_polycurve_wrapper (std::istringstream& str_stream);
@@ -341,7 +343,8 @@ Traits_test<Geom_traits_T>::Traits_test(const Geom_traits_T& traits) : Base(trai
   // some polycurve functors needs Segment and x-monotone segment to be defined which are normally 
  // not found in other geom_traits. 
 #if TEST_GEOM_TRAITS == POLYCURVE_CONIC_GEOM_TRAITS || \
-      TEST_GEOM_TRAITS == POLYCURVE_CIRCULAR_ARC_GEOM_TRAITS
+      TEST_GEOM_TRAITS == POLYCURVE_CIRCULAR_ARC_GEOM_TRAITS || \
+      TEST_GEOM_TRAITS == POLYCURVE_BEZIER_GEOM_TRAITS
   m_wrappers[std::string("push_back")] =
     &Traits_test<Traits>::push_back_wrapper; 
   m_wrappers[std::string("push_front")] =
@@ -369,7 +372,8 @@ Traits_test<Geom_traits_T>::~Traits_test() {}
  // some polycurve functors needs Segment and x-monotone segment to be defined which are normally 
  // not found in other geom_traits. 
 #if TEST_GEOM_TRAITS == POLYCURVE_CONIC_GEOM_TRAITS || \
-      TEST_GEOM_TRAITS == POLYCURVE_CIRCULAR_ARC_GEOM_TRAITS
+    TEST_GEOM_TRAITS == POLYCURVE_CIRCULAR_ARC_GEOM_TRAITS || \
+    TEST_GEOM_TRAITS == POLYCURVE_BEZIER_GEOM_TRAITS
 
 /*
  * Test Push_back 

@@ -688,6 +688,8 @@ template <>
 template <typename stream>
 bool IO_base_test<Base_geom_traits>::read_segment(stream& is, Segment_2& seg)
 {
+  char type;
+  is >> type;
 
   Bezier_tratis bezier_traits;
   std::vector<Control_point_2> point_vector;
@@ -713,6 +715,9 @@ template <typename stream>
 bool IO_base_test<Base_geom_traits>::read_xsegment(stream& is,
                                                  X_monotone_segment_2& xseg)                               //read x-segment
 {
+  char type;
+  is >> type;
+
   Bezier_tratis bezier_traits;
   std::vector<Control_point_2> point_vector;
 
@@ -723,9 +728,9 @@ bool IO_base_test<Base_geom_traits>::read_xsegment(stream& is,
 
   for (unsigned int j=0; j<num_control_points; ++j)
   {
-  int point_x, point_y;
-  is >> point_x >> point_y;
-  point_vector.push_back( Control_point_2(point_x, point_y) );
+    int point_x, point_y;
+    is >> point_x >> point_y;
+    point_vector.push_back( Control_point_2(point_x, point_y) );
   } 
   //get the non x-monotone bezier segment
   Segment_2 seg (point_vector.begin(), point_vector.end());
@@ -811,7 +816,7 @@ bool IO_base_test<Base_geom_traits>::read_curve(stream& is, Curve_2& cv)
   unsigned int number_of_segments;
   is >> number_of_segments;
 
-  if ((type == 's') || (type == 'S')) 
+  if ((type == 'c') || (type == 'C')) 
   {
     for(unsigned int i=0; i<number_of_segments; i++)
     {
