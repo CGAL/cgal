@@ -650,27 +650,7 @@ bool IO_base_test<Base_geom_traits>::read_xsegment(stream& is,
 
 
   return true;
-} 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+}
 
 #elif TEST_GEOM_TRAITS == POLYCURVE_BEZIER_GEOM_TRAITS
 
@@ -678,7 +658,29 @@ template <>
 template <typename stream>
 bool IO_base_test<Base_geom_traits>::read_point(stream& is, Point_2& p)
 {
+  char type;
+  is >> type;
 
+  //Read bezier segment
+  Segment_2 seg;
+  if( !read_segment(is, seg) )
+    return false;
+  
+  Point_2 point;
+  if(type == 'r')
+  {
+    Rational rat_t;
+    is >> rat_t;
+    point = Point_2(seg, rat_t);
+  }
+  else if (type == 'a')
+  {
+    Algebraic alg_t;
+    is >> alg_t;
+    point = Point_2(seg, alg_t);
+  }
+
+  p = point;
   return true;
 }
 
@@ -687,6 +689,22 @@ template <typename stream>
 bool IO_base_test<Base_geom_traits>::read_segment(stream& is, Segment_2& seg)
 {
 
+  Bezier_tratis bezier_traits;
+  std::vector<Control_point_2> point_vector;
+
+  unsigned int num_control_points;
+  is >> num_control_points;
+
+  point_vector.clear();
+
+  for (unsigned int j=0; j<num_control_points; ++j)
+  {
+    int point_x, point_y;
+    is >> point_x >> point_y;
+    point_vector.push_back( Control_point_2(point_x, point_y) );
+  } 
+  //get the non x-monotone bezier segment
+  seg = Segment_2( point_vector.begin(), point_vector.end() );
   return true;
 }
 
@@ -695,6 +713,29 @@ template <typename stream>
 bool IO_base_test<Base_geom_traits>::read_xsegment(stream& is,
                                                  X_monotone_segment_2& xseg)                               //read x-segment
 {
+  Bezier_tratis bezier_traits;
+  std::vector<Control_point_2> point_vector;
+
+  unsigned int num_control_points;
+  is >> num_control_points;
+
+  point_vector.clear();
+
+  for (unsigned int j=0; j<num_control_points; ++j)
+  {
+  int point_x, point_y;
+  is >> point_x >> point_y;
+  point_vector.push_back( Control_point_2(point_x, point_y) );
+  } 
+  //get the non x-monotone bezier segment
+  Segment_2 seg (point_vector.begin(), point_vector.end());
+
+  //convert it into x-monotone bezier segment.
+  std::vector<CGAL::Object> obj_vector;
+  bezier_traits.make_x_monotone_2_object()( seg, std::back_inserter(obj_vector));
+  X_monotone_segment_2 x_segment = CGAL::object_cast<X_monotone_segment_2>( (obj_vector[0]) );
+
+  xseg = x_segment;
 
   return true;
 } 
@@ -803,21 +844,6 @@ bool IO_base_test<Base_geom_traits>::read_curve(stream& is, Curve_2& cv)
   cv = m_geom_traits.construct_curve_2_object()(segments.begin(), segments.end());
   return true;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 // Circle segment
 #elif TEST_GEOM_TRAITS == CIRCLE_SEGMENT_GEOM_TRAITS

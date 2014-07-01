@@ -256,8 +256,8 @@ bool IO_test<Geom_traits_T>::read_points(const char* filename,
   }
 
   std::string line;
-  while (skip_comments(p_stream, line)) {
-    //std::cout << "\n ***" << line << std::endl;
+  while (skip_comments(p_stream, line)) 
+  {
     std::istringstream line_stream(line);
     typename Geom_traits::Point_2 p;
     this->read_point(line_stream, p);
