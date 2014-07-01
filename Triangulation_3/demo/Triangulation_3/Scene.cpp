@@ -42,6 +42,7 @@ void Scene::generatePoints(int num)
 
   Lock_ds locking_ds(CGAL::Bbox_3(-1.,-1.,-1.,1,1,1), 50);
   m_dt.set_lock_data_structure(&locking_ds);
+#endif
 
   m_dt.insert( pts.begin(), pts.end() );
   /* Check the combinatorial validity of the triangulation */
