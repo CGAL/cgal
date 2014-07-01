@@ -29,7 +29,7 @@
 #include <CGAL/IO/File_tetgen.h>
 #include <CGAL/IO/File_binary_mesh_3.h>
 
-template <typename K>
+template <typename K, typename Concurrency_tag = CGAL::Sequential_tag>
 struct Polyhedron_with_features_tester : public Tester<K>
 {
   void operator()() const
@@ -37,14 +37,10 @@ struct Polyhedron_with_features_tester : public Tester<K>
     typedef CGAL::Mesh_3::Robust_intersection_traits_3<K> Gt;
     typedef CGAL::Polyhedral_mesh_domain_with_features_3<Gt> Mesh_domain;
     
-#ifdef CGAL_CONCURRENT_MESH_3
     typedef typename CGAL::Mesh_triangulation_3<
       Mesh_domain,
       CGAL::Kernel_traits<Mesh_domain>::Kernel,
-      CGAL::Parallel_tag>::type Tr;
-#else
-    typedef typename CGAL::Mesh_triangulation_3<Mesh_domain>::type Tr;
-#endif
+      Concurrency_tag>::type Tr;
     typedef CGAL::Mesh_complex_3_in_triangulation_3 <
       Tr,
       typename Mesh_domain::Corner_index,
@@ -97,6 +93,12 @@ int main()
   Polyhedron_with_features_tester<K_e_i> test_epic;
   std::cerr << "Mesh generation from a polyhedron with edges:\n";
   test_epic();
+  
+#ifdef CGAL_LINKED_WITH_TBB
+  Polyhedron_with_features_tester<K_e_i, CGAL::Parallel_tag> test_epic_p;
+  std::cerr << "Parallel mesh generation from a polyhedron with edges:\n";
+  test_epic_p();
+#endif
 
   return EXIT_SUCCESS;
 }

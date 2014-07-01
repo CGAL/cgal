@@ -8,14 +8,7 @@ typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef CGAL::Polyhedral_mesh_domain_with_features_3<K> Mesh_domain;
 
 // Triangulation
-#ifdef CGAL_CONCURRENT_MESH_3
-  typedef CGAL::Mesh_triangulation_3<
-    Mesh_domain,
-    CGAL::Kernel_traits<Mesh_domain>::Kernel,
-    CGAL::Parallel_tag>::type Tr;
-#else
-  typedef CGAL::Mesh_triangulation_3<Mesh_domain>::type Tr;
-#endif
+typedef CGAL::Mesh_triangulation_3<Mesh_domain>::type Tr;
 // Criteria
 typedef CGAL::Mesh_criteria_3<Tr> Mc;
 typedef CGAL::Mesh_constant_domain_field_3<Tr::Geom_traits,

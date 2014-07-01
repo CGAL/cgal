@@ -27,7 +27,7 @@
 #include <CGAL/Labeled_image_mesh_domain_3.h>
 #include <CGAL/use.h>
 
-template <typename K>
+template <typename K, typename Concurrency_tag = CGAL::Sequential_tag>
 struct Image_tester : public Tester<K>
 {
 public:
@@ -36,14 +36,10 @@ public:
     typedef CGAL::Image_3 Image;
     typedef CGAL::Labeled_image_mesh_domain_3<Image, K> Mesh_domain;
     
-#ifdef CGAL_CONCURRENT_MESH_3
     typedef typename CGAL::Mesh_triangulation_3<
       Mesh_domain,
       CGAL::Kernel_traits<Mesh_domain>::Kernel,
-      CGAL::Parallel_tag>::type Tr;
-#else
-    typedef typename CGAL::Mesh_triangulation_3<Mesh_domain>::type Tr;
-#endif
+      Concurrency_tag>::type Tr;
     typedef CGAL::Mesh_complex_3_in_triangulation_3<Tr> C3t3;
     
     typedef CGAL::Mesh_criteria_3<Tr> Mesh_criteria;
@@ -83,6 +79,12 @@ int main()
   Image_tester<K_e_i> test_epic;
   std::cerr << "Mesh generation from a 3D image:\n";
   test_epic.image();
-  
+
+#ifdef CGAL_LINKED_WITH_TBB
+  Image_tester<K_e_i, CGAL::Parallel_tag> test_epic_p;
+  std::cerr << "Parallel mesh generation from a 3D image:\n";
+  test_epic_p.image();
+#endif
+
   return EXIT_SUCCESS;  
 }

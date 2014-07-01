@@ -25,7 +25,7 @@
 #include "test_meshing_utilities.h"
 #include <CGAL/Implicit_mesh_domain_3.h>
 
-template <typename K>
+template <typename K, typename Concurrency_tag = CGAL::Sequential_tag>
 struct Implicit_tester : public Tester<K>
 {
   typedef typename K::Point_3 Point;
@@ -43,14 +43,10 @@ struct Implicit_tester : public Tester<K>
     
     typedef CGAL::Implicit_mesh_domain_3<Function, K> Mesh_domain;
     
-#ifdef CGAL_CONCURRENT_MESH_3
     typedef typename CGAL::Mesh_triangulation_3<
       Mesh_domain,
       CGAL::Kernel_traits<Mesh_domain>::Kernel,
-      CGAL::Parallel_tag>::type Tr;
-#else
-    typedef typename CGAL::Mesh_triangulation_3<Mesh_domain>::type Tr;
-#endif
+      Concurrency_tag>::type Tr;
     typedef CGAL::Mesh_complex_3_in_triangulation_3<Tr> C3t3;
     
     typedef CGAL::Mesh_criteria_3<Tr> Mesh_criteria;
@@ -102,5 +98,10 @@ int main()
   std::cerr << "Mesh generation from an implicit function:\n";
   test_epic.implicit();
   
+#ifdef CGAL_LINKED_WITH_TBB
+  Implicit_tester<K_e_i, CGAL::Parallel_tag> test_epic_p;
+  std::cerr << "Parallel mesh generation from an implicit function:\n";
+  test_epic_p.implicit();
+#endif
   return EXIT_SUCCESS;
 }
