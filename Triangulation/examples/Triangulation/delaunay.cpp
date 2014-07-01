@@ -59,8 +59,6 @@ int main(int argc, char **argv)
     CGAL_assertion( t.is_valid() );
     v = t.insert_in_hole(*rand_it, zone.begin(), zone.end(), ftc, out);
     std::cout<<new_full_cells.size()<<" new cells"<<std::endl;
-    for (Full_cells::iterator it=new_full_cells.begin();
-      it!=new_full_cells.end(); ++it) (*it)->data() = zone.size();
   }
 
   std::cout << " done in "<<cost.time()<<" seconds." << std::endl;
