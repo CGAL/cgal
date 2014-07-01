@@ -1,10 +1,15 @@
 #ifndef CGAL_CONVEX_HULL_TRAITS_DUAL_3_H
 #define CGAL_CONVEX_HULL_TRAITS_DUAL_3_H
 
-#include <CGAL/Voronoi_covariance_3/dual_predicates.h>
-#include <CGAL/Voronoi_covariance_3/Convex_hull_traits_dual_2.h>
+#include <CGAL/dual/predicates.h>
+#include <CGAL/dual/Convex_hull_traits_dual_2.h>
 #include <CGAL/Filtered_predicate.h>
 #include <CGAL/Cartesian_converter.h>
+
+// Traits class used during the computation of the dual convex
+// hull for the intersection of halfspaces.
+
+// This traits class base on the concept ConvexHullTraits_3
 
 namespace CGAL
 {
@@ -15,7 +20,7 @@ namespace CGAL
       class Convex_hull_traits_base_dual_3
       {
         private:
-          // Origin
+          // Origin : point inside the halfspaces intersection
           typedef typename R_::Point_3 Primal_point_3;
           Primal_point_3 origin;
 
@@ -25,8 +30,10 @@ namespace CGAL
                                           Primal_point_3(0, 0, 0)) : origin(o)
           {}
 
+          // Types
           typedef R_                                     R;
           typedef Convex_hull_traits_base_dual_3<R>      Self;
+          typedef typename R::RT                         RT;
 
           // Dual
           typedef typename R::Plane_3         Point_3;
@@ -35,12 +42,13 @@ namespace CGAL
           typedef Plane_dual<R>               Triangle_3;
           typedef Vector_dual<R>              Vector_3;
 
-          // Traits for convex_hull_2
+          // Traits used by convex_hull_2
           typedef typename CGAL::Convex_hull_3::Traits_xy_dual<R> Traits_xy_3;
           typedef typename CGAL::Convex_hull_3::Traits_yz_dual<R> Traits_yz_3;
           typedef typename CGAL::Convex_hull_3::Traits_xz_dual<R> Traits_xz_3;
 
           // Construct objects
+          // Segment_3
           class Construct_segment_3 {
             public:
               Segment_3 operator ()(const Point_3& p, const Point_3& q)
@@ -49,6 +57,7 @@ namespace CGAL
               }
           };
 
+          // Triangle_3
           class Construct_triangle_3 {
             public:
               Triangle_3 operator ()(const Point_3& p,
@@ -59,6 +68,7 @@ namespace CGAL
               }
           };
 
+          // Vector_3
           class Construct_vector_3 {
             public:
                 Vector_3 operator ()(const Point_3& p,
@@ -78,8 +88,7 @@ namespace CGAL
               }
           };
 
-          typedef typename R::RT                         RT;
-
+          // Plane_3
           class Construct_plane_3 {
               public:
                   Plane_3 operator ()(const Point_3& p,
@@ -91,11 +100,11 @@ namespace CGAL
           };
 
           // Predicates
-          typedef Equal_3_dual_point<R>                         Equal_3;
-          typedef Collinear_3_dual_point<R>                     Collinear_3;
-          typedef Coplanar_3_dual_point<R>                      Coplanar_3;
-          typedef Has_on_positive_side_3_dual_point<R>          Has_on_positive_side_3;
-          typedef Less_distance_to_point_3_dual_point<R>        Less_distance_to_point_3;
+          typedef Equal_3_dual_point<R>                     Equal_3;
+          typedef Collinear_3_dual_point<R>                 Collinear_3;
+          typedef Coplanar_3_dual_point<R>                  Coplanar_3;
+          typedef Has_on_positive_side_3_dual_point<R>      Has_on_positive_side_3;
+          typedef Less_distance_to_point_3_dual_point<R>    Less_distance_to_point_3;
           typedef Less_signed_distance_to_plane_3_dual_point<R> Less_signed_distance_to_plane_3;
           typedef Orientation_3_dual_point<R> Orientation_3;
 
@@ -150,7 +159,7 @@ namespace CGAL
         : public Convex_hull_traits_base_dual_3<R_>
         {} ;
 
-    // Converter for dual planes
+    // Converter for dual planes and dual vectors
     template <class K1, class K2>
         struct Cartesian_converter_dual : public Cartesian_converter<K1, K2>
     {
@@ -194,51 +203,53 @@ namespace CGAL
                     Filtering_traits;
 
                 // Converters
-                typedef Cartesian_converter_dual<R_, typename R_::Exact_kernel_rt> Converter_exact_dual;
-                typedef Cartesian_converter_dual<R_, typename R_::Approximate_kernel> Converter_approx_dual;
+                typedef Cartesian_converter_dual<R_, typename R_::Exact_kernel_rt>
+                    Converter_exact_dual;
+                typedef Cartesian_converter_dual<R_, typename R_::Approximate_kernel>
+                    Converter_approx_dual;
 
                 // Filtered predicates
                 typedef Filtered_predicate<
                     typename Exact_traits::Equal_3,
-                             typename Filtering_traits::Equal_3,
-                             Converter_exact_dual ,
-                             Converter_approx_dual > Equal_3;
+                    typename Filtering_traits::Equal_3,
+                    Converter_exact_dual ,
+                    Converter_approx_dual > Equal_3;
 
                 typedef Filtered_predicate<
                     typename Exact_traits::Collinear_3,
-                             typename Filtering_traits::Collinear_3,
-                             Converter_exact_dual,
-                             Converter_approx_dual > Collinear_3;
+                    typename Filtering_traits::Collinear_3,
+                    Converter_exact_dual,
+                    Converter_approx_dual > Collinear_3;
 
                 typedef Filtered_predicate<
                     typename Exact_traits::Coplanar_3,
-                             typename Filtering_traits::Coplanar_3,
-                             Converter_exact_dual,
-                             Converter_approx_dual > Coplanar_3;
+                    typename Filtering_traits::Coplanar_3,
+                    Converter_exact_dual,
+                    Converter_approx_dual > Coplanar_3;
 
                 typedef Filtered_predicate<
                     typename Exact_traits::Less_distance_to_point_3,
-                             typename Filtering_traits::Less_distance_to_point_3,
-                             Converter_exact_dual,
-                             Converter_approx_dual > Less_distance_to_point_3;
+                    typename Filtering_traits::Less_distance_to_point_3,
+                    Converter_exact_dual,
+                    Converter_approx_dual > Less_distance_to_point_3;
 
                 typedef Filtered_predicate<
                     typename Exact_traits::Has_on_positive_side_3,
-                             typename Filtering_traits::Has_on_positive_side_3,
-                             Converter_exact_dual,
-                             Converter_approx_dual > Has_on_positive_side_3;
+                    typename Filtering_traits::Has_on_positive_side_3,
+                    Converter_exact_dual,
+                    Converter_approx_dual > Has_on_positive_side_3;
 
                 typedef Filtered_predicate<
                     typename Exact_traits::Less_signed_distance_to_plane_3,
-                             typename Filtering_traits::Less_signed_distance_to_plane_3,
-                             Converter_exact_dual,
-                             Converter_approx_dual > Less_signed_distance_to_plane_3;
+                    typename Filtering_traits::Less_signed_distance_to_plane_3,
+                    Converter_exact_dual,
+                    Converter_approx_dual > Less_signed_distance_to_plane_3;
 
                 typedef Filtered_predicate<
                     typename Exact_traits::Orientation_3,
-                             typename Filtering_traits::Orientation_3,
-                             Converter_exact_dual,
-                             Converter_approx_dual > Orientation_3;
+                    typename Filtering_traits::Orientation_3,
+                    Converter_exact_dual,
+                    Converter_approx_dual > Orientation_3;
 
                 Collinear_3 collinear_3_object() const
                 { return Collinear_3(origin); }
@@ -260,8 +271,8 @@ namespace CGAL
                 { return Less_signed_distance_to_plane_3(origin); }
 
                 Orientation_3
-                    orientation_3_object() const
-                    { return Orientation_3(origin); }
+                orientation_3_object() const
+                { return Orientation_3(origin); }
 
                 // Constructions are inherited
         };

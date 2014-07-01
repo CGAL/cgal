@@ -1,5 +1,5 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Voronoi_covariance_3/halfspaces_intersection.h>
+#include <CGAL/dual/halfspaces_intersection.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel         K;
 typedef K::Plane_3 Plane;
@@ -16,10 +16,9 @@ int main (void) {
 
     Polyhedron_3 P;
 
-    CGAL::Convex_hull_3::halfspaces_intersection(planes.begin(),
-                                                 planes.end(),
-                                                 P,
-                                                 K());
+    CGAL::halfspaces_intersection(planes.begin(),
+                                  planes.end(),
+                                  P);
 
     return 0;
 }

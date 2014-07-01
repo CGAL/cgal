@@ -3,7 +3,8 @@
 
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Polyhedron_incremental_builder_3.h>
-#include <CGAL/Voronoi_covariance_3/Convex_hull_traits_dual_3.h>
+#include <CGAL/dual/Convex_hull_traits_dual_3.h>
+#include <CGAL/Origin.h>
 #include <CGAL/Convex_hull_3.h>
 #include <CGAL/intersections.h>
 #include <CGAL/assertions.h>
@@ -14,6 +15,8 @@ namespace CGAL
     {
         namespace internal
         {
+            // Build the primal polyhedron associated to a dual polyhedron
+            // We also need the `origin` that is to say a point inside the primal polyhedron
             template <typename K, class Polyhedron_dual, class Polyhedron>
                 class Build_primal_polyhedron :
                     public CGAL::Modifier_base<typename Polyhedron::HalfedgeDS> {
@@ -29,8 +32,6 @@ namespace CGAL
                                                  Primal_point_3 o =
                                                  Primal_point_3(0, 0, 0)) : _dual (dual), origin(o)
                         {}
-
-                        // Compute the primal point associated to a triple of dual planes
 
                         void operator () (HDS &hds)
                         {
@@ -52,7 +53,9 @@ namespace CGAL
                             // Typedefs for intersection
                             typedef typename K::Plane_3 Plane_3;
                             typedef typename K::Line_3 Line_3;
-                            typedef boost::optional< boost::variant< Point_3, Line_3, Plane_3 > > result_inter;
+                            typedef boost::optional< boost::variant< Point_3,
+                                                                     Line_3,
+                                                                     Plane_3 > > result_inter;
 
                             B.begin_surface(_dual.size_of_facets(),
                                             _dual.size_of_vertices(),
@@ -117,23 +120,37 @@ namespace CGAL
                         }
                     };
         } // namespace internal
-
-        template <class PlaneIterator, class Polyhedron, class K>
-            void halfspaces_intersection (PlaneIterator begin, PlaneIterator end,
-                                          Polyhedron &P, const K &k, typename K::Point_3 const& origin = typename K::Point_3(0, 0, 0)) {
-                typedef Convex_hull_traits_dual_3<K> Hull_traits_dual_3;
-                typedef Polyhedron_3<Hull_traits_dual_3> Polyhedron_dual_3;
-                typedef internal::Build_primal_polyhedron<K, Polyhedron_dual_3, Polyhedron> Builder;
-
-                Hull_traits_dual_3 dual_traits(origin);
-
-                Polyhedron_dual_3 dual_convex_hull;
-                CGAL::convex_hull_3(begin, end, dual_convex_hull, dual_traits);
-                Builder build_primal(dual_convex_hull, origin);
-                P.delegate(build_primal);
-            }
-
     } // namespace Convex_hull_3
+
+        /*!
+\ingroup PkgConvexHull3Functions
+
+\brief computes the intersection of the halfspaces defined by the planes contained in the range [`begin` .. `end`). The result is stored in the polyhedron `P`.
+In order to do that, it is necessary to give the function a point inside the polyhedron named `origin` which is `CGAL::ORIGIN` by default.
+
+\attention Halfspaces are considered as lower halfspaces that is to say if the plane's equation is \f$ a\, x +b\, y +c\, z + d = 0 \f$ then the halfspace is defined by \f$ a\, x +b\, y +c\, z + d \le 0 \f$ .
+
+\pre `origin` is inside the intersection of halfspaces defined by the range [`begin` .. `end`]
+
+\tparam PlaneIterator must be an input iterator with a value type  equivalent to `Polyhedron::Traits::Plane_3`.
+\tparam Polyhedron must be a model of `ConvexHullPolyhedron_3`.
+         */
+    template <class PlaneIterator, class Polyhedron>
+        void halfspaces_intersection (PlaneIterator begin, PlaneIterator end,
+                                      Polyhedron &P,
+                                      typename Polyhedron::Traits::Point_3 const& origin = typename Polyhedron::Traits::Point_3(CGAL::ORIGIN)) {
+            typedef typename Polyhedron::Traits::Kernel K;
+            typedef Convex_hull_3::Convex_hull_traits_dual_3<K> Hull_traits_dual_3;
+            typedef Polyhedron_3<Hull_traits_dual_3> Polyhedron_dual_3;
+            typedef Convex_hull_3::internal::Build_primal_polyhedron<K, Polyhedron_dual_3, Polyhedron> Builder;
+
+            Hull_traits_dual_3 dual_traits(origin);
+
+            Polyhedron_dual_3 dual_convex_hull;
+            CGAL::convex_hull_3(begin, end, dual_convex_hull, dual_traits);
+            Builder build_primal(dual_convex_hull, origin);
+            P.delegate(build_primal);
+        }
 } // namespace CGAL
 
 #endif // CGAL_HALFSPACES_INTERSECTION_H

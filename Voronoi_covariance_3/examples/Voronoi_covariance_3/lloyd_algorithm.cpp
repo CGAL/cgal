@@ -1,5 +1,5 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Voronoi_covariance_3/halfspaces_intersection.h>
+#include <CGAL/dual/halfspaces_intersection.h>
 #include <CGAL/Delaunay_triangulation_3.h>
 #include <CGAL/Convex_hull_3.h>
 
@@ -95,10 +95,8 @@ Point compute_centroid (Polyhedron &P) {
 
     volume /= 6;
     volume = fabs(volume);
-    /* std::cout << "volume = " << volume << std::endl; */
     Vector centroid(cx, cy, cz);
     centroid = centroid / (48 * volume);
-    /* std::cout << "centroid = " << centroid << std::endl; */
 
     return (CGAL::ORIGIN + centroid);
 }
@@ -137,10 +135,9 @@ void lloyd_algorithm (PolyIterator poly_begin,
 
         // Intersection
         Polyhedron P;
-        CGAL::Convex_hull_3::halfspaces_intersection(planes.begin(),
-                                                     planes.end(),
-                                                     P,
-                                                     K());
+        CGAL::halfspaces_intersection(planes.begin(),
+                                      planes.end(),
+                                      P);
         // Centroid
         Point centroid = compute_centroid(P);
         centroids.push_back(centroid);
@@ -158,12 +155,12 @@ void lloyd_algorithm (PolyIterator poly_begin,
 int main (int argc, char *argv[]) {
     // Cube
     std::list<Plane> planes;
-    /* planes.push_back(Plane(1, 0, 0, -1)); */
-    /* planes.push_back(Plane(-1, 0, 0, -1)); */
-    /* planes.push_back(Plane(0, 1, 0, -1)); */
-    /* planes.push_back(Plane(0, -1, 0, -1)); */
-    /* planes.push_back(Plane(0, 0, 1, -1)); */
-    /* planes.push_back(Plane(0, 0, -1, -1)); */
+    planes.push_back(Plane(1, 0, 0, -1));
+    planes.push_back(Plane(-1, 0, 0, -1));
+    planes.push_back(Plane(0, 1, 0, -1));
+    planes.push_back(Plane(0, -1, 0, -1));
+    planes.push_back(Plane(0, 0, 1, -1));
+    planes.push_back(Plane(0, 0, -1, -1));
 
     std::vector<Point> points;
     int N, steps;
@@ -181,13 +178,11 @@ int main (int argc, char *argv[]) {
         steps = 10;
     }
 
-    /* CGAL::Random_points_in_cube_3<Point> g(1); */
-    CGAL::Random_points_on_sphere_3<Point> g;
+    CGAL::Random_points_in_sphere_3<Point> g;
     for (int i = 0; i < N; i++) {
         Point p = *g++;
         points.push_back(p);
-        planes.push_back(tangent_plane<K>(p));
-        std::cout << p << std::endl;
+        /* planes.push_back(tangent_plane<K>(p)); */
     }
     Polyhedron P_before, P_after;
     CGAL::convex_hull_3(points.begin(), points.end(), P_before);
@@ -210,12 +205,6 @@ int main (int argc, char *argv[]) {
 
         elapsed_time = end - start;
         std::cout << "Execution time : " << elapsed_time.count() << "s\n";
-    }
-
-    for (std::vector<Point>::iterator it = points.begin();
-         it != points.end();
-         it++) {
-        std::cout << *it << std::endl;
     }
 
     CGAL::convex_hull_3(points.begin(), points.end(), P_after);

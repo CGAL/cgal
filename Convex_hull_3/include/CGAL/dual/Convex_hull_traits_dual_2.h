@@ -1,11 +1,16 @@
 #ifndef CGAL_CONVEX_HULL_TRAITS_DUAL_2_H
 #define CGAL_CONVEX_HULL_TRAITS_DUAL_2_H
 
+// Traits classes used during the computation of the dual
+// convex hull when the dual points are coplanar
+// The traits are used by convex_hull_2
+
+// Each traits class is based on the concept ConvexHullTraits_2
+
 namespace CGAL
 {
   namespace Convex_hull_3
   {
-      // Traits classes for Convex_hull_2
       // XY
     template <class R>
         class Traits_xy_dual {

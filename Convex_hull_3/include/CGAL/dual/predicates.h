@@ -1,7 +1,15 @@
-#ifndef PREDICATS_H
-#define PREDICATS_H
+#ifndef PREDICATES_H
+#define PREDICATES_H
 
 #include <CGAL/predicates/sign_of_determinant.h>
+
+// Predicates used during the computation of the dual convex hull
+// The dual point associated to the plane which  does not contain the origin
+// and whose equation is
+// a x + b y + c z + d = 0
+// is the point (- a / d, - b / d, - c / d)
+
+// The predicates are the ones required by the ConvexHullTraits_3 concept
 
 namespace CGAL
 {
@@ -495,5 +503,5 @@ namespace CGAL
     } // namespace Convex_hull_3
 } // namespace CGAL
 
-#endif
+#endif // PREDICATES_H
 
