@@ -99,7 +99,6 @@ public:
   typedef typename Gt::Segment_3     Segment;
   typedef typename Gt::Triangle_3    Triangle;
   typedef typename Gt::Tetrahedron_3 Tetrahedron;
-  typedef typename Gt::Vector_3      Vector;
 
   // types for dual:
   typedef typename Gt::Line_3        Line;
@@ -315,7 +314,7 @@ public:
         const double radius = 1.3 * 0.5 * std::sqrt(xdelta*xdelta +
                                                     ydelta*ydelta +
                                                     zdelta*zdelta);
-        const Vector center(
+        const typename Gt::Vector_3 center(
           bbox.xmin() + 0.5*xdelta,
           bbox.ymin() + 0.5*ydelta,
           bbox.zmin() + 0.5*zdelta);
