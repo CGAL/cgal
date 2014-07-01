@@ -78,7 +78,6 @@ remains.
 using the specialization \link BGLPolyGT `boost::graph_traits< CGAL::Polyhedron_3<Traits> >` \endlink.
 
 \sa \link BGLPolyGT `boost::graph_traits< CGAL::Polyhedron_3<Traits> >` \endlink
-\sa `CGAL::halfedge_graph_traits< CGAL::Polyhedron_3<Traits> >`
 
 */
 
