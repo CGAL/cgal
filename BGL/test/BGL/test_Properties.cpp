@@ -26,7 +26,7 @@ void index_uniqueness(const G&,
     assert(r.second);
   }
 
-  assert(std::distance(begin2, end) == m.size());
+  assert(std::distance(begin2, end) == static_cast<std::ptrdiff_t>(m.size()));
 }
 
 

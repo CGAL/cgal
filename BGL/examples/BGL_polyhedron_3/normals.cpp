@@ -69,7 +69,7 @@ void calculate_face_normals(const HalfedgeGraph& g,
   }
 }
 
-int main(int argc, char** argv)
+int main(int, char** argv)
 {
   typedef boost::property_map< 
     Polyhedron,

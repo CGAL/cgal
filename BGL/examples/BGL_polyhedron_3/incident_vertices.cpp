@@ -46,7 +46,7 @@ adjacent_vertices_V2(const Polyhedron& g,
 }
 
 
-int main(int argc, char** argv)
+int main(int, char** argv)
 { 
   std::ifstream in(argv[1]);
   Polyhedron P;

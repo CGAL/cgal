@@ -58,7 +58,7 @@ void fct(const Polyhedron& p)
   std::for_each(vb,ve, Fct());
 }
 
-int main(int argc, char** argv)
+int main(int, char** argv)
 {
   Polyhedron P;  
   std::ifstream in(argv[1]);

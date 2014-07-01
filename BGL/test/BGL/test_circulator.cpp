@@ -29,7 +29,7 @@ typedef CGAL::Halfedge_around_source_circulator<Polyhedron> halfedge_around_sour
 typedef CGAL::Halfedge_around_target_iterator<Polyhedron> halfedge_around_target_iterator;
 typedef CGAL::Halfedge_around_face_iterator<Polyhedron> halfedge_around_face_iterator;
 
-int main(int argc, char* argv[])
+int main(int, char* argv[])
 {
   std::ifstream in(argv[1]);
   Polyhedron P;
