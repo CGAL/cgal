@@ -405,7 +405,7 @@ push_back_wrapper (std::istringstream& str_stream)
     Segment_2 segment = this->m_segments[segment_id];
 
     std::cout << "Test: push_back ( " 
-              << segment << "into" 
+              << segment << " into " 
               << base_curve << " ) ? ";
 
 
@@ -437,7 +437,7 @@ push_back_wrapper (std::istringstream& str_stream)
     X_monotone_segment_2 x_segment = this->m_xsegments[segment_id];
 
     std::cout << "Test: push_back ( " 
-              << x_segment << "into" 
+              << x_segment << " into " 
               << base_curve << " ) ? ";
 
     this->m_geom_traits.push_back_2_object()( base_curve, x_segment );
@@ -486,7 +486,7 @@ push_front_wrapper (std::istringstream& str_stream)
     Segment_2 segment = this->m_segments[segment_id];
 
     std::cout << "Test: push_front ( " 
-              << segment << "into" 
+              << segment << "into " 
               << base_curve << " ) ? ";
 
     this->m_geom_traits.push_front_2_object()( base_curve, segment );
