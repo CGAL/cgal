@@ -27,7 +27,6 @@
 #include <CGAL/Polyhedron_3_property_map.h>
 #include <CGAL/Default.h>
 #include <boost/mpl/has_xxx.hpp>
-#include <boost/mpl/if.hpp>
 
 namespace CGAL {
 
@@ -35,6 +34,16 @@ namespace CGAL {
 #ifndef CGAL_NO_DEPRECATED_CODE
 namespace internal_aabb_tree{
   BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(Has_facet_const_handle,Facet_const_handle,false)
+  template <class FaceGraph,
+            bool has_facet_const_handle=Has_facet_const_handle<FaceGraph>::value>
+  struct Get_facet_const_handle{
+    typedef typename FaceGraph::Facet_const_handle type;
+  };
+  
+  template <class FaceGraph>
+  struct Get_facet_const_handle<FaceGraph,false>{
+    typedef void* type;
+  };
 }
 #endif
 
@@ -148,10 +157,8 @@ public:
   {}
 
   AABB_face_graph_triangle_primitive(
-      typename boost::mpl::if_<
-        typename internal_aabb_tree::Has_facet_const_handle<FaceGraph>::type,
-        typename FaceGraph::Facet_const_handle,
-        void*>::type fd, FaceGraph& graph
+      typename internal_aabb_tree::Get_facet_const_handle<FaceGraph>::type fd,
+      FaceGraph& graph
   ) : Base( Id_(fd.remove_const()),
             Triangle_property_map(&graph),
             Point_property_map(&graph) )
