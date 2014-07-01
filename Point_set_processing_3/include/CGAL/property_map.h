@@ -27,6 +27,8 @@
   #include <boost/property_map/property_map.hpp>
 #else
   #include <boost/property_map.hpp>
+  #include <boost/vector_property_map.hpp>
+
 #endif
 #include <boost/tuple/tuple.hpp>
 
