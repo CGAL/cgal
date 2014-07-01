@@ -677,8 +677,7 @@ class Optimization_function < Domain, Exude_parameters >
   typedef C3t3::Triangulation                               Tr;
   typedef CGAL::Mesh_3::Min_dihedral_angle_criterion<Tr>    Sc;
   typedef Exude_visitor                                     Visitor;
-  typedef CGAL::Mesh_3::Slivers_exuder<
-                                C3t3,Domain,Sc,Visitor>     Exuder;
+  typedef CGAL::Mesh_3::Slivers_exuder<C3t3,Sc,Visitor>     Exuder;
   
   typedef Optimization_function_base< Domain > Base;
   
@@ -716,7 +715,7 @@ protected:
     if ( NULL != exude_ ) { return CGAL::MESH_OPTIMIZATION_UNKNOWN_ERROR; }
     
     // Create exuder
-    exude_ = new Exuder(c3t3, domain, criterion_);
+    exude_ = new Exuder(c3t3, criterion_);
     if ( NULL == exude_ ) { return CGAL::MESH_OPTIMIZATION_UNKNOWN_ERROR; }
     
     // Set time_limit

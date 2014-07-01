@@ -3393,54 +3393,54 @@ bool
 C3T3_helpers<C3T3,MD>::
 try_lock_and_get_incident_cells(const Vertex_handle& v,
                                 Cell_vector &cells) const
-{
-  // We need to lock v individually first, to be sure v->cell() is valid
-  if (!try_lock_vertex(v))
-    return false;
-
-  Cell_handle d = v->cell();
-  if (!try_lock_element(d)) // LOCK
   {
-    unlock_all_elements();
-    return false;
-  }
-  cells.push_back(d);
-  d->tds_data().mark_in_conflict();
-  int head=0;
-  int tail=1;
-  do {
-    Cell_handle c = cells[head];
+    // We need to lock v individually first, to be sure v->cell() is valid
+    if (!try_lock_vertex(v))
+      return false;
 
-    for (int i=0; i<4; ++i) {
-      if (c->vertex(i) == v)
-        continue;
-      Cell_handle next = c->neighbor(i);
-
-      if (!try_lock_element(next)) // LOCK
-      {
-        BOOST_FOREACH(Cell_handle& ch,
-          std::make_pair(cells.begin(), cells.end()))
-        {
-          ch->tds_data().clear();
-        }
-        cells.clear();
-        unlock_all_elements();
-        return false;
-      }
-      if (! next->tds_data().is_clear())
-        continue;
-      cells.push_back(next);
-      ++tail;
-      next->tds_data().mark_in_conflict();
+    Cell_handle d = v->cell();
+    if (!try_lock_element(d)) // LOCK
+    {
+      unlock_all_elements();
+      return false;
     }
-    ++head;
-  } while(head != tail);
-  BOOST_FOREACH(Cell_handle& ch, std::make_pair(cells.begin(), cells.end()))
-  {
-    ch->tds_data().clear();
+    cells.push_back(d);
+    d->tds_data().mark_in_conflict();
+    int head=0;
+    int tail=1;
+    do {
+      Cell_handle c = cells[head];
+
+      for (int i=0; i<4; ++i) {
+        if (c->vertex(i) == v)
+          continue;
+        Cell_handle next = c->neighbor(i);
+
+        if (!try_lock_element(next)) // LOCK
+        {
+          BOOST_FOREACH(Cell_handle& ch,
+            std::make_pair(cells.begin(), cells.end()))
+          {
+            ch->tds_data().clear();
+          }
+          cells.clear();
+          unlock_all_elements();
+          return false;
+        }
+        if (! next->tds_data().is_clear())
+          continue;
+        cells.push_back(next);
+        ++tail;
+        next->tds_data().mark_in_conflict();
+      }
+      ++head;
+    } while(head != tail);
+    BOOST_FOREACH(Cell_handle& ch, std::make_pair(cells.begin(), cells.end()))
+    {
+      ch->tds_data().clear();
+    }
+    return true;
   }
-  return true;
-}
 
 template <typename C3T3, typename MD>
 template <typename Filter>
