@@ -1179,24 +1179,25 @@ test_polycurve_bezier_traits()
   compile_test_with_flags test_traits bezier_polycurve "$flags"
   if [ -n "${SUCCESS}" ] ; then
    execute_commands_new_structure Polycurves_bezier test_polycurve_bezier_traits \
-    COMPARE_Y_AT_X \
+    MERGE \
     EQUAL \
     IS_VERTICAL \
-    SPLIT \
-    ARE_MERGEABLE \
-    COMPARE_Y_AT_X_LEFT \
-    COMPARE_Y_AT_X_RIGHT \
-    MAKE_X_MONOTONE \
+    NUMBER_OF_POINTS \
     PUSH_BACK \
     PUSH_FRONT \
-    COMPARE_X_POLYCURVE \
-    COMPARE_XY_POLYCURVE \
-    NUMBER_OF_POINTS \
     VERTEX \
-    CONSTRUCT_OPPOSITE \
-    MERGE \
-    COMPARE_ENDPOINTS_XY \
-    INTERSECT
+    ARE_MERGEABLE \
+    COMPARE_ENDPOINTS_XY
+    # COMPARE_Y_AT_X \
+    # SPLIT \
+    # COMPARE_Y_AT_X_LEFT \
+    # COMPARE_Y_AT_X_RIGHT \
+    # MAKE_X_MONOTONE \
+    # COMPARE_X_POLYCURVE \
+    # COMPARE_XY_POLYCURVE \
+    # CONSTRUCT_OPPOSITE \
+    
+    # INTERSECT
     
   else
    echo "   ERROR:    not executed   test_traits polyline_traits" >> $ERRORFILE
