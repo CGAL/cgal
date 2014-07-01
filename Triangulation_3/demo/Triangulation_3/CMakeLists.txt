@@ -32,9 +32,9 @@ option(ACTIVATE_CONCURRENT_TRIANGULATION_3
   "Activate parallelism in Triangulation_3"
   OFF)
   
-# And add -DCONCURRENT_TRIANGULATION_3 if that option is ON
+# And add -DCGAL_CONCURRENT_TRIANGULATION_3 if that option is ON
 if( ACTIVATE_CONCURRENT_TRIANGULATION_3 )
-  add_definitions( -DCONCURRENT_TRIANGULATION_3 )
+  add_definitions( -DCGAL_CONCURRENT_TRIANGULATION_3 )
   find_package( TBB REQUIRED )
 else( ACTIVATE_CONCURRENT_TRIANGULATION_3 )
   option( LINK_WITH_TBB

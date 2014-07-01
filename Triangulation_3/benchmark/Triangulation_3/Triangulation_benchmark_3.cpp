@@ -81,7 +81,7 @@ typedef Exact_predicates_inexact_constructions_kernel  K;
 typedef Regular_triangulation_euclidean_traits_3<K>    WK;
 typedef K::Point_3                                     Point;
 
-#ifdef CONCURRENT_TRIANGULATION_3
+#ifdef CGAL_CONCURRENT_TRIANGULATION_3
   typedef CGAL::Spatial_lock_grid_3<
     CGAL::Tag_priority_blocking>                       Lock_ds;
 
@@ -213,7 +213,7 @@ void benchmark_construction()
     do {
       ++iterations;
       Time_accumulator tt(time);
-#ifdef CONCURRENT_TRIANGULATION_3
+#ifdef CGAL_CONCURRENT_TRIANGULATION_3
       Lock_ds locking_ds(pts_bbox, 50);
       Tr tr(pts.begin(), pts.begin() + nb_pts, &locking_ds);
 #else
@@ -238,7 +238,7 @@ void benchmark_location()
   cout << "#pts\tTime" << endl;
   for (size_t nb_pts = min_pts; nb_pts <= max_pts; nb_pts *= 10)
   {
-#ifdef CONCURRENT_TRIANGULATION_3
+#ifdef CGAL_CONCURRENT_TRIANGULATION_3
     Lock_ds locking_ds(pts_bbox, 50);
     Tr tr(pts.begin(), pts.begin() + nb_pts, &locking_ds);
 #else
@@ -279,7 +279,7 @@ void benchmark_remove()
   }
 
   do {
-#ifdef CONCURRENT_TRIANGULATION_3
+#ifdef CGAL_CONCURRENT_TRIANGULATION_3
     Lock_ds locking_ds(pts_bbox, 50);
     Tr tr(pts.begin(), pts.begin() + nb_pts, &locking_ds);
 #else
@@ -344,7 +344,7 @@ int main(int argc, char **argv)
   do_benchmarks<DT3>("Delaunay  [Compact_location]");
   if (input_file_selected)
     return 0;
-#ifndef CONCURRENT_TRIANGULATION_3
+#ifndef CGAL_CONCURRENT_TRIANGULATION_3
   do_benchmarks<DT3_FastLoc>("Delaunay with Fast_location");
 #endif
   do_benchmarks<RT3_WithHP>("Regular  [with hidden points kept, except there's none in the data sets]");

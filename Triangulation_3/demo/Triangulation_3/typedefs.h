@@ -85,7 +85,7 @@ private:
  *       Compact_location saves memory by avoiding the separate data structure
  *     and point location is then O(n^(1/3)) time
  */
-#ifdef CONCURRENT_TRIANGULATION_3
+#ifdef CGAL_CONCURRENT_TRIANGULATION_3
 typedef CGAL::Spatial_lock_grid_3<
   CGAL::Tag_priority_blocking>                        Lock_ds;
 typedef CGAL::Triangulation_data_structure_3< 
