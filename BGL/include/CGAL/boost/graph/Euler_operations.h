@@ -698,7 +698,38 @@ template<typename Graph>
 typename boost::graph_traits<Graph>::halfedge_descriptor
 add_vertex_and_face_to_border(typename boost::graph_traits<Graph>::halfedge_descriptor h1,
                               typename boost::graph_traits<Graph>::halfedge_descriptor h2,
-                              Graph& g){}
+                              Graph& g)
+{
+  typename boost::graph_traits<Graph>::face_descriptor v = add_vertex(g);
+  typename boost::graph_traits<Graph>::face_descriptor f = add_face(g);
+  typename boost::graph_traits<Graph>::edge_descriptor e1 = add_edge(g);
+  typename boost::graph_traits<Graph>::edge_descriptor e2 = add_edge(g);
+  typename boost::graph_traits<Graph>::halfedge_descriptor e1h= halfedge(e1, g);
+  typename boost::graph_traits<Graph>::halfedge_descriptor e2h= halfedge(e2, g);
+  typename boost::graph_traits<Graph>::halfedge_descriptor oe1h= opposite(e1h, g);
+  typename boost::graph_traits<Graph>::halfedge_descriptor oe2h= opposite(e2h, g);
+
+  set_next(e1h, next(h1,g),g);
+  set_next(h1,oe1h,g);
+  set_target(e1h,target(h1,g),g);
+
+  set_next(eh2,eh1,g);
+  set_target(eh2,v,g);
+  set_halfedge(v,eh2,g);
+  set_next(oeh2,next(h2,g),g);
+  set_target(oeh2,target(h2,g),g);
+  set_next(h2,eh2,g);
+  internal::set_border(oe1h,g);
+
+  CGAL::Halfedge_around_face_iterator<Graph> hafib,hafie;
+  for(boost::tie(hafib, hafie) = halfedges_around_face(eh1, g);
+      hafib != hafie;
+      ++hafib){
+    set_face(*hafib, f, g);
+  }
+  set_halfedge(f, eh1, g);
+}
+
 
 /**
  * appends a new face incident to the border halfedge `h1` and `h2` by connecting the vertex `target(h2,g)` 
