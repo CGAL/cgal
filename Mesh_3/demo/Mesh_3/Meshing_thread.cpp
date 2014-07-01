@@ -22,6 +22,7 @@
 // File Description : 
 //******************************************************************************
 
+#include "config.h"
 
 #include <QTime>
 #include <QApplication>

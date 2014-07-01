@@ -35,6 +35,8 @@
 
 //experimental
 #  define CGAL_FASTER_BUILD_QUEUE 1
+//#  define CGAL_SEQUENTIAL_MESH_3_ADD_OUTSIDE_POINTS_ON_A_FAR_SPHERE
+//#  define CGAL_PARALLEL_MESH_3_DO_NOT_ADD_OUTSIDE_POINTS_ON_A_FAR_SPHERE // slower / not recommended
 
 //should not be used
 //#define CGAL_MESH_3_OLD_MINIMUM_DIHEDRAL_ANGLE 1

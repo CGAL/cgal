@@ -187,7 +187,7 @@ init_c3t3_with_features(C3T3& c3t3,
 {
   typedef typename MeshCriteria::Edge_criteria Edge_criteria;
   typedef Edge_criteria_sizing_field_wrapper<Edge_criteria> Sizing_field;
-    
+
   CGAL::Mesh_3::Protect_edges_sizing_field<C3T3,MeshDomain,Sizing_field>     
     protect_edges(c3t3, domain, Sizing_field(criteria.edge_criteria_object()));
   
@@ -402,6 +402,10 @@ void make_mesh_3_impl(C3T3& c3t3,
                       const parameters::internal::Mesh_3_options& 
                         mesh_options = parameters::internal::Mesh_3_options())
 {
+#ifdef CGAL_MESH_3_INITIAL_POINTS_NO_RANDOM_SHOOTING
+  CGAL::default_random = CGAL::Random(0);
+#endif
+
   // Initialize c3t3
   internal::Mesh_3::C3t3_initializer< 
     C3T3,

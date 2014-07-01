@@ -1,3 +1,5 @@
+#include "config.h"
+
 #include "Volume_plane_intersection.h"
 #include "Volume_plane_interface.h"
 

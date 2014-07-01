@@ -35,41 +35,46 @@
 #include <CGAL/Compact_mesh_cell_base_3.h>
 
 namespace CGAL {
-
+  
   namespace details {
-
+    
     template<typename K>
     struct Mesh_geom_traits_generator
     {
     private:
       typedef Robust_weighted_circumcenter_filtered_traits_3<K>
         Geom_traits;
-
+      
     public:
       typedef Geom_traits type;
       typedef type Type;
     };  // end struct Mesh_geom_traits_generator
-
+    
   }  // end namespace details
-
-
+  
+  
 // Struct Mesh_triangulation_3
 //
 template<class MD,
          class K=typename Kernel_traits<MD>::Kernel,
-         class Concurrency_tag = Default,
+         class Concurrency_tag = Sequential_tag,
          class Vertex_base_ = Default,
          class Cell_base_   = Default>
+struct Mesh_triangulation_3;
+
+// Sequential version (default)
+template<class MD, class K, class Concurrency_tag,
+         class Vertex_base_, class Cell_base_>
 struct Mesh_triangulation_3
-  {
+{
 private:
   typedef typename details::Mesh_geom_traits_generator<K>::type Geom_traits;
 
   typedef typename Default::Get<
-    Vertex_base_,
+    Vertex_base_, 
     Mesh_vertex_base_3<Geom_traits, MD> >::type                 Vertex_base;
   typedef typename Default::Get<
-    Cell_base_,
+    Cell_base_, 
     Compact_mesh_cell_base_3<Geom_traits, MD> >::type           Cell_base;
 
   typedef Triangulation_data_structure_3<Vertex_base,Cell_base> Tds;
@@ -79,6 +84,33 @@ public:
   typedef Triangulation type;
   typedef type Type;
 };  // end struct Mesh_triangulation_3
+
+#ifdef CGAL_LINKED_WITH_TBB
+// Parallel version (specialization)
+//
+template<class MD, class K,
+         class Vertex_base_, class Cell_base_>
+struct Mesh_triangulation_3<MD, K, Parallel_tag, Vertex_base_, Cell_base_>
+{
+private:
+  typedef typename details::Mesh_geom_traits_generator<K>::type Geom_traits;
+
+  typedef typename Default::Get<
+    Vertex_base_, 
+    Mesh_vertex_base_3<Geom_traits, MD> >::type                 Vertex_base;
+  typedef typename Default::Get<
+    Cell_base_, 
+    Compact_mesh_cell_base_3<Geom_traits, MD> >::type           Cell_base;
+
+  typedef Triangulation_data_structure_3<
+    Vertex_base, Cell_base, Parallel_tag>                       Tds;
+  typedef Regular_triangulation_3<Geom_traits, Tds>             Triangulation;
+
+public:
+  typedef Triangulation type;
+  typedef type Type;
+};  // end struct Mesh_triangulation_3
+#endif // CGAL_LINKED_WITH_TBB
 
 }  // end namespace CGAL
 

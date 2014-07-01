@@ -146,6 +146,26 @@ MainWindow::MainWindow(QWidget* parent)
 
   readSettings(); // Among other things, the column widths are stored.
 
+  const char *windowTitle = "CGAL 3D mesh generator demo ["
+#ifdef CGAL_CONCURRENT_MESH_3
+    "Parallel"
+#else
+    "Sequential"
+# ifdef CGAL_LINKED_WITH_TBB
+    " - With TBB"
+# else
+    " - Without TBB"
+# endif
+#endif
+#ifdef _DEBUG
+    " - Debug]";
+#else
+    "]";
+#endif
+  
+  setWindowTitle(QApplication::translate(
+    "MainWindow", windowTitle, 0, QApplication::UnicodeUTF8));
+
   this->dumpObjectTree();
 }
 
@@ -482,11 +502,13 @@ void MainWindow::on_actionSaveAs_triggered()
     return;
   }
   
+  QString selectedFilter;
   QString filename = 
     QFileDialog::getSaveFileName(this,
                                  tr("Save to File..."),
                                  QString(),
-                                 filters.join(";;"));
+                                 filters.join(";;"),
+                                 &selectedFilter);
   
   QFileInfo fileinfo(filename);
   if(!fileinfo.isFile() ||
@@ -499,7 +521,7 @@ void MainWindow::on_actionSaveAs_triggered()
   {
 
     Q_FOREACH(Io_plugin_interface* plugin, canSavePlugins) {
-      if(plugin->save(item, fileinfo))
+      if(plugin->save(item, fileinfo, selectedFilter))
         break;
     }
   }

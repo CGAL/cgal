@@ -20,8 +20,9 @@ geometric traits class `TriangulationTraits_3` as the one used for
 `Triangulation_3`. This way, the point type defined by the base vertex is 
 the same as the point type defined by the geometric traits class. 
 
-\tparam TriangulationDSVertexBase_3 is a combinatorial vertex base class from which 
-`Triangulation_vertex_base_3` derives. 
+\tparam TriangulationDSVertexBase_3_ is a combinatorial vertex base class from which 
+`Triangulation_vertex_base_3` derives.
+It must be a model of the `TriangulationDSVertexBase_3` concept.
 It has the default value `Triangulation_ds_vertex_base_3<TDS>`.
 
 \cgalModels `TriangulationVertexBase_3`
@@ -31,8 +32,8 @@ It has the default value `Triangulation_ds_vertex_base_3<TDS>`.
 \sa `CGAL::Triangulation_vertex_base_with_info_3` 
 
 */
-template< typename TriangulationTraits_3, typename TriangulationDSVertexBase_3 >
-class Triangulation_vertex_base_3 : public TriangulationDSVertexBase_3 {
+template< typename TriangulationTraits_3, typename TriangulationDSVertexBase_3_ >
+class Triangulation_vertex_base_3 : public TriangulationDSVertexBase_3_ {
 public:
 
 /// \name Types 

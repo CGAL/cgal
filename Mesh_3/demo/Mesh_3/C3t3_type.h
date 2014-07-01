@@ -12,6 +12,7 @@
 #include <CGAL/Polyhedral_mesh_domain_3.h>
 #include <CGAL/Polyhedral_mesh_domain_with_features_3.h>
 #include <CGAL/Labeled_image_mesh_domain_3.h>
+#include <CGAL/tags.h>
 
 template <typename K>
 struct Wrapper
@@ -42,12 +43,18 @@ typedef CGAL::Polyhedral_mesh_domain_with_features_3<Kernel,
 
 typedef CGAL::Labeled_image_mesh_domain_3<Image,Kernel>                 Image_mesh_domain;
 typedef Wrapper<Kernel>                                                 Function_wrapper;
-typedef CGAL::Labeled_mesh_domain_3<Function_wrapper, Kernel>   Function_mesh_domain;
+typedef CGAL::Labeled_mesh_domain_3<Function_wrapper, Kernel>           Function_mesh_domain;
 
 // Triangulation
-typedef CGAL::Mesh_triangulation_3<Polyhedral_mesh_domain>::type Tr;
+#ifdef CGAL_CONCURRENT_MESH_3
+  typedef CGAL::Mesh_triangulation_3<Polyhedral_mesh_domain, 
+                                     CGAL::Kernel_traits<Polyhedral_mesh_domain>::Kernel,
+                                     CGAL::Parallel_tag>::type Tr;
+#else
+  typedef CGAL::Mesh_triangulation_3<Polyhedral_mesh_domain>::type Tr;
+#endif
+typedef CGAL::Mesh_complex_3_in_triangulation_3<Tr> C3t3;
 
 // 3D complex
-typedef CGAL::Mesh_complex_3_in_triangulation_3<Tr> C3t3;
 
 #endif // CGAL_DEMO_MESH_3_C3T3_TYPE_H
