@@ -245,7 +245,7 @@ typedef CGAL::Cartesian<Algebraic>                            							Alg_kernel;
 typedef CGAL::Arr_Bezier_curve_traits_2<Rat_kernel, Alg_kernel, Nt_traits>				Bezier_tratis;
 typedef Bezier_tratis::Bezier_cache                       		 						Bezier_cache;
 typedef Rat_kernel::Point_2 															Control_point_2;
-typedef Bezier_tratis::Point_2 															Bezier_point_2;
+typedef Bezier_tratis::Point_2 															Point_2;
 
 typedef CGAL::Arr_polyline_traits_2<Bezier_tratis>     									Base_geom_traits;
 // Poly curves needs some testing where Segments and X-monotone segments are required 
