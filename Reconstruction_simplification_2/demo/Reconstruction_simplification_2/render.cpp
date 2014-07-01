@@ -201,7 +201,7 @@ void R_s_k_2::draw_pedges(const float line_width)
     int nb_pinned = 0;
     int nb_cyclic = 0;
     int nb_discart = 0;
-    FT min_value = std::numeric_limits<FT>::max();
+    FT min_value = (std::numeric_limits<FT>::max)();
     FT max_value = std::numeric_limits<FT>::lowest();
     std::vector<FT>  values;
     std::vector<Edge> edges;
@@ -228,8 +228,8 @@ void R_s_k_2::draw_pedges(const float line_width)
             {
                 edges.push_back(edge);
                 values.push_back(pedge.priority());
-                min_value = std::min(min_value, values.back());
-                max_value = std::max(max_value, values.back());
+                min_value = (std::min)(min_value, values.back());
+                max_value = (std::max)(max_value, values.back());
             }
             else
             {
@@ -282,15 +282,15 @@ void R_s_k_2::draw_one_pedge(const Edge& edge,
 
 void R_s_k_2::draw_costs(const float line_width, const bool view_ghost)
 {
-    FT min_value = std::numeric_limits<FT>::max();
+    FT min_value = (std::numeric_limits<FT>::max)();
     FT max_value = std::numeric_limits<FT>::lowest();
     for (Finite_edges_iterator ei = m_dt.finite_edges_begin(); ei != m_dt.finite_edges_end(); ++ei)
     {
         Edge edge = *ei;
         if (m_dt.is_ghost(edge)) continue;
         FT value = m_dt.get_cost(edge).finalize(m_alpha);        
-        min_value = std::min(min_value, value);
-        max_value = std::max(max_value, value);
+        min_value = (std::min)(min_value, value);
+        max_value = (std::max)(max_value, value);
     }
     if (min_value == max_value) max_value += 1.0;
     
@@ -333,9 +333,8 @@ void R_s_k_2::draw_one_cost(const Edge& edge,
 void R_s_k_2::draw_relevance(const float line_width, const int nb, const bool incolors)
 {
     MultiIndex mindex;
-
-    FT min_value = std::numeric_limits<FT>::max();
-    FT max_value = std::numeric_limits<FT>::lowest();
+    FT min_value = (std::numeric_limits<FT>::max)();
+    FT max_value = (std::numeric_limits<FT>::lowest)();
     unsigned nb_initial = 0;
     for (Finite_edges_iterator ei = m_dt.finite_edges_begin(); ei != m_dt.finite_edges_end(); ++ei)
     {
@@ -344,15 +343,14 @@ void R_s_k_2::draw_relevance(const float line_width, const int nb, const bool in
         FT value = m_dt.get_edge_relevance(edge); // >= 0
         
         nb_initial++;
-        min_value = std::min(min_value, value);
-        max_value = std::max(max_value, value);
+        min_value = (std::min)(min_value, value);
+        max_value = (std::max)(max_value, value);
         mindex.insert(PEdge(edge, value));
-
     }
     if (min_value == max_value) max_value += 1.0;
     
     ::glLineWidth(line_width);
-    int nb_remove = std::min(nb, int(mindex.size()));
+    int nb_remove = (std::min)(nb, int(mindex.size()));
 
     ::glColor3d(0.5, 0.1, 0.1);
     for (int i = 0; i < nb_remove; ++i) 
@@ -921,7 +919,7 @@ void R_s_k_2::save_edges(std::ofstream& ofs, const int nb)
         mindex.insert(PEdge(edge, value));
     }
 
-    int nb_remove = std::min(nb, int(mindex.size()));
+    int nb_remove = (std::min)(nb, int(mindex.size()));
     for (int i = 0; i < nb_remove; ++i) 
     {
     	PEdge pedge = *(mindex.get<1>()).begin();

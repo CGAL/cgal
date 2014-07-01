@@ -35,12 +35,16 @@
 #include <list>
 #include <algorithm>
 
+#include <boost/multi_index_container.hpp>
+#include <boost/multi_index/mem_fun.hpp>
+#include <boost/multi_index/ordered_index.hpp>
+#include <boost/multi_index/identity.hpp>
+
 
 namespace CGAL {
 
 template<class Kernel, class InputIterator, class PointPMap, class MassPMap>
 class Reconstruction_simplification_2 {
-
 public:
 	typedef typename Kernel::FT FT;
 	typedef typename Kernel::Point_2 Point;
@@ -88,8 +92,8 @@ public:
 	typedef typename Triangulation::SQueue SQueue;
 
 	typedef typename Triangulation::Reconstruction_edge_2 Reconstruction_edge_2;
-	typedef typename Triangulation::MultiIndex MultiIndex;
 
+	typedef typename Triangulation::MultiIndex MultiIndex;
 
 
 protected:
@@ -316,15 +320,15 @@ public:
         for ( ; it != beyond; ++it)
         {
             p = it->point();
-            x_min = std::min(x_min, p.x());
-            x_max = std::max(x_max, p.x());
-            y_min = std::min(y_min, p.y());
-            y_max = std::max(y_max, p.y());
+            x_min = (std::min)(x_min, p.x());
+            x_max = (std::max)(x_max, p.x());
+            y_min = (std::min)(y_min, p.y());
+            y_max = (std::max)(y_max, p.y());
         }
 
         x = 0.5 * (x_min + x_max);
         y = 0.5 * (y_min + y_max);
-        scale = std::max(x_max - x_min, y_max - y_min);
+        scale = (std::max)(x_max - x_min, y_max - y_min);
         if (scale == 0.0) scale = 1.0;
     }
 
