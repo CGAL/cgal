@@ -132,6 +132,20 @@ add_face_to_border_test()
 
 }
 
+template <typename T> 
+void
+add_vertex_and_face_to_border_test()
+{
+  CGAL_GRAPH_TRAITS_MEMBERS(T);
+ 
+  Surface_fixture_5<T> f;
+
+  CGAL::Euler::add_vertex_and_face_to_border(f.h1, f.h2, f.m);
+
+  assert(CGAL::is_valid(f.m));
+
+}
+
 
 template <typename T> 
 void
@@ -348,6 +362,8 @@ void
 test_Euler_operations()
 {   
   join_face_test<Graph>();
+  add_vertex_and_face_to_border_test<Graph>();
+  add_face_to_border_test<Graph>();
   join_vertex_interior_test<Graph>();
   join_vertex_exterior_test<Graph>();
   split_vertex<Graph>();

@@ -700,34 +700,38 @@ add_vertex_and_face_to_border(typename boost::graph_traits<Graph>::halfedge_desc
                               typename boost::graph_traits<Graph>::halfedge_descriptor h2,
                               Graph& g)
 {
-  typename boost::graph_traits<Graph>::face_descriptor v = add_vertex(g);
+  typename boost::graph_traits<Graph>::vertex_descriptor v = add_vertex(g);
   typename boost::graph_traits<Graph>::face_descriptor f = add_face(g);
   typename boost::graph_traits<Graph>::edge_descriptor e1 = add_edge(g);
   typename boost::graph_traits<Graph>::edge_descriptor e2 = add_edge(g);
-  typename boost::graph_traits<Graph>::halfedge_descriptor e1h= halfedge(e1, g);
-  typename boost::graph_traits<Graph>::halfedge_descriptor e2h= halfedge(e2, g);
-  typename boost::graph_traits<Graph>::halfedge_descriptor oe1h= opposite(e1h, g);
-  typename boost::graph_traits<Graph>::halfedge_descriptor oe2h= opposite(e2h, g);
+  typename boost::graph_traits<Graph>::halfedge_descriptor he1= halfedge(e1, g);
+  typename boost::graph_traits<Graph>::halfedge_descriptor he2= halfedge(e2, g);
+  typename boost::graph_traits<Graph>::halfedge_descriptor ohe1= opposite(he1, g);
+  typename boost::graph_traits<Graph>::halfedge_descriptor ohe2= opposite(he2, g);
 
-  set_next(e1h, next(h1,g),g);
-  set_next(h1,oe1h,g);
-  set_target(e1h,target(h1,g),g);
+  set_next(he1, next(h1,g),g);
+  set_next(h1,ohe1,g);
+  set_target(he1,target(h1,g),g);
+  set_target(ohe1,v,g);
 
-  set_next(eh2,eh1,g);
-  set_target(eh2,v,g);
-  set_halfedge(v,eh2,g);
-  set_next(oeh2,next(h2,g),g);
-  set_target(oeh2,target(h2,g),g);
-  set_next(h2,eh2,g);
-  internal::set_border(oe1h,g);
+  set_next(he2,he1,g);
+  set_next(ohe1,ohe2,g);
+  set_target(he2,v,g);
+  set_halfedge(v,ohe1,g);
+  set_next(ohe2,next(h2,g),g);
+  set_target(ohe2,target(h2,g),g);
+  set_next(h2,he2,g);
+  internal::set_border(ohe1,g);
+  internal::set_border(ohe2,g);
 
   CGAL::Halfedge_around_face_iterator<Graph> hafib,hafie;
-  for(boost::tie(hafib, hafie) = halfedges_around_face(eh1, g);
+  for(boost::tie(hafib, hafie) = halfedges_around_face(he1, g);
       hafib != hafie;
       ++hafib){
     set_face(*hafib, f, g);
   }
-  set_halfedge(f, eh1, g);
+  set_halfedge(f, he1, g);
+  return ohe2;
 }
 
 
