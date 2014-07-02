@@ -27,7 +27,7 @@ else()
               )
 
   if ( NOT LEDA_INCLUDE_DIR )
-    typed_cache_set( FILEPATH "The directory containing the LEDA header files WITHOUT the LEDA prefix" LEDA_INCLUDE_DIR "$ENV{LEDA_INC_DIR}" )
+    typed_cache_set( PATH "The directory containing the LEDA header files WITHOUT the LEDA prefix" LEDA_INCLUDE_DIR "$ENV{LEDA_INC_DIR}" )
   endif()
 
   if ( NOT LEDA_DEFINITIONS )
