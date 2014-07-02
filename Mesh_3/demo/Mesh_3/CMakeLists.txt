@@ -52,14 +52,17 @@ add_definitions(-DCGAL_MESH_3_NO_DEPRECATED_SURFACE_INDEX
 
 # Add specific Find.cmake modules
 set(CMAKE_MODULE_PATH 
-  ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules 
-  ${CMAKE_CURRENT_SOURCE_DIR}/../../../Installation/cmake/modules/)
+  ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules)
 
 # Activate concurrency ? (turned OFF by default)
 option(ACTIVATE_CONCURRENT_MESH_3
   "Activate parallelism in Mesh_3"
   OFF)
   
+# Find CGAL and CGAL Qt4
+find_package(CGAL COMPONENTS Qt4 ImageIO)
+include( ${CGAL_USE_FILE} )
+
 # And add -DCGAL_CONCURRENT_MESH_3 if that option is ON
 if( ACTIVATE_CONCURRENT_MESH_3 )
   add_definitions( -DCGAL_CONCURRENT_MESH_3 )
@@ -76,10 +79,6 @@ endif()
 if( TBB_FOUND )
   include(${TBB_USE_FILE})
 endif()
-
-# Find CGAL and CGAL Qt4
-find_package(CGAL COMPONENTS Qt4 ImageIO)
-include( ${CGAL_USE_FILE} )
 
 # Find Qt4 itself
 set( QT_USE_QTXML    TRUE )
