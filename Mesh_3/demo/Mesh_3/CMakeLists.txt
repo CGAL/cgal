@@ -12,7 +12,7 @@ endif()
 # Creates a new CMake option, turned ON by default
 option(ACTIVATE_MSVC_PRECOMPILED_HEADERS
   "Activate precompiled headers in MSVC"
-  ON)
+  OFF)
 
 # Macro to add precompiled headers for MSVC
 # This function does two things:
@@ -76,11 +76,6 @@ endif()
 if( TBB_FOUND )
   include(${TBB_USE_FILE})
 endif()
-
-# Creates a new CMake option, turned ON by default
-option(ACTIVATE_MSVC_PRECOMPILED_HEADERS
-  "Activate precompiled headers in MSVC"
-  ON)
 
 # Find CGAL and CGAL Qt4
 find_package(CGAL COMPONENTS Qt4 ImageIO)

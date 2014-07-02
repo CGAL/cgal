@@ -16,7 +16,7 @@ endif()
 # Creates a new CMake option, turned ON by default
 option(ACTIVATE_MSVC_PRECOMPILED_HEADERS
   "Activate precompiled headers in MSVC"
-  ON)
+  OFF)
 
 # Macro to add precompiled headers for MSVC
 # This function does two things:
