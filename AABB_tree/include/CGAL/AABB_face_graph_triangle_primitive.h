@@ -135,18 +135,18 @@ public:
     Constructs a primitive.
   */
   template <class Iterator>
-  AABB_face_graph_triangle_primitive(Iterator it, FaceGraph& graph, VertexPointPMap vppm)
+  AABB_face_graph_triangle_primitive(Iterator it, const FaceGraph& graph, VertexPointPMap vppm)
     : Base( Id_(*it),
-            Triangle_property_map(&graph,vppm),
-            Point_property_map(&graph,vppm) )
+            Triangle_property_map(const_cast<FaceGraph*>(&graph),vppm),
+            Point_property_map(const_cast<FaceGraph*>(&graph),vppm) )
   {}
 
 #ifndef DOXYGEN_RUNNING
   template <class Iterator>
-  AABB_face_graph_triangle_primitive(Iterator it, FaceGraph& graph)
+  AABB_face_graph_triangle_primitive(Iterator it, const FaceGraph& graph)
     : Base( Id_(*it),
-            Triangle_property_map(&graph),
-            Point_property_map(&graph) )
+            Triangle_property_map(const_cast<FaceGraph*>(&graph)),
+            Point_property_map(const_cast<FaceGraph*>(&graph)) )
   {}
 #ifndef CGAL_NO_DEPRECATED_CODE
   // for backward compatibility with Polyhedron::facets_begin()
@@ -171,9 +171,9 @@ public:
   /// \internal
   static
   typename Cstr_shared_data::Shared_data
-  construct_shared_data(FaceGraph& graph)
+  construct_shared_data(const FaceGraph& graph)
   {
-    return Cstr_shared_data::construct_shared_data(graph);
+    return Cstr_shared_data::construct_shared_data(const_cast<FaceGraph&>(graph));
   }
 
 };

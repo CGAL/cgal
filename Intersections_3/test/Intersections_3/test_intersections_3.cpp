@@ -479,7 +479,7 @@ struct Test {
     std::cout << "Bbox - Triangle\n";
 
     typedef CGAL::Polyhedron_3<K> Polyhedron;
-    typedef CGAL::AABB_face_graph_triangle_primitive<const Polyhedron> Primitive;
+    typedef CGAL::AABB_face_graph_triangle_primitive<Polyhedron> Primitive;
     typedef CGAL::AABB_traits<K, Primitive> Traits;
     typedef CGAL::AABB_tree<Traits> Tree;
 
