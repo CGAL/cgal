@@ -11,17 +11,6 @@ typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef K::Point_3          Point;
 typedef CGAL::Timer Timer;
 
-// Delaunay T3
-typedef CGAL::Delaunay_triangulation_3<K> SequentialTriangulation;
-
-typedef CGAL::Triangulation_data_structure_3< 
-  CGAL::Triangulation_vertex_base_3<K>, 
-  CGAL::Triangulation_cell_base_3<K>, 
-  CGAL::Parallel_tag>                          ParallelTds;
-typedef CGAL::Delaunay_triangulation_3<K, ParallelTds> ParallelTriangulation;
-
-
-
 int main()
 {
   CGAL::Random_points_in_cube_3<Point> rnd(1.);
@@ -32,13 +21,24 @@ int main()
   for (int i = 0; i != 1000000; ++i)
     V.push_back(*rnd++);
   
+  // Sequential Delaunay T3
+  typedef CGAL::Delaunay_triangulation_3<K> SequentialTriangulation;
+
   Timer t;
   t.start();
   SequentialTriangulation S(V.begin(), V.end());
   t.stop();
   std::cerr << "Sequential construction takes " << t.time() << " sec." << std::endl;
-  t.reset();
+  
+// Parallel Delaunay T3
+#ifdef CGAL_LINKED_WITH_TBB
+  typedef CGAL::Triangulation_data_structure_3< 
+    CGAL::Triangulation_vertex_base_3<K>, 
+    CGAL::Triangulation_cell_base_3<K>, 
+    CGAL::Parallel_tag>                          ParallelTds;
+  typedef CGAL::Delaunay_triangulation_3<K, ParallelTds> ParallelTriangulation;
 
+  t.reset();
   t.start();
   // Construct the locking data-structure, using the bounding-box of the points
   ParallelTriangulation::Lock_data_structure locking_ds(
@@ -48,5 +48,7 @@ int main()
   t.stop();
   std::cerr << "Parallel construction takes " << t.time() << " sec. with "
             << tbb::task_scheduler_init::default_num_threads() << " threads" << std::endl;
+#endif
+
   return 0;
 }
