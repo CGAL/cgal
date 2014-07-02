@@ -2189,6 +2189,7 @@ private:
         update(m_outdated_cells[i]);
     }
   };
+#endif //CGAL_LINKED_WITH_TBB
 
   // -----------------------------------
   // -----------------------------------
@@ -2228,7 +2229,7 @@ private:
     }
   };
 
-
+#ifdef CGAL_LINKED_WITH_TBB
   // Same functor: special version for tbb:parallel_for
   template <typename C3T3_, typename Update_c3t3_>
   class Update_cell_for_parallel_for
@@ -2261,7 +2262,7 @@ private:
         update(m_outdated_cells[i]);
     }
   };
-#endif
+#endif //CGAL_LINKED_WITH_TBB
 
   // -----------------------------------
   // -----------------------------------
