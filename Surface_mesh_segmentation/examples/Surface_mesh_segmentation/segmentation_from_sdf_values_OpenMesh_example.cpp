@@ -18,8 +18,6 @@ typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 
 typedef OpenMesh::PolyMesh_ArrayKernelT</* MyTraits*/> Mesh;
 
-typedef boost::graph_traits<Mesh>::edge_descriptor edge_descriptor;
-typedef boost::graph_traits<Mesh>::edge_iterator edge_iterator;
 typedef boost::graph_traits<Mesh>::face_descriptor face_descriptor;
 typedef boost::graph_traits<Mesh>::face_iterator face_iterator;
 
@@ -36,11 +34,13 @@ int main(int argc, char** argv )
   Facet_double_map internal_sdf_map;
   boost::associative_property_map<Facet_double_map> sdf_property_map(internal_sdf_map);
 
+  typedef boost::property_map<Mesh, boost::vertex_point_t>::type Ppmap;
+  Ppmap ppmap(mesh);
 
   // compute SDF values
   // We can't use default parameters for number of rays, and cone angle
   // and the postprocessing
-  CGAL::sdf_values(mesh, sdf_property_map);
+  CGAL::sdf_values(mesh, sdf_property_map, 2.0 / 3.0 * CGAL_PI, 25, true, ppmap);
 
   // create a property-map for segment-ids
   typedef std::map<face_descriptor, std::size_t> Facet_int_map;
