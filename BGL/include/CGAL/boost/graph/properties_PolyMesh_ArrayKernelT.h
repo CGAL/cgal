@@ -127,6 +127,7 @@ public:
 
   inline friend reference get(const OM_point_pmap<K,P>& pm, key_type v)
   {
+    CGAL_precondition(pm.sm_!=NULL);
 #if defined(CGAL_USE_OM_POINTS)
     return pm.sm->.point(v);
 #else
@@ -137,6 +138,7 @@ public:
 
   inline friend void put(const OM_point_pmap<K,P>& pm, key_type v, const value_type& p)
   {
+    CGAL_precondition(pm.sm_!=NULL);
 #if defined(CGAL_USE_OM_POINTS)
     const_cast<OpenMesh::PolyMesh_ArrayKernelT<K>&>(*pm.sm_).set_point(v,p);
 #else
