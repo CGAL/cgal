@@ -45,7 +45,7 @@ struct Implicit_tester : public Tester<K>
     
     typedef typename CGAL::Mesh_triangulation_3<
       Mesh_domain,
-      CGAL::Kernel_traits<Mesh_domain>::Kernel,
+      typename CGAL::Kernel_traits<Mesh_domain>::Kernel,
       Concurrency_tag>::type Tr;
     typedef CGAL::Mesh_complex_3_in_triangulation_3<Tr> C3t3;
     
