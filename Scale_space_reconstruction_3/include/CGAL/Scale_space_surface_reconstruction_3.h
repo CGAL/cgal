@@ -36,7 +36,6 @@
 #include <CGAL/Scale_space_reconstruction_3/internal/check3264.h>
 #include <CGAL/Scale_space_reconstruction_3/Shape_construction_3.h>
 
-
 namespace CGAL {
 
 /// computes a triangulated surface mesh interpolating a point set.
@@ -143,24 +142,31 @@ namespace CGAL {
  *  The surface can be stored either as an unordered collection of triangles, 
  *  or as a collection of shells. A shell is a connected component of the 
  *  surface where connected facets are locally oriented towards the same side
- *  of the surface. Shells are separated by a special triple.
+ *  of the surface.
  *  
  *  \tparam GeomTraits is the geometric traits class. It must be a model of
  *  `DelaunayTriangulationTraits_3`. Generally,
  *  `Exact_predicates_inexact_constructions_kernel` is preferred.
  *  \tparam FixedScale determines whether the shape is constructed at a fixed
  *  scale. It must be a `Boolean_tag` type. The default value is `Tag_true`.
- *  \tparam Shells determines whether to collect the surface per shell. It must
+ *  \tparam OrderShells determines whether to collect the surface per shell. It must
  *  be a `Boolean_tag` type. The default value is `Tag_true`.
  */
 #ifdef DOXYGEN_RUNNING
-template < class GeomTraits, class FixedScale, class Shells >
+template < class GeomTraits, class FixedScale, class OrderShells >
 #else
-template < class GeomTraits, class FixedScale = Tag_true, class Shells = Tag_true >
+template < class Gt, class FS = Tag_true, class OS = Tag_true, class Ct = Parallel_tag >
 #endif
 class Scale_space_surface_reconstruction_3 {
+public:
+    typedef Gt                                          GeomTraits;
+    typedef FS                                          FixedScale;
+    typedef OS                                          OrderShells;
+    typedef Ct                                          Concurrency_tag;
+
+private:
     // Searching for neighbors.
-    typedef Search_traits_3< GeomTraits >               Search_traits;
+    typedef Search_traits_3< Gt >                       Search_traits;
     typedef Orthogonal_k_neighbor_search< Search_traits >
                                                         Static_search;
     typedef Orthogonal_incremental_neighbor_search< Search_traits >
@@ -170,8 +176,7 @@ class Scale_space_surface_reconstruction_3 {
     typedef CGAL::Random                                Random;
 
     // Constructing the surface.
-    typedef CGAL::Shape_construction_3< GeomTraits, FixedScale >
-                                                        Shape_construction_3;
+    typedef CGAL::Shape_construction_3< Gt, FS >        Shape_construction_3;
 
     typedef typename Shape_construction_3::Shape           Shape;
     typedef typename Shape_construction_3::Triangulation   Triangulation;
@@ -191,21 +196,19 @@ class Scale_space_surface_reconstruction_3 {
     typedef typename Shape::All_cells_iterator          All_cells_iterator;
 
     typedef typename Shape::Classification_type         Classification_type;
-
+    
 public:
 /// \name Types
 /// \{
-    typedef Shells                                      Collect_per_shell;      ///< defines whether to collect the surface per shell.
+    typedef typename Gt::FT                             FT;                     ///< defines the number field type.
 
-	typedef typename GeomTraits::FT                     FT;                     ///< defines the number field type.
-
-	typedef typename GeomTraits::Point_3                Point;                  ///< defines the point type.
-	typedef typename GeomTraits::Triangle_3             Triangle;               ///< defines the triangle type.
+	typedef typename Gt::Point_3                        Point;                  ///< defines the point type.
+	typedef typename Gt::Triangle_3                     Triangle;               ///< defines the triangle type.
 
 #ifdef DOXYGEN_RUNNING
     typedef unspecified_type                            Point_iterator;         ///< defines an iterator over the points.
     typedef const unspecified_type                      Const_point_iterator;   ///< defines a constant iterator over the points.
-#else
+#else // DOXYGEN_RUNNING
     typedef typename Search_tree::iterator              Point_iterator;
     typedef typename Search_tree::const_iterator        Const_point_iterator;
 #endif // DOXYGEN_RUNNING
@@ -219,7 +222,7 @@ public:
 #ifdef DOXYGEN_RUNNING
     typedef unspecified_type                            Triple_iterator;        ///< defines an iterator over the triples.
     typedef const unspecified_type                      Const_triple_iterator;  ///< defines a constant iterator over the triples.
-#else
+#else // DOXYGEN_RUNNING
     typedef Tripleset::iterator                         Triple_iterator;
     typedef Tripleset::const_iterator                   Const_triple_iterator;
 #endif // DOXYGEN_RUNNING
@@ -228,12 +231,16 @@ public:
 
 private:
     typedef std::vector< Triple_iterator >              TripleIterSet;
-
+    
 private:
     class Finite_point_iterator;
     class In_surface_tester;
     typedef Filter_iterator< Facet_iterator, In_surface_tester >
                                                     Surface_facets_iterator;
+
+    // Parallel processing functors.
+    class ComputeNN;
+    class AdvanceSS;
 
 private:
     Search_tree     _tree;              // To quickly search for nearest neighbors.
@@ -283,7 +290,7 @@ public:
 
 private:
     void deinit_shape() { if( _shape != 0 ) { delete _shape; _shape = 0; } }
-    
+
     void clear_tree() { _tree.clear(); }
 	void clear_surface() { _surface.clear(); deinit_shape(); }
     
@@ -312,7 +319,7 @@ private:
     void collect_facets() { 
         if( !has_neighborhood_radius() )
             estimate_neighborhood_radius();
-        collect_facets( Shells() );
+        collect_facets( OS() );
     }
 
 private:
@@ -698,6 +705,11 @@ private:
     void construct_scale_space( Triangulation& tr ) {
         insert_points( tr.finite_vertices_begin(), tr.finite_vertices_end() );
     }
+
+    // tries to perform a functor in parallel.
+    template< class F > void try_parallel( const F& func, size_t begin, size_t end, Sequential_tag ) const;
+    template< class F > void try_parallel( const F& func, size_t begin, size_t end, Parallel_tag ) const;
+    template< class F > void try_parallel( const F& func, size_t begin, size_t end ) const { try_parallel( func, begin, end, Ct() );}
     
 private:
 /// \name Shape
@@ -766,7 +778,7 @@ public:
     
     /// gives the number of shells of the surface.
     std::size_t number_of_shells() const {
-        CGAL_assertion( Shells::value == true );
+        CGAL_assertion( OS::value == true );
         return _shells.size();
     }
     

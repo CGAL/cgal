@@ -34,7 +34,7 @@ int main(void) {
     Reconstruction reconstruct( 5, 200 );
 	reconstruct.reconstruct_surface( points.begin(), points.end(), 1 );
     std::cout << "Reconstruction done:" << std::endl;
-
+    
     // Write the reconstruction.
     std::cout << "Neighborhood radius^2 = " << reconstruct.neighborhood_squared_radius() << std::endl;
     for( std::size_t shell = 0; shell < reconstruct.number_of_shells(); ++shell ) {
