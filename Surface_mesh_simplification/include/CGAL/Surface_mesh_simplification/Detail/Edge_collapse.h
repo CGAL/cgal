@@ -233,7 +233,8 @@ private:
     return mEdgeDataArray[get_edge_id(aEdge)];
   }
   
-  Point const& get_point ( vertex_descriptor const& aV ) const
+  typename boost::property_traits<VertexPointMap>::reference
+  get_point ( vertex_descriptor const& aV ) const
   {
     return get(Vertex_point_map,aV);
   }

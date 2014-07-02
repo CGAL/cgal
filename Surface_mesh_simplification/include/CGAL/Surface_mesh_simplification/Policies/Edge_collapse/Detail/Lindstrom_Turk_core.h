@@ -120,7 +120,7 @@ private :
   FT Compute_volume_cost  ( Vector const& v, Triangle_data_vector const& aTriangles ) ;
   FT Compute_shape_cost   ( Point  const& p, vertex_descriptor_vector const& aLink ) ;
 
-  Point get_point ( vertex_descriptor const& v ) const 
+  Point get_point ( vertex_descriptor const& v ) const
   {
     return convert(get(mProfile.vertex_point_map(),v));
   }

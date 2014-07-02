@@ -46,7 +46,6 @@ public:
   optional<typename Profile::Point> operator()( Profile const& aProfile ) const
   {
     typedef typename Profile::ECM                                ECM;
-    typedef typename boost::graph_traits<ECM>            GraphTraits;
     typedef typename CGAL::Halfedge_around_target_iterator<ECM>  in_edge_iterator;
 
     in_edge_iterator eb, ee ;
