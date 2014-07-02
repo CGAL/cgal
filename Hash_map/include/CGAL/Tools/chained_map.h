@@ -143,6 +143,9 @@ void chained_map<T, Allocator>::init_table(std::size_t t)
   table_size = t;
   table_size_1 = t-1;
   table = alloc.allocate(t + t/2);
+  for (std::size_t i = 0 ; i < t + t/2 ; ++i)
+    alloc.construct(table + i, chained_map_elem<T>());
+
   free = table + t;
   table_end = table + t + t/2;      
 
