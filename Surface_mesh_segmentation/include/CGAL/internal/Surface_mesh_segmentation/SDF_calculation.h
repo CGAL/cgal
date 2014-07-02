@@ -82,7 +82,7 @@ private:
   typedef typename boost::graph_traits<Polyhedron>::face_iterator face_iterator;
   typedef typename boost::graph_traits<Polyhedron>::face_descriptor   face_handle;
 
-  typedef AABB_face_graph_triangle_primitive<Polyhedron> Primitive;
+  typedef AABB_face_graph_triangle_primitive<Polyhedron, VertexPointPmap> Primitive;
   typedef AABB_traits_SDF<GeomTraits, Primitive, fast_bbox_intersection>
   AABB_traits_internal;
   typedef typename CGAL::AABB_tree<AABB_traits_internal>                 Tree;
@@ -139,8 +139,9 @@ public:
     normal_functor(traits.construct_normal_3_object()),
     translated_point_functor(traits.construct_translated_point_3_object()),
     centroid_functor(traits.construct_centroid_3_object()),
-    use_diagonal(use_diagonal) {
-    tree.insert(faces(mesh).first, faces(mesh).second, mesh);
+    use_diagonal(use_diagonal) 
+  {
+    tree.insert(faces(mesh).first, faces(mesh).second, mesh, vertex_point_map);
     tree.build();
 
     if(build_kd_tree) {
@@ -180,7 +181,7 @@ public:
       use_diagonal(false) {
     for( ; polyhedron_begin != polyhedron_end; ++polyhedron_begin) {
       tree.insert(faces(*polyhedron_begin).first,
-                  faces(*polyhedron_begin).second);
+                  faces(*polyhedron_begin).second, mesh, vertex_point_map);
     }
     tree.build();
 
