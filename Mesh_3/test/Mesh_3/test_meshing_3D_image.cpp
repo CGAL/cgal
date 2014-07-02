@@ -27,14 +27,14 @@
 #include <CGAL/Labeled_image_mesh_domain_3.h>
 #include <CGAL/use.h>
 
-template <typename K, typename Concurrency_tag = CGAL::Sequential_tag>
-struct Image_tester : public Tester<K>
+template <typename Concurrency_tag = CGAL::Sequential_tag>
+struct Image_tester : public Tester<K_e_i>
 {
 public:
   void image() const
   {
     typedef CGAL::Image_3 Image;
-    typedef CGAL::Labeled_image_mesh_domain_3<Image, K> Mesh_domain;
+    typedef CGAL::Labeled_image_mesh_domain_3<Image, K_e_i> Mesh_domain;
     
     typedef typename CGAL::Mesh_triangulation_3<
       Mesh_domain,
@@ -76,12 +76,12 @@ public:
 
 int main()
 {
-  Image_tester<K_e_i> test_epic;
+  Image_tester<> test_epic;
   std::cerr << "Mesh generation from a 3D image:\n";
   test_epic.image();
 
 #ifdef CGAL_LINKED_WITH_TBB
-  Image_tester<K_e_i, CGAL::Parallel_tag> test_epic_p;
+  Image_tester<CGAL::Parallel_tag> test_epic_p;
   std::cerr << "Parallel mesh generation from a 3D image:\n";
   test_epic_p.image();
 #endif

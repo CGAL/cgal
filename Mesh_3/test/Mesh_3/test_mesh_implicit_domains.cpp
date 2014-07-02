@@ -45,9 +45,9 @@ void test()
   typedef CGAL::Mesh_complex_3_in_triangulation_3<Tr> C3t3;
 
   // Mesh Criteria
-  typedef CGAL::Mesh_criteria_3<Tr> Mesh_criteria;
-  typedef Mesh_criteria::Facet_criteria    Facet_criteria;
-  typedef Mesh_criteria::Cell_criteria     Cell_criteria;
+  typedef CGAL::Mesh_criteria_3<Tr>      Mesh_criteria;
+  typedef typename Mesh_criteria::Facet_criteria  Facet_criteria;
+  typedef typename Mesh_criteria::Cell_criteria   Cell_criteria;
 
   // Define functions
   Function f1(&torus_function);
