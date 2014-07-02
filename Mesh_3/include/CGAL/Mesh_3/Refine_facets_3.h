@@ -51,7 +51,6 @@
 #include <CGAL/tuple.h>
 #include <boost/type_traits/is_convertible.hpp>
 #include <sstream>
-#include <boost/tuple/tuple.hpp>
 
 namespace CGAL {
 
@@ -101,7 +100,7 @@ struct Get_Is_facet_bad<Facet_criteria, true> {
   public:
     Facet_to_refine_is_not_zombie() {}
 
-    bool operator()(const boost::tuple<
+    bool operator()(const CGAL::cpp11::tuple<
       Facet, unsigned int, Facet, unsigned int> &f) const
     {
 #ifdef _DEBUG
@@ -169,11 +168,11 @@ protected:
 #if defined(CGAL_MESH_3_USE_LAZY_SORTED_REFINEMENT_QUEUE) \
  || defined(CGAL_MESH_3_USE_LAZY_UNSORTED_REFINEMENT_QUEUE)
 
-  boost::tuple<Facet, unsigned int, Facet, unsigned int>
+  CGAL::cpp11::tuple<Facet, unsigned int, Facet, unsigned int>
   from_facet_to_refinement_queue_element(const Facet &facet,
                                          const Facet &mirror) const
   {
-    return boost::make_tuple(
+    return CGAL::cpp11::make_tuple(
       facet, facet.first->erase_counter(),
       mirror, mirror.first->erase_counter());
   }
@@ -228,11 +227,11 @@ protected:
     m_last_vertex_index.local() = i;
   }
 
-  boost::tuple<Facet, unsigned int, Facet, unsigned int>
+  CGAL::cpp11::tuple<Facet, unsigned int, Facet, unsigned int>
   from_facet_to_refinement_queue_element(const Facet &facet,
                                          const Facet &mirror) const
   {
-    return boost::make_tuple(
+    return CGAL::cpp11::make_tuple(
       facet, facet.first->erase_counter(),
       mirror, mirror.first->erase_counter());
   }
@@ -280,8 +279,8 @@ template<class Tr,
           Meshes::Filtered_multimap_container
 # endif
           <
-            boost::tuple<typename Tr::Facet, unsigned int,
-                          typename Tr::Facet, unsigned int>,
+            CGAL::cpp11::tuple<typename Tr::Facet, unsigned int,
+                               typename Tr::Facet, unsigned int>,
             typename Criteria::Facet_quality,
             Facet_to_refine_is_not_zombie<typename Tr::Facet>,
             Concurrency_tag
@@ -290,8 +289,8 @@ template<class Tr,
 # ifdef CGAL_MESH_3_USE_LAZY_UNSORTED_REFINEMENT_QUEUE
           Meshes::Filtered_deque_container
           <
-            boost::tuple<typename Tr::Facet, unsigned int,
-                          typename Tr::Facet, unsigned int>,
+            CGAL::cpp11::tuple<typename Tr::Facet, unsigned int,
+                               typename Tr::Facet, unsigned int>,
             typename Criteria::Facet_quality,
             Facet_to_refine_is_not_zombie<typename Tr::Facet>,
             Concurrency_tag
@@ -299,8 +298,8 @@ template<class Tr,
 # elif defined(CGAL_MESH_3_USE_LAZY_SORTED_REFINEMENT_QUEUE)
           Meshes::Filtered_multimap_container
           <
-            boost::tuple<typename Tr::Facet, unsigned int,
-                          typename Tr::Facet, unsigned int>,
+            CGAL::cpp11::tuple<typename Tr::Facet, unsigned int,
+                               typename Tr::Facet, unsigned int>,
             typename Criteria::Facet_quality,
             Facet_to_refine_is_not_zombie<typename Tr::Facet>,
             Concurrency_tag
@@ -318,8 +317,8 @@ template<class Tr,
 # ifdef CGAL_MESH_3_USE_LAZY_UNSORTED_REFINEMENT_QUEUE
           Meshes::Filtered_deque_container
           <
-            boost::tuple<typename Tr::Facet, unsigned int,
-                          typename Tr::Facet, unsigned int>,
+            CGAL::cpp11::tuple<typename Tr::Facet, unsigned int,
+                               typename Tr::Facet, unsigned int>,
             typename Criteria::Facet_quality,
             Facet_to_refine_is_not_zombie<typename Tr::Facet>,
             Concurrency_tag
@@ -327,8 +326,8 @@ template<class Tr,
 # elif defined(CGAL_MESH_3_USE_LAZY_SORTED_REFINEMENT_QUEUE)
           Meshes::Filtered_multimap_container
           <
-            boost::tuple<typename Tr::Facet, unsigned int,
-                          typename Tr::Facet, unsigned int>,
+            CGAL::cpp11::tuple<typename Tr::Facet, unsigned int,
+                               typename Tr::Facet, unsigned int>,
             typename Criteria::Facet_quality,
             Facet_to_refine_is_not_zombie<typename Tr::Facet>,
             Concurrency_tag
@@ -635,8 +634,9 @@ private:
   typedef typename Gt::Ray_3 Ray_3;
   typedef typename Gt::Line_3 Line_3;
 
-  typedef typename boost::optional<CGAL::cpp11::tuple<Surface_patch_index, Index, Point> >
-                                                               Facet_properties;
+  typedef typename boost::optional<
+    CGAL::cpp11::tuple<Surface_patch_index, Index, Point> >
+                                                      Facet_properties;
 
 private:
   /// Get mirror facet
@@ -1641,8 +1641,8 @@ compute_facet_properties(const Facet& facet,
       if(surface)
 #endif // CGAL_MESH_3_NO_LONGER_CALLS_DO_INTERSECT_3
       fp =  Facet_properties(CGAL::cpp11::make_tuple(*surface,
-                                                     CGAL::cpp11::get<1>(intersect),
-                                                     CGAL::cpp11::get<0>(intersect)));
+                                               CGAL::cpp11::get<1>(intersect),
+                                               CGAL::cpp11::get<0>(intersect)));
       return;
     }
   }
@@ -1674,8 +1674,8 @@ compute_facet_properties(const Facet& facet,
 #endif // CGAL_MESH_3_NO_LONGER_CALLS_DO_INTERSECT_3
         {
           fp = Facet_properties(CGAL::cpp11::make_tuple(*surface,
-                                                        CGAL::cpp11::get<1>(intersect),
-                                                        CGAL::cpp11::get<0>(intersect)));
+                                              CGAL::cpp11::get<1>(intersect),
+                                              CGAL::cpp11::get<0>(intersect)));
           return;
         }
       
@@ -1705,8 +1705,8 @@ compute_facet_properties(const Facet& facet,
 
       Intersection intersect = construct_intersection(line);
       fp = Facet_properties(CGAL::cpp11::make_tuple(*surface,
-                                                    CGAL::cpp11::get<1>(intersect),
-                                                    CGAL::cpp11::get<0>(intersect)));
+                                              CGAL::cpp11::get<1>(intersect),
+                                              CGAL::cpp11::get<0>(intersect)));
       return;
     }
   }
