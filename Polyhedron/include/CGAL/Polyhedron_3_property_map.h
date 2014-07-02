@@ -38,7 +38,7 @@ struct Triangle_from_face_descriptor_property_map{
   typename boost::remove_const<FaceGraph>::type* m_graph;
   VertexPointPMap m_vppm;
 
-  Triangle_from_face_descriptor_property_map()
+  Triangle_from_face_descriptor_property_map() : m_graph(NULL)
   {}
 
   Triangle_from_face_descriptor_property_map(FaceGraph* g)
