@@ -104,10 +104,10 @@ struct Get_Is_facet_bad<Facet_criteria, true> {
       Facet, unsigned int, Facet, unsigned int> &f) const
     {
 #ifdef _DEBUG
-      int f1_current_erase_counter = boost::get<0>(f).first->erase_counter();
-      int f1_saved_erase_counter = boost::get<1>(f);
-      int f2_current_erase_counter = boost::get<2>(f).first->erase_counter();
-      int f2_saved_erase_counter = boost::get<3>(f);
+      int f1_current_erase_counter = CGAL::cpp11::get<0>(f).first->erase_counter();
+      int f1_saved_erase_counter = CGAL::cpp11::get<1>(f);
+      int f2_current_erase_counter = CGAL::cpp11::get<2>(f).first->erase_counter();
+      int f2_saved_erase_counter = CGAL::cpp11::get<3>(f);
       //f1_current_erase_counter - f1_saved_erase_counter + f2_current_erase_counter - f2_saved_erase_counter == 1
 
       /*if (f1_current_erase_counter - f1_saved_erase_counter + f2_current_erase_counter - f2_saved_erase_counter == 1)
@@ -118,7 +118,7 @@ struct Get_Is_facet_bad<Facet_criteria, true> {
 #endif
 
         std::stringstream sstr;
-        Facet facet = boost::get<0>(f);
+        Facet facet = CGAL::cpp11::get<0>(f);
         sstr << "Facet 1 { " << std::endl
         << "  - " << *facet.first->vertex((facet.second+1)%4)  << std::endl
         << "  - " << *facet.first->vertex((facet.second+2)%4)  << std::endl
@@ -126,7 +126,7 @@ struct Get_Is_facet_bad<Facet_criteria, true> {
         << "  - 4th vertex in cell: " << *facet.first->vertex(facet.second)  << std::endl
         << "}" << std::endl;
 
-        facet = boost::get<2>(f);
+        facet = CGAL::cpp11::get<2>(f);
         sstr << "Facet 2 { " << std::endl
         << "  - " << *facet.first->vertex((facet.second+1)%4)  << std::endl
         << "  - " << *facet.first->vertex((facet.second+2)%4)  << std::endl
@@ -138,8 +138,8 @@ struct Get_Is_facet_bad<Facet_criteria, true> {
         //std::cerr << s << std::endl;
       }*/
 #endif
-      return (boost::get<0>(f).first->erase_counter() == boost::get<1>(f)
-        && boost::get<2>(f).first->erase_counter() == boost::get<3>(f) );
+      return (CGAL::cpp11::get<0>(f).first->erase_counter() == CGAL::cpp11::get<1>(f)
+        && CGAL::cpp11::get<2>(f).first->erase_counter() == CGAL::cpp11::get<3>(f) );
     }
   };
 
