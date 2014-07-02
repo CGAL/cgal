@@ -401,38 +401,19 @@ advance_scale_space( unsigned int iterations ) {
     if( !has_neighborhood_radius() )
         estimate_neighborhood_radius();
 
-    // In order to reduce memory consumption, we maintain two data structures:
-    // a local tree (because openMP cannot work on global members), and
-    // a vector for the points after smoothing.
+    // To enable concurrent processing, we maintain two data structures:
+    // a search tree and a vector for the points after smoothing.
     Pointset points;
     points.assign( _tree.begin(), _tree.end() );
-    _tree.clear();
-    Search_tree tree;
 
-    // Construct a search tree of the points.
-    // Note that the tree has to be local for openMP.
     for( unsigned int iter = 0; iter < iterations; ++iter ) {
-        tree.insert( points.begin(), points.end() );
-        if( !tree.is_built() )
-            tree.build();
+        if( !_tree.is_built() )
+            _tree.build();
 
         // Collect the number of neighbors of each point.
         // This can be done concurrently.
-        CountVec neighbors( tree.size(), 0 );
-        typename Gt::Compare_squared_distance_3 compare;
-        p_size_t count = tree.size(); // openMP can only use signed variables.
-        const FT squared_radius = _squared_radius; // openMP can only use local variables.
-/*#ifdef _OPENMP
-#pragma omp parallel for shared(count,tree,points,squared_radius,neighbors) firstprivate(compare)
-#endif
-        for( p_size_t i = 0; i < count; ++i ) {
-            // Iterate over the neighbors until the first one is found that is too far.
-            Dynamic_search search( tree, points[i] );
-            for( typename Dynamic_search::iterator nit = search.begin(); nit != search.end() && compare( points[i], nit->first, squared_radius ) != LARGER; ++nit )
-                ++neighbors[i];
-        }*/
-
-        try_parallel( ComputeNN( points, tree, squared_radius, neighbors ), 0, tree.size() );
+        CountVec neighbors( _tree.size(), 0 );
+        try_parallel( ComputeNN( points, _tree, _squared_radius, neighbors ), 0, _tree.size() );
 
         // Construct a mapping from each point to its index.
         PIMap indices;
@@ -442,38 +423,12 @@ advance_scale_space( unsigned int iterations ) {
 
         // Compute the tranformed point locations.
         // This can be done concurrently.
-/*#ifdef _OPENMP
-#pragma omp parallel for shared(count,neighbors,tree,squared_radius) firstprivate(compare)
-#endif
-        for( p_size_t i = 0; i < count; ++i ) {
-            // If the neighborhood is too small, the vertex is not moved.
-            if( neighbors[i] < 4 )
-                continue;
+        try_parallel( AdvanceSS( _tree, neighbors, indices, points ), 0, _tree.size() );
 
-            // Collect the vertices within the ball and their weights.
-            Dynamic_search search( tree, points[i] );
-            WPCAP pca( neighbors[i] );
-            unsigned int column = 0;
-            for( typename Dynamic_search::iterator nit = search.begin(); nit != search.end() && column < neighbors[i]; ++nit, ++column ) {
-                pca.set_point( column, nit->first, 1.0 / neighbors[ indices[nit->first] ] );
-            }
-            CGAL_assertion( column == neighbors[i] );
-
-            // Compute the weighted least-squares planar approximation of the point set.
-            if( !pca.approximate() )
-                continue;
-
-            // The vertex is moved by projecting it onto the plane
-            // through the barycenter and orthogonal to the Eigen vector with smallest Eigen value.
-            points[i] = pca.project( points[i] );
-        }*/
-
-        try_parallel( AdvanceSS( tree, neighbors, indices, points ), 0, tree.size() );
-            
-        tree.clear();
+        // Put the new points back in the tree.
+        _tree.clear();
+        _tree.insert( points.begin(), points.end() );
     }
-    
-    _tree.insert( points.begin(), points.end() );
 }
 
 template < class Gt, class FS, class OS, class Ct >
