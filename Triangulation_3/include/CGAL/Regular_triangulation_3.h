@@ -248,7 +248,7 @@ namespace CGAL {
             bbox.zmin() + 0.5*zdelta);
           Random_points_on_sphere_3<Point> random_point(radius);
           const int NUM_PSEUDO_INFINITE_VERTICES = static_cast<int>(
-            boost::thread::hardware_concurrency() * 3.5);
+            tbb::task_scheduler_init::default_num_threads() * 3.5);
           std::vector<Point> points_on_far_sphere;
           for (int i = 0 ; i < NUM_PSEUDO_INFINITE_VERTICES ; ++i, ++random_point)
             points_on_far_sphere.push_back(*random_point + center);

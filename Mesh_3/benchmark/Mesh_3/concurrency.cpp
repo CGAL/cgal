@@ -18,7 +18,6 @@
 #include <sstream>
 #include <ctime>
 
-#include <boost/thread.hpp>
 #ifdef CGAL_USE_BOOST_PROGRAM_OPTIONS
 # include <boost/program_options.hpp>
   namespace po = boost::program_options;
@@ -950,7 +949,7 @@ int main()
 #ifdef CGAL_CONCURRENT_MESH_3
             CGAL_MESH_3_SET_PERFORMANCE_DATA(
               "Num_threads",
-              (num_threads == -1 ? boost::thread::hardware_concurrency() : num_threads));
+              (num_threads == -1 ? tbb::task_scheduler_init::default_num_threads() : num_threads));
             CGAL_MESH_3_SET_PERFORMANCE_DATA(
               "Lockgrid_size",
               Concurrent_mesher_config::get().locking_grid_num_cells_per_axis);
