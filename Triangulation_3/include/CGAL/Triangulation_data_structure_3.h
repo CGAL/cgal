@@ -1031,7 +1031,8 @@ public:
     return vertices;
 
     if (dimension() == 0) {
-      *vertices++ = v->cell()->neighbor(0)->vertex(0);
+      Vertex_handle v1 = v->cell()->neighbor(0)->vertex(0);
+      if(!f(v1)) *vertices++ = v1;
       return vertices;
     }
 
