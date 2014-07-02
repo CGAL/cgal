@@ -176,6 +176,13 @@ public:
     return Cstr_shared_data::construct_shared_data(const_cast<FaceGraph&>(graph));
   }
 
+  static
+  typename Cstr_shared_data::Shared_data
+  construct_shared_data(const FaceGraph& graph, const VertexPointPMap& vpm)
+  {
+    return Cstr_shared_data::construct_shared_data(const_cast<FaceGraph&>(graph), vpm);
+  }
+
 };
 
 }  // end namespace CGAL

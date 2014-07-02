@@ -144,6 +144,13 @@ public:
   {
     return Cstr_shared_data::construct_shared_data(const_cast<HalfedgeGraph&>(graph));
   }
+
+  static
+  typename Cstr_shared_data::Shared_data
+  construct_shared_data(const HalfedgeGraph& graph, const VertexPointPMap& vpm)
+  {
+    return Cstr_shared_data::construct_shared_data(const_cast<HalfedgeGraph&>(graph), vpm);
+  }
 };
 
 }  // end namespace CGAL
