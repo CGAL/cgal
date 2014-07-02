@@ -28,7 +28,7 @@
 #include <CGAL/Dimension.h>
 #include <Eigen/Dense>
 #include <CGAL/iterator_from_indices.h>
-#include <CGAL/marcutils.h>
+#include <CGAL/NewKernel_d/utils.h>
 #include <boost/preprocessor/repetition.hpp>
 #include <boost/preprocessor/repetition/enum.hpp>
 #include <boost/preprocessor/repetition/enum_params.hpp>

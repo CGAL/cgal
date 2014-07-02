@@ -21,7 +21,7 @@
 #define CGAL_KD_DIMENSION_BASE_h
 #include <CGAL/Dimension.h>
 #include <CGAL/assertions.h>
-#include <CGAL/marcutils.h>
+#include <CGAL/NewKernel_d/utils.h>
 namespace CGAL {
 struct Store_dimension_base {
 	//TODO: add some assertions

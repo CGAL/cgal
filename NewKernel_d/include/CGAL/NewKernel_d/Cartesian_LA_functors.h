@@ -20,7 +20,7 @@
 #ifndef CGAL_CARTESIAN_LA_FUNCTORS_H
 #define CGAL_CARTESIAN_LA_FUNCTORS_H
 
-#include <CGAL/marcutils.h>
+#include <CGAL/NewKernel_d/utils.h>
 #include <CGAL/is_iterator.h>
 #include <CGAL/argument_swaps.h>
 #include <CGAL/Kernel/Return_base_tag.h>

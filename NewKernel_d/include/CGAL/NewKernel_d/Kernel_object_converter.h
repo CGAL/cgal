@@ -19,7 +19,7 @@
 
 #ifndef CGAL_KD_KO_CONVERTER_H
 #define CGAL_KD_KO_CONVERTER_H
-#include <CGAL/marcutils.h>
+#include <CGAL/NewKernel_d/utils.h>
 #include <CGAL/NewKernel_d/functor_tags.h>
 #include <CGAL/Kernel/mpl.h> // First_if_different
 namespace CGAL {
