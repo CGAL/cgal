@@ -372,7 +372,7 @@ join_loop(typename boost::graph_traits<Graph>::halfedge_descriptor h1,
  *
  * `h1`, `h2`, and `h3` will be incident to the first new face. 
  *
- * Note that `split_loop` does not deal with properties of new vertices, halfedges, and faces.
+ * Note that `split_loop()` does not deal with properties of new vertices, halfedges, and faces.
  *
  * \image html split_loop.svg
  * 
@@ -575,7 +575,7 @@ void make_hole(typename boost::graph_traits<Graph>::halfedge_descriptor h,
  * \returns the halfedge `next(h, g)` after the
  * operation, i.e., a halfedge pointing to the new vertex. 
  *
- * Note that `add_center_vertex` does not deal with properties of new vertices, 
+ * Note that `add_center_vertex()` does not deal with properties of new vertices, 
  * halfedges, and faces. 
  *  \pre `h` is not a border halfedge.
  *
@@ -652,7 +652,6 @@ remove_center_vertex(typename boost::graph_traits<Graph>::halfedge_descriptor h,
   typedef typename boost::graph_traits<Graph>              Traits;
   typedef typename Traits::halfedge_descriptor             halfedge_descriptor;
 
-  assert(internal::is_valid(g));
   // h points to the vertex that gets removed
   halfedge_descriptor h2    = opposite(next(h, g), g);
   halfedge_descriptor hret = prev(h, g);
@@ -680,7 +679,7 @@ remove_center_vertex(typename boost::graph_traits<Graph>::halfedge_descriptor h,
  * appends a new face to the border halfedge `h2` by connecting 
  * the tip of `h2` with the tip of `h1` with two new halfedges and a new vertex 
  * and creating a new face that is incident to `h2`. 
- * Note that `add_vertex_and_face_to_border` does not deal with properties of new 
+ * Note that `add_vertex_and_face_to_border()` does not deal with properties of new 
  * vertices, halfedges, and faces.
  * 
  * \image html add_vertex_and_face_to_border.svg
