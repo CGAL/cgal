@@ -314,6 +314,8 @@ public:
         const double radius = 1.3 * 0.5 * std::sqrt(xdelta*xdelta +
                                                     ydelta*ydelta +
                                                     zdelta*zdelta);
+        // WARNING - TODO: this code has to be fixed because Vector_3 is not 
+        // required by the traits concept
         const typename Gt::Vector_3 center(
           bbox.xmin() + 0.5*xdelta,
           bbox.ymin() + 0.5*ydelta,
