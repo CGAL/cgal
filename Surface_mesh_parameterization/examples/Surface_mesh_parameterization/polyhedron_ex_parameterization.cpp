@@ -12,15 +12,6 @@
 // polyhedron_ex_parameterization -t conformal -b circle mesh.off mesh.eps
 
 //----------------------------------------------------------
-// floater parameterization
-// square border
-// TAUCS solver
-// output is a eps map
-// input file is mesh.off
-//----------------------------------------------------------
-// polyhedron_ex_parameterization -t floater -b square -s taucs mesh.off mesh.eps
-
-//----------------------------------------------------------
 // Least Squares Conformal Maps parameterization
 // two pinned vertices (automatically picked)
 // OpenNL solver
@@ -44,9 +35,6 @@
 #include <CGAL/Parameterization_mesh_feature_extractor.h>
 
 #include <CGAL/OpenNL/linear_solver.h>
-#ifdef CGAL_USE_TAUCS
-    #include <CGAL/Taucs_solver_traits.h>
-#endif
 
 #include "Polyhedron_ex.h"
 #include "Mesh_cutter.h"
@@ -326,7 +314,7 @@ int main()
             ("border,b", po::value<std::string>(&border)->default_value("circle"),
             "border shape: circle, square or 2pts (lscm only)")
             ("solver,s", po::value<std::string>(&solver)->default_value("opennl"),
-            "solver: opennl or taucs")
+            "solver: opennl")
             ("input,i", po::value<std::string>(&input)->default_value(""),
             "input mesh (OFF)")
             ("output,o", po::value<std::string>(&output)->default_value("out.eps"),
@@ -433,18 +421,6 @@ int main()
                            OpenNL::DefaultLinearSolverTraits<double>,
                            OpenNL::SymmetricLinearSolverTraits<double>
                           >(mesh_patch, type, border);
-    }
-    else if (solver == std::string("taucs"))
-    {
-#ifdef CGAL_USE_TAUCS
-        err = parameterize<Mesh_patch_polyhedron,
-                           CGAL::Taucs_solver_traits<double>,
-                           CGAL::Taucs_symmetric_solver_traits<double>
-                          >(mesh_patch, type, border);
-#else
-        std::cerr << "Error: TAUCS is not installed" << std::endl;
-        err = Parameterizer::ERROR_WRONG_PARAMETER;
-#endif
     }
     else
     {
