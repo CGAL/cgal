@@ -1282,8 +1282,8 @@ private:
         return compute_vv_sss_hv(sp, sq, sr, is_p_hor, is_q_hor, is_r_hor);
       }
 
-      RT a[3], b[3], c[3];
-      orient_lines_linf(sp, sq, sr, a, b, c);
+      Line_2 lines[3];
+      orient_lines_linf(sp, sq, sr, lines);
 
       const bool have_common_pq = is_psrc_q or is_ptrg_q;
       const bool have_common_rp = is_psrc_r or is_ptrg_r;
@@ -1375,12 +1375,9 @@ private:
       }
       CGAL_SDG_DEBUG(std::cout
           << "debug: vsqr SSS vv=" << vv << std::endl;);
-      CGAL_assertion(oriented_side_of_line(
-            Line_2(a[0],b[0],c[0]), this->point()));
-      CGAL_assertion(oriented_side_of_line(
-            Line_2(a[1],b[1],c[1]), this->point()));
-      CGAL_assertion(oriented_side_of_line(
-            Line_2(a[2],b[2],c[2]), this->point()));
+      CGAL_assertion( oriented_side_of_line(lines[0], this->point()) );
+      CGAL_assertion( oriented_side_of_line(lines[1], this->point()) );
+      CGAL_assertion( oriented_side_of_line(lines[2], this->point()) );
     }
   }
 

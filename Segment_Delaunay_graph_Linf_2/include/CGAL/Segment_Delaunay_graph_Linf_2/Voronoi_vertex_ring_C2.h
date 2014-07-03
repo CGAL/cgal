@@ -1186,16 +1186,13 @@ private:
         return compute_sss_hv(p, q, r, is_p_hor, is_q_hor, is_r_hor);
       }
 
-      RT a[3], b[3], c[3];
-      orient_lines_linf(p, q, r, a, b, c);
+      Line_2 lines[3];
+      orient_lines_linf(p, q, r, lines);
 
       compute_sss_bisectors(p, q, r);
-      CGAL_assertion(oriented_side_of_line(
-            Line_2(a[0],b[0],c[0]), this->point()));
-      CGAL_assertion(oriented_side_of_line(
-            Line_2(a[1],b[1],c[1]), this->point()));
-      CGAL_assertion(oriented_side_of_line(
-            Line_2(a[2],b[2],c[2]), this->point()));
+      CGAL_assertion( oriented_side_of_line(lines[0], this->point()) );
+      CGAL_assertion( oriented_side_of_line(lines[1], this->point()) );
+      CGAL_assertion( oriented_side_of_line(lines[2], this->point()) );
     }
   }
 

@@ -1307,12 +1307,11 @@ private:
 public:
   static void
   orient_lines_linf(const Site_2& p, const Site_2& q, const Site_2& r,
-      RT a[], RT b[], RT c[])
+      Line_2 l[])
   {
     CGAL_precondition( p.is_segment() && q.is_segment() &&
 		       r.is_segment() );
 
-    Line_2 l[3];
     l[0] = compute_supporting_line(p.supporting_site());
     l[1] = compute_supporting_line(q.supporting_site());
     l[2] = compute_supporting_line(r.supporting_site());
@@ -1359,11 +1358,6 @@ public:
     }
 
     if ( is_oriented[0] && is_oriented[1] && is_oriented[2] ) {
-      for (int i = 0; i < 3; i++) {
-	a[i] = l[i].a();
-	b[i] = l[i].b();
-	c[i] = l[i].c();
-      }
       return;
     }
 
@@ -1393,11 +1387,6 @@ public:
     }
 
     if (is_oriented[i_no]) {
-      for (int i = 0; i < 3; i++) {
-	a[i] = l[i].a();
-	b[i] = l[i].b();
-	c[i] = l[i].c();
-      }
       return;
     }
 
@@ -1446,12 +1435,6 @@ public:
       is_oriented[i_no] = true;
     }
     CGAL_assertion(is_oriented[i_no]);
-    for (int i = 0; i < 3; i++) {
-      a[i] = l[i].a();
-      b[i] = l[i].b();
-      c[i] = l[i].c();
-    }
-    return;
   }
 
 
