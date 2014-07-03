@@ -6,7 +6,7 @@
 #include <OpenMesh/Core/Mesh/PolyMesh_ArrayKernelT.hh>
 
 // HalfedgeGraph adapters
-//~ #define CGAL_USE_OM_POINTS // use OpenMesh point type
+#define CGAL_USE_OM_POINTS // use OpenMesh point type
 #include <CGAL/boost/graph/graph_traits_PolyMesh_ArrayKernelT.h>
 #include <CGAL/boost/graph/properties_PolyMesh_ArrayKernelT.h>
 
@@ -14,16 +14,19 @@
 
 #include <CGAL/Timer.h>
 
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef OpenMesh::PolyMesh_ArrayKernelT</* MyTraits*/>               Mesh;
-
+typedef Mesh::Point                                                 Point;
 typedef boost::graph_traits<Mesh>::vertex_descriptor    vertex_descriptor;
 typedef boost::graph_traits<Mesh>::vertex_iterator        vertex_iterator;
 
 typedef CGAL::Deform_mesh<Mesh, CGAL::Default, CGAL::Default, CGAL::ORIGINAL_ARAP>  Deform_mesh_arap;
 typedef CGAL::Deform_mesh<Mesh, CGAL::Default, CGAL::Default, CGAL::SPOKES_AND_RIMS> Deform_mesh_spoke;
 const double squared_threshold = 0.001; // alert if average difs between precomputed and deformed mesh models is above threshold
+
+double squared_length(const Point& p)
+{
+  return p[0]*p[0]+p[1]*p[1]+p[2]*p[2];
+}
 
 void compare_mesh(const Mesh& mesh_1, const Mesh& mesh_2)
 {
@@ -32,12 +35,12 @@ void compare_mesh(const Mesh& mesh_1, const Mesh& mesh_2)
   CGAL::cpp11::tie(it_2, end_2) = vertices(mesh_2);
   boost::property_map<Mesh, boost::vertex_point_t>::type
     ppmap_1 = get(boost::vertex_point, mesh_1), ppmap_2 = get(boost::vertex_point, mesh_2);
-  Kernel::Vector_3 total_dif(0,0,0);
+  Point total_dif(0,0,0);
   for( ; it_1 != end_1; ++it_1 , ++it_2)
   {
     total_dif = total_dif + (get(ppmap_1, *it_1) - get(ppmap_2, *it_2));
   }
-  double average_mesh_dif = (total_dif / num_vertices(mesh_1)).squared_length();
+  double average_mesh_dif = squared_length(total_dif / num_vertices(mesh_1));
 
   std::cerr << "Average mesh difference: " << average_mesh_dif << std::endl;
 
