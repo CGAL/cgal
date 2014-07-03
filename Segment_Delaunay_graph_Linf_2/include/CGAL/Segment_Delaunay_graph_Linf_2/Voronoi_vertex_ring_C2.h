@@ -77,6 +77,7 @@ public:
   using Base::is_orth_dist_smaller_than_pt_dist;
   using Base::touch_same_side;
   using Base::coord_at;
+  using Base::orient_lines_linf;
 
 private:
   typedef SegmentDelaunayGraph_2::Are_same_points_C2<K>
@@ -88,8 +89,6 @@ private:
 
   typedef SegmentDelaunayGraph_2::Compare_x_2<K> Compare_x_2_Sites_Type;
   typedef SegmentDelaunayGraph_2::Compare_y_2<K> Compare_y_2_Sites_Type;
-
-  typedef typename K::Intersections_tag ITag;
 
   Are_same_points_2                same_points;
   Are_same_segments_2              same_segments;
@@ -1153,62 +1152,6 @@ private:
 
   //--------------------------------------------------------------------------
 
-  bool check_if_exact(const Site_2& , unsigned int ,
-		      const Tag_false&) const
-  {
-    return true;
-  }
-
-  bool check_if_exact(const Site_2& s, unsigned int i,
-		      const Tag_true&) const
-  {
-    return s.is_input(i);
-  }
-
-  // determines of the segment s is on the positive halfspace as
-  // defined by the supporting line of the segment supp; the line l
-  // is supposed to be the supporting line of the segment supp and we
-  // pass it so that we do not have to recompute it
-  bool
-  is_on_positive_halfspace(const Site_2& supp,
-			   const Site_2& s, const Line_2& l) const
-  {
-    CGAL_precondition( supp.is_segment() && s.is_segment() );
-
-    if ( same_segments(supp.supporting_site(),
-		       s.supporting_site()) ) {
-      return false;
-    }
-
-    if ( same_points(supp.source_site(), s.source_site()) ||
-	 same_points(supp.target_site(), s.source_site()) ) {
-      return oriented_side_of_line(l, s.target()) == ON_POSITIVE_SIDE;
-    }
-
-    if ( same_points(supp.source_site(), s.target_site()) ||
-	 same_points(supp.target_site(), s.target_site()) ) {
-      return oriented_side_of_line(l, s.source()) == ON_POSITIVE_SIDE;
-    }
-
-    ITag itag;
-
-    if ( !check_if_exact(s, 0, itag) &&
-	 same_segments(supp.supporting_site(),
-		       s.crossing_site(0)) ) {
-      return oriented_side_of_line(l, s.target()) == ON_POSITIVE_SIDE;
-    }
-
-    if ( !check_if_exact(s, 1, itag) &&
-	 same_segments(supp.supporting_site(),
-		       s.crossing_site(1)) ) {
-      return oriented_side_of_line(l, s.source()) == ON_POSITIVE_SIDE;
-    }
-
-    return Base::is_on_positive_halfspace(l, s.segment());
-  }
-
-  //--------------------------------------------------------------------------
-
   void
   compute_sss(const Site_2& p, const Site_2& q, const Site_2& r)
   {
@@ -1243,7 +1186,16 @@ private:
         return compute_sss_hv(p, q, r, is_p_hor, is_q_hor, is_r_hor);
       }
 
+      RT a[3], b[3], c[3];
+      orient_lines_linf(p, q, r, a, b, c);
+
       compute_sss_bisectors(p, q, r);
+      CGAL_assertion(oriented_side_of_line(
+            Line_2(a[0],b[0],c[0]), this->point()));
+      CGAL_assertion(oriented_side_of_line(
+            Line_2(a[1],b[1],c[1]), this->point()));
+      CGAL_assertion(oriented_side_of_line(
+            Line_2(a[2],b[2],c[2]), this->point()));
     }
   }
 

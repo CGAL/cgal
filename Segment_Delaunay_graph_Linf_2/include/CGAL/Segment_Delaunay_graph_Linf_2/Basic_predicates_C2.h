@@ -5,6 +5,7 @@
 
 #include <CGAL/Segment_Delaunay_graph_Linf_2/basic.h>
 #include <CGAL/Segment_Delaunay_graph_2/Are_same_points_C2.h>
+#include <CGAL/Segment_Delaunay_graph_2/Are_same_segments_C2.h>
 
 #include <CGAL/Polychain_2.h>
 
@@ -46,8 +47,12 @@ public:
 
   typedef typename CGAL::Polychainline_2<K> Polychainline_2;
   typedef SegmentDelaunayGraph_2::Are_same_points_C2<K>  Are_same_points_2;
+  typedef SegmentDelaunayGraph_2::Are_same_segments_C2<K>
+          Are_same_segments_2;
 
 private:
+  typedef typename K::Intersections_tag ITag;
+
   typedef typename Algebraic_structure_traits<RT>::Algebraic_category RT_Category;
   typedef typename Algebraic_structure_traits<FT>::Algebraic_category FT_Category;
 public:
@@ -1184,6 +1189,271 @@ public:
     return is_hor ? s.supporting_site().source_site().point().y() :
                     s.supporting_site().source_site().point().x() ;
   }
+
+  inline static
+  bool check_if_exact(const Site_2& , unsigned int ,
+		      const Tag_false&)
+  {
+    return true;
+  }
+
+  inline static
+  bool check_if_exact(const Site_2& s, unsigned int i,
+		      const Tag_true&)
+  {
+    return s.is_input(i);
+  }
+
+  // determines if the segment s is on the positive halfspace as
+  // defined by the supporting line of the segment supp; the line l
+  // is supposed to be the supporting line of the segment supp and we
+  // pass it so that we do not have to recompute it
+  static bool
+  is_on_positive_halfspace(const Site_2& supp,
+			   const Site_2& s, const Line_2& l)
+  {
+    CGAL_precondition( supp.is_segment() && s.is_segment() );
+    Are_same_points_2 same_points;
+    Are_same_segments_2 same_segments;
+
+    if ( same_segments(supp.supporting_site(),
+		       s.supporting_site()) ) {
+      return false;
+    }
+
+    if ( same_points(supp.source_site(), s.source_site()) ||
+	 same_points(supp.target_site(), s.source_site()) ) {
+      return oriented_side_of_line(l, s.target()) == ON_POSITIVE_SIDE;
+    }
+
+    if ( same_points(supp.source_site(), s.target_site()) ||
+	 same_points(supp.target_site(), s.target_site()) ) {
+      return oriented_side_of_line(l, s.source()) == ON_POSITIVE_SIDE;
+    }
+
+    ITag itag;
+
+    if ( !check_if_exact(s, 0, itag) &&
+	 same_segments(supp.supporting_site(),
+		       s.crossing_site(0)) ) {
+      return oriented_side_of_line(l, s.target()) == ON_POSITIVE_SIDE;
+    }
+
+    if ( !check_if_exact(s, 1, itag) &&
+	 same_segments(supp.supporting_site(),
+		       s.crossing_site(1)) ) {
+      return oriented_side_of_line(l, s.source()) == ON_POSITIVE_SIDE;
+    }
+
+    return Base::is_on_positive_halfspace(l, s.segment());
+  }
+
+private:
+  // The bearing of a line l is defined as a number in {0, 1, ..., 7},
+  // encoding each permissible ordered pair (sign(l.a), sign(l.b)).
+  // There are 8 permissible pairs; pair (ZERO, ZERO) is not allowed.
+  // A line with pair (NEG, POS) has bearing 0 and as this line rotates
+  // counterclockwise we get consecutive bearings. Observe that
+  // axis-parallel lines have odd bearings (1, 3, 5, 7).
+
+  inline static unsigned int
+  bearing(const Line_2 & l) {
+    const Sign sa = CGAL::sign(l.a());
+    const Sign sb = CGAL::sign(l.b());
+    if (sa == NEGATIVE) {
+      return 1-sb;
+    } else if (sa == ZERO) {
+      return (sb == NEGATIVE) ? 3 : 7;
+    } else { // sa == POSITIVE
+      return 5+sb;
+    }
+  }
+
+  inline static bool
+  have_same_bearing(const Line_2 & l1, const Line_2 & l2) {
+    return (CGAL::sign(l1.a()) == CGAL::sign(l2.a())) and
+           (CGAL::sign(l1.b()) == CGAL::sign(l2.b()))    ;
+  }
+
+  inline static bool
+  have_opposite_bearing(const Line_2 & l1, const Line_2 & l2) {
+    return (CGAL::sign(l1.a()) == -CGAL::sign(l2.a())) and
+           (CGAL::sign(l1.b()) == -CGAL::sign(l2.b()))    ;
+  }
+
+  inline static bool
+  bearing_outside(
+      const unsigned int bprev,
+      const unsigned int br,
+      const unsigned int bnext)
+  {
+    CGAL_assertion(bprev <= 7);
+    CGAL_assertion(br <= 7);
+    CGAL_assertion(bnext <= 7);
+    CGAL_assertion(bprev != bnext);
+    CGAL_assertion(bprev != br);
+    CGAL_assertion(bnext != br);
+    unsigned int i = bprev;
+    while (true) {
+      i = (i + 1) % 8;
+      if (i == bnext) {
+        return true;
+      } else if (i == br) {
+        return false;
+      }
+    }
+  }
+
+public:
+  static void
+  orient_lines_linf(const Site_2& p, const Site_2& q, const Site_2& r,
+      RT a[], RT b[], RT c[])
+  {
+    CGAL_precondition( p.is_segment() && q.is_segment() &&
+		       r.is_segment() );
+
+    Line_2 l[3];
+    l[0] = compute_supporting_line(p.supporting_site());
+    l[1] = compute_supporting_line(q.supporting_site());
+    l[2] = compute_supporting_line(r.supporting_site());
+
+    bool is_oriented[3] = {false, false, false};
+
+    if ( is_on_positive_halfspace(p, q, l[0]) ||
+	 is_on_positive_halfspace(p, r, l[0]) ) {
+      is_oriented[0] = true;
+    } else {
+      l[0] = opposite_line(l[0]);
+      if ( is_on_positive_halfspace(p, q, l[0]) ||
+	   is_on_positive_halfspace(p, r, l[0]) ) {
+	is_oriented[0] = true;
+      } else {
+	l[0] = opposite_line(l[0]);
+      }
+    }
+
+    if ( is_on_positive_halfspace(q, p, l[1]) ||
+	 is_on_positive_halfspace(q, r, l[1]) ) {
+      is_oriented[1] = true;
+    } else {
+       l[1] = opposite_line(l[1]);
+      if ( is_on_positive_halfspace(q, p, l[1]) ||
+	   is_on_positive_halfspace(q, r, l[1]) ) {
+	is_oriented[1] = true;
+      } else {
+	l[1] = opposite_line(l[1]);
+      }
+    }
+
+    if ( is_on_positive_halfspace(r, p, l[2]) ||
+	 is_on_positive_halfspace(r, q, l[2]) ) {
+      is_oriented[2] = true;
+    } else {
+      l[2] = opposite_line(l[2]);
+      if ( is_on_positive_halfspace(r, p, l[2]) ||
+	   is_on_positive_halfspace(r, q, l[2]) ) {
+	is_oriented[2] = true;
+      } else {
+	l[2] = opposite_line(l[2]);
+      }
+    }
+
+    if ( is_oriented[0] && is_oriented[1] && is_oriented[2] ) {
+      for (int i = 0; i < 3; i++) {
+	a[i] = l[i].a();
+	b[i] = l[i].b();
+	c[i] = l[i].c();
+      }
+      return;
+    }
+
+    int i_no(-1);
+    for (int i = 0; i < 3; i++) {
+      if ( !is_oriented[i] ) {
+	i_no = i;
+	CGAL_assertion( is_oriented[(i+1)%3] && is_oriented[(i+2)%3] );
+	break;
+      }
+    }
+
+    CGAL_assertion( i_no != -1 );
+
+    CGAL_SDG_DEBUG( std::cout << "orient_lines_linf i_no: "
+        << p << ' ' << q << ' ' << ' ' << r << " i_no=" << i_no
+        << std::endl;);
+
+    for (int j = 1; j < 3; j++) {
+      if (have_same_bearing(l[i_no], l[(i_no+j)%3])) {
+        l[i_no] = opposite_line(l[i_no]);
+        is_oriented[i_no] = true;
+      } else if (have_opposite_bearing(l[i_no], l[(i_no+j)%3])) {
+        is_oriented[i_no] = true;
+      }
+      if (is_oriented[i_no]) break;
+    }
+
+    if (is_oriented[i_no]) {
+      for (int i = 0; i < 3; i++) {
+	a[i] = l[i].a();
+	b[i] = l[i].b();
+	c[i] = l[i].c();
+      }
+      return;
+    }
+
+    CGAL_SDG_DEBUG( std::cout << "orient_lines_linf lonely bearing: "
+        << p << ' ' << q << ' ' << ' ' << r << " i_no=" << i_no
+        << std::endl;);
+    const unsigned int iprev = (i_no+2)%3;
+    const unsigned int inext = (i_no+1)%3;
+    const unsigned int bprev = bearing(l[iprev]);
+    const unsigned int bnext = bearing(l[inext]);
+    CGAL_SDG_DEBUG( std::cout << "orient_lines_linf"
+        << " bprev=" << bprev << " bnext=" << bnext
+        << std::endl;);
+    CGAL_assertion(bprev != bnext);
+    const unsigned int diffbear = (bnext - bprev)%8;
+    CGAL_assertion(diffbear != 1);
+    CGAL_assertion(diffbear != 7);
+    const unsigned int br = bearing(l[i_no]);
+    if ( bearing_outside(bprev, br, bnext) ) {
+      CGAL_assertion_code( const unsigned int bropp = (br+4)%8 );
+      CGAL_assertion( not bearing_outside(bprev, bropp, bnext) );
+      l[i_no] = opposite_line(l[i_no]);
+      is_oriented[i_no] = true;
+    } else {
+      CGAL_assertion( not bearing_outside(bprev, br, bnext) );
+      const unsigned int bropp = (br+4)%8;
+      if ( not bearing_outside(bprev, bropp, bnext) ) {
+        CGAL_assertion( diffbear == 6 );
+        CGAL_assertion( br % 2 == 1 ); // undecided is axis-parallel
+        const Site_2 & sprev = iprev == 0 ? p : (iprev == 1? q : r);
+        unsigned int brcorrect = (bprev+5)%8;
+        if (Base::is_on_positive_halfspace(l[inext], sprev.segment())) {
+          brcorrect = (bprev+1)%8;
+        } else {
+          CGAL_assertion_code(
+              const Site_2 & snext = inext == 0 ? p : (inext == 1? q : r) );
+          CGAL_assertion(
+              Base::is_on_positive_halfspace(l[iprev], snext.segment()) );
+        }
+        if (brcorrect == bropp) {
+          l[i_no] = opposite_line(l[i_no]);
+        } else {
+          CGAL_assertion(brcorrect == br);
+        }
+      }
+      is_oriented[i_no] = true;
+    }
+    CGAL_assertion(is_oriented[i_no]);
+    for (int i = 0; i < 3; i++) {
+      a[i] = l[i].a();
+      b[i] = l[i].b();
+      c[i] = l[i].c();
+    }
+    return;
+  }
+
 
 };
 
