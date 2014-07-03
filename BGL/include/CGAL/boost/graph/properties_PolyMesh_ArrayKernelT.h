@@ -106,7 +106,7 @@ public:
   typedef boost::read_write_property_map_tag category;
 #if defined(CGAL_USE_OM_POINTS)
   typedef typename OpenMesh::PolyMesh_ArrayKernelT<K>::Point             value_type;
-  typedef typename const OpenMesh::PolyMesh_ArrayKernelT<K>::Point&      reference;
+  typedef const typename OpenMesh::PolyMesh_ArrayKernelT<K>::Point&      reference;
 #else
   typedef P value_type;
   typedef P reference;
@@ -129,7 +129,7 @@ public:
   {
     CGAL_precondition(pm.sm_!=NULL);
 #if defined(CGAL_USE_OM_POINTS)
-    return pm.sm->.point(v);
+    return pm.sm_->point(v);
 #else
     typename OpenMesh::PolyMesh_ArrayKernelT<K>::Point const& omp = pm.sm_->point(v);
     return value_type(omp[0], omp[1], omp[2]);
