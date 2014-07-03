@@ -38,7 +38,7 @@ if ( CGAL_FOUND )
       create_single_source_cgal_program( "all_roi_assign_example_with_OpenMesh.cpp" )
       target_link_libraries( all_roi_assign_example_with_OpenMesh ${OPENMESH_LIBRARIES} )
     else()
-      message(STATUS "Examples that use OpenMesh will not be compiled.")
+      message(STATUS "Example that use OpenMesh will not be compiled.")
     endif()
 
   else()
