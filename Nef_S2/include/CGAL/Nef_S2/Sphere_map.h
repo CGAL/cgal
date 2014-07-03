@@ -158,7 +158,7 @@ public:
     operator SHalfedge_handle() const 
     { SHalfedge_handle e; CGAL::assign(e,Ibase::operator*()); return e; }
     operator SHalfloop_handle() const 
-    { SHalfloop_handle l; CGAL::assign(l,Ibase::operator*()); return l; }
+    { SHalfloop_handle l=0; CGAL::assign(l,Ibase::operator*()); return l; }
 
     operator Object_handle() const { return Ibase::operator*(); }
     Object_handle& operator*() const { return Ibase::operator*(); }
@@ -188,7 +188,7 @@ public:
     { SHalfedge_handle e; CGAL::assign(e,Ibase::operator*()); 
       return SHalfedge_const_handle(e); }
     operator SHalfloop_const_handle() const 
-    { SHalfloop_handle l; CGAL::assign(l,Ibase::operator*()); 
+    { SHalfloop_handle l=0; CGAL::assign(l,Ibase::operator*()); 
       return SHalfloop_const_handle(l); }
 
     operator Object_handle() const { return Ibase::operator*(); }
