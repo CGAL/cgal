@@ -614,6 +614,9 @@ class Test_is_square {
         typedef typename Is_square::first_argument_type First_argument_type;
         typedef typename Is_square::second_argument_type Second_argument_type;
         typedef typename Is_square::result_type   Result_type;
+        CGAL_USE_TYPE(First_argument_type);
+        CGAL_USE_TYPE(Second_argument_type);
+
         CGAL_static_assertion(
                 ( ::boost::is_same< AS , First_argument_type>::value));
         CGAL_static_assertion(
@@ -647,6 +650,8 @@ public:
     void operator() (const Sqrt& sqrt) {
         typedef typename Sqrt::argument_type Argument_type;
         typedef typename Sqrt::result_type   Result_type;
+        CGAL_USE_TYPE(Argument_type);
+        CGAL_USE_TYPE(Result_type);
         CGAL_static_assertion(( ::boost::is_same< AS , Argument_type>::value));
         CGAL_static_assertion(( ::boost::is_same< AS , Result_type>::value));
         typedef Algebraic_structure_traits<AS> AST;
@@ -670,6 +675,9 @@ public:
         typedef typename Root::first_argument_type  First_argument_type;
         typedef typename Root::second_argument_type Second_argument_type;
         typedef typename Root::result_type          Result_type;
+        CGAL_USE_TYPE(First_argument_type);
+        CGAL_USE_TYPE(Second_argument_type);
+        CGAL_USE_TYPE(Result_type);
         CGAL_static_assertion(
                 ( ::boost::is_same<int, First_argument_type>::value));
         CGAL_static_assertion(
