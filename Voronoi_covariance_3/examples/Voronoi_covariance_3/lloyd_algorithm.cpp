@@ -4,9 +4,7 @@
 #include <CGAL/Convex_hull_3.h>
 
 #include <vector>
-#include <sstream>
-
-#include "include/off.h"
+#include <fstream>
 
 // Chrono
 #include <chrono>
@@ -21,53 +19,39 @@ typedef K::Vector_3 Vector;
 
 typedef CGAL::Convex_hull_traits_3<K> Traits;
 typedef Traits::Polyhedron_3 Polyhedron;
-typedef Polyhedron::Facet_iterator Facet_iterator;
-typedef Polyhedron::Plane_iterator Plane_iterator;
 
 typedef CGAL::Delaunay_triangulation_3<K> DT;
 typedef DT::Vertex_handle Vertex_handle;
 
 #include <CGAL/point_generators_3.h>
 
-template <typename K>
-typename K::Plane_3 tangent_plane (typename K::Point_3 const& p) {
-    typename K::Vector_3 v(p.x(), p.y(), p.z());
-    v = v / sqrt(v.squared_length());
-    typename K::Plane_3 plane(v.x(), v.y(), v.z(), -(p - CGAL::ORIGIN) * v);
+// Function object that compute the volume
+// and the centroid of a polyhedron
+template <class K>
+class Centroid_volume_accumulator {
+    public:
+        typedef typename K::Point_3 Point;
+        typedef typename K::Vector_3 Vector;
 
-    return plane;
-}
+        Centroid_volume_accumulator() : vol(0),
+                                        cx(0), cy(0), cz(0) {}
 
-// Centroid of a polyhedron
-Point compute_centroid (Polyhedron &P) {
-    typedef Polyhedron::Halfedge_around_facet_circulator Hafc;
-
-    float volume = 0.f;
-    float cx = 0.f, cy = 0.f, cz = 0.f;
-    Vector ex(1, 0, 0),
-           ey(0, 1, 0),
-           ez(0, 0, 1);
-
-    for (Facet_iterator fit = P.facets_begin();
-         fit != P.facets_end();
-         fit++) {
-        Hafc h0 = fit->facet_begin(), hf = h0--, hs = hf;
-        hs ++;
-
-        while (1) {
-            Point a = h0->vertex()->point(),
-                  b = hf->vertex()->point(),
-                  c = hs->vertex()->point();
+        void operator () (const Point &a,
+                          const Point &b,
+                          const Point &c) {
+            Vector ex(1, 0, 0),
+                   ey(0, 1, 0),
+                   ez(0, 0, 1);
 
             Vector va = CGAL::ORIGIN - a;
             Vector vb = CGAL::ORIGIN - b;
             Vector vc = CGAL::ORIGIN - c;
 
-            // Volume
+            // Updating the volume...
             Vector nhat = CGAL::cross_product(b - a, c - a);
-            volume += nhat * va;
+            vol += nhat * va;
 
-            // Centroid
+            // ... and the centroid
             // X
             cx += (nhat * ex) * (
                 SQUARE(ex * (va + vb)) +
@@ -85,6 +69,58 @@ Point compute_centroid (Polyhedron &P) {
                 SQUARE(ez * (va + vb)) +
                 SQUARE(ez * (vb + vc)) +
                 SQUARE(ez * (vc + va)) );
+        }
+
+        void end () {
+            vol /= 6;
+            cx /= (48 * vol);
+            cy /= (48 * vol);
+            cz /= (48 * vol);
+        }
+
+        Point centroid () const {
+            return Point(cx, cy, cz);
+        }
+
+        float volume () const {
+            return vol;
+        }
+
+        void reset () {
+            vol = 0;
+            cx = 0;
+            cy = 0;
+            cz = 0;
+        }
+
+    private:
+        // Volume
+        float vol;
+
+        // Centroid
+        float cx, cy, cz;
+};
+
+// Aplply a function object to all the faces of a polyhedron
+template <typename Polyhedron, class F>
+F& apply_function_object_polyhedron (Polyhedron &P,
+                                     F &f) {
+    typedef typename Polyhedron::Halfedge_around_facet_circulator Hafc;
+    typedef typename Polyhedron::Facet_iterator Facet_iterator;
+
+    f.reset();
+
+    for (Facet_iterator fit = P.facets_begin();
+         fit != P.facets_end();
+         fit++) {
+        Hafc h0 = fit->facet_begin(), hf = h0--, hs = hf;
+        hs ++;
+
+        while (1) {
+            // Apply 'f' on each triangle of the polyhedron's facet
+            f ( h0->vertex()->point(),
+                hf->vertex()->point(),
+                hs->vertex()->point() );
 
             if (hs == h0)
                 break;
@@ -93,12 +129,9 @@ Point compute_centroid (Polyhedron &P) {
         }
     }
 
-    volume /= 6;
-    volume = fabs(volume);
-    Vector centroid(cx, cy, cz);
-    centroid = centroid / (48 * volume);
+    f.end();
 
-    return (CGAL::ORIGIN + centroid);
+    return f;
 }
 
 template <class PolyIterator>
@@ -107,23 +140,23 @@ void lloyd_algorithm (PolyIterator poly_begin,
                       std::vector<Point> & points) {
     std::list<Plane> planes;
     std::list<Point> centroids;
+    Centroid_volume_accumulator<K> centroid_acc;
 
     // Compute Delaunay triangulation
     DT dt(points.begin(), points.end());
 
-    for (std::vector<Point>::iterator pit = points.begin();
-         pit != points.end();
-         pit++) {
+    for (DT::Finite_vertices_iterator vit = dt.finite_vertices_begin();
+         vit != dt.finite_vertices_end();
+         ++vit) {
         planes.clear();
         // Voronoi cells
         std::list<Vertex_handle> vertices;
-        Vertex_handle v = dt.nearest_vertex(*pit);
-        dt.incident_vertices(v, std::back_inserter(vertices));
+        dt.incident_vertices(vit, std::back_inserter(vertices));
         for (std::list<Vertex_handle>::iterator it = vertices.begin();
              it != vertices.end();
              it++) {
-            Vector p = ((*it)->point() - v->point()) / 2;
-            planes.push_back (Plane(CGAL::ORIGIN + p, p));
+            Vector p = ((*it)->point() - vit->point()) / 2;
+            planes.push_back (Plane(CGAL::midpoint((*it)->point(), vit->point()), p));
         }
 
         // Add planes of the polyhedron faces
@@ -137,10 +170,12 @@ void lloyd_algorithm (PolyIterator poly_begin,
         Polyhedron P;
         CGAL::halfspaces_intersection(planes.begin(),
                                       planes.end(),
-                                      P);
+                                      P,
+                                      vit->point());
+
         // Centroid
-        Point centroid = compute_centroid(P);
-        centroids.push_back(centroid);
+        apply_function_object_polyhedron(P, centroid_acc);
+        centroids.push_back(centroid_acc.centroid());
     }
 
     // Replace the initial points by the computed centroids
@@ -182,13 +217,9 @@ int main (int argc, char *argv[]) {
     for (int i = 0; i < N; i++) {
         Point p = *g++;
         points.push_back(p);
-        /* planes.push_back(tangent_plane<K>(p)); */
     }
-    Polyhedron P_before, P_after;
-    CGAL::convex_hull_3(points.begin(), points.end(), P_before);
-    convertToOFF<K, Polyhedron>("before.off", P_before);
 
-    std::ofstream bos("before.cloud");
+    std::ofstream bos("before.xyz");
     std::copy(points.begin(), points.end(),
               std::ostream_iterator<Point>(bos, "\n"));
 
@@ -196,7 +227,7 @@ int main (int argc, char *argv[]) {
     std::chrono::time_point<std::chrono::system_clock> start, end;
     std::chrono::duration<double> elapsed_time;
     for (int i = 0; i < steps; i++) {
-        std::cout << "iter " << i << std::endl;
+        std::cout << "iteration " << i << std::endl;
         start = std::chrono::system_clock::now();
         lloyd_algorithm(planes.begin(),
                         planes.end(),
@@ -207,10 +238,7 @@ int main (int argc, char *argv[]) {
         std::cout << "Execution time : " << elapsed_time.count() << "s\n";
     }
 
-    CGAL::convex_hull_3(points.begin(), points.end(), P_after);
-    convertToOFF<K, Polyhedron>("after.off", P_after);
-
-    std::ofstream aos("after.cloud");
+    std::ofstream aos("after.xyz");
     std::copy(points.begin(), points.end(),
               std::ostream_iterator<Point>(aos, "\n"));
 
