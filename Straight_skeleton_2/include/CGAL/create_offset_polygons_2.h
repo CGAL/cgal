@@ -171,7 +171,7 @@ create_offset_polygons_2 ( FT const& aOffset, Skeleton const& aSs, K const& /*k*
 template<class Skeleton>
 Skeleton const& dereference ( boost::shared_ptr<Skeleton> const& ss )
 {
-  CGAL_precondition(ss!= NULL);
+  CGAL_precondition(ss.get() != 0);
   return *ss;
 }
 
