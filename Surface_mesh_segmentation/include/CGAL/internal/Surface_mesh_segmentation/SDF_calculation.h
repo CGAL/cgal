@@ -159,38 +159,6 @@ public:
   }
 
   /**
-   * Construct AABB tree with meshes inside interval.
-   * @tparam InputIterator Iterator over polyhedrons. Its value type is `pointer to polyhedron`.
-   * @param polyhedron_begin range begin
-   * @param polyhedron_end range past-the-end
-   * @param build_kd_tree requirement on internal kd-tree (it is only required if find_closest_with_AABB_distance is planned to use)
-   * @param traits trait object
-   */
-  template<class InputIterator>
-  SDF_calculation(InputIterator polyhedron_begin, InputIterator polyhedron_end,
-                  VertexPointPmap vertex_point_map,
-                  bool build_kd_tree = false, GeomTraits traits = GeomTraits())
-    : traits(traits),
-      vertex_point_map(vertex_point_map),
-      angle_functor(traits.angle_3_object()),
-      scale_functor(traits.construct_scaled_vector_3_object()),
-      sum_functor(traits.construct_sum_of_vectors_3_object()),
-      normal_functor(traits.construct_normal_3_object()),
-      translated_point_functor(traits.construct_translated_point_3_object()),
-      centroid_functor(traits.construct_centroid_3_object()),
-      use_diagonal(false) {
-    for( ; polyhedron_begin != polyhedron_end; ++polyhedron_begin) {
-      tree.insert(faces(*polyhedron_begin).first,
-                  faces(*polyhedron_begin).second, mesh, vertex_point_map);
-    }
-    tree.build();
-
-    if(build_kd_tree) {
-      tree.accelerate_distance_queries();
-    }
-  }
-
-  /**
    * Calculates SDF values for each facet in a range, and stores them in @a sdf_values. Note that sdf values are neither smoothed nor normalized.
    * @tparam FacetValueMap `WritablePropertyMap` with `boost::graph_traits<Polyhedron>::face_handle` as key and `double` as value type
    * @tparam InputIterator Iterator over polyhedrons. Its value type is `pointer to polyhedron`.
