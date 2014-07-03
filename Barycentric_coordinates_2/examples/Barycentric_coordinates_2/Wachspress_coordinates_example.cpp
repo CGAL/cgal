@@ -21,7 +21,7 @@ typedef CGAL::Creator_uniform_2<double, Point> Creator;
 typedef Point_vector::iterator InputIterator;
 
 typedef BC::Wachspress_2<Kernel> Wachspress;
-typedef BC::Generalized_barycentric_coordinates_2<InputIterator, Wachspress, Kernel> Wachspress_coordinates;
+typedef BC::Generalized_barycentric_coordinates_2<Wachspress, Kernel> Wachspress_coordinates;
 
 using std::cout; using std::endl; using std::string;
 
@@ -55,7 +55,7 @@ int main()
         // Compute coordinates.
         Scalar_vector coordinates;
         coordinates.reserve(number_of_vertices);
-        wachspress_coordinates.compute(points[i], std::back_inserter(coordinates));
+        wachspress_coordinates(points[i], std::back_inserter(coordinates));
 
         // Output the computed coordinates.
         cout << "Point " << i + 1 << ": " << endl;

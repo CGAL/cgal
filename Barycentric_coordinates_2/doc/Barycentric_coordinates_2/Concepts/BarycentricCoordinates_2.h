@@ -1,5 +1,5 @@
 /*!
-\ingroup PkgBarycentric_Coordinates_2Concepts
+\ingroup PkgBarycentric_coordinates_2Concepts
 \cgalConcept
 
 Requirements of the template parameter `Coordinate_2` for the class `CGAL::Barycentric_coordinates::Generalized_barycentric_coordinates_2` with a set of two-dimensional generalized barycentric coordinates. 
@@ -25,34 +25,29 @@ BarycentricCoordinates_2(const std::vector<Traits::Point_2> &vertices, const Tra
 /// @{
 
 /*!
-	a function that computes generalized barycentric weights without normalization.
+	a function that computes generalized barycentric coordinates without normalization that are called generalized baycentric weights (as fast as possible algorithm is used)
 */ 
-std::pair<Iterator, bool> weights();
+boost::optional<OutputIterator> weights(const Traits::Point_2 &query_point, OutputIterator &output);
 
 /*!
-	a function that computes generalized barycentric coordinates on the bounded side of a polygon with an algorithm that is as precise as possible.
+	a function that computes generalized barycentric coordinates on the bounded side of a polygon with an algorithm that is as precise as possible
 */ 
-std::pair<Iterator, bool> coordinates_on_bounded_side_precise();
+boost::optional<OutputIterator> coordinates_on_bounded_side_precise(const Traits::Point_2 &query_point, OutputIterator &output);
 
 /*!
-	a function that computes generalized barycentric coordinates on the bounded side of a polygon with an algorithm that is as fast as possible.
+	a function that computes generalized barycentric coordinates on the bounded side of a polygon with an algorithm that is as fast as possible
 */ 
-std::pair<Iterator, bool> coordinates_on_bounded_side_fast(); 
+boost::optional<OutputIterator> coordinates_on_bounded_side_fast(const Traits::Point_2 &query_point, OutputIterator &output); 
 
 /*!
-	a function that computes generalized barycentric coordinates on the unbounded side of a polygon with an algorithm that is as precise as possible.
+	a function that computes generalized barycentric coordinates on the unbounded side of a polygon with an algorithm that is as precise as possible
 */ 
-std::pair<Iterator, bool> coordinates_on_unbounded_side_precise();
+boost::optional<OutputIterator> coordinates_on_unbounded_side_precise(const Traits::Point_2 &query_point, OutputIterator &output);
 
 /*!
-	a function that computes generalized barycentric coordinates on the unbounded side of a polygon with an algorithm that is as fast as possible.
+	a function that computes generalized barycentric coordinates on the unbounded side of a polygon with an algorithm that is as fast as possible
 */ 
-std::pair<Iterator, bool> coordinates_on_unbounded_side_fast();
-
-/*!
-	a function that prints some information about computed coordinates.
-*/ 
-void print_coordinates_information();
+boost::optional<OutputIterator> coordinates_on_unbounded_side_fast(const Traits::Point_2 &query_point, OutputIterator &output);
 
 /// @} 
 

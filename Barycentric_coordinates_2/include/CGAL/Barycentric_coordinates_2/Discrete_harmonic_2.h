@@ -31,6 +31,9 @@
 // Barycentric coordinates headers.
 #include <CGAL/Barycentric_coordinates_2/barycentric_enum_2.h>
 
+// Boost headers.
+#include <boost/mpl/has_xxx.hpp>
+
 // CGAL namespace.
 namespace CGAL {
 
@@ -46,10 +49,14 @@ namespace Barycentric_coordinates {
  * This class is parameterized by a traits class `Traits`, and it is used as a coordinate class to complete the class `Generalized_barycentric_coordinates_2`.
  * For a polygon with three vertices (triangle) it is better to use the class `Triangle_coordinates_2`.
  * Discrete harmonic coordinates can be computed exactly. By definition, they do not necesserily give positive values.
- 
-\cgalHeading{Template parameters}
 
-\tparam Traits must be a model of the concepts `BarycentricTraits_2` and `PolygonTraits_2`. In particular, it must provide the functions `Kernel::Compute_area_2`, `Kernel::Compute_squared_distance_2`, and `Kernel::Collinear_2`.
+\tparam Traits must be a model of the concepts `BarycentricTraits_2` and `PolygonTraits_2`.
+
+\cgalModels `BarycentricCoordinates_2`
+
+\pre The provided polygon is strictly convex.
+ 
+\attention Weight functions (coordinates without normalization) are allowed to be computed for an arbitrary polygon.
 
 */
 
@@ -63,10 +70,10 @@ public:
     /// @{
 
     /// Number type.
-    typedef typename Traits::FT      Scalar;
+    typedef typename Traits::FT      FT;
 
     /// Point type.
-    typedef typename Traits::Point_2 Point;
+    typedef typename Traits::Point_2 Point_2;
 
     /// @}
 
@@ -76,8 +83,8 @@ public:
     /// Creates the class `Discrete_harmonic_2` that implements the behaviour of discrete harmonic coordinates for any query point that does not belong to the polygon's boundary.
     /// The polygon is given by a range of vertices of the type `Traits::Point_2` stored in a container of the type <a href="http://en.cppreference.com/w/cpp/container/vector">`std::vector`</a>.
     Discrete_harmonic_2(const std::vector<typename Traits::Point_2> &vertices, const Traits &b_traits) :
-        barycentric_traits(b_traits),
         vertex(vertices),
+        barycentric_traits(b_traits),
         number_of_vertices(vertex.size()),
         area_2(barycentric_traits.compute_area_2_object()),
         squared_distance_2(barycentric_traits.compute_squared_distance_2_object()),
@@ -93,82 +100,73 @@ public:
 
     /// @}
 
-    /// \name Computation of Discrete Harmonic Weight Functions
-    /// @{
+    // Computation of Discrete Harmonic Weight Functions
 
-    /// This function computes discrete harmonic weights for a chosen query point.
-    template<class Iterator>
-        inline std::pair<Iterator, bool> weights(const Point &query_point, Iterator &output)
+    // This function computes discrete harmonic weights (unnormalized coordinates) for a chosen query point.
+    template<class OutputIterator>
+        inline boost::optional<OutputIterator> weights(const Point_2 &query_point, OutputIterator &output)
     {
         return weights_2(query_point, output);
     }
 
-    /// @}
+    // Computation of Discrete Harmonic Basis Functions
 
-    /// \name Computation of Discrete Harmonic Basis Functions
-    /// @{
-
-    /// This function computes discrete harmonic barycentric coordinates for a chosen query point on the bounded side of a strictly convex polygon with the O(n^2) precise algorithm.
-    /// \pre The provided polygon is strictly convex that is it complies with the constant `CGAL::Barycentric_coordinates::STRICTLY_CONVEX`. 
-    template<class Iterator>
-        inline std::pair<Iterator, bool> coordinates_on_bounded_side_precise(const Point &query_point, Iterator &output)
+    // This function computes discrete harmonic barycentric coordinates for a chosen query point on the bounded side of a strictly convex polygon with the O(n^2) precise algorithm.
+    // \pre The provided polygon is strictly convex. 
+    template<class OutputIterator>
+        inline boost::optional<OutputIterator> coordinates_on_bounded_side_precise(const Point_2 &query_point, OutputIterator &output)
     {   
         return coordinates_on_bounded_side_precise_2(query_point, output);
     }
 
-    /// This function computes discrete harmonic barycentric coordinates for a chosen query point on the bounded side of a strictly convex polygon with the O(n) fast algorithm.
-    /// \pre The provided polygon is strictly convex that is it complies with the constant `CGAL::Barycentric_coordinates::STRICTLY_CONVEX`.
-    template<class Iterator>
-        inline std::pair<Iterator, bool> coordinates_on_bounded_side_fast(const Point &query_point, Iterator &output)
+    // This function computes discrete harmonic barycentric coordinates for a chosen query point on the bounded side of a strictly convex polygon with the O(n) fast algorithm.
+    // \pre The provided polygon is strictly convex.
+    template<class OutputIterator>
+        inline boost::optional<OutputIterator> coordinates_on_bounded_side_fast(const Point_2 &query_point, OutputIterator &output)
     {   
         return coordinates_on_bounded_side_fast_2(query_point, output);
     }
 
-    /// This function computes discrete harmonic barycentric coordinates for a chosen query point on the unbounded side of a strictly convex polygon with the O(n^2) precise algorithm.
-    /// \pre The provided polygon is strictly convex that is it complies with the constant `CGAL::Barycentric_coordinates::STRICTLY_CONVEX`.
-    template<class Iterator>
-        inline std::pair<Iterator, bool> coordinates_on_unbounded_side_precise(const Point &query_point, Iterator &output, const bool warning_tag = true)
+    // This function computes discrete harmonic barycentric coordinates for a chosen query point on the unbounded side of a strictly convex polygon with the O(n^2) precise algorithm.
+    // \pre The provided polygon is strictly convex.
+    template<class OutputIterator>
+        inline boost::optional<OutputIterator> coordinates_on_unbounded_side_precise(const Point_2 &query_point, OutputIterator &output, const bool warning_tag = true)
     {   
         return coordinates_on_unbounded_side_precise_2(query_point, output, warning_tag);
     }
 
-    /// This function computes discrete harmonic barycentric coordinates for a chosen query point on the unbounded side of a strictly convex polygon with the O(n) fast algorithm.
-    /// \pre The provided polygon is strictly convex that is it complies with the constant `CGAL::Barycentric_coordinates::STRICTLY_CONVEX`.
-    template<class Iterator>
-        inline std::pair<Iterator, bool> coordinates_on_unbounded_side_fast(const Point &query_point, Iterator &output, const bool warning_tag = true)
+    // This function computes discrete harmonic barycentric coordinates for a chosen query point on the unbounded side of a strictly convex polygon with the O(n) fast algorithm.
+    // \pre The provided polygon is strictly convex.
+    template<class OutputIterator>
+        inline boost::optional<OutputIterator> coordinates_on_unbounded_side_fast(const Point_2 &query_point, OutputIterator &output, const bool warning_tag = true)
     {   
         return coordinates_on_unbounded_side_fast_2(query_point, output, warning_tag);
     }
 
-    /// @}
+    // Information Functions
 
-    /// \name Information Functions
-    /// @{
-
-    /// This function prints some information about discrete harmonic coordinates.
+    // This function prints some information about discrete harmonic coordinates.
     void print_coordinates_information(std::ostream &output_stream) const
     {
         return print_coordinates_information_2(output_stream);
     }
 
-    /// @}
-
 private:
 
     // Some convenient typedefs.
-    typedef typename std::vector<Scalar> Scalar_vector;
-    typedef typename std::vector<Point>  Point_vector;
+    typedef typename std::vector<FT>      FT_vector;
+    typedef typename std::vector<Point_2> Point_vector;
 
     // Internal global variables.
-    const Traits &barycentric_traits;
-
     const Point_vector &vertex;
+
+    const Traits &barycentric_traits;
 
     const size_t number_of_vertices;
 
-    Scalar_vector r, A, B, weight;
+    FT_vector r, A, B, weight;
 
-    Scalar dh_denominator, inverted_dh_denominator;
+    FT dh_denominator, inverted_dh_denominator;
 
     typename Traits::Compute_area_2 area_2;
     typename Traits::Compute_squared_distance_2 squared_distance_2;
@@ -177,8 +175,8 @@ private:
     // WEIGHTS.
 
     // Compute discrete harmonic weights without normalization.
-    template<class Iterator>
-        std::pair<Iterator, bool> weights_2(const Point &query_point, Iterator &output)
+    template<class OutputIterator>
+        boost::optional<OutputIterator> weights_2(const Point_2 &query_point, OutputIterator &output)
     {
         // Get the number of vertices in the polygon.
         const int n = int(number_of_vertices);
@@ -199,29 +197,29 @@ private:
         B[n-1] = area_2(vertex[n-2], vertex[0] , query_point);
 
         // Compute unnormalized weights following the formula (25) with p = 2 from [1].
-        CGAL_precondition( A[n-1] != Scalar(0) && A[0] != Scalar(0) );
+        CGAL_precondition( A[n-1] != FT(0) && A[0] != FT(0) );
         *output = (r[1]*A[n-1] - r[0]*B[0] + r[n-1]*A[0]) / (A[n-1] * A[0]);
         ++output;
 
         for(int i = 1; i < n-1; ++i) {
-            CGAL_precondition( A[i-1] != Scalar(0) && A[i] != Scalar(0) );
+            CGAL_precondition( A[i-1] != FT(0) && A[i] != FT(0) );
             *output = (r[i+1]*A[i-1] - r[i]*B[i] + r[i-1]*A[i]) / (A[i-1] * A[i]);
             ++output;
         }
 
-        CGAL_precondition( A[n-2] != Scalar(0) && A[n-1] != Scalar(0) );
+        CGAL_precondition( A[n-2] != FT(0) && A[n-1] != FT(0) );
         *output = (r[0]*A[n-2] - r[n-1]*B[n-1] + r[n-2]*A[n-1]) / (A[n-2] * A[n-1]);
 
         // Return weights.
-        return std::make_pair(output, true);
+        return boost::optional<OutputIterator>(output);
     }
 
     // COORDINATES ON BOUNDED SIDE.
 
     // Compute discrete harmonic coordinates on the bounded side of the polygon with the slow O(n^2) but precise algorithm.
     // Here, n - is the number of the polygon's vertices.
-    template<class Iterator>
-        std::pair<Iterator, bool> coordinates_on_bounded_side_precise_2(const Point &query_point, Iterator &output)
+    template<class OutputIterator>
+        boost::optional<OutputIterator> coordinates_on_bounded_side_precise_2(const Point_2 &query_point, OutputIterator &output)
     {
         CGAL_precondition( type_of_polygon() == STRICTLY_CONVEX );
 
@@ -262,8 +260,8 @@ private:
         for(int i = 1; i < n; ++i) dh_denominator += weight[i];
 
         // Invert this denominator.
-        CGAL_precondition( dh_denominator != Scalar(0) );
-        inverted_dh_denominator = Scalar(1) / dh_denominator;
+        CGAL_precondition( dh_denominator != FT(0) );
+        inverted_dh_denominator = FT(1) / dh_denominator;
 
         // Normalize weights and save them as resulting discrete harmonic coordinates.
         for(int i = 0; i < n-1; ++i) {
@@ -273,13 +271,13 @@ private:
         *output = weight[n-1] * inverted_dh_denominator;
 
         // Return coordinates.
-        return std::make_pair(output, true);
+        return boost::optional<OutputIterator>(output);
     }
 
     // Compute discrete harmonic coordinates on the bounded side of the polygon with the fast O(n) but less precise algorithm.
     // Here, n - is the number of the polygon's vertices. Precision is lost near the boundary (~ 1.0e-10 and closer).
-    template<class Iterator>
-        std::pair<Iterator, bool> coordinates_on_bounded_side_fast_2(const Point &query_point, Iterator &output)
+    template<class OutputIterator>
+        boost::optional<OutputIterator> coordinates_on_bounded_side_fast_2(const Point_2 &query_point, OutputIterator &output)
     {
         CGAL_precondition( type_of_polygon() == STRICTLY_CONVEX );
 
@@ -302,15 +300,15 @@ private:
         B[n-1] = area_2(vertex[n-2], vertex[0] , query_point);
 
         // Compute unnormalized weights following the formula (25) with p = 2 from [1].
-        CGAL_precondition( A[n-1] != Scalar(0) && A[0] != Scalar(0) );
+        CGAL_precondition( A[n-1] != FT(0) && A[0] != FT(0) );
         weight[0] = (r[1]*A[n-1] - r[0]*B[0] + r[n-1]*A[0]) / (A[n-1] * A[0]);
 
         for(int i = 1; i < n-1; ++i) {
-            CGAL_precondition( A[i-1] != Scalar(0) && A[i] != Scalar(0) );
+            CGAL_precondition( A[i-1] != FT(0) && A[i] != FT(0) );
             weight[i] = (r[i+1]*A[i-1] - r[i]*B[i] + r[i-1]*A[i]) / (A[i-1] * A[i]);
         }
 
-        CGAL_precondition( A[n-2] != Scalar(0) && A[n-1] != Scalar(0) );
+        CGAL_precondition( A[n-2] != FT(0) && A[n-1] != FT(0) );
         weight[n-1] = (r[0]*A[n-2] - r[n-1]*B[n-1] + r[n-2]*A[n-1]) / (A[n-2] * A[n-1]);
 
         // Compute the sum of all weights - denominator of discrete harmonic coordinates.
@@ -318,8 +316,8 @@ private:
         for(int i = 1; i < n; ++i) dh_denominator += weight[i];
 
         // Invert this denominator.
-        CGAL_precondition( dh_denominator != Scalar(0) );
-        inverted_dh_denominator = Scalar(1) / dh_denominator;
+        CGAL_precondition( dh_denominator != FT(0) );
+        inverted_dh_denominator = FT(1) / dh_denominator;
 
         // Normalize weights and save them as resulting discrete harmonic coordinates.
         for(int i = 0; i < n-1; ++i) {
@@ -329,15 +327,15 @@ private:
         *output = weight[n-1] * inverted_dh_denominator;
 
         // Return coordinates.
-        return std::make_pair(output, true);
+        return boost::optional<OutputIterator>(output);
     }
 
     // COORDINATES ON UNBOUNDED SIDE.
 
     // Compute discrete harmonic coordinates on the unbounded side of the polygon with the slow O(n^2) but precise algorithm.
     // Here, n - is the number of the polygon's vertices.
-    template<class Iterator>
-        std::pair<Iterator, bool> coordinates_on_unbounded_side_precise_2(const Point &query_point, Iterator &output, bool warning_tag)
+    template<class OutputIterator>
+        boost::optional<OutputIterator> coordinates_on_unbounded_side_precise_2(const Point_2 &query_point, OutputIterator &output, bool warning_tag)
     {
         if(warning_tag)
             std::cout << std::endl << "WARNING: Discrete harmonic coordinates might be not well-defined outside the polygon!" << std::endl;
@@ -348,8 +346,8 @@ private:
 
     // Compute discrete harmonic coordinates on the unbounded side of the polygon with the fast O(n) but less precise algorithm.
     // Here, n - is the number of the polygon's vertices. Precision is lost near the boundary (~ 1.0e-10 and closer).
-    template<class Iterator>
-        std::pair<Iterator, bool> coordinates_on_unbounded_side_fast_2(const Point &query_point, Iterator &output, bool warning_tag)
+    template<class OutputIterator>
+        boost::optional<OutputIterator> coordinates_on_unbounded_side_fast_2(const Point_2 &query_point, OutputIterator &output, bool warning_tag)
     {
         if(warning_tag)
             std::cout << std::endl << "WARNING: Discrete harmonic coordinates might be not well-defined outside the polygon!" << std::endl;

@@ -74,24 +74,21 @@ enum Type_of_algorithm
 
 /// @}
 
-/// \name Types of a Polygon
-/// @{
+// Types of a Polygon
 
-/// Type_of_polygon is enumeration with possible types of the input polygon.
-/// It is used internally to precondition coordinates.
+// Type_of_polygon is enumeration with possible types of the input polygon.
+// It is used internally to precondition coordinates.
 enum Type_of_polygon
 {
-    /// Concave polygon = non-convex polygon.
+    // Concave polygon = non-convex polygon.
     CONCAVE,
 
-    /// This is a convex polygon with collinear vertices.
+    // This is a convex polygon with collinear vertices.
     WEAKLY_CONVEX,
 
-    /// This is a convex polygon without collinear vertices.
+    // This is a convex polygon without collinear vertices.
     STRICTLY_CONVEX
 };
-
-/// @}
 
 } // namespace Barycentric_coordinates
 

@@ -12,8 +12,6 @@ typedef Kernel::Point_2 Point;
 
 typedef CGAL::cpp11::array<Scalar,2> Pair;
 
-typedef BC::Segment_coordinates_2<Kernel> Segment_coordinates;
-
 using std::cout; using std::endl; using std::string;
 
 int main()
@@ -34,7 +32,7 @@ int main()
     // We use a static function and return segment coordinates stored in the CGAL::cpp11::array<FT,2> data structure.
     cout << endl << "Computed segment coordinates are: " << endl << endl;
     for(int i = 0; i < 5; ++i) {
-        const Pair pair = Segment_coordinates::static_compute(first_vertex, second_vertex, query_points[i]);
+        const Pair pair = BC::compute_segment_coordinates_2(first_vertex, second_vertex, query_points[i], Kernel());
 
         // Output both coordinates for each point.
         cout << "Pair of coordinates # " << i + 1 << " = (" << pair[1] << ", " << pair[2] << ");" << endl;

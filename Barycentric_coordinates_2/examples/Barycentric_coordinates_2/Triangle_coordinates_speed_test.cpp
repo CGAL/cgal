@@ -42,7 +42,7 @@ int main()
 {
     // Number of x and y coordinates together gives the number of points.
     const int number_of_x_coordinates = 1000000;
-    const int number_of_y_coordinates = 10000;
+    const int number_of_y_coordinates = 1000;
 
     // Number of runs to compute the arithmetic mean of the time.
     const int number_of_runs = 10;
@@ -78,7 +78,7 @@ int main()
         time_to_compute.start(); // Start clock
         for(Scalar x = zero; x <= one; x += x_step) {
             for(Scalar y = zero; y <= one; y += y_step)
-                triangle_coordinates.compute(Point(x, y), it); // Compute 3 coordinate values for each generated point
+                triangle_coordinates(Point(x, y), it); // Compute 3 coordinate values for each generated point
         }
         time_to_compute.stop(); // Stop clock
 

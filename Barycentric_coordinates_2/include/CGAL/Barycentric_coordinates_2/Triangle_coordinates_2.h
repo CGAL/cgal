@@ -31,6 +31,9 @@
 #include <CGAL/array.h>
 #include <CGAL/assertions.h>
 
+// Boost headers.
+#include <boost/optional.hpp>
+
 // CGAL namespace.
 namespace CGAL {
 
@@ -46,9 +49,7 @@ namespace Barycentric_coordinates {
  * <a href="http://en.wikipedia.org/wiki/Barycentric_coordinate_system" target=blanc>[2]</a> ) with respect to an arbitrary non-degenerate triangle in the plane.
  * This class is parameterized by a traits class `Traits`.
 
-\cgalHeading{Template parameters}
-
-\tparam Traits must be a model of the concept `BarycentricTraits_2`. In particular, it must provide the functions `Kernel::Compute_area_2` and `Kernel::Collinear_2`.
+\tparam Traits must be a model of the concept `BarycentricTraits_2`.
 
 */
 
@@ -62,10 +63,18 @@ public:
     /// @{
 
     /// Number type.
-    typedef typename Traits::FT      Scalar;
+    typedef typename Traits::FT      FT;
 
     /// Point type.
-    typedef typename Traits::Point_2 Point;
+    typedef typename Traits::Point_2 Point_2;
+
+    #ifdef DOXYGEN_RUNNING
+        /// Range of vertices in a triangle.
+        /// This type is a model of the concept `Range`. Its iterator type is `RandomAccessIterator`, and its value type is `Traits::Point_2`.
+        typedef unspecified_type Vertex_range;
+    #else
+        typedef std::vector<Point_2> Vertex_range;
+    #endif
 
     /// @}
 
@@ -75,56 +84,79 @@ public:
     /// Creates the class `Triangle_coordinates_2` that implements the behaviour of triangle coordinates with respect to an arbitrary non-degenerate triangle in the plane.
     /// The triangle is given by its three vertices.
     /// \pre Triangle is not degenerate.
-    Triangle_coordinates_2(const Point &first_vertex, const Point &second_vertex, const Point &third_vertex, const Traits &b_traits = Traits()) :
+    Triangle_coordinates_2(const Point_2 &first_vertex, const Point_2 &second_vertex, const Point_2 &third_vertex, const Traits &b_traits = Traits()) :
+        vertex(),
         barycentric_traits(b_traits),
-        vertex_0(first_vertex),
-        vertex_1(second_vertex),
-        vertex_2(third_vertex),
         area_2(barycentric_traits.compute_area_2_object()),
         collinear_2(barycentric_traits.collinear_2_object())
     {
-        CGAL_precondition( !collinear_2(vertex_0, vertex_1, vertex_2) );
+        CGAL_precondition( !collinear_2(first_vertex, second_vertex, third_vertex) );
+
+        vertex.resize(3);
+        vertex[0] = first_vertex;
+        vertex[1] = second_vertex;
+        vertex[2] = third_vertex;
     }
 
     /// @}
 
-    /// \name Computation of Basis Functions
+    /// \name Computation
     /// @{
 
     /// Computes triangle barycentric coordinates for a chosen query point with respect to all three vertices of the triangle.
-    /// This function accepts any STL like iterator, which complies with the `Iterator` concept.
-    template<class Iterator>
-        inline std::pair<Iterator, bool> compute(const Point &query_point, Iterator output)
+    /// Computed coordinates are stored in the output iterator `output`.
+    template<class OutputIterator>
+        inline boost::optional<OutputIterator> operator()(const Point_2 &query_point, OutputIterator output)
     {
         return triangle_coordinates_2(query_point, output);
     }
 
-    /// Computes triangle barycentric coordinates for a chosen query point with respect to all three vertices of the triangle.
-    /// This function accepts a container of the type <a href="http://en.cppreference.com/w/cpp/container/vector">`std::vector`</a> 
-    /// and returns an iterator of the type <a href="http://en.cppreference.com/w/cpp/iterator/back_insert_iterator">`std::back_insert_iterator`</a>
-    /// that is placed past-the-end of the resulting sequence of coordinate values.
-    inline std::pair<std::back_insert_iterator<std::vector<Scalar> >, bool> compute(const Point &query_point, std::vector<Scalar> &output_vector)
+    /// @}
+
+    /// \name Endpoint Accessors
+    /// @{
+
+    /// Returns all the vertices of the triangle.
+    inline const Vertex_range& vertices() const 
+    { 
+        return vertex; 
+    }
+
+    /// Returns the first vertex of the triangle.
+    inline const Point_2& first_vertex() const 
+    { 
+        return vertex[0]; 
+    }
+
+    /// Returns the second vertex of the triangle.
+    inline const Point_2& second_vertex() const 
+    { 
+        return vertex[1]; 
+    }
+
+    /// Returns the third vertex of the triangle.
+    inline const Point_2& third_vertex() const 
+    { 
+        return vertex[2]; 
+    }
+
+    /// @}
+
+    // Computes triangle barycentric coordinates for a chosen query point with respect to all three vertices of the triangle.
+    // This function accepts a container of the type <a href="http://en.cppreference.com/w/cpp/container/vector">`std::vector`</a> 
+    // and returns an iterator of the type <a href="http://en.cppreference.com/w/cpp/iterator/back_insert_iterator">`std::back_insert_iterator`</a>
+    // that is placed past-the-end of the resulting sequence of coordinate values.
+    inline boost::optional<std::back_insert_iterator<std::vector<FT> > > operator()(const Point_2 &query_point, std::vector<FT> &output_vector)
     {
         output_vector.reserve(output_vector.size() + 3);
-        typedef typename std::back_insert_iterator<std::vector<Scalar> > Iterator;
-        Iterator output = std::back_inserter(output_vector);
+        typedef typename std::back_insert_iterator<std::vector<FT> > OutputIterator;
+        OutputIterator output = std::back_inserter(output_vector);
         return triangle_coordinates_2(query_point, output);
     }
 
-    /// This is a static function that takes three vertices of a triangle and computes triangle coordinates at a given query point with respect to these vertices.
-    /// The coordinate values are returned as `CGAL::cpp11::array<FT,3>`.
-    /// The function also requires a traits class of the concept `BarycentricTraits_2`.
-    static inline CGAL::cpp11::array<typename Traits::FT,3> static_compute(const typename Traits::Point_2 &first_vertex, const typename Traits::Point_2 &second_vertex, const typename Traits::Point_2 &third_vertex, const typename Traits::Point_2 &query_point, const Traits &barycentric_traits = Traits())
-    {
-        return static_triangle_coordinates_2(first_vertex, second_vertex, third_vertex, query_point, barycentric_traits);
-    }
+    // Information Functions
 
-    /// @}
-
-    /// \name Information Functions
-    /// @{
-
-    /// This function prints some information about the used triangle and triangle coordinates.
+    // This function prints some information about the used triangle and triangle coordinates.
     void print_information(std::ostream &output_stream = std::cout) const
     {
         output_stream << std::endl << "INFORMATION: " << std::endl;
@@ -133,7 +165,7 @@ public:
         output_stream << "The internal data structure is triangle." << std::endl;
 
         output_stream << std::endl << "DEGENERACY: " << std::endl << std::endl;
-        if(!collinear_2(vertex_0, vertex_1, vertex_2)) output_stream << "This triangle is not degenerate." << std::endl;
+        if(!collinear_2(vertex[0], vertex[1], vertex[2])) output_stream << "This triangle is not degenerate." << std::endl;
         else std::cout << "This triangle is degenerate. The correct computation is not expected!" << std::endl;
 
         output_stream << std::endl << "TYPE OF COORDINATES: " << std::endl << std::endl;
@@ -143,37 +175,33 @@ public:
         output_stream << "Triangle coordinates can be computed exactly for an arbitrary point in the plane." << std::endl;
     }
 
-    /// @}
-
 private:
 
     // Internal global variables.
+    Vertex_range vertex;
+
     const Traits &barycentric_traits;
 
-    const Point &vertex_0;
-    const Point &vertex_1;
-    const Point &vertex_2;
+    FT area_second;
+    FT area_third;
+    FT inverted_total_area;
 
-    Scalar area_second;
-    Scalar area_third;
-    Scalar inverted_total_area;
-
-    Scalar b_first;
-    Scalar b_second;
+    FT b_first;
+    FT b_second;
 
     typename Traits::Compute_area_2 area_2;
     typename Traits::Collinear_2 collinear_2;
 
     // Compute triangle coordinates.
-    template<class Iterator>
-        std::pair<Iterator, bool> triangle_coordinates_2(const Point &query_point, Iterator &output)
+    template<class OutputIterator>
+        boost::optional<OutputIterator> triangle_coordinates_2(const Point_2 &query_point, OutputIterator &output)
     {
         // Compute some related sub-areas.
-        area_second = area_2(vertex_1, vertex_2, query_point);
-        area_third  = area_2(vertex_2, vertex_0, query_point);
+        area_second = area_2(vertex[1], vertex[2], query_point);
+        area_third  = area_2(vertex[2], vertex[0], query_point);
 
         // Compute the total inverted area of the triangle.
-        inverted_total_area = Scalar(1) / area_2(vertex_0, vertex_1, vertex_2);
+        inverted_total_area = FT(1) / area_2(vertex[0], vertex[1], vertex[2]);
 
         // Compute the first and second coordinate functions.
         b_first  = area_second * inverted_total_area;
@@ -186,36 +214,46 @@ private:
         ++output;
 
         // Compute the last = third coordinate, using the partition of unity property.
-        *output = Scalar(1) - b_first - b_second;
+        *output = FT(1) - b_first - b_second;
 
         // Output all coordinates.
-        return std::make_pair(output, true);
+        return boost::optional<OutputIterator>(output);
    }
-
-    // This is a static function that takes three vertices of a triangle and computes triangle coordinates at a given query point with respect to these vertices.
-    static CGAL::cpp11::array<typename Traits::FT,3> static_triangle_coordinates_2(const typename Traits::Point_2 &vertex_0, const typename Traits::Point_2 &vertex_1, const typename Traits::Point_2 &vertex_2, const typename Traits::Point_2 &query_point, const Traits &barycentric_traits)
-    {
-        // Some predefined functions.
-        typename Traits::Compute_area_2 area_2 = barycentric_traits.compute_area_2_object();
-
-        // Number type.
-        typedef typename Traits::FT Scalar;
-
-        // Compute some related sub-areas.
-        const Scalar area_second = area_2(vertex_1, vertex_2, query_point);
-        const Scalar area_third  = area_2(vertex_2, vertex_0, query_point);
-
-        // Compute the total inverted area of the triangle.
-        const Scalar inverted_total_area = Scalar(1) / area_2(vertex_0, vertex_1, vertex_2);
-
-        // Compute the first and second coordinate functions.
-        const Scalar b_first  = area_second * inverted_total_area;
-        const Scalar b_second = area_third  * inverted_total_area;
-
-        // Return the CGAL::cpp11::array<FT,3> type of coordinates.
-        return CGAL::make_array(b_first, b_second, Scalar(1) - b_first - b_second);
-    }
 };
+
+// Global functions
+
+/*!
+ * \relates Triangle_coordinates_2
+ * This is a global function that takes three vertices of a triangle and computes triangle coordinates at a given query point with respect to these vertices.
+ 
+\tparam Traits must be a model of the concept `BarycentricTraits_2`.
+
+*/
+
+template<class Traits>
+    inline CGAL::cpp11::array<typename Traits::FT,3> compute_triangle_coordinates_2(const typename Traits::Point_2 &first_vertex, const typename Traits::Point_2 &second_vertex, const typename Traits::Point_2 &third_vertex, const typename Traits::Point_2 &query_point, const Traits &barycentric_traits = Traits())
+{
+    // Some predefined functions.
+    typename Traits::Compute_area_2 area_2 = barycentric_traits.compute_area_2_object();
+
+    // Number type.
+    typedef typename Traits::FT FT;
+
+    // Compute some related sub-areas.
+    const FT area_second = area_2(second_vertex, third_vertex, query_point);
+    const FT area_third  = area_2(third_vertex , first_vertex, query_point);
+
+    // Compute the total inverted area of the triangle.
+    const FT inverted_total_area = FT(1) / area_2(first_vertex, second_vertex, third_vertex);
+
+    // Compute the first and second coordinate functions.
+    const FT b_first  = area_second * inverted_total_area;
+    const FT b_second = area_third  * inverted_total_area;
+
+    // Return the CGAL::cpp11::array<FT,3> type of coordinates.
+    return CGAL::make_array(b_first, b_second, FT(1) - b_first - b_second);
+}
 
 } // namespace Barycentric_coordinates
 

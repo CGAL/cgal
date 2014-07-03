@@ -1,4 +1,3 @@
-#include <CGAL/Barycentric_coordinates_2/Barycentric_traits_2.h>
 #include <CGAL/Barycentric_coordinates_2/Generalized_barycentric_coordinates_2.h>
 #include <CGAL/Barycentric_coordinates_2/Mean_value_2.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
@@ -9,20 +8,18 @@ namespace BC = CGAL::Barycentric_coordinates;
 // Some convenient typedefs.
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 
-typedef CGAL::Barycentric_coordinates::Barycentric_traits_2<Kernel> Barycentric_traits;
-
-typedef Barycentric_traits::FT      Scalar;
-typedef Barycentric_traits::Point_2 Point;
+typedef Kernel::FT      Scalar;
+typedef Kernel::Point_2 Point;
 
 typedef std::vector<Scalar> Scalar_vector;
 typedef std::vector<Point>  Point_vector;
 
 typedef Point_vector::iterator InputIterator;
 typedef std::back_insert_iterator<Scalar_vector> Vector_insert_iterator;
-typedef std::pair<Vector_insert_iterator, bool> Output_type;
+typedef boost::optional<Vector_insert_iterator> Output_type;
 
-typedef BC::Mean_value_2<Barycentric_traits> Mean_value;
-typedef BC::Generalized_barycentric_coordinates_2<InputIterator, Mean_value, Barycentric_traits> Mean_value_coordinates;
+typedef BC::Mean_value_2<Kernel> Mean_value;
+typedef BC::Generalized_barycentric_coordinates_2<Mean_value, Kernel> Mean_value_coordinates;
 
 using std::cout; using std::endl; using std::string;
 
@@ -61,10 +58,10 @@ int main()
     const CGAL::Barycentric_coordinates::Query_point_location query_point_location = CGAL::Barycentric_coordinates::ON_BOUNDED_SIDE;
 
     for(int i = 0; i < number_of_interior_points; ++i) {
-        const Output_type result = mean_value_coordinates.compute(interior_points[i], std::back_inserter(coordinates), query_point_location, type_of_algorithm);
+        const Output_type result = mean_value_coordinates(interior_points[i], std::back_inserter(coordinates), query_point_location, type_of_algorithm);
 
         // Output the coordinates for each point.
-        const string status = (result.second == true ? "SUCCESS." : "FAILURE.");
+        const string status = (result ? "SUCCESS." : "FAILURE.");
         cout << endl << "For the point " << i + 1 << " status of the computation: " << status << endl;
 
         for(int j = 0; j < number_of_vertices; ++j)
@@ -88,7 +85,7 @@ int main()
     const Scalar mv_inverted_denominator = Scalar(1) / mv_denominator;
 
     // Output mean value weights.
-    const string status = (result.second == true ? "SUCCESS." : "FAILURE.");
+    const string status = (result ? "SUCCESS." : "FAILURE.");
     cout << endl << "Status of the weights' computation for the point " << last_point_index + 1 << ": " << status << endl;
 
     for(int j = 0; j < number_of_vertices; ++j)
