@@ -2568,7 +2568,6 @@ exact_locate(const Point & p, Locate_type & lt, int & li, int & lj,
       // For the remembering visibility walk (Delaunay and Regular only), we don't :
       // int i = 0;
 
-      bool stop = false;
       // for each vertex
       for (int j=0; !try_next_cell && j != 4; ++j, i = (i+1)&3)
       {
