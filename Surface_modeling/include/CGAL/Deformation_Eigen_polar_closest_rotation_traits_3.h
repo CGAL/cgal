@@ -32,7 +32,7 @@ namespace CGAL {
   /// and `Eigen::JacobiSVD<>` (polar decomposition).
   ///
   /// \cgalModels `DeformationClosestRotationTraits_3`
-  class Deformation_Eigen_polar_closest_rotation_traits_3 : 
+  class Deformation_Eigen_polar_closest_rotation_traits_3 :
     public Deformation_Eigen_closest_rotation_traits_3{
   public:
 
@@ -44,10 +44,10 @@ namespace CGAL {
       CGAL_PROFILER(" times closest rotation is computed");
       bool solved = polar_eigen(m, R);
 
-      if(!solved) { 
+      if(!solved) {
         CGAL_PROFILER(" times polar_eigen failed and SVD is called");
-        Deformation_Eigen_closest_rotation_traits_3::compute_close_rotation(m, R); 
-      }       
+        Deformation_Eigen_closest_rotation_traits_3::compute_close_rotation(m, R);
+      }
     }
 
   private:

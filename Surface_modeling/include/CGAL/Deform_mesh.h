@@ -46,7 +46,7 @@ namespace CGAL {
 /// \ingroup PkgSurfaceModeling
 ///@brief Deformation algorithm type
 enum Deformation_algorithm_tag
-{ 
+{
   ORIGINAL_ARAP,  /**< use original as-rigid-as possible algorithm */
   SPOKES_AND_RIMS /**< use spokes and rims version of as-rigid-as possible algorithm */
 };
@@ -74,7 +74,7 @@ struct Weight_calculator_selector<HalfedgeGraph, CGAL::ORIGINAL_ARAP> {
  /// \ingroup PkgSurfaceModeling
  /// @brief Class providing the functionalities for deforming a triangulated surface mesh
  ///
- /// @tparam HG a model of HalfedgeGraph 
+ /// @tparam HG a model of HalfedgeGraph
  /// @tparam VIM a model of `ReadablePropertyMap`</a>  with Deform_mesh::vertex_descriptor as key and `unsigned int` as value type.
  ///         The default is `boost::property_map<HG, boost::%vertex_index_t>::%type`.
  /// @tparam HIM a model of `ReadablePropertyMap`</a>  with Deform_mesh::halfedge_descriptor as key and `unsigned int` as value type.
@@ -83,7 +83,7 @@ struct Weight_calculator_selector<HalfedgeGraph, CGAL::ORIGINAL_ARAP> {
  /// @tparam WC a model of SurfaceModelingWeights, with `WC::Halfedge_graph` being `HG`.
  ///         If `TAG` is `ORIGINAL_ARAP`, the weights must be positive to guarantee a correct energy minimization.
  ///         The default is the cotangent weighting scheme. In case `TAG` is `ORIGINAL_ARAP`, negative weights are clamped to zero.
- /// @tparam ST a model of SparseLinearAlgebraTraitsWithFactor_d. If \ref thirdpartyEigen "Eigen" 3.2 (or greater) is available 
+ /// @tparam ST a model of SparseLinearAlgebraTraitsWithFactor_d. If \ref thirdpartyEigen "Eigen" 3.2 (or greater) is available
  /// and `CGAL_EIGEN3_ENABLED` is defined, then an overload of `Eigen_solver_traits` is provided as default parameter.\n
   /// \code
  ///     CGAL::Eigen_solver_traits<
@@ -91,13 +91,13 @@ struct Weight_calculator_selector<HalfedgeGraph, CGAL::ORIGINAL_ARAP> {
  ///            CGAL::Eigen_sparse_matrix<double>::EigenType,
  ///            Eigen::COLAMDOrdering<int> >  >
  /// \endcode
- /// @tparam CR a model of DeformationClosestRotationTraits_3. If \ref thirdpartyEigen "Eigen" 3.1 (or greater) is available and `CGAL_EIGEN3_ENABLED` is defined, 
+ /// @tparam CR a model of DeformationClosestRotationTraits_3. If \ref thirdpartyEigen "Eigen" 3.1 (or greater) is available and `CGAL_EIGEN3_ENABLED` is defined,
  /// `Deformation_Eigen_polar_closest_rotation_traits_3` is provided as default parameter.
- /// @tparam VPM a model of `ReadWritePropertyMap`</a>  with Deform_mesh::vertex_descriptor as key and a point as value type. The point type must be a model of `::RawPoint_3`. 
+ /// @tparam VPM a model of `ReadWritePropertyMap`</a>  with Deform_mesh::vertex_descriptor as key and a point as value type. The point type must be a model of `::RawPoint_3`.
  /// The default is `boost::property_map<HG, CGAL::vertex_point_t>::%type`.
 template <
-  class HG, 
-  class VIM=Default, 
+  class HG,
+  class VIM=Default,
   class HIM=Default,
   Deformation_algorithm_tag TAG = SPOKES_AND_RIMS,
   class WC = Default,
@@ -189,12 +189,12 @@ public:
 #endif
 
   /// The type for vertex descriptor
-  typedef typename boost::graph_traits<Halfedge_graph>::vertex_descriptor	vertex_descriptor;
+  typedef typename boost::graph_traits<Halfedge_graph>::vertex_descriptor vertex_descriptor;
   /// The type for halfedge descriptor
-  typedef typename boost::graph_traits<Halfedge_graph>::halfedge_descriptor		halfedge_descriptor;
+  typedef typename boost::graph_traits<Halfedge_graph>::halfedge_descriptor halfedge_descriptor;
   /// The 3D point type, model of `::RawPoint_3`
   typedef typename boost::property_traits<Vertex_point_map>::value_type Point;
-  /// A constant iterator range over the vertices of the region-of-interest. 
+  /// A constant iterator range over the vertices of the region-of-interest.
   /// It is a model of `ConstRange` with `vertex_descriptor` as iterator value type.
   typedef std::vector<vertex_descriptor> Roi_vertex_range;
 /// @}
@@ -211,7 +211,7 @@ private:
   typedef typename Closest_rotation_traits::Vector CR_vector;
 
 // Data members.
-  Halfedge_graph& m_halfedge_graph;															/**< Source triangulated surface mesh for modeling */
+  Halfedge_graph& m_halfedge_graph;                   /**< Source triangulated surface mesh for modeling */
 
   std::vector<Point> original;                        ///< original positions of roi (size: ros + boundary_of_ros)
   std::vector<Point> solution;                        ///< storing position of ros vertices during iterations (size: ros + boundary_of_ros)
@@ -226,15 +226,15 @@ private:
   std::vector<bool>        is_roi_map;                ///< (size: num vertices)
   std::vector<bool>        is_ctrl_map;               ///< (size: num vertices)
 
-  std::vector<double> hedge_weight;                   ///< all halfedge weights 
+  std::vector<double> hedge_weight;                   ///< all halfedge weights
   std::vector<CR_matrix> rot_mtr;                     ///< rotation matrices of ros vertices (size: ros)
 
   Sparse_linear_solver m_solver;                      ///< linear sparse solver
   unsigned int m_iterations;                          ///< number of maximal iterations
-  double m_tolerance;                                 ///< tolerance of convergence 
+  double m_tolerance;                                 ///< tolerance of convergence
 
   bool need_preprocess_factorization;                 ///< is there any need to compute L and factorize
-  bool need_preprocess_region_of_solution;            ///< is there any need to compute region of solution 
+  bool need_preprocess_region_of_solution;            ///< is there any need to compute region of solution
 
   bool last_preprocess_successful;                    ///< stores the result of last call to preprocess()
 
@@ -252,7 +252,7 @@ private:
   std::vector<double> scales;
 #endif
 private:
-  Deform_mesh(const Self&) { } 
+  Deform_mesh(const Self&) { }
 
 // Public methods
 public:
@@ -315,8 +315,8 @@ public:
   }
 
   // Constructor with all the parameters provided
-  Deform_mesh(Halfedge_graph& halfedge_graph, 
-    Vertex_index_map vertex_index_map, 
+  Deform_mesh(Halfedge_graph& halfedge_graph,
+    Vertex_index_map vertex_index_map,
     Hedge_index_map hedge_index_map,
     Vertex_point_map vertex_point_map,
     Weight_calculator weight_calculator = Weight_calculator()
@@ -326,7 +326,7 @@ public:
     is_roi_map(std::vector<bool>(num_vertices(halfedge_graph), false)),
     is_ctrl_map(std::vector<bool>(num_vertices(halfedge_graph), false)),
     m_iterations(5), m_tolerance(1e-4),
-    need_preprocess_factorization(true), 
+    need_preprocess_factorization(true),
     need_preprocess_region_of_solution(true),
     last_preprocess_successful(false),
     weight_calculator(weight_calculator),
@@ -396,7 +396,7 @@ public:
     //set to false all bits
     is_ctrl_map.assign(num_vertices(m_halfedge_graph), false);
   }
-  
+
   /**
    * Inserts a vertex in the set of control vertices. The vertex is also inserted in the region-of-interest if it is not already in it.
    * @param vd the vertex to be inserted
@@ -436,7 +436,7 @@ public:
   bool erase_control_vertex(vertex_descriptor vd)
   {
     if(!is_control_vertex(vd)) { return false; }
-    
+
     need_preprocess_factorization=true;
     is_ctrl_map[id(vd)] = false;
     return true;
@@ -462,7 +462,7 @@ public:
    * @param vd the vertex to be inserted
    * @return `true` if `vd` is not already in the region-of-interest.
    */
-  bool insert_roi_vertex(vertex_descriptor vd)   
+  bool insert_roi_vertex(vertex_descriptor vd)
   {
     if(is_roi_vertex(vd)) { return false; }
     need_preprocess_both();
@@ -474,15 +474,15 @@ public:
 
   /**
    * Erases a vertex from the region-of-interest and the set of control vertices.
-   * \note At the next call to `preprocess()`, any vertex that is no longer in the region-of-interest will be assigned to its original position 
+   * \note At the next call to `preprocess()`, any vertex that is no longer in the region-of-interest will be assigned to its original position
    * (that is the position of the vertex at the time of construction or after the last call to `overwrite_initial_geometry()`).
    * @param vd the vertex to be erased
    * @return `true` `vd` was a vertex from the region-of-interest.
    */
-  bool erase_roi_vertex(vertex_descriptor vd)   
+  bool erase_roi_vertex(vertex_descriptor vd)
   {
-    if(!is_roi_vertex(vd)) { return false; }  
-    
+    if(!is_roi_vertex(vd)) { return false; }
+
     erase_control_vertex(vd); // also erase from being control
 
     typename std::vector<vertex_descriptor>::iterator it = std::find(roi.begin(), roi.end(), vd);
@@ -494,7 +494,7 @@ public:
       need_preprocess_both();
       return true;
     }
-    
+
     CGAL_assertion(false); // inconsistency between is_roi_map, and roi vector!
     return false;
   }
@@ -511,7 +511,7 @@ public:
    * \note A modification of the set of control vertices or the region-of-interest invalidates the
    * preprocessing data.
    * @return `true` if successful.
-   * A common reason for failure is that the system is rank deficient, 
+   * A common reason for failure is that the system is rank deficient,
    * which happens for example when all the vertices are in the region-of-interest and no control vertices are set, or
    * if the weighting scheme used features too many zero and breaks the connectivity information.
    */
@@ -567,7 +567,7 @@ public:
    *
    * @param begin first iterator of the range of vertices
    * @param end past-the-end iterator of the range of vertices
-   * @param t translation vector 
+   * @param t translation vector
    */
   template<class InputIterator, class Vect>
   void translate(InputIterator begin, InputIterator end, const Vect& t)
@@ -669,9 +669,9 @@ public:
   {
     preprocess();
 
-    if(!last_preprocess_successful) { 
+    if(!last_preprocess_successful) {
       CGAL_warning(false);
-      return; 
+      return;
     }
     // Note: no energy based termination occurs at first iteration
     // because comparing energy of original model (before deformation) and deformed model (deformed_1_iteration)
@@ -686,13 +686,13 @@ public:
       // main steps of optimization
       update_solution();
 #ifndef CGAL_DEFORM_MESH_JUST_EXPERIMENTAL_SCALE
-      optimal_rotations(); 
+      optimal_rotations();
 #endif
 #ifdef CGAL_DEFORM_MESH_USE_EXPERIMENTAL_SCALE
       optimal_scales();
 #endif
       // energy based termination
-      if(tolerance > 0.0 && (ite + 1) < iterations) // if tolerance <= 0 then don't compute energy 
+      if(tolerance > 0.0 && (ite + 1) < iterations) // if tolerance <= 0 then don't compute energy
       {                                             // also no need compute energy if this iteration is the last iteration
         energy_last = energy_this;
         energy_this = energy();
@@ -741,7 +741,7 @@ public:
    * \note if the region-of-interest or the set of control vertices have been modified since the last call to `preprocess()`,
    * it will be called prior to the overwrite.
    *
-   * \cgalAdvancedBegin 
+   * \cgalAdvancedBegin
    * This function might have a non-negligible effect on the result.
    * The Laplacian matrix of the free vertices and the optimal rotations
    * are computed using the original positions of the points
@@ -782,14 +782,14 @@ public:
         hedge_weight[id_e_opp] = weight_calculator(e_opp, m_halfedge_graph, vertex_point_map);
         is_weight_computed[id_e_opp] = true;
       }
-    }    
+    }
 
     // also set rotation matrix to identity
     std::fill(rot_mtr.begin(), rot_mtr.end(), Closest_rotation_traits().identity_matrix());
 
     need_preprocess_both(); // now we need reprocess
   }
-  
+
 /// @} Deformation
 
 /// \name Utilities
@@ -800,7 +800,7 @@ public:
    */
   unsigned int iterations()
   { return m_iterations; }
-  
+
   /**
    * Gets the default tolerance parameter (1e-4) or the value passed to the function `set_tolerance()`
    */
@@ -812,7 +812,7 @@ public:
    */
   void set_iterations(unsigned int iterations)
   { this->m_iterations = iterations; }
-  
+
    /// @brief Sets the tolerance of the convergence used in `deform()`.
    /// If `tolerance==0`, no energy based termination criteria is used (preventing to do the energy computation at each iteration step)
    ///
@@ -820,7 +820,7 @@ public:
   void set_tolerance(double tolerance)
   { this->m_tolerance = tolerance; }
 
-  /** 
+  /**
    * Returns the range of vertices in the region-of-interest.
    */
   Roi_vertex_range roi_vertices() const
@@ -856,29 +856,29 @@ public:
 private:
 
   /// Assigns id to one ring neighbor of vd, and also push them into push_vector
-  void assign_ros_id_to_one_ring(vertex_descriptor vd, 
-                             std::size_t& next_id, 
+  void assign_ros_id_to_one_ring(vertex_descriptor vd,
+                             std::size_t& next_id,
                              std::vector<vertex_descriptor>& push_vector)
   {
     in_edge_iterator e, e_end;
     for (cpp11::tie(e,e_end) = in_edges(vd, m_halfedge_graph); e != e_end; e++)
     {
-      vertex_descriptor vt = source(*e, m_halfedge_graph);    
+      vertex_descriptor vt = source(*e, m_halfedge_graph);
       if(ros_id(vt) == (std::numeric_limits<std::size_t>::max)())  // neighboring vertex which is outside of roi and not visited previously (i.e. need an id)
       {
         ros_id(vt) = next_id++;
-        push_vector.push_back(vt);        
+        push_vector.push_back(vt);
       }
     }
   }
-  
+
   /// Find region of solution, including roi and hard constraints, which is the 1-ring vertices out roi
   /// Contains four parts:
   ///  - if there is any vertex which is no longer roi, set its position back to original position
   ///  - assign a ros id to vertices inside ros + ros-boundary
   ///  - reinitialize rotation matrices, if a vertex is previously ros, use its previous matrix, otherwise set zero
-  ///  - reinitialize original, and solution, 
-  ///      + if a vertex is previously roi, then use its original position in old_origional, else use point(). 
+  ///  - reinitialize original, and solution,
+  ///      + if a vertex is previously roi, then use its original position in old_origional, else use point().
   ///        In both case we are using "original position" of the vertex.
   ///      + same for solution (it is required to prevent jumping effects)
   void region_of_solution()
@@ -890,11 +890,11 @@ private:
     std::vector<CR_matrix>    old_rot_mtr    = rot_mtr;
     std::vector<Point>        old_solution   = solution;
     std::vector<Point>        old_original   = original;
-    
+
     // any vertices which are no longer ROI, should be assigned to their original position, so that:
     // IF a vertex is ROI (actually if its ros + boundary) previously (when previous region_of_solution() is called)
-    // we have its original position in old_original 
-    // ELSE 
+    // we have its original position in old_original
+    // ELSE
     // we have its original position in vertex->point()
     // (current ros is actually old ros - we did not change it yet)
     for(typename std::vector<vertex_descriptor>::iterator it = ros.begin(); it != ros.end(); ++it)
@@ -908,8 +908,8 @@ private:
     // assign id to vertices inside: roi, boundary of roi (roi + boundary of roi = ros),
     //                               and boundary of ros
     // keep in mind that id order does not have to be compatible with ros order
-    ros.clear(); // clear ros    
-    ros.insert(ros.end(), roi.begin(), roi.end()); 
+    ros.clear(); // clear ros
+    ros.insert(ros.end(), roi.begin(), roi.end());
 
     ros_id_map.assign(num_vertices(m_halfedge_graph), (std::numeric_limits<std::size_t>::max)()); // use max as not assigned mark
 
@@ -923,7 +923,7 @@ private:
 
     std::vector<vertex_descriptor> outside_ros;
     // boundary of ros also must have ids because in CR calculation,
-    // one-ring neighbor of ROS vertices are reached. 
+    // one-ring neighbor of ROS vertices are reached.
     for(std::size_t i = roi.size(); i < ros.size(); i++)
     { assign_ros_id_to_one_ring(ros[i], next_ros_index, outside_ros); }
     ////////////////////////////////////////////////////////////////
@@ -938,31 +938,31 @@ private:
       // any vertex which is previously ROS has a rotation matrix
       // use that matrix to prevent jumping effects
       if(old_ros_id_map[v_id] != (std::numeric_limits<std::size_t>::max)()
-          && old_ros_id_map[v_id] < old_rot_mtr.size()) { 
+          && old_ros_id_map[v_id] < old_rot_mtr.size()) {
           // && boundary of ros vertices also have ids so check whether it is ros
-        rot_mtr[v_ros_id] = old_rot_mtr[ old_ros_id_map[v_id] ];        
+        rot_mtr[v_ros_id] = old_rot_mtr[ old_ros_id_map[v_id] ];
       }
       else {
         rot_mtr[v_ros_id] = Closest_rotation_traits().identity_matrix();
       }
     }
-    
+
     // initialize solution and original (size: ros + boundary_of_ros)
 
     // for simplifying coding effort, I also put boundary of ros into solution and original
     // because boundary of ros vertices are reached in optimal_rotations() and energy()
     solution.resize(ros.size() + outside_ros.size());
     original.resize(ros.size() + outside_ros.size());
-    
+
     for(std::size_t i = 0; i < ros.size(); i++)
     {
       std::size_t v_ros_id = ros_id(ros[i]);
       std::size_t v_id = id(ros[i]);
 
-      if(is_roi_vertex(ros[i]) && old_ros_id_map[v_id] != (std::numeric_limits<std::size_t>::max)()) { 
+      if(is_roi_vertex(ros[i]) && old_ros_id_map[v_id] != (std::numeric_limits<std::size_t>::max)()) {
         // if it is currently roi and previously ros + boundary
         // (actually I just need to assign old's to new's if a vertex is currently and previously ROI
-        // but no harm on assigning if its also previously ros + boundary because 
+        // but no harm on assigning if its also previously ros + boundary because
         // those(old_original & old_solution) will be equal to original position)
         original[v_ros_id] = old_original[old_ros_id_map[v_id]];
         solution[v_ros_id] = old_solution[old_ros_id_map[v_id]];
@@ -970,7 +970,7 @@ private:
       else {
         solution[v_ros_id] = get(vertex_point_map, ros[i]);
         original[v_ros_id] = get(vertex_point_map, ros[i]);
-      }         
+      }
     }
 
     for(std::size_t i = 0; i < outside_ros.size(); ++i)
@@ -989,7 +989,7 @@ private:
   /// Assemble Laplacian matrix A of linear system A*X=B
   void assemble_laplacian_and_factorize()
   {
-    if(TAG == SPOKES_AND_RIMS) 
+    if(TAG == SPOKES_AND_RIMS)
     {
       assemble_laplacian_and_factorize_spokes_and_rims();
     }
@@ -1024,8 +1024,8 @@ private:
           double wji = hedge_weight[id(opposite(he, m_halfedge_graph))]; // edge(pi - pj)
           double total_weight = wij + wji;
 
-          A.set_coef(vi_id, ros_id(vj), -total_weight, true);	// off-diagonal coefficient
-          diagonal += total_weight;  
+          A.set_coef(vi_id, ros_id(vj), -total_weight, true); // off-diagonal coefficient
+          diagonal += total_weight;
         }
         // diagonal coefficient
         A.set_coef(vi_id, vi_id, diagonal, true);
@@ -1050,7 +1050,7 @@ private:
 
     typename Sparse_linear_solver::Matrix A(ros.size());
 
-    /// assign cotangent Laplacian to ros vertices    
+    /// assign cotangent Laplacian to ros vertices
     for(std::size_t k = 0; k < ros.size(); k++)
     {
       vertex_descriptor vi = ros[k];
@@ -1063,12 +1063,12 @@ private:
         {
           halfedge_descriptor he = halfedge(*e, m_halfedge_graph);
           double total_weight = 0;
-          // an edge contribute to energy only if it is part of an incident triangle 
+          // an edge contribute to energy only if it is part of an incident triangle
           // (i.e it should not be a border edge)
           if(!is_border(he, m_halfedge_graph))
           {
             double wji = hedge_weight[id(he)]; // edge(pj - pi)
-            total_weight += wji; 
+            total_weight += wji;
           }
 
           halfedge_descriptor opp = opposite(he, m_halfedge_graph);
@@ -1080,15 +1080,15 @@ private:
 
           // place coefficient to matrix
           vertex_descriptor vj = target(he, m_halfedge_graph);
-          A.set_coef(vi_id, ros_id(vj), -total_weight, true);	// off-diagonal coefficient
-          diagonal += total_weight; 
+          A.set_coef(vi_id, ros_id(vj), -total_weight, true); // off-diagonal coefficient
+          diagonal += total_weight;
         }
         // diagonal coefficient
         A.set_coef(vi_id, vi_id, diagonal, true);
       }
       else // constrained vertex
       {
-        A.set_coef(vi_id, vi_id, 1.0, true); 
+        A.set_coef(vi_id, vi_id, 1.0, true);
       }
     }
 
@@ -1101,7 +1101,7 @@ private:
   /// Local step of iterations, computing optimal rotation matrices
   void optimal_rotations()
   {
-    if(TAG == SPOKES_AND_RIMS) 
+    if(TAG == SPOKES_AND_RIMS)
     {
       optimal_rotations_spokes_and_rims();
     }
@@ -1111,7 +1111,7 @@ private:
     }
   }
   void optimal_rotations_arap()
-  {     
+  {
     Closest_rotation_traits cr_traits;
     CR_matrix cov = cr_traits.zero_matrix();
 
@@ -1151,9 +1151,9 @@ private:
     }
   }
   void optimal_rotations_spokes_and_rims()
-  {    
+  {
     Closest_rotation_traits cr_traits;
-    CR_matrix cov =cr_traits.zero_matrix();   
+    CR_matrix cov =cr_traits.zero_matrix();
 
     // only accumulate ros vertices
     for ( std::size_t k = 0; k < ros.size(); k++ )
@@ -1163,12 +1163,12 @@ private:
       // compute covariance matrix
       cov = cr_traits.zero_matrix();
 
-      //iterate through all triangles 
+      //iterate through all triangles
       out_edge_iterator e, e_end;
       for (cpp11::tie(e,e_end) = out_edges(vi, m_halfedge_graph); e != e_end; e++)
       {
         halfedge_descriptor he = halfedge(*e, m_halfedge_graph);
-        if(is_border(he, m_halfedge_graph)) { continue; } // no facet 
+        if(is_border(he, m_halfedge_graph)) { continue; } // no facet
         // iterate edges around facet
         halfedge_descriptor hedge_around_facet = he;
         do
@@ -1177,7 +1177,7 @@ private:
           vertex_descriptor v2 = source(hedge_around_facet, m_halfedge_graph);
 
           std::size_t v1_id = ros_id(v1); std::size_t v2_id = ros_id(v2);
-        
+
           const CR_vector& p12 = sub_to_CR_vector(original[v1_id], original[v2_id]);
           const CR_vector& q12 = sub_to_CR_vector(solution[v1_id], solution[v2_id]);
           double w12 = hedge_weight[id(hedge_around_facet)];
@@ -1192,7 +1192,7 @@ private:
   }
 
 #ifdef CGAL_DEFORM_MESH_USE_EXPERIMENTAL_SCALE
-  void optimal_scales() 
+  void optimal_scales()
   {
     for ( std::size_t k = 0; k < ros.size(); k++ )
     {
@@ -1210,7 +1210,7 @@ private:
 
         const CR_vector& pij = sub_to_CR_vector(original[vi_id], original[vj_id]);
         const CR_vector& qij = sub_to_CR_vector(solution[vi_id], solution[vj_id]);
-        
+
         double wij = hedge_weight[id(he)];
 
         const CR_vector& pRij = rot_mtr[vi_id] * pij;
@@ -1226,7 +1226,7 @@ private:
   /// Global step of iterations, updating solution
   void update_solution()
   {
-    if(TAG == SPOKES_AND_RIMS) 
+    if(TAG == SPOKES_AND_RIMS)
     {
       update_solution_spokes_and_rims();
     }
@@ -1250,7 +1250,7 @@ private:
       vertex_descriptor vi = ros[k];
       std::size_t vi_id = ros_id(vi);
 
-      if ( is_roi_vertex(vi) && !is_control_vertex(vi) ) 
+      if ( is_roi_vertex(vi) && !is_control_vertex(vi) )
       {// free vertices
         // sum of right-hand side of eq:lap_ber in user manual
         CR_vector xyz = cr_traits.vector(0, 0, 0);
@@ -1260,8 +1260,8 @@ private:
         {
           halfedge_descriptor he = halfedge(*e, m_halfedge_graph);
           vertex_descriptor vj = source(he, m_halfedge_graph);
-          std::size_t vj_id = ros_id(vj); 
-          
+          std::size_t vj_id = ros_id(vj);
+
           const CR_vector& pij = sub_to_CR_vector(original[vi_id], original[vj_id]);
 
           double wij = hedge_weight[id(he)];
@@ -1269,16 +1269,16 @@ private:
 #ifndef CGAL_DEFORM_MESH_USE_EXPERIMENTAL_SCALE
           cr_traits.add__scalar_t_matrix_p_scalar_t_matrix__t_vector(xyz, wij, rot_mtr[vi_id], wji, rot_mtr[vj_id], pij);
 #else
-        cr_traits.add__scalar_t_matrix_p_scalar_t_matrix__t_vector(xyz, wij * scales[vi_id], rot_mtr[vi_id], 
+        cr_traits.add__scalar_t_matrix_p_scalar_t_matrix__t_vector(xyz, wij * scales[vi_id], rot_mtr[vi_id],
           wji * scales[vj_id], rot_mtr[vj_id], pij);
 #endif
           // corresponds xyz += (wij*rot_mtr[vi_id] + wji*rot_mtr[vj_id]) * pij
         }
-        Bx[vi_id] = cr_traits.vector_coordinate(xyz, 0); 
-        By[vi_id] = cr_traits.vector_coordinate(xyz, 1); 
-        Bz[vi_id] = cr_traits.vector_coordinate(xyz, 2); 
+        Bx[vi_id] = cr_traits.vector_coordinate(xyz, 0);
+        By[vi_id] = cr_traits.vector_coordinate(xyz, 1);
+        Bz[vi_id] = cr_traits.vector_coordinate(xyz, 2);
       }
-      else 
+      else
       {// constrained vertex
         Bx[vi_id] = solution[vi_id][0]; By[vi_id] = solution[vi_id][1]; Bz[vi_id] = solution[vi_id][2];
       }
@@ -1287,8 +1287,8 @@ private:
     // solve "A*X = B".
     bool is_all_solved = m_solver.linear_solver(Bx, X) && m_solver.linear_solver(By, Y) && m_solver.linear_solver(Bz, Z);
     if(!is_all_solved) {
-      CGAL_warning(false); 
-      return; 
+      CGAL_warning(false);
+      return;
     }
     // copy to solution
     for (std::size_t i = 0; i < ros.size(); i++)
@@ -1313,7 +1313,7 @@ private:
       vertex_descriptor vi = ros[k];
       std::size_t vi_id = ros_id(vi);
 
-      if ( is_roi_vertex(vi) && !is_control_vertex(vi) ) 
+      if ( is_roi_vertex(vi) && !is_control_vertex(vi) )
       {// free vertices
         // sum of right-hand side of eq:lap_ber_rims in user manual
         CR_vector xyz = cr_traits.vector(0, 0, 0);
@@ -1323,14 +1323,14 @@ private:
         {
           halfedge_descriptor he = halfedge(*e, m_halfedge_graph);
           vertex_descriptor vj = target(he, m_halfedge_graph);
-          std::size_t vj_id = ros_id(vj); 
+          std::size_t vj_id = ros_id(vj);
 
           const CR_vector& pij = sub_to_CR_vector(original[vi_id], original[vj_id]);
-          
+
           if(!is_border(he, m_halfedge_graph))
           {
             vertex_descriptor vn = target(next(he, m_halfedge_graph), m_halfedge_graph); // opp vertex of e_ij
-            double wji = hedge_weight[id(he)] / 3.0;  // edge(pj - pi)           
+            double wji = hedge_weight[id(he)] / 3.0;  // edge(pj - pi)
             cr_traits.add_scalar_t_matrix_sum_t_vector(xyz, wji, rot_mtr[vi_id], rot_mtr[vj_id], rot_mtr[ros_id(vn)], pij);
             // corresponds  xyz += wji*(rot_mtr[vi_id] + rot_mtr[vj_id] + rot_mtr[ros_id(vn)])*pij;
           }
@@ -1344,11 +1344,11 @@ private:
             // corresponds xyz += wij * ( rot_mtr[vi_id] + rot_mtr[vj_id] + rot_mtr[ros_id(vm)] ) * pij
           }
         }
-        Bx[vi_id] = cr_traits.vector_coordinate(xyz, 0); 
-        By[vi_id] = cr_traits.vector_coordinate(xyz, 1); 
-        Bz[vi_id] = cr_traits.vector_coordinate(xyz, 2); 
+        Bx[vi_id] = cr_traits.vector_coordinate(xyz, 0);
+        By[vi_id] = cr_traits.vector_coordinate(xyz, 1);
+        Bz[vi_id] = cr_traits.vector_coordinate(xyz, 2);
       }
-      else 
+      else
       {// constrained vertices
         Bx[vi_id] = solution[vi_id][0]; By[vi_id] = solution[vi_id][1]; Bz[vi_id] = solution[vi_id][2];
       }
@@ -1356,8 +1356,8 @@ private:
     // solve "A*X = B".
     bool is_all_solved = m_solver.linear_solver(Bx, X) && m_solver.linear_solver(By, Y) && m_solver.linear_solver(Bz, Z);
     if(!is_all_solved) {
-      CGAL_warning(false); 
-      return; 
+      CGAL_warning(false);
+      return;
     }
 
     // copy to solution
@@ -1382,9 +1382,9 @@ private:
   }
 
   /// Compute modeling energy
-  double energy() const 
+  double energy() const
   {
-    if(TAG == SPOKES_AND_RIMS) 
+    if(TAG == SPOKES_AND_RIMS)
     {
       return energy_spokes_and_rims();
     }
@@ -1398,7 +1398,7 @@ private:
   {
     Closest_rotation_traits cr_traits;
 
-    double sum_of_energy = 0;    
+    double sum_of_energy = 0;
     // only accumulate ros vertices
     for( std::size_t k = 0; k < ros.size(); k++ )
     {
@@ -1433,12 +1433,12 @@ private:
     {
       vertex_descriptor vi = ros[k];
       std::size_t vi_id = ros_id(vi);
-      //iterate through all triangles 
+      //iterate through all triangles
       out_edge_iterator e, e_end;
       for (cpp11::tie(e,e_end) = out_edges(vi, m_halfedge_graph); e != e_end; e++)
       {
         halfedge_descriptor he = halfedge(*e, m_halfedge_graph);
-        if(is_border(he, m_halfedge_graph)) { continue; } // no facet 
+        if(is_border(he, m_halfedge_graph)) { continue; } // no facet
         // iterate edges around facet
         halfedge_descriptor hedge_around_facet = he;
         do
@@ -1450,7 +1450,7 @@ private:
           const CR_vector& p12 = sub_to_CR_vector(original[v1_id], original[v2_id]);
           const CR_vector& q12 = sub_to_CR_vector(solution[v1_id], solution[v2_id]);
           double w12 = hedge_weight[id(hedge_around_facet)];
-         
+
           sum_of_energy += w12 * cr_traits.squared_norm_vector_scalar_vector_subs(q12, rot_mtr[vi_id], p12);
           // sum_of_energy += w12 * ( q12 - rot_mtr[vi_id]*p12 )^2
 
@@ -1486,9 +1486,9 @@ private:
   std::size_t id(vertex_descriptor vd) const
   { return get(vertex_index_map, vd); }
 
-  std::size_t& ros_id(vertex_descriptor vd)       
+  std::size_t& ros_id(vertex_descriptor vd)
   { return ros_id_map[id(vd)]; }
-  std::size_t  ros_id(vertex_descriptor vd) const 
+  std::size_t  ros_id(vertex_descriptor vd) const
   { return ros_id_map[id(vd)]; }
 
   /// shorthand of get(hedge_index_map, e)

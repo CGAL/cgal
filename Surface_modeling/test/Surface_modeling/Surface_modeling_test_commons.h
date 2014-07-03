@@ -42,7 +42,7 @@ void init_indices(Polyhedron& poly) {
 
 template<class DeformMesh>
 std::vector<typename DeformMesh::vertex_descriptor>
-read_rois(DeformMesh& deform_mesh, 
+read_rois(DeformMesh& deform_mesh,
   const std::string& roi_file,
   const std::string& handle_file)
 {
@@ -82,13 +82,13 @@ read_rois(DeformMesh& deform_mesh,
 }
 
 template<class DeformMesh>
-void preprocess_and_deform(DeformMesh& deform_mesh, 
+void preprocess_and_deform(DeformMesh& deform_mesh,
   const std::string& roi_file,
   const std::string& handle_file,
-  CGAL::Simple_cartesian<double>::Vector_3 translate, 
-  int deformation_iteration) 
+  CGAL::Simple_cartesian<double>::Vector_3 translate,
+  int deformation_iteration)
 {
-  std::vector<typename DeformMesh::vertex_descriptor> hg = 
+  std::vector<typename DeformMesh::vertex_descriptor> hg =
     read_rois(deform_mesh, roi_file, handle_file);
 
   CGAL::Timer timer; timer.start();

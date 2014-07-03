@@ -1,7 +1,7 @@
  /// \ingroup PkgSurfaceModelingConcepts
  /// \cgalConcept
  ///
- /// @brief Concept describing the set of requirements for calculating weights for halfedges. 
+ /// @brief Concept describing the set of requirements for calculating weights for halfedges.
  ///
  /// \cgalHeading{Example:}
  ///
@@ -21,19 +21,19 @@
 class SurfaceModelingWeights
 {
 public:
-/// \name Types 
+/// \name Types
 /// @{
   /// a model of HalfedgeGraph
   typedef unspecified_type Halfedge_graph;
-/// @} 
+/// @}
 
-/// \name Creation 
+/// \name Creation
 /// @{
   /// Default constructor. Required only if the default parameter is used in the constructor of `CGAL::Deform_mesh`.
   SurfaceModelingWeights();
-/// @} 
+/// @}
 
-/// \name Operations 
+/// \name Operations
 /// @{
   /// Function computing the halfedge weight of halfedge `he`
   /// \tparam VertexPointMap a model of `ReadWritePropertyMap`</a>  with boost::graph_traits<Halfedge_graph>::vertex_descriptor as key and a 3D point from a \cgal Kernel as value type

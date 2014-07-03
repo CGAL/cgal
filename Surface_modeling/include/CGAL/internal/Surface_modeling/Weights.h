@@ -24,7 +24,7 @@ class Cotangent_value_Meyer
 {
 public:
   typedef typename boost::graph_traits<HalfedgeGraph>::vertex_descriptor vertex_descriptor;
-  
+
   typedef HalfedgeGraph Halfedge_graph;
 
   template<class VertexPointMap>
@@ -37,9 +37,9 @@ public:
     Vector cross_ab = CGAL::cross_product(a, b);
     double divider = std::sqrt(cross_ab*cross_ab);
 
-    if(divider == 0 /*|| divider != divider*/) 
+    if(divider == 0 /*|| divider != divider*/)
     {
-      this->collinear(get(vpm, v0), get(vpm, v1), get(vpm, v2)) ? 
+      this->collinear(get(vpm, v0), get(vpm, v1), get(vpm, v2)) ?
         CGAL_warning(!"Infinite Cotangent value with degenerate triangle!") :
         CGAL_warning(!"Infinite Cotangent value due to floating point arithmetic!");
 
@@ -55,14 +55,14 @@ public:
   //          just for raising a proper warning message (i.e nothing functional)
   template<class Point>
   bool collinear(const Point&, const Point&, const Point&) {
-    return true; 
+    return true;
   }
   template<class Kernel>
   bool collinear(const CGAL::Point_3<Kernel>& a, const CGAL::Point_3<Kernel>& b, const CGAL::Point_3<Kernel>& c) {
     return CGAL::collinear(a, b, c);
   }
   ///////////////////////////////////////////////////////////////////////////////////////
-  
+
 };
 
 // Returns the cotangent value of half angle v0 v1 v2 by clamping between [1, 89] degrees
@@ -101,10 +101,10 @@ public:
 
 
 ///////////////////////////// Halfedge Weight Calculators ///////////////////////////////////
-// Cotangent weight calculator 
+// Cotangent weight calculator
 // Cotangent_value:               as suggested by -[Sorkine07] ARAP Surface Modeling-
 // Cotangent_value_area_weighted: as suggested by -[Mullen08] Spectral Conformal Parameterization-
-template<class HalfedgeGraph, 
+template<class HalfedgeGraph,
          class CotangentValue = Cotangent_value_minimum_zero<HalfedgeGraph> >
 class Cotangent_weight : CotangentValue
 {
@@ -120,9 +120,9 @@ public:
      vertex_descriptor v0 = target(he, halfedge_graph);
      vertex_descriptor v1 = source(he, halfedge_graph);
      // Only one triangle for border edges
-     if ( is_border(he, halfedge_graph) || 
+     if ( is_border(he, halfedge_graph) ||
           is_border(opposite(he, halfedge_graph), halfedge_graph) )
-     {       
+     {
        halfedge_descriptor he_cw = opposite( next(he, halfedge_graph), halfedge_graph );
        vertex_descriptor v2 = source(he_cw, halfedge_graph);
        if ( is_border(he_cw, halfedge_graph) ||
@@ -136,7 +136,7 @@ public:
      else
      {
         halfedge_descriptor he_cw = opposite( next(he, halfedge_graph), halfedge_graph );
-        vertex_descriptor v2 = source(he_cw, halfedge_graph);     
+        vertex_descriptor v2 = source(he_cw, halfedge_graph);
         halfedge_descriptor he_ccw = prev( opposite(he, halfedge_graph), halfedge_graph );
         vertex_descriptor v3 = source(he_ccw, halfedge_graph);
 
@@ -146,7 +146,7 @@ public:
 };
 
 // Single cotangent from -[Chao10] Simple Geometric Model for Elastic Deformation
-template<class HalfedgeGraph, 
+template<class HalfedgeGraph,
          class CotangentValue = Cotangent_value_Meyer<HalfedgeGraph> >
 class Single_cotangent_weight : CotangentValue
 {
@@ -161,7 +161,7 @@ public:
   double operator()(halfedge_descriptor he, HalfedgeGraph& halfedge_graph, VertexPointMap vpm)
   {
      if(is_border(he, halfedge_graph)) { return 0.0;}
-     
+
      vertex_descriptor v0 = target(he, halfedge_graph);
      vertex_descriptor v1 = source(he, halfedge_graph);
 
@@ -195,7 +195,7 @@ public:
     {
       halfedge_descriptor he_cw = opposite( next(he, halfedge_graph), halfedge_graph );
       vertex_descriptor v2 = source(he_cw, halfedge_graph);
-      if ( is_border(he_cw, halfedge_graph) || 
+      if ( is_border(he_cw, halfedge_graph) ||
            is_border(opposite(he_cw, halfedge_graph), halfedge_graph) )
       {
         halfedge_descriptor he_ccw = prev( opposite(he, halfedge_graph), halfedge_graph );
@@ -207,7 +207,7 @@ public:
     else
     {
       halfedge_descriptor he_cw = opposite( next(he, halfedge_graph), halfedge_graph );
-      vertex_descriptor v2 = source(he_cw, halfedge_graph);     
+      vertex_descriptor v2 = source(he_cw, halfedge_graph);
       halfedge_descriptor he_ccw = prev( opposite(he, halfedge_graph), halfedge_graph );
       vertex_descriptor v3 = source(he_ccw, halfedge_graph);
 
@@ -225,12 +225,12 @@ private:
     double e0_square = vec0.squared_length();
     double e1_square = vec1.squared_length();
     double e2_square = vec2.squared_length();
-    double e0 = std::sqrt(e0_square); 
+    double e0 = std::sqrt(e0_square);
     double e2 = std::sqrt(e2_square);
     double cos_angle = ( e0_square + e2_square - e1_square ) / 2.0 / e0 / e2;
     cos_angle = (std::max)(-1.0, (std::min)(1.0, cos_angle)); // clamp into [-1, 1]
     double angle = acos(cos_angle);
-    
+
     return ( tan(angle/2.0) );
   }
 
@@ -253,7 +253,7 @@ private:
   }
 };
 
-template< class HalfedgeGraph, 
+template< class HalfedgeGraph,
           class PrimaryWeight = Cotangent_weight<HalfedgeGraph>,
           class SecondaryWeight = Mean_value_weight<HalfedgeGraph> >
 class Hybrid_weight : public PrimaryWeight, SecondaryWeight

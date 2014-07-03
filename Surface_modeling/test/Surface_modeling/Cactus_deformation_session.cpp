@@ -27,7 +27,7 @@ void compare_mesh(const Polyhedron& mesh_1, const Polyhedron& mesh_2)
   Kernel::Vector_3 total_dif(0,0,0);
   for( ; it_1 != mesh_1.vertices_end(); ++it_1 , ++it_2)
   {
-    total_dif = total_dif + (it_1->point() - it_2->point());    
+    total_dif = total_dif + (it_1->point() - it_2->point());
   }
   double average_mesh_dif = (total_dif / mesh_1.size_of_vertices()).squared_length();
 
@@ -50,7 +50,7 @@ void read_handle_difs_and_deform(DeformMesh& deform_mesh, InputIterator begin, I
   std::ifstream dif_stream("data/cactus_handle_differences.txt");
   std::vector<Vector> dif_vector;
   double x, y, z;
-  while(dif_stream >> x >> y >> z) 
+  while(dif_stream >> x >> y >> z)
   { dif_vector.push_back(Vector(x, y, z)); }
 
   CGAL::Timer timer;
@@ -68,18 +68,18 @@ void read_handle_difs_and_deform(DeformMesh& deform_mesh, InputIterator begin, I
     previous=dif_vector[i];
 
     // read pre-deformed cactus
-    std::stringstream predeformed_cactus_file;    
+    std::stringstream predeformed_cactus_file;
     predeformed_cactus_file << "data/cactus_deformed/cactus_deformed_" << i << ".off";
     Polyhedron predeformed_cactus;
-	
-    read_to_polyhedron(predeformed_cactus_file.str().c_str(), predeformed_cactus); 
-	  compare_mesh(predeformed_cactus, deform_mesh.halfedge_graph());
 
-	  // for saving deformation
+    read_to_polyhedron(predeformed_cactus_file.str().c_str(), predeformed_cactus);
+    compare_mesh(predeformed_cactus, deform_mesh.halfedge_graph());
+
+    // for saving deformation
     //std::ofstream(predeformed_cactus_file) << deform_mesh.halfedge_graph();
     //std::cerr << predeformed_cactus_file << std::endl;
   }
-  std::cerr << "Deformation performance (with default number_of_iteration and tolerance) " << std::endl 
+  std::cerr << "Deformation performance (with default number_of_iteration and tolerance) " << std::endl
     << dif_vector.size() << " translation: " << timer.time() << std::endl;
 }
 
@@ -92,16 +92,16 @@ int main()
   init_indices(mesh_1);
   init_indices(mesh_2);
 
-  Deform_mesh_arap deform_mesh_arap(mesh_1); 
-  Deform_mesh_spoke deform_mesh_spoke(mesh_2); 
+  Deform_mesh_arap deform_mesh_arap(mesh_1);
+  Deform_mesh_spoke deform_mesh_spoke(mesh_2);
   // For original arap
-  std::vector<vertex_descriptor> hg_1 = 
+  std::vector<vertex_descriptor> hg_1 =
     read_rois(deform_mesh_arap, "data/cactus_roi.txt", "data/cactus_handle.txt");
 
   read_handle_difs_and_deform(deform_mesh_arap, hg_1.begin(), hg_1.end());
   std::cerr << "ORIGINAL ARAP Success!" << std::endl;
   // For spokes rims
-  std::vector<vertex_descriptor> hg_2 = 
+  std::vector<vertex_descriptor> hg_2 =
     read_rois(deform_mesh_spoke, "data/cactus_roi.txt", "data/cactus_handle.txt");
 
   read_handle_difs_and_deform(deform_mesh_spoke, hg_2.begin(), hg_2.end());

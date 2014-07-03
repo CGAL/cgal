@@ -19,10 +19,10 @@ typedef CGAL::Simple_cartesian<double> Kernel;
 
 typedef CGAL::Polyhedron_3<Kernel, CGAL::Polyhedron_items_with_id_3>  Polyhedron;
 
-typedef CGAL::Deform_mesh<Polyhedron, CGAL::Default, CGAL::Default, 
+typedef CGAL::Deform_mesh<Polyhedron, CGAL::Default, CGAL::Default,
   CGAL::ORIGINAL_ARAP> Deform_mesh_arap;
 
-typedef CGAL::Deform_mesh<Polyhedron, CGAL::Default, CGAL::Default, 
+typedef CGAL::Deform_mesh<Polyhedron, CGAL::Default, CGAL::Default,
   CGAL::SPOKES_AND_RIMS> Deform_mesh_spoke;
 
 int main()
@@ -30,12 +30,12 @@ int main()
   Polyhedron mesh_1;
   read_to_polyhedron("data/cactus.off", mesh_1);
   Polyhedron mesh_2 = mesh_1;
-  
+
   init_indices(mesh_1);
   init_indices(mesh_2);
 
-  Deform_mesh_arap deform_mesh_arap(mesh_1); 
-  Deform_mesh_spoke deform_mesh_spoke(mesh_2); 
+  Deform_mesh_arap deform_mesh_arap(mesh_1);
+  Deform_mesh_spoke deform_mesh_spoke(mesh_2);
 
   const int deformation_iteration = 500;
   const double x = -0.55; const double y = -0.50; const double z = -0.0;

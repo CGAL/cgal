@@ -38,37 +38,37 @@ public:
   typedef Eigen::Vector3d Vector;
 
   /// Equivalent to `result += w * (v1*v2^t)`
-  void add_scalar_t_vector_t_vector_transpose(Matrix& result, double w, const Vector& v1, const Vector& v2) 
+  void add_scalar_t_vector_t_vector_transpose(Matrix& result, double w, const Vector& v1, const Vector& v2)
   {
     result += w * (v1*v2.transpose());
   }
-  
+
   /// Equivalent to `result += (w1*m1 + w2*m2) * v`
-  void add__scalar_t_matrix_p_scalar_t_matrix__t_vector(Vector& result, double w1, const Matrix& m1, double w2, const Matrix& m2, const Vector& v) 
+  void add__scalar_t_matrix_p_scalar_t_matrix__t_vector(Vector& result, double w1, const Matrix& m1, double w2, const Matrix& m2, const Vector& v)
   {
     result += (w1*m1 + w2*m2) * v;
   }
-  
+
   /// Equivalent to `result += w * (m1 + m2 + m3) * v`
-  void add_scalar_t_matrix_sum_t_vector(Vector& result, double w, const Matrix& m1, const Matrix& m2, const Matrix& m3, const Vector& v) 
-  { 
+  void add_scalar_t_matrix_sum_t_vector(Vector& result, double w, const Matrix& m1, const Matrix& m2, const Matrix& m3, const Vector& v)
+  {
     result += w * (m1 + m2 + m3) * v;
   }
-  
+
   /// Returns the squared norm of `v1 - m*v2`
-  double squared_norm_vector_scalar_vector_subs(const Vector& v1, const Matrix& m, const Vector& v2) 
-  { 
-    return (v1 - m*v2).squaredNorm(); 
-  } 
+  double squared_norm_vector_scalar_vector_subs(const Vector& v1, const Matrix& m, const Vector& v2)
+  {
+    return (v1 - m*v2).squaredNorm();
+  }
 
   /// Returns an identity matrix
-  Matrix identity_matrix() 
+  Matrix identity_matrix()
   {
     return Matrix().setIdentity();
   }
-  
+
   /// Returns a zero initialized matrix
-  Matrix zero_matrix() 
+  Matrix zero_matrix()
   {
     return Matrix().setZero();
   }
@@ -78,13 +78,13 @@ public:
   {
     return Vector(x, y, z);
   }
-  
+
   /// Returns a coefficient of a vector
   double vector_coordinate(const Vector& v, int i)
   {
     return v(i);
   }
-    
+
   /// Computes the closest rotation to `m` and places it into `R`
   void compute_close_rotation(const Matrix& m, Matrix& R)
   {
@@ -96,7 +96,7 @@ public:
 
     if( R.determinant() < 0 ) {
       Matrix u_copy = u;
-      u_copy.col(2) *= -1;        // singular values sorted ascendingly  
+      u_copy.col(2) *= -1;        // singular values sorted ascendingly
       R = v * u_copy.transpose(); // re-extract rotation matrix
     }
   }

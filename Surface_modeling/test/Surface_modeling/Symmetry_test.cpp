@@ -9,7 +9,7 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Deform_mesh.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
-  
+
 typedef CGAL::Simple_cartesian<double>   Kernel;
 typedef CGAL::Polyhedron_3<Kernel, CGAL::Polyhedron_items_with_id_3>  Polyhedron;
 
@@ -25,8 +25,8 @@ int main()
   init_indices(mesh_1);
   init_indices(mesh_2);
 
-  Deform_mesh_arap deform_mesh_arap(mesh_1); 
-  Deform_mesh_spoke deform_mesh_spoke(mesh_2); 
+  Deform_mesh_arap deform_mesh_arap(mesh_1);
+  Deform_mesh_spoke deform_mesh_spoke(mesh_2);
 
   const int deformation_iteration = 500;
   const double x = -0.45; const double y = -0.65; const double z = -0.0;

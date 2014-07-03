@@ -22,7 +22,7 @@
 
 namespace CGAL {
 namespace internal {
-/** 
+/**
  * Currently this class is not used by surface modeling package, just leave it for possible future need.
  * Provide simple functionality for iterating over spoke and rim edges
  *   - use get_descriptor() to obtain active edge
@@ -31,7 +31,7 @@ namespace internal {
  /// // how to use Spokes_and_rims_iterator
  /// boost::tie(e_begin, e_end) = out_edges(vertex, halfedge_graph);
  /// Spokes_and_rims_iterator<HalfedgeGraph> rims_it(e_begin, halfedge_graph);
- /// 
+ ///
  /// for ( ; rims_it.get_iterator() != e_end; ++rims_it )
  /// {
  ///   halfedge_descriptor active_hedge = rims_it.get_descriptor();
@@ -42,8 +42,8 @@ template<class HalfedgeGraph>
 class Spokes_and_rims_iterator
 {
 public:
-  typedef typename boost::graph_traits<HalfedgeGraph>::out_edge_iterator	out_edge_iterator;
-  typedef typename boost::graph_traits<HalfedgeGraph>::halfedge_descriptor		halfedge_descriptor; 
+  typedef typename boost::graph_traits<HalfedgeGraph>::out_edge_iterator  out_edge_iterator;
+  typedef typename boost::graph_traits<HalfedgeGraph>::halfedge_descriptor  halfedge_descriptor;
 
   Spokes_and_rims_iterator(out_edge_iterator edge_iterator, HalfedgeGraph& halfedge_graph)
     : is_current_rim(false), iterator(edge_iterator), descriptor(halfedge(*edge_iterator)), halfedge_graph(halfedge_graph)
@@ -51,18 +51,18 @@ public:
 
   /// descriptor will be assigned to next valid edge, note that iterator might not change
   Spokes_and_rims_iterator<HalfedgeGraph>&
-  operator++() 
+  operator++()
   {
     // loop through one spoke then one rim edge
     if(!is_current_rim && !is_border(descriptor, halfedge_graph)) // it is rim edge's turn
     {
-	    is_current_rim = true;
-	    descriptor = next(descriptor, halfedge_graph);
+      is_current_rim = true;
+      descriptor = next(descriptor, halfedge_graph);
     }
     else // if current edge is rim OR there is no rim edge (current spoke edge is boudary)
     {    // then iterate to next spoke edge
-	    is_current_rim = false;
-	    descriptor = halfedge(*(++iterator));
+      is_current_rim = false;
+      descriptor = halfedge(*(++iterator));
     }
     return *this;
   }

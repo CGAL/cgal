@@ -386,7 +386,7 @@ following equation:
 \begin{equation}
 \sum_{\mathbf{v}_j \in N(\mathbf{v}_i)} w_{ij}(\mathbf{v}'_i - \mathbf{v}'_j) =
 \sum_{\mathbf{v}_j \in N(\mathbf{v}_i)} w_{ij} \frac{(\mathbf{R}_i + \mathbf{R}_j)}{2} (\mathbf{v}_i - \mathbf{v}_j).
-	\label{eq:lap_ber}
+\label{eq:lap_ber}
 \end{equation}
 \f]
 
@@ -410,7 +410,7 @@ we slightly change Eq. \f$\eqref{eq:lap_ber}\f$ to:
 \begin{equation}
 \sum_{\mathbf{v}_j \in N(\mathbf{v}_i)} (w_{ij} + w_{ji})(\mathbf{v}'_i - \mathbf{v}'_j) =
 \sum_{\mathbf{v}_j \in N(\mathbf{v}_i)} (w_{ij}\mathbf{R}_i + w_{ji}\mathbf{R}_j)(\mathbf{v}_i - \mathbf{v}_j).
-	\label{eq:lap_ber_asym}
+\label{eq:lap_ber_asym}
 \end{equation}
 \f]
 
@@ -462,7 +462,7 @@ respect to \f$\mathbf{v}_i\f$ gives the following equation:
 \begin{equation}
 \sum_{\mathbf{v}_j \in N(\mathbf{v}_i)} (w_{ij} + w_{ji})(\mathbf{v}'_i - \mathbf{v}'_j) =
 \sum_{\mathbf{v}_j \in N(\mathbf{v}_i)} \frac{w_{ij}(\mathbf{R}_i + \mathbf{R}_j + \mathbf{R}_m) + w_{ji}(\mathbf{R}_i + \mathbf{R}_j + \mathbf{R}_n)}{3} (\mathbf{v}_i - \mathbf{v}_j).
-	\label{eq:lap_ber_rims}
+\label{eq:lap_ber_rims}
 \end{equation}
 \f]
 

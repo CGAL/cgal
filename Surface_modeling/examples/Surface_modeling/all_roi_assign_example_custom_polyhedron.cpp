@@ -102,21 +102,21 @@ int main()
   // Insert two control vertices
   vertex_descriptor control_1 = *next(vb, 213);
   vertex_descriptor control_2 = *next(vb, 157);
-  deform_mesh.insert_control_vertex(control_1); 
+  deform_mesh.insert_control_vertex(control_1);
   deform_mesh.insert_control_vertex(control_2);
 
   // The definition of the ROI and the control vertices is done, call preprocess
   bool is_matrix_factorization_OK = deform_mesh.preprocess();
-  if(!is_matrix_factorization_OK){ 
-    std::cerr << "Check documentation of preprocess()" << std::endl; 
+  if(!is_matrix_factorization_OK){
+    std::cerr << "Check documentation of preprocess()" << std::endl;
     return 1;
   }
 
-  // Use set_target_position() to set the constained position 
+  // Use set_target_position() to set the constained position
   // of control_1. control_2 remains at the last assigned positions
   Deform_mesh::Point constrained_pos_1(-0.35, 0.40, 0.60);
   deform_mesh.set_target_position(control_1, constrained_pos_1);
-  
+
   // Deform the mesh, the positions of vertices of 'mesh' are updated
   deform_mesh.deform();
   // The function deform() can be called several times if the convergence has not been reached yet
@@ -125,11 +125,11 @@ int main()
   // Set the constained position of control_2
   Deform_mesh::Point constrained_pos_2(0.55, -0.30, 0.70);
   deform_mesh.set_target_position(control_2, constrained_pos_2);
-  
+
 
   // Call the function deform() with one-time parameters:
   // iterate 10 times and do not use energy based termination criterion
-  deform_mesh.deform(10, 0.0); 
+  deform_mesh.deform(10, 0.0);
 
   std::ofstream output("deform_1.off");
   output << mesh; // save deformed mesh
@@ -138,10 +138,10 @@ int main()
   // Add another control vertex
   vertex_descriptor control_3 = *next(vb, 92);
   deform_mesh.insert_control_vertex(control_3);
-  
+
   // The prepocessing step is again needed
   if(!deform_mesh.preprocess()) {
-    std::cerr << "Check documentation of preprocess()" << std::endl; 
+    std::cerr << "Check documentation of preprocess()" << std::endl;
     return 1;
   }
 
