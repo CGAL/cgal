@@ -52,7 +52,7 @@ bool test_ray(Arrangement_2& arr, Face_handle f)
   arr.remove_edge(eh2);
   arr.remove_edge(eh1);
 
-  if (!test(arr)) return false;
+  if (!::test(arr)) return false;
 
   return true;
 }
@@ -99,7 +99,7 @@ int main()
             << ",  E = " << arr.number_of_edges()
             << ",  F = " << arr.number_of_faces() << std::endl;
 
-  if (!test(arr)) return 1;
+  if (!::test(arr)) return 1;
 
   /* Construct another arrangement of a segment connected to a ray.
    * First remove the ray, then remove the segment.
