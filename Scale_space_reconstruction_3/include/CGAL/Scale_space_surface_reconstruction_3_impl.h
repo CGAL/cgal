@@ -379,7 +379,7 @@ typename Scale_space_surface_reconstruction_3<Gt,FS,OS,Ct>::FT
 Scale_space_surface_reconstruction_3<Gt,FS,OS,Ct>::
 estimate_neighborhood_radius( InputIterator begin, InputIterator end, unsigned int neighbors, unsigned int samples ) {
     clear();
-	insert_points( begin, end );
+	add_points( begin, end );
 	return estimate_neighborhood_radius( neighbors, samples );
 }
 #endif // DOXYGEN_RUNNING
@@ -490,7 +490,7 @@ Scale_space_surface_reconstruction_3<Gt,FS,OS,Ct>::
 reconstruct_surface( InputIterator begin, InputIterator end, unsigned int iterations ) {
     // Compute the radius for which the mean ball would contain the required number of neighbors.
     clear();
-    insert_points( begin, end );
+    add_points( begin, end );
 
     // Smooth the scale space.
     advance_scale_space( iterations );

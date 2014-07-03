@@ -268,7 +268,7 @@ private:
 public:
 /// \name Constructors
 /// \{
-    /// constructs a surface reconstructor that automatically estimates the neighborhood radius.
+    /// constructs a surface reconstructor that will automatically estimate the neighborhood radius.
     /** \param neighbors is the number of neighbors a point's neighborhood should
      *  contain on average.
      *  \param samples is the number of points sampled to estimate the
@@ -344,9 +344,9 @@ public:
      *  \warning Inserting a new point may invalidate the neighborhood radius
      *  if it was previously estimated.
      *
-     *  \sa `insert_points(InputIterator begin, InputIterator end)`.
+     *  \sa `add_points(InputIterator begin, InputIterator end)`.
      */
-	void insert_point( const Point& p ) {
+	void add_point( const Point& p ) {
 		_tree.insert( p );
 	}
 
@@ -368,12 +368,12 @@ public:
      *  \warning Inserting new points may invalidate the neighborhood radius if
      *  it was previously estimated.
      *
-     *  \sa `insert_point(const Point& p)`.
+     *  \sa `add_point(const Point& p)`.
      *  \sa `construct_scale_space(InputIterator begin, InputIterator end, unsigned int iterations)`.
      *  \sa `reconstruct_surface(InputIterator begin, InputIterator end, unsigned int iterations)`.
      */
 	template < class InputIterator >
-	void insert_points( InputIterator begin, InputIterator end ) {
+	void add_points( InputIterator begin, InputIterator end ) {
 		_tree.insert( begin, end );
 	}
     
@@ -548,6 +548,9 @@ public:
      *
      *  \return the estimated neighborhood radius.
      *
+     *  \note This method processes the current point scale-space. The points
+     *  in the scale-space can be set with <code>[add_points(begin, end)](\ref add_points)</code>.
+     *
      *  \warning If the surface was already constructed, estimating the
      *  neighborhood radius will automatically adjust the surface.
      *
@@ -576,6 +579,9 @@ public:
      *  neighborhood radius.
      *  \return the estimated neighborhood radius.
      *
+     *  \note This method processes the current point scale-space. The points
+     *  in the scale-space can be set with <code>[add_points(begin, end)](\ref add_points)</code>.
+     *
      *  \warning If the surface was already constructed, estimating the
      *  neighborhood radius will automatically adjust the surface.
      *
@@ -587,8 +593,8 @@ public:
     /// estimates the neighborhood radius of a collection of points.
     /** This method is equivalent to running
      *  `clear()` followed by
-     *  <code>[insert_points(begin, end)](\ref insert_points)</code> and
-     *  finally `estimate_neighborhood_radius()`.
+     *  <code>[add_points(begin, end)](\ref add_points)</code> and
+     *  finally <code>[estimate_neighborhood_radius( mean_number_of_neighbors(), neighborhood_sample_size() )](\ref estimate_neighborhood_radius)</code>.
      *
      *  This method will be called by the scale-space and surface construction
      *  methods if the neighborhood radius is not set when they are called.
@@ -603,7 +609,7 @@ public:
      *  \sa `set_neighborhood_sample_size(unsigned int samples)`.
      *  \sa `estimate_neighborhood_radius(InputIterator begin, InputIterator end, unsigned int neighbors, unsigned int samples)`.
      *  \sa `estimate_neighborhood_radius()`.
-     *  \sa `insert_points(InputIterator begin, InputIterator end)`.
+     *  \sa `add_points(InputIterator begin, InputIterator end)`.
      *  \sa `construct_scale_space(InputIterator begin, InputIterator end, unsigned int iterations)`.
      *  \sa `reconstruct_surface(InputIterator begin, InputIterator end, unsigned int iterations)`.
      */
@@ -622,7 +628,7 @@ public:
      *  
      *  This method is equivalent to running
      *  `clear()` followed by
-     *  <code>[insert_points(begin, end)](\ref insert_points)</code> and finally
+     *  <code>[add_points(begin, end)](\ref add_points)</code> and finally
      *  <code>[estimate_neighborhood_radius(neighbors, samples)](\ref estimate_neighborhood_radius)</code>.
      *
      *  \tparam InputIterator is an iterator over the point collection.
@@ -656,10 +662,13 @@ public:
      *  with `iterations > 0` will advance the scale-space further.
      *
      *  If the neighborhood radius has not been set before, it is automatically
-     *  estimated.
+     *  estimated using `estimate_neighborhood_radius()`.
      *
      *  \param iterations is the number of iterations to perform. If
      *  `iterations` is 0, nothing happens.
+     *
+     *  \note This method processes the current point scale-space. The points
+     *  in the scale-space can be set with <code>[add_points(begin, end)](\ref add_points)</code>.
      *
      *  \note If the surface was already constructed, advancing the scale-space
      *  will not automatically adjust the surface.
@@ -672,11 +681,11 @@ public:
     
     /// constructs a scale-space of a collection of points.
     /** If the neighborhood radius has not been set before, it is automatically
-     *  estimated.
+     *  estimated using `estimate_neighborhood_radius()`.
      *
      *  This method is equivalent to running
      *  `clear()` followed by
-     *  <code>[insert_points(begin, end)](\ref insert_points)</code> and finally
+     *  <code>[add_points(begin, end)](\ref add_points)</code> and finally
      *  <code>[advance_scale_space(iterations)](\ref advance_scale_space)</code>.
      *
      *  \tparam InputIterator is an iterator over the point collection.
@@ -687,7 +696,7 @@ public:
      *  \param iterations is the number of iterations to perform. If
      *  `iteations` is 0, nothing happens.
      *
-     *  \sa `insert_points(InputIterator begin, InputIterator end)`.
+     *  \sa `add_points(InputIterator begin, InputIterator end)`.
      *  \sa `estimate_neighborhood_radius(InputIterator begin, InputIterator end)`.
      *  \sa `advance_scale_space(unsigned int iterations)`.
      *  \sa `reconstruct_surface(InputIterator begin, InputIterator end, unsigned int iterations)`.
@@ -695,7 +704,7 @@ public:
 	template < class InputIterator >
 	void construct_scale_space( InputIterator begin, InputIterator end, unsigned int iterations = 1 ) {
         clear();
-		insert_points( begin, end );
+		add_points( begin, end );
 		advance_scale_space( iterations );
 	}
 
@@ -703,7 +712,7 @@ public:
 private:
     // constructs the scale-space from a triangulation.
     void construct_scale_space( Triangulation& tr ) {
-        insert_points( tr.finite_vertices_begin(), tr.finite_vertices_end() );
+        add_points( tr.finite_vertices_begin(), tr.finite_vertices_end() );
     }
 
     // tries to perform a functor in parallel.
@@ -754,7 +763,7 @@ private:
      *  \param end is a past-the-end iterator for the point collection.
      *
      *  \note This does not set the current scale-space.
-     *  To set this as well, use `insert_points( InputIterator begin, InputIterator end )`.
+     *  To set this as well, use `add_points( InputIterator begin, InputIterator end )`.
      *
      *  \note If the neighborhood radius has not been set before, it is automatically
      *  estimated.
@@ -792,10 +801,13 @@ public:
      *  `surface_begin()` and `surface_end()`.
      *
      *  If the neighborhood radius has not been set before, it is automatically
-     *  estimated.
+     *  estimated using `estimate_neighborhood_radius()`.
      *
      *  \param iterations is the number of scale-space advancement iterations to
      *  apply. If `iterations` is 0, the current scale-space is used.
+     *
+     *  \note This method processes the current point scale-space. The points
+     *  in the scale-space can be set with <code>[add_points(begin, end)](\ref add_points)</code>.
      *
      *  \sa `reconstruct_surface(InputIterator begin, InputIterator end, unsigned int iterations)`.
      *  \sa `estimate_neighborhood_radius()`.
@@ -806,11 +818,11 @@ public:
     /// constructs a surface mesh from the scale-space of a collection of points.
     /** This method is equivalent to running
      *  `clear()` followed by
-     *  <code>[insert_points(begin, end)](\ref insert_points)</code> and finally
+     *  <code>[add_points(begin, end)](\ref add_points)</code> and finally
      *  <code>[reconstruct_surface(iterations)](\ref reconstruct_surface)</code>.
      *
      *  If the neighborhood radius has not been set before, it is automatically
-     *  estimated.
+     *  estimated using `estimate_neighborhood_radius()`.
      *
      *  \tparam InputIterator is an iterator over the point collection.
      *  The iterator must point to a `Point`.
@@ -821,7 +833,7 @@ public:
      *  apply. If `iterations` is 0, the current scale-space is used.
      *  
      *  \sa `reconstruct_surface(unsigned int iterations)`.
-     *  \sa `insert_points(InputIterator begin, InputIterator end)`.
+     *  \sa `add_points(InputIterator begin, InputIterator end)`.
      *  \sa `estimate_neighborhood_radius(InputIterator begin, InputIterator end)`.
      *  \sa `construct_scale_space(InputIterator begin, InputIterator end, unsigned int iterations)`.
      */

@@ -20,7 +20,6 @@ int main(void) {
     // Read the data.
 	Pointset points;
 	std::ifstream in("kitten.off");
-    //std::ifstream in("C:\\Recherche\\Data\\ball_30.off");
     std::cout << "Reading " << std::flush;
     if( !in || !CGAL::read_off_points( in, std::back_inserter( points ) ) ) {
         std::cerr << "Error: cannot read file" << std::endl;
@@ -29,11 +28,8 @@ int main(void) {
 	std::cout << "done: " << points.size() << " points." << std::endl;
 
 	// Construct the mesh in a scale space.
-	//Reconstruction reconstruct( 30, 200 );
-	//Reconstruction reconstruct( 10, 200 );
-	//reconstruct.reconstruct_surface( points.begin(), points.end(), 4 );
-    Reconstruction reconstruct( 5, 200 );
-	reconstruct.reconstruct_surface( points.begin(), points.end(), 1 );
+	Reconstruction reconstruct( 10, 200 );
+	reconstruct.reconstruct_surface( points.begin(), points.end(), 4 );
     std::cout << "Reconstruction done:" << std::endl;
     
     // Write the reconstruction.
@@ -43,24 +39,6 @@ int main(void) {
         for( Triple_iterator it = reconstruct.shell_begin( shell ); it != reconstruct.shell_end( shell ); ++it )
             std::cout << *it << std::endl;
     }
-
-
-
-    /*
-    std::ofstream out( "kitten_tst.off" );
-    out << "OFF" << std::endl;
-    //out << points.size() << " " << reconstruct.number_of_triangles() << " 0" << std::endl;
-    out << points.size() << " " << std::distance( reconstruct.shell_begin(0), reconstruct.shell_end(0) ) << " 0" << std::endl;
-    for( Pointset::const_iterator pit = points.begin(); pit != points.end(); ++pit )
-        out << *pit << std::endl;
-    //for( Triple_iterator it = reconstruct.surface_begin(); it != reconstruct.surface_end(); ++it )
-    for( Triple_iterator it = reconstruct.shell_begin(0); it != reconstruct.shell_end(0); ++it )
-        out << "3  " << *it << std::endl;*/
-
-
-
-
-
 
 	std::cout << "Done." << std::endl;
     return EXIT_SUCCESS;
