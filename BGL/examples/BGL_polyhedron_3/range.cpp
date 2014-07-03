@@ -39,7 +39,7 @@ void fct(const Polyhedron& p)
 {
   vertex_range vr(vertices(p));
   
-#ifndef BOOST_NO_CXX11_RANGE_BASED_FOR
+#ifndef CGAL_NO_CPP0X_RANGE_BASED_FOR
   std::cout << "new for loop" << std::endl;
   for(vertex_descriptor vd : vr){
     std::cout << vd->point() << std::endl;
