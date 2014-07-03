@@ -181,14 +181,15 @@ triangle(const HalfedgeGraph& g,
 {
   BOOST_CONCEPT_ASSERT((HalfedgeGraphConcept<HalfedgeGraph>));
 
-  typedef typename boost::graph_traits<HalfedgeGraph>::halfedge_descriptor halfedge_descriptor;
   typedef typename boost::graph_traits<HalfedgeGraph>::vertex_descriptor vertex_descriptor;
   
   typedef typename Kernel_traits<
     typename boost::property_traits<PositionMap>::value_type
     >::Kernel::Triangle_3 Triangle_3;
   
-  CGAL_assertion_code(halfedge_descriptor h2 = h);
+  CGAL_assertion_code(
+    typename boost::graph_traits<HalfedgeGraph>::halfedge_descriptor h2 = h;
+  )
   vertex_descriptor u = target(h,g);
   h = next(h,g);
   vertex_descriptor v = target(h,g);
