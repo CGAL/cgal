@@ -1932,7 +1932,8 @@ private:
     std::unique_copy(all_facets.begin(),
                      all_facets.end(),
                      std::back_inserter(facets));
-    CGAL_HISTOGRAM_PROFILER("|facets|", facets.size());
+    CGAL_HISTOGRAM_PROFILER("|facets|", 
+                            static_cast<unsigned int>(facets.size()));
     return facets;
   }
 
@@ -2678,7 +2679,8 @@ rebuild_restricted_delaunay(OutdatedCells& outdated_cells,
   t.reset();
 # endif
 
-    CGAL_HISTOGRAM_PROFILER("|vertex_to_proj|=", vertex_to_proj.size());
+    CGAL_HISTOGRAM_PROFILER("|vertex_to_proj|=", 
+                            static_cast<unsigned int>(vertex_to_proj.size()));
   // Project interior vertices
   // Note: ~0% of rebuild_restricted_delaunay time
   // TODO : iterate to be sure no interior vertice become on the surface
