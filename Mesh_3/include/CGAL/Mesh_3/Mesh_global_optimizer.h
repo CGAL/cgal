@@ -851,7 +851,7 @@ compute_move(const Vertex_handle& v)
   // Parallel
   if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
   {
-    tr_.incident_cells_threadsafe(v, std::back_inserter(incident_cells));
+    tr_.incident_cells_threadsafe(v, incident_cells);
   }
   else
 #endif //CGAL_LINKED_WITH_TBB
@@ -1066,7 +1066,7 @@ average_circumradius_length(const Vertex_handle& v) const
   // Parallel
   if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
   {
-    tr_.incident_cells_threadsafe(v, std::back_inserter(incident_cells));
+    tr_.incident_cells_threadsafe(v, incident_cells);
   }
   else
 #endif //CGAL_LINKED_WITH_TBB

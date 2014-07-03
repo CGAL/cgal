@@ -3248,18 +3248,7 @@ get_least_square_surface_plane(const Vertex_handle& v,
 {
   // Get incident facets
   Facet_vector facets;
-# ifdef CGAL_LINKED_WITH_TBB
-  // Parallel
-  if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
-  {
-    tr_.finite_incident_facets_threadsafe(v, std::back_inserter(facets));
-  }
-  // Sequential
-  else
-# endif // CGAL_LINKED_WITH_TBB
-  {
-    tr_.finite_incident_facets(v,std::back_inserter(facets));
-  }
+  tr_.finite_incident_facets(v,std::back_inserter(facets));
 
   // Get adjacent surface points
   std::vector<Point_3> surface_point_vector;
@@ -3385,10 +3374,10 @@ get_incident_slivers_without_using_tds_data(const Vertex_handle& v,
                                             Cell_vector &slivers) const
 {
   Is_sliver<SliverCriterion> i_s(c3t3_, criterion, sliver_bound);
-  tr_.incident_cells_threadsafe(v, std::back_inserter(slivers), i_s);
+  tr_.incident_cells_threadsafe(v, slivers, i_s);
 }
 
-// CJTODO: call tr_.try_lock_and_get_incident_cells instead?
+
 template <typename C3T3, typename MD>
 bool
 C3T3_helpers<C3T3,MD>::

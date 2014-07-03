@@ -1844,26 +1844,25 @@ public:
     }
   };
 
-  template <typename OutputIterator>
+  template <class OutputIterator>
   OutputIterator
   incident_cells(Vertex_handle v, OutputIterator cells) const
   {
     return _tds.incident_cells(v, cells);
   }
   
-  template <typename OutputIterator>
   void incident_cells_threadsafe(Vertex_handle v,
-                                 OutputIterator cells) const
+                                 std::vector<Cell_handle> &cells) const
   {
-    _tds.incident_cells_threadsafe(v, cells);
+    return _tds.incident_cells_threadsafe(v, cells);
   }
   
-  template <typename Filter, typename OutputIterator>
+  template <typename Filter>
   void incident_cells_threadsafe(Vertex_handle v,
-                                 OutputIterator cells,
+                                 std::vector<Cell_handle> &cells,
                                  const Filter &filter) const
   {
-    _tds.incident_cells_threadsafe(v, cells, filter);
+    return _tds.incident_cells_threadsafe(v, cells, filter);
   }
 
   bool
@@ -2001,20 +2000,6 @@ public:
   finite_incident_facets(Vertex_handle v, OutputIterator facets) const
   {
     return _tds.incident_facets(v, facets, Finite_filter(this));
-  }
-
-  template <class OutputIterator>
-  OutputIterator
-  incident_facets_threadsafe(Vertex_handle v, OutputIterator facets) const
-  {
-    return _tds.incident_facets_threadsafe(v, facets);
-  }
-
-  template <class OutputIterator>
-  OutputIterator
-  finite_incident_facets_threadsafe(Vertex_handle v, OutputIterator facets) const
-  {
-    return _tds.incident_facets_threadsafe(v, facets, Finite_filter(this));
   }
 
   // old name (up to CGAL 3.4)
