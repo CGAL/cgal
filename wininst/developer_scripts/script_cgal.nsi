@@ -229,17 +229,6 @@ Section "GMP and MPFR precompiled libs"  GMP_LIB_Idx
 SectionEnd
 
 
-; Download and install LAPACK and TAUCSbinaries.
-; Depend only on the platform (one variant per platform)
-
-; Laurent Rineau, 2014/03/05: Remove TAUCS from the installer
-;Section /o "LAPACK and TAUCS precompiled libs"  TAUCS_LIB_Idx
-;  !ifndef FetchLocal
-;    !insertmacro Install_LAPACK_TAUCS_libs "$Platform"
-;  !endif
-;SectionEnd
-
-
 ;--------------------------------
 
 
@@ -305,7 +294,6 @@ SectionEnd
   LangString DESC_MAIN      ${LANG_ENGLISH} "The main components of the CGAL Library."
   LangString DESC_SAMPLES   ${LANG_ENGLISH} "The CGAL demos and examples, for which you need Qt 4 in order to build them (and Qt 3 for some)."
   LangString DESC_GMP_LIB   ${LANG_ENGLISH} "The precompiled GMP and MPFR libraries (needed for exact constructions)."
-  LangString DESC_TAUCS_LIB ${LANG_ENGLISH} "The precompiled LAPACK and TAUCS libraries."
   LangString DESC_DOC       ${LANG_ENGLISH} "The HTML manuals."
   LangString DESC_ENVSET    ${LANG_ENGLISH} "already set"
 
@@ -314,8 +302,6 @@ SectionEnd
     !insertmacro MUI_DESCRIPTION_TEXT ${MAIN_Idx}      $(DESC_MAIN)
     !insertmacro MUI_DESCRIPTION_TEXT ${SAMPLES_Idx}   $(DESC_SAMPLES)
     !insertmacro MUI_DESCRIPTION_TEXT ${GMP_LIB_Idx}   $(DESC_GMP_LIB)
-; Laurent Rineau, 2014/03/05: Remove TAUCS from the installer
-;    !insertmacro MUI_DESCRIPTION_TEXT ${TAUCS_LIB_Idx} $(DESC_TAUCS_LIB)
     !insertmacro MUI_DESCRIPTION_TEXT ${DOC_Idx}       $(DESC_DOC)
   !insertmacro MUI_FUNCTION_DESCRIPTION_END
 
