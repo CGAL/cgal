@@ -27,6 +27,7 @@
 #include <CGAL/Hilbert_sort_2.h>
 #include <CGAL/Hilbert_sort_3.h>
 #include <CGAL/Hilbert_sort_d.h>
+#include <CGAL/algorithm.h>
 
 #include <boost/random/random_number_generator.hpp>
 #include <boost/random/linear_congruential.hpp>
@@ -47,7 +48,11 @@ namespace internal {
     {
         boost::rand48 random;
         boost::random_number_generator<boost::rand48> rng(random);
+#if defined(CGAL_HILBERT_SORT_WITH_MEDIAN_POLICY_CROSS_PLATFORM_BEHAVIOR)
+        CGAL::random_shuffle(begin,end, rng);
+#else
         std::random_shuffle(begin,end, rng);
+#endif
 	(Hilbert_sort_2<Kernel, Policy> (k))(begin, end);
     }
     
@@ -60,7 +65,11 @@ namespace internal {
     {
         boost::rand48 random;
         boost::random_number_generator<boost::rand48> rng(random);
+#if defined(CGAL_HILBERT_SORT_WITH_MEDIAN_POLICY_CROSS_PLATFORM_BEHAVIOR)
+        CGAL::random_shuffle(begin,end, rng);
+#else
         std::random_shuffle(begin,end, rng);
+#endif
         (Hilbert_sort_3<Kernel, Policy> (k))(begin, end);
     }
 
@@ -73,7 +82,11 @@ namespace internal {
     {
         boost::rand48 random;
         boost::random_number_generator<boost::rand48> rng(random);
+#if defined(CGAL_HILBERT_SORT_WITH_MEDIAN_POLICY_CROSS_PLATFORM_BEHAVIOR)
+        CGAL::random_shuffle(begin,end, rng);
+#else
         std::random_shuffle(begin,end, rng);
+#endif
         (Hilbert_sort_d<Kernel, Policy> (k))(begin, end);
     }
     
