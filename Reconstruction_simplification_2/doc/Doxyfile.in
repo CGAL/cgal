@@ -1,0 +1,9 @@
+@INCLUDE = ${CGAL_DOC_PACKAGE_DEFAULTS}
+
+PROJECT_NAME                       =  "CGAL ${CGAL_CREATED_VERSION_NUM} - 2D Reconstruction and Simplification from Point Set"
+
+INPUT                      =  ${CMAKE_SOURCE_DIR}/Reconstruction_simplification_2/doc/Reconstruction_simplification_2/ \ 
+                              ${CMAKE_SOURCE_DIR}/Reconstruction_simplification_2/include
+EXTRACT_ALL                =  false
+HIDE_UNDOC_CLASSES         =  true
+WARN_IF_UNDOCUMENTED       =  false

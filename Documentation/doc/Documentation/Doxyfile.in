@@ -112,3 +112,4 @@ IMAGE_PATH = ${CMAKE_SOURCE_DIR}/Documentation/doc/Documentation/fig \
              ${CMAKE_SOURCE_DIR}/Surface_reconstruction_points_3/doc/Surface_reconstruction_points_3/fig \
              ${CMAKE_SOURCE_DIR}/Stream_lines_2/doc/Stream_lines_2/fig \
              ${CMAKE_SOURCE_DIR}/Stream_support/doc/Stream_support/fig \
+	     ${CMAKE_SOURCE_DIR}/Reconstruction_simplification_2/doc/Reconstruction_simplification_2/fig

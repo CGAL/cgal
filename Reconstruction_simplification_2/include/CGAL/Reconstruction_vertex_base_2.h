@@ -1,9 +1,21 @@
-/*
- * Reconstruction_vertex_base_2.h
- *
- *  Created on: Jun 17, 2014
- *      Author: ivovigan
- */
+// Copyright (c) 2014  INRIA Sophia-Antipolis (France), INRIA Lorraine LORIA.
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
+//
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
+//
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+//
+// $URL$
+// $Id$
+//
+// Author(s)     : Fernando de Goes, Pierre Alliez
 
 #ifndef RECONSTRUCTION_VERTEX_BASE_2_H_
 #define RECONSTRUCTION_VERTEX_BASE_2_H_
@@ -12,7 +24,7 @@
 #include <CGAL/sample.h>
 
 /// The Reconstruction_vertex_base_2 class (corresponding to
-//Reconstruction_vertex_base_2 in prototype) is the default
+/// Reconstruction_vertex_base_2 in prototype) is the default
 /// vertex class of the Reconstruction_triangulation_2 class.
 ///
 /// - Each vertex stores a CSample as well as the corresponding relocated point

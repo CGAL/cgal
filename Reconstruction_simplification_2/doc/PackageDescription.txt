@@ -1,0 +1,35 @@
+/// \defgroup PkgReconstructionSimplification2 2D Reconstruction Simplification Reference
+/// \defgroup PkgReconstructionSimplification2Concepts Concepts
+/// \ingroup PkgReconstructionSimplification2
+/*!
+\addtogroup PkgReconstructionSimplification2
+\todo check generated documentation
+\cgalPkgDescriptionBegin{2D Reconstruction Simplification, PkgReconstructionSimplification2Summary}
+\cgalPkgPicture{xxx.png}
+\cgalPkgSummaryBegin
+\cgalPkgAuthor{ Fernando de Goes, Ivo Vigan}
+\cgalPkgDesc{This package provides an algorithm to simplify and reconstruct a shape form a noisy point set in the plane using a transportation theory approach to match the input point with an output simplex.}
+\cgalPkgManuals{Chapter_2D_Reconstruction_Simplification, PkgReconstructionSimplification2}
+\cgalPkgSummaryEnd
+\cgalPkgShortInfoBegin
+\cgalPkgSince{4.x}
+\cgalPkgDependsOn{\ref PkgBGLSummary}
+\cgalPkgDependsOn{\ref PkgPolyhedronSummary}
+\cgalPkgBib{cgal:c-tsms-12}
+\cgalPkgLicense{\ref licensesGPL "GPL"}
+\cgalPkgDemo{XXXX.zip}
+\cgalPkgShortInfoEnd
+\cgalPkgDescriptionEnd
+
+\cgalClassifedRefPages
+
+## Concepts ##
+- `PointPMap`
+- `MassPMap`
+
+
+## Classes ##
+- `CGAL::Reconstruction_simplification_2<Kernel, InputIterator, PointPMap, MassPMap>
+
+*/
+

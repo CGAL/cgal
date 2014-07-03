@@ -1,6 +1,7 @@
-// Copyright (c) 2007  INRIA Sophia-Antipolis (France), INRIA Lorraine LORIA.
+// Copyright (c) 2014  INRIA Sophia-Antipolis (France), INRIA Lorraine LORIA.
 // All rights reserved.
 //
+
 // This file is part of CGAL (www.cgal.org).
 // You can redistribute it and/or modify it under the terms of the GNU
 // General Public License as published by the Free Software Foundation,
@@ -15,7 +16,7 @@
 // $URL$
 // $Id$
 //
-// Author(s)     : Fernando de Goes and Ivo Vigan
+// Author(s)     : Fernando de Goes, Pierre Alliez, Ivo Vigan
 
 #ifndef RECONSTRUCTION_TRIANGULATION_2_H
 #define RECONSTRUCTION_TRIANGULATION_2_H
@@ -54,12 +55,20 @@
 
 namespace CGAL {
 
-/// The Reconstruction_triangulation_2 class
-//  (corresponding to Triangulation in prototype)
-/// provides the reconstruction simplex as well as the transportation plan.
+
+/// \internal
+///  The Reconstruction_triangulation_2 class
+///  provides the reconstruction simplex as well as the transportation plan.
+/// - Each vertex stores a normal vector.
+/// - A vertex a Sample which got assinged to it by the transportation plan,
+///   well as the corresponding relocated Point (of type Kernel::Point_2).
+/// - In order to solve a linear system over the triangulation, a vertex may be constrained
+///   or not (i.e. may contribute to the right or left member of the linear system),
+///   and has a unique index.
+/// The vertex class must derive from Reconstruction_vertex_base_3.
 ///
-/// @param Kernel   The underlying Kernel
-/// @param Tds      Model of TriangulationDataStructure_2.
+///  @param Kernel   The underlying Kernel
+///  @param Tds      Model of TriangulationDataStructure_2.
 ///  The vertex class must derive from Reconstruction_vertex_base_2.
 ///  The face   class must derive from Reconstruction_face_base_2.
 template<class Kernel,

@@ -1,4 +1,4 @@
-// Copyright (c) 2007  INRIA Sophia-Antipolis (France), INRIA Lorraine LORIA.
+// Copyright (c) 2014  INRIA Sophia-Antipolis (France), INRIA Lorraine LORIA.
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 //
-// Author(s)     : Fernando de Goes and Ivo Vigan
+// Author(s)     : Fernando de Goes, Pierre Alliez, Ivo Vigan
 
 #ifndef RECONSTRUCTION_SIMPLIFICATION_2_H_
 #define RECONSTRUCTION_SIMPLIFICATION_2_H_
@@ -43,14 +43,53 @@
 
 namespace CGAL {
 
+
+/*!
+\ingroup Reconstruction_simplification_2
+
+\brief The class `Reconstruction_simplification_2` is the base class
+designed to execute the reconstruction and simplification tasks.
+
+\details This class takes as input a collection of point-mass pairs $.
+
+
+\tparam Kernel is the geometric kernel, used for the reconstruction and simplification task.
+
+\tparam InputIterator is the iterator type of the algorithm input.
+
+\tparam PointPMap is a PropertyMap for accessing the input points.
+
+\tparam MassPMap  is a PropertyMap for accessing the input points'
+				  mass information.
+
+ */
 template<class Kernel, class InputIterator, class PointPMap, class MassPMap>
 class Reconstruction_simplification_2 {
 public:
+
+	/// \name Types
+	/// @{
+
+	/*!
+		Number type.
+	*/
 	typedef typename Kernel::FT FT;
+
+	/*!
+		Point type.
+	*/
 	typedef typename Kernel::Point_2 Point;
+	/*!
+		Vector type.
+	*/
 	typedef typename Kernel::Vector_2 Vector;
 
+	/*!
+	The Output simplex.
+	*/
 	typedef Reconstruction_triangulation_2<Kernel> Triangulation;
+
+	/// @}
 
 	typedef typename Triangulation::Vertex Vertex;
 	typedef typename Triangulation::Vertex_handle Vertex_handle;
@@ -96,6 +135,7 @@ public:
 	typedef typename Triangulation::MultiIndex MultiIndex;
 
 
+
 protected:
 	Triangulation m_dt;
 	MultiIndex m_mindex;
@@ -120,8 +160,19 @@ protected:
 	MassPMap  mass_pmap;
 
 
-public:
+	// Public methods
+	public:
 
+	  /// \name Creation
+	  /// @{
+
+	/*!
+	     \Instantiates a new Reconstruction_simplification_2.
+
+	     \details This function is a convenience function for people who do not feel comfortable with circulators.
+
+	     \tparam OutputIterator  must be a model of `CopyConstructible`.
+	*/
 	Reconstruction_simplification_2(InputIterator start_itr,
 									InputIterator beyond_itr,
 									PointPMap in_point_pmap,
@@ -137,7 +188,7 @@ public:
 		initialize_parameters();
 	}
 
-
+	/// \cond SKIP_IN_MANUAL
 	Reconstruction_simplification_2() {
 		initialize_parameters();
 	}
@@ -146,6 +197,8 @@ public:
 	~Reconstruction_simplification_2() {
 		clear();
 	}
+
+	  /// @}
 
 
 	void initialize_parameters() {
@@ -184,6 +237,14 @@ public:
 
 	}
 
+	/*!
+		First function to be called after instantiating a new
+		Reconstruction_simplification_2 object.
+		It computes an bounding box around the input points and creates an first
+		(fine) output simplex as well as an initial transportation plan.
+
+		\param steps The number of edge contractions performed by the algorithm.
+	  */
 	void initialize() {
 
 		clear();
@@ -289,6 +350,7 @@ public:
 		    std::cout <<  "---------------------------------------------------" << std::endl;
 	}
 
+	/// \cond SKIP_IN_MANUAL
     void normalize_points()
     {
         //noise(1e-5); TODO IV, killed that noise
@@ -307,7 +369,7 @@ public:
         m_bbox_size = 1.0;
     }
 
-
+    /// \cond SKIP_IN_MANUAL
     void compute_bbox(double &x, double &y, double &scale)
     {
 
@@ -470,6 +532,13 @@ public:
 
 	// RECONSTRUCTION //
 
+	 /*!
+	    This function must be called after initialization().
+	    It computes a shape consisting of nv vertices, reconstructing the input
+	    points.
+
+	    \param nv The number of vertices which will be present in the output.
+	  */
 	void reconstruct_until(const unsigned nv) {
 		double timer = clock();
 		std::cerr << yellow << "reconstruct until " << white << nv << " V";
@@ -489,6 +558,13 @@ public:
 				<< std::endl;
 	}
 
+	 /*!
+		This function must be called after initialization().
+		It computes a shape, reconstructing the input, by performing steps many
+		edge contractions on the output simplex.
+
+		\param steps The number of edge contractions performed by the algorithm.
+	  */
 	void reconstruct(const unsigned steps) {
 		double timer = clock();
 		std::cerr << yellow << "reconstruct " << steps << white;

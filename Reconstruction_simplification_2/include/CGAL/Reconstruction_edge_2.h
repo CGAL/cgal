@@ -1,6 +1,7 @@
-// Copyright (c) 2007  INRIA Sophia-Antipolis (France), INRIA Lorraine LORIA.
+// Copyright (c) 2014  INRIA Sophia-Antipolis (France), INRIA Lorraine LORIA.
 // All rights reserved.
 //
+
 // This file is part of CGAL (www.cgal.org).
 // You can redistribute it and/or modify it under the terms of the GNU
 // General Public License as published by the Free Software Foundation,
@@ -15,7 +16,7 @@
 // $URL$
 // $Id$
 //
-// Author(s)     : TODO: WHO? and Ivo Vigan
+// Author(s)     : Fernando de Goes, Pierre Alliez
 
 #ifndef RECONSTRUCTION_EDGE_2_H_
 #define RECONSTRUCTION_EDGE_2_H_
