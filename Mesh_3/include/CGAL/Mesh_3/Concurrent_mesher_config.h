@@ -39,8 +39,7 @@ class Concurrent_mesher_config
 {
   // Private constructor (singleton)
   Concurrent_mesher_config()
-  : m_config_file_loaded(false),
-    locking_grid_num_cells_per_axis(50),
+  : locking_grid_num_cells_per_axis(50),
     first_grid_lock_radius(0),
     work_stats_grid_num_cells_per_axis(5),
     num_work_items_per_batch(50),
@@ -48,7 +47,8 @@ class Concurrent_mesher_config
     refinement_batch_size(10000),
     min_num_vertices_of_coarse_mesh(100),
     num_vertices_of_coarse_mesh_per_core(3.5f),
-    num_pseudo_infinite_vertices_per_core(5.0f)
+    num_pseudo_infinite_vertices_per_core(5.0f),
+    m_config_file_loaded(false)
   {}
 
 public:

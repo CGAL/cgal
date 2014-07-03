@@ -1050,7 +1050,6 @@ number_of_bad_elements_impl()
           << "*** Num of real surface facets in c: " << num_real_surface_facets_in_c << std::endl
           << "*** Num of real surface facets in mc: " << num_real_surface_facets_in_mc << std::endl;
 
-        typedef typename MD::Subdomain Subdomain;
         const bool is_c_in_domain = r_oracle_.is_in_domain_object()(r_tr_.dual(c));
         const bool is_mc_in_domain = r_oracle_.is_in_domain_object()(r_tr_.dual(mc));
 

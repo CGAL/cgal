@@ -222,22 +222,22 @@ public:
 #endif
     , surface_center_index_table_()
     , sliver_value_(FT(0.))
-    , subdomain_index_()
+    , subdomain_index_()  
     , sliver_cache_validity_(false)
   {
   }
 
   Compact_mesh_cell_base_3(const Compact_mesh_cell_base_3& rhs)
-    : circumcenter_(NULL)
-    , sliver_value_(rhs.sliver_value_)
-    , subdomain_index_(rhs.subdomain_index_)
-    , sliver_cache_validity_(false)
+    : N(rhs.N)
+    , V(rhs.V)
+    , circumcenter_(NULL)
 #ifdef CGAL_INTRUSIVE_LIST
     , next_intrusive_(rhs.next_intrusive_)
     , previous_intrusive_(rhs.previous_intrusive_)
 #endif
-    , V(rhs.V)
-    , N(rhs.N)
+    , sliver_value_(rhs.sliver_value_)
+    , subdomain_index_(rhs.subdomain_index_)
+    , sliver_cache_validity_(false)
   {
     for(int i=0; i <4; i++){
       surface_index_table_[i] = rhs.surface_index_table_[i];
@@ -252,6 +252,7 @@ public:
                             Vertex_handle v3)
     : surface_index_table_()
     , surface_center_table_()
+    , V(CGAL::make_array(v0, v1, v2, v3))
     , circumcenter_(NULL)
 #ifdef CGAL_INTRUSIVE_LIST
     , next_intrusive_()
@@ -261,7 +262,6 @@ public:
     , sliver_value_(FT(0.))
     , subdomain_index_()
     , sliver_cache_validity_(false)
-    , V(CGAL::make_array(v0, v1, v2, v3))
   {
   }
 
@@ -276,6 +276,8 @@ public:
                             Cell_handle n3)
     : surface_index_table_()
     , surface_center_table_()
+    , N(CGAL::make_array(n0, n1, n2, n3))
+    , V(CGAL::make_array(v0, v1, v2, v3))
     , circumcenter_(NULL)
 #ifdef CGAL_INTRUSIVE_LIST
     , next_intrusive_()
@@ -285,8 +287,6 @@ public:
     , sliver_value_(FT(0.))
     , subdomain_index_()
     , sliver_cache_validity_(false)
-    , V(CGAL::make_array(v0, v1, v2, v3))
-    , N(CGAL::make_array(n0, n1, n2, n3))
   {
   }
 

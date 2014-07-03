@@ -516,8 +516,8 @@ public:
 
   void add_to_TLS_lists(bool) {}
   void splice_local_lists() {}
-  bool no_longer_local_element_to_refine() {}
-  Element get_next_local_element() {}
+  bool no_longer_local_element_to_refine() { return true; }
+  Element get_next_local_element() {return Element(); }
   void pop_next_local_element() {}
 
   Zone conflicts_zone(const Point& p
@@ -895,8 +895,6 @@ public:
   void process_a_batch_of_elements(Mesh_visitor visitor)
   {
     typedef typename Derived::Container::value_type Container_quality_and_element;
-    typedef typename Derived::Container::Element Container_element;
-    typedef typename Derived::Container::Quality Container_quality;
 
 #ifdef CGAL_CONCURRENT_MESH_3_VERBOSE
     std::cerr << "Refining elements...";

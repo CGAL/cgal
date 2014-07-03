@@ -54,7 +54,6 @@ _test_cls_parallel_triangulation_3(const Parallel_triangulation &)
   std::cout << "Parallel removal" << std::endl;
   // Remove the first 100,000 vertices
   std::vector<Vertex_handle> vertices_to_remove;
-  int i = 0;
   typename Cls::Finite_vertices_iterator vit = tr.finite_vertices_begin();
   for (int i = 0 ; i < 100000 ; ++i)
     vertices_to_remove.push_back(vit++);

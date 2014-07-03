@@ -662,8 +662,7 @@ public:
 
   // copy constructor duplicates vertices and cells
   Triangulation_3(const Triangulation_3 & tr)
-  : _gt(tr._gt),
-    Base(tr.get_lock_data_structure())
+    : Base(tr.get_lock_data_structure()), _gt(tr._gt)
     {
       infinite = _tds.copy_tds(tr._tds, tr.infinite);
       CGAL_triangulation_expensive_postcondition(*this == tr);
@@ -673,10 +672,10 @@ public:
   Triangulation_3(InputIterator first, InputIterator last,
                   const GT & gt = GT(), Lock_data_structure *lock_ds = NULL)
     : Base(lock_ds), _gt(gt)
-  {
+    {
       init_tds();
       insert(first, last);
-  }
+    }
 
   // Create the 3D triangulation of p0, p1, p3 and p4
   // Precondition: p0, p1, p3 and p4 MUST BE positively oriented
@@ -684,10 +683,10 @@ public:
                   const Point &p3, const Point &p4,
                   const GT & gt = GT(), Lock_data_structure *lock_ds = NULL)
     : Base(lock_ds), _gt(gt)
-  {
-    CGAL_triangulation_precondition(orientation(p0, p1, p3, p4) == POSITIVE);
-    init_tds(p0, p1, p3, p4);
-  }
+    {
+      CGAL_triangulation_precondition(orientation(p0, p1, p3, p4) == POSITIVE);
+      init_tds(p0, p1, p3, p4);
+    }
 
   void clear()
     {
@@ -1844,26 +1843,25 @@ public:
     }
   };
 
-  template <typename OutputIterator>
+  template <class OutputIterator>
   OutputIterator
   incident_cells(Vertex_handle v, OutputIterator cells) const
   {
     return _tds.incident_cells(v, cells);
   }
   
-  template <typename OutputIterator>
   void incident_cells_threadsafe(Vertex_handle v,
-                                 OutputIterator cells) const
+                                 std::vector<Cell_handle> &cells) const
   {
-    _tds.incident_cells_threadsafe(v, cells);
+    return _tds.incident_cells_threadsafe(v, cells);
   }
   
-  template <typename Filter, typename OutputIterator>
+  template <typename Filter>
   void incident_cells_threadsafe(Vertex_handle v,
-                                 OutputIterator cells,
+                                 std::vector<Cell_handle> &cells,
                                  const Filter &filter) const
   {
-    _tds.incident_cells_threadsafe(v, cells, filter);
+    return _tds.incident_cells_threadsafe(v, cells, filter);
   }
 
   bool
@@ -2001,20 +1999,6 @@ public:
   finite_incident_facets(Vertex_handle v, OutputIterator facets) const
   {
     return _tds.incident_facets(v, facets, Finite_filter(this));
-  }
-
-  template <class OutputIterator>
-  OutputIterator
-  incident_facets_threadsafe(Vertex_handle v, OutputIterator facets) const
-  {
-    return _tds.incident_facets_threadsafe(v, facets);
-  }
-
-  template <class OutputIterator>
-  OutputIterator
-  finite_incident_facets_threadsafe(Vertex_handle v, OutputIterator facets) const
-  {
-    return _tds.incident_facets_threadsafe(v, facets, Finite_filter(this));
   }
 
   // old name (up to CGAL 3.4)
