@@ -60,8 +60,10 @@ int main( int argc, char** argv )
 {
   Surface_mesh surface_mesh;
   Constrained_edge_map constraints_map(surface_mesh);
-  OpenMesh::IO::read_mesh(surface_mesh, argv[1]);
-  
+  if (argc==2)
+    OpenMesh::IO::read_mesh(surface_mesh, argv[1]);
+  else
+    OpenMesh::IO::read_mesh(surface_mesh, "cube.off");
   // For the pupose of the example we mark 10 edges as constrained edges
   edge_iterator b,e;
   int count=0;
