@@ -318,25 +318,11 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   if(EIGEN3_FOUND)
     polyhedron_demo_plugin(parameterization_plugin Polyhedron_demo_parameterization_plugin)
     target_link_libraries(parameterization_plugin scene_polyhedron_item scene_textured_polyhedron_item )
-  else(EIGEN3_FOUND)
-    message(STATUS "NOTICE: Eigen 3.1 (or greater) library has not been found. Parameterization will not be available.")
-  endif()
-  
-  if(EIGEN3_FOUND)
+
     qt4_wrap_ui( poissonUI_FILES Polyhedron_demo_poisson_plugin.ui)
     polyhedron_demo_plugin(poisson_plugin Polyhedron_demo_poisson_plugin Polyhedron_demo_poisson_plugin_impl.cpp ${poissonUI_FILES})
     target_link_libraries(poisson_plugin scene_polyhedron_item scene_points_with_normal_item)
-  else()
-    message(STATUS "NOTICE: Eigen 3.1 (or greater) library has not been found. Poisson reconstruction will not be available.")
-  endif()
-  
-  
-  # Link with BLAS and LAPACK only (optional), for Jet Fitting
-  if (NOT EIGEN3_FOUND AND LAPACK_FOUND)
-    include( ${LAPACK_USE_FILE} )
-  endif()
-  
-  if(EIGEN3_FOUND OR LAPACK_FOUND)
+
     qt4_wrap_ui( normal_estimationUI_FILES Polyhedron_demo_normal_estimation_plugin.ui)
     polyhedron_demo_plugin(normal_estimation_plugin Polyhedron_demo_normal_estimation_plugin ${normal_estimationUI_FILES})
     target_link_libraries(normal_estimation_plugin scene_points_with_normal_item)
@@ -349,10 +335,9 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
     polyhedron_demo_plugin(jet_fitting_plugin Polyhedron_demo_jet_fitting_plugin)
     target_link_libraries(jet_fitting_plugin scene_polyhedron_item scene_polylines_item)
-    
-  else(EIGEN3_FOUND OR LAPACK_FOUND)
-    message(STATUS "NOTICE: Nor Eigen 3.1 (or greater) nor LAPACK library were found. Normal estimation and smoothing will not be available.")
-  endif(EIGEN3_FOUND OR LAPACK_FOUND)
+  else(EIGEN3_FOUND)
+    message(STATUS "NOTICE: Eigen 3.1 (or greater) was not found. Some plugins will not be available.")
+  endif(EIGEN3_FOUND)
 
   polyhedron_demo_plugin(self_intersection_plugin Polyhedron_demo_self_intersection_plugin)
   target_link_libraries(self_intersection_plugin scene_polyhedron_item)
