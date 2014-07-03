@@ -34,7 +34,7 @@ set( QT_USE_QTOPENGL TRUE )
 set( QT_USE_QTXML    TRUE )
 set( QT_USE_QTMAIN   TRUE )
 
-option (USE_QT5 "Use Qt5 version instead of Qt4" OFF)
+option (USE_QT5 "Use Qt5 version instead of Qt4" ON)
 
 if(USE_QT5)
 

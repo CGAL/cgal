@@ -11,7 +11,7 @@ else()
 endif()
 
 #New for Qt5 version !
-option (USE_QT5 "Use Qt5 version instead of Qt4" OFF)
+option (USE_QT5 "Use Qt5 version instead of Qt4" ON)
 
 set( QT_USE_QTXML    TRUE )
 set( QT_USE_QTMAIN   TRUE )

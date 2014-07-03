@@ -26,19 +26,45 @@ add_definitions(-DCGAL_MESH_3_NO_DEPRECATED_SURFACE_INDEX
 # Add specific Find.cmake modules
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules )
 
-# Find CGAL and CGAL Qt4
-find_package(CGAL COMPONENTS Qt4 ImageIO)
-include( ${CGAL_USE_FILE} )
-
-# Find Qt4 itself
 set( QT_USE_QTXML    TRUE )
 set( QT_USE_QTMAIN   TRUE )
 set( QT_USE_QTSCRIPT  TRUE )
 set( QT_USE_QTOPENGL  TRUE )
-find_package(Qt4)
+
+#New for Qt5 version !
+option (USE_QT5 "Use Qt5 version instead of Qt4" ON)
+
+if(USE_QT5)
+
+	find_package(CGAL COMPONENTS Qt5 ImageIO)
+
+	include(${CGAL_USE_FILE})
+	
+	find_package(Qt5)
+
+else (USE_QT5)
+
+	find_package(CGAL COMPONENTS Qt4 ImageIO)
+	include(${CGAL_USE_FILE})
+
+	find_package(Qt4)
+
+	if(CGAL_Qt4_FOUND AND QT4_FOUND)
+		include(${QT_USE_FILE})
+		message("Qt4 found")
+		set(QT4 TRUE)
+	endif()
+
+endif (USE_QT5)
+
+include(QtChoice)
+
 
 # Find OpenGL
 find_package(OpenGL)
+
+# Find QGLViewer
+find_package(QGLViewer)
 
 # Find GLEW (for OpenGL-1.5 and OpenGL extensions)
 find_package(GLEW)
@@ -46,14 +72,8 @@ find_package(GLEW)
 # Find everybodies darling
 find_package(Boost COMPONENTS thread system)
 
-# Find QGLViewer
-if(QT4_FOUND)
-  include(${QT_USE_FILE})
-  find_package(QGLViewer )
-endif(QT4_FOUND)
 
-
-if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND AND Boost_FOUND)
+if((QT4 OR QT5) AND OPENGL_FOUND AND QGLVIEWER_FOUND AND Boost_FOUND)
 
   # Add directory containing implicit function plugin source files
   add_subdirectory("implicit_functions")
@@ -68,12 +88,12 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND AND Boost_F
 
   include_directories ( ${QGLVIEWER_INCLUDE_DIR} )
 
-  qt4_wrap_ui( UI_FILES ui_files/MainWindow.ui )
-  qt4_wrap_ui( meshingUI_FILES  ui_files/Meshing_dialog.ui)
-  qt4_wrap_ui( optimUI_FILES  ui_files/Smoother_dialog.ui ui_files/LocalOptim_dialog.ui)
-  qt4_wrap_ui( ribUI_FILES  ui_files/Rib_dialog.ui)
-  qt4_wrap_ui( funcUI_FILES  ui_files/Function_dialog.ui)
-  qt4_wrap_ui( imgUI_FILES ui_files/Image_res_dialog.ui)
+  qt_wrap_ui( UI_FILES ui_files/MainWindow.ui )
+  qt_wrap_ui( meshingUI_FILES  ui_files/Meshing_dialog.ui)
+  qt_wrap_ui( optimUI_FILES  ui_files/Smoother_dialog.ui ui_files/LocalOptim_dialog.ui)
+  qt_wrap_ui( ribUI_FILES  ui_files/Rib_dialog.ui)
+  qt_wrap_ui( funcUI_FILES  ui_files/Function_dialog.ui)
+  qt_wrap_ui( imgUI_FILES ui_files/Image_res_dialog.ui)
 
   include(AddFileDependencies)
 
@@ -81,31 +101,31 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND AND Boost_F
   set(DEMO_SRC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src/CGAL_demo")
   set(DEMO_H_DIR "${CMAKE_CURRENT_SOURCE_DIR}/include/CGAL_demo")
 
-  qt4_generate_moc( "MainWindow.h" "${CMAKE_CURRENT_BINARY_DIR}/MainWindow_moc.cpp" )
+  qt_generate_moc( "MainWindow.h" "${CMAKE_CURRENT_BINARY_DIR}/MainWindow_moc.cpp" )
   add_file_dependencies( MainWindow_moc.cpp "${CMAKE_CURRENT_SOURCE_DIR}/MainWindow.h" )
 
-  qt4_generate_moc( "${DEMO_H_DIR}/Viewer.h" Viewer_moc.cpp )
+  qt_generate_moc( "${DEMO_H_DIR}/Viewer.h" Viewer_moc.cpp )
   add_file_dependencies( Viewer_moc.cpp "${DEMO_H_DIR}/Viewer.h" )
 
-  qt4_generate_moc( "${DEMO_H_DIR}/Scene.h" Scene_moc.cpp )
+  qt_generate_moc( "${DEMO_H_DIR}/Scene.h" Scene_moc.cpp )
   add_file_dependencies( Scene_moc.cpp "${DEMO_H_DIR}/Scene.h" )
 
-  qt4_generate_moc( "${DEMO_H_DIR}/Scene_item.h" Scene_item_moc.cpp )
+  qt_generate_moc( "${DEMO_H_DIR}/Scene_item.h" Scene_item_moc.cpp )
   add_file_dependencies( Scene_item_moc.cpp "${DEMO_H_DIR}/Scene_item.h" )
 
-  qt4_wrap_cpp( VOLUME_MOC_OUTFILES ${CMAKE_CURRENT_SOURCE_DIR}/Volume_plane_thread.h )
-  qt4_wrap_cpp( VOLUME_MOC_OUTFILES ${CMAKE_CURRENT_SOURCE_DIR}/Volume_plane_interface.h )
+  qt_wrap_cpp( VOLUME_MOC_OUTFILES ${CMAKE_CURRENT_SOURCE_DIR}/Volume_plane_thread.h )
+  qt_wrap_cpp( VOLUME_MOC_OUTFILES ${CMAKE_CURRENT_SOURCE_DIR}/Volume_plane_interface.h )
 
-  qt4_add_resources ( RESOURCE_FILES Mesh_3.qrc )
+  qt_add_resources ( RESOURCE_FILES Mesh_3.qrc )
 
-  qt4_automoc( Scene_polyhedron_item.cpp )
-  qt4_automoc( Scene_polygon_soup.cpp )
-  qt4_automoc( Scene_segmented_image_item.cpp )
-  qt4_automoc( Scene_c3t3_item.cpp )
-  qt4_automoc( Scene_implicit_function_item.cpp )
-  qt4_automoc( Optimizer_thread.cpp )
-  qt4_automoc( Meshing_thread.cpp )
-  qt4_automoc( Volume_plane_intersection.cpp )
+  qt_automoc( Scene_polyhedron_item.cpp )
+  qt_automoc( Scene_polygon_soup.cpp )
+  qt_automoc( Scene_segmented_image_item.cpp )
+  qt_automoc( Scene_c3t3_item.cpp )
+  qt_automoc( Scene_implicit_function_item.cpp )
+  qt_automoc( Optimizer_thread.cpp )
+  qt_automoc( Meshing_thread.cpp )
+  qt_automoc( Volume_plane_intersection.cpp )
 
   # put plugins (which are shared libraries) at the same location as
   # executable files
@@ -131,8 +151,16 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND AND Boost_F
   target_link_libraries(${SCENE_ITEM_LIB} ${QT_LIBRARIES} ${OPENGL_LIBRARIES})
 
   set(SCENE_SEGMENTED_IMAGE_ITEM_LIB "${MESH_3_LIB_PREFIX}scene_segmented_image_item")
+
+ if(QT5)
+  add_library(${SCENE_SEGMENTED_IMAGE_ITEM_LIB} SHARED
+    Scene_segmented_image_item.cpp)
+ endif()
+if(QT4)
   add_library(${SCENE_SEGMENTED_IMAGE_ITEM_LIB} SHARED
     Scene_segmented_image_item.cpp Scene_segmented_image_item.moc)
+ endif()
+
   target_link_libraries(${SCENE_SEGMENTED_IMAGE_ITEM_LIB} ${SCENE_ITEM_LIB} ${CGAL_LIBRARIES})
   set_target_properties(${SCENE_SEGMENTED_IMAGE_ITEM_LIB} PROPERTIES DEFINE_SYMBOL scene_segmented_image_item_EXPORTS)
 
@@ -141,26 +169,63 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND AND Boost_F
   endif()
 
   set(SCENE_POLYHEDRON_ITEM_LIB "${MESH_3_LIB_PREFIX}scene_polyhedron_item")
-  add_library(${SCENE_POLYHEDRON_ITEM_LIB} SHARED
+
+  if(QT5)
+    add_library(${SCENE_POLYHEDRON_ITEM_LIB} SHARED
+    Scene_polyhedron_item.cpp)
+  endif()
+  if(QT4)
+    add_library(${SCENE_POLYHEDRON_ITEM_LIB} SHARED
     Scene_polyhedron_item.cpp Scene_polyhedron_item.moc)
+  endif()
+
+
   target_link_libraries(${SCENE_POLYHEDRON_ITEM_LIB} ${SCENE_ITEM_LIB} ${CGAL_LIBRARIES})
   set_target_properties(${SCENE_POLYHEDRON_ITEM_LIB} PROPERTIES DEFINE_SYMBOL scene_polyhedron_item_EXPORTS)
 
   set(POLYGON_SOUP_LIB "${MESH_3_LIB_PREFIX}polygon_soup")
-  add_library(${POLYGON_SOUP_LIB} SHARED
+
+
+  if(QT5)
+    add_library(${POLYGON_SOUP_LIB} SHARED
+    Scene_polygon_soup.cpp)
+  endif()
+  if(QT4)
+    add_library(${POLYGON_SOUP_LIB} SHARED
     Scene_polygon_soup.cpp Scene_polygon_soup.moc)
+  endif()
+
+
   target_link_libraries(${POLYGON_SOUP_LIB} ${SCENE_ITEM_LIB} ${CGAL_LIBRARIES})
   set_target_properties(${POLYGON_SOUP_LIB} PROPERTIES DEFINE_SYMBOL polygon_soup_EXPORTS)
 
   set(SCENE_C3T3_ITEM_LIB "${MESH_3_LIB_PREFIX}scene_c3t3_item")
-  add_library(${SCENE_C3T3_ITEM_LIB} SHARED
+
+  if(QT5)
+    add_library(${SCENE_C3T3_ITEM_LIB} SHARED
+    Scene_c3t3_item.cpp)
+  endif()
+  if(QT4)
+    add_library(${SCENE_C3T3_ITEM_LIB} SHARED
     Scene_c3t3_item.cpp Scene_c3t3_item.moc)
+  endif()
+
+
   target_link_libraries(${SCENE_C3T3_ITEM_LIB} ${SCENE_ITEM_LIB} ${QGLVIEWER_LIBRARIES} ${QT_LIBRARIES} ${CGAL_LIBRARIES} ${Boost_LIBRARIES})
   set_target_properties(${SCENE_C3T3_ITEM_LIB} PROPERTIES DEFINE_SYMBOL scene_c3t3_item_EXPORTS)
 
   set(SCENE_IMPLICIT_FUNCTION_ITEM_LIB "${MESH_3_LIB_PREFIX}scene_implicit_function_item")
-  add_library(${SCENE_IMPLICIT_FUNCTION_ITEM_LIB} SHARED
+
+  if(QT5)
+    add_library(${SCENE_IMPLICIT_FUNCTION_ITEM_LIB} SHARED
+    Scene_implicit_function_item.cpp Color_ramp.cpp)
+  endif()
+  if(QT4)
+    add_library(${SCENE_IMPLICIT_FUNCTION_ITEM_LIB} SHARED
     Scene_implicit_function_item.cpp Scene_implicit_function_item.moc Color_ramp.cpp)
+  endif()
+
+
   target_link_libraries(${SCENE_IMPLICIT_FUNCTION_ITEM_LIB} ${SCENE_ITEM_LIB} ${QGLVIEWER_LIBRARIES} ${QT_LIBRARIES})
   set_target_properties(${SCENE_IMPLICIT_FUNCTION_ITEM_LIB} PROPERTIES DEFINE_SYMBOL scene_implicit_function_item_EXPORTS)
 
@@ -207,10 +272,15 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND AND Boost_F
     else()
       set(other_sources ${ARGN_TAIL})
     endif()
-    qt4_generate_moc( "${CMAKE_CURRENT_SOURCE_DIR}/${plugin_implementation_base_name}.cpp" ${plugin_implementation_base_name}.moc )
+    qt_generate_moc( "${CMAKE_CURRENT_SOURCE_DIR}/${plugin_implementation_base_name}.cpp" ${plugin_implementation_base_name}.moc )
     add_file_dependencies( ${plugin_implementation_base_name}.moc "${CMAKE_CURRENT_SOURCE_DIR}/${plugin_implementation_base_name}.cpp" )
 
-    add_library(${plugin_name} MODULE ${option} ${plugin_implementation_base_name}.moc ${plugin_implementation_base_name}.cpp ${other_sources})
+    if(QT5)
+     add_library(${plugin_name} MODULE ${option} ${plugin_implementation_base_name}.cpp)
+    endif()
+    if(QT4)
+     add_library(${plugin_name} MODULE ${option} ${plugin_implementation_base_name}.moc ${plugin_implementation_base_name}.cpp ${other_sources})
+    endif()
     add_to_cached_list( CGAL_EXECUTABLE_TARGETS ${plugin_name} )
     # Link with Qt
     target_link_libraries( ${plugin_name} ${QT_LIBRARIES} )
@@ -291,28 +361,26 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND AND Boost_F
                         ${OPENGL_glu_LIBRARY})
 
 
-else (CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND AND Boost_FOUND)
+else ((QT4 OR QT5) AND OPENGL_FOUND AND QGLVIEWER_FOUND AND Boost_FOUND)
 
   set(MESH_3_MISSING_DEPS "")
 
-  if(NOT CGAL_Qt4_FOUND)
+  if(NOT CGAL_Qt4_FOUND AND NOT USE_QT5)
     set(MESH_3_MISSING_DEPS "the CGAL Qt4 library, ${MESH_3_MISSING_DEPS}")
   endif()
+  if(NOT CGAL_Qt5_FOUND AND USE_QT5)
+    set(MESH_3_MISSING_DEPS "the CGAL Qt5 library, ${MESH_3_MISSING_DEPS}")
+  endif()
 
-  if(NOT QT4_FOUND)
+  if(NOT QT4 AND NOT USE_QT5)
     set(MESH_3_MISSING_DEPS "Qt4, ${MESH_3_MISSING_DEPS}")
+  endif()
+  if(NOT QT5 AND USE_QT5)
+    set(MESH_3_MISSING_DEPS "Qt5, ${MESH_3_MISSING_DEPS}")
   endif()
 
   if(NOT OPENGL_FOUND)
     set(MESH_3_MISSING_DEPS "OpenGL, ${MESH_3_MISSING_DEPS}")
-  endif()
-
-  if(NOT QGLVIEWER_FOUND)
-    set(MESH_3_MISSING_DEPS "QGLViewer, ${MESH_3_MISSING_DEPS}")
-  endif()
-
-  if(NOT QGLVIEWER_FOUND)
-    set(MESH_3_MISSING_DEPS "QGLViewer, ${MESH_3_MISSING_DEPS}")
   endif()
 
   if(NOT QGLVIEWER_FOUND)
@@ -325,7 +393,7 @@ else (CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND AND Boos
 
   message(STATUS "NOTICE: This demo requires ${MESH_3_MISSING_DEPS}and will not be compiled.")
 
-endif (CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND AND Boost_FOUND)
+endif ((QT4 OR QT5) AND OPENGL_FOUND AND QGLVIEWER_FOUND AND Boost_FOUND)
 
 
 

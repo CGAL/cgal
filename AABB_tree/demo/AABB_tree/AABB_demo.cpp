@@ -27,6 +27,11 @@
 #include <QApplication>
 #include <CGAL/Qt/resources.h>
 
+ //New for Qt5 version !
+ #if QT_VERSION >= 0x050000 
+ #include <QMimeData>
+ #endif
+
 int main(int argc, char **argv)
 {
   QApplication app(argc, argv);
@@ -34,9 +39,9 @@ int main(int argc, char **argv)
   app.setOrganizationName("INRIA");
   app.setApplicationName("AABB tree demo");
 
-  // Import resources from libCGALQt4.
+  // Import resources from libCGALQt (Qt4 or Qt5).
   // See http://doc.trolltech.com/4.4/qdir.html#Q_INIT_RESOURCE
-  CGAL_QT4_INIT_RESOURCES;
+  CGAL_QT_INIT_RESOURCES;//New for Qt5 version !
 
   MainWindow mainWindow;
   mainWindow.show();

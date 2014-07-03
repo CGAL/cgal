@@ -15,20 +15,44 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
 # Include directory of demo includes
 include_directories( BEFORE ${Mesh_3_implicit_functions_BINARY_DIR} ../include )
 
-# Find CGAL and CGAL Qt4
-find_package(CGAL COMPONENTS Qt4)
-include( ${CGAL_USE_FILE} )
-
 # Find Qt4 itself
 set( QT_USE_QTXML    TRUE )
 set( QT_USE_QTMAIN   TRUE )
 set( QT_USE_QTSCRIPT  TRUE )
 set( QT_USE_QTOPENGL  TRUE )
-find_package(Qt4)
+
+#New for Qt5 version !
+if(NOT USE_QT5)
+	option (USE_QT5 "Use Qt5 version instead of Qt4" ON)
+endif()
+
+if(USE_QT5)
+
+	find_package(CGAL COMPONENTS Qt5 ImageIO)
+
+	include(${CGAL_USE_FILE})
+	
+	find_package(Qt5)
+
+else (USE_QT5)
+
+	find_package(CGAL COMPONENTS Qt4 ImageIO)
+	include(${CGAL_USE_FILE})
+
+	find_package(Qt4)
+
+	if(CGAL_Qt4_FOUND AND QT4_FOUND)
+		include(${QT_USE_FILE})
+		message("Qt4 found")
+		set(QT4 TRUE)
+	endif()
+
+endif (USE_QT5)
+
+include(QtChoice)
 
 
-if(CGAL_Qt4_FOUND AND QT4_FOUND)
-  include(${QT_USE_FILE})
+if(QT4 OR QT5)
 
   # put plugins (which are shared libraries) at the same location as
   # executable files
@@ -49,7 +73,7 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND)
     else()
       set(other_sources ${ARGN_TAIL})
     endif()
-    qt4_generate_moc( "${CMAKE_CURRENT_SOURCE_DIR}/${plugin_implementation_base_name}.cpp" ${plugin_implementation_base_name}.moc )
+    qt_generate_moc( "${CMAKE_CURRENT_SOURCE_DIR}/${plugin_implementation_base_name}.cpp" ${plugin_implementation_base_name}.moc )
     add_file_dependencies( ${plugin_implementation_base_name}.moc "${CMAKE_CURRENT_SOURCE_DIR}/${plugin_implementation_base_name}.cpp" )
 
     add_library(${plugin_name} MODULE ${option} ${plugin_implementation_base_name}.moc ${plugin_implementation_base_name}.cpp ${other_sources})
@@ -64,18 +88,24 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND)
   polyhedron_demo_plugin(tanglecube_function_plugin Tanglecube_implicit_function)
   polyhedron_demo_plugin(klein_function_plugin Klein_implicit_function)
 
-else (CGAL_Qt4_FOUND AND QT4_FOUND)
+else (QT4 OR QT5)
 
   set(MESH_3_MISSING_DEPS "")
 
-  if(NOT CGAL_Qt4_FOUND)
+  if(NOT CGAL_Qt4_FOUND ANS NOT USE_QT5)
     set(MESH_3_MISSING_DEPS "the CGAL Qt4 library, ${MESH_3_MISSING_DEPS}")
   endif()
+  if(NOT CGAL_Qt5_FOUND AND USE_QT5)
+    set(MESH_3_MISSING_DEPS "the CGAL Qt5 library, ${MESH_3_MISSING_DEPS}")
+  endif()
 
-  if(NOT QT4_FOUND)
+  if(NOT QT4 AND NOT USE_QT5)
     set(MESH_3_MISSING_DEPS "Qt4, ${MESH_3_MISSING_DEPS}")
+  endif()
+  if(NOT QT5 AND USE_QT5)
+    set(MESH_3_MISSING_DEPS "Qt5, ${MESH_3_MISSING_DEPS}")
   endif()
 
   message(STATUS "NOTICE: This demo requires ${MESH_3_MISSING_DEPS}and will not be compiled.")
 
-endif (CGAL_Qt4_FOUND AND QT4_FOUND)
+endif (QT4 OR QT5)

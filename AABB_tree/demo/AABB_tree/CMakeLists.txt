@@ -12,44 +12,63 @@ endif()
 # Include this package's headers first
 include_directories( BEFORE ./ ./include ../../include )
 
-# Find CGAL and CGAL Qt4
-find_package(CGAL COMPONENTS Qt4)
-include( ${CGAL_USE_FILE} )
 
-# Find Qt4 itself
+# Find Qt itself
 set( QT_USE_QTXML    TRUE )
 set( QT_USE_QTMAIN   TRUE )
 set( QT_USE_QTSCRIPT  TRUE )
 set( QT_USE_QTOPENGL  TRUE )
-find_package(Qt4)
+
+#New for Qt5 version !
+option (USE_QT5 "Use Qt5 version instead of Qt4" ON)
+
+if(USE_QT5)
+
+	find_package(CGAL COMPONENTS Qt5)
+
+	include(${CGAL_USE_FILE})
+	
+	find_package(Qt5)
+
+else (USE_QT5)
+
+	find_package(CGAL COMPONENTS Qt4)
+	include(${CGAL_USE_FILE})
+
+	find_package(Qt4)
+
+	if(CGAL_Qt4_FOUND AND QT4_FOUND)
+		include(${QT_USE_FILE})
+		message("Qt4 found")
+		set(QT4 TRUE)
+	endif()
+
+endif (USE_QT5)
+
+include(QtChoice)
 
 # Find OpenGL
 find_package(OpenGL)
+find_package(QGLViewer )
 
-# Find QGLViewer
-if(QT4_FOUND)
-  include(${QT_USE_FILE})
-  find_package(QGLViewer )
-endif(QT4_FOUND)
-
-if(CGAL_FOUND AND CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
+if(CGAL_FOUND AND (QT4 OR QT5) AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
   include_directories ( ${QGLVIEWER_INCLUDE_DIR} )
 
-  qt4_wrap_ui( UI_FILES MainWindow.ui )
+  qt_wrap_ui( UI_FILES MainWindow.ui )
 
   include(AddFileDependencies)
 
-  qt4_generate_moc( "MainWindow.h" "${CMAKE_CURRENT_BINARY_DIR}/MainWindow_moc.cpp" )
+  qt_generate_moc( "MainWindow.h" "${CMAKE_CURRENT_BINARY_DIR}/MainWindow_moc.cpp" )
   add_file_dependencies( MainWindow_moc.cpp "${CMAKE_CURRENT_SOURCE_DIR}/MainWindow.h" )
 
-  qt4_generate_moc( "Viewer.h" "${CMAKE_CURRENT_BINARY_DIR}/Viewer_moc.cpp" )
+  qt_generate_moc( "Viewer.h" "${CMAKE_CURRENT_BINARY_DIR}/Viewer_moc.cpp" )
   add_file_dependencies( Viewer_moc.cpp "${CMAKE_CURRENT_SOURCE_DIR}/Viewer.h" )
 
-  qt4_generate_moc( "Scene.h" "${CMAKE_CURRENT_BINARY_DIR}/Scene_moc.cpp" )
+  qt_generate_moc( "Scene.h" "${CMAKE_CURRENT_BINARY_DIR}/Scene_moc.cpp" )
   add_file_dependencies( Scene_moc.cpp "${CMAKE_CURRENT_SOURCE_DIR}/Scene.h" )
 
-  qt4_add_resources ( RESOURCE_FILES AABB_demo.qrc )
+  qt_add_resources ( RESOURCE_FILES AABB_demo.qrc )
 
   add_file_dependencies( AABB_demo.cpp "${CMAKE_CURRENT_BINARY_DIR}/MainWindow_moc.cpp"
                                        "${CMAKE_CURRENT_BINARY_DIR}/Viewer_moc.cpp"
@@ -69,7 +88,7 @@ if(CGAL_FOUND AND CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FO
   add_to_cached_list( CGAL_EXECUTABLE_TARGETS AABB_demo )
 
 
-else (CGAL_FOUND AND CGAL_CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
+else (CGAL_FOUND AND (Qt4 OR QT5) AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
   set(AABB_MISSING_DEPS "")
 
@@ -81,8 +100,16 @@ else (CGAL_FOUND AND CGAL_CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLV
     set(AABB_MISSING_DEPS "the CGAL Qt4 library, ${AABB_MISSING_DEPS}")
   endif()
 
+  if(NOT CGAL_Qt5_FOUND)
+    set(AABB_MISSING_DEPS "the CGAL Qt5 library, ${AABB_MISSING_DEPS}")
+  endif()
+
   if(NOT QT4_FOUND)
     set(AABB_MISSING_DEPS "Qt4, ${AABB_MISSING_DEPS}")
+  endif()
+
+  if(NOT QT5_FOUND)
+    set(AABB_MISSING_DEPS "Qt5, ${AABB_MISSING_DEPS}")
   endif()
 
   if(NOT OPENGL_FOUND)
@@ -95,4 +122,4 @@ else (CGAL_FOUND AND CGAL_CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLV
 
   message(STATUS "NOTICE: This demo requires ${AABB_MISSING_DEPS}and will not be compiled.")
 
-endif (CGAL_FOUND AND CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
+endif (CGAL_FOUND AND (QT4 OR QT5) AND OPENGL_FOUND AND QGLVIEWER_FOUND)
