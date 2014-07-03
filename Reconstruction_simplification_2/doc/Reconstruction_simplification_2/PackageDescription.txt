@@ -17,7 +17,7 @@
 \cgalPkgDependsOn{\ref PkgPolyhedronSummary}
 \cgalPkgBib{cgal:c-tsms-12}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
-\cgalPkgDemo{XXXX.zip}
+\cgalPkgDemo{XXX, XXXX.zip}
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd
 
