@@ -7,7 +7,6 @@
 
 #include <CGAL/Deform_mesh.h>
 
-typedef CGAL::Simple_cartesian<double>                                   Kernel;
 typedef OpenMesh::PolyMesh_ArrayKernelT</* MyTraits*/>                     Mesh;
 
 typedef boost::graph_traits<Mesh>::vertex_descriptor    vertex_descriptor;
