@@ -769,7 +769,8 @@ conflicts_zone_impl(const Point& point
 
   facet_is_in_its_cz = true; // Always true
 
-  CGAL_HISTOGRAM_PROFILER("Mesh_3::Refine_cells::conflict zone", zone.cells.size());
+  CGAL_HISTOGRAM_PROFILER("Mesh_3::Refine_cells::conflict zone", 
+                          static_cast<unsigned int>(zone.cells.size()));
   return zone;
 }
 
