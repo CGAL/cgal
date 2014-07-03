@@ -519,12 +519,12 @@ class Load_based_worksharing_ds
 public:
   // Constructors
   Load_based_worksharing_ds(const Bbox_3 &bbox)
-    : m_num_cells_per_axis(
+    : NUM_WORK_ITEMS_PER_BATCH(
+        Concurrent_mesher_config::get().num_work_items_per_batch),
+      m_num_cells_per_axis(
         Concurrent_mesher_config::get().work_stats_grid_num_cells_per_axis),
-      m_stats(bbox, m_num_cells_per_axis),
       m_num_cells(m_num_cells_per_axis*m_num_cells_per_axis*m_num_cells_per_axis),
-      NUM_WORK_ITEMS_PER_BATCH(
-        Concurrent_mesher_config::get().num_work_items_per_batch)
+      m_stats(bbox, m_num_cells_per_axis)
   {
     m_tls_work_buffers = new TLS_WorkBuffer[m_num_cells];
     m_work_batches = new tbb::concurrent_queue<WorkBatch>[m_num_cells];

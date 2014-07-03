@@ -222,8 +222,8 @@ PVertex_()
 
 PVertex_(const Vertex_handle& vh, id_type id)
 : vertex_handle_(vh)
-, in_dimension_(vh->in_dimension())
 , vh_erase_counter_when_added_(vh->erase_counter())
+, in_dimension_(vh->in_dimension())
 , incident_sliver_nb_(0)
 , min_value_((std::numeric_limits<double>::max)())
 , try_nb_(0)
@@ -942,10 +942,6 @@ perturb(const FT& sliver_bound, PQueue& pqueue, Visitor& visitor) const
   // Parallel
   if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
   {
-# ifdef CGAL_MESH_3_PERTURBER_VERBOSE
-    int iteration_nb = 0;
-# endif
-
     this->create_root_task();
 
     while (pqueue.size() > 0)
