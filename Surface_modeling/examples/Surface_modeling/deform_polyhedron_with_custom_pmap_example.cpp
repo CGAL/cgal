@@ -2,9 +2,9 @@
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
 // Halfedge adaptors for Polyhedron_3
-#include <CGAL/boost/graph/halfedge_graph_traits_Polyhedron_3.h>
+#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/boost/graph/properties_Polyhedron_3.h>
-
+#include <CGAL/property_map.h>
 #include <CGAL/Deform_mesh.h>
 
 #include <fstream>
@@ -15,17 +15,17 @@ typedef CGAL::Polyhedron_3<Kernel>                                   Polyhedron;
 
 typedef boost::graph_traits<Polyhedron>::vertex_descriptor    vertex_descriptor;
 typedef boost::graph_traits<Polyhedron>::vertex_iterator        vertex_iterator;
-typedef boost::graph_traits<Polyhedron>::edge_descriptor        edge_descriptor;
-typedef boost::graph_traits<Polyhedron>::edge_iterator            edge_iterator;
+typedef boost::graph_traits<Polyhedron>::halfedge_descriptor halfedge_descriptor;
+typedef boost::graph_traits<Polyhedron>::halfedge_iterator    halfedge_iterator;
 
 // Define the maps
 typedef std::map<vertex_descriptor, std::size_t>                  Vertex_id_map;
-typedef std::map<edge_descriptor, std::size_t>                      Edge_id_map;
+typedef std::map<halfedge_descriptor, std::size_t>                 Hedge_id_map;
 typedef boost::associative_property_map<Vertex_id_map>           Vertex_id_pmap;
-typedef boost::associative_property_map<Edge_id_map>               Edge_id_pmap;
+typedef boost::associative_property_map<Hedge_id_map>             Hedge_id_pmap;
 
 
-typedef CGAL::Deform_mesh<Polyhedron, Vertex_id_pmap, Edge_id_pmap> Deform_mesh;
+typedef CGAL::Deform_mesh<Polyhedron, Vertex_id_pmap, Hedge_id_pmap> Deform_mesh;
 
 int main()
 {
@@ -41,19 +41,19 @@ int main()
   Vertex_id_map vertex_index_map;
   vertex_iterator vb, ve;
   std::size_t counter = 0;
-  for(boost::tie(vb, ve) = boost::vertices(mesh); vb != ve; ++vb, ++counter)
+  for(boost::tie(vb, ve) = vertices(mesh); vb != ve; ++vb, ++counter)
     vertex_index_map[*vb]=counter;
 
-  // Init the indices of the halfedges from 0 to num_edges(mesh)-1
-  Edge_id_map edge_index_map;
+  // Init the indices of the halfedges from 0 to 2*num_edges(mesh)-1
+  Hedge_id_map hedge_index_map;
   counter = 0;
-  edge_iterator eb, ee;
-  for(boost::tie(eb, ee) = boost::edges(mesh); eb != ee; ++eb, ++counter)
-    edge_index_map[*eb]=counter;
+  halfedge_iterator eb, ee;
+  for(boost::tie(eb, ee) = halfedges(mesh); eb != ee; ++eb, ++counter)
+    hedge_index_map[*eb]=counter;
 
   Deform_mesh deform_mesh( mesh,
                            Vertex_id_pmap(vertex_index_map),
-                           Edge_id_pmap(edge_index_map) );
+                           Hedge_id_pmap(hedge_index_map) );
 
   // Now deform mesh as desired
   // .....

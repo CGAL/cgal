@@ -11,7 +11,7 @@ Scene_edit_polyhedron_item::Scene_edit_polyhedron_item
   QMainWindow* mw)
   : ui_widget(ui_widget), 
     poly_item(poly_item),
-    deform_mesh(*(poly_item->polyhedron()), Vertex_index_map(), Edge_index_map(), Array_based_vertex_point_map(&positions)),
+    deform_mesh(*(poly_item->polyhedron()), Deform_mesh::Vertex_index_map(), Deform_mesh::Hedge_index_map(), Array_based_vertex_point_map(&positions)),
     is_rot_free(true),
     own_poly_item(true),
     k_ring_selector(poly_item, mw, Scene_polyhedron_item_k_ring_selection::Active_handle::VERTEX, true),
@@ -40,7 +40,7 @@ Scene_edit_polyhedron_item::Scene_edit_polyhedron_item
   startTimer(0);
 
   // Required for drawing functionality
-  positions.resize(boost::num_vertices(*polyhedron())*3);
+  positions.resize(num_vertices(*polyhedron())*3);
   normals.resize(positions.size());
   Polyhedron::Vertex_iterator vb, ve;
   std::size_t counter = 0;

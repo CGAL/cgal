@@ -8,7 +8,6 @@
 
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/boost/graph/properties_Polyhedron_3.h>
-#include <CGAL/boost/graph/halfedge_graph_traits_Polyhedron_3.h>
 #include <CGAL/internal/Operations_on_polyhedra/compute_normal.h>
 
 #include <iostream>
@@ -27,24 +26,8 @@
 typedef Polyhedron::Vertex_handle Vertex_handle;
 typedef boost::graph_traits<Polyhedron>::vertex_descriptor		vertex_descriptor;
 typedef boost::graph_traits<Polyhedron>::vertex_iterator		  vertex_iterator;
-typedef boost::graph_traits<Polyhedron>::edge_descriptor		  edge_descriptor;
-typedef boost::graph_traits<Polyhedron>::edge_iterator		    edge_iterator;
-typedef boost::graph_traits<Polyhedron>::in_edge_iterator		  in_edge_iterator;
+typedef boost::graph_traits<Polyhedron>::in_edge_iterator		 in_edge_iterator;
 typedef boost::graph_traits<Polyhedron>::out_edge_iterator		out_edge_iterator;
-
-template<class PolyhedronWithId, class KeyType>
-struct Polyhedron_with_id_property_map
-    : public boost::put_get_helper<std::size_t&,
-             Polyhedron_with_id_property_map<PolyhedronWithId, KeyType> >
-{
-public:
-    typedef KeyType      key_type;
-    typedef std::size_t  value_type;
-    typedef value_type&  reference;
-    typedef boost::lvalue_property_map_tag category;
-        
-    reference operator[](key_type key) const { return key->id(); }
-};
 
 struct Array_based_vertex_point_map
 {
@@ -77,10 +60,7 @@ put(Array_based_vertex_point_map pmap,
   (*pmap.positions)[pos+2] = val.z();
 }
 
-typedef Polyhedron_with_id_property_map<Polyhedron, vertex_descriptor> Vertex_index_map; 
-typedef Polyhedron_with_id_property_map<Polyhedron, edge_descriptor>   Edge_index_map; 
-
-typedef CGAL::Deform_mesh<Polyhedron, Vertex_index_map, Edge_index_map, CGAL::ORIGINAL_ARAP
+typedef CGAL::Deform_mesh<Polyhedron, CGAL::Default, CGAL::Default, CGAL::ORIGINAL_ARAP
   ,CGAL::Default, CGAL::Default, CGAL::Default, 
   Array_based_vertex_point_map> Deform_mesh;
 
@@ -347,7 +327,7 @@ public:
   void set_all_vertices_as_roi()
   {
     vertex_iterator vb, ve;
-    for(boost::tie(vb, ve) = boost::vertices(*polyhedron()); vb != ve; ++vb)
+    for(boost::tie(vb, ve) = vertices(*polyhedron()); vb != ve; ++vb)
     {
       insert_roi_vertex(*vb);
     }   
@@ -509,9 +489,9 @@ public:
 
     // put vertices to vector
     std::vector<vertex_descriptor> all_vertices;
-    all_vertices.reserve(boost::num_vertices(deform_mesh.halfedge_graph()));
+    all_vertices.reserve(num_vertices(deform_mesh.halfedge_graph()));
     vertex_iterator vb, ve;
-    for(boost::tie(vb, ve) = boost::vertices(deform_mesh.halfedge_graph()); vb != ve; ++vb) {
+    for(boost::tie(vb, ve) = vertices(deform_mesh.halfedge_graph()); vb != ve; ++vb) {
       all_vertices.push_back(*vb);
     }
     // read roi

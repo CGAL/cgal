@@ -3,7 +3,7 @@
 #include <CGAL/Polyhedron_items_with_id_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
 // HalfedgeGraph adapters for Polyhedron_3
-#include <CGAL/boost/graph/halfedge_graph_traits_Polyhedron_3.h>
+#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/boost/graph/properties_Polyhedron_3.h>
 
 #include <CGAL/Deform_mesh.h>
@@ -37,12 +37,12 @@ int main()
 
   // Definition of the region of interest (use the whole mesh)
   vertex_iterator vb,ve;
-  boost::tie(vb, ve) = boost::vertices(mesh);
+  boost::tie(vb, ve) = vertices(mesh);
   deform_mesh.insert_roi_vertices(vb, ve);
 
   // Select two control vertices ...
-  vertex_descriptor control_1 = *boost::next(vb, 213);
-  vertex_descriptor control_2 = *boost::next(vb, 157);
+  vertex_descriptor control_1 = *next(vb, 213);
+  vertex_descriptor control_2 = *next(vb, 157);
 
   // ... and insert them
   deform_mesh.insert_control_vertex(control_1);
@@ -79,7 +79,7 @@ int main()
   output.close();
 
   // Add another control vertex which requires another call to preprocess
-  vertex_descriptor control_3 = *boost::next(vb, 92);
+  vertex_descriptor control_3 = *next(vb, 92);
   deform_mesh.insert_control_vertex(control_3);
 
   // The prepocessing step is again needed

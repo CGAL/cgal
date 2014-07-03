@@ -1,7 +1,7 @@
  /// \ingroup PkgSurfaceModelingConcepts
  /// \cgalConcept
  ///
- /// @brief Concept describing the set of requirements for calculating weights for edges. 
+ /// @brief Concept describing the set of requirements for calculating weights for halfedges. 
  ///
  /// \cgalHeading{Example:}
  ///
@@ -12,7 +12,7 @@
  /// {
  ///   typedef HalfedgeGraph Halfedge_graph;
  ///   template<class VertexPointMap>
- ///   double operator()(typename boost::graph_traits<HalfedgeGraph>::edge_descriptor  /*e*/, const HalfedgeGraph& /*p*/, VertexPointMap /*v*/)
+ ///   double operator()(typename boost::graph_traits<HalfedgeGraph>::halfedge_descriptor  /*e*/, const HalfedgeGraph& /*p*/, VertexPointMap /*v*/)
  ///   { return 1.0; }
  /// };
  /// \endcode
@@ -35,10 +35,10 @@ public:
 
 /// \name Operations 
 /// @{
-  /// Function computing the edge weight of edge `e`
+  /// Function computing the halfedge weight of halfedge `he`
   /// \tparam VertexPointMap a model of `ReadWritePropertyMap`</a>  with boost::graph_traits<Halfedge_graph>::vertex_descriptor as key and a 3D point from a \cgal Kernel as value type
   template <class VertexPointMap>
-  double operator()(boost::graph_traits<Halfedge_graph>::edge_descriptor  e, const Halfedge_graph& halfedge_graph, VertexPointMap vpm);
+  double operator()(boost::graph_traits<Halfedge_graph>::halfedge_descriptor  he, const Halfedge_graph& halfedge_graph, VertexPointMap vpm);
 /// @}
 };
 

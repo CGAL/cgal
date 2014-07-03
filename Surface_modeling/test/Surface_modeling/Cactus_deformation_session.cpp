@@ -14,13 +14,9 @@ typedef CGAL::Simple_cartesian<double> Kernel;
 typedef CGAL::Polyhedron_3<Kernel, CGAL::Polyhedron_items_with_id_3>  Polyhedron;
 
 typedef boost::graph_traits<Polyhedron>::vertex_descriptor    vertex_descriptor;
-typedef boost::graph_traits<Polyhedron>::edge_descriptor      edge_descriptor;
 
-typedef Polyhedron_with_id_property_map<Polyhedron, vertex_descriptor> Vertex_index_map; // use id field of vertices
-typedef Polyhedron_with_id_property_map<Polyhedron, edge_descriptor>   Edge_index_map;   // use id field of edges
-
-typedef CGAL::Deform_mesh<Polyhedron, Vertex_index_map, Edge_index_map, CGAL::ORIGINAL_ARAP>  Deform_mesh_arap;
-typedef CGAL::Deform_mesh<Polyhedron, Vertex_index_map, Edge_index_map, CGAL::SPOKES_AND_RIMS> Deform_mesh_spoke;
+typedef CGAL::Deform_mesh<Polyhedron, CGAL::Default, CGAL::Default, CGAL::ORIGINAL_ARAP>  Deform_mesh_arap;
+typedef CGAL::Deform_mesh<Polyhedron, CGAL::Default, CGAL::Default, CGAL::SPOKES_AND_RIMS> Deform_mesh_spoke;
 
 const double squared_threshold = 0.001; // alert if average difs between precomputed and deformed mesh models is above threshold
 
@@ -96,16 +92,16 @@ int main()
   init_indices(mesh_1);
   init_indices(mesh_2);
 
-  Deform_mesh_arap deform_mesh_arap(mesh_1, Vertex_index_map(), Edge_index_map()); 
-  Deform_mesh_spoke deform_mesh_spoke(mesh_2, Vertex_index_map(), Edge_index_map()); 
+  Deform_mesh_arap deform_mesh_arap(mesh_1); 
+  Deform_mesh_spoke deform_mesh_spoke(mesh_2); 
   // For original arap
-  std::vector<Deform_mesh_arap::vertex_descriptor> hg_1 = 
+  std::vector<vertex_descriptor> hg_1 = 
     read_rois(deform_mesh_arap, "data/cactus_roi.txt", "data/cactus_handle.txt");
 
   read_handle_difs_and_deform(deform_mesh_arap, hg_1.begin(), hg_1.end());
   std::cerr << "ORIGINAL ARAP Success!" << std::endl;
   // For spokes rims
-  std::vector<Deform_mesh_arap::vertex_descriptor> hg_2 = 
+  std::vector<vertex_descriptor> hg_2 = 
     read_rois(deform_mesh_spoke, "data/cactus_roi.txt", "data/cactus_handle.txt");
 
   read_handle_difs_and_deform(deform_mesh_spoke, hg_2.begin(), hg_2.end());

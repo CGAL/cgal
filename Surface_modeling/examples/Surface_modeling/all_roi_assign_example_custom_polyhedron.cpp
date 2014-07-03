@@ -1,7 +1,7 @@
 #include <fstream>
 #include <map>
 #include <cmath>
-#include <boost/property_map/property_map.hpp>
+#include <CGAL/property_map.h>
 
 struct Custom_point_3{
   // Required by File_scanner_OFF
@@ -40,7 +40,7 @@ struct Custom_point_3{
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
 // Halfedge adapters for Polyhedron_3
-#include <CGAL/boost/graph/halfedge_graph_traits_Polyhedron_3.h>
+#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/boost/graph/properties_Polyhedron_3.h>
 
 #include <CGAL/Deform_mesh.h>
@@ -54,16 +54,16 @@ typedef CGAL::Polyhedron_3<Custom_traits>       Polyhedron;
 
 typedef boost::graph_traits<Polyhedron>::vertex_descriptor    vertex_descriptor;
 typedef boost::graph_traits<Polyhedron>::vertex_iterator      vertex_iterator;
-typedef boost::graph_traits<Polyhedron>::edge_descriptor      edge_descriptor;
-typedef boost::graph_traits<Polyhedron>::edge_iterator        edge_iterator;
+typedef boost::graph_traits<Polyhedron>::halfedge_descriptor  halfedge_descriptor;
+typedef boost::graph_traits<Polyhedron>::halfedge_iterator    halfedge_iterator;
 
 typedef std::map<vertex_descriptor, std::size_t>   Internal_vertex_map;
-typedef std::map<edge_descriptor, std::size_t>     Internal_edge_map;
+typedef std::map<halfedge_descriptor, std::size_t>     Internal_hedge_map;
 
 typedef boost::associative_property_map<Internal_vertex_map>   Vertex_index_map;
-typedef boost::associative_property_map<Internal_edge_map>     Edge_index_map;
+typedef boost::associative_property_map<Internal_hedge_map>     Hedge_index_map;
 
-typedef CGAL::Deform_mesh<Polyhedron, Vertex_index_map, Edge_index_map> Deform_mesh;
+typedef CGAL::Deform_mesh<Polyhedron, Vertex_index_map, Hedge_index_map> Deform_mesh;
 
 int main()
 {
@@ -81,27 +81,27 @@ int main()
   Vertex_index_map vertex_index_map(internal_vertex_index_map);
   vertex_iterator vb, ve;
   std::size_t counter = 0;
-  for(boost::tie(vb, ve) = boost::vertices(mesh); vb != ve; ++vb, ++counter) {
+  for(boost::tie(vb, ve) = vertices(mesh); vb != ve; ++vb, ++counter) {
     put(vertex_index_map, *vb, counter);
   }
 
-  Internal_edge_map internal_edge_index_map;
-  Edge_index_map edge_index_map(internal_edge_index_map);
+  Internal_hedge_map internal_hedge_index_map;
+  Hedge_index_map hedge_index_map(internal_hedge_index_map);
   counter = 0;
-  edge_iterator eb, ee;
-  for(boost::tie(eb, ee) = boost::edges(mesh); eb != ee; ++eb, ++counter) {
-    put(edge_index_map, *eb, counter);
+  halfedge_iterator eb, ee;
+  for(boost::tie(eb, ee) = halfedges(mesh); eb != ee; ++eb, ++counter) {
+    put(hedge_index_map, *eb, counter);
   }
 
-  Deform_mesh deform_mesh(mesh, vertex_index_map, edge_index_map);
+  Deform_mesh deform_mesh(mesh, vertex_index_map, hedge_index_map);
 
   // Insert the whole mesh as region of interest
-  boost::tie(vb, ve) = boost::vertices(mesh);
+  boost::tie(vb, ve) = vertices(mesh);
   deform_mesh.insert_roi_vertices(vb, ve);
 
   // Insert two control vertices
-  vertex_descriptor control_1 = *boost::next(vb, 213);
-  vertex_descriptor control_2 = *boost::next(vb, 157);
+  vertex_descriptor control_1 = *next(vb, 213);
+  vertex_descriptor control_2 = *next(vb, 157);
   deform_mesh.insert_control_vertex(control_1); 
   deform_mesh.insert_control_vertex(control_2);
 
@@ -136,7 +136,7 @@ int main()
   output.close();
 
   // Add another control vertex
-  vertex_descriptor control_3 = *boost::next(vb, 92);
+  vertex_descriptor control_3 = *next(vb, 92);
   deform_mesh.insert_control_vertex(control_3);
   
   // The prepocessing step is again needed

@@ -2,6 +2,7 @@
 #define CGAL_SURFACE_MODELING_WEIGHTS_H
 /// @cond CGAL_DOCUMENT_INTERNAL
 
+#include <CGAL/boost/graph/helpers.h>
 #include <CGAL/Simple_cartesian.h>
 typedef CGAL::Simple_cartesian<double>::Vector_3 Vector;
 
@@ -99,7 +100,7 @@ public:
 };
 
 
-///////////////////////////// Edge Weight Calculators ///////////////////////////////////
+///////////////////////////// Halfedge Weight Calculators ///////////////////////////////////
 // Cotangent weight calculator 
 // Cotangent_value:               as suggested by -[Sorkine07] ARAP Surface Modeling-
 // Cotangent_value_area_weighted: as suggested by -[Mullen08] Spectral Conformal Parameterization-
@@ -108,36 +109,36 @@ template<class HalfedgeGraph,
 class Cotangent_weight : CotangentValue
 {
 public:
-  typedef typename boost::graph_traits<HalfedgeGraph>::edge_descriptor   edge_descriptor;
+  typedef typename boost::graph_traits<HalfedgeGraph>::halfedge_descriptor   halfedge_descriptor;
   typedef typename boost::graph_traits<HalfedgeGraph>::vertex_descriptor vertex_descriptor;
   typedef HalfedgeGraph Halfedge_graph;
-  // Returns the cotangent weight of specified edge_descriptor
+  // Returns the cotangent weight of specified halfedge_descriptor
   // Edge orientation is trivial
   template<class VertexPointMap>
-  double operator()(edge_descriptor e, HalfedgeGraph& halfedge_graph, VertexPointMap vpm)
+  double operator()(halfedge_descriptor he, HalfedgeGraph& halfedge_graph, VertexPointMap vpm)
   {
-     vertex_descriptor v0 = boost::target(e, halfedge_graph);
-     vertex_descriptor v1 = boost::source(e, halfedge_graph);
+     vertex_descriptor v0 = target(he, halfedge_graph);
+     vertex_descriptor v1 = source(he, halfedge_graph);
      // Only one triangle for border edges
-     if (boost::get(CGAL::edge_is_border, halfedge_graph, e) ||
-         boost::get(CGAL::edge_is_border, halfedge_graph, CGAL::opposite_edge(e, halfedge_graph)))
+     if ( is_border(he, halfedge_graph) || 
+          is_border(opposite(he, halfedge_graph), halfedge_graph) )
      {       
-       edge_descriptor e_cw = CGAL::next_edge_cw(e, halfedge_graph);
-       vertex_descriptor v2 = boost::source(e_cw, halfedge_graph);
-       if (boost::get(CGAL::edge_is_border, halfedge_graph, e_cw) ||
-           boost::get(CGAL::edge_is_border, halfedge_graph, CGAL::opposite_edge(e_cw, halfedge_graph)) )
+       halfedge_descriptor he_cw = opposite( next(he, halfedge_graph), halfedge_graph );
+       vertex_descriptor v2 = source(he_cw, halfedge_graph);
+       if ( is_border(he_cw, halfedge_graph) ||
+            is_border(opposite(he_cw, halfedge_graph), halfedge_graph) )
        {
-          edge_descriptor e_ccw = CGAL::next_edge_ccw(e, halfedge_graph);
-          v2 = boost::source(e_ccw, halfedge_graph);
+          halfedge_descriptor he_ccw = prev( opposite(he, halfedge_graph), halfedge_graph );
+          v2 = source(he_ccw, halfedge_graph);
        }
        return ( CotangentValue::operator()(v0, v2, v1, vpm)/2.0 );
      }
      else
      {
-        edge_descriptor e_cw = CGAL::next_edge_cw(e, halfedge_graph);
-        vertex_descriptor v2 = boost::source(e_cw, halfedge_graph);     
-        edge_descriptor e_ccw = CGAL::next_edge_ccw(e, halfedge_graph);
-        vertex_descriptor v3 = boost::source(e_ccw, halfedge_graph);
+        halfedge_descriptor he_cw = opposite( next(he, halfedge_graph), halfedge_graph );
+        vertex_descriptor v2 = source(he_cw, halfedge_graph);     
+        halfedge_descriptor he_ccw = prev( opposite(he, halfedge_graph), halfedge_graph );
+        vertex_descriptor v3 = source(he_ccw, halfedge_graph);
 
         return ( CotangentValue::operator()(v0, v2, v1, vpm)/2.0 + CotangentValue::operator()(v0, v3, v1, vpm)/2.0 );
      }
@@ -150,21 +151,21 @@ template<class HalfedgeGraph,
 class Single_cotangent_weight : CotangentValue
 {
 public:
-  typedef typename boost::graph_traits<HalfedgeGraph>::edge_descriptor   edge_descriptor;
+  typedef typename boost::graph_traits<HalfedgeGraph>::halfedge_descriptor   halfedge_descriptor;
   typedef typename boost::graph_traits<HalfedgeGraph>::vertex_descriptor vertex_descriptor;
   typedef HalfedgeGraph Halfedge_graph;
 
-  // Returns the cotangent of the opposite angle of the edge
+  // Returns the cotangent of the opposite angle of the halfedge
   // 0 for border edges (which does not have an opposite angle)
   template<class VertexPointMap>
-  double operator()(edge_descriptor e, HalfedgeGraph& halfedge_graph, VertexPointMap vpm)
+  double operator()(halfedge_descriptor he, HalfedgeGraph& halfedge_graph, VertexPointMap vpm)
   {
-     if(boost::get(CGAL::edge_is_border, halfedge_graph, e)) { return 0.0;}
+     if(is_border(he, halfedge_graph)) { return 0.0;}
      
-     vertex_descriptor v0 = boost::target(e, halfedge_graph);
-     vertex_descriptor v1 = boost::source(e, halfedge_graph);
+     vertex_descriptor v0 = target(he, halfedge_graph);
+     vertex_descriptor v1 = source(he, halfedge_graph);
 
-     vertex_descriptor v_op = boost::target(CGAL::next_edge(e, halfedge_graph), halfedge_graph);
+     vertex_descriptor v_op = target(next(he, halfedge_graph), halfedge_graph);
      return CotangentValue::operator()(v0, v_op, v1, vpm);
   }
 };
@@ -175,40 +176,40 @@ template<class HalfedgeGraph>
 class Mean_value_weight
 {
 public:
-  typedef typename boost::graph_traits<HalfedgeGraph>::edge_descriptor   edge_descriptor;
+  typedef typename boost::graph_traits<HalfedgeGraph>::halfedge_descriptor   halfedge_descriptor;
   typedef typename boost::graph_traits<HalfedgeGraph>::vertex_descriptor vertex_descriptor;
   typedef HalfedgeGraph Halfedge_graph;
 
-  // Returns the mean-value coordinate of specified edge_descriptor
-  // Returns different value for different edge orientation (which is a normal behaivour according to formula)
-  double operator()(edge_descriptor e, HalfedgeGraph& halfedge_graph)
+  // Returns the mean-value coordinate of specified halfedge_descriptor
+  // Returns different value for different halfedge orientation (which is a normal behaviour according to formula)
+  double operator()(halfedge_descriptor he, HalfedgeGraph& halfedge_graph)
   {
-    vertex_descriptor v0 = boost::target(e, halfedge_graph);
-    vertex_descriptor v1 = boost::source(e, halfedge_graph);
+    vertex_descriptor v0 = target(he, halfedge_graph);
+    vertex_descriptor v1 = source(he, halfedge_graph);
     Vector vec(v1->point(), v0->point());
     double norm = std::sqrt( vec.squared_length() );
 
     // Only one triangle for border edges
-    if (boost::get(CGAL::edge_is_border, halfedge_graph, e) ||
-        boost::get(CGAL::edge_is_border, halfedge_graph, CGAL::opposite_edge(e, halfedge_graph)))
+    if ( is_border(he, halfedge_graph) ||
+         is_border( opposite(he, halfedge_graph), halfedge_graph) )
     {
-      edge_descriptor e_cw = CGAL::next_edge_cw(e, halfedge_graph);
-      vertex_descriptor v2 = boost::source(e_cw, halfedge_graph);
-      if (boost::get(CGAL::edge_is_border, halfedge_graph, e_cw) || 
-          boost::get(CGAL::edge_is_border, halfedge_graph, CGAL::opposite_edge(e_cw, halfedge_graph)) )
+      halfedge_descriptor he_cw = opposite( next(he, halfedge_graph), halfedge_graph );
+      vertex_descriptor v2 = source(he_cw, halfedge_graph);
+      if ( is_border(he_cw, halfedge_graph) || 
+           is_border(opposite(he_cw, halfedge_graph), halfedge_graph) )
       {
-        edge_descriptor e_ccw = CGAL::next_edge_ccw(e, halfedge_graph);
-        v2 = boost::source(e_ccw, halfedge_graph);
+        halfedge_descriptor he_ccw = prev( opposite(he, halfedge_graph), halfedge_graph );
+        v2 = source(he_ccw, halfedge_graph);
       }
 
       return ( half_tan_value_2(v1, v0, v2)/norm);
     }
     else
     {
-      edge_descriptor e_cw = CGAL::next_edge_cw(e, halfedge_graph);
-      vertex_descriptor v2 = boost::source(e_cw, halfedge_graph);     
-      edge_descriptor e_ccw = CGAL::next_edge_ccw(e, halfedge_graph);
-      vertex_descriptor v3 = boost::source(e_ccw, halfedge_graph);
+      halfedge_descriptor he_cw = opposite( next(he, halfedge_graph), halfedge_graph );
+      vertex_descriptor v2 = source(he_cw, halfedge_graph);     
+      halfedge_descriptor he_ccw = prev( opposite(he, halfedge_graph), halfedge_graph );
+      vertex_descriptor v3 = source(he_ccw, halfedge_graph);
 
       return ( half_tan_value_2(v1, v0, v2)/norm + half_tan_value_2(v1, v0, v3)/norm);
     }
@@ -258,14 +259,14 @@ template< class HalfedgeGraph,
 class Hybrid_weight : public PrimaryWeight, SecondaryWeight
 {
 public:
-  typedef typename boost::graph_traits<HalfedgeGraph>::edge_descriptor   edge_descriptor;
+  typedef typename boost::graph_traits<HalfedgeGraph>::halfedge_descriptor   halfedge_descriptor;
   typedef HalfedgeGraph Halfedge_graph;
 
-  double operator()(edge_descriptor e, HalfedgeGraph& halfedge_graph)
+  double operator()(halfedge_descriptor he, HalfedgeGraph& halfedge_graph)
   {
-    double weight = PrimaryWeight::operator()(e, halfedge_graph);
+    double weight = PrimaryWeight::operator()(he, halfedge_graph);
     //if(weight < 0) { std::cout << "Negative weight" << std::endl; }
-    return (weight >= 0) ? weight : SecondaryWeight::operator()(e, halfedge_graph);
+    return (weight >= 0) ? weight : SecondaryWeight::operator()(he, halfedge_graph);
   }
 };
 
@@ -275,9 +276,9 @@ class Uniform_weight
 {
 public:
   typedef HalfedgeGraph Halfedge_graph;
-  typedef typename boost::graph_traits<HalfedgeGraph>::edge_descriptor   edge_descriptor;
+  typedef typename boost::graph_traits<HalfedgeGraph>::halfedge_descriptor   halfedge_descriptor;
 
-  double operator()(edge_descriptor /*e*/, HalfedgeGraph& /*halfedge_graph*/)
+  double operator()(halfedge_descriptor /*he*/, HalfedgeGraph& /*halfedge_graph*/)
   { return 1.0; }
 };
 
