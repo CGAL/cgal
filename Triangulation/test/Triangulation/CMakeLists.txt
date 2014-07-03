@@ -30,10 +30,10 @@ if ( CGAL_FOUND )
 
     include_directories (BEFORE "include")
 
-  create_single_source_cgal_program( "delaunay.cpp" )
-  create_single_source_cgal_program( "tds.cpp" )
-  create_single_source_cgal_program( "torture.cpp" )
-  create_single_source_cgal_program( "triangulation.cpp" )
+  create_single_source_cgal_program( "test_delaunay.cpp" )
+  create_single_source_cgal_program( "test_tds.cpp" )
+  create_single_source_cgal_program( "test_torture.cpp" )
+  create_single_source_cgal_program( "test_triangulation.cpp" )
 
 else()
   
