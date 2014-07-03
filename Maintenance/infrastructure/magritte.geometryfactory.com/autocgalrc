@@ -35,3 +35,6 @@ REFERENCE_PLATFORMS_DIR=$CGAL_ROOT/reference_platforms
 USE_REFERENCE_PLATFORMS=yes
 
 UPLOAD_RESULT_DESTINATION="cgaltest@cgaltest.geometryfactory.com:incoming"
+
+EIGEN3_DIR=/Users/cgaltester/eigen-hg-git
+export EIGEN3_DIR
