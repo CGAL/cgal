@@ -81,7 +81,7 @@ void concept_check_polyhedron() {
   // null
   boost::graph_traits<Polyhedron>::null_vertex();
   boost::graph_traits<Polyhedron>::null_face();
-};
+}
 
 template<typename Polyhedron>
 void runtime_check_halfedgegraph()
