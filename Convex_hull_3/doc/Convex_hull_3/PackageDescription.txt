@@ -85,5 +85,8 @@ defining `CGAL_CH_CHECK_EXPENSIVE`.
 
 - `CGAL::is_strongly_convex_3`
 
+## Halfspaces Intersection Function ##
+
+- `CGAL::halfspaces_intersection`
 
 */

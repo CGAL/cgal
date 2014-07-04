@@ -16,34 +16,55 @@
 #include <vector>
 
 namespace CGAL {
-// Offset
+
+
+// ----------------------------------------------------------------------------
+// Private section
+// ----------------------------------------------------------------------------
+namespace internal {
+
+/// \cond SKIP_IN_MANUAL
+
+/// Computes the VCM for each point in the property map.
+/// The matrix is computed by intersecting the Voronoi cell
+/// of a point and a sphere whose radius is `R` and discretized
+/// by `N` planes.
+///
+/// @tparam ForwardIterator iterator over input points.
+/// @tparam PointPMap is a model of `ReadablePropertyMap` with a value_type = Point_3<Kernel>.
+/// @tparam K Geometric traits class.
+/// @tparam Covariance Covariance matrix type.
 template < typename ForwardIterator,
            typename PointPMap,
            class K,
            class Covariance
 >
 void
-vcm_offset (ForwardIterator first,
-            ForwardIterator beyond,
-            PointPMap point_pmap,
-            std::vector<Covariance> &cov,
-            double R, size_t N,
-            const K &)
+vcm_offset (ForwardIterator first, ///< iterator over the first input point.
+            ForwardIterator beyond, ///< past-the-end iterator over the input points.
+            PointPMap point_pmap, ///< property map: value_type of ForwardIterator -> Point_3.
+            std::vector<Covariance> &cov, ///< vector of covariance matrices.
+            double R, ///< radius of the sphere.
+            size_t N, ///< number of planes used to discretize the sphere.
+            const K & /*kernel*/) ///< geometric traits.
 {
-    typedef CGAL::Delaunay_triangulation_3<K> DT;
-
+    // Sphere discretization
     typename CGAL::Voronoi_covariance_3::Sphere_discretization<K> sphere(R, N);
+
+    // Compute the Delaunay Triangulation
+    typedef CGAL::Delaunay_triangulation_3<K> DT;
     DT dt;
     ForwardIterator it;
-    for (it = first; it != beyond; it++) {
+    for (it = first; it != beyond; ++it) {
         dt.insert(get(point_pmap, *it));
     }
 
     cov.clear();
 
-    for (it = first; it != beyond; it++) {
+    // Compute the VCM
+    for (it = first; it != beyond; ++it) {
         typename DT::Vertex_handle vh = dt.nearest_vertex(get(point_pmap, *it));
-        Covariance c = CGAL::Voronoi_covariance_3::voronoi_covariance_3(dt, vh, sphere);
+        Covariance c = Voronoi_covariance_3::voronoi_covariance_3(dt, vh, sphere);
         cov.push_back(c);
     }
 }
@@ -70,20 +91,22 @@ vcm_convolve (ForwardIterator first,
 
     ForwardIterator it;
 
+    // Kd tree
     Tree tree;
-    for (it = first; it != beyond; it++) {
+    for (it = first; it != beyond; ++it) {
         tree.insert(get(point_pmap, *it));
     }
 
     std::map<Point, size_t> indices;
     size_t i = 0;
-    for (it = first; it != beyond; it++) {
+    for (it = first; it != beyond; ++it) {
         indices[get(point_pmap, *it)] = i;
         i++;
     }
 
+    // Convolving
     ncov.clear();
-    for (it = first; it != beyond; it++) {
+    for (it = first; it != beyond; ++it) {
         std::vector<Point> nn;
         tree.search(std::back_inserter(nn),
                     Fuzzy_sphere (get(point_pmap, *it), r));
@@ -95,54 +118,59 @@ vcm_convolve (ForwardIterator first,
     }
 }
 
-namespace internal
-{
-    int
-    max_vector3f (Eigen::Vector3f & v)
-    {
-        float max_eigenvalue = std::max(std::max(v[0], v[1]), v[2]);
+template <class Covariance>
+bool
+extract_greater_eigenvector (Covariance &cov,
+                             Eigen::Vector3f &normal) {
+    Eigen::Matrix3f m;
 
-        if (max_eigenvalue == v[0])
-            return 0;
+    // Construct covariance matrix
+    m(0,0) = cov[0]; m(0,1) = cov[1]; m(0,2) = cov[2];
+    m(1,1) = cov[3]; m(1,2) = cov[4];
+    m(2,2) = cov[5];
 
-        if (max_eigenvalue == v[1])
-            return 1;
+    m(1, 0) = m(0,1); m(2, 0) = m(0, 2); m(2, 1) = m(1, 2);
 
-        return 2;
+    // Diagonalizing the matrix
+    Eigen::Vector3f eigenvalues;
+    Eigen::Matrix3f eigenvectors;
+    Eigen::SelfAdjointEigenSolver<Eigen::Matrix3f> eigensolver(m);
+
+    if (eigensolver.info() != Eigen::Success) {
+        return false;
     }
 
-    template <class Covariance>
-    bool
-    extract_greater_eigenvector (Covariance &cov,
-                                 Eigen::Vector3f &normal) {
-        Eigen::Matrix3f m;
+    eigenvalues = eigensolver.eigenvalues();
+    eigenvectors = eigensolver.eigenvectors();
 
-        // Construct covariance matrix
-        m(0,0) = cov[0]; m(0,1) = cov[1]; m(0,2) = cov[2];
-        m(1,1) = cov[3]; m(1,2) = cov[4];
-        m(2,2) = cov[5];
+    // Eigenvalues are already sorted by increasing order
+    normal = eigenvectors.col(2);
 
-        m(1, 0) = m(0,1); m(2, 0) = m(0,2); m(2,1) = m(1,2);
+    return true;
+}
 
-        // Diagonalizing the matrix
-        Eigen::Vector3f eigenvalues;
-        Eigen::Matrix3f eigenvectors;
-        Eigen::SelfAdjointEigenSolver<Eigen::Matrix3f> eigensolver(m);
+/// \endcond
 
-        if (eigensolver.info() != Eigen::Success) {
-            return false;
-        }
-
-        eigenvalues = eigensolver.eigenvalues();
-        eigenvectors = eigensolver.eigenvectors();
-
-        int index_max_eigenvalue = max_vector3f(eigenvalues);
-        normal = eigenvectors.col(index_max_eigenvalue);
-
-        return true;
-    }
 } // namespace internal
 
+// ----------------------------------------------------------------------------
+// Public section
+// ----------------------------------------------------------------------------
+
+/// \ingroup PkgPointSetProcessing
+/// Estimates normal directions of the `[first, beyond)` range of points
+/// using the Voronoi Covariance Measure.
+/// The output normals are randomly oriented.
+///
+/// @tparam ForwardIterator iterator over input points.
+/// @tparam PointPMap is a model of `ReadablePropertyMap` with a value_type = Point_3<Kernel>.
+///        It can be omitted if ForwardIterator value_type is convertible to Point_3<Kernel>.
+/// @tparam NormalPMap is a model of `WritablePropertyMap` with a value_type = Vector_3<Kernel>.
+/// @tparam Kernel Geometric traits class.
+///        It can be omitted and deduced automatically from PointPMap value_type.
+/// @tparam Covariance Covariance matrix type.
+
+// This variant requires all parameters.
 template < typename ForwardIterator,
            typename PointPMap,
            typename NormalPMap,
@@ -150,41 +178,55 @@ template < typename ForwardIterator,
            typename Covariance
 >
 void
-vcm_estimate_normals (ForwardIterator first,
-                      ForwardIterator beyond,
-                      PointPMap point_pmap,
-                      NormalPMap normal_pmap,
-                      double R,
-                      double r,
-                      const Kernel & /*kernel*/,
-                      const Covariance &) {
+vcm_estimate_normals (ForwardIterator first, ///< iterator over the first input point.
+                      ForwardIterator beyond, ///< past-the-end iterator over the input points.
+                      PointPMap point_pmap, ///< property map: value_type of ForwardIterator -> Point_3.
+                      NormalPMap normal_pmap, ///< property map: value_type of ForwardIterator -> Vector_3.
+                      double R, ///< offset radius.
+                      double r, ///< convolution radius.
+                      const Kernel & /*kernel*/, ///< geometric traits.
+                      const Covariance &) ///< covariance matrix type.
+{
     // First, compute the VCM for each point
     std::vector<Covariance> cov;
     size_t N = 20;
-    vcm_offset (first,
-                beyond,
-                point_pmap,
-                cov,
-                R,
-                N,
-                Kernel());
+    internal::vcm_offset (first, beyond,
+                          point_pmap,
+                          cov,
+                          R,
+                          N,
+                          Kernel());
 
-    // Then, convolve it
+    // TODO: debug
+    std::ofstream file_offset("offset.p");
+    std::copy(cov.begin(), cov.end(),
+              std::ostream_iterator<Covariance>(file_offset));
+
+    // Then, convolve it (only when r != 0)
     std::vector<Covariance> ccov;
-    vcm_convolve(first,
-                 beyond,
-                 point_pmap,
-                 cov,
-                 ccov,
-                 r,
-                 Kernel());
+    if (r == 0) {
+        std::copy(cov.begin(), cov.end(), std::back_inserter(ccov));
+    } else {
+        internal::vcm_convolve(first, beyond,
+                               point_pmap,
+                               cov,
+                               ccov,
+                               r,
+                               Kernel());
+    }
+
+    // TODO: debug
+    std::ofstream file_convolve("convolve.p");
+    std::copy(ccov.begin(), ccov.end(),
+              std::ostream_iterator<Covariance>(file_convolve));
 
     // And finally, compute the normals
-    int  i = 0;
-    for (ForwardIterator it = first; it != beyond; it++) {
+    int i = 0;
+    for (ForwardIterator it = first; it != beyond; ++it) {
         Eigen::Vector3f enormal;
-        if (! internal::extract_greater_eigenvector(cov[i], enormal)) {
-            std::cerr << "Error during extraction of normal" << std::endl;
+        if (! internal::extract_greater_eigenvector(ccov[i], enormal)) {
+            std::cerr << "Error during extraction of normal: " <<
+                "the covariance matrix is not diagonalizable!\n";
             exit(1);
         }
         CGAL::Vector_3<Kernel> normal(enormal[0],
@@ -194,6 +236,32 @@ vcm_estimate_normals (ForwardIterator first,
         i++;
     }
 }
+
+/// @cond SKIP_IN_MANUAL
+// This variant deduces the kernel from the point property map.
+template < typename ForwardIterator,
+           typename PointPMap,
+           typename NormalPMap,
+           typename Covariance
+>
+void
+vcm_estimate_normals (ForwardIterator first,
+                      ForwardIterator beyond,
+                      PointPMap point_pmap,
+                      NormalPMap normal_pmap,
+                      double R,
+                      double r,
+                      const Covariance &) {
+    typedef typename boost::property_traits<PointPMap>::value_type Point;
+    typedef typename Kernel_traits<Point>::Kernel Kernel;
+
+    vcm_estimate_normals(first, beyond,
+                         point_pmap, normal_pmap,
+                         R, r,
+                         Kernel(),
+                         Covariance());
+}
+/// @endcond
 
 } // namespace CGAL
 
