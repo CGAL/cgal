@@ -62,6 +62,18 @@ public:
     m_triplets.reserve(dim);
   }
 
+  /// Create a square matrix initialized with zeros.
+  Eigen_sparse_matrix(int  dim,                   ///< Matrix dimension.
+                      bool is_symmetric = false)  ///< Symmetric/hermitian?
+    : m_is_already_built(false), m_matrix(dim,dim)
+  {
+    CGAL_precondition(dim > 0);
+
+    m_is_symmetric = is_symmetric;
+    // reserve memory for a regular 3D grid
+    m_triplets.reserve(dim);
+  }
+
   /// Create a rectangular matrix initialized with zeros.
   ///
   /// @commentheading Precondition: rows == columns if is_symmetric is true.
@@ -84,6 +96,25 @@ public:
   /// Delete this object and the wrapped TAUCS matrix.
   ~Eigen_sparse_matrix()
   {
+  }
+
+  /// Create a rectangular matrix initialized with zeros.
+  ///
+  /// @commentheading Precondition: rows == columns if is_symmetric is true.
+  Eigen_sparse_matrix(int  rows,                 ///< Number of rows.
+                      int  columns,              ///< Number of columns.
+                      bool is_symmetric = false) ///< Symmetric/hermitian?
+    : m_is_already_built(false), m_matrix(rows,columns)
+  {
+    CGAL_precondition(rows > 0);
+    CGAL_precondition(columns > 0);
+    if (is_symmetric) {
+        CGAL_precondition(rows == columns);
+    }
+
+    m_is_symmetric = is_symmetric;
+    // reserve memory for a regular 3D grid
+    m_triplets.reserve(rows);
   }
 
   /// Return the matrix number of rows
