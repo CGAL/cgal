@@ -21,7 +21,6 @@
 #define CGAL_ITERATOR_RANGE_H
 
 #include <CGAL/tuple.h>
-#include <boost/range/irange.hpp>
 #include <utility>
 
 namespace CGAL {
