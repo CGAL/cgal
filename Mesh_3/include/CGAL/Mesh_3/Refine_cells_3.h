@@ -630,7 +630,6 @@ Refine_cells_3<Tr,Cr,MD,C3T3_,P_,Ct,C_>::
 scan_triangulation_impl()
 {
   typedef typename Tr::Finite_cells_iterator Finite_cell_iterator;
-  typedef typename Tr::All_cells_iterator All_cells_iterator;
 
 #ifdef CGAL_MESH_3_PROFILING
   WallClockTimer t;
@@ -645,6 +644,8 @@ scan_triangulation_impl()
     std::cerr << "Scanning triangulation for bad cells (in parallel)";
 # endif
     add_to_TLS_lists(true);
+    
+    typedef typename Tr::All_cells_iterator All_cells_iterator;
 
     // WITH PARALLEL_FOR
     // Copy cells into an std::vector to allow the use of tbb::parallel_for

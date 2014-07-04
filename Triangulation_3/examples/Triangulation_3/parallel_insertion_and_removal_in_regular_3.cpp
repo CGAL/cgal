@@ -11,12 +11,8 @@ int main()
 {
 #ifdef CGAL_LINKED_WITH_TBB
   typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
-
   typedef CGAL::Regular_triangulation_euclidean_traits_3<K>   Traits;
-
-  typedef Traits::RT                                          Weight;
   typedef Traits::Bare_point                                  Point;
-  typedef Traits::Weighted_point                              Weighted_point;
 
   // Regular T3
   typedef CGAL::Triangulation_data_structure_3< 
@@ -49,7 +45,6 @@ int main()
   std::cerr << "Remove" << std::endl;
   // Remove the first 1/10 vertices
   std::vector<Vertex_handle> vertices_to_remove;
-  int i = 0;
   Rt::Finite_vertices_iterator vit = rtr.finite_vertices_begin();
   for (int i = 0 ; i < NUM_INSERTED_POINTS/10 ; ++i)
     vertices_to_remove.push_back(vit++);
