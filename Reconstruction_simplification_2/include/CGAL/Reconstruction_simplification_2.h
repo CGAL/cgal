@@ -45,7 +45,9 @@ namespace CGAL {
 
 
 /*!
-\ingroup Reconstruction_simplification_2
+\ingroup PkgReconstructionSimplification2
+
+
 
 \brief The class `Reconstruction_simplification_2` is the base class
 designed to execute the reconstruction and simplification tasks.

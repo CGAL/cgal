@@ -3,24 +3,23 @@ namespace CGAL {
 
 \mainpage User Manual 
 \anchor Chapter_2D_Reconstruction_Simplification
-
 \cgalAutoToc
 
-\authors Fernando de Goes, Ivo Vigan
+\authors Fernando de Goes, Pierre Alliez, Ivo Vigan
 
-\image html process.png
-\image latex process.png
+\image html overview.png
+\image latex overview.png
 
-\section D_Reconstruction_SimplificationIntroduction Introduction
+\section 2D_Reconstruction_SimplificationIntroduction Introduction
 
 
-\cgalFigureBegin{Surface_reconstruction_points_3figintroduction,process.png}
+\cgalFigureBegin{2D_Reconstruction_Simplification_process,process.png}
 From left to right: input point set; Delaunay triangulation of input; after simplification, with ghost edges in grey, relevant solid edges in green, discarded solid edges in red; final reconstruction.
 \cgalFigureEnd
 
-The task addressed here is to reconstruct a shape from a noisy point set S in R^2, i.e. give a set of points in the plane, find a 0-1 simplex which best approximates the non-noise subset of S. The related task of simplifying a shape finds an approximation of the original shape using simpler curves.
+The task addressed here is to reconstruct a shape from a noisy point set S in $R^2$, i.e. give a set of points in the plane, find a <I>0-1 simplex </I>which best approximates the non-noise subset of S. The related task of simplifying a shape finds an approximation of the original shape using simpler curves.
 
-The algorithm presented here performs the reconstruction and simplification task jointly using a unifies ed framework based on optimal transports of measures. This new method provides benefits such as robustness to noise, preservation of sharp features and boundaries. An optimal transportation plan is an assignment of the input-points to vertices and edges of an output simplex such that the 2-Wasserstein distance is minimized.
+The algorithm (\cgalCite{degoes:hal-00758019}) presented here performs the reconstruction and simplification task jointly using a unifies ed framework based on optimal transports of measures. This new method provides benefits such as robustness to noise, preservation of sharp features and boundaries. An optimal transportation plan is an assignment of the input-points to vertices and edges of an output simplex such that the 2-Wasserstein distance is minimized.
 
 The algorithm can be summarized as: "Considering S as a measure mu consisting of Dirac masses, find a coarse simplicial complex T such that mu is well approximated by a linear combination of uniform measures on the edges and vertices of T."
 
@@ -36,53 +35,9 @@ After that, edges which carry little mass can be filtered out.
 
 
 
+\section 2D_Reconstruction_SimplificationOverview Overview of the Reconstruction Process
 
-
-
-can simplify any <I>oriented 2-manifold surface</I>,
-with any number of connected components, with or without boundaries (border or holes) 
-and handles (arbitrary genus), using a method known as <I>edge collapse</I>.
-Roughly speaking, the method consists of iteratively replacing an edge with a single vertex, 
-removing 2 triangles per collapse.
-
-Edges are collapsed according to a priority given by a user-supplied <I>cost</I> function,
-and the coordinates of the replacing vertex are determined by another user-supplied
-<I>placement</I> function. The algorithm terminates when a user-supplied <I>stop predicate</I> 
-is met, such as reaching the desired number of edges.
-
-The algorithm implemented here is generic in the sense that it does not require the surface mesh 
-to be of a particular type. Instead, it defines the concept of a `EdgeCollapsableSurfaceMesh`,
-which presents the surface mesh as being a halfedge data structure, and any surface mesh that 
-is a model of that concept can be simplified. The concept is defined not in terms of a monolithic class, but in terms of a set 
-of functions and traits, making it easy to adapt any concrete surface mesh type, 
-even if it is not a halfedge data structure at all.
-In particular, the concept definition follows the design of the 
-<A HREF="http://www.boost.org/libs/graph/doc/index.html"> Boost Graph Library (Bgl)</A>
-\cgalCite{cgal:sll-bgl-02}.
-
-The design is <A HREF="http://en.wikipedia.org/wiki/Policy-based_design"><I>policy-based</I></A>
-(<A HREF="http://en.wikipedia.org/wiki/Policy-based_design"><TT>http://en.wikipedia.org/wiki/Policy-based_design</TT></A>),
-meaning that you can customize some aspects of the process by passing a set of
-<I>policy objects</I>. Each policy object specifies a particular aspect of the algorithm,
-such as how edges are selected and where the replacement vertex is placed. All policies have 
-a sensible default.
-Furthermore, the API uses the so-called `named-parameters` technique which allows you
-to pass only the relevant parameters, in any order, omitting those parameters whose
-default is appropriate.
-
-\section Surface_mesh_simplificationOverview Overview of the Simplification Process
-
-The free function that implements the simplification algorithm takes not only the surface mesh
-and the desired stop predicate but a number of additional parameters which control and
-monitor the simplification process. This section briefly describes the process in order 
-to set the background for the discussion of the parameters to the algorithm.
-
-There are two slightly different "edge" collapse operations. One is known as
-<I>edge-collapse</I> while the other is known as <I>halfedge-collapse</I>.
-Given an edge `e` joining vertices `w` and `v`, the edge-collapse operation replaces
-`e`,`w` and `v` for a new vertex `r`, while the halfedge-collapse operation
-pulls `v` into `w`, dissapearing `e` and leaving `w` in place.
-In both cases the operation removes the edge `e` along with the 2 triangles 
+The task addressed is to reconstruct a shape from noisy data $S$ in $R^2$, i.e. give a (noisy) set of points, find a shape which best approximates the non-noise subset of S. The related task of simplifying a shape finds an approximation of the original shape using simpler curves. While previous works address these two issues sequentially, they are performed jointly using a unified framework based on optimal transport of measures. This new method provides benefits such as robustness to noise, preservation of sharp features and boundaries. It furthermore guarantees that the output is a simplicial complex. Transportation theory studies optimal transportations between a set M of n sources and a set F of n targets (both can for example be pointsets in R^2). Given a cost function c : R^2 x R^2 -> R^+, the goal is to find a bijection between M and F such that the sum of the costs c gets minimized. The optimal transport problem can also be defined between measures, and the paper views reconstruction and simplification tasks as such a transportation problem, where the input points are Dirac measure and the reconstructed simplicial complex is the support of a piecewise uniform measure. Given this theoretical background the algorithm then performs edge contractions in a greedy fashion w.r.t. the transportation cost, until the desired number of vertices are reached.In both cases the operation removes the edge `e` along with the 2 triangles 
 adjacent to it.
 
 This package uses the halfedge-collapse operation, which is implemented by removing,
@@ -91,137 +46,11 @@ It optionally moves the remaining vertex (`w`) into a new position,
 called <I>placement</I>, in which case the net effect is the same as in
 the edge-collapse operation.
 
-Naturally, the surface mesh that results from an edge collapse deviates from the initial 
-surface mesh by some amount, and since the goal of simplification is to reduce the number 
-of triangles while retaining the overall look of the surface mesh as much as possible, 
-it is necessary to measure such a deviation. Some methods attempt to measure the 
-total deviation from the initial surface mesh to the completely simplified surface mesh, 
-for example, by tracking an accumulated error while keeping a history of the simplification 
-changes. Other methods, like the one implemented in this package, attempt to measure only
-the <I>cost</I> of each individual edge collapse (the local deviation introduced by
-a single simplification step) and plan the entire process as a sequence of steps 
-of increasing cost.
 
-Global error tracking methods produce highly accurate simplifications but take up a lot 
-of additional space. Cost-driven methods, like the one in this package, produce slightly 
-less accurate simplifications but take up much less additional space, even none in some cases.
+\section 2D_Reconstruction_SimplificationTrans Transportation Cost
 
-The cost-driven method implemented in this package is mainly based on \cgalCite{cgal:lt-fmeps-98}, \cgalCite{cgal:lt-ems-99}, with contributions from \cgalCite{hddms-mo-93}, \cgalCite{gh-ssqem-97}
-and \cgalCite{degn-tpec-98}.
 
-The algorithm proceeds in two stages. In the first stage, called <I>collection stage</I>, 
-an initial <I>collapse cost</I> is assigned to each and every edge in the surface mesh.
-Then in the second stage, called <I>collapsing stage</I>, edges are 
-processed in order of increasing cost. Some processed edges are collapsed 
-while some are just discarded. Collapsed edges are replaced by a vertex and the collapse 
-cost of all the edges now incident on the replacement vertex is recalculated, affecting 
-the order of the remaining unprocessed edges.
-
-Not all edges selected for processing are collapsed. A processed edge can be discarded 
-right away, without being collapsed, if it does not satisfy certain topological
-and geometric conditions.
-
-The algorithm presented in \cgalCite{gh-ssqem-97} contracts (collapses) arbitrary vertex pairs and not 
-only edges by considering certain vertex pairs as forming a pseudo-edge and proceeding to collapse
-both edges and pseudo-edges in the same way as in \cgalCite{cgal:lt-fmeps-98}, \cgalCite{cgal:lt-ems-99} ( 
-which is the algorithm implemented here). However, contracting an arbitrary vertex-pair may result in a non-manifold surface mesh, but the current state of this package can only deal with manifold surface meshes, thus, it can only collapse edges. That is, this package cannot be used as a framework for vertex contraction.
-
-\section Surface_mesh_simplificationCost Cost Strategy
-
-The specific way in which the collapse cost and vertex placement is
-calculated is called the <I>cost strategy</I>. The user can choose 
-different strategies in the form of policies and related parameters,
-passed to the algorithm.
-
-The current version of the package provides a set of policies implementing
-two strategies: the Lindstrom-Turk strategy, which is the default, and 
-a strategy consisting of an edge-length cost with an optional
-midpoint placement (much faster but less accurate).
-
-\subsection SurfaceMeshSimplificationLindstromTurkStrategy Lindstrom-Turk Cost and Placement Strategy 
-
-The main characteristic of the strategy presented in
-\cgalCite{cgal:lt-fmeps-98}, \cgalCite{cgal:lt-ems-99} is that the simplified surface mesh
-is not compared at each step with the original surface mesh (or the surface mesh
-at a previous step) so there is no need to keep extra information,
-such as the original surface mesh or a history of the local changes. Hence
-the name <I>memoryless</I> simplification.
-
-At each step, all remaining edges are potential candidates for 
-collapsing and the one with the lowest cost is selected.
-
-The cost of collapsing an edge is given by the position chosen for the
-vertex that replaces it.
-
-The replacement vertex position is computed as
-the solution to a system of 3 linearly-independent linear equality constraints.
-Each constraint is obtained by minimizing a quadratic objective function
-subject to the previously computed constraints.
-
-There are several possible candidate constraints and each is considered in order of importance.
-A candidate constraint might be <I>incompatible</I> with the previously accepted constraints,
-in which case it is rejected and the next constraint is considered.
-
-Once 3 constraints have been accepted, the system is solved for the vertex position.
-
-The first constraints considered preserves the shape of the surface mesh boundaries 
-(in case the edge profile has boundary edges).
-The next constraints preserve the total volume of the surface mesh.
-The next constraints, if needed, optimize the local changes in volume and boundary shape.
-Lastly, if a constraint is still needed (because the ones previously computed were incompatible),
-a third (and last) constraint is added to favor equilateral triangles over elongated triangles.
-
-The cost is then a weighted sum of the shape, volume and boundary optimization terms, where the user specifies the unit <I>weighting unit factor</I> for each term.
-
-The local changes are computed independently for each edge using only
-the triangles currently adjacent to it at the time when the edge 
-is about to be collapsed, that is, after all previous collapses.
-Thus, the transitive path of minimal local changes yields at
-the end a global change reasonably close to the absolute minimum.
-
-\subsection Surface_mesh_simplificationCostStrategyPolicies Cost Strategy Policies
-
-The cost strategy used by the algorithm is selected by means of two policies: 
-`GetPlacement` and `GetCost`.
-
-The `GetPlacement` policy is called to compute the new position
-for the remaining vertex after the halfedge-collapse. It returns
-an optional value, which can be absent, in which case the 
-remaining vertex is kept in its place.
-
-The `GetCost` policy is called to compute the cost
-of collapsing an edge. This policy uses the placement to compute
-the cost (which is an error measure) and determines the 
-ordering of the edges.
-
-The algorithm maintains an internal data structure (a mutable priority queue)
-which allows each edge to be processed in increasing cost order. Such a data structure
-requires some per-edge additional information, such as the edge's cost.
-If the record of per-edge additional information occupies N bytes of storage,
-simplifying a surface mesh of 1 million edges (a normal size) requires 1 million times N bytes
-of additional storage. Thus, to minimize the amount of additional memory required to
-simplify a surface mesh only the cost is attached to each edge and nothing else.
-
-But this is a tradeoff: the cost of a collapse is a function of the placement
-(the new position chosen for the remaining vertex) so before `GetCost`
-is called for each and every edge, `GetPlacement` must also be called to obtain
-the placement parameter to the cost function.
-But that placement, which is a 3D Point, is not attached to each and every edge since
-that would easily <I>triple</I> the additional storage requirement.
-
-On the one hand, this dramatically saves on memory but on the other hand is
-a processing waste because when an edge is effectively collapsed, `GetPlacement` 
-must be called <I>again</I> to know were to move the remaining vertex.
-
-Earlier prototypes shown that attaching the placement to the edge, thus avoiding one
-redundant call to the placement function after the edge collapsed, has little 
-impact on the total running time. This is because the cost of an each edge is not just
-computed once but changes several times during the process so the placement function
-must be called several times just as well. Caching the placement can only avoid the 
-very last call, when the edge is collapsed, but not all the previous calls which
-are needed because the placement (and cost) changes.
-
-\section Surface_mesh_simplificationAPI API
+\section 2D_Reconstruction_SimplificationAPI API
 
 \subsection Surface_mesh_simplificationAPIOverview API Overview
 
@@ -264,60 +93,39 @@ That is, you give each parameter a name by wrapping it into a function whose nam
 When you use named parameters, the ordering is irrelevant, so this: `f(name(n).age(a).gender(g))` is equivalent to this:
 `f(age(a).gender(g).name(n))`, and you can just omit any named parameter that has a default value.
 
-\subsection Surface_mesh_simplificationSampleCall Sample Call
+\subsection 2D_Reconstruction_SimplificationSample Sample Call
 
 \code{.cpp}
 
 /*
-surface_mesh             : the surface_mesh to simplify
-stop_predicate           : policy indicating when the simplification must finish 
-vertex_index_map(vimap)  : property-map giving each vertex a unique integer index 
-edge_index_map(eimap)    : property-map giving each edge a unique integer index 
-edge_is_border_map(ebmap): property-map specifying whether an edge is a border edge or not 
-get_cost(cf)             : function object computing the cost of a collapse 
-get_placement(pf)        : function object computing the placement for the remaining vertex 
-visitor(vis)             : function object tracking the simplification process 
+K            	 : Kernel is the geometric kernel, used for the reconstruction and simplification task.
+InputIterator    : InputIterator is the iterator type of the algorithm input.
+PointPMap 	 : is a PropertyMap for accessing the input points.
+MassPMap	 : MassPMap  is a PropertyMap for accessing the input points'
 */
 
-int r = edge_collapse(surface_mesh
-                     ,stop_predicate
-                     ,vertex_index_map(vimap)
-                       .edge_index_map(eimap)
-                       .edge_is_border_map(ebmap)
-                       .get_cost(cf)
-                       .get_placement(pf)
-                       .visitor(vis)
-                     );
+
+Reconstruction_simplification_2<K, InputIterator, PointPMap, MassPMap>
+    	rs2(points.begin(), points.end(), point_pmap, mass_pmap);
+
+    rs2.initialize();
+
+    rs2.reconstruct(100);
+
+    rs2.extract_solid_eges();
 
 \endcode
 
-\subsection Surface_mesh_simplificationExamples Examples
+\subsection 2D_Reconstruction_SimplificationExamples Examples
 
-\subsection Surface_mesh_simplificationExampleUsinga Example Using a Default Polyhedron
+\subsection 2D_Reconstruction_SimplificationExampleSimple Simple reconstruction Example
 
 The following example illustrates the simplest of the cases. It uses
 an ordinary polyhedron and only one of the optional parameters.
 The unspecified cost strategy defaults to Lindstrom-Turk.
 \cgalExample{Surface_mesh_simplification/edge_collapse_polyhedron.cpp}
 
-\subsection Surface_mesh_simplificationExampleUsingan Example Using an Enriched Polyhedron
 
-The following example is equivalent to the previous example but using an
-enriched polyhedron whose halfedges support an `id` field to
-store the edge index needed by the algorithm. It also shows how to
-explicitly specify a cost strategy (other than the default)
-and how to use a visitor object to track the simplification process.
-
-\cgalExample{Surface_mesh_simplification/edge_collapse_enriched_polyhedron.cpp}
-
-\subsection Surface_mesh_simplificationExamplewithedges Example with Edges Marked as Non-Removable
-
-The following examples show how to use the optional named parameter `edge_is_constrained_map` to prevent
-edges from being removed. Edges marked as contrained are guaranteed to be in the final surface mesh. However,
-the vertices of the constrained edges may change and the placement may change the points.
-The wrapper `CGAL::Constrained_placement` guarantees that these points are not changed.
-
-\cgalExample{Surface_mesh_simplification/edge_collapse_constrained_border_polyhedron.cpp}
 
 */ 
 } /* namespace CGAL */

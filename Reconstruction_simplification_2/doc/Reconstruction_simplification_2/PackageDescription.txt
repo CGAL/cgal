@@ -5,19 +5,18 @@
 \addtogroup PkgReconstructionSimplification2
 \todo check generated documentation
 \cgalPkgDescriptionBegin{2D Reconstruction Simplification, PkgReconstructionSimplification2Summary}
-\cgalPkgPicture{xxx.png}
+\cgalPkgPicture{overview.png}
 \cgalPkgSummaryBegin
-\cgalPkgAuthor{ Fernando de Goes, Ivo Vigan}
-\cgalPkgDesc{This package provides an algorithm to simplify and reconstruct a shape form a noisy point set in the plane using a transportation theory approach to match the input point with an output simplex.}
+\cgalPkgAuthor{ Fernando de Goes, Pierre Alliez, Ivo Vigan}
+\cgalPkgDesc{This package provides an algorithm to simplify and reconstruct a shape form a noisy point set in the plane. It iteratively builds a simplified output simplex which approximates the input points in a fine to coarse manner.}
 \cgalPkgManuals{Chapter_2D_Reconstruction_Simplification, PkgReconstructionSimplification2}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{4.x}
-\cgalPkgDependsOn{\ref PkgBGLSummary}
-\cgalPkgDependsOn{\ref PkgPolyhedronSummary}
-\cgalPkgBib{cgal:c-tsms-12}
+\cgalPkgDependsOn{\ref PkgTriangulation2}
+\cgalPkgBib{cgal:rec-simp2-14x}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
-\cgalPkgDemo{XXX, XXXX.zip}
+\cgalPkgDemo{XXXX.zip}
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd
 
