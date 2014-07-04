@@ -23,8 +23,7 @@
 #define CGAL_AABB_FACE_GRAPH_TRIANGLE_PRIMITIVE_H
 
 #include <CGAL/AABB_primitive.h>
-#include <CGAL/Polyhedron_3.h>
-#include <CGAL/Polyhedron_3_property_map.h>
+#include <CGAL/internal/AABB_tree/Halfedge_and_face_graph_property_maps.h>
 #include <CGAL/Default.h>
 #include <boost/mpl/has_xxx.hpp>
 
