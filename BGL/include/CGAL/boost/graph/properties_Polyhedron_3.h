@@ -25,9 +25,6 @@
 #include <CGAL/Unique_hash_map.h>
 #include <CGAL/squared_distance_2_1.h>
 
-#include <functional>
-#include <CGAL/boost/graph/function_property_map.h>
-
 #define CGAL_HDS_PARAM_ template < class Traits, class Items, class Alloc> class HDS
 
 namespace CGAL {
