@@ -23,14 +23,14 @@
 #include <CGAL/Unique_hash_map.h>
 #include <CGAL/Linear_cell_complex.h>
 
-#define LCC_ARGS unsigned int d_, unsigned int ambient_dim, \
+#define CGAL_LCC_ARGS unsigned int d_, unsigned int ambient_dim, \
              class Traits_, \
              class Items_, \
              class Alloc_, \
              template<unsigned int, class, class, class> \
              class CMap
 
-#define LCC_TYPE CGAL::Linear_cell_complex<d_, ambient_dim, Traits_, Items_, Alloc_, CMap > 
+#define CGAL_LCC_TYPE CGAL::Linear_cell_complex<d_, ambient_dim, Traits_, Items_, Alloc_, CMap > 
 
 namespace CGAL {
 
@@ -223,96 +223,96 @@ struct CMap_property_map_helper
 namespace boost{
 
 // LCC.
-template<LCC_ARGS, class Tag>
-struct property_map<LCC_TYPE, Tag> : CGAL::CMap_property_map_helper<LCC_TYPE, Tag>
+template<CGAL_LCC_ARGS, class Tag>
+struct property_map<CGAL_LCC_TYPE, Tag> : CGAL::CMap_property_map_helper<CGAL_LCC_TYPE, Tag>
 {};
 
 // This partial specialization shouldn't be needed but is due to a bug in Boost 1.51.
-template<LCC_ARGS, class Tag>
-struct property_map<const LCC_TYPE, Tag> : CGAL::CMap_property_map_helper<LCC_TYPE, Tag>
+template<CGAL_LCC_ARGS, class Tag>
+struct property_map<const CGAL_LCC_TYPE, Tag> : CGAL::CMap_property_map_helper<CGAL_LCC_TYPE, Tag>
 {};
 
-template<LCC_ARGS>
-CGAL::CMap_dart_is_border_map<LCC_TYPE> get(CGAL::edge_is_border_t, LCC_TYPE const& lcc) 
+template<CGAL_LCC_ARGS>
+CGAL::CMap_dart_is_border_map<CGAL_LCC_TYPE> get(CGAL::edge_is_border_t, CGAL_LCC_TYPE const& lcc) 
 {
-  return CGAL::CMap_dart_is_border_map<LCC_TYPE>(lcc);
+  return CGAL::CMap_dart_is_border_map<CGAL_LCC_TYPE>(lcc);
 }
 
-template<LCC_ARGS>
-CGAL::CMap_dart_is_border_map<LCC_TYPE> get(CGAL::vertex_is_border_t, LCC_TYPE const& lcc) 
+template<CGAL_LCC_ARGS>
+CGAL::CMap_dart_is_border_map<CGAL_LCC_TYPE> get(CGAL::vertex_is_border_t, CGAL_LCC_TYPE const& lcc) 
 {
-  return CGAL::CMap_dart_is_border_map<LCC_TYPE>(lcc);
+  return CGAL::CMap_dart_is_border_map<CGAL_LCC_TYPE>(lcc);
 }
 
-template<LCC_ARGS>
-CGAL::CMap_dart_index_map_external<LCC_TYPE> get(CGAL::edge_external_index_t, LCC_TYPE const& cmap) 
+template<CGAL_LCC_ARGS>
+CGAL::CMap_dart_index_map_external<CGAL_LCC_TYPE> get(CGAL::edge_external_index_t, CGAL_LCC_TYPE const& cmap) 
 {
-  return CGAL::CMap_dart_index_map_external<LCC_TYPE>(cmap);
+  return CGAL::CMap_dart_index_map_external<CGAL_LCC_TYPE>(cmap);
 }
 
-template<LCC_ARGS>
-CGAL::CMap_dart_index_map_external<LCC_TYPE> get(CGAL::vertex_external_index_t, LCC_TYPE const& cmap) 
+template<CGAL_LCC_ARGS>
+CGAL::CMap_dart_index_map_external<CGAL_LCC_TYPE> get(CGAL::vertex_external_index_t, CGAL_LCC_TYPE const& cmap) 
 {
-  return CGAL::CMap_dart_index_map_external<LCC_TYPE>(cmap);
+  return CGAL::CMap_dart_index_map_external<CGAL_LCC_TYPE>(cmap);
 }
 
 // LCC get.
-template <LCC_ARGS>
-CGAL::LCC_edge_weight_map<LCC_TYPE> get(edge_weight_t, LCC_TYPE const& lcc) 
+template <CGAL_LCC_ARGS>
+CGAL::LCC_edge_weight_map<CGAL_LCC_TYPE> get(edge_weight_t, CGAL_LCC_TYPE const& lcc) 
 {
-  return CGAL::LCC_edge_weight_map<LCC_TYPE>(lcc);
+  return CGAL::LCC_edge_weight_map<CGAL_LCC_TYPE>(lcc);
 }
 
-template <LCC_ARGS>
-CGAL::CMap_dart_index_map_external<LCC_TYPE> get(edge_index_t, LCC_TYPE const& lcc) 
+template <CGAL_LCC_ARGS>
+CGAL::CMap_dart_index_map_external<CGAL_LCC_TYPE> get(edge_index_t, CGAL_LCC_TYPE const& lcc) 
 {
-  return CGAL::CMap_dart_index_map_external<LCC_TYPE>(lcc);
+  return CGAL::CMap_dart_index_map_external<CGAL_LCC_TYPE>(lcc);
 }
 
-template <LCC_ARGS>
-CGAL::CMap_dart_index_map_external<LCC_TYPE> get(vertex_index_t, LCC_TYPE const& lcc) 
+template <CGAL_LCC_ARGS>
+CGAL::CMap_dart_index_map_external<CGAL_LCC_TYPE> get(vertex_index_t, CGAL_LCC_TYPE const& lcc) 
 {
-  return CGAL::CMap_dart_index_map_external<LCC_TYPE>(lcc);
+  return CGAL::CMap_dart_index_map_external<CGAL_LCC_TYPE>(lcc);
 }
 
-template <LCC_ARGS>
-CGAL::LCC_vertex_point_map<LCC_TYPE> get(CGAL::vertex_point_t, LCC_TYPE& lcc) 
+template <CGAL_LCC_ARGS>
+CGAL::LCC_vertex_point_map<CGAL_LCC_TYPE> get(CGAL::vertex_point_t, CGAL_LCC_TYPE& lcc) 
 {
-  return CGAL::LCC_vertex_point_map<LCC_TYPE>(lcc);
+  return CGAL::LCC_vertex_point_map<CGAL_LCC_TYPE>(lcc);
 }
 
-template <LCC_ARGS>
-CGAL::LCC_vertex_point_const_map<LCC_TYPE> get(CGAL::vertex_point_t, LCC_TYPE const& lcc) 
+template <CGAL_LCC_ARGS>
+CGAL::LCC_vertex_point_const_map<CGAL_LCC_TYPE> get(CGAL::vertex_point_t, CGAL_LCC_TYPE const& lcc) 
 {
-  return CGAL::LCC_vertex_point_const_map<LCC_TYPE>(lcc);
+  return CGAL::LCC_vertex_point_const_map<CGAL_LCC_TYPE>(lcc);
 }
 
-template<LCC_ARGS, class PropertyTag, class Key>
-typename property_traits<typename property_map<LCC_TYPE, PropertyTag>::type>::reference
-get(PropertyTag p, LCC_TYPE& g, const Key& key) 
+template<CGAL_LCC_ARGS, class PropertyTag, class Key>
+typename property_traits<typename property_map<CGAL_LCC_TYPE, PropertyTag>::type>::reference
+get(PropertyTag p, CGAL_LCC_TYPE& g, const Key& key) 
 {
   return get(get(p, g), key);
 }
 
-template<LCC_ARGS, class PropertyTag, class Key>
-typename property_traits<typename property_map<LCC_TYPE, PropertyTag>::const_type>::reference
-get(PropertyTag p, LCC_TYPE const& g, const Key& key) 
+template<CGAL_LCC_ARGS, class PropertyTag, class Key>
+typename property_traits<typename property_map<CGAL_LCC_TYPE, PropertyTag>::const_type>::reference
+get(PropertyTag p, CGAL_LCC_TYPE const& g, const Key& key) 
 {
   return get(get(p, g), key);
 }
 
-template<LCC_ARGS, class PropertyTag, class Key,class Value>
-void put(PropertyTag p, LCC_TYPE& g, const Key& key, const Value& value)
+template<CGAL_LCC_ARGS, class PropertyTag, class Key,class Value>
+void put(PropertyTag p, CGAL_LCC_TYPE& g, const Key& key, const Value& value)
 {
-  typedef typename property_map<LCC_TYPE, PropertyTag>::type Map;
+  typedef typename property_map<CGAL_LCC_TYPE, PropertyTag>::type Map;
   Map pmap = get(p, g);
   put(pmap, key, value);
 }
 
 } // namespace boost
 
-#undef LCC_ARGS
-#undef LCC_TYPE
+#undef CGAL_LCC_ARGS
+#undef CGAL_LCC_TYPE
 
 
 #endif // CGAL_BOOST_GRAPH_PROPERTIES_COMBINATORIAL_MAP_H

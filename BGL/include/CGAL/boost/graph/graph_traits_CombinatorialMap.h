@@ -29,20 +29,20 @@
 #include <CGAL/Combinatorial_map.h>
 #include <CGAL/Dart_iterators.h>
 
-#define CMAP_BASE_TEMPLATE_ARGS template<unsigned int d, class Refs, class Items, class Alloc>
-#define CMAP_BASE_TYPE CGAL::Combinatorial_map_base<d, Refs, Items, Alloc>
+#define CGAL_CMAP_BASE_TEMPLATE_ARGS template<unsigned int d, class Refs, class Items, class Alloc>
+#define CGAL_CMAP_BASE_TYPE CGAL::Combinatorial_map_base<d, Refs, Items, Alloc>
 
-#define CMAP_TEMPLATE_ARGS template<unsigned int d, class Items, class Alloc>
-#define CMAP_TYPE CGAL::Combinatorial_map<d, Items, Alloc>
+#define CGAL_CMAP_TEMPLATE_ARGS template<unsigned int d, class Items, class Alloc>
+#define CGAL_CMAP_TYPE CGAL::Combinatorial_map<d, Items, Alloc>
 
-#define LCC_TEMPLATE_ARGS template < unsigned int d_, unsigned int ambient_dim, \
+#define CGAL_LCC_TEMPLATE_ARGS template < unsigned int d_, unsigned int ambient_dim, \
              class Traits_, \
              class Items_, \
              class Alloc_, \
              template<unsigned int, class,class,class>\
              class CMap>
 
-#define LCC_TYPE CGAL::Linear_cell_complex<d_, ambient_dim, Traits_, Items_, Alloc_, CMap> 
+#define CGAL_LCC_TYPE CGAL::Linear_cell_complex<d_, ambient_dim, Traits_, Items_, Alloc_, CMap> 
 
 namespace CGAL {
 
@@ -157,76 +157,76 @@ public :
 namespace boost{
 
 // Specialization of graph_traits for Combinatorial map.
-CMAP_TEMPLATE_ARGS
-struct graph_traits<CMAP_TYPE >
-: CGAL::CMap_Base_graph_traits<typename CMAP_TYPE::Base >
+CGAL_CMAP_TEMPLATE_ARGS
+struct graph_traits<CGAL_CMAP_TYPE >
+: CGAL::CMap_Base_graph_traits<typename CGAL_CMAP_TYPE::Base >
 {};
 
-CMAP_TEMPLATE_ARGS
-struct graph_traits<CMAP_TYPE const>
-: CGAL::CMap_Base_graph_traits<typename CMAP_TYPE::Base >
+CGAL_CMAP_TEMPLATE_ARGS
+struct graph_traits<CGAL_CMAP_TYPE const>
+: CGAL::CMap_Base_graph_traits<typename CGAL_CMAP_TYPE::Base >
 {};
 
 // Specialization of graph_traits for Combinatorial map base.
-CMAP_BASE_TEMPLATE_ARGS
-struct graph_traits<CMAP_BASE_TYPE >
-: CGAL::CMap_Base_graph_traits<CMAP_BASE_TYPE >
+CGAL_CMAP_BASE_TEMPLATE_ARGS
+struct graph_traits<CGAL_CMAP_BASE_TYPE >
+: CGAL::CMap_Base_graph_traits<CGAL_CMAP_BASE_TYPE >
 {};
 
-CMAP_BASE_TEMPLATE_ARGS
-struct graph_traits<CMAP_BASE_TYPE const>
-: CGAL::CMap_Base_graph_traits<CMAP_BASE_TYPE >
+CGAL_CMAP_BASE_TEMPLATE_ARGS
+struct graph_traits<CGAL_CMAP_BASE_TYPE const>
+: CGAL::CMap_Base_graph_traits<CGAL_CMAP_BASE_TYPE >
 {};
 
 // Specialization of graph_traits for Linear Cell Complex.
-LCC_TEMPLATE_ARGS
-struct graph_traits<LCC_TYPE >
-: CGAL::CMap_Base_graph_traits<typename LCC_TYPE::Base >
+CGAL_LCC_TEMPLATE_ARGS
+struct graph_traits<CGAL_LCC_TYPE >
+: CGAL::CMap_Base_graph_traits<typename CGAL_LCC_TYPE::Base >
 {};
 
-LCC_TEMPLATE_ARGS
-struct graph_traits<LCC_TYPE const>
-: CGAL::CMap_Base_graph_traits<typename LCC_TYPE::Base >
+CGAL_LCC_TEMPLATE_ARGS
+struct graph_traits<CGAL_LCC_TYPE const>
+: CGAL::CMap_Base_graph_traits<typename CGAL_LCC_TYPE::Base >
 {};
 
 // Expression required by the boost::IncidenceGraph concept.
 
-CMAP_BASE_TEMPLATE_ARGS
-typename boost::graph_traits<CMAP_BASE_TYPE >::vertex_descriptor 
-source(typename boost::graph_traits<CMAP_BASE_TYPE >::edge_descriptor e, const CMAP_BASE_TYPE&)
+CGAL_CMAP_BASE_TEMPLATE_ARGS
+typename boost::graph_traits<CGAL_CMAP_BASE_TYPE >::vertex_descriptor 
+source(typename boost::graph_traits<CGAL_CMAP_BASE_TYPE >::edge_descriptor e, const CGAL_CMAP_BASE_TYPE&)
 {
   return e;
 }
 
-CMAP_BASE_TEMPLATE_ARGS
-typename boost::graph_traits<CMAP_BASE_TYPE >::vertex_descriptor 
-target(typename boost::graph_traits<CMAP_BASE_TYPE >::edge_descriptor e, const CMAP_BASE_TYPE&)
+CGAL_CMAP_BASE_TEMPLATE_ARGS
+typename boost::graph_traits<CGAL_CMAP_BASE_TYPE >::vertex_descriptor 
+target(typename boost::graph_traits<CGAL_CMAP_BASE_TYPE >::edge_descriptor e, const CGAL_CMAP_BASE_TYPE&)
 {
   return e->opposite();
 }
 
-CMAP_BASE_TEMPLATE_ARGS
-std::pair<typename boost::graph_traits<CMAP_BASE_TYPE >::out_edge_iterator, 
-          typename boost::graph_traits<CMAP_BASE_TYPE >::out_edge_iterator>
-out_edges(typename boost::graph_traits<CMAP_BASE_TYPE >::vertex_descriptor u, const CMAP_BASE_TYPE& cm)
+CGAL_CMAP_BASE_TEMPLATE_ARGS
+std::pair<typename boost::graph_traits<CGAL_CMAP_BASE_TYPE >::out_edge_iterator, 
+          typename boost::graph_traits<CGAL_CMAP_BASE_TYPE >::out_edge_iterator>
+out_edges(typename boost::graph_traits<CGAL_CMAP_BASE_TYPE >::vertex_descriptor u, const CGAL_CMAP_BASE_TYPE& cm)
 {
-  typedef typename boost::graph_traits<CMAP_BASE_TYPE >::out_edge_iterator iter_type;
+  typedef typename boost::graph_traits<CGAL_CMAP_BASE_TYPE >::out_edge_iterator iter_type;
 
-  CMAP_BASE_TYPE& cmap = const_cast<CMAP_BASE_TYPE&>(cm);
+  CGAL_CMAP_BASE_TYPE& cmap = const_cast<CGAL_CMAP_BASE_TYPE&>(cm);
 
   return std::make_pair(
             cmap.template darts_of_cell<0>(u).begin(), 
             cmap.template darts_of_cell<0>(u).end());
 }
 
-CMAP_BASE_TEMPLATE_ARGS
-typename boost::graph_traits<CMAP_BASE_TYPE >::degree_size_type
-out_degree(typename boost::graph_traits<CMAP_BASE_TYPE >::vertex_descriptor u, const CMAP_BASE_TYPE& cm)
+CGAL_CMAP_BASE_TEMPLATE_ARGS
+typename boost::graph_traits<CGAL_CMAP_BASE_TYPE >::degree_size_type
+out_degree(typename boost::graph_traits<CGAL_CMAP_BASE_TYPE >::vertex_descriptor u, const CGAL_CMAP_BASE_TYPE& cm)
 {
-  typedef typename boost::graph_traits<CMAP_BASE_TYPE >::out_edge_iterator iter_type;
+  typedef typename boost::graph_traits<CGAL_CMAP_BASE_TYPE >::out_edge_iterator iter_type;
   std::pair<iter_type, iter_type> iter = out_edges(u, cm);
 
-  typename boost::graph_traits<CMAP_BASE_TYPE >::degree_size_type degree=0;
+  typename boost::graph_traits<CGAL_CMAP_BASE_TYPE >::degree_size_type degree=0;
   for(;iter.first != iter.second; ++(iter.first))
     ++degree;
   return degree;
@@ -234,85 +234,85 @@ out_degree(typename boost::graph_traits<CMAP_BASE_TYPE >::vertex_descriptor u, c
 
 // Expression required by the boost::BidirectionalGraph concept.
 
-CMAP_BASE_TEMPLATE_ARGS
-std::pair<typename boost::graph_traits<CMAP_BASE_TYPE >::in_edge_iterator, typename boost::graph_traits<CMAP_BASE_TYPE >::in_edge_iterator>
-in_edges(typename boost::graph_traits<CMAP_BASE_TYPE >::vertex_descriptor v, const CMAP_BASE_TYPE& cm)
+CGAL_CMAP_BASE_TEMPLATE_ARGS
+std::pair<typename boost::graph_traits<CGAL_CMAP_BASE_TYPE >::in_edge_iterator, typename boost::graph_traits<CGAL_CMAP_BASE_TYPE >::in_edge_iterator>
+in_edges(typename boost::graph_traits<CGAL_CMAP_BASE_TYPE >::vertex_descriptor v, const CGAL_CMAP_BASE_TYPE& cm)
 {
-  typedef typename boost::graph_traits<CMAP_BASE_TYPE >::in_edge_iterator iter_type;
+  typedef typename boost::graph_traits<CGAL_CMAP_BASE_TYPE >::in_edge_iterator iter_type;
 
-  CMAP_BASE_TYPE& cmap = const_cast<CMAP_BASE_TYPE&>(cm);
+  CGAL_CMAP_BASE_TYPE& cmap = const_cast<CGAL_CMAP_BASE_TYPE&>(cm);
 
   return std::make_pair<iter_type, iter_type>
     (cmap.darts_of_second_vertex(v).begin(), cmap.darts_of_second_vertex(v).end());
 }
 
-CMAP_BASE_TEMPLATE_ARGS
-typename boost::graph_traits<CMAP_BASE_TYPE >::degree_size_type
-in_degree(typename boost::graph_traits<CMAP_BASE_TYPE >::vertex_descriptor v, const CMAP_BASE_TYPE& cm)
+CGAL_CMAP_BASE_TEMPLATE_ARGS
+typename boost::graph_traits<CGAL_CMAP_BASE_TYPE >::degree_size_type
+in_degree(typename boost::graph_traits<CGAL_CMAP_BASE_TYPE >::vertex_descriptor v, const CGAL_CMAP_BASE_TYPE& cm)
 {
-  typedef typename boost::graph_traits<CMAP_BASE_TYPE >::in_edge_iterator iter_type;
+  typedef typename boost::graph_traits<CGAL_CMAP_BASE_TYPE >::in_edge_iterator iter_type;
   std::pair<iter_type, iter_type> iter = in_edges(v, cm);
 
-  typename boost::graph_traits<CMAP_BASE_TYPE >::degree_size_type degree=0;
+  typename boost::graph_traits<CGAL_CMAP_BASE_TYPE >::degree_size_type degree=0;
   for(;iter.first != iter.second; ++(iter.first))
     ++degree;
   return degree;
 }
 
 // We suppose there are no loops.
-CMAP_BASE_TEMPLATE_ARGS
-typename boost::graph_traits<CMAP_BASE_TYPE >::degree_size_type
-degree(typename boost::graph_traits<CMAP_BASE_TYPE >::vertex_descriptor v, const CMAP_BASE_TYPE& cm)
+CGAL_CMAP_BASE_TEMPLATE_ARGS
+typename boost::graph_traits<CGAL_CMAP_BASE_TYPE >::degree_size_type
+degree(typename boost::graph_traits<CGAL_CMAP_BASE_TYPE >::vertex_descriptor v, const CGAL_CMAP_BASE_TYPE& cm)
 {
   return in_degree(v, cm) + out_degree(v, cm);
 }
 
 // Expression required by the boost::VertexListGraph concept.
 
-CMAP_BASE_TEMPLATE_ARGS
-std::pair<typename boost::graph_traits<CMAP_BASE_TYPE >::vertex_iterator, typename boost::graph_traits<CMAP_BASE_TYPE >::vertex_iterator>
-vertices(const CMAP_BASE_TYPE& cm)
+CGAL_CMAP_BASE_TEMPLATE_ARGS
+std::pair<typename boost::graph_traits<CGAL_CMAP_BASE_TYPE >::vertex_iterator, typename boost::graph_traits<CGAL_CMAP_BASE_TYPE >::vertex_iterator>
+vertices(const CGAL_CMAP_BASE_TYPE& cm)
 {
-  typedef typename boost::graph_traits<CMAP_BASE_TYPE >::vertex_iterator iter_type;
+  typedef typename boost::graph_traits<CGAL_CMAP_BASE_TYPE >::vertex_iterator iter_type;
 
-  CMAP_BASE_TYPE& cmap = const_cast<CMAP_BASE_TYPE&>(cm);
+  CGAL_CMAP_BASE_TYPE& cmap = const_cast<CGAL_CMAP_BASE_TYPE&>(cm);
 
   return std::make_pair<iter_type, iter_type>
     (iter_type(cmap.template one_dart_per_cell<0>().begin()),
      iter_type(cmap.template one_dart_per_cell<0>().end()));
 }
 
-CMAP_BASE_TEMPLATE_ARGS
-typename boost::graph_traits<CMAP_BASE_TYPE >::vertices_size_type
-num_vertices(const CMAP_BASE_TYPE& cm)
+CGAL_CMAP_BASE_TEMPLATE_ARGS
+typename boost::graph_traits<CGAL_CMAP_BASE_TYPE >::vertices_size_type
+num_vertices(const CGAL_CMAP_BASE_TYPE& cm)
 {
-  CMAP_BASE_TYPE& cmap = const_cast<CMAP_BASE_TYPE&>(cm);
+  CGAL_CMAP_BASE_TYPE& cmap = const_cast<CGAL_CMAP_BASE_TYPE&>(cm);
   return cmap.template one_dart_per_cell<0>().size();
 }
 
 // Expression required by the boost::EdgeListGraph concept.
 
-CMAP_BASE_TEMPLATE_ARGS
-std::pair<typename boost::graph_traits<CMAP_BASE_TYPE >::edge_iterator, typename boost::graph_traits<CMAP_BASE_TYPE >::edge_iterator>
-edges(const CMAP_BASE_TYPE& cm)
+CGAL_CMAP_BASE_TEMPLATE_ARGS
+std::pair<typename boost::graph_traits<CGAL_CMAP_BASE_TYPE >::edge_iterator, typename boost::graph_traits<CGAL_CMAP_BASE_TYPE >::edge_iterator>
+edges(const CGAL_CMAP_BASE_TYPE& cm)
 {
-  typedef typename boost::graph_traits<CMAP_BASE_TYPE >::edge_iterator iter_type;
+  typedef typename boost::graph_traits<CGAL_CMAP_BASE_TYPE >::edge_iterator iter_type;
 
-  CMAP_BASE_TYPE& cmap = const_cast<CMAP_BASE_TYPE&>(cm);
+  CGAL_CMAP_BASE_TYPE& cmap = const_cast<CGAL_CMAP_BASE_TYPE&>(cm);
 
   return std::make_pair<iter_type, iter_type>
     (iter_type(cmap.darts().begin()),
      iter_type(cmap.darts().end()));
 }
 
-CMAP_BASE_TEMPLATE_ARGS
-typename boost::graph_traits<CMAP_BASE_TYPE >::edges_size_type
-num_edges(const CMAP_BASE_TYPE& cm)
+CGAL_CMAP_BASE_TEMPLATE_ARGS
+typename boost::graph_traits<CGAL_CMAP_BASE_TYPE >::edges_size_type
+num_edges(const CGAL_CMAP_BASE_TYPE& cm)
 {
-  typedef typename boost::graph_traits<CMAP_BASE_TYPE >::edge_iterator iter_type;
+  typedef typename boost::graph_traits<CGAL_CMAP_BASE_TYPE >::edge_iterator iter_type;
   std::pair<iter_type, iter_type> iter = edges(cm);
 
-  typename boost::graph_traits<CMAP_BASE_TYPE >::edges_size_type degree=0;
+  typename boost::graph_traits<CGAL_CMAP_BASE_TYPE >::edges_size_type degree=0;
   for(;iter.first != iter.second; ++(iter.first))
     ++degree;
   return degree;
@@ -321,11 +321,11 @@ num_edges(const CMAP_BASE_TYPE& cm)
 
 }// namespace boost
 
-#undef CMAP_BASE_TEMPLATE_ARGS
-#undef CMAP_TEMPLATE_ARGS
-#undef CMAP_TYPE
-#undef CMAP_BASE_TYPE
-#undef LCC_TEMPLATE_ARGS
-#undef LCC_TYPE
+#undef CGAL_CMAP_BASE_TEMPLATE_ARGS
+#undef CGAL_CMAP_TEMPLATE_ARGS
+#undef CGAL_CMAP_TYPE
+#undef CGAL_CMAP_BASE_TYPE
+#undef CGAL_LCC_TEMPLATE_ARGS
+#undef CGAL_LCC_TYPE
 
 #endif // CGAL_BOOST_GRAPH_GRAPH_TRAITS_CMAP_H
