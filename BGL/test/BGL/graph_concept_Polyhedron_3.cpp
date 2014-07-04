@@ -22,8 +22,6 @@
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/boost/graph/graph_concepts.h>
 #include <CGAL/Polyhedron_items_with_id_3.h>
-#include <CGAL/boost/graph/properties_Polyhedron_3.h>
-
 
 typedef CGAL::Simple_cartesian<double> Kernel;
 typedef CGAL::Polyhedron_3<Kernel, CGAL::Polyhedron_items_with_id_3> Polyhedron;

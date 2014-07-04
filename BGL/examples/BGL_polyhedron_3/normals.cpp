@@ -13,8 +13,6 @@
 #include <CGAL/Polyhedron_items_with_id_3.h>
 
 // Graph traits adaptors
-#include <CGAL/boost/graph/properties.h>
-#include <CGAL/boost/graph/properties_Polyhedron_3.h>
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 
 typedef CGAL::Cartesian<double>                                      Kernel;

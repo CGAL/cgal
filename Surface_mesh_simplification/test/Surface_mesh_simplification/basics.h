@@ -28,7 +28,6 @@ void Surface_simplification_external_trace( std::string s )
 #include <CGAL/Polyhedron_3.h>
 
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
-#include <CGAL/boost/graph/properties_Polyhedron_3.h>
 
 #include <CGAL/Surface_mesh_simplification/edge_collapse.h>
 #include <CGAL/Surface_mesh_simplification/Edge_collapse_visitor_base.h>
