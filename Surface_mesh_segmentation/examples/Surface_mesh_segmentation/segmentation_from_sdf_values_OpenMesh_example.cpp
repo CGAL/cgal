@@ -5,7 +5,6 @@
 #include <OpenMesh/Core/Mesh/PolyMesh_ArrayKernelT.hh>
 
 #include <CGAL/boost/graph/graph_traits_PolyMesh_ArrayKernelT.h>
-#include <CGAL/boost/graph/properties_PolyMesh_ArrayKernelT.h>
 
 #include <CGAL/mesh_segmentation.h>
 
