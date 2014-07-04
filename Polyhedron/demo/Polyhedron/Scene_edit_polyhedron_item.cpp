@@ -158,7 +158,7 @@ void Scene_edit_polyhedron_item::draw_edges() const {
 
   glEnableClientState(GL_VERTEX_ARRAY);
   glVertexPointer(3, GL_DOUBLE, 0, positions.data());
-  glDrawElements(GL_LINES, edges.size(), GL_UNSIGNED_INT, edges.data());
+  glDrawElements(GL_LINES, (GLsizei) edges.size(), GL_UNSIGNED_INT, edges.data());
   glDisableClientState(GL_VERTEX_ARRAY); 
 
   if(rendering_mode == Wireframe) {
@@ -171,7 +171,7 @@ void Scene_edit_polyhedron_item::draw() const {
 
   glVertexPointer(3, GL_DOUBLE, 0, positions.data());
   glNormalPointer(GL_DOUBLE, 0, normals.data());
-  glDrawElements(GL_TRIANGLES, tris.size(), GL_UNSIGNED_INT, tris.data());
+  glDrawElements(GL_TRIANGLES, (GLsizei) tris.size(), GL_UNSIGNED_INT, tris.data());
 
   glDisableClientState(GL_VERTEX_ARRAY);
   glDisableClientState(GL_NORMAL_ARRAY);

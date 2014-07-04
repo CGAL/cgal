@@ -249,7 +249,7 @@ void Polyhedron_demo_edit_polyhedron_plugin::on_Select_isolated_components_butto
   boost::optional<std::size_t> minimum = 
     edit_item->select_isolated_components(ui_widget.Threshold_size_spin_box->value());
   if(minimum) {
-    ui_widget.Threshold_size_spin_box->setValue(*minimum);
+    ui_widget.Threshold_size_spin_box->setValue((int) *minimum);
   }
 }
 
@@ -260,7 +260,7 @@ void Polyhedron_demo_edit_polyhedron_plugin::on_Get_minimum_button_clicked() {
 
   boost::optional<std::size_t> minimum = edit_item->get_minimum_isolated_component();
   if(minimum) {
-    ui_widget.Threshold_size_spin_box->setValue(*minimum);
+    ui_widget.Threshold_size_spin_box->setValue((int) *minimum);
   }
 }
 
