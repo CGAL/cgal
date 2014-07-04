@@ -9,8 +9,8 @@
 
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits.h>
+#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/AABB_face_graph_triangle_primitive.h>
-#include <CGAL/Polyhedron_3.h>
 #include <CGAL/point_generators_3.h>
 
 #include <iostream>

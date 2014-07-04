@@ -5,7 +5,6 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits.h>
-#include <CGAL/Polyhedron_3.h>
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/AABB_halfedge_graph_segment_primitive.h>
 #include <boost/iterator/transform_iterator.hpp>
