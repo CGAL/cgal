@@ -23,6 +23,7 @@
 #define HALFEDGE_AND_FACE_GRAPH_PROPERTY_MAPS_H
 
 #include <CGAL/property_map.h>
+#include <CGAL/boost/graph/properties.h>
 #include <boost/type_traits/is_const.hpp>
 #include <boost/mpl/if.hpp>
 #include <boost/type_traits/remove_const.hpp>
