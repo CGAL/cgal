@@ -88,7 +88,7 @@ public:
       b_t[1] -= pbb.ymin();
       b_t[2] -= pbb.zmin();
       int o1 [3] = { a_t[0] / dimension[0], a_t[1] / dimension[1], a_t[2] / dimension[2] };
-      int o2 [3] = { a_t[0] / dimension[0], a_t[1] / dimension[1], a_t[2] / dimension[2] };
+      int o2 [3] = { b_t[0] / dimension[0], b_t[1] / dimension[1], b_t[2] / dimension[2] };
 
       unsigned i = 0;
       while (i < 3)
@@ -126,10 +126,7 @@ public:
       value_a = r_domain_.labeling_function()(Point_3(a_max[0], a_max[1], a_max[2]));
       value_b = r_domain_.labeling_function()(Point_3(b_max[0], b_max[1], b_max[2]));
       if ( value_a != value_b )
-      {
-        std::cout << "Fix works!" << std::endl;
         return Surface_patch(r_domain_.make_surface_index(value_a, value_b));
-      }
 
       return Surface_patch();
     }
