@@ -974,8 +974,6 @@ void _test_critical_points_circle( const std::pair<
   typename AK::Z_critical_points theZ_critical_points =
     AK().z_critical_points_object();
   typename AK::Solve theSolve = AK().solve_object();
-  typedef typename AK::Polynomial_for_spheres_2_3
-      Polynomial_for_spheres_2_3;
   typedef typename AK::Polynomial_1_3
       Polynomial_1_3;
 
