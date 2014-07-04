@@ -92,6 +92,8 @@
 - `CGAL::Lazy_exact_nt<NT>`
 - `CGAL::Quotient<NT>`
 - `CGAL::Number_type_checker<NT1,NT2,Comparator>`
+- `CGAL::Exact_integer`
+- `CGAL::Exact_rational`
 
 ## Relates Rational ##
 

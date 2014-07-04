@@ -30,6 +30,7 @@
 
 #include<CGAL/basic.h>
 
+#include <CGAL/Arithmetic_kernel.h>
 #include <CGAL/Random.h>
 #include <CGAL/Cartesian_d.h>
 #include <CGAL/Homogeneous_d.h>
@@ -37,11 +38,11 @@
 #include <cassert>
 #include <CGAL/Min_sphere_annulus_d_traits_d.h>
 #include <CGAL/Min_sphere_d.h>
-#include <CGAL/Gmpq.h>
 
 using namespace CGAL;
 
-typedef Gmpq                                NT;
+// leda_rational, or Gmpq, or Quotient<MP_float>
+typedef CGAL::Arithmetic_kernel::Rational   NT;
 typedef NT                                  FT;
 typedef NT                                  RT;
 typedef Cartesian_d<FT>                     C;

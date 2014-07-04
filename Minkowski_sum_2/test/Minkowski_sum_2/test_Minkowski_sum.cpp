@@ -1,15 +1,7 @@
-#include <CGAL/basic.h>
+#include <CGAL/Arithmetic_kernel.h>
 
-#ifdef CGAL_USE_GMP
-  // GMP is installed. Use the GMP rational number-type. 
-  #include <CGAL/Gmpq.h>
-  typedef CGAL::Gmpq                                    Rational;
-#else
-  // GMP is not installed. Use CGAL's exact rational number-type.
-  #include <CGAL/MP_Float.h>
-  #include <CGAL/Quotient.h>
-  typedef CGAL::Quotient<CGAL::MP_Float>                Rational;
-#endif
+// leda_rational, or Gmpq, or Quotient<MP_float>
+typedef CGAL::Arithmetic_kernel::Rational         Rational;
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/minkowski_sum_2.h>

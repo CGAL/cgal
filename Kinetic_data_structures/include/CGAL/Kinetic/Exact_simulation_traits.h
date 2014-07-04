@@ -31,7 +31,7 @@
 #include <CGAL/Kinetic/Handle_degeneracy_function_kernel.h>
 #include <CGAL/Kinetic/Default_simulator.h>
 #include <CGAL/Kinetic/Two_list_pointer_event_queue.h>
-#include <CGAL/Gmpq.h>
+#include <CGAL/Exact_rational.h>
 
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 //#include <CGAL/Regular_triangulation_euclidean_traits_3.h>
@@ -41,7 +41,7 @@ namespace CGAL { namespace Kinetic {
 struct Exact_simulation_traits {
   typedef Exact_simulation_traits This;
 #ifdef CGAL_KINETIC_DO_NOT_USE_LAZY_EXACT
-  typedef CGAL::Cartesian<CGAL::Gmpq> Static_kernel;
+  typedef CGAL::Cartesian<CGAL::Exact_rational> Static_kernel;
 #else
   typedef CGAL::Exact_predicates_exact_constructions_kernel Static_kernel;
 #endif

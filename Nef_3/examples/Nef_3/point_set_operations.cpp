@@ -1,8 +1,8 @@
-#include <CGAL/Gmpz.h>
+#include <CGAL/Exact_integer.h>
 #include <CGAL/Extended_homogeneous.h>
 #include <CGAL/Nef_polyhedron_3.h>
 
-typedef CGAL::Extended_homogeneous<CGAL::Gmpz>  Kernel;
+typedef CGAL::Extended_homogeneous<CGAL::Exact_integer>  Kernel;
 typedef CGAL::Nef_polyhedron_3<Kernel>  Nef_polyhedron;
 typedef Kernel::Plane_3  Plane_3;
 

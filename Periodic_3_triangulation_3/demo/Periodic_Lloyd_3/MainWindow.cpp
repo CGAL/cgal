@@ -1,5 +1,6 @@
 
 #include "MainWindow.h"
+#include <ctime>
 
 MainWindow::MainWindow(QWidget* parent): CGAL::Qt::DemosMainWindow(parent)
 {

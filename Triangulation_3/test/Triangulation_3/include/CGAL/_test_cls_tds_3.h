@@ -85,7 +85,7 @@ _test_cls_tds_3( const Tds &)
   std::cout << "    I/O" << std::endl;
   {
     std::ofstream oFileT("Test_tds_IO_3", std::ios::out);
-    oFileT << tds1;
+    oFileT << tds1 << std::endl;
   }
   std::ifstream iFileT("Test_tds_IO_3", std::ios::in);
   iFileT >> tdsfromfile;

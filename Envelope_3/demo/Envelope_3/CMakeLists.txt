@@ -22,7 +22,7 @@ if ( CGAL_FOUND )
   # that it can be used together with FindQt4: all its variables are prefixed
   # by "QT3_" instead of "QT_".
   
-  if(CGAL_Qt3_FOUND AND QT3_FOUND)
+  if(CGAL_Qt3_FOUND AND QT3_FOUND AND CGAL_Core_FOUND)
   
     include( Qt3Macros-patched )
     qt3_automoc(  envelope_3.cpp )
@@ -43,7 +43,7 @@ if ( CGAL_FOUND )
     target_link_libraries(envelope_3 ${QT3_LIBRARIES} ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} )
   else()
   
-    message(STATUS "NOTICE: This demo requires Qt3 and the CGAL Qt3 library, and will not be compiled.")
+    message(STATUS "NOTICE: This demo requires Qt3, the CGAL Qt3 and the CGAL Core libraries, and will not be compiled.")
   
   endif()
   

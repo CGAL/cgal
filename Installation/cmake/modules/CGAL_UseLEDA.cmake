@@ -3,7 +3,6 @@
 
 if ( LEDA_FOUND AND NOT LEDA_SETUP )
 
-  message( STATUS "UseLEDA" )
   message( STATUS "LEDA include:     ${LEDA_INCLUDE_DIR}" )
   include_directories ( SYSTEM ${LEDA_INCLUDE_DIR} )
 

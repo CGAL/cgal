@@ -35,6 +35,8 @@
  
 #include <CGAL/basic.h>
 #include <CGAL/Arithmetic_kernel.h> 
+#include <CGAL/CORE_arithmetic_kernel.h>
+#include <CGAL/LEDA_arithmetic_kernel.h>
 #include <CGAL/gen_polynomials.h>
 #include <CGAL/test_modular_gcd.h>
 

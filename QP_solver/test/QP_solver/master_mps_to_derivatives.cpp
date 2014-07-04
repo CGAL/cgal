@@ -28,7 +28,7 @@
 #include <boost/iterator/zip_iterator.hpp>
 #include <boost/shared_ptr.hpp>
 
-#include <CGAL/Gmpq.h>
+#include <CGAL/Exact_rational.h>
 #include <CGAL/MP_Float.h>
 #include <CGAL/QP_solver/QP_solver.h>
 #include <CGAL/QP_solver/QP_full_exact_pricing.h>
@@ -57,12 +57,19 @@ namespace QP_from_mps_detail {
   struct MPS_type_name<int> {
     static const char *name() { return "integer"; }
   };
-  
+#ifdef CGAL_USE_GMP  
   template<>
   struct MPS_type_name<CGAL::Gmpq> {
     static const char *name() { return "rational"; }
   };  
-
+#endif
+  
+#ifdef CGAL_USE_LEDA
+  template<>
+  struct MPS_type_name<leda::rational> {
+    static const char *name() { return "rational"; }
+  };  
+#endif
   template<>
   struct MPS_type_name<CGAL::Quotient<CGAL::MP_Float> > {
     static const char *name() { return "rational"; }
@@ -74,7 +81,8 @@ namespace QP_from_mps_detail {
   struct IT_to_ET<double> {
     typedef CGAL::MP_Float ET;
   };
-  
+
+#ifdef CGAL_USE_GMP
   template<>
   struct IT_to_ET<int> {
     typedef CGAL::Gmpz ET;
@@ -83,8 +91,20 @@ namespace QP_from_mps_detail {
   template<>
   struct IT_to_ET<CGAL::Gmpq> {
     typedef CGAL::Gmpq ET;
-  }; 
+  };
+#endif
 
+#ifdef CGAL_USE_LEDA
+  template<>
+  struct IT_to_ET<int> {
+    typedef leda::integer ET;
+  };
+  
+  template<>
+  struct IT_to_ET<leda::rational> {
+    typedef leda::rational ET;
+  }; 
+#endif
   template<>
   struct IT_to_ET<CGAL::Quotient<CGAL::MP_Float> > {
     typedef CGAL::Quotient<CGAL::MP_Float> ET;
@@ -337,7 +357,7 @@ bool create_derivatives(const char *path,
 }
 
 int main(const int argnr, const char **argv) {
-  typedef CGAL::Gmpq Rational;
+  typedef CGAL::Exact_rational Rational;
 
   // output usage information:
   if (argnr != 4) {

@@ -1,11 +1,11 @@
-#include <CGAL/Gmpq.h>
+#include <CGAL/Exact_rational.h>
 #include <CGAL/Lazy_exact_nt.h>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Bounded_kernel.h>
 #include <CGAL/Nef_polyhedron_2.h>
 
 
-typedef CGAL::Lazy_exact_nt<CGAL::Gmpq> FT;
+typedef CGAL::Lazy_exact_nt<CGAL::Exact_rational> FT;
 typedef CGAL::Simple_cartesian<FT> Kernel;
 typedef CGAL::Bounded_kernel<Kernel> Extended_kernel;
 typedef CGAL::Nef_polyhedron_2<Extended_kernel> Nef_polyhedron;

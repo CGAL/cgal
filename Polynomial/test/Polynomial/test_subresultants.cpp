@@ -13,6 +13,8 @@
 #include <CGAL/basic.h>
 #include <CGAL/Polynomial/subresultants.h>
 #include <CGAL/Arithmetic_kernel.h>
+#include <CGAL/CORE_arithmetic_kernel.h>
+#include <CGAL/LEDA_arithmetic_kernel.h>
 
 template<typename Poly_> Poly_ from_string(const char* s) {
   std::stringstream ss(s);

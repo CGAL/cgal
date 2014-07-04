@@ -1,6 +1,5 @@
-
+#include <CGAL/Arithmetic_kernel.h>
 #include <CGAL/Cartesian.h>
-#include <CGAL/Gmpq.h>
 #include <CGAL/Timer.h>
 
 #include <CGAL/Env_triangle_traits_3.h>
@@ -14,7 +13,8 @@
 #include <vector>
 #include <map>
 
-typedef CGAL::Gmpq                                               NT;
+// leda_rational, or Gmpq, or Quotient<MP_float>
+typedef CGAL::Arithmetic_kernel::Rational                        NT;
 typedef CGAL::Cartesian<NT>                                      Kernel;
 
 typedef Kernel::Point_3                                          Point_3;

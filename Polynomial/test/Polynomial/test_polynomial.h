@@ -586,9 +586,9 @@ void psqff(){
         typedef CGAL::Polynomial<NT> POLY_1; 
         
         // monic factors 
-        POLY_1 a1(NT("4352435"), NT("4325245"));
-        POLY_1 b1(NT("123"), NT("432235"),NT("43324252"));
-        POLY_1 c1(NT("12324"), NT("25332235"),NT("24657252"));
+        POLY_1 a1(NT(std::string("4352435")), NT(std::string("4325245")));
+        POLY_1 b1(NT(std::string("123")), NT(std::string("432235")),NT(std::string("43324252")));
+        POLY_1 c1(NT(std::string("12324")), NT(std::string("25332235")),NT(std::string("24657252")));
  
         test_sqff_utcf(a1,b1,c1);
     }{
@@ -596,9 +596,9 @@ void psqff(){
         typedef CGAL::Polynomial<NT> POLY_1; 
         
         // monic factors 
-        POLY_1 a1(NT("4352435"), NT("4325245"));
-        POLY_1 b1(NT("123"), NT("432235"),NT("43324252"));
-        POLY_1 c1(NT("12324"), NT("25332235"),NT("24657252"));
+        POLY_1 a1(NT(std::string("4352435")), NT(std::string("4325245")));
+        POLY_1 b1(NT(std::string("123")), NT(std::string("432235")),NT(std::string("43324252")));
+        POLY_1 c1(NT(std::string("12324")), NT(std::string("25332235")),NT(std::string("24657252")));
  
         test_sqff_utcf(a1,b1,c1);
     }

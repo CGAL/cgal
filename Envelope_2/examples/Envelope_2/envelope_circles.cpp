@@ -2,14 +2,14 @@
 // Constructing the envelopes of a set of circles using the circle-segment
 // traits.
 
-#include <CGAL/Gmpq.h>
+#include <CGAL/Exact_rational.h>
 #include <CGAL/Cartesian.h>
 #include <CGAL/Arr_circle_segment_traits_2.h>
 #include <CGAL/Arrangement_2.h>
 #include <CGAL/Envelope_diagram_1.h>
 #include <CGAL/envelope_2.h>
 
-typedef CGAL::Gmpq                                    Number_type;
+typedef CGAL::Exact_rational                          Number_type;
 typedef CGAL::Cartesian<Number_type>                  Kernel;
 typedef Kernel::Point_2                               Kernel_point_2;
 typedef Kernel::Circle_2                              Circle_2;

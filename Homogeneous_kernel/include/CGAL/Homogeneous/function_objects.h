@@ -127,8 +127,8 @@ namespace HomogeneousKernelFunctors {
     operator()( const Circle_2& c, const Point_2& p) const
     {
       typename K::Compute_squared_distance_2 squared_distance;
-      return enum_cast<Bounded_side>(CGAL_NTS compare(c.squared_radius(),
-					   squared_distance(c.center(),p)));
+      return enum_cast<Bounded_side>(CGAL::compare(c.squared_radius(),
+                                                   squared_distance(c.center(),p)));
     }
 
     result_type
@@ -676,14 +676,14 @@ namespace HomogeneousKernelFunctors {
     result_type
     operator()(const T1& p, const T2& q, const T3& r) const
     {
-      return CGAL_NTS compare(squared_distance(p, q), squared_distance(p, r));
+      return CGAL::compare(squared_distance(p, q), squared_distance(p, r));
     }
 
     template <class T1, class T2, class T3, class T4>
     result_type
     operator()(const T1& p, const T2& q, const T3& r, const T4& s) const
     {
-      return CGAL_NTS compare(squared_distance(p, q), squared_distance(r, s));
+      return CGAL::compare(squared_distance(p, q), squared_distance(r, s));
     }
   };
 
@@ -729,14 +729,14 @@ namespace HomogeneousKernelFunctors {
     result_type
     operator()(const T1& p, const T2& q, const T3& r) const
     {
-      return CGAL_NTS compare(squared_distance(p, q), squared_distance(p, r));
+      return CGAL::compare(squared_distance(p, q), squared_distance(p, r));
     }
 
     template <class T1, class T2, class T3, class T4>
     result_type
     operator()(const T1& p, const T2& q, const T3& r, const T4& s) const
     {
-      return CGAL_NTS compare(squared_distance(p, q), squared_distance(r, s));
+      return CGAL::compare(squared_distance(p, q), squared_distance(r, s));
     }
   };
 
@@ -766,11 +766,11 @@ namespace HomogeneousKernelFunctors {
       if (l1_sign > l2_sign) return LARGER;
 
       if (l1_sign > 0)
-	return CGAL_NTS compare( CGAL_NTS abs(l1.a() * l2.b()),
-				 CGAL_NTS abs(l2.a() * l1.b()) );
+	return CGAL::compare( CGAL::abs(l1.a() * l2.b()),
+                              CGAL::abs(l2.a() * l1.b()) );
 
-      return CGAL_NTS compare( CGAL_NTS abs(l2.a() * l1.b()),
-			       CGAL_NTS abs(l1.a() * l2.b()) );
+      return CGAL::compare( CGAL::abs(l2.a() * l1.b()),
+                            CGAL::abs(l1.a() * l2.b()) );
     } // FIXME
 
     result_type
@@ -855,7 +855,7 @@ namespace HomogeneousKernelFunctors {
 
     result_type
     operator()( const Point_2& p, const Line_2& h1, const Line_2& h2) const
-    { return CGAL_NTS compare(h1.x_at_y( p.y() ), h2.x_at_y( p.y() )); }
+    { return CGAL::compare(h1.x_at_y( p.y() ), h2.x_at_y( p.y() )); }
     // FIXME
 
     result_type
@@ -905,7 +905,7 @@ namespace HomogeneousKernelFunctors {
       // same x and y
       pV = p.hz()*q.hw();
       qV = q.hz()*p.hw();
-      return CGAL_NTS compare(pV, qV);
+      return CGAL::compare(pV, qV);
     }
   };
 
@@ -935,7 +935,7 @@ namespace HomogeneousKernelFunctors {
 	  pV = phy*qhw;
 	  qV = qhy*phw;
 	}
-      return CGAL_NTS compare(pV, qV);
+      return CGAL::compare(pV, qV);
     }
   };
 
@@ -965,7 +965,7 @@ namespace HomogeneousKernelFunctors {
 	  pV = phx*qhw;
 	  qV = qhx*phw;
 	}
-      return CGAL_NTS compare(pV, qV);
+      return CGAL::compare(pV, qV);
     }
   };
 
@@ -993,7 +993,7 @@ namespace HomogeneousKernelFunctors {
       // same x
       pV = p.hy()*q.hw();
       qV = q.hy()*p.hw();
-      return CGAL_NTS compare(pV, qV);
+      return CGAL::compare(pV, qV);
     }
   };
 
@@ -1008,7 +1008,7 @@ namespace HomogeneousKernelFunctors {
     result_type
     operator()( const Point_2& p, const Point_2& q) const
     {
-      return CGAL_NTS compare(p.hx()*q.hw(), q.hx()*p.hw());
+      return CGAL::compare(p.hx()*q.hw(), q.hx()*p.hw());
     }
 
     result_type
@@ -1043,7 +1043,7 @@ namespace HomogeneousKernelFunctors {
 
     result_type
     operator()( const Point_3& p, const Point_3& q) const
-    { return CGAL_NTS compare(p.hx() * q.hw(), q.hx() * p.hw() ); }
+    { return CGAL::compare(p.hx() * q.hw(), q.hx() * p.hw() ); }
   };
 
   template <typename K>
@@ -1067,7 +1067,7 @@ namespace HomogeneousKernelFunctors {
 
     result_type
     operator()( const Point_2& p, const Line_2& h1, const Line_2& h2) const
-    { return CGAL_NTS compare(h1.y_at_x( p.x() ), h2.y_at_x( p.x() )); }
+    { return CGAL::compare(h1.y_at_x( p.x() ), h2.y_at_x( p.x() )); }
     // FIXME
 
     result_type
@@ -1140,11 +1140,11 @@ namespace HomogeneousKernelFunctors {
 	FT s1stx = s1sx-s1tx;
 	FT s2stx = s2sx-s2tx;
 
-	return CGAL_NTS compare(s1sx, s1tx) *
-	       CGAL_NTS compare(s2sx, s2tx) *
-	       CGAL_NTS compare(-(s1sx-px)*(s1sy-s1ty)*s2stx,
-			        (s2sy-s1sy)*s2stx*s1stx
-			        -(s2sx-px)*(s2sy-s2ty)*s1stx);
+	return CGAL::compare(s1sx, s1tx) *
+          CGAL::compare(s2sx, s2tx) *
+          CGAL::compare(-(s1sx-px)*(s1sy-s1ty)*s2stx,
+                        (s2sy-s1sy)*s2stx*s1stx
+                        -(s2sx-px)*(s2sy-s2ty)*s1stx);
       }
       else {
 	if (s1sx == s1tx) { // s1 is vertical
@@ -1183,7 +1183,7 @@ namespace HomogeneousKernelFunctors {
       const RT& phw = p.hw();
       const RT& qhy = q.hy();
       const RT& qhw = q.hw();
-      return CGAL_NTS compare(phy * qhw, qhy * phw);
+      return CGAL::compare(phy * qhw, qhy * phw);
     }
 
     result_type
@@ -1218,7 +1218,7 @@ namespace HomogeneousKernelFunctors {
 
     result_type
     operator()( const Point_3& p, const Point_3& q) const
-    { return CGAL_NTS compare(p.hy() * q.hw(), q.hy() * p.hw() ); }
+    { return CGAL::compare(p.hy() * q.hw(), q.hy() * p.hw() ); }
   };
 
   template <typename K>
@@ -1230,7 +1230,7 @@ namespace HomogeneousKernelFunctors {
 
     result_type
     operator()( const Point_3& p, const Point_3& q) const
-    { return CGAL_NTS compare(p.hz() * q.hw(), q.hz() * p.hw() ); }
+    { return CGAL::compare(p.hz() * q.hw(), q.hz() * p.hw() ); }
   };
 
   template <typename K>
@@ -4197,7 +4197,7 @@ namespace HomogeneousKernelFunctors {
       RT  C = qhx*rhw - qhw*rhx;
       RT  D = qhy*rhw - qhw*rhy;
 
-      return CGAL_NTS compare(A*D, B*C);
+      return CGAL::compare(A*D, B*C);
     }
 
     result_type
@@ -4330,8 +4330,8 @@ namespace HomogeneousKernelFunctors {
       const RT& thw = t.hw();
 
       return enum_cast<Bounded_side>(
-	    CGAL_NTS compare((thx*phw-phx*thw)*(qhx*thw-thx*qhw),
-			     (thy*phw-phy*thw)*(thy*qhw-qhy*thw)) );
+                                     CGAL::compare((thx*phw-phx*thw)*(qhx*thw-thx*qhw),
+                                                   (thy*phw-phy*thw)*(thy*qhw-qhy*thw)) );
     }
 
     result_type

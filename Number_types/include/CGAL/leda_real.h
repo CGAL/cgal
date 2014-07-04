@@ -27,8 +27,6 @@
 
 #include <CGAL/number_type_basic.h>
 
-#ifdef CGAL_USE_LEDA
-
 #include <CGAL/leda_coercion_traits.h>
 
 #include <CGAL/utils.h>
@@ -251,13 +249,11 @@ namespace leda {
     inline real operator+( const real& i) { return i; }
 } // namespace leda
 
-//since types are included by leda_coercion_traits.h:
+
+//since types are included by LEDA_coercion_traits.h:
 #include <CGAL/leda_integer.h>
 #include <CGAL/leda_rational.h>
 #include <CGAL/leda_bigfloat.h>
-#include <CGAL/leda_real.h>
 #include <CGAL/LEDA_arithmetic_kernel.h>
-
-#endif // CGAL_USE_LEDA
 
 #endif // CGAL_LEDA_REAL_H

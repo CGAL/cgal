@@ -26,8 +26,8 @@
 
 #define CGAL_NEF3_SORT_OUTPUT 1
 
-#include <CGAL/Gmpq.h>
-typedef CGAL::Gmpq NT;
+#include <CGAL/Arithmetic_kernel.h>
+typedef CGAL::Arithmetic_kernel::Rational NT;
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Lazy_kernel.h>
 #include <CGAL/Timer.h>

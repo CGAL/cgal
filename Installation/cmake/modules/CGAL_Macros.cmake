@@ -369,11 +369,17 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
       use_component( MPFI )
     endif()
 
-    use_component( MPFR )
+    if(MPFR_FOUND)
+      use_component( MPFR )
+    endif()
+
     if (GMPXX_FOUND)
       use_component( GMPXX )
     endif()
-    use_component( GMP )
+
+    if(GMP_FOUND)
+      use_component( GMP )
+    endif()
 
     if(LEDA_FOUND)
       use_component( LEDA )

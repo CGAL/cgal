@@ -282,8 +282,8 @@ public:
     FT norm2 = v2 * v2;
 
     return (s1 == POSITIVE) ?
-      compare(dot_p1 * dot_p1 * norm2, dot_p2 * dot_p2 * norm1) :
-      compare(dot_p2 * dot_p2 * norm1, dot_p1 * dot_p1 * norm2);
+      CGAL::compare(dot_p1 * dot_p1 * norm2, dot_p2 * dot_p2 * norm1) :
+      CGAL::compare(dot_p2 * dot_p2 * norm1, dot_p1 * dot_p1 * norm2);
   }
 
   /*! Compare two directions contained in the xy plane by u.

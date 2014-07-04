@@ -147,6 +147,7 @@ int main(int argc, char* argv[])
         std::cout << std::endl;
 	}*/
 #endif
+#ifdef CGAL_USE_GMP
     {
         if (verbose) std::cout <<"Sturm_exact_________________________________\n";
         else std::cout << "Sturm&\t";
@@ -161,7 +162,7 @@ int main(int argc, char* argv[])
 	//K::Root rt;
 	//std::cout << CGAL::to_interval(rt).first << std::endl;
     }
-    
+#endif
 
 #ifdef CGAL_USE_CORE
     {

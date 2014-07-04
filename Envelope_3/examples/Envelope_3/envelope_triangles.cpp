@@ -1,7 +1,7 @@
 //! \file examples/Envelope_3/ex_envelope_triangles.cpp
 // Constructing the lower and the upper envelope of a set of triangles.
 
-#include <CGAL/Gmpq.h>
+#include <CGAL/Exact_rational.h>
 #include <CGAL/Cartesian.h>
 #include <CGAL/Env_triangle_traits_3.h>
 #include <CGAL/Env_surface_data_traits_3.h>
@@ -9,7 +9,7 @@
 #include <iostream>
 #include <list>
 
-typedef CGAL::Gmpq                                       Number_type;
+typedef CGAL::Exact_rational                             Number_type;
 typedef CGAL::Cartesian<Number_type>                     Kernel;
 typedef CGAL::Env_triangle_traits_3<Kernel>              Traits_3;
 typedef Kernel::Point_3                                  Point_3;

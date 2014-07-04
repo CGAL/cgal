@@ -1,11 +1,11 @@
 #include <CGAL/Cartesian.h>
 #include <CGAL/Min_ellipse_2.h>
 #include <CGAL/Min_ellipse_2_traits_2.h>
-#include <CGAL/Gmpq.h>
+#include <CGAL/Exact_rational.h>
 
 #include <cassert>
 
-typedef  CGAL::Gmpq                       NT;
+typedef  CGAL::Exact_rational             NT;
 typedef  CGAL::Cartesian<NT>              K;
 typedef  CGAL::Point_2<K>                 Point;
 typedef  CGAL::Min_ellipse_2_traits_2<K>  Traits;

@@ -19,14 +19,14 @@
 // Author(s)     : Peter Hachenberger
 
 #include <CGAL/basic.h>
-#include <CGAL/Gmpz.h>
+#include <CGAL/Exact_integer.h>
 #include <CGAL/Homogeneous.h>
 #include <CGAL/Nef_polyhedron_3.h>
 #include <CGAL/IO/Nef_polyhedron_iostream_3.h>
 #include <CGAL/IO/Qt_widget_Nef_3.h>
 #include <qapplication.h>
 
-typedef CGAL::Homogeneous<CGAL::Gmpz> Kernel;
+typedef CGAL::Homogeneous<CGAL::Exact_integer> Kernel;
 typedef CGAL::Nef_polyhedron_3<Kernel> Nef_polyhedron_3;
 
 int main(int argc, char* argv[]) {

@@ -25,9 +25,10 @@
 #ifndef CGAL_GMP_ARITHMETIC_KERNEL_H
 #define CGAL_GMP_ARITHMETIC_KERNEL_H
 
+#include <CGAL/config.h>
+
 #ifdef CGAL_USE_GMP 
 
-#include <CGAL/basic.h>
 #include <CGAL/Arithmetic_kernel/Arithmetic_kernel_base.h>
 #include <CGAL/Get_arithmetic_kernel.h>
 

@@ -1,4 +1,5 @@
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Simple_cartesian.h>
+#include <CGAL/Exact_rational.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
 #include <CGAL/mesh_segmentation.h>
@@ -8,7 +9,7 @@
 #include <iostream>
 #include <fstream>
 
-typedef CGAL::Simple_cartesian<CGAL::Gmpq> Kernel;
+typedef CGAL::Simple_cartesian<CGAL::Exact_rational> Kernel;
 typedef CGAL::Polyhedron_3<Kernel> Polyhedron;
 
 int main()

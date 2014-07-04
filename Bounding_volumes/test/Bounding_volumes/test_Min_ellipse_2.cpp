@@ -25,6 +25,7 @@
 // implementation: test program for 2D Smallest Enclosing Ellipse
 // ============================================================================
 
+#include <CGAL/Arithmetic_kernel.h>
 #include <CGAL/Cartesian.h>
 #include <CGAL/Homogeneous.h>
 #include <CGAL/Min_ellipse_2.h>
@@ -37,15 +38,11 @@
 #include <cstring>
 #include <fstream>
 
-#ifdef CGAL_USE_LEDA_FOR_OPTIMISATION_TEST
-#  include <CGAL/leda_integer.h>
-   typedef  leda_integer                       Rt;
-   typedef  CGAL::Quotient< leda_integer >     Ft;
-#else
-#  include <CGAL/Gmpz.h>
-   typedef  CGAL::Gmpz                         Rt;
-   typedef  CGAL::Quotient< CGAL::Gmpz >       Ft;
-#endif
+
+typedef CGAL::Arithmetic_kernel::Integer      Rt;
+typedef  CGAL::Quotient< Rt >                 Ft;
+
+
 
 #ifdef CGAL_USE_CORE
    #include <CGAL/CORE_Expr.h>

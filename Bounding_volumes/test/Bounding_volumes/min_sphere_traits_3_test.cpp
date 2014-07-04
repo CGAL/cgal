@@ -25,23 +25,20 @@
 // implementation: dD Smallest Enclosing Sphere
 // ============================================================================
 
-// hack to overcome external linkage conflict warning in MIPS
-#define __SGI_STL_INTERNAL_RELOPS
-
 #include <CGAL/basic.h>
-
-// only do something if LEDA available
-#include <cassert>
+#include <CGAL/Arithmetic_kernel.h>
 #include<CGAL/Random.h>
 #include<CGAL/Cartesian.h>
 #include<CGAL/Homogeneous.h>
 #include<CGAL/Min_sphere_annulus_d_traits_3.h>
 #include<CGAL/Min_sphere_d.h>
-#include<CGAL/Gmpq.h>
+
+#include <cassert>
 
 using namespace CGAL;
 
-typedef Gmpq                                        NT;
+// leda_rational, or Gmpq, or Quotient<MP_float>
+typedef CGAL::Arithmetic_kernel::Rational           NT;
 typedef NT                                          FT;
 typedef NT                                          RT;
 typedef Cartesian<FT>                               C;
