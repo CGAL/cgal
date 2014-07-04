@@ -3,7 +3,6 @@
 
 // HalfedgeGraph adapters
 #include <CGAL/boost/graph/graph_traits_PolyMesh_ArrayKernelT.h>
-#include <CGAL/boost/graph/properties_PolyMesh_ArrayKernelT.h>
 
 #include <CGAL/Deform_mesh.h>
 

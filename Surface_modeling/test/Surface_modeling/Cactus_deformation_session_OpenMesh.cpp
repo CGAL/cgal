@@ -8,7 +8,6 @@
 // HalfedgeGraph adapters
 #define CGAL_USE_OM_POINTS // use OpenMesh point type
 #include <CGAL/boost/graph/graph_traits_PolyMesh_ArrayKernelT.h>
-#include <CGAL/boost/graph/properties_PolyMesh_ArrayKernelT.h>
 
 #include <CGAL/Deform_mesh.h>
 
