@@ -29,7 +29,7 @@ void compare_mesh(const Polyhedron& mesh_1, const Polyhedron& mesh_2)
   {
     total_dif = total_dif + (it_1->point() - it_2->point());
   }
-  double average_mesh_dif = (total_dif / mesh_1.size_of_vertices()).squared_length();
+  double average_mesh_dif = (total_dif / (double) mesh_1.size_of_vertices()).squared_length();
 
   std::cerr << "Average mesh difference: " << average_mesh_dif << std::endl;
 
