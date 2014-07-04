@@ -20,6 +20,8 @@ if(USE_QT5)
 	
 	find_package(Qt5)
 
+       
+
 else (USE_QT5)
 
 	find_package(CGAL COMPONENTS Core Qt4 )
@@ -43,9 +45,10 @@ if ( CGAL_FOUND AND (QT4 OR QT5) )
   # Arrangement package includes
   include_directories( BEFORE ../../include )
 
+ if(QT4)
   qt_wrap_ui( arrangement_2_uis
     ArrangementDemoWindow.ui
-    NewTabDialog.ui
+  #  NewTabDialog.ui
     OverlayDialog.ui
     ArrangementDemoPropertiesDialog.ui
   )
@@ -59,8 +62,10 @@ if ( CGAL_FOUND AND (QT4 OR QT5) )
     ColorItemEditor.h
     DeleteCurveModeItemEditor.h
     PropertyValueDelegate.h
-    #PropertyValueDelegate.cpp
+#    PropertyValueDelegate.cpp
   )
+ endif(QT4)
+
   qt_add_resources( arrangement_2_resources
     ArrangementDemoWindow.qrc
   )

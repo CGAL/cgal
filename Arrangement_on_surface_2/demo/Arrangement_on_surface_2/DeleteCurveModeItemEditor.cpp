@@ -33,8 +33,7 @@ DeleteCurveModeItemEditor::DeleteCurveModeItemEditor( QWidget* parent ) :
 
 DeleteCurveMode DeleteCurveModeItemEditor::mode( ) const
 {
-  return qVariantValue<DeleteCurveMode >(this->itemData(this->currentIndex( ),
-                                                        Qt::UserRole ) );
+  return this->itemData(this->currentIndex( ), Qt::UserRole ).value< DeleteCurveMode >();
 }
 
 void DeleteCurveModeItemEditor::setMode( DeleteCurveMode m )
