@@ -5,7 +5,7 @@ namespace CGAL {
 \anchor Chapter_2D_Visibility_Computation
 \cgalAutoToc
 
-\authors Michael Hemmer, Kan Huang, Francisc Bungiu
+\authors Michael Hemmer, Kan Huang, Francisc Bungiu, Ning Xu
 
 \cgalFigureBegin{example_figure,visibility-teaser.png}
 \cgalFigureEnd
@@ -133,6 +133,17 @@ The visibility region of \f$ q \f$ in a polygon with two holes.
 \cgalFigureEnd
 \cgalExample{Visibility_2/general_polygon_example.cpp}
 
+\section implentation_history Implementation History
+
+This package was first developed during Google Summer of Code 2013. Fancisc Bungju developed the Simple_polygon_visibility_2 class; Kan Huang developed the Rotational_sweep_visibility_2 class; and Michael Hemmer developed the Triangular_expansion_visibility_2 class.
+
+This first class, Simple_polygon_visibility_2, implements the algorithm presented by B. Joe and R.B. Simpson in 1987 \cite js-clvpa87. This algorithm is a linear time algorithm for simple polygons, fixing the errors in a previous algorithm presented by D.T. Lee in 1983.
+
+The second class, Rotational_sweep_visibility_2, implements the algorithm presented by T. Asano in 1985. This algorithm can be applied to polygons with holes with time complexity \f$ O(n\log n) \f$.
+
+The third class, Triangular_expansion_visibility_2, implements the algorithm presented by F. Bungju, et al.. This algorithm can be applied to polygons with holes with worst case running time \f$ O(n^2) \f$, but is extremely fast in practice.
+
+In Google Summer of Code 2014, Ning Xu became a developer for this package. He fixed bugs in the algorithm for simple polygons.
 
 */
 
