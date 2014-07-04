@@ -20,7 +20,7 @@
 #ifndef CGAL_FUNCTOR_TAGS_H
 #define CGAL_FUNCTOR_TAGS_H
 #include <CGAL/tags.h> // for Null_tag
-#include <CGAL/marcutils.h>
+#include <CGAL/NewKernel_d/utils.h>
 #ifdef CGAL_CXX11
 #include <type_traits>
 #include <utility>

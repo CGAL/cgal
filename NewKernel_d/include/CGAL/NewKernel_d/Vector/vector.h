@@ -22,7 +22,7 @@
 #include <boost/type_traits/is_arithmetic.hpp>
 #include <boost/utility/enable_if.hpp>
 #include <CGAL/Dimension.h>
-#include <CGAL/marcutils.h>
+#include <CGAL/NewKernel_d/utils.h>
 #include <vector>
 #include <boost/preprocessor/repetition.hpp>
 #include <boost/preprocessor/repetition/enum.hpp>
