@@ -531,10 +531,6 @@ public:
       ++c_;
   }
 
-  template<class OtherIterator>
-  Filter_iterator(Filter_iterator<OtherIterator, Predicate> const& otherFI)
-    : e_(otherFI.end()), c_(otherFI.base()), p_(otherFI.predicate()) {}
-
   Self& operator++() {
     do { ++c_; } while (c_ != e_ && p_(c_));
     return *this;
