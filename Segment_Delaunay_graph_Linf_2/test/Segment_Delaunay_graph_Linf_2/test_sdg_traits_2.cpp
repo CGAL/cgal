@@ -546,6 +546,25 @@ void test_traits(const char* title)
       Point_2(100, 100),
       CGAL::NEGATIVE);
 
+  // SSS sssoriented8 vertex:
+  // s 100 -50 200 50
+  // s 150 250 150 50
+  // s -100 100 200 -200
+  test_incircle<Gt>(
+      Segment_2(Point_2(100, -50), Point_2(200, 50)),
+      Segment_2(Point_2(150, 250), Point_2(150, 50)),
+      Segment_2(Point_2(-100, 100), Point_2(200, -200)),
+      Point_2(165, -32),
+      CGAL::POSITIVE);
+
+  test_incircle<Gt>(
+      Segment_2(Point_2(100, -50), Point_2(200, 50)),
+      Segment_2(Point_2(150, 250), Point_2(150, 50)),
+      Segment_2(Point_2(-100, 100), Point_2(200, -200)),
+      Point_2(110, 33),
+      CGAL::NEGATIVE);
+
+
   std::cout << "====================================" << std::endl;
   std::cout << std::endl;
 }
