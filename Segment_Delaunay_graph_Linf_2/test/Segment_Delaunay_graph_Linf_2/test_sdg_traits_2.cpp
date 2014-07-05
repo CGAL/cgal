@@ -517,6 +517,35 @@ void test_traits(const char* title)
       Point_2(150, 30),
       CGAL::POSITIVE);
 
+  // SSS axis-parallel segments
+  test_incircle<Gt>(
+      Segment_2(Point_2(200,  50), Point_2(200, 150)),
+      Segment_2(Point_2(-50, 200), Point_2(450, 200)),
+      Segment_2(Point_2(-50,   0), Point_2(450,   0)),
+      Point_2(250, 50),
+      CGAL::POSITIVE);
+
+  test_incircle<Gt>(
+      Segment_2(Point_2(200,  50), Point_2(200, 150)),
+      Segment_2(Point_2(-50, 200), Point_2(450, 200)),
+      Segment_2(Point_2(-50,   0), Point_2(450,   0)),
+      Point_2(-50, 100),
+      CGAL::POSITIVE);
+
+  test_incircle<Gt>(
+      Segment_2(Point_2(200,  50), Point_2(200, 150)),
+      Segment_2(Point_2(-50, 200), Point_2(450, 200)),
+      Segment_2(Point_2(-50,   0), Point_2(450,   0)),
+      Point_2(0, 100),
+      CGAL::ZERO);
+
+  test_incircle<Gt>(
+      Segment_2(Point_2(200,  50), Point_2(200, 150)),
+      Segment_2(Point_2(-50, 200), Point_2(450, 200)),
+      Segment_2(Point_2(-50,   0), Point_2(450,   0)),
+      Point_2(100, 100),
+      CGAL::NEGATIVE);
+
   std::cout << "====================================" << std::endl;
   std::cout << std::endl;
 }
