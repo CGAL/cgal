@@ -51,6 +51,13 @@ public:
   using Base::is_orth_dist_smaller_than_pt_dist;
   using Base::compute_intersection_of_lines;
   using Base::orient_lines_linf;
+  using Base::are_parallel_lines;
+  using Base::direction;
+  using Base::compute_line_dir;
+  using Base::parallel_bis;
+  using Base::dir_from_lines;
+  using Base::bisector_linf_line;
+  using Base::is_endpoint_of;
 
   typedef enum {PPP = 0, PPS, PSS, SSS} vertex_t;
   struct PPP_Type {};
@@ -62,6 +69,7 @@ public:
   typedef typename Base::Segment_2           Segment_2;
   typedef typename Base::Line_2              Line_2;
   typedef typename Base::Site_2              Site_2;
+  typedef typename Base::Direction_2         Direction_2;
   typedef typename Base::FT                  FT;
   typedef typename Base::RT                  RT;
 
@@ -98,21 +106,12 @@ private:
   Compare_y_2_Points_Type          cmpy;
   Orientation_Linf_points_2 or_linf;
   Bisector_Linf_Type bisector_linf;
+  Bisector_Linf_Type linf_bisect_direction;
 
 private:
   //--------------------------------------------------------------------------
   // helpful methods
   //--------------------------------------------------------------------------
-
-  // check whether the point p is an endpoint of the segment s
-  inline
-  bool is_endpoint_of(const Site_2& p, const Site_2& s) const
-  {
-    CGAL_precondition( p.is_point() && s.is_segment() );
-
-    return ( same_points(p, s.source_site()) or
-	     same_points(p, s.target_site())   );
-  }
 
   // given that p is an endpoint of seg (not checked), returns the
   // other endpoint of seg
@@ -1325,54 +1324,70 @@ private:
       bool bqrset(false);
       bool brpset(false);
 
-      Polychainline_2 bpq;
+      Line_2 bpq;
       if ((is_p_hv and is_q_hv and have_common_pq) ) {
-        bpq = bisector_linf(sp, sq);
+        const Point_2 xpq = is_psrc_q ? sp.source() : sp.target();
+        Direction_2 dirbpq = dir_from_lines(lines[0], lines[1]);
+        bpq = compute_line_dir(xpq, dirbpq);
         CGAL_SDG_DEBUG(std::cout
             << "debug: vsqr bpq p=" << sp << " q=" << sq << std::endl;);
-        CGAL_SDG_DEBUG(std::cout
-            << "debug: vsqr bpq =" << bpq << std::endl;);
+        //CGAL_SDG_DEBUG(std::cout
+        //    << "debug: vsqr bpq =" << bpq << std::endl;);
         bpqset = true;
       }
 
-
-      Polychainline_2 bqr;
+      Line_2 bqr;
       if ((not bpqset) or (is_q_hv and is_r_hv) or
           (not have_common_rp)) {
-        bqr = bisector_linf(sq, sr);
+        bqr = bisector_linf_line(sq, sr, lines[1], lines[2]);
         CGAL_SDG_DEBUG(std::cout
             << "debug: vsqr bqr q=" << sq << " r=" << sr << std::endl;);
-        CGAL_SDG_DEBUG(std::cout
-            << "debug: vsqr bqr =" << bqr << std::endl;);
+        //CGAL_SDG_DEBUG(std::cout
+        //    << "debug: vsqr bqr =" << bqr << std::endl;);
         bqrset = true;
       }
 
-      Polychainline_2 brp;
+      Line_2 brp;
       if ((not (bpqset and bqrset))) {
-        brp = bisector_linf(sr, sp);
+        if (are_parallel_lines(lines[0], lines[2])) {
+          brp = parallel_bis(lines[0], lines[2]);
+        } else {
+          Point_2 xrp;
+          if (have_common_rp) {
+            xrp = is_psrc_r ? sp.source() : sp.target();
+          } else {
+            RT hx, hy, hz;
+            compute_intersection_of_lines(lines[0], lines[2], hx, hy, hz);
+            xrp = Point_2(hx, hy, hz);
+          }
+          Direction_2 dirbrp = dir_from_lines(lines[2], lines[0]);
+          brp = compute_line_dir(xrp, dirbrp);
+        }
         CGAL_SDG_DEBUG(std::cout
             << "debug: vsqr brp r=" << sr << " p=" << sp << std::endl;);
-        CGAL_SDG_DEBUG(std::cout
-            << "debug: vsqr brp =" << brp << std::endl;);
+        //CGAL_SDG_DEBUG(std::cout
+        //    << "debug: vsqr brp =" << brp << std::endl;);
         brpset = true;
       }
 
       CGAL_assertion((bpqset and bqrset) or (bqrset and brpset)
           or (brpset and bpqset));
 
+      RT ux, uy, uz;
       if (bpqset and bqrset) {
         CGAL_SDG_DEBUG(std::cout
             << "debug: vsqr SSS using bpq bqr" << std::endl;);
-        vv = bpq.first_intersection_point_with(bqr);
+        compute_intersection_of_lines(bpq, bqr, ux, uy, uz);
       } else if (bqrset and brpset) {
         CGAL_SDG_DEBUG(std::cout
             << "debug: vsqr SSS using bqr brp" << std::endl;);
-        vv = bqr.first_intersection_point_with(brp);
+        compute_intersection_of_lines(bqr, brp, ux, uy, uz);
       } else {
         CGAL_SDG_DEBUG(std::cout
             << "debug: vsqr SSS using brp bpq" << std::endl;);
-        vv = brp.first_intersection_point_with(bpq);
+        compute_intersection_of_lines(brp, bpq, ux, uy, uz);
       }
+      vv = Point_2(ux, uy, uz);
       CGAL_SDG_DEBUG(std::cout
           << "debug: vsqr SSS vv=" << vv << std::endl;);
       CGAL_assertion( oriented_side_of_line(lines[0], this->point()) );
@@ -1380,6 +1395,7 @@ private:
       CGAL_assertion( oriented_side_of_line(lines[2], this->point()) );
     }
   }
+
 
   // SSS: all sites are axis-parallel
   inline void

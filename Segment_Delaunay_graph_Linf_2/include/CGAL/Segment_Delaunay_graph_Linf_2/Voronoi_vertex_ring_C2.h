@@ -38,6 +38,7 @@ public:
   typedef typename Base::Point_2             Point_2;
   typedef typename Base::Segment_2           Segment_2;
   typedef typename Base::Line_2              Line_2;
+  typedef typename Base::Direction_2         Direction_2;
   typedef typename Base::Site_2              Site_2;
   typedef typename Base::FT                  FT;
   typedef typename Base::RT                  RT;
@@ -78,6 +79,9 @@ public:
   using Base::touch_same_side;
   using Base::coord_at;
   using Base::orient_lines_linf;
+  using Base::compute_line_dir;
+  using Base::bisector_linf_line;
+  using Base::is_endpoint_of;
 
 private:
   typedef SegmentDelaunayGraph_2::Are_same_points_C2<K>
@@ -1189,7 +1193,7 @@ private:
       Line_2 lines[3];
       orient_lines_linf(p, q, r, lines);
 
-      compute_sss_bisectors(p, q, r);
+      compute_sss_bisectors(p, q, r, lines);
       CGAL_assertion( oriented_side_of_line(lines[0], this->point()) );
       CGAL_assertion( oriented_side_of_line(lines[1], this->point()) );
       CGAL_assertion( oriented_side_of_line(lines[2], this->point()) );
@@ -1236,9 +1240,21 @@ private:
   }
 
   inline void
-  compute_sss_bisectors(const Site_2& p, const Site_2& q, const Site_2& r)
+  compute_sss_bisectors(const Site_2& p, const Site_2& q, const Site_2& r,
+      const Line_2 lines[])
   {
     CGAL_SDG_DEBUG(std::cout << "debug vring compute_sss_bisectors"
+        << " p=" << p << " q=" << q  << " r=" << r << std::endl;);
+    Line_2 bpq = bisector_linf_line(p, q, lines[0], lines[1]);
+    Line_2 bqr = bisector_linf_line(q, r, lines[1], lines[2]);
+    compute_intersection_of_lines(bpq, bqr, ux_, uy_, uz_);
+  }
+
+  inline void
+  compute_sss_bisectors_old(
+      const Site_2& p, const Site_2& q, const Site_2& r)
+  {
+    CGAL_SDG_DEBUG(std::cout << "debug vring compute_sss_bisectors_old"
         << " p=" << p << " q=" << q  << " r=" << r << std::endl;);
     Polychainline_2 bpq = bisector_linf(p, q);
     Polychainline_2 bqr = bisector_linf(q, r);

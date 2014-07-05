@@ -10,6 +10,7 @@
 #include <CGAL/Polychain_2.h>
 
 #include <CGAL/Segment_Delaunay_graph_2/Basic_predicates_C2.h>
+#include <CGAL/Segment_Delaunay_graph_Linf_2/Bisector_Linf.h>
 
 
 namespace CGAL {
@@ -52,6 +53,7 @@ public:
 
 private:
   typedef typename K::Intersections_tag ITag;
+  typedef Bisector_Linf<K>              Bisector_Linf_Type;
 
   typedef typename Algebraic_structure_traits<RT>::Algebraic_category RT_Category;
   typedef typename Algebraic_structure_traits<FT>::Algebraic_category FT_Category;
@@ -321,6 +323,30 @@ public:    //    compute_supporting_line(q.supporting_segment(), a1, b1, c1);
     c = p.x() * q.y() - q.x() * p.y();
 
     return Line_2(a, b, c);
+  }
+
+  // compute line from a point and a direction
+  inline static
+  Line_2 compute_line_dir(const Point_2& p, const Direction_2& d)
+  {
+    return Line_2( -d.dy(), d.dx(), -(-d.dy()*p.x() +d.dx()*p.y()) );
+  }
+
+  // compute bisector of two parallel lines
+  inline static
+  Line_2 parallel_bis(const Line_2& lp, const Line_2& lq)
+  {
+    RT bisa, bisb, bisc;
+    if ( CGAL::sign ( lq.a() ) != ZERO ) {
+      bisa = RT(2) * lp.a() * lq.a();
+      bisb = RT(2) * lp.a() * lq.b();
+      bisc = lp.a() * lq.c() + lp.c() * lq.a();
+    } else {
+      bisa = RT(2) * lp.a() * lq.b();
+      bisb = RT(2) * lp.b() * lq.b();
+      bisc = lp.c() * lq.b() + lp.b() * lq.c();
+    }
+    return Line_2(bisa, bisb, bisc);
   }
 
   /* use point p for y coordinate of line */
@@ -1304,7 +1330,19 @@ private:
     }
   }
 
+  // absolute bearing difference between low and high
+  inline static unsigned int
+  bearing_diff(const unsigned int low, const unsigned int high)
+  {
+    CGAL_assertion(low <= 7);
+    CGAL_assertion(high <= 7);
+    return high > low ? high - low : 8 + high - low;
+  }
+
 public:
+  // Orient the segments p, q, r so that they go counterclockwise
+  // around the Linf square. The orientations are saved as lines
+  // l[0], l[1], l[2] in the l array.
   static void
   orient_lines_linf(const Site_2& p, const Site_2& q, const Site_2& r,
       Line_2 l[])
@@ -1401,7 +1439,7 @@ public:
         << " bprev=" << bprev << " bnext=" << bnext
         << std::endl;);
     CGAL_assertion(bprev != bnext);
-    const unsigned int diffbear = (bnext - bprev)%8;
+    CGAL_assertion_code( const unsigned int diffbear = (bnext - bprev)%8 );
     CGAL_assertion(diffbear != 1);
     CGAL_assertion(diffbear != 7);
     const unsigned int br = bearing(l[i_no]);
@@ -1435,6 +1473,78 @@ public:
       is_oriented[i_no] = true;
     }
     CGAL_assertion(is_oriented[i_no]);
+  }
+
+  inline static bool
+  are_parallel_lines(const Line_2 & lp, const Line_2 & lq) {
+    return lp.a() * lq.b() == lq.a() * lp.b();
+  }
+
+  inline static Direction_2
+  direction(const Line_2 & l) {
+    return Direction_2(l.b(), -l.a());
+  }
+
+  // compute correct bisector direction of two consecutive lines,
+  // that are already correctly oriented from sites with orient_lines_linf
+  static Direction_2
+  dir_from_lines(const Line_2& lp, const Line_2& lq)
+  {
+    Bisector_Linf_Type linf_bisect_direction;
+    const unsigned int bdiff = bearing_diff(bearing(lp), bearing(lq));
+    CGAL_assertion(bdiff != 0);
+    if (bdiff < 4) {
+      return linf_bisect_direction(direction(lq), -direction(lp));
+    } else if (bdiff > 4) {
+      return linf_bisect_direction(direction(lp), -direction(lq));
+    } else {
+      CGAL_assertion(bdiff == 4);
+      const Sign sgn = CGAL::sign(lp.a() * lq.b() - lq.a() * lp.b());
+      if (sgn == POSITIVE) {
+        return linf_bisect_direction(direction(lq), -direction(lp));
+      } else {
+        CGAL_assertion(sgn == NEGATIVE);
+        return linf_bisect_direction(direction(lp), -direction(lq));
+      }
+    }
+  }
+
+  // Compute the bisecting line between sites p and q, such that
+  // the sites are correctly oriented according to lines lp and lq,
+  // respectively
+  static Line_2
+  bisector_linf_line(const Site_2& p, const Site_2& q,
+      const Line_2 & lp, const Line_2 & lq)
+  {
+    Line_2 bpq;
+    if (are_parallel_lines(lp, lq)) {
+      bpq = parallel_bis(lp, lq);
+    } else {
+      const bool is_psrc_q = is_endpoint_of(p.source_site(), q);
+      const bool is_ptrg_q = is_endpoint_of(p.target_site(), q);
+      const bool have_common_pq = is_psrc_q or is_ptrg_q;
+      Point_2 xpq;
+      if (have_common_pq) {
+        xpq = is_psrc_q ? p.source() : p.target();
+      } else {
+        RT hx, hy, hz;
+        compute_intersection_of_lines(lp, lq, hx, hy, hz);
+        xpq = Point_2(hx, hy, hz);
+      }
+      const Direction_2 dirbpq = dir_from_lines(lp, lq);
+      bpq = compute_line_dir(xpq, dirbpq);
+    }
+    return bpq;
+  }
+
+  // check whether the point p is an endpoint of the segment s
+  inline static
+  bool is_endpoint_of(const Site_2& p, const Site_2& s)
+  {
+    Are_same_points_2 same_points;
+    CGAL_precondition( p.is_point() and s.is_segment() );
+    return ( same_points(p, s.source_site()) or
+	     same_points(p, s.target_site())   );
   }
 
 

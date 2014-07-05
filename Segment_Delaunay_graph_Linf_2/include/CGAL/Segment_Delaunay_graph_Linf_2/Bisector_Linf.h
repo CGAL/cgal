@@ -22,6 +22,10 @@ public:
   typedef Polychainline            result_type;
   typedef Site_2                   argument_type;
 
+  typedef typename K::Direction_2  Direction_2;
+  typedef Direction_2              dir_result_type;
+  typedef Direction_2              dir_argument_type;
+
 
 private:
   typedef typename K::Segment_2 Segment_2;
@@ -30,7 +34,6 @@ private:
 
   typedef typename K::Line_2             Full_Line_2;
   typedef typename K::Point_2            Point_2;
-  typedef typename K::Direction_2        Direction_2;
   typedef typename K::Vector_2           Vector_2;
   typedef typename K::Sign               Sign;
 
@@ -645,6 +648,7 @@ private:
     // precondition:
     // dirq is strictly after (counterclockwise) dirp
     // and dirq is less than 180 degrees after dirp
+    CGAL_assertion( dirq.counterclockwise_in_between(dirp, -dirp) );
 
     CGAL_SDG_DEBUG(std::cout << "debug dir1 = " << dirp
               << " dir2 = " << dirq << std::endl;);
@@ -751,6 +755,13 @@ public:
   {
     return bisector(p, q);
   }
+
+  dir_result_type operator()(
+      const dir_argument_type& d1, const dir_argument_type& d2) const
+  {
+    return compute_linf_bisecting_direction(d1, d2);
+  }
+
 };
 
 } //namespace SegmentDelaunayGraphLinf_2
