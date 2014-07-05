@@ -518,9 +518,9 @@ private:
     if ( pq && pr ) {
       // philaris: result should be point p
       const Point_2 pp = p.point();
-      ux_ = pp.x();
-      uy_ = pp.y();
-      uz_ = RT(1);
+      ux_ = pp.hx();
+      uy_ = pp.hy();
+      uz_ = pp.hw();
       return;
     }
     const bool is_q_hor = is_site_horizontal(q);
@@ -664,9 +664,9 @@ private:
     CGAL_SDG_DEBUG(std::cout
         << "debug: vring compute_pss vv=" << vv << std::endl;);
 
-    ux_ = vv.x();
-    uy_ = vv.y();
-    uz_ = RT(1);
+    ux_ = vv.hx();
+    uy_ = vv.hy();
+    uz_ = vv.hw();
 
   }
 
@@ -1149,9 +1149,9 @@ private:
     CGAL_SDG_DEBUG(std::cout << "debug: PPS returns with vv="
         << vv << std::endl;);
 
-    ux_ = vv.x();
-    uy_ = vv.y();
-    uz_ = RT(1);
+    ux_ = vv.hx();
+    uy_ = vv.hy();
+    uz_ = vv.hw();
   }
 
   //--------------------------------------------------------------------------
@@ -1168,13 +1168,14 @@ private:
     const bool is_ptrg_q = is_endpoint_of(p.target_site(), q);
     const bool is_ptrg_r = is_endpoint_of(p.target_site(), r);
 
-    uz_ = RT(1);
     if (is_psrc_q and is_psrc_r) {
-      ux_ = p.source().x();
-      uy_ = p.source().y();
+      ux_ = p.source().hx();
+      uy_ = p.source().hy();
+      uz_ = p.source().hw();
     } else if (is_ptrg_q and is_ptrg_r) {
-      ux_ = p.target().x();
-      uy_ = p.target().y();
+      ux_ = p.target().hx();
+      uy_ = p.target().hy();
+      uz_ = p.target().hw();
     } else {
       // here, not all segments have a common point
 
@@ -1259,9 +1260,9 @@ private:
     Polychainline_2 bpq = bisector_linf(p, q);
     Polychainline_2 bqr = bisector_linf(q, r);
     Point_2 vv = bpq.first_intersection_point_with(bqr);
-    ux_ = vv.x();
-    uy_ = vv.y();
-    uz_ = RT(1);
+    ux_ = vv.hx();
+    uy_ = vv.hy();
+    uz_ = vv.hw();
   }
 
   //--------------------------------------------------------------------------
