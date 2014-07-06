@@ -69,6 +69,8 @@ public:
   using Base::test_star;
   using Base::compute_neg_45_line_at;
   using Base::compute_pos_45_line_at;
+  using Base::compute_hor_line_at;
+  using Base::compute_ver_line_at;
   using Base::has_positive_slope;
   using Base::are_in_same_open_halfspace_of;
   using Base::horseg_y_coord;
@@ -82,6 +84,8 @@ public:
   using Base::compute_line_dir;
   using Base::bisector_linf_line;
   using Base::is_endpoint_of;
+  using Base::orient_line_endp;
+  using Base::orient_line_nonendp;
 
 private:
   typedef SegmentDelaunayGraph_2::Are_same_points_C2<K>
@@ -530,10 +534,43 @@ private:
     const bool is_q_hv = is_q_hor or is_q_ver;
     const bool is_r_hv = is_r_hor or is_r_ver;
     if (is_q_hv and is_r_hv) {
-      return compute_pss_both_hv(p, q, r, is_q_hor, is_r_hor, pq, pr);
+      compute_pss_both_hv(p, q, r, is_q_hor, is_r_hor, pq, pr);
     } else {
-      return compute_pss_bisectors(p, q, r);
+      if (pq or pr) {
+        compute_pss_endp(p, q, r,
+            is_q_hv, is_q_hor, pq, is_r_hv, is_r_hor, pr);
+      } else {
+        compute_pss_bisectors(p, q, r);
+      }
     }
+  }
+
+  // PSS case when not both segments are axis-parallel and p is
+  // an endpoint of one of the segments
+  inline void
+  compute_pss_endp(const Site_2& p, const Site_2& q, const Site_2& r,
+      const bool is_q_hv, const bool is_q_hor, const bool pq,
+      const bool is_r_hv, const bool is_r_hor, const bool pr)
+  {
+    CGAL_precondition(pq or pr);
+    const Line_2 lendp = orient_line_endp(p, (pq ? q : r), pq);
+    const Line_2 lnon = orient_line_nonendp(p, (pq ? r : q));
+    const Line_2 llbis = bisector_linf_line(
+        (pq ? q : r), (pq ? r : q), lendp, lnon);
+    Line_2 lperp;
+    const bool is_hv = pq ? is_q_hv : is_r_hv;
+    if (is_hv) {
+      const bool is_hor = pq ? is_q_hor : is_r_hor;
+      lperp = is_hor ? compute_ver_line_at(p.point()) :
+                       compute_hor_line_at(p.point()) ;
+    } else {
+      lperp = has_positive_slope(pq ? q : r) ?
+        compute_neg_45_line_at(p.point()) :
+        compute_pos_45_line_at(p.point()) ;
+    }
+    compute_intersection_of_lines(llbis, lperp, ux_, uy_, uz_);
+    CGAL_assertion( oriented_side_of_line(lendp, this->point()) );
+    CGAL_assertion( oriented_side_of_line(lnon, this->point()) );
   }
 
   // both segments are axis-parallel
