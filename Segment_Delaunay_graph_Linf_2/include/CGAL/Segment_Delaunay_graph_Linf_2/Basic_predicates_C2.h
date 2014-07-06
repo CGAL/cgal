@@ -393,6 +393,22 @@ public:    //    compute_supporting_line(q.supporting_segment(), a1, b1, c1);
     return Line_2(RT(1),RT(-1),p.y()-p.x());
   }
 
+  // horizontal line passing through p
+  inline
+  static
+  Line_2 compute_hor_line_at(const Point_2 & p)
+  {
+    return Line_2(RT(0), p.hw(), - p.hy());
+  }
+
+  // vertical line passing through p
+  inline
+  static
+  Line_2 compute_ver_line_at(const Point_2 & p)
+  {
+    return Line_2(p.hw(), RT(0), - p.hx());
+  }
+
   static
   RT compute_linf_distance(const Point_2& p, const Point_2& q)
   {
@@ -696,8 +712,6 @@ public:
       const Site_2 & q, const Point_2 & corner,
       const Site_2 & p)
   {
-    Are_same_points_2 same_points;
-
     CGAL_assertion(s.is_segment());
     Segment_2 seg = s.segment();
 
@@ -710,6 +724,7 @@ public:
     Line_2 lqc = compute_line_from_to(qq, corner);
     Line_2 lcp = compute_line_from_to(corner, pp);
 
+    Are_same_points_2 same_points;
 
     bool is_ssrc_positive;
     if (same_points(q, s.source_site()) or
@@ -1516,40 +1531,82 @@ public:
   bisector_linf_line(const Site_2& p, const Site_2& q,
       const Line_2 & lp, const Line_2 & lq)
   {
-    Line_2 bpq;
     if (are_parallel_lines(lp, lq)) {
-      bpq = parallel_bis(lp, lq);
+      return parallel_bis(lp, lq);
     } else {
-      const bool is_psrc_q = is_endpoint_of(p.source_site(), q);
-      const bool is_ptrg_q = is_endpoint_of(p.target_site(), q);
-      const bool have_common_pq = is_psrc_q or is_ptrg_q;
-      Point_2 xpq;
-      if (have_common_pq) {
-        xpq = is_psrc_q ? p.source() : p.target();
-      } else {
-        RT hx, hy, hz;
-        compute_intersection_of_lines(lp, lq, hx, hy, hz);
-        xpq = Point_2(hx, hy, hz);
-      }
-      const Direction_2 dirbpq = dir_from_lines(lp, lq);
-      bpq = compute_line_dir(xpq, dirbpq);
+      return bisector_linf_line_nonpar(p, q, lp, lq);
     }
-    return bpq;
+  }
+
+  inline static Line_2
+  bisector_linf_line_nonpar(const Site_2& p, const Site_2& q,
+      const Line_2 & lp, const Line_2 & lq)
+  {
+    const bool is_psrc_q = is_endpoint_of(p.source_site(), q);
+    const bool is_ptrg_q = is_endpoint_of(p.target_site(), q);
+    const bool have_common_pq = is_psrc_q or is_ptrg_q;
+    Point_2 xpq;
+    if (have_common_pq) {
+      xpq = is_psrc_q ? p.source() : p.target();
+    } else {
+      RT hx, hy, hz;
+      compute_intersection_of_lines(lp, lq, hx, hy, hz);
+      xpq = Point_2(hx, hy, hz);
+    }
+    const Direction_2 dirbpq = dir_from_lines(lp, lq);
+    return compute_line_dir(xpq, dirbpq);
   }
 
   // check whether the point p is an endpoint of the segment s
   inline static
   bool is_endpoint_of(const Site_2& p, const Site_2& s)
   {
-    Are_same_points_2 same_points;
     CGAL_precondition( p.is_point() and s.is_segment() );
+    Are_same_points_2 same_points;
     return ( same_points(p, s.source_site()) or
 	     same_points(p, s.target_site())   );
   }
 
+  // Orient the segment s and return result as a line.
+  // Site p is a point which is an endpoint of s and
+  // p_before_s is true if p is just before s in the
+  // Voronoi vertex.
+  static Line_2
+  orient_line_endp(const Site_2& p, const Site_2& s, const bool p_before_s)
+  {
+    return compute_line_from_to(
+        p_before_s ? p.point() : other_site(p, s).point(),
+        p_before_s ? other_site(p, s).point() : p.point()  );
+  }
 
-};
+  // Orient the segment s and return result as a line.
+  // Site p is a point which is not an endpoint of s.
+  static Line_2
+  orient_line_nonendp(const Site_2& p, const Site_2& s)
+  {
+    Line_2 lseg = compute_supporting_line(s.supporting_site());
+    if (oriented_side_of_line(lseg, p.point()) == ON_NEGATIVE_SIDE) {
+      lseg = opposite_line(lseg);
+    }
+    return lseg;
+  }
 
+  // given that point site p is an endpoint of segment seg,
+  // return the other endpoint of seg (as a site)
+  inline static
+  const Site_2 other_site(const Site_2& p, const Site_2& seg)
+  {
+    CGAL_precondition( p.is_point() && seg.is_segment() );
+    Are_same_points_2 same_points;
+    if ( same_points(p, seg.source_site()) ){
+      return seg.target_site();
+    } else {
+      CGAL_assertion(same_points(p, seg.target_site()));
+      return seg.source_site();
+    }
+  }
+
+}; // end of struct Basic_predicates_C2
 
 
 } //namespace SegmentDelaunayGraphLinf_2

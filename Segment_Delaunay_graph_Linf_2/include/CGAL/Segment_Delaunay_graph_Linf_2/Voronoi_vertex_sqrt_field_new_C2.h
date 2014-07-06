@@ -42,6 +42,8 @@ public:
   using Base::test_star;
   using Base::compute_neg_45_line_at;
   using Base::compute_pos_45_line_at;
+  using Base::compute_hor_line_at;
+  using Base::compute_ver_line_at;
   using Base::are_in_same_open_halfspace_of;
   using Base::horseg_y_coord;
   using Base::verseg_x_coord;
@@ -58,6 +60,8 @@ public:
   using Base::dir_from_lines;
   using Base::bisector_linf_line;
   using Base::is_endpoint_of;
+  using Base::orient_line_endp;
+  using Base::orient_line_nonendp;
 
   typedef enum {PPP = 0, PPS, PSS, SSS} vertex_t;
   struct PPP_Type {};
@@ -112,19 +116,6 @@ private:
   //--------------------------------------------------------------------------
   // helpful methods
   //--------------------------------------------------------------------------
-
-  // given that p is an endpoint of seg (not checked), returns the
-  // other endpoint of seg
-  inline
-  Site_2 other_site(const Site_2& sp, const Site_2& seg) const
-  {
-    CGAL_precondition( sp.is_point() && seg.is_segment() );
-
-    if ( same_points(sp, seg.source_site()) ){
-      return seg.target_site();
-    }
-    return seg.source_site();
-  }
 
   inline
   bool points_inside_touching_sides_v(
@@ -1100,9 +1091,45 @@ private:
     const bool is_q_hv = is_q_hor or is_q_ver;
     const bool is_r_hv = is_r_hor or is_r_ver;
     if (is_q_hv and is_r_hv) {
-      return compute_pss_both_hv(sp, sq, sr, is_q_hor, is_r_hor, pq, pr);
+      compute_pss_both_hv(sp, sq, sr, is_q_hor, is_r_hor, pq, pr);
+    } else {
+      if (pq or pr) {
+        compute_pss_endp(sp, sq, sr,
+            is_q_hv, is_q_hor, pq, is_r_hv, is_r_hor, pr);
+      } else {
+        compute_vv_bisectors(sp, sq, sr, PSS_Type());
+      }
     }
-    return compute_vv_bisectors(sp, sq, sr, PSS_Type());
+  }
+
+  // PSS case when not both segments are axis-parallel and p is
+  // an endpoint of one of the segments
+  inline void
+  compute_pss_endp(const Site_2& p, const Site_2& q, const Site_2& r,
+      const bool is_q_hv, const bool is_q_hor, const bool pq,
+      const bool is_r_hv, const bool is_r_hor, const bool pr) const
+  {
+    CGAL_precondition(pq or pr);
+    const Line_2 lendp = orient_line_endp(p, (pq ? q : r), pq);
+    const Line_2 lnon = orient_line_nonendp(p, (pq ? r : q));
+    const Line_2 llbis = bisector_linf_line(
+        (pq ? q : r), (pq ? r : q), lendp, lnon);
+    Line_2 lperp;
+    const bool is_hv = pq ? is_q_hv : is_r_hv;
+    if (is_hv) {
+      const bool is_hor = pq ? is_q_hor : is_r_hor;
+      lperp = is_hor ? compute_ver_line_at(p.point()) :
+                       compute_hor_line_at(p.point()) ;
+    } else {
+      lperp = has_positive_slope(pq ? q : r) ?
+        compute_neg_45_line_at(p.point()) :
+        compute_pos_45_line_at(p.point()) ;
+    }
+    RT ux, uy, uz;
+    compute_intersection_of_lines(llbis, lperp, ux, uy, uz);
+    vv = Point_2(ux, uy, uz);
+    CGAL_assertion( oriented_side_of_line(lendp, this->point()) );
+    CGAL_assertion( oriented_side_of_line(lnon, this->point()) );
   }
 
   // both segments are axis-parallel

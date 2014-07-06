@@ -531,8 +531,9 @@ private:
     const bool is_r_hv = is_r_hor or is_r_ver;
     if (is_q_hv and is_r_hv) {
       return compute_pss_both_hv(p, q, r, is_q_hor, is_r_hor, pq, pr);
+    } else {
+      return compute_pss_bisectors(p, q, r);
     }
-    return compute_pss_bisectors(p, q, r);
   }
 
   // both segments are axis-parallel
