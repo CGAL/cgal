@@ -327,9 +327,11 @@ public:    //    compute_supporting_line(q.supporting_segment(), a1, b1, c1);
 
   // compute line from a point and a direction
   inline static
-  Line_2 compute_line_dir(const Point_2& p, const Direction_2& d)
+  Line_2 compute_line_dir(
+      const Homogeneous_point_2& p, const Direction_2& d)
   {
-    return Line_2( -d.dy(), d.dx(), -(-d.dy()*p.x() +d.dx()*p.y()) );
+    return Line_2( -d.dy()*p.hw(), d.dx()*p.hw(),
+                   -(-d.dy()*p.hx() +d.dx()*p.hy()) );
   }
 
   // compute bisector of two parallel lines
@@ -382,7 +384,7 @@ public:    //    compute_supporting_line(q.supporting_segment(), a1, b1, c1);
   static
   Line_2 compute_neg_45_line_at(const Point_2 & p)
   {
-    return Line_2(RT(1),RT(1),-p.x()-p.y());
+    return Line_2(p.hw() , p.hw(), -p.hx()-p.hy());
   }
 
   // pos slope 45 degree line passing through p
@@ -1545,15 +1547,20 @@ public:
     const bool is_psrc_q = is_endpoint_of(p.source_site(), q);
     const bool is_ptrg_q = is_endpoint_of(p.target_site(), q);
     const bool have_common_pq = is_psrc_q or is_ptrg_q;
-    Point_2 xpq;
+    Homogeneous_point_2 xpq;
     if (have_common_pq) {
       xpq = is_psrc_q ? p.source() : p.target();
     } else {
-      RT hx, hy, hz;
-      compute_intersection_of_lines(lp, lq, hx, hy, hz);
-      xpq = Point_2(hx, hy, hz);
+      RT hx, hy, hw;
+      compute_intersection_of_lines(lp, lq, hx, hy, hw);
+      CGAL_SDG_DEBUG( std::cout << "debug xpq hom="
+        << hx << ' ' << hy << ' ' << hw << std::endl; );
+      xpq = Homogeneous_point_2(hx, hy, hw);
     }
     const Direction_2 dirbpq = dir_from_lines(lp, lq);
+    CGAL_SDG_DEBUG( std::cout << "debug xpq hom="
+        << xpq.hx() << ' ' << xpq.hy() << ' ' << xpq.hw()
+        << " dirbpq=" << dirbpq << std::endl; );
     return compute_line_dir(xpq, dirbpq);
   }
 

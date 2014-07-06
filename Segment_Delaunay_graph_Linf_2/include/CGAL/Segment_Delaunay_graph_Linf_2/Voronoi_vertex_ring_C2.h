@@ -555,6 +555,12 @@ private:
     CGAL_precondition(pq or pr);
     const Line_2 lendp = orient_line_endp(p, (pq ? q : r), pq);
     const Line_2 lnon = orient_line_nonendp(p, (pq ? r : q));
+    CGAL_SDG_DEBUG(std::cout << "debug compute_pss_endp lendp="
+        << lendp.a() << ' ' << lendp.b() << ' ' << lendp.c() << ' '
+        << std::endl ; );
+    CGAL_SDG_DEBUG(std::cout << "debug compute_pss_endp lnon="
+        << lnon.a() << ' ' << lnon.b() << ' ' << lnon.c() << ' '
+        << std::endl ; );
     const Line_2 llbis = bisector_linf_line(
         (pq ? q : r), (pq ? r : q), lendp, lnon);
     Line_2 lperp;
@@ -568,7 +574,16 @@ private:
         compute_neg_45_line_at(p.point()) :
         compute_pos_45_line_at(p.point()) ;
     }
+    CGAL_SDG_DEBUG(std::cout << "debug compute_pss_endp llbis="
+        << llbis.a() << ' ' << llbis.b() << ' ' << llbis.c() << ' '
+        << std::endl ; );
+    CGAL_SDG_DEBUG(std::cout << "debug compute_pss_endp lperp="
+        << lperp.a() << ' ' << lperp.b() << ' ' << lperp.c() << ' '
+        << std::endl ; );
     compute_intersection_of_lines(llbis, lperp, ux_, uy_, uz_);
+    CGAL_SDG_DEBUG(std::cout << "debug compute_pss_endp vertex="
+        << ux_ << ' ' << uy_ << ' ' << uz_ << ' '
+        << Point_2(ux_, uy_, uz_) << std::endl ; );
     CGAL_assertion( oriented_side_of_line(lendp, this->point()) );
     CGAL_assertion( oriented_side_of_line(lnon, this->point()) );
   }
