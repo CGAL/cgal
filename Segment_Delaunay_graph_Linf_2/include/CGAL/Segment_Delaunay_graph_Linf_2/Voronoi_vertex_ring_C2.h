@@ -555,7 +555,7 @@ private:
   {
     //const Line_2 lq = orient_line_nonendp(p, q);
     //const Line_2 lr = orient_line_nonendp(p, r);
-    compute_pps_bisectors(p, q, r);
+    compute_pss_bisectors(p, q, r);
   }
 
   // PSS case when not both segments are axis-parallel and p is
