@@ -1,16 +1,15 @@
 namespace CGAL {
 /*!
 
-\mainpage 2D Reconstruction Simplification
+\mainpage User Manual 
 \anchor Chapter_2D_Reconstruction_Simplification
 \cgalAutoToc
 
 \authors Fernando de Goes, Pierre Alliez, Ivo Vigan
 
-\image html overview.png
-\image latex overview.png
 
-\section 2D_Reconstruction_SimplificationIntroduction Introduction
+
+\section Reconstruction_simplification_2Introduction Introduction
 
 
 \cgalFigureBegin{2D_Reconstruction_Simplification_process,process.png}
@@ -35,18 +34,18 @@ After that, edges which carry little mass can be filtered out.
 
 
 
-\section 2D_Reconstruction_SimplificationOverview Overview of the Reconstruction Process
+\section Reconstruction_simplification_2Overview Overview of the Reconstruction Process
 
 The task addressed is to reconstruct a shape from noisy data $S$ in $R^2$, i.e. give a (noisy) set of points, find a shape which best approximates the non-noise subset of $S$. The related task of simplifying a shape finds an approximation of the original shape using simpler curves. While previous works address these two issues sequentially, they are performed jointly using a unified framework based on optimal transport of measures. This new method provides benefits such as robustness to noise, preservation of sharp features and boundaries. It furthermore guarantees that the output is a simplicial complex. Transportation theory studies optimal transportations between a set M of n sources and a set $F$ of n targets (both can for example be point sets in $R^2$). Given a cost function $c : R^2 x R^2 -> R^+$, the goal is to find a bijection between M and F such that the sum of the costs c gets minimized. The optimal transport problem can also be defined between measures, and the paper views reconstruction and simplification tasks as such a transportation problem, where the input points are Dirac measure and the reconstructed simplicial complex is the support of a piecewise uniform measure. Given this theoretical background the algorithm then performs edge contractions in a greedy fashion w.r.t. the transportation cost, until the desired number of vertices are reached.
 
 
-\section 2D_Reconstruction_SimplificationTrans Optimal Transport Formulation
+\section Reconstruction_simplification_2Trans Optimal Transport Formulation
 
 The quality of an output simplex is measured as the total <I>transportation cost</I> of the input to the assigned simplex vertices and edges.
 For the transportation cost, the  <I>2-Wasserstein metric</I> is chosen which is also known the <I>Earth Mover Distance</I>, and intuitively 
 corresponds to the minimum cost of turning a (unit) pile of sand into a given shape, where the cost is measures as the $L_2$ distances. 
 
-\subsection 2D_Reconstruction_SimplificationTransCost Transportation Plan & Cost from Points to Simplices
+\subsection Reconstruction_simplification_2TransCost Transportation Plan & Cost from Points to Simplices
 
 Assuming that the algorithm is given an output simplex $T$, and a <I>point-to-simplex</I> assignment which maps every input point to either an edge or a vertex of $T$, 
 the total transportation cost is then computed using the following rules. For a point to vertex assignment, the cost is simply the sum of the weighted $L_2$-distances of all the points
@@ -58,12 +57,12 @@ For an edge of the simplex, the optimal plan and its cost is computed indirectly
 
 
 
-\section 2D_Reconstruction_SimplificationAPI API
+\section Reconstruction_simplification_2API API
 
 The API design is chosen in such a way that most of the implementation details are hidden from the user, i.e., the only class
 exposed to the user is the <I> Reconstruction_simplification_2</I>  class.
 
-\subsection 2D_Reconstruction_SimplificationSample Sample Call
+\subsection Reconstruction_simplification_2Sample Sample Call
 
 \code{.cpp}
 
@@ -86,9 +85,9 @@ Reconstruction_simplification_2<K, InputIterator, PointPMap, MassPMap>
 
 \endcode
 
-\subsection 2D_Reconstruction_SimplificationExamples Examples
+\subsection Reconstruction_simplification_2Examples Examples
 
-\subsection 2D_Reconstruction_SimplificationExampleSimple Simple reconstruction Example
+\subsection Reconstruction_simplification_2ExampleSimple Simple reconstruction Example
 
 The following example illustrates the simplest of the cases. It uses
 an ordinary polyhedron and only one of the optional parameters.

@@ -45,7 +45,7 @@ namespace CGAL {
 
 
 /*!
-\ingroup PkgReconstructionSimplification2
+\ingroup PkgReconstructionSimplification2Classes
 
 
 
@@ -172,9 +172,16 @@ protected:
 	/*!
 	     \Instantiates a new Reconstruction_simplification_2.
 
-	     \details This function is a convenience function for people who do not feel comfortable with circulators.
+	     \details Instantiates a new Reconstruction_simplification_2 object
+	     	 	  for a given collection of point-mass pairs.
 
-	     \tparam OutputIterator  must be a model of `CopyConstructible`.
+	     \param start_itr An InputIterator pointing the the first point-mass
+	     	 	 	 	 	 pair in a collection.
+   	   	 \param beyond_itr An InputIterator pointing beyond the last point-mass
+	     	 	 	 	 	 pair in a collection.
+	     \param in_point_pmap A PropertyMap used to access the input points
+
+	     \param in_mass_pmap A PropertyMap used to access the input points' mass.
 	*/
 	Reconstruction_simplification_2(InputIterator start_itr,
 									InputIterator beyond_itr,
@@ -243,10 +250,9 @@ protected:
 	/*!
 		First function to be called after instantiating a new
 		Reconstruction_simplification_2 object.
-		It computes an bounding box around the input points and creates an first
-		(fine) output simplex as well as an initial transportation plan.
-
-		\param steps The number of edge contractions performed by the algorithm.
+		It computes an bounding box around the input points and creates a first
+		(fine) output simplex as well as an initial transportation plan. This
+		first output simplex
 	  */
 	void initialize() {
 
