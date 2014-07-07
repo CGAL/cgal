@@ -7,9 +7,7 @@
 #include <fstream>
 
 // Chrono
-#include <chrono>
-#include <ctime>
-
+#include <CGAL/Timer.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef K::Point_3 Point;
@@ -223,18 +221,17 @@ int main (int argc, char *argv[]) {
               std::ostream_iterator<Point>(bos, "\n"));
 
     // Apply Lloyd algorithm
-    std::chrono::time_point<std::chrono::system_clock> start, end;
-    std::chrono::duration<double> elapsed_time;
+
     for (int i = 0; i < steps; i++) {
         std::cout << "iteration " << i << std::endl;
-        start = std::chrono::system_clock::now();
+        CGAL::Timer timer;
+        timer.start();
         lloyd_algorithm(planes.begin(),
                         planes.end(),
                         points);
-        end = std::chrono::system_clock::now();
+        timer.stop();
 
-        elapsed_time = end - start;
-        std::cout << "Execution time : " << elapsed_time.count() << "s\n";
+        std::cout << "Execution time : " << timer.time() << "s\n";
     }
 
     std::ofstream aos("after.xyz");
