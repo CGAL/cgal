@@ -1,4 +1,4 @@
-// Copyright (c) 2009 INRIA Sophia-Antipolis (France).
+// Copyright (c) 2009-2014 INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -16,7 +16,7 @@
 // $Id$
 //
 //
-// Author(s)     : Laurent Rineau, Stephane Tayeb
+// Author(s)     : Laurent Rineau, Stephane Tayeb, Clement Jamin
 //
 //******************************************************************************
 // File Description :
@@ -205,7 +205,11 @@ public:
            const MeshCriteria& criteria);
 
   /// Destructor
-  ~Mesher_3() { }
+  ~Mesher_3() 
+  {
+    // The lock data structure is going to be destroyed
+    r_c3t3_.triangulation().set_lock_data_structure(NULL);
+  }
 
   /// Launch mesh refinement
   double refine_mesh(std::string dump_after_refine_surface_prefix = "");
@@ -509,12 +513,12 @@ initialize()
       const Bbox_3 &bbox = estimated_bbox;
 
       // Compute radius for far sphere
-      const double& xdelta = bbox.xmax()-bbox.xmin();
-      const double& ydelta = bbox.ymax()-bbox.ymin();
-      const double& zdelta = bbox.zmax()-bbox.zmin();
-      const double radius = 1.3 * 0.5 * std::sqrt(xdelta*xdelta +
-                                                  ydelta*ydelta +
-                                                  zdelta*zdelta);
+      const double xdelta = bbox.xmax()-bbox.xmin();
+      const double ydelta = bbox.ymax()-bbox.ymin();
+      const double zdelta = bbox.zmax()-bbox.zmin();
+      const double radius = 5. * std::sqrt(xdelta*xdelta +
+                                           ydelta*ydelta +
+                                           zdelta*zdelta);
       const Vector center(
         bbox.xmin() + 0.5*xdelta,
         bbox.ymin() + 0.5*ydelta,
@@ -570,12 +574,12 @@ initialize()
       // Compute radius for far sphere
       //const Bbox_3 &bbox = r_c3t3_.bbox();
       const Bbox_3 &bbox = estimated_bbox;
-      const double& xdelta = bbox.xmax()-bbox.xmin();
-      const double& ydelta = bbox.ymax()-bbox.ymin();
-      const double& zdelta = bbox.zmax()-bbox.zmin();
-      const double radius = 1.3 * 0.5 * std::sqrt(xdelta*xdelta +
-                                    ydelta*ydelta +
-                                    zdelta*zdelta);
+      const double xdelta = bbox.xmax()-bbox.xmin();
+      const double ydelta = bbox.ymax()-bbox.ymin();
+      const double zdelta = bbox.zmax()-bbox.zmin();
+      const double radius = 5. * std::sqrt(xdelta*xdelta +
+                                           ydelta*ydelta +
+                                           zdelta*zdelta);
       const Vector center(
         bbox.xmin() + 0.5*xdelta,
         bbox.ymin() + 0.5*ydelta,
