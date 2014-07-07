@@ -19,8 +19,8 @@
 #include <CGAL/Fuzzy_sphere.h>
 
 // Eigen3
-#include <eigen3/Eigen/Dense>
-#include <eigen3/Eigen/Eigenvalues>
+#include <Eigen/Dense>
+#include <Eigen/Eigenvalues>
 
 // kernel
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
