@@ -32,7 +32,6 @@
 #include <CGAL/Mesh_optimization_return_code.h>
 #include <CGAL/Mesh_3/parameters_defaults.h> // to get default values
 
-
 // declare the CGAL function
 Optimizer_thread* cgal_code_odt_mesh_3(Scene_c3t3_item& c3t3_item,
                                        const double time_limit,
@@ -60,6 +59,7 @@ Optimizer_thread* cgal_code_exude_mesh_3(Scene_c3t3_item& c3t3_item,
 
 QString translate(CGAL::Mesh_optimization_return_code rc);
 
+
 // Mesh_3_optimization_plugin class
 class Mesh_3_optimization_plugin : 
   public QObject,
@@ -68,6 +68,10 @@ class Mesh_3_optimization_plugin :
   Q_OBJECT
   Q_INTERFACES(Plugin_interface)
   
+  #if QT_VERSION >= 0x050000
+  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")//New for Qt5 version !
+  #endif
+
   typedef Plugin_helper Base;
 public:
   Mesh_3_optimization_plugin();
@@ -103,7 +107,6 @@ private:
   
   Scene_c3t3_item* source_item_;
 }; // end class Mesh_3_optimization_plugin
-
 
 Mesh_3_optimization_plugin::
 Mesh_3_optimization_plugin()
@@ -584,7 +587,9 @@ translate(CGAL::Mesh_optimization_return_code rc)
 }
 
 
+#if QT_VERSION < 0x050000
 Q_EXPORT_PLUGIN2(Mesh_3_optimization_plugin, Mesh_3_optimization_plugin)
+#endif
 
 #include "Mesh_3_optimization_plugin.moc"
 

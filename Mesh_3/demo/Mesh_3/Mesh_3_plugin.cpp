@@ -34,6 +34,7 @@
 #include <fstream>
 #include <math.h>
 
+
 // Constants
 const QColor default_mesh_color(45,169,70);
 
@@ -62,14 +63,17 @@ Meshing_thread* cgal_code_mesh_3(const Implicit_function_interface*,
 double get_approximate(double d, int precision, int& decimals);
 
 
-
 class Mesh_3_plugin : 
   public QObject,
   protected Plugin_helper
 {
   Q_OBJECT
   Q_INTERFACES(Plugin_interface)
-  
+
+  #if QT_VERSION >= 0x050000
+  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")//New for Qt5 version !
+  #endif
+
   typedef Plugin_helper Base;
 public:
   Mesh_3_plugin();
@@ -111,6 +115,7 @@ private:
   Scene_item* source_item_;
   
 }; // end class Mesh_3_plugin
+
 
 Mesh_3_plugin::
 Mesh_3_plugin()
@@ -404,7 +409,8 @@ get_approximate(double d, int precision, int& decimals)
   return std::floor(d)*std::pow(10.,decimals);
 }
 
-
+#if QT_VERSION < 0x050000
 Q_EXPORT_PLUGIN2(Mesh_3_plugin, Mesh_3_plugin)
+#endif
 
 #include "Mesh_3_plugin.moc"

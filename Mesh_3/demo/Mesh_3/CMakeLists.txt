@@ -95,6 +95,7 @@ if((QT4 OR QT5) AND OPENGL_FOUND AND QGLVIEWER_FOUND AND Boost_FOUND)
   qt_wrap_ui( funcUI_FILES  ui_files/Function_dialog.ui)
   qt_wrap_ui( imgUI_FILES ui_files/Image_res_dialog.ui)
 
+
   include(AddFileDependencies)
 
   # Shared demo files directory
@@ -232,14 +233,24 @@ if(QT4)
 
   add_definitions(-DUSE_FORWARD_DECL)
   add_definitions(-DQT_STATICPLUGIN)
-    add_executable  ( Mesh_3 MainWindow.cpp
+ 
+ if(QT4)
+  add_executable  ( Mesh_3 MainWindow.cpp
       Mesh_3.cpp
       ${DEMO_SRC_DIR}/Scene.cpp
       MainWindow_moc.cpp
       Scene_moc.cpp
       ${UI_FILES} ${RESOURCE_FILES} )
     add_to_cached_list( CGAL_EXECUTABLE_TARGETS Mesh_3 )
-
+ endif(QT4)
+ if(QT5)
+  add_executable  ( Mesh_3 MainWindow.cpp
+      Mesh_3.cpp
+      ${DEMO_SRC_DIR}/Scene.cpp
+      Scene_moc.cpp
+      ${UI_FILES} ${RESOURCE_FILES} )
+    add_to_cached_list( CGAL_EXECUTABLE_TARGETS Mesh_3 )
+ endif(QT5)
   # Link with Qt libraries
   target_link_libraries( Mesh_3 ${QT_LIBRARIES} )
 
@@ -275,12 +286,8 @@ if(QT4)
     qt_generate_moc( "${CMAKE_CURRENT_SOURCE_DIR}/${plugin_implementation_base_name}.cpp" ${plugin_implementation_base_name}.moc )
     add_file_dependencies( ${plugin_implementation_base_name}.moc "${CMAKE_CURRENT_SOURCE_DIR}/${plugin_implementation_base_name}.cpp" )
 
-    if(QT5)
-     add_library(${plugin_name} MODULE ${option} ${plugin_implementation_base_name}.cpp)
-    endif()
-    if(QT4)
-     add_library(${plugin_name} MODULE ${option} ${plugin_implementation_base_name}.moc ${plugin_implementation_base_name}.cpp ${other_sources})
-    endif()
+    add_library(${plugin_name} MODULE ${option} ${plugin_implementation_base_name}.moc ${plugin_implementation_base_name}.cpp ${other_sources})
+
     add_to_cached_list( CGAL_EXECUTABLE_TARGETS ${plugin_name} )
     # Link with Qt
     target_link_libraries( ${plugin_name} ${QT_LIBRARIES} )
