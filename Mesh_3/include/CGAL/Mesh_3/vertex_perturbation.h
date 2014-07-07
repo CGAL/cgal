@@ -27,12 +27,14 @@
 
 #include <CGAL/Mesh_3/config.h>
 
-#include <CGAL/Timer.h>
 #include <CGAL/Mesh_3/C3T3_helpers.h>
 #include <CGAL/Mesh_3/Triangulation_helpers.h>
 
 #ifdef CGAL_MESH_3_PERTURBER_VERBOSE
   #include <CGAL/Timer.h>
+  #ifdef CGAL_LINKED_WITH_TBB
+    #include <tbb/enumerable_thread_specific.h>
+  #endif
 #endif
 
 #include <boost/optional.hpp>
@@ -235,7 +237,7 @@ public:
     return do_perturb(v, slivers, c3t3, domain, criterion,
                       sliver_bound, modified_vertices, could_lock_zone);
 #else
-    timer_.start();
+    timer().start();
     
     // Virtual call
     std::pair<bool,Vertex_handle> perturb =
@@ -245,7 +247,7 @@ public:
     if ( perturb.first )
       ++counter_;
     
-    timer_.stop();
+    timer().stop();
     
     return perturb;
 #endif
@@ -329,16 +331,28 @@ private:
   
 #ifdef CGAL_MESH_3_PERTURBER_VERBOSE
 public:
-  void reset_timer() { total_time_+= time(); timer_.reset(); }
+  void reset_timer() { total_time_+= time(); timer().reset(); }
   void reset_counter() { total_counter_ += counter_; counter_ = 0; }
   int counter() const { return counter_; }
-  double time() const { return timer_.time(); }
+  double time() const { return timer().time(); }
   int total_counter() const { return total_counter_ + counter(); }
   double total_time() const { return total_time_ + time(); }
   virtual std::string perturbation_name() const = 0;
 private:
+  CGAL::Timer &timer() const
+  {
+#ifdef CGAL_LINKED_WITH_TBB
+    return timer_.local();
+#else
+    return timer_;
+#endif
+  }
   mutable int counter_;
+#ifdef CGAL_LINKED_WITH_TBB
+  mutable tbb::enumerable_thread_specific<CGAL::Timer> timer_;
+#else
   mutable CGAL::Timer timer_;
+#endif
   int total_counter_;
   double total_time_;
 #endif
