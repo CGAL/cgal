@@ -1693,6 +1693,30 @@ namespace CGAL {
                 if (right_res == SMALLER) {
 
                   X_monotone_segment_2 seg = trim(cv2[i2], min_vertex(cv2[i2]), max_vertex(cv1[i1]));
+
+                  // X_monotone_segment_2 seg; 
+
+                  // if( cv2[i2].is_directed_right() && cv1[i1].is_directed_right() )
+                  // {
+                  //   //both curves are directed right.
+                  //   seg = trim(cv1[i1], min_vertex(cv2[i2]), max_vertex(cv1[i1]));
+                  // }
+
+                  // else if( !cv2[i2].is_directed_right() && !cv1[i1].is_directed_right() )
+                  // {
+                  //   //both curves are directed left.
+                  //   seg = trim(cv1[i1], min_vertex(cv1[i1]), max_vertex(cv2[i2]));
+                  // }
+                  // else if( !cv2[i2].is_directed_right() && cv1[i1].is_directed_right() )
+                  // {
+                  //   //Cv2 is directed left and cv1 is directed right.
+                  //   seg = trim(cv1[i1], max_vertex(cv2[i2]), max_vertex(cv1[i1]));
+                  // }
+                  // else
+                  // {
+                  //   //Cv2 is directed right and cv1 is directed left.
+                  //   seg = trim(cv1[i1], min_vertex(cv1[i1]), min_vertex(cv2[i2]));
+                  // }
                   
                   //since the overlapping curve should only be directed right.
                   if( !seg.is_directed_right() )
@@ -1711,6 +1735,7 @@ namespace CGAL {
                   ocv.push_back(seg);
                 }
               }
+
               else {
                 if (right_res == SMALLER) {
 
@@ -1725,6 +1750,30 @@ namespace CGAL {
                 }
                 else {
                   X_monotone_segment_2 seg = trim(cv1[i1], min_vertex(cv1[i1]), max_vertex(cv2[i2]));
+
+                  // X_monotone_segment_2 seg;
+
+                  // if( cv2[i2].is_directed_right() && cv1[i1].is_directed_right() )
+                  // {
+                  //   //both curves are directed right.
+                  //   seg = trim(cv2[i2], min_vertex(cv1[i1]), max_vertex(cv2[i2]));
+                  // }
+
+                  // else if( !cv2[i2].is_directed_right() && !cv1[i1].is_directed_right() )
+                  // {
+                  //   //both curves are directed left.
+                  //   seg = trim(cv2[i2], min_vertex(cv2[i2]), max_vertex(cv1[i1]));
+                  // }
+                  // else if( !cv2[i2].is_directed_right() && cv1[i1].is_directed_right() )
+                  // {
+                  //   //Cv2 is directed left and cv1 is directed right.
+                  //   seg = trim(cv2[i2], min_vertex(cv2[i2]), min_vertex(cv1[i1]));
+                  // }
+                  // else
+                  // {
+                  //   //Cv2 is directed right and cv1 is directed left.
+                  //   seg = trim(cv2[i2], max_vertex(cv1[i1]), max_vertex(cv2[i2]));
+                  // }
 
                   //since the overlapping curve should only be directed right.
                   if( !seg.is_directed_right() )
