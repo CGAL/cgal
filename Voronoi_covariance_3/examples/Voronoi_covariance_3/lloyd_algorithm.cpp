@@ -10,7 +10,6 @@
 #include <chrono>
 #include <ctime>
 
-#define SQUARE(x) ( (x) * (x) )
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef K::Point_3 Point;
@@ -54,21 +53,21 @@ class Centroid_volume_accumulator {
             // ... and the centroid
             // X
             cx += (nhat * ex) * (
-                SQUARE(ex * (va + vb)) +
-                SQUARE(ex * (vb + vc)) +
-                SQUARE(ex * (vc + va)) );
+                CGAL::square(ex * (va + vb)) +
+                CGAL::square(ex * (vb + vc)) +
+                CGAL::square(ex * (vc + va)) );
 
             // Y
             cy += (nhat * ey) * (
-                SQUARE(ey * (va + vb)) +
-                SQUARE(ey * (vb + vc)) +
-                SQUARE(ey * (vc + va)) );
+                CGAL::square(ey * (va + vb)) +
+                CGAL::square(ey * (vb + vc)) +
+                CGAL::square(ey * (vc + va)) );
 
             // Z
             cz += (nhat * ez) * (
-                SQUARE(ez * (va + vb)) +
-                SQUARE(ez * (vb + vc)) +
-                SQUARE(ez * (vc + va)) );
+                CGAL::square(ez * (va + vb)) +
+                CGAL::square(ez * (vb + vc)) +
+                CGAL::square(ez * (vc + va)) );
         }
 
         void end () {
