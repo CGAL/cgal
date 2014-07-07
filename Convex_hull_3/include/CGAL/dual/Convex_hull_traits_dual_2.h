@@ -149,8 +149,6 @@ namespace CGAL
 
 
                 Equal_2 equal_2_object () const {
-                    typedef bool result_type;
-
                     return Equal_2();
                 }
 

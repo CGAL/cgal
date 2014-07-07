@@ -30,7 +30,6 @@ template <typename R>
 void convert_dual_OFF (std::string const& filename, Polyhedron_dual_3& P) {
     typedef Polyhedron_dual_3::Point_iterator                    Point_iterator;
     typedef Polyhedron_dual_3::Facet_iterator                    Facet_iterator;
-    typedef Polyhedron_dual_3::Halfedge_handle                   Halfedge_handle;
     typedef Polyhedron_dual_3::Halfedge_around_facet_circulator  Halfedge_facet_circulator;
 
     std::ofstream file(filename.c_str());
