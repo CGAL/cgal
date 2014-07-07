@@ -19,7 +19,12 @@
 #include <CGAL/Polyhedron_shortest_path/Internal/Cone_expansion_event.h>
 #include <CGAL/Polyhedron_shortest_path/Internal/misc_functions.h>
 
+#if !defined(NDEBUG)
 
+#include <CGAL/Simple_cartesian.h>
+#include <CGAL/Interval_nt.h>
+
+#endif 
 
 namespace CGAL
 {
@@ -55,6 +60,10 @@ private:
   typedef typename Traits::Compute_squared_distance_2 Compute_squared_distance_2;
   typedef typename Traits::Construct_triangle_location_2 Construct_triangle_location_2;
   typedef typename CGAL::internal::Cone_expansion_event<Traits> Cone_expansion_event;
+  
+#if !defined(NDEBUG)
+  typedef CGAL::Simple_cartesian<Interval_nt<true> > IntervalKernel;
+#endif
 
 private:
   // These could be pulled back into a 'context' class to save space
@@ -99,6 +108,7 @@ public:
     , m_polyhedron(polyhedron)
     , m_sourceImage(Point_2(CGAL::ORIGIN))
     , m_layoutFace(Point_2(CGAL::ORIGIN),Point_2(CGAL::ORIGIN),Point_2(CGAL::ORIGIN))
+    , m_pseudoSourceDistance(0.0)
     , m_level(0)
     , m_treeId(treeId)
     , m_nodeType(ROOT)
@@ -118,6 +128,7 @@ public:
     , m_entryEdge(entryEdge)
     , m_sourceImage(Point_2(CGAL::ORIGIN))
     , m_layoutFace(Point_2(CGAL::ORIGIN),Point_2(CGAL::ORIGIN),Point_2(CGAL::ORIGIN))
+    , m_pseudoSourceDistance(0.0)
     , m_level(0)
     , m_treeId(treeId)
     , m_nodeType(ROOT)
@@ -230,7 +241,7 @@ public:
   }
   
   FT distance_from_source_to_root() const
-  { 
+  {
     return m_pseudoSourceDistance;
   }
   
@@ -238,6 +249,52 @@ public:
   {
     return distance_to_root(target_vertex_location());
   }
+  
+#if !defined(NDEBUG)
+
+  Interval_nt<true> distance_to_root_interval(const Point_2& point) const
+  {
+    if (is_root_node())
+    {
+      return Interval_nt<true>(0.0);
+    }
+    
+    IntervalKernel::Compute_squared_distance_2 compute_squared_distance_2;
+    IntervalKernel::Point_2 iPoint(point.x(), point.y());
+    IntervalKernel::Point_2 iSource(m_sourceImage.x(), m_sourceImage.y());
+    
+    return CGAL::sqrt(compute_squared_distance_2(iPoint, iSource)) + distance_from_source_to_root_interval();
+  }
+  
+  Interval_nt<true> distance_from_source_to_root_interval() const
+  {
+    if (is_root_node())
+    {
+      return Interval_nt<true>(0.0);
+    }
+    else if (is_source_node())
+    {
+      return m_parent->distance_from_target_to_root_interval();
+    }
+    else
+    {
+      return m_parent->distance_from_source_to_root_interval();
+    }
+  }
+  
+  Interval_nt<true> distance_from_target_to_root_interval() const
+  {
+    if (is_root_node())
+    {
+      return Interval_nt<true>(0.0);
+    }
+    else
+    {
+      return distance_to_root_interval(target_vertex_location());
+    }
+  }
+
+#endif
   
   Ray_2 left_boundary() const
   {
@@ -282,11 +339,21 @@ public:
   
   bool has_left_side() const
   {
+    if (is_source_node())
+    {
+      return true;
+    }
+    //Ray_2 leftBoundary = left_boundary();
+    //std::cout << "Left side check: " << m_orientation_2(source_image(), m_windowLeft, target_vertex_location()) << " vs. " << m_orientation_2(leftBoundary.source(), leftBoundary.point(1), target_vertex_location()) << std::endl;
+    
     return m_orientation_2(source_image(), m_windowLeft, target_vertex_location()) == CGAL::RIGHT_TURN;
   }
   
   bool has_right_side() const
   {
+    //Ray_2 rightBoundary = right_boundary();
+    //std::cout << "Right side check: " << m_orientation_2(source_image(), m_windowRight, target_vertex_location()) << " vs. " << m_orientation_2(rightBoundary.source(), rightBoundary.point(1), target_vertex_location()) << std::endl;
+    
     return m_orientation_2(source_image(), m_windowRight, target_vertex_location()) == CGAL::LEFT_TURN;
   }
   

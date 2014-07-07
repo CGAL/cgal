@@ -465,7 +465,7 @@ public:
 
 /// \class ConstRep
 /// \brief constant node
-class ConstRep : public ExprRep {
+class CGAL_CORE_EXPORT ConstRep : public ExprRep {
 public:
   /// \name Constructors and Destructor
   //@{
@@ -504,7 +504,7 @@ protected:
 
 /// \class ConstDoubleRep
 /// \brief constant node
-class ConstDoubleRep : public ConstRep {
+class CGAL_CORE_EXPORT ConstDoubleRep : public ConstRep {
 public:
   /// \name Constructors and Destructor
   //@{
@@ -698,7 +698,7 @@ protected:
 };
 /// \class UnaryOpRep
 /// \brief unary operator node
-class UnaryOpRep : public ExprRep {
+class CGAL_CORE_EXPORT UnaryOpRep : public ExprRep {
 public:
   /// \name Constructors and Destructor
   //@{
@@ -733,7 +733,7 @@ protected:
 
 /// \class NegRep
 /// \brief unary minus operator node
-class NegRep : public UnaryOpRep {
+class CGAL_CORE_EXPORT NegRep : public UnaryOpRep {
 public:
   /// \name Constructors and Destructor
   //@{
@@ -763,7 +763,7 @@ protected:
 
 /// \class SqrtRep
 /// \brief squartroot operator node
-class SqrtRep : public UnaryOpRep {
+class CGAL_CORE_EXPORT SqrtRep : public UnaryOpRep {
 public:
   /// \name Constructors and Destructor
   //@{
@@ -793,7 +793,7 @@ protected:
 
 /// \class BinOpRep
 /// \brief binary operator node
-class BinOpRep : public ExprRep {
+class CGAL_CORE_EXPORT BinOpRep : public ExprRep {
 public:
   /// \name Constructors and Destructor
   //@{
@@ -1222,7 +1222,7 @@ typedef AddSubRep<Sub> SubRep;
 
 /// \class MultRep
 /// \brief multiplication operator node
-class MultRep : public BinOpRep {
+class CGAL_CORE_EXPORT MultRep : public BinOpRep {
 public:
   /// \name Constructors and Destructor
   //@{
@@ -1248,7 +1248,7 @@ public:
 
 /// \class DivRep
 /// \brief division operator node
-class DivRep : public BinOpRep {
+class CGAL_CORE_EXPORT DivRep : public BinOpRep {
 public:
   /// \name Constructors and Destructor
   //@{

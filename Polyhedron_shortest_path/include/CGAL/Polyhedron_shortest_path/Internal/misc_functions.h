@@ -13,6 +13,8 @@
 #include <CGAL/boost/graph/properties_Polyhedron_3.h>
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 
+#include <CGAL/Interval_nt.h>
+
 namespace CGAL {
 
 namespace internal {
@@ -77,6 +79,75 @@ V shift_vector_3_right(const V& v, size_t by)
 {
   by %= 3;
   return V(v[(3 - by) % 3], v[(4 - by) % 3], v[(5 - by) % 3]);
+}
+
+enum Line_relation
+{
+  LINE_RELATION_UNKNOWN = 0,
+
+  LINE_RELATION_INTERSECT,
+  LINE_RELATION_NO_INTERSECT,
+  LINE_RELATION_PARALLEL,
+};
+
+template <class FT>
+struct Intersection_result
+{
+  Intersection_result()
+  {
+    relation = LINE_RELATION_UNKNOWN;
+    t0 = 0.0;
+    t1 = 0.0;
+  }
+
+  Intersection_result(Line_relation _relation, FT _t0, FT _t1)
+  {
+    relation = _relation;
+    t0 = _t0;
+    t1 = _t1;
+  }
+
+  Line_relation relation;
+  FT t0;
+  FT t1;
+};
+
+template <class FT, class V>
+FT cross_product(const V& v0, const V& v1)
+{
+  return v0.x()*v1.y() - v0.y()*v1.x();
+}
+
+template <class FT, class R, class V>
+Intersection_result<FT> intersect_rays(const R& r0, const R& r1)
+{
+  V r0D = r0.to_vector();
+  V r1D = r1.to_vector();
+
+  FT crossProd = cross_product<FT,V>(r0D, r1D);
+
+  V diff = r1.start() - r0.start();
+
+  FT r0Cross = cross_product<FT,V>(diff, r0D);
+  FT r1Cross = cross_product<FT,V>(diff, r1D);
+
+  if (CGAL::abs(crossProd) < 1e-10)
+  {
+    if (CGAL::abs(r0Cross) < 1e-10 || CGAL::abs(r1Cross) < 1e-10)
+    {
+      return Intersection_result<FT>(LINE_RELATION_PARALLEL, 0.0, 0.0);
+    }
+    else
+    {
+      return Intersection_result<FT>(LINE_RELATION_NO_INTERSECT, 0.0, 0.0);
+    }
+  }
+
+  // Yes, this is correct
+  FT t1 = r0Cross / crossProd;
+  FT t0 = r1Cross / crossProd;
+
+  return Intersection_result<FT>(LINE_RELATION_INTERSECT, t0, t1);
 }
 
 } // namespace internal
