@@ -540,9 +540,22 @@ private:
         compute_pss_endp(p, q, r,
             is_q_hv, is_q_hor, pq, is_r_hv, is_r_hor, pr);
       } else {
-        compute_pss_bisectors(p, q, r);
+        compute_pss_nonendp(p, q, r,
+            is_q_hv, is_q_hor, is_r_hv, is_r_hor);
       }
     }
+  }
+
+  // PSS case when not both segments are axis-parallel and p is
+  // not an endpoint of any of the segments q and r
+  inline void
+  compute_pss_nonendp(const Site_2& p, const Site_2& q, const Site_2& r,
+      const bool is_q_hv, const bool is_q_hor,
+      const bool is_r_hv, const bool is_r_hor)
+  {
+    //const Line_2 lq = orient_line_nonendp(p, q);
+    //const Line_2 lr = orient_line_nonendp(p, r);
+    compute_pps_bisectors(p, q, r);
   }
 
   // PSS case when not both segments are axis-parallel and p is
