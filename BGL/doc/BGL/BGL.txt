@@ -110,8 +110,8 @@ well as the distance to the source  in such a property map.
  
 Some default property maps are associated with the graph types. They
 are called *internal property maps* and can be retrieved using an
-overload of the function `get()`. For example, pm = get(g,
-boost::vertex_index) returns a property map that associates an index
+overload of the function `get()`. For example, pm = get(boost::vertex_index, g)
+returns a property map that associates an index
 in the range `[0, num_vertices(g))` with each vertex of the graph.
 This reduces the number of parameters to pass. 
 The data itself may be stored in the vertex or the edge, or it may

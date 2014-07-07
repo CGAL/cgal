@@ -1,4 +1,5 @@
 // Copyright (c) 2008  INRIA Sophia-Antipolis (France), ETH Zurich (Switzerland).
+// Copyright (c) 2010, 2014  GeometryFactory Sarl (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
@@ -28,8 +29,7 @@
 // The code looks slightly different from his code because we avoid the translation at
 // a minimal cost (and we use C++ ;).
 
-#include <CGAL/number_utils.h>
-// ST: is this include really needed ?
+#include <CGAL/Uncertain.h>
 #include <CGAL/internal/Intersections_3/Bbox_3_Plane_3_do_intersect.h>
 
 namespace CGAL {
@@ -203,7 +203,7 @@ namespace internal {
       if (is_indeterminate(b))
         return b;
       if(b) std::swap(j,k);
-      return CGAL_OR( (do_axis_intersect_aux<K,AXE,SIDE>(p_min.y()-j->y(), p_min.z()-j->z(), sides) <= 0),
+      return CGAL_AND((do_axis_intersect_aux<K,AXE,SIDE>(p_min.y()-j->y(), p_min.z()-j->z(), sides) <= 0),
                       (do_axis_intersect_aux<K,AXE,SIDE>(p_max.y()-k->y(), p_max.z()-k->z(), sides) >= 0) );      
     }
     case 1: {
@@ -212,7 +212,7 @@ namespace internal {
       if (is_indeterminate(b))
         return b;
       if(b) std::swap(j,k);
-      return  CGAL_OR( (do_axis_intersect_aux<K,AXE,SIDE>(p_min.x()-j->x(), p_min.z()-j->z(), sides) <= 0),
+      return  CGAL_AND((do_axis_intersect_aux<K,AXE,SIDE>(p_min.x()-j->x(), p_min.z()-j->z(), sides) <= 0),
                        (do_axis_intersect_aux<K,AXE,SIDE>(p_max.x()-k->x(), p_max.z()-k->z(), sides) >= 0) );
 
     }
@@ -222,7 +222,7 @@ namespace internal {
       if ( is_indeterminate(b))
         return b;
       if(b) std::swap(j,k);
-      return  CGAL_OR( (do_axis_intersect_aux<K,AXE,SIDE>(p_min.x()-j->x(), p_min.y()-j->y(), sides) <= 0),
+      return  CGAL_AND((do_axis_intersect_aux<K,AXE,SIDE>(p_min.x()-j->x(), p_min.y()-j->y(), sides) <= 0),
                        (do_axis_intersect_aux<K,AXE,SIDE>(p_max.x()-k->x(), p_max.y()-k->y(), sides) >= 0) );
     }
     default:
@@ -287,30 +287,30 @@ namespace internal {
     const Bbox_3& bbox = a_bbox;
 #endif    
     
-    Uncertain<bool> ind = make_uncertain(true);
+    // Create a "certainly true"
+    Uncertain<bool> ind_or_true = make_uncertain(true);
     
-    Uncertain<bool> b = make_uncertain(true);
     if (forbidden_axis!=0){
       if (forbidden_size!=0){
-        b = do_axis_intersect<K,0,0>(triangle, sides, bbox);
+        Uncertain<bool> b = do_axis_intersect<K,0,0>(triangle, sides, bbox);
         if(is_indeterminate(b)){
-          ind = b;
+          ind_or_true = b;
         } else if(! b){
           return false;
         }
       }
       if (forbidden_size!=1){
-        b = do_axis_intersect<K,0,1>(triangle, sides, bbox);
+        Uncertain<bool> b = do_axis_intersect<K,0,1>(triangle, sides, bbox);
         if(is_indeterminate(b)){
-          ind = b;
+          ind_or_true = b;
         } else if(! b){
           return false;
         }
       }
       if (forbidden_size!=2){
-        b = do_axis_intersect<K,0,2>(triangle, sides, bbox);
+        Uncertain<bool> b = do_axis_intersect<K,0,2>(triangle, sides, bbox);
         if(is_indeterminate(b)){
-          ind = b;
+          ind_or_true = b;
         } else if(! b){
           return false;
         }
@@ -319,25 +319,25 @@ namespace internal {
     
     if (forbidden_axis!=1){
       if (forbidden_size!=0){
-        b = do_axis_intersect<K,1,0>(triangle, sides, bbox);
+        Uncertain<bool> b = do_axis_intersect<K,1,0>(triangle, sides, bbox);
         if(is_indeterminate(b)){
-          ind = b;
+          ind_or_true = b;
         } else if(! b){
           return false;
         }
       }
       if (forbidden_size!=1){
-        b = do_axis_intersect<K,1,1>(triangle, sides, bbox);
+        Uncertain<bool> b = do_axis_intersect<K,1,1>(triangle, sides, bbox);
         if(is_indeterminate(b)){
-          ind = b;
+          ind_or_true = b;
         } else if(! b){
           return false;
         }
       }
       if (forbidden_size!=2){
-        b = do_axis_intersect<K,1,2>(triangle, sides, bbox);
+        Uncertain<bool> b = do_axis_intersect<K,1,2>(triangle, sides, bbox);
         if(is_indeterminate(b)){
-          ind = b;
+          ind_or_true = b;
         } else if(! b){
           return false;
         }
@@ -346,31 +346,31 @@ namespace internal {
     
     if (forbidden_axis!=2){
       if (forbidden_size!=0){
-        b = do_axis_intersect<K,2,0>(triangle, sides, bbox);
+        Uncertain<bool> b = do_axis_intersect<K,2,0>(triangle, sides, bbox);
         if(is_indeterminate(b)){
-          ind = b;
+          ind_or_true = b;
         } else if(! b){
           return false;
         }
       }
       if (forbidden_size!=1){
-        b = do_axis_intersect<K,2,1>(triangle, sides, bbox);
+        Uncertain<bool> b = do_axis_intersect<K,2,1>(triangle, sides, bbox);
         if(is_indeterminate(b)){
-          ind = b;
+          ind_or_true = b;
         } else if(! b){
           return false;
         }
       }
       if (forbidden_size!=2){
-        b = do_axis_intersect<K,2,2>(triangle, sides, bbox);
+        Uncertain<bool> b = do_axis_intersect<K,2,2>(triangle, sides, bbox);
         if(is_indeterminate(b)){
-          ind = b;
+          ind_or_true = b;
         } else if(! b){
           return false;
         }
       }
     }
-    return ind; // throws exception in case it is indeterminate
+    return ind_or_true; // throws exception in case it is indeterminate
   }
 
   template <class K>

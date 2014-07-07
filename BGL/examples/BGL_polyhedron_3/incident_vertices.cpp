@@ -4,6 +4,7 @@
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/boost/graph/iterator.h>
 #include <iostream>
+#include <fstream>
 
 
 typedef CGAL::Simple_cartesian<double> Kernel;
@@ -45,14 +46,16 @@ adjacent_vertices_V2(const Polyhedron& g,
 }
 
 
-int main()
+int main(int argc, char** argv)
 { 
+  std::ifstream in(argv[1]);
   Polyhedron P;
-  std::cin >> P;
+  in >> P;
   GraphTraits::vertex_iterator vi = vertices(P).first;
   std::list<vertex_descriptor> V;
   adjacent_vertices_V1(P, *vi, std::back_inserter(V));
   ++vi;
   adjacent_vertices_V2(P, *vi, std::back_inserter(V));
+  std::cerr << "done\n";
   return 0;
 }

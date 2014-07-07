@@ -1,5 +1,5 @@
-#ifndef CGAL_BGL_HELPERS_H
-#define CGAL_BGL_HELPERS_H
+#ifndef CGAL_BOOST_GRAPH_INTERNAL_HELPERS_H
+#define CGAL_BOOST_GRAPH_INTERNAL_HELPERS_H
 
 #include <boost/graph/graph_traits.hpp>
 #include <boost/optional.hpp>
@@ -7,22 +7,11 @@
 
 namespace CGAL {
 
-// breaks a dependency loop between <CGAL/BGL/Helper.h> and
-// <CGAL/boost/graph/iterator.h>
+// breaks a dependency loop between <CGAL/boost/graph/helpers.h>
+// and <CGAL/boost/graph/iterator.h>
 template <typename Graph> class Halfedge_around_target_iterator;
 
 namespace internal {
-
-
-
-
-template <typename Graph>
-bool
-is_border(typename boost::graph_traits<Graph>::halfedge_descriptor const& h
-          , const Graph& g)
-{
-  return face(h,g) == boost::graph_traits<Graph>::null_face();
-}
 
 template <typename Graph>
 void
@@ -161,7 +150,7 @@ exact_num_faces(const Graph& g)
   return std::distance(beg,end);
  }
 
-
+  /*
 template <typename Graph, typename BorderMap>
 boost::optional<typename boost::graph_traits<Graph>::halfedge_descriptor>
 is_border_vertex(const Graph& g
@@ -178,70 +167,7 @@ is_border_vertex(const Graph& g
   // empty
   return boost::optional<typename boost::graph_traits<Graph>::halfedge_descriptor>();
 }
-
-// Check if a graph fulfills the constant-vertex-is-border guarantee.
-//
-// \returns true, if for each vertex `v` which lies on a border
-// (e.g. one of its incident halfedges is a border halfedge),
-// `bm[halfedge(v)] == true` holds
-template <typename Graph, typename BorderMap>
-bool
-constant_vertex_is_border(const Graph& g, BorderMap bm)
-{
-  typename boost::graph_traits<Graph>::vertex_iterator vb, ve;
-  for(boost::tie(vb, ve) = vertices(g); vb != ve; ++vb) {
-    bool has_border = is_border_vertex(g, *vb, bm); // optional -> bool
-    if(!(get(bm, halfedge(*vb, g)) == has_border))
-      return false;
-  }
-  return true;
-}
-
-// overload
-template <typename Graph>
-bool
-constant_vertex_is_border(const Graph& g)
-{ return constant_vertex_is_border(g, get(CGAL::halfedge_is_border, g)); }
-
-template <typename Graph, typename BorderMap>
-void
-set_constant_vertex_is_border(Graph& g, 
-                              typename boost::graph_traits<Graph>::vertex_descriptor v, 
-                              BorderMap bm)
-{
-  // AF: this is not the solution
-  adjust_border_halfedge(v,g);
-  return; 
-  boost::optional<typename boost::graph_traits<Graph>::halfedge_descriptor>
-    border = is_border_vertex(g, v, bm);
-  if(border && !get(bm, halfedge(v, g))) {
-    // has a border, but the current halfedge is not it
-    CGAL_assertion(target(*border, g) == v);
-    set_halfedge(v, *border, g);
-  }
-}
-
-
-// Check the constant-vertex-is-border guarantee and repair vertices
-// that violate it.
-template <typename Graph, typename BorderMap>
-void
-set_constant_vertex_is_border(Graph& g, BorderMap bm)
-{
-  typename boost::graph_traits<Graph>::vertex_iterator vb, ve;
-  for(boost::tie(vb, ve) = vertices(g); vb != ve; ++vb) {
-    set_constant_vertex_is_border(g, *vb, bm);
-  }
-}
-
-
-// overload
-template <typename Graph>
-void
-set_constant_vertex_is_border(Graph& g)
-{ 
-  set_constant_vertex_is_border(g, get(CGAL::halfedge_is_border, g)); 
-}
+  */
 
 
 template <typename Graph>
@@ -341,4 +267,4 @@ bool is_valid(const Graph& g)
 } // CGAL
 
 
-#endif /* CGAL_BGL_HELPERS_H */
+#endif // CGAL_BOOST_GRAPH_INTERNAL_HELPERS_H

@@ -322,18 +322,6 @@ set_halfedge(typename boost::graph_traits< CGAL::Polyhedron_3<Gt,I,HDS,A> >::ver
 }
 
 
-template<class Gt, class I, CGAL_HDS_PARAM_, class A>
-void
-adjust_border_halfedge(typename boost::graph_traits< CGAL::Polyhedron_3<Gt,I,HDS,A> >::vertex_descriptor v
-  , const CGAL::Polyhedron_3<Gt,I,HDS,A>&)
-{
-}
-
-template<class Gt, class I, CGAL_HDS_PARAM_, class A>
-void
-garbage_collection(const CGAL::Polyhedron_3<Gt,I,HDS,A>&)
-{}
-
 //
 // HalfedgeGraph
 //
@@ -473,12 +461,28 @@ num_faces(const CGAL::Polyhedron_3<Gt,I,HDS,A>& p)
   return p.size_of_facets();
 }
 
+
+
+template<class Gt, class I, CGAL_HDS_PARAM_, class A>
+bool is_valid(const CGAL::Polyhedron_3<Gt,I,HDS,A>& p)
+{
+  return p.is_valid();
+}
 } // namespace CGAL
 
 
-#undef CGAL_HDS_PARAM_
-
 #ifndef CGAL_NO_DEPRECATED_CODE
+
+namespace CGAL {
+template<class Gt, class I, CGAL_HDS_PARAM_, class A>
+struct halfedge_graph_traits< CGAL::Polyhedron_3<Gt,I,HDS,A> >
+   : CGAL::HDS_graph_traits< CGAL::Polyhedron_3<Gt,I,HDS,A> >
+{
+  typedef CGAL::HDS_graph_traits< CGAL::Polyhedron_3<Gt,I,HDS,A> > Base;
+  typedef typename Gt::Point_3 Point;
+  typedef typename Base::edge_iterator undirected_edge_iterator;
+};
+} // namespace CGAL
 #include <CGAL/boost/graph/backward_compatibility_functions.h>
 
 namespace boost {
@@ -492,7 +496,9 @@ namespace boost {
   using CGAL::target;
   using CGAL::source;
 } // namespace boost
+
 #endif //CGAL_NO_DEPRECATED_CODE
 
+#undef CGAL_HDS_PARAM_
 
 #endif // CGAL_BOOST_GRAPH_GRAPH_TRAITS_POLYHEDRON_3_H

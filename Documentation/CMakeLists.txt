@@ -165,6 +165,7 @@ if(DOXYGEN_FOUND)
                             ${CMAKE_CURRENT_SOURCE_DIR}/scripts/makebiblio
                             ${CMAKE_BINARY_DIR}/how_to_cite_cgal.bib
                             ${BIBTEX2HTML_EXECUTABLE}
+                    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
                     OUTPUT_VARIABLE makebiblio_OUTPUT
                     ERROR_VARIABLE makebiblio_ERROR
                     RESULT_VARIABLE makebiblio_RESULT) #bibtex2html also prints info in stderr

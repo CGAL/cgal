@@ -24,22 +24,23 @@ namespace CGAL {
 namespace Surface_mesh_simplification
 {
 
-template<class ECM>
+  template<class ECM, class VertexPointMap>
 
 template<class VertexIdxMap
         ,class EdgeIdxMap
-        ,class EdgeIsBorderMap
         >
-Edge_profile<ECM>::Edge_profile ( halfedge_descriptor  const& aV0V1
+  Edge_profile<ECM,VertexPointMap>::Edge_profile ( halfedge_descriptor  const& aV0V1
                                 , ECM&                    aSurface
                                 , VertexIdxMap     const& 
+                                , VertexPointMap const& aVertex_point_map
                                 , EdgeIdxMap       const&
-                                , EdgeIsBorderMap  const&
                                 , bool has_border
+
                                 )
   :
    mV0V1(aV0V1)
   ,mSurface(boost::addressof(aSurface))
+    , mvpm(aVertex_point_map)
   
 {
   CGAL_PROFILER("Edge_profile constructor calls");
@@ -53,8 +54,8 @@ Edge_profile<ECM>::Edge_profile ( halfedge_descriptor  const& aV0V1
   
   CGAL_assertion( mV0 != mV1 );
   
-  mP0 = get(vertex_point,surface_mesh(),mV0);
-  mP1 = get(vertex_point,surface_mesh(),mV1);
+  mP0 = get(vertex_point_map(),mV0);
+  mP1 = get(vertex_point_map(),mV1);
   
   mIsBorderV0V1 = is_border(v0_v1());
   mIsBorderV1V0 = is_border(v1_v0());
@@ -97,8 +98,8 @@ Edge_profile<ECM>::Edge_profile ( halfedge_descriptor  const& aV0V1
 }
 
 
-template<class ECM>
-void Edge_profile<ECM>::Extract_borders()
+  template<class ECM, class VertexPointMap>
+  void Edge_profile<ECM,VertexPointMap>::Extract_borders()
 {
   halfedge_descriptor e = mV0V1;
   halfedge_descriptor oe = opposite(e, surface_mesh());
@@ -130,8 +131,8 @@ void Edge_profile<ECM>::Extract_borders()
 
 // Extract all triangles (its normals) and vertices (the link) around the collapsing edge p_q
 //
-template<class ECM>
-void Edge_profile<ECM>::Extract_triangles_and_link()
+  template<class ECM, class VertexPointMap>
+  void Edge_profile<ECM,VertexPointMap>::Extract_triangles_and_link()
 {
   #ifdef CGAL_SMS_EDGE_PROFILE_ALWAYS_NEED_UNIQUE_VERTEX_IN_LINK
   std::set<vertex_descriptor> vertex_already_inserted;

@@ -7,8 +7,16 @@
 #include <CGAL/Homogeneous.h>
 #include <CGAL/MP_Float.h>
 
+#include <CGAL/AABB_tree.h>
+#include <CGAL/AABB_traits.h>
+#include <CGAL/AABB_face_graph_triangle_primitive.h>
+#include <CGAL/Polyhedron_3.h>
+#include <CGAL/point_generators_3.h>
+
 #include <iostream>
 #include <cassert>
+
+#include "create_bbox_mesh.h"
 
 const double epsilon = 0.001;
 
@@ -467,6 +475,84 @@ struct Test {
     check_intersection<S>  (box,R(P(0, 0.5,0),P(-0.5,0,0)));
   }
 
+  void Bbox_Tr() {
+    std::cout << "Bbox - Triangle\n";
+
+    typedef CGAL::Polyhedron_3<K> Polyhedron;
+    typedef CGAL::AABB_face_graph_triangle_primitive<const Polyhedron> Primitive;
+    typedef CGAL::AABB_traits<K, Primitive> Traits;
+    typedef CGAL::AABB_tree<Traits> Tree;
+
+    Bbox unit_bbox(-1., -1., -1.
+                   ,1.,  1.,  1.);
+    const Polyhedron unit_bbox_poly = create_bbox_mesh<Polyhedron>(unit_bbox);
+    const Tree tree(unit_bbox_poly.facets_begin(),
+                    unit_bbox_poly.facets_end(),
+                    unit_bbox_poly);
+
+    const Tr tr(P(-3. ,  0. ,   0.),
+                P(-2. ,  0.1,   0.),
+                P(-0.5,  3. ,   0.));
+
+    const bool b = CGAL::do_intersect(unit_bbox, tr);
+    assert(b == false);
+    assert(tree.do_intersect(tr) == b);
+
+    CGAL::Random_points_in_cube_3<P> r(10.);
+
+    std::size_t bbox_does_intersect_counter = 0;
+    std::size_t plane_does_intersect_counter = 0;
+    std::size_t do_intersect_counter = 0;
+    std::cerr << "Begin random testing...\n"
+              << "  (each 'o' in the following line is 1000 tests)\n  ";
+#if __OPTIMIZE__
+    const std::size_t nb_of_tests = 1000000;
+#else
+    const std::size_t nb_of_tests = 10000;
+#endif
+    for(std::size_t i = 0, end = nb_of_tests; i < end; ++i)
+    {
+      if(i % 1000 == 0) std::cerr << "o";
+      const P p0(*r++);
+      const P p1(*r++);
+      const P p2(*r++);
+      const Tr tr(p0, p1, p2);
+
+      const bool b = do_intersect(unit_bbox, tr);
+      if(b) ++do_intersect_counter;
+      const bool b_tree = tree.do_intersect(tr);
+      if(b != b_tree) {
+        std::stringstream err_msg;
+        err_msg.precision(17);
+        CGAL::set_pretty_mode(err_msg);
+        err_msg << "do_intersect(\n"
+                << "             " << unit_bbox << "\n,\n"
+                << "             " << tr
+                << "             ) = " << std::boolalpha << b << "\n"
+                << "but the same test with AABB tree gives: "
+                << std::boolalpha << b_tree << "\n";
+        CGAL_error_msg(err_msg.str().c_str());
+        std::exit(EXIT_FAILURE);
+      }
+      if(CGAL::do_overlap(unit_bbox, tr.bbox())) {
+        ++bbox_does_intersect_counter;
+        if(CGAL::do_intersect(unit_bbox, tr.supporting_plane())) {
+          ++plane_does_intersect_counter;
+        }
+      }
+      //      if();
+    } // end for-loop
+    std::cerr << "\n";
+    std::cerr << "                      Number of tests: "
+              << nb_of_tests << "\n";
+    std::cerr << "        Number of bbox-does-intersect: "
+              << bbox_does_intersect_counter << "\n";
+    std::cerr << "Number of bbox-and-plane-do-intersect: "
+              << plane_does_intersect_counter << "\n";
+    std::cerr << "              Number of intersections: "
+              << do_intersect_counter << "\n";
+  } // end function Bbox_Tr
+
   void run()
   {
     std::cout << "3D Intersection tests\n";
@@ -486,6 +572,7 @@ struct Test {
     R_R();
     Bbox_L();
     Bbox_R();
+    Bbox_Tr();
   }
 
 };

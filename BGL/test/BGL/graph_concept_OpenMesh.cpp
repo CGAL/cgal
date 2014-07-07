@@ -18,7 +18,7 @@
 //
 // Author(s)     : Philipp Möller, Andreas Fabri
 
-#include <boost/test/included/unit_test.hpp>
+#include <boost/test/unit_test.hpp>
 
 #include <CGAL/basic.h>
 #include <OpenMesh/Core/IO/MeshIO.hh>

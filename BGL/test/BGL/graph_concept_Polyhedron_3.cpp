@@ -18,9 +18,9 @@
 //
 // Author(s)     : Philipp Möller
 
-#include <boost/test/included/unit_test.hpp>
+#define BOOST_TEST_MAIN 1
+#include <boost/test/unit_test.hpp>
 
-#include <CGAL/basic.h>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/boost/graph/graph_concepts.h>
@@ -131,6 +131,9 @@ void runtime_check_halfedgegraph()
   BOOST_CHECK_EQUAL(num_faces(p), 4);
 }
 
+
+
+
 boost::unit_test::test_suite*
 init_unit_test_suite( int, char** const)
 {
@@ -142,6 +145,8 @@ init_unit_test_suite( int, char** const)
 
     return 0;
 }
+
+
 
 // int main()
 // {

@@ -205,25 +205,7 @@ triangle(const HalfedgeGraph& g,
 }
 
 
-/** 
- * Check if all faces in a \ref FaceListGraph are triangles.
- *
- * @tparam FaceListGraph Must be a model of \ref FaceListGraph.
- *
- * @return true, if all faces are triangles, false otherwise.
- */
-template<typename FaceListGraph>
-bool
-is_pure_triangle(const FaceListGraph& g)
-{
-  typedef boost::graph_traits<FaceListGraph> Traits;
-  typedef typename Traits::face_iterator face_iterator;
-  face_iterator fb, fe;
-  for(boost::tie(fb, fe) = faces(g); fb != fe; ++fb) {
-    if(boost::distance(halfedges_around_face(halfedge(*fb,g), g)) != 3) return false;
-  }
-  return true;
-}
+
 
 /// @}
 

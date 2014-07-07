@@ -72,6 +72,7 @@ namespace CGAL {
   enum edge_is_constrained_params_t  { edge_is_constrained_params } ;
   
 #if BOOST_VERSION >= 105100
+
   template <typename T, typename Tag, typename Base = boost::no_property>
   struct cgal_bgl_named_params : boost::bgl_named_params<T, Tag, Base>
   {
@@ -341,6 +342,14 @@ namespace CGAL {
   vertex_index_map(IndexMap const& p) 
   {
     typedef cgal_bgl_named_params<IndexMap, boost::vertex_index_t> Params;
+    return Params(p);
+  }
+  
+  template <typename IndexMap>
+  cgal_bgl_named_params<IndexMap, boost::halfedge_index_t>
+  halfedge_index_map(IndexMap const& p) 
+  {
+    typedef cgal_bgl_named_params<IndexMap, boost::halfedge_index_t> Params;
     return Params(p);
   }
   

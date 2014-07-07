@@ -23,12 +23,17 @@
 #include <boost/config.hpp>
 #include <boost/iterator/iterator_adaptor.hpp>
 #include <boost/iterator/transform_iterator.hpp>
+#include <boost/type_traits/remove_const.hpp>
 
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/properties.hpp>
 
 #include <CGAL/basic.h>
 #include <CGAL/boost/graph/iterator.h>
+
+#ifndef CGAL_NO_DEPRECATED_CODE
+#include <CGAL/boost/graph/halfedge_graph_traits.h>
+#endif
 
 namespace CGAL {
 
@@ -54,7 +59,7 @@ public:
   Prevent_deref(const I& i) : Base(i) {};
 private:
   friend class boost::iterator_core_access;
-  reference dereference() const { return const_cast<reference&>(this->base_reference()); }
+  reference dereference() const { return const_cast<typename boost::remove_reference<reference>::type&>(this->base_reference()); }
 };
 
 // a HDS_halfedge pretending to be an Edge
@@ -85,6 +90,11 @@ struct HDS_edge {
     return !(*this == other);
   }
 
+  friend bool operator<(const HDS_edge& a,const HDS_edge& b)
+  {
+    if(a==b) return false;
+    return a.halfedge_ < b.halfedge_;
+  }
 
   // forward some function to avoid boilerplate and typedefs inside
   // the free functions
@@ -182,6 +192,7 @@ public:
   typedef vertices_size_type      faces_size_type;
 
   static vertex_descriptor null_vertex() { return vertex_descriptor(); }
+  static halfedge_descriptor null_halfedge() { return halfedge_descriptor(); }
   static face_descriptor null_face() { return face_descriptor(); }
 };
 

@@ -1,4 +1,6 @@
-#include <boost/test/included/unit_test.hpp>
+
+#define BOOST_TEST_MAIN 1
+
 #include <boost/test/parameterized_test.hpp>
 #include <boost/test/test_case_template.hpp>
 
@@ -6,7 +8,7 @@
 
 #include <boost/unordered_set.hpp>
 
-typedef boost::unordered_set<unsigned int> id_map;
+typedef boost::unordered_set<std::size_t> id_map;
 
 template <typename Graph>
 void test_halfedge_around_vertex_iterator(const Graph& g)

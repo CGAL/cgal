@@ -38,9 +38,9 @@ namespace CGAL {
  *
  * \cgalModels `AABBPrimitiveWithSharedData`
  *
- *\tparam FaceGraph is a \cgal polyhedron.
- *\tparam VertexPointPMap must be set to `CGAL::Default`
- *        This parameter is useless for the moment and will be useful in an upcoming release of \cgal.
+ *\tparam FaceGraph is a model of the face graph concept.
+ *\tparam VertexPointPMap  is a property map with `boost::graph_traits<HalfedgeGraph>::%vertex_descriptor`
+ *   as key type and a \cgal Kernel `Point_3` as value type.
  *\tparam OneFaceGraphPerTree is either `CGAL::Tag_true` or `CGAL::Tag_false`.
  * In the former case, we guarantee that all the primitives will be from a
  * common polyhedron and some data will be factorized so that the size of
@@ -60,17 +60,13 @@ template < class FaceGraph,
            class CacheDatum=Tag_false >
 class AABB_face_graph_triangle_primitive
 #ifndef DOXYGEN_RUNNING
-: public AABB_primitive<typename boost::mpl::if_<
-                          typename boost::is_const<FaceGraph>::type,
-                          typename FaceGraph::Facet_const_handle,
-                          typename FaceGraph::Facet_handle
-                          >::type,
-                        Triangle_from_facet_handle_property_map<
+  : public AABB_primitive<typename boost::graph_traits<FaceGraph>::face_descriptor,
+                        Triangle_from_face_descriptor_property_map<
                           FaceGraph,
                           typename Default::Get<VertexPointPMap,
                                                 typename boost::property_map< FaceGraph,
                                                                               vertex_point_t>::type >::type>,
-                        One_point_from_facet_handle_property_map<
+                        One_point_from_face_descriptor_property_map<
                           FaceGraph,
                           typename Default::Get<VertexPointPMap,
                                                 typename boost::property_map< FaceGraph,
@@ -81,12 +77,9 @@ class AABB_face_graph_triangle_primitive
 {
   typedef typename Default::Get<VertexPointPMap, typename boost::property_map< FaceGraph, vertex_point_t>::type >::type VertexPointPMap_;
 
-  typedef typename boost::mpl::if_<
-                          typename boost::is_const<FaceGraph>::type,
-                          typename FaceGraph::Facet_const_handle,
-                          typename FaceGraph::Facet_handle >::type  Id_;
-  typedef Triangle_from_facet_handle_property_map<FaceGraph,VertexPointPMap_>  Triangle_property_map;
-  typedef One_point_from_facet_handle_property_map<FaceGraph,VertexPointPMap_> Point_property_map;
+  typedef typename boost::graph_traits<FaceGraph>::face_descriptor Id_;
+  typedef Triangle_from_face_descriptor_property_map<FaceGraph,VertexPointPMap_>  Triangle_property_map;
+  typedef One_point_from_face_descriptor_property_map<FaceGraph,VertexPointPMap_> Point_property_map;
 
   typedef AABB_primitive< Id_,
                           Triangle_property_map,
@@ -137,7 +130,7 @@ public:
             Triangle_property_map(&graph),
             Point_property_map(&graph) )
   {}
-#if 0
+#ifndef CGAL_NO_DEPRECATED_CODE
   // for backward compatibility with Polyhedron::facets_begin()
   AABB_face_graph_triangle_primitive(typename boost::graph_traits<FaceGraph>::face_descriptor fd, FaceGraph& graph)
     : Base( Id_(fd),

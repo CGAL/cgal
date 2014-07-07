@@ -31,12 +31,22 @@ namespace SMS = CGAL::Surface_mesh_simplification ;
 // BGL property map which indicates whether an edge is marked as non-removable
 //
 struct Border_is_constrained_edge_map{
-  typedef boost::graph_traits<Surface_mesh>::halfedge_descriptor key_type;
+  const Surface_mesh* sm;
+  typedef boost::graph_traits<Surface_mesh>::edge_descriptor key_type;
   typedef bool value_type;
   typedef value_type reference;
   typedef boost::readable_property_map_tag category;
-  friend bool get(Border_is_constrained_edge_map, key_type edge) {
-    return edge->is_border_edge();
+
+  Border_is_constrained_edge_map()
+  {}
+
+  Border_is_constrained_edge_map(const Surface_mesh& sm)
+    : sm(&sm)
+  {}
+
+  friend bool get(Border_is_constrained_edge_map m, key_type edge) {
+    return (face(halfedge(edge,*m.sm),*m.sm) == boost::graph_traits<Surface_mesh>::null_face()) 
+      || (face(opposite(halfedge(edge,*m.sm),*m.sm),*m.sm) == boost::graph_traits<Surface_mesh>::null_face());
   }
 };
 
@@ -91,7 +101,7 @@ int main( int argc, char** argv )
             ,stop
             ,CGAL::vertex_index_map(get(CGAL::vertex_external_index,surface_mesh))
                   .halfedge_index_map  (get(CGAL::halfedge_external_index  ,surface_mesh))
-                  .edge_is_constrained_map(Border_is_constrained_edge_map())
+                  .edge_is_constrained_map(Border_is_constrained_edge_map(surface_mesh))
                   .get_placement(Placement())
             );
 

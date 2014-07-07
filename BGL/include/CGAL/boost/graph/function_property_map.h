@@ -18,11 +18,13 @@
 // well to prevent it from affecting users.
 
 #include <boost/config.hpp>
-#include <boost/property_map/property_map.hpp>
 #include <boost/type_traits.hpp>
 #include <boost/utility/result_of.hpp>
 #include <boost/mpl/and.hpp>
 #include <boost/mpl/not.hpp>
+
+#include <CGAL/property_map.h>
+
 #include <utility>
 
 namespace CGAL {

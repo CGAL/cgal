@@ -20,7 +20,7 @@
 #ifndef CGAL_BOOST_GRAPH_BACKWARD_COMPATIBILITY_FUNCTIONS_H
 #define CGAL_BOOST_GRAPH_BACKWARD_COMPATIBILITY_FUNCTIONS_H
 
-namespace CGAL{
+namespace CGAL {
 
   template<class Graph>
   typename boost::graph_traits<Graph>::edge_descriptor
@@ -61,7 +61,14 @@ namespace CGAL{
     
     return edge(prev(opposite(h, g), g), g);
   }
-
+  
+   template<class Graph>
+   std::pair<typename CGAL::halfedge_graph_traits<Graph>::undirected_edge_iterator, typename CGAL::halfedge_graph_traits<Graph>::undirected_edge_iterator>
+   undirected_edges(const Graph& g)
+   {
+     return edges(g);
+   }
+  
 }  //end of namespace CGAL
 
 #endif //CGAL_BOOST_GRAPH_BACKWARD_COMPATIBILITY_FUNCTIONS_H

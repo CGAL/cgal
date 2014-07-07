@@ -81,7 +81,7 @@ bool handle_exists ( Iterator begin, Iterator end, Handle h )
 
 template <class ECM>
 struct No_constrained_edge_map{
-  typedef typename boost::graph_traits<ECM>::halfedge_descriptor key_type;
+  typedef typename boost::graph_traits<ECM>::edge_descriptor key_type;
   typedef bool value_type;
   typedef value_type reference;
   typedef boost::readable_property_map_tag category;

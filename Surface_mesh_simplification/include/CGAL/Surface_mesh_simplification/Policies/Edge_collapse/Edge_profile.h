@@ -29,20 +29,25 @@ namespace CGAL {
 namespace Surface_mesh_simplification
 {
 
-template<class ECM_>
+  template<class ECM_, class VertexPointMap_ = typename boost::property_map<ECM_, CGAL::vertex_point_t>::type>
 class Edge_profile
 {
 public:
 
   typedef ECM_ ECM ;
-    typedef boost::graph_traits<ECM>       GraphTraits ;
+  typedef VertexPointMap_ VertexPointMap;
+  typedef boost::graph_traits<ECM>       GraphTraits ;
   
   typedef typename GraphTraits::vertex_descriptor vertex_descriptor ;
-  typedef typename GraphTraits::halfedge_descriptor   halfedge_descriptor ;
+  typedef typename GraphTraits::face_descriptor face_descriptor ;
+  typedef typename GraphTraits::halfedge_descriptor halfedge_descriptor ;
 
-  typedef typename boost::property_map<ECM, CGAL::vertex_point_t>::type Vertex_point_pmap;
-  typedef typename boost::property_traits<Vertex_point_pmap>::value_type Point;
-    
+
+  //typedef typename boost::property_map<ECM, CGAL::vertex_point_t>::type Vertex_point_pmap;
+  typedef typename boost::property_traits<VertexPointMap>::value_type Point;
+  typedef typename Kernel_traits<Point>::Kernel Kernel;
+  typedef typename Kernel::FT FT;
+
 public:
 
   struct Triangle
@@ -73,13 +78,12 @@ public :
   
   template<class VertexIdxMap
           ,class EdgeIdxMap
-          ,class EdgeIsBorderMap
           >
   Edge_profile ( halfedge_descriptor  const& aV0V1
                , ECM&                    aSurface
                , VertexIdxMap     const& aVertex_index_map
+               , VertexPointMap   const& aVertex_point_map
                , EdgeIdxMap       const& aEdge_index_map
-               , EdgeIsBorderMap  const& aEdge_is_border_map
                , bool has_border 
                ) ;
      
@@ -124,6 +128,7 @@ public :
   ECM& surface() const { return *mSurface ; } 
   ECM& surface_mesh() const { return *mSurface ; } 
  
+  VertexPointMap vertex_point_map() const { return mvpm ; }
   
 public :
 
@@ -142,7 +147,7 @@ private:
   
   bool is_border(halfedge_descriptor e) const
   {
-    return get(CGAL::halfedge_is_border, surface_mesh(), e);
+    return face(e,*mSurface) == boost::graph_traits<ECM>::null_face();
   }
    
 
@@ -151,7 +156,7 @@ private:
   void Extract_triangles_and_link() ;
     
 private:
- 
+
   halfedge_descriptor mV0V1;
   halfedge_descriptor mV1V0;
 
@@ -177,7 +182,7 @@ private:
   Triangle_vector          mTriangles ;
   
   ECM* mSurface ;
-  
+  VertexPointMap mvpm;  
 } ;
   
 } // namespace Surface_mesh_simplification

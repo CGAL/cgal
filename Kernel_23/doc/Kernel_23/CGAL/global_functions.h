@@ -2207,7 +2207,8 @@ const CGAL::Point_3<Kernel>&s);
 
 /*!
 returns `CGAL::NEGATIVE` if `u`, `v` and `w` are negatively oriented,
-and returns `CGAL::COPLANAR` if `u`, `v` and `w` are coplanar.
+`CGAL::POSITIVE` if `u`, `v` and `w` are positively oriented,
+and `CGAL::COPLANAR` if `u`, `v` and `w` are coplanar.
 */
 template <typename Kernel>
 Orientation orientation(const CGAL::Vector_3<Kernel> &u,

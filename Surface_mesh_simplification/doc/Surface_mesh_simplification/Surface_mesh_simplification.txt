@@ -288,6 +288,17 @@ and how to use a visitor object to track the simplification process.
 
 \cgalExample{Surface_mesh_simplification/edge_collapse_enriched_polyhedron.cpp}
 
+\subsection Surface_mesh_simplificationExampleOpenMesh Example for Simplification of OpenMesh
+
+The following example shows how the mesh simplification package can be applied
+on a mesh data structure which is not part of \cgal, but a model of `FaceGraph`.
+
+What is particular in this example is the property map that allows to associate
+3D \cgal points to the vertices.
+
+\cgalExample{Surface_mesh_simplification/edge_collapse_OpenMesh.cpp}
+
+
 \subsection Surface_mesh_simplificationExamplewithedges Example with Edges Marked as Non-Removable
 
 The following examples show how to use the optional named parameter `edge_is_constrained_map` to prevent

@@ -8,7 +8,6 @@
 #include <boost/assign.hpp>
 #include <boost/mpl/list.hpp>
 
-#include <CGAL/basic.h>
 #include <CGAL/Simple_cartesian.h>
 
 #include <CGAL/Polyhedron_items_with_id_3.h>
@@ -50,7 +49,7 @@ typedef CGAL::Surface_mesh<Point_3> SM;
 typedef OpenMesh::PolyMesh_ArrayKernelT</* MyTraits*/> OMesh;
 #endif
 
-#include <CGAL/BGL/Helper.h>
+#include <CGAL/boost/graph/helpers.h>
 
 // helper to easily define all graph_traits members
 #define CGAL_GRAPH_TRAITS_MEMBERS(T)                                    \
@@ -110,8 +109,6 @@ bool read_a_mesh(Polyhedron& p, const std::string& str) {
   bool success = in.good();
   if(success)
     set_halfedgeds_items_id(p);
-  // we also need to fix up the halfedge of each vertex
-  CGAL::internal::set_constant_vertex_is_border(p);
   return success;
 }
 
@@ -150,8 +147,6 @@ struct Surface_fixture_1 {
     BOOST_CHECK(CGAL::is_valid(m));
     typename boost::property_map<Graph, CGAL::vertex_point_t>::const_type
       pm = get(CGAL::vertex_point, const_cast<const Graph&>(m));
-    typename boost::property_map<Graph, CGAL::halfedge_is_border_t>::const_type
-      bm = get(CGAL::halfedge_is_border, m);
 
     typename boost::graph_traits<Graph>::vertex_iterator vb, ve;
     for(boost::tie(vb, ve) = vertices(m); vb != ve; ++vb) {
@@ -172,12 +167,12 @@ struct Surface_fixture_1 {
     BOOST_CHECK(x != boost::graph_traits<Graph>::null_vertex());
     BOOST_CHECK(y != boost::graph_traits<Graph>::null_vertex());
 
-    f1 = get(bm,halfedge(u, m)) ? face(opposite(halfedge(u, m), m), m) : face(halfedge(u, m), m);
+    f1 = is_border(halfedge(u, m),m) ? face(opposite(halfedge(u, m), m), m) : face(halfedge(u, m), m);
     BOOST_CHECK(f1 != boost::graph_traits<Graph>::null_face());
     CGAL::Halfedge_around_face_iterator<Graph> hafib, hafie;
     for(boost::tie(hafib, hafie) = halfedges_around_face(halfedge(f1, m), m); hafib != hafie; ++hafib) 
     {
-      if(!get(bm,opposite(*hafib, m)))
+      if(! is_border(opposite(*hafib, m), m))
         f2 = face(opposite(*hafib, m), m);
     }
     typename boost::graph_traits<Graph>::face_iterator fb, fe;
@@ -202,8 +197,6 @@ struct Surface_fixture_2 {
 
     typename boost::property_map<Graph, CGAL::vertex_point_t>::const_type
       pm = get(CGAL::vertex_point, const_cast<const Graph&>(m));
-    typename boost::property_map<Graph, CGAL::halfedge_is_border_t>::const_type
-      bm = get(CGAL::halfedge_is_border, m);
 
     typename boost::graph_traits<Graph>::vertex_iterator vb, ve;
     for(boost::tie(vb, ve) = vertices(m); vb != ve; ++vb) {
@@ -227,25 +220,25 @@ struct Surface_fixture_2 {
     bool found;
     boost::tie(h, found) = halfedge(x, v, m);
     BOOST_CHECK(found);
-    BOOST_CHECK(!get(bm,h));
+    BOOST_CHECK(! is_border(h,m));
     f1 = face(h, m);
     BOOST_CHECK(f1 != boost::graph_traits<Graph>::null_face());
 
     boost::tie(h, found) = halfedge(v, u, m);
     BOOST_CHECK(found);
-    BOOST_CHECK(!get(bm,h));
+    BOOST_CHECK(!is_border(h,m));
     f2 = face(h, m);
     BOOST_CHECK(f2 != boost::graph_traits<Graph>::null_face());
 
     boost::tie(h, found) = halfedge(u, w, m);
     BOOST_CHECK(found);
-    BOOST_CHECK(!get(bm,h));
+    BOOST_CHECK(!is_border(h,m));
     f3 = face(h, m);
     BOOST_CHECK(f3 != boost::graph_traits<Graph>::null_face());
 
     boost::tie(h, found) = halfedge(w, x, m);
     BOOST_CHECK(found);
-    BOOST_CHECK(!get(bm,h));
+    BOOST_CHECK(!is_border(h,m));
     f4 = face(h, m);
     BOOST_CHECK(f4 != boost::graph_traits<Graph>::null_face());
   }
@@ -265,8 +258,6 @@ struct Surface_fixture_3 {
 
     typename boost::property_map<Graph, CGAL::vertex_point_t>::const_type
       pm = get(CGAL::vertex_point, const_cast<const Graph&>(m));
-    typename boost::property_map<Graph, CGAL::halfedge_is_border_t>::const_type
-      bm = get(CGAL::halfedge_is_border, m);
 
     typename boost::graph_traits<Graph>::vertex_iterator vb, ve;
     for(boost::tie(vb, ve) = vertices(m); vb != ve; ++vb) {
@@ -290,8 +281,8 @@ struct Surface_fixture_3 {
     BOOST_CHECK(y != boost::graph_traits<Graph>::null_vertex());
     BOOST_CHECK(z != boost::graph_traits<Graph>::null_vertex());
 
-    f1 = get(bm,halfedge(u, m)) ? face(opposite(halfedge(u, m), m), m) : face(halfedge(u, m), m);
-    f2 = get(bm,halfedge(u, m)) ? face(opposite(halfedge(z, m), m), m) : face(halfedge(z, m), m);
+    f1 = is_border(halfedge(u, m),m) ? face(opposite(halfedge(u, m), m), m) : face(halfedge(u, m), m);
+    f2 = is_border(halfedge(u, m),m) ? face(opposite(halfedge(z, m), m), m) : face(halfedge(z, m), m);
 
     BOOST_CHECK(f1 != boost::graph_traits<Graph>::null_face());
     BOOST_CHECK(f2 != boost::graph_traits<Graph>::null_face());
@@ -313,13 +304,11 @@ struct Surface_fixture_4 {
 
    typename boost::property_map<Graph, CGAL::vertex_point_t>::const_type
       pm = get(CGAL::vertex_point, const_cast<const Graph&>(m));
-    typename boost::property_map<Graph, CGAL::halfedge_is_border_t>::const_type
-      bm = get(CGAL::halfedge_is_border, m);
 
     int found = 0;
     typename boost::graph_traits<Graph>::halfedge_iterator hb, he;
     for(boost::tie(hb, he) = halfedges(m); hb != he; ++hb) {
-      if(get(bm, *hb)){
+      if(is_border(*hb,m)){
         if(get(pm, target(*hb,m)) == Point_3(0,0,0)){
           if(found == 0){
             h1 = *hb;
@@ -350,13 +339,11 @@ struct Surface_fixture_5 {
 
    typename boost::property_map<Graph, CGAL::vertex_point_t>::const_type
       pm = get(CGAL::vertex_point, const_cast<const Graph&>(m));
-    typename boost::property_map<Graph, CGAL::halfedge_is_border_t>::const_type
-      bm = get(CGAL::halfedge_is_border, m);
 
     int found = 0;
     typename boost::graph_traits<Graph>::halfedge_iterator hb, he;
     for(boost::tie(hb, he) = halfedges(m); hb != he; ++hb) {
-      if(get(bm, *hb)){
+      if(is_border(*hb,m)){
         if(get(pm, target(*hb,m)) == Point_3(2,1,0)){
           h1 = *hb;
           found++;
@@ -380,10 +367,6 @@ struct Surface_fixture_6 {
     BOOST_CHECK(read_a_mesh(m, "data/quad.off"));
     BOOST_CHECK(CGAL::is_valid(m));
 
-    typename boost::property_map<Graph, CGAL::halfedge_is_border_t>::const_type
-      bm = get(CGAL::halfedge_is_border, m);
-
-    int found = 0;
     typename boost::graph_traits<Graph>::halfedge_descriptor h;
     
     h1 = halfedge(*faces(m).first, m);
