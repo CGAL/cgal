@@ -632,8 +632,6 @@ public:
   refine_sequentially_up_to_N_vertices(Mesh_visitor visitor,
                                             int approx_max_num_mesh_vertices)
   {
-    int count = 0;
-
     while(! is_algorithm_done()
       && triangulation().number_of_vertices() < approx_max_num_mesh_vertices)
     {
@@ -847,8 +845,6 @@ public:
 
     CGAL_assertion_msg(triangulation().get_lock_data_structure() == 0,
       "In refine_sequentially_up_to_N_vertices, the triangulation's locking data structure should be NULL");
-
-    int count = 0;
 
     while(! is_algorithm_done()
       && triangulation().number_of_vertices() < approx_max_num_mesh_vertices)

@@ -750,7 +750,6 @@ private:
   void insert_bad_facet(Facet& facet, const Quality& quality)
   {
     // Insert the facet and its mirror
-    Facet mirror = mirror_facet(facet);
     this->add_bad_element(
       this->from_facet_to_refinement_queue_element(facet, mirror_facet(facet)),
       quality);
