@@ -20,19 +20,21 @@ if ( CGAL_FOUND )
   include( ${CGAL_USE_FILE} )
 
   include( CGAL_CreateSingleSourceCGALProgram )
-
+  
   find_package(Eigen3 3.1.0) 
   if (EIGEN3_FOUND) 
     include( ${EIGEN3_USE_FILE} ) 
+    include_directories (BEFORE "../../include")
+
+    create_single_source_cgal_program( "barycentric_subdivision.cpp" )
+    create_single_source_cgal_program( "delaunay_triangulation.cpp" )
+    create_single_source_cgal_program( "triangulation.cpp" )
+    create_single_source_cgal_program( "triangulation_data_structure_dynamic.cpp" )
+    create_single_source_cgal_program( "triangulation_data_structure_static.cpp" )
+
+  else()
+    message(STATUS "NOTICE: Some of the executables in this directory need Eigen 3.1 (or greater) and will not be compiled.")
   endif()
-
-  include_directories (BEFORE "../../include")
-
-  create_single_source_cgal_program( "barycentric_subdivision.cpp" )
-  create_single_source_cgal_program( "delaunay_triangulation.cpp" )
-  create_single_source_cgal_program( "triangulation.cpp" )
-  create_single_source_cgal_program( "triangulation_data_structure_dynamic.cpp" )
-  create_single_source_cgal_program( "triangulation_data_structure_static.cpp" )
 
 else()
   

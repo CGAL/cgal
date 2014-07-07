@@ -24,17 +24,15 @@ if ( CGAL_FOUND )
   find_package(Eigen3 3.1.0) 
   if (EIGEN3_FOUND) 
     include( ${EIGEN3_USE_FILE} ) 
+    include_directories (BEFORE "../../include")
+    include_directories (BEFORE "include")
+    create_single_source_cgal_program( "delaunay.cpp" )
+
+  else()
+    message(STATUS "NOTICE: Some of the executables in this directory need Eigen 3.1 (or greater) and will not be compiled.")
   endif()
 
-  include_directories (BEFORE "../../include")
-
-    include_directories (BEFORE "include")
-
-  create_single_source_cgal_program( "delaunay.cpp" )
-
 else()
-  
     message(STATUS "This program requires the CGAL library, and will not be compiled.")
-  
 endif()
 

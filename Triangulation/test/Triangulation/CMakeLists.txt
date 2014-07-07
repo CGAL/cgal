@@ -25,15 +25,21 @@ if ( CGAL_FOUND )
   if (EIGEN3_FOUND) 
     include( ${EIGEN3_USE_FILE} ) 
   endif()
-
-  include_directories (BEFORE "../../include")
-
+  
+  find_package(Eigen3 3.1.0) 
+  if (EIGEN3_FOUND) 
+    include( ${EIGEN3_USE_FILE} ) 
+    include_directories (BEFORE "../../include")
     include_directories (BEFORE "include")
 
-  create_single_source_cgal_program( "test_delaunay.cpp" )
-  create_single_source_cgal_program( "test_tds.cpp" )
-  create_single_source_cgal_program( "test_torture.cpp" )
-  create_single_source_cgal_program( "test_triangulation.cpp" )
+    create_single_source_cgal_program( "test_delaunay.cpp" )
+    create_single_source_cgal_program( "test_tds.cpp" )
+    create_single_source_cgal_program( "test_torture.cpp" )
+    create_single_source_cgal_program( "test_triangulation.cpp" )
+
+  else()
+    message(STATUS "NOTICE: Some of the executables in this directory need Eigen 3.1 (or greater) and will not be compiled.")
+  endif()
 
 else()
   
