@@ -1050,17 +1050,36 @@ public:
       CGAL_precondition(compare_y_at_x(tgt, xcv) == EQUAL);
       
       //check if the src and the tgt conform to the direction of xcv
-      if( xcv.is_directed_right() )
+      // if( xcv.is_directed_right() )
+      // {
+      //   CGAL_precondition(tgt.x() > src.x());
+      // }
+
+      // if( !xcv.is_directed_right() )
+      // {
+      //   CGAL_precondition( tgt.x() < src.x() );
+      // }
+
+      // X_monotone_curve_2 trimmed_segment = X_monotone_curve_2(src, tgt);
+
+      // exchange src and tgt IF they do not conform with the direction
+      X_monotone_curve_2 trimmed_segment;
+
+      if( xcv.is_directed_right() && tgt.x() < src.x() )
       {
-        CGAL_precondition(tgt.x() > src.x());
+        trimmed_segment = X_monotone_curve_2(tgt, src);
       }
 
-      if( !xcv.is_directed_right() )
+      else if( !xcv.is_directed_right() && tgt.x() > src.x())
       {
-        CGAL_precondition( tgt.x() < src.x() );
+        trimmed_segment = X_monotone_curve_2(tgt, src);
+      }
+
+      else
+      {
+        trimmed_segment = X_monotone_curve_2(src, tgt);
       }
       
-      X_monotone_curve_2 trimmed_segment = X_monotone_curve_2(src, tgt);
       return (trimmed_segment);
     }
 
