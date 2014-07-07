@@ -1,13 +1,10 @@
 /// \defgroup PkgReconstructionSimplification2 2D Reconstruction Simplification Reference
-/// \defgroup PkgReconstructionSimplification2Concepts Concepts
-/// \ingroup PkgReconstructionSimplification2
 /*!
 \addtogroup PkgReconstructionSimplification2
-\todo check generated documentation
 \cgalPkgDescriptionBegin{2D Reconstruction Simplification, PkgReconstructionSimplification2Summary}
 \cgalPkgPicture{overview.png}
-\cgalPkgSummaryBegin
-\cgalPkgAuthor{ Fernando de Goes, Pierre Alliez, Ivo Vigan}
+\cgalPkgSummaryBegin
+\cgalPkgAuthor{Fernando de Goes, Pierre Alliez, Ivo Vigan}
 \cgalPkgDesc{This package provides an algorithm to simplify and reconstruct a shape form a noisy point set in the plane. It iteratively builds a simplified output simplex which approximates the input points in a fine to coarse manner.}
 \cgalPkgManuals{Chapter_2D_Reconstruction_Simplification, PkgReconstructionSimplification2}
 \cgalPkgSummaryEnd
@@ -16,7 +13,6 @@
 \cgalPkgDependsOn{\ref PkgTriangulation2}
 \cgalPkgBib{cgal:rec-simp2-14x}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
-\cgalPkgDemo{XXXX.zip}
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd
 
@@ -28,7 +24,7 @@
 
 
 ## Classes ##
-- `CGAL::Reconstruction_simplification_2<Kernel, InputIterator, PointPMap, MassPMap>
+- `CGAL::Reconstruction_simplification_2<Kernel, InputIterator, PointPMap, MassPMap>`
 
 */
 

@@ -52,17 +52,18 @@ namespace CGAL {
 \brief The class `Reconstruction_simplification_2` is the base class
 designed to execute the reconstruction and simplification tasks.
 
-\details This class takes as input a collection of point-mass pairs $.
+\details This class takes as input a collection of point-mass pairs, where both
+the points and their masses are accessed using PropertyMaps.
 
 
-\tparam Kernel is the geometric kernel, used for the reconstruction and simplification task.
+\tparam Kernel is the geometric kernel, used for the reconstruction and
+					simplification task.
 
 \tparam InputIterator is the iterator type of the algorithm input.
 
-\tparam PointPMap is a PropertyMap for accessing the input points.
+\tparam PointPMap is a model of ReadablePropertyMap with a value_type = Point_2
 
-\tparam MassPMap  is a PropertyMap for accessing the input points'
-				  mass information.
+\tparam MassPMap   is a model of ReadablePropertyMap with a value_type = FT
 
  */
 template<class Kernel, class InputIterator, class PointPMap, class MassPMap>

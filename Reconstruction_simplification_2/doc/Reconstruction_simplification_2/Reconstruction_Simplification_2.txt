@@ -1,7 +1,7 @@
 namespace CGAL {
 /*!
 
-\mainpage User Manual 
+\mainpage 2D Reconstruction Simplification
 \anchor Chapter_2D_Reconstruction_Simplification
 \cgalAutoToc
 
@@ -25,7 +25,7 @@ The algorithm can be summarized as: "Considering S as a measure mu consisting of
 
 It performs a course to fine simplification of the output simplex. It starts by putting a bounding box around the input points S and computes the Delaunay Triangulation T_0 on S. T_0 is the first output simplex, which is made courser in subsequent iterations by repeated edge contractions. To chose the next edge, a contraction is  simulated for each feasible edge, i.e., edges which neither introduce overlaps nor fold-overs in the triangulation. The next edge e for contraction is chosen according to the overall cost of the transportation plan T \ e.
 
-The transportation plan is approximated by assigning each input point temporarily to a closest simplex edge. The input point is then peramnetly assigned to the edge if and only if the corresponding transportation cost is less than the transportation cost for each of the two vertices of the edge. Otherwise it is assigned to the cheaper of the two vertices. 
+The transportation plan is approximated by assigning each input point temporarily to a closest simplex edge. The input point is then permanently assigned to the edge if and only if the corresponding transportation cost is less than the transportation cost for each of the two vertices of the edge. Otherwise it is assigned to the cheaper of the two vertices. 
 
 This sequence of edge contraction and transportation plan update is repeated until the desired number of vertices, specified by the users has been reached. 
 
@@ -37,61 +37,31 @@ After that, edges which carry little mass can be filtered out.
 
 \section 2D_Reconstruction_SimplificationOverview Overview of the Reconstruction Process
 
-The task addressed is to reconstruct a shape from noisy data $S$ in $R^2$, i.e. give a (noisy) set of points, find a shape which best approximates the non-noise subset of S. The related task of simplifying a shape finds an approximation of the original shape using simpler curves. While previous works address these two issues sequentially, they are performed jointly using a unified framework based on optimal transport of measures. This new method provides benefits such as robustness to noise, preservation of sharp features and boundaries. It furthermore guarantees that the output is a simplicial complex. Transportation theory studies optimal transportations between a set M of n sources and a set F of n targets (both can for example be pointsets in R^2). Given a cost function c : R^2 x R^2 -> R^+, the goal is to find a bijection between M and F such that the sum of the costs c gets minimized. The optimal transport problem can also be defined between measures, and the paper views reconstruction and simplification tasks as such a transportation problem, where the input points are Dirac measure and the reconstructed simplicial complex is the support of a piecewise uniform measure. Given this theoretical background the algorithm then performs edge contractions in a greedy fashion w.r.t. the transportation cost, until the desired number of vertices are reached.In both cases the operation removes the edge `e` along with the 2 triangles 
-adjacent to it.
-
-This package uses the halfedge-collapse operation, which is implemented by removing,
-additionally, 1 vertex (`v`) and 2 edges, one per adjacent triangle.
-It optionally moves the remaining vertex (`w`) into a new position, 
-called <I>placement</I>, in which case the net effect is the same as in
-the edge-collapse operation.
+The task addressed is to reconstruct a shape from noisy data $S$ in $R^2$, i.e. give a (noisy) set of points, find a shape which best approximates the non-noise subset of $S$. The related task of simplifying a shape finds an approximation of the original shape using simpler curves. While previous works address these two issues sequentially, they are performed jointly using a unified framework based on optimal transport of measures. This new method provides benefits such as robustness to noise, preservation of sharp features and boundaries. It furthermore guarantees that the output is a simplicial complex. Transportation theory studies optimal transportations between a set M of n sources and a set $F$ of n targets (both can for example be point sets in $R^2$). Given a cost function $c : R^2 x R^2 -> R^+$, the goal is to find a bijection between M and F such that the sum of the costs c gets minimized. The optimal transport problem can also be defined between measures, and the paper views reconstruction and simplification tasks as such a transportation problem, where the input points are Dirac measure and the reconstructed simplicial complex is the support of a piecewise uniform measure. Given this theoretical background the algorithm then performs edge contractions in a greedy fashion w.r.t. the transportation cost, until the desired number of vertices are reached.
 
 
-\section 2D_Reconstruction_SimplificationTrans Transportation Cost
+\section 2D_Reconstruction_SimplificationTrans Optimal Transport Formulation
+
+The quality of an output simplex is measured as the total <I>transportation cost</I> of the input to the assigned simplex vertices and edges.
+For the transportation cost, the  <I>2-Wasserstein metric</I> is chosen which is also known the <I>Earth Mover Distance</I>, and intuitively 
+corresponds to the minimum cost of turning a (unit) pile of sand into a given shape, where the cost is measures as the $L_2$ distances. 
+
+\subsection 2D_Reconstruction_SimplificationTransCost Transportation Plan & Cost from Points to Simplices
+
+Assuming that the algorithm is given an output simplex $T$, and a <I>point-to-simplex</I> assignment which maps every input point to either an edge or a vertex of $T$, 
+the total transportation cost is then computed using the following rules. For a point to vertex assignment, the cost is simply the sum of the weighted $L_2$-distances of all the points
+assigned to the given vertex. 
+
+For an edge of the simplex, the optimal plan and its cost is computed indirectly, by decomposing the transportation plan into a tangential and normal component.  TODO: CONTINUE
+
+
+
 
 
 \section 2D_Reconstruction_SimplificationAPI API
 
-\subsection Surface_mesh_simplificationAPIOverview API Overview
-
-Since the algorithm is free from robustness issues there is no need for exact predicates nor constructions and `Simple_cartesian<double>` can be used safely.
-\cgalFootnote{In the current version, 3.3, the LindstromTurk policies are not implemented for homogeneous coordinates, so a %Cartesian kernel must be used.}
-
-The simplification algorithm is implemented as the free template function 
-`Surface_mesh_simplification::edge_collapse()`. The function has two mandatory and several optional parameters.
-
-\subsection Surface_mesh_simplificationMandatoryParameters Mandatory Parameters
-
-There are two main parameters to the algorithm: the surface mesh to be simplified (in-place) and the stop predicate.
-
-The surface mesh to simplify must be a model of the `EdgeCollapsableSurfaceMesh` concept. 
-Many concrete surface mesh types, such as `Polyhedron_3` with only triangular faces,
-become models of that concept via a technique known as 
-<I>external adaptation</I>, which is described in \cgalCite{cgal:sll-bgl-02}
-and this <span class="textsc">Bgl</span> web page: <A HREF="http://www.boost.org/libs/graph/doc/leda_conversion.html"><TT>http://www.boost.org/libs/graph/doc/leda_conversion.html</TT></A>
-
-External adaptation is a way to add an interface to an 
-object without coercing the type of the object (which happens when you adapt it by means 
-of a wrapper). That is, the formal parameter to the `edge_collapse` function that 
-implements the simplification is the concrete surface mesh object itself, not an adaptor 
-which delegates the functionality to the concrete type.
-
-The stop predicate is called after each edge is selected for processing, <I>before</I> 
-it is classified as collapsible or not (thus before it is collapsed). If the stop predicate 
-returns `true` the algorithm terminates.
-
-\subsection Surface_mesh_simplificationOptionalNamed Optional Named Parameters
-
-The notion of <I>named parameters</I> was also introduced in the <span class="textsc">Bgl</span>. You can read about it in \cgalCite{cgal:sll-bgl-02} or the following site: <A HREF="http://www.boost.org/libs/graph/doc/bgl_named_params.html"><TT>http://www.boost.org/libs/graph/doc/bgl_named_params.html</TT></A>. Named parameters allow the user to specify only those parameters which are really needed, by name, making the parameter ordering unimportant.
-
-Say there is a function `f()` that takes 3 parameters called `name`, `age` and `gender`, and you have variables `n,a and g` to pass as parameters to that function. Without named parameters, you would call it like this: `f(n,a,g)`, but with named parameters, you call it like this: `f(name(n).age(a).gender(g))`.
-
-That is, you give each parameter a name by wrapping it into a function whose name matches that of the parameter. The entire list of named parameters is really a composition of function calls separated by a dot (\f$ .\f$). Thus, if the function takes a mix of mandatory and named parameters, you use a comma to separate the last non-named parameter from the first named parameters, like this:
-
-`f(non_named_par0, non_named_pa1, name(n).age(a).gender(g)) `
-
-When you use named parameters, the ordering is irrelevant, so this: `f(name(n).age(a).gender(g))` is equivalent to this:
-`f(age(a).gender(g).name(n))`, and you can just omit any named parameter that has a default value.
+The API design is chosen in such a way that most of the implementation details are hidden from the user, i.e., the only class
+exposed to the user is the <I> Reconstruction_simplification_2</I>  class.
 
 \subsection 2D_Reconstruction_SimplificationSample Sample Call
 
