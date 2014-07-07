@@ -10,6 +10,7 @@
 #include <CGAL/boost/graph/properties_Polyhedron_3.h>
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/result_of.h>
+#include <CGAL/Polyhedron_shortest_path/Internal/misc_functions.h>
 
 #ifndef CGAL_POLYHEDRON_SHORTEST_PATH_INTERNAL_FUNCTION_OBJECTS_H
 #define CGAL_POLYHEDRON_SHORTEST_PATH_INTERNAL_FUNCTION_OBJECTS_H
@@ -93,198 +94,23 @@ public:
   {
     Vector_3 v01 = t3.vertex(edgeIndex + 1) - t3.vertex(edgeIndex + 0);
     Vector_3 v02 = t3.vertex(edgeIndex + 2) - t3.vertex(edgeIndex + 0);
-    
+
     FT scalePoint = (v01 * v02) / (v01 * v01);
     Point_3 projectedLocation3d = t3.vertex(edgeIndex) + (scalePoint * v01);
     FT triangleHeight = CGAL::sqrt(m_compute_squared_distance_3(projectedLocation3d, t3.vertex(edgeIndex + 2)));
 
     Vector_2 edgeVector = segment.to_vector();
     Point_2 projectionPoint = segment.start() + (segment.to_vector() * scalePoint);
-    
+
     Vector_2 perpendicularEdgeVector(-edgeVector[1], edgeVector[0]);
     perpendicularEdgeVector = perpendicularEdgeVector / CGAL::sqrt(perpendicularEdgeVector.squared_length());
-    
+
     Point_2 points[3];
     points[edgeIndex] = segment.start();
     points[(edgeIndex + 1) % 3] = segment.end();
     points[(edgeIndex + 2) % 3] = segment.start() + (edgeVector * scalePoint) + (perpendicularEdgeVector * triangleHeight);
+
     return Triangle_2(points[0], points[1], points[2]);
-  }
-};
-
-template <class K>
-class Compare_relative_intersection_along_segment_2
-{
-public:
-  typedef typename K::FT FT;
-  typedef typename K::Ray_2 Ray_2;
-  typedef typename K::Vector_2 Vector_2;
-  typedef typename K::Triangle_2 Triangle_2;
-  typedef typename K::Point_2 Point_2;
-  typedef typename K::Segment_2 Segment_2;
-  typedef typename K::Line_2 Line_2;
-  
-  typedef typename K::Compute_squared_distance_2 Compute_squared_distance_2;
-  typedef typename K::Intersect_2 Intersect_2;
- 
-  
-private:
-  Compute_squared_distance_2 m_compute_squared_distance_2;
-  Intersect_2 m_intersect_2;
-  
-public:
-  Compare_relative_intersection_along_segment_2()
-  {
-  }
-  
-  Compare_relative_intersection_along_segment_2(const Compute_squared_distance_2& cds, const Intersect_2& i2)
-    : m_compute_squared_distance_2(cds)
-    , m_intersect_2(i2)
-  {
-  }
-
-  CGAL::Comparison_result operator () (const Segment_2& s1, const Line_2& l1, const Segment_2& s2, const Line_2& l2)
-  {
-    typedef typename cpp11::result_of<Intersect_2(Segment_2, Line_2)>::type SegmentLineIntersectResult;
-
-    SegmentLineIntersectResult s1l1Intersection = m_intersect_2(s1, l1);
-    Point_2 p1;
-
-    if (s1l1Intersection)
-    {
-      Point_2* result = boost::get<Point_2>(&*s1l1Intersection);
-      
-      if (result)
-      {
-        p1 = *result;
-       
-      }
-      else
-      {
-        assert(false && "Ray entering triangle must not be parallel to entry segment.");
-      }
-    }
-    else
-    {
-      std::cerr << "Segment-Line intersection failed: " << std::endl;
-      std::cerr << s1 << std::endl;
-      std::cerr << l1.projection(s1.source()) << std::endl;
-      std::cerr << l1.projection(s1.target()) << std::endl;
-      
-      if (m_compute_squared_distance_2(l1.projection(s1.source()), s1.source()) < 0.0000001)
-      {
-        p1 = s1.source();
-      }
-      else if (m_compute_squared_distance_2(l1.projection(s1.target()), s1.target()) < 0.0000001)
-      {
-        p1 = s1.target();
-      }
-      else
-      {
-        typedef typename cpp11::result_of<Intersect_2(Line_2, Line_2)>::type LineLineIntersectResult;
-
-        LineLineIntersectResult left2 = m_intersect_2(s1.supporting_line(), l1);
-        
-        if (left2)
-        {
-          Point_2* result = boost::get<Point_2>(&*left2);
-        
-          if (result)
-          {
-            std::cerr << "Point of Line-Line intersection: " << *result << std::endl;
-            p1 = *result;
-          }
-          else
-          {
-            assert(false && "This is dumb");
-          }
-        }
-        else
-        {
-          assert(s1l1Intersection && "Ray must enter triangle via entry segment.");
-        }
-      }
-    }
-    
-    SegmentLineIntersectResult s2l2Intersection = m_intersect_2(s2, l2);
-    Point_2 p2;
-
-    if (s2l2Intersection)
-    {
-      Point_2* result = boost::get<Point_2>(&*s2l2Intersection);
-      
-      if (result)
-      {
-        p2 = *result;
-       
-      }
-      else
-      {
-        assert(false && "Ray entering triangle must not be parallel to entry segment.");
-      }
-    }
-    else
-    {
-      std::cerr << "Segment-Line intersection failed: " << std::endl;
-      std::cerr << s2 << std::endl;
-      std::cerr << l2.projection(s2.source()) << std::endl;
-      std::cerr << l2.projection(s2.target()) << std::endl;
-
-      if (m_compute_squared_distance_2(l2.projection(s2.source()), s2.source()) < 0.0000001)
-      {
-        p2 = s2.source();
-      }
-      else if (m_compute_squared_distance_2(l2.projection(s2.target()), s2.target()) < 0.0000001)
-      {
-        p2 = s2.target();
-      }
-      else
-      {
-        typedef typename cpp11::result_of<Intersect_2(Line_2, Line_2)>::type LineLineIntersectResult;
-
-        LineLineIntersectResult right2 = m_intersect_2(s2.supporting_line(), l2);
-        
-        if (right2)
-        {
-          Point_2* result = boost::get<Point_2>(&*right2);
-        
-          if (result)
-          {
-            std::cerr << "Point of Line-Line intersection: " << *result << std::endl;
-            p2 = *result;
-          }
-          else
-          {
-            assert(false && "This is dumb");
-          }
-        }
-        else
-        {
-          assert(s2l2Intersection && "Ray must enter triangle via entry segment.");
-        }
-      }
-    }
-    
-    FT distance1 = m_compute_squared_distance_2(s1[0], p1);
-    FT length1 = m_compute_squared_distance_2(s1[0], s1[1]);
-    FT distance2 = m_compute_squared_distance_2(s2[0], p2);
-    FT length2 = m_compute_squared_distance_2(s2[0], s2[1]);
-    
-    FT parametricDistance1 = distance1 / length1;
-    FT parametricDistance2 = distance2 / length2;
-    
-    if (parametricDistance1 == parametricDistance2)
-    {
-      return CGAL::EQUAL;
-    }
-    else if (parametricDistance1 < parametricDistance2)
-    {
-      return CGAL::SMALLER;
-    }
-    else
-    {
-      return CGAL::LARGER;
-    }
   }
 };
 
@@ -308,13 +134,109 @@ public:
     Vector_2 lineDiff = x1 - x0;
     Vector_2 pointDiff = point - x0;
     
-    if (!CGAL::is_zero(lineDiff[0]))
+    if (CGAL::abs(lineDiff[0]) > CGAL::abs(lineDiff[1]))
     {
       return pointDiff[0] / lineDiff[0];
     }
     else 
     {
       return pointDiff[1] / lineDiff[1];
+    }
+  }
+};
+
+template <class K>
+class Compare_relative_intersection_along_segment_2
+{
+public:
+  typedef typename K::FT FT;
+  typedef typename K::Ray_2 Ray_2;
+  typedef typename K::Vector_2 Vector_2;
+  typedef typename K::Triangle_2 Triangle_2;
+  typedef typename K::Point_2 Point_2;
+  typedef typename K::Segment_2 Segment_2;
+  typedef typename K::Line_2 Line_2;
+
+  typedef typename K::Intersect_2 Intersect_2;
+ 
+  
+private:
+  Parameteric_distance_along_segment_2<K> m_parametric_distance_along_segment_2;
+  Intersect_2 m_intersect_2;
+  
+  bool in_range(FT x, FT end1, FT end2)
+  {
+    return x >= std::min(end1, end2) && x <= std::max(end1, end2);
+  }
+  
+public:
+  Compare_relative_intersection_along_segment_2()
+  {
+  }
+  
+  Compare_relative_intersection_along_segment_2(const Parameteric_distance_along_segment_2<K>& pds, const Intersect_2& i2)
+    : m_parametric_distance_along_segment_2(pds)
+    , m_intersect_2(i2)
+  {
+  }
+
+  CGAL::Comparison_result operator () (const Segment_2& s1, const Line_2& l1, const Segment_2& s2, const Line_2& l2)
+  {
+    typedef typename cpp11::result_of<Intersect_2(Line_2, Line_2)>::type LineLineIntersectResult;
+  
+    Line_2 s1Line(s1.source(), s1.target());
+    
+    Line_2 s2Line(s2.source(), s2.target());
+    
+    LineLineIntersectResult intersectResult1 = m_intersect_2(s1Line, l1);
+    
+    assert(intersectResult1);
+    
+    FT t1(0.0);
+    
+    if (intersectResult1)
+    {
+      Point_2* result = boost::get<Point_2>(&*intersectResult1);
+      
+      assert(result && "Intersection should have been a point");
+      
+      if (result)
+      {
+        t1 = m_parametric_distance_along_segment_2(s1.source(), s1.target(), *result);
+        assert(t1 >= FT(-0.00001) && t1 <= FT(1.00001));
+      }
+    }
+    
+    LineLineIntersectResult intersectResult2 = m_intersect_2(s2Line, l2);
+    
+    assert(intersectResult2);
+    
+    FT t2(0.0);
+    
+    if (intersectResult2)
+    {
+      Point_2* result = boost::get<Point_2>(&*intersectResult2);
+      
+      assert(result && "Intersection should have been a point");
+      
+      if (result)
+      {
+        t2 = m_parametric_distance_along_segment_2(s2.source(), s2.target(), *result);
+        assert(t2 >= FT(-0.00001) && t2 <= FT(1.00001));
+      }
+    }
+    
+    if (t1 == t2)
+    {
+      return CGAL::EQUAL;
+    }
+    else if (t1 < t2)
+    {
+      return CGAL::SMALLER;
+    }
+    else
+    {
+      return CGAL::LARGER;
     }
   }
 };
@@ -393,13 +315,17 @@ public:
     
     do
     {
+      //std::cout << "Here:" << __LINE__ << std::endl;
+      
       prevPoint = nextPoint;
       currentEdge = CGAL::next(currentEdge, P);
       nextPoint = pointMap[CGAL::target(currentEdge, P)];
       currentEdge = CGAL::opposite(currentEdge, P);
       
       Triangle_3 currentFace3(rootPoint, nextPoint, prevPoint);
+      //std::cout << "Here:" << __LINE__ << std::endl;
       Triangle_2 currentFace2(m_flatten_triangle_3_along_segment_2(currentFace3, 2, nextSegment));
+      //std::cout << "Here:" << __LINE__ << std::endl;
 
       if (m_orientation_2(baseSegment[0], baseSegment[1], currentFace2[2]) != baseOrientation && m_orientation_2(baseSegment[0], baseSegment[1], currentFace2[1]) == baseOrientation)
       {

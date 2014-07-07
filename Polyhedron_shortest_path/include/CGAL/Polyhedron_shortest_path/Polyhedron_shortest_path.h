@@ -12,6 +12,7 @@
 #include <algorithm>
 
 #include <boost/array.hpp>
+#include <boost/lexical_cast.hpp>
 
 #include <CGAL/Polyhedron_shortest_path/Internal/Cone_tree.h>
 #include <CGAL/Polyhedron_shortest_path/Internal/Barycentric.h>
@@ -320,7 +321,7 @@ private:
     {
       return false;
     }
-    
+
     return true;
   }
     
@@ -369,7 +370,7 @@ private:
   void expand_root(face_descriptor face, Barycentric_coordinate location)
   {
     size_t associatedEdge;
-    CGAL::internal::Barycentric_coordinate_type type = classify_barycentric_coordinate(location, associatedEdge);
+    CGAL::internal::Barycentric_coordinate_type type = CGAL::internal::classify_barycentric_coordinate(location, associatedEdge);
     
     switch (type)
     {
@@ -413,7 +414,7 @@ private:
     
     if (m_debugOutput)
     {
-      std::cout << "\tFace Root Expansion: face = " << m_faceIndexMap[faceId] << " , Location = " << faceLocation << std::endl;
+      std::cout << "\tFace Root Expansion: id = " << m_faceIndexMap[faceId] << " , Location = " << faceLocation << std::endl;
     }
     
     for (size_t currentVertex = 0; currentVertex < 3; ++currentVertex)
@@ -495,13 +496,14 @@ private:
     {
       std::cout << "\tVertex Root Expansion: Vertex = " << m_vertexIndexMap[vertex] << std::endl;
     }
-    
+
     Cone_tree_node* vertexRoot = new Cone_tree_node(m_traits, m_polyhedron, m_rootNodes.size(), CGAL::prev(CGAL::halfedge(vertex, m_polyhedron), m_polyhedron));
+
     node_created();
     m_rootNodes.push_back(vertexRoot);
-    
+
     m_closestToVertices[m_vertexIndexMap[vertex]] = Node_distance_pair(vertexRoot, FT(0.0));
-    
+
     expand_pseudo_source(vertexRoot);
   }
 
@@ -513,9 +515,9 @@ private:
   
     halfedge_descriptor startEdge = CGAL::halfedge(expansionVertex, m_polyhedron);
     halfedge_descriptor currentEdge = CGAL::halfedge(expansionVertex, m_polyhedron);
-        
+
     FT distanceFromTargetToRoot = parent->distance_from_target_to_root();
-      
+
     if (m_debugOutput)
     {
       std::cout << "Distance from target to root: " << distanceFromTargetToRoot << std::endl;
@@ -539,10 +541,11 @@ private:
         {
           std::cout << "EXTERNAL";
         }
-        std::cout << " , face = " << layoutFace << std::endl;
+        std::cout << std::endl;
       }
 
       Cone_tree_node* child = new Cone_tree_node(m_traits, m_polyhedron, currentEdge, layoutFace, layoutFace[1], distanceFromTargetToRoot, layoutFace[0], layoutFace[2], Cone_tree_node::VERTEX_SOURCE);
+
       node_created();
       parent->push_middle_child(child);
       process_node(child);
@@ -553,58 +556,171 @@ private:
 
   }
 
-  Segment_2 clip_to_bounds(Segment_2 segment, Ray_2 leftBoundary, Ray_2 rightBoundary)
+  // This is probably a good candidate to put into the traits class
+  bool clip_to_bounds(const Segment_2& segment, const Ray_2& leftBoundary, const Ray_2& rightBoundary, Segment_2& outSegment)
   {
+    typedef typename cpp11::result_of<Intersect_2(Line_2, Line_2)>::type LineLineIntersectResult;
     typedef typename cpp11::result_of<Intersect_2(Segment_2, Ray_2)>::type SegmentRayIntersectResult;
-
-    SegmentRayIntersectResult leftIntersection = m_traits.intersect_2_object()(segment, leftBoundary);
+  
+    Ray_2 segmentRay(segment.start(), segment.end());
     Point_2 leftPoint;
-    bool containsLeft = true;
-    
-    if (leftIntersection)
-    {
-      Point_2* result = boost::get<Point_2>(&*leftIntersection);
-      
-      if (result)
-      {
-        leftPoint = *result;
-        containsLeft = false;
-      }
-    }
-    
-    if (containsLeft)
-    {
-      leftPoint = segment[0];
-    }
-    
-    SegmentRayIntersectResult rightIntersection = m_traits.intersect_2_object()(segment, rightBoundary);
     Point_2 rightPoint;
-    bool containsRight = true;
     
-    if (rightIntersection)
+    if (m_debugOutput)
     {
-      Point_2* result = boost::get<Point_2>(&*rightIntersection);
-      
-      if (result)
+      std::cout << "Clipping Segment " << segment << " with left = " << leftBoundary << " and right = " << rightBoundary << std::endl;
+    }
+    
+    FT leftT;
+    FT rightT;
+
+    CGAL::Orientation leftOrientation = m_traits.orientation_2_object()(leftBoundary.source(), leftBoundary.point(1), segment[0]);
+
+    if (leftOrientation == CGAL::RIGHT_TURN || leftOrientation == CGAL::COLLINEAR)
+    {
+      if (m_debugOutput)
       {
-        rightPoint = *result;
-        containsRight = false;
+        std::cout << "\tLeft is completely covered." << std::endl;
+      }
+      leftPoint = segment.start();
+      leftT = FT(0.0);
+    }
+    else
+    {
+      LineLineIntersectResult cgalIntersection = m_traits.intersect_2_object()(segment.supporting_line(), leftBoundary.supporting_line());
+
+      if (!cgalIntersection || !boost::get<Point_2>(&*cgalIntersection))
+      {
+        if (m_debugOutput)
+        {
+          std::cout << "Dropping left due to co-linearity of boundary. " << bool(cgalIntersection) << std::endl;
+        }
+        return false;
+      }
+      else
+      {
+        Point_2* result = boost::get<Point_2>(&*cgalIntersection);
+        FT t0 = m_traits.parameteric_distance_along_segment_2_object()(segment.start(), segment.end(), *result);
+
+        if (t0 >= FT(1.00000))
+        {
+          if (m_debugOutput)
+          {
+            std::cout << "Dropping due to missing left intersect. " << t0 << std::endl;
+          }
+
+          return false;
+        }
+        else if (t0 <= FT(0.00000))
+        {
+          if (m_debugOutput)
+          {
+            std::cout << "\tLeft is completely covered (secondary check). " << t0 << std::endl;
+          }
+
+          leftPoint = segment.start();
+          leftT = FT(0.0);
+        }
+        else
+        {
+          if (m_debugOutput)
+          {
+            std::cout << "\tLeft intersects at t = " << t0 << std::endl;
+          }
+         
+          leftPoint = *result;
+          leftT = t0;
+        }
       }
     }
     
-    if (containsRight)
+    CGAL::Orientation rightOrientation = m_traits.orientation_2_object()(rightBoundary.source(), rightBoundary.point(1), segment[1]);
+    
+    if (rightOrientation == CGAL::LEFT_TURN || rightOrientation == CGAL::COLLINEAR)
     {
-      rightPoint = segment[1];
+      if (m_debugOutput)
+      {
+        std::cout << "Right is completely covered." << std::endl;
+      }
+      rightPoint = segment.end();
+      rightT = FT(1.0);
+    }
+    else
+    {
+      LineLineIntersectResult cgalIntersection = m_traits.intersect_2_object()(segment.supporting_line(), rightBoundary.supporting_line());
+
+      if (!cgalIntersection || !boost::get<Point_2>(&*cgalIntersection))
+      {
+        if (m_debugOutput)
+        {
+          std::cout << "Dropping due to co-linearity of right boundary." << std::endl;
+        }
+        return false;
+      }
+      else
+      {
+        Point_2* result = boost::get<Point_2>(&*cgalIntersection);
+        FT t0 = m_traits.parameteric_distance_along_segment_2_object()(segment.start(), segment.end(), *result);
+      
+        if (t0 <= FT(0.00000))
+        {
+          if (m_debugOutput)
+          {
+            std::cout << "Dropping due to missing right intersect. " << t0 << std::endl;
+          }
+          return false;
+        }
+        else if (t0 >= FT(1.00000))
+        {
+          if (m_debugOutput)
+          {
+            std::cout << "\tRight is completely covered (secondary check). " << t0 << std::endl;
+          }
+          rightPoint = segment.end();
+          rightT = FT(1.0);
+        }
+        else
+        {
+          if (m_debugOutput)
+          {
+            std::cout << "\tRight intersects at t = " << t0 << std::endl;
+          }
+          rightPoint = *result;
+          rightT = t0;
+        }
+      }
     }
     
-    return Segment_2(leftPoint, rightPoint);
+    if (leftT >= rightT)
+    {
+      if (m_debugOutput)
+      {
+        std::cout << "Dropping due to overlap. " << leftT << " : " << rightT << std::endl;
+      }
+      return false;
+    }
+    
+    outSegment = Segment_2(leftPoint, rightPoint);
+    
+    return true;
   }
 
   void process_node(Cone_tree_node* node)
   {
-    bool leftSide = node->has_left_side();
-    bool rightSide = node->has_right_side();
+    bool leftSide = false;
+    bool rightSide = false;
     
+    if (!node->is_source_node())
+    {
+      leftSide = node->has_left_side();
+      rightSide = node->has_right_side();
+    }
+    else
+    {
+      leftSide = true;
+      rightSide = false;
+    }
+
     bool propagateLeft = false;
     bool propagateRight = false;
     bool propagateMiddle = false;
@@ -613,6 +729,14 @@ private:
     {
       std::cout << " Processing node " << node << " , level = " << node->level() << std::endl;
       std::cout << "\tFace = " << node->layout_face() << std::endl;
+      std::cout << "\tVertices = ";
+      halfedge_descriptor current = node->entry_edge();
+      for (size_t i = 0; i < 3; ++i)
+      {
+        std::cout << m_vertexIndexMap[CGAL::source(current, m_polyhedron)] << " ";
+        current = CGAL::next(current, m_polyhedron);
+      }
+      std::cout << std::endl;
       std::cout << "\tSource Image = " << node->source_image() << std::endl;
       std::cout << "\tWindow Left = " << node->window_left() << std::endl;
       std::cout << "\tWindow Right = " << node->window_right() << std::endl;
@@ -621,6 +745,7 @@ private:
     
     if (node->is_source_node() || (leftSide && rightSide))
     {
+
       if (m_debugOutput)
       {
         std::cout << "\tContains target vertex" << std::endl;
@@ -748,7 +873,7 @@ private:
           {
             std::cout << "\t Current node is now the closest" << std::endl;
           }
-
+          
           // if this is a saddle vertex, then evict previous closest vertex
           if (m_vertexIsPseudoSource[targetVertexIndex])
           {
@@ -778,7 +903,7 @@ private:
 
             propagateMiddle = true;
           }
-          
+
           m_closestToVertices[targetVertexIndex] = Node_distance_pair(node, currentNodeDistance);
         }
       }
@@ -800,7 +925,7 @@ private:
       propagateRight = rightSide;
     }
     
-    if (node->level() < num_faces(m_polyhedron))
+    if (node->level() <= num_faces(m_polyhedron))
     {
       if (propagateLeft)
       {
@@ -821,15 +946,34 @@ private:
     {
       std::cout << "\tNo expansion since level limit reached" << std::endl;
     }
+
   }
 
   void push_left_child(Cone_tree_node* parent)
   {
     if (CGAL::face(parent->left_child_edge(), m_polyhedron) != GraphTraits::null_face())
     {
-      Segment_2 leftWindow(clip_to_bounds(parent->left_child_base_segment(), parent->left_boundary(), parent->right_boundary()));
-      FT distanceEstimate = std::min(parent->distance_to_root(leftWindow[0]), parent->distance_to_root(leftWindow[1]));
+      Segment_2 leftWindow;
       
+      if (parent->is_source_node())
+      {
+        leftWindow = parent->left_child_base_segment();
+      }
+      else
+      {
+        bool result = clip_to_bounds(parent->left_child_base_segment(), parent->left_boundary(), parent->right_boundary(), leftWindow);
+        if (!result)
+        {
+          if (m_debugOutput)
+          {
+            std::cout << "Left child clip failed, killing node." << std::endl;
+          }
+          return;
+        }
+      }
+
+      FT distanceEstimate = parent->distance_from_source_to_root() + CGAL::sqrt(m_traits.compute_squared_distance_2_object()(parent->source_image(), leftWindow));
+
       if (m_debugOutput)
       {
         std::cout << "\tPushing Left Child, Segment = " << parent->left_child_base_segment() << " , clipped = " << leftWindow << " , Estimate = " << distanceEstimate << std::endl;
@@ -839,6 +983,7 @@ private:
       parent->m_pendingLeftSubtree = event;
       
       m_expansionPriqueue.push(event);
+      
       queue_pushed();
     }
   }
@@ -847,8 +992,19 @@ private:
   {
     if (CGAL::face(parent->right_child_edge(), m_polyhedron) != GraphTraits::null_face())
     {
-      Segment_2 rightWindow(clip_to_bounds(parent->right_child_base_segment(), parent->left_boundary(), parent->right_boundary()));
-      FT distanceEstimate = std::min(parent->distance_to_root(rightWindow[0]), parent->distance_to_root(rightWindow[1]));
+      Segment_2 rightWindow;
+      bool result = clip_to_bounds(parent->right_child_base_segment(), parent->left_boundary(), parent->right_boundary(), rightWindow);
+      
+      if (!result)
+      {
+        if (m_debugOutput)
+        {
+          std::cout << "Right child clip failed, killing node." << std::endl;
+        }
+        return;
+      }
+      
+      FT distanceEstimate = parent->distance_from_source_to_root() + CGAL::sqrt(m_traits.compute_squared_distance_2_object()(parent->source_image(), rightWindow));
       
       if (m_debugOutput)
       {
@@ -869,9 +1025,11 @@ private:
     {
       std::cout << "\tPushing Middle Child, Estimate = " << parent->distance_from_target_to_root() << std::endl;
     }
-    
+
     Cone_expansion_event* event = new Cone_expansion_event(parent, parent->distance_from_target_to_root(), Cone_expansion_event::PSEUDO_SOURCE);
+
     queue_pushed();
+
     parent->m_pendingMiddleSubtree = event;
     
     m_expansionPriqueue.push(event);
@@ -948,6 +1106,8 @@ private:
           m_closestToVertices[targetVertexIndex].first = NULL;
         }
       }
+      
+      delete node;
     }
     
     node_deleted();
@@ -988,7 +1148,7 @@ private:
     return m_traits.is_saddle_vertex_object()(v, m_polyhedron, m_vertexPointMap);
   }
   
-  bool is_boundary_vertex(vertex_descriptor v) // TODO: confirm that this actually works
+  bool is_boundary_vertex(vertex_descriptor v)
   {
     halfedge_descriptor h = CGAL::halfedge(v, m_polyhedron);
     halfedge_descriptor first = h;
@@ -1048,7 +1208,7 @@ private:
   void visit_shortest_path(Cone_tree_node* startNode, const Point_2& startLocation, Visitor& visitor)
   {
     typedef typename Traits::Intersect_2 Intersect_2;
-    typedef typename cpp11::result_of<Intersect_2(Segment_2, Line_2)>::type SegmentRayIntersectResult;
+    typedef typename cpp11::result_of<Intersect_2(Line_2, Line_2)>::type SegmentRayIntersectResult;
     
     Cone_tree_node* current = startNode;
     Point_2 currentLocation(startLocation);
@@ -1063,28 +1223,26 @@ private:
           Segment_2 entrySegment = current->entry_segment();
           Ray_2 rayToLocation(current->source_image(), currentLocation);
 
-          SegmentRayIntersectResult intersection = m_traits.intersect_2_object()(entrySegment, rayToLocation.supporting_line());
-          
-          assert(intersection && "Line from source did not cross entry segment");
-          Point_2* result = boost::get<Point_2>(&*intersection);
-          assert(result != NULL && "Intersection with entry segment was not a single point");
-          FT parametricLocation = m_traits.parameteric_distance_along_segment_2_object()(entrySegment[0], entrySegment[1], *result);
-          visitor.edge(current->entry_edge(), parametricLocation);
+          Ray_2 segmentRay(entrySegment.start(), entrySegment.end());
+          internal::Intersection_result<FT> entryIntersect = internal::intersect_rays<FT, Ray_2, Vector_2>(segmentRay, rayToLocation);
+          assert(entryIntersect.relation == internal::LINE_RELATION_INTERSECT);
+          assert(entryIntersect.t0 >= FT(-0.00001) && entryIntersect.t0 <= FT(1.00001));
+
+          visitor.edge(current->entry_edge(), entryIntersect.t0);
 
           if (current->is_left_child())
           {
             Segment_2 baseSegment = current->parent()->left_child_base_segment();
-            currentLocation = CGAL::internal::interpolate_points(baseSegment[0], baseSegment[1], parametricLocation);
+            currentLocation = CGAL::internal::interpolate_points(baseSegment[0], baseSegment[1], entryIntersect.t0);
           }
           else if (current->is_right_child())
           {
             Segment_2 baseSegment = current->parent()->right_child_base_segment();
-            currentLocation = CGAL::internal::interpolate_points(baseSegment[0], baseSegment[1], parametricLocation);
+            currentLocation = CGAL::internal::interpolate_points(baseSegment[0], baseSegment[1], entryIntersect.t0);
           }
-          
-          //std::cout << m_halfedgeIndexMap[current->entry_edge()] << std::endl;
-          
+
           current = current->parent();
+
         }
           break;
         case Cone_tree_node::VERTEX_SOURCE:
@@ -1198,6 +1356,7 @@ public:
     , m_vertexPointMap(CGAL::get(CGAL::vertex_point, polyhedron))
     , m_debugOutput(false)
   {
+    reset_algorithm();
   }
   
   /*!
@@ -1226,6 +1385,7 @@ public:
     , m_vertexPointMap(vertexPointMap)
     , m_debugOutput(false)
   {
+    reset_algorithm();
   }
   
   /// @}
@@ -1239,6 +1399,7 @@ public:
     {
       std::cout << "Final node count: " << m_currentNodeCount << std::endl;
     }
+    return;
     assert(m_currentNodeCount == 0);
 #endif
   }
@@ -1311,7 +1472,7 @@ public:
 
       for (boost::tie(current,end) = boost::vertices(m_polyhedron); current != end; ++current)
       {
-        std::cout << "Vertex#" << numVertices << ": p = " << m_vertexPointMap[*current] << " , Concave: " << (m_vertexIsPseudoSource[numVertices] ? "yes" : "no") << std::endl;
+        std::cout << "Vertex#" << numVertices << ": p = " << m_vertexPointMap[*current] << " , Saddle Vertex: " << (is_saddle_vertex(*current) ? "yes" : "no") << " , Boundary Vertex: " << (is_boundary_vertex(*current) ? "yes" : "no") << std::endl;
         ++numVertices;
       }
     }
@@ -1465,6 +1626,15 @@ public:
     return m_closestToVertices[m_vertexIndexMap[v]].second;
   }
   
+#if !defined(NDEBUG)
+
+  Interval_nt<true> shortest_distance_to_vertex_interval(vertex_descriptor v)
+  {
+    return m_closestToVertices[m_vertexIndexMap[v]].first->distance_from_target_to_root_interval();
+  }
+  
+#endif
+  
   /*!
   \brief Computes the shortest surface distance from any surface location to any source point
   
@@ -1476,6 +1646,16 @@ public:
   {
     return nearest_on_face(face, alpha).second;
   }
+  
+#if !defined(NDEBUG)
+
+  Interval_nt<true> shortest_distance_to_location_interval(face_descriptor face, Barycentric_coordinate alpha)
+  {
+    Node_distance_pair ndp = nearest_on_face(face, alpha);
+    return ndp.first->distance_to_root_interval(face_location_with_normalized_coordinate(ndp.first, alpha));
+  }
+  
+#endif
   
   /*!
   \brief Visits the sequence of edges, vertices and faces traversed by the shortest path
@@ -1591,11 +1771,9 @@ public:
     
     const FT one(1.0);
     const FT zero(0.0);
-  
+    
     return std::make_pair(locationFace, Barycentric_coordinate(edgeIndex == 0 ? one : zero, edgeIndex == 1 ? one : zero, edgeIndex == 2 ? one : zero));
   }
-  
-  
   
 /// @}
 
