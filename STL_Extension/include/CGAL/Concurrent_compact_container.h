@@ -693,6 +693,7 @@ void Concurrent_compact_container<T, Allocator>::merge(Self &d)
     set_type(d.m_first_item, m_last_item, BLOCK_BOUNDARY);
     m_last_item = d.m_last_item;
   }
+  m_all_items.insert(m_all_items.end(), d.m_all_items.begin(), d.m_all_items.end());
   // Add the capacities.
   m_capacity += d.m_capacity;
   // It seems reasonnable to take the max of the block sizes.
