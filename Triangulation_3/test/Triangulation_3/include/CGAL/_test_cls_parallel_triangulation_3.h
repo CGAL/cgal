@@ -30,6 +30,8 @@ template <class Parallel_triangulation>
 void
 _test_cls_parallel_triangulation_3(const Parallel_triangulation &)
 {
+  const int NUM_INSERTED_POINTS = 5000;
+
   typedef Parallel_triangulation                                Cls;
   typedef typename Cls::Vertex_handle                           Vertex_handle;
   typedef typename boost::mpl::if_<typename Cls::Weighted_tag,
@@ -38,10 +40,10 @@ _test_cls_parallel_triangulation_3(const Parallel_triangulation &)
   
   CGAL::Random_points_in_cube_3<Point> rnd(1.);
 
-  // Construction from a vector of 1,000,000 points
+  // Construction from a vector of points
   std::vector<Point> points;
-  points.reserve(1000000);
-  for (int i = 0; i != 1000000; ++i)
+  points.reserve(NUM_INSERTED_POINTS);
+  for (int i = 0; i != NUM_INSERTED_POINTS; ++i)
     points.push_back(*rnd++);
   
   // Construct the locking data-structure, using the bounding-box of the points
@@ -55,7 +57,7 @@ _test_cls_parallel_triangulation_3(const Parallel_triangulation &)
   // Remove the first 100,000 vertices
   std::vector<Vertex_handle> vertices_to_remove;
   typename Cls::Finite_vertices_iterator vit = tr.finite_vertices_begin();
-  for (int i = 0 ; i < 100000 ; ++i)
+  for (int i = 0 ; i < NUM_INSERTED_POINTS/10 ; ++i)
     vertices_to_remove.push_back(vit++);
   // Parallel remove
   tr.remove(vertices_to_remove.begin(), vertices_to_remove.end());
