@@ -1,7 +1,7 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/dual/halfspaces_intersection.h>
 #include <CGAL/Delaunay_triangulation_3.h>
-#include <CGAL/Convex_hull_3.h>
+#include <CGAL/convex_hull_3.h>
 
 #include <vector>
 #include <fstream>
