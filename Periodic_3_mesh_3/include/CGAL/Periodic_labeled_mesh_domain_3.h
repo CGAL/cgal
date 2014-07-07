@@ -90,38 +90,28 @@ public:
       int o1 [3] = { a_t[0] / dimension[0], a_t[1] / dimension[1], a_t[2] / dimension[2] };
       int o2 [3] = { b_t[0] / dimension[0], b_t[1] / dimension[1], b_t[2] / dimension[2] };
 
-      unsigned i = 0;
-      while (i < 3)
-      {
-        if (abs(o1[i] - o2[i]) == 1)
-          break;
-        ++i;
-      }
-      if (i == 3)
-      {
-        Subdomain_index value_a = r_domain_.labeling_function()(a);
-        Subdomain_index value_b = r_domain_.labeling_function()(b);
-        if ( value_a != value_b )
-          return Surface_patch(r_domain_.make_surface_index(value_a, value_b));
-        return Surface_patch();
-      }
-
-      FT min_o = static_cast<FT>(std::min(o1[i], o2[i]));
       FT a_min [3] = { a.x(), a.y(), a.z() };
       FT b_min [3] = { b.x(), b.y(), b.z() };
-      a_min[i] -= (dimension[i] * min_o);
-      b_min[i] -= (dimension[i] * min_o);
+      for (unsigned idx = 0; idx < 3; ++idx)
+      {
+        FT offset = dimension[idx] * static_cast<FT>(std::min(o1[idx], o2[idx]));
+        a_min[idx] -= offset;
+        b_min[idx] -= offset;
+      }
 
       Subdomain_index value_a = r_domain_.labeling_function()(Point_3(a_min[0], a_min[1], a_min[2]));
       Subdomain_index value_b = r_domain_.labeling_function()(Point_3(b_min[0], b_min[1], b_min[2]));
       if ( value_a != value_b )
         return Surface_patch(r_domain_.make_surface_index(value_a, value_b));
 
-      FT max_o = static_cast<FT>(std::max(o1[i], o2[i]));
       FT a_max [3] = { a.x(), a.y(), a.z() };
       FT b_max [3] = { b.x(), b.y(), b.z() };
-      a_max[i] -= (dimension[i] * max_o);
-      b_max[i] -= (dimension[i] * max_o);
+      for (unsigned idx = 0; idx < 3; ++idx)
+      {
+        FT offset = dimension[idx] * static_cast<FT>(std::max(o1[idx], o2[idx]));
+        a_max[idx] -= offset;
+        b_max[idx] -= offset;
+      }
 
       value_a = r_domain_.labeling_function()(Point_3(a_max[0], a_max[1], a_max[2]));
       value_b = r_domain_.labeling_function()(Point_3(b_max[0], b_max[1], b_max[2]));
@@ -203,24 +193,25 @@ public:
 
       Iso_cuboid_3 pbb = r_domain_.periodic_bounding_box();
       FT dimension [3] = { pbb.xmax()-pbb.xmin(), pbb.ymax()-pbb.ymin(), pbb.zmax()-pbb.zmin() };
-      int o1 [3] = { a.x() / dimension[0], a.y() / dimension[1], a.z() / dimension[2] };
-      int o2 [3] = { b.x() / dimension[0], b.y() / dimension[1], b.z() / dimension[2] };
+      FT a_t [3] = { a.x(), a.y(), a.z() };
+      FT b_t [3] = { b.x(), b.y(), b.z() };
+      a_t[0] -= pbb.xmin();
+      a_t[1] -= pbb.ymin();
+      a_t[2] -= pbb.zmin();
+      b_t[0] -= pbb.xmin();
+      b_t[1] -= pbb.ymin();
+      b_t[2] -= pbb.zmin();
+      int o1 [3] = { a_t[0] / dimension[0], a_t[1] / dimension[1], a_t[2] / dimension[2] };
+      int o2 [3] = { b_t[0] / dimension[0], b_t[1] / dimension[1], b_t[2] / dimension[2] };
 
-      unsigned i = 0;
-      while (i < 3)
-      {
-        if (abs(o1[i] - o2[i]) == 1)
-          break;
-        ++i;
-      }
-      if (i == 3)
-        i = 0;
-
-      FT min_o = static_cast<FT>(std::min(o1[i], o2[i]));
       FT a_min [3] = { a.x(), a.y(), a.z() };
       FT b_min [3] = { b.x(), b.y(), b.z() };
-      a_min[i] -= (dimension[i] * min_o);
-      b_min[i] -= (dimension[i] * min_o);
+      for (unsigned idx = 0; idx < 3; ++idx)
+      {
+        FT offset = dimension[idx] * static_cast<FT>(std::min(o1[idx], o2[idx]));
+        a_min[idx] -= offset;
+        b_min[idx] -= offset;
+      }
 
       // Non const points
       Point_3 p1(a_min[0], a_min[1], a_min[2]);
@@ -237,11 +228,14 @@ public:
       // This should not happen...
       if( value_at_p1 == value_at_p2 )
       {
-        FT max_o = static_cast<FT>(std::max(o1[i], o2[i]));
         FT a_max [3] = { a.x(), a.y(), a.z() };
         FT b_max [3] = { b.x(), b.y(), b.z() };
-        a_max[i] -= (dimension[i] * max_o);
-        b_max[i] -= (dimension[i] * max_o);
+        for (unsigned idx = 0; idx < 3; ++idx)
+        {
+          FT offset = dimension[idx] * static_cast<FT>(std::max(o1[idx], o2[idx]));
+          a_max[idx] -= offset;
+          b_max[idx] -= offset;
+        }
         p1 = Point_3(a_max[0], a_max[1], a_max[2]);
         p2 = Point_3(b_max[0], b_max[1], b_max[2]);
         mid = midpoint(p1, p2);
