@@ -1588,11 +1588,14 @@ public:
 
   // Orient the segment s and return result as a line.
   // Site p is a point which is not an endpoint of s.
+  // Site p must not be on the line defined by s.
   static Line_2
   orient_line_nonendp(const Site_2& p, const Site_2& s)
   {
     Line_2 lseg = compute_supporting_line(s.supporting_site());
-    if (oriented_side_of_line(lseg, p.point()) == ON_NEGATIVE_SIDE) {
+    Oriented_side os = oriented_side_of_line(lseg, p.point());
+    if (os != ON_POSITIVE_SIDE) {
+      CGAL_assertion( os == ON_NEGATIVE_SIDE );
       lseg = opposite_line(lseg);
     }
     return lseg;
