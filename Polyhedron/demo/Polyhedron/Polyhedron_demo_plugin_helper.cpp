@@ -118,8 +118,8 @@ void Polyhedron_demo_plugin_helper::autoConnectActions()
 	   #else
             qDebug() << thisObject->tr("Cannot connect method %1.%2 to slot %3!")
               .arg(action->objectName())
-              .arg(action_method.methodSignature())
-              .arg(methods[index].methodSignature());
+              .arg(action_method.signature())
+              .arg(methods[index].signature());
 	   #endif
           }
           else {

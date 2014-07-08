@@ -28,7 +28,7 @@ foreach(DEP_PKG AABB_tree STL_Extension GraphicsView Surface_mesher Filtered_ker
 endforeach()
 
 #New for Qt5 version !
-option (USE_QT5 "Use Qt5 version instead of Qt4" OFF)
+option (USE_QT5 "Use Qt5 version instead of Qt4" ON)
 
 option( POLYHEDRON_QTSCRIPT_DEBUGGER 
   "Activate the use of Qt Script Debugger in Polyhedron_3 demo" OFF)
