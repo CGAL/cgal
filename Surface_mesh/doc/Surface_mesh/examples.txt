@@ -1,0 +1,11 @@
+/*!
+\example Surface_mesh/iterators_and_circulators.cpp
+\example Surface_mesh/properties.cpp
+\example Surface_mesh/memory.cpp
+\example Surface_mesh/bgl.cpp
+\example Surface_mesh/kruskal.cpp
+@cond 
+\example Surface_mesh/do_intersect.cpp
+\example Surface_mesh/aabbtree.cpp
+@endcond
+*/

@@ -1,0 +1,309 @@
+namespace CGAL {
+/*!
+
+
+\mainpage User Manual 
+\anchor Chapter_3D_Surface_mesh
+\anchor chapterSurface_mesh
+
+\author Mario Botsch, Daniel Sieger, Philipp Moeller and Andreas Fabri
+\cgalAutoToc
+
+\image html clown_fish.jpg
+
+The class `Surface_mesh` is a data structure that can be used 
+as halfedge data structure or polyhedral
+surface. It is an alternative to the \cgal packages \ref PkgHDSSummary
+and \ref PkgPolyhedronSummary.
+The main differences are that it is indexed based and not pointer based,
+and that the mechanism for adding information to vertices, halfedges,
+and faces is much simpler and done at runtime and not at compile time.
+
+It provides the following features:
+- comparatively low memory footprint
+- stable under insertion and deletion
+- Vertex, face, halfedge, and edge types
+- dynamic properties
+- iterators, ranges and circulators for all common use cases
+- constant time border predicate for vertices and halfedges
+
+\section sectionSurfaceMeshUsage Usage
+
+The main class `Surface_mesh` provides four nested classes that
+represent the basic elements of the halfedge data structure:
+
+- `Surface_mesh::Vertex_descriptor`
+- `Surface_mesh::Halfedge_descriptor`
+- `Surface_mesh::Face_descriptor`
+- `Surface_mesh::Edge_descriptor`
+
+Descriptors are just a typed wrapper for an index
+and should be passed by value. They are
+default constructible, which yields an *invalid* element. New
+simplices can be added and removed to the `Surface_mesh` through a
+set of low-level functions which do not maintain connectivity. One
+exception is `Surface_mesh::add_face()` which tries to add a new
+face, defined by a sequence of vertices, to the mesh and fails, if the
+operation is not topologically valid.
+
+\code
+typedef Surface_mesh<Point> Mesh;
+Mesh m;
+Mesh::Vertex_descriptor u = m.add_vertex(K::Point_3(0,1,0));
+Mesh::Vertex_descriptor v = m.add_vertex(K::Point_3(0,0,0));
+Mesh::Vertex_descriptor w = m.add_vertex(K::Point_3(1,0,0));
+m.add_face(u, v, w);
+\endcode
+
+As `Surface_mesh` is index-based `Vertex_descriptor`, `Face_descriptor`, 
+`Halfedge_descriptor` and `Edge_descriptor`
+don't have member functions to access connectivity or properties.
+The functions of the `Surface_mesh` instance they were
+created from needs to be used to obtain that information.
+
+\section sectionSurfaceMeshConnectivity Connectivity 
+
+A surface mesh is an edge-centered data structure capable of
+maintaining incidence information of vertices, edges, and faces.  Each
+edge is represented by two halfedges with opposite orientation. Each
+halfedge stores a reference to an incident face and to an incident
+vertex. Additionally it stores a reference to the next and previous
+halfedge incident to its incident face. For each face and each vertex
+an incident halfedge is stored.
+
+The following figure illustrates the functions which allow to navigate 
+in a surface mesh:  `Surface_mesh::opposite()`, `Surface_mesh::next()`, 
+`Surface_mesh::prev()`, `Surface_mesh::target()`, and 
+`Surface_mesh::face()`.  What is not illustrated are the
+functions `Surface_mesh::halfedge()` overloaded for 
+`Surface_mesh::Vertex_descriptor` and `Surface_mesh::Face_descriptor`.
+Alternatively, one may use the free functions with the same names
+defined in the package \ref PkgBGLSummary.
+
+\cgalFigureBegin{FigSurfaceMeshConnectivity,connectivity.svg}
+Connectivity of halfedges and vertices in a surface mesh.
+\cgalFigureEnd
+ 
+\anchor  SurfaceMeshOrientation
+The halfedges incident to a face form a cycle. Depending on from
+which side we look at the surface, the sequence of
+halfedges appears to be oriented *clockwise* or *counterclockwise*.
+When in this manual we speak about the orientation of a traversal
+then we look at the surface such that the halfedges around a
+face are oriented counterclockwise, as illustrated in
+\cgalFigureRef{FigSurfaceMeshConnectivity}
+
+
+\section sectionSurfaceMesh_iterators Iterators and Circulators
+
+`Surface_mesh` provides bidirectional iterators to enumerate all vertices,
+halfedges, edges, and faces. It provides member functions
+returning ranges of elements which are compatible with the
+<a href="http://www.boost.org/libs/range/doc/html/index.html">Boost.Range</a>
+library. 
+
+It further provides circulators around faces and around vertices.
+Circulators around faces basically call `Surface_mesh::next()`
+in order to go from halfedge to halfedge counterclockwise around the face, and 
+when dereferenced return the halfedge or the incident vertex or the opposite face.
+
+- `Surface_mesh::Halfedge_around_face_circulator`
+- `Surface_mesh::Vertex_around_face_circulator`
+- `Surface_mesh::Face_around_face_circulator`
+
+Circulators around the target vertex of an edge basically
+call `Surface_mesh::opposite(Surface_mesh::next())` in order
+to go from halfedge to halfedge clockwise around the same target vertex.
+
+- `Surface_mesh::Halfedge_around_target_circulator`
+- `Surface_mesh::Vertex_around_target_circulator`
+- `Surface_mesh::Face_around_target_circulator`
+
+All circulators model `BidirectionalCirculator`. In addition to that
+they also support a conversion to `bool` for more convenient checking
+of emptiness.
+
+For all these circulators exist corresponding iterators. 
+These circulators and iterators around faces and vertices 
+are implemented as class templates  in the package \ref PkgBGLSummary.
+
+\subsection iterators_example Example
+
+The following example illustrates how to use iterators and circulators.
+
+\cgalExample{Surface_mesh/sm_iterators_and_circulators.cpp}
+
+\section sectionSurfaceMesh_properties Properties
+
+`Surface_mesh` provides a mechanism to specify new properties for
+vertices, edges, halfedges and faces at run-time. Each property is
+identified by a string and its key_type. All properties are stored as
+consecutive blocks of memory. References to properties are invalidated
+whenever new elements of the key type are added to the data-structure
+or when the function `Surface_mesh::collect_garbage()` is performed. Properties will continue to
+exist after an element has been deleted (their destructor is not
+called) and will still be accessible when `Property::data()` is
+called. Trying to access a property through an invalidated element
+will result in undefined behavior.
+
+
+One property is maintained by default, namely \c "v:point". The value of
+this property has to be supplied when adding a new point to the data
+structure via `Surface_mesh::add_vertex()`. The property can be
+directly accessed using `Surface_mesh::points()` or
+`Surface_mesh::point(Surface_mesh::Vertex_descriptor v)`.
+
+\subsection properties_example Example
+
+This example shows how to use the most common features of the property system. 
+
+\cgalExample{Surface_mesh/sm_properties.cpp}
+
+\section sectionSurfaceMesh_borders Borders
+
+A halfedge `h` is on the border, if it has no associated face, that is if
+`sm.face(h) == Surface_mesh::null_face()`.  An edge is on the border,
+if any of its halfedges is on the border.  A vertex is on the border,
+if any of its incident halfedges is on the border. In order to make 
+`Surface_mesh::is_border(Vertex_descriptor v)` a constant time 
+operation, this function only checks if the halfedge associated to `v`
+is a border halfedge. The user is in charge to correctly set the halfedge
+associated to a vertex after having applied an operation that might invalidate 
+this property.
+The functions `Surface_mesh::fix_border(Vertex_descriptor v)`,
+`Surface_mesh::fix_border(Halfedge_descriptor h)`, and 
+ `Surface_mesh::fix_border()` allow to restore this property 
+for a single vertex `v`, for all vertices on the boundary of the
+face of `h`, and for all vertices of the surface mesh, respectively.
+
+
+\section sectionSurfaceMesh_BGL Surface Mesh and the BGL API
+
+The class `Surface_mesh` is a model of the concept 
+[<tt>IncidenceGraph</tt>](http://www.boost.org/doc/libs/1_55_0/libs/graph/doc/IncidenceGraph.html)
+defined in the Boost graph Library.  This enables to apply algorithms such
+as 
+[Dijkstra shortest path](http://www.boost.org/doc/libs/1_55_0/libs/graph/doc/dijkstra_shortest_paths.html), or
+[Kruskal minimum spanning tree](http://www.boost.org/doc/libs/1_55_0/libs/graph/doc/kruskal_min_spanning_tree.html)
+directly on a surface mesh.
+
+The types and free functions of the BGL API have each an equivalent type or member function,
+for example
+| BGL   | Surface mesh |
+| :---- | :----        |
+| `boost::graph_traits<G>::vertex_descriptor` | `Surface_mesh::Vertex_descriptor` |
+| `edges(const G& g)` | `sm.edges()` |
+| `vd = source(ed,g)` | `vd = sm.source(ed)` |
+| `n = num_vertices(g)`  | `n = sm.num_vertices()` |
+| etc. | |
+
+
+
+The class `Surface_mesh` is also a model of the concept `MutableFaceGraph` defined
+in the package \ref PkgBGLSummary. This and similar concepts like `HalfedgeGraph`
+refine the graph concepts of the BGL by introducing the notion of halfedges and faces,
+as well as cycles of halfedges around faces and around vertices.
+Again, there are equivalent types and functions:
+
+| BGL   | Surface mesh |
+| :---- | :----        |
+| `boost::graph_traits<G>::halfedge_descriptor` | `Surface_mesh::Halfedge_descriptor` |
+| `hd = next(hd, g)` | `hd = sm.next(hd)` |
+| `hd = opposite(hd,g)` | `hd = sm.opposite(hd)` |
+| `hd = halfedge(vd,g)` | `hd = sm.halfedge(vd)` |
+| etc. | |
+
+The BGL API enables us to write geometric algorithms operating
+on surface meshes, that work for any model of `FaceGraph`, or
+`MutableFaceGraph`. That is surface mesh simplification, deformation,
+or segmentation algorithms work for `Surface_mesh` and `Polyhedron_3`, 
+and also for third party surface meshes such as `OpenMesh::PolyMesh_ArrayKernelT`.
+
+BGL algorithms use property maps in order to associate information
+to vertices and edges. One important property is the index, an integer
+between `0` and `num_vertices(g)` for the vertices of a graph `g`.
+This allows algorithms to create a vector of the approriate size
+in order to store per vertex information. For example a Boolean
+for storing if a vertex has already been visited during a graph traversal.
+
+The BGL way of retrieving the index property map of a graph `g` is
+`vipm = get(boost::vertex_index, g)`, and `get(vipm, vd)` in order then
+to retrieve the index for a vertex descriptor `vd`, and it is  
+`get(vertex_index, g, vd)` to obtain the vertex index directly.
+For the `Surface_mesh` class, all an index property map has to do
+is to call `Vertex_descriptor::idx()`.
+
+\subsection SubsectionSurfaceMeshBglExample Example
+
+The first example shows that we can apply Kruskal's 
+minimum spanning tree algorithm directly on a surface mesh.
+
+\cgalExample{Surface_mesh/sm_kruskal.cpp}
+
+The second example shows how we can use property maps for built-in
+properties like `vertex_index_t`, but also for the dynamic properties
+introduced with the surface mesh package.
+
+\cgalExample{Surface_mesh/sm_bgl.cpp}
+
+
+\section sectionSurfaceMesh_memory Memory Managment
+
+Memory management is semi-automatic. Memory grows as more elements are
+added to the structure but does not shrink when elements are
+removed. 
+
+When you add elements and the capacity of the underlying vector
+is exhausted, the vector reallocates memory. As descriptors are
+basically indices, they refer to the same element after a reallocation.
+
+When you remove an element it is only marked as removed.
+Internally it is put in a free list, and when you add elements to 
+the surface mesh, they are taken from the free list in case it is 
+not empty. 
+
+For all elements we offer a function to obtain the number of 
+added and removed elements, as well as the number of removed elements.
+For vertices the functions are `Surface_mesh::num_vertices()`
+and `Surface_mesh::num_removed_vertices()`, respectively. The first function
+matches the free function `num_vertices(const G&)` of the \sc{Bgl}
+package. As \sc{Bgl} style algorithms use the indices of elements
+to access data in temporary vectors of size `num_vertices()`
+this function must return a number larger than the largest index of 
+the elements.
+
+
+Iterators like the `Surface_mesh::Vertex_iterator` only enumerate
+elements that are not marked as deleted. 
+
+
+To really shrink the used memory, `Surface_mesh::collect_garbage()`
+must be called.  Garbage collection also compacts the properties
+associated with the surface mesh.
+
+Note however that by garbage collecting elements get new indices.
+In case you store vertex descriptors in an auxiliary data structure
+or in a property these vertex descriptors are potentially no longer 
+refering to the right vertices. 
+
+\subsection SubsectionSurfaceMeshMemoryManagementExample Example
+\cgalExample{Surface_mesh/sm_memory.cpp}
+
+
+
+\section sectionSurfaceMeshHistory Implementation History
+
+This package is derived from an early version of Daniel Sieger and Mario Botsch package 
+<a href="http://graphics.uni-bielefeld.de/publications/imr11/"><em>%Surface_mesh</em></a>
+\cgalCite{cgal:sb-diesmds-11}, 
+which is inspired from the design of <a href="www.openmesh.org">OpenMesh</a> and the \cgal package 
+\ref PkgPolyhedronSummary.
+
+Philipp Moeller and Andreas Fabri worked on the code so that iterators
+fulfill the requirements of the \stl iterator concepts, and
+changed the API so that it becomes similar to the `HalfedgeGraph`
+concept of the package \ref PkgBGLSummary.
+
+*/
+
+} /* namespace CGAL */
