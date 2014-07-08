@@ -40,7 +40,7 @@
 
 namespace CGAL {
 
-#define GENERATE_MEMBER_DETECTOR(X)                                             \
+#define GENERATE_MEMBER_DETECTOR(X)                                           \
 template<typename T> class has_##X {                                          \
     struct Fallback { int X; };                                               \
     struct Derived : T, Fallback { };                                         \
