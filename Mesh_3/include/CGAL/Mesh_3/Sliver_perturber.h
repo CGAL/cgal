@@ -1594,7 +1594,7 @@ print_final_perturbations_statistics() const
   {
     std::cerr << it->perturbation_name() << ": "
               << (double)it->total_counter() / (double)total_perturbation_nb * 100.
-              << "% (" << it->total_counter() << " in " << it->total_time() << "s)"
+              << "% (" << it->total_counter() << " in " << it->total_time() << "ms)"
               << std::endl;
   }
 }

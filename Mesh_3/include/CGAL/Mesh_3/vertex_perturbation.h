@@ -34,6 +34,7 @@
   #include <CGAL/Timer.h>
   #ifdef CGAL_LINKED_WITH_TBB
     #include <tbb/enumerable_thread_specific.h>
+    #include <tbb/atomic.h>
   #endif
 #endif
 
@@ -191,7 +192,7 @@ public:
     , counter_(0)
     , timer_()
     , total_counter_(0)
-    , total_time_(0.)
+    , total_time_(0)
 #endif
   {}
   
@@ -331,12 +332,12 @@ private:
   
 #ifdef CGAL_MESH_3_PERTURBER_VERBOSE
 public:
-  void reset_timer() { total_time_+= time(); timer().reset(); }
+  void reset_timer() { total_time_+= 1000*time(); timer().reset(); }
   void reset_counter() { total_counter_ += counter_; counter_ = 0; }
   int counter() const { return counter_; }
   double time() const { return timer().time(); }
   int total_counter() const { return total_counter_ + counter(); }
-  double total_time() const { return total_time_ + time(); }
+  std::size_t total_time() const { return total_time_ + 1000*time(); }
   virtual std::string perturbation_name() const = 0;
 private:
   CGAL::Timer &timer() const
@@ -350,11 +351,13 @@ private:
   mutable int counter_;
 #ifdef CGAL_LINKED_WITH_TBB
   mutable tbb::enumerable_thread_specific<CGAL::Timer> timer_;
+  tbb::atomic<int> total_counter_;
+  tbb::atomic<std::size_t> total_time_;
 #else
   mutable CGAL::Timer timer_;
-#endif
   int total_counter_;
-  double total_time_;
+  std::size_t total_time_;
+#endif
 #endif
 };
   
