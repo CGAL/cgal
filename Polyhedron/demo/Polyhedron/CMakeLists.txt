@@ -61,22 +61,12 @@ endif(QT4_FOUND)
 
 
 
-# Eigen is now used by default
+# Eigen is required by default
 find_package(Eigen3 3.1.0) #(requires 3.1.0 or greater)
-if (NOT EIGEN3_FOUND)
-  # Find LAPACK (optional), for curvatures estimation
-  find_package(LAPACK)
-  if(LAPACK_FOUND)
-    include( ${LAPACK_USE_FILE} )
-  endif(LAPACK_FOUND)
-
-  # Find TAUCS (optionnal), for parametrization
-  find_package(TAUCS)
-  if(TAUCS_FOUND)
-    include( ${TAUCS_USE_FILE} )
-  endif(TAUCS_FOUND)
-else()
+if (EIGEN3_FOUND)
   include( ${EIGEN3_USE_FILE} )
+else()
+  message(STATUS "NOTICE: parametrization, poisson reconstruction and curvatures estimation plugins require Eigen 3.1 (or greater) and will not be available.")
 endif()
 
 
@@ -86,16 +76,6 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   find_package(Boost COMPONENTS thread system)
 
   include_directories ( ${QGLVIEWER_INCLUDE_DIR} )
-
-  # Parameterization needs Eigen3 or TAUCS
-  if(NOT EIGEN3_FOUND AND NOT TAUCS_FOUND)
-    message(STATUS "NOTICE: Eigen 3.1 (or greater) and TAUCS is not found. parametrization will not be available.")
-  endif(NOT EIGEN3_FOUND AND NOT TAUCS_FOUND)
-
-  # Curvature estimation needs Eigen3 or LAPACK
-  if(NOT EIGEN3_FOUND AND NOT LAPACK_FOUND)
-    message(STATUS "NOTICE: Eigen 3.1 (or greater) and LAPACK is not found. curvatures estimation will not be available.")
-  endif(NOT EIGEN3_FOUND AND NOT LAPACK_FOUND)
 
   qt4_wrap_ui( MainWindowUI_files MainWindow.ui )
   qt4_wrap_ui( FileLoaderDialogUI_files FileLoaderDialog.ui )
@@ -132,7 +112,6 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
               Scene_polyhedron_item.cpp
               Scene_polyhedron_transform_item.cpp
               Scene_polylines_item.cpp
-              Scene_edit_polyhedron_item.cpp
               Scene_textured_polyhedron_item.cpp
               Scene_c2t3_item.cpp
               Scene_nef_polyhedron_item.cpp
@@ -198,23 +177,19 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   target_link_libraries(scene_combinatorial_map_item scene_polyhedron_item)
 
   add_item(scene_polylines_item Scene_polylines_item.cpp Scene_polylines_item.moc)
-
-  add_item(scene_edit_polyhedron_item Scene_edit_polyhedron_item.cpp Scene_edit_polyhedron_item.moc)
-  # special
-  target_link_libraries(scene_edit_polyhedron_item scene_polyhedron_item)
-	
+  
   add_item(scene_polyhedron_item_decorator Scene_polyhedron_item_decorator.cpp Scene_polyhedron_item_decorator.moc)
   target_link_libraries(scene_polyhedron_item_decorator scene_polyhedron_item)
   
   add_item(scene_polyhedron_item_k_ring_selection Scene_polyhedron_item_k_ring_selection.cpp Scene_polyhedron_item_k_ring_selection.moc)
   target_link_libraries(scene_polyhedron_item_k_ring_selection scene_polyhedron_item)
-  
+ 
   add_item(scene_polyhedron_selection_item Scene_polyhedron_selection_item.cpp Scene_polyhedron_selection_item.moc)
   target_link_libraries(scene_polyhedron_selection_item scene_polyhedron_item_decorator scene_polyhedron_item_k_ring_selection)
-  
-  if(EIGEN3_FOUND OR TAUCS_FOUND)
+ 
+  if(EIGEN3_FOUND )
     add_item(scene_textured_polyhedron_item Scene_textured_polyhedron_item.cpp texture.cpp Scene_textured_polyhedron_item.moc)
-  endif(EIGEN3_FOUND OR TAUCS_FOUND)
+  endif()
 
   add_item(scene_implicit_function_item Scene_implicit_function_item.cpp Scene_implicit_function_item.moc Color_ramp.cpp)
 
@@ -247,7 +222,7 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 #      Viewer_moc.cpp
        ${FileLoaderDialogUI_files} ${MainWindowUI_files} ${PreferencesUI_FILES} ${RESOURCE_FILES} )
     add_to_cached_list( CGAL_EXECUTABLE_TARGETS Polyhedron_3 )
-    if(EIGEN3_FOUND OR TAUCS_FOUND)
+    if(EIGEN3_FOUND)
 #      add_executable( Polyhedron_3 Scene_tex_rendering.cpp Scene_tex_polyhedron_operations.cpp )
     endif()
 #  else(POLYHEDRON_DEMO_ENABLE_FORWARD_DECL)
@@ -352,20 +327,16 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   polyhedron_demo_plugin(pca_plugin Polyhedron_demo_pca_plugin)
   target_link_libraries(pca_plugin scene_polyhedron_item scene_basic_objects)
 
-  if(EIGEN3_FOUND OR TAUCS_FOUND)
+  if(EIGEN3_FOUND)
     polyhedron_demo_plugin(parameterization_plugin Polyhedron_demo_parameterization_plugin)
     target_link_libraries(parameterization_plugin scene_polyhedron_item scene_textured_polyhedron_item )
-  else(EIGEN3_FOUND OR TAUCS_FOUND)
-    message(STATUS "NOTICE: Neither TAUCS nor Eigen 3.1 (or greater) libraries have been found. Parameterization will not be available.")
-  endif(EIGEN3_FOUND OR TAUCS_FOUND)
+  endif()
   
-  if(TAUCS_FOUND OR EIGEN3_FOUND)
+  if(EIGEN3_FOUND)
     qt4_wrap_ui( poissonUI_FILES Polyhedron_demo_poisson_plugin.ui)
     polyhedron_demo_plugin(poisson_plugin Polyhedron_demo_poisson_plugin Polyhedron_demo_poisson_plugin_impl.cpp ${poissonUI_FILES})
     target_link_libraries(poisson_plugin scene_polyhedron_item scene_points_with_normal_item)
-  else(TAUCS_FOUND OR EIGEN3_FOUND)
-    message(STATUS "NOTICE: Neither TAUCS nor Eigen 3.1 (or greater) libraries have been found. Poisson reconstruction will not be available.")
-  endif(TAUCS_FOUND OR EIGEN3_FOUND)
+  endif()
   
   
   # Link with BLAS and LAPACK only (optional), for Jet Fitting
@@ -388,7 +359,7 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
     target_link_libraries(jet_fitting_plugin scene_polyhedron_item scene_polylines_item)
     
   else(EIGEN3_FOUND OR LAPACK_FOUND)
-    message(STATUS "NOTICE: Nor Eigen 3.1 (or greater) nor LAPACK library were found. Normal estimation and smoothing will not be available.")
+    message(STATUS "NOTICE: Normal estimation and smoothing plugins require Eigen 3.1 (or greater) or LAPACK libraries and will not be available.")
   endif(EIGEN3_FOUND OR LAPACK_FOUND)
 
   polyhedron_demo_plugin(self_intersection_plugin Polyhedron_demo_self_intersection_plugin)
@@ -426,9 +397,20 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
   polyhedron_demo_plugin(trivial_plugin Polyhedron_demo_trivial_plugin)
 
-  polyhedron_demo_plugin(edit_polyhedron_plugin Polyhedron_demo_edit_polyhedron_plugin)
-  target_link_libraries(edit_polyhedron_plugin scene_polyhedron_item scene_edit_polyhedron_item)
+  # Edit polyhedron scene item and plugin
+  if ( EIGEN3_FOUND AND "${EIGEN3_VERSION}" VERSION_GREATER "3.1.90" )
+    qt4_wrap_ui( editionUI_FILES Deform_mesh.ui )
+    qt4_automoc( Scene_edit_polyhedron_item.cpp )
+    add_item(scene_edit_polyhedron_item Scene_edit_polyhedron_item.cpp Scene_edit_polyhedron_item.moc ${editionUI_FILES})
 
+    target_link_libraries(scene_edit_polyhedron_item scene_polyhedron_item scene_polyhedron_item_k_ring_selection)
+
+    polyhedron_demo_plugin(edit_polyhedron_plugin Polyhedron_demo_edit_polyhedron_plugin ${editionUI_FILES})
+    target_link_libraries(edit_polyhedron_plugin scene_polyhedron_item scene_edit_polyhedron_item)
+  else()
+    message(STATUS "NOTICE: The polyhedron edit plugin require Eigen 3.2 (or higher) and will not be available.")
+  endif()
+  
   polyhedron_demo_plugin(cut_plugin Polyhedron_demo_cut_plugin)
   target_link_libraries(cut_plugin scene_polyhedron_item scene_basic_objects)
   
