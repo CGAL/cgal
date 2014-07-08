@@ -30,7 +30,7 @@ class Polyhedron_demo_scale_space_reconstruction_plugin_dialog : public QDialog,
     bool generate_smoothed() const { return m_genSmooth->isChecked(); }
 };
 
-#include <CGAL/Scale_space_surface_reconstructer_3.h>
+#include <CGAL/Scale_space_surface_reconstruction_3.h>
 
 class Polyhedron_demo_scale_space_reconstruction_plugin :
   public QObject,
@@ -84,7 +84,7 @@ void Polyhedron_demo_scale_space_reconstruction_plugin::on_actionScaleSpaceRecon
     time.start();
     std::cout << "Scale scape surface reconstruction...";
 
-    typedef CGAL::Scale_space_surface_reconstructer_3<Kernel> Recontructor;
+    typedef CGAL::Scale_space_surface_reconstruction_3<Kernel> Recontructor;
     Recontructor reconstruct( dialog.neighbors(), dialog.samples() );
     reconstruct.reconstruct_surface(
       pts_item->point_set()->begin(),
@@ -97,7 +97,7 @@ void Polyhedron_demo_scale_space_reconstruction_plugin::on_actionScaleSpaceRecon
     //create item for the reconstruction output with input point set
     Scene_polygon_soup_item* new_item = new Scene_polygon_soup_item();
     new_item->init_polygon_soup(pts_item->point_set()->size(),
-                              reconstruct.get_surface_size() );
+                                reconstruct.number_of_triangles() );
 
     typedef Point_set::iterator Point_iterator;
 
@@ -110,7 +110,7 @@ void Polyhedron_demo_scale_space_reconstruction_plugin::on_actionScaleSpaceRecon
     for (Recontructor::Triple_iterator it=reconstruct.surface_begin(),
                                        end=reconstruct.surface_end();it!=end;++it)
     {
-      new_item->new_triangle(it->first, it->second, it->third);
+      new_item->new_triangle( get<0>(*it), get<1>(*it), get<2>(*it) );
     }
 
     new_item->finalize_polygon_soup();
@@ -125,7 +125,7 @@ void Polyhedron_demo_scale_space_reconstruction_plugin::on_actionScaleSpaceRecon
       Scene_polygon_soup_item *new_item_smoothed = new Scene_polygon_soup_item();
 
       new_item_smoothed->init_polygon_soup(pts_item->point_set()->size(),
-                                           reconstruct.get_surface_size() );
+                                           reconstruct.number_of_triangles() );
 
       typedef Recontructor::Point_iterator SS_point_iterator;
       for(SS_point_iterator it = reconstruct.scale_space_begin(),
@@ -137,7 +137,7 @@ void Polyhedron_demo_scale_space_reconstruction_plugin::on_actionScaleSpaceRecon
       for (Recontructor::Triple_iterator it=reconstruct.surface_begin(),
                                          end=reconstruct.surface_end();it!=end;++it)
       {
-        new_item_smoothed->new_triangle(it->first, it->second, it->third);
+        new_item_smoothed->new_triangle( get<0>(*it), get<1>(*it), get<2>(*it) );
       }
 
       new_item_smoothed->finalize_polygon_soup();
