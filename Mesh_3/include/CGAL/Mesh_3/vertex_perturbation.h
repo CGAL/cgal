@@ -191,10 +191,12 @@ public:
 #ifdef CGAL_MESH_3_PERTURBER_VERBOSE
     , counter_(0)
     , timer_()
-    , total_counter_(0)
-    , total_time_(0)
 #endif
-  {}
+  {
+    // Initialized here in case it's some tbb::atomic
+    total_counter_ = 0;
+    total_time_ = 0;
+  }
   
   /**
    * @brief destructor
@@ -337,7 +339,8 @@ public:
   int counter() const { return counter_; }
   double time() const { return timer().time(); }
   int total_counter() const { return total_counter_ + counter(); }
-  std::size_t total_time() const { return total_time_ + 1000*time(); }
+  std::size_t total_time() const 
+  { return static_cast<std::size_t>(total_time_ + 1000*time()); }
   virtual std::string perturbation_name() const = 0;
 private:
   CGAL::Timer &timer() const
