@@ -193,9 +193,11 @@ public:
     , timer_()
 #endif
   {
+#ifdef CGAL_MESH_3_PERTURBER_VERBOSE
     // Initialized here in case it's some tbb::atomic
     total_counter_ = 0;
     total_time_ = 0;
+#endif
   }
   
   /**
