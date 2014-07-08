@@ -2649,7 +2649,7 @@ rebuild_restricted_delaunay(OutdatedCells& outdated_cells,
   {
     while ( first_cell != last_cell )
     {
-      const Cell_handle& cell = *first_cell++;
+      Cell_handle cell = *first_cell++;
       c3t3_.remove_from_complex(cell);
       updater(cell);
     }
