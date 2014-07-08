@@ -22,6 +22,10 @@ class Polyhedron_demo_point_set_average_spacing_plugin :
   Q_OBJECT
   Q_INTERFACES(Polyhedron_demo_plugin_interface)
 
+  #if QT_VERSION >= 0x050000
+  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")//New for Qt5 version !
+  #endif
+
 private:
   QAction* actionAverageSpacing;
   
@@ -63,6 +67,18 @@ void Polyhedron_demo_point_set_average_spacing_plugin::on_actionAverageSpacing_t
 
     // Gets options
     bool ok;
+
+  #if QT_VERSION >= 0x050000
+    const int nb_neighbors =
+      QInputDialog::getInt((QWidget*)mw,
+                               tr("Average Spacing"), // dialog title
+                               tr("Number of neighbors:"), // field label
+                               6, // default value = 1 ring
+                               6, // min
+                               1000, // max
+                               1, // step
+                               &ok);
+  #else
     const int nb_neighbors =
       QInputDialog::getInteger((QWidget*)mw,
                                tr("Average Spacing"), // dialog title
@@ -72,6 +88,7 @@ void Polyhedron_demo_point_set_average_spacing_plugin::on_actionAverageSpacing_t
                                1000, // max
                                1, // step
                                &ok);
+  #endif
     if(!ok) 
       return;
 
@@ -104,6 +121,8 @@ void Polyhedron_demo_point_set_average_spacing_plugin::on_actionAverageSpacing_t
   }
 }
 
+#if QT_VERSION < 0x050000
 Q_EXPORT_PLUGIN2(Polyhedron_demo_point_set_average_spacing_plugin, Polyhedron_demo_point_set_average_spacing_plugin)
+#endif
 
 #include "Polyhedron_demo_point_set_average_spacing_plugin.moc"

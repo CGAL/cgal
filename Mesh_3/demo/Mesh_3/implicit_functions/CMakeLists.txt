@@ -22,7 +22,7 @@ set( QT_USE_QTSCRIPT  TRUE )
 set( QT_USE_QTOPENGL  TRUE )
 
 #New for Qt5 version !
-if(NOT USE_QT5)
+if(QT4 OR QT5)
 	option (USE_QT5 "Use Qt5 version instead of Qt4" ON)
 endif()
 
