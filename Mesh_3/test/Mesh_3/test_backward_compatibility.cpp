@@ -85,6 +85,7 @@ struct Mesh_new_facet_criteria {
 
 #include <CGAL/Implicit_mesh_domain_3.h>
 #include <CGAL/make_mesh_3.h>
+#include <CGAL/remove_far_points_in_mesh_3.h>
 
 // Domain
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
@@ -128,6 +129,7 @@ void test()
   // Mesh generation
   C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria, no_exude(), no_perturb());
   CGAL::refine_mesh_3<C3t3>(c3t3, domain, new_criteria, no_exude(), no_perturb());
+  CGAL::remove_far_points_in_mesh_3(c3t3);
 
   std::cout << "Number of vertices: "
             << c3t3.triangulation().number_of_vertices() << "\n"

@@ -85,9 +85,11 @@ struct Implicit_tester : public Tester<K>
     CGAL::refine_mesh_3(c3t3, domain, criteria,
                         CGAL::parameters::no_exude(),
                         CGAL::parameters::no_perturb());
-    
+
+    CGAL::remove_far_points_in_mesh_3(c3t3);
+
     // Verify
-    this->verify(c3t3,domain,criteria,Bissection_tag(),50,58,80,90);
+    this->verify(c3t3,domain,criteria,Bissection_tag(), 50, 58, 70, 90);
   }
 };
 

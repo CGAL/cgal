@@ -508,7 +508,7 @@ initialize()
 
 # ifndef CGAL_PARALLEL_MESH_3_DO_NOT_ADD_OUTSIDE_POINTS_ON_A_FAR_SPHERE
 
-    if (r_c3t3_.number_of_facets() == 0)
+    if (r_c3t3_.number_of_far_points() == 0 && r_c3t3_.number_of_facets() == 0)
     {
       const Bbox_3 &bbox = estimated_bbox;
 
@@ -531,7 +531,7 @@ initialize()
         tbb::task_scheduler_init::default_num_threads()
         * Concurrent_mesher_config::get().num_pseudo_infinite_vertices_per_core);
       for (int i = 0 ; i < NUM_PSEUDO_INFINITE_VERTICES ; ++i, ++random_point)
-        r_c3t3_.triangulation().insert(*random_point + center);
+        r_c3t3_.add_far_point(*random_point + center);
     
 #  ifdef CGAL_CONCURRENT_MESH_3_VERBOSE
       std::cerr << "done." << std::endl;
@@ -555,7 +555,7 @@ initialize()
 #endif // CGAL_LINKED_WITH_TBB
   {
 #ifdef CGAL_SEQUENTIAL_MESH_3_ADD_OUTSIDE_POINTS_ON_A_FAR_SPHERE
-    if (r_c3t3_.number_of_facets() == 0)
+    if (r_c3t3_.number_of_far_points() == 0 && r_c3t3_.number_of_facets() == 0)
     {
       /*std::cerr << "A little bit of refinement... ";
 
@@ -590,7 +590,7 @@ initialize()
       Random_points_on_sphere_3<Point> random_point(radius);
       const int NUM_PSEUDO_INFINITE_VERTICES = 12*2;
       for (int i = 0 ; i < NUM_PSEUDO_INFINITE_VERTICES ; ++i, ++random_point)
-        r_c3t3_.triangulation().insert(*random_point + center);
+        r_c3t3_.add_far_point(*random_point + center);
 # ifdef CGAL_MESH_3_VERBOSE
       std::cerr << "done." << std::endl;
 # endif

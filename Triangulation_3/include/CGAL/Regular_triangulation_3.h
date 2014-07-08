@@ -660,6 +660,18 @@ namespace CGAL {
       return n - number_of_vertices();
     }
 
+    
+    template <class OutputItCells>
+    void remove_and_give_new_cells(Vertex_handle v, OutputItCells cit)
+    {
+      Self tmp;
+      Vertex_remover<Self> remover (tmp);
+      Tr_Base::remove_and_give_new_cells(v, remover, cit);
+
+      CGAL_triangulation_expensive_postcondition(is_valid());
+    }
+
+
     // DISPLACEMENT
     Vertex_handle move_point(Vertex_handle v, const Weighted_point & p);
 

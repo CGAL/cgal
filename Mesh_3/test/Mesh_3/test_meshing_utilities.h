@@ -377,7 +377,7 @@ struct Tester
                                       const double reference_value) const
   {
     double hdist = compute_hausdorff_distance(c3t3, domain, Polyhedral_tag());
-    assert(hdist <= reference_value*1.01);
+    assert(hdist <= reference_value*1.05);
   }
 
   template<typename C3t3, typename MeshDomain>

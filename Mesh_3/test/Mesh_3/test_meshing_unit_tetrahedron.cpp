@@ -58,10 +58,11 @@ struct Polyhedron_tester : public Tester<K>
                            cell_size = cs);
     // Mesh generation
     C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria);
-
+    
+    CGAL::remove_far_points_in_mesh_3(c3t3);
+    
     double vol = 1/6.;
     this->verify_c3t3_volume(c3t3, vol*0.95, vol*1.05);
-
     this->verify_c3t3(c3t3,domain,Polyhedral_tag(),
                       55, 65, 110, 125, 85, 120);
   }

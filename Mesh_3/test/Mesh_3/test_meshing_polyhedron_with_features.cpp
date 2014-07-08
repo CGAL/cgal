@@ -68,6 +68,8 @@ struct Polyhedron_with_features_tester : public Tester<K>
                                         CGAL::parameters::no_exude(),
                                         CGAL::parameters::no_perturb());
     
+    CGAL::remove_far_points_in_mesh_3(c3t3);
+
     // Verify
     this->verify(c3t3,domain,criteria,
                  Polyhedral_tag()); //, 1099, 1099, 1158, 1158, 4902, 4902);

@@ -70,6 +70,22 @@ namespace CGAL {
         Vertex_handle new_vertex = r_c3t3_.triangulation().insert(point);
         r_c3t3_.set_index(new_vertex, index);
         r_c3t3_.set_dimension(new_vertex, dimension);
+
+#if defined(CGAL_LINKED_WITH_TBB)\
+ && !defined(CGAL_PARALLEL_MESH_3_DO_NOT_ADD_OUTSIDE_POINTS_ON_A_FAR_SPHERE)
+        if (boost::is_convertible<C3T3::Concurrency_tag, CGAL::Parallel_tag>::value)
+        {
+          if (dimension == -1)
+            r_c3t3_.add_far_point(new_vertex);
+        }
+#endif
+#ifdef CGAL_SEQUENTIAL_MESH_3_ADD_OUTSIDE_POINTS_ON_A_FAR_SPHERE
+        if (boost::is_convertible<C3T3::Concurrency_tag, CGAL::Sequential_tag>::value)
+        {
+          if (dimension == -1)
+            r_c3t3_.add_far_point(new_vertex);
+        }
+#endif
       }
 
     private:

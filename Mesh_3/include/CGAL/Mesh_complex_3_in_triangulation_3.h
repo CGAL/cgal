@@ -1,4 +1,4 @@
-// Copyright (c) 2009-2010 INRIA Sophia-Antipolis (France).
+// Copyright (c) 2009-2014 INRIA Sophia-Antipolis (France).
 // Copyright (c) 2010-2013 GeometryFactory Sarl (France).
 // All rights reserved.
 //
@@ -17,7 +17,7 @@
 // $Id$
 //
 //
-// Author(s)     : Stephane Tayeb
+// Author(s)     : Stephane Tayeb, Clement Jamin
 //
 //******************************************************************************
 // File Description :
@@ -60,7 +60,8 @@ private:
 
 public:
   typedef typename Base::size_type                        size_type;
-
+  
+  typedef typename Tr::Point                              Point;
   typedef typename Base::Edge                             Edge;
   typedef typename Base::Vertex_handle                    Vertex_handle;
   typedef CornerIndex                                     Corner_index;
@@ -83,6 +84,8 @@ private:
 
   // Type to store the corners
   typedef std::map<Vertex_handle,Corner_index>        Corner_map;
+  // Type to store far vertices
+  typedef std::vector<Vertex_handle>                  Far_vertices_vec;
 
 public:
   /**
@@ -120,6 +123,7 @@ public:
     Base::swap(rhs);
     edges_.swap(rhs.edges_);
     corners_.swap(rhs.corners_);
+    far_vertices_.swap(rhs.far_vertices_);
   }
 
   /**
@@ -136,6 +140,9 @@ public:
   using Base::is_in_complex;
   using Base::add_to_complex;
   using Base::remove_from_complex;
+  using Base::triangulation;
+  using Base::set_surface_patch_index;
+    
 
 
   /**
@@ -191,6 +198,62 @@ public:
   {
     corners_.erase(v);
     v->set_dimension(-1);
+  }
+
+  std::size_t number_of_far_points() const
+  {
+    return far_vertices_.size();
+  }
+
+  void add_far_point(const Point &p)
+  {
+    far_vertices_.push_back(triangulation().insert(p));
+  }
+  
+  void add_far_point(Vertex_handle vh)
+  {
+    far_vertices_.push_back(vh);
+  }
+
+  void remove_far_points()
+  {
+    Triangulation &tr = triangulation();
+    //triangulation().remove(far_vertices_.begin(), far_vertices_.end());
+    Far_vertices_vec::const_iterator it = far_vertices_.begin();
+    Far_vertices_vec::const_iterator it_end = far_vertices_.end();
+    for ( ; it != it_end ; ++it)
+    {
+      std::vector<Cell_handle> new_cells;
+      new_cells.reserve(32);
+      tr.remove_and_give_new_cells(*it, std::back_inserter(new_cells));
+
+      std::vector<Cell_handle>::iterator nc_it = new_cells.begin();
+      std::vector<Cell_handle>::iterator nc_it_end = new_cells.end();
+      for ( ; nc_it != nc_it_end ; ++nc_it)
+      {
+        Cell_handle c = *nc_it;
+        for (int i = 0 ; i < 4 ; ++i)
+        {
+          Facet mirror_facet = tr.mirror_facet(std::make_pair(c, i));
+          if (is_in_complex(mirror_facet))
+          {
+            set_surface_patch_index(c, i, 
+                                    surface_patch_index(mirror_facet));
+          }
+        }
+        /*int i_inf;
+        if (c->has_vertex(tr.infinite_vertex(), i_inf))
+        {
+          Facet mirror_facet = tr.mirror_facet(std::make_pair(c, i_inf));
+          if (is_in_complex(mirror_facet))
+          {
+            set_surface_patch_index(c, i_inf, 
+                                    surface_patch_index(mirror_facet));
+          }
+        }*/
+      }
+    }
+    far_vertices_.clear();
   }
 
   /**
@@ -479,6 +542,7 @@ private:
 private:
   Edge_map edges_;
   Corner_map corners_;
+  Far_vertices_vec far_vertices_;
 };
 
 
@@ -512,6 +576,20 @@ Mesh_complex_3_in_triangulation_3(const Self& rhs)
     Vertex_handle new_v;
     this->triangulation().is_vertex(it->first->point(), new_v);
     this->add_to_complex(new_v, it->second);
+  }
+
+  // Parse vertices to identify far vertices
+  if (rhs.far_vertices_.size() > 0)
+  {
+    Triangulation &tr = triangulation();
+    typename Tr::Finite_vertices_iterator vit = tr.finite_vertices_begin();
+    for(typename Tr::Finite_vertices_iterator end = tr.finite_vertices_end();
+        vit != end ; ++vit)
+    {
+      if (vit->in_dimension() == -1)
+        far_vertices_.push_back(vit);
+    }
+    CGAL_assertion(far_vertices_.size() == rhs.far_vertices_.size());
   }
 }
 
