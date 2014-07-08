@@ -49,11 +49,11 @@ typedef CGAL::Mesh_criteria_3<Tr, Edge_criteria, Periodic_facet_criteria, Period
 // To avoid verbose function and named parameters call
 using namespace CGAL::parameters;
 
-const FT PI = std::acos(-1.);
+const FT PI = 3.14159265358979;
 
 // Function
 FT sphere_function_1 (const Point& p)
-{ return CGAL::squared_distance(p, Point(0.5, 0.5, 0.5))-0.2; }
+{ return CGAL::squared_distance(p, Point(0.5, 0.5, 0.5))-0.15; }
 FT sphere_function_2 (const Point& p)
 { return CGAL::squared_distance(p, Point(0.66, 0.5, 0.5))-0.2; }
 FT schwarz_p(const Point& p) {
@@ -62,9 +62,6 @@ FT schwarz_p(const Point& p) {
   z2=std::cos( p.z() * 2*PI );
   return x2 + y2 + z2;
 }
-
-
-typedef CGAL::Mesh_constant_domain_field_3<Periodic_mesh_domain::R, Periodic_mesh_domain::Index> Field;
 
 int main(int argc, char** argv)
 {
@@ -79,32 +76,18 @@ int main(int argc, char** argv)
   }
 
   std::vector<Function> funcs;
+  funcs.push_back(&schwarz_p);
   funcs.push_back(&sphere_function_1);
   std::vector<std::string> vps;
-  vps.push_back("-");
-  vps.push_back("+");
+  vps.push_back("--");
+  vps.push_back("-+");
   Wrapper wrapper(funcs, vps);
   Periodic_mesh_domain domain(wrapper, CGAL::Iso_cuboid_3<K>(0, 0, 0, domain_size, domain_size, domain_size));
   
-  double kidney_size = 0.3;
-  int volume_dimension = 3;
-  Field size(8);
-  size.set_size(kidney_size, volume_dimension,
-                domain.index_from_subdomain_index(2));
-
-  size.set_size(0.06, volume_dimension,
-                domain.index_from_subdomain_index(1));
-
-  Mesh_criteria criteria(domain, facet_angle=30, facet_size=0.05, facet_distance=0.025,
-                                cell_radius_edge_ratio=2, cell_size = size);
-//  Mesh_criteria criteria(domain
-////      , facet_angle=30, facet_size=0.05 * domain_size, facet_distance=0.025 * domain_size,
-////      cell_radius_edge_ratio=2, cell_size = 0.05
-//      , facet_angle=30, facet_size=0.05, facet_distance=0.025,
-//      cell_radius_edge_ratio=2, cell_size = 0.05
-////      , facet_angle=30, facet_size=0.10 * domain_size, facet_distance=0.25 * domain_size,
-////      cell_radius_edge_ratio=2, cell_size = 0.10
-//                                 );
+  Mesh_criteria criteria(domain
+      , facet_angle=30, facet_size=0.05, facet_distance=0.025,
+      cell_radius_edge_ratio=2, cell_size = 0.05
+                                 );
 
   
   // Mesh generation
@@ -113,7 +96,7 @@ int main(int argc, char** argv)
   // Output
   std::ofstream medit_file( (std::string("output_") + index + ".mesh").data() );
   
-  write_complex_to_medit(medit_file, c3t3);
+  write_complex_to_medit(medit_file, c3t3, 1);
   
   medit_file.close();
   
