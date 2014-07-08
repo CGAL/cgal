@@ -1,7 +1,7 @@
 #ifndef CGAL_DEMO_MESH_3_CONFIG_H
 #define CGAL_DEMO_MESH_3_CONFIG_H
 
-#define CGAL_PROFILE
+//#define CGAL_PROFILE
 
 // #define CGAL_POLYHEDRON_DEMO_NO_NEF
 // #define CGAL_POLYHEDRON_DEMO_NO_SURFACE_MESHER
@@ -12,7 +12,7 @@
 //#define CGAL_MESH_3_EXUDER_VERBOSE
 //#define CGAL_MESH_3_EXUDER_HIGH_VERBOSITY
 //#define CGAL_MESH_3_VERY_VERBOSE
-#define CGAL_MESH_3_IO_VERBOSE
+//#define CGAL_MESH_3_IO_VERBOSE
 
 //#define SHOW_REMAINING_BAD_ELEMENT_IN_RED
 
@@ -50,7 +50,7 @@
 // ==========================================================================
 
 //#define CGAL_MESH_3_USE_OLD_SURFACE_RESTRICTED_DELAUNAY_UPDATE // WARNING: VERY SLOW
-#define CGAL_MESH_3_INITIAL_POINTS_NO_RANDOM_SHOOTING
+//#define CGAL_MESH_3_INITIAL_POINTS_NO_RANDOM_SHOOTING
 //#define CGAL_MESHES_DEBUG_REFINEMENT_POINTS
 //#define CHECK_AND_DISPLAY_THE_NUMBER_OF_BAD_ELEMENTS_IN_THE_END
 
@@ -75,7 +75,7 @@
   // Verbose
   // ==========================================================================
 
-# define CGAL_CONCURRENT_MESH_3_VERBOSE
+//# define CGAL_CONCURRENT_MESH_3_VERBOSE
 //#define CGAL_CONCURRENT_MESH_3_VERY_VERBOSE
 
   // ==========================================================================
@@ -97,7 +97,7 @@
   // ==========================================================================
 
   // For abortion profiling, etc.
-# define CGAL_CONCURRENT_MESH_3_PROFILING
+//# define CGAL_CONCURRENT_MESH_3_PROFILING
   // Debugging
 //# define CGAL_DEBUG_FORCE_SEQUENTIAL_MESH_REFINEMENT
 
@@ -116,6 +116,6 @@
 
 #endif // CGAL_CONCURRENT_MESH_3
   
-#define CGAL_MESH_3_PROFILING
+//#define CGAL_MESH_3_PROFILING
 
 #endif // CGAL_DEMO_MESH_3_CONFIG_H
