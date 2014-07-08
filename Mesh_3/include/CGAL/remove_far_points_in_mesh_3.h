@@ -35,7 +35,7 @@ namespace Mesh_3 {
 ************************************************/
 
 // Sequential
-template <typename C3T3, typename Concurrency_tag = C3T3::Concurrency_tag>
+template <typename C3T3, typename Concurrency_tag = typename C3T3::Concurrency_tag>
 class Remove_far_points
 {
 #ifdef CGAL_SEQUENTIAL_MESH_3_ADD_OUTSIDE_POINTS_ON_A_FAR_SPHERE

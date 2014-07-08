@@ -63,11 +63,15 @@ public:
   
   typedef typename Tr::Point                              Point;
   typedef typename Base::Edge                             Edge;
+  typedef typename Base::Facet                            Facet;
   typedef typename Base::Vertex_handle                    Vertex_handle;
+  typedef typename Base::Cell_handle                      Cell_handle;
   typedef CornerIndex                                     Corner_index;
   typedef CurveSegmentIndex                               Curve_segment_index;
 
   typedef typename Base::Triangulation                    Triangulation;
+
+  using Base::surface_patch_index;
 
 private:
   // Type to store the edges:
@@ -219,16 +223,16 @@ public:
   {
     Triangulation &tr = triangulation();
     //triangulation().remove(far_vertices_.begin(), far_vertices_.end());
-    Far_vertices_vec::const_iterator it = far_vertices_.begin();
-    Far_vertices_vec::const_iterator it_end = far_vertices_.end();
+    typename Far_vertices_vec::const_iterator it = far_vertices_.begin();
+    typename Far_vertices_vec::const_iterator it_end = far_vertices_.end();
     for ( ; it != it_end ; ++it)
     {
       std::vector<Cell_handle> new_cells;
       new_cells.reserve(32);
       tr.remove_and_give_new_cells(*it, std::back_inserter(new_cells));
 
-      std::vector<Cell_handle>::iterator nc_it = new_cells.begin();
-      std::vector<Cell_handle>::iterator nc_it_end = new_cells.end();
+      typename std::vector<Cell_handle>::iterator nc_it = new_cells.begin();
+      typename std::vector<Cell_handle>::iterator nc_it_end = new_cells.end();
       for ( ; nc_it != nc_it_end ; ++nc_it)
       {
         Cell_handle c = *nc_it;
