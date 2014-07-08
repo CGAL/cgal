@@ -29,9 +29,14 @@ namespace CGAL
 
 /// @cond SKIP_IN_MANUAL
 template <bool Fast_sdf_calculation_mode, class Polyhedron,
-         class SDFPropertyMap, class GeomTraits
+         class SDFPropertyMap,
+         class PointPropertyMap
 #ifndef CGAL_CFG_NO_CPP0X_DEFAULT_TEMPLATE_ARGUMENTS_FOR_FUNCTION_TEMPLATES
-         = typename Polyhedron::Traits
+         = typename boost::property_map<Polyhedron, boost::vertex_point_t>::type
+#endif
+         , class GeomTraits
+  #ifndef CGAL_CFG_NO_CPP0X_DEFAULT_TEMPLATE_ARGUMENTS_FOR_FUNCTION_TEMPLATES
+         = typename Kernel_traits<typename boost::property_traits<PointPropertyMap>::value_type>::Kernel
 #endif
          >
 std::pair<double, double>
@@ -40,10 +45,12 @@ sdf_values( const Polyhedron& polyhedron,
             double cone_angle = 2.0 / 3.0 * CGAL_PI,
             std::size_t number_of_rays = 25,
             bool postprocess = true,
+            PointPropertyMap ppmap = PointPropertyMap(),
             GeomTraits traits = GeomTraits())
 {
-  internal::Surface_mesh_segmentation<Polyhedron, GeomTraits, Fast_sdf_calculation_mode>
-  algorithm(polyhedron, traits);
+  typedef PointPropertyMap VPMap;
+  internal::Surface_mesh_segmentation<Polyhedron, GeomTraits, VPMap, Fast_sdf_calculation_mode>
+    algorithm(polyhedron, traits, ppmap);
   return algorithm.calculate_sdf_values(cone_angle, number_of_rays,
                                         sdf_values_map, postprocess);
 }
@@ -59,9 +66,10 @@ sdf_values( const Polyhedron& polyhedron,
  *
  * @pre @a polyhedron.is_pure_triangle()
  *
- * @tparam Polyhedron a %CGAL polyhedron
- * @tparam SDFPropertyMap  a `ReadWritePropertyMap` with `Polyhedron::Facet_const_handle` as key and `double` as value type
- * @tparam GeomTraits a model of SegmentationGeomTraits
+ * @tparam Polyhedron a model of `FaceListGraph`
+ * @tparam SDFPropertyMap  a `ReadWritePropertyMap` with `boost::graph_traits<Polyhedron>::%face_descriptor` as key and `double` as value type
+ * @tparam GeomTraits a model of `SegmentationGeomTraits`
+ * @tparam PointPropertyMap a `ReadablePropertyMap` with `boost::graph_traits<Polyhedron>::%vertex_descriptor` as key and `GeomTraits::Point_3` as value type.
  *
  * @param polyhedron surface mesh on which SDF values are computed
  * @param[out] sdf_values_map the SDF value of each facet
@@ -69,12 +77,17 @@ sdf_values( const Polyhedron& polyhedron,
  * @param number_of_rays number of rays picked in the cone of each facet. In our experiments, we observe that increasing the number of rays beyond the default has little effect on the quality of the segmentation result
  * @param postprocess if `true`, `CGAL::sdf_values_postprocessing` is called on raw SDF value computed.
  * @param traits traits class
+ * @param ppmap point property map. An overload is provided with `get(boost::vertex_point,polyhedron)` as default.
  *
  * @return minimum and maximum raw SDF values if @a postprocess is `true`, otherwise minimum and maximum SDF values (before linear normalization)
  */
-template <class Polyhedron, class SDFPropertyMap, class GeomTraits
+template <class Polyhedron, class SDFPropertyMap, class PointPropertyMap
 #ifndef CGAL_CFG_NO_CPP0X_DEFAULT_TEMPLATE_ARGUMENTS_FOR_FUNCTION_TEMPLATES
-= typename Polyhedron::Traits
+         = typename boost::property_map<Polyhedron, boost::vertex_point_t>::type
+#endif
+, class GeomTraits
+#ifndef CGAL_CFG_NO_CPP0X_DEFAULT_TEMPLATE_ARGUMENTS_FOR_FUNCTION_TEMPLATES
+=  typename Kernel_traits<typename boost::property_traits<PointPropertyMap>::value_type>::Kernel
 #endif
 >
 std::pair<double, double>
@@ -83,10 +96,11 @@ sdf_values( const Polyhedron& polyhedron,
             double cone_angle = 2.0 / 3.0 * CGAL_PI,
             std::size_t number_of_rays = 25,
             bool postprocess = true,
+            PointPropertyMap ppmap = PointPropertyMap(),
             GeomTraits traits = GeomTraits())
 {
-  return sdf_values<true, Polyhedron, SDFPropertyMap, GeomTraits>
-         (polyhedron, sdf_values_map, cone_angle, number_of_rays, postprocess, traits);
+  return sdf_values<true, Polyhedron, SDFPropertyMap, PointPropertyMap, GeomTraits>
+         (polyhedron, sdf_values_map, cone_angle, number_of_rays, postprocess, ppmap, traits);
 }
 
 
@@ -106,8 +120,8 @@ sdf_values( const Polyhedron& polyhedron,
  * @pre @a polyhedron.is_pure_triangle()
  * @pre Raw values should be greater or equal to 0. -1 indicates when no value could be computed
  *
- * @tparam Polyhedron a %CGAL polyhedron
- * @tparam SDFPropertyMap  a `ReadWritePropertyMap` with `Polyhedron::Facet_const_handle` as key and `double` as value type
+ * @tparam Polyhedron a model of `FaceListGraph`
+ * @tparam SDFPropertyMap  a `ReadWritePropertyMap` with `boost::graph_traits<Polyhedron>::%face_descriptor` as key and `double` as value type
  *
  * @param polyhedron surface mesh on which SDF values are computed
  * @param[in, out] sdf_values_map the SDF value of each facet
@@ -144,10 +158,11 @@ sdf_values_postprocessing(const Polyhedron& polyhedron,
  * @pre @a polyhedron.is_pure_triangle()
  * @pre @a number_of_clusters > 0
  *
- * @tparam Polyhedron a %CGAL polyhedron
- * @tparam SDFPropertyMap  a `ReadablePropertyMap` with `Polyhedron::Facet_const_handle` as key and `double` as value type
- * @tparam SegmentPropertyMap a `ReadWritePropertyMap` with `Polyhedron::Facet_const_handle` as key and `std::size_t` as value type
- * @tparam GeomTraits a model of SegmentationGeomTraits
+ * @tparam Polyhedron a model of `FaceListGraph`
+ * @tparam SDFPropertyMap  a `ReadablePropertyMap` with `boost::graph_traits<Polyhedron>::%face_descriptor` as key and `double` as value type
+ * @tparam SegmentPropertyMap a `ReadWritePropertyMap` with `boost::graph_traits<Polyhedron>::%face_descriptor` as key and `std::size_t` as value type
+ * @tparam GeomTraits a model of `SegmentationGeomTraits`
+ * @tparam PointPropertyMap a `ReadablePropertyMap` with `boost::graph_traits<Polyhedron>::%vertex_descriptor` as key and `GeomTraits::Point_3` as value type.
  *
  * @param polyhedron surface mesh corresponding to the SDF values
  * @param sdf_values_map the SDF value of each facet between [0-1]
@@ -156,13 +171,18 @@ sdf_values_postprocessing(const Polyhedron& polyhedron,
  * @param smoothing_lambda factor which indicates the importance of the surface features for the energy minimization. It is recommended to choose a value in the interval [0,1]. See the section \ref Surface_mesh_segmentationGraphCut for more details.
  * @param output_cluster_ids if `false` fill `segment_ids` with segment-ids, and with cluster-ids otherwise (see \cgalFigureRef{Cluster_vs_segment})
  * @param traits traits class
+ * @param ppmap point property map. An overload is provided with `get(boost::vertex_point,polyhedron)` as default.
  *
  * @return number of segments if `output_cluster_ids` is set to `false` and `number_of_clusters` otherwise
  */
 template <class Polyhedron, class SDFPropertyMap, class SegmentPropertyMap,
-         class GeomTraits
+          class PointPropertyMap
 #ifndef CGAL_CFG_NO_CPP0X_DEFAULT_TEMPLATE_ARGUMENTS_FOR_FUNCTION_TEMPLATES
-         = typename Polyhedron::Traits
+         = typename boost::property_map<Polyhedron, boost::vertex_point_t>::type
+#endif
+         , class GeomTraits
+#ifndef CGAL_CFG_NO_CPP0X_DEFAULT_TEMPLATE_ARGUMENTS_FOR_FUNCTION_TEMPLATES
+         = typename Kernel_traits<typename boost::property_traits<PointPropertyMap>::value_type>::Kernel
 #endif
          >
 std::size_t
@@ -172,21 +192,26 @@ segmentation_from_sdf_values( const Polyhedron& polyhedron,
                               std::size_t number_of_clusters = 5,
                               double smoothing_lambda = 0.26,
                               bool output_cluster_ids = false,
-                              GeomTraits traits = GeomTraits())
+                              PointPropertyMap ppmap=PointPropertyMap(),
+                              GeomTraits traits=GeomTraits())
 {
-  internal::Surface_mesh_segmentation<Polyhedron, GeomTraits> algorithm(
-    polyhedron, traits);
+  typedef typename boost::property_map<Polyhedron, boost::vertex_point_t>::type VPMap;
+  internal::Surface_mesh_segmentation<Polyhedron, GeomTraits, VPMap> algorithm(polyhedron, traits, ppmap);
   return algorithm.partition(number_of_clusters, smoothing_lambda, sdf_values_map,
                              segment_ids, !output_cluster_ids);
 }
 
 ///\cond SKIP_IN_MANUAL
 template < bool Fast_sdf_calculation_mode, class Polyhedron,
-         class SegmentPropertyMap, class GeomTraits
+         class SegmentPropertyMap, class PointPropertyMap
 #ifndef CGAL_CFG_NO_CPP0X_DEFAULT_TEMPLATE_ARGUMENTS_FOR_FUNCTION_TEMPLATES
-         = typename Polyhedron::Traits
+         = typename boost::property_map<Polyhedron, boost::vertex_point_t>::type
 #endif
-         >
+        , class GeomTraits
+#ifndef CGAL_CFG_NO_CPP0X_DEFAULT_TEMPLATE_ARGUMENTS_FOR_FUNCTION_TEMPLATES
+         = typename Kernel_traits<typename boost::property_traits<PointPropertyMap>::value_type>::Kernel
+#endif
+        >
 std::size_t
 segmentation_via_sdf_values(const Polyhedron& polyhedron,
                             SegmentPropertyMap segment_ids,
@@ -195,19 +220,21 @@ segmentation_via_sdf_values(const Polyhedron& polyhedron,
                             std::size_t number_of_clusters = 5,
                             double smoothing_lambda = 0.26,
                             bool output_cluster_ids = false,
-                            GeomTraits traits = GeomTraits())
+                            PointPropertyMap ppmap=PointPropertyMap(),
+                            GeomTraits traits=GeomTraits() )
 {
-  typedef std::map< typename Polyhedron::Facet_const_handle, double>
+  typedef typename boost::graph_traits<Polyhedron>::face_descriptor face_descriptor;
+  typedef std::map<face_descriptor, double>
   Facet_double_map;
   Facet_double_map internal_sdf_map;
   boost::associative_property_map<Facet_double_map> sdf_property_map(
     internal_sdf_map);
 
-  sdf_values<Fast_sdf_calculation_mode, Polyhedron, boost::associative_property_map<Facet_double_map>, GeomTraits>
-  (polyhedron, sdf_property_map, cone_angle, number_of_rays, true, traits);
-  return segmentation_from_sdf_values<Polyhedron, boost::associative_property_map<Facet_double_map>, SegmentPropertyMap, GeomTraits>
+  sdf_values<Fast_sdf_calculation_mode, Polyhedron, boost::associative_property_map<Facet_double_map>, PointPropertyMap, GeomTraits>
+  (polyhedron, sdf_property_map, cone_angle, number_of_rays, true, ppmap, traits);
+  return segmentation_from_sdf_values<Polyhedron, boost::associative_property_map<Facet_double_map>, SegmentPropertyMap, PointPropertyMap, GeomTraits>
          (polyhedron, sdf_property_map, segment_ids, number_of_clusters,
-          smoothing_lambda, output_cluster_ids, traits);
+          smoothing_lambda, output_cluster_ids, ppmap, traits);
 }
 /// \endcond
 
@@ -228,9 +255,10 @@ segmentation_via_sdf_values(const Polyhedron& polyhedron,
  * @pre @a polyhedron.is_pure_triangle()
  * @pre @a number_of_clusters > 0
  *
- * @tparam Polyhedron a %CGAL polyhedron
- * @tparam SegmentPropertyMap a `ReadWritePropertyMap` with `Polyhedron::Facet_const_handle` as key and `std::size_t` as value type
- * @tparam GeomTraits a model of SegmentationGeomTraits
+ * @tparam Polyhedron a model of `FaceListGraph`
+ * @tparam SegmentPropertyMap a `ReadWritePropertyMap` with `boost::graph_traits<Polyhedron>::%face_descriptor` as key and `std::size_t` as value type
+ * @tparam GeomTraits a model of `SegmentationGeomTraits`
+ * @tparam PointPropertyMap a `ReadablePropertyMap` with `boost::graph_traits<Polyhedron>::%vertex_descriptor` as key and `GeomTraits::Point_3` as value type.
  *
  * @param polyhedron surface mesh on which SDF values are computed
  * @param[out] segment_ids the segment or cluster id of each facet
@@ -240,12 +268,17 @@ segmentation_via_sdf_values(const Polyhedron& polyhedron,
  * @param smoothing_lambda factor which indicates the importance of the surface features for the energy minimization. It is recommended to choose a value in the interval [0,1]. See the section \ref Surface_mesh_segmentationGraphCut for more details.
  * @param output_cluster_ids if `false` fill `segment_ids` with segment-ids, and with cluster-ids otherwise (see \cgalFigureRef{Cluster_vs_segment})
  * @param traits traits class
+ * @param ppmap point property map. An overload is provided with `get(boost::vertex_point,polyhedron)` as default.
  *
  * @return number of segments if `output_cluster_ids` is set to `false` and `number_of_clusters` otherwise
  */
-template < class Polyhedron, class SegmentPropertyMap, class GeomTraits
+template < class Polyhedron, class SegmentPropertyMap, class PointPropertyMap
 #ifndef CGAL_CFG_NO_CPP0X_DEFAULT_TEMPLATE_ARGUMENTS_FOR_FUNCTION_TEMPLATES
-= typename Polyhedron::Traits
+         = typename boost::property_map<Polyhedron, boost::vertex_point_t>::type
+#endif
+, class GeomTraits
+#ifndef CGAL_CFG_NO_CPP0X_DEFAULT_TEMPLATE_ARGUMENTS_FOR_FUNCTION_TEMPLATES
+= typename Kernel_traits<typename boost::property_traits<PointPropertyMap>::value_type>::Kernel
 #endif
 >
 std::size_t
@@ -256,26 +289,65 @@ segmentation_via_sdf_values(const Polyhedron& polyhedron,
                             std::size_t number_of_clusters = 5,
                             double smoothing_lambda = 0.26,
                             bool output_cluster_ids = false,
-                            GeomTraits traits = GeomTraits())
+                            PointPropertyMap ppmap=PointPropertyMap(),
+                            GeomTraits traits=GeomTraits())
 {
-  return segmentation_via_sdf_values<true, Polyhedron, SegmentPropertyMap, GeomTraits>
+  return segmentation_via_sdf_values<true, Polyhedron, SegmentPropertyMap, PointPropertyMap, GeomTraits>
          (polyhedron, segment_ids, cone_angle, number_of_rays, number_of_clusters,
-          smoothing_lambda, output_cluster_ids, traits);
+          smoothing_lambda, output_cluster_ids, ppmap, traits);
 }
 
+#ifdef  CGAL_CFG_NO_CPP0X_DEFAULT_TEMPLATE_ARGUMENTS_FOR_FUNCTION_TEMPLATES
+// we need these overloads for the default of the point property map
 
-#ifdef CGAL_CFG_NO_CPP0X_DEFAULT_TEMPLATE_ARGUMENTS_FOR_FUNCTION_TEMPLATES
-template <bool Fast_sdf_calculation_mode, class Polyhedron, class SDFPropertyMap>
+/// sdf_values ///
+template < bool Fast_sdf_calculation_mode, class Polyhedron, class SDFPropertyMap, class PointPropertyMap>
 std::pair<double, double>
-sdf_values(const Polyhedron& polyhedron,
-           SDFPropertyMap sdf_values_map,
-           double cone_angle = 2.0 / 3.0 * CGAL_PI,
-           std::size_t number_of_rays = 25,
-           bool postprocess = true,
-           typename Polyhedron::Traits traits = typename Polyhedron::Traits())
+sdf_values( const Polyhedron& polyhedron,
+            SDFPropertyMap sdf_values_map,
+            double cone_angle = 2.0 / 3.0 * CGAL_PI,
+            std::size_t number_of_rays = 25,
+            bool postprocess = true,
+            PointPropertyMap ppmap = PointPropertyMap())
 {
-  return sdf_values<Fast_sdf_calculation_mode, Polyhedron, SDFPropertyMap, typename Polyhedron::Traits>
-         (polyhedron, sdf_values_map, cone_angle, number_of_rays, postprocess, traits);
+  typedef typename boost::property_traits<PointPropertyMap>::value_type Point_3;
+  typedef typename Kernel_traits<Point_3>::Kernel GeomTraits;
+  GeomTraits traits;
+  return sdf_values<Fast_sdf_calculation_mode, Polyhedron, SDFPropertyMap, PointPropertyMap, GeomTraits>
+         (polyhedron, sdf_values_map, cone_angle, number_of_rays, postprocess, ppmap, traits);
+}
+
+template < bool Fast_sdf_calculation_mode, class Polyhedron, class SDFPropertyMap>
+std::pair<double, double>
+sdf_values( const Polyhedron& polyhedron,
+            SDFPropertyMap sdf_values_map,
+            double cone_angle = 2.0 / 3.0 * CGAL_PI,
+            std::size_t number_of_rays = 25,
+            bool postprocess = true)
+{
+  typedef typename boost::property_map<Polyhedron, boost::vertex_point_t>::type PointPropertyMap;
+  PointPropertyMap ppmap = get(boost::vertex_point, const_cast<Polyhedron&>(polyhedron));
+  typedef typename boost::property_traits<PointPropertyMap>::value_type Point_3;
+  typedef typename Kernel_traits<Point_3>::Kernel GeomTraits;
+  GeomTraits traits;
+  return sdf_values<Fast_sdf_calculation_mode, Polyhedron, SDFPropertyMap, PointPropertyMap, GeomTraits>
+         (polyhedron, sdf_values_map, cone_angle, number_of_rays, postprocess, ppmap, traits);
+}
+
+template < class Polyhedron, class SDFPropertyMap, class PointPropertyMap>
+std::pair<double, double>
+sdf_values( const Polyhedron& polyhedron,
+            SDFPropertyMap sdf_values_map,
+            double cone_angle = 2.0 / 3.0 * CGAL_PI,
+            std::size_t number_of_rays = 25,
+            bool postprocess = true,
+            PointPropertyMap ppmap = PointPropertyMap())
+{
+  typedef typename boost::property_traits<PointPropertyMap>::value_type Point_3;
+  typedef typename Kernel_traits<Point_3>::Kernel GeomTraits;
+  GeomTraits traits;
+  return sdf_values<true, Polyhedron, SDFPropertyMap, PointPropertyMap, GeomTraits>
+         (polyhedron, sdf_values_map, cone_angle, number_of_rays, postprocess, ppmap, traits);
 }
 
 template < class Polyhedron, class SDFPropertyMap>
@@ -284,11 +356,34 @@ sdf_values( const Polyhedron& polyhedron,
             SDFPropertyMap sdf_values_map,
             double cone_angle = 2.0 / 3.0 * CGAL_PI,
             std::size_t number_of_rays = 25,
-            bool postprocess = true,
-            typename Polyhedron::Traits traits = typename Polyhedron::Traits())
+            bool postprocess = true)
 {
-  return sdf_values<true, Polyhedron, SDFPropertyMap, typename Polyhedron::Traits>
-         (polyhedron, sdf_values_map, cone_angle, number_of_rays, postprocess, traits);
+  typedef typename boost::property_map<Polyhedron, boost::vertex_point_t>::type PointPropertyMap;
+  PointPropertyMap ppmap = get(boost::vertex_point, const_cast<Polyhedron&>(polyhedron));
+  typedef typename boost::property_traits<PointPropertyMap>::value_type Point_3;
+  typedef typename Kernel_traits<Point_3>::Kernel GeomTraits;
+  GeomTraits traits;
+  return sdf_values<true, Polyhedron, SDFPropertyMap, PointPropertyMap, GeomTraits>
+         (polyhedron, sdf_values_map, cone_angle, number_of_rays, postprocess, ppmap, traits);
+}
+
+/// segmentation_from_sdf_values ///
+template <class Polyhedron, class SDFPropertyMap, class SegmentPropertyMap, class PointPropertyMap>
+std::size_t
+segmentation_from_sdf_values(const Polyhedron& polyhedron,
+                             SDFPropertyMap sdf_values_map,
+                             SegmentPropertyMap segment_ids,
+                             std::size_t number_of_clusters = 5,
+                             double smoothing_lambda = 0.26,
+                             bool output_cluster_ids = false,
+                             PointPropertyMap ppmap = PointPropertyMap() )
+{
+  typedef typename boost::property_traits<PointPropertyMap>::value_type Point_3;
+  typedef typename Kernel_traits<Point_3>::Kernel GeomTraits;
+  GeomTraits traits;
+  return segmentation_from_sdf_values<Polyhedron, SDFPropertyMap, SegmentPropertyMap, PointPropertyMap, GeomTraits>
+         (polyhedron, sdf_values_map, segment_ids, number_of_clusters, smoothing_lambda,
+          output_cluster_ids, ppmap, traits);
 }
 
 template <class Polyhedron, class SDFPropertyMap, class SegmentPropertyMap>
@@ -298,12 +393,36 @@ segmentation_from_sdf_values(const Polyhedron& polyhedron,
                              SegmentPropertyMap segment_ids,
                              std::size_t number_of_clusters = 5,
                              double smoothing_lambda = 0.26,
-                             bool output_cluster_ids = false,
-                             typename Polyhedron::Traits traits = typename Polyhedron::Traits())
+                             bool output_cluster_ids = false)
 {
-  return segmentation_from_sdf_values<Polyhedron, SDFPropertyMap, SegmentPropertyMap, typename Polyhedron::Traits>
+  typedef typename boost::property_map<Polyhedron, boost::vertex_point_t>::type PointPropertyMap;
+  PointPropertyMap ppmap = get(boost::vertex_point, const_cast<Polyhedron&>(polyhedron));
+  typedef typename boost::property_traits<PointPropertyMap>::value_type Point_3;
+  typedef typename Kernel_traits<Point_3>::Kernel GeomTraits;
+  GeomTraits traits;
+  return segmentation_from_sdf_values<Polyhedron, SDFPropertyMap, SegmentPropertyMap, PointPropertyMap, GeomTraits>
          (polyhedron, sdf_values_map, segment_ids, number_of_clusters, smoothing_lambda,
-          output_cluster_ids, traits);
+          output_cluster_ids, ppmap, traits);
+}
+
+/// segmentation_via_sdf_values ///
+template <bool Fast_sdf_calculation_mode, class Polyhedron, class SegmentPropertyMap, class PointPropertyMap>
+std::size_t
+segmentation_via_sdf_values(const Polyhedron& polyhedron,
+                            SegmentPropertyMap segment_ids,
+                            double cone_angle = 2.0 / 3.0 * CGAL_PI,
+                            std::size_t number_of_rays = 25,
+                            std::size_t number_of_clusters = 5,
+                            double smoothing_lambda = 0.26,
+                            bool output_cluster_ids = false,
+                            PointPropertyMap ppmap = PointPropertyMap() )
+{
+  typedef typename boost::property_traits<PointPropertyMap>::value_type Point_3;
+  typedef typename Kernel_traits<Point_3>::Kernel GeomTraits;
+  GeomTraits traits;
+  return segmentation_via_sdf_values<Fast_sdf_calculation_mode, Polyhedron, SegmentPropertyMap, PointPropertyMap, GeomTraits>
+         (polyhedron, segment_ids, cone_angle, number_of_rays, number_of_clusters,
+          smoothing_lambda, output_cluster_ids, ppmap, traits);
 }
 
 template <bool Fast_sdf_calculation_mode, class Polyhedron, class SegmentPropertyMap>
@@ -314,12 +433,35 @@ segmentation_via_sdf_values(const Polyhedron& polyhedron,
                             std::size_t number_of_rays = 25,
                             std::size_t number_of_clusters = 5,
                             double smoothing_lambda = 0.26,
-                            bool output_cluster_ids = false,
-                            typename Polyhedron::Traits traits = typename Polyhedron::Traits())
+                            bool output_cluster_ids = false)
 {
-  return segmentation_via_sdf_values< Fast_sdf_calculation_mode, Polyhedron, SegmentPropertyMap, typename Polyhedron::Traits>
+  typedef typename boost::property_map<Polyhedron, boost::vertex_point_t>::type PointPropertyMap;
+  PointPropertyMap ppmap = get(boost::vertex_point, const_cast<Polyhedron&>(polyhedron));
+  typedef typename boost::property_traits<PointPropertyMap>::value_type Point_3;
+  typedef typename Kernel_traits<Point_3>::Kernel GeomTraits;
+  GeomTraits traits;
+  return segmentation_via_sdf_values<Fast_sdf_calculation_mode, Polyhedron, SegmentPropertyMap, PointPropertyMap, GeomTraits>
          (polyhedron, segment_ids, cone_angle, number_of_rays, number_of_clusters,
-          smoothing_lambda, output_cluster_ids, traits);
+          smoothing_lambda, output_cluster_ids, ppmap, traits);
+}
+
+template <class Polyhedron, class SegmentPropertyMap, class PointPropertyMap>
+std::size_t
+segmentation_via_sdf_values(const Polyhedron& polyhedron,
+                            SegmentPropertyMap segment_ids,
+                            double cone_angle = 2.0 / 3.0 * CGAL_PI,
+                            std::size_t number_of_rays = 25,
+                            std::size_t number_of_clusters = 5,
+                            double smoothing_lambda = 0.26,
+                            bool output_cluster_ids = false,
+                            PointPropertyMap ppmap = PointPropertyMap() )
+{
+  typedef typename boost::property_traits<PointPropertyMap>::value_type Point_3;
+  typedef typename Kernel_traits<Point_3>::Kernel GeomTraits;
+  GeomTraits traits;
+  return segmentation_via_sdf_values<true, Polyhedron, SegmentPropertyMap, PointPropertyMap, GeomTraits>
+         (polyhedron, segment_ids, cone_angle, number_of_rays, number_of_clusters,
+          smoothing_lambda, output_cluster_ids, ppmap, traits);
 }
 
 template <class Polyhedron, class SegmentPropertyMap>
@@ -330,16 +472,19 @@ segmentation_via_sdf_values(const Polyhedron& polyhedron,
                             std::size_t number_of_rays = 25,
                             std::size_t number_of_clusters = 5,
                             double smoothing_lambda = 0.26,
-                            bool output_cluster_ids = false,
-                            typename Polyhedron::Traits traits = typename Polyhedron::Traits())
+                            bool output_cluster_ids = false)
 {
-  return segmentation_via_sdf_values<true, Polyhedron, SegmentPropertyMap, typename Polyhedron::Traits>
+  typedef typename boost::property_map<Polyhedron, boost::vertex_point_t>::type PointPropertyMap;
+  PointPropertyMap ppmap = get(boost::vertex_point, const_cast<Polyhedron&>(polyhedron));
+  typedef typename boost::property_traits<PointPropertyMap>::value_type Point_3;
+  typedef typename Kernel_traits<Point_3>::Kernel GeomTraits;
+  GeomTraits traits;
+  return segmentation_via_sdf_values<true, Polyhedron, SegmentPropertyMap, PointPropertyMap, GeomTraits>
          (polyhedron, segment_ids, cone_angle, number_of_rays, number_of_clusters,
-          smoothing_lambda, output_cluster_ids, traits);
+          smoothing_lambda, output_cluster_ids, ppmap, traits);
 }
-
-
 #endif
+
 
 }//namespace CGAL
 

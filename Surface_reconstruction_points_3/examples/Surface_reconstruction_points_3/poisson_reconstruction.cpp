@@ -15,7 +15,7 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Timer.h>
 #include <CGAL/trace.h>
-#include <CGAL/Polyhedron_3.h>
+#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
 #include <CGAL/Surface_mesh_default_triangulation_3.h>
 #include <CGAL/make_surface_mesh.h>
@@ -410,7 +410,7 @@ int main(int argc, char * argv[])
 
     // Constructs AABB tree and computes internal KD-tree
     // data structure to accelerate distance queries
-    AABB_tree tree(output_mesh.facets_begin(), output_mesh.facets_end(), output_mesh);
+    AABB_tree tree(faces(output_mesh).first, faces(output_mesh).second, output_mesh);
     tree.accelerate_distance_queries();
 
     // Computes distance from each input point to reconstructed mesh

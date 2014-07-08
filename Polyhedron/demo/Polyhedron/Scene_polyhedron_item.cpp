@@ -28,8 +28,8 @@ Input_facets_AABB_tree* get_aabb_tree(Scene_polyhedron_item* item)
     Polyhedron* poly = item->polyhedron();
     if(poly) {
       Input_facets_AABB_tree* tree = 
-        new Input_facets_AABB_tree(poly->facets_begin(),
-                                   poly->facets_end(),
+        new Input_facets_AABB_tree(faces(*poly).first,
+                                   faces(*poly).second,
                                    *poly);
       item->setProperty(aabb_property_name, 
                         QVariant::fromValue<void*>(tree));

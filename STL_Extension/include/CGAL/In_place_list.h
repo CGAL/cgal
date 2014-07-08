@@ -164,6 +164,11 @@ namespace internal {
       --*this;
       return tmp;
     }
+    In_place_list_iterator<T,Alloc>
+    remove_const() const
+    {
+      return In_place_list_iterator<T,Alloc>(const_cast<T*>(node));
+    }
   };
 }
 

@@ -33,7 +33,7 @@ typedef unspecified_type Profile;
 /*!
 The point type for the surface mesh vertex. Must be a model of `Point_3`. 
 */ 
-typename CGAL::halfedge_graph_traits<ECM>::Point Point; 
+typename unspecified_type Point; 
 
 /*!
 An integer type representing the number of edges 

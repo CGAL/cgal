@@ -212,7 +212,7 @@ Polyhedron* poisson_reconstruct(const Point_set& points,
 
     // Constructs AABB tree and computes internal KD-tree
     // data structure to accelerate distance queries
-    AABB_tree tree(output_mesh->facets_begin(), output_mesh->facets_end(), *output_mesh);
+    AABB_tree tree(faces(*output_mesh).first, faces(*output_mesh).second, *output_mesh);
     tree.accelerate_distance_queries();
 
     // Computes distance from each input point to reconstructed mesh

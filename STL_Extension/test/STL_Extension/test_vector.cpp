@@ -33,6 +33,7 @@
 #include <iostream>
 #include <algorithm>
 #include <list>
+#include <CGAL/use.h>
 
 class X {
 public:
@@ -212,6 +213,14 @@ int main() {
     assert( V7[1] == X(9));
     assert( V7.size() == 16);
     std::cout << "done" << std::endl;
-  
+
+    // test remove_const
+    const_iterator mycit=V3.begin();
+    iterator myit=cit.remove_const();
+    iterator myit2=myit.remove_const();
+    CGAL_USE(mycit);
+    CGAL_USE(myit);
+    CGAL_USE(myit2);
+
     return 0;
 }

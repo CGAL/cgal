@@ -136,6 +136,30 @@ and <code>src/</code> directories).
     <li> A new model <code>Epick_d</code> of the <code>Kernel_d</code> concept is introduced. It provides better performance through arithmetic filtering and specializations for fixed dimensions. It may not work with compilers as old as gcc-4.2, but was tested with gcc-4.4.</li>
   </ul>
 
+  <h3>CGAL and the Boost Graph Library (Major changes)</h3>
+  <ul>
+    <li>Cleanup of the <code>HalfedgeGraph</code> concept. In particular:
+    <ul>
+      <li>Introduction of the notion of <code>halfedge_descriptor</code> in the specialization of the class <code>boost::graph_traits</code>.</li>
+      <li>Deprecation of <code>halfedge_graph_traits</code>.</li>
+      <li>A model of <code>HalfedgeGraph</code> is considered as an undirected graph. Thus any call to <code>edges()</code>
+          should be replaced by <code>halfedges()</code> and <code>num_edges()</code> now returns the number of (undirected) edges.
+      <li>Deprecation of the <code>is_border_edge</code> and <code>is_border_halfedge</code> properties.
+          The free functions <code>is_border()</code> and <code>is_border_edge()</code> should be used instead.</li>
+      <li>Renaming of <code>HalfedgeGraph</code> specific free functions.</li>
+    </ul>
+    </li>
+    <li>Introduction of the  <code>FaceGraph</code> concept.</li>
+    <li>Adaptation of the package <em>Triangulated Surface Mesh Simplification</em> and of the class <code>AABB_halfedge_graph_segment_primitive</code>
+        from the package <em>3D Fast Intersection and Distance Computation</em> to the API change.</li>
+    <li>Update of the package <em>Triangulated Surface Mesh Segmentation</em> and of the class <code>AABB_face_graph_triangle_primitive</code> from
+        the package <em>3D Fast Intersection and Distance Computation</em> to accept model of the newly introduced concepts.</li>
+    <li>Offer <em>Euler</em> operations as free functions for models of the graph concepts provided by CGAL.</li>
+    <li>Specialization of <code>boost::graph_traits</code> for <code>OpenMesh::PolyMesh_ArrayKernelT</code> as proof of concept.
+        A <code>OpenMesh::PolyMesh_ArrayKernelT</code> becomes a model of the aforementioned concepts when including
+        <code>CGAL/boost/graph/graph_traits_PolyMesh_ArrayKernelT.h</code>.</li>
+  </ul>
+
   <h3>2D Arrangements</h3>
   <ul>
     <li>Fixed a bug in removing an unbounded curve (e.g., a ray) from

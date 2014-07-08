@@ -59,9 +59,9 @@ void LindstromTurkCore<ECM,K>::Extract_boundary_data()
   mBdry_data.reserve(mProfile.border_edges().size());
   for ( const_border_edge_iterator it = mProfile.border_edges().begin(), eit = mProfile.border_edges().end() ; it != eit ; ++ it )
   {
-    edge_descriptor border_edge = *it ;
+    halfedge_descriptor border_edge = *it ;
     
-    edge_descriptor face_edge = opposite_edge(border_edge,surface()) ;
+    halfedge_descriptor face_edge = opposite(border_edge,surface()) ;
         
     vertex_descriptor sv = source(face_edge,surface());
     vertex_descriptor tv = target(face_edge,surface());
@@ -550,9 +550,9 @@ void LindstromTurkCore<ECM,K>::Add_constraint_from_gradient ( Matrix const& H, V
         
         CGAL_assertion( A0 != NULL_VECTOR ) ;
         
-        Vector AbsA0( CGAL_NTS abs(A0.x())
-                    , CGAL_NTS abs(A0.y())
-                    , CGAL_NTS abs(A0.z())
+        Vector AbsA0( CGAL::abs(A0.x())
+                      , CGAL::abs(A0.y())
+                      , CGAL::abs(A0.z())
                     );
            
         Vector Q0;      

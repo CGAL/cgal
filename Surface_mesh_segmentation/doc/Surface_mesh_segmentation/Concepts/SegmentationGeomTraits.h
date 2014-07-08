@@ -26,7 +26,7 @@ typedef unspecified_type FT;
 /// @{
 
 /*!
-The vector type.
+The point type.
 */
 typedef unspecified_type Point_3;
 

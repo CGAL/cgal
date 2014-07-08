@@ -83,6 +83,9 @@
 //  feature is not available, even if that is wrong.
 //  ----------------------------------------------------------------------//
 
+#if defined(BOOST_NO_CXX11_RANGE_BASED_FOR) || BOOST_VERSION < 105000
+#define CGAL_NO_CPP0X_RANGE_BASED_FOR 1
+#endif
 #if defined(BOOST_NO_0X_HDR_ARRAY) || BOOST_VERSION < 104000
 #define CGAL_CFG_NO_CPP0X_ARRAY 1
 #endif
