@@ -182,7 +182,7 @@ int main(int argc, char * argv[])
       std::cerr << "  -offset_radius_vcm <double>           Offset radius\n";
       std::cerr << "  to compute VCM (default=0.1)\n";
       std::cerr << "  -convolve_radius_vcm <double>         Convolve radius\n";
-      std::cerr << "  to compute VCM (default=0.01)\n";
+      std::cerr << "  to compute VCM (default=0)\n";
       std::cerr << "  -orient MST                          Orient normals\n";
       std::cerr << "  using a Minimum Spanning Tree (default=MST)\n";
       std::cerr << "  -nb_neighbors_mst <int>              Number of neighbors\n";
@@ -195,7 +195,7 @@ int main(int argc, char * argv[])
     unsigned int nb_neighbors_jet_fitting_normals = 18; // K-nearest neighbors (estimate normals by Jet Fitting)
     unsigned int nb_neighbors_mst = 18; // K-nearest neighbors (orient normals by MST)
     double offset_radius_vcm = 0.1; // Offset radius (estimate normals by VCM)
-    double convolve_radius_vcm = 0.01; // Convolve radius (estimate normals by VCM)
+    double convolve_radius_vcm = 0; // Convolve radius (estimate normals by VCM)
     std::string estimate = "quadric"; // estimate normals by jet fitting
     std::string orient = "MST"; // orient normals using a Minimum Spanning Tree
 

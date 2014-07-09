@@ -157,7 +157,15 @@ namespace CGAL
     template <class R_, bool Has_filtered_predicates = R_::Has_filtered_predicates >
         class Convex_hull_traits_dual_3
         : public Convex_hull_traits_base_dual_3<R_>
-        {} ;
+        {
+            private:
+                typedef typename R_::Point_3 Primal_point_3;
+
+            public:
+                Convex_hull_traits_dual_3 (Primal_point_3 o =
+                                           Primal_point_3(0, 0, 0)) : Convex_hull_traits_base_dual_3<R_>(o)
+                {}
+        } ;
 
     // Converter for dual planes and dual vectors
     template <class K1, class K2>

@@ -5,6 +5,7 @@
 
 #include <CGAL/Delaunay_triangulation_3.h>
 #include <CGAL/voronoi_covariance_3.h>
+#include <CGAL/vcm_utilities.h>
 #include <CGAL/Kd_tree.h>
 #include <CGAL/Search_traits_3.h>
 #include <CGAL/Fuzzy_sphere.h>
@@ -60,7 +61,6 @@ vcm_offset (ForwardIterator first, ///< iterator over the first input point.
     }
 
     cov.clear();
-
     // Compute the VCM
     for (it = first; it != beyond; ++it) {
         typename DT::Vertex_handle vh = dt.nearest_vertex(get(point_pmap, *it));
@@ -69,7 +69,7 @@ vcm_offset (ForwardIterator first, ///< iterator over the first input point.
     }
 }
 
-// Convolve
+// Convolve using a sphere
 template < class ForwardIterator,
            class PointPMap,
            class K,
@@ -118,85 +118,105 @@ vcm_convolve (ForwardIterator first,
     }
 }
 
-// Construct the covariance matrix
-template <class Covariance>
-Eigen::Matrix3f
-construct_covariance_matrix (Covariance &cov) {
-    Eigen::Matrix3f m;
+// Compute the VCM and make the convolution using a sphere
+template < class ForwardIterator,
+           class PointPMap,
+           class Kernel,
+           class Covariance
+>
+void
+vcm_offset_and_convolve (ForwardIterator first,
+                         ForwardIterator beyond,
+                         PointPMap point_pmap,
+                         std::vector<Covariance> &ccov,
+                         double R,
+                         double r,
+                         const Kernel &)
+{
+    // First, compute the VCM for each point
+    std::vector<Covariance> cov;
+    size_t N = 20;
+    internal::vcm_offset (first, beyond,
+                          point_pmap,
+                          cov,
+                          R,
+                          N,
+                          Kernel());
 
-    m(0,0) = cov[0]; m(0,1) = cov[1]; m(0,2) = cov[2];
-    m(1,1) = cov[3]; m(1,2) = cov[4];
-    m(2,2) = cov[5];
+    // TODO: debug
+    std::ofstream file_offset("offset.p");
+    std::copy(cov.begin(), cov.end(),
+              std::ostream_iterator<Covariance>(file_offset));
 
-    m(1, 0) = m(0,1); m(2, 0) = m(0, 2); m(2, 1) = m(1, 2);
+    // Then, convolve it (only when r != 0)
+    if (r == 0) {
+        std::copy(cov.begin(), cov.end(), std::back_inserter(ccov));
+    } else {
+        internal::vcm_convolve(first, beyond,
+                               point_pmap,
+                               cov,
+                               ccov,
+                               r,
+                               Kernel());
+    }
 
-    return m;
+    // TODO: debug
+    std::ofstream file_convolve("convolve.p");
+    std::copy(ccov.begin(), ccov.end(),
+              std::ostream_iterator<Covariance>(file_convolve));
 }
 
-// Diagonalize a selfadjoint matrix
-bool
-diagonalize_selfadjoint_matrix (Eigen::Matrix3f &m,
-                                Eigen::Matrix3f &eigenvectors,
-                                Eigen::Vector3f &eigenvalues) {
-    Eigen::SelfAdjointEigenSolver<Eigen::Matrix3f> eigensolver(m);
+// Convolve using neighbors
+template < class ForwardIterator,
+           class PointPMap,
+           class K,
+           class Covariance
+>
+void
+vcm_convolve (ForwardIterator first,
+              ForwardIterator beyond,
+              PointPMap point_pmap,
+              const std::vector<Covariance> &cov,
+              std::vector<Covariance> &ncov,
+              unsigned int nb_neighbors_convolve,
+              const K &)
+{
+    typedef typename CGAL::Point_3<K> Point;
+    typedef typename CGAL::Search_traits_3<K> Traits;
+    typedef typename CGAL::Orthogonal_k_neighbor_search<Traits> Neighbor_search;
+    typedef typename Neighbor_search::Tree Tree;
 
-    if (eigensolver.info() != Eigen::Success) {
-        return false;
+    ForwardIterator it;
+
+    // Search tree
+    Tree tree;
+    for (it = first; it != beyond; ++it) {
+        tree.insert(get(point_pmap, *it));
     }
 
-    eigenvalues = eigensolver.eigenvalues();
-    eigenvectors = eigensolver.eigenvectors();
-
-    return true;
-}
-
-// Determine if a point is on an edge
-template <class Covariance>
-bool
-is_on_edge (Covariance &cov,
-            float threshold,
-            Eigen::Vector3f &dir) {
-    // Construct covariance matrix
-    Eigen::Matrix3f m = construct_covariance_matrix(cov);
-
-    // Diagonalizing the matrix
-    Eigen::Vector3f eigenvalues;
-    Eigen::Matrix3f eigenvectors;
-    if (! diagonalize_selfadjoint_matrix(m, eigenvectors, eigenvalues)) {
-        return false;
+    std::map<Point, size_t> indices;
+    size_t i = 0;
+    for (it = first; it != beyond; ++it) {
+        indices[get(point_pmap, *it)] = i;
+        i++;
     }
+    // Convolving
+    ncov.clear();
+    for (it = first; it != beyond; ++it) {
+        Neighbor_search search(tree, get(point_pmap, *it), nb_neighbors_convolve);
+        std::vector<Point> nn;
 
-    // Compute the ratio
-    // TODO
-    float r = eigenvalues(0) / (eigenvalues(0) + eigenvalues(1) + eigenvalues(2));
-    std::cout << r << std::endl;
-    if (r <= threshold) {
-        dir = eigenvectors.col(1);
-        return true;
+        for (typename Neighbor_search::iterator nit = search.begin();
+             nit != search.end();
+             ++nit) {
+            nn.push_back(nit->first);
+        }
+
+        Covariance m;
+        for (size_t k = 0; k < nn.size(); ++k)
+            m += cov[indices [nn[k]]];
+        ncov.push_back(m);
     }
-
-    return false;
-}
-
-// Extract the eigenvector associated to the greatest eigenvalue
-template <class Covariance>
-bool
-extract_greater_eigenvector (Covariance &cov,
-                             Eigen::Vector3f &normal) {
-    // Construct covariance matrix
-    Eigen::Matrix3f m = construct_covariance_matrix(cov);
-
-    // Diagonalizing the matrix
-    Eigen::Vector3f eigenvalues;
-    Eigen::Matrix3f eigenvectors;
-    if (! diagonalize_selfadjoint_matrix(m, eigenvectors, eigenvalues)) {
-        return false;
-    }
-
-    // Eigenvalues are already sorted by increasing order
-    normal = eigenvectors.col(0);
-
-    return true;
 }
 
 /// \endcond
@@ -234,59 +254,41 @@ vcm_estimate_normals (ForwardIterator first, ///< iterator over the first input 
                       NormalPMap normal_pmap, ///< property map: value_type of ForwardIterator -> Vector_3.
                       double R, ///< offset radius.
                       double r, ///< convolution radius.
+                      unsigned int nb_neighbors_offset,
+                      unsigned int nb_neighbors_convolve,
                       const Kernel & /*kernel*/, ///< geometric traits.
-                      const Covariance &) ///< covariance matrix type.
+                      const Covariance &, ///< covariance matrix type.
+                      bool use_radii = true)
 {
-    // First, compute the VCM for each point
+    // Compute the VCM and convolve it
     std::vector<Covariance> cov;
-    size_t N = 20;
-    internal::vcm_offset (first, beyond,
-                          point_pmap,
-                          cov,
-                          R,
-                          N,
-                          Kernel());
-
-    // TODO: debug
-    std::ofstream file_offset("offset.p");
-    std::copy(cov.begin(), cov.end(),
-              std::ostream_iterator<Covariance>(file_offset));
-
-    // Then, convolve it (only when r != 0)
-    std::vector<Covariance> ccov;
-    if (r == 0) {
-        std::copy(cov.begin(), cov.end(), std::back_inserter(ccov));
+    if (use_radii) {
+        internal::vcm_offset_and_convolve(first, beyond,
+                                          point_pmap,
+                                          cov,
+                                          R,
+                                          r,
+                                          Kernel());
     } else {
+        // TODO
+        std::vector<Covariance> ccov;
         internal::vcm_convolve(first, beyond,
                                point_pmap,
                                cov,
                                ccov,
-                               r,
+                               nb_neighbors_convolve,
                                Kernel());
     }
 
-    // TODO: debug
-    std::ofstream file_convolve("convolve.p");
-    std::copy(ccov.begin(), ccov.end(),
-              std::ostream_iterator<Covariance>(file_convolve));
-
-    // Sharp edges
-    float threshold = 0.5;
-    std::vector<typename Kernel::Point_3> points_on_edges;
     // And finally, compute the normals
     int i = 0;
     for (ForwardIterator it = first; it != beyond; ++it) {
         Eigen::Vector3f enormal;
         Eigen::Vector3f dir;
-        if (! internal::extract_greater_eigenvector(ccov[i], enormal)) {
+        if (! internal::extract_greater_eigenvector(cov[i], enormal)) {
             std::cerr << "Error during extraction of normal: " <<
                 "the covariance matrix is not diagonalizable!\n";
             exit(1);
-        }
-
-        // TODO
-        if (internal::is_on_edge(ccov[i], threshold, dir)) {
-            points_on_edges.push_back(get(point_pmap, *it));
         }
 
         CGAL::Vector_3<Kernel> normal(enormal[0],
@@ -295,11 +297,6 @@ vcm_estimate_normals (ForwardIterator first, ///< iterator over the first input 
         put(normal_pmap, *it, normal);
         i++;
     }
-
-    // TODO: debug
-    std::ofstream file_edges("edges.xyz");
-    std::copy(points_on_edges.begin(), points_on_edges.end(),
-              std::ostream_iterator<typename Kernel::Point_3>(file_edges, "\n"));
 }
 
 /// @cond SKIP_IN_MANUAL
@@ -323,8 +320,36 @@ vcm_estimate_normals (ForwardIterator first,
     vcm_estimate_normals(first, beyond,
                          point_pmap, normal_pmap,
                          R, r,
+                         0, 0,
                          Kernel(),
                          Covariance());
+}
+
+// This variant requires numbers of neighbors instead of radii
+template < typename ForwardIterator,
+           typename PointPMap,
+           typename NormalPMap,
+           typename Covariance
+>
+void
+vcm_estimate_normals (ForwardIterator first,
+                      ForwardIterator beyond,
+                      PointPMap point_pmap,
+                      NormalPMap normal_pmap,
+                      double R,
+                      unsigned int nb_neighbors_convolve,
+                      const Covariance &) {
+    typedef typename boost::property_traits<PointPMap>::value_type Point;
+    typedef typename Kernel_traits<Point>::Kernel Kernel;
+
+    // TODO
+    vcm_estimate_normals(first, beyond,
+                         point_pmap, normal_pmap,
+                         0, 0,
+                         nb_neighbors_convolve, nb_neighbors_convolve,
+                         Kernel(),
+                         Covariance(),
+                         false);
 }
 /// @endcond
 
