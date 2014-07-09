@@ -23,11 +23,10 @@
 #include <CGAL/Triangulation_vertex_base_2.h>
 #include <CGAL/sample.h>
 
-/// The Reconstruction_vertex_base_2 class (corresponding to
-/// Reconstruction_vertex_base_2 in prototype) is the default
+/// The Reconstruction_vertex_base_2 class is the default
 /// vertex class of the Reconstruction_triangulation_2 class.
 ///
-/// - Each vertex stores a CSample as well as the corresponding relocated point
+/// - Each vertex stores a Sample as well as the corresponding relocated point.
 ///
 namespace CGAL {
 /// @param Kernel   Geometric traits class
@@ -99,6 +98,8 @@ public:
 
     const Point& relocated() const { return m_relocated; }
     Point& relocated() { return m_relocated; }
+
+    bool  has_sample_assigned() const { return get_sample() != NULL; }
 };
 //---------------STRUCT LESS VERTEX_HANDLE---------------------
 template <class T>

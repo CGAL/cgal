@@ -59,8 +59,7 @@ const QMetaObject &GlViewer::getStaticMetaObject() { return staticMetaObject; }
 
 const QMetaObject *GlViewer::metaObject() const
 {
-    return QObject::d_ptr->metaObject ?
-    		QObject::d_ptr->metaObject : &staticMetaObject;
+    return QObject::d_ptr->metaObject ? QObject::d_ptr->metaObject : &staticMetaObject;
 }
 
 void *GlViewer::qt_metacast(const char *_clname)

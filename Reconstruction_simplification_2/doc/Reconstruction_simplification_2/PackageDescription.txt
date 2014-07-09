@@ -2,6 +2,13 @@
 
 /// \defgroup PkgReconstructionSimplification2Classes Classes
 /// \ingroup PkgReconstructionSimplification2
+
+/// \defgroup PkgReconstructionSimplification2Concepts Concepts
+/// \ingroup PkgReconstructionSimplification2
+
+/// \defgroup PkgReconstructionSimplification2Models Models
+/// \ingroup PkgReconstructionSimplification2
+
 /*!
 \addtogroup PkgReconstructionSimplification2
 \cgalPkgDescriptionBegin{2D Reconstruction Simplification, PkgReconstructionSimplification2Summary}
@@ -18,6 +25,23 @@
 \cgalPkgLicense{\ref licensesGPL "GPL"}
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd
+
+
+\cgalClassifedRefPages
+
+## Concepts ##
+- `OutputModel`
+- `PointPMap`
+- `MassPMap`
+
+
+## Models ##
+- `CGAL::List_output<Kernel>`
+
+
+## Classes ##
+- `CGAL::Reconstruction_simplification_2<Kernel, InputIterator, PointPMap, MassPMap>`
+
 
 */
 

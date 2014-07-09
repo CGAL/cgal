@@ -33,7 +33,6 @@
 #include <CGAL/basic.h>
 #include <CGAL/intersections.h>
 #include <CGAL/Delaunay_triangulation_2.h>
-#include <CGAL/Delaunay_triangulation_2.h>
 
 // local
 #include <CGAL/Sample.h>
@@ -60,7 +59,7 @@ namespace CGAL {
 ///  The Reconstruction_triangulation_2 class
 ///  provides the reconstruction simplex as well as the transportation plan.
 /// - Each vertex stores a normal vector.
-/// - A vertex a Sample which got assinged to it by the transportation plan,
+/// - A vertex a Sample which got assigned to it by the transportation plan,
 ///   well as the corresponding relocated Point (of type Kernel::Point_2).
 /// - In order to solve a linear system over the triangulation, a vertex may be constrained
 ///   or not (i.e. may contribute to the right or left member of the linear system),

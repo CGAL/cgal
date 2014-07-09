@@ -11,6 +11,9 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include "Reconstruction_simplification_kerneled_2.h"
 #include "../../include/CGAL/Reconstruction_simplification_2.h"
+#include "../../include/CGAL/List_output.h"
+
+
 #include "third/CImg.h"
 #include "random.h"
 #include <utility>      // std::pair
@@ -73,6 +76,9 @@ public:
 	typedef R_s_2::SQueue SQueue;
 
 	typedef R_s_2::Reconstruction_edge_2 PEdge;
+
+	typedef CGAL::List_output<K>::Output_Vertex_Iterator Output_Vertex_Iterator;
+	typedef CGAL::List_output<K>::Output_Edge_Iterator   Output_Edge_Iterator;
 
 private:
 	// data
@@ -381,9 +387,40 @@ public:
 		std::cerr << "done (" << m_samples.size() << ")" << std::endl;
 	}
 
+	void print_vertex(Vertex vertex) {
+		std::cout <<"vertex " <<  vertex << std::endl;
+	}
+
+
+	void print_edge(PEdge edge) {
+		int i = ((edge).edge()).second;
+		Point a = ((edge).edge()).first->vertex((i+1)%3)->point();
+		Point b = ((edge).edge()).first->vertex((i+2)%3)->point();
+		std::cout <<"( " << (edge).priority()  <<  ") ( " << a
+								<< " , " << b << " )" << std::endl;
+	}
+
+
+	void debug_print() {
+
+	    CGAL::List_output<K> list_output;
+
+	    m_pwsrec->extract_solid_eges(list_output);
+
+	  	for (Output_Vertex_Iterator it = list_output.vertices_start();
+				it != list_output.vertices_beyond(); it++) {
+	  		print_vertex(*it);
+	   }
+
+		for (Output_Edge_Iterator it = list_output.edges_start();
+				it != list_output.edges_beyond(); it++) {
+			print_edge(*it);
+	    }
+	}
+
 	void save(const QString& filename) {
 		std::cout << "SAVE-------------" << std::endl;
-		m_pwsrec->extract_solid_eges();
+		debug_print();
 
 		if (filename.contains(".edges", Qt::CaseInsensitive)) {
 			std::ofstream ofs(qPrintable(filename));

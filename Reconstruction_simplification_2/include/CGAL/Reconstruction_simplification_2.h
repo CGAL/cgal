@@ -274,90 +274,25 @@ protected:
 	}
 
 
-	//Returns the solid edges present after the reconstruction process.
-	//TODO: determine suitable way of storing them
-	void extract_solid_eges() {
+	/*!
 
-	    std::cout <<  "---------extracted_solid_eges------------" << std::endl;
+		 Returns the solid edges present after the reconstruction process.
+
+	 	 \details Instantiates a new Reconstruction_simplification_2 object
+				  for a given collection of point-mass pairs.
+
+		 \tparam OutputModule Concept for accessing the output
+
+		 \param output An OutputModule in which the solid edges and vertics are
+		  	  stored.
+	*/
+	template <class OutputModule>
+	void extract_solid_eges(OutputModule& output) {
+		output.store_marked_elements(m_dt.tds(), m_ignore);
 
 
-		MultiIndex mindex;
-		    for (Finite_edges_iterator ei = m_dt.finite_edges_begin();
-		    		ei != m_dt.finite_edges_end(); ++ei)
-		    {
-		        Edge edge = *ei;
-		        if (m_dt.is_ghost(edge)) continue;
-		        FT value = m_dt.get_edge_relevance(edge); // >= 0
-		        mindex.insert(Reconstruction_edge_2(edge, value));
-		    }
-
-		    //TODO: IV find nicer way to handle m_ignore
-		    int nb_remove = (std::min)(m_ignore, int(mindex.size()));
-
-		    for (int i = 0; i < nb_remove; ++i)
-		    {
-		    	Reconstruction_edge_2 pedge = *(mindex.template get<1>()).begin();
-				(mindex.template get<0>()).erase(pedge);
-		    }
-
-		    while (!mindex.empty())
-		    {
-		    	Reconstruction_edge_2 pedge = *(mindex.template get<1>()).begin();
-				(mindex.template get<0>()).erase(pedge);
-
-		        int i = (pedge.edge()).second;
-				Face_handle face = (pedge.edge()).first;
-				Point a = face->vertex((i+1)%3)->point();
-				Point b = face->vertex((i+2)%3)->point();
-				std::cout <<  "( " << a << " , " << b << " )" << std::endl;
-		    }
-
-		    std::cout <<  "---------------------------------------------------" << std::endl;
 	}
 
-	//Returns the solid edges present after the reconstruction process.
-	//TODO: determine suitable way of storing them
-	void extract_solid_eges(std::vector<Reconstruction_edge_2>& solid_edges) {
-
-	    std::cout <<  "---------extracted_solid_eges------------" << std::endl;
-
-
-	    MultiIndex mindex;
-
-		    for (Finite_edges_iterator ei = m_dt.finite_edges_begin();
-		    		ei != m_dt.finite_edges_end(); ++ei)
-		    {
-		        Edge edge = *ei;
-		        if (m_dt.is_ghost(edge)) continue;
-		        FT value = m_dt.get_edge_relevance(edge); // >= 0
-		        mindex.insert(Reconstruction_edge_2(edge, value));
-		    }
-
-		    //TODO: IV find nicer way to handle m_ignore
-		    int nb_remove = (std::min)(m_ignore, int(mindex.size()));
-
-		    for (int i = 0; i < nb_remove; ++i)
-		    {
-		    	Reconstruction_edge_2 pedge = *(mindex.template get<1>()).begin();
-				(mindex.template get<0>()).erase(pedge);
-		    }
-
-		    while (!mindex.empty())
-		    {
-		    	Reconstruction_edge_2 pedge = *(mindex.template get<1>()).begin();
-				(mindex.template get<0>()).erase(pedge);
-
-		        solid_edges.push_back(pedge);
-
-		        int i = (pedge.edge()).second;
-				Face_handle face = (pedge.edge()).first;
-				Point a = face->vertex((i+1)%3)->point();
-				Point b = face->vertex((i+2)%3)->point();
-				std::cout <<  "( " << a << " , " << b << " )" << std::endl;
-		    }
-
-		    std::cout <<  "---------------------------------------------------" << std::endl;
-	}
 
 	/// \cond SKIP_IN_MANUAL
     void normalize_points()

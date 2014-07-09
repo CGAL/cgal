@@ -36,8 +36,7 @@ static const char qt_meta_stringdata_Dialog_options[] = {
     "Dialog_options\0"
 };
 
-void Dialog_options::qt_static_metacall(QObject *_o,
-				QMetaObject::Call _c, int _id, void **_a)
+void Dialog_options::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **_a)
 {
     Q_UNUSED(_o);
     Q_UNUSED(_id);
@@ -55,15 +54,12 @@ const QMetaObject Dialog_options::staticMetaObject = {
 };
 
 #ifdef Q_NO_DATA_RELOCATION
-const QMetaObject &Dialog_options::getStaticMetaObject() {
-	return staticMetaObject;
-}
+const QMetaObject &Dialog_options::getStaticMetaObject() { return staticMetaObject; }
 #endif //Q_NO_DATA_RELOCATION
 
 const QMetaObject *Dialog_options::metaObject() const
 {
-    return QObject::d_ptr->metaObject ?
-    		QObject::d_ptr->metaObject : &staticMetaObject;
+    return QObject::d_ptr->metaObject ? QObject::d_ptr->metaObject : &staticMetaObject;
 }
 
 void *Dialog_options::qt_metacast(const char *_clname)

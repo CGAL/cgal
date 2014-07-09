@@ -1,4 +1,4 @@
-// test_basic.cpp
+// test_list_output.cpp
 
 //----------------------------------------------------------
 // Test the cgal environment for Reconstruction_simplification_2
@@ -6,6 +6,8 @@
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Reconstruction_simplification_2.h>
+#include <CGAL/List_output.h>
+
 
 #include <fstream>
 
@@ -13,6 +15,7 @@
 #include <string>
 #include <iterator>
 #include <utility>      // std::pair
+
 
 #include <CGAL/property_map.h>
 #include <CGAL/value_type_traits.h>
@@ -25,12 +28,36 @@ typedef std::pair<Point, FT> PointMassPair;
 typedef std::list<PointMassPair> PointMassList;
 typedef PointMassList::const_iterator InputIterator;
 typedef CGAL::value_type_traits<InputIterator>::type MassPoint;
-typedef CGAL::First_of_pair_property_map <PointMassPair> PointPMap;
+typedef CGAL::First_of_pair_property_map <PointMassPair>  PointPMap;
 typedef CGAL::Second_of_pair_property_map <PointMassPair> MassPMap;
+typedef CGAL::Reconstruction_simplification_2 <K, InputIterator,
+					PointPMap, MassPMap>::Reconstruction_edge_2 R_edge_2;
+
+typedef CGAL::Reconstruction_simplification_2 <K, InputIterator,
+					PointPMap, MassPMap>::Vertex Vertex;
+
+typedef CGAL::List_output<K>::Output_Vertex_Iterator Output_Vertex_Iterator;
+typedef CGAL::List_output<K>::Output_Edge_Iterator   Output_Edge_Iterator;
+
 
 
 PointMassList* load_xy_file(const std::string& fileName);
 PointMassList* simple_point_set();
+
+
+void print_vertex(Vertex vertex) {
+	std::cout <<"vertex " <<  vertex << std::endl;
+}
+
+
+void print_edge(R_edge_2 edge) {
+	int i = ((edge).edge()).second;
+	Point a = ((edge).edge()).first->vertex((i+1)%3)->point();
+	Point b = ((edge).edge()).first->vertex((i+2)%3)->point();
+	std::cout <<"( " << (edge).priority()  <<  ") ( " << a
+							<< " , " << b << " )" << std::endl;
+}
+
 
 
 int main ()
@@ -53,7 +80,19 @@ int main ()
 
     rs2.print_stats_debug();
 
-    rs2.extract_solid_eges();
+    CGAL::List_output<K> list_output;
+
+    rs2.extract_solid_eges(list_output);
+
+  	for (Output_Vertex_Iterator it = list_output.vertices_start();
+			it != list_output.vertices_beyond(); it++) {
+  		print_vertex(*it);
+   }
+
+	for (Output_Edge_Iterator it = list_output.edges_start();
+			it != list_output.edges_beyond(); it++) {
+		print_edge(*it);
+    }
 }
 
 
@@ -83,17 +122,17 @@ PointMassList* simple_point_set() {
 PointMassList* load_xy_file(const std::string& fileName)
 {
 	PointMassList *points = new PointMassList();
-   std::ifstream ifs(fileName);
-   std::cerr << "read xy...";
-   Point point;
-   unsigned int nb = 0;
-   while (ifs >> point)
-   {
-	   points->push_back(std::make_pair(point, 1));
-   }
-   std::cerr << "done (" << nb << " points)" << std::endl;
-   ifs.close();
+       std::ifstream ifs(fileName);
+       std::cerr << "read xy...";
+       Point point;
+       unsigned int nb = 0;
+       while (ifs >> point)
+       {
+    	   points->push_back(std::make_pair(point, 1));
+       }
+       std::cerr << "done (" << nb << " points)" << std::endl;
+       ifs.close();
 
-   return points;
+       return points;
 
 }
