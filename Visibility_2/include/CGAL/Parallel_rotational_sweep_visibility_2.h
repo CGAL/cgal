@@ -27,7 +27,7 @@
 #include <CGAL/enum.h>
 #include <CGAL/Visibility_2/visibility_utils.h>
 #include <vector>
-#include <map>
+#include <set>
 
 //#define MYDEBUG
 #ifdef MYDEBUG
@@ -71,16 +71,42 @@ private:
     typedef typename Arrangement_2::Geometry_traits_2   Geometry_traits_2;
 
     typedef typename Geometry_traits_2::Point_2         Point_2;
+    typedef typename Geometry_traits_2::FT              Number_type;
     typedef typename Arrangement_2::Ccb_halfedge_const_circulator
                                                         Circulator;
   private:
     Circulator circ;
     CGAL::Orientation orient;
+    CGAL::Orientation boundary_orient;
     enum { NOT_APPLIED, INWARD, OUTWARD, IN_EDGE, AT_SOURCE, AT_TARGET } mode;
     int idx;
+    int prev_idx;
+    int quad;
+  private:
+    int compute_quad( const Point_2& query_pt, const Point_2& p )
+    {
+      CGAL::Comparison_result cx = CGAL::compare_x( query_pt, p );
+      CGAL::Comparison_result cy = CGAL::compare_y( query_pt, p );
+      if ( cy == CGAL::SMALLER ) {
+        if ( cx == CGAL::SMALLER )
+          return 0;
+        else
+          return 1;
+      } else if ( cy == CGAL::LARGER ) {
+        if ( cx == CGAL::LARGER )
+          return 2;
+        else
+          return 3;
+      } else {
+        if ( cx != CGAL::LARGER )
+          return 0;
+        else
+          return 2;
+      }
+    }
   public:
-    Edge ( const Point_2& query_pt, const Circulator& he, bool on_edge, bool on_vertex, int _idx )
-      : circ( he ), idx( _idx )
+    Edge ( const Point_2& query_pt, const Circulator& he, bool on_edge, bool on_vertex )
+      : circ( he )
     {
       if ( on_vertex ) {
         orient = CGAL::COLLINEAR;
@@ -108,7 +134,11 @@ private:
             mode = NOT_APPLIED;
         }
       }
+      quad = compute_quad( query_pt, he->source()->point()  );
+      boundary_orient = CGAL::orientation( prev_source(), source(), target() );
     }
+    void set_index ( int i, int p )
+      { idx = i; prev_idx = p; }
 
     const Point_2& source () const
       { return circ->source()->point(); }
@@ -122,6 +152,8 @@ private:
       { return circ; }
     CGAL::Orientation orientation () const
       { return orient; }
+    CGAL::Orientation boundary_orientation () const
+      { return boundary_orient; }
     bool inward () const
       { return ( mode == INWARD ); }
     bool outward () const
@@ -134,6 +166,12 @@ private:
       { return ( mode == AT_TARGET ); }
     int index () const
       { return idx; }
+    int prev_index () const
+      { return prev_idx; }
+    int quadrant () const
+      { return quad; }
+    bool angle_less_than_pi () const
+      { return ( quadrant() < 2 ); }
 
 #ifdef MYDEBUG
     void trace ( ostream& os )
@@ -173,6 +211,7 @@ private:
           break;
       }
       os << "]" << endl;
+      os << "\t\tquadrant=[" << quadrant() << "], idx=[" << index() << "], prev_idx=[" << prev_index() << "]" << endl;
     }
 #endif
   };
@@ -208,36 +247,11 @@ private:
     typedef typename Geometry_traits_2::Point_2         Point_2;
     typedef typename Geometry_traits_2::FT              Number_type;
   private:
-    // angle_less_than pi
-    // Verify whether the polar angle of p is less than pi
-    bool angle_less_than_pi( const Point_2& p )
-    {
-      CGAL::Orientation orient = CGAL::orientation( query_pt, aux, p );
-      return ( orient == CGAL::LEFT_TURN ||
-               ( orient == CGAL::COLLINEAR && p.x() >= query_pt.x() ) );
-    }
-    // less_general
-    // precondition: query_pt, p1 and p2 are not collinear
-    // return true if p1 has smaller polar angle
-    bool less_general ( const Point_2& p1, const Point_2& p2, CGAL::Orientation orient )
-    {
-      if ( angle_less_than_pi( p1 ) ) {
-        if ( orient == CGAL::LEFT_TURN )
-          return true;
-        else
-          return ( CGAL::orientation( query_pt, aux, p2 ) == CGAL::RIGHT_TURN );
-      } else {
-        if ( orient == CGAL::RIGHT_TURN )
-          return false;
-        else
-          return ( CGAL::orientation( query_pt, aux, p2 ) == CGAL::RIGHT_TURN );
-      }
-    }
     // less_source_at_query_pt
     // Precondition: he1.source() == query_pt
     bool less_source_at_query_pt( const Edge_type& he1, const Edge_type& he2 )
     {
-      CGAL::Orientation orient1 = CGAL::orientation( he1.prev_source(), he1.source(), he1.target() );
+      CGAL::Orientation orient1 = he1.boundary_orientation();
       CGAL::Orientation orient2 = CGAL::orientation( he1.source(), he1.target(), he2.source() );
       if ( orient1 == CGAL::LEFT_TURN ) {
         // The boundary makes a left turn at query_pt
@@ -251,14 +265,26 @@ private:
             return false;
           } else {
             // he1.source(), he1.target(), he2.source() are ordered along ray
-            return !angle_less_than_pi( he2.source() );
+            return !he2.angle_less_than_pi();
+          }
+        } else if ( orient2 == CGAL::LEFT_TURN ) {
+          // he1.source(), he1.target(), he2.source() make a left turn
+          if ( he2.angle_less_than_pi() ) {
+            return false;
+          } else {
+            return ( he1.target().y() < query_pt.y() ||
+                     ( he1.target().y() == query_pt.y() &&
+                       he1.target().x() < query_pt.x() ) );
           }
         } else {
-          Point_2 image( query_pt.x()+query_pt.x()-he1.target().x(), query_pt.y()+query_pt.y()-he1.target().y() );
-          if ( orient2 == CGAL::LEFT_TURN )
-            return less_general( image, he2.source(), CGAL::RIGHT_TURN );
-          else
-            return less_general( image, he2.source(), CGAL::LEFT_TURN );
+          // he1.source(), he1.target(), he2.source() make a right turn
+          if ( he2.angle_less_than_pi() ) {
+            return ( he1.target().y() < query_pt.y() ||
+                     ( he1.target().y() == query_pt.y() &&
+                       he1.target().x() < query_pt.x() ) );
+          } else {
+            return true;
+          }
         }
       } else {
         // The boundary makes a right turn at query_pt,
@@ -269,56 +295,82 @@ private:
           // he1.source(), he1.target(), he2.source() are collinear
           if ( CGAL::collinear_are_ordered_along_line( he2.source(), he1.source(), he1.target() ) ) {
             // he1.source() is between he1.target() and he2.source()
-            return angle_less_than_pi( he1.target() );
+            return !he2.angle_less_than_pi();
           } else {
             // he1.source(), he1.target(), he2.source() are ordered along ray
             return true;
           }
+        } else if ( orient2 == CGAL::LEFT_TURN ) {
+          // he1.source(), he1.target(), he2.source() make a left turn
+          if ( he2.angle_less_than_pi() ) {
+            return ( he1.target().y() > query_pt.y() ||
+                     ( he1.target().y() == query_pt.y() &&
+                       he1.target().x() > query_pt.x() ) );
+          } else {
+            return true;
+          }
         } else {
-          return less_general( he1.target(), he2.source(), orient2 );
+          // he1.source(), he1.target(), he2.source() make a right turn
+          if ( he2.angle_less_than_pi() ) {
+            return false;
+          } else {
+            return ( he1.target().y() > query_pt.y() ||
+                     ( he1.target().y() == query_pt.y() &&
+                       he1.target().x() > query_pt.x() ) );
+          }
         }
       }
     }
-    // less_on_ray
-    // Precondition: he1.source() and he2.source() are collinear on a ray
-    // shooting from the query_pt
-    bool less_on_ray ( const Edge_type& he1, const Edge_type& he2 )
+    // less
+    bool less ( const Edge_type& he1, const Edge_type& he2 )
     {
-      if ( CGAL::collinear_are_ordered_along_line( query_pt, he1.source(), he2.source() ) )
-        // he1.source() is closer
-        return ( he1.orientation() == CGAL::RIGHT_TURN ||
-                 ( he1.at_source() || he1.outward() ) );
-      else
-        return !( he2.orientation() == CGAL::RIGHT_TURN ||
-                  ( he2.at_source() || he2.outward() ) );
-    }
-  public:
-    // Constructor
-    Less_Source( const Point_2& q, const Point_2& a )
-      : query_pt( q ), aux( a )
-      {}
-    // Comparator
-    // Precondition: he1 and he2 are not the same halfedge
-    bool operator () ( const Edge_type& he1, const Edge_type& he2 )
-    {
-      CGAL::Orientation orient = CGAL::orientation( query_pt, he1.source(), he2.source() );
-      if ( orient != CGAL::COLLINEAR )
-        return less_general( he1.source(), he2.source(), orient );
-      // query_pt, he1.source(), he2.source() are collinear
       if ( he2.at_source() )
         return !less_source_at_query_pt( he2, he1 );
       if ( he1.at_source() )
         return less_source_at_query_pt( he1, he2 );
-      if ( CGAL::collinear_are_ordered_along_line( he1.source(), query_pt, he2.source() ) )
-        // querypt is between he1.source() and he2.source()
-        return angle_less_than_pi( he1.source() );
-      return less_on_ray ( he1, he2 );
+
+      if ( he1.quadrant() != he2.quadrant() )
+        return ( he1.quadrant() < he2.quadrant() );
+      // In the same quadrant
+      CGAL::Orientation orient = CGAL::orientation( query_pt, he1.source(), he2.source() );
+      if ( orient != CGAL::COLLINEAR ) {
+        // General case, in the same quadrant
+        return ( orient == CGAL::LEFT_TURN );
+      } else {
+        // query_pt, he1.source(), he2.source() are collinear on a ray
+        if ( CGAL::collinear_are_ordered_along_line( query_pt, he1.source(), he2.source() ) ) {
+          // he1.source() is closer
+          return ( he1.orientation() == CGAL::RIGHT_TURN || he1.outward() );
+        } else {
+          // he2.source() is closer
+          return !( he2.orientation() == CGAL::RIGHT_TURN || he2.outward() );
+        }
+      }
     }
+  public:
+    // Constructor
+    Less_Source( const Point_2& q )
+      : query_pt( q )
+      {}
+    // Comparator
+    // Precondition: he1 and he2 are not the same halfedge
+    bool operator () ( const Edge_type& he1, const Edge_type& he2 )
+      { return less( he1, he2 ); }
   private:
     Point_2 query_pt;
     Point_2 aux;
   };
 
+  /*
+    class Less_Edge
+    Compare the halfedges intersecting a ray, find whose intersection point
+    is closer to the query point.
+    The class rovides a comparator:
+        Less_Edge( const Edge_type& he1, const Edge_type& he2 )
+    where he1 and he2 are two half edges.
+
+    Precondition: he1 != he2
+  */
   template < class E >
   class Less_Edge
   {
@@ -326,93 +378,73 @@ private:
     typedef E                                           Edge_type;
     typedef typename E::Geometry_traits_2               Geometry_traits_2;
     typedef typename Geometry_traits_2::Point_2         Point_2;
-    typedef typename Geometry_traits_2::FT              Number_type;
   private:
-    // less_vertex, the halfedge he1 passes throught query_pt
+    Point_2 query_pt;
+  private:
+    // less_vertex
+    // Precondition:  (1) he1 contains query_pt
+    //                (2) he2 does not contain query_pt
     bool less_vertex ( const Edge_type& he1, const Edge_type& he2 )
     {
-      if ( he1.at_source() ) {
-        if ( he2.at_target() ) {
-          // he2 is the previous halfedge of he1
-          return ( CGAL::orientation( query_pt, *p_aux, he1.target() ) != CGAL::COLLINEAR );
-        } else {
-          return true;
-        }
-      } else if ( he1.at_target() ) {
-        if ( he2.at_source() ) {
-          // he2 is the next halfege of he2
-          return ( CGAL::orientation( query_pt, *p_aux, he2.target() ) == CGAL::COLLINEAR );
-        } else {
-          return true;
-        }
-      } else {
-        // The query point lies in the interior of he1
-        return true;
-      }
+      assert( !(he2.at_source() || he2.at_target() || he2.in_edge() ) );
+      return true;
     }
-    // less_collinear, the halfedge he1 is through the ray (query_pt, *p_aux)
-    bool less_collinear ( const Edge_type& he1, const Edge_type& he2 )
-    {
-      if ( he1.inward() ) {
-        if ( he2.inward() || he2.outward() )
-          return ( CGAL::collinear_are_ordered_along_line( query_pt, he1.target(), he2.target() ) );
-        else
-          return ( CGAL::orientation( he2.source(), he2.target(), query_pt ) ==
-                   CGAL::orientation( he2.source(), he2.target(), he1.target() ) );
-      } else {
-        // he1.outward()
-        if ( he2.inward() || he2.outward() )
-          return ( CGAL::collinear_are_ordered_along_line( query_pt, he1.source(), he2.source() ) );
-        else
-          return ( CGAL::orientation( he2.source(), he2.target(), query_pt ) ==
-                   CGAL::orientation( he2.source(), he2.target(), he1.source() ) );
-      }
-    }
-    // General setting, he2 is the next halfedge of he1
+    // less_consecutive
+    // Precondition:  (1) Both he1 and he2 does not contain query_pt
+    //                (2) he1 is the previous halfedge of he2
     bool less_consecutive ( const Edge_type& he1, const Edge_type& he2 )
     {
-      CGAL::Orientation orient1 = CGAL::orientation( query_pt, *p_aux, he1.target() );
-      if ( orient1 == CGAL::LEFT_TURN ) {
-        return ( CGAL::orientation( he1.source(), he1.target(), he2.target() ) == CGAL::RIGHT_TURN );
-      } else if ( orient1 == CGAL::RIGHT_TURN ) {
-        return ( CGAL::orientation( he1.source(), he1.target(), he2.target() ) == CGAL::LEFT_TURN );
+      if ( he1.outward() )
+        return true;
+      else if ( he1.inward() )
+        return false;
+      else if ( he1.orientation() == CGAL::LEFT_TURN ) {
+        return ( he2.boundary_orientation() == CGAL::RIGHT_TURN );
       } else {
-        // orient1 == CGAL::COLLINEAR
-        if ( he1.orientation() == CGAL::LEFT_TURN ) {
-          if ( he2.orientation() == CGAL::LEFT_TURN )
-            return false;
-          else
-            return ( CGAL::orientation( he1.source(), he1.target(), he2.target() ) == CGAL::RIGHT_TURN );
-        } else {
-          // he1.orientation() == CGAL::RIGHT_TURN
-          if ( he2.orientation() == CGAL::RIGHT_TURN )
-            return true;
-          else
-            return ( CGAL::orientation( he1.source(), he1.target(), he2.target() ) == CGAL::LEFT_TURN );
-        }
+        // he1.orientation() == CGAL::RIGHT_TURN
+        return ( he2.boundary_orientation() != CGAL::RIGHT_TURN );
       }
     }
-    // less_general, the general case
+    // less_collinear
+    // Precondition:  (1) Both he1 and he2 does not contain query_pt
+    //                (2) he1 and he2 are not incident
+    //                (3) query_pt, he1.source(), he1.target() are collinear
+    bool less_collinear ( const Edge_type& he1, const Edge_type& he2 )
+    {
+      if ( he2.inward() || he2.outward() ) {
+        return CGAL::collinear_are_ordered_along_line( query_pt,
+                                                       he1.source(),
+                                                       he2.source() );
+      } else {
+        return ( CGAL::orientation( he2.source(), he2.target(), he1.source() )
+                                   == he2.orientation() );
+      }
+    }
+    // less_general
+    // Precondition:  (1) Both he1 and he2 does not contain query_pt
+    //                (2) he1 and he2 are not incident
+    //                (3) he1.orientation() == CGAL::LEFT_TURN || RIGHT_TURN
+    //                (4) he2.orientation() == CGAL::LEFT_TURN || RIGHT_TURN
     bool less_general ( const Edge_type& he1, const Edge_type& he2 )
     {
-      if ( he1.source() == he2.target() ) 
-        return !less_consecutive( he2, he1 );
-      if ( he1.target() == he2.source() )
-        return less_consecutive( he1, he2 );
-      CGAL::Orientation orient1 = CGAL::orientation( he1.source(), he1.target(), he2.source() );
-      CGAL::Orientation orient2 = CGAL::orientation( he1.source(), he1.target(), he2.target() );
+      CGAL::Orientation orient1 = CGAL::orientation( he1.source(),
+                                                     he1.target(), 
+                                                     he2.source() );
+      CGAL::Orientation orient2 = CGAL::orientation( he1.source(),
+                                                     he1.target(), 
+                                                     he2.target() );
       if ( orient1 == orient2 ) {
-        return ( CGAL::orientation( he1.source(), he1.target(), query_pt ) != orient1 );
+        // he2.source() and he2.target() lies on the same side of he1
+        return ( CGAL::orientation( he1.source(), he1.target(), query_pt )
+                                  != orient1 );
       } else {
-        return ( CGAL::orientation( he2.source(), he2.target(), query_pt ) ==
-                 CGAL::orientation( he2.source(), he2.target(), he1.source() ) );
+        // he2.source() and he2.target() lies on the different side of he1
+        return ( CGAL::orientation( he2.source(), he2.target(), he1.source() )
+                                 == he2.orientation() );
       }
     }
-  public:
-    Less_Edge ( const Point_2& q, const Point_2 * a )
-      : query_pt( q ), p_aux( a )
-      {}
-    bool operator () ( const Edge_type& he1, const Edge_type& he2 )
+    // less
+    bool less ( const Edge_type& he1, const Edge_type& he2 )
     {
       if ( he1.circulator() == he2.circulator() )
         return false;
@@ -420,27 +452,90 @@ private:
         return less_vertex( he1, he2 );
       if ( he2.at_source() || he2.at_target() || he2.in_edge() )
         return !less_vertex( he2, he1 );
+      if ( he1.index() == he2.prev_index() )
+        return less_consecutive( he1, he2 );
+      if ( he1.prev_index() == he2.index() )
+        return !less_consecutive( he2, he1 );
       if ( he1.inward() || he1.outward() )
         return less_collinear( he1, he2 );
       if ( he2.inward() || he2.outward() )
         return !less_collinear( he2, he1 );
       return less_general( he1, he2 );
     }
+  public:
+    Less_Edge ( const Point_2& q )
+      : query_pt( q )
+      {}
+    bool operator () ( const Edge_type& he1, const Edge_type& he2 )
+      { return less( he1, he2 ); }
+  };
+
+  template < class E, class Comp >
+  class Active_Edge
+  {
   private:
-    Point_2 query_pt;
-    const Point_2 * p_aux;
+    typedef E                                           Edge_type;
+    typedef Comp                                        Sorter;
+    typedef typename E::Geometry_traits_2               Geometry_traits_2;
+    typedef typename Geometry_traits_2::Point_2         Point_2;
+    typedef typename std::set<Edge_type,Sorter>         Active_edge_container;
+    typedef typename std::vector<Edge_type>             Edge_vector;
+  private:
+    Active_edge_container active_edges;
+    const Edge_vector * p_edges;
+    std::vector<bool> active;
+  public:
+    Active_Edge ( const Edge_vector * pe, const Sorter& s )
+      : p_edges( pe ), active_edges( s )
+    { active.assign( pe->size(), false ); }
+
+    void insert ( const Edge_type& he )
+    {
+      active_edges.insert( he );
+      active[he.index()] = true;
+    }
+    void erase ( const Edge_type& he )
+    {
+      active_edges.erase( he );
+      active[he.index()] = false;
+    }
+    void replace ( const Edge_type& he1, const Edge_type& he2 )
+    {
+      typename Active_edge_container::const_iterator ait;
+      ait = active_edges.find( he1 );
+      assert( ait != active_edges.end() );
+      const Edge_type& const_he = *ait;
+      Edge_type& tmp_he = const_cast<Edge_type&>(const_he);
+      tmp_he = he2;
+      active[he1.index()] = false;
+      active[he2.index()] = true;
+    }
+    bool is_active( int idx ) const
+      { return active[idx]; }
+    const Edge_type& closest () const
+      { return *(active_edges.begin()); }
+#ifdef MYDEBUG
+    void trace ( ostream& os )
+    {
+      typename Active_edge_container::const_iterator ait;
+      for( ait = active_edges.begin(); ait != active_edges.end(); ait++ ) {
+        cout << "Edge: " << ait->source() << " --> " << ait->target() << endl;
+      }
+        cout << "Active:[ ";
+      for ( int i = 0; i < active.size(); i++ ) {
+        if ( active[i] )
+          cout << i << " ";
+      }
+      cout << "]" << endl;
+    }
+#endif
   };
 
 private:
   typedef Edge<Arrangement_2>                         Edge_type;
   typedef std::vector<Edge_type>                      Edge_vector;
   typedef typename Edge_vector::const_iterator        Edge_iterator;
-  typedef bool                                        Active_edge_property;
   typedef Less_Edge<Edge_type>                        Active_edge_sorter;
-  typedef std::map<Edge_type,Active_edge_property,Active_edge_sorter>
-                                                      Active_edge_container;
-  typedef typename Active_edge_container::const_iterator
-                                                      Active_const_iterator;
 
 private:
   // do_intersect_ray
@@ -449,14 +544,23 @@ private:
   bool do_intersect_ray ( const Point_2& query_pt, const Point_2& aux, const Edge_type& he )
   {
     if ( he.orientation() != CGAL::COLLINEAR ) {
-      Ray_2 ray( query_pt, aux );
-      Segment_2 seg( he.source(), he.target() );
-      if ( !CGAL::do_intersect( ray, seg ) )
+      CGAL::Orientation orient1 = CGAL::orientation( query_pt, aux, he.source() );
+      CGAL::Orientation orient2 = CGAL::orientation( query_pt, aux, he.target() );
+      if ( orient1 == orient2 )
         return false;
-      if ( he.orientation() == CGAL::LEFT_TURN )
-        return ( CGAL::orientation( query_pt, aux, he.source() ) == CGAL::RIGHT_TURN );
-      else
-        return ( CGAL::orientation( query_pt, aux, he.target() ) == CGAL::RIGHT_TURN );
+      if ( orient1 == CGAL::COLLINEAR ) {
+        if ( CGAL::collinear_are_ordered_along_line( aux, query_pt, he.source() ) )
+          return false;
+        // Ray intersects he at he.source()
+        return ( he.orientation() == CGAL::RIGHT_TURN );
+      } else if ( orient2 == CGAL::COLLINEAR ) {
+        if ( CGAL::collinear_are_ordered_along_line( aux, query_pt, he.target() ) )
+          return false;
+        // Ray intersects he at he.target()
+        return ( he.orientation() == CGAL::LEFT_TURN );
+      } else {
+        return ( CGAL::orientation( query_pt, aux, he.target() ) == he.orientation() );
+      }
     } else if ( he.inward() || he.outward() ) {
       return false;
     } else if ( he.at_source() ) {
@@ -534,10 +638,8 @@ private:
                                       std::vector<Point_2>& out_points )
   {
     Point_2 aux;
-    Active_edge_sorter closer( query_pt, &aux );
-    Active_edge_container active_edges( closer );
-    std::vector<bool> active;
-    Active_const_iterator ait;
+    Active_edge_sorter closer( query_pt );
+    Active_Edge< Edge_type, Active_edge_sorter > active( &unsorted_edges, closer );
 
     // Initialize the edges intersecting the ray
     aux = first->source();
@@ -550,11 +652,9 @@ private:
       }
     }
 
-    active.assign( unsorted_edges.size(), false );
     for ( Edge_iterator eit = edges.begin(); eit != edges.end(); eit++ ) {
       if ( do_intersect_ray( query_pt, aux, *eit ) ) { 
-        active_edges.insert( std::make_pair( *eit, true ) );
-        active[eit->index()] = true;
+        active.insert( *eit );
       }
     }
 
@@ -563,94 +663,82 @@ cout << "query_pt = [" << query_pt << "]" <<endl;
 cout << "Unsorted edges" << endl;
 cout << "================================" << endl;
 for ( int i = 0; i < unsorted_edges.size(); i++ ) {
-  cout << "Edge: " << unsorted_edges[i].source() << " --> " << unsorted_edges[i].target() << "  idx = " << unsorted_edges[i].index() << endl;
+  unsorted_edges[i].trace( cout );
 }
 cout << endl;
 cout << "Sorted edges" << endl;
 cout << "================================" << endl;
 for ( int i = 0; i < edges.size(); i++ ) {
-  cout << "Edge: " << edges[i].source() << " --> " << edges[i].target() << "  idx = " << edges[i].index() << endl;
+  edges[i].trace( cout );
 }
 cout << endl;
 cout << "After Initialization" << endl;
 cout << "================================" << endl;
-for ( ait = active_edges.begin(); ait != active_edges.end(); ait++ ) {
-  cout << "Edge: " << ait->first.source() << " ---> " << ait->first.target() << endl;
-}
+active.trace( cout );
 cout << endl;
 #endif 
 
     // Rotational sweep the ray, until reach the end of the cone
-    Point_2 first_intersection, last_intersection;
-    first_intersection = last_intersection = calculate_intersection( query_pt, aux, active_edges.begin()->first.circulator() );
-    bool first_intersect_at_vertex = ( first_intersection == active_edges.begin()->first.source() ||  first_intersection == active_edges.begin()->first.target() );
+    Point_2 first_pt, last_pt;
+    first_pt = last_pt = calculate_intersection( query_pt, aux, active.closest().circulator() );
+    bool first_at_vertex = ( first_pt == active.closest().source() ||  first_pt == active.closest().target() );
     for ( Edge_iterator eit = first; eit != last; eit++ ) {
       aux = eit->source();
       int idx = eit->index();
-      int prev = ( idx-1 );
-      if ( prev < 0 )
-        prev = unsorted_edges.size() - 1;
-      Circulator top = active_edges.begin()->first.circulator();
+      int prev = eit->prev_index();
+      Circulator top = active.closest().circulator();
       assert( unsorted_edges[idx].circulator() == eit->circulator() );
 
 #ifdef MYDEBUG
-cout << "idx=" << idx << ",prev=" << prev << ",size=" << unsorted_edges.size() << endl;
+cout << "idx = " << idx << " , prev = " << prev << endl;
 cout << "Current edge: " << eit->source() << " --> " << eit->target() << "    Previous edge: " << unsorted_edges[prev].source() << " --> " << unsorted_edges[prev].target() << endl;
-cout << "aux = " << aux << "   top: " << top->source()->point() << " --> " << top->target()->point() << endl;
+cout << "top: " << top->source()->point() << " --> " << top->target()->point() << endl;
 #endif
 
-      if ( active[idx] && active[prev] ) {
+      if ( active.is_active( idx ) && active.is_active( prev ) ) {
         // Both edges incident to the current vertex are active
 #ifdef MYDEBUG
 cout << "Both Active!" << endl;
 #endif
 
-        active_edges.erase( *eit );
-        active[idx] = false;
-        active_edges.erase( unsorted_edges[prev] );
-        active[prev] = false;
-        if ( top != active_edges.begin()->first.circulator() ) {
+        active.erase( *eit );
+        active.erase( unsorted_edges[prev] );
+        if ( top != active.closest().circulator() ) {
           Point_2 u;
-          u = calculate_intersection( query_pt, aux, active_edges.begin()->first.circulator() );
-          if ( last_intersection != eit->source() )
+          u = calculate_intersection( query_pt, aux, active.closest().circulator() );
+          if ( last_pt != eit->source() )
             out_points.push_back( eit->source() );
           out_points.push_back( u );
-          last_intersection = u;
+          last_pt = u;
 #ifdef MYDEBUG
 cout << "New Top! Intersection = " << u << endl;
 #endif
         }
-      } else if ( active[idx] ) {
+      } else if ( active.is_active( idx ) ) {
 #ifdef MYDEBUG
 cout << "Current Active!" << endl;
 #endif
         // Only one edge whose source is the current vertex is active.
-        active_edges.erase( *eit );
-        active[idx] = false;
-        active_edges.insert( std::make_pair( unsorted_edges[prev], true ) );
-        active[prev] = true;
-        if ( top != active_edges.begin()->first.circulator() ) {
-          if ( last_intersection != eit->source() ) {
+        active.replace( *eit, unsorted_edges[prev] );
+        if ( top != active.closest().circulator() ) {
+          if ( last_pt != eit->source() ) {
             out_points.push_back( eit->source() );
-            last_intersection = eit->source();
+            last_pt = eit->source();
           }
 #ifdef MYDEBUG
 cout << "New Top! Intersection = " << eit->source() << endl;
 #endif
         }
-      } else if ( active[prev] ) {
+      } else if ( active.is_active( prev ) ) {
 #ifdef MYDEBUG
 cout << "Previous Active!" << endl;
 #endif
         // Only one edge whose target is the current vertex is active.
-        active_edges.erase( unsorted_edges[prev] );
-        active[prev] = false;
-        active_edges.insert( std::make_pair( *eit, true ) );
-        active[idx] = true;
-        if ( top != active_edges.begin()->first.circulator() ) {
-          if ( last_intersection != eit->source() ) {
+        active.replace( unsorted_edges[prev], *eit );
+        if ( top != active.closest().circulator() ) {
+          if ( last_pt != eit->source() ) {
             out_points.push_back( eit->source() );
-            last_intersection = eit->source();
+            last_pt = eit->source();
           }
 #ifdef MYDEBUG
 cout << "New Top! Intersection = " << eit->source() << endl;
@@ -661,20 +749,18 @@ cout << "New Top! Intersection = " << eit->source() << endl;
 #ifdef MYDEBUG
 cout << "Both Inctive!" << endl;
 #endif
-        active_edges.insert( std::make_pair( *eit, true ) );
-        active[idx] = true;
-        active_edges.insert( std::make_pair( unsorted_edges[prev], true ) );
-        active[prev] = true;
-        if ( top != active_edges.begin()->first.circulator() ) {
+        active.insert( *eit );
+        active.insert( unsorted_edges[prev] );
+        if ( top != active.closest().circulator() ) {
           Point_2 u;
           if ( query_on_vertex && query_pt == aux )
             u = aux;
           else
             u = calculate_intersection( query_pt, aux, top );
-          if ( last_intersection != u )
+          if ( last_pt != u )
             out_points.push_back( u );
           out_points.push_back( eit->source() );
-          last_intersection = eit->source();
+          last_pt = eit->source();
 #ifdef MYDEBUG
 cout << "New Top! Intersection = " << u << endl;
 #endif
@@ -682,16 +768,15 @@ cout << "New Top! Intersection = " << u << endl;
       }
 #ifdef MYDEBUG
 cout << "*** After Iteration ***" << endl;
-for ( ait = active_edges.begin(); ait != active_edges.end(); ait++ ) {
-  cout << "Edge: " << ait->first.source() << " ---> " << ait->first.target() << endl;
-}
+active.trace( cout );
 cout << endl;
 #endif
     }
-    if ( first_intersection != last_intersection ) {
-      if ( first_intersect_at_vertex ||
-        ( CGAL::orientation( out_points.front(), out_points.back(), first_intersection ) != CGAL::COLLINEAR ) )
-      out_points.push_back( first_intersection );
+
+    if ( first_pt != last_pt ) {
+      if ( first_at_vertex ||
+        ( CGAL::orientation( out_points.front(), out_points.back(), first_pt ) != CGAL::COLLINEAR ) )
+      out_points.push_back( first_pt );
     }
 #ifdef MYDEBUG
 cout << "Visibility segments:" << endl;
@@ -708,24 +793,26 @@ cout << endl;
   compute_visibility_impl ( const Point_2& query_pt, VARR& arr_out )
   {
     Point_2 aux( query_pt.x()+Number_type(1), query_pt.y() );
-    Less_Source<Edge_type> comp ( query_pt, aux );
+    Less_Source<Edge_type> comp ( query_pt );
     // Sort halfedges with their source point by polar angle
+    std::sort( edges.begin(), edges.end(), comp );
 #ifdef MYDEBUG
 for ( int i = 0; i < edges.size(); i++ ) {
   for ( int j = 0; j < edges.size(); j++ ) {
-    if ( i== j )
+    if ( i == j )
       continue;
     bool res = comp( edges[i], edges[j] );
-    cout << "Edges1: " << edges[i].source() << " --> " << edges[i].target() << "    ";
-    cout << "Edges2: " << edges[j].source() << " --> " << edges[j].target() << "    ";
-    if ( res )
-      cout << "Result:  1<2" <<endl;
-    else
-      cout << "Result:  2<1" <<endl;
+    if ( res != ( i < j ) ) {
+      cout << "WRONG: Edges1: " << edges[i].source() << " --> " << edges[i].target() << " ";
+      cout << "Edges2: " << edges[j].source() << " --> " << edges[j].target() << "    ";
+      if ( res )
+        cout << "Result:  1<2" <<endl;
+      else
+        cout << "Result:  2<1" <<endl;
+    }
   }
 }
 #endif
-    std::sort( edges.begin(), edges.end(), comp );
 
     std::vector<Point_2> vec;
     compute_visibility_partition( query_pt, edges.begin(), edges.end(), vec );
@@ -739,6 +826,7 @@ for ( int i = 0; i < edges.size(); i++ ) {
 
     edges.clear();
     unsorted_edges.clear();
+
     return arr_out.faces_begin();
   }
 
@@ -808,11 +896,12 @@ public:
 
     arr_out.clear();
     edges.clear();
+
     Circulator circ, curr;
     Circulator qedge( he2 );
     Circulator qprev( he2->prev() );
 
-    int idx = 0;
+    int hole_base = 0, hole_edge = 0;
 
     if ( f->has_outer_ccb() ) {
       curr = circ = f->outer_ccb();
@@ -824,13 +913,18 @@ public:
         } else if ( curr == qprev ) {
           on_edge = on_vertex = query_on_vertex;
         }
-        edges.push_back( Edge_type( query_pt, curr, on_edge, on_vertex, idx ) );
-        idx++;
+        edges.push_back( Edge_type( query_pt, curr, on_edge, on_vertex ) );
+        hole_edge++;
       } while ( ++curr != circ );
+      for ( int i = 0; i < hole_edge; i++ ) {
+        edges[hole_base+i].set_index( hole_base+i, hole_base+(i+hole_edge-1)%hole_edge );
+      }
+      hole_base += hole_edge;
     }
     for ( Hole_const_iterator hi = f->holes_begin();
           hi != f->holes_end(); hi++ ) {
       curr = circ = *hi;
+      hole_edge = 0;
       do {
         bool on_edge = false, on_vertex = false;
         if ( curr == qedge ) {
@@ -839,9 +933,13 @@ public:
         } else if ( curr == qprev ) {
           on_edge = on_vertex = query_on_vertex;
         }
-        edges.push_back( Edge_type( query_pt, curr, on_edge, on_vertex, idx ) );
-        idx++;
+        edges.push_back( Edge_type( query_pt, curr, on_edge, on_vertex ) );
+        hole_edge++;
       } while ( ++curr != circ );
+      for ( int i = 0; i < hole_edge; i++ ) {
+        edges[hole_base+i].set_index( hole_base+i, hole_base+(i+hole_edge-1)%hole_edge );
+      }
+      hole_base += hole_edge;
     }
 
     unsorted_edges.assign( edges.begin(), edges.end() );
@@ -863,22 +961,31 @@ public:
 
     Circulator circ, curr;
 
-    int idx = 0;
+    int hole_base = 0, hole_edge = 0;
 
     if ( f->has_outer_ccb() ) {
       curr = circ = f->outer_ccb();
       do {
-        edges.push_back( Edge_type( query_pt, curr, false, false, idx ) );
-        idx++;
+        edges.push_back( Edge_type( query_pt, curr, false, false ) );
+        hole_edge++;
       } while ( ++curr != circ );
+      for ( int i = 0; i < hole_edge; i++ ) {
+        edges[hole_base+i].set_index( hole_base+i, hole_base+(i+hole_edge-1)%hole_edge );
+      }
+      hole_base += hole_edge;
     }
     for ( Hole_const_iterator hi = f->holes_begin();
           hi != f->holes_end(); hi++ ) {
       curr = circ = *hi;
+      hole_edge = 0;
       do {
-        edges.push_back( Edge_type( query_pt, curr, false, false, idx ) );
-        idx++;
+        edges.push_back( Edge_type( query_pt, curr, false, false ) );
+        hole_edge++;
       } while ( ++curr != circ );
+      for ( int i = 0; i < hole_edge; i++ ) {
+        edges[hole_base+i].set_index( hole_base+i, hole_base+(i+hole_edge-1)%hole_edge );
+      }
+      hole_base += hole_edge;
     }
 
     unsorted_edges.assign( edges.begin(), edges.end() );
@@ -894,7 +1001,6 @@ private:
   bool query_on_vertex;
   Edge_vector edges;
   Edge_vector unsorted_edges;
-
 }; // End of class Rotational_sweep_visibility_2
 
 } // End namespace CGAL
