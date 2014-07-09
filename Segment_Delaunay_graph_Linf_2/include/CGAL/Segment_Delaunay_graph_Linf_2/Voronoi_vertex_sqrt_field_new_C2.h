@@ -62,6 +62,9 @@ public:
   using Base::is_endpoint_of;
   using Base::orient_line_endp;
   using Base::orient_line_nonendp;
+  using Base::bearing;
+  using Base::bearing_diff;
+  using Base::center_from_corner_and_pt;
 
   typedef enum {PPP = 0, PPS, PSS, SSS} vertex_t;
   struct PPP_Type {};
@@ -87,6 +90,8 @@ public:
   typedef typename Base::Compute_scalar_product_2 Compute_scalar_product_2;
 
   typedef typename Base::Polychainline_2     Polychainline_2;
+
+  typedef typename Base::Bearing Bearing;
 
 private:
   typedef SegmentDelaunayGraph_2::Are_same_points_C2<K>   Are_same_points_2;
@@ -1110,9 +1115,51 @@ private:
       const bool is_q_hv, const bool is_q_hor,
       const bool is_r_hv, const bool is_r_hor) const
   {
-    //const Line_2 lq = orient_line_nonendp(p, q);
-    //const Line_2 lr = orient_line_nonendp(p, r);
-    compute_vv_bisectors(p, q, r, PSS_Type());
+    const Line_2 lq = orient_line_nonendp(p, q);
+    const Line_2 lr = orient_line_nonendp(p, r);
+    const Bearing bq = bearing(lq);
+    const Bearing br = bearing(lr);
+    const Bearing bdiff = bearing_diff(bq, br);
+    CGAL_assertion( bdiff != 0 );
+    CGAL_assertion( bdiff != 7 );
+
+    if (bdiff == 1) {
+      compute_pss_corner_and_pt(p, lq, lr, bq, br);
+    } if (bdiff == 6) {
+      compute_pss_lines_side(p, lq, lr, (br+1)%8);
+    }else {
+      compute_vv_bisectors(p, q, r, PSS_Type());
+    }
+    CGAL_assertion( oriented_side_of_line(lq, this->point()) );
+    CGAL_assertion( oriented_side_of_line(lr, this->point()) );
+  }
+
+  inline void
+  compute_pss_lines_side(const Site_2& p,
+      const Line_2& lq, const Line_2 & lr,
+      const Bearing bside) const
+  {
+    CGAL_precondition(bside % 2 == 1);
+    const bool side_ver = (bside % 4 == 1);
+    FT pcoord = (side_ver) ? p.point().x() : p.point().y();
+    FT qcoord = coord_at(lq, pcoord, side_ver);
+    FT rcoord = coord_at(lr, pcoord, side_ver);
+    FT sidelen = CGAL::abs(qcoord-rcoord);
+    const int sgn = (bside < 4) ? -1 : +1;
+    vv = side_ver ?
+      Point_2(pcoord + sgn*sidelen/FT(2), (qcoord+rcoord)/FT(2)) :
+      Point_2((qcoord+rcoord)/FT(2), pcoord + sgn*sidelen/FT(2)) ;
+  }
+
+  inline void
+  compute_pss_corner_and_pt(const Site_2& p,
+      const Line_2& lq, const Line_2 & lr,
+      const Bearing bq, const Bearing br) const
+  {
+    RT cx, cy, cw;
+    compute_intersection_of_lines(lq, lr, cx, cy, cw);
+    const Bearing cb = (bq % 2 == 0) ? bq : br;
+    vv = center_from_corner_and_pt(Point_2(cx, cy, cw), cb, p.point());
   }
 
   // PSS case when not both segments are axis-parallel and p is

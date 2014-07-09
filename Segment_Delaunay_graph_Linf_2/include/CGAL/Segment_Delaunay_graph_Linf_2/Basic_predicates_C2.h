@@ -51,6 +51,8 @@ public:
   typedef SegmentDelaunayGraph_2::Are_same_segments_C2<K>
           Are_same_segments_2;
 
+  typedef unsigned int Bearing;
+
 private:
   typedef typename K::Intersections_tag ITag;
   typedef Bisector_Linf<K>              Bisector_Linf_Type;
@@ -1291,7 +1293,6 @@ public:
     return Base::is_on_positive_halfspace(l, s.segment());
   }
 
-private:
   // The bearing of a line l is defined as a number in {0, 1, ..., 7},
   // encoding each permissible ordered pair (sign(l.a), sign(l.b)).
   // There are 8 permissible pairs; pair (ZERO, ZERO) is not allowed.
@@ -1299,7 +1300,7 @@ private:
   // counterclockwise we get consecutive bearings. Observe that
   // axis-parallel lines have odd bearings (1, 3, 5, 7).
 
-  inline static unsigned int
+  inline static Bearing
   bearing(const Line_2 & l) {
     const Sign sa = CGAL::sign(l.a());
     const Sign sb = CGAL::sign(l.b());
@@ -1312,6 +1313,7 @@ private:
     }
   }
 
+private:
   inline static bool
   have_same_bearing(const Line_2 & l1, const Line_2 & l2) {
     return (CGAL::sign(l1.a()) == CGAL::sign(l2.a())) and
@@ -1326,9 +1328,9 @@ private:
 
   inline static bool
   bearing_outside(
-      const unsigned int bprev,
-      const unsigned int br,
-      const unsigned int bnext)
+      const Bearing bprev,
+      const Bearing br,
+      const Bearing bnext)
   {
     CGAL_assertion(bprev <= 7);
     CGAL_assertion(br <= 7);
@@ -1336,7 +1338,7 @@ private:
     CGAL_assertion(bprev != bnext);
     CGAL_assertion(bprev != br);
     CGAL_assertion(bnext != br);
-    unsigned int i = bprev;
+    Bearing i(bprev);
     while (true) {
       i = (i + 1) % 8;
       if (i == bnext) {
@@ -1347,16 +1349,16 @@ private:
     }
   }
 
+public:
   // absolute bearing difference between low and high
   inline static unsigned int
-  bearing_diff(const unsigned int low, const unsigned int high)
+  bearing_diff(const Bearing low, const Bearing high)
   {
     CGAL_assertion(low <= 7);
     CGAL_assertion(high <= 7);
     return high > low ? high - low : 8 + high - low;
   }
 
-public:
   // Orient the segments p, q, r so that they go counterclockwise
   // around the Linf square. The orientations are saved as lines
   // l[0], l[1], l[2] in the l array.
@@ -1450,29 +1452,29 @@ public:
         << std::endl;);
     const unsigned int iprev = (i_no+2)%3;
     const unsigned int inext = (i_no+1)%3;
-    const unsigned int bprev = bearing(l[iprev]);
-    const unsigned int bnext = bearing(l[inext]);
+    const Bearing bprev = bearing(l[iprev]);
+    const Bearing bnext = bearing(l[inext]);
     CGAL_SDG_DEBUG( std::cout << "orient_lines_linf"
         << " bprev=" << bprev << " bnext=" << bnext
         << std::endl;);
     CGAL_assertion(bprev != bnext);
-    CGAL_assertion_code( const unsigned int diffbear = (bnext - bprev)%8 );
+    CGAL_assertion_code( const Bearing diffbear = (bnext - bprev)%8 );
     CGAL_assertion(diffbear != 1);
     CGAL_assertion(diffbear != 7);
-    const unsigned int br = bearing(l[i_no]);
+    const Bearing br = bearing(l[i_no]);
     if ( bearing_outside(bprev, br, bnext) ) {
-      CGAL_assertion_code( const unsigned int bropp = (br+4)%8 );
+      CGAL_assertion_code( const Bearing bropp = (br+4)%8 );
       CGAL_assertion( not bearing_outside(bprev, bropp, bnext) );
       l[i_no] = opposite_line(l[i_no]);
       is_oriented[i_no] = true;
     } else {
       CGAL_assertion( not bearing_outside(bprev, br, bnext) );
-      const unsigned int bropp = (br+4)%8;
+      const Bearing bropp = (br+4)%8;
       if ( not bearing_outside(bprev, bropp, bnext) ) {
         CGAL_assertion( diffbear == 6 );
         CGAL_assertion( br % 2 == 1 ); // undecided is axis-parallel
         const Site_2 & sprev = iprev == 0 ? p : (iprev == 1? q : r);
-        unsigned int brcorrect = (bprev+5)%8;
+        Bearing brcorrect = (bprev+5)%8;
         if (Base::is_on_positive_halfspace(l[inext], sprev.segment())) {
           brcorrect = (bprev+1)%8;
         } else {
@@ -1613,6 +1615,28 @@ public:
     } else {
       CGAL_assertion(same_points(p, seg.target_site()));
       return seg.source_site();
+    }
+  }
+
+  // Given corner with bearing cb (0: bottom right, 2: top right,
+  // 4: top left, 6: bottom left) and another point p, return the
+  // (smallest) square having that corner and passing through p.
+  static
+  Point_2 center_from_corner_and_pt(
+      const Point_2 & corner, const Bearing cb, const Point_2 & p)
+  {
+    CGAL_precondition(cb % 2 == 0);
+    const FT absdifx = CGAL::abs(corner.x() - p.x());
+    const FT absdify = CGAL::abs(corner.y() - p.y());
+    const Comparison_result cmp = CGAL::compare(absdifx, absdify);
+    if (cmp == SMALLER) {
+      const FT ox = corner.x() + FT((cb < 3) ? -1: +1)*absdify/FT(2);
+      const FT oy = (corner.y() + p.y())/FT(2);
+      return Point_2(ox, oy);
+    } else {
+      const FT ox = (corner.x() + p.x())/FT(2);
+      const FT oy = corner.y() + FT((cb % 6 == 0) ? +1: -1)*absdifx/FT(2);
+      return Point_2(ox, oy);
     }
   }
 
