@@ -10,37 +10,62 @@ else()
   cmake_policy(VERSION 2.6)
 endif()
 
-find_package(CGAL COMPONENTS Qt4 Core GMP MPFR)
-
-include(${CGAL_USE_FILE})
 
 set( QT_USE_QTXML    TRUE )
 set( QT_USE_QTMAIN   TRUE )
 set( QT_USE_QTSCRIPT  TRUE )
 set( QT_USE_QTOPENGL  TRUE )
 
-#find_package(Qt4)
+#New for Qt5 version !
+option (USE_QT5 "Use Qt5 version instead of Qt4" ON)
+
+if(USE_QT5)
+
+	find_package(CGAL COMPONENTS Qt5 Core GMP MPFR)
+
+	include(${CGAL_USE_FILE})
+	
+	find_package(Qt5)
+
+        set(CMAKE_AUTOMOC OFF)
+
+else (USE_QT5)
+
+	find_package(CGAL COMPONENTS Qt4 Core GMP MPFR)
+
+	include(${CGAL_USE_FILE})
+
+	find_package(Qt4)
+
+	if(CGAL_Qt4_FOUND AND QT4_FOUND)
+		include(${QT_USE_FILE})
+		message("Qt4 found")
+		set(QT4 TRUE)
+	endif()
+
+endif (USE_QT5)
+
+include(QtChoice)
 
 include_directories (BEFORE ../../include)
 
-if ( CGAL_FOUND AND CGAL_Qt4_FOUND AND QT4_FOUND )
+if ( CGAL_FOUND AND (Qt4 OR QT5) )
 
   if( CGAL_Core_FOUND)
     add_definitions(-DCGAL_USE_CORE)
   endif()
 
-  include(${QT_USE_FILE})
   #--------------------------------
   # Demo: Polygon_2
   #--------------------------------
   # UI files (Qt Designer files)
-  qt4_wrap_ui( DT_UI_FILES Polygon_2.ui )
+  qt_wrap_ui( DT_UI_FILES Polygon_2.ui )
 
   # qrc files (resources files, that contain icons, at least)
-  qt4_add_resources ( DT_RESOURCE_FILES ./Polygon_2.qrc )
+  qt_add_resources ( DT_RESOURCE_FILES ./Polygon_2.qrc )
 
   # use the Qt MOC preprocessor on classes that derives from QObject
-  qt4_generate_moc( Polygon_2.cpp "${CMAKE_CURRENT_BINARY_DIR}/Polygon_2.moc" )
+  qt_generate_moc( Polygon_2.cpp "${CMAKE_CURRENT_BINARY_DIR}/Polygon_2.moc" )
 
 #  add_library( CGAL SHARED IMPORTED ) 
 #  SET_PROPERTY(TARGET CGAL PROPERTY IMPORTED_LOCATION ${CGAL_LIBRARY} )

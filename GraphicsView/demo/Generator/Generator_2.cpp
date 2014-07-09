@@ -9,6 +9,7 @@
 // Qt headers
 #include <QtGui>
 #include <QString>
+#include <QInputDialog>
 #include <QFileDialog>
 #include <QGraphicsLineItem>
 
@@ -61,6 +62,18 @@ private:
 
     G pg(radius);
     bool ok = false;
+
+  #if QT_VERSION >= 0x050000
+  const int number_of_points = 
+      QInputDialog::getInt(this, 
+                               tr("Number of random points"),
+                               tr("Enter number of random points"),
+                               100,
+                               0,
+                               (std::numeric_limits<int>::max)(),
+                               1,
+                               &ok);
+  #else
     const int number_of_points = 
       QInputDialog::getInteger(this, 
                                tr("Number of random points"),
@@ -70,6 +83,8 @@ private:
                                (std::numeric_limits<int>::max)(),
                                1,
                                &ok);
+  #endif
+
 
     if(!ok) {
       return;
@@ -281,9 +296,9 @@ int main(int argc, char **argv)
   app.setOrganizationName("GeometryFactory");
   app.setApplicationName("Generator_2 demo");
 
-  // Import resources from libCGALQt4.
+  // Import resources from libCGAL (Qt4 or Qt5).
   // See http://doc.trolltech.com/4.4/qdir.html#Q_INIT_RESOURCE
-  CGAL_QT4_INIT_RESOURCES;
+  CGAL_QT_INIT_RESOURCES;//New for QT5 version !
   Q_INIT_RESOURCE(Generator_2);
 
   MainWindow mainWindow;

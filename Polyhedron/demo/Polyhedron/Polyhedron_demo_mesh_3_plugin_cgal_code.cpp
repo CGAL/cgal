@@ -329,8 +329,6 @@ Scene_item* cgal_code_mesh_3(const Polyhedron* pMesh,
   }
 }
 
-#if QT_VERSION >= 0x050000
 #include "Polyhedron_demo_mesh_3_plugin_cgal_code.moc"
-#else
 //#include "Scene_c3t3_item.moc" //Check this one, it's strange moc include.
-#endif
+

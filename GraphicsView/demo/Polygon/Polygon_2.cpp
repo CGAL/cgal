@@ -16,6 +16,7 @@
 #include <QtGui>
 #include <QString>
 #include <QFileDialog>
+#include <QInputDialog>
 #include <QGraphicsLineItem>
 
 // GraphicsView items and event filters (input classes)
@@ -570,9 +571,9 @@ int main(int argc, char **argv)
   app.setOrganizationName("GeometryFactory");
   app.setApplicationName("Polygon_2 demo");
 
-  // Import resources from libCGALQt4.
+  // Import resources from libCGAL (Qt4 or Qt5).
   // See http://doc.trolltech.com/4.4/qdir.html#Q_INIT_RESOURCE
-  CGAL_QT4_INIT_RESOURCES;
+  CGAL_QT_INIT_RESOURCES;
   Q_INIT_RESOURCE(Polygon_2);
 
   MainWindow mainWindow;

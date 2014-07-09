@@ -215,11 +215,20 @@ MainWindow::on_actionInsertRandomPoints_triggered()
   QRectF rect = CGAL::Qt::viewportsBbox(&scene);
   CGAL::Qt::Converter<K> convert;
   Iso_rectangle_2 isor = convert(rect);
-  CGAL::Random_points_in_iso_rectangle_2<Point_2> pg((isor.min)(), (isor.max)());
+  CGAL::Random_points_in_iso_rectangle_2<Point_2> pg((isor.min)(), (isor.max)()); 
+
+  #if QT_VERSION >= 0x050000
+  const int number_of_points = 
+    QInputDialog::getInt(this, 
+                             tr("Number of random points"),
+                             tr("Enter number of random points"), 100, 0);
+  #else
   const int number_of_points = 
     QInputDialog::getInteger(this, 
                              tr("Number of random points"),
                              tr("Enter number of random points"), 100, 0);
+  #endif 
+
 
   // wait cursor
   QApplication::setOverrideCursor(Qt::WaitCursor);
@@ -295,9 +304,9 @@ int main(int argc, char **argv)
   app.setOrganizationName("GeometryFactory");
   app.setApplicationName("Regular_triangulation_2 demo");
 
-  // Import resources from libCGALQt4.
+  // Import resources from libCGAL (Qt4 or Qt5).
   // See http://doc.trolltech.com/4.4/qdir.html#Q_INIT_RESOURCE
-  CGAL_QT4_INIT_RESOURCES;
+  CGAL_QT_INIT_RESOURCES;//New for Qt5 version !
 
   MainWindow mainWindow;
   mainWindow.show();

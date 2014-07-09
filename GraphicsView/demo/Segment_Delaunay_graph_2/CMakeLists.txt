@@ -10,36 +10,59 @@ else()
   cmake_policy(VERSION 2.6)
 endif()
 
-find_package(CGAL COMPONENTS Qt4 Core)
-
-include(${CGAL_USE_FILE})
-
 set( QT_USE_QTXML    TRUE )
 set( QT_USE_QTMAIN   TRUE )
 set( QT_USE_QTSCRIPT  TRUE )
 set( QT_USE_QTOPENGL  TRUE )
 
+#New for Qt5 version !
+option (USE_QT5 "Use Qt5 version instead of Qt4" ON)
 
-find_package(Qt4)
+if(USE_QT5)
+
+	find_package(CGAL COMPONENTS Qt5 Core)
+
+	include(${CGAL_USE_FILE})
+	
+	find_package(Qt5)
+
+        set(CMAKE_AUTOMOC OFF)
+
+else (USE_QT5)
+
+	find_package(CGAL COMPONENTS Qt4 Core)
+
+	include(${CGAL_USE_FILE})
+
+	find_package(Qt4)
+
+	if(CGAL_Qt4_FOUND AND QT4_FOUND)
+		include(${QT_USE_FILE})
+		message("Qt4 found")
+		set(QT4 TRUE)
+	endif()
+
+endif (USE_QT5)
+
+include(QtChoice)
+
 include_directories (BEFORE ../../include)
 include_directories (BEFORE ./include)
 
 
-if ( CGAL_FOUND AND CGAL_Qt4_FOUND AND QT4_FOUND )
-
-include(${QT_USE_FILE})
+if ( CGAL_FOUND AND (QT4 OR QT5) )
 
 #--------------------------------
 # The "Segment Voronoi" demo: Segment_voronoi_2
 #--------------------------------
 # UI files (Qt Designer files)
-qt4_wrap_ui( CDT_UI_FILES Segment_voronoi_2.ui )
+qt_wrap_ui( CDT_UI_FILES Segment_voronoi_2.ui )
 
 # qrc files (resources files, that contain icons, at least)
-qt4_add_resources ( CDT_RESOURCE_FILES ./Segment_voronoi_2.qrc )
+qt_add_resources ( CDT_RESOURCE_FILES ./Segment_voronoi_2.qrc )
 
 # use the Qt MOC preprocessor on classes that derives from QObject
-qt4_generate_moc( "Segment_voronoi_2.cpp" "${CMAKE_CURRENT_BINARY_DIR}/Segment_voronoi_2.moc" )
+qt_generate_moc( "Segment_voronoi_2.cpp" "${CMAKE_CURRENT_BINARY_DIR}/Segment_voronoi_2.moc" )
 
 # The executable itself.
 add_executable  ( Segment_voronoi_2 Segment_voronoi_2.cpp Segment_voronoi_2.moc ${CDT_UI_FILES} ${CDT_RESOURCE_FILES} )

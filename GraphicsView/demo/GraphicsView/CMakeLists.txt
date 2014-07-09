@@ -9,22 +9,43 @@ else()
   cmake_policy(VERSION 2.6)
 endif()
 
-find_package(CGAL COMPONENTS Qt4)
-
-include(${CGAL_USE_FILE})
-
-
 set( QT_USE_QTXML    TRUE )
 set( QT_USE_QTMAIN   TRUE )
 set( QT_USE_QTSCRIPT  TRUE )
 set( QT_USE_QTOPENGL  TRUE )
 
-find_package(Qt4)
+#New for Qt5 version !
+option (USE_QT5 "Use Qt5 version instead of Qt4" ON)
 
-if ( CGAL_FOUND AND CGAL_Qt4_FOUND AND QT4_FOUND )
+if(USE_QT5)
 
-  include(${QT_USE_FILE})
+	find_package(CGAL COMPONENTS Qt5)
 
+	include(${CGAL_USE_FILE})
+	
+	find_package(Qt5)
+
+        set(CMAKE_AUTOMOC OFF)
+
+else (USE_QT5)
+
+	find_package(CGAL COMPONENTS Qt4)
+
+	include(${CGAL_USE_FILE})
+
+	find_package(Qt4)
+
+	if(CGAL_Qt4_FOUND AND QT4_FOUND)
+		include(${QT_USE_FILE})
+		message("Qt4 found")
+		set(QT4 TRUE)
+	endif()
+
+endif (USE_QT5)
+
+#include(QtChoice) not necessary here.
+
+if ( CGAL_FOUND AND (QT4 OR QT5) )
 
   add_executable  ( min min.cpp )
 
