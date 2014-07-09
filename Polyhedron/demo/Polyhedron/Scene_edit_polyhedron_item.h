@@ -263,8 +263,8 @@ private:
   Scene_polyhedron_item* poly_item;
   // For drawing
   std::vector<double> positions;
-  std::vector<std::size_t> tris;
-  std::vector<std::size_t> edges;
+  std::vector<unsigned int> tris;
+  std::vector<unsigned int> edges;
   std::vector<double> normals;
 
   Deform_mesh deform_mesh;
