@@ -121,7 +121,7 @@ protected:
 
   Triangulation_3_base(Lock_data_structure *) {}
 
-  void swap(Triangulation_3_base<Concurrency_tag, Lock_data_structure_> &tr){}
+  void swap(Triangulation_3_base<Concurrency_tag, Lock_data_structure_> &){}
 
   template <typename Vertex_triple, typename Facet>
   struct Vertex_triple_Facet_map_generator
@@ -146,7 +146,7 @@ public:
   // LOCKS (no-op functions)
 
   template <typename Point_3>
-  bool try_lock_point(const Point_3 &p, int = 0) const
+  bool try_lock_point(const Point_3 &, int = 0) const
   { return true; }
 
   template <typename Vertex_handle>

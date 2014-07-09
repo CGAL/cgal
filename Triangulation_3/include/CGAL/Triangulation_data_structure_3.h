@@ -741,7 +741,7 @@ private:
 
   template <class OutputIterator>
   void
-  incident_cells_2(Vertex_handle v, Cell_handle c,
+  incident_cells_2(Vertex_handle v, Cell_handle,
                    OutputIterator cells) const
   {
       CGAL_triangulation_precondition(dimension() == 2);
