@@ -365,8 +365,10 @@ if (TBB_INCLUDE_DIR)
 endif (TBB_INCLUDE_DIR)
 
 if (NOT TBB_FOUND)
-    message("ERROR: Intel TBB NOT found! Please define the TBBROOT (or TBB_INSTALL_DIR) and/or TBB_ARCH_PLATFORM environment variables.")
-    message(STATUS "Looked for Threading Building Blocks in ${_TBB_INSTALL_DIR}")
+    if(NOT TBB_FIND_QUIETLY)
+        message("ERROR: Intel TBB NOT found! Please define the TBBROOT (or TBB_INSTALL_DIR) and/or TBB_ARCH_PLATFORM environment variables.")
+        message(STATUS "Looked for Threading Building Blocks in ${_TBB_INSTALL_DIR}")
+    endif(NOT TBB_FIND_QUIETLY)
     SET(TBB_INSTALL_DIR "TBB_INSTALL_DIR_NOT_FOUND" CACHE STRING "Intel TBB install directory")
     # do only throw fatal, if this pkg is REQUIRED
     if (TBB_FIND_REQUIRED)
