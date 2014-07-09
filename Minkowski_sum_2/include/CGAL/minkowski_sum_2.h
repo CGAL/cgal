@@ -15,7 +15,8 @@
 // $URL$
 // $Id$
 //
-// Author(s)     : Ron Wein   <wein@post.tau.ac.il>
+// Author(s) : Ron Wein   <wein@post.tau.ac.il>
+//             Efi Fogel  <efifogel@gmail.com>
 
 #ifndef CGAL_MINKOWSKI_SUM_2_H
 #define CGAL_MINKOWSKI_SUM_2_H
@@ -35,26 +36,48 @@ namespace CGAL {
  * Note that as the input polygons may not be convex, their Minkowski sum may
  * not be a simple polygon. The result is therefore represented as a polygon
  * with holes.
- * \param pgn1 The first polygon.
- * \param pgn2 The second polygon.
+ * \param pgn1 (in) The first polygon.
+ * \param pgn2 (in) The second polygon.
  * \return The resulting polygon with holes, representing the sum.
  */
-
-template <class Kernel, class Container>
-Polygon_with_holes_2<Kernel,Container>
-minkowski_sum_2 (const Polygon_2<Kernel,Container>& pgn1,
-                 const Polygon_2<Kernel,Container>& pgn2)
+template <typename Kernel_, typename Container_>
+Polygon_with_holes_2<Kernel_, Container_>
+minkowski_sum_2(const Polygon_2<Kernel_, Container_>& pgn1,
+                const Polygon_2<Kernel_, Container_>& pgn2)
 {
-  Minkowski_sum_by_convolution_2<Kernel, Container>  mink_sum;
-  Polygon_2<Kernel,Container>                        sum_bound;
-  std::list<Polygon_2<Kernel,Container> >            sum_holes;
+  Kernel_ kernel;
+  return minkowski_sum_2(pgn1, pgn2, kernel);
+}
+
+/*!
+ * Compute the Minkowski sum of two simple polygons using the convolution
+ * method.
+ * Note that as the input polygons may not be convex, their Minkowski sum may
+ * not be a simple polygon. The result is therefore represented as a polygon
+ * with holes.
+ * \param pgn1 (in) The first polygon.
+ * \param pgn2 (in) The second polygon.
+ * \param kernel (in) The kernel.
+ * \return The resulting polygon with holes, representing the sum.
+ */
+template <typename Kernel_, typename Container_>
+Polygon_with_holes_2<Kernel_, Container_>
+minkowski_sum_2(const Polygon_2<Kernel_, Container_>& pgn1,
+                const Polygon_2<Kernel_, Container_>& pgn2,
+                const Kernel_& kernel)
+{
+  typedef Kernel_                                    Kernel;
+  typedef Container_                                 Container;
+
+  Minkowski_sum_by_convolution_2<Kernel, Container>  mink_sum(kernel);
+  Polygon_2<Kernel, Container> sum_bound;
+  std::list<Polygon_2<Kernel, Container> > sum_holes;
 
   if (pgn1.size() > pgn2.size())
-    mink_sum (pgn1, pgn2, sum_bound, std::back_inserter(sum_holes));
+    mink_sum(pgn1, pgn2, sum_bound, std::back_inserter(sum_holes));
   else
-    mink_sum (pgn2, pgn1, sum_bound, std::back_inserter(sum_holes));
-
-  return (Polygon_with_holes_2<Kernel,Container> (sum_bound,
+    mink_sum(pgn2, pgn1, sum_bound, std::back_inserter(sum_holes));
+  return (Polygon_with_holes_2<Kernel, Container>(sum_bound,
                                                   sum_holes.begin(),
                                                   sum_holes.end()));
 }
@@ -66,26 +89,160 @@ minkowski_sum_2 (const Polygon_2<Kernel,Container>& pgn1,
  * Note that as the input polygons may not be convex, their Minkowski sum may
  * not be a simple polygon. The result is therefore represented as a polygon
  * with holes.
- * \param pgn1 The first polygon.
- * \param pgn2 The second polygon.
- * \param decomp A functor for decomposing polygons.
- * \param sum Output: The resulting polygon with holes, representing the sum.
+ * \param pgn1 (in) The first polygon.
+ * \param pgn2 (in) The second polygon.
+ * \param decomposition_strategy (in) A functor for decomposing polygons.
+ * \return The resulting polygon with holes, representing the sum.
  */
-template <class Kernel, class Container, class DecompositionStrategy>
-Polygon_with_holes_2<Kernel,Container>
-minkowski_sum_2 (const Polygon_2<Kernel,Container>& pgn1,
-                 const Polygon_2<Kernel,Container>& pgn2,
-                 const DecompositionStrategy&)
+template <typename Kernel_, typename Container_,
+          typename DecompositionStrategy_>
+Polygon_with_holes_2<Kernel_, Container_>
+minkowski_sum_2(const Polygon_2<Kernel_, Container_>& pgn1,
+                const Polygon_2<Kernel_, Container_>& pgn2,
+                const DecompositionStrategy_& decomposition_strategy)
 {
-  Minkowski_sum_by_decomposition_2<DecompositionStrategy,Container>        mink_sum;
+  typename Minkowski_sum_by_decomposition_2<DecompositionStrategy_,
+                                            Container_>::Traits_2 traits;
+  return minkowski_sum_2(pgn1, pgn2, decomposition_strategy, traits);
+}
 
-  typedef Polygon_with_holes_2<Kernel,Container>                 Polygon_with_holes_2;
-  
-  Polygon_with_holes_2 sum;
+/*!
+ * Compute the Minkowski sum of two simple polygons by decomposing each
+ * polygon to convex sub-polygons and computing the union of the pairwise
+ * Minkowski sums of the sub-polygons.
+ * Note that as the input polygons may not be convex, their Minkowski sum may
+ * not be a simple polygon. The result is therefore represented as a polygon
+ * with holes.
+ * \param pgn1 (in) The first polygon.
+ * \param pgn2 (in) The second polygon.
+ * \param decomposition_strategy (in) A functor for decomposing polygons.
+ * \param traits (in) traits The traits.
+ * \return The resulting polygon with holes, representing the sum.
+ */
+template <typename Kernel_, typename Container_,
+          typename DecompositionStrategy_>
+Polygon_with_holes_2<Kernel_, Container_>
+minkowski_sum_2(const Polygon_2<Kernel_, Container_>& pgn1,
+                const Polygon_2<Kernel_, Container_>& pgn2,
+                const DecompositionStrategy_& decomposition_strategy,
+                const typename
+                Minkowski_sum_by_decomposition_2<DecompositionStrategy_,
+                                                 Container_>::Traits_2& traits)
+{
+  typedef Kernel_                               Kernel;
+  typedef Container_                            Container;
+  typedef DecompositionStrategy_                Decomposition_strategy;
 
-  sum = mink_sum (pgn1, pgn2);
-  
+  Minkowski_sum_by_decomposition_2<Decomposition_strategy, Container>
+    mink_sum(decomposition_strategy, traits);
+  Polygon_with_holes_2<Kernel, Container> sum = mink_sum(pgn1, pgn2);
   return (sum);
+}
+
+/*!
+ * Compute the Minkowski sum of two polygon-with-holes by decomposing each
+ * polygon to convex sub-polygons and computing the union of the pairwise
+ * Minkowski sums of the sub-polygons.
+ * The result is also represented as a polygon with holes.
+ * \param pgn1 (in) The first polygon.
+ * \param pgn2 (in) The second polygon.
+ * \param decomposition_strategy (in) A functor for decomposing polygons.
+ * \return The resulting polygon with holes, representing the sum.
+ */
+template <typename Kernel_, typename Container_,
+          typename DecompositionStrategy_>
+Polygon_with_holes_2<Kernel_, Container_>
+minkowski_sum_2(const Polygon_with_holes_2<Kernel_, Container_>& pgn1,
+                const Polygon_with_holes_2<Kernel_, Container_>& pgn2,
+                const DecompositionStrategy_& decomposition_strategy)
+{
+  typename Minkowski_sum_by_decomposition_2<DecompositionStrategy_,
+                                            Container_>::Traits_2 traits;
+  return minkowski_sum_2(pgn1, pgn2, decomposition_strategy, traits);
+}
+
+/*!
+ * Compute the Minkowski sum of two polygon-with-holes by decomposing each
+ * polygon to convex sub-polygons and computing the union of the pairwise
+ * Minkowski sums of the sub-polygons.
+ * The result is also represented as a polygon with holes.
+ * \param pgn1 (in) The first polygon.
+ * \param pgn2 (in) The second polygon.
+ * \param decomposition_strategy (in) A functor for decomposing polygons.
+ * \param traits (in) The traits.
+ * \return The resulting polygon with holes, representing the sum.
+ */
+template <typename Kernel_, typename Container_,
+          typename DecompositionStrategy_>
+Polygon_with_holes_2<Kernel_, Container_>
+minkowski_sum_2(const Polygon_with_holes_2<Kernel_, Container_>& pgn1,
+                const Polygon_with_holes_2<Kernel_, Container_>& pgn2,
+                const DecompositionStrategy_& decomposition_strategy,
+                const typename
+                Minkowski_sum_by_decomposition_2<DecompositionStrategy_,
+                                                 Container_>::Traits_2& traits)
+{
+  typedef Kernel_                               Kernel;
+  typedef Container_                            Container;
+  typedef DecompositionStrategy_                Decomposition_strategy;
+
+  Minkowski_sum_by_decomposition_2<Decomposition_strategy, Container>
+    mink_sum(decomposition_strategy, traits);
+  Polygon_with_holes_2<Kernel, Container> sum = mink_sum(pgn1, pgn2);
+  return sum;
+}
+
+/*!
+ * Compute the Minkowski sum of one simple polygon and one polygon-with-holes
+ * by decomposing each polygon to convex sub-polygons and computing the union
+ * of the pairwise Minkowski sums of the sub-polygons.  The result is also
+ * represented as a polygon with holes.
+ * \param pgn1 (in) The first polygon.
+ * \param pgn2 (in)The second polygon.
+ * \param decomposition_strategy (in) A functor for decomposing polygons.
+ * \return The resulting polygon with holes, representing the sum.
+ */
+template <typename Kernel_, typename Container_,
+          typename DecompositionStrategy_>
+Polygon_with_holes_2<Kernel_, Container_>
+minkowski_sum_2(const Polygon_2<Kernel_, Container_>& pgn1,
+                const Polygon_with_holes_2<Kernel_, Container_>& pgn2,
+                const DecompositionStrategy_& decomposition_strategy)
+{
+  typename Minkowski_sum_by_decomposition_2<DecompositionStrategy_,
+                                            Container_>::Traits_2 traits;
+  return minkowski_sum_2(pgn1, pgn2, decomposition_strategy, traits);
+}
+
+/*!
+ * Compute the Minkowski sum of one simple polygon and one polygon-with-holes
+ * by decomposing each polygon to convex sub-polygons and computing the union
+ * of the pairwise Minkowski sums of the sub-polygons.  The result is also
+ * represented as a polygon with holes.
+ * \param pgn1 (in) The first polygon.
+ * \param pgn2 (in)The second polygon.
+ * \param decomposition_strategy (in) A functor for decomposing polygons.
+ * \param traits (in) The traits.
+ * \return The resulting polygon with holes, representing the sum.
+ */
+template <typename Kernel_, typename Container_,
+          typename DecompositionStrategy_>
+Polygon_with_holes_2<Kernel_, Container_>
+minkowski_sum_2(const Polygon_2<Kernel_, Container_>& pgn1,
+                const Polygon_with_holes_2<Kernel_, Container_>& pgn2,
+                const DecompositionStrategy_& decomposition_strategy,
+                const typename
+                Minkowski_sum_by_decomposition_2<DecompositionStrategy_,
+                                                 Container_>::Traits_2& traits)
+{
+  typedef Kernel_                               Kernel;
+  typedef Container_                            Container;
+  typedef DecompositionStrategy_                Decomposition_strategy;
+
+  Minkowski_sum_by_decomposition_2<Decomposition_strategy, Container>
+    mink_sum(decomposition_strategy, traits);
+  Polygon_with_holes_2<Kernel, Container> sum = mink_sum(pgn1, pgn2);
+  return sum;
 }
 
 } //namespace CGAL
