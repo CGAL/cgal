@@ -2,7 +2,7 @@
 
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/dual/Convex_hull_traits_dual_3.h>
-#include <CGAL/dual/halfspaces_intersection.h>
+#include <CGAL/dual/halfspaces_intersection_3.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel         K;
 typedef K::Plane_3 Plane;

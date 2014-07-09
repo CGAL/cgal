@@ -118,22 +118,26 @@ vcm_convolve (ForwardIterator first,
     }
 }
 
+// Construct the covariance matrix
 template <class Covariance>
-bool
-extract_greater_eigenvector (Covariance &cov,
-                             Eigen::Vector3f &normal) {
+Eigen::Matrix3f
+construct_covariance_matrix (Covariance &cov) {
     Eigen::Matrix3f m;
 
-    // Construct covariance matrix
     m(0,0) = cov[0]; m(0,1) = cov[1]; m(0,2) = cov[2];
     m(1,1) = cov[3]; m(1,2) = cov[4];
     m(2,2) = cov[5];
 
     m(1, 0) = m(0,1); m(2, 0) = m(0, 2); m(2, 1) = m(1, 2);
 
-    // Diagonalizing the matrix
-    Eigen::Vector3f eigenvalues;
-    Eigen::Matrix3f eigenvectors;
+    return m;
+}
+
+// Diagonalize a selfadjoint matrix
+bool
+diagonalize_selfadjoint_matrix (Eigen::Matrix3f &m,
+                                Eigen::Matrix3f &eigenvectors,
+                                Eigen::Vector3f &eigenvalues) {
     Eigen::SelfAdjointEigenSolver<Eigen::Matrix3f> eigensolver(m);
 
     if (eigensolver.info() != Eigen::Success) {
@@ -143,8 +147,54 @@ extract_greater_eigenvector (Covariance &cov,
     eigenvalues = eigensolver.eigenvalues();
     eigenvectors = eigensolver.eigenvectors();
 
+    return true;
+}
+
+// Determine if a point is on an edge
+template <class Covariance>
+bool
+is_on_edge (Covariance &cov,
+            float threshold,
+            Eigen::Vector3f &dir) {
+    // Construct covariance matrix
+    Eigen::Matrix3f m = construct_covariance_matrix(cov);
+
+    // Diagonalizing the matrix
+    Eigen::Vector3f eigenvalues;
+    Eigen::Matrix3f eigenvectors;
+    if (! diagonalize_selfadjoint_matrix(m, eigenvectors, eigenvalues)) {
+        return false;
+    }
+
+    // Compute the ratio
+    // TODO
+    float r = eigenvalues(0) / (eigenvalues(0) + eigenvalues(1) + eigenvalues(2));
+    std::cout << r << std::endl;
+    if (r <= threshold) {
+        dir = eigenvectors.col(1);
+        return true;
+    }
+
+    return false;
+}
+
+// Extract the eigenvector associated to the greatest eigenvalue
+template <class Covariance>
+bool
+extract_greater_eigenvector (Covariance &cov,
+                             Eigen::Vector3f &normal) {
+    // Construct covariance matrix
+    Eigen::Matrix3f m = construct_covariance_matrix(cov);
+
+    // Diagonalizing the matrix
+    Eigen::Vector3f eigenvalues;
+    Eigen::Matrix3f eigenvectors;
+    if (! diagonalize_selfadjoint_matrix(m, eigenvectors, eigenvalues)) {
+        return false;
+    }
+
     // Eigenvalues are already sorted by increasing order
-    normal = eigenvectors.col(2);
+    normal = eigenvectors.col(0);
 
     return true;
 }
@@ -220,21 +270,36 @@ vcm_estimate_normals (ForwardIterator first, ///< iterator over the first input 
     std::copy(ccov.begin(), ccov.end(),
               std::ostream_iterator<Covariance>(file_convolve));
 
+    // Sharp edges
+    float threshold = 0.5;
+    std::vector<typename Kernel::Point_3> points_on_edges;
     // And finally, compute the normals
     int i = 0;
     for (ForwardIterator it = first; it != beyond; ++it) {
         Eigen::Vector3f enormal;
+        Eigen::Vector3f dir;
         if (! internal::extract_greater_eigenvector(ccov[i], enormal)) {
             std::cerr << "Error during extraction of normal: " <<
                 "the covariance matrix is not diagonalizable!\n";
             exit(1);
         }
+
+        // TODO
+        if (internal::is_on_edge(ccov[i], threshold, dir)) {
+            points_on_edges.push_back(get(point_pmap, *it));
+        }
+
         CGAL::Vector_3<Kernel> normal(enormal[0],
                                       enormal[1],
                                       enormal[2]);
         put(normal_pmap, *it, normal);
         i++;
     }
+
+    // TODO: debug
+    std::ofstream file_edges("edges.xyz");
+    std::copy(points_on_edges.begin(), points_on_edges.end(),
+              std::ostream_iterator<typename Kernel::Point_3>(file_edges, "\n"));
 }
 
 /// @cond SKIP_IN_MANUAL

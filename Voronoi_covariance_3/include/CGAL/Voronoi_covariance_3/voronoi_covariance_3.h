@@ -4,7 +4,7 @@
 #include <list>
 #include <CGAL/array.h>
 #include <CGAL/Voronoi_covariance_3/voronoi_covariance_sphere_3.h>
-#include <CGAL/dual/halfspaces_intersection.h>
+#include <CGAL/dual/halfspaces_intersection_3.h>
 
 namespace CGAL {
     namespace Voronoi_covariance_3 {
@@ -129,7 +129,7 @@ namespace CGAL {
                     sphere(std::back_inserter(planes));
 
                     Polyhedron P;
-                    CGAL::halfspaces_intersection(planes.begin(), planes.end(), P);
+                    CGAL::halfspaces_intersection_3(planes.begin(), planes.end(), P);
 
                     // apply f to the triangles on the boundary of P
                     for (typename Polyhedron::Facet_iterator it = P.facets_begin();

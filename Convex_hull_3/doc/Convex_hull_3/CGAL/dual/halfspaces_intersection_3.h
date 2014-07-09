@@ -15,8 +15,8 @@ In order to do that, it is necessary to give the function a point inside the pol
  */
 
 template <class PlaneIterator, class Polyhedron>
-void halfspaces_intersection (PlaneIterator begin, PlaneIterator end,
-                              Polyhedron &P,
-                              typename Polyhedron::Traits::Point_3 const& origin = typename Polyhedron::Traits::Point_3(CGAL::ORIGIN));
+void halfspaces_intersection_3 (PlaneIterator begin, PlaneIterator end,
+                                Polyhedron &P,
+                                typename Polyhedron::Traits::Point_3 const& origin = typename Polyhedron::Traits::Point_3(CGAL::ORIGIN));
 
 } /* namespace CGAL */

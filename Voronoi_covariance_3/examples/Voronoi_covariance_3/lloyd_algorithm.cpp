@@ -1,5 +1,5 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/dual/halfspaces_intersection.h>
+#include <CGAL/dual/halfspaces_intersection_3.h>
 #include <CGAL/Delaunay_triangulation_3.h>
 #include <CGAL/convex_hull_3.h>
 
@@ -165,10 +165,10 @@ void lloyd_algorithm (PolyIterator poly_begin,
 
         // Intersection
         Polyhedron P;
-        CGAL::halfspaces_intersection(planes.begin(),
-                                      planes.end(),
-                                      P,
-                                      vit->point());
+        CGAL::halfspaces_intersection_3(planes.begin(),
+                                        planes.end(),
+                                        P,
+                                        vit->point());
 
         // Centroid
         apply_function_object_polyhedron(P, centroid_acc);

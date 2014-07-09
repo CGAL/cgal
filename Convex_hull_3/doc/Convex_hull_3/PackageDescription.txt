@@ -87,6 +87,6 @@ defining `CGAL_CH_CHECK_EXPENSIVE`.
 
 ## Halfspaces Intersection Function ##
 
-- `CGAL::halfspaces_intersection`
+- `CGAL::halfspaces_intersection_3`
 
 */

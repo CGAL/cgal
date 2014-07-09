@@ -1,5 +1,5 @@
-#ifndef CGAL_HALFSPACES_INTERSECTION_H
-#define CGAL_HALFSPACES_INTERSECTION_H
+#ifndef CGAL_HALFSPACES_INTERSECTION_3_H
+#define CGAL_HALFSPACES_INTERSECTION_3_H
 
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Polyhedron_incremental_builder_3.h>
@@ -88,9 +88,9 @@ namespace CGAL
                                 // Compute the intersection
                                 result_inter result = CGAL::intersection(pp1, pp2, pp3);
                                 CGAL_assertion_msg(result,
-                                                   "halfspaces_intersection: no intersection");
+                                                   "halfspaces_intersection_3: no intersection");
                                 CGAL_assertion_msg(boost::get<Point_3>(& *result),
-                                                   "halfspaces_intersection: intersection is not a point");
+                                                   "halfspaces_intersection_3: intersection is not a point");
 
                                 const Point_3* pp = boost::get<Point_3>(& *result);
 
@@ -125,9 +125,9 @@ namespace CGAL
 
     // Compute the intersection of halfspaces
     template <class PlaneIterator, class Polyhedron>
-        void halfspaces_intersection (PlaneIterator begin, PlaneIterator end,
-                                      Polyhedron &P,
-                                      typename Polyhedron::Traits::Point_3 const& origin = typename Polyhedron::Traits::Point_3(CGAL::ORIGIN)) {
+        void halfspaces_intersection_3 (PlaneIterator begin, PlaneIterator end,
+                                        Polyhedron &P,
+                                        typename Polyhedron::Traits::Point_3 const& origin = typename Polyhedron::Traits::Point_3(CGAL::ORIGIN)) {
             typedef typename Polyhedron::Traits::Kernel K;
             typedef Convex_hull_3::Convex_hull_traits_dual_3<K> Hull_traits_dual_3;
             typedef Polyhedron_3<Hull_traits_dual_3> Polyhedron_dual_3;
@@ -143,9 +143,9 @@ namespace CGAL
             // Posterior check for the origin inside the cmputed polyhedron
             Point_inside_polyhedron_3<Polyhedron, K> is_inside(P);
             CGAL_assertion_msg(is_inside(origin) == CGAL::ON_BOUNDED_SIDE,
-                               "halfspaces_intersection: origin not in the polyhedron");
+                               "halfspaces_intersection_3: origin not in the polyhedron");
         }
 } // namespace CGAL
 
-#endif // CGAL_HALFSPACES_INTERSECTION_H
+#endif // CGAL_HALFSPACES_INTERSECTION_3_H
 
