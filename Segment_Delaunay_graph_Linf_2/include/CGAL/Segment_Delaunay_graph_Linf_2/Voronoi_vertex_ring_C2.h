@@ -3417,12 +3417,8 @@ public:
     FT absdifyvl = CGAL::abs(difyvl);
     Comparison_result cmplabsxy = CGAL::compare(absdifxvl, absdifyvl);
 
-    // philaris: (cmplabsxy == EQUAL) means that lref is
-    // one of the corners of the square with center vv
-
-    if ((cmplabsxy == EQUAL) and is_l_h_or_v) {
-      return POSITIVE;
-    }
+    // lref is corner if and only if the line is not axis-parallel
+    CGAL_assertion( (cmplabsxy == EQUAL) == (not is_l_h_or_v) );
 
     Oriented_side oslvv (ON_ORIENTED_BOUNDARY);
     if ((p_.is_segment() or q_.is_segment() or r_.is_segment()) and
