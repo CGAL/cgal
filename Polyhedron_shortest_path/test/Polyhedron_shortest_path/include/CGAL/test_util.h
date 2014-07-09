@@ -3,13 +3,117 @@
 
 #include <algorithm>
 
+#include <CGAL/boost/graph/properties.h>
+#include <CGAL/boost/graph/properties_Polyhedron_3.h>
+#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
+#include <CGAL/Random.h>
+
 namespace CGAL {
 
 namespace test {
 
-#include <CGAL/boost/graph/properties.h>
-#include <CGAL/boost/graph/properties_Polyhedron_3.h>
-#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
+enum Sequence_item_type
+{
+  SEQUENCE_ITEM_VERTEX,
+  SEQUENCE_ITEM_EDGE,
+  SEQUENCE_ITEM_FACE,
+};
+
+template <class Traits>
+struct Sequence_item
+{
+  typedef typename Traits::Polyhedron Polyhedron;
+  typedef typename Traits::FT FT;
+  typedef typename Traits::Barycentric_coordinate Barycentric_coordinate;
+  typedef typename boost::graph_traits<Polyhedron> GraphTraits;
+  typedef typename GraphTraits::vertex_descriptor vertex_descriptor;
+  typedef typename GraphTraits::halfedge_descriptor halfedge_descriptor;
+  typedef typename GraphTraits::face_descriptor face_descriptor;
+  
+  Sequence_item_type type;
+  size_t index;
+  Barycentric_coordinate faceAlpha;
+  FT edgeAlpha;
+  
+  halfedge_descriptor halfedge;
+  vertex_descriptor vertex;
+  face_descriptor face;
+};
+
+template <class Traits, 
+  class VIM = typename boost::property_map<typename Traits::Polyhedron, CGAL::vertex_external_index_t>::type,
+  class HIM = typename boost::property_map<typename Traits::Polyhedron, CGAL::halfedge_external_index_t>::type,
+  class FIM = typename boost::property_map<typename Traits::Polyhedron, CGAL::face_external_index_t>::type>
+struct Edge_sequence_collector
+{
+  typedef typename Traits::Polyhedron Polyhedron;
+  typedef typename Traits::FT FT;
+  typedef typename Traits::Barycentric_coordinate Barycentric_coordinate;
+  typedef VIM VertexIndexMap;
+  typedef HIM HalfedgeIndexMap;
+  typedef FIM FaceIndexMap;
+  typedef typename boost::graph_traits<Polyhedron> GraphTraits;
+  typedef typename GraphTraits::vertex_descriptor vertex_descriptor;
+  typedef typename GraphTraits::halfedge_descriptor halfedge_descriptor;
+  typedef typename GraphTraits::face_descriptor face_descriptor;
+
+  VertexIndexMap m_vertexIndexMap;
+  HalfedgeIndexMap m_halfedgeIndexMap;
+  FaceIndexMap m_faceIndexMap;
+  
+  std::vector<Sequence_item<Traits> > m_sequence;
+  
+  Edge_sequence_collector(Polyhedron& p)
+    : m_vertexIndexMap(CGAL::get(boost::vertex_external_index, p))
+    , m_halfedgeIndexMap(CGAL::get(CGAL::halfedge_external_index, p))
+    , m_faceIndexMap(CGAL::get(CGAL::face_external_index, p))
+  {
+  }
+
+  Edge_sequence_collector(VertexIndexMap& vertexIndexMap, HalfedgeIndexMap& halfedgeIndexMap, FaceIndexMap& faceIndexMap)
+    : m_vertexIndexMap(vertexIndexMap)
+    , m_halfedgeIndexMap(halfedgeIndexMap)
+    , m_faceIndexMap(faceIndexMap)
+  {
+  }
+  
+  void edge(halfedge_descriptor he, FT alpha)
+  {
+    Sequence_item<Traits> item;
+    item.type = SEQUENCE_ITEM_EDGE;
+    item.index = m_halfedgeIndexMap[he];
+    item.edgeAlpha = alpha;
+    item.halfedge = he;
+    m_sequence.push_back(item);
+  }
+  
+  void vertex(vertex_descriptor v)
+  {
+    Sequence_item<Traits> item;
+    item.type = SEQUENCE_ITEM_VERTEX;
+    item.index = m_vertexIndexMap[v];
+    item.vertex = v;
+    m_sequence.push_back(item);
+  }
+  
+  void face(face_descriptor f, Barycentric_coordinate alpha)
+  {
+    Sequence_item<Traits> item;
+    item.type = SEQUENCE_ITEM_FACE;
+    item.index = m_faceIndexMap[f];
+    item.faceAlpha = alpha;
+    item.face = f;
+    m_sequence.push_back(item);
+  }
+};
+
+template <class FT, class B>
+B random_coordinate(CGAL::Random& rand)
+{
+  FT u = rand.uniform_01<FT>();
+  FT v = rand.uniform_real(FT(0.0), FT(1.0) - u);
+  return B(u, v, FT(1.0) - u - v);
+}
 
 template <class FT>
 FT squared(FT in)

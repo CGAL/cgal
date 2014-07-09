@@ -12,6 +12,7 @@
 #include <CGAL/boost/graph/properties.h>
 #include <CGAL/boost/graph/properties_Polyhedron_3.h>
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
+#include <CGAL/boost/graph/iterator.h>
 
 #include <CGAL/Interval_nt.h>
 
@@ -20,7 +21,7 @@ namespace CGAL {
 namespace internal {
 
 template <class Triangle_3, class Polyhedron, class VertexPointMap>
-Triangle_3 triangle_from_halfedge(typename boost::graph_traits<Polyhedron>::halfedge_descriptor edge, Polyhedron& polyhedron, VertexPointMap vertexPointMap)
+Triangle_3 triangle_from_halfedge(typename boost::graph_traits<Polyhedron>::halfedge_descriptor edge, const Polyhedron& polyhedron, VertexPointMap vertexPointMap)
 {
   typedef typename boost::graph_traits<Polyhedron>::halfedge_descriptor halfedge_descriptor;
   
@@ -31,7 +32,7 @@ Triangle_3 triangle_from_halfedge(typename boost::graph_traits<Polyhedron>::half
 }
 
 template <class Triangle_3, class Polyhedron>
-Triangle_3 triangle_from_halfedge(typename boost::graph_traits<Polyhedron>::halfedge_descriptor edge, Polyhedron& polyhedron)
+Triangle_3 triangle_from_halfedge(typename boost::graph_traits<Polyhedron>::halfedge_descriptor edge, const Polyhedron& polyhedron)
 {
   return triangle_from_halfedge<Triangle_3, Polyhedron, typename boost::property_map<Polyhedron, CGAL::vertex_point_t>::type>(edge, polyhedron, CGAL::get(CGAL::vertex_point, polyhedron));
 }
@@ -81,6 +82,7 @@ V shift_vector_3_right(const V& v, size_t by)
   return V(v[(3 - by) % 3], v[(4 - by) % 3], v[(5 - by) % 3]);
 }
 
+/*
 enum Line_relation
 {
   LINE_RELATION_UNKNOWN = 0,
@@ -149,6 +151,7 @@ Intersection_result<FT> intersect_rays(const R& r0, const R& r1)
 
   return Intersection_result<FT>(LINE_RELATION_INTERSECT, t0, t1);
 }
+*/
 
 } // namespace internal
 

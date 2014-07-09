@@ -115,7 +115,7 @@ public:
 };
 
 template <class Kernel>
-class Parameteric_distance_along_segment_2
+class Parametric_distance_along_segment_2
 {
 public:
   typedef typename Kernel::FT FT;
@@ -161,7 +161,7 @@ public:
  
   
 private:
-  Parameteric_distance_along_segment_2<K> m_parametric_distance_along_segment_2;
+  Parametric_distance_along_segment_2<K> m_parametric_distance_along_segment_2;
   Intersect_2 m_intersect_2;
   
   bool in_range(FT x, FT end1, FT end2)
@@ -174,7 +174,7 @@ public:
   {
   }
   
-  Compare_relative_intersection_along_segment_2(const Parameteric_distance_along_segment_2<K>& pds, const Intersect_2& i2)
+  Compare_relative_intersection_along_segment_2(const Parametric_distance_along_segment_2<K>& pds, const Intersect_2& i2)
     : m_parametric_distance_along_segment_2(pds)
     , m_intersect_2(i2)
   {
@@ -339,6 +339,8 @@ public:
     return false;
   }
 };
+
+
 
 } // namespace internal
 

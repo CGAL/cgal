@@ -33,88 +33,6 @@
 #define BOOST_TEST_MODULE polyhedron_shortest_path_test
 #include <boost/test/included/unit_test.hpp>
 
-enum Sequence_item_type
-{
-  SEQUENCE_ITEM_VERTEX,
-  SEQUENCE_ITEM_EDGE,
-  SEQUENCE_ITEM_FACE,
-};
-
-template <class Traits>
-struct Sequence_item
-{
-  typedef typename Traits::Barycentric_coordinate Barycentric_coordinate;
-  typedef typename Traits::FT FT;
-  
-  Sequence_item_type type;
-  size_t index;
-  Barycentric_coordinate faceAlpha;
-  FT edgeAlpha;
-};
-
-template <class Traits, 
-  class VIM = typename boost::property_map<typename Traits::Polyhedron, CGAL::vertex_external_index_t>::type,
-  class HIM = typename boost::property_map<typename Traits::Polyhedron, CGAL::halfedge_external_index_t>::type,
-  class FIM = typename boost::property_map<typename Traits::Polyhedron, CGAL::face_external_index_t>::type>
-struct Edge_sequence_collector
-{
-  typedef typename Traits::Polyhedron Polyhedron;
-  typedef typename Traits::FT FT;
-  typedef typename Traits::Barycentric_coordinate Barycentric_coordinate;
-  typedef VIM VertexIndexMap;
-  typedef HIM HalfedgeIndexMap;
-  typedef FIM FaceIndexMap;
-  typedef typename boost::graph_traits<Polyhedron> GraphTraits;
-  typedef typename GraphTraits::vertex_descriptor vertex_descriptor;
-  typedef typename GraphTraits::halfedge_descriptor halfedge_descriptor;
-  typedef typename GraphTraits::face_descriptor face_descriptor;
-
-  VertexIndexMap m_vertexIndexMap;
-  HalfedgeIndexMap m_halfedgeIndexMap;
-  FaceIndexMap m_faceIndexMap;
-  
-  std::vector<Sequence_item<Traits> > m_sequence;
-  
-  Edge_sequence_collector(Polyhedron& p)
-    : m_vertexIndexMap(CGAL::get(boost::vertex_external_index, p))
-    , m_halfedgeIndexMap(CGAL::get(CGAL::halfedge_external_index, p))
-    , m_faceIndexMap(CGAL::get(CGAL::face_external_index, p))
-  {
-  }
-
-  Edge_sequence_collector(VertexIndexMap& vertexIndexMap, HalfedgeIndexMap& halfedgeIndexMap, FaceIndexMap& faceIndexMap)
-    : m_vertexIndexMap(vertexIndexMap)
-    , m_halfedgeIndexMap(halfedgeIndexMap)
-    , m_faceIndexMap(faceIndexMap)
-  {
-  }
-  
-  void edge(halfedge_descriptor he, FT alpha)
-  {
-    Sequence_item<Traits> item;
-    item.type = SEQUENCE_ITEM_EDGE;
-    item.index = m_halfedgeIndexMap[he];
-    item.edgeAlpha = alpha;
-    m_sequence.push_back(item);
-  }
-  
-  void vertex(vertex_descriptor v)
-  {
-    Sequence_item<Traits> item;
-    item.type = SEQUENCE_ITEM_VERTEX;
-    item.index = m_vertexIndexMap[v];
-    m_sequence.push_back(item);
-  }
-  
-  void face(face_descriptor f, Barycentric_coordinate alpha)
-  {
-    Sequence_item<Traits> item;
-    item.type = SEQUENCE_ITEM_FACE;
-    item.index = m_faceIndexMap[f];
-    item.faceAlpha = alpha;
-    m_sequence.push_back(item);
-  }
-};
 
 BOOST_AUTO_TEST_CASE( shortest_path_regular_tetrahedron )
 {
@@ -278,14 +196,14 @@ BOOST_AUTO_TEST_CASE( test_simple_saddle_vertex_mesh )
   }
   
   // test the edge sequence reporting
-  Edge_sequence_collector<Traits> collector(P);
+  CGAL::test::Edge_sequence_collector<Traits> collector(P);
   
   shortestPaths.shortest_path_sequence(vertexHandles[5], collector);
   
   BOOST_CHECK_EQUAL(collector.m_sequence.size(), 2);
-  BOOST_CHECK_EQUAL(collector.m_sequence[0].type, SEQUENCE_ITEM_VERTEX);
+  BOOST_CHECK_EQUAL(collector.m_sequence[0].type, CGAL::test::SEQUENCE_ITEM_VERTEX);
   //BOOST_CHECK_EQUAL(collector.m_sequence[0].index, 4 || collector.m_sequence[0].index, 6);
-  BOOST_CHECK_EQUAL(collector.m_sequence[1].type, SEQUENCE_ITEM_VERTEX);
+  BOOST_CHECK_EQUAL(collector.m_sequence[1].type, CGAL::test::SEQUENCE_ITEM_VERTEX);
   BOOST_CHECK_EQUAL(collector.m_sequence[1].index, 1);
   
   collector.m_sequence.clear();
@@ -297,10 +215,10 @@ BOOST_AUTO_TEST_CASE( test_simple_saddle_vertex_mesh )
   shortestPaths.shortest_path_sequence(vertexHandles[7], collector);
   
   BOOST_CHECK_EQUAL(collector.m_sequence.size(), 2);
-  BOOST_CHECK_EQUAL(collector.m_sequence[0].type, SEQUENCE_ITEM_EDGE);
+  BOOST_CHECK_EQUAL(collector.m_sequence[0].type, CGAL::test::SEQUENCE_ITEM_EDGE);
   BOOST_CHECK_EQUAL(collector.m_sequence[0].index, halfedgeIndexMap[CGAL::halfedge(vertexHandles[4], vertexHandles[6], P).first]);
   BOOST_CHECK_CLOSE(collector.m_sequence[0].edgeAlpha, FT(0.5), FT(0.0001));
-  BOOST_CHECK_EQUAL(collector.m_sequence[1].type, SEQUENCE_ITEM_VERTEX);
+  BOOST_CHECK_EQUAL(collector.m_sequence[1].type, CGAL::test::SEQUENCE_ITEM_VERTEX);
   BOOST_CHECK_EQUAL(collector.m_sequence[1].index, 1);
   
   // Now test an internal face location sequence
@@ -314,11 +232,11 @@ BOOST_AUTO_TEST_CASE( test_simple_saddle_vertex_mesh )
   shortestPaths.shortest_path_sequence(CGAL::face(firstCrossing, P), CGAL::internal::shift_vector_3_left(location, edgeIndex), collector);
 
   BOOST_CHECK_EQUAL(collector.m_sequence.size(), 3);
-  BOOST_CHECK_EQUAL(collector.m_sequence[0].type, SEQUENCE_ITEM_EDGE);
+  BOOST_CHECK_EQUAL(collector.m_sequence[0].type, CGAL::test::SEQUENCE_ITEM_EDGE);
   BOOST_CHECK_EQUAL(collector.m_sequence[0].index, halfedgeIndexMap[firstCrossing]);
-  BOOST_CHECK_EQUAL(collector.m_sequence[1].type, SEQUENCE_ITEM_EDGE);
+  BOOST_CHECK_EQUAL(collector.m_sequence[1].type, CGAL::test::SEQUENCE_ITEM_EDGE);
   BOOST_CHECK_EQUAL(collector.m_sequence[1].index, halfedgeIndexMap[CGAL::halfedge(vertexHandles[4], vertexHandles[6], P).first]);
-  BOOST_CHECK_EQUAL(collector.m_sequence[2].type, SEQUENCE_ITEM_VERTEX);
+  BOOST_CHECK_EQUAL(collector.m_sequence[2].type, CGAL::test::SEQUENCE_ITEM_VERTEX);
   BOOST_CHECK_EQUAL(collector.m_sequence[2].index, 1);
   
   // Now test with 2 source vertices
@@ -484,7 +402,7 @@ BOOST_AUTO_TEST_CASE( test_boundary_mesh )
   Triangle_3 oneStepTriangle(vertexLocations[4], vertexLocations[1], vertexLocations[3]);
   Barycentric_coordinate locationInOneStepTriangle(0.1, 0.8, 0.1);
   
-  Edge_sequence_collector<Traits> collector(P);
+  CGAL::test::Edge_sequence_collector<Traits> collector(P);
   shortestPaths.shortest_path_sequence(faceHandles[2], locationInOneStepTriangle, collector);
 
   FT distT2 = shortestPaths.shortest_distance_to_location(faceHandles[2], locationInOneStepTriangle);
@@ -503,24 +421,8 @@ BOOST_AUTO_TEST_CASE( test_boundary_mesh )
   BOOST_CHECK_CLOSE(distT6, dist5 + CGAL::sqrt(compute_squared_distance_3(vertexLocations[5], construct_triangle_location_3(threeStepTriangle, locationInThreeStepTriangle))), FT(0.00001));
 }
 
-/*
-BOOST_AUTO_TEST_CASE( line_segment_intersection_bug )
-{
-  typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
-  typedef CGAL::Polyhedron_3<Kernel> Polyhedron_3;
-  typedef CGAL::Polyhedron_shortest_path_default_traits<Kernel, Polyhedron_3> Traits;
-  typedef Traits::Intersect_2 Intersect_2;
-  typedef Traits::Segment_2 Segment_2;
-  typedef Traits::Line_2 Line_2;
-  typedef Traits::FT FT;
-  
-  
-  
-  
-}
-*/
-  
-// Hack to trick cgal_test_with_cmake into using this file even without a main
+
+// Hack to trick cgal_create_CMakeLists into using this file even without a main
 // int main(int argc, char** argv)
 // {
 //   return 0;
