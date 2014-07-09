@@ -399,41 +399,41 @@ protected:
 
 public:
   // Dummy locks/unlocks
-  bool try_lock_point(const Point_3 &p, int lock_radius = 0) const
+  bool try_lock_point(const Point_3 &, int = 0) const
   {
     return true;
   }
 
-  bool try_lock_vertex(Vertex_handle vh, int lock_radius = 0) const
+  bool try_lock_vertex(Vertex_handle, int = 0) const
   {
     return true;
   }
 
-  bool try_lock_point_no_spin(const Point_3 &p, int lock_radius = 0) const
+  bool try_lock_point_no_spin(const Point_3 &, int = 0) const
   {
     return true;
   }
 
-  bool try_lock_vertex_no_spin(Vertex_handle vh, int lock_radius = 0) const
+  bool try_lock_vertex_no_spin(Vertex_handle, int = 0) const
   {
     return true;
   }
 
-  bool try_lock_element(Cell_handle cell_handle, int lock_radius = 0) const
+  bool try_lock_element(Cell_handle, int = 0) const
   {
     return true;
   }
 
-  bool try_lock_element(const Facet &facet, int lock_radius = 0) const
+  bool try_lock_element(const Facet &, int = 0) const
   {
     return true;
   }
 
 
-  bool is_point_locked_by_this_thread(const Point_3 &p) const
+  bool is_point_locked_by_this_thread(const Point_3 &) const
   { return false; }
 
-  bool is_cell_locked_by_this_thread(const Cell_handle &cell_handle) const
+  bool is_cell_locked_by_this_thread(const Cell_handle &) const
   { return false; }
 
   void unlock_all_elements() const {}
