@@ -66,6 +66,7 @@ h1 {
 \package_listing{Snap_rounding_2}
 \package_listing{Envelope_2}
 \package_listing{Envelope_3}
+\package_listing{Visibility_2}
 
 \section PartTriangulationsAndDelaunayTriangulations Triangulations and Delaunay Triangulations
 

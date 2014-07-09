@@ -718,7 +718,23 @@ namespace for the XML file to be processed properly.  -->
             <item>./tags/Arrangement_on_surface_2.tag=../../CGAL.CGAL.2D-Arrangements/html</item>
           </list>
         </doxygen>
+      </project>   
+
+      <project>
+        <name>2D Visibility</name>
+        <input>../Visibility_2/doc/Visibility_2</input>
+        <doxygen>
+          <string name="STRIP_FROM_INC_PATH">../Visibility_2/doc/Visibility_2/</string>
+          <string name="STRIP_FROM_PATH">../Visibility_2/doc/Visibility_2/</string>
+          <string name="GENERATE_TAGFILE">./tags/Visibility_2.tag</string>
+          <string name="EXAMPLE_PATH">../Visibility_2/examples</string>
+          <string name="IMAGE_PATH">../Visibility_2/doc/Visibility_2/fig</string>
+          <list name="TAGFILES" append="true">
+            <item>./tags/Arrangement_on_surface_2.tag=../../CGAL.CGAL.2D-Arrangements/html</item>
+          </list>
+        </doxygen>
       </project>
+
 
       <project>
         <name>2D Minkowski Sums</name>
@@ -1457,6 +1473,7 @@ namespace for the XML file to be processed properly.  -->
           <item>../Convex_hull_d/doc/Convex_hull_d/fig</item>
           <item>../Envelope_2/doc/Envelope_2/fig</item>
           <item>../Envelope_3/doc/Envelope_3/fig</item>
+          <item>../Visibility_2/doc/Visibility_2/fig</item>
           <item>../Generator/doc/Generator/fig</item>
           <item>../Geomview/doc/Geomview/fig</item>
           <item>../GraphicsView/doc/GraphicsView/fig</item>
@@ -1538,6 +1555,7 @@ namespace for the XML file to be processed properly.  -->
           <item>./tags/Convex_hull_d.tag=../../CGAL.CGAL.dD-Convex-Hulls-and-Delaunay-Triangulations/html</item>
           <item>./tags/Envelope_2.tag=../../CGAL.CGAL.2D-Envelopes/html</item>
           <item>./tags/Envelope_3.tag=../../CGAL.CGAL.3D-Envelopes/html</item>
+          <item>./tags/Visibility_2.tag=../../CGAL.CGAL.2D-Visibility/html</item>
           <item>./tags/Generator.tag=../../CGAL.CGAL.Geometric-Object-Generators/html</item>
           <item>./tags/Geomview.tag=../../CGAL.CGAL.Geomview/html</item>
           <item>./tags/GraphicsView.tag=../../CGAL.CGAL.CGAL-and-the-Qt-Graphics-View-Framework/html</item>

@@ -1,0 +1,26 @@
+# Test case 10 for simple polygons. See https://cgal.geometryfactory.com/CGAL/Members/wiki/Visibility/TestCases
+2 3
+2 3
+
+0
+10
+0 0 8 0
+8 0 10 3
+10 3 10 6
+10 6 9 4
+9 4 8 6
+8 6 8 2
+8 2 6 3
+6 3 6 7
+6 7 0 7
+0 7 0 0
+
+0 
+7
+0 0 8 0
+8 0 46/5 9/5
+46/5 9/5 8 2
+8 2 6 3
+6 3 6 7
+6 7 0 7
+0 7 0 0
