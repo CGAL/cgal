@@ -83,7 +83,7 @@
 
 namespace CGAL {
 
-#define GENERATE_MEMBER_DETECTOR(X)                                             \
+#define CGAL_GENERATE_MEMBER_DETECTOR(X)                                             \
 template<typename T> class has_##X {                                          \
     struct Fallback { int X; };                                               \
     struct Derived : T, Fallback { };                                         \
@@ -99,7 +99,7 @@ template<typename T> class has_##X {                                          \
   public:                                                                     \
     typedef has_##X type;                                                     \
     enum { value = sizeof(func<Derived>(0)) == 2 };                           \
-};
+} // semicolon is after the macro call
 
 #define CGAL_INIT_COMPACT_CONTAINER_BLOCK_SIZE 14
 #define CGAL_INCREMENT_COMPACT_CONTAINER_BLOCK_SIZE 16
@@ -181,7 +181,7 @@ namespace internal {
   template < class DSC, bool Const >
   class CC_iterator;
 
-  GENERATE_MEMBER_DETECTOR(increment_erase_counter);
+  CGAL_GENERATE_MEMBER_DETECTOR(increment_erase_counter);
 
   // A basic "no erase counter" strategy
   template <bool Has_erase_counter_tag>
