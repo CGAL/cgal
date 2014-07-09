@@ -253,7 +253,7 @@ private:
   std::vector<double> scales;
 #endif
 private:
-  Deform_mesh(const Self&) { }
+  Deform_mesh(const Self&);
 
 // Public methods
 public:
