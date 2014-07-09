@@ -295,7 +295,90 @@ private:
   /**
    * Returns moves for vertices of set \c moving_vertices
    */
-  Moves_vector compute_moves(Moving_vertices_set& moving_vertices);
+  Moves_vector compute_moves(Moving_vertices_set& moving_vertices)
+{
+  typename Gt::Construct_translated_point_3 translate =
+    Gt().construct_translated_point_3_object();
+
+  // Store new position of points which have to move
+  Moves_vector moves;
+
+
+  moves.reserve(moving_vertices.size());
+
+  // reset worst_move list
+  this->clear_big_moves();
+
+#ifdef CGAL_MESH_3_PROFILING
+  std::cerr << "Computing moves...";
+  WallClockTimer t;
+#endif
+
+
+#ifdef CGAL_LINKED_WITH_TBB
+  // Parallel
+  if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
+  {
+    tbb::concurrent_vector<Vertex_handle> vertices_not_moving_any_more;
+
+    // Get move for each moving vertex
+    tbb::parallel_do(
+      moving_vertices.begin(), moving_vertices.end(),
+      Compute_move<Self, Sizing_field, Moves_vector,
+                   typename Gt::Construct_translated_point_3>(
+        *this, sizing_field_, moves, do_freeze_, vertices_not_moving_any_more,
+        translate)
+    );
+
+    typename tbb::concurrent_vector<Vertex_handle>::const_iterator it
+      = vertices_not_moving_any_more.begin();
+    typename tbb::concurrent_vector<Vertex_handle>::const_iterator it_end
+      = vertices_not_moving_any_more.end();
+    for ( ; it != it_end ; ++it)
+    {
+      moving_vertices.erase(*it);
+    }
+  }
+  // Sequential
+  else
+#endif // CGAL_LINKED_WITH_TBB
+  {
+    // Get move for each moving vertex
+    typename Moving_vertices_set::iterator vit = moving_vertices.begin();
+    for ( ; vit != moving_vertices.end() ; )
+    {
+      Vertex_handle oldv = *vit;
+      ++vit;
+      Vector_3 move = compute_move(oldv);
+
+      if ( CGAL::NULL_VECTOR != move )
+      {
+        Point_3 new_position = translate(oldv->point(),move);
+        FT size = (Sizing_field::is_vertex_update_needed ?
+          sizing_field_(new_position, oldv) : 0);
+        moves.push_back(cpp11::make_tuple(oldv,new_position,size));
+      }
+      else // CGAL::NULL_VECTOR == move
+      {
+        if(do_freeze_)
+          moving_vertices.erase(oldv); // TODO: if non-intrusive,
+                                       // we can optimize since we have the iterator,
+                                       // don't forget to do "vit = mv.erase(vit)" instead ++vit
+      }
+
+      // Stop if time_limit_ is reached
+      if ( is_time_limit_reached() )
+        break;
+    }
+  }
+
+#ifdef CGAL_MESH_3_PROFILING
+  std::cerr << "done in " << t.elapsed() << " seconds." << std::endl;
+#endif
+
+  return moves;
+}
+
 
   /**
    * Returns the move for vertex \c v
@@ -450,13 +533,13 @@ private:
   };
 
   // Functor for update_mesh function
-  template <typename MGO, typename Helper, typename Tr_, typename Moves_vector,
+  template <typename MGO, typename Helper, typename Tr_, typename Moves_vector_,
             typename Moving_vertices_set_, typename Outdated_cell_set_>
   class Move_vertex
   {
     MGO                                  & m_mgo;
     const Helper                         & m_helper;
-    const Moves_vector                   & m_moves;
+    const Moves_vector_                   & m_moves;
     Moving_vertices_set_                 & m_moving_vertices;
     Outdated_cell_set_                   & m_outdated_cells;
   
@@ -465,7 +548,7 @@ private:
 
   public:
     // Constructor
-    Move_vertex(MGO &mgo, const Helper &helper, const Moves_vector &moves,
+    Move_vertex(MGO &mgo, const Helper &helper, const Moves_vector_ &moves,
                 Moving_vertices_set_ &moving_vertices,
                 Outdated_cell_set_ &outdated_cells)
     : m_mgo(mgo), m_helper(helper), m_moves(moves), 
@@ -743,92 +826,6 @@ collect_all_vertices(Moving_vertices_set& moving_vertices)
   for(; vit != tr_.finite_vertices_end(); ++vit )
     moving_vertices.insert(vit);
 }
-
-template <typename C3T3, typename Md, typename Mf, typename V_>
-typename Mesh_global_optimizer<C3T3,Md,Mf,V_>::Moves_vector
-Mesh_global_optimizer<C3T3,Md,Mf,V_>::
-compute_moves(Moving_vertices_set& moving_vertices)
-{
-  typename Gt::Construct_translated_point_3 translate =
-    Gt().construct_translated_point_3_object();
-
-  // Store new position of points which have to move
-  Moves_vector moves;
-  moves.reserve(moving_vertices.size());
-
-  // reset worst_move list
-  this->clear_big_moves();
-
-#ifdef CGAL_MESH_3_PROFILING
-  std::cerr << "Computing moves...";
-  WallClockTimer t;
-#endif
-
-
-#ifdef CGAL_LINKED_WITH_TBB
-  // Parallel
-  if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
-  {
-    tbb::concurrent_vector<Vertex_handle> vertices_not_moving_any_more;
-
-    // Get move for each moving vertex
-    tbb::parallel_do(
-      moving_vertices.begin(), moving_vertices.end(),
-      Compute_move<Self, Sizing_field, Moves_vector,
-                   typename Gt::Construct_translated_point_3>(
-        *this, sizing_field_, moves, do_freeze_, vertices_not_moving_any_more,
-        translate)
-    );
-
-    typename tbb::concurrent_vector<Vertex_handle>::const_iterator it
-      = vertices_not_moving_any_more.begin();
-    typename tbb::concurrent_vector<Vertex_handle>::const_iterator it_end
-      = vertices_not_moving_any_more.end();
-    for ( ; it != it_end ; ++it)
-    {
-      moving_vertices.erase(*it);
-    }
-  }
-  // Sequential
-  else
-#endif // CGAL_LINKED_WITH_TBB
-  {
-    // Get move for each moving vertex
-    typename Moving_vertices_set::iterator vit = moving_vertices.begin();
-    for ( ; vit != moving_vertices.end() ; )
-    {
-      Vertex_handle oldv = *vit;
-      ++vit;
-      Vector_3 move = compute_move(oldv);
-
-      if ( CGAL::NULL_VECTOR != move )
-      {
-        Point_3 new_position = translate(oldv->point(),move);
-        FT size = (Sizing_field::is_vertex_update_needed ?
-          sizing_field_(new_position, oldv) : 0);
-        moves.push_back(cpp11::make_tuple(oldv,new_position,size));
-      }
-      else // CGAL::NULL_VECTOR == move
-      {
-        if(do_freeze_)
-          moving_vertices.erase(oldv); // TODO: if non-intrusive,
-                                       // we can optimize since we have the iterator,
-                                       // don't forget to do "vit = mv.erase(vit)" instead ++vit
-      }
-
-      // Stop if time_limit_ is reached
-      if ( is_time_limit_reached() )
-        break;
-    }
-  }
-
-#ifdef CGAL_MESH_3_PROFILING
-  std::cerr << "done in " << t.elapsed() << " seconds." << std::endl;
-#endif
-
-  return moves;
-}
-
 
 
 template <typename C3T3, typename Md, typename Mf, typename V_>
