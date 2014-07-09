@@ -564,6 +564,20 @@ void test_traits(const char* title)
       Point_2(110, 33),
       CGAL::NEGATIVE);
 
+  // tests related to points_inside_touching_sides, e.g. br83.cin
+  test_incircle<Gt>(
+      Point_2(80, 40),
+      Segment_2(Point_2(50, 20), Point_2(70, 60)),
+      Segment_2(Point_2(30, 110), Point_2(120, 20)),
+      Point_2(60, 20),
+      CGAL::NEGATIVE);
+
+  test_incircle<Gt>(
+      Point_2(80, 40),
+      Point_2(60, 20),
+      Segment_2(Point_2(30, 110), Point_2(120, 20)),
+      Segment_2(Point_2(50, 20), Point_2(70, 60)),
+      CGAL::POSITIVE);
 
   std::cout << "====================================" << std::endl;
   std::cout << std::endl;
