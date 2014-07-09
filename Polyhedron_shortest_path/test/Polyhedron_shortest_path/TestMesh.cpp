@@ -37,114 +37,6 @@
 #include <cstdlib>
 #include <cmath>
 
-/*
-#include <boost/test/unit_test.hpp>
-using namespace boost::unit_test;
-*/
-
-enum Sequence_item_type
-{
-  SEQUENCE_ITEM_VERTEX,
-  SEQUENCE_ITEM_EDGE,
-  SEQUENCE_ITEM_FACE,
-};
-
-template <class Traits>
-struct Sequence_item
-{
-  typedef typename Traits::Polyhedron Polyhedron;
-  typedef typename Traits::FT FT;
-  typedef typename Traits::Barycentric_coordinate Barycentric_coordinate;
-  typedef typename boost::graph_traits<Polyhedron> GraphTraits;
-  typedef typename GraphTraits::vertex_descriptor vertex_descriptor;
-  typedef typename GraphTraits::halfedge_descriptor halfedge_descriptor;
-  typedef typename GraphTraits::face_descriptor face_descriptor;
-  
-  Sequence_item_type type;
-  size_t index;
-  Barycentric_coordinate faceAlpha;
-  FT edgeAlpha;
-  
-  halfedge_descriptor halfedge;
-  vertex_descriptor vertex;
-  face_descriptor face;
-};
-
-template <class Traits, 
-  class VIM = typename boost::property_map<typename Traits::Polyhedron, CGAL::vertex_external_index_t>::type,
-  class HIM = typename boost::property_map<typename Traits::Polyhedron, CGAL::halfedge_external_index_t>::type,
-  class FIM = typename boost::property_map<typename Traits::Polyhedron, CGAL::face_external_index_t>::type>
-struct Edge_sequence_collector
-{
-  typedef typename Traits::Polyhedron Polyhedron;
-  typedef typename Traits::FT FT;
-  typedef typename Traits::Barycentric_coordinate Barycentric_coordinate;
-  typedef VIM VertexIndexMap;
-  typedef HIM HalfedgeIndexMap;
-  typedef FIM FaceIndexMap;
-  typedef typename boost::graph_traits<Polyhedron> GraphTraits;
-  typedef typename GraphTraits::vertex_descriptor vertex_descriptor;
-  typedef typename GraphTraits::halfedge_descriptor halfedge_descriptor;
-  typedef typename GraphTraits::face_descriptor face_descriptor;
-
-  VertexIndexMap m_vertexIndexMap;
-  HalfedgeIndexMap m_halfedgeIndexMap;
-  FaceIndexMap m_faceIndexMap;
-  
-  std::vector<Sequence_item<Traits> > m_sequence;
-  
-  Edge_sequence_collector(Polyhedron& p)
-    : m_vertexIndexMap(CGAL::get(boost::vertex_external_index, p))
-    , m_halfedgeIndexMap(CGAL::get(CGAL::halfedge_external_index, p))
-    , m_faceIndexMap(CGAL::get(CGAL::face_external_index, p))
-  {
-  }
-
-  Edge_sequence_collector(VertexIndexMap& vertexIndexMap, HalfedgeIndexMap& halfedgeIndexMap, FaceIndexMap& faceIndexMap)
-    : m_vertexIndexMap(vertexIndexMap)
-    , m_halfedgeIndexMap(halfedgeIndexMap)
-    , m_faceIndexMap(faceIndexMap)
-  {
-  }
-  
-  void edge(halfedge_descriptor he, FT alpha)
-  {
-    Sequence_item<Traits> item;
-    item.type = SEQUENCE_ITEM_EDGE;
-    item.index = m_halfedgeIndexMap[he];
-    item.edgeAlpha = alpha;
-    item.halfedge = he;
-    m_sequence.push_back(item);
-  }
-  
-  void vertex(vertex_descriptor v)
-  {
-    Sequence_item<Traits> item;
-    item.type = SEQUENCE_ITEM_VERTEX;
-    item.index = m_vertexIndexMap[v];
-    item.vertex = v;
-    m_sequence.push_back(item);
-  }
-  
-  void face(face_descriptor f, Barycentric_coordinate alpha)
-  {
-    Sequence_item<Traits> item;
-    item.type = SEQUENCE_ITEM_FACE;
-    item.index = m_faceIndexMap[f];
-    item.faceAlpha = alpha;
-    item.face = f;
-    m_sequence.push_back(item);
-  }
-};
-
-template <class FT, class B>
-B random_coordinate(CGAL::Random& rand)
-{
-  FT u = rand.uniform_01<FT>();
-  FT v = rand.uniform_real(FT(0.0), FT(1.0) - u);
-  return B(u, v, FT(1.0) - u - v);
-}
-
 size_t randomSeed = 2681972;
 size_t numIterations;
 std::string meshName;
@@ -220,8 +112,6 @@ void test_mesh_function()
   for (vertex_iterator it = verticesStart; it != verticesEnd; ++it)
   {
     vertices.push_back(*it);
-    //it->id() = currentId;
-    //++currentId;
   }
   
   face_iterator facesStart;
@@ -263,14 +153,14 @@ void test_mesh_function()
     
     startToEndShortestPaths.compute_shortest_paths(startVertex);
 
-    Edge_sequence_collector<Traits> startToEndCollector(vertexIndexMap, halfedgeIndexMap, faceIndexMap);
+    CGAL::test::Edge_sequence_collector<Traits> startToEndCollector(vertexIndexMap, halfedgeIndexMap, faceIndexMap);
     startToEndShortestPaths.shortest_path_sequence(endVertex, startToEndCollector);
 
     FT startToEnd = startToEndShortestPaths.shortest_distance_to_vertex(endVertex);
 
     endToStartShortestPaths.compute_shortest_paths(endVertex);
 
-    Edge_sequence_collector<Traits> endToStartCollector(vertexIndexMap, halfedgeIndexMap, faceIndexMap);
+    CGAL::test::Edge_sequence_collector<Traits> endToStartCollector(vertexIndexMap, halfedgeIndexMap, faceIndexMap);
     endToStartShortestPaths.shortest_path_sequence(startVertex, endToStartCollector);
 
     FT endToStart = endToStartShortestPaths.shortest_distance_to_vertex(startVertex);
@@ -291,7 +181,7 @@ void test_mesh_function()
     
     std::string names[2] = { "STE", "ETS" };
     Polyhedron_shortest_path* pathStructures[2] = { &startToEndShortestPaths, &endToStartShortestPaths };
-    Edge_sequence_collector<Traits>* collectors[2] = { &startToEndCollector, &endToStartCollector };
+    CGAL::test::Edge_sequence_collector<Traits>* collectors[2] = { &startToEndCollector, &endToStartCollector };
     
     for (size_t d = 0; d < 2; ++d)
     {
@@ -299,13 +189,13 @@ void test_mesh_function()
       {
         std::cout << names[d] << "(sequence:" << j << "): ";
         
-        Sequence_item<Traits>& seqItem = collectors[d]->m_sequence[j];
+        CGAL::test::Sequence_item<Traits>& seqItem = collectors[d]->m_sequence[j];
         
-        if (seqItem.type == SEQUENCE_ITEM_EDGE)
+        if (seqItem.type == CGAL::test::SEQUENCE_ITEM_EDGE)
         {
           std::cout << vertexIndexMap[CGAL::source(seqItem.halfedge, P)] << " , " << vertexIndexMap[CGAL::target(seqItem.halfedge, P)] << " : " << seqItem.edgeAlpha << std::endl;
         }
-        else if (seqItem.type == SEQUENCE_ITEM_VERTEX)
+        else if (seqItem.type == CGAL::test::SEQUENCE_ITEM_VERTEX)
         {
           std::cout << vertexIndexMap[seqItem.vertex] << " , Distance: " << pathStructures[d]->shortest_distance_to_vertex(seqItem.vertex) << std::endl;
         }

@@ -52,6 +52,7 @@ public:
   typedef typename Kernel::Vector_3 Barycentric_coordinate;
   typedef typename Kernel::Point_3 Point_3;
   typedef typename Kernel::Vector_3 Vector_3;
+  typedef typename Kernel::Ray_3 Ray_3;
   typedef typename Kernel::Triangle_3 Triangle_3;
   
   // Predicates
@@ -68,7 +69,7 @@ public:
   typedef typename Kernel::Compute_squared_distance_3 Compute_squared_distance_3;
   typedef typename internal::Project_triangle_3_to_triangle_2<K> Project_triangle_3_to_triangle_2;
   typedef typename internal::Flatten_triangle_3_along_segment_2<K> Flatten_triangle_3_along_segment_2;
-  typedef typename internal::Parameteric_distance_along_segment_2<K> Parameteric_distance_along_segment_2;
+  typedef typename internal::Parametric_distance_along_segment_2<K> Parametric_distance_along_segment_2;
 
   class Construct_barycentric_coordinate_2
   {
@@ -116,7 +117,7 @@ private:
   Construct_triangle_location_3 m_construct_triangle_location_3_object;
   Compare_relative_intersection_along_segment_2 m_compare_relative_intersection_along_segment_2_object;
   Is_saddle_vertex m_is_saddle_vertex_object;
-  Parameteric_distance_along_segment_2 m_parameteric_distance_along_segment_2_object;
+  Parametric_distance_along_segment_2 m_parametric_distance_along_segment_2_object;
   
 public:
 
@@ -145,9 +146,9 @@ public:
   Flatten_triangle_3_along_segment_2 flatten_triangle_3_along_segment_2_object() const { return m_flatten_triangle_3_along_segment_2_object; }
   Construct_barycentric_coordinate_2 construct_barycentric_coordinate_2_object() const { return m_construct_barycentric_coordinate_2_object; }
   Construct_triangle_location_2 construct_triangle_location_2_object() const { return m_construct_triangle_location_2_object; }
-  Construct_barycentric_coordinate_3 construct_barycentric_coordinate_3_object() { return m_construct_barycentric_coordinate_3_object; }
+  Construct_barycentric_coordinate_3 construct_barycentric_coordinate_3_object() const { return m_construct_barycentric_coordinate_3_object; }
   Construct_triangle_location_3 construct_triangle_location_3_object() const { return m_construct_triangle_location_3_object; }
-  Parameteric_distance_along_segment_2 parameteric_distance_along_segment_2_object() const { return m_parameteric_distance_along_segment_2_object; }
+  Parametric_distance_along_segment_2 parametric_distance_along_segment_2_object() const { return m_parametric_distance_along_segment_2_object; }
 };
 
 } // namespace CGAL

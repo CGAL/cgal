@@ -55,6 +55,9 @@ public:
   /// The 3-dimensional Vector type for this algorithm
   typedef unspecified_type Vector_3;
   
+  /// The 3-dimensional Ray type for this algorithm
+  typedef unspecified_type Ray_3;
+  
   /// The 3-dimensional Triangle type for this algorithm
   typedef unspecified_type Triangle_3;
   

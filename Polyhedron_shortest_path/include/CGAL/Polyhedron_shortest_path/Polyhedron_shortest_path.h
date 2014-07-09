@@ -6,7 +6,8 @@
 //
 // Author(s)     : Stephen Kiazyk
 
-#include <map>
+#include <iterator>
+#include <vector>
 #include <utility>
 #include <queue>
 #include <algorithm>
@@ -20,6 +21,10 @@
 
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/boost/graph/iterator.h>
+
+#include <CGAL/AABB_face_graph_triangle_primitive.h>
+#include <CGAL/AABB_traits.h>
+#include <CGAL/AABB_tree.h>
 
 namespace CGAL {
 
@@ -92,12 +97,22 @@ public:
   /// An ordered pair specifying a location on the surface of the polyhedron.
   typedef typename std::pair<face_descriptor, Barycentric_coordinate> Face_location_pair;
   
+  /// AABB primitive type for face graph polyhedron type
+  typedef AABB_face_graph_triangle_primitive<Polyhedron, VertexPointMap> AABB_polyhedron_primitive;
+  
+  /// Traits class for point location AABB tree
+  typedef CGAL::AABB_traits<typename Traits::Kernel, AABB_polyhedron_primitive> AABB_polyhedron_traits;
+  
+  /// An AABB tree to perform point location queries to get surface locations
+  typedef AABB_tree<AABB_polyhedron_traits> AABB_polyhedron_tree;
+  
 /// @}
   
 private:
   typedef typename Traits::Triangle_3 Triangle_3;
   typedef typename Traits::Triangle_2 Triangle_2;
   typedef typename Traits::Segment_2 Segment_2;
+  typedef typename Traits::Ray_3 Ray_3;
   typedef typename Traits::Ray_2 Ray_2;
   typedef typename Traits::Line_2 Line_2;
   typedef typename Traits::Point_2 Point_2;
@@ -253,12 +268,18 @@ private:
 #endif
   }
 
-  Triangle_3 triangle_from_halfedge(halfedge_descriptor edge)
+  Triangle_3 triangle_from_halfedge(halfedge_descriptor edge) const
   {
-    halfedge_descriptor e0 = edge;
+    /*halfedge_descriptor e0 = edge;
     halfedge_descriptor e1 = CGAL::next(edge, m_polyhedron);
 
-    return Triangle_3(m_vertexPointMap[boost::source(e0, m_polyhedron)], m_vertexPointMap[boost::target(e0, m_polyhedron)], m_vertexPointMap[boost::target(e1, m_polyhedron)]);
+    return Triangle_3(m_vertexPointMap[boost::source(e0, m_polyhedron)], m_vertexPointMap[boost::target(e0, m_polyhedron)], m_vertexPointMap[boost::target(e1, m_polyhedron)]);*/
+    return CGAL::internal::triangle_from_halfedge<Triangle_3, Polyhedron, VertexPointMap>(edge, m_polyhedron, m_vertexPointMap);
+  }
+  
+  Triangle_3 triangle_from_face(face_descriptor face) const
+  {
+    return triangle_from_halfedge(CGAL::halfedge(face, m_polyhedron));
   }
 
   bool window_distance_filter(Cone_tree_node* cone, Segment_2 windowSegment, bool reversed)
@@ -600,7 +621,7 @@ private:
       else
       {
         Point_2* result = boost::get<Point_2>(&*cgalIntersection);
-        FT t0 = m_traits.parameteric_distance_along_segment_2_object()(segment.start(), segment.end(), *result);
+        FT t0 = m_traits.parametric_distance_along_segment_2_object()(segment.start(), segment.end(), *result);
 
         if (t0 >= FT(1.00000))
         {
@@ -660,7 +681,7 @@ private:
       else
       {
         Point_2* result = boost::get<Point_2>(&*cgalIntersection);
-        FT t0 = m_traits.parameteric_distance_along_segment_2_object()(segment.start(), segment.end(), *result);
+        FT t0 = m_traits.parametric_distance_along_segment_2_object()(segment.start(), segment.end(), *result);
       
         if (t0 <= FT(0.00000))
         {
@@ -1208,7 +1229,9 @@ private:
   void visit_shortest_path(Cone_tree_node* startNode, const Point_2& startLocation, Visitor& visitor)
   {
     typedef typename Traits::Intersect_2 Intersect_2;
-    typedef typename cpp11::result_of<Intersect_2(Line_2, Line_2)>::type SegmentRayIntersectResult;
+    Intersect_2 intersect_2(m_traits.intersect_2_object());
+    
+    typedef typename cpp11::result_of<Intersect_2(Line_2, Line_2)>::type LineLineIntersectResult;
     
     Cone_tree_node* current = startNode;
     Point_2 currentLocation(startLocation);
@@ -1222,23 +1245,30 @@ private:
         {
           Segment_2 entrySegment = current->entry_segment();
           Ray_2 rayToLocation(current->source_image(), currentLocation);
+          
+          LineLineIntersectResult cgalIntersection = intersect_2(entrySegment.supporting_line(), rayToLocation.supporting_line());
 
-          Ray_2 segmentRay(entrySegment.start(), entrySegment.end());
-          internal::Intersection_result<FT> entryIntersect = internal::intersect_rays<FT, Ray_2, Vector_2>(segmentRay, rayToLocation);
-          assert(entryIntersect.relation == internal::LINE_RELATION_INTERSECT);
-          assert(entryIntersect.t0 >= FT(-0.00001) && entryIntersect.t0 <= FT(1.00001));
+          assert(cgalIntersection);
+          
+          Point_2* result = boost::get<Point_2>(&*cgalIntersection);
+          
+          assert(result && "Error, did not get point intersection on path walk to source");
+          
+          FT t0 = m_traits.parametric_distance_along_segment_2_object()(entrySegment.start(), entrySegment.end(), *result);
+          
+          assert(t0 >= FT(-0.00001) && t0 <= FT(1.00001));
 
-          visitor.edge(current->entry_edge(), entryIntersect.t0);
+          visitor.edge(current->entry_edge(), t0);
 
           if (current->is_left_child())
           {
             Segment_2 baseSegment = current->parent()->left_child_base_segment();
-            currentLocation = CGAL::internal::interpolate_points(baseSegment[0], baseSegment[1], entryIntersect.t0);
+            currentLocation = *result;
           }
           else if (current->is_right_child())
           {
             Segment_2 baseSegment = current->parent()->right_child_base_segment();
-            currentLocation = CGAL::internal::interpolate_points(baseSegment[0], baseSegment[1], entryIntersect.t0);
+            currentLocation = *result;
           }
 
           current = current->parent();
@@ -1626,15 +1656,6 @@ public:
     return m_closestToVertices[m_vertexIndexMap[v]].second;
   }
   
-#if !defined(NDEBUG)
-
-  Interval_nt<true> shortest_distance_to_vertex_interval(vertex_descriptor v)
-  {
-    return m_closestToVertices[m_vertexIndexMap[v]].first->distance_from_target_to_root_interval();
-  }
-  
-#endif
-  
   /*!
   \brief Computes the shortest surface distance from any surface location to any source point
   
@@ -1646,16 +1667,6 @@ public:
   {
     return nearest_on_face(face, alpha).second;
   }
-  
-#if !defined(NDEBUG)
-
-  Interval_nt<true> shortest_distance_to_location_interval(face_descriptor face, Barycentric_coordinate alpha)
-  {
-    Node_distance_pair ndp = nearest_on_face(face, alpha);
-    return ndp.first->distance_to_root_interval(face_location_with_normalized_coordinate(ndp.first, alpha));
-  }
-  
-#endif
   
   /*!
   \brief Visits the sequence of edges, vertices and faces traversed by the shortest path
@@ -1733,7 +1744,7 @@ public:
   */
   Point_3 get_face_location(face_descriptor face, Barycentric_coordinate alpha) const
   {
-    return m_traits.construct_triangle_location_3_object()(CGAL::internal::triangle_from_halfedge<Triangle_3, Polyhedron, VertexPointMap>(CGAL::halfedge(face, m_polyhedron), m_polyhedron, m_vertexPointMap), alpha);
+    return m_traits.construct_triangle_location_3_object()(triangle_from_face(face), alpha);
   }
   
   /*!
@@ -1773,6 +1784,119 @@ public:
     const FT zero(0.0);
     
     return std::make_pair(locationFace, Barycentric_coordinate(edgeIndex == 0 ? one : zero, edgeIndex == 1 ? one : zero, edgeIndex == 2 ? one : zero));
+  }
+  
+  /*!
+  \brief Return the nearest face location to the given point.
+  
+  \param point Point to locate on the polyhedron
+  \param tree A cached AABB to perform the point location
+  */
+  Face_location_pair get_nearest_face_location(const Point_3& location, const AABB_polyhedron_tree& tree) const
+  {
+    typename AABB_polyhedron_tree::Point_and_primitive_id result = tree.closest_point_and_primitive(location);
+    
+    face_descriptor face = result.second;
+    Barycentric_coordinate b = m_traits.construct_barycentric_coordinate_3_object()(triangle_from_face(face), result.first);
+    return Face_location_pair(face, b);
+  }
+  
+  /*!
+  \brief Return the nearest face location to the given point.
+    Note that this will fully build an AABB on each call, use the
+    other version in conjunction with `construct_aabb_tree' 
+    if you need to call this method more than once.
+  
+  \param point Point to locate on the polyhedron
+  */
+  Face_location_pair get_nearest_face_location(const Point_3& location) const
+  {
+    AABB_polyhedron_tree tree;
+    construct_aabb_tree(tree);
+    return get_nearest_face_location(location, tree);
+  }
+  
+  /*!
+  \brief Return the face location along `ray' nearest to
+    its source point.
+  
+  \param ray Ray to intersect with the polyhedron
+  \param tree A cached AABB to perform the intersection
+  */
+  Face_location_pair get_nearest_face_location(const Ray_3& ray, const AABB_polyhedron_tree& tree) const
+  {
+    typedef typename AABB_polyhedron_traits::template Intersection_and_primitive_id<Ray_3>::Type Intersection_type;
+    //typedef typename AABB_polyhedron_tree::Intersection_and_primitive_id<Ray_3>::Type Intersection_type;
+    typedef boost::optional<Intersection_type> Ray_intersection;
+    
+    std::vector<Ray_intersection> intersections;
+    
+    tree.all_intersections(ray, std::back_inserter(intersections));
+    
+    bool foundOne = false;
+    FT nearestDistance;
+    Point_3 nearestPoint;
+    face_descriptor nearestFace;
+    
+    for (size_t i = 0; i < intersections.size(); ++i)
+    {
+      if (intersections[i])
+      {
+        Point_3* intersectionPoint = boost::get<Point_3>(&(intersections[i]->first));
+        
+        if (intersectionPoint)
+        {
+          FT distance = m_traits.compute_squared_distance_3_object()(*intersectionPoint, ray.source());
+          
+          if (!foundOne || distance < nearestDistance)
+          {
+            foundOne = true;
+            nearestPoint = *intersectionPoint;
+            nearestDistance = distance;
+            nearestFace = intersections[i]->second;
+          }
+        }
+      }
+    }
+    
+    if (foundOne)
+    {
+      Barycentric_coordinate b = m_traits.construct_barycentric_coordinate_3_object()(triangle_from_face(nearestFace), nearestPoint);
+      return Face_location_pair(nearestFace, b);
+    }
+    else
+    {
+      return Face_location_pair(GraphTraits::null_face(), Barycentric_coordinate());
+    }
+  }
+  
+  /*!
+  \brief Return the face location along `ray' nearest to
+    its source point.
+    Note that this will fully build an AABB on each call, use the
+    other version in conjunction with `construct_aabb_tree' 
+    if you need to call this method more than once.
+  
+  \param ray Ray to intersect with the polyhedron
+  */
+  Face_location_pair get_nearest_face_location(const Ray_3& ray) const
+  {
+    AABB_polyhedron_tree tree;
+    construct_aabb_tree(tree);
+    return get_nearest_face_location(ray, tree);
+  }
+  
+  /*!
+  \brief Creates an AABB tree suitable for use with 'get_nearest_face_location'.
+  
+  \param outTree Output parameter to hold the created AABB tree
+  */
+  void construct_aabb_tree(AABB_polyhedron_tree& outTree) const
+  {
+    face_iterator facesStart, facesEnd;
+    boost::tie(facesStart, facesEnd) = CGAL::faces(m_polyhedron);
+    outTree.rebuild(facesStart, facesEnd, m_polyhedron);
+    outTree.build();
   }
   
 /// @}
