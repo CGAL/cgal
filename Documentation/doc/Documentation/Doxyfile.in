@@ -113,3 +113,5 @@ IMAGE_PATH = ${CMAKE_SOURCE_DIR}/Documentation/doc/Documentation/fig \
              ${CMAKE_SOURCE_DIR}/Stream_lines_2/doc/Stream_lines_2/fig \
              ${CMAKE_SOURCE_DIR}/Stream_support/doc/Stream_support/fig \
              ${CMAKE_SOURCE_DIR}/Surface_modeling/doc/Surface_modeling/fig \
+             ${CMAKE_SOURCE_DIR}/Mean_curvature_skeleton/doc/Mean_curvature_skeleton/fig \
+

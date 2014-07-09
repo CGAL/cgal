@@ -103,6 +103,7 @@ h1 {
 \package_listing{Jet_fitting_3}
 \package_listing{Point_set_processing_3}
 \package_listing{Surface_modeling}
+\package_listing{Mean_curvature_skeleton}
 
 \section PartSearchStructures Spatial Searching and Sorting
 

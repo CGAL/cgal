@@ -58,6 +58,7 @@ public slots:
   void show_only_feature_edges(bool);
   void enable_facets_picking(bool);
   void set_erase_next_picked_facet(bool);
+  void switch_transparency_on_off();
 
   void select(double orig_x,
               double orig_y,
