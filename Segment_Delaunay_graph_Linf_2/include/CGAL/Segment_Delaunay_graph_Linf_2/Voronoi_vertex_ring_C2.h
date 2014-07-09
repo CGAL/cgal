@@ -3427,6 +3427,12 @@ public:
       CGAL_assertion(oslvv != ON_ORIENTED_BOUNDARY);
     }
 
+    // The following boolean variables are used to:
+    // compute whether lref agrees with the x and y coordinates
+    // of some of the points in p, q, r
+    bool corner_agree_pt_x(false);
+    bool corner_agree_pt_y(false);
+
     if (p_.is_point()) {
       Point_2 pp = p_.point();
       FT difxvp = vv.x() - pp.x();
@@ -3438,6 +3444,7 @@ public:
       {
         if (CGAL::compare(difxvl, difxvp) == EQUAL) {
           compare_p = CGAL::compare(absdifyvl, absdifyvp);
+          corner_agree_pt_x = true;
         }
       }
       if (not ( (cmplabsxy == LARGER ) and (cmppabsxy == LARGER ) ))
@@ -3445,6 +3452,7 @@ public:
         if (CGAL::compare(difyvl, difyvp) == EQUAL) {
           CGAL_assertion(compare_p == EQUAL);
           compare_p = CGAL::compare(absdifxvl, absdifxvp);
+          corner_agree_pt_y = true;
         }
       }
     } else {
@@ -3472,6 +3480,7 @@ public:
       {
         if (CGAL::compare(difxvl, difxvq) == EQUAL) {
           compare_q = CGAL::compare(absdifyvl, absdifyvq);
+          corner_agree_pt_x = true;
         }
       }
       if (not ( (cmplabsxy == LARGER ) and (cmpqabsxy == LARGER ) ))
@@ -3479,6 +3488,7 @@ public:
         if (CGAL::compare(difyvl, difyvq) == EQUAL) {
           CGAL_assertion(compare_q == EQUAL);
           compare_q = CGAL::compare(absdifxvl, absdifxvq);
+          corner_agree_pt_y = true;
         }
       }
     } else {
@@ -3506,6 +3516,7 @@ public:
       {
         if (CGAL::compare(difxvl, difxvr) == EQUAL) {
           compare_r = CGAL::compare(absdifyvl, absdifyvr);
+          corner_agree_pt_x = true;
         }
       }
       if (not ( (cmplabsxy == LARGER ) and (cmprabsxy == LARGER ) ))
@@ -3513,6 +3524,7 @@ public:
         if (CGAL::compare(difyvl, difyvr) == EQUAL) {
           CGAL_assertion(compare_r == EQUAL);
           compare_r = CGAL::compare(absdifxvl, absdifxvr);
+          corner_agree_pt_y = true;
         }
       }
     } else {
@@ -3537,14 +3549,17 @@ public:
         (compare_r == SMALLER)   ) {
       return SMALLER;
     }
-    /*
-    if ((compare_p == LARGER) or
-        (compare_q == LARGER) or
-        (compare_r == LARGER)   ) {
-      // tocheck
-      return LARGER;
+    if (corner_agree_pt_x and corner_agree_pt_y) {
+      CGAL_assertion(not is_l_h_or_v);
+      const unsigned int count_larger =
+        (compare_p ? 1 : 0) +      
+        (compare_q ? 1 : 0) +      
+        (compare_r ? 1 : 0) ;     
+      if (count_larger >= 2) {
+        // two points (among p, q, r) hide the line l from the vertex vv
+        return LARGER;
+      }
     }
-    */
     return EQUAL;
 
   }
