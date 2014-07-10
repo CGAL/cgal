@@ -171,13 +171,13 @@ protected:
   {
     return qv.first;
   }
-  unsigned int extract_erase_counter_from_queue_value(const Queue_value_type &qv) const
+  unsigned int extract_erase_counter_from_queue_value(const Queue_value_type &) const
   {
     return 0;
   }
 
   // Dummy
-  unsigned int erase_counter(const Cell_handle &ch) const { return 0;}
+  unsigned int erase_counter(const Cell_handle &) const { return 0;}
 
   std::size_t cells_queue_size() const { return cells_queue_.size(); }
   bool cells_queue_empty()       const { return cells_queue_.empty(); }
