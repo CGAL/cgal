@@ -3674,18 +3674,23 @@ private:
   inline
   bool points_inside_touching_sides(
       const Site_2 & s, const Site_2 & pt_site,
-      const Site_2 & other_seg, const Site_2 & t)
+      const Site_2 & other_s, const Site_2 & t)
   const
   {
     CGAL_SDG_DEBUG(std::cout << "debug vring non-hv s=" << s
-        << " pt_site=" << pt_site << " other_seg=" << other_seg
+        << " pt_site=" << pt_site << " other_s=" << other_s
         << " t=" << t << std::endl;);
     CGAL_assertion(not is_site_h_or_v(s));
     CGAL_assertion(t.is_point());
     CGAL_assertion(s.is_segment());
-    if ((not is_site_h_or_v(other_seg)) and
-        is_endpoint_of(pt_site, other_seg)) {
-      return false;
+    if (other_s.is_segment()) {
+      // shortcut: when the point pt_site is on a corner of
+      // the Linf square, because it is the endpoint of the
+      // other site which is a segment; return false immediately
+      if ((not is_site_h_or_v(other_s)) and
+          is_endpoint_of(pt_site, other_s)) {
+        return false;
+      }
     }
     const Line_2 ls = compute_supporting_line(s.supporting_site());
     const Point_2 v(ux_,uy_,uz_);

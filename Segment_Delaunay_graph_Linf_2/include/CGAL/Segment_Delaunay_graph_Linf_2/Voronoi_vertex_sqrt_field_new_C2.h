@@ -125,17 +125,21 @@ private:
   inline
   bool points_inside_touching_sides_v(
       const Site_2 & s, const Site_2 & pt_site,
-      const Site_2 & other_seg, const Site_2 & t, const Point_2 & v)
+      const Site_2 & other_s, const Site_2 & t, const Point_2 & v)
   const
   {
     CGAL_assertion(not is_site_h_or_v(s));
     CGAL_assertion(t.is_point());
     CGAL_assertion(pt_site.is_point());
     CGAL_assertion(s.is_segment());
-    CGAL_assertion(other_seg.is_segment());
-    if ((not is_site_h_or_v(other_seg)) and
-        is_endpoint_of(pt_site, other_seg)) {
-      return false;
+    if (other_s.is_segment()) {
+      // shortcut: when the point pt_site is on a corner of
+      // the Linf square, because it is the endpoint of the
+      // other site which is a segment; return false immediately
+      if ((not is_site_h_or_v(other_s)) and
+          is_endpoint_of(pt_site, other_s)) {
+        return false;
+      }
     }
     const Line_2 ls = compute_supporting_line(s.supporting_site());
     const Point_2 corner =
@@ -1693,7 +1697,7 @@ private:
               const Line_2& l, Homogeneous_point_2& lref
              ) const
   {
-    bool is_l_h_or_v = is_line_h_or_v(l);
+    const bool is_l_h_or_v = is_line_h_or_v(l);
 
     if (not is_l_h_or_v) {
       return EQUAL;
