@@ -345,7 +345,7 @@ protected:
   template <typename Func, typename PVertex>
   void enqueue_work(Func, const PVertex &)          const {}
 
-  void increment_erase_counter(const Vertex_handle &vh) const {}
+  void increment_erase_counter(const Vertex_handle &) const {}
 };
 
 #ifdef CGAL_LINKED_WITH_TBB

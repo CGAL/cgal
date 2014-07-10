@@ -47,7 +47,7 @@ namespace Meshes {
     typedef typename Container::size_type size_type;
     typedef typename Container::value_type value_type;
 
-    void add_to_TLS_lists_impl(bool add) {}
+    void add_to_TLS_lists_impl(bool) {}
     Element get_next_local_element_impl()
     { return Element(); }
     value_type get_next_local_raw_element_impl()

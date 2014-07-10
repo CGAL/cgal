@@ -32,6 +32,7 @@
 
 #include <iostream>
 #include <fstream>
+#include <CGAL/use.h>
 
 // class Concurrent_mesher_config
 /// Singleton containing config
@@ -89,6 +90,7 @@ protected:
     const char *filename,
     bool reload_if_already_loaded = false)
   {
+    CGAL_USE(reload_if_already_loaded);
 #ifdef CGAL_USE_BOOST_PROGRAM_OPTIONS
     if (m_config_file_loaded && reload_if_already_loaded == false)
       return true;

@@ -101,7 +101,7 @@ struct Null_mesher_level {
   void add_to_TLS_lists(bool) {}
   void splice_local_lists() {}
   template <typename Mesh_visitor>
-  void before_next_element_refinement_in_superior(Mesh_visitor visitor) {}
+  void before_next_element_refinement_in_superior(Mesh_visitor) {}
   void before_next_element_refinement() {}
   //==============================================
 
