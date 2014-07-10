@@ -60,11 +60,21 @@ MainWindow::MainWindow(QWidget* parent)
   treeView->setItemDelegate(new SceneDelegate(this));
 
   treeView->header()->setStretchLastSection(false);
+
+  //New for Qt5 version !
+  #if QT_VERSION >= 0x050000
+  treeView->header()->setSectionResizeMode(Scene::NameColumn, QHeaderView::Stretch);
+  treeView->header()->setSectionResizeMode(Scene::NameColumn, QHeaderView::Stretch);
+  treeView->header()->setSectionResizeMode(Scene::ColorColumn, QHeaderView::ResizeToContents);
+  treeView->header()->setSectionResizeMode(Scene::RenderingModeColumn, QHeaderView::Fixed);
+  treeView->header()->setSectionResizeMode(Scene::VisibleColumn, QHeaderView::Fixed);
+  #else
   treeView->header()->setResizeMode(Scene::NameColumn, QHeaderView::Stretch);
   treeView->header()->setResizeMode(Scene::NameColumn, QHeaderView::Stretch);
   treeView->header()->setResizeMode(Scene::ColorColumn, QHeaderView::ResizeToContents);
   treeView->header()->setResizeMode(Scene::RenderingModeColumn, QHeaderView::Fixed);
   treeView->header()->setResizeMode(Scene::VisibleColumn, QHeaderView::Fixed);
+  #endif
 
   treeView->resizeColumnToContents(Scene::ColorColumn);
   treeView->resizeColumnToContents(Scene::RenderingModeColumn);

@@ -24,6 +24,11 @@ class PS_demo_simplification_plugin :
 {
   Q_OBJECT
   Q_INTERFACES(Polyhedron_demo_plugin_interface)
+
+  #if QT_VERSION >= 0x050000
+  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")//New for Qt5 version !
+  #endif
+
   QAction* actionSimplify;
 
 public:
@@ -137,6 +142,9 @@ void PS_demo_simplification_plugin::on_actionSimplify_triggered()
   }
 }
 
+#if QT_VERSION < 0x050000
 Q_EXPORT_PLUGIN2(PS_demo_simplification_plugin, PS_demo_simplification_plugin)
+#endif
+
 
 #include "PS_demo_simplification_plugin.moc"

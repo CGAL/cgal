@@ -18,6 +18,11 @@ class PS_demo_smoothing_plugin :
 {
   Q_OBJECT
   Q_INTERFACES(Polyhedron_demo_plugin_interface)
+
+  #if QT_VERSION >= 0x050000
+  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")//New for Qt5 version !
+  #endif
+
   QAction* actionJetSmoothing;
 
 public:
@@ -54,6 +59,18 @@ void PS_demo_smoothing_plugin::on_actionJetSmoothing_triggered()
 
     // Gets options
     bool ok;
+
+    #if QT_VERSION >= 0x050000
+    const unsigned int nb_neighbors =
+      QInputDialog::getInt((QWidget*)mw,
+                               tr("Jet Smoothing"), // dialog title
+                               tr("Number of neighbors:"), // field label
+                               24, // default value = fast
+                               6, // min
+                               1000, // max
+                               1, // step
+                               &ok);
+    #else
     const unsigned int nb_neighbors =
       QInputDialog::getInteger((QWidget*)mw,
                                tr("Jet Smoothing"), // dialog title
@@ -63,6 +80,8 @@ void PS_demo_smoothing_plugin::on_actionJetSmoothing_triggered()
                                1000, // max
                                1, // step
                                &ok);
+    #endif
+
     if(!ok) return;
 
     QApplication::setOverrideCursor(Qt::WaitCursor);
@@ -78,6 +97,9 @@ void PS_demo_smoothing_plugin::on_actionJetSmoothing_triggered()
   }
 }
 
+#if QT_VERSION < 0x050000
 Q_EXPORT_PLUGIN2(PS_demo_smoothing_plugin, PS_demo_smoothing_plugin)
+#endif
+
 
 #include "PS_demo_smoothing_plugin.moc"

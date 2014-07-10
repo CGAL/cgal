@@ -51,9 +51,18 @@ Scene::addItem(Scene_item* item)
 {
   entries.push_back(item);
 
+//New for Qt5 version !
+ #if QT_VERSION >= 0x050000
+  QAbstractListModel::beginResetModel();
+  emit updated_bbox();
+  emit updated();
+  QAbstractListModel::endResetModel();
+ #else
   emit updated_bbox();
   emit updated();
   QAbstractListModel::reset();
+ #endif
+
   return entries.size() - 1;
 }
 
@@ -71,8 +80,17 @@ Scene::Item_id Scene::erase(Item_id index)
   entries.removeAt(index);
 
   selected_item = -1;
+
+//New for Qt5 version !
+ #if QT_VERSION >= 0x050000
+  QAbstractListModel::beginResetModel();
+  emit updated();
+  QAbstractListModel::endResetModel();
+ #else
   emit updated();
   QAbstractListModel::reset();
+ #endif
+
 
   if(--index >= 0)
     return index;

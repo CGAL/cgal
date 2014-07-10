@@ -18,25 +18,47 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
 # Include this package's headers first
 include_directories( BEFORE ./ ./include ../../include )
 
-# Find CGAL and CGAL Qt4
-find_package(CGAL COMPONENTS Qt4)
-include( ${CGAL_USE_FILE} )
-
-# Find Qt4 itself
+# Find Qt itself
 set( QT_USE_QTXML    TRUE )
 set( QT_USE_QTMAIN   TRUE )
 set( QT_USE_QTSCRIPT  TRUE )
 set( QT_USE_QTOPENGL  TRUE )
-find_package(Qt4)
+
+#New for Qt5 version !
+option (USE_QT5 "Use Qt5 version instead of Qt4" ON)
+
+if(USE_QT5)
+
+	find_package(CGAL COMPONENTS Qt5)
+
+	include(${CGAL_USE_FILE})
+	
+	find_package(Qt5)
+
+else (USE_QT5)
+
+	find_package(CGAL COMPONENTS Qt4)
+	include(${CGAL_USE_FILE})
+
+	find_package(Qt4)
+
+	if(CGAL_Qt4_FOUND AND QT4_FOUND)
+		include(${QT_USE_FILE})
+		message("Qt4 found")
+		set(QT4 TRUE)
+	endif()
+
+endif (USE_QT5)
+
+include(QtChoice)
 
 # Find OpenGL
 find_package(OpenGL)
 
 # Find QGLViewer
-if(QT4_FOUND)
-  include(${QT_USE_FILE})
+if(QT4 OR QT5)
   find_package(QGLViewer )
-endif(QT4_FOUND)
+endif(QT4 OR QT5)
 
 # Find BLAS, LAPACK and TAUCS (optional), for Poisson
 find_package(TAUCS)
@@ -51,7 +73,7 @@ find_package(Eigen3 3.1.0)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/GlSplat/cmake)
 find_package(GLEW)
 
-if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
+if((QT4 OR QT5) AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
   include_directories ( ${QGLVIEWER_INCLUDE_DIR} )
 
@@ -109,22 +131,22 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   # Temporary debugging stuff
   ADD_DEFINITIONS( "-DDEBUG_TRACE" ) # turn on traces
 
-  qt4_wrap_ui( UI_FILES MainWindow.ui)
+  qt_wrap_ui( UI_FILES MainWindow.ui)
 
   include(AddFileDependencies)
 
-  qt4_generate_moc( "MainWindow.h" "${CMAKE_CURRENT_BINARY_DIR}/MainWindow_moc.cpp" )
+  qt_generate_moc( "MainWindow.h" "${CMAKE_CURRENT_BINARY_DIR}/MainWindow_moc.cpp" )
   add_file_dependencies( MainWindow_moc.cpp "${CMAKE_CURRENT_SOURCE_DIR}/MainWindow.h" )
 
-  qt4_generate_moc( "Viewer.h" "${CMAKE_CURRENT_BINARY_DIR}/Viewer_moc.cpp" )
+  qt_generate_moc( "Viewer.h" "${CMAKE_CURRENT_BINARY_DIR}/Viewer_moc.cpp" )
   add_file_dependencies( Viewer_moc.cpp "${CMAKE_CURRENT_SOURCE_DIR}/Viewer.h" )
 
-  qt4_generate_moc( "Scene.h" "${CMAKE_CURRENT_BINARY_DIR}/Scene_moc.cpp" )
+  qt_generate_moc( "Scene.h" "${CMAKE_CURRENT_BINARY_DIR}/Scene_moc.cpp" )
   add_file_dependencies( Scene_moc.cpp "${CMAKE_CURRENT_SOURCE_DIR}/Scene.h" )
 
-  qt4_add_resources ( RESOURCE_FILES Point_set_demo.qrc )
+  qt_add_resources ( RESOURCE_FILES Point_set_demo.qrc )
 
-  qt4_automoc(Scene_item.cpp
+  qt_automoc(Scene_item.cpp
               Scene_plane_item.cpp
               Point_set_scene_item.cpp
               Scene_polyhedron_item.cpp)
@@ -136,29 +158,51 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
   set(LIBRARY_OUTPUT_PATH ${RUNTIME_OUTPUT_PATH})
 
+  if(QT4)
   add_library(PS_demo_scene_item SHARED
     Scene_item.cpp Scene_item.moc
     Scene_item_with_display_list.cpp
     Polyhedron_demo_plugin_helper.cpp)
-  target_link_libraries(PS_demo_scene_item ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY} ${QT_QTOPENGL_LIBRARY} ${GLEW_LIBRARIES} ${OPENGL_gl_LIBRARY} ${OPENGL_glu_LIBRARY})
 
   add_library(PS_demo_scene_basic_objects SHARED
     Scene_plane_item.cpp Scene_plane_item.moc)
-  target_link_libraries(PS_demo_scene_basic_objects PS_demo_scene_item ${QGLVIEWER_LIBRARIES} ${OPENGL_gl_LIBRARY} ${OPENGL_glu_LIBRARY})
 
   add_library(PS_demo_scene_polyhedron_item SHARED
     Scene_polyhedron_item.cpp Scene_polyhedron_item.moc)
-  target_link_libraries(PS_demo_scene_polyhedron_item PS_demo_scene_item)
-
-  if(GLEW_FOUND)
-    qt4_add_resources(gl_splat_rc GlSplat/glsplat.qrc)
-    add_library(gl_splat SHARED
-      GlSplat/GlSplat.cpp GlSplat/Shader.cpp ${gl_splat_rc})
-    target_link_libraries(gl_splat ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY} ${QT_QTOPENGL_LIBRARY} ${GLEW_LIBRARIES})
-  endif(GLEW_FOUND)
 
   add_library(point_set SHARED
     Point_set_scene_item.cpp Point_set_scene_item.moc)
+  endif(QT4)
+  if(QT5)
+  add_library(PS_demo_scene_item SHARED
+    Scene_item.cpp
+    Scene_item_with_display_list.cpp
+    Polyhedron_demo_plugin_helper.cpp)
+
+  add_library(PS_demo_scene_basic_objects SHARED
+    Scene_plane_item.cpp)
+
+  add_library(PS_demo_scene_polyhedron_item SHARED
+    Scene_polyhedron_item.cpp)
+
+  add_library(point_set SHARED
+    Point_set_scene_item.cpp)
+  endif(QT5)
+
+  target_link_libraries(PS_demo_scene_item ${QT_LIBRARIES} ${GLEW_LIBRARIES} ${OPENGL_gl_LIBRARY} ${OPENGL_glu_LIBRARY})
+
+  target_link_libraries(PS_demo_scene_basic_objects PS_demo_scene_item ${QGLVIEWER_LIBRARIES} ${OPENGL_gl_LIBRARY} ${OPENGL_glu_LIBRARY})
+
+  target_link_libraries(PS_demo_scene_polyhedron_item PS_demo_scene_item)
+
+
+  if(GLEW_FOUND)
+    qt_add_resources(gl_splat_rc GlSplat/glsplat.qrc)
+    add_library(gl_splat SHARED
+      GlSplat/GlSplat.cpp GlSplat/Shader.cpp ${gl_splat_rc})
+    target_link_libraries(gl_splat ${QT_LIBRARIES} ${GLEW_LIBRARIES})
+  endif(GLEW_FOUND)
+
   target_link_libraries(point_set PS_demo_scene_item)
 
   foreach(lib PS_demo_scene_item PS_demo_scene_basic_objects PS_demo_scene_polyhedron_item point_set)
@@ -173,6 +217,8 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
 #  if(POINT_SET_DEMO_ENABLE_FORWARD_DECL)
     add_definitions(-DUSE_FORWARD_DECL)
+
+if(QT4)
     add_executable  ( Point_set_demo
       ${UI_FILES}
       MainWindow.cpp
@@ -183,6 +229,17 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
       Scene_moc.cpp
       Viewer_moc.cpp
       ${RESOURCE_FILES} )
+endif(QT4)
+if(QT5)
+    add_executable  ( Point_set_demo
+      ${UI_FILES}
+      MainWindow.cpp
+      Point_set_demo.cpp
+      Viewer.cpp
+      Scene.cpp
+      ${RESOURCE_FILES} )
+endif(QT5)
+
     add_to_cached_list( CGAL_EXECUTABLE_TARGETS Point_set_demo )
 #  else(POINT_SET_DEMO_ENABLE_FORWARD_DECL)
 #    add_file_dependencies( Point_set_demo.cpp "${CMAKE_CURRENT_BINARY_DIR}/MainWindow_moc.cpp"
@@ -224,7 +281,7 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
     else()
       set(other_sources ${ARGN_TAIL})
     endif()
-    qt4_generate_moc( "${CMAKE_CURRENT_SOURCE_DIR}/${plugin_implementation_base_name}.cpp" ${plugin_implementation_base_name}.moc )
+    qt_generate_moc( "${CMAKE_CURRENT_SOURCE_DIR}/${plugin_implementation_base_name}.cpp" ${plugin_implementation_base_name}.moc )
     add_file_dependencies( ${plugin_implementation_base_name}.moc "${CMAKE_CURRENT_SOURCE_DIR}/${plugin_implementation_base_name}.cpp" )
 
     add_library(${plugin_name} MODULE ${option} ${plugin_implementation_base_name}.moc ${plugin_implementation_base_name}.cpp ${other_sources})
@@ -238,7 +295,7 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   endmacro(point_set_demo_plugin)
 
   if(TAUCS_FOUND OR EIGEN3_FOUND)
-    qt4_wrap_ui( POISSON_UI_FILES PS_demo_poisson_plugin.ui)
+    qt_wrap_ui( POISSON_UI_FILES PS_demo_poisson_plugin.ui)
     point_set_demo_plugin(PS_demo_poisson_plugin
       PS_demo_poisson_plugin
       PS_demo_poisson_plugin_cgal_code.cpp
@@ -257,7 +314,7 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   point_set_demo_plugin(PS_demo_xyz_plugin PS_demo_xyz_plugin)
   target_link_libraries(PS_demo_xyz_plugin PS_demo_scene_polyhedron_item point_set)
 
-  qt4_wrap_ui(SIMPLIFICATION_UI_FILES PS_demo_simplification_plugin.ui)
+  qt_wrap_ui(SIMPLIFICATION_UI_FILES PS_demo_simplification_plugin.ui)
   point_set_demo_plugin(PS_demo_simplification_plugin
     PS_demo_simplification_plugin
     ${SIMPLIFICATION_UI_FILES})
@@ -275,29 +332,37 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   endif()
 
   if(LAPACK_FOUND)
-    qt4_wrap_ui( NORMAL_UI_FILES PS_demo_normal_estimation_plugin.ui)
+    qt_wrap_ui( NORMAL_UI_FILES PS_demo_normal_estimation_plugin.ui)
     point_set_demo_plugin(PS_demo_normal_estimation_plugin
       PS_demo_normal_estimation_plugin
       ${NORMAL_UI_FILES})
     target_link_libraries(PS_demo_normal_estimation_plugin point_set)
   endif()
 
-  qt4_wrap_ui( CLEANING_UI_FILES PS_demo_cleaning_plugin.ui)
+  qt_wrap_ui( CLEANING_UI_FILES PS_demo_cleaning_plugin.ui)
   point_set_demo_plugin(PS_demo_cleaning_plugin
     PS_demo_cleaning_plugin
     ${CLEANING_UI_FILES})
   target_link_libraries(PS_demo_cleaning_plugin point_set)
 
-else (CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
+else ((QT4 OR QT5) AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
   set(POINT_SET_DEMO_MISSING_DEPS "")
 
-  if(NOT CGAL_Qt4_FOUND)
+  if(NOT CGAL_Qt4_FOUND AND NOT USE_QT5)
     set(POINT_SET_DEMO_MISSING_DEPS "the CGAL Qt4 library, ${POINT_SET_DEMO_MISSING_DEPS}")
   endif()
 
-  if(NOT QT4_FOUND)
+  if(NOT QT4 AND NOT USE_QT5)
     set(POINT_SET_DEMO_MISSING_DEPS "Qt4, ${POINT_SET_DEMO_MISSING_DEPS}")
+  endif()
+
+  if(NOT CGAL_Qt5_FOUND AND USE_QT5)
+    set(POINT_SET_DEMO_MISSING_DEPS "the CGAL Qt5 library, ${POINT_SET_DEMO_MISSING_DEPS}")
+  endif()
+
+  if(NOT QT5 AND USE_QT5)
+    set(POINT_SET_DEMO_MISSING_DEPS "Qt5, ${POINT_SET_DEMO_MISSING_DEPS}")
   endif()
 
   if(NOT OPENGL_FOUND)
@@ -310,4 +375,4 @@ else (CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
   message(STATUS "NOTICE: This demo requires ${POINT_SET_DEMO_MISSING_DEPS}and will not be compiled.")
 
-endif (CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
+endif ((QT4 OR QT5) AND OPENGL_FOUND AND QGLVIEWER_FOUND)

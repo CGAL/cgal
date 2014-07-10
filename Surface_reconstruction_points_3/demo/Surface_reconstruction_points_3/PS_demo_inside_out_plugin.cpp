@@ -15,6 +15,9 @@ class PS_demo_inside_out_plugin :
   Q_OBJECT
   Q_INTERFACES(Polyhedron_demo_plugin_interface)
 
+  #if QT_VERSION >= 0x050000
+  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")//New for Qt5 version !
+  #endif
 public:
   // used by Polyhedron_demo_plugin_helper
   QStringList actionsNames() const {
@@ -50,6 +53,8 @@ void PS_demo_inside_out_plugin::on_actionInsideOut_triggered()
   }
 }
 
+#if QT_VERSION < 0x050000
 Q_EXPORT_PLUGIN2(PS_demo_inside_out_plugin, PS_demo_inside_out_plugin)
+#endif
 
 #include "PS_demo_inside_out_plugin.moc"

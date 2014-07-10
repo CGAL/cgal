@@ -81,7 +81,7 @@ Polyhedron* poisson_reconstruct(const Point_set& points,
     //***************************************
 
     std::cerr << "Computes Poisson implicit function "
-              << "using " << solver_name.toAscii().data() << " solver...\n";
+              << "using " << solver_name.toLatin1().data() << " solver...\n";
               
     
     // Creates implicit function from the point set.

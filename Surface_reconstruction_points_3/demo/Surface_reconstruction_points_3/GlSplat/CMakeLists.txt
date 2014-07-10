@@ -9,18 +9,40 @@ else()
 endif()
 set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
 
-find_package(Qt4 REQUIRED)
-find_package(GLEW REQUIRED)
-
 set(QT_USE_QTOPENGL TRUE)
 set(QT_USE_QTXML TRUE)
-include(${QT_USE_FILE})
+
+#New for Qt5 version !
+if (NOT QT4 AND NOT QT5)
+option (USE_QT5 "Use Qt5 version instead of Qt4" ON)
+endif(NOT QT4 AND NOT QT5)
+
+if(USE_QT5)
+	
+	find_package(Qt5 REQUIRED)
+
+else (USE_QT5)
+
+	find_package(Qt4 REQUIRED)
+
+	if(CGAL_Qt4_FOUND AND QT4_FOUND)
+		include(${QT_USE_FILE})
+		message("Qt4 found")
+		set(QT4 TRUE)
+	endif()
+
+endif (USE_QT5)
+
+include(QtChoice)
+
+find_package(GLEW REQUIRED)
+
 include_directories( ${QT_QTOPENGL_INCLUDE_DIR} ${QT_QTXML_INCLUDE_DIR} ${GLEW_INCLUDE_DIR})
 
 set(srcs Shader.cpp GlSplat.cpp)
 
-qt4_automoc( ${srcs})
-qt4_add_resources(srcs glsplat.qrc)
+qt_automoc( ${srcs})
+qt_add_resources(srcs glsplat.qrc)
 
 add_library(GlSplat SHARED ${srcs})
 target_link_libraries(GlSplat ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY} ${QT_QTOPENGL_LIBRARY} ${GLEW_LIBRARIES})
