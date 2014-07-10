@@ -65,6 +65,7 @@ public:
   using Base::bearing;
   using Base::bearing_diff;
   using Base::center_from_corner_and_pt;
+  using Base::points_inside_touching_sides_v;
 
   typedef enum {PPP = 0, PPS, PSS, SSS} vertex_t;
   struct PPP_Type {};
@@ -118,57 +119,6 @@ private:
   Bisector_Linf_Type linf_bisect_direction;
 
 private:
-  //--------------------------------------------------------------------------
-  // helpful methods
-  //--------------------------------------------------------------------------
-
-  inline
-  bool points_inside_touching_sides_v(
-      const Site_2 & s, const Site_2 & pt_site,
-      const Site_2 & other_s, const Site_2 & t, const Point_2 & v)
-  const
-  {
-    CGAL_assertion(not is_site_h_or_v(s));
-    CGAL_assertion(t.is_point());
-    CGAL_assertion(pt_site.is_point());
-    CGAL_assertion(s.is_segment());
-    if (other_s.is_segment()) {
-      // shortcut: when the point pt_site is on a corner of
-      // the Linf square, because it is the endpoint of the
-      // other site which is a segment; return false immediately
-      if ((not is_site_h_or_v(other_s)) and
-          is_endpoint_of(pt_site, other_s)) {
-        return false;
-      }
-    }
-    const Line_2 ls = compute_supporting_line(s.supporting_site());
-    const Point_2 corner =
-      compute_linf_projection_nonhom(ls, v);
-    const Line_2 ltest = has_positive_slope(s) ?
-      compute_pos_45_line_at(v): compute_neg_45_line_at(v);
-    CGAL_assertion(
-        oriented_side_of_line(ltest, v) == ON_ORIENTED_BOUNDARY);
-    const Oriented_side ost = oriented_side_of_line(ltest, t.point());
-    const Oriented_side osx = oriented_side_of_line(ltest, corner);
-    if (ost == osx) {
-      const Point_2 & p = pt_site.point();
-      const Oriented_side osp = oriented_side_of_line(ltest, p);
-      if (ost == osp) {
-        // +-pi/2 slope line through corner and v
-        const Line_2 lcv = has_positive_slope(s) ?
-          compute_neg_45_line_at(v): compute_pos_45_line_at(v);
-        const Oriented_side oslt = oriented_side_of_line(lcv, t.point());
-        const Oriented_side oslp = oriented_side_of_line(lcv, p);
-        if (oslt != oslp) {
-          return true;
-        }
-      }
-    }
-    return false;
-  }
-
-
-
   //--------------------------------------------------------------------------
   //--------------------------------------------------------------------------
   // Voronoi vertex computation
@@ -1688,19 +1638,75 @@ private:
     return CGAL::max(minp, CGAL::max(minq, minr));
   }
 
+  // L_inf refinement for non-axis parallel lines
+  template<class TypePSSorSSS> // for PSS and SSS return false
+  inline
+  Comparison_result
+  linf_refine_nonhv(const Point_2& ,
+              const Site_2& , const Site_2& , const Site_2& ,
+              const Line_2& , Homogeneous_point_2& ,
+              const TypePSSorSSS &
+             ) const
+  {
+    return EQUAL;
+  }
+
+  // L_inf refinement for non-axis parallel lines PPS case
+  inline
+  Comparison_result
+  linf_refine_nonhv(const Point_2& vv,
+              const Site_2& p, const Site_2& q, const Site_2& r,
+              const Line_2& l, Homogeneous_point_2& lref,
+              const PPS_Type & type
+             ) const
+  {
+    CGAL_assertion(p.is_point());
+    CGAL_assertion(q.is_point());
+    CGAL_assertion(r.is_segment());
+    if (points_inside_touching_sides_v(l, p, r, q, this->point())) {
+      return LARGER;
+    }
+    return EQUAL;
+  }
+
+  // L_inf refinement for non-axis parallel lines PPP case
+  inline
+  Comparison_result
+  linf_refine_nonhv(const Point_2& vv,
+              const Site_2& p, const Site_2& q, const Site_2& r,
+              const Line_2& l, Homogeneous_point_2& lref,
+              const PPP_Type & type
+             ) const
+  {
+    CGAL_assertion(p.is_point());
+    CGAL_assertion(q.is_point());
+    CGAL_assertion(r.is_point());
+    if (points_inside_touching_sides_v(l, p, q, r, this->point())) {
+      return LARGER;
+    }
+    if (points_inside_touching_sides_v(l, q, r, p, this->point())) {
+      return LARGER;
+    }
+    if (points_inside_touching_sides_v(l, r, p, q, this->point())) {
+      return LARGER;
+    }
+    return EQUAL;
+  }
 
   // L_inf refinement
+  template<class Type>
   inline
   Comparison_result
   linf_refine(const Point_2& vv,
               const Site_2& p, const Site_2& q, const Site_2& r,
-              const Line_2& l, Homogeneous_point_2& lref
+              const Line_2& l, Homogeneous_point_2& lref,
+              const Type & type
              ) const
   {
     const bool is_l_h_or_v = is_line_h_or_v(l);
 
     if (not is_l_h_or_v) {
-      return EQUAL;
+      return linf_refine_nonhv(vv, p, q, r, l, lref, type);
     }
 
     FT difxvl = vv.x() - lref.x();
@@ -3064,7 +3070,7 @@ private:
       // we might have to refine
 
       Comparison_result other =
-        linf_refine(vv, p, q, r, l, lref);
+        linf_refine(vv, p, q, r, l, lref, type);
 
       if (crude != other) {
         CGAL_SDG_DEBUG(std::cout << "xxxl instead of 0 returning " << other <<

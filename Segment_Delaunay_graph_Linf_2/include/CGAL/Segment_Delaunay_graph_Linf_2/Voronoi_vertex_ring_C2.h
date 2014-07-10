@@ -91,6 +91,7 @@ public:
   using Base::bearing;
   using Base::bearing_diff;
   using Base::center_from_corner_and_pt;
+  using Base::points_inside_touching_sides_v;
 
 private:
   typedef SegmentDelaunayGraph_2::Are_same_points_C2<K>
@@ -1872,7 +1873,8 @@ private:
       if (not is_site_h_or_v(s1)) {
         // here s1 is non-axis parallel
         // therefore, it touches the square at a corner
-        if (points_inside_touching_sides(s1, pt_site, s2, st)) {
+        if (points_inside_touching_sides_v(
+              s1, pt_site, s2, st, this->point())) {
           return NEGATIVE;
         }
       }
@@ -1880,7 +1882,8 @@ private:
       if (not is_site_h_or_v(s2)) {
         // here s2 is non-axis parallel
         // therefore, it touches the square at a corner
-        if (points_inside_touching_sides(s2, pt_site, s1, st)) {
+        if (points_inside_touching_sides_v(
+              s2, pt_site, s1, st, this->point())) {
           return NEGATIVE;
         }
       }
@@ -3670,58 +3673,6 @@ public:
   }
 
 
-private:
-  inline
-  bool points_inside_touching_sides(
-      const Site_2 & s, const Site_2 & pt_site,
-      const Site_2 & other_s, const Site_2 & t)
-  const
-  {
-    CGAL_SDG_DEBUG(std::cout << "debug vring non-hv s=" << s
-        << " pt_site=" << pt_site << " other_s=" << other_s
-        << " t=" << t << std::endl;);
-    CGAL_assertion(not is_site_h_or_v(s));
-    CGAL_assertion(t.is_point());
-    CGAL_assertion(s.is_segment());
-    if (other_s.is_segment()) {
-      // shortcut: when the point pt_site is on a corner of
-      // the Linf square, because it is the endpoint of the
-      // other site which is a segment; return false immediately
-      if ((not is_site_h_or_v(other_s)) and
-          is_endpoint_of(pt_site, other_s)) {
-        return false;
-      }
-    }
-    const Line_2 ls = compute_supporting_line(s.supporting_site());
-    const Point_2 v(ux_,uy_,uz_);
-    const Point_2 corner =
-      compute_linf_projection_nonhom(ls, v);
-    const Line_2 ltest = has_positive_slope(s) ?
-      compute_pos_45_line_at(v): compute_neg_45_line_at(v);
-    CGAL_assertion(
-        oriented_side_of_line(ltest, v) == ON_ORIENTED_BOUNDARY);
-    const Oriented_side ost = oriented_side_of_line(ltest, t.point());
-    const Oriented_side osx = oriented_side_of_line(ltest, corner);
-    CGAL_SDG_DEBUG(std::cout << "debug points_inside_touching_sides"
-        << " ltest: " << ltest.a() << ' ' << ltest.b() << ' ' <<  ltest.c()
-        << " v=" << v << " ost=" << ost
-        << " corner=" << corner << " osx=" << osx << std::endl;);
-    if (ost == osx) {
-      const Point_2 & p = pt_site.point();
-      const Oriented_side osp = oriented_side_of_line(ltest, p);
-      if (ost == osp) {
-        // +-pi/2 slope line through corner and v
-        const Line_2 lcv = has_positive_slope(s) ?
-          compute_neg_45_line_at(v): compute_pos_45_line_at(v);
-        const Oriented_side oslt = oriented_side_of_line(lcv, t.point());
-        const Oriented_side oslp = oriented_side_of_line(lcv, p);
-        if (oslt != oslp) {
-          return true;
-        }
-      }
-    }
-    return false;
-  }
 
   //--------------------------------------------------------------------------
 
