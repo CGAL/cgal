@@ -7,10 +7,9 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Reconstruction_simplification_2.h>
 #include <CGAL/List_output.h>
+#include <CGAL/Off_output.h>
 
-
-#include <fstream>
-
+#include<fstream>
 #include<iostream>
 #include <string>
 #include <iterator>
@@ -82,7 +81,7 @@ int main ()
 
     CGAL::List_output<K> list_output;
 
-    rs2.extract_solid_eges(list_output);
+    rs2.extract_solid_elements(list_output);
 
   	for (Output_Vertex_Iterator it = list_output.vertices_start();
 			it != list_output.vertices_beyond(); it++) {
@@ -93,6 +92,22 @@ int main ()
 			it != list_output.edges_beyond(); it++) {
 		print_edge(*it);
     }
+
+
+
+	//-------
+	std::cout <<"(------------------------ )" << std::endl;
+
+
+
+    CGAL::Off_output<K> off_output;
+
+    rs2.extract_solid_elements(off_output);
+
+    off_output.get_os_output(std::cout);
+
+
+
 }
 
 

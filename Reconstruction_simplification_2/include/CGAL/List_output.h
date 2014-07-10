@@ -38,6 +38,19 @@
 
 namespace CGAL {
 
+/*!
+\ingroup PkgReconstructionSimplification2Models
+
+
+\brief The class `List_output` is a model for the Output concept.
+
+\details It returns Output-iterators which allow iterating over both the
+isolated vertices and the edges of the reconstructed shape
+
+
+\tparam Kernel is the geometric kernel, used for the reconstruction and
+					simplification task.
+ */
 template<class Kernel>
 class List_output {
 public:
@@ -189,8 +202,6 @@ public:
 			edges.push_back(pedge.edge());
 
 		}
-		 std::cout <<  "edges.size() "  << edges.size() << std::endl;
-
 	  }
 
 	  void store_marked_elements(Tds_2 tds, int nb_ignore) {

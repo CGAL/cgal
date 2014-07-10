@@ -53,7 +53,6 @@ int main ()
 
     rs2.print_stats_debug();
 
-    rs2.extract_solid_eges();
 }
 
 

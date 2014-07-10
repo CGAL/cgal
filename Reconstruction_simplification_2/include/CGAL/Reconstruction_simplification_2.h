@@ -287,10 +287,8 @@ protected:
 		  	  stored.
 	*/
 	template <class OutputModule>
-	void extract_solid_eges(OutputModule& output) {
+	void extract_solid_elements(OutputModule& output) {
 		output.store_marked_elements(m_dt.tds(), m_ignore);
-
-
 	}
 
 

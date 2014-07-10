@@ -405,7 +405,7 @@ public:
 
 	    CGAL::List_output<K> list_output;
 
-	    m_pwsrec->extract_solid_eges(list_output);
+	    m_pwsrec->extract_solid_elements(list_output);
 
 	  	for (Output_Vertex_Iterator it = list_output.vertices_start();
 				it != list_output.vertices_beyond(); it++) {
