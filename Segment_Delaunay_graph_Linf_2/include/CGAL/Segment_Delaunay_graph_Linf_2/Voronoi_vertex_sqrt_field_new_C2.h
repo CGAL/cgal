@@ -2614,6 +2614,12 @@ private:
 
           if ((v_type == PSS) and (not is_q_hv) and (not is_r_hv)) {
             if (test == EQUAL) {
+              if (points_inside_touching_sides_v(q, p, r, t, vv)) {
+                return NEGATIVE;
+              }
+              if (points_inside_touching_sides_v(r, p, q, t, vv)) {
+                return NEGATIVE;
+              }
               CGAL_SDG_DEBUG(std::cout
                   << "debug equivalent points and two non-hv segments,"
                   << " thus return zero" << std::endl;);
