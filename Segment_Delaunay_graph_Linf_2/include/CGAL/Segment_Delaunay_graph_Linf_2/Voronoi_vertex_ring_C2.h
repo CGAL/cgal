@@ -3702,10 +3702,17 @@ private:
         << " v=" << v << " ost=" << ost
         << " corner=" << corner << " osx=" << osx << std::endl;);
     if (ost == osx) {
-      const Oriented_side osp = oriented_side_of_line(
-          ltest, pt_site.point());
+      const Point_2 & p = pt_site.point();
+      const Oriented_side osp = oriented_side_of_line(ltest, p);
       if (ost == osp) {
-        return true;
+        // +-pi/2 slope line through corner and v
+        const Line_2 lcv = has_positive_slope(s) ?
+          compute_neg_45_line_at(v): compute_pos_45_line_at(v);
+        const Oriented_side oslt = oriented_side_of_line(lcv, t.point());
+        const Oriented_side oslp = oriented_side_of_line(lcv, p);
+        if (oslt != oslp) {
+          return true;
+        }
       }
     }
     return false;
