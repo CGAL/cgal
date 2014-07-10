@@ -389,6 +389,9 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   polyhedron_demo_plugin(intersection_plugin Polyhedron_demo_intersection_plugin)
   target_link_libraries(intersection_plugin  scene_polyhedron_item scene_polylines_item)
 
+  polyhedron_demo_plugin(reconstruction_parallel_slices_plugin Polyhedron_demo_reconstruction_parallel_slices_plugin)
+  target_link_libraries(reconstruction_parallel_slices_plugin scene_polyhedron_item scene_polylines_item)
+
   polyhedron_demo_plugin(transform_polyhedron_plugin Polyhedron_demo_transform_polyhedron_plugin)
   target_link_libraries(transform_polyhedron_plugin  scene_polyhedron_item scene_polyhedron_transform_item)
 
