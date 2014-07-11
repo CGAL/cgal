@@ -1,6 +1,6 @@
 
 #include <CGAL/basic.h>
-
+#include <CGAL/use.h>
 #include <CGAL/Test/_test_algebraic_structure.h>
 #include <CGAL/Test/_test_real_embeddable.h>
 
@@ -19,13 +19,13 @@
 #define CGAL_DEFINE_TYPES_FROM_AK(AK)                           \
     typedef typename AK::Integer Integer;                       \
     typedef typename AK::Rational Rational;                     \
-    typedef typename AK::Field_with_sqrt Field_with_sqrt;       \
+    typedef typename AK::Field_with_sqrt Field_with_sqrt;  CGAL_USE_TYPE(Field_with_sqrt); \
     typedef CGAL::Polynomial<Integer> Poly_int1;                \
     typedef CGAL::Polynomial<Poly_int1> Poly_int2;              \
-    typedef CGAL::Polynomial<Poly_int2> Poly_int3;              \
+    typedef CGAL::Polynomial<Poly_int2> Poly_int3; CGAL_USE_TYPE(Poly_int3); \
     typedef CGAL::Polynomial<Rational> Poly_rat1;               \
     typedef CGAL::Polynomial<Poly_rat1> Poly_rat2;              \
-    typedef CGAL::Polynomial<Poly_rat2> Poly_rat3;             
+    typedef CGAL::Polynomial<Poly_rat2> Poly_rat3;  CGAL_USE_TYPE(Poly_rat3);           
    
 
 // TODO: copied from number_type_utils.h
