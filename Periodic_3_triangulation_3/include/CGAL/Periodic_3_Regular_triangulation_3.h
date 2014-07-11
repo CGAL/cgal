@@ -128,6 +128,22 @@ public:
     CGAL_triangulation_expensive_postcondition( is_valid() );
   }
 
+  /** @name Insertion */ //@{
+   Vertex_handle insert(const Weighted_point& p, Cell_handle start = Cell_handle()) {
+     Conflict_tester tester(p, this);
+     Point_hider hider(this);
+     return Base::insert_in_conflict(p, start, tester, hider);
+   }
+
+   Vertex_handle insert(const Weighted_point& p, Locate_type lt, Cell_handle c,
+        int li, int lj) {
+      Conflict_tester tester(p, this);
+      Point_hider hider(this);
+      return Base::insert_in_conflict(p,lt,c,li,lj, tester,hider);
+    }
+
+   //@}
+
 protected:
 	bool less_power_distance (const Bare_point &p, const Weighted_point &q, const Weighted_point &r)  const
 	{
