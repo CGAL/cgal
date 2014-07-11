@@ -359,7 +359,7 @@ public:
           (*start)->hidden_points_end(),
           std::back_inserter(hidden_points));
 
-      for (int i=0; i<=4; i++) { // 3 ou 4?
+      for (int i=0; i<=3; i++) {
         Vertex_handle v = (*start)->vertex(i);
         if (v->cell() != Cell_handle()) {
           vertices.push_back(v);
