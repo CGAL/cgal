@@ -49,29 +49,27 @@ namespace CGAL {
 
 
 
-\brief The class `Reconstruction_simplification_2` is the base class
-designed to execute the reconstruction and simplification tasks.
+\brief The class `Reconstruction_simplification_2` is the main class
+for executing the reconstruction and simplification tasks.
+It takes an InputIterator which can be used to traverse a collection
+of point-mass pairs, where the points and their masses are accessed
+via the PointPMap and MassPMap `PropertyMap`s respectively.
 
-\details This class takes as input a collection of point-mass pairs, where both
-the points and their masses are accessed using PropertyMaps.
 
-
-\tparam Kernel is the geometric kernel, used for the reconstruction and
+\tparam Kernel is the geometric kernel, used throughout the reconstruction and
 					simplification task.
 
 \tparam InputIterator is the iterator type of the algorithm input.
 
-\tparam PointPMap is a model of ReadablePropertyMap with a value_type = Point_2
+\tparam PointPMap is a model of `ReadablePropertyMap` with a value_type = `Point_2`
 
-\tparam MassPMap   is a model of ReadablePropertyMap with a value_type = FT
+\tparam MassPMap   is a model of `ReadablePropertyMap` with a value_type = `FT`
 
  */
 template<class Kernel, class InputIterator, class PointPMap, class MassPMap>
 class Reconstruction_simplification_2 {
 public:
 
-	/// \name Types
-	/// @{
 
 	/*!
 		Number type.
@@ -92,8 +90,7 @@ public:
 	*/
 	typedef Reconstruction_triangulation_2<Kernel> Triangulation;
 
-	/// @}
-
+	 /// \cond SKIP_IN_MANUAL
 	typedef typename Triangulation::Vertex Vertex;
 	typedef typename Triangulation::Vertex_handle Vertex_handle;
 	typedef typename Triangulation::Vertex_iterator Vertex_iterator;
@@ -137,8 +134,6 @@ public:
 
 	typedef typename Triangulation::MultiIndex MultiIndex;
 
-
-
 protected:
 	Triangulation m_dt;
 	MultiIndex m_mindex;
@@ -162,6 +157,7 @@ protected:
 	PointPMap point_pmap;
 	MassPMap  mass_pmap;
 
+	  /// \endcond
 
 	// Public methods
 	public:
@@ -179,9 +175,9 @@ protected:
 	     	 	 	 	 	 pair in a collection.
    	   	 \param beyond_itr An InputIterator pointing beyond the last point-mass
 	     	 	 	 	 	 pair in a collection.
-	     \param in_point_pmap A PropertyMap used to access the input points
+	     \param in_point_pmap A `ReadablePropertyMap` used to access the input points
 
-	     \param in_mass_pmap A PropertyMap used to access the input points' mass.
+	     \param in_mass_pmap A `ReadablePropertyMap` used to access the input points' mass.
 	*/
 	Reconstruction_simplification_2(InputIterator start_itr,
 									InputIterator beyond_itr,
@@ -198,7 +194,11 @@ protected:
 		initialize_parameters();
 	}
 
-	/// \cond SKIP_IN_MANUAL
+	  /// @}
+
+
+	 /// \cond SKIP_IN_MANUAL
+
 	Reconstruction_simplification_2() {
 		initialize_parameters();
 	}
@@ -207,9 +207,6 @@ protected:
 	~Reconstruction_simplification_2() {
 		clear();
 	}
-
-	  /// @}
-
 
 	void initialize_parameters() {
 
@@ -246,6 +243,8 @@ protected:
 		initialize();
 
 	}
+	 /// \endcond
+
 
 	/*!
 		First function to be called after instantiating a new
@@ -292,8 +291,9 @@ protected:
 	}
 
 
-	/// \cond SKIP_IN_MANUAL
-    void normalize_points()
+	 /// \cond SKIP_IN_MANUAL
+
+	void normalize_points()
     {
         //noise(1e-5); TODO IV, killed that noise
         compute_bbox(m_bbox_x, m_bbox_y, m_bbox_size);
@@ -311,8 +311,8 @@ protected:
         m_bbox_size = 1.0;
     }
 
-    /// \cond SKIP_IN_MANUAL
-    void compute_bbox(double &x, double &y, double &scale)
+
+	 void compute_bbox(double &x, double &y, double &scale)
     {
 
         FT x_min, x_max, y_min, y_max;
@@ -353,48 +353,59 @@ protected:
 		m_verbose = verbose;
 	}
 
+
 	void set_alpha(const double alpha) {
 		m_alpha = alpha;
 	}
+
 
 	void set_use_flip(const bool use_flip) {
 		m_use_flip = use_flip;
 	}
 
+
 	void set_norm_tol(const double norm_tol) {
 		m_norm_tol = norm_tol;
 	}
+
 
 	double get_norm_tol() const {
 		return m_norm_tol;
 	}
 
+
 	void set_tang_tol(const double tang_tol) {
 		m_tang_tol = tang_tol;
 	}
+
 
 	double get_tang_tol() const {
 		return m_tang_tol;
 	}
 
+
 	void set_relocation(const unsigned relocation) {
 		m_relocation = relocation;
 	}
 
+
 	unsigned get_relocation() const {
 		return m_relocation;
 	}
+
 
 	void set_ghost(const double g) {
 		m_ghost = g;
 		m_dt.ghost_factor() = m_ghost;
 	}
 
+
 	double get_ghost() {
 		return m_ghost;
 	}
 
 	// INIT //
+
 
 	void insert_loose_bbox(const double x, const double y, const double size) {
 		double timer = clock();
@@ -472,58 +483,6 @@ protected:
 		update_cost(hull.begin(), hull.end());
 	}
 
-	// RECONSTRUCTION //
-
-	 /*!
-	    This function must be called after initialization().
-	    It computes a shape consisting of nv vertices, reconstructing the input
-	    points.
-
-	    \param nv The number of vertices which will be present in the output.
-	  */
-	void reconstruct_until(const unsigned nv) {
-		double timer = clock();
-		std::cerr << yellow << "reconstruct until " << white << nv << " V";
-
-		unsigned N = nv + 4;
-		unsigned performed = 0;
-		while (m_dt.number_of_vertices() > N) {
-			bool ok = decimate();
-			if (!ok)
-				break;
-			performed++;
-		}
-
-		std::cerr << yellow << " done" << white << " (" << performed
-				<< " iters, " << m_dt.number_of_vertices() - 4 << " V "
-				<< yellow << time_duration(timer) << white << " s)"
-				<< std::endl;
-	}
-
-	 /*!
-		This function must be called after initialization().
-		It computes a shape, reconstructing the input, by performing steps many
-		edge contractions on the output simplex.
-
-		\param steps The number of edge contractions performed by the algorithm.
-	  */
-	void reconstruct(const unsigned steps) {
-		double timer = clock();
-		std::cerr << yellow << "reconstruct " << steps << white;
-
-		unsigned performed = 0;
-		for (unsigned i = 0; i < steps; ++i) {
-			bool ok = decimate();
-			if (!ok)
-				break;
-			performed++;
-		}
-
-		std::cerr << yellow << " done" << white << " (" << performed << "/"
-				<< steps << " iters, " << m_dt.number_of_vertices() - 4
-				<< " V, " << yellow << time_duration(timer) << white << " s)"
-				<< std::endl;
-	}
 
 	bool decimate() {
 		bool ok;
@@ -1370,6 +1329,62 @@ protected:
 	    std::cerr << "# solid: " << nb_solid << std::endl;
 	    std::cerr << "# ghost: " << nb_ghost << std::endl;
 	}
+
+	/// \endcond
+
+	// RECONSTRUCTION //
+
+		 /*!
+		    This function must be called after initialization().
+		    It computes a shape consisting of nv vertices, reconstructing the input
+		    points.
+
+		    \param nv The number of vertices which will be present in the output.
+		  */
+		void reconstruct_until(const unsigned nv) {
+			double timer = clock();
+			std::cerr << yellow << "reconstruct until " << white << nv << " V";
+
+			unsigned N = nv + 4;
+			unsigned performed = 0;
+			while (m_dt.number_of_vertices() > N) {
+				bool ok = decimate();
+				if (!ok)
+					break;
+				performed++;
+			}
+
+			std::cerr << yellow << " done" << white << " (" << performed
+					<< " iters, " << m_dt.number_of_vertices() - 4 << " V "
+					<< yellow << time_duration(timer) << white << " s)"
+					<< std::endl;
+		}
+
+		 /*!
+			This function must be called after initialization().
+			It computes a shape, reconstructing the input, by performing steps many
+			edge contractions on the output simplex.
+
+			\param steps The number of edge contractions performed by the algorithm.
+		  */
+		void reconstruct(const unsigned steps) {
+			double timer = clock();
+			std::cerr << yellow << "reconstruct " << steps << white;
+
+			unsigned performed = 0;
+			for (unsigned i = 0; i < steps; ++i) {
+				bool ok = decimate();
+				if (!ok)
+					break;
+				performed++;
+			}
+
+			std::cerr << yellow << " done" << white << " (" << performed << "/"
+					<< steps << " iters, " << m_dt.number_of_vertices() - 4
+					<< " V, " << yellow << time_duration(timer) << white << " s)"
+					<< std::endl;
+		}
+
 
 };
 }

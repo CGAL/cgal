@@ -44,10 +44,10 @@ namespace CGAL {
 \ingroup PkgReconstructionSimplification2Models
 
 
-\brief The class `Off_output` is a model for the Output concept.
+\brief The class `Off_output` is a model for the `OutputModule` concept.
 
 \details It allows accessing the isolated vertices and the edges
-of the reconstructed shape via an ostream object.
+of the reconstructed shape via an std::ostream object.
 
 
 \tparam Kernel is the geometric kernel, used for the reconstruction and
@@ -86,7 +86,16 @@ public:
 	}
 
 
+	/*!
+	Writes the edges and vertices of the output simplex into an `std::ostream`
+	in the OFF format.
+
+	\param os The `std::ostream` where the OFF data will be written to.
+	*/
 	void get_os_output(std::ostream& os) {
+		os << "[%d][%d][0] OFF " << list_output.vertex_count()  <<
+				list_output.edge_count()  << std::endl;
+
 		for (Output_Edge_Iterator it = list_output.edges_start();
 				it != list_output.edges_beyond(); it++) {
 

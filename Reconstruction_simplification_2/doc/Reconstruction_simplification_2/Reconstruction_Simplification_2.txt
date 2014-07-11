@@ -81,7 +81,20 @@ Reconstruction_simplification_2<K, InputIterator, PointPMap, MassPMap>
 
     rs2.reconstruct(100);
 
-    rs2.extract_solid_eges();
+    CGAL::List_output<K> list_output;
+
+    rs2.extract_solid_elements(list_output);
+
+    for (Output_Vertex_Iterator it = list_output.vertices_start();
+	it != list_output.vertices_beyond(); it++) {
+  		...
+   }
+
+   for (Output_Edge_Iterator it = list_output.edges_start();
+	it != list_output.edges_beyond(); it++) {
+		...
+    }
+
 
 \endcode
 

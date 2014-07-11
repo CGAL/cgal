@@ -37,6 +37,18 @@
 
 namespace CGAL {
 
+/*!
+\ingroup PkgReconstructionSimplification2Models
+
+
+\brief The class `Tds_output` is a model for the `OutputModule` concept.
+
+\details It provides access to the whole `Tds_2` of the reconstruction simplex.
+
+
+\tparam Kernel is the geometric kernel, used for the reconstruction and
+					simplification task.
+ */
 template<class Kernel>
 class Tds_output {
 public:

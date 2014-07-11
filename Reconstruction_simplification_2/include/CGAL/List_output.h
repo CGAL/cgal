@@ -42,7 +42,7 @@ namespace CGAL {
 \ingroup PkgReconstructionSimplification2Models
 
 
-\brief The class `List_output` is a model for the Output concept.
+\brief The class `List_output` is a model for the `OutputModule` concept.
 
 \details It returns Output-iterators which allow iterating over both the
 isolated vertices and the edges of the reconstructed shape
@@ -149,6 +149,14 @@ public:
 	  void clear() {
 		  vertices.clear();
 		  edges.clear();
+	  }
+
+	  int vertex_count() {
+		  return vertices.size();
+	  }
+
+	  int edge_count() {
+		  return edges.size();
 	  }
 
 	  void store_marked_vertices(Tds_2 dt) {

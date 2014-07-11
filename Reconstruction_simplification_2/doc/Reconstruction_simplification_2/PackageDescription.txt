@@ -30,17 +30,17 @@
 \cgalClassifedRefPages
 
 ## Concepts ##
-- `OutputModel`
-- `PointPMap`
-- `MassPMap`
+- `OutputModule`
 
 
 ## Models ##
 - `CGAL::List_output<Kernel>`
+- `CGAL::Off_output<Kernel>`
+- `CGAL::Tds_output<Kernel>`
 
 
 ## Classes ##
-- `CGAL::Reconstruction_simplification_2<Kernel, InputIterator, PointPMap, MassPMap>`
+- `CGAL::Reconstruction_simplification_2<class Kernel, class InputIterator, class PointPMap, class MassPMap>`
 
 
 */

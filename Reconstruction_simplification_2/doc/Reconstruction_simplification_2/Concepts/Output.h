@@ -3,22 +3,33 @@
 \ingroup PkgReconstructionSimplification2Concepts
 \cgalConcept
 
-The OutputModel 
+The OutputModule provides a Concept which allows the user to access the simplified 
+shape in a versatile way. 
+
+
+
 \cgalHasModel `CGAL::List_output<Tr>` 
+\cgalHasModel `CGAL::Off_output<Tr>` 
+\cgalHasModel `CGAL::Tds_output<Tr>` 
 
 
 */
 
-class OutputModel {
+class OutputModule {
 public:
 
 /// \name Types 
 /// @{
 
 
+/*!
+Output_Iterator for accessing the isolated vertices.
 */ 
 typedef unspecified_type Output_Vertex_Iterator; 
 
+/*!
+Output_Iterator for accessing the reconstructed edges.
+*/ 
 typedef unspecified_type Output_Edge_Iterator; 
 
 /// @} 
@@ -47,7 +58,6 @@ Returns an Output_Edge_Iterator pointing beyond the last edge.
 Output_Edge_Iterator edges_beyond();
 
 
-/// @}
 
-}; /* end OutputModel */
+}; /* end OutputModule */
 
