@@ -27,11 +27,7 @@ if(USE_QT5)
 	
 	find_package(Qt5)
 
-	  FIND_PROGRAM(QT_QCOLLECTIONGENERATOR_EXECUTABLE
-   		NAMES qcollectiongenerator-qt5 qcollectiongenerator
-    		PATHS ${QT_BINARY_DIR}
-    		NO_DEFAULT_PATH
-   	 )
+        set(CMAKE_AUTOMOC OFF)
 
 else (USE_QT5)
 

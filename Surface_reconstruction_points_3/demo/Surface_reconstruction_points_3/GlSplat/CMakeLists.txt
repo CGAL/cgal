@@ -37,7 +37,7 @@ include(QtChoice)
 
 find_package(GLEW REQUIRED)
 
-include_directories( ${QT_QTOPENGL_INCLUDE_DIR} ${QT_QTXML_INCLUDE_DIR} ${GLEW_INCLUDE_DIR})
+include_directories( ${QT_LIBRARIES} ${GLEW_INCLUDE_DIR})
 
 set(srcs Shader.cpp GlSplat.cpp)
 
@@ -45,13 +45,13 @@ qt_automoc( ${srcs})
 qt_add_resources(srcs glsplat.qrc)
 
 add_library(GlSplat SHARED ${srcs})
-target_link_libraries(GlSplat ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY} ${QT_QTOPENGL_LIBRARY} ${GLEW_LIBRARIES})
+target_link_libraries(GlSplat ${QT_LIBRARIES} ${GLEW_LIBRARIES})
 
 find_package(QGLViewer)
 if(QGLVIEWER_FOUND)
   include_directories( ${QGLViewer_INCLUDES})
   add_executable(demo demo.cpp)
-  target_link_libraries(demo ${QT_QTXML_LIBRARY} ${QGLViewer_LIBRARIES} GlSplat)
+  target_link_libraries(demo ${QT_LIBRARIES} ${QGLViewer_LIBRARIES} GlSplat)
 else()
   message("QGLViewer not found, demo won't be built")
 endif()

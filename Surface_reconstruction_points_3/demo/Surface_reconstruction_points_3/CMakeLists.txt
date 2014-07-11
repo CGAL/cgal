@@ -70,8 +70,10 @@ find_package(LAPACK)
 find_package(Eigen3 3.1.0)
 
 # Find Glew (optional), for splatting
+if(QT4)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/GlSplat/cmake)
 find_package(GLEW)
+endif()
 
 if((QT4 OR QT5) AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
@@ -201,7 +203,7 @@ if((QT4 OR QT5) AND OPENGL_FOUND AND QGLVIEWER_FOUND)
     add_library(gl_splat SHARED
       GlSplat/GlSplat.cpp GlSplat/Shader.cpp ${gl_splat_rc})
     target_link_libraries(gl_splat ${QT_LIBRARIES} ${GLEW_LIBRARIES})
-  endif(GLEW_FOUND)
+  endif()
 
   target_link_libraries(point_set PS_demo_scene_item)
 
@@ -211,7 +213,7 @@ if((QT4 OR QT5) AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
   if(GLEW_FOUND)
     target_link_libraries( point_set gl_splat ${GLEW_LIBRARIES} )
-  endif(GLEW_FOUND)
+  endif()
 
   add_definitions(-DQT_STATICPLUGIN)
 
@@ -263,7 +265,7 @@ endif(QT5)
 
   if(GLEW_FOUND)
     target_link_libraries( Point_set_demo gl_splat ${GLEW_LIBRARIES} )
-  endif(GLEW_FOUND)
+  endif()
 
   add_to_cached_list( CGAL_EXECUTABLE_TARGETS Point_set_demo )
 

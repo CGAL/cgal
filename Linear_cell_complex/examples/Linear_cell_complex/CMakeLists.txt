@@ -12,12 +12,17 @@ endif()
 
 # If you want to visualize a linear cell complex, there are 2 viewers
 # based on qt and vtk. Just uncomment the corresponding lines
+
+
 # find_package(CGAL QUIET COMPONENTS Core Qt4)
+#OR
+ find_package(CGAL QUIET COMPONENTS Core Qt5)
+
 # include("CMakeLCCViewerQt.inc")
 # include("CMakeLCCViewerVtk.inc")
 
 # If you don't want to visualize, use the following line (otherwise comment it)
-find_package(CGAL QUIET COMPONENTS Core)
+#find_package(CGAL QUIET COMPONENTS Core)
 
 # For Gprof.
 # ADD_DEFINITIONS("-pg")
