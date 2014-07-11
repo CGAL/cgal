@@ -427,6 +427,9 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
   polyhedron_demo_plugin(selection_plugin Polyhedron_demo_selection_plugin ${selectionUI_FILES})
   target_link_libraries(selection_plugin scene_polyhedron_selection_item scene_points_with_normal_item)
+  
+  polyhedron_demo_plugin(shortest_path_plugin Polyhedron_demo_shortest_path_plugin)
+  target_link_libraries(shortest_path_plugin scene_polyhedron_item scene_polylines_item scene_polyhedron_selection_item scene_basic_objects)
 #
 # Exporting
 #

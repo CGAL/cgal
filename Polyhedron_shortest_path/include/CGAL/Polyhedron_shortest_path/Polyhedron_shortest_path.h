@@ -1406,7 +1406,7 @@ public:
   
   \param traits An optional instance of the traits class to use.
   */
-  Polyhedron_shortest_path(Polyhedron& polyhedron, VertexIndexMap& vertexIndexMap, HalfedgeIndexMap& halfedgeIndexMap, FaceIndexMap& faceIndexMap, VertexPointMap& vertexPointMap, const Traits& traits = Traits())
+  Polyhedron_shortest_path(Polyhedron& polyhedron, VertexIndexMap vertexIndexMap, HalfedgeIndexMap halfedgeIndexMap, FaceIndexMap faceIndexMap, VertexPointMap vertexPointMap, const Traits& traits = Traits())
     : m_traits(traits)
     , m_polyhedron(polyhedron)
     , m_vertexIndexMap(vertexIndexMap)
@@ -1783,7 +1783,28 @@ public:
     const FT one(1.0);
     const FT zero(0.0);
     
-    return std::make_pair(locationFace, Barycentric_coordinate(edgeIndex == 0 ? one : zero, edgeIndex == 1 ? one : zero, edgeIndex == 2 ? one : zero));
+    return Face_location_pair(locationFace, Barycentric_coordinate(edgeIndex == 0 ? one : zero, edgeIndex == 1 ? one : zero, edgeIndex == 2 ? one : zero));
+  }
+  
+  /*!
+  \brief Returns an edge location as a face location pair
+  
+  \param he halfedge of the polyhedron
+  \param alpha parametric distance along he
+  */
+  Face_location_pair get_edge_as_face_location(halfedge_descriptor he, FT alpha) const
+  {
+    face_descriptor locationFace = CGAL::face(he, m_polyhedron);
+    size_t edgeIndex = CGAL::internal::edge_index(CGAL::next(he, m_polyhedron), m_polyhedron);
+    
+    const FT oneMinusAlpha(FT(1.0) - alpha);
+    
+    FT coords[3];
+    
+    coords[edgeIndex] = oneMinusAlpha;
+    coords[(edgeIndex + 1) % 3] = alpha;
+    
+    return Face_location_pair(locationFace, Barycentric_coordinate(coords[0], coords[1], coords[2]));
   }
   
   /*!

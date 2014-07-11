@@ -27,6 +27,8 @@
 #include <boost/graph/dijkstra_shortest_paths.hpp>
 #include <boost/property_map/property_map.hpp>
 
+#include <boost/algorithm/string.hpp>
+
 #include <CGAL/Random.h>
 
 #include <CGAL/test_util.h>
@@ -37,6 +39,30 @@
 #include <cstdlib>
 #include <cmath>
 
+typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
+typedef CGAL::Polyhedron_3<Kernel, CGAL::Polyhedron_items_with_id_3> Polyhedron_3;
+typedef CGAL::Polyhedron_shortest_path_default_traits<Kernel, Polyhedron_3> Traits;
+typedef Traits::Barycentric_coordinate Barycentric_coordinate;
+typedef Traits::FT FT;
+typedef Traits::Point_3 Point_3;
+typedef Traits::Point_2 Point_2;
+typedef Traits::Triangle_3 Triangle_3;
+typedef Traits::Triangle_2 Triangle_2;
+typedef Traits::Segment_2 Segment_2;
+typedef boost::graph_traits<Polyhedron_3> GraphTraits;
+typedef GraphTraits::vertex_descriptor vertex_descriptor;
+typedef GraphTraits::vertex_iterator vertex_iterator;
+typedef GraphTraits::halfedge_descriptor halfedge_descriptor;
+typedef GraphTraits::halfedge_iterator halfedge_iterator;
+typedef GraphTraits::face_descriptor face_descriptor;
+typedef GraphTraits::face_iterator face_iterator;
+typedef CGAL::Polyhedron_shortest_path<Traits> Polyhedron_shortest_path;
+typedef boost::property_map<Polyhedron_3, CGAL::vertex_point_t>::type VPM;
+typedef boost::property_map<typename Traits::Polyhedron, boost::vertex_external_index_t>::type VIM;
+typedef boost::property_map<typename Traits::Polyhedron, boost::edge_external_index_t>::type EIM;
+typedef boost::property_map<typename Traits::Polyhedron, CGAL::halfedge_external_index_t>::type HIM;
+typedef boost::property_map<typename Traits::Polyhedron, CGAL::face_external_index_t>::type FIM;
+
 size_t randomSeed = 2681972;
 size_t numIterations;
 std::string meshName;
@@ -44,6 +70,41 @@ bool debugMode = false;
 
 CGAL::Random* randomizer = NULL;
 size_t numVertices = 0;
+
+Polyhedron_shortest_path::Face_location_pair next_location(Polyhedron_shortest_path& shortestPath, Polyhedron_3& polyhedron, const std::vector<vertex_descriptor>& vertices)
+{
+  std::string type;
+    
+  std::cin >> type;
+  
+  boost::algorithm::to_lower(type);
+  
+  if (type == "v")
+  {
+    size_t x;
+    std::cin >> x;
+    
+    return shortestPath.get_vertex_as_face_location(vertices[x]);
+  }
+  else if (type == "E")
+  {
+    size_t x, y;
+    double alpha;
+    std::cin >> x >> y >> alpha;
+    std::pair<halfedge_descriptor, bool> he = CGAL::halfedge(vertices[x], vertices[y], polyhedron);
+    return shortestPath.get_edge_as_face_location(he.first, FT(alpha));
+  }
+  else if (type == "F")
+  {
+    size_t x, y;
+    double alpha0, alpha1, alpha2;
+    std::cin >> x >> y >> alpha0 >> alpha1 >> alpha2;
+    std::pair<halfedge_descriptor, bool> he = CGAL::halfedge(vertices[x], vertices[y], polyhedron);
+    return Polyhedron_shortest_path::Face_location_pair(CGAL::face(he.first, polyhedron), Barycentric_coordinate(FT(alpha0), FT(alpha1), FT(alpha2)));
+  }
+  
+  return Polyhedron_shortest_path::Face_location_pair(GraphTraits::null_face(), Barycentric_coordinate());
+}
 
 size_t next_vertex()
 {
@@ -61,30 +122,6 @@ size_t next_vertex()
 
 void test_mesh_function()
 {
-  typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
-  typedef CGAL::Polyhedron_3<Kernel, CGAL::Polyhedron_items_with_id_3> Polyhedron_3;
-  typedef CGAL::Polyhedron_shortest_path_default_traits<Kernel, Polyhedron_3> Traits;
-  typedef Traits::Barycentric_coordinate Barycentric_coordinate;
-  typedef Traits::FT FT;
-  typedef Traits::Point_3 Point_3;
-  typedef Traits::Point_2 Point_2;
-  typedef Traits::Triangle_3 Triangle_3;
-  typedef Traits::Triangle_2 Triangle_2;
-  typedef Traits::Segment_2 Segment_2;
-  typedef boost::graph_traits<Polyhedron_3> GraphTraits;
-  typedef GraphTraits::vertex_descriptor vertex_descriptor;
-  typedef GraphTraits::vertex_iterator vertex_iterator;
-  typedef GraphTraits::halfedge_descriptor halfedge_descriptor;
-  typedef GraphTraits::halfedge_iterator halfedge_iterator;
-  typedef GraphTraits::face_descriptor face_descriptor;
-  typedef GraphTraits::face_iterator face_iterator;
-  typedef CGAL::Polyhedron_shortest_path<Traits> Polyhedron_shortest_path;
-  typedef boost::property_map<Polyhedron_3, CGAL::vertex_point_t>::type VPM;
-  typedef boost::property_map<typename Traits::Polyhedron, boost::vertex_external_index_t>::type VIM;
-  typedef boost::property_map<typename Traits::Polyhedron, boost::edge_external_index_t>::type EIM;
-  typedef boost::property_map<typename Traits::Polyhedron, CGAL::halfedge_external_index_t>::type HIM;
-  typedef boost::property_map<typename Traits::Polyhedron, CGAL::face_external_index_t>::type FIM;
-  
   Traits traits;
   
   Polyhedron_3 P;
@@ -142,6 +179,7 @@ void test_mesh_function()
     vertex_descriptor startVertex;
     vertex_descriptor endVertex;
     
+    //TODO: use the alt interface to allow starting from edges and face interiors, hopefully to help debug the issues
     startVertexIndex = next_vertex();
     endVertexIndex = next_vertex();
     
@@ -150,6 +188,9 @@ void test_mesh_function()
     
     startVertex = vertices[startVertexIndex];
     endVertex = vertices[endVertexIndex];
+    
+    std::cout << "Vertex face location : " << startToEndShortestPaths.get_vertex_as_face_location(startVertex).second << std::endl;
+    std::cout << "Vertex face location : " << endToStartShortestPaths.get_vertex_as_face_location(startVertex).second << std::endl;
     
     startToEndShortestPaths.compute_shortest_paths(startVertex);
 
@@ -177,8 +218,7 @@ void test_mesh_function()
     {
       std::cout << "STE/ETS: sizeerror!" << std::endl;
     }
-    
-    
+
     std::string names[2] = { "STE", "ETS" };
     Polyhedron_shortest_path* pathStructures[2] = { &startToEndShortestPaths, &endToStartShortestPaths };
     CGAL::test::Edge_sequence_collector<Traits>* collectors[2] = { &startToEndCollector, &endToStartCollector };
