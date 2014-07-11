@@ -989,32 +989,20 @@ void test_interoperable_at(){
     typedef int Coefficient_type;
     typedef CGAL::Polynomial<Coefficient_type>    Poly_1;
     typedef CGAL::Polynomial<Poly_1> Poly_2;
-    typedef CGAL::Polynomial<Poly_2> Poly_3;
-    typedef CGAL::Polynomial<Poly_3> Poly_4;
     test_interoperable_poly<Poly_1>();
     test_interoperable_poly<Poly_2>();
-    // test_interoperable_poly<Poly_3>();
-    // test_interoperable_poly<Poly_4>();
   }{
     typedef Integer Coefficient_type;
     typedef CGAL::Polynomial<Coefficient_type>    Poly_1;
     typedef CGAL::Polynomial<Poly_1> Poly_2;
-    typedef CGAL::Polynomial<Poly_2> Poly_3;
-    typedef CGAL::Polynomial<Poly_3> Poly_4;
     test_interoperable_poly<Poly_1>();
     test_interoperable_poly<Poly_2>();
-    // test_interoperable_poly<Poly_3>();
-    // test_interoperable_poly<Poly_4>();
   }{
     typedef EXT Coefficient_type;
     typedef CGAL::Polynomial<Coefficient_type>    Poly_1;
     typedef CGAL::Polynomial<Poly_1> Poly_2;
-    typedef CGAL::Polynomial<Poly_2> Poly_3;
-    typedef CGAL::Polynomial<Poly_3> Poly_4;
     test_interoperable_poly<Poly_1>();
     test_interoperable_poly<Poly_2>();
-    // test_interoperable_poly<Poly_3>();
-    // test_interoperable_poly<Poly_4>();
   }
 }
 
