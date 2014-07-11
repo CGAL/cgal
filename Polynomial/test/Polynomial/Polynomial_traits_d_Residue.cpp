@@ -1,7 +1,6 @@
 #include <iostream>
 #include <cassert>
 
-#include <CGAL/basic.h>
 #include <CGAL/Arithmetic_kernel.h>
 
 #ifdef CGAL_HAS_DEFAULT_ARITHMETIC_KERNEL
@@ -17,7 +16,6 @@ int main()
   // Set wrong rounding mode to test modular arithmetic 
   CGAL::Protect_FPU_rounding<true> pfr(CGAL_FE_UPWARD);
   
-  typedef CGAL::Arithmetic_kernel AK; 
   
   {
     //  Enforce IEEE double precision and to nearest before 
