@@ -71,7 +71,8 @@ bool Io_off_plugin::canSave(const Scene_item* item)
     qobject_cast<const Scene_polygon_soup*>(item);
 }
 
-bool Io_off_plugin::save(const Scene_item* item, QFileInfo fileinfo, QString selectedFilter)
+bool Io_off_plugin::save(const Scene_item* item, QFileInfo fileinfo,
+                         QString /* `selecterFilter` is not used: only OFF */)
 {
   // This plugin supports polyhedrons and polygon soups
   const Scene_polyhedron_item* poly_item = 

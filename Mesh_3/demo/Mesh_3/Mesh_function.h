@@ -39,6 +39,7 @@
 #include "C3t3_type.h"
 #include "Meshing_thread.h"
 #include <CGAL/make_mesh_3.h> // for C3t3_initializer
+#include <CGAL/use.h>
 
 struct Mesh_parameters
 {
@@ -246,6 +247,9 @@ status(double time_period) const
 {
   QString result;
 
+  CGAL_USE(time_period); // to avoid a warning when the macro
+                         // CGAL_MESH_3_MESHER_STATUS_ACTIVATED is not
+                         // defined
 #ifdef CGAL_MESH_3_MESHER_STATUS_ACTIVATED
   // If mesher_ is not yet created, it means that either launch() has not
   // been called or that initial points have not been founded

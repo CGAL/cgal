@@ -710,7 +710,7 @@ protected:
   /// Launch sliver exudation
   /// The content of this method is taken from CGAL::exude_mesh_3()
   virtual CGAL::Mesh_optimization_return_code  
-  operator()(C3t3& c3t3, const Domain& domain)
+  operator()(C3t3& c3t3, const Domain&)
   {
     if ( NULL != exude_ ) { return CGAL::MESH_OPTIMIZATION_UNKNOWN_ERROR; }
     
