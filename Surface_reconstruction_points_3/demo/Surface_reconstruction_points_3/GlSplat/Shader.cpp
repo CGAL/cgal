@@ -30,7 +30,7 @@ void Shader::define(const char* name, const char* value)
 //--------------------------------------------------------------------------------
 bool Shader::loadSources(const char* vsrc, const char* fsrc)
 {
-    bool allIsOk = false;
+    bool allIsOk = true;
 
     mProgramID = glCreateProgram();
 
