@@ -121,6 +121,13 @@ public:
 	{
 	}
 
+  // copy constructor duplicates vertices and cells
+  Periodic_3_Regular_triangulation_3 (const Periodic_3_Regular_triangulation_3& tr)
+  : Base(tr)
+  {
+    CGAL_triangulation_expensive_postcondition( is_valid() );
+  }
+
 protected:
 	bool less_power_distance (const Bare_point &p, const Weighted_point &q, const Weighted_point &r)  const
 	{
@@ -154,6 +161,166 @@ protected:
 	{
 		return geom_traits().construct_weighted_circumcenter_3_object()(p,q,r);
 	}
+
+//protected:
+public:
+
+  Oriented_side
+  power_test(const Weighted_point &p, const Weighted_point &q) const
+  {
+      CGAL_triangulation_precondition(this->equal(p, q));
+      return geom_traits().power_test_3_object()(p, q);
+  }
+
+  Oriented_side
+  power_test(const Weighted_point &p, const Weighted_point &q,
+       const Weighted_point &r, const Weighted_point &s,
+       const Weighted_point &t, const Offset &o_p,
+       const Offset &o_q, const Offset &o_r, const Offset &o_s,
+       const Offset &o_t) const
+  {
+      return geom_traits().power_test_3_object()(p, q, r, s, t, o_p, o_q, o_r, o_s, o_t);
+  }
+
+  Oriented_side side_of_oriented_power_sphere(const Weighted_point &p, const Weighted_point &q,
+      const Weighted_point &r, const Weighted_point &s, const Weighted_point &t, const Offset &o_p,
+      const Offset &o_q, const Offset &o_r, const Offset &o_s,
+      const Offset &o_t) const
+  {
+    return power_test(p,q,r,s,t,o_p,o_q,o_r,o_s,o_t);
+  }
+
+  Bounded_side _side_of_power_sphere(const Cell_handle& c, const Weighted_point& p,
+      const Offset & offset = Offset(), bool perturb = false) const;
+
+protected:
+  // Protected, because inheritors(e.g. periodic triangulation for meshing)
+  // of the class Periodic_3_Delaunay_triangulation_3 use this class
+  class Conflict_tester;
+};
+
+template < class Gt, class Tds >
+Bounded_side Periodic_3_Regular_triangulation_3<Gt,Tds>::
+_side_of_power_sphere(const Cell_handle &c, const Weighted_point &q,
+    const Offset &offset, bool perturb ) const
+{
+  Weighted_point p0 = c->vertex(0)->point(),
+        p1 = c->vertex(1)->point(),
+        p2 = c->vertex(2)->point(),
+        p3 = c->vertex(3)->point();
+  Offset o0 = this->get_offset(c,0),
+        o1 = this->get_offset(c,1),
+        o2 = this->get_offset(c,2),
+        o3 = this->get_offset(c,3),
+        oq = offset;
+
+  Oriented_side os = ON_NEGATIVE_SIDE;
+  os= side_of_oriented_power_sphere(p0, p1, p2, p3, q, o0, o1, o2, o3, oq);
+
+  if (os != ON_ORIENTED_BOUNDARY || !perturb)
+    return (Bounded_side) os;
+
+  //We are now in a degenerate case => we do a symbolic perturbation.
+  // We sort the points lexicographically.
+  Periodic_point pts[5] = {std::make_pair(p0,o0), std::make_pair(p1,o1),
+         std::make_pair(p2,o2), std::make_pair(p3,o3),
+         std::make_pair(q,oq)};
+  const Periodic_point *points[5] ={&pts[0],&pts[1],&pts[2],&pts[3],&pts[4]};
+
+  std::sort(points, points+5,
+      typename Base::template Perturbation_order<
+    typename Gt::Compare_xyz_3 >(
+    geom_traits().compare_xyz_3_object() ) );
+  // We successively look whether the leading monomial, then 2nd monomial
+  // of the determinant has non null coefficient.
+  // 2 iterations are enough (cf paper)
+  for (int i=4; i>2; --i) {
+    if (points[i] == &pts[4]) {
+      CGAL_triangulation_assertion(orientation(p0, p1, p2, p3, o0, o1, o2, o3)
+          == POSITIVE);
+      // since p0 p1 p2 p3 are non coplanar and positively oriented
+      return ON_UNBOUNDED_SIDE;
+    }
+    Orientation o;
+    if (points[i] == &pts[3] &&
+        (o = orientation(p0, p1, p2, q, o0, o1, o2, oq)) != COPLANAR ) {
+      return (Bounded_side) o;
+    }
+    if (points[i] == &pts[2] &&
+        (o = orientation(p0, p1, q, p3, o0, o1, oq, o3)) != COPLANAR ) {
+      return (Bounded_side) o;
+    }
+    if (points[i] == &pts[1] &&
+        (o = orientation(p0, q, p2, p3, o0, oq, o2, o3)) != COPLANAR ) {
+      return (Bounded_side) o;
+    }
+    if (points[i] == &pts[0] &&
+        (o = orientation(q, p1, p2 ,p3, oq, o1, o2, o3)) != COPLANAR ) {
+      return (Bounded_side) o;
+    }
+  }
+
+  CGAL_triangulation_assertion(false);
+  return ON_UNBOUNDED_SIDE;
+}
+
+template < class GT, class Tds >
+class Periodic_3_Regular_triangulation_3<GT,Tds>::Conflict_tester
+{
+  // stores a pointer to the triangulation,
+  // a point, and an offset
+  Weighted_point p;
+  const Self *t;
+  // stores the offset of a point in 27-cover
+  mutable Offset o;
+
+public:
+  /// Constructor
+  Conflict_tester(const Self *_t) : t(_t), p(Weighted_point()) {}
+  Conflict_tester(const Weighted_point &pt, const Self *_t) : p(pt), t(_t){ }
+
+  /** The functor
+    *
+    * gives true if the circumcircle of c contains p
+    */
+  bool operator()(const Cell_handle c, const Offset &off) const {
+    return (t->_side_of_power_sphere(c, p, t->combine_offsets(o, off), true)
+        == ON_BOUNDED_SIDE);
+  }
+
+  bool operator()(const Cell_handle c, const Weighted_point& pt,
+      const Offset &off) const {
+    return (t->_side_of_power_sphere(c, pt, o + off, true) == ON_BOUNDED_SIDE);
+  }
+
+  int compare_weight(const Weighted_point& p, const Weighted_point& q) const
+  {
+    return t->power_test(p, q);
+  }
+
+  bool test_initial_cell(Cell_handle c, const Offset &off) const
+  {
+    if (!(operator()(c, off)))
+      CGAL_triangulation_assertion(false);
+    return true;
+  }
+
+  void set_point(const Weighted_point &_p) {
+    p = _p;
+  }
+
+  void set_offset(const Offset &off) const {
+    o = off;
+  }
+
+  const Offset &get_offset() const {
+    return o;
+  }
+
+  const Weighted_point &point() const {
+    return p;
+  }
+
 };
 }// namespace CGAL
 
