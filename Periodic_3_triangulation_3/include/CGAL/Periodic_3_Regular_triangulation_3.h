@@ -197,6 +197,8 @@ protected:
   // Protected, because inheritors(e.g. periodic triangulation for meshing)
   // of the class Periodic_3_Delaunay_triangulation_3 use this class
   class Conflict_tester;
+private:
+  class Point_hider;
 };
 
 template < class Gt, class Tds >
@@ -319,6 +321,92 @@ public:
 
   const Weighted_point &point() const {
     return p;
+  }
+
+};
+
+template < class GT, class Tds>
+class Periodic_3_Regular_triangulation_3<GT,Tds>::Point_hider
+{
+  Self *t;
+  mutable std::vector<Vertex_handle> vertices;
+  mutable std::vector<Weighted_point> hidden_points;
+
+public:
+  Point_hider(Self *tr) : t(tr) {}
+
+  template <class InputIterator>
+  inline void set_vertices(InputIterator start, InputIterator end) const
+  {
+    while (start != end) {
+      std::copy((*start)->hidden_points_begin(),
+          (*start)->hidden_points_end(),
+          std::back_inserter(hidden_points));
+
+      for (int i=0; i<=4; i++) { // 3 ou 4?
+        Vertex_handle v = (*start)->vertex(i);
+        if (v->cell() != Cell_handle()) {
+          vertices.push_back(v);
+          v->set_cell(Cell_handle());
+        }
+      }
+      start ++;
+    }
+  }
+
+  inline void reinsert_vertices(Vertex_handle v)
+  {
+    Cell_handle hc = v->cell();
+    for (typename std::vector<Vertex_handle>::iterator
+        vi = vertices.begin(); vi != vertices.end(); ++vi) {
+      if ((*vi)->cell() != Cell_handle()) continue;
+      hc = t->locate ((*vi)->point(), hc);
+      hide_point(hc, (*vi)->point());
+      t->tds().delete_vertex(*vi);
+    }
+    vertices.clear();
+    for (typename std::vector<Weighted_point>::iterator
+        hp = hidden_points.begin(); hp != hidden_points.end(); ++hp) {
+      hc = t->locate (*hp, hc);
+      hide_point (hc, *hp);
+    }
+    hidden_points.clear();
+  }
+
+  inline Vertex_handle replace_vertex(Cell_handle c, int index, const Weighted_point& p)
+  {
+    Vertex_handle v = c->vertex(index);
+    hide_point(c, v->point());
+    v->set_point(p);
+    return v;
+  }
+
+  inline void hide_point(Cell_handle c, const Weighted_point& p)
+  {
+    c->hide_point(p);
+  }
+
+  inline void hide(Weighted_point&, Cell_handle ) const  // useless?
+  {
+    CGAL_triangulation_assertion(false);
+  }
+
+  inline void do_hide(const Weighted_point&, Cell_handle ) const // useless?
+  {
+    CGAL_triangulation_assertion(false);
+  }
+
+  template < class Tester >
+  inline bool replace_vertex(const Weighted_point&, Vertex_handle, const Tester&) const // useless?
+  {
+    return true;
+  }
+
+  template <class Conflict_tester>
+  inline void hide_points(Vertex_handle,
+      const Conflict_tester &)
+  {
+    // No points to hide in the Delaunay triangulation.
   }
 
 };
