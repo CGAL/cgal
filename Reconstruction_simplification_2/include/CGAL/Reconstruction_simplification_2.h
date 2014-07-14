@@ -1088,7 +1088,18 @@ protected:
 			}
 		}
 	}
+	 /// \endcond
 
+
+	/*!
+	Since noise and missing data result may prevent the reconstructed shape to
+	have sharp corners, the algorithm offers the possibility to automatically
+	relocate vertices after each edge contraction. The new location of the
+	vertices is chosen such that the fitting of the output triangulation to the
+	input points is improved. This is achieved by minimizing the normal component
+	of the weighted $L_2$ distance. The vertices then get relocated only if the
+	 resulting triangulation is still embeddable.
+	  */
 	void relocate_all_vertices() {
 		double timer = clock();
 		std::cerr << yellow << "relocate all" << white << "...";
@@ -1130,6 +1141,7 @@ protected:
 				<< time_duration(timer) << white << " s)" << std::endl;
 	}
 
+	 /// \cond SKIP_IN_MANUAL
 	Vector compute_gradient(Vertex_handle vertex) {
 		Vector grad(0.0, 0.0);
 		Edge_circulator ecirc = m_dt.incident_edges(vertex);
