@@ -1,22 +1,6 @@
 #ifndef CGAL_AABB_2D_TRAITS_H_
 #define CGAL_AABB_2D_TRAITS_H_
 
-#include <CGAL/Bbox_2.h>                // for do_overlap, Bbox_2
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>  // for compare_xy
-#include <CGAL/Interval_nt.h>           // for Interval_nt
-#include <CGAL/Object.h>                // for Object, object_cast
-#include <CGAL/Origin.h>                // for ORIGIN
-#include <CGAL/aff_transformation_tags.h>  // for Translation
-#include <CGAL/assertions.h>            // for CGAL_error
-#include <CGAL/double.h>                // for nextafter
-#include <CGAL/enum.h>                  // for Comparison_result, etc
-#include <CGAL/number_utils.h>          // for abs, to_double, to_interval
-
-#include <float.h>                      // for DBL_MAX
-#include <algorithm>                    // for nth_element
-#include <boost/optional/optional.hpp>  // for optional
-#include <utility>                      // for pair
-
 namespace CGAL {
 namespace internal {
 

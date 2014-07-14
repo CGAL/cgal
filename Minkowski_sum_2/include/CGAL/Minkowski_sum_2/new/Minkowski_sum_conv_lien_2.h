@@ -1,44 +1,15 @@
 #ifndef CGAL_MINKOWSKI_SUM_REDUCED_CONV_H
 #define CGAL_MINKOWSKI_SUM_REDUCED_CONV_H
 
-#include <CGAL/Arrangement_2/Arrangement_on_surface_2_global.h>
 #include <CGAL/Arrangement_with_history_2.h>
-#include <CGAL/Arr_dcel_base.h>         // for Arr_dcel_base, etc
-#include <CGAL/Arr_enums.h>
-#include <CGAL/Arr_segment_traits_2.h>  // for Arr_segment_traits_2
-#include <CGAL/Origin.h>                // for ORIGIN
-#include <CGAL/Polygon_2.h>             // for Polygon_2
-#include <CGAL/aff_transformation_tags.h>  // for Translation, Rotation
-#include <CGAL/assertions.h>            // for CGAL_precondition
-#include <CGAL/enum.h>                  // for Comparison_result, etc
-#include <CGAL/number_utils.h>          // for to_double, sqrt
-#include <CGAL/utils.h>                 // for max, min
+#include "aabb/AABB_Collision_detector.h"
+#include "Arr_SegmentData_traits.h"
 
-#include <CGAL/Minkowski_sum_2/new/aabb/AABB_Collision_detector.h>
-#include <CGAL/Minkowski_sum_2/new/Arr_SegmentData_traits.h>  // for state, etc
-
-#include <math.h>                       // for acos
-#include <stddef.h>                     // for NULL
-#include <iterator>                     // for advance, distance
-#include <list>                         // for list, list<>::iterator, etc
-#include <queue>                        // for queue
-#include <set>                          // for set
-#include <utility>                      // for pair
-#include <vector>                       // for vector
-#include <iostream> // TODO remove
-
-#include <boost/unordered_map.hpp>  // for unordered_map
-#include <boost/unordered_set.hpp>  // for unordered_set
+#include <queue>
+#include <boost/unordered_set.hpp>
 
 namespace CGAL {
 namespace internal {
-
-struct Less_than_handle {
-    template <typename Type>
-    bool operator()(Type s1, Type s2) const {
-        return (&(*s1) < &(*s2));
-    }
-};
 
 template <class HalfedgeBase_>
 class Arr_map_halfedge : public HalfedgeBase_ {
@@ -83,25 +54,15 @@ public:
     typedef typename Kernel::Direction_2 Direction_2;
 
     // Kernel functors:
-    typedef typename Kernel::Equal_2 Equal_2;
     typedef typename Kernel::Construct_translated_point_2 Translate_point_2;
     typedef typename Kernel::Construct_vector_2 Construct_vector_2;
     typedef typename Kernel::Construct_direction_2 Construct_direction_2;
-    typedef typename Kernel::Construct_opposite_line_2 Opposite_line_2;
     typedef typename Kernel::Orientation_2 Compute_orientation_2;
     typedef typename Kernel::Compare_xy_2 Compare_xy_2;
     typedef typename Kernel::Counterclockwise_in_between_2 Ccw_in_between_2;
-    typedef typename Kernel::Angle_2 Compute_Angle_2;
     typedef typename Kernel::Compare_x_2 Compare_x_2;
-    typedef typename Kernel::Is_vertical_2 Is_vertical_2;
     typedef typename Kernel::Compute_x_2 Compute_x_2;
     typedef typename Kernel::Compute_y_2 Compute_y_2;
-
-    // Polygon-related types:
-    typedef typename Polygon_2::Vertex_circulator Vertex_circulator;
-    typedef std::pair<Vertex_circulator, unsigned int> Vertex_ref;
-    typedef std::pair<Vertex_ref, Vertex_ref> Anchor;
-    typedef std::list<Anchor> Anchors_queue;
 
     // Traits-related types:
     typedef Arr_segment_traits_2<Kernel> Traits_2_A;
@@ -115,9 +76,7 @@ public:
 
     typedef CGAL::Arrangement_with_history_2<Traits_2, Dcel> Arrangement_history_2;
     typedef typename Arrangement_history_2::Halfedge Halfedge;
-    typedef typename Arrangement_history_2::Vertex Vertex;
     typedef typename Arrangement_history_2::Vertex_iterator Vertex_iterator;
-    typedef typename Arrangement_history_2::Halfedge_iterator Halfedge_iterator;
     typedef typename Arrangement_history_2::Edge_iterator Edge_iterator;
     typedef typename Arrangement_history_2::Halfedge_handle Halfedge_handle;
     typedef typename Arrangement_history_2::Vertex_handle Vertex_handle;
@@ -130,11 +89,7 @@ public:
     typedef typename Arrangement_history_2::Originating_curve_iterator Originating_curve_iterator;
     typedef std::pair<int, int> StatePair;
 
-    typedef std::set<Halfedge_handle, Less_than_handle> Edges_set;
-    typedef std::set<Face_handle, Less_than_handle> Faces_set;
-
     // Data members:
-    Equal_2 f_equal;
     Translate_point_2 f_add;
     Construct_vector_2 f_vector;
     Construct_direction_2 f_direction;
@@ -144,7 +99,6 @@ public:
     Compute_x_2 f_compute_x;
     Compute_y_2 f_compute_y;
 
-    typename Traits_2::Compare_endpoints_xy_2 f_compare_endpoints_xy;
     typename Traits_2::Compare_y_at_x_2 f_compare_y_at_x;
     typename Traits_2::Compare_x_2 f_compare_x;
 
@@ -219,14 +173,12 @@ public:
         // Obtain kernel functors.
         Kernel ker;
 
-        f_equal = ker.equal_2_object();
         f_add = ker.construct_translated_point_2_object();
         f_vector = ker.construct_vector_2_object();
         f_direction = ker.construct_direction_2_object();
         f_orientation = ker.orientation_2_object();
         f_compare_xy = ker.compare_xy_2_object();
         f_ccw_in_between = ker.counterclockwise_in_between_2_object();
-        f_compare_endpoints_xy = Traits_2().compare_endpoints_xy_2_object();
         f_compare_x = Traits_2().compare_x_2_object();
         f_compare_y_at_x = Traits_2().compare_y_at_x_2_object();
         f_compute_x = ker.compute_x_2_object();

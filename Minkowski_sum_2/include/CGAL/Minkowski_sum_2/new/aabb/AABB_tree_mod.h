@@ -20,12 +20,7 @@
 #ifndef CGAL_AABB_TREE_MOD_H
 #define CGAL_AABB_TREE_MOD_H
 
-#include <CGAL/enum.h>                  // for Sign::SMALLER
-#include <stddef.h>                     // for NULL
-#include <boost/optional/optional.hpp>  // for optional
-#include <iostream>                     // for operator<<, basic_ostream, etc
-#include <vector>                       // for vector
-#include "AABB_node_mod.h"              // for AABB_node
+#include "AABB_node_mod.h"
 
 namespace CGAL {
 namespace internal {

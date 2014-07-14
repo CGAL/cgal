@@ -1,12 +1,9 @@
 #ifndef AABBCOLLISIONDETECTOR_HEADER
 #define AABBCOLLISIONDETECTOR_HEADER
 
-#include <CGAL/Arr_segment_traits_2.h>  // for Arr_segment_traits_2
-#include <CGAL/Polygon_2.h>             // for Polygon_2
-
-#include "AABB_2d_traits.h"             // for AABB_traits_2
-#include "AABB_segment_2_primitive.h"   // for AABB_segment_2_primitive
-#include "AABB_tree_mod.h"              // for AABB_tree
+#include "AABB_2d_traits.h"
+#include "AABB_segment_2_primitive.h"
+#include "AABB_tree_mod.h"
 
 namespace CGAL {
 namespace internal {

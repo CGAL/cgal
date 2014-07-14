@@ -20,8 +20,6 @@
 #ifndef CGAL_AABB_NODE_MOD_H
 #define CGAL_AABB_NODE_MOD_H
 
-#include <cstddef>                      // for size_t, NULL
-
 namespace CGAL {
 namespace internal {
 
