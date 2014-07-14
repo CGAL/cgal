@@ -45,7 +45,6 @@ class Arr_map_halfedge : public HalfedgeBase_ {
 public:
     bool visited;
     bool isDegenerate;
-    int loopNumber;
 };
 
 template <class Traits_,
@@ -149,154 +148,7 @@ public:
     typename Traits_2::Compare_y_at_x_2 f_compare_y_at_x;
     typename Traits_2::Compare_x_2 f_compare_x;
 
-    friend class ConvSegMapper;
-
-    struct ConvSegment {
-        Halfedge_handle _he;
-        ConvSegment(Halfedge_handle &he): _he(he) {}
-        ConvSegment() {}
-        bool getVisited() const {
-            return _he->visited;
-        }
-
-        bool getDegenerate() const {
-            return _he->isDegenerate;
-        }
-
-        int getLoopNum() {
-            return _he->loopNumber;
-        }
-
-        Vertex_handle getSrc() {
-            return (_he->source());
-        }
-
-        Vertex_handle getDst() {
-            return (_he->target());
-        }
-
-        bool operator<(const ConvSegment &rhs) const {
-            return Less_than_handle()(_he, rhs._he);
-        }
-
-        bool operator==(const ConvSegment &rhs) const {
-            return !Less_than_handle()(_he, rhs._he) && !Less_than_handle()(rhs._he, _he);
-        }
-    };
-
-    struct ConvSegMapper {
-        Arrangement_history_2 *_arr;
-        Minkowski_sum_by_convolution_lien_2 *_mink;
-        ConvSegMapper(Arrangement_history_2 *arr, Minkowski_sum_by_convolution_lien_2 *mink): _arr(arr), _mink(mink) {
-        }
-
-        ConvSegment getSegment(const Halfedge_handle &he) {
-            return ConvSegment(_mink->getDirAgreeingHalfedge(*_arr, he));
-        }
-
-        Direction_2 getConvSegDir(const ConvSegment &seg) const {
-            return _mink->getHalfedgeDir(seg._he);
-        }
-
-        void markVisited(ConvSegment &convSeg, int id) {
-            _mink->setEdgeVisited(*convSeg._he, true, id);
-        }
-
-        bool isBBiggerThenAWithReagrdToC(const ConvSegment &a, const ConvSegment &b, const ConvSegment &c) const {
-            Direction_2 dir_a = getConvSegDir(a);
-            Direction_2 dir_b = getConvSegDir(b);
-            Direction_2 dir_c = getConvSegDir(c);
-            return _mink->isDirImproving(dir_a, dir_c, dir_b);
-        }
-
-        void getNeighbouringSegments(Vertex_handle v, std::list<ConvSegment> &outSegments, std::list<ConvSegment> &inSegmets) {
-            std::list<Halfedge_handle> inList, outList;
-            _mink->getEdgesFromVertex(*_arr, v, inList, outList);
-            typename std::list<Halfedge_iterator>::const_iterator itr;
-
-            for (itr = inList.begin(); itr != inList.end(); ++itr) {
-                inSegmets.push_back(getSegment(*itr));
-            }
-
-            for (itr = outList.begin(); itr != outList.end(); ++itr) {
-                outSegments.push_back(getSegment(*itr));
-            }
-        }
-
-        static bool getSegVisited(const ConvSegment &seg) {
-            return (seg.getVisited() == true || seg.getDegenerate());
-        }
-
-        static bool getSegNotVisited(const ConvSegment &seg) {
-            return (seg.getVisited() == false && !seg.getDegenerate());
-        }
-
-        double getSignedAngle(const ConvSegment &enter, const ConvSegment &exit) {
-            return _mink->getSignedAngle(enter._he, exit._he);
-        }
-
-        void filterNonVisitedSegments(const std::list<ConvSegment> &inputList, std::list<ConvSegment> &outList, std::list<ConvSegment> &visitedSegmentsList) {
-            int out_size = count_if(inputList.begin(), inputList.end(), &ConvSegMapper::getSegNotVisited);
-            outList.resize(out_size);
-            remove_copy_if(inputList.begin(), inputList.end(), outList.begin(), &ConvSegMapper::getSegVisited);
-            visitedSegmentsList.resize(inputList.size() - out_size);
-            remove_copy_if(inputList.begin(), inputList.end(), visitedSegmentsList.begin(), &ConvSegMapper::getSegNotVisited);
-        }
-
-        struct SegCompare {
-            ConvSegment _incomingSeg;
-            ConvSegMapper *_mapperInstance;
-            SegCompare(ConvSegment incomingSeg, ConvSegMapper *mapperInstance): _incomingSeg(incomingSeg), _mapperInstance(mapperInstance) {}
-            bool operator()(ConvSegment a, ConvSegment b) {
-                return _mapperInstance->isBBiggerThenAWithReagrdToC(a, b, _incomingSeg);
-            }
-        };
-
-        ConvSegment getMaximalEdge(std::list<ConvSegment> outgoingSegs, ConvSegment incomingSeg) {
-            SegCompare seg_comp(incomingSeg, this);
-            return *max_element(outgoingSegs.begin(), outgoingSegs.end(), seg_comp);
-        }
-
-        bool checkLoopClosed(const Vertex_handle &v, ConvSegment &startingSeg, int id) {
-            Halfedge_handle h;
-            bool notFound = _mink->checkOutgoingNotVisited(*_arr, *v, h, id);
-
-            if (h != Halfedge_handle()) {
-                startingSeg = getSegment(h);
-            }
-
-            return !notFound;
-        }
-
-        template<typename T> void fillEdgesSet(T &edges_set) {
-            Edge_iterator itr;
-
-            for (itr = _arr->edges_begin(); itr != _arr->edges_end(); ++itr) {
-                _mink->setEdgeVisited(*itr, false, -1);
-
-                if (!itr->isDegenerate) {
-                    edges_set.insert(getSegment(itr));
-                }
-            }
-        }
-
-        ConvSegment getOuterSegment() {
-            Face_iterator startFace = _arr->unbounded_face();
-            Halfedge_iterator perimiterFace = *(startFace -> holes_begin());
-            return getSegment(perimiterFace);
-        }
-
-        void removeSegFromArr(const ConvSegment &seg) {
-            _arr->remove_edge(seg._he);
-        }
-
-        void removeRangeFromArr(std::list<ConvSegment> &segsToRemove) {
-            for (typename std::list<ConvSegment>::iterator itr = segsToRemove.begin(); itr != segsToRemove.end(); ++itr) {
-                removeSegFromArr(*itr);
-            }
-        }
-    };
-
+    /*
     friend class DegenerateCasesManager;
     struct DegenerateCasesManager {
         DegenerateCasesManager(Arrangement_history_2 *arr, Minkowski_sum_by_convolution_lien_2 *mink, Polygon_2 *poly1, Polygon_2 *poly2, bool isActive): _arr(arr), _mink(mink), _poly1(poly1), _poly2(poly2), _active(isActive) {
@@ -306,7 +158,7 @@ public:
             Edge_iterator itr = _arr->edges_begin();
 
             for (; itr != _arr->edges_end(); ++itr) {
-                _mink->setEdgeVisited(*itr, false, -1);
+                _mink->setEdgeVisited(*itr, false);
 
                 if (_active) {
                     if (_mink->checkDegenerateEdgeOppositeSegments(*_arr, itr)) {
@@ -359,6 +211,7 @@ public:
         Polygon_2 *_poly2;
         bool _active;
     };
+    */
 
 public:
 
@@ -401,9 +254,11 @@ public:
         Arrangement_history_2 arr;
         CGAL::insert(arr, reduced_conv.begin(), reduced_conv.end());
 
+        /*
         DegenerateCasesManager degHandler(&arr, this, const_cast <Polygon_2*>(&pgn1), const_cast <Polygon_2*>(&pgn2), true);
         degHandler.findDegenerateBorderVertices();
         degHandler.markDegenerateEdges();
+        */
 
         // trace outer loop
         markOutsideLoop(arr, sum_bound);
@@ -428,7 +283,7 @@ public:
             arr.remove_edge(*itr);
         }
 
-        degHandler.addDegenerateVerticesToArr();
+        //degHandler.addDegenerateVerticesToArr();
 
         delete _aabb_collision_detector;
 
@@ -442,7 +297,7 @@ public:
         Ccb_halfedge_circulator circ = circ_start;
 
         do {
-            setEdgeVisited(*circ, true, 0);
+            setEdgeVisited(*circ, true);
             out_bound.push_back(circ->source()->point());
             --circ;
         } while (circ != circ_start);
@@ -478,7 +333,7 @@ public:
         Polygon_2 pgn_hole;
 
         do {
-            setEdgeVisited(*circ, true, 0);
+            setEdgeVisited(*circ, true);
             pgn_hole.push_back(circ->source()->point());
             --circ;
         } while (circ != start);
@@ -794,132 +649,14 @@ private:
         return i > 2;
     }
 
-    // Gets the he that agrees in direction with the convolution segment.
-    Halfedge_handle getDirAgreeingHalfedge(Arrangement_history_2 &arr, const Halfedge_handle &he) const {
-        Halfedge_handle curr_halfedge = he;
-
-        if (!checkTripSameDirWithSegment(arr, he)) {
-            curr_halfedge = curr_halfedge->twin();
-        }
-
-        return curr_halfedge;
-    }
-
-    // Gets list of incoming and outgoing edges(as defined by directions of segments in the convolution) from the vertex.
-    void getEdgesFromVertex(Arrangement_history_2 &arr, Vertex_handle v_src, std::list<Halfedge_handle> &inList, std::list<Halfedge_handle> &outList) const {
-        outList.clear();
-        inList.clear();
-        Halfedge_around_vertex_circulator itr = v_src->incident_halfedges();
-        Halfedge_around_vertex_circulator start = itr;
-
-        do {
-            Halfedge_handle curr_edge = getDirAgreeingHalfedge(arr, itr);
-
-            if ((curr_edge->source()) == v_src) {
-                outList.push_back(curr_edge);
-            } else {
-                inList.push_back(curr_edge);
-            }
-        } while (++itr != start);
-    }
-
-    // Returns the direction of a half edge
-    Direction_2 getHalfedgeDir(const Halfedge_handle &he) const {
-        Direction_2 dir = f_direction((f_vector(he->source()->point(), he->target()->point())));
-        return dir;
-    }
-
-    double getSignedAngle(const Halfedge_handle &h_enter, const Halfedge_handle &h_exit) const {
-        Direction_2 dir_enter = getHalfedgeDir(h_enter);
-        Direction_2 dir_exit = getHalfedgeDir(h_exit);
-        Vector_2 vec_enter = dir_enter.vector();
-        Vector_2 vec_exit = dir_exit.vector();
-        Point_2 org(CGAL::ORIGIN);
-        Vector_2 origin_vec(org, org);
-        Orientation sign_or = f_orientation(vec_enter, vec_exit);
-        float sign = 0.f;
-
-        if (sign_or == CGAL::LEFT_TURN) {
-            sign = 1;
-        } else if (sign_or == CGAL::RIGHT_TURN) {
-            sign = -1;
-        } else {
-            sign = 0;
-        }
-
-        double prod = CGAL::to_double(vec_enter * vec_exit);
-
-        if (f_equal(vec_enter, origin_vec) || f_equal(vec_exit, origin_vec)) {
-            return 0;
-        }
-
-        double len1 = sqrt(CGAL::to_double(vec_enter.squared_length()));
-        double len2 = sqrt(CGAL::to_double(vec_exit.squared_length()));
-        double p = prod / (len1 * len2);
-        p = min((double)(1), p);
-        p = max((double)(-1), p);
-        double ang = acos(p);
-        return sign * ang;
-    }
-
-    void setEdgeVisited(Halfedge &he, bool value, int id) const {
+    void setEdgeVisited(Halfedge &he, bool value) const {
         he.visited = value;
         he.twin()->visited = value;
-        he.loopNumber = id;
-        he.twin()->loopNumber = id;
     }
 
     void setEdgeDegenerate(Halfedge &he, bool value) const {
         he.isDegenerate = value;
         he.twin()->isDegenerate = value;
-    }
-
-    bool isDirImproving(Direction_2 &min_edge_dir, Direction_2 &entering_dir, Direction_2 &new_edge_dir) const {
-        Direction_2 opp_enter = -entering_dir;
-
-        if ((opp_enter == min_edge_dir)) { // if minimal dir equals -entering dir
-            return true;
-        } else {
-            return f_ccw_in_between(new_edge_dir, opp_enter, min_edge_dir);
-        }
-    }
-
-    /*
-        Checks that the edge leads to a vertex which an outgoing visited edge has been ie returns false if we close a loop.
-        h returns the edge which begins the loop
-    */
-    bool checkOutgoingNotVisited(Arrangement_history_2 &arr, Vertex &v_target, Halfedge_handle &h, int loop_number) const {
-        Point_2 p_source = v_target.point();
-
-        Halfedge_around_vertex_circulator itr = v_target.incident_halfedges();
-        Halfedge_around_vertex_circulator start = itr;
-
-        do {
-            if (checkTripSameDirWithSegment(arr, ((itr->twin()))) && itr->visited && itr->loopNumber == loop_number) {
-                h = itr;
-                return false;
-            }
-        } while (++itr != start);
-
-        return true;
-    }
-
-    bool checkTripSameDirWithSegment(Arrangement_history_2 &arr, Halfedge_handle he) const {
-        Originating_curve_iterator segment_itr;
-
-        for (segment_itr = arr.originating_curves_begin(he); segment_itr != arr.originating_curves_end(he); ++segment_itr) {
-            Segment_2 segment = *segment_itr;
-
-            CGAL::Comparison_result c1 = f_compare_endpoints_xy(segment);
-            CGAL::Comparison_result c2 = (CGAL::Comparison_result)he->direction();
-            bool same_dir = (c1 == c2);
-
-            if (same_dir) {
-                return true;
-            }
-        }
-
-        return false;
     }
 
     bool checkTripNotSameDirWithSegment(Arrangement_history_2 &arr, Halfedge_handle he) const {
