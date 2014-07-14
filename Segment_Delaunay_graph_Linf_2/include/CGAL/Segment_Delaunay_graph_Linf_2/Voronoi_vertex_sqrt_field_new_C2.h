@@ -1086,9 +1086,11 @@ private:
 
     if (bdiff == 1) {
       compute_pss_corner_and_pt(p, lq, lr, bq, br);
+    } else if (bdiff == 2) {
+      compute_pss_nonhv_consecutive(p, q, r, lq, lr, bq, br);
     } if (bdiff == 6) {
       compute_pss_lines_side(p, lq, lr, (br+1)%8);
-    }else {
+    } else {
       compute_vv_bisectors(p, q, r, PSS_Type());
     }
     CGAL_assertion( oriented_side_of_line(lq, this->point()) );
@@ -1110,6 +1112,82 @@ private:
     vv = side_ver ?
       Point_2(pcoord + sgn*sidelen/FT(2), (qcoord+rcoord)/FT(2)) :
       Point_2((qcoord+rcoord)/FT(2), pcoord + sgn*sidelen/FT(2)) ;
+  }
+
+  inline void
+  compute_pss_nonhv_consecutive(
+      const Site_2& p, const Site_2& q, const Site_2& r,
+      const Line_2& lq, const Line_2 & lr,
+      const Bearing bq, const Bearing br) const
+  {
+    const Bearing bqr = (bq+1)%8;
+    return (bqr % 4) == 1 ?
+      compute_pss_x_consecutive(p, q, r, lq, lr, bq, br, bqr) :
+      compute_pss_y_consecutive(p, q, r, lq, lr, bq, br, bqr) ;
+  }
+
+  inline void
+  compute_pss_x_consecutive(
+      const Site_2& p, const Site_2& q, const Site_2& r,
+      const Line_2& lq, const Line_2 & lr,
+      const Bearing bq, const Bearing br,
+      const Bearing bqr) const
+  {
+    CGAL_precondition((bqr == 1) or (bqr == 5));
+    const FT xp = p.point().x();
+    const FT x =
+      (lr.b()*(lq.b()*xp + lq.c()) - lq.b()*lr.c()) /
+      (lr.b()*(lq.b() -lq.a()) + lq.b()*lr.a()) ;
+    const FT yq = (lq.a()*x + lq.c())/(-lq.b());
+    const FT yr = (lr.a()*x + lr.c())/(-lr.b());
+
+    const FT yp = p.point().y();
+    if (CGAL::compare(yp, yq) == ((bqr == 1) ? SMALLER : LARGER)) {
+      // p close to q
+      const FT xs = coord_at(lq, yp, false);
+      const FT ys = coord_at(lr, xs, true);
+      vv = Point_2(RT(2)*xs + (yp - ys), yp + ys, RT(2));
+    } else if (CGAL::compare(yp, yr) == ((bqr == 1) ? LARGER : SMALLER)) {
+      // p close to r
+      const FT xs = coord_at(lr, yp, false);
+      const FT ys = coord_at(lq, xs, true);
+      vv = Point_2(RT(2)*xs + (ys - yp), yp + ys, RT(2));
+    } else {
+      // p on opposite side of two lines (or on its corners)
+      vv = Point_2(xp + x, yq + yr, RT(2));
+    }
+  }
+
+  inline void
+  compute_pss_y_consecutive(
+      const Site_2& p, const Site_2& q, const Site_2& r,
+      const Line_2& lq, const Line_2 & lr,
+      const Bearing bq, const Bearing br,
+      const Bearing bqr) const
+  {
+    CGAL_precondition((bqr == 3) or (bqr == 7));
+    const FT yp = p.point().y();
+    const FT y =
+      (lr.a()*(lq.a()*yp - lq.c()) + lq.a()*lr.c()) /
+      (lr.a()*(lq.a() + lq.b()) - lq.a()*lr.b()) ;
+    const FT xq = (lq.b()*y + lq.c())/(-lq.a());
+    const FT xr = (lr.b()*y + lr.c())/(-lr.a());
+
+    const FT xp = p.point().x();
+    if (CGAL::compare(xp, xq) == ((bqr == 3) ? LARGER : SMALLER)) {
+      // p close to q
+      const FT ys = coord_at(lq, xp, true);
+      const FT xs = coord_at(lr, ys, false);
+      vv = Point_2(xp + xs, RT(2)*ys + (xs - xp), RT(2));
+    } else if (CGAL::compare(xp, xr) == ((bqr == 3) ? SMALLER : LARGER)) {
+      // p close to r
+      const FT ys = coord_at(lr, xp, true);
+      const FT xs = coord_at(lq, ys, false);
+      vv = Point_2(xp + xs, RT(2)*ys + (xp - xs), RT(2));
+    } else {
+      // p on opposite side of two lines (or on its corners)
+      vv = Point_2(xq + xr, yp + y, RT(2));
+    }
   }
 
   inline void
