@@ -157,10 +157,10 @@ namespace CGAL {
 
         FT u = ((a2 < M_PI_2) ? 2 * M_PI - a1 : a1) * c;
 
-        min[0] = std::min<FT>(min[0], u);
-        max[0] = std::max<FT>(max[0], u);
-        min[1] = std::min<FT>(min[1], v);
-        max[1] = std::max<FT>(max[1], v);
+        min[0] = (std::min<FT>)(min[0], u);
+        max[0] = (std::max<FT>)(max[0], u);
+        min[1] = (std::min<FT>)(min[1], v);
+        max[1] = (std::max<FT>)(max[1], v);
 
         parameterSpace[i] = std::pair<FT, FT>(u, v);
       }
@@ -168,7 +168,7 @@ namespace CGAL {
 
     void parameter_extend(const Point &center, FT width, FT min[2], FT max[2]) const {
       //V length of axis in box? not enough
-      FT maxLambda = std::numeric_limits<double>::max(), minLambda = -std::numeric_limits<double>::max();
+      FT maxLambda = (std::numeric_limits<double>::max)(), minLambda = -(std::numeric_limits<double>::max)();
       Vector a = m_axis.to_vector();
       Point p = m_point_on_axis;
 
@@ -179,8 +179,8 @@ namespace CGAL {
           if (l1 * l2 > 0) {
             std::cout << "Cylinder::parameterExtend(): dim 0, l1*l2 > 0" << std::endl;
           }
-          minLambda = std::max<FT>(minLambda, std::min<FT>(l1, l2));
-          maxLambda = std::min<FT>(maxLambda, std::max<FT>(l1, l2));
+          minLambda = (std::max<FT>)(minLambda, (std::min<FT>)(l1, l2));
+          maxLambda = (std::min<FT>)(maxLambda, (std::max<FT>)(l1, l2));
         }
       }
 

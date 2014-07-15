@@ -177,7 +177,7 @@ refer to schnabels paper
 
       //create subsets ------------------------------------------------
       //how many subsets ?
-      m_num_subsets = std::max((int) std::floor(std::log(double(m_numAvailablePoints))/std::log(2.))-9, 2);
+      m_num_subsets = (std::max)((int) std::floor(std::log(double(m_numAvailablePoints))/std::log(2.))-9, 2);
 
       // SUBSET GENERATION ->
       // approach with increasing subset sizes -> replace with octree later on
@@ -615,7 +615,7 @@ refer to schnabels paper
     }
 
     inline FT StopProbability(FT _sizeC, FT _np, FT _dC, FT _l) const {
-      return std::min<float>(std::pow(1.f - _sizeC / (_np * _l * 3), _dC), 1.);		//4 is (1 << (m_reqSamples - 1))) with m_reqSamples=3 (min number of points to create a candidate)
+      return (std::min<float>)(std::pow(1.f - _sizeC / (_np * _l * 3), _dC), 1.);		//4 is (1 << (m_reqSamples - 1))) with m_reqSamples=3 (min number of points to create a candidate)
     }
 
     static bool candComp(const Shape* a, const Shape* b) {

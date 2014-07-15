@@ -47,12 +47,12 @@ namespace CGAL {
 
     Shape_base() :
     m_isValid(true),
-      m_lowerBound(std::numeric_limits<FT>::min()),
-      m_upperBound(std::numeric_limits<FT>::min()),
+      m_lowerBound((std::numeric_limits<FT>::min)()),
+      m_upperBound((std::numeric_limits<FT>::min)()),
       m_score(0),
       m_sum_ExpectedValue(0),
       m_nb_subset_used(0),
-      m_hasconnected_component(false) {
+      m_has_connected_component(false) {
     }
 
     virtual ~Shape_base() {}
@@ -141,7 +141,7 @@ namespace CGAL {
       //       if (m_hasconnected_component)
       //         return m_score;
 
-      m_hasconnected_component = true;
+      m_has_connected_component = true;
       if (!supports_connected_component())
         return m_indices.size();
 
@@ -368,7 +368,7 @@ namespace CGAL {
 
     FT m_sum_ExpectedValue;
     int m_nb_subset_used;		//count the number of subset used so far for the score, and thus indicate the next one to use
-    bool m_hasconnected_component;
+    bool m_has_connected_component;
 
     std::vector<int> m_indices;	//indices of the points fitting to the candidate
     inputIterator m_first;

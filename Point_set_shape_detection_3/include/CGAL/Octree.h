@@ -612,20 +612,20 @@ namespace CGAL {
 
         
       void buildBoundingCube() {
-        FT min[] = {std::numeric_limits<FT>::max(), std::numeric_limits<FT>::max(), std::numeric_limits<FT>::max()};
-        FT max[] = {std::numeric_limits<FT>::min(), std::numeric_limits<FT>::min(), std::numeric_limits<FT>::min()};
+        FT min[] = {(std::numeric_limits<FT>::max)(), (std::numeric_limits<FT>::max)(), (std::numeric_limits<FT>::max)()};
+        FT max[] = {(std::numeric_limits<FT>::min)(), (std::numeric_limits<FT>::min)(), (std::numeric_limits<FT>::min)()};
 
         for (unsigned int i = 0;i<this->size();i++) {
             Point p = get(m_pointPMap, *this->at(i));
-          min[0] = std::min<FT>(min[0], p.x());
-          min[1] = std::min<FT>(min[1], p.y());
-          min[2] = std::min<FT>(min[2], p.z());
-          max[0] = std::max<FT>(max[0], p.x());
-          max[1] = std::max<FT>(max[1], p.y());
-          max[2] = std::max<FT>(max[2], p.z());
+          min[0] = (std::min<FT>)(min[0], p.x());
+          min[1] = (std::min<FT>)(min[1], p.y());
+          min[2] = (std::min<FT>)(min[2], p.z());
+          max[0] = (std::max<FT>)(max[0], p.x());
+          max[1] = (std::max<FT>)(max[1], p.y());
+          max[2] = (std::max<FT>)(max[2], p.z());
         }
 
-        m_width = std::max(max[0] - min[0], std::max(max[1] - min[1], max[2] - min[2])) * 0.5;
+        m_width = (std::max)(max[0] - min[0], (std::max)(max[1] - min[1], max[2] - min[2])) * 0.5;
 
         //         m_center[0] = (min[0] + max[0]) * 0.5;
         //         m_center[1] = (min[1] + max[1]) * 0.5;

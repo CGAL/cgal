@@ -101,10 +101,10 @@ namespace CGAL {
         Vector p = (get(this->m_pointPMap, *(this->m_first + indices[i])) - m_point_on_primitive);
         FT u = p * m_base1;
         FT v = p * m_base2;
-        min[0] = std::min<FT>(min[0], u);
-        max[0] = std::max<FT>(max[0], u);
-        min[1] = std::min<FT>(min[1], v);
-        max[1] = std::max<FT>(max[1], v);
+        min[0] = (std::min<FT>)(min[0], u);
+        max[0] = (std::max<FT>)(max[0], u);
+        min[1] = (std::min<FT>)(min[1], v);
+        max[1] = (std::max<FT>)(max[1], v);
         parameterSpace[i] = std::pair<FT, FT>(u, v);
       }
     }
@@ -125,10 +125,10 @@ namespace CGAL {
         Vector p = (corner[i] - m_plane.point());
         FT u = p * m_base1;
         FT v = p * m_base2;
-        min[0] = std::min(min[0], u);
-        min[1] = std::min(min[1], v);
-        max[0] = std::max(max[0], u);
-        max[1] = std::max(max[1], v);
+        min[0] = (std::min)(min[0], u);
+        min[1] = (std::min)(min[1], v);
+        max[0] = (std::max)(max[0], u);
+        max[1] = (std::max)(max[1], v);
       }
     }
 
