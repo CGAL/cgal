@@ -99,9 +99,6 @@ void run_jet_estimate_normals(PointList& points, // input points + output normal
 void run_vcm_estimate_normals(PointList &points, // input points + output normals
                               double R, // radius of the offset
                               double r) { // radius used during the convolution
-    // The VCM type
-    typedef CGAL::Voronoi_covariance_3::Voronoi_covariance_3<FT> Covariance;
-
     CGAL::Timer task_timer; task_timer.start();
     std::cerr << "Estimates Normals Direction using VCM (R="
         << R << " and r=" << r << ")...\n";
@@ -113,8 +110,7 @@ void run_vcm_estimate_normals(PointList &points, // input points + output normal
                                CGAL::First_of_pair_property_map<PointVectorPair>(),
                                CGAL::Second_of_pair_property_map<PointVectorPair>(),
                                R,
-                               r,
-                               Covariance());
+                               r);
 
     long memory = CGAL::Memory_sizer().virtual_size();
     std::cerr << "done: " << task_timer.time() << " seconds, "

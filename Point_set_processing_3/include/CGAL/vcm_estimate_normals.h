@@ -16,6 +16,8 @@
 #include <iterator>
 #include <vector>
 
+// TODO: complete doc
+
 namespace CGAL {
 
 
@@ -118,54 +120,6 @@ vcm_convolve (ForwardIterator first,
     }
 }
 
-// Compute the VCM and make the convolution using a sphere
-template < class ForwardIterator,
-           class PointPMap,
-           class Kernel,
-           class Covariance
->
-void
-vcm_offset_and_convolve (ForwardIterator first,
-                         ForwardIterator beyond,
-                         PointPMap point_pmap,
-                         std::vector<Covariance> &ccov,
-                         double R,
-                         double r,
-                         const Kernel &)
-{
-    // First, compute the VCM for each point
-    std::vector<Covariance> cov;
-    size_t N = 20;
-    internal::vcm_offset (first, beyond,
-                          point_pmap,
-                          cov,
-                          R,
-                          N,
-                          Kernel());
-
-    // TODO: debug
-    std::ofstream file_offset("offset.p");
-    std::copy(cov.begin(), cov.end(),
-              std::ostream_iterator<Covariance>(file_offset));
-
-    // Then, convolve it (only when r != 0)
-    if (r == 0) {
-        std::copy(cov.begin(), cov.end(), std::back_inserter(ccov));
-    } else {
-        internal::vcm_convolve(first, beyond,
-                               point_pmap,
-                               cov,
-                               ccov,
-                               r,
-                               Kernel());
-    }
-
-    // TODO: debug
-    std::ofstream file_convolve("convolve.p");
-    std::copy(ccov.begin(), ccov.end(),
-              std::ostream_iterator<Covariance>(file_convolve));
-}
-
 // Convolve using neighbors
 template < class ForwardIterator,
            class PointPMap,
@@ -219,6 +173,44 @@ vcm_convolve (ForwardIterator first,
     }
 }
 
+// Compute the VCM and make the convolution using a sphere
+template < class ForwardIterator,
+           class PointPMap,
+           class Kernel,
+           class Covariance
+>
+void
+vcm_offset_and_convolve (ForwardIterator first,
+                         ForwardIterator beyond,
+                         PointPMap point_pmap,
+                         std::vector<Covariance> &ccov,
+                         double R,
+                         double r,
+                         const Kernel &)
+{
+    // First, compute the VCM for each point
+    std::vector<Covariance> cov;
+    size_t N = 20;
+    internal::vcm_offset (first, beyond,
+                          point_pmap,
+                          cov,
+                          R,
+                          N,
+                          Kernel());
+
+    // Then, convolve it (only when r != 0)
+    if (r == 0) {
+        std::copy(cov.begin(), cov.end(), std::back_inserter(ccov));
+    } else {
+        internal::vcm_convolve(first, beyond,
+                               point_pmap,
+                               cov,
+                               ccov,
+                               r,
+                               Kernel());
+    }
+}
+
 /// \endcond
 
 } // namespace internal
@@ -254,15 +246,14 @@ vcm_estimate_normals (ForwardIterator first, ///< iterator over the first input 
                       NormalPMap normal_pmap, ///< property map: value_type of ForwardIterator -> Vector_3.
                       double R, ///< offset radius.
                       double r, ///< convolution radius.
-                      unsigned int nb_neighbors_offset,
-                      unsigned int nb_neighbors_convolve,
                       const Kernel & /*kernel*/, ///< geometric traits.
                       const Covariance &, ///< covariance matrix type.
-                      bool use_radii = true)
+                      int nb_neighbors_convolve = -1 ///< number of neighbors used to convolve
+)
 {
     // Compute the VCM and convolve it
     std::vector<Covariance> cov;
-    if (use_radii) {
+    if (nb_neighbors_convolve == -1) {
         internal::vcm_offset_and_convolve(first, beyond,
                                           point_pmap,
                                           cov,
@@ -270,14 +261,22 @@ vcm_estimate_normals (ForwardIterator first, ///< iterator over the first input 
                                           r,
                                           Kernel());
     } else {
-        // TODO
+        internal::vcm_offset(first, beyond,
+                             point_pmap,
+                             cov,
+                             R,
+                             20,
+                             Kernel());
+
         std::vector<Covariance> ccov;
         internal::vcm_convolve(first, beyond,
                                point_pmap,
                                cov,
                                ccov,
-                               nb_neighbors_convolve,
+                               (unsigned int) nb_neighbors_convolve,
                                Kernel());
+
+        std::copy(ccov.begin(), ccov.end(), std::back_inserter(cov));
     }
 
     // And finally, compute the normals
@@ -300,11 +299,10 @@ vcm_estimate_normals (ForwardIterator first, ///< iterator over the first input 
 }
 
 /// @cond SKIP_IN_MANUAL
-// This variant deduces the kernel from the point property map.
+// This variant deduces the kernel from the point property map and uses radii.
 template < typename ForwardIterator,
            typename PointPMap,
-           typename NormalPMap,
-           typename Covariance
+           typename NormalPMap
 >
 void
 vcm_estimate_normals (ForwardIterator first,
@@ -312,24 +310,23 @@ vcm_estimate_normals (ForwardIterator first,
                       PointPMap point_pmap,
                       NormalPMap normal_pmap,
                       double R,
-                      double r,
-                      const Covariance &) {
+                      double r) {
     typedef typename boost::property_traits<PointPMap>::value_type Point;
     typedef typename Kernel_traits<Point>::Kernel Kernel;
+    typedef typename Kernel::FT FT;
+    typedef CGAL::Voronoi_covariance_3::Voronoi_covariance_3<FT> Covariance;
 
     vcm_estimate_normals(first, beyond,
                          point_pmap, normal_pmap,
                          R, r,
-                         0, 0,
                          Kernel(),
                          Covariance());
 }
 
-// This variant requires numbers of neighbors instead of radii
+// This variant requires numbers of neighbors instead of a convolution radius.
 template < typename ForwardIterator,
            typename PointPMap,
-           typename NormalPMap,
-           typename Covariance
+           typename NormalPMap
 >
 void
 vcm_estimate_normals (ForwardIterator first,
@@ -337,19 +334,41 @@ vcm_estimate_normals (ForwardIterator first,
                       PointPMap point_pmap,
                       NormalPMap normal_pmap,
                       double R,
-                      unsigned int nb_neighbors_convolve,
-                      const Covariance &) {
+                      unsigned int nb_neighbors_convolve) {
     typedef typename boost::property_traits<PointPMap>::value_type Point;
     typedef typename Kernel_traits<Point>::Kernel Kernel;
+    typedef typename Kernel::FT FT;
+    typedef CGAL::Voronoi_covariance_3::Voronoi_covariance_3<FT> Covariance;
 
-    // TODO
     vcm_estimate_normals(first, beyond,
                          point_pmap, normal_pmap,
-                         0, 0,
-                         nb_neighbors_convolve, nb_neighbors_convolve,
+                         R, 0,
                          Kernel(),
                          Covariance(),
-                         false);
+                         nb_neighbors_convolve);
+}
+
+// This variant creates a default point property map = Identity_property_map.
+template < typename ForwardIterator,
+           typename NormalPMap
+>
+void
+vcm_estimate_normals (ForwardIterator first,
+                      ForwardIterator beyond,
+                      NormalPMap normal_pmap,
+                      double R,
+                      double r) {
+    typedef typename boost::property_traits<NormalPMap>::value_type Vector;
+    typedef typename Kernel_traits<Vector>::Kernel Kernel;
+    typedef typename Kernel::FT FT;
+    typedef CGAL::Voronoi_covariance_3::Voronoi_covariance_3<FT> Covariance;
+
+    vcm_estimate_normals(first, beyond,
+                         make_identity_property_map(typename std::iterator_traits<ForwardIterator>::value_type()),
+                         normal_pmap,
+                         R, r,
+                         Kernel(),
+                         Covariance());
 }
 /// @endcond
 
