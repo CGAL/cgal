@@ -21,7 +21,6 @@
 //******************************************************************************
 // File Description : 
 //******************************************************************************
-#define CGAL_MESH_3_OPTIMIZER_VERBOSE
 
 #include "test_meshing_utilities.h"
 #include <CGAL/Polyhedral_mesh_domain_3.h>
