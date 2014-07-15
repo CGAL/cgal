@@ -1,8 +1,8 @@
 #ifndef CGAL_VCM_UTILITIES_H
 #define CGAL_VCM_UTILITIES_H
 
-#include <eigen3/Eigen/Dense>
-#include <eigen3/Eigen/Eigenvalues>
+#include <Eigen/Dense>
+#include <Eigen/Eigenvalues>
 
 namespace CGAL {
 

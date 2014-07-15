@@ -10,8 +10,8 @@
 #include <CGAL/Search_traits_3.h>
 #include <CGAL/Fuzzy_sphere.h>
 
-#include <eigen3/Eigen/Dense>
-#include <eigen3/Eigen/Eigenvalues>
+#include <Eigen/Dense>
+#include <Eigen/Eigenvalues>
 
 #include <iterator>
 #include <vector>
