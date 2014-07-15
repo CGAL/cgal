@@ -71,7 +71,7 @@ namespace CGAL {
 			((*cit)-(*pit))*((*cit)-(*pit));
 		}
 		
-		return (distance < squared_radius); 
+		return (distance <= squared_radius); 
         }
 
         
@@ -94,7 +94,7 @@ namespace CGAL {
 				((*cit)-rectangle.max_coord(i))*((*cit)-rectangle.max_coord(i));
 		}
 		
-		return (distance < squared_radius);
+		return (distance <= squared_radius);
 	}
 
 
@@ -117,7 +117,7 @@ namespace CGAL {
 			distance += ((*cit)-rectangle.min_coord(i))*((*cit)-rectangle.min_coord(i));
 		}
 		
-		return (distance < squared_radius);
+		return (distance <= squared_radius);
 	}
   }; // class Fuzzy_sphere_impl
 
