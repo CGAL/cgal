@@ -65,8 +65,9 @@ public:
   using Base::bearing;
   using Base::bearing_diff;
   using Base::center_from_corner_and_pt;
-  using Base::center_from_opposite_corners;
   using Base::points_inside_touching_sides_v;
+  using Base::center_from_opposite_corners;
+  using Base::center_from_same_side_corners;
 
   typedef enum {PPP = 0, PPS, PSS, SSS} vertex_t;
   struct PPP_Type {};
@@ -1091,10 +1092,12 @@ private:
       compute_pss_nonhv_consecutive(p, q, r, lq, lr, bq, br);
     } else if ((bdiff == 3) or (bdiff == 4)) {
       compute_pss_ortho_wedge(p, q, r, lq, lr, bq, br);
-    } if (bdiff == 6) {
+    } else if (bdiff == 5) {
+      compute_pss_side_p_known(p, q, r, lq, lr, bq, br);
+    } else if (bdiff == 6) {
       compute_pss_lines_side(p, lq, lr, (br+1)%8);
     } else {
-      compute_vv_bisectors(p, q, r, PSS_Type());
+      CGAL_assertion( false );
     }
     CGAL_assertion( oriented_side_of_line(lq, this->point()) );
     CGAL_assertion( oriented_side_of_line(lr, this->point()) );
@@ -1115,6 +1118,24 @@ private:
     vv = side_ver ?
       Point_2(pcoord + sgn*sidelen/FT(2), (qcoord+rcoord)/FT(2)) :
       Point_2((qcoord+rcoord)/FT(2), pcoord + sgn*sidelen/FT(2)) ;
+  }
+
+  inline void
+  compute_pss_side_p_known(
+      const Site_2& p, const Site_2& q, const Site_2& r,
+      const Line_2& lq, const Line_2 & lr,
+      const Bearing bq, const Bearing br) const
+  {
+    const Bearing bside = (br + ((br % 2 == 0) ? 1 : 2)) % 8;
+    const bool l_compute_y = (bside % 4 == 1) ? true : false;
+    const FT pcoord = l_compute_y ? p.point().x() : p.point().y();
+    const FT qcoord = coord_at(lq, pcoord, l_compute_y);
+    const FT rcoord = coord_at(lr, pcoord, l_compute_y);
+    const Point_2 qcorner =
+      l_compute_y ? Point_2(pcoord, qcoord) : Point_2(qcoord, pcoord);
+    const Point_2 rcorner =
+      l_compute_y ? Point_2(pcoord, rcoord) : Point_2(rcoord, pcoord);
+    vv = center_from_same_side_corners(rcorner, qcorner, bside);
   }
 
   inline void
