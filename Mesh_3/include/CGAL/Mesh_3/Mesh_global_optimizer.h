@@ -539,7 +539,7 @@ private:
   {
     MGO                                  & m_mgo;
     const Helper                         & m_helper;
-    const Moves_vector_                   & m_moves;
+    const Moves_vector_                  & m_moves;
     Moving_vertices_set_                 & m_moving_vertices;
     Outdated_cell_set_                   & m_outdated_cells;
   
