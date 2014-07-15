@@ -1649,6 +1649,14 @@ public:
 
   inline
   static
+  Point_2 center_from_opposite_corners(
+      const Point_2 & c, const Point_2 & d)
+  {
+    return Point_2(c.x() + d.x(), c.y() + d.y(), RT(2));
+  }
+
+  inline
+  static
   bool points_inside_touching_sides_v(
       const Line_2 & ls, const Site_2 & pt_site,
       const Site_2 & other_s, const Site_2 & t, const Point_2 & v)

@@ -92,6 +92,7 @@ public:
   using Base::bearing_diff;
   using Base::center_from_corner_and_pt;
   using Base::points_inside_touching_sides_v;
+  using Base::center_from_opposite_corners;
 
 private:
   typedef SegmentDelaunayGraph_2::Are_same_points_C2<K>
@@ -571,6 +572,8 @@ private:
       compute_pss_corner_and_pt(p, q, r, lq, lr, bq, br);
     } else if (bdiff == 2) {
       compute_pss_nonhv_consecutive(p, q, r, lq, lr, bq, br);
+    } else if ((bdiff == 3) or (bdiff == 4)) {
+      compute_pss_ortho_wedge(p, q, r, lq, lr, bq, br);
     } else if (bdiff == 6) {
       compute_pss_lines_side(p, lq, lr, (br+1)%8);
     } else {
@@ -595,6 +598,46 @@ private:
     ux_ = side_ver? RT(2)*pcoord + sgn*sidelen : qcoord+rcoord;
     uy_ = side_ver? qcoord+rcoord : RT(2)*pcoord + sgn*sidelen;
     uz_ = RT(2);
+  }
+
+  inline void
+  compute_pss_ortho_wedge(
+      const Site_2& p, const Site_2& q, const Site_2& r,
+      const Line_2& lq, const Line_2 & lr,
+      const Bearing bq, const Bearing br)
+  {
+    const FT xp = p.point().x();
+    const FT yp = p.point().y();
+    const bool lq_compute_y = ((bq / 2) % 2 == 0) ? false : true;
+    const FT & lq_from_p = lq_compute_y ? xp : yp;
+    const FT & lr_from_p = lq_compute_y ? yp : xp;
+    const FT qcoord = coord_at(lq, lq_from_p, lq_compute_y);
+    const FT rcoord = coord_at(lr, lr_from_p, not lq_compute_y);
+    const FT qdist = (bq < 4) ? qcoord - lr_from_p :
+                                lr_from_p - qcoord;
+    CGAL_assertion(CGAL::sign(qdist) == POSITIVE);
+    const FT rdist = (bq <= 1) or (bq >= 6) ? rcoord - lq_from_p :
+                                              lq_from_p - rcoord;
+    CGAL_assertion(CGAL::sign(rdist) == POSITIVE);
+    const Comparison_result cmpqr = CGAL::compare(qdist, rdist);
+    const bool q_closer = (cmpqr == SMALLER);
+    const Point_2 corner =
+      q_closer ?
+      (lq_compute_y ? Point_2(xp, qcoord) : Point_2(qcoord, yp)) :
+      (lq_compute_y ? Point_2(rcoord, yp) : Point_2(xp, rcoord)) ;
+    const Bearing bnonhv = (bq % 2 == 1) ? br : bq;
+    CGAL_assertion(bnonhv % 2 == 0);
+    const Line_2 lcorner = (bnonhv % 4 == 0)?
+        compute_neg_45_line_at(corner) :
+        compute_pos_45_line_at(corner) ;
+    const Line_2 & lother = q_closer ? lr : lq;
+    RT hx, hy, hw;
+    compute_intersection_of_lines(lother, lcorner, hx, hy, hw);
+    const Point_2 v =
+      center_from_opposite_corners(Point_2(hx, hy, hw), corner);
+    ux_ = v.hx();
+    uy_ = v.hy();
+    uz_ = v.hw();
   }
 
   inline void
@@ -3641,9 +3684,9 @@ public:
     if (corner_agree_pt_x and corner_agree_pt_y) {
       CGAL_assertion(not is_l_h_or_v);
       const unsigned int count_larger =
-        (compare_p ? 1 : 0) +      
-        (compare_q ? 1 : 0) +      
-        (compare_r ? 1 : 0) ;     
+        (compare_p ? 1 : 0) +
+        (compare_q ? 1 : 0) +
+        (compare_r ? 1 : 0) ;
       if (count_larger >= 2) {
         // two points (among p, q, r) hide the line l from the vertex vv
         return LARGER;
