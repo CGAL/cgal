@@ -20,6 +20,7 @@
 #ifndef CGAL_DEFORM_MESH_H
 #define CGAL_DEFORM_MESH_H
 
+#include <CGAL/config.h>
 #include <CGAL/internal/Surface_modeling/Weights.h>
 #include <CGAL/Default.h>
 #include <CGAL/tuple.h>
@@ -252,8 +253,15 @@ private:
 #ifdef CGAL_DEFORM_MESH_USE_EXPERIMENTAL_SCALE
   std::vector<double> scales;
 #endif
+
+#ifndef CGAL_CFG_NO_CPP0X_DELETED_AND_DEFAULT_FUNCTIONS
+public:
+  Deform_mesh(const Self&) = delete; // no copy
+#else
 private:
-  Deform_mesh(const Self&);
+  Deform_mesh(const Self&); // no copy
+#endif
+
 
 // Public methods
 public:
