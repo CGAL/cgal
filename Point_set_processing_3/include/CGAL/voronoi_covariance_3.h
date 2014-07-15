@@ -107,7 +107,6 @@ namespace CGAL {
                                             F &f)
                 {
                     typedef typename DT::Vertex_handle Vertex_handle;
-                    typedef typename DT::Point Point;
                     typedef typename DT::Geom_traits::Kernel K;
                     typedef typename K::Plane_3 Plane;
                     typedef typename K::Vector_3 Vector;
