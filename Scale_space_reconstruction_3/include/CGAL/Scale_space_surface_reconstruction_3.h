@@ -123,10 +123,18 @@ namespace CGAL {
  *  neighborhood containg 30 points on average provides a good estimate for the
  *  radius and 4 iterations of smoothing proved a nice scale-space.
  *
- *  The method provides access to intermediate results and the user can adjust
- *  these to better suit his needs. These intermediate results are the estimate
- *  of the optimal scale, the scale-space, and the final collection of surface
- *  triangles.
+ *  This class stores several of the (intermediate) results. This makes it
+ *  easier and more efficient to adjust the parameter settings based on
+ *  preliminary results, or to further advance the scale-space to improve the
+ *  results. The class stores the current scale-space and the reconstructed
+ *  surface, possibly with iterators over the shells.
+ *
+ *  The class also stores the parameters for estimating the optimal
+ *  neighborhood radius and either the lastest estimate or the manually set
+ *  radius. This way, the radius can be estimated (again) whenever necessary.
+ *  Also note that both advancing the scale-space and reconstructing the
+ *  surface use this radius. By changing or re-estimating the radius between
+ *  these operations, they can use separate parameter settings.
  *
  *  The shape can be constructed either at a fixed scale, or at a dynamic
  *  scale. When constructing the surface for exactly one neighborhood radius,

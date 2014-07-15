@@ -214,11 +214,15 @@ Number of triangles of the surfaces constructed and running times in miliseconds
 \cgalFigureCaptionEnd
 
 
-\section ScaleSpaceReconstruction3secExamples Example
+\section ScaleSpaceReconstruction3secExamples Examples
 
-The following example shows how to read a point set from a file, reconstruct the surface, and write the surface to another file.
+This first example shows how to read a point set from a file, reconstruct the surface, and write the surface to another file.
 
 \cgalExample{Scale_space_reconstruction_3/scale_space.cpp}
+
+The next example shows how to perform the reconstruction step-by-step and how to change the parameters between steps.
+
+\cgalExample{Scale_space_reconstruction_3/scale_space_incremental.cpp}
 
 
 \section ScaleSpaceReconstruction3secDesImpl Design and Implementation History
