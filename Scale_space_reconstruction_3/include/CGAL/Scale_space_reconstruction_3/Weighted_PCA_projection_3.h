@@ -81,7 +81,10 @@ public:
      */
     template < typename PointIterator, typename WeightIterator >
     Weighted_PCA_projection_3( PointIterator points_begin, PointIterator points_end, WeightIterator weights_begin )
-    : this( std::distance( points_begin, points_end ) ) {
+    : _comp(false) {
+        std::size_t size = std::distance( points_begin, points_end );
+        _pts = Matrix3D(3,size);
+        _wts = Array1D(1,size);
         set_points( points_begin, points_end, weights_begin );
     }
 
