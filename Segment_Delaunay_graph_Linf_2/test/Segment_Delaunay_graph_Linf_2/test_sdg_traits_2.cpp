@@ -334,7 +334,7 @@ void test_traits(const char* title)
       Point_2(100, 0),
       Point_2(50, 100),
       CGAL::NEGATIVE);
-  
+
   //Start: Tests for pps case with vertical segment and two points with same y coordinate on the right of seg
   test_incircle<Gt>(
       Segment_2(Point_2(0, 0), Point_2(0, 100)),
@@ -342,27 +342,27 @@ void test_traits(const char* title)
       Point_2(200, 60),
       Point_2(200, 50),
       CGAL::NEGATIVE);
-  
+
   test_incircle<Gt>(
       Segment_2(Point_2(0, 0), Point_2(0, 100)),
       Point_2(200, 20),
       Point_2(200, 60),
       Point_2(200, 10),
-      CGAL::POSITIVE);  
+      CGAL::POSITIVE);
   // t is at the bottom right corner of the square
   test_incircle<Gt>(
       Segment_2(Point_2(0, 0), Point_2(0, 100)),
       Point_2(200, 20),
       Point_2(200, 60),
       Point_2(200, -50),
-      CGAL::POSITIVE); 
+      CGAL::POSITIVE);
   // t is at the top right corner of the square
   test_incircle<Gt>(
       Segment_2(Point_2(0, 0), Point_2(0, 100)),
       Point_2(200, 20),
       Point_2(200, 60),
       Point_2(200, 150),
-      CGAL::POSITIVE); 
+      CGAL::POSITIVE);
   // t is on bottom horizontal edge of square
   test_incircle<Gt>(
       Segment_2(Point_2(0, 0), Point_2(0, 100)),
@@ -419,9 +419,9 @@ void test_traits(const char* title)
       Point_2(200, 60),
       Point_2(20, -100),
       CGAL::POSITIVE);
-  
+
   //End: Tests for pps case with vertical segment and two points with same y coordinate on the right of seg
-  
+
   //Start: Tests for pps case with vertical segment and two points with same y coordinate on the left of seg
   test_incircle<Gt>(
       Segment_2(Point_2(0, 0), Point_2(0, 100)),
@@ -429,27 +429,27 @@ void test_traits(const char* title)
       Point_2(-200, 60),
       Point_2(-200, 50),
       CGAL::NEGATIVE);
-  
+
   test_incircle<Gt>(
       Segment_2(Point_2(0, 0), Point_2(0, 100)),
       Point_2(-200, 20),
       Point_2(-200, 60),
       Point_2(-200, 10),
-      CGAL::POSITIVE);  
+      CGAL::POSITIVE);
   // t is at the bottom left corner of the square
   test_incircle<Gt>(
       Segment_2(Point_2(0, 0), Point_2(0, 100)),
       Point_2(-200, 20),
       Point_2(-200, 60),
       Point_2(-200, -50),
-      CGAL::POSITIVE); 
+      CGAL::POSITIVE);
   // t is at the top left corner of the square
   test_incircle<Gt>(
       Segment_2(Point_2(0, 0), Point_2(0, 100)),
       Point_2(-200, 20),
       Point_2(-200, 60),
       Point_2(-200, 150),
-      CGAL::POSITIVE); 
+      CGAL::POSITIVE);
   // t is on bottom horizontal edge of square
   test_incircle<Gt>(
       Segment_2(Point_2(0, 0), Point_2(0, 100)),
@@ -508,7 +508,7 @@ void test_traits(const char* title)
       CGAL::POSITIVE);
 
   //End: Tests for pps case with vertical segment and two points with same y coordinate on the left of seg
-  
+
   // PSS case vertex computation, pssprob1.cin
   test_incircle<Gt>(
       Segment_2(Point_2(0, 100), Point_2(100, 100)),
@@ -626,6 +626,85 @@ void test_traits(const char* title)
        Point_2(200, 50),
        Point_2(100, 50),
        CGAL::NEGATIVE);
+
+
+  // PSS bdiff=4 point on corner pssd4a.cin
+
+  test_incircle<Gt>(
+       Segment_2(Point_2(100, 150), Point_2(200, -50)),
+       Segment_2(Point_2(-100, -50), Point_2(100, -150)),
+       Point_2(150, -100),
+       Point_2(-50, -50),
+       CGAL::POSITIVE);
+  test_incircle<Gt>(
+       Segment_2(Point_2(100, 150), Point_2(200, -50)),
+       Segment_2(Point_2(-100, -50), Point_2(100, -150)),
+       Point_2(150, -100),
+       Point_2(0, 100),
+       CGAL::POSITIVE);
+  test_incircle<Gt>(
+       Segment_2(Point_2(100, 150), Point_2(200, -50)),
+       Segment_2(Point_2(-100, -50), Point_2(100, -150)),
+       Point_2(150, -100),
+       Point_2(100, -150),
+       CGAL::POSITIVE);
+  test_incircle<Gt>(
+       Segment_2(Point_2(100, 150), Point_2(200, -50)),
+       Segment_2(Point_2(-100, -50), Point_2(100, -150)),
+       Point_2(150, -100),
+       Point_2(100, 100),
+       CGAL::POSITIVE);
+  test_incircle<Gt>(
+       Segment_2(Point_2(100, 150), Point_2(200, -50)),
+       Segment_2(Point_2(-100, -50), Point_2(100, -150)),
+       Point_2(150, -100),
+       Point_2(100, 150),
+       CGAL::POSITIVE);
+  test_incircle<Gt>(
+       Segment_2(Point_2(100, 150), Point_2(200, -50)),
+       Segment_2(Point_2(-100, -50), Point_2(100, -150)),
+       Point_2(150, -100),
+       Point_2(200, -50),
+       CGAL::POSITIVE);
+  test_incircle<Gt>(
+       Segment_2(Point_2(100, 150), Point_2(200, -50)),
+       Segment_2(Point_2(-100, -50), Point_2(100, -150)),
+       Point_2(150, -100),
+       Point_2(50, 100),
+       CGAL::POSITIVE);
+
+  test_incircle<Gt>(
+       Segment_2(Point_2(-100, -50), Point_2(100, -150)),
+       Segment_2(Point_2(100, 150), Point_2(200, -50)),
+       Point_2(0, 50),
+       Point_2(150, -100),
+       CGAL::ZERO);
+  test_incircle<Gt>(
+       Segment_2(Point_2(100, 150), Point_2(200, -50)),
+       Segment_2(Point_2(-100, -50), Point_2(100, -150)),
+       Point_2(150, -100),
+       Point_2(0, 50),
+       CGAL::ZERO);
+
+  test_incircle<Gt>(
+       Segment_2(Point_2(100, 150), Point_2(200, -50)),
+       Segment_2(Point_2(-100, -50), Point_2(100, -150)),
+       Point_2(150, -100),
+       Point_2(150, -50),
+       CGAL::NEGATIVE);
+  test_incircle<Gt>(
+       Segment_2(Point_2(100, 150), Point_2(200, -50)),
+       Segment_2(Point_2(-100, -50), Point_2(100, -150)),
+       Point_2(150, -100),
+       Point_2(50, -100),
+       CGAL::NEGATIVE);
+  test_incircle<Gt>(
+       Segment_2(Point_2(100, 150), Point_2(200, -50)),
+       Segment_2(Point_2(-100, -50), Point_2(100, -150)),
+       Point_2(150, -100),
+       Point_2(12, -27),
+       CGAL::NEGATIVE);
+
 
   std::cout << "====================================" << std::endl;
   std::cout << std::endl;
