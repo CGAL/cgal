@@ -9,7 +9,7 @@
 
 #include <sstream>
 
-template <typename K>
+template <typename K, typename Concurrency_tag = CGAL::Sequential_tag>
 struct Polyhedron_tester : public Tester<K>
 {
   void polyhedron() const
@@ -19,7 +19,10 @@ struct Polyhedron_tester : public Tester<K>
     typedef typename CGAL::Mesh_polyhedron_3<K>::type MeshPolyhedron_3;
 
     // Triangulation
-    typedef typename CGAL::Mesh_triangulation_3<Mesh_domain>::type Tr;
+    typedef typename CGAL::Mesh_triangulation_3<
+      Mesh_domain,
+      typename CGAL::Kernel_traits<Mesh_domain>::Kernel,
+      Concurrency_tag>::type Tr;
     typedef CGAL::Mesh_complex_3_in_triangulation_3<Tr,
       typename Mesh_domain::Corner_index,
       typename Mesh_domain::Curve_segment_index> C3t3;
@@ -85,6 +88,12 @@ int main() {
   Polyhedron_tester<K> test_epic;
   std::cerr << "Mesh generation from a polyhedron:\n";
   test_epic.polyhedron();
+  
+#ifdef CGAL_LINKED_WITH_TBB
+  Polyhedron_tester<K, CGAL::Parallel_tag> test_epic_p;
+  std::cerr << "Parallel mesh generation from a polyhedron:\n";
+  test_epic_p.polyhedron();
+#endif
 
   return EXIT_SUCCESS;
 }
