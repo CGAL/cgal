@@ -711,6 +711,36 @@ private:
 
         return it;
   }
+
+  template <class IncidentFacetIterator>
+  void
+  incident_cells_3_threadsafe(Vertex_handle v, Cell_handle d,
+                              std::vector<Cell_handle> &cells,
+                              IncidentFacetIterator facet_it) const
+  {
+    boost::unordered_set<Cell_handle, Handle_hash_function> found_cells;
+
+    cells.push_back(d);
+    found_cells.insert(d);
+    int head=0;
+    int tail=1;
+    do {
+      Cell_handle c = cells[head];
+
+      for (int i=0; i<4; ++i) {
+        if (c->vertex(i) == v)
+          continue;
+        Cell_handle next = c->neighbor(i);
+        if (c < next)
+          *facet_it++ = Facet(c, i); // Incident facet
+        if (! found_cells.insert(next).second )
+          continue;
+        cells.push_back(next);
+        ++tail;
+      }
+      ++head;
+    } while(head != tail);
+  }
   
   void just_incident_cells_3(Vertex_handle v,
                              std::vector<Cell_handle>& cells) const
@@ -999,47 +1029,19 @@ public:
     }
   }
   
-  void incident_cells_threadsafe(Vertex_handle v,
-                                 std::vector<Cell_handle> &cells) const
+  template <class Filter, class OutputIterator>
+  OutputIterator
+  incident_cells_threadsafe(Vertex_handle v, OutputIterator cells, Filter f = Filter()) const
   {
-    boost::unordered_set<Cell_handle, Handle_hash_function> found_cells;
-    Cell_handle d = v->cell();
-
-    cells.push_back(d);
-    found_cells.insert(d);
-    int head=0;
-    int tail=1;
-    do {
-      Cell_handle c = cells[head];
-
-      for (int i=0; i<4; ++i) {
-        if (c->vertex(i) == v)
-          continue;
-        Cell_handle next = c->neighbor(i);
-        if (! found_cells.insert(next).second )
-          continue;
-        cells.push_back(next);
-        ++tail;
-      }
-      ++head;
-    } while(head != tail);
+    return visit_incident_cells_threadsafe<Cell_extractor<OutputIterator, Filter>,
+      OutputIterator>(v, cells, f);
   }
 
-  template <typename Filter>
-  void incident_cells_threadsafe(Vertex_handle v,
-                                 std::vector<Cell_handle> &cells,
-                                 const Filter &filter) const
+  template <class OutputIterator>
+  OutputIterator
+  incident_cells_threadsafe(Vertex_handle v, OutputIterator cells) const
   {
-    std::vector<Cell_handle> tmp_cells;
-    tmp_cells.reserve(64);
-    incident_cells_threadsafe(v, tmp_cells);
-
-    BOOST_FOREACH(Cell_handle& ch,
-                  std::make_pair(tmp_cells.begin(), tmp_cells.end()))
-    {
-      if (filter(ch))
-        cells.push_back(ch);
-    }
+    return incident_cells_threadsafe<False_filter>(v, cells);
   }
 
   template <class Filter, class OutputIterator>
@@ -1056,6 +1058,24 @@ public:
   template <class OutputIterator>
   OutputIterator
   incident_facets(Vertex_handle v, OutputIterator facets) const
+  {
+    return incident_facets<False_filter>(v, facets);
+  }
+  
+  template <class Filter, class OutputIterator>
+  OutputIterator
+  incident_facets_threadsafe(Vertex_handle v, OutputIterator facets, Filter f = Filter()) const
+  {
+    CGAL_triangulation_precondition( dimension() > 1 );
+    if(dimension() == 3)
+        return visit_incident_cells_threadsafe<Facet_extractor<OutputIterator, Filter>, OutputIterator>(v, facets, f);
+    else
+        return visit_incident_cells_threadsafe<DegCell_as_Facet_extractor<OutputIterator, Filter>, OutputIterator>(v, facets, f);
+  }
+
+  template <class OutputIterator>
+  OutputIterator
+  incident_facets_threadsafe(Vertex_handle v, OutputIterator facets) const
   {
     return incident_facets<False_filter>(v, facets);
   }
@@ -1172,6 +1192,38 @@ public:
         ++cit)
     {
       (*cit)->tds_data().clear();
+      visit(*cit);
+    } 
+
+    return visit.result();
+  }
+  
+  template <class Visitor, class OutputIterator, class Filter>
+  OutputIterator
+  visit_incident_cells_threadsafe(
+    Vertex_handle v, OutputIterator output, Filter f) const
+  {
+    CGAL_triangulation_precondition( v != Vertex_handle() );
+    CGAL_triangulation_expensive_precondition( is_vertex(v) );
+
+    if ( dimension() < 2 )
+    return output;
+
+    Visitor visit(v, output, this, f);
+
+    std::vector<Cell_handle> tmp_cells;
+    tmp_cells.reserve(64);
+    if ( dimension() == 3 )
+      incident_cells_3_threadsafe(
+        v, v->cell(), tmp_cells, visit.facet_it());
+    else
+      incident_cells_2(v, v->cell(), std::back_inserter(tmp_cells));
+
+    typename std::vector<Cell_handle>::iterator cit;
+    for(cit = tmp_cells.begin();
+        cit != tmp_cells.end();
+        ++cit)
+    {
       visit(*cit);
     } 
 
