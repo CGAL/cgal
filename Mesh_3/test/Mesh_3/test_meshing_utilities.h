@@ -376,8 +376,15 @@ struct Tester
                                       const Polyhedral_tag,
                                       const double reference_value) const
   {
+    typedef typename C3t3::Concurrency_tag Concurrency_tag;
     double hdist = compute_hausdorff_distance(c3t3, domain, Polyhedral_tag());
-    assert(hdist <= reference_value*1.1);
+#ifdef CGAL_LINKED_WITH_TBB
+    // Parallel
+    if (boost::is_convertible<Concurrency_tag, CGAL::Parallel_tag>::value)
+      assert(hdist <= reference_value*1.2);
+    else
+#endif //CGAL_LINKED_WITH_TBB
+      assert(hdist <= reference_value*1.01);
   }
 
   template<typename C3t3, typename MeshDomain>

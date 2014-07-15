@@ -88,8 +88,18 @@ struct Implicit_tester : public Tester<K>
 
     CGAL::remove_far_points_in_mesh_3(c3t3);
 
-    // Verify
-    this->verify(c3t3,domain,criteria,Bissection_tag(), 50, 58, 70, 90);
+#ifdef CGAL_LINKED_WITH_TBB
+    // Parallel
+    if (boost::is_convertible<Concurrency_tag, CGAL::Parallel_tag>::value)
+    {
+      this->verify(c3t3, domain, criteria, Bissection_tag(), 40, 62, 70, 100);
+    }
+    else
+#endif //CGAL_LINKED_WITH_TBB
+    {
+      // Verify
+      this->verify(c3t3, domain, criteria, Bissection_tag(), 50, 58, 80, 90);
+    }
   }
 };
 

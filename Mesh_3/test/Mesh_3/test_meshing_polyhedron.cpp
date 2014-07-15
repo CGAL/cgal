@@ -21,6 +21,7 @@
 //******************************************************************************
 // File Description : 
 //******************************************************************************
+#define CGAL_MESH_3_OPTIMIZER_VERBOSE
 
 #include "test_meshing_utilities.h"
 #include <CGAL/Polyhedral_mesh_domain_3.h>
@@ -81,8 +82,20 @@ struct Polyhedron_tester : public Tester<K>
     // Verify
     double vol = 0.479171765761454;
     this->verify_c3t3_volume(c3t3, vol*0.95, vol*1.05);
-    this->verify(c3t3,domain,criteria,Polyhedral_tag(),
-                 110, 140, 190, 230, 350, 420);  }
+#ifdef CGAL_LINKED_WITH_TBB
+    // Parallel
+    if (boost::is_convertible<Concurrency_tag, CGAL::Parallel_tag>::value)
+    {
+      this->verify(c3t3, domain, criteria, Polyhedral_tag(),
+                   110, 140, 190, 230, 350, 420); 
+    }
+    else
+#endif //CGAL_LINKED_WITH_TBB
+    {
+      this->verify(c3t3, domain, criteria, Polyhedral_tag(),
+                   119, 121, 200, 204, 350, 360);  
+    }
+  }
 };
 
 int main()

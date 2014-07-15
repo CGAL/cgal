@@ -63,8 +63,20 @@ struct Polyhedron_tester : public Tester<K>
     
     double vol = 1/6.;
     this->verify_c3t3_volume(c3t3, vol*0.95, vol*1.05);
-    this->verify_c3t3(c3t3,domain,Polyhedral_tag(),
-                      55, 65, 110, 125, 85, 120);
+#ifdef CGAL_LINKED_WITH_TBB
+    // Parallel
+    if (boost::is_convertible<Concurrency_tag, CGAL::Parallel_tag>::value)
+    {
+      this->verify_c3t3(c3t3,domain,Polyhedral_tag(),
+                        55, 65, 110, 125, 85, 120);
+    }
+    else
+#endif //CGAL_LINKED_WITH_TBB
+    {
+      this->verify_c3t3(c3t3,domain,Polyhedral_tag(),
+                        55, 65, 110, 125, 85, 120);
+    }
+    
   }
 };
 
