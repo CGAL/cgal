@@ -636,7 +636,7 @@ QT_XRENDER_LIBRARY:FILEPATH=/usr/lib/libXrender.so
 QT_ZLIB_LIBRARY:FILEPATH=/usr/lib/libz.so
 
 //Enable CGAL component Core
-WITH_CGAL_Core:BOOL=ON
+WITH_CGAL_Core:BOOL=OFF
 
 //Enable CGAL component ImageIO
 WITH_CGAL_ImageIO:BOOL=ON
