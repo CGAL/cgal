@@ -34,7 +34,6 @@
 #  include <CGAL/Gmpq.h>
 #endif
 
-
 typedef CGAL::Simple_cartesian<double> K;
 typedef  K::Point_2 Point_2;
 
@@ -52,18 +51,19 @@ typedef CGAL::Simple_cartesian<leda::real> EK;
 typedef CGAL::Integral_domain_without_division_tag EMTag;
 typedef CGAL::Simple_cartesian<CGAL::Gmpq> EK;
 #endif
-typedef CGAL::Segment_Delaunay_graph_Linf_filtered_traits_without_intersections_2<K, MTag, EK, EMTag>  Gt;
+typedef CGAL::Segment_Delaunay_graph_Linf_filtered_traits_without_intersections_2<K, MTag, EK, EMTag>  GtLinf;
 
 
 #ifdef USE_INPLACE_LIST
 
-typedef CGAL::Segment_Delaunay_graph_storage_traits_2<Gt> ST;
-typedef CGAL::Segment_Delaunay_graph_vertex_base_2<ST>    Vb;
-typedef CGAL::Segment_Delaunay_graph_face_base_2<Gt>      Fb;
-typedef CGAL::Triangulation_data_structure_2<Vb,Fb>       TDS;
-typedef CGAL::Segment_Delaunay_graph_Linf_2<Gt,ST,TDS,CGAL::Tag_true>  SDG2;
+typedef CGAL::Segment_Delaunay_graph_storage_traits_2<GtLinf> STLinf;
+typedef CGAL::Segment_Delaunay_graph_vertex_base_2<STLinf>    VbLinf;
+typedef CGAL::Segment_Delaunay_graph_face_base_2<GtLinf>      FbLinf;
+typedef CGAL::Triangulation_data_structure_2<VbLinf,FbLinf>   TDSLinf;
+typedef CGAL::Segment_Delaunay_graph_Linf_2<
+              GtLinf,STLinf,TDSLinf,CGAL::Tag_true>  SDGLinf;
 #else
-typedef CGAL::Segment_Delaunay_graph_Linf_2<Gt>  SDG2;
+typedef CGAL::Segment_Delaunay_graph_Linf_2<GtLinf>  SDGLinf;
 #endif
 
 typedef std::vector<Point_2> Points_container;
@@ -74,11 +74,6 @@ typedef std::pair<Index_type,Index_type> Constraint;
 typedef std::vector<Constraint> Constraints_container;
 Points_container points;
 Constraints_container constraints;
-SDG2 sdg;
-
-std::vector<SDG2::Site_2> sites;
-
-
 
 template <typename Kernel, typename Iterator>
 struct Sort_traits_2 {
@@ -177,9 +172,9 @@ insert_constraints_using_spatial_sort(SDG& sdg)
   std::cerr << " done (" << timer.time() << "s)\n";
 }
 
-
+template <typename SDG>
 bool
-load_cin_file(std::istream& ifs) {
+load_cin_file(std::istream& ifs, SDG& sdg) {
   std::cerr << "Loading file... ";
   CGAL::Timer timer;
   timer.start();
@@ -188,7 +183,7 @@ load_cin_file(std::istream& ifs) {
     return false;
   Point_2 p, q, qold;
   int point_counter = 0;
-  SDG2::Site_2 site;
+  SDGLinf::Site_2 site;
   while (ifs >> site) {
     //std::cout << site << std::endl;
     if (site.is_point()) {
@@ -231,7 +226,8 @@ load_cin_file(std::istream& ifs) {
 
 int main()
 {
-  load_cin_file(std::cin);
+  SDGLinf sdg;
+  load_cin_file(std::cin, sdg);
 
   CGAL::Timer timer;
   timer.start();
