@@ -261,9 +261,11 @@ int main(int argc, const char *argv[])
   if (argc == 2) {
     if (strcmp(argv[1], "--l2") == 0) {
       is_linf = false;
+    } else if (strcmp(argv[1], "--linf") == 0) {
+      is_linf = true;
     } else {
-      std::cerr << "Error: Only --l2 allowed as argument." << std::endl;
-    return -2;
+      std::cerr << "Error: Only --l2/--linf argument allowed." << std::endl;
+      return -2;
     }
   }
   if (argc > 2) {
