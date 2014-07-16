@@ -1,12 +1,12 @@
 #ifndef SCENE_POLYHEDRON_SELECTION_ITEM_H
 #define SCENE_POLYHEDRON_SELECTION_ITEM_H
+#include "opengl_tools.h"
 #include "Scene_polyhedron_selection_item_config.h"
 #include "Scene_polyhedron_item_k_ring_selection.h"
 #include "Travel_isolated_components.h"
 
 #include "Scene_polyhedron_item_decorator.h"
 #include "Polyhedron_type.h"
-#include "opengl_tools.h"
 #include <CGAL/gl_render.h>
 #include <CGAL/orient_polygon_soup.h>
 

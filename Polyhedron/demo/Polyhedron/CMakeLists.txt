@@ -49,6 +49,10 @@ if( POLYHEDRON_QTSCRIPT_DEBUGGER)
 endif()
 find_package(Qt4)
 
+# Find Glew (optional), for splatting
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/GlSplat/cmake)
+find_package(GLEW)
+
 # Find OpenGL
 find_package(OpenGL)
 
@@ -59,7 +63,12 @@ if(QT4_FOUND)
   find_package(QGLViewer )
 endif(QT4_FOUND)
 
-
+if(GLEW_FOUND)
+  include_directories ( ${GLEW_INCLUDE_DIR} )
+  add_definitions(-DCGAL_GLEW_ENABLED)
+else(GLEW_FOUND)
+  message(STATUS "NOTICE: GLEW library is not found. Splat rendering will not be available.")
+endif(GLEW_FOUND)
 
 # Eigen is required by default
 find_package(Eigen3 3.1.0) #(requires 3.1.0 or greater)
@@ -172,6 +181,13 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   # special
   target_link_libraries(scene_polyhedron_transform_item scene_polyhedron_item)
 
+  if(GLEW_FOUND)
+    qt4_add_resources(gl_splat_rc GlSplat/glsplat.qrc)
+    add_library(gl_splat SHARED
+      GlSplat/GlSplat.cpp GlSplat/Shader.cpp ${gl_splat_rc})
+    target_link_libraries(gl_splat ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY} ${QT_QTOPENGL_LIBRARY} ${GLEW_LIBRARIES})
+  endif(GLEW_FOUND)
+  
   add_item(scene_combinatorial_map_item Scene_combinatorial_map_item.cpp Scene_combinatorial_map_item.moc)
   # special
   target_link_libraries(scene_combinatorial_map_item scene_polyhedron_item)
@@ -199,6 +215,9 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
     Scene_nef_rendering.cpp)
   target_link_libraries(scene_nef_polyhedron_item scene_polyhedron_item)
   add_item(scene_points_with_normal_item Scene_points_with_normal_item.cpp Scene_points_with_normal_item.moc)
+  if(GLEW_FOUND)
+    target_link_libraries( scene_points_with_normal_item gl_splat ${GLEW_LIBRARIES} )
+  endif(GLEW_FOUND)
 
   foreach( lib 
       demo_framework
@@ -242,6 +261,10 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   target_link_libraries( Polyhedron_3 ${QT_LIBRARIES} )
   target_link_libraries( Polyhedron_3 demo_framework )
   target_link_libraries( Polyhedron_3 point_dialog )
+
+  if(GLEW_FOUND)
+    target_link_libraries( Polyhedron_3 gl_splat ${GLEW_LIBRARIES} )
+  endif(GLEW_FOUND)
 
   # Link with CGAL
   target_link_libraries( Polyhedron_3 ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} )

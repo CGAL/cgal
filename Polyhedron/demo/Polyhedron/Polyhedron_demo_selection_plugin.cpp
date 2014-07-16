@@ -1,4 +1,5 @@
 #include <QtCore/qglobal.h>
+#include "opengl_tools.h"
 
 #include "Messages_interface.h"
 #include "Scene_polyhedron_item.h"
