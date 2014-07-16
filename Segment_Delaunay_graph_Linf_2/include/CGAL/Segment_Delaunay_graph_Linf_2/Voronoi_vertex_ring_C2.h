@@ -1860,7 +1860,7 @@ private:
                 return NEGATIVE;
               }
             }
-          } // end of pqsamex and pref same x case
+          } // end of pqsamex and rref same x case
           if ( pqsamey and (CGAL::compare(rref.y(), pointref.y()) == EQUAL) ) {
             RT scalediffdvrx = ux_ - rref.x() * uz_;
             if (CGAL::sign(scalediffdvrx) == CGAL::sign(scalediffdvtx)) {
@@ -1869,7 +1869,7 @@ private:
                 return NEGATIVE;
               }
             }
-          } // end of pqsamey and pref same y case
+          } // end of pqsamey and rref same y case
         } // end of case: pqsamex or pqsamey
       } // end of non-hv segment r case with p, q non-endpoints of r
 
