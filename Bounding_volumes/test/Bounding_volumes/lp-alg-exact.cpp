@@ -10,7 +10,7 @@
 #include <CGAL/basic.h>
 #include <CGAL/Cartesian_d.h>
 #include <CGAL/Min_sphere_of_spheres_d.h>
-#include <CGAL/Arithmetic_kernel.h>
+#include <CGAL/Exact_rational.h>
 
 #include <iostream>
 #include <vector>
@@ -19,7 +19,7 @@
 // The program will work with numbers of type FieldType.
 
 // leda_rational, or Gmpq, or Quotient<MP_float>
-typedef CGAL::Arithmetic_kernel::Rational FieldType;
+typedef CGAL::Exact_rational FieldType;
 
 class Ball {
 private: // representation:

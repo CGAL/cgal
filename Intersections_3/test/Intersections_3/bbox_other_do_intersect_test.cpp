@@ -26,10 +26,10 @@
 #if defined(BOOST_MSVC)
 #  pragma warning(disable:4244) // int to float conversion warning
 #endif  
-#include <CGAL/Arithmetic_kernel.h>
+#include <CGAL/Exact_rational.h>
 
 // leda_rational, or Gmpq, or Quotient<MP_float>
-typedef CGAL::Arithmetic_kernel::Rational         Rational;
+typedef CGAL::Exact_rational         Rational;
 #include <CGAL/intersections.h>
 #include <CGAL/Cartesian.h>
 #include <CGAL/Simple_cartesian.h>

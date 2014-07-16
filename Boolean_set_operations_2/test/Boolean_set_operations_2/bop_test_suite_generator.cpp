@@ -1,4 +1,4 @@
-#include <CGAL/Arithmetic_kernel.h>
+#include <CGAL/Exact_rational.h>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Polygon_2.h>
 #include <CGAL/Polygon_with_holes_2.h>
@@ -14,7 +14,7 @@
 
 
 // leda_rational, or Gmpq, or Quotient<MP_float>
-typedef CGAL::Arithmetic_kernel::Rational         Number_type;
+typedef CGAL::Exact_rational        Number_type;
 
 // instead of
 //typedef CGAL::Simple_cartesian<Number_type>            Kernel;

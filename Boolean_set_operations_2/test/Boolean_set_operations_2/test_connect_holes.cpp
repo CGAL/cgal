@@ -5,9 +5,9 @@
 #ifndef CGAL_BSO_RATIONAL_NT_H
 #define CGAL_BSO_RATIONAL_NT_H
 
-#include <CGAL/Arithmetic_kernel.h>
+#include <CGAL/Exact_rational.h>
 // leda_rational, or Gmpq, or Quotient<MP_float>
-typedef CGAL::Arithmetic_kernel::Rational         Number_type;
+typedef CGAL::Exact_rational         Number_type;
 #endif
 
 #include <CGAL/Cartesian.h>

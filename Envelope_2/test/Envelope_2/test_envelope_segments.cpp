@@ -1,4 +1,4 @@
-#include <CGAL/Arithmetic_kernel.h>
+#include <CGAL/Exact_rational.h>
 #include <CGAL/Cartesian.h>
 #include <CGAL/Arr_segment_traits_2.h>
 #include <CGAL/Arr_curve_data_traits_2.h>
@@ -12,7 +12,7 @@
 using std::strcmp;
 
 // leda_rational, or Gmpq, or Quotient<MP_float>
-typedef CGAL::Arithmetic_kernel::Rational               NT;
+typedef CGAL::Exact_rational                            NT;
 typedef CGAL::Cartesian<NT>                             Kernel;
 typedef CGAL::Arr_segment_traits_2<Kernel>              Segment_traits_2;
 typedef CGAL::Arr_curve_data_traits_2<Segment_traits_2, 

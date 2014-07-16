@@ -3,7 +3,7 @@
 #include <CGAL/basic.h>
 #include <CGAL/assertions_behaviour.h>
 
-#include <CGAL/Arithmetic_kernel.h>
+#include <CGAL/Exact_rational.h>
 #include <CGAL/Cartesian.h>
 #include <CGAL/Gps_segment_traits_2.h>
 #include <CGAL/Boolean_set_operations_2.h>
@@ -14,7 +14,7 @@
 #include <iostream>
 
 // leda_rational, or Gmpq, or Quotient<MP_float>
-typedef CGAL::Arithmetic_kernel::Rational          Number_type;
+typedef CGAL::Exact_rational                       Number_type;
 typedef CGAL::Cartesian<Number_type>               Kernel;
 typedef CGAL::Gps_segment_traits_2<Kernel>         Traits_2;
 typedef Traits_2::Polygon_2                        Polygon_2;

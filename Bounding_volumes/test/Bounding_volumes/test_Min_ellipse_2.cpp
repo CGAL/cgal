@@ -25,7 +25,7 @@
 // implementation: test program for 2D Smallest Enclosing Ellipse
 // ============================================================================
 
-#include <CGAL/Arithmetic_kernel.h>
+#include <CGAL/Exact_integer.h>
 #include <CGAL/Cartesian.h>
 #include <CGAL/Homogeneous.h>
 #include <CGAL/Min_ellipse_2.h>
@@ -39,7 +39,7 @@
 #include <fstream>
 
 
-typedef CGAL::Arithmetic_kernel::Integer      Rt;
+typedef CGAL::Exact_integer      Rt;
 typedef  CGAL::Quotient< Rt >                 Ft;
 
 
