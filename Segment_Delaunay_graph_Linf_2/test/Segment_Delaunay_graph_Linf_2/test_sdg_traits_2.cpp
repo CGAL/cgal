@@ -848,6 +848,18 @@ void test_traits(const char* title)
        Point_2(90, 80),
        CGAL::NEGATIVE);
 
+  // pssd5aless2.cin related validity test:
+  // At the moment, we expect zero.
+  // A negative value could also be possible (if points have priority
+  // over segments), but this would require more changes in other
+  // predicates.
+  test_incircle<Gt>(
+       Segment_2(Point_2(150, 0), Point_2(50, -100)),
+       Point_2(100, 100),
+       Point_2(-100, 100),
+       Point_2(100, 0),
+       CGAL::ZERO);
+
   std::cout << "====================================" << std::endl;
   std::cout << std::endl;
 }
