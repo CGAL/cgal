@@ -33,18 +33,26 @@
 #include <CGAL/Regular_triangulation_cell_base_3.h>
 #include <CGAL/Mesh_3/io_signature.h>
 
+#ifdef CGAL_LINKED_WITH_TBB
+# include <tbb/atomic.h>
+#endif
+
 namespace CGAL {
 
 // Class Compact_mesh_cell_base_3_base
 // Base for Compact_mesh_cell_base_3, with specializations
 // for different values of Concurrency_tag
 // Sequential
-template <typename Concurrency_tag>
+template <typename GT, typename Concurrency_tag>
 class Compact_mesh_cell_base_3_base
 {
+  typedef typename GT::Point_3 Point;
+
 protected:
   Compact_mesh_cell_base_3_base()
-    : bits_(0) {}
+    : bits_(0)
+    , circumcenter_(NULL)
+  {}
 
 public:
 #if defined(CGAL_MESH_3_USE_LAZY_SORTED_REFINEMENT_QUEUE) \
@@ -86,6 +94,13 @@ public:
     return ( (bits_ & (1 << facet)) != 0 );
   }
 
+  /// Precondition circumcenter_ == NULL
+  void try_to_set_circumcenter(Point *cc) const
+  {
+    CGAL_precondition(circumcenter_ == NULL);
+    circumcenter_ = cc;
+  }
+
 private:
   char bits_;
 
@@ -95,19 +110,25 @@ private:
   typedef unsigned int              Erase_counter_type;
   Erase_counter_type                m_erase_counter;
 #endif
+
+protected:
+  mutable Point * circumcenter_;
 };
 
 
 #ifdef CGAL_LINKED_WITH_TBB
 // Class Compact_mesh_cell_base_3_base
 // Specialization for parallel
-template <>
-class Compact_mesh_cell_base_3_base<Parallel_tag>
+template <typename GT>
+class Compact_mesh_cell_base_3_base<GT, Parallel_tag>
 {
+  typedef typename GT::Point_3 Point;
+
 protected:
   Compact_mesh_cell_base_3_base()
   {
     bits_ = 0;
+    circumcenter_ = NULL;
   }
 
 public:
@@ -154,11 +175,22 @@ public:
     return ( (bits_ & (1 << facet)) != 0 );
   }
 
+  /// If the circumcenter is already set (circumcenter_ != NULL),
+  /// this function "deletes" cc
+  void try_to_set_circumcenter(Point *cc) const
+  {
+    if (circumcenter_.compare_and_swap(cc, NULL) != NULL)
+      delete cc;
+  }
+
 private:
   typedef tbb::atomic<unsigned int> Erase_counter_type;
   Erase_counter_type                m_erase_counter;
   /// Stores visited facets (4 first bits)
   tbb::atomic<char> bits_;
+
+protected:
+  mutable tbb::atomic<Point*> circumcenter_;
 };
 
 #endif // CGAL_LINKED_WITH_TBB
@@ -171,7 +203,7 @@ template< class GT,
           class MD,
           class TDS = void >
 class Compact_mesh_cell_base_3
-  : public Compact_mesh_cell_base_3_base<typename TDS::Concurrency_tag>
+  : public Compact_mesh_cell_base_3_base<GT, typename TDS::Concurrency_tag>
 {
   typedef typename GT::FT FT;
 
@@ -210,12 +242,12 @@ public:
       circumcenter_ = NULL;
     }
   }
+
 public:
   // Constructors
   Compact_mesh_cell_base_3()
     : surface_index_table_()
     , surface_center_table_()
-    , circumcenter_(NULL)
 #ifdef CGAL_INTRUSIVE_LIST
     , next_intrusive_()
     , previous_intrusive_()
@@ -230,7 +262,6 @@ public:
   Compact_mesh_cell_base_3(const Compact_mesh_cell_base_3& rhs)
     : N(rhs.N)
     , V(rhs.V)
-    , circumcenter_(NULL)
 #ifdef CGAL_INTRUSIVE_LIST
     , next_intrusive_(rhs.next_intrusive_)
     , previous_intrusive_(rhs.previous_intrusive_)
@@ -253,7 +284,6 @@ public:
     : surface_index_table_()
     , surface_center_table_()
     , V(CGAL::make_array(v0, v1, v2, v3))
-    , circumcenter_(NULL)
 #ifdef CGAL_INTRUSIVE_LIST
     , next_intrusive_()
     , previous_intrusive_()
@@ -278,7 +308,6 @@ public:
     , surface_center_table_()
     , N(CGAL::make_array(n0, n1, n2, n3))
     , V(CGAL::make_array(v0, v1, v2, v3))
-    , circumcenter_(NULL)
 #ifdef CGAL_INTRUSIVE_LIST
     , next_intrusive_()
     , previous_intrusive_()
@@ -438,11 +467,12 @@ public:
   weighted_circumcenter(const Geom_traits& gt = Geom_traits()) const
   {
     if (circumcenter_ == NULL) {
-      circumcenter_ = new Point(gt.construct_weighted_circumcenter_3_object()
-                                (this->vertex(0)->point(),
-                                 this->vertex(1)->point(),
-                                 this->vertex(2)->point(),
-                                 this->vertex(3)->point()));
+      this->try_to_set_circumcenter(
+        new Point(gt.construct_weighted_circumcenter_3_object()
+                  (this->vertex(0)->point(),
+                   this->vertex(1)->point(),
+                   this->vertex(2)->point(),
+                   this->vertex(3)->point())));
     } else {
       CGAL_expensive_assertion(gt.construct_weighted_circumcenter_3_object()
                                 (this->vertex(0)->point(),
@@ -578,8 +608,6 @@ private:
 
   CGAL::cpp11::array<Cell_handle, 4> N;
   CGAL::cpp11::array<Vertex_handle, 4> V;
-
-  mutable Point * circumcenter_;
 
 #ifdef CGAL_INTRUSIVE_LIST
   Cell_handle next_intrusive_, previous_intrusive_;
