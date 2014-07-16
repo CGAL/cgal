@@ -2,6 +2,7 @@
 #undef CGAL_NO_STATIC_FILTERS
 
 
+#include <CGAL/FPU.h>
 #include <CGAL/MP_Float.h>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Filtered_kernel.h>
@@ -75,7 +76,10 @@ double my_rand()
 // Random point in unit cube.
 Weighted_point_3 my_rand_wp3()
 {
-  double x = my_rand(), y = my_rand(), z = my_rand(), r=my_rand();
+  double x = CGAL::IA_force_to_double(my_rand());
+  double y = CGAL::IA_force_to_double(my_rand());
+  double z = CGAL::IA_force_to_double(my_rand());
+  double r = CGAL::IA_force_to_double(my_rand());
   return Weighted_point_3( FTr_with_SF::Weighted_point_3(FTr_with_SF::Bare_point(x, y, z),r) , FTr_without_SF::Weighted_point_3(FTr_without_SF::Bare_point(x, y, z),r) );
 }
 
