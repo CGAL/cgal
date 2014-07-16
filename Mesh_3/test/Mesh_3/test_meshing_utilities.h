@@ -381,7 +381,7 @@ struct Tester
 #ifdef CGAL_LINKED_WITH_TBB
     // Parallel
     if (boost::is_convertible<Concurrency_tag, CGAL::Parallel_tag>::value)
-      assert(hdist <= reference_value*1.2);
+      assert(hdist <= reference_value*4.);
     else
 #endif //CGAL_LINKED_WITH_TBB
       assert(hdist <= reference_value*1.01);
