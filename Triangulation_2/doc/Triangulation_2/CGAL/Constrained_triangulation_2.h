@@ -261,6 +261,15 @@ are removed and new ones are created.
 */ 
 void insert_constraint(const Vertex_handle & va, const Vertex_handle & vb); 
 
+/*!
+Inserts a polyline defined by the points in the range `[first,last)`.
+The polyline is considered as a polygon if the first and last point are equal or if  `close = true`. This allows for example to pass the vertex range of a `Polygon_2`.
+\tparam PointIterator must be an `InputIterator` with the value type `Point`. 
+*/
+template < class PointIterator>
+void insert_constraint(PointIterator first, PointIterator last, bool close=false);
+
+
 
 /*! 
 Removes a vertex `v`. 

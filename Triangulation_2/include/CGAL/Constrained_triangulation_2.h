@@ -285,6 +285,31 @@ insert_constraint(Vertex_handle  vaa, Vertex_handle vbb, OutputIterator out)
   void insert_constraint(Vertex_handle va, Vertex_handle  vb);
   void push_back(const Constraint& c);
 
+
+  template <class PointIterator>
+  void insert_constraint(PointIterator first, PointIterator last, bool close=false)
+  {
+    if(first == last){
+      return;
+    }
+    const Point& p0 = *first;
+    Point p = p0;
+    Vertex_handle v0 = insert(p0), v(v0), w(v0);
+    ++first;
+    for(; first!=last; ++first){
+      const Point& q = *first;
+      if(p != q){
+        w = insert(q);
+        insert_constraint(v,w);
+        v = w;
+        p = q;
+      }
+    }
+    if(close && (p != p0)){
+      insert(w,v0);
+    }
+  }
+
   void remove(Vertex_handle  v);
   void remove_constrained_edge(Face_handle f, int i);
   void remove_incident_constraints(Vertex_handle  v);
