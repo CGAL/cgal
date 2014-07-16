@@ -206,6 +206,8 @@ class Compact_mesh_cell_base_3
   : public Compact_mesh_cell_base_3_base<GT, typename TDS::Concurrency_tag>
 {
   typedef typename GT::FT FT;
+  typedef Compact_mesh_cell_base_3_base<GT,typename TDS::Concurrency_tag> Base;
+  using Base::circumcenter_;
 
 public:
   typedef TDS                          Triangulation_data_structure;
