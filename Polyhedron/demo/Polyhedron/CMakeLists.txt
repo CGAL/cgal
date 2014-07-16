@@ -61,14 +61,10 @@ endif(QT4_FOUND)
 
 
 
-# Eigen is required by default
 find_package(Eigen3 3.1.0) #(requires 3.1.0 or greater)
 if (EIGEN3_FOUND)
   include( ${EIGEN3_USE_FILE} )
-else()
-  message(STATUS "NOTICE: parametrization, poisson reconstruction and curvatures estimation plugins require Eigen 3.1 (or greater) and will not be available.")
-endif()
-
+endif(EIGEN3_FOUND)
 
 if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
@@ -177,7 +173,7 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   target_link_libraries(scene_combinatorial_map_item scene_polyhedron_item)
 
   add_item(scene_polylines_item Scene_polylines_item.cpp Scene_polylines_item.moc)
-  
+
   add_item(scene_polyhedron_item_decorator Scene_polyhedron_item_decorator.cpp Scene_polyhedron_item_decorator.moc)
   target_link_libraries(scene_polyhedron_item_decorator scene_polyhedron_item)
   
@@ -330,21 +326,11 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   if(EIGEN3_FOUND)
     polyhedron_demo_plugin(parameterization_plugin Polyhedron_demo_parameterization_plugin)
     target_link_libraries(parameterization_plugin scene_polyhedron_item scene_textured_polyhedron_item )
-  endif()
-  
-  if(EIGEN3_FOUND)
+
     qt4_wrap_ui( poissonUI_FILES Polyhedron_demo_poisson_plugin.ui)
     polyhedron_demo_plugin(poisson_plugin Polyhedron_demo_poisson_plugin Polyhedron_demo_poisson_plugin_impl.cpp ${poissonUI_FILES})
     target_link_libraries(poisson_plugin scene_polyhedron_item scene_points_with_normal_item)
-  endif()
-  
-  
-  # Link with BLAS and LAPACK only (optional), for Jet Fitting
-  if (NOT EIGEN3_FOUND AND LAPACK_FOUND)
-    include( ${LAPACK_USE_FILE} )
-  endif()
-  
-  if(EIGEN3_FOUND OR LAPACK_FOUND)
+
     qt4_wrap_ui( normal_estimationUI_FILES Polyhedron_demo_normal_estimation_plugin.ui)
     polyhedron_demo_plugin(normal_estimation_plugin Polyhedron_demo_normal_estimation_plugin ${normal_estimationUI_FILES})
     target_link_libraries(normal_estimation_plugin scene_points_with_normal_item)
@@ -357,10 +343,14 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
     polyhedron_demo_plugin(jet_fitting_plugin Polyhedron_demo_jet_fitting_plugin)
     target_link_libraries(jet_fitting_plugin scene_polyhedron_item scene_polylines_item)
-    
-  else(EIGEN3_FOUND OR LAPACK_FOUND)
-    message(STATUS "NOTICE: Normal estimation and smoothing plugins require Eigen 3.1 (or greater) or LAPACK libraries and will not be available.")
-  endif(EIGEN3_FOUND OR LAPACK_FOUND)
+  else(EIGEN3_FOUND)
+    message(STATUS "NOTICE: Eigen 3.1 (or greater) was not found. Parameterization plugin will not be available.")
+    message(STATUS "NOTICE: Eigen 3.1 (or greater) was not found. Poisson reconstruction plugin will not be available.")
+    message(STATUS "NOTICE: Eigen 3.1 (or greater) was not found. Normal estimation plugin will not be available.")
+    message(STATUS "NOTICE: Eigen 3.1 (or greater) was not found. Smoothing plugin will not be available.")
+    message(STATUS "NOTICE: Eigen 3.1 (or greater) was not found. Average spacing plugin will not be available.")
+    message(STATUS "NOTICE: Eigen 3.1 (or greater) was not found. Jet fitting plugin will not be available.")
+  endif(EIGEN3_FOUND)
 
   polyhedron_demo_plugin(self_intersection_plugin Polyhedron_demo_self_intersection_plugin)
   target_link_libraries(self_intersection_plugin scene_polyhedron_item)

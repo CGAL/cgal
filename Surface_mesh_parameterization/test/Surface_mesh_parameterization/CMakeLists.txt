@@ -26,10 +26,6 @@ if ( CGAL_FOUND )
 
   # VisualC++ optimization for applications dealing with large data
   if (MSVC)
-    # Use /EHa option to catch stack overflows.
-    # Note: TAUCS needs a stack >= 2MB. CGAL default is 10MB.
-    string(REGEX REPLACE "/EH[asc]*" "/EHa" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
-
     # Use /FR to turn on IntelliSense
     SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /FR")
 
@@ -65,21 +61,11 @@ if ( CGAL_FOUND )
     include( ${EIGEN3_USE_FILE} )
   endif()
 
-  #find TAUCS
-  find_package(TAUCS)
-  if(TAUCS_FOUND)
-    include( ${TAUCS_USE_FILE} )
-  endif(TAUCS_FOUND)  
-
-  if(NOT TAUCS_FOUND)
-    message(STATUS "NOTICE: This directory requires the TAUCS library, and some features will not be available.")
-  endif(NOT TAUCS_FOUND)
-
   if(NOT EIGEN3_FOUND)
     message(STATUS "NOTICE: This directory requires Eigen 3.1 (or greater), and some features will not be available.")
   endif()
 
-  # Executable that can use EIGEN/TAUCS or not, depending on the macro CGAL_EIGEN3_ENABLED/CGAL_USE_TAUCS
+  # Executable that can use EIGEN or not, depending on the macro CGAL_EIGEN3_ENABLED
   create_single_source_cgal_program( "extensive_parameterization_test.cpp" )
 
 else()

@@ -38,11 +38,6 @@ if(QT4_FOUND)
   find_package(QGLViewer )
 endif(QT4_FOUND)
 
-# Find BLAS, LAPACK and TAUCS (optional), for Poisson
-find_package(TAUCS)
-
-# Find BLAS and LAPACK only (optional), for Jet Fitting
-find_package(LAPACK)
 
 # Find Eigen3 (requires 3.1.0 or greater)
 find_package(Eigen3 3.1.0)
@@ -55,28 +50,6 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
   include_directories ( ${QGLVIEWER_INCLUDE_DIR} )
 
-  # Link with BLAS, LAPACK and TAUCS (optional), for Poisson
-  if(TAUCS_FOUND)
-    include( ${TAUCS_USE_FILE} )
-  else(TAUCS_FOUND)
-    message(STATUS "NOTICE: TAUCS library is not found.")
-  endif(TAUCS_FOUND)
-  
-  if(EIGEN3_FOUND)
-    include( ${EIGEN3_USE_FILE} )
-  else()
-    message(STATUS "NOTICE: Eigen library is not found.")
-  endif()
-
-  # Link with BLAS and LAPACK only (optional), for Jet Fitting
-  if(LAPACK_FOUND)
-    include( ${LAPACK_USE_FILE} )
-  else(LAPACK_FOUND)
-    if (NOT EIGEN3_FOUND)
-      message(STATUS "NOTICE: Nor Eigen 3.1 (or greater) nor LAPACK library were found. Normal estimation and smoothing will not be available.")
-    endif()
-  endif(LAPACK_FOUND)
-
   if(GLEW_FOUND)
     include_directories ( ${GLEW_INCLUDE_DIR} )
     add_definitions(-DCGAL_GLEW_ENABLED)
@@ -86,10 +59,6 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
   # VisualC++ optimization for applications dealing with large data
   if (MSVC)
-    # Use /EHa option to catch stack overflows.
-    # Note: TAUCS needs a stack >= 2MB. CGAL default is 10MB.
-    string(REGEX REPLACE "/EH[asc]*" "/EHa" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
-
     # Use /FR to turn on IntelliSense
     SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /FR")
 
@@ -237,15 +206,26 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
     target_link_libraries( ${plugin_name} ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} )
   endmacro(point_set_demo_plugin)
 
-  if(TAUCS_FOUND OR EIGEN3_FOUND)
+  if(EIGEN3_FOUND)
+    include( ${EIGEN3_USE_FILE} )
+
     qt4_wrap_ui( POISSON_UI_FILES PS_demo_poisson_plugin.ui)
     point_set_demo_plugin(PS_demo_poisson_plugin
       PS_demo_poisson_plugin
       PS_demo_poisson_plugin_cgal_code.cpp
       ${POISSON_UI_FILES})
     target_link_libraries(PS_demo_poisson_plugin PS_demo_scene_polyhedron_item point_set)
+
+    point_set_demo_plugin(PS_demo_smoothing_plugin PS_demo_smoothing_plugin)
+    target_link_libraries(PS_demo_smoothing_plugin point_set)
+
+    qt4_wrap_ui( NORMAL_UI_FILES PS_demo_normal_estimation_plugin.ui)
+    point_set_demo_plugin(PS_demo_normal_estimation_plugin
+      PS_demo_normal_estimation_plugin
+      ${NORMAL_UI_FILES})
+    target_link_libraries(PS_demo_normal_estimation_plugin point_set)
   else()
-    message(STATUS "NOTICE: Neither TAUCS nor Eigen 3.1 (or greater) libraries have been found. Poisson reconstruction will not be available.")
+    message(STATUS "NOTICE: Eigen 3.1 (or greater) library has not been found. Poisson reconstruction, normal estimation and smoothing will not be available.")
   endif()
 
   point_set_demo_plugin(PS_demo_inside_out_plugin PS_demo_inside_out_plugin)
@@ -268,19 +248,6 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
   point_set_demo_plugin(PS_demo_average_spacing_plugin PS_demo_average_spacing_plugin)
   target_link_libraries(PS_demo_average_spacing_plugin point_set)
-
-  if(LAPACK_FOUND OR EIGEN3_FOUND)
-    point_set_demo_plugin(PS_demo_smoothing_plugin PS_demo_smoothing_plugin)
-    target_link_libraries(PS_demo_smoothing_plugin point_set)
-  endif()
-
-  if(LAPACK_FOUND)
-    qt4_wrap_ui( NORMAL_UI_FILES PS_demo_normal_estimation_plugin.ui)
-    point_set_demo_plugin(PS_demo_normal_estimation_plugin
-      PS_demo_normal_estimation_plugin
-      ${NORMAL_UI_FILES})
-    target_link_libraries(PS_demo_normal_estimation_plugin point_set)
-  endif()
 
   qt4_wrap_ui( CLEANING_UI_FILES PS_demo_cleaning_plugin.ui)
   point_set_demo_plugin(PS_demo_cleaning_plugin

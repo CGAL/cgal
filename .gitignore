@@ -623,7 +623,6 @@ Point_set_processing_3/examples/Point_set_processing_3/normal_estimation
 Point_set_processing_3/examples/Point_set_processing_3/oni_copy.xyz
 Point_set_processing_3/examples/Point_set_processing_3/property_map
 Point_set_processing_3/examples/Point_set_processing_3/sphere_20k_copy.xyz
-Point_set_processing_3/include/CGAL/*.Taucs_symmetric_solver_traits
 Point_set_processing_3/include/CGAL/*.object_pool
 Point_set_processing_3/include/CGAL/*.pool
 Point_set_processing_3/include/CGAL/*.reserve_RAM
@@ -879,7 +878,6 @@ Surface_reconstruction_points_3/examples/Surface_reconstruction_points_3/APSS_re
 Surface_reconstruction_points_3/examples/Surface_reconstruction_points_3/AQtimeProject
 Surface_reconstruction_points_3/examples/Surface_reconstruction_points_3/Makefile
 Surface_reconstruction_points_3/examples/Surface_reconstruction_points_3/poisson_reconstruction
-Surface_reconstruction_points_3/include/CGAL/*.Taucs_symmetric_solver_traits
 Surface_reconstruction_points_3/include/CGAL/*.object_pool
 Surface_reconstruction_points_3/include/CGAL/*.pool
 Surface_reconstruction_points_3/include/CGAL/*.reserve_RAM

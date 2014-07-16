@@ -60,11 +60,7 @@ class Polyhedron_demo_poisson_plugin_dialog : public QDialog, private Ui::Poisso
     Polyhedron_demo_poisson_plugin_dialog(QWidget* /*parent*/ = 0)
     {
       setupUi(this);
-      
-      #ifdef CGAL_TAUCS_ENABLED
-      m_inputSolver->addItem("Taucs");
-      #endif
-      
+
       #ifdef CGAL_EIGEN3_ENABLED
       m_inputSolver->addItem("Eigen - built-in simplicial LDLt");
       m_inputSolver->addItem("Eigen - built-in CG");

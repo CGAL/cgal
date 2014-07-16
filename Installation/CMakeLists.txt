@@ -512,7 +512,7 @@ endmacro()
 #  External libs Qt3 and Qt34are configured when Qt3 or Qt4 as lib of cgal are required
 #  Coin is used in KDS, but no FindCoin or FindCOIN exists
 #  There exists FindF2C, FindIPE, FindMKL, but they are only used to support supporting libs
-list (INSERT CGAL_SUPPORTING_3RD_PARTY_LIBRARIES 0 GMP MPFR ZLIB OpenGL LEDA MPFI RS RS3 OpenNL TAUCS Eigen3 BLAS LAPACK QGLViewer ESBTL Coin3D NTL IPE)
+list (INSERT CGAL_SUPPORTING_3RD_PARTY_LIBRARIES 0 GMP MPFR ZLIB OpenGL LEDA MPFI RS RS3 OpenNL Eigen3 BLAS LAPACK QGLViewer ESBTL Coin3D NTL IPE)
 if (NOT WIN32)
   # GMPXX is not supported on WIN32 machines
   list (INSERT CGAL_SUPPORTING_3RD_PARTY_LIBRARIES 1 GMPXX)
@@ -854,11 +854,6 @@ install(FILES     ${CGAL_MODULES_REL_DIR}/UseCGAL.cmake   DESTINATION ${CGAL_INS
 if ( GMP_IN_AUXILIARY )
   install(DIRECTORY auxiliary/gmp/include/ DESTINATION ${CGAL_INSTALL_INC_DIR} )
   install(DIRECTORY auxiliary/gmp/lib/     DESTINATION ${CGAL_INSTALL_LIB_DIR} )
-endif()
-
-if ( TAUCS_IN_AUXILIARY )
-  install(DIRECTORY auxiliary/taucs/include/ DESTINATION ${CGAL_INSTALL_INC_DIR} )
-  install(DIRECTORY auxiliary/taucs/lib/     DESTINATION ${CGAL_INSTALL_LIB_DIR} )
 endif()
 
 if ( ZLIB_IN_AUXILIARY )

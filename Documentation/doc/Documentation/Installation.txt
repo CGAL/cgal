@@ -703,7 +703,7 @@ cmake -DWITH_examples=OFF -DWITH_demos=OFF -DCMAKE_BUILD_TYPE=Release
 -- Build type: Release
 -- USING CXXFLAGS = ' -frounding-math -O3 -DNDEBUG'
 -- USING LDFLAGS = ' '
--- External libraries supported: GMP;GMPXX;MPFR;zlib;OpenGL;LEDA;MPFI;RS;RS3;OpenNL;TAUCS;EIGEN3;BLAS;LAPACK;QGLViewer;ESBTL;NTL
+-- External libraries supported: GMP;GMPXX;MPFR;zlib;OpenGL;LEDA;MPFI;RS;RS3;OpenNL;EIGEN3;BLAS;LAPACK;QGLViewer;ESBTL;NTL
 -- Preconfiguring library: GMP ...
 -- GMP has been preconfigured:
 -- CGAL_UseGMP-file: 
