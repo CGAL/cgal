@@ -21,11 +21,11 @@
 #ifndef CGAL_QT_RESOURCES_H
 #define CGAL_QT_RESOURCES_H
 
-#include <CGAL/export/Qt4.h>
+#include <CGAL/export/Qt.h>
 
 // cannot use namespaces because of the Q_INIT_RESOURCE macro
 //New for Qt5 version !
-CGAL_QT4_EXPORT void CGAL_Qt_init_resources();
+CGAL_QT_EXPORT void CGAL_Qt_init_resources();
 
 //New for Qt5 version !
 #define CGAL_QT_INIT_RESOURCES do { CGAL_Qt_init_resources(); } while(0)

@@ -334,13 +334,23 @@ if(QT4)
   target_link_libraries(${IO_IMPLICIT_FUNCTION_PLUGIN_LIB} ${SCENE_IMPLICIT_FUNCTION_ITEM_LIB})
 
   set(MESH_3_PLUGIN_LIB "${MESH_3_LIB_PREFIX}mesh_3_plugin") 
+  
+  if(QT5)
   polyhedron_demo_plugin(${MESH_3_PLUGIN_LIB} Mesh_3_plugin 
+                         Mesh_3_plugin_polyhedron_cgal_code.cpp
+                         Mesh_3_plugin_image_cgal_code.cpp
+                         Mesh_3_plugin_implicit_function_cgal_code.cpp
+                         Meshing_thread.cpp
+                         ${meshingUI_FILES})
+	elseif(QT4)
+	  polyhedron_demo_plugin(${MESH_3_PLUGIN_LIB} Mesh_3_plugin 
                          Mesh_3_plugin_polyhedron_cgal_code.cpp
                          Mesh_3_plugin_image_cgal_code.cpp
                          Mesh_3_plugin_implicit_function_cgal_code.cpp
                          Meshing_thread.cpp
                          Scene_c3t3_item.moc
                          ${meshingUI_FILES})
+	endif()
 
   target_link_libraries(${MESH_3_PLUGIN_LIB}
                         ${SCENE_C3T3_ITEM_LIB}
@@ -352,11 +362,20 @@ if(QT4)
                         ${OPENGL_glu_LIBRARY})
 
   set(MESH_3_OPTIMIZATION_PLUGIN_LIB "${MESH_3_LIB_PREFIX}mesh_3_optimization_plugin") 
-  polyhedron_demo_plugin(${MESH_3_OPTIMIZATION_PLUGIN_LIB} Mesh_3_optimization_plugin 
+  
+  if(QT5)
+    polyhedron_demo_plugin(${MESH_3_OPTIMIZATION_PLUGIN_LIB} Mesh_3_optimization_plugin 
+                         Mesh_3_optimization_plugin_cgal_code.cpp
+                         Optimizer_thread.cpp
+                         ${optimUI_FILES})
+  elseif(QT4)
+    polyhedron_demo_plugin(${MESH_3_OPTIMIZATION_PLUGIN_LIB} Mesh_3_optimization_plugin 
                          Mesh_3_optimization_plugin_cgal_code.cpp
                          Optimizer_thread.cpp
                          Scene_c3t3_item.moc
                          ${optimUI_FILES})
+  endif()
+
 
   target_link_libraries(${MESH_3_OPTIMIZATION_PLUGIN_LIB}
                         ${SCENE_C3T3_ITEM_LIB}

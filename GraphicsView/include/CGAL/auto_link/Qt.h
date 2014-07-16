@@ -17,16 +17,17 @@
 //
 // Author(s)     : Laurent Rineau
 
-#ifndef CGAL_AUTO_LINK_QT4_H
-#define CGAL_AUTO_LINK_QT4_H
+#ifndef CGAL_AUTO_LINK_QT_H
+#define CGAL_AUTO_LINK_QT_H
 
 #include <CGAL/config.h>
+#include <QtCore/qglobal.h>
 
-#ifndef CGAL_NO_AUTOLINK_QT4
+#if (! defined (CGAL_NO_AUTOLINK_QT4)) && ((!defined CGAL_NO_AUTOLINK_QT5))
 #if ( ! defined( CGAL_EXPORTS ) ) && (! defined ( CGAL_Qt4_EXPORTS ) && (! defined (CGAL_Qt5_EXPORTS) ) ) 
 
 // If CGAL_EXPORTS is defined it means that we are building the CGAL
-// library as a DLL. The CGAL.dll does not really depend on CGAL_Qt4,
+// library as a DLL. The CGAL.dll does not really depend on CGAL_Qt,
 // whatever the header inclusion graph says.
 
 //New for Qt5 version !
@@ -39,6 +40,6 @@
 #include <CGAL/auto_link/auto_link.h>
 
 #endif // CGAL_EXPORTS
-#endif // CGAL_NO_AUTOLINK_QT4
+#endif // CGAL_NO_AUTOLINK_QT
 
-#endif // CGAL_AUTO_LINK_QT4_H
+#endif // CGAL_AUTO_LINK_QT_H

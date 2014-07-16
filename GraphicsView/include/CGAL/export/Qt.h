@@ -17,9 +17,8 @@
 //
 // Author(s)     : Andreas Fabri
 
-#ifndef CGAL_QT4_EXPORT_H
-#define CGAL_QT4_EXPORT_H
-
+#ifndef CGAL_QT_EXPORT_H
+#define CGAL_QT_EXPORT_H
 
 #include <CGAL/config.h>
 #include <CGAL/export/helpers.h>
@@ -28,20 +27,20 @@
 
 #  if defined(CGAL_Qt4_EXPORTS) || defined(CGAL_Qt5_EXPORTS) // defined by CMake or in cpp files of the dll
 
-#    define CGAL_QT4_EXPORT CGAL_DLL_EXPORT
-#    define CGAL_QT4_EXPIMP_TEMPLATE
+#    define CGAL_QT_EXPORT CGAL_DLL_EXPORT
+#    define CGAL_QT_EXPIMP_TEMPLATE
 
 #  else // not CGAL_Qt4_EXPORTS
 
-#    define CGAL_QT4_EXPORT CGAL_DLL_IMPORT
-#    define CGAL_QT4_EXPIMP_TEMPLATE extern
+#    define CGAL_QT_EXPORT CGAL_DLL_IMPORT
+#    define CGAL_QT_EXPIMP_TEMPLATE extern
 
 #  endif // not CGAL_QT4_EXPORTS
 
 #else // not CGAL_BUILD_SHARED_LIBS
 
-#  define CGAL_QT4_EXPORT
-#  define CGAL_QT4_EXPIMP_TEMPLATE
+#  define CGAL_QT_EXPORT
+#  define CGAL_QT_EXPIMP_TEMPLATE
 
 #endif // not CGAL_BUILD_SHARED_LIBS
 
