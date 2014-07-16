@@ -480,7 +480,7 @@ public:
                                 (this->vertex(0)->point(),
                                  this->vertex(1)->point(),
                                  this->vertex(2)->point(),
-                                 this->vertex(3)->point()) == *circumcenter);
+                                 this->vertex(3)->point()) == *circumcenter_);
     }
     return *circumcenter_;
   }
