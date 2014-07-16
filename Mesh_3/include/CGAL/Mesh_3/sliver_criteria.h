@@ -154,7 +154,7 @@ public:
 public:
   Min_dihedral_angle_criterion(const double& sliver_bound,
                                const Tr& tr)
-    : Base(sliver_bound, tr)
+    : Base(sliver_bound, tr), min_value_before_move_(0.)
   {}
   
 private:
