@@ -1,4 +1,4 @@
-#include <CGAL/Arithmetic_kernel.h>
+#include <CGAL/Exact_rational.h>
 #include <CGAL/Cartesian.h>
 
 #include <fstream>
@@ -10,8 +10,8 @@
 #include <cassert>
 
 
-typedef CGAL::Arithmetic_kernel::Rational Precise_rational;
-typedef CGAL::Cartesian< Precise_rational >     R;
+typedef CGAL::Exact_rational Exact_rational;
+typedef CGAL::Cartesian< Exact_rational >     R;
 typedef CGAL::Convex_hull_traits_3<R>           Traits;
 typedef Traits::Polyhedron_3                    Polyhedron_3;
 
@@ -22,7 +22,7 @@ typedef R::Triangle_3				Triangle_3;
 typedef R::Plane_3   				Plane_3;
 
 
-typedef CGAL::Creator_uniform_3<Precise_rational, Point_3>    Creator;
+typedef CGAL::Creator_uniform_3<Exact_rational, Point_3>    Creator;
 typedef CGAL::Random_points_in_sphere_3<Point_3,Creator>      Generator;
 
 void test_coplanar_xy()

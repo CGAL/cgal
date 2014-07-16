@@ -28,7 +28,8 @@
 #define CGAL_NEF3_SORT_OUTPUT 1
 
 
-#include <CGAL/Arithmetic_kernel.h>
+#include <CGAL/Exact_integer.h>
+#include <CGAL/Exact_rational.h>
 #include <CGAL/Cartesian.h>
 #include <CGAL/Homogeneous.h>
 #include <CGAL/Nef_polyhedron_3.h>
@@ -40,8 +41,8 @@
 #include <string>
 
 
-typedef CGAL::Arithmetic_kernel::Integer NT;
-typedef CGAL::Arithmetic_kernel::Rational FNT;
+typedef CGAL::Exact_integer NT;
+typedef CGAL::Exact_rational FNT;
 
 
 template<typename Kernel>

@@ -1,7 +1,7 @@
 #define CGAL_POLYGON_DEBUG 1
 
 #include <CGAL/Cartesian.h>
-#include <CGAL/Arithmetic_kernel.h>
+#include <CGAL/Exact_rational.h>
 
 #include <CGAL/Point_2.h>
 #include <CGAL/Polygon_2_algorithms.h>
@@ -17,7 +17,7 @@ using std::endl;
 bool TestSimplicity(const char* FileName)
 // tests the simplicity of the polygon in the file FileName
 {
-  typedef CGAL::Arithmetic_kernel::Rational NT;
+  typedef CGAL::Exact_rational NT;
   typedef CGAL::Cartesian<NT> K;
   typedef CGAL::Point_2<K> Point;
 

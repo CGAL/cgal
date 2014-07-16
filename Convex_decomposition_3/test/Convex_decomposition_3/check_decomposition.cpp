@@ -1,4 +1,4 @@
-#include <CGAL/Arithmetic_kernel.h>
+#include <CGAL/Exact_integer.h>
 #include<CGAL/Homogeneous.h>
 #include<CGAL/Nef_polyhedron_3.h>
 #include<CGAL/IO/Nef_polyhedron_iostream_3.h>
@@ -8,7 +8,7 @@
 #include<CGAL/Nef_3/SNC_indexed_items.h>
 #include<fstream>
 
-typedef CGAL::Arithmetic_kernel::Integer  RT;
+typedef CGAL::Exact_integer  RT;
 typedef CGAL::Homogeneous<RT> Kernel;
 typedef CGAL::Nef_polyhedron_3<Kernel> Nef_polyhedron_3;
 //typedef CGAL::Nef_polyhedron_3<Kernel, CGAL::SNC_indexed_items> Nef_polyhedron_3;
