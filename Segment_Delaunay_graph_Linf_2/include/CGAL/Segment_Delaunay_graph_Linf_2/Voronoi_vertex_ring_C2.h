@@ -1834,24 +1834,25 @@ private:
           (not (is_p1_endp_of_s or is_p2_endp_of_s))
          ) {
         CGAL_SDG_DEBUG(std::cout << "debug vring seg=" << s
-            << "is non-axis parallel"
+            << " is non-axis parallel"
             << " and no points are its endpoints" << std::endl;);
         const bool pqsamex = scmpx(p1, p2) == EQUAL;
         bool pqsamey (false);
         if (pqsamex) {
-          CGAL_SDG_DEBUG(std::cout << "debug vring points on same vertical side"
+          CGAL_SDG_DEBUG(std::cout << "debug vring points have same x, "
+              << " might be on same Linf vertical side"
               << std::endl;);
         } else {
           pqsamey = scmpy(p1, p2) == EQUAL;
           if (pqsamey) {
-            CGAL_SDG_DEBUG(std::cout << "debug points on "
-                << "same horizontal side" << std::endl;);
+            CGAL_SDG_DEBUG(std::cout << "debug vring points have same y, "
+                << " might be on same Linf horizontal side" << std::endl;);
           }
         }
         if (pqsamex or pqsamey) {
           Line_2 lr = compute_supporting_line(s.supporting_site());
           Homogeneous_point_2 rref = compute_linf_projection_hom(lr, point());
-          if (pqsamex) {
+          if ( pqsamex and (CGAL::compare(rref.x(), pointref.x()) == EQUAL) ) {
             RT scalediffdvry = uy_ - rref.y() * uz_;
             if (CGAL::sign(scalediffdvry) == CGAL::sign(scalediffdvty)) {
               if (CGAL::compare(CGAL::abs(scalediffdvtx),
@@ -1859,8 +1860,8 @@ private:
                 return NEGATIVE;
               }
             }
-          } // end of pqsamex case
-          if (pqsamey) {
+          } // end of pqsamex and pref same x case
+          if ( pqsamey and (CGAL::compare(rref.y(), pointref.y()) == EQUAL) ) {
             RT scalediffdvrx = ux_ - rref.x() * uz_;
             if (CGAL::sign(scalediffdvrx) == CGAL::sign(scalediffdvtx)) {
               if (CGAL::compare(CGAL::abs(scalediffdvty),
@@ -1868,7 +1869,7 @@ private:
                 return NEGATIVE;
               }
             }
-          } // end of pqsamey case
+          } // end of pqsamey and pref same y case
         } // end of case: pqsamex or pqsamey
       } // end of non-hv segment r case with p, q non-endpoints of r
 

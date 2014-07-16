@@ -2942,19 +2942,20 @@ private:
         bool pqsamex = CGAL::compare(diffdvpx, diffdvqx) == EQUAL;
         bool pqsamey (false);
         if (pqsamex) {
-          CGAL_SDG_DEBUG(std::cout << "debug p, q on same vertical side"
+          CGAL_SDG_DEBUG(std::cout << "debug p, q have same x, "
+              << "might be on same Linf vertical side"
               << std::endl;);
         } else {
           pqsamey = CGAL::compare(diffdvpy, diffdvqy) == EQUAL;
           if (pqsamey) {
-            CGAL_SDG_DEBUG(std::cout << "debug p, q on "
-                << "same horizontal side" << std::endl;);
+            CGAL_SDG_DEBUG(std::cout << "debug p, q have same y, "
+                << "might be on same Linf horizontal side" << std::endl;);
           }
         }
         if (pqsamex or pqsamey) {
           Line_2 lr = compute_supporting_line(r.supporting_site());
           Homogeneous_point_2 rref = compute_linf_projection_hom(lr, vv);
-          if (pqsamex) {
+          if ( pqsamex and (CGAL::compare(pref.x(), rref.x()) == EQUAL) ) {
             FT diffdvry = vv.y() - rref.y();
             if (CGAL::sign(diffdvry) == CGAL::sign(diffdvty)) {
               if (CGAL::compare(CGAL::abs(diffdvtx),
@@ -2962,8 +2963,8 @@ private:
                 return NEGATIVE;
               }
             }
-          } // end of pqsamex case
-          if (pqsamey) {
+          } // end of pqsamex and rref same x case
+          if ( pqsamey and (CGAL::compare(pref.y(), rref.y()) == EQUAL) ) {
             FT diffdvrx = vv.x() - rref.x();
             if (CGAL::sign(diffdvrx) == CGAL::sign(diffdvtx)) {
               if (CGAL::compare(CGAL::abs(diffdvty),
@@ -2971,7 +2972,7 @@ private:
                 return NEGATIVE;
               }
             }
-          } // end of pqsamey case
+          } // end of pqsamey and rref same y case
         } // end of case: pqsamex or pqsamey
       } // end of non-hv segment r case with p, q non-endpoints of r
 
