@@ -99,13 +99,13 @@ typedef PVertex_<FT,
                  SliverCriterion,
                  Perturbation,
                  Concurrency_tag> Self;
-typedef unsigned int id_type;
+typedef std::size_t id_type;
 
 /// Constructor
 PVertex_()
 : vertex_handle_()
 , incident_sliver_nb_(0)
-, min_value_(SliverCriterion::max_value)
+, min_value_((std::numeric_limits<double>::max)())
 , try_nb_(0)
 , p_perturbation_(NULL)
 , id_()
@@ -207,7 +207,7 @@ typedef PVertex_<FT,
                  SliverCriterion,
                  Perturbation,
                  Parallel_tag> Self;
-typedef unsigned int id_type;
+typedef std::size_t id_type;
 
 /// Constructor
 PVertex_()
