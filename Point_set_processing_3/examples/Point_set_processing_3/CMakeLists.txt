@@ -23,6 +23,8 @@ if ( CGAL_FOUND )
   include( ${CGAL_USE_FILE} )
   include( CGAL_CreateSingleSourceCGALProgram )
 
+  find_package(Boost QUIET)
+
   # VisualC++ optimization for applications dealing with large data
   if (MSVC)
     # Use /EHa option to catch stack overflows.
@@ -48,7 +50,9 @@ if ( CGAL_FOUND )
   # Executables that do *not* require EIGEN or LAPACK
   create_single_source_cgal_program( "average_spacing_example.cpp" )
   create_single_source_cgal_program( "grid_simplification_example.cpp" )
-  create_single_source_cgal_program( "normals_example.cpp" )
+  if(NOT Boost_VERSION EQUAL "105400")
+    create_single_source_cgal_program( "normals_example.cpp" )
+  endif()
   create_single_source_cgal_program( "property_map.cpp" )
   create_single_source_cgal_program( "random_simplification_example.cpp" )
   create_single_source_cgal_program( "read_write_xyz_point_set_example.cpp" )
@@ -70,13 +74,22 @@ if ( CGAL_FOUND )
   if(EIGEN3_FOUND OR LAPACK_FOUND)
     # Executables that require Eigen or BLAS and LAPACK
     create_single_source_cgal_program( "jet_smoothing_example.cpp" )
-    create_single_source_cgal_program( "normal_estimation.cpp" )
+    if(NOT Boost_VERSION EQUAL "105400")
+      create_single_source_cgal_program( "normal_estimation.cpp" )
+    endif()
   else(EIGEN3_FOUND OR LAPACK_FOUND)
 
     message(STATUS "NOTICE: Some of the executables in this directory need either Eigen 3.1 (or greater) or LAPACK, and will not be compiled.")
 
   endif(EIGEN3_FOUND OR LAPACK_FOUND)
 
+  if(Boost_VERSION EQUAL "105400")
+    message(STATUS
+      "NOTICE: The examples \"normals_examples.cpp\" and "
+      "\"normal_estimation.cpp\" are incompatible with Boost 1.54,"
+      " and will not be compiled.")
+    message(STATUS "See the following bug:  https://svn.boost.org/trac/boost/ticket/9012")
+  endif()
 else()
 
     message(STATUS "NOTICE: This program requires the CGAL library, and will not be compiled.")
