@@ -59,10 +59,13 @@ public:
 	typedef Reconstruction_triangulation_2<Kernel> Rt_2;
 	typedef typename Rt_2::Triangulation_data_structure Tds_2;
 	typedef typename Rt_2::Edge      Edge;
+	typedef typename Rt_2::Vertex    Vertex;
 	typedef typename Kernel::Point_2 Point;
 
 	typedef typename Rt_2::Face_handle Face_handle;
 
+	typedef typename CGAL::List_output<Kernel>::Output_Vertex_Iterator
+				Output_Vertex_Iterator;
 
 	typedef typename CGAL::List_output<Kernel>::Output_Edge_Iterator
 				Output_Edge_Iterator;
@@ -70,15 +73,17 @@ private:
 	List_output<Kernel> list_output;
 
 
-	void save_one_edge(std::ostream& os, const Edge& edge)
-	{
+	void save_one_vertex(std::ostream& os, const Vertex& v) {
+	    os << v << std::endl;
+	}
+
+	void save_one_edge(std::ostream& os, const Edge& edge) {
 	    int i = edge.second;
 	    Face_handle face = edge.first;
 	    Point a = face->vertex((i+1)%3)->point();
 	    Point b = face->vertex((i+2)%3)->point();
 	    os << a << " " << b << std::endl;
 	}
-
 
 public:
 	void store_marked_elements(Tds_2 tds, int nb_ignore) {
@@ -93,8 +98,13 @@ public:
 	\param os The `std::ostream` where the OFF data will be written to.
 	*/
 	void get_os_output(std::ostream& os) {
-		os << "[%d][%d][0] OFF " << list_output.vertex_count()  <<
-				list_output.edge_count()  << std::endl;
+		os << "[" << list_output.vertex_count()  << "][" <<
+				list_output.edge_count()  << "][0] OFF " << std::endl;
+
+	  	for (Output_Vertex_Iterator it = list_output.vertices_start();
+				it != list_output.vertices_beyond(); it++) {
+	  		save_one_vertex(os, *it);
+	   }
 
 		for (Output_Edge_Iterator it = list_output.edges_start();
 				it != list_output.edges_beyond(); it++) {

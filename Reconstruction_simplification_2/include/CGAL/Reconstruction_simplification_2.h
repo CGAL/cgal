@@ -758,7 +758,6 @@ protected:
 		return true;
 	}
 
-	//TODO: IV Rename
 	void populate_pqueue() {
 		Finite_edges_iterator ei;
 		for (ei = m_dt.finite_edges_begin(); ei != m_dt.finite_edges_end();

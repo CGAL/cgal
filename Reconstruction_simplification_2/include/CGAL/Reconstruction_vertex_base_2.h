@@ -36,6 +36,7 @@ class Reconstruction_vertex_base_2 : public Vb
 {
 public:
     typedef Vb Base;
+    typedef Kernel::FT FT;
     typedef Sample<Kernel> Sample;
     typedef typename Kernel::Point_2 Point;
     typedef typename Base::Face_handle Face_handle;
@@ -51,6 +52,7 @@ private:
     bool  m_pinned;
     Sample* m_sample;
     Point m_relocated;
+    FT m_relevance;
 
 public:
     Reconstruction_vertex_base_2()
@@ -92,6 +94,9 @@ public:
 
     bool  pinned() const { return m_pinned; }
     bool& pinned() { return m_pinned; }
+
+    FT get_relevance() const { return m_relevance; }
+    void set_relevance(FT relevance) { m_relevance = relevance; }
 
     Sample* get_sample() const { return m_sample; }
     void set_sample(Sample* sample) { m_sample = sample; }
