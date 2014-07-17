@@ -226,8 +226,6 @@ MainWindow::MainWindow(QWidget* parent)
   //         this, SLOT(showSceneContextMenu(const QPoint &)));
 
   connect(ui->actionRecenterScene, SIGNAL(triggered()),
-          viewer->camera(), SLOT(interpolateToFitScene()));
-  connect(ui->actionRecenterScene, SIGNAL(triggered()),
           viewer, SLOT(update()));
 
   connect(ui->actionAntiAliasing, SIGNAL(toggled(bool)),
@@ -1420,4 +1418,10 @@ void MainWindow::on_action_Paste_camera_triggered()
 void MainWindow::setAddKeyFrameKeyboardModifiers(::Qt::KeyboardModifiers m)
 {
   viewer->setAddKeyFrameKeyboardModifiers(m);
+}
+
+void MainWindow::on_actionRecenterScene_triggered()
+{
+  updateViewerBBox();
+  viewer->camera()->interpolateToFitScene();
 }
