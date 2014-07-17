@@ -77,13 +77,37 @@ private:
 	    os << v << std::endl;
 	}
 
-	void save_one_edge(std::ostream& os, const Edge& edge) {
+	void save_one_edge(std::ostream& os, const Edge& edge, std::set<Point>& edge_vertices) {
 	    int i = edge.second;
 	    Face_handle face = edge.first;
 	    Point a = face->vertex((i+1)%3)->point();
 	    Point b = face->vertex((i+2)%3)->point();
-	    os << a << " " << b << std::endl;
+
+	    typename std::set<Point>::iterator it_a = edge_vertices.find(a);
+	    typename std::set<Point>::iterator it_b = edge_vertices.find(b);
+
+	    int pos_a = std::distance(edge_vertices.begin(), it_a);
+	    int pos_b = std::distance(edge_vertices.begin(), it_b);
+
+	    os << "2 "  << pos_a + list_output.vertex_count() << " "
+	    		<< pos_b + list_output.vertex_count() << std::endl;
 	}
+
+	void vertices_of_edges(std::set<Point>& edge_vertices) {
+
+		for (Output_Edge_Iterator it = list_output.edges_start();
+				it != list_output.edges_beyond(); it++) {
+
+			int i = (*it).second;
+			Face_handle face = (*it).first;
+			Point a = face->vertex((i+1)%3)->point();
+			Point b = face->vertex((i+2)%3)->point();
+
+			edge_vertices.insert(a);
+			edge_vertices.insert(b);
+	    }
+	}
+
 
 public:
 	void store_marked_elements(Tds_2 tds, int nb_ignore) {
@@ -98,18 +122,31 @@ public:
 	\param os The `std::ostream` where the OFF data will be written to.
 	*/
 	void get_os_output(std::ostream& os) {
-		os << "[" << list_output.vertex_count()  << "][" <<
-				list_output.edge_count()  << "][0] OFF " << std::endl;
+		os << "OFF [" << list_output.vertex_count()  << "][0][" <<
+				list_output.edge_count()  << "]" << std::endl;
 
 	  	for (Output_Vertex_Iterator it = list_output.vertices_start();
 				it != list_output.vertices_beyond(); it++) {
 	  		save_one_vertex(os, *it);
-	   }
+	  	}
+
+	  	std::set<Point> edge_vertices;
+		vertices_of_edges(edge_vertices);
+
+	  	for (typename std::set<Point>::iterator it = edge_vertices.begin();
+				it != edge_vertices.end(); it++) {
+
+	  		os << *it << std::endl;
+	  	}
+
+		for (int i = 0; i < list_output.vertex_count(); i++) {
+			os << "1 " <<  i << std::endl;
+		}
 
 		for (Output_Edge_Iterator it = list_output.edges_start();
 				it != list_output.edges_beyond(); it++) {
 
-			save_one_edge(os, *it);
+			save_one_edge(os, *it,edge_vertices);
 	    }
 	}
 };

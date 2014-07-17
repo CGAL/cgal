@@ -111,8 +111,6 @@ private:
 		return std::sqrt(segment.squared_length());
 	}
 
-
-
 	FT get_edge_relevance(const Edge& edge) const {
 		FT M = get_mass(edge);
 		if (M == 0.0)
@@ -128,7 +126,6 @@ private:
 	}
 
 public:
-
 	  inline Output_Vertex_Iterator vertices_start() const {
 	    return vertices.begin();
 	  }
