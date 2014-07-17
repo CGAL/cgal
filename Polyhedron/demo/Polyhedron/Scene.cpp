@@ -364,10 +364,7 @@ Scene::draw_aux(bool with_names, Viewer_interface* viewer)
         ::glPolygonMode(GL_FRONT_AND_BACK,GL_POINT);
         ::glPointSize(2.f);
         ::glLineWidth(1.0f);
-        if(index == selected_item)
-          CGALglcolor(Qt::black);
-        else
-          CGALglcolor(item.color().lighter(50));
+        CGALglcolor(item.color());
 
         if(viewer)
           item.draw_points(viewer);
@@ -399,10 +396,7 @@ Scene::draw_aux(bool with_names, Viewer_interface* viewer)
       Scene_item& item = *m_entries[index];
       if(item.visible() && item.renderingMode() == Splatting)
       {
-        if(index == selected_item)
-          CGALglcolor(item.color().lighter(120));
-        else
-          CGALglcolor(item.color());
+        CGALglcolor(item.color());
         item.draw_splats();
       }
     }
