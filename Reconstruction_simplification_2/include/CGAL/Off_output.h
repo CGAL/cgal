@@ -122,7 +122,10 @@ public:
 	\param os The `std::ostream` where the OFF data will be written to.
 	*/
 	void get_os_output(std::ostream& os) {
-		os << "OFF [" << list_output.vertex_count()  << "][0][" <<
+		std::set<Point> edge_vertices;
+		vertices_of_edges(edge_vertices);
+
+		os << "OFF [" << list_output.vertex_count() + edge_vertices.size() << "][0][" <<
 				list_output.edge_count()  << "]" << std::endl;
 
 	  	for (Output_Vertex_Iterator it = list_output.vertices_start();
@@ -130,8 +133,6 @@ public:
 	  		save_one_vertex(os, *it);
 	  	}
 
-	  	std::set<Point> edge_vertices;
-		vertices_of_edges(edge_vertices);
 
 	  	for (typename std::set<Point>::iterator it = edge_vertices.begin();
 				it != edge_vertices.end(); it++) {
