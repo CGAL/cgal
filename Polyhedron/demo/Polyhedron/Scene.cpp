@@ -14,6 +14,7 @@
 #include <QApplication>
 #include <QPointer>
 #include <QList>
+#include <QAbstractProxyModel>
 
 namespace {
   void CGALglcolor(QColor c)
@@ -588,7 +589,9 @@ bool SceneDelegate::editorEvent(QEvent *event, QAbstractItemModel *model,
 				const QStyleOptionViewItem &option,
 				const QModelIndex &index)
 {
-  Scene *scene = static_cast<Scene*>(model);
+  QAbstractProxyModel* proxyModel = dynamic_cast<QAbstractProxyModel*>(model);
+  Q_ASSERT(proxyModel);
+  Scene *scene = dynamic_cast<Scene*>(proxyModel->sourceModel());
   Q_ASSERT(scene);
   switch(index.column()) {
   case Scene::VisibleColumn:
@@ -655,8 +658,8 @@ bool SceneDelegate::editorEvent(QEvent *event, QAbstractItemModel *model,
       else {
 	scene->item_B = index.row();
       }
-      scene->dataChanged(scene->createIndex(Scene::ABColumn, 0),
-	scene->createIndex(Scene::ABColumn, scene->rowCount()));
+      scene->dataChanged(scene->createIndex(0, Scene::ABColumn),
+                         scene->createIndex(scene->rowCount() - 1, Scene::ABColumn));
     }
     return false;
     break;
