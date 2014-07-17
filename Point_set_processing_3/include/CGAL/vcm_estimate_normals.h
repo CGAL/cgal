@@ -2,12 +2,14 @@
 #define CGAL_VCM_ESTIMATE_NORMALS_H
 
 #include <CGAL/property_map.h>
+#include <CGAL/assertions.h>
 
 #include <CGAL/Delaunay_triangulation_3.h>
 #include <CGAL/voronoi_covariance_3.h>
 #include <CGAL/vcm_utilities.h>
 #include <CGAL/Kd_tree.h>
 #include <CGAL/Search_traits_3.h>
+#include <CGAL/Orthogonal_k_neighbor_search.h>
 #include <CGAL/Fuzzy_sphere.h>
 
 #include <Eigen/Dense>
@@ -284,11 +286,7 @@ vcm_estimate_normals (ForwardIterator first, ///< iterator over the first input 
     for (ForwardIterator it = first; it != beyond; ++it) {
         Eigen::Vector3f enormal;
         Eigen::Vector3f dir;
-        if (! internal::extract_greater_eigenvector(cov[i], enormal)) {
-            std::cerr << "Error during extraction of normal: " <<
-                "the covariance matrix is not diagonalizable!\n";
-            exit(1);
-        }
+        internal::extract_greater_eigenvector(cov[i], enormal);
 
         CGAL::Vector_3<Kernel> normal(enormal[0],
                                       enormal[1],
