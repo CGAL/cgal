@@ -26,7 +26,6 @@
 
 //local
 #include <CGAL/Reconstruction_triangulation_2.h>
-#include <CGAL/Cost.h>
 
 
 // boost
@@ -55,18 +54,11 @@ template<class Kernel>
 class List_output {
 public:
 	typedef typename Kernel::FT                 				    FT;
-	typedef Cost<FT>												Cost;
 	typedef Reconstruction_triangulation_2<Kernel> Rt_2;
-	typedef typename Kernel::Segment_2 Segment;
-	typedef typename Kernel::Point_2 Point;
-
-	typedef typename Rt_2::Vertex_handle Vertex_handle;
-
-	typedef typename Rt_2::Edge_iterator   Edge_iterator;
-	typedef typename Rt_2::Vertex_iterator Vertex_iterator;
 
 	typedef typename Rt_2::Vertex	 Vertex;
 	typedef typename Rt_2::Edge      Edge;
+	typedef typename Rt_2::Vertex_iterator Vertex_iterator;
 
 	typedef std::list<Vertex> Vertices;
 	typedef std::list<Edge> Edges;
@@ -84,47 +76,6 @@ private:
 
 	Vertices vertices;
 	Edges    edges;
-
-	FT get_mass(const Edge& edge) const {
-		return edge.first->mass(edge.second);
-	}
-
-	const Cost& get_cost(const Edge& edge) const {
-		return edge.first->cost(edge.second);
-	}
-
-	Vertex_handle source_vertex(const Edge& edge) const {
-			return edge.first->vertex(Rt_2::ccw(edge.second));
-	}
-
-	Vertex_handle target_vertex(const Edge& edge) const {
-		return edge.first->vertex(Rt_2::cw(edge.second));
-	}
-
-	Segment get_segment(const Edge& edge) const {
-		const Point& ps = source_vertex(edge)->point();
-		const Point& pt = target_vertex(edge)->point();
-		return Segment(ps, pt);
-	}
-
-	FT get_length(const Edge& edge) const {
-		Segment segment = get_segment(edge);
-		return std::sqrt(segment.squared_length());
-	}
-
-	FT get_edge_relevance(const Edge& edge) const {
-		FT M = get_mass(edge);
-		if (M == 0.0)
-			return 0.0;
-
-		FT L = get_length(edge);
-		FT cost = get_cost(edge).finalize();
-		return M * L * L / cost;
-	}
-
-	bool is_ghost(const Edge& edge) const {
-		return edge.first->ghost(edge.second);
-	}
 
 public:
 	  inline Output_Vertex_Iterator vertices_start() const {
@@ -168,7 +119,7 @@ public:
 			  typename Rt_2::Edge_circulator cur = start;
 
 			  do {
-				  if (!is_ghost(*cur)) {
+				  if (!rt2.is_ghost(*cur)) {
 
 					  incident_edges_have_sample = true;
 					  break;
@@ -188,8 +139,8 @@ public:
 		 for (Finite_edges_iterator ei = rt2.finite_edges_begin(); ei != rt2.finite_edges_end(); ++ei)
 		 {
 			Edge edge = *ei;
-			if (is_ghost(edge)) continue;
-			FT value = get_edge_relevance(edge); // >= 0
+			if (rt2.is_ghost(edge)) continue;
+			FT value = rt2.get_edge_relevance(edge); // >= 0
 			mindex.insert(Reconstruction_edge_2(edge, value));
 		 }
 
