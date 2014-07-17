@@ -30,6 +30,7 @@
 
 #include <CGAL/memory.h>
 #include <CGAL/iterator.h>
+#include <CGAL/CC_safe_handle.h>
 
 #include <boost/mpl/if.hpp>
 
@@ -81,6 +82,24 @@
 //   things (e.g. freeing empty blocks automatically) ?
 
 namespace CGAL {
+
+#define CGAL_GENERATE_MEMBER_DETECTOR(X)                                             \
+template<typename T> class has_##X {                                          \
+    struct Fallback { int X; };                                               \
+    struct Derived : T, Fallback { };                                         \
+                                                                              \
+    template<typename U, U> struct Check;                                     \
+                                                                              \
+    typedef char ArrayOfOne[1];                                               \
+    typedef char ArrayOfTwo[2];                                               \
+                                                                              \
+    template<typename U> static ArrayOfOne & func(                            \
+                                            Check<int Fallback::*, &U::X> *); \
+    template<typename U> static ArrayOfTwo & func(...);                       \
+  public:                                                                     \
+    typedef has_##X type;                                                     \
+    enum { value = sizeof(func<Derived>(0)) == 2 };                           \
+} // semicolon is after the macro call
 
 #define CGAL_INIT_COMPACT_CONTAINER_BLOCK_SIZE 14
 #define CGAL_INCREMENT_COMPACT_CONTAINER_BLOCK_SIZE 16
@@ -161,8 +180,50 @@ struct Compact_container_traits {
 namespace internal {
   template < class DSC, bool Const >
   class CC_iterator;
+
+  CGAL_GENERATE_MEMBER_DETECTOR(increment_erase_counter);
+
+  // A basic "no erase counter" strategy
+  template <bool Has_erase_counter_tag>
+  class Erase_counter_strategy {
+  public:
+    // Do nothing
+    template <typename Element>
+    static unsigned int erase_counter(const Element &) { return 0; }
+    template <typename Element>
+    static void set_erase_counter(Element &, unsigned int) {}
+    template <typename Element>
+    static void increment_erase_counter(Element &) {}
+  };
+
+
+  // A strategy managing an internal counter
+  template <>
+  class Erase_counter_strategy<true>
+  {
+  public:
+    template <typename Element>
+    static unsigned int erase_counter(const Element &e)
+    {
+      return e.erase_counter();
+    }
+
+    template <typename Element>
+    static void set_erase_counter(Element &e, unsigned int c)
+    {
+      e.set_erase_counter(c);
+    }
+
+    template <typename Element>
+    static void increment_erase_counter(Element &e)
+    {
+      e.increment_erase_counter();
+    }
+  };
 }
 
+// Class Compact_container
+//
 template < class T, class Allocator_ = Default, class Increment_policy
            =Addition_size_policy<CGAL_INIT_COMPACT_CONTAINER_BLOCK_SIZE,
                                  CGAL_INCREMENT_COMPACT_CONTAINER_BLOCK_SIZE> >
@@ -197,7 +258,7 @@ public:
   explicit Compact_container(const Allocator &a = Allocator())
   : alloc(a)
   {
-    init();
+    init (); 
   }
 
   template < class InputIterator >
@@ -493,11 +554,15 @@ public:
 
   void erase(iterator x)
   {
+    typedef internal::Erase_counter_strategy<
+      internal::has_increment_erase_counter<T>::value> EraseCounterStrategy;
+
     CGAL_precondition(type(&*x) == USED);
+    EraseCounterStrategy::increment_erase_counter(*x);
     alloc.destroy(&*x);
-#ifndef CGAL_NO_ASSERTIONS
+/*#ifndef CGAL_NO_ASSERTIONS
     std::memset(&*x, 0, sizeof(T));
-#endif
+#endif*/
     put_on_free_list(&*x);
     --size_;
   }
@@ -768,6 +833,9 @@ void Compact_container<T, Allocator, Increment_policy>::clear()
 template < class T, class Allocator, class Increment_policy >
 void Compact_container<T, Allocator, Increment_policy>::allocate_new_block()
 {
+  typedef internal::Erase_counter_strategy<
+    internal::has_increment_erase_counter<T>::value> EraseCounterStrategy;
+
   pointer new_block = alloc.allocate(block_size + 2);
   all_items.push_back(std::make_pair(new_block, block_size + 2));
   capacity_ += block_size;
@@ -775,7 +843,10 @@ void Compact_container<T, Allocator, Increment_policy>::allocate_new_block()
   // We mark them free in reverse order, so that the insertion order
   // will correspond to the iterator order...
   for (size_type i = block_size; i >= 1; --i)
+  {
+    EraseCounterStrategy::set_erase_counter(*(new_block + i), 0);
     put_on_free_list(new_block + i);
+  }
   // We insert this new block at the end.
   if (last_item == NULL) // First time
   {
@@ -1047,7 +1118,7 @@ namespace internal {
   {
     CGAL_assertion( n == NULL);
     return &*rhs != NULL;
-    }
+  }
 
 } // namespace internal
 

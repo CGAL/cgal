@@ -86,7 +86,10 @@ public:
         break;
       case 1:
       case 0:
+      case -1: 
         // Don't move edge or corner vertices
+        // N.B.: dimension = -1 is possible if we added points on a far sphere
+        //       during initialization
         return CGAL::NULL_VECTOR;
         break;
       default:
@@ -99,7 +102,8 @@ public:
     return CGAL::NULL_VECTOR;
   }
   
-#ifdef CGAL_MESH_3_OPTIMIZER_VERBOSE
+#if defined(CGAL_MESH_3_OPTIMIZER_VERBOSE) \
+ || defined (CGAL_MESH_3_EXPORT_PERFORMANCE_DATA)
   static std::string name() { return std::string("Lloyd"); }
 #endif
   

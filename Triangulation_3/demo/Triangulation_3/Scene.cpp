@@ -36,6 +36,14 @@ void Scene::generatePoints(int num)
   /* Insert the points to build a Delaunay triangulation */
   /* Note: this function returns the number of inserted points;
       it is not guaranteed to insert the points following the order of iteraror. */
+#ifdef CGAL_CONCURRENT_TRIANGULATION_3
+  // To define the max number of threads TBB can use
+  //tbb::task_scheduler_init init(10);
+
+  Lock_ds locking_ds(CGAL::Bbox_3(-1.,-1.,-1.,1,1,1), 50);
+  m_dt.set_lock_data_structure(&locking_ds);
+#endif
+
   m_dt.insert( pts.begin(), pts.end() );
   /* Check the combinatorial validity of the triangulation */
   /* Note: when it is set to be true,

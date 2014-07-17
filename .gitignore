@@ -756,7 +756,6 @@ Ridges_3/examples/Ridges_3/Compute_Ridges_Umbilics
 Ridges_3/examples/Ridges_3/Makefile
 Ridges_3/test/Ridges_3/Makefile
 Ridges_3/test/Ridges_3/ridge_test
-STL_Extension/test/STL_Extension/CMakeLists.txt
 STL_Extension/test/STL_Extension/cgal_test_with_cmake
 STL_Extension/test/STL_Extension/test_Cache
 STL_Extension/test/STL_Extension/test_Compact_container
@@ -928,7 +927,6 @@ Triangulation_2/test/Triangulation_2/vrml_tds*
 Triangulation_3/benchmark/Triangulation_3/CMakeLists.txt
 Triangulation_3/benchmark/Triangulation_3/cgal_test_with_cmake
 Triangulation_3/benchmark/Triangulation_3/simple
-Triangulation_3/examples/Triangulation_3/CMakeLists.txt
 Triangulation_3/examples/Triangulation_3/adding_handles_3
 Triangulation_3/examples/Triangulation_3/cgal_test_with_cmake
 Triangulation_3/examples/Triangulation_3/color
@@ -944,7 +942,6 @@ Triangulation_3/examples/Triangulation_3/regular_3
 Triangulation_3/examples/Triangulation_3/simple_triangulation_3
 Triangulation_3/examples/Triangulation_3/simplex
 Triangulation_3/examples/Triangulation_3/tds
-Triangulation_3/test/Triangulation_3/CMakeLists.txt
 Triangulation_3/test/Triangulation_3/Makefile
 Triangulation_3/test/Triangulation_3/Test1_triangulation_IO_3_binary
 Triangulation_3/test/Triangulation_3/Test2_triangulation_IO_3_binary

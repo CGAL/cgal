@@ -26,24 +26,189 @@
 #include <CGAL/Mesh_3/config.h>
 
 #include <CGAL/basic.h>
+#include <CGAL/array.h>
 #include <CGAL/triangulation_assertions.h>
 #include <CGAL/internal/Dummy_tds_3.h>
 
 #include <CGAL/Regular_triangulation_cell_base_3.h>
 #include <CGAL/Mesh_3/io_signature.h>
 
+#ifdef CGAL_LINKED_WITH_TBB
+# include <tbb/atomic.h>
+#endif
+
 namespace CGAL {
-  
+
+// Class Compact_mesh_cell_base_3_base
+// Base for Compact_mesh_cell_base_3, with specializations
+// for different values of Concurrency_tag
+// Sequential
+template <typename GT, typename Concurrency_tag>
+class Compact_mesh_cell_base_3_base
+{
+  typedef typename GT::Point_3 Point;
+
+protected:
+  Compact_mesh_cell_base_3_base()
+    : bits_(0)
+    , circumcenter_(NULL)
+  {}
+
+public:
+#if defined(CGAL_MESH_3_USE_LAZY_SORTED_REFINEMENT_QUEUE) \
+ || defined(CGAL_MESH_3_USE_LAZY_UNSORTED_REFINEMENT_QUEUE)
+
+  // Erase counter (cf. Compact_container)
+  unsigned int erase_counter() const
+  {
+    return this->m_erase_counter;
+  }
+  void set_erase_counter(unsigned int c)
+  {
+    this->m_erase_counter = c;
+  }
+  void increment_erase_counter()
+  {
+    ++this->m_erase_counter;
+  }
+#endif
+
+  /// Marks \c facet as visited
+  void set_facet_visited (const int facet)
+  {
+    CGAL_precondition(facet>=0 && facet <4);
+    bits_ |= (1 << facet);
+  }
+
+  /// Marks \c facet as not visited
+  void reset_visited (const int facet)
+  {
+    CGAL_precondition(facet>=0 && facet<4);
+    bits_ &= (15 & ~(1 << facet));
+  }
+
+  /// Returns \c true if \c facet is marked as visited
+  bool is_facet_visited (const int facet) const
+  {
+    CGAL_precondition(facet>=0 && facet<4);
+    return ( (bits_ & (1 << facet)) != 0 );
+  }
+
+  /// Precondition circumcenter_ == NULL
+  void try_to_set_circumcenter(Point *cc) const
+  {
+    CGAL_precondition(circumcenter_ == NULL);
+    circumcenter_ = cc;
+  }
+
+private:
+  char bits_;
+
+#if defined(CGAL_MESH_3_USE_LAZY_SORTED_REFINEMENT_QUEUE) \
+ || defined(CGAL_MESH_3_USE_LAZY_UNSORTED_REFINEMENT_QUEUE)
+
+  typedef unsigned int              Erase_counter_type;
+  Erase_counter_type                m_erase_counter;
+#endif
+
+protected:
+  mutable Point * circumcenter_;
+};
+
+
+#ifdef CGAL_LINKED_WITH_TBB
+// Class Compact_mesh_cell_base_3_base
+// Specialization for parallel
+template <typename GT>
+class Compact_mesh_cell_base_3_base<GT, Parallel_tag>
+{
+  typedef typename GT::Point_3 Point;
+
+protected:
+  Compact_mesh_cell_base_3_base()
+  {
+    bits_ = 0;
+    circumcenter_ = NULL;
+  }
+
+public:
+  // Erase counter (cf. Compact_container)
+  unsigned int erase_counter() const
+  {
+    return this->m_erase_counter;
+  }
+  void set_erase_counter(unsigned int c)
+  {
+    this->m_erase_counter = c;
+  }
+  void increment_erase_counter()
+  {
+    ++this->m_erase_counter;
+  }
+
+  /// Marks \c facet as visited
+  void set_facet_visited (const int facet)
+  {
+    CGAL_precondition(facet>=0 && facet<4);
+    char current_bits = bits_;
+    while (bits_.compare_and_swap(current_bits | (1 << facet), current_bits) != current_bits)
+    {
+      current_bits = bits_;
+    }
+  }
+
+  /// Marks \c facet as not visited
+  void reset_visited (const int facet)
+  {
+    CGAL_precondition(facet>=0 && facet<4);
+    char current_bits = bits_;
+    while (bits_.compare_and_swap(current_bits & (15 & ~(1 << facet)), current_bits) != current_bits)
+    {
+      current_bits = bits_;
+    }
+  }
+
+  /// Returns \c true if \c facet is marked as visited
+  bool is_facet_visited (const int facet) const
+  {
+    CGAL_precondition(facet>=0 && facet<4);
+    return ( (bits_ & (1 << facet)) != 0 );
+  }
+
+  /// If the circumcenter is already set (circumcenter_ != NULL),
+  /// this function "deletes" cc
+  void try_to_set_circumcenter(Point *cc) const
+  {
+    if (circumcenter_.compare_and_swap(cc, NULL) != NULL)
+      delete cc;
+  }
+
+private:
+  typedef tbb::atomic<unsigned int> Erase_counter_type;
+  Erase_counter_type                m_erase_counter;
+  /// Stores visited facets (4 first bits)
+  tbb::atomic<char> bits_;
+
+protected:
+  mutable tbb::atomic<Point*> circumcenter_;
+};
+
+#endif // CGAL_LINKED_WITH_TBB
+
+
 // Class Compact_mesh_cell_base_3
 // Cell base class used in 3D meshing process.
 // Adds information to Cb about the cell of the input complex containing it
 template< class GT,
           class MD,
-          class TDS = void > 
+          class TDS = void >
 class Compact_mesh_cell_base_3
+  : public Compact_mesh_cell_base_3_base<GT, typename TDS::Concurrency_tag>
 {
   typedef typename GT::FT FT;
-  
+  typedef Compact_mesh_cell_base_3_base<GT,typename TDS::Concurrency_tag> Base;
+  using Base::circumcenter_;
+
 public:
   typedef TDS                          Triangulation_data_structure;
   typedef typename TDS::Vertex_handle  Vertex_handle;
@@ -63,10 +228,10 @@ public:
   typedef typename MD::Subdomain_index      Subdomain_index;
   typedef typename MD::Surface_patch_index  Surface_patch_index;
   typedef typename MD::Index                Index;
-  
+
   typedef GT                   Geom_traits;
   typedef typename GT::Point_3 Point;
-  
+
   typedef Point*           Point_container;
   typedef Point*           Point_iterator;
   typedef const Point*     Point_const_iterator;
@@ -79,33 +244,32 @@ public:
       circumcenter_ = NULL;
     }
   }
+
 public:
   // Constructors
   Compact_mesh_cell_base_3()
     : surface_index_table_()
     , surface_center_table_()
-    , circumcenter_(NULL)
 #ifdef CGAL_INTRUSIVE_LIST
     , next_intrusive_()
     , previous_intrusive_()
 #endif
     , surface_center_index_table_()
     , sliver_value_(FT(0.))
-    , subdomain_index_()
-    , bits_(0)
+    , subdomain_index_()  
     , sliver_cache_validity_(false)
   {
   }
 
-  Compact_mesh_cell_base_3(const Compact_mesh_cell_base_3& rhs) 
-    : circumcenter_(NULL)
+  Compact_mesh_cell_base_3(const Compact_mesh_cell_base_3& rhs)
+    : N(rhs.N)
+    , V(rhs.V)
 #ifdef CGAL_INTRUSIVE_LIST
     , next_intrusive_(rhs.next_intrusive_)
     , previous_intrusive_(rhs.previous_intrusive_)
 #endif
     , sliver_value_(rhs.sliver_value_)
     , subdomain_index_(rhs.subdomain_index_)
-    , bits_(0)
     , sliver_cache_validity_(false)
   {
     for(int i=0; i <4; i++){
@@ -114,25 +278,23 @@ public:
       surface_center_index_table_[i] = rhs.surface_center_index_table_[i];
     }
   }
-  
+
   Compact_mesh_cell_base_3 (Vertex_handle v0,
                             Vertex_handle v1,
                             Vertex_handle v2,
                             Vertex_handle v3)
     : surface_index_table_()
     , surface_center_table_()
-    , circumcenter_(NULL)
+    , V(CGAL::make_array(v0, v1, v2, v3))
 #ifdef CGAL_INTRUSIVE_LIST
     , next_intrusive_()
     , previous_intrusive_()
 #endif
     , surface_center_index_table_()
     , sliver_value_(FT(0.))
-    , subdomain_index_() 
-    , bits_(0) 
+    , subdomain_index_()
     , sliver_cache_validity_(false)
   {
-    set_vertices(v0, v1, v2, v3);
   }
 
 
@@ -146,7 +308,8 @@ public:
                             Cell_handle n3)
     : surface_index_table_()
     , surface_center_table_()
-    , circumcenter_(NULL)
+    , N(CGAL::make_array(n0, n1, n2, n3))
+    , V(CGAL::make_array(v0, v1, v2, v3))
 #ifdef CGAL_INTRUSIVE_LIST
     , next_intrusive_()
     , previous_intrusive_()
@@ -154,11 +317,8 @@ public:
     , surface_center_index_table_()
     , sliver_value_(FT(0.))
     , subdomain_index_()
-    , bits_(0)
     , sliver_cache_validity_(false)
   {
-    set_neighbors(n0, n1, n2, n3);
-    set_vertices(v0, v1, v2, v3);
   }
 
   ~Compact_mesh_cell_base_3()
@@ -309,17 +469,18 @@ public:
   weighted_circumcenter(const Geom_traits& gt = Geom_traits()) const
   {
     if (circumcenter_ == NULL) {
-      circumcenter_ = new Point(gt.construct_weighted_circumcenter_3_object()
-                                (this->vertex(0)->point(),
-                                 this->vertex(1)->point(),
-                                 this->vertex(2)->point(),
-                                 this->vertex(3)->point()));
+      this->try_to_set_circumcenter(
+        new Point(gt.construct_weighted_circumcenter_3_object()
+                  (this->vertex(0)->point(),
+                   this->vertex(1)->point(),
+                   this->vertex(2)->point(),
+                   this->vertex(3)->point())));
     } else {
       CGAL_expensive_assertion(gt.construct_weighted_circumcenter_3_object()
                                 (this->vertex(0)->point(),
                                  this->vertex(1)->point(),
                                  this->vertex(2)->point(),
-                                 this->vertex(3)->point()) == *circumcenter);
+                                 this->vertex(3)->point()) == *circumcenter_);
     }
     return *circumcenter_;
   }
@@ -327,11 +488,11 @@ public:
 
   // Returns the index of the cell of the input complex that contains the cell
   Subdomain_index subdomain_index() const { return subdomain_index_; }
-  
+
   // Sets the index of the cell of the input complex that contains the cell
   void set_subdomain_index(const Subdomain_index& index)
-  { subdomain_index_ = index; }  
-  
+  { subdomain_index_ = index; }
+
   void set_sliver_value(const FT& value)
   {
     sliver_cache_validity_ = true;
@@ -359,27 +520,6 @@ public:
   {
     CGAL_precondition(facet>=0 && facet<4);
     return surface_index_table_[facet];
-  }
-
-  /// Marks \c facet as visited
-  void set_facet_visited (const int facet)
-  {
-    CGAL_precondition(facet>=0 && facet <4);
-    bits_ |= (1 << facet);
-  }
-
-  /// Marks \c facet as not visited
-  void reset_visited (const int facet)
-  {
-    CGAL_precondition(facet>=0 && facet<4);
-    bits_ &= (15 & ~(1 << facet));
-  }
-
-  /// Returns \c true if \c facet is marked as visited
-  bool is_facet_visited (const int facet) const
-  {
-    CGAL_precondition(facet>=0 && facet<4);
-    return ( (bits_ & (1 << facet)) != 0 );
   }
 
   /// Sets surface center of \c facet to \c point
@@ -416,16 +556,16 @@ public:
     CGAL_precondition(facet>=0 && facet<4);
     return ( Surface_patch_index() != surface_index_table_[facet]);
   }
-  
+
   // -----------------------------------
   // Backward Compatibility
   // -----------------------------------
 #ifndef CGAL_MESH_3_NO_DEPRECATED_SURFACE_INDEX
   typedef Surface_patch_index   Surface_index;
-  
+
   void set_surface_index(const int facet, const Surface_index& index)
   { set_surface_patch_index(facet,index); }
-  
+
   /// Returns surface index of facet \c facet
   Surface_index surface_index(const int facet) const
   { return surface_patch_index(facet); }
@@ -437,7 +577,7 @@ public:
   static
   std::string io_signature()
   {
-    return 
+    return
       Get_io_signature<Subdomain_index>()() + "+" +
       Get_io_signature<Regular_triangulation_cell_base_3<Geom_traits> >()()
       + "+(" + Get_io_signature<Surface_patch_index>()() + ")[4]";
@@ -450,7 +590,7 @@ public:
   { 
     next_intrusive_ = c; 
   }
-   
+
   Cell_handle previous_intrusive() const { return previous_intrusive_; }
   void set_previous_intrusive(Cell_handle c)
   { 
@@ -471,8 +611,6 @@ private:
   CGAL::cpp11::array<Cell_handle, 4> N;
   CGAL::cpp11::array<Vertex_handle, 4> V;
 
-  mutable Point * circumcenter_;
-
 #ifdef CGAL_INTRUSIVE_LIST
   Cell_handle next_intrusive_, previous_intrusive_;
 #endif
@@ -488,7 +626,6 @@ private:
   Subdomain_index subdomain_index_;
 
   TDS_data      _tds_data;
-  char bits_;
   mutable bool sliver_cache_validity_;
 
 

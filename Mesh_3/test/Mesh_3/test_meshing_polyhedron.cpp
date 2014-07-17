@@ -26,7 +26,7 @@
 #include <CGAL/Polyhedral_mesh_domain_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
 
-template <typename K>
+template <typename K, typename Concurrency_tag = CGAL::Sequential_tag>
 struct Polyhedron_tester : public Tester<K>
 {
   void polyhedron() const
@@ -35,7 +35,10 @@ struct Polyhedron_tester : public Tester<K>
     typedef CGAL::Polyhedron_3<Gt> Polyhedron;
     typedef CGAL::Polyhedral_mesh_domain_3<Polyhedron, Gt> Mesh_domain;
     
-    typedef typename CGAL::Mesh_triangulation_3<Mesh_domain>::type Tr;
+    typedef typename CGAL::Mesh_triangulation_3<
+      Mesh_domain,
+      typename CGAL::Kernel_traits<Mesh_domain>::Kernel,
+      Concurrency_tag>::type Tr;
     typedef CGAL::Mesh_complex_3_in_triangulation_3<Tr> C3t3;
     
     typedef CGAL::Mesh_criteria_3<Tr> Mesh_criteria;
@@ -72,12 +75,26 @@ struct Polyhedron_tester : public Tester<K>
     CGAL::refine_mesh_3(c3t3, domain, criteria,
                         CGAL::parameters::no_exude(),
                         CGAL::parameters::no_perturb());
+
+    CGAL::remove_far_points_in_mesh_3(c3t3);
     
     // Verify
     double vol = 0.479171765761454;
     this->verify_c3t3_volume(c3t3, vol*0.95, vol*1.05);
-    this->verify(c3t3,domain,criteria,Polyhedral_tag(),
-                 119, 121, 200, 204, 350, 360);  }
+#ifdef CGAL_LINKED_WITH_TBB
+    // Parallel
+    if (boost::is_convertible<Concurrency_tag, CGAL::Parallel_tag>::value)
+    {
+      this->verify(c3t3, domain, criteria, Polyhedral_tag(),
+                   110, 140, 190, 230, 350, 420); 
+    }
+    else
+#endif //CGAL_LINKED_WITH_TBB
+    {
+      this->verify(c3t3, domain, criteria, Polyhedral_tag(),
+                   119, 121, 200, 204, 350, 360);  
+    }
+  }
 };
 
 int main()
@@ -85,6 +102,15 @@ int main()
   Polyhedron_tester<K_e_i> test_epic;
   std::cerr << "Mesh generation from a polyhedron:\n";
   test_epic.polyhedron();
-  
+
+#ifdef CGAL_LINKED_WITH_TBB
+  Polyhedron_tester<K_e_i, CGAL::Parallel_tag> test_epic_parallel;
+  std::cerr << "Mesh generation from a polyhedron using Parallel_tag:\n";
+  test_epic_parallel.polyhedron();
+#else
+  std::cerr << "TBB is not installed, or not configured."
+            << "The parallel version cannot be tested.\n";
+#endif
+
   return EXIT_SUCCESS;
 }

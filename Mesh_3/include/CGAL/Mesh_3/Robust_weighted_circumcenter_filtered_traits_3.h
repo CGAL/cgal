@@ -165,7 +165,8 @@ public:
   Bare_point operator() ( const Weighted_point_3 & p,
                           const Weighted_point_3 & q,
                           const Weighted_point_3 & r,
-                          const Weighted_point_3 & s ) const
+                          const Weighted_point_3 & s,
+                          bool force_exact = false) const
   {
     CGAL_precondition(Rt().orientation_3_object()(p,q,r,s) == CGAL::POSITIVE);
     
@@ -181,7 +182,7 @@ public:
                                              s.x(), s.y(), s.z(), s.weight(),
                                              num_x,  num_y, num_z, den);
     
-    if ( ! CGAL_NTS is_zero(den) )
+    if ( ! force_exact && ! CGAL_NTS is_zero(den) )
     {
       FT inv = FT(1)/(FT(2) * den);
       Bare_point res(p.x() + num_x*inv, p.y() - num_y*inv, p.z() + num_z*inv);

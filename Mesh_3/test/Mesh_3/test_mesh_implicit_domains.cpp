@@ -26,26 +26,29 @@
 
 using namespace CGAL::parameters;
 
-// Domain
-typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
-typedef FT_to_point_function_wrapper<K::FT, K::Point_3> Function;
-typedef CGAL::Mesh_3::Implicit_vector_to_labeled_function_wrapper<Function, K>
-                                                        Function_wrapper;
-typedef Function_wrapper::Function_vector Function_vector;
-typedef CGAL::Mesh_3::Labeled_mesh_domain_3<Function_wrapper, K> Mesh_domain;
+template <typename Concurrency_tag>
+void test()
+{  
+  // Domain
+  typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
+  typedef FT_to_point_function_wrapper<K::FT, K::Point_3> Function;
+  typedef CGAL::Mesh_3::Implicit_vector_to_labeled_function_wrapper<Function, K>
+                                                          Function_wrapper;
+  typedef Function_wrapper::Function_vector Function_vector;
+  typedef CGAL::Mesh_3::Labeled_mesh_domain_3<Function_wrapper, K> Mesh_domain;
 
-// Triangulation
-typedef CGAL::Mesh_triangulation_3<Mesh_domain>::type Tr;
-typedef CGAL::Mesh_complex_3_in_triangulation_3<Tr> C3t3;
+  // Triangulation
+  typedef typename CGAL::Mesh_triangulation_3<
+      Mesh_domain,
+      CGAL::Kernel_traits<Mesh_domain>::Kernel,
+      Concurrency_tag>::type Tr;
+  typedef CGAL::Mesh_complex_3_in_triangulation_3<Tr> C3t3;
 
-// Mesh Criteria
-typedef CGAL::Mesh_criteria_3<Tr> Mesh_criteria;
-typedef Mesh_criteria::Facet_criteria    Facet_criteria;
-typedef Mesh_criteria::Cell_criteria     Cell_criteria;
+  // Mesh Criteria
+  typedef CGAL::Mesh_criteria_3<Tr>      Mesh_criteria;
+  typedef typename Mesh_criteria::Facet_criteria  Facet_criteria;
+  typedef typename Mesh_criteria::Cell_criteria   Cell_criteria;
 
-
-int main()
-{
   // Define functions
   Function f1(&torus_function);
   Function f2(&sphere_function<5>);
@@ -76,6 +79,16 @@ int main()
   // Output
   std::ofstream medit_file("out.mesh");
   CGAL::output_to_medit(medit_file, c3t3);
+}
+
+int main()
+{
+  std::cout << "==== Test sequential meshing ====" << std::endl;
+  test<CGAL::Sequential_tag>();
+#ifdef CGAL_LINKED_WITH_TBB
+  std::cout << "==== Test parallel meshing ====" << std::endl;
+  test<CGAL::Parallel_tag>();
+#endif
 
   return 0;
 }

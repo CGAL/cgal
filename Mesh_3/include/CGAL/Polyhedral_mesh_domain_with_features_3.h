@@ -58,7 +58,7 @@ template < class IGT_,
            class Polyhedron_ = typename Mesh_polyhedron_3<IGT_>::type,
            class TriangleAccessor=Triangle_accessor_3<Polyhedron_,IGT_>,
            class Use_patch_id_tag = Tag_true,
-           class Use_exact_intersection_construction_tag = CGAL::Tag_true >
+           class Use_exact_intersection_construction_tag = Tag_true >
 class Polyhedral_mesh_domain_with_features_3
   : public Mesh_domain_with_polyline_features_3<
       Polyhedral_mesh_domain_3< Polyhedron_,

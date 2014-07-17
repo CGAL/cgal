@@ -1,3 +1,5 @@
+#include "config.h"
+
 #include "Scene_polyhedron_item.h"
 #include "Scene_polygon_soup.h"
 #include "Polyhedron_type.h"
@@ -18,7 +20,7 @@ public:
   Scene_item* load(QFileInfo fileinfo);
 
   bool canSave(const Scene_item*);
-  bool save(const Scene_item*, QFileInfo fileinfo);
+  bool save(const Scene_item*, QFileInfo, QString);
 };
 
 QStringList Io_off_plugin::nameFilters() const {
@@ -69,7 +71,8 @@ bool Io_off_plugin::canSave(const Scene_item* item)
     qobject_cast<const Scene_polygon_soup*>(item);
 }
 
-bool Io_off_plugin::save(const Scene_item* item, QFileInfo fileinfo)
+bool Io_off_plugin::save(const Scene_item* item, QFileInfo fileinfo,
+                         QString /* `selecterFilter` is not used: only OFF */)
 {
   // This plugin supports polyhedrons and polygon soups
   const Scene_polyhedron_item* poly_item = 

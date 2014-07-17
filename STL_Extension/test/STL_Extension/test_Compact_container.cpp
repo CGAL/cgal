@@ -18,6 +18,22 @@ struct Node_1
   bool operator==(const Node_1 &) const { return true; }
   bool operator!=(const Node_1 &) const { return false; }
   bool operator< (const Node_1 &) const { return false; }
+
+  // Erase counter (cf. Compact_container)
+  unsigned int erase_counter() const
+  {
+    return this->m_erase_counter;
+  }
+  void set_erase_counter(unsigned int c)
+  {
+    this->m_erase_counter = c;
+  }
+  void increment_erase_counter()
+  {
+    ++this->m_erase_counter;
+  }
+
+  int m_erase_counter;
 };
 
 class Node_2
