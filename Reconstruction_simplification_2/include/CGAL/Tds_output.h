@@ -60,16 +60,14 @@ private:
 
 public:
 	void store_marked_elements(Rt_2& rt2, int nb_ignore) {
-		rt2 = rt2;
+		m_rt2 = rt2;
 	}
 
-	Tds_2 get_reconstruction_tds() {
-		return rt2;
+	void extract_reconstruction_tds(Rt_2& rt2) {
+		rt2 = m_rt2;
 	}
-
 };
 }
-
 
 
 #endif /* TDS_OUTPUT_H_ */

@@ -8,6 +8,7 @@
 #include <CGAL/Reconstruction_simplification_2.h>
 #include <CGAL/List_output.h>
 #include <CGAL/Off_output.h>
+#include <CGAL/Tds_output.h>
 
 #include<fstream>
 #include<iostream>
@@ -34,6 +35,8 @@ typedef CGAL::Reconstruction_simplification_2 <K, InputIterator,
 
 typedef CGAL::Reconstruction_simplification_2 <K, InputIterator,
 					PointPMap, MassPMap>::Vertex Vertex;
+
+typedef CGAL::Reconstruction_triangulation_2<K> Rt_2;
 
 typedef CGAL::List_output<K>::Output_Vertex_Iterator Output_Vertex_Iterator;
 typedef CGAL::List_output<K>::Output_Edge_Iterator   Output_Edge_Iterator;
@@ -101,13 +104,19 @@ int main ()
 	//-------
 	std::cout <<"(-------------OFF OUTPUT----------- )" << std::endl;
 
-
-
     CGAL::Off_output<K> off_output;
 
     rs2.extract_solid_elements(off_output);
 
     off_output.get_os_output(std::cout);
+
+
+	//-------
+	std::cout <<"(-------------TRI OUTPUT----------- )" << std::endl;
+
+    CGAL::Tds_output<K> tds_output;
+    Rt_2 rt2;
+    tds_output.extract_reconstruction_tds(rt2);
 
 
 
