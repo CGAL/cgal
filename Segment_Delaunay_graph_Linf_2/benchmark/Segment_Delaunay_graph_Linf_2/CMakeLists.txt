@@ -23,6 +23,7 @@ if ( CGAL_FOUND )
 
   create_single_source_cgal_program( "sdg-creation-time.cpp" )
   create_single_source_cgal_program( "benchmark-gen.cpp" )
+  create_single_source_cgal_program( "incirc.cpp" )
 
 else()
 
