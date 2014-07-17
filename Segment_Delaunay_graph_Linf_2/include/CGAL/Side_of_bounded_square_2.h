@@ -246,7 +246,7 @@ namespace CGAL {
         Point_2 const *s1;
         Point_2 const *s2;
 
-        Point_2 const *dx;
+        Point_2 const *dx = NULL;
         // check if two points have the same x coordinate
         bool exist_two_with_same_x (false);
         if (samex_pq) {
