@@ -31,35 +31,36 @@ int main() {
   Arrangement_2 env;
   CGAL::insert_non_intersecting_curves(env, &s[0], &s[6]);
   //locate the query point in the arrangement
-  Point_2 query_point(0.5, 2);
-  Arrangement_2::Face_const_handle face;
+  Point_2 q(0.5, 2);
+  Arrangement_2::Face_const_handle * face;
   CGAL::Arr_naive_point_location<Arrangement_2> pl(env);
-  CGAL::Object obj = pl.locate(query_point);
-  CGAL::assign(face, obj);
+  typename CGAL::Arr_point_location_result<Arrangement_2>::Type obj = pl.locate(q);
+  // The query point locates in the interior of a face
+  face = boost::get<Arrangement_2::Face_const_handle> (&obj);
   //visibility query
   Arrangement_2 non_regular_output;
   NSPV non_regular_visibility(env);
-  Face_handle non_regular_fh = non_regular_visibility.compute_visibility(query_point, face, non_regular_output);
+  Face_handle non_regular_fh = non_regular_visibility.compute_visibility(q, *face, non_regular_output);
   std::cout << "Non-regularized visibility region of q has "
             << non_regular_output.number_of_edges()
             << " edges:" << std::endl;
   for (Edge_const_iterator eit = non_regular_output.edges_begin(); eit != non_regular_output.edges_end(); ++eit)
-    std::cout << "[" << eit->curve() << "]" << std::endl;
+    std::cout << "[" << eit->source()->point() << " -> " << eit->target()->point() << "]" << std::endl;
   Arrangement_2 regular_output;
   RSPV regular_visibility(env);
-  Face_handle regular_fh = regular_visibility.compute_visibility(query_point, face, regular_output);
+  Face_handle regular_fh = regular_visibility.compute_visibility(q, *face, regular_output);
   Ccb_halfedge_circulator curr = regular_fh->outer_ccb();
   std::cout << "Regularized visibility region of q has "
             << regular_output.number_of_edges()
             << " edges:" << std::endl;
   for (Edge_const_iterator eit = regular_output.edges_begin(); eit != regular_output.edges_end(); ++eit)
-    std::cout << "[" << eit->curve() << "]" << std::endl;
+    std::cout << "[" << eit->source()->point() << " -> " << eit->target()->point() << "]" << std::endl;
 
   //For a regular face, we can also get its whole boundary by traversing its outer CCB.
   std::cout << "Traverse the face of the regularized visibility region:" << std::endl;
-  std::cout << "[" << curr->curve() << "]"<< std::endl;
+  std::cout << "[" << curr->source()->point() << " -> " << curr->target()->point() << "]" << std::endl;
   while (++curr != regular_fh->outer_ccb())
-    std::cout << "[" << curr->curve() << "]" << std::endl;
+    std::cout << "[" << curr->source()->point() << " -> " << curr->target()->point() << "]" << std::endl;
   return 0;
 }
 

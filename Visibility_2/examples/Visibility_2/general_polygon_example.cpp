@@ -49,8 +49,8 @@ int main() {
             << " edges." << std::endl;
   Arrangement_2::Ccb_halfedge_circulator curr = fh->outer_ccb();
   std::cout << "Traverse the face of the visibility region." << std::endl;
-  std::cout << "[" << curr->curve() << "]"<< std::endl;
+  std::cout << "[" << curr->source()->point() << " -> " << curr->target()->point() << "]"<< std::endl;
   while (++curr != fh->outer_ccb())
-    std::cout << "[" << curr->curve() << "]" << std::endl;
+    std::cout << "[" << curr->source()->point() << " -> " << curr->target()->point() << "]"<< std::endl;
   return 0;
 }
