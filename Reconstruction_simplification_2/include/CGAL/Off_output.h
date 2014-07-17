@@ -110,8 +110,8 @@ private:
 
 
 public:
-	void store_marked_elements(Tds_2 tds, int nb_ignore) {
-		list_output.store_marked_elements(tds, nb_ignore);
+	void store_marked_elements(Rt_2& rt2, int nb_ignore) {
+		list_output.store_marked_elements(rt2, nb_ignore);
 	}
 
 

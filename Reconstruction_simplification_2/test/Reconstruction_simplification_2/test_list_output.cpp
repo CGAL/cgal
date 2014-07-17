@@ -83,6 +83,9 @@ int main ()
 
     rs2.extract_solid_elements(list_output);
 
+    std::cout <<"(-------------List OUTPUT---------- )" << std::endl;
+
+
   	for (Output_Vertex_Iterator it = list_output.vertices_start();
 			it != list_output.vertices_beyond(); it++) {
   		print_vertex(*it);
@@ -96,7 +99,7 @@ int main ()
 
 
 	//-------
-	std::cout <<"(------------------------ )" << std::endl;
+	std::cout <<"(-------------OFF OUTPUT----------- )" << std::endl;
 
 
 

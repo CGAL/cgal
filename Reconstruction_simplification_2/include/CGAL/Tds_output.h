@@ -56,15 +56,15 @@ public:
 	typedef typename Rt_2::Triangulation_data_structure Tds_2;
 
 private:
-	Tds_2 reconstruction_tds;
+	Rt_2 m_rt2;
 
 public:
-	void store_marked_elements(Tds_2 tds, int nb_ignore) {
-		reconstruction_tds = tds;
+	void store_marked_elements(Rt_2& rt2, int nb_ignore) {
+		rt2 = rt2;
 	}
 
 	Tds_2 get_reconstruction_tds() {
-		return reconstruction_tds;
+		return rt2;
 	}
 
 };

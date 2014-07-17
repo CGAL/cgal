@@ -61,10 +61,9 @@ public:
 	typedef typename Kernel::Point_2 Point;
 
 	typedef typename Rt_2::Vertex_handle Vertex_handle;
-	typedef typename Rt_2::Triangulation_data_structure Tds_2;
 
-	typedef typename Tds_2::Edge_iterator   Edge_iterator;
-	typedef typename Tds_2::Vertex_iterator Vertex_iterator;
+	typedef typename Rt_2::Edge_iterator   Edge_iterator;
+	typedef typename Rt_2::Vertex_iterator Vertex_iterator;
 
 	typedef typename Rt_2::Vertex	 Vertex;
 	typedef typename Rt_2::Edge      Edge;
@@ -76,6 +75,8 @@ public:
 
 	typedef typename Rt_2::Reconstruction_edge_2 Reconstruction_edge_2;
 	typedef typename Rt_2::MultiIndex MultiIndex;
+
+	typedef typename Rt_2::Finite_edges_iterator Finite_edges_iterator;
 
 
 
@@ -156,17 +157,19 @@ public:
 		  return edges.size();
 	  }
 
-	  void store_marked_vertices(Tds_2 dt) {
+	  void store_marked_vertices(Rt_2& rt2) {
 
-		  for (Vertex_iterator vi = dt.vertices_begin();
-				  vi != dt.vertices_end(); ++vi)
+		  for (Vertex_iterator vi = rt2.vertices_begin();
+				  vi != rt2.vertices_end(); ++vi)
 		  {
 			  bool incident_edges_have_sample = false;
-			  typename Tds_2::Edge_circulator start = dt.incident_edges(vi);
+			  typename Rt_2::Edge_circulator start = rt2.incident_edges(vi);
 
-			  typename Tds_2::Edge_circulator cur = start;
+			  typename Rt_2::Edge_circulator cur = start;
+
 			  do {
 				  if (!is_ghost(*cur)) {
+
 					  incident_edges_have_sample = true;
 					  break;
 				  }
@@ -180,16 +183,15 @@ public:
 		  }
 	  }
 
-	  void store_marked_edges(Tds_2 dt, int nb_ignore) {
+	  void store_marked_edges(Rt_2& rt2, int nb_ignore) {
 		 MultiIndex mindex;
-		for (Edge_iterator ei = dt.edges_begin();
-				ei != dt.edges_end(); ++ei)  //TODO: IV removed finite!
-		{
+		 for (Finite_edges_iterator ei = rt2.finite_edges_begin(); ei != rt2.finite_edges_end(); ++ei)
+		 {
 			Edge edge = *ei;
 			if (is_ghost(edge)) continue;
 			FT value = get_edge_relevance(edge); // >= 0
 			mindex.insert(Reconstruction_edge_2(edge, value));
-		}
+		 }
 
 
 		int nb_remove = (std::min)(nb_ignore, int(mindex.size()));
@@ -209,9 +211,9 @@ public:
 		}
 	  }
 
-	  void store_marked_elements(Tds_2 tds, int nb_ignore) {
-		  store_marked_vertices(tds);
-		  store_marked_edges(tds, nb_ignore);
+	  void store_marked_elements(Rt_2& rt2, int nb_ignore) {
+		  store_marked_vertices(rt2);
+		  store_marked_edges(rt2, nb_ignore);
 	}
 };
 

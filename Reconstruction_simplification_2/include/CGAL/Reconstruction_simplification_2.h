@@ -287,7 +287,7 @@ protected:
 	*/
 	template <class OutputModule>
 	void extract_solid_elements(OutputModule& output) {
-		output.store_marked_elements(m_dt.tds(), m_ignore);
+		output.store_marked_elements(m_dt, m_ignore);
 	}
 
 
