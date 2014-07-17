@@ -19,6 +19,7 @@
 #include <CGAL/version.h> 
 
 #include <CGAL/orient_polygon_soup.h>
+#include <CGAL/orient_polyhedron_3.h>
 
 typedef Kernel::Point_3 Point_3;
 
@@ -306,7 +307,15 @@ Scene_polygon_soup_item::exportAsPolyhedron(Polyhedron* out_polyhedron)
   CGAL::Polygon_soup_to_polyhedron_3<Polyhedron::HalfedgeDS, Point_3> builder(
     soup->points, soup->polygons);
   out_polyhedron->delegate(builder);
-  return out_polyhedron->size_of_vertices() > 0;
+
+  if(out_polyhedron->size_of_vertices() > 0) {
+    // Also check whether the consistent orientation is fine
+    if(!CGAL::is_oriented(*out_polyhedron)) {
+      out_polyhedron->inside_out();
+    }
+    return true;
+  }
+  return false;
 }
 
 QString 
