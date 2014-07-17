@@ -70,16 +70,16 @@ double rand_base()
 double my_rand()
 {
   // Ensure 53 random bits, not 48.
-  return rand_base() + rand_base()/1024;
+  return CGAL::IA_force_to_double(rand_base() + rand_base()/1024);
 }
 
 // Random point in unit cube.
 Weighted_point_3 my_rand_wp3()
 {
-  double x = CGAL::IA_force_to_double(my_rand());
-  double y = CGAL::IA_force_to_double(my_rand());
-  double z = CGAL::IA_force_to_double(my_rand());
-  double r = CGAL::IA_force_to_double(my_rand());
+  double x = my_rand();
+  double y = my_rand();
+  double z = my_rand();
+  double r = my_rand();
   return Weighted_point_3( FTr_with_SF::Weighted_point_3(FTr_with_SF::Bare_point(x, y, z),r) , FTr_without_SF::Weighted_point_3(FTr_without_SF::Bare_point(x, y, z),r) );
 }
 
@@ -89,7 +89,7 @@ void perturb(Weighted_point_3 &p, double rel_eps)
   double x = p.first.x()*(1+rand_base()*rel_eps);
   double y = p.first.y()*(1+rand_base()*rel_eps);
   double z = p.first.z()*(1+rand_base()*rel_eps);
-  double r= p.first.weight()*(1+rand_base()*rel_eps);
+  double r = p.first.weight()*(1+rand_base()*rel_eps);
   p=Weighted_point_3( FTr_with_SF::Weighted_point_3(FTr_with_SF::Bare_point(x, y, z),r) , FTr_without_SF::Weighted_point_3(FTr_without_SF::Bare_point(x, y, z),r) );
 }
 
