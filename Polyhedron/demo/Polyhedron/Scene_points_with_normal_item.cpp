@@ -173,7 +173,10 @@ Scene_points_with_normal_item::toolTip() const
 
 bool Scene_points_with_normal_item::supportsRenderingMode(RenderingMode m) const 
 {
-  return m==Points || m==PointsPlusNormals || m==Splatting;
+  //note that when this function is first called the point set might be empty
+  bool points_have_normals = (m_points->begin() != m_points->end() &&
+                            m_points->begin()->normal() != CGAL::NULL_VECTOR);
+  return m==Points || m==PointsPlusNormals || (m==Splatting && points_have_normals);
 }
 
 // Points OpenGL drawing in a display list
