@@ -244,7 +244,7 @@ namespace CGAL {
 
         // check if two points have the same x or y coordinate
         Point_2 const *s1;
-        Point_2 const *s2;
+        Point_2 const *s2 = NULL;
 
         Point_2 const *dx = NULL;
         // check if two points have the same x coordinate
