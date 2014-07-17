@@ -127,8 +127,8 @@ void from_file(const char* file_name, std::vector<Point>& points) {
   in.close();
 }
 
-int main() {
-  std::ifstream input("data/elephant.off");
+int main(int, char** argv) {
+  std::ifstream input(argv[1]);
   Polyhedron poly;
   if ( !input || !(input >> poly) || poly.empty() ){
     std::cerr << "Error: can not read file.";

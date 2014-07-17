@@ -46,11 +46,11 @@ std::istream& read_soup(
   return stream;
 }
 
-int main() {
+int main(int,char** argv) {
   std::vector<Point_3> points;
   std::vector< std::vector<std::size_t> > polygons;
 
-  std::ifstream input("data/elephant_soup.off");
+  std::ifstream input(argv[0]);
   if ( !input || !read_soup(input, points, polygons)){
     std::cerr << "Error: can not read file.";
     return 1;
@@ -64,7 +64,7 @@ int main() {
     CGAL::Polygon_soup_to_polyhedron_3<Polyhedron::HalfedgeDS, Point_3> builder(points, polygons);
     poly.delegate(builder);
 
-    std::ofstream out("data/elephant_oriented.off");
+    std::ofstream out("oriented.off");
     out << poly;
     out.close();
   }

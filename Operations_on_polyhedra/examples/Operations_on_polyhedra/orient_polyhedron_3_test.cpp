@@ -27,13 +27,12 @@ void test(const char* file_name) {
   std::cerr << file_name << " passed the test." << std::endl;
 }
 
-int main() {
-  std::vector<std::string> files;
+int main(int argc, char** argv) {
   files.push_back("data/elephant.off");
   files.push_back("data/camel.off");
 
-  for(std::vector<std::string>::iterator it = files.begin(); it != files.end(); ++it) {
-    test(it->c_str());
+  for(int i=1;i<argc;++i) {
+    test(argv[i]);
   }
   std::cerr << "All done." << std::endl;
 }
