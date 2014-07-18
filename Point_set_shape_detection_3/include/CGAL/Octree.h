@@ -23,14 +23,14 @@ namespace CGAL {
       // think if constructor could be protected (and the rest of the methods)
     public:
       typedef Sdt Sd_traits;
-      typedef typename Sd_traits::inputIterator inputIterator;
+      typedef typename Sd_traits::Input_iterator Input_iterator;
 
       DirectPointAccessor() {}
-      DirectPointAccessor(const inputIterator &begin, const inputIterator &beyond, unsigned int offset) : m_first(begin), m_offset(offset) {
+      DirectPointAccessor(const Input_iterator &begin, const Input_iterator &beyond, unsigned int offset) : m_first(begin), m_offset(offset) {
         m_beyond = (beyond == begin) ? begin : beyond - 1;
       }
 
-      inputIterator at(unsigned int i) {
+      Input_iterator at(unsigned int i) {
         return m_first + i;
       }
 
@@ -46,30 +46,30 @@ namespace CGAL {
         return m_beyond - m_first + 1;
       }
 
-      inputIterator first() {
+      Input_iterator first() {
         return m_first;
       }
 
-      inputIterator beyond() {
+      Input_iterator beyond() {
         return m_beyond;
       }
 
-      void setData(inputIterator &begin, inputIterator &beyond) {
+      void setData(Input_iterator &begin, Input_iterator &beyond) {
         m_beyond = (beyond == begin) ? begin : beyond - 1;
       }
 
       void swap(unsigned int a, unsigned int b) {
-        typename std::iterator_traits<inputIterator>::value_type tmp;
+        typename std::iterator_traits<Input_iterator>::value_type tmp;
         tmp = m_first[a];
         m_first[a] = m_first[b];
         m_first[b] = tmp;
       }
 
     protected:
-      inputIterator m_first;
+      Input_iterator m_first;
 
     private:
-      inputIterator m_beyond;
+      Input_iterator m_beyond;
       unsigned int m_offset;
     };
 
@@ -77,17 +77,17 @@ namespace CGAL {
     class IndexedPointAccessor {
     public:
       typedef Sdt Sd_traits;
-      typedef typename Sd_traits::inputIterator inputIterator;
+      typedef typename Sd_traits::Input_iterator Input_iterator;
 
       IndexedPointAccessor() {}
-      IndexedPointAccessor(const inputIterator &begin, const inputIterator &beyond, unsigned int) : m_first(begin) {
+      IndexedPointAccessor(const Input_iterator &begin, const Input_iterator &beyond, unsigned int) : m_first(begin) {
         m_beyond = (beyond == begin) ? begin : beyond - 1;
         m_indices.resize(size());
         for (unsigned int i = 0;i<size();i++)
           m_indices[i] = i;
       }
 
-      inputIterator at(unsigned int i) {
+      Input_iterator at(unsigned int i) {
         return m_first + m_indices[i];
       }
 
@@ -99,15 +99,15 @@ namespace CGAL {
         return 0;
       }
 
-      inputIterator first() {
+      Input_iterator first() {
         return m_first;
       }
 
-      inputIterator beyond() {
+      Input_iterator beyond() {
         return m_beyond;
       }
 
-      void setData(inputIterator &begin, inputIterator &beyond) {
+      void setData(Input_iterator &begin, Input_iterator &beyond) {
         m_beyond = (beyond == begin) ? begin : beyond - 1;
         m_indices.resize(size());
         for (unsigned int i = 0;i<size();i++)
@@ -125,24 +125,24 @@ namespace CGAL {
       }
 
     protected:
-      inputIterator m_first;
+      Input_iterator m_first;
 
     private:
       std::vector<unsigned int> m_indices;
-      inputIterator m_beyond;
+      Input_iterator m_beyond;
     };
 
     template<class PointAccessor>
     class Octree : public PointAccessor {
 
       typedef typename PointAccessor::Sd_traits Sd_traits;
-      typedef typename Sd_traits::inputIterator inputIterator;
+      typedef typename Sd_traits::Input_iterator Input_iterator;
       typedef Shape_base<Sd_traits> Primitive;
-      typedef typename Sd_traits::Geom_Traits::Point_3 Point;
-      typedef typename Sd_traits::Geom_Traits::Vector_3 Vector;
-      typedef typename Sd_traits::Geom_Traits::FT FT;
-      typedef typename Sd_traits::PointPMap PointPMap;
-      typedef typename Sd_traits::NormalPMap NormalPMap;
+      typedef typename Sd_traits::Geom_traits::Point_3 Point;
+      typedef typename Sd_traits::Geom_traits::Vector_3 Vector;
+      typedef typename Sd_traits::Geom_traits::FT FT;
+      typedef typename Sd_traits::Point_pmap Point_pmap;
+      typedef typename Sd_traits::Normal_pmap Normal_pmap;
 
       template<class Sd_traits>
         friend class ::CGAL::Shape_detection_3;
@@ -173,7 +173,7 @@ namespace CGAL {
         
     public:
       Octree() : m_bucketSize(20), m_setMaxLevel(10), m_root(NULL) {}
-      Octree(const inputIterator &first, const inputIterator &beyond, unsigned int offset = 0, unsigned int bucketSize = 20, unsigned int maxLevel = 10) : PointAccessor(first, beyond, offset), m_root(NULL), m_bucketSize(bucketSize), m_setMaxLevel(maxLevel) {}
+      Octree(const Input_iterator &first, const Input_iterator &beyond, unsigned int offset = 0, unsigned int bucketSize = 20, unsigned int maxLevel = 10) : PointAccessor(first, beyond, offset), m_root(NULL), m_bucketSize(bucketSize), m_setMaxLevel(maxLevel) {}
       ~Octree() {
         if (!m_root)
           return;
@@ -695,8 +695,8 @@ namespace CGAL {
       unsigned int m_bucketSize;
       unsigned int m_setMaxLevel;
       unsigned int m_maxLevel;
-      PointPMap m_pointPMap;
-      NormalPMap m_normalPMap;
+      Point_pmap m_pointPMap;
+      Normal_pmap m_normalPMap;
     };
   }
 }

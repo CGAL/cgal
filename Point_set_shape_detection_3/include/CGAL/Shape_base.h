@@ -36,12 +36,12 @@ namespace CGAL {
     /// \name Types 
     /// @{
 
-    typedef typename Sd_traits::inputIterator inputIterator; ///< random access iterator for input data.
-    typedef typename Sd_traits::Geom_Traits::FT FT; ///< number type.
-    typedef typename Sd_traits::Geom_Traits::Point_3 Point; ///< point type.
-    typedef typename Sd_traits::Geom_Traits::Vector_3 Vector; ///< vector type.
-    typedef typename Sd_traits::PointPMap PointPMap;  ///< property map to access the location of an input point.
-    typedef typename Sd_traits::NormalPMap NormalPMap; ///< property map to access the unoriented normal of an input point.
+    typedef typename Sd_traits::Input_iterator Input_iterator; ///< random access iterator for input data.
+    typedef typename Sd_traits::Geom_traits::FT FT; ///< number type.
+    typedef typename Sd_traits::Geom_traits::Point_3 Point; ///< point type.
+    typedef typename Sd_traits::Geom_traits::Vector_3 Vector; ///< vector type.
+    typedef typename Sd_traits::Point_pmap Point_pmap;  ///< property map to access the location of an input point.
+    typedef typename Sd_traits::Normal_pmap Normal_pmap; ///< property map to access the unoriented normal of an input point.
 
     typedef Shape_base<Sd_traits> Shape; ///< own type.
 
@@ -283,7 +283,7 @@ namespace CGAL {
       return m_score = m_indices.size();
     }
 
-    void compute(const std::set<int> &indices, inputIterator first, PointPMap pointPMap, NormalPMap normalPMap, FT epsilon, FT normal_threshold) {
+    void compute(const std::set<int> &indices, Input_iterator first, Point_pmap pointPMap, Normal_pmap normalPMap, FT epsilon, FT normal_threshold) {
       if (indices.size() < required_samples())
         return;
 
@@ -371,9 +371,9 @@ namespace CGAL {
     bool m_has_connected_component;
 
     std::vector<int> m_indices;	//indices of the points fitting to the candidate
-    inputIterator m_first;
-    PointPMap m_pointPMap;
-      NormalPMap m_normalPMap;
+    Input_iterator m_first;
+    Point_pmap m_pointPMap;
+      Normal_pmap m_normalPMap;
       /// \endcond
   };
 

@@ -79,10 +79,10 @@ namespace CGAL {
             class PPMap,
             class NPMap>
   struct Shape_detection_traits_3 {
-    typedef Gt Geom_Traits;     ///< Geometric types for definition of point, vector types, etc.
-    typedef iIt inputIterator;  ///< Random access iterator type used for providing input data to the method.
-    typedef PPMap PointPMap;    ///< Property map to access point location from input data.
-    typedef NPMap NormalPMap;   ///< Property map to access normal vector from input data.
+    typedef Gt Geom_traits;     ///< Geometric types for definition of point, vector types, etc.
+    typedef iIt Input_iterator;  ///< Random access iterator type used for providing input data to the method.
+    typedef PPMap Point_pmap;    ///< Property map to access point location from input data.
+    typedef NPMap Normal_pmap;   ///< Property map to access normal vector from input data.
   };
 
   /*!
@@ -131,12 +131,12 @@ refer to schnabels paper
 
     /// \name Types 
     /// @{
-    typedef typename Sd_traits::inputIterator inputIterator; ///< random access iterator for input data.
-    typedef typename Sd_traits::Geom_Traits::FT FT; ///< number type.
-    typedef typename Sd_traits::Geom_Traits::Point_3 Point; ///< point type.
-    typedef typename Sd_traits::Geom_Traits::Vector_3 Vector; ///< vector type.
-    typedef typename Sd_traits::PointPMap PointPMap; ///< property map to access the location of an input point.
-    typedef typename Sd_traits::NormalPMap NormalPMap; ///< property map to access the unoriented normal of an input point.
+    typedef typename Sd_traits::Input_iterator Input_iterator; ///< random access iterator for input data.
+    typedef typename Sd_traits::Geom_traits::FT FT; ///< number type.
+    typedef typename Sd_traits::Geom_traits::Point_3 Point; ///< point type.
+    typedef typename Sd_traits::Geom_traits::Vector_3 Vector; ///< vector type.
+    typedef typename Sd_traits::Point_pmap Point_pmap; ///< property map to access the location of an input point.
+    typedef typename Sd_traits::Normal_pmap Normal_pmap; ///< property map to access the unoriented normal of an input point.
 
     typedef Shape_base<Sd_traits> Shape; ///< shape type.
     typedef typename std::vector<Shape *>::const_iterator Shape_iterator; ///< iterator for extracted shapes.
@@ -158,10 +158,10 @@ refer to schnabels paper
     Constructor to provide random access iterators over the input data and property maps to access point locations and unoriented normals.
     Internal data structures depending on the input data are constructed.
   */ 
-    Shape_detection_3(inputIterator first, ///< iterator over the first input point.
-      inputIterator beyond, ///< past-the-end iterator over the input points.
-      PointPMap pointPMap, ///< property map to access the position of an input point.
-      NormalPMap normalPMap ///< property map to access the unoriented normal of an input point.
+    Shape_detection_3(Input_iterator first, ///< iterator over the first input point.
+      Input_iterator beyond, ///< past-the-end iterator over the input points.
+      Point_pmap pointPMap, ///< property map to access the position of an input point.
+      Normal_pmap normalPMap ///< property map to access the unoriented normal of an input point.
       ) : m_rng(std::random_device()()) {
 
       m_pointPMap = pointPMap;
@@ -181,7 +181,7 @@ refer to schnabels paper
 
       // SUBSET GENERATION ->
       // approach with increasing subset sizes -> replace with octree later on
-      inputIterator last = beyond - 1;
+      Input_iterator last = beyond - 1;
       int remainingPoints = m_numAvailablePoints;
 
       m_availableOctreeSizes.resize(m_num_subsets);
@@ -201,7 +201,7 @@ refer to schnabels paper
 
           // move points to the end of the point vector
           for (int i = subsetSize - 1;i >= 0;i--) {
-            typename std::iterator_traits<inputIterator>::value_type tmp = (*last);
+            typename std::iterator_traits<Input_iterator>::value_type tmp = (*last);
             *last = first[indices[i]];
             first[indices[i]] = tmp;
             last--;
@@ -638,9 +638,9 @@ refer to schnabels paper
     std::vector<Shape *> m_extractedShapes;
 
     std::vector<internal::Shape_factory_base *> m_shapeFactories;
-    inputIterator m_inputIterator_first, m_inputIterator_beyond; // iterators of input data
-    PointPMap m_pointPMap;
-    NormalPMap m_normalPMap;
+    Input_iterator m_inputIterator_first, m_inputIterator_beyond; // iterators of input data
+    Point_pmap m_pointPMap;
+    Normal_pmap m_normalPMap;
 
     FT m_max_radiusSphere_Octree;
     std::vector<FT> m_level_weighting;  	//sum must be 1
