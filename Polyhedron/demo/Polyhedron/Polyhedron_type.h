@@ -10,6 +10,9 @@
 #include <CGAL/Polyhedron_items_3.h>
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 
+#include <CGAL/Has_timestamp.h>
+#include <CGAL/tags.h>
+
 #include <set>
 
 template <typename Refs, typename Tag, typename Point, typename Patch_id>
@@ -24,6 +27,8 @@ private:
 
   Set_of_indices indices;
   std::size_t mID;
+  std::size_t time_stamp_;
+
 public:
   int nb_of_feature_edges;
 
@@ -38,6 +43,18 @@ public:
   void add_incident_patch(const Patch_id i) {
     indices.insert(i);
   }
+
+  /// For the determinism of Compact_container iterators
+  ///@{
+  typedef CGAL::Tag_true Has_timestamp;
+
+  std::size_t time_stamp() const {
+    return time_stamp_;
+  }
+  void set_time_stamp(const std::size_t& ts) {
+    time_stamp_ = ts;
+  }
+  ///}@
 
   const Set_of_indices&
   incident_patches_ids_set() const {
@@ -58,6 +75,8 @@ class Polyhedron_demo_halfedge :
 private:
   bool feature_edge;
   std::size_t mID;
+  std::size_t time_stamp_;
+
 public:
 
   Polyhedron_demo_halfedge() 
@@ -75,6 +94,17 @@ public:
   std::size_t& id()       { return mID; }
   std::size_t  id() const { return mID; }
 
+  /// For the determinism of Compact_container iterators
+  ///@{
+  typedef CGAL::Tag_true Has_timestamp;
+
+  std::size_t time_stamp() const {
+    return time_stamp_;
+  }
+  void set_time_stamp(const std::size_t& ts) {
+    time_stamp_ = ts;
+  }
+  ///@}
 };
 
 template <class Refs, class T_, class Pln_, class Patch_id_>
@@ -84,6 +114,8 @@ class Polyhedron_demo_face :
 private:
   Patch_id_ patch_id_;
   std::size_t mID;
+  std::size_t time_stamp_;
+
 public:
   typedef Patch_id_ Patch_id;
   
@@ -101,6 +133,17 @@ public:
   std::size_t& id()       { return mID; }
   std::size_t  id() const { return mID; }
 
+  /// For the determinism of Compact_container iterators
+  ///@{
+  typedef CGAL::Tag_true Has_timestamp;
+
+  std::size_t time_stamp() const {
+    return time_stamp_;
+  }
+  void set_time_stamp(const std::size_t& ts) {
+    time_stamp_ = ts;
+  }
+  ///@}
 };
 
 template <typename Patch_id>

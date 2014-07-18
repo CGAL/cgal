@@ -33,6 +33,7 @@
 
 #include <CGAL/Labeled_mesh_domain_3.h>
 #include <CGAL/Implicit_to_labeling_function_wrapper.h>
+#include <CGAL/Random.h>
 
 namespace CGAL {
 
@@ -66,8 +67,9 @@ public:
    */
   Implicit_mesh_domain_3(const Function& f,
                          const Sphere_3& bounding_sphere,
-                         const FT& error_bound = FT(1e-3))
-    : Base(Wrapper(f), bounding_sphere, error_bound)  {}
+                         const FT& error_bound = FT(1e-3),
+                         CGAL::Random* p_rng = NULL)
+    : Base(Wrapper(f), bounding_sphere, error_bound, p_rng)  {}
 
   /// Destructor
   virtual ~Implicit_mesh_domain_3() {}

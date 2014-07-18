@@ -39,7 +39,8 @@ FT sphere_function (const Point& p)
 int main()
 {
   // Domain (Warning: Sphere_3 constructor uses squared radius !)
-  Mesh_domain domain(sphere_function, K::Sphere_3(CGAL::ORIGIN, 2.));
+  Mesh_domain domain(sphere_function,
+                     K::Sphere_3(CGAL::ORIGIN, 2.));
 
   // Mesh criteria
   Mesh_criteria criteria(facet_angle=30, facet_size=0.1, facet_distance=0.025,

@@ -4021,11 +4021,11 @@ void
 Triangulation_3<Gt,Tds,Lds>::
 make_canonical(Vertex_triple& t) const
 {
-  int i = (&*(t.first) < &*(t.second))? 0 : 1;
+  int i = (t.first < t.second) ? 0 : 1;
   if(i==0) {
-    i = (&*(t.first) < &*(t.third))? 0 : 2;
+    i = (t.first < t.third) ? 0 : 2;
   } else {
-    i = (&*(t.second) < &*(t.third))? 1 : 2;
+    i = (t.second < t.third) ? 1 : 2;
   }
   Vertex_handle tmp;
   switch(i){

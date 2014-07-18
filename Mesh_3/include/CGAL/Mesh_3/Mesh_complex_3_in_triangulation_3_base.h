@@ -242,7 +242,7 @@ public:
   Index index(const Vertex_handle& v) const { return v->index(); }
 
   /// Outputs the mesh to medit
-  void output_to_medit(std::ofstream& os,
+  void output_to_medit(std::ostream& os,
                        bool rebind = true,
                        bool show_patches = false) const
   {

@@ -30,9 +30,10 @@
 #define CGAL_COMPACT_MESH_VERTEX_BASE_3_H
 
 #include <CGAL/Triangulation_vertex_base_3.h>
-#include <CGAL/Mesh_3/Has_features.h>
 #include <CGAL/internal/Mesh_3/get_index.h>
 #include <CGAL/Mesh_3/io_signature.h>
+#include <CGAL/Has_timestamp.h>
+#include <CGAL/tags.h>
 
 namespace CGAL {
   
@@ -132,6 +133,7 @@ public:
     , next_intrusive_()
     , previous_intrusive_()
 #endif //CGAL_INTRUSIVE_LIST
+    , time_stamp_(-1)
   {}
 
   // Default copy constructor and assignment operator are ok
@@ -181,6 +183,18 @@ public:
     previous_intrusive_ = v; 
   }
 #endif
+
+  /// For the determinism of Compact_container iterators
+  ///@{
+  typedef Tag_true Has_timestamp;
+
+  std::size_t time_stamp() const {
+    return time_stamp_;
+  }
+  void set_time_stamp(const std::size_t& ts) {
+    time_stamp_ = ts;
+  }
+  ///@}
 
   bool is_c2t3_cache_valid() const {
     return cache_validity;
@@ -237,12 +251,9 @@ private:
   Vertex_handle next_intrusive_;
   Vertex_handle previous_intrusive_;
 #endif
-};  // end class Mesh_vertex_base_3
+  std::size_t time_stamp_;
 
-namespace internal {
-namespace Mesh_3 {
-} // end namespace internal::Mesh_3
-} // end namespace internal
+};  // end class Mesh_vertex_base_3
 
 template<class GT,
          class MD,

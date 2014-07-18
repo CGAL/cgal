@@ -61,7 +61,8 @@ FT sphere_function (const Point& p)
 int main()
 {
   // Domain (Warning: Sphere_3 constructor uses squared radius !)
-  Mesh_domain domain(sphere_function, K::Sphere_3(Point(1, 0, 0), 6.));
+  Mesh_domain domain(sphere_function,
+                     K::Sphere_3(Point(1, 0, 0), 6.));
 
   // Mesh criteria
   Mesh_criteria criteria(edge_size = 0.15,

@@ -23,15 +23,46 @@
 #define CGAL_MESH_3_DETECT_POLYLINES_IN_POLYHEDRA_H
 
 #include <CGAL/Mesh_3/Detect_polylines_in_polyhedra_fwd.h>
+#include <CGAL/Has_timestamp.h>
+#include <CGAL/Default.h>
+
 #include <algorithm>
 #include <boost/foreach.hpp>
+#include <boost/mpl/if.hpp>
 
 namespace CGAL { namespace Mesh_3 {
 
-struct Detect_polyline_less {
-  template <typename Handle>
-  bool operator()(const Handle& va, const Handle& vb) const {
-    return &*va < &*vb;
+template <typename Handle>
+struct CGAL_with_time_stamp
+{
+public:
+  static bool less(Handle h1, Handle h2)
+  {
+    return h1->time_stamp() < h2->time_stamp();
+  }
+};
+
+template <typename Handle>
+struct CGAL_no_time_stamp
+{
+public:
+  static bool less(Handle h1, Handle h2)
+  {
+    return &*h1 < &*h2;
+  }
+};
+
+struct Detect_polyline_less
+{
+  template<typename Handle>
+  bool operator()(const Handle& h1, const Handle& h2) const
+  {
+    typedef typename std::iterator_traits<Handle>::value_type Type;
+    typedef typename boost::mpl::if_c<
+        CGAL::internal::Has_timestamp<Type>::value,
+        CGAL_with_time_stamp<Handle>,
+        CGAL_no_time_stamp<Handle> >::type    Comparator;
+    return Comparator::less(h1, h2);
   }
 };
 
