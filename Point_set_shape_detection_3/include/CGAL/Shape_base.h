@@ -57,12 +57,12 @@ namespace CGAL {
 
     virtual ~Shape_base() {}
       
-      /*!
-       Indices into the input data of all points assigned to this shape.
+    /*!
+      Indices into the input data of all points assigned to this shape.
     */
 
-    const std::vector<int> *assigned_points() {
-      return &m_indices;
+    const std::vector<int> &assigned_points() {
+      return m_indices;
     }
       
     /*!

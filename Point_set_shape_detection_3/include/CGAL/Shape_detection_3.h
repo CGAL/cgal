@@ -375,7 +375,7 @@ refer to schnabels paper
         //if the bestCandidate is good enough (proba of overlook lower than m_options.m_probability)
         if (StopProbability(best_Candidate->expected_value(), (m_numAvailablePoints - numInvalid), nbNewCandidates, m_global_octree->maxLevel()) <= m_options.probability) {
           //we keep it
-          if (best_Candidate->assigned_points()->size() >=  m_options.min_points) {
+          if (best_Candidate->assigned_points().size() >=  m_options.min_points) {
             //printf(best_Candidate->info().c_str());
             candidates.back() = NULL;	//put null like that when we delete the vector, the object is not lost (pointer saved in bestCandidate)
 
@@ -384,13 +384,13 @@ refer to schnabels paper
 
             //2. remove the points
             //2.1 update boolean
-            const std::vector<int> *indices_points_best_candidate = best_Candidate->assigned_points();
+            const std::vector<int> &indices_points_best_candidate = best_Candidate->assigned_points();
 
-            for (int i=0;i<indices_points_best_candidate->size();i++) {
-              if (m_shapeIndex[indices_points_best_candidate->at(i)] != -1) {
+            for (int i=0;i<indices_points_best_candidate.size();i++) {
+              if (m_shapeIndex[indices_points_best_candidate.at(i)] != -1) {
                 std::cout << "shapeIndex already assigned!" << std::endl;
               }
-              m_shapeIndex[indices_points_best_candidate->at(i)] = m_extractedShapes.size() - 1;
+              m_shapeIndex[indices_points_best_candidate.at(i)] = m_extractedShapes.size() - 1;
               numInvalid++;
 
               bool exactlyOnce = true;
@@ -398,7 +398,7 @@ refer to schnabels paper
               for (unsigned int j = 0;j<m_num_subsets;j++) {
                 if (m_direct_octrees[j] && m_direct_octrees[j]->m_root) {
                   int offset = m_direct_octrees[j]->offset();
-                  if (offset <= indices_points_best_candidate->at(i) && (indices_points_best_candidate->at(i) - offset) < m_direct_octrees[j]->size()) {
+                  if (offset <= indices_points_best_candidate.at(i) && (indices_points_best_candidate.at(i) - offset) < m_direct_octrees[j]->size()) {
                     if (!exactlyOnce) {
                       std::cout << "adjusting available octree sizes failed! (twice)" << std::endl;
                     }
