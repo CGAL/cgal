@@ -86,10 +86,10 @@ Weighted_point_3 my_rand_wp3()
 // Perturbation with given maximum relative epsilon.
 void perturb(Weighted_point_3 &p, double rel_eps)
 {
-  double x = p.first.x()*(1+rand_base()*rel_eps);
-  double y = p.first.y()*(1+rand_base()*rel_eps);
-  double z = p.first.z()*(1+rand_base()*rel_eps);
-  double r = p.first.weight()*(1+rand_base()*rel_eps);
+  double x = CGAL::IA_force_to_double(p.first.x()*(1+rand_base()*rel_eps));
+  double y = CGAL::IA_force_to_double(p.first.y()*(1+rand_base()*rel_eps));
+  double z = CGAL::IA_force_to_double(p.first.z()*(1+rand_base()*rel_eps));
+  double r = CGAL::IA_force_to_double(p.first.weight()*(1+rand_base()*rel_eps));
   p=Weighted_point_3( FTr_with_SF::Weighted_point_3(FTr_with_SF::Bare_point(x, y, z),r) , FTr_without_SF::Weighted_point_3(FTr_without_SF::Bare_point(x, y, z),r) );
 }
 
