@@ -30,7 +30,7 @@ class Polyhedron_demo_vcm_normal_estimation_plugin :
 public:
   void init(QMainWindow* mainWindow, Scene_interface* scene_interface) {
 
-    actionVCMNormalEstimation = new QAction(tr("Normal estimation of point set using VCM"), mainWindow);
+    actionVCMNormalEstimation = new QAction(tr("VCM normal estimation"), mainWindow);
     actionVCMNormalEstimation->setObjectName("actionVCMNormalEstimation");
 
     Polyhedron_demo_plugin_helper::init(mainWindow, scene_interface);
@@ -83,6 +83,9 @@ void Polyhedron_demo_vcm_normal_estimation_plugin::on_actionVCMNormalEstimation_
 
     QApplication::setOverrideCursor(Qt::WaitCursor);
 
+    // First point to delete
+    Point_set::iterator first_unoriented_point = points->end();
+
     //***************************************
     // VCM normal estimation
     //***************************************
@@ -96,10 +99,33 @@ void Polyhedron_demo_vcm_normal_estimation_plugin::on_actionVCMNormalEstimation_
                                CGAL::make_normal_of_point_with_normal_pmap(Point_set::value_type()),
                                dialog.offsetRadius(), dialog.convolveRadius());
 
+      // Mark all normals as unoriented
+      first_unoriented_point = points->begin();
+
     std::size_t memory = CGAL::Memory_sizer().virtual_size();
     std::cerr << "Estimates normal direction: " << task_timer.time() << " seconds, "
         << (memory>>20) << " Mb allocated"
         << std::endl;
+
+    //***************************************
+    // normal orientation
+    //***************************************
+
+    unsigned int neighbors = 18;
+    task_timer.start();
+    std::cerr << "Orient normals with a Minimum Spanning Tree (k=" << neighbors << ")...\n";
+
+    // Tries to orient normals
+    first_unoriented_point = CGAL::mst_orient_normals(points->begin(), points->end(),
+                                                      CGAL::make_normal_of_point_with_normal_pmap(Point_set::value_type()),
+                                                      neighbors);
+
+    std::size_t nb_unoriented_normals = std::distance(first_unoriented_point, points->end());
+    memory = CGAL::Memory_sizer().virtual_size();
+    std::cerr << "Orient normals: " << nb_unoriented_normals << " point(s) with an unoriented normal are selected ("
+                                    << task_timer.time() << " seconds, "
+                                    << (memory>>20) << " Mb allocated)"
+                                    << std::endl;
 
     // Updates scene
     scene->itemChanged(index);
