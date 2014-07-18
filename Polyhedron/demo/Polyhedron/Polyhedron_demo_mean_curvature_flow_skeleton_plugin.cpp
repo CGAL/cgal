@@ -34,7 +34,6 @@
 #include <CGAL/mesh_segmentation.h>
 
 #include <queue>
-
 template<class PolyhedronWithId, class KeyType>
 struct Polyhedron_with_id_property_map
     : public boost::put_get_helper<std::size_t&,
@@ -193,7 +192,7 @@ struct Split_in_polylines_visitor_base
 {
   virtual void onNewPolyline(){}
 
-  virtual void onAddNode(size_t node_id){}
+  virtual void onAddNode(size_t /* node_id */){}
 };
 
 struct Polyline_visitor : Split_in_polylines_visitor_base
@@ -730,7 +729,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSegment()
     sdf_property_map[f] = (sdf_property_map[f] - min_dis) / (max_dis - min_dis);
   }
 
-  postprocess_sdf_values(*segment_mesh, sdf_property_map);
+  CGAL::sdf_values_postprocessing (*segment_mesh, sdf_property_map);
 
   // create a property-map for segment-ids (it is an adaptor for this case)
   typedef std::map<Polyhedron::Facet_const_handle, int> Facet_int_map;
@@ -739,7 +738,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSegment()
 
   // segment the mesh using default parameters for number of levels, and smoothing lambda
   // Note that you can use your own scalar value, instead of using SDF calculation computed using the CGAL function
-  int number_of_segments = CGAL::segment_from_sdf_values(*segment_mesh, sdf_property_map, segment_property_map);
+  int number_of_segments = CGAL::segmentation_from_sdf_values(*segment_mesh, sdf_property_map, segment_property_map);
   std::cout << "Number of segments: " << number_of_segments << std::endl;
 
   for (Facet_iterator facet_it = segment_mesh->facets_begin();
