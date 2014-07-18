@@ -57,11 +57,13 @@ typedef GraphTraits::halfedge_iterator halfedge_iterator;
 typedef GraphTraits::face_descriptor face_descriptor;
 typedef GraphTraits::face_iterator face_iterator;
 typedef CGAL::Polyhedron_shortest_path<Traits> Polyhedron_shortest_path;
+typedef Polyhedron_shortest_path::Face_location_pair Face_location_pair;
 typedef boost::property_map<Polyhedron_3, CGAL::vertex_point_t>::type VPM;
 typedef boost::property_map<typename Traits::Polyhedron, boost::vertex_external_index_t>::type VIM;
 typedef boost::property_map<typename Traits::Polyhedron, boost::edge_external_index_t>::type EIM;
 typedef boost::property_map<typename Traits::Polyhedron, CGAL::halfedge_external_index_t>::type HIM;
 typedef boost::property_map<typename Traits::Polyhedron, CGAL::face_external_index_t>::type FIM;
+
 
 size_t randomSeed = 2681972;
 size_t numIterations;
@@ -71,7 +73,7 @@ bool debugMode = false;
 CGAL::Random* randomizer = NULL;
 size_t numVertices = 0;
 
-Polyhedron_shortest_path::Face_location_pair next_location(Polyhedron_shortest_path& shortestPath, Polyhedron_3& polyhedron, const std::vector<vertex_descriptor>& vertices)
+Face_location_pair next_location(Polyhedron_shortest_path& shortestPath, Polyhedron_3& polyhedron, const std::vector<vertex_descriptor>& vertices)
 {
   std::string type;
     
@@ -86,15 +88,20 @@ Polyhedron_shortest_path::Face_location_pair next_location(Polyhedron_shortest_p
     
     return shortestPath.get_vertex_as_face_location(vertices[x]);
   }
-  else if (type == "E")
+  else if (type == "e")
   {
     size_t x, y;
     double alpha;
     std::cin >> x >> y >> alpha;
     std::pair<halfedge_descriptor, bool> he = CGAL::halfedge(vertices[x], vertices[y], polyhedron);
+    assert(he.second);
+    if (!he.second)
+    {
+      std::cout << "I hate my life" << std::endl;
+    }
     return shortestPath.get_edge_as_face_location(he.first, FT(alpha));
   }
-  else if (type == "F")
+  else if (type == "f")
   {
     size_t x, y;
     double alpha0, alpha1, alpha2;
@@ -103,7 +110,7 @@ Polyhedron_shortest_path::Face_location_pair next_location(Polyhedron_shortest_p
     return Polyhedron_shortest_path::Face_location_pair(CGAL::face(he.first, polyhedron), Barycentric_coordinate(FT(alpha0), FT(alpha1), FT(alpha2)));
   }
   
-  return Polyhedron_shortest_path::Face_location_pair(GraphTraits::null_face(), Barycentric_coordinate());
+  return Face_location_pair(GraphTraits::null_face(), Barycentric_coordinate());
 }
 
 size_t next_vertex()
@@ -171,41 +178,38 @@ void test_mesh_function()
 
   std::cout << "Mesh: " << meshName << " " << boost::num_vertices(P) << " " << CGAL::num_faces(P) << " " << CGAL::num_halfedges(P) << std::endl;
 
+  std::cout << std::setprecision(20);
+  
   for (size_t i = 0; i < numIterations; ++i)
   {
     bool found = false;
-    size_t startVertexIndex;
-    size_t endVertexIndex;
-    vertex_descriptor startVertex;
-    vertex_descriptor endVertex;
+
+    Face_location_pair startLocation = next_location(startToEndShortestPaths, P, vertices);
+    Face_location_pair endLocation = next_location(endToStartShortestPaths, P, vertices);
+
+    std::cout << "STE(location): " << faceIndexMap[startLocation.first] << " , " << startLocation.second << std::endl;
+    std::cout << "ETS(location): " << faceIndexMap[endLocation.first] << " , " << endLocation.second << std::endl;
     
-    //TODO: use the alt interface to allow starting from edges and face interiors, hopefully to help debug the issues
-    startVertexIndex = next_vertex();
-    endVertexIndex = next_vertex();
-    
-    std::cout << "STE(index): " << startVertexIndex << std::endl;
-    std::cout << "ETS(index): " << endVertexIndex << std::endl;
-    
-    startVertex = vertices[startVertexIndex];
-    endVertex = vertices[endVertexIndex];
-    
-    std::cout << "Vertex face location : " << startToEndShortestPaths.get_vertex_as_face_location(startVertex).second << std::endl;
-    std::cout << "Vertex face location : " << endToStartShortestPaths.get_vertex_as_face_location(startVertex).second << std::endl;
-    
-    startToEndShortestPaths.compute_shortest_paths(startVertex);
+    startToEndShortestPaths.compute_shortest_paths(startLocation.first, startLocation.second);
 
     CGAL::test::Edge_sequence_collector<Traits> startToEndCollector(vertexIndexMap, halfedgeIndexMap, faceIndexMap);
-    startToEndShortestPaths.shortest_path_sequence(endVertex, startToEndCollector);
+    startToEndShortestPaths.shortest_path_sequence(endLocation.first, endLocation.second, startToEndCollector);
 
-    FT startToEnd = startToEndShortestPaths.shortest_distance_to_vertex(endVertex);
+    FT startToEnd = startToEndShortestPaths.shortest_distance_to_location(endLocation.first, endLocation.second);
 
-    endToStartShortestPaths.compute_shortest_paths(endVertex);
+    endToStartShortestPaths.compute_shortest_paths(endLocation.first, endLocation.second);
 
+    std::cout << "Here" << std::endl;
+    
     CGAL::test::Edge_sequence_collector<Traits> endToStartCollector(vertexIndexMap, halfedgeIndexMap, faceIndexMap);
-    endToStartShortestPaths.shortest_path_sequence(startVertex, endToStartCollector);
+    //endToStartShortestPaths.shortest_path_sequence(vertices[401], endToStartCollector);
+    endToStartShortestPaths.shortest_path_sequence(startLocation.first, startLocation.second, endToStartCollector);
+    
+    //std::cout << "Weird: " << endToStartShortestPaths.shortest_distance_to_vertex(vertices[401]) << std::endl;
 
-    FT endToStart = endToStartShortestPaths.shortest_distance_to_vertex(startVertex);
-
+    FT endToStart = endToStartShortestPaths.shortest_distance_to_location(startLocation.first, startLocation.second);
+    //
+    
     std::cout << "STE(distance): " << startToEnd << std::endl;
     std::cout << "ETS(distance): " << endToStart << std::endl;
     if (CGAL::abs(startToEnd - endToStart) > FT(0.000001))
