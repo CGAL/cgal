@@ -273,7 +273,7 @@ split_in_polylines(Graph graph,
       out_edge_iterator b, e;
       boost::tie(b, e) = out_edges(u, graph);
       vertex_descriptor v = target(*b, graph);
-      CGAL_assertion(get(points_pmap, graph[v].id) != polyline.back());
+//      CGAL_assertion(get(points_pmap, graph[v].id) != polyline.back());
       polyline_visitor.onAddNode(graph[v].id);
       remove_edge(b, graph);
       u = v;
@@ -330,7 +330,7 @@ split_in_polylines(Graph graph,
     // std::cerr << "cycle with " << polyline.size() - 1  << " vertices\n";
     ++curve_id;
   }
-  CGAL_assertion(polylines_of_ids.size() == (curve_id - features_id_offset));
+//  CGAL_assertion(polylines_of_ids.size() == (curve_id - features_id_offset));
 
   // std::cerr << nb_cycles << " cycles\n";
   return std::pair<std::size_t, std::size_t>(curve_id - features_id_offset,
