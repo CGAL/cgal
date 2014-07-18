@@ -21,7 +21,9 @@
 #include <CGAL/value_type_traits.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
-typedef K::Point_2                                          Point;
+typedef K::Point_2                     	                    Point;
+typedef K::Segment_2                 						Segment;
+
 typedef K::FT                                         		FT;
 
 typedef std::pair<Point, FT> PointMassPair;
@@ -50,20 +52,21 @@ PointMassList* load_xy_file(const std::string& fileName);
 PointMassList* simple_point_set();
 
 
-void print_vertex(Vertex vertex) {
-	std::cout <<"vertex " <<  vertex << std::endl;
+void print_vertex(Point vertex) {
+	std::cout  <<  vertex << std::endl;
 }
 
 
-void print_edge(R_edge_2 edge) {
-	int i = ((edge).edge()).second;
+void print_edge(Segment edge) {
+	/*int i = ((edge).edge()).second;
 	Point a = ((edge).edge()).first->vertex((i+1)%3)->point();
 	Point b = ((edge).edge()).first->vertex((i+2)%3)->point();
-	std::cout << "( " << a << " , " << b << " )" << std::endl;
+	std::cout << "( " << a << " , " << b << " )" << std::endl;*/
 	//"( " << (edge).priority()  <<  ")
+
+
+	std::cout << edge << std::endl;
 }
-
-
 
 int main ()
 {
@@ -100,7 +103,7 @@ int main ()
 	for (Output_Edge_Iterator it = list_output.edges_start();
 			it != list_output.edges_beyond(); it++) {
 		print_edge(*it);
-    }
+    }/*
 
 	//-------
 	std::cout <<"(-------------OFF OUTPUT----------- )" << std::endl;
@@ -127,7 +130,6 @@ int main ()
 			continue;
 
 		print_vertex(*vi);
-
     }
 
     for (Finite_edges_iterator ei = rt2.finite_edges_begin(); ei != rt2.finite_edges_end(); ++ei) {
@@ -138,7 +140,7 @@ int main ()
     	std::cout <<  relevance;
     	print_edge(*ei);
     	(*ei).first->relevance((*ei).second);
-    }
+    }*/
 }
 
 PointMassList* simple_point_set() {

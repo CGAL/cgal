@@ -54,14 +54,17 @@ template<class Kernel>
 class List_output {
 public:
 	typedef typename Kernel::FT                 				    FT;
+	typedef typename Kernel::Point_2                 				Point;
+	typedef typename Kernel::Segment_2                 				Segment;
+
 	typedef Reconstruction_triangulation_2<Kernel> Rt_2;
 
 	typedef typename Rt_2::Vertex	 Vertex;
 	typedef typename Rt_2::Edge      Edge;
 	typedef typename Rt_2::Vertex_iterator Vertex_iterator;
 
-	typedef std::list<Vertex> Vertices;
-	typedef std::list<Edge> Edges;
+	typedef std::list<Point> Vertices;
+	typedef std::list<Segment> Edges;
 	typedef typename Vertices::const_iterator 		Output_Vertex_Iterator;
 	typedef typename Edges::const_iterator 			Output_Edge_Iterator;
 
@@ -116,7 +119,6 @@ public:
 
 			  do {
 				  if (!rt2.is_ghost(*cur)) {
-
 					  incident_edges_have_sample = true;
 					  break;
 				  }
@@ -125,7 +127,7 @@ public:
 
 			  if (!incident_edges_have_sample) {
 				  if ((*vi).has_sample_assigned())
-					  vertices.push_back(*vi);
+					  vertices.push_back((*vi).point());
 			  }
 		  }
 	  }
@@ -153,7 +155,8 @@ public:
 		{
 			Reconstruction_edge_2 pedge = *(mindex.template get<1>()).begin();
 			(mindex.template get<0>()).erase(pedge);
-			edges.push_back(pedge.edge());
+			Segment s(pedge.source()->point(), pedge.target()->point());
+			edges.push_back(s);
 
 		}
 	  }

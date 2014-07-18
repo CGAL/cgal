@@ -20,7 +20,6 @@
 #ifndef RECONSTRUCTION_SIMPLIFICATION_2_H_
 #define RECONSTRUCTION_SIMPLIFICATION_2_H_
 
-
 #include <CGAL/Reconstruction_triangulation_2.h>
 #include <CGAL/Cost.h>
 #include <CGAL/Reconstruction_edge_2.h>
@@ -28,7 +27,6 @@
 #include <CGAL/console_color.h>
 
 #include <CGAL/property_map.h>
-
 
 #include <iterator>
 #include <iostream>
@@ -40,9 +38,7 @@
 #include <boost/multi_index/ordered_index.hpp>
 #include <boost/multi_index/identity.hpp>
 
-
 namespace CGAL {
-
 
 /*!
 \ingroup PkgReconstructionSimplification2Classes

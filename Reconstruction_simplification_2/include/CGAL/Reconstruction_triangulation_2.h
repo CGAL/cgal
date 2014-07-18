@@ -78,7 +78,7 @@ class Reconstruction_triangulation_2: public Delaunay_triangulation_2<Kernel,
 		Tds_> {
 public:
 
-  typedef Delaunay_triangulation_2<Kernel, Tds_> Base;
+    typedef Delaunay_triangulation_2<Kernel, Tds_> Base;
 
 	typedef typename Kernel::FT FT;
 	typedef typename Kernel::Point_2 Point;
