@@ -23,11 +23,10 @@
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/foreach.hpp>
 
-#include <CGAL/Polyhedron_3.h>
-#include <CGAL/Polyhedron_items_with_id_3.h>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Eigen_solver_traits.h>
 #include <CGAL/Mean_curvature_skeleton.h>
+#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/iterator.h>
 #include <CGAL/internal/corefinement/Polyhedron_subset_extraction.h>
 
@@ -50,12 +49,12 @@ public:
 
 typedef boost::graph_traits<Polyhedron>::vertex_descriptor          vertex_descriptor;
 typedef boost::graph_traits<Polyhedron>::vertex_iterator            vertex_iterator;
-typedef boost::graph_traits<Polyhedron>::edge_descriptor            edge_descriptor;
+typedef boost::graph_traits<Polyhedron>::halfedge_descriptor        halfedge_descriptor;
 typedef Polyhedron::Facet_iterator                                  Facet_iterator;
 typedef Polyhedron::Halfedge_around_facet_circulator                Halfedge_facet_circulator;
 
 typedef Polyhedron_with_id_property_map<Polyhedron, vertex_descriptor> Vertex_index_map; // use id field of vertices
-typedef Polyhedron_with_id_property_map<Polyhedron, edge_descriptor>   Edge_index_map;   // use id field of edges
+typedef Polyhedron_with_id_property_map<Polyhedron, halfedge_descriptor>   Edge_index_map;   // use id field of edges
 
 struct Vertex
 {
@@ -682,7 +681,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSegment()
   int vertex_id_count = 0;
   for (boost::tie(vb, ve) = boost::vertices(*segment_mesh); vb != ve; ++vb)
   {
-    vb->id() = vertex_id_count++;
+    (*vb)->id() = vertex_id_count++;
   }
 
   // create a property-map for sdf values (it is an adaptor for this case)
