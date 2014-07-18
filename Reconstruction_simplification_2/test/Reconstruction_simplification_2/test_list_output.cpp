@@ -41,6 +41,9 @@ typedef CGAL::Reconstruction_triangulation_2<K> Rt_2;
 typedef CGAL::List_output<K>::Output_Vertex_Iterator Output_Vertex_Iterator;
 typedef CGAL::List_output<K>::Output_Edge_Iterator   Output_Edge_Iterator;
 
+typedef typename Rt_2::Finite_edges_iterator Finite_edges_iterator;
+typedef typename Rt_2::Vertex_iterator Vertex_iterator;
+
 
 
 PointMassList* load_xy_file(const std::string& fileName);
@@ -56,8 +59,8 @@ void print_edge(R_edge_2 edge) {
 	int i = ((edge).edge()).second;
 	Point a = ((edge).edge()).first->vertex((i+1)%3)->point();
 	Point b = ((edge).edge()).first->vertex((i+2)%3)->point();
-	std::cout <<"( " << (edge).priority()  <<  ") ( " << a
-							<< " , " << b << " )" << std::endl;
+	std::cout << "( " << a << " , " << b << " )" << std::endl;
+	//"( " << (edge).priority()  <<  ")
 }
 
 
@@ -99,15 +102,11 @@ int main ()
 		print_edge(*it);
     }
 
-
-
 	//-------
 	std::cout <<"(-------------OFF OUTPUT----------- )" << std::endl;
 
     CGAL::Off_output<K> off_output;
-
     rs2.extract_solid_elements(off_output);
-
     off_output.get_os_output(std::cout);
 
 
@@ -115,14 +114,32 @@ int main ()
 	std::cout <<"(-------------TRI OUTPUT----------- )" << std::endl;
 
     CGAL::Tds_output<K> tds_output;
+    rs2.extract_solid_elements(tds_output);
     Rt_2 rt2;
     tds_output.extract_reconstruction_tds(rt2);
 
 
+    for (Vertex_iterator vi = rt2.vertices_begin();
+    				  vi != rt2.vertices_end(); ++vi) {
 
+    	FT relevance = (*vi).get_relevance();
+		if (relevance <= 0)
+			continue;
+
+		print_vertex(*vi);
+
+    }
+
+    for (Finite_edges_iterator ei = rt2.finite_edges_begin(); ei != rt2.finite_edges_end(); ++ei) {
+    	FT relevance = (*ei).first->relevance((*ei).second);
+    	if (relevance <= 0)
+    		continue;
+
+    	std::cout <<  relevance;
+    	print_edge(*ei);
+    	(*ei).first->relevance((*ei).second);
+    }
 }
-
-
 
 PointMassList* simple_point_set() {
 

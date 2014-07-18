@@ -64,6 +64,8 @@ private:
     Cost m_cost1[3];
     int  m_plan[3];
 
+    FT m_relevance[3];
+
 public:
     Reconstruction_face_base_2()
     : Base()
@@ -112,6 +114,10 @@ public:
         m_plan[0] = f->plan(0);
         m_plan[1] = f->plan(1);
         m_plan[2] = f->plan(2);
+
+        m_relevance[0] = f->relevance(0);
+        m_relevance[1] = f->relevance(1);
+        m_relevance[2] = f->relevance(2);
     }
 
     virtual ~Reconstruction_face_base_2()
@@ -136,6 +142,11 @@ public:
         m_plan[0] = 0;
         m_plan[1] = 0;
         m_plan[2] = 0;
+
+        m_relevance[0] = 0;
+        m_relevance[1] = 0;
+        m_relevance[2] = 0;
+
     }
 
     const int plan(int edge) const { return m_plan[edge]; }
@@ -149,6 +160,10 @@ public:
 
     const Cost& edge_cost(int edge) const { return m_cost1[edge]; }
     Cost& edge_cost(int edge) { return m_cost1[edge]; }
+
+    const FT& relevance(int edge) const { return m_relevance[edge]; }
+    FT& relevance(int edge) { return m_relevance[edge]; }
+
 
     const Cost& cost(int edge) const
     {

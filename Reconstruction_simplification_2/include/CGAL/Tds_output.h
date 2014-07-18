@@ -37,6 +37,7 @@
 
 namespace CGAL {
 
+
 /*!
 \ingroup PkgReconstructionSimplification2Models
 
@@ -53,14 +54,59 @@ template<class Kernel>
 class Tds_output {
 public:
 	typedef Reconstruction_triangulation_2<Kernel> Rt_2;
-	typedef typename Rt_2::Triangulation_data_structure Tds_2;
+	typedef typename Kernel::FT                 				    FT;
+
+	typedef typename Rt_2::Vertex	 Vertex;
+	typedef typename Rt_2::Edge      Edge;
+	typedef typename Rt_2::Vertex_iterator Vertex_iterator;
+	typedef typename Rt_2::Finite_edges_iterator Finite_edges_iterator;
+
 
 private:
 	Rt_2 m_rt2;
 
+	void mark_vertices() {
+		for (Vertex_iterator vi = m_rt2.vertices_begin();
+			  vi != m_rt2.vertices_end(); ++vi)
+		{
+
+		  bool incident_edges_have_sample = false;
+		  typename Rt_2::Edge_circulator start = m_rt2.incident_edges(vi);
+		  typename Rt_2::Edge_circulator cur = start;
+
+		  do {
+			  if (!m_rt2.is_ghost(*cur)) {
+				  incident_edges_have_sample = true;
+				  break;
+			  }
+			  ++cur;
+		  } while (cur != start);
+
+		  if (!incident_edges_have_sample) {
+			  if ((*vi).has_sample_assigned())
+				  (*vi).set_relevance(1);
+		  }
+		}
+	}
+
+	void mark_edges() {
+
+		for (Finite_edges_iterator ei = m_rt2.finite_edges_begin(); ei != m_rt2.finite_edges_end(); ++ei)
+		{
+			Edge edge = *ei;
+			FT relevance = 0;
+			if (!m_rt2.is_ghost(edge)) {
+				relevance = m_rt2.get_edge_relevance(edge); // >= 0
+			}
+			edge.first->relevance(edge.second) = relevance;
+		}
+	}
+
 public:
-	void store_marked_elements(Rt_2& rt2, int nb_ignore) {
-		m_rt2 = rt2;
+	  void store_marked_elements(Rt_2& rt2, int nb_ignore) {
+		  m_rt2 = rt2;
+		  mark_vertices();
+		  mark_edges();
 	}
 
 	void extract_reconstruction_tds(Rt_2& rt2) {

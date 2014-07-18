@@ -70,10 +70,7 @@ public:
 
 	typedef typename Rt_2::Finite_edges_iterator Finite_edges_iterator;
 
-
-
 private:
-
 	Vertices vertices;
 	Edges    edges;
 
@@ -93,7 +90,6 @@ public:
 	  inline Output_Edge_Iterator edges_beyond() const {
 	    return edges.end();
 	  }
-
 
 	  void clear() {
 		  vertices.clear();

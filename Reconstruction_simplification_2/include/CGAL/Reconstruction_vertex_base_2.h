@@ -54,6 +54,7 @@ private:
     Point m_relocated;
     FT m_relevance;
 
+
 public:
     Reconstruction_vertex_base_2()
     : Base()
@@ -61,6 +62,7 @@ public:
         m_id = -1;
         m_pinned = false;
         m_sample = NULL;
+        m_relevance = 0;
     }
 
     Reconstruction_vertex_base_2(const Point & p)
@@ -69,6 +71,7 @@ public:
         m_id = -1;
         m_pinned = false;
         m_sample = NULL;
+        m_relevance = 0;
     }
 
     Reconstruction_vertex_base_2(Face_handle f)
@@ -77,6 +80,7 @@ public:
         m_id = -1;
         m_pinned = false;
         m_sample = NULL;
+        m_relevance = 0;
     }
 
     Reconstruction_vertex_base_2(const Point & p, Face_handle f)
@@ -85,6 +89,7 @@ public:
         m_id = -1;
         m_pinned = false;
         m_sample = NULL;
+        m_relevance = 0;
     }
 
     virtual ~Reconstruction_vertex_base_2() { }

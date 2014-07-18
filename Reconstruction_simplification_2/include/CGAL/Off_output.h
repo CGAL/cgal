@@ -114,7 +114,6 @@ public:
 		list_output.store_marked_elements(rt2, nb_ignore);
 	}
 
-
 	/*!
 	Writes the edges and vertices of the output simplex into an `std::ostream`
 	in the OFF format.
@@ -125,8 +124,8 @@ public:
 		std::set<Point> edge_vertices;
 		vertices_of_edges(edge_vertices);
 
-		os << "OFF [" << list_output.vertex_count() + edge_vertices.size() << "][0][" <<
-				list_output.edge_count()  << "]" << std::endl;
+		os << "OFF " << list_output.vertex_count() + edge_vertices.size() <<
+				" 0 " << list_output.edge_count()  << std::endl;
 
 	  	for (Output_Vertex_Iterator it = list_output.vertices_start();
 				it != list_output.vertices_beyond(); it++) {
