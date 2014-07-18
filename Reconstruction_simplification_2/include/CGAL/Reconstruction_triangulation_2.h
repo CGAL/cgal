@@ -78,7 +78,7 @@ class Reconstruction_triangulation_2: public Delaunay_triangulation_2<Kernel,
 		Tds_> {
 public:
 
-	typedef Reconstruction_triangulation_2 Rt_2;
+  typedef Delaunay_triangulation_2<Kernel, Tds_> Base;
 
 	typedef typename Kernel::FT FT;
 	typedef typename Kernel::Point_2 Point;
@@ -88,22 +88,22 @@ public:
 	typedef typename Kernel::Segment_2 Segment;
 	typedef typename Kernel::Triangle_2 Triangle;
 
-	typedef typename Rt_2::Vertex Vertex;
-	typedef typename Rt_2::Vertex_handle Vertex_handle;
-	typedef typename Rt_2::Vertex_iterator Vertex_iterator;
-	typedef typename Rt_2::Vertex_circulator Vertex_circulator;
-	typedef typename Rt_2::Finite_vertices_iterator Finite_vertices_iterator;
+	typedef typename Base::Vertex Vertex;
+	typedef typename Base::Vertex_handle Vertex_handle;
+	typedef typename Base::Vertex_iterator Vertex_iterator;
+	typedef typename Base::Vertex_circulator Vertex_circulator;
+	typedef typename Base::Finite_vertices_iterator Finite_vertices_iterator;
 
-	typedef typename Rt_2::Edge Edge;
-	typedef typename Rt_2::Edge_iterator Edge_iterator;
-	typedef typename Rt_2::Edge_circulator Edge_circulator;
-	typedef typename Rt_2::Finite_edges_iterator Finite_edges_iterator;
+	typedef typename Base::Edge Edge;
+	typedef typename Base::Edge_iterator Edge_iterator;
+	typedef typename Base::Edge_circulator Edge_circulator;
+	typedef typename Base::Finite_edges_iterator Finite_edges_iterator;
 
-	typedef typename Rt_2::Face Face;
-	typedef typename Rt_2::Face_handle Face_handle;
-	typedef typename Rt_2::Face_iterator Face_iterator;
-	typedef typename Rt_2::Face_circulator Face_circulator;
-	typedef typename Rt_2::Finite_faces_iterator Finite_faces_iterator;
+	typedef typename Base::Face Face;
+	typedef typename Base::Face_handle Face_handle;
+	typedef typename Base::Face_iterator Face_iterator;
+	typedef typename Base::Face_circulator Face_circulator;
+	typedef typename Base::Finite_faces_iterator Finite_faces_iterator;
 
 	typedef std::map<Vertex_handle, Vertex_handle,
 			less_Vertex_handle<Vertex_handle> > Vertex_handle_map;
@@ -164,9 +164,9 @@ public:
 	}
 
 	Edge random_finite_edge() {
-		int nbf = Rt_2::number_of_faces();
+		int nbf = Base::number_of_faces();
 		int offset = random_int(0, nbf - 1);
-		Finite_faces_iterator fi = Rt_2::finite_faces_begin();
+		Finite_faces_iterator fi = Base::finite_faces_begin();
 		for (int i = 0; i < offset; i++)
 			fi++;
 		Face_handle face = fi;
@@ -177,11 +177,11 @@ public:
 	// ACCESS //
 
 	Vertex_handle source_vertex(const Edge& edge) const {
-		return edge.first->vertex(Rt_2::ccw(edge.second));
+		return edge.first->vertex(Base::ccw(edge.second));
 	}
 
 	Vertex_handle target_vertex(const Edge& edge) const {
-		return edge.first->vertex(Rt_2::cw(edge.second));
+		return edge.first->vertex(Base::cw(edge.second));
 	}
 
 	Vertex_handle opposite_vertex(const Edge& edge) const {
@@ -199,18 +199,18 @@ public:
 		Face_handle f = edge.first;
 		Vertex_handle v = source_vertex(edge);
 		Face_handle nf = f->neighbor(edge.second);
-		return Edge(nf, Rt_2::ccw(nf->index(v)));
+		return Edge(nf, Base::ccw(nf->index(v)));
 	}
 
 	Edge next_edge(const Edge& edge) const {
 		Face_handle f = edge.first;
-		int index = Rt_2::ccw(edge.second);
+		int index = Base::ccw(edge.second);
 		return Edge(f, index);
 	}
 
 	Edge prev_edge(const Edge& edge) const {
 		Face_handle f = edge.first;
-		int index = Rt_2::cw(edge.second);
+		int index = Base::cw(edge.second);
 		return Edge(f, index);
 	}
 
@@ -242,7 +242,7 @@ public:
 
 	void get_vertices_from_vertex_link(Vertex_handle vertex,
 			Vertex_handle_set& vertices) const {
-		Vertex_circulator vcirc = Rt_2::incident_vertices(vertex);
+		Vertex_circulator vcirc = Base::incident_vertices(vertex);
 		Vertex_circulator vend = vcirc;
 		CGAL_For_all(vcirc, vend)
 		{
@@ -255,7 +255,7 @@ public:
 	// 'outward' chooses the orientation of the boundary
 	void get_edges_from_star_minus_link(Vertex_handle vertex, Edge_list& hull,
 			bool outward = false) const {
-		Face_circulator fcirc = Rt_2::incident_faces(vertex);
+		Face_circulator fcirc = Base::incident_faces(vertex);
 		Face_circulator fend = fcirc;
 		CGAL_For_all(fcirc, fend)
 		{
@@ -345,7 +345,7 @@ public:
 
 	void collect_samples_from_vertex(Vertex_handle vertex, Sample_list& samples,
 			bool cleanup) {
-		Face_circulator fcirc = Rt_2::incident_faces(vertex);
+		Face_circulator fcirc = Base::incident_faces(vertex);
 		Face_circulator fend = fcirc;
 		CGAL_For_all(fcirc, fend)
 		{
@@ -372,15 +372,15 @@ public:
 	}
 
 	void collect_all_samples(Sample_list& samples) {
-		for (Finite_edges_iterator ei = Rt_2::finite_edges_begin();
-				ei != Rt_2::finite_edges_end(); ++ei) {
+		for (Finite_edges_iterator ei = Base::finite_edges_begin();
+				ei != Base::finite_edges_end(); ++ei) {
 			Edge edge = *ei;
 			Edge twin = twin_edge(edge);
 			collect_samples_from_edge(edge, samples);
 			collect_samples_from_edge(twin, samples);
 		}
-		for (Finite_vertices_iterator vi = Rt_2::finite_vertices_begin();
-				vi != Rt_2::finite_vertices_end(); ++vi) {
+		for (Finite_vertices_iterator vi = Base::finite_vertices_begin();
+				vi != Base::finite_vertices_end(); ++vi) {
 			Vertex_handle v = vi;
 			Sample* sample = v->get_sample();
 			if (sample)
@@ -389,12 +389,12 @@ public:
 	}
 
 	void cleanup_assignments() {
-		for (Finite_faces_iterator fi = Rt_2::finite_faces_begin();
-				fi != Rt_2::finite_faces_end(); ++fi) {
+		for (Finite_faces_iterator fi = Base::finite_faces_begin();
+				fi != Base::finite_faces_end(); ++fi) {
 			fi->clean_all_samples();
 		}
-		for (Finite_vertices_iterator vi = Rt_2::finite_vertices_begin();
-				vi != Rt_2::finite_vertices_end(); ++vi) {
+		for (Finite_vertices_iterator vi = Base::finite_vertices_begin();
+				vi != Base::finite_vertices_end(); ++vi) {
 			vi->set_sample(NULL);
 		}
 	}
@@ -403,8 +403,8 @@ public:
 
 	Cost compute_total_cost() const {
 		Cost sum;
-		for (Finite_edges_iterator ei = Rt_2::finite_edges_begin();
-				ei != Rt_2::finite_edges_end(); ++ei) {
+		for (Finite_edges_iterator ei = Base::finite_edges_begin();
+				ei != Base::finite_edges_end(); ++ei) {
 			Edge edge = *ei;
 			const Cost& cost = get_cost(edge);
 			sum.update_max(cost);
@@ -416,7 +416,7 @@ public:
 	Cost compute_cost_around_vertex(Vertex_handle vertex) const {
 		Cost inner;
 		Cost outer;
-		Face_circulator fcirc = Rt_2::incident_faces(vertex);
+		Face_circulator fcirc = Base::incident_faces(vertex);
 		Face_circulator fend = fcirc;
 		CGAL_For_all(fcirc, fend)
 		{
@@ -424,17 +424,17 @@ public:
 			int index = face->index(vertex);
 
 			Edge edge(face, index);
-			Cost cost = Rt_2::get_cost(edge);
+			Cost cost = get_cost(edge);
 			outer.update_max(cost);
 			outer.add(cost);
 
-			edge = Rt_2::next_edge(edge);
-			cost = Rt_2::get_cost(edge);
+			edge = next_edge(edge);
+			cost = get_cost(edge);
 			inner.update_max(cost);
 			inner.add(cost);
 
-			edge = Rt_2::next_edge(edge);
-			cost = Rt_2::get_cost(edge);
+			edge = next_edge(edge);
+			cost = get_cost(edge);
 			inner.update_max(cost);
 			inner.add(cost);
 		}
@@ -449,8 +449,8 @@ public:
 	}
 
 	void reset_all_costs() {
-		for (Finite_edges_iterator ei = Rt_2::finite_edges_begin();
-				ei != Rt_2::finite_edges_end(); ++ei) {
+		for (Finite_edges_iterator ei = Base::finite_edges_begin();
+				ei != Base::finite_edges_end(); ++ei) {
 			Edge edge = *ei;
 			update_cost(edge);
 		}
@@ -607,9 +607,9 @@ public:
 
 	bool assign_sample(Sample* sample) {
 		const Point& point = sample->point();
-		Face_handle face = Rt_2::locate(point);
+		Face_handle face = Base::locate(point);
 
-		if (face == Face_handle() || Rt_2::is_infinite(face)) {
+		if (face == Face_handle() || Base::is_infinite(face)) {
 			std::cout << "free bird" << std::endl;
 			return false;
 		}
@@ -628,8 +628,8 @@ public:
 	bool assign_sample_brute_force(Sample* sample) {
 		const Point& point = sample->point();
 		Face_handle nearest_face = Face_handle();
-		for (Finite_faces_iterator fi = Rt_2::finite_faces_begin();
-				fi != Rt_2::finite_faces_end(); ++fi) {
+		for (Finite_faces_iterator fi = Base::finite_faces_begin();
+				fi != Base::finite_faces_end(); ++fi) {
 			Face_handle face = fi;
 			if (face_has_point(face, point)) {
 				nearest_face = face;
@@ -829,9 +829,9 @@ public:
 
 	bool is_flippable(const Edge& edge) const {
 		Edge twin = twin_edge(edge);
-		if (Rt_2::is_infinite(twin.first))
+		if (Base::is_infinite(twin.first))
 			return false;
-		if (Rt_2::is_infinite(edge.first))
+		if (Base::is_infinite(edge.first))
 			return false;
 
 		Vertex_handle vs = source_vertex(edge);
@@ -921,7 +921,7 @@ public:
 		Vertex_handle t = target_vertex(st);
 
 		Edge sc = twin_edge(prev_edge(sb));
-		Rt_2::tds().flip(sb.first, sb.second);
+		Base::tds().flip(sb.first, sb.second);
 		Edge ac = prev_edge(twin_edge(sc));
 
 		Vertex_handle a = source_vertex(ac);
@@ -938,7 +938,7 @@ public:
 		}
 
 		Edge twin = twin_edge(edge);
-		Rt_2::tds().join_vertices(twin);
+		Base::tds().join_vertices(twin);
 	}
 
 	// (a,b,c) + (c,b,a) + (a,c,i) + (c,a,j) ->
