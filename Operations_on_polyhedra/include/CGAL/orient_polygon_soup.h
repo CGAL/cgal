@@ -171,7 +171,8 @@ public:
                 const std::size_t& i0 = polygons[index][j];
                 const std::size_t& i1 = polygons[index][ j+1 < size ? j+1: 0];
                 CGAL_assertion_code(const bool r = )
-                  edges[std::make_pair(i0, i1)].erase(index) != 0;
+                  edges[std::make_pair(i0, i1)].erase(index)
+                CGAL_assertion_code(!= 0);
                 CGAL_assertion(r);
               }
               inverse_orientation(index);
