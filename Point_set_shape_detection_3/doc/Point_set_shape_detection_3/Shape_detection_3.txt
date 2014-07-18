@@ -27,7 +27,7 @@ The candidate with the highest number of supporting points is repeatedly extract
 The algorithm is described in full detail in \cite cgal:-erpcsd-07.
 
 \section Point_set_shape_detection_3Usage Usage
-The main class ‚Shape_detection_3‘ takes a template parameter ‚Shape_detection_traits_3‘ where the geometric types and the input format is specified. The concept of property maps is used, as this is independent of the data format. The first parameter of the ‚Shape_detection_traits_3’ class is the commonly used Kernel. For the use of property maps an iterator type and two maps to map that iterator to a point and a normal are specified in the ‚Shape_detection_traits_3‘ class. The property maps concept is explained in detail in Chapter \ref chapterProperty_map "CGAL and Boost Property Maps“.
+The main class `Shape_detection_3` takes a template parameter `Shape_detection_traits_3` where the geometric types and the input format is specified. The concept of property maps is used, as this is independent of the data format. The first parameter of the `Shape_detection_traits_3’ class is the commonly used Kernel. For the use of property maps, an iterator type and two maps to map that iterator to a point and a normal are specified in the `Shape_detection_traits_3` class. The property maps concept is explained in detail in Chapter \ref chapterProperty_map "CGAL and Boost Property Maps“.
 
 Four steps are necessary:
 

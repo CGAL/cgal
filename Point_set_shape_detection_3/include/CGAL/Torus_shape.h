@@ -65,15 +65,15 @@ namespace CGAL {
   protected:
       /// \cond SKIP_IN_MANUAL
       void create_shape(const std::vector<int> &indices) {
-      Point p1 = get(this->m_pointPMap, *(this->m_first + indices[0]));
-      Point p2 = get(this->m_pointPMap, *(this->m_first + indices[1]));
-      Point p3 = get(this->m_pointPMap, *(this->m_first + indices[2]));
-      Point p4 = get(this->m_pointPMap, *(this->m_first + indices[3]));
+      Point p1 = get(this->m_point_pmap, *(this->m_first + indices[0]));
+      Point p2 = get(this->m_point_pmap, *(this->m_first + indices[1]));
+      Point p3 = get(this->m_point_pmap, *(this->m_first + indices[2]));
+      Point p4 = get(this->m_point_pmap, *(this->m_first + indices[3]));
 
-      Vector n1 = get(this->m_normalPMap, *(this->m_first + indices[0]));
-      Vector n2 = get(this->m_normalPMap, *(this->m_first + indices[1]));
-      Vector n3 = get(this->m_normalPMap, *(this->m_first + indices[2]));
-      Vector n4 = get(this->m_normalPMap, *(this->m_first + indices[3]));
+      Vector n1 = get(this->m_normal_pmap, *(this->m_first + indices[0]));
+      Vector n2 = get(this->m_normal_pmap, *(this->m_first + indices[1]));
+      Vector n3 = get(this->m_normal_pmap, *(this->m_first + indices[2]));
+      Vector n4 = get(this->m_normal_pmap, *(this->m_first + indices[3]));
 
       // Implemented method from 'Geometric least-squares fitting of spheres, cylinders, cones and tori' by G. Lukacs,A.D. Marshall, R. R. Martin
       double a01 = CGAL::cross_product(n1, n2) * n3;
@@ -178,7 +178,7 @@ namespace CGAL {
     void squared_distance(std::vector<FT> &dists, const std::vector<int> &shapeIndex, const std::vector<unsigned int> &indices) {
       for (unsigned int i = 0;i<indices.size();i++) {
         if (shapeIndex[indices[i]] == -1) {
-          Point po = get(this->m_pointPMap, *(this->m_first + i));
+          Point po = get(this->m_point_pmap, *(this->m_first + i));
           Vector d = po - m_center;
           // height over symmetry plane
           FT p = d * m_axis;
@@ -198,7 +198,7 @@ namespace CGAL {
     void cos_to_normal(std::vector<FT> &angles, const std::vector<int> &shapeIndex, const std::vector<unsigned int> &indices) const {
       for (unsigned int i = 0;i<indices.size();i++) {
         if (shapeIndex[indices[i]] == -1) {
-          Vector d = get(this->m_pointPMap, *(this->m_first + i)) - m_center;
+          Vector d = get(this->m_point_pmap, *(this->m_first + i)) - m_center;
           // height over symmetry plane
           //FT p = d * m_axis;
           // distance from axis in plane
@@ -209,9 +209,9 @@ namespace CGAL {
             inPlane = -inPlane;
           inPlane = inPlane / sqrt(inPlane.squared_length());
 
-          d = get(this->m_pointPMap, *(this->m_first + i)) - (m_center + inPlane * m_majorRad);
+          d = get(this->m_point_pmap, *(this->m_first + i)) - (m_center + inPlane * m_majorRad);
           d = d / sqrt(d.squared_length());
-          angles[i] = abs(d * get(this->m_normalPMap, *(this->m_first + i)));
+          angles[i] = abs(d * get(this->m_normal_pmap, *(this->m_first + i)));
         }
       }
     }

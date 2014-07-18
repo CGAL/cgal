@@ -65,13 +65,13 @@ namespace CGAL {
   protected:
       /// \cond SKIP_IN_MANUAL
       void create_shape(const std::vector<int> &indices) {
-      Point p1 = get(this->m_pointPMap, *(this->m_first + indices[0]));
-      Point p2 = get(this->m_pointPMap, *(this->m_first + indices[1]));
-      Point p3 = get(this->m_pointPMap, *(this->m_first + indices[2]));
+      Point p1 = get(this->m_point_pmap, *(this->m_first + indices[0]));
+      Point p2 = get(this->m_point_pmap, *(this->m_first + indices[1]));
+      Point p3 = get(this->m_point_pmap, *(this->m_first + indices[2]));
 
-      Vector n1 = get(this->m_normalPMap, *(this->m_first + indices[0]));
-      Vector n2 = get(this->m_normalPMap, *(this->m_first + indices[1]));
-      Vector n3 = get(this->m_normalPMap, *(this->m_first + indices[2]));
+      Vector n1 = get(this->m_normal_pmap, *(this->m_first + indices[0]));
+      Vector n2 = get(this->m_normal_pmap, *(this->m_first + indices[1]));
+      Vector n3 = get(this->m_normal_pmap, *(this->m_first + indices[2]));
 
 
       // Determine center: select midpoint of shortest line segment between p1 and p2
@@ -143,7 +143,7 @@ namespace CGAL {
     void squared_distance(std::vector<FT> &dists, const std::vector<int> &shapeIndex, const std::vector<unsigned int> &indices) {
       for (unsigned int i = 0;i<indices.size();i++) {
         if (shapeIndex[indices[i]] == -1) {
-          dists[i] = sqrt((m_sphere.center() - get(this->m_pointPMap, *(this->m_first + indices[i]))).squared_length()) - m_radius;
+          dists[i] = sqrt((m_sphere.center() - get(this->m_point_pmap, *(this->m_first + indices[i]))).squared_length()) - m_radius;
           dists[i] = dists[i] * dists[i];
         }
       }
@@ -152,9 +152,9 @@ namespace CGAL {
     void cos_to_normal(std::vector<FT> &angles, const std::vector<int> &shapeIndex, const std::vector<unsigned int> &indices) const {
       for (unsigned int i = 0;i<indices.size();i++) {
         if (shapeIndex[indices[i]] == -1) {
-          Vector n = m_sphere.center() - get(this->m_pointPMap, *(this->m_first + indices[i]));
+          Vector n = m_sphere.center() - get(this->m_point_pmap, *(this->m_first + indices[i]));
           n = n * (1.0 / (sqrt(n.squared_length())));
-          angles[i] = abs(get(this->m_normalPMap, *(this->m_first + indices[i])) * n);
+          angles[i] = abs(get(this->m_normal_pmap, *(this->m_first + indices[i])) * n);
         }
       }
     }

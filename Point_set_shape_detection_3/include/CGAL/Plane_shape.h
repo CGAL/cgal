@@ -60,9 +60,9 @@ namespace CGAL {
   protected:
       /// \cond SKIP_IN_MANUAL
     virtual void create_shape(const std::vector<int> &indices) {
-      Point p1 = get(this->m_pointPMap, *(this->m_first + indices[0]));
-      Point p2 = get(this->m_pointPMap, *(this->m_first + indices[1]));
-      Point p3 = get(this->m_pointPMap, *(this->m_first + indices[2]));
+      Point p1 = get(this->m_point_pmap, *(this->m_first + indices[0]));
+      Point p2 = get(this->m_point_pmap, *(this->m_first + indices[1]));
+      Point p3 = get(this->m_point_pmap, *(this->m_first + indices[2]));
 
       m_plane = Plane_3(p1, p2, p3);
 
@@ -73,7 +73,7 @@ namespace CGAL {
       //check deviation of the 3 normal
       Vector l_v;
       for (int i = 0;i<3;i++) {
-        l_v = get(this->m_normalPMap, *(this->m_first + indices[i]));
+        l_v = get(this->m_normal_pmap, *(this->m_first + indices[i]));
 
         if (abs(l_v * m_normal) < this->m_normal_threshold * sqrt(l_v.squared_length())) {
           this->m_isValid = false;
@@ -90,7 +90,7 @@ namespace CGAL {
     }
 
     void parameters(std::vector<std::pair<FT, FT> > &parameterSpace, const std::vector<int> &indices, FT min[2], FT max[2]) const {
-      Vector p = (get(this->m_pointPMap, *(this->m_first + indices[0])) - m_point_on_primitive);
+      Vector p = (get(this->m_point_pmap, *(this->m_first + indices[0])) - m_point_on_primitive);
       FT u = p * m_base1;
       FT v = p * m_base2;
       parameterSpace[0] = std::pair<FT, FT>(u, v);
@@ -98,7 +98,7 @@ namespace CGAL {
       min[1] = max[1] = v;
 
       for (unsigned int i = 1;i<indices.size();i++) {
-        Vector p = (get(this->m_pointPMap, *(this->m_first + indices[i])) - m_point_on_primitive);
+        Vector p = (get(this->m_point_pmap, *(this->m_first + indices[i])) - m_point_on_primitive);
         FT u = p * m_base1;
         FT v = p * m_base2;
         min[0] = (std::min<FT>)(min[0], u);
@@ -143,14 +143,14 @@ namespace CGAL {
     void squared_distance(std::vector<FT> &dists, const std::vector<int> &shapeIndex, const std::vector<unsigned int> &indices) {
       for (unsigned int i = 0;i<indices.size();i++) {
         if (shapeIndex[indices[i]] == -1)
-          dists[i] = CGAL::squared_distance(m_plane, get(this->m_pointPMap, *(this->m_first + indices[i])));
+          dists[i] = CGAL::squared_distance(m_plane, get(this->m_point_pmap, *(this->m_first + indices[i])));
       }
     }
 
     void cos_to_normal(std::vector<FT> &angles, const std::vector<int> &shapeIndex, const std::vector<unsigned int> &indices) const {
       for (unsigned int i = 0;i<indices.size();i++) {
         if (shapeIndex[indices[i]] == -1)
-          angles[i] = abs(get(this->m_normalPMap, *(this->m_first + indices[i])) * m_normal);
+          angles[i] = abs(get(this->m_normal_pmap, *(this->m_first + indices[i])) * m_normal);
       }
     }
 

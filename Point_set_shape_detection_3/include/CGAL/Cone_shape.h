@@ -71,13 +71,13 @@ namespace CGAL {
   protected:
       /// \cond SKIP_IN_MANUAL
       virtual void create_shape(const std::vector<int> &indices) {
-      Point p1 = get(this->m_pointPMap, *(this->m_first + indices[0]));
-      Point p2 = get(this->m_pointPMap, *(this->m_first + indices[1]));
-      Point p3 = get(this->m_pointPMap, *(this->m_first + indices[2]));
+      Point p1 = get(this->m_point_pmap, *(this->m_first + indices[0]));
+      Point p2 = get(this->m_point_pmap, *(this->m_first + indices[1]));
+      Point p3 = get(this->m_point_pmap, *(this->m_first + indices[2]));
 
-      Vector n1 = get(this->m_normalPMap, *(this->m_first + indices[0]));
-      Vector n2 = get(this->m_normalPMap, *(this->m_first + indices[1]));
-      Vector n3 = get(this->m_normalPMap, *(this->m_first + indices[2]));
+      Vector n1 = get(this->m_normal_pmap, *(this->m_first + indices[0]));
+      Vector n2 = get(this->m_normal_pmap, *(this->m_first + indices[1]));
+      Vector n3 = get(this->m_normal_pmap, *(this->m_first + indices[2]));
 
       // first calculate intersection of three planes -> apex
 
@@ -163,7 +163,7 @@ namespace CGAL {
     void squared_distance(std::vector<FT> &dists, const std::vector<int> &shapeIndex, const std::vector<unsigned int> &indices) {
       for (unsigned int i = 0;i<indices.size();i++) {
         if (shapeIndex[indices[i]] == -1) {
-          Vector toApex = get(this->m_pointPMap, *(this->m_first + indices[i])) - m_apex;
+          Vector toApex = get(this->m_point_pmap, *(this->m_first + indices[i])) - m_apex;
           FT a = toApex.squared_length();
           // projection on axis
           FT b = toApex * m_axis;
@@ -186,13 +186,13 @@ namespace CGAL {
       for (unsigned int i = 0;i<indices.size();i++) {
         if (shapeIndex[indices[i]] == -1) {
           // construct vector orthogonal to axis in direction of the point
-          Vector a = get(this->m_pointPMap, *(this->m_first + indices[i])) - m_apex;
+          Vector a = get(this->m_point_pmap, *(this->m_first + indices[i])) - m_apex;
           Vector b = CGAL::cross_product(m_axis, CGAL::cross_product(m_axis, a));
           b = (a * b < 0) ? -b : b;
           b = b * 1.0 / sqrt(b.squared_length());
           b = m_cosAng * b + m_nSinAng * m_axis;
 
-          angles[i] = abs(get(this->m_normalPMap, *(this->m_first + indices[i])) * b);
+          angles[i] = abs(get(this->m_normal_pmap, *(this->m_first + indices[i])) * b);
         }
       }
     }

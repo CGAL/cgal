@@ -576,7 +576,7 @@ namespace CGAL {
         Point c = cell->center;
 
         for (int i = cell->first;i<cell->last;i++) {
-          FT d = sqrt(CGAL::squared_distance(cell->center, get(m_pointPMap, this->at(i).first)));
+          FT d = sqrt(CGAL::squared_distance(cell->center, get(m_point_pmap, this->at(i).first)));
           if (d > diag) {
             std::cout << "points out of range" << std::endl;
           }
@@ -594,14 +594,14 @@ namespace CGAL {
 
         for (;first <= last;first++) {
           bool fail = false;
-          p = get(m_pointPMap, this->at(first));
+          p = get(m_point_pmap, this->at(first));
           v = p[dimension];
           if (below){
-            if (get(m_pointPMap, this->at(first))[dimension] > threshold)
+            if (get(m_point_pmap, this->at(first))[dimension] > threshold)
               fail = true;
           }
           else
-            if (get(m_pointPMap, this->at(first))[dimension] <= threshold)
+            if (get(m_point_pmap, this->at(first))[dimension] <= threshold)
               fail = true;
 
           if (fail) {
@@ -616,7 +616,7 @@ namespace CGAL {
         FT max[] = {(std::numeric_limits<FT>::min)(), (std::numeric_limits<FT>::min)(), (std::numeric_limits<FT>::min)()};
 
         for (unsigned int i = 0;i<this->size();i++) {
-            Point p = get(m_pointPMap, *this->at(i));
+            Point p = get(m_point_pmap, *this->at(i));
           min[0] = (std::min<FT>)(min[0], p.x());
           min[1] = (std::min<FT>)(min[1], p.y());
           min[2] = (std::min<FT>)(min[2], p.z());
@@ -649,27 +649,27 @@ namespace CGAL {
 
         while(first < last) {
           // find first above threshold
-          Point p1 = get(m_pointPMap, *this->at(first));
+          Point p1 = get(m_point_pmap, *this->at(first));
           FT v1 = p1[dimension];
-          while (get(m_pointPMap, *this->at(first))[dimension] < threshold && first < last) {
+          while (get(m_point_pmap, *this->at(first))[dimension] < threshold && first < last) {
             first++;
           }
 
           // check if last has been reached
           if (first == last) {
-            return (get(m_pointPMap, *this->at(first))[dimension] < threshold) ? first : (first == origFirst) ? -1 : first - 1;
+            return (get(m_point_pmap, *this->at(first))[dimension] < threshold) ? first : (first == origFirst) ? -1 : first - 1;
           }
 
           // find last below threshold
-          p1 = get(m_pointPMap, *this->at(last));
+          p1 = get(m_point_pmap, *this->at(last));
           v1 = p1[dimension];
-          while (get(m_pointPMap, *this->at(last))[dimension] >= threshold && last > first) {
+          while (get(m_point_pmap, *this->at(last))[dimension] >= threshold && last > first) {
             last--;
           }
 
           // check if first has been reached
           if (last == first) {
-            return (get(m_pointPMap, *this->at(first))[dimension] < threshold) ? first : (first == origFirst) ? -1 : first - 1;
+            return (get(m_point_pmap, *this->at(first))[dimension] < threshold) ? first : (first == origFirst) ? -1 : first - 1;
           }
 
           // swap entries
@@ -677,15 +677,15 @@ namespace CGAL {
             std::cout << "split: swap out of bounds!" << std::endl;
           }
           this->swap(first, last);
-          p1 = get(m_pointPMap, *this->at(first));
+          p1 = get(m_point_pmap, *this->at(first));
           v1 = p1[dimension];
-          p1 = get(m_pointPMap, *this->at(last));
+          p1 = get(m_point_pmap, *this->at(last));
           v1 = p1[dimension];
           first++;
           last--;
         }
 
-        return (get(m_pointPMap, *this->at(first))[dimension] < threshold) ? first : (first == origFirst) ? -1 : first - 1;
+        return (get(m_point_pmap, *this->at(first))[dimension] < threshold) ? first : (first == origFirst) ? -1 : first - 1;
       }
 
       //Bbox_3 m_bBox;
@@ -695,8 +695,8 @@ namespace CGAL {
       unsigned int m_bucketSize;
       unsigned int m_setMaxLevel;
       unsigned int m_maxLevel;
-      Point_pmap m_pointPMap;
-      Normal_pmap m_normalPMap;
+      Point_pmap m_point_pmap;
+      Normal_pmap m_normal_pmap;
     };
   }
 }

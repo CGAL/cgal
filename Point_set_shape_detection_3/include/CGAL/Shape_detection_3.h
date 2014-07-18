@@ -75,14 +75,14 @@ namespace CGAL {
      */
 
   template <class Gt,
-            class iIt,
-            class PPMap,
-            class NPMap>
+            class Input_it,
+            class P_pmap,
+            class N_pmap>
   struct Shape_detection_traits_3 {
     typedef Gt Geom_traits;     ///< Geometric types for definition of point, vector types, etc.
-    typedef iIt Input_iterator;  ///< Random access iterator type used for providing input data to the method.
-    typedef PPMap Point_pmap;    ///< Property map to access point location from input data.
-    typedef NPMap Normal_pmap;   ///< Property map to access normal vector from input data.
+    typedef Input_it Input_iterator;  ///< Random access iterator type used for providing input data to the method.
+    typedef P_pmap Point_pmap;    ///< Property map to access point location from input data.
+    typedef N_pmap Normal_pmap;   ///< Property map to access normal vector from input data.
   };
 
   /*!
@@ -92,8 +92,8 @@ Given a point set in 3D space with unoriented normals sampled from a surface,
 the method detects sets of connected points on the surface of shapes. Each point in the input data will be assigned to at most one shape.
 This implementation follows the algorithm published by \cgalCite{Schnabel07}.
 
-some properties: each point gets assigned to at most one shape
-refer to schnabels paper
+Some properties: each point gets assigned to at most one shape
+Please refer to \cgalCite{Schnabel07} for more information.
 
 \tparam Shape detection traits class. 
 
@@ -160,12 +160,12 @@ refer to schnabels paper
   */ 
     Shape_detection_3(Input_iterator first, ///< iterator over the first input point.
       Input_iterator beyond, ///< past-the-end iterator over the input points.
-      Point_pmap pointPMap, ///< property map to access the position of an input point.
-      Normal_pmap normalPMap ///< property map to access the unoriented normal of an input point.
+      Point_pmap point_pmap, ///< property map to access the position of an input point.
+      Normal_pmap normal_pmap ///< property map to access the unoriented normal of an input point.
       ) : m_rng(std::random_device()()) {
 
-      m_pointPMap = pointPMap;
-      m_normalPMap = normalPMap;
+      m_point_pmap = point_pmap;
+      m_normal_pmap = normal_pmap;
 
       m_inputIterator_first = first;
       m_inputIterator_beyond = beyond;
@@ -304,7 +304,7 @@ refer to schnabels paper
               firstSample = m_rng() % m_numAvailablePoints;
               while (m_shapeIndex[firstSample] != -1);
               
-            done = m_global_octree->drawSamplesFromCellContainingPoint(get(m_pointPMap, *(m_inputIterator_first + firstSample)), selectRandomOctreeLevel(), indices, m_shapeIndex, requiredSamples);
+            done = m_global_octree->drawSamplesFromCellContainingPoint(get(m_point_pmap, *(m_inputIterator_first + firstSample)), selectRandomOctreeLevel(), indices, m_shapeIndex, requiredSamples);
           } while (m_shapeIndex[firstSample] != -1 || !done);
 
           nbNewCandidates++;
@@ -312,7 +312,7 @@ refer to schnabels paper
           //add candidate for each type of primitives
           for(auto it = m_shapeFactories.begin(); it != m_shapeFactories.end(); it++)	{
             Shape *p = (Shape *) (*it)->create();
-            p->compute(indices, m_inputIterator_first, m_pointPMap, m_normalPMap, options.epsilon, options.normal_threshold);	//compute the primitive and says if the candidate is valid
+            p->compute(indices, m_inputIterator_first, m_point_pmap, m_normal_pmap, options.epsilon, options.normal_threshold);	//compute the primitive and says if the candidate is valid
 
             if (p->is_valid()) {
               improveBound(p, m_numAvailablePoints - numInvalid, 1, 500);//this include the next subset for computing bounds, -> the score is then returned by ExpectedValue()
@@ -639,8 +639,8 @@ refer to schnabels paper
 
     std::vector<internal::Shape_factory_base *> m_shapeFactories;
     Input_iterator m_inputIterator_first, m_inputIterator_beyond; // iterators of input data
-    Point_pmap m_pointPMap;
-    Normal_pmap m_normalPMap;
+    Point_pmap m_point_pmap;
+    Normal_pmap m_normal_pmap;
 
     FT m_max_radiusSphere_Octree;
     std::vector<FT> m_level_weighting;  	//sum must be 1

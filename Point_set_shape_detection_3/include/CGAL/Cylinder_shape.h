@@ -63,13 +63,13 @@ namespace CGAL {
   protected:
       /// \cond SKIP_IN_MANUAL
     virtual void create_shape(const std::vector<int> &indices) {
-      Point p1 = get(this->m_pointPMap, *(this->m_first + indices[0]));
-      Point p2 = get(this->m_pointPMap, *(this->m_first + indices[1]));
-      //Point p3 = get(this->m_pointPMap, (this->m_first + indices[2]));
+      Point p1 = get(this->m_point_pmap, *(this->m_first + indices[0]));
+      Point p2 = get(this->m_point_pmap, *(this->m_first + indices[1]));
+      //Point p3 = get(this->m_point_pmap, (this->m_first + indices[2]));
 
-      Vector n1 = get(this->m_normalPMap, *(this->m_first + indices[0]));
-      Vector n2 = get(this->m_normalPMap, *(this->m_first + indices[1]));
-      //Vector n3 = get(this->m_normalPMap, (this->m_first + indices[2]));
+      Vector n1 = get(this->m_normal_pmap, *(this->m_first + indices[0]));
+      Vector n2 = get(this->m_normal_pmap, *(this->m_first + indices[1]));
+      //Vector n3 = get(this->m_normal_pmap, (this->m_first + indices[2]));
 
       Vector axis = CGAL::cross_product(n1, n2);
       FT axisL = sqrt(axis.squared_length());
@@ -131,7 +131,7 @@ namespace CGAL {
       FT c = 1.0 / 2 * M_PI * m_radius;
 
       // first one separate for initializing min/max
-      Vector vec = get(this->m_pointPMap, *(this->m_first + indices[0])) - m_point_on_axis;
+      Vector vec = get(this->m_point_pmap, *(this->m_first + indices[0])) - m_point_on_axis;
       FT v = vec * a;
       vec = vec - ((vec * a) * a);
       vec = vec * (1.0 / sqrt(vec.squared_length()));
@@ -147,7 +147,7 @@ namespace CGAL {
       min[1] = max[1] = v;
 
       for (unsigned int i = 0;i<indices.size();i++) {
-        Vector vec = get(this->m_pointPMap, *(this->m_first + indices[i])) - m_point_on_axis;
+        Vector vec = get(this->m_point_pmap, *(this->m_first + indices[i])) - m_point_on_axis;
         FT v = vec * a;
         vec = vec - ((vec * a) * a);
         vec = vec * (1.0 / sqrt(vec.squared_length()));
@@ -205,7 +205,7 @@ namespace CGAL {
       a = a * (1.0 / sqrt(a.squared_length()));
       for (unsigned int i = 0;i<indices.size();i++) {
         if (shapeIndex[indices[i]] == -1) {
-          Vector v = get(this->m_pointPMap, *(this->m_first + indices[i])) - m_point_on_axis;
+          Vector v = get(this->m_point_pmap, *(this->m_first + indices[i])) - m_point_on_axis;
           v = v - ((v * a) * a);
           dists[i] = sqrt(v.squared_length()) - m_radius;
           dists[i] = dists[i] * dists[i];
@@ -218,10 +218,10 @@ namespace CGAL {
       a = a * (1.0 / sqrt(a.squared_length()));
       for (unsigned int i = 0;i<indices.size();i++) {
         if (shapeIndex[indices[i]] == -1) {
-          Vector v = get(this->m_pointPMap, *(this->m_first + indices[i])) - m_point_on_axis;
+          Vector v = get(this->m_point_pmap, *(this->m_first + indices[i])) - m_point_on_axis;
           v = v - ((v * a) * a);
           v = v * (1.0 / sqrt(v.squared_length()));
-          angles[i] = abs(v * get(this->m_normalPMap, *(this->m_first + indices[i])));
+          angles[i] = abs(v * get(this->m_normal_pmap, *(this->m_first + indices[i])));
         }
       }
     }

@@ -47,10 +47,10 @@ namespace CGAL {
 
     Shape_base() :
     m_isValid(true),
-      m_lowerBound((std::numeric_limits<FT>::min)()),
-      m_upperBound((std::numeric_limits<FT>::min)()),
+      m_lower_bound((std::numeric_limits<FT>::min)()),
+      m_upper_bound((std::numeric_limits<FT>::min)()),
       m_score(0),
-      m_sum_ExpectedValue(0),
+      m_sum_expected_value(0),
       m_nb_subset_used(0),
       m_has_connected_component(false) {
     }
@@ -80,15 +80,15 @@ namespace CGAL {
       };
       
     FT expected_value() const {
-      return (m_lowerBound + m_upperBound) / 2.f;
+      return (m_lower_bound + m_upper_bound) / 2.f;
     }
 
     FT inline min_bound() const {
-      return  m_lowerBound;
+      return  m_lower_bound;
     }
 
     FT inline max_bound() const {
-      return  m_upperBound;
+      return  m_upper_bound;
     }
 
     //return last computed score, or -1 if no score yet
@@ -283,13 +283,13 @@ namespace CGAL {
       return m_score = m_indices.size();
     }
 
-    void compute(const std::set<int> &indices, Input_iterator first, Point_pmap pointPMap, Normal_pmap normalPMap, FT epsilon, FT normal_threshold) {
+    void compute(const std::set<int> &indices, Input_iterator first, Point_pmap point_pmap, Normal_pmap normal_pmap, FT epsilon, FT normal_threshold) {
       if (indices.size() < required_samples())
         return;
 
       m_first = first;
-      m_pointPMap = pointPMap;
-      m_normalPMap = normalPMap;
+      m_point_pmap = point_pmap;
+      m_normal_pmap = normal_pmap;
       m_epsilon = epsilon;
       m_normal_threshold = normal_threshold;
 
@@ -331,9 +331,9 @@ namespace CGAL {
     }
 
     void compute_bound(const int sizeS1, const int sizeP) {
-      hypergeometrical_dist(-2 - sizeS1, -2 - sizeP, -1 - signed(m_indices.size()), m_lowerBound, m_upperBound);
-      m_lowerBound = -1 - m_lowerBound;
-      m_upperBound = -1 - m_upperBound;
+      hypergeometrical_dist(-2 - sizeS1, -2 - sizeP, -1 - signed(m_indices.size()), m_lower_bound, m_upper_bound);
+      m_lower_bound = -1 - m_lower_bound;
+      m_upper_bound = -1 - m_upper_bound;
     }
 
     void hypergeometrical_dist(const int UN, const int x, const FT n, FT &low, FT &high) {
@@ -361,19 +361,19 @@ namespace CGAL {
     FT m_normal_threshold;	 //deviation of normal, used during first check of the 3 normal
 
     bool m_isValid;
-    FT m_lowerBound;
-    FT m_upperBound;
+    FT m_lower_bound;
+    FT m_upper_bound;
 
     unsigned int m_score;
 
-    FT m_sum_ExpectedValue;
+    FT m_sum_expected_value;
     int m_nb_subset_used;		//count the number of subset used so far for the score, and thus indicate the next one to use
     bool m_has_connected_component;
 
     std::vector<int> m_indices;	//indices of the points fitting to the candidate
     Input_iterator m_first;
-    Point_pmap m_pointPMap;
-      Normal_pmap m_normalPMap;
+    Point_pmap m_point_pmap;
+      Normal_pmap m_normal_pmap;
       /// \endcond
   };
 
