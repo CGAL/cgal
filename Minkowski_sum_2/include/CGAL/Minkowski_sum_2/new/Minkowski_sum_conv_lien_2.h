@@ -11,33 +11,6 @@
 namespace CGAL {
 namespace internal {
 
-template <class HalfedgeBase_>
-class Arr_map_halfedge : public HalfedgeBase_ {
-public:
-    bool visited;
-    bool isDegenerate;
-};
-
-template <class Traits_,
-          class HalfedgeBase_ = Arr_halfedge_base<typename Traits_::X_monotone_curve_2> > class Arr_my_extended_dcel :
-    public Arr_dcel_base<Arr_vertex_base<typename Traits_::Point_2>,
-    Arr_map_halfedge<HalfedgeBase_>,
-    Arr_face_base> {
-
-public:
-
-    template<typename T>
-    class rebind {
-        typedef typename HalfedgeBase_::template rebind
-        <typename T::X_monotone_curve_2> Rebind_halfedge;
-        typedef typename Rebind_halfedge::other Halfedge_base;
-
-    public:
-
-        typedef Arr_my_extended_dcel<T, Halfedge_base> other;
-    };
-};
-
 template <class Kernel_, class Container_>
 class Minkowski_sum_by_convolution_lien_2 {
 
@@ -72,7 +45,7 @@ public:
     typedef typename Traits_2::X_monotone_curve_2 Segment_2;
     typedef std::list<Segment_2> Segments_list;
 
-    typedef Arr_my_extended_dcel<Traits_2> Dcel;
+    typedef Arr_default_dcel<Traits_2> Dcel;
 
     typedef CGAL::Arrangement_with_history_2<Traits_2, Dcel> Arrangement_history_2;
     typedef typename Arrangement_history_2::Halfedge Halfedge;
@@ -101,71 +74,6 @@ public:
 
     typename Traits_2::Compare_y_at_x_2 f_compare_y_at_x;
     typename Traits_2::Compare_x_2 f_compare_x;
-
-    /*
-    friend class DegenerateCasesManager;
-    struct DegenerateCasesManager {
-        DegenerateCasesManager(Arrangement_history_2 *arr, Minkowski_sum_by_convolution_lien_2 *mink, Polygon_2 *poly1, Polygon_2 *poly2, bool isActive): _arr(arr), _mink(mink), _poly1(poly1), _poly2(poly2), _active(isActive) {
-        }
-
-        void markDegenerateEdges() {
-            Edge_iterator itr = _arr->edges_begin();
-
-            for (; itr != _arr->edges_end(); ++itr) {
-                _mink->setEdgeVisited(*itr, false);
-
-                if (_active) {
-                    if (_mink->checkDegenerateEdgeOppositeSegments(*_arr, itr)) {
-                        if (!_mink->checkSegmentCollisionDetection(*_arr, itr->curve(), *_poly1, *_poly2)) {
-                            _mink->setEdgeDegenerate(*itr, true);
-                        } else {
-                            _mink->setEdgeDegenerate(*itr, false);
-                        }
-                    } else {
-                        _mink->setEdgeDegenerate(*itr, false);
-                    }
-                } else {
-                    _mink->setEdgeDegenerate(*itr, false);
-                }
-            }
-        }
-
-        void findDegenerateBorderVertices() {
-            if (!_active) {
-                return;
-            }
-
-            Vertex_iterator itr = _arr->vertices_begin();
-
-            for (; itr != _arr->vertices_end(); ++itr) {
-                if (_mink->checkDegenarateVertexIsIntersectionOfThreeSegments(*_arr, itr))
-                {
-                    Point_2 p_end = itr->point();
-
-                    if (!_mink->checkCollisionDetection(*_arr, itr->point(), *_poly1, *_poly2)) {
-                        _degenerate_points_list.push_back(itr->point());
-                    }
-                }
-            }
-        }
-
-        void addDegenerateVerticesToArr() {
-            typename std::list<Point_2>::iterator itr = _degenerate_points_list.begin();
-
-            for (; itr != _degenerate_points_list.end(); ++itr) {
-                CGAL::insert_point(*_arr, *itr);
-            }
-        }
-
-    private:
-        Arrangement_history_2 *_arr;
-        Minkowski_sum_by_convolution_lien_2 *_mink;
-        std::list<Point_2> _degenerate_points_list;
-        Polygon_2 *_poly1;
-        Polygon_2 *_poly2;
-        bool _active;
-    };
-    */
 
 public:
 
@@ -205,12 +113,6 @@ public:
         Arrangement_history_2 arr;
         CGAL::insert(arr, reduced_conv.begin(), reduced_conv.end());
 
-        /*
-        DegenerateCasesManager degHandler(&arr, this, const_cast <Polygon_2*>(&pgn1), const_cast <Polygon_2*>(&pgn2), true);
-        degHandler.findDegenerateBorderVertices();
-        degHandler.markDegenerateEdges();
-        */
-
         // trace outer loop
         markOutsideLoop(arr, sum_bound);
 
@@ -221,20 +123,6 @@ public:
         for (Face_iterator itr = arr.faces_begin(); itr != arr.faces_end(); ++itr) {
             handleFace(arr, itr, rotated_pgn1, pgn2, sum_holes);
         }
-
-        std::list<Halfedge_handle> removeList;
-
-        // remove all non marked edges
-        for (Edge_iterator itr = arr.edges_begin(); itr != arr.edges_end(); ++itr) {
-            if ((!itr->visited) && (!itr->isDegenerate)) {
-                removeList.push_back(itr);
-            }
-        }
-        for (typename std::list<Halfedge_handle>::iterator itr = removeList.begin(); itr != removeList.end(); ++itr) {
-            arr.remove_edge(*itr);
-        }
-
-        //degHandler.addDegenerateVerticesToArr();
 
         delete _aabb_collision_detector;
 
@@ -248,7 +136,6 @@ public:
         Ccb_halfedge_circulator circ = circ_start;
 
         do {
-            setEdgeVisited(*circ, true);
             out_bound.push_back(circ->source()->point());
             --circ;
         } while (circ != circ_start);
@@ -284,7 +171,6 @@ public:
         Polygon_2 pgn_hole;
 
         do {
-            setEdgeVisited(*circ, true);
             pgn_hole.push_back(circ->source()->point());
             --circ;
         } while (circ != start);
@@ -509,99 +395,6 @@ private:
         typename Kernel::FT y = (y_best - y_point) / 2 + y_point;
 
         return Point_2(x0, y);
-    }
-
-    /*
-        This version reflects poly 1.
-    */
-    bool checkCollisionDetection(Arrangement_history_2 &arr, Point_2 &point, const Polygon_2 &pgn1, const Polygon_2 &pgn2) const {
-        Point_2 p = point;
-        Polygon_2 r_pgn1 = transform(Aff_transformation_2<Kernel>(SCALING, -1), pgn1);
-        Polygon_2 t_pgn1 = transform(typename Kernel::Aff_transformation_2(CGAL::Translation(), Vector_2(CGAL::ORIGIN, p)), r_pgn1);
-        _aabb_collision_detector->setTranslationPoint(p);
-        return _aabb_collision_detector->checkCollision(t_pgn1, pgn2);
-    }
-
-    bool checkSegmentCollisionDetection(Arrangement_history_2 &arr, Segment_2 &seg, const Polygon_2 &pgn1, const Polygon_2 &pgn2) const {
-        Point_2 mid_point = CGAL::midpoint(seg.source(), seg.target());
-        return checkCollisionDetection(arr, mid_point, pgn1, pgn2);
-    }
-
-    bool checkDegenerateEdgeOppositeSegments(Arrangement_history_2 &arr, Halfedge_handle he) const {
-        Originating_curve_iterator segment_itr;// = arr.originating_curves_begin ( *he);
-
-        std::list<Direction_2> segments_dir_list;
-
-        for (segment_itr = arr.originating_curves_begin(he); segment_itr != arr.originating_curves_end(he); ++segment_itr) {
-            Segment_2 segment = *segment_itr;
-            Direction_2 seg_dir = f_direction(f_vector(segment.source(), segment.target()));
-            segments_dir_list.push_back(seg_dir);
-        }
-
-        segments_dir_list.sort();
-        typename std::list<Direction_2>::iterator end = unique(segments_dir_list.begin(), segments_dir_list.end());
-        int i = distance(segments_dir_list.begin(), end);
-        return i > 1;
-    }
-
-    bool checkDegenarateVertexIsIntersectionOfThreeSegments(Arrangement_history_2 &arr, Vertex_handle vh) {
-        Halfedge_around_vertex_circulator itr = vh->incident_halfedges();
-        Halfedge_around_vertex_circulator start = itr;
-        int count_degree = 0;
-
-        do {
-            ++count_degree;
-        } while (++itr != start);
-
-        if (count_degree <= 2) {
-            return false;
-        }
-
-        Originating_curve_iterator segment_itr;
-        std::list<Segment_2 *> orig_segments_list;
-        std::list<Direction_2> segments_dir_list;
-
-        // Handle the standard case where we have two intersecting convolution segments.
-        if (count_degree == 4) {
-            do {
-                for (segment_itr = arr.originating_curves_begin(itr); segment_itr != arr.originating_curves_end(itr); ++segment_itr) {
-                    Segment_2 segment = *segment_itr;
-                    orig_segments_list.push_back(&(*segment_itr));
-                }
-            } while (++itr != start);
-
-            orig_segments_list.sort();
-            typename std::list<Segment_2 *>::iterator end = unique(orig_segments_list.begin(), orig_segments_list.end());
-            int i = distance(orig_segments_list.begin(), end);
-
-            if (i == 2) { // this is two curves crossing case.
-                return false;
-            }
-        }
-
-        do {
-
-            for (segment_itr = arr.originating_curves_begin(itr); segment_itr != arr.originating_curves_end(itr); ++segment_itr) {
-                Segment_2 segment = *segment_itr;
-                Direction_2 seg_dir = f_direction(f_vector(segment.source(), segment.target()));
-                segments_dir_list.push_back(seg_dir);
-            }
-        } while (++itr != start);
-
-        segments_dir_list.sort();
-        typename std::list<Direction_2>::iterator end = unique(segments_dir_list.begin(), segments_dir_list.end());
-        int i = distance(segments_dir_list.begin(), end);
-        return i > 2;
-    }
-
-    void setEdgeVisited(Halfedge &he, bool value) const {
-        he.visited = value;
-        he.twin()->visited = value;
-    }
-
-    void setEdgeDegenerate(Halfedge &he, bool value) const {
-        he.isDegenerate = value;
-        he.twin()->isDegenerate = value;
     }
 
     bool checkTripNotSameDirWithSegment(Arrangement_history_2 &arr, Halfedge_handle he) const {
