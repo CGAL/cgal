@@ -139,7 +139,6 @@ namespace CGAL
             bool point_inside_convex_polyhedron (Polyhedron &P,
                                                  typename Polyhedron::Traits::Point_3 const& p) {
                 // Compute the equations of the facets of the polyhedron
-                typedef typename Polyhedron::Traits::Kernel K;
                 typedef typename Polyhedron::Plane_iterator Plane_iterator;
                 typedef typename Polyhedron::Facet Facet;
 
