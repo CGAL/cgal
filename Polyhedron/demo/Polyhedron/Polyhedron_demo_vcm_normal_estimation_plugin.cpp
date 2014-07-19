@@ -103,6 +103,7 @@ void Polyhedron_demo_vcm_normal_estimation_plugin::on_actionVCMNormalEstimation_
       first_unoriented_point = points->begin();
 
     std::size_t memory = CGAL::Memory_sizer().virtual_size();
+    task_timer.stop();
     std::cerr << "Estimates normal direction: " << task_timer.time() << " seconds, "
         << (memory>>20) << " Mb allocated"
         << std::endl;
@@ -112,6 +113,7 @@ void Polyhedron_demo_vcm_normal_estimation_plugin::on_actionVCMNormalEstimation_
     //***************************************
 
     unsigned int neighbors = 18;
+    task_timer.reset();
     task_timer.start();
     std::cerr << "Orient normals with a Minimum Spanning Tree (k=" << neighbors << ")...\n";
 
