@@ -28,7 +28,7 @@ protected:
 
 public:
 
-    AABBCollisionDetector(Polygon_2 &p, Polygon_2 &q)
+    AABBCollisionDetector(const Polygon_2 &p, const Polygon_2 &q)
         : m_stationary_tree((p.edges_begin()), (p.edges_end())), m_translating_tree((q.edges_begin()), (q.edges_end())), m_p(q), m_q(p) {
     }
     bool checkCollision(const Polygon_2 &p, const Polygon_2 &q) {
@@ -48,8 +48,8 @@ private:
     AABB_Tree m_stationary_tree;
     AABB_Tree m_translating_tree;
     Point m_translation_point;
-    Polygon_2 &m_p;
-    Polygon_2 &m_q;
+    const Polygon_2 &m_p;
+    const Polygon_2 &m_q;
 };
 
 } // namespace internal

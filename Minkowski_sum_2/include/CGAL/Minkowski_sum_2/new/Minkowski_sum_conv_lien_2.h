@@ -194,9 +194,8 @@ public:
         CGAL_precondition(pgn1.orientation() == CGAL::COUNTERCLOCKWISE);
         CGAL_precondition(pgn2.orientation() == CGAL::COUNTERCLOCKWISE);
 
-        Polygon_2 revP1 = transform(Aff_transformation_2<Kernel>(SCALING, -1), pgn1);
-        Polygon_2 p2 = pgn2;
-        _aabb_collision_detector = new AABBCollisionDetector<Kernel_, Container_>(p2, revP1);
+        const Polygon_2 inversed_p1 = transform(Aff_transformation_2<Kernel>(SCALING, -1), pgn1);
+        _aabb_collision_detector = new AABBCollisionDetector<Kernel_, Container_>(pgn2, inversed_p1);
 
         // compute the reduced convolution
         Segments_list reduced_conv;
@@ -216,11 +215,11 @@ public:
         markOutsideLoop(arr, sum_bound);
 
         // turn pgn1 by 180 degrees
-        Polygon_2 reverse_pgn1 = transform(Aff_transformation_2<Kernel>(ROTATION, 0, -1), pgn1);
+        Polygon_2 rotated_pgn1 = transform(Aff_transformation_2<Kernel>(ROTATION, 0, -1), pgn1);
 
         // trace holes
         for (Face_iterator itr = arr.faces_begin(); itr != arr.faces_end(); ++itr) {
-            handleFace(arr, itr, reverse_pgn1, pgn2, sum_holes);
+            handleFace(arr, itr, rotated_pgn1, pgn2, sum_holes);
         }
 
         std::list<Halfedge_handle> removeList;
@@ -402,19 +401,14 @@ public:
 private:
     AABBCollisionDetector<Kernel, Container_> *_aabb_collision_detector;
 
-    AABBCollisionDetector<Kernel, Container_> *getColDetect() const {
-        return _aabb_collision_detector;
-    }
-
     /*
     This version assumes poly1 is reflected through origin. (as called from nested loops filter)
     */
     bool checkCollisionDetection(Arrangement_history_2 &arr, Halfedge_handle &handle, const Polygon_2 &pgn1, const Polygon_2 &pgn2) const {
-        AABBCollisionDetector<Kernel, Container_> *collision_detector = getColDetect();
         Point_2 mid_point = findInsidePoint(arr, handle);
         Polygon_2 t_pgn1 = transform(typename Kernel::Aff_transformation_2(CGAL::Translation(), Vector_2(CGAL::ORIGIN, mid_point)), pgn1);
-        collision_detector->setTranslationPoint(mid_point);
-        return collision_detector->checkCollision(t_pgn1, pgn2);
+        _aabb_collision_detector->setTranslationPoint(mid_point);
+        return _aabb_collision_detector->checkCollision(t_pgn1, pgn2);
     }
 
     Point_2 findInsidePoint(Arrangement_history_2 &arr, Halfedge_handle &handle) const {
@@ -521,12 +515,11 @@ private:
         This version reflects poly 1.
     */
     bool checkCollisionDetection(Arrangement_history_2 &arr, Point_2 &point, const Polygon_2 &pgn1, const Polygon_2 &pgn2) const {
-        AABBCollisionDetector<Kernel, Container_> *collision_detector = getColDetect();
         Point_2 p = point;
         Polygon_2 r_pgn1 = transform(Aff_transformation_2<Kernel>(SCALING, -1), pgn1);
         Polygon_2 t_pgn1 = transform(typename Kernel::Aff_transformation_2(CGAL::Translation(), Vector_2(CGAL::ORIGIN, p)), r_pgn1);
-        collision_detector->setTranslationPoint(p);
-        return collision_detector->checkCollision(t_pgn1, pgn2);
+        _aabb_collision_detector->setTranslationPoint(p);
+        return _aabb_collision_detector->checkCollision(t_pgn1, pgn2);
     }
 
     bool checkSegmentCollisionDetection(Arrangement_history_2 &arr, Segment_2 &seg, const Polygon_2 &pgn1, const Polygon_2 &pgn2) const {
