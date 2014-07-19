@@ -23,7 +23,7 @@
 
 #include <list>
 
-typedef CGAL::Cartesian<Rational>                   Kernel;
+typedef CGAL::Exact_predicates_exact_constructions_kernel Kernel;
 
 typedef Kernel::Point_2                             Point_2;
 typedef Kernel::Segment_2                           Segment_2;
@@ -90,19 +90,18 @@ int main (int argc, char **argv)
 
     std::cout << "Testing " << argv[i+1] << " and " << argv[i+2] << std::endl;
 
-    // Compute the Minkowski sum using the convolution method.
-    Polygon_with_holes_2                                     sum_conv;
+    Polygon_with_holes_2                                     sum_conv_new;
     
-    std::cout << "Using the convolution method ... ";
+    std::cout << "Using the reduced convolution method ... ";
     timer.reset();
     timer.start();
-    sum_conv = minkowski_sum_2 (pgn1, pgn2);
+    sum_conv_new = minkowski_sum_2_new (pgn1, pgn2);
     timer.stop();
     std::cout << "Done (" << timer.time() << " s)" << std::endl;
 
     if (verify)
     {
-      if (are_equal (result, sum_conv))
+      if (are_equal (result, sum_conv_new))
       {
         std::cout << "OK." << std::endl;
       }
@@ -114,16 +113,16 @@ int main (int argc, char **argv)
     }
     else
     {
-      result = sum_conv;
+      result = sum_conv_new;
     }
 
-    Polygon_with_holes_2                                     sum_conv_new;
-    std::cout << "Using the reduced convolution method ... ";
+    Polygon_with_holes_2                                     sum_conv;
+    std::cout << "Using the convolution method ... ";
     timer.reset();
     timer.start();
-    sum_conv_new = minkowski_sum_2_new (pgn1, pgn2);
+    sum_conv = minkowski_sum_2 (pgn1, pgn2);
     timer.stop();
-    if (are_equal (result, sum_conv_new))
+    if (are_equal (result, sum_conv))
     {
       std::cout << "OK (" << timer.time() << " s)" << std::endl;
     }
