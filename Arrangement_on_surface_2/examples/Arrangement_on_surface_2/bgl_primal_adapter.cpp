@@ -11,11 +11,7 @@
 #include <climits>
 #include <boost/graph/dijkstra_shortest_paths.hpp>
 
-#if BOOST_VERSION > 104000
-#include <boost/property_map/vector_property_map.hpp>
-#else
-#include <boost/vector_property_map.hpp>
-#endif
+#include <CGAL/property_map.h>
 
 typedef CGAL::Cartesian<Number_type>                    Kernel;
 typedef CGAL::Arr_segment_traits_2<Kernel>              Traits_2;
