@@ -11,15 +11,12 @@
 namespace CGAL {
 namespace internal {
 
-template <class Kernel_, class Container_>
+template <class Kernel, class Container>
 class Minkowski_sum_by_convolution_lien_2 {
 
-public:
+private:
 
-    typedef Kernel_ Kernel;
-    typedef CGAL::Polygon_2<Kernel, Container_> Polygon_2;
-
-public:
+    typedef CGAL::Polygon_2<Kernel, Container> Polygon_2;
 
     // Kernel types:
     typedef typename Kernel::Point_2 Point_2;
@@ -103,7 +100,7 @@ public:
         CGAL_precondition(pgn2.orientation() == CGAL::COUNTERCLOCKWISE);
 
         const Polygon_2 inversed_p1 = transform(Aff_transformation_2<Kernel>(SCALING, -1), pgn1);
-        _aabb_collision_detector = new AABBCollisionDetector<Kernel_, Container_>(pgn2, inversed_p1);
+        _aabb_collision_detector = new AABBCollisionDetector<Kernel, Container>(pgn2, inversed_p1);
 
         // compute the reduced convolution
         Segments_list reduced_conv;
@@ -128,6 +125,8 @@ public:
 
         return sum_holes;
     }
+
+private:
 
     void markOutsideLoop(Arrangement_history_2 &arr, Polygon_2 &out_bound) {
         Face_iterator ub_face = arr.unbounded_face();
@@ -284,8 +283,7 @@ public:
         }
     }
 
-private:
-    AABBCollisionDetector<Kernel, Container_> *_aabb_collision_detector;
+    AABBCollisionDetector<Kernel, Container> *_aabb_collision_detector;
 
     /*
     This version assumes poly1 is reflected through origin. (as called from nested loops filter)
