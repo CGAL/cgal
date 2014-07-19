@@ -8,8 +8,7 @@
 #include <CGAL/graph_traits_Arrangement_2.h>
 #include <CGAL/Arr_vertex_index_map.h>
 
-#include <climits>
-#include <boost/graph/dijkstra_shortest_paths.hpp>
+#include <CGAL/boost/graph/dijkstra_shortest_paths.h>
 
 #if BOOST_VERSION > 104000
 #include <boost/property_map/vector_property_map.hpp>
