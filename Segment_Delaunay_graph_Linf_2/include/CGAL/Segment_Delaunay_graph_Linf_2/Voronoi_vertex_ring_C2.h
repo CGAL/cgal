@@ -135,8 +135,7 @@ private:
   compute_ppp(const Point_2& p, const Point_2& q, const Point_2& r)
   {
     RT x_min, x_max, y_min, y_max;
-    RT x_center, y_center;
-    RT half(0.5);
+    RT two_x_center, two_y_center;
     RT two(2);
 
     bool is_set_x_center(false);
@@ -157,11 +156,12 @@ private:
     } else { // q.x() = p.x()
       x_min = p.x();
       x_max = p.x();
-      y_center = half * (p.y() + q.y());
+      two_y_center = p.y() + q.y();
       is_set_y_center = true;
 
-      CGAL_SDG_DEBUG(std::cout << "debug set y_center=" <<
-        y_center << std::endl;);
+      CGAL_SDG_DEBUG(std::cout << "debug set " <<
+        " py, qy =" << p.y() << ' ' << q.y() <<
+        " two_y_center=" << two_y_center << std::endl;);
 
       Comparison_result cmpxrothers = CGAL::compare(r.x(), p.x());
       if (cmpxrothers == SMALLER) {
@@ -173,12 +173,12 @@ private:
            ) {
           // do fix
           if (cmpyrp == LARGER) {
-            y_min = two*y_center - r.y();
+            y_min = two_y_center - r.y();
             is_set_y_min = true;
             CGAL_SDG_DEBUG(std::cout << "debug set y_min=" <<
               y_min << std::endl;);
           } else {
-            y_max = two*y_center - r.y();
+            y_max = two_y_center - r.y();
             is_set_y_max = true;
             CGAL_SDG_DEBUG(std::cout << "debug set y_max=" <<
               y_max << std::endl;);
@@ -193,12 +193,12 @@ private:
            ) {
           // do fix
           if (cmpyrp == LARGER) {
-            y_min = two*y_center - r.y();
+            y_min = two_y_center - r.y();
             is_set_y_min = true;
             CGAL_SDG_DEBUG(std::cout << "debug set y_min=" <<
               y_min << std::endl;);
           } else {
-            y_max = two*y_center - r.y();
+            y_max = two_y_center - r.y();
             is_set_y_max = true;
             CGAL_SDG_DEBUG(std::cout << "debug set y_max=" <<
               y_max << std::endl;);
@@ -232,7 +232,7 @@ private:
       if (not is_set_y_max) {
         y_max = p.y();
       }
-      x_center = half * (p.x() + q.x());
+      two_x_center = p.x() + q.x();
       is_set_x_center = true;
 
       Comparison_result cmpyrothers = CGAL::compare(r.y(), p.y());
@@ -244,10 +244,10 @@ private:
            ) {
           // do fix
           if (cmpxrp == LARGER) {
-            x_min = two*x_center - r.x();
+            x_min = two_x_center - r.x();
             is_set_x_min = true;
           } else {
-            x_max = two*x_center - r.x();
+            x_max = two_x_center - r.x();
             is_set_x_max = true;
           }
         }
@@ -259,10 +259,10 @@ private:
            ) {
           // do fix
           if (cmpxrp == LARGER) {
-            x_min = two*x_center - r.x();
+            x_min = two_x_center - r.x();
             is_set_x_min = true;
           } else {
-            x_max = two*x_center - r.x();
+            x_max = two_x_center - r.x();
             is_set_x_max = true;
           }
         }
@@ -292,27 +292,27 @@ private:
       } else { // r.x() = x_max
         // r.x() = p.x() or r.x() = q.x()
         if (CGAL::compare(r.x(), p.x()) == EQUAL) {
-          y_center = half * (p.y() + r.y());
+          two_y_center = p.y() + r.y();
           //Comparison_result cmpyqp = CGAL::compare(q.y(),p.y());
           Comparison_result cmpyqr = CGAL::compare(q.y(),r.y());
           if ((cmpyqp == LARGER) and (cmpyqr == LARGER)) {
-            y_min = two*y_center - q.y();
+            y_min = two_y_center - q.y();
             is_set_y_min = true;
           }
           if ((cmpyqp == SMALLER) and (cmpyqr == SMALLER)) {
-            y_max = two*y_center - q.y();
+            y_max = two_y_center - q.y();
             is_set_y_max = true;
           }
         } else {
-          y_center = half * (q.y() + r.y());
+          two_y_center = q.y() + r.y();
           Comparison_result cmpypq = CGAL::compare(p.y(),q.y());
           Comparison_result cmpypr = CGAL::compare(p.y(),r.y());
           if ((cmpypq == LARGER) and (cmpypr == LARGER)) {
-            y_min = two*y_center - p.y();
+            y_min = two_y_center - p.y();
             is_set_y_min = true;
           }
           if ((cmpypq == SMALLER) and (cmpypr == SMALLER)) {
-            y_max = two*y_center - p.y();
+            y_max = two_y_center - p.y();
             is_set_y_max = true;
           }
         }
@@ -324,33 +324,33 @@ private:
       if (CGAL::compare(r.x(), p.x()) == EQUAL) {
         CGAL_SDG_DEBUG(std::cout << "debug r.x = p.x" << std::endl;);
         // r.x() = p.x()
-        y_center = half * (p.y() + r.y());
+        two_y_center = p.y() + r.y();
         //Comparison_result cmpyqp = CGAL::compare(q.y(),p.y());
         Comparison_result cmpyqr = CGAL::compare(q.y(),r.y());
         if ((cmpyqp == LARGER) and (cmpyqr == LARGER)) {
           CGAL_SDG_DEBUG(std::cout << "debug q is above p, r" << std::endl;);
-          y_min = two*y_center - q.y();
+          y_min = two_y_center - q.y();
           is_set_y_min = true;
         }
         if ((cmpyqp == SMALLER) and (cmpyqr == SMALLER)) {
           CGAL_SDG_DEBUG(std::cout << "debug q is below p, r" << std::endl;);
-          y_max = two*y_center - q.y();
+          y_max = two_y_center - q.y();
           is_set_y_max = true;
         }
       } else {
         // r.x() = q.x()
         CGAL_SDG_DEBUG(std::cout << "debug r.x = q.x" << std::endl;);
-        y_center = half * (q.y() + r.y());
+        two_y_center = q.y() + r.y();
         Comparison_result cmpypq = CGAL::compare(p.y(),q.y());
         Comparison_result cmpypr = CGAL::compare(p.y(),r.y());
         if ((cmpypq == LARGER) and (cmpypr == LARGER)) {
           CGAL_SDG_DEBUG(std::cout << "debug p is above q, r" << std::endl;);
-          y_min = two*y_center - p.y();
+          y_min = two_y_center - p.y();
           is_set_y_min = true;
         }
         if ((cmpypq == SMALLER) and (cmpypr == SMALLER)) {
           CGAL_SDG_DEBUG(std::cout << "debug p is below q, r" << std::endl;);
-          y_max = two*y_center - p.y();
+          y_max = two_y_center - p.y();
           is_set_y_max = true;
         }
       }
@@ -377,27 +377,27 @@ private:
       } else { // r.y() = y_max
         // r.y() = p.y() or r.y() = q.y()
         if (CGAL::compare(r.y(), p.y()) == EQUAL) {
-          x_center = half * (p.x() + r.x());
+          two_x_center = p.x() + r.x();
           //Comparison_result cmpxqp = CGAL::compare(q.x(),p.x());
           Comparison_result cmpxqr = CGAL::compare(q.x(),r.x());
           if ((cmpxqp == LARGER) and (cmpxqr == LARGER)) {
-            x_min = two*x_center - q.x();
+            x_min = two_x_center - q.x();
             is_set_x_min = true;
           }
           if ((cmpxqp == SMALLER) and (cmpxqr == SMALLER)) {
-            x_max = two*x_center - q.x();
+            x_max = two_x_center - q.x();
             is_set_x_max = true;
           }
         } else {
-          x_center = half * (q.x() + r.x());
+          two_x_center = q.x() + r.x();
           Comparison_result cmpxpq = CGAL::compare(p.x(),q.x());
           Comparison_result cmpxpr = CGAL::compare(p.x(),r.x());
           if ((cmpxpq == LARGER) and (cmpxpr == LARGER)) {
-            x_min = two*x_center - p.x();
+            x_min = two_x_center - p.x();
             is_set_x_min = true;
           }
           if ((cmpxpq == SMALLER) and (cmpxpr == SMALLER)) {
-            x_max = two*x_center - p.x();
+            x_max = two_x_center - p.x();
             is_set_x_max = true;
           }
         }
@@ -407,27 +407,27 @@ private:
       // here r.y() = y_min
       // r.y() = p.y() or r.y() = q.y()
       if (CGAL::compare(r.y(), p.y()) == EQUAL) {
-        x_center = half * (p.x() + r.x());
+        two_x_center = p.x() + r.x();
         //Comparison_result cmpxqp = CGAL::compare(q.x(),p.x());
         Comparison_result cmpxqr = CGAL::compare(q.x(),r.x());
         if ((cmpxqp == LARGER) and (cmpxqr == LARGER)) {
-          x_min = two*x_center - q.x();
+          x_min = two_x_center - q.x();
           is_set_x_min = true;
         }
         if ((cmpxqp == SMALLER) and (cmpxqr == SMALLER)) {
-          x_max = two*x_center - q.x();
+          x_max = two_x_center - q.x();
           is_set_x_max = true;
         }
       } else {
-        x_center = half * (q.x() + r.x());
+        two_x_center = q.x() + r.x();
         Comparison_result cmpxpq = CGAL::compare(p.x(),q.x());
         Comparison_result cmpxpr = CGAL::compare(p.x(),r.x());
         if ((cmpxpq == LARGER) and (cmpxpr == LARGER)) {
-          x_min = two*x_center - p.x();
+          x_min = two_x_center - p.x();
           is_set_x_min = true;
         }
         if ((cmpxpq == SMALLER) and (cmpxpr == SMALLER)) {
-          x_max = two*x_center - p.x();
+          x_max = two_x_center - p.x();
           is_set_x_max = true;
         }
       }
