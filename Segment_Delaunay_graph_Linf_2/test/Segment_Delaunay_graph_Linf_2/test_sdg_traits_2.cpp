@@ -551,6 +551,105 @@ void test_traits(const char* title)
       Point_2(98, -70),
       CGAL::NEGATIVE);
 
+  // PPPP same side and outside
+  test_incircle<Gt>(
+      Point_2(3, 100),
+      Point_2(25, 0),
+      Point_2(75, 0),
+      Point_2(50, -2),
+      CGAL::POSITIVE);
+
+  test_incircle<Gt>(
+      Point_2(3, 100),
+      Point_2(25, 0),
+      Point_2(75, 0),
+      Point_2(50, 102),
+      CGAL::POSITIVE);
+
+  test_incircle<Gt>(
+      Point_2(3, 100),
+      Point_2(25, 0),
+      Point_2(75, 0),
+      Point_2(0, 100),
+      CGAL::POSITIVE);
+
+  test_incircle<Gt>(
+      Point_2(3, 100),
+      Point_2(25, 0),
+      Point_2(75, 0),
+      Point_2(100, 100),
+      CGAL::POSITIVE);
+
+  test_incircle<Gt>(
+      Point_2(3, 100),
+      Point_2(25, 0),
+      Point_2(75, 0),
+      Point_2(1, 100),
+      CGAL::POSITIVE);
+
+  test_incircle<Gt>(
+      Point_2(3, 100),
+      Point_2(25, 0),
+      Point_2(75, 0),
+      Point_2(98, 100),
+      CGAL::POSITIVE);
+
+  test_incircle<Gt>(
+      Point_2(3, 100),
+      Point_2(25, 0),
+      Point_2(75, 0),
+      Point_2(0, 0),
+      CGAL::POSITIVE);
+
+  test_incircle<Gt>(
+      Point_2(3, 100),
+      Point_2(25, 0),
+      Point_2(75, 0),
+      Point_2(100, 0),
+      CGAL::POSITIVE);
+
+  test_incircle<Gt>(
+      Point_2(3, 100),
+      Point_2(25, 0),
+      Point_2(75, 0),
+      Point_2(97, 100),
+      CGAL::ZERO);
+
+  test_incircle<Gt>(
+      Point_2(3, 100),
+      Point_2(25, 0),
+      Point_2(75, 0),
+      Point_2(0, 99),
+      CGAL::ZERO);
+
+  test_incircle<Gt>(
+      Point_2(3, 100),
+      Point_2(25, 0),
+      Point_2(75, 0),
+      Point_2(100, 40),
+      CGAL::ZERO);
+
+  test_incircle<Gt>(
+      Point_2(3, 100),
+      Point_2(25, 0),
+      Point_2(75, 0),
+      Point_2(10, 100),
+      CGAL::NEGATIVE);
+
+  test_incircle<Gt>(
+      Point_2(3, 100),
+      Point_2(25, 0),
+      Point_2(75, 0),
+      Point_2(75, 100),
+      CGAL::NEGATIVE);
+
+  test_incircle<Gt>(
+      Point_2(3, 100),
+      Point_2(25, 0),
+      Point_2(75, 0),
+      Point_2(50, 0),
+      CGAL::NEGATIVE);
+
 
   test_incircle<Gt>(Point_2(400, 500),
                     Segment_2(Point_2(400, 500), Point_2(300, 500)),
