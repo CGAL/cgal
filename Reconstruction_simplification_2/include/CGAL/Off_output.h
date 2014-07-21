@@ -58,30 +58,23 @@ class Off_output {
 public:
 	typedef Reconstruction_triangulation_2<Kernel> Rt_2;
 	typedef typename Rt_2::Triangulation_data_structure Tds_2;
-	typedef typename Rt_2::Edge      Edge;
-	typedef typename Rt_2::Vertex    Vertex;
 	typedef typename Kernel::Point_2 Point;
-
+	typedef typename Kernel::Segment_2 Segment;
 	typedef typename Rt_2::Face_handle Face_handle;
 
-	typedef typename CGAL::List_output<Kernel>::Output_Vertex_Iterator
-				Output_Vertex_Iterator;
-
-	typedef typename CGAL::List_output<Kernel>::Output_Edge_Iterator
-				Output_Edge_Iterator;
 private:
-	List_output<Kernel> list_output;
+	typedef std::back_insert_iterator<std::vector<Point> >   Point_it;
+	typedef std::back_insert_iterator<std::vector<Segment> > Edge_it;
+
+	std::vector<Point> isolated_points;
+	std::vector<Segment> edges;
+
+	CGAL::List_output<Kernel, Point_it, Edge_it> list_output;
 
 
-	void save_one_vertex(std::ostream& os, const Vertex& v) {
-	    os << v << std::endl;
-	}
-
-	void save_one_edge(std::ostream& os, const Edge& edge, std::set<Point>& edge_vertices) {
-	    int i = edge.second;
-	    Face_handle face = edge.first;
-	    Point a = face->vertex((i+1)%3)->point();
-	    Point b = face->vertex((i+2)%3)->point();
+	void save_one_edge(std::ostream& os, const Segment& edge, std::set<Point>& edge_vertices) {
+	    Point a = edge.source();
+	    Point b = edge.target();
 
 	    typename std::set<Point>::iterator it_a = edge_vertices.find(a);
 	    typename std::set<Point>::iterator it_b = edge_vertices.find(b);
@@ -89,19 +82,17 @@ private:
 	    int pos_a = std::distance(edge_vertices.begin(), it_a);
 	    int pos_b = std::distance(edge_vertices.begin(), it_b);
 
-	    os << "2 "  << pos_a + list_output.vertex_count() << " "
-	    		<< pos_b + list_output.vertex_count() << std::endl;
+	    os << "2 "  << pos_a + isolated_points.size() << " "
+	    		<< pos_b + isolated_points.size() << std::endl;
 	}
 
 	void vertices_of_edges(std::set<Point>& edge_vertices) {
 
-		for (Output_Edge_Iterator it = list_output.edges_start();
-				it != list_output.edges_beyond(); it++) {
+	  	for (typename std::vector<Segment>::iterator it = edges.begin();
+				it != edges.end(); it++) {
 
-			int i = (*it).second;
-			Face_handle face = (*it).first;
-			Point a = face->vertex((i+1)%3)->point();
-			Point b = face->vertex((i+2)%3)->point();
+			Point a = (*it).source();
+		    Point b = (*it).target();
 
 			edge_vertices.insert(a);
 			edge_vertices.insert(b);
@@ -110,6 +101,9 @@ private:
 
 
 public:
+
+	Off_output() : list_output(Point_it(isolated_points), Edge_it(edges)) { }
+
 	void store_marked_elements(Rt_2& rt2, int nb_ignore) {
 		list_output.store_marked_elements(rt2, nb_ignore);
 	}
@@ -124,14 +118,13 @@ public:
 		std::set<Point> edge_vertices;
 		vertices_of_edges(edge_vertices);
 
-		os << "OFF " << list_output.vertex_count() + edge_vertices.size() <<
-				" 0 " << list_output.edge_count()  << std::endl;
+		os << "OFF " << isolated_points.size() + edge_vertices.size() <<
+				" 0 " << edges.size()  << std::endl;
 
-	  	for (Output_Vertex_Iterator it = list_output.vertices_start();
-				it != list_output.vertices_beyond(); it++) {
-	  		save_one_vertex(os, *it);
+		for (typename std::vector<Point>::iterator it = isolated_points.begin();
+					it != isolated_points.end(); it++) {
+			os << *it << std::endl;
 	  	}
-
 
 	  	for (typename std::set<Point>::iterator it = edge_vertices.begin();
 				it != edge_vertices.end(); it++) {
@@ -139,14 +132,14 @@ public:
 	  		os << *it << std::endl;
 	  	}
 
-		for (int i = 0; i < list_output.vertex_count(); i++) {
+		for (int i = 0; i < isolated_points.size(); i++) {
 			os << "1 " <<  i << std::endl;
 		}
 
-		for (Output_Edge_Iterator it = list_output.edges_start();
-				it != list_output.edges_beyond(); it++) {
+	  	for (typename std::vector<Segment>::iterator it = edges.begin();
+				it != edges.end(); it++) {
 
-			save_one_edge(os, *it,edge_vertices);
+	  		save_one_edge(os, *it,edge_vertices);
 	    }
 	}
 };

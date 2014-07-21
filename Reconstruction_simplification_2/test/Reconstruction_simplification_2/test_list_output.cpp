@@ -40,32 +40,22 @@ typedef CGAL::Reconstruction_simplification_2 <K, InputIterator,
 
 typedef CGAL::Reconstruction_triangulation_2<K> Rt_2;
 
-typedef CGAL::List_output<K>::Output_Vertex_Iterator Output_Vertex_Iterator;
-typedef CGAL::List_output<K>::Output_Edge_Iterator   Output_Edge_Iterator;
-
 typedef typename Rt_2::Finite_edges_iterator Finite_edges_iterator;
 typedef typename Rt_2::Vertex_iterator Vertex_iterator;
 
-
+typedef typename Rt_2::Edge Edge;
 
 PointMassList* load_xy_file(const std::string& fileName);
 PointMassList* simple_point_set();
 
 
-void print_vertex(Point vertex) {
-	std::cout  <<  vertex << std::endl;
-}
 
+void print_edge(Edge edge) {
+	int i = edge.second;
+	Point a = edge.first->vertex((i+1)%3)->point();
+	Point b = edge.first->vertex((i+2)%3)->point();
+	std::cout << "( " << a << " , " << b << " )" << std::endl;
 
-void print_edge(Segment edge) {
-	/*int i = ((edge).edge()).second;
-	Point a = ((edge).edge()).first->vertex((i+1)%3)->point();
-	Point b = ((edge).edge()).first->vertex((i+2)%3)->point();
-	std::cout << "( " << a << " , " << b << " )" << std::endl;*/
-	//"( " << (edge).priority()  <<  ")
-
-
-	std::cout << edge << std::endl;
 }
 
 int main ()
@@ -88,22 +78,31 @@ int main ()
 
     rs2.print_stats_debug();
 
-    CGAL::List_output<K> list_output;
+    std::vector<Point> isolated_points;
+	std::vector<Segment> edges;
+
+	typedef std::back_insert_iterator<std::vector<Point> > Point_it;
+	typedef std::back_insert_iterator<std::vector<Segment> >  Edge_it;
+
+	Point_it point_it(isolated_points);
+	Edge_it  edge_it(edges);
+
+	CGAL::List_output<K, Point_it, Edge_it> list_output(point_it, edge_it);
 
     rs2.extract_solid_elements(list_output);
 
     std::cout <<"(-------------List OUTPUT---------- )" << std::endl;
 
-
-  	for (Output_Vertex_Iterator it = list_output.vertices_start();
-			it != list_output.vertices_beyond(); it++) {
-  		print_vertex(*it);
+  	for (std::vector<Point>::iterator it = isolated_points.begin();
+			it != isolated_points.end(); it++) {
+  		std::cout  <<  *it << std::endl;
    }
 
-	for (Output_Edge_Iterator it = list_output.edges_start();
-			it != list_output.edges_beyond(); it++) {
-		print_edge(*it);
-    }/*
+  	for (std::vector<Segment>::iterator it = edges.begin();
+			it != edges.end(); it++) {
+  		std::cout << *it << std::endl;
+    }
+
 
 	//-------
 	std::cout <<"(-------------OFF OUTPUT----------- )" << std::endl;
@@ -129,7 +128,8 @@ int main ()
 		if (relevance <= 0)
 			continue;
 
-		print_vertex(*vi);
+  		std::cout  <<  *vi << std::endl;
+
     }
 
     for (Finite_edges_iterator ei = rt2.finite_edges_begin(); ei != rt2.finite_edges_end(); ++ei) {
@@ -140,7 +140,7 @@ int main ()
     	std::cout <<  relevance;
     	print_edge(*ei);
     	(*ei).first->relevance((*ei).second);
-    }*/
+    }
 }
 
 PointMassList* simple_point_set() {

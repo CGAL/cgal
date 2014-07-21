@@ -47,7 +47,7 @@ template <class Rt, class OutputIterator>
 Triple< OutputIterator, typename Rt::Geom_traits::FT, bool >
 regular_neighbor_coordinates_vertex_2(const Rt& rt,
 			       const typename Rt::Weighted_point& p,
-			       OutputIterator out)
+			       OutputIterator F)
 {
   return regular_neighbor_coordinates_vertex_2(rt, p, out,
 					typename Rt::Face_handle());

@@ -50,7 +50,7 @@ isolated vertices and the edges of the reconstructed shape
 \tparam Kernel is the geometric kernel, used for the reconstruction and
 					simplification task.
  */
-template<class Kernel>
+template<class Kernel, class Output_Vertex_Iterator, class Output_Edge_Iterator>
 class List_output {
 public:
 	typedef typename Kernel::FT                 				    FT;
@@ -65,8 +65,6 @@ public:
 
 	typedef std::list<Point> Vertices;
 	typedef std::list<Segment> Edges;
-	typedef typename Vertices::const_iterator 		Output_Vertex_Iterator;
-	typedef typename Edges::const_iterator 			Output_Edge_Iterator;
 
 	typedef typename Rt_2::Reconstruction_edge_2 Reconstruction_edge_2;
 	typedef typename Rt_2::MultiIndex MultiIndex;
@@ -74,38 +72,13 @@ public:
 	typedef typename Rt_2::Finite_edges_iterator Finite_edges_iterator;
 
 private:
-	Vertices vertices;
-	Edges    edges;
-
+	Output_Vertex_Iterator m_v_it;
+	Output_Edge_Iterator m_e_it;
 public:
-	  inline Output_Vertex_Iterator vertices_start() const {
-	    return vertices.begin();
-	  }
 
-	  inline Output_Vertex_Iterator vertices_beyond() const {
-	    return vertices.end();
-	  }
+	List_output(Output_Vertex_Iterator v_it, Output_Edge_Iterator e_it)  :
+		m_v_it(v_it), m_e_it(e_it) { }
 
-	  inline Output_Edge_Iterator edges_start() const {
-		 return edges.begin();
-	  }
-
-	  inline Output_Edge_Iterator edges_beyond() const {
-	    return edges.end();
-	  }
-
-	  void clear() {
-		  vertices.clear();
-		  edges.clear();
-	  }
-
-	  int vertex_count() {
-		  return vertices.size();
-	  }
-
-	  int edge_count() {
-		  return edges.size();
-	  }
 
 	  void store_marked_vertices(Rt_2& rt2) {
 
@@ -126,8 +99,11 @@ public:
 			  } while (cur != start);
 
 			  if (!incident_edges_have_sample) {
-				  if ((*vi).has_sample_assigned())
-					  vertices.push_back((*vi).point());
+				  if ((*vi).has_sample_assigned()) {
+					  Point p = (*vi).point();
+					   *m_v_it = p;
+					  m_v_it++;
+				  }
 			  }
 		  }
 	  }
@@ -156,7 +132,9 @@ public:
 			Reconstruction_edge_2 pedge = *(mindex.template get<1>()).begin();
 			(mindex.template get<0>()).erase(pedge);
 			Segment s(pedge.source()->point(), pedge.target()->point());
-			edges.push_back(s);
+			//edges.push_back(s);
+		 	*m_e_it = s;
+			m_e_it++;
 
 		}
 	  }
