@@ -19,8 +19,8 @@
 // Author(s)     : Laurent Rineau and Ilker O. Yaz
 
 
-#ifndef CGAL_ORIENT_POLYHEDRON_3
-#define CGAL_ORIENT_POLYHEDRON_3
+#ifndef CGAL_ORIENT_POLYGON_SOUP
+#define CGAL_ORIENT_POLYGON_SOUP
 #include <CGAL/IO/generic_print_polyhedron.h>
 #include <CGAL/Polyhedron_incremental_builder_3.h>
 #include <CGAL/Modifier_base.h>
@@ -171,7 +171,8 @@ public:
                 const std::size_t& i0 = polygons[index][j];
                 const std::size_t& i1 = polygons[index][ j+1 < size ? j+1: 0];
                 CGAL_assertion_code(const bool r = )
-                  edges[std::make_pair(i0, i1)].erase(index);
+                  edges[std::make_pair(i0, i1)].erase(index)
+                CGAL_assertion_code(!= 0);
                 CGAL_assertion(r);
               }
               inverse_orientation(index);
@@ -279,4 +280,4 @@ public:
 
 }// namespace CGAL
 
-#endif // CGAL_ORIENT_POLYHEDRON_3
+#endif // CGAL_ORIENT_POLYGON_SOUP

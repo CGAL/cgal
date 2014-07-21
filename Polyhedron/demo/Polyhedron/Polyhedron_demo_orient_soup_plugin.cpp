@@ -113,6 +113,9 @@ void Polyhedron_demo_orient_soup_plugin::orient()
       }
       QApplication::restoreOverrideCursor();
     }
+    else{
+      messages->warning(tr("This function is only applicable on polygon soups."));
+    }
   }
 }
 

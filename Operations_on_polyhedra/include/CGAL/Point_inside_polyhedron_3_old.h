@@ -24,6 +24,7 @@
 #ifndef CGAL_POINT_INSIDE_POLYHEDRON_OLD_H
 #define CGAL_POINT_INSIDE_POLYHEDRON_OLD_H
 
+#include <CGAL/AABB_polyhedron_triangle_primitive.h>
 #include <CGAL/internal/Operations_on_polyhedra/Ray_3_Triangle_3_traversal_traits.h>
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits.h>
