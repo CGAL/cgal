@@ -136,8 +136,8 @@ void Polyhedron_demo_point_set_shape_detection_plugin::on_actionDetect_triggered
 	int index = 0;
 	while (it != shape_detection.shapes_end()) {
 		Scene_points_with_normal_item *point_item = new Scene_points_with_normal_item;
-		auto it2 = (*it)->assigned_points()->begin();
-		while (it2 != (*it)->assigned_points()->end()) {
+		auto it2 = (*it)->assigned_points().begin();
+		while (it2 != (*it)->assigned_points().end()) {
 				point_item->point_set()->push_back((*points)[*it2].position());
 				it2++;
 		}
@@ -154,7 +154,7 @@ void Polyhedron_demo_point_set_shape_detection_plugin::on_actionDetect_triggered
     else if (dynamic_cast<CGAL::Plane_shape<ShapeDetectionTraits> *>(*it))
       ss << "_plane_";
 
-    ss << (*it)->assigned_points()->size();
+    ss << (*it)->assigned_points().size();
 
 		//names[i] = ss.str(		
     point_item->setName(QString::fromStdString(ss.str()));
