@@ -39,17 +39,17 @@ int main(int argc, char **argv) {
     
   // In Shape_detection_traits_3 the used types, i.e. Point and Vector types as well as iterator type and property maps, are defined.
   typedef CGAL::Shape_detection_traits_3<Kernel, Point_list::iterator, Point_pmap, Normal_pmap> ShapeDetectionTraits;
-  typedef CGAL::Shape_detection_3<ShapeDetectionTraits> ShapeDetection;
+  typedef CGAL::Shape_detection_3<ShapeDetectionTraits> Shape_detection;
 
   // Creation of the instance and providing the input data.
-  ShapeDetection sd(points.begin(), points.end(), Point_pmap(), Normal_pmap());
+  Shape_detection sd(points.begin(), points.end(), Point_pmap(), Normal_pmap());
     
   // Shapes to be searched for are registered by using the template Shape_factory
   sd.add_shape_factory(new CGAL::Shape_factory<CGAL::Plane_shape<ShapeDetectionTraits> >);
   sd.add_shape_factory(new CGAL::Shape_factory<CGAL::Cylinder_shape<ShapeDetectionTraits> >);
     
   // Parameterization of the shape detection using the Parameters structure.
-  ShapeDetection::Parameters op;
+  Shape_detection::Parameters op;
   op.probability = 0.01f;       // 1% probability to miss the largest primitive on each iteration.
   op.min_points = 500;          // Only extract shapes with at least 500 points.
   op.epsilon = 0.002f;          // 0.002 maximum euclidean distance between point and shape.
