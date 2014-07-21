@@ -2,7 +2,7 @@
  * kernel-object.
  */
 #include <CGAL/Cartesian.h>
-#include <CGAL/Arithmetic_kernel.h>
+#include <CGAL/Exact_rational.h>
 #include <CGAL/Arr_non_caching_segment_traits_2.h>
 #include <CGAL/Arrangement_2.h>
 #include <iostream>
@@ -117,7 +117,7 @@ struct Ext_seg_kernel :
 
 // The remaining types:
 // leda_rational, or Gmpq, or Quotient<MP_float>
-typedef CGAL::Arithmetic_kernel::Rational               Number_type;
+typedef CGAL::Exact_rational                            Number_type;
 typedef Ext_seg_kernel<Number_type>                     Kernel;
 typedef CGAL::Arr_non_caching_segment_traits_2<Kernel>  Traits;
 typedef Traits::Point_2                                 Point_2;

@@ -26,13 +26,13 @@
 
 #define CGAL_NEF3_SORT_OUTPUT 1
 
-#include <CGAL/Arithmetic_kernel.h>
+#include <CGAL/Exact_integer.h>
 #include <CGAL/Extended_homogeneous.h>
 #include <CGAL/Timer.h>
 #include <CGAL/test_Nef_3.h>
 
 int main() {
-  typedef CGAL::Arithmetic_kernel::Integer NT;
+  typedef CGAL::Exact_integer NT;
   typedef CGAL::Extended_homogeneous<NT> EH_kernel;
   
 #ifdef CGAL_CFG_ISTREAM_INT_BUG

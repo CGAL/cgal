@@ -1,3 +1,4 @@
+
 // ============================================================================
 //
 // Copyright (c) 1997 The CGAL Consortium
@@ -39,12 +40,12 @@
 #include<CGAL/Min_sphere_d.h>
 #include<CGAL/Min_circle_2.h>
 #include<CGAL/Min_circle_2_traits_2.h>  //why is this not in Min_circle_2.h
-#include <CGAL/Arithmetic_kernel.h>
+#include <CGAL/Exact_rational.h>
 
 using namespace CGAL;
 
 // leda_rational, or Gmpq, or Quotient<MP_float>
-typedef CGAL::Arithmetic_kernel::Rational           NT;
+typedef CGAL::Exact_rational                        NT;
 typedef NT                                          FT;
 typedef NT                                          RT;
 typedef Cartesian<FT>                               C;

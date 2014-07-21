@@ -3,11 +3,12 @@
 #include <CGAL/Cartesian_d.h>
 #include <CGAL/simple_transformations_d.h>
 #include <CGAL/test_macros.h>
-#include <CGAL/Arithmetic_kernel.h>
+#include <CGAL/Exact_integer.h>
+#include <CGAL/Exact_rational.h>
 
 
-typedef CGAL::Arithmetic_kernel::Integer RT_;
-typedef CGAL::Arithmetic_kernel::Rational FT_;
+typedef CGAL::Exact_integer RT_;
+typedef CGAL::Exact_rational FT_;
 
 
 int main()
