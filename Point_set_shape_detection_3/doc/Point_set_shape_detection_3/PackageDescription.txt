@@ -1,0 +1,31 @@
+/// \defgroup PkgPointSetShapeDetection3 Shape Detection in Point Sets Reference
+/*!
+\addtogroup PkgPointSetShapeDetection3
+
+\cgalPkgDescriptionBegin{Shape Detection in Point Sets, PkgPointSetShapeDetection3Summary}
+\cgalPkgPicture{shapes_detail.png}
+
+\cgalPkgSummaryBegin
+\cgalPkgAuthors{Sven Oesau, Yannick Verdie, Clément Jamin}
+\cgalPkgDesc{This package implements a ransac-based shape detection algorithm for point sets with unoriented normals.}
+\cgalPkgManuals{Chapter_Shape Detection in Point Sets, PkgPointSetShapeDetection3}
+\cgalPkgSummaryEnd
+
+\cgalPkgShortInfoBegin
+\cgalPkgSince{4.4}
+\cgalPkgLicense{\ref licensesGPL "GPL"}
+\cgalPkgDemo{examples,shape_detection_example.zip}
+\cgalPkgShortInfoEnd
+
+\cgalPkgDescriptionEnd
+## Classes ##
+- `CGAL::Cone_shape<Sd_traits>`
+- `CGAL::Cylinder_shape<Sd_traits>`
+- `CGAL::Shape_base<Sd_traits>`
+- `CGAL::Shape_detection_3<Sd_traits>`
+- `CGAL::Shape_detection_traits_3`
+- `CGAL::Shape_factory<Shape>`
+- `CGAL::Sphere_shape<Sd_traits>`
+- `CGAL::Torus_shape<Sd_traits>`
+*/
+

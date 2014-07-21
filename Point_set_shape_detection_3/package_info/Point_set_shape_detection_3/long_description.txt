@@ -1,0 +1,5 @@
+Point Set Shape Detection
+
+Sven Oesau, Yannick Verdie and Clément Jamin
+
+This CGAL package implements a RANSAC (random sample consensus) method for detecting shapes in a point set with unoriented normals. The available shapes for detection are planes, spheres, cylinders, cones and tori.

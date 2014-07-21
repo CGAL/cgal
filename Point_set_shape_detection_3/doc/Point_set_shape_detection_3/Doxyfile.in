@@ -1,0 +1,10 @@
+@INCLUDE = ${CGAL_DOC_PACKAGE_DEFAULTS}
+
+PROJECT_NAME                       =  "CGAL ${CGAL_CREATED_VERSION_NUM} - Shape detection in Point Sets"
+
+INPUT                      =  ${CMAKE_SOURCE_DIR}/Point_set_shape_detection_3/doc/Point_set_shape_detection_3/ \ 
+                              ${CMAKE_SOURCE_DIR}/Point_set_shape_detection_3/include
+EXAMPLE_PATH               =  ${CMAKE_SOURCE_DIR}/Point_set_shape_detection_3/examples/Point_set_shape_detection_3/
+EXTRACT_ALL                =  false
+HIDE_UNDOC_CLASSES         =  true
+WARN_IF_UNDOCUMENTED       =  false

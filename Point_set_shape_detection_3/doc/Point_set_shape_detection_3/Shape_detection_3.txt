@@ -1,0 +1,59 @@
+namespace CGAL {
+/*!
+
+\mainpage User Manual 
+\anchor Chapter_Shape_Detection_In_Point_Sets
+\cgalAutoToc
+
+\authors Sven Oesau, Yannick Verdie, Clément Jamin
+
+\section Point_set_shape_detection_3Introduction Introduction
+
+This \cgal component implements the RANSAC method for shape detection published in \cite cgal:-erpcsd-07. The method takes an unstructured point set with unoriented normals as input and provides a list of detected shapes with associated points on its surface (see \cgalFigureRef{Point_set_shape_detection_3_overview}). The supported shape types are plane, sphere, cylinder, cone and torus.
+
+\cgalFigureBegin{Point_set_shape_detection_3_overview,overview2.png}
+Left: Input point set. Right: Points colored by detected primitive. 
+\cgalFigureEnd
+
+\section Point_set_shape_detection_3Method Method
+
+The method follows a ransac approach, i.e. random sample consensus. Points are randomly chosen from the input data to propose shape candidates. These candidates are tested against the input data to determine how many points support the shape. Based on the number of supporting points a shape candidate is kept or gets discarded. The principle of this method is to repeatedly extract the shape with the highest number of points. By choosing the candidate with the highest number of points the method is robust against outliers and noise.
+
+However, testing all possible shape candidates against all input data to determine the largest shape is impractical. Therefore, only a certain amount of shape candidates is tested against a subset of the input data. The search thoroughness is controlled by a parameter that specifies the probability to miss the largest candidate. A lower probability provides a higher reliability and determinism at the cost of running time.
+
+The metric to decide whether a point supports a shape is based on the euclidean distance to the shape and the deviation from the point normal to the normal of the shape in the point projected onto the surface. Two user-specified parameters, epsilon and normal_threshold, control the tolerance for distance and deviation. Additionally there is a connectivity criteria. The number of supporting points of a shape corresponds to the largest cluster of points fitting the metric. In a cluster of points, each point has a neighbor in the cluster within a certain user-specified distance, called cluster_epsilon.
+
+The candidate with the highest number of supporting points is repeatedly extracted until no candidate can be found with a minimum number of supporting points specified by the user.
+The algorithm is described in full detail in \cite cgal:-erpcsd-07.
+
+\section Point_set_shape_detection_3Usage Usage
+The main class `Shape_detection_3` takes a template parameter `Shape_detection_traits_3` where the geometric types and the input format is specified. The concept of property maps is used, as this is independent of the data format. The first parameter of the `Shape_detection_traits_3’ class is the commonly used Kernel. For the use of property maps, an iterator type and two maps to map that iterator to a point and a normal are specified in the `Shape_detection_traits_3` class. The property maps concept is explained in detail in Chapter \ref chapterProperty_map "CGAL and Boost Property Maps“.
+
+Four steps are necessary:
+
+-# Providing input data via constructor
+-# Registering shape factories
+-# Specifying parameters for the detection
+-# Accessing the extracted shapes
+
+The following example reads a point set from a file and performs a detection of planes and cylinders.
+27-28 primitives will be detected with a coverage of ~94-95%. On a recent computer this takes around 300-400ms.
+
+\cgalExample{shape_detection_3_example.cpp}
+
+
+\section Point_set_shape_detection_3Performance Performance
+
+The running time and the detection performance depend on the chosen parameters. A more selective parameterization leads to a higher running time. It leads to smaller primitives, more shape candidates are generated to find the largest shape. A typical performance graph depending on the epsilon parameter for a plane detection in a complex scene with around 5 million points is shown in \cgalFigureRef{Point_set_shape_detection_3_performace_epsilon}. Epsilon is considered to be the main parameter as it specifies the fitting tolerance distance between a point and a shape. The probability parameter controls the rigorosity of search for the largest candidate in each iteration. While it does not affect the number of detected primitives, it has a small effect on the size of the found primitives and increases the running time. A performance graph depending on the chosen probability parameter is shown in \cgalFigureRef{Point_set_shape_detection_3_performace_probability}.
+
+\cgalFigureBegin{Point_set_shape_detection_3_performace_epsilon,epsilon_graph.png}
+The graph shows the amount of detected shapes (violet) and the coverage (green), i.e. assignedPoints / totalPoints, depending on the chosen epsilon parameter. A higher value of epsilon, i.e. a more tolerant metric, leads to fewer but larger primitives and a shorter running time.
+\cgalFigureEnd
+
+\cgalFigureBegin{Point_set_shape_detection_3_performace_probability,prob_graph.png}
+The graph displays as the same characteristic numbers depending on the chosen search rigorisity, i.e. probability to miss the largest primitive in an iteration. The number of primitives is stable, while the coverage increases, when the probability is lowered. However the running time increases significantly as a lot more candidates are generated during each iteration of the method.
+\cgalFigureEnd
+
+*/ 
+} /* namespace CGAL */
+
