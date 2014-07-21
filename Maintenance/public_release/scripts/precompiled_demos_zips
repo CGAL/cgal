@@ -29,7 +29,6 @@ pushd Triangulation_2_Demo;
 popd
 
 # CGAL<3.8 but was forgot
-pushd Surface_reconstruction_points_3_Demo; zip ../surface_reconstruction_points_3.zip *; popd
 pushd Principal_component_analysis_Demo;    zip ../pca.zip *; popd
 
 # CGAL-3.8

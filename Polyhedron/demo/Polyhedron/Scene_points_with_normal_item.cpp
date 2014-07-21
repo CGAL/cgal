@@ -173,7 +173,10 @@ Scene_points_with_normal_item::toolTip() const
 
 bool Scene_points_with_normal_item::supportsRenderingMode(RenderingMode m) const 
 {
-  return m==Points || m==PointsPlusNormals;
+  //note that when this function is first called the point set might be empty
+  bool points_have_normals = (m_points->begin() != m_points->end() &&
+                            m_points->begin()->normal() != CGAL::NULL_VECTOR);
+  return m==Points || m==PointsPlusNormals || (m==Splatting && points_have_normals);
 }
 
 // Points OpenGL drawing in a display list
@@ -199,6 +202,21 @@ void Scene_points_with_normal_item::draw_normals() const
     float normal_length = (float)std::sqrt(region_of_interest.squared_radius() / 1000.);
 
     m_points->gl_draw_normals(normal_length);
+  }
+}
+
+void Scene_points_with_normal_item::draw_splats() const
+{
+  Q_ASSERT(m_points != NULL);
+
+  // Draw splats
+  bool points_have_normals = (m_points->begin() != m_points->end() &&
+                              m_points->begin()->normal() != CGAL::NULL_VECTOR);
+  bool points_have_radii =   (m_points->begin() != m_points->end() &&
+                              m_points->begin()->radius() != 0);
+  if(points_have_normals && points_have_radii)
+  {
+    m_points->gl_draw_splats();
   }
 }
 
@@ -300,6 +318,10 @@ QMenu* Scene_points_with_normal_item::contextMenu()
 void Scene_points_with_normal_item::setRenderingMode(RenderingMode m)
 {
   Scene_item_with_display_list::setRenderingMode(m);
+  if (rendering_mode==Splatting && (!m_points->are_radii_uptodate()))
+  {
+    computes_local_spacing(6); // default value = small
+  }
 }
 
 #include "Scene_points_with_normal_item.moc"

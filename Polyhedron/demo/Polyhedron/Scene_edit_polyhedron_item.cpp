@@ -1,3 +1,4 @@
+#include "opengl_tools.h"
 #include "Scene_edit_polyhedron_item.h"
 #include <boost/foreach.hpp>
 #include <algorithm>

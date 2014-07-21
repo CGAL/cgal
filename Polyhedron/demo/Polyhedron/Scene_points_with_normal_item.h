@@ -53,6 +53,9 @@ public:
   void draw_normals() const;
   virtual void draw_edges() const { draw_normals(); }//to tweak scene
 
+  // Splat OpenGL drawing
+  virtual void draw_splats() const;
+  
   // Gets wrapped point set
   Point_set*       point_set();
   const Point_set* point_set() const;

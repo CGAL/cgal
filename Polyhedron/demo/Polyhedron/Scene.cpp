@@ -1,3 +1,9 @@
+
+#ifdef CGAL_GLEW_ENABLED
+# include "GlSplat/GlSplat.h"
+#endif
+
+
 #include <CGAL/check_gl_error.h>
 #include "config.h"
 #include "Scene.h"
@@ -22,6 +28,16 @@ namespace {
   }
 }
 
+#ifdef CGAL_GLEW_ENABLED
+GlSplat::SplatRenderer* Scene::ms_splatting = 0;
+int Scene::ms_splattingCounter = 0;
+GlSplat::SplatRenderer* Scene::splatting()
+{
+  assert(ms_splatting!=0 && "A Scene object must be created before requesting the splatting object");
+  return ms_splatting;
+}
+#endif
+
 Scene::Scene(QObject* parent)
   : QAbstractListModel(parent),
     selected_item(-1),
@@ -32,6 +48,11 @@ Scene::Scene(QObject* parent)
                                     double, double, double)),
           this, SLOT(setSelectionRay(double, double, double, 
                                      double, double, double)));
+#ifdef CGAL_GLEW_ENABLED
+  if(ms_splatting==0)
+    ms_splatting  = new GlSplat::SplatRenderer();
+  ms_splattingCounter++;
+#endif
 }
 
 Scene::Item_id
@@ -140,6 +161,11 @@ Scene::~Scene()
     delete item_ptr;
   }
   m_entries.clear();
+
+#ifdef CGAL_GLEW_ENABLED
+  if((--ms_splattingCounter)==0)
+    delete ms_splatting;
+#endif
 }
 
 Scene_item*
@@ -183,6 +209,9 @@ Scene::duplicate(Item_id index)
 
 void Scene::initializeGL()
 {
+#ifdef CGAL_GLEW_ENABLED
+  ms_splatting->init();
+#endif
 }
 
 // workaround for Qt-4.2.
@@ -335,10 +364,7 @@ Scene::draw_aux(bool with_names, Viewer_interface* viewer)
         ::glPolygonMode(GL_FRONT_AND_BACK,GL_POINT);
         ::glPointSize(2.f);
         ::glLineWidth(1.0f);
-        if(index == selected_item)
-          CGALglcolor(Qt::black);
-        else
-          CGALglcolor(item.color().lighter(50));
+        CGALglcolor(item.color());
 
         if(viewer)
           item.draw_points(viewer);
@@ -350,6 +376,34 @@ Scene::draw_aux(bool with_names, Viewer_interface* viewer)
       }
     }
   }
+
+#ifdef CGAL_GLEW_ENABLED
+  // Splatting
+  if(ms_splatting->isSupported())
+  {
+    ms_splatting->beginVisibilityPass();
+    for(int index = 0; index < m_entries.size(); ++index)
+    {
+      Scene_item& item = *m_entries[index];
+      if(item.visible() && item.renderingMode() == Splatting)
+      {
+        item.draw_splats();
+      }
+    }
+    ms_splatting->beginAttributePass();
+    for(int index = 0; index < m_entries.size(); ++index)
+    {
+      Scene_item& item = *m_entries[index];
+      if(item.visible() && item.renderingMode() == Splatting)
+      {
+        CGALglcolor(item.color());
+        item.draw_splats();
+      }
+    }
+    ms_splatting->finalize();
+  }
+#endif
+
 }
 
 // workaround for Qt-4.2 (see above)
@@ -512,7 +566,12 @@ Scene::setData(const QModelIndex &index,
   {
     RenderingMode rendering_mode = static_cast<RenderingMode>(value.toInt());
     // Find next supported rendering mode
-    while ( ! item->supportsRenderingMode(rendering_mode) ) {
+    while ( ! item->supportsRenderingMode(rendering_mode) 
+#ifdef CGAL_GLEW_ENABLED
+         || (rendering_mode==Splatting && !Scene::splatting()->isSupported())
+#endif
+    )
+    {
       rendering_mode = static_cast<RenderingMode>( (rendering_mode+1) % NumberOfRenderingMode );
     }
     item->setRenderingMode(rendering_mode);
