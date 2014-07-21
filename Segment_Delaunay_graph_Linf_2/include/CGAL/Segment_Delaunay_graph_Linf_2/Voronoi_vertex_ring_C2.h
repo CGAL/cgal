@@ -118,6 +118,7 @@ private:
 
   void
   compute_ppp(const Site_2& sp, const Site_2& sq, const Site_2& sr)
+  const
   {
     CGAL_precondition( sp.is_point() && sq.is_point() &&
 		       sr.is_point() );
@@ -127,12 +128,12 @@ private:
 
     Point_2 p = sp.point(), q = sq.point(), r = sr.point();
 
-    v_type = PPP;
     compute_ppp(p, q, r);
   }
 
   void
   compute_ppp(const Point_2& p, const Point_2& q, const Point_2& r)
+  const
   {
     RT x_min, x_max, y_min, y_max;
     RT two_x_center, two_y_center;
@@ -513,14 +514,13 @@ private:
 
   void
   compute_pss(const Site_2& p, const Site_2& q, const Site_2& r)
+  const
   {
     CGAL_precondition( p.is_point() && q.is_segment() &&
 		       r.is_segment() );
 
     CGAL_SDG_DEBUG(std::cout << "debug: compute_pss entering p=" << p
        << " q=" << q << " r=" << r << std::endl;);
-
-    v_type = PSS;
 
     const bool pq =
       same_points(p, q.source_site()) || same_points(p, q.target_site());
@@ -560,6 +560,7 @@ private:
   compute_pss_nonendp(const Site_2& p, const Site_2& q, const Site_2& r,
       const bool is_q_hv, const bool is_q_hor,
       const bool is_r_hv, const bool is_r_hor)
+  const
   {
     const Line_2 lq = orient_line_nonendp(p, q);
     const Line_2 lr = orient_line_nonendp(p, r);
@@ -582,6 +583,7 @@ private:
     } else {
       CGAL_assertion( false );
     }
+    CGAL_assertion_code( is_v_computed = true );
     CGAL_assertion( oriented_side_of_line(lq, this->point()) );
     CGAL_assertion( oriented_side_of_line(lr, this->point()) );
   }
@@ -590,6 +592,7 @@ private:
   compute_pss_lines_side(const Site_2& p,
       const Line_2& lq, const Line_2 & lr,
       const Bearing bside)
+  const
   {
     CGAL_precondition(bside % 2 == 1);
     const bool side_ver = (bside % 4 == 1);
@@ -608,6 +611,7 @@ private:
       const Site_2& p, const Site_2& q, const Site_2& r,
       const Line_2& lq, const Line_2 & lr,
       const Bearing bq, const Bearing br)
+  const
   {
     const Bearing bside = (br + ((br % 2 == 0) ? 1 : 2)) % 8;
     const bool l_compute_y = (bside % 4 == 1) ? true : false;
@@ -630,6 +634,7 @@ private:
       const Site_2& p, const Site_2& q, const Site_2& r,
       const Line_2& lq, const Line_2 & lr,
       const Bearing bq, const Bearing br)
+  const
   {
     const FT xp = p.point().x();
     const FT yp = p.point().y();
@@ -670,6 +675,7 @@ private:
       const Site_2& p, const Site_2& q, const Site_2& r,
       const Line_2& lq, const Line_2 & lr,
       const Bearing bq, const Bearing br)
+  const
   {
     const Bearing bqr = (bq+1)%8;
     return (bqr % 4) == 1 ?
@@ -683,6 +689,7 @@ private:
       const Line_2& lq, const Line_2 & lr,
       const Bearing bq, const Bearing br,
       const Bearing bqr)
+  const
   {
     CGAL_precondition((bqr == 1) or (bqr == 5));
     const FT xp = p.point().x();
@@ -719,6 +726,7 @@ private:
       const Line_2& lq, const Line_2 & lr,
       const Bearing bq, const Bearing br,
       const Bearing bqr)
+  const
   {
     CGAL_precondition((bqr == 3) or (bqr == 7));
     const FT yp = p.point().y();
@@ -753,6 +761,7 @@ private:
   compute_pss_corner_and_pt(const Site_2& p, const Site_2& q, const Site_2& r,
       const Line_2& lq, const Line_2 & lr,
       const Bearing bq, const Bearing br)
+  const
   {
     const Bearing cb = (bq % 2 == 0) ? bq : br;
     Point_2 v;
@@ -781,6 +790,7 @@ private:
   compute_pss_endp(const Site_2& p, const Site_2& q, const Site_2& r,
       const bool is_q_hv, const bool is_q_hor, const bool pq,
       const bool is_r_hv, const bool is_r_hor, const bool pr)
+  const
   {
     CGAL_precondition(pq or pr);
     const Line_2 lendp = orient_line_endp(p, (pq ? q : r), pq);
@@ -814,6 +824,7 @@ private:
     CGAL_SDG_DEBUG(std::cout << "debug compute_pss_endp vertex="
         << ux_ << ' ' << uy_ << ' ' << uz_ << ' '
         << Point_2(ux_, uy_, uz_) << std::endl ; );
+    CGAL_assertion_code( is_v_computed = true );
     CGAL_assertion( oriented_side_of_line(lendp, this->point()) );
     CGAL_assertion( oriented_side_of_line(lnon, this->point()) );
   }
@@ -823,6 +834,7 @@ private:
   compute_pss_both_hv(const Site_2& p, const Site_2& q, const Site_2& r,
       const bool is_q_hor, const bool is_r_hor,
       const bool pq, const bool pr)
+  const
   {
     CGAL_precondition(not (pq and pr));
     if (is_q_hor == is_r_hor) {
@@ -848,6 +860,7 @@ private:
       const Site_2& p, const Site_2& q, const Site_2& r,
       const bool is_q_hor, const bool is_r_hor,
       const bool pq, const bool pr)
+  const
   {
     CGAL_precondition(is_q_hor != is_r_hor);
     if (pq or pr) {
@@ -889,6 +902,7 @@ private:
       const Site_2& p, const Site_2& q, const Site_2& r,
       const bool is_q_hor, const bool is_r_hor,
       const bool pq, const bool pr)
+  const
   {
     CGAL_precondition(not (pq or pr));
     const RT q_coord = hvseg_coord(q, is_q_hor);
@@ -919,6 +933,7 @@ private:
 
   inline void
   compute_pss_bisectors(const Site_2& p, const Site_2& q, const Site_2& r)
+  const
   {
     const bool pq =
       same_points(p, q.source_site()) || same_points(p, q.target_site());
@@ -960,6 +975,7 @@ private:
   inline void
   compute_pps_endp_hv(const Site_2& p, const Site_2& q, const Site_2& r,
                    const bool p_endp_r, const bool is_r_horizontal)
+  const
   {
     const Site_2 & A = p_endp_r ? p : q;
     const Site_2 & B = p_endp_r ? q : p;
@@ -989,6 +1005,7 @@ private:
   compute_pps_nonendp_hv_samecoord(
       const Site_2& p, const Site_2& q, const Site_2& r,
       const bool is_r_horizontal)
+  const
   {
     const RT ppar = is_r_horizontal ? p.point().x() : p.point().y();
     const RT port = is_r_horizontal ? p.point().y() : p.point().x();
@@ -1012,6 +1029,7 @@ private:
   inline void
   compute_pps_nonendp_hv(const Site_2& p, const Site_2& q, const Site_2& r,
                          const bool is_r_horizontal)
+  const
   {
     if ((is_r_horizontal       and (scmpx(p, q) == EQUAL)) or
         ((not is_r_horizontal) and (scmpy(p, q) == EQUAL))   ) {
@@ -1087,6 +1105,7 @@ private:
   inline void
   compute_pps_endp_slope(const Site_2& p, const Site_2& q, const Site_2& r,
                    const bool p_endp_r, const bool pos_slope)
+  const
   {
     const Site_2 & A = p_endp_r ? p : q;
     const Site_2 & B = p_endp_r ? q : p;
@@ -1112,6 +1131,7 @@ private:
   inline void
   compute_pps_endp(const Site_2& p, const Site_2& q, const Site_2& r,
                    const bool p_endp_r)
+  const
   {
     const bool is_r_horizontal = is_site_horizontal(r);
     if (is_r_horizontal or is_site_vertical(r)) {
@@ -1129,6 +1149,7 @@ private:
   inline void
   compute_pps_nonendp_nonhv_nonsamec
   (const Site_2& p, const Site_2& q, const Site_2& r)
+  const
   {
     Line_2 l = compute_supporting_line(r);
     if (oriented_side_of_line(l, p.point()) == NEGATIVE) {
@@ -1240,6 +1261,7 @@ private:
 
   inline void
   compute_pps_nonendp_nonhv(const Site_2& p, const Site_2& q, const Site_2& r)
+  const
   {
     const bool samexpq = scmpx(p, q) == EQUAL;
     const bool sameypq = (samexpq)? false : make_certain(scmpy(p, q) == EQUAL);
@@ -1288,6 +1310,7 @@ private:
 
   inline void
   compute_pps_nonendp(const Site_2& p, const Site_2& q, const Site_2& r)
+  const
   {
     const bool is_r_horizontal = is_site_horizontal(r);
     if (is_r_horizontal or is_site_vertical(r)) {
@@ -1299,6 +1322,7 @@ private:
 
   void
   compute_pps(const Site_2& p, const Site_2& q, const Site_2& r)
+  const
   {
     CGAL_precondition( p.is_point() && q.is_point() &&
 		       r.is_segment() );
@@ -1306,8 +1330,6 @@ private:
     CGAL_SDG_DEBUG(std::cout
         << "debug: vring compute_pps entering p=" << p
         << " q=" << q << " r=" << r << std::endl;);
-
-    v_type = PPS;
 
     bool p_endp_r = is_endpoint_of(p, r);
     bool q_endp_r = is_endpoint_of(q, r);
@@ -1322,6 +1344,7 @@ private:
 
   void
   compute_pps_bisectors(const Site_2& p, const Site_2& q, const Site_2& r)
+  const
   {
     CGAL_precondition( p.is_point() && q.is_point() &&
 		       r.is_segment() );
@@ -1329,8 +1352,6 @@ private:
     CGAL_SDG_DEBUG(std::cout
         << "debug: vring compute_pps_bisectors entering p=" << p
         << " q=" << q << " r=" << r << std::endl;);
-
-    v_type = PPS;
 
     bool p_endp_r = is_endpoint_of(p, r);
     bool q_endp_r = is_endpoint_of(q, r);
@@ -1441,11 +1462,10 @@ private:
 
   void
   compute_sss(const Site_2& p, const Site_2& q, const Site_2& r)
+  const
   {
     CGAL_precondition( p.is_segment() && q.is_segment() &&
 		       r.is_segment() );
-    v_type = SSS;
-
     const bool is_psrc_q = is_endpoint_of(p.source_site(), q);
     const bool is_psrc_r = is_endpoint_of(p.source_site(), r);
     const bool is_ptrg_q = is_endpoint_of(p.target_site(), q);
@@ -1478,6 +1498,7 @@ private:
       orient_lines_linf(p, q, r, lines);
 
       compute_sss_bisectors(p, q, r, lines);
+      CGAL_assertion_code( is_v_computed = true );
       CGAL_assertion( oriented_side_of_line(lines[0], this->point()) );
       CGAL_assertion( oriented_side_of_line(lines[1], this->point()) );
       CGAL_assertion( oriented_side_of_line(lines[2], this->point()) );
@@ -1488,6 +1509,7 @@ private:
   inline void
   compute_sss_hv(const Site_2 & p, const Site_2 & q, const Site_2 & r,
       const bool is_p_hor, const bool is_q_hor, const bool is_r_hor)
+  const
   {
     CGAL_precondition(not (is_p_hor and is_q_hor and is_r_hor));
     CGAL_precondition(is_p_hor or is_q_hor or is_r_hor);
@@ -1526,6 +1548,7 @@ private:
   inline void
   compute_sss_bisectors(const Site_2& p, const Site_2& q, const Site_2& r,
       const Line_2 lines[])
+  const
   {
     CGAL_SDG_DEBUG(std::cout << "debug vring compute_sss_bisectors"
         << " p=" << p << " q=" << q  << " r=" << r << std::endl;);
@@ -1537,6 +1560,7 @@ private:
   inline void
   compute_sss_bisectors_old(
       const Site_2& p, const Site_2& q, const Site_2& r)
+  const
   {
     CGAL_SDG_DEBUG(std::cout << "debug vring compute_sss_bisectors_old"
         << " p=" << p << " q=" << q  << " r=" << r << std::endl;);
@@ -1551,33 +1575,57 @@ private:
   //--------------------------------------------------------------------------
 
   void
-  compute_vertex(const Site_2& s1, const Site_2& s2, const Site_2& s3)
+  analyze_vertex(const Site_2& s1, const Site_2& s2, const Site_2& s3)
   {
     if ( s1.is_point() && s2.is_point() && s3.is_point() ) {
+      v_type = PPP;
+    } else if ( s1.is_segment() && s2.is_point() && s3.is_point() ) {
+      pps_idx = 1;
+      v_type = PPS;
+    } else if ( s1.is_point() && s2.is_segment() && s3.is_point() ) {
+      pps_idx = 2;
+      v_type = PPS;
+    } else if ( s1.is_point() && s2.is_point() && s3.is_segment() ) {
+      pps_idx = 0;
+      v_type = PPS;
+    } else if ( s1.is_point() && s2.is_segment() && s3.is_segment() ) {
+      v_type = PSS;
+    } else if ( s1.is_segment() && s2.is_point() && s3.is_segment() ) {
+      v_type = PSS;
+    } else if ( s1.is_segment() && s2.is_segment() && s3.is_point() ) {
+      v_type = PSS;
+    } else {
+      v_type = SSS;
+    }
+  }
+
+  void
+  compute_vertex(const Site_2& s1, const Site_2& s2, const Site_2& s3)
+  const
+  {
+    CGAL_assertion( not is_v_computed );
+    CGAL_SDG_DEBUG(std::cout << "debug vring compute_vertex "
+        << s1 << ' ' << s2 << ' ' << s3 << std::endl;);
+    if ( v_type == PPP ) {
       compute_ppp(s1, s2, s3);
 
     } else if ( s1.is_segment() && s2.is_point() && s3.is_point() ) {
-      compute_vertex(s2, s3, s1);
-      pps_idx = 1;
-
+      compute_pps(s2, s3, s1);
     } else if ( s1.is_point() && s2.is_segment() && s3.is_point() ) {
-      compute_vertex(s3, s1, s2);
-      pps_idx = 2;
-
+      compute_pps(s3, s1, s2);
     } else if ( s1.is_point() && s2.is_point() && s3.is_segment() ) {
       compute_pps(s1, s2, s3);
-      pps_idx = 0;
 
     } else if ( s1.is_point() && s2.is_segment() && s3.is_segment() ) {
       compute_pss(s1, s2, s3);
     } else if ( s1.is_segment() && s2.is_point() && s3.is_segment() ) {
-      compute_vertex(s2, s3, s1);
+      compute_pss(s2, s3, s1);
     } else if ( s1.is_segment() && s2.is_segment() && s3.is_point() ) {
-      compute_vertex(s3, s1, s2);
+      compute_pss(s3, s1, s2);
     } else {
       compute_sss(s1, s2, s3);
     }
-
+    is_v_computed = true;
   }
 
   //--------------------------------------------------------------------------
@@ -1701,6 +1749,10 @@ private:
     Sign s = check_easy_degeneracies(st, type, use_result);
     if ( use_result ) { return s; }
 
+    if (not is_v_computed) {
+      compute_vertex(p_, q_, r_);
+      is_v_computed = true;
+    }
     return incircle_p_no_easy(st, type);
   }
 
@@ -2510,6 +2562,10 @@ private:
       }
     }
 
+    if (not is_v_computed) {
+      compute_vertex(p_, q_, r_);
+      is_v_computed = true;
+    }
     Sign retval = incircle_s_no_easy(t, type);
 
     CGAL_SDG_DEBUG(std::cout
@@ -3460,6 +3516,10 @@ public:
     if ( is_degenerate_Voronoi_circle() ) {
       return degenerate_point();
     }
+    if (not is_v_computed) {
+      compute_vertex(p_, q_, r_);
+      is_v_computed = true;
+    }
 
     return Point_2(x(), y());
   }
@@ -3486,9 +3546,10 @@ public:
   Voronoi_vertex_ring_C2(const Site_2& p,
 			 const Site_2& q,
 			 const Site_2& r)
-    : p_(p), q_(q), r_(r)
+    : p_(p), q_(q), r_(r), is_v_computed(false)
   {
-    compute_vertex(p, q, r);
+    CGAL_SDG_DEBUG(std::cout << "Voronoi_vertex_ring_C2()" << std::endl;);
+    analyze_vertex(p, q, r);
   }
 
   //--------------------------------------------------------------------------
@@ -3849,7 +3910,9 @@ private:
   // the case pss and sss
   //Sqrt_3 ux, uy, uz;
 
-  RT ux_, uy_, uz_;
+  mutable bool is_v_computed;
+
+  mutable RT ux_, uy_, uz_;
 };
 
 
