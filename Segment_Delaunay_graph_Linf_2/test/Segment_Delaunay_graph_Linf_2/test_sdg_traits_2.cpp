@@ -210,7 +210,6 @@ void test_traits(const char* title)
 {
   typedef typename Gt::Point_2             Point_2;
   typedef typename Gt::Segment_2           Segment_2;
-  typedef typename Gt::Site_2              Site_2;
 
   std::cout << "====================================" << std::endl;
   std::cout << title << std::endl;
