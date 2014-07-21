@@ -331,7 +331,7 @@ namespace CGAL {
           }
         }
 
-        const FT half(0.5);
+        const FT two(2);
 
         CGAL_SDG_DEBUG( std::cout << "debug bs after mirror "
             << "lft=" << *lft_p
@@ -371,11 +371,11 @@ namespace CGAL {
                 << std::endl;);
             fix1 = Point_2 (
                 bot_p->x(),
-               (bot_p->y() + top_p->y() - rgt_p->x() + lft_p->x())*half);
+               (bot_p->y() + top_p->y() - rgt_p->x() + lft_p->x())/two);
             is_bot_input = false;
             fix2 = Point_2 (
                 top_p->x(),
-               (top_p->y() + bot_p->y() + rgt_p->x() - lft_p->x())*half);
+               (top_p->y() + bot_p->y() + rgt_p->x() - lft_p->x())/two);
             is_top_input = false;
 
             // update bottom and top
@@ -408,14 +408,14 @@ namespace CGAL {
                 << std::endl;);
 
             fix1 = Point_2 (
-               (lft_p->x() + rgt_p->x() + top_p->y() - bot_p->y())*half,
+               (lft_p->x() + rgt_p->x() + top_p->y() - bot_p->y())/two,
                 rgt_p->y());
             is_rgt_input = false;
             CGAL_SDG_DEBUG(std::cout << "debug Side_of_bs fatten fix1="
                 << fix1 << std::endl;);
 
             fix2 = Point_2 (
-               (lft_p->x() + rgt_p->x() - top_p->y() + bot_p->y())*half,
+               (lft_p->x() + rgt_p->x() - top_p->y() + bot_p->y())/two,
                 lft_p->y());
             is_lft_input = false;
             CGAL_SDG_DEBUG(std::cout << "debug Side_of_bs fatten fix2="
