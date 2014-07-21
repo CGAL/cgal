@@ -28,7 +28,7 @@ typedef CGAL::Mesh_criteria_3<Tr> Mesh_criteria;
 // To avoid verbose function and named parameters call
 using namespace CGAL::parameters;
 
-int main(int argc, char* argv[])
+int main(int, char*[])
 {
   // Collect options
   std::size_t nb_runs   = 2;
