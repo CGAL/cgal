@@ -20,6 +20,7 @@
 #include <QApplication>
 #include <QPointer>
 #include <QList>
+#include <QAbstractProxyModel>
 
 namespace {
   void CGALglcolor(QColor c)
@@ -609,14 +610,14 @@ int Scene::selectionBindex() const {
 
 QItemSelection Scene::createSelection(int i)
 {
-  return QItemSelection(QAbstractItemModel::createIndex(i, 0),
-    QAbstractItemModel::createIndex(i, LastColumn));
+  return QItemSelection(this->createIndex(i, 0),
+                        this->createIndex(i, LastColumn));
 }
 
 QItemSelection Scene::createSelectionAll()
 {
-  return QItemSelection(QAbstractItemModel::createIndex(0, 0),
-    QAbstractItemModel::createIndex(m_entries.size() - 1 , LastColumn));
+  return QItemSelection(this->createIndex(0, 0),
+                        this->createIndex(m_entries.size() - 1 , LastColumn));
 }
 
 void Scene::itemChanged()
@@ -632,22 +633,24 @@ void Scene::itemChanged(Item_id i)
     return;
 
   m_entries[i]->changed();
-  emit dataChanged(QAbstractItemModel::createIndex(i, 0),
-    QAbstractItemModel::createIndex(i, LastColumn));
+  emit dataChanged(this->createIndex(i, 0),
+                   this->createIndex(i, LastColumn));
 }
 
 void Scene::itemChanged(Scene_item* item)
 {
   item->changed();
-  emit dataChanged(QAbstractItemModel::createIndex(0, 0),
-    QAbstractItemModel::createIndex(m_entries.size() - 1, LastColumn));
+  emit dataChanged(this->createIndex(0, 0),
+                   this->createIndex(m_entries.size() - 1, LastColumn));
 }
 
 bool SceneDelegate::editorEvent(QEvent *event, QAbstractItemModel *model,
 				const QStyleOptionViewItem &option,
 				const QModelIndex &index)
 {
-  Scene *scene = static_cast<Scene*>(model);
+  QAbstractProxyModel* proxyModel = dynamic_cast<QAbstractProxyModel*>(model);
+  Q_ASSERT(proxyModel);
+  Scene *scene = dynamic_cast<Scene*>(proxyModel->sourceModel());
   Q_ASSERT(scene);
   switch(index.column()) {
   case Scene::VisibleColumn:
@@ -714,8 +717,8 @@ bool SceneDelegate::editorEvent(QEvent *event, QAbstractItemModel *model,
       else {
 	scene->item_B = index.row();
       }
-      scene->dataChanged(scene->createIndex(Scene::ABColumn, 0),
-	scene->createIndex(Scene::ABColumn, scene->rowCount()));
+      scene->dataChanged(scene->createIndex(0, Scene::ABColumn),
+                         scene->createIndex(scene->rowCount() - 1, Scene::ABColumn));
     }
     return false;
     break;
@@ -762,8 +765,8 @@ void Scene::setItemVisible(int index, bool b)
   if( index < 0 || index >= m_entries.size() )
     return;
   m_entries[index]->setVisible(b);
-  emit dataChanged(QAbstractItemModel::createIndex(index, VisibleColumn),
-    QAbstractItemModel::createIndex(index, VisibleColumn));
+  emit dataChanged(this->createIndex(index, VisibleColumn),
+                   this->createIndex(index, VisibleColumn));
 }
 
 void Scene::setSelectionRay(double orig_x,
@@ -789,8 +792,8 @@ void Scene::setItemA(int i)
   {
     item_B = -1;
   }
-  emit dataChanged(QAbstractItemModel::createIndex(0, ABColumn),
-    QAbstractItemModel::createIndex(m_entries.size()-1, ABColumn));
+  emit dataChanged(this->createIndex(0, ABColumn),
+                   this->createIndex(m_entries.size()-1, ABColumn));
 }
 
 void Scene::setItemB(int i)
@@ -801,8 +804,8 @@ void Scene::setItemB(int i)
     item_A = -1;
   }
   emit updated();
-  emit dataChanged(QAbstractItemModel::createIndex(0, ABColumn),
-    QAbstractItemModel::createIndex(m_entries.size()-1, ABColumn));
+  emit dataChanged(this->createIndex(0, ABColumn),
+                   this->createIndex(m_entries.size()-1, ABColumn));
 }
 
 Scene::Bbox Scene::bbox() const
