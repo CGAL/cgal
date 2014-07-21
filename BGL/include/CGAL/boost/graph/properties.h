@@ -44,7 +44,6 @@ enum vertex_external_index_t { vertex_external_index } ;
 
 /// A property tag which refers to the property
 /// of a halfedge of being a border halfedge.
-enum halfedge_is_border_t    { halfedge_is_border    };
 enum edge_external_index_t   { edge_external_index   } ;
 
 /// A property tag which identifies the *index* property of
@@ -100,8 +99,6 @@ using boost::halfedge_index_t;
 using boost::halfedge_index;
 using boost::halfedge_external_index_t;
 using boost::halfedge_external_index;
-using boost::halfedge_is_border_t;
-using boost::halfedge_is_border;
 using boost::edge_external_index_t;
 using boost::edge_external_index;
 using boost::face_index_t;

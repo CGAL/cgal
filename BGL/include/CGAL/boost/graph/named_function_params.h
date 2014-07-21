@@ -250,14 +250,6 @@ namespace CGAL {
       return Params(p, *this);
     }
 
-    template <typename IsBorderMap>
-    cgal_bgl_named_params<IsBorderMap, halfedge_is_border_t, self>
-    halfedge_is_border_map(const IsBorderMap& p) const 
-    {
-      typedef cgal_bgl_named_params<IsBorderMap, halfedge_is_border_t, self> Params;
-      return Params(p, *this);
-    }
-
     template <typename Visitor>
     cgal_bgl_named_params<Visitor, boost::graph_visitor_t, self>
     visitor(const Visitor& p) const 
@@ -376,15 +368,7 @@ namespace CGAL {
     typedef cgal_bgl_named_params<IndexMap, boost::edge_index_t> Params;
     return Params(pmap);
   }
-  
-  template <typename IsBorderMap>
-  cgal_bgl_named_params<IsBorderMap, halfedge_is_border_t>
-  halfedge_is_border_map(IsBorderMap const& p) 
-  {
-    typedef cgal_bgl_named_params<IsBorderMap, halfedge_is_border_t> Params;
-    return Params(p);
-  }
-  
+
   template <typename Visitor>
   cgal_bgl_named_params<Visitor, boost::graph_visitor_t>
   visitor(const Visitor& p) 
