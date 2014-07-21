@@ -46,6 +46,7 @@
 #include <CGAL/Timer.h>
 #include <CGAL/Mesh_3/Null_perturber_visitor.h>
 #include <CGAL/Mesh_3/sliver_criteria.h>
+#include <CGAL/Has_timestamp.h>
 
 #include <CGAL/Mesh_3/Concurrent_mesher_config.h>
 #include <CGAL/Mesh_3/Worksharing_data_structures.h>
@@ -75,6 +76,29 @@
 #include <memory>
 
 namespace CGAL {
+
+namespace internal { namespace Mesh_3 {
+
+  // Hash function for boost::unordered_map<Vertex_handle,...>
+  template <typename Tr, bool HasTimestamp>
+  struct VHash
+  {
+    typedef typename Tr::Vertex_handle Vertex_handle;
+    std::size_t operator()(Vertex_handle vh) const
+    {
+      return vh->time_stamp();
+    }
+  };
+  template <typename Tr>
+  struct VHash<Tr, false>
+  {
+    typedef typename Tr::Vertex_handle Vertex_handle;
+    std::size_t operator()(Vertex_handle vh) const
+    {
+      return boost::hash_value(&*vh);
+    }
+  };
+}} // end internal::Mesh_3
 
 namespace Mesh_3 {
 
@@ -537,14 +561,6 @@ public:
   double time_limit() const { return time_limit_; }
 
 private:
-
-  struct VHash
-  {
-    std::size_t operator()(Vertex_handle vh) const
-    {
-      return boost::hash_value(&*vh);
-    }
-  };
 
   // -----------------------------------
   // Private methods
@@ -1106,7 +1122,12 @@ build_priority_queue(const FT& sliver_bound, PQueue& pqueue) const
 
   int pqueue_size = 0;
 
-  typedef boost::unordered_map<Vertex_handle,PVertex,VHash> M;
+  typedef typename std::iterator_traits<Vertex_handle>::value_type Vertex;
+  typedef CGAL::internal::Has_timestamp<Vertex> Vertex_has_timestamp;
+  using CGAL::internal::Mesh_3::VHash;
+  typedef VHash<Tr, Vertex_has_timestamp::value> Hash_fct;
+  typedef boost::unordered_map<Vertex_handle,PVertex,Hash_fct> M;
+
   M vpm;
   for ( typename Tr::Finite_cells_iterator cit = tr_.finite_cells_begin();
        cit != tr_.finite_cells_end() ;

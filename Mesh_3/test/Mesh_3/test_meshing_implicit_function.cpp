@@ -60,8 +60,12 @@ struct Implicit_tester : public Tester<K>
     //-------------------------------------------------------
     // Data generation
     //-------------------------------------------------------
+    std::cout << "\tSeed is\t" 
+      << CGAL::default_random.get_seed() << std::endl;
     Mesh_domain domain(Implicit_tester<K>::sphere_function,
-                       Sphere_3(CGAL::ORIGIN,2.));
+                       Sphere_3(CGAL::ORIGIN,2.),
+                       1e-3,
+                       &CGAL::default_random);
     
     // Set mesh criteria
     Facet_criteria facet_criteria(0, 0, 0.3);

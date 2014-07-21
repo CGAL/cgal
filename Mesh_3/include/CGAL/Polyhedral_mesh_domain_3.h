@@ -36,6 +36,7 @@
 #include <CGAL/AABB_traits.h>
 #include <sstream>
 
+#include <CGAL/Random.h>
 #include <CGAL/point_generators_3.h>
 #include <CGAL/Mesh_3/Creator_weighted_point_3.h>
 #include <CGAL/Mesh_3/Profile_counter.h>
@@ -67,8 +68,8 @@ max_length(const Bbox_3& b)
   return (std::max)(b.xmax()-b.xmin(),
                     (std::max)(b.ymax()-b.ymin(),b.zmax()-b.zmin()) );
 }
-  
-  
+
+
 // -----------------------------------
 // Surface_patch_index_generator
 // To use patch_id enclosed in AABB_primitives or not
@@ -78,12 +79,12 @@ struct Surface_patch_index_generator
 {
   typedef std::pair<Subdomain_index,Subdomain_index>  Surface_patch_index;
   typedef Surface_patch_index                         type;
-  
+
   template < typename Primitive_id >
   Surface_patch_index operator()(const Primitive_id&)
   { return Surface_patch_index(0,1); }
 };
-  
+
 template < typename Subdomain_index, typename Polyhedron >
 struct Surface_patch_index_generator<Subdomain_index, Polyhedron, CGAL::Tag_true>
 {
@@ -117,10 +118,10 @@ struct Index_generator<T, T>
 // -----------------------------------
 // Geometric traits generator
 // -----------------------------------
-template < typename Gt, 
+template < typename Gt,
            typename Use_exact_intersection_construction_tag >
 struct IGT_generator {};
-  
+
 template < typename Gt >
 struct IGT_generator<Gt,CGAL::Tag_true>
 {
@@ -131,14 +132,14 @@ struct IGT_generator<Gt,CGAL::Tag_true>
 #endif // NOT CGAL_MESH_3_NEW_ROBUST_INTERSECTION_TRAITS
   typedef type Type;
 };
-  
+
 template < typename Gt >
 struct IGT_generator<Gt,CGAL::Tag_false>
 {
   typedef Gt type;
   typedef type Type;
 };
-  
+
 }  // end namespace details
 
 }  // end namespace Mesh_3
@@ -158,7 +159,7 @@ class Polyhedral_mesh_domain_3
 {
   typedef typename Mesh_3::details::IGT_generator<
     IGT_,Use_exact_intersection_construction_tag>::type IGT;
-  
+
 public:
   /// Geometric object types
   typedef typename IGT::Point_3    Point_3;
@@ -200,44 +201,64 @@ private:
   typedef typename AABB_tree_::Primitive_id              AABB_primitive_id;
   typedef typename AABB_tree_::Primitive Primitive;
   typedef typename AABB_traits::Bounding_box            Bounding_box;
-  
+
 public:
 
   /// Default constructor
   Polyhedral_mesh_domain_3()
     : tree_()
     , bounding_tree_(&tree_)
-  {}
-  
+    , p_rng_(NULL)
+    , delete_rng_(true)
+  {
+    p_rng_ = new CGAL::Random(0);
+  }
+
   /**
    * @brief Constructor. Contruction from a polyhedral surface
    * @param polyhedron the polyhedron describing the polyhedral surface
    */
-  Polyhedral_mesh_domain_3(const Polyhedron& p)
+  Polyhedral_mesh_domain_3(const Polyhedron& p,
+                           CGAL::Random* p_rng = NULL)
     : tree_(TriangleAccessor().triangles_begin(p),
             TriangleAccessor().triangles_end(p))
     , bounding_tree_(&tree_) // the bounding tree is tree_
-  { 
+    , p_rng_(p_rng)
+    , delete_rng_(false)
+  {
     if(!p.is_pure_triangle()) {
       std::cerr << "Your input polyhedron must be triangulated!\n";
       CGAL_error_msg("Your input polyhedron must be triangulated!");
     }
+    if(!p_rng_)
+    {
+      p_rng_ = new CGAL::Random(0);
+      delete_rng_ = true;
+    }
   }
 
   Polyhedral_mesh_domain_3(const Polyhedron& p,
-                           const Polyhedron& bounding_polyhedron)
+                           const Polyhedron& bounding_polyhedron,
+                           CGAL::Random* p_rng = NULL)
     : tree_(TriangleAccessor().triangles_begin(p),
             TriangleAccessor().triangles_end(p))
     , bounding_tree_(new AABB_tree_(TriangleAccessor().triangles_begin(bounding_polyhedron),
                                     TriangleAccessor().triangles_end(bounding_polyhedron)))
-  { 
+    , p_rng_(p_rng)
+    , delete_rng_(false)
+  {
     tree_.insert(TriangleAccessor().triangles_begin(bounding_polyhedron),
                  TriangleAccessor().triangles_end(bounding_polyhedron));
     tree_.build();
     bounding_tree_->build();
+    if(!p_rng_)
+    {
+      p_rng_ = new CGAL::Random(0);
+      delete_rng_ = true;
+    }
   }
-  
-  /** 
+
+  /**
    * Constructor.
    *
    * Constructor from a sequence of polyhedral surfaces, and a bounding
@@ -251,9 +272,12 @@ public:
   template <typename InputPolyhedraPtrIterator>
   Polyhedral_mesh_domain_3(InputPolyhedraPtrIterator begin,
                            InputPolyhedraPtrIterator end,
-                           const Polyhedron& bounding_polyhedron)
+                           const Polyhedron& bounding_polyhedron,
+                           CGAL::Random* p_rng = NULL)
+    : p_rng_(p_rng)
+    , delete_rng_(false)
   {
-    if(begin != end) { 
+    if(begin != end) {
       for(; begin != end; ++begin) {
         tree_.insert(TriangleAccessor().triangles_begin(**begin),
                      TriangleAccessor().triangles_end(**begin));
@@ -261,7 +285,7 @@ public:
       tree_.insert(TriangleAccessor().triangles_begin(bounding_polyhedron),
                    TriangleAccessor().triangles_end(bounding_polyhedron));
       tree_.build();
-      bounding_tree_ = 
+      bounding_tree_ =
         new AABB_tree_(TriangleAccessor().triangles_begin(bounding_polyhedron),
                        TriangleAccessor().triangles_end(bounding_polyhedron));
       bounding_tree_->build();
@@ -271,9 +295,14 @@ public:
                     TriangleAccessor().triangles_end(bounding_polyhedron));
       bounding_tree_ = &tree_;
     }
+    if(!p_rng_)
+    {
+      p_rng_ = new CGAL::Random(0);
+      delete_rng_ = true;
+    }
   }
 
-  /** 
+  /**
    * Constructor.
    *
    * Constructor from a sequence of polyhedral surfaces, without bounding
@@ -285,7 +314,10 @@ public:
    */
   template <typename InputPolyhedraPtrIterator>
   Polyhedral_mesh_domain_3(InputPolyhedraPtrIterator begin,
-                           InputPolyhedraPtrIterator end)
+                           InputPolyhedraPtrIterator end,
+                           CGAL::Random* p_rng = NULL)
+    : p_rng_(p_rng)
+    , delete_rng_(false)
   {
     if(begin != end) {
       for(; begin != end; ++begin) {
@@ -295,13 +327,20 @@ public:
       tree_.build();
     }
     bounding_tree_ = 0;
+    if(!p_rng_)
+    {
+      p_rng_ = new CGAL::Random(0);
+      delete_rng_ = true;
+    }
   }
 
   /// Destructor
-  ~Polyhedral_mesh_domain_3() { 
+  ~Polyhedral_mesh_domain_3() {
     if(bounding_tree_ != 0 && bounding_tree_ != &tree_) {
-      delete bounding_tree_; 
+      delete bounding_tree_;
     }
+    if(delete_rng_)
+      delete p_rng_;
   }
 
   /**
@@ -348,7 +387,7 @@ public:
   {
     return tree_.closest_point(p);
   }
-  
+
   /// Allowed query types
   typedef boost::mpl::vector<Segment_3, Ray_3, Line_3> Allowed_query_types;
 
@@ -376,10 +415,10 @@ public:
 
       boost::optional<AABB_primitive_id> primitive_id = r_domain_.tree_.any_intersected_primitive(q);
       if ( primitive_id )
-      { 
+      {
         r_domain_.cache_primitive(q, *primitive_id);
         return Surface_patch(r_domain_.make_surface_index(*primitive_id));
-      } else {      
+      } else {
         return Surface_patch();
       }
     }
@@ -443,7 +482,7 @@ public:
       {
         // Get primitive
         AABB_primitive_id primitive_id = intersection->second;
-        
+
         // intersection may be either a point or a segment
 #if CGAL_INTERSECTION_VERSION > 1
         if ( const Bare_point* p_intersect_pt =
@@ -478,10 +517,10 @@ public:
           std::stringstream stream;
           stream.precision(17);
           set_pretty_mode(stream);
-          stream << 
+          stream <<
             "Mesh_3 error : AABB_tree any_intersection result is "
             "not a point nor a segment\n";
-          if(intersection->first.empty()) { 
+          if(intersection->first.empty()) {
             stream <<  "The intersection is empty!";
           } else {
             stream <<  "The intersection typeinfo name is ";
@@ -492,7 +531,7 @@ public:
           stream << "The intersecting primitive in the AABB tree was: "
                  << AABB_primitive(intersection->second).datum() << std::endl;
           CGAL_error_msg(stream.str().c_str());
-#endif // not CGAL_MESH_3_NO_LONGER_CALLS_DO_INTERSECT_3        
+#endif // not CGAL_MESH_3_NO_LONGER_CALLS_DO_INTERSECT_3
         }
       }
 
@@ -509,8 +548,8 @@ public:
   {
     return Construct_intersection(*this);
   }
-  
-  
+
+
   /**
    * Returns the index to be stored in a vertex lying on the surface identified
    * by \c index.
@@ -538,16 +577,16 @@ public:
    */
   Subdomain_index subdomain_index(const Index& index) const
   { return boost::get<Subdomain_index>(index); }
-  
+
   // -----------------------------------
   // Backward Compatibility
   // -----------------------------------
 #ifndef CGAL_MESH_3_NO_DEPRECATED_SURFACE_INDEX
   typedef Surface_patch_index   Surface_index;
-  
+
   Index index_from_surface_index(const Surface_index& index) const
   { return index_from_surface_patch_index(index); }
-  
+
   Surface_index surface_index(const Index& index) const
   { return surface_patch_index(index); }
 #endif // CGAL_MESH_3_NO_DEPRECATED_SURFACE_INDEX
@@ -579,10 +618,10 @@ protected:
   {
     tree_.insert(TriangleAccessor().triangles_begin(p),
                  TriangleAccessor().triangles_end(p));
-    
+
     tree_.build();
   }
-  
+
 private:
   /// The AABB tree: intersection detection and more
   AABB_tree_ tree_;
@@ -604,10 +643,14 @@ private:
   mutable Query_cache query_cache;
 #endif
 
+  //random number generator for Construct_initial_points
+  CGAL::Random* p_rng_;
+  bool delete_rng_;
+
 public:
 
   template <typename Query>
-  void cache_primitive(const Query& q, 
+  void cache_primitive(const Query& q,
                        const AABB_primitive_id id) const
   {
 #ifdef CGAL_LINKED_WITH_TBB
@@ -641,6 +684,20 @@ public:
 #endif
   }
 
+  void set_random_generator(CGAL::Random* p_rng)
+  {
+    if(delete_rng_) delete p_rng_;
+    if(!p_rng)
+    {
+      p_rng_ = new CGAL::Random(0);
+      delete_rng_ = true;
+    }
+    else {
+      p_rng_ = p_rng;
+      delete_rng_ = false;
+    }
+  }
+
 private:
   // Disabled copy constructor & assignment operator
   typedef Polyhedral_mesh_domain_3 Self;
@@ -653,7 +710,8 @@ private:
 
 
 
-template<typename P_, typename IGT_, typename TA, typename Tag, typename E_tag_>
+template<typename P_, typename IGT_, typename TA,
+         typename Tag, typename E_tag_>
 template<class OutputIterator>
 OutputIterator
 Polyhedral_mesh_domain_3<P_,IGT_,TA,Tag,E_tag_>::
@@ -662,13 +720,14 @@ Construct_initial_points::operator()(OutputIterator pts,
 {
   typename IGT::Construct_ray_3 ray = IGT().construct_ray_3_object();
   typename IGT::Construct_vector_3 vector = IGT().construct_vector_3_object();
-  
+
   const Bounding_box bbox = r_domain_.tree_.bbox();
   const Point_3 center( FT( (bbox.xmin() + bbox.xmax()) / 2),
                         FT( (bbox.ymin() + bbox.ymax()) / 2),
                         FT( (bbox.zmin() + bbox.zmax()) / 2) );
-  
-  Random_points_on_sphere_3<Point_3> random_point(1.);
+
+  CGAL::Random& rng = *(r_domain_.p_rng_);
+  Random_points_on_sphere_3<Point_3> random_point(1., rng);
 
   int i = n;
 # ifdef CGAL_MESH_3_VERBOSE
@@ -688,9 +747,9 @@ Construct_initial_points::operator()(OutputIterator pts,
 #endif
       *pts++ = std::make_pair(CGAL::cpp0x::get<0>(intersection),
                               CGAL::cpp0x::get<1>(intersection));
-        
+
       --i;
-        
+
 #ifdef CGAL_MESH_3_VERBOSE
       std::cerr << boost::format("\r             \r"
                                  "%1%/%2% initial point(s) found...")
@@ -708,7 +767,8 @@ Construct_initial_points::operator()(OutputIterator pts,
 }
 
 
-template<typename P_, typename IGT_, typename TA, typename Tag, typename E_tag_>
+template<typename P_, typename IGT_, typename TA,
+         typename Tag, typename E_tag_>
 typename Polyhedral_mesh_domain_3<P_,IGT_,TA,Tag,E_tag_>::Subdomain
 Polyhedral_mesh_domain_3<P_,IGT_,TA,Tag,E_tag_>::
 Is_in_domain::operator()(const Point_3& p) const

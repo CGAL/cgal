@@ -19,7 +19,7 @@
 // Author(s)     : Stephane Tayeb
 //
 //******************************************************************************
-// File Description : 
+// File Description :
 //******************************************************************************
 
 #include "test_meshing_utilities.h"
@@ -35,36 +35,39 @@ public:
   {
     typedef CGAL::Image_3 Image;
     typedef CGAL::Labeled_image_mesh_domain_3<Image, K_e_i> Mesh_domain;
-    
+
     typedef typename CGAL::Mesh_triangulation_3<
       Mesh_domain,
       CGAL::Kernel_traits<Mesh_domain>::Kernel,
       Concurrency_tag>::type Tr;
     typedef CGAL::Mesh_complex_3_in_triangulation_3<Tr> C3t3;
-    
+
     typedef CGAL::Mesh_criteria_3<Tr> Mesh_criteria;
     typedef typename Mesh_criteria::Facet_criteria Facet_criteria;
     typedef typename Mesh_criteria::Cell_criteria Cell_criteria;
-    
+
     CGAL_USE_TYPE(typename Mesh_domain::Surface_patch_index);
-    
+
     //-------------------------------------------------------
     // Data generation
     //-------------------------------------------------------
     Image image;
     image.read("data/liver.inr.gz");
-    Mesh_domain domain(image,1e-9);
-    
+
+    std::cout << "\tSeed is\t"
+      << CGAL::default_random.get_seed() << std::endl;
+    Mesh_domain domain(image, 1e-9, &CGAL::default_random);
+
     // Set mesh criteria
     Facet_criteria facet_criteria(25, 20*image.vx(), 5*image.vx());
     Cell_criteria cell_criteria(4, 25*image.vx());
     Mesh_criteria criteria(facet_criteria, cell_criteria);
-    
+
     // Mesh generation
     C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria,
                                         CGAL::parameters::no_exude(),
                                         CGAL::parameters::no_perturb());
-    
+
     // Verify
     this->verify_c3t3_volume(c3t3, 1772330*0.95, 1772330*1.05);
     this->verify(c3t3,domain,criteria, Bissection_tag());
@@ -86,5 +89,5 @@ int main()
   test_epic_p.image();
 #endif
 
-  return EXIT_SUCCESS;  
+  return EXIT_SUCCESS;
 }

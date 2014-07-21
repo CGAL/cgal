@@ -29,6 +29,8 @@
 #include <CGAL/array.h>
 #include <CGAL/triangulation_assertions.h>
 #include <CGAL/internal/Dummy_tds_3.h>
+#include <CGAL/tags.h>
+#include <CGAL/Has_timestamp.h>
 
 #include <CGAL/Regular_triangulation_cell_base_3.h>
 #include <CGAL/Mesh_3/io_signature.h>
@@ -254,12 +256,12 @@ public:
     , next_intrusive_()
     , previous_intrusive_()
 #endif
+    , time_stamp_(-1)
     , surface_center_index_table_()
     , sliver_value_(FT(0.))
     , subdomain_index_()  
     , sliver_cache_validity_(false)
-  {
-  }
+  {}
 
   Compact_mesh_cell_base_3(const Compact_mesh_cell_base_3& rhs)
     : N(rhs.N)
@@ -268,6 +270,7 @@ public:
     , next_intrusive_(rhs.next_intrusive_)
     , previous_intrusive_(rhs.previous_intrusive_)
 #endif
+    , time_stamp_(rhs.time_stamp_)
     , sliver_value_(rhs.sliver_value_)
     , subdomain_index_(rhs.subdomain_index_)
     , sliver_cache_validity_(false)
@@ -290,6 +293,7 @@ public:
     , next_intrusive_()
     , previous_intrusive_()
 #endif
+    , time_stamp_(-1)
     , surface_center_index_table_()
     , sliver_value_(FT(0.))
     , subdomain_index_()
@@ -314,6 +318,7 @@ public:
     , next_intrusive_()
     , previous_intrusive_()
 #endif
+    , time_stamp_(-1)
     , surface_center_index_table_()
     , sliver_value_(FT(0.))
     , subdomain_index_()
@@ -598,6 +603,17 @@ public:
   }
 #endif // CGAL_INTRUSIVE_LIST
 
+  /// For the determinism of Compact_container iterators
+  ///@{
+  typedef Tag_true Has_timestamp;
+
+  std::size_t time_stamp() const {
+    return time_stamp_;
+  }
+  void set_time_stamp(const std::size_t& ts) {
+    time_stamp_ = ts;
+  }
+  ///@}
 
 private:
 
@@ -614,6 +630,7 @@ private:
 #ifdef CGAL_INTRUSIVE_LIST
   Cell_handle next_intrusive_, previous_intrusive_;
 #endif
+  std::size_t time_stamp_;
 
   CGAL::cpp11::array<Index, 4> surface_center_index_table_;
   /// Stores visited facets (4 first bits)
@@ -630,8 +647,6 @@ private:
 
 
 };  // end class Compact_mesh_cell_base_3
-
-
 
 template < class GT, class MT, class Cb >
 std::istream&

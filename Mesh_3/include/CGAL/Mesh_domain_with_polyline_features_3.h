@@ -54,13 +54,13 @@ class Polyline
   typedef typename Kernel::FT       FT;
 
   typedef std::vector<Point_3>      Data;
-  
+
 public:
   typedef typename Data::const_iterator const_iterator;
-  
+
   Polyline() {}
   ~Polyline() {}
-  
+
   /// Add a point at the end of the polyline
   void add_point(const Point_3& p)
   {
@@ -68,33 +68,33 @@ public:
       points_.push_back(p);
     }
   }
-  
+
   /// Returns the starting point of the polyline
   const Point_3& start_point() const
   {
     CGAL_assertion( ! points_.empty() );
     return points_.front();
   }
-  
+
   /// Returns the ending point of the polyline
   const Point_3& end_point() const
   {
     CGAL_assertion( ! points_.empty() );
-    return points_.back();          
+    return points_.back();
   }
-  
+
   /// Returns true if the polyline is not degenerated
   bool is_valid() const
   {
     return points_.size() > 1;
   }
-  
+
   /// Returns true if polyline is a cycle
   bool is_cycle() const
   {
     return start_point() == end_point();
   }
-  
+
   /// Returns the length of the polyline
   FT length() const
   {
@@ -102,29 +102,29 @@ public:
     FT result (0);
     const_iterator it = points_.begin();
     const_iterator previous = it++;
-    
+
     for ( const_iterator end = points_.end() ; it != end ; ++it, ++previous )
     {
       result += distance(*previous,*it);
     }
-    
+
     return result;
   }
-  
+
   /// Returns signed geodesic distance between \c p and \c q
   FT geodesic_distance(const Point_3& p, const Point_3& q,
                        bool /*treat_cycle*/=true) const
   {
     CGAL_precondition(is_valid());
-    
+
     // Locate p & q on polyline
     const_iterator pit = locate(p);
     const_iterator qit = locate(q,false);
-    
+
     // Compute geodesic distance
     FT result = (pit <= qit) ? geodesic_distance(p,q,pit,qit)
                              : -geodesic_distance(q,p,qit,pit);
- 
+
     // Treat cycles: return a positive value
     if ( is_cycle() && (p==q || result < FT(0)) )
     {
@@ -133,8 +133,8 @@ public:
 
     return result;
   }
-  
-  
+
+
   /// Returns a point at geodesic distance \c distance from p along the
   /// polyline. The polyline is oriented from starting point to end point.
   /// The distance could be negative.
@@ -142,108 +142,108 @@ public:
   {
     // use first point of the polyline instead of p
     distance += geodesic_distance(start_point(),p,false);
-    
+
     // If polyline is a cycle, ensure that distance is given from start_point()
     if ( is_cycle() )
     {
       if ( distance < FT(0) ) { distance += length(); }
       else if ( distance > length() ) { distance -= length(); }
     }
-    
-    CGAL_assertion( distance > FT(0) );
-    CGAL_assertion( distance < length() );
-    
+
+    CGAL_assertion( distance >= FT(0) );
+    CGAL_assertion( distance <= length() );
+
     // Initialize iterators
     const_iterator pit = points_.begin();
     const_iterator previous = pit++;
-    
+
     // Iterate to find which segment contains the point we want to construct
     FT segment_length = this->distance(*previous,*pit);
     while ( distance > segment_length )
     {
       distance -= segment_length;
-      
+
       // Increment iterators and update length
       ++previous;
       ++pit;
       CGAL_assertion(pit != points_.end());
-      
+
       segment_length = this->distance(*previous,*pit);
     }
-    
+
     // return point at distance from current segment source
     typedef typename Kernel::Vector_3 Vector_3;
     Vector_3 v (*previous, *pit);
-    
+
     return (*previous) + (distance / CGAL::sqrt(v.squared_length())) * v;
   }
-  
+
   bool are_ordered_along(const Point_3& p, const Point_3& q) const
   {
     CGAL_precondition(!is_cycle());
-    
+
     // Locate p & q on polyline
     const_iterator pit = locate(p);
     const_iterator qit = locate(q,true);
-    
+
     // Points are not located on the same segment
     if ( pit != qit ) { return (pit <= qit); }
-    
+
     // pit == qit, then we have to sort p&q along (pit,pit+1)
     return ( compare_distance(*pit,p,q) != CGAL::LARGER );
   }
-  
+
 private:
   const_iterator first_segment_source() const
   {
     CGAL_precondition(is_valid());
     return points_.begin();
   }
-  
+
   const_iterator last_segment_source() const
   {
     CGAL_precondition(is_valid());
     return (points_.end() - 2);
   }
-  
+
   FT geodesic_distance(const Point_3& p, const Point_3& q,
                        const_iterator pit, const_iterator qit) const
   {
     CGAL_precondition(std::distance(pit,qit) >= 0);
-    
+
     // If p and q are in the same segment of the polyline
     if ( pit == qit )
     {
       FT result = distance(p,q);
-      
+
       // Find the closest point to *pit
       if ( compare_distance(*pit,p,q) != CGAL::LARGER )
       { return result; }
       else
       { return -result; }
     }
-    
+
     // p is inside [pit,pit+1], pit+1 != qit, q is inside [qit,qit+1]
     FT result = distance(p,*(pit+1));
     result += distance(*qit,q);
-    
+
     // Add segments between pit+1 and qit to result
     for ( const_iterator it = (pit+1) ; it != qit ; ++it )
     {
       result += distance(*it,*(it+1));
     }
-    
+
     return result;
   }
 
-  /// Returns an iterator on the starting point of the segment of the 
+  /// Returns an iterator on the starting point of the segment of the
   /// polyline which contains p
   /// if end_point_first is true, then --end is returned instead of begin
   /// if p is the starting point of a cycle.
   const_iterator locate(const Point_3& p, bool end_point_first=false) const
   {
     CGAL_precondition(is_valid());
-    
+
     // First look if p is one of the points of the polyline
     const_iterator result = std::find(points_.begin(), points_.end(), p);
     if ( result != points_.end() )
@@ -251,7 +251,7 @@ private:
       if ( result != points_.begin() )
       { return --result; }
       else
-      { 
+      {
         // Treat cycles
         if ( end_point_first && p == end_point() )
         { return last_segment_source(); }
@@ -269,7 +269,7 @@ private:
     const_iterator nearest_vertex = it;
     result = nearest_vertex;
     bool nearest_is_a_segment = false;
-    
+
     while ( ++it != points_.end() )
     {
       Segment_3 seg (*previous, *it);
@@ -311,27 +311,27 @@ private:
       return result;
     }
   }
-  
+
   // FT squared_distance(const Point_3& p, const Point_3& q) const
   // {
   //   typename Kernel::Compute_squared_distance_3 sq_distance =
   //     Kernel().compute_squared_distance_3_object();
   //   return sq_distance(p,q);
   // }
-  
+
   FT distance(const Point_3& p, const Point_3& q) const
   {
     return CGAL::sqrt(squared_distance(p, q));
   }
 
-  Angle angle(const Point_3& p, 
+  Angle angle(const Point_3& p,
               const Point_3& angle_vertex_point,
-              const Point_3& q) const 
+              const Point_3& q) const
   {
     typename Kernel::Angle_3 compute_angle =  Kernel().angle_3_object();
     return compute_angle(p,angle_vertex_point,q);
   }
-  
+
   template <typename T1, typename T2>
   CGAL::Sign compare_distance(const Point_3& p,
                               const T1& obj1,
@@ -345,7 +345,7 @@ private:
 public:
   Data points_;
 }; // end class Polyline
-  
+
 
 template <typename Gt, typename MapIterator>
 struct Mesh_domain_segment_of_curve_primitive{
@@ -353,7 +353,7 @@ struct Mesh_domain_segment_of_curve_primitive{
   typedef typename Map_value_type::first_type Curve_id;
   typedef typename Map_value_type::second_type Polyline;
 
-  typedef std::pair<MapIterator, 
+  typedef std::pair<MapIterator,
                     typename Polyline::const_iterator> Id;
 
   typedef typename std::iterator_traits<
@@ -362,7 +362,7 @@ struct Mesh_domain_segment_of_curve_primitive{
   typedef typename Gt::Segment_3 Datum;
 
   Id id_;
-  
+
   Mesh_domain_segment_of_curve_primitive(Id id) : id_(id) {}
 
   const Id& id() const { return id_; }
@@ -427,7 +427,7 @@ public:
   // Index types
   typedef typename Base::Index    Index;
 
-  typedef typename Base::Surface_patch_index 
+  typedef typename Base::Surface_patch_index
                                   Surface_patch_index;
 
   typedef int                     Curve_segment_index;
@@ -437,10 +437,10 @@ public:
   typedef Gt                       R;
   typedef typename Base::Point_3   Point_3;
   typedef typename Gt::FT          FT;
-  
+
   typedef CGAL::Tag_true           Has_features;
 
-  
+
 #ifndef CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
   template <typename ... T>
   Mesh_domain_with_polyline_features_3(const T& ...t)
@@ -472,11 +472,11 @@ public:
     , curves_aabb_tree_is_built(false) {}
 
   template <typename T1, typename T2, typename T3>
-  Mesh_domain_with_polyline_features_3(const T1& o1, const T2& o2, 
+  Mesh_domain_with_polyline_features_3(const T1& o1, const T2& o2,
                                        const T3& o3)
     : Base(o1, o2, o3)
     , current_corner_index_(1)
-    , current_curve_index_(1) 
+    , current_curve_index_(1)
     , curves_aabb_tree_is_built(false) {}
 #endif
 
@@ -486,13 +486,13 @@ public:
   /// OutputIterator value type is std::pair<Corner_index, Point_3>
   template <typename OutputIterator>
   OutputIterator get_corners(OutputIterator out) const;
-  
+
   /// OutputIterator value type is CGAL::cpp11::tuple<Curve_segment_index,
   /// std::pair<Point_3,Index>, std::pair<Point_3,Index> >
   template <typename OutputIterator>
   OutputIterator get_curve_segments(OutputIterator out) const;
 
-  /// Returns the geodesic distance between points p and q of curve 
+  /// Returns the geodesic distance between points p and q of curve
   /// \c curve_index
   FT geodesic_distance(const Point_3& p, const Point_3& q,
                        const Curve_segment_index& curve_index) const;
@@ -503,17 +503,17 @@ public:
   construct_point_on_curve_segment(const Point_3& starting_point,
                                    const Curve_segment_index& curve_index,
                                    FT distance) const;
-  
+
   /// Returns the sign of the orientation of p,q,r along curve segment
   /// of index \c index
   CGAL::Sign distance_sign_along_cycle(const Point_3& p,
                                        const Point_3& q,
                                        const Point_3& r,
                                        const Curve_segment_index& index) const;
-  
+
   /// Returns true if curve \c curve_index is a cycle
   bool is_cycle(const Point_3&, const Curve_segment_index& index) const;
-  
+
   /// Returns an Index from a Curve_segment_index
   Index index_from_curve_segment_index(const Curve_segment_index& index) const
   { return Index(index); }
@@ -521,11 +521,11 @@ public:
   /// Returns an Curve_segment_index from an Index
   Curve_segment_index curve_segment_index(const Index& index) const
   { return boost::get<Curve_segment_index>(index); }
-  
+
   /// Returns an Index from a Corner_index
   Index index_from_corner_index(const Corner_index& index) const
   { return Index(index); }
-  
+
   /// Returns an Corner_index from an Index
   Corner_index corner_index(const Index& index) const
   { return boost::get<Corner_index>(index); }
@@ -549,20 +549,20 @@ public:
   template <typename IndicesOutputIterator>
   IndicesOutputIterator
   get_incidences(Curve_segment_index id, IndicesOutputIterator out) const;
- 
+
   template <typename IndicesOutputIterator>
   IndicesOutputIterator
   get_corner_incidences(Curve_segment_index id, IndicesOutputIterator out) const;
 
   typedef std::set<Surface_patch_index> Surface_patch_index_set;
 
-  const Surface_patch_index_set& 
+  const Surface_patch_index_set&
   get_incidences(Curve_segment_index id) const;
 
   void display_corner_incidences(std::ostream& os, Corner_index id);
 
   template <typename InputIterator>
-  void 
+  void
   add_features(InputIterator first, InputIterator last)
   { add_features(first, last, CGAL::Emptyset_iterator()); }
 
@@ -578,8 +578,8 @@ private:
   /// Returns the sign of the geodesic distance between \c p and \c q
   /// Precondition: index is not a cycle
   CGAL::Sign distance_sign(const Point_3& p, const Point_3& q,
-                           const Curve_segment_index& index) const;  
-  
+                           const Curve_segment_index& index) const;
+
   /// Returns Index associated to p (p must be the coordinates of a corner
   /// point)
   Index point_corner_index(const Point_3& p) const;
@@ -597,7 +597,7 @@ private:
     Gt,
     typename Edges::const_iterator> Curves_primitives;
 
-  typedef CGAL::AABB_traits<Gt, 
+  typedef CGAL::AABB_traits<Gt,
                             Curves_primitives> AABB_curves_traits;
 
   Corners corners_;
@@ -621,17 +621,17 @@ public:
     if(!curves_aabb_tree_is_built) build_curves_aabb_tree();
     return curves_aabb_tree_;
   }
- 
+
   void build_curves_aabb_tree() const {
     std::cerr << "Building curves AABB tree...\n";
     curves_aabb_tree_.clear();
-    for(typename Edges::const_iterator 
+    for(typename Edges::const_iterator
           edges_it = edges_.begin(),
           edges_end = edges_.end();
         edges_it != edges_end; ++edges_it)
     {
       const Polyline& polyline = edges_it->second;
-      for(typename Polyline::const_iterator 
+      for(typename Polyline::const_iterator
             pit = polyline.points_.begin(),
             end = polyline.points_.end() - 1;
           pit != end; ++pit)
@@ -664,7 +664,7 @@ get_corners(OutputIterator out) const
   {
     *out++ = std::make_pair(cit->second,cit->first);
   }
-  
+
   return out;
 }
 
@@ -678,10 +678,10 @@ get_curve_segments(OutputIterator out) const
        eit = edges_.begin(), end = edges_.end() ; eit != end ; ++eit )
   {
     CGAL_assertion( eit->second.is_valid() );
-    
+
     const Point_3& p = eit->second.start_point();
     const Point_3& q = eit->second.end_point();
-    
+
     Index p_index, q_index;
     if ( ! eit->second.is_cycle() )
     {
@@ -693,15 +693,15 @@ get_curve_segments(OutputIterator out) const
       p_index = index_from_curve_segment_index(eit->first);
       q_index = p_index;
     }
-    
+
     *out++ = CGAL::cpp11::make_tuple(eit->first,
                                      std::make_pair(p,p_index),
                                      std::make_pair(q,q_index));
   }
-  
+
   return out;
 }
-  
+
 
 template <class MD_>
 typename Mesh_domain_with_polyline_features_3<MD_>::Index
@@ -714,7 +714,7 @@ point_corner_index(const Point_3& p) const
     CGAL_assertion(false);
     return Index();
   }
-  
+
   return p_index_it->second;
 }
 
@@ -728,7 +728,7 @@ geodesic_distance(const Point_3& p, const Point_3& q,
   // Get corresponding polyline
   typename Edges::const_iterator eit = edges_.find(curve_index);
   CGAL_assertion(eit != edges_.end());
-  
+
   // Compute geodesic_distance
   return eit->second.geodesic_distance(p,q);
 }
@@ -744,7 +744,7 @@ construct_point_on_curve_segment(const Point_3& starting_point,
   // Get corresponding polyline
   typename Edges::const_iterator eit = edges_.find(curve_index);
   CGAL_assertion(eit != edges_.end());
-  
+
   // Return point at geodesic_distance distance from starting_point
   return eit->second.point_at(starting_point,distance);
 }
@@ -778,7 +778,7 @@ add_features_with_context(InputIterator first, InputIterator last,
   // Insert one edge for each element
   for( ; first != last ; ++first )
   {
-    Curve_segment_index curve_id = 
+    Curve_segment_index curve_id =
       insert_edge(first->polyline_content.begin(), first->polyline_content.end());
     edges_incidences_[curve_id] = first->context.adjacent_patches_ids;
     *indices_out++ = curve_id;
@@ -900,7 +900,7 @@ void
 Mesh_domain_with_polyline_features_3<MD_>::
 compute_corners_incidences()
 {
-  for(typename Corners::iterator 
+  for(typename Corners::iterator
         cit = corners_.begin(), end = corners_.end();
       cit != end; /* the loop variable is incremented in the  body */)
   {
@@ -925,7 +925,7 @@ compute_corners_incidences()
 
     BOOST_FOREACH(Curve_segment_index curve_index, corner_tmp_incidences)
     {
-      get_incidences(curve_index, 
+      get_incidences(curve_index,
                      std::inserter(incidences,
                                    incidences.begin()));
     }
@@ -939,7 +939,7 @@ compute_corners_incidences()
 }
 
 template <class MD_>
-const typename Mesh_domain_with_polyline_features_3<MD_>::Surface_patch_index_set& 
+const typename Mesh_domain_with_polyline_features_3<MD_>::Surface_patch_index_set&
 Mesh_domain_with_polyline_features_3<MD_>::
 get_incidences(Curve_segment_index id) const
 {
@@ -952,7 +952,7 @@ void
 Mesh_domain_with_polyline_features_3<MD_>::
 register_corner(const Point_3& p, const Curve_segment_index& curve_index)
 {
-  
+
   typename Corners::iterator cit = corners_.lower_bound(p);
 
   // If the corner already exists, returns...
@@ -977,9 +977,9 @@ Mesh_domain_with_polyline_features_3<MD_>::
 insert_edge(InputIterator first, InputIterator last)
 {
   CGAL_assertion(std::distance(first,last) > 1);
-  
+
   const Curve_segment_index curve_index = current_curve_index_++;
-  
+
   // Fill corners
   //
   // For a cycle, the "first" point of the cycle is registered as a
@@ -991,11 +991,11 @@ insert_edge(InputIterator first, InputIterator last)
   {
     register_corner(*boost::prior(last), curve_index);
   }
-  
+
   // Create a new polyline
   std::pair<typename Edges::iterator,bool> insertion =
     edges_.insert(std::make_pair(curve_index,Polyline()));
-  
+
   // Fill polyline with data
   while ( first != last )
   {
@@ -1014,7 +1014,7 @@ distance_sign(const Point_3& p, const Point_3& q,
   typename Edges::const_iterator eit = edges_.find(index);
   CGAL_assertion(eit != edges_.end());
   CGAL_precondition( ! eit->second.is_cycle() );
-  
+
   if ( p == q )
     return CGAL::ZERO;
   else if ( eit->second.are_ordered_along(p,q) )
@@ -1034,17 +1034,17 @@ distance_sign_along_cycle(const Point_3& p,
   // Find edge
   typename Edges::const_iterator eit = edges_.find(index);
   CGAL_assertion(eit != edges_.end());
-  
+
   // If eit is not a cycle, then the orientation corresponds to the sign
   // of the distance
   if ( ! eit->second.is_cycle() )
   {
     return distance_sign(p,r,index);
   }
-  
+
   // If p and r are the same point, it correspond to a complete loop on a cycle
   if ( p == r ) { return CGAL::POSITIVE; }
-  
+
   // We are on a cycle without any clue (p==q). Return the shortest path as
   // orientation.
   if ( p == q )
@@ -1054,15 +1054,15 @@ distance_sign_along_cycle(const Point_3& p,
     if ( pr < rp ) { return CGAL::POSITIVE; }
     else { return CGAL::NEGATIVE; }
   }
-  
+
   // If pq or pr is negative, edge is not a cycle, thus geodesic_distance
   // gives the answer.
   FT pq = eit->second.geodesic_distance(p,q);
   FT pr = eit->second.geodesic_distance(p,r);
   CGAL_assertion(pq > FT(0));
   CGAL_assertion(pr > FT(0));
-  
-  // Compare pq and pr 
+
+  // Compare pq and pr
   if ( pq <= pr ) { return CGAL::POSITIVE; }
   else { return CGAL::NEGATIVE; }
 }
@@ -1075,7 +1075,7 @@ is_cycle(const Point_3&, const Curve_segment_index& index) const
   // Find edge
   typename Edges::const_iterator eit = edges_.find(index);
   CGAL_assertion(eit != edges_.end());
-  
+
   return eit->second.is_cycle();
 }
 
