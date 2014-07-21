@@ -54,7 +54,7 @@ void print_edge(Edge edge) {
 	int i = edge.second;
 	Point a = edge.first->vertex((i+1)%3)->point();
 	Point b = edge.first->vertex((i+2)%3)->point();
-	std::cout << "( " << a << " , " << b << " )" << std::endl;
+	std::cout << a << " " << b << std::endl;
 
 }
 
@@ -125,21 +125,15 @@ int main ()
     				  vi != rt2.vertices_end(); ++vi) {
 
     	FT relevance = (*vi).get_relevance();
-		if (relevance <= 0)
-			continue;
-
-  		std::cout  <<  *vi << std::endl;
+		if (relevance > 0)
+			std::cout  <<  *vi << std::endl;
 
     }
 
     for (Finite_edges_iterator ei = rt2.finite_edges_begin(); ei != rt2.finite_edges_end(); ++ei) {
     	FT relevance = (*ei).first->relevance((*ei).second);
-    	if (relevance <= 0)
-    		continue;
-
-    	std::cout <<  relevance;
-    	print_edge(*ei);
-    	(*ei).first->relevance((*ei).second);
+    	if (relevance > 0)
+    		print_edge(*ei);
     }
 }
 
