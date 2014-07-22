@@ -199,6 +199,7 @@ MainWindow::MainWindow()
 
   if (has_file_argument) {
     open(file_to_open);
+    statusBar()->showMessage(file_to_open, 0);
   }
 }
 
