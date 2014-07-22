@@ -162,14 +162,14 @@ namespace CGAL {
         CGAL_assertion(bot_p != NULL);
         CGAL_assertion(top_p != NULL);
 
+        CGAL_SDG_DEBUG(std::cout << "debug bs " << " lft=" << *lft_p <<
+            "  rgt=" << *rgt_p << "  bot=" << *bot_p << "  top=" << *top_p
+            << std::endl; );
+
         bool is_lft_input (true);
         bool is_rgt_input (true);
         bool is_bot_input (true);
         bool is_top_input (true);
-
-        CGAL_SDG_DEBUG(std::cout << "debug bs " << " lft=" << *lft_p <<
-            "  rgt=" << *rgt_p << "  bot=" << *bot_p << "  top=" << *top_p
-            << std::endl; );
 
         // check if two points have the same x or y coordinate
         Point_2 const *s1;
