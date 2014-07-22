@@ -205,6 +205,7 @@ namespace CGAL {
                  ( compare_y_2(*dx, *s2) == SMALLER )   ) or
                ( ( compare_y_2(*dx, *s1) == LARGER  ) and
                  ( compare_y_2(*dx, *s2) == LARGER  )   )   )   {
+            CGAL_assertion( (bot_p == dx) or (top_p == dx) );
             dxmirror = Point_2 (dx->x(), s1->y() + s2->y() - dx->y());
             if (compare_y_2(dxmirror, *bot_p) == SMALLER) {
               bot_p = &dxmirror;
@@ -248,6 +249,7 @@ namespace CGAL {
                  ( compare_x_2(*dy, *s2) == SMALLER )   ) or
                ( ( compare_x_2(*dy, *s1) == LARGER  ) and
                  ( compare_x_2(*dy, *s2) == LARGER  )   )   )   {
+            CGAL_assertion( (lft_p == dy) or (rgt_p == dy) );
             dymirror = Point_2 (s1->x() + s2->x() - dy->x(), dy->y());
             if (compare_x_2(dymirror, *lft_p) == SMALLER) {
               lft_p = &dymirror;
