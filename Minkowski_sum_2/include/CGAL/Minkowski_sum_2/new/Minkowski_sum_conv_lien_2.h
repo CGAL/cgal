@@ -90,8 +90,8 @@ public:
         CGAL_precondition(pgn1.orientation() == CGAL::COUNTERCLOCKWISE);
         CGAL_precondition(pgn2.orientation() == CGAL::COUNTERCLOCKWISE);
 
-        const Polygon_2 inversed_p1 = transform(Aff_transformation_2<Kernel>(SCALING, -1), pgn1);
-        aabb_collision_detector = new AABBCollisionDetector<Kernel, Container>(pgn2, inversed_p1);
+        const Polygon_2 inversed_pgn1 = transform(Aff_transformation_2<Kernel>(SCALING, -1), pgn1);
+        aabb_collision_detector = new AABBCollisionDetector<Kernel, Container>(pgn2, inversed_pgn1);
 
         // compute the reduced convolution
         Segments_list reduced_conv;
@@ -106,7 +106,7 @@ public:
 
         // trace holes
         for (Face_iterator itr = arr.faces_begin(); itr != arr.faces_end(); ++itr) {
-            handle_face(arr, itr, inversed_p1, pgn2, sum_holes);
+            handle_face(arr, itr, inversed_pgn1, pgn2, sum_holes);
         }
 
         delete aabb_collision_detector;
