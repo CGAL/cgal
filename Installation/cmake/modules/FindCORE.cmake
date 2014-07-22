@@ -6,6 +6,7 @@
 # TODO: support Windows and MacOSX
 
 # CORE needs GMP
+
 include(FindPackageHandleStandardArgs)
 
 if(GMP_FOUND)

@@ -9,7 +9,6 @@
 
 include(FindPackageHandleStandardArgs)
 
-
 if(GMP_FOUND)
 
   if (CGAL_CORE_INCLUDE_DIR AND CGAL_CORE_LIBRARIES)

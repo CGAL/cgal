@@ -120,9 +120,10 @@ foreach(package ${CGAL_CONFIGURED_PACKAGES})
     if (NOT ${CGAL_CONFIGURED_LIBRARY_NAME} STREQUAL "CGAL")
 
      message(STATUS "Sources for CGAL component library '${CGAL_CONFIGURED_LIBRARY_NAME}' detected")
+	 
       list(APPEND CGAL_CONFIGURED_LIBRARIES ${CGAL_CONFIGURED_LIBRARY_NAME})
       #message(STATUS "Library config detected: ${CGAL_CONFIGURED_LIBRARIES}")
-	
+
       cache_set(${CGAL_CONFIGURED_LIBRARY_NAME}_LIBRARY                  "" )
       cache_set(${CGAL_CONFIGURED_LIBRARY_NAME}_3RD_PARTY_DEFINITIONS    "" )
       cache_set(${CGAL_CONFIGURED_LIBRARY_NAME}_3RD_PARTY_INCLUDE_DIRS   "" )
@@ -145,7 +146,6 @@ foreach(package ${CGAL_CONFIGURED_PACKAGES})
      cache_get(${CGAL_CONFIGURED_LIBRARY_NAME}_3RD_PARTY_INCLUDE_DIRS  )
      cache_get(${CGAL_CONFIGURED_LIBRARY_NAME}_3RD_PARTY_LIBRARIES     )
      cache_get(${CGAL_CONFIGURED_LIBRARY_NAME}_3RD_PARTY_LIBRARIES_DIRS) 
-
     else() 
  
       list(APPEND CGAL_CONFIGURED_LIBRARIES CGAL)
@@ -154,13 +154,16 @@ foreach(package ${CGAL_CONFIGURED_PACKAGES})
   endforeach()
 endforeach()
 
+
 if (NOT CGAL_CONFIGURED_LIBRARIES) 
    message(FATAL_ERROR "No component library in configured packages found. Please fix package-file.")
 endif()
 
 list(REMOVE_DUPLICATES CGAL_CONFIGURED_LIBRARIES)
 list(SORT CGAL_CONFIGURED_LIBRARIES)
+
 cache_set(CGAL_CONFIGURED_LIBRARIES "${CGAL_CONFIGURED_LIBRARIES}")
+
 
 message(STATUS "Sources for CGAL component libraries '${CGAL_CONFIGURED_LIBRARIES}' detected")
 

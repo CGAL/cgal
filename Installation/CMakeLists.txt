@@ -773,6 +773,11 @@ endif()
 # Set CGAL_LIBRARY_INSTALLED, CGAL_Qt3_LIBRARY_INSTALLED and so on. Those
 # variables are the path to the libraries installed by the install
 # target. Used in the generation of the installed CGALConfig.cmake
+ 
+ #Adding of this part for Windows platforms.
+ if(WIN32)
+	cache_get(CGAL_CONFIGURED_LIBRARIES ${CGAL_CONFIGURED_LIBRARIES})
+ endif(WIN32)
 
 foreach(lib ${CGAL_CONFIGURED_LIBRARIES} CGAL) # note the added fake 'CGAL'
  if(${lib}_LIBRARY)

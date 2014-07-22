@@ -299,8 +299,8 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
       #New for Qt5 version !
       if (${component} STREQUAL "Qt5")
         find_package( OpenGL )
-
-        FIND_PACKAGE( Qt5Core )
+		
+    FIND_PACKAGE( Qt5Core )
 	FIND_PACKAGE( Qt5Gui  )
 	FIND_PACKAGE( Qt5OpenGL )
 	FIND_PACKAGE( Qt5Widgets )
