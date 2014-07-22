@@ -19,6 +19,10 @@ else()
   cmake_policy(VERSION 2.6)
 endif()
 
+if(POLICY CMP0026)
+  cmake_policy(SET CMP0026 OLD)
+endif()
+
 #--------------------------------------------------------------------------------------------------
 #
 #                                    -= PACKAGE SETUP =-
