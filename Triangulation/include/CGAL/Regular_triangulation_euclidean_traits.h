@@ -172,7 +172,49 @@ public:
       return m_kernel.compare_lexicographically_d_object()(pdw(p), pdw(q));
     }
   };
+  
+  //=============================================================================
 
+  class Compute_coordinate_d
+  {
+    const K &m_kernel;
+
+  public:
+    typedef FT result_type;
+    
+    Compute_coordinate_d(const K &kernel)
+      : m_kernel(kernel) {}
+
+    result_type operator()(
+      const Weighted_point_d & p, const int i) const
+    {
+      Point_drop_weight_d pdw = m_kernel.point_drop_weight_d_object();
+      auto pp = pdw(p);
+      auto ddsd = m_kernel.compute_coordinate_d_object();
+      ddsd(pp, i);
+      return m_kernel.compute_coordinate_d_object()(pdw(p), i);
+    }
+  };
+
+  //=============================================================================
+
+  class Point_dimension_d
+  {
+    const K &m_kernel;
+
+  public:
+    typedef int result_type;
+    
+    Point_dimension_d(const K &kernel)
+      : m_kernel(kernel) {}
+
+    result_type operator()(
+      const Weighted_point_d & p) const
+    {
+      Point_drop_weight_d pdw = m_kernel.point_drop_weight_d_object();
+      return m_kernel.point_dimension_d_object()(pdw(p));
+    }
+  };
   
   //=============================================================================
   // Object creation
@@ -197,6 +239,14 @@ public:
   Compare_lexicographically_d compare_lexicographically_d_object() const
   { 
     return Compare_lexicographically_d(*this);
+  }
+  Compute_coordinate_d compute_coordinate_d_object() const
+  { 
+    return Compute_coordinate_d(*this);
+  }
+  Point_dimension_d point_dimension_d_object() const
+  { 
+    return Point_dimension_d(*this);
   }
 };
 

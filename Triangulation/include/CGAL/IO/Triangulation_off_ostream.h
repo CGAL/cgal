@@ -28,28 +28,51 @@
 
 namespace CGAL {
 
-template<typename K>
-std::ostream &
-operator<<(std::ostream & os, const typename Wrap::Point_d<K> & p)
+namespace Triangulation_IO
 {
-  typename K::Cartesian_const_iterator_d it = p.cartesian_begin();
-  os << *it;
-  ++it;
-  for ( ; it != p.cartesian_end() ; ++it)
+// TODO: test if the stream is binary or text?
+template<typename Traits, typename P>
+void
+output_point(std::ostream & os, const Traits &traits, const P & p)
+{
+  typedef typename Traits::Compute_coordinate_d Ccd;
+  const Ccd ccd = traits.compute_coordinate_d_object();
+  const int dim = traits.point_dimension_d_object()(p);
+  if (dim > 0)
   {
-    os << " " << *it;
+    os << ccd(p, 0);
+    for (int i = 1 ; i < dim ; ++i)
+      os << " " << CGAL::to_double(ccd(p, i));
   }
-  return os;
 }
 
-template<typename K>
-std::ostream &
-operator<<(std::ostream & os, const typename Wrap::Weighted_point_d<K> & p)
+// TODO: test if the stream is binary or text?
+/*template<typename Traits, typename P>
+void
+input_point(std::istream & is, const Traits &traits, P & p)
 {
-  return os << p.point();
-}
+  typedef typename Traits::FT FT;
+  std::vector<FT> coords;
+  
+  std::string line;
+  for(;;)
+  {
+    if (!std::getline(is, line))
+      return is;
+    if (line != "")
+      break;
+  }
+  std::stringstream line_sstr(line);
+  FT temp;
+  while (line_sstr >> temp)
+    coords.push_back(temp);
 
+  p = traits.construct_point_d_object()(coords.begin(), coords.end());
+}*/
 
+} // namespace Triangulation_IO
+
+// TODO: test if the stream is binary or text?
 template<typename K>
 std::istream &
 operator>>(std::istream &is, typename Wrap::Point_d<K> & p)
@@ -75,6 +98,7 @@ operator>>(std::istream &is, typename Wrap::Point_d<K> & p)
   return is;
 }
 
+// TODO: test if the stream is binary or text?
 template<typename K>
 std::istream &
 operator>>(std::istream &is, typename Wrap::Weighted_point_d<K> & wp)
@@ -137,7 +161,7 @@ export_triangulation_to_off(std::ostream & os,
   for(Finite_vertex_iterator it = tr.finite_vertices_begin(); 
       it != tr.finite_vertices_end(); ++it, ++i)
   {
-    output << *it;
+    Triangulation_IO::output_point(output, tr.geom_traits(), it->point());
     if (tr.maximal_dimension() == 2)
       output << " 0";
     output << std::endl;
