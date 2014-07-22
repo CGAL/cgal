@@ -253,8 +253,6 @@ protected:
 
 		clear();
 
-		normalize_points();
-
 		insert_loose_bbox(m_bbox_x, m_bbox_y, 2 * m_bbox_size);
 
 		init(start, beyond);
@@ -294,8 +292,12 @@ protected:
 	    double dy = -scale + (double(rand()) / double(RAND_MAX)) * 2* scale;
 	    return Vector(dx, dy);
 	}
+	 /// \endcond
 
-    void noise(const FT scale)
+	/*!
+			TODO COMMENT and change to perturb
+	 */
+	 void noise(const FT scale)
     {
         std::cerr << "noise by " << scale << "...";
          for (InputIterator it = start; it != beyond; it++)
@@ -306,6 +308,9 @@ protected:
         std::cerr << "done" << std::endl;
     }
 
+	/*!
+		TODO COMMENT
+	 */
 	void normalize_points()
     {
         noise(1e-5);
@@ -323,7 +328,7 @@ protected:
         m_bbox_size = 1.0;
     }
 
-
+	 /// \cond SKIP_IN_MANUAL
 	 void compute_bbox(double &x, double &y, double &scale)
      {
 
