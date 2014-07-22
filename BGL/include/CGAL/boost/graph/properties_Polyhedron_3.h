@@ -123,49 +123,6 @@ struct Edge_index_accessor
   reference operator[](Handle h) const { return h.id(); }
 };
 
-template<typename Polyhedron, typename Handle>
-struct Is_border_accessor
-{
-
-  typedef boost::read_write_property_map_tag category;
-  typedef bool                             value_type;
-  typedef bool                             reference;
-  typedef Handle                           key_type;
-
-  friend reference get(const Is_border_accessor& , Handle h)
-  {
-    return h->is_border(); 
-  }
-  friend void put(const Is_border_accessor& , Handle h, bool b)
-  {
-     typedef typename Polyhedron::Halfedge::Base Sneak;
-     if(b){
-       static_cast<Sneak&>(*h).set_face(boost::graph_traits<Polyhedron>::null_face());
-     }
-  }
-private:
-  //  const Polyhedron& p;
-};
-
-
-template<typename Polyhedron, typename Handle>
-struct Is_border_edge_accessor
-  : boost::put_get_helper< bool, Is_border_edge_accessor<Polyhedron,Handle> >
-{
-  typedef boost::readable_property_map_tag category;
-  typedef bool                             value_type;
-  typedef bool                             reference;
-  typedef Handle                           key_type;
-
-  reference operator[](const Handle& h) const 
-  {
-    return h.halfedge()->is_border() || h.halfedge()->opposite()->is_border();
-  }
-};
-
-
-
-
 template<typename Handle, typename ValueType, typename Reference>
 struct Point_accessor
   : boost::put_get_helper< Reference, Point_accessor<Handle, ValueType, Reference> >
@@ -239,9 +196,6 @@ void put(PropertyTag p, CGAL::Polyhedron_3<Gt,I,HDS,A>& g, const Key& key, const
 CGAL_POLYHEDRON_INDEX_PM(halfedge, _index_t, Index)
 CGAL_POLYHEDRON_INDEX_PM(vertex, _index_t, Index)
 CGAL_POLYHEDRON_INDEX_PM(face, _index_t, Index)
-CGAL_POLYHEDRON_INDEX_PM(halfedge, _is_border_t, Is_border)
-
-CGAL_POLYHEDRON_INDEX_PM(edge, _is_border_t, Is_border_edge)
 
 #undef CGAL_POLYHEDRON_INDEX_PM
 

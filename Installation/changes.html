@@ -144,7 +144,7 @@ and <code>src/</code> directories).
       <li>Deprecation of <code>halfedge_graph_traits</code>.</li>
       <li>A model of <code>HalfedgeGraph</code> is considered as an undirected graph. Thus any call to <code>edges()</code>
           should be replaced by <code>halfedges()</code> and <code>num_edges()</code> now returns the number of (undirected) edges.
-      <li>Deprecation of the <code>is_border_edge</code> and <code>is_border_halfedge</code> properties.
+      <li>Breaking change: <code>is_border_edge</code> and <code>is_border_halfedge</code> properties are removed.
           The free functions <code>is_border()</code> and <code>is_border_edge()</code> should be used instead.</li>
       <li>Renaming of <code>HalfedgeGraph</code> specific free functions.</li>
     </ul>

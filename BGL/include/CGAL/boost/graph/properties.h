@@ -33,10 +33,6 @@ namespace boost {
 /// \ingroup PkgBGLProperties
 /// @{
 
-/// A property tag which refers to the property
-/// of a vertex of being a border vertex.
-enum vertex_is_border_t      { vertex_is_border      };
-
 /// A property tag which refers to the geometric embedding property
 /// of a vertex of a \ref HalfedgeGraph.
 enum vertex_point_t          { vertex_point          };
@@ -55,9 +51,6 @@ enum halfedge_external_index_t   { halfedge_external_index   } ;
 /// a face of a \ref FaceGraph.
 enum face_index_t            { face_index            };
 enum face_external_index_t   { face_external_index   } ;
-
-  /// backward compatibily
-enum edge_is_border_t    { edge_is_border    };
 
   template <typename T>
   struct vertex_property_t
@@ -78,10 +71,8 @@ enum edge_is_border_t    { edge_is_border    };
 struct halfedge_property_tag { };
 struct face_property_tag { };
 
-BOOST_INSTALL_PROPERTY(vertex, is_border);
 BOOST_INSTALL_PROPERTY(vertex, point);
 BOOST_INSTALL_PROPERTY(vertex, external_index);
-BOOST_INSTALL_PROPERTY(halfedge, is_border);
 BOOST_INSTALL_PROPERTY(halfedge, external_index);
 BOOST_INSTALL_PROPERTY(edge, external_index);
 BOOST_INSTALL_PROPERTY(face, index);
@@ -89,8 +80,6 @@ BOOST_INSTALL_PROPERTY(face, external_index);
 } // boost
 
 namespace CGAL {
-using boost::vertex_is_border_t;
-using boost::vertex_is_border;
 using boost::vertex_point_t;
 using boost::vertex_point;
 using boost::vertex_external_index_t;
@@ -106,10 +95,6 @@ using boost::face_index;
 using boost::face_external_index_t;
 using boost::face_external_index;
 using boost::vertex_property_t;
-
-  // backward compatibily
-  using boost::edge_is_border_t;
-  using boost::edge_is_border;
 } // CGAL
 
 #endif // CGAL_BOOST_GRAPH_BGL_PROPERTIES_H

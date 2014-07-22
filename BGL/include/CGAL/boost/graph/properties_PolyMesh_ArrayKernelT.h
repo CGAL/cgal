@@ -265,7 +265,6 @@ get(boost::vertex_point_t, const OpenMesh::PolyMesh_ArrayKernelT<K>& g)
   CGAL_OM_INTRINSIC_PROPERTY(std::size_t, boost::face_index_t, face_descriptor)
   //  CGAL_OM_INTRINSIC_PROPERTY(std::size_t, boost::halfedge_index_t, face_descriptor)
   CGAL_OM_INTRINSIC_PROPERTY(typename CGAL::Exact_predicates_inexact_constructions_kernel::Point_3, boost::vertex_point_t, vertex_descriptor)
-  CGAL_OM_INTRINSIC_PROPERTY(bool, boost::vertex_is_border_t, vertex_descriptor)
 
 #undef CGAL_OM_INTRINSIC_PROPERTY
 

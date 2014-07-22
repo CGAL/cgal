@@ -98,22 +98,6 @@ private:
   CGAL::Unique_hash_map<key_type,std::size_t> map ;
 };
 
-template <class CMap>
-class CMap_dart_is_border_map : public boost::put_get_helper<bool, CMap_dart_is_border_map<CMap> >
-{
-public:
-
-  typedef boost::readable_property_map_tag                                category;
-  typedef bool                                                            value_type;
-  typedef bool                                                            reference;
-  typedef typename boost::graph_traits<CMap const>::edge_descriptor key_type;
-
-  CMap_dart_is_border_map(){}
-  CMap_dart_is_border_map(CMap const& ) {}
-
-  reference operator[](key_type const& e) const { return e->is_free(CMap::dimension); }
-};
-
 template<class LCC>
 class LCC_vertex_point_map : public boost::put_get_helper< typename LCC::Point&, LCC_vertex_point_map<LCC> >
 {
@@ -181,20 +165,6 @@ struct CMap_property_map<CMap, boost::vertex_index_t>
   typedef CMap_dart_index_map_external<CMap> const_type;
 };
 
-template <class CMap>
-struct CMap_property_map<CMap, edge_is_border_t> 
-{
-  typedef CMap_dart_is_border_map<CMap> type;
-  typedef CMap_dart_is_border_map<CMap> const_type;
-};
-
-template <class CMap>
-struct CMap_property_map<CMap, vertex_is_border_t> 
-{
-  typedef CMap_dart_is_border_map<CMap> type;
-  typedef CMap_dart_is_border_map<CMap> const_type;
-};
-
 // For LCC
 template <class LCC>
 struct CMap_property_map<LCC, boost::edge_weight_t>
@@ -231,18 +201,6 @@ struct property_map<CGAL_LCC_TYPE, Tag> : CGAL::CMap_property_map_helper<CGAL_LC
 template<CGAL_LCC_ARGS, class Tag>
 struct property_map<const CGAL_LCC_TYPE, Tag> : CGAL::CMap_property_map_helper<CGAL_LCC_TYPE, Tag>
 {};
-
-template<CGAL_LCC_ARGS>
-CGAL::CMap_dart_is_border_map<CGAL_LCC_TYPE> get(CGAL::edge_is_border_t, CGAL_LCC_TYPE const& lcc) 
-{
-  return CGAL::CMap_dart_is_border_map<CGAL_LCC_TYPE>(lcc);
-}
-
-template<CGAL_LCC_ARGS>
-CGAL::CMap_dart_is_border_map<CGAL_LCC_TYPE> get(CGAL::vertex_is_border_t, CGAL_LCC_TYPE const& lcc) 
-{
-  return CGAL::CMap_dart_is_border_map<CGAL_LCC_TYPE>(lcc);
-}
 
 template<CGAL_LCC_ARGS>
 CGAL::CMap_dart_index_map_external<CGAL_LCC_TYPE> get(CGAL::edge_external_index_t, CGAL_LCC_TYPE const& cmap) 
