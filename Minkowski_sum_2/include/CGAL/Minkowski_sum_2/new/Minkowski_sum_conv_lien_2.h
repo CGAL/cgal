@@ -102,14 +102,11 @@ public:
         CGAL::insert(arr, reduced_conv.begin(), reduced_conv.end());
 
         // trace outer loop
-        markOutsideLoop(arr, sum_bound);
-
-        // turn pgn1 by 180 degrees
-        Polygon_2 rotated_pgn1 = transform(Aff_transformation_2<Kernel>(ROTATION, 0, -1), pgn1);
+        get_outer_loop(arr, sum_bound);
 
         // trace holes
         for (Face_iterator itr = arr.faces_begin(); itr != arr.faces_end(); ++itr) {
-            handleFace(arr, itr, rotated_pgn1, pgn2, sum_holes);
+            handle_face(arr, itr, inversed_p1, pgn2, sum_holes);
         }
 
         delete aabb_collision_detector;
@@ -226,7 +223,7 @@ private:
     }
 
     // Put the outside loop of the arrangement in 'out_bound'
-    void markOutsideLoop(Arrangement_history_2 &arr, Polygon_2 &out_bound) {
+    void get_outer_loop(Arrangement_history_2 &arr, Polygon_2 &out_bound) {
         Ccb_halfedge_circulator circ_start = *(arr.unbounded_face()->holes_begin());
         Ccb_halfedge_circulator circ = circ_start;
 
@@ -237,7 +234,7 @@ private:
 
     // Check whether the face is on the M-sum's border. Add it to 'holes' if it is.
     template <class OutputIterator>
-    void handleFace(Arrangement_history_2 &arr, Face_handle itr, const Polygon_2 &reverse_pgn1, const Polygon_2 &pgn2, OutputIterator holes) {
+    void handle_face(Arrangement_history_2 &arr, Face_handle itr, const Polygon_2 &reverse_pgn1, const Polygon_2 &pgn2, OutputIterator holes) {
 
         // If the face contains holes, it can't be on the Minkowski sum's border
         if (itr->holes_begin() != itr->holes_end()) {
@@ -284,115 +281,14 @@ private:
         return true;
     }
 
-
     /*
-    This version assumes poly1 is reflected through origin. (as called from nested loops filter)
+    This version assumes poly1 is reflected through origin.
     */
     bool checkCollisionDetection(Arrangement_history_2 &arr, Halfedge_handle &handle, const Polygon_2 &pgn1, const Polygon_2 &pgn2) const {
-        Point_2 mid_point = findInsidePoint(arr, handle);
+        Point_2 mid_point = handle->source()->point();
         Polygon_2 t_pgn1 = transform(typename Kernel::Aff_transformation_2(CGAL::Translation(), Vector_2(CGAL::ORIGIN, mid_point)), pgn1);
         aabb_collision_detector->setTranslationPoint(mid_point);
         return aabb_collision_detector->checkCollision(t_pgn1, pgn2);
-    }
-
-    Point_2 findInsidePoint(Arrangement_history_2 &arr, Halfedge_handle &handle) const {
-        Ccb_halfedge_circulator currHandle = handle->ccb();
-        Ccb_halfedge_circulator nextHandle = currHandle;
-        ++nextHandle;
-
-        while (currHandle->direction() != nextHandle->direction()) {
-            ++currHandle;
-            ++nextHandle;
-
-            if (!check_convex(currHandle->source()->point(), currHandle->target()->point(), nextHandle->target()->point())) {
-                break;
-            }
-        }
-
-        Point_2 p = currHandle->source()->point();
-        Point_2 p2 = currHandle->target()->point();
-        Point_2 work_point = p2;
-
-        Ccb_halfedge_circulator best_edge = handle;
-        bool has_some_point = false;
-        Ccb_halfedge_circulator circ = nextHandle;
-        Ccb_halfedge_circulator end = handle;
-
-        bool shoot_upwards = (currHandle->direction() == ARR_LEFT_TO_RIGHT);
-
-        if (nextHandle->curve().is_vertical()) {
-            work_point = CGAL::midpoint(p, p2);
-        }
-
-        if (currHandle->curve().is_vertical()) {
-            p = nextHandle->source()->point();
-            p2 = nextHandle->target()->point();
-            work_point = CGAL::midpoint(p, p2);
-            ++best_edge;
-            ++circ;
-            ++end;
-        }
-
-        ++circ;
-
-        while (circ != end) {
-            Base_Segment_2 circ_curve = circ->curve();
-
-            if (f_compare_x(work_point, circ_curve.min()) != f_compare_x(work_point, circ_curve.max())) {
-                // we have an edge with same x range as endpoint of
-                bool above_first = (f_compare_y_at_x(work_point, circ_curve) == SMALLER);
-
-                if (has_some_point) {
-                    bool under_best;
-                    Base_Segment_2 best_edge_curve = best_edge->curve();
-
-                    if (f_compare_x(best_edge_curve.min(), circ_curve.min()) != f_compare_x(best_edge_curve.max(), circ_curve.min())) {
-                        under_best = f_compare_y_at_x(circ_curve.min(), best_edge_curve) == SMALLER;
-                    } else {
-                        under_best = f_compare_y_at_x(best_edge_curve.min(), circ_curve) != SMALLER;
-                    }
-
-                    if ((shoot_upwards && above_first && under_best) || (!shoot_upwards && !above_first && !under_best)) {
-                        best_edge = circ;
-                    }
-                } else {
-                    has_some_point = true;
-                    best_edge = circ;
-                }
-            }
-
-            ++circ;
-        }
-
-        if (best_edge->curve().is_vertical()) {
-            Base_Segment_2 best_edge_curve = best_edge->curve();
-            typename Kernel::FT x0 = f_compute_x(work_point);
-            typename Kernel::FT y_point = f_compute_y(work_point);
-
-            if (shoot_upwards) {
-                typename Kernel::FT y_best = f_compute_y(best_edge_curve.min());
-                typename Kernel::FT y = (y_best - y_point) / 2 + y_point;
-                return Point_2(x0, y);
-            } else {
-                typename Kernel::FT y_best = f_compute_y(best_edge_curve.min());
-                typename Kernel::FT y = (y_point - y_best) / 2 + y_best;
-                return Point_2(x0, y);
-            }
-
-            return work_point;
-        }
-
-        Base_Segment_2 best_edge_curve = best_edge->curve();
-        typename Kernel::FT x0 = f_compute_x(work_point);
-        typename Kernel::FT x1 = f_compute_x(best_edge_curve.min());
-        typename Kernel::FT x2 = f_compute_x(best_edge_curve.max());
-        typename Kernel::FT alpha = (x0 - x2) / (x1 - x2);
-
-        typename Kernel::FT y_best = alpha * f_compute_y(best_edge_curve.min()) + (1 - alpha) * f_compute_y(best_edge_curve.max());
-        typename Kernel::FT y_point = f_compute_y(work_point);
-        typename Kernel::FT y = (y_best - y_point) / 2 + y_point;
-
-        return Point_2(x0, y);
     }
 };
 
