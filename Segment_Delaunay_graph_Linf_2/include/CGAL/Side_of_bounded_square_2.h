@@ -27,6 +27,108 @@ namespace CGAL {
 
       Orientation_Linf_2_Type orientation_Linf;
 
+      template <class Compare>
+      inline void minmax(
+          const Point_2 &p, const Point_2 &q, const Point_2 &r,
+          Point_2 const * & min_p, Point_2 const * & max_p,
+          bool & samepq, bool & samepr, bool & sameqr
+          ) const
+      {
+        Compare cmp;
+        samepq = false;
+        samepr = false;
+        sameqr = false;
+        const Comparison_result cmppq = cmp(p, q);
+        switch(cmppq) {
+          case SMALLER:
+            min_p = &p;
+            max_p = &q;
+            break;
+          case LARGER:
+            min_p = &q;
+            max_p = &p;
+            break;
+          default: // EQUAL
+            min_p = &p;
+            max_p = &q;
+            samepq = true;
+            break;
+        }
+        const Comparison_result cmppr = cmp(p, r);
+        Comparison_result cmpqr;
+        if (samepq) {
+          cmpqr = cmppr;
+          switch(cmppr) {
+            case SMALLER:
+              max_p = &r;
+              break;
+            case LARGER:
+              min_p = &r;
+              break;
+            default: // EQUAL is impossible
+              CGAL_assertion(false);
+              break;
+          }
+        } else {
+          if (min_p == &p) {
+            switch(cmppr) {
+              case SMALLER:
+                cmpqr = cmp(q, r);
+                switch(cmpqr) {
+                  case SMALLER:
+                    max_p = &r;
+                    break;
+                  case LARGER:
+                    break;
+                  default:
+                    // q and r have the same coord
+                    sameqr = true;
+                    break;
+                }
+                break;
+              case LARGER:
+                cmpqr = cmppr;
+                min_p = &r;
+                break;
+              default:
+                // p and r have the same coord
+                cmpqr = - cmppr;
+                samepr = true;
+                break;
+            }
+          } else { // min_p == &q
+            switch(cmppr) {
+              case SMALLER:
+                cmpqr = cmppr;
+                max_p = &r;
+                break;
+              case LARGER:
+                cmpqr = cmp(q, r);
+                switch(cmpqr) {
+                  case SMALLER:
+                    break;
+                  case LARGER:
+                    min_p = &r;
+                    break;
+                  default:
+                    // q and r have the same coord
+                    sameqr = true;
+                    break;
+                }
+                break;
+              default:
+                // p and r have the same coord
+                cmpqr = - cmppq;
+                samepr = true;
+                break;
+            }
+          }
+        }
+        CGAL_assertion(min_p != NULL);
+        CGAL_assertion(max_p != NULL);
+        CGAL_SDG_DEBUG(std::cout << "debug minmax cmppq=" << cmppq
+            << " cmppr=" << cmppr << " cmpqr=" << cmpqr << std::endl; );
+      }
 
       inline Bounded_side predicate(const Point_2 &p, const Point_2 &q,
                   const Point_2 &r, const Point_2 &t) const
@@ -39,196 +141,26 @@ namespace CGAL {
         CGAL_assertion(orientation_Linf(p,q,r) != DEGENERATE);
 
         //compute the minimum x and maximum x
-        Point_2 const * lft_p;
-        Point_2 const * rgt_p;
+        Point_2 const * lft_p (NULL);
+        Point_2 const * rgt_p (NULL);
         bool samex_pq (false);
         bool samex_pr (false);
         bool samex_qr (false);
-        Comparison_result cmpxpq = compare_x_2(p, q);
-        switch(cmpxpq) {
-          case SMALLER:
-            lft_p = &p;
-            rgt_p = &q;
-            break;
-          case LARGER:
-            lft_p = &q;
-            rgt_p = &p;
-            break;
-          default: // EQUAL
-            lft_p = &p;
-            rgt_p = &q;
-            samex_pq = true;
-            break;
-        }
-        Comparison_result cmpxpr = compare_x_2(p, r);
-        Comparison_result cmpxqr;
-        if (samex_pq) {
-          cmpxqr = cmpxpr;
-          switch(cmpxpr) {
-            case SMALLER:
-              rgt_p = &r;
-              break;
-            case LARGER:
-              lft_p = &r;
-              break;
-            default: // EQUAL is impossible
-              CGAL_assertion(false);
-              break;
-          }
-        } else {
-          if (lft_p == &p) {
-            switch(cmpxpr) {
-              case SMALLER:
-                cmpxqr = compare_x_2(q, r);
-                switch(cmpxqr) {
-                  case SMALLER:
-                    rgt_p = &r;
-                    break;
-                  case LARGER:
-                    break;
-                  default:
-                    // q and r have the same x coord
-                    samex_qr = true;
-                    break;
-                }
-                break;
-              case LARGER:
-                cmpxqr = cmpxpr;
-                lft_p = &r;
-                break;
-              default:
-                // p and r have the same x coord
-                cmpxqr = - cmpxpr;
-                samex_pr = true;
-                break;
-            }
-          } else { // lft_p == &q
-            switch(cmpxpr) {
-              case SMALLER:
-                cmpxqr = cmpxpr;
-                rgt_p = &r;
-                break;
-              case LARGER:
-                cmpxqr = compare_x_2(q, r);
-                switch(cmpxqr) {
-                  case SMALLER:
-                    break;
-                  case LARGER:
-                    lft_p = &r;
-                    break;
-                  default:
-                    // q and r have the same x coord
-                    samex_qr = true;
-                    break;
-                }
-                break;
-              default:
-                // p and r have the same x coord
-                cmpxqr = - cmpxpq;
-                samex_pr = true;
-                break;
-            }
-          }
-        }
+        minmax<Compare_x_2>(p, q, r,
+            lft_p, rgt_p, samex_pq, samex_pr, samex_qr);
+        CGAL_assertion(lft_p != NULL);
+        CGAL_assertion(rgt_p != NULL);
 
         //compute the minimum y and maximum y
-        Point_2 const * bot_p;
-        Point_2 const * top_p;
+        Point_2 const * bot_p (NULL);
+        Point_2 const * top_p (NULL);
         bool samey_pq (false);
         bool samey_pr (false);
         bool samey_qr (false);
-        Comparison_result cmpypq = compare_y_2(p, q);
-        switch(cmpypq) {
-          case SMALLER:
-            bot_p = &p;
-            top_p = &q;
-            break;
-          case LARGER:
-            bot_p = &q;
-            top_p = &p;
-            break;
-          default: // EQUAL
-            bot_p = &p;
-            top_p = &q;
-            samey_pq = true;
-            break;
-        }
-        Comparison_result cmpypr = compare_y_2(p, r);
-        CGAL_SDG_DEBUG( std::cout << "debug bs " << " p=" << p
-            << "  r=" << r << "  cmpypr=" << cmpypr << std::endl ; );
-        Comparison_result cmpyqr;
-        if (samey_pq) {
-          cmpyqr = cmpypr;
-          switch(cmpypr) {
-            case SMALLER:
-              top_p = &r;
-              break;
-            case LARGER:
-              bot_p = &r;
-              break;
-            default: // EQUAL is impossible
-              CGAL_assertion(false);
-              break;
-          }
-        } else {
-          if (bot_p == &p) {
-            switch(cmpypr) {
-              case SMALLER:
-                cmpyqr = compare_y_2(q, r);
-                switch(cmpyqr) {
-                  case SMALLER:
-                    top_p = &r;
-                    break;
-                  case LARGER:
-                    break;
-                  default:
-                    // q and r have the same y coord
-                    samey_qr = true;
-                    break;
-                }
-                break;
-              case LARGER:
-                cmpyqr = cmpypr;
-                bot_p = &r;
-                break;
-              default:
-                // p and r have the same y coord
-                cmpyqr = - cmpypq;
-                samey_pr = true;
-                break;
-            }
-          } else { // bot_p == &q
-            CGAL_SDG_DEBUG(std::cout << "debug cmpypr=" << cmpypr
-                << " and q is lower than p" << std::endl; );
-            switch(cmpypr) {
-              case SMALLER:
-                cmpyqr = cmpypr;
-                top_p = &r;
-                break;
-              case LARGER:
-                cmpyqr = compare_y_2(q, r);
-                CGAL_SDG_DEBUG( std::cout << "debug bs " << " q=" << q
-                    << "  r=" << r << "  cmpyqr=" << cmpyqr << std::endl ; );
-                switch(cmpyqr) {
-                  case SMALLER:
-                    break;
-                  case LARGER:
-                    bot_p = &r;
-                    break;
-                  default:
-                    // q and r have the same y coord
-                    samey_qr = true;
-                    break;
-                }
-                break;
-              default:
-                // p and r have the same y coord
-                cmpyqr = - cmpypq;
-                samey_pr = true;
-                break;
-            }
-          }
-        }
+        minmax<Compare_y_2>(p, q, r,
+            bot_p, top_p, samey_pq, samey_pr, samey_qr);
+        CGAL_assertion(bot_p != NULL);
+        CGAL_assertion(top_p != NULL);
 
         bool is_lft_input (true);
         bool is_rgt_input (true);
@@ -237,9 +169,6 @@ namespace CGAL {
 
         CGAL_SDG_DEBUG(std::cout << "debug bs " << " lft=" << *lft_p <<
             "  rgt=" << *rgt_p << "  bot=" << *bot_p << "  top=" << *top_p
-            << std::endl; );
-        CGAL_SDG_DEBUG(std::cout << "debug bs cmpypq=" << cmpypq <<
-            " cmpypr=" << cmpypr << " cmpyqr=" << cmpyqr
             << std::endl; );
 
         // check if two points have the same x or y coordinate
