@@ -252,6 +252,9 @@ protected:
 	void initialize() {
 
 		clear();
+
+		normalize_points();
+
 		insert_loose_bbox(m_bbox_x, m_bbox_y, 2 * m_bbox_size);
 
 		init(start, beyond);
@@ -263,11 +266,8 @@ protected:
 			Sample* s = new Sample(point, mass);
 			m_samples.push_back(s);
 		}
-
 		assign_samples(m_samples.begin(), m_samples.end());
-
 	}
-
 
 	/*!
 
@@ -286,22 +286,38 @@ protected:
 		output.store_marked_elements(m_dt, m_ignore);
 	}
 
-
 	 /// \cond SKIP_IN_MANUAL
+	template <class Vector>
+	Vector random_vec(const double scale)
+	{
+	    double dx = -scale + (double(rand()) / double(RAND_MAX)) * 2* scale;
+	    double dy = -scale + (double(rand()) / double(RAND_MAX)) * 2* scale;
+	    return Vector(dx, dy);
+	}
+
+    void noise(const FT scale)
+    {
+        std::cerr << "noise by " << scale << "...";
+         for (InputIterator it = start; it != beyond; it++)
+        {
+            Point point = get(point_pmap, *it);
+            point = point + random_vec<Vector>(scale);
+        }
+        std::cerr << "done" << std::endl;
+    }
 
 	void normalize_points()
     {
-        //noise(1e-5); TODO IV, killed that noise
+        noise(1e-5);
         compute_bbox(m_bbox_x, m_bbox_y, m_bbox_size);
         if (m_bbox_size == 0.0) return;
 
         Point center(m_bbox_x, m_bbox_y);
-        InputIterator it;
-        for (it = start; it != beyond; ++it)
+        for (InputIterator it = start; it != beyond; ++it)
         {
-            Sample& sample = *it;
-            Vector vec = (sample.point() - center) / m_bbox_size;
-            sample.point() = CGAL::ORIGIN + vec;
+        	Point point = get(point_pmap, *it);
+			Vector vec = (point - center) / m_bbox_size;
+			point = CGAL::ORIGIN + vec;
         }
         m_bbox_x = m_bbox_y = 0.0;
         m_bbox_size = 1.0;
@@ -309,17 +325,17 @@ protected:
 
 
 	 void compute_bbox(double &x, double &y, double &scale)
-    {
+     {
 
         FT x_min, x_max, y_min, y_max;
         InputIterator it = start;
-        Point p = it->point();
+        Point p = get(point_pmap, *it);
         x_min = x_max = p.x();
         y_min = y_max = p.y();
         ++it;
         for ( ; it != beyond; ++it)
         {
-            p = it->point();
+        	p = get(point_pmap, *it);
             x_min = (std::min)(x_min, p.x());
             x_max = (std::max)(x_max, p.x());
             y_min = (std::min)(y_min, p.y());
