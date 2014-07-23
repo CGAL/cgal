@@ -35,13 +35,13 @@ namespace internal {
   
 /**
 * Split the edge
-* @param polyhedron the mesh containing the given edge
+* @param hg the mesh containing the given edge
 * @param ei the edge to be split
 * @param pn the position of the new vertex created by the split
 */
 template<class HalfedgeGraph, class HalfedgeGraphPointPMap>
 typename boost::graph_traits<HalfedgeGraph>::halfedge_descriptor
-mesh_split(HalfedgeGraph& polyhedron, 
+mesh_split(HalfedgeGraph& hg, 
            HalfedgeGraphPointPMap& hg_point_pmap,
            typename boost::graph_traits<HalfedgeGraph>::halfedge_descriptor ei,
            typename HalfedgeGraph::Traits::Point_3 pn)
@@ -49,10 +49,10 @@ mesh_split(HalfedgeGraph& polyhedron,
   typedef typename boost::graph_traits<HalfedgeGraph>::halfedge_descriptor            halfedge_descriptor;
 
   
-  // halfedge_descriptor en = Euler::split_edge(ei, polyhedron); // there is an issue in this function for now use the polyhedron version in the meantime
-  halfedge_descriptor en = polyhedron.split_edge(ei);
+  // halfedge_descriptor en = Euler::split_edge(ei, hg); // there is an issue in this function for now use the polyhedron version in the meantime
+  halfedge_descriptor en = hg.split_edge(ei);
   boost::put(hg_point_pmap, en->vertex(), pn);
-  Euler::split_face(en, ei->next(), polyhedron);
+  Euler::split_face(en, ei->next(), hg);
 
   en->id() = -1;
   en->opposite()->id() = -1;
@@ -62,10 +62,10 @@ mesh_split(HalfedgeGraph& polyhedron,
   en->next()->opposite()->id() = -1;
   en->next()->next()->id() = -1;
   ei->next()->id() = -1;
-  halfedge_descriptor ej = opposite(en, polyhedron);
+  halfedge_descriptor ej = opposite(en, hg);
   if (!(ej->is_border()))
   {
-    Euler::split_face(ei->opposite(), ej->next(), polyhedron);
+    Euler::split_face(ei->opposite(), ej->next(), hg);
     ej->next()->id() = -1;
     halfedge_descriptor ei_op_next = ei->opposite()->next();
     ei_op_next->id() = -1;
@@ -88,7 +88,7 @@ double get_triangle_area(typename Kernel::Point_3 p1,
 }
 
 template<class HalfedgeGraph, class HalfedgeGraphPointPMap>
-double get_surface_area(HalfedgeGraph& polyhedron, HalfedgeGraphPointPMap& hg_point_pmap)
+double get_surface_area(HalfedgeGraph& hg, HalfedgeGraphPointPMap& hg_point_pmap)
 {
   typedef typename HalfedgeGraph::Traits                                  Kernel;
   typedef typename Kernel::Point_3                                        Point;
@@ -97,7 +97,7 @@ double get_surface_area(HalfedgeGraph& polyhedron, HalfedgeGraphPointPMap& hg_po
   typedef typename boost::graph_traits<HalfedgeGraph>::vertex_descriptor	vertex_descriptor;
 
   double total_area = 0;
-  for (Facet_iterator i = polyhedron.facets_begin(); i != polyhedron.facets_end(); ++i)
+  for (Facet_iterator i = hg.facets_begin(); i != hg.facets_end(); ++i)
   {
     Halfedge_facet_circulator j = i->facet_begin();
     vertex_descriptor v1 = j->vertex();

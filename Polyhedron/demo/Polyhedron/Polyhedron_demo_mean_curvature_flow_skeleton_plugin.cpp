@@ -479,9 +479,9 @@ public:
 
       mcs = new Mean_curvature_skeleton(*pMesh, Vertex_index_map(), Edge_index_map(),
                                         skeleton_args);
-      mcs->set_own_polyhedron(false);
+      mcs->set_own_halfedge_graph(false);
 
-      Polyhedron* contracted_mesh = mcs->get_halfedge_graph();
+      Polyhedron* contracted_mesh = &(mcs->halfedge_graph());
       Scene_polyhedron_item* contracted_item = new Scene_polyhedron_item(contracted_mesh);
       contracted_item->setName(QString("contracted mesh of %1").arg(item->name()));
 
@@ -498,7 +498,7 @@ public:
     }
     else
     {
-      Polyhedron* mesh = mcs->get_halfedge_graph();
+      Polyhedron* mesh = &(mcs->halfedge_graph());
       if (mesh != pMesh)
       {
         if (!is_mesh_valid(pMesh))
@@ -517,9 +517,9 @@ public:
 
         mcs = new Mean_curvature_skeleton(*pMesh, Vertex_index_map(), Edge_index_map(),
                                           skeleton_args);
-        mcs->set_own_polyhedron(false);
+        mcs->set_own_halfedge_graph(false);
 
-        Polyhedron* contracted_mesh = mcs->get_halfedge_graph();
+        Polyhedron* contracted_mesh = &(mcs->halfedge_graph());
         Scene_polyhedron_item* contracted_item = new Scene_polyhedron_item(contracted_mesh);
         contracted_item->setName(QString("contracted mesh of %1").arg(item->name()));
 

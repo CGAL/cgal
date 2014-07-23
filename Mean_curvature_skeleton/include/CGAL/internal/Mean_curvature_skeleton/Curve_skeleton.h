@@ -82,7 +82,7 @@ private:
   // vertex id mapped to vertex descriptor
   std::vector<vertex_descriptor> id_to_descriptor;
 
-  HalfedgeGraph& polyhedron;
+  HalfedgeGraph& hg;
 
   VertexIndexMap vertex_id_pmap;
   EdgeIndexMap edge_id_pmap;
@@ -113,11 +113,11 @@ private:
 
 // Public methods
 public:
-  Curve_skeleton(HalfedgeGraph& polyhedron,
+  Curve_skeleton(HalfedgeGraph& hg,
                  VertexIndexMap vertex_id_pmap,
                  EdgeIndexMap edge_id_pmap,
                  HalfedgeGraphPointPMap hg_point_pmap) :
-                 polyhedron(polyhedron),
+                 hg(hg),
                  vertex_id_pmap(vertex_id_pmap),
                  edge_id_pmap(edge_id_pmap),
                  hg_point_pmap(hg_point_pmap)
@@ -195,7 +195,7 @@ public:
     }
 
     vertex_iterator vb, ve;
-    for (boost::tie(vb, ve) = vertices(polyhedron); vb != ve; ++vb)
+    for (boost::tie(vb, ve) = vertices(hg); vb != ve; ++vb)
     {
       int id = get(vertex_id_pmap, *vb);
       int new_id = new_vertex_id[id];
@@ -222,9 +222,9 @@ public:
 private:
   void init()
   {
-    int nb_edges = num_edges(polyhedron);
-    int num_faces = polyhedron.size_of_facets();
-    int nb_vertices = num_vertices(polyhedron);
+    int nb_edges = num_edges(hg);
+    int num_faces = hg.size_of_facets();
+    int nb_vertices = num_vertices(hg);
     edge_to_face.clear();
     edge_to_face.resize(nb_edges);
     edge_to_vertex.clear();
@@ -258,7 +258,7 @@ private:
     surface_vertex_id.resize(nb_vertices);
     vertex_iterator vb, ve;
     int idx = 0;
-    for (boost::tie(vb, ve) = vertices(polyhedron); vb != ve; ++vb)
+    for (boost::tie(vb, ve) = vertices(hg); vb != ve; ++vb)
     {
       surface_vertex_id[idx] = get(vertex_id_pmap, *vb);
       put(vertex_id_pmap, *vb, idx++);
@@ -268,11 +268,11 @@ private:
     // the two halfedges representing the same edge get the same id
     halfedge_iterator eb, ee;
     idx = 0;
-    for (boost::tie(eb, ee) = halfedges(polyhedron); eb != ee; ++eb)
+    for (boost::tie(eb, ee) = halfedges(hg); eb != ee; ++eb)
     {
       put(edge_id_pmap, *eb, -1);
     }
-    for (boost::tie(eb, ee) = halfedges(polyhedron); eb != ee; ++eb)
+    for (boost::tie(eb, ee) = halfedges(hg); eb != ee; ++eb)
     {
       halfedge_descriptor ed = *eb;
       int id = get(edge_id_pmap, ed);
@@ -295,7 +295,7 @@ private:
 
     // assign face id and compute edge-face connectivity
     int face_id = 0;
-    for (Facet_iterator i = polyhedron.facets_begin(); i != polyhedron.facets_end(); ++i)
+    for (Facet_iterator i = hg.facets_begin(); i != hg.facets_end(); ++i)
     {
       Halfedge_facet_circulator j = i->facet_begin();
       // Facets in polyhedral surfaces are at least triangles.
@@ -310,14 +310,14 @@ private:
     }
 
     // compute vertex-edge connectivity
-    for (boost::tie(vb, ve) = vertices(polyhedron); vb != ve; ++vb)
+    for (boost::tie(vb, ve) = vertices(hg); vb != ve; ++vb)
     {
       vertex_descriptor vd = *vb;
       int vid = get(vertex_id_pmap, vd);
       in_edge_iterator e, e_end;
-      for (boost::tie(e, e_end) = in_edges(*vb, polyhedron); e != e_end; ++e)
+      for (boost::tie(e, e_end) = in_edges(*vb, hg); e != e_end; ++e)
       {
-        halfedge_descriptor ed = halfedge(*e, polyhedron);
+        halfedge_descriptor ed = halfedge(*e, hg);
         int eid = get(edge_id_pmap, ed);
         vertex_to_edge[vid].push_back(eid);
         edge_to_vertex[eid].push_back(vid);
@@ -336,7 +336,7 @@ private:
     std::vector<bool> is_edge_inserted;
     is_edge_inserted.clear();
     is_edge_inserted.resize(edge_to_face.size(), false);
-    for (boost::tie(eb, ee) = halfedges(polyhedron); eb != ee; ++eb)
+    for (boost::tie(eb, ee) = halfedges(hg); eb != ee; ++eb)
     {
       halfedge_descriptor ed = *eb;
       int id = get(edge_id_pmap, ed);
@@ -612,7 +612,7 @@ private:
   void check_edge()
   {
     halfedge_iterator eb, ee;
-    for (boost::tie(eb, ee) = halfedges(polyhedron); eb != ee; ++eb)
+    for (boost::tie(eb, ee) = halfedges(hg); eb != ee; ++eb)
     {
       halfedge_descriptor ed = *eb;
       int id = get(edge_id_pmap, ed);

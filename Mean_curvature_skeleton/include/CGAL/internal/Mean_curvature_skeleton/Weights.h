@@ -41,11 +41,11 @@ struct Vector{
 
 /////////////////////////////////////////////////////////////////////////////////////////
 // Returns the cotangent value of half angle v0 v1 v2
-template<class Polyhedron>
+template<class HalfedgeGraph>
 class Cotangent_value
 {
 public:
-  typedef typename boost::graph_traits<Polyhedron>::vertex_descriptor vertex_descriptor;
+  typedef typename boost::graph_traits<HalfedgeGraph>::vertex_descriptor vertex_descriptor;
 
   double operator()(vertex_descriptor v0, vertex_descriptor v1, vertex_descriptor v2)
   {
@@ -69,11 +69,11 @@ public:
 // The potential problem with previous one (Cotangent_value) is that it does not produce symmetric results
 // (i.e. for v0, v1, v2 and v2, v1, v0 returned cot weights can be slightly different)
 // This one provides stable results.
-template<class Polyhedron>
+template<class HalfedgeGraph>
 class Cotangent_value_Meyer
 {
 public:
-  typedef typename boost::graph_traits<Polyhedron>::vertex_descriptor vertex_descriptor;
+  typedef typename boost::graph_traits<HalfedgeGraph>::vertex_descriptor vertex_descriptor;
 
   double operator()(vertex_descriptor v0, vertex_descriptor v1, vertex_descriptor v2)
   {
@@ -86,11 +86,11 @@ public:
   }
 };
 
-template<class Polyhedron>
+template<class HalfedgeGraph>
 class Cotangent_value_Meyer_secure
 {
 public:
-  typedef typename boost::graph_traits<Polyhedron>::vertex_descriptor vertex_descriptor;
+  typedef typename boost::graph_traits<HalfedgeGraph>::vertex_descriptor vertex_descriptor;
 
   double operator()(vertex_descriptor v0, vertex_descriptor v1, vertex_descriptor v2)
   {
@@ -110,11 +110,11 @@ public:
 
 // Returns the cotangent value of half angle v0 v1 v2 by clamping between [1, 89] degrees
 // as suggested by -[Friedel] Unconstrained Spherical Parameterization-
-template<class Polyhedron, class CotangentValue = Cotangent_value_Meyer<Polyhedron> >
+template<class HalfedgeGraph, class CotangentValue = Cotangent_value_Meyer<HalfedgeGraph> >
 class Cotangent_value_clamped : CotangentValue
 {
 public:
-  typedef typename boost::graph_traits<Polyhedron>::vertex_descriptor vertex_descriptor;
+  typedef typename boost::graph_traits<HalfedgeGraph>::vertex_descriptor vertex_descriptor;
 
   double operator()(vertex_descriptor v0, vertex_descriptor v1, vertex_descriptor v2)
   {
@@ -125,11 +125,11 @@ public:
   }
 };
 
-template<class Polyhedron, class CotangentValue = Cotangent_value_Meyer<Polyhedron> >
+template<class HalfedgeGraph, class CotangentValue = Cotangent_value_Meyer<HalfedgeGraph> >
 class Cotangent_value_minimum_zero : CotangentValue
 {
 public:
-  typedef typename boost::graph_traits<Polyhedron>::vertex_descriptor vertex_descriptor;
+  typedef typename boost::graph_traits<HalfedgeGraph>::vertex_descriptor vertex_descriptor;
 
   double operator()(vertex_descriptor v0, vertex_descriptor v1, vertex_descriptor v2)
   {
@@ -140,12 +140,12 @@ public:
 
 // Returns the cotangent value of half angle v0 v1 v2 by dividing the triangle area
 // as suggested by -[Mullen08] Spectral Conformal Parameterization-
-template<class Polyhedron, 
-         class CotangentValue = Cotangent_value_Meyer<Polyhedron> >
+template<class HalfedgeGraph, 
+         class CotangentValue = Cotangent_value_Meyer<HalfedgeGraph> >
 class Cotangent_value_area_weighted : CotangentValue
 {
 public:
-  typedef typename boost::graph_traits<Polyhedron>::vertex_descriptor vertex_descriptor;
+  typedef typename boost::graph_traits<HalfedgeGraph>::vertex_descriptor vertex_descriptor;
 
   double operator()(vertex_descriptor v0, vertex_descriptor v1, vertex_descriptor v2)
   {
@@ -159,42 +159,42 @@ public:
 // Cotangent weight calculator 
 // Cotangent_value:               as suggested by -[Sorkine07] ARAP Surface Modeling-
 // Cotangent_value_area_weighted: as suggested by -[Mullen08] Spectral Conformal Parameterization-
-template<class Polyhedron, 
-         class CotangentValue = Cotangent_value_minimum_zero<Polyhedron> >
+template<class HalfedgeGraph, 
+         class CotangentValue = Cotangent_value_minimum_zero<HalfedgeGraph> >
 class Cotangent_weight : CotangentValue
 {
 public:
-  typedef typename boost::graph_traits<Polyhedron>::halfedge_descriptor   halfedge_descriptor;
-  typedef typename boost::graph_traits<Polyhedron>::vertex_descriptor vertex_descriptor;
+  typedef typename boost::graph_traits<HalfedgeGraph>::halfedge_descriptor   halfedge_descriptor;
+  typedef typename boost::graph_traits<HalfedgeGraph>::vertex_descriptor vertex_descriptor;
 
-  typedef typename Polyhedron::Traits::Point_3   Point;
+  typedef typename HalfedgeGraph::Traits::Point_3   Point;
 
   // Returns the cotangent weight of specified halfedge_descriptor
   // Edge orientation is trivial
-  double operator()(halfedge_descriptor e, Polyhedron& polyhedron)
+  double operator()(halfedge_descriptor e, HalfedgeGraph& hg)
   {
-     vertex_descriptor v0 = target(e, polyhedron);
-     vertex_descriptor v1 = source(e, polyhedron);
+     vertex_descriptor v0 = target(e, hg);
+     vertex_descriptor v1 = source(e, hg);
      // Only one triangle for border edges
-     if ( is_border(e, polyhedron) ||
-          is_border( opposite(e, polyhedron), polyhedron) )
+     if ( is_border(e, hg) ||
+          is_border( opposite(e, hg), hg) )
      {       
-       halfedge_descriptor e_cw = opposite(next(e, polyhedron), polyhedron);
-       vertex_descriptor v2 = source(e_cw, polyhedron);
-       if ( is_border(e_cw,polyhedron) ||
-            is_border( opposite(e_cw,polyhedron), polyhedron) )
+       halfedge_descriptor e_cw = opposite(next(e, hg), hg);
+       vertex_descriptor v2 = source(e_cw, hg);
+       if ( is_border(e_cw, hg) ||
+            is_border( opposite(e_cw, hg), hg) )
        {
-          halfedge_descriptor e_ccw = prev(opposite(e, polyhedron), polyhedron);
-          v2 = source(e_ccw, polyhedron);
+          halfedge_descriptor e_ccw = prev(opposite(e, hg), hg);
+          v2 = source(e_ccw, hg);
        }
        return ( CotangentValue::operator()(v0, v2, v1)/2.0 );
      }
      else
      {
-        halfedge_descriptor e_cw = opposite(next(e, polyhedron), polyhedron);
-        vertex_descriptor v2 = source(e_cw, polyhedron);     
-        halfedge_descriptor e_ccw = prev(opposite(e, polyhedron), polyhedron);
-        vertex_descriptor v3 = source(e_ccw, polyhedron);
+        halfedge_descriptor e_cw = opposite(next(e, hg), hg);
+        vertex_descriptor v2 = source(e_cw, hg);     
+        halfedge_descriptor e_ccw = prev(opposite(e, hg), hg);
+        vertex_descriptor v3 = source(e_ccw, hg);
 
         return ( CotangentValue::operator()(v0, v2, v1)/2.0 + CotangentValue::operator()(v0, v3, v1)/2.0 );
      }
@@ -202,70 +202,70 @@ public:
 };
 
 // Single cotangent from -[Chao10] Simple Geometric Model for Elastic Deformation
-template<class Polyhedron, 
-         class CotangentValue = Cotangent_value_Meyer<Polyhedron> >
+template<class HalfedgeGraph, 
+         class CotangentValue = Cotangent_value_Meyer<HalfedgeGraph> >
 class Single_cotangent_weight : CotangentValue
 {
 public:
-  typedef typename boost::graph_traits<Polyhedron>::halfedge_descriptor   halfedge_descriptor;
-  typedef typename boost::graph_traits<Polyhedron>::vertex_descriptor vertex_descriptor;
+  typedef typename boost::graph_traits<HalfedgeGraph>::halfedge_descriptor   halfedge_descriptor;
+  typedef typename boost::graph_traits<HalfedgeGraph>::vertex_descriptor vertex_descriptor;
 
-  typedef typename Polyhedron::Traits::Point_3   Point;
+  typedef typename HalfedgeGraph::Traits::Point_3   Point;
 
   // Returns the cotangent of the opposite angle of the edge
   // 0 for border edges (which does not have an opposite angle)
-  double operator()(halfedge_descriptor e, Polyhedron& polyhedron)
+  double operator()(halfedge_descriptor e, HalfedgeGraph& hg)
   {
-     if( is_border(e, polyhedron) ) { return 0.0;}
+     if( is_border(e, hg) ) { return 0.0;}
      
-     vertex_descriptor v0 = target(e, polyhedron);
-     vertex_descriptor v1 = source(e, polyhedron);
+     vertex_descriptor v0 = target(e, hg);
+     vertex_descriptor v1 = source(e, hg);
 
-     vertex_descriptor v_op = target(next(e, polyhedron), polyhedron);
+     vertex_descriptor v_op = target(next(e, hg), hg);
      return CotangentValue::operator()(v0, v_op, v1);
   }
 };
 
 // Mean value calculator described in -[Floater04] Mean Value Coordinates-
-template<class Polyhedron>
+template<class HalfedgeGraph>
 class Mean_value_weight
 {
 public:
-  typedef typename boost::graph_traits<Polyhedron>::halfedge_descriptor   halfedge_descriptor;
-  typedef typename boost::graph_traits<Polyhedron>::vertex_descriptor vertex_descriptor;
+  typedef typename boost::graph_traits<HalfedgeGraph>::halfedge_descriptor   halfedge_descriptor;
+  typedef typename boost::graph_traits<HalfedgeGraph>::vertex_descriptor vertex_descriptor;
 
-  typedef typename Polyhedron::Traits::Point_3   Point;
+  typedef typename HalfedgeGraph::Traits::Point_3   Point;
 
   // Returns the mean-value coordinate of specified halfedge_descriptor
   // Returns different value for different edge orientation (which is a normal behaivour according to formula)
-  double operator()(halfedge_descriptor e, Polyhedron& polyhedron)
+  double operator()(halfedge_descriptor e, HalfedgeGraph& hg)
   {
-    vertex_descriptor v0 = target(e, polyhedron);
-    vertex_descriptor v1 = source(e, polyhedron);
+    vertex_descriptor v0 = target(e, hg);
+    vertex_descriptor v1 = source(e, hg);
     Vector vec(v1->point(), v0->point());
     double norm = std::sqrt( vec.squared_length() );
 
     // Only one triangle for border edges
-    if ( is_border(e, polyhedron) ||
-         is_border( opposite(e, polyhedron), polyhedron) )
+    if ( is_border(e, hg) ||
+         is_border( opposite(e, hg), hg) )
     {
-      halfedge_descriptor e_cw = opposite(next(e, polyhedron), polyhedron);
-      vertex_descriptor v2 = source(e_cw, polyhedron);
-      if ( is_border(e_cw, polyhedron) ||
-           is_border( opposite(e_cw, polyhedron), polyhedron) )
+      halfedge_descriptor e_cw = opposite(next(e, hg), hg);
+      vertex_descriptor v2 = source(e_cw, hg);
+      if ( is_border(e_cw, hg) ||
+           is_border( opposite(e_cw, hg), hg) )
       {
-        halfedge_descriptor e_ccw = prev(opposite(e, polyhedron), polyhedron);
-        v2 = source(e_ccw, polyhedron);
+        halfedge_descriptor e_ccw = prev(opposite(e, hg), hg);
+        v2 = source(e_ccw, hg);
       }
 
       return ( half_tan_value_2(v1, v0, v2)/norm);
     }
     else
     {
-      halfedge_descriptor e_cw = opposite(next(e, polyhedron), polyhedron);
-      vertex_descriptor v2 = source(e_cw, polyhedron);     
-      halfedge_descriptor e_ccw = prev(opposite(e, polyhedron), polyhedron);
-      vertex_descriptor v3 = source(e_ccw, polyhedron);
+      halfedge_descriptor e_cw = opposite(next(e, hg), hg);
+      vertex_descriptor v2 = source(e_cw, hg);     
+      halfedge_descriptor e_ccw = prev(opposite(e, hg), hg);
+      vertex_descriptor v3 = source(e_ccw, hg);
 
       return ( half_tan_value_2(v1, v0, v2)/norm + half_tan_value_2(v1, v0, v3)/norm);
     }
@@ -309,30 +309,30 @@ private:
   }
 };
 
-template< class Polyhedron, 
-          class PrimaryWeight = Cotangent_weight<Polyhedron>,
-          class SecondaryWeight = Mean_value_weight<Polyhedron> >
+template< class HalfedgeGraph, 
+          class PrimaryWeight = Cotangent_weight<HalfedgeGraph>,
+          class SecondaryWeight = Mean_value_weight<HalfedgeGraph> >
 class Hybrid_weight : public PrimaryWeight, SecondaryWeight
 {
 public:
-  typedef typename boost::graph_traits<Polyhedron>::halfedge_descriptor   halfedge_descriptor;
+  typedef typename boost::graph_traits<HalfedgeGraph>::halfedge_descriptor   halfedge_descriptor;
 
-  double operator()(halfedge_descriptor e, Polyhedron& polyhedron)
+  double operator()(halfedge_descriptor e, HalfedgeGraph& hg)
   {
-    double weight = PrimaryWeight::operator()(e, polyhedron);
+    double weight = PrimaryWeight::operator()(e, hg);
     //if(weight < 0) { std::cout << "Negative weight" << std::endl; }
-    return (weight >= 0) ? weight : SecondaryWeight::operator()(e, polyhedron);
+    return (weight >= 0) ? weight : SecondaryWeight::operator()(e, hg);
   }
 };
 
 // Trivial uniform weights (created for test purposes)
-template<class Polyhedron>
+template<class HalfedgeGraph>
 class Uniform_weight
 {
 public:
-  typedef typename boost::graph_traits<Polyhedron>::halfedge_descriptor   halfedge_descriptor;
+  typedef typename boost::graph_traits<HalfedgeGraph>::halfedge_descriptor   halfedge_descriptor;
 
-  double operator()(halfedge_descriptor /*e*/, Polyhedron& /*polyhedron*/)
+  double operator()(halfedge_descriptor /*e*/, HalfedgeGraph& /*hg*/)
   { return 1.0; }
 };
 

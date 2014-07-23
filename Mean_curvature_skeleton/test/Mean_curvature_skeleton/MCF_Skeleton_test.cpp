@@ -187,10 +187,10 @@ int main()
     return EXIT_FAILURE;
   }
 
-  bool own_polyhedron = false;
-  mcs->set_own_polyhedron(own_polyhedron);
-  bvalue = mcs->get_own_polyhedron();
-  if (!check_value_equal(own_polyhedron, bvalue))
+  bool own_halfedge_graph = false;
+  mcs->set_own_halfedge_graph(own_halfedge_graph);
+  bvalue = mcs->owns_halfedge_graph();
+  if (!check_value_equal(own_halfedge_graph, bvalue))
   {
     return EXIT_FAILURE;
   }
@@ -201,7 +201,7 @@ int main()
     return EXIT_FAILURE;
   }
 
-  Polyhedron *contracted = mcs->get_halfedge_graph();
+  Polyhedron *contracted = &(mcs->halfedge_graph());
 
   // Check the following API does not crash.
   mcs->contract_geometry();

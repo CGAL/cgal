@@ -42,12 +42,12 @@ namespace internal {
 * distance at the given vertex. If it is not equal to one, which is the case
 * for disk topology, the vertex is considered to be degenerate.
 
-* @param polyhedron the mesh containing the given vertex
+* @param hg the mesh containing the given vertex
 * @param root the given vertex
 * @param edgelength_TH the diameter of the geodesic disk
 */
 template<class HalfedgeGraph, class HalfedgeGraphPointPMap>
-bool is_vertex_degenerate(HalfedgeGraph& polyhedron,
+bool is_vertex_degenerate(HalfedgeGraph& hg,
                           HalfedgeGraphPointPMap& hg_point_pmap,
                           typename boost::graph_traits<HalfedgeGraph>::vertex_descriptor root,
                           double edgelength_TH)
@@ -63,18 +63,18 @@ bool is_vertex_degenerate(HalfedgeGraph& polyhedron,
   std::set<Face_handle> faces_in_disk;
 
   vertices_in_disk.clear();
-  search_vertices_in_disk(polyhedron, hg_point_pmap, root, vertices_in_disk, edgelength_TH);
+  search_vertices_in_disk(hg, hg_point_pmap, root, vertices_in_disk, edgelength_TH);
 
   typename std::set<vertex_descriptor>::iterator v_iter;
   for (v_iter = vertices_in_disk.begin(); v_iter != vertices_in_disk.end(); ++v_iter)
   {
     vertex_descriptor vd = *v_iter;
     out_edge_iterator e, e_end;
-    for (boost::tie(e, e_end) = out_edges(vd, polyhedron); e != e_end; ++e)
+    for (boost::tie(e, e_end) = out_edges(vd, hg); e != e_end; ++e)
     {
-      halfedge_descriptor ed = halfedge(*e, polyhedron);
-      halfedge_descriptor ed_op = opposite(ed, polyhedron);
-      vertex_descriptor tgt = target(ed, polyhedron);
+      halfedge_descriptor ed = halfedge(*e, hg);
+      halfedge_descriptor ed_op = opposite(ed, hg);
+      vertex_descriptor tgt = target(ed, hg);
       if (vertices_in_disk.find(tgt) != vertices_in_disk.end())
       {
         edges_in_disk.insert(ed);
@@ -114,13 +114,13 @@ bool is_vertex_degenerate(HalfedgeGraph& polyhedron,
 /**
 * Find all the vertices within a geodesic disk.
 *
-* @param polyhedron the mesh containing the vertices
+* @param hg the mesh containing the vertices
 * @param root the center of the geodesic disk
 * @param vertices_in_disk containing the found vertices within the disk
 * @param edgelength_TH the diameter of the geodesic disk
 */
 template<class HalfedgeGraph, class HalfedgeGraphPointPMap>
-void search_vertices_in_disk(HalfedgeGraph& polyhedron,
+void search_vertices_in_disk(HalfedgeGraph& hg,
                              HalfedgeGraphPointPMap& hg_point_pmap,
                              typename boost::graph_traits<HalfedgeGraph>::vertex_descriptor root,
                              std::set<typename boost::graph_traits<HalfedgeGraph>::vertex_descriptor>& vertices_in_disk,
@@ -144,11 +144,11 @@ void search_vertices_in_disk(HalfedgeGraph& polyhedron,
     Q.pop();
 
     out_edge_iterator e, e_end;
-    for(boost::tie(e, e_end) = out_edges(v, polyhedron); e != e_end; ++e)
+    for(boost::tie(e, e_end) = out_edges(v, hg); e != e_end; ++e)
     {
-      halfedge_descriptor ed = halfedge(*e, polyhedron);
+      halfedge_descriptor ed = halfedge(*e, hg);
 
-      vertex_descriptor new_v = target(ed, polyhedron);
+      vertex_descriptor new_v = target(ed, hg);
       if (vertex_visited.find(new_v) == vertex_visited.end())
       {
         double distance = sqrtf(squared_distance(get(hg_point_pmap, new_v),
