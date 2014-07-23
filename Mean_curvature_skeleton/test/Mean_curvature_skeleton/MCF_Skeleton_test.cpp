@@ -37,16 +37,21 @@ typedef CGAL::Polyhedron_3<Kernel, CGAL::Polyhedron_items_with_id_3> Polyhedron;
 
 typedef boost::graph_traits<Polyhedron>::vertex_descriptor           vertex_descriptor;
 typedef boost::graph_traits<Polyhedron>::vertex_iterator             vertex_iterator;
-typedef boost::graph_traits<Polyhedron>::edge_descriptor             edge_descriptor;
+typedef boost::graph_traits<Polyhedron>::halfedge_descriptor         halfedge_descriptor;
 
-typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS> Graph;
+struct Skeleton_vertex_info
+{
+  std::size_t id;
+};
+
+typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS, Skeleton_vertex_info> Graph;
 
 typedef boost::graph_traits<Graph>::vertex_descriptor                  vertex_desc;
 typedef boost::graph_traits<Graph>::vertex_iterator                    vertex_iter;
 typedef boost::graph_traits<Graph>::edge_iterator                      edge_iter;
 
 typedef Polyhedron_with_id_property_map<Polyhedron, vertex_descriptor> Vertex_index_map;
-typedef Polyhedron_with_id_property_map<Polyhedron, edge_descriptor>   Edge_index_map;
+typedef Polyhedron_with_id_property_map<Polyhedron, halfedge_descriptor>   Halfedge_index_map;
 
 typedef std::map<vertex_desc, std::vector<int> >                       Correspondence_map;
 typedef boost::associative_property_map<Correspondence_map>            GraphCorrelationPMap;
@@ -58,7 +63,7 @@ typedef boost::associative_property_map<GraphPointMap>                 GraphPoin
 
 typedef CGAL::MCF_default_solver<double>::type                         Sparse_linear_solver;
 
-typedef CGAL::MCF_Skeleton<Polyhedron, Graph, Vertex_index_map, Edge_index_map,
+typedef CGAL::MCF_Skeleton<Polyhedron, Graph, Vertex_index_map, Halfedge_index_map,
 GraphCorrelationPMap, GraphPointPMap, HalfedgeGraphPointPMap, Sparse_linear_solver> 
 Mean_curvature_skeleton;
 
@@ -128,7 +133,7 @@ int main()
   CGAL::MCF_skel_args<Polyhedron> skeleton_args(mesh);
 
   Mean_curvature_skeleton* mcs = new Mean_curvature_skeleton(mesh,
-      Vertex_index_map(), Edge_index_map(), skeleton_args);
+      Vertex_index_map(), Halfedge_index_map(), skeleton_args);
 
   double value;
   bool bvalue;
@@ -221,7 +226,7 @@ int main()
   delete contracted;
 
   mcs = new Mean_curvature_skeleton(mesh,
-      Vertex_index_map(), Edge_index_map(), skeleton_args);
+      Vertex_index_map(), Halfedge_index_map(), skeleton_args);
 
   g.clear();
   points_map.clear();
@@ -233,13 +238,13 @@ int main()
   points_map.clear();
   corr_map.clear();
   mcs = new Mean_curvature_skeleton(mesh,
-      Vertex_index_map(), Edge_index_map(), skeleton_args);
+      Vertex_index_map(), Halfedge_index_map(), skeleton_args);
 
   mcs->extract_skeleton(g, points, corr);
   delete mcs;
 
   mcs = new Mean_curvature_skeleton(&mesh,
-      Vertex_index_map(), Edge_index_map(), skeleton_args);
+      Vertex_index_map(), Halfedge_index_map(), skeleton_args);
 
   g.clear();
   points_map.clear();

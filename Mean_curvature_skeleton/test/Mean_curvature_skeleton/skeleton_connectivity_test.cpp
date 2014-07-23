@@ -37,9 +37,14 @@ typedef CGAL::Polyhedron_3<Kernel, CGAL::Polyhedron_items_with_id_3> Polyhedron;
 
 typedef boost::graph_traits<Polyhedron>::vertex_descriptor           vertex_descriptor;
 typedef boost::graph_traits<Polyhedron>::vertex_iterator             vertex_iterator;
-typedef boost::graph_traits<Polyhedron>::edge_descriptor             edge_descriptor;
+typedef boost::graph_traits<Polyhedron>::halfedge_descriptor         halfedge_descriptor;
 
-typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS> Graph;
+struct Skeleton_vertex_info
+{
+  std::size_t id;
+};
+
+typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS, Skeleton_vertex_info> Graph;
 
 typedef boost::graph_traits<Graph>::vertex_descriptor                  vertex_desc;
 typedef boost::graph_traits<Graph>::vertex_iterator                    vertex_iter;
@@ -47,7 +52,7 @@ typedef boost::graph_traits<Graph>::edge_iterator                      edge_iter
 typedef boost::graph_traits<Graph>::in_edge_iterator                   in_edge_iter;
 
 typedef Polyhedron_with_id_property_map<Polyhedron, vertex_descriptor> Vertex_index_map;
-typedef Polyhedron_with_id_property_map<Polyhedron, edge_descriptor>   Edge_index_map;
+typedef Polyhedron_with_id_property_map<Polyhedron, halfedge_descriptor>   Halfedge_index_map;
 
 typedef std::map<vertex_desc, std::vector<int> >                       Correspondence_map;
 typedef boost::associative_property_map<Correspondence_map>            GraphCorrelationPMap;
@@ -110,7 +115,7 @@ int main()
   CGAL::MCF_skel_args<Polyhedron> skeleton_args(mesh);
 
   CGAL::extract_skeleton(
-      mesh, Vertex_index_map(), Edge_index_map(),
+      mesh, Vertex_index_map(), Halfedge_index_map(),
       skeleton_args, g, points, corr);
 
   int num_vertices = boost::num_vertices(g);

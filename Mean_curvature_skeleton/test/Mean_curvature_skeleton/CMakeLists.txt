@@ -1,14 +1,8 @@
-# Created by the script cgal_create_cmake_script_with_options
-# This is the CMake script for compiling a set of CGAL applications.
+# Created by the script cgal_create_cmake_script
+# This is the CMake script for compiling a CGAL application.
 
-project( Mean_curvature_skeleton )
 
-SET(CMAKE_CXX_COMPILER "/usr/bin/clang++")
-#SET(CMAKE_BUILD_TYPE "Debug")
-
-#SET(GCC_COVERAGE_COMPILE_FLAGS "-fprofile-arcs -ftest-coverage")
-
-#SET( CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} ${GCC_COVERAGE_COMPILE_FLAGS}" )
+project( Mean_curvature_skeleton_ )
 
 cmake_minimum_required(VERSION 2.6.2)
 if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}" VERSION_GREATER 2.6)
@@ -19,62 +13,30 @@ if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}" VERSION_GREATER 2.6)
   endif()
 endif()
 
-set( CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true )
- 
+find_package(CGAL QUIET COMPONENTS Core )
 
+if ( CGAL_FOUND )
 
-if ( COMMAND cmake_policy )
-
-  cmake_policy( SET CMP0003 NEW )  
-
-endif()
-
-# CGAL and its components
-find_package( CGAL QUIET COMPONENTS  )
-
-if ( NOT CGAL_FOUND )
-
-  message(STATUS "This project requires the CGAL library, and will not be compiled.")
-  return()  
-
-endif()
-
-# include helper file
-include( ${CGAL_USE_FILE} )
-
-
-# Boost and its components
-find_package( Boost REQUIRED )
-
-if ( NOT Boost_FOUND )
-
-  message(STATUS "This project requires the Boost library, and will not be compiled.")
-
-  return()  
-
-endif()
-
-# include for local directory
-
-# include for local package
-include_directories( BEFORE ../../include )
+  include( ${CGAL_USE_FILE} )
 
 find_package(Eigen3 3.2.0) #(requires 3.2.0 or greater)
 
-if(NOT EIGEN3_FOUND)
-  message(STATUS "NOTICE: Eigen 3.2 (or greater) is not found.")
+  if(EIGEN3_FOUND)
+    include( ${EIGEN3_USE_FILE} )
+
+    include( CGAL_CreateSingleSourceCGALProgram )
+
+    include_directories (BEFORE "../../include")
+
+    create_single_source_cgal_program( "extract_skeleton_test.cpp" )
+    create_single_source_cgal_program( "MCF_Skeleton_test.cpp" )
+    create_single_source_cgal_program( "skeleton_connectivity_test.cpp" )
+  else()
+    message(STATUS "This program requires the Eigen library (3.2 or greater), and will not be compiled.")
+  endif()
 else()
-  include( ${EIGEN3_USE_FILE} )
-endif(NOT EIGEN3_FOUND)
 
+    message(STATUS "This program requires the CGAL library, and will not be compiled.")
 
-# Creating entries for all .cpp/.C files with "main" routine
-# ##########################################################
+endif()
 
-include( CGAL_CreateSingleSourceCGALProgram )
-
-create_single_source_cgal_program( "skeleton_connectivity_test.cpp" )
-
-create_single_source_cgal_program( "MCF_Skeleton_test.cpp" )
-
-create_single_source_cgal_program( "extract_skeleton_test.cpp" )
