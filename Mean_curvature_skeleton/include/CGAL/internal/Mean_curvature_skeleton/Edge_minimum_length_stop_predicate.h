@@ -53,7 +53,7 @@ public:
   
 private :
 
-  typedef typename halfedge_graph_traits<ECM>::Point Point ;
+  typedef typename ECM::Traits::Point_3 Point ; //temporary it should be a point property map
   typedef typename Kernel_traits<Point>::Kernel      Kernel ;
 
 public :
