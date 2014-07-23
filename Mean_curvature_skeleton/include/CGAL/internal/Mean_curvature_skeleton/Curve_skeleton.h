@@ -56,8 +56,8 @@ public:
   // Repeat HalfedgeGraph types
   typedef typename boost::graph_traits<HalfedgeGraph>::vertex_descriptor	        vertex_descriptor;
   typedef typename boost::graph_traits<HalfedgeGraph>::vertex_iterator            vertex_iterator;
-  typedef typename boost::graph_traits<HalfedgeGraph>::edge_descriptor            edge_descriptor;
-  typedef typename boost::graph_traits<HalfedgeGraph>::edge_iterator              edge_iterator;
+  typedef typename boost::graph_traits<HalfedgeGraph>::halfedge_descriptor        halfedge_descriptor;
+  typedef typename boost::graph_traits<HalfedgeGraph>::halfedge_iterator          halfedge_iterator;
   typedef typename boost::graph_traits<HalfedgeGraph>::in_edge_iterator           in_edge_iterator;
   typedef typename HalfedgeGraph::Facet_iterator                                  Facet_iterator;
   typedef typename HalfedgeGraph::Halfedge_around_facet_circulator                Halfedge_facet_circulator;
@@ -222,7 +222,7 @@ public:
 private:
   void init()
   {
-    int nb_edges = num_edges(polyhedron) / 2;
+    int nb_edges = num_edges(polyhedron);
     int num_faces = polyhedron.size_of_facets();
     int nb_vertices = num_vertices(polyhedron);
     edge_to_face.clear();
@@ -266,20 +266,20 @@ private:
 
     // assign edge id
     // the two halfedges representing the same edge get the same id
-    edge_iterator eb, ee;
+    halfedge_iterator eb, ee;
     idx = 0;
-    for (boost::tie(eb, ee) = edges(polyhedron); eb != ee; ++eb)
+    for (boost::tie(eb, ee) = halfedges(polyhedron); eb != ee; ++eb)
     {
       put(edge_id_pmap, *eb, -1);
     }
-    for (boost::tie(eb, ee) = boost::edges(polyhedron); eb != ee; ++eb)
+    for (boost::tie(eb, ee) = halfedges(polyhedron); eb != ee; ++eb)
     {
-      edge_descriptor ed = *eb;
+      halfedge_descriptor ed = *eb;
       int id = get(edge_id_pmap, ed);
       if (id == -1)
       {
         put(edge_id_pmap, ed, idx);
-        edge_descriptor ed_opposite = ed->opposite();
+        halfedge_descriptor ed_opposite = ed->opposite();
         put(edge_id_pmap, ed_opposite, idx);
 
         // also cache the length of the edge
@@ -317,7 +317,7 @@ private:
       in_edge_iterator e, e_end;
       for (boost::tie(e, e_end) = in_edges(*vb, polyhedron); e != e_end; ++e)
       {
-        edge_descriptor ed = *e;
+        halfedge_descriptor ed = halfedge(*e, polyhedron);
         int eid = get(edge_id_pmap, ed);
         vertex_to_edge[vid].push_back(eid);
         edge_to_vertex[eid].push_back(vid);
@@ -332,13 +332,13 @@ private:
   {
     // put all the edges into a priority queue
     // shorter edge has higher priority
-    edge_iterator eb, ee;
+    halfedge_iterator eb, ee;
     std::vector<bool> is_edge_inserted;
     is_edge_inserted.clear();
     is_edge_inserted.resize(edge_to_face.size(), false);
-    for (boost::tie(eb, ee) = edges(polyhedron); eb != ee; ++eb)
+    for (boost::tie(eb, ee) = halfedges(polyhedron); eb != ee; ++eb)
     {
-      edge_descriptor ed = *eb;
+      halfedge_descriptor ed = *eb;
       int id = get(edge_id_pmap, ed);
 
       if (is_edge_inserted[id])
@@ -611,10 +611,10 @@ private:
 
   void check_edge()
   {
-    edge_iterator eb, ee;
-    for (boost::tie(eb, ee) = edges(polyhedron); eb != ee; ++eb)
+    halfedge_iterator eb, ee;
+    for (boost::tie(eb, ee) = halfedges(polyhedron); eb != ee; ++eb)
     {
-      edge_descriptor ed = *eb;
+      halfedge_descriptor ed = *eb;
       int id = get(edge_id_pmap, ed);
       if (!is_edge_deleted[id])
       {

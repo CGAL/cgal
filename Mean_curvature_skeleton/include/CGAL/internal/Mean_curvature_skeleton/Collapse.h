@@ -43,18 +43,18 @@ namespace internal {
 */
 template<class HalfedgeGraph>
 bool is_collapse_ok(HalfedgeGraph& polyhedron, 
-                    typename boost::graph_traits<HalfedgeGraph>::edge_descriptor v0v1)
+                    typename boost::graph_traits<HalfedgeGraph>::halfedge_descriptor v0v1)
 {
   typedef typename boost::graph_traits<HalfedgeGraph>::vertex_descriptor	         vertex_descriptor;
-  typedef typename boost::graph_traits<HalfedgeGraph>::edge_descriptor	           edge_descriptor;
+  typedef typename boost::graph_traits<HalfedgeGraph>::halfedge_descriptor	           halfedge_descriptor;
   typedef typename boost::graph_traits<HalfedgeGraph>::in_edge_iterator            in_edge_iterator;
 
-  edge_descriptor v1v0 = opposite(v0v1, polyhedron);
+  halfedge_descriptor v1v0 = opposite(v0v1, polyhedron);
   vertex_descriptor v0 = target(v1v0, polyhedron);
   vertex_descriptor v1 = source(v1v0, polyhedron);
 
   vertex_descriptor vv, vl, vr;
-  edge_descriptor  h1, h2;
+  halfedge_descriptor  h1, h2;
 
   // the edges v1-vl and vl-v0 must not be both boundary edges
   if (!(is_border(v0v1, polyhedron)))
@@ -128,7 +128,6 @@ bool find_halfedge(HalfedgeGraph& polyhedron,
                    typename boost::graph_traits<HalfedgeGraph>::vertex_descriptor vj)
 {
   typedef typename boost::graph_traits<HalfedgeGraph>::vertex_descriptor          vertex_descriptor;
-  typedef typename boost::graph_traits<HalfedgeGraph>::edge_descriptor            edge_descriptor;
   typedef typename boost::graph_traits<HalfedgeGraph>::in_edge_iterator           in_edge_iterator;
 
   in_edge_iterator eb, ee;

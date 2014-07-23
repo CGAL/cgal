@@ -58,7 +58,7 @@ private :
 
 public :
   
-  typedef typename boost::graph_traits<ECM>::edge_descriptor edge_descriptor ;
+  typedef typename boost::graph_traits<ECM>::halfedge_descriptor halfedge_descriptor ;
   typedef typename boost::graph_traits<ECM>::edges_size_type size_type ;
   
   typedef typename Kernel::FT FT ;

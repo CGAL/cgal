@@ -53,13 +53,13 @@ bool is_vertex_degenerate(HalfedgeGraph& polyhedron,
                           double edgelength_TH)
 {
   typedef typename boost::graph_traits<HalfedgeGraph>::vertex_descriptor          vertex_descriptor;
-  typedef typename boost::graph_traits<HalfedgeGraph>::edge_descriptor            edge_descriptor;
-  typedef typename boost::graph_traits<HalfedgeGraph>::out_edge_iterator		      out_edge_iterator;
+  typedef typename boost::graph_traits<HalfedgeGraph>::halfedge_descriptor        halfedge_descriptor;
+  typedef typename boost::graph_traits<HalfedgeGraph>::out_edge_iterator          out_edge_iterator;
   typedef typename HalfedgeGraph::Face_handle                                     Face_handle;
   typedef typename HalfedgeGraph::Halfedge_around_facet_circulator                Halfedge_facet_circulator;
 
   std::set<vertex_descriptor> vertices_in_disk;
-  std::set<edge_descriptor> edges_in_disk;
+  std::set<halfedge_descriptor> edges_in_disk;
   std::set<Face_handle> faces_in_disk;
 
   vertices_in_disk.clear();
@@ -72,10 +72,10 @@ bool is_vertex_degenerate(HalfedgeGraph& polyhedron,
     out_edge_iterator e, e_end;
     for (boost::tie(e, e_end) = out_edges(vd, polyhedron); e != e_end; ++e)
     {
-      edge_descriptor ed = *e;
-      edge_descriptor ed_op = opposite(ed, polyhedron);
-      vertex_descriptor target = target(ed, polyhedron);
-      if (vertices_in_disk.find(target) != vertices_in_disk.end())
+      halfedge_descriptor ed = halfedge(*e, polyhedron);
+      halfedge_descriptor ed_op = opposite(ed, polyhedron);
+      vertex_descriptor tgt = target(ed, polyhedron);
+      if (vertices_in_disk.find(tgt) != vertices_in_disk.end())
       {
         edges_in_disk.insert(ed);
         edges_in_disk.insert(ed_op);
@@ -127,8 +127,7 @@ void search_vertices_in_disk(HalfedgeGraph& polyhedron,
                              double edgelength_TH)
 {
   typedef typename boost::graph_traits<HalfedgeGraph>::vertex_descriptor          vertex_descriptor;
-  typedef typename boost::graph_traits<HalfedgeGraph>::vertex_iterator            vertex_iterator;
-  typedef typename boost::graph_traits<HalfedgeGraph>::edge_descriptor            edge_descriptor;
+  typedef typename boost::graph_traits<HalfedgeGraph>::halfedge_descriptor            halfedge_descriptor;
   typedef typename boost::graph_traits<HalfedgeGraph>::out_edge_iterator		      out_edge_iterator;
 
   std::map<vertex_descriptor, bool> vertex_visited;
@@ -147,7 +146,7 @@ void search_vertices_in_disk(HalfedgeGraph& polyhedron,
     out_edge_iterator e, e_end;
     for(boost::tie(e, e_end) = out_edges(v, polyhedron); e != e_end; ++e)
     {
-      edge_descriptor ed = *e;
+      halfedge_descriptor ed = halfedge(*e, polyhedron);
 
       vertex_descriptor new_v = target(ed, polyhedron);
       if (vertex_visited.find(new_v) == vertex_visited.end())

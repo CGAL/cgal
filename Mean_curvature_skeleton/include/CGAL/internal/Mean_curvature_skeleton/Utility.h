@@ -40,15 +40,15 @@ namespace internal {
 * @param pn the position of the new vertex created by the split
 */
 template<class HalfedgeGraph, class HalfedgeGraphPointPMap>
-typename boost::graph_traits<HalfedgeGraph>::edge_descriptor
+typename boost::graph_traits<HalfedgeGraph>::halfedge_descriptor
 mesh_split(HalfedgeGraph& polyhedron, 
            HalfedgeGraphPointPMap& hg_point_pmap,
-           typename boost::graph_traits<HalfedgeGraph>::edge_descriptor ei,
+           typename boost::graph_traits<HalfedgeGraph>::halfedge_descriptor ei,
            typename HalfedgeGraph::Traits::Point_3 pn)
 {
-  typedef typename boost::graph_traits<HalfedgeGraph>::edge_descriptor            edge_descriptor;
+  typedef typename boost::graph_traits<HalfedgeGraph>::halfedge_descriptor            halfedge_descriptor;
 
-  edge_descriptor en = polyhedron.split_edge(ei);
+  halfedge_descriptor en = polyhedron.split_edge(ei);
   boost::put(hg_point_pmap, en->vertex(), pn);
   polyhedron.split_facet(en, ei->next());
 
@@ -60,12 +60,12 @@ mesh_split(HalfedgeGraph& polyhedron,
   en->next()->opposite()->id() = -1;
   en->next()->next()->id() = -1;
   ei->next()->id() = -1;
-  edge_descriptor ej = opposite(en, polyhedron);
+  halfedge_descriptor ej = opposite(en, polyhedron);
   if (!(ej->is_border()))
   {
     polyhedron.split_facet(ei->opposite(), ej->next());
     ej->next()->id() = -1;
-    edge_descriptor ei_op_next = ei->opposite()->next();
+    halfedge_descriptor ei_op_next = ei->opposite()->next();
     ei_op_next->id() = -1;
     ei_op_next->opposite()->id() = -1;
     ei_op_next->next()->id() = -1;

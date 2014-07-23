@@ -248,7 +248,7 @@ public:
 ///         `unsigned int` as value type
 /// @tparam EdgeIndexMap
 ///         a model of `ReadWritePropertyMap`</a>
-///         with MCF_Skeleton::edge_descriptor as key and
+///         with MCF_Skeleton::halfedge_descriptor as key and
 ///         `unsigned int` as value type
 /// @tparam GraphCorrelationPMap
 ///         a model of `ReadWritePropertyMap`/a>
@@ -306,6 +306,8 @@ public:
   typedef typename boost::graph_traits<HalfedgeGraph>::vertex_iterator         vertex_iterator;
   typedef typename HalfedgeGraph::Vertex_handle                                Vertex_handle;
 
+  typedef typename boost::graph_traits<HalfedgeGraph>::halfedge_descriptor     halfedge_descriptor;
+  typedef typename boost::graph_traits<HalfedgeGraph>::halfedge_iterator       halfedge_iterator;
   typedef typename boost::graph_traits<HalfedgeGraph>::edge_descriptor         edge_descriptor;
   typedef typename boost::graph_traits<HalfedgeGraph>::edge_iterator           edge_iterator;
   typedef typename boost::graph_traits<HalfedgeGraph>::in_edge_iterator        in_edge_iterator;
@@ -1033,9 +1035,9 @@ private:
 
     max_id = vertex_id_count;
 
-    edge_iterator eb, ee;
+    halfedge_iterator eb, ee;
     int idx = 0;
-    for (boost::tie(eb, ee) = boost::edges(*polyhedron); eb != ee; ++eb)
+    for (boost::tie(eb, ee) = halfedges(*polyhedron); eb != ee; ++eb)
     {
       put(edge_id_pmap, *eb, idx++);
     }
@@ -1057,9 +1059,9 @@ private:
   void compute_edge_weight()
   {
     edge_weight.clear();
-    edge_weight.reserve(num_edges(*polyhedron));
-    edge_iterator eb, ee;
-    for(boost::tie(eb, ee) = edges(*polyhedron); eb != ee; ++eb)
+    edge_weight.reserve(2 * num_edges(*polyhedron));
+    halfedge_iterator eb, ee;
+    for(boost::tie(eb, ee) = halfedges(*polyhedron); eb != ee; ++eb)
     {
       edge_weight.push_back(this->weight_calculator(*eb, *polyhedron));
     }
@@ -1116,7 +1118,7 @@ private:
       for (boost::tie(e, e_end) = in_edges(*vb, *polyhedron); e != e_end; ++e)
       {
         vertex_descriptor vj = source(*e, *polyhedron);
-        double wij = edge_weight[get(edge_id_pmap, *e)] * 2.0;
+        double wij = edge_weight[get(edge_id_pmap, halfedge(*e, *polyhedron))] * 2.0;
         int jd = get(vertex_id_pmap, vj);
         int j = new_id[jd];
         A.set_coef(i, j, wij * L, true);
@@ -1388,20 +1390,20 @@ private:
   void compute_incident_angle()
   {
     halfedge_angle.clear();
-    int ne = num_edges(*polyhedron);
+    int ne = 2 * num_edges(*polyhedron);
     halfedge_angle.resize(ne, 0);
 
-    edge_iterator eb, ee;
+    halfedge_iterator eb, ee;
     int idx = 0;
-    for (boost::tie(eb, ee) = edges(*polyhedron); eb != ee; ++eb)
+    for (boost::tie(eb, ee) = halfedges(*polyhedron); eb != ee; ++eb)
     {
       put(edge_id_pmap, *eb, idx++);
     }
 
-    for (boost::tie(eb, ee) = edges(*polyhedron); eb != ee; ++eb)
+    for (boost::tie(eb, ee) = halfedges(*polyhedron); eb != ee; ++eb)
     {
       int e_id = get(edge_id_pmap, *eb);
-      edge_descriptor ed = *eb;
+      halfedge_descriptor ed = *eb;
 
       if (is_border(ed, *polyhedron))
       {
@@ -1411,7 +1413,7 @@ private:
       {
         vertex_descriptor vi = source(ed, *polyhedron);
         vertex_descriptor vj = target(ed, *polyhedron);
-        edge_descriptor ed_next = ed->next();
+        halfedge_descriptor ed_next = ed->next();
         vertex_descriptor vk = target(ed_next, *polyhedron);
         Point pi = get(hg_point_pmap, vi);
         Point pj = get(hg_point_pmap, vj);
@@ -1473,15 +1475,15 @@ private:
   /// Split triangles with an angle greater than `alpha_TH`.
   int split_flat_triangle()
   {
-    int ne = num_edges(*polyhedron);
+    int ne = 2 * num_edges(*polyhedron);
     compute_incident_angle();
 
     int cnt = 0;
-    edge_iterator eb, ee;
-    for (boost::tie(eb, ee) = edges(*polyhedron); eb != ee; ++eb)
+    halfedge_iterator eb, ee;
+    for (boost::tie(eb, ee) = halfedges(*polyhedron); eb != ee; ++eb)
     {
-      edge_descriptor ei = *eb;
-      edge_descriptor ej = ei->opposite();
+      halfedge_descriptor ei = *eb;
+      halfedge_descriptor ej = opposite(ei, *polyhedron);
       int ei_id = get(edge_id_pmap, ei);
       int ej_id = get(edge_id_pmap, ej);
       if (ei_id < 0 || ei_id >= ne
@@ -1500,7 +1502,7 @@ private:
         continue;
       }
 
-      edge_descriptor ek;
+      halfedge_descriptor ek;
       if (angle_i > angle_j)
       {
         ek = ei->next();
@@ -1511,7 +1513,7 @@ private:
       }
       vertex_descriptor vk = target(ek, *polyhedron);
       Point pn = project_vertex(vs, vt, vk);
-      edge_descriptor en = internal::mesh_split(*polyhedron, hg_point_pmap, ei, pn);
+      halfedge_descriptor en = internal::mesh_split(*polyhedron, hg_point_pmap, ei, pn);
       // set id for new vertex
       put(vertex_id_pmap, en->vertex(), vertex_id_count++);
       cnt++;
@@ -1570,7 +1572,7 @@ private:
         in_edge_iterator eb, ee;
         for (boost::tie(eb, ee) = in_edges(v, *polyhedron); eb != ee; ++eb)
         {
-          edge_descriptor edge = *eb;
+          halfedge_descriptor edge = halfedge(*eb, *polyhedron);
           vertex_descriptor v0 = source(edge, *polyhedron);
           vertex_descriptor v1 = target(edge, *polyhedron);
           double length = sqrt(squared_distance(get(hg_point_pmap, v0),
@@ -1699,11 +1701,11 @@ private:
 
   void print_edges()
   {
-    edge_iterator eb, ee;
+    halfedge_iterator eb, ee;
 
-    std::map<edge_descriptor, bool> visited;
+    std::map<halfedge_descriptor, bool> visited;
 
-    for (boost::tie(eb, ee) = edges(*polyhedron); eb != ee; ++eb)
+    for (boost::tie(eb, ee) = halfedges(*polyhedron); eb != ee; ++eb)
     {
       if (!visited[*eb])
       {
@@ -1736,7 +1738,7 @@ private:
 ///         `unsigned int` as value type
 /// @tparam EdgeIndexMap
 ///         a model of `ReadWritePropertyMap`</a>
-///         with MCF_Skeleton::edge_descriptor as key and
+///         with MCF_Skeleton::halfedge_descriptor as key and
 ///         `unsigned int` as value type
 /// @tparam GraphCorrelationPMap
 ///         a model of `ReadWritePropertyMap`</a>
