@@ -199,18 +199,19 @@ namespace CGAL {
             }
             CGAL_SDG_DEBUG(std::cout << "debug Side_of_bs two same x"
                 << std::endl;);
-            if ( ( ( compare_y_2(*dx, *s1) == SMALLER ) and
+            if ( (bot_p == dx) or (top_p == dx) ) {
+              CGAL_assertion (
+                 ( ( compare_y_2(*dx, *s1) == SMALLER ) and
                    ( compare_y_2(*dx, *s2) == SMALLER )   ) or
                  ( ( compare_y_2(*dx, *s1) == LARGER  ) and
-                   ( compare_y_2(*dx, *s2) == LARGER  )   )   )   {
-              CGAL_assertion( (bot_p == dx) or (top_p == dx) );
+                   ( compare_y_2(*dx, *s2) == LARGER  )   )   );
               dxmirror = Point_2 (dx->x(), s1->y() + s2->y() - dx->y());
-              if (compare_y_2(dxmirror, *bot_p) == SMALLER) {
-                CGAL_assertion( top_p == dx );
+              if (top_p == dx) {
+                CGAL_assertion( compare_y_2(dxmirror, *bot_p) == SMALLER );
                 bot_p = &dxmirror;
                 is_bot_input = false;
-              }
-              if (compare_y_2(dxmirror, *top_p) == LARGER) {
+              } else {
+                CGAL_assertion( compare_y_2(dxmirror, *top_p) == LARGER );
                 CGAL_assertion( bot_p == dx );
                 top_p = &dxmirror;
                 is_top_input = false;
