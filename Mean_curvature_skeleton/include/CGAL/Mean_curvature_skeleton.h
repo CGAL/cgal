@@ -327,12 +327,7 @@ public:
   HalfedgeGraphPointPMap, GraphPointPMap>                                      Skeleton;
 
   // Repeat Graph types
-  typedef typename boost::graph_traits<Graph>::vertex_descriptor               vertex_desc;
-  typedef typename boost::graph_traits<Graph>::vertex_iterator                 vertex_iter;
-  typedef typename boost::graph_traits<Graph>::in_edge_iterator                in_edge_iter;
-  typedef typename boost::graph_traits<Graph>::out_edge_iterator               out_edge_iter;
-  typedef typename boost::graph_traits<Graph>::edge_iterator                   edge_iter;
-  typedef typename boost::graph_traits<Graph>::edge_descriptor                 edge_desc;
+  typedef typename boost::graph_traits<Graph>::vertex_descriptor               Skeleton_vertex_descriptor;
 
   // Mesh simplification types
   typedef SMS::Edge_profile<HalfedgeGraph>                                     Profile;
@@ -421,7 +416,7 @@ private:
   std::map<int, std::vector<int> > correspondence;
   /** Record the correspondence between skeletal points
    *  and original surface points. */
-  std::map<vertex_desc, std::vector<int> > skeleton_to_surface_map;
+  std::map<Skeleton_vertex_descriptor, std::vector<int> > skeleton_to_surface_map;
 
   /** Record the corresponding pole of a point. */
   std::map<int, int> poles;
@@ -959,11 +954,11 @@ public:
    */
   void get_correspondent_vertices(GraphCorrelationPMap& skeleton_to_surface)
   {
-    typename std::map<vertex_desc, std::vector<int> >::iterator iter;
+    typename std::map<Skeleton_vertex_descriptor, std::vector<int> >::iterator iter;
     for (iter = skeleton_to_surface_map.begin();
          iter != skeleton_to_surface_map.end(); ++iter)
     {
-      vertex_desc i = iter->first;
+      Skeleton_vertex_descriptor i = iter->first;
 
       skeleton_to_surface[i] = std::vector<int>();
       for (size_t j = 0; j < skeleton_to_surface_map[i].size(); ++j)
