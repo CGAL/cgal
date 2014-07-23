@@ -3589,6 +3589,7 @@ public:
 
   Orientation orientation(const Line_2& l) const
   {
+    CGAL_assertion( is_v_computed);
     Orientation o(COLLINEAR);
     switch ( v_type ) {
     case PPP:
@@ -3610,6 +3611,10 @@ public:
 
   Oriented_side oriented_side(const Line_2& l) const
   {
+    if (not is_v_computed) {
+      compute_vertex(p_, q_, r_);
+      is_v_computed = true;
+    }
     Orientation o = orientation(l);
 
     if ( o == COLLINEAR ) { return ON_ORIENTED_BOUNDARY; }
@@ -3622,6 +3627,7 @@ public:
   Comparison_result
   linf_refine( const Line_2& l, Homogeneous_point_2& lrefhp ) const
   {
+    CGAL_assertion( is_v_computed );
     Point_2 vv ( ux_, uy_, uz_ );
 
     bool is_l_h_or_v = is_line_h_or_v(l);
@@ -3787,6 +3793,7 @@ public:
   Comparison_result
   linf_refinement( Homogeneous_point_2& lrefhp ) const
   {
+    CGAL_assertion( is_v_computed );
     Point_2 vv ( ux_, uy_, uz_ );
 
     Comparison_result compare_p(EQUAL);
