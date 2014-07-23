@@ -175,92 +175,89 @@ namespace CGAL {
         bool is_bot_input (true);
         bool is_top_input (true);
 
-        // check if two points have the same x or y coordinate
-        Point_2 const *s1;
-        Point_2 const *s2 = NULL;
-
-        Point_2 const *dx = NULL;
-        // check if two points have the same x coordinate
-        if (samex_pq) {
-          s1 = &p;
-          s2 = &q;
-          dx = &r;
-        }
-        else if (samex_pr) {
-          s1 = &p;
-          s2 = &r;
-          dx = &q;
-        }
-        else if (samex_qr) {
-          s1 = &q;
-          s2 = &r;
-          dx = &p;
-        }
-
         Point_2 dxmirror;
-        if (exist_two_with_same_x) {
-          CGAL_SDG_DEBUG(std::cout << "debug Side_of_bs two same x"
-              << std::endl;);
-          if ( ( ( compare_y_2(*dx, *s1) == SMALLER ) and
-                 ( compare_y_2(*dx, *s2) == SMALLER )   ) or
-               ( ( compare_y_2(*dx, *s1) == LARGER  ) and
-                 ( compare_y_2(*dx, *s2) == LARGER  )   )   )   {
-            CGAL_assertion( (bot_p == dx) or (top_p == dx) );
-            dxmirror = Point_2 (dx->x(), s1->y() + s2->y() - dx->y());
-            if (compare_y_2(dxmirror, *bot_p) == SMALLER) {
-              CGAL_assertion( top_p == dx );
-              bot_p = &dxmirror;
-              is_bot_input = false;
-            }
-            if (compare_y_2(dxmirror, *top_p) == LARGER) {
-              CGAL_assertion( bot_p == dx );
-              top_p = &dxmirror;
-              is_top_input = false;
-            }
-          }
-        }
-
-        Point_2 const *dy = NULL;
-        // check if two points have the same y coordinate
-        if (samey_pq) {
-          s1 = &p;
-          s2 = &q;
-          dy = &r;
-        }
-        else if (samey_pr) {
-          s1 = &p;
-          s2 = &r;
-          dy = &q;
-        }
-        else if (samey_qr) {
-          s1 = &q;
-          s2 = &r;
-          dy = &p;
-        }
-
         Point_2 dymirror;
-        if (exist_two_with_same_y) {
-          CGAL_assertion( dy != NULL );
-          CGAL_SDG_DEBUG(std::cout << "debug Side_of_bs two same y"
-              << std::endl;);
-          if ( ( ( compare_x_2(*dy, *s1) == SMALLER ) and
-                 ( compare_x_2(*dy, *s2) == SMALLER )   ) or
-               ( ( compare_x_2(*dy, *s1) == LARGER  ) and
-                 ( compare_x_2(*dy, *s2) == LARGER  )   )   )   {
-            CGAL_assertion( (lft_p == dy) or (rgt_p == dy) );
-            dymirror = Point_2 (s1->x() + s2->x() - dy->x(), dy->y());
-            if (compare_x_2(dymirror, *lft_p) == SMALLER) {
-              CGAL_assertion( rgt_p == dy );
-              lft_p = &dymirror;
-              is_lft_input = false;
+        if (exist_two_with_same_x != exist_two_with_same_y) {
+          if (exist_two_with_same_x) {
+            Point_2 const *s1 = NULL;
+            Point_2 const *s2 = NULL;
+            Point_2 const *dx = NULL;
+            if (samex_pq) {
+              s1 = &p;
+              s2 = &q;
+              dx = &r;
             }
-            if (compare_x_2(dymirror, *rgt_p) == LARGER) {
-              CGAL_assertion( lft_p == dy );
-              rgt_p = &dymirror;
-              is_rgt_input = false;
+            else if (samex_pr) {
+              s1 = &p;
+              s2 = &r;
+              dx = &q;
             }
-          }
-        }
+            else if (samex_qr) {
+              s1 = &q;
+              s2 = &r;
+              dx = &p;
+            }
+            CGAL_SDG_DEBUG(std::cout << "debug Side_of_bs two same x"
+                << std::endl;);
+            if ( ( ( compare_y_2(*dx, *s1) == SMALLER ) and
+                   ( compare_y_2(*dx, *s2) == SMALLER )   ) or
+                 ( ( compare_y_2(*dx, *s1) == LARGER  ) and
+                   ( compare_y_2(*dx, *s2) == LARGER  )   )   )   {
+              CGAL_assertion( (bot_p == dx) or (top_p == dx) );
+              dxmirror = Point_2 (dx->x(), s1->y() + s2->y() - dx->y());
+              if (compare_y_2(dxmirror, *bot_p) == SMALLER) {
+                CGAL_assertion( top_p == dx );
+                bot_p = &dxmirror;
+                is_bot_input = false;
+              }
+              if (compare_y_2(dxmirror, *top_p) == LARGER) {
+                CGAL_assertion( bot_p == dx );
+                top_p = &dxmirror;
+                is_top_input = false;
+              }
+            }
+          } else {
+            CGAL_assertion( exist_two_with_same_y );
+            Point_2 const *s1 = NULL;
+            Point_2 const *s2 = NULL;
+            Point_2 const *dy = NULL;
+            if (samey_pq) {
+              s1 = &p;
+              s2 = &q;
+              dy = &r;
+            }
+            else if (samey_pr) {
+              s1 = &p;
+              s2 = &r;
+              dy = &q;
+            }
+            else if (samey_qr) {
+              s1 = &q;
+              s2 = &r;
+              dy = &p;
+            }
+            CGAL_assertion( dy != NULL );
+            CGAL_SDG_DEBUG(std::cout << "debug Side_of_bs two same y"
+                << std::endl;);
+            if ( ( ( compare_x_2(*dy, *s1) == SMALLER ) and
+                   ( compare_x_2(*dy, *s2) == SMALLER )   ) or
+                 ( ( compare_x_2(*dy, *s1) == LARGER  ) and
+                   ( compare_x_2(*dy, *s2) == LARGER  )   )   )   {
+              CGAL_assertion( (lft_p == dy) or (rgt_p == dy) );
+              dymirror = Point_2 (s1->x() + s2->x() - dy->x(), dy->y());
+              if (compare_x_2(dymirror, *lft_p) == SMALLER) {
+                CGAL_assertion( rgt_p == dy );
+                lft_p = &dymirror;
+                is_lft_input = false;
+              }
+              if (compare_x_2(dymirror, *rgt_p) == LARGER) {
+                CGAL_assertion( lft_p == dy );
+                rgt_p = &dymirror;
+                is_rgt_input = false;
+              }
+            }
+          } // end of case exist_two_with_same_y
+        } // end of if exist_two_with_same_x != exist_two_with_same_y
 
         const FT two(2);
 
