@@ -26,6 +26,7 @@
 #define CGAL_NUMBER_TYPE_CHECKER_H
 
 #include <CGAL/number_type_basic.h>
+#include <sstream>
 
 // A number type class, parameterized by 2 number types NT1 and NT2.
 // It runs all operations on parallel over NT1 and NT2.
@@ -926,7 +927,9 @@ std::istream &
 operator>> (std::istream & is, Number_type_checker<NT1, NT2, Cmp> &b)
 {
   is >> b.n1();
-  b.n2() = b.n1(); // We hope that there is a conversion.
+  std::stringstream ss;
+  ss << b.n1();
+  ss >> b.n2();
   return is;
 }
 
