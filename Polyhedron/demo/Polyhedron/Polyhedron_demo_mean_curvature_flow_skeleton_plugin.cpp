@@ -111,7 +111,6 @@ struct Polyline_visitor
     Polyline& polyline = polylines.back();
     polyline.push_back(get(points_pmap, node_id));
   }
-
 };
 
 class Polyhedron_demo_mean_curvature_flow_skeleton_plugin :
@@ -572,22 +571,18 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionConvert_to_sk
 
     std::cout << "ok (" << time.elapsed() << " ms, " << ")" << std::endl;
 
+    //create the polylines representing the skeleton
     Scene_polylines_item* skeleton = new Scene_polylines_item();
     skeleton->setColor(QColor(175, 0, 255));
 
-    boost::graph_traits<SkeletonGraph>::edge_iterator ei, ei_end;
-    for (boost::tie(ei, ei_end) = edges(g); ei != ei_end; ++ei)
-    {
-      std::vector<Point> line;
-      line.clear();
-      Point s = points[source(*ei, g)];
-      Point t = points[target(*ei, g)];
-      line.push_back(s);
-      line.push_back(t);
-      skeleton->polylines.push_back(line);
-    }
+    Polyline_visitor polyline_visitor(skeleton->polylines, points);
+    CGAL::split_graph_into_polylines( g,
+                                      polyline_visitor,
+                                      CGAL::IsTerminalDefault() );
+
     skeleton->setName(QString("skeleton curve of %1").arg(item->name()));
     scene->addItem(skeleton);
+
     item->setGouraudMode();
     item->switch_transparency_on_off();
 
@@ -638,24 +633,18 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionConvert_to_me
 
     std::cout << "ok (" << time.elapsed() << " ms, " << ")" << std::endl;
 
+    //create the polylines representing the skeleton
     Scene_polylines_item* skeleton = new Scene_polylines_item();
     skeleton->setColor(QColor(175, 0, 255));
 
-    boost::graph_traits<SkeletonGraph>::edge_iterator ei, ei_end;
-    for (boost::tie(ei, ei_end) = edges(g); ei != ei_end; ++ei)
-    {
-      std::vector<Point> line;
-      line.clear();
-      boost::graph_traits<SkeletonGraph>::vertex_descriptor sv = source(*ei, g);
-      boost::graph_traits<SkeletonGraph>::vertex_descriptor tv = target(*ei, g);
-      Point s = points[sv];
-      Point t = points[tv];
-      line.push_back(s);
-      line.push_back(t);
-      skeleton->polylines.push_back(line);
-    }
-    skeleton->setName(QString("skeleton curve of %1").arg(item->name()));
+    Polyline_visitor polyline_visitor(skeleton->polylines, points);
+    CGAL::split_graph_into_polylines( g,
+                                      polyline_visitor,
+                                      CGAL::IsTerminalDefault() );
+
+    skeleton->setName(QString("medial skeleton curve of %1").arg(item->name()));
     scene->addItem(skeleton);
+
     item->setGouraudMode();
     item->switch_transparency_on_off();
 
@@ -974,6 +963,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSkeletonize()
 
   std::cout << "ok (" << time.elapsed() << " ms, " << ")" << std::endl;
 
+  //create the polylines representing the skeleton
   Scene_polylines_item* skeleton = new Scene_polylines_item();
   skeleton->setColor(QColor(175, 0, 255));
 
