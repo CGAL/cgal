@@ -173,16 +173,16 @@ public:
   // Edge orientation is trivial
   double operator()(edge_descriptor e, Polyhedron& polyhedron)
   {
-     vertex_descriptor v0 = boost::target(e, polyhedron);
-     vertex_descriptor v1 = boost::source(e, polyhedron);
+     vertex_descriptor v0 = target(e, polyhedron);
+     vertex_descriptor v1 = source(e, polyhedron);
      // Only one triangle for border edges
-     if (boost::get(CGAL::edge_is_border, polyhedron, e) ||
-         boost::get(CGAL::edge_is_border, polyhedron, CGAL::opposite_edge(e, polyhedron)))
+     if (get(CGAL::edge_is_border, polyhedron, e) ||
+         get(CGAL::edge_is_border, polyhedron, CGAL::opposite_edge(e, polyhedron)))
      {       
        edge_descriptor e_cw = CGAL::next_edge_cw(e, polyhedron);
-       vertex_descriptor v2 = boost::source(e_cw, polyhedron);
-       if (boost::get(CGAL::edge_is_border, polyhedron, e_cw) ||
-           boost::get(CGAL::edge_is_border, polyhedron, CGAL::opposite_edge(e_cw, polyhedron)) )
+       vertex_descriptor v2 = source(e_cw, polyhedron);
+       if (get(CGAL::edge_is_border, polyhedron, e_cw) ||
+           get(CGAL::edge_is_border, polyhedron, CGAL::opposite_edge(e_cw, polyhedron)) )
        {
           edge_descriptor e_ccw = CGAL::next_edge_ccw(e, polyhedron);
           v2 = boost::source(e_ccw, polyhedron);
@@ -192,9 +192,9 @@ public:
      else
      {
         edge_descriptor e_cw = CGAL::next_edge_cw(e, polyhedron);
-        vertex_descriptor v2 = boost::source(e_cw, polyhedron);     
+        vertex_descriptor v2 = source(e_cw, polyhedron);     
         edge_descriptor e_ccw = CGAL::next_edge_ccw(e, polyhedron);
-        vertex_descriptor v3 = boost::source(e_ccw, polyhedron);
+        vertex_descriptor v3 = source(e_ccw, polyhedron);
 
         return ( CotangentValue::operator()(v0, v2, v1)/2.0 + CotangentValue::operator()(v0, v3, v1)/2.0 );
      }
@@ -216,12 +216,12 @@ public:
   // 0 for border edges (which does not have an opposite angle)
   double operator()(edge_descriptor e, Polyhedron& polyhedron)
   {
-     if(boost::get(CGAL::edge_is_border, polyhedron, e)) { return 0.0;}
+     if(get(CGAL::edge_is_border, polyhedron, e)) { return 0.0;}
      
-     vertex_descriptor v0 = boost::target(e, polyhedron);
-     vertex_descriptor v1 = boost::source(e, polyhedron);
+     vertex_descriptor v0 = target(e, polyhedron);
+     vertex_descriptor v1 = source(e, polyhedron);
 
-     vertex_descriptor v_op = boost::target(CGAL::next_edge(e, polyhedron), polyhedron);
+     vertex_descriptor v_op = target(CGAL::next_edge(e, polyhedron), polyhedron);
      return CotangentValue::operator()(v0, v_op, v1);
   }
 };
@@ -240,19 +240,19 @@ public:
   // Returns different value for different edge orientation (which is a normal behaivour according to formula)
   double operator()(edge_descriptor e, Polyhedron& polyhedron)
   {
-    vertex_descriptor v0 = boost::target(e, polyhedron);
-    vertex_descriptor v1 = boost::source(e, polyhedron);
+    vertex_descriptor v0 = target(e, polyhedron);
+    vertex_descriptor v1 = source(e, polyhedron);
     Vector vec(v1->point(), v0->point());
     double norm = std::sqrt( vec.squared_length() );
 
     // Only one triangle for border edges
-    if (boost::get(CGAL::edge_is_border, polyhedron, e) ||
-        boost::get(CGAL::edge_is_border, polyhedron, CGAL::opposite_edge(e, polyhedron)))
+    if (get(CGAL::edge_is_border, polyhedron, e) ||
+        get(CGAL::edge_is_border, polyhedron, CGAL::opposite_edge(e, polyhedron)))
     {
       edge_descriptor e_cw = CGAL::next_edge_cw(e, polyhedron);
-      vertex_descriptor v2 = boost::source(e_cw, polyhedron);
-      if (boost::get(CGAL::edge_is_border, polyhedron, e_cw) || 
-          boost::get(CGAL::edge_is_border, polyhedron, CGAL::opposite_edge(e_cw, polyhedron)) )
+      vertex_descriptor v2 = source(e_cw, polyhedron);
+      if (get(CGAL::edge_is_border, polyhedron, e_cw) || 
+          get(CGAL::edge_is_border, polyhedron, CGAL::opposite_edge(e_cw, polyhedron)) )
       {
         edge_descriptor e_ccw = CGAL::next_edge_ccw(e, polyhedron);
         v2 = boost::source(e_ccw, polyhedron);
@@ -263,9 +263,9 @@ public:
     else
     {
       edge_descriptor e_cw = CGAL::next_edge_cw(e, polyhedron);
-      vertex_descriptor v2 = boost::source(e_cw, polyhedron);     
+      vertex_descriptor v2 = source(e_cw, polyhedron);     
       edge_descriptor e_ccw = CGAL::next_edge_ccw(e, polyhedron);
-      vertex_descriptor v3 = boost::source(e_ccw, polyhedron);
+      vertex_descriptor v3 = source(e_ccw, polyhedron);
 
       return ( half_tan_value_2(v1, v0, v2)/norm + half_tan_value_2(v1, v0, v3)/norm);
     }

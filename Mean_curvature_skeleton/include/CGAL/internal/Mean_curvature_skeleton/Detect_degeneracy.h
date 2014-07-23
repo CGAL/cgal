@@ -70,11 +70,11 @@ bool is_vertex_degenerate(HalfedgeGraph& polyhedron,
   {
     vertex_descriptor vd = *v_iter;
     out_edge_iterator e, e_end;
-    for (boost::tie(e, e_end) = boost::out_edges(vd, polyhedron); e != e_end; ++e)
+    for (boost::tie(e, e_end) = out_edges(vd, polyhedron); e != e_end; ++e)
     {
       edge_descriptor ed = *e;
       edge_descriptor ed_op = ed->opposite();
-      vertex_descriptor target = boost::target(ed, polyhedron);
+      vertex_descriptor target = target(ed, polyhedron);
       if (vertices_in_disk.find(target) != vertices_in_disk.end())
       {
         edges_in_disk.insert(ed);
@@ -145,15 +145,15 @@ void search_vertices_in_disk(HalfedgeGraph& polyhedron,
     Q.pop();
 
     out_edge_iterator e, e_end;
-    for(boost::tie(e, e_end) = boost::out_edges(v, polyhedron); e != e_end; ++e)
+    for(boost::tie(e, e_end) = out_edges(v, polyhedron); e != e_end; ++e)
     {
       edge_descriptor ed = *e;
 
-      vertex_descriptor new_v = boost::target(ed, polyhedron);
+      vertex_descriptor new_v = target(ed, polyhedron);
       if (vertex_visited.find(new_v) == vertex_visited.end())
       {
-        double distance = sqrtf(squared_distance(boost::get(hg_point_pmap, new_v),
-                                                 boost::get(hg_point_pmap, root)));
+        double distance = sqrtf(squared_distance(get(hg_point_pmap, new_v),
+                                                 get(hg_point_pmap, root)));
         if (distance < dist_TH)
         {
           vertex_visited[new_v] = true;

@@ -50,8 +50,8 @@ bool is_collapse_ok(HalfedgeGraph& polyhedron,
   typedef typename boost::graph_traits<HalfedgeGraph>::in_edge_iterator            in_edge_iterator;
 
   edge_descriptor v1v0 = v0v1->opposite();
-  vertex_descriptor v0 = boost::target(v1v0, polyhedron);
-  vertex_descriptor v1 = boost::source(v1v0, polyhedron);
+  vertex_descriptor v0 = target(v1v0, polyhedron);
+  vertex_descriptor v1 = source(v1v0, polyhedron);
 
   vertex_descriptor vv, vl, vr;
   edge_descriptor  h1, h2;
@@ -59,7 +59,7 @@ bool is_collapse_ok(HalfedgeGraph& polyhedron,
   // the edges v1-vl and vl-v0 must not be both boundary edges
   if (!(v0v1->is_border()))
   {
-    vl = boost::target(v0v1->next(), polyhedron);
+    vl = target(v0v1->next(), polyhedron);
     h1 = v0v1->next();
     h2 = h1->next();
     if (h1->opposite()->is_border() && h2->opposite()->is_border())
@@ -71,7 +71,7 @@ bool is_collapse_ok(HalfedgeGraph& polyhedron,
   // the edges v0-vr and vr-v1 must not be both boundary edges
   if (!(v1v0->is_border()))
   {
-    vr = boost::target(v1v0->next(), polyhedron);
+    vr = target(v1v0->next(), polyhedron);
     h1 = v1v0->next();
     h2 = h1->next();
     if (h1->opposite()->is_border() && h2->opposite()->is_border())
@@ -97,9 +97,9 @@ bool is_collapse_ok(HalfedgeGraph& polyhedron,
 
   // test intersection of the one-rings of v0 and v1
   in_edge_iterator eb, ee;
-  for (boost::tie(eb, ee) = boost::in_edges(v0, polyhedron); eb != ee; ++eb)
+  for (boost::tie(eb, ee) = in_edges(v0, polyhedron); eb != ee; ++eb)
   {
-    vv = boost::source(*eb, polyhedron);
+    vv = source(*eb, polyhedron);
     if (vv != v1 && vv != vl && vv != vr)
     {
       if (find_halfedge(polyhedron, vv, v1))
@@ -130,9 +130,9 @@ bool find_halfedge(HalfedgeGraph& polyhedron,
   typedef typename boost::graph_traits<HalfedgeGraph>::in_edge_iterator           in_edge_iterator;
 
   in_edge_iterator eb, ee;
-  for (boost::tie(eb, ee) = boost::in_edges(vj, polyhedron); eb != ee; ++eb)
+  for (boost::tie(eb, ee) = in_edges(vj, polyhedron); eb != ee; ++eb)
   {
-    vertex_descriptor vv = boost::source(*eb, polyhedron);
+    vertex_descriptor vv = source(*eb, polyhedron);
     if (vv == vi)
     {
       return true;
@@ -158,7 +158,7 @@ bool is_border(HalfedgeGraph& polyhedron,
   bool rR = false;
 
   in_edge_iterator eb, ee;
-  for (boost::tie(eb, ee) = boost::in_edges(aV, polyhedron); eb != ee; ++eb)
+  for (boost::tie(eb, ee) = in_edges(aV, polyhedron); eb != ee; ++eb)
   {
     edge_descriptor lEdge = *eb;
     if (is_undirected_edge_a_border(lEdge))
