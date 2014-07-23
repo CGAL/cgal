@@ -57,24 +57,26 @@ bool is_collapse_ok(HalfedgeGraph& polyhedron,
   edge_descriptor  h1, h2;
 
   // the edges v1-vl and vl-v0 must not be both boundary edges
-  if (!(v0v1->is_border()))
+  if (!(is_border(v0v1, polyhedron)))
   {
     vl = target(v0v1->next(), polyhedron);
     h1 = v0v1->next();
     h2 = h1->next();
-    if (h1->opposite()->is_border() && h2->opposite()->is_border())
+    if ( is_border(opposite(h1, polyhedron), polyhedron) &&
+         is_border(opposite(h2, polyhedron), polyhedron) )
     {
       return false;
     }
   }
 
   // the edges v0-vr and vr-v1 must not be both boundary edges
-  if (!(v1v0->is_border()))
+  if (!is_border(v1v0, polyhedron))
   {
     vr = target(v1v0->next(), polyhedron);
     h1 = v1v0->next();
     h2 = h1->next();
-    if (h1->opposite()->is_border() && h2->opposite()->is_border())
+    if ( is_border(opposite(h1, polyhedron), polyhedron) &&
+         is_border(opposite(h2, polyhedron), polyhedron) )
     {
       return false;
     }
@@ -87,10 +89,10 @@ bool is_collapse_ok(HalfedgeGraph& polyhedron,
   }
 
   // edge between two boundary vertices should be a boundary edge
-  if (is_border(polyhedron, v0) 
-   && is_border(polyhedron, v1)
-   && !(v0v1->is_border()) 
-   && !(v1v0->is_border()))
+  if (is_border(v0, polyhedron) 
+   && is_border(v1, polyhedron)
+   && !(is_border(v0v1, polyhedron))
+   && !(is_border(v1v0,polyhedron)))
   {
     return false;
   }
@@ -139,47 +141,6 @@ bool find_halfedge(HalfedgeGraph& polyhedron,
     }
   }
   return false;
-}
-
-/**
-* Test if a given vertex is on the border.
-*
-* @param polyhedron the mesh containing the given vertex
-* @param aV the given vertex
-*/
-template<class HalfedgeGraph>
-bool is_border(HalfedgeGraph& polyhedron,
-               typename boost::graph_traits<HalfedgeGraph>::vertex_descriptor aV)
-{
-  typedef typename boost::graph_traits<HalfedgeGraph>::vertex_descriptor          vertex_descriptor;
-  typedef typename boost::graph_traits<HalfedgeGraph>::edge_descriptor            edge_descriptor;
-  typedef typename boost::graph_traits<HalfedgeGraph>::in_edge_iterator           in_edge_iterator;
-
-  bool rR = false;
-
-  in_edge_iterator eb, ee;
-  for (boost::tie(eb, ee) = in_edges(aV, polyhedron); eb != ee; ++eb)
-  {
-    edge_descriptor lEdge = *eb;
-    if (is_undirected_edge_a_border(lEdge))
-    {
-      rR = true;
-      break;
-    }
-  }
-
-  return rR;
-}
-
-/**
-* Test if a given edge is a border edge.
-*
-* @param aEdge the given edge
-*/
-template<class Edge_descriptor>
-bool is_undirected_edge_a_border(Edge_descriptor aEdge)
-{
-  return aEdge->is_border() || aEdge->opposite()->is_border();
 }
 
 } //namespace internal

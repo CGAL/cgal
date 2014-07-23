@@ -1415,7 +1415,7 @@ private:
       int e_id = get(edge_id_pmap, *eb);
       edge_descriptor ed = *eb;
 
-      if (ed->is_border())
+      if (is_border(ed, *polyhedron))
       {
         halfedge_angle[e_id] = -1;
       }
