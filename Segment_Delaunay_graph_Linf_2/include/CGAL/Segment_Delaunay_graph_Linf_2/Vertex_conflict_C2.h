@@ -250,6 +250,7 @@ private:
   }
 
 
+  // check if (p, inf, q) conflicts with t
   Sign incircle_p(const Site_2& p, const Site_2& q,
 		  const Site_2& t) const
   {
@@ -1064,8 +1065,8 @@ private:
   {
     CGAL_precondition( p.is_point() && q.is_segment() );
 
-    CGAL_SDG_DEBUG(std::cout << "debug incircle_pss (pqt) = ("
-        << p << ") (" << q << ") (" << t << ")" << std::endl; );
+    CGAL_SDG_DEBUG(std::cout << "debug incircle_pss (piqt) = ("
+        << p << ") inf (" << q << ") (" << t << ")" << std::endl; );
 
     bool is_p_tsrc = same_points(p, t.source_site());
     bool is_p_ttrg = same_points(p, t.target_site());
@@ -1319,6 +1320,7 @@ private:
   } // end of function incircle_pss
 
 
+  // check if (p, inf, q) conflicts with t
   Sign incircle_s(const Site_2& p, const Site_2& q,
 		  const Site_2& t) const
   {
@@ -1399,11 +1401,12 @@ public:
 
 
 
+  // check if (p, q, inf) conflicts with t
   Sign operator()(const Site_2& p, const Site_2& q,
 		  const Site_2& t) const
   {
-    CGAL_SDG_DEBUG(std::cout << "debug: Vertex_conflict (pqt)= ("
-        << p << ") (" << q << ") (" << t << ")"
+    CGAL_SDG_DEBUG(std::cout << "debug: Vertex_conflict (pqit)= ("
+        << p << ") (" << q << ") inf (" << t << ")"
         << std::endl; );
 
 #ifdef CGAL_PROFILE
@@ -1447,8 +1450,8 @@ public:
       retval = incircle_s(q, p, t);
     }
 
-    CGAL_SDG_DEBUG(std::cout << "debug: Vertex_conflict (pqt)= ("
-        << p << ") (" << q << ") (" << t << ")"
+    CGAL_SDG_DEBUG(std::cout << "debug: Vertex_conflict (pqit)= ("
+        << p << ") (" << q << ") inf (" << t << ")"
         << " returns " << retval << std::endl; );
     return retval;
   }
