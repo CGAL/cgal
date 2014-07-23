@@ -1244,7 +1244,7 @@ private:
                 ,CGAL::get_cost(SMS::Edge_length_cost<HalfedgeGraph>())
                       .get_placement(placement)
                       .visitor(vis)
-                      .edge_is_border_map(fixed_edge_map)
+                      .edge_is_constrained_map(fixed_edge_map)
                 );
 
     return r;
