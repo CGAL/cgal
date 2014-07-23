@@ -31,7 +31,6 @@ typename Kernel::Vector_3 get_vertex_normal(const Vertex& v)
   typedef typename Kernel::Point_3 Point;
   typedef typename Kernel::Vector_3 Vector;
   typedef typename Vertex::Halfedge_around_vertex_const_circulator HV_circulator;
-  typedef typename Vertex::Facet Facet;
   Vector normal = CGAL::NULL_VECTOR;
   HV_circulator he = v.vertex_begin();
   HV_circulator end = he;
