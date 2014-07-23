@@ -35,6 +35,12 @@ struct IsTerminalDefault
   }
 };
 
+struct Dummy_visitor_for_split_graph_into_polylines
+{
+  void start_new_polyline(){}
+  void add_node(size_t /* node_id */){}
+};
+
 /// Splits a graph at vertices with degree higher than two.
 /// The vertices are duplicated, and new incident edges created.
 /// Graph must be undirected
@@ -125,8 +131,8 @@ split_graph_into_polylines(Graph graph,
     typename std::set<vertex_descriptor>::iterator it = terminal.begin();
     vertex_descriptor u = *it;
     terminal.erase(it);
-    polyline_visitor.onNewPolyline();
-    polyline_visitor.onAddNode(graph[u].id);
+    polyline_visitor.start_new_polyline();
+    polyline_visitor.add_node(graph[u].id);
 
     while (degree(u,graph) != 0)
     {
@@ -134,7 +140,7 @@ split_graph_into_polylines(Graph graph,
       out_edge_iterator b = out_edges(u, graph).first;
       vertex_descriptor v = target(*b, graph);
       CGAL_assertion(u!=v);
-      polyline_visitor.onAddNode(graph[v].id);
+      polyline_visitor.add_node(graph[v].id);
       remove_edge(b, graph);
       u = v;
     }
@@ -147,8 +153,8 @@ split_graph_into_polylines(Graph graph,
     edge_descriptor first_edge = *edges(graph).first;
     vertex_descriptor u = source(first_edge, graph);
 
-    polyline_visitor.onNewPolyline();
-    polyline_visitor.onAddNode(graph[u].id);
+    polyline_visitor.start_new_polyline();
+    polyline_visitor.add_node(graph[u].id);
 
     u = target(first_edge, graph);
     remove_edge(first_edge, graph);
@@ -159,7 +165,7 @@ split_graph_into_polylines(Graph graph,
       out_edge_iterator b = out_edges(u, graph).first;
       vertex_descriptor v = target(*b, graph);
       CGAL_assertion(u!=v);
-      polyline_visitor.onAddNode(graph[v].id);
+      polyline_visitor.add_node(graph[v].id);
       remove_edge(b, graph);
       u = v;
     }

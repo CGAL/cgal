@@ -86,14 +86,7 @@ GraphCorrelationPMap, GraphPointPMap, HalfedgeGraphPointPMap, Sparse_linear_solv
 typedef Polyhedron::Traits         Kernel;
 typedef Kernel::Point_3            Point;
 
-struct Split_in_polylines_visitor_base
-{
-  virtual void onNewPolyline(){}
-
-  virtual void onAddNode(size_t /* node_id */){}
-};
-
-struct Polyline_visitor : Split_in_polylines_visitor_base
+struct Polyline_visitor
 {
   typedef std::vector<Point> Polyline;
   typedef std::vector<std::size_t> Polyline_of_ids;
@@ -109,14 +102,14 @@ struct Polyline_visitor : Split_in_polylines_visitor_base
       points_pmap(points_property_map)
   {}
 
-  void onNewPolyline()
+  void start_new_polyline()
   {
     Polyline V;
     polylines.push_back(V);
     polylines_of_ids.push_back(Polyline_of_ids());
   }
 
-  void onAddNode(size_t node_id)
+  void add_node(size_t node_id)
   {
     Polyline& polyline = polylines.back();
     Polyline_of_ids& polyline_of_ids = polylines_of_ids.back();
