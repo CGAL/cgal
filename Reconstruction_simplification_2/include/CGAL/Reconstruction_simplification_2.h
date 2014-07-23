@@ -295,9 +295,11 @@ protected:
 	 /// \endcond
 
 	/*!
-			TODO COMMENT and change to perturb
+		Randomly perturbs the input points.
+
+		\param scale Coordinate-wise upper bound for the perturbation.
 	 */
-	 void noise(const FT scale)
+	 void perturbe_points(const FT scale = 1e-5)
     {
         std::cerr << "noise by " << scale << "...";
          for (InputIterator it = start; it != beyond; it++)
@@ -309,11 +311,12 @@ protected:
     }
 
 	/*!
-		TODO COMMENT
+		Normalizes the coordinates of the input points, i.e.,
+		the input points get recentered.
 	 */
 	void normalize_points()
     {
-        noise(1e-5);
+        //perturbe_points(1e-5);
         compute_bbox(m_bbox_x, m_bbox_y, m_bbox_size);
         if (m_bbox_size == 0.0) return;
 
@@ -331,7 +334,6 @@ protected:
 	 /// \cond SKIP_IN_MANUAL
 	 void compute_bbox(double &x, double &y, double &scale)
      {
-
         FT x_min, x_max, y_min, y_max;
         InputIterator it = start;
         Point p = get(point_pmap, *it);
@@ -422,8 +424,6 @@ protected:
 	}
 
 	// INIT //
-
-
 	void insert_loose_bbox(const double x, const double y, const double size) {
 		double timer = clock();
 		std::cerr << yellow << "insert loose bbox" << white << "...";
@@ -500,19 +500,6 @@ protected:
 		update_cost(hull.begin(), hull.end());
 	}
 
-
-	bool decimate() {
-		bool ok;
-		Reconstruction_edge_2 pedge;
-		ok = pick_edge(m_mchoice, pedge);
-		if (!ok)
-			return false;
-
-		ok = do_collapse(pedge.edge());
-		if (!ok)
-			return false;
-		return true;
-	}
 
 	bool do_collapse(Edge edge) {
 		bool ok;
@@ -635,7 +622,20 @@ protected:
 
 	// PEDGE //
 
-	bool create_pedge(const Edge& edge, Reconstruction_edge_2& pedge) {
+	bool decimate() {
+		bool ok;
+		Reconstruction_edge_2 pedge;
+		ok = pick_edge(m_mchoice, pedge);
+		if (!ok)
+			return false;
+
+		ok = do_collapse(pedge.edge());
+		if (!ok)
+			return false;
+		return true;
+	}
+
+bool create_pedge(const Edge& edge, Reconstruction_edge_2& pedge) {
 		Cost after_cost;
 		bool ok = simulate_collapse(edge, after_cost);
 		if (!ok)

@@ -41,12 +41,12 @@ typedef CGAL::Reconstruction_simplification_2 <K, InputIterator,
 
 typedef CGAL::Reconstruction_triangulation_2<K> Rt_2;
 
-typedef typename Rt_2::Finite_edges_iterator Finite_edges_iterator;
-typedef typename Rt_2::Vertex_iterator Vertex_iterator;
+typedef Rt_2::Finite_edges_iterator Finite_edges_iterator;
+typedef Rt_2::Vertex_iterator Vertex_iterator;
 
-typedef typename Rt_2::Edge Edge;
+typedef Rt_2::Edge Edge;
 
-typedef typename CGAL::Reconstruction_simplification_2<K, InputIterator, PointPMap, MassPMap> Rs_2;
+typedef CGAL::Reconstruction_simplification_2<K, InputIterator, PointPMap, MassPMap> Rs_2;
 
 PointMassList* load_xy_file(const std::string& fileName);
 PointMassList* simple_point_set();
