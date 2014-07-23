@@ -988,61 +988,8 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSkeletonize()
                                     polyline_visitor,
                                     CGAL::IsTerminalDefault() );
 
-//  edge_iter ei, ei_end;
-//  for (boost::tie(ei, ei_end) = edges(skeleton_curve); ei != ei_end; ++ei)
-//  {
-//    std::vector<Point> line;
-//    line.clear();
-//    Point s = skeleton_points[source(*ei, skeleton_curve)];
-//    Point t = skeleton_points[target(*ei, skeleton_curve)];
-//    line.push_back(s);
-//    line.push_back(t);
-//    skeleton->polylines.push_back(line);
-//  }
-
-  std::cout << "line number " << skeleton->polylines.size() << "\n";
-  Scene_polylines_item::Polylines_container::iterator i;
-
-  for(i = skeleton->polylines.begin(); i != skeleton->polylines.end(); ++i)
-  {
-    std::cout << "vertex number " << (*i).size() << "\n";
-  }
-
   skeleton->setName(QString("skeleton curve of %1").arg(item->name()));
   scene->addItem(skeleton);
-
-//  Polyhedron* mesh = mcs->get_mesh();
-
-//  vertex_iterator vb, ve;
-//  std::vector<vertex_descriptor> id_to_vd;
-//  id_to_vd.clear();
-//  id_to_vd.resize(num_vertices(*mesh));
-//  for (boost::tie(vb, ve) = vertices(*mesh); vb != ve; ++vb)
-//  {
-//    vertex_descriptor v = *vb;
-//    id_to_vd[v->id()] = v;
-//  }
-
-//  Scene_polylines_item* lines = new Scene_polylines_item();
-
-//  vertex_iter gvb, gve;
-//  for (boost::tie(gvb, gve) = vertices(skeleton_curve); gvb != gve; ++gvb)
-//  {
-//    vertex_desc i = *gvb;
-//    Point s = skeleton_points[i];
-//    for (size_t j = 0; j < corr[i].size(); ++j)
-//    {
-//      std::vector<Point> line;
-//      line.clear();
-//      Point t = id_to_vd[corr[i][j]]->point();
-//      line.push_back(s);
-//      line.push_back(t);
-//      lines->polylines.push_back(line);
-//    }
-//  }
-//  lines->setName(QString("correspondent vertices of %1").arg(item->name()));
-//  lines->setVisible(false);
-//  scene->addItem(lines);
 
   // set the fixed points and contracted mesh as invisible
   if (fixedPointsItemIndex >= 0)
@@ -1057,46 +1004,6 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSkeletonize()
     dynamic_cast<Scene_polyhedron_item*>(scene->item(copyItemIndex))->switch_transparency_on_off();
     scene->item(copyItemIndex)->setGouraudMode();
   }
-
-  // display the end points and junction points
-//  Scene_points_with_normal_item* endPointsItem = new Scene_points_with_normal_item;
-//  endPointsItem->setName(QString("end points of %1").arg(item->name()));
-//  endPointsItem->setVisible(false);
-//  Scene_points_with_normal_item* junctionPointsItem = new Scene_points_with_normal_item;
-//  junctionPointsItem->setName(QString("junction points of %1").arg(item->name()));
-//  junctionPointsItem->setVisible(false);
-
-//  Point_set *end_ps = endPointsItem->point_set();
-//  end_ps->set_selected_color(QColor(254, 111, 94));
-//  end_ps->set_selected_diameter(6.0);
-//  Point_set *junction_ps = junctionPointsItem->point_set();
-//  junction_ps->set_selected_color(QColor(51, 255, 204));
-//  junction_ps->set_selected_diameter(6.0);
-
-//  boost::graph_traits<SkeletonGraph>::vertex_iterator vi;
-//  for (vi = vertices(skeleton_curve).first; vi != vertices(skeleton_curve).second; ++vi)
-//  {
-//    int deg = out_degree(*vi, skeleton_curve);
-//    if (deg == 1)
-//    {
-//      UI_point_3<Kernel> point(skeleton_points[*vi].x(),
-//                               skeleton_points[*vi].y(),
-//                               skeleton_points[*vi].z());
-//      end_ps->select(&point);
-//      end_ps->push_back(point);
-//    }
-//    else if (deg > 2)
-//    {
-//      UI_point_3<Kernel> point(skeleton_points[*vi].x(),
-//                               skeleton_points[*vi].y(),
-//                               skeleton_points[*vi].z());
-//      junction_ps->select(&point);
-//      junction_ps->push_back(point);
-//    }
-//  }
-
-//  scene->addItem(endPointsItem);
-//  scene->addItem(junctionPointsItem);
 
   // update scene
   QApplication::restoreOverrideCursor();
