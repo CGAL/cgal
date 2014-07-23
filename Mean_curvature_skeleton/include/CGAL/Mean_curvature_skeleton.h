@@ -1466,6 +1466,7 @@ private:
 
     int cnt = 0;
     halfedge_iterator eb, ee;
+    /// \todo this is unsafe, we loop over a sequence that we modify!!!
     for (boost::tie(eb, ee) = halfedges(*hg_ptr); eb != ee; ++eb)
     {
       halfedge_descriptor ei = *eb;

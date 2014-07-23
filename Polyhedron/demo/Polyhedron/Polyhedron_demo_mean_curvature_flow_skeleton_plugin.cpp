@@ -193,6 +193,7 @@ public:
     return true;
   }
 
+  /// \todo move this function into an include
   bool is_mesh_valid(Polyhedron *pMesh) {
     if (!pMesh->is_closed())
     {
@@ -226,6 +227,7 @@ public:
     return true;
   }
 
+  /// \todo remove duplicated code
   // check if the Mean_curvature_skeleton exists
   // or has the same polyheron item
   // check if the mesh is a watertight triangle mesh
