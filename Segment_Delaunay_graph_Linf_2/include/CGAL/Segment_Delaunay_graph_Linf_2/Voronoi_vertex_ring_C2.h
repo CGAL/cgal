@@ -1788,6 +1788,7 @@ private:
   Sign incircle_p_no_easy(const Site_2& st, PPS_Type ) const
   {
     CGAL_precondition( st.is_point() );
+    CGAL_assertion( is_v_computed );
 
     CGAL_SDG_DEBUG(std::cout << "debug vring incircle_p_no_easy PPS p="
       << p_ << " q=" << q_  << " r=" << r_ << " t=" << st
@@ -1940,6 +1941,7 @@ private:
   Sign incircle_p_no_easy(const Site_2& st, PSS_Type ) const
   {
     CGAL_precondition( st.is_point() );
+    CGAL_assertion( is_v_computed );
     const Point_2 t = st.point();
 
     const Point_2 pref = p_ref().point();
@@ -2108,6 +2110,7 @@ private:
   Sign incircle_p_no_easy(const Site_2& st, SSS_Type ) const
   {
     CGAL_precondition( st.is_point() );
+    CGAL_assertion( is_v_computed );
 
     Point_2 t = st.point();
 
@@ -2578,7 +2581,7 @@ private:
   template<class Type>
   Sign incircle_s_no_easy(const Site_2& t, Type type) const
   {
-
+    CGAL_assertion( is_v_computed );
     CGAL_SDG_DEBUG(std::cout << "debug vring fn incircle_s_no_easy pqrt= ("
         << p_ << ") (" << q_ << ") (" << r_ << ") (" << t << ")"
         << std::endl;);
@@ -3463,26 +3466,17 @@ public:
   }
 
   FT hx() const {
-    // philaris: changed to one type
-    //if ( v_type == PPP ) { return ux_ppp; }
-    //if ( v_type == PPS ) { return to_ft(ux_pps); }
-    //return to_ft(ux);
+    CGAL_assertion( is_v_computed );
     return ux_;
   }
 
   FT hy() const {
-    // philaris: changed to one type
-    //if ( v_type == PPP ) { return uy_ppp; }
-    //if ( v_type == PPS ) { return to_ft(uy_pps); }
-    //return to_ft(uy);
+    CGAL_assertion( is_v_computed );
     return uy_;
   }
 
   FT hw() const {
-    // philaris: changed to one type
-    //if ( v_type == PPP ) { return uz_ppp; }
-    //if ( v_type == PPS ) { return to_ft(uz_pps); }
-    //return to_ft(uz);
+    CGAL_assertion( is_v_computed );
     return uz_;
   }
 
