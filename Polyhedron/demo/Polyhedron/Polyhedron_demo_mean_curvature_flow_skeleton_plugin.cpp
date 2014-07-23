@@ -28,7 +28,7 @@
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/iterator.h>
 #include <CGAL/internal/corefinement/Polyhedron_subset_extraction.h>
-#include <CGAL/extract_maximal_polylines.h>
+#include <CGAL/split_graph_into_polylines.h>
 #include <CGAL/mesh_segmentation.h>
 
 #include <queue>
@@ -992,10 +992,10 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSkeletonize()
   std::vector<std::vector<std::size_t> > polylines_of_ids;
   std::set<std::size_t> corner_ids;
   Polyline_visitor polyline_visitor(skeleton->polylines, polylines_of_ids, skeleton_points);
-  CGAL::split_in_polylines(skeleton_curve,
-                           corner_ids,
-                           polyline_visitor,
-                           CGAL::IsTerminalDefault());
+  CGAL::split_graph_into_polylines( skeleton_curve,
+                                    corner_ids,
+                                    polyline_visitor,
+                                    CGAL::IsTerminalDefault() );
 
 //  edge_iter ei, ei_end;
 //  for (boost::tie(ei, ei_end) = edges(skeleton_curve); ei != ei_end; ++ei)

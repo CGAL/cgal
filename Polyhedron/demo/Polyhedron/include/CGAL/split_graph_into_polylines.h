@@ -63,9 +63,8 @@ struct IsTerminalDefault
 /// The vertices are duplicated, and new incident edges created.
 template <typename Graph,
           typename IsTerminal>
-void split_in_polylines(Graph graph,
-                        IsTerminal is_terminal,
-                        std::size_t /* features_id_offset */ = 0)
+void split_graph_into_polylines(Graph graph,
+                                IsTerminal is_terminal)
 {
   typedef typename boost::graph_traits<Graph>::vertex_descriptor vertex_descriptor;
   typedef typename boost::graph_traits<Graph>::edge_descriptor edge_descriptor;
@@ -106,6 +105,9 @@ void split_in_polylines(Graph graph,
       }
     }
   }
+
+  // check all vertices are of degree 1 or 2 and that the source
+  // and target of each edge are different vertices with different ids
   CGAL_assertion_code(
   BOOST_FOREACH(vertex_descriptor v, vertices(graph))
   {
@@ -129,11 +131,11 @@ template <typename Graph,
           typename Visitor,
           typename IsTerminal>
 std::pair<std::size_t, std::size_t>
-split_in_polylines(Graph graph,
-                   SetOfCornerVertexIds& corner_ids,
-                   Visitor& polyline_visitor,
-                   IsTerminal is_terminal,
-                   std::size_t features_id_offset = 0)
+split_graph_into_polylines(Graph graph,
+                           SetOfCornerVertexIds& corner_ids,
+                           Visitor& polyline_visitor,
+                           IsTerminal is_terminal,
+                           std::size_t features_id_offset = 0)
 {
   std::size_t curve_id = features_id_offset;
 
@@ -142,7 +144,7 @@ split_in_polylines(Graph graph,
   typedef typename boost::graph_traits<Graph>::vertex_iterator vertex_iterator;
   typedef typename boost::graph_traits<Graph>::out_edge_iterator out_edge_iterator;
 
-  split_in_polylines(graph, is_terminal, features_id_offset);
+  split_graph_into_polylines(graph, is_terminal, features_id_offset);
   std::set<vertex_descriptor> terminal;
   vertex_iterator b,e;
   for (boost::tie(b, e) = vertices(graph); b != e; ++b)
