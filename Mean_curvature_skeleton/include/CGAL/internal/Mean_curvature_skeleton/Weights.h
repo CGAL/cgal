@@ -179,21 +179,21 @@ public:
      if ( is_border(e, polyhedron) ||
           is_border( opposite(e, polyhedron), polyhedron) )
      {       
-       edge_descriptor e_cw = CGAL::next_edge_cw(e, polyhedron);
+       edge_descriptor e_cw = opposite(next(e, polyhedron), polyhedron);
        vertex_descriptor v2 = source(e_cw, polyhedron);
        if ( is_border(e_cw,polyhedron) ||
             is_border( opposite(e_cw,polyhedron), polyhedron) )
        {
-          edge_descriptor e_ccw = CGAL::next_edge_ccw(e, polyhedron);
-          v2 = boost::source(e_ccw, polyhedron);
+          edge_descriptor e_ccw = prev(opposite(e, polyhedron), polyhedron);
+          v2 = source(e_ccw, polyhedron);
        }
        return ( CotangentValue::operator()(v0, v2, v1)/2.0 );
      }
      else
      {
-        edge_descriptor e_cw = CGAL::next_edge_cw(e, polyhedron);
+        edge_descriptor e_cw = opposite(next(e, polyhedron), polyhedron);
         vertex_descriptor v2 = source(e_cw, polyhedron);     
-        edge_descriptor e_ccw = CGAL::next_edge_ccw(e, polyhedron);
+        edge_descriptor e_ccw = prev(opposite(e, polyhedron), polyhedron);
         vertex_descriptor v3 = source(e_ccw, polyhedron);
 
         return ( CotangentValue::operator()(v0, v2, v1)/2.0 + CotangentValue::operator()(v0, v3, v1)/2.0 );
@@ -249,22 +249,22 @@ public:
     if ( is_border(e, polyhedron) ||
          is_border( opposite(e, polyhedron), polyhedron) )
     {
-      edge_descriptor e_cw = CGAL::next_edge_cw(e, polyhedron);
+      edge_descriptor e_cw = opposite(next(e, polyhedron), polyhedron);
       vertex_descriptor v2 = source(e_cw, polyhedron);
       if ( is_border(e_cw, polyhedron) ||
            is_border( opposite(e_cw, polyhedron), polyhedron) )
       {
-        edge_descriptor e_ccw = CGAL::next_edge_ccw(e, polyhedron);
-        v2 = boost::source(e_ccw, polyhedron);
+        edge_descriptor e_ccw = prev(opposite(e, polyhedron), polyhedron);
+        v2 = source(e_ccw, polyhedron);
       }
 
       return ( half_tan_value_2(v1, v0, v2)/norm);
     }
     else
     {
-      edge_descriptor e_cw = CGAL::next_edge_cw(e, polyhedron);
+      edge_descriptor e_cw = opposite(next(e, polyhedron), polyhedron);
       vertex_descriptor v2 = source(e_cw, polyhedron);     
-      edge_descriptor e_ccw = CGAL::next_edge_ccw(e, polyhedron);
+      edge_descriptor e_ccw = prev(opposite(e, polyhedron), polyhedron);
       vertex_descriptor v3 = source(e_ccw, polyhedron);
 
       return ( half_tan_value_2(v1, v0, v2)/norm + half_tan_value_2(v1, v0, v3)/norm);

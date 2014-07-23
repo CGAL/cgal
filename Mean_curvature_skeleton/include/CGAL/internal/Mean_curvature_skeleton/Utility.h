@@ -60,7 +60,7 @@ mesh_split(HalfedgeGraph& polyhedron,
   en->next()->opposite()->id() = -1;
   en->next()->next()->id() = -1;
   ei->next()->id() = -1;
-  edge_descriptor ej = en->opposite();
+  edge_descriptor ej = opposite(en, polyhedron);
   if (!(ej->is_border()))
   {
     polyhedron.split_facet(ei->opposite(), ej->next());

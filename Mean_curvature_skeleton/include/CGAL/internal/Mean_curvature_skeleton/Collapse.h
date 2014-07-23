@@ -49,7 +49,7 @@ bool is_collapse_ok(HalfedgeGraph& polyhedron,
   typedef typename boost::graph_traits<HalfedgeGraph>::edge_descriptor	           edge_descriptor;
   typedef typename boost::graph_traits<HalfedgeGraph>::in_edge_iterator            in_edge_iterator;
 
-  edge_descriptor v1v0 = v0v1->opposite();
+  edge_descriptor v1v0 = opposite(v0v1, polyhedron);
   vertex_descriptor v0 = target(v1v0, polyhedron);
   vertex_descriptor v1 = source(v1v0, polyhedron);
 
@@ -60,8 +60,8 @@ bool is_collapse_ok(HalfedgeGraph& polyhedron,
   if (!(is_border(v0v1, polyhedron)))
   {
     vl = target(v0v1->next(), polyhedron);
-    h1 = v0v1->next();
-    h2 = h1->next();
+    h1 = next(v0v1, polyhedron);
+    h2 = next(h1, polyhedron);
     if ( is_border(opposite(h1, polyhedron), polyhedron) &&
          is_border(opposite(h2, polyhedron), polyhedron) )
     {
@@ -72,9 +72,9 @@ bool is_collapse_ok(HalfedgeGraph& polyhedron,
   // the edges v0-vr and vr-v1 must not be both boundary edges
   if (!is_border(v1v0, polyhedron))
   {
-    vr = target(v1v0->next(), polyhedron);
-    h1 = v1v0->next();
-    h2 = h1->next();
+    vr = target( next(v1v0, polyhedron), polyhedron);
+    h1 = next(v1v0, polyhedron);
+    h2 = next(h1, polyhedron);
     if ( is_border(opposite(h1, polyhedron), polyhedron) &&
          is_border(opposite(h2, polyhedron), polyhedron) )
     {

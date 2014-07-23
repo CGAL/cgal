@@ -73,7 +73,7 @@ bool is_vertex_degenerate(HalfedgeGraph& polyhedron,
     for (boost::tie(e, e_end) = out_edges(vd, polyhedron); e != e_end; ++e)
     {
       edge_descriptor ed = *e;
-      edge_descriptor ed_op = ed->opposite();
+      edge_descriptor ed_op = opposite(ed, polyhedron);
       vertex_descriptor target = target(ed, polyhedron);
       if (vertices_in_disk.find(target) != vertices_in_disk.end())
       {

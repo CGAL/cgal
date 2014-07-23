@@ -1726,7 +1726,7 @@ private:
         std::cout << vi_idx << " " << vj_idx << "\n";
 
         visited[*eb] = true;
-        visited[eb->opposite()] = true;
+        visited[opposite(*eb,*polyhedron)] = true;
       }
     }
   }
