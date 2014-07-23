@@ -240,18 +240,19 @@ namespace CGAL {
             CGAL_assertion( dy != NULL );
             CGAL_SDG_DEBUG(std::cout << "debug Side_of_bs two same y"
                 << std::endl;);
-            if ( ( ( compare_x_2(*dy, *s1) == SMALLER ) and
+            if ( (lft_p == dy) or (rgt_p == dy) ) {
+              CGAL_assertion (
+                 ( ( compare_x_2(*dy, *s1) == SMALLER ) and
                    ( compare_x_2(*dy, *s2) == SMALLER )   ) or
                  ( ( compare_x_2(*dy, *s1) == LARGER  ) and
-                   ( compare_x_2(*dy, *s2) == LARGER  )   )   )   {
-              CGAL_assertion( (lft_p == dy) or (rgt_p == dy) );
+                   ( compare_x_2(*dy, *s2) == LARGER  )   )   );
               dymirror = Point_2 (s1->x() + s2->x() - dy->x(), dy->y());
-              if (compare_x_2(dymirror, *lft_p) == SMALLER) {
-                CGAL_assertion( rgt_p == dy );
+              if (rgt_p == dy) {
+                CGAL_assertion( compare_x_2(dymirror, *lft_p) == SMALLER );
                 lft_p = &dymirror;
                 is_lft_input = false;
-              }
-              if (compare_x_2(dymirror, *rgt_p) == LARGER) {
+              } else {
+                CGAL_assertion(compare_x_2(dymirror, *rgt_p) == LARGER);
                 CGAL_assertion( lft_p == dy );
                 rgt_p = &dymirror;
                 is_rgt_input = false;
