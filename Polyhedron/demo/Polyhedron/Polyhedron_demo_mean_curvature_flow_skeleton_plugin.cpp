@@ -92,13 +92,11 @@ struct Polyline_visitor
   typedef std::vector<std::size_t> Polyline_of_ids;
 
   std::list<Polyline>& polylines;
-  std::vector<Polyline_of_ids>& polylines_of_ids;
   GraphPointPMap& points_pmap;
 
   Polyline_visitor(std::list<Polyline>& lines,
-                   std::vector<Polyline_of_ids>& lines_of_ids,
                    GraphPointPMap& points_property_map)
-    : polylines(lines), polylines_of_ids(lines_of_ids),
+    : polylines(lines),
       points_pmap(points_property_map)
   {}
 
@@ -106,15 +104,12 @@ struct Polyline_visitor
   {
     Polyline V;
     polylines.push_back(V);
-    polylines_of_ids.push_back(Polyline_of_ids());
   }
 
   void add_node(size_t node_id)
   {
     Polyline& polyline = polylines.back();
-    Polyline_of_ids& polyline_of_ids = polylines_of_ids.back();
     polyline.push_back(get(points_pmap, node_id));
-    polyline_of_ids.push_back(node_id);
   }
 
 };
@@ -982,8 +977,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSkeletonize()
   Scene_polylines_item* skeleton = new Scene_polylines_item();
   skeleton->setColor(QColor(175, 0, 255));
 
-  std::vector<std::vector<std::size_t> > polylines_of_ids;
-  Polyline_visitor polyline_visitor(skeleton->polylines, polylines_of_ids, skeleton_points);
+  Polyline_visitor polyline_visitor(skeleton->polylines, skeleton_points);
   CGAL::split_graph_into_polylines( skeleton_curve,
                                     polyline_visitor,
                                     CGAL::IsTerminalDefault() );
