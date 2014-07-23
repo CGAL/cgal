@@ -45,31 +45,34 @@ class Fixed_edge_map : public boost::put_get_helper<bool, Fixed_edge_map<Halfedg
 {
 public:
 
-  typedef boost::readable_property_map_tag                                   category;
-  typedef bool                                                               value_type;
-  typedef bool                                                               reference;
-  typedef typename boost::graph_traits<HalfedgeGraph const>::edge_descriptor key_type;
+  typedef boost::readable_property_map_tag                                 category;
+  typedef bool                                                             value_type;
+  typedef bool                                                             reference;
+  typedef typename boost::graph_traits<HalfedgeGraph>::edge_descriptor     key_type;
+  typedef typename boost::graph_traits<HalfedgeGraph>::halfedge_descriptor halfedge_descriptor;
 
-  Fixed_edge_map() : mFixed(false) {}
+  Fixed_edge_map(const HalfedgeGraph& hg_) : hg(hg_), mFixed(false) {}
 
   reference operator[](key_type const& e) const
   {
-    return e->is_border() || is_fixed(e);
+    halfedge_descriptor h=halfedge(e,hg);
+    return is_border(h,hg) || is_border(opposite(h,hg),hg) || is_fixed(h);
   }
 
-  void set_is_fixed (key_type const& e, bool is)
+  void set_is_fixed (halfedge_descriptor const& h, bool is)
   {
-    mFixed[e] = is;
+    mFixed[h] = is;
+    mFixed[opposite(h,hg)] = is;
   }
 
-  bool is_fixed(key_type const& e) const
+  bool is_fixed(halfedge_descriptor const& h) const
   {
-    return mFixed.is_defined(e) ? mFixed[e] : false;
+    return mFixed.is_defined(h) ? mFixed[h] : false;
   }
 
 private:
-
-  CGAL::Unique_hash_map<key_type, bool> mFixed;
+  const HalfedgeGraph& hg;
+  CGAL::Unique_hash_map<halfedge_descriptor, bool> mFixed;
 };
 
 } //namespace internal

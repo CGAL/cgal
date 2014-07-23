@@ -792,7 +792,7 @@ public:
    */
   int collapse_edges()
   {
-    internal::Fixed_edge_map<HalfedgeGraph> fixed_edge_map;
+    internal::Fixed_edge_map<HalfedgeGraph> fixed_edge_map(*polyhedron);
     init_fixed_edge_map(fixed_edge_map);
 
     int num_collapses = 0;
@@ -1209,27 +1209,16 @@ private:
   /// Collapse short edges using simplification package.
   int collapse_edges_simplification()
   {
-    internal::Fixed_edge_map<HalfedgeGraph> fixed_edge_map;
+    internal::Fixed_edge_map<HalfedgeGraph> fixed_edge_map(*polyhedron);
 
-    edge_iterator eb, ee;
-    for (boost::tie(eb, ee) = edges(*polyhedron); eb != ee; ++eb)
+    init_fixed_edge_map(fixed_edge_map);
+
+
+    int edge_id = -1;
+    halfedge_iterator hb, he;
+    for (boost::tie(hb, he) = halfedges(*polyhedron); hb != he; ++hb)
     {
-      vertex_descriptor vi = source(*eb, *polyhedron);
-      vertex_descriptor vj = target(*eb, *polyhedron);
-      size_t vi_idx = get(vertex_id_pmap, vi);
-      size_t vj_idx = get(vertex_id_pmap, vj);
-
-      if (is_vertex_fixed_map.find(vi_idx) != is_vertex_fixed_map.end()
-       && is_vertex_fixed_map.find(vj_idx) != is_vertex_fixed_map.end())
-      {
-        fixed_edge_map.set_is_fixed(*eb, true);
-      }
-    }
-
-    int edge_id = 0;
-    for (boost::tie(eb, ee) = edges(*polyhedron); eb != ee; ++eb)
-    {
-      put(edge_id_pmap, *eb, edge_id++);
+      put(edge_id_pmap, *hb, ++edge_id);
     }
 
     // This is a stop predicate (defines when the algorithm terminates).
@@ -1336,30 +1325,28 @@ private:
     int cnt = 0;
     for (size_t i = 0; i < all_edges.size(); ++i)
     {
-      edge_descriptor ed = all_edges[i];
-      if (fixed_edge_map.is_fixed(ed))
+      halfedge_descriptor h = halfedge(all_edges[i], *polyhedron);
+      if (fixed_edge_map.is_fixed(h))
       {
         continue;
       }
 
-      vertex_descriptor vi = source(ed, *polyhedron);
-      vertex_descriptor vj = target(ed, *polyhedron);
+      vertex_descriptor vi = source(h, *polyhedron);
+      vertex_descriptor vj = target(h, *polyhedron);
       double edge_length = sqrt(squared_distance(get(hg_point_pmap, vi),
                                                  get(hg_point_pmap, vj)));
-      if (internal::is_collapse_ok(*polyhedron, ed) && edge_length < edgelength_TH)
+      if (internal::is_collapse_ok(*polyhedron, h) && edge_length < edgelength_TH)
       {
         Point p = midpoint(
-          get(vertex_point, *polyhedron, source(ed, *polyhedron)),
-          get(vertex_point, *polyhedron, target(ed, *polyhedron)));
+          get(vertex_point, *polyhedron, source(h, *polyhedron)),
+          get(vertex_point, *polyhedron, target(h, *polyhedron)));
 
         // invalidate the edges that will be collapsed
         // since the mesh is closed, 6 halfedges will be collapsed
-        fixed_edge_map.set_is_fixed(ed, true);
-        fixed_edge_map.set_is_fixed(ed->opposite(), true);
-        fixed_edge_map.set_is_fixed(ed->prev(), true);
-        fixed_edge_map.set_is_fixed(ed->prev()->opposite(), true);
-        fixed_edge_map.set_is_fixed(ed->opposite()->prev(), true);
-        fixed_edge_map.set_is_fixed(ed->opposite()->prev()->opposite(), true);
+        // (opposite is automatically added)
+        fixed_edge_map.set_is_fixed(h, true);
+        fixed_edge_map.set_is_fixed(prev(h, *polyhedron), true);
+        fixed_edge_map.set_is_fixed(prev(opposite(h, *polyhedron), *polyhedron), true);
 
         vertex_descriptor v = SMS::halfedge_collapse(ed, *polyhedron);
         put(vertex_point, *polyhedron, v, p);
@@ -1379,15 +1366,16 @@ private:
     edge_iterator eb, ee;
     for (boost::tie(eb, ee) = edges(*polyhedron); eb != ee; ++eb)
     {
-      vertex_descriptor vi = source(*eb, *polyhedron);
-      vertex_descriptor vj = target(*eb, *polyhedron);
+      halfedge_descriptor h = halfedge(*eb, *polyhedron);
+      vertex_descriptor vi = source(h, *polyhedron);
+      vertex_descriptor vj = target(h, *polyhedron);
       size_t vi_idx = get(vertex_id_pmap, vi);
       size_t vj_idx = get(vertex_id_pmap, vj);
 
       if (is_vertex_fixed_map.find(vi_idx) != is_vertex_fixed_map.end()
        && is_vertex_fixed_map.find(vj_idx) != is_vertex_fixed_map.end())
       {
-        fixed_edge_map.set_is_fixed(*eb, true);
+        fixed_edge_map.set_is_fixed(h, true); // opposite is automatically added
       }
     }
   }
