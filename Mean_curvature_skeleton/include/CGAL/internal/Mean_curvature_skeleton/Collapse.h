@@ -29,9 +29,6 @@
  * The approach is based on the functions from surface_mesh.
  */
 
-#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
-#include <CGAL/boost/graph/properties_Polyhedron_3.h>
-#include <CGAL/boost/graph/halfedge_graph_traits_Polyhedron_3.h>
 #include <boost/graph/graph_traits.hpp>
 
 namespace CGAL {
