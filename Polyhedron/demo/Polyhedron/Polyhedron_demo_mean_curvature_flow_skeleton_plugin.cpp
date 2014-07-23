@@ -990,10 +990,8 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSkeletonize()
   skeleton->setColor(QColor(175, 0, 255));
 
   std::vector<std::vector<std::size_t> > polylines_of_ids;
-  std::set<std::size_t> corner_ids;
   Polyline_visitor polyline_visitor(skeleton->polylines, polylines_of_ids, skeleton_points);
   CGAL::split_graph_into_polylines( skeleton_curve,
-                                    corner_ids,
                                     polyline_visitor,
                                     CGAL::IsTerminalDefault() );
 

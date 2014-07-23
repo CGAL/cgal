@@ -26,30 +26,6 @@
 
 namespace CGAL {
 
-template <typename Graph, typename PointPropertyMap>
-void dump_graph_edges(std::ostream& out, const Graph& g,
-                      PointPropertyMap points_pmap)
-{
-  typedef typename boost::graph_traits<Graph>::vertex_descriptor vertex_descriptor;
-  typedef typename boost::graph_traits<Graph>::edge_descriptor edge_descriptor;
-
-  BOOST_FOREACH(edge_descriptor e, edges(g))
-  {
-    vertex_descriptor s = source(e, g);
-    vertex_descriptor t = target(e, g);
-    out.precision(17);
-    out << "2 " << get(points_pmap,g[s].id) << " " << get(points_pmap, g[t].id) << "\n";
-  }
-}
-
-template <typename Graph, typename PointPropertyMap>
-void dump_graph_edges(const char* filename, const Graph& g,
-                      PointPropertyMap points_pmap)
-{
-  std::ofstream out(filename);
-  dump_graph_edges(out, g, points_pmap);
-}
-
 struct IsTerminalDefault
 {
   template <typename VertexDescriptor, typename Graph>
@@ -61,9 +37,10 @@ struct IsTerminalDefault
 
 /// Splits a graph at vertices with degree higher than two.
 /// The vertices are duplicated, and new incident edges created.
+/// Graph must be undirected
 template <typename Graph,
           typename IsTerminal>
-void split_graph_into_polylines(Graph graph,
+void split_graph_into_polylines(Graph& graph,
                                 IsTerminal is_terminal)
 {
   typedef typename boost::graph_traits<Graph>::vertex_descriptor vertex_descriptor;
@@ -78,18 +55,8 @@ void split_graph_into_polylines(Graph graph,
       it != V.end();
       ++it) {
     vertex_descriptor v = *it;
-    bool split = false;
 
-    // const typename Kernel::Point_3& p = graph[v].id;
-    // std::cerr << "At point   ( " << p << " )  "
-    //           << "degree=" << out_degree(v, graph) << "\n";
-
-    if (out_degree(v, graph) > 2 || is_terminal(v, graph))
-    {
-      split = true;
-    }
-
-    if (split)
+    if (degree(v, graph) > 2 || is_terminal(v, graph))
     {
       out_edge_iterator b, e;
       boost::tie(b, e) = out_edges(v, graph);
@@ -112,7 +79,7 @@ void split_graph_into_polylines(Graph graph,
   BOOST_FOREACH(vertex_descriptor v, vertices(graph))
   {
     typename boost::graph_traits<Graph>::degree_size_type
-      n = out_degree(v, graph);
+      n = degree(v, graph);
 
     CGAL_assertion(n == 1 || n == 2);
   }
@@ -126,114 +93,77 @@ void split_graph_into_polylines(Graph graph,
   ) // end of CGAL_assertion_code
 }
 
+/// Split graph into polylines delimited by node of degree 1 or more,
+/// and vertices for which `is_terminal(v,graph)==true`.
+/// Then the graph is visited and Visitor is called to describe the polylines
+/// Graph must be undirected
 template <typename Graph,
-          typename SetOfCornerVertexIds,
           typename Visitor,
           typename IsTerminal>
-std::pair<std::size_t, std::size_t>
+void
 split_graph_into_polylines(Graph graph,
-                           SetOfCornerVertexIds& corner_ids,
                            Visitor& polyline_visitor,
-                           IsTerminal is_terminal,
-                           std::size_t features_id_offset = 0)
+                           IsTerminal is_terminal)
 {
-  std::size_t curve_id = features_id_offset;
-
-//  dump_graph_edges("edges.polylines.txt", graph, points_pmap);
   typedef typename boost::graph_traits<Graph>::vertex_descriptor vertex_descriptor;
   typedef typename boost::graph_traits<Graph>::vertex_iterator vertex_iterator;
+  typedef typename boost::graph_traits<Graph>::edge_descriptor edge_descriptor;
   typedef typename boost::graph_traits<Graph>::out_edge_iterator out_edge_iterator;
 
-  split_graph_into_polylines(graph, is_terminal, features_id_offset);
+  // duplicate terminal vertices and vertices of degree more than 2
+  split_graph_into_polylines(graph, is_terminal);
+
+  // put polylines endpoint in a set
   std::set<vertex_descriptor> terminal;
   vertex_iterator b,e;
   for (boost::tie(b, e) = vertices(graph); b != e; ++b)
-  {
-    if (degree(*b, graph) == 1)
-    {
-      // std::cerr << "terminal " << graph[*b] << std::endl;
-      terminal.insert(*b);
-      corner_ids.insert(graph[*b].id);
-    }
-  }
-  // std::cerr << terminal.size() << " terminal vertices\n";
+    if (degree(*b, graph) == 1) terminal.insert(*b);
 
+  // go over all polylines and provide the description to the visitor
   while (!terminal.empty())
   {
     typename std::set<vertex_descriptor>::iterator it = terminal.begin();
     vertex_descriptor u = *it;
-    terminal.erase(u);
+    terminal.erase(it);
     polyline_visitor.onNewPolyline();
     polyline_visitor.onAddNode(graph[u].id);
 
-    while (out_degree(u,graph) != 0)
+    while (degree(u,graph) != 0)
     {
-      CGAL_assertion(out_degree(u,graph) == 1);
-      out_edge_iterator b, e;
-      boost::tie(b, e) = out_edges(u, graph);
+      CGAL_assertion(degree(u,graph) == 1);
+      out_edge_iterator b = out_edges(u, graph).first;
       vertex_descriptor v = target(*b, graph);
-//      CGAL_assertion(get(points_pmap, graph[v].id) != polyline.back());
+      CGAL_assertion(u!=v);
       polyline_visitor.onAddNode(graph[v].id);
       remove_edge(b, graph);
       u = v;
     }
     terminal.erase(u);
-
-    //// Comment that piece of code. Probably Mesh_3 does not like cycles
-    //// with corners, and we split them arbitrary in two polylines.
-    // if(polyline.back() == polyline.front())
-    // {
-    //   CGAL_assertion(polyline.size() > 3);
-    //   // Fake cycle. We intended that cycle to be split at polyline.front()
-    //   // Split the line in two, arbitrary.
-    //   std::size_t n = polyline.size() / 2;
-    //   Polyline new_line(polyline.begin() + n,
-    //                     polyline.end());
-    //   polyline.resize(n+1);
-    //   // std::cerr << "  split the line in two\n";
-    //   polylines.push_back(new_line);
-    // // std::cerr << "polyline with " << new_line.size() << " vertices\n";
-    // }
-
-    // std::cerr << "polyline with " << polyline.size() << " vertices\n";
-
-    ++curve_id;
   }
-  // std::cerr << polylines.size() << " polylines\n";
-//  dump_graph_edges("only-cycle-edges.polylines.txt", graph, points_pmap);
 
-  std::size_t nb_cycles = 0;
-  // process cycles
+  // do the same but for cycles
   while (num_edges(graph) != 0)
   {
-    vertex_descriptor u = source(*edges(graph).first, graph);
+    edge_descriptor first_edge = *edges(graph).first;
+    vertex_descriptor u = source(first_edge, graph);
 
     polyline_visitor.onNewPolyline();
     polyline_visitor.onAddNode(graph[u].id);
 
-    ++nb_cycles;
+    u = target(first_edge, graph);
+    remove_edge(first_edge, graph);
 
-    CGAL_assertion_code(bool first = true);
-    while (out_degree(u,graph) != 0)
+    while (degree(u,graph) != 0)
     {
-      CGAL_assertion(out_degree(u,graph) == 1 ||
-                     (first && out_degree(u, graph) == 2));
-      out_edge_iterator b, e;
-      boost::tie(b, e) = out_edges(u, graph);
+      CGAL_assertion(degree(u,graph) == 1);
+      out_edge_iterator b = out_edges(u, graph).first;
       vertex_descriptor v = target(*b, graph);
+      CGAL_assertion(u!=v);
       polyline_visitor.onAddNode(graph[v].id);
       remove_edge(b, graph);
       u = v;
-      CGAL_assertion_code(first = false);
     }
-    // std::cerr << "cycle with " << polyline.size() - 1  << " vertices\n";
-    ++curve_id;
   }
-//  CGAL_assertion(polylines_of_ids.size() == (curve_id - features_id_offset));
-
-  // std::cerr << nb_cycles << " cycles\n";
-  return std::pair<std::size_t, std::size_t>(curve_id - features_id_offset,
-                                             corner_ids.size());
 }
 
 } //end of namespace CGAL
