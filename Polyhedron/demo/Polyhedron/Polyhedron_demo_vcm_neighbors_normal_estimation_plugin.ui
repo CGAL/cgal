@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>358</width>
+    <width>327</width>
     <height>122</height>
    </rect>
   </property>
@@ -44,20 +44,20 @@
      </property>
     </widget>
    </item>
-   <item row="1" column="1">
-    <widget class="QDoubleSpinBox" name="m_inputConvolveRadius">
-     <property name="decimals">
-      <number>3</number>
-     </property>
-     <property name="singleStep">
-      <double>0.050000000000000</double>
-     </property>
-    </widget>
-   </item>
    <item row="1" column="0">
     <widget class="QLabel" name="label_2">
      <property name="text">
-      <string>Convolution:</string>
+      <string>Neighbors:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1">
+    <widget class="QSpinBox" name="m_inputConvolveNeighbors">
+     <property name="suffix">
+      <string> neighbors</string>
+     </property>
+     <property name="value">
+      <number>40</number>
      </property>
     </widget>
    </item>

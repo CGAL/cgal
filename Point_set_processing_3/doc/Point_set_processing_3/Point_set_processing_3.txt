@@ -188,6 +188,11 @@ at each point from the set by linear least squares fitting of a plane
 over its `k` nearest neighbors. This algorithm is simpler and
 faster than `jet_estimate_normals()`.
 
+Function `vcm_estimate_normals()` estimates the normal direction
+at each point from the set by using the Voronoi Covariance Measure
+of the point set. This algorithm is more complex and slower than
+the previous algorithms.
+
 \section Point_set_processing_3NormalOrientation Normal Orientation
 
 Function `mst_orient_normals()` orients the normals of a set of

@@ -16,7 +16,7 @@ namespace CGAL
         namespace internal
         {
             // Build the primal polyhedron associated to a dual polyhedron
-            // We also need the `origin` that is to say a point inside the primal polyhedron
+            // We also need the `origin` which represents a point inside the primal polyhedron
             template <typename K, class Polyhedron_dual, class Polyhedron>
                 class Build_primal_polyhedron :
                     public CGAL::Modifier_base<typename Polyhedron::HalfedgeDS> {

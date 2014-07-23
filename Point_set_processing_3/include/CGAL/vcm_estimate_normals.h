@@ -2,7 +2,6 @@
 #define CGAL_VCM_ESTIMATE_NORMALS_H
 
 #include <CGAL/property_map.h>
-#include <CGAL/assertions.h>
 
 #include <CGAL/Delaunay_triangulation_3.h>
 #include <CGAL/voronoi_covariance_3.h>
@@ -17,8 +16,6 @@
 
 #include <iterator>
 #include <vector>
-
-// TODO: complete doc
 
 namespace CGAL {
 
@@ -73,7 +70,7 @@ vcm_offset (ForwardIterator first, ///< iterator over the first input point.
     }
 }
 
-// Convolve using a sphere
+// Convolve using a radius.
 template < class ForwardIterator,
            class PointPMap,
            class K,
@@ -122,7 +119,7 @@ vcm_convolve (ForwardIterator first,
     }
 }
 
-// Convolve using neighbors
+// Convolve using neighbors.
 template < class ForwardIterator,
            class PointPMap,
            class K,
@@ -175,7 +172,7 @@ vcm_convolve (ForwardIterator first,
     }
 }
 
-// Compute the VCM and make the convolution using a sphere
+// Compute the VCM and make the convolution using a radius.
 template < class ForwardIterator,
            class PointPMap,
            class Kernel,
@@ -233,8 +230,11 @@ vcm_offset_and_convolve (ForwardIterator first,
 /// @tparam Kernel Geometric traits class.
 ///        It can be omitted and deduced automatically from PointPMap value_type.
 /// @tparam Covariance Covariance matrix type.
+/// @pre If nb_neighbors_convolve is equal to -1, then the convolution is made using a radius.
+/// On the contrary, if nb_neighbors_convolve is different from -1, the convolution is made using
+/// this number of neighbors.
 
-// This variant requires all parameters.
+// This variant requires all of the parameters.
 template < typename ForwardIterator,
            typename PointPMap,
            typename NormalPMap,
@@ -250,7 +250,7 @@ vcm_estimate_normals (ForwardIterator first, ///< iterator over the first input 
                       double r, ///< convolution radius.
                       const Kernel & /*kernel*/, ///< geometric traits.
                       const Covariance &, ///< covariance matrix type.
-                      int nb_neighbors_convolve = -1 ///< number of neighbors used to convolve
+                      int nb_neighbors_convolve = -1 ///< number of neighbors used during the convolution.
 )
 {
     // Compute the VCM and convolve it
@@ -278,6 +278,7 @@ vcm_estimate_normals (ForwardIterator first, ///< iterator over the first input 
                                (unsigned int) nb_neighbors_convolve,
                                Kernel());
 
+        cov.clear();
         std::copy(ccov.begin(), ccov.end(), std::back_inserter(cov));
     }
 
@@ -297,7 +298,8 @@ vcm_estimate_normals (ForwardIterator first, ///< iterator over the first input 
 }
 
 /// @cond SKIP_IN_MANUAL
-// This variant deduces the kernel from the point property map and uses radii.
+// This variant deduces the kernel from the point property map
+// and uses a radius for the convolution.
 template < typename ForwardIterator,
            typename PointPMap,
            typename NormalPMap
@@ -320,8 +322,11 @@ vcm_estimate_normals (ForwardIterator first,
                          Kernel(),
                          Covariance());
 }
+/// @endcond
 
-// This variant requires numbers of neighbors instead of a convolution radius.
+/// @cond SKIP_IN_MANUAL
+// This variant deduces the kernel from the point property map
+// and uses a number of neighbors for the convolution.
 template < typename ForwardIterator,
            typename PointPMap,
            typename NormalPMap
@@ -345,8 +350,11 @@ vcm_estimate_normals (ForwardIterator first,
                          Covariance(),
                          nb_neighbors_convolve);
 }
+/// @endcond
 
-// This variant creates a default point property map = Identity_property_map.
+/// @cond SKIP_IN_MANUAL
+// This variant creates a default point property map = Identity_property_map
+// and use a radius for the convolution.
 template < typename ForwardIterator,
            typename NormalPMap
 >
@@ -356,17 +364,29 @@ vcm_estimate_normals (ForwardIterator first,
                       NormalPMap normal_pmap,
                       double R,
                       double r) {
-    typedef typename boost::property_traits<NormalPMap>::value_type Vector;
-    typedef typename Kernel_traits<Vector>::Kernel Kernel;
-    typedef typename Kernel::FT FT;
-    typedef CGAL::Voronoi_covariance_3::Voronoi_covariance_3<FT> Covariance;
-
     vcm_estimate_normals(first, beyond,
                          make_identity_property_map(typename std::iterator_traits<ForwardIterator>::value_type()),
                          normal_pmap,
-                         R, r,
-                         Kernel(),
-                         Covariance());
+                         R, r);
+}
+/// @endcond
+
+/// @cond SKIP_IN_MANUAL
+// This variant creates a default point property map = Identity_property_map
+// and use a number of neighbors for the convolution.
+template < typename ForwardIterator,
+           typename NormalPMap
+>
+void
+vcm_estimate_normals (ForwardIterator first,
+                      ForwardIterator beyond,
+                      NormalPMap normal_pmap,
+                      double R,
+                      unsigned int nb_neighbors_convolve) {
+    vcm_estimate_normals(first, beyond,
+                         make_identity_property_map(typename std::iterator_traits<ForwardIterator>::value_type()),
+                         normal_pmap,
+                         R, nb_neighbors_convolve);
 }
 /// @endcond
 
