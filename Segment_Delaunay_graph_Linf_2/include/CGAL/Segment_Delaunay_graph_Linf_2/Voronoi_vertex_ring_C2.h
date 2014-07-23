@@ -116,6 +116,14 @@ private:
 private:
   //--------------------------------------------------------------------------
 
+  inline void
+  compute_v_if_not_computed() const {
+    if (not is_v_computed) {
+      compute_vertex(p_, q_, r_);
+      is_v_computed = true;
+    }
+  }
+
   void
   compute_ppp(const Site_2& sp, const Site_2& sq, const Site_2& sr)
   const
@@ -1749,10 +1757,6 @@ private:
     Sign s = check_easy_degeneracies(st, type, use_result);
     if ( use_result ) { return s; }
 
-    if (not is_v_computed) {
-      compute_vertex(p_, q_, r_);
-      is_v_computed = true;
-    }
     return incircle_p_no_easy(st, type);
   }
 
@@ -1788,7 +1792,7 @@ private:
   Sign incircle_p_no_easy(const Site_2& st, PPS_Type ) const
   {
     CGAL_precondition( st.is_point() );
-    CGAL_assertion( is_v_computed );
+    compute_v_if_not_computed();
 
     CGAL_SDG_DEBUG(std::cout << "debug vring incircle_p_no_easy PPS p="
       << p_ << " q=" << q_  << " r=" << r_ << " t=" << st
@@ -1941,7 +1945,7 @@ private:
   Sign incircle_p_no_easy(const Site_2& st, PSS_Type ) const
   {
     CGAL_precondition( st.is_point() );
-    CGAL_assertion( is_v_computed );
+    compute_v_if_not_computed();
     const Point_2 t = st.point();
 
     const Point_2 pref = p_ref().point();
@@ -2110,7 +2114,7 @@ private:
   Sign incircle_p_no_easy(const Site_2& st, SSS_Type ) const
   {
     CGAL_precondition( st.is_point() );
-    CGAL_assertion( is_v_computed );
+    compute_v_if_not_computed();
 
     Point_2 t = st.point();
 
@@ -2565,10 +2569,6 @@ private:
       }
     }
 
-    if (not is_v_computed) {
-      compute_vertex(p_, q_, r_);
-      is_v_computed = true;
-    }
     Sign retval = incircle_s_no_easy(t, type);
 
     CGAL_SDG_DEBUG(std::cout
@@ -2581,7 +2581,6 @@ private:
   template<class Type>
   Sign incircle_s_no_easy(const Site_2& t, Type type) const
   {
-    CGAL_assertion( is_v_computed );
     CGAL_SDG_DEBUG(std::cout << "debug vring fn incircle_s_no_easy pqrt= ("
         << p_ << ") (" << q_ << ") (" << r_ << ") (" << t << ")"
         << std::endl;);
@@ -2746,6 +2745,8 @@ private:
 
     CGAL_SDG_DEBUG(std::cout << "debug incircle_s_no_easy numendpts_of_t= "
       << numendpts_of_t << std::endl;);
+
+    compute_v_if_not_computed();
 
     if (numendpts_of_t > 0) {
       bool is_t_horizontal = is_site_horizontal(t);
@@ -3510,11 +3511,7 @@ public:
     if ( is_degenerate_Voronoi_circle() ) {
       return degenerate_point();
     }
-    if (not is_v_computed) {
-      compute_vertex(p_, q_, r_);
-      is_v_computed = true;
-    }
-
+    compute_v_if_not_computed();
     return Point_2(x(), y());
   }
 
@@ -3605,10 +3602,7 @@ public:
 
   Oriented_side oriented_side(const Line_2& l) const
   {
-    if (not is_v_computed) {
-      compute_vertex(p_, q_, r_);
-      is_v_computed = true;
-    }
+    compute_v_if_not_computed();
     Orientation o = orientation(l);
 
     if ( o == COLLINEAR ) { return ON_ORIENTED_BOUNDARY; }
