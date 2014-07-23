@@ -50,7 +50,7 @@ private:
   CGAL::Unique_hash_map<key_type,std::size_t> map_;
 };
 
-// Special case for edges. Hashes each half_edge.
+// Special case for edges.
 template<class Polyhedron>
 class Polyhedron_edge_index_map_external
   : public boost::put_get_helper<std::size_t, Polyhedron_edge_index_map_external<Polyhedron> >
@@ -62,21 +62,17 @@ public:
   typedef typename boost::graph_traits<Polyhedron>::edge_descriptor key_type;
 
   Polyhedron_edge_index_map_external(Polyhedron& p)
-    : map_(std::size_t(-1), num_halfedges(p)), p(p)
+    : map_(std::size_t(-1), num_halfedges(p))
   {
     unsigned int data = 0;
     typename boost::graph_traits<Polyhedron>::edge_iterator it, end;
-    for(boost::tie(it, end) = edges(p); it != end; ++it, ++data) {
-      map_[halfedge(*it, p)] = data;
-      map_[opposite(halfedge(*it, p), p)] = data;
-    }
+    for(boost::tie(it, end) = edges(p); it != end; ++it, ++data)
+      map_[*it] = data;
   }
 
-  reference operator[](const key_type& k) const { return map_[halfedge(k,p)]; }
+  reference operator[](const key_type& k) const { return map_[k]; }
 private:
-  CGAL::Unique_hash_map<typename boost::graph_traits<Polyhedron>::halfedge_descriptor,
-                        std::size_t> map_;
-  Polyhedron& p;
+  CGAL::Unique_hash_map<key_type,std::size_t> map_;
 };
 
 template<typename Handle>

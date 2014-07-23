@@ -27,14 +27,14 @@ The traits class `boost::graph_traits< CGAL::Polyhedron_3<T> >` provides the fol
 | Member                   | Value  | Description |
 | :----------------------- | :----: | :---------- |
 | `vertex_descriptor`      | `Polyhedron_3::Vertex_handle`     | The vertex descriptor |
-| `edge_descriptor`        | `Polyhedron_3::Halfedge_handle`   | The edge descriptor |
+| `edge_descriptor`        | `unspecified_type`   | The edge descriptor |
 | `halfedge_descriptor`    | `Polyhedron_3::Halfedge_handle`   | The halfedge descriptor |
 | `face_descriptor`        | `Polyhedron_3::Face_handle`       | The face descriptor |
 | `adjacency_iterator`     | `CGAL::Vertex_around_target_iterator<Polyhedron_3<T> >` | Iterates through adjacent vertices|
 | `out_edge_iterator`      | `CGAL::Out_edge_iterator<Polyhedron_3<T> >` | Iterate through the out-edges of a vertex. |
 | `in_edge_iterator`       | `CGAL::Out_edge_iterator<Polyhedron_3<T> >` | Iterate through the in-edges of a vertex. |
 | `vertex_iterator`        | `unspecified_type`     | Iterate through the vertices of a polyhedron.|
-| `edge_iterator`          | `Polyhedron_3::Halfedge_iterator`     | Iterate through the edges of a polyhedron.|
+| `edge_iterator`          | `unspecified_type`     | Iterate through the edges of a polyhedron.|
 | `halfedge_iterator`      | `Polyhedron_3::Halfedge_iterator`     | Iterate through the halfedges of a polyhedron.|
 | `face_iterator`          | `Polyhedron_3::Face_iterator`         | Iterate through the faces of a polyhedron.|
 | `directed_category`      | Inherits from `boost::bidirectional_graph_tag`, `boost::vertex_list_graph_tag` and `boost::edge_list_graph_tag` | |
@@ -44,6 +44,8 @@ The traits class `boost::graph_traits< CGAL::Polyhedron_3<T> >` provides the fol
 | `edges_size_type`        | `Polyhedron_3::size_type` | The size type of the edge list |
 | `degree_size_type`       | `Polyhedron_3::size_type` | The size type of the adjacency list |
 
+For convenience, the type `edge_descriptor` is hashable using the functor `CGAL::Handle_hash_function`
+that is the default hash functor of `CGAL::Unique_hash_map`.
 
 \section BGLT2GT Specializations for the 2D Triangulation Classes
 
