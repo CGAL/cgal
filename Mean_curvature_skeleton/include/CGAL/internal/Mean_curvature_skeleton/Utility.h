@@ -48,9 +48,11 @@ mesh_split(HalfedgeGraph& polyhedron,
 {
   typedef typename boost::graph_traits<HalfedgeGraph>::halfedge_descriptor            halfedge_descriptor;
 
+  
+  // halfedge_descriptor en = Euler::split_edge(ei, polyhedron); // there is an issue in this function for now use the polyhedron version in the meantime
   halfedge_descriptor en = polyhedron.split_edge(ei);
   boost::put(hg_point_pmap, en->vertex(), pn);
-  polyhedron.split_facet(en, ei->next());
+  Euler::split_face(en, ei->next(), polyhedron);
 
   en->id() = -1;
   en->opposite()->id() = -1;
@@ -63,7 +65,7 @@ mesh_split(HalfedgeGraph& polyhedron,
   halfedge_descriptor ej = opposite(en, polyhedron);
   if (!(ej->is_border()))
   {
-    polyhedron.split_facet(ei->opposite(), ej->next());
+    Euler::split_face(ei->opposite(), ej->next(), polyhedron);
     ej->next()->id() = -1;
     halfedge_descriptor ei_op_next = ei->opposite()->next();
     ei_op_next->id() = -1;

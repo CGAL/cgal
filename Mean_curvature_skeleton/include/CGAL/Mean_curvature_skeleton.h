@@ -1350,7 +1350,7 @@ private:
         fixed_edge_map.set_is_fixed(prev(h, *polyhedron), true);
         fixed_edge_map.set_is_fixed(prev(opposite(h, *polyhedron), *polyhedron), true);
 
-        vertex_descriptor v = SMS::halfedge_collapse(ed, *polyhedron);
+        vertex_descriptor v = Euler::collapse_edge(edge(h, *polyhedron), *polyhedron);
         put(vertex_point, *polyhedron, v, p);
 
         track_correspondence(vi, vj, v);
