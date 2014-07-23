@@ -56,12 +56,12 @@ typedef Polyhedron::Halfedge_around_facet_circulator                Halfedge_fac
 typedef Polyhedron_with_id_property_map<Polyhedron, vertex_descriptor> Vertex_index_map; // use id field of vertices
 typedef Polyhedron_with_id_property_map<Polyhedron, halfedge_descriptor>   Edge_index_map;   // use id field of edges
 
-struct Vertex
+struct Skeleton_vertex_info
 {
   std::size_t id;
 };
 
-typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS, Vertex> SkeletonGraph;
+typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS, Skeleton_vertex_info> SkeletonGraph;
 
 typedef boost::graph_traits<SkeletonGraph>::vertex_descriptor               vertex_desc;
 typedef boost::graph_traits<SkeletonGraph>::vertex_iterator                 vertex_iter;
@@ -94,7 +94,7 @@ void dump_graph_edges(std::ostream& out, const Graph& g,
   typedef typename boost::graph_traits<Graph>::vertex_descriptor vertex_descriptor;
   typedef typename boost::graph_traits<Graph>::edge_descriptor edge_descriptor;
 
-  BOOST_FOREACH(edge_descriptor e, boost::edges(g))
+  BOOST_FOREACH(edge_descriptor e, edges(g))
   {
     vertex_descriptor s = source(e, g);
     vertex_descriptor t = target(e, g);
@@ -221,7 +221,7 @@ struct Polyline_visitor : Split_in_polylines_visitor_base
   {
     Polyline& polyline = polylines.back();
     Polyline_of_ids& polyline_of_ids = polylines_of_ids.back();
-    polyline.push_back(boost::get(points_pmap, node_id));
+    polyline.push_back(get(points_pmap, node_id));
     polyline_of_ids.push_back(node_id);
   }
 
@@ -669,8 +669,8 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSegment()
   vertex_iterator vb, ve;
   std::vector<vertex_descriptor> id_to_vd;
   id_to_vd.clear();
-  id_to_vd.resize(boost::num_vertices(*mCopy));
-  for (boost::tie(vb, ve) = boost::vertices(*mCopy); vb != ve; ++vb)
+  id_to_vd.resize(num_vertices(*mCopy));
+  for (boost::tie(vb, ve) = vertices(*mCopy); vb != ve; ++vb)
   {
     vertex_descriptor v = *vb;
     id_to_vd[v->id()] = v;
@@ -679,7 +679,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSegment()
   // init segment mesh id
   Polyhedron *segment_mesh = new Polyhedron(*mCopy);
   int vertex_id_count = 0;
-  for (boost::tie(vb, ve) = boost::vertices(*segment_mesh); vb != ve; ++vb)
+  for (boost::tie(vb, ve) = vertices(*segment_mesh); vb != ve; ++vb)
   {
     (*vb)->id() = vertex_id_count++;
   }
@@ -690,11 +690,11 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSegment()
   boost::associative_property_map<Facet_double_map> sdf_property_map(internal_sdf_map);
 
   std::vector<double> distances;
-  distances.resize(boost::num_vertices(*segment_mesh));
+  distances.resize(num_vertices(*segment_mesh));
 
   GraphPointPMap skeleton_points(skeleton_points_map);
   vertex_iter gvb, gve;
-  for (boost::tie(gvb, gve) = boost::vertices(skeleton_curve); gvb != gve; ++gvb)
+  for (boost::tie(gvb, gve) = vertices(skeleton_curve); gvb != gve; ++gvb)
   {
     vertex_desc i = *gvb;
     Point skel = skeleton_points[i];
@@ -800,12 +800,12 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionConvert_to_sk
     skeleton->setColor(QColor(175, 0, 255));
 
     boost::graph_traits<SkeletonGraph>::edge_iterator ei, ei_end;
-    for (boost::tie(ei, ei_end) = boost::edges(g); ei != ei_end; ++ei)
+    for (boost::tie(ei, ei_end) = edges(g); ei != ei_end; ++ei)
     {
       std::vector<Point> line;
       line.clear();
-      Point s = points[boost::source(*ei, g)];
-      Point t = points[boost::target(*ei, g)];
+      Point s = points[source(*ei, g)];
+      Point t = points[target(*ei, g)];
       line.push_back(s);
       line.push_back(t);
       skeleton->polylines.push_back(line);
@@ -866,12 +866,12 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionConvert_to_me
     skeleton->setColor(QColor(175, 0, 255));
 
     boost::graph_traits<SkeletonGraph>::edge_iterator ei, ei_end;
-    for (boost::tie(ei, ei_end) = boost::edges(g); ei != ei_end; ++ei)
+    for (boost::tie(ei, ei_end) = edges(g); ei != ei_end; ++ei)
     {
       std::vector<Point> line;
       line.clear();
-      boost::graph_traits<SkeletonGraph>::vertex_descriptor sv = boost::source(*ei, g);
-      boost::graph_traits<SkeletonGraph>::vertex_descriptor tv = boost::target(*ei, g);
+      boost::graph_traits<SkeletonGraph>::vertex_descriptor sv = source(*ei, g);
+      boost::graph_traits<SkeletonGraph>::vertex_descriptor tv = target(*ei, g);
       Point s = points[sv];
       Point t = points[tv];
       line.push_back(s);
@@ -1136,7 +1136,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionRun()
   mcs->get_poles(pole_points);
   vertex_iterator vb, ve;
   int id = 0;
-  for (boost::tie(vb, ve) = boost::vertices(*pMesh); vb != ve; ++vb)
+  for (boost::tie(vb, ve) = vertices(*pMesh); vb != ve; ++vb)
   {
     std::vector<Point> line;
     line.clear();
@@ -1210,12 +1210,12 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSkeletonize()
                      IsTerminalDefault());
 
 //  edge_iter ei, ei_end;
-//  for (boost::tie(ei, ei_end) = boost::edges(skeleton_curve); ei != ei_end; ++ei)
+//  for (boost::tie(ei, ei_end) = edges(skeleton_curve); ei != ei_end; ++ei)
 //  {
 //    std::vector<Point> line;
 //    line.clear();
-//    Point s = skeleton_points[boost::source(*ei, skeleton_curve)];
-//    Point t = skeleton_points[boost::target(*ei, skeleton_curve)];
+//    Point s = skeleton_points[source(*ei, skeleton_curve)];
+//    Point t = skeleton_points[target(*ei, skeleton_curve)];
 //    line.push_back(s);
 //    line.push_back(t);
 //    skeleton->polylines.push_back(line);
@@ -1237,8 +1237,8 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSkeletonize()
 //  vertex_iterator vb, ve;
 //  std::vector<vertex_descriptor> id_to_vd;
 //  id_to_vd.clear();
-//  id_to_vd.resize(boost::num_vertices(*mesh));
-//  for (boost::tie(vb, ve) = boost::vertices(*mesh); vb != ve; ++vb)
+//  id_to_vd.resize(num_vertices(*mesh));
+//  for (boost::tie(vb, ve) = vertices(*mesh); vb != ve; ++vb)
 //  {
 //    vertex_descriptor v = *vb;
 //    id_to_vd[v->id()] = v;
@@ -1247,7 +1247,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSkeletonize()
 //  Scene_polylines_item* lines = new Scene_polylines_item();
 
 //  vertex_iter gvb, gve;
-//  for (boost::tie(gvb, gve) = boost::vertices(skeleton_curve); gvb != gve; ++gvb)
+//  for (boost::tie(gvb, gve) = vertices(skeleton_curve); gvb != gve; ++gvb)
 //  {
 //    vertex_desc i = *gvb;
 //    Point s = skeleton_points[i];
@@ -1297,7 +1297,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSkeletonize()
 //  boost::graph_traits<SkeletonGraph>::vertex_iterator vi;
 //  for (vi = vertices(skeleton_curve).first; vi != vertices(skeleton_curve).second; ++vi)
 //  {
-//    int deg = boost::out_degree(*vi, skeleton_curve);
+//    int deg = out_degree(*vi, skeleton_curve);
 //    if (deg == 1)
 //    {
 //      UI_point_3<Kernel> point(skeleton_points[*vi].x(),
