@@ -42,9 +42,6 @@
 // Compute the vertex normal
 #include <CGAL/internal/Mean_curvature_skeleton/get_normal.h>
 
-// Low level collapse function
-#include <CGAL/Surface_mesh_simplification/halfedge_collapse_Polyhedron_3.h>
-
 // Simplification function
 #include <CGAL/Surface_mesh_simplification/edge_collapse.h>
 
@@ -56,9 +53,6 @@
 
 // Skip the geometric test
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Geometric_test_skipper.h>
-
-// Adaptor for Polyhedron_3
-#include <CGAL/Surface_mesh_simplification/HalfedgeGraph_Polyhedron_3.h>
 
 // Curve skeleton data structure
 #include <CGAL/internal/Mean_curvature_skeleton/Curve_skeleton.h>
