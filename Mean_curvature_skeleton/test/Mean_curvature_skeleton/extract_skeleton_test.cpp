@@ -47,7 +47,7 @@ typedef boost::associative_property_map<Correspondence_map>            GraphCorr
 
 typedef CGAL::MCF_default_halfedge_graph_pmap<Polyhedron>::type        HalfedgeGraphPointPMap;
 
-typedef std::map<vertex_desc, Polyhedron::Traits::Point_3>             GraphPointMap;
+typedef std::map<vertex_desc, Point>                                   GraphPointMap;
 typedef boost::associative_property_map<GraphPointMap>                 GraphPointPMap;
 
 typedef CGAL::Eigen_solver_traits<
