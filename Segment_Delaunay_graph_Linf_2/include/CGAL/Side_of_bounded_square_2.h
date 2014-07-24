@@ -331,15 +331,19 @@ namespace CGAL {
         else if (cmpsides == LARGER)
         { //diff x > diff y forms a rectangle
           //need to find the movable side of rectangle
-          if (compare_x_2(*lft_p, *top_p) == SMALLER and
-              compare_x_2(*top_p, *rgt_p) == SMALLER   ) {
+          if ((top_p != lft_p) and (top_p != rgt_p) and
+              (not exist_two_with_same_x)) {
+            CGAL_assertion(compare_x_2(*lft_p, *top_p) == SMALLER);
+            CGAL_assertion(compare_x_2(*top_p, *rgt_p) == SMALLER);
             // lower the bottom side
             fix1 = Point_2 (bot_p->x(), top_p->y() - rgt_p->x() + lft_p->x());
             bot_p = &fix1;
             is_bot_input = false;
           }
-          else if (compare_x_2(*lft_p, *bot_p) == SMALLER and
-                   compare_x_2(*bot_p, *rgt_p) == SMALLER   ){
+          else if ((bot_p != lft_p) and (bot_p != rgt_p) and
+                   (not exist_two_with_same_x)) {
+            CGAL_assertion(compare_x_2(*lft_p, *bot_p) == SMALLER);
+            CGAL_assertion(compare_x_2(*bot_p, *rgt_p) == SMALLER);
             // augment the top side
             fix2 = Point_2 (top_p->x(), bot_p->y() + rgt_p->x() - lft_p->x());
             top_p = &fix2;
@@ -368,15 +372,19 @@ namespace CGAL {
           // diff x < diff y forms a rectangle
 
           // find the movable side or sides of the rectangle
-          if (compare_y_2(*lft_p, *bot_p) == LARGER and
-              compare_y_2(*lft_p, *top_p) == SMALLER ) {
+          if ((lft_p != bot_p) and (lft_p != top_p) and
+              (not exist_two_with_same_y)) {
+            CGAL_assertion(compare_y_2(*lft_p, *bot_p) == LARGER);
+            CGAL_assertion(compare_y_2(*lft_p, *top_p) == SMALLER);
             // augment the right side
             fix1 = Point_2 (lft_p->x() + top_p->y() - bot_p->y(), rgt_p->y());
             rgt_p = &fix1;
             is_rgt_input = false;
           }
-          else if (compare_y_2(*rgt_p,*bot_p) == LARGER and
-                   compare_y_2(*rgt_p,*top_p) == SMALLER ){
+          else if ((rgt_p != bot_p) and (rgt_p != top_p) and
+                   (not exist_two_with_same_y)) {
+            CGAL_assertion(compare_y_2(*rgt_p,*bot_p) == LARGER);
+            CGAL_assertion(compare_y_2(*rgt_p,*top_p) == SMALLER);
             // diminish from the left side
             fix2 = Point_2 (rgt_p->x() - top_p->y() + bot_p->y(), lft_p->y());
             lft_p = &fix2;
