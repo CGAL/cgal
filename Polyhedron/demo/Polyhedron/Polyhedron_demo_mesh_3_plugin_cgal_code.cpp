@@ -10,6 +10,8 @@
 #include <CGAL/Polyhedral_mesh_domain_with_features_3.h>
 #include <CGAL/make_mesh_3.h>
 
+#include <CGAL/internal/Mesh_3/Boundary_of_subdomain_of_complex_3_in_triangulation_3_to_off.h>
+
 #include <fstream>
 
 #include <CGAL/Timer.h>
@@ -329,6 +331,10 @@ Scene_item* cgal_code_mesh_3(const Polyhedron* pMesh,
   {
     std::ofstream medit_out("out.mesh");
     new_item->c3t3().output_to_medit(medit_out);
+
+    std::ofstream surface_out("surface_mesh.off");
+    CGAL::output_boundary_of_c3t3_to_off(new_item->c3t3(), 1, surface_out);
+
     const Scene_item::Bbox& bbox = new_item->bbox();
     new_item->setPosition((float)(bbox.xmin + bbox.xmax)/2.f,
                           (float)(bbox.ymin + bbox.ymax)/2.f,
