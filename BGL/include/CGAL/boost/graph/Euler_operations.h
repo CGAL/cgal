@@ -149,8 +149,8 @@ join_vertex(typename boost::graph_traits<Graph>::halfedge_descriptor h,
 
 
 /** 
- * splits the vertex `v`, and connects the new vertex and `v` with a new
- * edge. Let `hnew` be `opposite(next(h1, g), g)` after the
+ * splits the target vertex `v` of `h1` and `h2`, and connects the new vertex
+ * and `v` with a new edge. Let `hnew` be `opposite(next(h1, g), g)` after the
  * split. The split regroups the halfedges around the two vertices. The
  * edge sequence `hnew`, `opposite(next(h2, g), g)`, ..., `h1`
  * remains around the old vertex, while the halfedge sequence
@@ -211,13 +211,13 @@ split_vertex(typename boost::graph_traits<Graph>::halfedge_descriptor h1,
 
 /**
  * splits the halfedge `h` into two halfedges inserting a new vertex that is a copy of `vertex(opposite(h,g),g)`.
- * Is equivalent to `split_vertex( prev(h,g), opposite(h,g),g)`. 
+ * Is equivalent to `opposite(split_vertex( prev(h,g), opposite(h,g),g), g)`.
  * \returns the new halfedge `hnew` pointing to the inserted vertex. The new halfedge is followed by the old halfedge, i.e., `next(hnew,g) == h`.
  */
 template<typename Graph>
 typename boost::graph_traits<Graph>::halfedge_descriptor
 split_edge(typename boost::graph_traits<Graph>::halfedge_descriptor h, Graph& g)
-{ return split_vertex(prev(h,g), opposite(h,g),g); }
+{ return opposite(split_vertex(prev(h,g), opposite(h,g),g), g); }
 
 
 /**
