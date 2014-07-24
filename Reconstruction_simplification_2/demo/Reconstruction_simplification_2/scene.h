@@ -35,6 +35,9 @@ public:
 
 	typedef CGAL::Reconstruction_simplification_2<K, InputIterator, PointPMap,
 			MassPMap> R_s_2;
+
+	typedef K::Segment_2 Segment;
+
 	typedef R_s_2::FT FT;
 	typedef R_s_2::Point Point;
 	typedef R_s_2::Vector Vector;
@@ -77,8 +80,6 @@ public:
 
 	typedef R_s_2::Reconstruction_edge_2 PEdge;
 
-	typedef CGAL::List_output<K>::Output_Vertex_Iterator Output_Vertex_Iterator;
-	typedef CGAL::List_output<K>::Output_Edge_Iterator   Output_Edge_Iterator;
 
 private:
 	// data
@@ -403,19 +404,34 @@ public:
 
 	void debug_print() {
 
-	    CGAL::List_output<K> list_output;
 
-	    m_pwsrec->extract_solid_elements(list_output);
+	    std::vector<Point> isolated_points;
+		std::vector<Segment> edges;
 
-	  	for (Output_Vertex_Iterator it = list_output.vertices_start();
-				it != list_output.vertices_beyond(); it++) {
-	  		print_vertex(*it);
-	   }
+		typedef std::back_insert_iterator<std::vector<Point> > Point_it;
+		typedef std::back_insert_iterator<std::vector<Segment> >  Edge_it;
 
-		for (Output_Edge_Iterator it = list_output.edges_start();
-				it != list_output.edges_beyond(); it++) {
-			print_edge(*it);
-	    }
+		Point_it point_it(isolated_points);
+		Edge_it  edge_it(edges);
+
+		CGAL::List_output<K, Point_it, Edge_it> list_output(point_it, edge_it);
+
+		m_pwsrec->extract_solid_elements(list_output);
+
+		int vertex_count = 0;
+		for (std::vector<Point>::iterator it = isolated_points.begin();
+				it != isolated_points.end(); it++) {
+			vertex_count++;
+			std::cout  <<  *it << std::endl;
+		}
+		assert(vertex_count == 18);
+
+		int edge_count = 0;
+		for (std::vector<Segment>::iterator it = edges.begin();
+				it != edges.end(); it++) {
+			std::cout << *it << std::endl;
+			edge_count++;
+		}
 	}
 
 	void save(const QString& filename) {

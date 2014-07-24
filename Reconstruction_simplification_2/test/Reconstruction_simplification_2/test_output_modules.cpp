@@ -21,6 +21,8 @@
 #include <CGAL/property_map.h>
 #include <CGAL/value_type_traits.h>
 
+#include "testing_tools.h"
+
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef K::Point_2                     	                    Point;
 typedef K::Segment_2                 						Segment;
@@ -30,7 +32,7 @@ typedef K::FT                                         		FT;
 typedef std::pair<Point, FT> PointMassPair;
 typedef std::list<PointMassPair> PointMassList;
 typedef PointMassList::const_iterator InputIterator;
-typedef CGAL::value_type_traits<InputIterator>::type MassPoint;
+
 typedef CGAL::First_of_pair_property_map <PointMassPair>  PointPMap;
 typedef CGAL::Second_of_pair_property_map <PointMassPair> MassPMap;
 typedef CGAL::Reconstruction_simplification_2 <K, InputIterator,
@@ -48,9 +50,6 @@ typedef Rt_2::Edge Edge;
 
 typedef CGAL::Reconstruction_simplification_2<K, InputIterator, PointPMap, MassPMap> Rs_2;
 
-PointMassList* load_xy_file(const std::string& fileName);
-PointMassList* simple_point_set();
-
 void test_list_output(Rs_2& rs2);
 void test_tds_output(Rs_2& rs2);
 void test_off_output(Rs_2& rs2);
@@ -67,8 +66,9 @@ void print_edge(Edge edge) {
 int main ()
 {
 
+	PointMassList points;
 	//use the stair example for testing
-	PointMassList points = *(load_xy_file("data/stair-noise00.xy"));
+	load_xy_file<PointMassList, Point>("data/stair-noise00.xy", points);
 
 	PointPMap point_pmap;
 	MassPMap  mass_pmap;
@@ -84,9 +84,9 @@ int main ()
 
 void test_list_output(Rs_2& rs2) {
 
-	 std::cout <<"(-------------List OUTPUT---------- )" << std::endl;
+	std::cout <<"(-------------List OUTPUT---------- )" << std::endl;
 
-	 std::vector<Point> isolated_points;
+	std::vector<Point> isolated_points;
 	std::vector<Segment> edges;
 
 	typedef std::back_insert_iterator<std::vector<Point> > Point_it;
@@ -185,23 +185,4 @@ void test_off_output(Rs_2& rs2) {
 	for (int i = 79; i < 110; i++) {
 		assert(res[i].substr(0,2) == "2 ");
 	}
-}
-
-
-PointMassList* load_xy_file(const std::string& fileName)
-{
-	PointMassList *points = new PointMassList();
-       std::ifstream ifs(fileName);
-       std::cerr << "read xy...";
-       Point point;
-       unsigned int nb = 0;
-       while (ifs >> point)
-       {
-    	   points->push_back(std::make_pair(point, 1));
-       }
-       std::cerr << "done (" << nb << " points)" << std::endl;
-       ifs.close();
-
-       return points;
-
 }
