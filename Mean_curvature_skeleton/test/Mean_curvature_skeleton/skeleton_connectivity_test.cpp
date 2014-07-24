@@ -16,20 +16,6 @@
 #include <fstream>
 #include <map>
 
-template<class PolyhedronWithId, class KeyType>
-struct Polyhedron_with_id_property_map
-    : public boost::put_get_helper<std::size_t&,
-             Polyhedron_with_id_property_map<PolyhedronWithId, KeyType> >
-{
-public:
-    typedef KeyType      key_type;
-    typedef std::size_t  value_type;
-    typedef value_type&  reference;
-    typedef boost::lvalue_property_map_tag category;
-
-    reference operator[](key_type key) const { return key->id(); }
-};
-
 typedef CGAL::Simple_cartesian<double>                               Kernel;
 typedef Kernel::Point_3                                              Point;
 typedef Kernel::Vector_3                                             Vector;
@@ -51,8 +37,8 @@ typedef boost::graph_traits<Graph>::vertex_iterator                    vertex_it
 typedef boost::graph_traits<Graph>::edge_iterator                      edge_iter;
 typedef boost::graph_traits<Graph>::in_edge_iterator                   in_edge_iter;
 
-typedef Polyhedron_with_id_property_map<Polyhedron, vertex_descriptor> Vertex_index_map;
-typedef Polyhedron_with_id_property_map<Polyhedron, halfedge_descriptor>   Halfedge_index_map;
+typedef boost::property_map<Polyhedron, boost::vertex_index_t>::type     Vertex_index_map;
+typedef boost::property_map<Polyhedron, boost::halfedge_index_t>::type   Halfedge_index_map;
 
 typedef std::map<vertex_desc, std::vector<int> >                       Correspondence_map;
 typedef boost::associative_property_map<Correspondence_map>            GraphCorrelationPMap;

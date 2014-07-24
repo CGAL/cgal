@@ -33,19 +33,6 @@
 
 #include <queue>
 
-template<class PolyhedronWithId, class KeyType>
-struct Polyhedron_with_id_property_map
-    : public boost::put_get_helper<std::size_t&,
-             Polyhedron_with_id_property_map<PolyhedronWithId, KeyType> >
-{
-public:
-    typedef KeyType      key_type;
-    typedef std::size_t  value_type;
-    typedef value_type&  reference;
-    typedef boost::lvalue_property_map_tag category;
-
-    reference operator[](key_type key) const { return key->id(); }
-};
 
 typedef boost::graph_traits<Polyhedron>::vertex_descriptor          vertex_descriptor;
 typedef boost::graph_traits<Polyhedron>::vertex_iterator            vertex_iterator;
@@ -53,8 +40,8 @@ typedef boost::graph_traits<Polyhedron>::halfedge_descriptor        halfedge_des
 typedef Polyhedron::Facet_iterator                                  Facet_iterator;
 typedef Polyhedron::Halfedge_around_facet_circulator                Halfedge_facet_circulator;
 
-typedef Polyhedron_with_id_property_map<Polyhedron, vertex_descriptor> Vertex_index_map; // use id field of vertices
-typedef Polyhedron_with_id_property_map<Polyhedron, halfedge_descriptor>   Edge_index_map;   // use id field of edges
+typedef boost::property_map<Polyhedron, boost::vertex_index_t>::type Vertex_index_map; // use id field of vertices
+typedef boost::property_map<Polyhedron, boost::halfedge_index_t>::type   Edge_index_map;   // use id field of edges
 
 struct Skeleton_vertex_info
 {
