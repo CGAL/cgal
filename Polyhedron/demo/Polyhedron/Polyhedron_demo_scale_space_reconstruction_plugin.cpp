@@ -93,59 +93,64 @@ void Polyhedron_demo_scale_space_reconstruction_plugin::on_actionScaleSpaceRecon
     );
     std::cout << "ok (" << time.elapsed() << " ms)" << std::endl;
 
+    for( unsigned int sh = 0; sh < reconstruct.number_of_shells(); ++sh ) {
+        // collect the number of triples.
+        std::ptrdiff_t num = std::distance( reconstruct.shell_begin( sh ),
+                                            reconstruct.shell_end( sh ) );
 
-    //create item for the reconstruction output with input point set
-    Scene_polygon_soup_item* new_item = new Scene_polygon_soup_item();
-    new_item->init_polygon_soup(pts_item->point_set()->size(),
-                                reconstruct.number_of_triangles() );
+        //create item for the reconstruction output with input point set
+        Scene_polygon_soup_item* new_item = new Scene_polygon_soup_item();
+        new_item->init_polygon_soup(pts_item->point_set()->size(),
+                                    num );
 
-    typedef Point_set::iterator Point_iterator;
+        typedef Point_set::iterator Point_iterator;
 
-    for(Point_iterator it = pts_item->point_set()->begin(),
-                       end = pts_item->point_set()->end(); it!=end; ++it)
-    {
-      new_item->new_vertex(it->x(), it->y(), it->z());
-    }
+        for(Point_iterator it = pts_item->point_set()->begin(),
+                           end = pts_item->point_set()->end(); it!=end; ++it)
+        {
+          new_item->new_vertex(it->x(), it->y(), it->z());
+        }
 
-    for (Recontructor::Triple_iterator it=reconstruct.surface_begin(),
-                                       end=reconstruct.surface_end();it!=end;++it)
-    {
-      new_item->new_triangle( get<0>(*it), get<1>(*it), get<2>(*it) );
-    }
+        for (Recontructor::Triple_iterator it=reconstruct.shell_begin( sh ),
+                                           end=reconstruct.shell_end( sh );it!=end;++it)
+        {
+          new_item->new_triangle( get<0>(*it), get<1>(*it), get<2>(*it) );
+        }
 
-    new_item->finalize_polygon_soup();
+        new_item->finalize_polygon_soup();
 
-    new_item->setName(tr("%1 (ss reconstruction)").arg(scene->item(index)->name()));
-    new_item->setColor(Qt::magenta);
-    new_item->setRenderingMode(FlatPlusEdges);
-    scene->addItem(new_item);
+        new_item->setName(tr("%1-shell %2 (ss reconstruction)").arg(scene->item(index)->name()).arg(sh+1));
+        new_item->setColor(Qt::magenta);
+        new_item->setRenderingMode(FlatPlusEdges);
+        scene->addItem(new_item);
 
-    if ( dialog.generate_smoothed() ){
-      //create item for the reconstruction output with input point set smoothed
-      Scene_polygon_soup_item *new_item_smoothed = new Scene_polygon_soup_item();
+        if ( dialog.generate_smoothed() ){
+          //create item for the reconstruction output with input point set smoothed
+          Scene_polygon_soup_item *new_item_smoothed = new Scene_polygon_soup_item();
 
-      new_item_smoothed->init_polygon_soup(pts_item->point_set()->size(),
-                                           reconstruct.number_of_triangles() );
+          new_item_smoothed->init_polygon_soup(pts_item->point_set()->size(),
+                                               num );
 
-      typedef Recontructor::Point_iterator SS_point_iterator;
-      for(SS_point_iterator it = reconstruct.scale_space_begin(),
-                            end = reconstruct.scale_space_end(); it!=end; ++it)
-      {
-        new_item_smoothed->new_vertex(it->x(), it->y(), it->z());
-      }
+          typedef Recontructor::Point_iterator SS_point_iterator;
+          for(SS_point_iterator it = reconstruct.scale_space_begin(),
+                                end = reconstruct.scale_space_end(); it!=end; ++it)
+          {
+            new_item_smoothed->new_vertex(it->x(), it->y(), it->z());
+          }
 
-      for (Recontructor::Triple_iterator it=reconstruct.surface_begin(),
-                                         end=reconstruct.surface_end();it!=end;++it)
-      {
-        new_item_smoothed->new_triangle( get<0>(*it), get<1>(*it), get<2>(*it) );
-      }
+          for (Recontructor::Triple_iterator it=reconstruct.shell_begin( sh ),
+                                             end=reconstruct.shell_end( sh );it!=end;++it)
+          {
+            new_item_smoothed->new_triangle( get<0>(*it), get<1>(*it), get<2>(*it) );
+          }
 
-      new_item_smoothed->finalize_polygon_soup();
+          new_item_smoothed->finalize_polygon_soup();
 
-      new_item_smoothed->setName(tr("%1 (ss smoothed reconstruction)").arg(scene->item(index)->name()));
-      new_item_smoothed->setColor(Qt::magenta);
-      new_item_smoothed->setRenderingMode(FlatPlusEdges);
-      scene->addItem(new_item_smoothed);
+          new_item_smoothed->setName(tr("%1-shell %2 (ss smoothed reconstruction)").arg(scene->item(index)->name()).arg(sh+1));
+          new_item_smoothed->setColor(Qt::magenta);
+          new_item_smoothed->setRenderingMode(FlatPlusEdges);
+          scene->addItem(new_item_smoothed);
+        }
     }
 
     // default cursor
