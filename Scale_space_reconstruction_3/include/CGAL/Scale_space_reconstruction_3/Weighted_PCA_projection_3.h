@@ -108,7 +108,7 @@ public:
             _pts( 2, column ) = CGAL::to_double( (*points_begin)[2] );
             _wts( column ) = CGAL::to_double( *weights_begin );
         }
-        approximate();
+        return approximate();
     }
     
     // compute weighted PCA.

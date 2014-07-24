@@ -305,6 +305,8 @@ collect_facets( Tag_true ) {
                 collect_shell( *fit );
                 collect_shell( _shape->mirror_facet( *fit ) );
                 break;
+            default:
+                break;
         }
     }
 }
@@ -327,7 +329,9 @@ collect_facets( Tag_false ) {
                 // Collect both incident cells.
                 _surface.push_back( ordered_facet_indices( *fit ) );
                 _surface.push_back( ordered_facet_indices( _shape->mirror_facet( *fit ) ) );
-            break;
+                break;
+            default:
+                break;
         }
     }
 }
@@ -391,7 +395,6 @@ advance_scale_space( unsigned int iterations ) {
     typedef std::vector< unsigned int >		CountVec;
     typedef std::map<Point, size_t>			PIMap;
     typedef std::vector<Point>              Pointset;
-    typedef Weighted_PCA_projection_3< Gt > WPCAP;
 
     typedef internal::_ENVIRONMENT::s_ptr_type			p_size_t;
 		
