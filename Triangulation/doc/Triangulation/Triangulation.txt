@@ -461,7 +461,7 @@ This package is heavily inspired by the works of
 Monique Teillaud and Sylvain Pion (`Triangulation_3`)
 and Mariette Yvinec (`Triangulation_2`).
 The first version was written by Samuel Hornus. The final version is a joint 
-work by Samuel Hornus, Olivier Devillers and Clément Jamin.
+work by Samuel Hornus, Olivier Devillers and ClÃ©ment Jamin.
 
 */ 
 } /* namespace CGAL */
