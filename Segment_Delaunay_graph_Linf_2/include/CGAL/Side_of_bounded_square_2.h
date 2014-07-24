@@ -31,9 +31,9 @@ namespace CGAL {
 
       Orientation_Linf_2_Type orientation_Linf;
 
-      template <class Compare>
+      template <class Compare, typename E>
       inline void minmax(
-          const Point_2 &p, const Point_2 &q, const Point_2 &r,
+          const E &p, const E &q, const E &r,
           Point_2 const * & min_p, Point_2 const * & max_p,
           bool & samepq, bool & samepr, bool & sameqr
           ) const
