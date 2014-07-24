@@ -269,7 +269,7 @@ namespace boost {
     template <class Graph, class IndexMap>
     struct default_color_map_generator_helper<Graph, IndexMap, false> {
       typedef boost::vector_property_map<boost::two_bit_color_type, IndexMap> type;
-      static type build(const Graph& g, const IndexMap& index) {
+      static type build(const Graph& /* g */, const IndexMap& index) {
         return boost::make_vector_property_map<boost::two_bit_color_type>(index);
       }
     };
