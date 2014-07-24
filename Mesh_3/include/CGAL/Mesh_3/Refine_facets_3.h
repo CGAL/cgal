@@ -776,7 +776,7 @@ private:
 #ifdef CGAL_LINKED_WITH_TBB
   /// Removes facet from refinement queue
   // Parallel: it's always lazy, so do nothing
-  void remove_bad_facet(Facet& facet, Parallel_tag) {}
+  void remove_bad_facet(Facet&, Parallel_tag) {}
 #endif // CGAL_LINKED_WITH_TBB
 
   /**

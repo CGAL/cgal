@@ -115,7 +115,7 @@ public:
     m_num_batches_grid[cell_index].fetch_and_add(to_add);
   }
 
-  void add_occupation(int cell_index, int to_add, int num_items_in_work_queue)
+  void add_occupation(int cell_index, int to_add, int)
   {
     m_occupation_grid[cell_index].fetch_and_add(to_add);
 
@@ -833,7 +833,7 @@ protected:
   }
 
   void enqueue_task(WorkBatchTask *task,
-                    tbb::task &parent_task) const
+                    tbb::task &) const
   {
     tbb::task::spawn(*task);
   }
