@@ -114,7 +114,7 @@ void Polyhedron_demo_scale_space_reconstruction_plugin::on_actionScaleSpaceRecon
         for (Recontructor::Triple_iterator it=reconstruct.shell_begin( sh ),
                                            end=reconstruct.shell_end( sh );it!=end;++it)
         {
-          new_item->new_triangle( get<0>(*it), get<1>(*it), get<2>(*it) );
+          new_item->new_triangle( (*it)[0], (*it)[1], (*it)[2] );
         }
 
         new_item->finalize_polygon_soup();
@@ -141,7 +141,7 @@ void Polyhedron_demo_scale_space_reconstruction_plugin::on_actionScaleSpaceRecon
           for (Recontructor::Triple_iterator it=reconstruct.shell_begin( sh ),
                                              end=reconstruct.shell_end( sh );it!=end;++it)
           {
-            new_item_smoothed->new_triangle( get<0>(*it), get<1>(*it), get<2>(*it) );
+            new_item_smoothed->new_triangle( (*it)[0], (*it)[1], (*it)[2] );
           }
 
           new_item_smoothed->finalize_polygon_soup();
