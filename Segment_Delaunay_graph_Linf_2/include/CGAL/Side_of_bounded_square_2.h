@@ -26,22 +26,27 @@ namespace CGAL {
       typedef CGAL::cpp11::tuple<bool, bool, bool, bool, size_t>
               SmallerEqTuple;
 
+      template<typename E>
+      struct MinMaxTuple {
+        typedef CGAL::cpp11::tuple<E const *, E const *,
+                     const bool, const bool, const bool> Type;
+      };
+
       Compare_x_2 compare_x_2;
       Compare_y_2 compare_y_2;
 
       Orientation_Linf_2_Type orientation_Linf;
 
       template <class Compare, typename E>
-      inline void minmax(
-          const E &p, const E &q, const E &r,
-          Point_2 const * & min_p, Point_2 const * & max_p,
-          bool & samepq, bool & samepr, bool & sameqr
-          ) const
+      inline typename MinMaxTuple<E>::Type
+      minmax(const E &p, const E &q, const E &r) const
       {
         Compare cmp;
-        samepq = false;
-        samepr = false;
-        sameqr = false;
+        E const * min_p (NULL);
+        E const * max_p (NULL);
+        bool samepq = false;
+        bool samepr = false;
+        bool sameqr = false;
         const Comparison_result cmppq = cmp(p, q);
         switch(cmppq) {
           case SMALLER:
@@ -132,6 +137,8 @@ namespace CGAL {
         CGAL_assertion(max_p != NULL);
         CGAL_SDG_DEBUG(std::cout << "debug minmax cmppq=" << cmppq
             << " cmppr=" << cmppr << " cmpqr=" << cmpqr << std::endl; );
+        return CGAL::cpp11::make_tuple(
+            min_p, max_p, samepq, samepr, sameqr);
       }
 
       inline SmallerEqTuple analyze_smalleq(
@@ -177,25 +184,25 @@ namespace CGAL {
 
         CGAL_assertion(orientation_Linf(p,q,r) != DEGENERATE);
 
+        typedef typename MinMaxTuple<Point_2>::Type PointMinMaxTuple;
+
         //compute the minimum x and maximum x
-        Point_2 const * lft_p (NULL);
-        Point_2 const * rgt_p (NULL);
-        bool samex_pq (false);
-        bool samex_pr (false);
-        bool samex_qr (false);
-        minmax<Compare_x_2>(p, q, r,
-            lft_p, rgt_p, samex_pq, samex_pr, samex_qr);
+        PointMinMaxTuple tupx = minmax<Compare_x_2>(p, q, r);
+        Point_2 const * lft_p = CGAL::cpp11::get<0>(tupx);
+        Point_2 const * rgt_p = CGAL::cpp11::get<1>(tupx);
+        const bool samex_pq = CGAL::cpp11::get<2>(tupx);
+        const bool samex_pr = CGAL::cpp11::get<3>(tupx);
+        const bool samex_qr = CGAL::cpp11::get<4>(tupx);
         CGAL_assertion(lft_p != NULL);
         CGAL_assertion(rgt_p != NULL);
 
         //compute the minimum y and maximum y
-        Point_2 const * bot_p (NULL);
-        Point_2 const * top_p (NULL);
-        bool samey_pq (false);
-        bool samey_pr (false);
-        bool samey_qr (false);
-        minmax<Compare_y_2>(p, q, r,
-            bot_p, top_p, samey_pq, samey_pr, samey_qr);
+        PointMinMaxTuple tupy = minmax<Compare_y_2>(p, q, r);
+        Point_2 const * bot_p = CGAL::cpp11::get<0>(tupy);
+        Point_2 const * top_p = CGAL::cpp11::get<1>(tupy);
+        const bool samey_pq = CGAL::cpp11::get<2>(tupy);
+        const bool samey_pr = CGAL::cpp11::get<3>(tupy);
+        const bool samey_qr = CGAL::cpp11::get<4>(tupy);
         CGAL_assertion(bot_p != NULL);
         CGAL_assertion(top_p != NULL);
 
