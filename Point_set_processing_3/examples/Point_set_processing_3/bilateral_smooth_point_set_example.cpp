@@ -21,13 +21,13 @@ typedef std::pair<Point, Vector> PointVectorPair;
 
 int main(void)
 {
-  const std::string INPUT_FILENAME_WITHOUT_EXT = "data/fin90_with_PCA_normals";
-  const std::string INPUT_FILENAME = INPUT_FILENAME_WITHOUT_EXT + ".xyz";
-  const std::string OUTPUT_FILENAME = INPUT_FILENAME_WITHOUT_EXT + "_bilateral_smoothed.xyz";
+  const std::string input_filename_without_ext = "data/fin90_with_PCA_normals";
+  const std::string input_filename = input_filename_without_ext + ".xyz";
+  const std::string output_filename = input_filename_without_ext + "_bilateral_smoothed.xyz";
 
   // Reads a .xyz point set file in points[] * with normals *.
   std::vector<PointVectorPair> points;
-  std::ifstream stream(INPUT_FILENAME.c_str());
+  std::ifstream stream(input_filename.c_str());
   if (!stream ||
       !CGAL::read_xyz_points_and_normals(stream,
                      std::back_inserter(points),
@@ -35,7 +35,7 @@ int main(void)
                      CGAL::Second_of_pair_property_map<PointVectorPair>()))
   {
      std::cerr << "Error: cannot read file " 
-               << INPUT_FILENAME_WITHOUT_EXT << ".xyz" << std::endl;
+               << input_filename_without_ext << ".xyz" << std::endl;
      return EXIT_FAILURE;
   }
 
@@ -59,7 +59,7 @@ int main(void)
   }
   
   //// Save point set.
-  std::ofstream out(OUTPUT_FILENAME.c_str());   
+  std::ofstream out(output_filename.c_str());   
   if (!out ||
       !CGAL::write_xyz_points_and_normals(
       out, points.begin(), points.end(), 

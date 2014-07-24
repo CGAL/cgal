@@ -12,18 +12,18 @@ typedef Kernel::Point_3 Point;
 
 int main(void)
 {
-  const std::string INPUT_FILENAME_WITHOUT_EXT = "data/saint_jean_370K";
-  const std::string INPUT_FILENAME = INPUT_FILENAME_WITHOUT_EXT + ".xyz";
-  const std::string OUTPUT_FILENAME = INPUT_FILENAME_WITHOUT_EXT + "_WLOPED.xyz";
+  const std::string input_filename_without_ext = "data/saint_jean_370K";
+  const std::string input_filename = input_filename_without_ext + ".xyz";
+  const std::string OUTPUT_FILENAME = input_filename_without_ext + "_WLOPED.xyz";
 
   // Reads a .xyz point set file in points[]
   std::vector<Point> points;
-  std::ifstream stream(INPUT_FILENAME.c_str());
+  std::ifstream stream(input_filename.c_str());
 
   if (!stream || !CGAL::read_xyz_points(stream, std::back_inserter(points)))
   {
     std::cerr << "Error: cannot read file "
-              << INPUT_FILENAME.c_str()  << std::endl;
+              << input_filename.c_str()  << std::endl;
     return EXIT_FAILURE;
   }
 
