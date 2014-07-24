@@ -7,9 +7,9 @@ if(WIN32)
 	
 endif()
 
-if (QT_USE_QTMAIN )
+if (QT_USE_QTMAIN OR NOT component)
 	find_package(Qt5Core)
-endif(QT_USE_QTMAIN )
+endif(QT_USE_QTMAIN OR NOT component)
 
 # Qt modules
 FOREACH(module Core GUI OpenGL Multimedia  

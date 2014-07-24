@@ -24,16 +24,36 @@ foreach(LIB_DIR ${PACKAGE_ROOT}/../CGAL_ImageIO/src/CGAL_ImageIO)
   endif()
 endforeach()
 
-
 find_package(CGAL REQUIRED ImageIO)
+
 include( ${CGAL_USE_FILE} )
+
+#New for Qt5 version !
+option (USE_QT5 "Use Qt5 version instead of Qt4" ON)
+
+if(USE_QT5)
+	
+	find_package(Qt5)
+
+else (USE_QT5)
+
+	find_package(Qt4)
+
+	if(CGAL_Qt4_FOUND AND QT4_FOUND)
+		include(${QT_USE_FILE})
+		message("Qt4 found")
+		set(QT4 TRUE)
+	endif()
+
+endif (USE_QT5)
+
+include(QtChoice)
+
 find_package(VTK QUIET)
-find_package(Qt4 QUIET)
 
 if(QT_FOUND AND VTK_FOUND)
   add_definitions(-DCGAL_USE_VTK)
   include(${VTK_USE_FILE})
-  include(${QT_USE_FILE})
 
   add_definitions(${QT_DEFINITIONS})
 
@@ -60,7 +80,7 @@ else()
   if(NOT VTK_FOUND)
     message(STATUS "NOTICE: This demo needs VTK, and will not be compiled.")
   endif()
-  if(NOT QT_FOUND)
-    message(STATUS "NOTICE: This demo needs Qt4, and will not be compiled.")
+  if(NOT (QT4 OR QT5))
+    message(STATUS "NOTICE: This demo needs Qt, and will not be compiled.")
   endif()
 endif()
