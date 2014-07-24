@@ -169,6 +169,12 @@ void Polyhedron_demo_normal_estimation_plugin::on_actionNormalEstimation_trigger
                               CGAL::make_normal_of_point_with_normal_pmap(Point_set::value_type()),
                               dialog.orientationNbNeighbors());
 
+    //indicates that the point set has normals
+    if (first_unoriented_point!=points->begin()){
+      item->set_has_normals(true);
+      item->setRenderingMode(PointsPlusNormals);
+    }
+
     std::size_t nb_unoriented_normals = std::distance(first_unoriented_point, points->end());
     std::size_t memory = CGAL::Memory_sizer().virtual_size();
     std::cerr << "Orient normals: " << nb_unoriented_normals << " point(s) with an unoriented normal are selected ("

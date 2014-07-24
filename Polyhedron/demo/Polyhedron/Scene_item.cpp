@@ -65,7 +65,6 @@ QString Scene_item::renderingModeName() const
 {
   return modeName(renderingMode());
 } 
-
 QMenu* Scene_item::contextMenu()
 {
   if(defaultContextMenu) {
