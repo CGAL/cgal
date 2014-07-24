@@ -8,6 +8,7 @@
 #include <CGAL/basic.h>
 #include <CGAL/enum.h>
 #include <CGAL/Orientation_Linf_2.h>
+#include <CGAL/tuple.h>
 
 namespace CGAL {
 
@@ -21,6 +22,9 @@ namespace CGAL {
       typedef typename K::Compare_y_2           Compare_y_2;
       typedef typename K::FT                    FT;
       typedef typename K::Comparison_result     Comparison_result;
+
+      typedef CGAL::cpp11::tuple<bool, bool, bool, bool, size_t>
+              SmallerEqTuple;
 
       Compare_x_2 compare_x_2;
       Compare_y_2 compare_y_2;
@@ -128,6 +132,39 @@ namespace CGAL {
         CGAL_assertion(max_p != NULL);
         CGAL_SDG_DEBUG(std::cout << "debug minmax cmppq=" << cmppq
             << " cmppr=" << cmppr << " cmpqr=" << cmpqr << std::endl; );
+      }
+
+      inline SmallerEqTuple analyze_smalleq(
+          const Comparison_result & cxtmax,
+          const Comparison_result & cytmax,
+          const Comparison_result & cxmint,
+          const Comparison_result & cymint) const
+      {
+        CGAL_precondition(cxtmax != LARGER);
+        CGAL_precondition(cytmax != LARGER);
+        CGAL_precondition(cxmint != LARGER);
+        CGAL_precondition(cymint != LARGER);
+        size_t count_eq = 0;
+        const bool at_rgt (cxtmax == EQUAL);
+        bool at_lft (false);
+        if (at_rgt) {
+          ++count_eq;
+          CGAL_assertion( cxmint == SMALLER );
+        } else {
+          at_lft = cxmint == EQUAL;
+          if (at_lft) { ++count_eq; }
+        }
+        const bool at_top (cytmax == EQUAL);
+        bool at_bot (false);
+        if (at_top) {
+          ++count_eq;
+          CGAL_assertion( cymint == SMALLER );
+        } else {
+          at_bot = cymint == EQUAL;
+          if (at_bot) { ++count_eq; }
+        }
+        return CGAL::cpp11::make_tuple(
+            at_rgt, at_top, at_lft, at_bot, count_eq);
       }
 
       inline Bounded_side predicate(const Point_2 &p, const Point_2 &q,
@@ -261,6 +298,9 @@ namespace CGAL {
           } // end of case exist_two_with_same_y
         } // end of if exist_two_with_same_x != exist_two_with_same_y
 
+        const bool is_L_shaped =
+          exist_two_with_same_x and exist_two_with_same_y;
+
         const FT two(2);
 
         CGAL_SDG_DEBUG( std::cout << "debug bs after mirror"
@@ -274,9 +314,12 @@ namespace CGAL {
         Point_2 fix1;
         Point_2 fix2;
 
+        bool are_at_three_corners (false);
         if (cmpsides == EQUAL)
         {
-          // do nothing, lrbt are fine
+          if (is_L_shaped) {
+            are_at_three_corners = true;
+          }
         }
         else if (cmpsides == LARGER)
         { //diff x > diff y forms a rectangle
@@ -363,27 +406,31 @@ namespace CGAL {
             << "top=" << *top_p << std::endl ; );
 
         // comparison of query point t with lrbt
-        Comparison_result cxmint = compare_x_2(*lft_p, t);
+        const Comparison_result cxmint = compare_x_2(*lft_p, t);
         if (cxmint == LARGER) {
           return ON_UNBOUNDED_SIDE;
         }
-        Comparison_result cxtmax = compare_x_2(t, *rgt_p);
+        const Comparison_result cxtmax = compare_x_2(t, *rgt_p);
         if (cxtmax == LARGER) {
           return ON_UNBOUNDED_SIDE;
         }
-        Comparison_result cymint = compare_y_2(*bot_p, t);
+        const Comparison_result cymint = compare_y_2(*bot_p, t);
         if (cymint == LARGER) {
           return ON_UNBOUNDED_SIDE;
         }
-        Comparison_result cytmax = compare_y_2(t, *top_p);
+        const Comparison_result cytmax = compare_y_2(t, *top_p);
         if (cytmax == LARGER) {
           return ON_UNBOUNDED_SIDE;
         }
         // here, each comparison value is either SMALLER or EQUAL
-        if( cxmint == SMALLER and
-            cxtmax == SMALLER and
-            cymint == SMALLER and
-            cytmax == SMALLER   ) {
+        const SmallerEqTuple tup =
+          analyze_smalleq(cxtmax, cytmax, cxmint, cymint);
+        const size_t count_eq = CGAL::cpp11::get<4>(tup);
+        CGAL_assertion( count_eq >= 0 );
+        CGAL_assertion( count_eq <= 2 );
+        if (count_eq == 0) {
+          CGAL_assertion( cxmint == SMALLER and cxtmax == SMALLER and
+                          cymint == SMALLER and cytmax == SMALLER );
           CGAL_SDG_DEBUG(std::cout
               << "debug Side_of_bs return ON_BOUNDED_SIDE" << std::endl;);
           return ON_BOUNDED_SIDE;
@@ -393,7 +440,19 @@ namespace CGAL {
               << " bot=" << cymint << " top  =" << cytmax
               << std::endl; );
 
-          if (is_lft_input and (cxmint == EQUAL)) {
+          if (count_eq == 2) {
+            if (are_at_three_corners) {
+              return ON_BOUNDARY;
+            } else {
+              if (is_L_shaped) {
+                return ON_UNBOUNDED_SIDE;
+              }
+            }
+          }
+
+          const bool at_lft = CGAL::cpp11::get<2>(tup);
+          if (is_lft_input and at_lft) {
+            CGAL_assertion(cxmint == EQUAL);
             CGAL_SDG_DEBUG(std::cout
                 << "debug Side_of_bs t on lft input" << std::endl;);
             Comparison_result test =
@@ -404,7 +463,9 @@ namespace CGAL {
             }
           }
 
-          if (is_rgt_input and (cxtmax == EQUAL)) {
+          const bool at_rgt = CGAL::cpp11::get<0>(tup);
+          if (is_rgt_input and at_rgt) {
+            CGAL_assertion(cxtmax == EQUAL);
             CGAL_SDG_DEBUG(std::cout
                 << "debug Side_of_bs t on rgt input" << std::endl;);
             Comparison_result test =
@@ -415,7 +476,9 @@ namespace CGAL {
             }
           }
 
-          if (is_bot_input and (cymint == EQUAL)) {
+          const bool at_bot = CGAL::cpp11::get<3>(tup);
+          if (is_bot_input and at_bot) {
+            CGAL_assertion(cymint == EQUAL);
             CGAL_SDG_DEBUG(std::cout
                 << "debug Side_of_bs t on bot input" << std::endl;);
             Comparison_result test =
@@ -426,7 +489,9 @@ namespace CGAL {
             }
           }
 
-          if (is_top_input and (cytmax == EQUAL)) {
+          const bool at_top = CGAL::cpp11::get<1>(tup);
+          if (is_top_input and at_top) {
+            CGAL_assertion(cytmax == EQUAL);
             CGAL_SDG_DEBUG(std::cout
                 << "debug Side_of_bs t on top input" << std::endl;);
             Comparison_result test =
