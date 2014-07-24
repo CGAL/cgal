@@ -2,24 +2,6 @@ namespace CGAL {
 
 /*!
 \ingroup PkgBGLEnums
-The constant `edge_is_border` is a 
-<A HREF="http://www.boost.org/libs/graph/doc/PropertyTag.html">property tag</A> 
-which refers to the property of an edge of being a border edge.
-
-`edge_is_border` is an 
-<A HREF="http://www.boost.org/libs/graph/doc/using_property_maps.html">interior property</A>. 
-That is, a
-<A HREF="http://www.boost.org/libs/property_map/doc/property_map.html">property map</A> 
-for `edge_is_border` can be extracted from any model of a `HalfedgeGraph`
-using the <span class="textsc">Bgl</span>
-<A HREF="http://www.boost.org/libs/graph/doc/PropertyGraph.html">PropertyGraph</A> interface: `boost::get(edge_is_border,graph)`
-
-The Boolean flag that indicates if the edge is a border can be directly accessed via:
-`boost::get(edge_is_border,graph,edge)`.
-*/
-enum edge_is_border_t { edge_is_border };
-/*!
-\ingroup PkgBGLEnums
 
 The constant `vertex_is_border` is a 
 <A HREF="http://www.boost.org/libs/graph/doc/PropertyTag.html">property tag</A> which refers to the property

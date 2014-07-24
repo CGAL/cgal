@@ -51,36 +51,6 @@ public:
 private:
   const OpenMesh::PolyMesh_ArrayKernelT<K>& sm_;
 };
-  
-
-template<typename K, typename Key>
-class OM_is_border_pmap
-{
-public:
-  typedef boost::read_write_property_map_tag category;
-  typedef bool                             value_type;
-  typedef bool                             reference;
-  typedef Key                              key_type;
-    
-  OM_is_border_pmap(const OpenMesh::PolyMesh_ArrayKernelT<K>& sm)
-    : sm_(sm)
-    {}
-
-  friend reference get(OM_is_border_pmap pm, key_type k)
-  {
-    return pm.sm_.is_boundary(k); 
-  }
-
-  friend void put(OM_is_border_pmap pm, key_type k , bool b)
-  {
-    if(b){
-      const_cast<OpenMesh::PolyMesh_ArrayKernelT<K>& >(pm.sm_).set_face_handle(k, typename OpenMesh::PolyMesh_ArrayKernelT<K>::FaceHandle());
-    }
-  }
-
-private:
-  const OpenMesh::PolyMesh_ArrayKernelT<K>& sm_;
-};
 
 template <typename K, typename VEF>
 class OM_index_pmap : public boost::put_get_helper<std::size_t, OM_index_pmap<K,VEF> >
@@ -224,31 +194,6 @@ struct property_map<OpenMesh::PolyMesh_ArrayKernelT<K>, boost::vertex_point_t >
   typedef type const_type;
 };
 
-
-//
-// vertex_is_border
-//
-
-template<typename K>
-struct property_map<OpenMesh::PolyMesh_ArrayKernelT<K>, CGAL::vertex_is_border_t >
-{
-  typedef CGAL::OM_is_border_pmap<K, typename boost::graph_traits<OpenMesh::PolyMesh_ArrayKernelT<K> >::vertex_descriptor>
-    type;
-  typedef type const_type;
-};
-
-//
-// halfedge_is_border
-//
-
-template<typename K>
-struct property_map<OpenMesh::PolyMesh_ArrayKernelT<K>, CGAL::halfedge_is_border_t >
-{
-  typedef CGAL::OM_is_border_pmap<K, typename boost::graph_traits<OpenMesh::PolyMesh_ArrayKernelT<K> >::halfedge_descriptor>
-    type;
-  typedef type const_type;
-};
-
 } // namespace boost
 
 namespace boost {
@@ -306,21 +251,6 @@ get(boost::vertex_point_t, const OpenMesh::PolyMesh_ArrayKernelT<K>& g)
   return CGAL::OM_point_pmap<K,P>(g);
 }
 
-
-template<typename K>
-CGAL::OM_is_border_pmap<K, typename boost::graph_traits<OpenMesh::PolyMesh_ArrayKernelT<K> >::vertex_descriptor>
-get(boost::vertex_is_border_t, const OpenMesh::PolyMesh_ArrayKernelT<K>& g) 
-{
-  return CGAL::OM_is_border_pmap<K, typename boost::graph_traits<OpenMesh::PolyMesh_ArrayKernelT<K> >::vertex_descriptor>(g);
-}
-
-template<typename K>
-CGAL::OM_is_border_pmap<K, typename boost::graph_traits<OpenMesh::PolyMesh_ArrayKernelT<K> >::halfedge_descriptor>
-get(boost::halfedge_is_border_t, const OpenMesh::PolyMesh_ArrayKernelT<K>& g) 
-{
-  return CGAL::OM_is_border_pmap<K, typename boost::graph_traits<OpenMesh::PolyMesh_ArrayKernelT<K> >::halfedge_descriptor>(g);
-}
-
 // get for intrinsic properties
 #define CGAL_OM_INTRINSIC_PROPERTY(RET, PROP, TYPE)                     \
   template<typename K>                                              \
@@ -335,8 +265,6 @@ get(boost::halfedge_is_border_t, const OpenMesh::PolyMesh_ArrayKernelT<K>& g)
   CGAL_OM_INTRINSIC_PROPERTY(std::size_t, boost::face_index_t, face_descriptor)
   //  CGAL_OM_INTRINSIC_PROPERTY(std::size_t, boost::halfedge_index_t, face_descriptor)
   CGAL_OM_INTRINSIC_PROPERTY(typename CGAL::Exact_predicates_inexact_constructions_kernel::Point_3, boost::vertex_point_t, vertex_descriptor)
-  CGAL_OM_INTRINSIC_PROPERTY(bool, boost::vertex_is_border_t, vertex_descriptor)
-  CGAL_OM_INTRINSIC_PROPERTY(bool, boost::halfedge_is_border_t, halfedge_descriptor)
 
 #undef CGAL_OM_INTRINSIC_PROPERTY
 

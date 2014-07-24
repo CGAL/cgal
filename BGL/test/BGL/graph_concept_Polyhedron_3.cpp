@@ -52,8 +52,6 @@ void concept_check_polyhedron() {
   boost::function_requires< boost::concepts::PropertyGraph<
     Polyhedron, halfedge_descriptor, CGAL::halfedge_index_t> >();
   boost::function_requires< boost::concepts::ReadablePropertyGraph<
-    Polyhedron, halfedge_descriptor, CGAL::halfedge_is_border_t> >();
-  boost::function_requires< boost::concepts::ReadablePropertyGraph<
     Polyhedron, edge_descriptor, boost::edge_index_t> >();
   boost::function_requires< boost::concepts::ReadablePropertyGraph<
     Polyhedron, edge_descriptor, boost::edge_weight_t> >();

@@ -144,7 +144,7 @@ and <code>src/</code> directories).
       <li>Deprecation of <code>halfedge_graph_traits</code>.</li>
       <li>A model of <code>HalfedgeGraph</code> is considered as an undirected graph. Thus any call to <code>edges()</code>
           should be replaced by <code>halfedges()</code> and <code>num_edges()</code> now returns the number of (undirected) edges.
-      <li>Deprecation of the <code>is_border_edge</code> and <code>is_border_halfedge</code> properties.
+      <li>Breaking change: <code>is_border_edge</code> and <code>is_border_halfedge</code> properties are removed.
           The free functions <code>is_border()</code> and <code>is_border_edge()</code> should be used instead.</li>
       <li>Renaming of <code>HalfedgeGraph</code> specific free functions.</li>
     </ul>
@@ -204,6 +204,12 @@ and <code>src/</code> directories).
   </ul>
   <h3>Triangulated Surface Mesh Simplification</h3>
   <ul>
+    <li>
+      Breaking change: Due to the cleanup of the concepts of the package <em>CGAL and the Boost Graph Library</em>,
+      the named parameter <code>edge_is_border_map</code> has been removed, and the named parameter
+      <code>edge_is_constrained_map</code> now expects a property map with an edge descriptor as key type
+      (vs. halfedge descriptor before).
+    </li>
     <li>Add some optimization in the code making the implementation faster
         (depending on the cost and the placement chosen). However, for an edge which
         collapse is not topologically valid, the vector of vertices of the link provided
@@ -213,7 +219,7 @@ and <code>src/</code> directories).
         but if it is a absolute requirement for user defined cost/placement, defining
         the macro <code>CGAL_SMS_EDGE_PROFILE_ALWAYS_NEED_UNIQUE_VERTEX_IN_LINK</code>
         will restore the former behavior.
-        </li>
+    </li>
   </ul>
 
   <h3>Triangulated Surface Mesh Deformation (new package)</h3>
