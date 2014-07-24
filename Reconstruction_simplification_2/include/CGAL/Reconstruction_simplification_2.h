@@ -292,68 +292,6 @@ protected:
 	    double dy = -scale + (double(rand()) / double(RAND_MAX)) * 2* scale;
 	    return Vector(dx, dy);
 	}
-	 /// \endcond
-
-	/*!
-		Randomly perturbs the input points.
-
-		\param scale Coordinate-wise upper bound for the perturbation.
-	 */
-	 void perturbe_points(const FT scale = 1e-5)
-    {
-        std::cerr << "noise by " << scale << "...";
-         for (InputIterator it = start; it != beyond; it++)
-        {
-            Point point = get(point_pmap, *it);
-            point = point + random_vec<Vector>(scale);
-        }
-        std::cerr << "done" << std::endl;
-    }
-
-	/*!
-		Normalizes the coordinates of the input points, i.e.,
-		the input points get recentered.
-	 */
-	void normalize_points()
-    {
-        //perturbe_points(1e-5);
-        compute_bbox(m_bbox_x, m_bbox_y, m_bbox_size);
-        if (m_bbox_size == 0.0) return;
-
-        Point center(m_bbox_x, m_bbox_y);
-        for (InputIterator it = start; it != beyond; ++it)
-        {
-        	Point point = get(point_pmap, *it);
-			Vector vec = (point - center) / m_bbox_size;
-			point = CGAL::ORIGIN + vec;
-        }
-        m_bbox_x = m_bbox_y = 0.0;
-        m_bbox_size = 1.0;
-    }
-
-	 /// \cond SKIP_IN_MANUAL
-	 void compute_bbox(double &x, double &y, double &scale)
-     {
-        FT x_min, x_max, y_min, y_max;
-        InputIterator it = start;
-        Point p = get(point_pmap, *it);
-        x_min = x_max = p.x();
-        y_min = y_max = p.y();
-        ++it;
-        for ( ; it != beyond; ++it)
-        {
-        	p = get(point_pmap, *it);
-            x_min = (std::min)(x_min, p.x());
-            x_max = (std::max)(x_max, p.x());
-            y_min = (std::min)(y_min, p.y());
-            y_max = (std::max)(y_max, p.y());
-        }
-
-        x = 0.5 * (x_min + x_max);
-        y = 0.5 * (y_min + y_max);
-        scale = (std::max)(x_max - x_min, y_max - y_min);
-        if (scale == 0.0) scale = 1.0;
-    }
 
 	void clear() {
 		m_dt.clear();
