@@ -469,6 +469,11 @@ namespace CGAL {
             }
           }
 
+          if (are_at_three_corners) {
+            CGAL_assertion( count_eq == 1 );
+            return ON_BOUNDED_SIDE;
+          }
+
           const bool at_lft = CGAL::cpp11::get<2>(tup);
           if (is_lft_input and at_lft) {
             CGAL_assertion(cxmint == EQUAL);
