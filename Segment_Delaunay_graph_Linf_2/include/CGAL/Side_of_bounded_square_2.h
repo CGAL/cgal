@@ -23,31 +23,29 @@ namespace CGAL {
       typedef typename K::FT                    FT;
       typedef typename K::Comparison_result     Comparison_result;
 
-      typedef CGAL::cpp11::tuple<bool, bool, bool, bool, size_t>
-              SmallerEqTuple;
+      typedef CGAL::cpp11::tuple<const bool, const bool,
+                 const bool, const bool, const size_t> SmallerEqTuple;
 
-      template<typename E>
-      struct MinMaxTuple {
-        typedef CGAL::cpp11::tuple<E const *, E const *,
-                     const bool, const bool, const bool> Type;
-      };
+      typedef CGAL::cpp11::tuple<FT const *, FT const *,
+                   const bool, const bool, const bool,
+                   Point_2 const *, Point_2 const *> MinMaxTuple;
 
       Compare_x_2 compare_x_2;
       Compare_y_2 compare_y_2;
 
       Orientation_Linf_2_Type orientation_Linf;
 
-      template <class Compare, typename E>
-      inline typename MinMaxTuple<E>::Type
-      minmax(const E &p, const E &q, const E &r) const
+      inline MinMaxTuple
+      minmax(const FT &p, const FT &q, const FT &r,
+             const Point_2 &pt_p, const Point_2 &pt_q, const Point_2 &pt_r)
+      const
       {
-        Compare cmp;
-        E const * min_p (NULL);
-        E const * max_p (NULL);
+        FT const * min_p (NULL);
+        FT const * max_p (NULL);
         bool samepq = false;
         bool samepr = false;
         bool sameqr = false;
-        const Comparison_result cmppq = cmp(p, q);
+        const Comparison_result cmppq = compare(p, q);
         switch(cmppq) {
           case SMALLER:
             min_p = &p;
@@ -63,7 +61,7 @@ namespace CGAL {
             samepq = true;
             break;
         }
-        const Comparison_result cmppr = cmp(p, r);
+        const Comparison_result cmppr = compare(p, r);
         Comparison_result cmpqr;
         if (samepq) {
           cmpqr = cmppr;
@@ -82,7 +80,7 @@ namespace CGAL {
           if (min_p == &p) {
             switch(cmppr) {
               case SMALLER:
-                cmpqr = cmp(q, r);
+                cmpqr = compare(q, r);
                 switch(cmpqr) {
                   case SMALLER:
                     max_p = &r;
@@ -112,7 +110,7 @@ namespace CGAL {
                 max_p = &r;
                 break;
               case LARGER:
-                cmpqr = cmp(q, r);
+                cmpqr = compare(q, r);
                 switch(cmpqr) {
                   case SMALLER:
                     break;
@@ -135,10 +133,14 @@ namespace CGAL {
         }
         CGAL_assertion(min_p != NULL);
         CGAL_assertion(max_p != NULL);
+        Point_2 const * pt_min_p =
+          (min_p == &p)? &pt_p : (min_p == &q)? &pt_q : &pt_r;
+        Point_2 const * pt_max_p =
+          (max_p == &p)? &pt_p : (max_p == &q)? &pt_q : &pt_r;
         CGAL_SDG_DEBUG(std::cout << "debug minmax cmppq=" << cmppq
             << " cmppr=" << cmppr << " cmpqr=" << cmpqr << std::endl; );
         return CGAL::cpp11::make_tuple(
-            min_p, max_p, samepq, samepr, sameqr);
+            min_p, max_p, samepq, samepr, sameqr, pt_min_p, pt_max_p);
       }
 
       inline SmallerEqTuple analyze_smalleq(
@@ -184,12 +186,11 @@ namespace CGAL {
 
         CGAL_assertion(orientation_Linf(p,q,r) != DEGENERATE);
 
-        typedef typename MinMaxTuple<Point_2>::Type PointMinMaxTuple;
-
         //compute the minimum x and maximum x
-        PointMinMaxTuple tupx = minmax<Compare_x_2>(p, q, r);
-        Point_2 const * lft_p = CGAL::cpp11::get<0>(tupx);
-        Point_2 const * rgt_p = CGAL::cpp11::get<1>(tupx);
+        const FT px (p.x()), qx (q.x()), rx (r.x());
+        MinMaxTuple tupx = minmax(px, qx, rx, p, q, r);
+        FT const * lft_p = CGAL::cpp11::get<0>(tupx);
+        FT const * rgt_p = CGAL::cpp11::get<1>(tupx);
         const bool samex_pq = CGAL::cpp11::get<2>(tupx);
         const bool samex_pr = CGAL::cpp11::get<3>(tupx);
         const bool samex_qr = CGAL::cpp11::get<4>(tupx);
@@ -197,9 +198,10 @@ namespace CGAL {
         CGAL_assertion(rgt_p != NULL);
 
         //compute the minimum y and maximum y
-        PointMinMaxTuple tupy = minmax<Compare_y_2>(p, q, r);
-        Point_2 const * bot_p = CGAL::cpp11::get<0>(tupy);
-        Point_2 const * top_p = CGAL::cpp11::get<1>(tupy);
+        const FT py (p.y()), qy (q.y()), ry (r.y());
+        MinMaxTuple tupy = minmax(py, qy, ry, p, q, r);
+        FT const * bot_p = CGAL::cpp11::get<0>(tupy);
+        FT const * top_p = CGAL::cpp11::get<1>(tupy);
         const bool samey_pq = CGAL::cpp11::get<2>(tupy);
         const bool samey_pr = CGAL::cpp11::get<3>(tupy);
         const bool samey_qr = CGAL::cpp11::get<4>(tupy);
@@ -219,43 +221,43 @@ namespace CGAL {
         bool is_bot_input (true);
         bool is_top_input (true);
 
-        Point_2 dxmirror;
-        Point_2 dymirror;
+        FT dxmirror;
+        FT dymirror;
         if (exist_two_with_same_x != exist_two_with_same_y) {
           if (exist_two_with_same_x) {
-            Point_2 const *s1 = NULL;
-            Point_2 const *s2 = NULL;
-            Point_2 const *dx = NULL;
+            FT const *s1 = NULL;
+            FT const *s2 = NULL;
+            FT const *dx = NULL;
             if (samex_pq) {
-              s1 = &p;
-              s2 = &q;
-              dx = &r;
+              s1 = &py;
+              s2 = &qy;
+              dx = &ry;
             }
             else if (samex_pr) {
-              s1 = &p;
-              s2 = &r;
-              dx = &q;
+              s1 = &py;
+              s2 = &ry;
+              dx = &qy;
             }
             else if (samex_qr) {
-              s1 = &q;
-              s2 = &r;
-              dx = &p;
+              s1 = &qy;
+              s2 = &ry;
+              dx = &py;
             }
             CGAL_SDG_DEBUG(std::cout << "debug Side_of_bs two same x"
                 << std::endl;);
             if ( (bot_p == dx) or (top_p == dx) ) {
               CGAL_assertion (
-                 ( ( compare_y_2(*dx, *s1) == SMALLER ) and
-                   ( compare_y_2(*dx, *s2) == SMALLER )   ) or
-                 ( ( compare_y_2(*dx, *s1) == LARGER  ) and
-                   ( compare_y_2(*dx, *s2) == LARGER  )   )   );
-              dxmirror = Point_2 (dx->x(), s1->y() + s2->y() - dx->y());
+                 ( ( CGAL::compare(*dx, *s1) == SMALLER ) and
+                   ( CGAL::compare(*dx, *s2) == SMALLER )   ) or
+                 ( ( CGAL::compare(*dx, *s1) == LARGER  ) and
+                   ( CGAL::compare(*dx, *s2) == LARGER  )   )   );
+              dxmirror = *s1 + *s2 - *dx;
               if (top_p == dx) {
-                CGAL_assertion( compare_y_2(dxmirror, *bot_p) == SMALLER );
+                CGAL_assertion(CGAL::compare(dxmirror, *bot_p) == SMALLER);
                 bot_p = &dxmirror;
                 is_bot_input = false;
               } else {
-                CGAL_assertion( compare_y_2(dxmirror, *top_p) == LARGER );
+                CGAL_assertion(CGAL::compare(dxmirror, *top_p) == LARGER);
                 CGAL_assertion( bot_p == dx );
                 top_p = &dxmirror;
                 is_top_input = false;
@@ -263,40 +265,40 @@ namespace CGAL {
             }
           } else {
             CGAL_assertion( exist_two_with_same_y );
-            Point_2 const *s1 = NULL;
-            Point_2 const *s2 = NULL;
-            Point_2 const *dy = NULL;
+            FT const *s1 = NULL;
+            FT const *s2 = NULL;
+            FT const *dy = NULL;
             if (samey_pq) {
-              s1 = &p;
-              s2 = &q;
-              dy = &r;
+              s1 = &px;
+              s2 = &qx;
+              dy = &rx;
             }
             else if (samey_pr) {
-              s1 = &p;
-              s2 = &r;
-              dy = &q;
+              s1 = &px;
+              s2 = &rx;
+              dy = &qx;
             }
             else if (samey_qr) {
-              s1 = &q;
-              s2 = &r;
-              dy = &p;
+              s1 = &qx;
+              s2 = &rx;
+              dy = &px;
             }
             CGAL_assertion( dy != NULL );
             CGAL_SDG_DEBUG(std::cout << "debug Side_of_bs two same y"
                 << std::endl;);
             if ( (lft_p == dy) or (rgt_p == dy) ) {
               CGAL_assertion (
-                 ( ( compare_x_2(*dy, *s1) == SMALLER ) and
-                   ( compare_x_2(*dy, *s2) == SMALLER )   ) or
-                 ( ( compare_x_2(*dy, *s1) == LARGER  ) and
-                   ( compare_x_2(*dy, *s2) == LARGER  )   )   );
-              dymirror = Point_2 (s1->x() + s2->x() - dy->x(), dy->y());
+                 ( ( CGAL::compare(*dy, *s1) == SMALLER ) and
+                   ( CGAL::compare(*dy, *s2) == SMALLER )   ) or
+                 ( ( CGAL::compare(*dy, *s1) == LARGER  ) and
+                   ( CGAL::compare(*dy, *s2) == LARGER  )   )   );
+              dymirror = *s1 + *s2 - *dy;
               if (rgt_p == dy) {
-                CGAL_assertion( compare_x_2(dymirror, *lft_p) == SMALLER );
+                CGAL_assertion(CGAL::compare(dymirror, *lft_p) == SMALLER);
                 lft_p = &dymirror;
                 is_lft_input = false;
               } else {
-                CGAL_assertion(compare_x_2(dymirror, *rgt_p) == LARGER);
+                CGAL_assertion(CGAL::compare(dymirror, *rgt_p) == LARGER);
                 CGAL_assertion( lft_p == dy );
                 rgt_p = &dymirror;
                 is_rgt_input = false;
@@ -316,10 +318,10 @@ namespace CGAL {
             << std::endl ; );
 
         Comparison_result cmpsides =
-          CGAL::compare(rgt_p->x() - lft_p->x(), top_p->y() - bot_p->y());
+          CGAL::compare(*rgt_p - *lft_p, *top_p - *bot_p);
 
-        Point_2 fix1;
-        Point_2 fix2;
+        FT fix1;
+        FT fix2;
 
         bool are_at_three_corners (false);
         if (cmpsides == EQUAL)
@@ -331,80 +333,58 @@ namespace CGAL {
         else if (cmpsides == LARGER)
         { //diff x > diff y forms a rectangle
           //need to find the movable side of rectangle
-          if ((top_p != lft_p) and (top_p != rgt_p) and
-              (not exist_two_with_same_x)) {
-            CGAL_assertion(compare_x_2(*lft_p, *top_p) == SMALLER);
-            CGAL_assertion(compare_x_2(*top_p, *rgt_p) == SMALLER);
-            // lower the bottom side
-            fix1 = Point_2 (bot_p->x(), top_p->y() - rgt_p->x() + lft_p->x());
-            bot_p = &fix1;
-            is_bot_input = false;
-          }
-          else if ((bot_p != lft_p) and (bot_p != rgt_p) and
-                   (not exist_two_with_same_x)) {
-            CGAL_assertion(compare_x_2(*lft_p, *bot_p) == SMALLER);
-            CGAL_assertion(compare_x_2(*bot_p, *rgt_p) == SMALLER);
-            // augment the top side
-            fix2 = Point_2 (top_p->x(), bot_p->y() + rgt_p->x() - lft_p->x());
-            top_p = &fix2;
-            is_top_input = false;
-          }
-          else {
+          if (exist_two_with_same_x) {
             // expand rectangle both downwards and upwards
             CGAL_SDG_DEBUG(std::cout << "debug Side_of_bs move both sides"
                 << std::endl;);
-            fix1 = Point_2 (
-                bot_p->x(),
-               (bot_p->y() + top_p->y() - rgt_p->x() + lft_p->x())/two);
+            fix1 = (*bot_p + *top_p - *rgt_p + *lft_p)/two;
             is_bot_input = false;
-            fix2 = Point_2 (
-                top_p->x(),
-               (top_p->y() + bot_p->y() + rgt_p->x() - lft_p->x())/two);
+            fix2 = (*top_p + *bot_p + *rgt_p - *lft_p)/two;
             is_top_input = false;
-
             // update bottom and top
             bot_p = &fix1;
             top_p = &fix2;
           }
-        }
+          else {
+            CGAL_assertion( is_bot_input and is_top_input );
+            Point_2 const * const pt_lft_p =
+              (is_lft_input)? CGAL::cpp11::get<5>(tupx) : NULL;
+            Point_2 const * const pt_rgt_p =
+              (is_rgt_input)? CGAL::cpp11::get<6>(tupx) : NULL;
+            Point_2 const * const pt_top_p = CGAL::cpp11::get<6>(tupy);
+            if ((pt_top_p != pt_lft_p) and (pt_top_p != pt_rgt_p)) {
+              // lower the bottom side
+              fix1 = *top_p - *rgt_p + *lft_p;
+              bot_p = &fix1;
+              is_bot_input = false;
+            }
+            else {
+              CGAL_assertion_code(
+              Point_2 const * const pt_bot_p = CGAL::cpp11::get<5>(tupy);)
+              CGAL_assertion(
+                  (pt_bot_p != pt_lft_p) and (pt_bot_p != pt_rgt_p) );
+              // augment the top side
+              fix2 = *bot_p + *rgt_p - *lft_p;
+              top_p = &fix2;
+              is_top_input = false;
+            }
+          } // end of not exist_two_with_same_x case
+        } // end of cmpsides == LARGER case
         else
         { // px_max.x() - px_min.x() < py_max.y() - py_min.y())
           // diff x < diff y forms a rectangle
-
-          // find the movable side or sides of the rectangle
-          if ((lft_p != bot_p) and (lft_p != top_p) and
-              (not exist_two_with_same_y)) {
-            CGAL_assertion(compare_y_2(*lft_p, *bot_p) == LARGER);
-            CGAL_assertion(compare_y_2(*lft_p, *top_p) == SMALLER);
-            // augment the right side
-            fix1 = Point_2 (lft_p->x() + top_p->y() - bot_p->y(), rgt_p->y());
-            rgt_p = &fix1;
-            is_rgt_input = false;
-          }
-          else if ((rgt_p != bot_p) and (rgt_p != top_p) and
-                   (not exist_two_with_same_y)) {
-            CGAL_assertion(compare_y_2(*rgt_p,*bot_p) == LARGER);
-            CGAL_assertion(compare_y_2(*rgt_p,*top_p) == SMALLER);
-            // diminish from the left side
-            fix2 = Point_2 (rgt_p->x() - top_p->y() + bot_p->y(), lft_p->y());
-            lft_p = &fix2;
-            is_lft_input = false;
-          }
-          else {
+          CGAL_assertion( cmpsides == SMALLER );
+          if (exist_two_with_same_y) {
             // change both sides
             CGAL_SDG_DEBUG(std::cout << "debug Side_of_bs move both sides"
                 << std::endl;);
 
-            fix1 = Point_2 (
-               (lft_p->x() + rgt_p->x() + top_p->y() - bot_p->y())/two,
-                rgt_p->y());
+            fix1 = (*lft_p + *rgt_p + *top_p - *bot_p)/two;
             is_rgt_input = false;
             CGAL_SDG_DEBUG(std::cout << "debug Side_of_bs fatten fix1="
                 << fix1 << std::endl;);
 
-            fix2 = Point_2 (
-               (lft_p->x() + rgt_p->x() - top_p->y() + bot_p->y())/two,
-                lft_p->y());
+            fix2 = (*lft_p + *rgt_p - *top_p + *bot_p)/two;
             is_lft_input = false;
             CGAL_SDG_DEBUG(std::cout << "debug Side_of_bs fatten fix2="
                 << fix2 << std::endl;);
@@ -413,7 +393,31 @@ namespace CGAL {
             rgt_p = &fix1;
             lft_p = &fix2;
           }
-        }
+          else {
+            CGAL_assertion( is_lft_input and is_rgt_input );
+            Point_2 const * const pt_lft_p = CGAL::cpp11::get<5>(tupx);
+            Point_2 const * const pt_bot_p =
+              (is_bot_input) ? CGAL::cpp11::get<5>(tupy) : NULL;
+            Point_2 const * const pt_top_p =
+              (is_top_input) ? CGAL::cpp11::get<6>(tupy) : NULL;
+            // find the movable side or sides of the rectangle
+            if ((pt_lft_p != pt_bot_p) and (pt_lft_p != pt_top_p)) {
+              // augment the right side
+              fix1 = *lft_p + *top_p - *bot_p;
+              rgt_p = &fix1;
+              is_rgt_input = false;
+            } else {
+              CGAL_assertion_code(
+              Point_2 const * const pt_rgt_p = CGAL::cpp11::get<6>(tupx);)
+              CGAL_assertion(
+                  (pt_rgt_p != pt_bot_p) and (pt_rgt_p != pt_top_p) );
+              // diminish from the left side
+              fix2 = *rgt_p - *top_p + *bot_p;
+              lft_p = &fix2;
+              is_lft_input = false;
+            }
+          } // end of not exist_two_with_same_y case
+        } // end of cmpsides == SMALLER case
 
         CGAL_SDG_DEBUG( std::cout << "debug bs after side fixing "
             << "lft=" << *lft_p
@@ -421,19 +425,19 @@ namespace CGAL {
             << "top=" << *top_p << std::endl ; );
 
         // comparison of query point t with lrbt
-        const Comparison_result cxmint = compare_x_2(*lft_p, t);
+        const Comparison_result cxmint = CGAL::compare(*lft_p, t.x());
         if (cxmint == LARGER) {
           return ON_UNBOUNDED_SIDE;
         }
-        const Comparison_result cxtmax = compare_x_2(t, *rgt_p);
+        const Comparison_result cxtmax = CGAL::compare(t.x(), *rgt_p);
         if (cxtmax == LARGER) {
           return ON_UNBOUNDED_SIDE;
         }
-        const Comparison_result cymint = compare_y_2(*bot_p, t);
+        const Comparison_result cymint = CGAL::compare(*bot_p, t.y());
         if (cymint == LARGER) {
           return ON_UNBOUNDED_SIDE;
         }
-        const Comparison_result cytmax = compare_y_2(t, *top_p);
+        const Comparison_result cytmax = CGAL::compare(t.y(), *top_p);
         if (cytmax == LARGER) {
           return ON_UNBOUNDED_SIDE;
         }
@@ -470,8 +474,9 @@ namespace CGAL {
             CGAL_assertion(cxmint == EQUAL);
             CGAL_SDG_DEBUG(std::cout
                 << "debug Side_of_bs t on lft input" << std::endl;);
-            Comparison_result test =
-              test1d(bot_p->y(), top_p->y(), lft_p->y(), t.y());
+            const FT lfty = (lft_p == &px) ? py : (lft_p == &qx) ? qy : ry;
+            const Comparison_result test =
+              test1d(*bot_p, *top_p, lfty, t.y());
             if (test != EQUAL) {
               return (test == SMALLER) ?
                      ON_BOUNDED_SIDE : ON_UNBOUNDED_SIDE;
@@ -483,8 +488,9 @@ namespace CGAL {
             CGAL_assertion(cxtmax == EQUAL);
             CGAL_SDG_DEBUG(std::cout
                 << "debug Side_of_bs t on rgt input" << std::endl;);
-            Comparison_result test =
-              test1d(bot_p->y(), top_p->y(), rgt_p->y(), t.y());
+            const FT rgty = (rgt_p == &px) ? py : (rgt_p == &qx) ? qy : ry;
+            const Comparison_result test =
+              test1d(*bot_p, *top_p, rgty, t.y());
             if (test != EQUAL) {
               return (test == SMALLER) ?
                      ON_BOUNDED_SIDE : ON_UNBOUNDED_SIDE;
@@ -496,8 +502,9 @@ namespace CGAL {
             CGAL_assertion(cymint == EQUAL);
             CGAL_SDG_DEBUG(std::cout
                 << "debug Side_of_bs t on bot input" << std::endl;);
-            Comparison_result test =
-              test1d(lft_p->x(), rgt_p->x(), bot_p->x(), t.x());
+            const FT botx = (bot_p == &py) ? px : (bot_p == &qy) ? qx : rx;
+            const Comparison_result test =
+              test1d(*lft_p, *rgt_p, botx, t.x());
             if (test != EQUAL) {
               return (test == SMALLER) ?
                      ON_BOUNDED_SIDE : ON_UNBOUNDED_SIDE;
@@ -509,8 +516,9 @@ namespace CGAL {
             CGAL_assertion(cytmax == EQUAL);
             CGAL_SDG_DEBUG(std::cout
                 << "debug Side_of_bs t on top input" << std::endl;);
-            Comparison_result test =
-              test1d(lft_p->x(), rgt_p->x(), top_p->x(), t.x());
+            const FT topx = (top_p == &py) ? px : (top_p == &qy) ? qx : rx;
+            const Comparison_result test =
+              test1d(*lft_p, *rgt_p, topx, t.x());
             if (test != EQUAL) {
               return (test == SMALLER) ?
                      ON_BOUNDED_SIDE : ON_UNBOUNDED_SIDE;

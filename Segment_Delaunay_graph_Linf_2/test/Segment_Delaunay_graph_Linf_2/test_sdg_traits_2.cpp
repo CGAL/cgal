@@ -939,7 +939,12 @@ void test_traits(const char* title)
       Point_2(-99, 97),
       CGAL::NEGATIVE);
 
-
+  test_incircle<Gt>(
+      Point_2(200, 0),
+      Point_2(180, 160),
+      Point_2(180, 140),
+      Point_2(160, 160),
+      CGAL::POSITIVE);
 
   test_incircle<Gt>(Point_2(400, 500),
                     Segment_2(Point_2(400, 500), Point_2(300, 500)),
