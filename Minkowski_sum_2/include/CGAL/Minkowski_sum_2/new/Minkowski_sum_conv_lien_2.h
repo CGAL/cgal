@@ -1,10 +1,12 @@
 #ifndef CGAL_MINKOWSKI_SUM_REDUCED_CONV_H
 #define CGAL_MINKOWSKI_SUM_REDUCED_CONV_H
 
+#include <CGAL/Timer.h>
 #include <CGAL/Arrangement_with_history_2.h>
 #include "aabb/AABB_Collision_detector.h"
 #include "Arr_SegmentData_traits.h"
 
+#include <iostream> // TODO: remove!
 #include <queue>
 #include <boost/unordered_set.hpp>
 
@@ -85,29 +87,62 @@ public:
     OutputIterator operator()(const Polygon_2 &pgn1, const Polygon_2 &pgn2,
                               Polygon_2 &sum_bound, OutputIterator sum_holes) {
 
+        CGAL::Timer timer;
+        timer.start();
+
         CGAL_precondition(pgn1.is_simple());
         CGAL_precondition(pgn2.is_simple());
         CGAL_precondition(pgn1.orientation() == CGAL::COUNTERCLOCKWISE);
         CGAL_precondition(pgn2.orientation() == CGAL::COUNTERCLOCKWISE);
 
+        timer.stop();
+        std::cout << timer.time() << " s: Preconditions" << std::endl;
+        timer.reset();
+        timer.start();
+
         const Polygon_2 inversed_pgn1 = transform(Aff_transformation_2<Kernel>(SCALING, -1), pgn1);
         aabb_collision_detector = new AABBCollisionDetector<Kernel, Container>(pgn2, inversed_pgn1);
+
+        timer.stop();
+        std::cout << timer.time() << " s: AABB init" << std::endl;
+        timer.reset();
+        timer.start();
 
         // compute the reduced convolution
         Segments_list reduced_conv;
         build_reduced_convolution(pgn1, pgn2, reduced_conv);
 
+        timer.stop();
+        std::cout << timer.time() << " s: Convolution" << std::endl;
+        timer.reset();
+        timer.start();
+
         // split the segments at their intersection points
         Arrangement_history_2 arr;
         CGAL::insert(arr, reduced_conv.begin(), reduced_conv.end());
 
+        timer.stop();
+        std::cout << timer.time() << " s: Arrangement" << std::endl;
+        timer.reset();
+        timer.start();
+
         // trace outer loop
         get_outer_loop(arr, sum_bound);
+
+        timer.stop();
+        std::cout << timer.time() << " s: Outer Loop" << std::endl;
+        timer.reset();
+        timer.start();
 
         // trace holes
         for (Face_iterator itr = arr.faces_begin(); itr != arr.faces_end(); ++itr) {
             handle_face(arr, itr, inversed_pgn1, pgn2, sum_holes);
         }
+
+        timer.stop();
+        std::cout << timer.time() << " s: Holes" << std::endl;
+        timer.reset();
+        timer.start();
 
         delete aabb_collision_detector;
 
