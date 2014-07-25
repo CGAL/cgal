@@ -18,10 +18,6 @@ struct Segment_Data_Label {
     state _min_id, _max_id;
     CGAL::Comparison_result _orientation;
     int _origin;
-
-    bool operator==(const Segment_Data_Label &rhs) const {
-        return (this == &rhs);
-    }
 };
 
 template <class Traits_> class Arr_SegmentData_traits : public Traits_ {
@@ -69,16 +65,6 @@ public:
 
         {}
 
-        /*! Get the base point (const version). */
-        const Base_p &base() const {
-            return (m_base_pt);
-        }
-
-        /*! Get the base point (non-const version). */
-        Base_p &base() {
-            return (m_base_pt);
-        }
-
         /*! Casting to a base point (const version). */
         operator const Base_p &() const {
             return (m_base_pt);
@@ -104,12 +90,6 @@ public:
         X_monotone_curve_2() {
         }
 
-        /*! Constructor from a base x-monotone curve. */
-        X_monotone_curve_2(const Base_x_monotone_curve_2 &p) :
-            Base_x_monotone_curve_2(p),
-            _label() {
-        }
-
         /*! Constructor from an x-monotone curve an a label. */
         X_monotone_curve_2(const Base_x_monotone_curve_2 &p,
                            const Segment_Data_Label &label) :
@@ -133,12 +113,6 @@ public:
 
         Segment_Data_Label &data() {
             return (_label);
-        }
-
-        /*! Set the label. */
-        void set_label(const Segment_Data_Label &label) {
-            _label = label;
-            return;
         }
     };
 
@@ -253,61 +227,19 @@ public:
             Construct_min_vertex_2 min_vertex_obj = m_traits->construct_min_vertex_2_object();
             Construct_max_vertex_2 max_vertex_obj = m_traits->construct_max_vertex_2_object();
 
-            int endp_coll = 0;
-
             if ((xcv1.data()._min_id == xcv2.data()._min_id) && (xcv2.data()._min_id != no_state)) {
-                return oi;
-
-                if (xcv1.data()._orientation == CGAL::SMALLER) {
-                    *oi = CGAL::make_object(std::make_pair(min_vertex_obj(xcv1), 1));
-                } else {
-                    *oi = CGAL::make_object(std::make_pair(max_vertex_obj(xcv1), 1));
-                }
-
-                ++oi;
                 return oi;
             }
 
             if ((xcv1.data()._min_id == xcv2.data()._max_id) && (xcv2.data()._max_id != no_state)) {
                 return oi;
-
-                if (xcv1.data()._orientation == CGAL::SMALLER) {
-                    *oi = CGAL::make_object(std::make_pair(min_vertex_obj(xcv1), 1));
-                } else {
-                    *oi = CGAL::make_object(std::make_pair(max_vertex_obj(xcv1), 1));
-                }
-
-                ++oi;
-                return oi;
             }
 
             if ((xcv1.data()._max_id == xcv2.data()._min_id) && (xcv2.data()._min_id != no_state)) {
                 return oi;
-
-                if (xcv1.data()._orientation == CGAL::SMALLER) {
-                    *oi = CGAL::make_object(std::make_pair(max_vertex_obj(xcv1), 1));
-                } else {
-                    *oi = CGAL::make_object(std::make_pair(min_vertex_obj(xcv1), 1));
-                }
-
-                ++oi;
-                return oi;
             }
 
             if ((xcv1.data()._max_id == xcv2.data()._max_id) && (xcv2.data()._max_id != no_state)) {
-                return oi;
-
-                if (xcv1.data()._orientation == CGAL::SMALLER) {
-                    *oi = CGAL::make_object(std::make_pair(max_vertex_obj(xcv1), 1));
-                } else {
-                    *oi = CGAL::make_object(std::make_pair(min_vertex_obj(xcv1), 1));
-                }
-
-                ++oi;
-                return oi;
-            }
-
-            if (endp_coll == 1) {
                 return oi;
             }
 
@@ -477,10 +409,6 @@ public:
 
     Compare_x_2 compare_x_2_object() const {
         return (Compare_x_2(((Base *)this)->compare_x_2_object()));
-    }
-
-    Compare_endpoints_xy_2 compare_endpoints_xy_2_object() const {
-        return (Compare_endpoints_xy_2(((Base *)this)->compare_endpoints_xy_2_object()));
     }
 };
 
