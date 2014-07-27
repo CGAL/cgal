@@ -99,6 +99,7 @@ int main(int argc, const char *argv[])
 
   if (svec.size() != 4) {
     std::cerr << "error: 4 sites must be specified" << std::endl;
+    std::cerr << "error: " << svec.size() << " specified" << std::endl;
     return -3;
   }
   std::istringstream strp(svec[0]);
