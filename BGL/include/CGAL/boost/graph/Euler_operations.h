@@ -228,7 +228,7 @@ split_edge(typename boost::graph_traits<Graph>::halfedge_descriptor h, Graph& g)
  * the face incident to `opposite(h,g)` is removed.
  *
  * `join_face()` and `split_face()` are inverse operations, that is
- * `join_face(g, split_face(g,h))` returns `h`.
+ * `join_face(split_face(h,g),h)` returns `h`.
  *
  * \image html join_face.svg
  *
@@ -621,7 +621,7 @@ add_center_vertex(typename boost::graph_traits<Graph>::halfedge_descriptor h,
  * removes the vertex `target(h, g)` and all incident halfedges thereby merging all
  * incident faces.   The resulting face may not be triangulated. 
  * This function is the inverse operation of `add_center_vertex()`. 
- * The invariant `h == remove_center_vertex(g, add_center_vertex(g, h))` 
+ * The invariant `h == remove_center_vertex(add_center_vertex(h,g),g)` 
  * holds, if `h` is not a border halfedge. 
  *
  * \image html remove_center_vertex.svg
@@ -820,7 +820,7 @@ add_face_to_border(typename boost::graph_traits<Graph>::halfedge_descriptor h1,
  * </UL>
  * \returns vertex `vkept` (which can be either `v0` or `v1`).
  * \pre g must be a triangulated graph
- * \pre `safisfies_link_condition(g, v0v1) == true`.
+ * \pre `safisfies_link_condition(v0v1,g) == true`.
  */
 template<typename Graph>
 typename boost::graph_traits<Graph>::vertex_descriptor
@@ -1137,7 +1137,7 @@ collapse_edge(typename boost::graph_traits<Graph>::halfedge_descriptor coll,
 
 
 /**
- *  \returns `true` if e satisfy the *link condition* \cgalCite{degn-tpec-98}, which guarantees that the surface is also 2-manifold after the edge collapse.
+ *  \returns `true` if `e` satisfies the *link condition* \cgalCite{degn-tpec-98}, which guarantees that the surface is also 2-manifold after the edge collapse.
  */
   template<typename Graph>
 bool
