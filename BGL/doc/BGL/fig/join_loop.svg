@@ -36,8 +36,8 @@
      showguides="true"
      inkscape:guide-bbox="true"
      inkscape:window-width="1920"
-     inkscape:window-height="1139"
-     inkscape:window-x="1911"
+     inkscape:window-height="1019"
+     inkscape:window-x="-9"
      inkscape:window-y="-9"
      inkscape:window-maximized="1"
      inkscape:snap-nodes="false"
@@ -53,7 +53,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -579,7 +579,7 @@
          id="tspan3209-4"
          x="196.18929"
          y="237.37852"
-         style="font-size:14px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;font-family:Sans;-inkscape-font-specification:Sans">h1</tspan></text>
+         style="font-size:13.99999979px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr;text-anchor:start;font-family:Arial;-inkscape-font-specification:Arial">h1</tspan></text>
     <path
        d="m 194.2029,346.56509 c 0,4.80248 -3.89318,8.69566 -8.69565,8.69566 -4.80248,0 -8.69565,-3.89318 -8.69565,-8.69566 0,-4.80247 3.89317,-8.69565 8.69565,-8.69565 4.80247,0 8.69565,3.89318 8.69565,8.69565 z"
        sodipodi:ry="8.695652"
@@ -707,7 +707,7 @@
          id="tspan3209-7-4"
          x="309.71698"
          y="211.38564"
-         style="font-size:14px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;font-family:Sans;-inkscape-font-specification:Sans">h2</tspan></text>
+         style="font-size:13.99999979px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr;text-anchor:start;font-family:Arial;-inkscape-font-specification:Arial">h2</tspan></text>
     <g
        transform="matrix(0.74339218,0.15801288,-0.15801288,0.74339218,129.64661,63.438607)"
        id="g3622-1-1-0"
@@ -1002,6 +1002,6 @@
          id="tspan3209-4-2"
          x="725.3653"
          y="233.21127"
-         style="font-size:14px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;font-family:Sans;-inkscape-font-specification:Sans">res</tspan></text>
+         style="font-size:13.99999979px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr;text-anchor:start;font-family:Arial;-inkscape-font-specification:Arial">res</tspan></text>
   </g>
 </svg>

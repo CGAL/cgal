@@ -36,8 +36,8 @@
      showguides="true"
      inkscape:guide-bbox="true"
      inkscape:window-width="1920"
-     inkscape:window-height="1139"
-     inkscape:window-x="1911"
+     inkscape:window-height="1019"
+     inkscape:window-x="-9"
      inkscape:window-y="-9"
      inkscape:window-maximized="1"
      inkscape:snap-nodes="false"
@@ -182,7 +182,7 @@
          id="tspan3209"
          x="135.91193"
          y="283.11246"
-         style="font-size:14px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;font-family:Sans;-inkscape-font-specification:Sans">h</tspan></text>
+         style="font-size:13.99999991px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr;text-anchor:start;font-family:Arial;-inkscape-font-specification:Arial">h</tspan></text>
     <text
        xml:space="preserve"
        style="font-size:20px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans;-inkscape-font-specification:Sans"
@@ -750,7 +750,7 @@
            y="145.91309" /></flowRegion><flowPara
          id="flowPara3805" /></flowRoot>    <text
        xml:space="preserve"
-       style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       style="font-size:39.99999974px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Arial;-inkscape-font-specification:Arial;font-stretch:normal;font-variant:normal;text-anchor:start;text-align:start;writing-mode:lr"
        x="597.98029"
        y="304.05719"
        id="text3207-3"
@@ -759,7 +759,7 @@
          id="tspan3209-8"
          x="597.98029"
          y="304.05719"
-         style="font-size:14px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;font-family:Sans;-inkscape-font-specification:Sans">res</tspan></text>
+         style="font-size:13.99999991px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr;text-anchor:start;font-family:Arial;-inkscape-font-specification:Arial">res</tspan></text>
     <g
        id="g3312"
        transform="matrix(0,1.5387862,-0.4119098,0,561.73001,-331.86474)"
@@ -798,5 +798,5 @@
            height="41.379311"
            x="477.58621"
            y="155.0901" /></flowRegion><flowPara
-         id="flowPara3324"></flowPara></flowRoot>  </g>
+         id="flowPara3324" /></flowRoot>  </g>
 </svg>
