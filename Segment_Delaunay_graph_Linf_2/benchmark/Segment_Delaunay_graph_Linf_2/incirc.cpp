@@ -55,9 +55,11 @@ typedef CGAL::Segment_Delaunay_graph_filtered_traits_without_intersections_2
 #include <tclap/CmdLine.h>
 
 
-template <typename Gt, typename ...Args>
+template <typename Gt>
 void
-run_benchmark(const size_t repetitions, const Args & ... args)
+run_benchmark(const size_t repetitions, const typename Gt::Site_2 & p,
+    const typename Gt::Site_2 & q, const typename Gt::Site_2 & r,
+    const typename Gt::Site_2 & t)
 {
   typedef typename Gt::Vertex_conflict_2 Vertex_conflict_2;
   Gt gt;
@@ -65,7 +67,25 @@ run_benchmark(const size_t repetitions, const Args & ... args)
   CGAL::Timer timer;
   timer.start();
   for (size_t i = 0; i < repetitions; ++i) {
-    (void) incircle(args...);
+    (void) incircle(p, q, r, t);
+  }
+  timer.stop();
+  std::cerr << "Test time = " << timer.time() << "s\n";
+}
+
+template <typename Gt>
+void
+run_benchmark(const size_t repetitions, const typename Gt::Site_2 & p,
+    const typename Gt::Site_2 & q,
+    const typename Gt::Site_2 & t)
+{
+  typedef typename Gt::Vertex_conflict_2 Vertex_conflict_2;
+  Gt gt;
+  Vertex_conflict_2 incircle = gt.vertex_conflict_2_object();
+  CGAL::Timer timer;
+  timer.start();
+  for (size_t i = 0; i < repetitions; ++i) {
+    (void) incircle(p, q, t);
   }
   timer.stop();
   std::cerr << "Test time = " << timer.time() << "s\n";
@@ -137,17 +157,17 @@ int main(int argc, const char *argv[])
     << svec[0] << "  "  << svec[1] << "  " << svec[2] << "   " << svec[3]
     << std::endl;
 
+  std::istringstream strt(svec[3]);
   if (count_inf == 0) {
     std::istringstream strp(svec[0]);
     std::istringstream strq(svec[1]);
     std::istringstream strr(svec[2]);
-    std::istringstream strt(svec[3]);
     if (is_linf) {
       GtLinf::Site_2 p, q, r, t;
       strp >> p;
       strq >> q;
       strr >> r;
-      strr >> t;
+      strt >> t;
       run_benchmark<GtLinf>(reps, p, q, r, t);
     } else {
       GtL2::Site_2 p, q, r, t;
@@ -167,11 +187,13 @@ int main(int argc, const char *argv[])
       GtLinf::Site_2 p, q, t;
       strp >> p;
       strq >> q;
+      strt >> t;
       run_benchmark<GtLinf>(reps, p, q, t);
     } else {
       GtL2::Site_2 p, q, t;
       strp >> p;
       strq >> q;
+      strq >> t;
       run_benchmark<GtL2>(reps, p, q, t);
     }
   }
