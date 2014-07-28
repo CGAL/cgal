@@ -48,7 +48,7 @@ CGAL_Boost_USE_STATIC_LIBS:BOOL=OFF
 CGAL_Core_LIBRARY:STRING=/Users/cgaltester/cgal_test/reference_platforms/x86-64_Darwin-13.0_Apple-clang-5.1_Release-LEDA-without-GMP/lib/libCGAL_Core.dylib
 
 //Dependencies for the target
-CGAL_Core_LIB_DEPENDS:STATIC=general;/usr/local/lib/libmpfr.dylib;general;/usr/local/lib/libgmp.dylib;general;/Users/cgaltester/LEDA/leda-numbers/libleda_numbers.so;general;/Users/cgaltester/cgal_test/reference_platforms/x86-64_Darwin-13.0_Apple-clang-5.1_Release-LEDA-without-GMP/lib/libCGAL.dylib;general;/Users/cgaltester/boost-cpp11/boost_1_54_0/stage/lib/libboost_thread.dylib;general;/Users/cgaltester/boost-cpp11/boost_1_54_0/stage/lib/libboost_system.dylib;
+CGAL_Core_LIB_DEPENDS:STATIC=general;/usr/local/lib/libmpfr.dylib;general;/usr/local/lib/libgmp.dylib;general;/Users/cgaltester/LEDA/leda-numbers/libleda_numbers.dylib;general;/Users/cgaltester/cgal_test/reference_platforms/x86-64_Darwin-13.0_Apple-clang-5.1_Release-LEDA-without-GMP/lib/libCGAL.dylib;general;/Users/cgaltester/boost-cpp11/boost_1_54_0/stage/lib/libboost_thread.dylib;general;/Users/cgaltester/boost-cpp11/boost_1_54_0/stage/lib/libboost_system.dylib;
 
 //Set this to TRUE if you want to define or modify any of CMAKE_*_FLAGS.
 // When this is FALSE, all the CMAKE_*_FLAGS flags are overriden
@@ -88,19 +88,19 @@ CGAL_INSTALL_MAN_DIR:STRING=share/man/man1
 CGAL_ImageIO_LIBRARY:STRING=/Users/cgaltester/cgal_test/reference_platforms/x86-64_Darwin-13.0_Apple-clang-5.1_Release-LEDA-without-GMP/lib/libCGAL_ImageIO.dylib
 
 //Dependencies for the target
-CGAL_ImageIO_LIB_DEPENDS:STATIC=general;/usr/local/lib/libmpfr.dylib;general;/usr/local/lib/libgmp.dylib;general;/Users/cgaltester/LEDA/leda-numbers/libleda_numbers.so;general;/Users/cgaltester/cgal_test/reference_platforms/x86-64_Darwin-13.0_Apple-clang-5.1_Release-LEDA-without-GMP/lib/libCGAL.dylib;general;/Users/cgaltester/boost-cpp11/boost_1_54_0/stage/lib/libboost_thread.dylib;general;/Users/cgaltester/boost-cpp11/boost_1_54_0/stage/lib/libboost_system.dylib;general;/System/Library/Frameworks/AGL.framework;general;/System/Library/Frameworks/OpenGL.framework;general;/usr/lib/libz.dylib;
+CGAL_ImageIO_LIB_DEPENDS:STATIC=general;/usr/local/lib/libmpfr.dylib;general;/usr/local/lib/libgmp.dylib;general;/Users/cgaltester/LEDA/leda-numbers/libleda_numbers.dylib;general;/Users/cgaltester/cgal_test/reference_platforms/x86-64_Darwin-13.0_Apple-clang-5.1_Release-LEDA-without-GMP/lib/libCGAL.dylib;general;/Users/cgaltester/boost-cpp11/boost_1_54_0/stage/lib/libboost_thread.dylib;general;/Users/cgaltester/boost-cpp11/boost_1_54_0/stage/lib/libboost_system.dylib;general;/System/Library/Frameworks/AGL.framework;general;/System/Library/Frameworks/OpenGL.framework;general;/usr/lib/libz.dylib;
 
 //The CGAL library
 CGAL_LIBRARY:STRING=/Users/cgaltester/cgal_test/reference_platforms/x86-64_Darwin-13.0_Apple-clang-5.1_Release-LEDA-without-GMP/lib/libCGAL.dylib
 
 //Dependencies for the target
-CGAL_LIB_DEPENDS:STATIC=general;/usr/local/lib/libmpfr.dylib;general;/usr/local/lib/libgmp.dylib;general;/Users/cgaltester/LEDA/leda-numbers/libleda_numbers.so;general;/Users/cgaltester/boost-cpp11/boost_1_54_0/stage/lib/libboost_thread.dylib;general;/Users/cgaltester/boost-cpp11/boost_1_54_0/stage/lib/libboost_system.dylib;
+CGAL_LIB_DEPENDS:STATIC=general;/usr/local/lib/libmpfr.dylib;general;/usr/local/lib/libgmp.dylib;general;/Users/cgaltester/LEDA/leda-numbers/libleda_numbers.dylib;general;/Users/cgaltester/boost-cpp11/boost_1_54_0/stage/lib/libboost_thread.dylib;general;/Users/cgaltester/boost-cpp11/boost_1_54_0/stage/lib/libboost_system.dylib;
 
 //The CGAL_Qt4 library
 CGAL_Qt4_LIBRARY:STRING=/Users/cgaltester/cgal_test/reference_platforms/x86-64_Darwin-13.0_Apple-clang-5.1_Release-LEDA-without-GMP/lib/libCGAL_Qt4.dylib
 
 //Dependencies for the target
-CGAL_Qt4_LIB_DEPENDS:STATIC=general;/usr/local/lib/libmpfr.dylib;general;/usr/local/lib/libgmp.dylib;general;/Users/cgaltester/LEDA/leda-numbers/libleda_numbers.so;general;/Users/cgaltester/cgal_test/reference_platforms/x86-64_Darwin-13.0_Apple-clang-5.1_Release-LEDA-without-GMP/lib/libCGAL.dylib;general;/Users/cgaltester/boost-cpp11/boost_1_54_0/stage/lib/libboost_thread.dylib;general;/Users/cgaltester/boost-cpp11/boost_1_54_0/stage/lib/libboost_system.dylib;general;/usr/local/lib/QtOpenGL.framework;general;/usr/local/lib/QtGui.framework;general;/usr/local/lib/QtCore.framework;general;/System/Library/Frameworks/AGL.framework;general;/System/Library/Frameworks/OpenGL.framework;
+CGAL_Qt4_LIB_DEPENDS:STATIC=general;/usr/local/lib/libmpfr.dylib;general;/usr/local/lib/libgmp.dylib;general;/Users/cgaltester/LEDA/leda-numbers/libleda_numbers.dylib;general;/Users/cgaltester/cgal_test/reference_platforms/x86-64_Darwin-13.0_Apple-clang-5.1_Release-LEDA-without-GMP/lib/libCGAL.dylib;general;/Users/cgaltester/boost-cpp11/boost_1_54_0/stage/lib/libboost_thread.dylib;general;/Users/cgaltester/boost-cpp11/boost_1_54_0/stage/lib/libboost_system.dylib;general;/usr/local/lib/QtOpenGL.framework;general;/usr/local/lib/QtGui.framework;general;/usr/local/lib/QtCore.framework;general;/System/Library/Frameworks/AGL.framework;general;/System/Library/Frameworks/OpenGL.framework;
 
 //Value Computed by CMake
 CGAL_SOURCE_DIR:STATIC=/Users/cgaltester/cgal_test/CGAL-I
@@ -293,13 +293,13 @@ LEDA_DEFINITIONS:STRING=-DCGAL_LEDA_VERSION=640
 LEDA_INCLUDE_DIR:PATH=/Users/cgaltester/LEDA/leda-numbers/incl
 
 //The LEDA library
-LEDA_LIBRARIES:FILEPATH=/Users/cgaltester/LEDA/leda-numbers/libleda_numbers.so
+LEDA_LIBRARIES:FILEPATH=/Users/cgaltester/LEDA/leda-numbers/libleda_numbers.dylib
 
 //The LEDA debug-mode libraries
 LEDA_LIBRARY_DEBUG:FILEPATH=
 
 //The LEDA release-mode libraries
-LEDA_LIBRARY_RELEASE:FILEPATH=/Users/cgaltester/LEDA/leda-numbers/libleda_numbers.so
+LEDA_LIBRARY_RELEASE:FILEPATH=/Users/cgaltester/LEDA/leda-numbers/libleda_numbers.dylib
 
 //Linker flags for the LEDA library
 LEDA_LINKER_FLAGS:STRING=

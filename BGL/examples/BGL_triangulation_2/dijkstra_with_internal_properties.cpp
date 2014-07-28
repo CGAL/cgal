@@ -3,8 +3,7 @@
 #include <CGAL/Triangulation_vertex_base_with_id_2.h>
 #include <CGAL/boost/graph/graph_traits_Delaunay_triangulation_2.h>
 
-#include <climits>
-#include <boost/graph/dijkstra_shortest_paths.hpp>
+#include <CGAL/boost/graph/dijkstra_shortest_paths.h>
 #include <boost/graph/filtered_graph.hpp>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
