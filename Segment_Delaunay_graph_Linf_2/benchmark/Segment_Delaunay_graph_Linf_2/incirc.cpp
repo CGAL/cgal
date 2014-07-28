@@ -55,11 +55,9 @@ typedef CGAL::Segment_Delaunay_graph_filtered_traits_without_intersections_2
 #include <tclap/CmdLine.h>
 
 
-template <typename Gt>
+template <typename Gt, typename ...Args>
 void
-run_benchmark(const size_t repetitions, const typename Gt::Site_2 & p,
-    const typename Gt::Site_2 & q, const typename Gt::Site_2 & r,
-    const typename Gt::Site_2 & t)
+run_benchmark(const size_t repetitions, const Args & ... args)
 {
   typedef typename Gt::Vertex_conflict_2 Vertex_conflict_2;
   Gt gt;
@@ -67,7 +65,7 @@ run_benchmark(const size_t repetitions, const typename Gt::Site_2 & p,
   CGAL::Timer timer;
   timer.start();
   for (size_t i = 0; i < repetitions; ++i) {
-    (void) incircle(p, q, r, t);
+    (void) incircle(args...);
   }
   timer.stop();
   std::cerr << "Test time = " << timer.time() << "s\n";
@@ -102,25 +100,80 @@ int main(int argc, const char *argv[])
     std::cerr << "error: " << svec.size() << " specified" << std::endl;
     return -3;
   }
-  std::istringstream strp(svec[0]);
-  std::istringstream strq(svec[1]);
-  std::istringstream strr(svec[2]);
-  std::istringstream strt(svec[3]);
+  size_t count_inf = 0;
+  size_t inf_i;
+  for (size_t i = 0; i < 4; ++i) {
+    if (svec[i] == "inf") {
+      ++count_inf;
+      inf_i = i;
+    } else {
+      if (svec[i].length() < 5) {
+        std::cerr << "error: argument " << i << " too short" << std::endl;
+        return -4;
+      }
+      if (not ((svec[i][0] == 'p') or (svec[i][0] == 's'))) {
+        std::cerr << "error: argument " << i << " non site" << std::endl;
+        return -5;
+      }
+      GtLinf::Site_2 read_test;
+      std::istringstream stream_test(svec[i]);
+      stream_test >> read_test;
+      if (!stream_test) {
+        std::cerr << "error: reading site " << i << std::endl;
+        return -11;
+      }
+    }
+  }
+  if (inf_i == 3) {
+    std::cerr << "error: test site cannot be at infinity" << std::endl;
+    return -6;
+  }
+  if (count_inf > 1) {
+    std::cerr << "error: " << count_inf << " infinite sites" << std::endl;
+    return -11;
+  }
 
-  if (is_linf) {
-    GtLinf::Site_2 p, q, r, t;
-    strp >> p;
-    strq >> q;
-    strr >> r;
-    strt >> t;
-    run_benchmark<GtLinf>(reps, p, q, r, t);
+  std::cout << "Running " << (is_linf ? "Linf" : "L2") << " test:  "
+    << svec[0] << "  "  << svec[1] << "  " << svec[2] << "   " << svec[3]
+    << std::endl;
+
+  if (count_inf == 0) {
+    std::istringstream strp(svec[0]);
+    std::istringstream strq(svec[1]);
+    std::istringstream strr(svec[2]);
+    std::istringstream strt(svec[3]);
+    if (is_linf) {
+      GtLinf::Site_2 p, q, r, t;
+      strp >> p;
+      strq >> q;
+      strr >> r;
+      strr >> t;
+      run_benchmark<GtLinf>(reps, p, q, r, t);
+    } else {
+      GtL2::Site_2 p, q, r, t;
+      strp >> p;
+      strq >> q;
+      strr >> r;
+      strt >> t;
+      run_benchmark<GtL2>(reps, p, q, r, t);
+    }
   } else {
-    GtL2::Site_2 p, q, r, t;
-    strp >> p;
-    strq >> q;
-    strr >> r;
-    strt >> t;
-    run_benchmark<GtL2>(reps, p, q, r, t);
+    CGAL_assertion(count_inf == 1);
+    std::istringstream strp(
+        (inf_i == 0) ? svec[1] : (inf_i == 1) ? svec[2] : svec[0]);
+    std::istringstream strq(
+        (inf_i == 0) ? svec[2] : (inf_i == 1) ? svec[0] : svec[1]);
+    if (is_linf) {
+      GtLinf::Site_2 p, q, t;
+      strp >> p;
+      strq >> q;
+      run_benchmark<GtLinf>(reps, p, q, t);
+    } else {
+      GtL2::Site_2 p, q, t;
+      strp >> p;
+      strq >> q;
+      run_benchmark<GtL2>(reps, p, q, t);
+    }
   }
 
   } catch (TCLAP::ArgException &e)  // catch any exceptions
