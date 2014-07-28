@@ -228,7 +228,7 @@ split_edge(typename boost::graph_traits<Graph>::halfedge_descriptor h, Graph& g)
  * the face incident to `opposite(h,g)` is removed.
  *
  * `join_face()` and `split_face()` are inverse operations, that is
- * `join_face(split_face(h,g),h)` returns `h`.
+ * `join_face(split_face(h,g),g)` returns `h`.
  *
  * \image html join_face.svg
  *
