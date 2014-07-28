@@ -204,6 +204,25 @@ void test_incircle(const A & p, const B & q, const C & r, const D & t,
   assert(s == sign);
 }
 
+// ((p, q, inf), t) incircle test
+template<class Gt, typename A, typename B, typename D>
+void test_incircle(const A & p, const B & q, const D & t,
+    const CGAL::Sign & sign)
+{
+  typedef typename Gt::Vertex_conflict_2   Vertex_conflict_2;
+  typedef typename Gt::Site_2   Site_2;
+  Gt gt;
+  Vertex_conflict_2 incircle = gt.vertex_conflict_2_object();
+  Site_2 sp = to_site<Gt>(p);
+  Site_2 sq = to_site<Gt>(q);
+  Site_2 st = to_site<Gt>(t);
+  CGAL::Sign s = incircle(sp, sq, st);
+  std::cout << "test: " << sp << " " << sq << " " << "inf" << "  " << st;
+  std::cout << "   " << sign << " " << s;
+  std::cout << std::endl;
+  assert(s == sign);
+}
+
 
 template<class Gt>
 void test_traits(const char* title)
@@ -214,6 +233,37 @@ void test_traits(const char* title)
   std::cout << "====================================" << std::endl;
   std::cout << title << std::endl;
   std::cout << "------------------------------------" << std::endl;
+
+  // ((p,q,inf),t) tests (vertex at infinity)
+  test_incircle<Gt>(
+      Point_2(0, 0),
+      Point_2(100,0),
+      Point_2(150, 30),
+      CGAL::NEGATIVE);
+
+  test_incircle<Gt>(
+      Point_2(0, 0),
+      Point_2(100,0),
+      Point_2(50, -20),
+      CGAL::POSITIVE);
+
+  test_incircle<Gt>(
+      Point_2(0, 0),
+      Point_2(100,0),
+      Point_2(150, 0),
+      CGAL::POSITIVE);
+
+  test_incircle<Gt>(
+      Point_2(0, 0),
+      Point_2(100,0),
+      Point_2(-10, 0),
+      CGAL::POSITIVE);
+
+  test_incircle<Gt>(
+      Point_2(0, 0),
+      Point_2(100,0),
+      Point_2(40, 0),
+      CGAL::NEGATIVE);
 
   // PPPP tests
   // PPPP three points at corners
