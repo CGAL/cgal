@@ -121,7 +121,7 @@ int main(int argc, const char *argv[])
     return -3;
   }
   size_t count_inf = 0;
-  size_t inf_i;
+  size_t inf_i = 4; // out of bounds value
   for (size_t i = 0; i < 4; ++i) {
     if (svec[i] == "inf") {
       ++count_inf;
@@ -144,7 +144,7 @@ int main(int argc, const char *argv[])
       }
     }
   }
-  if (inf_i == 3) {
+  if ((count_inf > 0) and (inf_i == 3)) {
     std::cerr << "error: test site cannot be at infinity" << std::endl;
     return -6;
   }
