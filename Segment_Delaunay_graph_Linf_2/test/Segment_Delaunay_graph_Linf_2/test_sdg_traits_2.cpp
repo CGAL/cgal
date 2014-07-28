@@ -265,6 +265,50 @@ void test_traits(const char* title)
       Point_2(40, 0),
       CGAL::NEGATIVE);
 
+
+  test_incircle<Gt>(
+      Point_2(10, 10),
+      Point_2(60, 30),
+      Point_2(20, 10),
+      CGAL::POSITIVE);
+
+  test_incircle<Gt>(
+      Point_2(10, 10),
+      Point_2(60, 30),
+      Point_2(60, 10),
+      CGAL::POSITIVE);
+
+  test_incircle<Gt>(
+      Point_2(10, 10),
+      Point_2(60, 30),
+      Point_2(60, 15),
+      CGAL::POSITIVE);
+
+  test_incircle<Gt>(
+      Point_2(10, 10),
+      Point_2(60, 30),
+      Point_2(40, -30),
+      CGAL::POSITIVE);
+
+  test_incircle<Gt>(
+      Point_2(10, 10),
+      Point_2(60, 30),
+      Point_2(-20, 10),
+      CGAL::NEGATIVE);
+
+  test_incircle<Gt>(
+      Point_2(10, 10),
+      Point_2(60, 30),
+      Point_2(60, 60),
+      CGAL::NEGATIVE);
+
+  test_incircle<Gt>(
+      Point_2(10, 10),
+      Point_2(60, 30),
+      Point_2(40, 60),
+      CGAL::NEGATIVE);
+
+
   // PPPP tests
   // PPPP three points at corners
   test_incircle<Gt>(
