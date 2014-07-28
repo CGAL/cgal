@@ -49,7 +49,11 @@ public:
   }
 
   bool applicable() const {
-    return qobject_cast<Scene_points_with_normal_item*>(scene->item(scene->mainSelectionIndex()));
+    Scene_points_with_normal_item* item =
+      qobject_cast<Scene_points_with_normal_item*>(scene->item(scene->mainSelectionIndex()));
+    if (item && item->has_normals())
+      return true;
+    return false;
   }
 
   QList<QAction*> actions() const {
