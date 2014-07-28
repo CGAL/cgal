@@ -1288,7 +1288,7 @@ n  */
 
     splits the halfedge `h` into two halfedges inserting a new vertex 
     that is a copy of `h->%opposite()->%vertex()`. Is equivalent to 
-    `split_vertex( h->%prev(), h->%opposite())`. The call of `%prev()` 
+    `split_vertex( h->%prev(), h->%opposite())->opposite()`. The call of `%prev()`
     can make this method slower than a direct call of `split_vertex()` 
     if the previous halfedge is already known and computing it would be 
     costly when the halfedge data structure does not support the `%prev()` 
