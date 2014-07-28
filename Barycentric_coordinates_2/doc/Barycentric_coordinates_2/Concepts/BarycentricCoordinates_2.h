@@ -17,6 +17,8 @@ public:
 /// \name Creation
 /// @{
 
+/// Creates a class that implements behaviour of generalized barycentric coordinates for any query point that does not belong to the polygon's boundary.
+/// The polygon is given by a range of vertices of the type `Traits::Point_2` stored in a container of the type <a href="http://en.cppreference.com/w/cpp/container/vector">`std::vector`</a>.
 BarycentricCoordinates_2(const std::vector<Traits::Point_2> &vertices, const Traits &barycentric_traits);
 
 /// @}
@@ -25,27 +27,32 @@ BarycentricCoordinates_2(const std::vector<Traits::Point_2> &vertices, const Tra
 /// @{
 
 /*!
-	a function that computes generalized barycentric coordinates without normalization that are called generalized baycentric weights (as fast as possible algorithm is used)
+	A function that computes generalized barycentric coordinates without normalization that are called generalized baycentric weights (as fast as possible algorithm is used).
+	Weights are computed with respect to a query point of the type `Traits::Point_2` and stored in the output iterator `output`. The function returns a pointer to the last stored element. 
 */ 
 boost::optional<OutputIterator> weights(const Traits::Point_2 &query_point, OutputIterator &output);
 
 /*!
-	a function that computes generalized barycentric coordinates on the bounded side of a polygon with an algorithm that is as precise as possible
+	A function that computes generalized barycentric coordinates on the bounded side of a polygon with an algorithm that is as precise as possible.
+	Coordinates are computed with respect to a query point of the type `Traits::Point_2` and stored in the output iterator `output`. The function returns a pointer to the last stored element.
 */ 
 boost::optional<OutputIterator> coordinates_on_bounded_side_precise(const Traits::Point_2 &query_point, OutputIterator &output);
 
 /*!
-	a function that computes generalized barycentric coordinates on the bounded side of a polygon with an algorithm that is as fast as possible
+	A function that computes generalized barycentric coordinates on the bounded side of a polygon with an algorithm that is as fast as possible.
+	Coordinates are computed with respect to a query point of the type `Traits::Point_2` and stored in the output iterator `output`. The function returns a pointer to the last stored element.
 */ 
 boost::optional<OutputIterator> coordinates_on_bounded_side_fast(const Traits::Point_2 &query_point, OutputIterator &output); 
 
 /*!
-	a function that computes generalized barycentric coordinates on the unbounded side of a polygon with an algorithm that is as precise as possible
+	A function that computes generalized barycentric coordinates on the unbounded side of a polygon with an algorithm that is as precise as possible.
+	Coordinates are computed with respect to a query point of the type `Traits::Point_2` and stored in the output iterator `output`. The function returns a pointer to the last stored element.
 */ 
 boost::optional<OutputIterator> coordinates_on_unbounded_side_precise(const Traits::Point_2 &query_point, OutputIterator &output);
 
 /*!
-	a function that computes generalized barycentric coordinates on the unbounded side of a polygon with an algorithm that is as fast as possible
+	A function that computes generalized barycentric coordinates on the unbounded side of a polygon with an algorithm that is as fast as possible.
+	Coordinates are computed with respect to a query point of the type `Traits::Point_2` and stored in the output iterator `output`. The function returns a pointer to the last stored element.
 */ 
 boost::optional<OutputIterator> coordinates_on_unbounded_side_fast(const Traits::Point_2 &query_point, OutputIterator &output);
 
