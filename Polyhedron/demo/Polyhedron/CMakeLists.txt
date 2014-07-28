@@ -381,8 +381,8 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   polyhedron_demo_plugin(polyhedron_stitching_plugin Polyhedron_demo_polyhedron_stitching_plugin)
   target_link_libraries(polyhedron_stitching_plugin scene_polyhedron_item scene_polylines_item)
 
-  polyhedron_demo_plugin(join_polyhedra_plugin Polyhedron_demo_join_polyhedra_plugin)
-  target_link_libraries(join_polyhedra_plugin scene_polyhedron_item)
+  polyhedron_demo_plugin(join_and_split_polyhedra_plugin Polyhedron_demo_join_and_split_polyhedra_plugin)
+  target_link_libraries(join_and_split_polyhedra_plugin scene_polyhedron_item)
 
   polyhedron_demo_plugin(subdivision_methods_plugin Polyhedron_demo_subdivision_methods_plugin)
   target_link_libraries(subdivision_methods_plugin scene_polyhedron_item)
