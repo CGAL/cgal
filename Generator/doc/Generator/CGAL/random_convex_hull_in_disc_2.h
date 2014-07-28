@@ -4,7 +4,7 @@ namespace CGAL {
 \ingroup PkgGenerators
 
 
-\brief Computes a random convex polygon as the convex hull of \f$ n \f$ random points in a disc centered in \f$0\f$ with radius `radius`. 
+\brief Computes a random convex polygon as the convex hull of \f$ n \f$ random points in a disc centered at the origin with radius `radius`. 
 The vertices are stored counterclockwise in `it`.
 The generated polygon will have an average number of vertices \f$ n^\frac{1}{3}(1+o(1))\f$. 
 
