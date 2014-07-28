@@ -37,8 +37,6 @@ After that, edges which carry little mass can be filtered out.
 
 
 
-
-
 \section Reconstruction_simplification_2Overview Overview of the Reconstruction Process
 
 The task addressed is to reconstruct a shape from noisy data $S$ in $R^2$, i.e. give a (noisy) set of points, find a shape which best approximates the non-noise subset of $S$. The related task of simplifying a shape finds an approximation of the original shape using simpler curves. While previous works address these two issues sequentially, they are performed jointly using a unified framework based on optimal transport of measures. This new method provides benefits such as robustness to noise, preservation of sharp features and boundaries. It furthermore guarantees that the output is a simplicial complex. Transportation theory studies optimal transportations between a set M of n sources and a set $F$ of n targets (both can for example be point sets in $R^2$). Given a cost function $c : R^2 x R^2 -> R^+$, the goal is to find a bijection between M and F such that the sum of the costs c gets minimized. The optimal transport problem can also be defined between measures, and the paper views reconstruction and simplification tasks as such a transportation problem, where the input points are Dirac measure and the reconstructed simplicial complex is the support of a piecewise uniform measure. Given this theoretical background the algorithm then performs edge contractions in a greedy fashion w.r.t. the transportation cost, until the desired number of vertices are reached.
@@ -96,21 +94,8 @@ Reconstruction_simplification_2<K, InputIterator, PointPMap, MassPMap>
 
     rs2.initialize();
 
-    rs2.reconstruct(100);
+    rs2.reconstruct(100); //perform 100 contraction steps
 
-    CGAL::List_output<K> list_output;
-
-    rs2.extract_solid_elements(list_output);
-
-    for (Output_Vertex_Iterator it = list_output.vertices_start();
-	it != list_output.vertices_beyond(); it++) {
-  		...
-   }
-
-   for (Output_Edge_Iterator it = list_output.edges_start();
-	it != list_output.edges_beyond(); it++) {
-		...
-    }
 
 
 \endcode
@@ -118,15 +103,25 @@ Reconstruction_simplification_2<K, InputIterator, PointPMap, MassPMap>
 \subsection Reconstruction_simplification_2Examples Examples
 
 
+\subsection Reconstruction_simplification_2ExampleSimple Simple Reconstruction Example
+
+
+The following example shows a simple use case of the Reconstruction_simplification_2 package. 
+It works by first reading a collection of input points from an xy-file. Using two property maps 
+the points and their optional initial mass are passed to the Reconstruction_simplification_2 object rs2.
+After initializing rs2, the 100 iterations of the reconstruction process are performed. Lastly, the isolated
+points and the edges of the reconstructed shape are extracted and printed to the console using the List_output model. 
+
+ 
+
+\cgalExample{Reconstruction_simplification_2/reconstruction_simplification_2_example.cpp}
+
+
 \cgalFigureBegin{2D_Reconstruction_Simplification_20vertices,20vertices.png}
 Example of a reconstructed image where the user specified that the output should consist of $20$ vertices.
 \cgalFigureEnd
 
-\subsection Reconstruction_simplification_2ExampleSimple Simple reconstruction Example
 
-The following example illustrates the simplest of the cases. It uses
-an ordinary polyhedron and only one of the optional parameters.
-The unspecified cost strategy defaults to Lindstrom-Turk.
 \cgalExample{Surface_mesh_simplification/edge_collapse_polyhedron.cpp}
 Illustration of a call to the reconstruction function where the user specified to leave $20$ vertices.
 \cgalFigureEnd

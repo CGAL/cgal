@@ -13,7 +13,6 @@
 #include<fstream>
 #include<iostream>
 #include <string>
-#include <cassert>
 #include <iterator>
 #include <utility>      // std::pair
 
@@ -51,14 +50,12 @@ typedef CGAL::Reconstruction_simplification_2<K, InputIterator, PointPMap, MassP
 void load_xy_file(const std::string& fileName, PointMassList& points)
 {
    std::ifstream ifs(fileName);
-   std::cerr << "read xy...";
    Point point;
    unsigned int nb = 0;
    while (ifs >> point)
    {
 	   points.push_back(std::make_pair(point, 1));
    }
-   std::cerr << "done (" << nb << " points)" << std::endl;
    ifs.close();
 }
 
@@ -92,20 +89,15 @@ int main ()
     rs2.extract_solid_elements(list_output);
 
     std::cerr << "Isolated Vertices" << std::endl;
-    int vertex_count = 0;
-	for (std::vector<Point>::iterator it = isolated_points.begin();
+    for (std::vector<Point>::iterator it = isolated_points.begin();
 			it != isolated_points.end(); it++) {
-		vertex_count++;
-  		std::cout  <<  *it << std::endl;
+		std::cout  <<  *it << std::endl;
 	}
-	assert(vertex_count == 18);
 
 	std::cerr << "Edges" << std::endl;
-	int edge_count = 0;
 	for (std::vector<Segment>::iterator it = edges.begin();
 			it != edges.end(); it++) {
   		std::cout << *it << std::endl;
-  		edge_count++;
-    }
+     }
 
 }
