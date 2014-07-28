@@ -23,23 +23,29 @@
 
 Scene_points_with_normal_item::Scene_points_with_normal_item()
   : Scene_item_with_display_list(),
-    m_points(new Point_set)
+    m_points(new Point_set),
+    m_has_normals(false)
 {
-  setRenderingMode(PointsPlusNormals);
+  setRenderingMode(Points);
 }
 
 // Copy constructor
 Scene_points_with_normal_item::Scene_points_with_normal_item(const Scene_points_with_normal_item& toCopy)
   : Scene_item_with_display_list(), // do not call superclass' copy constructor
-    m_points(new Point_set(*toCopy.m_points))
+    m_points(new Point_set(*toCopy.m_points)),
+    m_has_normals(toCopy.m_has_normals)
 {
-  setRenderingMode(PointsPlusNormals);
+  if (m_has_normals)
+    setRenderingMode(PointsPlusNormals);
+  else
+    setRenderingMode(Points);
 }
 
 // Converts polyhedron to point set
 Scene_points_with_normal_item::Scene_points_with_normal_item(const Polyhedron& input_mesh)
   : Scene_item_with_display_list(),
-    m_points(new Point_set)
+    m_points(new Point_set),
+    m_has_normals(true)
 {
   // Converts Polyhedron vertices to point set.
   // Computes vertices normal from connectivity.
@@ -144,6 +150,19 @@ bool Scene_points_with_normal_item::read_xyz_point_set(std::istream& stream)
                                               CGAL::make_normal_of_point_with_normal_pmap(Point_set::value_type())) &&
             !isEmpty();
 
+  if (ok)
+  {
+    for (Point_set::iterator it=m_points->begin(),
+                             end=m_points->end();it!=end; ++it)
+    {
+      if (it->normal() != CGAL::NULL_VECTOR)
+      {
+        m_has_normals=true;
+        setRenderingMode(PointsPlusNormals);
+        break;
+      }
+    }
+  }
   return ok;
 }
 
@@ -173,10 +192,9 @@ Scene_points_with_normal_item::toolTip() const
 
 bool Scene_points_with_normal_item::supportsRenderingMode(RenderingMode m) const 
 {
-  //note that when this function is first called the point set might be empty
-  bool points_have_normals = (m_points->begin() != m_points->end() &&
-                            m_points->begin()->normal() != CGAL::NULL_VECTOR);
-  return m==Points || m==PointsPlusNormals || (m==Splatting && points_have_normals);
+  return m==Points ||
+         ( has_normals() &&
+         ( m==PointsPlusNormals || m==Splatting ) );
 }
 
 // Points OpenGL drawing in a display list
@@ -194,15 +212,10 @@ void Scene_points_with_normal_item::draw_normals() const
   Q_ASSERT(m_points != NULL);
 
   // Draw normals
-  bool points_have_normals = (m_points->begin() != m_points->end() &&
-                              m_points->begin()->normal() != CGAL::NULL_VECTOR);
-  if(points_have_normals)
-  {
-    Kernel::Sphere_3 region_of_interest = m_points->region_of_interest();
-    float normal_length = (float)std::sqrt(region_of_interest.squared_radius() / 1000.);
+  Kernel::Sphere_3 region_of_interest = m_points->region_of_interest();
+  float normal_length = (float)std::sqrt(region_of_interest.squared_radius() / 1000.);
 
-    m_points->gl_draw_normals(normal_length);
-  }
+  m_points->gl_draw_normals(normal_length);
 }
 
 void Scene_points_with_normal_item::draw_splats() const
@@ -323,5 +336,17 @@ void Scene_points_with_normal_item::setRenderingMode(RenderingMode m)
     computes_local_spacing(6); // default value = small
   }
 }
+
+bool Scene_points_with_normal_item::has_normals() const { return m_has_normals; }
+
+void Scene_points_with_normal_item::set_has_normals(bool b) {
+  if (b!=m_has_normals){
+    m_has_normals=b;
+    //reset the context menu
+    delete this->defaultContextMenu;
+    this->defaultContextMenu = 0;
+  }
+}
+
 
 #include "Scene_points_with_normal_item.moc"
