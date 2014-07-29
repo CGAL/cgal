@@ -72,6 +72,10 @@ input_point(std::istream & is, const Traits &traits, P & p)
 
 } // namespace Triangulation_IO
 
+///////////////////////////////////////////////////////////////
+// TODO: replace these operator>> by an "input_point" function
+///////////////////////////////////////////////////////////////
+
 // TODO: test if the stream is binary or text?
 template<typename K>
 std::istream &
