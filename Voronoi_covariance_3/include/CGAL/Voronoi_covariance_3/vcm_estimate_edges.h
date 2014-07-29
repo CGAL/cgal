@@ -61,7 +61,7 @@ vcm_estimate_edges (ForwardIterator first,
                     double R,
                     double r,
                     double threshold,
-                    const Kernel&)
+                    const Kernel& k)
 {
     typedef typename Kernel::FT FT;
     typedef CGAL::Voronoi_covariance_3::Voronoi_covariance_3<FT> Covariance;
@@ -77,7 +77,7 @@ vcm_estimate_edges (ForwardIterator first,
                                       cov,
                                       R,
                                       r,
-                                      Kernel());
+                                      k);
 
     // Find the potential points on the edges
     // TODO: direction?
@@ -111,16 +111,14 @@ vcm_estimate_edges (ForwardIterator first,
                                   boost::undirectedS,
                                   boost::no_property,
                                   EdgeWeightProperty > Graph;
-    typedef typename boost::graph_traits<Graph>::vertex_iterator Graph_Vertex_iterator;
     typedef boost::graph_traits<Graph>::vertex_descriptor Vertex_descriptor;
     typedef boost::graph_traits<Graph>::edge_descriptor Edge_descriptor;
-    typedef boost::graph_traits<Graph>::edge_iterator Edge_iterator;
     Graph g;
 
     // KD-Tree
-    typedef typename CGAL::Search_traits_3<Kernel> Traits;
-    typedef typename CGAL::Kd_tree<Traits> Tree;
-    typedef typename CGAL::Fuzzy_sphere<Traits> Fuzzy_sphere;
+    typedef CGAL::Search_traits_3<Kernel> Traits;
+    typedef CGAL::Kd_tree<Traits> Tree;
+    typedef CGAL::Fuzzy_sphere<Traits> Fuzzy_sphere;
     Tree tree(points_on_edges.begin(), points_on_edges.end());
 
     // Vertices

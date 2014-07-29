@@ -110,7 +110,7 @@ namespace CGAL {
                     typedef typename DT::Geom_traits::Kernel K;
                     typedef typename K::Plane_3 Plane;
                     typedef typename K::Vector_3 Vector;
-                    typedef typename CGAL::Convex_hull_traits_3<K> Traits;
+                    typedef CGAL::Convex_hull_traits_3<K> Traits;
                     typedef typename Traits::Polyhedron_3 Polyhedron;
 
                     std::list<Vertex_handle> vertices;
@@ -167,7 +167,7 @@ namespace CGAL {
         template<class FT>
             class Voronoi_covariance_3 : public CGAL::array<FT,6>
         {
-            typedef typename CGAL::array<FT,6> Parent;
+            typedef CGAL::array<FT,6> Parent;
             typedef typename Parent::iterator iterator;
             typedef typename Parent::const_iterator const_iterator;
 
@@ -212,7 +212,7 @@ namespace CGAL {
                               const Sphere &sphere)
             {
                 typedef typename DT::Geom_traits::FT FT;
-                typename internal::Volume_accumulator_3<FT> va;
+                internal::Volume_accumulator_3<FT> va;
 
                 return internal::tessellate_and_intersect(dt, v, sphere, va).result();
             }

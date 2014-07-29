@@ -85,10 +85,10 @@ vcm_convolve (ForwardIterator first,
               double r,
               const K &)
 {
-    typedef typename CGAL::Point_3<K> Point;
-    typedef typename CGAL::Search_traits_3<K> Traits;
-    typedef typename CGAL::Kd_tree<Traits> Tree;
-    typedef typename CGAL::Fuzzy_sphere<Traits> Fuzzy_sphere;
+    typedef CGAL::Point_3<K> Point;
+    typedef CGAL::Search_traits_3<K> Traits;
+    typedef CGAL::Kd_tree<Traits> Tree;
+    typedef CGAL::Fuzzy_sphere<Traits> Fuzzy_sphere;
 
     ForwardIterator it;
 
@@ -134,9 +134,9 @@ vcm_convolve (ForwardIterator first,
               unsigned int nb_neighbors_convolve,
               const K &)
 {
-    typedef typename CGAL::Point_3<K> Point;
-    typedef typename CGAL::Search_traits_3<K> Traits;
-    typedef typename CGAL::Orthogonal_k_neighbor_search<Traits> Neighbor_search;
+    typedef CGAL::Point_3<K> Point;
+    typedef CGAL::Search_traits_3<K> Traits;
+    typedef CGAL::Orthogonal_k_neighbor_search<Traits> Neighbor_search;
     typedef typename Neighbor_search::Tree Tree;
 
     ForwardIterator it;
@@ -185,7 +185,7 @@ vcm_offset_and_convolve (ForwardIterator first,
                          std::vector<Covariance> &ccov,
                          double R,
                          double r,
-                         const Kernel &)
+                         const Kernel & k)
 {
     // First, compute the VCM for each point
     std::vector<Covariance> cov;
@@ -195,7 +195,7 @@ vcm_offset_and_convolve (ForwardIterator first,
                           cov,
                           R,
                           N,
-                          Kernel());
+                          k);
 
     // Then, convolve it (only when r != 0)
     if (r == 0) {
@@ -206,7 +206,7 @@ vcm_offset_and_convolve (ForwardIterator first,
                                cov,
                                ccov,
                                r,
-                               Kernel());
+                               k);
     }
 }
 
@@ -248,7 +248,7 @@ vcm_estimate_normals (ForwardIterator first, ///< iterator over the first input 
                       NormalPMap normal_pmap, ///< property map: value_type of ForwardIterator -> Vector_3.
                       double R, ///< offset radius.
                       double r, ///< convolution radius.
-                      const Kernel & /*kernel*/, ///< geometric traits.
+                      const Kernel & k, ///< geometric traits.
                       const Covariance &, ///< covariance matrix type.
                       int nb_neighbors_convolve = -1 ///< number of neighbors used during the convolution.
 )
@@ -261,14 +261,14 @@ vcm_estimate_normals (ForwardIterator first, ///< iterator over the first input 
                                           cov,
                                           R,
                                           r,
-                                          Kernel());
+                                          k);
     } else {
         internal::vcm_offset(first, beyond,
                              point_pmap,
                              cov,
                              R,
                              20,
-                             Kernel());
+                             k);
 
         std::vector<Covariance> ccov;
         internal::vcm_convolve(first, beyond,
@@ -276,7 +276,7 @@ vcm_estimate_normals (ForwardIterator first, ///< iterator over the first input 
                                cov,
                                ccov,
                                (unsigned int) nb_neighbors_convolve,
-                               Kernel());
+                               k);
 
         cov.clear();
         std::copy(ccov.begin(), ccov.end(), std::back_inserter(cov));
