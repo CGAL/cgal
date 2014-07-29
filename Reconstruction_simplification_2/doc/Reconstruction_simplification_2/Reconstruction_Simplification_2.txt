@@ -5,7 +5,7 @@ namespace CGAL {
 \anchor Chapter_2D_Reconstruction_Simplification
 \cgalAutoToc
 
-\authors Fernando de Goes, Pierre Alliez, Ivo Vigan
+\authors Fernando de Goes, Pierre Alliez, Ivo Vigan and Clément Jamin
 
 
 
