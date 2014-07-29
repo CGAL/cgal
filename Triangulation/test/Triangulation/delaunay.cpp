@@ -119,11 +119,11 @@ int main(int argc, char **argv)
     int N = 10;
     if( argc > 1 )
         N = atoi(argv[1]);
-     //go<5>(N);
-     //go<4>(N);
-     //go<3>(N);
-     go<2>(N);
-     //go<1>(N);
+    //go<5>(N);
+    //go<4>(N);
+    //go<3>(N);
+    go<2>(N);
+    //go<1>(N);
 
     cerr << endl;
     return 0;

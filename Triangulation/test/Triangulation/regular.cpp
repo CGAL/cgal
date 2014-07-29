@@ -16,11 +16,7 @@ using namespace std;
 template<typename RTri>
 void test(const int d, const string & type, const int N)
 {
-  typedef typename RTri::Vertex Vertex;
-  typedef typename RTri::Vertex_handle Vertex_handle;
-  typedef typename RTri::Full_cell Full_cell;
   typedef typename RTri::Full_cell_handle Full_cell_handle;
-  typedef typename RTri::Facet Facet;
   typedef typename RTri::Face Face;
   typedef typename RTri::Point Point;
   typedef typename RTri::Bare_point Bare_point;
@@ -98,6 +94,7 @@ void test(const int d, const string & type, const int N)
   random_shuffle(points.begin(),  points.end());
   rt.remove(points.begin(),  points.end());
   assert( rt.is_valid() );
+  //std::cerr << ((rt.is_valid(true)) ? "VALID!" : "NOT VALID :(") << std::endl;
   cerr << rt.number_of_vertices() << " vertices.";
   // assert( rt.empty() ); NOT YET !
   // CLEAR
@@ -105,6 +102,7 @@ void test(const int d, const string & type, const int N)
   assert( -1 == rt.current_dimension() );
   assert( rt.empty() );
   assert( rt.is_valid() );
+  //std::cerr << ((rt.is_valid(true)) ? "VALID!" : "NOT VALID :(") << std::endl;
 }
 
 template< int D >
