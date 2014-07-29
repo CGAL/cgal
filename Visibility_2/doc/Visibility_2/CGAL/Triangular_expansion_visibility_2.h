@@ -12,7 +12,7 @@ The query time is \f$ O(nh)\f$, where \f$ h \f$ is the number of holes+1 of inpu
 
 \tparam Arrangement_2_ is the type used to represent the input environment.
 It must be an instance of CGAL::Arrangement_2, where its CGAL::Arrangement_2::Traits_2 must be an instance of 
-CGAL::Arr_segment_traits_2. 
+CGAL::Arr_segment_traits_2, or of CGAL::Arr_non_caching_segment_traits_2. 
 
 \tparam RegularizationTag indicates whether the output should be regularized. It can be
 specified by one of the following: ::Tag_true or ::Tag_false, where ::Tag_false is the default value.
