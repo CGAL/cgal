@@ -82,7 +82,6 @@ public:
 //private data types declaration
   typedef Ccb_halfedge_const_circulator                 Circulator;
   typedef typename Arrangement_2::Hole_const_iterator   Hole_const_iterator;
-  typedef boost::hash<const Point_2 *>                  Vertex_handle_hashfunc;
   typedef std::vector<int>                              Index_vector;
 
 // private nested classes
@@ -154,20 +153,6 @@ private:
          << "]" << endl;
     }
 #endif
-  };
-
-  class Less_vertex_handle : public std::binary_function
-                      < Vertex_const_handle, Vertex_const_handle, bool >
-  {
-  private:
-    typedef Vertex_const_handle                         VH;
-  public:
-    bool operator () ( const VH& v1, const VH& v2 ) const
-    {
-      if ( v1 == v2 ) return false;
-      // A dirty trick introduced by Michael, for improving performance
-      return &(*v1)<&(*v2);
-    }
   };
 
   class Edge
@@ -276,17 +261,6 @@ private:
       os << "]" << endl;
     }
 #endif
-  };
-
-  class Hash_vertex_handle : public std::unary_function
-        < Vertex_const_handle, typename Vertex_handle_hashfunc::result_type >
-  {
-  private:
-    typedef typename Vertex_handle_hashfunc::result_type Hash_result;
-    Vertex_handle_hashfunc _hash;
-  public:
-    Hash_result operator () ( const Vertex_const_handle& vh ) const
-      { return _hash( &(vh->point()) ); }
   };
 
   class Closer_edge : public std::binary_function<int, int, bool>
@@ -472,8 +446,6 @@ private:
   typedef std::vector<Edge_type>                        Edge_vector;
   typedef std::vector<Point_2>                          Point_vector;
   
-  typedef boost::unordered_map< Vertex_const_handle, int, Hash_vertex_handle >
-                                                        Vertex_index_map;
 private:
   class Is_swept_earlier
   {
@@ -776,7 +748,7 @@ private:
 
     for ( int i = 0; i < good_vdx.size(); i++ ) {
       int j = i + 1;
-      while ( j < vs.size() ) {
+      while ( j < good_vdx.size() ) {
         if ( orients[j-1] != CGAL::COLLINEAR )
           break;
         j++;
@@ -1013,13 +985,10 @@ private:
 
     Ray_2 ray( query_pt, dp );
     Segment_2 seg( s, t );
-    Point_2 res;
-    {
-      CGAL::Object obj = CGAL::intersection( ray, seg );
-      const Point_2 * i_point = CGAL::object_cast<Point_2> (&obj );
-      res = Point_2( i_point->x(), i_point->y() );
-    }
-    return res;
+    CGAL::Object obj = CGAL::intersection( ray, seg );
+    const Point_2 * i_point = CGAL::object_cast<Point_2> (&obj );
+    assert( i_point != NULL );
+    return *i_point;
   }
 
   void compute_visibility_partition( int cone_idx )
@@ -1039,7 +1008,7 @@ private:
 
     // Rotational sweep
     std::vector<int> insert_edx;
-    std::vector<int> remove_edx;
+    std::vector<edge_iterator> remove_its;
     for ( int i = cone.begin(); i < cone.end(); i++ ) {
       int old_top, new_top;
       if ( active_edges.empty() )
@@ -1051,25 +1020,35 @@ private:
         continue;   // ignore bad vertex
 
       insert_edx.clear();
-      remove_edx.clear();
+      remove_its.clear();
       for ( int j = vs[v_idx].first_incident();
                 j < vs[v_idx].last_incident(); j++ ) {
         int edx = incident[j].second;
         if ( es[edx].pass_query_pt() )
           continue;   // ignore bad edges
-        if ( !active_edges.count( edx ) )
+        eit = active_edges.find( edx );
+        if ( eit == active_edges.end() )
           insert_edx.push_back( edx );
         else
-          remove_edx.push_back( edx );
+          remove_its.push_back( eit );
       }
 
-      if ( insert_edx.empty() && remove_edx.empty() )
+      if ( insert_edx.empty() && remove_its.empty() )
         continue;
 
-      for ( int i = 0; i < insert_edx.size(); i++ )
-        active_edges.insert( insert_edx[i] );
-      for ( int i = 0; i < remove_edx.size(); i++ )
-        active_edges.erase( remove_edx[i] );
+      if ( insert_edx.size() == 1 && remove_its.size() == 1 ) {
+        // Simple replacement
+        // Use a dirty trick for local replacement
+        const int& ctemp = *remove_its.front();
+        int& temp = const_cast<int&>( ctemp );
+        temp = insert_edx.front();
+      } else {
+        for ( int i = 0; i < insert_edx.size(); i++ ) {
+          active_edges.insert( insert_edx[i] );
+        }
+        for ( int i = 0; i < remove_its.size(); i++ )
+          active_edges.erase( remove_its[i] );
+      }
 
       if ( active_edges.empty() )
         new_top = -1;
@@ -1077,11 +1056,11 @@ private:
         new_top = *active_edges.begin();
       if ( old_top != new_top ) {
         // The closest edge changed
-        if ( !insert_edx.empty() && !remove_edx.empty() ) {
+        if ( !insert_edx.empty() && !remove_its.empty() ) {
           // Some edges are added, and some are removed
           // the current vertex is part of visibility region
           result.insert( vs[v_idx].point() );
-        } else if ( remove_edx.empty() ) {
+        } else if ( remove_its.empty() ) {
           // Only add edges, the view ray is blocked by new edges
           if ( old_top != -1 )
             result.insert( ray_edge_intersection( v_idx, old_top ) );
@@ -1400,6 +1379,7 @@ private:
   bool is_small_cone;
   Point_2 flipped_source;
   int flipped_quadrant;
+
 };
 
 } // end namespace CGAL
