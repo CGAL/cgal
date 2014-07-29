@@ -320,10 +320,45 @@ private:
     This version assumes poly1 is reflected through origin.
     */
     bool checkCollisionDetection(Arrangement_history_2 &arr, Halfedge_handle &handle, const Polygon_2 &pgn1, const Polygon_2 &pgn2) const {
-        Point_2 mid_point = handle->source()->point();
+        Point_2 mid_point = find_inside_point(arr, handle);
         Polygon_2 t_pgn1 = transform(typename Kernel::Aff_transformation_2(CGAL::Translation(), Vector_2(CGAL::ORIGIN, mid_point)), pgn1);
         aabb_collision_detector->setTranslationPoint(mid_point);
         return aabb_collision_detector->checkCollision(t_pgn1, pgn2);
+    }
+
+    Point_2 find_inside_point(Arrangement_history_2 &arr, Halfedge_handle &handle) const {
+        Ccb_halfedge_circulator current_edge = handle->ccb();
+        Ccb_halfedge_circulator next_edge = current_edge--;
+
+        while (!check_convex(current_edge->source()->point(), current_edge->target()->point(), next_edge->target()->point())) {
+            current_edge++;
+            next_edge++;
+        }
+
+        Point_2 a = current_edge->source()->point();
+        Point_2 v = current_edge->target()->point();
+        Point_2 b = next_edge->target()->point();
+        typename Kernel::Triangle_2 ear(a, v, b);
+
+        typename Kernel::FT min_distance = -1;
+        Point_2 min_q;
+
+        while (++next_edge != current_edge) {
+            Point_2 q = next_edge->target()->point();
+            if (ear.has_on_bounded_side(q)) {
+                typename Kernel::FT distance = CGAL::squared_distance(q, v);
+                if (distance < min_distance) {
+                    min_distance = distance;
+                    min_q = q;
+                }
+            }
+        }
+
+        if (min_distance != -1) {
+            return CGAL::midpoint(v, min_q);
+        } else {
+            return CGAL::midpoint(a, b);
+        }
     }
 };
 
