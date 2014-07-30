@@ -126,7 +126,7 @@ BOOST_AUTO_TEST_CASE( test_a_to_b_vs_b_t_a_distances )
       CGAL::test::Edge_sequence_collector<Traits> startToEndCollector(vertexIndexMap, halfedgeIndexMap, faceIndexMap);
       startToEndShortestPaths.shortest_path_sequence(endVertex, startToEndCollector);
       
-      FT startToEnd = startToEndShortestPaths.shortest_distance_to_vertex(endVertex);
+      FT startToEnd = startToEndShortestPaths.shortest_distance_to_vertex(endVertex).first;
       
       //endToStartShortestPaths.m_debugOutput = true;
       
@@ -135,7 +135,7 @@ BOOST_AUTO_TEST_CASE( test_a_to_b_vs_b_t_a_distances )
       CGAL::test::Edge_sequence_collector<Traits> endToStartCollector(vertexIndexMap, halfedgeIndexMap, faceIndexMap);
       endToStartShortestPaths.shortest_path_sequence(startVertex, endToStartCollector);
       
-      FT endToStart = endToStartShortestPaths.shortest_distance_to_vertex(startVertex);
+      FT endToStart = endToStartShortestPaths.shortest_distance_to_vertex(startVertex).first;
 
       BOOST_CHECK_CLOSE(startToEnd, endToStart, FT(0.0000001));
       
@@ -181,7 +181,7 @@ BOOST_AUTO_TEST_CASE( test_a_to_b_vs_b_t_a_distances )
                 }
                 else if (items[d].type == CGAL::test::SEQUENCE_ITEM_VERTEX)
                 {
-                  std::cout << "\t" << names[d] << "(vertex): " << vertexIndexMap[items[d].vertex] << " , Distance: " << pathStructures[d]->shortest_distance_to_vertex(items[d].vertex) << std::endl;
+                  std::cout << "\t" << names[d] << "(vertex): " << vertexIndexMap[items[d].vertex] << " , Distance: " << pathStructures[d]->shortest_distance_to_vertex(items[d].vertex).first << std::endl;
                 }
               }
             }
@@ -213,7 +213,7 @@ BOOST_AUTO_TEST_CASE( test_a_to_b_vs_b_t_a_distances )
 
       //CGAL::Interval_nt<true> startToEnd = startToEndShortestPaths.shortest_distance_to_location_interval(endFace, endLocation);
       
-      FT startToEnd = startToEndShortestPaths.shortest_distance_to_location(endFace, endLocation);
+      FT startToEnd = startToEndShortestPaths.shortest_distance_to_location(endFace, endLocation).first;
       
       CGAL::test::Edge_sequence_collector<Traits> startToEndCollector(vertexIndexMap, halfedgeIndexMap, faceIndexMap);
       startToEndShortestPaths.shortest_path_sequence(endFace, endLocation, startToEndCollector);
@@ -222,7 +222,7 @@ BOOST_AUTO_TEST_CASE( test_a_to_b_vs_b_t_a_distances )
       
       //CGAL::Interval_nt<true> endToStart = endToStartShortestPaths.shortest_distance_to_location_interval(startFace, startLocation);
       
-      FT endToStart = endToStartShortestPaths.shortest_distance_to_location(startFace, startLocation);
+      FT endToStart = endToStartShortestPaths.shortest_distance_to_location(startFace, startLocation).first;
 
       CGAL::test::Edge_sequence_collector<Traits> endToStartCollector(vertexIndexMap, halfedgeIndexMap, faceIndexMap);
       endToStartShortestPaths.shortest_path_sequence(startFace, startLocation, endToStartCollector);

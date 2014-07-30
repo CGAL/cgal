@@ -207,7 +207,7 @@ void test_mesh_function()
     CGAL::test::Edge_sequence_collector<Traits> startToEndCollector(vertexIndexMap, halfedgeIndexMap, faceIndexMap);
     startToEndShortestPaths.shortest_path_sequence(endLocation.first, endLocation.second, startToEndCollector);
 
-    FT startToEnd = startToEndShortestPaths.shortest_distance_to_location(endLocation.first, endLocation.second);
+    FT startToEnd = startToEndShortestPaths.shortest_distance_to_location(endLocation.first, endLocation.second).first;
 
     endToStartShortestPaths.compute_shortest_paths(endLocation.first, endLocation.second);
 
@@ -219,7 +219,7 @@ void test_mesh_function()
     
     //std::cout << "Weird: " << endToStartShortestPaths.shortest_distance_to_vertex(vertices[401]) << std::endl;
 
-    FT endToStart = endToStartShortestPaths.shortest_distance_to_location(startLocation.first, startLocation.second);
+    FT endToStart = endToStartShortestPaths.shortest_distance_to_location(startLocation.first, startLocation.second).first;
     //
     
     std::cout << "STE(distance): " << startToEnd << std::endl;
@@ -253,7 +253,7 @@ void test_mesh_function()
         }
         else if (seqItem.type == CGAL::test::SEQUENCE_ITEM_VERTEX)
         {
-          std::cout << vertexIndexMap[seqItem.vertex] << " , Distance: " << pathStructures[d]->shortest_distance_to_vertex(seqItem.vertex) << std::endl;
+          std::cout << vertexIndexMap[seqItem.vertex] << " , Distance: " << pathStructures[d]->shortest_distance_to_vertex(seqItem.vertex).first << std::endl;
         }
       }
     }

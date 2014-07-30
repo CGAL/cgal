@@ -1477,9 +1477,14 @@ private:
       }
     }
   
-    assert(closest);
-    
-    return std::make_pair(Node_distance_pair(closest, closestDistance), localized_coordiate(closest, location));
+    if (closest)
+    {
+      return std::make_pair(Node_distance_pair(closest, closestDistance), localized_coordiate(closest, location));
+    }
+    else
+    {
+      return std::make_pair(Node_distance_pair(NULL, FT(0.0)), Barycentric_coordinate(FT(0.0), FT(0.0), FT(0.0)));
+    }
   }
   
   std::pair<Node_distance_pair, Barycentric_coordinate> nearest_to_location(face_descriptor face, Barycentric_coordinate location)
@@ -1518,7 +1523,18 @@ private:
           Barycentric_coordinate oppositeLocation(cbc(oppositeLocationCoords[0], oppositeLocationCoords[1], oppositeLocationCoords[2]));
           std::pair<Node_distance_pair,Barycentric_coordinate> otherFace = nearest_on_face(CGAL::face(oppositeHalfedge, m_polyhedron), oppositeLocation);
           
-          return mainFace.first.second < otherFace.first.second ? mainFace : otherFace;
+          if (mainFace.first.first == NULL)
+          {
+            return otherFace;
+          }
+          else if (otherFace.first.first == NULL)
+          {
+            return mainFace;
+          }
+          else
+          {
+            return mainFace.first.second < otherFace.first.second ? mainFace : otherFace;
+          }
         }
         break;
       case CGAL::internal::BARYCENTRIC_COORDINATE_VERTEX:
@@ -1833,13 +1849,49 @@ public:
   }
   
   /*!
+  \brief Gets the face location of the `i`th source point
+    given to this algorithm.
+    
+  \param i Index of the source point to get.  Precondition: 0 <= i < num_source_locations()
+  */
+  const Face_location& get_source_location(size_t i) const
+  {
+    return m_faceLocations[i];
+  }
+  
+  /*!
+  \brief The total number of source points in the current
+    sequence tree, or 0 if no sequence tree is computed.
+  */
+  size_t num_source_locations() const
+  {
+    return m_faceLocations.size();
+  }
+  
+  /*!
   Computes the shortest surface distance from a vertex to any source point
   
   \param v The vertex to act as the query point
+  
+  \return A pair, containing the distance to the source location, and the
+    index of the source location itself.  If no source location was 
+    reachable, the distance will be a negative value and the source 
+    location will be an index greater than the number of source points.
   */
-  FT shortest_distance_to_vertex(vertex_descriptor v)
+  std::pair<FT, size_t> shortest_distance_to_vertex(vertex_descriptor v)
   {
-    return m_closestToVertices[m_vertexIndexMap[v]].second;
+    Node_distance_pair result = m_closestToVertices[m_vertexIndexMap[v]];
+    
+    Cone_tree_node* current = result.first;
+    
+    if (current)
+    {
+      return std::make_pair(result.second, current->tree_id());
+    }
+    else
+    {
+      return std::make_pair(FT(-1.0), num_source_locations());
+    }
   }
   
   /*!
@@ -1848,10 +1900,26 @@ public:
   \param face Face of the polyhedron of the query point
   
   \param location Barycentric coordinate on face of the query point
+  
+  \return A pair, containing the distance to the source location, and the
+    index of the source location itself.  If no source location was 
+    reachable, the distance will be a negative value and the source 
+    location will be an index greater than the number of source points.
   */
-  FT shortest_distance_to_location(face_descriptor face, Barycentric_coordinate location)
+  std::pair<FT, size_t> shortest_distance_to_location(face_descriptor face, Barycentric_coordinate location)
   {
-    return nearest_to_location(face, location).first.second;
+    std::pair<Node_distance_pair, Barycentric_coordinate> result = nearest_to_location(face, location);
+    
+    Cone_tree_node* current = result.first.first;
+    
+    if (current)
+    {
+      return std::make_pair(result.first.second, current->tree_id());
+    }
+    else
+    {
+      return std::make_pair(FT(-1.0), num_source_locations());
+    }
   }
   
   /*!
@@ -1865,6 +1933,7 @@ public:
   bool shortest_path_sequence(vertex_descriptor v, Visitor& visitor)
   {
     Cone_tree_node* current = m_closestToVertices[m_vertexIndexMap[v]].first;
+    
     if (current)
     {
       visit_shortest_path(current, current->target_vertex_location(), visitor);
@@ -1891,6 +1960,7 @@ public:
   {
     std::pair<Node_distance_pair, Barycentric_coordinate> result = nearest_to_location(face, location);
     Cone_tree_node* current = result.first.first;
+    
     if (current)
     {
       Point_2 locationInContext = construct_barycenter_in_triangle_2(current->layout_face(), result.second);
