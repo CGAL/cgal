@@ -65,7 +65,7 @@ int main ()
 {
 
 	PointMassList points;
-	//use the stair example for testing
+
 	load_xy_file("data/stair-noise00.xy", points);
 
 	PointPMap point_pmap;

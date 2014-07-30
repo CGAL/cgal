@@ -162,7 +162,7 @@ protected:
 	  /// @{
 
 	/*!
-	     \Instantiates a new Reconstruction_simplification_2.
+	     Instantiates a new Reconstruction_simplification_2.
 
 	     \details Instantiates a new Reconstruction_simplification_2 object
 	     	 	  for a given collection of point-mass pairs.
