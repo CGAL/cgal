@@ -209,13 +209,6 @@ public:
                                   OutputIterator oi) {
             state no_state = state(-1, -1);
 
-            // In case the curves originate from the same arrangement, they are
-            // obviously interior-disjoint.
-            //if (xcv1.data().front() == xcv2.data().front())
-            //  if (xcv1.data().front()._color == xcv2.data().front()._color)
-            //   return (oi);
-            //Arr_SegmentData_traits<Traits_>::count++;
-
             // Ignore edges which originates from the same polygon and are added to the same vertex.
             if (xcv1.data()._origin == xcv2.data()._origin) {
                 if ((xcv1.data()._origin == 0 && ((xcv1.data()._min_id.second == xcv2.data()._min_id.second)) ||

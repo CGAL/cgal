@@ -286,8 +286,9 @@ private:
             }
         } while (++circ != start);
 
-        // Check whether this is a false hole (TODO: explain)
-        if (checkCollisionDetection(arr, start, reverse_pgn1, pgn2)) {
+        // When the reversed polygon 1, translated by a point inside of this face, collides with polygon 2, this cannot be a hole
+        Point_2 mid_point = find_inside_point(arr, start);
+        if (aabb_collision_detector->checkCollision(mid_point)) {
             return;
         }
 
@@ -320,10 +321,6 @@ private:
     This version assumes poly1 is reflected through origin.
     */
     bool checkCollisionDetection(Arrangement_history_2 &arr, Halfedge_handle &handle, const Polygon_2 &pgn1, const Polygon_2 &pgn2) const {
-        Point_2 mid_point = find_inside_point(arr, handle);
-        Polygon_2 t_pgn1 = transform(typename Kernel::Aff_transformation_2(CGAL::Translation(), Vector_2(CGAL::ORIGIN, mid_point)), pgn1);
-        aabb_collision_detector->setTranslationPoint(mid_point);
-        return aabb_collision_detector->checkCollision(t_pgn1, pgn2);
     }
 
     Point_2 find_inside_point(Arrangement_history_2 &arr, Halfedge_handle &handle) const {
