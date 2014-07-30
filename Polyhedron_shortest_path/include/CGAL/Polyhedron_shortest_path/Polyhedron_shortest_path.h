@@ -17,6 +17,9 @@
 
 #include <boost/array.hpp>
 #include <boost/lexical_cast.hpp>
+#include <boost/utility/enable_if.hpp>
+#include <boost/type_traits/is_same.hpp>
+#include <iterator>
 
 #include <CGAL/Polyhedron_shortest_path/internal/Cone_tree.h>
 #include <CGAL/Polyhedron_shortest_path/internal/misc_functions.h>
@@ -1283,7 +1286,7 @@ private:
     }
   }
   
-  void reset_algorithm()
+  void reset_algorithm(bool clearFaceLocations = true)
   {
     m_closestToVertices.resize(boost::num_vertices(m_polyhedron));
     std::fill(m_closestToVertices.begin(), m_closestToVertices.end(), Node_distance_pair(NULL, FT(0.0)));
@@ -1296,7 +1299,11 @@ private:
       m_expansionPriqueue.pop();
     }
 
-    m_faceLocations.clear();
+    if (clearFaceLocations)
+    {
+      m_faceLocations.clear();
+    }
+    
     delete_all_nodes();
     m_rootNodes.clear();
     m_vertexIsPseudoSource.resize(boost::num_vertices(m_polyhedron));
@@ -1562,135 +1569,9 @@ private:
     return lhs->distance_from_source_to_root() < rhs->distance_from_source_to_root();
   }
   
-public:
-  
-  /// \name Constructors
-  /// @{
-  
-  /*!
-  \brief Creates a shortest paths object associated with a specific polyhedron.
-  
-  \details No copy of the polyhedron is made, only a reference to the polyhedron is held.
-  Default versions of the necessary polyhedron property maps are created and
-  used with this constructor.
-  
-  \param polyhedron The polyhedral surface to use.  Note that it must be triangulated.
-  
-  \param traits An optional instance of the traits class to use.
-  
-  */
-  Polyhedron_shortest_path(Polyhedron& polyhedron, const Traits& traits = Traits())
-    : m_traits(traits)
-    , m_polyhedron(polyhedron)
-    , m_vertexIndexMap(CGAL::get(boost::vertex_external_index, polyhedron))
-    , m_halfedgeIndexMap(CGAL::get(CGAL::halfedge_external_index, polyhedron))
-    , m_faceIndexMap(CGAL::get(CGAL::face_external_index, polyhedron))
-    , m_vertexPointMap(CGAL::get(CGAL::vertex_point, polyhedron))
-    , m_debugOutput(false)
+  void construct_sequence_tree_internal()
   {
-    reset_algorithm();
-  }
-  
-  /*!
-  \brief Creates a shortest paths object associated with a specific polyhedron.
-  
-  \details No copy of the polyhedron is made, only a reference to the polyhedron is held.
-  
-  \param polyhedron The polyhedral surface to use.  Note that it must be triangulated.
-  
-  \param vertexIndexMap Maps between vertices and their index.
-  
-  \param halfedgeIndexMap Maps between halfedges and their index.
-  
-  \param faceIndexMap Maps between faces and their index.
-  
-  \param vertexPointMap Maps between vertices and their 3-dimensional coordinates.
-  
-  \param traits An optional instance of the traits class to use.
-  */
-  Polyhedron_shortest_path(Polyhedron& polyhedron, VertexIndexMap vertexIndexMap, HalfedgeIndexMap halfedgeIndexMap, FaceIndexMap faceIndexMap, VertexPointMap vertexPointMap, const Traits& traits = Traits())
-    : m_traits(traits)
-    , m_polyhedron(polyhedron)
-    , m_vertexIndexMap(vertexIndexMap)
-    , m_halfedgeIndexMap(halfedgeIndexMap)
-    , m_faceIndexMap(faceIndexMap)
-    , m_vertexPointMap(vertexPointMap)
-    , m_debugOutput(false)
-  {
-    reset_algorithm();
-  }
-  
-  /// @}
-
-  ~Polyhedron_shortest_path()
-  {
-    delete_all_nodes();
-    
-#if !defined(NDEBUG)
-    if (m_debugOutput)
-    {
-      std::cout << "Final node count: " << m_currentNodeCount << std::endl;
-    }
-    return;
-    assert(m_currentNodeCount == 0);
-#endif
-  }
-  
-  /// \name Methods
-  /// @{
-  
-  /*!
-  \brief Compute shortest paths from a single vertex
-  
-  \details Constructs a shortest paths sequence tree that covers shortest surface paths
-  to all locations on the polyhedron.
-  
-  \param face Handle to the face on which the source originates.
-  
-  \param location Barycentric coordinate on face specifying the source location.
-  */
-  void compute_shortest_paths(vertex_descriptor vertex)
-  {
-    typedef Face_location* Face_locationIterator;
-
-    Face_location faceLocation(get_vertex_as_face_location(vertex));
-    compute_shortest_paths<Face_locationIterator>(&faceLocation, (&faceLocation) + 1);
-  }
-  
-  /*!
-  \brief Compute shortest paths from a single source location
-  
-  \details Constructs a shortest paths sequence tree that covers shortest surface paths
-  to all locations on the polyhedron.
-  
-  \param face Handle to the face on which the source originates.
-  
-  \param location Barycentric coordinate on face specifying the source location.
-  */
-  void compute_shortest_paths(face_descriptor face, Barycentric_coordinate location)
-  {
-    typedef Face_location* Face_locationIterator;
-
-    Face_location faceLocation(std::make_pair(face, location));
-    compute_shortest_paths<Face_locationIterator>(&faceLocation, (&faceLocation) + 1);
-  }
-  
-  /*!
-  \brief Compute shortest paths from multiple source locations
-  
-  \details Constructs a shortest paths sequence tree that covers shortest surface paths
-  to all locations on the polyhedron, from multiple source locations.
-  
-  \tparam InputIterator a ForwardIterator type which dereferences to Face_location.
-  
-  \param faceLocationsBegin iterator to the first in the list of face location pairs.
-  
-  \param faceLocationsEnd iterator to one past the end of the list of face location pairs.
-  */
-  template<class InputIterator>
-  void compute_shortest_paths(InputIterator faceLocationsBegin, InputIterator faceLocationsEnd)
-  {
-    reset_algorithm();
+    reset_algorithm(false);
     set_vertex_types();
     
     m_vertexOccupiers.resize(CGAL::num_halfedges(m_polyhedron));
@@ -1745,16 +1626,14 @@ public:
     
     }
     
-    for (InputIterator it = faceLocationsBegin; it != faceLocationsEnd; ++it)
+    for (size_t i = 0; i < m_faceLocations.size(); ++i)
     {
-      m_faceLocations.push_back(*it);
-      
       if (m_debugOutput)
       {
-        std::cout << "Root: " << m_faceIndexMap[it->first] << " , " << it->second[0] << " " << it->second[1] << " " << it->second[2] << " " << std::endl;
+        std::cout << "Root: " << m_faceIndexMap[m_faceLocations[i].first] << " , " << m_faceLocations[i].second[0] << " " << m_faceLocations[i].second[1] << " " << m_faceLocations[i].second[2] << " " << std::endl;
       }
       
-      expand_root(it->first, it->second);
+      expand_root(m_faceLocations[i].first, m_faceLocations[i].second);
     }
     
     if (m_debugOutput)
@@ -1846,6 +1725,163 @@ public:
       
       std::cout << std::endl << "Done!" << std::endl;
     }
+  }
+  
+public:
+  
+  /// \name Constructors
+  /// @{
+  
+  /*!
+  \brief Creates a shortest paths object associated with a specific polyhedron.
+  
+  \details No copy of the polyhedron is made, only a reference to the polyhedron is held.
+  Default versions of the necessary polyhedron property maps are created and
+  used with this constructor.
+  
+  \param polyhedron The polyhedral surface to use.  Note that it must be triangulated.
+  
+  \param traits An optional instance of the traits class to use.
+  
+  */
+  Polyhedron_shortest_path(Polyhedron& polyhedron, const Traits& traits = Traits())
+    : m_traits(traits)
+    , m_polyhedron(polyhedron)
+    , m_vertexIndexMap(CGAL::get(boost::vertex_external_index, polyhedron))
+    , m_halfedgeIndexMap(CGAL::get(CGAL::halfedge_external_index, polyhedron))
+    , m_faceIndexMap(CGAL::get(CGAL::face_external_index, polyhedron))
+    , m_vertexPointMap(CGAL::get(CGAL::vertex_point, polyhedron))
+    , m_debugOutput(false)
+  {
+    reset_algorithm();
+  }
+  
+  /*!
+  \brief Creates a shortest paths object associated with a specific polyhedron.
+  
+  \details No copy of the polyhedron is made, only a reference to the polyhedron is held.
+  
+  \param polyhedron The polyhedral surface to use.  Note that it must be triangulated.
+  
+  \param vertexIndexMap Maps between vertices and their index.
+  
+  \param halfedgeIndexMap Maps between halfedges and their index.
+  
+  \param faceIndexMap Maps between faces and their index.
+  
+  \param vertexPointMap Maps between vertices and their 3-dimensional coordinates.
+  
+  \param traits An optional instance of the traits class to use.
+  */
+  Polyhedron_shortest_path(Polyhedron& polyhedron, VertexIndexMap vertexIndexMap, HalfedgeIndexMap halfedgeIndexMap, FaceIndexMap faceIndexMap, VertexPointMap vertexPointMap, const Traits& traits = Traits())
+    : m_traits(traits)
+    , m_polyhedron(polyhedron)
+    , m_vertexIndexMap(vertexIndexMap)
+    , m_halfedgeIndexMap(halfedgeIndexMap)
+    , m_faceIndexMap(faceIndexMap)
+    , m_vertexPointMap(vertexPointMap)
+    , m_debugOutput(false)
+  {
+    reset_algorithm();
+  }
+  
+  /// @}
+
+  ~Polyhedron_shortest_path()
+  {
+    delete_all_nodes();
+    
+#if !defined(NDEBUG)
+    if (m_debugOutput)
+    {
+      std::cout << "Final node count: " << m_currentNodeCount << std::endl;
+    }
+    return;
+    assert(m_currentNodeCount == 0);
+#endif
+  }
+  
+  /// \name Methods
+  /// @{
+  
+  /*!
+  \brief Compute shortest paths sequence tree from a single vertex
+  
+  \details Constructs a shortest paths sequence tree that covers shortest surface paths
+  to all locations on the polyhedron from the given source vertex.
+  
+  \param face Handle to the face on which the source originates.
+  
+  \param location Barycentric coordinate on face specifying the source location.
+  */
+  void construct_sequence_tree(vertex_descriptor vertex)
+  {
+    m_faceLocations.clear();
+    m_faceLocations.push_back(get_vertex_as_face_location(vertex));
+    construct_sequence_tree_internal();
+  }
+  
+  /*!
+  \brief Compute shortest paths from a single source location
+  
+  \details Constructs a shortest paths sequence tree that covers shortest surface paths
+  to all locations on the polyhedron reachable from the given source point.
+  
+  \param face Handle to the face on which the source originates.
+  
+  \param location Barycentric coordinate on face specifying the source location.
+  */
+  void construct_sequence_tree(face_descriptor face, Barycentric_coordinate location)
+  {
+    m_faceLocations.clear();
+    m_faceLocations.push_back(std::make_pair(face, location));
+    construct_sequence_tree_internal();
+  }
+  
+  /*!
+  \brief Compute a shortest path sequence tree from multiple source vertices
+  
+  \details Constructs a shortest paths sequence tree that covers shortest paths
+  to all locations on the polyhedron reachable from the supplied source locations.
+  
+  \tparam InputIterator a ForwardIterator type which dereferences to Face_location.
+  
+  \param faceLocationsBegin iterator to the first in the list of face location pairs.
+  
+  \param faceLocationsEnd iterator to one past the end of the list of face location pairs.
+  */
+  template <class InputIterator>
+  typename boost::enable_if<typename boost::is_same<typename std::iterator_traits<InputIterator>::value_type, vertex_descriptor>::value, void>::type construct_sequence_tree(InputIterator begin, InputIterator end)
+  {
+    m_faceLocations.clear();
+    for (InputIterator it = begin; it != end; ++it)
+    {
+      m_faceLocations.push_back(get_vertex_as_face_location(*it));
+    }
+    construct_sequence_tree_internal();
+  }
+  
+    /*!
+  \brief Compute a shortest path sequence tree from multiple source locations
+  
+  \details Constructs a shortest paths sequence tree that covers shortest surface paths
+  to all locations on the polyhedron reachable from the supplied source locations.
+  
+  \tparam InputIterator a ForwardIterator type which dereferences to Face_location.
+  
+  \param faceLocationsBegin iterator to the first in the list of face location pairs.
+  
+  \param faceLocationsEnd iterator to one past the end of the list of face location pairs.
+  */
+  template <class InputIterator>
+  typename boost::enable_if<typename boost::is_same<typename std::iterator_traits<InputIterator>::value_type, Face_location>::type, void>::type construct_sequence_tree(InputIterator begin, InputIterator end)
+  {
+    m_faceLocations.clear();
+    for (InputIterator it = begin; it != end; ++it)
+    {
+      m_faceLocations.push_back(*it);
+    }
+    construct_sequence_tree_internal();
   }
   
   /*!

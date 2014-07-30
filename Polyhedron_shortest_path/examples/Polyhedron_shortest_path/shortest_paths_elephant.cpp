@@ -18,6 +18,7 @@
 #include <CGAL/boost/graph/iterator.h>
 
 #include <fstream>
+#include <iterator>
 
 #define UNUSED(X) (void)sizeof(X)
 
@@ -32,19 +33,6 @@ typedef GraphTraits::halfedge_descriptor halfedge_descriptor;
 typedef GraphTraits::halfedge_iterator halfedge_iterator;
 typedef GraphTraits::face_descriptor face_descriptor;
 typedef GraphTraits::face_iterator face_iterator;
-
-template <class Traits>
-struct Point_sequence_collector
-{
-  typedef typename Traits::Point_3 Point_3;
-  
-  std::vector<Point_3> m_points;
-  
-  void point(const Point_3& point)
-  {
-    m_points.push_back(point);
-  }
-};
 
 int main(int argc, char** argv)
 {
@@ -79,7 +67,7 @@ int main(int argc, char** argv)
   Traits traits;
   Polyhedron_shortest_path shortestPaths(polyhedron, traits);
 
-  shortestPaths.compute_shortest_paths(targetFace, faceLocation);
+  shortestPaths.construct_sequence_tree(targetFace, faceLocation);
   
   vertex_iterator verticesCurrent, verticesEnd;
   
@@ -87,15 +75,15 @@ int main(int argc, char** argv)
   
   for (boost::tie(verticesCurrent, verticesEnd) = boost::vertices(polyhedron); verticesCurrent != verticesEnd; ++verticesCurrent)
   {
-    Point_sequence_collector<Traits> collector;
+    std::vector<Traits::Point_3> points;
     
-    shortestPaths.shortest_path_points(*verticesCurrent, collector);
+    shortestPaths.shortest_path_points(*verticesCurrent, std::back_inserter(points));
     
-    outPaths << collector.m_points.size();
+    outPaths << points.size();
     
-    for (size_t i = 0; i < collector.m_points.size(); ++i)
+    for (size_t i = 0; i < points.size(); ++i)
     {
-      outPaths << " " << collector.m_points[i];
+      outPaths << " " << points[i];
     }
     
     outPaths << std::endl;

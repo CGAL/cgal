@@ -19,6 +19,7 @@
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/boost/graph/iterator.h>
 
+#include <iterator>
 #include <fstream>
 
 #define UNUSED(X) (void)sizeof(X)
@@ -34,19 +35,6 @@ typedef GraphTraits::halfedge_descriptor halfedge_descriptor;
 typedef GraphTraits::halfedge_iterator halfedge_iterator;
 typedef GraphTraits::face_descriptor face_descriptor;
 typedef GraphTraits::face_iterator face_iterator;
-
-template <class Traits>
-struct Point_sequence_collector
-{
-  typedef typename Traits::Point_3 Point_3;
-  
-  std::vector<Point_3> m_points;
-  
-  void point(const Point_3& point)
-  {
-    m_points.push_back(point);
-  }
-};
 
 Traits::Barycentric_coordinate random_coordinate(CGAL::Random& rand)
 {
@@ -81,17 +69,17 @@ int main(int argc, char** argv)
   CGAL::Random rand(2379912);
   const size_t numSamplePoints = 30;
   
-  std::vector<Polyhedron_shortest_path::Face_location_pair> faceLocations;
+  std::vector<Polyhedron_shortest_path::Face_location> faceLocations;
   
   for (size_t i = 0; i < numSamplePoints; ++i)
   {
-    faceLocations.push_back(Polyhedron_shortest_path::Face_location_pair(faceList[rand.get_int(0, CGAL::num_faces(polyhedron))], random_coordinate(rand)));
+    faceLocations.push_back(Polyhedron_shortest_path::Face_location(faceList[rand.get_int(0, CGAL::num_faces(polyhedron))], random_coordinate(rand)));
   }
   
   Traits traits;
   Polyhedron_shortest_path shortestPaths(polyhedron, traits);
 
-  shortestPaths.compute_shortest_paths(faceLocations.begin(), faceLocations.end());
+  shortestPaths.construct_sequence_tree(faceLocations.begin(), faceLocations.end());
   
   vertex_iterator verticesCurrent, verticesEnd;
   
@@ -99,15 +87,15 @@ int main(int argc, char** argv)
   
   for (boost::tie(verticesCurrent, verticesEnd) = boost::vertices(polyhedron); verticesCurrent != verticesEnd; ++verticesCurrent)
   {
-    Point_sequence_collector<Traits> collector;
+    std::vector<Traits::Point_3> points;
     
-    shortestPaths.shortest_path_points(*verticesCurrent, collector);
+    shortestPaths.shortest_path_points(*verticesCurrent, std::back_inserter(points));
     
-    outPaths << collector.m_points.size();
+    outPaths << points.size();
     
-    for (size_t i = 0; i < collector.m_points.size(); ++i)
+    for (size_t i = 0; i < points.size(); ++i)
     {
-      outPaths << " " << collector.m_points[i];
+      outPaths << " " << points[i];
     }
     
     outPaths << std::endl;

@@ -161,7 +161,7 @@ void Scene_polyhedron_shortest_path_item::ensure_shortest_paths_tree()
   if (!m_isComputed)
   {
     m_messages->information(tr("Recomputing shortest paths tree..."));
-    m_shortestPaths->compute_shortest_paths(m_faceLocations.begin(), m_faceLocations.end());
+    m_shortestPaths->construct_sequence_tree(m_faceLocations.begin(), m_faceLocations.end());
     m_messages->information(tr("Done."));
     m_isComputed = true;
   }

@@ -206,7 +206,7 @@ public:
 template <class K, class P>
 std::ostream& operator<<(std::ostream& os, typename Polyhedron_shortest_path_default_traits<K,P>::Barycentric_coordinate b)
 {
-  os << b[0] << " " << b[1] << " " << b[2];
+  return os << b[0] << " " << b[1] << " " << b[2];
 }
 
 } // namespace CGAL

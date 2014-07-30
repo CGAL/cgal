@@ -67,7 +67,7 @@ BOOST_AUTO_TEST_CASE( shortest_path_regular_tetrahedron )
   
   Polyhedron_shortest_path shortestPaths(P, traits);
   //shortestPaths.m_debugOutput = true;
-  shortestPaths.compute_shortest_paths(firstFace, b);
+  shortestPaths.construct_sequence_tree(firstFace, b);
 
   vertex_iterator currentVertex;
   vertex_iterator endVertex;
@@ -144,7 +144,7 @@ BOOST_AUTO_TEST_CASE( test_simple_saddle_vertex_mesh )
 
   Polyhedron_shortest_path shortestPaths(P, traits);
   //shortestPaths.m_debugOutput = true;
-  shortestPaths.compute_shortest_paths(currentFace, baryCoord);
+  shortestPaths.construct_sequence_tree(currentFace, baryCoord);
 
   VPM vpm = CGAL::get(CGAL::vertex_point, P);
   
@@ -257,7 +257,7 @@ BOOST_AUTO_TEST_CASE( test_simple_saddle_vertex_mesh )
   faceLocations.push_back(Polyhedron_shortest_path::Face_location(currentFace, baryCoord));
   faceLocations.push_back(Polyhedron_shortest_path::Face_location(currentFace2, baryCoord2));
   
-  shortestPaths.compute_shortest_paths(faceLocations.begin(), faceLocations.end());
+  shortestPaths.construct_sequence_tree(faceLocations.begin(), faceLocations.end());
   
   FT distanceToApexFrom2 = CGAL::sqrt(compute_squared_distance_3(vertexLocations[5], vertexLocations[7]));
 
@@ -385,7 +385,7 @@ BOOST_AUTO_TEST_CASE( test_boundary_mesh )
 
   Polyhedron_shortest_path shortestPaths(P, traits);
   //shortestPaths.m_debugOutput = true;
-  shortestPaths.compute_shortest_paths(*startFace, startLocation);
+  shortestPaths.construct_sequence_tree(*startFace, startLocation);
   
   Triangle_3 firstTriangle(vertexLocations[1], vertexLocations[0], vertexLocations[2]);
   

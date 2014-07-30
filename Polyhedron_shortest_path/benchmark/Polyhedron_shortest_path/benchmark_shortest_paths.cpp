@@ -184,17 +184,17 @@ void run_benchmarks_no_id(CGAL::Random& rand, size_t numTrials, size_t numSource
   
   for (size_t i = 0; i < numTrials; ++i)
   {
-    std::vector<Polyhedron_shortest_path::Face_location_pair> sourcePoints;
+    std::vector<Polyhedron_shortest_path::Face_location> sourcePoints;
     
     while (sourcePoints.size() < numSources)
     {
       face_descriptor sourceFace = allFaces[rand.get_int(0, allFaces.size())];
       Barycentric_coordinate sourceLocation = random_coordinate(rand);
-      sourcePoints.push_back(Polyhedron_shortest_path::Face_location_pair(sourceFace, sourceLocation));
+      sourcePoints.push_back(Polyhedron_shortest_path::Face_location(sourceFace, sourceLocation));
     }
 
     timer.start();
-    shortestPaths.compute_shortest_paths(sourcePoints.begin(), sourcePoints.end());
+    shortestPaths.construct_sequence_tree(sourcePoints.begin(), sourcePoints.end());
     timer.stop();
     
     boost::timer::cpu_times elapsed = timer.elapsed();
@@ -211,7 +211,7 @@ void run_benchmarks_no_id(CGAL::Random& rand, size_t numTrials, size_t numSource
       Barycentric_coordinate sourceLocation = random_coordinate(rand);
       
       timer.start();
-      Traits::FT distance = shortestPaths.shortest_distance_to_location(sourceFace, sourceLocation);
+      Traits::FT distance = shortestPaths.shortest_distance_to_location(sourceFace, sourceLocation).first;
       timer.stop();
       UNUSED(distance);
       

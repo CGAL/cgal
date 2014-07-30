@@ -202,14 +202,14 @@ void test_mesh_function()
     std::cout << "STE(location): " << faceIndexMap[startLocation.first] << " , " << startLocation.second[0] << " " << startLocation.second[1] << " " << startLocation.second[2] << " " << std::endl;
     std::cout << "ETS(location): " << faceIndexMap[endLocation.first] << " , " << endLocation.second[0] << " " << endLocation.second[1] << " " << endLocation.second[2] << " " << std::endl;
 
-    startToEndShortestPaths.compute_shortest_paths(startLocation.first, startLocation.second);
+    startToEndShortestPaths.construct_sequence_tree(startLocation.first, startLocation.second);
 
     CGAL::test::Edge_sequence_collector<Traits> startToEndCollector(vertexIndexMap, halfedgeIndexMap, faceIndexMap);
     startToEndShortestPaths.shortest_path_sequence(endLocation.first, endLocation.second, startToEndCollector);
 
     FT startToEnd = startToEndShortestPaths.shortest_distance_to_location(endLocation.first, endLocation.second).first;
 
-    endToStartShortestPaths.compute_shortest_paths(endLocation.first, endLocation.second);
+    endToStartShortestPaths.construct_sequence_tree(endLocation.first, endLocation.second);
 
     std::cout << "Here" << std::endl;
     
