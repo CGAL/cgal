@@ -27,7 +27,7 @@ typedef CGAL::value_type_traits<InputIterator>::type MassPoint;
 typedef CGAL::First_of_pair_property_map<PointMassPair> PointPMap;
 typedef CGAL::Second_of_pair_property_map<PointMassPair> MassPMap;
 
-typedef CGAL::Reconstruction_simplification_2<K, InputIterator, PointPMap,
+typedef CGAL::Reconstruction_simplification_2<K, PointPMap,
 		MassPMap> Reconstruction_simplification_2;
 
 class Reconstruction_simplification_kerneled_2:

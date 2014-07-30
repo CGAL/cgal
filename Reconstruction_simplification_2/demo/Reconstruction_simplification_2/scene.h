@@ -33,7 +33,7 @@ public:
 	typedef CGAL::First_of_pair_property_map<PointMassPair> PointPMap;
 	typedef CGAL::Second_of_pair_property_map<PointMassPair> MassPMap;
 
-	typedef CGAL::Reconstruction_simplification_2<K, InputIterator, PointPMap,
+	typedef CGAL::Reconstruction_simplification_2<K, PointPMap,
 			MassPMap> R_s_2;
 
 	typedef K::Segment_2 Segment;

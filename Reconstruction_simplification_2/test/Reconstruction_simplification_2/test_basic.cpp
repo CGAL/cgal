@@ -23,8 +23,6 @@ typedef K::FT                                         		FT;
 typedef std::pair<Point, FT> PointMassPair;
 typedef std::list<PointMassPair> PointMassList;
 
-typedef PointMassList::const_iterator InputIterator;
-
 typedef CGAL::First_of_pair_property_map <PointMassPair> PointPMap;
 typedef CGAL::Second_of_pair_property_map <PointMassPair> MassPMap;
 
@@ -38,10 +36,8 @@ int main ()
     PointPMap point_pmap;
     MassPMap  mass_pmap;
 
-    CGAL::Reconstruction_simplification_2<K, InputIterator, PointPMap, MassPMap>
+    CGAL::Reconstruction_simplification_2<K, PointPMap, MassPMap>
     	rs2(points.begin(), points.end(), point_pmap, mass_pmap);
-
-    rs2.initialize();
 
     rs2.reconstruct(100); //100 steps
 

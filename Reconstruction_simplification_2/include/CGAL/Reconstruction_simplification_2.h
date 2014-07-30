@@ -55,14 +55,12 @@ via the PointPMap and MassPMap `PropertyMap`s respectively.
 \tparam Kernel is the geometric kernel, used throughout the reconstruction and
 					simplification task.
 
-\tparam InputIterator is the iterator type of the algorithm input.
-
 \tparam PointPMap is a model of `ReadablePropertyMap` with a value_type = `Point_2`
 
 \tparam MassPMap   is a model of `ReadablePropertyMap` with a value_type = `FT`
 
  */
-template<class Kernel, class InputIterator, class PointPMap, class MassPMap>
+template<class Kernel, class PointPMap, class MassPMap>
 class Reconstruction_simplification_2 {
 public:
 
@@ -148,9 +146,7 @@ protected:
     double m_bbox_y;
     double m_bbox_size;
 
-	InputIterator start;
-	InputIterator beyond;
-	PointPMap point_pmap;
+    PointPMap point_pmap;
 	MassPMap  mass_pmap;
 
 	  /// \endcond
@@ -163,9 +159,14 @@ protected:
 
 	/*!
 	     Instantiates a new Reconstruction_simplification_2.
+	     It computes an bounding box around the input points and creates a first
+		 (fine) output simplex as well as an initial transportation plan. This
+		first output simplex
 
 	     \details Instantiates a new Reconstruction_simplification_2 object
 	     	 	  for a given collection of point-mass pairs.
+
+	     \tparam InputIterator is the iterator type of the algorithm input.
 
 	     \param start_itr An InputIterator pointing the the first point-mass
 	     	 	 	 	 	 pair in a collection.
@@ -175,19 +176,19 @@ protected:
 
 	     \param in_mass_pmap A `ReadablePropertyMap` used to access the input points' mass.
 	*/
+	template <class InputIterator>
 	Reconstruction_simplification_2(InputIterator start_itr,
 									InputIterator beyond_itr,
 									PointPMap in_point_pmap,
 									MassPMap  in_mass_pmap) {
 
 
-		start  = start_itr;
-		beyond = beyond_itr;
-
 		point_pmap = in_point_pmap;
 		mass_pmap  = in_mass_pmap;
 
 		initialize_parameters();
+
+		initialize(start_itr, beyond_itr);
 	}
 
 	  /// @}
@@ -225,31 +226,22 @@ protected:
 
 	//Function if one wants to create a Reconstruction_simplification_2
 	//without specifying the input yet in the constructor
+	template <class InputIterator>
 	void initialize(InputIterator start_itr,
 									InputIterator beyond_itr,
 									PointPMap in_point_pmap,
 									MassPMap  in_mass_pmap) {
 
-		start  = start_itr;
-		beyond = beyond_itr;
-
 		point_pmap = in_point_pmap;
 		mass_pmap  = in_mass_pmap;
 
-		initialize();
+		initialize(start_itr, beyond_itr);
 
 	}
-	 /// \endcond
 
 
-	/*!
-		First function to be called after instantiating a new
-		Reconstruction_simplification_2 object.
-		It computes an bounding box around the input points and creates a first
-		(fine) output simplex as well as an initial transportation plan. This
-		first output simplex
-	  */
-	void initialize() {
+	template <class InputIterator>
+	void initialize(InputIterator start, InputIterator beyond) {
 
 		clear();
 
@@ -266,6 +258,9 @@ protected:
 		}
 		assign_samples(m_samples.begin(), m_samples.end());
 	}
+
+	 /// \endcond
+
 
 	/*!
 
@@ -378,13 +373,13 @@ protected:
 	}
 
 	template<class Iterator>  // value_type = Point*
-	void init(Iterator begin, Iterator end) {
+	void init(Iterator begin, Iterator beyond) {
 		double timer = clock();
 		std::cerr << yellow << "init" << white << "...";
 
 		int nb = m_dt.number_of_vertices();
 		m_dt.infinite_vertex()->pinned() = true;
-		for (Iterator it = begin; it != end; it++) {
+		for (Iterator it = begin; it != beyond; it++) {
 			Point point = get(point_pmap, *it);
 			Vertex_handle vertex = insert_point(point, false, nb++);
 		}

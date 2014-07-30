@@ -27,15 +27,16 @@ typedef K::FT                                         		FT;
 
 typedef std::pair<Point, FT> PointMassPair;
 typedef std::list<PointMassPair> PointMassList;
-typedef PointMassList::const_iterator InputIterator;
 
 typedef CGAL::First_of_pair_property_map <PointMassPair>  PointPMap;
 typedef CGAL::Second_of_pair_property_map <PointMassPair> MassPMap;
-typedef CGAL::Reconstruction_simplification_2 <K, InputIterator,
-					PointPMap, MassPMap>::Reconstruction_edge_2 R_edge_2;
 
-typedef CGAL::Reconstruction_simplification_2 <K, InputIterator,
-					PointPMap, MassPMap>::Vertex Vertex;
+
+typedef CGAL::Reconstruction_simplification_2<K, PointPMap, MassPMap> Rs_2;
+
+typedef Rs_2::Reconstruction_edge_2 R_edge_2;
+
+typedef Rs_2::Vertex Vertex;
 
 typedef CGAL::Reconstruction_triangulation_2<K> Rt_2;
 
@@ -44,7 +45,6 @@ typedef Rt_2::Vertex_iterator Vertex_iterator;
 
 typedef Rt_2::Edge Edge;
 
-typedef CGAL::Reconstruction_simplification_2<K, InputIterator, PointPMap, MassPMap> Rs_2;
 
 
 void load_xy_file(const std::string& fileName, PointMassList& points)
@@ -72,7 +72,7 @@ int main ()
 	MassPMap  mass_pmap;
 
 	Rs_2 rs2(points.begin(), points.end(), point_pmap, mass_pmap);
-	rs2.initialize();
+
 	rs2.reconstruct(100); //100 steps
 
  	std::vector<Point> isolated_points;
