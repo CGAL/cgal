@@ -273,6 +273,10 @@ public:
                                   const Facet &, 
                                   const Full_cell_handle);
   
+  Vertex_handle insert_in_conflicting_cell_if_in_star(const Weighted_point &, 
+                                                      const Vertex_handle, 
+                                                      const Full_cell_handle);
+  
   Vertex_handle insert_if_in_star(
     const Weighted_point & p, const Vertex_handle star_center,
     const Full_cell_handle start = Full_cell_handle())
@@ -827,9 +831,10 @@ Regular_triangulation<RTTraits, TDS>
       break;
     }
     default:
-      if (s->has_vertex(star_center))
+    {
+      if( 1 == current_dimension() )
       {
-        if( 1 == current_dimension() )
+        if (s->has_vertex(star_center))
         {
           if( Base::OUTSIDE_CONVEX_HULL == lt )
           {
@@ -839,12 +844,35 @@ Regular_triangulation<RTTraits, TDS>
           v->set_point(p);
           return v;
         }
-        else
-          return insert_in_conflicting_cell(p, s);
       }
-      break;
+      else
+        return insert_in_conflicting_cell_if_in_star(p, star_center, s);
+    break;
+    }
   }
 
+  return Vertex_handle();
+}
+
+template< typename RTTraits, typename TDS >
+typename Regular_triangulation<RTTraits, TDS>::Vertex_handle
+Regular_triangulation<RTTraits, TDS>
+::insert_in_conflicting_cell_if_in_star(const Weighted_point & p, 
+                                        const Vertex_handle star_center,
+                                        const Full_cell_handle s)
+{
+  typedef std::vector<Full_cell_handle> Full_cell_h_vector;
+  static Full_cell_h_vector cs; // for storing conflicting full_cells.
+  cs.clear();
+  // cs.reserve(64);
+  std::back_insert_iterator<Full_cell_h_vector> out(cs);
+  Facet ft = compute_conflict_zone(p, s, out);
+  Full_cell_h_vector::const_iterator it = cs.begin(), it_end = cs.end();
+  for ( ; it != it_end ; ++it)
+  {
+    if ((*it)->has_vertex(star_center))
+      return insert_in_hole(p, cs.begin(), cs.end(), ft);
+  }
   return Vertex_handle();
 }
 
