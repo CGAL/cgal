@@ -265,6 +265,32 @@ public:
 
   Vertex_handle insert_outside_affine_hull(const Weighted_point &);
   Vertex_handle insert_in_conflicting_cell(const Weighted_point &, const Full_cell_handle);
+  
+  Vertex_handle insert_if_in_star(const Weighted_point &, 
+                                  const Vertex_handle, 
+                                  const Locate_type, 
+                                  const Face &, 
+                                  const Facet &, 
+                                  const Full_cell_handle);
+  
+  Vertex_handle insert_if_in_star(
+    const Weighted_point & p, const Vertex_handle star_center,
+    const Full_cell_handle start = Full_cell_handle())
+  {
+    Locate_type lt;
+    Face f(maximal_dimension());
+    Facet ft;
+    Full_cell_handle s = locate(p, lt, f, ft, start);
+    return insert_if_in_star(p, star_center, lt, f, ft, s);
+  }
+
+  Vertex_handle insert_if_in_star(
+    const Weighted_point & p, const Vertex_handle star_center, 
+    const Vertex_handle hint)
+  {
+    CGAL_assertion( Vertex_handle() != hint );
+    return insert_if_in_star(p, hint->full_cell());
+  }
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - GATHERING CONFLICTING SIMPLICES
 
@@ -778,6 +804,48 @@ Regular_triangulation<RTTraits, TDS>
   std::back_insert_iterator<Full_cell_h_vector> out(cs);
   Facet ft = compute_conflict_zone(p, s, out);
   return insert_in_hole(p, cs.begin(), cs.end(), ft);
+}
+
+template< typename RTTraits, typename TDS >
+typename Regular_triangulation<RTTraits, TDS>::Vertex_handle
+Regular_triangulation<RTTraits, TDS>
+::insert_if_in_star(const Weighted_point & p, 
+                    const Vertex_handle star_center,
+                    const Locate_type lt, const Face & f, const Facet & ft, 
+                    const Full_cell_handle s)
+{
+  switch( lt )
+  {
+    case Base::OUTSIDE_AFFINE_HULL:
+      return insert_outside_affine_hull(p);
+      break;
+    case Base::ON_VERTEX:
+    {
+      Vertex_handle v = s->vertex(f.index(0));
+      v->set_point(p);
+      return v;
+      break;
+    }
+    default:
+      if (s->has_vertex(star_center))
+      {
+        if( 1 == current_dimension() )
+        {
+          if( Base::OUTSIDE_CONVEX_HULL == lt )
+          {
+            return insert_outside_convex_hull_1(p, s);
+          }
+          Vertex_handle v = tds().insert_in_full_cell(s);
+          v->set_point(p);
+          return v;
+        }
+        else
+          return insert_in_conflicting_cell(p, s);
+      }
+      break;
+  }
+
+  return Vertex_handle();
 }
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - GATHERING CONFLICTING SIMPLICES
