@@ -51,8 +51,7 @@ BOOST_AUTO_TEST_CASE( test_find_nearest_face_location_on_surface )
   
   Traits traits;
   
-  Traits::Construct_barycentric_coordinate_3 construct_barycentric_coordinate_3(traits.construct_barycentric_coordinate_3_object());
-  Traits::Construct_triangle_location_3 construct_triangle_location_3(traits.construct_triangle_location_3_object());
+  Traits::Construct_barycenter_3 construct_barycenter_3(traits.construct_barycenter_3_object());
   
   Polyhedron_3 polyhedron;
   
@@ -90,9 +89,9 @@ BOOST_AUTO_TEST_CASE( test_find_nearest_face_location_on_surface )
     
     Barycentric_coordinate location = CGAL::test::random_coordinate<FT, Barycentric_coordinate>(random);
     
-    Point_3 location3d = construct_triangle_location_3(faceTriangle, location);
+    Point_3 location3d = construct_barycenter_3(faceTriangle[0], location[0], faceTriangle[1], location[1], faceTriangle[2], location[2]);
     
-    Polyhedron_shortest_path::Face_location_pair faceLocation = shortestPaths.get_nearest_face_location(location3d);
+    Polyhedron_shortest_path::Face_location faceLocation = shortestPaths.get_nearest_face_location(location3d);
     
     BOOST_CHECK_EQUAL(faceIndexMap[face], faceIndexMap[faceLocation.first]);
     BOOST_CHECK_CLOSE(location[0], faceLocation.second[0], FT(0.0001));

@@ -7,6 +7,7 @@
 // Author(s)     : Stephen Kiazyk
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 //#include <CGAL/Exact_predicates_exact_constructions_kernel_with_sqrt.h>
 
 #include <CGAL/Polyhedron_3.h>
@@ -39,7 +40,10 @@
 #include <cstdlib>
 #include <cmath>
 
+using namespace CGAL::test;
+
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
+//typedef CGAL::Exact_predicates_exact_constructions_kernel Kernel;
 typedef CGAL::Polyhedron_3<Kernel, CGAL::Polyhedron_items_with_id_3> Polyhedron_3;
 typedef CGAL::Polyhedron_shortest_path_default_traits<Kernel, Polyhedron_3> Traits;
 typedef Traits::Barycentric_coordinate Barycentric_coordinate;
@@ -57,7 +61,7 @@ typedef GraphTraits::halfedge_iterator halfedge_iterator;
 typedef GraphTraits::face_descriptor face_descriptor;
 typedef GraphTraits::face_iterator face_iterator;
 typedef CGAL::Polyhedron_shortest_path<Traits> Polyhedron_shortest_path;
-typedef Polyhedron_shortest_path::Face_location_pair Face_location_pair;
+typedef Polyhedron_shortest_path::Face_location Face_location;
 typedef boost::property_map<Polyhedron_3, CGAL::vertex_point_t>::type VPM;
 typedef boost::property_map<typename Traits::Polyhedron, boost::vertex_external_index_t>::type VIM;
 typedef boost::property_map<typename Traits::Polyhedron, boost::edge_external_index_t>::type EIM;
@@ -73,44 +77,47 @@ bool debugMode = false;
 CGAL::Random* randomizer = NULL;
 size_t numVertices = 0;
 
-Face_location_pair next_location(Polyhedron_shortest_path& shortestPath, Polyhedron_3& polyhedron, const std::vector<vertex_descriptor>& vertices)
+Face_location next_location(Polyhedron_shortest_path& shortestPath, Polyhedron_3& polyhedron, const std::vector<vertex_descriptor>& vertices)
 {
-  std::string type;
-    
-  std::cin >> type;
-  
-  boost::algorithm::to_lower(type);
-  
-  if (type == "v")
+  if (randomizer)
   {
-    size_t x;
-    std::cin >> x;
-    
-    return shortestPath.get_vertex_as_face_location(vertices[x]);
+    return shortestPath.get_vertex_as_face_location(vertices[randomizer->get_int(0, vertices.size())]);
   }
-  else if (type == "e")
+  else
   {
-    size_t x, y;
-    double alpha;
-    std::cin >> x >> y >> alpha;
-    std::pair<halfedge_descriptor, bool> he = CGAL::halfedge(vertices[x], vertices[y], polyhedron);
-    assert(he.second);
-    if (!he.second)
+    std::string type;
+      
+    std::cin >> type;
+    
+    boost::algorithm::to_lower(type);
+    
+    if (type == "v")
     {
-      std::cout << "I hate my life" << std::endl;
+      size_t x;
+      std::cin >> x;
+      
+      return shortestPath.get_vertex_as_face_location(vertices[x]);
     }
-    return shortestPath.get_edge_as_face_location(he.first, FT(alpha));
+    else if (type == "e")
+    {
+      size_t x, y;
+      double alpha;
+      std::cin >> x >> y >> alpha;
+      std::pair<halfedge_descriptor, bool> he = CGAL::halfedge(vertices[x], vertices[y], polyhedron);
+      assert(he.second);
+      return shortestPath.get_edge_as_face_location(he.first, FT(alpha));
+    }
+    else if (type == "f")
+    {
+      size_t x, y;
+      double alpha0, alpha1, alpha2;
+      std::cin >> x >> y >> alpha0 >> alpha1 >> alpha2;
+      std::pair<halfedge_descriptor, bool> he = CGAL::halfedge(vertices[x], vertices[y], polyhedron);
+      return Polyhedron_shortest_path::Face_location(CGAL::face(he.first, polyhedron), Barycentric_coordinate(FT(alpha0), FT(alpha1), FT(alpha2)));
+    }
+    
+    return Face_location(GraphTraits::null_face(), Barycentric_coordinate());
   }
-  else if (type == "f")
-  {
-    size_t x, y;
-    double alpha0, alpha1, alpha2;
-    std::cin >> x >> y >> alpha0 >> alpha1 >> alpha2;
-    std::pair<halfedge_descriptor, bool> he = CGAL::halfedge(vertices[x], vertices[y], polyhedron);
-    return Polyhedron_shortest_path::Face_location_pair(CGAL::face(he.first, polyhedron), Barycentric_coordinate(FT(alpha0), FT(alpha1), FT(alpha2)));
-  }
-  
-  return Face_location_pair(GraphTraits::null_face(), Barycentric_coordinate());
 }
 
 size_t next_vertex()
@@ -127,10 +134,15 @@ size_t next_vertex()
   }
 }
 
+std::ostream& operator << (std::ostream& os, const typename Traits::Barycentric_coordinate& b)
+{
+  return os << b[0] << " " << b[1] << " " << b[2];
+}
+
 void test_mesh_function()
 {
   Traits traits;
-  
+
   Polyhedron_3 P;
   std::ifstream in(meshName.c_str());
   
@@ -184,12 +196,12 @@ void test_mesh_function()
   {
     bool found = false;
 
-    Face_location_pair startLocation = next_location(startToEndShortestPaths, P, vertices);
-    Face_location_pair endLocation = next_location(endToStartShortestPaths, P, vertices);
+    Face_location startLocation = next_location(startToEndShortestPaths, P, vertices);
+    Face_location endLocation = next_location(endToStartShortestPaths, P, vertices);
 
-    std::cout << "STE(location): " << faceIndexMap[startLocation.first] << " , " << startLocation.second << std::endl;
-    std::cout << "ETS(location): " << faceIndexMap[endLocation.first] << " , " << endLocation.second << std::endl;
-    
+    std::cout << "STE(location): " << faceIndexMap[startLocation.first] << " , " << startLocation.second[0] << " " << startLocation.second[1] << " " << startLocation.second[2] << " " << std::endl;
+    std::cout << "ETS(location): " << faceIndexMap[endLocation.first] << " , " << endLocation.second[0] << " " << endLocation.second[1] << " " << endLocation.second[2] << " " << std::endl;
+
     startToEndShortestPaths.compute_shortest_paths(startLocation.first, startLocation.second);
 
     CGAL::test::Edge_sequence_collector<Traits> startToEndCollector(vertexIndexMap, halfedgeIndexMap, faceIndexMap);

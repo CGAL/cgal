@@ -10,7 +10,8 @@
 #include <CGAL/boost/graph/properties_Polyhedron_3.h>
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/result_of.h>
-#include <CGAL/Polyhedron_shortest_path/Internal/misc_functions.h>
+
+#include <CGAL/Polyhedron_shortest_path/internal/misc_functions.h>
 
 #ifndef CGAL_POLYHEDRON_SHORTEST_PATH_INTERNAL_FUNCTION_OBJECTS_H
 #define CGAL_POLYHEDRON_SHORTEST_PATH_INTERNAL_FUNCTION_OBJECTS_H
@@ -18,101 +19,6 @@
 namespace CGAL {
 
 namespace internal {
-
-template<class K>
-class Project_triangle_3_to_triangle_2
-{
-public:
-  typedef typename K::Vector_3 Vector_3;
-  typedef typename K::FT FT;
-  typedef typename K::Triangle_3 Triangle_3;
-  typedef typename K::Triangle_2 Triangle_2;
-  typedef typename K::Point_2 Point_2;
-  typedef typename K::Point_3 Point_3;
-  typedef typename K::Compute_squared_distance_3 Compute_squared_distance_3;
-
-private:
-  Compute_squared_distance_3 m_compute_squared_distance_3;
-  
-public:
-  Project_triangle_3_to_triangle_2()
-  {
-  }
-  
-  Project_triangle_3_to_triangle_2(const Compute_squared_distance_3& cds)
-    : m_compute_squared_distance_3(cds)
-  {
-  }
-
-  Triangle_2 operator() (const Triangle_3& t3) const
-  {
-    Vector_3 v01 = t3[1] - t3[0];
-    Vector_3 v02 = t3[2] - t3[0];
-    
-    FT scalePoint = (v01 * v02) / (v01 * v01);
-    Point_3 projectedLocation3d = t3[0] + (scalePoint * v01);
-    FT triangleHeight = CGAL::sqrt(m_compute_squared_distance_3(projectedLocation3d, t3[2]));
-    FT v01Len = CGAL::sqrt(m_compute_squared_distance_3(t3[1], t3[0])); 
-    
-    Point_2 A(0.0, 0.0);
-    Point_2 B(v01Len, 0.0);
-    Point_2 C(v01Len * scalePoint, triangleHeight);
-    
-    return Triangle_2(A, B, C);
-  }
-};
-
-template<class K>
-class Flatten_triangle_3_along_segment_2
-{
-public:
-  typedef typename K::Vector_3 Vector_3;
-  typedef typename K::Vector_2 Vector_2;
-  typedef typename K::FT FT;
-  typedef typename K::Triangle_3 Triangle_3;
-  typedef typename K::Triangle_2 Triangle_2;
-  typedef typename K::Point_2 Point_2;
-  typedef typename K::Point_3 Point_3;
-  typedef typename K::Segment_2 Segment_2;
-  
-  typedef typename K::Compute_squared_distance_3 Compute_squared_distance_3;
-
-private:
-  Compute_squared_distance_3 m_compute_squared_distance_3;
-
-public:
-  Flatten_triangle_3_along_segment_2()
-  {
-  }
-  
-  Flatten_triangle_3_along_segment_2(const Compute_squared_distance_3& cds)
-    : m_compute_squared_distance_3(cds)
-  {
-  }
-
-  Triangle_2 operator() (const Triangle_3& t3, size_t edgeIndex, const Segment_2& segment) const
-  {
-    Vector_3 v01 = t3.vertex(edgeIndex + 1) - t3.vertex(edgeIndex + 0);
-    Vector_3 v02 = t3.vertex(edgeIndex + 2) - t3.vertex(edgeIndex + 0);
-
-    FT scalePoint = (v01 * v02) / (v01 * v01);
-    Point_3 projectedLocation3d = t3.vertex(edgeIndex) + (scalePoint * v01);
-    FT triangleHeight = CGAL::sqrt(m_compute_squared_distance_3(projectedLocation3d, t3.vertex(edgeIndex + 2)));
-
-    Vector_2 edgeVector = segment.to_vector();
-    Point_2 projectionPoint = segment.start() + (segment.to_vector() * scalePoint);
-
-    Vector_2 perpendicularEdgeVector(-edgeVector[1], edgeVector[0]);
-    perpendicularEdgeVector = perpendicularEdgeVector / CGAL::sqrt(perpendicularEdgeVector.squared_length());
-
-    Point_2 points[3];
-    points[edgeIndex] = segment.start();
-    points[(edgeIndex + 1) % 3] = segment.end();
-    points[(edgeIndex + 2) % 3] = segment.start() + (edgeVector * scalePoint) + (perpendicularEdgeVector * triangleHeight);
-
-    return Triangle_2(points[0], points[1], points[2]);
-  }
-};
 
 template <class Kernel>
 class Parametric_distance_along_segment_2
@@ -124,24 +30,304 @@ public:
   typedef typename Kernel::Segment_2 Segment_2;
   
   typedef typename Kernel::Intersect_2 Intersect_2;
+  typedef typename Kernel::Construct_cartesian_const_iterator_2 Construct_cartesian_const_iterator_2;
+  typedef typename Kernel::Construct_vector_2 Construct_vector_2;
+  typedef typename Kernel::Construct_source_2 Construct_source_2;
+  typedef typename Kernel::Construct_target_2 Construct_target_2;
+  
+  typedef typename Kernel::Cartesian_const_iterator_2 Cartesian_const_iterator_2;
+  
+  typedef FT result_type;
   
 private:
   Intersect_2 m_intersect_2;
+  Construct_cartesian_const_iterator_2 m_construct_cartesian_const_iterator_2;
+  Construct_vector_2 m_construct_vector_2;
+  Construct_source_2 m_construct_source_2;
+  Construct_target_2 m_construct_target_2;
+  
   
 public:
-  FT operator () (const Point_2& x0, const Point_2& x1, const Point_2& point)
+  Parametric_distance_along_segment_2()
   {
-    Vector_2 lineDiff = x1 - x0;
-    Vector_2 pointDiff = point - x0;
+  }
+  
+  Parametric_distance_along_segment_2(const Kernel& kernel)
+    : m_intersect_2(kernel.intersect_2_object())
+    , m_construct_cartesian_const_iterator_2(kernel.construct_cartesian_const_iterator_2_object())
+    , m_construct_vector_2(kernel.construct_vector_2_object())
+    , m_construct_source_2(kernel.construct_source_2_object())
+    , m_construct_target_2(kernel.construct_target_2_object())
+  {
+  }
+
+  result_type operator () (const Segment_2& s, const Point_2& p) const 
+  {
+    return (*this)(m_construct_source_2(s), m_construct_target_2(s), p);
+  }
+
+  result_type operator () (const Point_2& x0, const Point_2& x1, const Point_2& point) const 
+  {
+    Vector_2 lineDiff(m_construct_vector_2(x0, x1));
+    Vector_2 pointDiff(m_construct_vector_2(x0, point));
+
+    Cartesian_const_iterator_2 lineDiffIt(m_construct_cartesian_const_iterator_2(lineDiff));
+    Cartesian_const_iterator_2 pointDiffIt(m_construct_cartesian_const_iterator_2(pointDiff));
     
-    if (CGAL::abs(lineDiff[0]) > CGAL::abs(lineDiff[1]))
+    FT lineDiff_x = *lineDiffIt;
+    ++lineDiffIt;
+    FT lineDiff_y = *lineDiffIt;
+    
+    FT pointDiff_x = *pointDiffIt;
+    ++pointDiffIt;
+    FT pointDiff_y = *pointDiffIt;
+    
+    if (CGAL::abs(lineDiff_x) > CGAL::abs(lineDiff_y))
     {
-      return pointDiff[0] / lineDiff[0];
+      return pointDiff_x / lineDiff_x;
     }
     else 
     {
-      return pointDiff[1] / lineDiff[1];
+      return pointDiff_y / lineDiff_y;
     }
+  }
+};
+
+template <class Kernel>
+class Parametric_distance_along_segment_3
+{
+public:
+  typedef typename Kernel::FT FT;
+  typedef typename Kernel::Point_3 Point_3;
+  typedef typename Kernel::Vector_3 Vector_3;
+  typedef typename Kernel::Segment_3 Segment_3;
+  
+  typedef typename Kernel::Construct_cartesian_const_iterator_3 Construct_cartesian_const_iterator_3;
+  typedef typename Kernel::Construct_vector_3 Construct_vector_3;
+  typedef typename Kernel::Construct_source_3 Construct_source_3;
+  typedef typename Kernel::Construct_target_3 Construct_target_3;
+  
+  typedef typename Kernel::Cartesian_const_iterator_3 Cartesian_const_iterator_3;
+  
+  typedef FT result_type;
+  
+private:
+  Construct_cartesian_const_iterator_3 m_construct_cartesian_const_iterator_3;
+  Construct_vector_3 m_construct_vector_3;
+  Construct_source_3 m_construct_source_3;
+  Construct_target_3 m_construct_target_3;
+  
+  
+public:
+  Parametric_distance_along_segment_3()
+  {
+  }
+  
+  Parametric_distance_along_segment_3(const Kernel& kernel)
+    : m_construct_cartesian_const_iterator_3(kernel.construct_cartesian_const_iterator_3_object())
+    , m_construct_vector_3(kernel.construct_vector_3_object())
+    , m_construct_source_3(kernel.construct_source_3_object())
+    , m_construct_target_3(kernel.construct_target_3_object())
+  {
+  }
+
+  result_type operator () (const Segment_3& s, const Point_3& p) const 
+  {
+    return (*this)(m_construct_source_3(s), m_construct_target_3(s), p);
+  }
+
+  result_type operator () (const Point_3& x0, const Point_3& x1, const Point_3& point) const 
+  {
+    Vector_3 lineDiff(m_construct_vector_3(x0, x1));
+    Vector_3 pointDiff(m_construct_vector_3(x0, point));
+
+    Cartesian_const_iterator_3 lineDiffIt(m_construct_cartesian_const_iterator_3(lineDiff));
+    Cartesian_const_iterator_3 pointDiffIt(m_construct_cartesian_const_iterator_3(pointDiff));
+    
+    FT lineDiff_x = *lineDiffIt;
+    ++lineDiffIt;
+    FT lineDiff_y = *lineDiffIt;
+    ++lineDiffIt;
+    FT lineDiff_z = *lineDiffIt;
+    
+    FT pointDiff_x = *pointDiffIt;
+    ++pointDiffIt;
+    FT pointDiff_y = *pointDiffIt;
+    ++pointDiffIt;
+    FT pointDiff_z = *pointDiffIt;
+    
+    if (CGAL::abs(lineDiff_x) > CGAL::abs(lineDiff_y) && CGAL::abs(lineDiff_x) > CGAL::abs(lineDiff_z))
+    {
+      return pointDiff_x / lineDiff_x;
+    }
+    else if (CGAL::abs(lineDiff_y) > CGAL::abs(lineDiff_z))
+    {
+      return pointDiff_y / lineDiff_y;
+    }
+    else
+    {
+      return pointDiff_z / lineDiff_z;
+    }
+  }
+};
+
+template<class K>
+class Project_triangle_3_to_triangle_2
+{
+public:
+  typedef typename K::Vector_3 Vector_3;
+  typedef typename K::FT FT;
+  typedef typename K::Triangle_3 Triangle_3;
+  typedef typename K::Triangle_2 Triangle_2;
+  typedef typename K::Point_2 Point_2;
+  typedef typename K::Point_3 Point_3;
+  typedef typename K::Line_3 Line_3;
+  
+  typedef typename K::Construct_line_3 Construct_line_3;
+  typedef typename K::Compute_squared_distance_3 Compute_squared_distance_3;
+  typedef typename K::Construct_vertex_3 Construct_vertex_3;
+  typedef typename K::Construct_vector_3 Construct_vector_3;
+  typedef typename K::Construct_point_2 Construct_point_2;
+  typedef typename K::Construct_triangle_2 Construct_triangle_2;
+  typedef typename K::Construct_projected_point_3 Construct_projected_point_3;
+  
+private:
+  Parametric_distance_along_segment_3<K> m_parametric_distance_along_segment_3;
+  Compute_squared_distance_3 m_compute_squared_distance_3;
+  Construct_line_3 m_constuct_line_3;
+  Construct_projected_point_3 m_construct_projected_point_3;
+  Construct_vertex_3 m_construct_vertex_3;
+  Construct_vector_3 m_construct_vector_3;
+  Construct_point_2 m_construct_point_2;
+  Construct_triangle_2 m_construct_triangle_2;
+
+public:
+  Project_triangle_3_to_triangle_2()
+  {
+  }
+  
+  Project_triangle_3_to_triangle_2(const K& kernel)
+    : m_compute_squared_distance_3(kernel.compute_squared_distance_3_object())
+    , m_constuct_line_3(kernel.constuct_line_3_object())
+    , m_construct_vertex_3(kernel.construct_vertex_3_object())
+    , m_construct_projected_point_3(kernel.construct_projected_point_3_object())
+    , m_construct_vector_3(kernel.construct_vector_3_object())
+    , m_construct_point_2(kernel.construct_point_2_object())
+    , m_construct_triangle_2(kernel.construct_triangle_2_object())
+  {
+  }
+
+  Triangle_2 operator() (const Triangle_3& t3) const
+  {
+    Vector_3 v01(m_construct_vector_3(m_construct_vertex_3(t3, 0), m_construct_vertex_3(t3, 1)));
+    Vector_3 v02(m_construct_vector_3(m_construct_vertex_3(t3, 0), m_construct_vertex_3(t3, 2)));
+    
+    Line_3 baseSegment(m_constuct_line_3(m_construct_vertex_3(t3, 0), m_construct_vertex_3(t3, 1)));
+    
+    //FT scalePoint = (v01 * v02) / (v01 * v01);
+    Point_3 projectedLocation3d(m_construct_projected_point_3(baseSegment, m_construct_vertex_3(t3, 2)));
+    FT scalePoint = m_parametric_distance_along_segment_3(m_construct_vertex_3(t3, 0), m_construct_vertex_3(t3, 1), projectedLocation3d);
+    FT triangleHeight = CGAL::internal::my_sqrt(m_compute_squared_distance_3(projectedLocation3d, t3[2]));
+    FT v01Len = CGAL::internal::my_sqrt(m_compute_squared_distance_3(t3[1], t3[0])); 
+    
+    Point_2 A(m_construct_point_2(0.0, 0.0));
+    Point_2 B(m_construct_point_2(v01Len, 0.0));
+    Point_2 C(m_construct_point_2(v01Len * scalePoint, triangleHeight));
+    
+    return m_construct_triangle_2(A, B, C);
+  }
+};
+
+template<class K>
+class Flatten_triangle_3_along_segment_2
+{
+public:
+  typedef typename K::Vector_3 Vector_3;
+  typedef typename K::Vector_2 Vector_2;
+  typedef typename K::Line_3 Line_3;
+  typedef typename K::FT FT;
+  typedef typename K::Triangle_3 Triangle_3;
+  typedef typename K::Triangle_2 Triangle_2;
+  typedef typename K::Point_2 Point_2;
+  typedef typename K::Point_3 Point_3;
+  typedef typename K::Segment_2 Segment_2;
+  
+  typedef typename K::Compute_squared_distance_3 Compute_squared_distance_3;
+  typedef typename K::Construct_projected_point_3 Construct_projected_point_3;
+  typedef typename K::Construct_perpendicular_vector_2 Construct_perpendicular_vector_2;
+  typedef typename K::Construct_sum_of_vectors_2 Construct_sum_of_vectors_2;
+  typedef typename K::Construct_scaled_vector_2 Construct_scaled_vector_2;
+  typedef typename K::Construct_translated_point_2 Construct_translated_point_2;
+  typedef typename K::Construct_vector_2 Construct_vector_2;
+  typedef typename K::Compute_squared_length_2 Compute_squared_length_2;
+  typedef typename K::Construct_vertex_3 Construct_vertex_3;
+  typedef typename K::Construct_triangle_2 Construct_triangle_2;
+  typedef typename K::Construct_line_3 Construct_line_3;
+  typedef typename K::Construct_segment_3 Construct_segment_3;
+  typedef typename K::Construct_source_2 Construct_source_2;
+  typedef typename K::Construct_target_2 Construct_target_2;
+  
+  typedef Triangle_2 result_type;
+  
+private:
+
+  Parametric_distance_along_segment_3<K> m_parametric_distance_along_segment_3;
+  Compute_squared_distance_3 m_compute_squared_distance_3;
+  Construct_projected_point_3 m_constrct_projected_point_3;
+  Construct_perpendicular_vector_2 m_construct_perpendicular_vector_2;
+  Construct_sum_of_vectors_2 m_construct_sum_of_vectors_2;
+  Construct_scaled_vector_2 m_construct_scaled_vector_2;
+  Construct_translated_point_2 m_construct_translated_point_2;
+  Construct_vector_2 m_construct_vector_2;
+  Compute_squared_length_2 m_compute_squared_length_2;
+  Construct_line_3 m_construct_line_3;
+  Construct_segment_3 m_construct_segment_3;
+  Construct_source_2 m_construct_source_2;
+  Construct_target_2 m_construct_target_2;
+  Construct_vertex_3 m_construct_vertex_3;
+  Construct_triangle_2 m_construct_triangle_2;
+  
+public:
+  Flatten_triangle_3_along_segment_2()
+  {
+  }
+  
+  Flatten_triangle_3_along_segment_2(const K& kernel)
+    : m_compute_squared_distance_3(kernel.compute_squared_distance_3_object())
+    , m_constrct_projected_point_3(kernel.constrct_projected_point_3_object())
+    , m_construct_perpendicular_vector_2(kernel.construct_perpendicular_vector_2_object())
+    , m_construct_sum_of_vectors_2(kernel.construct_sum_of_vectors_2_object())
+    , m_construct_scaled_vector_2(kernel.construct_scaled_vector_2_object())
+    , m_construct_translated_point_2(kernel.construct_translated_point_2_object())
+    , m_construct_vector_2(kernel.construct_vector_2_object())
+    , m_compute_squared_length_2(kernel.compute_squared_length_2_object())
+    , m_construct_line_3(kernel.construct_line_3_object())
+    , m_construct_segment_3(kernel.construct_segment_3_object())
+    , m_construct_source_2(kernel.construct_source_2_object())
+    , m_construct_target_2(kernel.construct_target_2_object())
+    , m_construct_vertex_3(kernel.construct_vertex_3_object())
+    , m_construct_triangle_2(kernel.construct_triangle_2_object())
+  {
+  }
+
+  result_type operator() (const Triangle_3& t3, size_t edgeIndex, const Segment_2& segment) const
+  {
+    Point_3 projectedLocation3d(m_constrct_projected_point_3(m_construct_line_3(m_construct_vertex_3(t3, edgeIndex), m_construct_vertex_3(t3, edgeIndex + 1)), m_construct_vertex_3(t3, edgeIndex + 2)));
+    FT scalePoint = m_parametric_distance_along_segment_3(m_construct_segment_3(m_construct_vertex_3(t3, edgeIndex), m_construct_vertex_3(t3, edgeIndex + 1)), projectedLocation3d);
+    FT triangleHeight = CGAL::internal::my_sqrt(m_compute_squared_distance_3(projectedLocation3d, m_construct_vertex_3(t3, edgeIndex + 2)));
+
+    Vector_2 edgeVector(m_construct_vector_2(segment));
+    Point_2 projectionPoint(m_construct_translated_point_2(m_construct_source_2(segment), m_construct_scaled_vector_2(edgeVector, scalePoint)));
+
+    Vector_2 perpendicularEdgeVector(m_construct_perpendicular_vector_2(edgeVector, CGAL::COUNTERCLOCKWISE));
+    perpendicularEdgeVector = m_construct_scaled_vector_2(perpendicularEdgeVector, FT(1.0) / CGAL::internal::my_sqrt(m_compute_squared_length_2(perpendicularEdgeVector)));
+
+    Point_2 points[3];
+    points[edgeIndex] = m_construct_source_2(segment);
+    points[(edgeIndex + 1) % 3] = m_construct_target_2(segment);
+    points[(edgeIndex + 2) % 3] = m_construct_translated_point_2(m_construct_source_2(segment), m_construct_sum_of_vectors_2(m_construct_scaled_vector_2(edgeVector, scalePoint), m_construct_scaled_vector_2(perpendicularEdgeVector, triangleHeight)));
+
+    return m_construct_triangle_2(points[0], points[1], points[2]);
   }
 };
 
@@ -158,41 +344,50 @@ public:
   typedef typename K::Line_2 Line_2;
 
   typedef typename K::Intersect_2 Intersect_2;
- 
+  typedef typename K::Compare_distance_2 Compare_distance_2;
+  typedef typename K::Construct_line_2 Construct_line_2;
+  typedef typename K::Construct_source_2 Construct_source_2;
+  typedef typename K::Construct_target_2 Construct_target_2;
   
+  typedef CGAL::Comparison_result result_type;
+ 
 private:
   Parametric_distance_along_segment_2<K> m_parametric_distance_along_segment_2;
   Intersect_2 m_intersect_2;
-  
-  bool in_range(FT x, FT end1, FT end2)
-  {
-    return x >= std::min(end1, end2) && x <= std::max(end1, end2);
-  }
+  Compare_distance_2 m_compare_distance_2;
+  Construct_line_2 m_construct_line_2;
+  Construct_source_2 m_construct_source_2;
+  Construct_target_2 m_construct_target_2;
   
 public:
   Compare_relative_intersection_along_segment_2()
   {
   }
   
-  Compare_relative_intersection_along_segment_2(const Parametric_distance_along_segment_2<K>& pds, const Intersect_2& i2)
-    : m_parametric_distance_along_segment_2(pds)
-    , m_intersect_2(i2)
+  Compare_relative_intersection_along_segment_2(const K& kernel)
+    : m_intersect_2(kernel.intersect_2_object())
+    , m_compare_distance_2(kernel.compare_distance_2_object())
+    , m_construct_line_2(kernel.construct_line_2_object())
+    , m_construct_source_2(kernel.construct_source_2_object())
+    , m_construct_target_2(kernel.construct_target_2_object())
   {
   }
 
-  CGAL::Comparison_result operator () (const Segment_2& s1, const Line_2& l1, const Segment_2& s2, const Line_2& l2)
+  result_type operator () (const Segment_2& s1, const Line_2& l1, const Segment_2& s2, const Line_2& l2) const 
   {
-    typedef typename cpp11::result_of<Intersect_2(Line_2, Line_2)>::type LineLineIntersectResult;
+    typedef typename CGAL::cpp11::result_of<Intersect_2(Line_2, Line_2)>::type LineLineIntersectResult;
   
-    Line_2 s1Line(s1.source(), s1.target());
+    Line_2 s1Line(m_construct_line_2(s1));
     
-    Line_2 s2Line(s2.source(), s2.target());
+    Line_2 s2Line(m_construct_line_2(s2));
     
-    LineLineIntersectResult intersectResult1 = m_intersect_2(s1Line, l1);
+    LineLineIntersectResult intersectResult1(m_intersect_2(s1Line, l1));
     
     assert(intersectResult1);
     
-    FT t1(0.0);
+    Point_2 p1;
+
+    FT t1;
     
     if (intersectResult1)
     {
@@ -202,7 +397,8 @@ public:
       
       if (result)
       {
-        t1 = m_parametric_distance_along_segment_2(s1.source(), s1.target(), *result);
+        t1 = m_parametric_distance_along_segment_2(s1, *result);
+        p1 = *result;
         assert(t1 >= FT(-0.00001) && t1 <= FT(1.00001));
       }
     }
@@ -211,7 +407,8 @@ public:
     
     assert(intersectResult2);
     
-    FT t2(0.0);
+    FT t2;
+    Point_2 p2;
     
     if (intersectResult2)
     {
@@ -221,23 +418,64 @@ public:
       
       if (result)
       {
-        t2 = m_parametric_distance_along_segment_2(s2.source(), s2.target(), *result);
+        t2 = m_parametric_distance_along_segment_2(s2, *result);
+        p2 = *result;
         assert(t2 >= FT(-0.00001) && t2 <= FT(1.00001));
       }
     }
     
+    result_type predicateResult = m_compare_distance_2(s1.source(), p1, s2.source(), p2);
+    
+    return predicateResult;
+    /*
     if (t1 == t2)
     {
+      if (predicateResult != CGAL::EQUAL)
+      {
+        std::cout << "HERE: " << __LINE__ << std::endl;
+        std::cout << "Was " << predicateResult << " , expected " << CGAL::EQUAL << std::endl;
+        std::cout << "s1 = " << s1 << std::endl;
+        std::cout << "l1 = " << l1 << std::endl;
+        std::cout << "p1 = " << p1 << std::endl;
+        std::cout << "s2 = " << s2 << std::endl;
+        std::cout << "l2 = " << l2 << std::endl;
+        std::cout << "p2 = " << p2 << std::endl;
+      }
+      
       return CGAL::EQUAL;
     }
     else if (t1 < t2)
     {
+      if (predicateResult != CGAL::SMALLER)
+      {
+        std::cout << "HERE: " << __LINE__ << std::endl;
+        std::cout << "Was " << predicateResult << " , expected " << CGAL::SMALLER << std::endl;
+        std::cout << "s1 = " << s1 << std::endl;
+        std::cout << "l1 = " << l1 << std::endl;
+        std::cout << "p1 = " << p1 << std::endl;
+        std::cout << "s2 = " << s2 << std::endl;
+        std::cout << "l2 = " << l2 << std::endl;
+        std::cout << "p2 = " << p2 << std::endl;
+      }
+      
       return CGAL::SMALLER;
     }
     else
     {
+      if (predicateResult != CGAL::LARGER)
+      {
+        std::cout << "HERE: " << __LINE__ << std::endl;
+        std::cout << "Was " << predicateResult << " , expected " << CGAL::LARGER << std::endl;
+        std::cout << "s1 = " << s1 << std::endl;
+        std::cout << "l1 = " << l1 << std::endl;
+        std::cout << "p1 = " << p1 << std::endl;
+        std::cout << "s2 = " << s2 << std::endl;
+        std::cout << "l2 = " << l2 << std::endl;
+        std::cout << "p2 = " << p2 << std::endl;
+      }
+      
       return CGAL::LARGER;
-    }
+    }*/
   }
 };
 
@@ -260,10 +498,22 @@ public:
   typedef typename CGAL::internal::Project_triangle_3_to_triangle_2<Kernel> Project_triangle_3_to_triangle_2;
   typedef typename CGAL::internal::Flatten_triangle_3_along_segment_2<Kernel> Flatten_triangle_3_along_segment_2;
   typedef typename Kernel::Orientation_2 Orientation_2;
+  typedef typename Kernel::Construct_triangle_3 Construct_triangle_3;
+  typedef typename Kernel::Construct_vertex_2 Construct_vertex_2;
+  typedef typename Kernel::Construct_segment_2 Construct_segment_2;
+  typedef typename Kernel::Construct_source_2 Construct_source_2;
+  typedef typename Kernel::Construct_target_2 Construct_target_2;
+  
+  typedef typename Kernel::Boolean result_type;
   
 private:
   Project_triangle_3_to_triangle_2 m_project_triangle_3_to_triangle_2;
   Flatten_triangle_3_along_segment_2 m_flatten_triangle_3_along_segment_2;
+  Construct_triangle_3 m_construct_triangle_3;
+  Construct_vertex_2 m_construct_vertex_2;
+  Construct_segment_2 m_construct_segment_2;
+  Construct_source_2 m_construct_source_2;
+  Construct_target_2 m_construct_target_2;
   Orientation_2 m_orientation_2;
   
 public:
@@ -272,20 +522,25 @@ public:
   {
   }
   
-  Is_saddle_vertex(Project_triangle_3_to_triangle_2 pt3tt2, Flatten_triangle_3_along_segment_2 ft3as2, Orientation_2 o2)
-    : m_project_triangle_3_to_triangle_2(pt3tt2)
+  Is_saddle_vertex(const Kernel& kernel, const Project_triangle_3_to_triangle_2& pt3tt2, const Flatten_triangle_3_along_segment_2& ft3as2, const Orientation_2& o2)
+    : m_orientation_2(kernel.orientation_2_object())
+    , m_construct_triangle_3(kernel.construct_triangle_3_object())
+    , m_construct_vertex_2(kernel.construct_vertex_2_object())
+    , m_construct_segment_2(kernel.construct_segment_2_object())
+    , m_construct_source_2(kernel.construct_source_2_object())
+    , m_construct_target_2(kernel.construct_target_2_object())
+    , m_project_triangle_3_to_triangle_2(pt3tt2)
     , m_flatten_triangle_3_along_segment_2(ft3as2)
-    , m_orientation_2(o2)
   {
   }
   
-  bool operator() (vertex_descriptor v, Polyhedron& P)
+  result_type operator() (vertex_descriptor v, Polyhedron& P) const 
   {
     return (*this)(v, P, CGAL::get(CGAL::vertex_point, P));
   }
   
   template<class VertexPointMap>
-  bool operator() (vertex_descriptor v, Polyhedron& P, VertexPointMap const& pointMap)
+  result_type operator() (vertex_descriptor v, const Polyhedron& P, VertexPointMap const& pointMap) const 
   {
     halfedge_descriptor startEdge = CGAL::halfedge(v, P);
     
@@ -302,11 +557,15 @@ public:
     
     Triangle_2 baseFace2(m_project_triangle_3_to_triangle_2(baseFace3));
     
-    Segment_2 baseSegment(baseFace2[0], baseFace2[2]);
-
-    Segment_2 nextSegment(baseFace2[1], baseFace2[0]);
+    Point_2 A(m_construct_vertex_2(baseFace2, 0));
+    Point_2 B(m_construct_vertex_2(baseFace2, 1));
+    Point_2 C(m_construct_vertex_2(baseFace2, 2));
     
-    CGAL::Orientation baseOrientation = m_orientation_2(baseFace2[0], baseFace2[2], baseFace2[1]);
+    Segment_2 baseSegment(m_construct_segment_2(A, C));
+
+    Segment_2 nextSegment(m_construct_segment_2(B, A));
+    
+    CGAL::Orientation baseOrientation = m_orientation_2(m_construct_vertex_2(baseFace2, 0), m_construct_vertex_2(baseFace2, 2), m_construct_vertex_2(baseFace2, 1));
     
     if (baseOrientation == CGAL::COLLINEAR)
     {
@@ -315,32 +574,26 @@ public:
     
     do
     {
-      //std::cout << "Here:" << __LINE__ << std::endl;
-      
       prevPoint = nextPoint;
       currentEdge = CGAL::next(currentEdge, P);
       nextPoint = pointMap[CGAL::target(currentEdge, P)];
       currentEdge = CGAL::opposite(currentEdge, P);
       
-      Triangle_3 currentFace3(rootPoint, nextPoint, prevPoint);
-      //std::cout << "Here:" << __LINE__ << std::endl;
+      Triangle_3 currentFace3(m_construct_triangle_3(rootPoint, nextPoint, prevPoint));
       Triangle_2 currentFace2(m_flatten_triangle_3_along_segment_2(currentFace3, 2, nextSegment));
-      //std::cout << "Here:" << __LINE__ << std::endl;
-
-      if (m_orientation_2(baseSegment[0], baseSegment[1], currentFace2[2]) != baseOrientation && m_orientation_2(baseSegment[0], baseSegment[1], currentFace2[1]) == baseOrientation)
+      
+      if (m_orientation_2(m_construct_source_2(baseSegment), m_construct_target_2(baseSegment), m_construct_vertex_2(currentFace2, 2)) != baseOrientation && m_orientation_2(m_construct_source_2(baseSegment), m_construct_target_2(baseSegment), m_construct_vertex_2(currentFace2, 1)) == baseOrientation)
       {
         return true;
       }
       
-      nextSegment = Segment_2(currentFace2[1], currentFace2[0]);
+      nextSegment = m_construct_segment_2(currentFace2[1], currentFace2[0]);
     }
     while (currentEdge != startEdge);
     
     return false;
   }
 };
-
-
 
 } // namespace internal
 

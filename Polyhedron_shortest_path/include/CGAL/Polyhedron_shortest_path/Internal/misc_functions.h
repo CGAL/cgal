@@ -61,97 +61,11 @@ size_t edge_index(typename boost::graph_traits<Polyhedron>::halfedge_descriptor 
   return count;
 }
 
-template <class P, class FT>
-P interpolate_points(const P& p0, const P& p1, FT t)
-{
-  FT t0 = FT(1.0) - t;
-  
-  return P(CGAL::ORIGIN) + (((p0 - P(CGAL::ORIGIN)) * t0) + ((p1 - P(CGAL::ORIGIN)) * t));
-}
-
-template <class V>
-V shift_vector_3_left(const V& v, size_t by)
-{
-  return V(v[by], v[(by + 1) % 3], v[(by + 2) % 3]);
-}
-
-template <class V>
-V shift_vector_3_right(const V& v, size_t by)
-{
-  by %= 3;
-  return V(v[(3 - by) % 3], v[(4 - by) % 3], v[(5 - by) % 3]);
-}
-
-/*
-enum Line_relation
-{
-  LINE_RELATION_UNKNOWN = 0,
-
-  LINE_RELATION_INTERSECT,
-  LINE_RELATION_NO_INTERSECT,
-  LINE_RELATION_PARALLEL,
-};
-
 template <class FT>
-struct Intersection_result
+FT my_sqrt(const FT& x)
 {
-  Intersection_result()
-  {
-    relation = LINE_RELATION_UNKNOWN;
-    t0 = 0.0;
-    t1 = 0.0;
-  }
-
-  Intersection_result(Line_relation _relation, FT _t0, FT _t1)
-  {
-    relation = _relation;
-    t0 = _t0;
-    t1 = _t1;
-  }
-
-  Line_relation relation;
-  FT t0;
-  FT t1;
-};
-
-template <class FT, class V>
-FT cross_product(const V& v0, const V& v1)
-{
-  return v0.x()*v1.y() - v0.y()*v1.x();
+  return FT(std::sqrt(CGAL::to_double(x)));
 }
-
-template <class FT, class R, class V>
-Intersection_result<FT> intersect_rays(const R& r0, const R& r1)
-{
-  V r0D = r0.to_vector();
-  V r1D = r1.to_vector();
-
-  FT crossProd = cross_product<FT,V>(r0D, r1D);
-
-  V diff = r1.start() - r0.start();
-
-  FT r0Cross = cross_product<FT,V>(diff, r0D);
-  FT r1Cross = cross_product<FT,V>(diff, r1D);
-
-  if (CGAL::abs(crossProd) < 1e-10)
-  {
-    if (CGAL::abs(r0Cross) < 1e-10 || CGAL::abs(r1Cross) < 1e-10)
-    {
-      return Intersection_result<FT>(LINE_RELATION_PARALLEL, 0.0, 0.0);
-    }
-    else
-    {
-      return Intersection_result<FT>(LINE_RELATION_NO_INTERSECT, 0.0, 0.0);
-    }
-  }
-
-  // Yes, this is correct
-  FT t1 = r0Cross / crossProd;
-  FT t0 = r1Cross / crossProd;
-
-  return Intersection_result<FT>(LINE_RELATION_INTERSECT, t0, t1);
-}
-*/
 
 } // namespace internal
 

@@ -16,8 +16,8 @@
 #include <CGAL/boost/graph/properties_Polyhedron_3.h>
 #include <CGAL/boost/graph/iterator.h>
 
-#include <CGAL/Polyhedron_shortest_path/Internal/Cone_expansion_event.h>
-#include <CGAL/Polyhedron_shortest_path/Internal/misc_functions.h>
+#include <CGAL/Polyhedron_shortest_path/internal/Cone_expansion_event.h>
+#include <CGAL/Polyhedron_shortest_path/internal/misc_functions.h>
 
 namespace CGAL
 {
@@ -49,16 +49,11 @@ private:
   typedef typename GraphTraits::face_descriptor face_descriptor;
   typedef typename GraphTraits::halfedge_descriptor halfedge_descriptor;
   typedef typename GraphTraits::vertex_descriptor vertex_descriptor;
-  typedef typename Traits::Orientation_2 Orientation_2;
-  typedef typename Traits::Compute_squared_distance_2 Compute_squared_distance_2;
-  typedef typename Traits::Construct_triangle_location_2 Construct_triangle_location_2;
   typedef typename CGAL::internal::Cone_expansion_event<Traits> Cone_expansion_event;
 
 private:
   // These could be pulled back into a 'context' class to save space
-  Orientation_2 m_orientation_2;
-  Compute_squared_distance_2 m_compute_squared_distance_2;
-  Construct_triangle_location_2 m_construct_triangle_location_2;
+  Traits& m_traits;
   Polyhedron& m_polyhedron;
   
   halfedge_descriptor m_entryEdge;
@@ -91,9 +86,7 @@ private:
   
 public:
   Cone_tree_node(Traits& traits, Polyhedron& polyhedron, size_t treeId)
-    : m_orientation_2(traits.orientation_2_object())
-    , m_compute_squared_distance_2(traits.compute_squared_distance_2_object())
-    , m_construct_triangle_location_2(traits.construct_triangle_location_2_object())
+    : m_traits(traits)
     , m_polyhedron(polyhedron)
     , m_sourceImage(Point_2(CGAL::ORIGIN))
     , m_layoutFace(Point_2(CGAL::ORIGIN),Point_2(CGAL::ORIGIN),Point_2(CGAL::ORIGIN))
@@ -110,9 +103,7 @@ public:
   }
   
   Cone_tree_node(Traits& traits, Polyhedron& polyhedron, size_t treeId, halfedge_descriptor entryEdge)
-    : m_orientation_2(traits.orientation_2_object())
-    , m_compute_squared_distance_2(traits.compute_squared_distance_2_object())
-    , m_construct_triangle_location_2(traits.construct_triangle_location_2_object())
+    : m_traits(traits)
     , m_polyhedron(polyhedron)
     , m_entryEdge(entryEdge)
     , m_sourceImage(Point_2(CGAL::ORIGIN))
@@ -130,9 +121,7 @@ public:
   }
 
   Cone_tree_node(Traits& traits, Polyhedron& polyhedron, halfedge_descriptor entryEdge, const Triangle_2& layoutFace, const Point_2& sourceImage, const FT& pseudoSourceDistance, const Point_2& windowLeft, const Point_2& windowRight, Node_type nodeType = INTERVAL)
-    : m_orientation_2(traits.orientation_2_object())
-    , m_compute_squared_distance_2(traits.compute_squared_distance_2_object())
-    , m_construct_triangle_location_2(traits.construct_triangle_location_2_object())
+    : m_traits(traits)
     , m_polyhedron(polyhedron)
     , m_entryEdge(entryEdge)
     , m_sourceImage(sourceImage)
@@ -226,7 +215,8 @@ public:
   
   FT distance_to_root(const Point_2& point) const
   {
-    return CGAL::sqrt(m_compute_squared_distance_2(point, m_sourceImage)) + m_pseudoSourceDistance;
+    typename Traits::Compute_squared_distance_2 csd2(m_traits.compute_squared_distance_2_object());
+    return CGAL::internal::my_sqrt(csd2(point, m_sourceImage)) + m_pseudoSourceDistance;
   }
   
   FT distance_from_source_to_root() const
@@ -266,13 +256,15 @@ public:
   
   bool inside_window(const Point_2& point) const
   {
+    typename Traits::Orientation_2 orientation_2(m_traits.orientation_2_object());
     Point_2 sourceImagePoint(source_image());
-    return m_orientation_2(sourceImagePoint, m_windowLeft, point) == CGAL::RIGHT_TURN && m_orientation_2(sourceImagePoint, m_windowRight, point) == CGAL::LEFT_TURN;
+    return orientation_2(sourceImagePoint, m_windowLeft, point) == CGAL::RIGHT_TURN && orientation_2(sourceImagePoint, m_windowRight, point) == CGAL::LEFT_TURN;
   }
 
   Point_2 target_vertex_location() const
   {
-    return m_layoutFace[2];
+    typename Traits::Construct_vertex_2 cv2(m_traits.construct_vertex_2_object());
+    return cv2(m_layoutFace, 2);
   }
   
   bool is_target_vertex_inside_window() const
@@ -282,39 +274,40 @@ public:
   
   bool has_left_side() const
   {
+    typename Traits::Orientation_2 orientation_2(m_traits.orientation_2_object());
+    
     if (is_source_node())
     {
       return true;
     }
-    //Ray_2 leftBoundary = left_boundary();
-    //std::cout << "Left side check: " << m_orientation_2(source_image(), m_windowLeft, target_vertex_location()) << " vs. " << m_orientation_2(leftBoundary.source(), leftBoundary.point(1), target_vertex_location()) << std::endl;
-    
-    return m_orientation_2(source_image(), m_windowLeft, target_vertex_location()) == CGAL::RIGHT_TURN;
+
+    return orientation_2(source_image(), m_windowLeft, target_vertex_location()) == CGAL::RIGHT_TURN;
   }
   
   bool has_right_side() const
   {
-    //Ray_2 rightBoundary = right_boundary();
-    //std::cout << "Right side check: " << m_orientation_2(source_image(), m_windowRight, target_vertex_location()) << " vs. " << m_orientation_2(rightBoundary.source(), rightBoundary.point(1), target_vertex_location()) << std::endl;
-    
-    return m_orientation_2(source_image(), m_windowRight, target_vertex_location()) == CGAL::LEFT_TURN;
+    typename Traits::Orientation_2 orientation_2(m_traits.orientation_2_object());
+    return orientation_2(source_image(), m_windowRight, target_vertex_location()) == CGAL::LEFT_TURN;
   }
   
   Segment_2 left_child_base_segment() const
   {
+    typename Traits::Construct_vertex_2 cv2(m_traits.construct_vertex_2_object());
     // reversed to maintain consistent triangle winding on the child
-    return Segment_2(m_layoutFace[0], m_layoutFace[2]);
+    return Segment_2(cv2(m_layoutFace, 0), cv2(m_layoutFace, 2));
   }
   
   Segment_2 right_child_base_segment() const
   {
+    typename Traits::Construct_vertex_2 cv2(m_traits.construct_vertex_2_object());
     // reversed to maintain consistent triangle winding on the child
-    return Segment_2(m_layoutFace[2], m_layoutFace[1]);
+    return Segment_2(cv2(m_layoutFace, 2), cv2(m_layoutFace, 1));
   }
   
   Segment_2 entry_segment() const
   {
-    return Segment_2(m_layoutFace[0], m_layoutFace[1]);
+    typename Traits::Construct_vertex_2 cv2(m_traits.construct_vertex_2_object());
+    return Segment_2(cv2(m_layoutFace, 0), cv2(m_layoutFace, 1));
   }
    
   bool has_middle_children() const

@@ -52,8 +52,7 @@ BOOST_AUTO_TEST_CASE( test_find_nearest_face_location_above_surface )
   
   Traits traits;
   
-  Traits::Construct_barycentric_coordinate_3 construct_barycentric_coordinate_3(traits.construct_barycentric_coordinate_3_object());
-  Traits::Construct_triangle_location_3 construct_triangle_location_3(traits.construct_triangle_location_3_object());
+  Traits::Construct_barycenter_3 construct_barycenter_3(traits.construct_barycenter_3_object());
   
   Polyhedron_3 polyhedron;
   
@@ -94,11 +93,11 @@ BOOST_AUTO_TEST_CASE( test_find_nearest_face_location_above_surface )
     
     Barycentric_coordinate location = CGAL::test::random_coordinate<FT, Barycentric_coordinate>(random);
     
-    Point_3 location3d = construct_triangle_location_3(faceTriangle, location);
+    Point_3 location3d = construct_barycenter_3(faceTriangle[0], location[0], faceTriangle[1], location[1], faceTriangle[2], location[2]);
     
     Ray_3 rayPointingDown(location3d + Vector_3(FT(0.0), FT(0.0), FT(10.0)), location3d);
     
-    Polyhedron_shortest_path::Face_location_pair faceLocation = shortestPaths.get_nearest_face_location(rayPointingDown);
+    Polyhedron_shortest_path::Face_location faceLocation = shortestPaths.get_nearest_face_location(rayPointingDown);
     
     BOOST_CHECK_EQUAL(faceIndexMap[face], faceIndexMap[faceLocation.first]);
     BOOST_CHECK_CLOSE(location[0], faceLocation.second[0], FT(0.0001));
@@ -108,7 +107,7 @@ BOOST_AUTO_TEST_CASE( test_find_nearest_face_location_above_surface )
   
   Ray_3 outsideRay(Point_3(FT(-1.0), FT(-1.0), FT(6.0)), Point_3(FT(-1.0), FT(-1.0), FT(0.0)));
   
-  Polyhedron_shortest_path::Face_location_pair emptyFaceLocation = shortestPaths.get_nearest_face_location(outsideRay);
+  Polyhedron_shortest_path::Face_location emptyFaceLocation = shortestPaths.get_nearest_face_location(outsideRay);
     
   BOOST_CHECK(GraphTraits::null_face() == emptyFaceLocation.first);
 }
