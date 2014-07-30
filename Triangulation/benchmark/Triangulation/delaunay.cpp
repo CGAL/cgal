@@ -65,6 +65,5 @@ int main(int argc, char **argv)
     go<7>(N);
     go<8>(N);
 
-
     return 0;
 }
