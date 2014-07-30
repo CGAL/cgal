@@ -7,25 +7,6 @@
 #include <QKeySequence>
 #include <fstream>
 
-namespace
-{
-  struct Shortest_paths_points_visitor
-  {
-    typedef std::vector<typename Kernel::Point_3> Container; 
-    Container& m_container;
-
-    Shortest_paths_points_visitor(Container& container)
-      : m_container(container)
-    {
-    }
-    
-    void point(const Kernel::Point_3& point)
-    {
-      m_container.push_back(point);
-    }
-  };
-}
-
 Scene_polyhedron_shortest_path_item::Scene_polyhedron_shortest_path_item() 
   : Scene_polyhedron_item_decorator(NULL, false)
   , m_shortestPaths(NULL)
@@ -59,21 +40,21 @@ bool Scene_polyhedron_shortest_path_item::supportsRenderingMode(RenderingMode m)
   case PointsPlusNormals:
     return true;
   case Wireframe:
-    return false;
+    return true;
   case Flat:
-    return false;
+    return true;
   case FlatPlusEdges:
-    return false;
+    return true;
   case Gouraud:
-    return false;
+    return true;
   default:
-    return false;
+    return true;
   }
 }
   
 void Scene_polyhedron_shortest_path_item::draw() const
 {
-  if (renderingMode() == Points || renderingMode() == PointsPlusNormals)
+  if (supportsRenderingMode(renderingMode()))
   {
     draw_points();
   }
@@ -213,7 +194,7 @@ bool Scene_polyhedron_shortest_path_item::get_mouse_ray(QMouseEvent* mouseEvent,
   return found;
 }
 
-void Scene_polyhedron_shortest_path_item::remove_nearest_point(const Face_location_pair& faceLocation)
+void Scene_polyhedron_shortest_path_item::remove_nearest_point(const Face_location& faceLocation)
 {
   Polyhedron_shortest_path_traits::Compute_squared_distance_3 computeSquaredDistance3;
   
@@ -241,7 +222,7 @@ void Scene_polyhedron_shortest_path_item::remove_nearest_point(const Face_locati
   }
 }
 
-bool Scene_polyhedron_shortest_path_item::get_as_edge_point(Scene_polyhedron_shortest_path_item::Face_location_pair& inOutLocation)
+bool Scene_polyhedron_shortest_path_item::get_as_edge_point(Scene_polyhedron_shortest_path_item::Face_location& inOutLocation)
 {
   size_t minIndex = 0;
   FT minCoord(inOutLocation.second[0]);
@@ -278,7 +259,7 @@ bool Scene_polyhedron_shortest_path_item::get_as_edge_point(Scene_polyhedron_sho
   inOutLocation.second = Barycentric_coordinate(coords[0], coords[1], coords[2]);
 }
 
-bool Scene_polyhedron_shortest_path_item::get_as_vertex_point(Scene_polyhedron_shortest_path_item::Face_location_pair& inOutLocation)
+bool Scene_polyhedron_shortest_path_item::get_as_vertex_point(Scene_polyhedron_shortest_path_item::Face_location& inOutLocation)
 {
   size_t maxIndex = 0;
   FT maxCoord(inOutLocation.second[0]);
@@ -302,7 +283,7 @@ bool Scene_polyhedron_shortest_path_item::run_point_select(const Ray_3& ray)
 {
   ensure_aabb_object();
   
-  Face_location_pair faceLocation = m_shortestPaths->get_nearest_face_location(ray, m_aabbTree);
+  Face_location faceLocation = m_shortestPaths->get_nearest_face_location(ray, m_aabbTree);
   
   if (faceLocation.first == GraphTraits::null_face())
   {
@@ -364,9 +345,7 @@ bool Scene_polyhedron_shortest_path_item::run_point_select(const Ray_3& ray)
             
         m_messages->information(tr("Computing shortest path polyline..."));
             
-        Shortest_paths_points_visitor visitor(polylines->polylines.back());
-        
-        m_shortestPaths->shortest_path_points(faceLocation.first, faceLocation.second, visitor);
+        m_shortestPaths->shortest_path_points(faceLocation.first, faceLocation.second, std::back_inserter(polylines->polylines.back()));
 
         m_messages->information(tr("Done"));
         
@@ -450,11 +429,13 @@ bool Scene_polyhedron_shortest_path_item::deferred_load(Scene_polyhedron_item* p
   while (std::getline(inFile, line))
   {
     std::istringstream lineStream(line);
-    lineStream >> faceId >> location;
+    FT coords[3];
+    lineStream >> faceId >> coords[0] >> coords[1] >> coords[2];
+    location = Barycentric_coordinate(coords[0], coords[1], coords[2]);
     
     // std::cout << "Read in face: " << faceId << " , " << location << std::endl;
     
-    m_faceLocations.push_back(Face_location_pair(listOfFaces[faceId], location));
+    m_faceLocations.push_back(Face_location(listOfFaces[faceId], location));
   }
 
   return true;
@@ -472,7 +453,7 @@ bool Scene_polyhedron_shortest_path_item::save(const std::string& file_name) con
   for(Face_locations::const_iterator it = m_faceLocations.begin(); it != m_faceLocations.end(); ++it) 
   { 
     // std::cout << "Output face location: " << it->first->id() << " , " << it->second << std::endl;
-    out << it->first->id() << " " << it->second << std::endl;
+    out << it->first->id() << " " << it->second[0] << " " << it->second[1] << " " << it->second[3] << std::endl;
   }
 
   return true;

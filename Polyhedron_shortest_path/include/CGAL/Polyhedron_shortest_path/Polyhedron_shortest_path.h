@@ -20,6 +20,7 @@
 
 #include <CGAL/Polyhedron_shortest_path/internal/Cone_tree.h>
 #include <CGAL/Polyhedron_shortest_path/internal/misc_functions.h>
+#include <CGAL/Polyhedron_shortest_path/internal/Barycentric.h>
 
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/boost/graph/iterator.h>
@@ -135,31 +136,34 @@ private:
   
 private:
 
-  template <class Visitor>
+  template <class OutputIterator>
   struct Point_path_visitor_wrapper
   {
     Polyhedron_shortest_path& m_owner;
-    Visitor& m_visitor;
+    OutputIterator m_output;
     
-    Point_path_visitor_wrapper(Polyhedron_shortest_path& owner, Visitor& visitor)
+    Point_path_visitor_wrapper(Polyhedron_shortest_path& owner, OutputIterator output)
       : m_owner(owner)
-      , m_visitor(visitor)
+      , m_output(output)
     {
     }
     
     void edge(halfedge_descriptor edge, FT t)
     {
-      m_visitor.point(m_owner.get_edge_location(edge, t));
+      *m_output = m_owner.get_edge_location(edge, t);
+      ++m_output;
     }
     
     void vertex(vertex_descriptor vertex)
     {
-      m_visitor.point(m_owner.get_vertex_location(vertex));
+      *m_output = m_owner.get_vertex_location(vertex);
+      ++m_output;
     }
     
     void face(face_descriptor face, Barycentric_coordinate location)
     {
-      m_visitor.point(m_owner.get_face_location(face, location));
+      *m_output = m_owner.get_face_location(face, location);
+      ++m_output;
     }
   };
 
@@ -276,7 +280,7 @@ private:
 #endif
   }
 
-  Point_2 construct_barycenter_in_triangle_2(const Triangle_2& t, const Barycentric_coordinate& b)
+  Point_2 construct_barycenter_in_triangle_2(const Triangle_2& t, const Barycentric_coordinate& b) const 
   {
     typename Traits::Construct_vertex_2 cv2(m_traits.construct_vertex_2_object());
     typename Traits::Construct_barycentric_coordinate_weight cbcw(m_traits.construct_barycentric_coordinate_weight_object());
@@ -285,13 +289,13 @@ private:
     return cb2(cv2(t, 0), cbcw(b, 0), cv2(t, 1), cbcw(b, 1), cv2(t, 2), cbcw(b, 2));
   }
   
-  Point_3 construct_barycenter_in_triangle_3(const Triangle_3& t, const Barycentric_coordinate& b)
+  Point_3 construct_barycenter_in_triangle_3(const Triangle_3& t, const Barycentric_coordinate& b) const 
   {
     typename Traits::Construct_vertex_3 cv3(m_traits.construct_vertex_3_object());
     typename Traits::Construct_barycentric_coordinate_weight cbcw(m_traits.construct_barycentric_coordinate_weight_object());
     typename Traits::Construct_barycenter_3 cb3(m_traits.construct_barycenter_3_object());
     
-    return cb3(cv2(t, 0), cbcw(b, 0), cv2(t, 1), cbcw(b, 1), cv2(t, 2), cbcw(b, 2));
+    return cb3(cv3(t, 0), cbcw(b, 0), cv3(t, 1), cbcw(b, 1), cv3(t, 2), cbcw(b, 2));
   }
   
   Triangle_3 triangle_from_halfedge(halfedge_descriptor edge) const
@@ -1905,13 +1909,14 @@ public:
   
   \param v The vertex to act as the query point
   
-  \param visitor A model of PolyhedronShortestPathPointsVisitor to receive the shortest path points
+  \param output An OutputIterator to receive the shortest path points as Point_3
   */
-  template <class Visitor>
-  void shortest_path_points(vertex_descriptor v, Visitor& visitor)
+  template <class OutputIterator>
+  void shortest_path_points(vertex_descriptor v, OutputIterator output)
   {
-    Point_path_visitor_wrapper<Visitor> wrapper(*this, visitor);
-    wrapper.vertex(v);
+    *output = get_vertex_location(v);
+    ++output;
+    Point_path_visitor_wrapper<OutputIterator> wrapper(*this, output);
     shortest_path_sequence(v, wrapper);
   }
   
@@ -1923,13 +1928,14 @@ public:
   
   \param location Barycentric coordinate on face of the query point
   
-  \param visitor A model of PolyhedronShortestPathPointsVisitor to receive the shortest path points
+  \param output An OutputIterator to receive the shortest path points as Point_3
   */
-  template <class Visitor>
-  void shortest_path_points(face_descriptor face, Barycentric_coordinate location, Visitor& visitor)
+  template <class OutputIterator>
+  void shortest_path_points(face_descriptor face, Barycentric_coordinate location, OutputIterator output)
   {
-    Point_path_visitor_wrapper<Visitor> wrapper(*this, visitor);
-    wrapper.face(face, location);
+    *output = get_face_location(face, location);
+    ++output;
+    Point_path_visitor_wrapper<OutputIterator> wrapper(*this, output);
     shortest_path_sequence(face, location, wrapper);
   }
   
@@ -1954,10 +1960,10 @@ public:
   */
   Point_3 get_edge_location(halfedge_descriptor edge, FT t) const
   {
-    typename Traits::Construct_barycenter_3 compute_barycenter_3(m_traits.compute_barycenter_3_object());
+    typename Traits::Construct_barycenter_3 construct_barycenter_3(m_traits.construct_barycenter_3_object());
     
     // Note: the parameter t is meant to be the weighted coordinate on the _endpoint_ (i.e. target) of the segment
-    return compute_barycenter_3(m_vertexPointMap[CGAL::target(edge, m_polyhedron)], t, m_vertexPointMap[CGAL::source(edge, m_polyhedron)]);
+    return construct_barycenter_3(m_vertexPointMap[CGAL::target(edge, m_polyhedron)], t, m_vertexPointMap[CGAL::source(edge, m_polyhedron)]);
   }
   
   /*!

@@ -16,6 +16,7 @@
 #include <CGAL/boost/graph/properties_Polyhedron_3.h>
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 
+#include <ostream>
 #include <boost/array.hpp>
 
 namespace CGAL {
@@ -201,6 +202,12 @@ public:
   Construct_barycentric_coordinate_in_triangle_3 construct_barycentric_coordinate_in_triangle_3_object() const { return m_construct_barycentric_coordinate_in_triangle_3_object; }
   Parametric_distance_along_segment_2 parametric_distance_along_segment_2_object() const { return m_parametric_distance_along_segment_2_object; }
 };
+
+template <class K, class P>
+std::ostream& operator<<(std::ostream& os, typename Polyhedron_shortest_path_default_traits<K,P>::Barycentric_coordinate b)
+{
+  os << b[0] << " " << b[1] << " " << b[2];
+}
 
 } // namespace CGAL
 

@@ -46,7 +46,7 @@ public:
   
   typedef CGAL::Polyhedron_shortest_path_default_traits<Kernel, Polyhedron> Polyhedron_shortest_path_traits;
   typedef CGAL::Polyhedron_shortest_path<Polyhedron_shortest_path_traits, VertexIndexMap, HalfedgeIndexMap, FaceIndexMap, VertexPointMap> Polyhedron_shortest_path;
-  typedef typename Polyhedron_shortest_path::Face_location_pair Face_location_pair;
+  typedef typename Polyhedron_shortest_path::Face_location Face_location;
   typedef typename Polyhedron_shortest_path::AABB_polyhedron_tree AABB_polyhedron_tree;
   
   typedef typename Polyhedron_shortest_path_traits::Barycentric_coordinate Barycentric_coordinate;
@@ -68,7 +68,7 @@ public:
     FACE_MODE = 2,
   };
   
-  typedef std::list<Face_location_pair> Face_locations;
+  typedef std::list<Face_location> Face_locations;
   
 private:
   Messages_interface* m_messages;
@@ -97,9 +97,9 @@ private:
   void ensure_shortest_paths_tree();
   
   bool run_point_select(const Kernel::Ray_3&);
-  void remove_nearest_point(const Face_location_pair& ray);
-  bool get_as_edge_point(Face_location_pair& inOutLocation);
-  bool get_as_vertex_point(Face_location_pair& inOutLocation);
+  void remove_nearest_point(const Face_location& ray);
+  bool get_as_edge_point(Face_location& inOutLocation);
+  bool get_as_vertex_point(Face_location& inOutLocation);
   
   
 public:
