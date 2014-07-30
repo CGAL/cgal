@@ -34,13 +34,13 @@
 
 
 ## Models ##
-- `CGAL::List_output<Kernel>`
+- `CGAL::List_output<Kernel, Output_Vertex_Iterator, Output_Edge_Iterator>`
 - `CGAL::Off_output<Kernel>`
 - `CGAL::Tds_output<Kernel>`
 
 
 ## Classes ##
-- `CGAL::Reconstruction_simplification_2<class Kernel, class InputIterator, class PointPMap, class MassPMap>`
+- `CGAL::Reconstruction_simplification_2<Kernel, PointPMap, MassPMap>`
 
 
 */
