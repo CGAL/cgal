@@ -43,16 +43,24 @@ namespace CGAL {
 
 \brief The class `List_output` is a model for the `OutputModule` concept.
 
-\details It returns Output-iterators which allow iterating over both the
-isolated vertices and the edges of the reconstructed shape
+\details It takes two `Output-Iterators`, one for storing the
+isolated points and one for storing the edges of the reconstructed shape.
 
 
 \tparam Kernel is the geometric kernel, used for the reconstruction and
 					simplification task.
+
+\tparam Output_Vertex_Iterator The `Output-Iterator` type for storing the points
+
+\tparam Output_Edge_Iterator The `Output-Iterator` type for storing the
+										edges (as Segments).
  */
 template<class Kernel, class Output_Vertex_Iterator, class Output_Edge_Iterator>
 class List_output {
 public:
+
+	/// \cond SKIP_IN_MANUAL
+
 	typedef typename Kernel::FT                 				    FT;
 	typedef typename Kernel::Point_2                 				Point;
 	typedef typename Kernel::Segment_2                 				Segment;
@@ -74,49 +82,44 @@ public:
 private:
 	Output_Vertex_Iterator m_v_it;
 	Output_Edge_Iterator m_e_it;
-public:
 
-	List_output(Output_Vertex_Iterator v_it, Output_Edge_Iterator e_it)  :
-		m_v_it(v_it), m_e_it(e_it) { }
+	void store_marked_vertices(Rt_2& rt2) {
 
+		for (Vertex_iterator vi = rt2.vertices_begin();
+				vi != rt2.vertices_end(); ++vi)
+		{
+			bool incident_edges_have_sample = false;
+			typename Rt_2::Edge_circulator start = rt2.incident_edges(vi);
 
-	  void store_marked_vertices(Rt_2& rt2) {
+			typename Rt_2::Edge_circulator cur = start;
 
-		  for (Vertex_iterator vi = rt2.vertices_begin();
-				  vi != rt2.vertices_end(); ++vi)
-		  {
-			  bool incident_edges_have_sample = false;
-			  typename Rt_2::Edge_circulator start = rt2.incident_edges(vi);
+			do {
+				if (!rt2.is_ghost(*cur)) {
+					incident_edges_have_sample = true;
+					break;
+				}
+				++cur;
+			} while (cur != start);
 
-			  typename Rt_2::Edge_circulator cur = start;
+			if (!incident_edges_have_sample) {
+				if ((*vi).has_sample_assigned()) {
+					Point p = (*vi).point();
+					*m_v_it = p;
+					m_v_it++;
+				}
+			}
+		}
+	}
 
-			  do {
-				  if (!rt2.is_ghost(*cur)) {
-					  incident_edges_have_sample = true;
-					  break;
-				  }
-				  ++cur;
-			  } while (cur != start);
-
-			  if (!incident_edges_have_sample) {
-				  if ((*vi).has_sample_assigned()) {
-					  Point p = (*vi).point();
-					   *m_v_it = p;
-					  m_v_it++;
-				  }
-			  }
-		  }
-	  }
-
-	  void store_marked_edges(Rt_2& rt2, int nb_ignore) {
-		 MultiIndex mindex;
-		 for (Finite_edges_iterator ei = rt2.finite_edges_begin(); ei != rt2.finite_edges_end(); ++ei)
-		 {
+	void store_marked_edges(Rt_2& rt2, int nb_ignore) {
+		MultiIndex mindex;
+		for (Finite_edges_iterator ei = rt2.finite_edges_begin(); ei != rt2.finite_edges_end(); ++ei)
+		{
 			Edge edge = *ei;
 			if (rt2.is_ghost(edge)) continue;
 			FT value = rt2.get_edge_relevance(edge); // >= 0
 			mindex.insert(Reconstruction_edge_2(edge, value));
-		 }
+		}
 
 
 		int nb_remove = (std::min)(nb_ignore, int(mindex.size()));
@@ -133,15 +136,42 @@ public:
 			(mindex.template get<0>()).erase(pedge);
 			Segment s(pedge.source()->point(), pedge.target()->point());
 			//edges.push_back(s);
-		 	*m_e_it = s;
+			*m_e_it = s;
 			m_e_it++;
 
 		}
-	  }
+	}
 
-	  void store_marked_elements(Rt_2& rt2, int nb_ignore) {
-		  store_marked_vertices(rt2);
-		  store_marked_edges(rt2, nb_ignore);
+	/// \endcond
+public:
+
+	/// \name Creation
+	  /// @{
+
+	/*!
+		 Instantiates a new List_output object
+				  for two given Output_Iterators.
+
+		 \param v_it An Output_Vertex_Iterator for storing the points.
+
+		 \param e_it An Output_Edge_Iterator for storing the edges (as Segments).
+	 */
+	List_output(Output_Vertex_Iterator v_it, Output_Edge_Iterator e_it)  :
+		m_v_it(v_it), m_e_it(e_it) { }
+	  /// @}
+
+
+
+	/*!
+	Extracts the solid edges and vertices from the `Reconstruction_simplification_2` module.
+
+	\param rt2 The `Reconstruction_triangulation_2` from which the solid edges and vertices are extracted.
+	\param nb_ignore The number of verticess to be ignored in the output.
+
+	*/
+	void store_marked_elements(Rt_2& rt2, int nb_ignore) {
+		store_marked_vertices(rt2);
+		store_marked_edges(rt2, nb_ignore);
 	}
 };
 

@@ -49,7 +49,6 @@
 #include <boost/multi_index/identity.hpp>
 #include <boost/multi_index/member.hpp>
 
-
 #define EPS   1e-15
 
 namespace CGAL {

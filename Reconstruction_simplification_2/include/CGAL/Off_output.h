@@ -1,10 +1,3 @@
-/*
- * Off_output.h
- *
- *  Created on: Jul 10, 2014
- *      Author: ivovigan
- */
-
 #ifndef OFF_OUTPUT_H_
 #define OFF_OUTPUT_H_
 
@@ -55,6 +48,10 @@ of the reconstructed shape via an std::ostream object.
  */
 template<class Kernel>
 class Off_output {
+
+
+	/// \cond SKIP_IN_MANUAL
+
 public:
 	typedef Reconstruction_triangulation_2<Kernel> Rt_2;
 	typedef typename Rt_2::Triangulation_data_structure Tds_2;
@@ -100,10 +97,20 @@ private:
 	}
 
 
+	/// \endcond
 public:
 
 	Off_output() : list_output(Point_it(isolated_points), Edge_it(edges)) { }
 
+
+
+	/*!
+	Extracts the solid edges and vertices from the `Reconstruction_simplification_2` module.
+
+	\param rt2 The `Reconstruction_triangulation_2` from which the solid edges and vertices are extracted.
+	\param nb_ignore The number of verticess to be ignored in the output.
+
+	*/
 	void store_marked_elements(Rt_2& rt2, int nb_ignore) {
 		list_output.store_marked_elements(rt2, nb_ignore);
 	}

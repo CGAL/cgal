@@ -1,10 +1,3 @@
-/*
- * Tds_output.h
- *
- *  Created on: Jul 10, 2014
- *      Author: ivovigan
- */
-
 #ifndef TDS_OUTPUT_H_
 #define TDS_OUTPUT_H_
 
@@ -52,6 +45,10 @@ namespace CGAL {
  */
 template<class Kernel>
 class Tds_output {
+
+	/// \cond SKIP_IN_MANUAL
+
+
 public:
 	typedef Reconstruction_triangulation_2<Kernel> Rt_2;
 	typedef typename Kernel::FT                 				    FT;
@@ -102,13 +99,28 @@ private:
 		}
 	}
 
+	/// \endcond
 public:
-	  void store_marked_elements(Rt_2& rt2, int nb_ignore) {
+
+	/*!
+	Extracts the solid edges and vertices from the `Reconstruction_simplification_2` module.
+
+	\param rt2 The `Reconstruction_triangulation_2` from which the solid edges and vertices are extracted.
+	\param nb_ignore The number of verticess to be ignored in the output.
+
+	*/
+	void store_marked_elements(Rt_2& rt2, int nb_ignore) {
 		  m_rt2 = rt2;
 		  mark_vertices();
 		  mark_edges();
 	}
 
+
+	/*!
+	Allows accessing the `Reconstruction_triangulation_2` of the `Reconstruction_simplification_2` module.
+
+	\param rt2 The `Reconstruction_triangulation_2`.
+	*/
 	void extract_reconstruction_tds(Rt_2& rt2) {
 		rt2 = m_rt2;
 	}
