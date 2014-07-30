@@ -60,14 +60,20 @@ void test(const int d, const string & type, const int N)
   cerr << "\nChecking topology and geometry..."
        << (rt.is_valid(true) ? "OK.\n" : "Error.\n");
 
-  cerr << "\nThe triangulation has current dimension " << rt.current_dimension() 
+  cerr << "\nThe triangulation using 'insert' has current dimension " << rt.current_dimension() 
        << " and " << rt.number_of_full_cells() << " full cells\n";
+  
+  cerr << "\nThe triangulation using 'insert_if_in_star' has current dimension " << rt.current_dimension() 
+       << " and " << rt_star_only.number_of_full_cells() << " full cells\n";
 
   // Export
-  std::ofstream off_stream_all("data/test_insert_all.off");
-  CGAL::export_triangulation_to_off(off_stream_all, rt);
-  std::ofstream off_stream_star_only("data/test_insert_if_in_star.off");
-  CGAL::export_triangulation_to_off(off_stream_star_only, rt_star_only);
+  if (d <= 3)
+  {
+    std::ofstream off_stream_all("data/test_insert_all.off");
+    CGAL::export_triangulation_to_off(off_stream_all, rt);
+    std::ofstream off_stream_star_only("data/test_insert_if_in_star.off");
+    CGAL::export_triangulation_to_off(off_stream_star_only, rt_star_only);
+  }
 }
 
 template< int D >
