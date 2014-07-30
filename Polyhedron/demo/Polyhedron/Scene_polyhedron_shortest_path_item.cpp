@@ -52,13 +52,31 @@ Scene_polyhedron_shortest_path_item::~Scene_polyhedron_shortest_path_item()
   
 bool Scene_polyhedron_shortest_path_item::supportsRenderingMode(RenderingMode m) const
 {
-  return true;
+  switch (m)
+  {
+  case Points:
+    return true;
+  case PointsPlusNormals:
+    return true;
+  case Wireframe:
+    return false;
+  case Flat:
+    return false;
+  case FlatPlusEdges:
+    return false;
+  case Gouraud:
+    return false;
+  default:
+    return false;
+  }
 }
   
 void Scene_polyhedron_shortest_path_item::draw() const
 {
-  draw_points();
-  draw_edges();
+  if (renderingMode() == Points || renderingMode() == PointsPlusNormals)
+  {
+    draw_points();
+  }
 }
 
 void Scene_polyhedron_shortest_path_item::draw(Viewer_interface*) const
@@ -378,43 +396,6 @@ bool Scene_polyhedron_shortest_path_item::eventFilter(QObject* /*target*/, QEven
     m_shiftHeld = modifiers.testFlag(Qt::ShiftModifier);
   }
   
-  // This is just a hack to avoid having to fire up QtCreator, eventually this will be replaced
-  // with an appropriate plugin GUI
-  if(event->type() == QEvent::KeyPress)
-  {
-    QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
-    
-    Qt::Key pressedKey = (Qt::Key) keyEvent->key();
-    
-    switch (pressedKey)
-    {
-    case Qt::Key_V:
-      //std::cout << "Set primitives mode to vertex" << std::endl;
-      m_primitivesMode = VERTEX_MODE;
-      break;
-    case Qt::Key_E:
-      //std::cout << "Set primitives mode to edge" << std::endl;
-      m_primitivesMode = EDGE_MODE;
-      break;
-    case Qt::Key_F:
-      //std::cout << "Set primitives mode to face" << std::endl;
-      m_primitivesMode = FACE_MODE;
-      break;
-    case Qt::Key_I:
-      //std::cout << "Set selection mode to insert" << std::endl;
-      m_selectionMode = INSERT_POINTS_MODE;
-      break;
-    case Qt::Key_R:
-      //std::cout << "Set selection mode to remove" << std::endl;
-      m_selectionMode = REMOVE_POINTS_MODE;
-      break;
-    case Qt::Key_O: // 'S' and 'H' are both used by the application already
-      //std::cout << "Set selection mode to shortest paths" << std::endl;
-      m_selectionMode = SHORTEST_PATH_MODE;
-      break;
-    }
-  }
-
   if (event->type() == QEvent::MouseButtonPress && m_shiftHeld)
   {
     QMouseEvent* mouseEvent = static_cast<QMouseEvent*>(event);
