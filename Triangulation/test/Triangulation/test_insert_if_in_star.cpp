@@ -28,8 +28,8 @@ void test(const int d, const string & type, const int N)
        << ") dimension with " << N << " points\n";
   assert(rt.empty());
   assert(rt_star_only.empty());
-
-  srand(10);
+  
+  srand(static_cast<unsigned int>(time(NULL)));
 
   // Insert first point (0, 0...)
   vector<double> coords(d);
@@ -51,7 +51,7 @@ void test(const int d, const string & type, const int N)
     
     p = Point(
       Bare_point(d, coords.begin(), coords.end()), 
-      static_cast<double>(rand() % 10000)/100000);
+      static_cast<double>(rand() % 10000)/1000000);
 
     rt.insert(p);
     rt_star_only.insert_if_in_star(p, first_vertex);
