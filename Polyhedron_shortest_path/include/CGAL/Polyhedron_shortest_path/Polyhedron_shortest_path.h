@@ -285,30 +285,60 @@ private:
 
   Point_2 construct_barycenter_in_triangle_2(const Triangle_2& t, const Barycentric_coordinate& b) const 
   {
-    typename Traits::Construct_vertex_2 cv2(m_traits.construct_vertex_2_object());
-    typename Traits::Construct_barycentric_coordinate_weight cbcw(m_traits.construct_barycentric_coordinate_weight_object());
-    typename Traits::Construct_barycenter_2 cb2(m_traits.construct_barycenter_2_object());
+    return construct_barycenter_in_triangle_2(t, b, m_traits);
+  }
+  
+  static Point_2 construct_barycenter_in_triangle_2(const Triangle_2& t, const Barycentric_coordinate& b, const Traits& traits)
+  {
+    typename Traits::Construct_vertex_2 cv2(traits.construct_vertex_2_object());
+    typename Traits::Construct_barycentric_coordinate_weight cbcw(traits.construct_barycentric_coordinate_weight_object());
+    typename Traits::Construct_barycenter_2 cb2(traits.construct_barycenter_2_object());
     
     return cb2(cv2(t, 0), cbcw(b, 0), cv2(t, 1), cbcw(b, 1), cv2(t, 2), cbcw(b, 2));
   }
   
   Point_3 construct_barycenter_in_triangle_3(const Triangle_3& t, const Barycentric_coordinate& b) const 
   {
-    typename Traits::Construct_vertex_3 cv3(m_traits.construct_vertex_3_object());
-    typename Traits::Construct_barycentric_coordinate_weight cbcw(m_traits.construct_barycentric_coordinate_weight_object());
-    typename Traits::Construct_barycenter_3 cb3(m_traits.construct_barycenter_3_object());
+    return construct_barycenter_in_triangle_3(t, b, m_traits);
+  }
+  
+  static Point_3 construct_barycenter_in_triangle_3(const Triangle_3& t, const Barycentric_coordinate& b, const Traits& traits) 
+  {
+    typename Traits::Construct_vertex_3 cv3(traits.construct_vertex_3_object());
+    typename Traits::Construct_barycentric_coordinate_weight cbcw(traits.construct_barycentric_coordinate_weight_object());
+    typename Traits::Construct_barycenter_3 cb3(traits.construct_barycenter_3_object());
     
     return cb3(cv3(t, 0), cbcw(b, 0), cv3(t, 1), cbcw(b, 1), cv3(t, 2), cbcw(b, 2));
   }
   
   Triangle_3 triangle_from_halfedge(halfedge_descriptor edge) const
   {
-    return CGAL::internal::triangle_from_halfedge<Triangle_3, FaceGraph, VertexPointMap>(edge, m_faceGraph, m_vertexPointMap);
+    return triangle_from_halfedge(edge, m_faceGraph, m_vertexPointMap);
+  }
+  
+  static Triangle_3 triangle_from_halfedge(halfedge_descriptor edge, const FaceGraph& faceGraph)
+  {
+    return triangle_from_halfedge(edge, faceGraph, CGAL::get(CGAL::vertex_point, faceGraph));
+  }
+  
+  static Triangle_3 triangle_from_halfedge(halfedge_descriptor edge, const FaceGraph& faceGraph, VertexPointMap vertexPointMap)
+  {
+    return CGAL::internal::triangle_from_halfedge<Triangle_3, FaceGraph, VertexPointMap>(edge, faceGraph, vertexPointMap);
   }
   
   Triangle_3 triangle_from_face(face_descriptor face) const
   {
-    return triangle_from_halfedge(CGAL::halfedge(face, m_faceGraph));
+    return triangle_from_face(face, m_faceGraph, m_vertexPointMap);
+  }
+  
+  static Triangle_3 triangle_from_face(face_descriptor face, const FaceGraph& faceGraph)
+  {
+    return triangle_from_halfedge(CGAL::halfedge(face, faceGraph), faceGraph, CGAL::get(CGAL::vertex_point, faceGraph));
+  }
+  
+  static Triangle_3 triangle_from_face(face_descriptor face, const FaceGraph& faceGraph, VertexPointMap vertexPointMap)
+  {
+    return triangle_from_halfedge(CGAL::halfedge(face, faceGraph), faceGraph, vertexPointMap);
   }
 
   bool window_distance_filter(Cone_tree_node* cone, Segment_2 windowSegment, bool reversed)
@@ -2076,7 +2106,37 @@ public:
   */
   Point_3 point(face_descriptor face, Barycentric_coordinate location) const
   {
-    return construct_barycenter_in_triangle_3(triangle_from_face(face), location);
+    return point(face, location, m_faceGraph, m_vertexPointMap, m_traits);
+  }
+  
+  /*!
+  \brief Returns the 3-dimensional coordinate of the given face and face location on the faceGraph.
+  
+  \param face Face of the faceGraph of the query point
+  
+  \param location Barycentric coordinate on face of the query point 
+  
+  \param faceGraph Face graph to perform face location
+  */
+  static Point_3 point(face_descriptor face, Barycentric_coordinate location, const FaceGraph& faceGraph, const Traits& traits = Traits()) 
+  {
+    return point(face, location, faceGraph, CGAL::get(CGAL::vertex_point, faceGraph), traits);
+  }
+  
+  /*!
+  \brief Returns the 3-dimensional coordinate of the given face and face location on the faceGraph.
+  
+  \param face Face of the faceGraph of the query point
+  
+  \param location Barycentric coordinate on face of the query point
+  
+  \param faceGraph Face graph to perform face location
+  
+  \param vertexPointMap Point map for `faceGraph`
+  */
+  static Point_3 point(face_descriptor face, Barycentric_coordinate location, const FaceGraph& faceGraph, VertexPointMap vertexPointMap, const Traits& traits = Traits()) 
+  {
+    return construct_barycenter_in_triangle_3(triangle_from_face(face, faceGraph, vertexPointMap), location, traits);
   }
   
   /*!
@@ -2088,10 +2148,34 @@ public:
   */
   Point_3 point(halfedge_descriptor edge, FT t) const
   {
-    typename Traits::Construct_barycenter_3 construct_barycenter_3(m_traits.construct_barycenter_3_object());
+    return point(edge, t, m_faceGraph, m_vertexPointMap, m_traits);
+  }
+  
+  /*!
+  \brief Returns the 3-dimensional coordinate of the given edge and a parametric location along that edge.
+  
+  \param edge Edge of the faceGraph to use
+  
+  \param t Parametric distance along edge
+  */
+  static Point_3 point(halfedge_descriptor edge, FT t, const FaceGraph& faceGraph, const Traits& traits = Traits())
+  {
+    return point(edge, t, faceGraph, CGAL::get(CGAL::vertex_point, faceGraph), traits);
+  }
+  
+  /*!
+  \brief Returns the 3-dimensional coordinate of the given edge and a parametric location along that edge.
+  
+  \param edge Edge of the faceGraph to use
+  
+  \param t Parametric distance along edge
+  */
+  static Point_3 point(halfedge_descriptor edge, FT t, const FaceGraph& faceGraph, VertexPointMap vertexPointMap, const Traits& traits = Traits())
+  {
+    typename Traits::Construct_barycenter_3 construct_barycenter_3(traits.construct_barycenter_3_object());
     
     // Note: the parameter t is meant to be the weighted coordinate on the _endpoint_ (i.e. target) of the segment
-    return construct_barycenter_3(m_vertexPointMap[CGAL::target(edge, m_faceGraph)], t, m_vertexPointMap[CGAL::source(edge, m_faceGraph)]);
+    return construct_barycenter_3(vertexPointMap[CGAL::target(edge, faceGraph)], t, vertexPointMap[CGAL::source(edge, faceGraph)]);
   }
   
   /*!
@@ -2107,14 +2191,26 @@ public:
   /*!
   \brief Returns a vertex location as a face location object
   
-  \param vertex Vertex of the faceGraph
+  \param vertex Vertex of the face graph
   */
   Face_location face_location(vertex_descriptor vertex) const
   {
-    typename Traits::Construct_barycentric_coordinate construct_barycentric_coordinate(m_traits.construct_barycentric_coordinate_object());
-    halfedge_descriptor he = CGAL::next(CGAL::halfedge(vertex, m_faceGraph), m_faceGraph);
-    face_descriptor locationFace = CGAL::face(he, m_faceGraph);
-    size_t edgeIndex = CGAL::internal::edge_index(he, m_faceGraph);
+    return face_location(vertex, m_faceGraph, m_traits);
+  }
+  
+  /*!
+  \brief Returns a vertex location as a face location object
+  
+  \param vertex Vertex of parameter `faceGraph`
+  
+  \param faceGraph Face graph to use
+  */
+  static Face_location face_location(vertex_descriptor vertex, const FaceGraph& faceGraph, const Traits& traits = Traits())
+  {
+    typename Traits::Construct_barycentric_coordinate construct_barycentric_coordinate(traits.construct_barycentric_coordinate_object());
+    halfedge_descriptor he = CGAL::next(CGAL::halfedge(vertex, faceGraph), faceGraph);
+    face_descriptor locationFace = CGAL::face(he, faceGraph);
+    size_t edgeIndex = CGAL::internal::edge_index(he, faceGraph);
     
     FT coords[3] = { FT(0.0), FT(0.0), FT(0.0) };
     
@@ -2131,9 +2227,20 @@ public:
   */
   Face_location face_location(halfedge_descriptor he, FT t) const
   {
-    typename Traits::Construct_barycentric_coordinate cbc(m_traits.construct_barycentric_coordinate_object());
-    face_descriptor locationFace = CGAL::face(he, m_faceGraph);
-    size_t edgeIndex = CGAL::internal::edge_index(he, m_faceGraph);
+    return face_location(he, t, m_faceGraph, m_traits);
+  }
+  
+    /*!
+  \brief Returns an edge location as a face location pair
+  
+  \param he halfedge of the faceGraph
+  \param t parametric distance along he
+  */
+  static Face_location face_location(halfedge_descriptor he, FT t, const FaceGraph& faceGraph, const Traits& traits = Traits())
+  {
+    typename Traits::Construct_barycentric_coordinate cbc(traits.construct_barycentric_coordinate_object());
+    face_descriptor locationFace = CGAL::face(he, faceGraph);
+    size_t edgeIndex = CGAL::internal::edge_index(he, faceGraph);
     
     const FT oneMinusT(FT(1.0) - t);
     
