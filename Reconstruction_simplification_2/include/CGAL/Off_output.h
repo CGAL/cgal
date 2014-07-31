@@ -111,7 +111,7 @@ public:
 
 	*/
 	void store_marked_elements(Rt_2& rt2) {
-		list_output.store_marked_elements(rt2, 0);
+		list_output.store_marked_elements(rt2);
 	}
 
 	/*!

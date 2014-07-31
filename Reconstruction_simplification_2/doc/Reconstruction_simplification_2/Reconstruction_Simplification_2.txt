@@ -126,6 +126,16 @@ points and the edges of the reconstructed shape are extracted and printed to the
 \cgalExample{Reconstruction_simplification_2/reconstruction_simplification_2_example.cpp}
 
 
+\subsubsection Reconstruction_simplification_2Output Output-Example
+
+To access the reconstructed vertices and edges, models which implement the OutputModule Concept can be used. The package offers three such models, CGAL::List_output<Kernel, Output_Vertex_Iterator, Output_Edge_Iterator>, CGAL::Off_output<Kernel>, CGAL::Tds_output<Kernel>
+
+
+\cgalExample{Reconstruction_simplification_2/reconstruction_simplification_2_output_example.cpp}
+
+
+
+
 
 */ 
 } /* namespace CGAL */
