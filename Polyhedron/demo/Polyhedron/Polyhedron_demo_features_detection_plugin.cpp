@@ -1,14 +1,15 @@
 #include <QApplication>
 #include <QMessageBox>
 #include <QMainWindow>
-#include "Kernel_type.h"
-#include "Polyhedron_type.h"
+#include "config.h"
 #include "Scene_points_with_normal_item.h"
 #include "Scene_polylines_item.h"
-
 #include "Polyhedron_demo_plugin_helper.h"
 #include "Polyhedron_demo_plugin_interface.h"
 
+#include <CGAL/Timer.h>
+#include <CGAL/Memory_sizer.h>
+#include <CGAL/compute_average_spacing.h>
 #include <CGAL/Voronoi_covariance_3/vcm_estimate_edges.h>
 
 #include "ui_Polyhedron_demo_features_detection_plugin.h"
@@ -51,6 +52,7 @@ class Polyhedron_demo_features_detection_dialog : public QDialog, private Ui::VC
     float offsetRadius() const { return m_inputOffsetRadius->value(); }
     float convolveRadius() const { return m_inputConvolveRadius->value(); }
     float threshold() const { return m_inputFeaturesThreshold->value(); }
+    float edgeRadius() const { return m_inputEdgeRadius->value(); }
 };
 
 void Polyhedron_demo_features_detection_plugin::on_actionDetectFeatures_triggered()
@@ -74,13 +76,32 @@ void Polyhedron_demo_features_detection_plugin::on_actionDetectFeatures_triggere
     if(!dialog.exec())
       return;
 
+    // Approximation of the radius by the average spacing
+    // TODO
+    const int nb_neighbors = 40;
+    double average_spacing = CGAL::compute_average_spacing(points->begin(), points->end(),
+                                                           nb_neighbors);
+    std::cerr << "Average spacing = " << average_spacing << std::endl;
+
     // Compute poylines
     typedef Kernel::Segment_3 Segment;
     std::vector<Segment> polylines;
+    CGAL::Timer task_timer; task_timer.start();
+    std::cerr << "Estimates Features using VCM (R="
+        << dialog.offsetRadius() << " and r=" << dialog.convolveRadius()
+        << " and threshold=" << dialog.threshold() << " and radius=" << dialog.edgeRadius() << ")...\n";
     polylines = CGAL::vcm_estimate_edges(points->begin(), points->end(),
                                          CGAL::make_identity_property_map(Point_set::value_type()),
                                          dialog.offsetRadius(), dialog.convolveRadius(), dialog.threshold(),
-                                         Kernel());
+                                         Kernel(),
+                                         dialog.edgeRadius());
+
+    std::size_t memory = CGAL::Memory_sizer().virtual_size();
+    task_timer.stop();
+    std::cerr << "Estimates features: " << task_timer.time() << " seconds, "
+        << (memory>>20) << " Mb allocated"
+        << std::endl;
+
 
     // Add the polylines to the item item
     for (unsigned int i = 0; i < polylines.size(); i++) {

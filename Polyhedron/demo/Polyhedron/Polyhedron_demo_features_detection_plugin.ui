@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>291</width>
+    <width>371</width>
     <height>156</height>
    </rect>
   </property>
@@ -14,13 +14,33 @@
    <string>Normal estimation</string>
   </property>
   <layout class="QGridLayout">
+   <item row="0" column="3">
+    <widget class="QDoubleSpinBox" name="m_inputFeaturesThreshold">
+     <property name="decimals">
+      <number>3</number>
+     </property>
+     <property name="singleStep">
+      <double>0.020000000000000</double>
+     </property>
+     <property name="value">
+      <double>0.160000000000000</double>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="2">
+    <widget class="QLabel" name="label_3">
+     <property name="text">
+      <string>Threshold:</string>
+     </property>
+    </widget>
+   </item>
    <item row="1" column="1">
     <widget class="QDoubleSpinBox" name="m_inputConvolveRadius">
      <property name="decimals">
       <number>3</number>
      </property>
      <property name="singleStep">
-      <double>0.100000000000000</double>
+      <double>0.050000000000000</double>
      </property>
     </widget>
    </item>
@@ -38,7 +58,7 @@
      </property>
     </widget>
    </item>
-   <item row="3" column="1" colspan="2">
+   <item row="5" column="1" colspan="2">
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
@@ -48,36 +68,36 @@
      </property>
     </widget>
    </item>
-   <item row="2" column="0">
-    <widget class="QLabel" name="label_3">
-     <property name="text">
-      <string>Threshold:</string>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="1">
-    <widget class="QDoubleSpinBox" name="m_inputFeaturesThreshold">
-     <property name="decimals">
-      <number>3</number>
-     </property>
-     <property name="singleStep">
-      <double>0.100000000000000</double>
-     </property>
-     <property name="value">
-      <double>0.200000000000000</double>
-     </property>
-    </widget>
-   </item>
    <item row="0" column="1">
     <widget class="QDoubleSpinBox" name="m_inputOffsetRadius">
      <property name="decimals">
       <number>3</number>
      </property>
      <property name="singleStep">
-      <double>0.100000000000000</double>
+      <double>0.050000000000000</double>
      </property>
      <property name="value">
       <double>0.100000000000000</double>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="3">
+    <widget class="QDoubleSpinBox" name="m_inputEdgeRadius">
+     <property name="decimals">
+      <number>3</number>
+     </property>
+     <property name="singleStep">
+      <double>0.050000000000000</double>
+     </property>
+     <property name="value">
+      <double>0.100000000000000</double>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="2">
+    <widget class="QLabel" name="label_4">
+     <property name="text">
+      <string>Radius:</string>
      </property>
     </widget>
    </item>
