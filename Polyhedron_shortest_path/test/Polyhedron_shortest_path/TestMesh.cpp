@@ -162,9 +162,7 @@ void test_mesh_function()
   std::vector<vertex_descriptor> vertices;
   
   boost::tie(verticesStart, verticesEnd) = boost::vertices(P);
-  
-  size_t currentId = 0;
-  
+
   for (vertex_iterator it = verticesStart; it != verticesEnd; ++it)
   {
     vertices.push_back(*it);
@@ -194,8 +192,6 @@ void test_mesh_function()
   
   for (size_t i = 0; i < numIterations; ++i)
   {
-    bool found = false;
-
     Face_location startLocation = next_location(startToEndShortestPaths, P, vertices);
     Face_location endLocation = next_location(endToStartShortestPaths, P, vertices);
 

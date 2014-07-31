@@ -276,7 +276,6 @@ BOOST_AUTO_TEST_CASE( detect_is_saddle_vertex )
   typedef CGAL::Polyhedron_shortest_path_default_traits<Kernel, Polyhedron_3> Traits;
   
   typedef boost::graph_traits<Polyhedron_3> GraphTraits;
-  typedef GraphTraits::vertex_descriptor vertex_descriptor;
   typedef GraphTraits::vertex_iterator vertex_iterator;
   
   Traits traits;

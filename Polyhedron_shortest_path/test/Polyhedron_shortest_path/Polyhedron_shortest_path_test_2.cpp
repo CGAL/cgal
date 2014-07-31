@@ -41,22 +41,13 @@ BOOST_AUTO_TEST_CASE( test_a_to_b_vs_b_t_a_distances )
   typedef CGAL::Polyhedron_shortest_path_default_traits<Kernel, Polyhedron_3> Traits;
   typedef Traits::Barycentric_coordinate Barycentric_coordinate;
   typedef Traits::FT FT;
-  typedef Traits::Point_3 Point_3;
-  typedef Traits::Point_2 Point_2;
-  typedef Traits::Triangle_3 Triangle_3;
-  typedef Traits::Triangle_2 Triangle_2;
-  typedef Traits::Segment_2 Segment_2;
   typedef boost::graph_traits<Polyhedron_3> GraphTraits;
   typedef GraphTraits::vertex_descriptor vertex_descriptor;
   typedef GraphTraits::vertex_iterator vertex_iterator;
-  typedef GraphTraits::halfedge_descriptor halfedge_descriptor;
-  typedef GraphTraits::halfedge_iterator halfedge_iterator;
   typedef GraphTraits::face_descriptor face_descriptor;
   typedef GraphTraits::face_iterator face_iterator;
   typedef CGAL::Polyhedron_shortest_path<Traits> Polyhedron_shortest_path;
-  typedef boost::property_map<Polyhedron_3, CGAL::vertex_point_t>::type VPM;
   typedef boost::property_map<Polyhedron_3, boost::vertex_external_index_t>::type VIM;
-  typedef boost::property_map<Polyhedron_3, boost::edge_external_index_t>::type EIM;
   typedef boost::property_map<Polyhedron_3, CGAL::halfedge_external_index_t>::type HIM;
   typedef boost::property_map<Polyhedron_3, CGAL::face_external_index_t>::type FIM;
   
@@ -166,9 +157,6 @@ BOOST_AUTO_TEST_CASE( test_a_to_b_vs_b_t_a_distances )
             }
             else
             {
-              CGAL::test::Sequence_item<Traits>& steItem = startToEndCollector.m_sequence[k];
-              CGAL::test::Sequence_item<Traits>& etsItem = endToStartCollector.m_sequence[j];
-              
               std::string names[2] = { "STE", "ETS" };
               CGAL::test::Sequence_item<Traits> items[2] = { startToEndCollector.m_sequence[k], endToStartCollector.m_sequence[j] };
               Polyhedron_shortest_path* pathStructures[2] = { &startToEndShortestPaths, &endToStartShortestPaths };
@@ -257,9 +245,6 @@ BOOST_AUTO_TEST_CASE( test_a_to_b_vs_b_t_a_distances )
           }
           else
           {
-            CGAL::test::Sequence_item<Traits>& steItem = startToEndCollector.m_sequence[k];
-            CGAL::test::Sequence_item<Traits>& etsItem = endToStartCollector.m_sequence[j];
-            
             std::string names[2] = { "STE", "ETS" };
             CGAL::test::Sequence_item<Traits> items[2] = { startToEndCollector.m_sequence[k], endToStartCollector.m_sequence[j] };
             

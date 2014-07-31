@@ -240,7 +240,7 @@ void Scene_polyhedron_shortest_path_item::get_as_edge_point(Scene_polyhedron_sho
   
   for (size_t i = 0; i < 3; ++i)
   {
-    if (i != minCoord)
+    if (i != minIndex)
     {
       sum += inOutLocation.second[i];
     }
@@ -250,7 +250,7 @@ void Scene_polyhedron_shortest_path_item::get_as_edge_point(Scene_polyhedron_sho
   
   for (size_t i = 0; i < 3; ++i)
   {
-    if (i != minCoord)
+    if (i != minIndex)
     {
       coords[i] = inOutLocation.second[i] / coords[i];
     }

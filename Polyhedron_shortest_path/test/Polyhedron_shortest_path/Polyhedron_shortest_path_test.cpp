@@ -42,10 +42,7 @@ BOOST_AUTO_TEST_CASE( shortest_path_regular_tetrahedron )
   typedef Traits::Barycentric_coordinate Barycentric_coordinate;
   typedef Traits::FT FT;
   typedef boost::graph_traits<Polyhedron_3> GraphTraits;
-  typedef GraphTraits::vertex_descriptor vertex_descriptor;
   typedef GraphTraits::vertex_iterator vertex_iterator;
-  typedef GraphTraits::halfedge_descriptor halfedge_descriptor;
-  typedef GraphTraits::halfedge_iterator halfedge_iterator;
   typedef GraphTraits::face_descriptor face_descriptor;
   typedef GraphTraits::face_iterator face_iterator;
   typedef CGAL::Polyhedron_shortest_path<Traits> Polyhedron_shortest_path;
@@ -109,9 +106,7 @@ BOOST_AUTO_TEST_CASE( test_simple_saddle_vertex_mesh )
   typedef GraphTraits::vertex_descriptor vertex_descriptor;
   typedef GraphTraits::vertex_iterator vertex_iterator;
   typedef GraphTraits::halfedge_descriptor halfedge_descriptor;
-  typedef GraphTraits::halfedge_iterator halfedge_iterator;
   typedef GraphTraits::face_descriptor face_descriptor;
-  typedef GraphTraits::face_iterator face_iterator;
   typedef CGAL::Polyhedron_shortest_path<Traits> Polyhedron_shortest_path;
   typedef boost::property_map<Polyhedron_3, CGAL::vertex_point_t>::type VPM;
 
@@ -300,15 +295,10 @@ BOOST_AUTO_TEST_CASE( test_boundary_mesh )
   typedef Traits::Barycentric_coordinate Barycentric_coordinate;
   typedef Traits::FT FT;
   typedef Traits::Point_3 Point_3;
-  typedef Traits::Point_2 Point_2;
   typedef Traits::Triangle_3 Triangle_3;
-  typedef Traits::Triangle_2 Triangle_2;
-  typedef Traits::Segment_2 Segment_2;
   typedef boost::graph_traits<Polyhedron_3> GraphTraits;
   typedef GraphTraits::vertex_descriptor vertex_descriptor;
   typedef GraphTraits::vertex_iterator vertex_iterator;
-  typedef GraphTraits::halfedge_descriptor halfedge_descriptor;
-  typedef GraphTraits::halfedge_iterator halfedge_iterator;
   typedef GraphTraits::face_descriptor face_descriptor;
   typedef GraphTraits::face_iterator face_iterator;
   typedef CGAL::Polyhedron_shortest_path<Traits> Polyhedron_shortest_path;
@@ -380,8 +370,6 @@ BOOST_AUTO_TEST_CASE( test_boundary_mesh )
   typedef boost::property_map<Polyhedron_3, CGAL::face_external_index_t>::type FaceIndexMap;
   
   FaceIndexMap faceIndexMap(CGAL::get(CGAL::face_external_index, P));
-  
-  face_descriptor face = *startFace;
 
   Polyhedron_shortest_path shortestPaths(P, traits);
   //shortestPaths.m_debugOutput = true;
