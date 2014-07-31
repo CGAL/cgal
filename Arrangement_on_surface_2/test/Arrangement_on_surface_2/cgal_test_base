@@ -107,6 +107,7 @@ COMPARE_XY_POLYCURVE=31
 NUMBER_OF_POINTS=32
 COMPARE_ENDPOINTS_XY=33
 CONSTRUCT_OPPOSITE=34
+TRIM=35
 
 #---------------------------------------------------------------------#
 #                    configure
@@ -492,6 +493,7 @@ execute_commands_new_structure()
     commands_indicator[NUMBER_OF_POINTS]=0
     commands_indicator[COMPARE_ENDPOINTS_XY]=0
     commands_indicator[CONSTRUCT_OPPOSITE]=0
+    commands_indicator[TRIM]=0
     i=1
     if [ $# -gt 2 ] ; then
 	for arg in $* ; do
@@ -612,6 +614,10 @@ execute_commands_new_structure()
     if [ ${commands_indicator[$CONSTRUCT_OPPOSITE]} -ne 0 ] ; then
   run_trapped_test test_traits data/$1/points \
       data/$1/xcurves data/$1/curves data/$1/construct_opposite $2
+    fi
+    if [ ${commands_indicator[$TRIM]} -ne 0 ] ; then
+  run_trapped_test test_traits data/$1/points \
+      data/$1/xcurves data/$1/curves data/$1/trim $2
     fi
 }
 
@@ -1120,7 +1126,8 @@ test_polycurve_conic_traits()
       VERTEX \
       CONSTRUCT_OPPOSITE \
       MERGE \
-      COMPARE_ENDPOINTS_XY
+      COMPARE_ENDPOINTS_XY \
+      TRIM
 
   else
     echo "   ERROR:    not executed   test_traits polyline_traits" >> $ERRORFILE
@@ -1631,11 +1638,11 @@ fi
 
 # waqar start
 
-test_polycurve_bezier_traits
+#test_polycurve_bezier_traits
 #test_polycurve_conic_traits
 #test_polycurve_circular_arc_traits
 #test_circle_segments_traits
-#test_polyline_traits
+test_polyline_traits
 #test_circular_arc_traits
 #test_conic_traits
 

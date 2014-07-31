@@ -65,18 +65,18 @@
 //for the time being this will run for conic polycurves only
 #elif TEST_GEOM_TRAITS == POLYCURVE_CONIC_GEOM_TRAITS
 #include <CGAL/CORE_algebraic_number_traits.h>
-#include <CGAL/Arr_polyline_traits_2.h>
+#include <CGAL/Arr_polycurve_traits_2.h>
 #include <CGAL/Arr_conic_traits_2.h>
 
 
 #elif TEST_GEOM_TRAITS == POLYCURVE_CIRCULAR_ARC_GEOM_TRAITS
-#include <CGAL/Arr_polyline_traits_2.h>
+#include <CGAL/Arr_polycurve_traits_2.h>
 #include <CGAL/Arr_circle_segment_traits_2.h>
 
 #elif TEST_GEOM_TRAITS == POLYCURVE_BEZIER_GEOM_TRAITS
 #include <CGAL/CORE_algebraic_number_traits.h>
 #include <CGAL/Arr_Bezier_curve_traits_2.h>
-#include <CGAL/Arr_polyline_traits_2.h>
+#include <CGAL/Arr_polycurve_traits_2.h>
 
 #else
 #error No geometry traits (GEOM_TRAITS) specified!
@@ -96,11 +96,19 @@ typedef CGAL::Arr_non_caching_segment_traits_2<Kernel>  Base_geom_traits;
 #elif TEST_GEOM_TRAITS == POLYLINE_GEOM_TRAITS
 typedef CGAL::Arr_segment_traits_2<Kernel>              Segment_traits;
 typedef CGAL::Arr_polyline_traits_2<Segment_traits>     Base_geom_traits;
+// Poly curves needs some testing where Segments and X-monotone segments are required 
+// instead of polycurves/x-monotone polycurves.
+typedef Base_geom_traits::Segment_2               Segment_2;
+typedef Base_geom_traits::X_monotone_segment_2    X_monotone_segment_2;
 #define GEOM_TRAITS_TYPE "Polylines"
 
 #elif TEST_GEOM_TRAITS == NON_CACHING_POLYLINE_GEOM_TRAITS
 typedef CGAL::Arr_non_caching_segment_traits_2<Kernel>  Segment_traits;
 typedef CGAL::Arr_polyline_traits_2<Segment_traits>     Base_geom_traits;
+// Poly curves needs some testing where Segments and X-monotone segments are required 
+// instead of polycurves/x-monotone polycurves.
+typedef Base_geom_traits::Segment_2               Segment_2;
+typedef Base_geom_traits::X_monotone_segment_2    X_monotone_segment_2;
 #define GEOM_TRAITS_TYPE "Non Caching Polylines"
 
 #elif TEST_GEOM_TRAITS == CORE_CONIC_GEOM_TRAITS
@@ -204,8 +212,8 @@ typedef Nt_traits::Rational                            					 	Rational;
 typedef Nt_traits::Algebraic                            					Algebraic;
 typedef CGAL::Cartesian<Rational>                       					Rat_kernel;
 typedef CGAL::Cartesian<Algebraic>                      					Alg_kernel;
-typedef CGAL::Arr_conic_traits_2<Rat_kernel, Alg_kernel, Nt_traits>       Conic_traits_2;
-typedef CGAL::Arr_polyline_traits_2<Conic_traits_2>                       Base_geom_traits;
+typedef CGAL::Arr_conic_traits_2<Rat_kernel, Alg_kernel, Nt_traits>       	Conic_traits_2;
+typedef CGAL::Arr_polycurve_traits_2<Conic_traits_2>                       	Base_geom_traits;
 
 //needed when we want to construct ellips, parabola and hyperbolas
 typedef Conic_traits_2::Rat_point_2                   Rat_point;
@@ -219,14 +227,14 @@ typedef Base_geom_traits::X_monotone_segment_2    X_monotone_segment_2;
 #define GEOM_TRAITS_TYPE "Polycurves_conics"
 
 #elif TEST_GEOM_TRAITS == POLYCURVE_CIRCULAR_ARC_GEOM_TRAITS
+
 typedef CGAL::Cartesian<Number_type>                          	 Rat_kernel;
 typedef CGAL::Arr_circle_segment_traits_2<Kernel>             	 Circle_segment_traits_2;
-typedef CGAL::Arr_polyline_traits_2<Circle_segment_traits_2>     Base_geom_traits;
+typedef CGAL::Arr_polycurve_traits_2<Circle_segment_traits_2>    Base_geom_traits;
 
 typedef Rat_kernel::FT                                        Rat_nt;
 typedef Rat_kernel::Circle_2                                  Circle_2;
 typedef Rat_kernel::Line_2                                    Line_2;
-// typedef Rat_kernel::Segment_2                                 Segment_2;
 typedef Rat_kernel::Point_2                                   Rat_point_2;
 typedef Circle_segment_traits_2::Point_2 					  Point_2;
 
@@ -237,6 +245,7 @@ typedef Base_geom_traits::X_monotone_segment_2    X_monotone_segment_2;
 #define GEOM_TRAITS_TYPE "Polycurves_circular_arcs"
 
 #elif TEST_GEOM_TRAITS == POLYCURVE_BEZIER_GEOM_TRAITS
+
 typedef CGAL::CORE_algebraic_number_traits                    							Nt_traits;
 typedef Nt_traits::Rational                                   							Rational;
 typedef Nt_traits::Algebraic                                  							Algebraic;
@@ -247,7 +256,7 @@ typedef Bezier_tratis::Bezier_cache                       		 						Bezier_cache;
 typedef Rat_kernel::Point_2 															Control_point_2;
 typedef Bezier_tratis::Point_2 															Point_2;
 
-typedef CGAL::Arr_polyline_traits_2<Bezier_tratis>     									Base_geom_traits;
+typedef CGAL::Arr_polycurve_traits_2<Bezier_tratis>     								Base_geom_traits;
 // Poly curves needs some testing where Segments and X-monotone segments are required 
 // instead of polycurves/x-monotone polycurves.
 typedef Base_geom_traits::Segment_2               										Segment_2;

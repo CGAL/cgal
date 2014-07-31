@@ -252,7 +252,8 @@ private:
   // not found in other geom_traits. 
   #if TEST_GEOM_TRAITS == POLYCURVE_CONIC_GEOM_TRAITS || \
       TEST_GEOM_TRAITS == POLYCURVE_CIRCULAR_ARC_GEOM_TRAITS || \
-      TEST_GEOM_TRAITS == POLYCURVE_BEZIER_GEOM_TRAITS
+      TEST_GEOM_TRAITS == POLYCURVE_BEZIER_GEOM_TRAITS || \
+      TEST_GEOM_TRAITS == POLYLINE_GEOM_TRAITS
   bool push_back_wrapper (std::istringstream& str_stream);
   bool push_front_wrapper (std::istringstream& str_stream);
   bool compare_x_polycurve_wrapper (std::istringstream& str_stream);
@@ -260,6 +261,7 @@ private:
   bool number_of_points_wrapper (std::istringstream& str_stream);
   bool compare_endpoints_xy_wrapper (std::istringstream& str_stream);
   bool construct_opposite_wrapper (std::istringstream& str_stream);
+  bool trim_wrapper(std::istringstream& str_stream);
   #endif
   // TODO Is_on_x_identification_2
 
@@ -344,7 +346,8 @@ Traits_test<Geom_traits_T>::Traits_test(const Geom_traits_T& traits) : Base(trai
  // not found in other geom_traits. 
 #if TEST_GEOM_TRAITS == POLYCURVE_CONIC_GEOM_TRAITS || \
       TEST_GEOM_TRAITS == POLYCURVE_CIRCULAR_ARC_GEOM_TRAITS || \
-      TEST_GEOM_TRAITS == POLYCURVE_BEZIER_GEOM_TRAITS
+      TEST_GEOM_TRAITS == POLYCURVE_BEZIER_GEOM_TRAITS || \
+      TEST_GEOM_TRAITS == POLYLINE_GEOM_TRAITS
   m_wrappers[std::string("push_back")] =
     &Traits_test<Traits>::push_back_wrapper; 
   m_wrappers[std::string("push_front")] =
@@ -358,7 +361,9 @@ Traits_test<Geom_traits_T>::Traits_test(const Geom_traits_T& traits) : Base(trai
   m_wrappers[std::string("compare_endpoints_xy")] =
     &Traits_test<Traits>::compare_endpoints_xy_wrapper;
   m_wrappers[std::string("construct_opposite")] =
-    &Traits_test<Traits>::construct_opposite_wrapper;    
+    &Traits_test<Traits>::construct_opposite_wrapper;
+  m_wrappers[std::string("trim")] = 
+    &Traits_test<Traits>::trim_wrapper;      
 #endif
   // TODO Is_on_x_identification_2
 }
@@ -373,7 +378,41 @@ Traits_test<Geom_traits_T>::~Traits_test() {}
  // not found in other geom_traits. 
 #if TEST_GEOM_TRAITS == POLYCURVE_CONIC_GEOM_TRAITS || \
     TEST_GEOM_TRAITS == POLYCURVE_CIRCULAR_ARC_GEOM_TRAITS || \
-    TEST_GEOM_TRAITS == POLYCURVE_BEZIER_GEOM_TRAITS
+    TEST_GEOM_TRAITS == POLYCURVE_BEZIER_GEOM_TRAITS || \
+    TEST_GEOM_TRAITS == POLYLINE_GEOM_TRAITS
+
+template <typename Geom_traits_T>
+bool Traits_test<Geom_traits_T>::trim_wrapper (std::istringstream& str_stream)
+{
+  unsigned int x_curve_id, xcv_trimmed, 
+               src_id, tgt_id;
+
+  // Read the ID's of the x-curve, source and target points
+  // and the trimmed xcv. 
+  str_stream >> x_curve_id >> src_id >> tgt_id >> xcv_trimmed;
+
+  //get the x-monotone curve
+  X_monotone_curve_2 xcv = this->m_xcurves[x_curve_id];
+
+  //get the trimmed curve for confirmation.
+  X_monotone_curve_2 expected_xcv = this->m_xcurves[xcv_trimmed];
+
+  //get the trimming source and target points
+  Point_2 src = this->m_points[src_id];
+  Point_2 tgt = this->m_points[tgt_id];
+  
+  std::cout << "Test: Trim ( " << xcv << " from "
+            << src << " to " << tgt << " ) ?";
+
+  X_monotone_curve_2 trimmed_xcv = this->m_geom_traits.trim_2_object()(xcv, src, tgt);
+  
+  if( !this->compare_curves(trimmed_xcv, expected_xcv ) )
+  {
+    return false;
+  }
+
+  return true;
+}
 
 /*
  * Test Push_back 

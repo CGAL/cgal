@@ -11,7 +11,8 @@ public:
 
 #if TEST_GEOM_TRAITS == POLYCURVE_CONIC_GEOM_TRAITS || \
     TEST_GEOM_TRAITS == POLYCURVE_CIRCULAR_ARC_GEOM_TRAITS || \
-    TEST_GEOM_TRAITS == POLYCURVE_BEZIER_GEOM_TRAITS
+    TEST_GEOM_TRAITS == POLYCURVE_BEZIER_GEOM_TRAITS || \
+    TEST_GEOM_TRAITS == POLYLINE_GEOM_TRAITS
   // Poly curves needs some testing where Segments and X-monotone segments are required 
   // instead of polycurves/x-monotone polycurves.
   template <typename stream>
@@ -158,6 +159,42 @@ bool IO_base_test<Base_geom_traits>::read_curve(stream& is, Curve_2& cv)
   cv = m_geom_traits.construct_curve_2_object()(points.begin(), points.end());
   return true;
 }
+template <>
+template <typename stream>
+bool IO_base_test<Base_geom_traits>::read_segment(stream& is, Segment_2& seg)
+{
+  Basic_number_type x, y;
+  
+  is >> x >> y;
+  Point_2 p_src(x, y);
+
+  is >> x >> y;
+  Point_2 p_tgt(x, y);
+
+
+  seg = Segment_2(p_src, p_tgt);
+
+  return true;
+}
+
+template <>
+template <typename stream>
+bool IO_base_test<Base_geom_traits>::read_xsegment(stream& is,
+                                                 X_monotone_segment_2& xseg)                               //read x-segment
+{
+  Basic_number_type x, y;
+  
+  is >> x >> y;
+  Point_2 p_src(x, y);
+
+  is >> x >> y;
+  Point_2 p_tgt(x, y);
+
+
+  xseg = X_monotone_segment_2(p_src, p_tgt);
+
+  return true;
+}  
 
 //polycurve_conic
 #elif TEST_GEOM_TRAITS == POLYCURVE_CONIC_GEOM_TRAITS
