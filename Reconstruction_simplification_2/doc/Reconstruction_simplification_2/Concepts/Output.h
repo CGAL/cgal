@@ -22,10 +22,9 @@ public:
 Extracts the solid edges and vertices from the `Reconstruction_simplification_2` module.
 
 \param rt2 The `Reconstruction_triangulation_2` from which the solid edges and vertices are extracted.
-\param nb_ignore The number of verticess to be ignored in the output.
 		
 */ 
-void store_marked_elements(Rt_2& rt2, int nb_ignore);
+void store_marked_elements(Rt_2& rt2);
 
 
 }; /* end OutputModule */

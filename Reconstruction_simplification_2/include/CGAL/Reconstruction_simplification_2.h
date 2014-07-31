@@ -45,19 +45,19 @@ namespace CGAL {
 
 
 
-\brief The class `Reconstruction_simplification_2` is the main class
+\brief `Reconstruction_simplification_2` is the main class
 for executing the reconstruction and simplification tasks.
-It takes an InputIterator which can be used to traverse a collection
+Its constructor takes an InputIterator, used to traverse a collection
 of point-mass pairs, where the points and their masses are accessed
 via the PointPMap and MassPMap `PropertyMap`s respectively.
 
 
-\tparam Kernel is the geometric kernel, used throughout the reconstruction and
+\tparam Kernel a geometric kernel, used throughout the reconstruction and
 					simplification task.
 
-\tparam PointPMap is a model of `ReadablePropertyMap` with a value_type = `Point_2`
+\tparam PointPMap a model of `ReadablePropertyMap` with a value_type = `Point_2`
 
-\tparam MassPMap   is a model of `ReadablePropertyMap` with a value_type = `FT`
+\tparam MassPMap   a model of `ReadablePropertyMap` with a value_type = `FT`
 
  */
 template<class Kernel, class PointPMap, class MassPMap>
@@ -161,7 +161,7 @@ protected:
 	     Instantiates a new Reconstruction_simplification_2.
 	     It computes an bounding box around the input points and creates a first
 		 (fine) output simplex as well as an initial transportation plan. This
-		first output simplex
+		first output simplex is then made coarser during subsequent iterations.
 
 	     \details Instantiates a new Reconstruction_simplification_2 object
 	     	 	  for a given collection of point-mass pairs.
@@ -225,7 +225,7 @@ protected:
 	}
 
 	//Function if one wants to create a Reconstruction_simplification_2
-	//without specifying the input yet in the constructor
+	//without specifying the input yet in the constructor.
 	template <class InputIterator>
 	void initialize(InputIterator start_itr,
 									InputIterator beyond_itr,
@@ -276,7 +276,7 @@ protected:
 	*/
 	template <class OutputModule>
 	void extract_solid_elements(OutputModule& output) {
-		output.store_marked_elements(m_dt, m_ignore);
+		output.store_marked_elements(m_dt);
 	}
 
 	 /// \cond SKIP_IN_MANUAL
@@ -1041,7 +1041,7 @@ bool create_pedge(const Edge& edge, Reconstruction_edge_2& pedge) {
 
 
 	/*!
-	Since noise and missing data result may prevent the reconstructed shape to
+	Since noise and missing data may prevent the reconstructed shape to
 	have sharp corners, the algorithm offers the possibility to automatically
 	relocate vertices after each edge contraction. The new location of the
 	vertices is chosen such that the fitting of the output triangulation to the
@@ -1296,7 +1296,6 @@ bool create_pedge(const Edge& edge, Reconstruction_edge_2& pedge) {
 	// RECONSTRUCTION //
 
 		 /*!
-		    This function must be called after initialization().
 		    It computes a shape consisting of nv vertices, reconstructing the input
 		    points.
 
@@ -1322,7 +1321,6 @@ bool create_pedge(const Edge& edge, Reconstruction_edge_2& pedge) {
 		}
 
 		 /*!
-			This function must be called after initialization().
 			It computes a shape, reconstructing the input, by performing steps many
 			edge contractions on the output simplex.
 

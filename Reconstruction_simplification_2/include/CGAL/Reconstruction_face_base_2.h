@@ -41,6 +41,9 @@ template < class Kernel, class Fb = Triangulation_face_base_2<Kernel> >
 class Reconstruction_face_base_2 : public Fb
 {
 public:
+
+	 /// \cond SKIP_IN_MANUAL
+
     typedef Fb Base;
     typedef typename Base::Vertex_handle Vertex_handle;
     typedef typename Base::Face_handle   Face_handle;
@@ -253,6 +256,10 @@ struct less_Edge
         if (a1 < b1) return true;
         return false;
     }
+
+
+	  /// \endcond
+
 };
 
 

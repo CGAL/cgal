@@ -34,6 +34,9 @@ namespace CGAL {
 template < class Kernel, class Vb = Triangulation_vertex_base_2<Kernel> >
 class Reconstruction_vertex_base_2 : public Vb
 {
+
+	 /// \cond SKIP_IN_MANUAL
+
 public:
     typedef Vb Base;
     typedef typename Kernel::FT FT;
@@ -120,6 +123,9 @@ struct less_Vertex_handle
         return (a->id() < b->id());
     }
 };
+
+
+/// \endcond
 
 } //end namespace
 
