@@ -107,13 +107,13 @@ public:
   typedef typename std::pair<face_descriptor, Barycentric_coordinate> Face_location;
   
   /// AABB primitive type for face graph faceGraph type
-  typedef AABB_face_graph_triangle_primitive<FaceGraph, VertexPointMap> AABB_faceGraph_primitive;
+  typedef AABB_face_graph_triangle_primitive<FaceGraph, VertexPointMap> AABB_face_graph_primitive;
   
   /// Traits class for point location AABB tree
-  typedef CGAL::AABB_traits<typename Traits::Kernel, AABB_faceGraph_primitive> AABB_faceGraph_traits;
+  typedef CGAL::AABB_traits<typename Traits::Kernel, AABB_face_graph_primitive> AABB_face_graph_traits;
   
   /// An AABB tree to perform point location queries to get surface locations
-  typedef AABB_tree<AABB_faceGraph_traits> AABB_face_graph_tree;
+  typedef AABB_tree<AABB_face_graph_traits> AABB_face_graph_tree;
   
 /// @}
   
@@ -2187,7 +2187,7 @@ public:
   {
     typename Traits::Construct_barycentric_coordinate_in_triangle_3 cbcit3(m_traits.construct_barycentric_coordinate_in_triangle_3_object());
     typename Traits::Compute_squared_distance_3 csd3(m_traits.compute_squared_distance_3_object());
-    typedef typename AABB_faceGraph_traits::template Intersection_and_primitive_id<Ray_3>::Type Intersection_type;
+    typedef typename AABB_face_graph_tree::template Intersection_and_primitive_id<Ray_3>::Type Intersection_type;
     typedef boost::optional<Intersection_type> Ray_intersection;
     
     std::vector<Ray_intersection> intersections;
@@ -2219,7 +2219,7 @@ public:
         }
       }
     }
-    
+     
     if (foundOne)
     {
       Barycentric_coordinate b = cbcit3(triangle_from_face(nearestFace), nearestPoint);
