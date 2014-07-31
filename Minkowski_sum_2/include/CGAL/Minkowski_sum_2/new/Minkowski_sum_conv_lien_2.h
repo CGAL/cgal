@@ -344,7 +344,7 @@ private:
             Point_2 q = next_edge->target()->point();
             if (ear.has_on_bounded_side(q)) {
                 typename Kernel::FT distance = CGAL::squared_distance(q, v);
-                if (distance < min_distance) {
+                if (min_distance == -1 || distance < min_distance) {
                     min_distance = distance;
                     min_q = q;
                 }
