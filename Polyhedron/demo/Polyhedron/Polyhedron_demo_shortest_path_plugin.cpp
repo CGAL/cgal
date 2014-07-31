@@ -211,7 +211,7 @@ void Polyhedron_demo_shortest_path_plugin::new_item(int itemIndex)
   
   if(item->name() == "unamed")
   {
-    item->setName(tr("%1 (shortest paths)").arg(item->polyhedron_item()->name()));
+    item->setName(tr("%1 (shortest path computation item)").arg(item->polyhedron_item()->name()));
   }
 
   m_shortestPathsMap.insert(std::make_pair(item->polyhedron_item(), item));
