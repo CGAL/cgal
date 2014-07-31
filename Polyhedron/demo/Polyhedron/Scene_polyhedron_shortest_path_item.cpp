@@ -83,7 +83,7 @@ void Scene_polyhedron_shortest_path_item::draw_points() const
 
   CGAL::GL::Point_size point_size; 
   point_size.set_point_size(5);
-  CGALglcolor(this->color());
+  CGALglcolor(Qt::green);
   
   ::glBegin(GL_POINTS);
   
