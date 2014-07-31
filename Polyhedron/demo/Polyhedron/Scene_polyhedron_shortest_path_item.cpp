@@ -350,7 +350,8 @@ bool Scene_polyhedron_shortest_path_item::run_point_select(const Ray_3& ray)
         m_messages->information(tr("Done"));
         
         polylines->setName(tr("%1 (shortest path)").arg(polyhedron_item()->name()));
-        
+        polylines->setColor(Qt::red);
+
         this->m_sceneInterface->addItem(polylines);
       }
       else
