@@ -1639,7 +1639,7 @@ fi
 # waqar start
 
 #test_polycurve_bezier_traits
-#test_polycurve_conic_traits
+test_polycurve_conic_traits
 #test_polycurve_circular_arc_traits
 #test_circle_segments_traits
 test_polyline_traits
