@@ -1561,6 +1561,7 @@ private:
         
       default:
         assert(false && "Invalid face location");
+        return std::pair<Node_distance_pair, Barycentric_coordinate>();
     }
   }
   
@@ -2194,8 +2195,8 @@ public:
     tree.all_intersections(ray, std::back_inserter(intersections));
     
     bool foundOne = false;
-    FT nearestDistance;
-    Point_3 nearestPoint;
+    FT nearestDistance = 0;
+    Point_3 nearestPoint = CGAL::ORIGIN;
     face_descriptor nearestFace;
     
     for (size_t i = 0; i < intersections.size(); ++i)

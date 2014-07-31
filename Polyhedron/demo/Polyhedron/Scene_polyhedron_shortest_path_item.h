@@ -98,8 +98,8 @@ private:
   
   bool run_point_select(const Kernel::Ray_3&);
   void remove_nearest_point(const Face_location& ray);
-  bool get_as_edge_point(Face_location& inOutLocation);
-  bool get_as_vertex_point(Face_location& inOutLocation);
+  void get_as_edge_point(Face_location& inOutLocation);
+  void get_as_vertex_point(Face_location& inOutLocation);
   
   
 public:

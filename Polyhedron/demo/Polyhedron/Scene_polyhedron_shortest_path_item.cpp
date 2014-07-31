@@ -222,7 +222,7 @@ void Scene_polyhedron_shortest_path_item::remove_nearest_point(const Face_locati
   }
 }
 
-bool Scene_polyhedron_shortest_path_item::get_as_edge_point(Scene_polyhedron_shortest_path_item::Face_location& inOutLocation)
+void Scene_polyhedron_shortest_path_item::get_as_edge_point(Scene_polyhedron_shortest_path_item::Face_location& inOutLocation)
 {
   size_t minIndex = 0;
   FT minCoord(inOutLocation.second[0]);
@@ -259,7 +259,7 @@ bool Scene_polyhedron_shortest_path_item::get_as_edge_point(Scene_polyhedron_sho
   inOutLocation.second = Barycentric_coordinate(coords[0], coords[1], coords[2]);
 }
 
-bool Scene_polyhedron_shortest_path_item::get_as_vertex_point(Scene_polyhedron_shortest_path_item::Face_location& inOutLocation)
+void Scene_polyhedron_shortest_path_item::get_as_vertex_point(Scene_polyhedron_shortest_path_item::Face_location& inOutLocation)
 {
   size_t maxIndex = 0;
   FT maxCoord(inOutLocation.second[0]);

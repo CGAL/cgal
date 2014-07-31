@@ -219,8 +219,6 @@ void Polyhedron_demo_shortest_path_plugin::new_item(int itemIndex)
 
 void Polyhedron_demo_shortest_path_plugin::on_actionMakeShortestPaths_triggered()
 {
-  const Scene_interface::Item_id index = scene->mainSelectionIndex();
-
   Scene_polyhedron_item* polyhedronItem = get_selected_item<Scene_polyhedron_item>();
   
   if (polyhedronItem)
