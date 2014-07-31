@@ -26,6 +26,7 @@
 #include <CGAL/Visibility_2/visibility_utils.h>
 #include <CGAL/Arrangement_2.h>
 #include <CGAL/bounding_box.h>
+#include <CGAL/result_of.h>
 #include <boost/unordered_set.hpp> 
 #include <boost/unordered_map.hpp> 
 #include <iostream>
@@ -410,20 +411,62 @@ private:
   class Sub_region
   {
   private:
-    std::vector<Point_2> _pts;
+    struct Intersection_point
+    {
+      bool by_edge;
+      int v_idx;
+      int e_idx;
+      Intersection_point( bool b, int v, int e )
+        : by_edge( b ), v_idx( v ), e_idx( e )
+        {}
+    };
+  private:
+    std::vector<Intersection_point> _pts;
+  private:
+    Point_2 compute_intersection( const Point_2& q,
+                                  const Point_2& dp,
+                                  const Point_2& s,
+                                  const Point_2& t ) const
+   {
+     if ( CGAL::collinear( q, dp, s ) ) {
+       if ( CGAL::collinear( q, dp, t ) ) {
+         if ( CGAL::collinear_are_ordered_along_line( q, s, t ) )
+           return s;
+         else
+           return t;
+       } else {
+         return s;
+       }
+     }
+     Ray_2 ray( q, dp );
+     Segment_2 seg( s, t );
+     CGAL::Object obj = CGAL::intersection( ray, seg );
+     const Point_2 * ipoint = CGAL::object_cast<Point_2> (&obj);
+     assert( ipoint != NULL );
+     return *ipoint;
+   }
   public:
     Sub_region ( int est_pts_num )
       { _pts.reserve( est_pts_num*2+2 ); }
     int size () const
       { return _pts.size(); }
-    const Point_2& operator [] ( int pos ) const
-      { return _pts[pos]; }
-    void insert ( const Point_2& p )
+    Point_2 get_point ( const Point_2& q,
+                        const std::vector<Vertex>& vertices,
+                        const std::vector<Edge>& edges,
+                        int pos ) const
     {
-      if ( _pts.empty() || _pts.back() != p ) {
-        _pts.push_back( p );
+      if ( _pts[pos].by_edge ) {
+        return compute_intersection( q, vertices[_pts[pos].v_idx].point(),
+                      vertices[edges[_pts[pos].e_idx].source_index()].point(),
+                      vertices[edges[_pts[pos].e_idx].target_index()].point() );
+      } else {
+        return vertices[_pts[pos].v_idx].point();
       }
     }
+    void insert ( int v_idx )
+      { _pts.push_back( Intersection_point( false, v_idx, -1 ) ); }
+    void insert ( int v_idx, int e_idx )
+      { _pts.push_back( Intersection_point( true, v_idx, e_idx ) ); }
 #ifndef NDEBUG
     void trace ( ostream& os, int level ) const
     {
@@ -432,7 +475,7 @@ private:
       for ( int i = 0; i < level; i++ ) os << "  ";
       os << "pts = [ ";
       for ( int i = 0; i < _pts.size(); i++ )
-      os << _pts[i] << " ";
+      os << _pts[i].by_edge << " " << _pts[i].v_idx << " " <<_pts[i].e_idx << " , ";
       os << "]" << endl;
     }
 #endif
@@ -986,9 +1029,9 @@ private:
     Ray_2 ray( query_pt, dp );
     Segment_2 seg( s, t );
     CGAL::Object obj = CGAL::intersection( ray, seg );
-    const Point_2 * i_point = CGAL::object_cast<Point_2> (&obj );
-    assert( i_point != NULL );
-    return *i_point;
+    const Point_2 * ipoint = CGAL::object_cast<Point_2> (&obj );
+    assert( ipoint != NULL );
+    return Point_2( ipoint->x(), ipoint->y() );
   }
 
   void compute_visibility_partition( int cone_idx )
@@ -1059,17 +1102,17 @@ private:
         if ( !insert_edx.empty() && !remove_its.empty() ) {
           // Some edges are added, and some are removed
           // the current vertex is part of visibility region
-          result.insert( vs[v_idx].point() );
+          result.insert( v_idx );
         } else if ( remove_its.empty() ) {
           // Only add edges, the view ray is blocked by new edges
           if ( old_top != -1 )
-            result.insert( ray_edge_intersection( v_idx, old_top ) );
-          result.insert( vs[v_idx].point() );
+            result.insert( v_idx, old_top );
+          result.insert( v_idx );
         } else {
           // Only remove edges, a block for the view ray is removed
-          result.insert( vs[v_idx].point() );
+          result.insert( v_idx );
           if ( new_top != -1 )
-            result.insert( ray_edge_intersection( v_idx, new_top ) );
+            result.insert( v_idx, new_top );
         }
       }
     }
@@ -1099,11 +1142,14 @@ private:
     cone_end_idx = cone_start_idx = -1;
     for ( int i = 0; i < sub_regions.size(); i++ ) {
       for ( int j = 0; j < sub_regions[i].size(); j++ ) {
-        polygon.push_back( sub_regions[i][j] );
+        Point_2 p = sub_regions[i].get_point( query_pt, vs, es, j );
+        if ( !polygon.empty() && p == polygon.back() )
+          continue;
+        polygon.push_back( p );
         if ( query_type != FACE_QUERY ) {
-          if ( polygon.back() == cone_end->point() )
+          if ( p == cone_end->point() )
             cone_end_idx = polygon.size() - 1;
-          if ( polygon.back() == cone_start->point() )
+          if ( p == cone_start->point() )
             cone_start_idx = polygon.size() - 1;
         }
       }
@@ -1129,6 +1175,7 @@ private:
     compute_visibility_parallel( ConcurrencyTag() );
 
     merge_result();
+
     //trace_all( cout );
   }
 
@@ -1314,6 +1361,7 @@ public:
 
     conditional_regularize( arr_out, Regularization_tag() );
 
+    conditional_regularize( arr_out, Regularization_tag() );
     if ( arr_out.faces_begin()->is_unbounded() )
       return ++arr_out.faces_begin();
     else
@@ -1379,7 +1427,6 @@ private:
   bool is_small_cone;
   Point_2 flipped_source;
   int flipped_quadrant;
-
 };
 
 } // end namespace CGAL
