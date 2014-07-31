@@ -47,7 +47,7 @@ BOOST_AUTO_TEST_CASE( test_find_nearest_face_location_on_surface )
   typedef GraphTraits::face_iterator face_iterator;
   typedef CGAL::Polyhedron_shortest_path<Traits> Polyhedron_shortest_path;
   typedef boost::property_map<Polyhedron_3, CGAL::vertex_point_t>::type VPM;
-  typedef boost::property_map<typename Traits::Polyhedron, CGAL::face_external_index_t>::type FIM;
+  typedef boost::property_map<Polyhedron_3, CGAL::face_external_index_t>::type FIM;
   
   Traits traits;
   
@@ -91,7 +91,7 @@ BOOST_AUTO_TEST_CASE( test_find_nearest_face_location_on_surface )
     
     Point_3 location3d = construct_barycenter_3(faceTriangle[0], location[0], faceTriangle[1], location[1], faceTriangle[2], location[2]);
     
-    Polyhedron_shortest_path::Face_location faceLocation = shortestPaths.get_nearest_face_location(location3d);
+    Polyhedron_shortest_path::Face_location faceLocation = shortestPaths.locate(location3d);
     
     BOOST_CHECK_EQUAL(faceIndexMap[face], faceIndexMap[faceLocation.first]);
     BOOST_CHECK_CLOSE(location[0], faceLocation.second[0], FT(0.0001));

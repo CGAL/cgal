@@ -47,7 +47,7 @@ public:
   typedef CGAL::Polyhedron_shortest_path_default_traits<Kernel, Polyhedron> Polyhedron_shortest_path_traits;
   typedef CGAL::Polyhedron_shortest_path<Polyhedron_shortest_path_traits, VertexIndexMap, HalfedgeIndexMap, FaceIndexMap, VertexPointMap> Polyhedron_shortest_path;
   typedef typename Polyhedron_shortest_path::Face_location Face_location;
-  typedef typename Polyhedron_shortest_path::AABB_polyhedron_tree AABB_polyhedron_tree;
+  typedef typename Polyhedron_shortest_path::AABB_face_graph_tree AABB_face_graph_tree;
   
   typedef typename Polyhedron_shortest_path_traits::Barycentric_coordinate Barycentric_coordinate;
   typedef typename Polyhedron_shortest_path_traits::Ray_3 Ray_3;
@@ -75,7 +75,7 @@ private:
   QMainWindow* m_mainWindow;
   Scene_interface* m_sceneInterface;
   Polyhedron_shortest_path* m_shortestPaths;
-  AABB_polyhedron_tree m_aabbTree;
+  AABB_face_graph_tree m_aabbTree;
   
   std::string m_deferredLoadFilename;
   

@@ -427,59 +427,10 @@ public:
     result_type predicateResult = m_compare_distance_2(s1.source(), p1, s2.source(), p2);
     
     return predicateResult;
-    /*
-    if (t1 == t2)
-    {
-      if (predicateResult != CGAL::EQUAL)
-      {
-        std::cout << "HERE: " << __LINE__ << std::endl;
-        std::cout << "Was " << predicateResult << " , expected " << CGAL::EQUAL << std::endl;
-        std::cout << "s1 = " << s1 << std::endl;
-        std::cout << "l1 = " << l1 << std::endl;
-        std::cout << "p1 = " << p1 << std::endl;
-        std::cout << "s2 = " << s2 << std::endl;
-        std::cout << "l2 = " << l2 << std::endl;
-        std::cout << "p2 = " << p2 << std::endl;
-      }
-      
-      return CGAL::EQUAL;
-    }
-    else if (t1 < t2)
-    {
-      if (predicateResult != CGAL::SMALLER)
-      {
-        std::cout << "HERE: " << __LINE__ << std::endl;
-        std::cout << "Was " << predicateResult << " , expected " << CGAL::SMALLER << std::endl;
-        std::cout << "s1 = " << s1 << std::endl;
-        std::cout << "l1 = " << l1 << std::endl;
-        std::cout << "p1 = " << p1 << std::endl;
-        std::cout << "s2 = " << s2 << std::endl;
-        std::cout << "l2 = " << l2 << std::endl;
-        std::cout << "p2 = " << p2 << std::endl;
-      }
-      
-      return CGAL::SMALLER;
-    }
-    else
-    {
-      if (predicateResult != CGAL::LARGER)
-      {
-        std::cout << "HERE: " << __LINE__ << std::endl;
-        std::cout << "Was " << predicateResult << " , expected " << CGAL::LARGER << std::endl;
-        std::cout << "s1 = " << s1 << std::endl;
-        std::cout << "l1 = " << l1 << std::endl;
-        std::cout << "p1 = " << p1 << std::endl;
-        std::cout << "s2 = " << s2 << std::endl;
-        std::cout << "l2 = " << l2 << std::endl;
-        std::cout << "p2 = " << p2 << std::endl;
-      }
-      
-      return CGAL::LARGER;
-    }*/
   }
 };
 
-template <class Kernel, class Polyhedron>
+template <class Kernel, class FaceGraph>
 class Is_saddle_vertex
 {
 public:
@@ -491,7 +442,7 @@ public:
   typedef typename Kernel::Vector_2 Vector_2;
   typedef typename Kernel::Point_2 Point_2;
   
-  typedef typename boost::graph_traits<Polyhedron> GraphTraits;
+  typedef typename boost::graph_traits<FaceGraph> GraphTraits;
   typedef typename GraphTraits::vertex_descriptor vertex_descriptor;
   typedef typename GraphTraits::halfedge_descriptor halfedge_descriptor;
   
@@ -534,26 +485,26 @@ public:
   {
   }
   
-  result_type operator() (vertex_descriptor v, Polyhedron& P) const 
+  result_type operator() (vertex_descriptor v, FaceGraph& faceGraph) const 
   {
-    return (*this)(v, P, CGAL::get(CGAL::vertex_point, P));
+    return (*this)(v, faceGraph, CGAL::get(CGAL::vertex_point, faceGraph));
   }
   
   template<class VertexPointMap>
-  result_type operator() (vertex_descriptor v, const Polyhedron& P, VertexPointMap const& pointMap) const 
+  result_type operator() (vertex_descriptor v, const FaceGraph& faceGraph, VertexPointMap const& pointMap) const 
   {
-    halfedge_descriptor startEdge = CGAL::halfedge(v, P);
+    halfedge_descriptor startEdge = CGAL::halfedge(v, faceGraph);
     
     Point_3 rootPoint(pointMap[v]);
-    Point_3 prevPoint(pointMap[CGAL::source(startEdge, P)]);
+    Point_3 prevPoint(pointMap[CGAL::source(startEdge, faceGraph)]);
     
-    halfedge_descriptor currentEdge = CGAL::next(startEdge, P);
+    halfedge_descriptor currentEdge = CGAL::next(startEdge, faceGraph);
     
-    Point_3 nextPoint(pointMap[CGAL::target(currentEdge, P)]);
+    Point_3 nextPoint(pointMap[CGAL::target(currentEdge, faceGraph)]);
     
     Triangle_3 baseFace3(rootPoint, nextPoint, prevPoint);
     
-    currentEdge = CGAL::opposite(currentEdge, P);
+    currentEdge = CGAL::opposite(currentEdge, faceGraph);
     
     Triangle_2 baseFace2(m_project_triangle_3_to_triangle_2(baseFace3));
     
@@ -567,17 +518,14 @@ public:
     
     CGAL::Orientation baseOrientation = m_orientation_2(m_construct_vertex_2(baseFace2, 0), m_construct_vertex_2(baseFace2, 2), m_construct_vertex_2(baseFace2, 1));
     
-    if (baseOrientation == CGAL::COLLINEAR)
-    {
-      // I would say this violates a precondition
-    }
+    assert(baseOrientation != CGAL::COLLINEAR);
     
     do
     {
       prevPoint = nextPoint;
-      currentEdge = CGAL::next(currentEdge, P);
-      nextPoint = pointMap[CGAL::target(currentEdge, P)];
-      currentEdge = CGAL::opposite(currentEdge, P);
+      currentEdge = CGAL::next(currentEdge, faceGraph);
+      nextPoint = pointMap[CGAL::target(currentEdge, faceGraph)];
+      currentEdge = CGAL::opposite(currentEdge, faceGraph);
       
       Triangle_3 currentFace3(m_construct_triangle_3(rootPoint, nextPoint, prevPoint));
       Triangle_2 currentFace2(m_flatten_triangle_3_along_segment_2(currentFace3, 2, nextSegment));

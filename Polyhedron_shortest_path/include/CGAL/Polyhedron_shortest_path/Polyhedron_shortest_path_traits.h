@@ -22,26 +22,26 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgPolyhedronShortestPathTraitsClasses
+\ingroup PkgFaceGraphShortestPathTraitsClasses
 
-\brief Provides an implementation of the PolyhedronShortestPathTraits 
+\brief Provides an implementation of the FaceGraphShortestPathTraits 
 model as required by the Polyhedron_shortest_path algorithm
 
 \tparam K The kernel type whose geometric primitives to use
 
-\tparam P The polyhedron type the algorithm is to act on
+\tparam F The faceGraph type the algorithm is to act on
 
-\cgalModels `PolyhedronShortestPathTraits`
+\cgalModels `FaceGraphShortestPathTraits`
 */
 template <
   class K, 
-  class P>
+  class F>
 class Polyhedron_shortest_path_default_traits
 {
 public:
 
   typedef K Kernel;
-  typedef P Polyhedron;
+  typedef F FaceGraph;
 
   typedef typename Kernel::FT FT;
   
@@ -124,8 +124,8 @@ public:
   
   // Predicates
 public:
-  typedef typename internal::Compare_relative_intersection_along_segment_2<K> Compare_relative_intersection_along_segment_2;
-  typedef typename internal::Is_saddle_vertex<K,P> Is_saddle_vertex;
+  typedef typename internal::Compare_relative_intersection_along_segment_2<Kernel> Compare_relative_intersection_along_segment_2;
+  typedef typename internal::Is_saddle_vertex<Kernel, FaceGraph> Is_saddle_vertex;
   
   // Constructions
 public:
@@ -203,8 +203,8 @@ public:
   Parametric_distance_along_segment_2 parametric_distance_along_segment_2_object() const { return m_parametric_distance_along_segment_2_object; }
 };
 
-template <class K, class P>
-std::ostream& operator<<(std::ostream& os, typename Polyhedron_shortest_path_default_traits<K,P>::Barycentric_coordinate b)
+template <class Kernel, class FaceGraph>
+std::ostream& operator<<(std::ostream& os, typename Polyhedron_shortest_path_default_traits<Kernel, FaceGraph>::Barycentric_coordinate b)
 {
   return os << b[0] << " " << b[1] << " " << b[2];
 }

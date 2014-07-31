@@ -89,7 +89,7 @@ int main(int argc, char** argv)
   {
     std::vector<Traits::Point_3> points;
     
-    shortestPaths.shortest_path_points(*verticesCurrent, std::back_inserter(points));
+    shortestPaths.shortest_path_points_to_source_points(*verticesCurrent, std::back_inserter(points));
     
     outPaths << points.size();
     

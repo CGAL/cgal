@@ -89,7 +89,7 @@ void Scene_polyhedron_shortest_path_item::draw_points() const
   
   for(Face_locations::const_iterator it = m_faceLocations.begin(); it != m_faceLocations.end(); ++it)
   {
-    const Point_3& p = m_shortestPaths->get_face_location(it->first, it->second);
+    const Point_3& p = m_shortestPaths->point(it->first, it->second);
     ::glVertex3d(p.x(), p.y(), p.z());
   }
   
@@ -151,7 +151,7 @@ void Scene_polyhedron_shortest_path_item::ensure_aabb_object()
 {
   if (!m_isTreeCached)
   {
-    m_shortestPaths->construct_aabb_tree(m_aabbTree);
+    m_shortestPaths->fill_aabb_tree(m_aabbTree);
     m_isTreeCached = true;
   }
 }
@@ -198,7 +198,7 @@ void Scene_polyhedron_shortest_path_item::remove_nearest_point(const Face_locati
 {
   Polyhedron_shortest_path_traits::Compute_squared_distance_3 computeSquaredDistance3;
   
-  const Point_3 pickLocation = m_shortestPaths->get_face_location(faceLocation.first, faceLocation.second);
+  const Point_3 pickLocation = m_shortestPaths->point(faceLocation.first, faceLocation.second);
   
   Face_locations::iterator found = m_faceLocations.end();
   FT minDistance(0.0);
@@ -206,7 +206,7 @@ void Scene_polyhedron_shortest_path_item::remove_nearest_point(const Face_locati
   
   for (Face_locations::iterator it = m_faceLocations.begin(); it != m_faceLocations.end(); ++it)
   {
-    Point_3 sourceLocation = m_shortestPaths->get_face_location(it->first, it->second);
+    Point_3 sourceLocation = m_shortestPaths->point(it->first, it->second);
     FT distance = computeSquaredDistance3(sourceLocation, pickLocation);
     
     if ((found == m_faceLocations.end() && distance <= thresholdDistance) || distance < minDistance)
@@ -283,7 +283,7 @@ bool Scene_polyhedron_shortest_path_item::run_point_select(const Ray_3& ray)
 {
   ensure_aabb_object();
   
-  Face_location faceLocation = m_shortestPaths->get_nearest_face_location(ray, m_aabbTree);
+  Face_location faceLocation = m_shortestPaths->locate(ray, m_aabbTree);
   
   if (faceLocation.first == GraphTraits::null_face())
   {
@@ -345,7 +345,7 @@ bool Scene_polyhedron_shortest_path_item::run_point_select(const Ray_3& ray)
             
         m_messages->information(tr("Computing shortest path polyline..."));
             
-        m_shortestPaths->shortest_path_points(faceLocation.first, faceLocation.second, std::back_inserter(polylines->polylines.back()));
+        m_shortestPaths->shortest_path_points_to_source_points(faceLocation.first, faceLocation.second, std::back_inserter(polylines->polylines.back()));
 
         m_messages->information(tr("Done"));
         

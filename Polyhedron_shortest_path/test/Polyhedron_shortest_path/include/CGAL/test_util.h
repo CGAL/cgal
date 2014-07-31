@@ -22,10 +22,10 @@ enum Sequence_item_type
 template <class Traits>
 struct Sequence_item
 {
-  typedef typename Traits::Polyhedron Polyhedron;
+  typedef typename Traits::FaceGraph FaceGraph;
   typedef typename Traits::FT FT;
   typedef typename Traits::Barycentric_coordinate Barycentric_coordinate;
-  typedef typename boost::graph_traits<Polyhedron> GraphTraits;
+  typedef typename boost::graph_traits<FaceGraph> GraphTraits;
   typedef typename GraphTraits::vertex_descriptor vertex_descriptor;
   typedef typename GraphTraits::halfedge_descriptor halfedge_descriptor;
   typedef typename GraphTraits::face_descriptor face_descriptor;
@@ -41,18 +41,18 @@ struct Sequence_item
 };
 
 template <class Traits, 
-  class VIM = typename boost::property_map<typename Traits::Polyhedron, CGAL::vertex_external_index_t>::type,
-  class HIM = typename boost::property_map<typename Traits::Polyhedron, CGAL::halfedge_external_index_t>::type,
-  class FIM = typename boost::property_map<typename Traits::Polyhedron, CGAL::face_external_index_t>::type>
+  class VIM = typename boost::property_map<typename Traits::FaceGraph, CGAL::vertex_external_index_t>::type,
+  class HIM = typename boost::property_map<typename Traits::FaceGraph, CGAL::halfedge_external_index_t>::type,
+  class FIM = typename boost::property_map<typename Traits::FaceGraph, CGAL::face_external_index_t>::type>
 struct Edge_sequence_collector
 {
-  typedef typename Traits::Polyhedron Polyhedron;
+  typedef typename Traits::FaceGraph FaceGraph;
   typedef typename Traits::FT FT;
   typedef typename Traits::Barycentric_coordinate Barycentric_coordinate;
   typedef VIM VertexIndexMap;
   typedef HIM HalfedgeIndexMap;
   typedef FIM FaceIndexMap;
-  typedef typename boost::graph_traits<Polyhedron> GraphTraits;
+  typedef typename boost::graph_traits<FaceGraph> GraphTraits;
   typedef typename GraphTraits::vertex_descriptor vertex_descriptor;
   typedef typename GraphTraits::halfedge_descriptor halfedge_descriptor;
   typedef typename GraphTraits::face_descriptor face_descriptor;
@@ -63,7 +63,7 @@ struct Edge_sequence_collector
   
   std::vector<Sequence_item<Traits> > m_sequence;
   
-  Edge_sequence_collector(Polyhedron& p)
+  Edge_sequence_collector(FaceGraph& p)
     : m_vertexIndexMap(CGAL::get(boost::vertex_external_index, p))
     , m_halfedgeIndexMap(CGAL::get(CGAL::halfedge_external_index, p))
     , m_faceIndexMap(CGAL::get(CGAL::face_external_index, p))
@@ -121,11 +121,11 @@ FT squared(FT in)
   return in * in;
 }
 
-template<class Polyhedron>
+template<class FaceGraph>
 struct Plane_from_facet {
-  typedef typename Polyhedron::Plane_3 Plane_3;
-  typedef typename Polyhedron::Facet Facet;
-  typedef typename Polyhedron::Halfedge_handle Halfedge_handle;
+  typedef typename FaceGraph::Plane_3 Plane_3;
+  typedef typename FaceGraph::Facet Facet;
+  typedef typename FaceGraph::Halfedge_handle Halfedge_handle;
 
   Plane_3 operator()(Facet& f) {
       Halfedge_handle h = f.halfedge();
@@ -135,34 +135,34 @@ struct Plane_from_facet {
   }
 };
 
-template <class Polyhedron>
-void construct_polyhedron_planes(Polyhedron& out)
+template <class FaceGraph>
+void construct_polyhedron_planes(FaceGraph& out)
 {
-  std::transform( out.facets_begin(), out.facets_end(), out.planes_begin(), Plane_from_facet<Polyhedron>());
+  std::transform( out.facets_begin(), out.facets_end(), out.planes_begin(), Plane_from_facet<FaceGraph>());
 }
 
-template <class Polyhedron>
-typename Polyhedron::Halfedge_handle make_regular_tetrahedron(Polyhedron& out)
+template <class FaceGraph>
+typename FaceGraph::Halfedge_handle make_regular_tetrahedron(FaceGraph& out)
 {
-  typedef typename Polyhedron::Traits::FT FT;
+  typedef typename FaceGraph::Traits::FT FT;
   
   FT rsqrt2 = FT(1.0) / CGAL::sqrt(FT(2.0));
   out.clear();
-  typename Polyhedron::Halfedge_handle result = out.make_tetrahedron(
-    typename Polyhedron::Point_3(FT(1.0), FT(0.0), -rsqrt2),
-    typename Polyhedron::Point_3(-FT(1.0), FT(0.0), -rsqrt2),
-    typename Polyhedron::Point_3(FT(0.0), FT(1.0), rsqrt2),
-    typename Polyhedron::Point_3(FT(0.0), -FT(1.0), rsqrt2));
+  typename FaceGraph::Halfedge_handle result = out.make_tetrahedron(
+    typename FaceGraph::Point_3(FT(1.0), FT(0.0), -rsqrt2),
+    typename FaceGraph::Point_3(-FT(1.0), FT(0.0), -rsqrt2),
+    typename FaceGraph::Point_3(FT(0.0), FT(1.0), rsqrt2),
+    typename FaceGraph::Point_3(FT(0.0), -FT(1.0), rsqrt2));
   construct_polyhedron_planes(out);
   return result;
 }
 
-template <class Polyhedron>
-size_t face_vertex_index(typename boost::graph_traits<Polyhedron>::face_descriptor face, typename boost::graph_traits<Polyhedron>::vertex_descriptor vertex, Polyhedron& P)
+template <class FaceGraph>
+size_t face_vertex_index(typename boost::graph_traits<FaceGraph>::face_descriptor face, typename boost::graph_traits<FaceGraph>::vertex_descriptor vertex, FaceGraph& P)
 {
   size_t index = 0;
   
-  typedef typename boost::graph_traits<Polyhedron>::halfedge_descriptor halfedge_descriptor;
+  typedef typename boost::graph_traits<FaceGraph>::halfedge_descriptor halfedge_descriptor;
   
   halfedge_descriptor currentEdge(CGAL::halfedge(face, P));
   halfedge_descriptor startEdge = currentEdge;

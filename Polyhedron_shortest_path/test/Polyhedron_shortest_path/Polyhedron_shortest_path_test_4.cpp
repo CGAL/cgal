@@ -48,7 +48,7 @@ BOOST_AUTO_TEST_CASE( test_find_nearest_face_location_above_surface )
   typedef GraphTraits::face_iterator face_iterator;
   typedef CGAL::Polyhedron_shortest_path<Traits> Polyhedron_shortest_path;
   typedef boost::property_map<Polyhedron_3, CGAL::vertex_point_t>::type VPM;
-  typedef boost::property_map<typename Traits::Polyhedron, CGAL::face_external_index_t>::type FIM;
+  typedef boost::property_map<Polyhedron_3, CGAL::face_external_index_t>::type FIM;
   
   Traits traits;
   
@@ -79,7 +79,7 @@ BOOST_AUTO_TEST_CASE( test_find_nearest_face_location_above_surface )
   size_t numTrials = 30;
   
   typedef boost::property_map<Polyhedron_3, CGAL::vertex_point_t>::type VPM ;
-  typedef boost::property_map<typename Traits::Polyhedron, CGAL::face_external_index_t>::type FIM;
+  typedef boost::property_map<Polyhedron_3, CGAL::face_external_index_t>::type FIM;
 
   FIM faceIndexMap(CGAL::get(CGAL::face_external_index, polyhedron));
   VPM vertexPointMap(CGAL::get(CGAL::vertex_point, polyhedron));
@@ -97,7 +97,7 @@ BOOST_AUTO_TEST_CASE( test_find_nearest_face_location_above_surface )
     
     Ray_3 rayPointingDown(location3d + Vector_3(FT(0.0), FT(0.0), FT(10.0)), location3d);
     
-    Polyhedron_shortest_path::Face_location faceLocation = shortestPaths.get_nearest_face_location(rayPointingDown);
+    Polyhedron_shortest_path::Face_location faceLocation = shortestPaths.locate(rayPointingDown);
     
     BOOST_CHECK_EQUAL(faceIndexMap[face], faceIndexMap[faceLocation.first]);
     BOOST_CHECK_CLOSE(location[0], faceLocation.second[0], FT(0.0001));
@@ -107,7 +107,7 @@ BOOST_AUTO_TEST_CASE( test_find_nearest_face_location_above_surface )
   
   Ray_3 outsideRay(Point_3(FT(-1.0), FT(-1.0), FT(6.0)), Point_3(FT(-1.0), FT(-1.0), FT(0.0)));
   
-  Polyhedron_shortest_path::Face_location emptyFaceLocation = shortestPaths.get_nearest_face_location(outsideRay);
+  Polyhedron_shortest_path::Face_location emptyFaceLocation = shortestPaths.locate(outsideRay);
     
   BOOST_CHECK(GraphTraits::null_face() == emptyFaceLocation.first);
 }

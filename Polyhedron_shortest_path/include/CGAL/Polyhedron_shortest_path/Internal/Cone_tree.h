@@ -39,13 +39,13 @@ public:
   };
 
 private:
-  typedef typename Traits::Polyhedron Polyhedron;
+  typedef typename Traits::FaceGraph FaceGraph;
   typedef typename Traits::FT FT;
   typedef typename Traits::Point_2 Point_2;
   typedef typename Traits::Triangle_2 Triangle_2;
   typedef typename Traits::Segment_2 Segment_2;
   typedef typename Traits::Ray_2 Ray_2;
-  typedef typename boost::graph_traits<Polyhedron> GraphTraits;
+  typedef typename boost::graph_traits<FaceGraph> GraphTraits;
   typedef typename GraphTraits::face_descriptor face_descriptor;
   typedef typename GraphTraits::halfedge_descriptor halfedge_descriptor;
   typedef typename GraphTraits::vertex_descriptor vertex_descriptor;
@@ -54,7 +54,7 @@ private:
 private:
   // These could be pulled back into a 'context' class to save space
   Traits& m_traits;
-  Polyhedron& m_polyhedron;
+  FaceGraph& m_faceGraph;
   
   halfedge_descriptor m_entryEdge;
   
@@ -85,9 +85,9 @@ private:
   }
   
 public:
-  Cone_tree_node(Traits& traits, Polyhedron& polyhedron, size_t treeId)
+  Cone_tree_node(Traits& traits, FaceGraph& faceGraph, size_t treeId)
     : m_traits(traits)
-    , m_polyhedron(polyhedron)
+    , m_faceGraph(faceGraph)
     , m_sourceImage(Point_2(CGAL::ORIGIN))
     , m_layoutFace(Point_2(CGAL::ORIGIN),Point_2(CGAL::ORIGIN),Point_2(CGAL::ORIGIN))
     , m_pseudoSourceDistance(0.0)
@@ -102,9 +102,9 @@ public:
   {
   }
   
-  Cone_tree_node(Traits& traits, Polyhedron& polyhedron, size_t treeId, halfedge_descriptor entryEdge)
+  Cone_tree_node(Traits& traits, FaceGraph& faceGraph, size_t treeId, halfedge_descriptor entryEdge)
     : m_traits(traits)
-    , m_polyhedron(polyhedron)
+    , m_faceGraph(faceGraph)
     , m_entryEdge(entryEdge)
     , m_sourceImage(Point_2(CGAL::ORIGIN))
     , m_layoutFace(Point_2(CGAL::ORIGIN),Point_2(CGAL::ORIGIN),Point_2(CGAL::ORIGIN))
@@ -120,9 +120,9 @@ public:
   {
   }
 
-  Cone_tree_node(Traits& traits, Polyhedron& polyhedron, halfedge_descriptor entryEdge, const Triangle_2& layoutFace, const Point_2& sourceImage, const FT& pseudoSourceDistance, const Point_2& windowLeft, const Point_2& windowRight, Node_type nodeType = INTERVAL)
+  Cone_tree_node(Traits& traits, FaceGraph& faceGraph, halfedge_descriptor entryEdge, const Triangle_2& layoutFace, const Point_2& sourceImage, const FT& pseudoSourceDistance, const Point_2& windowLeft, const Point_2& windowRight, Node_type nodeType = INTERVAL)
     : m_traits(traits)
-    , m_polyhedron(polyhedron)
+    , m_faceGraph(faceGraph)
     , m_entryEdge(entryEdge)
     , m_sourceImage(sourceImage)
     , m_layoutFace(layoutFace)
@@ -170,7 +170,7 @@ public:
   
   face_descriptor current_face() const
   {
-    return CGAL::face(m_entryEdge, m_polyhedron);
+    return CGAL::face(m_entryEdge, m_faceGraph);
   }
   
   bool is_null_face() const
@@ -180,7 +180,7 @@ public:
   
   size_t edge_face_index() const
   {
-    return CGAL::internal::edge_index(entry_edge(), m_polyhedron);
+    return CGAL::internal::edge_index(entry_edge(), m_faceGraph);
   }
   
   halfedge_descriptor entry_edge() const
@@ -190,17 +190,17 @@ public:
   
   halfedge_descriptor left_child_edge() const
   {
-    return CGAL::opposite(CGAL::prev(m_entryEdge, m_polyhedron), m_polyhedron);
+    return CGAL::opposite(CGAL::prev(m_entryEdge, m_faceGraph), m_faceGraph);
   }
   
   halfedge_descriptor right_child_edge() const
   {
-    return CGAL::opposite(CGAL::next(m_entryEdge, m_polyhedron), m_polyhedron);
+    return CGAL::opposite(CGAL::next(m_entryEdge, m_faceGraph), m_faceGraph);
   }
   
   vertex_descriptor target_vertex() const
   {
-    return CGAL::target(CGAL::next(m_entryEdge, m_polyhedron), m_polyhedron);
+    return CGAL::target(CGAL::next(m_entryEdge, m_faceGraph), m_faceGraph);
   }
   
   Point_2 source_image() const
@@ -226,7 +226,7 @@ public:
   
   FT distance_from_target_to_root() const
   {
-    return distance_to_root(target_vertex_location());
+    return distance_to_root(tarpoint());
   }
   
   Ray_2 left_boundary() const
@@ -251,7 +251,7 @@ public:
   
   Ray_2 ray_to_target_vertex() const
   {
-    return Ray_2(source_image(), target_vertex_location());
+    return Ray_2(source_image(), tarpoint());
   }
   
   bool inside_window(const Point_2& point) const
@@ -261,7 +261,7 @@ public:
     return orientation_2(sourceImagePoint, m_windowLeft, point) == CGAL::RIGHT_TURN && orientation_2(sourceImagePoint, m_windowRight, point) == CGAL::LEFT_TURN;
   }
 
-  Point_2 target_vertex_location() const
+  Point_2 tarpoint() const
   {
     typename Traits::Construct_vertex_2 cv2(m_traits.construct_vertex_2_object());
     return cv2(m_layoutFace, 2);
@@ -269,7 +269,7 @@ public:
   
   bool is_target_vertex_inside_window() const
   {
-    return inside_window(target_vertex_location());
+    return inside_window(tarpoint());
   }
   
   bool has_left_side() const
@@ -281,13 +281,13 @@ public:
       return true;
     }
 
-    return orientation_2(source_image(), m_windowLeft, target_vertex_location()) == CGAL::RIGHT_TURN;
+    return orientation_2(source_image(), m_windowLeft, tarpoint()) == CGAL::RIGHT_TURN;
   }
   
   bool has_right_side() const
   {
     typename Traits::Orientation_2 orientation_2(m_traits.orientation_2_object());
-    return orientation_2(source_image(), m_windowRight, target_vertex_location()) == CGAL::LEFT_TURN;
+    return orientation_2(source_image(), m_windowRight, tarpoint()) == CGAL::LEFT_TURN;
   }
   
   Segment_2 left_child_base_segment() const

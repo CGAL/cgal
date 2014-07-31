@@ -20,28 +20,28 @@ namespace CGAL {
 
 namespace internal {
 
-template <class Triangle_3, class Polyhedron, class VertexPointMap>
-Triangle_3 triangle_from_halfedge(typename boost::graph_traits<Polyhedron>::halfedge_descriptor edge, const Polyhedron& polyhedron, VertexPointMap vertexPointMap)
+template <class Triangle_3, class FaceGraph, class VertexPointMap>
+Triangle_3 triangle_from_halfedge(typename boost::graph_traits<FaceGraph>::halfedge_descriptor edge, const FaceGraph& faceGraph, VertexPointMap vertexPointMap)
 {
-  typedef typename boost::graph_traits<Polyhedron>::halfedge_descriptor halfedge_descriptor;
+  typedef typename boost::graph_traits<FaceGraph>::halfedge_descriptor halfedge_descriptor;
   
   halfedge_descriptor e0 = edge;
-  halfedge_descriptor e1 = CGAL::next(edge, polyhedron);
+  halfedge_descriptor e1 = CGAL::next(edge, faceGraph);
 
-  return Triangle_3(vertexPointMap[boost::source(e0, polyhedron)], vertexPointMap[boost::target(e0, polyhedron)], vertexPointMap[boost::target(e1, polyhedron)]);
+  return Triangle_3(vertexPointMap[boost::source(e0, faceGraph)], vertexPointMap[boost::target(e0, faceGraph)], vertexPointMap[boost::target(e1, faceGraph)]);
 }
 
-template <class Triangle_3, class Polyhedron>
-Triangle_3 triangle_from_halfedge(typename boost::graph_traits<Polyhedron>::halfedge_descriptor edge, const Polyhedron& polyhedron)
+template <class Triangle_3, class FaceGraph>
+Triangle_3 triangle_from_halfedge(typename boost::graph_traits<FaceGraph>::halfedge_descriptor edge, const FaceGraph& faceGraph)
 {
-  return triangle_from_halfedge<Triangle_3, Polyhedron, typename boost::property_map<Polyhedron, CGAL::vertex_point_t>::type>(edge, polyhedron, CGAL::get(CGAL::vertex_point, polyhedron));
+  return triangle_from_halfedge<Triangle_3, FaceGraph, typename boost::property_map<FaceGraph, CGAL::vertex_point_t>::type>(edge, faceGraph, CGAL::get(CGAL::vertex_point, faceGraph));
 }
 
 
-template <class Polyhedron>
-size_t edge_index(typename boost::graph_traits<Polyhedron>::halfedge_descriptor he, Polyhedron& p)
+template <class FaceGraph>
+size_t edge_index(typename boost::graph_traits<FaceGraph>::halfedge_descriptor he, FaceGraph& p)
 {
-  typedef typename boost::graph_traits<Polyhedron> GraphTraits;
+  typedef typename boost::graph_traits<FaceGraph> GraphTraits;
   typedef typename GraphTraits::face_descriptor face_descriptor;
   typedef typename GraphTraits::halfedge_descriptor halfedge_descriptor;
   

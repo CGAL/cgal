@@ -211,7 +211,7 @@ void run_benchmarks_no_id(CGAL::Random& rand, size_t numTrials, size_t numSource
       Barycentric_coordinate sourceLocation = random_coordinate(rand);
       
       timer.start();
-      Traits::FT distance = shortestPaths.shortest_distance_to_location(sourceFace, sourceLocation).first;
+      Traits::FT distance = shortestPaths.shortest_distance_to_source_points(sourceFace, sourceLocation).first;
       timer.stop();
       UNUSED(distance);
       

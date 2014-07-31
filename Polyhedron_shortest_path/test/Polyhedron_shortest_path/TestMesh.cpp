@@ -63,10 +63,10 @@ typedef GraphTraits::face_iterator face_iterator;
 typedef CGAL::Polyhedron_shortest_path<Traits> Polyhedron_shortest_path;
 typedef Polyhedron_shortest_path::Face_location Face_location;
 typedef boost::property_map<Polyhedron_3, CGAL::vertex_point_t>::type VPM;
-typedef boost::property_map<typename Traits::Polyhedron, boost::vertex_external_index_t>::type VIM;
-typedef boost::property_map<typename Traits::Polyhedron, boost::edge_external_index_t>::type EIM;
-typedef boost::property_map<typename Traits::Polyhedron, CGAL::halfedge_external_index_t>::type HIM;
-typedef boost::property_map<typename Traits::Polyhedron, CGAL::face_external_index_t>::type FIM;
+typedef boost::property_map<typename Traits::FaceGraph, boost::vertex_external_index_t>::type VIM;
+typedef boost::property_map<typename Traits::FaceGraph, boost::edge_external_index_t>::type EIM;
+typedef boost::property_map<typename Traits::FaceGraph, CGAL::halfedge_external_index_t>::type HIM;
+typedef boost::property_map<typename Traits::FaceGraph, CGAL::face_external_index_t>::type FIM;
 
 
 size_t randomSeed = 2681972;
@@ -81,7 +81,7 @@ Face_location next_location(Polyhedron_shortest_path& shortestPath, Polyhedron_3
 {
   if (randomizer)
   {
-    return shortestPath.get_vertex_as_face_location(vertices[randomizer->get_int(0, vertices.size())]);
+    return shortestPath.face_location(vertices[randomizer->get_int(0, vertices.size())]);
   }
   else
   {
@@ -96,7 +96,7 @@ Face_location next_location(Polyhedron_shortest_path& shortestPath, Polyhedron_3
       size_t x;
       std::cin >> x;
       
-      return shortestPath.get_vertex_as_face_location(vertices[x]);
+      return shortestPath.face_location(vertices[x]);
     }
     else if (type == "e")
     {
@@ -105,7 +105,7 @@ Face_location next_location(Polyhedron_shortest_path& shortestPath, Polyhedron_3
       std::cin >> x >> y >> alpha;
       std::pair<halfedge_descriptor, bool> he = CGAL::halfedge(vertices[x], vertices[y], polyhedron);
       assert(he.second);
-      return shortestPath.get_edge_as_face_location(he.first, FT(alpha));
+      return shortestPath.face_location(he.first, FT(alpha));
     }
     else if (type == "f")
     {
@@ -205,21 +205,21 @@ void test_mesh_function()
     startToEndShortestPaths.construct_sequence_tree(startLocation.first, startLocation.second);
 
     CGAL::test::Edge_sequence_collector<Traits> startToEndCollector(vertexIndexMap, halfedgeIndexMap, faceIndexMap);
-    startToEndShortestPaths.shortest_path_sequence(endLocation.first, endLocation.second, startToEndCollector);
+    startToEndShortestPaths.shortest_path_sequence_to_source_points(endLocation.first, endLocation.second, startToEndCollector);
 
-    FT startToEnd = startToEndShortestPaths.shortest_distance_to_location(endLocation.first, endLocation.second).first;
+    FT startToEnd = startToEndShortestPaths.shortest_distance_to_source_points(endLocation.first, endLocation.second).first;
 
     endToStartShortestPaths.construct_sequence_tree(endLocation.first, endLocation.second);
 
     std::cout << "Here" << std::endl;
     
     CGAL::test::Edge_sequence_collector<Traits> endToStartCollector(vertexIndexMap, halfedgeIndexMap, faceIndexMap);
-    //endToStartShortestPaths.shortest_path_sequence(vertices[401], endToStartCollector);
-    endToStartShortestPaths.shortest_path_sequence(startLocation.first, startLocation.second, endToStartCollector);
+    //endToStartShortestPaths.shortest_path_sequence_to_source_points(vertices[401], endToStartCollector);
+    endToStartShortestPaths.shortest_path_sequence_to_source_points(startLocation.first, startLocation.second, endToStartCollector);
     
-    //std::cout << "Weird: " << endToStartShortestPaths.shortest_distance_to_vertex(vertices[401]) << std::endl;
+    //std::cout << "Weird: " << endToStartShortestPaths.shortest_distance_to_source_points(vertices[401]) << std::endl;
 
-    FT endToStart = endToStartShortestPaths.shortest_distance_to_location(startLocation.first, startLocation.second).first;
+    FT endToStart = endToStartShortestPaths.shortest_distance_to_source_points(startLocation.first, startLocation.second).first;
     //
     
     std::cout << "STE(distance): " << startToEnd << std::endl;
@@ -253,7 +253,7 @@ void test_mesh_function()
         }
         else if (seqItem.type == CGAL::test::SEQUENCE_ITEM_VERTEX)
         {
-          std::cout << vertexIndexMap[seqItem.vertex] << " , Distance: " << pathStructures[d]->shortest_distance_to_vertex(seqItem.vertex).first << std::endl;
+          std::cout << vertexIndexMap[seqItem.vertex] << " , Distance: " << pathStructures[d]->shortest_distance_to_source_points(seqItem.vertex).first << std::endl;
         }
       }
     }
