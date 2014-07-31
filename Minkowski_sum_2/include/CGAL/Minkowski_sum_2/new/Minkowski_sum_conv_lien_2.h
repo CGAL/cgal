@@ -323,9 +323,9 @@ private:
     bool checkCollisionDetection(Arrangement_history_2 &arr, Halfedge_handle &handle, const Polygon_2 &pgn1, const Polygon_2 &pgn2) const {
     }
 
-    Point_2 find_inside_point(Arrangement_history_2 &arr, Halfedge_handle &handle) const {
-        Ccb_halfedge_circulator current_edge = handle->ccb();
-        Ccb_halfedge_circulator next_edge = current_edge--;
+    Point_2 find_inside_point(Arrangement_history_2 &arr, Ccb_halfedge_circulator &current_edge) const {
+        Ccb_halfedge_circulator next_edge = current_edge;
+        next_edge++;
 
         while (!check_convex(current_edge->source()->point(), current_edge->target()->point(), next_edge->target()->point())) {
             current_edge++;
@@ -354,7 +354,7 @@ private:
         if (min_distance != -1) {
             return CGAL::midpoint(v, min_q);
         } else {
-            return CGAL::midpoint(a, b);
+            return CGAL::centroid(ear);
         }
     }
 };
