@@ -33,34 +33,10 @@ set( QT_USE_QTMAIN   TRUE )
 set( QT_USE_QTSCRIPT  TRUE )
 set( QT_USE_QTOPENGL  TRUE )
 
-#New for Qt5 version !
-option (USE_QT5 "Use Qt5 version instead of Qt4" ON)
+find_package(CGAL COMPONENTS Qt)
+include(${CGAL_USE_FILE})
 
-if(USE_QT5)
-
-	find_package(CGAL COMPONENTS Qt5)
-
-	include(${CGAL_USE_FILE})
-	
-	find_package(Qt5)
-
-else (USE_QT5)
-
-	find_package(CGAL COMPONENTS Qt4)
-	include(${CGAL_USE_FILE})
-
-	find_package(Qt4)
-
-	if(CGAL_Qt4_FOUND AND QT4_FOUND)
-		include(${QT_USE_FILE})
-		message("Qt4 found")
-		set(QT4 TRUE)
-	endif()
-
-endif (USE_QT5)
-
-include(QtChoice)
-
+find_package(Qt)
 find_package(OpenGL)
 find_package(QGLViewer)
 
@@ -71,7 +47,7 @@ if ( NOT CGAL_FOUND )
 elseif ( NOT (QT4 OR QT5) )
 	
   MESSAGE(STATUS "NOTICE: This demo requires "
-    "Qt4 or Qt5, and will not be compiled.")
+    "Qt, and will not be compiled.")
 elseif ( NOT OPENGL_FOUND )
 
   MESSAGE(STATUS "NOTICE: This demo requires OpenGL "

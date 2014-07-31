@@ -31,34 +31,11 @@ set( QT_USE_QTMAIN   TRUE )
 set( QT_USE_QTSCRIPT  TRUE )
 set( QT_USE_QTOPENGL  TRUE )
 
-#New for Qt5 version !
-option (USE_QT5 "Use Qt5 version instead of Qt4" ON)
+find_package(CGAL COMPONENTS Qt ImageIO)
 
-if(USE_QT5)
-
-	find_package(CGAL COMPONENTS Qt5 ImageIO)
-
-	include(${CGAL_USE_FILE})
+include(${CGAL_USE_FILE})
 	
-	find_package(Qt5)
-
-else (USE_QT5)
-
-	find_package(CGAL COMPONENTS Qt4 ImageIO)
-	include(${CGAL_USE_FILE})
-
-	find_package(Qt4)
-
-	if(CGAL_Qt4_FOUND AND QT4_FOUND)
-		include(${QT_USE_FILE})
-		message("Qt4 found")
-		set(QT4 TRUE)
-	endif()
-
-endif (USE_QT5)
-
-include(QtChoice)
-
+find_package(Qt)
 
 # Find OpenGL
 find_package(OpenGL)
@@ -391,18 +368,12 @@ else ((QT4 OR QT5) AND OPENGL_FOUND AND QGLVIEWER_FOUND AND Boost_FOUND)
 
   set(MESH_3_MISSING_DEPS "")
 
-  if(NOT CGAL_Qt4_FOUND AND NOT USE_QT5)
-    set(MESH_3_MISSING_DEPS "the CGAL Qt4 library, ${MESH_3_MISSING_DEPS}")
-  endif()
-  if(NOT CGAL_Qt5_FOUND AND USE_QT5)
-    set(MESH_3_MISSING_DEPS "the CGAL Qt5 library, ${MESH_3_MISSING_DEPS}")
+  if(NOT CGAL_Qt_FOUND)
+    set(MESH_3_MISSING_DEPS "the CGAL Qt library, ${MESH_3_MISSING_DEPS}")
   endif()
 
-  if(NOT QT4 AND NOT USE_QT5)
-    set(MESH_3_MISSING_DEPS "Qt4, ${MESH_3_MISSING_DEPS}")
-  endif()
-  if(NOT QT5 AND USE_QT5)
-    set(MESH_3_MISSING_DEPS "Qt5, ${MESH_3_MISSING_DEPS}")
+  if(NOT QT4 OR NOT QT5)
+    set(MESH_3_MISSING_DEPS "Qt, ${MESH_3_MISSING_DEPS}")
   endif()
 
   if(NOT OPENGL_FOUND)

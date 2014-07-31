@@ -25,17 +25,17 @@
 
 #if defined(CGAL_BUILD_SHARED_LIBS)
 
-#  if defined(CGAL_Qt4_EXPORTS) || defined(CGAL_Qt5_EXPORTS) // defined by CMake or in cpp files of the dll
+#  if (defined(CGAL_Qt_EXPORTS)) // defined by CMake or in cpp files of the dll
 
 #    define CGAL_QT_EXPORT CGAL_DLL_EXPORT
 #    define CGAL_QT_EXPIMP_TEMPLATE
 
-#  else // not CGAL_Qt4_EXPORTS
+#  else // not CGAL_Qt_EXPORTS
 
 #    define CGAL_QT_EXPORT CGAL_DLL_IMPORT
 #    define CGAL_QT_EXPIMP_TEMPLATE extern
 
-#  endif // not CGAL_QT4_EXPORTS
+#  endif // not CGAL_QT_EXPORTS
 
 #else // not CGAL_BUILD_SHARED_LIBS
 
@@ -44,6 +44,6 @@
 
 #endif // not CGAL_BUILD_SHARED_LIBS
 
-#endif //  CGAL_QT4_EXPORT_H
+#endif //  CGAL_QT_EXPORT_H
 
 

@@ -21,36 +21,11 @@ set( QT_USE_QTMAIN   TRUE )
 set( QT_USE_QTSCRIPT  TRUE )
 set( QT_USE_QTOPENGL  TRUE )
 
-#New for Qt5 version !
-if(QT4 OR QT5)
-	option (USE_QT5 "Use Qt5 version instead of Qt4" ON)
-endif()
+find_package(CGAL COMPONENTS Qt ImageIO)
 
-if(USE_QT5)
+include(${CGAL_USE_FILE})
 
-	find_package(CGAL COMPONENTS Qt5 ImageIO)
-
-	include(${CGAL_USE_FILE})
-	
-	find_package(Qt5)
-
-else (USE_QT5)
-
-	find_package(CGAL COMPONENTS Qt4 ImageIO)
-	include(${CGAL_USE_FILE})
-
-	find_package(Qt4)
-
-	if(CGAL_Qt4_FOUND AND QT4_FOUND)
-		include(${QT_USE_FILE})
-		message("Qt4 found")
-		set(QT4 TRUE)
-	endif()
-
-endif (USE_QT5)
-
-include(QtChoice)
-
+find_package(Qt)
 
 if(QT4 OR QT5)
 

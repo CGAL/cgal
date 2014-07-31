@@ -30,20 +30,17 @@
 #include <QMessageBox>
 #include <QStatusBar>
 #include <QGraphicsView>
-
-//New for Qt5 version !
-//Doesn't work on Linux kernel.
-//#include <QtCore\QMimeData>
-//#include <QtOpenGL\QGLWidget>
-#include <QtCore>
-#include <QtOpenGL>
-//End of the news things for Qt5 version !
-
+#include <QGLWidget>
 #include <QTextStream>
 #include <QSettings>
 #include <QUrl>
 #include <QDesktopWidget>
 #include <QRegExp>
+
+//New for Qt5 version !
+#include <QtCore>
+#include <QtOpenGL>
+//End of the news things for Qt5 version !
 
 #include <CGAL/config.h> // needed to get CGAL_VERSION_STR
 #include <CGAL/Qt/DemosMainWindow.h>
@@ -99,8 +96,7 @@ DemosMainWindow::dragEnterEvent(QDragEnterEvent *event)
 void 
 DemosMainWindow::dropEvent(QDropEvent *event)
 {
-  Q_FOREACH(QUrl url, event->mimeData()->urls()) 
-  {
+  Q_FOREACH(QUrl url, event->mimeData()->urls()) {
     QString filename = url.toLocalFile();
     this->open(filename);
   }

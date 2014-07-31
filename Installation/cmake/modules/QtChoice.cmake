@@ -10,7 +10,7 @@ endmacro()
 
 macro(qt_wrap_ui)
   if(QT5)
-     	qt5_wrap_ui(${ARGN})
+    qt5_wrap_ui(${ARGN})
   elseif(QT4)
    	qt4_wrap_ui(${ARGN})
   else()
