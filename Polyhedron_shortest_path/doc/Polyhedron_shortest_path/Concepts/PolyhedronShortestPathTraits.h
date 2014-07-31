@@ -18,8 +18,8 @@ public:
 /// \name Types
 /// @{
 
-  /// The polyhedron type for the algorithm
-  typedef unspecified_type Polyhedron;
+  /// The face graph type for the algorithm
+  typedef unspecified_type FaceGraph;
   
   /// The numeric type for the algorithm.  All geometric types are expected to use this number type.
   /// The square root operation must be supported on this type.
@@ -47,7 +47,7 @@ public:
   typedef unspecified_type Barycentric_coordinate;
   
   /// The 3-dimensional Point type for this algorithm
-  /// (Must be exactly the same type used by Polyhedron).
+  /// (Must be exactly the same type used by FaceGraph).
   typedef unspecified_type Point_3;
   
   /// The 3-dimensional Vector type for this algorithm
@@ -334,7 +334,7 @@ public:
   
   /*!
   A predicate object type.  Must provide 
-  `template <class VertexPointMap> bool operator()(boost::graph_traits<Polyhedron>::vertex_descriptor v, Polyhedron& p, VertexPointMap vpm)`
+  `template <class VertexPointMap> bool operator()(boost::graph_traits<FaceGraph>::vertex_descriptor v, FaceGraph& p, VertexPointMap vpm)`
   that returns true if the vertex is a saddle vertex (more than 2pi surface area 
   over all adjacent faces), and false otherwise.  vmp must be a a model of concept ReadablePropertyMap that maps from vertex_descriptor to
   Point_3 objects.
