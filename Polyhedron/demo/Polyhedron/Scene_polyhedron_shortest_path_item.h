@@ -24,6 +24,10 @@
 #include <CGAL/Polyhedron_shortest_path/Polyhedron_shortest_path.h>
 #include <CGAL/Polyhedron_shortest_path/Polyhedron_shortest_path_traits.h>
 
+#include <CGAL/AABB_face_graph_triangle_primitive.h>
+#include <CGAL/AABB_traits.h>
+#include <CGAL/AABB_tree.h>
+
 #include <boost/current_function.hpp>
 
 class SCENE_POLYHEDRON_SHORTEST_PATH_ITEM_EXPORT Scene_polyhedron_shortest_path_item : public Scene_polyhedron_item_decorator
@@ -47,7 +51,9 @@ public:
   typedef CGAL::Polyhedron_shortest_path_default_traits<Kernel, Polyhedron> Polyhedron_shortest_path_traits;
   typedef CGAL::Polyhedron_shortest_path<Polyhedron_shortest_path_traits, VertexIndexMap, HalfedgeIndexMap, FaceIndexMap, VertexPointMap> Polyhedron_shortest_path;
   typedef typename Polyhedron_shortest_path::Face_location Face_location;
-  typedef typename Polyhedron_shortest_path::AABB_face_graph_tree AABB_face_graph_tree;
+  typedef CGAL::AABB_face_graph_triangle_primitive<Polyhedron, VertexPointMap> AABB_face_graph_primitive;
+  typedef CGAL::AABB_traits<Kernel, AABB_face_graph_primitive> AABB_face_graph_traits;
+  typedef CGAL::AABB_tree<AABB_face_graph_traits> AABB_face_graph_tree;
   
   typedef typename Polyhedron_shortest_path_traits::Barycentric_coordinate Barycentric_coordinate;
   typedef typename Polyhedron_shortest_path_traits::Ray_3 Ray_3;

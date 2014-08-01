@@ -28,10 +28,6 @@
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/boost/graph/iterator.h>
 
-#include <CGAL/AABB_face_graph_triangle_primitive.h>
-#include <CGAL/AABB_traits.h>
-#include <CGAL/AABB_tree.h>
-
 namespace CGAL {
 
 /*!
@@ -105,15 +101,6 @@ public:
   /// 1 - CGAL::target(CGAL::halfedge(`face`))
   /// 2 - CGAL::target(CGAL::next(CGAL::halfedge(`face`)))
   typedef typename std::pair<face_descriptor, Barycentric_coordinate> Face_location;
-  
-  /// AABB primitive type for face graph faceGraph type
-  typedef AABB_face_graph_triangle_primitive<FaceGraph, VertexPointMap> AABB_face_graph_primitive;
-  
-  /// Traits class for point location AABB tree
-  typedef CGAL::AABB_traits<typename Traits::Kernel, AABB_face_graph_primitive> AABB_face_graph_traits;
-  
-  /// An AABB tree to perform point location queries to get surface locations
-  typedef AABB_tree<AABB_face_graph_traits> AABB_face_graph_tree;
   
 /// @}
   
@@ -2078,9 +2065,7 @@ public:
   to any source point (used for visualization of the shortest path).
  
   \param face Face of the faceGraph of the query point
-  
   \param location Barycentric coordinate on face of the query point
-  
   \param output An OutputIterator to receive the shortest path points as Point_3
   */
   template <class OutputIterator>
@@ -2101,7 +2086,6 @@ public:
   \brief Returns the 3-dimensional coordinate of the given face and face location on the faceGraph.
   
   \param face Face of the faceGraph of the query point
-  
   \param location Barycentric coordinate on face of the query point
   */
   Point_3 point(face_descriptor face, Barycentric_coordinate location) const
@@ -2113,10 +2097,9 @@ public:
   \brief Returns the 3-dimensional coordinate of the given face and face location on the faceGraph.
   
   \param face Face of the faceGraph of the query point
-  
   \param location Barycentric coordinate on face of the query point 
-  
-  \param faceGraph Face graph to perform face location
+  \param faceGraph face graph to create face location on
+  \param traits Optional traits class to use
   */
   static Point_3 point(face_descriptor face, Barycentric_coordinate location, const FaceGraph& faceGraph, const Traits& traits = Traits()) 
   {
@@ -2127,12 +2110,9 @@ public:
   \brief Returns the 3-dimensional coordinate of the given face and face location on the faceGraph.
   
   \param face Face of the faceGraph of the query point
-  
   \param location Barycentric coordinate on face of the query point
-  
-  \param faceGraph Face graph to perform face location
-  
-  \param vertexPointMap Point map for `faceGraph`
+  \param faceGraph face graph to create face location on
+  \param traits Optional traits class to use
   */
   static Point_3 point(face_descriptor face, Barycentric_coordinate location, const FaceGraph& faceGraph, VertexPointMap vertexPointMap, const Traits& traits = Traits()) 
   {
@@ -2143,7 +2123,6 @@ public:
   \brief Returns the 3-dimensional coordinate of the given edge and a parametric location along that edge.
   
   \param edge Edge of the faceGraph to use
-  
   \param t Parametric distance along edge
   */
   Point_3 point(halfedge_descriptor edge, FT t) const
@@ -2155,8 +2134,9 @@ public:
   \brief Returns the 3-dimensional coordinate of the given edge and a parametric location along that edge.
   
   \param edge Edge of the faceGraph to use
-  
   \param t Parametric distance along edge
+  \param faceGraph face graph to create face location on
+  \param traits Optional traits class to use
   */
   static Point_3 point(halfedge_descriptor edge, FT t, const FaceGraph& faceGraph, const Traits& traits = Traits())
   {
@@ -2167,8 +2147,9 @@ public:
   \brief Returns the 3-dimensional coordinate of the given edge and a parametric location along that edge.
   
   \param edge Edge of the faceGraph to use
-  
   \param t Parametric distance along edge
+  \param faceGraph face graph to create face location on
+  \param traits Optional traits class to use
   */
   static Point_3 point(halfedge_descriptor edge, FT t, const FaceGraph& faceGraph, VertexPointMap vertexPointMap, const Traits& traits = Traits())
   {
@@ -2202,8 +2183,8 @@ public:
   \brief Returns a vertex location as a face location object
   
   \param vertex Vertex of parameter `faceGraph`
-  
-  \param faceGraph Face graph to use
+  \param faceGraph face graph to create face location on
+  \param traits Optional traits class to use
   */
   static Face_location face_location(vertex_descriptor vertex, const FaceGraph& faceGraph, const Traits& traits = Traits())
   {
@@ -2235,6 +2216,8 @@ public:
   
   \param he halfedge of the faceGraph
   \param t parametric distance along he
+  \param faceGraph face graph to create face location on
+  \param traits Optional traits class to use
   */
   static Face_location face_location(halfedge_descriptor he, FT t, const FaceGraph& faceGraph, const Traits& traits = Traits())
   {
@@ -2258,13 +2241,29 @@ public:
   \param point Point to locate on the faceGraph
   \param tree A cached AABB to perform the point location
   */
+  template <class AABB_face_graph_tree>
   Face_location locate(const Point_3& location, const AABB_face_graph_tree& tree) const
   {
-    typename Traits::Construct_barycentric_coordinate_in_triangle_3 cbcit3(m_traits.construct_barycentric_coordinate_in_triangle_3_object());
+    return locate(location, tree, m_faceGraph, m_vertexPointMap, m_traits);
+  }
+  
+  /*!
+  \brief Return the nearest face location to the given point.
+  
+  \param point Point to locate on the faceGraph
+  \param tree A cached AABB to perform the point location
+  \param faceGraph faceGraph Face graph to intersect
+  \param vertexPointMap Vertex point mapping for `faceGraph`
+  \param traits Optional traits class to use
+  */
+  template <class AABB_face_graph_tree>
+  static Face_location locate(const Point_3& location, const AABB_face_graph_tree& tree, const FaceGraph& faceGraph, VertexPointMap vertexPointMap, const Traits& traits = Traits())
+  {
+    typename Traits::Construct_barycentric_coordinate_in_triangle_3 cbcit3(traits.construct_barycentric_coordinate_in_triangle_3_object());
     typename AABB_face_graph_tree::Point_and_primitive_id result = tree.closest_point_and_primitive(location);
     
     face_descriptor face = result.second;
-    Barycentric_coordinate b = cbcit3(triangle_from_face(face), result.first);
+    Barycentric_coordinate b = cbcit3(triangle_from_face(face, faceGraph, vertexPointMap), result.first);
     return Face_location(face, b);
   }
   
@@ -2276,11 +2275,29 @@ public:
   
   \param point Point to locate on the faceGraph
   */
+  template <class AABB_face_graph_tree>
   Face_location locate(const Point_3& location) const
   {
+    return locate<AABB_face_graph_tree>(location, m_faceGraph, m_vertexPointMap, m_traits);
+  }
+  
+  /*!
+  \brief Return the nearest face location to the given point.
+    Note that this will fully build an AABB on each call, use the
+    other version in conjunction with `fill_aabb_tree' 
+    if you need to call this method more than once.
+  
+  \param point Point to locate on the faceGraph
+  \param faceGraph faceGraph Face graph to intersect
+  \param vertexPointMap Vertex point mapping for `faceGraph`
+  \param traits Optional traits class to use
+  */
+  template <class AABB_face_graph_tree>
+  static Face_location locate(const Point_3& location, const FaceGraph& faceGraph, VertexPointMap vertexPointMap, const Traits& traits = Traits())
+  {
     AABB_face_graph_tree tree;
-    fill_aabb_tree(tree);
-    return locate(location, tree);
+    fill_aabb_tree(faceGraph, tree);
+    return locate(location, tree, faceGraph, vertexPointMap, traits);
   }
   
   /*!
@@ -2290,10 +2307,27 @@ public:
   \param ray Ray to intersect with the faceGraph
   \param tree A cached AABB to perform the intersection
   */
+  template <class AABB_face_graph_tree>
   Face_location locate(const Ray_3& ray, const AABB_face_graph_tree& tree) const
   {
-    typename Traits::Construct_barycentric_coordinate_in_triangle_3 cbcit3(m_traits.construct_barycentric_coordinate_in_triangle_3_object());
-    typename Traits::Compute_squared_distance_3 csd3(m_traits.compute_squared_distance_3_object());
+    return locate(ray, tree, m_faceGraph, m_vertexPointMap, m_traits);
+  }
+  
+  /*!
+  \brief Return the face location along `ray` nearest to
+    its source point.
+  
+  \param ray Ray to intersect with the faceGraph
+  \param tree A cached AABB to perform the intersection
+  \param faceGraph faceGraph Face graph to intersect
+  \param vertexPointMap Vertex point mapping for `faceGraph`
+  \param traits Optional traits class to use
+  */
+  template <class AABB_face_graph_tree>
+  static Face_location locate(const Ray_3& ray, const AABB_face_graph_tree& tree, const FaceGraph& faceGraph, VertexPointMap vertexPointMap, const Traits& traits = Traits())
+  {
+    typename Traits::Construct_barycentric_coordinate_in_triangle_3 cbcit3(traits.construct_barycentric_coordinate_in_triangle_3_object());
+    typename Traits::Compute_squared_distance_3 csd3(traits.compute_squared_distance_3_object());
     typedef typename AABB_face_graph_tree::template Intersection_and_primitive_id<Ray_3>::Type Intersection_type;
     typedef boost::optional<Intersection_type> Ray_intersection;
     
@@ -2329,7 +2363,7 @@ public:
      
     if (foundOne)
     {
-      Barycentric_coordinate b = cbcit3(triangle_from_face(nearestFace), nearestPoint);
+      Barycentric_coordinate b = cbcit3(triangle_from_face(nearestFace, faceGraph, vertexPointMap), nearestPoint);
       return Face_location(nearestFace, b);
     }
     else
@@ -2347,23 +2381,55 @@ public:
   
   \param ray Ray to intersect with the faceGraph
   */
+  template <class AABB_face_graph_tree>
   Face_location locate(const Ray_3& ray) const
   {
-    AABB_face_graph_tree tree;
-    fill_aabb_tree(tree);
-    return locate(ray, tree);
+    return locate<AABB_face_graph_tree>(ray, m_faceGraph, m_vertexPointMap, m_traits);
   }
   
+  /*!
+  \brief Return the face location along `ray` nearest to
+    its source point.
+    Note that this will fully build an AABB on each call, use the
+    other version in conjunction with `fill_aabb_tree' 
+    if you need to call this method more than once.
+  
+  \param ray Ray to intersect with the face graph
+  \param faceGraph Face graph to intersect
+  \param vertexPointMap Vertex point mapping for `faceGraph`
+  \param traits Optional traits class to use
+  */
+  template <class AABB_face_graph_tree>
+  static Face_location locate(const Ray_3& ray, const FaceGraph& faceGraph, VertexPointMap vertexPointMap, const Traits& traits = Traits())
+  {
+    AABB_face_graph_tree tree;
+    fill_aabb_tree(faceGraph, tree);
+    return locate(ray, tree, faceGraph, vertexPointMap, traits);
+  }
+
   /*!
   \brief Creates an AABB tree suitable for use with `locate`.
   
   \param outTree Output parameter to hold the created AABB tree
   */
+  template <class AABB_face_graph_tree>
   void fill_aabb_tree(AABB_face_graph_tree& outTree) const
   {
+    fill_aabb_tree(m_faceGraph, outTree);
+  }
+  
+  /*!
+  \brief Creates an AABB tree suitable for use with `locate`.
+  
+  \param faceGraph Face graph to build the AABB tree from
+  \param outTree Output parameter to hold the created AABB tree
+  */
+  template <class AABB_face_graph_tree>
+  static void fill_aabb_tree(const FaceGraph& faceGraph, AABB_face_graph_tree& outTree)
+  {
     face_iterator facesStart, facesEnd;
-    boost::tie(facesStart, facesEnd) = CGAL::faces(m_faceGraph);
-    outTree.rebuild(facesStart, facesEnd, m_faceGraph);
+    boost::tie(facesStart, facesEnd) = CGAL::faces(faceGraph);
+    outTree.rebuild(facesStart, facesEnd, faceGraph);
     outTree.build();
   }
   

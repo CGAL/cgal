@@ -17,6 +17,10 @@
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/boost/graph/iterator.h>
 
+#include <CGAL/AABB_face_graph_triangle_primitive.h>
+#include <CGAL/AABB_traits.h>
+#include <CGAL/AABB_tree.h>
+
 #include <CGAL/Random.h>
 
 #include <CGAL/test_util.h>
@@ -43,6 +47,10 @@ BOOST_AUTO_TEST_CASE( test_find_nearest_face_location_on_surface )
   typedef CGAL::Polyhedron_shortest_path<Traits> Polyhedron_shortest_path;
   typedef boost::property_map<Polyhedron_3, CGAL::vertex_point_t>::type VPM;
   typedef boost::property_map<Polyhedron_3, CGAL::face_external_index_t>::type FIM;
+  
+  typedef CGAL::AABB_face_graph_triangle_primitive<Polyhedron_3, VPM> AABB_face_graph_primitive;
+  typedef CGAL::AABB_traits<Kernel, AABB_face_graph_primitive> AABB_face_graph_traits;
+  typedef CGAL::AABB_tree<AABB_face_graph_traits> AABB_face_graph_tree;
   
   Traits traits;
   
@@ -86,7 +94,7 @@ BOOST_AUTO_TEST_CASE( test_find_nearest_face_location_on_surface )
     
     Point_3 location3d = construct_barycenter_3(faceTriangle[0], location[0], faceTriangle[1], location[1], faceTriangle[2], location[2]);
     
-    Polyhedron_shortest_path::Face_location faceLocation = shortestPaths.locate(location3d);
+    Polyhedron_shortest_path::Face_location faceLocation = shortestPaths.locate<AABB_face_graph_tree>(location3d);
     
     BOOST_CHECK_EQUAL(faceIndexMap[face], faceIndexMap[faceLocation.first]);
     BOOST_CHECK_CLOSE(location[0], faceLocation.second[0], FT(0.0001));
