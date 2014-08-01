@@ -96,13 +96,11 @@ private:
 	    }
 	}
 
-
 	/// \endcond
+
 public:
 
 	Off_output() : list_output(Point_it(isolated_points), Edge_it(edges)) { }
-
-
 
 	/*!
 	Extracts the solid edges and vertices from the `Reconstruction_simplification_2` module.

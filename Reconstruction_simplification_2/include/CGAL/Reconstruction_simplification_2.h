@@ -296,26 +296,48 @@ protected:
 	double time_duration(const double init) {
 		return (clock() - init) / CLOCKS_PER_SEC;
 	}
+	 /// \endcond
 
+
+	/*!
+		Allows a speedup by not using the priority queue but using a random subset
+		of mchoice many samples. Based on those the next edge collapse step is determined.
+		By default mchoice is set to 0.
+
+		 \param mchoice The number of samples used for the  multiple choice selection.
+	*/
 	void set_mchoice(const int mchoice) {
 		m_mchoice = mchoice;
 	}
 
+	/*!
+		Determines how much console output the algorithm generates.
+		By default verbose is set to 0.
+
+		\param verbose The verbosity level.
+	*/
 	void set_verbose(const int verbose) {
 		m_verbose = verbose;
 	}
 
 
+	 /// \cond SKIP_IN_MANUAL
 	void set_alpha(const double alpha) {
 		m_alpha = alpha;
 	}
+	 /// \endcond
 
 
+	/*!
+		The use_flip parameter determines whether the flipping procedure
+		is used for the half-edge collapse. By default use_flip is set to true.
+	 */
 	void set_use_flip(const bool use_flip) {
 		m_use_flip = use_flip;
 	}
 
 
+	 /// \cond SKIP_IN_MANUAL
 	void set_norm_tol(const double norm_tol) {
 		m_norm_tol = norm_tol;
 	}
@@ -334,24 +356,40 @@ protected:
 	double get_tang_tol() const {
 		return m_tang_tol;
 	}
+	/// \endcond
 
 
+	/*!
+		The relocation parameter controls the number of relocations
+		that are performed between two edge collapses.
+		By default relocation is set to 0.
+	*/
 	void set_relocation(const unsigned relocation) {
 		m_relocation = relocation;
 	}
 
-
+	/// \cond SKIP_IN_MANUAL
 	unsigned get_relocation() const {
 		return m_relocation;
 	}
+	/// \endcond
 
 
-	void set_ghost(const double g) {
-		m_ghost = g;
+	/*!
+		After the decimation is completed, irrelevant edges may exist in the
+		reconstructed simplex. Using a use-case related relevance score,
+		which favors long edges with large mass and low cost, the algorithm
+		discard the edges with low relevance. The default value of relevance is 1.
+
+		\param relevance The relevance level.
+	 */
+	void set_ghost(const double relevance) {
+		m_ghost = relevance;
 		m_dt.ghost_factor() = m_ghost;
 	}
 
 
+	/// \cond SKIP_IN_MANUAL
 	double get_ghost() {
 		return m_ghost;
 	}
