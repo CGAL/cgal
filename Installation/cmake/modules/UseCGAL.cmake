@@ -35,7 +35,25 @@ if(NOT USE_CGAL_FILE_INCLUDED)
   set( CGAL_LIBRARIES )
 
   foreach ( component ${CGAL_REQUESTED_COMPONENTS} )
-    use_component( ${component} )
+  
+  	if(${component} STREQUAL "Qt4or5")
+	    
+		message(STATUS "The more recent Qt version configured for CGAL is libCGAL_Qt${CGAL_QT_RECENT}.")
+		
+	   	set (CGAL_QT_VERSION "${CGAL_QT_RECENT}" CACHE STRING "Choice of libCGAL Qt version")
+		
+	    if(NOT (${CGAL_QT_VERSION} STREQUAL ""))
+	      list(APPEND QT_VERSIONS_ALLOW 4 5)
+		else ()
+		  list(APPEND QT_VERSIONS_ALLOW "" )
+	    endif()
+
+		SET_PROPERTY(CACHE CGAL_QT_VERSION PROPERTY STRINGS ${QT_VERSIONS_ALLOW})
+		set(CGAL_Qt_version Qt${CGAL_QT_VERSION})
+		use_component( ${CGAL_Qt_version} )
+	else()
+	    use_component( ${component} )
+	endif()
   endforeach()
 
   use_essential_libs()

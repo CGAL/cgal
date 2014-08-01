@@ -27,9 +27,6 @@ foreach(DEP_PKG AABB_tree STL_Extension GraphicsView Surface_mesher Filtered_ker
   endforeach()
 endforeach()
 
-#New for Qt5 version !
-option (USE_QT5 "Use Qt5 version instead of Qt4" ON)
-
 option( POLYHEDRON_QTSCRIPT_DEBUGGER 
   "Activate the use of Qt Script Debugger in Polyhedron_3 demo" OFF)
 
@@ -39,51 +36,30 @@ include_directories( BEFORE ./ ./include ../../include ./CGAL_demo)
 add_subdirectory( implicit_functions )
 
 
-# Find Qt4 itself
-set( QT_USE_QTXML    TRUE )
+# Find Qt
 set( QT_USE_QTMAIN   TRUE )
+set( QT_USE_QTXML    TRUE )
 set( QT_USE_QTSCRIPT  TRUE )
 set( QT_USE_QTOPENGL  TRUE )
+
 if( POLYHEDRON_QTSCRIPT_DEBUGGER)
   set( QT_USE_QTSCRIPTTOOLS  TRUE )
 endif()
 
+find_package(CGAL COMPONENTS Qt4or5)
 
-if(USE_QT5)
-
-	find_package(CGAL COMPONENTS Qt5)
-
-	include(${CGAL_USE_FILE})
+include(${CGAL_USE_FILE})
 	
-	find_package(Qt5)
-			
-	set(COMPATIBILITY_QT4 TRUE)
-
-else (USE_QT5)
-	# Find CGAL and CGAL Qt4
-	find_package(CGAL COMPONENTS Qt4)
-	include( ${CGAL_USE_FILE} )
-
-	find_package(Qt4)
-
-	if(CGAL_Qt4_FOUND AND QT4_FOUND)
-		message("Qt4 found")
-		include(${QT_USE_FILE})
-
-		set(QT4 TRUE)
-	endif()
-endif(USE_QT5)
-
-include(QtChoice)
+find_package(Qt4or5)			
 
 # Find OpenGL
 find_package(OpenGL)
 
 # Find QGLViewer
-if(QT4 OR QT5)
+if(QT${USE_QT_VERSION})
   include_directories( ${QT_INCLUDE_DIR}/QtScriptTools )
   find_package(QGLViewer )
-endif(QT4 OR QT5)
+endif(QT${USE_QT_VERSION})
 
 
 
@@ -106,7 +82,7 @@ else()
 endif()
 
 
-if((QT4 OR QT5) AND OPENGL_FOUND AND QGLVIEWER_FOUND)
+if(QT${USE_QT_VERSION} AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
   set(Boost_USE_MULTITHREADED      ON)
   find_package(Boost COMPONENTS thread system)
@@ -551,16 +527,20 @@ if((QT4 OR QT5) AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
   configure_file(CGAL_polyhedron_demoConfig.cmake.in  CGAL_polyhedron_demoConfig.cmake)
 
-else ((QT4 OR QT5) AND OPENGL_FOUND AND QGLVIEWER_FOUND)
+else (QT${USE_QT_VERSION} AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
   set(POLYHEDRON_MISSING_DEPS "")
 
   if(NOT CGAL_Qt4_FOUND)
     set(POLYHEDRON_MISSING_DEPS "the CGAL Qt4 library, ${POLYHEDRON_MISSING_DEPS}")
   endif()
-
-  if(NOT (QT4 OR QT5))
-    set(POLYHEDRON_MISSING_DEPS "Qt, ${POLYHEDRON_MISSING_DEPS}")
+  
+  if(NOT CGAL_Qt5_FOUND)
+    set(POLYHEDRON_MISSING_DEPS "the CGAL Qt4 library, ${POLYHEDRON_MISSING_DEPS}")
+  endif()
+  
+  if(NOT QT${USE_QT_VERSION})
+    set(POLYHEDRON_MISSING_DEPS "Qt${USE_QT_VERSION}, ${POLYHEDRON_MISSING_DEPS}")
   endif()
 
   if(NOT OPENGL_FOUND)
@@ -573,4 +553,4 @@ else ((QT4 OR QT5) AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
   message(STATUS "NOTICE: This demo requires ${POLYHEDRON_MISSING_DEPS}and will not be compiled.")
 
-endif ((QT4 OR QT5) AND OPENGL_FOUND AND QGLVIEWER_FOUND)
+endif (QT${USE_QT_VERSION} AND OPENGL_FOUND AND QGLVIEWER_FOUND)

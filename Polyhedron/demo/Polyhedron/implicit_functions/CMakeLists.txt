@@ -16,44 +16,18 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
 include_directories( BEFORE ${Mesh_3_implicit_functions_BINARY_DIR} ../include )
 
 # Find Qt
-set( QT_USE_QTXML    TRUE )
 set( QT_USE_QTMAIN   TRUE )
+set( QT_USE_QTXML    TRUE )
 set( QT_USE_QTSCRIPT  TRUE )
 set( QT_USE_QTOPENGL  TRUE )
 
-#New for Qt5 version !
-if(QT4 OR QT5)
-	option (USE_QT5 "Use Qt5 version instead of Qt4" ON)
-endif()
+find_package(CGAL COMPONENTS Qt4or5)
 
-if(USE_QT5)
-
-	find_package(CGAL COMPONENTS Qt5)
-
-	include(${CGAL_USE_FILE})
+include(${CGAL_USE_FILE})
 	
-	find_package(Qt5)
+find_package(Qt4or5)
 		
-	set(COMPATIBILITY_QT4 TRUE)
-
-else(USE_QT5)
-	# Find CGAL and CGAL Qt4
-	find_package(CGAL COMPONENTS Qt4)
-	include( ${CGAL_USE_FILE} )
-
-	find_package(Qt4)
-
-	if(CGAL_Qt4_FOUND AND QT4_FOUND)
-		message("Qt4 found")
-		include(${QT_USE_FILE})
-
-		set(QT4 TRUE)
-	endif()
-endif(USE_QT5)
-
-include(QtChoice)
-
-if(QT4 OR QT5)
+if(QT${USE_QT_VERSION})
   
   # put plugins (which are shared libraries) at the same location as
   # executable files
@@ -91,7 +65,7 @@ if(QT4 OR QT5)
   polyhedron_demo_plugin(p_tanglecube_function_plugin Tanglecube_implicit_function)
   polyhedron_demo_plugin(p_klein_function_plugin Klein_implicit_function)
 
-else (QT4 OR QT5)
+else (QT${USE_QT_VERSION})
 
   set(MESH_3_MISSING_DEPS "")
 
@@ -113,4 +87,4 @@ else (QT4 OR QT5)
 
   message(STATUS "NOTICE: This demo requires ${MESH_3_MISSING_DEPS}and will not be compiled.")
 
-endif (QT4 OR QT5)
+endif(QT${USE_QT_VERSION})

@@ -1,16 +1,14 @@
-#This file propose the choice between versions 4 and 5 of Qt.
-
-set (USE_QT_VERSION "5" CACHE STRING "Choice of Qt version for CGAL compilation")
-SET_PROPERTY(CACHE USE_QT_VERSION PROPERTY STRINGS 4 5)
-
-cache_set(CGAL_Qt_version "Qt${USE_QT_VERSION}" )
+set(USE_QT_VERSION 5)
+set(CGAL_Qt_version "Qt${USE_QT_VERSION}" )
 
 message("Configuring libCGAL_${CGAL_Qt_version}")
 
 set( QT_USE_QTMAIN   TRUE )
 set( QT_USE_QTOPENGL TRUE )
 
-find_package(Qt QUIET)
+find_package(${CGAL_Qt_version} QUIET)
+include(QtChoice)
+
 find_package(OpenGL QUIET )
 
 if( QT${USE_QT_VERSION} )
@@ -37,15 +35,15 @@ if( QT${USE_QT_VERSION} )
     message( STATUS "moc executable:     ${QT_MOC_EXECUTABLE}" )
     message( STATUS "uic executable:     ${QT_UIC_EXECUTABLE}" )
 
-    cache_set(CGAL_Qt_3RD_PARTY_INCLUDE_DIRS ${QT_INCLUDE_DIR} ${OPENGL_INCLUDE_DIR} )
-    cache_set(CGAL_Qt_3RD_PARTY_LIBRARIES    ${QT_LIBRARIES}   ${OPENGL_LIBRARIES}   )
-    cache_set(CGAL_Qt_3RD_PARTY_DEFINITIONS  ${QT_DEFINITIONS} ${OPENGL_DEFINITIONS} -DNOMINMAX)
+    cache_set(CGAL_Qt${USE_QT_VERSION}_3RD_PARTY_INCLUDE_DIRS ${QT_INCLUDE_DIR} ${OPENGL_INCLUDE_DIR} )
+    cache_set(CGAL_Qt${USE_QT_VERSION}_3RD_PARTY_LIBRARIES    ${QT_LIBRARIES}   ${OPENGL_LIBRARIES}   )
+    cache_set(CGAL_Qt${USE_QT_VERSION}_3RD_PARTY_DEFINITIONS  ${QT_DEFINITIONS} ${OPENGL_DEFINITIONS} -DNOMINMAX)
 
     set(mocfiles "")
     set(RESOURCE_FILES "")
 
     foreach (package ${CGAL_CONFIGURED_PACKAGES} )
-      file(GLOB PACKAGE_QTMOC_FILES "${package}/src/CGAL_Qt/*.qtmoc.cmake")
+      file(GLOB PACKAGE_QTMOC_FILES "${package}/src/CGAL_Qt${USE_QT_VERSION}/*.qtmoc.cmake")
       foreach(package_qtmoc_file ${PACKAGE_QTMOC_FILES})
          # includes 'moccing' for sources/headers in package + collects lists of moc-files for dependency (to properly build the lib)
         include(${package_qtmoc_file}) 
@@ -64,22 +62,31 @@ if( QT${USE_QT_VERSION} )
 
     use_essential_libs()
 
-    include_directories( SYSTEM ${CGAL_3RD_PARTY_INCLUDE_DIRS} ${CGAL_Qt_3RD_PARTY_INCLUDE_DIRS} )
+    include_directories( SYSTEM ${CGAL_3RD_PARTY_INCLUDE_DIRS} ${CGAL_Qt${USE_QT_VERSION}_3RD_PARTY_INCLUDE_DIRS} )
 
     link_directories    ( ${CGAL_LIBRARIES_DIR} ${CGAL_3RD_PARTY_LIBRARIES_DIRS})
 
-    collect_cgal_library( CGAL_Qt "${additional_files}")
+    collect_cgal_library( CGAL_Qt${USE_QT_VERSION} "${additional_files}")
 
-    add_dependencies( CGAL_Qt CGAL )
+    add_dependencies( CGAL_Qt${USE_QT_VERSION} CGAL )
 
-    target_link_libraries( CGAL_Qt ${CGAL_LIBRARY} ${CGAL_3RD_PARTY_LIBRARIES} ${CGAL_Qt_3RD_PARTY_LIBRARIES} )
+    target_link_libraries( CGAL_Qt${USE_QT_VERSION} ${CGAL_LIBRARY} ${CGAL_3RD_PARTY_LIBRARIES} ${CGAL_Qt${USE_QT_VERSION}_3RD_PARTY_LIBRARIES} )
 
-    add_definitions ( ${CGAL_3RD_PARTY_DEFINITIONS} ${CGAL_Qt_3RD_PARTY_DEFINITIONS} )
+    add_definitions ( ${CGAL_3RD_PARTY_DEFINITIONS} ${CGAL_Qt${USE_QT_VERSION}_3RD_PARTY_DEFINITIONS} )
 
     if($ENV{CGAL_FAKE_PUBLIC_RELEASE})
       add_definitions( -DCGAL_FAKE_PUBLIC_RELEASE )
     endif()
-    
+	
+	if(${CGAL_QT_RECENT})
+		if(${CGAL_QT_RECENT} LESS ${USE_QT_VERSION})
+			set (CGAL_QT_RECENT ${USE_QT_VERSION})
+		endif()
+	else()
+	    set (CGAL_QT_RECENT ${USE_QT_VERSION})
+	endif()
+	cache_set(CGAL_QT_RECENT ${CGAL_QT_RECENT})
+	
     message("libCGAL_${CGAL_Qt_version} is configured")
 
   else()
@@ -87,5 +94,5 @@ if( QT${USE_QT_VERSION} )
   endif()  
   
 else()
-  message( STATUS "libCGAL_${CGAL_Qt_version} needs ${CGAL_Qt_version}, cannot be configured.")
+  message( STATUS "libCGAL_${CGAL_Qt_version} needs Qt${USE_QT_VERSION}, cannot be configured.")
 endif()

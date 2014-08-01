@@ -696,6 +696,9 @@ message("== Write compiler_config.h (DONE) ==\n")
 #
 #--------------------------------------------------------------------------------------------------
 
+ #To find the more recent Qt configured for CGAL. 
+ UNSET(CGAL_QT_RECENT CACHE)
+
 message("== Generating build files ==")
 
 set(CGAL_LIBRARIES_DIR ${CMAKE_BINARY_DIR}/lib)

@@ -266,7 +266,7 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
   macro( use_component component)
 
     message (STATUS "Requested component: ${component}")
-
+	
     if(WITH_CGAL_${component})
       if(TARGET CGAL_${component})
         add_to_list( CGAL_LIBRARIES CGAL_${component} )
@@ -290,28 +290,10 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
         find_package( OpenGL )
         find_package( Qt3-patched )
       endif()
-
+	  
       if (${component} STREQUAL "Qt4")
         find_package( OpenGL )
         find_package( Qt4 )
-      endif()
-
-      #New for Qt5 version !
-      if (${component} STREQUAL "Qt5")
-        find_package( OpenGL )
-		
-    FIND_PACKAGE( Qt5Core )
-	FIND_PACKAGE( Qt5Gui  )
-	FIND_PACKAGE( Qt5OpenGL )
-	FIND_PACKAGE( Qt5Widgets )
-	FIND_PACKAGE( Qt5Xml )
-
-	list(APPEND QT_INCLUDE_DIR ${Qt5Core_INCLUDE_DIRS} ${Qt5Gui_INCLUDE_DIRS} ${Qt5Widgets_INCLUDE_DIRS} ${Qt5OpenGL_INCLUDE_DIRS} ${Qt5Xml_INCLUDE_DIRS}) 
-
-	list(APPEND QT_LIBRARIES ${Qt5Core_LIBRARIES} ${Qt5Gui_LIBRARIES} ${Qt5Widgets_LIBRARIES} ${Qt5OpenGL_LIBRARIES} ${Qt5Xml_LIBRARIES})
-
-	list(APPEND QT_DEFINITIONS ${Qt5Core_DEFINITIONS} ${Qt5Gui_DEFINITIONS} ${Qt5Widgets_DEFINITIONS} ${Qt5OpenGL_DEFINITIONS} ${Qt5Xml_DEFINITIONS})
-
       endif()
 
     else(WITH_CGAL_${component})
