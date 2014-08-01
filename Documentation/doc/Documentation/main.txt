@@ -3,7 +3,7 @@
 \mainpage
 
 This is the beta version of the %CGAL Manual generated with doxygen.
-As it was generated semi-automatically from LaTeX sources of an
+ As it was generated semi-automatically from LaTeX sources of an
 inhouse documentation tool, followed by months of postprocessing
 we are happy about user feedback how we might improve things and
 where we have documentation bugs.
