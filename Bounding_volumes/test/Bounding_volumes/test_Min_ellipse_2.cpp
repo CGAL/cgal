@@ -19,8 +19,8 @@
 // revision      : $Id$
 // revision_date : $Date$
 //
-// author(s)     : Sven Schönherr <sven@inf.ethz.ch>, Bernd Gärtner
-// coordinator   : ETH Zürich (Bernd Gärtner <gaertner@inf.ethz.ch>)
+// author(s)     : Sven SchÃ¶nherr <sven@inf.ethz.ch>, Bernd GÃ¤rtner
+// coordinator   : ETH ZÃ¼rich (Bernd GÃ¤rtner <gaertner@inf.ethz.ch>)
 //
 // implementation: test program for 2D Smallest Enclosing Ellipse
 // ============================================================================

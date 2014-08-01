@@ -1,7 +1,7 @@
 #pragma once
 
 
-// Boîte de dialogue CDialogOptions
+// BoÃ®te de dialogue CDialogOptions
 
 class CDialogOptions : public CDialog
 {
@@ -11,7 +11,7 @@ public:
 	CDialogOptions(CWnd* pParent = NULL);   // constructeur standard
 	virtual ~CDialogOptions();
 
-// Données de boîte de dialogue
+// DonnÃ©es de boÃ®te de dialogue
 	enum { IDD = IDD_DIALOG_OPTIONS };
 
 protected:

@@ -1,4 +1,4 @@
-// DialogOptions.cpp : fichier d'implémentation
+// DialogOptions.cpp : fichier d'implÃ©mentation
 #include "stdafx.h"
 #include "Mesh.h"
 #include "DialogOptions.h"

@@ -73,9 +73,9 @@ Which linear solver?
 
 5 References
 
-[DMA02] Mathieu Desbrun, Mark Meyer, and Pierre Alliez. Intrinsic parameterizations of surface meshes. Computer Graphics Forum, 21(3):209–218, September 2002.
-[FH05] M. S. Floater and K. Hormann. Surface parameterization: a tutorial and survey. In N. A.  Dodgson, M. S. Floater, and M. A. Sabin, editors, Advances in Multiresolution for Geometric Modelling, Mathematics and Visualization, pages 157–186. Springer, Berlin, Heidelberg, 2005.
-[Flo03] Michael Floater. Mean Value Coordinates. Computer Aided Design, 20(1):19–27, 2003.
-[LPRM02] Bruno Lévy, Sylvain Petitjean, Nicolas Ray, and Jérome Maillot. Least squares conformal maps for automatic texture atlas generation.  In Proceedings of the 29th Conference on Computer Graphics and Interactive Techniques SIGGRAPH, volume 21(3) of ACM Transactions on Graphics, pages 362–371, 2002.
+[DMA02] Mathieu Desbrun, Mark Meyer, and Pierre Alliez. Intrinsic parameterizations of surface meshes. Computer Graphics Forum, 21(3):209â€“218, September 2002.
+[FH05] M. S. Floater and K. Hormann. Surface parameterization: a tutorial and survey. In N. A.  Dodgson, M. S. Floater, and M. A. Sabin, editors, Advances in Multiresolution for Geometric Modelling, Mathematics and Visualization, pages 157â€“186. Springer, Berlin, Heidelberg, 2005.
+[Flo03] Michael Floater. Mean Value Coordinates. Computer Aided Design, 20(1):19â€“27, 2003.
+[LPRM02] Bruno LÃ©vy, Sylvain Petitjean, Nicolas Ray, and JÃ©rome Maillot. Least squares conformal maps for automatic texture atlas generation.  In Proceedings of the 29th Conference on Computer Graphics and Interactive Techniques SIGGRAPH, volume 21(3) of ACM Transactions on Graphics, pages 362â€“371, 2002.
 
 

@@ -277,13 +277,13 @@ int readInrimageHeader(const char *,_image *im) {
 	 was used. 
 	 However the man said 
          ...
-	 n      Nothing is expected; instead, the number of charac­
+	 n      Nothing is expected; instead, the number of characÂ­
               ters consumed thus far from  the  input  is  stored
               through  the  next pointer, which must be a pointer
               to int.  This is not a conversion, although it  can
               be  suppressed  with  the  *  flag.  The C standard
-              says: `Execution of a %n directive does not  incre­
-              ment  the  assignment count returned at the comple­
+              says: `Execution of a %n directive does not  increÂ­
+              ment  the  assignment count returned at the compleÂ­
               tion of execution' but  the  Corrigendum  seems  to
               contradict  this.  Probably  it is wise not to make
               any assumptions on the effect of %n conversions  on

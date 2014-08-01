@@ -76,7 +76,7 @@ public:
     }
   }
 
-  // To future reference, I also left prev implementation which is a variant of Fisher–Yates shuffle, however to keep `points` intact I use another vector to
+  // To future reference, I also left prev implementation which is a variant of Fisherâ€“Yates shuffle, however to keep `points` intact I use another vector to
   // store and swap indices.
   // where n = number of points; complexity = O(n), memory overhead = O(n)
   /*

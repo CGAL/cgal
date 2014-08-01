@@ -20,7 +20,7 @@
 // $Id$
 // 
 //
-// Author(s)     : Sven Schönherr <sven@inf.ethz.ch>
+// Author(s)     : Sven SchÃ¶nherr <sven@inf.ethz.ch>
 
 #include <CGAL/Random.h>
 #include <ctime>

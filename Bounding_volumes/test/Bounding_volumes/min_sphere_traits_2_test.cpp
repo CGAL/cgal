@@ -18,10 +18,10 @@
 // source        : web/Optimisation/Min_sphere_d.aw
 // revision      : $Id$
 // revision_date : $Date$
-// author(s)     : Sven Schönherr <sven@inf.fu-berlin.de>
-//                 Bernd Gärtner
+// author(s)     : Sven SchÃ¶nherr <sven@inf.fu-berlin.de>
+//                 Bernd GÃ¤rtner
 //
-// coordinator   : ETH Zurich (Bernd Gärtner <gaertner@inf.ethz.ch>)
+// coordinator   : ETH Zurich (Bernd GÃ¤rtner <gaertner@inf.ethz.ch>)
 //
 // implementation: dD Smallest Enclosing Sphere
 // ============================================================================
