@@ -129,6 +129,17 @@ The Apollonius diagram partitions the plane depending on the closest
 circle (also called additively weighted Voronoi diagram).
 </ul>
 
+\subsection distance_ipelet Distance
+The input selection must be two marks. 
+The distance between the two marks is output (for few seconds)
+in the bottom of Ipe window. Can be computed in points, centimeters, or inches.
+<ul>
+<li><b> Distance between two marks (pts):</b> 
+<li><b> Distance between two marks (cm):</b> 
+<li><b> Distance between two marks (inch):</b> 
+</ul>
+
+
 \subsection generator_ipelet Generators
 A number of points to generate is asked in a dialog box.
 <ul>
