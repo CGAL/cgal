@@ -1,4 +1,170 @@
 
+-------------------------------- Release 4.5 --------------------------------
+
+Release date: September 2014
+
+
+* Installation
+
+  - Changes in the set of supported platforms:
+
+      - The Microsoft Windows Visual C++ compiler 2008 (VC9) is no longer
+        supported since CGAL-4.5.
+
+
+  - Since CGAL version 4.0, Eigen was the recommended third-party library to
+    use with Planar Parameterization of Triangulated Surface Meshes, Surface
+    Reconstruction from Point Sets, Approximation of Ridges and Umbilics on
+    Triangulated Surface Meshes, and Estimation of Local Differential
+    Properties of Point-Sampled Surfaces packages. From CGAL version 4.5,
+    Taucs, Blas and Lapack are no longer supported.
+
+  - CGAL is now compatible with the new CMake version 3.0.
+
+
+* dD Geometry Kernel
+
+  - A new model Epick_d of the Kernel_d concept is introduced. It provides
+    better performance through arithmetic filtering and specializations for
+    fixed dimensions. It may not work with compilers as old as gcc-4.2, but was
+    tested with gcc-4.4.
+
+
+* CGAL and the Boost Graph Library (Major changes)
+
+  - Cleanup of the HalfedgeGraph concept. In particular:
+
+      - Introduction of the notion of halfedge_descriptor in the specialization
+        of the class boost::graph_traits.
+
+      - Deprecation of halfedge_graph_traits.
+
+      - A model of HalfedgeGraph is considered as an undirected graph. Thus any
+        call to edges() should be replaced by halfedges() and num_edges() now
+        returns the number of (undirected) edges.
+
+      - Breaking change: is_border_edge and is_border_halfedge properties are
+        removed. The free functions is_border() and is_border_edge() should be
+        used instead.
+
+      - Renaming of HalfedgeGraph specific free functions.
+
+
+  - Introduction of the FaceGraph concept.
+
+  - Adaptation of the package Triangulated Surface Mesh Simplification and of
+    the class AABB_halfedge_graph_segment_primitive from the package 3D Fast
+    Intersection and Distance Computation to the API change.
+
+  - Update of the package Triangulated Surface Mesh Segmentation and of the
+    class AABB_face_graph_triangle_primitive from the package 3D Fast
+    Intersection and Distance Computation to accept model of the newly
+    introduced concepts.
+
+  - Offer Euler operations as free functions for models of the graph concepts
+    provided by CGAL.
+
+  - Specialization of boost::graph_traits for OpenMesh::PolyMesh_ArrayKernelT
+    as proof of concept. A OpenMesh::PolyMesh_ArrayKernelT becomes a model of
+    the aforementioned concepts when including CGAL/boost/graph/
+    graph_traits_PolyMesh_ArrayKernelT.h.
+
+
+* 2D Arrangements
+
+  - Fixed a bug in removing an unbounded curve (e.g., a ray) from an
+    arrangement induced by unbounded curves.
+
+
+* 2D Snap Rounding
+
+  - Replaced use of private kd_tree with CGAL's official Kd_tree from
+    Spatial_searching package; results in a small performance gain. Removed the
+    private kd_tree package.
+
+
+* Spatial_searching
+
+  - Added methods reserve(size_t size) and size_t capacity() to class Kd_tree
+    to allocate memory to store size points and to report that number (STL
+    compliance).
+
+
+* 3D Mesh Generation
+
+  - Add a new constructor for the class Labeled_mesh_domain_3 which takes an
+    Iso_cuboid_3.
+
+  - Add a new labeling function wrapper for meshing multi-domain.
+
+  - The meshing functionality in the Qt demos in demo/Polyhedron/ and demo/
+    Mesh_3/ can now use the handling of 1d-features, that exists in CGAL since
+    version 3.8.
+
+  - Add an experimental parallel version of the 3D mesh refinement and mesh
+    optimization methods.
+
+
+* STL_extension
+
+  - Add Compact_container::operator[], allowing a direct access to the ith
+    element of a compact container.
+
+  - Add Concurrent_compact_container, a compact container which allows
+    concurrent insertion and removal.
+
+
+* Triangulation_3
+
+  - Add an experimental parallel version of the Delaunay triangulation and the
+    Regular triangulation algorithms, which allows parallel insertion and
+    removal of point ranges.
+
+
+* Triangulated Surface Mesh Simplification
+
+  - Breaking change: Due to the cleanup of the concepts of the package CGAL and
+    the Boost Graph Library, the named parameter edge_is_border_map has been
+    removed, and the named parameter edge_is_constrained_map now expects a
+    property map with an edge descriptor as key type (vs. halfedge descriptor
+    before).
+
+  - Add some optimization in the code making the implementation faster
+    (depending on the cost and the placement chosen). However, for an edge
+    which collapse is not topologically valid, the vector of vertices of the
+    link provided by its profile might contains duplicates, thus also breaking
+    the orientation guarantee in the vector. This must not be a problem for
+    users as the edge is not collapsible anyway but if it is a absolute
+    requirement for user defined cost/placement, defining the macro
+    CGAL_SMS_EDGE_PROFILE_ALWAYS_NEED_UNIQUE_VERTEX_IN_LINK will restore the
+    former behavior.
+
+
+* Triangulated Surface Mesh Deformation (new package)
+
+  - This package allows to deform a triangulated surface mesh under positional
+    constraints of some of its vertices without requiring any additional
+    structure other than the surface mesh itself. The methods provided
+    implements an as-rigid-as-possible deformation.
+
+
+* 3D Convex Hulls
+
+  - Clean up the documentation of the concepts
+
+
+* Point Set Processing and Surface Reconstruction from Point Sets
+
+  - The former demo has been removed and is fully merge in the Polyhedron demo.
+
+
+* Point Set Processing
+
+  - Workaround a bug in dijsktra shortest path of boost 1.54 by shipping and
+    using the boost header from the 1.55 release. This header will be used only
+    if you are using the version 1.54 of boost.
+
+
 -------------------------------- Release 4.4 --------------------------------
 
 Release date: April 2014
@@ -77,6 +243,11 @@ Release date: April 2014
     the spatial sorting in order to speed up the time needed for the insertion.
 
 
+* 3D Periodic Triangulations
+
+  - Add a method to locate point with inexact predicates.
+
+
 * 3D Alpha Shapes
 
   - Add member functions in CGAL::Alpha_shape_3 to give access to the alpha
@@ -100,6 +271,10 @@ Release date: April 2014
 
   - Improve the use of cache values in Mesh_cell_base_3 to (re)compute
     circumcenters and sliver criterion values only when needed.
+
+  - Add caching of circumcenters to Regular_triangulation_cell_base_3. The
+    cache value is computed when cell->circumcenter() or rt.dual(cell)
+    functions are called.
 
 
 * Triangulated Surface Mesh Simplification
