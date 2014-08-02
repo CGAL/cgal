@@ -6,12 +6,13 @@ message("Configuring libCGAL_${CGAL_Qt_version}")
 set( QT_USE_QTMAIN   TRUE )
 set( QT_USE_QTOPENGL TRUE )
 
-find_package(${CGAL_Qt_version} QUIET)
-include(QtChoice)
+set(Qt_version ${CGAL_Qt_version})
 
-find_package(OpenGL QUIET )
+find_package(Qt4or5 QUIET)
 
-if( QT${USE_QT_VERSION} )
+if( QT${USE_QT_VERSION}_FOUND )
+
+  find_package(OpenGL QUIET )
 
   if( OPENGL_FOUND )
     

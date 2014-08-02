@@ -1,18 +1,25 @@
-message("Searching Qt5 modules.")
+MESSAGE("Searching Qt5 modules.")
 
 if(WIN32)
-	message("Qt5 on Windows needs Windows SDK.")
+	MESSAGE("Qt5 on Windows needs Windows SDK.")
 	
-	set(CMAKE_LIBRARY_PATH ${CMAKE_LIBRARY_PATH} "C:\\Program Files (x86)\\Windows Kits\\8.1\\Lib\\winv6.3\\um\\x64")
-	
+	SET(CMAKE_LIBRARY_PATH ${CMAKE_LIBRARY_PATH} "C:\\Program Files (x86)\\Windows Kits\\8.1\\Lib\\winv6.3\\um\\x64")	
 endif()
 
-if (QT_USE_QTMAIN OR NOT component)
-	find_package(Qt5Core)
-endif(QT_USE_QTMAIN OR NOT component)
+UNSET(QT5 CACHE)
+UNSET(QT5_fOUND CACHE)
+UNSET(USE_QT_VERSION CACHE)
+
+FIND_PACKAGE(Qt5Core QUIET)
+
+SET(QT_MODULES_MISSING "")
+
+if(NOT Qt5Core_FOUND)
+	SET(QT_MODULES_MISSING ${QT_MODULES_MISSING} "Core")
+endif()
 
 # Qt modules
-FOREACH(module Core GUI OpenGL Multimedia  
+FOREACH(module  GUI OpenGL Multimedia  
 		Network QML Quick SQL Test WebKit 
 		Widgets D-Bus Graphical_Effects ImageFormats 
 		MacExtras NFC Positioning PrintSupport Declarative 
@@ -22,14 +29,14 @@ FOREACH(module Core GUI OpenGL Multimedia
   STRING(TOUPPER ${module} component)
 
   IF (QT_USE_QT${component})
-    	FIND_PACKAGE(Qt5${module} REQUIRED)
+    	FIND_PACKAGE(Qt5${module} QUIET)
     	IF (Qt5${module}_FOUND)
-      	message(STATUS "Qt5${module} found.")
-      	SET(QT_INCLUDE_DIR ${QT_INCLUDE_DIR} ${Qt5${module}_INCLUDE_DIRS})
-      	SET(QT_LIBRARIES ${QT_LIBRARIES} ${Qt5${module}_LIBRARIES})
-      	SET(QT_DEFINITIONS ${QT_DEFINITIONS} ${Qt5${module}_DEFINITIONS})
+      		message(STATUS "Qt5${module} found.")
+      		SET(QT_INCLUDE_DIR ${QT_INCLUDE_DIR} ${Qt5${module}_INCLUDE_DIRS})
+      		SET(QT_LIBRARIES ${QT_LIBRARIES} ${Qt5${module}_LIBRARIES})
+      		SET(QT_DEFINITIONS ${QT_DEFINITIONS} ${Qt5${module}_DEFINITIONS})
     	ELSE (Qt5${module}_FOUND)
-      		MESSAGE("Qt5 ${module} library not found.")
+      		SET(QT_MODULES_MISSING "${QT_MODULES_MISSING}, ${module}")
     	ENDIF (Qt5${module}_FOUND)
   ENDIF (QT_USE_QT${component})
   
@@ -140,10 +147,15 @@ ENDFOREACH(module)
     QT_DESIGNER_EXECUTABLE QT_LINGUIST_EXECUTABLE)
 
 
-set(QT5 TRUE)
-set(USE_QT_VERSION 5)
+if(${QT_MODULES_MISSING} STREQUAL "")
+	set(QT5 TRUE)
+	set(QT5_FOUND TRUE)
+	set(USE_QT_VERSION 5)
 
-set(CMAKE_AUTOMOC ON)
-set(CMAKE_INCLUDE_CURRENT_DIR ON)
+	set(CMAKE_AUTOMOC ON)
+	set(CMAKE_INCLUDE_CURRENT_DIR ON)
+else()
+	message("Loading of Qt5 modules imcomplete. Missing of ${QT_MODULES_MISSING} modules.")
+endif()
 
 message("End of searching Qt5 modules.")
