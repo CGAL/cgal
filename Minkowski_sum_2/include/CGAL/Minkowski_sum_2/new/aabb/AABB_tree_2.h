@@ -20,10 +20,9 @@
 #ifndef CGAL_AABB_TREE_2_H
 #define CGAL_AABB_TREE_2_H
 
-#include "AABB_node_2.h"
+#include <CGAL/Minkowski_sum_2/new/aabb/AABB_node_2.h>
 
 namespace CGAL {
-namespace internal {
 
 /**
 * @class AABB_tree_2
@@ -732,7 +731,6 @@ AABB_tree_2<Tr>::closest_point_and_primitive(const Point &query,
     return distance_traits.closest_point_and_primitive();
 }
 
-} // namespace internal
 } // namespace CGAL
 
 #endif // CGAL_AABB_TREE_2_H

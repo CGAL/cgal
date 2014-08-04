@@ -23,8 +23,8 @@
 #include <CGAL/basic.h>
 #include <CGAL/Polygon_with_holes_2.h>
 
+#include <CGAL/Minkowski_sum_2/new/Minkowski_sum_by_reduced_convolution_2.h>
 #include <CGAL/Minkowski_sum_2/Minkowski_sum_conv_2.h>
-#include <CGAL/Minkowski_sum_2/new/Minkowski_sum_conv_lien_2.h>
 #include <CGAL/Minkowski_sum_2/Minkowski_sum_decomp_2.h>
 #include <list>
 
@@ -65,9 +65,9 @@ Polygon_with_holes_2<Kernel,Container>
 minkowski_sum_2_new (const Polygon_2<Kernel,Container>& pgn1,
                      const Polygon_2<Kernel,Container>& pgn2)
 {
-  internal::Minkowski_sum_by_convolution_lien_2<Kernel, Container>  mink_sum;
-  Polygon_2<Kernel,Container>                             sum_bound;
-  std::list<Polygon_2<Kernel,Container> >                 sum_holes;
+  Minkowski_sum_by_reduced_convolution_2<Kernel, Container> mink_sum;
+  Polygon_2<Kernel,Container>                              sum_bound;
+  std::list<Polygon_2<Kernel,Container> >                  sum_holes;
 
   if (pgn1.size() > pgn2.size())
     mink_sum (pgn1, pgn2, sum_bound, std::back_inserter(sum_holes));

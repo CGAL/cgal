@@ -1,12 +1,11 @@
 #ifndef AABBCOLLISIONDETECTOR_HEADER
 #define AABBCOLLISIONDETECTOR_HEADER
 
-#include "AABB_traits_2.h"
-#include "AABB_segment_2_primitive.h"
-#include "AABB_tree_2.h"
+#include <CGAL/Minkowski_sum_2/new/aabb/AABB_tree_2.h>
+#include <CGAL/Minkowski_sum_2/new/aabb/AABB_traits_2.h>
+#include <CGAL/Minkowski_sum_2/new/aabb/AABB_segment_2_primitive.h>
 
 namespace CGAL {
-namespace internal {
 
 template <class Kernel_, class Container_> class AABB_collision_detector_2 {
 
@@ -15,17 +14,10 @@ public:
     typedef typename Kernel_::Point_2 Point_2;
     typedef typename Kernel_::Vector_2 Vector_2;
     typedef typename CGAL::Polygon_2<Kernel_> Polygon_2;
-    typedef typename Polygon_2::Traits::Segment_2 Segment_2 ;
     typedef typename Polygon_2::Edge_const_iterator Edge_iterator;
-    typedef typename Polygon_2::Edge_const_circulator Edge_circulator;
     typedef AABB_segment_2_primitive<Kernel_, Edge_iterator, Polygon_2> Tree_segment_2;
     typedef AABB_traits_2<Kernel_, Tree_segment_2> Tree_traits;
     typedef AABB_tree_2<Tree_traits> Tree_2;
-    typedef CGAL::Arr_segment_traits_2<Kernel_> Traits_2;
-
-protected:
-
-    Traits_2 m_traits;
 
 public:
 
@@ -50,7 +42,6 @@ private:
     const Polygon_2 &m_q;
 };
 
-} // namespace internal
 } // namespace CGAL
 
 #endif

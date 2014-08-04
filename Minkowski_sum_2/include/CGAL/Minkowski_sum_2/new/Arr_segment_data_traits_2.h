@@ -2,7 +2,6 @@
 #define ARR_SEGMENTDATA_HEADER
 
 namespace CGAL {
-namespace internal {
 
 typedef std::pair<int, int> state;
 
@@ -407,7 +406,6 @@ public:
     }
 };
 
-} // namespace internal
 } // namespace CGAL
 
 #endif

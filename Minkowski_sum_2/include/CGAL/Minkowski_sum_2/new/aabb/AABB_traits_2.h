@@ -2,7 +2,6 @@
 #define CGAL_AABB_2D_TRAITS_H_
 
 namespace CGAL {
-namespace internal {
 
 template <class R_> class Point_2;
 template <class R_> class Segment_2;
@@ -485,7 +484,6 @@ AABB_traits_2<GT, P>::longest_axis(const Bounding_box &bbox) {
     }
 }
 
-} // namespace internal
 } // namespace CGAL
 
 #endif

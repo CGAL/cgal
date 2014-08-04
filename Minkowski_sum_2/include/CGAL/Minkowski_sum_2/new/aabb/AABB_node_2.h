@@ -21,7 +21,6 @@
 #define CGAL_AABB_NODE_MOD_H
 
 namespace CGAL {
-namespace internal {
 
 template<typename AABBTraits>
 class AABB_node_2 {
@@ -297,7 +296,6 @@ AABB_node_2<Tr>::join_traversal(const AABB_node_2 &other_node,
     }
 }
 
-} // namespace internal
 } // namespace CGAL
 
 #endif // CGAL_AABB_NODE_MOD_H

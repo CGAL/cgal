@@ -26,7 +26,6 @@
 #define CGAL_AABB_SEGMENT_2_PRIMITIVE_H_
 
 namespace CGAL {
-namespace internal {
 
 template <class GeomTraits, class Iterator_, class ContainerType>
 class AABB_segment_2_primitive {
@@ -73,7 +72,6 @@ public:
     }
 };
 
-} // namespace internal
 } // namespace CGAL
 
 #endif // CGAL_AABB_SEGMENT_PRIMITIVE_H_

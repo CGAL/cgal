@@ -1,20 +1,23 @@
 #ifndef CGAL_MINKOWSKI_SUM_REDUCED_CONV_H
 #define CGAL_MINKOWSKI_SUM_REDUCED_CONV_H
 
-#include <CGAL/Timer.h>
+#include <CGAL/basic.h>
 #include <CGAL/Arrangement_with_history_2.h>
-#include "aabb/AABB_collision_detector_2.h"
-#include "Arr_segment_data_traits_2.h"
+#include <CGAL/Arr_segment_traits_2.h>
+#include <CGAL/Timer.h>
 
-#include <iostream> // TODO: remove!
+#include <CGAL/Minkowski_sum_2/new/aabb/AABB_collision_detector_2.h>
+#include <CGAL/Minkowski_sum_2/new/Arr_segment_data_traits_2.h>
+
+#include <iostream> // TODO: remove when optimization is done
 #include <queue>
 #include <boost/unordered_set.hpp>
+#include <boost/unordered_map.hpp>
 
 namespace CGAL {
-namespace internal {
 
 template <class Kernel_, class Container_>
-class Minkowski_sum_by_convolution_lien_2 {
+class Minkowski_sum_by_reduced_convolution_2 {
 
 private:
 
@@ -68,7 +71,7 @@ private:
 
 public:
 
-    Minkowski_sum_by_convolution_lien_2() {
+    Minkowski_sum_by_reduced_convolution_2() {
         // Obtain kernel functors.
         Kernel ker;
 
@@ -354,7 +357,6 @@ private:
     }
 };
 
-} // namespace internal
 } // namespace CGAL
 
 #endif
