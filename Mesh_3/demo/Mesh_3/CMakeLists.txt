@@ -31,11 +31,11 @@ set( QT_USE_QTMAIN   TRUE )
 set( QT_USE_QTSCRIPT  TRUE )
 set( QT_USE_QTOPENGL  TRUE )
 
-find_package(CGAL COMPONENTS Qt ImageIO)
+find_package(CGAL COMPONENTS Qt4or5 ImageIO REQUIRED)
 
 include(${CGAL_USE_FILE})
 	
-find_package(Qt)
+find_package(Qt4or5)
 
 # Find OpenGL
 find_package(OpenGL)
@@ -50,7 +50,7 @@ find_package(GLEW)
 find_package(Boost COMPONENTS thread system)
 
 
-if((QT4 OR QT5) AND OPENGL_FOUND AND QGLVIEWER_FOUND AND Boost_FOUND)
+if(CGAL_Qt${USE_QT_VERSION}_FOUND AND QT${USE_QT_VERSION}_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND AND Boost_FOUND)
 
   # Add directory containing implicit function plugin source files
   add_subdirectory("implicit_functions")
@@ -312,22 +312,22 @@ if(QT4)
 
   set(MESH_3_PLUGIN_LIB "${MESH_3_LIB_PREFIX}mesh_3_plugin") 
   
-  if(QT5)
-  polyhedron_demo_plugin(${MESH_3_PLUGIN_LIB} Mesh_3_plugin 
+	if(QT5)
+        polyhedron_demo_plugin(${MESH_3_PLUGIN_LIB} Mesh_3_plugin 
                          Mesh_3_plugin_polyhedron_cgal_code.cpp
                          Mesh_3_plugin_image_cgal_code.cpp
                          Mesh_3_plugin_implicit_function_cgal_code.cpp
                          Meshing_thread.cpp
                          ${meshingUI_FILES})
-	elseif(QT4)
-	  polyhedron_demo_plugin(${MESH_3_PLUGIN_LIB} Mesh_3_plugin 
+    elseif(QT4)
+		polyhedron_demo_plugin(${MESH_3_PLUGIN_LIB} Mesh_3_plugin 
                          Mesh_3_plugin_polyhedron_cgal_code.cpp
                          Mesh_3_plugin_image_cgal_code.cpp
                          Mesh_3_plugin_implicit_function_cgal_code.cpp
                          Meshing_thread.cpp
                          Scene_c3t3_item.moc
                          ${meshingUI_FILES})
-	endif()
+    endif()
 
   target_link_libraries(${MESH_3_PLUGIN_LIB}
                         ${SCENE_C3T3_ITEM_LIB}
@@ -340,18 +340,18 @@ if(QT4)
 
   set(MESH_3_OPTIMIZATION_PLUGIN_LIB "${MESH_3_LIB_PREFIX}mesh_3_optimization_plugin") 
   
-  if(QT5)
-    polyhedron_demo_plugin(${MESH_3_OPTIMIZATION_PLUGIN_LIB} Mesh_3_optimization_plugin 
+	if(QT5)
+		polyhedron_demo_plugin(${MESH_3_OPTIMIZATION_PLUGIN_LIB} Mesh_3_optimization_plugin 
                          Mesh_3_optimization_plugin_cgal_code.cpp
                          Optimizer_thread.cpp
                          ${optimUI_FILES})
-  elseif(QT4)
-    polyhedron_demo_plugin(${MESH_3_OPTIMIZATION_PLUGIN_LIB} Mesh_3_optimization_plugin 
+	elseif(QT4)
+		polyhedron_demo_plugin(${MESH_3_OPTIMIZATION_PLUGIN_LIB} Mesh_3_optimization_plugin 
                          Mesh_3_optimization_plugin_cgal_code.cpp
                          Optimizer_thread.cpp
                          Scene_c3t3_item.moc
                          ${optimUI_FILES})
-  endif()
+	endif()
 
 
   target_link_libraries(${MESH_3_OPTIMIZATION_PLUGIN_LIB}
@@ -364,16 +364,16 @@ if(QT4)
                         ${OPENGL_glu_LIBRARY})
 
 
-else ((QT4 OR QT5) AND OPENGL_FOUND AND QGLVIEWER_FOUND AND Boost_FOUND)
+else ( CGAL_Qt${USE_QT_VERSION}_FOUND AND QT${USE_QT_VERSION}_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND AND Boost_FOUND)
 
   set(MESH_3_MISSING_DEPS "")
 
-  if(NOT CGAL_Qt_FOUND)
-    set(MESH_3_MISSING_DEPS "the CGAL Qt library, ${MESH_3_MISSING_DEPS}")
+  if(NOT CGAL_Qt${USE_QT_VERSION}_FOUND)
+    set(MESH_3_MISSING_DEPS "the CGAL Qt${USE_QT_VERSION} library, ${MESH_3_MISSING_DEPS}")
   endif()
 
-  if(NOT QT4 OR NOT QT5)
-    set(MESH_3_MISSING_DEPS "Qt, ${MESH_3_MISSING_DEPS}")
+  if(NOT QT${USE_QT_VERSION}_FOUND)
+    set(MESH_3_MISSING_DEPS "Qt${USE_QT_VERSION}, ${MESH_3_MISSING_DEPS}")
   endif()
 
   if(NOT OPENGL_FOUND)
@@ -390,7 +390,7 @@ else ((QT4 OR QT5) AND OPENGL_FOUND AND QGLVIEWER_FOUND AND Boost_FOUND)
 
   message(STATUS "NOTICE: This demo requires ${MESH_3_MISSING_DEPS}and will not be compiled.")
 
-endif ((QT4 OR QT5) AND OPENGL_FOUND AND QGLVIEWER_FOUND AND Boost_FOUND)
+endif ( CGAL_Qt${USE_QT_VERSION}_FOUND AND QT${USE_QT_VERSION}_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND AND Boost_FOUND)
 
 
 

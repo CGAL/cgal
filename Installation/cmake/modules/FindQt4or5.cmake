@@ -19,7 +19,10 @@ else()
 	set(QT_VERSION_CHOICE TRUE)
 endif()
 
-if (${OLD_CGAL_QT_VERSION})
+set (OLDCGALQt_version_temp ${OLD_CGAL_QT_VERSION})
+set (CGALQt_version_temp ${CGAL_QT_VERSION})
+
+if (OLDCGALQt_version_temp AND CGALQt_version_temp)
 	if(NOT (${CGAL_QT_VERSION} STREQUAL ${OLD_CGAL_QT_VERSION}) )
 		UNSET(QT_VERSION CACHE)
 	endif()
@@ -42,10 +45,15 @@ endif()
 		set(Qt_version Qt${QT_VERSION})
 	endif()
 	
-	UNSET(QT4 CACHE)
-	UNSET(QT4_fOUND CACHE)
-	UNSET(USE_QT_VERSION CACHE)
-
+	if(${Qt_version} STREQUAL "Qt4")
+		UNSET(QT4} CACHE)
+		UNSET(QT4_FOUND CACHE)
+		UNSET(USE_QT_VERSION CACHE)
+		
+		#We say that we want the version 4 of the Qt library.
+		set(USE_QT_VERSION 4)
+    endif()
+	
 	find_package(${Qt_version})
 	
 	if(${Qt_version} STREQUAL "Qt4" AND QT4_FOUND)
@@ -54,8 +62,6 @@ endif()
 
 		UNSET(QT4 CACHE)
 		UNSET(QT5_fOUND CACHE)
-
-		set(USE_QT_VERSION 4)
 
 		message("Qt4 found")
 	endif()

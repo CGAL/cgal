@@ -24,41 +24,19 @@ set( QT_USE_QTMAIN   TRUE )
 set( QT_USE_QTSCRIPT  TRUE )
 set( QT_USE_QTOPENGL  TRUE )
 
-#New for Qt5 version !
-option (USE_QT5 "Use Qt5 version instead of Qt4" ON)
+find_package(CGAL COMPONENTS Qt4or5)
 
-if(USE_QT5)
-
-	find_package(CGAL COMPONENTS Qt5)
-
-	include(${CGAL_USE_FILE})
+include(${CGAL_USE_FILE})
 	
-	find_package(Qt5)
-
-else (USE_QT5)
-
-	find_package(CGAL COMPONENTS Qt4)
-	include(${CGAL_USE_FILE})
-
-	find_package(Qt4)
-
-	if(CGAL_Qt4_FOUND AND QT4_FOUND)
-		include(${QT_USE_FILE})
-		message("Qt4 found")
-		set(QT4 TRUE)
-	endif()
-
-endif (USE_QT5)
-
-include(QtChoice)
+find_package(Qt4or5)
 
 # Find OpenGL
 find_package(OpenGL)
 
 # Find QGLViewer
-if(QT4 OR QT5)
+if(QT${USE_QT_VERSION}_FOUND)
   find_package(QGLViewer )
-endif(QT4 OR QT5)
+endif(QT${USE_QT_VERSION}_FOUND)
 
 # Find BLAS, LAPACK and TAUCS (optional), for Poisson
 find_package(TAUCS)
@@ -70,12 +48,13 @@ find_package(LAPACK)
 find_package(Eigen3 3.1.0)
 
 # Find Glew (optional), for splatting
+# Not compatible with Qt5 version.
 if(QT4)
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/GlSplat/cmake)
-find_package(GLEW)
+	set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/GlSplat/cmake)
+	find_package(GLEW)
 endif()
 
-if((QT4 OR QT5) AND OPENGL_FOUND AND QGLVIEWER_FOUND)
+if( QT${USE_QT_VERSION}_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND )
 
   include_directories ( ${QGLVIEWER_INCLUDE_DIR} )
 
@@ -347,24 +326,16 @@ endif(QT5)
     ${CLEANING_UI_FILES})
   target_link_libraries(PS_demo_cleaning_plugin point_set)
 
-else ((QT4 OR QT5) AND OPENGL_FOUND AND QGLVIEWER_FOUND)
+else ( QT${USE_QT_VERSION}_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND )
 
   set(POINT_SET_DEMO_MISSING_DEPS "")
 
-  if(NOT CGAL_Qt4_FOUND AND NOT USE_QT5)
-    set(POINT_SET_DEMO_MISSING_DEPS "the CGAL Qt4 library, ${POINT_SET_DEMO_MISSING_DEPS}")
+  if(NOT CGAL_Qt${USE_QT_VERSION}_FOUND)
+    set(POINT_SET_DEMO_MISSING_DEPS "the CGAL Qt${USE_QT_VERSION} library, ${POINT_SET_DEMO_MISSING_DEPS}")
   endif()
 
-  if(NOT QT4 AND NOT USE_QT5)
-    set(POINT_SET_DEMO_MISSING_DEPS "Qt4, ${POINT_SET_DEMO_MISSING_DEPS}")
-  endif()
-
-  if(NOT CGAL_Qt5_FOUND AND USE_QT5)
-    set(POINT_SET_DEMO_MISSING_DEPS "the CGAL Qt5 library, ${POINT_SET_DEMO_MISSING_DEPS}")
-  endif()
-
-  if(NOT QT5 AND USE_QT5)
-    set(POINT_SET_DEMO_MISSING_DEPS "Qt5, ${POINT_SET_DEMO_MISSING_DEPS}")
+  if(NOT QT${USE_QT_VERSION}_FOUND)
+    set(POINT_SET_DEMO_MISSING_DEPS "Qt${USE_QT_VERSION}, ${POINT_SET_DEMO_MISSING_DEPS}")
   endif()
 
   if(NOT OPENGL_FOUND)
@@ -377,4 +348,4 @@ else ((QT4 OR QT5) AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
   message(STATUS "NOTICE: This demo requires ${POINT_SET_DEMO_MISSING_DEPS}and will not be compiled.")
 
-endif ((QT4 OR QT5) AND OPENGL_FOUND AND QGLVIEWER_FOUND)
+endif ( QT${USE_QT_VERSION}_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)

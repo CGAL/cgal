@@ -45,7 +45,7 @@ if ( NOT CGAL_FOUND )
 
   MESSAGE(STATUS "NOTICE: This demo requires CGAL "
     "and will not be compiled.")
-elseif ( NOT (QT4 OR QT5) )
+elseif ( NOT QT${USE_QT_VERSION}_FOUND )
 	
   MESSAGE(STATUS "NOTICE: This demo requires "
     "Qt, and will not be compiled.")

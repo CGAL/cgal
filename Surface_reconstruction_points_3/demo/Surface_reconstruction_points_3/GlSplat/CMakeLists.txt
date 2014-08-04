@@ -12,28 +12,7 @@ set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
 set(QT_USE_QTOPENGL TRUE)
 set(QT_USE_QTXML TRUE)
 
-#New for Qt5 version !
-if (NOT QT4 AND NOT QT5)
-option (USE_QT5 "Use Qt5 version instead of Qt4" ON)
-endif(NOT QT4 AND NOT QT5)
-
-if(USE_QT5)
-	
-	find_package(Qt5 REQUIRED)
-
-else (USE_QT5)
-
-	find_package(Qt4 REQUIRED)
-
-	if(CGAL_Qt4_FOUND AND QT4_FOUND)
-		include(${QT_USE_FILE})
-		message("Qt4 found")
-		set(QT4 TRUE)
-	endif()
-
-endif (USE_QT5)
-
-include(QtChoice)
+find_package(Qt4or5)
 
 find_package(GLEW REQUIRED)
 

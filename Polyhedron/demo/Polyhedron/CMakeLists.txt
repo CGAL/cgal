@@ -56,10 +56,10 @@ find_package(Qt4or5)
 find_package(OpenGL)
 
 # Find QGLViewer
-if(QT${USE_QT_VERSION})
+if(QT${USE_QT_VERSION}_FOUND)
   include_directories( ${QT_INCLUDE_DIR}/QtScriptTools )
   find_package(QGLViewer )
-endif(QT${USE_QT_VERSION})
+endif(QT${USE_QT_VERSION}_FOUND)
 
 
 
@@ -81,8 +81,7 @@ else()
   include( ${EIGEN3_USE_FILE} )
 endif()
 
-
-if(QT${USE_QT_VERSION} AND OPENGL_FOUND AND QGLVIEWER_FOUND)
+if(CGAL_Qt${USE_QT_VERSION}_FOUND AND QT${USE_QT_VERSION}_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
   set(Boost_USE_MULTITHREADED      ON)
   find_package(Boost COMPONENTS thread system)
@@ -205,28 +204,28 @@ if(QT${USE_QT_VERSION} AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   endmacro(add_item)
 
   if(QT4)
-  add_item(scene_c2t3_item Scene_c2t3_item.cpp Scene_c2t3_item.moc)
-  add_item(scene_polyhedron_item Scene_polyhedron_item.cpp Scene_polyhedron_item.moc)
-  add_item(scene_polyhedron_transform_item Scene_polyhedron_transform_item.cpp Scene_polyhedron_transform_item.moc)
-  add_item(scene_combinatorial_map_item Scene_combinatorial_map_item.cpp Scene_combinatorial_map_item.moc)
-  add_item(scene_polylines_item Scene_polylines_item.cpp Scene_polylines_item.moc)
-  add_item(scene_edit_polyhedron_item Scene_edit_polyhedron_item.cpp Scene_edit_polyhedron_item.moc)
-  add_item(scene_implicit_function_item Scene_implicit_function_item.cpp Scene_implicit_function_item.moc Color_ramp.cpp)
-  add_item(scene_polygon_soup_item Scene_polygon_soup_item.cpp Scene_polygon_soup_item.moc)
-  add_item(scene_nef_polyhedron_item Scene_nef_polyhedron_item.cpp Scene_nef_polyhedron_item.moc Scene_nef_rendering.cpp)
-  add_item(scene_points_with_normal_item Scene_points_with_normal_item.cpp Scene_points_with_normal_item.moc)
+	add_item(scene_c2t3_item Scene_c2t3_item.cpp Scene_c2t3_item.moc)
+	add_item(scene_polyhedron_item Scene_polyhedron_item.cpp Scene_polyhedron_item.moc)
+	add_item(scene_polyhedron_transform_item Scene_polyhedron_transform_item.cpp Scene_polyhedron_transform_item.moc)
+	add_item(scene_combinatorial_map_item Scene_combinatorial_map_item.cpp Scene_combinatorial_map_item.moc)
+	add_item(scene_polylines_item Scene_polylines_item.cpp Scene_polylines_item.moc)
+	add_item(scene_edit_polyhedron_item Scene_edit_polyhedron_item.cpp Scene_edit_polyhedron_item.moc)
+	add_item(scene_implicit_function_item Scene_implicit_function_item.cpp Scene_implicit_function_item.moc Color_ramp.cpp)
+	add_item(scene_polygon_soup_item Scene_polygon_soup_item.cpp Scene_polygon_soup_item.moc)
+	add_item(scene_nef_polyhedron_item Scene_nef_polyhedron_item.cpp Scene_nef_polyhedron_item.moc Scene_nef_rendering.cpp)
+	add_item(scene_points_with_normal_item Scene_points_with_normal_item.cpp Scene_points_with_normal_item.moc)
   endif(QT4)
   if(QT5)
-  add_item(scene_c2t3_item Scene_c2t3_item.cpp)
-  add_item(scene_polyhedron_item Scene_polyhedron_item.cpp)
-  add_item(scene_polyhedron_transform_item Scene_polyhedron_transform_item.cpp)
-  add_item(scene_combinatorial_map_item Scene_combinatorial_map_item.cpp)
-  add_item(scene_polylines_item Scene_polylines_item.cpp)
-  add_item(scene_edit_polyhedron_item Scene_edit_polyhedron_item.cpp)
-  add_item(scene_implicit_function_item Scene_implicit_function_item.cpp Color_ramp.cpp)
-  add_item(scene_polygon_soup_item Scene_polygon_soup_item.cpp)
-  add_item(scene_nef_polyhedron_item Scene_nef_polyhedron_item.cpp Scene_nef_rendering.cpp)
-  add_item(scene_points_with_normal_item Scene_points_with_normal_item.cpp)
+	add_item(scene_c2t3_item Scene_c2t3_item.cpp)
+	add_item(scene_polyhedron_item Scene_polyhedron_item.cpp)
+	add_item(scene_polyhedron_transform_item Scene_polyhedron_transform_item.cpp)
+	add_item(scene_combinatorial_map_item Scene_combinatorial_map_item.cpp)
+	add_item(scene_polylines_item Scene_polylines_item.cpp)
+	add_item(scene_edit_polyhedron_item Scene_edit_polyhedron_item.cpp)
+	add_item(scene_implicit_function_item Scene_implicit_function_item.cpp Color_ramp.cpp)
+	add_item(scene_polygon_soup_item Scene_polygon_soup_item.cpp)
+	add_item(scene_nef_polyhedron_item Scene_nef_polyhedron_item.cpp Scene_nef_rendering.cpp)
+	add_item(scene_points_with_normal_item Scene_points_with_normal_item.cpp)
   endif(QT5)
 
   # special
@@ -510,12 +509,9 @@ if(QT${USE_QT_VERSION} AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 #
 # Exporting
 #
-  if(TARGET CGAL_Qt4)
-    export(TARGETS CGAL_Qt4 FILE polyhedron_demo_targets.cmake NAMESPACE Polyhedron_)
-    export(TARGETS CGAL CGAL_Qt4 FILE polyhedron_demo_targets.cmake NAMESPACE Polyhedron_)
-  elseif(TARGET CGAL_Qt5)
-    export(TARGETS CGAL_Qt5 FILE polyhedron_demo_targets.cmake NAMESPACE Polyhedron_)
-    export(TARGETS CGAL CGAL_Qt5 FILE polyhedron_demo_targets.cmake NAMESPACE Polyhedron_)
+  if(TARGET CGAL_Qt${USE_QT_VERSION})
+    export(TARGETS CGAL_Qt${USE_QT_VERSION} FILE polyhedron_demo_targets.cmake NAMESPACE Polyhedron_)
+    export(TARGETS CGAL CGAL_Qt${USE_QT_VERSION} FILE polyhedron_demo_targets.cmake NAMESPACE Polyhedron_)
   else()
     export(TARGETS FILE polyhedron_demo_targets.cmake)
   endif()
@@ -532,19 +528,15 @@ if(QT${USE_QT_VERSION} AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
   configure_file(CGAL_polyhedron_demoConfig.cmake.in  CGAL_polyhedron_demoConfig.cmake)
 
-else (QT${USE_QT_VERSION} AND OPENGL_FOUND AND QGLVIEWER_FOUND)
+else ( CGAL_Qt${USE_QT_VERSION}_FOUND AND QT${USE_QT_VERSION} AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
   set(POLYHEDRON_MISSING_DEPS "")
 
-  if(NOT CGAL_Qt4_FOUND)
-    set(POLYHEDRON_MISSING_DEPS "the CGAL Qt4 library, ${POLYHEDRON_MISSING_DEPS}")
+  if(NOT CGAL_Qt${USE_QT_VERSION}_FOUND)
+    set(POLYHEDRON_MISSING_DEPS "the CGAL Qt${USE_QT_VERSION} library, ${POLYHEDRON_MISSING_DEPS}")
   endif()
   
-  if(NOT CGAL_Qt5_FOUND)
-    set(POLYHEDRON_MISSING_DEPS "the CGAL Qt4 library, ${POLYHEDRON_MISSING_DEPS}")
-  endif()
-  
-  if(NOT QT${USE_QT_VERSION})
+  if(NOT QT${USE_QT_VERSION}_FOUND)
     set(POLYHEDRON_MISSING_DEPS "Qt${USE_QT_VERSION}, ${POLYHEDRON_MISSING_DEPS}")
   endif()
 
@@ -558,4 +550,4 @@ else (QT${USE_QT_VERSION} AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
   message(STATUS "NOTICE: This demo requires ${POLYHEDRON_MISSING_DEPS}and will not be compiled.")
 
-endif (QT${USE_QT_VERSION} AND OPENGL_FOUND AND QGLVIEWER_FOUND)
+endif (CGAL_Qt${USE_QT_VERSION}_FOUND AND QT${USE_QT_VERSION}_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)

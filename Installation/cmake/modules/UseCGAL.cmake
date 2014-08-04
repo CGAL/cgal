@@ -38,7 +38,7 @@ if(NOT USE_CGAL_FILE_INCLUDED)
   
   	if(${component} STREQUAL "Qt4or5")
 	    
-		message(STATUS "The more recent Qt version configured for CGAL is libCGAL_Qt${CGAL_QT_RECENT}.")
+		message(STATUS "CGAL_Qt finder : The most recent Qt version configured for CGAL is libCGAL_Qt${CGAL_QT_RECENT}.")
 		
 	   	set (CGAL_QT_VERSION "${CGAL_QT_RECENT}" CACHE STRING "Choice of libCGAL Qt version")
 		
