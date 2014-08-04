@@ -2,7 +2,7 @@
 -- CGAL hyperbolic geometry ipelet description
 ----------------------------------------------------------------------
 
-label = "Hyperbolic"
+label = "Distance"
 
 about = [[
 This ipelet is part of the CGAL_ipelet package. See www.cgal.org.
@@ -17,11 +17,9 @@ function run(model, num)
 end
 
 methods = {
-  { label= "Line through two points" },
-  { label= "Segment through two points" },
-  { label= "Bisector of two points" },
-  { label= "Circle by center(prim. sel.) and point" },
-  { label= "Circle center" },
+  { label= "Distance between two points" },
+  { label= "(centimeters)" },
+  { label= "(inches)" },
   { label="Help" },
 }
 
