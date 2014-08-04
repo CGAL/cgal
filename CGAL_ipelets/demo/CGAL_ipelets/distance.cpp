@@ -58,7 +58,7 @@ public:
 
 void distanceIpelet::protected_run(int fn)
 {
-  if (fn==2) {
+  if (fn==3) {
     show_help();
     return;
   } 
@@ -88,10 +88,14 @@ void distanceIpelet::protected_run(int fn)
   if (pt_list.end()!=it) {
     print_error_message(("More than two marks selected")); return;}
 
-  double scale=(fn==0)?1.0:  ( (fn==1)?0.0353:0.0139);
-  double length = scale*sqrt( CGAL::squared_distance(p1,p2).to_double() );
+  double length = sqrt( CGAL::squared_distance(p1,p2).to_double() );
   char message[50];
-  sprintf(message,"Distance between marks is %lf in ipe pts",length);
+  if (fn==0)
+    sprintf(message,"Distance between marks is %lf in ipe pts",length);
+  else if (fn==1) 
+    sprintf(message,"Distance between marks is %lf cm",0.0353*length);
+  else if (fn==2) 
+    sprintf(message,"Distance between marks is %lf inches",0.0139*length);
   print_error_message(message);
   return;
 }
