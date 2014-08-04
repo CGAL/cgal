@@ -142,7 +142,7 @@ void Polyhedron_demo_point_set_shape_detection_plugin::on_actionDetect_triggered
 		Scene_points_with_normal_item *point_item = new Scene_points_with_normal_item;
 		auto it2 = (*it)->assigned_points().begin();
 		while (it2 != (*it)->assigned_points().end()) {
-				point_item->point_set()->push_back((*points)[*it2].position());
+				point_item->point_set()->push_back((*points)[*it2]);
 				it2++;
 		}
 		unsigned char r, g, b;
@@ -154,14 +154,16 @@ void Polyhedron_demo_point_set_shape_detection_plugin::on_actionDetect_triggered
 		// Providing a useful name consisting of the order of detection, name of type and number of inliers
 		std::stringstream ss;
 		if (dynamic_cast<CGAL::Cylinder_shape<ShapeDetectionTraits> *>(*it))
-      ss << "cylinder_";
+      ss << item->name().toStdString() << "_cylinder_";
     else if (dynamic_cast<CGAL::Plane_shape<ShapeDetectionTraits> *>(*it))
-      ss << "_plane_";
+      ss << item->name().toStdString() << "_plane_";
 
     ss << (*it)->assigned_points().size();
 
 		//names[i] = ss.str(		
     point_item->setName(QString::fromStdString(ss.str()));
+    point_item->set_has_normals(true);
+    point_item->setRenderingMode(item->renderingMode());
 		scene->addItem(point_item);
 
 		index++;
@@ -181,6 +183,7 @@ void Polyhedron_demo_point_set_shape_detection_plugin::on_actionDetect_triggered
 //                                    tr("%1 point(s) are selected for removal.\nYou may delete or reset the selection using the item context menu.")
 //                                    .arg(nb_points_to_remove));
 //         }
+    item->setVisible(false);
   }
 }
 
