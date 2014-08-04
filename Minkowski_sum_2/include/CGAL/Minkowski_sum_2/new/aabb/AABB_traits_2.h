@@ -7,7 +7,7 @@ template <class R_> class Point_2;
 template <class R_> class Segment_2;
 
 double eps(double x) {
-    return CGAL::abs(CGAL::nextafter(x, DBL_MAX) - x);
+    return abs(nextafter(x, DBL_MAX) - x);
 }
 
 template<typename GeomTraits, typename AABB_primitive_>
@@ -15,7 +15,6 @@ class AABB_traits_2 {
 public:
     typedef AABB_traits_2<GeomTraits, AABB_primitive_> AT;
     typedef typename CGAL::Bbox_2 Bounding_box;
-    typedef typename CGAL::Object Object;
 
     typedef AABB_primitive_ Primitive;
     typedef typename Primitive::Id Id;
@@ -44,10 +43,10 @@ public:
     Construct_cartesian_const_iterator_3;
 
     AABB_traits_2(const Point &point, const Container &p, const Container &q): m_t_point(point), m_p(p), m_q(q) {
-        m_x_interval = Interval_nt<true>(CGAL::to_interval(point.x()));
-        m_y_interval = Interval_nt<true>(CGAL::to_interval(point.y()));
-        m_px = CGAL::to_double(point.x());
-        m_py = CGAL::to_double(point.y());
+        m_x_interval = Interval_nt<true>(to_interval(point.x()));
+        m_y_interval = Interval_nt<true>(to_interval(point.y()));
+        m_px = to_double(point.x());
+        m_py = to_double(point.y());
     };
 
     AABB_traits_2(): m_p(Container()), m_q(Container()) {
@@ -156,9 +155,9 @@ public:
 
             /* Code for faster bbox, needs to be tested
             // Get x max error.
-            double x_epsilon = CGAL::max(CGAL::max(eps(m_traits->m_px),eps(bbox.xmin())),eps(bbox.xmax()))*2;
+            double x_epsilon = max(max(eps(m_traits->m_px),eps(bbox.xmin())),eps(bbox.xmax()))*2;
             // Get y max error.
-            double y_epsilon = CGAL::max(CGAL::max(eps(m_traits->m_py),eps(bbox.ymin())),eps(bbox.ymax()))*2;
+            double y_epsilon = max(max(eps(m_traits->m_py),eps(bbox.ymin())),eps(bbox.ymax()))*2;
             double t_left = (m_traits->m_px + bbox.xmin())-x_epsilon;
             double t_right = (m_traits->m_px + bbox.xmax())+x_epsilon;
             double t_bottom = (m_traits->m_py + bbox.ymin())-y_epsilon;
@@ -172,15 +171,15 @@ public:
             double t_top = (m_traits->get_int_y() + bbox.ymax()).sup();
             Bounding_box t_box(t_left, t_bottom, t_right, t_top);
 
-            return CGAL::do_overlap(q, t_box);
+            return do_overlap(q, t_box);
         }
 
         bool operator()(const Primitive &q, const Bounding_box &bbox) const {
             /* Code for faster bbox, needs to be tested
             // Get x max error.
-            double x_epsilon = CGAL::max(CGAL::max(eps(m_traits->m_px),eps(bbox.xmin())),eps(bbox.xmax()))*2;
+            double x_epsilon = max(max(eps(m_traits->m_px),eps(bbox.xmin())),eps(bbox.xmax()))*2;
             // Get y max error.
-            double y_epsilon = CGAL::max(CGAL::max(eps(m_traits->m_py),eps(bbox.ymin())),eps(bbox.ymax()))*2;
+            double y_epsilon = max(max(eps(m_traits->m_py),eps(bbox.ymin())),eps(bbox.ymax()))*2;
             double t_left = (m_traits->m_px + bbox.xmin())-x_epsilon;
             double t_right = (m_traits->m_px + bbox.xmax())+x_epsilon;
             double t_bottom = (m_traits->m_py + bbox.ymin())-y_epsilon;
@@ -194,26 +193,26 @@ public:
             double t_top = (m_traits->get_int_y() + bbox.ymax()).sup();
             Bounding_box t_box(t_left, t_bottom, t_right, t_top);
 
-            return CGAL::do_overlap(q.datum().bbox(), t_box);
+            return do_overlap(q.datum().bbox(), t_box);
         }
 
         bool operator()(const Bounding_box &q, const Primitive &pr) const {
 
-            typename Primitive::Datum tr_pr = pr.datum().transform(typename GeomTraits::Aff_transformation_2(CGAL::Translation(), Vector_2(CGAL::ORIGIN, m_traits->get_translation_point())));
-            return CGAL::do_overlap(q, tr_pr.bbox());
+            typename Primitive::Datum tr_pr = pr.datum().transform(typename GeomTraits::Aff_transformation_2(Translation(), Vector_2(ORIGIN, m_traits->get_translation_point())));
+            return do_overlap(q, tr_pr.bbox());
         }
 
         bool operator()(const Primitive &q, const Primitive &pr) const {
 
-            typename Primitive::Datum tr_pr = pr.datum().transform(typename GeomTraits::Aff_transformation_2(CGAL::Translation(), Vector_2(CGAL::ORIGIN, m_traits->get_translation_point())));
+            typename Primitive::Datum tr_pr = pr.datum().transform(typename GeomTraits::Aff_transformation_2(Translation(), Vector_2(ORIGIN, m_traits->get_translation_point())));
 
-            if (!CGAL::do_overlap(q.datum().bbox(), tr_pr.bbox())) {
+            if (!do_overlap(q.datum().bbox(), tr_pr.bbox())) {
                 return false;
             }
 
-            CGAL::Object intersection_object = GeomTraits().intersect_2_object()(q.datum(), tr_pr);
+            Object intersection_object = GeomTraits().intersect_2_object()(q.datum(), tr_pr);
 
-            if (const CGAL::Point_2<GeomTraits> *ipoint = CGAL::object_cast<CGAL::Point_2<GeomTraits> >(&intersection_object)) {
+            if (const CGAL::Point_2<GeomTraits> *ipoint = object_cast<CGAL::Point_2<GeomTraits> >(&intersection_object)) {
                 // handle weak intersections
                 bool has_weak_intersection = false;
                 bool p_intersect = false;
@@ -259,9 +258,9 @@ public:
                 }
             }
 
-            if (const CGAL::Segment_2<GeomTraits> *iseg = CGAL::object_cast<CGAL::Segment_2<GeomTraits> >(&intersection_object)) { // we have overlapping segments
-                CGAL::Comparison_result c1 = CGAL::compare_xy(tr_pr.source(), tr_pr.target());
-                CGAL::Comparison_result c2 = CGAL::compare_xy(q.datum().source(), q.datum().target());
+            if (const CGAL::Segment_2<GeomTraits> *iseg = object_cast<CGAL::Segment_2<GeomTraits> >(&intersection_object)) { // we have overlapping segments
+                Comparison_result c1 = compare_xy(tr_pr.source(), tr_pr.target());
+                Comparison_result c2 = compare_xy(q.datum().source(), q.datum().target());
 
                 bool same_dir = (c1 == c2);
                 return same_dir;
@@ -277,7 +276,7 @@ public:
             Id itr_q = q.id();
             Id p_other = get_other_segment(p_intersect_start, itr_p, m_traits->get_p());
             Id q_other = get_other_segment(q_intersect_start, itr_q, m_traits->get_q());
-            Datum p_other_translated = (*p_other).transform(typename GeomTraits::Aff_transformation_2(CGAL::Translation(), Vector_2(CGAL::ORIGIN, m_traits->get_translation_point())));
+            Datum p_other_translated = (*p_other).transform(typename GeomTraits::Aff_transformation_2(Translation(), Vector_2(ORIGIN, m_traits->get_translation_point())));
 
             if (p_intersect && !q_intersect) {
                 if (p_intersect_start) {
@@ -378,7 +377,7 @@ public:
         operator()(const Query &query, const typename AT::Primitive &primitive) const {
             typedef boost::optional<Object_and_primitive_id> Intersection;
 
-            CGAL::Object object = GeomTraits().intersect_2_object()(primitive.datum(), query);
+            Object object = GeomTraits().intersect_2_object()(primitive.datum(), query);
 
             if (object.empty()) {
                 return Intersection();
@@ -402,7 +401,7 @@ public:
 
         Point operator()(const Point &p, const Primitive &pr, const Point &bound) const {
             // seems to be unused:
-            //return CGAL::nearest_point_2(p, pr.datum(), bound);
+            //return nearest_point_2(p, pr.datum(), bound);
             return p;
         }
     };
@@ -419,11 +418,11 @@ public:
     public:
 
         template <class Solid>
-        CGAL::Comparison_result operator()(const Point &p, const Solid &pr, const Point &bound) const {
+        Comparison_result operator()(const Point &p, const Solid &pr, const Point &bound) const {
             return GeomTraits().do_intersect_2_object()
                    (GeomTraits().construct_sphere_2_object()
                     (p, GeomTraits().compute_squared_distance_2_object()(p, bound)), pr) ?
-                   CGAL::SMALLER : CGAL::LARGER;
+                   SMALLER : LARGER;
         }
     };
 

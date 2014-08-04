@@ -468,7 +468,7 @@ private:
 
         bool do_intersect(const Point &query, const Node &node) const {
             return AABBTraits().compare_distance_object()
-                   (query, node.bbox(), m_closest_point) == CGAL::SMALLER;
+                   (query, node.bbox(), m_closest_point) == SMALLER;
         }
 
         Point closest_point() const {

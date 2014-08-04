@@ -6,18 +6,18 @@ namespace CGAL {
 typedef std::pair<int, int> state;
 
 struct Segment_data_label {
-    Segment_data_label(state min_id, state max_id, CGAL::Comparison_result orientation, int origin):
+    Segment_data_label(state min_id, state max_id, Comparison_result orientation, int origin):
         _min_id(min_id), _max_id(max_id), _orientation(orientation), _origin(origin) {}
 
     Segment_data_label() {
         _min_id = state(-1, -1);
         _max_id = state(-1, -1);
-        _orientation = CGAL::SMALLER;
+        _orientation = SMALLER;
         _origin = -1;
     }
 
     int _origin;
-    CGAL::Comparison_result _orientation;
+    Comparison_result _orientation;
     state _min_id, _max_id;
 };
 
@@ -166,7 +166,7 @@ public:
             // Split the base curve into two.
             m_traits->split_2_object()(cv, p, c1, c2);
 
-            if (cv.data()._orientation == CGAL::SMALLER) {
+            if (cv.data()._orientation == SMALLER) {
                 c1.data()._min_id = cv.data()._min_id;
                 c2.data()._max_id = cv.data()._max_id;
             } else {
@@ -239,7 +239,7 @@ public:
 
             // code ONLY FOR SEGMENTS !!!!!!!!
 
-            std::list<CGAL::Object> base_objs;
+            std::list<Object> base_objs;
 
             m_traits->intersect_2_object()(xcv1, xcv2, std::back_inserter(base_objs));
 
@@ -248,7 +248,7 @@ public:
             }
 
             // Attach labels to the intersection objects.
-            std::list<CGAL::Object>::iterator obj_it;
+            std::list<Object>::iterator obj_it;
             const std::pair<Base_point_2, unsigned int> *base_pt;
             const Base_x_monotone_curve_2 *base_xcv;
 
@@ -258,7 +258,7 @@ public:
 
                 if (base_pt != NULL) {
                     // Attach an invalid label to an itersection point.
-                    *oi = CGAL::make_object
+                    *oi = make_object
                           (std::make_pair(Point_2(base_pt->first), base_pt->second));
                     ++oi;
                 } else {
@@ -266,7 +266,7 @@ public:
                     CGAL_assertion(base_xcv != NULL);
 
                     // Attach a merged label to the overlapping curve.
-                    *oi = CGAL::make_object(X_monotone_curve_2(*base_xcv, Segment_data_label(no_state, no_state, xcv1.data()._orientation, -1)));
+                    *oi = make_object(X_monotone_curve_2(*base_xcv, Segment_data_label(no_state, no_state, xcv1.data()._orientation, -1)));
                     ++oi;
                 }
             }
@@ -340,7 +340,7 @@ public:
         Point_2 operator()(const X_monotone_curve_2 &xcv) {
             Point_2 min_p = m_base_min_v(xcv);
 
-            if (xcv.label()._orientation == CGAL::SMALLER) {
+            if (xcv.label()._orientation == SMALLER) {
                 min_p.id = xcv.data()._min_id;
             } else {
                 min_p.id = xcv.data()._max_id;
@@ -382,7 +382,7 @@ public:
         Point_2 operator()(const X_monotone_curve_2 &xcv) const {
             Point_2 max_p = m_base_max_v(xcv);
 
-            if (xcv.label()._orientation == CGAL::SMALLER) {
+            if (xcv.label()._orientation == SMALLER) {
                 max_p.id = xcv.data()._max_id;
             } else {
                 max_p.id = xcv.data()._min_id;

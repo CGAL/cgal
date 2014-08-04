@@ -30,7 +30,7 @@ public:
             return true;
         }
 
-        Polygon_2 translated_p = transform(typename Kernel_::Aff_transformation_2(CGAL::Translation(), Vector_2(CGAL::ORIGIN, t)), m_p);
+        Polygon_2 translated_p = transform(typename Kernel_::Aff_transformation_2(Translation(), Vector_2(ORIGIN, t)), m_p);
         return (translated_p.has_on_bounded_side(*(m_q.vertices_begin())) || m_q.has_on_bounded_side(*(translated_p.vertices_begin())));
     }
 

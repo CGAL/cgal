@@ -39,7 +39,7 @@ private:
 
     typedef Arr_default_dcel<Traits_2> Dcel;
 
-    typedef CGAL::Arrangement_with_history_2<Traits_2, Dcel> Arrangement_history_2;
+    typedef Arrangement_with_history_2<Traits_2, Dcel> Arrangement_history_2;
     typedef typename Arrangement_history_2::Halfedge Halfedge;
     typedef typename Arrangement_history_2::Vertex_iterator Vertex_iterator;
     typedef typename Arrangement_history_2::Edge_iterator Edge_iterator;
@@ -91,13 +91,13 @@ public:
     OutputIterator operator()(const Polygon_2 &pgn1, const Polygon_2 &pgn2,
                               Polygon_2 &sum_bound, OutputIterator sum_holes) {
 
-        CGAL::Timer timer;
+        Timer timer;
         timer.start();
 
         CGAL_precondition(pgn1.is_simple());
         CGAL_precondition(pgn2.is_simple());
-        CGAL_precondition(pgn1.orientation() == CGAL::COUNTERCLOCKWISE);
-        CGAL_precondition(pgn2.orientation() == CGAL::COUNTERCLOCKWISE);
+        CGAL_precondition(pgn1.orientation() == COUNTERCLOCKWISE);
+        CGAL_precondition(pgn2.orientation() == COUNTERCLOCKWISE);
 
         timer.stop();
         std::cout << timer.time() << " s: Preconditions" << std::endl;
@@ -123,7 +123,7 @@ public:
 
         // split the segments at their intersection points
         Arrangement_history_2 arr;
-        CGAL::insert(arr, reduced_conv.begin(), reduced_conv.end());
+        insert(arr, reduced_conv.begin(), reduced_conv.end());
 
         timer.stop();
         std::cout << timer.time() << " s: Arrangement" << std::endl;
@@ -208,7 +208,7 @@ private:
                     Point_2 start_point = get_point(i1, i2, points_map, pgn1, pgn2);
                     Point_2 end_point = get_point(i1, next_i2, points_map, pgn1, pgn2);
 
-                    CGAL::Comparison_result cres = f_compare_xy(start_point, end_point);
+                    Comparison_result cres = f_compare_xy(start_point, end_point);
                     Segment_2 conv_seg = Segment_2(typename Traits_2_A::Segment_2(start_point, end_point), Segment_data_label(state(i1, i2), state(i1, next_i2), cres, 1));
 
                     reduced_conv.push_back(conv_seg);
@@ -223,7 +223,7 @@ private:
                     Point_2 start_point = get_point(i1, i2, points_map, pgn1, pgn2);
                     Point_2 end_point = get_point(next_i1, i2, points_map, pgn1, pgn2);
 
-                    CGAL::Comparison_result cres = f_compare_xy(start_point, end_point);
+                    Comparison_result cres = f_compare_xy(start_point, end_point);
                     Segment_2 conv_seg = Segment_2(typename Traits_2_A::Segment_2(start_point, end_point), Segment_data_label(state(i1, i2), state(next_i1, i2), cres, 0));
                     reduced_conv.push_back(conv_seg);
                 }
@@ -313,7 +313,7 @@ private:
         Originating_curve_iterator segment_itr;
 
         for (segment_itr = arr.originating_curves_begin(he); segment_itr != arr.originating_curves_end(he); ++segment_itr) {
-            if (segment_itr->label()._orientation == (CGAL::Comparison_result)he->direction()) {
+            if (segment_itr->label()._orientation == (Comparison_result)he->direction()) {
                 return false;
             }
         }
@@ -341,7 +341,7 @@ private:
         while (++next_edge != current_edge) {
             Point_2 q = next_edge->target()->point();
             if (ear.has_on_bounded_side(q)) {
-                typename Kernel::FT distance = CGAL::squared_distance(q, v);
+                typename Kernel::FT distance = squared_distance(q, v);
                 if (min_distance == -1 || distance < min_distance) {
                     min_distance = distance;
                     min_q = q;
@@ -350,9 +350,9 @@ private:
         }
 
         if (min_distance != -1) {
-            return CGAL::midpoint(v, min_q);
+            return midpoint(v, min_q);
         } else {
-            return CGAL::centroid(ear);
+            return centroid(ear);
         }
     }
 };
