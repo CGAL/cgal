@@ -3,22 +3,22 @@
 
 namespace CGAL {
 
-typedef std::pair<int, int> state;
+typedef std::pair<int, int> State;
 
 struct Segment_data_label {
-    Segment_data_label(state min_id, state max_id, Comparison_result orientation, int origin):
+    Segment_data_label(State min_id, State max_id, Comparison_result orientation, int origin):
         _min_id(min_id), _max_id(max_id), _orientation(orientation), _origin(origin) {}
 
     Segment_data_label() {
-        _min_id = state(-1, -1);
-        _max_id = state(-1, -1);
+        _min_id = State(-1, -1);
+        _max_id = State(-1, -1);
         _orientation = SMALLER;
         _origin = -1;
     }
 
     int _origin;
     Comparison_result _orientation;
-    state _min_id, _max_id;
+    State _min_id, _max_id;
 };
 
 template <class Traits_> class Arr_segment_data_traits_2 : public Traits_ {
@@ -53,16 +53,16 @@ public:
         Base_p m_base_pt; // The base point.
 
     public:
-        state id;
+        State id;
         /*! Default constructor. */
         Ex_point_2() :
-            m_base_pt(), id(state(-1, -1))
+            m_base_pt(), id(State(-1, -1))
 
         {}
 
         /*! Constructor from a base point. */
         Ex_point_2(const Base_p &pt) :
-            m_base_pt(pt), id(state(-1, -1))
+            m_base_pt(pt), id(State(-1, -1))
 
         {}
 
@@ -208,7 +208,7 @@ public:
         OutputIterator operator()(const X_monotone_curve_2 &xcv1,
                                   const X_monotone_curve_2 &xcv2,
                                   OutputIterator oi) {
-            state no_state = state(-1, -1);
+            State no_state = State(-1, -1);
 
             // Ignore edges which originates from the same polygon and are added to the same vertex.
             if (xcv1.data()._origin == xcv2.data()._origin) {
@@ -301,7 +301,7 @@ public:
     public:
 
         Comparison_result operator()(const Point_2 &p1, const Point_2 &p2) const {
-            if ((p1.id == p2.id) && (p1.id != state(-1, -1))) {
+            if ((p1.id == p2.id) && (p1.id != State(-1, -1))) {
                 return EQUAL;
             }
 
