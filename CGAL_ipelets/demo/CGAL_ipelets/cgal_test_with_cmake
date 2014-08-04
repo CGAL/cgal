@@ -168,6 +168,10 @@ if  ${MAKE_CMD} -f Makefile help | grep "hyperbolic" > /dev/null; then
   compile_and_run CGAL_hyperbolic
   NEED_CLEAN=y
 fi
+if  ${MAKE_CMD} -f Makefile help | grep "distance" > /dev/null; then 
+  compile_and_run CGAL_hyperbolic
+  NEED_CLEAN=y
+fi
 fi
 
 #
