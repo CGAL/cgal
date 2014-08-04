@@ -146,7 +146,7 @@ private:
         std::vector<Direction_2> p2_dirs = directions_of_polygon(pgn2);
 
         // Contains states that were already visited
-        boost::unordered_set<State> visited_vertices;
+        boost::unordered_set<State> visited_states;
 
         // Init the queue with vertices from the first column
         std::queue<State> state_queue;
@@ -161,48 +161,60 @@ private:
             int i1 = curr_state.first;
             int i2 = curr_state.second;
 
-            if (visited_vertices.count(curr_state) > 0) {
+            // If this state was already visited, skip it
+            if (visited_states.count(curr_state) > 0) {
                 continue;
             }
-            visited_vertices.insert(curr_state);
+            visited_states.insert(curr_state);
 
-            // add two outgoing edges:
             int next_i1 = (i1+1) % n1;
             int next_i2 = (i2+1) % n2;
             int prev_i1 = (n1+i1-1) % n1;
             int prev_i2 = (n2+i2-1) % n2;
 
-            // add geometric entites of the transition from state (i,j) to (i+1,j) and (i,j+1), if they are in the reduced convolution.
-
-            bool is_end_coincide;
-            bool is_start_coincide;
-
-            // Add an edge from pgn2
-            if (p1_dirs[prev_i1] == p2_dirs[i2] || f_ccw_in_between(p2_dirs[i2], p1_dirs[prev_i1], p1_dirs[i1])) {
-                state_queue.push(State(i1, next_i2));
-
-                if (is_convex(pgn1[prev_i1], pgn1[i1], pgn1[next_i1])) {
-                    Point_2 start_point = get_point(i1, i2, pgn1, pgn2);
-                    Point_2 end_point = get_point(i1, next_i2, pgn1, pgn2);
-
-                    Comparison_result cres = f_compare_xy(start_point, end_point);
-                    Segment_2 conv_seg = Segment_2(Base_segment_2(start_point, end_point), Segment_data_label(State(i1, i2), State(i1, next_i2), cres, 1));
-
-                    reduced_convolution.push_back(conv_seg);
+            // Try two transitions: From (i,j) to (i+1,j) and to (i,j+1). Add
+            // the respective segments, if they are in the reduced convolution.
+            for(int step_in_pgn1 = 0; step_in_pgn1 <= 1; step_in_pgn1++) {
+                int new_i1, new_i2;
+                if (step_in_pgn1) {
+                    new_i1 = next_i1;
+                    new_i2 = i2;
+                } else {
+                    new_i1 = i1;
+                    new_i2 = next_i2;
                 }
-            }
 
-            // Add an edge from pgn1
-            if (p2_dirs[i2] == p1_dirs[i1] || f_ccw_in_between(p1_dirs[i1], p2_dirs[prev_i2], p2_dirs[i2])) {
-                state_queue.push(State(next_i1, i2));
+                // If the segment's direction lies counterclockwise in between
+                // the other polygon's vertex' ingoing and outgoing directions,
+                // the segment belongs to the full convolution.
+                bool belongs_to_convolution;
+                if (step_in_pgn1) {
+                    belongs_to_convolution = f_ccw_in_between(p1_dirs[i1], p2_dirs[prev_i2], p2_dirs[i2]) ||
+                                             p1_dirs[i1] == p2_dirs[i2];
+                } else {
+                    belongs_to_convolution = f_ccw_in_between(p2_dirs[i2], p1_dirs[prev_i1], p1_dirs[i1]) ||
+                                             p2_dirs[i2] == p1_dirs[prev_i1];
+                }
 
-                if (is_convex(pgn2[prev_i2], pgn2[i2], pgn2[next_i2])) {
-                    Point_2 start_point = get_point(i1, i2, pgn1, pgn2);
-                    Point_2 end_point = get_point(next_i1, i2, pgn1, pgn2);
+                if (belongs_to_convolution) {
+                    state_queue.push(State(new_i1, new_i2));
 
-                    Comparison_result cres = f_compare_xy(start_point, end_point);
-                    Segment_2 conv_seg = Segment_2(Base_segment_2(start_point, end_point), Segment_data_label(State(i1, i2), State(next_i1, i2), cres, 0));
-                    reduced_convolution.push_back(conv_seg);
+                    // Only edges added to convex vertices can be on the M-sum's boundary.
+                    // This filter only leaves the *reduced* convolution.
+                    bool convex;
+                    if (step_in_pgn1) {
+                        convex = is_convex(pgn2[prev_i2], pgn2[i2], pgn2[next_i2]);
+                    } else {
+                        convex = is_convex(pgn1[prev_i1], pgn1[i1], pgn1[next_i1]);
+                    }
+
+                    if (convex) {
+                        Point_2 start_point = get_point(i1, i2, pgn1, pgn2);
+                        Point_2 end_point = get_point(new_i1, new_i2, pgn1, pgn2);
+                        Comparison_result direction = f_compare_xy(start_point, end_point);
+                        Segment_2 conv_seg = Segment_2(Base_segment_2(start_point, end_point), Segment_data_label(State(i1, i2), State(new_i1, new_i2), direction, 1-step_in_pgn1));
+                        reduced_convolution.push_back(conv_seg);
+                    }
                 }
             }
         }
