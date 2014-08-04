@@ -33,15 +33,13 @@ private:
     typedef typename Kernel::FT FT;
 
     // Segment-related types:
-    typedef Arr_segment_traits_2<Kernel> Segment_traits_2;
-    typedef typename Segment_traits_2::Segment_2 Base_segment_2;
-    typedef Arr_segment_data_traits_2<Segment_traits_2> Segment_data_traits_2;
-    typedef typename Segment_data_traits_2::X_monotone_curve_2 Segment_2;
+    typedef Arr_segment_traits_2<Kernel> Traits_2;
+    typedef typename Traits_2::X_monotone_curve_2 Segment_2;
     typedef std::list<Segment_2> Segment_list;
-    typedef Arr_default_dcel<Segment_data_traits_2> Dcel;
+    typedef Arr_default_dcel<Traits_2> Dcel;
 
     // Arrangement-related types:
-    typedef Arrangement_with_history_2<Segment_data_traits_2, Dcel> Arrangement_history_2;
+    typedef Arrangement_with_history_2<Traits_2, Dcel> Arrangement_history_2;
     typedef typename Arrangement_history_2::Halfedge_handle Halfedge_handle;
     typedef typename Arrangement_history_2::Face_iterator Face_iterator;
     typedef typename Arrangement_history_2::Face_handle Face_handle;
@@ -211,9 +209,7 @@ private:
                     if (convex) {
                         Point_2 start_point = get_point(i1, i2, pgn1, pgn2);
                         Point_2 end_point = get_point(new_i1, new_i2, pgn1, pgn2);
-                        Comparison_result direction = f_compare_xy(start_point, end_point);
-                        Segment_2 conv_seg = Segment_2(Base_segment_2(start_point, end_point), Segment_data_label(State(i1, i2), State(new_i1, new_i2), direction, 1-step_in_pgn1));
-                        reduced_convolution.push_back(conv_seg);
+                        reduced_convolution.push_back(Segment_2(start_point, end_point));
                     }
                 }
             }
@@ -295,7 +291,7 @@ private:
         Originating_curve_iterator segment_itr;
 
         for (segment_itr = arr.originating_curves_begin(he); segment_itr != arr.originating_curves_end(he); ++segment_itr) {
-            if (segment_itr->label()._orientation == (Comparison_result)he->direction()) {
+            if (f_compare_xy(segment_itr->source(), segment_itr->target()) == (Comparison_result)he->direction()) {
                 return false;
             }
         }
