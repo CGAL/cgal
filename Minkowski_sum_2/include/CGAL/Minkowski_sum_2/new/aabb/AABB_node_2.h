@@ -11,8 +11,8 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL: svn+ssh://scm.gforge.inria.fr/svn/cgal/branches/CGAL-3.7-branch/AABB_tree/include/CGAL/AABB_node.h $
-// $Id: AABB_node.h 56934 2010-06-21 15:38:26Z afabri $
+// $URL: svn+ssh://scm.gforge.inria.fr/svn/cgal/branches/CGAL-3.7-branch/AABB_tree/include/CGAL/AABB_node_2.h $
+// $Id: AABB_node_2.h 56934 2010-06-21 15:38:26Z afabri $
 //
 //
 // Author(s) : Camille Wormser, Pierre Alliez, Stephane Tayeb
@@ -24,19 +24,19 @@ namespace CGAL {
 namespace internal {
 
 template<typename AABBTraits>
-class AABB_node {
+class AABB_node_2 {
 public:
     typedef typename AABBTraits::Bounding_box Bounding_box;
 
     /// Constructor
-    AABB_node()
+    AABB_node_2()
         : m_bbox()
         , m_p_left_child(NULL)
         , m_p_right_child(NULL) { };
 
     /// Non virtual Destructor
     /// Do not delete children because the tree hosts and delete them
-    ~AABB_node() { };
+    ~AABB_node_2() { };
 
     /// Returns the bounding box of the node
     Bounding_box bbox() const {
@@ -60,7 +60,7 @@ public:
      * @brief General traversal query
      * @param query the query
      * @param traits the traversal traits that define the traversal behaviour
-     * @param nb_primitives the number of primitive
+     * @param number_of_primitives the number of primitive
      *
      * General traversal query. The traits class allows using it for the various
      * traversal methods we need: listing, counting, detecting intersections,
@@ -69,16 +69,16 @@ public:
     template<class Traversal_traits, class Query>
     void traversal(const Query &query,
                    Traversal_traits &traits,
-                   const std::size_t nb_primitives) const;
+                   const std::size_t number_of_primitives) const;
 
     template<class Traversal_traits>
-    void join_traversal(const AABB_node &other_node,
+    void join_traversal(const AABB_node_2 &other_node,
                         Traversal_traits &traits,
-                        const std::size_t nb_primitives_this, const std::size_t nb_primitives_other, bool first_stationary) const;
+                        const std::size_t number_of_primitives_this, const std::size_t number_of_primitives_other, bool first_stationary) const;
 
 private:
     typedef AABBTraits AABB_traits;
-    typedef AABB_node<AABB_traits> Node;
+    typedef AABB_node_2<AABB_traits> Node;
     typedef typename AABB_traits::Primitive Primitive;
 
     /// Helper functions
@@ -119,15 +119,15 @@ private:
 
 private:
     // Disabled copy constructor & assignment operator
-    typedef AABB_node<AABBTraits> Self;
-    AABB_node(const Self &src);
+    typedef AABB_node_2<AABBTraits> Self;
+    AABB_node_2(const Self &src);
     Self &operator=(const Self &src);
-}; // end class AABB_node
+}; // end class AABB_node_2
 
 template<typename Tr>
 template<typename ConstPrimitiveIterator>
 void
-AABB_node<Tr>::expand(ConstPrimitiveIterator first,
+AABB_node_2<Tr>::expand(ConstPrimitiveIterator first,
                       ConstPrimitiveIterator beyond,
                       const std::size_t range) {
     m_bbox = AABB_traits().compute_bbox_object()(first, beyond);
@@ -159,11 +159,11 @@ AABB_node<Tr>::expand(ConstPrimitiveIterator first,
 template<typename Tr>
 template<class Traversal_traits, class Query>
 void
-AABB_node<Tr>::traversal(const Query &query,
+AABB_node_2<Tr>::traversal(const Query &query,
                          Traversal_traits &traits,
-                         const std::size_t nb_primitives) const {
+                         const std::size_t number_of_primitives) const {
     // Recursive traversal
-    switch (nb_primitives) {
+    switch (number_of_primitives) {
     case 2:
         traits.intersection(query, left_data());
 
@@ -184,13 +184,13 @@ AABB_node<Tr>::traversal(const Query &query,
 
     default:
         if (traits.do_intersect(query, left_child())) {
-            left_child().traversal(query, traits, nb_primitives / 2);
+            left_child().traversal(query, traits, number_of_primitives / 2);
 
             if (traits.go_further() && traits.do_intersect(query, right_child())) {
-                right_child().traversal(query, traits, nb_primitives - nb_primitives / 2);
+                right_child().traversal(query, traits, number_of_primitives - number_of_primitives / 2);
             }
         } else if (traits.do_intersect(query, right_child())) {
-            right_child().traversal(query, traits, nb_primitives - nb_primitives / 2);
+            right_child().traversal(query, traits, number_of_primitives - number_of_primitives / 2);
         }
     }
 }
@@ -198,14 +198,14 @@ AABB_node<Tr>::traversal(const Query &query,
 template<typename Tr>
 template<class Traversal_traits>
 void
-AABB_node<Tr>::join_traversal(const AABB_node &other_node,
+AABB_node_2<Tr>::join_traversal(const AABB_node_2 &other_node,
                               Traversal_traits &traits,
-                              const std::size_t nb_primitives_this, const std::size_t nb_primitives_other, bool first_stationary) const {
+                              const std::size_t number_of_primitives_this, const std::size_t number_of_primitives_other, bool first_stationary) const {
     // Recursive traversal
-    bool first_tree_small = nb_primitives_this <= 3;
-    bool second_tree_small = nb_primitives_other <= 3;
-    bool first_tree_even = nb_primitives_this == 2;
-    bool second_tree_even = nb_primitives_other == 2;
+    bool first_tree_small = number_of_primitives_this <= 3;
+    bool second_tree_small = number_of_primitives_other <= 3;
+    bool first_tree_even = number_of_primitives_this == 2;
+    bool second_tree_even = number_of_primitives_other == 2;
 
     if (first_tree_small && second_tree_small) {
         traits.intersection(left_data(), other_node.left_data(), !first_stationary);
@@ -254,45 +254,45 @@ AABB_node<Tr>::join_traversal(const AABB_node &other_node,
     // first tree is 3 or smaller and second tree is larger
     if (first_tree_small && !second_tree_small) {
         if (traits.do_intersect(*this, other_node.left_child(), !first_stationary)) {
-            other_node.left_child().join_traversal(*this, traits, nb_primitives_other / 2, nb_primitives_this, !first_stationary);
+            other_node.left_child().join_traversal(*this, traits, number_of_primitives_other / 2, number_of_primitives_this, !first_stationary);
 
             if (traits.go_further() && traits.do_intersect(*this, other_node.right_child(), !first_stationary)) {
-                other_node.right_child().join_traversal(*this, traits, nb_primitives_other - nb_primitives_other / 2, nb_primitives_this, !first_stationary);
+                other_node.right_child().join_traversal(*this, traits, number_of_primitives_other - number_of_primitives_other / 2, number_of_primitives_this, !first_stationary);
             }
         } else if (traits.do_intersect(*this, other_node.right_child(), !first_stationary)) {
-            other_node.right_child().join_traversal(*this, traits, nb_primitives_other - nb_primitives_other / 2, nb_primitives_this, !first_stationary);
+            other_node.right_child().join_traversal(*this, traits, number_of_primitives_other - number_of_primitives_other / 2, number_of_primitives_this, !first_stationary);
         }
     }
 
     // symetrical to previous case.
     if (!first_tree_small && second_tree_small) {
         if (traits.do_intersect(left_child(), other_node, !first_stationary)) {
-            left_child().join_traversal(other_node, traits, nb_primitives_this / 2, nb_primitives_other, first_stationary);
+            left_child().join_traversal(other_node, traits, number_of_primitives_this / 2, number_of_primitives_other, first_stationary);
 
             if (traits.go_further() && traits.do_intersect(right_child(), other_node, !first_stationary)) {
-                right_child().join_traversal(other_node, traits, nb_primitives_this - nb_primitives_this / 2, nb_primitives_other, first_stationary);
+                right_child().join_traversal(other_node, traits, number_of_primitives_this - number_of_primitives_this / 2, number_of_primitives_other, first_stationary);
             }
         } else if (traits.do_intersect(right_child(), other_node, !first_stationary)) {
-            right_child().join_traversal(other_node, traits, nb_primitives_this - nb_primitives_this / 2, nb_primitives_other, first_stationary);
+            right_child().join_traversal(other_node, traits, number_of_primitives_this - number_of_primitives_this / 2, number_of_primitives_other, first_stationary);
         }
     }
 
     // both trees as larger then 3
     if (!first_tree_small && !second_tree_small) {
         if (traits.do_intersect(left_child(), other_node.left_child(), !first_stationary)) {
-            left_child().join_traversal(other_node.left_child(), traits, nb_primitives_this / 2, nb_primitives_other / 2, first_stationary);
+            left_child().join_traversal(other_node.left_child(), traits, number_of_primitives_this / 2, number_of_primitives_other / 2, first_stationary);
         }
 
         if (traits.go_further() && traits.do_intersect(left_child(), other_node.right_child(), !first_stationary)) {
-            left_child().join_traversal(other_node.right_child(), traits, nb_primitives_this / 2, nb_primitives_other - nb_primitives_other / 2, first_stationary);
+            left_child().join_traversal(other_node.right_child(), traits, number_of_primitives_this / 2, number_of_primitives_other - number_of_primitives_other / 2, first_stationary);
         }
 
         if (traits.go_further() && traits.do_intersect(right_child(), other_node.left_child(), !first_stationary)) {
-            right_child().join_traversal(other_node.left_child(), traits, nb_primitives_this - nb_primitives_this / 2, nb_primitives_other / 2, first_stationary);
+            right_child().join_traversal(other_node.left_child(), traits, number_of_primitives_this - number_of_primitives_this / 2, number_of_primitives_other / 2, first_stationary);
         }
 
         if (traits.go_further() && traits.do_intersect(right_child(), other_node.right_child(), !first_stationary)) {
-            right_child().join_traversal(other_node.right_child(), traits, nb_primitives_this - nb_primitives_this / 2, nb_primitives_other - nb_primitives_other / 2, first_stationary);
+            right_child().join_traversal(other_node.right_child(), traits, number_of_primitives_this - number_of_primitives_this / 2, number_of_primitives_other - number_of_primitives_other / 2, first_stationary);
         }
     }
 }

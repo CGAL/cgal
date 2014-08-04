@@ -28,14 +28,14 @@
 namespace CGAL {
 namespace internal {
 
-template <class GeomTraits, class Iterator, class Container_type>
+template <class GeomTraits, class Iterator_, class ContainerType>
 class AABB_segment_2_primitive {
     // types
 public:
     typedef typename GeomTraits::Point_2 Point; // point type
     typedef typename GeomTraits::Segment_2 Datum; // datum type
-    typedef Container_type Container;
-    typedef Iterator Id; // Id type
+    typedef ContainerType Container;
+    typedef Iterator_ Id; // Id type
 
     // member data
 private:

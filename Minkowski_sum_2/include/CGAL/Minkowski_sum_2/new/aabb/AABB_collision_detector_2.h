@@ -1,14 +1,14 @@
 #ifndef AABBCOLLISIONDETECTOR_HEADER
 #define AABBCOLLISIONDETECTOR_HEADER
 
-#include "AABB_2d_traits.h"
+#include "AABB_traits_2.h"
 #include "AABB_segment_2_primitive.h"
-#include "AABB_tree_mod.h"
+#include "AABB_tree_2.h"
 
 namespace CGAL {
 namespace internal {
 
-template <class Kernel_, class Container_> class AABBCollisionDetector {
+template <class Kernel_, class Container_> class AABB_collision_detector_2 {
 
 public:
 
@@ -18,9 +18,9 @@ public:
     typedef typename Polygon_2::Traits::Segment_2 Segment_2 ;
     typedef typename Polygon_2::Edge_const_iterator Edge_iterator;
     typedef typename Polygon_2::Edge_const_circulator Edge_circulator;
-    typedef AABB_segment_2_primitive<Kernel_, Edge_iterator, Polygon_2> Tree_Segment_2;
-    typedef AABB_traits_2<Kernel_, Tree_Segment_2> Tree_Traits;
-    typedef AABB_tree<Tree_Traits> AABB_Tree;
+    typedef AABB_segment_2_primitive<Kernel_, Edge_iterator, Polygon_2> Tree_segment_2;
+    typedef AABB_traits_2<Kernel_, Tree_segment_2> Tree_traits;
+    typedef AABB_tree_2<Tree_traits> Tree_2;
     typedef CGAL::Arr_segment_traits_2<Kernel_> Traits_2;
 
 protected:
@@ -29,11 +29,11 @@ protected:
 
 public:
 
-    AABBCollisionDetector(const Polygon_2 &p, const Polygon_2 &q)
+    AABB_collision_detector_2(const Polygon_2 &p, const Polygon_2 &q)
         : m_stationary_tree((p.edges_begin()), (p.edges_end())), m_translating_tree((q.edges_begin()), (q.edges_end())), m_p(q), m_q(p) {
     }
 
-    bool checkCollision(const Point_2 &t) {
+    bool check_collision(const Point_2 &t) {
         if (m_stationary_tree.do_intersect_join(m_translating_tree, t, m_p, m_q)) {
             return true;
         }
@@ -44,8 +44,8 @@ public:
 
 private:
 
-    AABB_Tree m_stationary_tree;
-    AABB_Tree m_translating_tree;
+    Tree_2 m_stationary_tree;
+    Tree_2 m_translating_tree;
     const Polygon_2 &m_p;
     const Polygon_2 &m_q;
 };

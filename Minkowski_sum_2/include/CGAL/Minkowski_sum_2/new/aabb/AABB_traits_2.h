@@ -11,17 +11,17 @@ double eps(double x) {
     return CGAL::abs(CGAL::nextafter(x, DBL_MAX) - x);
 }
 
-template<typename GeomTraits, typename AABB_primitive>
+template<typename GeomTraits, typename AABB_primitive_>
 class AABB_traits_2 {
 public:
-    typedef AABB_traits_2<GeomTraits, AABB_primitive> AT;
+    typedef AABB_traits_2<GeomTraits, AABB_primitive_> AT;
     typedef typename CGAL::Bbox_2 Bounding_box;
     typedef typename CGAL::Object Object;
 
-    typedef AABB_primitive Primitive;
-    typedef typename AABB_primitive::Id Id;
-    typedef typename AABB_primitive::Datum Datum;
-    typedef typename AABB_primitive::Container Container;
+    typedef AABB_primitive_ Primitive;
+    typedef typename Primitive::Id Id;
+    typedef typename Primitive::Datum Datum;
+    typedef typename Primitive::Container Container;
 
     typedef typename GeomTraits::Point_2 Point;
     typedef typename GeomTraits::Vector_2 Vector_2;
@@ -56,14 +56,14 @@ public:
 
     ~AABB_traits_2() { };
 
-    Interval_nt<true> getIntX() const {
+    Interval_nt<true> get_int_x() const {
         return m_x_interval;
     }
-    Interval_nt<true> getIntY() const {
+    Interval_nt<true> get_int_y() const {
         return m_y_interval;
     }
 
-    Point getTPoint() const {
+    Point get_translation_point() const {
         return m_t_point;
     }
     const Container &get_p() const {
@@ -167,10 +167,10 @@ public:
             Bounding_box t_box(t_left,t_bottom,t_right,t_top);
             */
 
-            double t_left = (m_traits->getIntX() + bbox.xmin()).inf();
-            double t_right = (m_traits->getIntX() + bbox.xmax()).sup();
-            double t_bottom = (m_traits->getIntY() + bbox.ymin()).inf();
-            double t_top = (m_traits->getIntY() + bbox.ymax()).sup();
+            double t_left = (m_traits->get_int_x() + bbox.xmin()).inf();
+            double t_right = (m_traits->get_int_x() + bbox.xmax()).sup();
+            double t_bottom = (m_traits->get_int_y() + bbox.ymin()).inf();
+            double t_top = (m_traits->get_int_y() + bbox.ymax()).sup();
             Bounding_box t_box(t_left, t_bottom, t_right, t_top);
 
             return CGAL::do_overlap(q, t_box);
@@ -189,10 +189,10 @@ public:
             Bounding_box t_box(t_left,t_bottom,t_right,t_top);
             */
 
-            double t_left = (m_traits->getIntX() + bbox.xmin()).inf();
-            double t_right = (m_traits->getIntX() + bbox.xmax()).sup();
-            double t_bottom = (m_traits->getIntY() + bbox.ymin()).inf();
-            double t_top = (m_traits->getIntY() + bbox.ymax()).sup();
+            double t_left = (m_traits->get_int_x() + bbox.xmin()).inf();
+            double t_right = (m_traits->get_int_x() + bbox.xmax()).sup();
+            double t_bottom = (m_traits->get_int_y() + bbox.ymin()).inf();
+            double t_top = (m_traits->get_int_y() + bbox.ymax()).sup();
             Bounding_box t_box(t_left, t_bottom, t_right, t_top);
 
             return CGAL::do_overlap(q.datum().bbox(), t_box);
@@ -200,13 +200,13 @@ public:
 
         bool operator()(const Bounding_box &q, const Primitive &pr) const {
 
-            typename Primitive::Datum tr_pr = pr.datum().transform(typename GeomTraits::Aff_transformation_2(CGAL::Translation(), Vector_2(CGAL::ORIGIN, m_traits->getTPoint())));
+            typename Primitive::Datum tr_pr = pr.datum().transform(typename GeomTraits::Aff_transformation_2(CGAL::Translation(), Vector_2(CGAL::ORIGIN, m_traits->get_translation_point())));
             return CGAL::do_overlap(q, tr_pr.bbox());
         }
 
         bool operator()(const Primitive &q, const Primitive &pr) const {
 
-            typename Primitive::Datum tr_pr = pr.datum().transform(typename GeomTraits::Aff_transformation_2(CGAL::Translation(), Vector_2(CGAL::ORIGIN, m_traits->getTPoint())));
+            typename Primitive::Datum tr_pr = pr.datum().transform(typename GeomTraits::Aff_transformation_2(CGAL::Translation(), Vector_2(CGAL::ORIGIN, m_traits->get_translation_point())));
 
             if (!CGAL::do_overlap(q.datum().bbox(), tr_pr.bbox())) {
                 return false;
@@ -246,7 +246,7 @@ public:
 
                 if (has_weak_intersection) {
 
-                    bool val = handleWeakIntersections(p_intersect, q_intersect, p_intersect_start, q_intersect_start, pr, q, tr_pr);
+                    bool val = handle_weak_intersections(p_intersect, q_intersect, p_intersect_start, q_intersect_start, pr, q, tr_pr);
 
                     if (val == false) {
                         int k = 4;
@@ -273,25 +273,25 @@ public:
 
     private:
 
-        bool handleWeakIntersections(bool p_intersect, bool q_intersect, bool p_intersect_start, bool q_intersect_start, const Primitive &p, const Primitive &q, const Datum &tr_pr_datum) const {
+        bool handle_weak_intersections(bool p_intersect, bool q_intersect, bool p_intersect_start, bool q_intersect_start, const Primitive &p, const Primitive &q, const Datum &tr_pr_datum) const {
             Id itr_p = p.id();
             Id itr_q = q.id();
-            Id p_other = getOtherSegment(p_intersect_start, itr_p, m_traits->get_p());
-            Id q_other = getOtherSegment(q_intersect_start, itr_q, m_traits->get_q());
-            Datum p_other_translated = (*p_other).transform(typename GeomTraits::Aff_transformation_2(CGAL::Translation(), Vector_2(CGAL::ORIGIN, m_traits->getTPoint())));
+            Id p_other = get_other_segment(p_intersect_start, itr_p, m_traits->get_p());
+            Id q_other = get_other_segment(q_intersect_start, itr_q, m_traits->get_q());
+            Datum p_other_translated = (*p_other).transform(typename GeomTraits::Aff_transformation_2(CGAL::Translation(), Vector_2(CGAL::ORIGIN, m_traits->get_translation_point())));
 
             if (p_intersect && !q_intersect) {
                 if (p_intersect_start) {
-                    return handle_one_weak_int(p_other_translated, tr_pr_datum, *itr_q);
+                    return handle_weak_intersection(p_other_translated, tr_pr_datum, *itr_q);
                 } else {
-                    return handle_one_weak_int(tr_pr_datum, p_other_translated, *itr_q);
+                    return handle_weak_intersection(tr_pr_datum, p_other_translated, *itr_q);
                 }
             } else {
                 if (!p_intersect && q_intersect) {
                     if (q_intersect_start) {
-                        return handle_one_weak_int(*q_other, *itr_q, tr_pr_datum);
+                        return handle_weak_intersection(*q_other, *itr_q, tr_pr_datum);
                     } else {
-                        return handle_one_weak_int(*itr_q, *q_other, tr_pr_datum);
+                        return handle_weak_intersection(*itr_q, *q_other, tr_pr_datum);
                     }
                 } else {
                     Datum first_p, second_p;
@@ -313,25 +313,25 @@ public:
                         second_q = *q_other;
                     }
 
-                    return check_overlapping(first_p, second_p, first_q, second_q);
+                    return is_overlapping(first_p, second_p, first_q, second_q);
                 }
             }
         }
 
-        bool handle_one_weak_int(const Datum &incoming, const Datum &outgoing, const Datum &other_segment) const {
+        bool handle_weak_intersection(const Datum &incoming, const Datum &outgoing, const Datum &other_segment) const {
             // There is an overlap in polygon regions if the outgoing of p is ccw-between outgoing q and -incoming q or vice versa.
             //return (other_segment.direction()).counterclockwise_in_between(outgoing.direction(),incoming.opposite().direction());
             return (other_segment.direction()).counterclockwise_in_between(outgoing.direction(), incoming.opposite().direction()) ||
                    outgoing.direction().counterclockwise_in_between(other_segment.direction(), other_segment.opposite().direction());
         }
 
-        bool check_overlapping(const Datum &incoming_p, const Datum &outgoing_p, const Datum &incoming_q, const Datum &outgoing_q) const {
+        bool is_overlapping(const Datum &incoming_p, const Datum &outgoing_p, const Datum &incoming_q, const Datum &outgoing_q) const {
             // There is an overlap in polygon regions if the outgoing of p is ccw-between outgoing q and -incoming q or vice versa.
             return ((outgoing_q.direction()).counterclockwise_in_between(outgoing_p.direction(), incoming_p.opposite().direction()) ||
                     (outgoing_p.direction()).counterclockwise_in_between(outgoing_q.direction(), incoming_q.opposite().direction()));
         }
 
-        Id getOtherSegment(bool start, const Id &itr_p, const Container &cont) const {
+        Id get_other_segment(bool start, const Id &itr_p, const Container &cont) const {
             Id p_other;
 
             if (start) {
@@ -431,6 +431,7 @@ public:
     Closest_point closest_point_object() {
         return Closest_point();
     }
+
     Compare_distance compare_distance_object() {
         return Compare_distance();
     }
@@ -465,6 +466,7 @@ private:
     static bool less_x(const Primitive &pr1, const Primitive &pr2) {
         return pr1.reference_point().x() < pr2.reference_point().x();
     }
+
     static bool less_y(const Primitive &pr1, const Primitive &pr2) {
         return pr1.reference_point().y() < pr2.reference_point().y();
     }
@@ -481,7 +483,6 @@ AABB_traits_2<GT, P>::longest_axis(const Bounding_box &bbox) {
     } else {
         return CGAL_AXIS_Y;
     }
-
 }
 
 } // namespace internal

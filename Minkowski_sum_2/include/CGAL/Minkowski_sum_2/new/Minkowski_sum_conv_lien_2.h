@@ -3,8 +3,8 @@
 
 #include <CGAL/Timer.h>
 #include <CGAL/Arrangement_with_history_2.h>
-#include "aabb/AABB_Collision_detector.h"
-#include "Arr_SegmentData_traits.h"
+#include "aabb/AABB_collision_detector_2.h"
+#include "Arr_segment_data_traits_2.h"
 
 #include <iostream> // TODO: remove!
 #include <queue>
@@ -13,21 +13,22 @@
 namespace CGAL {
 namespace internal {
 
-template <class Kernel, class Container>
+template <class Kernel_, class Container_>
 class Minkowski_sum_by_convolution_lien_2 {
 
 private:
 
-    typedef CGAL::Polygon_2<Kernel, Container> Polygon_2;
+    typedef Kernel_ Kernel;
+    typedef Container_ Container;
 
-    // Kernel types:
+    typedef CGAL::Polygon_2<Kernel, Container> Polygon_2;
     typedef typename Kernel::Point_2 Point_2;
     typedef typename Kernel::Vector_2 Vector_2;
     typedef typename Kernel::Direction_2 Direction_2;
 
     // Traits-related types:
     typedef Arr_segment_traits_2<Kernel> Traits_2_A;
-    typedef Arr_SegmentData_traits<Traits_2_A> Traits_2;
+    typedef Arr_segment_data_traits_2<Traits_2_A> Traits_2;
 
     typedef typename Traits_2_A::Segment_2 Base_Segment_2;
     typedef typename Traits_2::X_monotone_curve_2 Segment_2;
@@ -63,7 +64,7 @@ private:
     typename Traits_2::Compare_y_at_x_2 f_compare_y_at_x;
     typename Traits_2::Compare_x_2 f_compare_x;
 
-    AABBCollisionDetector<Kernel, Container> *aabb_collision_detector;
+    AABB_collision_detector_2<Kernel, Container> *collision_detector;
 
 public:
 
@@ -101,7 +102,7 @@ public:
         timer.start();
 
         const Polygon_2 inversed_pgn1 = transform(Aff_transformation_2<Kernel>(SCALING, -1), pgn1);
-        aabb_collision_detector = new AABBCollisionDetector<Kernel, Container>(pgn2, inversed_pgn1);
+        collision_detector = new AABB_collision_detector_2<Kernel, Container>(pgn2, inversed_pgn1);
 
         timer.stop();
         std::cout << timer.time() << " s: AABB init" << std::endl;
@@ -144,7 +145,7 @@ public:
         timer.reset();
         timer.start();
 
-        delete aabb_collision_detector;
+        delete collision_detector;
 
         return sum_holes;
     }
@@ -205,7 +206,7 @@ private:
                     Point_2 end_point = get_point(i1, next_i2, points_map, pgn1, pgn2);
 
                     CGAL::Comparison_result cres = f_compare_xy(start_point, end_point);
-                    Segment_2 conv_seg = Segment_2(typename Traits_2_A::Segment_2(start_point, end_point), Segment_Data_Label(state(i1, i2), state(i1, next_i2), cres, 1));
+                    Segment_2 conv_seg = Segment_2(typename Traits_2_A::Segment_2(start_point, end_point), Segment_data_label(state(i1, i2), state(i1, next_i2), cres, 1));
 
                     reduced_conv.push_back(conv_seg);
                 }
@@ -220,7 +221,7 @@ private:
                     Point_2 end_point = get_point(next_i1, i2, points_map, pgn1, pgn2);
 
                     CGAL::Comparison_result cres = f_compare_xy(start_point, end_point);
-                    Segment_2 conv_seg = Segment_2(typename Traits_2_A::Segment_2(start_point, end_point), Segment_Data_Label(state(i1, i2), state(next_i1, i2), cres, 0));
+                    Segment_2 conv_seg = Segment_2(typename Traits_2_A::Segment_2(start_point, end_point), Segment_data_label(state(i1, i2), state(next_i1, i2), cres, 0));
                     reduced_conv.push_back(conv_seg);
                 }
             }
@@ -288,7 +289,7 @@ private:
 
         // When the reversed polygon 1, translated by a point inside of this face, collides with polygon 2, this cannot be a hole
         Point_2 mid_point = find_inside_point(arr, start);
-        if (aabb_collision_detector->checkCollision(mid_point)) {
+        if (collision_detector->check_collision(mid_point)) {
             return;
         }
 
@@ -315,12 +316,6 @@ private:
         }
 
         return true;
-    }
-
-    /*
-    This version assumes poly1 is reflected through origin.
-    */
-    bool checkCollisionDetection(Arrangement_history_2 &arr, Halfedge_handle &handle, const Polygon_2 &pgn1, const Polygon_2 &pgn2) const {
     }
 
     Point_2 find_inside_point(Arrangement_history_2 &arr, Ccb_halfedge_circulator &current_edge) const {

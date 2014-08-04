@@ -6,21 +6,23 @@ namespace internal {
 
 typedef std::pair<int, int> state;
 
-struct Segment_Data_Label {
-    Segment_Data_Label(state min_id, state max_id, CGAL::Comparison_result orientation, int origin): _min_id(min_id), _max_id(max_id), _orientation(orientation), _origin(origin) {}
-    Segment_Data_Label() {
+struct Segment_data_label {
+    Segment_data_label(state min_id, state max_id, CGAL::Comparison_result orientation, int origin):
+        _min_id(min_id), _max_id(max_id), _orientation(orientation), _origin(origin) {}
+
+    Segment_data_label() {
         _min_id = state(-1, -1);
         _max_id = state(-1, -1);
         _orientation = CGAL::SMALLER;
         _origin = -1;
     }
 
-    state _min_id, _max_id;
-    CGAL::Comparison_result _orientation;
     int _origin;
+    CGAL::Comparison_result _orientation;
+    state _min_id, _max_id;
 };
 
-template <class Traits_> class Arr_SegmentData_traits : public Traits_ {
+template <class Traits_> class Arr_segment_data_traits_2 : public Traits_ {
 
 public:
 
@@ -82,7 +84,7 @@ public:
 
     private:
 
-        Segment_Data_Label _label;
+        Segment_data_label _label;
 
     public:
 
@@ -92,26 +94,26 @@ public:
 
         /*! Constructor from an x-monotone curve an a label. */
         X_monotone_curve_2(const Base_x_monotone_curve_2 &p,
-                           const Segment_Data_Label &label) :
+                           const Segment_data_label &label) :
             Base_x_monotone_curve_2(p),
             _label(label) {
         }
 
         /*! Get the label (const version). */
-        const Segment_Data_Label &label() const {
+        const Segment_data_label &label() const {
             return (_label);
         }
 
-        const Segment_Data_Label &data() const {
+        const Segment_data_label &data() const {
             return (_label);
         }
 
         /*! Get the label (non-const version). */
-        Segment_Data_Label &label() {
+        Segment_data_label &label() {
             return (_label);
         }
 
-        Segment_Data_Label &data() {
+        Segment_data_label &data() {
             return (_label);
         }
     };
@@ -199,7 +201,7 @@ public:
         Intersect_2(const Traits_* traits) : m_traits(traits) {}
 
         //! Allow its functor obtaining function calling the protected constructor.
-        friend class Arr_SegmentData_traits<Traits_>;
+        friend class Arr_segment_data_traits_2<Traits_>;
 
     public:
 
@@ -265,7 +267,7 @@ public:
                     CGAL_assertion(base_xcv != NULL);
 
                     // Attach a merged label to the overlapping curve.
-                    *oi = CGAL::make_object(X_monotone_curve_2(*base_xcv, Segment_Data_Label(no_state, no_state, xcv1.data()._orientation, -1)));
+                    *oi = CGAL::make_object(X_monotone_curve_2(*base_xcv, Segment_data_label(no_state, no_state, xcv1.data()._orientation, -1)));
                     ++oi;
                 }
             }
@@ -295,7 +297,7 @@ public:
         }
 
         //! Allow its functor obtaining function calling the protected constructor.
-        friend class Arr_SegmentData_traits<Traits_>;
+        friend class Arr_segment_data_traits_2<Traits_>;
 
     public:
 
@@ -332,7 +334,7 @@ public:
         }
 
         //! Allow its functor obtaining function calling the protected constructor.
-        friend class Arr_SegmentData_traits<Traits_>;
+        friend class Arr_segment_data_traits_2<Traits_>;
 
     public:
 
@@ -374,7 +376,7 @@ public:
         {}
 
         //! Allow its functor obtaining function calling the protected constructor.
-        friend class Arr_SegmentData_traits<Traits_>;
+        friend class Arr_segment_data_traits_2<Traits_>;
 
     public:
 
