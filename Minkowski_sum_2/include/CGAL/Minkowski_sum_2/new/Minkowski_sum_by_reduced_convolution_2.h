@@ -148,9 +148,6 @@ private:
         // Contains states that were already visited
         boost::unordered_set<State> visited_vertices;
 
-        // Maps states to points
-        boost::unordered_map<State, Point_2> points_map;
-
         // Init the queue with vertices from the first column
         std::queue<State> state_queue;
         for (int i = n1-1; i >= 0; --i) {
@@ -185,8 +182,8 @@ private:
                 state_queue.push(State(i1, next_i2));
 
                 if (is_convex(pgn1[prev_i1], pgn1[i1], pgn1[next_i1])) {
-                    Point_2 start_point = get_point(i1, i2, points_map, pgn1, pgn2);
-                    Point_2 end_point = get_point(i1, next_i2, points_map, pgn1, pgn2);
+                    Point_2 start_point = get_point(i1, i2, pgn1, pgn2);
+                    Point_2 end_point = get_point(i1, next_i2, pgn1, pgn2);
 
                     Comparison_result cres = f_compare_xy(start_point, end_point);
                     Segment_2 conv_seg = Segment_2(Base_segment_2(start_point, end_point), Segment_data_label(State(i1, i2), State(i1, next_i2), cres, 1));
@@ -200,8 +197,8 @@ private:
                 state_queue.push(State(next_i1, i2));
 
                 if (is_convex(pgn2[prev_i2], pgn2[i2], pgn2[next_i2])) {
-                    Point_2 start_point = get_point(i1, i2, points_map, pgn1, pgn2);
-                    Point_2 end_point = get_point(next_i1, i2, points_map, pgn1, pgn2);
+                    Point_2 start_point = get_point(i1, i2, pgn1, pgn2);
+                    Point_2 end_point = get_point(next_i1, i2, pgn1, pgn2);
 
                     Comparison_result cres = f_compare_xy(start_point, end_point);
                     Segment_2 conv_seg = Segment_2(Base_segment_2(start_point, end_point), Segment_data_label(State(i1, i2), State(next_i1, i2), cres, 0));
@@ -228,18 +225,10 @@ private:
         return f_orientation(prev, curr, next) == LEFT_TURN;
     }
 
-    // Returns the point corresponding to a state (i,j). Caches the points in points_map.
-    Point_2 get_point(int i1, int i2, boost::unordered_map<std::pair<int, int>, Point_2> &points_map, const Polygon_2 &pgn1, const Polygon_2 &pgn2) const {
-        Point_2 result;
+    // Returns the point corresponding to a state (i,j).
+    Point_2 get_point(int i1, int i2, const Polygon_2 &pgn1, const Polygon_2 &pgn2) const {
 
-        if (points_map.count(State(i1, i2)) == 0) {
-            result = f_add(pgn1[i1], Vector_2(Point_2(ORIGIN), pgn2[i2]));
-            points_map[State(i1, i2)] = result;
-        } else {
-            result = points_map[State(i1, i2)];
-        }
-
-        return result;
+        return f_add(pgn1[i1], Vector_2(Point_2(ORIGIN), pgn2[i2]));
     }
 
     // Put the outer loop of the arrangement in 'outer_boundary'
@@ -266,13 +255,13 @@ private:
 
         // The face needs to be orientable
         do {
-            if (!check_originating_edge_has_same_direction(arr, circ)) {
+            if (!do_original_edges_have_same_direction(arr, circ)) {
                 return;
             }
         } while (++circ != start);
 
         // When the reversed polygon 1, translated by a point inside of this face, collides with polygon 2, this cannot be a hole
-        Point_2 inner_point = get_point_inside(face);
+        Point_2 inner_point = get_point_in_face(face);
         if (collision_detector.check_collision(inner_point)) {
             return;
         }
@@ -290,7 +279,7 @@ private:
     }
 
     // Check whether the convolution's original edge(s) had the same direction as the arrangement's half edge
-    bool check_originating_edge_has_same_direction(Arrangement_history_2 &arr, Halfedge_handle he) const {
+    bool do_original_edges_have_same_direction(Arrangement_history_2 &arr, Halfedge_handle he) const {
         Originating_curve_iterator segment_itr;
 
         for (segment_itr = arr.originating_curves_begin(he); segment_itr != arr.originating_curves_end(he); ++segment_itr) {
@@ -303,7 +292,7 @@ private:
     }
 
     // Return a point in the face's interior by finding a diagonal
-    Point_2 get_point_inside(Face_handle face) const {
+    Point_2 get_point_in_face(Face_handle face) const {
         Ccb_halfedge_circulator current_edge = face->outer_ccb();
         Ccb_halfedge_circulator next_edge = current_edge;
         next_edge++;
