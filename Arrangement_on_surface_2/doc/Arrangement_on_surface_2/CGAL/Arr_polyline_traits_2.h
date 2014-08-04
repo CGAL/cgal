@@ -74,7 +74,9 @@ namespace CGAL {
     the macro `CGAL_ALWAYS_LEFT_TO_RIGHT` to 1 before any \cgal header
     is included.
 
-    \cgalModels `ArrConstructionFromTwoPointsTraits_2`
+    \cgalModels 
+    `ArrConstructionFromTwoPointsTraits_2` 
+    (required by push_back and Push_front functors)
     `ArrTrimTraits_2` 
     `ArrApproximateTraits_2`(if the template parameter
     `GeometryTraits` models the concept as well)

@@ -13,30 +13,31 @@ namespace CGAL {
     \ingroup PkgArrangement2TraitsClasses
 
     The traits class `Arr_polycurve_traits_2` handles piecewise linear
-    curves, commonly referred to as polycurvess. Each polycurves is a
+    curves, commonly referred to as polycurve. Each polycurve is a
     chain of segments/curves, where each two neighboring segments/curves in the
-    chain share a common endpoint; that is, the polycurves is
+    chain share a common endpoint; that is, the polycurve is
     continuous. Furthermore, the target of the \f$i\f$th segement of
-    a polycurves has to coincide with the source of the \f$i+1\f$st
-    segment; that is, the polycurves has to be \a well-oriented. Note
-    that it is possible to construct general polycurvess that are
+    a polycurve has to coincide with the source of the \f$i+1\f$st
+    segment; that is, the polycurve has to be \a well-oriented. Note
+    that it is possible to construct general polycurves that are
     neither continuous nor well-oriented, as it is impossible to
     enforce this precondition (using the set of predicates required by
-    the relevant concepts, see below). However, such polycurvess cannot
+    the relevant concepts, see below). However, such polycurves cannot
     be used for the actual computation of arrangements. The traits
     class template exploits the functionality of the `GeometryTraits`
-    template-parameter to handle the segments that compose the
-    polycurves curves.
+    template-parameter to handle the segments/curves that compose the
+    polycurve segments/curves.
 
     The type substituting the template parameter `GeometryTraits` when
     the template Arr_polycurve_traits_2 is instantiated must be a model
     of the concepts
-      - `ArrangementTraits_2` and
+      - `ArrangementTraits_2`
+      - `ArrConstructionFromTwoPointsTraits_2`
+      - `ArrTrimTraits_2` and
       - `ArrangementDirectionalXMonotoneTraits_2`.
 
-    If, in addition, the segment traits models the concept
-    `ArrConstructionFromTwoPointsTraits_2, ArrApproximateTraits_2
-    and ArrTrimTraits_2` 
+    If, in addition, the GeometryTraits models the concept
+    `ArrApproximateTraits_2` 
     then `Arr_polycurve_traits_2` models
     this concept as well. If no type is provided, then
     `Arr_segment_traits_2` (instantiated with
@@ -52,26 +53,27 @@ namespace CGAL {
     avoid robustness problems, although other inexact number types
     could be used at the user's own risk.
 
-    A polycurves that comprises \f$n > 0\f$ segments has \f$ n+1 \f$
-    points, and they are represented as objects of type
+    A polycurve that comprises \f$n > 0\f$ segments has \f$ n+1 \f$
+    segment end-points, and they are represented as objects of type
     `GeometryTraits::Point_2`. Since the notion of a \a vertex is
     reserved to 0-dimensional elements of an arrangement, we use, in
     this context, the notion of \a points in order to refer to the
-    vertices of a polycurves. For example, an arrangement induced by a
-    single non-self intersecting polycurves has exactly two vertices
-    regardless of the number of points. Finally, the types `Segment_2`
+    vertices of a polycurve. For example, an arrangement induced by a
+    single non-self intersecting polycurve has exactly two vertices
+    regardless of the number of segment end-points. Finally, the types `Segment_2`
     and `X_monotone_segment_2` nested in `Arr_polycurve_traits_2` are
     nothing but `GeometryTraits::Curve_2` and
     `GeometryTraits::X_monotone_curve_2`, respectively.
 
     \cgalHeading{A note on Backwards compatibility} In \cgal version
     4.2 (and earlier) any object of the `X_monotone_curve_2` type
-    nested in `Arr_polycurve_traits_2` maintained a direction
+    nested in `Arr_polycurve_traits_2` which in that version was called 
+    `Arr_polyline_tratis_2` maintained a direction
     invariant; namely, its vertices were ordered in an \a ascending
     lexicographical \f$(xy)\f$-order.  This restriction is no longer
     imposed and `X_monotone_curve_2` can be now directed either from
     right-to-left \a or left-to-right. If you wish to maintain a
-    left-to-right orientations of the \f$x\f$-monotone polycurvess, set
+    left-to-right orientations of the \f$x\f$-monotone polycurve, set
     the macro `CGAL_ALWAYS_LEFT_TO_RIGHT` to 1 before any \cgal header
     is included.
 
@@ -100,7 +102,7 @@ namespace CGAL {
      */
     // TODO: Have to turn these into links, so whenever I mention Point_2 it
     //       will point here and *not* to Kernel::Point_2 for instance.
-    typedef GeometryTraits::Point_2            Point_2;
+    typedef GeometryTraits::Point_2                   Point_2;
 
     /*!
      */
@@ -124,34 +126,35 @@ namespace CGAL {
       /// @{
 
       /*!
-        Return a polycurves connecting the two given endpoints.
+        Return a polycurve connecting the two given endpoints.
         \param p The first point.
         \param q The second point.
         \pre `p` and `q` are distinct.
         \return A segment connecting `p` and `q`.
+        \in this case the polycurve actually will be a polyline.
       */
       Curve_2 operator()(const Point_2& p, const Point_2& q) const;
 
       /*!
-        Return a polycurves that comprises of one given segment.
+        Return a polycurve that comprises of one given segment.
         \param seg input segment
         \pre `seg` is not degenerated (not tested)
-        \return A polycurves with one segment, namely `seg`.
+        \return A polycurve with one segment, namely `seg`.
       */
       Curve_2 operator()(const Segment_2& seg) const;
 
       /*!
-        Construct a well-oriented polycurves from a range of either
+        Construct a well-oriented polycurve from a range of either
         `GeometryTraits::Point_2` or `GeometryTraits::Segment_2`.
 
          \param begin iterator pointing to the first element in the
                 range.
          \param end iterator pointing to the past-the-end
                 element in the range.
-         \pre The given range form a continuous and well-oriented polycurves
+         \pre The given range form a continuous and well-oriented polycurve
               (not tested).
          \pre Contains no degenerated segments (not tested)
-         \return A polycurves using the corresponding construction implementation.
+         \return A polycurve using the corresponding construction implementation.
        */
       template <typename ForwardIterator>
       Curve_2 operator()(ForwardIterator begin, ForwardIterator end) const;
@@ -160,26 +163,26 @@ namespace CGAL {
     }; /* end of Arr_polycurve_traits_2::Construct_curve_2 */
 
     /*!
-      Construction functor of \f$x\f$-monotone polycurves.
+      Construction functor of \f$x\f$-monotone polycurve.
 
       Similar to `Construct_curve_2`, only returns \f$x\f$-monotone
-      polycurvess.  Thus, have the same overloads of the
+      polycurve.  Thus, have the same overloads of the
       `operator()`. Note that when constructing `X_monotone_curve_2`
       all preconditions are tested.
 
       If `CGAL_ALWAYS_LEFT_TO_RIGHT` is defined, then the resulting
-      \f$x\f$-monotone polycurves will be oriented from left-to-right.
+      \f$x\f$-monotone polycurve will be oriented from left-to-right.
      */
     class Construct_x_monotone_curve_2 {};
 
     /*!
-      Function object which returns the number of points of a polycurves.
+      Function object which returns the number of segment end-points of a polycurve.
     */
     class Number_of_points_2{};
 
 
     /*!
-      Functor to augment a polycurves by either adding a vertex or a segment
+      Functor to augment a polycurve by either adding a vertex or a segment
       at the back.
     */
     class Push_back_2 {
@@ -188,39 +191,41 @@ namespace CGAL {
       /// @{
 
       /*!
-       * Append a point `p` to an existing polycurves `cv` at the back.
-       * \param cv a polycurves. Note, `cv` is not (necessarily)
+       * Append a point `p` to an existing polycurve `cv` at the back.
+       * \param cv a polycurve. Note, `cv` is not (necessarily)
        *        \f$ x\f$-monotone.
        * \param p a point to be appended to `cv` at the back.
        * \pre `cv` contains at least one segment.
+       * \pre Geometric segments can be constructed from two points.
        */
       void operator()(Curve_2& cv, const Point_2& p) const;
 
       /*!
-        Append a segment `seg` to an existing polycurves `cv` at the back.
+        Append a segment `seg` to an existing polycurve `cv` at the back.
         If `cv` is empty, `seg` will be its first segment.
-        \param cv a polycurves. Note, `cv` is (not necessarily) \f$x\f$-monotone.
+        \param cv a polycurve. Note, `cv` is (not necessarily) \f$x\f$-monotone.
         \param seg a segment (not necessarily \f$x\f$-monotone) to be appended
                to `cv`
       */
       void operator()(Curve_2& cv, const Segment_2& seg) const;
 
       /*!
-       * Append a point `p` to an existing \f$x\f$-monotone polycurves `xcv` at
+       * Append a point `p` to an existing \f$x\f$-monotone polycurve `xcv` at
        * the back.
-       * \param xcv the existing \f$x\f$-monotone polycurves
+       * \param xcv the existing \f$x\f$-monotone polycurve
        * \param p the point to be pushed back.
        * \pre `xcv` contains at least one segment
        * \pre `p` is either to the right of `xcv` if it is oriented
        *      left-to-right or it is to its left if `xcv` is oriented
        *      right-to-left.
+       * \pre Geometric segments can be constructed from two points.
        */
       void operator()(const X_monotone_curve_2& xcv, Point_2& p) const;
 
       /*!
-       * Append a segment `seg` to an existing \f$x\f$-monotone polycurves `xcv`
+       * Append a segment `seg` to an existing \f$x\f$-monotone polycurve `xcv`
        * at the back. If `xcv` is empty, `seg` will be its first segment.
-       * \param xcv existing \f$x\f$-monotone polycurves
+       * \param xcv existing \f$x\f$-monotone polycurve
        * \param seg the segment to be added
        * \pre If `xcv` is not empty then `seg` extends `xcv` to the right if
        *      `xcv` is oriented right-to-left. Otherwise, `seg` extends `xcv` to
@@ -228,13 +233,13 @@ namespace CGAL {
        * \pre `seg` is not degenerated.
        * \pre `xcv` and `seg` should have the same orientation
        */
-      void operator()(const X_monotone_curve_2& xcv, Segment_2& seg) const;
+      void operator()(const X_monotone_curve_2& xcv, X_monotone_segment_2& seg) const;
 
       /// @} /* end of operations */
     }; /* end of Arr_polycurve_traits_2::Push_back_2 */
 
     /*!
-      Functor to augment a polycurves by either adding a vertex or a segment
+      Functor to augment a polycurve by either adding a vertex or a segment
       at the front.
     */
     class Push_front_2 {
@@ -243,39 +248,41 @@ namespace CGAL {
       /// @{
 
       /*!
-       * Append a point `p` to an existing polycurves `cv` at the front.
-       * \param cv a polycurves. Note, `cv` is not (necessarily)
+       * Append a point `p` to an existing polycurve `cv` at the front.
+       * \param cv a polycurve. Note, `cv` is not (necessarily)
        *        \f$ x\f$-monotone.
        * \param p a point to be appended to `cv` at the back.
        * \pre `cv` contains at least one segment.
+       * \pre Geometric segments can be constructed from two points.
        */
       void operator()(Curve_2& cv, const Point_2& p) const;
 
       /*!
-        Append a segment `seg` to an existing polycurves `cv` at the front.
+        Append a segment `seg` to an existing polycurve `cv` at the front.
         If `cv` is empty, `seg` will be its first segment.
-        \param cv a polycurves. Note, `cv` is (not necessarily) \f$x\f$-monotone.
+        \param cv a polycurve. Note, `cv` is (not necessarily) \f$x\f$-monotone.
         \param seg a segment (not necessarily \f$x\f$-monotone) to be appended
         to `cv`
       */
       void operator()(Curve_2& cv, const Segment_2& seg) const;
 
       /*!
-       * Append a point `p` to an existing \f$x\f$-monotone polycurves `xcv` at
+       * Append a point `p` to an existing \f$x\f$-monotone polycurve `xcv` at
        * the front.
-       * \param xcv the existing \f$x\f$-monotone polycurves
+       * \param xcv the existing \f$x\f$-monotone polycurve
        * \param p the point to be pushed back.
        * \pre `xcv` contains at least one segment
        * \pre `p` is either to the left of `xcv` if it is oriented
        *      left-to-right or it is to its right if `xcv` is oriented
        *      right-to-left.
+       * \pre Geometric segments can be constructed from two points.
        */
       void operator()(const X_monotone_curve_2& xcv, Point_2& p) const;
 
       /*!
-       * Append a segment `seg` to an existing \f$x\f$-monotone polycurves `xcv`
+       * Append a segment `seg` to an existing \f$x\f$-monotone polycurve `xcv`
        * at the front. If `xcv` is empty, `seg` will be its first segment.
-       * \param xcv existing \f$x\f$-monotone polycurves
+       * \param xcv existing \f$x\f$-monotone polycurve
        * \param seg the segment to be added
        * \pre If `xcv` is not empty then `seg` extends `xcv` to the left if
        *      `xcv` is oriented right-to-left. Otherwise, `seg` extends `xcv` to
@@ -283,7 +290,7 @@ namespace CGAL {
        * \pre `seg` is not degenerated.
        * \pre `xcv` and `seg` should have the same orientation
        */
-      void operator()(const X_monotone_curve_2& xcv, Segment_2& seg) const;
+      void operator()(const X_monotone_curve_2& xcv, X_monotone_segment_2& seg) const;
 
       /// @} /* end of operations */
     }; /* end of Arr_polycurve_traits_2::Push_front_2 */
@@ -292,7 +299,7 @@ namespace CGAL {
     /*!
      * Cut the given curve into x-monotone sub-curves and insert them
      * into the given output iterator. Since the segments that
-     * constitute a general polycurves are not necessarily
+     * constitute a general polycurve are not necessarily
      * \f$x\f$-monotone, this functor may break them.
      */
     class Make_x_monotone_2 {
@@ -310,8 +317,9 @@ namespace CGAL {
 
     class Trim_2
     {
+    public:
        /*!\brief
-       * returns a trimmed version of the polycurve with src and tgt as end points.
+       * returns a trimmed version of the polycurve with src and tgt as end vertices.
        * Src and tgt will be swaped if they do not conform to the direction of the polycurve.
        */
       X_monotone_curve_2 operator()(const X_monotone_curve_2& xcv, 
@@ -321,9 +329,9 @@ namespace CGAL {
 
     /*!  The `Curve_2` type nested in the `Arr_polycurve_traits_2`
       represents general continuous piecewise-linear curves (a
-      polycurves can be self-intersecting) and support their
+      polycurve can be self-intersecting) and support their
       construction from range of segments. Construction of
-      polycurvess in various ways is supported using the construction
+      polycurves in various ways is supported using the construction
       functors. <em>It is strongly recommended to avoid construction
       of `Curve_2` objects directly and prefer the usage of the
       construction functors.</em> The type `Curve_2` has two template
@@ -333,7 +341,7 @@ namespace CGAL {
       comprises could be either \f$x\f$-monotone or not!
 
       The copy and default constructor as well as the assignment
-      operator are provided for polycurves curves. In addition, an \link
+      operator are provided for polycurve curves. In addition, an \link
       PkgArrangement2op_left_shift `operator<<` \endlink for the
       curves is defined for standard output streams, and an \link
       PkgArrangement2op_right_shift `operator>>` \endlink for the
@@ -348,39 +356,39 @@ namespace CGAL {
       /// @{
 
       /*!
-        The container of the segments that comprises the polycurves.
+        The container of the segments that comprises the polycurve.
        */
       typedef typename std::vector<Segment_2>        Segments_container;
 
     public:
       /*!
-        The size of the container that comprises the polycurvess.
+        The size of the container that comprises the polycurve.
        */
       typedef typename Segments_container::size_type Segments_size_type;
 
       /*!
         \deprecated
         A bidirectional iterator that allows traversing the points
-        that comprise a polycurves curve.
+        that comprise a polycurve's segments.
       */
       typedef unspecified_type const_iterator;
 
       /*!
         \deprecated
         A bidirectional iterator that allows traversing the points
-        that comprise a polycurves curve.
+        that comprise a polycurve's segments.
       */
       typedef unspecified_type const_reverse_iterator;
 
       /*!
         A bidirectional constant iterator that allows traversing
-        the segments the comprise the polycurves.
+        the segments that comprise the polycurve.
        */
       typedef unspecified_type Segment_const_iterator;
 
       /*!
         A bidirectional constant iterator that allows traversing
-        the segments the comprise the polycurves.
+        the segments that comprise the polycurve.
       */
       typedef unspecified_type Segment_const_reverse_iterator;
 
@@ -390,29 +398,29 @@ namespace CGAL {
       /// @{
 
       /*!
-        Default constructor that constructs an empty polycurves.
+        Default constructor that constructs an empty polycurve.
       */
       Curve_2 ();
 
       /*!
-        Construct a polycurves from one segment.
+        Construct a polycurve from one segment.
        */
       Curve_2 (const Segment_2 seg);
 
       /*!
-        Constructs a polycurves defined by the given range of segments
+        Constructs a polycurve defined by the given range of segments
         `[first, last)` (the value-type of `InputIterator` must be
         `GeometryTraits::Curve_2`. In general, the segments might not
         be \f$x\f$-monotone, furthermore, they might not form a
-        continuous polycurves.
+        continuous polycurve.
 
         \pre The segments in the range should form a continuous and
-             well-oriented polycurves.
+             well-oriented polycurve.
 
         \deprecated For backwards compatibility, it is
         possible to call this constructor with a range whose
         value-type is `GeometryTraits::Point_2`. In this case, the
-        constructed polycurves will concatenate the \f$n\f$th point
+        constructed polycurve will concatenate the \f$n\f$th point
         with the \f$(n+1)\f$-st point in the range (using a
         `GeometryTraits::Segment_2`'s). This functionality is \a deprecated.
         Instead use the `Construct_curve_2` functors.
@@ -426,67 +434,67 @@ namespace CGAL {
       /// @{
 
       /*!
-        \deprecated Return the number of points that comprise the polycurves.
-        Note that for a bounded polycurves, if there are \f$ n\f$ points in the
-        polycurves, it is comprised of \f$ (n - 1)\f$ segments.
-        Currently, only bounded polycurvess are supported.
+        \deprecated Return the number of segment end-points that comprise the polycurve.
+        Note that for a bounded polycurve, if there are \f$ n\f$ points in the
+        polycurve, it is comprised of \f$ (n - 1)\f$ segments.
+        Currently, only bounded polycurves are supported.
       */
       unsigned_int points() const;
 
       /*!
         \deprecated Return an iterator pointing at the source point of the
-        polycurves.
+        polycurve.
       */
       const_iterator begin() const;
 
-      /*! Obtain an iterator pointing at the first segment of the polycurves. */
+      /*! Obtain an iterator pointing at the first segment of the polycurve. */
       Segment_const_iterator begin_segments() const;
 
       /*!
-        \deprecated Return an iterator pointing after the end of the polycurves.
+        \deprecated Return an iterator pointing after the end of the polycurve.
       */
       const_iterator end() const;
 
       /*! Get an iterator pointing at the past-the-end segment of the
-          polycurves. */
+          polycurve. */
       Segment_const_iterator end_segments() const;
 
       /*!
         \deprecated Return an iterator pointing at the target point of the
-        polycurves.
+        polycurve.
       */
       const_iterator rbegin() const;
 
       /*!
-        Return an iterator pointing at the last segment of the polycurves.
+        Return an iterator pointing at the last segment of the polycurve.
       */
       Segment_const_reverse_iterator rbegin_segments() const;
 
       /*!
         \deprecated Return an iterator pointing before the beginning of the
-        polycurves.
+        polycurve.
       */
       const_iterator rend() const;
 
       /*!
         Return an iterator pointing at the past-the-end segment of
-        the polycurves in reverse order.
+        the polycurve in reverse order.
       */
       Segment_const_reverse_iterator rend_segments() const;
 
       /*!
-        \deprecated Return the number of line segments composing the polycurves
+        \deprecated Return the number of segments composing the polycurve
         (equivalent to `pi.points() - 1`). Was replaced by number_of_segments()
       */
       Segments_size_type size() const;
 
       /*!
-        Return the number of segments that comprise the polycurves.
+        Return the number of segments that comprise the polycurve.
        */
       Segments_container_size number_of_segments() const;
 
       /*!
-        Return the \f$ k\f$th segment of the polycurves.
+        Return the \f$ k\f$th segment of the polycurve.
         \pre \f$k\f$ is not greater then or equal to \f$n-1\f$, where
              \f$n\f$ is the number of segments.
       */
@@ -494,7 +502,7 @@ namespace CGAL {
       operator[] (size_t k) const;
 
       /*!
-        Return the bounding box of the polycurves.
+        Return the bounding box of the polycurve.
       */
       Bbox_2 bbox() const;
 
@@ -504,35 +512,36 @@ namespace CGAL {
       /// @{
 
       /*!
-       * Append a segment to the polycurves at the back.
+       * Append a segment to the polycurve at the back.
        * \a Warning: This function does not preform the precondition test
                      that the `Push_back_2` functor does. Thus, it is
                      recommended to use the latter.
-       * \param seg The new segment to be appended to the polycurves.
-       * \pre If the polycurves is not empty, the source of `seg` must coincide
-       *      with the target point of the last segment in the polycurves.
+       * \param seg The new segment to be appended to the polycurve.
+       * \pre If the polycurve is not empty, the source of `seg` must coincide
+       *      with the target point of the last segment in the polycurve.
        */
       inline void push_back (const Segment_2& seg);
 
       /*!
-       * Append a segment to the polycurves at the front.
+       * Append a segment to the polycurve at the front.
        * \a Warning: This is a risky function! Don't use it! Prefer the
        *             corresponding functor which is provided in the traits
        *             class.
-       * \param seg The new segment to be appended to the polycurves.
-       * \pre If the polycurves is not empty, the target of `seg` must coincide
-       *      with the source point of the first segment in the polycurves.
+       * \param seg The new segment to be appended to the polycurve.
+       * \pre If the polycurve is not empty, the target of `seg` must coincide
+       *      with the source point of the first segment in the polycurve.
        */
       inline void push_front (const Segment_2& seg);
 
       /*!
-        \deprecated adds a new point to the polycurves, which becomes the new
+        \deprecated adds a new point to the polycurvs, which becomes the new
         target point of `pi`.
+        * \pre Geometric segments can be constructed from two points.
       */
       void push_back (const Point_2 & p);
 
       /*!
-        Reset the polycurves.
+        Reset the polycurve.
       */
       void clear();
 
@@ -542,22 +551,22 @@ namespace CGAL {
 
 
     /*!
-      The `X_monotone_curve_2` class nested within the polycurves
+      The `X_monotone_curve_2` class nested within the polycurve
       traits is used to represent \f$ x\f$-monotone piecewise linear
       curves.
 
       It inherits from the `Curve_2` type. `X_monotone_curve_2` can be
       constructed just like `Curve_2`. However, there is precondition
       (which is not tested) that the input defines an \f$
-      x\f$-monotone polycurves. Furthermore, in contrast to the general
+      x\f$-monotone polycurve. Furthermore, in contrast to the general
       `Curve_2` type, in this case, the segments that an
       `X_monotone_curve_2` comprises have to be instances of the type
       `GeometryTraits::X_monotone_curve_2`. Note that the \f$
-      x\f$-monotonicity ensures that an \f$ x\f$-monotone polycurves
-      is not self-intersecting. (A self-intersecting polycurves is
+      x\f$-monotonicity ensures that an \f$ x\f$-monotone polycurve
+      is not self-intersecting. (A self-intersecting polycurve is
       subdivided into several interior-disjoint \f$x\f$-monotone subcurves).
 
-      The defined \f$ x\f$-monotone polycurves can be directed either from
+      The defined \f$ x\f$-monotone polycurve can be directed either from
       right-to-left (and in turn its vertices are stored in an ascending
       lexicographical \f$ xy\f$-order) or left-to-right (and in this case the
       vertices are stored in a descending lexicographical \f$ xy\f$-order).
