@@ -384,6 +384,13 @@ using std::max;
 #  endif
 #endif
 
+// Support for LEDA with threads
+//   Not that, if CGAL_HAS_THREADS is defined, and you want to use LEDA,
+//   you must link with a version of LEDA libraries that support threads.
+#if defined(CGAL_HAS_THREADS) && CGAL_USE_LEDA
+#  define LEDA_MULTI_THREAD 1
+#endif
+
 // Helper macros to disable macros
 #if defined(__clang__) || (BOOST_GCC >= 40600)
 #  define CGAL_PRAGMA_DIAG_PUSH _Pragma("GCC diagnostic push")
