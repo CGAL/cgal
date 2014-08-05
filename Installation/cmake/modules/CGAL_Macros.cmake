@@ -296,8 +296,8 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
         find_package( Qt4 )
       endif()
 
-	  if (${component} STREQUAL "Qt5")
-		set(CGAL_${component}_FOUND TRUE)
+      if (${component} STREQUAL "Qt5")
+	set(CGAL_${component}_FOUND TRUE)
       endif()
     else(WITH_CGAL_${component})
 
