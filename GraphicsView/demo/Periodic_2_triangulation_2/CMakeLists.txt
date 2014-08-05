@@ -15,42 +15,19 @@ set( QT_USE_QTSCRIPT  TRUE )
 set( QT_USE_QTOPENGL  TRUE )
 
 
-#New for Qt5 version !
-option (USE_QT5 "Use Qt5 version instead of Qt4" ON)
+find_package(CGAL COMPONENTS Qt4or5 REQUIRED)
 
-if(USE_QT5)
-
-	find_package(CGAL COMPONENTS Qt5 REQUIRED)
-
-	include(${CGAL_USE_FILE})
+include(${CGAL_USE_FILE})
 	
-	find_package(Qt5)
+find_package(Qt4or5)
 
-        set(CMAKE_AUTOMOC OFF)
-
-else (USE_QT5)
-
-	find_package(CGAL COMPONENTS Qt4 REQUIRED)
-
-	include(${CGAL_USE_FILE})
-
-	find_package(Qt4)
-
-	if(CGAL_Qt4_FOUND AND QT4_FOUND)
-		include(${QT_USE_FILE})
-		message("Qt4 found")
-		set(QT4 TRUE)
-	endif()
-
-endif (USE_QT5)
-
-include(QtChoice)
+set(CMAKE_AUTOMOC OFF)
 
 
 include_directories (BEFORE ../../../include)
 include_directories (BEFORE ./include)
 
-if ( QT4 OR QT5 )
+if ( CGAL_FOUND AND QT${QT_VERSION_USED}_FOUND )
 #--------------------------------
 # The "2D Periodic triangulation" demo: Periodic_2_triangulation_2
 #--------------------------------
@@ -85,6 +62,6 @@ target_link_libraries( Periodic_2_Delaunay_triangulation_2 ${QT_LIBRARIES} )
 target_link_libraries( Periodic_2_Delaunay_triangulation_2 ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES})
 else()
 
-  message(STATUS "NOTICE: This demo requires CGAL and Qt4 or Qt5, and will not be compiled.")
+  message(STATUS "NOTICE: This demo requires CGAL and ${QT_VERSION}, and will not be compiled.")
 
 endif()

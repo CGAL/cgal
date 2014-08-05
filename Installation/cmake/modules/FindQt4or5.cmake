@@ -6,15 +6,22 @@
 #
 #So, the variable ${CGAL_Qt_version} must be initialised before use find_package(Qt4or5) if auto configuration wanted. 
 #
-#At the end of the process, USE_QT_VERSION is set to the Qt proper version number.
+#At the end of the process, QT_VERSION_USED is set to the Qt proper version number.
 #
 
+cmake_minimum_required(VERSION 2.6.2)
+if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}.${CMAKE_PATCH_VERSION}" VERSION_GREATER 2.8.3)
+  cmake_policy(VERSION 2.8.4)
+else()
+  cmake_policy(VERSION 2.6)
+endif()
 
 #Set of a temporary variable, because the if existence checking seem to not work without it.
-set (Qt_version_temp ${Qt_version})
+set (USE_QT_VERSION_temp ${USE_QT_VERSION})
 
-if(Qt_version_temp)
+if(USE_QT_VERSION_temp)
 	set(QT_VERSION_CHOICE FALSE)
+	set(QT_VERSION Qt${USE_QT_VERSION})
 else()
 	set(QT_VERSION_CHOICE TRUE)
 endif()
@@ -24,7 +31,7 @@ set (CGALQt_version_temp ${CGAL_QT_VERSION})
 
 if (OLDCGALQt_version_temp AND CGALQt_version_temp)
 	if(NOT (${CGAL_QT_VERSION} STREQUAL ${OLD_CGAL_QT_VERSION}) )
-		UNSET(QT_VERSION CACHE)
+		UNSET(QT_CHOICE CACHE)
 	endif()
 endif()
 
@@ -36,27 +43,27 @@ if(NOT CGAL_QT_VERSION_temp)
 else()
         message(STATUS "Qt configuration : libCGAL_Qt${CGAL_QT_VERSION} has been asked.")
 endif()
-    
+
 	if(${QT_VERSION_CHOICE})
 		cache_set(OLD_CGAL_QT_VERSION ${CGAL_QT_VERSION})
-	
-		set (QT_VERSION ${CGAL_QT_VERSION} CACHE STRING "Choice of Qt version for find_package(Qt4or5).")
-		SET_PROPERTY(CACHE QT_VERSION PROPERTY STRINGS 4 5)
-		set(Qt_version Qt${QT_VERSION})
+
+		set (QT_CHOICE ${CGAL_QT_VERSION} CACHE STRING "Choice of Qt version for find_package(Qt4or5).")
+		SET_PROPERTY(CACHE QT_CHOICE PROPERTY STRINGS 4 5)
+		set(QT_VERSION Qt${QT_CHOICE})
 	endif()
 	
-	if(${Qt_version} STREQUAL "Qt4")
+	if(${QT_VERSION} STREQUAL "Qt4")
 		UNSET(QT4} CACHE)
 		UNSET(QT4_FOUND CACHE)
-		UNSET(USE_QT_VERSION CACHE)
+		UNSET(QT_VERSION_USED CACHE)
 		
 		#We say that we want the version 4 of the Qt library.
-		set(USE_QT_VERSION 4)
+		set(QT_VERSION_USED 4)
     endif()
 	
-	find_package(${Qt_version})
+	find_package(${QT_VERSION})
 	
-	if(${Qt_version} STREQUAL "Qt4" AND QT4_FOUND)
+	if(${QT_VERSION} STREQUAL "Qt4" AND QT4_FOUND)
 		include(${QT_USE_FILE})
 		set(QT4 TRUE)
 

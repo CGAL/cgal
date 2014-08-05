@@ -1,12 +1,9 @@
 set(USE_QT_VERSION 5)
-set(CGAL_Qt_version "Qt${USE_QT_VERSION}" )
 
-message("Configuring libCGAL_${CGAL_Qt_version}")
+message("Configuring libCGAL_Qt${USE_QT_VERSION}")
 
 set( QT_USE_QTMAIN   TRUE )
 set( QT_USE_QTOPENGL TRUE )
-
-set(Qt_version ${CGAL_Qt_version})
 
 find_package(Qt4or5 QUIET)
 
@@ -30,9 +27,9 @@ if( QT${USE_QT_VERSION}_FOUND )
     message( STATUS "OpenGL include:     ${OPENGL_INCLUDE_DIR}" )
     message( STATUS "OpenGL libraries:   ${OPENGL_LIBRARIES}" )
     message( STATUS "OpenGL definitions: ${OPENGL_DEFINITIONS}" )
-    message( STATUS "${CGAL_Qt_version} include:        ${QT_INCLUDE_DIR}" )
-    message( STATUS "${CGAL_Qt_version} libraries:      ${QT_LIBRARIES}" )
-    message( STATUS "${CGAL_Qt_version} definitions:    ${QT_DEFINITIONS}" )
+    message( STATUS "${QT_VERSION} include:        ${QT_INCLUDE_DIR}" )
+    message( STATUS "${QT_VERSION} libraries:      ${QT_LIBRARIES}" )
+    message( STATUS "${QT_VERSION} definitions:    ${QT_DEFINITIONS}" )
     message( STATUS "moc executable:     ${QT_MOC_EXECUTABLE}" )
     message( STATUS "uic executable:     ${QT_UIC_EXECUTABLE}" )
 
@@ -88,12 +85,12 @@ if( QT${USE_QT_VERSION}_FOUND )
 	endif()
 	cache_set(CGAL_QT_RECENT ${CGAL_QT_RECENT})
 	
-    message("libCGAL_${CGAL_Qt_version} is configured")
+    message("libCGAL_${QT_VERSION} is configured")
 
   else()
-    message( STATUS "libCGAL_${CGAL_Qt_version} needs OpenGL, cannot be configured.")
+    message( STATUS "libCGAL_${QT_VERSION} needs OpenGL, cannot be configured.")
   endif()  
   
 else()
-  message( STATUS "libCGAL_${CGAL_Qt_version} needs Qt${USE_QT_VERSION}, cannot be configured.")
+  message( STATUS "libCGAL_${QT_VERSION} needs Qt${USE_QT_VERSION}, cannot be configured.")
 endif()

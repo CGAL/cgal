@@ -16,40 +16,18 @@ set( QT_USE_QTMAIN   TRUE )
 set( QT_USE_QTSCRIPT  TRUE )
 set( QT_USE_QTOPENGL  TRUE )
 
-#New for Qt5 version !
-option (USE_QT5 "Use Qt5 version instead of Qt4" ON)
+find_package(CGAL COMPONENTS Qt4or5 Core GMP MPFR REQUIRED)
 
-if(USE_QT5)
-
-	find_package(CGAL COMPONENTS Qt5 Core GMP MPFR)
-
-	include(${CGAL_USE_FILE})
+include(${CGAL_USE_FILE})
 	
-	find_package(Qt5)
+find_package(Qt4or5)
 
-        set(CMAKE_AUTOMOC OFF)
+set(CMAKE_AUTOMOC OFF)
 
-else (USE_QT5)
-
-	find_package(CGAL COMPONENTS Qt4 Core GMP MPFR)
-
-	include(${CGAL_USE_FILE})
-
-	find_package(Qt4)
-
-	if(CGAL_Qt4_FOUND AND QT4_FOUND)
-		include(${QT_USE_FILE})
-		message("Qt4 found")
-		set(QT4 TRUE)
-	endif()
-
-endif (USE_QT5)
-
-include(QtChoice)
 
 include_directories (BEFORE ../../include)
 
-if ( CGAL_FOUND AND (Qt4 OR QT5) )
+if ( CGAL_FOUND AND QT${QT_VERSION_USED}_FOUND )
 
   if( CGAL_Core_FOUND)
     add_definitions(-DCGAL_USE_CORE)
@@ -83,6 +61,6 @@ if ( CGAL_FOUND AND (Qt4 OR QT5) )
 
 else()
 
-  message(STATUS "NOTICE: This demo requires CGAL, CGAL_Core, and Qt4, and will not be compiled.")
+  message(STATUS "NOTICE: This demo requires CGAL, CGAL_Core, and ${QT_VERSION}, and will not be compiled.")
 
 endif()

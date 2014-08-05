@@ -27,7 +27,7 @@ include(${CGAL_USE_FILE})
 	
 find_package(Qt4or5)
 		
-if(QT${USE_QT_VERSION}_FOUND)
+if(QT${QT_VERSION_USED}_FOUND)
   
   # put plugins (which are shared libraries) at the same location as
   # executable files
@@ -65,18 +65,18 @@ if(QT${USE_QT_VERSION}_FOUND)
   polyhedron_demo_plugin(p_tanglecube_function_plugin Tanglecube_implicit_function)
   polyhedron_demo_plugin(p_klein_function_plugin Klein_implicit_function)
 
-else (QT${USE_QT_VERSION}_FOUND)
+else (QT${QT_VERSION_USED}_FOUND)
 
   set(MESH_3_MISSING_DEPS "")
 
-  if(NOT CGAL_Qt${USE_QT_VERSION}_FOUND)
-    set(MESH_3_MISSING_DEPS "the CGAL Qt${USE_QT_VERSION} library, ${MESH_3_MISSING_DEPS}")
+  if(NOT CGAL_Qt${QT_VERSION_USED}_FOUND)
+    set(MESH_3_MISSING_DEPS "the CGAL Qt${QT_VERSION_USED} library, ${MESH_3_MISSING_DEPS}")
   endif()
 
-  if(NOT QT${USE_QT_VERSION}_FOUND AND NOT USE_QT5)
-    set(MESH_3_MISSING_DEPS "Qt${USE_QT_VERSION}, ${MESH_3_MISSING_DEPS}")
+  if(NOT QT${QT_VERSION_USED}_FOUND AND NOT USE_QT5)
+    set(MESH_3_MISSING_DEPS "Qt${QT_VERSION_USED}, ${MESH_3_MISSING_DEPS}")
   endif()
 
   message(STATUS "NOTICE: This demo requires ${MESH_3_MISSING_DEPS}and will not be compiled.")
 
-endif(QT${USE_QT_VERSION}_FOUND)
+endif(QT${QT_VERSION_USED}_FOUND)

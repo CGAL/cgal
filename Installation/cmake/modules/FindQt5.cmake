@@ -8,10 +8,10 @@ endif()
 
 UNSET(QT5 CACHE)
 UNSET(QT5_FOUND CACHE)
-UNSET(USE_QT_VERSION CACHE)
+UNSET(QT_VERSION_USED CACHE)
 
 #We say that we want the version 5 of Qt library.
-set(USE_QT_VERSION 5)
+set(QT_VERSION_USED 5)
 	
 FIND_PACKAGE(Qt5Core QUIET)
 
