@@ -17,8 +17,8 @@
 //
 // Author(s) : Camille Wormser, Pierre Alliez, Stephane Tayeb
 
-#ifndef CGAL_AABB_NODE_MOD_H
-#define CGAL_AABB_NODE_MOD_H
+#ifndef CGAL_AABB_NODE_2_H
+#define CGAL_AABB_NODE_2_H
 
 namespace CGAL {
 
@@ -298,4 +298,4 @@ AABB_node_2<Tr>::join_traversal(const AABB_node_2 &other_node,
 
 } // namespace CGAL
 
-#endif // CGAL_AABB_NODE_MOD_H
+#endif

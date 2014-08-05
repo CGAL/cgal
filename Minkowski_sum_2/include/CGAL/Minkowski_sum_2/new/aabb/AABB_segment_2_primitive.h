@@ -22,8 +22,8 @@
 //
 //******************************************************************************
 
-#ifndef CGAL_AABB_SEGMENT_2_PRIMITIVE_H_
-#define CGAL_AABB_SEGMENT_2_PRIMITIVE_H_
+#ifndef CGAL_AABB_SEGMENT_2_PRIMITIVE_H
+#define CGAL_AABB_SEGMENT_2_PRIMITIVE_H
 
 namespace CGAL {
 
@@ -74,5 +74,4 @@ public:
 
 } // namespace CGAL
 
-#endif // CGAL_AABB_SEGMENT_PRIMITIVE_H_
-
+#endif

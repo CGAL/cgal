@@ -1,5 +1,5 @@
-#ifndef CGAL_AABB_2D_TRAITS_H_
-#define CGAL_AABB_2D_TRAITS_H_
+#ifndef CGAL_AABB_TRAITS_2_H
+#define CGAL_AABB_TRAITS_2_H
 
 namespace CGAL {
 

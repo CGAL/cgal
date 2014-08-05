@@ -1,5 +1,5 @@
-#ifndef AABBCOLLISIONDETECTOR_HEADER
-#define AABBCOLLISIONDETECTOR_HEADER
+#ifndef CGAL_AABB_COLLISION_DETECTOR_2_H
+#define CGAL_AABB_COLLISION_DETECTOR_2_H
 
 #include <CGAL/Minkowski_sum_2/new/aabb/AABB_tree_2.h>
 #include <CGAL/Minkowski_sum_2/new/aabb/AABB_traits_2.h>

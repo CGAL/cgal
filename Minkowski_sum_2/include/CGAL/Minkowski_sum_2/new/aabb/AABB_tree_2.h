@@ -733,4 +733,4 @@ AABB_tree_2<Tr>::closest_point_and_primitive(const Point &query,
 
 } // namespace CGAL
 
-#endif // CGAL_AABB_TREE_2_H
+#endif
