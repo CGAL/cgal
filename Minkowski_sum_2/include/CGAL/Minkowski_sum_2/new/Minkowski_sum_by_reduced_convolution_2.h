@@ -1,13 +1,12 @@
-#ifndef CGAL_MINKOWSKI_SUM_REDUCED_CONV_H
-#define CGAL_MINKOWSKI_SUM_REDUCED_CONV_H
+#ifndef CGAL_MINKOWSKI_SUM_BY_REDUCED_CONVOLUTION_2_H
+#define CGAL_MINKOWSKI_SUM_BY_REDUCED_CONVOLUTION_2_H
 
 #include <CGAL/basic.h>
 #include <CGAL/Arrangement_with_history_2.h>
 #include <CGAL/Arr_segment_traits_2.h>
-#include <CGAL/Timer.h>
+#include <CGAL/Timer.h> // TODO: remove when optimization is done
 
 #include <CGAL/Minkowski_sum_2/new/aabb/AABB_collision_detector_2.h>
-#include <CGAL/Minkowski_sum_2/new/Arr_segment_data_traits_2.h>
 
 #include <iostream> // TODO: remove when optimization is done
 #include <queue>
@@ -37,6 +36,7 @@ private:
     typedef typename Traits_2::X_monotone_curve_2 Segment_2;
     typedef std::list<Segment_2> Segment_list;
     typedef Arr_default_dcel<Traits_2> Dcel;
+    typedef std::pair<int, int> State;
 
     // Arrangement-related types:
     typedef Arrangement_with_history_2<Traits_2, Dcel> Arrangement_history_2;
@@ -69,7 +69,7 @@ public:
 
     template <class OutputIterator>
     void operator()(const Polygon_2 &pgn1, const Polygon_2 &pgn2,
-                              Polygon_2 &outer_boundary, OutputIterator holes) {
+                    Polygon_2 &outer_boundary, OutputIterator holes) const {
 
             Timer timer; // TODO: remove when optimization is done
             timer.start();
@@ -240,7 +240,7 @@ private:
     }
 
     // Put the outer loop of the arrangement in 'outer_boundary'
-    void get_outer_loop(Arrangement_history_2 &arr, Polygon_2 &outer_boundary) {
+    void get_outer_loop(Arrangement_history_2 &arr, Polygon_2 &outer_boundary) const {
         Ccb_halfedge_circulator circ_start = *(arr.unbounded_face()->holes_begin());
         Ccb_halfedge_circulator circ = circ_start;
 
@@ -251,7 +251,7 @@ private:
 
     // Check whether the face is on the M-sum's border. Add it to 'holes' if it is.
     template <class OutputIterator>
-    void handle_face(Arrangement_history_2 &arr, Face_handle face, OutputIterator holes, AABB_collision_detector_2<Kernel, Container> &collision_detector) {
+    void handle_face(const Arrangement_history_2 &arr, const Face_handle face, OutputIterator holes, AABB_collision_detector_2<Kernel, Container> &collision_detector) const {
 
         // If the face contains holes, it can't be on the Minkowski sum's border
         if (face->holes_begin() != face->holes_end()) {
@@ -287,7 +287,7 @@ private:
     }
 
     // Check whether the convolution's original edge(s) had the same direction as the arrangement's half edge
-    bool do_original_edges_have_same_direction(Arrangement_history_2 &arr, Halfedge_handle he) const {
+    bool do_original_edges_have_same_direction(const Arrangement_history_2 &arr, const Halfedge_handle he) const {
         Originating_curve_iterator segment_itr;
 
         for (segment_itr = arr.originating_curves_begin(he); segment_itr != arr.originating_curves_end(he); ++segment_itr) {
@@ -300,7 +300,7 @@ private:
     }
 
     // Return a point in the face's interior by finding a diagonal
-    Point_2 get_point_in_face(Face_handle face) const {
+    Point_2 get_point_in_face(const Face_handle face) const {
         Ccb_halfedge_circulator current_edge = face->outer_ccb();
         Ccb_halfedge_circulator next_edge = current_edge;
         next_edge++;
