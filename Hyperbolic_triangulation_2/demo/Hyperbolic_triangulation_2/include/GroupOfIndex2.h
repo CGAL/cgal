@@ -7,10 +7,10 @@ template<class Translation>
 class Group_of_index_2
 {
 public:
-  typedef Element<Translation> Element;
+  typedef Element<Translation> Element_t;
   typedef typename Translation::FT FT;
   
-  typedef std::list<Element> List;
+  typedef std::list<Element_t> List;
   typedef CGAL::Circulator_from_container<List> Circulator;
   typedef typename List::iterator List_iterator;
   typedef typename List::size_type Size_type;
@@ -144,7 +144,7 @@ void Group_of_index_2<Translation>::compute_via_vector()
 template<class Translation>
 void Group_of_index_2<Translation>::compute()
 {
-  typedef std::map<Element*, std::pair<Circulator, Circulator> > MapLtoL2;
+  typedef std::map<Element_t*, std::pair<Circulator, Circulator> > MapLtoL2;
   MapLtoL2 l_to_l2;
   typedef typename MapLtoL2::iterator Map_it;
   
