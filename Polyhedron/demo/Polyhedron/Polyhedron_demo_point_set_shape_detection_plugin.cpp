@@ -37,8 +37,8 @@ class Polyhedron_demo_point_set_shape_detection_plugin :
   public Polyhedron_demo_plugin_helper
 {
   Q_OBJECT
-  Q_INTERFACES(Polyhedron_demo_plugin_interface)
-  QAction* actionDetect;
+    Q_INTERFACES(Polyhedron_demo_plugin_interface)
+    QAction* actionDetect;
 
 public:
   void init(QMainWindow* mainWindow, Scene_interface* scene_interface) {
@@ -60,24 +60,27 @@ public:
     return QList<QAction*>() << actionDetect;
   }
 
-public slots:
-  void on_actionDetect_triggered();
+  public slots:
+    void on_actionDetect_triggered();
 
 }; // end Polyhedron_demo_point_set_shape_detection_plugin
 
 class Point_set_demo_point_set_shape_detection_dialog : public QDialog, private Ui::PointSetShapeDetectionDialog
 {
   Q_OBJECT
-  public:
-    Point_set_demo_point_set_shape_detection_dialog(QWidget * /*parent*/ = 0)
-    {
-      setupUi(this);
-    }
+public:
+  Point_set_demo_point_set_shape_detection_dialog(QWidget * /*parent*/ = 0)
+  {
+    setupUi(this);
+  }
 
-	//QString shapeDetectionMethod() const { return m_shapeDetectionMethod->currentText(); }
-	double epsilon() const { return m_epsilon_field->value(); }
-	double normal_tolerance() const { return m_normal_tolerance_field->value(); }
-    double gridCellSize() const { return 1.0; }
+  //QString shapeDetectionMethod() const { return m_shapeDetectionMethod->currentText(); }
+  double cluster_epsilon() const { return m_cluster_epsilon_field->value(); }
+  double epsilon() const { return m_epsilon_field->value(); }
+  unsigned int min_points() const { return m_min_pts_field->value(); }
+  double normal_tolerance() const { return m_normal_tolerance_field->value(); }
+  double search_probability() const { return m_probability_field->value(); }
+  double gridCellSize() const { return 1.0; }
 };
 
 void Polyhedron_demo_point_set_shape_detection_plugin::on_actionDetect_triggered() {
@@ -93,7 +96,9 @@ void Polyhedron_demo_point_set_shape_detection_plugin::on_actionDetect_triggered
     Point_set* points = item->point_set();
 
     if(points == NULL)
-        return;
+      return;
+
+    //Epic_kernel::FT diag = sqrt(((points->bounding_box().max)() - (points->bounding_box().min)()).squared_length());
 
     // Gets options
     Point_set_demo_point_set_shape_detection_dialog dialog;
@@ -107,82 +112,82 @@ void Polyhedron_demo_point_set_shape_detection_plugin::on_actionDetect_triggered
     // First point to delete
     Point_set::iterator first_point_to_remove = points->end();
 
-	typedef CGAL::Identity_property_map<Point_set::Point_with_normal> PointPMap;
-	typedef CGAL::Normal_of_point_with_normal_pmap<Point_set::Geom_traits> NormalPMap;
+    typedef CGAL::Identity_property_map<Point_set::Point_with_normal> PointPMap;
+    typedef CGAL::Normal_of_point_with_normal_pmap<Point_set::Geom_traits> NormalPMap;
 
-	typedef CGAL::Shape_detection_traits_3<Epic_kernel, Point_set::iterator, PointPMap, NormalPMap> ShapeDetectionTraits;
-	typedef CGAL::Shape_detection_3<ShapeDetectionTraits> ShapeDetection;
+    typedef CGAL::Shape_detection_traits_3<Epic_kernel, Point_set::iterator, PointPMap, NormalPMap> ShapeDetectionTraits;
+    typedef CGAL::Shape_detection_3<ShapeDetectionTraits> ShapeDetection;
 
-	ShapeDetection shape_detection(points->begin(), points->end(), PointPMap(), NormalPMap());
+    ShapeDetection shape_detection(points->begin(), points->end(), PointPMap(), NormalPMap());
 
-	// Shapes to be searched for are registered by using the template Shape_factory
-  shape_detection.add_shape_factory(new CGAL::Shape_factory<CGAL::Plane_shape<ShapeDetectionTraits> >);
-  shape_detection.add_shape_factory(new CGAL::Shape_factory<CGAL::Cylinder_shape<ShapeDetectionTraits> >);
-//   shape_detection.add_shape_factory(new CGAL::Shape_factory<CGAL::Torus_shape<ShapeDetectionTraits> >);
-//   shape_detection.add_shape_factory(new CGAL::Shape_factory<CGAL::Cone_shape<ShapeDetectionTraits> >);
-//   shape_detection.add_shape_factory(new CGAL::Shape_factory<CGAL::Sphere_shape<ShapeDetectionTraits> >);
+    // Shapes to be searched for are registered by using the template Shape_factory
+    shape_detection.add_shape_factory(new CGAL::Shape_factory<CGAL::Plane_shape<ShapeDetectionTraits> >);
+    shape_detection.add_shape_factory(new CGAL::Shape_factory<CGAL::Cylinder_shape<ShapeDetectionTraits> >);
+    //   shape_detection.add_shape_factory(new CGAL::Shape_factory<CGAL::Torus_shape<ShapeDetectionTraits> >);
+    //   shape_detection.add_shape_factory(new CGAL::Shape_factory<CGAL::Cone_shape<ShapeDetectionTraits> >);
+    //   shape_detection.add_shape_factory(new CGAL::Shape_factory<CGAL::Sphere_shape<ShapeDetectionTraits> >);
 
-	// Parameterization of the shape detection using the Parameters structure.
-	ShapeDetection::Parameters op;
-	op.probability = 0.01f;       // 1% probability to miss the largest primitive on each iteration.
-	op.min_points = 500;          // Only extract shapes with at least 500 points.
-	op.epsilon = dialog.epsilon();          // 0.002 maximum euclidean distance between point and shape.
-	op.cluster_epsilon = 0.01f;    // 0.01 maximum euclidean distance between points to be clustered.
-	op.normal_threshold = dialog.normal_tolerance();   // 0.9 < dot(surface_normal, point_normal); maximum normal deviation.
+    // Parameterization of the shape detection using the Parameters structure.
+    ShapeDetection::Parameters op;
+    op.probability = dialog.search_probability();       // probability to miss the largest primitive on each iteration.
+    op.min_points = dialog.min_points();          // Only extract shapes with a minimum number of points.
+    op.epsilon = dialog.epsilon();          // maximum euclidean distance between point and shape.
+    op.cluster_epsilon = dialog.cluster_epsilon();    // maximum euclidean distance between points to be clustered.
+    op.normal_threshold = dialog.normal_tolerance();   // normal_threshold < dot(surface_normal, point_normal); maximum normal deviation.
 
-	// The actual shape detection.
-	shape_detection.detect(op);
+    // The actual shape detection.
+    shape_detection.detect(op);
 
-	std::cout << shape_detection.number_of_shapes() << " shapes found" << std::endl;
-	//print_message(QString("%1 shapes found.").arg(shape_detection.number_of_shapes()));
+    std::cout << shape_detection.number_of_shapes() << " shapes found" << std::endl;
+    //print_message(QString("%1 shapes found.").arg(shape_detection.number_of_shapes()));
 
-	auto it = shape_detection.shapes_begin();
-	int index = 0;
-	while (it != shape_detection.shapes_end()) {
-		Scene_points_with_normal_item *point_item = new Scene_points_with_normal_item;
-		auto it2 = (*it)->assigned_points().begin();
-		while (it2 != (*it)->assigned_points().end()) {
-				point_item->point_set()->push_back((*points)[*it2]);
-				it2++;
-		}
-		unsigned char r, g, b;
-		r = 64 + rng()%192;
-		g = 64 + rng()%192;
-		b = 64 + rng()%192;
-    point_item->setRbgColor(r, g, b);
+    auto it = shape_detection.shapes_begin();
+    int index = 0;
+    while (it != shape_detection.shapes_end()) {
+      Scene_points_with_normal_item *point_item = new Scene_points_with_normal_item;
+      auto it2 = (*it)->assigned_points().begin();
+      while (it2 != (*it)->assigned_points().end()) {
+        point_item->point_set()->push_back((*points)[*it2]);
+        it2++;
+      }
+      unsigned char r, g, b;
+      r = 64 + rng()%192;
+      g = 64 + rng()%192;
+      b = 64 + rng()%192;
+      point_item->setRbgColor(r, g, b);
 
-		// Providing a useful name consisting of the order of detection, name of type and number of inliers
-		std::stringstream ss;
-		if (dynamic_cast<CGAL::Cylinder_shape<ShapeDetectionTraits> *>(*it))
-      ss << item->name().toStdString() << "_cylinder_";
-    else if (dynamic_cast<CGAL::Plane_shape<ShapeDetectionTraits> *>(*it))
-      ss << item->name().toStdString() << "_plane_";
+      // Providing a useful name consisting of the order of detection, name of type and number of inliers
+      std::stringstream ss;
+      if (dynamic_cast<CGAL::Cylinder_shape<ShapeDetectionTraits> *>(*it))
+        ss << item->name().toStdString() << "_cylinder_";
+      else if (dynamic_cast<CGAL::Plane_shape<ShapeDetectionTraits> *>(*it))
+        ss << item->name().toStdString() << "_plane_";
 
-    ss << (*it)->assigned_points().size();
+      ss << (*it)->assigned_points().size();
 
-		//names[i] = ss.str(		
-    point_item->setName(QString::fromStdString(ss.str()));
-    point_item->set_has_normals(true);
-    point_item->setRenderingMode(item->renderingMode());
-		scene->addItem(point_item);
+      //names[i] = ss.str(		
+      point_item->setName(QString::fromStdString(ss.str()));
+      point_item->set_has_normals(true);
+      point_item->setRenderingMode(item->renderingMode());
+      scene->addItem(point_item);
 
-		index++;
-		it++;
-	}
+      index++;
+      it++;
+    }
 
     // Updates scene
     scene->itemChanged(index);
 
     QApplication::restoreOverrideCursor();
 
-//     Warn user, maybe choice of parameters is unsuitable
-//         if (nb_points_to_remove > 0)
-//         {
-//           QMessageBox::information(NULL,
-//                                    tr("Points selected for removal"),
-//                                    tr("%1 point(s) are selected for removal.\nYou may delete or reset the selection using the item context menu.")
-//                                    .arg(nb_points_to_remove));
-//         }
+    //     Warn user, maybe choice of parameters is unsuitable
+    //         if (nb_points_to_remove > 0)
+    //         {
+    //           QMessageBox::information(NULL,
+    //                                    tr("Points selected for removal"),
+    //                                    tr("%1 point(s) are selected for removal.\nYou may delete or reset the selection using the item context menu.")
+    //                                    .arg(nb_points_to_remove));
+    //         }
     item->setVisible(false);
   }
 }
