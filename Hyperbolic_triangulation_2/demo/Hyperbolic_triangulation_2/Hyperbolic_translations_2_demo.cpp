@@ -88,7 +88,7 @@ private:
   typedef Hyperbolic_isometry::complex complex;
   
   // storage of static data: translations a, b, c, d
-  typedef Translations<Gt> Translations;
+  typedef Translations<Gt> Translations_t;
   typedef CGAL::Qt::PointTranslationWithInfo<Delaunay, Hyperbolic_isometry> PointTranslation;
   
   PointTranslation *trs_a;
@@ -98,7 +98,7 @@ private:
   
   // experiment
   typedef CGAL::Qt::OriginalDomainNeighbors<Delaunay, Hyperbolic_isometry> OriginalDomainNeighbors;
-  typedef Group_of_index_2<Hyperbolic_isometry> Group_of_index_2;
+  typedef Group_of_index_2<Hyperbolic_isometry> Group_of_index_2_t;
   
   
   // Oct 2012
@@ -112,20 +112,20 @@ private:
   //
   
   // delete later, for some experiments
-  Group_of_index_2::List words;
+  Group_of_index_2_t::List words;
   //
   
-  Group_of_index_2 g2;
-  Group_of_index_2 g4;
-  Group_of_index_2 g8;
-  Group_of_index_2 g16;
+  Group_of_index_2_t g2;
+  Group_of_index_2_t g4;
+  Group_of_index_2_t g8;
+  Group_of_index_2_t g16;
   // extra groups, we can delete them
-  Group_of_index_2 g32;
-  Group_of_index_2 g64;
-  Group_of_index_2 g128;
-  Group_of_index_2 g256;
-  Group_of_index_2 g512;
-  Group_of_index_2 g1024;
+  Group_of_index_2_t g32;
+  Group_of_index_2_t g64;
+  Group_of_index_2_t g128;
+  Group_of_index_2_t g256;
+  Group_of_index_2_t g512;
+  Group_of_index_2_t g1024;
   //
   OriginalDomainNeighbors *odn;
   OriginalDomainNeighbors *odn2;
@@ -342,10 +342,10 @@ MainWindow::MainWindow()
   cz = new CGAL::Qt::TriangulationConflictZone<Delaunay>(&scene, &dt, this);
 
   // initialization of translations
-  trs_a = new PointTranslation(Translations::a(), scene, &dt, this);
-  trs_b = new PointTranslation(Translations::b(), scene, &dt, this);
-  trs_c = new PointTranslation(Translations::c(), scene, &dt, this);
-  trs_d = new PointTranslation(Translations::d(), scene, &dt, this);
+  trs_a = new PointTranslation(Translations_t::a(), scene, &dt, this);
+  trs_b = new PointTranslation(Translations_t::b(), scene, &dt, this);
+  trs_c = new PointTranslation(Translations_t::c(), scene, &dt, this);
+  trs_d = new PointTranslation(Translations_t::d(), scene, &dt, this);
   
   trs_a->info().setString(L"a");
   trs_b->info().setString(L"b");
@@ -353,15 +353,15 @@ MainWindow::MainWindow()
   trs_d->info().setString(L"d");
   
   // temp things
-  TranslationWithInfo tr_a(Translations::a(), TranslationInfo<std::wstring>(L"a") );
-  TranslationWithInfo tr_b(Translations::b(), TranslationInfo<std::wstring>(L"b") );
-  TranslationWithInfo tr_c(Translations::c(), TranslationInfo<std::wstring>(L"c") );
-  TranslationWithInfo tr_d(Translations::d(), TranslationInfo<std::wstring>(L"d") );
+  TranslationWithInfo tr_a(Translations_t::a(), TranslationInfo<std::wstring>(L"a") );
+  TranslationWithInfo tr_b(Translations_t::b(), TranslationInfo<std::wstring>(L"b") );
+  TranslationWithInfo tr_c(Translations_t::c(), TranslationInfo<std::wstring>(L"c") );
+  TranslationWithInfo tr_d(Translations_t::d(), TranslationInfo<std::wstring>(L"d") );
   
-  TranslationWithInfo tr_inv_a(Translations::a().inverse(), TranslationInfo<std::wstring>(L"a̅") );
-  TranslationWithInfo tr_inv_b(Translations::b().inverse(), TranslationInfo<std::wstring>(L"b̅") );
-  TranslationWithInfo tr_inv_c(Translations::c().inverse(), TranslationInfo<std::wstring>(L"c̅") );
-  TranslationWithInfo tr_inv_d(Translations::d().inverse(), TranslationInfo<std::wstring>(L"d̅") );
+  TranslationWithInfo tr_inv_a(Translations_t::a().inverse(), TranslationInfo<std::wstring>(L"a̅") );
+  TranslationWithInfo tr_inv_b(Translations_t::b().inverse(), TranslationInfo<std::wstring>(L"b̅") );
+  TranslationWithInfo tr_inv_c(Translations_t::c().inverse(), TranslationInfo<std::wstring>(L"c̅") );
+  TranslationWithInfo tr_inv_d(Translations_t::d().inverse(), TranslationInfo<std::wstring>(L"d̅") );
                                                
   std::vector<TranslationWithInfo> translations_with_info;
   translations_with_info.push_back(tr_a);
@@ -391,9 +391,9 @@ MainWindow::MainWindow()
                    this, SIGNAL(changed()));
   
   // experiment
-  std::cout << "G: " << Translations::list().size() << std::endl;
+  std::cout << "G: " << Translations_t::list().size() << std::endl;
   
-  g2.add_group(&Translations::list());
+  g2.add_group(&Translations_t::list());
   std::cout << "G_2: " << g2.number_of_elements() << std::endl;
   
   g4.add_group(&g2.list());
@@ -421,7 +421,7 @@ MainWindow::MainWindow()
   QObject::connect(odn, SIGNAL(modelChanged()),
                    this, SIGNAL(changed()));
   
-  GenerateWordsOfLengthLessThan4(Translations::list(), words);
+  GenerateWordsOfLengthLessThan4(Translations_t::list(), words);
   //
   
   // 
@@ -587,7 +587,7 @@ void
 MainWindow::on_actionG_toggled(bool checked)
 {
   if(checked){
-    odn->assign(Translations::list_begin(), Translations::list_end());
+    odn->assign(Translations_t::list_begin(), Translations_t::list_end());
   }
 }
 

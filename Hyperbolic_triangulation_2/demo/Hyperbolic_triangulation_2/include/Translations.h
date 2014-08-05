@@ -23,8 +23,8 @@ public:
   typedef typename std::complex<FT> complex;
   typedef CGAL::Hyperbolic_isometry_2<Gt> Hyperbolic_isometry;
   
-  typedef Element<Hyperbolic_isometry> Element;
-  typedef std::list<Element> List;
+  typedef Element<Hyperbolic_isometry> Element_t;
+  typedef std::list<Element_t> List;
   typedef typename List::iterator List_iterator;
   typedef CGAL::Circulator_from_container<List> Circulator;
   
