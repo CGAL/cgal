@@ -91,11 +91,11 @@ void distanceIpelet::protected_run(int fn)
   double length = sqrt( CGAL::squared_distance(p1,p2).to_double() );
   char message[50];
   if (fn==0)
-    sprintf(message,"Distance between marks is %lf in ipe pts",length);
+    sprintf(message,"Distance between marks is %f in ipe pts",length);
   else if (fn==1) 
-    sprintf(message,"Distance between marks is %lf cm",0.0353*length);
+    sprintf(message,"Distance between marks is %f cm",0.0353*length);
   else if (fn==2) 
-    sprintf(message,"Distance between marks is %lf inches",0.0139*length);
+    sprintf(message,"Distance between marks is %f inches",0.0139*length);
   print_error_message(message);
   return;
 }
