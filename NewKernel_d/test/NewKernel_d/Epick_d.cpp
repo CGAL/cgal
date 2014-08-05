@@ -8,7 +8,7 @@
 #include <CGAL/NewKernel_d/Lazy_cartesian.h>
 #include <CGAL/NewKernel_d/Wrapper/Cartesian_wrap.h>
 #include <CGAL/NewKernel_d/Kernel_d_interface.h>
-#include <CGAL/Gmpq.h>
+#include <CGAL/Exact_rational.h>
 #include <CGAL/Interval_nt.h>
 #include <CGAL/use.h>
 #include <iostream>
@@ -16,7 +16,7 @@
 //typedef CGAL::Cartesian_base_d<double,CGAL::Dimension_tag<2> > K0;
 //typedef CGAL::Cartesian_base_d<CGAL::Interval_nt_advanced,CGAL::Dimension_tag<2> > KA;
 struct KA : CGAL::Cartesian_static_filters<CGAL::Dimension_tag<2>, CGAL::Cartesian_base_d<CGAL::Interval_nt_advanced,CGAL::Dimension_tag<2>, KA>, KA> {};
-typedef CGAL::Cartesian_base_d<CGAL::Gmpq,CGAL::Dimension_tag<2> > KE;
+typedef CGAL::Cartesian_base_d<CGAL::Exact_rational,CGAL::Dimension_tag<2> > KE;
 
 struct RC: public
 CGAL::Cartesian_static_filters<CGAL::Dimension_tag<2>, // Yes, it is silly to put it there.
