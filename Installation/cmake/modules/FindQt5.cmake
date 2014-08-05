@@ -15,7 +15,7 @@ set(QT_VERSION_USED 5)
 	
 FIND_PACKAGE(Qt5Core QUIET)
 
-SET(QT_MODULES_MISSING " ")
+SET(QT_MODULES_MISSING "none")
 
 if(NOT Qt5Core_FOUND)
 	SET(QT_MODULES_MISSING ${QT_MODULES_MISSING} "Core")
@@ -39,6 +39,9 @@ FOREACH(module  GUI OpenGL Multimedia
       		SET(QT_LIBRARIES ${QT_LIBRARIES} ${Qt5${module}_LIBRARIES})
       		SET(QT_DEFINITIONS ${QT_DEFINITIONS} ${Qt5${module}_DEFINITIONS})
     	ELSE (Qt5${module}_FOUND)
+		if(QT_MODULES_MISSING STREQUAL "none")
+			SET(QT_MODULES_MISSING "")
+		endif()
       		SET(QT_MODULES_MISSING "${QT_MODULES_MISSING}, ${module}")
     	ENDIF (Qt5${module}_FOUND)
   ENDIF (QT_USE_QT${component})
@@ -150,14 +153,14 @@ ENDFOREACH(module)
     QT_DESIGNER_EXECUTABLE QT_LINGUIST_EXECUTABLE)
 
 
-if(${QT_MODULES_MISSING} STREQUAL " ")
+if(${QT_MODULES_MISSING} STREQUAL "none")
 	set(QT5 TRUE)
 	set(QT5_FOUND TRUE)
 
 	set(CMAKE_AUTOMOC ON)
 	set(CMAKE_INCLUDE_CURRENT_DIR ON)
 else()
-	message("Loading of Qt5 modules imcomplete. Missing of ${QT_MODULES_MISSING} modules.")
+	message("Loading of Qt5 modules incomplete. Missing of ${QT_MODULES_MISSING} modules.")
 endif()
 
 message("End of searching Qt5 modules.")

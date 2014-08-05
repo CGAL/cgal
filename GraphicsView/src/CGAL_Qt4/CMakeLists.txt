@@ -1,4 +1,4 @@
-set(USE_QT_VERSION 5)
+set(USE_QT_VERSION 4)
 
 message("Configuring libCGAL_Qt${USE_QT_VERSION}")
 
