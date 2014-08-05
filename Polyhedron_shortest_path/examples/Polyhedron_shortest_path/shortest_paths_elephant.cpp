@@ -50,7 +50,7 @@ int main(int argc, char** argv)
   const size_t targetFaceIndex = 432;
   
   face_iterator facesCurrent, facesEnd;
-  boost::tie(facesCurrent, facesEnd) = CGAL::faces(polyhedron);
+  boost::tie(facesCurrent, facesEnd) = faces(polyhedron);
   
   size_t currentFaceIndex = 0;
   
@@ -67,6 +67,8 @@ int main(int argc, char** argv)
   Traits traits;
   Polyhedron_shortest_path shortestPaths(polyhedron, traits);
 
+  shortestPaths.m_debugOutput = true;
+  
   shortestPaths.construct_sequence_tree(targetFace, faceLocation);
   
   vertex_iterator verticesCurrent, verticesEnd;

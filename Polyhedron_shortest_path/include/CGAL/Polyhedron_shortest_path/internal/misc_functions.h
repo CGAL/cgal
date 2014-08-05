@@ -26,15 +26,15 @@ Triangle_3 triangle_from_halfedge(typename boost::graph_traits<FaceGraph>::halfe
   typedef typename boost::graph_traits<FaceGraph>::halfedge_descriptor halfedge_descriptor;
   
   halfedge_descriptor e0 = edge;
-  halfedge_descriptor e1 = CGAL::next(edge, faceGraph);
+  halfedge_descriptor e1 = next(edge, faceGraph);
 
-  return Triangle_3(vertexPointMap[boost::source(e0, faceGraph)], vertexPointMap[boost::target(e0, faceGraph)], vertexPointMap[boost::target(e1, faceGraph)]);
+  return Triangle_3(get(vertexPointMap, boost::source(e0, faceGraph)), get(vertexPointMap, boost::target(e0, faceGraph)), get(vertexPointMap, boost::target(e1, faceGraph)));
 }
 
 template <class Triangle_3, class FaceGraph>
 Triangle_3 triangle_from_halfedge(typename boost::graph_traits<FaceGraph>::halfedge_descriptor edge, const FaceGraph& faceGraph)
 {
-  return triangle_from_halfedge<Triangle_3, FaceGraph, typename boost::property_map<FaceGraph, CGAL::vertex_point_t>::type>(edge, faceGraph, CGAL::get(CGAL::vertex_point, faceGraph));
+  return triangle_from_halfedge<Triangle_3, FaceGraph, typename boost::property_map<FaceGraph, boost::vertex_point_t>::type>(edge, faceGraph, get(boost::vertex_point, faceGraph));
 }
 
 
@@ -45,16 +45,16 @@ size_t edge_index(typename boost::graph_traits<FaceGraph>::halfedge_descriptor h
   typedef typename GraphTraits::face_descriptor face_descriptor;
   typedef typename GraphTraits::halfedge_descriptor halfedge_descriptor;
   
-  face_descriptor f = CGAL::face(he, p);
+  face_descriptor f = face(he, p);
   
-  halfedge_descriptor start = CGAL::halfedge(f, p);
+  halfedge_descriptor start = halfedge(f, p);
   halfedge_descriptor current = start;
   
   size_t count = 0;
   
   while (current != he)
   {
-    current = CGAL::next(current, p);
+    current = next(current, p);
     ++count;
   }
 

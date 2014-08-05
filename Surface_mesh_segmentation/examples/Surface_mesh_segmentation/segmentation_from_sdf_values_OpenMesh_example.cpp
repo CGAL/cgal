@@ -28,6 +28,10 @@ int main(int argc, char** argv )
   else
     OpenMesh::IO::read_mesh(mesh, "data/cactus.off");
 
+  std::cout << "#F : " << num_faces(mesh) << std::endl;
+  std::cout << "#H : " << num_halfedges(mesh) << std::endl;
+  std::cout << "#V : " << num_vertices(mesh) << std::endl;
+
   // create a property-map for SDF values
   typedef std::map<face_descriptor, double> Facet_double_map;
   Facet_double_map internal_sdf_map;

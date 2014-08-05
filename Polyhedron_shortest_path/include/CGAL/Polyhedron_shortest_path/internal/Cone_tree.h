@@ -170,7 +170,7 @@ public:
   
   face_descriptor current_face() const
   {
-    return CGAL::face(m_entryEdge, m_faceGraph);
+    return face(m_entryEdge, m_faceGraph);
   }
   
   bool is_null_face() const
@@ -190,17 +190,17 @@ public:
   
   halfedge_descriptor left_child_edge() const
   {
-    return CGAL::opposite(CGAL::prev(m_entryEdge, m_faceGraph), m_faceGraph);
+    return opposite(prev(m_entryEdge, m_faceGraph), m_faceGraph);
   }
   
   halfedge_descriptor right_child_edge() const
   {
-    return CGAL::opposite(CGAL::next(m_entryEdge, m_faceGraph), m_faceGraph);
+    return opposite(next(m_entryEdge, m_faceGraph), m_faceGraph);
   }
   
   vertex_descriptor target_vertex() const
   {
-    return CGAL::target(CGAL::next(m_entryEdge, m_faceGraph), m_faceGraph);
+    return target(next(m_entryEdge, m_faceGraph), m_faceGraph);
   }
   
   Point_2 source_image() const

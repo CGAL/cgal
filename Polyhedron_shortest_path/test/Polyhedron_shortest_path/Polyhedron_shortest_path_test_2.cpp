@@ -14,13 +14,16 @@
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
 
+#include <CGAL/boost/graph/properties_Polyhedron_3.h>
+#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
+
 #include <CGAL/Polyhedron_shortest_path/Polyhedron_shortest_path_traits.h>
 #include <CGAL/Polyhedron_shortest_path/Polyhedron_shortest_path.h>
 #include <CGAL/Polyhedron_shortest_path/Internal/function_objects.h>
 #include <CGAL/Polyhedron_shortest_path/Internal/Barycentric.h>
 #include <CGAL/Polyhedron_shortest_path/Internal/misc_functions.h>
 
-#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
+
 #include <CGAL/boost/graph/iterator.h>
 
 #include <CGAL/Random.h>

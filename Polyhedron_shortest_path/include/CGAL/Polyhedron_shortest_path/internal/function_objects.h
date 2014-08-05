@@ -391,7 +391,7 @@ public:
     
     if (intersectResult1)
     {
-      Point_2* result = boost::get<Point_2>(&*intersectResult1);
+      Point_2* result = boost::get<Point_2, Point_2, Line_2>(&*intersectResult1);
       
       assert(result && "Intersection should have been a point");
       
@@ -412,7 +412,7 @@ public:
     
     if (intersectResult2)
     {
-      Point_2* result = boost::get<Point_2>(&*intersectResult2);
+      Point_2* result = boost::get<Point_2, Point_2, Line_2>(&*intersectResult2);
       
       assert(result && "Intersection should have been a point");
       
@@ -487,24 +487,24 @@ public:
   
   result_type operator() (vertex_descriptor v, FaceGraph& faceGraph) const 
   {
-    return (*this)(v, faceGraph, CGAL::get(CGAL::vertex_point, faceGraph));
+    return (*this)(v, faceGraph, get(boost::vertex_point, faceGraph));
   }
   
   template<class VertexPointMap>
   result_type operator() (vertex_descriptor v, const FaceGraph& faceGraph, VertexPointMap const& pointMap) const 
   {
-    halfedge_descriptor startEdge = CGAL::halfedge(v, faceGraph);
+    halfedge_descriptor startEdge = halfedge(v, faceGraph);
     
-    Point_3 rootPoint(pointMap[v]);
-    Point_3 prevPoint(pointMap[CGAL::source(startEdge, faceGraph)]);
+    Point_3 rootPoint(get(pointMap, v));
+    Point_3 prevPoint(get(pointMap, source(startEdge, faceGraph)));
     
-    halfedge_descriptor currentEdge = CGAL::next(startEdge, faceGraph);
+    halfedge_descriptor currentEdge = next(startEdge, faceGraph);
     
-    Point_3 nextPoint(pointMap[CGAL::target(currentEdge, faceGraph)]);
+    Point_3 nextPoint(get(pointMap, target(currentEdge, faceGraph)));
     
     Triangle_3 baseFace3(rootPoint, nextPoint, prevPoint);
     
-    currentEdge = CGAL::opposite(currentEdge, faceGraph);
+    currentEdge = opposite(currentEdge, faceGraph);
     
     Triangle_2 baseFace2(m_project_triangle_3_to_triangle_2(baseFace3));
     
@@ -523,9 +523,9 @@ public:
     do
     {
       prevPoint = nextPoint;
-      currentEdge = CGAL::next(currentEdge, faceGraph);
-      nextPoint = pointMap[CGAL::target(currentEdge, faceGraph)];
-      currentEdge = CGAL::opposite(currentEdge, faceGraph);
+      currentEdge = next(currentEdge, faceGraph);
+      nextPoint = get(pointMap, target(currentEdge, faceGraph));
+      currentEdge = opposite(currentEdge, faceGraph);
       
       Triangle_3 currentFace3(m_construct_triangle_3(rootPoint, nextPoint, prevPoint));
       Triangle_2 currentFace2(m_flatten_triangle_3_along_segment_2(currentFace3, 2, nextSegment));
