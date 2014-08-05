@@ -190,15 +190,15 @@ namespace CGAL {
       /// \name Operations
       /// @{
 
-      /*!
-       * Append a point `p` to an existing polycurve `cv` at the back.
-       * \param cv a polycurve. Note, `cv` is not (necessarily)
-       *        \f$ x\f$-monotone.
-       * \param p a point to be appended to `cv` at the back.
-       * \pre `cv` contains at least one segment.
-       * \pre Geometric segments can be constructed from two points.
-       */
-      void operator()(Curve_2& cv, const Point_2& p) const;
+//      /*!
+//       * Append a point `p` to an existing polycurve `cv` at the back.
+//       * \param cv a polycurve. Note, `cv` is not (necessarily)
+//       *        \f$ x\f$-monotone.
+//       * \param p a point to be appended to `cv` at the back.
+//       * \pre `cv` contains at least one segment.
+//       * \pre Geometric segments can be constructed from two points.
+//       */
+//      void operator()(Curve_2& cv, const Point_2& p) const;
 
       /*!
         Append a segment `seg` to an existing polycurve `cv` at the back.
@@ -209,18 +209,18 @@ namespace CGAL {
       */
       void operator()(Curve_2& cv, const Segment_2& seg) const;
 
-      /*!
-       * Append a point `p` to an existing \f$x\f$-monotone polycurve `xcv` at
-       * the back.
-       * \param xcv the existing \f$x\f$-monotone polycurve
-       * \param p the point to be pushed back.
-       * \pre `xcv` contains at least one segment
-       * \pre `p` is either to the right of `xcv` if it is oriented
-       *      left-to-right or it is to its left if `xcv` is oriented
-       *      right-to-left.
-       * \pre Geometric segments can be constructed from two points.
-       */
-      void operator()(const X_monotone_curve_2& xcv, Point_2& p) const;
+//      /*!
+//       * Append a point `p` to an existing \f$x\f$-monotone polycurve `xcv` at
+//       * the back.
+//       * \param xcv the existing \f$x\f$-monotone polycurve
+//       * \param p the point to be pushed back.
+//       * \pre `xcv` contains at least one segment
+//       * \pre `p` is either to the right of `xcv` if it is oriented
+//       *      left-to-right or it is to its left if `xcv` is oriented
+//       *      right-to-left.
+//       * \pre Geometric segments can be constructed from two points.
+//       */
+//      void operator()(const X_monotone_curve_2& xcv, Point_2& p) const;
 
       /*!
        * Append a segment `seg` to an existing \f$x\f$-monotone polycurve `xcv`
@@ -247,15 +247,15 @@ namespace CGAL {
       /// \name Operations
       /// @{
 
-      /*!
-       * Append a point `p` to an existing polycurve `cv` at the front.
-       * \param cv a polycurve. Note, `cv` is not (necessarily)
-       *        \f$ x\f$-monotone.
-       * \param p a point to be appended to `cv` at the back.
-       * \pre `cv` contains at least one segment.
-       * \pre Geometric segments can be constructed from two points.
-       */
-      void operator()(Curve_2& cv, const Point_2& p) const;
+//      /*!
+//       * Append a point `p` to an existing polycurve `cv` at the front.
+//       * \param cv a polycurve. Note, `cv` is not (necessarily)
+//       *        \f$ x\f$-monotone.
+//       * \param p a point to be appended to `cv` at the back.
+//       * \pre `cv` contains at least one segment.
+//       * \pre Geometric segments can be constructed from two points.
+//       */
+//      void operator()(Curve_2& cv, const Point_2& p) const;
 
       /*!
         Append a segment `seg` to an existing polycurve `cv` at the front.
@@ -266,18 +266,18 @@ namespace CGAL {
       */
       void operator()(Curve_2& cv, const Segment_2& seg) const;
 
-      /*!
-       * Append a point `p` to an existing \f$x\f$-monotone polycurve `xcv` at
-       * the front.
-       * \param xcv the existing \f$x\f$-monotone polycurve
-       * \param p the point to be pushed back.
-       * \pre `xcv` contains at least one segment
-       * \pre `p` is either to the left of `xcv` if it is oriented
-       *      left-to-right or it is to its right if `xcv` is oriented
-       *      right-to-left.
-       * \pre Geometric segments can be constructed from two points.
-       */
-      void operator()(const X_monotone_curve_2& xcv, Point_2& p) const;
+//      /*!
+//       * Append a point `p` to an existing \f$x\f$-monotone polycurve `xcv` at
+//      * the front.
+//       * \param xcv the existing \f$x\f$-monotone polycurve
+//       * \param p the point to be pushed back.
+//       * \pre `xcv` contains at least one segment
+//       * \pre `p` is either to the left of `xcv` if it is oriented
+//       *      left-to-right or it is to its right if `xcv` is oriented
+//       *      right-to-left.
+//       * \pre Geometric segments can be constructed from two points.
+//       */
+//      void operator()(const X_monotone_curve_2& xcv, Point_2& p) const;
 
       /*!
        * Append a segment `seg` to an existing \f$x\f$-monotone polycurve `xcv`
