@@ -246,12 +246,10 @@ _test_cls_regular_euclidean_traits_3 (const Traits &)
   
   // test power_test
   // null weights
-  assert(power_test(wq0,wq1,wq2,wq3,wq4) == CGAL::ON_ORIENTED_BOUNDARY &&
-         traits.side_of_oriented_sphere_3_object()(q0,q1,q2,q3,q4) ==
-                                                             CGAL::ON_BOUNDARY);
-  assert(power_test(wq1,wq0,wq2,wq3,wq6) == CGAL::ON_POSITIVE_SIDE &&
-         traits.side_of_oriented_sphere_3_object()(q1,q0,q2,q3,q6) ==
-                                                         CGAL::ON_BOUNDED_SIDE);
+  assert(power_test(wq0,wq1,wq2,wq3,wq4) ==
+         traits.side_of_oriented_sphere_3_object()(q0,q1,q2,q3,q4));
+  assert(power_test(wq1,wq0,wq2,wq3,wq6) ==
+         traits.side_of_oriented_sphere_3_object()(q1,q0,q2,q3,q6));
   assert(power_test(wq0,wq1,wq2,wq5) == CGAL::ON_NEGATIVE_SIDE &&
          traits.coplanar_side_of_bounded_circle_3_object()(q0,q1,q2,q5) ==
                                                        CGAL::ON_UNBOUNDED_SIDE);
