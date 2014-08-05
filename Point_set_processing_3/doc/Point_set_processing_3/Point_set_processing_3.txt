@@ -228,8 +228,8 @@ Parallel bilateral smoothing speed-up, compared to the sequential version of the
 
 \section Point_set_processing_3NormalEstimation Normal Estimation
 
-Assuming a point set sampled over an inferred surface \f$ S\f$, two
-functions provide an estimate of the normal to \f$ S\f$ at each
+Assuming a point set sampled over an inferred surface \b S, two
+functions provide an estimate of the normal to \b S at each
 point. The result is an unoriented normal vector for each input point.
 
 Function `jet_estimate_normals()` estimates the normal direction
@@ -266,6 +266,8 @@ normals:
 \cgalExample{Point_set_processing_3/normals_example.cpp}
 
 
+
+
 \section Point_set_processing_3Upsampling Upsampling
 
 Function `edge_aware_upsample_point_set()` generates a much denser point set that has applications in point-based rendering, hole filling, and sparse surface reconstruction.
@@ -282,6 +284,7 @@ The following example reads a point set from a file, upsamples it to get a much 
 This parameter controls where the new points are inserted. Larger values of edge-sensitivity give higher priority to inserting points along the sharp features.
 For example, as shown in the following figure, high value is preferable when one wants to insert more points on sharp features, where the local gradient is high, e.g., darts, cusps, creases and corners. In contrast, points are evenly inserted when edge_sensitivity is set to 0. The range of possible value is [0, infinite). 
 
+
 \cgalFigureBegin{Point_set_processing_3figUpsample_edge_sensitivity, upsample_edge_sensitivity.jpg}
 Upsample results for different edge-sensitivity parameter values. The input containing 850 points is upsampled to 1,500 points in all cases depicted.
 \cgalFigureEnd
@@ -290,8 +293,66 @@ Upsample results for different edge-sensitivity parameter values. The input cont
 This parameter controls the preservation of sharp features.
 
 \cgalFigureBegin{Point_set_processing_3figUpsample_sharpness_angle, upsample_sharpness_angle.jpg}
+\cgalFigureEnd
+\cgalFigureBegin{Point_set_processing_3figUpsample_sharpness_angle, upsample_sharpness_angle.jpg}
 Upsample results for different sharpness_angle parameter values. The input containing 850 points is upsampled to 425K points in all cases depicted. 
 \cgalFigureEnd
+
+\section Point_set_processing_3DesignAndImpl Design and Implementation History
+
+\subsection Point_set_processing_3TheoreticalFoundations Theoretical Foundations
+
+The \cgal mesh generation package implements a meshing engine based 
+on the method of Delaunay refinement introduced by Chew \cgalCite{c-gqmgc-93} and Ruppert \cgalCite{r-draq2d-95}
+and pioneered in 3D by Shewchuk \cgalCite{s-tmgdr-98}. 
+It uses the notion of restricted Delaunay triangulation
+to approximate 1-dimensional curved features and curved surface patches
+and rely on the work of Boissonnat and Oudot \cgalCite{cgal:bo-pgsms-05}
+and Oudot et al. \cgalCite{cgal:ory-mvbss-05}
+to achieve accurate representation of boundary and subdividing surfaces in the mesh.
+The mechanism of protecting balls, used to ensure a fair representation
+of 1-dimensional features, if any, and the termination of the refinement process
+whatever may be the input geometry, in particular whatever small dihedral angles may form
+the boundary and subdivision surface patches,
+was pioneered by Cheng et al. \cgalCite{cgal:cdr-drpsc-07} and further experimented by Dey, Levine et al.
+\cgalCite{cgal:cdl-pdma-07}.
+The optimization phase involves global optimization processes, a perturbation process
+and a sliver exudation process. The global optimizers are based on Lloyd smoothing \cgalCite{cgal:dfg-cvtaa-99t}, \cgalCite{cgal:dw-tmgob-02}
+and odt smoothing \cgalCite{cgal::c-mssbo-04}, \cgalCite{cgal:acyd-vtm-05}, where odt means
+<I>optimal Delaunay triangulation</I>. The perturbation process 
+is mainly based on the work of Tournois \cgalCite{cgal:t-om-09}
+and Tournois et al. \cgalCite{cgal:twad-iropitmg-09},
+while the exudation process is, the now famous, optimization by weighting described
+in Edelsbrunner et al. \cgalCite{cgal:cdeft-slive-00}.
+
+\subsection Point_set_processing_3ImplementationHistory Implementation History
+
+Work on the package `Mesh_3` started during the PhD thesis of Laurent Rineau
+advised by Mariette Yvinec. A code prototype, together
+with a first version of design and specifications \cgalCite{cgal:ry-gsddrm-06}
+came out of their collaboration.
+
+From the beginning of 2009, most of the work has been performed by Stéphane
+Tayeb, in collaboration with Mariette Yvinec, Laurent Rineau, Pierre Alliez and Jane Tournois.
+First, Stéphane released the first public version of the package, implementing the specifications
+written by Laurent and Mariette.
+
+The optimization processes are
+heavily based on the work of Jane Tournois and Pierre Alliez
+during the PhD of Jane advised by Pierre. The optimization phase was imported
+in the mesh generation package by Stéphane Tayeb
+and appeared first in release 3.6 of \cgal.
+
+In collaboration with Laurent Rineau, Stéphane also added demos and examples.
+After some experiments on medical imaging data performed by
+Dobrina Boltcheva et al. \cgalCite{cgal:byb-mgmmi-09}, \cgalCite{cgal:-byb-fpdmgmmi-09}, the handling
+of 1-dimensional features was worked out by Laurent Rineau, Stéphane Tayeb
+and Mariette Yvinec. It appeared first in the release 3.8 of \cgal.
+
+Started from GSoC'2013, three new algorithms were implemented by Shihao Wu & Clément Jamin,
+including WLOP, bilateral smoothing and upsampling. 
+
+
 
 
 
