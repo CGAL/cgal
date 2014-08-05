@@ -48,7 +48,7 @@ if ( NOT CGAL_FOUND )
 elseif ( NOT QT${QT_VERSION_USED}_FOUND )
 	
   MESSAGE(STATUS "NOTICE: This demo requires "
-    "Qt, and will not be compiled.")
+    "${QT_VERSION}, and will not be compiled.")
 elseif ( NOT OPENGL_FOUND )
 
   MESSAGE(STATUS "NOTICE: This demo requires OpenGL "
