@@ -3,9 +3,6 @@
 
 namespace CGAL {
 
-template <class R_> class Point_2;
-template <class R_> class Segment_2;
-
 double eps(double x) {
     return abs(nextafter(x, DBL_MAX) - x);
 }
@@ -39,8 +36,7 @@ public:
     typedef typename GeomTraits::Compute_squared_radius_2 Compute_squared_radius_3;
     typedef typename GeomTraits::Compute_squared_distance_2 Compute_squared_distance_3;
     typedef typename GeomTraits::Cartesian_const_iterator_2 Cartesian_const_iterator_3;
-    typedef typename GeomTraits::Construct_cartesian_const_iterator_2
-    Construct_cartesian_const_iterator_3;
+    typedef typename GeomTraits::Construct_cartesian_const_iterator_2 Construct_cartesian_const_iterator_3;
 
     AABB_traits_2(const Point &point, const Container &p, const Container &q): m_t_point(point), m_p(p), m_q(q) {
         m_x_interval = Interval_nt<true>(to_interval(point.x()));
@@ -51,8 +47,6 @@ public:
 
     AABB_traits_2(): m_p(Container()), m_q(Container()) {
     };
-
-    ~AABB_traits_2() { };
 
     Interval_nt<true> get_int_x() const {
         return m_x_interval;
@@ -86,25 +80,14 @@ public:
 
         template<typename PrimitiveIterator>
         void operator()(PrimitiveIterator first,
-                        PrimitiveIterator beyond,
-                        const typename AT::Bounding_box &bbox) const {
+                PrimitiveIterator beyond,
+                const typename AT::Bounding_box &bbox) const {
             PrimitiveIterator middle = first + (beyond - first) / 2;
 
-            switch (longest_axis(bbox)) {
-            case AT::CGAL_AXIS_X: // sort along x
-                std::nth_element(first, middle, beyond, less_x);
-                break;
-
-            case AT::CGAL_AXIS_Y: // sort along y
-                std::nth_element(first, middle, beyond, less_y);
-                break;
-
-            case AT::CGAL_AXIS_Z: // sort along z
-                CGAL_error();
-                break;
-
-            default:
-                CGAL_error();
+            if (bbox.xmax()-bbox.xmin() >= bbox.ymax()-bbox.ymin()) {
+                std::nth_element(first, middle, beyond, less_x); // sort along x
+            } else {
+                std::nth_element(first, middle, beyond, less_y); // sort along y
             }
         }
     };
@@ -126,10 +109,10 @@ public:
         template<typename ConstPrimitiveIterator>
         typename AT::Bounding_box operator()(ConstPrimitiveIterator first,
                                              ConstPrimitiveIterator beyond) const {
-            typename AT::Bounding_box bbox = compute_bbox(*first);
+            typename AT::Bounding_box bbox = first->datum().bbox();
 
             for (++first; first != beyond; ++first) {
-                bbox = bbox + compute_bbox(*first);
+                bbox = bbox + first->datum().bbox();
             }
 
             return bbox;
@@ -210,228 +193,12 @@ public:
                 return false;
             }
 
-            Object intersection_object = GeomTraits().intersect_2_object()(q.datum(), tr_pr);
-
-            if (const CGAL::Point_2<GeomTraits> *ipoint = object_cast<CGAL::Point_2<GeomTraits> >(&intersection_object)) {
-                // handle weak intersections
-                bool has_weak_intersection = false;
-                bool p_intersect = false;
-                bool p_intersect_start = false;
-                bool q_intersect = false;
-                bool q_intersect_start = false;
-
-                if (*ipoint == tr_pr.source()) {
-                    has_weak_intersection = true;
-                    p_intersect = true;
-                    p_intersect_start = true;
-                } else {
-                    if (*ipoint == tr_pr.target()) {
-                        has_weak_intersection = true;
-                        p_intersect = true;
-                    }
-                }
-
-                if (*ipoint == q.datum().source()) {
-                    has_weak_intersection = true;
-                    q_intersect = true;
-                    q_intersect_start = true;
-                } else {
-                    if (*ipoint == q.datum().target()) {
-                        q_intersect = true;
-                        has_weak_intersection = true;
-                    }
-                }
-
-                if (has_weak_intersection) {
-
-                    bool val = handle_weak_intersections(p_intersect, q_intersect, p_intersect_start, q_intersect_start, pr, q, tr_pr);
-
-                    if (val == false) {
-                        int k = 4;
-                        k = k + 4;
-                        k++;
-                    }
-
-                    return val;
-                } else {
-                    return true;
-                }
-            }
-
-            if (const CGAL::Segment_2<GeomTraits> *iseg = object_cast<CGAL::Segment_2<GeomTraits> >(&intersection_object)) { // we have overlapping segments
-                Comparison_result c1 = compare_xy(tr_pr.source(), tr_pr.target());
-                Comparison_result c2 = compare_xy(q.datum().source(), q.datum().target());
-
-                bool same_dir = (c1 == c2);
-                return same_dir;
-            } else {
-                return false; // no intersection
-            }
-        }
-
-    private:
-
-        bool handle_weak_intersections(bool p_intersect, bool q_intersect, bool p_intersect_start, bool q_intersect_start, const Primitive &p, const Primitive &q, const Datum &tr_pr_datum) const {
-            Id itr_p = p.id();
-            Id itr_q = q.id();
-            Id p_other = get_other_segment(p_intersect_start, itr_p, m_traits->get_p());
-            Id q_other = get_other_segment(q_intersect_start, itr_q, m_traits->get_q());
-            Datum p_other_translated = (*p_other).transform(typename GeomTraits::Aff_transformation_2(Translation(), Vector_2(ORIGIN, m_traits->get_translation_point())));
-
-            if (p_intersect && !q_intersect) {
-                if (p_intersect_start) {
-                    return handle_weak_intersection(p_other_translated, tr_pr_datum, *itr_q);
-                } else {
-                    return handle_weak_intersection(tr_pr_datum, p_other_translated, *itr_q);
-                }
-            } else {
-                if (!p_intersect && q_intersect) {
-                    if (q_intersect_start) {
-                        return handle_weak_intersection(*q_other, *itr_q, tr_pr_datum);
-                    } else {
-                        return handle_weak_intersection(*itr_q, *q_other, tr_pr_datum);
-                    }
-                } else {
-                    Datum first_p, second_p;
-                    Datum first_q, second_q;
-
-                    if (p_intersect_start) {
-                        first_p = p_other_translated;
-                        second_p = tr_pr_datum;
-                    } else {
-                        first_p = tr_pr_datum;
-                        second_p = p_other_translated;
-                    }
-
-                    if (q_intersect_start) {
-                        first_q = *q_other;
-                        second_q = *itr_q;
-                    } else {
-                        first_q = *itr_q;
-                        second_q = *q_other;
-                    }
-
-                    return is_overlapping(first_p, second_p, first_q, second_q);
-                }
-            }
-        }
-
-        bool handle_weak_intersection(const Datum &incoming, const Datum &outgoing, const Datum &other_segment) const {
-            // There is an overlap in polygon regions if the outgoing of p is ccw-between outgoing q and -incoming q or vice versa.
-            //return (other_segment.direction()).counterclockwise_in_between(outgoing.direction(),incoming.opposite().direction());
-            return (other_segment.direction()).counterclockwise_in_between(outgoing.direction(), incoming.opposite().direction()) ||
-                   outgoing.direction().counterclockwise_in_between(other_segment.direction(), other_segment.opposite().direction());
-        }
-
-        bool is_overlapping(const Datum &incoming_p, const Datum &outgoing_p, const Datum &incoming_q, const Datum &outgoing_q) const {
-            // There is an overlap in polygon regions if the outgoing of p is ccw-between outgoing q and -incoming q or vice versa.
-            return ((outgoing_q.direction()).counterclockwise_in_between(outgoing_p.direction(), incoming_p.opposite().direction()) ||
-                    (outgoing_p.direction()).counterclockwise_in_between(outgoing_q.direction(), incoming_q.opposite().direction()));
-        }
-
-        Id get_other_segment(bool start, const Id &itr_p, const Container &cont) const {
-            Id p_other;
-
-            if (start) {
-                p_other = cont.edges_begin();
-
-                if (p_other == itr_p) {
-                    p_other = cont.edges_end();
-                    --p_other;
-                } else {
-                    while (p_other != itr_p) {
-                        ++p_other;
-                    }
-
-                    --p_other;
-                }
-            } else {
-                p_other = cont.edges_end();
-                --p_other;
-
-                if (p_other == itr_p) {
-                    p_other = cont.edges_begin();
-                } else {
-                    while (p_other != itr_p) {
-                        --p_other;
-                    }
-
-                    ++p_other;
-                }
-            }
-
-            return p_other;
+            return GeomTraits().intersect_2_object()(q.datum(), tr_pr);
         }
     };
 
     Do_intersect do_intersect_object() {
         return Do_intersect(this);
-    }
-
-    class Intersection {
-
-    public:
-
-        template<typename Query>
-        boost::optional<typename AT::Object_and_primitive_id>
-        operator()(const Query &query, const typename AT::Primitive &primitive) const {
-            typedef boost::optional<Object_and_primitive_id> Intersection;
-
-            Object object = GeomTraits().intersect_2_object()(primitive.datum(), query);
-
-            if (object.empty()) {
-                return Intersection();
-            } else {
-                return Intersection(Object_and_primitive_id(object, primitive.id()));
-            }
-        }
-    };
-
-    Intersection intersection_object() {
-        return Do_intersect(this);
-    }
-
-    // This should go down to the GeomTraits, i.e. the kernel
-    class Closest_point {
-
-        typedef typename AT::Point Point;
-        typedef typename AT::Primitive Primitive;
-
-    public:
-
-        Point operator()(const Point &p, const Primitive &pr, const Point &bound) const {
-            // seems to be unused:
-            //return nearest_point_2(p, pr.datum(), bound);
-            return p;
-        }
-    };
-
-    // This should go down to the GeomTraits, i.e. the kernel
-    // and the internal implementation should change its name from
-    // do_intersect to something like does_contain (this is what we compute,
-    // this is not the same do_intersect as the spherical kernel)
-    class Compare_distance {
-
-        typedef typename AT::Point Point;
-        typedef typename AT::Primitive Primitive;
-
-    public:
-
-        template <class Solid>
-        Comparison_result operator()(const Point &p, const Solid &pr, const Point &bound) const {
-            return GeomTraits().do_intersect_2_object()
-                   (GeomTraits().construct_sphere_2_object()
-                    (p, GeomTraits().compute_squared_distance_2_object()(p, bound)), pr) ?
-                   SMALLER : LARGER;
-        }
-    };
-
-    Closest_point closest_point_object() {
-        return Closest_point();
-    }
-
-    Compare_distance compare_distance_object() {
-        return Compare_distance();
     }
 
 private:
@@ -443,23 +210,6 @@ private:
     const Container &m_p;
     const Container &m_q;
 
-    /**
-     * @brief Computes bounding box of one primitive
-     * @param pr the primitive
-     * @return the bounding box of the primitive \c pr
-     */
-    static Bounding_box compute_bbox(const Primitive &pr) {
-        return pr.datum().bbox();
-    }
-
-    typedef enum {
-        CGAL_AXIS_X = 0,
-        CGAL_AXIS_Y = 1,
-        CGAL_AXIS_Z = 2
-    } Axis;
-
-    static Axis longest_axis(const Bounding_box &bbox);
-
     /// Comparison functions
     static bool less_x(const Primitive &pr1, const Primitive &pr2) {
         return pr1.reference_point().x() < pr2.reference_point().x();
@@ -469,19 +219,6 @@ private:
         return pr1.reference_point().y() < pr2.reference_point().y();
     }
 };
-
-template<typename GT, typename P>
-typename AABB_traits_2<GT, P>::Axis
-AABB_traits_2<GT, P>::longest_axis(const Bounding_box &bbox) {
-    const double dx = bbox.xmax() - bbox.xmin();
-    const double dy = bbox.ymax() - bbox.ymin();
-
-    if (dx >= dy) {
-        return CGAL_AXIS_X;
-    } else {
-        return CGAL_AXIS_Y;
-    }
-}
 
 } // namespace CGAL
 
