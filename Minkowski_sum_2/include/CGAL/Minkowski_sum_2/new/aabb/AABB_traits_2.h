@@ -109,7 +109,7 @@ public:
         }
     };
 
-    Sort_primitives sort_primitives_object() {
+    Sort_primitives sort_primitives_object() const {
         return Sort_primitives();
     }
 
@@ -136,7 +136,7 @@ public:
         }
     };
 
-    Compute_bbox compute_bbox_object() {
+    Compute_bbox compute_bbox_object() const {
         return Compute_bbox();
     }
 

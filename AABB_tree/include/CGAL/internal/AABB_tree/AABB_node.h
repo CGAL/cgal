@@ -82,6 +82,13 @@ public:
                  Traversal_traits& traits,
                  const std::size_t nb_primitives) const;
 
+  template<class Traversal_traits>
+  void join_traversal(const AABB_node &other_node,
+                      Traversal_traits &traits,
+                      const std::size_t nb_primitives_this,
+                      const std::size_t nb_primitives_other,
+                      bool first_stationary) const;
+
 private:
   typedef AABBTraits AABB_traits;
   typedef AABB_node<AABB_traits> Node;
@@ -192,6 +199,110 @@ AABB_node<Tr>::traversal(const Query& query,
       right_child().traversal(query, traits, nb_primitives-nb_primitives/2);
     }
   }
+}
+
+template<typename Tr>
+template<class Traversal_traits>
+void
+AABB_node<Tr>::join_traversal(const AABB_node &other_node,
+                              Traversal_traits &traits,
+                              const std::size_t nb_primitives_this,
+                              const std::size_t nb_primitives_other,
+                              bool first_stationary) const {
+    // Recursive traversal
+    bool first_tree_small = nb_primitives_this <= 3;
+    bool second_tree_small = nb_primitives_other <= 3;
+    bool first_tree_even = nb_primitives_this == 2;
+    bool second_tree_even = nb_primitives_other == 2;
+
+    if (first_tree_small && second_tree_small) {
+        traits.intersection(left_data(), other_node.left_data(), !first_stationary);
+
+        if (traits.go_further()) {
+            // 4 cases
+            if (first_tree_even) {
+                if (second_tree_even) { // 2 and 2
+                    traits.intersection(right_data(), other_node.right_data(), !first_stationary);
+
+                    if (traits.go_further()) {
+                        traits.intersection(right_data(), other_node.left_data(), !first_stationary);
+                    }
+
+                    if (traits.go_further()) {
+                        traits.intersection(left_data(), other_node.right_data(), !first_stationary);
+                    }
+                } else { // 2 and 3
+                    if (traits.do_intersect(right_data(), other_node.right_child(), !first_stationary) || traits.do_intersect(left_data(), other_node.right_child(), !first_stationary)) {
+                        other_node.right_child().join_traversal(*this, traits, 2, 2, !first_stationary);
+                    }
+                }
+            } else {
+
+                if (second_tree_even) { // 3 and 2
+                    if (traits.do_intersect(right_child(), other_node.right_data(), !first_stationary) || traits.do_intersect(right_child(), other_node.left_data(), !first_stationary)) {
+                        right_child().join_traversal(other_node, traits, 2, 2, first_stationary);
+                    }
+                } else { //3 and 3
+                    if (traits.do_intersect(right_child(), other_node.right_child(), !first_stationary)) {
+                        right_child().join_traversal(other_node.right_child(), traits, 2, 2, first_stationary);
+                    }
+
+                    if (traits.go_further() && traits.do_intersect(right_child(), other_node.left_data(), !first_stationary)) {
+                        right_child().join_traversal(other_node, traits, 2, 3, first_stationary);
+                    }
+
+                    if (traits.go_further() && traits.do_intersect(left_data(), other_node.right_child(), !first_stationary)) {
+                        other_node.right_child().join_traversal(*this, traits, 2, 3, !first_stationary);
+                    }
+                }
+            }
+        }
+    }
+
+    // first tree is 3 or smaller and second tree is larger
+    if (first_tree_small && !second_tree_small) {
+        if (traits.do_intersect(*this, other_node.left_child(), !first_stationary)) {
+            other_node.left_child().join_traversal(*this, traits, nb_primitives_other / 2, nb_primitives_this, !first_stationary);
+
+            if (traits.go_further() && traits.do_intersect(*this, other_node.right_child(), !first_stationary)) {
+                other_node.right_child().join_traversal(*this, traits, nb_primitives_other - nb_primitives_other / 2, nb_primitives_this, !first_stationary);
+            }
+        } else if (traits.do_intersect(*this, other_node.right_child(), !first_stationary)) {
+            other_node.right_child().join_traversal(*this, traits, nb_primitives_other - nb_primitives_other / 2, nb_primitives_this, !first_stationary);
+        }
+    }
+
+    // symetrical to previous case.
+    if (!first_tree_small && second_tree_small) {
+        if (traits.do_intersect(left_child(), other_node, !first_stationary)) {
+            left_child().join_traversal(other_node, traits, nb_primitives_this / 2, nb_primitives_other, first_stationary);
+
+            if (traits.go_further() && traits.do_intersect(right_child(), other_node, !first_stationary)) {
+                right_child().join_traversal(other_node, traits, nb_primitives_this - nb_primitives_this / 2, nb_primitives_other, first_stationary);
+            }
+        } else if (traits.do_intersect(right_child(), other_node, !first_stationary)) {
+            right_child().join_traversal(other_node, traits, nb_primitives_this - nb_primitives_this / 2, nb_primitives_other, first_stationary);
+        }
+    }
+
+    // both trees as larger then 3
+    if (!first_tree_small && !second_tree_small) {
+        if (traits.do_intersect(left_child(), other_node.left_child(), !first_stationary)) {
+            left_child().join_traversal(other_node.left_child(), traits, nb_primitives_this / 2, nb_primitives_other / 2, first_stationary);
+        }
+
+        if (traits.go_further() && traits.do_intersect(left_child(), other_node.right_child(), !first_stationary)) {
+            left_child().join_traversal(other_node.right_child(), traits, nb_primitives_this / 2, nb_primitives_other - nb_primitives_other / 2, first_stationary);
+        }
+
+        if (traits.go_further() && traits.do_intersect(right_child(), other_node.left_child(), !first_stationary)) {
+            right_child().join_traversal(other_node.left_child(), traits, nb_primitives_this - nb_primitives_this / 2, nb_primitives_other / 2, first_stationary);
+        }
+
+        if (traits.go_further() && traits.do_intersect(right_child(), other_node.right_child(), !first_stationary)) {
+            right_child().join_traversal(other_node.right_child(), traits, nb_primitives_this - nb_primitives_this / 2, nb_primitives_other - nb_primitives_other / 2, first_stationary);
+        }
+    }
 }
 
 } // end namespace CGAL

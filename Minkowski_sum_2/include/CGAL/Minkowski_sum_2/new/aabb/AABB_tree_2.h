@@ -20,7 +20,7 @@
 #ifndef CGAL_AABB_TREE_2_H
 #define CGAL_AABB_TREE_2_H
 
-#include <CGAL/Minkowski_sum_2/new/aabb/AABB_node_2.h>
+#include <CGAL/internal/AABB_tree/AABB_node.h>
 
 namespace CGAL {
 
@@ -48,7 +48,7 @@ private:
     // type of the primitives container
     typedef std::vector<Primitive> Primitives;
 
-    typedef AABB_node_2<AABBTraits> Node;
+    typedef AABB_node<AABBTraits> Node;
 
 public:
     // size type is the size_type of the primitive container
@@ -544,7 +544,7 @@ AABB_tree_2<Tr>::AABB_tree_2(ConstPrimitiveIterator first,
         CGAL_assertion(m_p_root_node != NULL);
         m_primitives.clear();
     } else {
-        m_p_root_node->expand(m_primitives.begin(), m_primitives.end(), m_primitives.size());
+        m_p_root_node->expand(m_primitives.begin(), m_primitives.end(), m_primitives.size(), Tr());
     }
 }
 
@@ -572,7 +572,7 @@ void AABB_tree_2<Tr>::rebuild(ConstPrimitiveIterator first,
     }
 
     // constructs the tree
-    m_p_root_node->expand(m_primitives.begin(), m_primitives.end(), m_primitives.size());
+    m_p_root_node->expand(m_primitives.begin(), m_primitives.end(), m_primitives.size(), Tr());
 }
 
 // constructs the search KD tree from given points
