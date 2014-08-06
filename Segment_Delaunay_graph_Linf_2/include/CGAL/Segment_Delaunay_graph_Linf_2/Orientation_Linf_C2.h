@@ -22,10 +22,6 @@ class Orientation_Linf_C2
 {
 private:
   typedef Basic_predicates_C2<K>              Base;
-  
-public:
-  // type of return value of orientation
-  typedef typename CGAL::OrientationLinf      OrientationLinf;
 
 private:
   typedef typename Base::Point_2              Point_2;

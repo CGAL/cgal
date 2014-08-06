@@ -48,7 +48,6 @@ private:
   typedef typename K::FT                     FT;
   typedef typename K::RT                     RT;
   //typedef typename K::Orientation            Orientation;
-  typedef CGAL::OrientationLinf              OrientationLinf;
   typedef typename K::Sign                   Sign;
 
   typedef Voronoi_vertex_C2<K,Method_tag>    Voronoi_vertex_2;
