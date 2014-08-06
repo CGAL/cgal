@@ -9,6 +9,13 @@ else()
   cmake_policy(VERSION 2.6)
 endif()
 
+# Compatibility with CMake 3.0
+if(POLICY CMP0042)
+  # Do not enable the use of MACOSX_RPATH
+  # http://www.cmake.org/cmake/help/v3.0/policy/CMP0042.html
+  cmake_policy(SET CMP0042 OLD)
+endif()
+
 # Creates a new CMake option, turned ON by default
 option(ACTIVATE_MSVC_PRECOMPILED_HEADERS
   "Activate precompiled headers in MSVC"
