@@ -59,10 +59,10 @@ namespace Qt {
       }
       if(const Arc_2* arc = boost::get<Arc_2>(&s)){
         
-        const Circle_2& circle = arc->get<0>();
+        const Circle_2& circle = get<0>(*arc);
         const Point_2& center = circle.center();
-        const Point_2& source = arc->get<1>();
-        const Point_2& target = arc->get<2>();
+        const Point_2& source = get<1>(*arc);
+        const Point_2& target = get<2>(*arc);
         
         if (circle.squared_radius() > 10) {
           const Line_segment_2 seg(source,target);
