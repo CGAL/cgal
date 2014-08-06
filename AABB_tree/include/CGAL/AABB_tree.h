@@ -336,11 +336,8 @@ public:
 		template<typename Query>
 		bool do_intersect(const Query& query) const;
 
-        template<typename Primitive_type>
         bool do_intersect_join(const AABB_tree &other,
-                               const Point &Translation_point,
-                               const Primitive_type &p,
-                               const Primitive_type &q) const;
+                               const Point &Translation_point) const;
 
     /// Returns the number of primitives intersected by the
     /// query. \tparam Query must be a type for which
@@ -1099,15 +1096,12 @@ public:
 	}
 
     template<typename Tr>
-    template<typename Primitive_type>
     bool
         AABB_tree<Tr>::do_intersect_join(const AABB_tree &other,
-                                         const Point &Translation_point,
-                                         const Primitive_type &p,
-                                         const Primitive_type &q) const {
+                                         const Point &Translation_point) const {
         using namespace CGAL::internal::AABB_tree;
         typedef typename AABB_tree<Tr>::AABB_traits AABBTraits;
-        Do_intersect_joined_traits<AABBTraits, Primitive_type> traversal_traits(Translation_point, p, q);
+        Do_intersect_joined_traits<AABBTraits> traversal_traits(Translation_point);
         this->join_traversal(other, traversal_traits);
         return traversal_traits.is_intersection_found();
     }

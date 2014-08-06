@@ -284,15 +284,15 @@ private:
 };
 
 
-template<typename AABBTraits, typename Primitive_type>
+template<typename AABBTraits>
 class Do_intersect_joined_traits {
   typedef typename AABBTraits::Point_3 Point;
   typedef typename AABBTraits::Primitive Primitive;
   typedef ::CGAL::AABB_node<AABBTraits> Node;
 public:
-    Do_intersect_joined_traits(const Point &point, const Primitive_type &p, const Primitive_type &q)
+    Do_intersect_joined_traits(const Point &point)
         : m_is_found(false) , m_point(point) {
-        m_traits_ptr = new AABBTraits(point, p, q);
+        m_traits_ptr = new AABBTraits(point);
     }
 
     bool go_further() const {
@@ -346,7 +346,6 @@ public:
 private:
     bool m_is_found;
     Point m_point;
-    //Primitive_type& m_p,m_q;
     AABBTraits *m_traits_ptr;
 };
 

@@ -26,7 +26,7 @@ public:
     }
 
     bool check_collision(const Point_2 &t) {
-        if (m_stationary_tree.do_intersect_join(m_translating_tree, t, m_p, m_q)) {
+        if (m_stationary_tree.do_intersect_join(m_translating_tree, t)) {
             return true;
         }
 

@@ -38,14 +38,14 @@ public:
     typedef typename GeomTraits::Cartesian_const_iterator_2 Cartesian_const_iterator_3;
     typedef typename GeomTraits::Construct_cartesian_const_iterator_2 Construct_cartesian_const_iterator_3;
 
-    AABB_traits_2(const Point &point, const Container &p, const Container &q): m_t_point(point), m_p(p), m_q(q) {
-        m_x_interval = Interval_nt<true>(to_interval(point.x()));
-        m_y_interval = Interval_nt<true>(to_interval(point.y()));
-        m_px = to_double(point.x());
-        m_py = to_double(point.y());
+    AABB_traits_2(const Point &translation_point): m_t_point(translation_point) {
+        m_x_interval = Interval_nt<true>(to_interval(translation_point.x()));
+        m_y_interval = Interval_nt<true>(to_interval(translation_point.y()));
+        m_px = to_double(translation_point.x());
+        m_py = to_double(translation_point.y());
     };
 
-    AABB_traits_2(): m_p(Container()), m_q(Container()) {
+    AABB_traits_2() {
     };
 
     Interval_nt<true> get_int_x() const {
@@ -57,12 +57,6 @@ public:
 
     Point get_translation_point() const {
         return m_t_point;
-    }
-    const Container &get_p() const {
-        return m_p;
-    }
-    const Container &get_q() const {
-        return m_q;
     }
 
     /**
@@ -207,8 +201,6 @@ private:
     double m_px, m_py;
     Interval_nt<true> m_x_interval;
     Interval_nt<true> m_y_interval;
-    const Container &m_p;
-    const Container &m_q;
 
     /// Comparison functions
     static bool less_x(const Primitive &pr1, const Primitive &pr2) {
