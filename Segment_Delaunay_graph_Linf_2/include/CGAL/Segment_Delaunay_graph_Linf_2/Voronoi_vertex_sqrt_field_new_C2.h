@@ -664,7 +664,7 @@ private:
       const RT signrdist = (is_r_horizontal ? pp.y() : pp.x()) - coordr;
       Comparison_result comp = CGAL::compare(pqdist, CGAL::abs(signrdist));
       vv = Point_2(is_r_horizontal ?
-                     pp.x() + qq.x() :
+                     (pp.x() + qq.x()) :
                      (comp == LARGER) ?
                        RT(2)*coordr + CGAL::sign(signrdist)*pqdist :
                        coordr + pp.x(),
@@ -672,7 +672,7 @@ private:
                      (comp == LARGER) ?
                        RT(2)*coordr + CGAL::sign(signrdist)*pqdist :
                        coordr + pp.y() :
-                     pp.y() + qq.y(),
+                     (pp.y() + qq.y()),
                    RT(2));
       return;
     }
@@ -698,19 +698,19 @@ private:
       const bool is_p_farthest = farp == pp;
       const Point_2 & closep = (is_p_farthest)? qq : pp;
       vv = Point_2(is_r_horizontal ?
-                   RT(2) * closep.x() - (is_p_farthest? -1 : +1) * sdistf :
-                   RT(2)*coordr + sdistf,
+                   (RT(2) * closep.x() - (is_p_farthest? -1 : +1) * sdistf) :
+                   (RT(2)*coordr + sdistf),
                    is_r_horizontal ?
-                   RT(2)*coordr + sdistf :
-                   RT(2) * closep.y() + (is_p_farthest? -1 : +1) * sdistf,
+                   (RT(2)*coordr + sdistf) :
+                   (RT(2) * closep.y() + (is_p_farthest? -1 : +1) * sdistf),
                    RT(2));
     } else {
       vv = Point_2(is_r_horizontal ?
-                   pp.x() + qq.x() :
-                   RT(2)*coordr + CGAL::sign(sdistf)*pqdist,
+                   (pp.x() + qq.x()) :
+                   (RT(2)*coordr + CGAL::sign(sdistf)*pqdist),
                    is_r_horizontal ?
-                   RT(2)*coordr + CGAL::sign(sdistf)*pqdist :
-                   pp.y() + qq.y(),
+                   (RT(2)*coordr + CGAL::sign(sdistf)*pqdist) :
+                   (pp.y() + qq.y()),
                    RT(2));
     }
     return;
@@ -1382,12 +1382,12 @@ private:
     RT ux_, uy_, uz_;
     if (cmp == LARGER) {
       ux_ = is_q_hor ? r_coord + p_coord_r : q_coord + p_coord_q;
-      uy_ = is_q_hor ? RT(2)*q_coord + CGAL::sign(sdistq)*dx :
-                       RT(2)*r_coord + CGAL::sign(sdistr)*dx ;
+      uy_ = is_q_hor ? (RT(2)*q_coord + CGAL::sign(sdistq)*dx) :
+                       (RT(2)*r_coord + CGAL::sign(sdistr)*dx) ;
     } else if (cmp == SMALLER) {
       uy_ = is_r_hor ? r_coord + p_coord_r : q_coord + p_coord_q;
-      ux_ = is_r_hor ? RT(2)*q_coord + CGAL::sign(sdistq)*dy :
-                       RT(2)*r_coord + CGAL::sign(sdistr)*dy ;
+      ux_ = is_r_hor ? (RT(2)*q_coord + CGAL::sign(sdistq)*dy) :
+                       (RT(2)*r_coord + CGAL::sign(sdistr)*dy) ;
     } else {
       ux_ = is_q_hor ? r_coord + p_coord_r : q_coord + p_coord_q;
       uy_ = is_q_hor ? q_coord + p_coord_q : r_coord + p_coord_r;

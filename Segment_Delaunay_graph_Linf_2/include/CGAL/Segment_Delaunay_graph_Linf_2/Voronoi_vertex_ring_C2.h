@@ -604,14 +604,15 @@ private:
   {
     CGAL_precondition(bside % 2 == 1);
     const bool side_ver = (bside % 4 == 1);
-    FT pcoord = (side_ver) ? p.point().x() : p.point().y();
-    FT qcoord = coord_at(lq, pcoord, side_ver);
-    FT rcoord = coord_at(lr, pcoord, side_ver);
-    FT sidelen = CGAL::abs(qcoord-rcoord);
+    const FT pcoord = (side_ver) ? p.point().x() : p.point().y();
+    const FT qcoord = coord_at(lq, pcoord, side_ver);
+    const FT rcoord = coord_at(lr, pcoord, side_ver);
+    const FT sidelen = CGAL::abs(qcoord-rcoord);
     const int sgn = (bside < 4) ? -1 : +1;
-    ux_ = side_ver? RT(2)*pcoord + sgn*sidelen : qcoord+rcoord;
-    uy_ = side_ver? qcoord+rcoord : RT(2)*pcoord + sgn*sidelen;
-    uz_ = RT(2);
+    const RT two(2);
+    ux_ = side_ver ? (two*pcoord + sgn*sidelen) : (qcoord+rcoord);
+    uy_ = side_ver ? (qcoord+rcoord) : (two*pcoord + sgn*sidelen);
+    uz_ = two;
   }
 
   inline void
@@ -925,16 +926,16 @@ private:
     const RT & dy = is_r_hor ? distr : distq;
     const Comparison_result cmp = CGAL::compare(dx, dy);
     if (cmp == LARGER) {
-      ux_ = is_q_hor ? r_coord + p_coord_r : q_coord + p_coord_q;
-      uy_ = is_q_hor ? RT(2)*q_coord + CGAL::sign(sdistq)*dx :
-                       RT(2)*r_coord + CGAL::sign(sdistr)*dx ;
+      ux_ = is_q_hor ? (r_coord + p_coord_r) : (q_coord + p_coord_q);
+      uy_ = is_q_hor ? (RT(2)*q_coord + CGAL::sign(sdistq)*dx) :
+                       (RT(2)*r_coord + CGAL::sign(sdistr)*dx) ;
     } else if (cmp == SMALLER) {
-      uy_ = is_r_hor ? r_coord + p_coord_r : q_coord + p_coord_q;
-      ux_ = is_r_hor ? RT(2)*q_coord + CGAL::sign(sdistq)*dy :
-                       RT(2)*r_coord + CGAL::sign(sdistr)*dy ;
+      uy_ = is_r_hor ? (r_coord + p_coord_r) : (q_coord + p_coord_q);
+      ux_ = is_r_hor ? (RT(2)*q_coord + CGAL::sign(sdistq)*dy) :
+                       (RT(2)*r_coord + CGAL::sign(sdistr)*dy) ;
     } else {
-      ux_ = is_q_hor ? r_coord + p_coord_r : q_coord + p_coord_q;
-      uy_ = is_q_hor ? q_coord + p_coord_q : r_coord + p_coord_r;
+      ux_ = is_q_hor ? (r_coord + p_coord_r) : (q_coord + p_coord_q);
+      uy_ = is_q_hor ? (q_coord + p_coord_q) : (r_coord + p_coord_r);
     }
     uz_ = RT(2);
   }
