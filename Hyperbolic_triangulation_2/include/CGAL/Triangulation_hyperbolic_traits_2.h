@@ -402,11 +402,11 @@ public:
         return operator()(p, *s);
       }
       if(Arc_2* arc = boost::get<Arc_2>(&l)){
-        if(arc->get<0>().orientation() == CLOCKWISE){
-          arc->get<1>() = p;
+        if(get<0>(*arc).orientation() == CLOCKWISE){
+          get<1>(*arc) = p;
           return *arc;
         }
-        arc->get<2>() = p;
+        get<2>(*arc) = p;
         return *arc;
       }
       assert(false);
