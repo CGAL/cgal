@@ -336,6 +336,12 @@ public:
 		template<typename Query>
 		bool do_intersect(const Query& query) const;
 
+        template<typename Primitive_type>
+        bool do_intersect_join(const AABB_tree &other,
+                               const Point &Translation_point,
+                               const Primitive_type &p,
+                               const Primitive_type &q) const;
+
     /// Returns the number of primitives intersected by the
     /// query. \tparam Query must be a type for which
     /// `do_intersect` predicates are defined
@@ -567,6 +573,16 @@ public:
 				root_node()->template traversal<Traversal_traits,Query>(query, traits, m_primitives.size());
 			}
 		}
+
+        template <class Traversal_traits>
+        void join_traversal(const AABB_tree &other_tree, Traversal_traits &traits) const
+        {
+            if (!empty() && !other_tree.empty()) {
+                root_node()->template join_traversal<Traversal_traits>(*(other_tree.root_node()), traits, m_primitives.size(), other_tree.m_primitives.size(), true);
+            } else {
+                std::cerr << "AABB tree join traversal with empty tree" << std::endl;
+            }
+        }
 
 	private:
 		typedef AABB_node<AABBTraits> Node;
@@ -1081,6 +1097,20 @@ public:
 		this->traversal(query, traversal_traits);
 		return traversal_traits.is_intersection_found();
 	}
+
+    template<typename Tr>
+    template<typename Primitive_type>
+    bool
+        AABB_tree<Tr>::do_intersect_join(const AABB_tree &other,
+                                         const Point &Translation_point,
+                                         const Primitive_type &p,
+                                         const Primitive_type &q) const {
+        using namespace CGAL::internal::AABB_tree;
+        typedef typename AABB_tree<Tr>::AABB_traits AABBTraits;
+        Do_intersect_joined_traits<AABBTraits, Primitive_type> traversal_traits(Translation_point, p, q);
+        this->join_traversal(other, traversal_traits);
+        return traversal_traits.is_intersection_found();
+    }
 
 	template<typename Tr>
 	template<typename Query>

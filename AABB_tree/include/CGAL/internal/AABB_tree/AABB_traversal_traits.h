@@ -284,6 +284,73 @@ private:
 };
 
 
+template<typename AABBTraits, typename Primitive_type>
+class Do_intersect_joined_traits {
+  typedef typename AABBTraits::Point_3 Point;
+  typedef typename AABBTraits::Primitive Primitive;
+  typedef ::CGAL::AABB_node<AABBTraits> Node;
+public:
+    Do_intersect_joined_traits(const Point &point, const Primitive_type &p, const Primitive_type &q)
+        : m_is_found(false) , m_point(point) {
+        m_traits_ptr = new AABBTraits(point, p, q);
+    }
+
+    bool go_further() const {
+        return !m_is_found;
+    }
+
+    void intersection(const Primitive &primitive1, const Primitive &primitive2, bool toSwitch) {
+        if (!toSwitch) {
+            if (m_traits_ptr->do_intersect_object()(primitive1, primitive2)) {
+                m_is_found = true;
+            }
+        } else {
+            if (m_traits_ptr->do_intersect_object()(primitive2, primitive1)) {
+                m_is_found = true;
+            }
+        }
+    }
+
+    bool do_intersect(const Node &node_1, const Node &node_2, bool toSwitch) const {
+        if (!toSwitch) {
+            return m_traits_ptr->do_intersect_object()(node_1.bbox(), node_2.bbox());
+        } else {
+            return m_traits_ptr->do_intersect_object()(node_2.bbox(), node_1.bbox());
+        }
+    }
+
+    bool do_intersect(const Node &node_1, const Primitive &primitive2, bool toSwitch) const {
+        if (!toSwitch) {
+            return m_traits_ptr->do_intersect_object()(node_1.bbox(), primitive2);
+        } else {
+            return m_traits_ptr->do_intersect_object()(primitive2, node_1.bbox());
+        }
+    }
+
+    bool do_intersect(const Primitive &primitive1, const Node &node_2, bool toSwitch) const {
+        if (!toSwitch) {
+            return m_traits_ptr->do_intersect_object()(primitive1, node_2.bbox());
+        } else {
+            return m_traits_ptr->do_intersect_object()(node_2.bbox(), primitive1);
+        }
+    }
+
+    bool is_intersection_found() const {
+        return m_is_found;
+    }
+
+    ~Do_intersect_joined_traits() {
+        delete m_traits_ptr;
+    }
+
+private:
+    bool m_is_found;
+    Point m_point;
+    //Primitive_type& m_p,m_q;
+    AABBTraits *m_traits_ptr;
+};
+
+
 /**
  * @class Projection_traits
  */
