@@ -70,26 +70,23 @@ double rand_base()
 double my_rand()
 {
   // Ensure 53 random bits, not 48.
-  return CGAL::IA_force_to_double(rand_base() + rand_base()/1024);
+  return CGAL_IA_FORCE_TO_DOUBLE(rand_base() + rand_base()/1024);
 }
 
 // Random point in unit cube.
 Weighted_point_3 my_rand_wp3()
 {
-  double x = my_rand();
-  double y = my_rand();
-  double z = my_rand();
-  double r = my_rand();
+  double x = my_rand(), y = my_rand(), z = my_rand(), r=my_rand();
   return Weighted_point_3( FTr_with_SF::Weighted_point_3(FTr_with_SF::Bare_point(x, y, z),r) , FTr_without_SF::Weighted_point_3(FTr_without_SF::Bare_point(x, y, z),r) );
 }
 
 // Perturbation with given maximum relative epsilon.
 void perturb(Weighted_point_3 &p, double rel_eps)
 {
-  double x = CGAL::IA_force_to_double(p.first.x()*(1+rand_base()*rel_eps));
-  double y = CGAL::IA_force_to_double(p.first.y()*(1+rand_base()*rel_eps));
-  double z = CGAL::IA_force_to_double(p.first.z()*(1+rand_base()*rel_eps));
-  double r = CGAL::IA_force_to_double(p.first.weight()*(1+rand_base()*rel_eps));
+  double x = CGAL_IA_FORCE_TO_DOUBLE(p.first.x()*(1+rand_base()*rel_eps));
+  double y = CGAL_IA_FORCE_TO_DOUBLE(p.first.y()*(1+rand_base()*rel_eps));
+  double z = CGAL_IA_FORCE_TO_DOUBLE(p.first.z()*(1+rand_base()*rel_eps));
+  double r = CGAL_IA_FORCE_TO_DOUBLE(p.first.weight()*(1+rand_base()*rel_eps));
   p=Weighted_point_3( FTr_with_SF::Weighted_point_3(FTr_with_SF::Bare_point(x, y, z),r) , FTr_without_SF::Weighted_point_3(FTr_without_SF::Bare_point(x, y, z),r) );
 }
 
@@ -142,11 +139,18 @@ void test_compare_weighted_squared_radius_3(){
   
 }
 
-void test_power_test_3(){
+Weighted_point_3 convert_to_pair(const Exact_traits::Weighted_point_3& wp)
+{
+  CGAL::Weighted_converter_3<CGAL::Cartesian_converter<Exact_kernel,FK_with_SF>,Exact_traits,FTr_with_SF >    convert_to_double;
+  CGAL::Weighted_converter_3<CGAL::Cartesian_converter<FK_with_SF,FK_without_SF>,FTr_with_SF,FTr_without_SF > convert_to_double_noSF;
   
-  CGAL::Weighted_converter_3<CGAL::Cartesian_converter<Exact_kernel,FK_with_SF>,Exact_traits,FTr_with_SF >          convert_to_double;
-  CGAL::Weighted_converter_3<CGAL::Cartesian_converter<Exact_kernel,FK_without_SF>,Exact_traits,FTr_without_SF >    convert_to_double_noSF;
-  CGAL::Weighted_converter_3<CGAL::Cartesian_converter<FK_without_SF,Exact_kernel>,FTr_without_SF,Exact_traits >    convert_to_exact;
+  FTr_with_SF::Weighted_point_3 wp_with_sf = convert_to_double(wp);
+  FTr_without_SF::Weighted_point_3 wp_without_sf = convert_to_double_noSF(wp_with_sf);
+  return Weighted_point_3(wp_with_sf, wp_without_sf);
+}
+
+void test_power_test_3(){
+  CGAL::Weighted_converter_3<CGAL::Cartesian_converter<FK_without_SF,Exact_kernel>,FTr_without_SF,Exact_traits > convert_to_exact;
   
   Weighted_point_3 p=my_rand_wp3();
   Weighted_point_3 q=my_rand_wp3();
@@ -174,19 +178,19 @@ void test_power_test_3(){
   );
   assert(Exact_traits().power_test_3_object()(p_e,q_e,r_e,s_e,tmp)==CGAL::ON_ORIENTED_BOUNDARY);
   
-  Weighted_point_3 ortho_pqrs( convert_to_double(tmp),convert_to_double_noSF(tmp) );
+  Weighted_point_3 ortho_pqrs = convert_to_pair(tmp);
   tmp=Exact_traits::Weighted_point_3(
       Exact_traits().construct_weighted_circumcenter_3_object()(p_e,q_e,r_e),
       -Exact_traits().compute_squared_radius_smallest_orthogonal_sphere_3_object()(p_e,q_e,r_e)
     );
   assert(Exact_traits().power_test_3_object()(p_e,q_e,r_e,tmp)==CGAL::ON_ORIENTED_BOUNDARY);    
-  Weighted_point_3 ortho_pqr( convert_to_double(tmp),convert_to_double_noSF(tmp) );
+  Weighted_point_3 ortho_pqr = convert_to_pair(tmp);
   tmp=Exact_traits::Weighted_point_3(
       Exact_traits().construct_weighted_circumcenter_3_object()(p_e,q_e),
       -Exact_traits().compute_squared_radius_smallest_orthogonal_sphere_3_object()(p_e,q_e)
     );
   assert(Exact_traits().power_test_3_object()(p_e,q_e,tmp)==CGAL::ON_ORIENTED_BOUNDARY);        
-  Weighted_point_3 ortho_pq( convert_to_double(tmp),convert_to_double_noSF(tmp) );
+  Weighted_point_3 ortho_pq = convert_to_pair(tmp);
   
   
   K3().power_test_3_object()(p,q,r,s,ortho_pqrs);
