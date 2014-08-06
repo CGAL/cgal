@@ -445,7 +445,6 @@ namespace CGAL {
         const SmallerEqTuple tup =
           analyze_smalleq(cxtmax, cytmax, cxmint, cymint);
         const size_t count_eq = CGAL::cpp11::get<4>(tup);
-        CGAL_assertion( count_eq >= 0 );
         CGAL_assertion( count_eq <= 2 );
         if (count_eq == 0) {
           CGAL_assertion( cxmint == SMALLER and cxtmax == SMALLER and
