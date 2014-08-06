@@ -35,7 +35,7 @@ namespace CGAL {
 \ingroup PkgReconstructionSimplification2Models
 
 
-\brief The class `Tds_output` is a model for the `OutputModule` concept.
+\brief The class `Tds_output` is a model for the `ReconstructionSimplificationOutput_2` concept.
 
 \details It provides access to the `Tds_2` of the reconstruction simplex.
 

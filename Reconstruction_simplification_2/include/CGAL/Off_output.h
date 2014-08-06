@@ -37,7 +37,7 @@ namespace CGAL {
 \ingroup PkgReconstructionSimplification2Models
 
 
-\brief The class `Off_output` is a model for the `OutputModule` concept.
+\brief The class `Off_output` is a model for the `ReconstructionSimplificationOutput_2` concept.
 
 \details It allows accessing the isolated vertices and the edges
 of the reconstructed shape in the OFF format via an std::ostream object.

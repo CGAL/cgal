@@ -128,7 +128,7 @@ points and the edges of the reconstructed shape are extracted and printed to the
 
 \subsubsection Reconstruction_simplification_2Output Output-Example
 
-To access the reconstructed vertices and edges, models which implement the OutputModule Concept can be used. The package offers three such models, List_output, Off_output, Tds_output 
+To access the reconstructed vertices and edges, models which implement the ReconstructionSimplificationOutput_2 concept can be used. The package offers three such models, List_output, Off_output, Tds_output 
 
 
 \cgalExample{Reconstruction_simplification_2/reconstruction_simplification_2_output_example.cpp}

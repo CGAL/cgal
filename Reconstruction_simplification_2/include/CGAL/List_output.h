@@ -41,7 +41,7 @@ namespace CGAL {
 \ingroup PkgReconstructionSimplification2Models
 
 
-\brief The class `List_output` is a model for the `OutputModule` concept.
+\brief The class `List_output` is a model for the `ReconstructionSimplificationOutput_2` concept.
 
 \details It takes two `Output-Iterators`, one for storing the
 isolated points and one for storing the edges of the reconstructed shape.

@@ -30,7 +30,7 @@
 \cgalClassifedRefPages
 
 ## Concepts ##
-- `OutputModule`
+- `ReconstructionSimplificationOutput_2`
 
 
 ## Models ##
