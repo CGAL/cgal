@@ -97,24 +97,27 @@ private:
     int alias_idx;
     int sorted_idx;
   private:
-    int compute_quadrant ( const Point_2& query_pt, const Point_2 & p )
+  public:
+    Vertex ( const Vertex_const_handle& v )
+      : vh( v ), first_ic( 0 ), last_ic( 0 ), alias_idx( -1 ), sorted_idx( -1 )
+      {}
+    void init_quadrant ( const Point_2& query_pt )
     {
-      CGAL::Comparison_result cx = CGAL::compare_x( p, query_pt );
-      CGAL::Comparison_result cy = CGAL::compare_y( p, query_pt );
+      CGAL::Comparison_result cx = CGAL::compare_x( vh->point(), query_pt );
+      CGAL::Comparison_result cy = CGAL::compare_y( vh->point(), query_pt );
       if ( cx == CGAL::LARGER )
-        return ( ( cy != CGAL::SMALLER ) ? 1 : 4 );
+        quad = ( cy != CGAL::SMALLER ) ? 1 : 4;
       else if ( cx == CGAL::SMALLER )
-        return ( ( cy != CGAL::LARGER ) ? 3 : 2 );
+        quad = ( cy != CGAL::LARGER ) ? 3 : 2;
       else {
-        if ( cy == CGAL::LARGER ) return 2;
-        else if ( cy == CGAL::SMALLER ) return 4;
-        else return 0;
+        if ( cy == CGAL::LARGER )
+          quad = 2;
+        else if ( cy == CGAL::SMALLER )
+          quad = 4;
+        else
+          quad = 0;
       }
     }
-  public:
-    Vertex ( const Point_2& query_pt, const Vertex_const_handle& v )
-      : vh( v ), first_ic( 0 ), last_ic( 0 ), alias_idx( -1 ), sorted_idx( -1 )
-      { quad = compute_quadrant( query_pt, v->point() ); }
     const Vertex_const_handle& handle () const
       { return vh; }
     int quadrant () const
@@ -163,28 +166,28 @@ private:
     int target_idx;
     enum { LTURN, RTURN, OUTWARD, INWARD, AT_SOURCE, AT_TARGET, IN_EDGE } mode;
   public:
-    Edge ( const Point_2& query_pt, const Halfedge_const_handle& eh, int s, int t )
+    Edge ( int s, int t )
       : source_idx( s ), target_idx( t )
+      {}
+    void init_orientation ( const Point_2& query_pt,
+                            const Point_2& source,
+                            const Point_2& target )
     {
-      CGAL::Orientation orient = CGAL::orientation( query_pt,
-                                                    eh->source()->point(),
-                                                    eh->target()->point() );
+      CGAL::Orientation orient = CGAL::orientation( query_pt, source, target );
       if ( orient == CGAL::LEFT_TURN )
         mode = LTURN;
       else if ( orient == CGAL::RIGHT_TURN )
         mode = RTURN;
       else {
-        if ( query_pt == eh->source()->point() )
+        if ( query_pt == source )
           mode = AT_SOURCE;
-        else if ( query_pt == eh->target()->point() )
+        else if ( query_pt == target )
           mode = AT_TARGET;
         else if ( CGAL::collinear_are_ordered_along_line
-                        ( query_pt, eh->source()->point(),
-                          eh->target()->point() ) )
+                        ( query_pt, source, target ) )
           mode = OUTWARD;
         else if ( CGAL::collinear_are_ordered_along_line
-                        ( query_pt, eh->target()->point(),
-                          eh->source()->point() ) )
+                        ( query_pt, target, source ) )
           mode = INWARD;
         else
           mode = IN_EDGE;
@@ -373,6 +376,69 @@ private:
     }
   };
   
+  class Intersection_edges
+  {
+  private:
+    struct IE_node {
+      bool exist;
+      int prev;
+      int next;
+      IE_node ()
+        : exist( false ), prev( -1 ), next( -1 )
+        {}
+      IE_node ( bool f, int p, int n )
+        : exist( f ), prev( p ), next( n )
+        {}
+    };
+  private:
+    std::vector< IE_node > _data;
+    int _head;
+  public:
+    Intersection_edges( int s )
+    {
+      _data.reserve( s+1 );
+      for ( int i = 0; i < s+1; i++ )
+        _data.push_back( IE_node( false, i, i ) );
+      _head = s;
+    }
+    void insert( int idx )
+    {
+      if ( _data[idx].exist )
+        return;
+      _data[idx].exist = true;
+      _data[idx].next = _data[_head].next;
+      _data[idx].prev = _head;
+      _data[_data[_head].next].prev = idx;
+      _data[_head].next = idx;
+    }
+    void erase ( int idx )
+    {
+      if ( !_data[idx].exist )
+        return;
+      _data[_data[idx].prev].next = _data[idx].next;
+      _data[_data[idx].next].prev = _data[idx].prev;
+      _data[idx].exist = false;
+      _data[idx].prev = _data[idx].next = idx;
+    }
+    std::vector<int> data ()
+    {
+      std::vector<int> res;
+      int curr = _data[_head].next;
+      while ( curr != _head ) {
+        res.push_back( curr );
+        curr = _data[curr].next;
+      }
+      return res;
+    }
+    int begin () const
+      { return _data[_head].next; }
+    int end () const
+      { return _head; }
+    int next ( int curr ) const
+      { return _data[curr].next; }
+    bool has ( int idx ) const
+    { return _data[idx].exist; }
+  };
 
   class Cone
   {
@@ -495,8 +561,8 @@ private:
   private:
     const Point_2& query_pt;
     const Vertex_vector * vertices;
-    const Point_2& flipped_source;
-    int flipped_quadrant;
+    const Point_2& shifted_source;
+    int shifted_quadrant;
 
     bool is_vertex_query;
   private:
@@ -505,16 +571,16 @@ private:
     bool less_vertex ( const Vertex_type& v1, const Vertex_type& v2 ) const
     {
       CGAL::Orientation orient = CGAL::orientation( query_pt,
-                                                    flipped_source,
+                                                    shifted_source,
                                                     v2.point() );
       if ( orient == CGAL::COLLINEAR ) {
-        if ( flipped_quadrant != v2.quadrant() )
-          return ( flipped_quadrant < v2.quadrant() );
+        if ( shifted_quadrant != v2.quadrant() )
+          return ( shifted_quadrant < v2.quadrant() );
         else
           return true;
       } else {
-        if ( flipped_quadrant != v2.quadrant() )
-          return ( flipped_quadrant < v2.quadrant() );
+        if ( shifted_quadrant != v2.quadrant() )
+          return ( shifted_quadrant < v2.quadrant() );
         else
           return ( orient == CGAL::LEFT_TURN );
       }
@@ -550,8 +616,8 @@ private:
   public:
     Is_swept_earlier ( const Point_2& q, const Vertex_vector * pv,
                        const Point_2& fs, int fq )
-      : query_pt( q ), vertices( pv ), flipped_source( fs ),
-        flipped_quadrant( fq )
+      : query_pt( q ), vertices( pv ), shifted_source( fs ),
+        shifted_quadrant( fq )
       { is_vertex_query = ( fs != query_pt ); }
     bool operator () ( int vdx1, int vdx2 ) const
       { return less( vertices->at( vdx1 ), vertices->at( vdx2 ) ); }
@@ -570,6 +636,55 @@ private:
     {
       for ( int i = range.begin(); i != range.end(); i++ )
         algo->compute_visibility_partition( i );
+    }
+  };
+
+  class Parallel_init_quadrant
+  {
+  private:
+    Parallel_rotational_sweep_visibility_2 * algo;
+  public:
+    Parallel_init_quadrant ( Parallel_rotational_sweep_visibility_2 * a  )
+      : algo( a )
+      {}
+    void operator () ( const tbb::blocked_range<int>& range ) const
+    {
+      for ( int i = range.begin(); i != range.end(); i++ )
+        algo->init_quadrant_each_vertex( i );
+    }
+  };
+
+  class Parallel_init_orientation
+  {
+  private:
+    Parallel_rotational_sweep_visibility_2 * algo;
+  public:
+    Parallel_init_orientation ( Parallel_rotational_sweep_visibility_2 * a  )
+      : algo( a )
+      {}
+    void operator () ( const tbb::blocked_range<int>& range ) const
+    {
+      for ( int i = range.begin(); i != range.end(); i++ )
+        algo->init_orientation_each_edge( i );
+    }
+  };
+
+  class Parallel_do_intersect_edge
+  {
+  private:
+    Parallel_rotational_sweep_visibility_2 * algo;
+    const Point_2& dp;
+    std::vector<int>& results;
+  public:
+    Parallel_do_intersect_edge ( Parallel_rotational_sweep_visibility_2 * a,
+                                 const Point_2& p,
+                                 std::vector<int>& r  )
+      : algo( a ), dp( p ), results( r )
+      {}
+    void operator () ( const tbb::blocked_range<int>& range ) const
+    {
+      for ( int i = range.begin(); i != range.end(); i++ )
+        results[i] = algo->do_intersect_edge( dp, i );
     }
   };
 #endif
@@ -606,39 +721,78 @@ private:
     int edge_base = vs.size();
     do {
       assert( curr->face() == e1->face() );
-      vs.push_back( Vertex_type( query_pt, curr->source() ) );
-      es.push_back( Edge_type( query_pt, curr, vs.size()-1, vs.size() ) );
+      vs.push_back( Vertex_type( curr->source() ) );
+      es.push_back( Edge_type( vs.size()-1, vs.size() ) );
     } while ( ++curr != circ );
     es.back().set_index( es.back().source_index(), edge_base );
   }
 
-  void compute_flipped_source ()
+  void compute_shifted_source ()
   {
     if ( query_type != VERTEX_QUERY ) {
-      flipped_source = query_pt;
-      flipped_quadrant = 0;
+      shifted_source = query_pt;
+      shifted_quadrant = 0;
     } else {
-      Vertex_type vt( query_pt, query_edge->next()->target() );
+      Vertex_type vt( query_edge->next()->target() );
+      vt.init_quadrant( query_pt );
       if ( is_small_cone ) {
-        flipped_source = Point_2( query_pt.x() + query_pt.x() - vt.point().x(),
+        shifted_source = Point_2( query_pt.x() + query_pt.x() - vt.point().x(),
                                   query_pt.y() + query_pt.y() - vt.point().y() );
-        flipped_quadrant = ( vt.quadrant() + 2 ) % 4;
+        shifted_quadrant = ( vt.quadrant() + 2 ) % 4;
       } else {
-        flipped_source = vt.point();
-        flipped_quadrant = vt.quadrant();
+        shifted_source = vt.point();
+        shifted_quadrant = vt.quadrant();
       }
     }
   }
+
+  void init_quadrant_each_vertex( int i )
+    { vs[i].init_quadrant( query_pt ); }
+  void init_quadrant_parallel( CGAL::Sequential_tag )
+  {
+    for ( int i = 0; i < vs.size(); i++ )
+      init_quadrant_each_vertex( i );
+  }
+  void init_quadrant_parallel( CGAL::Parallel_tag )
+  {
+#ifdef CGAL_LINKED_WITH_EBB
+    Parallel_init_quadrant init( this );
+    tbb::parallel_for( tbb::blocked_range<int>(0, vs.size() ), init );
+#else
+    init_quadrant_parallel( CGAL::Sequential_tag() );
+#endif
+  }
+
+  void init_orientation_each_edge( int i )
+  { 
+    es[i].init_orientation( query_pt, vs[es[i].source_index()].point(),
+                            vs[es[i].target_index()].point() );
+  }
+  void init_orientation_parallel( CGAL::Sequential_tag )
+  {
+    for ( int i = 0; i < es.size(); i++ )
+      init_orientation_each_edge( i );
+  }
+  void init_orientation_parallel( CGAL::Parallel_tag )
+  {
+#ifdef CGAL_LINKED_WITH_EBB
+    Parallel_init_orientation init( this );
+    tbb::parallel_for( tbb::blocked_range<int>(0, es.size() ), init );
+#else
+    init_orientation_parallel( CGAL::Sequential_tag() );
+#endif
+  }
+
   void sort_vertices( CGAL::Sequential_tag )
   {
-    Is_swept_earlier comp ( query_pt, &vs, flipped_source, flipped_quadrant );
+    Is_swept_earlier comp ( query_pt, &vs, shifted_source, shifted_quadrant );
     std::sort( good_vdx.begin(), good_vdx.end(), comp );
   }
 
   void sort_vertices( CGAL::Parallel_tag )
   {
 #ifdef CGAL_LINKED_WITH_TBB
-    Is_swept_earlier comp ( query_pt, &vs, flipped_source, flipped_quadrant );
+    Is_swept_earlier comp ( query_pt, &vs, shifted_source, shifted_quadrant );
     tbb::parallel_sort( good_vdx.begin(), good_vdx.end(), comp );
 #else
     sort_vertices( CGAL::Sequential_tag() );
@@ -765,16 +919,16 @@ private:
         if ( vs[good_vdx[i+1]].quadrant() == 0 ) {
           // (i+1)-th point is the query point
           orients[i] = CGAL::orientation( query_pt, vs[good_vdx[i]].point(),
-                                          flipped_source );
+                                          shifted_source );
           if ( orients[i] == CGAL::COLLINEAR &&
-               flipped_quadrant != vs[good_vdx[i]].quadrant() )
+               shifted_quadrant != vs[good_vdx[i]].quadrant() )
             orients[i] = CGAL::RIGHT_TURN;
         } else if ( vs[good_vdx[i]].quadrant() == 0 ) {
           // i-th point is the query point
-          orients[i] = CGAL::orientation( query_pt, flipped_source,
+          orients[i] = CGAL::orientation( query_pt, shifted_source,
                                           vs[good_vdx[i+1]].point() );
           if ( orients[i] == CGAL::COLLINEAR &&
-               flipped_quadrant != vs[good_vdx[i+1]].quadrant() )
+               shifted_quadrant != vs[good_vdx[i+1]].quadrant() )
             orients[i] = CGAL::RIGHT_TURN;
         } else {
           orients[i] = CGAL::orientation( query_pt, vs[good_vdx[i]].point(),
@@ -870,8 +1024,8 @@ private:
     int edge_base = vs.size();
     do {
       assert( curr->face() == fh );
-      vs.push_back( Vertex_type( query_pt, curr->source() ) );
-      es.push_back( Edge_type( query_pt, curr, vs.size()-1, vs.size() ) );
+      vs.push_back( Vertex_type( curr->source() ) );
+      es.push_back( Edge_type( vs.size()-1, vs.size() ) );
     } while ( ++curr != circ );
     es.back().set_index( es.back().source_index(), edge_base );
     for ( hi = fh->holes_begin(); hi != fh->holes_end(); hi++ ) {
@@ -879,8 +1033,8 @@ private:
       edge_base = vs.size();
       do {
         assert( curr->face() == fh );
-        vs.push_back( Vertex_type( query_pt, curr->source() ) );
-        es.push_back( Edge_type( query_pt, curr, vs.size()-1, vs.size() ) );
+        vs.push_back( Vertex_type( curr->source() ) );
+        es.push_back( Edge_type( vs.size()-1, vs.size() ) );
       } while ( ++curr != circ );
       es.back().set_index( es.back().source_index(), edge_base );
     }
@@ -888,12 +1042,16 @@ private:
     if ( query_type != FACE_QUERY )
       add_box();
 
+    init_quadrant_parallel( ConcurrencyTag() );
+
+    init_orientation_parallel( ConcurrencyTag() );
+
     good_vdx.reserve( vs.size() );
     for ( int i = 0; i < vs.size(); i++ )
       good_vdx.push_back( i );
 
     // sort vertices by their polar angle
-    compute_flipped_source();
+    compute_shifted_source();
     sort_vertices( ConcurrencyTag() );
 
     // Build the reverse indexes
@@ -916,20 +1074,38 @@ private:
   }
 
   // Precondtion: dp != any end point of the edge.
-  bool do_intersect_edge ( const Point_2& dp, const Edge_type& e )
+  int do_intersect_edge ( const Point_2& dp, int i )
   {
     CGAL::Orientation orient1, orient2;
-    if ( e.pass_query_pt() )    // ignore bad edges
-      return false;
-    if ( e.inward() || e.outward() )
-      return false;
+    if ( es[i].pass_query_pt() )    // ignore bad edges
+      return 0;
+    if ( es[i].inward() || es[i].outward() )
+      return 0;
     orient1 = CGAL::orientation( query_pt, dp,
-                                 vs[e.source_index()].point() );
+                                 vs[es[i].source_index()].point() );
     orient2 = CGAL::orientation( query_pt, dp,
-                                 vs[e.target_index()].point() );
-    if ( orient1 == orient2 )
-      return false;
-    return ( orient1 != e.orientation() );
+                                 vs[es[i].target_index()].point() );
+    if ( orient1 != orient2 && orient1 != es[i].orientation() )
+      return 1;
+    return 0;
+  }
+  void do_intersect_parallel ( const Point_2& dp,
+                               std::vector<int>& results,
+                               CGAL::Sequential_tag )
+  {
+    for ( int i = 0; i < es.size(); i++ )
+      results[i] = do_intersect_edge( dp, i );
+  }
+  void do_intersect_parallel ( const Point_2& dp,
+                               std::vector<int>& results,
+                               CGAL::Parallel_tag )
+  {
+#ifdef CGAL_LINKED_WITH_TBB
+    Parallel_do_intersect_edge obj( this, dp, results );
+    tbb::parallel_for( tbb::blocked_range<int>(0, es.size() ), obj );
+#else
+    do_intersect_parallel( dp, results, CGAL::Sequential_tag() );
+#endif
   }
 
   int default_cone_size ( CGAL::Sequential_tag )
@@ -939,20 +1115,18 @@ private:
 
   void partition_cones ()
   {
-    typedef boost::unordered_set<int> edge_container;
-    typedef typename edge_container::const_iterator edge_iterator;
-    edge_container active_edges;
-    edge_iterator eit;
+    Intersection_edges active_edges( es.size() );
+    int curr;
 
     cones.clear();
 
     // Determine the first ray
     Point_2 dp;
     if ( vs[good_vdx.back()].quadrant() == 0 ) {
-      if ( flipped_quadrant < 4 )
+      if ( shifted_quadrant < 4 )
         dp = query_pt + Vector_2( 1, -1 );
       else
-        dp = flipped_source + Vector_2( 1, 0 );
+        dp = shifted_source + Vector_2( 1, 0 );
     } else if ( vs[good_vdx.back()].quadrant() < 4 ) {
       dp = query_pt + Vector_2( 1, -1 );
     } else {
@@ -960,10 +1134,17 @@ private:
     }
 
     // Initialize
+    std::vector<int> is( es.size(), 0 );
+    /*
+     * There is a bug here. When I verified the intersection parallelly,
+     * the program crashed. Thus, I use the Sequential_tag here.
+     * I will solve this one later.
+    do_intersect_parallel( dp, is, ConcurrencyTag() );
+    */
+    do_intersect_parallel( dp, is, CGAL::Sequential_tag() );
     for ( int i = 0; i < es.size(); i++ ) {
-      if ( do_intersect_edge( dp, es[i] ) ) {
+      if ( is[i] != 0 )
         active_edges.insert( i );
-      }
     }
 
     // initialize the first cone
@@ -973,8 +1154,10 @@ private:
     if ( cone_next + 16 >= vs.size() )
       cone_next = vs.size();
     cones.push_back( Cone( cone_base, cone_next ) );
-    for ( eit = active_edges.begin(); eit != active_edges.end(); eit++ )
-      cones.back().insert( *eit );
+    for ( curr = active_edges.begin(); curr != active_edges.end();
+          curr = active_edges.next( curr ) ) {
+      cones.back().insert( curr );
+    }
     if ( cone_next == vs.size() )
       return;
 
@@ -986,8 +1169,10 @@ private:
         if ( cone_next + 16 >= good_vdx.size() )
           cone_next = good_vdx.size();
         cones.push_back( Cone( cone_base, cone_next ) );
-        for ( eit = active_edges.begin(); eit != active_edges.end(); eit++ )
-          cones.back().insert( *eit );
+        for ( curr = active_edges.begin(); curr != active_edges.end();
+              curr = active_edges.next( curr ) ) {
+          cones.back().insert( curr );
+        }
         if ( cone_next == good_vdx.size() )
           break;
       }
@@ -1000,7 +1185,7 @@ private:
         int edx = incident[j].second;
         if ( es[edx].pass_query_pt() )
           continue;   // ignore bad edges
-        if ( !active_edges.count( edx ) ) {
+        if ( !active_edges.has( edx ) ) {
           active_edges.insert( edx );
         } else {
           active_edges.erase( edx );
@@ -1361,7 +1546,6 @@ public:
 
     conditional_regularize( arr_out, Regularization_tag() );
 
-    conditional_regularize( arr_out, Regularization_tag() );
     if ( arr_out.faces_begin()->is_unbounded() )
       return ++arr_out.faces_begin();
     else
@@ -1425,8 +1609,8 @@ private:
   Arrangement_2 arr_box;
 
   bool is_small_cone;
-  Point_2 flipped_source;
-  int flipped_quadrant;
+  Point_2 shifted_source;
+  int shifted_quadrant;
 };
 
 } // end namespace CGAL
