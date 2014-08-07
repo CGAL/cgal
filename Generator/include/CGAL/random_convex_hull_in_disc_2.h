@@ -25,7 +25,6 @@
 #ifndef CGAL_RANDOM_CONVEX_HULL_DISC_H
 #define CGAL_RANDOM_CONVEX_HULL_DISC_H
 #include <boost/random.hpp>
-
 //#include <cmath>
 #include <CGAL/Polygon_2_algorithms.h>
 
@@ -36,8 +35,6 @@ struct compare_points_angle {
   bool operator()(const P& p, const P& q) {
     P zero(0,0);
     Traits traits;
-    //typedef typename Traits::Left_turn_2 Left_turn;
-    //Left_turn left_turn = traits.left_turn_2_object();
     typedef typename Traits::Orientation_2 Orientation_2;
     Orientation_2 orientation_2=traits.orientation_2_object();
     typedef typename Traits::Compare_y_2 Compare_y_2;
@@ -45,7 +42,7 @@ struct compare_points_angle {
 
     if (compare_y_2(p, zero) == LARGER ){
       if (compare_y_2(q, zero)==LARGER)
-        return (orientation_2(zero,p,q)==LEFT_TURN);//left_turn(zero, p, q);
+        return (orientation_2(zero,p,q)==LEFT_TURN);
       else
         return false;
 
@@ -53,7 +50,7 @@ struct compare_points_angle {
       if (compare_y_2(q,zero)==LARGER)
         return true;
       else
-        return (orientation_2(zero,p,q)==LEFT_TURN);//left_turn(zero, p, q);
+        return (orientation_2(zero,p,q)==LEFT_TURN);
     }
   }
 };
@@ -64,8 +61,8 @@ void generate_points_annulus(long n, double a, double b, double small_radius,
                              double big_radius, std::list<P>& l,
                              GEN& gen) {  // generate n points between a and b
   if (n > 1) {
-    boost::random::binomial_distribution<long> bin_distribution(n, .5);
-    boost::random::variate_generator<GEN&, boost::binomial_distribution<long> >
+    boost::binomial_distribution<long> bin_distribution(n, .5);
+    boost::variate_generator<GEN&, boost::binomial_distribution<long> >
         g(gen, bin_distribution);
     long nb = g();
     generate_points_annulus(nb, a, (a + b) / 2.0, small_radius, big_radius, l,
@@ -75,6 +72,19 @@ void generate_points_annulus(long n, double a, double b, double small_radius,
   }
   if (n == 1)  // generation of a point
   {
+
+    #if BOOST_VERSION < 104700
+
+    boost::uniform_real<double> random_squared_radius_distribution(
+        small_radius * small_radius / (big_radius * big_radius), 1);
+    boost::uniform_real<double> random_angle_distribution(a, b);
+    boost::variate_generator<
+        GEN&, boost::uniform_real<double> > random_angle(gen, random_angle_distribution);
+    boost::variate_generator<
+        GEN&, boost::uniform_real<double> > random_squared_radius(gen, random_squared_radius_distribution);
+
+    #else
+
     boost::random::uniform_real_distribution<double> random_squared_radius_distribution(
         small_radius * small_radius / (big_radius * big_radius), 1);
 
@@ -83,9 +93,12 @@ void generate_points_annulus(long n, double a, double b, double small_radius,
         GEN&, boost::random::uniform_real_distribution<double> > random_angle(gen, random_angle_distribution);
     boost::random::variate_generator<
         GEN&, boost::random::uniform_real_distribution<double> > random_squared_radius(gen, random_squared_radius_distribution);
+
+    #endif
+
     double alpha = random_angle();
     double r = big_radius * std::sqrt(random_squared_radius());
-    typedef Creator_uniform_2<double, P> Creator;
+    typedef  Creator_uniform_2<double, P> Creator;
     Creator creator;
     typedef typename Creator::argument_type T;
     l.push_back(creator(T(r * cos(alpha)), T(r * std::sin(alpha))));
@@ -107,29 +120,29 @@ void Graham_without_sort_2(std::list<P>& l, const Traits& traits) {
      //typedef typename Traits::Left_turn_2 Left_turn;
      //Left_turn left_turn = traits.left_turn_2_object();
     typedef typename Traits::Orientation_2 Orientation_2;
+    typedef typename std::list<P>::iterator Iterator;
     Orientation_2 orientation_2=traits.orientation_2_object();
 
      typedef typename Traits::Compare_x_2 Compare_x_2;
      Compare_x_2 compare_x_2=traits.compare_x_2_object();
 
-    typename std::list<P>::iterator pmin = l.begin();
-    for (typename std::list<P>::iterator it = l.begin(); it != l.end(); ++it) {
+    Iterator pmin = l.begin();
+    for (Iterator it = l.begin(); it != l.end(); ++it) {
       //if ((*pmin).x() > (*it).x()) {
 
       if (compare_x_2(*pmin, *it) == LARGER){
         pmin = it;
       }
     }  //*pmin is the extremal point on the left
-    typename std::list<P>::iterator u = pmin;
-    typename std::list<P>::iterator u_next = u;
+    Iterator u = pmin;
+    Iterator u_next = u;
     Cyclic_increment(u_next, l);
 
-    typename std::list<P>::iterator u_next_next = u_next;
+    Iterator u_next_next = u_next;
     Cyclic_increment(u_next_next, l);
 
     while (u_next != pmin) {
 
-      //if (left_turn(*u, *u_next, *u_next_next)) {
       if (orientation_2(*u,*u_next,*u_next_next)==LEFT_TURN){
         Cyclic_increment(u, l);
         Cyclic_increment(u_next, l);
@@ -159,7 +172,6 @@ void random_convex_hull_in_disc_2(std::size_t n, double radius, std::list<typena
                                   GEN& gen, const Traits& traits,
                                   bool fast = true) {
   CGAL_precondition(n >= 3);
-  // typedef typename Kernel_traits<P>::Kernel K;
   typedef typename Traits::Point_2 P;
   typedef typename Traits::FT FT;
   std::size_t simulated_points = 0;
@@ -184,7 +196,7 @@ void random_convex_hull_in_disc_2(std::size_t n, double radius, std::list<typena
     Graham_without_sort_2(l, traits);
   } while ((bounded_side_2(l.begin(), l.end(), zero, traits) !=
             ON_BOUNDED_SIDE) &&
-           (simulated_points < n));  // initialisation such that 0 in P_n
+           (simulated_points < n));  // initialization such that 0 in P_n
 
   std::size_t T = n;
   if (!fast) T = static_cast<std::size_t>(std::floor(n / std::pow(std::log(n), 2)));
@@ -195,14 +207,12 @@ void random_convex_hull_in_disc_2(std::size_t n, double radius, std::list<typena
     {
       typename std::list<P>::iterator it = l.begin();
       while (compare_y_2(*it,zero) == LARGER){
-      //while (to_double((*it).y()) > 0) {
         l.push_back(*it);
         l.pop_front();
         it = l.begin();
       }
       it = l.end();
       --it;  // last element
-     // while (to_double((*it).y()) < 0) {
       while (compare_y_2(*it,zero) == SMALLER){
         l.push_front(*it);
         l.pop_back();
@@ -219,23 +229,21 @@ void random_convex_hull_in_disc_2(std::size_t n, double radius, std::list<typena
       for (; it != l.end();
            ++it, Cyclic_increment(it2, l)) {  // computation of annulus
         typename Traits::Segment_2 s(*it, *it2);
-        //double temp = to_double(squared_distance(s, zero));
         FT temp=squared_distance(s,zero);
         if ( compare(squared_small_radius,temp) == LARGER ) squared_small_radius=temp;
-        //if (squared_small_radius > temp) squared_small_radius = temp;
       }
     }  // squared_small_radius=squared small radius of the annulus
 
     FT p_disc = squared_small_radius / squared_radius;
-    std::size_t nb;
+    long nb;
     if (simulated_points < T) {
-      nb = std::min(simulated_points, n - simulated_points);
+      nb = static_cast<long>(std::min(simulated_points, n - simulated_points));
     } else {
-      nb = std::min(T, n - simulated_points);
+      nb = static_cast<long>(std::min(T, n - simulated_points));
     }
-    boost::random::binomial_distribution<long> dbin(nb, to_double(p_disc));
-    boost::random::variate_generator<
-        GEN&, boost::random::binomial_distribution<long> > bin(gen, dbin);
+    boost::binomial_distribution<long> dbin(nb, to_double(p_disc));
+    boost::variate_generator<
+        GEN&, boost::binomial_distribution<long> > bin(gen, dbin);
 
     // How many points are falling in the small disc and wont be generated:
     long k_disc = bin();

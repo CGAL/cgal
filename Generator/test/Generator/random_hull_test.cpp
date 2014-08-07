@@ -14,15 +14,23 @@ main( )
 {
 
 
-  Polygon_2 p;
+  Polygon_2 p,q;
   int n( 1000);
-  boost::random::mt19937 gen;
+  boost::mt19937 gen(0);
 
   // build random hull from n random points in a disc:
-  random_convex_hull_in_disc_2(n,1.0,gen,std::back_inserter(p),K());
+  random_convex_hull_in_disc_2(n,1.0,gen,std::back_inserter(p),K(), true);
 
   // check convexity:
   if ( ! p.is_convex()) {
+    std::cerr << "ERROR: polygon is not convex." << std::endl;
+    return 1;
+  }
+
+  // build random hull from n random points in a disc:
+  random_convex_hull_in_disc_2(n,1.0,gen,std::back_inserter(q),K(), false);
+  // check convexity:
+  if ( ! q.is_convex()) {
     std::cerr << "ERROR: polygon is not convex." << std::endl;
     return 1;
   }

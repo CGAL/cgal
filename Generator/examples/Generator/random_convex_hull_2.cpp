@@ -15,7 +15,7 @@ int main( )
 {
    int N=10000;
    std::vector<Point> v;
-   boost::random::mt19937 gen;
+   boost::mt19937 gen;
    gen.seed(time(0));
 
    random_convex_hull_in_disc_2(N,RADIUS,gen,std::back_inserter(v),K());
