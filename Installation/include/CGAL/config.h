@@ -390,6 +390,8 @@ using std::max;
 #if defined(CGAL_HAS_THREADS) && CGAL_USE_LEDA
 #  define LEDA_MULTI_THREAD 1
 #endif
+// Support for LEDA_numbers on Windows
+#define LEDA_NUMBERS_DLL 1
 
 // Helper macros to disable macros
 #if defined(__clang__) || (BOOST_GCC >= 40600)
