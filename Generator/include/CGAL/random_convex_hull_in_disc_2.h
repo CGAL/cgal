@@ -25,6 +25,7 @@
 #ifndef CGAL_RANDOM_CONVEX_HULL_DISC_H
 #define CGAL_RANDOM_CONVEX_HULL_DISC_H
 #include <boost/random.hpp>
+#include <CGAL/config.h>
 //#include <cmath>
 #include <CGAL/Polygon_2_algorithms.h>
 
@@ -128,8 +129,6 @@ void Graham_without_sort_2(std::list<P>& l, const Traits& traits) {
 
     Iterator pmin = l.begin();
     for (Iterator it = l.begin(); it != l.end(); ++it) {
-      //if ((*pmin).x() > (*it).x()) {
-
       if (compare_x_2(*pmin, *it) == LARGER){
         pmin = it;
       }
@@ -184,7 +183,7 @@ void random_convex_hull_in_disc_2(std::size_t n, double radius, std::list<typena
 
 
   do {  // Initialization
-    std::size_t init =
+    long init =
         std::min(static_cast<std::size_t>(100), n - simulated_points);
     
     generate_points_annulus(init, -CGAL_PI, CGAL_PI, 0, radius, l,
