@@ -23,10 +23,8 @@
 // Author(s)     : Remy Thomasse  <remy.thomasse@inria.fr>
 
 #ifndef CGAL_RANDOM_CONVEX_HULL_DISC_H
-#define CGAL_RANDOM_CONVEX_HULL_DISC_H
+#define CGAL_RANDOM_CONVEX_HULL_DISC_H 1
 #include <boost/random.hpp>
-#include <CGAL/config.h>
-//#include <cmath>
 #include <CGAL/Polygon_2_algorithms.h>
 
 namespace CGAL {
@@ -184,7 +182,7 @@ void random_convex_hull_in_disc_2(std::size_t n, double radius, std::list<typena
 
   do {  // Initialization
     long init =
-        std::min(static_cast<std::size_t>(100), n - simulated_points);
+        static_cast<long>((std::min)(static_cast<std::size_t>(100), n - simulated_points));
     
     generate_points_annulus(init, -CGAL_PI, CGAL_PI, 0, radius, l,
                             gen);
@@ -236,9 +234,9 @@ void random_convex_hull_in_disc_2(std::size_t n, double radius, std::list<typena
     FT p_disc = squared_small_radius / squared_radius;
     long nb;
     if (simulated_points < T) {
-      nb = static_cast<long>(std::min(simulated_points, n - simulated_points));
+      nb = static_cast<long>((std::min)(simulated_points, n - simulated_points));
     } else {
-      nb = static_cast<long>(std::min(T, n - simulated_points));
+      nb = static_cast<long>((std::min)(T, n - simulated_points));
     }
     boost::binomial_distribution<long> dbin(nb, to_double(p_disc));
     boost::variate_generator<

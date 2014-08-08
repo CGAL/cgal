@@ -285,8 +285,8 @@ MainWindow::on_actionGeneratePolytopeInDisc_triggered()
     bool ok = false;
     const int number_of_points =
     QInputDialog::getInteger(this,
-                             tr("Number of random points"),
-                             tr("Enter number of random points"),
+                             tr("Number of random points in the disc"),
+                             tr("Enter number of random points.\nThe polytope will be the convex hull of these points."),
                              100,
                              0,
                              (std::numeric_limits<int>::max)(),
@@ -302,7 +302,7 @@ MainWindow::on_actionGeneratePolytopeInDisc_triggered()
     
     segments.reserve(segments.size() + 100);
 
-    CGAL::random_convex_hull_in_disc_2(number_of_points,100,gen,std::back_inserter(points),K());
+    CGAL::random_convex_hull_in_disc_2(number_of_points,radius,gen,std::back_inserter(points),K());
     std::vector<Point_2>::iterator it2=points.begin();
     for(std::vector<Point_2>::iterator it=points.begin();it!=points.end();it++){
         it2++;
@@ -313,7 +313,7 @@ MainWindow::on_actionGeneratePolytopeInDisc_triggered()
 
 
     // default cursor
-    QApplication::restoreOverrideCursor();std::cout<<"OK";
+    QApplication::restoreOverrideCursor();
     
     emit(changed());
 }
