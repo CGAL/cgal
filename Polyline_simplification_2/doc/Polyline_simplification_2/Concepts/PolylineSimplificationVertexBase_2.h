@@ -3,7 +3,7 @@
 \ingroup PkgPolylineSimplification2Concepts
 \cgalConcept
 
-Thr polyline simplification algorithm stores in the vertices
+The polyline simplification algorithm stores in the vertices
 whether a vertex can be removed, and the cost of the removal.
 
 \cgalRefines `TriangulationVertexBase_2` 
@@ -15,7 +15,7 @@ Defines the same types as the `TriangulationVertexBase_2` concept
 \cgalHasModel `CGAL::Polyline_simplification_2::Vertex_base_2<Vb>` 
 
 \sa `TriangulationFaceBase_2` 
-\sa `CGAL::Polyline_constrained_triangulation_2<CDT>` 
+\sa `CGAL::Constrained_triangulation_plus_2<Tr>`
 
 */
 

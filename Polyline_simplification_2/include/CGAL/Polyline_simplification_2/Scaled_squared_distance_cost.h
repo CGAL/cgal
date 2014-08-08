@@ -39,20 +39,21 @@ public:
   /// Initializes the cost function.
   Scaled_squared_distance_cost() {}
 
-  /// Returns the maximal square distances between each point along the original subpolyline,
-  /// given by the range `[original_subpolyline_vertices_begin,original_subpolyline_vertices_end)`,
+  /// Returns the maximum of the square distances between each point along the original subpolyline
+  /// between `p` and `r`,
   /// and the straight line segment `p->r` divided by the shortest squared distance between
   /// that segment and each of the vertices adjacent to `q`.
-    template<class PolylineConstraintTriangulation, class CVI>  
-    boost::optional<typename PolylineConstraintTriangulation::Geom_traits::FT> 
-    operator()( PolylineConstraintTriangulation const& pct
-                                  , CVI p
-                                  , CVI q
-                                  , CVI r) const
+    template<class Tr>
+    boost::optional<typename CGAL::Constrained_triangulation_plus_2<Tr>::Geom_traits::FT>
+    operator()(const CGAL::Constrained_triangulation_plus_2<Tr>& pct
+                                  , typename CGAL::Constrained_triangulation_plus_2<Tr>::Vertices_in_constraint_iterator p
+                                  , typename CGAL::Constrained_triangulation_plus_2<Tr>::Vertices_in_constraint_iterator q
+                                  , typename CGAL::Constrained_triangulation_plus_2<Tr>::Vertices_in_constraint_iterator r) const
   {
-    typedef typename PolylineConstraintTriangulation::Vertex_handle Vertex_handle;
-    typedef typename PolylineConstraintTriangulation::Vertex_circulator Vertex_circulator;
-    typedef typename PolylineConstraintTriangulation::Geom_traits Geom_traits ;
+    typedef typename CGAL::Constrained_triangulation_plus_2<Tr>::Points_in_constraint_iterator Points_in_constraint_iterator;
+    typedef typename CGAL::Constrained_triangulation_plus_2<Tr>::Vertex_handle Vertex_handle;
+    typedef typename CGAL::Constrained_triangulation_plus_2<Tr>::Vertex_circulator Vertex_circulator;
+    typedef typename CGAL::Constrained_triangulation_plus_2<Tr>::Geom_traits Geom_traits ;
     typedef typename Geom_traits::FT                                  FT;
     typedef typename Geom_traits::Compute_squared_distance_2 Compute_squared_distance;
     typedef typename Geom_traits::Construct_segment_2        Construct_segment;
@@ -68,10 +69,11 @@ public:
     Segment lP_R = construct_segment(lP, lR) ;
 
     FT d1 = 0.0;
-    ++p;
-
-    for ( ;p != r; ++p )
-      d1 = (std::max)(d1, compute_squared_distance( lP_R, (*p)->point() ) ) ;
+    Points_in_constraint_iterator pp(p), rr(r);
+    ++pp;
+    
+    for ( ;pp != rr; ++pp )
+      d1 = (std::max)(d1, compute_squared_distance( lP_R, *pp ) ) ;
 
     double d2 = (std::numeric_limits<double>::max)() ;
 

@@ -22,8 +22,13 @@
 
 namespace CGAL {
 
+
+#ifndef DOXYGEN_RUNNING
+
 template < class Tr >
 class Constrained_triangulation_plus_2;
+
+#endif
 
 namespace Polyline_simplification_2 {
 
