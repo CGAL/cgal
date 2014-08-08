@@ -188,6 +188,28 @@ ostream& operator<<(ostream& os, const Sqrt_field<Int>& nb)
   return os;
 }
 
+// begin MT - added to please libc++
+template<class Int>
+bool isnan(const Sqrt_field<Int>& x)
+{
+  return false; // MT TBD
+}
+
+template<class Int>
+bool isinf(const Sqrt_field<Int>& x)
+{
+  return false; // MT TBD
+}
+
+template<class Int>
+Sqrt_field<Int> copysign(const Sqrt_field<Int>& x, const Sqrt_field<Int>& y)
+{
+  if (y.abs()==y)
+    { return x;}
+  return -x;
+}
+// end MT - added to please libc++
+
 template<class Sqrt_field>
 class Octagon_matrix
 {
