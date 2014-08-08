@@ -336,8 +336,11 @@ public:
 		template<typename Query>
 		bool do_intersect(const Query& query) const;
 
-        bool do_intersect_join(const AABB_tree &other,
-                               const Point &Translation_point) const;
+        /// Returns `true`, iff at least one pair of primitives in the
+        /// two trees intersect. The `other` tree is translated by
+        /// `translation` before this is tested.
+        bool do_intersect(const AABB_tree &other,
+                          const Point &translation) const;
 
     /// Returns the number of primitives intersected by the
     /// query. \tparam Query must be a type for which
@@ -571,13 +574,18 @@ public:
 			}
 		}
 
+    /// \internal
         template <class Traversal_traits>
-        void join_traversal(const AABB_tree &other_tree, Traversal_traits &traits) const
+        void traversal(const AABB_tree &other_tree, Traversal_traits &traits) const
         {
-            if (!empty() && !other_tree.empty()) {
-                root_node()->template join_traversal<Traversal_traits>(*(other_tree.root_node()), traits, m_primitives.size(), other_tree.m_primitives.size(), true);
-            } else {
-                std::cerr << "AABB tree join traversal with empty tree" << std::endl;
+            if (empty() && other_tree.empty()) {
+                break
+            } else if (size() > 1 && other_tree.size() > 1) {
+                root_node()->template traversal<Traversal_traits>(*(other_tree.root_node()), traits, m_primitives.size(), other_tree.m_primitives.size(), true);
+            } else if (size() == 1) {
+                // TODO
+            } else if (other_tree.size() == 1) {
+                // TODO
             }
         }
 
@@ -1097,12 +1105,12 @@ public:
 
     template<typename Tr>
     bool
-        AABB_tree<Tr>::do_intersect_join(const AABB_tree &other,
-                                         const Point &Translation_point) const {
+        AABB_tree<Tr>::do_intersect(const AABB_tree &other,
+                                    const Point &translation) const {
         using namespace CGAL::internal::AABB_tree;
         typedef typename AABB_tree<Tr>::AABB_traits AABBTraits;
-        Do_intersect_joined_traits<AABBTraits> traversal_traits(Translation_point);
-        this->join_traversal(other, traversal_traits);
+        Do_intersect_joined_traits<AABBTraits> traversal_traits(translation);
+        this->traversal(other, traversal_traits);
         return traversal_traits.is_intersection_found();
     }
 

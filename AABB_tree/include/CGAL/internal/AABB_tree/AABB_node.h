@@ -82,12 +82,21 @@ public:
                  Traversal_traits& traits,
                  const std::size_t nb_primitives) const;
 
+  /**
+   * @param other_node root node of a tree which we want to traverse in parallel
+   * @param traits the traversal traits that define the traversal behaviour
+   * @param nb_primitives the number of primitives in this tree
+   * @param nb_primitives_other the number of primitives in the other tree
+   * @param first_stationary if true, the other_node is the translatable tree's root
+   *
+   * General traversal query for two trees.
+   */
   template<class Traversal_traits>
-  void join_traversal(const AABB_node &other_node,
-                      Traversal_traits &traits,
-                      const std::size_t nb_primitives_this,
-                      const std::size_t nb_primitives_other,
-                      bool first_stationary) const;
+  void traversal(const AABB_node &other_node,
+                 Traversal_traits &traits,
+                 const std::size_t nb_primitives,
+                 const std::size_t nb_primitives_other,
+                 bool first_stationary) const;
 
 private:
   typedef AABBTraits AABB_traits;
@@ -204,104 +213,73 @@ AABB_node<Tr>::traversal(const Query& query,
 template<typename Tr>
 template<class Traversal_traits>
 void
-AABB_node<Tr>::join_traversal(const AABB_node &other_node,
-                              Traversal_traits &traits,
-                              const std::size_t nb_primitives_this,
-                              const std::size_t nb_primitives_other,
-                              bool first_stationary) const {
-    // Recursive traversal
-    bool first_tree_small = nb_primitives_this <= 3;
-    bool second_tree_small = nb_primitives_other <= 3;
-    bool first_tree_even = nb_primitives_this == 2;
-    bool second_tree_even = nb_primitives_other == 2;
+AABB_node<Tr>::traversal(const AABB_node &other_node,
+                         Traversal_traits &traits,
+                         const std::size_t nb_primitives,
+                         const std::size_t nb_primitives_other,
+                         bool first_stationary) const {
 
-    if (first_tree_small && second_tree_small) {
-        traits.intersection(left_data(), other_node.left_data(), !first_stationary);
+    if (nb_primitives >= nb_primitives_other) {
+        switch(nb_primitives)
+        {
+            case 2: // Both trees contain 2 primitives, test all pairs
+                traits.intersection(left_data(), other_node.left_data(), first_stationary);
 
-        if (traits.go_further()) {
-            // 4 cases
-            if (first_tree_even) {
-                if (second_tree_even) { // 2 and 2
-                    traits.intersection(right_data(), other_node.right_data(), !first_stationary);
+                if (traits.go_further()) {
+                    traits.intersection(right_data(), other_node.right_data(), first_stationary);
+                }
 
-                    if (traits.go_further()) {
-                        traits.intersection(right_data(), other_node.left_data(), !first_stationary);
-                    }
+                if (traits.go_further()) {
+                    traits.intersection(right_data(), other_node.left_data(), first_stationary);
+                }
 
-                    if (traits.go_further()) {
-                        traits.intersection(left_data(), other_node.right_data(), !first_stationary);
-                    }
-                } else { // 2 and 3
-                    if (traits.do_intersect(right_data(), other_node.right_child(), !first_stationary) || traits.do_intersect(left_data(), other_node.right_child(), !first_stationary)) {
-                        other_node.right_child().join_traversal(*this, traits, 2, 2, !first_stationary);
+                if (traits.go_further()) {
+                    traits.intersection(left_data(), other_node.right_data(), first_stationary);
+                }
+                break;
+
+            case 3: // This tree contains 3 primitives, the other 3 or 2
+                // Both left children are primitives:
+                traits.intersection(left_data(), other_node.left_data(), first_stationary);
+                if (!traits.go_further()) {
+                    return;
+                }
+
+                // Test left child against all right leaves of the other tree
+                if (nb_primitives_other == 2) {
+                    traits.intersection(left_data(), other_node.right_data(), first_stationary);
+                } else {
+                    if (traits.do_intersect(left_data(), other_node.right_child(), first_stationary)) {
+                        traits.intersection(left_data(), other_node.right_child().left_data(), first_stationary);
+                        if (traits.go_further()) {
+                            traits.intersection(left_data(), other_node.right_child().right_data(), first_stationary);
+                        }
                     }
                 }
-            } else {
 
-                if (second_tree_even) { // 3 and 2
-                    if (traits.do_intersect(right_child(), other_node.right_data(), !first_stationary) || traits.do_intersect(right_child(), other_node.left_data(), !first_stationary)) {
-                        right_child().join_traversal(other_node, traits, 2, 2, first_stationary);
-                    }
-                } else { //3 and 3
-                    if (traits.do_intersect(right_child(), other_node.right_child(), !first_stationary)) {
-                        right_child().join_traversal(other_node.right_child(), traits, 2, 2, first_stationary);
-                    }
+                // Test right child against the other node
+                if( traits.go_further() && traits.do_intersect(right_child(), other_node, first_stationary) )
+                {
+                    right_child().traversal(other_node, traits, 2, nb_primitives_other, first_stationary);
+                }
+                break;
 
-                    if (traits.go_further() && traits.do_intersect(right_child(), other_node.left_data(), !first_stationary)) {
-                        right_child().join_traversal(other_node, traits, 2, 3, first_stationary);
-                    }
-
-                    if (traits.go_further() && traits.do_intersect(left_data(), other_node.right_child(), !first_stationary)) {
-                        other_node.right_child().join_traversal(*this, traits, 2, 3, !first_stationary);
+            default: // This tree has two node-children, test both against the other node
+                if( traits.do_intersect(left_child(), other_node, first_stationary) )
+                {
+                    left_child().traversal(other_node, traits, nb_primitives/2, nb_primitives_other, first_stationary);
+                    if( !traits.go_further()) {
+                        return;
                     }
                 }
-            }
+                if( traits.do_intersect(right_child(), other_node, first_stationary) )
+                {
+                    right_child().traversal(other_node, traits, nb_primitives-nb_primitives/2, nb_primitives_other, first_stationary);
+                }
         }
-    }
-
-    // first tree is 3 or smaller and second tree is larger
-    if (first_tree_small && !second_tree_small) {
-        if (traits.do_intersect(*this, other_node.left_child(), !first_stationary)) {
-            other_node.left_child().join_traversal(*this, traits, nb_primitives_other / 2, nb_primitives_this, !first_stationary);
-
-            if (traits.go_further() && traits.do_intersect(*this, other_node.right_child(), !first_stationary)) {
-                other_node.right_child().join_traversal(*this, traits, nb_primitives_other - nb_primitives_other / 2, nb_primitives_this, !first_stationary);
-            }
-        } else if (traits.do_intersect(*this, other_node.right_child(), !first_stationary)) {
-            other_node.right_child().join_traversal(*this, traits, nb_primitives_other - nb_primitives_other / 2, nb_primitives_this, !first_stationary);
-        }
-    }
-
-    // symetrical to previous case.
-    if (!first_tree_small && second_tree_small) {
-        if (traits.do_intersect(left_child(), other_node, !first_stationary)) {
-            left_child().join_traversal(other_node, traits, nb_primitives_this / 2, nb_primitives_other, first_stationary);
-
-            if (traits.go_further() && traits.do_intersect(right_child(), other_node, !first_stationary)) {
-                right_child().join_traversal(other_node, traits, nb_primitives_this - nb_primitives_this / 2, nb_primitives_other, first_stationary);
-            }
-        } else if (traits.do_intersect(right_child(), other_node, !first_stationary)) {
-            right_child().join_traversal(other_node, traits, nb_primitives_this - nb_primitives_this / 2, nb_primitives_other, first_stationary);
-        }
-    }
-
-    // both trees as larger then 3
-    if (!first_tree_small && !second_tree_small) {
-        if (traits.do_intersect(left_child(), other_node.left_child(), !first_stationary)) {
-            left_child().join_traversal(other_node.left_child(), traits, nb_primitives_this / 2, nb_primitives_other / 2, first_stationary);
-        }
-
-        if (traits.go_further() && traits.do_intersect(left_child(), other_node.right_child(), !first_stationary)) {
-            left_child().join_traversal(other_node.right_child(), traits, nb_primitives_this / 2, nb_primitives_other - nb_primitives_other / 2, first_stationary);
-        }
-
-        if (traits.go_further() && traits.do_intersect(right_child(), other_node.left_child(), !first_stationary)) {
-            right_child().join_traversal(other_node.left_child(), traits, nb_primitives_this - nb_primitives_this / 2, nb_primitives_other / 2, first_stationary);
-        }
-
-        if (traits.go_further() && traits.do_intersect(right_child(), other_node.right_child(), !first_stationary)) {
-            right_child().join_traversal(other_node.right_child(), traits, nb_primitives_this - nb_primitives_this / 2, nb_primitives_other - nb_primitives_other / 2, first_stationary);
-        }
+    } else {
+        // The other node contains more primitives. Call this method the other way around:
+        other_node.traversal(*this, traits, nb_primitives_other, nb_primitives, !first_stationary);
     }
 }
 

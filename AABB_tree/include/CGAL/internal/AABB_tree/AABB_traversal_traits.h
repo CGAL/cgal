@@ -284,14 +284,19 @@ private:
 };
 
 
+/**
+ * @class Do_intersect_joined_traits
+ */
 template<typename AABBTraits>
 class Do_intersect_joined_traits {
+
   typedef typename AABBTraits::Point_3 Point;
   typedef typename AABBTraits::Primitive Primitive;
-  typedef ::CGAL::AABB_node<AABBTraits> Node;
+  typedef AABB_node<AABBTraits> Node;
+
 public:
-    Do_intersect_joined_traits(const Point &point)
-        : m_is_found(false) , m_point(point) {
+
+    Do_intersect_joined_traits(const Point &point) : m_is_found(false) {
         m_traits_ptr = new AABBTraits(point);
     }
 
@@ -299,8 +304,8 @@ public:
         return !m_is_found;
     }
 
-    void intersection(const Primitive &primitive1, const Primitive &primitive2, bool toSwitch) {
-        if (!toSwitch) {
+    void intersection(const Primitive &primitive1, const Primitive &primitive2, bool first_stationary) {
+        if (first_stationary) {
             if (m_traits_ptr->do_intersect_object()(primitive1, primitive2)) {
                 m_is_found = true;
             }
@@ -311,24 +316,24 @@ public:
         }
     }
 
-    bool do_intersect(const Node &node_1, const Node &node_2, bool toSwitch) const {
-        if (!toSwitch) {
+    bool do_intersect(const Node &node_1, const Node &node_2, bool first_stationary) const {
+        if (first_stationary) {
             return m_traits_ptr->do_intersect_object()(node_1.bbox(), node_2.bbox());
         } else {
             return m_traits_ptr->do_intersect_object()(node_2.bbox(), node_1.bbox());
         }
     }
 
-    bool do_intersect(const Node &node_1, const Primitive &primitive2, bool toSwitch) const {
-        if (!toSwitch) {
+    bool do_intersect(const Node &node_1, const Primitive &primitive2, bool first_stationary) const {
+        if (first_stationary) {
             return m_traits_ptr->do_intersect_object()(node_1.bbox(), primitive2);
         } else {
             return m_traits_ptr->do_intersect_object()(primitive2, node_1.bbox());
         }
     }
 
-    bool do_intersect(const Primitive &primitive1, const Node &node_2, bool toSwitch) const {
-        if (!toSwitch) {
+    bool do_intersect(const Primitive &primitive1, const Node &node_2, bool first_stationary) const {
+        if (first_stationary) {
             return m_traits_ptr->do_intersect_object()(primitive1, node_2.bbox());
         } else {
             return m_traits_ptr->do_intersect_object()(node_2.bbox(), primitive1);
@@ -345,7 +350,6 @@ public:
 
 private:
     bool m_is_found;
-    Point m_point;
     AABBTraits *m_traits_ptr;
 };
 
