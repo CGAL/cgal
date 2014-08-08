@@ -21,7 +21,7 @@ public:
   typedef typename DT::Vertex_handle Vertex_handle;
   typedef typename DT::Point Point;
   
-  OriginalDomainNeighbors(QGraphicsScene& scene_, DT  * dt_, QObject* parent, Point p_, int color);
+  OriginalDomainNeighbors(QGraphicsScene& scene_, DT  * dt_, QObject* parent, Point p_ = Point(0, 0), int color = 0);
   
   template <typename InputIterator>
   void assign(InputIterator begin, InputIterator end)
@@ -49,8 +49,8 @@ template <typename DT, typename Translation>
 OriginalDomainNeighbors<DT, Translation>::OriginalDomainNeighbors(QGraphicsScene& ,
                                                                   DT * dt_,
                                                                   QObject* parent,
-                                                                  Point p_ = Point(0, 0),
-                                                                  int color_ = 0)
+                                                                  Point p_,
+                                                                  int color_)
   :  GraphicsViewInput(parent), dt(dt_), p(p_), color(color_)
 {
 }
