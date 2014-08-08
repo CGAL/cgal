@@ -38,7 +38,7 @@ namespace CGAL {
 \details Uses an optimized variation of Chen and Han's O(n^2) algorithm by Xin and Wang. 
 Refer to those respective papers for the details of the implementation.
  
-\tparam Traits The geometric traits for this algorithm, a model of FaceGraphShortestPathTraits concept.
+\tparam Traits The geometric traits for this algorithm, a model of PolyhedronShortestPathTraits concept.
 
 \tparam VIM A model of the boost ReadablePropertyMap concept, provides a vertex index property map.
 
@@ -190,6 +190,8 @@ private:
 #if !defined(NDEBUG)
 public:
 
+  /// \cond
+
   size_t peak_node_count()
   {
     return m_peakNodeCount;
@@ -229,14 +231,20 @@ public:
     
     return std::max(peakNodeUsage, peakQueueUsage);
   }
+  
+  /// \endcond
 
 #endif
 
 
 public:
 
+  /// \cond
+  
   /// This is just a placeholder for a proper debug output verbosity switch method
   bool m_debugOutput;
+  
+  /// \endcond
   
 private:
 
@@ -1804,6 +1812,8 @@ public:
   }
   
   /// @}
+  
+  /// \cond
 
   ~Polyhedron_shortest_path()
   {
@@ -1818,6 +1828,8 @@ public:
     assert(m_currentNodeCount == 0);
 #endif
   }
+  
+  /// \endcond
   
   /// \name Sequence Tree Construction
   /// @{
@@ -1924,7 +1936,7 @@ public:
     return m_faceLocations.size();
   }
   
-  /// @|
+  /// @}
   
   /// \name Shortest Distance Query
   /// @{

@@ -22,8 +22,6 @@
 #include <iterator>
 #include <fstream>
 
-#define UNUSED(X) (void)sizeof(X)
-
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef CGAL::Polyhedron_3<Kernel> Polyhedron_3;
 typedef CGAL::Polyhedron_shortest_path_default_traits<Kernel, Polyhedron_3> Traits;
@@ -43,11 +41,8 @@ Traits::Barycentric_coordinate random_coordinate(CGAL::Random& rand)
   return Traits::Barycentric_coordinate(u, v, Traits::FT(1.0) - u - v);
 }
 
-int main(int argc, char** argv)
+int main()
 {
-  UNUSED(argc);
-  UNUSED(argv);
-
   Polyhedron_3 polyhedron;
   
   std::ifstream inStream("data/elephant.off");
@@ -55,9 +50,9 @@ int main(int argc, char** argv)
   inStream >> polyhedron;
   
   inStream.close();
-
+  
   face_iterator facesStart, facesEnd;
-  boost::tie(facesStart, facesEnd) = CGAL::faces(polyhedron);
+  boost::tie(facesStart, facesEnd) = faces(polyhedron);
   
   std::vector<face_descriptor> faceList;
   

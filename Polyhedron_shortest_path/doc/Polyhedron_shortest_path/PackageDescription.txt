@@ -16,9 +16,8 @@
 \cgalPkgPicture{pkg-small.png}
 
 \cgalPkgSummaryBegin
-\cgalPkgAuthors{PACKAGE AUTHOR}
-\cgalPkgDesc{PACKAGE DESCRIPTION.
-The package provides ... }
+\cgalPkgAuthors{Stephen Kiazyk, Sébastien Loriot, Éric Colin de Verdière}
+\cgalPkgDesc{The package provides methods for computing the shortest path on the surface of 3D face graphs and polyhedra}
 \cgalPkgManuals{Chapter_Polyhedron_shortest_path,PkgPolyhedronShortestPath}
 \cgalPkgSummaryEnd
 

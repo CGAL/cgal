@@ -24,14 +24,11 @@
 #include <fstream>
 #include <iterator>
 
-#define UNUSED(X) (void)sizeof(X)
+typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 
-
-typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
-
-typedef OpenMesh::PolyMesh_ArrayKernelT< /* MyTraits*/> Mesh;
+typedef OpenMesh::PolyMesh_ArrayKernelT<> Mesh;
 
 typedef boost::graph_traits<Mesh> GraphTraits;
 typedef GraphTraits::vertex_descriptor vertex_descriptor;
@@ -56,12 +53,8 @@ typedef CGAL::Polyhedron_shortest_path<Traits,
   FaceIndexMap, 
   boost::property_map<Mesh, CGAL::vertex_point_t>::type> Polyhedron_shortest_path;
 
-
-int main(int argc, char** argv)
+int main()
 {
-  UNUSED(argc);
-  UNUSED(argv);
-
   Mesh polyhedron;
 
   OpenMesh::IO::read_mesh(polyhedron, "data/elephant.off");
@@ -122,8 +115,6 @@ int main(int argc, char** argv)
   Traits traits;
   Polyhedron_shortest_path shortestPaths(polyhedron, vertexIndexMap, halfedgeIndexMap, faceIndexMap, boost::get(boost::vertex_point, polyhedron), traits);
 
-  shortestPaths.m_debugOutput = true;
-  
   shortestPaths.construct_sequence_tree(targetFace, faceLocation);
   
   std::ofstream outPaths("polylines.cgal");

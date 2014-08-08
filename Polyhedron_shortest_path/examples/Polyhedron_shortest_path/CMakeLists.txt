@@ -74,6 +74,8 @@ create_single_source_cgal_program( "compute_isolines.cpp" )
 
 create_single_source_cgal_program( "shortest_paths_elephant.cpp" )
 
+create_single_source_cgal_program( "shortest_paths_elephant_with_id.cpp" )
+
 create_single_source_cgal_program( "shortest_paths_elephant_multiple_sources.cpp" )
 
 if(OpenMesh_FOUND)

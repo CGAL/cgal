@@ -20,8 +20,6 @@
 #include <fstream>
 #include <iterator>
 
-#define UNUSED(X) (void)sizeof(X)
-
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef CGAL::Polyhedron_3<Kernel> Polyhedron_3;
 typedef CGAL::Polyhedron_shortest_path_default_traits<Kernel, Polyhedron_3> Traits;
@@ -34,11 +32,8 @@ typedef GraphTraits::halfedge_iterator halfedge_iterator;
 typedef GraphTraits::face_descriptor face_descriptor;
 typedef GraphTraits::face_iterator face_iterator;
 
-int main(int argc, char** argv)
+int main()
 {
-  UNUSED(argc);
-  UNUSED(argv);
-
   Polyhedron_3 polyhedron;
   
   std::ifstream inStream("data/elephant.off");
@@ -67,8 +62,6 @@ int main(int argc, char** argv)
   Traits traits;
   Polyhedron_shortest_path shortestPaths(polyhedron, traits);
 
-  shortestPaths.m_debugOutput = true;
-  
   shortestPaths.construct_sequence_tree(targetFace, faceLocation);
   
   vertex_iterator verticesCurrent, verticesEnd;
