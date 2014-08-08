@@ -580,7 +580,7 @@ public:
     {
       if (empty() && other_tree.empty())
       {
-        break
+        return;
       }
       else if (size() > 1 && other_tree.size() > 1)
       {
