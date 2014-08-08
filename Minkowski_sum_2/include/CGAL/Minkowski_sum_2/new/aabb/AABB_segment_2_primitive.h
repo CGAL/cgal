@@ -3,22 +3,16 @@
 
 namespace CGAL {
 
+// Wraps around a Segment_2 and provides its iterator as Id
 template <class GeomTraits, class Iterator_, class ContainerType>
 class AABB_segment_2_primitive {
 
 public:
 
-    typedef typename GeomTraits::Point_2 Point;
-    typedef typename GeomTraits::Segment_2 Datum;
-    typedef ContainerType Container;
     typedef Iterator_ Id;
-
-private:
-
-    Id m_it;
-    Datum m_datum;
-
-public:
+    typedef typename GeomTraits::Segment_2 Datum;
+    typedef typename GeomTraits::Point_2 Point;
+    typedef ContainerType Container;
 
     AABB_segment_2_primitive() {}
 
@@ -31,18 +25,8 @@ public:
         m_datum = primitive.datum();
     }
 
-public:
-
-    Id &id() {
-        return m_it;
-    }
-
     const Id &id() const {
         return m_it;
-    }
-
-    Datum &datum() {
-        return m_datum;
     }
 
     const Datum &datum() const {
@@ -53,6 +37,12 @@ public:
     Point reference_point() const {
         return m_datum.source();
     }
+
+private:
+
+    Id m_it;
+    Datum m_datum;
+
 };
 
 } // namespace CGAL

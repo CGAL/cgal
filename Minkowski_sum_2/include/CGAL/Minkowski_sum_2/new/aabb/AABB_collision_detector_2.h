@@ -7,7 +7,9 @@
 
 namespace CGAL {
 
-template <class Kernel_, class Container_> class AABB_collision_detector_2 {
+// Tests whether two polygons P and Q overlap for different translations of Q.
+template <class Kernel_, class Container_>
+class AABB_collision_detector_2 {
 
 public:
 
@@ -25,6 +27,7 @@ public:
         : m_stationary_tree((p.edges_begin()), (p.edges_end())), m_translating_tree((q.edges_begin()), (q.edges_end())), m_p(q), m_q(p) {
     }
 
+    // Returns true iff the polygons' boundaries intersect or one polygon is completely inside of the other one. Q is translated by t.
     bool check_collision(const Point_2 &t) {
         if (m_stationary_tree.do_intersect_join(m_translating_tree, t)) {
             return true;
