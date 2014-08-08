@@ -25,8 +25,7 @@ namespace CGAL {
 // ----------------------------------------------------------------------------
 namespace internal {
 
-/// \cond SKIP_IN_MANUAL
-
+/// @cond SKIP_IN_MANUAL
 /// Computes the VCM for each point in the property map.
 /// The matrix is computed by intersecting the Voronoi cell
 /// of a point and a sphere whose radius is `R` and discretized
@@ -69,7 +68,9 @@ vcm_offset (ForwardIterator first, ///< iterator over the first input point.
         cov.push_back(c);
     }
 }
+/// @endcond
 
+/// @cond SKIP_IN_MANUAL
 // Convolve using a radius.
 template < class ForwardIterator,
            class PointPMap,
@@ -118,7 +119,9 @@ vcm_convolve (ForwardIterator first,
         ncov.push_back(m);
     }
 }
+/// @endcond
 
+/// @cond SKIP_IN_MANUAL
 // Convolve using neighbors.
 template < class ForwardIterator,
            class PointPMap,
@@ -171,7 +174,9 @@ vcm_convolve (ForwardIterator first,
         ncov.push_back(m);
     }
 }
+/// @endcond
 
+/// @cond SKIP_IN_MANUAL
 // Compute the VCM and make the convolution using a radius.
 template < class ForwardIterator,
            class PointPMap,
@@ -209,8 +214,7 @@ vcm_offset_and_convolve (ForwardIterator first,
                                k);
     }
 }
-
-/// \endcond
+/// @endcond
 
 } // namespace internal
 
@@ -218,7 +222,7 @@ vcm_offset_and_convolve (ForwardIterator first,
 // Public section
 // ----------------------------------------------------------------------------
 
-/// \ingroup PkgPointSetProcessing
+/// @cond SKIP_IN_MANUAL
 /// Estimates normal directions of the `[first, beyond)` range of points
 /// using the Voronoi Covariance Measure.
 /// The output normals are randomly oriented.
@@ -296,8 +300,18 @@ vcm_estimate_normals (ForwardIterator first, ///< iterator over the first input 
         i++;
     }
 }
+/// @endcond
 
-/// @cond SKIP_IN_MANUAL
+/// \ingroup PkgPointSetProcessing
+/// Estimates normal directions of the `[first, beyond)` range of points
+/// using the Voronoi Covariance Measure with a radius for the convolution.
+/// The output normals are randomly oriented.
+///
+/// @tparam ForwardIterator iterator over input points.
+/// @tparam PointPMap is a model of `ReadablePropertyMap` with a value_type = `Kernel::Point_3`.
+///        It can be omitted if ForwardIterator value_type is convertible to `Kernel::Point_3`.
+/// @tparam NormalPMap is a model of `WritablePropertyMap` with a value_type = `Kernel::Vector_3`.
+
 // This variant deduces the kernel from the point property map
 // and uses a radius for the convolution.
 template < typename ForwardIterator,
@@ -305,12 +319,14 @@ template < typename ForwardIterator,
            typename NormalPMap
 >
 void
-vcm_estimate_normals (ForwardIterator first,
-                      ForwardIterator beyond,
-                      PointPMap point_pmap,
-                      NormalPMap normal_pmap,
-                      double R,
-                      double r) {
+vcm_estimate_normals (ForwardIterator first, ///< iterator over the first input point.
+                      ForwardIterator beyond, ///< past-the-end iterator over the input points.
+                      PointPMap point_pmap, ///< property map: value_type of ForwardIterator -> Point_3.
+                      NormalPMap normal_pmap, ///< property map: value_type of ForwardIterator -> Vector_3.
+                      double R, ///< offset radius.
+                      double r ///< convolution radius.
+)
+{
     typedef typename boost::property_traits<PointPMap>::value_type Point;
     typedef typename Kernel_traits<Point>::Kernel Kernel;
     typedef typename Kernel::FT FT;
@@ -322,9 +338,17 @@ vcm_estimate_normals (ForwardIterator first,
                          Kernel(),
                          Covariance());
 }
-/// @endcond
 
-/// @cond SKIP_IN_MANUAL
+/// \ingroup PkgPointSetProcessing
+/// Estimates normal directions of the `[first, beyond)` range of points
+/// using the Voronoi Covariance Measure with a number of neighbors for the convolution.
+/// The output normals are randomly oriented.
+///
+/// @tparam ForwardIterator iterator over input points.
+/// @tparam PointPMap is a model of `ReadablePropertyMap` with a value_type = `Kernel::Point_3`.
+///        It can be omitted if ForwardIterator value_type is convertible to `Kernel::Point_3`.
+/// @tparam NormalPMap is a model of `WritablePropertyMap` with a value_type = `Kernel::Vector_3`.
+
 // This variant deduces the kernel from the point property map
 // and uses a number of neighbors for the convolution.
 template < typename ForwardIterator,
@@ -332,12 +356,14 @@ template < typename ForwardIterator,
            typename NormalPMap
 >
 void
-vcm_estimate_normals (ForwardIterator first,
-                      ForwardIterator beyond,
-                      PointPMap point_pmap,
-                      NormalPMap normal_pmap,
-                      double R,
-                      unsigned int nb_neighbors_convolve) {
+vcm_estimate_normals (ForwardIterator first, ///< iterator over the first input point.
+                      ForwardIterator beyond, ///< past-the-end iterator over the input points.
+                      PointPMap point_pmap, ///< property map: value_type of ForwardIterator -> Point_3.
+                      NormalPMap normal_pmap, ///< property map: value_type of ForwardIterator -> Vector_3.
+                      double R, ///< offset radius.
+                      unsigned int nb_neighbors_convolve ///< number of neighbors used during the convolution.
+)
+{
     typedef typename boost::property_traits<PointPMap>::value_type Point;
     typedef typename Kernel_traits<Point>::Kernel Kernel;
     typedef typename Kernel::FT FT;
@@ -350,7 +376,6 @@ vcm_estimate_normals (ForwardIterator first,
                          Covariance(),
                          nb_neighbors_convolve);
 }
-/// @endcond
 
 /// @cond SKIP_IN_MANUAL
 // This variant creates a default point property map = Identity_property_map

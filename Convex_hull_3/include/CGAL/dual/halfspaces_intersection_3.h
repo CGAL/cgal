@@ -30,7 +30,7 @@ namespace CGAL
                         public:
                         Build_primal_polyhedron (const Polyhedron_dual & dual,
                                                  Primal_point_3 o =
-                                                 Primal_point_3(0, 0, 0)) : _dual (dual), origin(o)
+                                                 Primal_point_3(CGAL::ORIGIN)) : _dual (dual), origin(o)
                         {}
 
                         void operator () (HDS &hds)

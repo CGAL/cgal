@@ -69,7 +69,7 @@ compute_rips_graph (Undirected_Graph& g,
     typedef typename K::FT FT;
 
     // KD-Tree
-    typedef typename CGAL::Search_traits_3<Kernel> Traits;
+    typedef typename CGAL::Search_traits_3<K> Traits;
     typedef typename CGAL::Kd_tree<Traits> Tree;
     typedef typename CGAL::Fuzzy_sphere<Traits> Fuzzy_sphere;
     Tree tree(points_on_edges.begin(), points_on_edges.end());

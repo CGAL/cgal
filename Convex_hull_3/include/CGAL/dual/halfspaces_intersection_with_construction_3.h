@@ -3,6 +3,7 @@
 
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Polyhedron_incremental_builder_3.h>
+#include <CGAL/Origin.h>
 #include <CGAL/convex_hull_3.h>
 
 namespace CGAL
@@ -14,11 +15,14 @@ namespace CGAL
                 public CGAL::Modifier_base<typename Polyhedron::HalfedgeDS>
         {
             typedef typename Polyhedron::HalfedgeDS HDS;
+            typedef typename Polyhedron::Traits::Point_3 Point_3;
             const Polyhedron &_primal;
+            Point_3 origin;
 
             public:
-            Build_dual_polyhedron (const Polyhedron & primal):
-                _primal (primal)
+            Build_dual_polyhedron (const Polyhedron & primal,
+                                   Point_3 o = Point_3(CGAL::ORIGIN)):
+                _primal (primal), origin(o)
             {}
 
             void operator () (HDS &hds)
@@ -45,7 +49,12 @@ namespace CGAL
                     typename Facet::Plane_3 p ( h->vertex()->point(),
                                                 h->next()->vertex()->point(),
                                                 h->next()->next()->vertex()->point());
-                    B.add_vertex(CGAL::ORIGIN + p.orthogonal_vector () / (-p.d()));
+                    // translate extreme vertex
+                    Point_3 extreme_p = CGAL::ORIGIN + p.orthogonal_vector () / (-p.d());
+                    Point_3 translated_extreme_p(extreme_p.x() + origin.x(),
+                                                 extreme_p.y() + origin.y(),
+                                                 extreme_p.z() + origin.z());
+                    B.add_vertex(translated_extreme_p);
                     extreme_points[it] = n;
                 }
 
@@ -72,24 +81,31 @@ namespace CGAL
     } // namespace internal
 
     template <class PlaneIterator, class Polyhedron>
-    void
-    halfspaces_intersection_with_construction_3(PlaneIterator pbegin,
-                                                PlaneIterator pend,
-                                                Polyhedron &P)
-        {
+    void halfspaces_intersection_with_construction_3(PlaneIterator pbegin,
+                                                     PlaneIterator pend,
+                                                     Polyhedron &P,
+                                                     typename Polyhedron::Traits::Point_3 const& origin = typename Polyhedron::Traits::Point_3(CGAL::ORIGIN))
+            {
             typedef typename Polyhedron::Traits::Kernel K;
             typedef typename K::Point_3 Point;
+            typedef typename K::Plane_3 Plane;
             typedef typename CGAL::internal::Build_dual_polyhedron<Polyhedron> Builder;
 
             // construct dual points to apply the convex hull
             std::vector<Point> dual_points;
-            for (PlaneIterator p = pbegin; p != pend; ++p)
-                dual_points.push_back(CGAL::ORIGIN + p->orthogonal_vector () / (-p->d()));
+            for (PlaneIterator p = pbegin; p != pend; ++p) {
+                // translate plane
+                Plane translated_p(p->a(),
+                                   p->b(),
+                                   p->c(),
+                                   p->d() + origin.x() * p->a() + origin.y() * p->b() + origin.z() * p->c());
+                dual_points.push_back(CGAL::ORIGIN + translated_p.orthogonal_vector () / (-translated_p.d()));
+            }
 
             Polyhedron ch;
             CGAL::convex_hull_3(dual_points.begin(), dual_points.end(), ch);
 
-            Builder build_dual (ch);
+            Builder build_dual (ch, origin);
             P.delegate(build_dual);
         }
 } // namespace CGAL

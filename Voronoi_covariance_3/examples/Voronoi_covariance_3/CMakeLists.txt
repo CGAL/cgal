@@ -24,6 +24,7 @@ if ( CGAL_FOUND )
   create_single_source_cgal_program( "convex_hull.cpp" )
   create_single_source_cgal_program( "convex_hull_translated.cpp" )
   create_single_source_cgal_program( "halfspaces_intersection.cpp" )
+  create_single_source_cgal_program( "halfspaces_intersection_with_construction.cpp" )
   create_single_source_cgal_program( "lloyd_algorithm.cpp" )
 
   find_package(Boost COMPONENTS program_options filesystem graph)
