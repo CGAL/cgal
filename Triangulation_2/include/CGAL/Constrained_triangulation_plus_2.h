@@ -18,6 +18,12 @@
 //
 // Author(s)     : Mariette Yvinec
 
+#ifndef CGAL_USE_OLD_CONSTRAINED_TRIANGULATION_PLUS_2_H
+
+#include <CGAL/Polyline_constrained_triangulation_2.h>
+
+#else 
+
 #ifndef CGAL_CONSTRAINED_TRIANGULATION_PLUS_2_H
 #define CGAL_CONSTRAINED_TRIANGULATION_PLUS_2_H
 
@@ -694,3 +700,5 @@ vertices_in_constraint_end(Vertex_handle va, Vertex_handle vb)
 #endif
 
 #endif //CGAL_CONSTRAINED_TRIANGULATION_PLUS_2_H
+
+#endif // CGAL_USE_OLD_CONSTRAINED_TRIANGULATION_PLUS_2_H

@@ -21,7 +21,7 @@ the overall software
 design of the 2D triangulations package. 
 The next sections present the different two dimensional triangulations classes
 available in \cgal: 
-basic triangulations (section \ref Section_2D_Triangulations_Basic),
+basic triangulations (Section \ref Section_2D_Triangulations_Basic),
 Delaunay triangulations
 (Section \ref Section_2D_Triangulations_Delaunay),
 regular triangulations
@@ -793,11 +793,12 @@ of vertices and the number of hidden vertices.
 
 A constrained triangulation is a triangulation of a set of points
 that has to include among its edges 
-a given set of segments joining the points. The corresponding 
-edges are called <I>constrained edges</I>.
+a given set of segments or polylines joining the points. The segments or 
+polylines are called *constraints*. The corresponding 
+edges are called *constrained edges*, or *sub-constraints*.
 
 The endpoints of constrained edges are of course vertices of the
-triangulation. However the triangulation may include
+triangulation. However, the triangulation may
 include other vertices as well.
 There are three versions of constrained triangulations.
 <UL>
@@ -812,27 +813,25 @@ In those versions, input constraints are allowed to be
 intersecting, overlapping or partially
 overlapping segments.
 The triangulation introduces additional vertices at each point that
-is the proper intersection points of two 
+is the proper intersection point of two 
 constraints. A single constraint intersecting other
-constraints will then appear as several edges in the triangulation.
-The two versions dealing with intersecting constraints differ
-in the way intersecting constraints are dealt with.
+constraints will then appear as several constrained edges in the triangulation.
+There are two ways to deal with intersecting constraints.
 <UL>
-<LI>One of them is
-designed to be robust when predicates are evaluated exactly but
-constructions (i. e. intersection computations) are
-approximate.
-<LI>The other one is designed to be used 
-with exact arithmetic (meaning exact
+<LI>The first one is robust when predicates are evaluated exactly but
+constructions (i. e. intersection computations) are approximate.
+<LI>The second one should be used with exact arithmetic (meaning exact
 evaluation of predicates and exact computation of intersections.)
-This last version finds its full efficiency when used in conjunction
-with a constraint hierarchy data structure (which allows one to avoid the
-cascading of intersection computations)
-as provided in the class
-`Constrained_triangulation_plus_2`. See
-section \ref Section_2D_Triangulations_Constrained_Plus.
 </UL>
 </UL>
+
+In order to retrieve the constrained edges of a constraint, or
+the constraints overlapping with a constrained edge, we provide
+the class `Constrained_triangulation_plus_2`. This class maintains
+a constraint hierarchy data structure. See
+Section \ref Section_2D_Triangulations_Constrained_Plus for details.
+This class should also be used when doing exact intersection computations
+as it avoids the cascading of intersection computations.
 
 \image html constraints.png
 \image latex constraints.png
@@ -852,13 +851,9 @@ and exact constructions are provided.
 
 The class `Constrained_triangulation_2<Traits,Tds, Itag>`
 inherits from `Triangulation_2<Traits,Tds>`.
-It defines an additional type `Constraint`
-to represent the constraints. A
-constraint is represented as a pair of points.
-
 A constrained triangulation can be created
-from a
-list of constrained edges.
+from a list of pairs of points which represent the constraints.
+
 The class `Constrained_triangulation_2<Traits,Tds,Itag>`
 overrides the insertion and removal of a point to take care of the
 information about constrained edges. The class also allows inline
@@ -908,7 +903,7 @@ constrained edges which tries to be as much Delaunay as possible.
 As constrained edges are not necessarily Delaunay edges,
 the triangles of a constrained Delaunay triangulation do not
 necessarily fulfill the empty circle property
-but they fulfill a weaker `constrained empty circle property`.
+but they fulfill a weaker *constrained empty circle property*.
 To state this property,
 it is convenient to think of constrained
 edges as blocking the view. Then, a triangulation is 
@@ -1001,11 +996,11 @@ Triangulation (in blue) of the domain delimited by the red polygons.
 
 \cgalExample{Triangulation_2/polygon_triangulation.cpp}
 
-\section Section_2D_Triangulations_Constrained_Plus Constrained Triangulations Plus 
+\section Section_2D_Triangulations_Constrained_Plus Constrained Triangulations with Constraint Hierarchy 
 
 The class `Constrained_triangulation_plus_2<Tr>`
 provides a constrained triangulation with an additional data
-structure called the constraint hierarchy 
+structure called the *constraint hierarchy* 
 that keeps track of the input constraints and of their refinement
 in the triangulation.
 The class `Constrained_triangulation_plus_2<Tr>`
@@ -1017,8 +1012,8 @@ When intersections of input constraints are supported,
 the base class constructs a triangulation of the arrangement
 of the constraints,
 introducing new vertices at each proper intersection
-points and refining the input constraints into sub-constraints
-which appear as edges (more precisely as constrained edges) of the
+point and refining the input constraints into sub-constraints.
+These sub-constraints are constrained edges of the
 triangulation. The data structure maintains for each 
 input constraint
 the sequence of intersection vertices added on this constraint.
@@ -1030,18 +1025,31 @@ The class `Constrained_triangulation_plus_2<Tr>`
 is especially useful when the base constrained triangulation class
 handles intersections of constraints and uses an exact number type,
 i.e.\ when its intersection tag is `Exact_intersections_tag`.
-Indeed in this case, the `Constrained_triangulation_plus_2<Tr>`
-is specially designed to avoid cascading in the computations of
-intersection points.
+In this case, the `Constrained_triangulation_plus_2<Tr>`
+avoids cascading in the computations of intersection points:
+The intersection of a segment and a constrained edge is
+computed with a segment overlapping the constained edge.
 
-\subsection Triangulation_2ExampleBuildingaTriangulated Example: Building a Triangulated Arrangement of Segments
+\subsection Triangulation_2ExampleBuildingaTriangulated Example: Building a Triangulated Arrangement of Polylines
 
-The following code inserts a set of intersecting constraint segments
-into a triangulation 
-and counts the number of constrained edges of the
-resulting triangulation.
+The following code inserts two polylines into a triangulation.
+Note that if the triangulation allows intersections we can have
+arbitrary complicated overlapping polylines.  They can share
+any number of edges, and a polyline may pass several times through 
+the same edge.  
 
-\cgalExample{Triangulation_2/constrained_plus.cpp}
+
+
+For an edge we can further find out how many and which polyline
+constraints pass through it. For an edge we can obtain an iterator
+range with value type `Constrained_triangulation_plus_2::Context`.
+From a context we can obtain the `Constrained_triangulation_plus_2::Constraint_id`, and an iterator
+pointing to the vertex in the polyline constraint that passes 
+through the edge.
+
+
+
+\cgalExample{Triangulation_2/polylines.cpp}
 
 \section Section_2D_Triangulations_Hierarchy The Triangulation Hierarchy 
 
@@ -1067,7 +1075,7 @@ the data structure remains small and achieves fast point location
 queries on real
 data. As proved in \cgalCite{d-iirdt-98}, this structure has an optimal behavior
 when it is built for Delaunay triangulations.
-However it can be used as well for other triangulations
+However, it can be used as well for other triangulations
 and the class `Triangulation_hierarchy_2<Tr>` is templated by a parameter
 which is to be instantiated by one of the \cgal triangulation
 classes.

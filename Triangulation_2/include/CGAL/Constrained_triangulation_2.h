@@ -146,10 +146,169 @@ public:
   Vertex_handle push_back(const Point& a);
 //   template < class InputIterator >
 //   std::ptrdiff_t insert(InputIterator first, InputIterator last);
+
+
+
+  // The iterator range [edge_it, edge_pteit) is a set of edges
+  // that delimit areas in the triangulation.
+  // This function writes the face handles that cover this
+  // area to the output iterator faces_it
+  template <class InputIterator, class OutputIterator>
+  void
+  get_bounded_faces(InputIterator edge_it, InputIterator edge_pteit,
+		    OutputIterator faces_it) const
+  {
+    Edge e;
+    Unique_hash_map<Face_handle,bool> visited;
+    std::stack<Face_handle> st;
+
+    for(; edge_it != edge_pteit; edge_it++){
+      e = *edge_it;
+      visited[e.first] = true;
+      st.push(e.first->neighbor(e.second));
+    }
+
+    while(! st.empty()){
+      Face_handle fh = st.top();
+      st.pop();
+      typename CGAL::Unique_hash_map<Face_handle, bool>::Data& data = visited[fh];    
+      if(! data) {
+	data = true;
+	*faces_it++ = fh;
+	for(int i = 0 ; i < 3 ; ++i){
+	  Face_handle n = fh->neighbor(i);
+	  if(! visited[n]) {
+	    st.push(n);
+	  }
+	}
+      }
+    }
+
+  }
+
+#if 1
+  template <class Segment_2>
+  static const Point& get_source(const Segment_2& segment){
+    return segment.source();
+  }
+  template <class Segment_2>
+  static const Point& get_target(const Segment_2& segment){
+    return segment.target();
+  }
+
+  static const Point& get_source(const Constraint& cst){
+    return cst.first;
+  }
+  static const Point& get_target(const Constraint& cst){
+    return cst.second;
+  }
+#endif
+
+  // A version of insert_constraint, that additionally writes
+  // the new faces in an output iterator
+  // We duplicate code, as to run this one with an Emptyset_iterator 
+  // is still too much overhead 
+template <class OutputIterator>
+void
+insert_constraint(Vertex_handle  vaa, Vertex_handle vbb, OutputIterator out)
+// forces the constrained [va,vb]
+// [va,vb] will eventually be splitted into several edges
+// if a vertex vc of t lies on segment ab
+// of if ab intersect some constrained edges
+{
+  CGAL_triangulation_precondition( vaa != vbb);
+  Vertex_handle vi;
+
+  Face_handle fr;
+  int i;
+  if(includes_edge(vaa,vbb,vi,fr,i)) {
+    mark_constraint(fr,i);
+    if (vi != vbb)  {
+      insert_constraint(vi,vbb,out);
+    }
+    return;
+  }
+
+  List_faces intersected_faces;
+  List_edges conflict_boundary_ab, conflict_boundary_ba;
+
+  bool intersection  = find_intersected_faces( vaa, vbb,
+			                       intersected_faces,
+					       conflict_boundary_ab,
+					       conflict_boundary_ba,
+					       vi);
+  if ( intersection) {
+    if (vi != vaa && vi != vbb) {
+      insert_constraint(vaa,vi,out); 
+      insert_constraint(vi,vbb,out); 
+     }
+    else {
+      insert_constraint(vaa,vbb,out);
+    }
+    return;
+  }
+  List_edges edges(conflict_boundary_ab);
+  std::copy(conflict_boundary_ba.begin(), conflict_boundary_ba.end(), std::back_inserter(edges));
+
+  typename List_edges::iterator last = edges.end();
+  --last;
+  for(typename List_edges::iterator it = edges.begin();
+      it != last;
+      ){
+    typename List_edges::iterator n = it;
+    ++n;
+    if(it->first == n->first->neighbor(n->second) ){
+      // remove dangling edge
+      edges.erase(it);
+      it = n;
+      ++n;
+      edges.erase(it);
+    }
+    it = n;
+  }
+  triangulate_hole(intersected_faces,
+		   conflict_boundary_ab,
+		   conflict_boundary_ba);
+
+  get_bounded_faces(edges.begin(),
+		    edges.end(),
+		    out);
+  
+  if (vi != vbb) {
+    insert_constraint(vi,vbb,out); 
+  }
+  return;
+
+}
  
   void insert_constraint(const Point& a, const Point& b);
   void insert_constraint(Vertex_handle va, Vertex_handle  vb);
   void push_back(const Constraint& c);
+
+
+  template <class PointIterator>
+  void insert_constraint(PointIterator first, PointIterator last, bool close=false)
+  {
+    if(first == last){
+      return;
+    }
+    const Point& p0 = *first;
+    Point p = p0;
+    Vertex_handle v0 = insert(p0), v(v0), w(v0);
+    ++first;
+    for(; first!=last; ++first){
+      const Point& q = *first;
+      if(p != q){
+        w = insert(q);
+        insert_constraint(v,w);
+        v = w;
+        p = q;
+      }
+    }
+    if(close && (p != p0)){
+      insert(w,v0);
+    }
+  }
 
   void remove(Vertex_handle  v);
   void remove_constrained_edge(Face_handle f, int i);
@@ -458,15 +617,14 @@ insert_constraint(const Point& a, const Point& b)
 }
 
 
-
 template <class Gt, class Tds, class Itag >
 inline void
 Constrained_triangulation_2<Gt,Tds,Itag>::
 insert_constraint(Vertex_handle  vaa, Vertex_handle vbb)
-// forces the constrained [va,vb]
-// [va,vb] will eventually be splitted into several edges
+// forces the constraint [va,vb]
+// [va,vb] will eventually be split into several edges
 // if a vertex vc of t lies on segment ab
-// of if ab intersect some constrained edges
+// or if ab intersect some constrained edges
 {
   CGAL_triangulation_precondition( vaa != vbb);
   Vertex_handle vi;

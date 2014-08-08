@@ -31,10 +31,12 @@ struct Exact_predicates_tag{};
 
 A constrained triangulation is a triangulation of a set of points 
 which has to include among its edges 
-a given set of segments 
-joining the points. The given segments are 
-called <I>constraints</I> and the corresponding 
-edges in the triangulation are called <I>constrained edges</I>. 
+a given set of segments joining the points.
+
+The given segments (or polylines) are 
+called *constraints* and the corresponding 
+edges in the triangulation are called *constrained edges* or *sub-constraints*. 
+
 
 The endpoints of constrained edges are of course vertices of the 
 triangulation. However the triangulation may include 
@@ -43,37 +45,36 @@ There are three versions of constrained triangulations
 <UL> 
 <LI>In the basic version, the constrained triangulation 
 does not handle intersecting constraints, and the set of input 
-constraints is required to be a set of segments that do not intersect 
-except possibly at their endpoints. Any number of constrained edges 
+constraints is required to be a set of polylines that do not intersect 
+except possibly at their points. Any number of constrained edges 
 are allowed to share the same endpoint. Vertical constrained edges 
 are allowed as well as 
 constrained edges with null length. 
 <LI>The two other versions support intersecting input constraints. 
 In those versions, input constraints are allowed to be 
 intersecting, overlapping or partially 
-overlapping segments. 
+overlapping polylines. 
 The triangulation introduce additional vertices at each point which 
 is a proper intersection point of two 
 constraints. A single constraint intersecting other 
 constraints will then appear as the union of several 
 constrained edges of the triangulation. 
-The two versions dealing with intersecting constraints, slightly differ 
-in the way intersecting constraints are dealt with. 
+There are two ways to deal with intersecting constraints. 
 <UL> 
-<LI>One of them is 
-designed to be robust when predicates are evaluated exactly but 
+<LI>The first one is robust when predicates are evaluated exactly but 
 constructions (i. e. intersection computations) are 
 approximate. 
-<LI>The other one is designed to be used 
-with an exact arithmetic (meaning exact 
-evaluation of predicates and exact computation of intersections.) 
-This last version finds its full efficiency when used in conjunction 
-with a constraint hierarchy data structure 
-as provided in the class 
-`Constrained_triangulation_plus_2`. See 
-Section \ref Section_2D_Triangulations_Constrained_Plus. 
+<LI>The second one should be used with exact arithmetic (meaning exact
+evaluation of predicates and exact computation of intersections.)
 </UL> 
 </UL> 
+In order to retrieve the constrained edges of a constraint, or
+the constraints overlapping with a constrained edge, we provide
+the class `Constrained_triangulation_plus_2`. This class maintains
+a constraint hierarchy data structure. See
+Section \ref Section_2D_Triangulations_Constrained_Plus for details.
+This class should also be used when doing exact intersection computations
+as it avoids the cascading of intersection computations.
 
 \image html constraints.png
 \image latex constraints.png
@@ -84,7 +85,7 @@ of the concept `TriangulationTraits_2`.
 When intersection of input constraints are supported, 
 the geometric traits class 
 is required to provide additional function object types 
-to compute the intersection of two segments. 
+to compute the intersection of two segments of polylines. 
 It has then to be a model of the concept 
 `ConstrainedTriangulationTraits_2`. 
 
@@ -148,9 +149,9 @@ public:
 /// \name Types 
 /// @{
 
-/*!
-The type of input 
-constraints 
+
+/*! 
+\deprecated The type of constraints.
 */ 
 typedef std::pair<Point,Point> Constraint; 
 
@@ -178,16 +179,6 @@ is copied.
 Constrained_triangulation_2(const 
 Constrained_triangulation_2& ct1); 
 
-/*!
-A templated constructor which introduces and builds 
-a constrained triangulation with constrained edges in the range 
-`[first,last)`.
-\tparam InputIterator must be an input iterator with the value type `Constraint`. 
-*/ 
-template<class InputIterator> Constrained_triangulation_2( 
-InputIterator first, 
-InputIterator last, 
-const Traits& t=Traits()); 
 
 /// @} 
 
@@ -209,7 +200,7 @@ bool are_there_incident_constraints(Vertex_handle v) const;
 Outputs the constrained edges incident to `v` 
 into the output iterator `out` and returns the resulting 
 output iterator. 
-\tparam OutputItEdges is an output iterator with `Edge` as value 
+\tparam OutputItEdges is an `OutputIterator` with `Edge` as value 
 type. 
 */ 
 template<class OutputItEdges> 
@@ -219,6 +210,10 @@ OutputItEdges out) const;
 /// @} 
 
 /// \name Insertion and Removal 
+///
+/// As the triangulation one obtains depends on the insertion order
+/// we only provide low level functions for inserting a point or a
+/// segment constraint, and no function for inserting a polyline or polygon.
 /// @{
 
 /*!
@@ -242,40 +237,41 @@ Equivalent to `insert(p)`.
 */ 
 Vertex_handle push_back(const Point& p); 
 
-/*!
-Inserts the points in the range `[first,last)`.
-Returns the number of inserted points. 
-\pre The `value_type` of `first` and `last` is `Point`. 
-*/ 
-template < class InputIterator > 
-std::ptrdiff_t 
-insert(InputIterator first, InputIterator last); 
 
 /*!
-Inserts points `a` and `b`, and inserts segment `ab` as a 
+Inserts points `a` and `b` in this order, and inserts the line segment `ab` as a 
 constraint. Removes the faces crossed by segment `ab` and creates new 
 faces instead. If a vertex `c` lies on segment `ab`, constraint `ab` is 
 replaced by the two constraints `ac` and `cb`. Apart from the insertion of 
 `a` and `b`, the algorithm runs in time proportional to the number of 
 removed triangles. 
-\pre The relative interior of segment `ab` does not intersect the relative interior of another constrained edge. 
 */ 
 void insert_constraint(Point a, Point b); 
 
 /*!
 Equivalent to `insert(c.first, c.second)`. 
 */ 
-void push_back(const Constraint& c); 
+  void push_back(const std::pair<Point,Point>& c); 
 
 /*!
 Inserts the line segment `s` whose endpoints are the vertices 
 `va` and 
-`vb` as a constrained edge. The triangles intersected by `s` 
+`vb` as a constraint. The triangles intersected by `s` 
 are removed and new ones are created. 
 */ 
 void insert_constraint(const Vertex_handle & va, const Vertex_handle & vb); 
 
 /*!
+Inserts a polyline defined by the points in the range `[first,last)`.
+The polyline is considered as a polygon if the first and last point are equal or if  `close = true`. This allows for example to pass the vertex range of a `Polygon_2`.
+\tparam PointIterator must be an `InputIterator` with the value type `Point`. 
+*/
+template < class PointIterator>
+void insert_constraint(PointIterator first, PointIterator last, bool close=false);
+
+
+
+/*! 
 Removes a vertex `v`. 
 \pre Vertex `v` is not incident to a constrained edge. 
 */ 

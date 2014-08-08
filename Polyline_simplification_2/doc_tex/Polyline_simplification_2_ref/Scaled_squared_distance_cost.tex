@@ -1,0 +1,91 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Scaled_squared_distance_cost.tex
+% +------------------------------------------------------------------------+
+% | April 2009   Fernando Cacciola
+% | Package: Polyline_simplification_2
+% |
+\RCSdef{\RCSScaledsquareddistancecostRev}{$Id: header.tex 40270 2007-09-07 15:29:10Z lsaboret $}
+\RCSdefDate{\RCSScaledsquareddistancecostDate}{$Date: 2007-09-07 12:29:10 -0300 (Fri, 07 Sep 2007) $}
+% |
+\ccRefPageBegin
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Polyline_simplification_2::Scaled_squared_distance_cost}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+\ccDefinition
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccDefinition)
+
+This class is a cost function which calculates the cost as a scaled variant of the square of the distance between the original and simplified polylines.
+
+%END-AUTO(\ccDefinition)
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccInclude)
+
+\ccInclude{CGAL/Polyline_simplification_2/simplify.h}
+
+%END-AUTO(\ccInclude)
+
+\ccIsModel
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccIsModel)
+
+\ccc{PolylineSimplificationCostFunction}
+
+%END-AUTO(\ccIsModel)
+
+\ccCreation
+\ccCreationVariable{cost}  %% choose variable name
+
+% Reduce left margin
+\ccThree{12}{12}{}
+\ccThreeToTwo
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccCreation)
+
+\ccConstructor{Scaled_squared_distance_cost();}
+{
+Initializes the cost function.
+}
+\ccGlue
+
+%END-AUTO(\ccCreation)
+
+\ccOperations
+
+% Reduce left margin
+\ccThree{12}{12}{}
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccOperations)
+
+\ccMethod{template <class Tr>
+          boost::optional<Tr::Geom_traits::FT> 
+          operator()(Polyline_constrained_triangulation_2<Tr> const& pct, 
+                     Polyline_constrained_triangulation_2<Tr>::Vertices_in_constraint_iterator vip, 
+                     Polyline_constrained_triangulation_2<Tr>::Vertices_in_constraint_iterator viq, 
+                     Polyline_constrained_triangulation_2<Tr>::Vertices_in_constraint_iterator vir) const;}
+{ Returns the maximal square distance between  the straight line segment \ccc{(*vip,*vir)} 
+and  all points of the original polyline between \ccc{*vip} and \ccc{*viq},
+ divided by the shortest squared distance between that segment and each of the vertices adjacent to \ccc{*viq}.}
+\ccGlue
+
+%END-AUTO(\ccOperations)
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+

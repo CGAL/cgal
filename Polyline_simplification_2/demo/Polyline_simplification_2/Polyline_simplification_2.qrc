@@ -1,0 +1,8 @@
+<RCC>
+  <qresource prefix="/cgal/Actions" >
+    <file>icons/triangulation.png</file>
+  </qresource>
+  <qresource prefix="/cgal/help" lang="en" >
+    <file>about_Polyline_simplification_2.html</file>
+  </qresource>
+</RCC>
