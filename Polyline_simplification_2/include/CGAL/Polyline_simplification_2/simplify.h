@@ -318,15 +318,15 @@ template <class PolygonTraits_2, class Container, class CostFunction, class Stop
                            CostFunction cost,
                            StopFunction stop)
 {
-  typedef PolygonTraits_2::Point_2 Point_2;
-  typedef CGAL::Kernel_traits<Point_2>::type K;
+  typedef typename PolygonTraits_2::Point_2 Point_2;
+  typedef typename CGAL::Kernel_traits<Point_2>::type K;
   typedef Vertex_base_2< K > Vb;
   typedef CGAL::Constrained_triangulation_face_base_2<K> Fb;
   typedef CGAL::Triangulation_data_structure_2<Vb,Fb> TDS;
   typedef CGAL::Constrained_Delaunay_triangulation_2<K, TDS, CGAL::Exact_predicates_tag> CDT;
   typedef CGAL::Constrained_triangulation_plus_2<CDT>       PCT;
-  typedef PCT::Constraint_id Constraint_id;
-  typedef PCT::Vertices_in_constraint_iterator Vertices_in_constraint_iterator;
+  typedef typename PCT::Constraint_id Constraint_id;
+  typedef typename PCT::Vertices_in_constraint_iterator Vertices_in_constraint_iterator;
 
   PCT pct;
 
