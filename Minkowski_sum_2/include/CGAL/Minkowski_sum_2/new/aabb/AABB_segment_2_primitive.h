@@ -17,31 +17,28 @@ public:
     AABB_segment_2_primitive() {}
 
     AABB_segment_2_primitive(Id it) : m_it(it) {
-        m_datum = *it;
     }
 
     AABB_segment_2_primitive(const AABB_segment_2_primitive &primitive) {
         m_it = primitive.id();
-        m_datum = primitive.datum();
     }
 
     const Id &id() const {
         return m_it;
     }
 
-    const Datum &datum() const {
-        return m_datum;
+    const Datum datum() const {
+        return *m_it;
     }
 
     // Return a point on the primitive
     Point reference_point() const {
-        return m_datum.source();
+        return datum().source();
     }
 
 private:
 
     Id m_it;
-    Datum m_datum;
 
 };
 
