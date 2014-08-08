@@ -225,30 +225,18 @@ AABB_node<Tr>::traversal(const AABB_node &other_node,
     {
       case 2: // Both trees contain 2 primitives, test all pairs
         traits.intersection(left_data(), other_node.left_data(), first_stationary);
-
-        if (traits.go_further())
-        {
-          traits.intersection(right_data(), other_node.right_data(), first_stationary);
-        }
-
-        if (traits.go_further())
-        {
-          traits.intersection(right_data(), other_node.left_data(), first_stationary);
-        }
-
-        if (traits.go_further())
-        {
-          traits.intersection(left_data(), other_node.right_data(), first_stationary);
-        }
+        if (!traits.go_further()) return;
+        traits.intersection(right_data(), other_node.right_data(), first_stationary);
+        if (!traits.go_further()) return;
+        traits.intersection(right_data(), other_node.left_data(), first_stationary);
+        if (!traits.go_further()) return;
+        traits.intersection(left_data(), other_node.right_data(), first_stationary);
         break;
 
       case 3: // This tree contains 3 primitives, the other 3 or 2
         // Both left children are primitives:
         traits.intersection(left_data(), other_node.left_data(), first_stationary);
-        if (!traits.go_further())
-        {
-          return;
-        }
+        if (!traits.go_further()) return;
 
         // Test left child against all right leaves of the other tree
         if (nb_primitives_other == 2)
@@ -260,15 +248,14 @@ AABB_node<Tr>::traversal(const AABB_node &other_node,
           if (traits.do_intersect(left_data(), other_node.right_child(), first_stationary))
           {
             traits.intersection(left_data(), other_node.right_child().left_data(), first_stationary);
-            if (traits.go_further())
-            {
-              traits.intersection(left_data(), other_node.right_child().right_data(), first_stationary);
-            }
+            if (!traits.go_further()) return;
+            traits.intersection(left_data(), other_node.right_child().right_data(), first_stationary);
           }
         }
+        if (!traits.go_further()) return;
 
         // Test right child against the other node
-        if( traits.go_further() && traits.do_intersect(right_child(), other_node, first_stationary) )
+        if(traits.do_intersect(right_child(), other_node, first_stationary))
         {
           right_child().traversal(other_node, traits, 2, nb_primitives_other, first_stationary);
         }
@@ -278,11 +265,8 @@ AABB_node<Tr>::traversal(const AABB_node &other_node,
         if( traits.do_intersect(left_child(), other_node, first_stationary) )
         {
           left_child().traversal(other_node, traits, nb_primitives/2, nb_primitives_other, first_stationary);
-          if( !traits.go_further())
-          {
-            return;
-          }
         }
+        if (!traits.go_further()) return;
         if( traits.do_intersect(right_child(), other_node, first_stationary) )
         {
           right_child().traversal(other_node, traits, nb_primitives-nb_primitives/2, nb_primitives_other, first_stationary);
