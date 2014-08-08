@@ -25,6 +25,9 @@
      </item>
      <item>
       <widget class="QDoubleSpinBox" name="m_epsilon_field">
+       <property name="toolTip">
+        <string>Fitting tolerance in Euclidean distance</string>
+       </property>
        <property name="decimals">
         <number>3</number>
        </property>
@@ -52,6 +55,9 @@
      </item>
      <item>
       <widget class="QDoubleSpinBox" name="m_normal_tolerance_field">
+       <property name="toolTip">
+        <string>Normal angle deviation tolerance as cosine of the angle</string>
+       </property>
        <property name="singleStep">
         <double>0.001000000000000</double>
        </property>
@@ -73,6 +79,9 @@
      </item>
      <item>
       <widget class="QSpinBox" name="m_min_pts_field">
+       <property name="toolTip">
+        <string>Smallest allowed size for a primitive</string>
+       </property>
        <property name="maximum">
         <number>10000</number>
        </property>
@@ -97,6 +106,9 @@
      </item>
      <item>
       <widget class="QDoubleSpinBox" name="m_cluster_epsilon_field">
+       <property name="toolTip">
+        <string>Maximum world distance between points on a shape to be considered as connected</string>
+       </property>
        <property name="decimals">
         <number>2</number>
        </property>
@@ -124,6 +136,9 @@
      </item>
      <item>
       <widget class="QDoubleSpinBox" name="m_probability_field">
+       <property name="toolTip">
+        <string>Probability to overlook the largest primitive in one extraction iteration</string>
+       </property>
        <property name="maximum">
         <double>1.000000000000000</double>
        </property>
