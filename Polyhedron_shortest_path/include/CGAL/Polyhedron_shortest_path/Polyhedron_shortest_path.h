@@ -1353,8 +1353,6 @@ private:
     
     while (!current->is_root_node())
     {
-      std::cout << "Node Type : " << current->node_type() << std::endl;
-    
       switch (current->node_type())
       {
         case Cone_tree_node::INTERVAL:
