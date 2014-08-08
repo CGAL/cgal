@@ -45,7 +45,7 @@ int main (void) {
     /* std::cout << equal_dual(p2, q2) << std::endl; */
     /* std::cout << equal(to_dual<K>(p2), to_dual<K>(q2)) << std::endl; */
     assert(equal_dual(p2, q2) == false);
-    assert(equal_dual(p2, 2) == equal(to_dual<K>(p2), to_dual<K>(q2)));
+    assert(equal_dual(p2, q2) == equal(to_dual<K>(p2), to_dual<K>(q2)));
 
     // True test using exact computation
     double x = 1.123456789, y = 1.987654321, e=1e-15;

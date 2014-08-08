@@ -64,6 +64,19 @@ to determine if the vertices of a given polytope constitute a strongly convex
 point set or not. This function is used in postcondition testing for
 `convex_hull_3()`.
 
+\subsection Convex_hull_3HalfspacesIntersection Halfspaces Intersection
+The functions `halfspaces_intersection_3()` and
+`halfspaces_intersection_with_construction_3()`
+uses the convex hull computation and the duality to compute the intersection
+of a list of halfspaces. The first version does not explicitly computes
+the dual points: the traits class handles this issue. The second one constructs
+these points and hence is less robust but the computation is faster.
+
+The following program computes the intersection of halfspaces defined by
+tangent planes to a sphere:
+
+\cgalExample{Convex_hull_3/halfspaces_intersection_3.cpp}
+
 \subsection Convex_hull_3Example Example
 
 The following program computes the convex hull of a set of 250 random

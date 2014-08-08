@@ -191,7 +191,8 @@ faster than `jet_estimate_normals()`.
 Function `vcm_estimate_normals()` estimates the normal direction
 at each point from the set by using the Voronoi Covariance Measure
 of the point set. This algorithm is more complex and slower than
-the previous algorithms.
+the previous algorithms. It is based on the
+article \cgalCite{cgal:mog-vbcfe-11}.
 
 \section Point_set_processing_3NormalOrientation Normal Orientation
 

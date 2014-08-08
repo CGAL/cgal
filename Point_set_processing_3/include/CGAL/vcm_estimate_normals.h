@@ -229,9 +229,9 @@ vcm_offset_and_convolve (ForwardIterator first,
 /// @tparam NormalPMap is a model of `WritablePropertyMap` with a value_type = `Kernel::Vector_3`.
 /// @tparam Kernel Geometric traits class.
 ///        It can be omitted and deduced automatically from PointPMap value_type.
-/// @tparam Covariance Covariance matrix type.
-/// @pre If nb_neighbors_convolve is equal to -1, then the convolution is made using a radius.
-/// On the contrary, if nb_neighbors_convolve is different from -1, the convolution is made using
+/// @tparam Covariance Covariance matrix type..
+/// @pre If `nb_neighbors_convolve` is equal to -1, then the convolution is made using a radius.
+/// On the contrary, if `nb_neighbors_convolve` is different from -1, the convolution is made using
 /// this number of neighbors.
 
 // This variant requires all of the parameters.
