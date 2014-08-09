@@ -579,11 +579,7 @@ public:
     template <class Traversal_traits>
     void traversal(const AABB_tree &other_tree, Traversal_traits &traits) const
     {
-      if (empty() && other_tree.empty())
-      {
-        return;
-      }
-      else if (size() > 1 && other_tree.size() > 1)
+      if (size() > 1 && other_tree.size() > 1)
       {
         root_node()->template traversal<Traversal_traits>(*(other_tree.root_node()),
                                                           traits,
@@ -591,13 +587,9 @@ public:
                                                           other_tree.m_primitives.size(),
                                                           true);
       }
-      else if (size() == 1)
+      else // at least tree has less than 2 primitives
       {
-        // TODO
-      }
-      else if (other_tree.size() == 1)
-      {
-        // TODO
+          // TODO not implemented yet, cannot happen with two polygons
       }
     }
 
