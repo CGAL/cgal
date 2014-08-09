@@ -338,7 +338,8 @@ public:
 
     /// Returns `true`, iff at least one pair of primitives in the
     /// two trees intersect. The `other` tree is translated by
-    /// `translation` before this is tested.
+    /// `translation` before this is tested. The traits class `AABBTraits`
+    /// needs to define `do_intersect` predicates for the tree's primitive.
     bool do_intersect(const AABB_tree &other,
                       const Point &translation) const;
 
