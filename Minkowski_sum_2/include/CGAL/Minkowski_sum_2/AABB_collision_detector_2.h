@@ -2,8 +2,8 @@
 #define CGAL_AABB_COLLISION_DETECTOR_2_H
 
 #include <CGAL/AABB_tree.h>
-#include <CGAL/Minkowski_sum_2/new/aabb/AABB_traits_2.h>
-#include <CGAL/Minkowski_sum_2/new/aabb/AABB_segment_2_primitive.h>
+#include <CGAL/Minkowski_sum_2/AABB_traits_2.h>
+#include <CGAL/Minkowski_sum_2/AABB_segment_2_primitive.h>
 
 namespace CGAL {
 

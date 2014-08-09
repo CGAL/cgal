@@ -6,7 +6,7 @@
 #include <CGAL/Arr_segment_traits_2.h>
 #include <CGAL/Timer.h> // TODO: remove when optimization is done
 
-#include <CGAL/Minkowski_sum_2/new/aabb/AABB_collision_detector_2.h>
+#include <CGAL/Minkowski_sum_2/AABB_collision_detector_2.h>
 
 #include <iostream> // TODO: remove when optimization is done
 #include <queue>

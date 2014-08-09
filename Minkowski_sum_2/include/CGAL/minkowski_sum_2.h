@@ -23,7 +23,7 @@
 #include <CGAL/basic.h>
 #include <CGAL/Polygon_with_holes_2.h>
 
-#include <CGAL/Minkowski_sum_2/new/Minkowski_sum_by_reduced_convolution_2.h>
+#include <CGAL/Minkowski_sum_2/Minkowski_sum_by_reduced_convolution_2.h>
 #include <CGAL/Minkowski_sum_2/Minkowski_sum_conv_2.h>
 #include <CGAL/Minkowski_sum_2/Minkowski_sum_decomp_2.h>
 #include <list>
