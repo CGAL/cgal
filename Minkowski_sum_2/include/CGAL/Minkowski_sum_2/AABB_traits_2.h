@@ -157,8 +157,8 @@ public:
     bool operator()(const Bounding_box &q, const Primitive &pr) const
     {
       Datum tr_pr = pr.datum().transform(typename GeomTraits::Aff_transformation_2(
-                                           Translation(),
-                                           Vector_2(ORIGIN, m_traits->get_translation_point())));
+                                         Translation(),
+                                         Vector_2(ORIGIN, m_traits->get_translation_point())));
 
       return do_overlap(q, tr_pr.bbox());
     }
@@ -166,7 +166,7 @@ public:
     bool operator()(const Primitive &q, const Primitive &pr) const
     {
       Datum tr_pr = pr.datum().transform(typename GeomTraits::Aff_transformation_2(
-                                           Translation(), Vector_2(ORIGIN, m_traits->get_translation_point())));
+                                         Translation(), Vector_2(ORIGIN, m_traits->get_translation_point())));
 
       if (!do_overlap(q.datum().bbox(), tr_pr.bbox()))
       {

@@ -90,10 +90,8 @@ public:
     timer.start();
 
     // Initialize collision detector. It operates on pgn2 and on the inversed pgn1:
-    const Polygon_2 inversed_pgn1 = transform(Aff_transformation_2<Kernel>(SCALING,
-                                    -1), pgn1);
-    AABB_collision_detector_2<Kernel, Container> collision_detector(pgn2,
-        inversed_pgn1);
+    const Polygon_2 inversed_pgn1 = transform(Aff_transformation_2<Kernel>(SCALING, -1), pgn1);
+    AABB_collision_detector_2<Kernel, Container> collision_detector(pgn2, inversed_pgn1);
 
     timer.stop();
     std::cout << timer.time() << " s: AABB init" << std::endl;
@@ -312,7 +310,8 @@ private:
     }
     while (++circ != start);
 
-    // When the reversed polygon 1, translated by a point inside of this face, collides with polygon 2, this cannot be a hole
+    // When the reversed polygon 1, translated by a point inside of this face,
+    // collides with polygon 2, this cannot be a hole
     Point_2 inner_point = get_point_in_face(face);
     if (collision_detector.check_collision(inner_point))
     {
@@ -333,9 +332,10 @@ private:
     ++holes;
   }
 
-  // Check whether the convolution's original edge(s) had the same direction as the arrangement's half edge
+  // Check whether the convolution's original edge(s) had the same direction as
+  // the arrangement's half edge
   bool do_original_edges_have_same_direction(const Arrangement_history_2 &arr,
-      const Halfedge_handle he) const
+                                             const Halfedge_handle he) const
   {
     Originating_curve_iterator segment_itr;
 
@@ -377,7 +377,8 @@ private:
     FT min_distance = -1;
     Point_2 min_q;
 
-    // Of the remaining vertices, find the one inside of the "ear" with minimal distance to v:
+    // Of the remaining vertices, find the one inside of the "ear" with minimal
+    // distance to v:
     while (++next_edge != current_edge)
     {
       Point_2 q = next_edge->target()->point();

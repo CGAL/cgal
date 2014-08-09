@@ -31,7 +31,8 @@ public:
   {
   }
 
-  // Returns true iff the polygons' boundaries intersect or one polygon is completely inside of the other one. Q is translated by t.
+  // Returns true iff the polygons' boundaries intersect or one polygon is
+  // completely inside of the other one. Q is translated by t.
   bool check_collision(const Point_2 &t)
   {
     if (m_stationary_tree.do_intersect(m_translating_tree, t))
