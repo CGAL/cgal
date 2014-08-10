@@ -35,7 +35,7 @@
 #include <CGAL/Arr_topology_traits/Arr_bounded_planar_batched_pl_helper.h>
 #include <CGAL/Arr_topology_traits/Arr_bounded_planar_vert_decomp_helper.h>
 #include <CGAL/Arr_topology_traits/Arr_inc_insertion_zone_visitor.h>
-
+#include <CGAL/use.h>
 namespace CGAL {
 
 // Forward declaration:
@@ -382,6 +382,9 @@ public:
                  const X_monotone_curve_2& cv, Arr_curve_end ind,
                  Arr_parameter_space ps_x, Arr_parameter_space ps_y) const
   {
+    CGAL_USE(ps_x);
+    CGAL_USE(ps_y);
+
     CGAL_assertion((ps_x == ARR_INTERIOR) && (ps_y == ARR_INTERIOR));
 
     if (ind == ARR_MIN_END) {
