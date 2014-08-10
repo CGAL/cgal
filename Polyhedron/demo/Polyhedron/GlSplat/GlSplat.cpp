@@ -61,7 +61,7 @@ QString SplatRenderer::loadSource(const QString& func,const QString& filename)
   QTextStream stream(&f);
   res = stream.readAll();
   f.close();
-  res = QString("#define __%1__ 1\n").arg(func)
+  res = QString("#define GLSPLAT__%1__ 1\n").arg(func)
       + QString("#define %1 main\n").arg(func)
       + res;
   return res;
