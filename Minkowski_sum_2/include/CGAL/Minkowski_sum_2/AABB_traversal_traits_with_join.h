@@ -18,15 +18,15 @@
 //
 // Author(s) : Camille Wormser, Pierre Alliez, Stephane Tayeb
 
-#ifndef CGAL_AABB_TRAVERSAL_TRAITS_H
-#define CGAL_AABB_TRAVERSAL_TRAITS_H
+#ifndef CGAL_AABB_TRAVERSAL_TRAITS_WITH_JOIN_H
+#define CGAL_AABB_TRAVERSAL_TRAITS_WITH_JOIN_H
 
-#include <CGAL/internal/AABB_tree/AABB_node.h>
+#include <CGAL/Minkowski_sum_2/AABB_node_with_join.h>
 #include <boost/optional.hpp>
 
 namespace CGAL { 
 
-namespace internal { namespace AABB_tree {
+namespace internal { namespace AABB_tree_with_join {
 
 template <class Value_type, typename Integral_type>
 class Counting_output_iterator {
@@ -70,7 +70,7 @@ class First_intersection_traits
   typedef typename AABBTraits::Primitive::Id Primitive_id;
   typedef typename AABBTraits::Point_and_primitive_id Point_and_primitive_id;
   typedef typename AABBTraits::Object_and_primitive_id Object_and_primitive_id;
-  typedef ::CGAL::AABB_node<AABBTraits> Node;
+  typedef ::CGAL::AABB_node_with_join<AABBTraits> Node;
 
 public:
   typedef
@@ -123,7 +123,7 @@ class Listing_intersection_traits
   typedef typename AABBTraits::Primitive::Id Primitive_id;
   typedef typename AABBTraits::Point_and_primitive_id Point_and_primitive_id;
   typedef typename AABBTraits::Object_and_primitive_id Object_and_primitive_id;
-  typedef ::CGAL::AABB_node<AABBTraits> Node;
+  typedef ::CGAL::AABB_node_with_join<AABBTraits> Node;
 
 public:
   Listing_intersection_traits(Output_iterator out_it, const AABBTraits& traits)
@@ -170,7 +170,7 @@ class Listing_primitive_traits
   typedef typename AABBTraits::Primitive::Id Primitive_id;
   typedef typename AABBTraits::Point_and_primitive_id Point_and_primitive_id;
   typedef typename AABBTraits::Object_and_primitive_id Object_and_primitive_id;
-  typedef ::CGAL::AABB_node<AABBTraits> Node;
+  typedef ::CGAL::AABB_node_with_join<AABBTraits> Node;
 
 public:
   Listing_primitive_traits(Output_iterator out_it, const AABBTraits& traits)
@@ -210,7 +210,7 @@ class First_primitive_traits
   typedef typename AABBTraits::Primitive::Id Primitive_id;
   typedef typename AABBTraits::Point_and_primitive_id Point_and_primitive_id;
   typedef typename AABBTraits::Object_and_primitive_id Object_and_primitive_id;
-  typedef ::CGAL::AABB_node<AABBTraits> Node;
+  typedef ::CGAL::AABB_node_with_join<AABBTraits> Node;
 
 public:
   First_primitive_traits(const AABBTraits& traits)
@@ -256,7 +256,7 @@ class Do_intersect_traits
   typedef typename AABBTraits::Primitive::Id Primitive_id;
   typedef typename AABBTraits::Point_and_primitive_id Point_and_primitive_id;
   typedef typename AABBTraits::Object_and_primitive_id Object_and_primitive_id;
-  typedef ::CGAL::AABB_node<AABBTraits> Node;
+  typedef ::CGAL::AABB_node_with_join<AABBTraits> Node;
 
 public:
   Do_intersect_traits(const AABBTraits& traits)
@@ -285,6 +285,90 @@ private:
 
 
 /**
+ * @class Do_intersect_joined_traits
+ */
+template<typename AABBTraits>
+class Do_intersect_joined_traits
+{
+  typedef typename AABBTraits::Point_3 Point;
+  typedef typename AABBTraits::Primitive Primitive;
+  typedef AABB_node_with_join<AABBTraits> Node;
+
+public:
+
+  Do_intersect_joined_traits(const Point &point) : m_is_found(false)
+  {
+    m_traits_ptr = new AABBTraits(point);
+  }
+
+  bool go_further() const { return !m_is_found; }
+
+  void intersection(const Primitive &primitive1, const Primitive &primitive2, bool first_stationary)
+  {
+    if (first_stationary)
+    {
+      if (m_traits_ptr->do_intersect_object()(primitive1, primitive2))
+      {
+        m_is_found = true;
+      }
+    }
+    else
+    {
+      if (m_traits_ptr->do_intersect_object()(primitive2, primitive1))
+      {
+        m_is_found = true;
+      }
+    }
+  }
+
+  bool do_intersect(const Node &node_1, const Node &node_2, bool first_stationary) const
+  {
+    if (first_stationary)
+    {
+      return m_traits_ptr->do_intersect_object()(node_1.bbox(), node_2.bbox());
+    }
+    else
+    {
+      return m_traits_ptr->do_intersect_object()(node_2.bbox(), node_1.bbox());
+    }
+  }
+
+  bool do_intersect(const Node &node_1, const Primitive &primitive2, bool first_stationary) const
+  {
+    if (first_stationary)
+    {
+      return m_traits_ptr->do_intersect_object()(node_1.bbox(), primitive2);
+    }
+    else
+    {
+      return m_traits_ptr->do_intersect_object()(primitive2, node_1.bbox());
+    }
+  }
+
+  bool do_intersect(const Primitive &primitive1, const Node &node_2, bool first_stationary) const
+  {
+    if (first_stationary)
+    {
+      return m_traits_ptr->do_intersect_object()(primitive1, node_2.bbox());
+    }
+    else
+    {
+      return m_traits_ptr->do_intersect_object()(node_2.bbox(), primitive1);
+    }
+  }
+
+  bool is_intersection_found() const { return m_is_found; }
+
+  ~Do_intersect_joined_traits() { delete m_traits_ptr; }
+
+private:
+
+  bool m_is_found;
+  AABBTraits *m_traits_ptr;
+};
+
+
+/**
  * @class Projection_traits
  */
 template <typename AABBTraits>
@@ -297,7 +381,7 @@ class Projection_traits
   typedef typename AABBTraits::Primitive::Id Primitive_id;
   typedef typename AABBTraits::Point_and_primitive_id Point_and_primitive_id;
   typedef typename AABBTraits::Object_and_primitive_id Object_and_primitive_id;
-  typedef ::CGAL::AABB_node<AABBTraits> Node;
+  typedef ::CGAL::AABB_node_with_join<AABBTraits> Node;
 
 public:
   Projection_traits(const Point& hint,
@@ -339,6 +423,6 @@ private:
   const AABBTraits& m_traits;
 };
 
-}}} // end namespace CGAL::internal::AABB_tree
+}}} // end namespace CGAL::internal::AABB_tree_with_join
 
-#endif // CGAL_AABB_TRAVERSAL_TRAITS_H
+#endif // CGAL_AABB_TRAVERSAL_TRAITS_WITH_JOIN_H

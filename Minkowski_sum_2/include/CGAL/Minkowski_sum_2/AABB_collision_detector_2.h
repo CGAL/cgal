@@ -1,7 +1,7 @@
 #ifndef CGAL_AABB_COLLISION_DETECTOR_2_H
 #define CGAL_AABB_COLLISION_DETECTOR_2_H
 
-#include <CGAL/AABB_tree.h>
+#include <CGAL/Minkowski_sum_2/AABB_tree_with_join.h>
 #include <CGAL/Minkowski_sum_2/AABB_traits_2.h>
 #include <CGAL/Minkowski_sum_2/AABB_segment_2_primitive.h>
 
@@ -21,7 +21,7 @@ public:
   typedef AABB_segment_2_primitive<Kernel_, Edge_iterator, Polygon_2>
   Tree_segment_2;
   typedef AABB_traits_2<Kernel_, Tree_segment_2> Tree_traits;
-  typedef AABB_tree<Tree_traits> Tree_2;
+  typedef AABB_tree_with_join<Tree_traits> Tree_2;
 
 public:
 

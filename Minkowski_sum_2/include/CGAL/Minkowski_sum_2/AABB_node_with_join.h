@@ -18,8 +18,8 @@
 //
 // Author(s) : Camille Wormser, Pierre Alliez, Stephane Tayeb
 
-#ifndef CGAL_AABB_NODE_H
-#define CGAL_AABB_NODE_H
+#ifndef CGAL_AABB_NODE_WITH_JOIN_H
+#define CGAL_AABB_NODE_WITH_JOIN_H
 
 #include <CGAL/Profile_counter.h>
 #include <CGAL/Cartesian_converter.h>
@@ -30,25 +30,25 @@
 namespace CGAL {
 
 /**
- * @class AABB_node
+ * @class AABB_node_with_join
  *
  *
  */
 template<typename AABBTraits>
-class AABB_node
+class AABB_node_with_join
 {
 public:
   typedef typename AABBTraits::Bounding_box Bounding_box;
 
   /// Constructor
-  AABB_node()
+  AABB_node_with_join()
     : m_bbox()
     , m_p_left_child(NULL)
     , m_p_right_child(NULL)      { };
 
   /// Non virtual Destructor
   /// Do not delete children because the tree hosts and delete them
-  ~AABB_node() { };
+  ~AABB_node_with_join() { };
 
   /// Returns the bounding box of the node
   const Bounding_box& bbox() const { return m_bbox; }
@@ -82,9 +82,25 @@ public:
                  Traversal_traits& traits,
                  const std::size_t nb_primitives) const;
 
+  /**
+   * @param other_node root node of a tree which we want to traverse in parallel
+   * @param traits the traversal traits that define the traversal behaviour
+   * @param nb_primitives the number of primitives in this tree
+   * @param nb_primitives_other the number of primitives in the other tree
+   * @param first_stationary if true, the other_node is the translatable tree's root
+   *
+   * General traversal query for two trees.
+   */
+  template<class Traversal_traits>
+  void traversal(const AABB_node_with_join &other_node,
+                 Traversal_traits &traits,
+                 const std::size_t nb_primitives,
+                 const std::size_t nb_primitives_other,
+                 bool first_stationary) const;
+
 private:
   typedef AABBTraits AABB_traits;
-  typedef AABB_node<AABB_traits> Node;
+  typedef AABB_node_with_join<AABB_traits> Node;
   typedef typename AABB_traits::Primitive Primitive;
 
   /// Helper functions
@@ -113,17 +129,17 @@ private:
 
 private:
   // Disabled copy constructor & assignment operator
-  typedef AABB_node<AABBTraits> Self;
-  AABB_node(const Self& src);
+  typedef AABB_node_with_join<AABBTraits> Self;
+  AABB_node_with_join(const Self& src);
   Self& operator=(const Self& src);
 
-};  // end class AABB_node
+};  // end class AABB_node_with_join
 
 
 template<typename Tr>
 template<typename ConstPrimitiveIterator>
 void
-AABB_node<Tr>::expand(ConstPrimitiveIterator first,
+AABB_node_with_join<Tr>::expand(ConstPrimitiveIterator first,
                       ConstPrimitiveIterator beyond,
                       const std::size_t range,
                       const Tr& traits)
@@ -157,7 +173,7 @@ AABB_node<Tr>::expand(ConstPrimitiveIterator first,
 template<typename Tr>
 template<class Traversal_traits, class Query>
 void
-AABB_node<Tr>::traversal(const Query& query,
+AABB_node_with_join<Tr>::traversal(const Query& query,
                          Traversal_traits& traits,
                          const std::size_t nb_primitives) const
 {
@@ -194,6 +210,76 @@ AABB_node<Tr>::traversal(const Query& query,
   }
 }
 
+template<typename Tr>
+template<class Traversal_traits>
+void
+AABB_node_with_join<Tr>::traversal(const AABB_node_with_join &other_node,
+                         Traversal_traits &traits,
+                         const std::size_t nb_primitives,
+                         const std::size_t nb_primitives_other,
+                         bool first_stationary) const
+{
+  if (nb_primitives >= nb_primitives_other)
+  {
+    switch(nb_primitives)
+    {
+      case 2: // Both trees contain 2 primitives, test all pairs
+        traits.intersection(left_data(), other_node.left_data(), first_stationary);
+        if (!traits.go_further()) return;
+        traits.intersection(right_data(), other_node.right_data(), first_stationary);
+        if (!traits.go_further()) return;
+        traits.intersection(right_data(), other_node.left_data(), first_stationary);
+        if (!traits.go_further()) return;
+        traits.intersection(left_data(), other_node.right_data(), first_stationary);
+        break;
+
+      case 3: // This tree contains 3 primitives, the other 3 or 2
+        // Both left children are primitives:
+        traits.intersection(left_data(), other_node.left_data(), first_stationary);
+        if (!traits.go_further()) return;
+
+        // Test left child against all right leaves of the other tree
+        if (nb_primitives_other == 2)
+        {
+          traits.intersection(left_data(), other_node.right_data(), first_stationary);
+        }
+        else
+        {
+          if (traits.do_intersect(left_data(), other_node.right_child(), first_stationary))
+          {
+            traits.intersection(left_data(), other_node.right_child().left_data(), first_stationary);
+            if (!traits.go_further()) return;
+            traits.intersection(left_data(), other_node.right_child().right_data(), first_stationary);
+          }
+        }
+        if (!traits.go_further()) return;
+
+        // Test right child against the other node
+        if(traits.do_intersect(right_child(), other_node, first_stationary))
+        {
+          right_child().traversal(other_node, traits, 2, nb_primitives_other, first_stationary);
+        }
+        break;
+
+      default: // This tree has two node-children, test both against the other node
+        if( traits.do_intersect(left_child(), other_node, first_stationary) )
+        {
+          left_child().traversal(other_node, traits, nb_primitives/2, nb_primitives_other, first_stationary);
+        }
+        if (!traits.go_further()) return;
+        if( traits.do_intersect(right_child(), other_node, first_stationary) )
+        {
+          right_child().traversal(other_node, traits, nb_primitives-nb_primitives/2, nb_primitives_other, first_stationary);
+        }
+    }
+  }
+  else
+  {
+    // The other node contains more primitives. Call this method the other way around:
+    other_node.traversal(*this, traits, nb_primitives_other, nb_primitives, !first_stationary);
+  }
+}
+
 } // end namespace CGAL
 
-#endif // CGAL_AABB_NODE_H
+#endif // CGAL_AABB_NODE_WITH_JOIN_H
