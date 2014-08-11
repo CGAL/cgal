@@ -95,7 +95,7 @@ int main (int argc, char **argv)
     std::cout << "Using the reduced convolution method ... ";
     timer.reset();
     timer.start();
-    sum_conv_new = minkowski_sum_2_new (pgn1, pgn2);
+    sum_conv_new = minkowski_sum_by_reduced_convolution_2 (pgn1, pgn2);
     timer.stop();
     std::cout << "Done (" << timer.time() << " s)" << std::endl;
 
@@ -120,7 +120,7 @@ int main (int argc, char **argv)
     std::cout << "Using the convolution method ... ";
     timer.reset();
     timer.start();
-    sum_conv = minkowski_sum_2 (pgn1, pgn2);
+    sum_conv = minkowski_sum_by_full_convolution_2 (pgn1, pgn2);
     timer.stop();
     if (are_equal (result, sum_conv))
     {
