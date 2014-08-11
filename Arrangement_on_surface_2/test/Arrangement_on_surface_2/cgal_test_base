@@ -70,7 +70,7 @@ CGAL_GMPZ_NT=14
 CORE_INT_NT=15
 CORE_RAT_NT=16
 
-if [ -n ${CGAL_DISABLE_GMP} ]; then
+if [ -n "${CGAL_DISABLE_GMP}" ]; then
     echo GMP is disable. Try to use LEDA instead.
     GMPZ_NT=LEDA_INT_NT
     QUOTIENT_CGAL_GMPZ_NT=LEDA_RAT_NT
