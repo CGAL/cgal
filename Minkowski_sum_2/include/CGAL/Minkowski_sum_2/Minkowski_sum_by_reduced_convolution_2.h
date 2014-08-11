@@ -15,6 +15,10 @@
 
 namespace CGAL {
 
+// This algorithm was first described by Evan Behar and Jyh-Ming Lien in "Fast
+// and Robust 2D Minkowski Sum Using Reduced Convolution", IROS 2011.
+// This implementation is based on Alon Baram's 2013 master's thesis "Polygonal
+// Minkowski Sums via Convolution: Theory and Practice" at Tel-Aviv University.
 template <class Kernel_, class Container_>
 class Minkowski_sum_by_reduced_convolution_2
 {
@@ -98,7 +102,7 @@ public:
     timer.reset();
     timer.start();
 
-    // Compute the reduced convolution
+    // Compute the reduced convolution (see section 4.1 of Alon's master's thesis)
     Segment_list reduced_convolution;
     build_reduced_convolution(pgn1, pgn2, reduced_convolution);
 
@@ -125,6 +129,7 @@ public:
     timer.start();
 
     // Check for each face whether it is a hole in the M-sum. If it is, add it to 'holes'.
+    // See chapter 3 of of Alon's master's thesis.
     for (Face_iterator face = arr.faces_begin(); face != arr.faces_end(); ++face)
     {
       handle_face(arr, face, holes, collision_detector);
