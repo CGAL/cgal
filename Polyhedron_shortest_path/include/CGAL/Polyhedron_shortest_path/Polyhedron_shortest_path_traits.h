@@ -22,7 +22,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgFaceGraphShortestPathTraitsClasses
+\ingroup PkgPolyhedronShortestPathTraitsClasses
 
 \brief Provides an implementation of the FaceGraphShortestPathTraits 
 model as required by the Polyhedron_shortest_path algorithm

@@ -31,7 +31,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgFaceGraphShortestPath
+\ingroup PkgPolyhedronShortestPath
 
 \brief Computes shortest surface paths from one or more source points on a polyhedral surface
 
