@@ -220,6 +220,7 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   add_item(scene_points_with_normal_item Scene_points_with_normal_item.cpp Scene_points_with_normal_item.moc)
   if(GLEW_FOUND)
     target_link_libraries( scene_points_with_normal_item gl_splat ${GLEW_LIBRARIES} )
+    target_link_libraries( demo_framework gl_splat ${GLEW_LIBRARIES} )
   endif(GLEW_FOUND)
 
   foreach( lib 
