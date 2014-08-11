@@ -44,7 +44,7 @@ if ( CGAL_FOUND )
 
   create_single_source_cgal_program( "test_use_h.cpp" )
 
-  find_package( TBB )
+  find_package( TBB QUIET )
   if( TBB_FOUND )
     include(${TBB_USE_FILE})
     list(APPEND CGAL_3RD_PARTY_LIBRARIES ${TBB_LIBRARIES})
@@ -77,7 +77,14 @@ if ( CGAL_FOUND )
     add_executable(test_gmp_mpfr_dll test_gmp_mpfr_dll.cpp)
     target_link_libraries(test_gmp_mpfr_dll Version)
   endif(WIN32)
-  
+
+  find_package( LEDA QUIET)
+  if(LEDA_FOUND)
+    include( ${LEDA_USE_FILE} )
+    add_executable(test_LEDA_IO test_LEDA_IO.cpp)
+    target_link_libraries(test_LEDA_IO ${LEDA_LIBRARIES})
+  endif()
+
 else()
   
   message(STATUS "NOTICE: This program requires the CGAL library, and will not be compiled.")
