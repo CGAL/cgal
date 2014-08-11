@@ -221,7 +221,7 @@ A plugin for the polyhedron demo is available to test the algorithm. The followi
 @endhtmlonly
 
 
-\section Surface_Modeling_Overview Deformations Techniques, Energies and Weighting Scheme
+\section Surface_Modeling_Overview Deformation Techniques, Energies and Weighting Schemes
 This section gives the theorical background to make the user manual self-contained
 and at the same time explains where the weights comes in. This allows advanced users
 of this package to tune the weighting scheme by developing a model of the concept
