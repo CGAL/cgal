@@ -46,16 +46,17 @@ public:
 /// @{
   /*! 
     Tag identifying whether the regularized visibility area is computed. 
+    Its value is either \ref CGAL::Tag_true or \ref CGAL::Tag_false.
   */
   typedef RegularizationTag Regularization_tag;
   
   /*! 
-    The class does not support general polygons (i.e.\ with holes). 
+    Its value is \ref CGAL::Tag_false.
   */
   typedef ::Tag_false Supports_general_polygon_tag; 
 
   /*! 
-    The class supports general simple polygons. 
+    Its value is \ref CGAL::Tag_true.
   */
   typedef ::Tag_true Supports_simple_polygon_tag; 
 /// @}

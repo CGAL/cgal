@@ -20,12 +20,7 @@ public:
  /*! 
    The arrangement type of the input.
  */ 
-  typedef Hidden_type Arrangement_2;  
-
- /*! 
-   The geometry traits class of Arrangement_2.
- */ 
-  typedef Arrangement_2::Traits_2 Traits_2; 
+  typedef unspecified_type Arrangement_2;  
 
  /*! 
    The 2D point type used for the queries. 
@@ -49,17 +44,17 @@ public:
   /*! 
     Tag identifying whether the regularized visibility area is computed (either \ref CGAL::Tag_true or \ref CGAL::Tag_false). 
   */
-  typedef Hidden_type Regularization_tag;
+  typedef unspecified_type Regularization_tag;
   
   /*! 
     Tag identifying whether general polygons (with holes) are supported (either \ref CGAL::Tag_true or \ref CGAL::Tag_false). 
   */
-  typedef Hidden_type Supports_general_polygon_tag; 
+  typedef unspecified_type Supports_general_polygon_tag; 
 
   /*! 
     Tag identifying whether general simple polygons are supported (either \ref CGAL::Tag_true or \ref CGAL::Tag_false). 
   */
-  typedef Hidden_type Supports_simple_polygon_tag; 
+  typedef unspecified_type Supports_simple_polygon_tag; 
 /// @}
 
 /// \name Constructors 

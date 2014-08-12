@@ -22,10 +22,10 @@ region of \f$ q \f$, denoted by \f$ V_q \f$
 
 
 Definition [Valid Polygon]: 
-A polygon \f$ P \f$ is valid if  \f$ P \f$ is closed (\f$\partial P \subset P\f$) 
-and each boundary loop (only one outer boundary loop in case of no holes) is simple. 
-See \ref PkgBooleanSetOperations2Summary for the complete definition. 
+A polygon \f$ P \f$ is valid if \f$ P \f$ is closed (\f$\partial P \subset P\f$) and each boundary loop is simple. Namely, \f$ P \f$ has exactly one outer boundary (it may have some inner boundaires), and the edges in each boundary loop are only allowed to intersect at vertices. Note that a vertex may appear multiple times in one boundary loop. See \ref PkgBooleanSetOperations2Summary for the complete definition. 
 
+Definition [Simple Polygon]
+A valid polygon is simple if has no holes, i.e., it has exactly one boundary which is an outer boundary.
 
 \subsection visibility_2_degeneracies Degeneracies and Regularization 
 
@@ -117,7 +117,7 @@ Complete Cathedral             |	total preprocessing time | total query time    
 Thus, in general we recommend to use `Triangular_expansion_visibility_2` even if the polygon is simple. The main advantage 
 of the algorithm is its locality. After the triangle that contains the query point is located in the triangulation, 
 the algorithm explores neighboring triangles, but only those that are actually seen.In this sense the algorithm can be considered as output sensitive.
-Note that the `Triangular_expansion_visibility_2` algorithm performs better on the full cathedral by the fact that the additional pillars block the view early in many cases.
+Note that the `Triangular_expansion_visibility_2` algorithm performs better on the full cathedral since the additional pillars block the view early in many cases.
 However, if the simple polygon is rather convex (i.e., nearly all boundary is seen) or 
 if only one (or very little) queries are required, using one of the algorithms that does not require preprocessing is advantageous. 
 
