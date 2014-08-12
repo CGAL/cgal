@@ -39,5 +39,5 @@ public:
   \param face face of the polyhedron encountered by the shortest path
   \param location the barycentric coordinate inside face of this point on the path
   */
-  void face(face_descriptor face, Barycentric_coordinate location)
+  void face(face_descriptor face, Barycentric_coordinate location);
 };

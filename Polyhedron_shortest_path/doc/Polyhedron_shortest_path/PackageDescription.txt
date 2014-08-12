@@ -13,14 +13,34 @@
 \todo Make a todo list
 
 \cgalPkgDescriptionBegin{Polyhedron Shortest Paths,PkgPolyhedronShortestPathSummary}
-\cgalPkgPicture{pkg-small.png}
-
+\cgalPkgPicture{shortestpathspackage-ico.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Stephen Kiazyk, Sébastien Loriot, Éric Colin de Verdière}
 \cgalPkgDesc{The package provides methods for computing the shortest path on the surface of 3D face graphs and polyhedra}
 \cgalPkgManuals{Chapter_Polyhedron_shortest_path,PkgPolyhedronShortestPath}
 \cgalPkgSummaryEnd
 
+\cgalPkgShortInfoBegin
+\cgalPkgDemo{Operations on Polyhedra,polyhedron_3.zip}
+\cgalPkgShortInfoEnd
+
 \cgalPkgDescriptionEnd
+
+\cgalClassifedRefPages
+
+## Concepts ##
+
+- `PolyhedronShortestPathTraits`
+- `PolyhedronShortestPathVisitor`
+
+## Classes ##
+
+### Main Classes ###
+
+- `CGAL::Polyhedron_shortest_path<PolyhedronShortestPathTraits,VertexIndexMap, HalfedgeIndexMap, FaceIndexMap, VertexPointMap>`
+
+### Traits Classes ###
+
+- `CGAL::Polyhedron_shortest_path_default_traits<Kernel, FaceGraph>`
 
 */

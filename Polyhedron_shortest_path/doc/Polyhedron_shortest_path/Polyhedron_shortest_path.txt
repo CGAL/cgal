@@ -7,7 +7,7 @@ namespace CGAL {
 \cgalAutoToc
 \author Stephen Kiazyk, Sébastien Loriot, and Éric Colin de Verdière
 
-This chapter describes the Shortest paths on polyhedral surfaces algorithm in the CGAL library.
+This chapter describes the Shortest paths on polyhedral surfaces algorithm in the \cgal library.
 
 \cgalFigureBegin{Shortest_path_main,shortest_paths_overview.png}
 The shortest paths computation on a mesh.
@@ -17,7 +17,7 @@ The shortest paths computation on a mesh.
 
 Imagine one wants to plan the path of a robot moving across the surface a 3-dimensional terrain.  Using a 2-dimensional approximation would fail to capture anything interesting about the terrain we are trying to cross, and would give a poor solution.  This is often called the <em>Discrete Geodesic Problem</em>.  Although the general problem of shortest paths in 3D in the presence of obstacles is NP-Hard, it can be solved efficiently if all motion is constrained to the surface of a 3D object.
 
-This chapter describes functions and objects in CGAL for computing shortest paths on polyhedral surfaces.  Specifically, we build a data structure to efficiently answer queries of the form: given a polyhedral surface \f$\cal{P}\f$, a set of source points \f$S\f$ living on the surface of \f$\cal{P}\f$, and a query point \f$q\f$ also on the surface of \f$\cal{P}\f$, find a shortest path \f$p\f$ between \f$q\f$ and any element \f$s \in S\f$, where \f$p\f$ is constrained to the surface of \f$\cal{P}\f$.
+This chapter describes functions and objects in \cgal for computing shortest paths on polyhedral surfaces.  Specifically, we build a data structure to efficiently answer queries of the form: given a polyhedral surface \f$\cal{P}\f$, a set of source points \f$S\f$ living on the surface of \f$\cal{P}\f$, and a query point \f$q\f$ also on the surface of \f$\cal{P}\f$, find a shortest path \f$p\f$ between \f$q\f$ and any element \f$s \in S\f$, where \f$p\f$ is constrained to the surface of \f$\cal{P}\f$.
 
 Note that there are no restrictions on the genus, connectivity, or convexity of the input surface, however, all of the surface's faces must be triangulated before applying this algorithm.
 
@@ -63,7 +63,7 @@ The algorithm used is based on a paper by Xin and Wang \cgalCite{XinWang2009impr
   Once a sequence tree is built, the shortest path to any query point can be found relatively efficiently.
 
 \section Polyhedron_shortest_pathTheory Theoretical Overview
-  The size of the sequence tree is normally exponential in the complexity of the polyhedral model, thus a simple breadth-first is not feasible.  Rather, we apply techniques to cut down the computation time and storage size of the sequence tree by eliminating branches which are provably unable to contain shortest paths from the source point(s).  The techniques used are given in greater detail in a paper by Xin and Wang (link), which itself expands on earlier work by Chen and Han (line).
+  The size of the sequence tree is normally exponential in the complexity of the polyhedral model, thus a simple breadth-first is not feasible.  Rather, we apply techniques to cut down the computation time and storage size of the sequence tree by eliminating branches which are provably unable to contain shortest paths from the source point(s).  The techniques used are given in greater detail in a paper by Xin and Wang \cgalCite{XinWang2009improvingchenandhan}, which itself expands on earlier work by Chen and Han \cgalCite{ChenHan1996shortestpaths}.
   
 \subsection Polyhedron_shortest_pathContinuousDijkstra Continuous Dijkstra 
   Continuous Dijkstra is simply the application of the graph-search algorithm to a non-discrete setting.  As we build the search tree, newly created nodes are tagged with a distance metric, and inserted into a priority queue, such that the shortest distance nodes are always first.
@@ -86,11 +86,11 @@ In order to use the algorithm, one creates an instance of the `Polyhedron_shorte
 
 \subsection Polyhedron_shortest_pathTraits Traits Class
   
-  The `PolyhedronShortesPathTraits` concept encapsulates all of the necessary geometric types, predicates, and constructions required for the algorithm.  Most of these are supplied by the default CGAL 2D/3D kernels, however a number of important operations related to unfolding and barycentric coordinates must be provided by the traits class.
+  The `PolyhedronShortesPathTraits` concept encapsulates all of the necessary geometric types, predicates, and constructions required for the algorithm.  Most of these are supplied by the default \cgal 2D/3D kernels, however a number of important operations related to unfolding and barycentric coordinates must be provided by the traits class.
   
 \subsection Polyhedron_shortest_pathFaceGraph Face Graph
   
-  The FaceGraph type must support all of the CGAL boost graph library extension operations for halfedge graph and face graph concepts.
+  The FaceGraph type must support all of the \cgal boost graph library extension operations for halfedge graph and face graph concepts.
 
 \subsection Polyhedron_shortest_pathBarycentric Barycentric Coordinates and Face Locations
 
