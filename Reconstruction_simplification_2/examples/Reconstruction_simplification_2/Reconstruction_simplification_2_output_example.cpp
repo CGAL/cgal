@@ -9,7 +9,7 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Reconstruction_simplification_2.h>
 #include <CGAL/List_output.h>
-#include <CGAL/Off_output.h>
+#include <CGAL/Index_output.h>
 #include <CGAL/Tds_output.h>
 
 #include<fstream>
@@ -52,7 +52,7 @@ typedef Rt_2::Edge Edge;
 
 void list_output(Rs_2& rs2);
 void tds_output(Rs_2& rs2);
-void off_output(Rs_2& rs2);
+void index_output(Rs_2& rs2);
 
 
 void print_edge(Edge edge) {
@@ -88,7 +88,7 @@ int main ()
 
 	list_output(rs2);
 	tds_output(rs2);
-	off_output(rs2);
+	index_output(rs2);
 }
 
 void list_output(Rs_2& rs2) {
@@ -145,14 +145,14 @@ void tds_output(Rs_2& rs2) {
 	}
 }
 
-void off_output(Rs_2& rs2) {
+void index_output(Rs_2& rs2) {
 
 	std::cout << "(-------------Off output---------- )" << std::endl;
 
-	CGAL::Off_output<K> off_output;
+	CGAL::Index_output<K> index_output;
 
-    rs2.extract_solid_elements(off_output);
+    rs2.extract_solid_elements(index_output);
 
-    off_output.get_os_output(std::cout);
+    index_output.get_os_output(std::cout);
 
 }

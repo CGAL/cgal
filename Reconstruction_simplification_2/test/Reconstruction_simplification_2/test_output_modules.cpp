@@ -7,7 +7,7 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Reconstruction_simplification_2.h>
 #include <CGAL/List_output.h>
-#include <CGAL/Off_output.h>
+#include <CGAL/Index_output.h>
 #include <CGAL/Tds_output.h>
 
 #include<fstream>
@@ -52,7 +52,7 @@ typedef Rt_2::Edge Edge;
 
 void test_list_output(Rs_2& rs2);
 void test_tds_output(Rs_2& rs2);
-void test_off_output(Rs_2& rs2);
+void test_index_output(Rs_2& rs2);
 
 
 void print_edge(Edge edge) {
@@ -79,7 +79,7 @@ int main ()
 
 	test_list_output(rs2);
 	test_tds_output(rs2);
-	test_off_output(rs2);
+	test_index_output(rs2);
 }
 
 void test_list_output(Rs_2& rs2) {
@@ -151,20 +151,20 @@ void test_tds_output(Rs_2& rs2) {
 	assert(edge_count == 31);
 
 }
-void test_off_output(Rs_2& rs2) {
+void test_index_output(Rs_2& rs2) {
 
 	std::cout <<"(-------------Off OUTPUT---------- )" << std::endl;
 
-	CGAL::Off_output<K> off_output;
+	CGAL::Index_output<K> index_output;
 
-    rs2.extract_solid_elements(off_output);
+    rs2.extract_solid_elements(index_output);
 
     //print
-    off_output.get_os_output(std::cout);
+    index_output.get_os_output(std::cout);
 
     //test cardinalities
     std::ostringstream buffer;
-    off_output.get_os_output(buffer);
+    index_output.get_os_output(buffer);
 
     std::stringstream stream(buffer.str());
 	std::vector<std::string> res;

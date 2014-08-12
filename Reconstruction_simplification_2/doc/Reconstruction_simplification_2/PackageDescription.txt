@@ -35,7 +35,7 @@
 
 ## Models ##
 - `CGAL::List_output<Kernel, Output_Vertex_Iterator, Output_Edge_Iterator>`
-- `CGAL::Off_output<Kernel>`
+- `CGAL::Index_output<Kernel>`
 - `CGAL::Tds_output<Kernel>`
 
 

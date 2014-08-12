@@ -1,5 +1,5 @@
-#ifndef OFF_OUTPUT_H_
-#define OFF_OUTPUT_H_
+#ifndef INDEX_OUTPUT_H_
+#define INDEX_OUTPUT_H_
 
 
 // Copyright (c) 2014  INRIA Sophia-Antipolis (France), INRIA Lorraine LORIA.
@@ -37,17 +37,17 @@ namespace CGAL {
 \ingroup PkgReconstructionSimplification2Models
 
 
-\brief The class `Off_output` is a model for the `ReconstructionSimplificationOutput_2` concept.
+\brief The class `Index_output` is a model for the `ReconstructionSimplificationOutput_2` concept.
 
 \details It allows accessing the isolated vertices and the edges
-of the reconstructed shape in the OFF format via an std::ostream object.
+of the reconstructed shape in a format similar to the OFF format via an std::ostream object.
 
 
 \tparam Kernel is the geometric kernel, used for the reconstruction and
 					simplification task.
  */
 template<class Kernel>
-class Off_output {
+class Index_output {
 
 
 	/// \cond SKIP_IN_MANUAL
@@ -100,7 +100,7 @@ private:
 
 public:
 
-	Off_output() : list_output(Point_it(isolated_points), Edge_it(edges)) { }
+	Index_output() : list_output(Point_it(isolated_points), Edge_it(edges)) { }
 
 	/*!
 	Extracts the solid edges and vertices from the `Reconstruction_simplification_2` module.
@@ -114,9 +114,9 @@ public:
 
 	/*!
 	Writes the edges and vertices of the output simplex into an `std::ostream`
-	in the OFF format.
+	in an indexed format.
 
-	\param os The `std::ostream` where the OFF data will be written to.
+	\param os The `std::ostream` where the indexed data will be written to.
 	*/
 	void get_os_output(std::ostream& os) {
 		std::set<Point> edge_vertices;
@@ -150,4 +150,4 @@ public:
 }
 
 
-#endif /* OFF_OUTPUT_H_ */
+#endif /* INDEX_OUTPUT_H_ */
