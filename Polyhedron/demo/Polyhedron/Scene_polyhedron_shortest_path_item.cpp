@@ -151,7 +151,7 @@ void Scene_polyhedron_shortest_path_item::ensure_aabb_object()
 {
   if (!m_isTreeCached)
   {
-    m_shortestPaths->fill_aabb_tree(m_aabbTree);
+    m_shortestPaths->build_aabb_tree(m_aabbTree);
     m_isTreeCached = true;
   }
 }

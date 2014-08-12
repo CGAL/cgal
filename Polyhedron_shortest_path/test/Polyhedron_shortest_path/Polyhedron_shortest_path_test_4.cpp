@@ -101,7 +101,7 @@ BOOST_AUTO_TEST_CASE( test_find_nearest_face_location_above_surface )
     
     Ray_3 rayPointingDown(location3d + Vector_3(FT(0.0), FT(0.0), FT(10.0)), location3d);
     
-    Polyhedron_shortest_path::Face_location faceLocation = shortestPaths.locate<AABB_face_graph_tree>(rayPointingDown);
+    Polyhedron_shortest_path::Face_location faceLocation = shortestPaths.locate<AABB_face_graph_traits>(rayPointingDown);
     
     BOOST_CHECK_EQUAL(faceIndexMap[face], faceIndexMap[faceLocation.first]);
     BOOST_CHECK_CLOSE(location[0], faceLocation.second[0], FT(0.0001));
@@ -111,7 +111,7 @@ BOOST_AUTO_TEST_CASE( test_find_nearest_face_location_above_surface )
   
   Ray_3 outsideRay(Point_3(FT(-1.0), FT(-1.0), FT(6.0)), Point_3(FT(-1.0), FT(-1.0), FT(0.0)));
   
-  Polyhedron_shortest_path::Face_location emptyFaceLocation = shortestPaths.locate<AABB_face_graph_tree>(outsideRay);
+  Polyhedron_shortest_path::Face_location emptyFaceLocation = shortestPaths.locate<AABB_face_graph_traits>(outsideRay);
     
   BOOST_CHECK(GraphTraits::null_face() == emptyFaceLocation.first);
 }

@@ -21,6 +21,8 @@
 #include <boost/type_traits/is_same.hpp>
 #include <iterator>
 
+#include <CGAL/AABB_tree.h>
+
 #include <CGAL/Polyhedron_shortest_path/barycentric.h>
 #include <CGAL/Polyhedron_shortest_path/internal/Cone_tree.h>
 #include <CGAL/Polyhedron_shortest_path/internal/misc_functions.h>
@@ -2248,11 +2250,13 @@ public:
   /*!
   \brief Return the nearest face location to the given point.
   
+  \tparam AABBTraits A model of `AABBTraits` used to defined a \cgal `AABB_tree`.
+  
   \param location Point to locate on the faceGraph
   \param tree A cached AABB to perform the point location
   */
-  template <class AABB_face_graph_tree>
-  Face_location locate(const Point_3& location, const AABB_face_graph_tree& tree) const
+  template <class AABBTraits>
+  Face_location locate(const Point_3& location, const AABB_tree<AABBTraits>& tree) const
   {
     return locate(location, tree, m_faceGraph, m_vertexPointMap, m_traits);
   }
@@ -2260,17 +2264,19 @@ public:
   /*!
   \brief Return the nearest face location to the given point.
   
+  \tparam AABBTraits A model of `AABBTraits` used to defined a \cgal `AABB_tree`.
+  
   \param location Point to locate on the faceGraph
   \param tree A cached AABB to perform the point location
   \param faceGraph faceGraph Face graph to intersect
   \param vertexPointMap Vertex point mapping for `faceGraph`
   \param traits Optional traits class to use
   */
-  template <class AABB_face_graph_tree>
-  static Face_location locate(const Point_3& location, const AABB_face_graph_tree& tree, const FaceGraph& faceGraph, VertexPointMap vertexPointMap, const Traits& traits = Traits())
+  template <class AABBTraits>
+  static Face_location locate(const Point_3& location, const AABB_tree<AABBTraits>& tree, const FaceGraph& faceGraph, VertexPointMap vertexPointMap, const Traits& traits = Traits())
   {
     typename Traits::Construct_barycentric_coordinate_in_triangle_3 cbcit3(traits.construct_barycentric_coordinate_in_triangle_3_object());
-    typename AABB_face_graph_tree::Point_and_primitive_id result = tree.closest_point_and_primitive(location);
+    typename AABB_tree<AABBTraits>::Point_and_primitive_id result = tree.closest_point_and_primitive(location);
     
     face_descriptor f = result.second;
     Barycentric_coordinate b = cbcit3(triangle_from_face(f, faceGraph, vertexPointMap), result.first);
@@ -2280,45 +2286,51 @@ public:
   /*!
   \brief Return the nearest face location to the given point.
     Note that this will fully build an AABB on each call, use the
-    other version in conjunction with `fill_aabb_tree' 
+    other version in conjunction with `build_aabb_tree' 
     if you need to call this method more than once.
+  
+  \tparam AABBTraits A model of `AABBTraits` used to defined a \cgal `AABB_tree`.
   
   \param location Point to locate on the faceGraph
   */
-  template <class AABB_face_graph_tree>
+  template <class AABBTraits>
   Face_location locate(const Point_3& location) const
   {
-    return locate<AABB_face_graph_tree>(location, m_faceGraph, m_vertexPointMap, m_traits);
+    return locate<AABBTraits>(location, m_faceGraph, m_vertexPointMap, m_traits);
   }
   
   /*!
   \brief Return the nearest face location to the given point.
     Note that this will fully build an AABB on each call, use the
-    other version in conjunction with `fill_aabb_tree' 
+    other version in conjunction with `build_aabb_tree' 
     if you need to call this method more than once.
+  
+  \tparam AABBTraits A model of `AABBTraits` used to defined a \cgal `AABB_tree`.
   
   \param location Point to locate on the faceGraph
   \param faceGraph faceGraph Face graph to intersect
   \param vertexPointMap Vertex point mapping for `faceGraph`
   \param traits Optional traits class to use
   */
-  template <class AABB_face_graph_tree>
+  template <class AABBTraits>
   static Face_location locate(const Point_3& location, const FaceGraph& faceGraph, VertexPointMap vertexPointMap, const Traits& traits = Traits())
   {
-    AABB_face_graph_tree tree;
-    fill_aabb_tree(faceGraph, tree);
+    AABB_tree<AABBTraits> tree;
+    build_aabb_tree(faceGraph, tree);
     return locate(location, tree, faceGraph, vertexPointMap, traits);
   }
   
   /*!
   \brief Return the face location along `ray` nearest to
     its source point.
+    
+  \tparam AABBTraits A model of `AABBTraits` used to defined a \cgal `AABB_tree`.
   
   \param ray Ray to intersect with the faceGraph
   \param tree A cached AABB to perform the intersection
   */
-  template <class AABB_face_graph_tree>
-  Face_location locate(const Ray_3& ray, const AABB_face_graph_tree& tree) const
+  template <class AABBTraits>
+  Face_location locate(const Ray_3& ray, const AABB_tree<AABBTraits>& tree) const
   {
     return locate(ray, tree, m_faceGraph, m_vertexPointMap, m_traits);
   }
@@ -2326,6 +2338,8 @@ public:
   /*!
   \brief Return the face location along `ray` nearest to
     its source point.
+    
+  \tparam AABBTraits A model of `AABBTraits` used to defined a \cgal `AABB_tree`.
   
   \param ray Ray to intersect with the faceGraph
   \param tree A cached AABB to perform the intersection
@@ -2333,9 +2347,10 @@ public:
   \param vertexPointMap Vertex point mapping for `faceGraph`
   \param traits Optional traits class to use
   */
-  template <class AABB_face_graph_tree>
-  static Face_location locate(const Ray_3& ray, const AABB_face_graph_tree& tree, const FaceGraph& faceGraph, VertexPointMap vertexPointMap, const Traits& traits = Traits())
+  template <class AABBTraits>
+  static Face_location locate(const Ray_3& ray, const AABB_tree<AABBTraits>& tree, const FaceGraph& faceGraph, VertexPointMap vertexPointMap, const Traits& traits = Traits())
   {
+    typedef AABB_tree<AABBTraits> AABB_face_graph_tree;
     typename Traits::Construct_barycentric_coordinate_in_triangle_3 cbcit3(traits.construct_barycentric_coordinate_in_triangle_3_object());
     typename Traits::Compute_squared_distance_3 csd3(traits.compute_squared_distance_3_object());
     typedef typename AABB_face_graph_tree::template Intersection_and_primitive_id<Ray_3>::Type Intersection_type;
@@ -2386,56 +2401,64 @@ public:
   \brief Return the face location along `ray` nearest to
     its source point.
     Note that this will fully build an AABB on each call, use the
-    other version in conjunction with `fill_aabb_tree' 
+    other version in conjunction with `build_aabb_tree' 
     if you need to call this method more than once.
+  
+  \tparam AABBTraits A model of `AABBTraits` used to defined a \cgal `AABB_tree`.
   
   \param ray Ray to intersect with the faceGraph
   */
-  template <class AABB_face_graph_tree>
+  template <class AABBTraits>
   Face_location locate(const Ray_3& ray) const
   {
-    return locate<AABB_face_graph_tree>(ray, m_faceGraph, m_vertexPointMap, m_traits);
+    return locate<AABBTraits>(ray, m_faceGraph, m_vertexPointMap, m_traits);
   }
   
   /*!
   \brief Return the face location along `ray` nearest to
     its source point.
     Note that this will fully build an AABB on each call, use the
-    other version in conjunction with `fill_aabb_tree' 
+    other version in conjunction with `build_aabb_tree' 
     if you need to call this method more than once.
+  
+  \tparam AABBTraits A model of `AABBTraits` used to defined a \cgal `AABB_tree`.
   
   \param ray Ray to intersect with the face graph
   \param faceGraph Face graph to intersect
   \param vertexPointMap Vertex point mapping for `faceGraph`
   \param traits Optional traits class to use
   */
-  template <class AABB_face_graph_tree>
+  template <class AABBTraits>
   static Face_location locate(const Ray_3& ray, const FaceGraph& faceGraph, VertexPointMap vertexPointMap, const Traits& traits = Traits())
   {
-    AABB_face_graph_tree tree;
-    fill_aabb_tree(faceGraph, tree);
+    AABB_tree<AABBTraits> tree;
+    build_aabb_tree(faceGraph, tree);
     return locate(ray, tree, faceGraph, vertexPointMap, traits);
   }
 
   /*!
   \brief Creates an AABB tree suitable for use with `locate`.
   
+  \tparam AABBTraits A model of `AABBTraits` used to defined a \cgal `AABB_tree`.
+  
   \param outTree Output parameter to hold the created AABB tree
   */
-  template <class AABB_face_graph_tree>
-  void fill_aabb_tree(AABB_face_graph_tree& outTree) const
+  template <class AABBTraits>
+  void build_aabb_tree(AABB_tree<AABBTraits>& outTree) const
   {
-    fill_aabb_tree(m_faceGraph, outTree);
+    build_aabb_tree(m_faceGraph, outTree);
   }
   
   /*!
   \brief Creates an AABB tree suitable for use with `locate`.
   
+  \tparam AABBTraits A model of `AABBTraits` used to defined a \cgal `AABB_tree`.
+  
   \param faceGraph Face graph to build the AABB tree from
   \param outTree Output parameter to hold the created AABB tree
   */
-  template <class AABB_face_graph_tree>
-  static void fill_aabb_tree(const FaceGraph& faceGraph, AABB_face_graph_tree& outTree)
+  template <class AABBTraits>
+  static void build_aabb_tree(const FaceGraph& faceGraph, AABB_tree<AABBTraits>& outTree)
   {
     face_iterator facesStart, facesEnd;
     boost::tie(facesStart, facesEnd) = faces(faceGraph);

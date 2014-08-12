@@ -94,7 +94,7 @@ BOOST_AUTO_TEST_CASE( test_find_nearest_face_location_on_surface )
     
     Point_3 location3d = construct_barycenter_3(faceTriangle[0], location[0], faceTriangle[1], location[1], faceTriangle[2], location[2]);
     
-    Polyhedron_shortest_path::Face_location faceLocation = shortestPaths.locate<AABB_face_graph_tree>(location3d);
+    Polyhedron_shortest_path::Face_location faceLocation = shortestPaths.locate<AABB_face_graph_traits>(location3d);
     
     BOOST_CHECK_EQUAL(faceIndexMap[face], faceIndexMap[faceLocation.first]);
     BOOST_CHECK_CLOSE(location[0], faceLocation.second[0], FT(0.0001));
