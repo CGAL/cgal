@@ -386,47 +386,47 @@ private:
     bool hasD2 = v2Distance.first != NULL;
     bool hasD3 = v3Distance.first != NULL;
     
-    if (hasD1 && (d + CGAL::internal::my_sqrt(csd2(I, B)) > d1 + CGAL::internal::my_sqrt(csd2(v1, B))))
+    if (hasD1 && (d + CGAL::internal::select_sqrt(csd2(I, B)) > d1 + CGAL::internal::select_sqrt(csd2(v1, B))))
     {
       if (m_debugOutput)
       {
         std::cout << "Filter: d + |I,B| > d1 + |v1,B|: " << std::endl;
         std::cout << "v1 = " << v1Index << " , " << d1 << " , v2 = " << v2Index << " , " << d2 << " , v3 = " << v3Index << " , " << d3 << std::endl;
         std::cout << "d = " << d << std::endl;
-        std::cout << "v1,B = " << CGAL::internal::my_sqrt(csd2(v1, B)) << std::endl;
-        std::cout << "I,B = " << CGAL::internal::my_sqrt(csd2(I, B)) << std::endl;
-        std::cout << "I,A = " << CGAL::internal::my_sqrt(csd2(I, A)) << std::endl;
-        std::cout << (d + CGAL::internal::my_sqrt(csd2(I, B))) << " vs. " << (d1 + CGAL::internal::my_sqrt(csd2(v1, B))) << std::endl;
+        std::cout << "v1,B = " << CGAL::internal::select_sqrt(csd2(v1, B)) << std::endl;
+        std::cout << "I,B = " << CGAL::internal::select_sqrt(csd2(I, B)) << std::endl;
+        std::cout << "I,A = " << CGAL::internal::select_sqrt(csd2(I, A)) << std::endl;
+        std::cout << (d + CGAL::internal::select_sqrt(csd2(I, B))) << " vs. " << (d1 + CGAL::internal::select_sqrt(csd2(v1, B))) << std::endl;
       }
       
       return false;
     }
     
-    if (hasD2 && (d + CGAL::internal::my_sqrt(csd2(I, A)) > d2 + CGAL::internal::my_sqrt(csd2(v2, A))))
+    if (hasD2 && (d + CGAL::internal::select_sqrt(csd2(I, A)) > d2 + CGAL::internal::select_sqrt(csd2(v2, A))))
     {
       if (m_debugOutput)
       {
         std::cout << "Filter: d + |I,A| > d1 + |v2,A|: " << std::endl;
         std::cout << "v1 = " << v1Index << " , " << d1 << " , v2 = " << v2Index << " , " << d2 << " , v3 = " << v3Index << " , " << d3 << std::endl;
         std::cout << "d = " << d << std::endl;
-        std::cout << "v2,A = " << CGAL::internal::my_sqrt(csd2(v2, A)) << std::endl;
-        std::cout << "I,A = " << CGAL::internal::my_sqrt(csd2(I, A)) << std::endl;
-        std::cout << (d + CGAL::internal::my_sqrt(csd2(I, A))) << " vs. " << (d2 + CGAL::internal::my_sqrt(csd2(v2, A))) << std::endl;
+        std::cout << "v2,A = " << CGAL::internal::select_sqrt(csd2(v2, A)) << std::endl;
+        std::cout << "I,A = " << CGAL::internal::select_sqrt(csd2(I, A)) << std::endl;
+        std::cout << (d + CGAL::internal::select_sqrt(csd2(I, A))) << " vs. " << (d2 + CGAL::internal::select_sqrt(csd2(v2, A))) << std::endl;
       }
       
       return false;
     }
     
-    if (hasD3 && (d + CGAL::internal::my_sqrt(csd2(I, A)) > d3 + CGAL::internal::my_sqrt(csd2(v3, A))))
+    if (hasD3 && (d + CGAL::internal::select_sqrt(csd2(I, A)) > d3 + CGAL::internal::select_sqrt(csd2(v3, A))))
     {
       if (m_debugOutput)
       {
         std::cout << "Filter: d + |I,A| > d1 + |v3,A|: " << std::endl;
         std::cout << "v1 = " << v1Index << " , " << d1 << " , v2 = " << v2Index << " , " << d2 << " , v3 = " << v3Index << " , " << d3 << std::endl;
         std::cout << "d = " << d << std::endl;
-        std::cout << "v3,A = " << CGAL::internal::my_sqrt(csd2(v3, A)) << std::endl;
-        std::cout << "I,A = " << CGAL::internal::my_sqrt(csd2(I, A)) << std::endl;
-        std::cout << (d + CGAL::internal::my_sqrt(csd2(I, A))) << " vs. " << (d3 + CGAL::internal::my_sqrt(csd2(v3, A))) << std::endl;
+        std::cout << "v3,A = " << CGAL::internal::select_sqrt(csd2(v3, A)) << std::endl;
+        std::cout << "I,A = " << CGAL::internal::select_sqrt(csd2(I, A)) << std::endl;
+        std::cout << (d + CGAL::internal::select_sqrt(csd2(I, A))) << " vs. " << (d3 + CGAL::internal::select_sqrt(csd2(v3, A))) << std::endl;
       }
       
       return false;
@@ -1113,7 +1113,7 @@ private:
         }
       }
       
-      FT distanceEstimate = parent->distance_from_source_to_root() + CGAL::internal::my_sqrt(csd2(parent->source_image(), leftWindow));
+      FT distanceEstimate = parent->distance_from_source_to_root() + CGAL::internal::select_sqrt(csd2(parent->source_image(), leftWindow));
 
       if (m_debugOutput)
       {
@@ -1147,7 +1147,7 @@ private:
         return;
       }
 
-      FT distanceEstimate = parent->distance_from_source_to_root() + CGAL::internal::my_sqrt(csd2(parent->source_image(), rightWindow));
+      FT distanceEstimate = parent->distance_from_source_to_root() + CGAL::internal::select_sqrt(csd2(parent->source_image(), rightWindow));
       
       if (m_debugOutput)
       {

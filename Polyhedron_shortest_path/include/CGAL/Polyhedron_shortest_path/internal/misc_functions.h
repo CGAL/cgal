@@ -62,9 +62,23 @@ size_t edge_index(typename boost::graph_traits<FaceGraph>::halfedge_descriptor h
 }
 
 template <class FT>
-FT my_sqrt(const FT& x)
+FT internal_sqrt(const FT& x, CGAL::Tag_true)
+{
+  return CGAL::sqrt(x);
+}
+
+template <class FT>
+FT internal_sqrt(const FT& x, CGAL::Tag_false)
 {
   return FT(std::sqrt(CGAL::to_double(x)));
+}
+
+template <class FT>
+FT select_sqrt(const FT& x)
+{
+  typedef ::CGAL::Algebraic_structure_traits<FT> AST; 
+  static const bool has_sqrt = ! ::boost::is_same< ::CGAL::Null_functor, typename AST::Sqrt >::value;
+  return internal_sqrt(x, ::CGAL::Boolean_tag<has_sqrt>());
 }
 
 } // namespace internal

@@ -7,8 +7,6 @@
 // Author(s)     : Stephen Kiazyk
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
-//#include <CGAL/Exact_predicates_exact_constructions_kernel_with_sqrt.h>
 
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
@@ -43,7 +41,6 @@
 using namespace CGAL::test;
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
-//typedef CGAL::Exact_predicates_exact_constructions_kernel Kernel;
 typedef CGAL::Polyhedron_3<Kernel, CGAL::Polyhedron_items_with_id_3> Polyhedron_3;
 typedef CGAL::Polyhedron_shortest_path_default_traits<Kernel, Polyhedron_3> Traits;
 typedef Traits::Barycentric_coordinate Barycentric_coordinate;

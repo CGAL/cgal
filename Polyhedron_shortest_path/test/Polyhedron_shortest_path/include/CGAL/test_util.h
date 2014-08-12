@@ -110,9 +110,9 @@ struct Edge_sequence_collector
 template <class FT, class B>
 B random_coordinate(CGAL::Random& rand)
 {
-  FT u = rand.uniform_01<FT>();
-  FT v = rand.uniform_real(FT(0.0), FT(1.0) - u);
-  return B(u, v, FT(1.0) - u - v);
+  FT u = rand.uniform_real(FT(0.0), FT(1.0));
+  FT v = rand.uniform_real(FT(0.0), FT(FT(1.0) - u));
+  return B(u, v, FT(FT(1.0) - u - v));
 }
 
 template <class FT>

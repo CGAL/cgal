@@ -216,7 +216,7 @@ public:
   FT distance_to_root(const Point_2& point) const
   {
     typename Traits::Compute_squared_distance_2 csd2(m_traits.compute_squared_distance_2_object());
-    return CGAL::internal::my_sqrt(csd2(point, m_sourceImage)) + m_pseudoSourceDistance;
+    return CGAL::internal::select_sqrt(csd2(point, m_sourceImage)) + m_pseudoSourceDistance;
   }
   
   FT distance_from_source_to_root() const

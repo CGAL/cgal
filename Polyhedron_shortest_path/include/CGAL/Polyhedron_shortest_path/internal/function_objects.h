@@ -196,7 +196,7 @@ private:
   Compute_squared_distance_3 m_compute_squared_distance_3;
   Construct_line_3 m_constuct_line_3;
   Construct_projected_point_3 m_construct_projected_point_3;
-  Construct_vertex_3 m_construct_vertex_3;
+  mutable Construct_vertex_3 m_construct_vertex_3;
   Construct_vector_3 m_construct_vector_3;
   Construct_point_2 m_construct_point_2;
   Construct_triangle_2 m_construct_triangle_2;
@@ -227,8 +227,8 @@ public:
     //FT scalePoint = (v01 * v02) / (v01 * v01);
     Point_3 projectedLocation3d(m_construct_projected_point_3(baseSegment, m_construct_vertex_3(t3, 2)));
     FT scalePoint = m_parametric_distance_along_segment_3(m_construct_vertex_3(t3, 0), m_construct_vertex_3(t3, 1), projectedLocation3d);
-    FT triangleHeight = CGAL::internal::my_sqrt(m_compute_squared_distance_3(projectedLocation3d, t3[2]));
-    FT v01Len = CGAL::internal::my_sqrt(m_compute_squared_distance_3(t3[1], t3[0])); 
+    FT triangleHeight = CGAL::internal::select_sqrt(m_compute_squared_distance_3(projectedLocation3d, t3[2]));
+    FT v01Len = CGAL::internal::select_sqrt(m_compute_squared_distance_3(t3[1], t3[0])); 
     
     Point_2 A(m_construct_point_2(0.0, 0.0));
     Point_2 B(m_construct_point_2(v01Len, 0.0));
@@ -284,7 +284,7 @@ private:
   Construct_segment_3 m_construct_segment_3;
   Construct_source_2 m_construct_source_2;
   Construct_target_2 m_construct_target_2;
-  Construct_vertex_3 m_construct_vertex_3;
+  mutable Construct_vertex_3 m_construct_vertex_3;
   Construct_triangle_2 m_construct_triangle_2;
   
 public:
@@ -314,13 +314,13 @@ public:
   {
     Point_3 projectedLocation3d(m_constrct_projected_point_3(m_construct_line_3(m_construct_vertex_3(t3, edgeIndex), m_construct_vertex_3(t3, edgeIndex + 1)), m_construct_vertex_3(t3, edgeIndex + 2)));
     FT scalePoint = m_parametric_distance_along_segment_3(m_construct_segment_3(m_construct_vertex_3(t3, edgeIndex), m_construct_vertex_3(t3, edgeIndex + 1)), projectedLocation3d);
-    FT triangleHeight = CGAL::internal::my_sqrt(m_compute_squared_distance_3(projectedLocation3d, m_construct_vertex_3(t3, edgeIndex + 2)));
+    FT triangleHeight = CGAL::internal::select_sqrt(m_compute_squared_distance_3(projectedLocation3d, m_construct_vertex_3(t3, edgeIndex + 2)));
 
     Vector_2 edgeVector(m_construct_vector_2(segment));
     Point_2 projectionPoint(m_construct_translated_point_2(m_construct_source_2(segment), m_construct_scaled_vector_2(edgeVector, scalePoint)));
 
     Vector_2 perpendicularEdgeVector(m_construct_perpendicular_vector_2(edgeVector, CGAL::COUNTERCLOCKWISE));
-    perpendicularEdgeVector = m_construct_scaled_vector_2(perpendicularEdgeVector, FT(1.0) / CGAL::internal::my_sqrt(m_compute_squared_length_2(perpendicularEdgeVector)));
+    perpendicularEdgeVector = m_construct_scaled_vector_2(perpendicularEdgeVector, FT(1.0) / CGAL::internal::select_sqrt(m_compute_squared_length_2(perpendicularEdgeVector)));
 
     Point_2 points[3];
     points[edgeIndex] = m_construct_source_2(segment);
@@ -461,7 +461,7 @@ private:
   Project_triangle_3_to_triangle_2 m_project_triangle_3_to_triangle_2;
   Flatten_triangle_3_along_segment_2 m_flatten_triangle_3_along_segment_2;
   Construct_triangle_3 m_construct_triangle_3;
-  Construct_vertex_2 m_construct_vertex_2;
+  mutable Construct_vertex_2 m_construct_vertex_2;
   Construct_segment_2 m_construct_segment_2;
   Construct_source_2 m_construct_source_2;
   Construct_target_2 m_construct_target_2;

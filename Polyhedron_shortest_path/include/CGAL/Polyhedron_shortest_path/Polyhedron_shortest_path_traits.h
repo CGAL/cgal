@@ -36,7 +36,7 @@ model as required by the Polyhedron_shortest_path algorithm
 template <
   class K, 
   class F>
-class Polyhedron_shortest_path_default_traits
+class Polyhedron_shortest_path_default_traits : public K
 {
 public:
 
@@ -44,18 +44,6 @@ public:
   typedef F FaceGraph;
 
   typedef typename Kernel::FT FT;
-  
-  typedef typename Kernel::Point_2 Point_2;
-  typedef typename Kernel::Vector_2 Vector_2;
-  typedef typename Kernel::Ray_2 Ray_2;
-  typedef typename Kernel::Line_2 Line_2;
-  typedef typename Kernel::Segment_2 Segment_2;
-  typedef typename Kernel::Triangle_2 Triangle_2;
-
-  typedef typename Kernel::Point_3 Point_3;
-  typedef typename Kernel::Vector_3 Vector_3;
-  typedef typename Kernel::Ray_3 Ray_3;
-  typedef typename Kernel::Triangle_3 Triangle_3;
   
   class Barycentric_coordinate
   {
@@ -83,44 +71,6 @@ public:
       return m_coords[i % 3];
     }
   };
-  
-public:
-  #define CGAL_kernel_functor(X, Y) \
-    typedef typename Kernel::X X;     \
-    X Y() const { return m_kernel.Y(); }
-
-  // Predicates
-  CGAL_kernel_functor(Compare_distance_2, compare_distance_2_object)
-  CGAL_kernel_functor(Orientation_2, orientation_2_object);
-    
-  // Constructions
-  CGAL_kernel_functor(Construct_point_2, construct_point_2_object)
-  CGAL_kernel_functor(Construct_vector_2, construct_vector_2_object)
-  CGAL_kernel_functor(Construct_ray_2, construct_ray_2_object)
-  CGAL_kernel_functor(Construct_line_2, construct_line_2_object)
-  CGAL_kernel_functor(Construct_segment_2, construct_segment_2_object)
-  CGAL_kernel_functor(Construct_triangle_2, construct_triangle_2_object)
-
-  CGAL_kernel_functor(Construct_vertex_2, construct_vertex_2_object)
-  CGAL_kernel_functor(Construct_source_2, construct_source_2_object)
-  CGAL_kernel_functor(Construct_target_2, construct_target_2_object)
-  
-  CGAL_kernel_functor(Construct_barycenter_2, construct_barycenter_2_object)
-  CGAL_kernel_functor(Compute_squared_distance_2, compute_squared_distance_2_object)
-  CGAL_kernel_functor(Intersect_2, intersect_2_object)
-  CGAL_kernel_functor(Construct_point_on_2, construct_point_on_2_object)
-
-  CGAL_kernel_functor(Construct_vector_3, construct_vector_3_object)
-  CGAL_kernel_functor(Construct_triangle_3, construct_triangle_3_object)
-  
-  CGAL_kernel_functor(Construct_vertex_3, construct_vertex_3_object)
-  CGAL_kernel_functor(Construct_source_3, construct_source_3_object)
-  CGAL_kernel_functor(Construct_target_3, construct_target_3_object)
-  
-  CGAL_kernel_functor(Construct_barycenter_3, construct_barycenter_3_object)
-  CGAL_kernel_functor(Compute_squared_distance_3, compute_squared_distance_3_object)
-  
-  #undef CGAL_kernel_functor
   
   // Predicates
 public:
