@@ -14,9 +14,7 @@ endif()
 # based on qt and vtk. Just uncomment the corresponding lines
 
 
-# find_package(CGAL QUIET COMPONENTS Core Qt4)
-#OR
- find_package(CGAL QUIET COMPONENTS Core Qt5)
+find_package(CGAL QUIET COMPONENTS Core Qt4or5)
 
 # include("CMakeLCCViewerQt.inc")
 # include("CMakeLCCViewerVtk.inc")
@@ -28,7 +26,7 @@ endif()
 # ADD_DEFINITIONS("-pg")
 # set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -pg")
 
-# To use valgrind, we must disable rounding math ckeck.
+# To use valgrind, we must disable rounding maths check.
 # add_definition(-DCGAL_DISABLE_ROUNDING_MATH_CHECK)
 
 if ( CGAL_FOUND )

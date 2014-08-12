@@ -12,40 +12,17 @@ endif()
 
 set( QT_USE_QTMAIN   TRUE )
 
-#New for Qt5 version !
-option (USE_QT5 "Use Qt5 version instead of Qt4" ON)
+find_package(CGAL COMPONENTS Qt4or5 Core )
 
-if(USE_QT5)
-
-	find_package(CGAL COMPONENTS Qt5 Core )
-
-	include(${CGAL_USE_FILE})
+include(${CGAL_USE_FILE})
 	
-	find_package(Qt5)
-
-else (USE_QT5)
-
-	
-	find_package(CGAL COMPONENTS Qt4 Core )
-	include(${CGAL_USE_FILE})
-
-	find_package(Qt4)
-
-	if(CGAL_Qt4_FOUND AND QT4_FOUND)
-		include(${QT_USE_FILE})
-		message("Qt4 found")
-		set(QT4 TRUE)
-	endif()
-
-endif (USE_QT5)
-
-include(QtChoice)
+find_package(Qt4or5)
 
 include_directories (BEFORE ${CMAKE_CURRENT_SOURCE_DIR}/../../include )
 include_directories (BEFORE ${CMAKE_CURRENT_BINARY_DIR})
 include_directories (BEFORE ${CMAKE_CURRENT_SOURCE_DIR}/include )
 
-if ( CGAL_FOUND AND (QT4 OR QT5) AND CGAL_Core_FOUND )
+if ( CGAL_FOUND AND QT${QT_VERSION_USED}_FOUND AND CGAL_Core_FOUND )
 
   #include(${QT_USE_FILE})
 
@@ -67,8 +44,8 @@ if ( CGAL_FOUND AND (QT4 OR QT5) AND CGAL_Core_FOUND )
   # Link with CGAL
   target_link_libraries( boolean_operations_2 ${CGAL_LIBRARIES}  ${CGAL_3RD_PARTY_LIBRARIES})
 
-else( CGAL_FOUND AND (QT4 OR QT5) AND CGAL_Core_FOUND )
+else( CGAL_FOUND AND QT${QT_VERSION_USED}_FOUND AND CGAL_Core_FOUND )
 
-  message(STATUS "NOTICE: This demo requires CGAL and Qt ( version 4 or 5), and will not be compiled.")
+  message(STATUS "NOTICE: This demo requires CGAL and ${QT_VERSION}, and will not be compiled.")
 
-endif( CGAL_FOUND AND (QT4 OR QT5) AND CGAL_Core_FOUND )
+endif( CGAL_FOUND AND QT${QT_VERSION_USED}_FOUND AND CGAL_Core_FOUND )

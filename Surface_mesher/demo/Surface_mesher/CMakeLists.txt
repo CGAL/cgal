@@ -26,39 +26,19 @@ endforeach()
 
 include_directories( ./ )
 
-#New for Qt5 version !
-
 # QGLViwer needs Qt4 configured with QtOpenGL and QtXml support
 
 set( QT_USE_QTOPENGL TRUE )
 set( QT_USE_QTXML    TRUE )
 set( QT_USE_QTMAIN   TRUE )
 
-option (USE_QT5 "Use Qt5 version instead of Qt4" ON)
+find_package(CGAL COMPONENTS ImageIO Qt4or5)
 
-if(USE_QT5)
+include(${CGAL_USE_FILE})
 
-	find_package(CGAL COMPONENTS ImageIO Qt5)
-	include(${CGAL_USE_FILE})
-	find_package(Qt5)
+find_package(Qt4or5)
 
-else (USE_QT5)
-	find_package(CGAL COMPONENTS ImageIO Qt4)
-
-	include(${CGAL_USE_FILE})
-
-	find_package(Qt4)
-	include(${QT_USE_FILE})
-
-	if(CGAL_Qt4_FOUND AND QT4_FOUND)
-		message("Qt4 found")
-		set(QT4 TRUE)
-	endif()
-endif (USE_QT5)
-
-include(QtChoice)
-
-if ( CGAL_FOUND AND (QT4 OR QT5) AND CGAL_ImageIO_FOUND)
+if ( CGAL_FOUND AND QT${QT_VERSION_USED}_FOUND AND CGAL_ImageIO_FOUND)
   include( ${CGAL_USE_FILE} )
 
   find_package(QGLViewer )
@@ -132,9 +112,9 @@ if ( CGAL_FOUND AND (QT4 OR QT5) AND CGAL_ImageIO_FOUND)
   else( QGLVIEWER_FOUND)
     message(STATUS "NOTICE: This demo needs libQGLViewer, and will not be compiled.")
   endif( QGLVIEWER_FOUND)
-else(CGAL_FOUND AND (QT4 OR QT5) AND CGAL_ImageIO_FOUND)
+else(CGAL_FOUND AND QT${QT_VERSION_USED}_FOUND AND CGAL_ImageIO_FOUND)
   if(RUNNING_CGAL_AUTO_TEST)
     # Just to avoid a warning from CMake if that variable is set on the command line...
   endif()
-  message(STATUS "NOTICE: This demo needs Qt (version 4 or 5), and will not be compiled.")
-endif(CGAL_FOUND AND (QT4 OR QT5) AND CGAL_ImageIO_FOUND)
+  message(STATUS "NOTICE: This demo needs ${QT_VERSION}, and will not be compiled.")
+endif(CGAL_FOUND AND QT${QT_VERSION_USED}_FOUND AND CGAL_ImageIO_FOUND)

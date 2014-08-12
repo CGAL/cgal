@@ -10,38 +10,21 @@ else()
   cmake_policy(VERSION 2.6)
 endif()
 
-#New for Qt5 version !
-option (USE_QT5 "Use Qt5 version instead of Qt4" ON)
-
 set( QT_USE_QTXML    TRUE )
 set( QT_USE_QTMAIN   TRUE )
 set( QT_USE_QTSCRIPT  TRUE )
 set( QT_USE_QTOPENGL  TRUE )
 
-if(USE_QT5)
-	find_package(CGAL COMPONENTS Qt5)
-	include(${CGAL_USE_FILE})
+find_package(CGAL COMPONENTS Qt4or5)
 
-	find_package(Qt5)
+include(${CGAL_USE_FILE})
 
-else(USE_QT5)
-	find_package(CGAL  COMPONENTS Qt4)
-	include(${CGAL_USE_FILE})
-
-	find_package(Qt4)
-	if(QT4_FOUND)
-		message("Qt4 found")
-		set(QT4 TRUE) 
-                include( ${QT_USE_FILE} )
-	endif(QT4_FOUND)
-endif (USE_QT5)
-
-include(QtChoice)
+find_package(Qt4or5)
 
 find_package(OpenGL)
 find_package(QGLViewer)
 
-if ( CGAL_FOUND AND (QT4 OR QT5) AND OPENGL_FOUND AND QGLVIEWER_FOUND )
+if ( CGAL_FOUND AND QT${QT_VERSION_USED}_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND )
 
   include_directories (${QGLVIEWER_INCLUDE_DIR})
   include_directories (BEFORE ../../include ./ )
@@ -70,21 +53,17 @@ if ( CGAL_FOUND AND (QT4 OR QT5) AND OPENGL_FOUND AND QGLVIEWER_FOUND )
   target_link_libraries( T3_demo ${QT_LIBRARIES} ${QGLVIEWER_LIBRARIES} )
   target_link_libraries( T3_demo ${OPENGL_gl_LIBRARY} ${OPENGL_glu_LIBRARY} )
 
-else( CGAL_FOUND AND (QT4 OR QT5) AND OPENGL_FOUND AND QGLVIEWER_FOUND )
+else( CGAL_FOUND AND QT${QT_VERSION_USED}_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND )
 
   set(TRIANGULATION_3_MISSING_DEPS "")
 
   if(NOT CGAL_FOUND)
-    set(TRIANGULATION_3_MISSING_DEPS "the CGAL Qt library, ${TRIANGULATION_3_MISSING_DEPS}")
+    set(TRIANGULATION_3_MISSING_DEPS "the CGAL ${QT_VERSION} library, ${TRIANGULATION_3_MISSING_DEPS}")
   endif()      	   
 
-  if(NOT QT4)
-    set(TRIANGULATION_3_MISSING_DEPS "Qt4, ${TRIANGULATION_3_MISSING_DEPS}")
-  endif() 
-
-  if(NOT QT5)
-    set(TRIANGULATION_3_MISSING_DEPS "Qt5, ${TRIANGULATION_3_MISSING_DEPS}")  
-  endif()     	   
+  if(NOT QT${QT_VERSION_USED}_FOUND)
+    set(TRIANGULATION_3_MISSING_DEPS "${QT_VERSION}, ${TRIANGULATION_3_MISSING_DEPS}")
+  endif()    	   
 
   if(NOT OPENGL_FOUND)
     set(TRIANGULATION_3_MISSING_DEPS "OpenGL, ${TRIANGULATION_3_MISSING_DEPS}")
@@ -97,4 +76,4 @@ else( CGAL_FOUND AND (QT4 OR QT5) AND OPENGL_FOUND AND QGLVIEWER_FOUND )
 
   message(STATUS "NOTICE: This demo requires ${TRIANGULATION_3_MISSING_DEPS}and will not be compiled.")
 
-endif( CGAL_FOUND AND (QT4 OR QT5) AND OPENGL_FOUND AND QGLVIEWER_FOUND )
+endif( CGAL_FOUND AND QT${QT_VERSION_USED}_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND )
