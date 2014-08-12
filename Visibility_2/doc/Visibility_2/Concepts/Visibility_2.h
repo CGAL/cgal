@@ -48,11 +48,18 @@ public:
   
   /*! 
     Tag identifying whether general polygons (with holes) are supported (either \ref CGAL::Tag_true or \ref CGAL::Tag_false). 
+    That is, the polygon is represented by a face \f$ f \f$ with no 
+    isolated vertex and any edge of \f$ f \f$ separates \f$ f \f$ from another face.
+    Note that this allows \f$ f \f$ to touch a vertex from several sides. 
   */
   typedef unspecified_type Supports_general_polygon_tag; 
 
   /*! 
     Tag identifying whether general simple polygons are supported (either \ref CGAL::Tag_true or \ref CGAL::Tag_false). 
+
+    That is, the polygon is represented by a face \f$ f \f$ with no holes, 
+    no isolated vertex and any edge of \f$ f \f$ separates \f$ f \f$ from another face.
+    Note that this allows \f$ f \f$ to touch a vertex from several sides. 
   */
   typedef unspecified_type Supports_simple_polygon_tag; 
 /// @}
