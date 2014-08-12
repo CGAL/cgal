@@ -4,6 +4,7 @@
 #include <CGAL/gl.h>
 #include <CGAL/internal/Operations_on_polyhedra/compute_normal.h>
 
+#define EMULATE_TRANSPARENCY -44
 
 
 inline void CGALglcolor(QColor c, int dv = 0)
@@ -36,14 +37,27 @@ void gl_render_facets(Polyhedron& polyhedron, const std::vector<QColor>& colors)
 
   int patch_id = -1;
 
+  //to cancel transparency emulation
+  ::glEnable(GL_DEPTH_TEST);
+  ::glEnable(GL_CULL_FACE);
+
   Facet_iterator f;
   for(f = polyhedron.facets_begin();
     f != polyhedron.facets_end();
     f++)
   {
     const int this_patch_id = f->patch_id();
-    if(patch_id != this_patch_id) {
-      CGALglcolor(colors[this_patch_id]);
+    if(patch_id != this_patch_id){
+      if ( this_patch_id==EMULATE_TRANSPARENCY )
+      {
+        ::glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        ::glEnable(GL_BLEND);
+        ::glColor4f(.23,.78,.32,0.02);
+        ::glDisable(GL_DEPTH_TEST);
+        ::glDisable(GL_CULL_FACE);
+      }
+      else
+        CGALglcolor(colors[this_patch_id]);
       patch_id = this_patch_id;
     }
     ::glBegin(GL_POLYGON);

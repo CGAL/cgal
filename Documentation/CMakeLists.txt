@@ -104,7 +104,7 @@ option(BUILD_DOC "Build the doxygen documentation" OFF)
 if (BUILD_DOC)
 
 find_package(Doxygen)
-find_package(PythonInterp 2.6.8)
+find_package(PythonInterp 2.6.7)
 
 if(DOXYGEN_FOUND)
   # set up the directories and variables
