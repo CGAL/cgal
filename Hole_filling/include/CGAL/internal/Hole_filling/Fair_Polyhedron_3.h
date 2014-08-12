@@ -153,7 +153,7 @@ public:
     // factorize
     double D;
     Sparse_linear_solver m_solver;
-    bool prefactor_ok = m_solver.pre_factor(A, D);
+    bool prefactor_ok = m_solver.factor(A, D);
     if(!prefactor_ok) {
       CGAL_warning(!"pre_factor failed!");
       return false;
