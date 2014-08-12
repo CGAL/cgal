@@ -196,7 +196,7 @@ namespace CGAL {
 //       *        \f$ x\f$-monotone.
 //       * \param p a point to be appended to `cv` at the back.
 //       * \pre `cv` contains at least one segment.
-//       * \pre Geometric segments can be constructed from two points.
+//       * \pre GeometryTraits is a model of ArrConstructionFromTwoPointsTraits_2.
 //       */
 //      void operator()(Curve_2& cv, const Point_2& p) const;
 
@@ -218,7 +218,7 @@ namespace CGAL {
 //       * \pre `p` is either to the right of `xcv` if it is oriented
 //       *      left-to-right or it is to its left if `xcv` is oriented
 //       *      right-to-left.
-//       * \pre Geometric segments can be constructed from two points.
+//       * \pre GeometryTraits is a model of ArrConstructionFromTwoPointsTraits_2.
 //       */
 //      void operator()(const X_monotone_curve_2& xcv, Point_2& p) const;
 
@@ -253,7 +253,7 @@ namespace CGAL {
 //       *        \f$ x\f$-monotone.
 //       * \param p a point to be appended to `cv` at the back.
 //       * \pre `cv` contains at least one segment.
-//       * \pre Geometric segments can be constructed from two points.
+//       * \pre GeometryTraits is a model of ArrConstructionFromTwoPointsTraits_2.
 //       */
 //      void operator()(Curve_2& cv, const Point_2& p) const;
 
@@ -275,7 +275,7 @@ namespace CGAL {
 //       * \pre `p` is either to the left of `xcv` if it is oriented
 //       *      left-to-right or it is to its right if `xcv` is oriented
 //       *      right-to-left.
-//       * \pre Geometric segments can be constructed from two points.
+//       * \pre GeometryTraits is a model of ArrConstructionFromTwoPointsTraits_2.
 //       */
 //      void operator()(const X_monotone_curve_2& xcv, Point_2& p) const;
 
@@ -536,7 +536,7 @@ namespace CGAL {
       /*!
         \deprecated adds a new point to the polycurvs, which becomes the new
         target point of `pi`.
-        * \pre Geometric segments can be constructed from two points.
+        * \pre GeometryTraits is a model of ArrConstructionFromTwoPointsTraits_2.
       */
       void push_back (const Point_2 & p);
 
