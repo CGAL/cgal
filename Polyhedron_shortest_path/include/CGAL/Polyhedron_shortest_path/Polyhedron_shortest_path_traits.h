@@ -9,12 +9,8 @@
 #ifndef CGAL_POLYHEDRON_SHORTEST_PATH_TRAITS_H
 #define CGAL_POLYHEDRON_SHORTEST_PATH_TRAITS_H
 
-#include <CGAL/Polyhedron_shortest_path/internal/Barycentric.h>
-#include <CGAL/Polyhedron_shortest_path/internal/function_objects.h>
-
-#include <CGAL/boost/graph/properties.h>
-//#include <CGAL/boost/graph/properties_Polyhedron_3.h>
-//#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
+#include <CGAL/Polyhedron_shortest_path/barycentric.h>
+#include <CGAL/Polyhedron_shortest_path/function_objects.h>
 
 #include <ostream>
 #include <boost/array.hpp>
@@ -48,7 +44,7 @@ public:
   class Barycentric_coordinate
   {
   private:
-    boost::array<FT,3> m_coords;
+    CGAL::cpp11::array<FT,3> m_coords;
   public:
     Barycentric_coordinate()
     {
@@ -74,8 +70,8 @@ public:
   
   // Predicates
 public:
-  typedef typename internal::Compare_relative_intersection_along_segment_2<Kernel> Compare_relative_intersection_along_segment_2;
-  typedef typename internal::Is_saddle_vertex<Kernel, FaceGraph> Is_saddle_vertex;
+  typedef typename PolyhedronShortestPath::Compare_relative_intersection_along_segment_2<Kernel> Compare_relative_intersection_along_segment_2;
+  typedef typename PolyhedronShortestPath::Is_saddle_vertex<Kernel, FaceGraph> Is_saddle_vertex;
   
   // Constructions
 public:
@@ -101,12 +97,12 @@ public:
     }
   };
 
-  typedef typename internal::Project_triangle_3_to_triangle_2<K> Project_triangle_3_to_triangle_2;
-  typedef typename internal::Flatten_triangle_3_along_segment_2<K> Flatten_triangle_3_along_segment_2;
-  typedef typename internal::Parametric_distance_along_segment_2<K> Parametric_distance_along_segment_2;
-  typedef typename internal::Construct_barycentric_coordinate_in_triangle_2<K, Barycentric_coordinate, Construct_barycentric_coordinate> Construct_barycentric_coordinate_in_triangle_2;
-  typedef typename internal::Construct_barycentric_coordinate_in_triangle_3<K, Barycentric_coordinate, Construct_barycentric_coordinate> Construct_barycentric_coordinate_in_triangle_3;
-  typedef typename internal::Classify_barycentric_coordinate<Barycentric_coordinate, Construct_barycentric_coordinate_weight> Classify_barycentric_coordinate;
+  typedef typename PolyhedronShortestPath::Project_triangle_3_to_triangle_2<K> Project_triangle_3_to_triangle_2;
+  typedef typename PolyhedronShortestPath::Flatten_triangle_3_along_segment_2<K> Flatten_triangle_3_along_segment_2;
+  typedef typename PolyhedronShortestPath::Parametric_distance_along_segment_2<K> Parametric_distance_along_segment_2;
+  typedef typename PolyhedronShortestPath::Construct_barycentric_coordinate_in_triangle_2<K, Barycentric_coordinate, Construct_barycentric_coordinate> Construct_barycentric_coordinate_in_triangle_2;
+  typedef typename PolyhedronShortestPath::Construct_barycentric_coordinate_in_triangle_3<K, Barycentric_coordinate, Construct_barycentric_coordinate> Construct_barycentric_coordinate_in_triangle_3;
+  typedef typename PolyhedronShortestPath::Classify_barycentric_coordinate<Barycentric_coordinate, Construct_barycentric_coordinate_weight> Classify_barycentric_coordinate;
   
 private:
   Kernel m_kernel;

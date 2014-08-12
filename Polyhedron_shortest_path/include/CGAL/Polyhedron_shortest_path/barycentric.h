@@ -15,7 +15,7 @@
 
 namespace CGAL {
 
-namespace internal {
+namespace PolyhedronShortestPath {
 
 template <class K, class B, class Construct_barycentric_coordinate>
 class Construct_barycentric_coordinate_in_triangle_2
@@ -119,6 +119,9 @@ public:
   }
 };
 
+/*!
+Classify the location of a 3-tuple barycentric coordinate in a triangle
+*/
 enum Barycentric_coordinate_type
 {
   BARYCENTRIC_COORDINATE_INVALID = 0,
@@ -221,7 +224,7 @@ public:
   
 };
 
-} // namespace internal
+} // namespace Polyhedron_shortest_path
 
 } // namespace CGAL
 

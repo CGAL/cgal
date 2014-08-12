@@ -21,9 +21,9 @@
 #include <boost/type_traits/is_same.hpp>
 #include <iterator>
 
+#include <CGAL/Polyhedron_shortest_path/barycentric.h>
 #include <CGAL/Polyhedron_shortest_path/internal/Cone_tree.h>
 #include <CGAL/Polyhedron_shortest_path/internal/misc_functions.h>
-#include <CGAL/Polyhedron_shortest_path/internal/Barycentric.h>
 
 #include <CGAL/boost/graph/iterator.h>
 #include <boost/variant/get.hpp>
@@ -489,15 +489,15 @@ private:
     typename Traits::Classify_barycentric_coordinate classify_barycentric_coordinate(m_traits.classify_barycentric_coordinate_object());
   
     size_t associatedEdge;
-    CGAL::internal::Barycentric_coordinate_type type;
+    CGAL::PolyhedronShortestPath::Barycentric_coordinate_type type;
     boost::tie(type, associatedEdge) = classify_barycentric_coordinate(location);
     
     switch (type)
     {
-      case CGAL::internal::BARYCENTRIC_COORDINATE_INTERNAL:
+      case CGAL::PolyhedronShortestPath::BARYCENTRIC_COORDINATE_INTERNAL:
         expand_face_root(f, location);
         break;
-      case CGAL::internal::BARYCENTRIC_COORDINATE_EDGE:
+      case CGAL::PolyhedronShortestPath::BARYCENTRIC_COORDINATE_EDGE:
         {
           halfedge_descriptor he = halfedge(f, m_faceGraph);
           for (size_t i = 0; i < associatedEdge; ++i)
@@ -507,7 +507,7 @@ private:
           expand_edge_root(he, cbcw(location, associatedEdge), cbcw(location, (associatedEdge + 1) % 3));
         }
         break;
-      case CGAL::internal::BARYCENTRIC_COORDINATE_VERTEX:
+      case CGAL::PolyhedronShortestPath::BARYCENTRIC_COORDINATE_VERTEX:
         {
           halfedge_descriptor he = halfedge(f, m_faceGraph);
           for (size_t i = 0; i < associatedEdge; ++i)
@@ -1526,14 +1526,14 @@ private:
     typename Traits::Classify_barycentric_coordinate classify_barycentric_coordinate(m_traits.classify_barycentric_coordinate_object());
     
     size_t associatedEdge;
-    CGAL::internal::Barycentric_coordinate_type type;
+    CGAL::PolyhedronShortestPath::Barycentric_coordinate_type type;
     boost::tie(type, associatedEdge) = classify_barycentric_coordinate(location);
     
     switch (type)
     {
-      case CGAL::internal::BARYCENTRIC_COORDINATE_INTERNAL:
+      case CGAL::PolyhedronShortestPath::BARYCENTRIC_COORDINATE_INTERNAL:
         return nearest_on_face(f, location);
-      case CGAL::internal::BARYCENTRIC_COORDINATE_EDGE:
+      case CGAL::PolyhedronShortestPath::BARYCENTRIC_COORDINATE_EDGE:
         {
           halfedge_descriptor he = halfedge(f, m_faceGraph);
           for (size_t i = 0; i < associatedEdge; ++i)
@@ -1569,7 +1569,7 @@ private:
           }
         }
         break;
-      case CGAL::internal::BARYCENTRIC_COORDINATE_VERTEX:
+      case CGAL::PolyhedronShortestPath::BARYCENTRIC_COORDINATE_VERTEX:
         {
           halfedge_descriptor he = halfedge(f, m_faceGraph);
           

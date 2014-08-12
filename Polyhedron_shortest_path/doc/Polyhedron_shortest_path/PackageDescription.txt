@@ -43,4 +43,8 @@
 
 - `CGAL::Polyhedron_shortest_path_default_traits<Kernel, FaceGraph>`
 
+## Enums ##
+
+- `CGAL::PolyhedronShortestPath::Barycentric_coordinate_type`
+
 */

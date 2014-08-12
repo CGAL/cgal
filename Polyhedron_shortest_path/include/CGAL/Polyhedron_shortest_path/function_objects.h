@@ -18,7 +18,7 @@
 
 namespace CGAL {
 
-namespace internal {
+namespace PolyhedronShortestPath {
 
 template <class Kernel>
 class Parametric_distance_along_segment_2
@@ -446,8 +446,8 @@ public:
   typedef typename GraphTraits::vertex_descriptor vertex_descriptor;
   typedef typename GraphTraits::halfedge_descriptor halfedge_descriptor;
   
-  typedef typename CGAL::internal::Project_triangle_3_to_triangle_2<Kernel> Project_triangle_3_to_triangle_2;
-  typedef typename CGAL::internal::Flatten_triangle_3_along_segment_2<Kernel> Flatten_triangle_3_along_segment_2;
+  typedef typename CGAL::PolyhedronShortestPath::Project_triangle_3_to_triangle_2<Kernel> Project_triangle_3_to_triangle_2;
+  typedef typename CGAL::PolyhedronShortestPath::Flatten_triangle_3_along_segment_2<Kernel> Flatten_triangle_3_along_segment_2;
   typedef typename Kernel::Orientation_2 Orientation_2;
   typedef typename Kernel::Construct_triangle_3 Construct_triangle_3;
   typedef typename Kernel::Construct_vertex_2 Construct_vertex_2;
@@ -543,7 +543,7 @@ public:
   }
 };
 
-} // namespace internal
+} // namespace Polyhedron_shortest_path
 
 } // namespace CGAL
 

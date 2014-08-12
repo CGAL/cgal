@@ -14,8 +14,6 @@
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/boost/graph/iterator.h>
 
-#include <CGAL/Interval_nt.h>
-
 namespace CGAL {
 
 namespace internal {
