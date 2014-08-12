@@ -2,16 +2,12 @@
 
 
 template <class PointMassList, class Point>
-void load_xy_file(const std::string& fileName, PointMassList& points)
+void load_xy_file(const std::string& filename, PointMassList& points)
 {
-   std::ifstream ifs(fileName);
-   std::cerr << "read xy...";
+   std::ifstream ifs(filename);
    Point point;
-   unsigned int nb = 0;
    while (ifs >> point)
-   {
-	   points.push_back(std::make_pair(point, 1));
-   }
-   std::cerr << "done (" << nb << " points)" << std::endl;
+      points.push_back(std::make_pair(point, 1));
+
    ifs.close();
 }

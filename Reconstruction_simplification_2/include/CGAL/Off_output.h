@@ -108,8 +108,8 @@ public:
 	\param rt2 The `Reconstruction_triangulation_2` from which the solid edges and vertices are extracted.
 
 	*/
-	void store_marked_elements(Rt_2& rt2) {
-		list_output.store_marked_elements(rt2);
+	void store_solid_elements(Rt_2& rt2) {
+		list_output.store_solid_elements(rt2);
 	}
 
 	/*!

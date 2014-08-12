@@ -49,7 +49,7 @@ namespace CGAL {
 for executing the reconstruction and simplification tasks.
 Its constructor takes an InputIterator, used to traverse a collection
 of point-mass pairs, where the points and their masses are accessed
-via the PointPMap and MassPMap `PropertyMap`s respectively.
+via the PointPMap and MassPMap `PropertyMaps` respectively.
 
 
 \tparam Kernel a geometric kernel, used throughout the reconstruction and
@@ -57,7 +57,7 @@ via the PointPMap and MassPMap `PropertyMap`s respectively.
 
 \tparam PointPMap a model of `ReadablePropertyMap` with a value_type = `Point_2`
 
-\tparam MassPMap   a model of `ReadablePropertyMap` with a value_type = `FT`
+\tparam MassPMap   a model of `ReadablePropertyMap` with a value_type = `Kernel::FT`
 
  */
 template<class Kernel, class PointPMap, class MassPMap>
@@ -159,8 +159,8 @@ protected:
 
 	/*!
 	     Instantiates a new Reconstruction_simplification_2.
-	     It computes an bounding box around the input points and creates a first
-		 (fine) output simplex as well as an initial transportation plan. This
+	     Computes a bounding box around the input points and creates a first
+		 (dense) output simplex as well as an initial transportation plan. This
 		first output simplex is then made coarser during subsequent iterations.
 
 	     \details Instantiates a new Reconstruction_simplification_2 object
@@ -264,7 +264,8 @@ protected:
 
 	/*!
 
-		 Returns the solid edges present after the reconstruction process.
+		 Returns the solid edges and vertics present after the reconstruction
+		 process finished.
 
 	 	 \details Instantiates a new Reconstruction_simplification_2 object
 				  for a given collection of point-mass pairs.
@@ -276,7 +277,7 @@ protected:
 	*/
 	template <class OutputModule>
 	void extract_solid_elements(OutputModule& output) {
-		output.store_marked_elements(m_dt);
+		output.store_solid_elements(m_dt);
 	}
 
 	 /// \cond SKIP_IN_MANUAL
@@ -300,7 +301,7 @@ protected:
 
 
 	/*!
-		Allows a speedup by not using the priority queue but using a random subset
+		Allows a speedup by not using the priority queue but instead using a random subset
 		of mchoice many samples. Based on those the next edge collapse step is determined.
 		By default mchoice is set to 0.
 
@@ -312,7 +313,8 @@ protected:
 
 	/*!
 		Determines how much console output the algorithm generates.
-		By default verbose is set to 0.
+		By default verbose is set to 0. If set to a value larger than 0
+		details about the reconstruction process are writen to std::err.
 
 		\param verbose The verbosity level.
 	*/
@@ -1080,11 +1082,11 @@ bool create_pedge(const Edge& edge, Reconstruction_edge_2& pedge) {
 
 	/*!
 	Since noise and missing data may prevent the reconstructed shape to
-	have sharp corners, the algorithm offers the possibility to automatically
+	have sharp corners well located, the algorithm offers the possibility to automatically
 	relocate vertices after each edge contraction. The new location of the
 	vertices is chosen such that the fitting of the output triangulation to the
 	input points is improved. This is achieved by minimizing the normal component
-	of the weighted $L_2$ distance. The vertices then get relocated only if the
+	of the weighted \f$L_2 \f$ distance. The vertices then get relocated only if the
 	 resulting triangulation is still embeddable.
 	  */
 	void relocate_all_vertices() {
@@ -1334,7 +1336,7 @@ bool create_pedge(const Edge& edge, Reconstruction_edge_2& pedge) {
 	// RECONSTRUCTION //
 
 		 /*!
-		    It computes a shape consisting of nv vertices, reconstructing the input
+		    Computes a shape consisting of nv vertices, reconstructing the input
 		    points.
 
 		    \param nv The number of vertices which will be present in the output.
@@ -1359,7 +1361,7 @@ bool create_pedge(const Edge& edge, Reconstruction_edge_2& pedge) {
 		}
 
 		 /*!
-			It computes a shape, reconstructing the input, by performing steps many
+			Computes a shape, reconstructing the input, by performing steps many
 			edge contractions on the output simplex.
 
 			\param steps The number of edge contractions performed by the algorithm.

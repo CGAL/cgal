@@ -83,7 +83,7 @@ private:
 	Output_Vertex_Iterator m_v_it;
 	Output_Edge_Iterator m_e_it;
 
-	void store_marked_vertices(Rt_2& rt2) {
+	void store_solid_vertices(Rt_2& rt2) {
 
 		for (Vertex_iterator vi = rt2.vertices_begin();
 				vi != rt2.vertices_end(); ++vi)
@@ -111,7 +111,7 @@ private:
 		}
 	}
 
-	void store_marked_edges(Rt_2& rt2, int nb_ignore) {
+	void store_solid_edges(Rt_2& rt2, int nb_ignore) {
 		MultiIndex mindex;
 		for (Finite_edges_iterator ei = rt2.finite_edges_begin(); ei != rt2.finite_edges_end(); ++ei)
 		{
@@ -167,9 +167,9 @@ public:
 
 	\param rt2 The `Reconstruction_triangulation_2` from which the solid edges and vertices are extracted.
 	*/
-	void store_marked_elements(Rt_2& rt2) {
-		store_marked_vertices(rt2);
-		store_marked_edges(rt2, 0); //TODO: IV do we want the nb_ignore parameter
+	void store_solid_elements(Rt_2& rt2) {
+		store_solid_vertices(rt2);
+		store_solid_edges(rt2, 0); //TODO: IV do we want the nb_ignore parameter
 	}
 };
 

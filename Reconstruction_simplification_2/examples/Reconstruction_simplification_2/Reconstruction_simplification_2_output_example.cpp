@@ -57,21 +57,19 @@ void off_output(Rs_2& rs2);
 
 void print_edge(Edge edge) {
 	int i = edge.second;
-	Point a = edge.first->vertex((i+1)%3)->point();
-	Point b = edge.first->vertex((i+2)%3)->point();
+	const Point& a = edge.first->vertex((i+1)%3)->point();
+	const Point& b = edge.first->vertex((i+2)%3)->point();
 	std::cout << a << " , " << b  << std::endl;
 
 }
 
-void load_xy_file(const std::string& fileName, PointMassList& points)
+void load_xy_file(const std::string& filename, PointMassList& points)
 {
-   std::ifstream ifs(fileName);
+   std::ifstream ifs(filename);
    Point point;
-   unsigned int nb = 0;
    while (ifs >> point)
-   {
 	   points.push_back(std::make_pair(point, 1));
-   }
+
    ifs.close();
 }
 

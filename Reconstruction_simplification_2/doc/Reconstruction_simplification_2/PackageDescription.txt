@@ -14,8 +14,8 @@
 \cgalPkgDescriptionBegin{2D Reconstruction Simplification, PkgReconstructionSimplification2Summary}
 \cgalPkgPicture{overview.png}
 \cgalPkgSummaryBegin
-\cgalPkgAuthor{Fernando de Goes, Pierre Alliez, Ivo Vigan}
-\cgalPkgDesc{This package provides an algorithm to simplify and reconstruct a shape form a noisy point set in the plane. It iteratively builds a simplified output simplex which approximates the input points in a fine to coarse manner.}
+\cgalPkgAuthor{Fernando de Goes, Pierre Alliez, Ivo Vigan, Clement Jamin}
+\cgalPkgDesc{This package provides an algorithm to simplify and reconstruct a shape form a noisy point set in the plane. It iteratively builds a simplified output simplex which approximates the input points in a fine-to-coarse manner.}
 \cgalPkgManuals{Chapter_2D_Reconstruction_Simplification, PkgReconstructionSimplification2}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
