@@ -1597,6 +1597,28 @@ private:
     return lhs->distance_from_source_to_root() < rhs->distance_from_source_to_root();
   }
   
+  template <class InputIterator>
+  void construct_sequence_tree(InputIterator begin, InputIterator end, vertex_descriptor)
+  {
+    m_faceLocations.clear();
+    for (InputIterator it = begin; it != end; ++it)
+    {
+      m_faceLocations.push_back(face_location(*it));
+    }
+    construct_sequence_tree_internal();
+  }
+  
+  template <class InputIterator>
+  void construct_sequence_tree(InputIterator begin, InputIterator end, Face_location)
+  {
+    m_faceLocations.clear();
+    for (InputIterator it = begin; it != end; ++it)
+    {
+      m_faceLocations.push_back(*it);
+    }
+    construct_sequence_tree_internal();
+  }
+  
   void construct_sequence_tree_internal()
   {
     reset_algorithm(false);
@@ -1868,48 +1890,21 @@ public:
   }
   
   /*!
-  \brief Compute a shortest path sequence tree from multiple source vertices
-  
-  \details Constructs a shortest paths sequence tree that covers shortest paths
-  to all locations on the faceGraph reachable from the supplied source locations.
-  
-  \tparam InputIterator a ForwardIterator type which dereferences to Face_location.
-  
-  \param begin iterator to the first in the list of vertices
-  \param end iterator to one past the end of the list of vertices
-  */
-  template <class InputIterator>
-  typename boost::enable_if<typename boost::is_same<typename std::iterator_traits<InputIterator>::value_type, vertex_descriptor>::value, void>::type construct_sequence_tree(InputIterator begin, InputIterator end)
-  {
-    m_faceLocations.clear();
-    for (InputIterator it = begin; it != end; ++it)
-    {
-      m_faceLocations.push_back(face_location(*it));
-    }
-    construct_sequence_tree_internal();
-  }
-  
-    /*!
   \brief Compute a shortest path sequence tree from multiple source locations
   
   \details Constructs a shortest paths sequence tree that covers shortest surface paths
   to all locations on the faceGraph reachable from the supplied source locations.
   
-  \tparam InputIterator a ForwardIterator type which dereferences to Face_location.
+  \tparam InputIterator A ForwardIterator type which dereferences to either `Face_location`, or `vertex_descriptor`.
   
   \param begin iterator to the first in the list of face location pairs.
   
   \param end iterator to one past the end of the list of face location pairs.
   */
   template <class InputIterator>
-  typename boost::enable_if<typename boost::is_same<typename std::iterator_traits<InputIterator>::value_type, Face_location>::type, void>::type construct_sequence_tree(InputIterator begin, InputIterator end)
+  void construct_sequence_tree(InputIterator begin, InputIterator end)
   {
-    m_faceLocations.clear();
-    for (InputIterator it = begin; it != end; ++it)
-    {
-      m_faceLocations.push_back(*it);
-    }
-    construct_sequence_tree_internal();
+    construct_sequence_tree(begin, end, typename std::iterator_traits<InputIterator>::value_type());
   }
   
   /// @}
