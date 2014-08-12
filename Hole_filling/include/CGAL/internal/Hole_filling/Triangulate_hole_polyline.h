@@ -430,7 +430,7 @@ struct Tracer_polyline_incomplete {
   void
   operator()(const LookupTable& lambda, int v0, int v1)
   {
-    const int n = lambda.n;
+    CGAL_assertion_code( const int n = lambda.n; )
     std::stack<std::pair<int, int> > ranges;
     ranges.push(std::make_pair(v0, v1));
 
