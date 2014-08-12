@@ -22,15 +22,20 @@ The algorithm of \cgalCite{degoes:hal-00758019} presented here performs the reco
 
 The algorithm can be summarized as: Considering \f$S\f$ as a measure  \f$ \mu \f$ consisting of Dirac masses, find a coarse simplicial complex \f$T\f$ such that  \f$ \mu \f$ is well approximated by a piecewise combination of uniform measure on the edges and vertices of  \f$ T \f$.
 
-It performs a fine to coarse simplification of the output simplex. It starts by putting a bounding box around the input points \f$S\f$ and computes the Delaunay Triangulation  \f$  T_0  \f$  on a subset of \f$  S \f$. \f$ T_0 \f$ is the first output simplex, which is simplified in subsequent iterations by repeated edge contractions. To chose the next edge, a contraction is  simulated for each feasible edge, i.e., edges which neither introduce overlaps nor fold-overs in the triangulation. The next edge \f$ e \f$ for contraction is chosen according to the overall cost of the transportation plan for \f$ T \setminus e \f$, where the cheapest overall cost is preferred.
+It performs a fine to coarse simplification of the output simplex. It starts by putting a bounding box around the input points \f$S\f$ and computes the Delaunay Triangulation  \f$  T_0  \f$  on a subset of \f$  S \f$. \f$ T_0 \f$ is the first output simplex, which is simplified in subsequent iterations by repeated edge contractions. To chose the next edge, a contraction is  simulated for each feasible edge, i.e., edges which neither introduce overlaps nor fold-overs in the triangulation. The next edge \f$ e \f$ for contraction is chosen according to the overall cost of the transportation plan for \f$ T \setminus e \f$, where the cheapest overall cost is preferred. Since disregarding edges which do not preserve the embedding of the triangulation can severely affect the performance of the greedy approach to optimal transport, the contraction operator is modified by adding a local flip procedure which makes every edge contractable.
+
+\cgalFigureBegin{2D_Reconstruction_Simplification_edgeflip,edgeflip.png}
+Illustration of an edge flip. In the left image, the blue edge creates fold-overs because of blocking edges shown in black. After running the flipping procedure with the result shown in the middle image, the
+ blue edge is contractable, and the contraction results in the image shown on the right.
+\cgalFigureEnd
+
+
+
+The transportation plan is approximated by assigning each input point temporarily to the closest simplex edge. After this partitioning of the input points w.r.t. the edges, all the points temporarily assigned to a given edge are being assigned to it permanently if and only if the corresponding transportation costs are less than the transportation cost for each of the two vertices of the edge. Otherwise each of the points is assigned to the cheaper of the two vertices. This process of edge contraction and transportation plan update is repeated until the desired number of vertices, specified by the users, has been reached. After that, edges which carry little mass can be filtered out and the remaining edges are reported as reconstructing the input shape. 
 
 \cgalFigureBegin{2D_Reconstruction_Simplification_edgecontraction,edgecontraction.png}
 Illustration of an edge contraction, indicated by the blue arrow. The resulting reassignment of the input points to vertices and edges is depicted in green and red respectively.
 \cgalFigureEnd
-
-
-The transportation plan is approximated by assigning each input point temporarily to the closest simplex edge. After this partitioning of the input points w.r.t. the edges, all the points temporarily assigned to a given edge are being assigned to it permanently if and only if the corresponding transportation costs are less than the transportation cost for each of the two vertices of the edge. Otherwise each of the points iOS assigned to the cheaper of the two vertices. [TODO: add that edge flips also occur to make edges collapsible] This process of edge contraction and transportation plan update is repeated until the desired number of vertices, specified by the users, has been reached. After that, edges which carry little mass can be filtered out and the remaining edges are reported as reconstructing the input shape.
-
 
 
 \section Reconstruction_simplification_2Overview Overview of the Reconstruction Process
