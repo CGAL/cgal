@@ -22,7 +22,6 @@
 #include <iterator>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
-
 typedef CGAL::Polyhedron_3<Kernel, CGAL::Polyhedron_items_with_id_3> Polyhedron_3;
 typedef boost::property_map<Polyhedron_3, boost::vertex_index_t>::type VertexIndexMap;
 typedef boost::property_map<Polyhedron_3, CGAL::halfedge_index_t>::type HalfedgeIndexMap;
@@ -31,10 +30,7 @@ typedef boost::property_map<Polyhedron_3, CGAL::vertex_point_t>::type VertexPoin
 typedef CGAL::Polyhedron_shortest_path_default_traits<Kernel, Polyhedron_3> Traits;
 typedef CGAL::Polyhedron_shortest_path<Traits, VertexIndexMap, HalfedgeIndexMap, FaceIndexMap, VertexPointMap> Polyhedron_shortest_path;
 typedef boost::graph_traits<Polyhedron_3> GraphTraits;
-typedef GraphTraits::vertex_descriptor vertex_descriptor;
 typedef GraphTraits::vertex_iterator vertex_iterator;
-typedef GraphTraits::halfedge_descriptor halfedge_descriptor;
-typedef GraphTraits::halfedge_iterator halfedge_iterator;
 typedef GraphTraits::face_descriptor face_descriptor;
 typedef GraphTraits::face_iterator face_iterator;
 

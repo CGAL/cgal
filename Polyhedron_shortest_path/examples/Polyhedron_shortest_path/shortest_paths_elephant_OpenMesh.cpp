@@ -26,8 +26,6 @@
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 
-typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
-
 typedef OpenMesh::PolyMesh_ArrayKernelT<> Mesh;
 
 typedef boost::graph_traits<Mesh> GraphTraits;
