@@ -467,6 +467,14 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
     NAMESPACE Polyhedron_
     APPEND FILE polyhedron_demo_targets.cmake)
 
+  if(GLEW_FOUND)
+    export(
+      TARGETS
+      gl_splat
+      NAMESPACE Polyhedron_
+      APPEND FILE polyhedron_demo_targets.cmake)
+  endif(GLEW_FOUND)
+
   configure_file(CGAL_polyhedron_demoConfig.cmake.in  CGAL_polyhedron_demoConfig.cmake)
 
 else (CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
