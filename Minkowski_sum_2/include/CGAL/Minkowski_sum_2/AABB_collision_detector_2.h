@@ -40,10 +40,15 @@ public:
       return true;
     }
 
-    Polygon_2 translated_p = transform(typename Kernel_::Aff_transformation_2(
-                                         Translation(), Vector_2(ORIGIN, t)), m_p);
-    return (translated_p.has_on_bounded_side(*(m_q.vertices_begin()))
-            || m_q.has_on_bounded_side(*(translated_p.vertices_begin())));
+    // If t_q is inside of P, or t_p is inside of Q, one polygon is completely
+    // inside of the other.
+    Point_2 t_q = *m_q.vertices_begin() + Vector_2(ORIGIN, t);
+    Point_2 t_p = *m_p.vertices_begin() - Vector_2(ORIGIN, t);
+
+    // Use bounded_side_2() instead of on_bounded_side() because the latter
+    // checks vor simplicity every time.
+    return bounded_side_2(m_p.vertices_begin(), m_p.vertices_end(), t_q, m_p.traits_member()) == ON_BOUNDED_SIDE
+        || bounded_side_2(m_q.vertices_begin(), m_q.vertices_end(), t_p, m_q.traits_member()) == ON_BOUNDED_SIDE;
   }
 
 private:
