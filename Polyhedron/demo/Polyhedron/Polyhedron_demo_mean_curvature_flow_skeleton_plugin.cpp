@@ -487,8 +487,8 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSegment()
     double dis3 = distances[vid3];
     double avg_dis = (dis1 + dis2 + dis3) / 3.0;
     sdf_property_map[f] = avg_dis;
-    min_dis = std::min(min_dis, avg_dis);
-    max_dis = std::min(max_dis, avg_dis);
+    min_dis = (std::min)(min_dis, avg_dis);
+    max_dis = (std::min)(max_dis, avg_dis);
   }
 
   for (Facet_iterator f = segment_mesh->facets_begin(); f != segment_mesh->facets_end(); ++f)
