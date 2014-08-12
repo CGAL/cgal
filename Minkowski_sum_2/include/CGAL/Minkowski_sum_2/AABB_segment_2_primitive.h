@@ -39,7 +39,7 @@ public:
   // Return a point on the primitive
   Point reference_point() const
   {
-    return datum().source();
+    return m_it->source();
   }
 
 private:
