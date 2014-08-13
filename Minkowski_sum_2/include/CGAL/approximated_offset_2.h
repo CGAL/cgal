@@ -27,22 +27,19 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgMinkowskiSum2
-
-Provides a guaranteed approximation of the offset of the given polygon
-`P` by a given radius `r` - namely, the function computes the
-Minkowski sum \f$ P \oplus B_r\f$, where \f$ B_r\f$ is a disc of radius
-`r` centered at the origin.
-The function actually outputs a set \f$ S\f$ that contains the Minkowski sum,
-such that the approximation error is bounded by `eps`.
-Note that as the input polygon may not be convex, its offset may not be a
-simple polygon. The result is therefore represented as a polygon with
-holes, whose edges are either line segments or circular arcs.
-\pre `P` is a simple polygon.
-*/
+ * Approximate the offset of a given simple polygon by a given radius,
+ * using the convolution method.
+ * Note that as the input polygon may not be convex, its offset may not be 
+ * simply connected. The result is therefore represented as a polygon with
+ * holes.
+ * \param pgn The polygon.
+ * \param r The offset radius.
+ * \param eps The approximation-error bound.
+ * \return The approximated offset polygon.
+ */
 template <class Kernel, class Container>
 typename Gps_circle_segment_traits_2<Kernel>::Polygon_with_holes_2
-approximated_offset_2 (const Polygon_2<Kernel, Container>& P,
+approximated_offset_2 (const Polygon_2<Kernel, Container>& pgn,
                        const typename Kernel::FT& r,
                        const double& eps)
 {
@@ -55,7 +52,7 @@ approximated_offset_2 (const Polygon_2<Kernel, Container>& P,
   Offset_polygon_2                                   offset_bound;
   std::list<Offset_polygon_2>                        offset_holes;
 
-  approx_offset (P, r,
+  approx_offset (pgn, r,
                  offset_bound, std::back_inserter(offset_holes));
 
   return (typename Gps_circle_segment_traits_2<Kernel>::Polygon_with_holes_2
@@ -63,16 +60,16 @@ approximated_offset_2 (const Polygon_2<Kernel, Container>& P,
 }
 
 /*!
-\ingroup PkgMinkowskiSum2
-
-Provides a guaranteed approximation of offset the given polygon with holes
-`pwh` by a given radius `r`, such that the approximation error is bounded
-by `eps`. It does so by offsetting outer boundary of `pwh` and insetting
-its holes.
-The result is represented as a generalized polygon with holes, such that the edges
-of the polygon correspond to line segment and circular arcs.
-\pre `pwh` is <I>not</I> unbounded (it has a valid outer boundary).
-*/
+ * Approximate the offset of a given polygon with holes by a given radius,
+ * using the convolution method.
+ * The result is represented as a polygon with holes whose edges are line
+ * segments and circular arcs.
+ * \param pwh The polygon with holes.
+ * \param r The offset radius.
+ * \param eps The approximation-error bound.
+ * \pre The polygon is bounded (has a valid outer boundary).
+ * \return The approximated offset polygon.
+ */
 template <class Kernel, class Container>
 typename Gps_circle_segment_traits_2<Kernel>::Polygon_with_holes_2
 approximated_offset_2 (const Polygon_with_holes_2<Kernel, Container>& pwh,
@@ -96,24 +93,24 @@ approximated_offset_2 (const Polygon_with_holes_2<Kernel, Container>& pwh,
 }
 
 /*!
-\ingroup PkgMinkowskiSum2
-
-Provides a guaranteed approximation of the offset of the given polygon
-`P` by a radius `r`, as described above.
-If the input polygon `P` is not convex, the function
-decomposes it into convex sub-polygons \f$ P_1, \ldots, P_k\f$ and computes
-the union of the sub-offsets (namely \f$ \bigcup_{i}{(P_i \oplus B_r)}\f$).
-The decomposition is performed using the given decomposition strategy
-`decomp`, which must be an instance of a class that models the
-concept `PolygonConvexDecomposition`.
-\pre `P` is a simple polygon.
-*/
+ * Approximate the offset of a given simple polygon by a given radius,
+ * by decomposing it to convex sub-polygons and computing the union of their
+ * offsets.
+ * Note that as the input polygon may not be convex, its offset may not be 
+ * simply connected. The result is therefore represented as a polygon with
+ * holes.
+ * \param pgn The polygon.
+ * \param r The offset radius.
+ * \param eps The approximation-error bound.
+ * \param decomp A functor for decomposing polygons.
+ * \return The approximated offset polygon.
+ */
 template <class Kernel, class Container, class DecompositionStrategy>
 typename Gps_circle_segment_traits_2<Kernel>::Polygon_with_holes_2
-approximated_offset_2 (const Polygon_2<Kernel, Container>& P,
+approximated_offset_2 (const Polygon_2<Kernel, Container>& pgn,
                        const typename Kernel::FT& r,
                        const double& eps,
-                       const DecompositionStrategy& decomp)
+                       const DecompositionStrategy&)
 {
   typedef Approx_offset_base_2<Kernel, Container>            Base;
   typedef Offset_by_decomposition_2<Base, DecompositionStrategy>
@@ -125,7 +122,7 @@ approximated_offset_2 (const Polygon_2<Kernel, Container>& P,
   Offset_polygon_2                                   offset_bound;
   std::list<Offset_polygon_2>                        offset_holes;
 
-  approx_offset (P, r,
+  approx_offset (pgn, r,
                  offset_bound, std::back_inserter(offset_holes));
 
   return (typename Gps_circle_segment_traits_2<Kernel>::Polygon_with_holes_2
@@ -133,25 +130,21 @@ approximated_offset_2 (const Polygon_2<Kernel, Container>& P,
 }
 
 /*!
-\ingroup PkgMinkowskiSum2
-
-Provides a guaranteed approximation of the inset, or inner offset, of
-the given polygon `P` by a given radius `r`. Namely, the
-function computes the set of points inside the polygon whose distance
-from \f$ P\f$'s boundary is at least \f$ r\f$:
-\f$ \{ p \in P \;|\; {\rm dist}(p, \partial P) \geq r \}\f$,
-with the approximation error bounded by `eps`.
-Note that as the input polygon may not be convex, its inset may comprise
-several disconnected components. The result is therefore represented as a
-sequence of generalized polygons, whose edges are either line segments or
-circular arcs.
-The output sequence is returned via the output iterator `oi`, whose
-value-type must be `Gps_circle_segment_traits_2::Polygon_2`.
-\pre `P` is a simple polygon.
-*/
+ * Approximate the inset of a given simple polygon by a given radius, using
+ * the convolution method.
+ * Note that as the input polygon may not be convex, its inset may not be 
+ * simply connected. The result is therefore represented as a set of polygons.
+ * \param pgn The polygon.
+ * \param r The inset radius.
+ * \param eps The approximation-error bound.
+ * \param oi An output iterator for the inset polygons.
+ *           Its value-type must be
+ *           Gps_circle_segment_traits_2<Kernel>::Polygon_2.
+ * \return A past-the-end iterator for the inset polygons.
+ */
 template <class Kernel, class Container, class OutputIterator>
 OutputIterator
-approximated_inset_2 (const Polygon_2<Kernel, Container>& P,
+approximated_inset_2 (const Polygon_2<Kernel, Container>& pgn,
                       const typename Kernel::FT& r,
                       const double& eps,
                       OutputIterator oi)
@@ -165,7 +158,7 @@ approximated_inset_2 (const Polygon_2<Kernel, Container>& P,
   Offset_polygon_2                                   offset_bound;
   std::list<Offset_polygon_2>                        offset_holes;
 
-  oi = approx_offset.inset (P, r,
+  oi = approx_offset.inset (pgn, r,
                             oi);
 
   return (oi);
