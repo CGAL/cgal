@@ -451,7 +451,6 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
     scene_points_with_normal_item
     scene_implicit_function_item
     scene_polylines_item
-    scene_polyhedron_shortest_path_item
     NAMESPACE Polyhedron_
     APPEND FILE polyhedron_demo_targets.cmake)
 
