@@ -1,4 +1,5 @@
 rfsohg
+data/rooms_part1.dat data/rooms_part2.dat
 data/comb_part1.dat data/comb_part2.dat
 data/knife_part1.dat data/knife_part2.dat
 data/mchain_part1.dat data/mchain_part2.dat
