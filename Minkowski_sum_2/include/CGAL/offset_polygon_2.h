@@ -27,19 +27,23 @@
 namespace CGAL {
 
 /*!
- * Compute the offset of a given simple polygon by a given radius,
- * using the convolution method.
- * Note that as the input polygon may not be convex, its offset may not be 
- * simply connected. The result is therefore represented as a polygon with
- * holes.
- * \param pgn The polygon.
- * \param r The offset radius.
- * \return The offset polygon.
- */
+\ingroup PkgMinkowskiSum2
+
+Computes the offset of the given polygon `P` by a given radius
+`r` - namely, the function computes the Minkowski sum
+\f$ P \oplus B_r\f$, where \f$ B_r\f$ is a disc of radius `r` centered at the
+origin.
+Note that as the input polygon may not be convex, its offset may not be a
+simple polygon. The result is therefore represented as a generalized
+polygon with holes, such that the edges of the polygon correspond to
+line segments and circular arcs, both are special types of conic arcs,
+as represented by the `traits` class.
+\pre `P` is a simple polygon.
+*/
 template <class ConicTraits, class Container>
 typename Gps_traits_2<ConicTraits>::Polygon_with_holes_2
 offset_polygon_2 (const Polygon_2<typename ConicTraits::Rat_kernel,
-                                  Container>& pgn,
+                                  Container>& P,
                   const typename ConicTraits::Rat_kernel::FT& r,
                   const ConicTraits& )
 {
@@ -52,7 +56,7 @@ offset_polygon_2 (const Polygon_2<typename ConicTraits::Rat_kernel,
   Offset_polygon_2                                   offset_bound;
   std::list<Offset_polygon_2>                        offset_holes;
 
-  exact_offset (pgn, r, 
+  exact_offset (P, r, 
                 offset_bound, std::back_inserter(offset_holes));
 
   return (typename Gps_traits_2<ConicTraits>::Polygon_with_holes_2
@@ -60,15 +64,16 @@ offset_polygon_2 (const Polygon_2<typename ConicTraits::Rat_kernel,
 }
 
 /*!
- * Compute the offset of a given polygon with holes by a given radius,
- * using the convolution method.
- * The result is represented as a polygon with holes whose edges are line
- * segments and circular arcs.
- * \param pwh The polygon with holes.
- * \param r The offset radius.
- * \pre The polygon is bounded (has a valid outer boundary).
- * \return The offset polygon.
- */
+\ingroup PkgMinkowskiSum2
+
+Computes the offset of the given polygon with holes `pwh` by a given
+radius `r`. It does so by offsetting outer boundary of `pwh` and
+insetting its holes.
+The result is represented as a generalized polygon with holes, such that the
+edges of the polygon correspond to line segments and circular arcs, both are
+special types of conic arcs, as represented by the `traits` class.
+\pre `pwh` is <I>not</I> unbounded (it has a valid outer boundary).
+*/
 template <class ConicTraits, class Container>
 typename Gps_traits_2<ConicTraits>::Polygon_with_holes_2
 offset_polygon_2 (const Polygon_with_holes_2<typename ConicTraits::Rat_kernel,
@@ -93,24 +98,25 @@ offset_polygon_2 (const Polygon_with_holes_2<typename ConicTraits::Rat_kernel,
 }
 
 /*!
- * Compute the offset of a given simple polygon by a given radius,
- * by decomposing it to convex sub-polygons and computing the union of their
- * offsets.
- * Note that as the input polygon may not be convex, its offset may not be 
- * simply connected. The result is therefore represented as a polygon with
- * holes.
- * \param pgn The polygon.
- * \param r The offset radius.
- * \param decomp A functor for decomposing polygons.
- * \return The offset polygon.
- */
+\ingroup PkgMinkowskiSum2
+
+Computes the exact representation of the offset of the given polygon
+`P` by a radius `r`, as described above.
+If `P` is not convex, the function decomposes it into convex
+sub-polygons \f$ P_1, \ldots, P_k\f$ and computes the union of sub-offsets
+(namely \f$ \bigcup_{i}{(P_i \oplus B_r)}\f$).
+The decomposition is performed using the given decomposition strategy
+`decomp`, which must be an instance of a class that models the
+concept `PolygonConvexDecomposition`.
+\pre `P` is a simple polygon.
+*/
 template <class ConicTraits, class Container, class DecompositionStrategy>
 typename Gps_traits_2<ConicTraits>::Polygon_with_holes_2
 offset_polygon_2 (const Polygon_2<typename ConicTraits::Rat_kernel,
-                                  Container>& pgn,
+                                  Container>& P,
                   const typename ConicTraits::Rat_kernel::FT& r,
-                  const DecompositionStrategy&,
-                  const ConicTraits& )
+                  const DecompositionStrategy& decomp,
+                  const ConicTraits& traits)
 {
   typedef Exact_offset_base_2<ConicTraits, Container>        Base;
   typedef Offset_by_decomposition_2<Base, DecompositionStrategy>
@@ -122,7 +128,7 @@ offset_polygon_2 (const Polygon_2<typename ConicTraits::Rat_kernel,
   Offset_polygon_2                                   offset_bound;
   std::list<Offset_polygon_2>                        offset_holes;
 
-  exact_offset (pgn, r,
+  exact_offset (P, r,
                 offset_bound, std::back_inserter(offset_holes));
 
   return (typename Gps_traits_2<ConicTraits>::Polygon_with_holes_2
@@ -130,22 +136,27 @@ offset_polygon_2 (const Polygon_2<typename ConicTraits::Rat_kernel,
 }
 
 /*!
- * Compute the inset of a given simple polygon by a given radius, using the
- * convolution method.
- * Note that as the input polygon may not be convex, its inset may not be 
- * simply connected. The result is therefore represented as a set of polygons.
- * \param pgn The polygon.
- * \param r The inset radius.
- * \param oi An output iterator for the inset polygons.
- *           Its value-type must be Gps_traits_2<ConicTraits>::Polygon_2.
- * \return A past-the-end iterator for the inset polygons.
- */
+\ingroup PkgMinkowskiSum2
+
+Computes the inset, or inner offset, of the given polygon `P` by a
+given radius `r` - namely, the function computes the set of points
+inside the polygon whose distance from \f$ P\f$'s boundary is at least \f$ r\f$:
+\f$ \{ p \in P \;|\; {\rm dist}(p, \partial P) \geq r \}\f$.
+Note that as the input polygon may not be convex, its inset may comprise
+several disconnected components. The result is therefore represented as a
+sequence of generalized polygons, such that the edges of each polygon
+correspond to line segments and circular arcs, both are special types of
+conic arcs, as represented by the `traits` class.
+The output sequence is returned via the output iterator `oi`, whose
+value-type must be `Gps_traits_2::Polygon_2`.
+\pre `P` is a simple polygon.
+*/
 template <class ConicTraits, class Container, class OutputIterator>
 OutputIterator
 inset_polygon_2 (const Polygon_2<typename ConicTraits::Rat_kernel,
-                                 Container>& pgn,
+                                 Container>& P,
                  const typename ConicTraits::Rat_kernel::FT& r,
-                 const ConicTraits& ,
+                 const ConicTraits& traits,
                  OutputIterator oi)
 {
   typedef Exact_offset_base_2<ConicTraits, Container>        Base;
@@ -154,7 +165,7 @@ inset_polygon_2 (const Polygon_2<typename ConicTraits::Rat_kernel,
   Base                                               base;
   Exact_offset_2                                     exact_offset (base);
 
-  oi = exact_offset.inset (pgn, r,
+  oi = exact_offset.inset (P, r,
                            oi);
 
   return (oi);
