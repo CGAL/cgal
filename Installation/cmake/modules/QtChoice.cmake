@@ -1,3 +1,27 @@
+#
+# QtChoice.cmake needs to be included into CMakeList when a macros compatibility between Qt4 and Qt5 
+# necessary.
+#
+# The purpose of this file is to substitute Qt version notification into Qt macro.
+#
+# For instance qt4_wrap_ui or qt5_wrap_ui could be replace by just qt_wrap_ui into CMakeList.
+#
+# The Qt macros supported are the followings with their Qt4 and Qt5 equivalents :
+#
+#  Name of the macro                        Qt4                              Qt5
+#    qt_automoc                         qt4_automoc                    Qt5 doesn't need automoc
+#    qt_wrap_ui                         qt4_wrap_ui                    qt5_wrap_ui
+#    qt_wrap_cpp                        qt4_wrap_cpp                   qt5_wrap_cpp
+#    qt_generate_moc                    qt4_generate_moc               qt5_generate_moc
+#    qt_add_dbus_adaptor                qt4_add_dbus_adaptor           qt5_add_dbus_adaptor
+#    qt_add_dbus_interfaces             qt4_add_dbus_interfaces        qt5_add_dbus_interfaces
+#    qt_add_dbus_interface              qt4_add_dbus_interface         qt5_add_dbus_interface
+#    qt_generate_dbus_interface         qt_generate_dbus_interface     qt5_generate_dbus_interface
+#    qt_add_resources                   qt_add_resources               qt5_add_resources
+#
+#
+#
+
 macro(qt_automoc)
   if(QT5)
   	message(STATUS "Qt5 doesn't need automoc.")

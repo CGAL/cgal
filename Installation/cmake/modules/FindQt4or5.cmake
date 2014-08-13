@@ -1,13 +1,68 @@
-#This file allows an easy add of Qt library with CGAL.
-#New for Qt5 version !
+#
+#=================================================FindQt4or5.cmake=================================================
+#
+#	FindQt4or5.cmake is a new way to find package of Qt, with the possibility of make a choice between Qt4 or Qt5.
 #
 #
-#find_package(Qt4or5) works with the variable ${CGAL_QT_VERSION}, containing the value of Qt version using.
+#	Several variables are linked to this file :
+#  
+#  - QT_VERSION_USED
+#  - QT_VERSION
+#  - USE_QT_VERSION
+#  - CGAL_QT_VERSION
 #
-#So, the variable ${CGAL_Qt_version} must be initialised before use find_package(Qt4or5) if auto configuration wanted. 
 #
-#At the end of the process, QT_VERSION_USED is set to the Qt proper version number.
+#==================================================QT_VERSION_USED==================================================
+
+#	The variable QT_VERSION_USED is set when an Qt version is asked into FindQt4or5.cmake even if this Qt version 
+# is not found.
 #
+#   Hence, if Qt4 asked,  QT_VERSION_USED value is set to 4 and to 5 if Qt5 asked.
+#
+#	Moreover, when an Qt version ( 4 or 5 ) is found, the followings flags are set :
+#   
+#  - QT4_FOUND => Qt4 has been loaded
+#  - QT5_FOUND => Qt5 has been loaded
+#
+#	So, into CMakeList, the typical use of these flag could be : 
+#
+#   IF ( QT${QT_VERSION_USED)_FOUND ) //Works for QT4_FOUND and QT5_FOUND
+#   ...
+#
+#
+#=====================================================QT_VERSION====================================================
+#
+#	The value of QT_VERSION variable depends on the QT_VERSION_USED value. Indeed, if QT_VERSION_USED value is 
+# 5, so the QT_VERSION will be "Qt5" and Qt4 if QT_VERSION_USED is 4.
+#
+#
+#
+#==================================================USE_QT_VERSION==================================================
+#
+# When find_package(Qt4or5) is used, two possibility are offered
+#
+#
+# 1) If the variable USE_QT_VERSION isn't set, an drop-down menu for Qt version choice appear on CMake-gui
+#
+# 2) If the variable USE_QT_VERSION is set, so the user force the Qt version ( 4 or 5 ) to use and no choice 
+#    is proposed into CMake-gui
+#
+#	Of course, during the process, QT_VERSION_USED is set to the Qt proper version number.
+#
+#
+#==================================================CGAL_QT_VERSION==================================================
+#
+#	The last variable used into FindQt4or5.cmake is CGAL_QT_VERSION, an variable set during the process 
+# of USE_CGAL.cmake.
+#
+#	Actually, when find_package(CGAL COMPONENT Qt4or5) is called, the variable ${CGAL_QT_VERSION} is set and when 
+# find_package(Qt4or5) is called (after), the Qt version is set to the proper Qt version 
+# chosen for CGAL.
+#
+# 	For instance, if libCGAL_Qt5 chosen during find_package(CGAL COMPONENTS Qt4or5) process, Qt5 will be automatically 
+# loaded when find_package(Qt4or5) calling.
+#
+
 
 cmake_minimum_required(VERSION 2.6.2)
 if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}.${CMAKE_PATCH_VERSION}" VERSION_GREATER 2.8.3)
