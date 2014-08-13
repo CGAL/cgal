@@ -87,7 +87,6 @@ namespace CGAL {
 		typedef typename AABBTraits::Bounding_box Bounding_box;
     /// 
 		typedef typename AABBTraits::Point_and_primitive_id Point_and_primitive_id;
-    /// \deprecated 
 		typedef typename AABBTraits::Object_and_primitive_id Object_and_primitive_id;
 
     /*!
