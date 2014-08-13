@@ -22,11 +22,13 @@ const Polygon_2<Kernel,Container>& Q);
 /*!
 \ingroup PkgMinkowskiSum2
 
-Computes the Minkowski sum \f$ P \oplus Q\f$ of the two given polygons.
-The function computes the reduced convolution of the two polygons and
-extracts those loops of the convolution which are part of the Minkowsi
-sum. This method works very efficiently, regardless of whether `P` and
-`Q` are convex or non-convex.
+Computes the Minkowski sum \f$ P \oplus Q\f$ of the two given polygons. The
+function computes the reduced convolution \cgalCite{cgal:bl-frmsurc-11} of
+the two polygons and extracts those loops of the convolution which are part of
+the Minkowsi sum. This method works very efficiently, regardless of whether `P`
+and `Q` are convex or non-convex. It is usually faster than the full
+convolution method, except in degenerate cases where the output polygon has
+many holes.
 Note that as the input polygons may not be convex, their Minkowski
 sum may not be a simple polygon. The result is therefore represented
 as a polygon with holes.
