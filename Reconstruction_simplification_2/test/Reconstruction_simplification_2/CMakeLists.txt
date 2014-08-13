@@ -21,7 +21,7 @@ if ( CGAL_FOUND )
 
   include_directories (BEFORE "include")
 
-  create_single_source_cgal_program( "test_output_modules.cpp" )
+  create_single_source_cgal_program( "test_quality.cpp" )
 
 else()
   

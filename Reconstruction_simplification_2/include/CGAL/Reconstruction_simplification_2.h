@@ -1331,7 +1331,47 @@ bool create_pedge(const Edge& edge, Reconstruction_edge_2& pedge) {
 	    std::cerr << "# ghost: " << nb_ghost << std::endl;
 	}
 
+
 	/// \endcond
+
+	 /*!
+	    Returns the number of vertices present in the reconstructed triangulation.
+	  */
+	int get_vertex_count() {
+		return m_dt.number_of_vertices()-4 ;
+
+	}
+
+	 /*!
+	    Returns the number of (solid) edges present in the reconstructed triangulation.
+	  */
+	int get_edge_count() {
+		int nb_solid = 0;
+		for (Finite_edges_iterator ei = m_dt.finite_edges_begin();
+			    		ei != m_dt.finite_edges_end(); ++ei)
+		{
+			Edge edge = *ei;
+			if (m_dt.is_ghost(edge)) continue;
+			nb_solid++;
+		}
+		return nb_solid;
+	}
+
+
+	 /*!
+	    Returns the cost of the (solid) edges present in the reconstructed triangulation.
+	  */
+	FT get_total_edge_cost() {
+		FT total_cost = 0;
+		for (Finite_edges_iterator ei = m_dt.finite_edges_begin();
+				ei != m_dt.finite_edges_end(); ++ei) {
+			Edge edge = *ei;
+			if (m_dt.is_ghost(edge)) continue;
+
+			total_cost += m_dt.get_cost(edge).finalize();
+		}
+		return total_cost;
+	}
 
 	// RECONSTRUCTION //
 
