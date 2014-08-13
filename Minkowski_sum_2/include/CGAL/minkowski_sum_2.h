@@ -47,7 +47,7 @@ as a polygon with holes.
 
 template <class Kernel, class Container>
 Polygon_with_holes_2<Kernel,Container>
-minkowski_sum_by_reduced_convolution_2 (const Polygon_2<Kernel,Container>& pgn1,
+minkowski_sum_reduced_convolution_2 (const Polygon_2<Kernel,Container>& pgn1,
                                         const Polygon_2<Kernel,Container>& pgn2)
 {
   Minkowski_sum_by_reduced_convolution_2<Kernel, Container> mink_sum;
@@ -81,7 +81,7 @@ as a polygon with holes.
 
 template <class Kernel, class Container>
 Polygon_with_holes_2<Kernel,Container>
-minkowski_sum_by_full_convolution_2 (const Polygon_2<Kernel,Container>& P,
+minkowski_sum_full_convolution_2 (const Polygon_2<Kernel,Container>& P,
                                      const Polygon_2<Kernel,Container>& Q)
 {
   Minkowski_sum_by_convolution_2<Kernel, Container>  mink_sum;
@@ -109,8 +109,8 @@ as a polygon with holes.
 
 \pre Both `P` and `Q` are simple, counterclockwise-oriented polygons.
 
-\sa `CGAL::minkowski_sum_by_reduced_convolution_2()`
-\sa `CGAL::minkowski_sum_by_full_convolution_2()`
+\sa `CGAL::minkowski_sum_reduced_convolution_2()`
+\sa `CGAL::minkowski_sum_full_convolution_2()`
  */
 
 template <class Kernel, class Container>
@@ -118,7 +118,7 @@ Polygon_with_holes_2<Kernel,Container>
 minkowski_sum_2 (const Polygon_2<Kernel,Container>& P,
                  const Polygon_2<Kernel,Container>& Q)
 {
-  return minkowski_sum_by_reduced_convolution_2(P, Q);
+  return minkowski_sum_reduced_convolution_2(P, Q);
 }
 
 /*!

@@ -49,12 +49,12 @@ Polygon_with_holes_2 compute_minkowski_sum_2(Polygon_2 &p, Polygon_2 &q, Strateg
   {
     case REDUCED_CONVOLUTION:
       {
-        return minkowski_sum_by_reduced_convolution_2 (p, q);
+        return minkowski_sum_reduced_convolution_2 (p, q);
         break;
       }
     case FULL_CONVOLUTION:
       {
-        return minkowski_sum_by_full_convolution_2 (p, q);
+        return minkowski_sum_full_convolution_2 (p, q);
         break;
       }
     case SSAB_DECOMP:
