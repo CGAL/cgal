@@ -51,16 +51,15 @@ typedef Rt_2::Edge Edge;
 
 
 void test_list_output(Rs_2& rs2);
-void test_tds_output(Rs_2& rs2);
 void test_index_output(Rs_2& rs2);
+void test_tds_output(Rs_2& rs2);
 
 
 void print_edge(Edge edge) {
 	int i = edge.second;
 	Point a = edge.first->vertex((i+1)%3)->point();
 	Point b = edge.first->vertex((i+2)%3)->point();
-	std::cout << a << " , " << b << " )" << std::endl;
-
+	std::cout << a << " , " << b <<  std::endl;
 }
 
 int main ()
@@ -137,6 +136,7 @@ void test_tds_output(Rs_2& rs2) {
 			vertex_count++;
 		}
 	}
+	std::cout <<"vertex_count " << vertex_count << std::endl;
 	assert(vertex_count == 18);
 
 	int edge_count = 0;
@@ -144,6 +144,11 @@ void test_tds_output(Rs_2& rs2) {
 		FT relevance = (*ei).first->relevance((*ei).second);
 		if (relevance > 0) {
 			print_edge(*ei);
+
+			std::cout << "mass "   << tds_output.get_mass(*ei) << std::endl;
+			std::cout << "cost "   << tds_output.get_cost(*ei) << std::endl;
+			std::cout << "length " << tds_output.get_length(*ei) << std::endl;
+
 			edge_count++;
 		}
 	}

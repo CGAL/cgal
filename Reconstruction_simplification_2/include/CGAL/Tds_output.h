@@ -122,6 +122,40 @@ public:
 	void extract_reconstruction_tds(Rt_2& rt2) {
 		rt2 = m_rt2;
 	}
+
+	/*!
+	Returns the mass of a given edge.
+	This can be used to introduce a problem specific relevance function which
+	can determine a threshold for ignoring reconstructed edges.
+
+	\param edge The `Edge` of which the mass is returned.
+	*/
+	FT get_mass(Edge& edge) {
+		return m_rt2.get_mass(edge);
+	}
+
+	/*!
+	Returns the length of a given edge.
+	This can be used to introduce a problem specific relevance function which
+	can determine a threshold for ignoring reconstructed edges.
+
+	\param edge The `Edge` of which the length is returned.
+	*/
+	FT get_length(Edge& edge) {
+		return m_rt2.get_length(edge);
+	}
+
+	/*!
+	Returns the cost of a given edge.
+	This can be used to introduce a problem specific relevance function which
+	can determine a threshold for ignoring reconstructed edges.
+
+	\param edge The `Edge` of which the cost is returned.
+	*/
+	FT get_cost(Edge& edge) {
+		return m_rt2.get_cost(edge).finalize();
+	}
+
 };
 }
 

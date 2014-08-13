@@ -24,16 +24,12 @@
 //CGAL
 #include <CGAL/basic.h>
 
+//std
+#include <utility>
+
+
 //local
 #include <CGAL/Reconstruction_triangulation_2.h>
-
-
-// boost
-#include <boost/multi_index/mem_fun.hpp>
-#include <boost/multi_index_container.hpp>
-#include <boost/multi_index/ordered_index.hpp>
-#include <boost/multi_index/identity.hpp>
-#include <boost/multi_index/member.hpp>
 
 namespace CGAL {
 
@@ -67,15 +63,16 @@ public:
 
 	typedef Reconstruction_triangulation_2<Kernel> Rt_2;
 
+	typedef Reconstruction_vertex_base_2<Kernel> Reconstruction_vertex_base_2;
+
 	typedef typename Rt_2::Vertex	 Vertex;
 	typedef typename Rt_2::Edge      Edge;
 	typedef typename Rt_2::Vertex_iterator Vertex_iterator;
+	typedef typename Rt_2::Vertex_handle Vertex_handle;
+	typedef typename Rt_2::Face_handle Face_handle;
 
 	typedef std::list<Point> Vertices;
 	typedef std::list<Segment> Edges;
-
-	typedef typename Rt_2::Reconstruction_edge_2 Reconstruction_edge_2;
-	typedef typename Rt_2::MultiIndex MultiIndex;
 
 	typedef typename Rt_2::Finite_edges_iterator Finite_edges_iterator;
 
@@ -90,8 +87,7 @@ private:
 		{
 			bool incident_edges_have_sample = false;
 			typename Rt_2::Edge_circulator start = rt2.incident_edges(vi);
-
-			typename Rt_2::Edge_circulator cur = start;
+			typename Rt_2::Edge_circulator cur   = start;
 
 			do {
 				if (!rt2.is_ghost(*cur)) {
@@ -111,34 +107,19 @@ private:
 		}
 	}
 
-	void store_solid_edges(Rt_2& rt2, int nb_ignore) {
-		MultiIndex mindex;
+	void store_solid_edges(Rt_2& rt2) {
 		for (Finite_edges_iterator ei = rt2.finite_edges_begin(); ei != rt2.finite_edges_end(); ++ei)
 		{
 			Edge edge = *ei;
 			if (rt2.is_ghost(edge)) continue;
-			FT value = rt2.get_edge_relevance(edge); // >= 0
-			mindex.insert(Reconstruction_edge_2(edge, value));
-		}
 
+	        int index = edge.second;
+	        Vertex_handle source = edge.first->vertex( (index+1)%3 );
+	        Vertex_handle target = edge.first->vertex( (index+2)%3 );
 
-		int nb_remove = (std::min)(nb_ignore, int(mindex.size()));
-
-		for (int i = 0; i < nb_remove; ++i)
-		{
-			Reconstruction_edge_2 pedge = *(mindex.template get<1>()).begin();
-			(mindex.template get<0>()).erase(pedge);
-		}
-
-		while (!mindex.empty())
-		{
-			Reconstruction_edge_2 pedge = *(mindex.template get<1>()).begin();
-			(mindex.template get<0>()).erase(pedge);
-			Segment s(pedge.source()->point(), pedge.target()->point());
-			//edges.push_back(s);
+			Segment s(source->point(), target->point());
 			*m_e_it = s;
 			m_e_it++;
-
 		}
 	}
 
@@ -169,10 +150,9 @@ public:
 	*/
 	void store_solid_elements(Rt_2& rt2) {
 		store_solid_vertices(rt2);
-		store_solid_edges(rt2, 0); //TODO: IV do we want the nb_ignore parameter
+		store_solid_edges(rt2);
 	}
 };
-
 
 } //namespace CGAL
 
