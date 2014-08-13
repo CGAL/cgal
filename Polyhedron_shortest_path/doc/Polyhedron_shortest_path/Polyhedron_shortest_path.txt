@@ -131,5 +131,93 @@ This example shows using a range of FaceLocation to specify multiple source poin
 
 \cgalExample{Polyhedron_shortest_path/shortest_paths_elephant_multiple_sources.cpp}
 
+\section Polyhedron_shortest_pathBenchmarks Benchmarks
+
+These benchmarks were run using randomly generated source and destination points over multiple trials.  It can be re-generated using 
+
+\code{.sh}
+> python compileBenchmarks.py outputTables.txt 8236179
+\endcode
+
+And then pasting the contents of outputTables.txt into the doc.  For more details, see compileBenchmarks.py in the Polyhedron_shortest_path benchmark directory.  
+
+\subsection Polyhedron_shortest_pathBenchmarkSingleSourcePoint Single Source Point
+<center>
+Model | Number of Vertices | Average Construction Time (s) | Average Query Time (s) | Peak Memory Usage (MB)
+---|---|---|---|---
+anchor.off | 519 | 0.0344441 | 2.96017e-06 | 3.90475
+bones.off | 2154 | 0.00622507 | 5.18066e-07 | 0.929105
+bull.off | 6200 | 0.300789 | 2.82301e-06 | 34.9687
+couplingdown.off | 1841 | 0.0833272 | 2.4433e-06 | 9.98218
+cow.off | 2904 | 0.140567 | 2.76215e-06 | 17.4595
+cross.off | 40 | 0.000638729 | 7.91677e-07 | 0.0773592
+cube-ouvert.off | 8 | 0.000103796 | 7.85355e-07 | 0.0128452
+cube.off | 8 | 0.000119377 | 7.93054e-07 | 0.0133796
+dragknob.off | 161 | 0.00492197 | 1.27657e-06 | 0.693251
+elephant.off | 2775 | 0.119159 | 2.50813e-06 | 13.9274
+ellipsoid.off | 162 | 0.00315336 | 1.04006e-06 | 0.399203
+fandisk.off | 6475 | 0.668231 | 4.56329e-06 | 72.2795
+femur.off | 3897 | 0.202146 | 2.89927e-06 | 21.4738
+handle.off | 1165 | 0.0647537 | 3.00076e-06 | 7.54454
+icosahedron.off | 12 | 0.000208361 | 8.34111e-07 | 0.0206312
+joint.off | 221 | 0.0151741 | 2.25272e-06 | 1.66535
+knot1.off | 3200 | 0.235086 | 3.63962e-06 | 25.3322
+knot2.off | 5760 | 0.228027 | 2.27325e-06 | 22.5448
+lion-head.off | 8356 | 0.984965 | 5.02184e-06 | 87.2008
+man.off | 17495 | 1.82984 | 5.47994e-06 | 146.854
+mushroom.off | 2337 | 0.248026 | 5.14315e-06 | 22.6295
+oblong.off | 424 | 0.0282517 | 2.61892e-06 | 2.5286
+pinion.off | 650 | 0.0366011 | 2.70219e-06 | 3.18767
+pipe.off | 160 | 0.013194 | 2.96508e-06 | 1.04051
+pyramid.off | 5 | 0.000156253 | 1.77012e-06 | 0.0076252
+retinal.off | 3643 | 0.363653 | 4.66264e-06 | 30.6895
+rotor.off | 600 | 0.0370874 | 2.74953e-06 | 3.16909
+sphere.off | 162 | 0.00437447 | 1.35004e-06 | 0.493202
+spool.off | 649 | 0.0387392 | 2.75794e-06 | 3.66918
+star.off | 14 | 0.0004529 | 1.44964e-06 | 0.040506
+translated-cube.off | 8 | 0.000211323 | 1.28031e-06 | 0.0137416
+tripod.off | 24 | 0.000657739 | 1.38318e-06 | 0.0550848
+turbine.off | 9210 | 2.18024 | 1.00274e-05 | 166.232
+</center>
+
+\subsection Polyhedron_shortest_pathBenchmarkTenSourcePoints Ten Source Points
+<center>
+Model | Number of Vertices | Average Construction Time (s) | Average Query Time (s) | Peak Memory Usage (MB)
+---|---|---|---|---
+anchor.off | 519 | 0.0376559 | 2.87967e-06 | 3.30576
+bones.off | 2154 | 0.0480119 | 1.57e-06 | 4.02833
+bull.off | 6200 | 0.392232 | 3.30422e-06 | 30.7336
+couplingdown.off | 1841 | 0.0974105 | 2.85146e-06 | 7.72087
+cow.off | 2904 | 0.183081 | 3.55657e-06 | 13.2623
+cross.off | 40 | 0.00123242 | 1.41559e-06 | 0.0928268
+cube-ouvert.off | 8 | 0.00040513 | 2.54405e-06 | 0.0263356
+cube.off | 8 | 0.000453016 | 2.30916e-06 | 0.0284896
+dragknob.off | 161 | 0.00591995 | 1.77946e-06 | 0.417911
+elephant.off | 2775 | 0.15421 | 3.07259e-06 | 11.1574
+ellipsoid.off | 162 | 0.00361291 | 1.29314e-06 | 0.243336
+fandisk.off | 6475 | 0.523455 | 3.66223e-06 | 38.9224
+femur.off | 3897 | 0.229458 | 3.39845e-06 | 16.7818
+handle.off | 1165 | 0.0551457 | 2.66767e-06 | 4.61976
+icosahedron.off | 12 | 0.00040688 | 1.46085e-06 | 0.0351044
+joint.off | 221 | 0.0163422 | 2.39641e-06 | 1.49762
+knot1.off | 3200 | 0.203266 | 3.37209e-06 | 16.145
+knot2.off | 5760 | 0.429757 | 3.58947e-06 | 33.386
+lion-head.off | 8356 | 0.80021 | 4.3669e-06 | 58.1624
+man.off | 17495 | 1.74717 | 4.83922e-06 | 120.897
+mushroom.off | 2337 | 0.147192 | 3.37557e-06 | 11.4675
+oblong.off | 424 | 0.0250824 | 2.40293e-06 | 2.14421
+pinion.off | 650 | 0.0339581 | 2.44165e-06 | 3.04677
+pipe.off | 160 | 0.010256 | 2.26951e-06 | 0.9233
+pyramid.off | 5 | 0.000236818 | 2.42322e-06 | 0.0208116
+retinal.off | 3643 | 0.256133 | 3.88195e-06 | 19.1396
+rotor.off | 600 | 0.0243794 | 2.11276e-06 | 1.985
+sphere.off | 162 | 0.00326896 | 1.26024e-06 | 0.23461
+spool.off | 649 | 0.0260415 | 2.02274e-06 | 2.16148
+star.off | 14 | 0.000852245 | 2.25622e-06 | 0.0523388
+translated-cube.off | 8 | 0.000472959 | 2.47453e-06 | 0.028552
+tripod.off | 24 | 0.0014061 | 2.07382e-06 | 0.0685392
+turbine.off | 9210 | 1.36279 | 6.02925e-06 | 90.5429
+</center>
+
 */
 } /* namespace CGAL */

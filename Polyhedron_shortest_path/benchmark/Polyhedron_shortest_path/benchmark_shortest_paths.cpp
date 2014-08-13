@@ -146,6 +146,7 @@ void print_results(std::ostream& stream, const std::string& filename, const Benc
   stream << "Num Vertices | " << outData.numVertices << std::endl;
   stream << "Num Edges | " << outData.numEdges << std::endl;
   stream << "Num Faces | " << outData.numFaces << std::endl;
+  
   stream << "Construction  | " << outData.constructionTime.average_float() / 1.0e9 << " | " << double(outData.constructionTime.minimum()) / 1.0e9 << " | " << double(outData.constructionTime.maximum()) / 1.0e9 << " |" << std::endl;
   stream << "Query         | " << outData.queryTime.average_float() / 1.0e9 << " | " << double(outData.queryTime.minimum()) / 1.0e9 << " | " << double(outData.queryTime.maximum()) / 1.0e9 << " |" << std::endl;
 #if !defined(NDEBUG)
@@ -224,7 +225,7 @@ void run_benchmarks_no_id(CGAL::Random& rand, size_t numTrials, size_t numSource
 
 int main(int argc, char* argv[])
 {
-  namespace po = boost::program_options ;
+  namespace po = boost::program_options;
   po::options_description options;
 
   options.add_options()
