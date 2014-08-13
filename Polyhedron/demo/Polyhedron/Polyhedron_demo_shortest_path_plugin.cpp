@@ -10,9 +10,6 @@
 #include "Scene.h"
 #include "ui_Shortest_path_widget.h"
 
-#include <CGAL/Polyhedron_shortest_path/Polyhedron_shortest_path_traits.h>
-#include <CGAL/Polyhedron_shortest_path/Polyhedron_shortest_path.h>
-
 #include <QApplication>
 #include <QMainWindow>
 #include <QInputDialog>

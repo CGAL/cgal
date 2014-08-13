@@ -21,8 +21,10 @@
 #include <string>
 #include <list>
 
+#ifndef Q_MOC_RUN
 #include <CGAL/Polyhedron_shortest_path/Polyhedron_shortest_path.h>
 #include <CGAL/Polyhedron_shortest_path/Polyhedron_shortest_path_traits.h>
+#endif
 
 #include <CGAL/AABB_face_graph_triangle_primitive.h>
 #include <CGAL/AABB_traits.h>
@@ -44,21 +46,21 @@ public:
   typedef boost::property_map<Polyhedron, CGAL::face_index_t>::type FaceIndexMap;
   typedef boost::property_map<Polyhedron, CGAL::vertex_point_t>::type VertexPointMap;
   
-  typedef typename boost::graph_traits<Polyhedron> GraphTraits;
-  typedef typename GraphTraits::face_descriptor face_descriptor;
-  typedef typename GraphTraits::face_iterator face_iterator;
+  typedef boost::graph_traits<Polyhedron> GraphTraits;
+  typedef GraphTraits::face_descriptor face_descriptor;
+  typedef GraphTraits::face_iterator face_iterator;
   
   typedef CGAL::Polyhedron_shortest_path_default_traits<Kernel, Polyhedron> Polyhedron_shortest_path_traits;
   typedef CGAL::Polyhedron_shortest_path<Polyhedron_shortest_path_traits, VertexIndexMap, HalfedgeIndexMap, FaceIndexMap, VertexPointMap> Polyhedron_shortest_path;
-  typedef typename Polyhedron_shortest_path::Face_location Face_location;
+  typedef Polyhedron_shortest_path::Face_location Face_location;
   typedef CGAL::AABB_face_graph_triangle_primitive<Polyhedron, VertexPointMap> AABB_face_graph_primitive;
   typedef CGAL::AABB_traits<Kernel, AABB_face_graph_primitive> AABB_face_graph_traits;
   typedef CGAL::AABB_tree<AABB_face_graph_traits> AABB_face_graph_tree;
   
-  typedef typename Polyhedron_shortest_path_traits::Barycentric_coordinate Barycentric_coordinate;
-  typedef typename Polyhedron_shortest_path_traits::Ray_3 Ray_3;
-  typedef typename Polyhedron_shortest_path_traits::Point_3 Point_3;
-  typedef typename Polyhedron_shortest_path_traits::FT FT;
+  typedef Polyhedron_shortest_path_traits::Barycentric_coordinate Barycentric_coordinate;
+  typedef Polyhedron_shortest_path_traits::Ray_3 Ray_3;
+  typedef Polyhedron_shortest_path_traits::Point_3 Point_3;
+  typedef Polyhedron_shortest_path_traits::FT FT;
   
   enum Selection_mode
   {
