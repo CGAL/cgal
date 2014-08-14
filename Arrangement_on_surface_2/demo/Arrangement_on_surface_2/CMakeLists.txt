@@ -9,14 +9,15 @@ else()
   cmake_policy(VERSION 2.6)
 endif()
 
-find_package(CGAL COMPONENTS Core Qt4or5 )
+set( QT_USE_QTOPENGL  TRUE )
+
+find_package(CGAL COMPONENTS Core Qt4or5 REQUIRED)
 
 include(${CGAL_USE_FILE})
 	
 find_package(Qt4or5)
 
-
-if ( CGAL_FOUND AND QT${QT_VERSION_USED}_FOUND )
+if ( CGAL_FOUND AND CGAL_Core_FOUND AND CGAL_${QT_VERSION}_FOUND AND QT${QT_VERSION_USED}_FOUND )
 
   include_directories( ./ )
   # Arrangement package includes
@@ -29,6 +30,7 @@ if ( CGAL_FOUND AND QT${QT_VERSION_USED}_FOUND )
     OverlayDialog.ui
     ArrangementDemoPropertiesDialog.ui
   )
+  
   if(QT4)
   qt_wrap_cpp( arrangement_2_mocs
     ArrangementDemoWindow.h
@@ -42,7 +44,7 @@ if ( CGAL_FOUND AND QT${QT_VERSION_USED}_FOUND )
     PropertyValueDelegate.h
 #    PropertyValueDelegate.cpp
   )
-  endif()
+  endif(QT4)
 
   qt_add_resources( arrangement_2_resources
     ArrangementDemoWindow.qrc
@@ -81,9 +83,27 @@ if ( CGAL_FOUND AND QT${QT_VERSION_USED}_FOUND )
     ${QT_LIBRARIES}
   )
 
-else()
+else( CGAL_FOUND AND CGAL_Core_FOUND AND CGAL_${QT_VERSION}_FOUND AND QT${QT_VERSION_USED}_FOUND )
+    
+  set(ARRANGEMENT_MISSING_DEPS "")
 
-  message(STATUS "NOTICE: This demo requires CGAL and ${QT_VERSION}, and will not be compiled.")
+  if(NOT CGAL_FOUND)
+    set(ARRANGEMENT_MISSING_DEPS "the CGAL library, ${ARRANGEMENT_MISSING_DEPS}")
+  endif()
+    
+  if(NOT CGAL_Core_FOUND)
+    set(ARRANGEMENT_MISSING_DEPS "the CGAL Core library, ${ARRANGEMENT_MISSING_DEPS}")
+  endif()
+  
+  if(NOT CGAL_${QT_VERSION}_FOUND)
+    set(ARRANGEMENT_MISSING_DEPS "the CGAL Qt${QT_VERSION_USED} library, ${ARRANGEMENT_MISSING_DEPS}")
+  endif()
+  
+  if(NOT QT${QT_VERSION_USED}_FOUND)
+    set(ARRANGEMENT_MISSING_DEPS "Qt${QT_VERSION_USED}, ${ARRANGEMENT_MISSING_DEPS}")
+  endif()
+
+  message(STATUS "NOTICE: The Arrangemnt on surface_2 demonstration requires ${ARRANGEMENT_MISSING_DEPS}and will not be compiled.")
 
 endif()
 

@@ -11,8 +11,9 @@ else()
 endif()
 
 set( QT_USE_QTMAIN   TRUE )
+set( QT_USE_QTOPENGL  TRUE )
 
-find_package(CGAL COMPONENTS Qt4or5 Core )
+find_package(CGAL COMPONENTS Qt4or5 Core REQUIRED)
 
 include(${CGAL_USE_FILE})
 	

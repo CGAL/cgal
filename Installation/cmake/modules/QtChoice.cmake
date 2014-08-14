@@ -1,4 +1,6 @@
 #
+#===================================================QtChoice.cmake==================================================
+#
 # QtChoice.cmake needs to be included into CMakeList when a macros compatibility between Qt4 and Qt5 
 # necessary.
 #
@@ -9,7 +11,7 @@
 # The Qt macros supported are the followings with their Qt4 and Qt5 equivalents :
 #
 #  Name of the macro                        Qt4                              Qt5
-#    qt_automoc                         qt4_automoc                    Qt5 doesn't need automoc
+#    qt_automoc                         qt4_automoc                    Qt5 doesn't need automoc (because CMAKE_AUTOMOC automaticaly set with find_package(Qt5)
 #    qt_wrap_ui                         qt4_wrap_ui                    qt5_wrap_ui
 #    qt_wrap_cpp                        qt4_wrap_cpp                   qt5_wrap_cpp
 #    qt_generate_moc                    qt4_generate_moc               qt5_generate_moc
@@ -32,6 +34,7 @@ macro(qt_automoc)
   endif()
 endmacro()
 
+#The following one needs QT_OPENGL module
 macro(qt_wrap_ui)
   if(QT5)
     qt5_wrap_ui(${ARGN})

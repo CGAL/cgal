@@ -297,7 +297,9 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
       endif()
 
       if (${component} STREQUAL "Qt5")
-	set(CGAL_${component}_FOUND TRUE)
+		set(CGAL_${component}_FOUND TRUE)
+		find_package( OpenGL )
+		find_package (Qt5)
       endif()
     else(WITH_CGAL_${component})
 

@@ -15,17 +15,15 @@ UNSET(QT_VERSION_USED CACHE)
 
 #We say that we want the version 5 of Qt library.
 set(QT_VERSION_USED 5)
-	
-FIND_PACKAGE(Qt5Core QUIET)
 
 SET(QT_MODULES_MISSING "none")
 
-if(NOT Qt5Core_FOUND)
-	SET(QT_MODULES_MISSING ${QT_MODULES_MISSING} "Core")
-endif()
+  IF(NOT QT_USE_QTCORE)
+    SET( QT_USE_QTCORE TRUE )
+  ENDIF(NOT QT_USE_QTCORE)
 
 # Qt modules
-FOREACH(module  GUI OpenGL Multimedia  
+FOREACH(module Core GUI OpenGL Multimedia  
 		Network QML Quick SQL Test WebKit 
 		Widgets D-Bus Graphical_Effects ImageFormats 
 		MacExtras NFC Positioning PrintSupport Declarative 

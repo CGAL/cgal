@@ -13,8 +13,10 @@ endif()
 # If you want to visualize a linear cell complex, there are 2 viewers
 # based on qt and vtk. Just uncomment the corresponding lines
 
+set(QT_USE_QTOPENGL TRUE)
 
 find_package(CGAL QUIET COMPONENTS Core Qt4or5)
+
 
 # include("CMakeLCCViewerQt.inc")
 # include("CMakeLCCViewerVtk.inc")
@@ -30,7 +32,6 @@ find_package(CGAL QUIET COMPONENTS Core Qt4or5)
 # add_definition(-DCGAL_DISABLE_ROUNDING_MATH_CHECK)
 
 if ( CGAL_FOUND )
-
   include( ${CGAL_USE_FILE} )
 
   include( CGAL_CreateSingleSourceCGALProgram )
@@ -52,11 +53,13 @@ if ( CGAL_FOUND )
                                    ${MAP_VIEWER_LIBRARIES})
 
   add_executable(voronoi_2 voronoi_2.cpp)
-  target_link_libraries(voronoi_2 ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES}
+  target_link_libraries(voronoi_2 ${CGAL_LIBRARIES} 
+								  ${CGAL_3RD_PARTY_LIBRARIES}
                                   ${MAP_VIEWER_LIBRARIES})
 
   add_executable(voronoi_3 voronoi_3.cpp)
-  target_link_libraries(voronoi_3 ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES}
+  target_link_libraries(voronoi_3 ${CGAL_LIBRARIES} 
+								  ${CGAL_3RD_PARTY_LIBRARIES}
                                   ${MAP_VIEWER_LIBRARIES})
 
 else()
