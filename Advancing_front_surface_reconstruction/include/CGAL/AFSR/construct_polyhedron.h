@@ -64,7 +64,7 @@ template <class Polyhedron, class Surface>
 void
 construct_polyhedron(Polyhedron& P, Surface& surface)
 {
-  typedef Polyhedron::HalfedgeDS             HalfedgeDS;
+  typedef typename Polyhedron::HalfedgeDS             HalfedgeDS;
   Construct_polyhedron<HalfedgeDS, Surface> builder(surface);
   P.delegate(builder);
 }

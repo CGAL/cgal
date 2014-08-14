@@ -2293,7 +2293,7 @@ advancing_front_surface_reconstruction(PointIterator b, PointIterator e, Polyhed
   typedef Delaunay_triangulation_3<Kernel,Tds> Triangulation_3;
 
   typedef Advancing_front_surface_reconstruction<Kernel,Triangulation_3> Reconstruction;
-  typedef Kernel::Point_3 Point_3;
+  typedef typename Kernel::Point_3 Point_3;
   
   Triangulation_3 dt( boost::make_transform_iterator(b, AFSR::Auto_count<Point_3>()),
                       boost::make_transform_iterator(e, AFSR::Auto_count<Point_3>() )  );
