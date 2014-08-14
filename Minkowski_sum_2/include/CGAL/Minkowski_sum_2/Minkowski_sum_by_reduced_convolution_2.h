@@ -4,11 +4,9 @@
 #include <CGAL/basic.h>
 #include <CGAL/Arrangement_with_history_2.h>
 #include <CGAL/Arr_segment_traits_2.h>
-#include <CGAL/Timer.h> // TODO: remove when optimization is done
 
 #include <CGAL/Minkowski_sum_2/AABB_collision_detector_2.h>
 
-#include <iostream> // TODO: remove when optimization is done
 #include <queue>
 #include <boost/unordered_set.hpp>
 #include <boost/unordered_map.hpp>
@@ -80,53 +78,25 @@ public:
                   Polygon_2 &outer_boundary, OutputIterator holes) const
   {
 
-    Timer timer; // TODO: remove when optimization is done
-    timer.start();
-
     CGAL_precondition(pgn1.is_simple());
     CGAL_precondition(pgn2.is_simple());
     CGAL_precondition(pgn1.orientation() == COUNTERCLOCKWISE);
     CGAL_precondition(pgn2.orientation() == COUNTERCLOCKWISE);
 
-    timer.stop();
-    std::cout << timer.time() << " s: Preconditions" << std::endl;
-    timer.reset();
-    timer.start();
-
     // Initialize collision detector. It operates on pgn2 and on the inversed pgn1:
     const Polygon_2 inversed_pgn1 = transform(Aff_transformation_2<Kernel>(SCALING, -1), pgn1);
     AABB_collision_detector_2<Kernel, Container> collision_detector(pgn2, inversed_pgn1);
-
-    timer.stop();
-    std::cout << timer.time() << " s: AABB init" << std::endl;
-    timer.reset();
-    timer.start();
 
     // Compute the reduced convolution (see section 4.1 of Alon's master's thesis)
     Segment_list reduced_convolution;
     build_reduced_convolution(pgn1, pgn2, reduced_convolution);
 
-    timer.stop();
-    std::cout << timer.time() << " s: Convolution" << std::endl;
-    timer.reset();
-    timer.start();
-
     // Insert the segments into an arrangement
     Arrangement_history_2 arr;
     insert(arr, reduced_convolution.begin(), reduced_convolution.end());
 
-    timer.stop();
-    std::cout << timer.time() << " s: Arrangement" << std::endl;
-    timer.reset();
-    timer.start();
-
     // Trace the outer loop and put it in 'outer_boundary'
     get_outer_loop(arr, outer_boundary);
-
-    timer.stop();
-    std::cout << timer.time() << " s: Outer Loop" << std::endl;
-    timer.reset();
-    timer.start();
 
     // Check for each face whether it is a hole in the M-sum. If it is, add it to 'holes'.
     // See chapter 3 of of Alon's master's thesis.
@@ -134,9 +104,6 @@ public:
     {
       handle_face(arr, face, holes, collision_detector);
     }
-
-    timer.stop();
-    std::cout << timer.time() << " s: Holes" << std::endl;
   }
 
 private:
