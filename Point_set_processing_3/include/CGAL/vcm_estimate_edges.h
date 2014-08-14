@@ -19,15 +19,18 @@
 #include <fstream>
 #include <cmath>
 
-// TODO:
-// - remove traces
-// - use average spacing to determine edge_radius
 
 namespace CGAL {
 
+// ----------------------------------------------------------------------------
+// Private section
+// ----------------------------------------------------------------------------
 namespace internal {
 
-// Determine if a point is on an edge
+/// @cond SKIP_IN_MANUAL
+// Determine if a point is on an edge using the VCM of the point.
+// A point will be considered as an edge point iff it satisfies a criteria
+// relating the eigenvalues of its VCM.
 template <class Covariance>
 bool
 is_on_edge (Covariance &cov,
@@ -45,8 +48,6 @@ is_on_edge (Covariance &cov,
 
     // Compute the ratio
     float r = eigenvalues(1) / (eigenvalues(0) + eigenvalues(1) + eigenvalues(2));
-    // TODO: remove trace
-    /* std::cout << r << std::endl; */
     if (r >= threshold) {
         dir = eigenvectors.col(1);
         return true;
@@ -54,16 +55,26 @@ is_on_edge (Covariance &cov,
 
     return false;
 }
+/// @endcond
 
+/// @cond SKIP_IN_MANUAL
+// Computes the Rips graph of a set of points.
+// The Rips graph is a graph where the vertices are the points and
+// there is an edge between each vertex contained in a ball of a given radius.
+// There is also a cost at each edge.
+// The cost between the points pi and pj is given by: c(pi, pj) = norm(p, pi, pj) ^ p
+// where p is a given exponent (whose default value is 2 so the cost is the euclidean
+// squared distance).
 template <typename Undirected_Graph,
           typename K>
 void
-compute_rips_graph (Undirected_Graph& g,
-                    std::vector<typename K::Point_3> points_on_edges,
-                    std::map<typename K::Point_3, size_t> indices,
-                    double rips_radius,
-                    float exponent,
-                    const K & /* kernel */) {
+compute_rips_graph (Undirected_Graph& g, ///< constructed graph.
+                    std::vector<typename K::Point_3> points_on_edges, ///< given points.
+                    std::map<typename K::Point_3, size_t> indices, ///< map between each point and its corresponding index in the array.
+                    double rips_radius, ///< radius of the sphere used to add edges.
+                    float exponent, ///< exponent used in the computation of the cost.
+                    const K & /* kernel */) ///< geometric traits
+{
     typedef typename K::Point_3 Point;
     typedef typename K::Vector_3 Vector;
     typedef typename K::FT FT;
@@ -95,16 +106,26 @@ compute_rips_graph (Undirected_Graph& g,
         }
     }
 }
+/// @endcond
 
+/// @cond SKIP_IN_MANUAL
+// Computes the nearest neighbors graph of a set of points.
+// The nearest neighbors graph is a graph where the vertices are the points and
+// there is an edge between each vertex and its k nearest neighbors where k is a given parameter.
+// There is also a cost at each edge.
+// The cost between the points pi and pj is given by: c(pi, pj) = norm(p, pi, pj) ^ p
+// where p is a given exponent (whose default value is 2 so the cost is the euclidean
+// squared distance).
 template <typename Undirected_Graph,
           typename K>
 void
-compute_nearest_neighbors_graph (Undirected_Graph& g,
-                                 std::vector<typename K::Point_3> points_on_edges,
-                                 std::map<typename K::Point_3, size_t> indices,
-                                 int nb_neighbors,
-                                 float exponent,
-                                 const K & /* kernel */) {
+compute_nearest_neighbors_graph (Undirected_Graph& g, ///< constructed graph.
+                                 std::vector<typename K::Point_3> points_on_edges, ///< given points.
+                                 std::map<typename K::Point_3, size_t> indices, ///< map between each point and its corresponding index in the array.
+                                 int nb_neighbors, ///< number of neighbors to consider when constructing the graph.
+                                 float exponent, ///< exponent used in the computation of the cost.
+                                 const K & /* kernel */) ///< geometric traits
+{
     typedef typename K::Point_3 Point;
     typedef typename K::Vector_3 Vector;
     typedef typename K::FT FT;
@@ -140,15 +161,25 @@ compute_nearest_neighbors_graph (Undirected_Graph& g,
         }
     }
 }
+/// @endcond
 
+/// @cond SKIP_IN_MANUAL
+// Computes the Delaunay graph of a set of points.
+// The Delaunay graph is a graph where the vertices are the points and
+// there the edges are the Delaunay edges.
+// There is also a cost at each edge.
+// The cost between the points pi and pj is given by: c(pi, pj) = norm(p, pi, pj) ^ p
+// where p is a given exponent (whose default value is 2 so the cost is the euclidean
+// squared distance).
 template <typename Undirected_Graph,
           typename K>
 void
-compute_delaunay_graph (Undirected_Graph& g,
-                        std::vector<typename K::Point_3> points_on_edges,
-                        std::map<typename K::Point_3, size_t> indices,
-                        float exponent,
-                        const K & /* kernel */) {
+compute_delaunay_graph (Undirected_Graph& g, ///< constructed graph.
+                        std::vector<typename K::Point_3> points_on_edges, ///< given points.
+                        std::map<typename K::Point_3, size_t> indices, ///< map between each point and its corresponding index in the array.
+                        float exponent, ///< exponent used in the computation of the cost.
+                        const K & /* kernel */) ///< geometric traits
+{
     typedef typename K::Point_3 Point;
     typedef typename K::Vector_3 Vector;
     typedef typename K::FT FT;
@@ -176,24 +207,38 @@ compute_delaunay_graph (Undirected_Graph& g,
         boost::add_edge(indices[s], indices[t], cost, g);
     }
 }
+/// @endcond
 
 } // namespace internal
 
-// Estimate sharp edges using VCM
+// ----------------------------------------------------------------------------
+// Public section
+// ----------------------------------------------------------------------------
+
+/// \ingroup PkgPointSetProcessing
+/// Estimates the feature edges of the `[first, beyond)` range of points
+/// using the Voronoi Covariance Measure.
+/// It returns a vector of segments where each segment represent a polyline that belongs to the estimated feature.
+/// @tparam ForwardIterator iterator over input points.
+/// @tparam PointPMap is a model of `ReadablePropertyMap` with a value_type = `Kernel::Point_3`.
+///        It can be omitted if ForwardIterator value_type is convertible to `Kernel::Point_3`.
+/// @tparam Kernel Geometric traits class.
+/// @tparam Covariance Covariance matrix type..
 template < typename ForwardIterator,
            typename PointPMap,
            typename Kernel
 >
 std::vector<typename Kernel::Segment_3>
-vcm_estimate_edges (ForwardIterator first,
-                    ForwardIterator beyond,
-                    PointPMap point_pmap,
-                    double R,
-                    double r,
-                    double threshold,
-                    const Kernel& k,
-                    double rips_radius = 0.1,
-                    float exponent = 2)
+vcm_estimate_edges (ForwardIterator first, ///< iterator over the first input point.
+                    ForwardIterator beyond, ///< past-the-end iterator over the input points.
+                    PointPMap point_pmap, ///< property map: value_type of ForwardIterator -> Point_3.
+                    double R, ///< offset radius: radius of the sphere to intersect the Voronoi cell with.
+                    double r, ///< convolution radius: all points in a sphere with this radius will be convolved.
+                    double threshold, ///< threshold used to determine if a point is an edge point or not.
+                    const Kernel& k, ///< geometric traits.
+                    double rips_radius = 0.1, ///< radius used for the construction of the Rips graph.
+                    float exponent = 2 ///< exponent of the cost between edges.
+)
 {
     typedef typename Kernel::FT FT;
     typedef CGAL::Voronoi_covariance_3::Voronoi_covariance_3<FT> Covariance;
@@ -228,14 +273,6 @@ vcm_estimate_edges (ForwardIterator first,
     for (size_t s = 0; s < points_on_edges.size(); ++s)
         indices[points_on_edges[s]] = s;
 
-    // TODO: debug
-    std::ofstream file_edges("edges.xyz");
-    for (typename std::vector<Point>::iterator it = points_on_edges.begin();
-         it != points_on_edges.end();
-         ++it) {
-        file_edges << *it << "\n";
-    }
-
     // Compute the graph
     typedef boost::property<boost::edge_weight_t, double> EdgeWeightProperty;
     typedef boost::adjacency_list<boost::vecS,
@@ -249,44 +286,11 @@ vcm_estimate_edges (ForwardIterator first,
     typedef boost::graph_traits<Undirected_Graph>::edge_iterator Edge_iterator;
     Undirected_Graph g;
     compute_rips_graph(g, points_on_edges, indices, rips_radius, exponent, k);
-    /* compute_nearest_neighbors_graph(g, points_on_edges, indices, 50, exponent, k); */
-    /* compute_delaunay_graph(g, points_on_edges, indices, exponent, k); */
 
     // Compute the MST
     boost::property_map<Undirected_Graph, boost::edge_weight_t>::type weight = get(boost::edge_weight, g);
     std::vector<Edge_descriptor> spanning_tree;
     boost::kruskal_minimum_spanning_tree(g, std::back_inserter(spanning_tree));
-
-    // Compute the distance function
-    // We first create a new graph containing the tree
-    Undirected_Graph mst;
-    Vertex_descriptor v0 = boost::add_vertex(mst);
-    for (unsigned int ind = 1; ind < points_on_edges.size(); ++ind)
-        boost::add_vertex(mst);
-
-    for (std::vector<Edge_descriptor>::iterator ei = spanning_tree.begin();
-         ei != spanning_tree.end();
-         ++ei) {
-        unsigned int si = boost::source(*ei, g);
-        unsigned int ti = boost::target(*ei, g);
-        boost::add_edge(si, ti, weight[*ei], mst);
-    }
-
-    // Then, we compute the shortest paths using Dijkstra algorithm
-    std::vector<Vertex_descriptor> parents(boost::num_vertices(mst));
-    std::vector<float> distances(boost::num_vertices(mst));
-    boost::dijkstra_shortest_paths(mst, v0, boost::predecessor_map(&parents[0]).distance_map(&distances[0]));
-
-    // TODO: remove trace
-    /* std::cout << "distances and parents:" << std::endl; */
-    std::ofstream file_distances("distances.xyz");
-    Vertex_iterator vertexIterator, vend;
-    for (boost::tie(vertexIterator, vend) = boost::vertices(g); vertexIterator != vend; ++vertexIterator) {
-        /* std::cout << "distance(" << *vertexIterator << ") = " << distances[*vertexIterator] << ", "; */
-        /* std::cout << "parent(" << *vertexIterator << ") = " << parents[*vertexIterator] << std::endl; */
-        file_distances << distances[*vertexIterator] << "\n";
-    }
-    /* std::cout << std::endl; */
 
     // Construct the polylines
     std::vector<Segment> polylines;

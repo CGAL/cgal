@@ -7,10 +7,9 @@
 #include "Polyhedron_demo_plugin_helper.h"
 #include "Polyhedron_demo_plugin_interface.h"
 
+#include <CGAL/vcm_estimate_edges.h>
 #include <CGAL/Timer.h>
 #include <CGAL/Memory_sizer.h>
-#include <CGAL/compute_average_spacing.h>
-#include <CGAL/Voronoi_covariance_3/vcm_estimate_edges.h>
 
 #include "ui_Polyhedron_demo_features_detection_plugin.h"
 
@@ -75,13 +74,6 @@ void Polyhedron_demo_features_detection_plugin::on_actionDetectFeatures_triggere
     Polyhedron_demo_features_detection_dialog dialog;
     if(!dialog.exec())
       return;
-
-    // Approximation of the radius by the average spacing
-    // TODO
-    const int nb_neighbors = 40;
-    double average_spacing = CGAL::compute_average_spacing(points->begin(), points->end(),
-                                                           nb_neighbors);
-    std::cerr << "Average spacing = " << average_spacing << std::endl;
 
     // Compute poylines
     typedef Kernel::Segment_3 Segment;

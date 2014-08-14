@@ -232,7 +232,6 @@ vcm_offset_and_convolve (ForwardIterator first,
 ///        It can be omitted if ForwardIterator value_type is convertible to `Kernel::Point_3`.
 /// @tparam NormalPMap is a model of `WritablePropertyMap` with a value_type = `Kernel::Vector_3`.
 /// @tparam Kernel Geometric traits class.
-///        It can be omitted and deduced automatically from PointPMap value_type.
 /// @tparam Covariance Covariance matrix type..
 /// @pre If `nb_neighbors_convolve` is equal to -1, then the convolution is made using a radius.
 /// On the contrary, if `nb_neighbors_convolve` is different from -1, the convolution is made using
@@ -323,8 +322,8 @@ vcm_estimate_normals (ForwardIterator first, ///< iterator over the first input 
                       ForwardIterator beyond, ///< past-the-end iterator over the input points.
                       PointPMap point_pmap, ///< property map: value_type of ForwardIterator -> Point_3.
                       NormalPMap normal_pmap, ///< property map: value_type of ForwardIterator -> Vector_3.
-                      double R, ///< offset radius.
-                      double r ///< convolution radius.
+                      double R, ///< offset radius: radius of the sphere to intersect the Voronoi cell with.
+                      double r ///< convolution radius: all points in a sphere with this radius will be convolved.
 )
 {
     typedef typename boost::property_traits<PointPMap>::value_type Point;
@@ -360,8 +359,8 @@ vcm_estimate_normals (ForwardIterator first, ///< iterator over the first input 
                       ForwardIterator beyond, ///< past-the-end iterator over the input points.
                       PointPMap point_pmap, ///< property map: value_type of ForwardIterator -> Point_3.
                       NormalPMap normal_pmap, ///< property map: value_type of ForwardIterator -> Vector_3.
-                      double R, ///< offset radius.
-                      unsigned int nb_neighbors_convolve ///< number of neighbors used during the convolution.
+                      double R, ///< offset radius: radius of the sphere to intersect the Voronoi cell with.
+                      unsigned int nb_neighbors_convolve ///< number of neighbor points used for the convolution.
 )
 {
     typedef typename boost::property_traits<PointPMap>::value_type Point;
