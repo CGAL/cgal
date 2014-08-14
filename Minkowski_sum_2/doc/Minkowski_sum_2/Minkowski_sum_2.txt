@@ -119,7 +119,12 @@ avoid the costly intersection tests.
 The function \link minkowski_sum_2() `minkowski_sum_2(P, Q)`\endlink accepts two simple polygons \f$ P\f$
 and \f$ Q\f$, represented using the `Polygon_2<Kernel,Container>`
 class-template and uses the reduced convolution method in order to compute and
-return their Minkowski sum \f$ S = P \oplus Q\f$.
+return their Minkowski sum \f$ S = P \oplus Q\f$. By default, \link minkowski_sum_2()
+`minkowski_sum_2(P, Q)`\endlink uses the reduced convolution approach, to explicitly
+use the full convolution, use \link minkowski_sum_full_convolution_2()
+`minkowski_sum_full_convolution_2(P, Q)`\endlink. To explicitly use the reduced
+convolution convolution, use \link minkowski_sum_reduced_convolution_2()
+`minkowski_sum_reduced_convolution_2(P, Q)`\endlink.
 
 As the input polygons may not be convex, their Minkowski sum may not be
 simply connected and contain polygonal holes; see for example

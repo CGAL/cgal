@@ -3,8 +3,8 @@ namespace CGAL {
 /*!
 \ingroup PkgMinkowskiSum2
 
-Computes the Minkowski sum \f$ P \oplus Q\f$ of the two given polygons
-using the reduced convolution method.
+Computes the Minkowski sum \f$ P \oplus Q\f$ of the two given polygons.
+This method defaults to the reduced convolution method, see below.
 Note that as the input polygons may not be convex, their Minkowski
 sum may not be a simple polygon. The result is therefore represented
 as a polygon with holes.
