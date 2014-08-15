@@ -118,9 +118,9 @@ if(WIN32)
 
 	if ( NOT WIN_SDK_PATH )
 		MESSAGE("Qt5 on Windows needs Windows SDK.")
-	
-		FIND_PATH ( WIN_SDK_PATH WIN_SDK_PATH)
 	endif()
+	
+	SET(WIN_SDK_PATH ${WIN_SDK_PATH} CACHE FILEPATH "Path to the Windows SDK folder")
 	
 	SET(CMAKE_LIBRARY_PATH ${CMAKE_LIBRARY_PATH} ${WIN_SDK_PATH})
 
