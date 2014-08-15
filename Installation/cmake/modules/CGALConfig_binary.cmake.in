@@ -44,6 +44,7 @@ set(WITH_CGAL_Qt4     "@WITH_CGAL_Qt4@" )
 set(WITH_CGAL_Qt5     "@WITH_CGAL_Qt5@" )
 
 set(CGAL_QT_RECENT "@CGAL_QT_RECENT@")
+set(WIN_SDK_PATH "@WIN_SDK_PATH@")
 
 set(CGAL_LIBRARY         "@CGAL_LIBRARY@" )
 set(CGAL_Core_LIBRARY    "@CGAL_Core_LIBRARY@" )

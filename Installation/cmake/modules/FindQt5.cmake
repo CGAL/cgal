@@ -99,7 +99,7 @@
 #	The path is automatically set if contains into CMake Configuration files of CGAL. Otherwise, the user has to inform 
 # the path into CMake-gui. 
 #
-#	For instance, on Windows 8 64 bits, the path is : C:\\Program Files (x86)\\Windows Kits\\8.1\\Lib\\winv6.3\\um\\x64
+#	For instance, on Windows 8 64 bits, the path is : C:/Program Files (x86)/Windows Kits/8.1/Lib/winv6.3/um/x64
 #
 #  NOTICE : Finally, it seems that this part is not necessary.
 #
@@ -109,21 +109,23 @@
 
 MESSAGE("Searching Qt5 modules.")
 
-#
+
 #	This one is maybe not necessary...
-#
-#if(WIN32)
-#
-#	set (WIN_SDK_PATH ${WIN_SDK_PATH_MEMORY})
-#	
-#	if ( WIN_SDK_PATH_temp STREQUAL "" )
-#		MESSAGE("Qt5 on Windows needs Windows SDK.")
-#	
-#		PATH ( WIN_SDK_PATH "")
-#	endif()
-#	
-#	SET(CMAKE_LIBRARY_PATH ${CMAKE_LIBRARY_PATH} ${WIN_SDK_PATH})	
-#endif()
+
+if(WIN32)
+
+	SET (WIN_SDK_PATH ${WIN_SDK_PATH})
+
+	if ( NOT WIN_SDK_PATH )
+		MESSAGE("Qt5 on Windows needs Windows SDK.")
+	
+		FIND_PATH ( WIN_SDK_PATH WIN_SDK_PATH)
+	endif()
+	
+	SET(CMAKE_LIBRARY_PATH ${CMAKE_LIBRARY_PATH} ${WIN_SDK_PATH})
+
+	MESSAGE( STATUS "Windows SDK path : ${WIN_SDK_PATH}")
+endif()
 
 UNSET(QT5 CACHE)
 UNSET(QT5_FOUND CACHE)
