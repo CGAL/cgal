@@ -16,7 +16,7 @@
 \cgalPkgPicture{shortestpathspackage-ico.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Stephen Kiazyk, Sébastien Loriot, Éric Colin de Verdière}
-\cgalPkgDesc{The package provides methods for computing the shortest path on the surface of 3D face graphs and polyhedra}
+\cgalPkgDesc{The package provides methods for computing shortests path on the surface of 3D face graphs.  The algorithm used is based on a paper by Xin and Wang \cgalCite{XinWang2009improvingchenandhan}, itself based on an earlier algorithm by Chen and Han \cgalCite{ChenHan1996shortestpaths}.  Any face graph supporting the \cgal FaceListGraph concept may be used with this algorithm. }
 \cgalPkgManuals{Chapter_Polyhedron_shortest_path,PkgPolyhedronShortestPath}
 \cgalPkgSummaryEnd
 
