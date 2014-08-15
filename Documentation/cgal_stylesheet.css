@@ -161,6 +161,10 @@ div.cgal_figure_caption {
 	text-align: center;
 }
 
+div.cgal_video_caption {
+	text-align: center;
+}
+
 div.groupText {
     font-style: none;
 }
