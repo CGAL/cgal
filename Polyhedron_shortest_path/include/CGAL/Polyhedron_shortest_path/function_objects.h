@@ -13,6 +13,8 @@
 
 #include <CGAL/Polyhedron_shortest_path/internal/misc_functions.h>
 
+#include <CGAL/Exact_predicates_exact_constructions_kernel_with_sqrt.h>
+
 #ifndef CGAL_POLYHEDRON_SHORTEST_PATH_INTERNAL_FUNCTION_OBJECTS_H
 #define CGAL_POLYHEDRON_SHORTEST_PATH_INTERNAL_FUNCTION_OBJECTS_H
 
@@ -194,7 +196,7 @@ public:
 private:
   Parametric_distance_along_segment_3<K> m_parametric_distance_along_segment_3;
   Compute_squared_distance_3 m_compute_squared_distance_3;
-  Construct_line_3 m_constuct_line_3;
+  Construct_line_3 m_construct_line_3;
   Construct_projected_point_3 m_construct_projected_point_3;
   mutable Construct_vertex_3 m_construct_vertex_3;
   Construct_vector_3 m_construct_vector_3;
@@ -208,7 +210,7 @@ public:
   
   Project_triangle_3_to_triangle_2(const K& kernel)
     : m_compute_squared_distance_3(kernel.compute_squared_distance_3_object())
-    , m_constuct_line_3(kernel.constuct_line_3_object())
+    , m_construct_line_3(kernel.construct_line_3_object())
     , m_construct_vertex_3(kernel.construct_vertex_3_object())
     , m_construct_projected_point_3(kernel.construct_projected_point_3_object())
     , m_construct_vector_3(kernel.construct_vector_3_object())
@@ -222,7 +224,7 @@ public:
     Vector_3 v01(m_construct_vector_3(m_construct_vertex_3(t3, 0), m_construct_vertex_3(t3, 1)));
     Vector_3 v02(m_construct_vector_3(m_construct_vertex_3(t3, 0), m_construct_vertex_3(t3, 2)));
     
-    Line_3 baseSegment(m_constuct_line_3(m_construct_vertex_3(t3, 0), m_construct_vertex_3(t3, 1)));
+    Line_3 baseSegment(m_construct_line_3(m_construct_vertex_3(t3, 0), m_construct_vertex_3(t3, 1)));
     
     //FT scalePoint = (v01 * v02) / (v01 * v01);
     Point_3 projectedLocation3d(m_construct_projected_point_3(baseSegment, m_construct_vertex_3(t3, 2)));
@@ -235,6 +237,36 @@ public:
     Point_2 C(m_construct_point_2(v01Len * scalePoint, triangleHeight));
     
     return m_construct_triangle_2(A, B, C);
+  }
+};
+
+template<class K>
+class Robust_project_triangle_3_to_triangle_2
+{
+public:
+  typedef typename K::Triangle_3 Triangle_3;
+  typedef typename K::Triangle_2 Triangle_2;
+  typedef Exact_predicates_exact_constructions_kernel_with_sqrt EKSQRT;
+  typedef Project_triangle_3_to_triangle_2<EKSQRT> Exact_project_triangle_3_to_triangle_2;
+  typedef Cartesian_converter<K, EKSQRT>  To_exact;
+  typedef Cartesian_converter<EKSQRT, K>  Back_from_exact;
+
+public:
+  Robust_project_triangle_3_to_triangle_2()
+  {
+  }
+  
+  Robust_project_triangle_3_to_triangle_2(const K& kernel)
+  {
+  }
+
+  Triangle_2 operator() (const Triangle_3& t3) const
+  {
+    Exact_project_triangle_3_to_triangle_2 ept3t2;
+    To_exact to_exact;
+    Back_from_exact back_from_exact;
+    
+    return back_from_exact(ept3t2(to_exact(t3)));
   }
 };
 
@@ -273,7 +305,7 @@ private:
 
   Parametric_distance_along_segment_3<K> m_parametric_distance_along_segment_3;
   Compute_squared_distance_3 m_compute_squared_distance_3;
-  Construct_projected_point_3 m_constrct_projected_point_3;
+  Construct_projected_point_3 m_construct_projected_point_3;
   Construct_perpendicular_vector_2 m_construct_perpendicular_vector_2;
   Construct_sum_of_vectors_2 m_construct_sum_of_vectors_2;
   Construct_scaled_vector_2 m_construct_scaled_vector_2;
@@ -294,7 +326,7 @@ public:
   
   Flatten_triangle_3_along_segment_2(const K& kernel)
     : m_compute_squared_distance_3(kernel.compute_squared_distance_3_object())
-    , m_constrct_projected_point_3(kernel.constrct_projected_point_3_object())
+    , m_construct_projected_point_3(kernel.construct_projected_point_3_object())
     , m_construct_perpendicular_vector_2(kernel.construct_perpendicular_vector_2_object())
     , m_construct_sum_of_vectors_2(kernel.construct_sum_of_vectors_2_object())
     , m_construct_scaled_vector_2(kernel.construct_scaled_vector_2_object())
@@ -312,7 +344,7 @@ public:
 
   result_type operator() (const Triangle_3& t3, size_t edgeIndex, const Segment_2& segment) const
   {
-    Point_3 projectedLocation3d(m_constrct_projected_point_3(m_construct_line_3(m_construct_vertex_3(t3, edgeIndex), m_construct_vertex_3(t3, edgeIndex + 1)), m_construct_vertex_3(t3, edgeIndex + 2)));
+    Point_3 projectedLocation3d(m_construct_projected_point_3(m_construct_line_3(m_construct_vertex_3(t3, edgeIndex), m_construct_vertex_3(t3, edgeIndex + 1)), m_construct_vertex_3(t3, edgeIndex + 2)));
     FT scalePoint = m_parametric_distance_along_segment_3(m_construct_segment_3(m_construct_vertex_3(t3, edgeIndex), m_construct_vertex_3(t3, edgeIndex + 1)), projectedLocation3d);
     FT triangleHeight = CGAL::internal::select_sqrt(m_compute_squared_distance_3(projectedLocation3d, m_construct_vertex_3(t3, edgeIndex + 2)));
 
@@ -328,6 +360,38 @@ public:
     points[(edgeIndex + 2) % 3] = m_construct_translated_point_2(m_construct_source_2(segment), m_construct_sum_of_vectors_2(m_construct_scaled_vector_2(edgeVector, scalePoint), m_construct_scaled_vector_2(perpendicularEdgeVector, triangleHeight)));
 
     return m_construct_triangle_2(points[0], points[1], points[2]);
+  }
+};
+
+template<class K>
+class Robust_flatten_triangle_3_along_segment_2
+{
+public:
+  typedef typename K::Triangle_3 Triangle_3;
+  typedef typename K::Segment_2 Segment_2;
+  typedef typename K::Triangle_2 Triangle_2;
+  
+  typedef Exact_predicates_exact_constructions_kernel_with_sqrt EKSQRT;
+  typedef Flatten_triangle_3_along_segment_2<EKSQRT> Exact_flatten_triangle_3_along_segment_2;
+  typedef Cartesian_converter<K, EKSQRT>  To_exact;
+  typedef Cartesian_converter<EKSQRT, K>  Back_from_exact;
+
+public:
+  Robust_flatten_triangle_3_along_segment_2()
+  {
+  }
+  
+  Robust_flatten_triangle_3_along_segment_2(const K& kernel)
+  {
+  }
+
+  Triangle_2 operator() (const Triangle_3& t3, size_t edgeIndex, const Segment_2& segment) const
+  {
+    Exact_flatten_triangle_3_along_segment_2 eft3as2;
+    To_exact to_exact;
+    Back_from_exact back_from_exact;
+    
+    return back_from_exact(eft3as2(to_exact(t3), edgeIndex, to_exact(segment)));
   }
 };
 
@@ -473,7 +537,7 @@ public:
   {
   }
   
-  Is_saddle_vertex(const Kernel& kernel, const Project_triangle_3_to_triangle_2& pt3tt2, const Flatten_triangle_3_along_segment_2& ft3as2, const Orientation_2& o2)
+  Is_saddle_vertex(const Kernel& kernel, const Project_triangle_3_to_triangle_2& pt3tt2, const Flatten_triangle_3_along_segment_2& ft3as2)
     : m_orientation_2(kernel.orientation_2_object())
     , m_construct_triangle_3(kernel.construct_triangle_3_object())
     , m_construct_vertex_2(kernel.construct_vertex_2_object())

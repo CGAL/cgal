@@ -27,7 +27,7 @@ model as required by the Polyhedron_shortest_path algorithm
 
 \tparam F The faceGraph type the algorithm is to act on
 
-\cgalModels `FaceGraphShortestPathTraits`
+\cgalModels `PolyhedronShortestPathTraits`
 */
 template <
   class K, 
@@ -155,6 +155,53 @@ std::ostream& operator<<(std::ostream& os, typename Polyhedron_shortest_path_def
   return os << b[0] << " " << b[1] << " " << b[2];
 }
 
+
+
+/*!
+\ingroup PkgPolyhedronShortestPathTraitsClasses
+
+\brief Provides an implementation of the FaceGraphShortestPathTraits 
+model as required by the Polyhedron_shortest_path algorithm
+
+\tparam K The kernel type whose geometric primitives to use
+
+\tparam F The faceGraph type the algorithm is to act on
+
+\cgalModels `PolyhedronShortestPathTraits`
+*/
+template <
+  class K, 
+  class F>
+class Polyhedron_shortest_path_default_traits_with_robust_unfolding : public Polyhedron_shortest_path_default_traits<K,F>
+{
+public:
+  typedef K Kernel;
+  typedef typename PolyhedronShortestPath::Robust_project_triangle_3_to_triangle_2<K> Project_triangle_3_to_triangle_2;
+  typedef typename PolyhedronShortestPath::Robust_flatten_triangle_3_along_segment_2<K> Flatten_triangle_3_along_segment_2;
+  
+private:
+
+  Project_triangle_3_to_triangle_2 m_robust_project_triangle_3_to_triangle_2_object;
+  Flatten_triangle_3_along_segment_2 m_robust_flatten_triangle_3_along_segment_2;
+  
+public:
+
+  Polyhedron_shortest_path_default_traits_with_robust_unfolding()
+  {
+  }
+  
+  Polyhedron_shortest_path_default_traits_with_robust_unfolding(const Kernel& kernel)
+    : Polyhedron_shortest_path_default_traits<K,F>(kernel)
+    , m_robust_project_triangle_3_to_triangle_2_object(kernel)
+    , m_robust_flatten_triangle_3_along_segment_2(kernel)
+  {
+  }
+  
+  Project_triangle_3_to_triangle_2 project_triangle_3_to_triangle_2_object() const { return m_robust_project_triangle_3_to_triangle_2_object; }
+  Flatten_triangle_3_along_segment_2 flatten_triangle_3_along_segment_2_object() const { return m_robust_flatten_triangle_3_along_segment_2; }
+};
+
 } // namespace CGAL
+
 
 #endif // CGAL_POLYHEDRON_SHORTEST_PATH_TRAITS_H
