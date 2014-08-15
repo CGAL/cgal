@@ -139,52 +139,6 @@ To access the reconstructed vertices and edges, models which implement the Recon
 \cgalExample{Reconstruction_simplification_2/reconstruction_simplification_2_output_example.cpp}
 
 
-\section Reconstruction_simplification_2Performance Performance
-
-
-<TABLE CELLSPACING=5 >
-<TR><TD ALIGN=LEFT NOWRAP COLSPAN=2><HR>
-<TR>
-<TD class="math" ALIGN=CENTER NOWRAP>
-
-Number of points 
-<TD class="math" ALIGN=CENTER NOWRAP>
-reconstruction duration (in s) 
-<TR><TD ALIGN=LEFT NOWRAP COLSPAN=2><HR>
-<TR>
-<TD class="math" ALIGN=CENTER NOWRAP>
-60
-<TD class="math" ALIGN=CENTER NOWRAP>
-15
-<TR>
-<TD class="math" ALIGN=CENTER NOWRAP>
-100
-<TD class="math" ALIGN=CENTER NOWRAP>
-25
-<TR>
-
-<TD class="math" ALIGN=CENTER NOWRAP>
-250
-<TD class="math" ALIGN=CENTER NOWRAP>
-96
-<TR>
-<TD class="math" ALIGN=CENTER NOWRAP>
-500
-<TD class="math" ALIGN=CENTER NOWRAP>
-150
-<TR>
-<TD class="math" ALIGN=CENTER NOWRAP>
-1,000
-<TD class="math" ALIGN=CENTER NOWRAP>
-249
-<TR>
-
-<TD class="math" ALIGN=CENTER NOWRAP>
-1,800
-<TD class="math" ALIGN=CENTER NOWRAP>
-478
-<TR><TD ALIGN=LEFT NOWRAP COLSPAN=2><HR>
-</TABLE>
 
 
 
