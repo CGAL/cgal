@@ -1,13 +1,129 @@
-
+#======================================================FindQt5.cmake=====================================================
+#
+#
+#	This file has on purpose to search and include Qt5 modules wanted by the user.
+#
+#	To make this findQt5.cmake compatible with the Qt4 find_package, we use the QT_USE_QT* flags.
+#
+#	However, if the used does not set the flag QT_USE_QTCORE, this one is automatically set when findQt5 called.
+#
+#	NOTICE : Some part of this file are porting from findQt4.cmake by Kitware, Inc.
+#
+#==========================================================Success========================================================
+#
+#	If all modules asked by the user are found, so the flags QT5 and QT5_FOUND are set to TRUE.
+#
+#
+#==========================================================Failure========================================================
+#
+#
+#	If all modules asked by the flags are not found, findQt5 fails and returns the list of modules missing.
+#
+#   The flags QT5 and QT5_FOUND are not set.
+#
+#
+#========================================================Typical use=======================================================
+#
+# 	Typical use could be : 
+#
+#		set( QT_USE_QTXML    TRUE )
+#		set( QT_USE_QTSCRIPT  TRUE )
+#		set( QT_USE_QTOPENGL  TRUE )
+#
+#
+#		find_package(CGAL REQUIRED COMPONENTS Qt5) //Because we want to know the CGAL path to use findQt4or5
+#
+#		include(${CGAL_USE_FILE})// Same
+#	
+#		find_package(Qt5)// Here, we search and include all the modules previously set by the QT_USE_QT* flags.	
+#
+#		IF(QT5_FOUND)
+#
+#			qt5_wrap_cpp(cpp file.cpp)
+#			qt5_wrap_ui (ui  fileui.ui )
+#			qt5_add_ressource ( RESOURCE_FILES filescr.qrc )
+#			qt5_generate_moc ( file.h file_moc.cpp)
+#
+#       	IF(QT5)
+#				add_library(example
+#				file.cpp
+#				file_moc.cpp
+#				)
+#			ENDIF(QT5)
+#		ENDIF(QT5_FOUND)
+#
+#
+#	NORICE : this way is to does not use the AUTOMOC.
+#
+#================================================FindQt4.cmake compatibility==============================================
+#
+#	The QT_USE_QT* flags supported byb findQt5 are the followings :
+#
+#                    QT_USE_QTCORE
+#                    QT_USE_QTD-BUS
+#                    QT_USE_QTDECLARATIVE
+#                    QT_USE_QTDESIGNER
+#                    QT_USE_QTGRAPHICAL_EFFECTS
+#                    QT_USE_QTGUI
+#                    QT_USE_QTIMAGEFORMATS
+#                    QT_USE_QTHELP
+#                    QT_USE_QTMACEXTRATS
+#                    QT_USE_QTMULTIMEDIA
+#                    QT_USE_QTNETWORK
+#                    QT_USE_QTNFC
+#                    QT_USE_QTOPENGL
+#                    QT_USE_QTPOSITIONING
+#                    QT_USE_QTPRINTSUPPORT
+#                    QT_USE_QTQML
+#                    QT_USE_QTQUICK
+#                    QT_USE_QTSCRIPT
+#                    QT_USE_QTSENSORS
+#                    QT_USE_QTSERIALPORT
+#                    QT_USE_QTSQL
+#                    QT_USE_QTSVG
+#                    QT_USE_QTTEST
+#                    QT_USE_QTUITOOLS
+#                    QT_USE_QTWEBKIT
+#                    QT_USE_QTWIDGETS
+#                    QT_USE_QTWEBSOCKEETS
+#                    QT_USE_QTWINDOWSEXTRAS
+#                    QT_USE_QTX11EXTRAS
+#                    QT_USE_QTXML
+#                    QT_USE_QTXMLPATTERNS
+#
+#
+#======================================================WIN_SDK_PATH=====================================================
+#
+#	This is the PATH to the Windows SDK that Qt5 needs to know.
+#
+#	The path is automatically set if contains into CMake Configuration files of CGAL. Otherwise, the user has to inform 
+# the path into CMake-gui. 
+#
+#	For instance, on Windows 8 64 bits, the path is : C:\\Program Files (x86)\\Windows Kits\\8.1\\Lib\\winv6.3\\um\\x64
+#
+#  NOTICE : Finally, it seems that this part is not necessary.
+#
+#
+#
 
 
 MESSAGE("Searching Qt5 modules.")
 
-if(WIN32)
-	MESSAGE("Qt5 on Windows needs Windows SDK.")
-	
-	SET(CMAKE_LIBRARY_PATH ${CMAKE_LIBRARY_PATH} "C:\\Program Files (x86)\\Windows Kits\\8.1\\Lib\\winv6.3\\um\\x64")	
-endif()
+#
+#	This one is maybe not necessary...
+#
+#if(WIN32)
+#
+#	set (WIN_SDK_PATH ${WIN_SDK_PATH_MEMORY})
+#	
+#	if ( WIN_SDK_PATH_temp STREQUAL "" )
+#		MESSAGE("Qt5 on Windows needs Windows SDK.")
+#	
+#		PATH ( WIN_SDK_PATH "")
+#	endif()
+#	
+#	SET(CMAKE_LIBRARY_PATH ${CMAKE_LIBRARY_PATH} ${WIN_SDK_PATH})	
+#endif()
 
 UNSET(QT5 CACHE)
 UNSET(QT5_FOUND CACHE)

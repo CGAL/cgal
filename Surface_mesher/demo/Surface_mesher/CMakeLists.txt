@@ -26,20 +26,19 @@ endforeach()
 
 include_directories( ./ )
 
-# QGLViwer needs Qt4 configured with QtOpenGL and QtXml support
+# QGLViwer needs Qt configured with QtOpenGL and QtXml support
 
 set( QT_USE_QTOPENGL TRUE )
 set( QT_USE_QTXML    TRUE )
 set( QT_USE_QTMAIN   TRUE )
 
-find_package(CGAL COMPONENTS ImageIO Qt4or5)
+find_package(CGAL REQUIRED COMPONENTS ImageIO Qt4or5)
 
 include(${CGAL_USE_FILE})
 
 find_package(Qt4or5)
 
 if ( CGAL_FOUND AND QT${QT_VERSION_USED}_FOUND AND CGAL_ImageIO_FOUND)
-  include( ${CGAL_USE_FILE} )
 
   find_package(QGLViewer )
   find_package(OpenGL    )

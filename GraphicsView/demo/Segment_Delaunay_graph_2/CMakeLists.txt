@@ -16,7 +16,7 @@ set( QT_USE_QTSCRIPT  TRUE )
 set( QT_USE_QTOPENGL  TRUE )
 
 
-find_package(CGAL COMPONENTS Qt4or5 Core REQUIRED)
+find_package(CGAL REQUIRED COMPONENTS Qt4or5 Core)
 
 include(${CGAL_USE_FILE})
 	
