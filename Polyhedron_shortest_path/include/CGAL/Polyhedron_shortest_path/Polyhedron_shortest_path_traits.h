@@ -126,12 +126,12 @@ public:
   Polyhedron_shortest_path_default_traits(const Kernel& kernel)
     : m_kernel(kernel)
     , m_classify_barycentric_coordinate_object(m_construct_barycentric_coordinate_weight_object)
-    , m_project_triangle_3_to_triangle_2_object(m_kernel.compute_squared_distance_3_object())
-    , m_flatten_triangle_3_along_segment_2_object(m_kernel.compute_squared_distance_3_object())
-    , m_is_saddle_vertex_object(m_project_triangle_3_to_triangle_2_object, m_flatten_triangle_3_along_segment_2_object, m_kernel.orientation_2_object())
-    , m_compare_relative_intersection_along_segment_2_object(m_kernel.compute_squared_distance_2_object(), m_kernel.intersect_2_object())
-    , m_construct_barycentric_coordinate_in_triangle_2_object(m_construct_barycentric_coordinate_object, m_kernel.construct_difference_of_vectors_2_object(), m_kernel.compute_scalar_product_2_object())
-    , m_construct_barycentric_coordinate_in_triangle_3_object(m_construct_barycentric_coordinate_object, m_kernel.construct_difference_of_vectors_3_object(), m_kernel.compute_scalar_product_3_object())
+    , m_project_triangle_3_to_triangle_2_object(m_kernel)
+    , m_flatten_triangle_3_along_segment_2_object(m_kernel)
+    , m_is_saddle_vertex_object(m_kernel, m_project_triangle_3_to_triangle_2_object, m_flatten_triangle_3_along_segment_2_object)
+    , m_compare_relative_intersection_along_segment_2_object(m_kernel)
+    , m_construct_barycentric_coordinate_in_triangle_2_object(m_construct_barycentric_coordinate_object, m_kernel.construct_vector_2_object(), m_kernel.compute_scalar_product_2_object())
+    , m_construct_barycentric_coordinate_in_triangle_3_object(m_construct_barycentric_coordinate_object, m_kernel.construct_vector_3_object(), m_kernel.compute_scalar_product_3_object())
   {
   }
 
