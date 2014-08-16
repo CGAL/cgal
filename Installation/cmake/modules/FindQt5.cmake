@@ -9,6 +9,7 @@
 #
 #	NOTICE : Some part of this file are porting from findQt4.cmake by Kitware, Inc.
 #
+#
 #==========================================================Success========================================================
 #
 #	If all modules asked by the user are found, so the flags QT5 and QT5_FOUND are set to TRUE.
@@ -97,20 +98,16 @@
 #	This is the PATH to the Windows SDK that Qt5 needs to know.
 #
 #	The path is automatically set if contains into CMake Configuration files of CGAL. Otherwise, the user has to inform 
-# the path into CMake-gui. 
+# the path into CMake-gui (line WIN_SDK_PATH). 
 #
 #	For instance, on Windows 8 64 bits, the path is : C:/Program Files (x86)/Windows Kits/8.1/Lib/winv6.3/um/x64
 #
-#  NOTICE : Finally, it seems that this part is not necessary.
 #
 #
 #
 
 
 MESSAGE("Searching Qt5 modules.")
-
-
-#	This one is maybe not necessary...
 
 if(WIN32)
 
