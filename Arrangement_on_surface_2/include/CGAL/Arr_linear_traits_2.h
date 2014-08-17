@@ -57,6 +57,7 @@ public:
   typedef Tag_true                        Has_left_category;
   typedef Tag_true                        Has_merge_category;
   typedef Tag_false                       Has_do_intersect_category;
+  typedef Tag_true                        Has_construct_x_monotone_curve_from_two_points_category;
 
   typedef Arr_open_side_tag               Left_side_category;
   typedef Arr_open_side_tag               Bottom_side_category;
@@ -643,6 +644,27 @@ public:
   {
     return Compare_x_2(this);
   }
+
+
+
+  //waqar add functor start()
+  class Compare_endpoints_xy_2{
+  public:
+    
+    Comparison_result operator() (const X_monotone_curve_2& xcv) const
+    {
+      return (xcv.is_directed_right()) ? (SMALLER) : (LARGER);
+    }
+  };
+
+  Compare_endpoints_xy_2 compare_endpoints_xy_2_object() const
+  {
+    return Compare_endpoints_xy_2();
+  }
+  //waqar add functor end()
+
+
+
 
   /*! A functor that compares the x-coordinates of two points */
   class Compare_xy_2 {
