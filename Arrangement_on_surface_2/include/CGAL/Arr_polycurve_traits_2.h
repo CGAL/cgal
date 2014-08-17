@@ -1156,7 +1156,24 @@ namespace CGAL {
       /* Append a segment `seg` to an existing polyline `cv`. If `cv` is
          empty, `seg` will be its first segment. */
       void operator()(Curve_2& cv, const Segment_2& seg) const
-      { cv.push_back(seg); }
+      {
+        //in case a line is being pushed.
+         typedef typename X_monotone_curve_2::Segments_size_type size_type;
+           size_type num_seg = cv.number_of_segments();
+        
+        CGAL_precondition_msg ( !( !seg.has_left() && !seg.has_right() ), 
+                                "Lines can not be pushed into polycurve"
+                               );
+        
+        //precondition if the last segment already is a ray
+        CGAL_precondition_msg( ( cv[num_seg-1].right_infinite_in_x() == CGAL::ARR_INTERIOR && 
+                                 cv[num_seg-1].right_infinite_in_y() == CGAL::ARR_INTERIOR &&
+                                 cv[num_seg-1].left_infinite_in_x() == CGAL::ARR_INTERIOR && 
+                                 cv[num_seg-1].left_infinite_in_y() == CGAL::ARR_INTERIOR),
+                               "Segment can not be pushed. Polycurve reaches infinity at target"
+                              );
+        cv.push_back(seg); 
+      }
 
       //Waqar: Disabled.
       // /* Append a point `p` to an existing polyline `xcv` at the back. */
@@ -1212,10 +1229,24 @@ namespace CGAL {
       void operator()(X_monotone_curve_2& xcv,
                       const X_monotone_segment_2& seg) const
       {
+        typedef typename X_monotone_curve_2::Segments_size_type size_type;
+           size_type num_seg = xcv.number_of_segments();
+        
+        CGAL_precondition_msg ( !( !seg.has_left() && !seg.has_right() ), 
+                                "Lines can not be pushed into polycurve"
+                               );
+        
+        //precondition if the last segment already is a ray
+        CGAL_precondition_msg( ( xcv[num_seg-1].right_infinite_in_x() == CGAL::ARR_INTERIOR && 
+                                 xcv[num_seg-1].right_infinite_in_y() == CGAL::ARR_INTERIOR &&
+                                 xcv[num_seg-1].left_infinite_in_x() == CGAL::ARR_INTERIOR && 
+                                 xcv[num_seg-1].left_infinite_in_y() == CGAL::ARR_INTERIOR),
+                               "Segment can not be pushed. Polycurve reaches infinity at target"
+                              );
+
         CGAL_precondition_code
           (
-           typedef typename X_monotone_curve_2::Segments_size_type size_type;
-           size_type num_seg = xcv.number_of_segments();
+           
            const Geometry_traits_2* geom_traits =
              m_poly_traits.geometry_traits_2();
            typename Geometry_traits_2::Compare_endpoints_xy_2 cmp_seg_endpts =
@@ -1232,29 +1263,49 @@ namespace CGAL {
            );
 
         CGAL_precondition_msg((num_seg == 0) ||
-                              ((is_vertical(xcv[0]) && is_vertical(seg)) ||
-                               (!is_vertical(xcv[0]) && !is_vertical(seg))),
+                              ( (is_vertical(xcv[0]) && is_vertical(seg)) ||
+                                (!is_vertical(xcv[0]) && !is_vertical(seg))
+                              ),
                               "xcv is vertical and seg is not or vice versa!");
 
         CGAL_precondition_msg((num_seg == 0) || (cmp_seg_endpts(xcv[0]) == dir),
                               "xcv and seg do not have the same orientation!");
+        if( seg.has_left() && seg.has_right() )
+        {
+        
+          CGAL_precondition_msg((num_seg == 0) ||
+                                !equal(get_min_v(seg), get_max_v(seg)),
+                                "Seg degenerates to a point!");
 
-        CGAL_precondition_msg((num_seg == 0) ||
-                              !equal(get_min_v(seg), get_max_v(seg)),
-                              "Seg degenerates to a point!");
 
-        CGAL_precondition_msg((num_seg == 0) ||
-                              (((dir != SMALLER) ||
-                                equal(get_max_v(xcv[num_seg-1]),
-                                      get_min_v(seg)))),
-                              "Seg does not extend to the right!");
+          CGAL_precondition_msg((num_seg == 0) ||
+                                (((dir != SMALLER) ||
+                                  equal(get_max_v(xcv[num_seg-1]),
+                                        get_min_v(seg)))),
+                                "Seg does not extend to the right!");
 
-        CGAL_precondition_msg((num_seg == 0) ||
-                              (((dir != LARGER) ||
-                                equal(get_min_v(xcv[num_seg-1]),
-                                      get_max_v(seg)))),
-                              "Seg does not extend to the left!");
+          CGAL_precondition_msg((num_seg == 0) ||
+                                (((dir != LARGER) ||
+                                  equal(get_min_v(xcv[num_seg-1]),
+                                        get_max_v(seg)))),
+                                "Seg does not extend to the left!");
 
+        }
+        else
+        {
+          CGAL_precondition_msg((num_seg == 0) ||
+                                (((dir != SMALLER) ||
+                                  equal(get_max_v(xcv[num_seg-1]),
+                                        seg.left()))),
+                                "Seg does not extend to the right!");
+
+          CGAL_precondition_msg((num_seg == 0) ||
+                                (((dir != LARGER) ||
+                                  equal(get_min_v(xcv[num_seg-1]),
+                                        seg.right()))),
+                                "Seg does not extend to the left!");
+        }
+        
         xcv.push_back(seg);
       }
     };
@@ -1310,7 +1361,13 @@ namespace CGAL {
 
       /* Append a segment `seg` to an existing polyline `cv` at the front. */
       void operator()(Curve_2& cv, const Segment_2& seg) const
-      { cv.push_front(seg); }
+      {
+         //in case a line or ray is being pushed.
+        CGAL_precondition_msg ( !( !seg.has_left() || !seg.has_right() ), 
+                                "Line or ray can not be pushed fronted into polycurve"
+                               ); 
+        cv.push_front(seg); 
+      }
 
       // Waqar: Disabled
       // /* Append a point `p` to an existing polyline `xcv` at the front. */
@@ -1366,6 +1423,10 @@ namespace CGAL {
       void operator()(X_monotone_curve_2& xcv,
                       const X_monotone_segment_2& seg) const
       {
+        //in case a line or ray is being pushed.
+        CGAL_precondition_msg ( !( !seg.has_left() || !seg.has_right() ), 
+                                "Line or ray can not be pushed fronted into polycurve"
+                               );
         CGAL_precondition_code
           (
            typedef typename X_monotone_curve_2::Segments_size_type size_type;
