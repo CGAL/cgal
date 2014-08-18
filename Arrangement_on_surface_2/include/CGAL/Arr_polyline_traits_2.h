@@ -119,29 +119,9 @@ public:
 
 	typedef typename Segment_traits_2::Multiplicity       Multiplicity;
 
-// class Compare_x_2 {};
-// class Compare_xy_2 {};
-// class Number_of_points_2 {};
-// class Construct_max_vertex_2 {};
-// class Is_vertical_2 {};
-// class Compare_y_at_x_2 {};
-// class Compare_y_at_x_left_2 {};
-// class Compare_y_at_x_right_2 {};
-// class Equal_2 {};
-// class Compare_endpoints_xy_2 {};
-// class Construct_opposite_2 {};
-// class Make_x_monotone_2 {};
-// class Push_back_2 {}:
-// class Push_front_2 {};
-// class Split_2 {};
-// class Intersect_2 {};
-// class Are_mergeable_2 {};
-// class Merge_2 {};
-// class Construct_curve_2 {};
-// class Construct_x_monotone_curve_2 {};
-// class Trim_2{};	
 
-	class Push_back_2 {
+
+	class Push_back_2 : public Base::Push_back_2{
 	protected:
 	  typedef Arr_polyline_traits_2<SegmentTraits_2>     Polyline_traits_2;
 	  /*! The traits (in case it has state) */
@@ -149,7 +129,7 @@ public:
 
 	public:
 	  /*! Constructor. */
-	  Push_back_2(const Polyline_traits_2& traits) : m_poly_traits(traits) {}
+	  Push_back_2(const Polyline_traits_2& traits) : Base::Push_back_2(traits), m_poly_traits(traits) {}
 
 	  /* Append a point `p` to an existing polyline `cv` at the back. */
 	  void operator()(Curve_2& cv, const Point_2& p) const
@@ -185,7 +165,9 @@ public:
 	  /* Append a segment `seg` to an existing polyline `cv`. If `cv` is
 	     empty, `seg` will be its first segment. */
 	  void operator()(Curve_2& cv, const Segment_2& seg) const
-	  { cv.push_back(seg); }
+	  { 
+	  	Base::Push_back_2::operator() (cv, seg);
+	  }
 
 	  /* Append a point `p` to an existing polyline `xcv` at the back. */
 	  void operator()(X_monotone_curve_2& xcv, const Point_2& p) const
@@ -234,12 +216,11 @@ public:
 	    }
 	  }
 
-	  /* Append a segment `seg` to an existing polyline `xcv` at the back. */
+	  // /* Append a segment `seg` to an existing polyline `xcv` at the back. */
 	  void operator()(X_monotone_curve_2& xcv,
 	                  const X_monotone_segment_2& seg) const
 	  {
-	    Base base_traits;
-	    base_traits.push_back_2_object()(xcv, seg);
+	    Base::Push_back_2::operator()(xcv,seg);
 	  }
 	};
 
@@ -252,7 +233,7 @@ public:
 	 * at the front.
 	 * TODO: Test all the operator()'s. (Don't forget vertical cases!)
 	 */
-	class Push_front_2 {
+	class Push_front_2 : public Base::Push_front_2 {
 	protected:
 	  typedef Arr_polyline_traits_2<SegmentTraits_2>     Polyline_traits_2;
 	  /*! The traits (in case it has state) */
@@ -260,7 +241,7 @@ public:
 
 	public:
 	  /*! Constructor. */
-	  Push_front_2(const Polyline_traits_2& traits) : m_poly_traits(traits) {}
+	  Push_front_2(const Polyline_traits_2& traits) : m_poly_traits(traits), Base::Push_front_2(traits) {}
 
 	  /* Append a point `p` to an existing polyline `cv` at the front. */
 	  void operator()(Curve_2& cv, const Point_2& p) const
@@ -294,7 +275,10 @@ public:
 
 	  /* Append a segment `seg` to an existing polyline `cv` at the front. */
 	  void operator()(Curve_2& cv, const Segment_2& seg) const
-	  { cv.push_front(seg); }
+	  { 
+	  	//cv.push_front(seg); 
+	  	Base::Push_front_2::operator()(cv, seg);
+	  }
 
 	  /* Append a point `p` to an existing polyline `xcv` at the front. */
 	  void operator()(const X_monotone_curve_2& xcv, Point_2& p) const
@@ -349,8 +333,7 @@ public:
 	  void operator()(X_monotone_curve_2& xcv,
 	                  const X_monotone_segment_2& seg) const
 	  {
-	   	Base base_traits;
-	    base_traits.push_front_2_object()(xcv, seg);
+	   	Base::Push_front_2::operator()(xcv, seg);
 	  }
 	};
 
@@ -358,6 +341,28 @@ public:
 	Push_front_2 push_front_2_object() const
 	{ return Push_front_2(*this); }
 
+// These functors are defined in the base class.
+// class Compare_x_2 {};
+// class Compare_xy_2 {};
+// class Number_of_points_2 {};
+// class Construct_max_vertex_2 {};
+// class Is_vertical_2 {};
+// class Compare_y_at_x_2 {};
+// class Compare_y_at_x_left_2 {};
+// class Compare_y_at_x_right_2 {};
+// class Equal_2 {};
+// class Compare_endpoints_xy_2 {};
+// class Construct_opposite_2 {};
+// class Make_x_monotone_2 {};
+// class Push_back_2 {}:
+// class Push_front_2 {};
+// class Split_2 {};
+// class Intersect_2 {};
+// class Are_mergeable_2 {};
+// class Merge_2 {};
+// class Construct_curve_2 {};
+// class Construct_x_monotone_curve_2 {};
+// class Trim_2{};	
 };
 
 } // namespace CGAL
