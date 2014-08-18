@@ -29,6 +29,7 @@
 #include <CGAL/Arr_geometry_traits/Bezier_curve_2.h>
 #include <CGAL/Arr_geometry_traits/Bezier_point_2.h>
 #include <CGAL/Arr_geometry_traits/Bezier_cache.h>
+#include <CGAL/Arr_enums.h>
 #include <ostream>
 
 namespace CGAL {
@@ -248,6 +249,36 @@ public:
   const Point_2& target () const
   {
     return (_pt);
+  }
+
+  bool has_left() const
+  {
+    return true;
+  }
+
+  bool has_right() const
+  {
+    return true;
+  }
+
+  Arr_parameter_space right_infinite_in_x () const
+  {
+    return ARR_INTERIOR;
+  }
+
+  Arr_parameter_space right_infinite_in_y () const
+  {
+    return ARR_INTERIOR;
+  }
+
+  Arr_parameter_space left_infinite_in_x () const
+  {
+    return ARR_INTERIOR;
+  }
+
+  Arr_parameter_space left_infinite_in_y () const
+  {
+    return ARR_INTERIOR;
   }
 
   /*!

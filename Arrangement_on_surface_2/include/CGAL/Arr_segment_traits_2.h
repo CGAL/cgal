@@ -31,6 +31,7 @@
 #include <CGAL/Arr_tags.h>
 #include <CGAL/Arr_geometry_traits/Segment_assertions.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
+#include <CGAL/Arr_enums.h> 
 #include <fstream>
 
 
@@ -294,6 +295,36 @@ public:
     {
       CGAL_precondition (! is_degen);
       return (is_vert);
+    }
+
+    bool has_left() const
+    {
+      return true;
+    }
+
+    bool has_right() const
+    {
+      return true;
+    }
+
+    Arr_parameter_space right_infinite_in_x () const
+    {
+      return ARR_INTERIOR;
+    }
+
+    Arr_parameter_space right_infinite_in_y () const
+    {
+      return ARR_INTERIOR;
+    }
+
+    Arr_parameter_space left_infinite_in_x () const
+    {
+      return ARR_INTERIOR;
+    }
+
+    Arr_parameter_space left_infinite_in_y () const
+    {
+      return ARR_INTERIOR;
     }
 
     /*!

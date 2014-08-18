@@ -33,6 +33,7 @@
 #include <deque>
 #include <vector>
 #include <list>
+#include <CGAL/Arr_enums.h>
 #include <ostream>
 
 namespace CGAL {
@@ -412,6 +413,36 @@ public:
   unsigned int number_of_control_points () const
   {
     return (this->_rep()._ctrl_pts.size());
+  }
+
+  bool has_left() const
+  {
+    return true;
+  }
+
+  bool has_right() const
+  {
+    return true;
+  }
+
+  Arr_parameter_space right_infinite_in_x () const
+  {
+    return ARR_INTERIOR;
+  }
+
+  Arr_parameter_space right_infinite_in_y () const
+  {
+    return ARR_INTERIOR;
+  }
+
+  Arr_parameter_space left_infinite_in_x () const
+  {
+    return ARR_INTERIOR;
+  }
+
+  Arr_parameter_space left_infinite_in_y () const
+  {
+    return ARR_INTERIOR;
   }
 
   /*!
