@@ -107,7 +107,8 @@
 #
 
 
-MESSAGE("Searching Qt5 modules.")
+MESSAGE("Searching Qt5.")
+
 
 if(WIN32)
 
@@ -164,16 +165,59 @@ FOREACH(module Core GUI OpenGL Multimedia
   
 ENDFOREACH(module)
 
+
+  #######################################
+  #
+  #       Find and check the Qmake 
+  #		executable 
+  #
+  #######################################
+
+#The following line is a trick to find the directory of qmake (the one into the folder of ENV variable could be not the good one)
+get_target_property(QT_QMAKE_EXECUTABLE Qt5::qmake LOCATION)
+
+IF(NOT QT_QMAKE_EXECUTABLE OR QT_QMAKE_CHANGED)
+  FIND_PROGRAM(QT_QMAKE_EXECUTABLE NAMES qmake qmake5 qmake-qt5
+               PATHS "${QT_SEARCH_PATH}/bin" "$ENV{QTDIR}/bin")
+ENDIF()
+
+EXEC_PROGRAM(${QT_QMAKE_EXECUTABLE} ARGS "-query QT_VERSION" OUTPUT_VARIABLE QTVERSION)
+IF(NOT QTVERSION MATCHES "5.*")
+    message(FATAL_ERROR "Found Qt${QTVERSION} instead of Qt5. Please, manually set QT_QMAKE_EXECUTABLE.")
+ENDIF(NOT QTVERSION MATCHES "5.*")
+
+#When the QT_QMAKE_EXECUTABLE Qt version is 5. we will check :
+IF(NOT QT_INCLUDE_DIR OR QT_QMAKE_CHANGED)
+  EXEC_PROGRAM(${QT_QMAKE_EXECUTABLE} ARGS "-query QT_INSTALL_HEADERS" OUTPUT_VARIABLE QTHEADERS)
+  SET(QT_INCLUDE_DIR ${QTHEADERS} CACHE INTERNAL "" FORCE)
+ENDIF()
+
+IF(NOT QT_LIBRARY_DIR OR QT_QMAKE_CHANGED)
+  EXEC_PROGRAM(${QT_QMAKE_EXECUTABLE} ARGS "-query QT_INSTALL_LIBS" OUTPUT_VARIABLE QTLIBS)
+  SET(QT_LIBRARY_DIR ${QTLIBS} CACHE INTERNAL "" FORCE)
+ENDIF()
+
+IF(NOT QT_BINARY_DIR OR QT_QMAKE_CHANGED)
+  EXEC_PROGRAM(${QT_QMAKE_EXECUTABLE} ARGS "-query QT_INSTALL_BINS" OUTPUT_VARIABLE QTBINS)
+  SET(QT_BINARY_DIR ${QTBINS} CACHE INTERNAL "" FORCE)
+ENDIF()
+
+IF(NOT QT_DOC_DIR OR QT_QMAKE_CHANGED)
+  EXEC_PROGRAM(${QT_QMAKE_EXECUTABLE} ARGS "-query QT_INSTALL_DOCS" OUTPUT_VARIABLE QTDOCS)
+  SET(QT_DOC_DIR ${QTDOCS} CACHE INTERNAL "" FORCE)
+ENDIF()
+
   #######################################
   #
   #       Check the executables of Qt 
   #          ( moc, uic, rcc )
-  #         Same as Qt4 version  
+  #         Same as Qt4 version 
+  #            (but for Qt5)
   #
   #######################################
+ 
 
-
-  IF(QT_QMAKE_CHANGED)
+IF(QT_QMAKE_CHANGED)
     SET(QT_UIC_EXECUTABLE NOTFOUND)
     SET(QT_MOC_EXECUTABLE NOTFOUND)
     SET(QT_UIC3_EXECUTABLE NOTFOUND)
@@ -186,7 +230,8 @@ ENDFOREACH(module)
     SET(QT_DESIGNER_EXECUTABLE NOTFOUND)
     SET(QT_LINGUIST_EXECUTABLE NOTFOUND)
   ENDIF(QT_QMAKE_CHANGED)
-  
+
+
   FIND_PROGRAM(QT_MOC_EXECUTABLE
     NAMES moc-qt5 moc
     PATHS ${QT_BINARY_DIR}
@@ -261,8 +306,6 @@ ENDFOREACH(module)
      SET(QT_WRAP_UI "YES")
   ENDIF (QT_UIC_EXECUTABLE)
 
-
-
   MARK_AS_ADVANCED( QT_UIC_EXECUTABLE QT_UIC3_EXECUTABLE QT_MOC_EXECUTABLE
     QT_RCC_EXECUTABLE QT_DBUSXML2CPP_EXECUTABLE QT_DBUSCPP2XML_EXECUTABLE
     QT_LUPDATE_EXECUTABLE QT_LRELEASE_EXECUTABLE QT_QCOLLECTIONGENERATOR_EXECUTABLE
@@ -278,5 +321,7 @@ if(${QT_MODULES_MISSING} STREQUAL "none")
 else()
 	message("Loading of Qt5 modules incomplete. Missing of ${QT_MODULES_MISSING} modules.")
 endif()
-
-message("End of searching Qt5 modules.")
+    INCLUDE(FindPackageMessage)
+    FIND_PACKAGE_MESSAGE(Qt5 "Found Qt-Version ${QTVERSION} (using ${QT_QMAKE_EXECUTABLE})"
+      "[${QT_LIBRARY_DIR}][${QT_INCLUDE_DIR}][${QT_MOC_EXECUTABLE}][${QT_UIC_EXECUTABLE}][${QT_RCC_EXECUTABLE}]")
+message("End of searching Qt5.")

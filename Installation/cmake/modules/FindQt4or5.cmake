@@ -71,6 +71,11 @@ else()
   cmake_policy(VERSION 2.6)
 endif()
 
+#Get the previous state of QT_VERSION.
+cache_get(QT_VERSION_mem)
+set(OLD_QT_VERSION ${QT_VERSION_mem})
+
+
 #Set of a temporary variable, because the if existence checking seem to not work without it.
 set (USE_QT_VERSION_temp ${USE_QT_VERSION})
 
@@ -105,8 +110,20 @@ endif()
 		set (QT_CHOICE ${CGAL_QT_VERSION} CACHE STRING "Choice of Qt version for find_package(Qt4or5).")
 		SET_PROPERTY(CACHE QT_CHOICE PROPERTY STRINGS 4 5)
 		set(QT_VERSION Qt${QT_CHOICE})
+
+		#Save the current version of Qt considered.
+                cache_set(QT_VERSION_mem ${QT_VERSION})
 	endif()
-	
+
+	#Check if we switch Qt version (from 4 to 5 or 5 to 4)
+	if( OLD_QT_VERSION )
+		if(NOT ${OLD_QT_VERSION} STREQUAL ${QT_VERSION})
+                        message("Switch from ${OLD_QT_VERSION} to ${QT_VERSION}")
+			message("Think to change the version of externals libraries that depending on Qt and to clean the build directory before make the project.")
+			set(QT_QMAKE_CHANGED TRUE)
+		endif()
+	endif()
+
 	if(${QT_VERSION} STREQUAL "Qt4")
 		UNSET(QT4} CACHE)
 		UNSET(QT4_FOUND CACHE)
@@ -114,7 +131,7 @@ endif()
 		
 		#We say that we want the version 4 of the Qt library.
 		set(QT_VERSION_USED 4)
-    endif()
+        endif()
 	
 	find_package(${QT_VERSION})
 	
