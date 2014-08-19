@@ -412,8 +412,8 @@ downloaded from <A HREF="http://www.opengl.org/">`http://www.opengl.org/`</A>.
 Qt is a cross-platform application and UI framework.
 
 The component libCGAL_Qt3 requires \sc{Qt}3 installed on your system, while
-the component libCGAL_Qt4 requires \sc{Qt}4 installed on your system and 
-the component libCGAL_Qt5 requires \sc{Qt}5 installed on your system. 
+the component libCGAL_Qt4 requires \sc{Qt}4 installed on your system as 
+the component libCGAL_Qt5 requires \sc{Qt}5. 
 In case \sc{Qt} is not yet installed on your system, you can download 
 it from <A HREF="http://qt-project.org/">`http://qt-project.org/`</A>.
 
@@ -800,24 +800,6 @@ cmake -DWITH_examples=OFF -DWITH_demos=OFF -DCMAKE_BUILD_TYPE=Release
 -- libCGALCore is configured
 -- Sources for %CGAL component library 'Qt3' detected
 -- Sources for %CGAL component library 'Qt4' detected
--- Sources for %CGAL component library 'Qt5' detected
--- Configuring libCGAL_Qt5
--- Searching Qt5.
--- Qt5Core found.
--- Qt5OpenGL found.
--- End of searching Qt5.
--- USING OPENGL_VERSION = '1.1'
--- OpenGL include:     
--- OpenGL libraries:   glu32;opengl32
--- OpenGL definitions: 
--- Qt5 include:        /usr/include/qt5
--- Qt5 libraries:      Qt5::Core;Qt5::OpenGL
--- Qt5 definitions:    -DQT_CORE_LIB;-DQT_OPENGL_LIB;-DQT_WIDGETS_LIB;-DQT_GUI_LIB;-DQT_CORE_LIB
--- moc executable:     /usr/bin/moc-qt5
--- uic executable:     /usr/bin/uic-qt5
--- Requested component: MPFR
--- Requested component: GMP
--- libCGAL_Qt5 is configured
 -- Configure libCGALQt4
 -- Looking for Q_WS_X11
 -- Looking for Q_WS_X11 - found
