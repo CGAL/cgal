@@ -8,7 +8,7 @@
 \cgalPkgDescriptionBegin{2D Visibility Computation,PkgVisibility_2Summary}
 \cgalPkgPicture{visibility-teaser-thumbnail.png}
 \cgalPkgSummaryBegin
-\cgalPkgAuthors{Michael Hemmer, Kan Huang, Francisc Bungiu}
+\cgalPkgAuthors{Michael Hemmer, Kan Huang, Francisc Bungiu, Ning Xu}
 \cgalPkgDesc{This package provides several variants to compute 
 the visibility area of a point within polygonal regions in two dimensions.}
 \cgalPkgManuals{Chapter_2D_Visibility_Computation,PkgVisibility_2}
