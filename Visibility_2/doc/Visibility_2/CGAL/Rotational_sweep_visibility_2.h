@@ -45,12 +45,12 @@ public:
   typedef RegularizationTag Regularization_tag;
   
   /*! 
-    Its value is \ref CGAL::Tag_true.
+    See also \ref Visibility_2::Supports_general_polygon_tag.
   */
   typedef ::Tag_true Supports_general_polygon_tag; 
 
   /*! 
-    Its value is \ref CGAL::Tag_true.
+    See also \ref Visibility_2::Supports_simple_polygon_tag.
   */
   typedef ::Tag_true Supports_simple_polygon_tag; 
 /// @}
