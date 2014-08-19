@@ -108,6 +108,10 @@ private:
       { return fh->vertex( fh->cw( idx ) ); }
     CDT_Vertex_handle right_vertex () const
       { return fh->vertex( fh->ccw( idx ) ); }
+    bool left_ray_degenerate () const
+      { return ( lvh->point() == left_vertex()->point() ); }
+    bool right_ray_degenerate () const
+      { return ( rvh->point() == right_vertex()->point() ); }
 
     CDT_Edge edge () const
       { return CDT_Edge( fh, idx ); }
@@ -249,7 +253,6 @@ private:
       } while ( curr != circ && !p_cdt->is_infinite( curr ) );
     }
     // Something must be wrong here!
-cout << "must be wrong" << endl;
     return NULL;
   }
   int find_index_of_halfedge( CDT_Face_handle fh )
@@ -313,10 +316,15 @@ cout << "must be wrong" << endl;
             // No split is needed
             bundle.push( Edge( nfh, rindex, e.left_source(), e.right_source() ) );
             count++;
-          } else {
+          } else if ( lo == CGAL::RIGHT_TURN ) {
             // split at the new vertex
             bundle.push( Edge( nfh, rindex, nvh, e.right_source() ) );
             count++;
+          } else {
+            // the right edge is not seen, but the opposite vertex is seen
+            bundle.push( Edge( nfh, rindex, nvh, e.right_source() ) );
+            count++;
+            bundle.push_constrained( Edge( nfh, rindex, e.left_source(), e.left_source() ) );
           }
         }
 
@@ -326,10 +334,13 @@ cout << "must be wrong" << endl;
             // No split is needed
             bundle.push( Edge( nfh, lindex, e.left_source(), e.right_source() ) );
             count++;
-          } else {
+          } else if ( ro == CGAL::LEFT_TURN ) {
             // split at the new vertex
             bundle.push( Edge( nfh, lindex, e.left_source(), nvh ) );
             count++;
+          } else {
+            // the left edge is not seen, but the opposite vertex is seen
+            bundle.push_constrained( Edge( nfh, lindex, e.right_source(), e.right_source() ) );
           }
         }
       }
@@ -437,26 +448,35 @@ cout << "must be wrong" << endl;
       break;
     }
 
-#ifndef NDEBUG
-    cout << "... Initialize edges ..." << endl;
-    edges.trace( cout, 0 );
-    cout << endl;
-#endif
-
     Result_container results;
 
     compute_visibility_parallel( edges, results, ConcurrencyTag() );
-
-#ifndef NDEBUG
-    for ( int i = 0; i < results.size(); i++ ) {
-      results[i].trace( cout, 0 );
-    }
-#endif
 
     // Generate results
     std::vector<Segment_2> segs;
     for ( int i = 0; i < results.size(); i++ ) {
       // push segments on the edge
+      if ( results[i].left_source()->point() == results[i].right_source()->point() ) {
+        // Special case
+        // the constrained edge is introduced by a single ray
+        if ( CGAL::orientation( query_pt, results[i].left_source()->point(),
+                                results[i].left_vertex()->point() )
+                                == CGAL::COLLINEAR ) { 
+          // the left vertex is shoot by the ray
+          if ( !results[i].left_ray_degenerate() ) {
+            segs.push_back( Segment_2( results[i].left_vertex()->point(),
+                                       results[i].left_source()->point() ) );
+          }
+        }  else {
+          // the right vertex is shoot by the ray
+          if ( !results[i].right_ray_degenerate() ) {
+            segs.push_back( Segment_2( results[i].right_source()->point(),
+                                       results[i].right_vertex()->point() ) );
+          }
+        }
+        continue;
+      }
+
       Point_2 lp = ray_seg_intersection( results[i].left_source()->point(),
                                          results[i].left_vertex()->point(),
                                          results[i].right_vertex()->point() );
@@ -464,11 +484,11 @@ cout << "must be wrong" << endl;
                                          results[i].left_vertex()->point(),
                                          results[i].right_vertex()->point() );
       if ( lp != rp )
-        segs.push_back( Segment_2( lp, rp ) );
+        segs.push_back( Segment_2( rp, lp ) );
 
       //push segments on the left side
       if ( results[i].left_source() != results[i].left_vertex() ) {
-        segs.push_back( Segment_2( results[i].left_source()->point(), lp ) );
+        segs.push_back( Segment_2( lp, results[i].left_source()->point() ) );
       }
 
       //push segments on the right side
@@ -477,14 +497,6 @@ cout << "must be wrong" << endl;
       }
     }
 
-#ifndef NDEBUG
-    cout << "Output segments ... " << endl;
-    for ( int i = 0; i < segs.size(); i++ ) {
-      cout << segs[i].source() << " --> " << segs[i].target() << endl;
-    }
-#endif
-
-    //CGAL::insert_non_intersecting_curves( arr_out, segs.begin(), segs.end() );
     CGAL::insert( arr_out, segs.begin(), segs.end() );
   }
 
