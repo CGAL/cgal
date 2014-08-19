@@ -42,17 +42,17 @@ public:
 /// \name Tags 
 /// @{
   /*! 
-    Its value is either \ref CGAL::Tag_true or \ref CGAL::Tag_false.
+    \copydoc ::Visibility_2::Regularization_tag
   */
   typedef RegularizationTag Regularization_tag;
   
   /*! 
-    See also \ref Visibility_2::Supports_general_polygon_tag.
+    See \ref Visibility_2::Supports_general_polygon_tag.
   */
   typedef ::Tag_true Supports_general_polygon_tag; 
 
   /*! 
-    See also \ref Visibility_2::Supports_simple_polygon_tag.
+    See \ref Visibility_2::Supports_simple_polygon_tag.
   */
   typedef ::Tag_true Supports_simple_polygon_tag; 
 /// @}
