@@ -13,8 +13,8 @@ namespace CGAL {
     \ingroup PkgArrangement2TraitsClasses
 
     The traits class `Arr_polycurve_traits_2` handles piecewise linear
-    curves, commonly referred to as polycurve. Each polycurve is a
-    chain of segments/curves, where each two neighboring segments/curves in the
+    segments, commonly referred to as a polycurve. A polycurve is a
+    chain of segments, where each two neighboring segments in the
     chain share a common endpoint; that is, the polycurve is
     continuous. Furthermore, the target of the \f$i\f$th segement of
     a polycurve has to coincide with the source of the \f$i+1\f$st
@@ -25,8 +25,12 @@ namespace CGAL {
     the relevant concepts, see below). However, such polycurves cannot
     be used for the actual computation of arrangements. The traits
     class template exploits the functionality of the `GeometryTraits`
-    template-parameter to handle the segments/curves that compose the
-    polycurve segments/curves.
+    template-parameter to handle the segments that compose the
+    polycurve segments.
+
+    Note: The `GeometryTraits` can comprise of Line_segments, Conic_arcs,
+          Circular_arc, Bezier_curves or Linear_curves. A portion or a part 
+          of any of the above mentioned geometric traits is called a segment.
 
     The type substituting the template parameter `GeometryTraits` when
     the template Arr_polycurve_traits_2 is instantiated must be a model
@@ -297,7 +301,7 @@ namespace CGAL {
 
 
     /*!
-     * Cut the given curve into x-monotone sub-curves and insert them
+     * Cut the given segment into x-monotone sub-segments and insert them
      * into the given output iterator. Since the segments that
      * constitute a general polycurve are not necessarily
      * \f$x\f$-monotone, this functor may break them.
@@ -306,7 +310,7 @@ namespace CGAL {
     public:
       /*!
       * \pre if `cv` is not empty then it must be continuous and well-oriented.
-      * \param cv The curve.
+      * \param cv The segment.
       * \param oi The output iterator, whose value-type is Object. The output
       *           object is a wrapper of a X_monotone_curve_2 objects.
       * \return The past-the-end iterator.
@@ -328,7 +332,7 @@ namespace CGAL {
     };
 
     /*!  The `Curve_2` type nested in the `Arr_polycurve_traits_2`
-      represents general continuous piecewise-linear curves (a
+      represents general continuous piecewise-linear segments (a
       polycurve can be self-intersecting) and support their
       construction from range of segments. Construction of
       polycurves in various ways is supported using the construction
@@ -341,11 +345,11 @@ namespace CGAL {
       comprises could be either \f$x\f$-monotone or not!
 
       The copy and default constructor as well as the assignment
-      operator are provided for polycurve curves. In addition, an \link
+      operator are provided for polycurve segments. In addition, an \link
       PkgArrangement2op_left_shift `operator<<` \endlink for the
-      curves is defined for standard output streams, and an \link
+      segments is defined for standard output streams, and an \link
       PkgArrangement2op_right_shift `operator>>` \endlink for the
-      curves is defined for standard input streams.
+      segments is defined for standard input streams.
     */
     template <typename Segment_type_T, typename Point_type_T>
     class Curve_2 {
@@ -553,7 +557,7 @@ namespace CGAL {
     /*!
       The `X_monotone_curve_2` class nested within the polycurve
       traits is used to represent \f$ x\f$-monotone piecewise linear
-      curves.
+      segments.
 
       It inherits from the `Curve_2` type. `X_monotone_curve_2` can be
       constructed just like `Curve_2`. However, there is precondition
