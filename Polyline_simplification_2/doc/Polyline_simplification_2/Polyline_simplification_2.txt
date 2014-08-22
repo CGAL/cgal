@@ -59,8 +59,8 @@ Check if vertex `q` can be removed.
 
 \section Section_PolylineSimplification_Cost_Functions Cost Functions
 
-The specific way in which the removal cost is calculated is called the
-*cost* function. The user can choose different strategies by choosing
+The specific way in which the removal cost is calculated is called the *cost*
+function. The user can choose different strategies by choosing
 a cost function object.
 
 This package provides the three cost functions formulated in 
@@ -154,7 +154,7 @@ the number of vertices.
 
 In the second example we insert several polygons in a
 `Constrained_triangulation_plus_2`.    As a vertex 
-type we have to use `CGAL::Polyline_simplification_2::Vertex_base`
+type we have to use `CGAL::Polyline_simplification_2::Vertex_base_2`
 as vertices may be marked as non-removable. The simplification
 algorithm marks the first and last vertex of polyline constraints
 as well as intersections.

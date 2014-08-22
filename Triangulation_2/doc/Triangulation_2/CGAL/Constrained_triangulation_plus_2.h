@@ -142,7 +142,7 @@ Constrained_triangulation_plus_2& ct);
 /*! 
 Introduces a constrained triangulation 
 from the constraints in the range `[first,last)`.
-\tparam ConstraintIterator must be an InputIterator` with the value type `std::pair<Point,Point>` or `Segment`. 
+\tparam ConstraintIterator must be an `InputIterator` with the value type `std::pair<Point,Point>` or `Segment`. 
 */ 
 template<class ConstraintIterator> 
 Constrained_triangulation_plus_2( 
