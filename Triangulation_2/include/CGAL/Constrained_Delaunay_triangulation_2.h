@@ -99,7 +99,10 @@ public:
   using Ctr::collinear_between;
   using Ctr::are_there_incident_constraints;
   using Ctr::make_hole;
-  using Ctr::insert_constraint;
+  // The next using statement makes trouble for VC++ with the version
+  // of the method that is templated with PointIterator
+  // VC++ cannot disambiguate between this method and the method of the base class
+  // using Ctr::insert_constraint;
   using Ctr::locate;
   using Ctr::test_dim_down;
   using Ctr::fill_hole_delaunay;
@@ -201,6 +204,16 @@ public:
 
   void insert(Vertex_handle va, Vertex_handle  vb) {insert_constraint(va,vb);}
 
+  void insert_constraint(Vertex_handle va, Vertex_handle  vb)
+  {
+    ((Ctr*)this)->insert_constraint(va,vb);
+  }
+
+  void
+  insert_constraint(const Point& a, const Point& b)
+  {
+    ((Ctr*)this)->insert_constraint(a,b);
+  }
 
   template <class PointIterator>
   void insert_constraint(PointIterator first, PointIterator last, bool close=false)
