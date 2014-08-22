@@ -101,7 +101,6 @@ public:
   Polyline_simplification_2(PCT& pct, CostFunction cost, StopFunction stop)
     : pct(pct), cost(cost), stop(stop), pct_initial_number_of_vertices(pct.number_of_vertices()), number_of_unremovable_vertices(0)
   {
-    std::cerr << pct_initial_number_of_vertices << std::endl;
     int m = initialize_indices();
     initialize_unremovable();
     Compare_cost cc;
@@ -182,7 +181,6 @@ public:
     for(; cit!=e; ++cit){
       n+= initialize_costs(*cit);
     }
-  std::cerr << "Initialized cost of " << n << " vertices" << std::endl;
   }
 
   bool
@@ -216,6 +214,12 @@ public:
       ++circ;
     }
     ++circ;
+    if(circ == wh){
+      typename PCT::Edge e;
+      bool b = pct.is_edge(uh,wh,e.first,e.second);
+      assert(b);
+      return ! pct.is_constrained(e);
+    }
     while(circ != wh){
       o = orientation_2(up, circ->point(), wp);
       if(orientation_2(up, wp, circ->point()) != CGAL::RIGHT_TURN){
@@ -389,8 +393,6 @@ simplify(CGAL::Constrained_triangulation_plus_2<Tr>& pct,
   if(! keep_points){
     pct.remove_points_from_constraints();
   }
-  std::cerr << "unremovable vertices: " << simplifier.number_of_unremovable_vertices << std::endl;
-  std::cerr << "simplify removed " << simplifier.number_of_removed_vertices() << "vertices" << std::endl;
   return simplifier.number_of_removed_vertices();
 }
 
