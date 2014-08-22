@@ -338,7 +338,6 @@ Polyline_constraint_hierarchy_2<T,Data>::
 copy(const Polyline_constraint_hierarchy_2& ch1, std::map<Vertex_handle,Vertex_handle>& vmap)
   // copy with a transfer vertex map
 {
-  std::cerr << "copy" << std::endl;
   std::map<Vertex_list*,Vertex_list*> vlmap;
   clear();
   // copy constraint_set
@@ -384,7 +383,6 @@ void
 Polyline_constraint_hierarchy_2<T,Data>::
 swap(Polyline_constraint_hierarchy_2& ch)
 {
-  std::cerr << "swap" << std::endl;
   constraint_set.swap(ch.constraint_set);
   sc_to_c_map.swap(ch.sc_to_c_map);
 }
@@ -447,7 +445,6 @@ enclosing_constraint(T  vaa, T  vbb, T& va, T& vb) const
     std::swap(vaa,vbb);
   }
   while(!pos.input()){
-    std::cerr << "decrement\n";
     --pos;
   }
   va = *pos;
@@ -455,7 +452,6 @@ enclosing_constraint(T  vaa, T  vbb, T& va, T& vb) const
   ++pos;
   assert(vbb == *pos);
   while(!pos.input()){
-    std::cerr << "increment\n";
     ++pos;
   }
   vb = *pos;
@@ -576,7 +572,6 @@ template <class T, class Data>
 void
 Polyline_constraint_hierarchy_2<T,Data>::
 remove_constraint(Constraint_id hvl){
-  std::cerr << "remove_constraint" << std::endl;
   constraint_set.erase(hvl);
   
   // We have to look at all subconstraints
@@ -682,7 +677,6 @@ template <class T, class Data>
 typename Polyline_constraint_hierarchy_2<T,Data>::Constraint_id
 Polyline_constraint_hierarchy_2<T,Data>::concatenate(Constraint_id first, Constraint_id second)
 {
-  std::cerr << "concatenate" << std::endl;
   constraint_set.erase(first);
   constraint_set.erase(second);
   // We have to look at all subconstraints
@@ -736,7 +730,6 @@ template <class T, class Data>
 typename Polyline_constraint_hierarchy_2<T,Data>::Constraint_id
 Polyline_constraint_hierarchy_2<T,Data>::concatenate2(Constraint_id first, Constraint_id second)
 {  
-  std::cerr << "concatenate2" << std::endl;
   constraint_set.erase(first);
   constraint_set.erase(second);
   // We have to look at all subconstraints
@@ -793,7 +786,6 @@ template <class T, class Data>
 typename Polyline_constraint_hierarchy_2<T,Data>::Constraint_id
 Polyline_constraint_hierarchy_2<T,Data>::split(Constraint_id first, Vertex_it vcit)
 {
-  std::cerr << "split" << std::endl;
   constraint_set.erase(first);
   Vertex_list* second = new Vertex_list;
   second->splice(second->skip_end(), *first, vcit.base(), first->skip_end());
@@ -828,7 +820,6 @@ template <class T, class Data>
 typename Polyline_constraint_hierarchy_2<T,Data>::Constraint_id
 Polyline_constraint_hierarchy_2<T,Data>::split2(Constraint_id first, Vertex_it vcit)
 {
-  std::cerr << "split2" << std::endl;
   constraint_set.erase(first);
   Vertex_list* second = new Vertex_list;
   second->splice(second->skip_end(), *first, first->skip_begin(), vcit.base());
@@ -922,7 +913,6 @@ template <class T, class Data>
 void Polyline_constraint_hierarchy_2<T,Data>::
 clear()
 {
-    std::cerr << "clear" << std::endl;
   C_iterator cit;
   Sc_iterator scit;
   // clean and delete vertices lists
