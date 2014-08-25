@@ -356,6 +356,55 @@ template <class PolygonTraits_2, class Container, class CostFunction, class Stop
 /*!
 \ingroup  PkgPolylineSimplification2Functions
 
+Simplifies an open or closed polyline given as an iterator range of 2D \cgal points.
+
+\tparam PointIterator must be an iterator with value type `CGAL::Kernel::Point_2`.
+\tparam CostFunction must be a model of `PolylineSimplificationCostFunction`
+\tparam StopFunction must be a model of `PolylineSimplificationStopPredicate`
+\tparam OutputIterator must be an output iterator to which `CGAL::Kernel::Point_2` can be assigned.
+*/
+  template <class PointIterator, class CostFunction, class StopFunction, class OutputIterator>
+  OutputIterator
+  simplify(PointIterator b, PointIterator e,
+           CostFunction cost,
+           StopFunction stop,
+           OutputIterator out,
+           bool close = false)
+{
+  typedef typename std::iterator_traits<PointIterator>::value_type Point_2;
+  typedef typename CGAL::Kernel_traits<Point_2>::type K;
+  typedef Vertex_base_2< K > Vb;
+  typedef CGAL::Constrained_triangulation_face_base_2<K> Fb;
+  typedef CGAL::Triangulation_data_structure_2<Vb,Fb> TDS;
+  typedef CGAL::Constrained_Delaunay_triangulation_2<K, TDS, CGAL::Exact_predicates_tag> CDT;
+  typedef CGAL::Constrained_triangulation_plus_2<CDT>       PCT;
+  typedef typename PCT::Constraint_id Constraint_id;
+  typedef typename PCT::Vertices_in_constraint_iterator Vertices_in_constraint_iterator;
+
+  PCT pct;
+
+  Constraint_id cid = pct.insert_constraint(b,e, close);
+
+  bool keep_points = false;
+  Polyline_simplification_2<PCT, CostFunction, StopFunction> simplifier(pct, cost, stop);
+  while(simplifier()){}
+
+  Vertices_in_constraint_iterator beg = pct.vertices_in_constraint_begin(cid);
+  Vertices_in_constraint_iterator end = pct.vertices_in_constraint_end(cid);
+  for(; beg!=end;){
+    Point_2 p = (*beg)->point();
+    ++beg;
+    if((!close) || (beg!=end)){
+      *out++ = p;
+    }
+  }
+  return out;
+}
+
+
+/*!
+\ingroup  PkgPolylineSimplification2Functions
+
 Simplifies a single polyline in a triangulation with polylines as constraints.
 */
 template <class Tr, class CostFunction, class StopFunction>
