@@ -760,22 +760,17 @@ private:
         Comparison_result cmpypq = cmpy(pp, qq);
 
         if ((cmpxpq == EQUAL) or (cmpypq == EQUAL)) {
-          // consider line from p to q
-          Line_2 lpq = compute_line_from_to(pp, qq);
-          Oriented_side os1 = (is_p_tsrc or is_q_tsrc) ?
-            ON_ORIENTED_BOUNDARY :
-            oriented_side_of_line(lpq, t.segment().source());
-          Oriented_side os2 = (is_p_ttrg or is_q_ttrg) ?
-            ON_ORIENTED_BOUNDARY :
-            oriented_side_of_line(lpq, t.segment().target());
-
-          if ((os1 == ON_NEGATIVE_SIDE) or
-              (os2 == ON_NEGATIVE_SIDE)   )  {
-            return NEGATIVE;
-          } else {
-            return POSITIVE;
+          if (not (is_p_tsrc or is_q_tsrc)) {
+            if (CGAL::right_turn(pp, qq, t.segment().source())) {
+              return NEGATIVE;
+            }
           }
-
+          if (not (is_p_ttrg or is_q_ttrg)) {
+            if (CGAL::right_turn(pp, qq, t.segment().target())) {
+              return NEGATIVE;
+            }
+          }
+          return POSITIVE;
         } else {
           // here, p and q do not have any same coordinate
 
