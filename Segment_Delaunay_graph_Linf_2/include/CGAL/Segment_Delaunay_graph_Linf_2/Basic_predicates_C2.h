@@ -703,6 +703,123 @@ public:
     }
   }
 
+  // returns true if and only if
+  // the interior of s has non-empty intersection
+  // with the interior of the following infinite box:
+  // the only finite corner of the infinite box is corner
+  // and if you traverse the infinite box ccw, then
+  // you meet points in that order: q, corner, p
+  static
+  Boolean
+  intersects_segment_interior_inf_box(const Site_2 & s,
+      const Site_2 & q, const Site_2 & p,
+      const Comparison_result & cmpxpq, const Comparison_result & cmpypq)
+  {
+    CGAL_assertion(s.is_segment());
+    const Segment_2 seg = s.segment();
+
+    const Point_2 ssrc = seg.source();
+    const Point_2 strg = seg.target();
+
+    const Point_2 qq = q.point();
+    const Point_2 pp = p.point();
+
+    const Point_2 corner = (cmpxpq == cmpypq) ?
+      Point_2( pp.x(), qq.y() ) :
+      Point_2( qq.x(), pp.y() ) ;
+
+    Line_2 lqc = compute_line_from_to(qq, corner);
+    Line_2 lcp = compute_line_from_to(corner, pp);
+
+    Are_same_points_2 same_points;
+
+    bool is_ssrc_positive;
+    if (same_points(q, s.source_site()) or
+        same_points(p, s.source_site())   ) {
+      is_ssrc_positive = false;
+    } else {
+      Oriented_side os_lqc_ssrc = oriented_side_of_line(lqc, ssrc);
+      Oriented_side os_lcp_ssrc = oriented_side_of_line(lcp, ssrc);
+      is_ssrc_positive =
+        ((os_lqc_ssrc == ON_POSITIVE_SIDE) and
+         (os_lcp_ssrc == ON_POSITIVE_SIDE)    ) ;
+    }
+
+    bool is_strg_positive;
+    if (same_points(q, s.target_site()) or
+        same_points(p, s.target_site())   ) {
+      is_strg_positive = false;
+    } else {
+      Oriented_side os_lqc_strg = oriented_side_of_line(lqc, strg);
+      Oriented_side os_lcp_strg = oriented_side_of_line(lcp, strg);
+      is_strg_positive =
+        ((os_lqc_strg == ON_POSITIVE_SIDE) and
+         (os_lcp_strg == ON_POSITIVE_SIDE)    ) ;
+    }
+
+    CGAL_SDG_DEBUG(std::cout << "debug qcp= (" << q << ") (" << corner
+        << ") (" << p << ")"
+        << " isssrcpos=" << is_ssrc_positive
+        << " isstrgpos=" << is_strg_positive
+        << std::endl;);
+
+    if (is_ssrc_positive or is_strg_positive) {
+      CGAL_SDG_DEBUG(std::cout << "debug is_segment_inside_inf_box "
+                     << "endpoint inside" << std::endl;);
+      return true;
+    } else {
+      // here you have to check if the interior is inside
+
+      CGAL_SDG_DEBUG(std::cout << "debug is_segment_inside_inf_box "
+                     << "try for interior to be inside" << std::endl;);
+
+      // in fact, here you can intersect the segment
+      // with the ray starting from corner and going to the
+      // direction of the center of the infinite box
+
+      const RT one(1);
+
+      Point_2 displaced ( corner.x() + (-cmpypq)*one ,
+                          corner.y() + cmpxpq * one   );
+
+      Line_2 l = compute_line_from_to(corner, displaced);
+
+      Line_2 lseg = compute_supporting_line(s.supporting_site());
+
+      RT hx, hy, hw;
+
+      compute_intersection_of_lines(l, lseg, hx, hy, hw);
+
+      if (CGAL::sign(hw) == ZERO) {
+        return false;
+      } else {
+        Point_2 ip ( hx/hw, hy/hw);
+        Oriented_side os_lqc_ip = oriented_side_of_line(lqc, ip);
+        Oriented_side os_lcp_ip = oriented_side_of_line(lcp, ip);
+
+        Compare_x_2 cmpx;
+        Compare_y_2 cmpy;
+
+        Comparison_result cmpxsrcip = cmpx(ssrc, ip);
+        Comparison_result cmpysrcip = cmpy(ssrc, ip);
+        Comparison_result cmpxiptrg = cmpx(ip, strg);
+        Comparison_result cmpyiptrg = cmpy(ip, strg);
+
+        // philaris: to check
+        Boolean is_ip_inside_segment =
+          (CGAL::sign(cmpxsrcip * cmpxiptrg +
+                      cmpysrcip * cmpyiptrg   )) == POSITIVE;
+
+        if ((os_lqc_ip == ON_POSITIVE_SIDE) and
+            (os_lcp_ip == ON_POSITIVE_SIDE) and
+            is_ip_inside_segment ) {
+          return true;
+        } else {
+          return false;
+        }
+      }
+    }
+  } // end of intersects_segment_interior_inf_box
 
   // returns true if and only if
   // the interior of s has non-empty intersection

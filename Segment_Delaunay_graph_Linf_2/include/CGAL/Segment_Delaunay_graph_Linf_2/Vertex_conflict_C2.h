@@ -749,7 +749,7 @@ private:
       } else {
         // here segment is neither horizontal nor vertical
 
-        // compute corner of infinite square going through
+        // consider corner of infinite square going through
         // p and q (if you traverse this square ccw, you meet
         // q first, then p)
 
@@ -773,19 +773,7 @@ private:
           return POSITIVE;
         } else {
           // here, p and q do not have any same coordinate
-
-          Point_2 corner;
-
-          if (cmpxpq == cmpypq) {
-            corner = Point_2( pp.x(), qq.y() );
-          } else {
-            corner = Point_2( qq.x(), pp.y() );
-          }
-
-          CGAL_SDG_DEBUG(std::cout << "debug incircle_pps corner="
-            << corner << std::endl; );
-
-          if (intersects_segment_interior_inf_box(t, q, corner, p)) {
+          if (intersects_segment_interior_inf_box(t, q, p, cmpxpq, cmpypq)) {
             return NEGATIVE;
           } else {
             return POSITIVE;
