@@ -700,14 +700,14 @@ private:
     CGAL_SDG_DEBUG(std::cout << "debug incircle_pps p=" << p
       << " q=" << q << " t=" << t << std::endl; );
 
-    bool is_p_tsrc = same_points(p, t.source_site());
-    bool is_p_ttrg = same_points(p, t.target_site());
+    const bool is_p_tsrc = same_points(p, t.source_site());
+    const bool is_p_ttrg = same_points(p, t.target_site());
 
-    bool is_q_tsrc = same_points(q, t.source_site());
-    bool is_q_ttrg = same_points(q, t.target_site());
+    const bool is_q_tsrc = same_points(q, t.source_site());
+    const bool is_q_ttrg = same_points(q, t.target_site());
 
-    bool is_p_on_t = is_p_tsrc || is_p_ttrg;
-    bool is_q_on_t = is_q_tsrc || is_q_ttrg;
+    const bool is_p_on_t = is_p_tsrc || is_p_ttrg;
+    const bool is_q_on_t = is_q_tsrc || is_q_ttrg;
 
     if ( is_p_on_t && is_q_on_t ) {
 	// if t is the segment joining p and q then t must be a vertex
@@ -762,9 +762,11 @@ private:
         if ((cmpxpq == EQUAL) or (cmpypq == EQUAL)) {
           // consider line from p to q
           Line_2 lpq = compute_line_from_to(pp, qq);
-          Oriented_side os1 =
+          Oriented_side os1 = (is_p_tsrc or is_q_tsrc) ?
+            ON_ORIENTED_BOUNDARY :
             oriented_side_of_line(lpq, t.segment().source());
-          Oriented_side os2 =
+          Oriented_side os2 = (is_p_ttrg or is_q_ttrg) ?
+            ON_ORIENTED_BOUNDARY :
             oriented_side_of_line(lpq, t.segment().target());
 
           if ((os1 == ON_NEGATIVE_SIDE) or
