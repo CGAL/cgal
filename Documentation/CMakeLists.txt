@@ -108,7 +108,7 @@ find_package(PythonInterp 2.6.8)
 
 if(DOXYGEN_FOUND)
   # set up the directories and variables
-  set(CGAL_DOC_MATHJAX_LOCATION "http://cdn.mathjax.org/mathjax/latest"
+  set(CGAL_DOC_MATHJAX_LOCATION "https://cdn.mathjax.org/mathjax/latest"
       CACHE STRING "The location of MathJax to be used for the documentation.")
 
   set(CGAL_DOC_OUTPUT_DIR "${CMAKE_BINARY_DIR}/doc_output")
