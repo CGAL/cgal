@@ -3049,9 +3049,16 @@ private:
 
     // if t is an endpoint of r, then t is necessarily outside the
     // Voronoi circle of p, q and r and thus the result is POSITIVE
-    // philaris: this might have to be changed
-    // philaris: I remove the following line to be on the safe side
-    //if ( is_endpoint_of(t, r) ) { return POSITIVE; }
+    // philaris: In Linf, we are partially sure of the above only for a
+    // non-axis-parallel segment, in the sense that the possible return
+    // values are either ZERO or POSITIVE. In the non-axis-parallel case,
+    // the point t can be at the corner of the Linf-square and thus the
+    // possibility of ZERO cannot be excluded. However, this code seems
+    // to be reached only in validations and POSITIVE seems to be
+    // acceptable.
+    if ( is_endpoint_of(t, r) and not is_site_h_or_v(r) ) {
+      return POSITIVE;
+    }
 
     // easy degeneracies --- end
 
