@@ -69,7 +69,7 @@ public:
     
     Point const& lP = (*p)->point();
     Point const& lR = (*r)->point();
-     
+
     Segment lP_R = construct_segment(lP, lR) ;
 
     FT d1 = 0.0;

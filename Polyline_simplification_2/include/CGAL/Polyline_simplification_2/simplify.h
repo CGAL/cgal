@@ -336,7 +336,6 @@ template <class PolygonTraits_2, class Container, class CostFunction, class Stop
 
   Constraint_id cid = pct.insert_constraint(polygon);
 
-  mark_vertices_unremovable(pct);
   bool keep_points = false;
   Polyline_simplification_2<PCT, CostFunction, StopFunction> simplifier(pct, cost, stop);
   while(simplifier()){}
@@ -344,8 +343,12 @@ template <class PolygonTraits_2, class Container, class CostFunction, class Stop
   CGAL::Polygon_2<PolygonTraits_2,Container> result;
   Vertices_in_constraint_iterator beg = pct.vertices_in_constraint_begin(cid);
   Vertices_in_constraint_iterator end = pct.vertices_in_constraint_end(cid);
-  for(; beg!=end;++beg){
-    result.push_back((*beg)->point());
+  for(; beg!=end;){
+    Point_2 p = (*beg)->point();
+    ++beg;
+    if(beg!=end){
+      result.push_back(p);
+    }
   }
   return result;
 }
