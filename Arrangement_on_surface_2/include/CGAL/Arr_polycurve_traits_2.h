@@ -2920,6 +2920,7 @@ namespace CGAL {
         // I think this is because of the way the segments are stored in the curve_vector.
         // I am assuming that min end depends upon the direction and not the x-value. 
         // and also that min end segment is always placed at position 0 of the vector. 
+        // Comfirm with Eric.
         unsigned int index = ( ce == ARR_MIN_END ) ? 0 : xcv.number_of_segments()-1;
         return index;
       }
@@ -2956,7 +2957,8 @@ namespace CGAL {
                                    Arr_curve_end ce2/*! for xseg */) const
       {
           const Geometry_traits_2* geom_traits = m_poly_traits.geometry_traits_2();
-          typename Geometry_traits_2::Compare_x_at_limit_2 compare_x_at_limit = geom_traits->compare_x_at_limit_2_object();
+          typename Geometry_traits_2::Compare_x_at_limit_2 
+                   compare_x_at_limit = geom_traits->compare_x_at_limit_2_object();
           
           unsigned int index = this->get_curve_index( xcv, ce1 );
           
@@ -2969,8 +2971,52 @@ namespace CGAL {
       return Compare_x_at_limit_2(*this);
     }
 
+    //
+    // waqar:: this functor required by Arr_linear_traits_2
+    //
+    class Compare_x_near_limit_2{
+    protected:
+      typedef Arr_polycurve_traits_2<Geometry_traits_2>     Polycurve_traits_2;
+      //in case the class has a state.
+      const Polycurve_traits_2& m_poly_traits;
 
+    public:
+      Compare_x_near_limit_2(const Polycurve_traits_2& traits): m_poly_traits(traits)
+      {}
 
+      unsigned int get_curve_index (const X_monotone_curve_2& xcv, const Arr_curve_end ce) const
+      {
+        Comparison_result orientation = m_poly_traits.compare_endpoints_xy_2_object()(xcv);
+        
+        //waqar:: dont know why it is opposite in Parameter_space_in_x...
+        // I think this is because of the way the segments are stored in the curve_vector.
+        // I am assuming that min end depends upon the direction and not the x-value. 
+        // and also that min end segment is always placed at position 0 of the vector. 
+        // Comfirm with Eric.
+        unsigned int index = ( ce == ARR_MIN_END ) ? 0 : xcv.number_of_segments()-1;
+        return index;
+      }
+
+      Comparison_result operator()(const X_monotone_curve_2 xcv1, 
+                                   const X_monotone_curve_2 xcv2, 
+                                         Arr_curve_end ce) const
+      {
+          const Geometry_traits_2* geom_traits = m_poly_traits.geometry_traits_2();
+          typename Geometry_traits_2::Compare_x_near_limit_2 
+                   cmp_x_near_limit = geom_traits->compare_x_near_limit_2_object();
+
+          unsigned int index_1 = this->get_curve_index(xcv1, ce);
+          unsigned int index_2 = this->get_curve_index(xcv2, ce);
+
+          return cmp_x_near_limit( xcv1[index_1], xcv2[index_2], ce);
+      }
+  
+    };
+
+    Compare_x_near_limit_2 compare_x_near_limit_2_object() const
+    {
+      return Compare_x_near_limit_2(*this);
+    }
 
 
 
