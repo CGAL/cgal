@@ -131,6 +131,9 @@ public:
 	  /*! Constructor. */
 	  Push_back_2(const Polyline_traits_2& traits) : Base::Push_back_2(traits), m_poly_traits(traits) {}
 
+	  //http://stackoverflow.com/questions/21168635/inheritance-and-overloading-of-the-function-call-operator
+	  using Base::Push_back_2::operator();
+
 	  /* Append a point `p` to an existing polyline `cv` at the back. */
 	  void operator()(Curve_2& cv, const Point_2& p) const
 	  {
@@ -164,10 +167,10 @@ public:
 
 	  /* Append a segment `seg` to an existing polyline `cv`. If `cv` is
 	     empty, `seg` will be its first segment. */
-	  void operator()(Curve_2& cv, const Segment_2& seg) const
-	  { 
-	  	Base::Push_back_2::operator() (cv, seg);
-	  }
+	  // void operator()(Curve_2& cv, const Segment_2& seg) const
+	  // { 
+	  // 	Base::Push_back_2::operator() (cv, seg);
+	  // }
 
 	  /* Append a point `p` to an existing polyline `xcv` at the back. */
 	  void operator()(X_monotone_curve_2& xcv, const Point_2& p) const
@@ -217,11 +220,11 @@ public:
 	  }
 
 	  // /* Append a segment `seg` to an existing polyline `xcv` at the back. */
-	  void operator()(X_monotone_curve_2& xcv,
-	                  const X_monotone_segment_2& seg) const
-	  {
-	    Base::Push_back_2::operator()(xcv,seg);
-	  }
+	  // void operator()(X_monotone_curve_2& xcv,
+	  //                 const X_monotone_segment_2& seg) const
+	  // {
+	  //   Base::Push_back_2::operator()(xcv,seg);
+	  // }
 	};
 
 	/*! Get a Push_back_2 functor object. */
@@ -242,6 +245,8 @@ public:
 	public:
 	  /*! Constructor. */
 	  Push_front_2(const Polyline_traits_2& traits) : m_poly_traits(traits), Base::Push_front_2(traits) {}
+
+	  using Base::Push_front_2::operator();
 
 	  /* Append a point `p` to an existing polyline `cv` at the front. */
 	  void operator()(Curve_2& cv, const Point_2& p) const
