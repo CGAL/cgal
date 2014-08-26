@@ -51,7 +51,7 @@ namespace CGAL {
  * 
  *  The points maintain their original order in the scale-space. This means it
  *  is straightforward to revert the scale-space on the triangulated surface
- *  mesh. In essence, the method can reconstruct a smooted surface or a surface
+ *  mesh. In essence, the method can reconstruct a smoothed surface or a surface
  *  interpolating the original points. The only change is whether to apply the
  *  index triples to the scale-space or to the original point set.
  *
@@ -702,7 +702,7 @@ public:
      *  \param begin is an iterator to the first point of the collection.
      *  \param end is a past-the-end iterator for the point collection.
      *  \param iterations is the number of iterations to perform. If
-     *  `iteations` is 0, nothing happens.
+     *  `iterations` is 0, nothing happens.
      *
      *  \sa `add_points(InputIterator begin, InputIterator end)`.
      *  \sa `estimate_neighborhood_radius(InputIterator begin, InputIterator end)`.
