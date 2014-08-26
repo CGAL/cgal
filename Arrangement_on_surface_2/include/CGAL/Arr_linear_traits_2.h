@@ -661,6 +661,65 @@ public:
   {
     return Compare_endpoints_xy_2();
   }
+
+  class Trim_2{
+  protected:
+    typedef Arr_linear_traits_2<Kernel> Traits;
+
+    /*! The traits (in case it has state) */
+    const Traits* m_traits;
+
+    /*! Constructor
+     * \param traits the traits (in case it has state)
+     * The constructor is declared private to allow only the functor
+     * obtaining function, which is a member of the nesting class,
+     * constructing it.
+     */
+    Trim_2(const Traits * traits) : m_traits(traits) {}
+
+    //! Allow its functor obtaining function calling the private constructor.
+    friend class Arr_linear_traits_2<Kernel>;
+  
+  public:
+    X_monotone_curve_2 operator()( const X_monotone_curve_2 xcv, 
+                                   const Point_2 src, 
+                                   const Point_2 tgt )
+    {
+      /*
+       * "Line_segment, line, and ray" will become line segments
+       * when trimmed. 
+      */
+      Equal_2 equal = Equal_2();
+      Compare_y_at_x_2 compare_y_at_x = m_traits->compare_y_at_x_2_object();
+      
+      //preconditions
+      //check if source and taget are two distinct points and they lie on the line.
+      CGAL_precondition(!equal(src, tgt));
+      CGAL_precondition(compare_y_at_x(src, xcv) == EQUAL);
+      CGAL_precondition(compare_y_at_x(tgt, xcv) == EQUAL);
+
+      //create trimmed line_segment
+      X_monotone_curve_2 trimmed_segment;
+
+      if( xcv.is_directed_right() && tgt.x() < src.x() )
+        trimmed_segment = Segment_2(tgt, src);
+  
+
+      else if( !xcv.is_directed_right() && tgt.x() > src.x())
+        trimmed_segment = Segment_2(tgt, src);
+
+      else
+        trimmed_segment = Segment_2(src, tgt);
+      
+      return trimmed_segment;
+    }
+
+  };
+
+  Trim_2 trim_2_object() const
+  {
+    return Trim_2(this);
+  }
   //waqar add functor end()
 
 
