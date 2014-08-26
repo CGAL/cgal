@@ -48,16 +48,18 @@ namespace CGAL {
     typedef GeometryTraits_2                         Geometry_traits_2;
 
     // Tag definitions:
-    typedef Tag_true                                 Has_left_category;
-    typedef Tag_true                                 Has_merge_category;
-    typedef Tag_false                                Has_do_intersect_category;
+    //waqar: these categories need to be inherited from the geometry_tratis.
+    typedef typename Geometry_traits_2::Has_left_category           Has_left_category;
+    typedef typename Geometry_traits_2::Has_merge_category          Has_merge_category;
+    typedef typename Geometry_traits_2::Has_do_intersect_category   Has_do_intersect_category;
 
     typedef typename Geometry_traits_2::Left_side_category   Left_side_category;
     typedef typename Geometry_traits_2::Bottom_side_category Bottom_side_category;
     typedef typename Geometry_traits_2::Top_side_category    Top_side_category;
     typedef typename Geometry_traits_2::Right_side_category  Right_side_category;
 
-    typedef typename Geometry_traits_2::Has_construct_x_monotone_curve_from_two_points_category  Has_construct_x_monotone_curve_from_two_points_category;
+    //waqar: this is not needed in the polycurve anymore.
+    //typedef typename Geometry_traits_2::Has_construct_x_monotone_curve_from_two_points_category  Has_construct_x_monotone_curve_from_two_points_category;
 
     typedef typename Arr_are_all_sides_oblivious_tag
     <Left_side_category, Bottom_side_category,
@@ -122,6 +124,28 @@ namespace CGAL {
       X_monotone_curve_2;
 
     typedef typename Geometry_traits_2::Multiplicity       Multiplicity;
+
+
+    //waqar: class to get the sides information
+    // why is this not working.. see this
+    // http://stackoverflow.com/questions/17388583/overloading-a-function-to-take-true-type-or-false-type-parameter-vs-using-an-if
+    class Get_all_sides_oblivios{
+
+      typedef Arr_polycurve_traits_2<Geometry_traits_2> Polycurve_traits_2;
+      //in case the class has a state.
+      const Polycurve_traits_2& m_poly_traits;
+
+      //constructor
+      Get_all_sides_oblivios(const Polycurve_traits_2& traits): m_poly_traits(traits) {}
+
+      typedef typename boost::is_same<Are_all_sides_oblivious_tag, Arr_all_sides_oblivious_tag>::type side_type;
+
+      bool operator()( side_type type)
+      {
+        return static_cast<bool>(side_type());
+      }
+
+    };
 
     /*! Compare the x-coordinates of two points. */
     class Compare_x_2 {
@@ -1157,21 +1181,21 @@ namespace CGAL {
          empty, `seg` will be its first segment. */
       void operator()(Curve_2& cv, const Segment_2& seg) const
       {
-        //in case a line is being pushed.
-         typedef typename X_monotone_curve_2::Segments_size_type size_type;
-           size_type num_seg = cv.number_of_segments();
+        // //in case a line is being pushed.
+        //  typedef typename X_monotone_curve_2::Segments_size_type size_type;
+        //    size_type num_seg = cv.number_of_segments();
         
-        CGAL_precondition_msg ( !( !seg.has_left() && !seg.has_right() ), 
-                                "Lines can not be pushed into polycurve"
-                               );
+        // CGAL_precondition_msg ( !( !seg.has_left() && !seg.has_right() ), 
+        //                         "Lines can not be pushed into polycurve"
+        //                        );
         
-        //precondition if the last segment already is a ray
-        CGAL_precondition_msg( ( cv[num_seg-1].right_infinite_in_x() == CGAL::ARR_INTERIOR && 
-                                 cv[num_seg-1].right_infinite_in_y() == CGAL::ARR_INTERIOR &&
-                                 cv[num_seg-1].left_infinite_in_x() == CGAL::ARR_INTERIOR && 
-                                 cv[num_seg-1].left_infinite_in_y() == CGAL::ARR_INTERIOR),
-                               "Segment can not be pushed. Polycurve reaches infinity at target"
-                              );
+        // //precondition if the last segment already is a ray
+        // CGAL_precondition_msg( ( cv[num_seg-1].right_infinite_in_x() == CGAL::ARR_INTERIOR && 
+        //                          cv[num_seg-1].right_infinite_in_y() == CGAL::ARR_INTERIOR &&
+        //                          cv[num_seg-1].left_infinite_in_x() == CGAL::ARR_INTERIOR && 
+        //                          cv[num_seg-1].left_infinite_in_y() == CGAL::ARR_INTERIOR),
+        //                        "Segment can not be pushed. Polycurve reaches infinity at target"
+        //                       );
         cv.push_back(seg); 
       }
 
@@ -1231,18 +1255,19 @@ namespace CGAL {
       {
         typedef typename X_monotone_curve_2::Segments_size_type size_type;
            size_type num_seg = xcv.number_of_segments();
+
         
-        CGAL_precondition_msg ( !( !seg.has_left() && !seg.has_right() ), 
-                                "Lines can not be pushed into polycurve"
-                               );
+        // CGAL_precondition_msg ( !( !seg.has_left() && !seg.has_right() ), 
+        //                         "Lines can not be pushed into polycurve"
+        //                        );
         
-        //precondition if the last segment already is a ray
-        CGAL_precondition_msg( ( xcv[num_seg-1].right_infinite_in_x() == CGAL::ARR_INTERIOR && 
-                                 xcv[num_seg-1].right_infinite_in_y() == CGAL::ARR_INTERIOR &&
-                                 xcv[num_seg-1].left_infinite_in_x() == CGAL::ARR_INTERIOR && 
-                                 xcv[num_seg-1].left_infinite_in_y() == CGAL::ARR_INTERIOR),
-                               "Segment can not be pushed. Polycurve reaches infinity at target"
-                              );
+        // //precondition if the last segment already is a ray
+        // CGAL_precondition_msg( ( xcv[num_seg-1].right_infinite_in_x() == CGAL::ARR_INTERIOR && 
+        //                          xcv[num_seg-1].right_infinite_in_y() == CGAL::ARR_INTERIOR &&
+        //                          xcv[num_seg-1].left_infinite_in_x() == CGAL::ARR_INTERIOR && 
+        //                          xcv[num_seg-1].left_infinite_in_y() == CGAL::ARR_INTERIOR),
+        //                        "Segment can not be pushed. Polycurve reaches infinity at target"
+        //                       );
 
         CGAL_precondition_code
           (
@@ -1270,7 +1295,9 @@ namespace CGAL {
 
         CGAL_precondition_msg((num_seg == 0) || (cmp_seg_endpts(xcv[0]) == dir),
                               "xcv and seg do not have the same orientation!");
-        if( seg.has_left() && seg.has_right() )
+        
+        if( boost::is_same<Are_all_sides_oblivious_tag, Arr_oblivious_side_tag>::value )
+        //if(1)
         {
         
           CGAL_precondition_msg((num_seg == 0) ||
@@ -1291,20 +1318,20 @@ namespace CGAL {
                                 "Seg does not extend to the left!");
 
         }
-        else
-        {
-          CGAL_precondition_msg((num_seg == 0) ||
-                                (((dir != SMALLER) ||
-                                  equal(get_max_v(xcv[num_seg-1]),
-                                        seg.left()))),
-                                "Seg does not extend to the right!");
+        // else
+        // {
+        //   CGAL_precondition_msg((num_seg == 0) ||
+        //                         (((dir != SMALLER) ||
+        //                           equal(get_max_v(xcv[num_seg-1]),
+        //                                 seg.left()))),
+        //                         "Seg does not extend to the right!");
 
-          CGAL_precondition_msg((num_seg == 0) ||
-                                (((dir != LARGER) ||
-                                  equal(get_min_v(xcv[num_seg-1]),
-                                        seg.right()))),
-                                "Seg does not extend to the left!");
-        }
+        //   CGAL_precondition_msg((num_seg == 0) ||
+        //                         (((dir != LARGER) ||
+        //                           equal(get_min_v(xcv[num_seg-1]),
+        //                                 seg.right()))),
+        //                         "Seg does not extend to the left!");
+        // }
         
         xcv.push_back(seg);
       }
@@ -1363,9 +1390,9 @@ namespace CGAL {
       void operator()(Curve_2& cv, const Segment_2& seg) const
       {
          //in case a line or ray is being pushed.
-        CGAL_precondition_msg ( !( !seg.has_left() || !seg.has_right() ), 
-                                "Line or ray can not be pushed fronted into polycurve"
-                               ); 
+        // CGAL_precondition_msg ( !( !seg.has_left() || !seg.has_right() ), 
+        //                         "Line or ray can not be pushed fronted into polycurve"
+        //                        ); 
         cv.push_front(seg); 
       }
 
@@ -1423,10 +1450,10 @@ namespace CGAL {
       void operator()(X_monotone_curve_2& xcv,
                       const X_monotone_segment_2& seg) const
       {
-        //in case a line or ray is being pushed.
-        CGAL_precondition_msg ( !( !seg.has_left() || !seg.has_right() ), 
-                                "Line or ray can not be pushed fronted into polycurve"
-                               );
+        // //in case a line or ray is being pushed.
+        // CGAL_precondition_msg ( !( !seg.has_left() || !seg.has_right() ), 
+        //                         "Line or ray can not be pushed fronted into polycurve"
+        //                        );
         CGAL_precondition_code
           (
            typedef typename X_monotone_curve_2::Segments_size_type size_type;
@@ -2864,7 +2891,92 @@ namespace CGAL {
     Trim_2 trim_2_object() const
     {
       return Trim_2(*this);
-    }    
+    }  
+
+
+
+
+
+
+
+
+
+    //functor required by Geometry_traits with infinity support. 
+    class Compare_x_at_limit_2{
+    protected:
+      typedef Arr_polycurve_traits_2<Geometry_traits_2>   Polycurve_traits_2;
+      //in case the class has a state.
+      const Polycurve_traits_2& m_poly_traits;
+
+    public:
+      Compare_x_at_limit_2(const Polycurve_traits_2& traits): m_poly_traits(traits) 
+      {}
+
+      unsigned int get_curve_index (const X_monotone_curve_2& xcv, const Arr_curve_end ce) const
+      {
+        Comparison_result orientation = m_poly_traits.compare_endpoints_xy_2_object()(xcv);
+        
+        //waqar:: dont know why it is opposite in Parameter_space_in_x...
+        // I think this is because of the way the segments are stored in the curve_vector.
+        // I am assuming that min end depends upon the direction and not the x-value. 
+        // and also that min end segment is always placed at position 0 of the vector. 
+        unsigned int index = ( ce == ARR_MIN_END ) ? 0 : xcv.number_of_segments()-1;
+        return index;
+      }
+
+      Comparison_result operator()(const Point_2& p,
+                                   const X_monotone_curve_2& xcv, 
+                                   Arr_curve_end ce) const
+      {
+          const Geometry_traits_2* geom_traits = m_poly_traits.geometry_traits_2();
+          typename Geometry_traits_2::Compare_x_at_limit_2 compare_x_at_limit = geom_traits->compare_x_at_limit_2_object();
+          
+          unsigned int index = this->get_curve_index(xcv, ce);
+          return compare_x_at_limit( p, xcv[index], ce );
+      }
+
+      Comparison_result operator()(const X_monotone_curve_2& xcv1,
+                                 Arr_curve_end ce1/* for xcv1 */,
+                                 const X_monotone_curve_2 & xcv2,
+                                 Arr_curve_end ce2/*! for xcv2 */) const
+      {
+          const Geometry_traits_2* geom_traits = m_poly_traits.geometry_traits_2();
+          typename Geometry_traits_2::Compare_x_at_limit_2 compare_x_at_limit = geom_traits->compare_x_at_limit_2_object();
+          
+          unsigned int index_1 = this->get_curve_index(xcv1, ce1);
+          unsigned int index_2 = this->get_curve_index(xcv2, ce2);
+
+          return compare_x_at_limit( xcv1[index_1], ce1,
+                                     xcv2[index_2], ce2 );
+      }
+
+      Comparison_result operator()(const X_monotone_curve_2& xcv,
+                                   Arr_curve_end ce1/* for xcv */,
+                                   const X_monotone_segment_2& xseg,
+                                   Arr_curve_end ce2/*! for xseg */) const
+      {
+          const Geometry_traits_2* geom_traits = m_poly_traits.geometry_traits_2();
+          typename Geometry_traits_2::Compare_x_at_limit_2 compare_x_at_limit = geom_traits->compare_x_at_limit_2_object();
+          
+          unsigned int index = this->get_curve_index( xcv, ce1 );
+          
+          return compare_x_at_limit( xcv[index], ce1, xseg, ce2 );
+      }
+    };
+
+    Compare_x_at_limit_2 compare_x_at_limit_2_object() const
+    {
+      return Compare_x_at_limit_2(*this);
+    }
+
+
+
+
+
+
+
+
+
 
     /*! A functor that compares the y-coordinate of two given points
      * that lie on the vertical identification curve.
