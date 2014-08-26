@@ -475,35 +475,35 @@ public:
     return (_orient == COLLINEAR);
   }
 
-  bool has_left() const
-  {
-    return true;
-  }
+  // bool has_left() const
+  // {
+  //   return true;
+  // }
 
-  bool has_right() const
-  {
-    return true;
-  }
+  // bool has_right() const
+  // {
+  //   return true;
+  // }
 
-  Arr_parameter_space right_infinite_in_x () const
-  {
-    return ARR_INTERIOR;
-  }
+  // Arr_parameter_space right_infinite_in_x () const
+  // {
+  //   return ARR_INTERIOR;
+  // }
 
-  Arr_parameter_space right_infinite_in_y () const
-  {
-    return ARR_INTERIOR;
-  }
+  // Arr_parameter_space right_infinite_in_y () const
+  // {
+  //   return ARR_INTERIOR;
+  // }
 
-  Arr_parameter_space left_infinite_in_x () const
-  {
-    return ARR_INTERIOR;
-  }
+  // Arr_parameter_space left_infinite_in_x () const
+  // {
+  //   return ARR_INTERIOR;
+  // }
 
-  Arr_parameter_space left_infinite_in_y () const
-  {
-    return ARR_INTERIOR;
-  }
+  // Arr_parameter_space left_infinite_in_y () const
+  // {
+  //   return ARR_INTERIOR;
+  // }
 
   /*! Check if the arc is circular. */
   inline bool is_circular () const
