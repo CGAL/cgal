@@ -298,6 +298,16 @@ public:
       return (is_right ? ps : pt);
     }
 
+    // waqar: functions to return the protected ps and pt
+    const Point_2& get_ps() const
+    {
+      return ps;
+    }
+    const Point_2& get_pt() const
+    {
+      return pt;
+    }
+
     /*!
      * Set the (lexicographically) left endpoint.
      * \param p The point to set.
@@ -720,7 +730,63 @@ public:
   {
     return Trim_2(this);
   }
-  //waqar add functor end()
+
+
+  class Construct_opposite_2{
+  protected:
+    typedef Arr_linear_traits_2<Kernel> Traits;
+
+    /*! The traits (in case it has state) */
+    const Traits* m_traits;
+
+    /*! Constructor
+     * \param traits the traits (in case it has state)
+     * The constructor is declared private to allow only the functor
+     * obtaining function, which is a member of the nesting class,
+     * constructing it.
+     */
+    Construct_opposite_2(const Traits * traits) : m_traits(traits) {}
+
+    //! Allow its functor obtaining function calling the private constructor.
+    friend class Arr_linear_traits_2<Kernel>;
+  
+  public:
+
+    X_monotone_curve_2 operator()(const X_monotone_curve_2& xcv)const
+    {
+      CGAL_precondition (! xcv.is_degenerate());
+
+      X_monotone_curve_2 opp_xcv;
+
+      if( xcv.is_segment() )
+      {
+        opp_xcv = Segment_2(xcv.target(), xcv.source());
+      }
+      
+      if( xcv.is_line() )
+      {
+        opp_xcv = Line_2(xcv.get_pt(), xcv.get_ps()); 
+      }
+      
+      if( xcv.is_ray() )
+      {
+        Point_2 opp_tgt = Point_2( -(xcv.get_pt().x()), -(xcv.get_pt().y()));
+        opp_xcv = Ray_2( xcv.source(),  opp_tgt);
+      }
+
+      return opp_xcv;
+
+    }
+
+  };
+
+  /*! Get a Construct_opposite_2 functor object. */
+  Construct_opposite_2 construct_opposite_2_object() const
+  {
+    return Construct_opposite_2(this);
+  }
+
+  //waqar: add functor end()
 
 
 
