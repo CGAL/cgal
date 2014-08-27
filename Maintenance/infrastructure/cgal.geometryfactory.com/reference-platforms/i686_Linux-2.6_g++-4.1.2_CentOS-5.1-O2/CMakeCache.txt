@@ -143,7 +143,7 @@ CMAKE_COLOR_MAKEFILE:BOOL=ON
 CMAKE_CXX_COMPILER:FILEPATH=/usr/bin/g++
 
 //User-defined flags
-CMAKE_CXX_FLAGS:STRING=-O2 -Wall  -frounding-math
+CMAKE_CXX_FLAGS:STRING=-O2 -Wall -m32  -frounding-math
 
 //No help, variable specified on the command line.
 CMAKE_CXX_FLAGS_DEBUG:STRING=
@@ -160,7 +160,7 @@ CMAKE_CXX_FLAGS_RELEASE:STRING=-O3 -DNDEBUG
 CMAKE_CXX_FLAGS_RELWITHDEBINFO:STRING=-O2 -g
 
 //C compiler.
-CMAKE_C_COMPILER:FILEPATH=/usr/lib/ccache/gcc
+CMAKE_C_COMPILER:FILEPATH=/usr/bin/gcc
 
 //Flags used by the compiler during all build types.
 CMAKE_C_FLAGS:STRING=

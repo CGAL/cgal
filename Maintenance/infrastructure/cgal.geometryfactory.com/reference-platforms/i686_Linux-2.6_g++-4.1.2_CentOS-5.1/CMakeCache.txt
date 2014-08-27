@@ -167,7 +167,7 @@ CMAKE_COLOR_MAKEFILE:BOOL=ON
 CMAKE_CXX_COMPILER:FILEPATH=/usr/bin/g++
 
 //User-defined flags
-CMAKE_CXX_FLAGS:STRING=-Wall  -frounding-math
+CMAKE_CXX_FLAGS:STRING=-Wall -m32  -frounding-math
 
 //No help, variable specified on the command line.
 CMAKE_CXX_FLAGS_DEBUG:STRING=
@@ -184,7 +184,7 @@ CMAKE_CXX_FLAGS_RELEASE:STRING=-O3 -DNDEBUG
 CMAKE_CXX_FLAGS_RELWITHDEBINFO:STRING=-O2 -g
 
 //C compiler.
-CMAKE_C_COMPILER:FILEPATH=/usr/lib/ccache/gcc
+CMAKE_C_COMPILER:FILEPATH=/usr/bin/gcc
 
 //Flags used by the compiler during all build types.
 CMAKE_C_FLAGS:STRING=
@@ -1358,7 +1358,7 @@ CMAKE_UNAME:INTERNAL=/bin/uname
 CMAKE_USE_RELATIVE_PATHS-ADVANCED:INTERNAL=1
 //Advanced flag for variable: CMAKE_VERBOSE_MAKEFILE
 CMAKE_VERBOSE_MAKEFILE-ADVANCED:INTERNAL=1
-CONFIG_CXX_FLAGS:INTERNAL=-Wall  -frounding-math
+CONFIG_CXX_FLAGS:INTERNAL=-Wall -m32  -frounding-math
 //Variable hidden from user
 EXECUTABLE_OUTPUT_PATH:INTERNAL=
 //Details about finding Threads
