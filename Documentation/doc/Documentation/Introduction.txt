@@ -148,7 +148,7 @@ have been a rather lengthy function template, and an even longer
 function call.
 
 \code{.cpp}
-template <class InputIterator, class OutputIterator, class Point_2, class Less_xy_2, class Lef_turn_2, class Equal_2>
+template <class InputIterator, class OutputIterator, class Point_2, class Less_xy_2, class Left_turn_2, class Equal_2>
 OutputIterator
 ch_graham_andrew( InputIterator  first,
                   InputIterator  beyond,
