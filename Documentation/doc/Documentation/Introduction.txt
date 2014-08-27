@@ -113,7 +113,7 @@ familiarize yourself with its basic ideas.
 If you look at the manual page of the function `convex_hull_2()`
 and the other 2D convex hull algorithms, you see that they come in two
 versions. In the examples we have seen so far the function that takes two
-iterators for the sequnce of input points and an output iterator for
+iterators for the sequence of input points and an output iterator for
 writing the result to. The second version has an additional template
 parameter `Traits`, and an additional parameter of this type.
 
