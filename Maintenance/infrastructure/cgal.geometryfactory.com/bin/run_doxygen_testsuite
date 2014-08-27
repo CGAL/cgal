@@ -33,12 +33,12 @@ export PYTHONPATH
 PATH=/home/cgal-testsuite/local/bin:$PATH
 export PATH
 
-/home/cgal-testsuite/install/cmake-2.8.11/bin/cmake \
+cmake \
     -DBUILD_DOC:BOOL=ON \
     -DCGAL_DOC_CREATE_LOGS:bool=ON \
     -DCGAL_DOC_MATHJAX_LOCATION:STRING=../../MathJax \
     -DCGAL_DOC_RELEASE:BOOL=TRUE \
-    -DCGAL_DOC_PUBLISH_DIR=/var/CGAL/www/Members/Manual_doxygen_test \
+    -DCGAL_DOC_PUBLISH_DIR=/srv/CGAL/www/Members/Manual_doxygen_test \
     -DDOXYGEN_EXECUTABLE:FILEPATH=/home/cgal-testsuite/local/bin/doxygen \
     -DPYTHON_EXECUTABLE:FILEPATH=/home/cgal-testsuite/local/bin/python2 \
     .. 2>&1 || error "exit code $? returned by CMake"
