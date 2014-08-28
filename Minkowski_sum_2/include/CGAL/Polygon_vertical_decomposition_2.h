@@ -12,9 +12,6 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL$
-// $Id$
-//
 // Author(s) : Efi Fogel   <efifogel@gmail.com>
 
 #ifndef CGAL_POLYGON_VERTICAL_DECOMPOSITION_2_H

@@ -12,10 +12,7 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL$
-// $Id$
-//
-// Author(s)     : Ron Wein   <wein@post.tau.ac.il>
+// Author(s)     : Ron Wein   <wein_r@yahoo.com>
 
 #ifndef CGAL_OFFSET_CONV_H
 #define CGAL_OFFSET_CONV_H
@@ -43,10 +40,10 @@ public:
   typedef typename Base::Polygon_2                       Polygon_2;
   typedef typename Base::Polygon_with_holes_2            Polygon_with_holes_2;
   typedef typename Base::Offset_polygon_2                Offset_polygon_2;
-  
+
 private:
 
-  typedef typename Base::Labeled_traits_2                Labeled_traits_2; 
+  typedef typename Base::Labeled_traits_2                Labeled_traits_2;
   typedef typename Base::Labeled_curve_2                 Labeled_curve_2;
   typedef std::list<Labeled_curve_2>                     Curves_list;
 
@@ -59,11 +56,11 @@ public:
   /*! Constructor. */
   Offset_by_convolution_2 (const Base_& base) :
     Base (base)
-  {}    
+  {}
 
   /*!
    * Compute the offset of a simple polygon by a given radius.
-   * Note that as the input polygon may not be convex, its offset may not be 
+   * Note that as the input polygon may not be convex, its offset may not be
    * simply connected. The result is therefore represented as the outer
    * boundary of the Minkowski sum (which is always a simple offset polygon)
    * and a container of offset polygons, representing the holes in this "outer"
@@ -126,7 +123,7 @@ public:
     // that forms the outer boundary.
     Curves_list                     cycle;
     unsigned int                    cycle_id = 1;
-    
+
     _offset_polygon (pwh.outer_boundary(),
                      CGAL::COUNTERCLOCKWISE,
                      r,
@@ -159,7 +156,7 @@ public:
 
   /*!
    * Compute the inset of a simple polygon by a given radius.
-   * Note that as the input polygon may not be convex, its offset may not be 
+   * Note that as the input polygon may not be convex, its offset may not be
    * simply connected. The result is therefore represented as a sequence of
    * polygons (which may also be empty).
    * \param pgn The polygon.

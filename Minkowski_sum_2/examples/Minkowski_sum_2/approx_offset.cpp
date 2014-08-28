@@ -15,7 +15,7 @@ int main(int argc, char* argv[])
 {
   // Open the input file and read a polygon.
   const char* filename = (argc > 1) ? argv[1] : "spiked.dat";
-  std::ifstream    in_file(filename);
+  std::ifstream in_file(filename);
   if (! in_file.is_open()) {
     std::cerr << "Failed to open the input file." << std::endl;
     return -1;

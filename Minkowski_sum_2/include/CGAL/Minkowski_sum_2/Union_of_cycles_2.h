@@ -12,10 +12,7 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL$
-// $Id$
-//
-// Author(s)     : Ron Wein   <wein@post.tau.ac.il>
+// Author(s)     : Ron Wein   <wein_r@yahoo.com>
 
 #ifndef CGAL_UNION_OF_CYCLES_2_H
 #define CGAL_UNION_OF_CYCLES_2_H
@@ -111,7 +108,7 @@ protected:
     {
       he = circ;
       f_next = he->twin()->face();
-      
+
       if (f_next->data() == UNVISITED)
       {
         next_count = _boundary_count (he->twin());
@@ -124,9 +121,9 @@ protected:
       }
 
       ++circ;
-      
+
     } while (circ != first);
-    
+
     ++iccb_it;
 
     // Make sure that there is a single hole in the unbounded face.
@@ -158,11 +155,11 @@ protected:
         }
         else if (f_curr != f_next)
         {
-          CGAL_assertion (f_next->data() == 
+          CGAL_assertion (f_next->data() ==
                           curr_count + _boundary_count (he->twin()));
         }
         ++circ;
-      
+
       } while (circ != first);
 
       // Go over the holes (inner CCBs) of the current face.
@@ -184,7 +181,7 @@ protected:
           }
           else if (f_curr != f_next)
           {
-            CGAL_assertion (f_next->data() == 
+            CGAL_assertion (f_next->data() ==
                             curr_count + _boundary_count (he->twin()));
           }
           ++circ;
@@ -192,7 +189,7 @@ protected:
         } while (circ != first);
       }
     }
-    
+
     return;
   }
 
@@ -208,13 +205,13 @@ private:
     if ((Arr_halfedge_direction) he->direction() == ARR_LEFT_TO_RIGHT)
     {
       // Halfedge is directed from left to right:
-      return (he->curve().label().right_count() - 
+      return (he->curve().label().right_count() -
               he->curve().label().left_count());
     }
     else
     {
       // Halfedge is directed from right to left:
-      return (he->curve().label().left_count() - 
+      return (he->curve().label().left_count() -
               he->curve().label().right_count());
     }
   }

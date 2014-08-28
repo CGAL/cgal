@@ -12,10 +12,7 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL$
-// $Id$
-//
-// Author(s)     : Ron Wein   <wein@post.tau.ac.il>
+// Author(s)     : Ron Wein   <wein_r@yahoo.com>
 
 #ifndef CGAL_OFFSET_DECOMP_H
 #define CGAL_OFFSET_DECOMP_H
@@ -43,16 +40,16 @@ public:
 
   typedef typename Base::Basic_kernel                  Kernel;
   typedef typename Base::Basic_NT                      NT;
-  typedef typename Base::Polygon_2                     Polygon_2;  
+  typedef typename Base::Polygon_2                     Polygon_2;
   typedef typename Base::Offset_polygon_2              Offset_polygon_2;
   typedef DecompStrategy_                              Decomposition_strategy;
-  
+
 private:
 
   typedef std::list<Polygon_2>                         Polygons_list;
   typedef typename Polygons_list::iterator             Polygons_iterator;
 
-  typedef typename Base::Labeled_traits_2              Labeled_traits_2; 
+  typedef typename Base::Labeled_traits_2              Labeled_traits_2;
   typedef typename Base::Labeled_curve_2               Labeled_curve_2;
   typedef std::list<Labeled_curve_2>                   Curves_list;
 
@@ -64,16 +61,16 @@ public:
   /*! Constructor. */
   Offset_by_decomposition_2 (const Base_& base) :
     Base (base)
-  {}    
+  {}
 
   /*!
    * Compute the offset of a simple polygon by a given radius.
-   * Note that as the input polygon may not be convex, its offset may not be 
+   * Note that as the input polygon may not be convex, its offset may not be
    * simply connected. The result is therefore represented as the outer
    * boundary of the Minkowski sum (which is always a simple offset polygon)
    * and a container of offset polygons, representing the holes in this "outer"
    * polygon.
-   * \param traits Arrangement traits that can deal with line segments and 
+   * \param traits Arrangement traits that can deal with line segments and
    *               circular arcs.
    * \param pgn The polygon.
    * \param r The offset radius.
