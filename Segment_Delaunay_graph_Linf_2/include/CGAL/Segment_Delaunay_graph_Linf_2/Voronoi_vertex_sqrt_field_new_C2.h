@@ -3176,11 +3176,10 @@ private:
 
     // if t is an endpoint of p, q or r, then t has to lie outside the
     // Voronoi circle of p, q and r and thus the result is positive
-    // philaris: removed to be on the safe side
-    //if ( is_endpoint_of(t, p) || is_endpoint_of(t, q) ||
-    //     is_endpoint_of(t, r) ) {
-    //  return POSITIVE;
-    //}
+    if ( is_endpoint_of(t, p) || is_endpoint_of(t, q) ||
+         is_endpoint_of(t, r) ) {
+      return POSITIVE;
+    }
 
     // easy degeneracies --- end
 
