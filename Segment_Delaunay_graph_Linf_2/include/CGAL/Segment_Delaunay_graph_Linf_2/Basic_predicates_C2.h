@@ -715,6 +715,8 @@ public:
       const Site_2 & q, const Site_2 & p,
       const Comparison_result & cmpxpq, const Comparison_result & cmpypq)
   {
+    CGAL_assertion(cmpxpq != EQUAL);
+    CGAL_assertion(cmpypq != EQUAL);
     CGAL_assertion(s.is_segment());
     const Segment_2 seg = s.segment();
 
@@ -724,7 +726,9 @@ public:
     const Point_2 qq = q.point();
     const Point_2 pp = p.point();
 
-    const Point_2 corner = (cmpxpq == cmpypq) ?
+    const bool eqcmp = cmpxpq == cmpypq;
+
+    const Point_2 corner = eqcmp ?
       Point_2( pp.x(), qq.y() ) :
       Point_2( qq.x(), pp.y() ) ;
 
@@ -732,6 +736,8 @@ public:
     Line_2 lcp = compute_line_from_to(corner, pp);
 
     Are_same_points_2 same_points;
+    Compare_x_2 cmpx;
+    Compare_y_2 cmpy;
 
     bool is_ssrc_positive;
     if (same_points(q, s.source_site()) or
@@ -743,6 +749,11 @@ public:
       is_ssrc_positive =
         ((os_lqc_ssrc == ON_POSITIVE_SIDE) and
          (os_lcp_ssrc == ON_POSITIVE_SIDE)    ) ;
+      const bool conflp = eqcmp ?
+        (cmpx(pp, ssrc) == cmpxpq) : (cmpy(pp, ssrc) == cmpypq) ;
+      const bool conflq = eqcmp ?
+        (cmpy(ssrc, qq) == cmpypq) : (cmpx(ssrc, qq) == cmpxpq) ;
+      CGAL_assertion(is_ssrc_positive == (conflp and conflq));
     }
 
     bool is_strg_positive;
@@ -755,6 +766,11 @@ public:
       is_strg_positive =
         ((os_lqc_strg == ON_POSITIVE_SIDE) and
          (os_lcp_strg == ON_POSITIVE_SIDE)    ) ;
+      const bool conflp = eqcmp ?
+        (cmpx(pp, strg) == cmpxpq) : (cmpy(pp, strg) == cmpypq) ;
+      const bool conflq = eqcmp ?
+        (cmpy(strg, qq) == cmpypq) : (cmpx(strg, qq) == cmpxpq) ;
+      CGAL_assertion(is_strg_positive == (conflp and conflq));
     }
 
     CGAL_SDG_DEBUG(std::cout << "debug qcp= (" << q << ") (" << corner
