@@ -1742,7 +1742,11 @@ private:
   {
     CGAL_precondition( t.is_point() );
     use_result = false;
-    // ADD THE CASES WHERE t IS AN ENDPOINT OF ONE OF THE SEGMENTS
+    if (is_endpoint_of(t, p_) or is_endpoint_of(t, q_) or
+        is_endpoint_of(t, r_) ) {
+      use_result = true;
+      return POSITIVE;
+    }
     return ZERO;
   }
 
