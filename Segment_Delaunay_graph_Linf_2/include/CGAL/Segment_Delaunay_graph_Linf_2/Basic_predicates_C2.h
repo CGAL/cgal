@@ -728,13 +728,6 @@ public:
 
     const bool eqcmp = cmpxpq == cmpypq;
 
-    const Point_2 corner = eqcmp ?
-      Point_2( pp.x(), qq.y() ) :
-      Point_2( qq.x(), pp.y() ) ;
-
-    Line_2 lqc = compute_line_from_to(qq, corner);
-    Line_2 lcp = compute_line_from_to(corner, pp);
-
     Are_same_points_2 same_points;
     Compare_x_2 cmpx;
     Compare_y_2 cmpy;
@@ -744,16 +737,16 @@ public:
         same_points(p, s.source_site())   ) {
       is_ssrc_positive = false;
     } else {
-      Oriented_side os_lqc_ssrc = oriented_side_of_line(lqc, ssrc);
-      Oriented_side os_lcp_ssrc = oriented_side_of_line(lcp, ssrc);
-      is_ssrc_positive =
-        ((os_lqc_ssrc == ON_POSITIVE_SIDE) and
-         (os_lcp_ssrc == ON_POSITIVE_SIDE)    ) ;
       const bool conflp = eqcmp ?
         (cmpx(pp, ssrc) == cmpxpq) : (cmpy(pp, ssrc) == cmpypq) ;
       const bool conflq = eqcmp ?
         (cmpy(ssrc, qq) == cmpypq) : (cmpx(ssrc, qq) == cmpxpq) ;
-      CGAL_assertion(is_ssrc_positive == (conflp and conflq));
+      is_ssrc_positive = (conflp and conflq);
+    }
+    if (is_ssrc_positive) {
+      CGAL_SDG_DEBUG(std::cout << "debug is_segment_inside_inf_box "
+                     << "src endpoint inside" << std::endl;);
+      return true;
     }
 
     bool is_strg_positive;
@@ -761,27 +754,16 @@ public:
         same_points(p, s.target_site())   ) {
       is_strg_positive = false;
     } else {
-      Oriented_side os_lqc_strg = oriented_side_of_line(lqc, strg);
-      Oriented_side os_lcp_strg = oriented_side_of_line(lcp, strg);
-      is_strg_positive =
-        ((os_lqc_strg == ON_POSITIVE_SIDE) and
-         (os_lcp_strg == ON_POSITIVE_SIDE)    ) ;
       const bool conflp = eqcmp ?
         (cmpx(pp, strg) == cmpxpq) : (cmpy(pp, strg) == cmpypq) ;
       const bool conflq = eqcmp ?
         (cmpy(strg, qq) == cmpypq) : (cmpx(strg, qq) == cmpxpq) ;
-      CGAL_assertion(is_strg_positive == (conflp and conflq));
+      is_strg_positive = (conflp and conflq);
     }
 
-    CGAL_SDG_DEBUG(std::cout << "debug qcp= (" << q << ") (" << corner
-        << ") (" << p << ")"
-        << " isssrcpos=" << is_ssrc_positive
-        << " isstrgpos=" << is_strg_positive
-        << std::endl;);
-
-    if (is_ssrc_positive or is_strg_positive) {
+    if (is_strg_positive) {
       CGAL_SDG_DEBUG(std::cout << "debug is_segment_inside_inf_box "
-                     << "endpoint inside" << std::endl;);
+                     << "trg endpoint inside" << std::endl;);
       return true;
     } else {
       // here you have to check if the interior is inside
@@ -789,37 +771,39 @@ public:
       CGAL_SDG_DEBUG(std::cout << "debug is_segment_inside_inf_box "
                      << "try for interior to be inside" << std::endl;);
 
+      const Point_2 corner = eqcmp ?
+        Point_2( pp.x(), qq.y() ) :
+        Point_2( qq.x(), pp.y() ) ;
+
       // in fact, here you can intersect the segment
       // with the ray starting from corner and going to the
       // direction of the center of the infinite box
 
       const RT one(1);
 
-      Point_2 displaced ( corner.x() + (-cmpypq)*one ,
-                          corner.y() + cmpxpq * one   );
+      const Point_2 displaced ( corner.x() + (-cmpypq)*one ,
+                                corner.y() + cmpxpq * one   );
 
-      Line_2 l = compute_line_from_to(corner, displaced);
+      const Line_2 l = compute_line_from_to(corner, displaced);
 
-      Line_2 lseg = compute_supporting_line(s.supporting_site());
+      const Line_2 lseg = compute_supporting_line(s.supporting_site());
 
       RT hx, hy, hw;
-
       compute_intersection_of_lines(l, lseg, hx, hy, hw);
 
       if (CGAL::sign(hw) == ZERO) {
         return false;
       } else {
-        Point_2 ip ( hx/hw, hy/hw);
-        Oriented_side os_lqc_ip = oriented_side_of_line(lqc, ip);
-        Oriented_side os_lcp_ip = oriented_side_of_line(lcp, ip);
+        const Point_2 ip ( hx, hy, hw );
+        const Line_2 lqc = compute_line_from_to(qq, corner);
+        const Line_2 lcp = compute_line_from_to(corner, pp);
+        const Oriented_side os_lqc_ip = oriented_side_of_line(lqc, ip);
+        const Oriented_side os_lcp_ip = oriented_side_of_line(lcp, ip);
 
-        Compare_x_2 cmpx;
-        Compare_y_2 cmpy;
-
-        Comparison_result cmpxsrcip = cmpx(ssrc, ip);
-        Comparison_result cmpysrcip = cmpy(ssrc, ip);
-        Comparison_result cmpxiptrg = cmpx(ip, strg);
-        Comparison_result cmpyiptrg = cmpy(ip, strg);
+        const Comparison_result cmpxsrcip = cmpx(ssrc, ip);
+        const Comparison_result cmpysrcip = cmpy(ssrc, ip);
+        const Comparison_result cmpxiptrg = cmpx(ip, strg);
+        const Comparison_result cmpyiptrg = cmpy(ip, strg);
 
         // philaris: to check
         Boolean is_ip_inside_segment =
