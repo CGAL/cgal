@@ -317,7 +317,7 @@ private:
 	compare_linf_distances_to_line(lq, p, t1.point());
 
       return ( res == LARGER );
-    }
+    } // end of case: point p is an endpoint of segment t
 
     Line_2 lt = compute_supporting_line(st.supporting_site());
 
