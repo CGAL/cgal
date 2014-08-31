@@ -1875,16 +1875,18 @@ public:
       if (is_p_endp_of_s) {
         if (is_site_horizontal(r) and is_site_horizontal(s)) { return true; }
         if (is_site_vertical(r) and is_site_vertical(s)) { return true; }
-        const bool pos_r = has_positive_slope(r);
-        const bool pos_s = has_positive_slope(s);
-        if (pos_r == pos_s) {
-          const Line_2 l = pos_r ? compute_neg_45_line_at(p.point()) :
-                                   compute_pos_45_line_at(p.point()) ;
-          const Oriented_side osr =
-            oriented_side_of_line(l, is_p_rsrc ? r.target() : r.source());
-          const Oriented_side oss =
-            oriented_side_of_line(l, is_p_ssrc ? s.target() : s.source());
-          if (osr != oss) { return true; }
+        if ((not is_site_h_or_v(r)) and (not is_site_h_or_v(s))) {
+          const bool pos_r = has_positive_slope(r);
+          const bool pos_s = has_positive_slope(s);
+          if (pos_r == pos_s) {
+            const Line_2 l = pos_r ? compute_neg_45_line_at(p.point()) :
+              compute_pos_45_line_at(p.point()) ;
+            const Oriented_side osr =
+              oriented_side_of_line(l, is_p_rsrc ? r.target() : r.source());
+            const Oriented_side oss =
+              oriented_side_of_line(l, is_p_ssrc ? s.target() : s.source());
+            if (osr != oss) { return true; }
+          }
         }
       }
     }
