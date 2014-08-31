@@ -61,11 +61,7 @@ public:
   using Base::intersects_segment_interior_inf_box;
   using Base::intersects_segment_interior_inf_wedge_sp;
   using Base::is_site_h_or_v;
-  using Base::is_site_horizontal;
-  using Base::is_site_vertical;
-  using Base::has_positive_slope;
-  using Base::compute_pos_45_line_at;
-  using Base::compute_neg_45_line_at;
+  using Base::zero_voronoi_area;
 
 
 private:
@@ -252,42 +248,6 @@ private:
   bool check_if_exact(const Site_2& t1, const Tag_true&) const
   {
     return t1.is_input();
-  }
-
-  // Check if point p's Voronoi area has zero area, because point p
-  // is sandwiched between two segments with agreeing slope and
-  // direction. As a result: vpqr and vqps coincide and
-  // is_interior_in_conflict_both_ps_s should return false.
-  bool
-  zero_voronoi_area(const Site_2& p, const Site_2& r, const Site_2& s) const
-  {
-    if (r.is_point() or s.is_point()) { return false; }
-    const bool is_p_rsrc = same_points(p, r.source_site());
-    const bool is_p_rtrg =
-      (not is_p_rsrc) and same_points(p, r.target_site());
-    const bool is_p_endp_of_r = is_p_rsrc or is_p_rtrg;
-    if (is_p_endp_of_r) {
-      const bool is_p_ssrc = same_points(p, s.source_site());
-      const bool is_p_strg =
-        (not is_p_ssrc) and same_points(p, s.target_site());
-      const bool is_p_endp_of_s = is_p_ssrc or is_p_strg;
-      if (is_p_endp_of_s) {
-        if (is_site_horizontal(r) and is_site_horizontal(s)) { return true; }
-        if (is_site_vertical(r) and is_site_vertical(s)) { return true; }
-        const bool pos_r = has_positive_slope(r);
-        const bool pos_s = has_positive_slope(s);
-        if (pos_r == pos_s) {
-          const Line_2 l = pos_r ? compute_neg_45_line_at(p.point()) :
-                                   compute_pos_45_line_at(p.point()) ;
-          const Oriented_side osr =
-            oriented_side_of_line(l, is_p_rsrc ? r.target() : r.source());
-          const Oriented_side oss =
-            oriented_side_of_line(l, is_p_ssrc ? s.target() : s.source());
-          if (osr != oss) { return true; }
-        }
-      }
-    }
-    return false;
   }
 
   Boolean
