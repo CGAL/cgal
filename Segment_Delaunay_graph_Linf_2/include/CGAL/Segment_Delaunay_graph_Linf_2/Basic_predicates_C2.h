@@ -1861,6 +1861,7 @@ public:
   zero_voronoi_area(const Site_2& p, const Site_2& r, const Site_2& s)
   {
     Are_same_points_2 same_points;
+    if (p.is_segment()) { return false; }
     if (r.is_point() or s.is_point()) { return false; }
     const bool is_p_rsrc = same_points(p, r.source_site());
     const bool is_p_rtrg =

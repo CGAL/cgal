@@ -56,6 +56,7 @@ private:
   using Base::compute_horizontal_projection;
   using Base::compute_linf_projection_nonhom;
   using Base::is_site_h_or_v;
+  using Base::zero_voronoi_area;
 
   typedef typename Base::Line_2        Line_2;
 
@@ -68,6 +69,10 @@ public:
         std::cout << "debug infinite-edge-int-cf entering (q,s,r,t,sgn)= "
         << q << ' ' << s << ' ' << r << ' ' << t
         << ' ' << sgn << std::endl;);
+
+    if (sgn == NEGATIVE) {
+      if (zero_voronoi_area(q, s, r)) { return true; }
+    }
 
     if ( t.is_segment() ) {
       if (q.is_point() and s.is_point() and r.is_point()) {
