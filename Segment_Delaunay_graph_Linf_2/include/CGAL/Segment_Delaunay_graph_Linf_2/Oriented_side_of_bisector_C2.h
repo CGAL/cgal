@@ -272,9 +272,11 @@ private:
       CGAL_assertion( idx1 == 0 );
       const std::pair<RT,RT> d2_s1 = compute_linf_distance(qq, ls1);
       if ( idx2 == -1 ) {
+        if (is_endpoint(s2.source_site(), s1)) { return SMALLER; }
         const RT d2_s2 = compute_linf_distance(qq, ssrc2);
         return CGAL::compare(d2_s1.first, d2_s2 * d2_s1.second);
       } else if ( idx2 == 1 ) {
+        if (is_endpoint(s2.target_site(), s1)) { return SMALLER; }
         const RT d2_s2 = compute_linf_distance(qq, strg2);
         return CGAL::compare(d2_s1.first, d2_s2 * d2_s1.second);
       } else {
