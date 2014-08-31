@@ -94,6 +94,10 @@ private:
   {
     Boolean   in_conflict(false);
 
+    if ( zero_voronoi_area(p, r, s) or zero_voronoi_area(q, r, s) ) {
+      return true;
+    }
+
     if ( p.is_point() && q.is_point() ) {
       in_conflict = is_interior_in_conflict_both_pp(p, q, r, s, t, tag);
 
@@ -256,8 +260,6 @@ private:
 				    const Site_2& st, Method_tag ) const
   {
     CGAL_precondition( st.is_segment() );
-
-    if (zero_voronoi_area(sp, r, s)) { return true; }
 
     Point_2 p = sp.point();
     //    Segment_2 q = sq.segment(), t = st.segment();
