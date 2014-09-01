@@ -3064,6 +3064,8 @@ private:
           return POSITIVE;
         }
       }
+    } else {
+      if (is_on_hv_seg_line(t, r)) { return POSITIVE; }
     }
 
     // easy degeneracies --- end
@@ -3072,6 +3074,22 @@ private:
     return incircle_p(vv, p, q, r, t, type);
   }
 
+  // Check if point p is on the line of the axis-parallel segment s.
+  // It returns true only for an axis-parallel segment s argument.
+  inline bool is_on_hv_seg_line(const Site_2 & p, const Site_2 & s) const
+  {
+    CGAL_precondition(p.is_point());
+    CGAL_precondition(s.is_segment());
+    const bool is_hor = is_site_horizontal(s);
+    const bool is_ver = (not is_hor) and is_site_vertical(s);
+    if (is_hor or is_ver) {
+      return ( (is_hor) ?
+               scmpy(p, s.source_site()) : scmpx(p, s.source_site()) )
+          == EQUAL;
+    } else {
+      return false;
+    }
+  }
 
   //--------------------------------------------------------------------------
   // the first three objects are a point and two segments and the query
