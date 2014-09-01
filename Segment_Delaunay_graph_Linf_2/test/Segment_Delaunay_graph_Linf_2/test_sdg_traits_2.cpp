@@ -1361,14 +1361,14 @@ void test_traits(const char* title)
       Point_2(-200, 60),
       Point_2(-200, 20),
       Point_2(0, -40),
-      CGAL::ZERO);
+      CGAL::POSITIVE);
   // t is at the corner of the square along the segment
   test_incircle<Gt>(
       Segment_2(Point_2(0, 0), Point_2(0, 100)),
       Point_2(-200, 60),
       Point_2(-200, 20),
       Point_2(0, -50),
-      CGAL::ZERO);
+      CGAL::POSITIVE);
   //t inside the square
   test_incircle<Gt>(
       Segment_2(Point_2(0, 0), Point_2(0, 100)),
