@@ -1274,22 +1274,22 @@ void test_traits(const char* title)
       Point_2(200, 20),
       Point_2(200, 60),
       Point_2(0, -40),
-      CGAL::ZERO);
+      CGAL::POSITIVE);
   // t is at the corner of the square along the segment
   test_incircle<Gt>(
       Segment_2(Point_2(0, 0), Point_2(0, 100)),
       Point_2(200, 20),
       Point_2(200, 60),
       Point_2(0, -50),
-      CGAL::ZERO);
-  //t inside the square
+      CGAL::POSITIVE);
+  // t is inside the square
   test_incircle<Gt>(
       Segment_2(Point_2(0, 0), Point_2(0, 100)),
       Point_2(200, 20),
       Point_2(200, 60),
       Point_2(50, 40),
       CGAL::NEGATIVE);
-  //t outside the square
+  // t is outside the square
   test_incircle<Gt>(
       Segment_2(Point_2(0, 0), Point_2(0, 100)),
       Point_2(200, 20),
