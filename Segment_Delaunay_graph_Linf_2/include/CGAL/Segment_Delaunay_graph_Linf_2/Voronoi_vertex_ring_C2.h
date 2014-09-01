@@ -94,6 +94,7 @@ public:
   using Base::points_inside_touching_sides_v;
   using Base::center_from_opposite_corners;
   using Base::center_from_same_side_corners;
+  using Base::is_on_hv_seg_line;
 
 private:
   typedef SegmentDelaunayGraph_2::Are_same_points_C2<K>
@@ -1719,6 +1720,15 @@ private:
       ( p_.is_segment() && is_endpoint_of(t, p_) ) ||
       ( q_.is_segment() && is_endpoint_of(t, q_) ) ||
       ( r_.is_segment() && is_endpoint_of(t, r_) )  )
+    {
+      use_result = true;
+      return POSITIVE;
+    }
+
+    if (
+      ( p_.is_segment() and is_on_hv_seg_line(t, p_) ) or
+      ( q_.is_segment() and is_on_hv_seg_line(t, q_) ) or
+      ( r_.is_segment() and is_on_hv_seg_line(t, r_) )  )
     {
       use_result = true;
       return POSITIVE;

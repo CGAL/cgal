@@ -6,6 +6,8 @@
 #include <CGAL/Segment_Delaunay_graph_Linf_2/basic.h>
 #include <CGAL/Segment_Delaunay_graph_2/Are_same_points_C2.h>
 #include <CGAL/Segment_Delaunay_graph_2/Are_same_segments_C2.h>
+#include <CGAL/Segment_Delaunay_graph_2/Compare_x_2.h>
+#include <CGAL/Segment_Delaunay_graph_2/Compare_y_2.h>
 
 #include <CGAL/Polychain_2.h>
 
@@ -50,6 +52,9 @@ public:
   typedef SegmentDelaunayGraph_2::Are_same_points_C2<K>  Are_same_points_2;
   typedef SegmentDelaunayGraph_2::Are_same_segments_C2<K>
           Are_same_segments_2;
+
+  typedef SegmentDelaunayGraph_2::Compare_x_2<K> Compare_x_2_Sites_Type;
+  typedef SegmentDelaunayGraph_2::Compare_y_2<K> Compare_y_2_Sites_Type;
 
   typedef unsigned int Bearing;
 
@@ -1891,6 +1896,25 @@ public:
       }
     }
     return false;
+  }
+
+  // Check if point p is on the line of the axis-parallel segment s.
+  // It returns true only for an axis-parallel segment s argument.
+  static inline bool is_on_hv_seg_line(const Site_2 & p, const Site_2 & s)
+  {
+    CGAL_precondition(p.is_point());
+    CGAL_precondition(s.is_segment());
+    Compare_x_2_Sites_Type scmpx;
+    Compare_y_2_Sites_Type scmpy;
+    const bool is_hor = is_site_horizontal(s);
+    const bool is_ver = (not is_hor) and is_site_vertical(s);
+    if (is_hor or is_ver) {
+      return ( (is_hor) ?
+               scmpy(p, s.source_site()) : scmpx(p, s.source_site()) )
+          == EQUAL;
+    } else {
+      return false;
+    }
   }
 
 
