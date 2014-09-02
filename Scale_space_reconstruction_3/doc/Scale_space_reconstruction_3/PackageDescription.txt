@@ -32,11 +32,11 @@
 
 ## Concepts ##
 
-- `WeightedPCAProjection_3<Kernel>`
+- `WeightedPCAProjection_3`
 
 ## Classes ##
 
-- `CGAL::Scale_space_surface_reconstruction_3<DelaunayTriangulationTraits_3,Boolean_tag,Boolean_tag>`
+- `CGAL::Scale_space_surface_reconstruction_3<DelaunayTriangulationTraits_3,FixedScale,OrderShells,WeightedPCAProjection_3>`
 - `CGAL::Weighted_PCA_projection_3<Kernel>`
 
 */

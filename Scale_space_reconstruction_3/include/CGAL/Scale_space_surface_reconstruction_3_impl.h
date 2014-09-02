@@ -385,7 +385,7 @@ estimate_neighborhood_radius( InputIterator begin, InputIterator end, unsigned i
                                 boost::is_convertible< typename std::iterator_traits<InputIterator>::value_type,
                                                        Point > >::type* ) {
     clear();
-	add_points( begin, end );
+	insert( begin, end );
 	return estimate_neighborhood_radius( neighbors, samples );
 }
 #endif // DOXYGEN_RUNNING
@@ -501,7 +501,7 @@ reconstruct_surface( InputIterator begin, InputIterator end, unsigned int iterat
                                                Point > >::type* = NULL ) {
     // Compute the radius for which the mean ball would contain the required number of neighbors.
     clear();
-    add_points( begin, end );
+    insert( begin, end );
 
     // Smooth the scale space.
     advance_scale_space( iterations );

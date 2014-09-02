@@ -49,9 +49,9 @@ public:
      *  approximation is immediately constructed.
      *
      *  \tparam PointIterator is an input iterator over the point collection.
-     *  The iterator must point to a `Point`.
+     *  The value type of the iterator must be a `Point`.
      *  \tparam WeightIterator is an input iterator over the collection of
-     *  weights. The iterator must point to an `FT`.
+     *  weights. The value type of the iterator must be an `FT`.
      *
      *  \param points_begin is an iterator to the first point.
      *  \param points_end is a past-the-end iterator for the points.

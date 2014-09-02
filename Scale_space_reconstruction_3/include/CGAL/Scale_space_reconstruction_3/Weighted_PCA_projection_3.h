@@ -33,19 +33,23 @@ namespace CGAL {
  *  Version 3.1.2 (or greater) of \ref thirdpartyEigen must be available on the
  *  system.
  *
- *  \tparam GeomTraits the geometric traits class of the input and output. It
- *  must be a model of Kernel with a `RealEmbeddable` FieldNumberType.
+ *  \tparam Kernel the geometric traits class of the input and output. It
+ *  must have a `RealEmbeddable` field number type.
  *
  *  \note Irrespective of the geometric traits class, the projection is
  *  always estimated up to double precision.
  *
  *  \cgalModels `WeightedPCAProjection_3`
  */
-template < class GeomTraits >
+#ifdef DOXYGEN_RUNNING
+template < class Kernel >
+#else // DOXYGEN_RUNNING
+template < class Gt >
+#endif // DOXYGEN_RUNNING
 class Weighted_PCA_projection_3 {
 public:
-	typedef typename GeomTraits::FT         FT;
-	typedef typename GeomTraits::Point_3    Point;
+	typedef typename Gt::FT                             FT;
+	typedef typename Gt::Point_3                        Point;
 
 private:
     typedef Eigen::Matrix<double, 3, Eigen::Dynamic>	Matrix3D;       // 3-by-dynamic double-value matrix.
@@ -73,7 +77,12 @@ public:
 
     /// constructs the weighted least-squares planar approximation of a point set.
     /** Similar to constructing an empty projection and calling
-     *  <code>[set_points(points_begin, points_end, weights_begin, weights_end)](\ref WeightedPCAProjection_3::set_points )</code>
+     *  <code>[set_points(points_begin, points_end, weights_begin)](\ref WeightedPCAProjection_3::set_points )</code>
+     *
+     *  \tparam PointIterator is an input iterator over the point collection.
+     *  The value type of the iterator must be a `Point`.
+     *  \tparam WeightIterator is an input iterator over the collection of
+     *  weights. The value type of the iterator must be an `FT`.
      *
      *  \param points_begin is an iterator to the first point.
      *  \param points_end is a past-the-end oterator for the points.

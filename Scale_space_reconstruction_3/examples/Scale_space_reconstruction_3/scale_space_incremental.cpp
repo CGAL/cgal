@@ -32,7 +32,7 @@ int main(void) {
 	Reconstruction reconstruct( -1 );
 
     // Add the points.
-    reconstruct.add_points( points.begin(), points.end() );
+    reconstruct.insert( points.begin(), points.end() );
 
     // Advance the scale-space several steps.
     // This automatically estimates the scale-space.
