@@ -340,7 +340,7 @@ vertices_in_constraint_end(Constraint_id cid) const;
 
 /*! \name Polyline Simplification
 \cgalAdvancedBegin 
-XXX The polyline simplification algorithm described in Chapter
+The polyline simplification algorithm described in Chapter
 \ref Chapter_2D_Polyline_simplification 
 operates on polyline constraints. The algorithm removes
 vertices of a constraint and at the same time  from the triangulation.
