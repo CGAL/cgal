@@ -17,7 +17,7 @@
 // Author(s):      Thijs van Lankveld
 
     
-/// projects a point orthogonally onto a weighted least-squares planar approximation of a point set.
+/// A concept for projecting a point orthogonally onto a weighted least-squares planar approximation of a point set.
 /** \ingroup PkgScaleSpaceReconstruction3Concepts
  *  \cgalConcept
  *

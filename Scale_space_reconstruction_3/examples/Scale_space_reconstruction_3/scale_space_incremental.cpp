@@ -28,7 +28,8 @@ int main(void) {
 	std::cout << "done: " << points.size() << " points." << std::endl;
     
 	// Construct the reconstruction to estimate the neighborhood radius.
-	Reconstruction reconstruct( 10, 100 );
+    // The -1 indicates the neighborhood radius is not yet set.
+	Reconstruction reconstruct( -1 );
 
     // Add the points.
     reconstruct.add_points( points.begin(), points.end() );
@@ -38,7 +39,7 @@ int main(void) {
     reconstruct.advance_scale_space( 2 );
 
     // Re-estimate the neighborhood radius.
-    reconstruct.estimate_neighborhood_radius();
+    reconstruct.estimate_neighborhood_radius( 10, 100 );
 
     // Advance the scale-space further.
     reconstruct.advance_scale_space( 2 );

@@ -24,11 +24,11 @@ The problem of surface reconstruction from a point sample is ill-defined. Becaus
 
 Given real-world data sets we also have to contend with noise and outliers, small errors in the point location and points that do not sample the surface respectively. These are generally caused by faults in the measurement procedure. Unless we actually know the surface sampled, we cannot determine whether a distinctive point is an outlier, is caused by noise, or samples a detail of the surface.
 
-To overcome these obstacles, we use a scale-space \cgalCite{cgal:dmsl-ssmrp-11}, which models geometry at different scales. For this purpose, a \em scale is an abstraction level of the geometry. At a smaller, finer scale the geometry contains more details. Conversely at a larger, coarser scale the geometry contains less details. The \em scale-space is a model of the geometry at a dynamic scale. We refer to changing to a coarser scale as <em>advancing the scale-space</em>. In case of a point set, less detailed geometry means the points are closer to a smooth surface or this surface is closer to planar.
+To overcome these obstacles, we use a scale-space \cgalCite{cgal:dmsl-ssmrp-11}, which models geometry at different scales. The geometry we model specifically are points and surfaces. For our purpose, a \em scale is an abstraction level of the geometry. At a smaller, finer scale the geometry contains more details. Conversely at a larger, coarser scale the geometry contains less details. The \em scale-space is a model of the geometry at a dynamic scale. We refer to changing to a coarser scale as <em>advancing the scale-space</em>. In case of a point set, less detailed geometry means the points are closer to a smooth surface or this surface is closer to planar.
 
 The scale-space surface reconstruction method is twofold. Firstly, a scale-space of the point set is constructed. Then, a triangulated surface mesh of the points in the scale-space is computed. Neighboring triangles in the mesh have consistent orientation, as expressed using the '<em>right-hand rule</em>' on the ordered vertices of the triangle.
 
-The points maintain their original order in the scale-space. This means it is straightforward to revert the scale-space on the triangulated surface mesh. In essence, the method can reconstruct a smooted surface or a surface interpolating the original points. The only change is whether to apply the index triples to the scale-space or to the original point set.
+The points maintain their original order in the scale-space. This means it is straightforward to revert the scale-space on the triangulated surface mesh. In essence, the method can reconstruct a smoothed surface or a surface interpolating the original points. The only change is whether to apply the index triples to the scale-space or to the original point set.
 
 When applied to the scale-space, the surface mesh is non-self-intersecting. The interior of the triangles cannot pairwise intersect in a line segment. However, the surface does not need to be manifold. An edge may be incident to more than two triangles and triangles may overlap exactly if the regions on both sides of the triangle are not part of the object. Note that we count overlapping triangles with opposite orientations as separate triangles. In many cases where the points sample the surface of an object, the computed surface will contain both an '<em>outward-facing</em>' and a similar '<em>inward-facing</em>' surface, with a thin volume between them.
 
@@ -54,7 +54,7 @@ The method provides access to intermediate results and the user can adjust these
 \subsection ScaleSpaceReconstruction3secParam Parameter Settings
 
 
-The scale-space surface reconstruction method has two main global parameters: the radius of the neighborhood ball and the number of scale-space advancement iterations. If no appropriate neighborhood radius is known, this can be estimated using two more parameters: the mean number of neighbors and the number of samples. We have empirically determined values for each of these parameters that work well on a broad spectrum of data sets. However, we advise to carefully fine-tune these parameters for each new data sets.
+The scale-space surface reconstruction method has two main global parameters: the radius of the neighborhood ball and the number of scale-space advancement iterations. If no appropriate neighborhood radius is known, this can be estimated using two more parameters: the mean number of neighbors and the number of samples. We have empirically determined values for each of these parameters that work well on a broad spectrum of data sets. However, we advise to carefully fine-tune these parameters for each new data set.
 
 The scale-space reconstruction operates locally. Points within a local neighborhood influence each other when advancing the scale-space. Similarly, points near each other in space are more likely to be near each other on the reconstructed surface. Therefore, it is important to have a good indication of which points are near each other. This proximity is expressed in the neighborhood ball radius parameter.
 
@@ -75,7 +75,7 @@ The main class `Scale_space_surface_reconstruction_3` contains all the functiona
 
 The neighborhood size is estimated using Orthogonal_k_neighbor_search. The point set is generally stored in a Orthogonal_k_neighbor_search::Tree. When the neighborhood size is estimated, this tree is searched for nearest neighbors.
 
-The scale-space is computed using a weighted PCA procedure. For this procedure, we use the efficient \ref thirdpartyEigen libraries. Because this procedure is performed locally per point, it is performed with parallel computing when openMP is enabled.
+The scale-space is computed using a weighted PCA procedure. For this procedure, we use the efficient \ref thirdpartyEigen libraries. Because this procedure is performed locally per point, it is performed with parallel computing when Intel TBB is linked.
 
 The mesh reconstruction of the scale-space is performed by filtering an Alpha_shape_3 or Fixed_alpha_shape_3. Which of these is used is captured in the Fixed_scale template parameter of Scale_space_surface_reconstruction_3.
 
@@ -178,7 +178,7 @@ Settings used when running the scale-space method on several data sets. Data set
 
 \cgalFigureRef{chapterScaleSpaceReconstruction3figBenchmarks} shows the number of triangles of the surfaces constructed and the running time for doing so. Half of the data sets are synthetic, the others are constructed by image-based dense reconstruction. The data sets are ordered by size, the synthetic sets mainly making up the smaller ones.
 
-The times were measured on a 64-bit Windows 7 system with 8 2.5GHz Intel processors and 16GB RAM. The scale-space constructions employ parallel computing using openMP. The smaller data sets use roughly 0.1GB of memory, but the largest data sets have a peak usage of 10.5GB during the meshing step. For this benchmark we used the Exact_predicates_inexact_constructions_kernel kernel, Fixed_scale enabled, and Shells disabled.14
+The times were measured on a 64-bit Windows 7 system with 8 2.5GHz Intel processors and 16GB RAM. The scale-space constructions employ parallel computing using Intel TBB. The smaller data sets use roughly 0.1GB of memory, but the largest data sets have a peak usage of 10.5GB during the meshing step. For this benchmark we used the Exact_predicates_inexact_constructions_kernel kernel, Fixed_scale enabled, and Shells disabled.14
 
 \cgalFigureAnchor{chapterScaleSpaceReconstruction3figBenchmarks}
 <center>
@@ -220,7 +220,7 @@ This first example shows how to read a point set from a file, reconstruct the su
 
 \cgalExample{Scale_space_reconstruction_3/scale_space.cpp}
 
-The next example shows how to perform the reconstruction step-by-step and how to change the parameters between steps.
+The next example shows how to perform the reconstruction step-by-step and how to change the parameters between steps. Each parameter can be changed between steps by calling the specific *set_* method. An example of this is given by the call to <code>set_neighborhood_squared_radius( 0.05 )</code>. Alternatively, they can be adjusted before performing a method by calling the method with parameters. An example is given by the call to <code>estimate_neighborhood_radius( 10, 100 )</code>.
 
 \cgalExample{Scale_space_reconstruction_3/scale_space_incremental.cpp}
 

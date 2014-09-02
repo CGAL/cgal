@@ -36,6 +36,10 @@
 #include <CGAL/Scale_space_reconstruction_3/internal/check3264.h>
 #include <CGAL/Scale_space_reconstruction_3/Shape_construction_3.h>
 
+#include <CGAL/Scale_space_reconstruction_3/Weighted_PCA_projection_3.h>
+
+#include <boost/mpl/and.hpp>
+
 namespace CGAL {
 
 /// computes a triangulated surface mesh interpolating a point set.
@@ -51,9 +55,9 @@ namespace CGAL {
  * 
  *  The points maintain their original order in the scale-space. This means it
  *  is straightforward to revert the scale-space on the triangulated surface
- *  mesh. In essence, the method can reconstruct a smooted surface or a surface
- *  interpolating the original points. The only change is whether to apply the
- *  index triples to the scale-space or to the original point set.
+ *  mesh. In essence, the method can reconstruct a smoothed surface or a
+ *  surface interpolating the original points. The only change is whether to
+ *  apply the index triples to the scale-space or to the original point set.
  *
  *  When applied to the scale-space, the surface mesh is non-self-intersecting.
  *  The interior of the triangles cannot pairwise intersect in a line segment.
@@ -101,7 +105,6 @@ namespace CGAL {
  *  smaller than the neighborhood size, the scale is coarse enough for mesh
  *  reconstruction after a few iterations of advancing the scale-space.
  *
- *  For the PCA procedure, we use a `Weighted_PCA_projection_3<GeomTraits>`.
  *  The mesh reconstruction of the scale-space is performed by filtering a 3D
  *  \f$ \alpha \f$-shape. The result is returned as a collection of triples on
  *  the indices of the points of the surface triangles. Recall that this
@@ -152,22 +155,22 @@ namespace CGAL {
  *  surface where connected facets are locally oriented towards the same side
  *  of the surface.
  *  
- *  \tparam GeomTraits is the geometric traits class. It must be a model of
- *  `DelaunayTriangulationTraits_3`. Generally,
- *  `Exact_predicates_inexact_constructions_kernel` is preferred.
+ *  \tparam DelaunayTriangulationTraits_3 is the geometric traits class.
+ *  Generally, `Exact_predicates_inexact_constructions_kernel` is preferred.
  *  \tparam FixedScale determines whether the shape is constructed at a fixed
  *  scale. It must be a `Boolean_tag` type. The default value is `Tag_true`.
- *  \tparam OrderShells determines whether to collect the surface per shell. It must
- *  be a `Boolean_tag` type. The default value is `Tag_true`.
+ *  \tparam OrderShells determines whether to collect the surface per shell. It
+ *  must be a `Boolean_tag` type. The default value is `Tag_true`.
+ *  \tparam WeightedPCAProjection_3 is the type of weighted PCA to use. The
+ *  default value is `Weighted_PCA_projection_3<DelaunayTriangulationTraits_3>`.
  */
 #ifdef DOXYGEN_RUNNING
-template < class GeomTraits, class FixedScale, class OrderShells >
+template < class DelaunayTriangulationTraits_3, class FixedScale, class OrderShells, class WeightedPCAProjection_3 >
 #else
-template < class Gt, class FS = Tag_true, class OS = Tag_true, class Ct = Parallel_tag >
+template < class Gt, class FS = Tag_true, class OS = Tag_true, class Ct = Parallel_tag, class WPCA = Weighted_PCA_projection_3< Gt > >
 #endif
 class Scale_space_surface_reconstruction_3 {
 public:
-    typedef Gt                                          GeomTraits;
     typedef FS                                          FixedScale;
     typedef OS                                          OrderShells;
     typedef Ct                                          Concurrency_tag;
@@ -208,15 +211,20 @@ private:
 public:
 /// \name Types
 /// \{
-    typedef typename Gt::FT                             FT;                     ///< defines the number field type.
-
-	typedef typename Gt::Point_3                        Point;                  ///< defines the point type.
-	typedef typename Gt::Triangle_3                     Triangle;               ///< defines the triangle type.
-
 #ifdef DOXYGEN_RUNNING
+    typedef typename DelaunayTriangulationTraits_3::FT          FT;             ///< defines the number field type.
+
+	typedef typename DelaunayTriangulationTraits_3::Point_3     Point;          ///< defines the point type.
+	typedef typename DelaunayTriangulationTraits_3::Triangle_3  Triangle;       ///< defines the triangle type.
+
     typedef unspecified_type                            Point_iterator;         ///< defines an iterator over the points.
     typedef const unspecified_type                      Const_point_iterator;   ///< defines a constant iterator over the points.
 #else // DOXYGEN_RUNNING
+    typedef typename Gt::FT                             FT;
+
+	typedef typename Gt::Point_3                        Point;
+	typedef typename Gt::Triangle_3                     Triangle;
+
     typedef typename Search_tree::iterator              Point_iterator;
     typedef typename Search_tree::const_iterator        Const_point_iterator;
 #endif // DOXYGEN_RUNNING
@@ -381,7 +389,14 @@ public:
      *  \sa `reconstruct_surface(InputIterator begin, InputIterator end, unsigned int iterations)`.
      */
 	template < class InputIterator >
+#ifdef DOXYGEN_RUNNING
 	void add_points( InputIterator begin, InputIterator end ) {
+#else // DOXYGEN_RUNNING
+	void add_points( InputIterator begin, InputIterator end,
+                     typename boost::enable_if<
+                        boost::is_convertible< typename std::iterator_traits<InputIterator>::value_type,
+                                               Point > >::type* = NULL ) {
+#endif // DOXYGEN_RUNNING
 		_tree.insert( begin, end );
 	}
     
@@ -622,7 +637,14 @@ public:
      *  \sa `reconstruct_surface(InputIterator begin, InputIterator end, unsigned int iterations)`.
      */
 	template < class InputIterator >
+#ifdef DOXYGEN_RUNNING
     FT estimate_neighborhood_radius( InputIterator begin, InputIterator end ) {
+#else // DOXYGEN_RUNNING
+    FT estimate_neighborhood_radius( InputIterator begin, InputIterator end,
+                     typename boost::enable_if<
+                        boost::is_convertible< typename std::iterator_traits<InputIterator>::value_type,
+                                               Point > >::type* = NULL ) {
+#endif // DOXYGEN_RUNNING
         return estimate_neighborhood_radius( begin, end, mean_number_of_neighbors(), neighborhood_sample_size() );
     }
     
@@ -654,7 +676,14 @@ public:
      *  \sa `estimate_neighborhood_radius(unsigned int neighbors, unsigned int samples)`.
      */
 	template < class InputIterator >
+#ifdef DOXYGEN_RUNNING
 	FT estimate_neighborhood_radius( InputIterator begin, InputIterator end, unsigned int neighbors, unsigned int samples );
+#else // DOXYGEN_RUNNING
+	FT estimate_neighborhood_radius( InputIterator begin, InputIterator end, unsigned int neighbors, unsigned int samples,
+                                     typename boost::enable_if<
+                                        boost::is_convertible< typename std::iterator_traits<InputIterator>::value_type,
+                                                               Point > >::type* = NULL );
+#endif // DOXYGEN_RUNNING
 
 /// \}
     
@@ -710,7 +739,14 @@ public:
      *  \sa `reconstruct_surface(InputIterator begin, InputIterator end, unsigned int iterations)`.
      */
 	template < class InputIterator >
+#ifdef DOXYGEN_RUNNING
 	void construct_scale_space( InputIterator begin, InputIterator end, unsigned int iterations = 1 ) {
+#else // DOXYGEN_RUNNING
+	void construct_scale_space( InputIterator begin, InputIterator end, unsigned int iterations = 1,
+                                     typename boost::enable_if<
+                                        boost::is_convertible< typename std::iterator_traits<InputIterator>::value_type,
+                                                               Point > >::type* = NULL ) {
+#endif // DOXYGEN_RUNNING
         clear();
 		add_points( begin, end );
 		advance_scale_space( iterations );
@@ -779,7 +815,14 @@ private:
      *  \sa `is_constructed()`.
      */
 	template < class InputIterator >
+#ifdef DOXYGEN_RUNNING
 	void construct_shape( InputIterator begin, InputIterator end );
+#else // DOXYGEN_RUNNING
+	void construct_shape( InputIterator begin, InputIterator end,
+                                     typename boost::enable_if<
+                                        boost::is_convertible< typename std::iterator_traits<InputIterator>::value_type,
+                                                               Point > >::type* = NULL );
+#endif // DOXYGEN_RUNNING
     
     // collects the surface mesh from the shape.
     // If the sahep does not yet exist, it is constructed.
@@ -846,7 +889,14 @@ public:
      *  \sa `construct_scale_space(InputIterator begin, InputIterator end, unsigned int iterations)`.
      */
 	template < class InputIterator >
+#ifdef DOXYGEN_RUNNING
 	void reconstruct_surface( InputIterator begin, InputIterator end, unsigned int iterations = 0 );
+#else // DOXYGEN_RUNNING
+	void reconstruct_surface( InputIterator begin, InputIterator end, unsigned int iterations = 0,
+                                     typename boost::enable_if<
+                                        boost::is_convertible< typename std::iterator_traits<InputIterator>::value_type,
+                                                               Point > >::type* = NULL );
+#endif // DOXYGEN_RUNNING
 
 /// \}
 
