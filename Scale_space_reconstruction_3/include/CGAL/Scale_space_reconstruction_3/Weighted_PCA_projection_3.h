@@ -34,7 +34,7 @@ namespace CGAL {
  *  system.
  *
  *  \tparam GeomTraits the geometric traits class of the input and output. It
- *  must be a model of Kernel with a RealEmbeddable FieldNumberType.
+ *  must be a model of Kernel with a `RealEmbeddable` FieldNumberType.
  *
  *  \note Irrespective of the geometric traits class, the projection is
  *  always estimated up to double precision.

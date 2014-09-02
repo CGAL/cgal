@@ -54,7 +54,7 @@ public:
      *  weights. The iterator must point to an `FT`.
      *
      *  \param points_begin is an iterator to the first point.
-     *  \param points_end is a past-the-end oterator for the points.
+     *  \param points_end is a past-the-end iterator for the points.
      *  \param weights_begin is an iterator to the weight of the first point.
      *
      *  \return whether the approximation converges. If the approximation does

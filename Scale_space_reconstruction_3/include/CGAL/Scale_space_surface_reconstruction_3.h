@@ -731,7 +731,7 @@ public:
      *  \param begin is an iterator to the first point of the collection.
      *  \param end is a past-the-end iterator for the point collection.
      *  \param iterations is the number of iterations to perform. If
-     *  `iteations` is 0, nothing happens.
+     *  `iterations` is 0, nothing happens.
      *
      *  \sa `add_points(InputIterator begin, InputIterator end)`.
      *  \sa `estimate_neighborhood_radius(InputIterator begin, InputIterator end)`.
