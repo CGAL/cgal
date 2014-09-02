@@ -195,7 +195,7 @@ public:
     cto = full_cells_begin();
     while( cto != full_cells_end() )
     {
-      for( int i = 0; i <= current_dimension(); ++i )
+      for( int i = 0; i <= (std::max)(0, current_dimension()); ++i )
       {
         associate_vertex_with_full_cell(cto, i, vmap[cto->vertex(i)]);
         cto->set_neighbor(i, cmap[cto->neighbor(i)]);
