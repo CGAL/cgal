@@ -337,8 +337,10 @@ vertices_in_constraint_end(Constraint_id cid) const;
 
 /// @}
 
+
 /*! \name Polyline Simplification
- The polyline simplification algorithm described in Chapter
+\cgalAdvancedBegin 
+XXX The polyline simplification algorithm described in Chapter
 \ref Chapter_2D_Polyline_simplification 
 operates on polyline constraints. The algorithm removes
 vertices of a constraint and at the same time  from the triangulation.
@@ -349,19 +351,23 @@ introduced by the simplification process by comparing the
 current sequence (vertices) to the original sequence (points).
 
 The simplification algorithm uses the following types and functions.
+\cgalAdvancedEnd
 */
 
 /// @{
 
 /*!
+\cgalAdvancedBegin
 An iterator on the points of the chain of sub-constraints representing a
 constraint. The value type of this iterator is `Point`.
 A \link Constrained_triangulation_plus_2::Vertices_in_constraint_iterator `Vertices_in_constraint_iterator`\endlink can be converted into
 a `Points_in_constraint_iterator`, but not the other way round.
+\cgalAdvancedEnd
 */
 typedef unspecified_type Points_in_constraint_iterator;
 
-/*! 
+/*!
+\cgalAdvancedBegin
 Removes the vertex at `vicq` from the constraint and the triangulation.
 Only the vertex but not the point is removed from the constraint `cid`.
 \pre The vertices `vicp`, `vicq`, and `vicr` must be three successive 
@@ -369,6 +375,7 @@ vertices in a constraint.
 \pre No other constraint must pass through `vicq`.
 \pre The line segment between `vicp` and `vicr` must not intersect any constraint.
 \pre All vertices of the triangulation must be a vertex of a constaint.
+\cgalAdvancedEnd
  */
 
 void
@@ -377,14 +384,18 @@ void
            Vertices_in_constraint_iterator vicr);
 
 /*!
+\cgalAdvancedBegin
 Removes the points that were kept in the constraint `cid`.
+\cgalAdvancedEnd
 */
 size_type
 remove_points_from_constraint(Constraint_id cid);
 
 
 /*!
+\cgalAdvancedBegin
 Removes the points that were kept in the constraints.
+\cgalAdvancedEnd
  */
 void
 remove_points_from_constraints();

@@ -95,7 +95,7 @@ int main( )
   polygon2.push_back(Point(1.5,1.5));
   polygon2.push_back(Point(0.5,1.5));
   
-  //Insert the polyons into a constrained triangulation
+  //Insert the polygons into a constrained triangulation
   CDT cdt;
   cdt.insert_constraint(polygon1.vertices_begin(), polygon1.vertices_end(), true);
   cdt.insert_constraint(polygon2.vertices_begin(), polygon2.vertices_end(), true);
