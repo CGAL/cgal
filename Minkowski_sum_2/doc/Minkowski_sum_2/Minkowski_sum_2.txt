@@ -7,7 +7,7 @@ namespace CGAL {
 \anchor chapterMinkowskisum2
 
 \cgalAutoToc
-\author Ron Wein
+\authors Ron Wein and Efi Fogel
 
 \section mink_secintro Introduction
 
@@ -523,12 +523,28 @@ offsets of the holes of \f$ P\f$. The former polygon defines the output
 boundary of \f$ P \oplus B_r\f$, and the latter define the holes within
 the result.
 
-\section Minkowski_sum_2Acknowledgements Acknowledgements
-
-Andreas Fabri and Laurent Rineau helped tracing and solving several bugs in
-the approximated offset function. They have also suggested a few algorithmic
-improvements that made their way into version 3.4, yielding a faster approximation
-scheme.
+\section Minkoski_sum_2Design Design and Implementation History
+Eyal flato set the ground for the this package around the end of the previous
+millennium with his research work about Minkowski sum construction using the
+decomposition approach. However, it was only a few years later when Ron Wein
+developed the first version of this package, which was introduced with
+release 3.3. The first version of the package contained functionality for
+computeing the Minkowski sum of two polygons, computing the offset of
+a polygon by a disk, and approximating the offset of a polygon by a disk.
+Release 3.4 contained an enhancement of the offset computation, which allowed
+for polygon with holes as operands. Release 3.4 also featured new functionality
+for computing the inner offset of a polygon and approximating the inner offset.
+All this was also developed by Ron Wein. Release 3.7 contained an enhancement
+of the offset approximation for degenerate polygons such as line segments. This
+enhancement was developed by Efi Fogel, who also developed a new decomposition
+strategy, which can handle polygons with holes, essentially enabling the
+computation of Minkowski sum of two polygons with holes using the decomposition
+approach. The later was introduced with release 4.6. Ron Wein, Efi Fogel,
+Ophir Setter, Andreas Fabri, and Laurent Rineau helped maintaining the package
+applying bug fixes and other improvements. In particular, Andreas Fabri and
+Laurent Rineau helped tracing and solving several bugs in the approximated
+offset computation. They have also suggested a few algorithmic improvements
+that made their way into version 3.4, yielding a faster approximation scheme.
 
 */
 } /* namespace CGAL */
