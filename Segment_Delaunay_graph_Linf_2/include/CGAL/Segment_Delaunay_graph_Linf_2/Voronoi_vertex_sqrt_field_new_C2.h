@@ -1648,6 +1648,39 @@ private:
 
   inline
   FT
+  linf_radius_pps(const Point_2& vv,
+                  const Site_2& p, const Site_2& q,
+                  const bool is_dx_max,
+                  const FT & diffdvtx, const FT & diffdvty
+                 ) const
+  {
+    CGAL_precondition( p.is_point() );
+    CGAL_precondition( q.is_point() );
+
+    const Sign sgnmaxdiff = CGAL::sign( is_dx_max ? diffdvtx : diffdvty );
+
+    const Point_2 qq = q.point();
+    const FT diffdvqx = vv.x() - qq.x();
+    const FT diffdvqy = vv.y() - qq.y();
+    const FT absdvqx = CGAL::abs(diffdvqx);
+    const FT absdvqy = CGAL::abs(diffdvqy);
+    const bool q_dx_max = CGAL::compare(absdvqx, absdvqy) == LARGER;
+    if (is_dx_max == q_dx_max) {
+      if (CGAL::sign( q_dx_max ? diffdvqx : diffdvqy ) == sgnmaxdiff) {
+        return q_dx_max ? absdvqx : absdvqy;
+      }
+    }
+
+    const Point_2 pp = p.point();
+    const FT diffdvpx = vv.x() - pp.x();
+    const FT diffdvpy = vv.y() - pp.y();
+    const FT absdvpx = CGAL::abs(diffdvpx);
+    const FT absdvpy = CGAL::abs(diffdvpy);
+    return CGAL::max(absdvpx, absdvpy);
+  }
+
+  inline
+  FT
   linf_radius(const Point_2& vv,
 		 const Site_2& p, const Site_2& q, const Site_2& r,
 		 const SSS_Type&) const
@@ -2476,18 +2509,19 @@ private:
     // p segment implies q segment
     CGAL_assertion(p.is_point() or q.is_segment());
 
-    Point_2 tt = t.point();
-    FT diffdvtx = vv.x() - tt.x();
-    FT diffdvty = vv.y() - tt.y();
+    const Point_2 tt = t.point();
+    const FT diffdvtx = vv.x() - tt.x();
+    const FT diffdvty = vv.y() - tt.y();
 
     CGAL_SDG_DEBUG(std::cout << "debug diffdvtx=" << diffdvtx
       << " diffdvty=" << diffdvty << std::endl;);
 
-    FT absdvtx = CGAL::abs(diffdvtx);
-    FT absdvty = CGAL::abs(diffdvty);
-
-    FT d = CGAL::max(absdvtx, absdvty);
-    FT radius = linf_radius(vv, p, q, r, type);
+    const FT absdvtx = CGAL::abs(diffdvtx);
+    const FT absdvty = CGAL::abs(diffdvty);
+    const bool is_dx_max = CGAL::compare(absdvtx, absdvty) == LARGER;
+    const FT d = is_dx_max ? absdvtx : absdvty;
+    const FT radius = q.is_segment() ? linf_radius(vv, p, q, r, type)
+              : linf_radius_pps(vv, p, q, is_dx_max, diffdvtx, diffdvty) ;
 
     Comparison_result crude = CGAL::compare(d, radius);
 
