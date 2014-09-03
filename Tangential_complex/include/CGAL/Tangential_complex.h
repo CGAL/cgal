@@ -28,7 +28,12 @@
 #include <CGAL/Regular_triangulation_euclidean_traits.h>
 #include <CGAL/Regular_triangulation.h>
 
+#include <CGAL/IO/Triangulation_off_ostream.h> // CJTODO TEMP
+
 #include <vector>
+#include <utility>
+#include <sstream>
+#include <iostream>
 
 namespace CGAL {
   
@@ -36,8 +41,21 @@ namespace CGAL {
 template <
   typename Kernel, 
   int Intrinsic_dimension,
-  typename Tr = Regular_triangulation<Regular_triangulation_euclidean_traits<
-                  CGAL::Epick_d<Dimension_tag<Intrinsic_dimension> > > >
+  typename Tr = Regular_triangulation
+  <
+    Regular_triangulation_euclidean_traits<
+      Epick_d<Dimension_tag<Intrinsic_dimension> > >,
+
+    Triangulation_data_structure
+    <
+      typename Regular_triangulation_euclidean_traits<
+        Epick_d<Dimension_tag<Intrinsic_dimension> > >::Dimension,
+      Triangulation_vertex<Regular_triangulation_euclidean_traits<
+        Epick_d<Dimension_tag<Intrinsic_dimension> > >, std::size_t >,
+      Triangulation_full_cell<Regular_triangulation_euclidean_traits<
+        Epick_d<Dimension_tag<Intrinsic_dimension> > > >
+    >
+  >
 >
 class Tangential_complex
 {
@@ -46,25 +64,28 @@ class Tangential_complex
   typedef typename Kernel::Vector_d                 Vector;
 
   typedef Tr                                        Triangulation;
+  typedef typename Triangulation::Geom_traits       Tr_traits;
   typedef typename Triangulation::Point             Tr_point;
   typedef typename Triangulation::Bare_point        Tr_bare_point;
   typedef typename Triangulation::Vertex_handle     Tr_vertex_handle;
+  typedef typename Triangulation::Full_cell_handle  Tr_full_cell_handle;
   
   typedef typename std::vector<Vector>              Tangent_space_base;
 
+  typedef std::pair<Triangulation,Tr_vertex_handle> Tr_and_VH;
   typedef typename std::vector<Point>               Point_container;
-  typedef typename std::vector<Triangulation>       Tr_container;
+  typedef typename std::vector<Tr_and_VH>           Tr_container;
   typedef typename std::vector<Tangent_space_base>  TS_container;
 
   // Stores the index of the original Point in the ambient space
-  struct Tr_point_with_index 
+  /*struct Tr_point_with_index 
   : public Tr_point
   {
     Tr_point_with_index(const Tr_point &p, std::size_t i)
       : Tr_point(p), index(i) {}
 
     std::size_t index;
-  };
+  };*/
 
 public:
   /// Constructor
@@ -80,40 +101,165 @@ public:
 
   void compute_tangential_complex()
   {
+    Tr_traits traits; // CJTODO: use the Triangulation's traits instance
+
+    // We need to do that because we don't want the container to copy the
+    // already-computed triangulations (while resizing) since it would
+    // invalidate the vertex handles stored beside the triangulations
+    m_triangulations.reserve(m_points.size());
+    m_tangent_spaces.reserve(m_points.size());
+
     Point_container::const_iterator it_p = m_points.begin();
     Point_container::const_iterator it_p_end = m_points.end();
     // For each point p in ambient space
     for (std::size_t i = 0 ; it_p != it_p_end ; ++it_p, ++i)
     {
-      m_triangulations.push_back(Triangulation(Intrinsic_dimension));
-      Triangulation &local_tr = m_triangulations.back();
+      m_triangulations.push_back(std::make_pair(
+        Triangulation(Intrinsic_dimension),
+        Tr_vertex_handle()));
+      Triangulation &local_tr = m_triangulations.back().first;
+      Tr_vertex_handle &center_vertex = m_triangulations.back().second;
 
       // Estimate the tangent space
-      Tangent_space_base ts = compute_tangential_space(*it_p);
+      m_tangent_spaces.push_back(compute_tangent_space(*it_p));
       
-      // Insert p
-      Tr_point wp = project_point(*it_p, ts);
-      Tr_point_with_index tpwi(wp, i);
-      Tr_vertex_handle vh = local_tr.insert(tpwi);
-
+      //***************************************************
       // Build a minimal triangulation in the tangent space
       // (we only need the star of p)
+      //***************************************************
+
+      // First, compute the projected points
+      std::vector<Tr_point> projected_points;
+      FT max_squared_weight = 0;
+      projected_points.reserve(m_points.size() - 1);
       Point_container::const_iterator it2_p = m_points.begin();
       for (std::size_t j = 0 ; it2_p != it_p_end ; ++it2_p, ++j)
       {
         // ith point = p, which is already inserted
         if (j != i)
         {
-          Tr_point wp = project_point(*it2_p, ts);
-          Tr_point_with_index tpwi(wp, j);
-          local_tr.insert_if_in_star(tpwi, vh);
+          Tr_point wp = project_point(*it2_p, *it_p, m_tangent_spaces.back());
+          projected_points.push_back(wp);
+          FT w = traits.point_weight_d_object()(wp);
+          if (w > max_squared_weight)
+            max_squared_weight = w;
         }
       }
+
+      // Now we can insert the points
+      
+      // Insert p
+      Tr_point wp = traits.construct_weighted_point_d_object()(
+        traits.construct_point_d_object()(0, 0),
+        CGAL::sqrt(max_squared_weight));
+      center_vertex = local_tr.insert(wp);
+      center_vertex->data() = i;
+
+      // Insert the other points
+      std::vector<Tr_point>::const_iterator it_wp = projected_points.begin();
+      it2_p = m_points.begin();
+      for (std::size_t j = 0 ; it2_p != it_p_end ; ++it2_p, ++j)
+      {
+        // ith point = p, which is already inserted
+        if (j != i)
+        {
+          FT w = CGAL::sqrt(max_squared_weight - traits.point_weight_d_object()(*it_wp));
+          std::cerr << w << std::endl;
+          Tr_point wp = traits.construct_weighted_point_d_object()(
+            traits.point_drop_weight_d_object()(*it_wp),
+            w);
+          /*Tr_bare_point bp = traits.point_drop_weight_d_object()(*it_wp);
+          Tr_point wp(traits.point_drop_weight_d_object()(*it_wp), w);*/
+          
+          Tr_vertex_handle vh = local_tr.insert_if_in_star(wp, center_vertex);
+          if (vh != Tr_vertex_handle())
+            vh->data() = j;
+          ++it_wp;
+        }
+      }
+      
+      // CJTODO
+      std::cerr << "\nChecking topology and geometry..."
+                << (local_tr.is_valid(true) ? "OK.\n" : "Error.\n");
+      std::stringstream sstr;
+      sstr << "data/local_tri_" << i << ".off";
+      std::ofstream off_stream_tr(sstr.str());
+      CGAL::export_triangulation_to_off(off_stream_tr, local_tr);
     }
   }
 
+  std::ostream &export_to_off(std::ostream & os)
+  {
+    const int ambient_dim = Ambient_dimension<Point>::value;
+    if (ambient_dim < 2 || ambient_dim > 3)
+    {
+      std::cerr << "Error: export_to_off => ambient dimension should be 2 or 3.";
+      os << "Error: export_to_off => ambient dimension should be 2 or 3.";
+      return os;
+    }
+
+    if (Intrinsic_dimension < 1 || Intrinsic_dimension > 3)
+    {
+      std::cerr << "Error: export_to_off => intrinsic dimension should be between 1 and 3.";
+      os << "Error: export_to_off => intrinsic dimension should be between 1 and 3.";
+      return os;
+    }
+
+    std::stringstream output;
+
+    //******** VERTICES ************
+
+    Point_container::const_iterator it_p = m_points.begin();
+    Point_container::const_iterator it_p_end = m_points.end();
+    // For each point p
+    for ( ; it_p != it_p_end ; ++it_p)
+    {
+      int i = 0;
+      for ( ; i < ambient_dim ; ++i)
+        output << (*it_p)[i] << " ";
+      if (i == 2)
+        output << "0";
+      output << std::endl;
+    }
+
+    //******** CELLS ************
+
+    std::size_t num_cells = 0;
+    Tr_container::const_iterator it_tr = m_triangulations.begin();
+    Tr_container::const_iterator it_tr_end = m_triangulations.end();
+    // For each triangulation
+    for ( ; it_tr != it_tr_end ; ++it_tr)
+    {
+      const Triangulation &tr = it_tr->first;
+      Tr_vertex_handle center_vh = it_tr->second;
+
+      std::vector<Tr_full_cell_handle> incident_cells;
+      tr.incident_full_cells(center_vh, std::back_inserter(incident_cells));
+
+      std::vector<Tr_full_cell_handle>::const_iterator it_c = incident_cells.begin();
+      std::vector<Tr_full_cell_handle>::const_iterator it_c_end= incident_cells.end();
+      // For each triangulation
+      for ( ; it_c != it_c_end ; ++it_c)
+      {
+        output << Intrinsic_dimension + 1 << " ";
+        for (int i = 0 ; i < Intrinsic_dimension + 1 ; ++i)
+          output << (*it_c)->vertex(i)->data() << " ";
+        output << std::endl;
+        ++num_cells;
+      }
+    }
+    
+    os << "OFF \n"
+       << m_points.size() << " " 
+       << num_cells << " "
+       << "0 \n"
+       << output.str();
+
+    return os;
+  }
+
 private:
-  Tangent_space_base compute_tangential_space(const Point &p) const
+  Tangent_space_base compute_tangent_space(const Point &p) const
   {
     Tangent_space_base ts;
     ts.reserve(Intrinsic_dimension);
@@ -143,26 +289,44 @@ private:
     return ts;
   }
 
-  Tr_point project_point(const Point &p, const Tangent_space_base &ts) const
+  // Project the point in the tangent space
+  // The weight will be the squared distance between p and the projection of p
+  Tr_point project_point(const Point &p, const Point &origin, 
+                         const Tangent_space_base &ts) const
   {
+    Kernel k;
+    Get_functor<Kernel, Scalar_product_tag>::type inner_pdct(k);
+    Get_functor<Kernel, Difference_of_points_tag>::type diff_points(k);
+  
     std::vector<FT> coords;
+    // Ambiant-space coords of the projected point
+    std::vector<FT> p_proj(Ambient_dimension<Point>::value, 0);
     coords.reserve(Intrinsic_dimension);
     for (std::size_t i = 0 ; i < Intrinsic_dimension ; ++i)
     {
       //coords[i] = Kernel().point_to_vector_d_object()(p) * ts[i]; // CJTODO: use that
-      Kernel k;
-      Get_functor<Kernel, Scalar_product_tag>::type scp(k);
-      coords.push_back(scp(k.point_to_vector_d_object()(p), ts[i]));
+      // Compute the inner product p * ts[i]
+      Vector v = diff_points(p, origin);
+      FT coord = inner_pdct(v, ts[i]);
+      coords.push_back(coord);
+
+      // p_proj += coord * v;
+      for (int i = 0 ; i < Ambient_dimension<Point>::value ; ++i)
+        p_proj[i] += coord * v[i];
     }
 
+    Point projected_pt(Ambient_dimension<Point>::value, 
+                       p_proj.begin(), p_proj.end());
     return Tr_point(
-      Tr_bare_point(Intrinsic_dimension, coords.begin(), coords.end()), 0); // CJTODO: poids
+      Tr_bare_point(Intrinsic_dimension, coords.begin(), coords.end()), 
+      k.squared_distance_d_object()(p, projected_pt));
   }
 
 private:
   Point_container     m_points;
   TS_container        m_tangent_spaces;
-  Tr_container        m_triangulations;
+  Tr_container        m_triangulations; // Contains the triangulations 
+                                        // and their center vertex
 
 }; // /class Tangential_complex
 
