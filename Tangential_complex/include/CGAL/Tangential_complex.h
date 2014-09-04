@@ -64,7 +64,6 @@ class Tangential_complex
   typedef typename Kernel::Vector_d                 Vector;
 
   typedef Tr                                        Triangulation;
-  typedef typename Triangulation::Geom_traits       Tr_traits;
   typedef typename Triangulation::Point             Tr_point;
   typedef typename Triangulation::Bare_point        Tr_bare_point;
   typedef typename Triangulation::Vertex_handle     Tr_vertex_handle;
@@ -89,20 +88,20 @@ class Tangential_complex
 
 public:
   /// Constructor
-  Tangential_complex() {}
+  Tangential_complex(const Kernel &k = Kernel())
+  : m_k(k){}
   
   /// Constructor for a range of points
   template <typename InputIterator>
-  Tangential_complex(InputIterator first, InputIterator last)
-  : m_points(first, last) {}
+  Tangential_complex(InputIterator first, InputIterator last, 
+                     const Kernel &k = Kernel())
+  : m_k(k), m_points(first, last) {}
 
   /// Destructor
   ~Tangential_complex() {}
 
   void compute_tangential_complex()
   {
-    Tr_traits traits; // CJTODO: use the Triangulation's traits instance
-
     // We need to do that because we don't want the container to copy the
     // already-computed triangulations (while resizing) since it would
     // invalidate the vertex handles stored beside the triangulations
@@ -118,6 +117,7 @@ public:
         Triangulation(Intrinsic_dimension),
         Tr_vertex_handle()));
       Triangulation &local_tr = m_triangulations.back().first;
+      const Geom_traits &local_tr_traits = local_tr.geom_traits();
       Tr_vertex_handle &center_vertex = m_triangulations.back().second;
 
       // Estimate the tangent space
@@ -140,7 +140,7 @@ public:
         {
           Tr_point wp = project_point(*it2_p, *it_p, m_tangent_spaces.back());
           projected_points.push_back(wp);
-          FT w = traits.point_weight_d_object()(wp);
+          FT w = local_tr_traits.point_weight_d_object()(wp);
           if (w > max_squared_weight)
             max_squared_weight = w;
         }
@@ -149,8 +149,8 @@ public:
       // Now we can insert the points
       
       // Insert p
-      Tr_point wp = traits.construct_weighted_point_d_object()(
-        traits.construct_point_d_object()(0, 0),
+      Tr_point wp = local_tr_traits.construct_weighted_point_d_object()(
+        local_tr_traits.construct_point_d_object()(0, 0),
         CGAL::sqrt(max_squared_weight));
       center_vertex = local_tr.insert(wp);
       center_vertex->data() = i;
@@ -169,10 +169,10 @@ public:
         if (j != i)
         {
           FT squared_dist_to_tangent_plane = 
-            traits.point_weight_d_object()(*it_wp);
+            local_tr_traits.point_weight_d_object()(*it_wp);
           FT w = CGAL::sqrt(max_squared_weight - squared_dist_to_tangent_plane);
-          Tr_point wp = traits.construct_weighted_point_d_object()(
-            traits.point_drop_weight_d_object()(*it_wp),
+          Tr_point wp = local_tr_traits.construct_weighted_point_d_object()(
+            local_tr_traits.point_drop_weight_d_object()(*it_wp),
             w);
           /*Tr_bare_point bp = traits.point_drop_weight_d_object()(*it_wp);
           Tr_point wp(traits.point_drop_weight_d_object()(*it_wp), w);*/
@@ -292,9 +292,8 @@ private:
     //Vector t2(0, 1, 0);
 
     // Normalize t1 and t2
-    Kernel k;
-    Get_functor<Kernel, Squared_length_tag>::type sqlen(k);
-    //Get_functor<Kernel, Scaled_vector_tag>::type scale(k);
+    Get_functor<Kernel, Squared_length_tag>::type sqlen(m_k);
+    //Get_functor<Kernel, Scaled_vector_tag>::type scale(m_k);
     //ts.push_back(scale(t1, 1./CGAL::sqrt(sqlen(t1))));
     //ts.push_back(scale(t2, 1./CGAL::sqrt(sqlen(t2))));
 
@@ -316,9 +315,8 @@ private:
   Tr_point project_point(const Point &p, const Point &origin, 
                          const Tangent_space_base &ts) const
   {
-    Kernel k;
-    Get_functor<Kernel, Scalar_product_tag>::type inner_pdct(k);
-    Get_functor<Kernel, Difference_of_points_tag>::type diff_points(k);
+    Get_functor<Kernel, Scalar_product_tag>::type inner_pdct(m_k);
+    Get_functor<Kernel, Difference_of_points_tag>::type diff_points(m_k);
   
     std::vector<FT> coords;
     // Ambiant-space coords of the projected point
@@ -326,7 +324,7 @@ private:
     coords.reserve(Intrinsic_dimension);
     for (std::size_t i = 0 ; i < Intrinsic_dimension ; ++i)
     {
-      //coords[i] = Kernel().point_to_vector_d_object()(p) * ts[i]; // CJTODO: use that
+      //coords[i] = m_k.point_to_vector_d_object()(p) * ts[i]; // CJTODO: use that
       // Compute the inner product p * ts[i]
       Vector v = diff_points(p, origin);
       FT coord = inner_pdct(v, ts[i]);
@@ -341,10 +339,11 @@ private:
                        p_proj.begin(), p_proj.end());
     return Tr_point(
       Tr_bare_point(Intrinsic_dimension, coords.begin(), coords.end()), 
-      k.squared_distance_d_object()(p, projected_pt));
+      m_k.squared_distance_d_object()(p, projected_pt));
   }
 
 private:
+  const Kernel        m_k;
   Point_container     m_points;
   TS_container        m_tangent_spaces;
   Tr_container        m_triangulations; // Contains the triangulations 
