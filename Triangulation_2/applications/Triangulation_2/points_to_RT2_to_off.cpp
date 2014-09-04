@@ -21,6 +21,7 @@ int main()
     wpoints.push_back(wp);
 
   Regular_triangulation rt(wpoints.begin(), wpoints.end());
+  CGAL_assertion(rt.is_valid(true));
   std::ofstream off_stream("data/rt2.off");
   CGAL::export_triangulation_2_to_off(off_stream, rt);
   return 0;
