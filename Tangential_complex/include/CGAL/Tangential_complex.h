@@ -155,6 +155,10 @@ public:
       center_vertex = local_tr.insert(wp);
       center_vertex->data() = i;
       std::cerr << "Inserted CENTER POINT of weight " << CGAL::sqrt(max_squared_weight) << std::endl;
+      
+      /*std::cerr << 0 << " "
+                << 0 << " "
+                << CGAL::sqrt(max_squared_weight) << std::endl;*/
 
       // Insert the other points
       std::vector<Tr_point>::const_iterator it_wp = projected_points.begin();
@@ -173,16 +177,19 @@ public:
           /*Tr_bare_point bp = traits.point_drop_weight_d_object()(*it_wp);
           Tr_point wp(traits.point_drop_weight_d_object()(*it_wp), w);*/
           
-          // CJTODO TEMP
-          if (squared_dist_to_tangent_plane < 9)
+          // CJTODO TEMP: remove this if (but not the content!)
+          //if (squared_dist_to_tangent_plane < 9)
           {
           Tr_vertex_handle vh = local_tr.insert_if_in_star(wp, center_vertex);
           if (vh != Tr_vertex_handle())
           {
-            std::cerr << "Inserted point of weight " << w 
+            /*std::cerr << "Inserted point of weight " << w 
                       << "\t(dist to tangent plane = " 
                       << CGAL::sqrt(squared_dist_to_tangent_plane) 
-                      << ")" << std::endl;
+                      << ")" << std::endl;*/
+            /*std::cerr << traits.point_drop_weight_d_object()(*it_wp)[0] << " "
+                      << traits.point_drop_weight_d_object()(*it_wp)[1] << " "
+                      << w << std::endl;*/
             vh->data() = j;
           }
           }
@@ -193,10 +200,10 @@ public:
       // CJTODO
       std::cerr << "\nChecking topology and geometry..."
                 << (local_tr.is_valid(true) ? "OK.\n" : "Error.\n");
-      std::stringstream sstr;
+      /*std::stringstream sstr;
       sstr << "data/local_tri_" << i << ".off";
       std::ofstream off_stream_tr(sstr.str());
-      CGAL::export_triangulation_to_off(off_stream_tr, local_tr);
+      CGAL::export_triangulation_to_off(off_stream_tr, local_tr);*/
     }
   }
 
