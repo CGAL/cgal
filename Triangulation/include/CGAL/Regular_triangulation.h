@@ -802,9 +802,8 @@ Regular_triangulation<RTTraits, TDS>
 ::insert_in_conflicting_cell(const Weighted_point & p, const Full_cell_handle s)
 {
   typedef std::vector<Full_cell_handle> Full_cell_h_vector;
-  static Full_cell_h_vector cs; // for storing conflicting full_cells.
-  cs.clear();
-  // cs.reserve(64);
+  Full_cell_h_vector cs; // for storing conflicting full_cells.
+  cs.reserve(64);
   std::back_insert_iterator<Full_cell_h_vector> out(cs);
   Facet ft = compute_conflict_zone(p, s, out);
   return insert_in_hole(p, cs.begin(), cs.end(), ft);
