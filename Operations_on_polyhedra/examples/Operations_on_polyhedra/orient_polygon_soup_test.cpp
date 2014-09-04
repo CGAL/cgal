@@ -50,9 +50,9 @@ int main(int,char** argv) {
   std::vector<Point_3> points;
   std::vector< std::vector<std::size_t> > polygons;
 
-  std::ifstream input(argv[0]);
+  std::ifstream input(argv[1]);
   if ( !input || !read_soup(input, points, polygons)){
-    std::cerr << "Error: can not read file.";
+    std::cerr << "Error: can not read file.\n";
     return 1;
   }
 
