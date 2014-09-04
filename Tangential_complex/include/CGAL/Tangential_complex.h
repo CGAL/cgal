@@ -177,9 +177,6 @@ public:
           /*Tr_bare_point bp = traits.point_drop_weight_d_object()(*it_wp);
           Tr_point wp(traits.point_drop_weight_d_object()(*it_wp), w);*/
           
-          // CJTODO TEMP: remove this if (but not the content!)
-          //if (squared_dist_to_tangent_plane < 9)
-          {
           Tr_vertex_handle vh = local_tr.insert_if_in_star(wp, center_vertex);
           if (vh != Tr_vertex_handle())
           {
@@ -191,7 +188,6 @@ public:
                       << traits.point_drop_weight_d_object()(*it_wp)[1] << " "
                       << w << std::endl;*/
             vh->data() = j;
-          }
           }
           ++it_wp;
         }
