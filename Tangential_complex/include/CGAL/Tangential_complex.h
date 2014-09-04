@@ -154,6 +154,7 @@ public:
         CGAL::sqrt(max_squared_weight));
       center_vertex = local_tr.insert(wp);
       center_vertex->data() = i;
+      std::cerr << "Inserted CENTER POINT of weight " << CGAL::sqrt(max_squared_weight) << std::endl;
 
       // Insert the other points
       std::vector<Tr_point>::const_iterator it_wp = projected_points.begin();
@@ -163,17 +164,28 @@ public:
         // ith point = p, which is already inserted
         if (j != i)
         {
-          FT w = CGAL::sqrt(max_squared_weight - traits.point_weight_d_object()(*it_wp));
-          std::cerr << w << std::endl;
+          FT squared_dist_to_tangent_plane = 
+            traits.point_weight_d_object()(*it_wp);
+          FT w = CGAL::sqrt(max_squared_weight - squared_dist_to_tangent_plane);
           Tr_point wp = traits.construct_weighted_point_d_object()(
             traits.point_drop_weight_d_object()(*it_wp),
             w);
           /*Tr_bare_point bp = traits.point_drop_weight_d_object()(*it_wp);
           Tr_point wp(traits.point_drop_weight_d_object()(*it_wp), w);*/
           
+          // CJTODO TEMP
+          if (squared_dist_to_tangent_plane < 9)
+          {
           Tr_vertex_handle vh = local_tr.insert_if_in_star(wp, center_vertex);
           if (vh != Tr_vertex_handle())
+          {
+            std::cerr << "Inserted point of weight " << w 
+                      << "\t(dist to tangent plane = " 
+                      << CGAL::sqrt(squared_dist_to_tangent_plane) 
+                      << ")" << std::endl;
             vh->data() = j;
+          }
+          }
           ++it_wp;
         }
       }
@@ -264,12 +276,15 @@ private:
     Tangent_space_base ts;
     ts.reserve(Intrinsic_dimension);
     // CJTODO: this is only for a sphere in R^3
-    Vector n = Kernel().point_to_vector_d_object()(p); // CJTODO: change that?
     Vector t1(-p[1] - p[2], p[0], p[0]);
     Vector t2(p[1] * t1[2] - p[2] * t1[1],
               p[2] * t1[0] - p[0] * t1[2],
               p[0] * t1[1] - p[1] * t1[0]);
+    // CJTODO: this is for a plane (test)
+    //Vector t1(1, 0, 0);
+    //Vector t2(0, 1, 0);
 
+    // Normalize t1 and t2
     Kernel k;
     Get_functor<Kernel, Squared_length_tag>::type sqlen(k);
     //Get_functor<Kernel, Scaled_vector_tag>::type scale(k);
@@ -300,7 +315,7 @@ private:
   
     std::vector<FT> coords;
     // Ambiant-space coords of the projected point
-    std::vector<FT> p_proj(Ambient_dimension<Point>::value, 0);
+    std::vector<FT> p_proj(origin.cartesian_begin(), origin.cartesian_end());
     coords.reserve(Intrinsic_dimension);
     for (std::size_t i = 0 ; i < Intrinsic_dimension ; ++i)
     {
@@ -311,8 +326,8 @@ private:
       coords.push_back(coord);
 
       // p_proj += coord * v;
-      for (int i = 0 ; i < Ambient_dimension<Point>::value ; ++i)
-        p_proj[i] += coord * v[i];
+      for (int j = 0 ; j < Ambient_dimension<Point>::value ; ++j)
+        p_proj[i] += coord * ts[i][j];
     }
 
     Point projected_pt(Ambient_dimension<Point>::value, 

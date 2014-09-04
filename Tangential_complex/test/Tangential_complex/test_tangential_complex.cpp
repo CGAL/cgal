@@ -10,12 +10,19 @@ int main()
   typedef Kernel::Point_d                         Point;
   const int INTRINSIC_DIMENSION = 2;
 
+#ifdef _DEBUG
   const int NUM_POINTS = 50;
+#else
+  const int NUM_POINTS = 500;
+#endif
   CGAL::Random_points_on_sphere_3<Point> generator(3.0);
   std::vector<Point> points;
   points.reserve(NUM_POINTS);
   for (int i = 0 ; i != NUM_POINTS ; ++i)
+  {
     points.push_back(*generator++);
+    //points.push_back(Point((double)(rand()%10000)/5000, (double)(rand()%10000)/5000, 0.)); // CJTODO : plane
+  }
 
   CGAL::Tangential_complex<Kernel, INTRINSIC_DIMENSION> tc(
                                                  points.begin(), points.end());
