@@ -807,7 +807,11 @@ Regular_triangulation<RTTraits, TDS>
   // cs.reserve(64);
   std::back_insert_iterator<Full_cell_h_vector> out(cs);
   Facet ft = compute_conflict_zone(p, s, out);
-  return insert_in_hole(p, cs.begin(), cs.end(), ft);
+  // The conflict zone is empty if the point is hidden
+  if (!cs.empty())
+    return insert_in_hole(p, cs.begin(), cs.end(), ft);
+  else
+    return Vertex_handle();
 }
 
 template< typename RTTraits, typename TDS >
@@ -982,7 +986,12 @@ Regular_triangulation<RTTraits, TDS>
     Power_test_d side = geom_traits().power_test_d_object();
     Conflict_pred_in_fullspace c(*this, p, ori, side);
     Conflict_traversal_pred_in_fullspace tp(*this, c);
-    return tds().gather_full_cells(s, tp, out);
+    // If p is not in conflict with s, then p is hidden
+    // => we don't insert it (CJTODO: handle hidden points)
+    if (!c(s))
+      return Facet();
+    else
+      return tds().gather_full_cells(s, tp, out);
   }
 }
 
