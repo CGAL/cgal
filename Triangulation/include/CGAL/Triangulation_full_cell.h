@@ -128,7 +128,7 @@ operator>>(std::istream & is, No_full_cell_data &)
 }
 
 std::ostream &
-operator<<(std::ostream & os, const No_full_cell_data & nd)
+operator<<(std::ostream & os, const No_full_cell_data &)
 {
     return os;
 }

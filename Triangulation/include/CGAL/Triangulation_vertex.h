@@ -100,7 +100,7 @@ operator>>(std::istream & is, No_vertex_data &)
 }
 
 std::ostream &
-operator<<(std::ostream & os, const No_vertex_data & nd)
+operator<<(std::ostream & os, const No_vertex_data &)
 {
     return os;
 }
