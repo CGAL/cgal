@@ -917,7 +917,7 @@ Regular_triangulation<RTTraits, TDS>
   Power_test_d side = geom_traits().power_test_d_object();
   Conflict_pred_in_fullspace c(*this, p, ori, side);
   // If p is not in conflict with s, then p is hidden
-  // => we don't insert it (CJTODO: handle hidden points)
+  // => we don't insert it
   if (!c(s))
   {
     m_hidden_points.push_back(p);

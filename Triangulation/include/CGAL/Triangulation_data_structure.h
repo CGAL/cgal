@@ -1023,7 +1023,7 @@ Triangulation_data_structure<Dim, Vb, Fcb>
         Full_cell_handle inside  = full_cell(rot);
         Full_cell_handle outside = neighbor(inside, index_of_covertex(rot));
         // "m" is the vertex of outside which is not on the boundary
-        Vertex_handle m = inside->mirror_vertex(index_of_covertex(rot), current_dimension()); // CJTODO: use mirror_index?
+        Vertex_handle m = inside->mirror_vertex(index_of_covertex(rot), current_dimension());
         // "index" is the index of m in "outside"
         int index = outside->index(m);
         // new_neighbor is the inside cell which is registered as the neighbor

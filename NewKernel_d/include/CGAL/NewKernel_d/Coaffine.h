@@ -78,10 +78,6 @@ template<class R_> struct Construct_flat_orientation : private Store_kernel<R_> 
 	// the points are affinely independent.
 	template<class Iter>
 	result_type operator()(Iter f, Iter e)const{
-    /*std::cerr << "Kernel flat orientation - points: " ; // CJTODO DEBUG          
-    for (Iter it = f ; it != e ; ++it)
-      std::cerr << (*it)[0] << " ";
-    std::cerr << std::endl; // CJTODO DEBUG*/
 		Iter f_save = f;
 		PD pd (this->kernel());
 		CCC ccc (this->kernel());
