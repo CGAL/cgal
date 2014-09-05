@@ -15,6 +15,7 @@ int main()
 #else
   const int NUM_POINTS = 500;
 #endif
+  CGAL::default_random = CGAL::Random(0); // NO RANDOM
   CGAL::Random_points_on_sphere_3<Point> generator(3.0);
   std::vector<Point> points;
   points.reserve(NUM_POINTS);

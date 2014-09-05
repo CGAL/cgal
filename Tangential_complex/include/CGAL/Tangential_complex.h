@@ -148,14 +148,14 @@ public:
       }
 
       // Now we can insert the points
-      
+
       // Insert p
       Tr_point wp = local_tr_traits.construct_weighted_point_d_object()(
         local_tr_traits.construct_point_d_object()(0, 0),
         CGAL::sqrt(max_squared_weight));
       center_vertex = local_tr.insert(wp);
       center_vertex->data() = i;
-      std::cerr << "Inserted CENTER POINT of weight " << CGAL::sqrt(max_squared_weight) << std::endl;
+      //std::cerr << "Inserted CENTER POINT of weight " << CGAL::sqrt(max_squared_weight) << std::endl;
       
       /*std::cerr << 0 << " "
                 << 0 << " "
@@ -179,6 +179,7 @@ public:
           Tr_point wp(traits.point_drop_weight_d_object()(*it_wp), w);*/
           
           Tr_vertex_handle vh = local_tr.insert_if_in_star(wp, center_vertex);
+          //Tr_vertex_handle vh = local_tr.insert(wp);
           if (vh != Tr_vertex_handle())
           {
             /*std::cerr << traits.point_drop_weight_d_object()(*it_wp)[0] << " "
@@ -189,7 +190,7 @@ public:
           ++it_wp;
         }
       }
-      
+
       // CJTODO DEBUG
       std::cerr << "\nChecking topology and geometry..."
                 << (local_tr.is_valid(true) ? "OK.\n" : "Error.\n");
