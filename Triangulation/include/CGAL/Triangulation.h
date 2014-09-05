@@ -255,7 +255,7 @@ public:
 
   // - - - - - - - - - - - - - - - - - - - - - - - - CREATION / CONSTRUCTORS
 
-  Triangulation(int dim, const Geom_traits k = Geom_traits())
+  Triangulation(int dim, const Geom_traits &k = Geom_traits())
     : tds_(dim)
     , kernel_(k)
     , infinity_()
@@ -276,7 +276,7 @@ public:
   Triangulation(
     int dim,
     const std::pair<int, const Flat_orientation_d *> &preset_flat_orientation, 
-    const Geom_traits k = Geom_traits())
+    const Geom_traits &k = Geom_traits())
     : tds_(dim)
     , kernel_(k)
     , infinity_()
