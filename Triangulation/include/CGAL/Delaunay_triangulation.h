@@ -150,7 +150,7 @@ public:
     
 // - - - - - - - - - - - - - - - - - - - - - - - - - - CREATION / CONSTRUCTORS
 
-    Delaunay_triangulation(int dim, const Geom_traits k = Geom_traits())
+    Delaunay_triangulation(int dim, &const Geom_traits k = Geom_traits())
     : Base(dim, k)
     {
     }
@@ -163,7 +163,7 @@ public:
     Delaunay_triangulation(
       int dim, 
       const std::pair<int, const Flat_orientation_d *> &preset_flat_orientation,
-      const Geom_traits k = Geom_traits())
+      const Geom_traits &k = Geom_traits())
     : Base(dim, preset_flat_orientation, k)
     {
     }
