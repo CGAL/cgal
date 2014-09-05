@@ -180,10 +180,6 @@ public:
           Tr_vertex_handle vh = local_tr.insert_if_in_star(wp, center_vertex);
           if (vh != Tr_vertex_handle())
           {
-            /*std::cerr << "Inserted point of weight " << w 
-                      << "\t(dist to tangent plane = " 
-                      << CGAL::sqrt(squared_dist_to_tangent_plane) 
-                      << ")" << std::endl;*/
             /*std::cerr << traits.point_drop_weight_d_object()(*it_wp)[0] << " "
                       << traits.point_drop_weight_d_object()(*it_wp)[1] << " "
                       << w << std::endl;*/
@@ -193,13 +189,14 @@ public:
         }
       }
       
-      // CJTODO
+      // CJTODO DEBUG
       std::cerr << "\nChecking topology and geometry..."
                 << (local_tr.is_valid(true) ? "OK.\n" : "Error.\n");
-      /*std::stringstream sstr;
-      sstr << "data/local_tri_" << i << ".off";
-      std::ofstream off_stream_tr(sstr.str());
-      CGAL::export_triangulation_to_off(off_stream_tr, local_tr);*/
+      // DEBUG: output the local mesh into an OFF file
+      //std::stringstream sstr;
+      //sstr << "data/local_tri_" << i << ".off";
+      //std::ofstream off_stream_tr(sstr.str());
+      //CGAL::export_triangulation_to_off(off_stream_tr, local_tr);
     }
   }
 
@@ -289,10 +286,13 @@ private:
 
     // Normalize t1 and t2
     Get_functor<Kernel, Squared_length_tag>::type sqlen(m_k);
+
+    // CJTODO: use this when Scaled_vector is fixed
     //Get_functor<Kernel, Scaled_vector_tag>::type scale(m_k);
     //ts.push_back(scale(t1, 1./CGAL::sqrt(sqlen(t1))));
     //ts.push_back(scale(t2, 1./CGAL::sqrt(sqlen(t2))));
 
+    // ****** Temporary code *******
     FT t1_len = CGAL::sqrt(sqlen(t1));
     FT t2_len = CGAL::sqrt(sqlen(t2));
     for (int i = 0 ; i < Ambient_dimension<Vector>::value ; ++i)
@@ -302,6 +302,7 @@ private:
     }
     ts.push_back(t1);
     ts.push_back(t2);
+    // ****** /Temporary code *******
 
     return ts;
   }
@@ -320,7 +321,6 @@ private:
     coords.reserve(Intrinsic_dimension);
     for (std::size_t i = 0 ; i < Intrinsic_dimension ; ++i)
     {
-      //coords[i] = m_k.point_to_vector_d_object()(p) * ts[i]; // CJTODO: use that
       // Compute the inner product p * ts[i]
       Vector v = diff_points(p, origin);
       FT coord = inner_pdct(v, ts[i]);
