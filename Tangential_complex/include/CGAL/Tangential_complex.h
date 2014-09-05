@@ -64,6 +64,7 @@ class Tangential_complex
   typedef typename Kernel::Vector_d                 Vector;
 
   typedef Tr                                        Triangulation;
+  typedef typename Triangulation::Geom_traits       Tr_traits;
   typedef typename Triangulation::Point             Tr_point;
   typedef typename Triangulation::Bare_point        Tr_bare_point;
   typedef typename Triangulation::Vertex_handle     Tr_vertex_handle;
@@ -117,7 +118,7 @@ public:
         Triangulation(Intrinsic_dimension),
         Tr_vertex_handle()));
       Triangulation &local_tr = m_triangulations.back().first;
-      const Geom_traits &local_tr_traits = local_tr.geom_traits();
+      const Tr_traits &local_tr_traits = local_tr.geom_traits();
       Tr_vertex_handle &center_vertex = m_triangulations.back().second;
 
       // Estimate the tangent space
