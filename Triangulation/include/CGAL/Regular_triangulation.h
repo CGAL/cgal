@@ -380,6 +380,49 @@ public:
     bool is_valid(bool verbose = false, int level = 0) const;
 
 private:
+  
+  template<typename InputIterator, typename OutputIterator>
+  void
+  process_conflict_zone(InputIterator cz_begin, InputIterator cz_end, 
+                        OutputIterator vertices_out) const
+  {
+    // Get all vertices
+    while(cz_begin != cz_end)
+    {
+      Full_cell_handle fch = *cz_begin;
+      for (int i = 0 ; i <= current_dimension() ; ++i)
+      {
+        Vertex_handle vh = fch->vertex(i);
+        if (vh->full_cell() != Full_cell_handle())
+        {
+          (*vertices_out++) = vh;
+          vh->set_full_cell(Full_cell_handle());
+        }
+      }
+      ++cz_begin;
+    }
+  }
+
+  
+  template<typename InputIterator>
+  void
+  process_cz_vertices_after_insertion(InputIterator vertices_begin, 
+                                      InputIterator vertices_end)
+  {
+    // Get all vertices
+    while(vertices_begin != vertices_end)
+    {
+      Vertex_handle vh = *vertices_begin;
+      if (vh->full_cell() == Full_cell_handle())
+      {
+        m_hidden_points.push_back(vh->point());
+        tds().delete_vertex(vh);
+      }
+      ++vertices_begin;
+    }
+  }
+
+private:
   // Some internal types to shorten notation
   using typename Base::Coaffine_orientation_d;
   using Base::flat_orientation_;
@@ -823,7 +866,17 @@ Regular_triangulation<RTTraits, TDS>
     cs.reserve(64);
     std::back_insert_iterator<Full_cell_h_vector> out(cs);
     Facet ft = compute_conflict_zone(p, s, out);
-    return insert_in_hole(p, cs.begin(), cs.end(), ft);
+    
+    std::vector<Vertex_handle> cz_vertices;
+    cz_vertices.reserve(64);
+    process_conflict_zone(cs.begin(), cs.end(), 
+                          std::back_inserter(cz_vertices));
+
+    Vertex_handle ret = insert_in_hole(p, cs.begin(), cs.end(), ft);
+
+    process_cz_vertices_after_insertion(cz_vertices.begin(), cz_vertices.end());
+
+    return ret;
   }
 }
 
