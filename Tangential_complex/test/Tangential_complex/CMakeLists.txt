@@ -17,6 +17,15 @@ find_package(CGAL QUIET COMPONENTS Core )
 
 if ( CGAL_FOUND )
   include( ${CGAL_USE_FILE} )
+  
+  find_package( TBB QUIET )
+
+  if( TBB_FOUND )
+    include(${TBB_USE_FILE})
+    list(APPEND CGAL_3RD_PARTY_LIBRARIES ${TBB_LIBRARIES})
+  endif()
+
+  
   include( CGAL_CreateSingleSourceCGALProgram )
 
   find_package(Eigen3 3.1.0) 

@@ -23,6 +23,7 @@
 #define TANGENTIAL_COMPLEX_H
 
 #include <CGAL/basic.h>
+#include <CGAL/tags.h>
 
 #include <CGAL/Epick_d.h>
 #include <CGAL/Regular_triangulation_euclidean_traits.h>
@@ -35,12 +36,17 @@
 #include <sstream>
 #include <iostream>
 
+#ifdef CGAL_LINKED_WITH_TBB
+# include <tbb/parallel_for.h>
+#endif
+
 namespace CGAL {
   
 /// The class Tangential_complex represents a tangential complex
 template <
   typename Kernel, 
   int Intrinsic_dimension,
+  typename Concurrency_tag = CGAL::Parallel_tag,
   typename Tr = Regular_triangulation
   <
     Regular_triangulation_euclidean_traits<
@@ -59,23 +65,23 @@ template <
 >
 class Tangential_complex
 {
-  typedef typename Kernel::FT                       FT;
-  typedef typename Kernel::Point_d                  Point;
-  typedef typename Kernel::Vector_d                 Vector;
+  typedef typename Kernel::FT                         FT;
+  typedef typename Kernel::Point_d                    Point;
+  typedef typename Kernel::Vector_d                   Vector;
 
-  typedef Tr                                        Triangulation;
-  typedef typename Triangulation::Geom_traits       Tr_traits;
-  typedef typename Triangulation::Point             Tr_point;
-  typedef typename Triangulation::Bare_point        Tr_bare_point;
-  typedef typename Triangulation::Vertex_handle     Tr_vertex_handle;
-  typedef typename Triangulation::Full_cell_handle  Tr_full_cell_handle;
+  typedef Tr                                          Triangulation;
+  typedef typename Triangulation::Geom_traits         Tr_traits;
+  typedef typename Triangulation::Point               Tr_point;
+  typedef typename Triangulation::Bare_point          Tr_bare_point;
+  typedef typename Triangulation::Vertex_handle       Tr_vertex_handle;
+  typedef typename Triangulation::Full_cell_handle    Tr_full_cell_handle;
   
-  typedef typename std::vector<Vector>              Tangent_space_base;
+  typedef typename std::vector<Vector>                Tangent_space_base;
 
-  typedef std::pair<Triangulation,Tr_vertex_handle> Tr_and_VH;
-  typedef typename std::vector<Point>               Point_container;
-  typedef typename std::vector<Tr_and_VH>           Tr_container;
-  typedef typename std::vector<Tangent_space_base>  TS_container;
+  typedef std::pair<Triangulation*, Tr_vertex_handle> Tr_and_VH;
+  typedef typename std::vector<Point>                 Point_container;
+  typedef typename std::vector<Tr_and_VH>             Tr_container;
+  typedef typename std::vector<Tangent_space_base>    TS_container;
 
   // Stores the index of the original Point in the ambient space
   /*struct Tr_point_with_index 
@@ -106,99 +112,26 @@ public:
     // We need to do that because we don't want the container to copy the
     // already-computed triangulations (while resizing) since it would
     // invalidate the vertex handles stored beside the triangulations
-    m_triangulations.reserve(m_points.size());
-    m_tangent_spaces.reserve(m_points.size());
-
-    Point_container::const_iterator it_p = m_points.begin();
-    Point_container::const_iterator it_p_end = m_points.end();
-    // For each point p in ambient space
-    for (std::size_t i = 0 ; it_p != it_p_end ; ++it_p, ++i)
+    m_triangulations.resize(
+      m_points.size(), 
+      std::make_pair((Triangulation*)NULL, Tr_vertex_handle()));
+    m_tangent_spaces.resize(m_points.size());
+    
+#ifdef CGAL_LINKED_WITH_TBB
+    // Parallel
+    if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
     {
-      m_triangulations.push_back(std::make_pair(
-        Triangulation(Intrinsic_dimension),
-        Tr_vertex_handle()));
-      Triangulation &local_tr = m_triangulations.back().first;
-      const Tr_traits &local_tr_traits = local_tr.geom_traits();
-      Tr_vertex_handle &center_vertex = m_triangulations.back().second;
-
-      // Estimate the tangent space
-      m_tangent_spaces.push_back(compute_tangent_space(*it_p));
-      
-      //***************************************************
-      // Build a minimal triangulation in the tangent space
-      // (we only need the star of p)
-      //***************************************************
-
-      // First, compute the projected points
-      std::vector<Tr_point> projected_points;
-      FT max_squared_weight = 0;
-      projected_points.reserve(m_points.size() - 1);
-      Point_container::const_iterator it2_p = m_points.begin();
-      for (std::size_t j = 0 ; it2_p != it_p_end ; ++it2_p, ++j)
-      {
-        // ith point = p, which is already inserted
-        if (j != i)
-        {
-          Tr_point wp = project_point(*it2_p, *it_p, m_tangent_spaces.back());
-          projected_points.push_back(wp);
-          FT w = local_tr_traits.point_weight_d_object()(wp);
-          if (w > max_squared_weight)
-            max_squared_weight = w;
-        }
-      }
-
-      // Now we can insert the points
-
-      // Insert p
-      Tr_point wp = local_tr_traits.construct_weighted_point_d_object()(
-        local_tr_traits.construct_point_d_object()(0, 0),
-        CGAL::sqrt(max_squared_weight));
-      center_vertex = local_tr.insert(wp);
-      center_vertex->data() = i;
-      //std::cerr << "Inserted CENTER POINT of weight " << CGAL::sqrt(max_squared_weight) << std::endl;
-      
-      /*std::cerr << 0 << " "
-                << 0 << " "
-                << CGAL::sqrt(max_squared_weight) << std::endl;*/
-
-      // Insert the other points
-      std::vector<Tr_point>::const_iterator it_wp = projected_points.begin();
-      it2_p = m_points.begin();
-      for (std::size_t j = 0 ; it2_p != it_p_end ; ++it2_p, ++j)
-      {
-        // ith point = p, which is already inserted
-        if (j != i)
-        {
-          FT squared_dist_to_tangent_plane = 
-            local_tr_traits.point_weight_d_object()(*it_wp);
-          FT w = CGAL::sqrt(max_squared_weight - squared_dist_to_tangent_plane);
-          Tr_point wp = local_tr_traits.construct_weighted_point_d_object()(
-            local_tr_traits.point_drop_weight_d_object()(*it_wp),
-            w);
-          /*Tr_bare_point bp = traits.point_drop_weight_d_object()(*it_wp);
-          Tr_point wp(traits.point_drop_weight_d_object()(*it_wp), w);*/
-          
-          Tr_vertex_handle vh = local_tr.insert_if_in_star(wp, center_vertex);
-          //Tr_vertex_handle vh = local_tr.insert(wp);
-          if (vh != Tr_vertex_handle())
-          {
-            /*std::cerr << traits.point_drop_weight_d_object()(*it_wp)[0] << " "
-                      << traits.point_drop_weight_d_object()(*it_wp)[1] << " "
-                      << w << std::endl;*/
-            vh->data() = j;
-          }
-          ++it_wp;
-        }
-      }
-
-      // CJTODO DEBUG
-      std::cerr << "\nChecking topology and geometry..."
-                << (local_tr.is_valid(true) ? "OK.\n" : "Error.\n");
-      // DEBUG: output the local mesh into an OFF file
-      //std::stringstream sstr;
-      //sstr << "data/local_tri_" << i << ".off";
-      //std::ofstream off_stream_tr(sstr.str());
-      //CGAL::export_triangulation_to_off(off_stream_tr, local_tr);
+      // Apply moves in triangulation
+      tbb::parallel_for(tbb::blocked_range<size_t>(0, m_points.size()),
+        Compute_tangent_triangulation(*this)
+      );
+    }
+    // Sequential
+    else
+#endif // CGAL_LINKED_WITH_TBB
+    {
+      for (std::size_t i = 0 ; i < m_points.size() ; ++i)
+        compute_tangent_triangulation(i);
     }
   }
 
@@ -244,7 +177,7 @@ public:
     // For each triangulation
     for ( ; it_tr != it_tr_end ; ++it_tr)
     {
-      const Triangulation &tr = it_tr->first;
+      const Triangulation &tr = *it_tr->first;
       Tr_vertex_handle center_vh = it_tr->second;
 
       std::vector<Tr_full_cell_handle> incident_cells;
@@ -273,6 +206,123 @@ public:
   }
 
 private:
+
+#ifdef CGAL_LINKED_WITH_TBB
+  // Functor for compute_tangential_complex function
+  class Compute_tangent_triangulation
+  {
+    Tangential_complex & m_tc;
+
+  public:
+    // Constructor
+    Compute_tangent_triangulation(Tangential_complex &tc)
+    : m_tc(tc)
+    {}
+
+    // Constructor
+    Compute_tangent_triangulation(const Compute_tangent_triangulation &ctt)
+    : m_tc(ctt.m_tc)
+    {}
+
+    // operator()
+    void operator()( const tbb::blocked_range<size_t>& r ) const
+    {
+      for( size_t i = r.begin() ; i != r.end() ; ++i)
+        m_tc.compute_tangent_triangulation(i);
+    }
+  };
+#endif // CGAL_LINKED_WITH_TBB
+
+  void compute_tangent_triangulation(std::size_t i)
+  {
+    Triangulation *p_local_tr =
+      m_triangulations[i].first = 
+        new Triangulation(Intrinsic_dimension);
+    const Tr_traits &local_tr_traits = p_local_tr->geom_traits();
+    Tr_vertex_handle &center_vertex = m_triangulations[i].second;
+
+    // Estimate the tangent space
+    const Point &center_pt = m_points[i];
+    m_tangent_spaces[i] = compute_tangent_space(center_pt);
+      
+    //***************************************************
+    // Build a minimal triangulation in the tangent space
+    // (we only need the star of p)
+    //***************************************************
+
+    // First, compute the projected points
+    std::vector<Tr_point> projected_points;
+    FT max_squared_weight = 0;
+    projected_points.reserve(m_points.size() - 1);
+    Point_container::const_iterator it_p = m_points.begin();
+    Point_container::const_iterator it_p_end = m_points.end();
+    for (std::size_t j = 0 ; it_p != it_p_end ; ++it_p, ++j)
+    {
+      // ith point = p, which is already inserted
+      if (j != i)
+      {
+        Tr_point wp = project_point(*it_p, center_pt, m_tangent_spaces[i]);
+        projected_points.push_back(wp);
+        FT w = local_tr_traits.point_weight_d_object()(wp);
+        if (w > max_squared_weight)
+          max_squared_weight = w;
+      }
+    }
+
+    // Now we can insert the points
+
+    // Insert p
+    Tr_point wp = local_tr_traits.construct_weighted_point_d_object()(
+      local_tr_traits.construct_point_d_object()(0, 0),
+      CGAL::sqrt(max_squared_weight));
+    center_vertex = p_local_tr->insert(wp);
+    center_vertex->data() = i;
+    //std::cerr << "Inserted CENTER POINT of weight " << CGAL::sqrt(max_squared_weight) << std::endl;
+      
+    /*std::cerr << 0 << " "
+              << 0 << " "
+              << CGAL::sqrt(max_squared_weight) << std::endl;*/
+
+    // Insert the other points
+    std::vector<Tr_point>::const_iterator it_wp = projected_points.begin();
+    it_p = m_points.begin();
+    for (std::size_t j = 0 ; it_p != it_p_end ; ++it_p, ++j)
+    {
+      // ith point = p, which is already inserted
+      if (j != i)
+      {
+        FT squared_dist_to_tangent_plane = 
+          local_tr_traits.point_weight_d_object()(*it_wp);
+        FT w = CGAL::sqrt(max_squared_weight - squared_dist_to_tangent_plane);
+        Tr_point wp = local_tr_traits.construct_weighted_point_d_object()(
+          local_tr_traits.point_drop_weight_d_object()(*it_wp),
+          w);
+        /*Tr_bare_point bp = traits.point_drop_weight_d_object()(*it_wp);
+        Tr_point wp(traits.point_drop_weight_d_object()(*it_wp), w);*/
+          
+        Tr_vertex_handle vh = p_local_tr->insert_if_in_star(wp, center_vertex);
+        //Tr_vertex_handle vh = p_local_tr->insert(wp);
+        if (vh != Tr_vertex_handle())
+        {
+          /*std::cerr << traits.point_drop_weight_d_object()(*it_wp)[0] << " "
+                    << traits.point_drop_weight_d_object()(*it_wp)[1] << " "
+                    << w << std::endl;*/
+          vh->data() = j;
+        }
+        ++it_wp;
+      }
+    }
+
+    // CJTODO DEBUG
+    //std::cerr << "\nChecking topology and geometry..."
+    //          << (p_local_tr->is_valid(true) ? "OK.\n" : "Error.\n");
+    // DEBUG: output the local mesh into an OFF file
+    //std::stringstream sstr;
+    //sstr << "data/local_tri_" << i << ".off";
+    //std::ofstream off_stream_tr(sstr.str());
+    //CGAL::export_triangulation_to_off(off_stream_tr, *p_local_tr);
+  }
+
   Tangent_space_base compute_tangent_space(const Point &p) const
   {
     Tangent_space_base ts;
