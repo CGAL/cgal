@@ -264,7 +264,9 @@ public:
   }
 
   Vertex_handle insert_outside_affine_hull(const Weighted_point &);
-  Vertex_handle insert_in_conflicting_cell(const Weighted_point &, const Full_cell_handle);
+  Vertex_handle insert_in_conflicting_cell(
+    const Weighted_point &, const Full_cell_handle,
+    const Vertex_handle only_if_this_vertex_is_in_the_cz = Vertex_handle());
   
   Vertex_handle insert_if_in_star(const Weighted_point &, 
                                   const Vertex_handle, 
@@ -272,10 +274,6 @@ public:
                                   const Face &, 
                                   const Facet &, 
                                   const Full_cell_handle);
-  
-  Vertex_handle insert_in_conflicting_cell_if_in_star(const Weighted_point &, 
-                                                      const Vertex_handle, 
-                                                      const Full_cell_handle);
   
   Vertex_handle insert_if_in_star(
     const Weighted_point & p, const Vertex_handle star_center,
@@ -381,6 +379,25 @@ public:
 
 private:
   
+  template<typename InputIterator>
+  bool
+  does_cell_range_contain_vertex(InputIterator cz_begin, InputIterator cz_end, 
+                                 Vertex_handle vh) const
+  {
+    // Check all vertices
+    while(cz_begin != cz_end)
+    {
+      Full_cell_handle fch = *cz_begin;
+      for (int i = 0 ; i <= current_dimension() ; ++i)
+      {
+        if (fch->vertex(i) == vh)
+          return true;
+      }
+      ++cz_begin;
+    }
+    return false;
+  }
+
   template<typename InputIterator, typename OutputIterator>
   void
   process_conflict_zone(InputIterator cz_begin, InputIterator cz_end, 
@@ -846,43 +863,6 @@ Regular_triangulation<RTTraits, TDS>
 template< typename RTTraits, typename TDS >
 typename Regular_triangulation<RTTraits, TDS>::Vertex_handle
 Regular_triangulation<RTTraits, TDS>
-::insert_in_conflicting_cell(const Weighted_point & p, const Full_cell_handle s)
-{
-  typedef std::vector<Full_cell_handle> Full_cell_h_vector;
-
-  Orientation_d ori = geom_traits().orientation_d_object();
-  Power_test_d side = geom_traits().power_test_d_object();
-  Conflict_pred_in_fullspace c(*this, p, ori, side);
-  // If p is not in conflict with s, then p is hidden
-  // => we don't insert it (CJTODO: handle hidden points)
-  if (!c(s))
-  {
-    m_hidden_points.push_back(p);
-    return Vertex_handle();
-  }
-  else
-  {
-    Full_cell_h_vector cs; // for storing conflicting full_cells.
-    cs.reserve(64);
-    std::back_insert_iterator<Full_cell_h_vector> out(cs);
-    Facet ft = compute_conflict_zone(p, s, out);
-    
-    std::vector<Vertex_handle> cz_vertices;
-    cz_vertices.reserve(64);
-    process_conflict_zone(cs.begin(), cs.end(), 
-                          std::back_inserter(cz_vertices));
-
-    Vertex_handle ret = insert_in_hole(p, cs.begin(), cs.end(), ft);
-
-    process_cz_vertices_after_insertion(cz_vertices.begin(), cz_vertices.end());
-
-    return ret;
-  }
-}
-
-template< typename RTTraits, typename TDS >
-typename Regular_triangulation<RTTraits, TDS>::Vertex_handle
-Regular_triangulation<RTTraits, TDS>
 ::insert_if_in_star(const Weighted_point & p, 
                     const Vertex_handle star_center,
                     const Locate_type lt, const Face & f, const Facet & ft, 
@@ -916,7 +896,7 @@ Regular_triangulation<RTTraits, TDS>
         }
       }
       else
-        return insert_in_conflicting_cell_if_in_star(p, star_center, s);
+        return insert_in_conflicting_cell(p, s, star_center);
     break;
     }
   }
@@ -927,23 +907,49 @@ Regular_triangulation<RTTraits, TDS>
 template< typename RTTraits, typename TDS >
 typename Regular_triangulation<RTTraits, TDS>::Vertex_handle
 Regular_triangulation<RTTraits, TDS>
-::insert_in_conflicting_cell_if_in_star(const Weighted_point & p, 
-                                        const Vertex_handle star_center,
-                                        const Full_cell_handle s)
+::insert_in_conflicting_cell(const Weighted_point & p, 
+                             const Full_cell_handle s,
+                             const Vertex_handle only_if_this_vertex_is_in_the_cz)
 {
   typedef std::vector<Full_cell_handle> Full_cell_h_vector;
-  static Full_cell_h_vector cs; // for storing conflicting full_cells.
-  cs.clear();
-  // cs.reserve(64);
-  std::back_insert_iterator<Full_cell_h_vector> out(cs);
-  Facet ft = compute_conflict_zone(p, s, out);
-  Full_cell_h_vector::const_iterator it = cs.begin(), it_end = cs.end();
-  for ( ; it != it_end ; ++it)
+
+  Orientation_d ori = geom_traits().orientation_d_object();
+  Power_test_d side = geom_traits().power_test_d_object();
+  Conflict_pred_in_fullspace c(*this, p, ori, side);
+  // If p is not in conflict with s, then p is hidden
+  // => we don't insert it (CJTODO: handle hidden points)
+  if (!c(s))
   {
-    if ((*it)->has_vertex(star_center))
-      return insert_in_hole(p, cs.begin(), cs.end(), ft);
+    m_hidden_points.push_back(p);
+    return Vertex_handle();
   }
-  return Vertex_handle();
+  else
+  {
+    Full_cell_h_vector cs; // for storing conflicting full_cells.
+    cs.reserve(64);
+    std::back_insert_iterator<Full_cell_h_vector> out(cs);
+    Facet ft = compute_conflict_zone(p, s, out);
+    
+    // Check if the CZ contains "only_if_this_vertex_is_in_the_cz"
+    if (only_if_this_vertex_is_in_the_cz != Vertex_handle()
+     && !does_cell_range_contain_vertex(cs.begin(), cs.end(), 
+                                        only_if_this_vertex_is_in_the_cz))
+    {
+      return Vertex_handle();
+    }
+
+    // Otherwise, proceed with the insertion
+    std::vector<Vertex_handle> cz_vertices;
+    cz_vertices.reserve(64);
+    process_conflict_zone(cs.begin(), cs.end(), 
+                          std::back_inserter(cz_vertices));
+
+    Vertex_handle ret = insert_in_hole(p, cs.begin(), cs.end(), ft);
+
+    process_cz_vertices_after_insertion(cz_vertices.begin(), cz_vertices.end());
+
+    return ret;
+  }
 }
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - GATHERING CONFLICTING SIMPLICES
