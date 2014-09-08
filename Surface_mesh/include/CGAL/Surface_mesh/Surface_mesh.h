@@ -1014,7 +1014,7 @@ public:
     /// performs a validity check on a single vertex.
     bool is_valid(Vertex_descriptor v) const {
         Halfedge_descriptor h = vconn_[v].halfedge_;
-        if(!has_valid_index(h) || is_removed(h)) {
+        if(h!= null_halfedge() && (!has_valid_index(h) || is_removed(h))) {
             std::cerr << "Vertex connectivity halfedge error in " << v.idx()
                       << " with " << h.idx() << std::endl;
             return false;
@@ -1153,7 +1153,9 @@ public:
     // sets previous halfedge of `h` to `nh`.
     void set_prev_only(Halfedge_descriptor h, Halfedge_descriptor nh)
     {
-      hconn_[h].prev_halfedge_ = nh;
+      if(h != null_halfedge()){
+        hconn_[h].prev_halfedge_ = nh;
+      }
     }
     /// @endcond  
 

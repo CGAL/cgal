@@ -18,21 +18,24 @@
 //
 // Author(s)     : Lutz Kettner  <kettner@mpi-sb.mpg.de>)
 
-#ifndef CGAL_SURFACE_MESH_INCREMENTAL_BUILDER_3_H
-#define CGAL_SURFACE_MESH_INCREMENTAL_BUILDER_3_H 1
+#ifndef CGAL_SURFACE_MESH_INCREMENTAL_BUILDER_H
+#define CGAL_SURFACE_MESH_INCREMENTAL_BUILDER_H 1
 
 #include <CGAL/basic.h>
 #include <CGAL/Random_access_adaptor.h>
 #include <CGAL/Unique_hash_map.h>
 #include <CGAL/IO/Verbose_ostream.h>
 #include <CGAL/boost/graph/properties.h>
+#include <CGAL/boost/graph/helpers.h>
+#include <CGAL/boost/graph/graph_traits_Surface_mesh.h>
+
 #include <vector>
 #include <cstddef>
 
 namespace CGAL {
 
 template < class HalfedgeDS_>
-class Surface_Mesh_incremental_builder_3 {
+class Surface_mesh_incremental_builder {
 public:
     typedef HalfedgeDS_                     HDS; // internal
     typedef HalfedgeDS_                     HalfedgeDS;
@@ -46,7 +49,7 @@ public:
 protected:
     typedef typename HDS::Vertex_iterator           Vertex_iterator;
     typedef typename HDS::Halfedge_iterator         Halfedge_iterator;
-    typedef Random_access_adaptor<Vertex_iterator>  Random_access_index;
+  typedef Random_access_value_adaptor<Vertex_iterator,Vertex_descriptor>  Random_access_index;
 
     bool                      m_error;
     bool                      m_verbose;
@@ -76,7 +79,7 @@ protected:
     // Implement the vertex_to_edge_map either with 
     // the halfedge pointer in the vertices
     // ----------------------------------------------------
-    void initialize_vertex_to_edge_map( size_type  n) {
+    void initialize_vertex_to_edge_map( size_type  n, bool mode) {
         vertex_to_edge_map.clear();
         vertex_to_edge_map.resize(n);
         if ( mode) {
@@ -112,7 +115,7 @@ protected:
 // ----------------------------------------------
 // DEFINITION
 //
-// Surface_Mesh_incremental_builder_3<HDS> is an auxiliary class that
+// Surface_mesh_incremental_builder<HDS> is an auxiliary class that
 // supports the incremental construction of polyhedral surfaces. This is
 // for example convinient when constructing polyhedral surfaces from
 // files. The incremental construction starts with a list of all point
@@ -134,7 +137,7 @@ protected:
 public:
     bool error() const { return m_error; }
 
-    Surface_Mesh_incremental_builder_3( HDS& h, bool verbose = false)
+    Surface_mesh_incremental_builder( HDS& h, bool verbose = false)
         // stores a reference to the halfedge data structure `h' in the
         // internal state. The previous polyhedral surface in `h'
         // remains unchanged. The incremental builder adds the new
@@ -143,7 +146,7 @@ public:
         CGAL_assertion_code(check_protocol = 0;)
     }
 
-    ~Surface_Mesh_incremental_builder_3() {
+    ~Surface_mesh_incremental_builder() {
         CGAL_assertion( check_protocol == 0);
     }
 
@@ -171,33 +174,23 @@ public:
     Vertex_descriptor add_vertex( const Point_3& p) {
         // adds p to the vertex list.
         CGAL_assertion( check_protocol == 1);
-        if ( hds.size_of_vertices() >= hds.capacity_of_vertices()) {
-            Verbose_ostream verr( m_verbose);
-            verr << " " << std::endl;
-            verr << "CGAL::Surface_Mesh_incremental_builder_3<HDS>::"
-                 << std::endl;
-            verr << "add_vertex(): capacity error: more than " << new_vertices
-                 << " vertices added." << std::endl;
-            m_error = true;
-            return Vertex_descriptor();
-        }
-
-        Vertex_descriptor v = add_vertex(hds);
-        put(vertex_point, hds, p);
-        index_to_vertex_map.push_back( v);
+        Vertex_descriptor v = CGAL::add_vertex(hds);
         set_halfedge( v, Halfedge_descriptor(),hds);
+        put(vertex_point, hds, v, p);
+        index_to_vertex_map.push_back(Vertex_iterator(v, &hds));
         push_back_vertex_to_edge_map( Halfedge_descriptor());
         ++new_vertices;
         return v;
     }
 
+  
     // returns handle for the vertex of index i
     Vertex_descriptor vertex( std::size_t i) {
         if ( i < new_vertices)
             return index_to_vertex_map[i];
         return Vertex_descriptor();
     }
-
+  
     Face_descriptor begin_facet() {
         // starts a facet.
         if ( m_error)
@@ -336,13 +329,13 @@ protected:
 
         Halfedge_descriptor e = get_vertex_to_edge_map( w);
         if ( e != Halfedge_descriptor()) {
-          CGAL_assertion( vertex(e,hds) == index_to_vertex_map[w]);
+          CGAL_assertion( target(e,hds) == index_to_vertex_map[w]);
             // check that the facet has no self intersections
             if ( current_face != Face_descriptor()
                  && current_face == face(e,hds)) {
                 Verbose_ostream verr( m_verbose);
                 verr << " " << std::endl;
-                verr << "CGAL::Surface_mesh_incremental_builder_3<HDS>::"
+                verr << "CGAL::Surface_mesh_incremental_builder<HDS>::"
                      << std::endl;
                 verr << "lookup_halfedge(): input error: facet "
                      << new_faces << " has a self intersection at vertex "
@@ -352,11 +345,11 @@ protected:
             }
             Halfedge_descriptor start_edge(e);
             do {
-              if ( vertex(next(e,hds),hds) == index_to_vertex_map[v]) {
+              if ( target(next(e,hds),hds) == index_to_vertex_map[v]) {
                 if ( ! is_border(next(e,hds),hds)) {
                         Verbose_ostream verr( m_verbose);
                         verr << " " << std::endl;
-                        verr << "CGAL::Surface_Mesh_incremental_builder_3"
+                        verr << "CGAL::Surface_mesh_incremental_builder"
                                 "<HDS>::" << std::endl;
                         verr << "lookup_halfedge(): input error: facet "
                              << new_faces << " shares a halfedge from "
@@ -376,7 +369,7 @@ protected:
                          face(opposite(next(e,hds),hds),hds)) {
                         Verbose_ostream verr( m_verbose);
                         verr << " " << std::endl;
-                        verr << "CGAL::Surface_Mesh_incremental_builder_3"
+                        verr << "CGAL::Surface_mesh_incremental_builder"
                                 "<HDS>::" << std::endl;
                         verr << "lookup_halfedge(): input error: facet "
                              << new_faces << " has a self intersection "
@@ -401,11 +394,12 @@ protected:
         new_halfedges++;
         new_halfedges++;
         set_face(e, current_face,hds);
-        set_vertex(e, index_to_vertex_map[v], hds);
+        set_target(e, index_to_vertex_map[v], hds);
         set_next(e, Halfedge_descriptor(),hds);
         //??? decorator.set_prev( e, e->opposite());
+        hds.set_prev_only(e, opposite(e,hds));
         e = opposite(e,hds);
-        set_vertex(e, index_to_vertex_map[w], hds);
+        set_target(e, index_to_vertex_map[w], hds);
         set_next(e, opposite(e,hds),hds);
         return e;
     }
@@ -418,7 +412,7 @@ protected:
 
         Halfedge_descriptor start_edge( e);
         do {
-          if ( is_border(nxt(e,hds),hds)) {
+          if ( is_border(next(e,hds),hds)) {
                 return e;
             }
           e = opposite(next(e,hds),hds);
@@ -426,9 +420,9 @@ protected:
 
         Verbose_ostream verr( m_verbose);
         verr << " " << std::endl;
-        verr << "CGAL::Surface_Mesh_incremental_builder_3<HDS>::" << std::endl;
+        verr << "CGAL::Surface_mesh_incremental_builder<HDS>::" << std::endl;
         verr << "lookup_hole(): input error: at vertex "
-             << find_vertex( vertex(e,hds))
+             << find_vertex( target(e,hds))
              << " a closed surface already exists and facet "
              << new_faces << " is nonetheless adjacent." << std::endl;
         if (  m_verbose && current_face != Face_descriptor()) {
@@ -447,7 +441,7 @@ protected:
 
 template < class HDS>
 void
-Surface_Mesh_incremental_builder_3<HDS>::
+Surface_mesh_incremental_builder<HDS>::
 rollback() {
     CGAL_assertion( rollback_v <= num_vertices(hds));
     CGAL_assertion( rollback_h <= num_halfedges(hds));
@@ -469,7 +463,7 @@ rollback() {
 
 template < class HDS>  CGAL_MEDIUM_INLINE
 void
-Surface_Mesh_incremental_builder_3<HDS>::
+Surface_mesh_incremental_builder<HDS>::
 begin_surface( std::size_t v, std::size_t f, std::size_t h, int mode) {
     CGAL_assertion( check_protocol == 0);
     CGAL_assertion_code( check_protocol = 1;)
@@ -514,7 +508,7 @@ begin_surface( std::size_t v, std::size_t f, std::size_t h, int mode) {
 
 template < class HDS>
 void
-Surface_Mesh_incremental_builder_3<HDS>::
+Surface_mesh_incremental_builder<HDS>::
 add_vertex_to_facet( std::size_t v2) {
     if ( m_error)
         return;
@@ -522,7 +516,7 @@ add_vertex_to_facet( std::size_t v2) {
     if ( v2 >= new_vertices) {
         Verbose_ostream verr( m_verbose);
         verr << " " << std::endl;
-        verr << "CGAL::Surface_Mesh_incremental_builder_3<HDS>::"
+        verr << "CGAL::Surface_mesh_incremental_builder<HDS>::"
              << std::endl;
         verr << "add_vertex_to_facet(): vertex index " << v2
              << " is out-of-range [0," << new_vertices-1 << "]."
@@ -576,7 +570,7 @@ add_vertex_to_facet( std::size_t v2) {
             set_next(hole, opposite(h1,hds), hds);
         } else if ( b2) {                                     // case 2.b:
           CGAL_assertion( is_border(prev,hds));
-          set_next(oppsote(hs,hds), prev, hds);
+          set_next(opposite(h2,hds), prev, hds);
         } else if ( b1) {                                     // case 2.c:
           CGAL_assertion( is_border(hprime,hds));
           set_next(hprime, opposite(h1,hds),hds);
@@ -615,7 +609,7 @@ add_vertex_to_facet( std::size_t v2) {
                     } else {
                         Verbose_ostream verr( m_verbose);
                         verr << " " << std::endl;
-                        verr << "CGAL::Surface_Mesh_incremental_builder_3<"
+                        verr << "CGAL::Surface_mesh_incremental_builder<"
                                 "HDS>::" << std::endl;
                         verr << "add_vertex_to_facet(): input error: "
                                 "disconnected facet complexes at vertex "
@@ -643,16 +637,16 @@ add_vertex_to_facet( std::size_t v2) {
             }
         }
     }
-    if ( vertex(h1,hds) == index_to_vertex_map[v1])
+    if ( target(h1,hds) == index_to_vertex_map[v1])
         set_vertex_to_edge_map( v1, h1);
-    CGAL_assertion( vertex(h1,hds) == index_to_vertex_map[v1]);
+    CGAL_assertion( target(h1,hds) == index_to_vertex_map[v1]);
     h1 = h2;
     v1 = v2;
 }
 
 template < class HDS>
 bool
-Surface_Mesh_incremental_builder_3<HDS>::
+Surface_mesh_incremental_builder<HDS>::
 test_facet_indices( std::vector< std::size_t> indices) {
 
     // tests if the facet described by the vertex indices can be inserted 
@@ -682,8 +676,8 @@ test_facet_indices( std::vector< std::size_t> indices) {
             Halfedge_descriptor vstart = v;
             do {
               v = opposite(next(,hds),hds);
-            } while ( vertex(next(v,hds),hds) != w && v != vstart);
-            if ( vertex(next(v,hds),hds) == w && ! is_border(next(v,hds),hds))
+            } while ( target(next(v,hds),hds) != w && v != vstart);
+            if ( target(next(v,hds),hds) == w && ! is_border(next(v,hds),hds))
                 return false;
         }
     }
@@ -732,7 +726,7 @@ test_facet_indices( std::vector< std::size_t> indices) {
       //look for a halfedge incident to vertex indices[i]
       //and which opposite is incident to previous_vertex
       do{
-        if (vertex(opposite(v,hds),hds)==previous_vertex){
+        if (target(opposite(v,hds),hds)==previous_vertex){
           previous=v;
           CGAL_precondition(is_border(previous,hds));
           break;
@@ -744,13 +738,13 @@ test_facet_indices( std::vector< std::size_t> indices) {
       if (previous!=Halfedge_descriptor()){
         v = opposite(next(v,hds),hds);
         //previous and next are already consecutive in the HDS
-        if (vertex(opposite(v,hds),hds)==next_vertex) continue;
+        if (target(opposite(v,hds),hds)==next_vertex) continue;
         
         //look for a border halfedge which opposite is
         //incident to next_vertex: set next halfedge
         do
         {
-          if (vertex(opposite(v,hds),hds)==next_vertex){
+          if (target(opposite(v,hds),hds)==next_vertex){
             next = opposite(v,hd);
             break;
           }
@@ -777,7 +771,7 @@ test_facet_indices( std::vector< std::size_t> indices) {
 
 template < class HDS>  CGAL_MEDIUM_INLINE
 void
-Surface_Mesh_incremental_builder_3<HDS>::
+Surface_mesh_incremental_builder<HDS>::
 end_surface() {
     if ( m_error)
         return;
@@ -787,7 +781,7 @@ end_surface() {
 
 template < class HDS>
 bool
-Surface_Mesh_incremental_builder_3<HDS>::
+Surface_mesh_incremental_builder<HDS>::
 check_unconnected_vertices() {
     if ( m_error)
         return false;
@@ -795,7 +789,7 @@ check_unconnected_vertices() {
     Verbose_ostream verr( m_verbose);
     for ( std::size_t i = 0; i < new_vertices; i++) {
         if ( get_vertex_to_edge_map( i) == Halfedge_descriptor()) {
-            verr << "CGAL::Surface_Mesh_incremental_builder_3<HDS>::\n"
+            verr << "CGAL::Surface_mesh_incremental_builder<HDS>::\n"
                  << "check_unconnected_vertices( verb = true): "
                  << "vertex " << i << " is unconnected." << std::endl;
             unconnected = true;
@@ -806,7 +800,7 @@ check_unconnected_vertices() {
 
 template < class HDS>
 bool
-Surface_Mesh_incremental_builder_3<HDS>::
+Surface_mesh_incremental_builder<HDS>::
 remove_unconnected_vertices() {
     if ( m_error)
         return true;
@@ -820,5 +814,5 @@ remove_unconnected_vertices() {
 
 } //namespace CGAL
 
-#endif // CGAL_SURFACE_MESH_INCREMENTAL_BUILDER_3_H //
+#endif // CGAL_SURFACE_MESH_INCREMENTAL_BUILDER_H //
 // EOF //
