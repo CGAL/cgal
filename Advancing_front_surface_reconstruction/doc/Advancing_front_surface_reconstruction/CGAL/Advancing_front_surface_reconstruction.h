@@ -7,7 +7,7 @@ namespace CGAL {
 The class `Advancing_front_surface_reconstruction` 
 
 \tparam Dt must be a `Delaunay_triangulation_3` with
-`Advancing_front_surface_reconstruction_vertex_base_3` and `Advancing_front_surface_reconstruction_cell_base_3` blended into the vertex and cell type, and the geometeic traits class must be the `Exact_predicates_inexact_constructions_kernel`.
+`Advancing_front_surface_reconstruction_vertex_base_3` and `Advancing_front_surface_reconstruction_cell_base_3` blended into the vertex and cell type, and the geometric traits class must be the `Exact_predicates_inexact_constructions_kernel`.
 
 */
 
