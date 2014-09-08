@@ -31,6 +31,7 @@ if ( CGAL_FOUND )
   create_single_source_cgal_program( "sm_memory.cpp" )
   create_single_source_cgal_program( "sm_bgl.cpp" )
   create_single_source_cgal_program( "sm_kruskal.cpp" )
+  create_single_source_cgal_program( "sm_builder.cpp" )
 
 else()
   
