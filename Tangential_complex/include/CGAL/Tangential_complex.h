@@ -76,12 +76,12 @@ class Tangential_complex
   typedef typename Triangulation::Vertex_handle       Tr_vertex_handle;
   typedef typename Triangulation::Full_cell_handle    Tr_full_cell_handle;
   
-  typedef typename std::vector<Vector>                Tangent_space_base;
+  typedef typename std::vector<Vector>                Tangent_space_basis;
 
   typedef std::pair<Triangulation*, Tr_vertex_handle> Tr_and_VH;
   typedef typename std::vector<Point>                 Point_container;
   typedef typename std::vector<Tr_and_VH>             Tr_container;
-  typedef typename std::vector<Tangent_space_base>    TS_container;
+  typedef typename std::vector<Tangent_space_basis>    TS_container;
 
   // Stores the index of the original Point in the ambient space
   /*struct Tr_point_with_index 
@@ -323,9 +323,9 @@ private:
     //CGAL::export_triangulation_to_off(off_stream_tr, *p_local_tr);
   }
 
-  Tangent_space_base compute_tangent_space(const Point &p) const
+  Tangent_space_basis compute_tangent_space(const Point &p) const
   {
-    Tangent_space_base ts;
+    Tangent_space_basis ts;
     ts.reserve(Intrinsic_dimension);
     // CJTODO: this is only for a sphere in R^3
     Vector t1(-p[1] - p[2], p[0], p[0]);
@@ -362,7 +362,7 @@ private:
   // Project the point in the tangent space
   // The weight will be the squared distance between p and the projection of p
   Tr_point project_point(const Point &p, const Point &origin, 
-                         const Tangent_space_base &ts) const
+                         const Tangent_space_basis &ts) const
   {
     Get_functor<Kernel, Scalar_product_tag>::type inner_pdct(m_k);
     Get_functor<Kernel, Difference_of_points_tag>::type diff_points(m_k);
