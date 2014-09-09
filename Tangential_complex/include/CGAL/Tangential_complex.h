@@ -22,12 +22,17 @@
 #ifndef TANGENTIAL_COMPLEX_H
 #define TANGENTIAL_COMPLEX_H
 
+#include <CGAL/Tangential_complex/config.h>
+
 #include <CGAL/basic.h>
 #include <CGAL/tags.h>
 
 #include <CGAL/Epick_d.h>
 #include <CGAL/Regular_triangulation_euclidean_traits.h>
 #include <CGAL/Regular_triangulation.h>
+#include <CGAL/Tangential_complex/utilities.h>
+
+#include <CGAL/Mesh_3/Profiling_tools.h>
 
 #include <CGAL/IO/Triangulation_off_ostream.h> // CJTODO TEMP
 
@@ -41,6 +46,8 @@
 #endif
 
 namespace CGAL {
+
+using namespace Tangential_complex_;
   
 /// The class Tangential_complex represents a tangential complex
 template <
@@ -109,6 +116,10 @@ public:
 
   void compute_tangential_complex()
   {
+#ifdef CGAL_TC_PROFILING
+    WallClockTimer t;
+#endif
+
     // We need to do that because we don't want the container to copy the
     // already-computed triangulations (while resizing) since it would
     // invalidate the vertex handles stored beside the triangulations
@@ -133,6 +144,11 @@ public:
       for (std::size_t i = 0 ; i < m_points.size() ; ++i)
         compute_tangent_triangulation(i);
     }
+    
+#ifdef CGAL_TC_PROFILING
+    std::cerr << "Tangential complex computed in " << t.elapsed() 
+              << " seconds." << std::endl;
+#endif
   }
 
   std::ostream &export_to_off(std::ostream & os)
@@ -291,6 +307,15 @@ private:
       // ith point = p, which is already inserted
       if (j != i)
       {
+        // CJTODO TEMP: for test only
+        /*if (local_tr_traits.squared_distance_d_object()(
+          local_tr_traits.point_drop_weight_d_object()(wp), 
+          local_tr_traits.point_drop_weight_d_object()(*it_wp)) > 1)
+        {
+          ++it_wp;
+          continue;
+        }*/
+
         FT squared_dist_to_tangent_plane = 
           local_tr_traits.point_weight_d_object()(*it_wp);
         FT w = CGAL::sqrt(max_squared_weight - squared_dist_to_tangent_plane);
@@ -325,38 +350,40 @@ private:
 
   Tangent_space_basis compute_tangent_space(const Point &p) const
   {
-    Tangent_space_basis ts;
-    ts.reserve(Intrinsic_dimension);
+
+    Kernel::Squared_length_d        sqlen      = m_k.squared_length_d_object();
+    Kernel::Scaled_vector_d         scaled_vec = m_k.scaled_vector_d_object();
+    //Kernel::Scalar_product_d        inner_pdct = m_k.scalar_product_d_object();
+    //Kernel::Difference_of_vectors_d diff_vec   = m_k.difference_of_vectors_d_object();
+    Get_functor<Kernel, Scalar_product_tag>::type inner_pdct(m_k); // CJTODO TEMP
+    Get_functor<Kernel, Difference_of_vectors_tag>::type diff_vec(m_k);
+
     // CJTODO: this is only for a sphere in R^3
     Vector t1(-p[1] - p[2], p[0], p[0]);
     Vector t2(p[1] * t1[2] - p[2] * t1[1],
               p[2] * t1[0] - p[0] * t1[2],
               p[0] * t1[1] - p[1] * t1[0]);
-    // CJTODO: this is for a plane (test)
-    //Vector t1(1, 0, 0);
-    //Vector t2(0, 1, 0);
-
+    
     // Normalize t1 and t2
-    Get_functor<Kernel, Squared_length_tag>::type sqlen(m_k);
+    Get_functor<Kernel, Scaled_vector_tag>::type scale(m_k);
 
-    // CJTODO: use this when Scaled_vector is fixed
-    //Get_functor<Kernel, Scaled_vector_tag>::type scale(m_k);
-    //ts.push_back(scale(t1, 1./CGAL::sqrt(sqlen(t1))));
-    //ts.push_back(scale(t2, 1./CGAL::sqrt(sqlen(t2))));
-
-    // ****** Temporary code *******
-    FT t1_len = CGAL::sqrt(sqlen(t1));
-    FT t2_len = CGAL::sqrt(sqlen(t2));
-    for (int i = 0 ; i < Ambient_dimension<Vector>::value ; ++i)
-    {
-      t1[i] /= t1_len;
-      t2[i] /= t2_len;
-    }
-    ts.push_back(t1);
-    ts.push_back(t2);
-    // ****** /Temporary code *******
+    Tangent_space_basis ts;
+    ts.reserve(Intrinsic_dimension);
+    ts.push_back(scale(t1, 1./CGAL::sqrt(sqlen(t1))));
+    ts.push_back(scale(t2, 1./CGAL::sqrt(sqlen(t2))));
 
     return ts;
+
+    // Alternative code (to be used later)
+    //Vector n = m_k.point_to_vector_d_object()(p);
+    //n = scaled_vec(n, 1./sqrt(sqlen(n)));
+    //Vector t1(12., 15., 65.);
+    //Vector t2(32., 5., 85.);
+    //Tangent_space_basis ts;
+    //ts.reserve(Intrinsic_dimension);
+    //ts.push_back(diff_vec(t1, scaled_vec(n, inner_pdct(t1, n))));
+    //ts.push_back(diff_vec(t2, scaled_vec(n, inner_pdct(t2, n))));
+    //return compute_gram_schmidt_basis(ts, m_k);
   }
 
   // Project the point in the tangent space
