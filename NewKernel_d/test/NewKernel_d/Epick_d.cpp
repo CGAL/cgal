@@ -116,6 +116,8 @@ void test2(){
   typedef typename K1::Equal_d E;
   typedef typename K1::Squared_distance_d SD;
   typedef typename K1::Squared_length_d SL;
+  typedef typename K1::Scalar_product_d SP;
+  typedef typename K1::Difference_of_vectors_d DV;
 
   CGAL_USE_TYPE(AT);
   CGAL_USE_TYPE(D);
@@ -170,6 +172,8 @@ void test2(){
   E ed Kinit(equal_d_object);
   SD sd Kinit(squared_distance_d_object);
   SL sl Kinit(squared_length_d_object);
+  SP spr Kinit(scalar_product_d_object);
+  DV dv Kinit(difference_of_vectors_d_object);
 
   CGAL_USE(bc);
   CGAL_USE(pol);
@@ -236,6 +240,8 @@ void test2(){
   assert(y1.squared_length()==2);
   assert(sl(y1)==2);
   V y2=cv(3,-3);
+  assert(spr(y1,y2)==6);
+  assert(dv(y2,y1)[0]==2);
   V tab3[]={y1,y2};
   std::vector<V> v;
   std::back_insert_iterator<std::vector<V> > bii(v);
