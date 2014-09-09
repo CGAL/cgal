@@ -450,7 +450,7 @@ rollback() {
       while ( rollback_v != (hds.num_vertices() - hds.num_removed_vertices()))
             hds.vertices_pop_back();
 
-      while ( rollback_h != (num_halfedges() - hds.num_removed_halfedges()))
+      while ( rollback_h != (hds.num_halfedges() - hds.num_removed_halfedges()))
             hds.edges_pop_back();
       while ( rollback_f != (hds.num_faces() -  - hds.num_removed_faces()))
             hds.faces_pop_back();
@@ -673,7 +673,7 @@ test_facet_indices( std::vector< std::size_t> indices) {
             // cycle through halfedge-loop and find edge to indices[i+1]
             Halfedge_descriptor vstart = v;
             do {
-              v = opposite(next(,hds),hds);
+              v = opposite(next(vstart,hds),hds);
             } while ( target(next(v,hds),hds) != w && v != vstart);
             if ( target(next(v,hds),hds) == w && ! is_border(next(v,hds),hds))
                 return false;
@@ -743,7 +743,7 @@ test_facet_indices( std::vector< std::size_t> indices) {
         do
         {
           if (target(opposite(v,hds),hds)==next_vertex){
-            next = opposite(v,hd);
+            next = opposite(v,hds);
             break;
           }
           v= opposite(next(v,hds));

@@ -22,6 +22,7 @@
 
 
 #include <boost/foreach.hpp>
+#include <CGAL/boost/graph/iterator.h>
 
 namespace CGAL {
 
