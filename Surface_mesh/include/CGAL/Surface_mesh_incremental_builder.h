@@ -396,8 +396,6 @@ protected:
         set_face(e, current_face,hds);
         set_target(e, index_to_vertex_map[v], hds);
         set_next(e, Halfedge_descriptor(),hds);
-        //??? decorator.set_prev( e, e->opposite());
-        hds.set_prev_only(e, opposite(e,hds));
         e = opposite(e,hds);
         set_target(e, index_to_vertex_map[w], hds);
         set_next(e, opposite(e,hds),hds);

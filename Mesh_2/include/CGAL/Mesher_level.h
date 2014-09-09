@@ -312,7 +312,7 @@ public:
   try_to_refine_element(Element e, Mesh_visitor visitor)
   {
     const Point& p = refinement_point(e);
-
+    //std::cerr << "(" << p << ") ";
     before_conflicts(e, p, visitor);
 
     Zone zone = conflicts_zone(p, e);
