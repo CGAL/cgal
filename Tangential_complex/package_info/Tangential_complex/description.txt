@@ -1,0 +1,3 @@
+Tangential complex
+
+This CGAL component provides an implementation of the tangential complex.
