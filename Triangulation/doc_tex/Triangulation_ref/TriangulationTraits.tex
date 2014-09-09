@@ -1,0 +1,180 @@
+\begin{ccRefConcept}{TriangulationTraits}
+
+\ccDefinition
+
+The concept \ccRefName\ describes the various types and functions that a class
+must provide as the first parameter (\ccc{TriangulationTraits}) to the class template
+\ccc{Triangulation<TriangulationTraits, TriangulationDataStructure>}. It brings the geometric ingredient to the
+definition of a triangulation, while the combinatorial ingredient is brought by
+the second template parameter, \ccc{TriangulationDataStructure}.
+
+Inserting a range of points in a triangulation is optimized using
+spatial sorting, thus besides the requirements below, 
+a class provided as \ccc{TriangulationTraits} should also satisfy the concept 
+\ccc{SpatialSortingTraits_d}.
+
+\ccRefines
+\ccc{SpatialSortingTraits_d}
+
+{If a range of points is inserted, the
+  traits must refine \ccc{SpatialSortingTraits_d}, This is not needed
+  if the points are inserted one by one.}
+
+\ccTypes
+
+\ccTwo{TriangulationTraits ::Compare_lexicographically_d}{}
+
+\ccNestedType{Dimension}%
+{A type representing the dimension of the underlying space. it can be static
+(\ccc{Maximal_dimension}=\ccGlobalScope\ccc{Dimension_tag<int dim>}) or
+dynamic (\ccc{Maximal_dimension}=\ccGlobalScope\ccc{Dynamic_dimension_tag}).
+This dimension must match the dimension of the predicate
+\ccc{Orientation_d} but not necessarily the one of \ccc{Point_d}.
+}
+
+\ccNestedType{Point_d}%
+{A type representing a point in Euclidean space.}
+
+
+\ccNestedType{Point_dimension_d}%
+       {Functor  returning the dimension of a  \ccc{Point_d}.
+       Must provide 
+        \ccc{int operator()(Point_d p)}  returning the dimension of $p$. 
+       }
+
+\ccNestedType{Orientation_d}{A predicate object that must provide the
+templated operator\\\ccc{template<typename ForwardIterator> Orientation
+operator()(ForwardIterator start, ForwardIterator end)}.\\The operator returns
+\ccc{CGAL::POSITIVE}, \ccc{CGAL::NEGATIVE} or \ccc{CGAL::COPLANAR}  depending on
+the orientation of the simplex defined by the points in the range \ccc{[start,
+end)}.
+ \ccPrecond \ccc{std::distance(start,end)=D+1}, where 
+\ccc{Point_dimension_d(*it)} is $D$ for all \ccc{it} in \ccc{[start,end)}.
+}
+
+\ccNestedType{Contained_in_affine_hull_d}{A predicate object that must provide
+the templated operator\\\ccc{template<typename ForwardIterator> bool
+operator()(ForwardIterator start, ForwardIterator end, const Point_d &
+p)}.\\The operator returns \ccc{true} if and only if point \ccc{p} is
+contained in the affine space spanned by the points in the range \ccc{[start,
+end)}. That affine space is also called the {\em affine hull} of the points
+in the range.
+\ccPrecond  The $k$ points in the range
+must be affinely independent. 
+\ccc{Point_dimension_d(*it)} is $D$ for all \ccc{it} in
+\ccc{[start,end)}, for some $D$.
+$2\leq k\leq D$.
+}
+
+
+In the $D$-dimensional oriented space, a $k-1$ dimensional subspace (flat)
+define by $k$ points can be oriented in two different ways.
+Choosing the orientation of any simplex defined by $k$ points fix the
+orientation of all other simplices. To be able to orient lower
+dimensional flats, we use the following classes:
+
+
+\ccNestedType{Flat_orientation_d}{
+  A type representing an orientation of an affine subspace of
+  dimension $k$ strictly smaller than the maximal dimension.
+}
+
+
+\ccNestedType{Construct_flat_orientation_d}{
+   A construction object that must 
+provide the templated operator\\\ccc{template<typename ForwardIterator> Flat_orientation_d
+operator()(ForwardIterator start, ForwardIterator end)}.\\
+The flat spanned by the points in
+the range \ccc{R=[start, end)}  can be oriented in two different ways,
+the operator
+returns an object that allow to orient that flat so that \ccc{R=[start, end)}
+defines a positive simplex.
+ \ccPrecond The $k$ points in the range
+must be affinely independent. 
+\ccc{Point_dimension_d(*it)} is $D$ for all \ccc{it} in \ccc{R} for
+some $D$.
+$2\leq k\leq D$.
+}
+
+
+\ccNestedType{In_flat_orientation_d}{
+A predicate object that must provide the
+templated operator\\\ccc{template<typename ForwardIterator> Orientation
+operator()(Flat_orientation_d orient,ForwardIterator start,
+ForwardIterator end)}.\\
+The operator returns
+\ccc{CGAL::POSITIVE}, \ccc{CGAL::NEGATIVE} or \ccc{CGAL::COPLANAR}  depending on
+the orientation of the simplex defined by the points in the range \ccc{[start,
+end)}.
+The points are supposed to belong to the lower dimensional flat
+ whose orientation is given by \ccc{orient}.
+\ccPrecond \ccc{std::distance(start,end)=k} where $k$ is the number of
+points
+used to construct \ccc{orient}.
+\ccc{Point_dimension_d(*it)} is $D$ for all \ccc{it} in
+\ccc{[start,end)} where  $D$ is the dimension of the points used to
+construct \ccc{orient}.
+$2\leq k\leq D$.
+}
+
+
+
+
+\ccNestedType{Compare_lexicographically_d}{A predicate object that must
+provide the operator\\\ccc{Comparison_result operator()(const Point_d & p,
+const Point_d & q)}.\\The operator returns \ccc{SMALLER} if \ccc{p} is
+lexicographically smaller than point \ccc{q}, \ccc{EQUAL} if both points are
+the same and \ccc{LARGER} otherwise.}
+
+%%%%%%% currently unused in the code
+% \ccNestedType{Affinely_independent_d}{A predicate object that must provide the
+% templated operator\\\ccc{template<typename ForwardIterator> bool
+% operator()(ForwardIterator start, ForwardIterator end)}.\\The operator returns
+% \ccc{true} if and only if the dimension of the affine hull of the points in
+% the range \ccc{R=[start, end)} is one less than the number of points in
+% \ccc{R}.}
+
+\ccCreation
+\ccCreationVariable{traits}
+
+\ccConstructor{TriangulationTraits();}{The default constructor.}
+
+\ccOperations
+\ccThree{Construct_flat_orientation_d}{construct_flat_orientation_d_object() const}{}
+
+The following methods permit access to the traits class's predicates:
+
+\ccMethod{Orientation_d orientation_d_object() const;}%
+{}
+\ccGlue
+\ccMethod{Contained_in_affine_hull_d contained_in_affine_hull_d_object()
+const;}%
+{}
+\ccGlue
+\ccMethod{Construct_flat_orientation_d construct_flat_orientation_d_object() const;}%
+{}
+\ccGlue
+\ccMethod{In_flat_orientation_d in_flat_orientation_d_object() const;}%
+{}
+\ccGlue
+\ccMethod{Compare_lexicographically_d compare_lexicographically_d_object()
+const;}%
+{}
+%\ccGlue
+%\ccMethod{ Affinely_independent_d affinely_independent_d_object() const;}%
+%{}
+
+\ccHasModels
+
+\ccc{CGAL::Cartesian_d<FT, Dim, LA>},\\
+%\ccc{Simple_cartesian_d<FT, Dim, LA>},\\
+\ccc{CGAL::????<K>} (recommended).
+\note{The new kernel is currently under developement}
+
+\ccSeeAlso
+
+\ccc{DelaunayTriangulationTraits}
+\ccc{Triangulation}
+
+
+\end{ccRefConcept}

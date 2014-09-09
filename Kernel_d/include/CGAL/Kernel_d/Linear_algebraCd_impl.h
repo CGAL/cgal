@@ -136,7 +136,10 @@ Triangular_system_solver(const Matrix &U, const Matrix& L, const Vector &b,
     CGAL_KD_TRACEN("Triangular_system_solver");CGAL_KD_TRACEV(U);CGAL_KD_TRACEV(b);
   D = FT(1); int i;
   for (i = rank; i < U.row_dimension(); ++i) 
-    if ( b[i] != FT(0) ) { x = L.row(i); return false; }
+      if ( b[i] != FT(0) ) {
+          x = L.row(i);
+          return false;
+      }
 
   x = Vector(U.column_dimension());
   for (i = rank-1; i>=0; --i) {
