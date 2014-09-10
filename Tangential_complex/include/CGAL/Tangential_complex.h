@@ -440,10 +440,8 @@ private:
     Kernel::Construct_vector_d      constr_vec = m_k.construct_vector_d_object();
     Kernel::Squared_length_d        sqlen      = m_k.squared_length_d_object();
     Kernel::Scaled_vector_d         scaled_vec = m_k.scaled_vector_d_object();
-    //Kernel::Scalar_product_d        inner_pdct = m_k.scalar_product_d_object();
-    //Kernel::Difference_of_vectors_d diff_vec   = m_k.difference_of_vectors_d_object();
-    Get_functor<Kernel, Scalar_product_tag>::type inner_pdct(m_k); // CJTODO TEMP
-    Get_functor<Kernel, Difference_of_vectors_tag>::type diff_vec(m_k);
+    Kernel::Scalar_product_d        inner_pdct = m_k.scalar_product_d_object();
+    Kernel::Difference_of_vectors_d diff_vec   = m_k.difference_of_vectors_d_object();
 
     // CJTODO: do better than that (ANN?)
     typedef std::set<Point, Compare_distance_to_ref_point> Sorted_points;
@@ -494,7 +492,7 @@ private:
               p[0] * t1[1] - p[1] * t1[0]);
     
     // Normalize t1 and t2
-    Get_functor<Kernel, Scaled_vector_tag>::type scale(m_k);
+    Kernel::Scaled_vector_d scale = m_k.scaled_vector_d_object();
 
     Tangent_space_basis ts;
     ts.reserve(Intrinsic_dimension);
@@ -521,7 +519,8 @@ private:
   Tr_point project_point(const Point &p, const Point &origin, 
                          const Tangent_space_basis &ts) const
   {
-    Get_functor<Kernel, Scalar_product_tag>::type inner_pdct(m_k);
+    Kernel::Scalar_product_d inner_pdct = m_k.scalar_product_d_object();
+    //Kernel::Difference_of_points_d  diff_points= m_k.difference_of_points_d_object(); // CJTODO: use that
     Get_functor<Kernel, Difference_of_points_tag>::type diff_points(m_k);
   
     std::vector<FT> coords;
