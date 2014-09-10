@@ -160,17 +160,31 @@ public:
   std::ostream &export_to_off(std::ostream & os)
   {
     const int ambient_dim = Ambient_dimension<Point>::value;
-    if (ambient_dim < 2 || ambient_dim > 3)
+    if (ambient_dim < 2)
     {
-      std::cerr << "Error: export_to_off => ambient dimension should be 2 or 3.";
-      os << "Error: export_to_off => ambient dimension should be 2 or 3.";
+      std::cerr << "Error: export_to_off => ambient dimension should be >= 2."
+                << std::endl;
+      os << "Error: export_to_off => ambient dimension should be >= 2." 
+         << std::endl;
       return os;
     }
+    if (ambient_dim > 3)
+    {
+      std::cerr << "Warning: export_to_off => ambient dimension should be "
+                   "<= 3. Only the first 3 coordinates will be exported." 
+                << std::endl;
+    }
+
+    int num_coords = min(ambient_dim, 3);
 
     if (Intrinsic_dimension < 1 || Intrinsic_dimension > 3)
     {
-      std::cerr << "Error: export_to_off => intrinsic dimension should be between 1 and 3.";
-      os << "Error: export_to_off => intrinsic dimension should be between 1 and 3.";
+      std::cerr << "Error: export_to_off => intrinsic dimension should be "
+                   "between 1 and 3."
+                << std::endl;
+      os << "Error: export_to_off => intrinsic dimension should be "
+            "between 1 and 3."
+         << std::endl;
       return os;
     }
 
@@ -184,7 +198,7 @@ public:
     for ( ; it_p != it_p_end ; ++it_p)
     {
       int i = 0;
-      for ( ; i < ambient_dim ; ++i)
+      for ( ; i < num_coords ; ++i)
         output << (*it_p)[i] << " ";
       if (i == 2)
         output << "0";
