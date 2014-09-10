@@ -36,6 +36,9 @@
 
 #include <CGAL/IO/Triangulation_off_ostream.h> // CJTODO TEMP
 
+#include <Eigen/Core>
+#include <Eigen/Eigen>
+
 #include <vector>
 #include <utility>
 #include <sstream>
@@ -223,6 +226,23 @@ public:
 
 private:
 
+  class Compare_distance_to_ref_point
+  {
+  public:
+    Compare_distance_to_ref_point(Point const& ref, Kernel const& k)
+      : m_ref(ref), m_k(k) {}
+
+    bool operator()(Point const& p1, Point const& p2)
+    {
+      Kernel::Squared_distance_d sqdist = m_k.squared_distance_d_object();
+      return sqdist(p1, m_ref) < sqdist(p2, m_ref);
+    }
+
+  private:
+    Point const& m_ref;
+    Kernel const& m_k;
+  };
+
 #ifdef CGAL_LINKED_WITH_TBB
   // Functor for compute_tangential_complex function
   class Compute_tangent_triangulation
@@ -350,7 +370,8 @@ private:
 
   Tangent_space_basis compute_tangent_space(const Point &p) const
   {
-
+    // Kernel functors
+    Kernel::Construct_vector_d      constr_vec = m_k.construct_vector_d_object();
     Kernel::Squared_length_d        sqlen      = m_k.squared_length_d_object();
     Kernel::Scaled_vector_d         scaled_vec = m_k.scaled_vector_d_object();
     //Kernel::Scalar_product_d        inner_pdct = m_k.scalar_product_d_object();
@@ -358,6 +379,47 @@ private:
     Get_functor<Kernel, Scalar_product_tag>::type inner_pdct(m_k); // CJTODO TEMP
     Get_functor<Kernel, Difference_of_vectors_tag>::type diff_vec(m_k);
 
+    // CJTODO: do better than that (ANN?)
+    typedef std::set<Point, Compare_distance_to_ref_point> Sorted_points;
+    Sorted_points sorted_points(
+      Compare_distance_to_ref_point(p, m_k));
+    sorted_points.insert(m_points.begin(), m_points.end());
+
+    //******************************* PCA *************************************
+
+    const int amb_dim = Ambient_dimension<Point>::value;
+    Eigen::MatrixXd mat(NUM_POINTS_FOR_PCA, amb_dim);
+    int j = 0;
+    for (Sorted_points::const_iterator it = sorted_points.begin() ; 
+         j < NUM_POINTS_FOR_PCA ; ++it, ++j)
+    {
+      for (int i = 0 ; i < amb_dim ; ++i)
+        mat(j, i) = (*it)[i];
+    }
+    Eigen::MatrixXd centered = mat.rowwise() - mat.colwise().mean();
+    Eigen::MatrixXd cov = centered.adjoint() * centered;
+    Eigen::SelfAdjointEigenSolver<Eigen::MatrixXd> eig(cov);
+
+    // The eigenvectors are sorted in increasing order of their corresponding
+    // eigenvalues
+    Tangent_space_basis ts;
+    for (int i = amb_dim - 1 ; i >= amb_dim - Intrinsic_dimension ; --i)
+    {
+      ts.push_back(constr_vec(
+        amb_dim, 
+        eig.eigenvectors().col(i).data(), 
+        eig.eigenvectors().col(i).data() + amb_dim));
+    }
+
+    //*************************************************************************
+
+    //Vector n = m_k.point_to_vector_d_object()(p);
+    //n = scaled_vec(n, 1./sqrt(sqlen(n)));
+    //std::cerr << "IP = " << inner_pdct(n, ts[0]) << " & " << inner_pdct(n, ts[1]) << std::endl;
+
+    return compute_gram_schmidt_basis(ts, m_k);
+
+    /*
     // CJTODO: this is only for a sphere in R^3
     Vector t1(-p[1] - p[2], p[0], p[0]);
     Vector t2(p[1] * t1[2] - p[2] * t1[1],
@@ -384,6 +446,7 @@ private:
     //ts.push_back(diff_vec(t1, scaled_vec(n, inner_pdct(t1, n))));
     //ts.push_back(diff_vec(t2, scaled_vec(n, inner_pdct(t2, n))));
     //return compute_gram_schmidt_basis(ts, m_k);
+    */
   }
 
   // Project the point in the tangent space

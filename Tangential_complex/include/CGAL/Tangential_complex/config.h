@@ -25,4 +25,6 @@
 
 #define CGAL_TC_PROFILING
 
+const std::size_t NUM_POINTS_FOR_PCA = 30;
+
 #endif // CGAL_TC_CONFIG_H
