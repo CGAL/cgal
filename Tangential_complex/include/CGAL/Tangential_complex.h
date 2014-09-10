@@ -350,7 +350,7 @@ private:
     // While building the local triangulation, we keep the radius
     // of the sphere centered at "center_vertex" and which contains all the
     // circumspheres of the star of "center_vertex"
-    // For now, we use non-weighted circumspheres but it could be
+    // [TODO?] For now, we use non-weighted circumspheres but it could be
     // optimized by using weighted circumspheres (which are smaller)
     FT star_sphere_squared_radius = std::numeric_limits<FT>::max();
     // Insert the other points
@@ -361,14 +361,6 @@ private:
       // ith point = p, which is already inserted
       if (j != i)
       {
-        // CJTODO TEMP: for test only
-        /*if (local_tr_traits.squared_distance_d_object()(
-          drop_w(wp), 
-          drop_w(*it_wp)) > 1)
-        {
-          ++it_wp;
-          continue;
-        }*/
         if (local_tr_traits.squared_distance_d_object()(
               drop_w(wp), drop_w(*it_wp)) 
             > star_sphere_squared_radius)
@@ -522,7 +514,7 @@ private:
     Kernel::Scalar_product_d inner_pdct = m_k.scalar_product_d_object();
     //Kernel::Difference_of_points_d  diff_points= m_k.difference_of_points_d_object(); // CJTODO: use that
     Get_functor<Kernel, Difference_of_points_tag>::type diff_points(m_k);
-  
+
     std::vector<FT> coords;
     // Ambiant-space coords of the projected point
     std::vector<FT> p_proj(origin.cartesian_begin(), origin.cartesian_end());
