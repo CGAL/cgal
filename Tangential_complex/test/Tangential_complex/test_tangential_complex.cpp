@@ -14,12 +14,31 @@
 # include <tbb/task_scheduler_init.h>
 #endif
 
+#ifdef _DEBUG
+  const int NUM_POINTS = 50;
+#else
+  const int NUM_POINTS = 5000;
+#endif
+
+template <typename Point>
+std::vector<Point> generate_points_on_sphere(double radius)
+{
+  CGAL::Random_points_on_sphere_3<Point> generator(radius);
+  std::vector<Point> points;
+  points.reserve(NUM_POINTS);
+  for (int i = 0 ; i != NUM_POINTS ; ++i)
+    points.push_back(*generator++);
+  return points;
+}
+
 int main()
 {
   typedef CGAL::Epick_d<CGAL::Dimension_tag<3> >  Kernel;
   typedef Kernel::Point_d                         Point;
   const int INTRINSIC_DIMENSION = 2;
-  
+ 
+  //CGAL::default_random = CGAL::Random(0); // NO RANDOM
+
 #ifdef CGAL_LINKED_WITH_TBB
 # ifdef _DEBUG
   tbb::task_scheduler_init init(1);
@@ -28,20 +47,7 @@ int main()
 # endif
 #endif
 
-#ifdef _DEBUG
-  const int NUM_POINTS = 50;
-#else
-  const int NUM_POINTS = 5000;
-#endif
-  //CGAL::default_random = CGAL::Random(0); // NO RANDOM
-  CGAL::Random_points_on_sphere_3<Point> generator(3.0);
-  std::vector<Point> points;
-  points.reserve(NUM_POINTS);
-  for (int i = 0 ; i != NUM_POINTS ; ++i)
-  {
-    points.push_back(*generator++);
-    //points.push_back(Point((double)(rand()%10000)/5000, (double)(rand()%10000)/5000, 0.)); // CJTODO : plane
-  }
+  std::vector<Point> points = generate_points_on_sphere<Point>(3.0);
 
   CGAL::Tangential_complex<
     Kernel, 
