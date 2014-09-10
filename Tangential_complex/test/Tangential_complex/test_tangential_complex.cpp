@@ -64,8 +64,8 @@ int main()
   const int INTRINSIC_DIMENSION = 2;
   const int AMBIENT_DIMENSION = 4;
 
-  typedef CGAL::Epick_d<CGAL::Dimension_tag<4> >  Kernel;
-  typedef Kernel::Point_d                         Point;
+  typedef CGAL::Epick_d<CGAL::Dimension_tag<AMBIENT_DIMENSION> > Kernel;
+  typedef Kernel::Point_d                                        Point;
  
   //CGAL::default_random = CGAL::Random(0); // NO RANDOM
 
@@ -88,7 +88,8 @@ int main()
   tc.compute_tangential_complex();
   
   std::stringstream output_filename;
-  output_filename << "data/test_tc_" << INTRINSIC_DIMENSION << ".off";
+  output_filename << "data/test_tc_" << INTRINSIC_DIMENSION << 
+    << "_in_R" << AMBIENT_DIMENSION << ".off";
   std::ofstream off_stream(output_filename.str());
   tc.export_to_off(off_stream);
 
