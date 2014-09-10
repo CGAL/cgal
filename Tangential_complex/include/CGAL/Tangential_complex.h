@@ -315,10 +315,6 @@ private:
     center_vertex->data() = i;
     //std::cerr << "Inserted CENTER POINT of weight " << CGAL::sqrt(max_squared_weight) << std::endl;
       
-    /*std::cerr << 0 << " "
-              << 0 << " "
-              << CGAL::sqrt(max_squared_weight) << std::endl;*/
-
     // Insert the other points
     std::vector<Tr_point>::const_iterator it_wp = projected_points.begin();
     it_p = m_points.begin();
@@ -342,16 +338,11 @@ private:
         Tr_point wp = local_tr_traits.construct_weighted_point_d_object()(
           local_tr_traits.point_drop_weight_d_object()(*it_wp),
           w);
-        /*Tr_bare_point bp = traits.point_drop_weight_d_object()(*it_wp);
-        Tr_point wp(traits.point_drop_weight_d_object()(*it_wp), w);*/
           
         Tr_vertex_handle vh = p_local_tr->insert_if_in_star(wp, center_vertex);
         //Tr_vertex_handle vh = p_local_tr->insert(wp);
         if (vh != Tr_vertex_handle())
         {
-          /*std::cerr << traits.point_drop_weight_d_object()(*it_wp)[0] << " "
-                    << traits.point_drop_weight_d_object()(*it_wp)[1] << " "
-                    << w << std::endl;*/
           vh->data() = j;
         }
         ++it_wp;
@@ -388,15 +379,16 @@ private:
     //******************************* PCA *************************************
 
     const int amb_dim = Ambient_dimension<Point>::value;
-    Eigen::MatrixXd mat(NUM_POINTS_FOR_PCA, amb_dim);
+    // One row = one point
+    Eigen::MatrixXd mat_points(NUM_POINTS_FOR_PCA, amb_dim);
     int j = 0;
     for (Sorted_points::const_iterator it = sorted_points.begin() ; 
          j < NUM_POINTS_FOR_PCA ; ++it, ++j)
     {
       for (int i = 0 ; i < amb_dim ; ++i)
-        mat(j, i) = (*it)[i];
+        mat_points(j, i) = (*it)[i];
     }
-    Eigen::MatrixXd centered = mat.rowwise() - mat.colwise().mean();
+    Eigen::MatrixXd centered = mat_points.rowwise() - mat_points.colwise().mean();
     Eigen::MatrixXd cov = centered.adjoint() * centered;
     Eigen::SelfAdjointEigenSolver<Eigen::MatrixXd> eig(cov);
 
