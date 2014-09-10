@@ -44,7 +44,15 @@ typedef typename Traits::Iso_cuboid_3 Iso_cuboid;
 
 template class CGAL::Periodic_3_Regular_triangulation_3<Traits>;
 
+typedef CGAL::Periodic_3_Regular_triangulation_3<Traits> P3RT3;
+
 int main ()
 {
-  return 0;
+  P3RT3 p3rt3;
+
+  Weighted_point p(0,0,0);
+  p3rt3.insert(p);
+
+  std::cout << "EXIT SUCCESS" << std::endl;
+  return EXIT_SUCCESS;
 }
