@@ -1148,11 +1148,11 @@ The triangulation defines an iterator that visits the cells intersected by a lin
 
 The cells visited comprise a connected region containing both source and target point of the line segment `s`. Each cell falls within one or more of the following categories:
 1. a finite cell whose interior intersects `s`.
-2. a finite cell with a facet `f` whose interior intersects `s`. If such a cell is visited, its neighbor incident to `f` is not visited.
-3. a finite cell with an edge `e` whose interior (partially) ovelaps `s`. If such a cell is visited, none of the other cells incident to `e` are visited.
-4. a finite cell with an edge `e` whose interior intersects `s` in a point. This cell must form a connected component together with a number of cells incident to `e`. Exactly two of these cells must also fall in category 1 or 2.
+2. a finite cell with a facet `f` whose interior intersects `s` in a line segment. If such a cell is visited, its neighbor incident to `f` is not visited.
+3. a finite cell with an edge `e` whose interior intersects `s` in a line segment. If such a cell is visited, none of the other cells incident to `e` are visited.
+4. a finite cell with an edge `e` whose interior intersects `s` in a point. This cell must form a connected component together with the other cells incident to `e` that are visited. Exactly two of these visited cells must also fall in category 1 or 2.
 5. a finite cell with a vertex `v` that is an endpoint of `s`. This cell must also fit in either category 1 or 2.
-6. a finite cell with a vertex `v` that lies on the iterior of `s`. This cell must form a connected component together with a number of cells incident to `v`. Exactly two of these cells must also fall in category 1 or 2.
+6. a finite cell with a vertex `v` that lies on the interior of `s`. This cell must form a connected component together with the other cells incident to `v` that are visited. Exactly two of these cells must also fall in category 1 or 2.
 7. an infinite cell with a finite facet whose interior intersects the interior of `s`.
 8. an infinite cell with a finite edge `e` whose interior intersects the interior of `s`. If such a cell is visited, its infinite neighbor incident to `e` is not visited.
 9. an infinite cell with a finite vertex `v` that lies on the interior of `s`. If such a cell is visited, none of the other infinite cells incident to `v` are visited.
@@ -1171,21 +1171,21 @@ The starting point of the iterator is an arbitrary cell incident to `s`.
 
 The iterator remains valid until the first cell incident to `t` is passed.
 
-\pre `s` and `t` must be different points and neither can be the infinite vertex.
+\pre `s` and `t` must be different vertices and neither can be the infinite vertex.
 \pre The triangulation must mave dimension at least 2.
 */
-Segment_walk_iterator segment_walk_begin(Vertex_handle s, Vertex_handle t) const;
+Segment_cell_iterator segment_walk_begin(Vertex_handle s, Vertex_handle t) const;
 
 /*!
 returns the past-the-end iterator over the cells intersected by the line segment `st`.
 
-This iterator cannot be dereferenced. It indicates when `segment_walk_begin` has
+This iterator cannot be dereferenced. It indicates when the `Segment_cell_iterator` has
 passed the target.
 
-\pre `s` and `t` must be different points and neither can be the infinite vertex.
+\pre `s` and `t` must be different vertices and neither can be the infinite vertex.
 \pre The triangulation must mave dimension at least 2.
 */
-Segment_walk_iterator segment_walk_end(Vertex_handle s, Vertex_handle t) const;
+Segment_cell_iterator segment_walk_end(Vertex_handle s, Vertex_handle t) const;
 
 /*!
 returns the iterator that allows to visit the cells intersected by the line segment `st`.
@@ -1196,23 +1196,25 @@ The starting point of the iterator is a cell containing `s`.
 
 The iterator remains valid until the first cell containing `t` is passed.
 
-The `hint` is used to locate `s`.
+The optional argument `hint` can reduce the time to construct the iterator if it is close to `s`.
 
 \pre `s` and `t` must be different points.
 \pre The triangulation must mave dimension at least 2. If the dimension is 2, both `s` and `t` must lie in the affine hull.
 */
-Segment_walk_iterator segment_walk_begin(const Point& s, const Point& t, Cell_handle hint = Cell_handle()) const;
+Segment_cell_iterator segment_walk_begin(const Point& s, const Point& t, Cell_handle hint = Cell_handle()) const;
 
 /*!
 returns the past-the-end iterator over the cells intersected by the line segment `st`.
 
-This iterator cannot be dereferenced. It indicates when `segment_walk_begin` has
+This iterator cannot be dereferenced. It indicates when the `Segment_cell_iterator` has
 passed the target.
+
+The optional argument `hint` can reduce the time to construct the iterator if it is close to `s`.
 
 \pre `s` and `t` must be different points and neither can be the infinite vertex.
 \pre The triangulation must mave dimension at least 2.
 */
-Segment_walk_iterator segment_walk_end(const Point& s, const Point& t, Cell_handle hint = Cell_handle()) const;
+Segment_cell_iterator segment_walk_end(const Point& s, const Point& t, Cell_handle hint = Cell_handle()) const;
 /// @}
 
 /*!\name Cell and Facet Circulators 
