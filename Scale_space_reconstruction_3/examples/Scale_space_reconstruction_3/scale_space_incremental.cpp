@@ -28,8 +28,7 @@ int main(void) {
 	std::cout << "done: " << points.size() << " points." << std::endl;
     
 	// Construct the reconstruction to estimate the neighborhood radius.
-    // The -1 indicates the neighborhood radius is not yet set.
-	Reconstruction reconstruct( -1 );
+	Reconstruction reconstruct( 10, 100 );
 
     // Add the points.
     reconstruct.insert( points.begin(), points.end() );

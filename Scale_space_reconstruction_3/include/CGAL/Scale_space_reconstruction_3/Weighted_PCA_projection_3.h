@@ -68,15 +68,13 @@ private:
     Vector3 _norm;  // normal.
 
 public:
-/// \name Constructors
-/// {
-    /// constructs an empty projection to hold the points.
-    /** \param size is the number of points that will be added.
+    // constructs an empty projection to hold the points.
+    /*  \param size is the number of points that will be added.
      */
     Weighted_PCA_projection_3( unsigned int size ): _comp(false), _pts(3,size), _wts(1,size) {}
 
-    /// constructs the weighted least-squares planar approximation of a point set.
-    /** Similar to constructing an empty projection and calling
+    // constructs the weighted least-squares planar approximation of a point set.
+    /*  Similar to constructing an empty projection and calling
      *  <code>[set_points(points_begin, points_end, weights_begin)](\ref WeightedPCAProjection_3::set_points )</code>
      *
      *  \tparam PointIterator is an input iterator over the point collection.
@@ -97,8 +95,6 @@ public:
         set_points( points_begin, points_end, weights_begin );
     }
 
-/// \}
-
 public:
     // sets a weighted point in the collection.
     void set_point( unsigned int i, const Point& p, const FT& w ) {
@@ -106,6 +102,7 @@ public:
         _pts( 1, i ) = CGAL::to_double( p[1] );
         _pts( 2, i ) = CGAL::to_double( p[2] );
         _wts( i ) = CGAL::to_double( w );
+        _comp = false;
     }
 
     // sets the weighted points and compute PCA.

@@ -20,11 +20,7 @@
 \cgalPkgSince{4.5}
 \cgalPkgBib{cgal:ssr3}
 \cgalPkgLicense{\ref licensesGPL "GPL" }
-\cgalPkgDependsOn{\ref PkgAlphaShapes3Summary}
-\cgalPkgDependsOn{\ref PkgSpatialSearchingD}
-\cgalPkgDependsOn{\ref PkgStlExtension}
-\cgalPkgDependsOn{\ref PkgAlgebraicFoundationsSummary}
-\cgalPkgDependsOn{\ref thirdpartyEigen}
+\cgalPkgDependsOn{\ref PkgAlphaShapes3Summary, \ref PkgSpatialSearchingD, \ref thirdpartyEigen 3.1.2 (or greater)}
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd
 

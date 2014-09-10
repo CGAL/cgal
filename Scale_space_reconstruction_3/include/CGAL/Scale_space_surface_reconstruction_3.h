@@ -81,11 +81,13 @@ namespace CGAL {
  *  must be a `Boolean_tag` type. The default value is `Tag_true`.
  *  \tparam WeightedPCAProjection_3 is the type of weighted PCA to use. The
  *  default value is `Weighted_PCA_projection_3<DelaunayTriangulationTraits_3>`.
+ *  \tparam Concurrency_tag indicates whether to use concurrent processing. The
+ *  default value is `Parallel_tag`.
  */
 #ifdef DOXYGEN_RUNNING
-template < class DelaunayTriangulationTraits_3, class FixedSurface, class OrderShells, class WeightedPCAProjection_3 >
+template < class DelaunayTriangulationTraits_3, class FixedSurface, class OrderShells, class WeightedPCAProjection_3, class Concurrency_tag >
 #else
-template < class Gt, class FS = Tag_true, class OS = Tag_true, class Ct = Parallel_tag, class WPCA = Weighted_PCA_projection_3< Gt > >
+template < class Gt, class FS = Tag_true, class OS = Tag_true, class WPCA = Weighted_PCA_projection_3< Gt >, class Ct = Parallel_tag >
 #endif
 class Scale_space_surface_reconstruction_3 {
 public:
@@ -133,7 +135,6 @@ public:
     typedef typename DelaunayTriangulationTraits_3::FT          FT;             ///< defines the number field type.
 
 	typedef typename DelaunayTriangulationTraits_3::Point_3     Point;          ///< defines the point type.
-	typedef typename DelaunayTriangulationTraits_3::Triangle_3  Triangle;       ///< defines the triangle type.
 
     typedef unspecified_type                            Point_iterator;         ///< defines an iterator over the points.
     typedef const unspecified_type                      Const_point_iterator;   ///< defines a constant iterator over the points.
@@ -141,7 +142,6 @@ public:
     typedef typename Gt::FT                             FT;
 
 	typedef typename Gt::Point_3                        Point;
-	typedef typename Gt::Triangle_3                     Triangle;
 
     typedef typename Search_tree::iterator              Point_iterator;
     typedef typename Search_tree::const_iterator        Const_point_iterator;
@@ -213,9 +213,7 @@ public:
     /// constructs a surface reconstructor with a given neighborhood radius.
     /** \param sq_radius is the squared radius of the neighborhood.
      *
-     *  \note If the neighborhood squared radius is negative when the point set
-     *  is smoothed or when the surface is computed, the neighborhood radius
-     *  will be computed automatically.
+     *  \pre `sq_radius` is not negative.
      */
 	Scale_space_surface_reconstruction_3( FT sq_radius );
 
@@ -266,7 +264,7 @@ private:
 public:
 /// \name Point Set Manipulation
 /// \{
-    /// inserts a collection of points into the scale-space.
+    /// inserts a collection of points into the scale-space at the current scale.
     /** \tparam InputIterator is an iterator over the point collection.
      *  The value type of the iterator must be a `Point`.
      *
@@ -300,7 +298,7 @@ public:
 		_tree.insert( begin, end );
 	}
     
-    /// inserts a point into the scale-space.
+    /// inserts a point into the scale-space at the current scale.
     /** \param p is the point to insert.
      *
      *  \note Inserting the point does not automatically construct or
@@ -318,9 +316,12 @@ public:
 		_tree.insert( p );
 	}
     
-    /// clears the scale-space surface reconstruction data.
+    /// clears the stored scale-space surface reconstruction data.
     /** This includes discarding the surface, the scale-space and all its
      *  points, and any estimation of the neighborhood radius.
+     *
+     *  This results in an object equivalent to one constructed by calling
+     *  `Scale_space_surface_reconstruction_3(-1)`.
      */
     void clear() {
 		clear_tree();

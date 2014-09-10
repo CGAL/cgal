@@ -21,7 +21,7 @@
 /** \ingroup PkgScaleSpaceReconstruction3Concepts
  *  \cgalConcept
  *
- *  The weighted least-squares planar approximation intersects the barycenter
+ *  The weighted least-squares planar approximation contains the barycenter
  *  of the points and is orthogonal to the eigenvector corresponding to the
  *  smallest eigenvalue.
  *
@@ -35,12 +35,40 @@ public:
 	typedef unspecified_type    Point;  ///< defines the point type.
 
 /// \}
+    
+public:
+/// \name Constructors
+/// \{
+    /// constructs an empty projection to hold the points.
+    /** \param size is the number of points that will be added.
+     */
+    Weighted_PCA_projection_3( unsigned int size );
+
+    /// constructs the weighted least-squares planar approximation of a point set.
+    /** Similar to constructing an empty projection and calling
+     *  <code>[set_points(points_begin, points_end, weights_begin)](\ref WeightedPCAProjection_3::set_points )</code>
+     *
+     *  \tparam PointIterator is an input iterator over the point collection.
+     *  The value type of the iterator must be a `Point`.
+     *  \tparam WeightIterator is an input iterator over the collection of
+     *  weights. The value type of the iterator must be an `FT`.
+     *
+     *  \param points_begin is an iterator to the first point.
+     *  \param points_end is a past-the-end oterator for the points.
+     *  \param weights_begin is an iterator to the weight of the first point.
+     */
+    template < typename PointIterator, typename WeightIterator >
+    Weighted_PCA_projection_3( PointIterator points_begin, PointIterator points_end, WeightIterator weights_begin );
+
+/// \}
 
 public:
 /// \name Point Insertions.
 /// \{
-    /// sets a weighted point in the collection.
-    /** \pre i must be smaller than the total size of the point set.
+    /// changes a weighted point in the collection.
+    /** This invalidates the approximation. `approximate()` should be called
+     *  after all points have been set.
+     *  \pre i must be smaller than the total size of the point set.
      */
     void set_point( unsigned int i, const Point& p, const FT& w );
     
@@ -88,6 +116,9 @@ public:
 /// \}
 
 public:
+/// \name Projection
+/// \{
+    
     /// projects a point onto the weighted least-squares planar approximation.
     /** \param p is the point to project.
      *
@@ -97,4 +128,5 @@ public:
      *  \pre The approximating plane must already be computed.
      */
     Point project( const Point& p );
+/// \}
 }; // class WeightedPCAProjection_3
