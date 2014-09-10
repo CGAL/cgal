@@ -44,120 +44,38 @@ namespace CGAL {
 
 /// computes a triangulated surface mesh interpolating a point set.
 /** \ingroup PkgScaleSpaceReconstruction3Classes
- *  The scale-space surface reconstruction method is twofold. Firstly, a
- *  scale-space of the point set is constructed. This scale-space contains a
- *  smoothed representation of the point set, which makes the surface
- *  reconstruction problem less ill-posed. Then, a triangulated surface mesh of
- *  the points in the scale-space is computed. This mesh is represented as
- *  triples of indices of the point set. Neighboring triples have consistent
- *  orientation, as expressed using the '<em>right-hand rule</em>' on the
- *  ordered vertices of the triple.
- * 
- *  The points maintain their original order in the scale-space. This means it
- *  is straightforward to revert the scale-space on the triangulated surface
- *  mesh. In essence, the method can reconstruct a smoothed surface or a
- *  surface interpolating the original points. The only change is whether to
- *  apply the index triples to the scale-space or to the original point set.
- *
- *  When applied to the scale-space, the surface mesh is non-self-intersecting.
- *  The interior of the triangles cannot pairwise intersect in a line segment.
- *  However, the surface does not need to be manifold. An edge may be incident
- *  to more than two triangles and triangles may overlap exactly if the regions
- *  on both sides of the triangle are not part of the object. Note that we
- *  count overlapping triangles with opposite orientations as separate
- *  triangles. In many cases where the points sample the surface of an object,
- *  the computed surface will contain both an '<em>outward-facing</em>' and a
- *  similar '<em>inward-facing</em>' surface, with a thin volume between them.
- *
- *  The surface mesh will not have edges incident to only one triangle or
- *  holes, loops of such edges, and the triangles are all oriented towards the
- *  outside of the object sampled. If the point sample has '<em>holes</em>', it
- *  is likely that the surface mesh will contain overlapping triangles with
- *  opposite orientation touching this hole.
- *
- *  If the object is not densely sampled or has disconnected components, the
- *  surface may have several disconnected components. The surface may be
- *  presented as an unordered collection of triangles, or as a collection
- *  sorted per \em shell. A shell is a collection of connected triangles that
- *  are locally oriented towards the same side of the surface.
- *
- *  When applied to the original points, we are unable to guarantee the same
- *  topology of the surface. The triangles of this surface may pairwise
- *  intersect in their interior and the surface could have boundary edges.
- *  However, when using appropriate parameter settings for the number of
- *  iterations and neighborhood size the surface will generally not
- *  self-intersect. The appropriate parameter settings depend on the geometry
- *  of the point set and generally need to be fine-tuned per data set.
- *
- *  Both the smoothing operator and the mesh reconstruction assume that points
- *  near each other belong to the same part of the object. This is expressed in
- *  the notion of balls with a fixed size, the neighborhood radius. If such a
- *  ball contains multiple points, these points are near each other and will
- *  influence each other while advancing the scale-space. If such a ball is
- *  empty, it lies outside the object. Note that \em outside is based on
- *  regions empty of points, not on whether a volume is enclosed by the
- *  surface.
- *
- *  The scale-space is constructed by projecting each point to the
- *  '<em>density</em>'-weighted principal component analysis (PCA) of the local
- *  (\f$ \delta \f$-distance) neighborhood. If the point set was sampled from a
- *  surface for which any high-frequency deformation and sampling noise is
- *  smaller than the neighborhood size, the scale is coarse enough for mesh
- *  reconstruction after a few iterations of advancing the scale-space.
- *
- *  The mesh reconstruction of the scale-space is performed by filtering a 3D
- *  \f$ \alpha \f$-shape. The result is returned as a collection of triples on
- *  the indices of the points of the surface triangles. Recall that this
- *  collection may be sorted per shell, where a shell is a collection of
- *  connected triangles that are locally oriented towards the same side of the
- *  surface.
- *
- *  The reconstruction method requires a neighborhood radius, related to the
- *  resolution of the data. This parameter can be estimated through statistical
- *  analysis. Specifically, we use a kD-tree to estimate the mean distance to
- *  the n-th nearest neighbor and we use this distance as an approximator for
- *  the resolution.
- *
- *  The method generally works well as long as this neighborhood radius is not
- *  too small and the number of scale-space advancement iterations necessary to
- *  reduce the high-frequency signals does not disturb the topology of the data
- *  so much that applying the surface connectivity to the original point set
- *  produces too many self-intersections. As a general rule of thumb, a
- *  neighborhood containg 30 points on average provides a good estimate for the
- *  radius and 4 iterations of smoothing proved a nice scale-space.
- *
  *  This class stores several of the (intermediate) results. This makes it
  *  easier and more efficient to adjust the parameter settings based on
- *  preliminary results, or to further advance the scale-space to improve the
- *  results. The class stores the current scale-space and the reconstructed
- *  surface, possibly with iterators over the shells.
+ *  preliminary results, or to further increase the scale to improve the
+ *  results. The class stores the point set at the current scale and the
+ *  reconstructed surface, possibly with iterators over the shells.
  *
  *  The class also stores the parameters for estimating the optimal
  *  neighborhood radius and either the lastest estimate or the manually set
  *  radius. This way, the radius can be estimated (again) whenever necessary.
- *  Also note that both advancing the scale-space and reconstructing the
+ *  Also note that both increasing the scale and reconstructing the
  *  surface use this radius. By changing or re-estimating the radius between
  *  these operations, they can use separate parameter settings.
  *
- *  The shape can be constructed either at a fixed scale, or at a dynamic
- *  scale. When constructing the surface for exactly one neighborhood radius,
- *  it is faster to set `FixedScale` to `Tag_true`. If the correct neighborhood
- *  radius should be changed or estimated multiple times, it is faster to set
- *  `FixedScale` to `Tag_false`.
+ *  The shape can be constructed either with a fixed neighborhood radius, or
+ *  with a dynamic radius. When constructing the surface for exactly one
+ *  neighborhood radius, it is faster to set `FixedSurface` to `Tag_true`. If
+ *  the correct neighborhood radius should be changed or estimated multiple
+ *  times, it is faster to set `FixedSurface` to `Tag_false`.
  *
- *  It is undefined whether a shape with fixed scale may have its scale
+ *  It is undefined whether a surface with fixed radius may have its radius
  *  changed, but if so, this will likely require more computation time than
- *  changing a dynamic scale. In either case, it is possible to change the
- *  point set while maintaining the same scale.
+ *  changing the radius of a dynamic surface. In either case, it is possible to
+ *  change the point set while maintaining the same radius.
  *
  *  The surface can be stored either as an unordered collection of triangles, 
- *  or as a collection of shells. A shell is a connected component of the 
- *  surface where connected facets are locally oriented towards the same side
- *  of the surface.
+ *  or as a collection ordered by shells. A shell is a maximally connected
+ *  component of the surface where connected facets are locally oriented
+ *  towards the same side of the surface.
  *  
  *  \tparam DelaunayTriangulationTraits_3 is the geometric traits class.
  *  Generally, `Exact_predicates_inexact_constructions_kernel` is preferred.
- *  \tparam FixedScale determines whether the shape is constructed at a fixed
+ *  \tparam FixedSurface determines whether the shape is constructed at a fixed
  *  scale. It must be a `Boolean_tag` type. The default value is `Tag_true`.
  *  \tparam OrderShells determines whether to collect the surface per shell. It
  *  must be a `Boolean_tag` type. The default value is `Tag_true`.
@@ -165,13 +83,13 @@ namespace CGAL {
  *  default value is `Weighted_PCA_projection_3<DelaunayTriangulationTraits_3>`.
  */
 #ifdef DOXYGEN_RUNNING
-template < class DelaunayTriangulationTraits_3, class FixedScale, class OrderShells, class WeightedPCAProjection_3 >
+template < class DelaunayTriangulationTraits_3, class FixedSurface, class OrderShells, class WeightedPCAProjection_3 >
 #else
 template < class Gt, class FS = Tag_true, class OS = Tag_true, class Ct = Parallel_tag, class WPCA = Weighted_PCA_projection_3< Gt > >
 #endif
 class Scale_space_surface_reconstruction_3 {
 public:
-    typedef FS                                          FixedScale;
+    typedef FS                                          FixedSurface;
     typedef OS                                          OrderShells;
     typedef Ct                                          Concurrency_tag;
 
@@ -401,8 +319,8 @@ public:
 	}
     
     /// clears the scale-space surface reconstruction data.
-    /** This includes discarding the surface, the scale-space, and any
-     *  estimation of the neighborhood radius.
+    /** This includes discarding the surface, the scale-space and all its
+     *  points, and any estimation of the neighborhood radius.
      */
     void clear() {
 		clear_tree();
@@ -439,16 +357,16 @@ public:
 
     /// gives the squared radius of the neighborhood.
     /** The neighborhood radius is used by
-     *  <code>[advance_scale_space(...)](\ref advance_scale_space)</code> and
+     *  <code>[increase_scale(...)](\ref increase_scale)</code> and
      *  <code>[construct_scale_space(...)](\ref construct_scale_space)</code> to
-     *  compute the scale-space and by
+     *  compute the point set at the desired scale and by
      *  <code>[reconstruct_surface(...)](\ref reconstruct_surface)</code> to
-     *  construct the shape of the scale-space.
+     *  construct a surface from the point set at the current scale.
      *
      *  \return the squared radius of the neighborhood, or -1 if the
      *  neighborhood radius has not yet been set.
      *
-     *  \sa `advance_scale_space(unsigned int iterations)`.
+     *  \sa `increase_scale(unsigned int iterations)`.
      *  \sa `construct_scale_space(InputIterator begin, InputIterator end, unsigned int iterations)`.
      *  \sa `reconstruct_surface(unsigned int iterations)`.
      *  \sa `reconstruct_surface(InputIterator begin, InputIterator end, unsigned int iterations)`.
@@ -494,11 +412,11 @@ public:
     
     /// sets the squared radius of the neighborhood.
     /** The neighborhood radius is used by
-     *  <code>[advance_scale_space(...)](\ref advance_scale_space)</code> and
+     *  <code>[increase_scale(...)](\ref increase_scale)</code> and
      *  <code>[construct_scale_space(...)](\ref construct_scale_space)</code> to
-     *  compute the scale-space and by
+     *  compute the point set at the desired scale and by
      *  <code>[reconstruct_surface(...)](\ref reconstruct_surface)</code> to
-     *  construct the shape of the scale-space.
+     *  construct a surface from the point set at the current scale.
      *
      *  \param sq_radius is the squared radius of the neighborhood.
      *
@@ -511,7 +429,7 @@ public:
      *
      *  \sa `neighborhood_squared_radius()`.
      *  \sa `has_neighborhood_radius()`.
-     *  \sa `advance_scale_space(unsigned int iterations)`.
+     *  \sa `increase_scale(unsigned int iterations)`.
      *  \sa `construct_scale_space(InputIterator begin, InputIterator end, unsigned int iterations)`.
      *  \sa `reconstruct_surface(unsigned int iterations)`.
      *  \sa `reconstruct_surface(InputIterator begin, InputIterator end, unsigned int iterations)`.
@@ -566,13 +484,13 @@ public:
     /** This method is equivalent to running
      *  <code>[estimate_neighborhood_radius( mean_number_of_neighbors(), neighborhood_sample_size() )](\ref estimate_neighborhood_radius)</code>.
      *
-     *  This method will be called by the scale-space and surface construction
+     *  This method can be called by the scale-space and surface construction
      *  methods if the neighborhood radius is not set when they are called.
      *
      *  \return the estimated neighborhood radius.
      *
-     *  \note This method processes the current point scale-space. The points
-     *  in the scale-space can be set with <code>[insert(begin, end)](\ref insert)</code>.
+     *  \note This method processes the point set at the current scale. The
+     *  points can be set with <code>[insert(begin, end)](\ref insert)</code>.
      *
      *  \warning If the surface was already constructed, estimating the
      *  neighborhood radius will automatically adjust the surface.
@@ -581,7 +499,7 @@ public:
      *  \sa `set_neighborhood_sample_size(unsigned int samples)`.
      *  \sa `estimate_neighborhood_radius(unsigned int neighbors, unsigned int samples)`.
      *  \sa `estimate_neighborhood_radius(InputIterator begin, InputIterator end)`.
-     *  \sa `advance_scale_space(unsigned int iterations)`.
+     *  \sa `increase_scale(unsigned int iterations)`.
      *  \sa `reconstruct_surface(unsigned int iterations)`.
      */
     inline FT estimate_neighborhood_radius() {
@@ -602,8 +520,8 @@ public:
      *  neighborhood radius.
      *  \return the estimated neighborhood radius.
      *
-     *  \note This method processes the current point scale-space. The points
-     *  in the scale-space can be set with <code>[insert(begin, end)](\ref insert)</code>.
+     *  \note This method processes the point set at the current scale. The
+     *  points can be set with <code>[insert(begin, end)](\ref insert)</code>.
      *
      *  \warning If the surface was already constructed, estimating the
      *  neighborhood radius will automatically adjust the surface.
@@ -619,7 +537,7 @@ public:
      *  <code>[insert(begin, end)](\ref insert)</code> and
      *  finally <code>[estimate_neighborhood_radius( mean_number_of_neighbors(), neighborhood_sample_size() )](\ref estimate_neighborhood_radius)</code>.
      *
-     *  This method will be called by the scale-space and surface construction
+     *  This method can be called by the scale-space and surface construction
      *  methods if the neighborhood radius is not set when they are called.
      *
      *  \tparam InputIterator is an iterator over the point collection.
@@ -687,16 +605,11 @@ public:
 
 /// \}
     
-/// \name Scale-space Manipulation
+/// \name Scale-Space Manipulation
 /// \{
-    /// advances the scale-space by a number of iterations.
-    /** Each iteration the scale-space is advanced, a higher scale-space is
-     *  computed. At a higher scale, the scale-space contains a smoother
-     *  representation of the point set.
-     *
-     *  In case the scale-space is not at the scale of the original point set,
-     *  calling <code>[advance_scale_space(iterations)](\ref advance_scale_space)</code>
-     *  with `iterations > 0` will advance the scale-space further.
+    /// increases the scale by a number of iterations.
+    /** Each iteration the scale is increased, the points set at a higher scale
+     *  is computed. At a higher scale, the points set is smoother.
      *
      *  If the neighborhood radius has not been set before, it is automatically
      *  estimated using `estimate_neighborhood_radius()`.
@@ -704,17 +617,17 @@ public:
      *  \param iterations is the number of iterations to perform. If
      *  `iterations` is 0, nothing happens.
      *
-     *  \note This method processes the current point scale-space. The points
-     *  in the scale-space can be set with <code>[insert(begin, end)](\ref insert)</code>.
+     *  \note This method processes the point set at the current scale. The
+     *  points can be set with <code>[insert(begin, end)](\ref insert)</code>.
      *
-     *  \note If the surface was already constructed, advancing the scale-space
+     *  \note If the surface was already constructed, increasing the scale
      *  will not automatically adjust the surface.
      *
      *  \sa `construct_scale_space(InputIterator begin, InputIterator end, unsigned int iterations)`.
      *  \sa `estimate_neighborhood_radius()`.
      *  \sa `reconstruct_surface(unsigned int iterations)`.
      */
-	void advance_scale_space( unsigned int iterations = 1 );
+	void increase_scale( unsigned int iterations = 1 );
     
     /// constructs a scale-space of a collection of points.
     /** If the neighborhood radius has not been set before, it is automatically
@@ -723,7 +636,7 @@ public:
      *  This method is equivalent to running
      *  `clear()` followed by
      *  <code>[insert(begin, end)](\ref insert)</code> and finally
-     *  <code>[advance_scale_space(iterations)](\ref advance_scale_space)</code>.
+     *  <code>[increase_scale(iterations)](\ref increase_scale)</code>.
      *
      *  \tparam InputIterator is an iterator over the point collection.
      *  The value type of the iterator must be a `Point`.
@@ -735,7 +648,7 @@ public:
      *
      *  \sa `insert(InputIterator begin, InputIterator end)`.
      *  \sa `estimate_neighborhood_radius(InputIterator begin, InputIterator end)`.
-     *  \sa `advance_scale_space(unsigned int iterations)`.
+     *  \sa `increase_scale(unsigned int iterations)`.
      *  \sa `reconstruct_surface(InputIterator begin, InputIterator end, unsigned int iterations)`.
      */
 	template < class InputIterator >
@@ -749,7 +662,7 @@ public:
 #endif // DOXYGEN_RUNNING
         clear();
 		insert( begin, end );
-		advance_scale_space( iterations );
+		increase_scale( iterations );
 	}
 
 /// \}
@@ -767,7 +680,7 @@ private:
 private:
 /// \name Shape
 /// \{
-    /// constructs the shape of the scale-space.
+    /// constructs the shape of the points at a fixed scale.
     /** The shape contains geometric and connectivity information
      *  of the scale space.
      *
@@ -842,11 +755,11 @@ public:
         return _shells.size();
     }
     
-    /// constructs a triangle mesh from the scale-space.
-    /** The order of the points in the scale-space is the same as the order of
-     *  the original points, meaning that the surface of the scale-space can
-     *  interpolate the original point set by applying the indices of the
-     *  surface triangles to the original point set.
+    /// constructs a triangle mesh from the point set at a fixed scale.
+    /** The order of the points at the current scale is the same as the order
+     *  at the original scale, meaning that the surface can interpolate the
+     *  point set at the original scale by applying the indices of the surface
+     *  triangles to the original point set.
      *
      *  After construction, the triangles of the surface can be iterated using
      *  `surface_begin()` and `surface_end()`.
@@ -854,19 +767,19 @@ public:
      *  If the neighborhood radius has not been set before, it is automatically
      *  estimated using `estimate_neighborhood_radius()`.
      *
-     *  \param iterations is the number of scale-space advancement iterations to
-     *  apply. If `iterations` is 0, the current scale-space is used.
+     *  \param iterations is the number of scale increase iterations to apply.
+     *  If `iterations` is 0, the point set at the current scale is used.
      *
-     *  \note This method processes the current point scale-space. The points
-     *  in the scale-space can be set with <code>[insert(begin, end)](\ref insert)</code>.
+     *  \note This method processes the point set at the current scale. The
+     *  points can be set with <code>[insert(begin, end)](\ref insert)</code>.
      *
      *  \sa `reconstruct_surface(InputIterator begin, InputIterator end, unsigned int iterations)`.
      *  \sa `estimate_neighborhood_radius()`.
-     *  \sa `advance_scale_space(unsigned int iterations)`.
+     *  \sa `increase_scale(unsigned int iterations)`.
      */
 	void reconstruct_surface( unsigned int iterations = 0 );
     
-    /// constructs a surface mesh from the scale-space of a collection of points.
+    /// constructs a surface mesh from a collection of points at a fixed scale.
     /** This method is equivalent to running
      *  `clear()` followed by
      *  <code>[insert(begin, end)](\ref insert)</code> and finally
@@ -880,8 +793,8 @@ public:
      *
      *  \param begin is an iterator to the first point of the collection.
      *  \param end is a past-the-end iterator for the point collection.
-     *  \param iterations is the number of scale-space advancement iterations to
-     *  apply. If `iterations` is 0, the current scale-space is used.
+     *  \param iterations is the number of scale increase iterations to apply.
+     *  If `iterations` is 0, the point set at the current scale is used.
      *  
      *  \sa `reconstruct_surface(unsigned int iterations)`.
      *  \sa `insert(InputIterator begin, InputIterator end)`.
@@ -903,17 +816,17 @@ public:
 public:
 /// \name Iterators
 /// \{
-    /// gives an iterator to the first point in the current scale space.
+    /// gives an iterator to the first point at the current scale.
     Const_point_iterator scale_space_begin() const { return _tree.begin(); }
-    /// gives an iterator to the first point in the current scale space.
+    /// gives an iterator to the first point at the current scale.
     /** \warning Changes to the scale-space do not cause an automatic update to
      *  the surface.
      */
     Point_iterator scale_space_begin() { return _tree.begin(); }
 
-    /// gives a past-the-end iterator of the points in the current scale space.
+    /// gives a past-the-end iterator of the points at the current scale.
     Const_point_iterator scale_space_end() const { return _tree.begin(); }
-    /// gives a past-the-end iterator of the points in the current scale space.
+    /// gives a past-the-end iterator of the points at the current scale.
     /** \warning Changes to the scale-space do not cause an automatic update to
      *  the surface.
      */

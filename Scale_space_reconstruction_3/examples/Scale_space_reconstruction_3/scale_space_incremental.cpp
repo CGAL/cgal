@@ -36,13 +36,13 @@ int main(void) {
 
     // Advance the scale-space several steps.
     // This automatically estimates the scale-space.
-    reconstruct.advance_scale_space( 2 );
+    reconstruct.increase_scale( 2 );
 
     // Re-estimate the neighborhood radius.
     reconstruct.estimate_neighborhood_radius( 10, 100 );
 
     // Advance the scale-space further.
-    reconstruct.advance_scale_space( 2 );
+    reconstruct.increase_scale( 2 );
 
     // Manually set the neighborhood radius.
     reconstruct.set_neighborhood_squared_radius( 0.05 );

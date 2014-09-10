@@ -62,10 +62,10 @@ namespace CGAL {
  *  \tparam GeomTraits is the geometric traits class. It must be a model of
  *  `DelaunayTriangulationTraits_3`. Generally,
  *  `Exact_predicates_inexact_constructions_kernel` is preferred.
- *  \tparam FixedScale determines whether the shape is constructed for a fixed
+ *  \tparam FixedSurface determines whether the shape is constructed for a fixed
  *  scale. It must be a Boolean_tag type.
  */
-template < class GeomTraits, class FixedScale >
+template < class GeomTraits, class FixedSurface >
 class Shape_construction_3 {
     typedef Triangulation_vertex_base_with_info_3< unsigned int, GeomTraits >   Vb;
     typedef Alpha_shape_vertex_base_3< GeomTraits, Vb >                     aVb;

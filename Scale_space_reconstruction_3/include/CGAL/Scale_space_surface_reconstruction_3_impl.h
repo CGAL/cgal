@@ -393,7 +393,7 @@ estimate_neighborhood_radius( InputIterator begin, InputIterator end, unsigned i
 template < class Gt, class FS, class OS, class Ct, class WPCA >
 void
 Scale_space_surface_reconstruction_3<Gt,FS,OS,Ct,WPCA>::
-advance_scale_space( unsigned int iterations ) {
+increase_scale( unsigned int iterations ) {
     typedef std::vector< unsigned int >		CountVec;
     typedef std::map<Point, size_t>			PIMap;
     typedef std::vector<Point>              Pointset;
@@ -485,7 +485,7 @@ void
 Scale_space_surface_reconstruction_3<Gt,FS,OS,Ct,WPCA>::
 reconstruct_surface( unsigned int iterations ) {
     // Smooth the scale space.
-    advance_scale_space( iterations );
+    increase_scale( iterations );
 
     // Mesh the perturbed points.
     collect_surface();
@@ -504,7 +504,7 @@ reconstruct_surface( InputIterator begin, InputIterator end, unsigned int iterat
     insert( begin, end );
 
     // Smooth the scale space.
-    advance_scale_space( iterations );
+    increase_scale( iterations );
 
     // Mesh the perturbed points.
     collect_surface();
