@@ -39,10 +39,13 @@
 #include <Eigen/Core>
 #include <Eigen/Eigen>
 
+#include <boost/iterator/transform_iterator.hpp>
+
 #include <vector>
 #include <utility>
 #include <sstream>
 #include <iostream>
+#include <limits>
 
 #ifdef CGAL_LINKED_WITH_TBB
 # include <tbb/parallel_for.h>
@@ -243,6 +246,26 @@ private:
     Kernel const& m_k;
   };
 
+  
+  struct Tr_vertex_to_bare_point
+  {
+    typedef typename Tr_vertex_handle	argument_type;
+    typedef typename Tr_bare_point	result_type;
+
+    Tr_vertex_to_bare_point(Tr_traits const& traits)
+      : m_traits(traits) {}
+
+    result_type operator()(argument_type const& vh) const
+    {
+      typename Tr_traits::Point_drop_weight_d pdw =
+        m_traits.point_drop_weight_d_object();
+      return pdw(vh->point());
+    }
+
+  private:
+    Tr_traits const& m_traits;
+  };
+
 #ifdef CGAL_LINKED_WITH_TBB
   // Functor for compute_tangential_complex function
   class Compute_tangent_triangulation
@@ -271,11 +294,20 @@ private:
 
   void compute_tangent_triangulation(std::size_t i)
   {
+    //std::cerr << "***********************************************" << std::endl;
     Triangulation *p_local_tr =
       m_triangulations[i].first = 
         new Triangulation(Intrinsic_dimension);
     const Tr_traits &local_tr_traits = p_local_tr->geom_traits();
     Tr_vertex_handle &center_vertex = m_triangulations[i].second;
+
+    // Traits functor & objects
+    Tr_traits::Center_of_sphere_d center_of_sphere = 
+      local_tr_traits.center_of_sphere_d_object();
+    Tr_traits::Squared_distance_d sqdist = 
+      local_tr_traits.squared_distance_d_object();
+    Tr_traits::Point_drop_weight_d drop_w = 
+      local_tr_traits.point_drop_weight_d_object();
 
     // Estimate the tangent space
     const Point &center_pt = m_points[i];
@@ -314,7 +346,13 @@ private:
     center_vertex = p_local_tr->insert(wp);
     center_vertex->data() = i;
     //std::cerr << "Inserted CENTER POINT of weight " << CGAL::sqrt(max_squared_weight) << std::endl;
-      
+
+    // While building the local triangulation, we keep the radius
+    // of the sphere centered at "center_vertex" and which contains all the
+    // circumspheres of the star of "center_vertex"
+    // For now, we use non-weighted circumspheres but it could be
+    // optimized by using weighted circumspheres (which are smaller)
+    FT star_sphere_squared_radius = std::numeric_limits<FT>::max();
     // Insert the other points
     std::vector<Tr_point>::const_iterator it_wp = projected_points.begin();
     it_p = m_points.begin();
@@ -325,18 +363,25 @@ private:
       {
         // CJTODO TEMP: for test only
         /*if (local_tr_traits.squared_distance_d_object()(
-          local_tr_traits.point_drop_weight_d_object()(wp), 
-          local_tr_traits.point_drop_weight_d_object()(*it_wp)) > 1)
+          drop_w(wp), 
+          drop_w(*it_wp)) > 1)
         {
           ++it_wp;
           continue;
         }*/
+        if (local_tr_traits.squared_distance_d_object()(
+              drop_w(wp), drop_w(*it_wp)) 
+            > star_sphere_squared_radius)
+        {
+          ++it_wp;
+          continue;
+        }
 
         FT squared_dist_to_tangent_plane = 
           local_tr_traits.point_weight_d_object()(*it_wp);
         FT w = CGAL::sqrt(max_squared_weight - squared_dist_to_tangent_plane);
         Tr_point wp = local_tr_traits.construct_weighted_point_d_object()(
-          local_tr_traits.point_drop_weight_d_object()(*it_wp),
+          drop_w(*it_wp),
           w);
           
         Tr_vertex_handle vh = p_local_tr->insert_if_in_star(wp, center_vertex);
@@ -344,7 +389,37 @@ private:
         if (vh != Tr_vertex_handle())
         {
           vh->data() = j;
+
+          // Let's recompute star_sphere_squared_radius
+          if (p_local_tr->current_dimension() >= Intrinsic_dimension)
+          { 
+            star_sphere_squared_radius = 0.;
+            // Get the incident cells and look for the biggest circumsphere
+            std::vector<Tr_full_cell_handle> incident_cells;
+            p_local_tr->incident_full_cells(
+              center_vertex, 
+              std::back_inserter(incident_cells));
+            for (auto cell : incident_cells) // CJTODO C++11
+            {
+              if (p_local_tr->is_infinite(cell))
+              {
+                star_sphere_squared_radius = std::numeric_limits<FT>::max();
+                break;
+              }
+              else
+              {
+                Tr_vertex_to_bare_point v2p(local_tr_traits);
+                Tr_bare_point c = center_of_sphere(
+                  boost::make_transform_iterator(cell->vertices_begin(), v2p),
+                  boost::make_transform_iterator(cell->vertices_end(), v2p));
+                FT sq_circumdiam = 4.*sqdist(c, drop_w(center_vertex->point()));
+                if (sq_circumdiam > star_sphere_squared_radius)
+                  star_sphere_squared_radius = sq_circumdiam;
+              }
+            }
+          }
         }
+        //std::cerr << star_sphere_squared_radius << std::endl;
         ++it_wp;
       }
     }
