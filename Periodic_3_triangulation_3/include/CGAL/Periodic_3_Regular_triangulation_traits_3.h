@@ -104,7 +104,7 @@ public:
 
 	typedef typename K::Segment_3 Segment_3;
 	typedef typename K::Triangle_3 Triangle_3;
-	typedef typename K::Tetrahedron_3 Tetrahedron_3;
+  typedef typename K::Tetrahedron_3 Tetrahedron_3;
 
 	typedef Regular_traits_with_offsets_adaptor<Self, typename K::Power_test_3> Power_test_3;
 	typedef Regular_traits_with_offsets_adaptor<Self, typename K::Compare_power_distance_3> Compare_power_distance_3;
@@ -120,6 +120,7 @@ public:
 
 	typedef Regular_traits_with_offsets_adaptor<Self, typename K::Compare_xyz_3> Compare_xyz_3;
 	typedef Regular_traits_with_offsets_adaptor<Self, typename K::Orientation_3> Orientation_3;
+  typedef Regular_traits_with_offsets_adaptor<Self, typename K::Coplanar_orientation_3> Coplanar_orientation_3;
 	typedef Periodic_3_construct_weighted_point_3<Self, typename K::Construct_point_3> Construct_point_3;
 	typedef Regular_traits_with_offsets_adaptor<Self, typename K::Construct_segment_3> Construct_segment_3;
 	typedef Regular_traits_with_offsets_adaptor<Self, typename K::Construct_triangle_3> Construct_triangle_3;
@@ -199,6 +200,11 @@ public:
 	{
 		return Orientation_3(&_domain);
 	}
+
+  Coplanar_orientation_3 coplanar_orientation_3_object () const
+  {
+    return Coplanar_orientation_3(&_domain);
+  }
 
 	Construct_point_3 construct_point_3_object () const
 	{

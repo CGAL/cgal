@@ -5,7 +5,7 @@
 #include <CGAL/spatial_sort.h>
 
 // Needed by remove to fill the hole.
-#include <CGAL/Periodic_3_triangulation_remove_traits_3.h>
+#include <CGAL/Periodic_3_regular_triangulation_remove_traits_3.h>
 #include <CGAL/Regular_triangulation_3.h>
 
 
@@ -141,8 +141,22 @@ public:
       Point_hider hider(this);
       return Base::insert_in_conflict(p,lt,c,li,lj, tester,hider);
     }
-
    //@}
+
+   void remove(Vertex_handle v)
+   {
+     typedef CGAL::Periodic_3_regular_triangulation_remove_traits_3< Gt > P3removeT;
+     typedef CGAL::Regular_triangulation_3< P3removeT >
+       Euclidean_triangulation;
+     typedef Vertex_remover< Euclidean_triangulation > Remover;
+     P3removeT remove_traits(domain());
+     Euclidean_triangulation tmp(remove_traits);
+     Remover remover(this, tmp);
+     Conflict_tester ct(this);
+
+     Base::remove(v, remover, ct);
+     CGAL_triangulation_expensive_assertion(is_valid());
+   }
 
 protected:
 	bool less_power_distance (const Bare_point &p, const Weighted_point &q, const Weighted_point &r)  const
@@ -215,6 +229,55 @@ protected:
   class Conflict_tester;
 private:
   class Point_hider;
+
+#ifndef CGAL_CFG_OUTOFLINE_TEMPLATE_MEMBER_DEFINITION_BUG
+  template <class TriangulationR3> struct Vertex_remover;
+#else
+  template <class TriangulationR3>
+  struct Vertex_remover
+  {
+    typedef TriangulationR3      Triangulation_R3;
+
+    typedef typename std::vector<Weighted_point>::iterator Hidden_points_iterator;
+
+    typedef Triple < Vertex_handle, Vertex_handle, Vertex_handle > Vertex_triple;
+
+    typedef typename Triangulation_R3::Triangulation_data_structure TDSE;
+    typedef typename Triangulation_R3::Cell_handle        CellE_handle;
+    typedef typename Triangulation_R3::Vertex_handle      VertexE_handle;
+    typedef typename Triangulation_R3::Facet              FacetE;
+    typedef typename Triangulation_R3::Finite_cells_iterator Finite_cellsE_iterator;
+
+    typedef Triple< VertexE_handle, VertexE_handle, VertexE_handle >
+    VertexE_triple;
+
+    typedef std::map<Vertex_triple,Facet> Vertex_triple_Facet_map;
+    typedef std::map<Vertex_triple, FacetE> Vertex_triple_FacetE_map;
+    typedef typename Vertex_triple_FacetE_map::iterator
+    Vertex_triple_FacetE_map_it;
+
+    Vertex_remover(const Self *t, Triangulation_R3 &tmp_) : _t(t),tmp(tmp_) {}
+
+    const Self *_t;
+    Triangulation_R3 &tmp;
+
+    void add_hidden_points(Cell_handle ch) {
+      std::copy(ch->hidden_points_begin(), ch->hidden_points_end(),
+    std::back_inserter(hidden));
+    }
+
+    Hidden_points_iterator hidden_points_begin() {
+      return hidden.begin();
+    }
+    Hidden_points_iterator hidden_points_end() {
+      return hidden.end();
+    }
+    //private:
+    // The removal of v may un-hide some points,
+    // Space functions output them.
+    std::vector<Weighted_point> hidden;
+  };
+#endif //CGAL_CFG_OUTOFLINE_TEMPLATE_MEMBER_DEFINITION_BUG
 };
 
 template < class Gt, class Tds >
@@ -424,8 +487,55 @@ public:
   {
     // No points to hide in the Delaunay triangulation.
   }
-
 };
+
+#ifndef CGAL_CFG_OUTOFLINE_TEMPLATE_MEMBER_DEFINITION_BUG
+template <class GT, class Tds>
+template <class TriangulationR3>
+struct Periodic_3_Regular_triangulation_3<GT,Tds>::Vertex_remover
+{
+  typedef TriangulationR3      Triangulation_R3;
+
+  typedef typename std::vector<Weighted_point>::iterator Hidden_points_iterator;
+
+  typedef Triple < Vertex_handle, Vertex_handle, Vertex_handle > Vertex_triple;
+
+  typedef typename Triangulation_R3::Triangulation_data_structure TDSE;
+  typedef typename Triangulation_R3::Cell_handle        CellE_handle;
+  typedef typename Triangulation_R3::Vertex_handle      VertexE_handle;
+  typedef typename Triangulation_R3::Facet              FacetE;
+  typedef typename Triangulation_R3::Finite_cells_iterator Finite_cellsE_iterator;
+
+  typedef Triple< VertexE_handle, VertexE_handle, VertexE_handle >
+  VertexE_triple;
+
+  typedef std::map<Vertex_triple,Facet> Vertex_triple_Facet_map;
+  typedef std::map<Vertex_triple, FacetE> Vertex_triple_FacetE_map;
+  typedef typename Vertex_triple_FacetE_map::iterator
+  Vertex_triple_FacetE_map_it;
+
+  Vertex_remover(const Self *t, Triangulation_R3 &tmp_) : _t(t),tmp(tmp_) {}
+
+  const Self *_t;
+  Triangulation_R3 &tmp;
+
+  void add_hidden_points(Cell_handle ch) {
+    std::copy(ch->hidden_points_begin(), ch->hidden_points_end(),
+  std::back_inserter(hidden));
+  }
+
+  Hidden_points_iterator hidden_points_begin() {
+    return hidden.begin();
+  }
+  Hidden_points_iterator hidden_points_end() {
+    return hidden.end();
+  }
+  //private:
+  // The removal of v may un-hide some points,
+  // Space functions output them.
+  std::vector<Weighted_point> hidden;
+};
+#endif //CGAL_CFG_OUTOFLINE_TEMPLATE_MEMBER_DEFINITION_BUG
 }// namespace CGAL
 
 #endif
