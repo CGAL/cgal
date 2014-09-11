@@ -17,21 +17,18 @@
 // Author(s):      Thijs van Lankveld
 
     
-/// A concept for projecting a point orthogonally onto a weighted least-squares planar approximation of a point set.
+/// A concept for computing a approximation of a weighted point set.
 /** \ingroup PkgScaleSpaceReconstruction3Concepts
  *  \cgalConcept
+ *  This approximation can be used to fit other points to the point set.
  *
- *  The weighted least-squares planar approximation contains the barycenter
- *  of the points and is orthogonal to the eigenvector corresponding to the
- *  smallest eigenvalue.
- *
- *  \cgalHasModel `CGAL::Weighted_PCA_projection_3`
+ *  \cgalHasModel `CGAL::Weighted_PCA_approximation_3`
  */
-class WeightedPCAProjection_3 {
+class WeightedApproximation_3 {
 public:
 /// \name Types
 /// \{
-	typedef unspecified_type    FT;     ///< defines the number field type.
+	typedef unspecified_type    FT;     ///< defines the field number type.
 	typedef unspecified_type    Point;  ///< defines the point type.
 
 /// \}
@@ -39,15 +36,20 @@ public:
 public:
 /// \name Constructors
 /// \{
-    /// constructs the weighted least-squares planar approximation of a point set.
-    /** The point set holds an fixed number of points with undefined coordinates.
-     *  \param size is the number of points in the set.
+    /// constructs an approximation of a undefined point set.
+    /** The point set holds a fixed number of points with undefined coordinates.
+     *
+     *  \param size is the size of the points set.
+     *
+     *  \note this does not compute the approximation.
      */
-    Weighted_PCA_projection_3( unsigned int size );
+    WeightedApproximation_3( unsigned int size );
+    
+/// \}
 
-    /// constructs the weighted least-squares planar approximation of a point set.
-    /** Similar to constructing a approximation and calling
-     *  <code>[set_points(points_begin, points_end, weights_begin)](\ref WeightedPCAProjection_3::set_points )</code>
+    //  computes the approximation of a point set.
+    /*  Similar to constructing a approximation and calling
+     *  <code>[set_points(points_begin, points_end, weights_begin)](\ref WeightedApproximation_3::set_points )</code>
      *
      *  \tparam PointIterator is an input iterator over the point collection.
      *  The value type of the iterator must be a `Point`.
@@ -62,23 +64,25 @@ public:
      *  points.
      */
     template < typename PointIterator, typename WeightIterator >
-    Weighted_PCA_projection_3( PointIterator points_begin, PointIterator points_end, WeightIterator weights_begin );
-
-/// \}
+    WeightedApproximation_3( PointIterator points_begin, PointIterator points_end, WeightIterator weights_begin );
 
 public:
-/// \name Point Insertions.
+/// \name Point Set.
 /// \{
-    /// changes a weighted point in the collection.
-    /** This invalidates the approximation. `approximate()` should be called
+    /// changes a weighted point in the set.
+    /** This invalidates the approximation. `compute()` should be called
      *  after all points have been set.
      *  \pre i must be smaller than the total size of the point set.
      */
     void set_point( unsigned int i, const Point& p, const FT& w );
     
-    /// sets the collection of weighted points.
-    /** After these points are set, the weighted least-squares planar
-     *  approximation is immediately constructed.
+    /// gives the size of the weighted point set.
+    std::size_t size() const;
+
+/// \}
+
+    //  changes the weighted point set.
+    /*  After these points are set, the approximation is immediately computed.
      *
      *  \tparam PointIterator is an input iterator over the point collection.
      *  The value type of the iterator must be a `Point`.
@@ -91,8 +95,9 @@ public:
      *
      *  \return whether the approximation converges. If the approximation does
      *  not converge this may indicate that the point set is too small, or the
-     *  affine hull of the points is smaller than 2D.
+     *  affine hull of the points cannot contain the approximation.
      *
+     *  \pre The points must fit in the approximation.
      *  \pre The number of weights must be at least equal to the number of
      *  points.
      */
@@ -100,37 +105,32 @@ public:
     bool set_points( PointIterator points_begin, PointIterator points_end,
                      WeightIterator weights_begin );
 
-/// \}
-
 public:
-/// \name Weighted PCA Approximation
+/// \name Approximation
 /// \{
     
-    /// computes the weighted least-squares planar approximation of the point set.
+    /// computes the approximation.
     /** \return whether the approximation converges. If the approximation does
      *  not converge this may indicate that the point set is too small, or the
-     *  affine hull of the points is smaller than 2D.
+     *  affine hull of the points cannot contain the approximation.
      */
-    bool approximate();
+    bool compute();
 
-    /// checks whether the weighted least-squares planar approximation has been computed.
-    /** \return `true` iff the approximation has been computed successfully.
-     */
-    bool is_approximated() const;
+    /// checks whether the approximation has been computed successfully.
+    bool is_computed() const;
 /// \}
 
 public:
-/// \name Projection
+/// \name Fitting
 /// \{
     
-    /// projects a point onto the weighted least-squares planar approximation.
-    /** \param p is the point to project.
+    /// fits a point to the approximation.
+    /** \param p is the point to fit.
      *
-     *  \return the orthogonal projection of `p` onto the weighted
-     *  least-squares planar approximating of the point set.
+     *  \return the point on the approximation closest to `p`.
      *
-     *  \pre The approximating plane must already be computed.
+     *  \pre The approximation must have been computed.
      */
-    Point project( const Point& p );
+    Point fit( const Point& p );
 /// \}
-}; // class WeightedPCAProjection_3
+}; // class WeightedApproximation_3

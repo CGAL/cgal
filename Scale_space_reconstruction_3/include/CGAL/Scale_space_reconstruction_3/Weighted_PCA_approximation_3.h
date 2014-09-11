@@ -25,31 +25,31 @@
 
 namespace CGAL {
     
-/// projects a point orthogonally onto a weighted least-squares planar approximation of a point set.
+/// approximates a point set using a weighted least-squares plane.
 /** \ingroup PkgScaleSpaceReconstruction3Classes
- *  
- *  This class uses the eigenvector solvers of \ref thirdpartyEigen.
+ *  The weighted least-squares planar approximation contains the barycenter
+ *  of the points and is orthogonal to the eigenvector corresponding to the
+ *  smallest eigenvalue.
  *
- *  Version 3.1.2 (or greater) of \ref thirdpartyEigen must be available on the
- *  system.
+ *  Point are fitted to this approximation by projecting them orthogonally onto
+ *  the weighted least-squares plane.
+ *  
+ *  This class requires the eigenvector solvers of \ref thirdpartyEigen version
+ *  3.1.2 (or greater).
  *
  *  \tparam Kernel the geometric traits class of the input and output. It
  *  must have a `RealEmbeddable` field number type.
  *
- *  \note Irrespective of the geometric traits class, the projection is
+ *  \note Irrespective of the geometric traits class, the approximation is
  *  always estimated up to double precision.
  *
- *  \cgalModels `WeightedPCAProjection_3`
+ *  \cgalModels `WeightedApproximation_3`
  */
-#ifdef DOXYGEN_RUNNING
 template < class Kernel >
-#else // DOXYGEN_RUNNING
-template < class Gt >
-#endif // DOXYGEN_RUNNING
-class Weighted_PCA_projection_3 {
+class Weighted_PCA_approximation_3 {
 public:
-	typedef typename Gt::FT                             FT;
-	typedef typename Gt::Point_3                        Point;
+	typedef typename Kernel::FT                         FT;
+	typedef typename Kernel::Point_3                    Point;
 
 private:
     typedef Eigen::Matrix<double, 3, Eigen::Dynamic>	Matrix3D;       // 3-by-dynamic double-value matrix.
@@ -68,14 +68,14 @@ private:
     Vector3 _norm;  // normal.
 
 public:
-    // constructs an default projection to hold the points.
+    // constructs an default approximation to hold the points.
     /*  \param size is the number of points that will be added.
      */
-    Weighted_PCA_projection_3( unsigned int size ): _comp(false), _pts(3,size), _wts(1,size) {}
+    Weighted_PCA_approximation_3( unsigned int size ): _comp(false), _pts(3,size), _wts(1,size) {}
 
-    // constructs the weighted least-squares planar approximation of a point set.
+    // computes the weighted least-squares planar approximation of a point set.
     /*  Similar to constructing an empty projection and calling
-     *  <code>[set_points(points_begin, points_end, weights_begin)](\ref WeightedPCAProjection_3::set_points )</code>
+     *  <code>[set_points(points_begin, points_end, weights_begin)](\ref WeightedApproximation_3::set_points )</code>
      *
      *  \tparam PointIterator is an input iterator over the point collection.
      *  The value type of the iterator must be a `Point`.
@@ -87,7 +87,7 @@ public:
      *  \param weights_begin is an iterator to the weight of the first point.
      */
     template < typename PointIterator, typename WeightIterator >
-    Weighted_PCA_projection_3( PointIterator points_begin, PointIterator points_end, WeightIterator weights_begin )
+    Weighted_PCA_approximation_3( PointIterator points_begin, PointIterator points_end, WeightIterator weights_begin )
     : _comp(false) {
         std::size_t size = std::distance( points_begin, points_end );
         _pts = Matrix3D(3,size);
@@ -114,11 +114,14 @@ public:
             _pts( 2, column ) = CGAL::to_double( (*points_begin)[2] );
             _wts( column ) = CGAL::to_double( *weights_begin );
         }
-        return approximate();
+        return compute();
     }
     
+    // gives the size of the weighted point set.
+    std::size_t size() const { return _pts.cols(); }
+    
     // compute weighted PCA.
-    bool approximate() {
+    bool compute() {
         // Construct the barycenter.
         _bary = ( _pts.array().rowwise() * _wts ).rowwise().sum() / _wts.sum();
 			
@@ -154,11 +157,11 @@ public:
     }
     
     // checks whether the weighted least-squares approximating plane has been computed.
-    bool is_approximated() const { return _comp; }
+    bool is_computed() const { return _comp; }
     
 public:
     // projects a point onto the weighted PCA plane.
-    Point project( const Point& p ) {
+    Point fit( const Point& p ) {
         CGAL_assertion( _comp );
         // The point is moved by projecting it onto the plane through the
         // barycenter and orthogonal to the normal.
@@ -168,7 +171,7 @@ public:
         Vector3 proj = _bary + to_p - ( _norm.dot(to_p) * _norm );
         return Point( proj(0), proj(1), proj(2) );
     }
-}; // class Weighted_PCA_projection_3
+}; // class Weighted_PCA_approximation_3
 
 } // namespace CGAL
 

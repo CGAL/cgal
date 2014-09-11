@@ -38,7 +38,7 @@
 #include <CGAL/Scale_space_reconstruction_3/Shape_construction_3.h>
 
 #ifdef CGAL_EIGEN3_ENABLED
-#include <CGAL/Scale_space_reconstruction_3/Weighted_PCA_projection_3.h>
+#include <CGAL/Scale_space_reconstruction_3/Weighted_PCA_approximation_3.h>
 #endif // CGAL_EIGEN3_ENABLED
 
 #include <boost/mpl/and.hpp>
@@ -60,11 +60,11 @@ namespace CGAL {
  *  surface use this radius. By changing or re-estimating the radius between
  *  these operations, they can use separate parameter settings.
  *
- *  The shape can be constructed either with a fixed neighborhood radius, or
- *  with a dynamic radius. When constructing the surface for exactly one
- *  neighborhood radius, it is faster to set `FixedSurface` to `Tag_true`. If
+ *  The surface can be constructed either for a fixed neighborhood radius, or
+ *  for a dynamic radius. When constructing the surface for exactly one
+ *  neighborhood radius, it is faster to set `FS` to `Tag_true`. If
  *  the correct neighborhood radius should be changed or estimated multiple
- *  times, it is faster to set `FixedSurface` to `Tag_false`.
+ *  times, it is faster to set `FS` to `Tag_false`.
  *
  *  It is undefined whether a surface with fixed radius may have its radius
  *  changed, but if so, this will likely require more computation time than
@@ -76,39 +76,32 @@ namespace CGAL {
  *  component of the surface where connected facets are locally oriented
  *  towards the same side of the surface.
  *  
- *  \tparam DelaunayTriangulationTraits_3 is the geometric traits class.
- *  Generally, `Exact_predicates_inexact_constructions_kernel` is preferred.
- *  \tparam FixedSurface determines whether the shape is constructed at a fixed
- *  scale. It must be a `Boolean_tag` type. The default value is `Tag_true`.
- *  \tparam OrderShells determines whether to collect the surface per shell. It
+ *  \tparam Gt is the geometric traits class. It must be a model of
+ *  `DelaunayTriangulationTraits_3`. It must have a `RealEmbeddable` field
+ *  number type. Generally, `Exact_predicates_inexact_constructions_kernel` is
+ *  preferred.
+ *  \tparam FS determines whether the surface is constructed for a fixed
+ *  neighborhood radius. It must be a `Boolean_tag` type. The default value is
+ *  `Tag_true`.
+ *  \tparam Sh determines whether to collect the surface per shell. It
  *  must be a `Boolean_tag` type. The default value is `Tag_true`.
- *  \tparam WeightedPCAProjection_3 is the type of weighted PCA to use. If
- *  \ref thirdpartyEigen 3.1.2 (or greater) is available and
- *  CGAL_EIGEN3_ENABLED is defined, then
- *  `Weighted_PCA_projection_3<DelaunayTriangulationTraits_3>` is provided as
- *  default value.
- *  \tparam Concurrency_tag indicates whether to use concurrent processing. The
- *  default value is `Parallel_tag`.
+ *  \tparam wA must be a model of `WeightedPCAProjection_3` and determines how
+ *  to approximate a weighted point set. If \ref thirdpartyEigen 3.1.2 (or
+ *  greater) is available and CGAL_EIGEN3_ENABLED is defined, then
+ *  `Weighted_PCA_approximation_3<DelaunayTriangulationTraits_3>` is provided
+ *  as default value.
+ *  \tparam Ct indicates whether to use concurrent processing. It must be
+ *  either `Sequential_tag` or `Parallel_tag` (the default value).
  */
-#ifdef DOXYGEN_RUNNING
-template < class DelaunayTriangulationTraits_3, class FixedSurface, class OrderShells, class WeightedPCAProjection_3, class Concurrency_tag >
-#else
-template < class Gt, class FS = Tag_true, class OS = Tag_true, class WPCA_ = Default, class Ct = Parallel_tag >
-#endif
+template < class Gt, class FS = Tag_true, class Sh = Tag_true, class wA = Default, class Ct = Parallel_tag >
 class Scale_space_surface_reconstruction_3 {
-    typedef typename Default::Get< WPCA_,
+    typedef typename Default::Get< wA,
 #ifdef CGAL_EIGEN3_ENABLED
-                                   Weighted_PCA_projection_3<Gt>
+                                   Weighted_PCA_approximation_3<Gt>
 #else // CGAL_EIGEN3_ENABLED
                                    void
 #endif // CGAL_EIGEN3_ENABLED
-                                 >::type                WPCA;
-
-public:
-    typedef FS                                          FixedSurface;
-    typedef OS                                          OrderShells;
-    typedef WPCA                                        WeightedPCAProjection_3;
-    typedef Ct                                          Concurrency_tag;
+                                 >::type                Approximation;
 
 private:
     // Searching for neighbors.
@@ -146,17 +139,13 @@ private:
 public:
 /// \name Types
 /// \{
+    typedef typename Gt::FT                             FT;             ///< defines the field number type.
+	typedef typename Gt::Point_3                        Point;          ///< defines the point type.
+
 #ifdef DOXYGEN_RUNNING
-    typedef typename DelaunayTriangulationTraits_3::FT          FT;             ///< defines the number field type.
-
-	typedef typename DelaunayTriangulationTraits_3::Point_3     Point;          ///< defines the point type.
-
     typedef unspecified_type                            Point_iterator;         ///< defines an iterator over the points.
     typedef const unspecified_type                      Const_point_iterator;   ///< defines a constant iterator over the points.
 #else // DOXYGEN_RUNNING
-    typedef typename Gt::FT                             FT;
-
-	typedef typename Gt::Point_3                        Point;
 
     typedef typename Search_tree::iterator              Point_iterator;
     typedef typename Search_tree::const_iterator        Const_point_iterator;
@@ -266,7 +255,7 @@ private:
     void collect_facets() { 
         if( !has_neighborhood_radius() )
             estimate_neighborhood_radius();
-        collect_facets( OS() );
+        collect_facets( Sh() );
     }
 
 private:
@@ -333,10 +322,12 @@ public:
     
     /// clears the stored scale-space surface reconstruction data.
     /** This includes discarding the surface, the scale-space and all its
-     *  points, and any estimation of the neighborhood radius.
+     *  points, and any estimation of the neighborhood radius. 
      *
-     *  This results in an object equivalent to one constructed by calling
-     *  `Scale_space_surface_reconstruction_3(-1)`.
+     *  Methods called after this point may have to re-estimate the
+     *  neighborhood radius. This method does not discard the parameters for
+     *  estimating this radius (the mean number of neighbors and the sample
+     *  size).
      */
     void clear() {
 		clear_tree();
@@ -767,7 +758,7 @@ public:
     
     /// gives the number of shells of the surface.
     std::size_t number_of_shells() const {
-        CGAL_assertion( OS::value == true );
+        CGAL_assertion( Sh::value == true );
         return _shells.size();
     }
     

@@ -1129,3 +1129,4 @@ gmon.*
 /Polygon/test/Polygon/polytest.ascii
 /Polygon/test/Polygon/polytest.binary
 /Polygon/test/Polygon/polytest.pretty
+/Scale_space_reconstruction_3/include/CGAL/Scale_space_reconstruction_3/Weighted_approximation_3.h

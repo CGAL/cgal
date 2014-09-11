@@ -27,9 +27,9 @@
 
 namespace CGAL {
 
-template < class Gt, class FS, class OS, class WPCA_, class Ct >
+template < class Gt, class FS, class Sh, class wA, class Ct >
 class
-Scale_space_surface_reconstruction_3<Gt,FS,OS,WPCA_,Ct>::
+Scale_space_surface_reconstruction_3<Gt,FS,Sh,wA,Ct>::
 Finite_point_iterator: public Finite_vertices_iterator {
     typedef Finite_vertices_iterator    Base;
     typedef Finite_point_iterator       Self;
@@ -42,9 +42,9 @@ public:
 }; // class Finite_point_iterator
 
 
-template < class Gt, class FS, class OS, class WPCA_, class Ct >
+template < class Gt, class FS, class Sh, class wA, class Ct >
 class
-Scale_space_surface_reconstruction_3<Gt,FS,OS,WPCA_,Ct>::
+Scale_space_surface_reconstruction_3<Gt,FS,Sh,wA,Ct>::
 In_surface_tester {
     const Shape* _s;
 
@@ -73,9 +73,9 @@ public:
 
 
 // Compute the number of neighbors of a point that lie within a fixed radius.
-template < class Gt, class FS, class OS, class WPCA_, class Ct >
+template < class Gt, class FS, class Sh, class wA, class Ct >
 class
-Scale_space_surface_reconstruction_3<Gt,FS,OS,WPCA_,Ct>::
+Scale_space_surface_reconstruction_3<Gt,FS,Sh,wA,Ct>::
 ComputeNN {
 public:
     typedef std::vector< Point >        Pointset;
@@ -112,9 +112,9 @@ public:
 
 
 // Advance a point to a coarser scale.
-template < class Gt, class FS, class OS, class WPCA_, class Ct >
+template < class Gt, class FS, class Sh, class wA, class Ct >
 class
-Scale_space_surface_reconstruction_3<Gt,FS,OS,WPCA_,Ct>::
+Scale_space_surface_reconstruction_3<Gt,FS,Sh,wA,Ct>::
 AdvanceSS {
 public:
     typedef std::vector< Point >            Pointset;
@@ -145,7 +145,7 @@ public:
     
         // Collect the vertices within the ball and their weights.
         Dynamic_search search( _tree, _pts[i] );
-        WPCA pca( _nn[i] );
+        Approximation pca( _nn[i] );
         unsigned int column = 0;
         for( typename Dynamic_search::iterator nit = search.begin();
              nit != search.end() && column < _nn[i];
@@ -155,31 +155,31 @@ public:
         CGAL_assertion( column == _nn[i] );
     
         // Compute the weighted least-squares planar approximation of the point set.
-        if( !pca.approximate() )
+        if( !pca.compute() )
             return;
 
         // The vertex is moved by projecting it onto the plane
         // through the barycenter and orthogonal to the Eigen vector with smallest Eigen value.
-        _pts[i] = pca.project( _pts[i] );
+        _pts[i] = pca.fit( _pts[i] );
     }
 }; // class AdvanceSS
 
 
-template < class Gt, class FS, class OS, class WPCA_, class Ct >
-Scale_space_surface_reconstruction_3<Gt,FS,OS,WPCA_,Ct>::
+template < class Gt, class FS, class Sh, class wA, class Ct >
+Scale_space_surface_reconstruction_3<Gt,FS,Sh,wA,Ct>::
 Scale_space_surface_reconstruction_3( unsigned int neighbors, unsigned int samples )
 : _mean_neighbors(neighbors), _samples(samples), _squared_radius(-1), _shape(0) {}
 
-template < class Gt, class FS, class OS, class WPCA_, class Ct >
-Scale_space_surface_reconstruction_3<Gt,FS,OS,WPCA_,Ct>::
+template < class Gt, class FS, class Sh, class wA, class Ct >
+Scale_space_surface_reconstruction_3<Gt,FS,Sh,wA,Ct>::
 Scale_space_surface_reconstruction_3( FT sq_radius )
 : _mean_neighbors(0), _samples(0), _squared_radius(sq_radius), _shape(0) {
     CGAL_precondition( sq_radius >= 0 );
 }
 
-template < class Gt, class FS, class OS, class WPCA_, class Ct >
+template < class Gt, class FS, class Sh, class wA, class Ct >
 inline bool
-Scale_space_surface_reconstruction_3<Gt,FS,OS,WPCA_,Ct>::
+Scale_space_surface_reconstruction_3<Gt,FS,Sh,wA,Ct>::
 is_handled( Cell_handle c, unsigned int li ) const {
     switch( li ) {
     case 0: return ( c->info()&1 ) != 0;
@@ -190,9 +190,9 @@ is_handled( Cell_handle c, unsigned int li ) const {
     return false;
 }
 
-template < class Gt, class FS, class OS, class WPCA_, class Ct >
+template < class Gt, class FS, class Sh, class wA, class Ct >
 inline void
-Scale_space_surface_reconstruction_3<Gt,FS,OS,WPCA_,Ct>::
+Scale_space_surface_reconstruction_3<Gt,FS,Sh,wA,Ct>::
 mark_handled( Cell_handle c, unsigned int li ) {
     switch( li ) {
     case 0: c->info() |= 1; return;
@@ -202,9 +202,9 @@ mark_handled( Cell_handle c, unsigned int li ) {
     }
 }
 
-template < class Gt, class FS, class OS, class WPCA_, class Ct >
-inline typename Scale_space_surface_reconstruction_3<Gt,FS,OS,WPCA_,Ct>::Triple
-Scale_space_surface_reconstruction_3<Gt,FS,OS,WPCA_,Ct>::
+template < class Gt, class FS, class Sh, class wA, class Ct >
+inline typename Scale_space_surface_reconstruction_3<Gt,FS,Sh,wA,Ct>::Triple
+Scale_space_surface_reconstruction_3<Gt,FS,Sh,wA,Ct>::
 ordered_facet_indices( const Facet& f ) const {
     if( (f.second&1) == 0 )
         return make_array<unsigned int>( f.first->vertex( (f.second+2)&3 )->info(),
@@ -216,9 +216,9 @@ ordered_facet_indices( const Facet& f ) const {
                                          f.first->vertex( (f.second+3)&3 )->info() );
 }
 
-template < class Gt, class FS, class OS, class WPCA_, class Ct >
+template < class Gt, class FS, class Sh, class wA, class Ct >
 void
-Scale_space_surface_reconstruction_3<Gt,FS,OS,WPCA_,Ct>::
+Scale_space_surface_reconstruction_3<Gt,FS,Sh,wA,Ct>::
 collect_shell( Cell_handle c, unsigned int li ) {
     // Collect one surface mesh from the alpha-shape in a fashion similar to ball-pivoting.
     // Invariant: the facet is regular or singular.
@@ -279,9 +279,9 @@ collect_shell( Cell_handle c, unsigned int li ) {
     }
 }
 
-template < class Gt, class FS, class OS, class WPCA_, class Ct >
+template < class Gt, class FS, class Sh, class wA, class Ct >
 void
-Scale_space_surface_reconstruction_3<Gt,FS,OS,WPCA_,Ct>::
+Scale_space_surface_reconstruction_3<Gt,FS,Sh,wA,Ct>::
 collect_facets( Tag_true ) {
     // Collect all surface meshes from the alpha-shape in a fashion similar to ball-pivoting.
     // Reset the facet handled markers.
@@ -310,9 +310,9 @@ collect_facets( Tag_true ) {
     }
 }
 
-template < class Gt, class FS, class OS, class WPCA_, class Ct >
+template < class Gt, class FS, class Sh, class wA, class Ct >
 void
-Scale_space_surface_reconstruction_3<Gt,FS,OS,WPCA_,Ct>::
+Scale_space_surface_reconstruction_3<Gt,FS,Sh,wA,Ct>::
 collect_facets( Tag_false ) {
     // Collect all facets from the alpha-shape in an unordered fashion.
     for( Finite_facets_iterator fit = _shape->finite_facets_begin(); fit != _shape->finite_facets_end(); ++fit ) {
@@ -335,18 +335,18 @@ collect_facets( Tag_false ) {
     }
 }
 
-template < class Gt, class FS, class OS, class WPCA_, class Ct >
-const typename Scale_space_surface_reconstruction_3<Gt,FS,OS,WPCA_,Ct>::Shape&
-Scale_space_surface_reconstruction_3<Gt,FS,OS,WPCA_,Ct>::
+template < class Gt, class FS, class Sh, class wA, class Ct >
+const typename Scale_space_surface_reconstruction_3<Gt,FS,Sh,wA,Ct>::Shape&
+Scale_space_surface_reconstruction_3<Gt,FS,Sh,wA,Ct>::
 shape() const {
 	if( !has_shape() )
         _shape = Shape_construction_3().construct( _shape, _squared_radius );
     return *_shape;
 }
 
-template < class Gt, class FS, class OS, class WPCA_, class Ct >
-typename Scale_space_surface_reconstruction_3<Gt,FS,OS,WPCA_,Ct>::FT
-Scale_space_surface_reconstruction_3<Gt,FS,OS,WPCA_,Ct>::
+template < class Gt, class FS, class Sh, class wA, class Ct >
+typename Scale_space_surface_reconstruction_3<Gt,FS,Sh,wA,Ct>::FT
+Scale_space_surface_reconstruction_3<Gt,FS,Sh,wA,Ct>::
 estimate_neighborhood_radius( unsigned int neighbors, unsigned int samples ) {
     typename Gt::Compute_squared_distance_3 squared_distance = Gt().compute_squared_distance_3_object();
 
@@ -376,10 +376,10 @@ estimate_neighborhood_radius( unsigned int neighbors, unsigned int samples ) {
 // Doxygen has a bug where it cannot link the declaration and implementation
 // of methods with a templated parameter.
 #ifndef DOXYGEN_RUNNING
-template < class Gt, class FS, class OS, class WPCA_, class Ct >
+template < class Gt, class FS, class Sh, class wA, class Ct >
 template < class InputIterator >
-typename Scale_space_surface_reconstruction_3<Gt,FS,OS,WPCA_,Ct>::FT
-Scale_space_surface_reconstruction_3<Gt,FS,OS,WPCA_,Ct>::
+typename Scale_space_surface_reconstruction_3<Gt,FS,Sh,wA,Ct>::FT
+Scale_space_surface_reconstruction_3<Gt,FS,Sh,wA,Ct>::
 estimate_neighborhood_radius( InputIterator begin, InputIterator end, unsigned int neighbors, unsigned int samples,
                               typename boost::enable_if<
                                 boost::is_convertible< typename std::iterator_traits<InputIterator>::value_type,
@@ -390,9 +390,9 @@ estimate_neighborhood_radius( InputIterator begin, InputIterator end, unsigned i
 }
 #endif // DOXYGEN_RUNNING
 
-template < class Gt, class FS, class OS, class WPCA_, class Ct >
+template < class Gt, class FS, class Sh, class wA, class Ct >
 void
-Scale_space_surface_reconstruction_3<Gt,FS,OS,WPCA_,Ct>::
+Scale_space_surface_reconstruction_3<Gt,FS,Sh,wA,Ct>::
 increase_scale( unsigned int iterations ) {
     typedef std::vector< unsigned int >		CountVec;
     typedef std::map<Point, size_t>			PIMap;
@@ -436,18 +436,18 @@ increase_scale( unsigned int iterations ) {
     }
 }
 
-template < class Gt, class FS, class OS, class WPCA_, class Ct >
+template < class Gt, class FS, class Sh, class wA, class Ct >
 template< class F >
 void
-Scale_space_surface_reconstruction_3<Gt,FS,OS,WPCA_,Ct>::
+Scale_space_surface_reconstruction_3<Gt,FS,Sh,wA,Ct>::
 try_parallel( const F& func, size_t begin, size_t end, Sequential_tag ) const {
     for( std::size_t i = begin; i < end; ++i ) func( i );
 }
     
-template < class Gt, class FS, class OS, class WPCA_, class Ct >
+template < class Gt, class FS, class Sh, class wA, class Ct >
 template< class F >
 void
-Scale_space_surface_reconstruction_3<Gt,FS,OS,WPCA_,Ct>::
+Scale_space_surface_reconstruction_3<Gt,FS,Sh,wA,Ct>::
 try_parallel( const F& func, size_t begin, size_t end, Parallel_tag ) const {
 #ifdef CGAL_LINKED_WITH_TBB
     tbb::parallel_for( tbb::blocked_range< std::size_t >( begin, end ), func );
@@ -456,10 +456,10 @@ try_parallel( const F& func, size_t begin, size_t end, Parallel_tag ) const {
 #endif // CGAL_LINKED_WITH_TBB
 }
 
-template < class Gt, class FS, class OS, class WPCA_, class Ct >
+template < class Gt, class FS, class Sh, class wA, class Ct >
 template < class InputIterator >
 void
-Scale_space_surface_reconstruction_3<Gt,FS,OS,WPCA_,Ct>::
+Scale_space_surface_reconstruction_3<Gt,FS,Sh,wA,Ct>::
 construct_shape( InputIterator begin, InputIterator end,
                  typename boost::enable_if<
                     boost::is_convertible< typename std::iterator_traits<InputIterator>::value_type,
@@ -470,9 +470,9 @@ construct_shape( InputIterator begin, InputIterator end,
     _shape = Shape_construction_3().construct( begin, end, _squared_radius );
 }
 
-template < class Gt, class FS, class OS, class WPCA_, class Ct >
+template < class Gt, class FS, class Sh, class wA, class Ct >
 void
-Scale_space_surface_reconstruction_3<Gt,FS,OS,WPCA_,Ct>::
+Scale_space_surface_reconstruction_3<Gt,FS,Sh,wA,Ct>::
 collect_surface() {
     _surface.clear();
     if( !has_shape() )
@@ -480,9 +480,9 @@ collect_surface() {
     collect_facets();
 }
 
-template < class Gt, class FS, class OS, class WPCA_, class Ct >
+template < class Gt, class FS, class Sh, class wA, class Ct >
 void
-Scale_space_surface_reconstruction_3<Gt,FS,OS,WPCA_,Ct>::
+Scale_space_surface_reconstruction_3<Gt,FS,Sh,wA,Ct>::
 reconstruct_surface( unsigned int iterations ) {
     // Smooth the scale space.
     increase_scale( iterations );
@@ -491,10 +491,10 @@ reconstruct_surface( unsigned int iterations ) {
     collect_surface();
 }
 
-template < class Gt, class FS, class OS, class WPCA_, class Ct >
+template < class Gt, class FS, class Sh, class wA, class Ct >
 template < class InputIterator >
 void
-Scale_space_surface_reconstruction_3<Gt,FS,OS,WPCA_,Ct>::
+Scale_space_surface_reconstruction_3<Gt,FS,Sh,wA,Ct>::
 reconstruct_surface( InputIterator begin, InputIterator end, unsigned int iterations,
                      typename boost::enable_if<
                         boost::is_convertible< typename std::iterator_traits<InputIterator>::value_type,
@@ -510,36 +510,36 @@ reconstruct_surface( InputIterator begin, InputIterator end, unsigned int iterat
     collect_surface();
 }
 
-template < class Gt, class FS, class OS, class WPCA_, class Ct >
-typename Scale_space_surface_reconstruction_3<Gt,FS,OS,WPCA_,Ct>::Const_triple_iterator
-Scale_space_surface_reconstruction_3<Gt,FS,OS,WPCA_,Ct>::shell_begin( std::size_t shell ) const {
-    CGAL_assertion( OS::value == true );
+template < class Gt, class FS, class Sh, class wA, class Ct >
+typename Scale_space_surface_reconstruction_3<Gt,FS,Sh,wA,Ct>::Const_triple_iterator
+Scale_space_surface_reconstruction_3<Gt,FS,Sh,wA,Ct>::shell_begin( std::size_t shell ) const {
+    CGAL_assertion( Sh::value == true );
     CGAL_assertion( shell >= 0 && shell < _shells.size() );
     return _shells[ shell ];
 }
 
-template < class Gt, class FS, class OS, class WPCA_, class Ct >
-typename Scale_space_surface_reconstruction_3<Gt,FS,OS,WPCA_,Ct>::Triple_iterator
-Scale_space_surface_reconstruction_3<Gt,FS,OS,WPCA_,Ct>::shell_begin( std::size_t shell ) {
-    CGAL_assertion( OS::value == true );
+template < class Gt, class FS, class Sh, class wA, class Ct >
+typename Scale_space_surface_reconstruction_3<Gt,FS,Sh,wA,Ct>::Triple_iterator
+Scale_space_surface_reconstruction_3<Gt,FS,Sh,wA,Ct>::shell_begin( std::size_t shell ) {
+    CGAL_assertion( Sh::value == true );
     CGAL_assertion( shell >= 0 && shell < _shells.size() );
     return _shells[ shell ];
 }
 
-template < class Gt, class FS, class OS, class WPCA_, class Ct >
-typename Scale_space_surface_reconstruction_3<Gt,FS,OS,WPCA_,Ct>::Const_triple_iterator
-Scale_space_surface_reconstruction_3<Gt,FS,OS,WPCA_,Ct>::shell_end( std::size_t shell ) const {
-    CGAL_assertion( OS::value == true );
+template < class Gt, class FS, class Sh, class wA, class Ct >
+typename Scale_space_surface_reconstruction_3<Gt,FS,Sh,wA,Ct>::Const_triple_iterator
+Scale_space_surface_reconstruction_3<Gt,FS,Sh,wA,Ct>::shell_end( std::size_t shell ) const {
+    CGAL_assertion( Sh::value == true );
     CGAL_assertion( shell >= 0 && shell < _shells.size() );
     if( shell == _shells.size()-1 )
         return _surface.end();
     return _shells[ shell+1 ];
 }
 
-template < class Gt, class FS, class OS, class WPCA_, class Ct >
-typename Scale_space_surface_reconstruction_3<Gt,FS,OS,WPCA_,Ct>::Triple_iterator
-Scale_space_surface_reconstruction_3<Gt,FS,OS,WPCA_,Ct>::shell_end( std::size_t shell ) {
-    CGAL_assertion( OS::value == true );
+template < class Gt, class FS, class Sh, class wA, class Ct >
+typename Scale_space_surface_reconstruction_3<Gt,FS,Sh,wA,Ct>::Triple_iterator
+Scale_space_surface_reconstruction_3<Gt,FS,Sh,wA,Ct>::shell_end( std::size_t shell ) {
+    CGAL_assertion( Sh::value == true );
     CGAL_assertion( shell >= 0 && shell < _shells.size() );
     if( shell == _shells.size()-1 )
         return _surface.end();

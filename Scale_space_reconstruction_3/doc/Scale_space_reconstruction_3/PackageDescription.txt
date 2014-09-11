@@ -28,12 +28,12 @@
 
 ## Concepts ##
 
-- `WeightedPCAProjection_3`
+- `WeightedApproximation_3`
 
 ## Classes ##
 
-- `CGAL::Scale_space_surface_reconstruction_3<DelaunayTriangulationTraits_3,FixedScale,OrderShells,WeightedPCAProjection_3>`
-- `CGAL::Weighted_PCA_projection_3<Kernel>`
+- `CGAL::Scale_space_surface_reconstruction_3<Gt,FS,Sh,wA,Ct>`
+- `CGAL::Weighted_PCA_approximation_3<Kernel>`
 
 */
 

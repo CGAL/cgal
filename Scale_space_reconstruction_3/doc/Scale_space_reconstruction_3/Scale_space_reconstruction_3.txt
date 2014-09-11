@@ -36,7 +36,7 @@ Small changes in scale result in small changes in the points set that depends on
 The black points and crosses show two different point sets. The blue boxes show both point sets at a higher scale. Note that given just the blue points, we cannot determine its point set at a lower scale.
 \cgalFigureEnd
 
-The scale-space surface reconstruction method works in two phases. Firstly, a scale-space is constructed from the point set and an intersection of this space at a higher scale \f$ s \f$ is computed. Then, a triangulated surface mesh of the point set at scale \f$ s \f$ is computed. Neighboring triangles in the mesh have consistent orientation, as expressed using the '<em>right-hand rule</em>' on the ordered vertices of the triangle.
+The scale-space surface reconstruction method works in two phases. Firstly, a scale-space is constructed from the point set and an intersection of this space at a higher scale \f$ s \f$ is computed. Then, a triangulated surface mesh of the point set at scale \f$ s \f$ is computed. Neighboring triangles in the mesh have consistent orientation, as expressed using the <em>right-hand rule</em> on the ordered vertices of the triangle.
 
 Generally, a reconstruction interpolating the original point set is desired. This can be achieved by reverting the points of the mesh to their original scale, i.e. their original locations. \cgalFigureRef{chapterScaleSpaceReconstruction3figSurfs} shows example reconstructions from the point set at its original scale and at a higher scale with reverted mesh.
 
@@ -44,9 +44,9 @@ Generally, a reconstruction interpolating the original point set is desired. Thi
 The surfaces constructed from the point set at the original scale (left) and at a higher scale (right). The surface points in the right figure are reverted back to the original scale. The dashed paths shows the inward-facing shell where it does not overlap the outward-facing shell. Note how the scale-space reconstruction assumes the points on the right side of the object sample small features.
 \cgalFigureEnd
 
-The surface mesh constructed at scale \f$ s \f$ is non-self-intersecting. The interiors of any two triangles cannot pairwise intersect in a line segment. However, the surface does not need to be manifold. An edge may be incident to more than two triangles and triangles may overlap exactly if large regions on both sides of the triangle are empty of points. Note that we count overlapping triangles with opposite orientations as separate triangles. In many cases where the points sample the surface of an object, the computed surface will contain both an '<em>outward-facing</em>' and a similar '<em>inward-facing</em>' surface, with a thin volume between them.
+The surface mesh constructed at scale \f$ s \f$ is non-self-intersecting. The interiors of any two triangles cannot pairwise intersect in a line segment. However, the surface does not need to be manifold. An edge may be incident to more than two triangles and triangles may overlap exactly if large regions on both sides of the triangle are empty of points. Note that we count overlapping triangles with opposite orientations as separate triangles. In many cases where the points sample the surface of an object, the computed surface will contain both an <em>outward-facing</em> and a similar <em>inward-facing</em> surface, with a thin volume between them.
 
-The surface mesh will not have edges incident to only one triangle or holes, loops of such edges, and the triangles are all oriented away from the point set. If the point set has '<em>holes</em>', it is likely that the surface mesh will contain overlapping triangles with opposite orientation touching this hole.
+The surface mesh will not have edges incident to only one triangle or holes, loops of such edges, and the triangles are all oriented away from the point set. If the point set has <em>holes</em>, it is likely that the surface mesh will contain overlapping triangles with opposite orientation touching this hole.
 
 If the object is not densely sampled or has disconnected components, the reconstructed surface may have several disconnected components. The surface may be presented as an unordered collection of triangles, or as the same collection sorted per \em shell. A shell is a collection of connected triangles that are locally oriented towards the same side of the surface.
 
@@ -54,7 +54,7 @@ When reverted to the original scale, we cannot guarantee the surface is a valid 
 
 Both the smoothing operator and the mesh reconstruction assume that points near each other belong to the same part of the object. This is expressed in the notion of balls with a fixed size, the neighborhood radius. If such a ball contains multiple points, these points are \em near each other and will influence each other while increasing the scale. If such a ball is empty, it lies outside the object. Note that \em outside is based on regions empty of points, not on whether a volume is enclosed by the surface.
 
-The point set at the initial scale is equivalent to the input point set. In theory the scale can be varied continuously, but in practice the scale is increased in discrete iterations for efficiency reasons. The scale is increased one iteration by projecting each point to the '<em>density</em>'-weighted principal component analysis (PCA) of the local, \em \f$\delta\f$-distance, neighborhood. If the point set was sampled from a surface for which any unwanted deformation and sampling noise is smaller than the neighborhood size, the scale is coarse enough for mesh reconstruction after a few iterations of increasing the scale.
+The point set at the initial scale is equivalent to the input point set. In theory the scale can be varied continuously, but in practice the scale is increased in discrete iterations for efficiency reasons. The scale is increased one iteration by projecting each point to the <em>density</em>-weighted principal component analysis (PCA) of the local, \em \f$\delta\f$-distance, neighborhood. If the point set was sampled from a surface for which any unwanted deformation and sampling noise is smaller than the neighborhood size, the scale is coarse enough for mesh reconstruction after a few iterations of increasing the scale.
 
 The reconstruction method requires a fixed neighborhood size parameter, related to the resolution of the data. This parameter indicates a region for which we can assume it contains at least one point if it is centered on the surface.
 
@@ -87,13 +87,13 @@ The main class `Scale_space_surface_reconstruction_3` contains all the functiona
 
 The neighborhood size is estimated using `Orthogonal_k_neighbor_search`. The point set is generally stored in a `Orthogonal_k_neighbor_search::Tree`. When the neighborhood size is estimated, this tree is searched for nearest neighbors.
 
-The scale-space is constructed at the original scale of the points. An iteration of increasing the the scale is computed using a weighted PCA procedure. By default we use the efficient \ref thirdpartyEigen libraries for this procedure. It is also possible to provide your own model for the `WeightedPCAProjection_3` concept and provide it as a template parameter. The PCA procedure is performed locally per point, so it can performed with parallel computing if both Intel TBB is linked and the `Concurrency_tag` is set to `Parallel_tag`.
+The scale-space is constructed at the original scale of the points. An iteration of increasing the the scale is computed using a weighted PCA procedure. By default we use the efficient \ref thirdpartyEigen libraries for this procedure. It is also possible to provide your own model for the `WeightedApproximation_3` concept and provide it as a template parameter. The PCA procedure is performed locally per point, so it can performed with parallel computing if both Intel TBB is linked and the `Ct` template parameter is set to `Parallel_tag`.
 
-The mesh reconstruction is performed by filtering an `Alpha_shape_3` or `Fixed_alpha_shape_3` of the point set at a fixed scale. Which shape is used is captured in the `Fixed_scale` template parameter of `Scale_space_surface_reconstruction_3`.
+The mesh reconstruction is performed by filtering an `Alpha_shape_3` or `Fixed_alpha_shape_3` of the point set at a fixed scale. Which shape is used is captured in the `FS` template parameter of `Scale_space_surface_reconstruction_3`.
 
-The resulting surface is stored as a collection of triples. Each triple contains three indices to the point set. The scale iterations do not change the order of the points. This means these indices can be applied on the point set at its original scale to get an interpolating surface, called \reverting the scale of the surface. The indices may also be applied to the point set at the current scale to get a smoothed surface. This smoothed surface will generally have shrunk somewhat compared to the reverted surface.
+The resulting surface is stored as a collection of triples. Each triple contains three indices to the point set. The scale iterations do not change the order of the points. This means these indices can be applied on the point set at its original scale to get an interpolating surface, called \em reverting the scale of the surface. The indices may also be applied to the point set at the current scale to get a smoothed surface. This smoothed surface will generally have shrunk somewhat compared to the reverted surface.
 
-To reduce memory requirements, the point set is not stored at its original scale. However, the stored point set is a clone of the input.
+To reduce memory requirements, the point set is not stored at its original scale. Instead, the stored point set at the current scale is a clone of the input. This means that the original input can be used to revert the surface.
 
 \section Triangulation3secComplexity Case Sets and Performance
 
@@ -109,7 +109,7 @@ The scale-space surface reconstruction has lenient ideal conditions. The surface
 
 \subsection Triangulation3ssecBound Boundaries
 
-Surfaces with boundaries are handled naturally. However, it is important to note that in these cases, the surface does not explicitly identify the boundary and 'loops' around it. In many cases, this will lead to boundary edges being shared by neighboring triangles of the surface that are identical except for their orientation. The boundaries may be made explicit by identifying orientation discrepancies between neighboring triangles, but this functionality is not provided by this package. \cgalFigureRef{chapterScaleSpaceReconstruction3figBound} shows a reconstructed surface with a boundary.
+Surfaces with boundaries are handled naturally. However, it is important to note that in these cases, the surface does not explicitly identify the boundary and \em loops around it. In many cases, this will lead to boundary edges being shared by neighboring triangles of the surface that are identical except for their orientation. The boundaries may be made explicit by identifying orientation discrepancies between neighboring triangles, but this functionality is not provided by this package. \cgalFigureRef{chapterScaleSpaceReconstruction3figBound} shows a reconstructed surface with a boundary.
 
 \cgalFigureBegin{chapterScaleSpaceReconstruction3figBound, mushroom_pts.png, mushroom_surf.png}
 <b>Left:</b> A point sample of a surface with boundary. <b>Right:</b> reconstructed surface mesh.
@@ -191,7 +191,7 @@ Settings used when running the scale-space method on several data sets. Data set
 
 \cgalFigureRef{chapterScaleSpaceReconstruction3figBenchmarks} shows the number of triangles of the surfaces constructed and the running time for doing so. Half of the data sets are synthetic, the others are constructed by image-based dense reconstruction. The data sets are ordered by size, the synthetic sets mainly making up the smaller ones.
 
-The times were measured on a 64-bit Windows 7 system with 8 2.5GHz Intel processors and 16GB RAM. The scale-space constructions employ parallel computing using Intel TBB. The smaller data sets use roughly 0.1GB of memory, but the largest data sets have a peak usage of 10.5GB during the meshing step. For this benchmark we used the Exact_predicates_inexact_constructions_kernel kernel, Fixed_scale enabled, and Shells disabled.14
+The times were measured on a 64-bit Windows 7 system with 8 2.5GHz Intel processors and 16GB RAM. The scale-space constructions employ parallel computing using Intel TBB. The smaller data sets use roughly 0.1GB of memory, but the largest data sets have a peak usage of 10.5GB during the meshing step. For this benchmark we used the `Exact_predicates_inexact_constructions_kernel` kernel, `FS` enabled, and `Sh` disabled.
 
 \cgalFigureAnchor{chapterScaleSpaceReconstruction3figBenchmarks}
 <center>
@@ -233,7 +233,9 @@ This first example shows how to read a point set from a file, reconstruct the su
 
 \cgalExample{Scale_space_reconstruction_3/scale_space.cpp}
 
-The different phases of the reconstruction can also be performed individually. The next example shows how to perform individual phases and how to change the parameters between steps. Each parameter can be changed between steps by calling the specific `set_...` method. An example of this is given by the call to <code>set_neighborhood_squared_radius( 0.05 )</code>. Alternatively, parameters can be set before performing a method by calling the method with parameters. An example is given by the call to <code>estimate_neighborhood_radius( 10, 100 )</code>.
+The different phases of the reconstruction can also be performed individually. This may be helpful in cases where the correct parameter settings are not known in advance. In \cgalFigureRef{chapterScaleSpaceReconstruction3figSurfs}, the right figure shows the surface after incrementing the scale. After examening the reconstructed surface, we may decide that performing more iterations may better model the top-left part.
+
+The next example shows how to perform individual phases and how to change the parameters between steps. Each parameter can be changed between steps by calling the specific `set_...` method. An example of this is given by the call to <code>set_neighborhood_squared_radius( 0.05 )</code>. Alternatively, parameters can be set before performing a method by calling the method with parameters. An example is given by the call to <code>estimate_neighborhood_radius( 10, 100 )</code>.
 
 \cgalExample{Scale_space_reconstruction_3/scale_space_incremental.cpp}
 
