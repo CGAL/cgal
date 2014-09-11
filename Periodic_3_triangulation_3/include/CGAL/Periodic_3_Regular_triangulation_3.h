@@ -223,6 +223,9 @@ public:
   Bounded_side _side_of_power_sphere(const Cell_handle& c, const Weighted_point& p,
       const Offset & offset = Offset(), bool perturb = false) const;
 
+  bool is_valid(bool verbose = false, int level = 0) const;
+  bool is_valid(Cell_handle c, bool verbose = false, int level = 0) const;
+
 protected:
   // Protected, because inheritors(e.g. periodic triangulation for meshing)
   // of the class Periodic_3_Delaunay_triangulation_3 use this class
@@ -343,6 +346,74 @@ _side_of_power_sphere(const Cell_handle &c, const Weighted_point &q,
 
   CGAL_triangulation_assertion(false);
   return ON_UNBOUNDED_SIDE;
+}
+
+template < class Gt, class Tds >
+bool
+Periodic_3_Regular_triangulation_3<Gt,Tds>::
+is_valid(bool verbose, int level) const
+{
+  if (!Base::is_valid(verbose, level)) {
+    if (verbose)
+      std::cerr << "Regular: invalid base" << std::endl;
+    return false;
+  }
+
+  Conflict_tester tester(this);
+  if (!is_valid_conflict(tester, verbose, level)) {
+    if (verbose)
+      std::cerr << "Regular: conflict problems" << std::endl;
+    return false;
+  }
+
+  if (verbose)
+    std::cerr << "Regular valid triangulation" << std::endl;
+  return true;
+}
+
+template < class GT, class TDS >
+bool
+Periodic_3_Regular_triangulation_3<GT,TDS>::
+is_valid(Cell_handle ch, bool verbose, int level) const {
+  bool error = false;
+  if (!Base::is_valid(ch, verbose, level)) {
+    error = true;
+    if (verbose) {
+      std::cerr << "geometrically invalid cell" << std::endl;
+      for (int i=0; i<4; i++ )
+  std::cerr << ch->vertex(i)->point() << ", ";
+      std::cerr << std::endl;
+    }
+  }
+  for (Vertex_iterator vit = vertices_begin(); vit != vertices_end(); ++ vit) {
+    for (int i=-1; i<=1; i++)
+      for (int j=-1; j<=1; j++)
+  for (int k=-1; k<=1; k++) {
+    if (periodic_point(ch,0) == std::make_pair(periodic_point(vit).first,
+      periodic_point(vit).second+Offset(i,j,k))
+    || periodic_point(ch,1) == std::make_pair(periodic_point(vit).first,
+      periodic_point(vit).second+Offset(i,j,k))
+          || periodic_point(ch,2) == std::make_pair(periodic_point(vit).first,
+      periodic_point(vit).second+Offset(i,j,k))
+    || periodic_point(ch,3) == std::make_pair(periodic_point(vit).first,
+                  periodic_point(vit).second+Offset(i,j,k)) )
+      continue;
+    if (_side_of_power_sphere(ch, periodic_point(vit).first,
+      periodic_point(vit).second+Offset(i,j,k),true)
+        != ON_UNBOUNDED_SIDE) {
+      error = true;
+      if (verbose) {
+        std::cerr << "Regular invalid cell" << std::endl;
+        for (int i=0; i<4; i++ ) {
+    Periodic_point pp = periodic_point(ch,i);
+    std::cerr <<"("<<pp.first <<","<<pp.second<< "), ";
+        }
+        std::cerr << std::endl;
+      }
+    }
+  }
+  }
+  return !error;
 }
 
 template < class GT, class Tds >
