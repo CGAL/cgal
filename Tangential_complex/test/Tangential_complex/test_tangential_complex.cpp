@@ -13,8 +13,6 @@
 #include <fstream>
 #include <math.h>
 
-#include <boost/random/random_number_generator.hpp>
-
 #ifdef CGAL_LINKED_WITH_TBB
 # include <tbb/task_scheduler_init.h>
 #endif
@@ -40,7 +38,7 @@ std::vector<Point> generate_points_on_sphere(double radius)
 template <typename Point>
 std::vector<Point> generate_points_on_klein_bottle(double a, double b)
 {
-  typedef CGAL::Kernel_traits<Point>::type Kernel;
+  typedef typename CGAL::Kernel_traits<Point>::type Kernel;
   typedef typename Kernel::FT FT;
   CGAL::Random rng;
 
@@ -88,7 +86,7 @@ int main()
   tc.compute_tangential_complex();
   
   std::stringstream output_filename;
-  output_filename << "data/test_tc_" << INTRINSIC_DIMENSION << 
+  output_filename << "data/test_tc_" << INTRINSIC_DIMENSION
     << "_in_R" << AMBIENT_DIMENSION << ".off";
   std::ofstream off_stream(output_filename.str());
   tc.export_to_off(off_stream);
