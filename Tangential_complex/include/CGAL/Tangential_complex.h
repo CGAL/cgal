@@ -26,11 +26,13 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/tags.h>
+#include <CGAL/Dimension.h>
 
 #include <CGAL/Epick_d.h>
 #include <CGAL/Regular_triangulation_euclidean_traits.h>
 #include <CGAL/Regular_triangulation.h>
 #include <CGAL/Tangential_complex/utilities.h>
+#include <CGAL/Tangential_complex/Point_cloud.h>
 
 #include <CGAL/Mesh_3/Profiling_tools.h>
 
@@ -90,11 +92,13 @@ class Tangential_complex
   typedef typename Triangulation::Full_cell_handle    Tr_full_cell_handle;
   
   typedef typename std::vector<Vector>                Tangent_space_basis;
+  
+  typedef Point_cloud<Point>                          Points;
+  typedef Point_cloud_data_structure<Points>          Points_ds;
 
   typedef std::pair<Triangulation*, Tr_vertex_handle> Tr_and_VH;
-  typedef typename std::vector<Point>                 Point_container;
   typedef typename std::vector<Tr_and_VH>             Tr_container;
-  typedef typename std::vector<Tangent_space_basis>    TS_container;
+  typedef typename std::vector<Tangent_space_basis>   TS_container;
 
   // Stores the index of the original Point in the ambient space
   /*struct Tr_point_with_index 
@@ -115,7 +119,7 @@ public:
   template <typename InputIterator>
   Tangential_complex(InputIterator first, InputIterator last, 
                      const Kernel &k = Kernel())
-  : m_k(k), m_points(first, last) {}
+  : m_k(k), m_points(first, last, k), m_points_ds(m_points, k) {}
 
   /// Destructor
   ~Tangential_complex() {}
@@ -192,8 +196,8 @@ public:
 
     //******** VERTICES ************
 
-    Point_container::const_iterator it_p = m_points.begin();
-    Point_container::const_iterator it_p_end = m_points.end();
+    Points::const_iterator it_p = m_points.begin();
+    Points::const_iterator it_p_end = m_points.end();
     // For each point p
     for ( ; it_p != it_p_end ; ++it_p)
     {
@@ -260,7 +264,23 @@ private:
     Kernel const& m_k;
   };
 
-  
+  struct Tr_vertex_to_global_point
+  {
+    typedef typename Tr_vertex_handle	argument_type;
+    typedef typename Point	result_type;
+
+    Tr_vertex_to_global_point(Points const& points)
+      : m_points(points) {}
+
+    result_type operator()(argument_type const& vh) const
+    {
+      return m_points[vh->data()];
+    }
+
+  private:
+    Points const& m_points;
+  };
+
   struct Tr_vertex_to_bare_point
   {
     typedef typename Tr_vertex_handle	argument_type;
@@ -336,8 +356,8 @@ private:
     std::vector<Tr_point> projected_points;
     FT max_squared_weight = 0;
     projected_points.reserve(m_points.size() - 1);
-    Point_container::const_iterator it_p = m_points.begin();
-    Point_container::const_iterator it_p_end = m_points.end();
+    Points::const_iterator it_p = m_points.begin();
+    Points::const_iterator it_p_end = m_points.end();
     for (std::size_t j = 0 ; it_p != it_p_end ; ++it_p, ++j)
     {
       // ith point = p, which is already inserted
@@ -449,23 +469,20 @@ private:
     Kernel::Scalar_product_d        inner_pdct = m_k.scalar_product_d_object();
     Kernel::Difference_of_vectors_d diff_vec   = m_k.difference_of_vectors_d_object();
 
-    // CJTODO: do better than that (ANN?)
-    typedef std::set<Point, Compare_distance_to_ref_point> Sorted_points;
-    Sorted_points sorted_points(
-      Compare_distance_to_ref_point(p, m_k));
-    sorted_points.insert(m_points.begin(), m_points.end());
+    std::size_t neighbor_indices[NUM_POINTS_FOR_PCA];
+    FT squared_distance[NUM_POINTS_FOR_PCA];
+    m_points_ds.query_ANN(
+      p, NUM_POINTS_FOR_PCA, neighbor_indices, squared_distance);
 
     //******************************* PCA *************************************
 
     const int amb_dim = Ambient_dimension<Point>::value;
     // One row = one point
     Eigen::MatrixXd mat_points(NUM_POINTS_FOR_PCA, amb_dim);
-    int j = 0;
-    for (Sorted_points::const_iterator it = sorted_points.begin() ; 
-         j < NUM_POINTS_FOR_PCA ; ++it, ++j)
+    for (int j = 0 ; j < NUM_POINTS_FOR_PCA ; ++j)
     {
       for (int i = 0 ; i < amb_dim ; ++i)
-        mat_points(j, i) = (*it)[i];
+        mat_points(j, i) = m_points[neighbor_indices[j]][i]; // CJTODO: Use kernel functor
     }
     Eigen::MatrixXd centered = mat_points.rowwise() - mat_points.colwise().mean();
     Eigen::MatrixXd cov = centered.adjoint() * centered;
@@ -531,7 +548,7 @@ private:
 
     std::vector<FT> coords;
     // Ambiant-space coords of the projected point
-    std::vector<FT> p_proj(origin.cartesian_begin(), origin.cartesian_end());
+    std::vector<FT> p_proj(origin.cartesian_begin(), origin.cartesian_end()); // CJTODO: use kernel functors?
     coords.reserve(Intrinsic_dimension);
     for (std::size_t i = 0 ; i < Intrinsic_dimension ; ++i)
     {
@@ -554,7 +571,8 @@ private:
 
 private:
   const Kernel        m_k;
-  Point_container     m_points;
+  Points              m_points;
+  Points_ds           m_points_ds;
   TS_container        m_tangent_spaces;
   Tr_container        m_triangulations; // Contains the triangulations 
                                         // and their center vertex

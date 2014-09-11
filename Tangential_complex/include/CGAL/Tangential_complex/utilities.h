@@ -23,11 +23,11 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/Kernel_traits.h>
+#include <CGAL/Dimension.h>
 
 #include <vector>
 
 namespace CGAL {
-
 namespace Tangential_complex_ {
 
   template <typename K>
@@ -70,7 +70,7 @@ namespace Tangential_complex_ {
     return output_basis;
   }
 
-}; // namespace Tangential_complex_
+} // namespace Tangential_complex_
 } //namespace CGAL
 
 #endif // CGAL_TC_UTILITIES_H
