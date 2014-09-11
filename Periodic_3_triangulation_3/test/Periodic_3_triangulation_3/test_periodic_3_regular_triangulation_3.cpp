@@ -33,6 +33,8 @@
 #include <CGAL/Periodic_3_Regular_triangulation_3.h>
 
 #include <cassert>
+#include <boost/random/uniform_real_distribution.hpp>
+#include <boost/random.hpp>
 
 
 typedef CGAL::Epick K;
@@ -46,12 +48,46 @@ template class CGAL::Periodic_3_Regular_triangulation_3<Traits>;
 
 typedef CGAL::Periodic_3_Regular_triangulation_3<Traits> P3RT3;
 
-int main ()
+
+void test_construction ()
+{
+  P3RT3 p3rt3;
+  assert(p3rt3.is_valid(true));
+}
+
+void test_insert_1 ()
 {
   P3RT3 p3rt3;
 
   Weighted_point p(0,0,0);
   p3rt3.insert(p);
+
+  assert(p3rt3.is_valid(true));
+}
+
+void test_insert_100 ()
+{
+  P3RT3 p3rt3;
+
+  boost::mt19937 gen;
+  boost::random::uniform_real_distribution<> dis(0., 1.);
+  auto gen_real = boost::bind(dis, gen);
+
+  for (unsigned cnt = 100; cnt--; )
+  {
+    Weighted_point p(gen_real(), gen_real(), gen_real());
+    std::cout << p << std::endl;
+    p3rt3.insert(p);
+  }
+
+  assert(p3rt3.is_valid(true));
+}
+
+int main ()
+{
+  test_construction();
+  test_insert_1();
+  test_insert_100();
 
   std::cout << "EXIT SUCCESS" << std::endl;
   return EXIT_SUCCESS;
