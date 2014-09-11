@@ -72,6 +72,7 @@ template <class Base_> struct Kernel_d_interface : public Base_ {
 	typedef typename Get_functor<Base, Vector_to_point_tag>::type Vector_to_point_d;
 	typedef typename Get_functor<Base, Scaled_vector_tag>::type Scaled_vector_d;
 	typedef typename Get_functor<Base, Difference_of_vectors_tag>::type Difference_of_vectors_d;
+	typedef typename Get_functor<Base, Difference_of_points_tag>::type Difference_of_points_d;
 	typedef typename Get_functor<Base, Construct_ttag<Point_tag> >::type Construct_point_d;
 	typedef typename Get_functor<Base, Construct_ttag<Vector_tag> >::type Construct_vector_d;
 	typedef typename Get_functor<Base, Construct_ttag<Segment_tag> >::type Construct_segment_d;
@@ -176,6 +177,7 @@ template <class Base_> struct Kernel_d_interface : public Base_ {
 	Vector_to_point_d vector_to_point_d_object()const{ return Vector_to_point_d(*this); }
 	Scaled_vector_d scaled_vector_d_object()const{ return Scaled_vector_d(*this); }
 	Difference_of_vectors_d difference_of_vectors_d_object()const{ return Difference_of_vectors_d(*this); }
+	Difference_of_points_d difference_of_points_d_object()const{ return Difference_of_points_d(*this); }
 	Affine_rank_d affine_rank_d_object()const{ return Affine_rank_d(*this); }
 	Affinely_independent_d affinely_independent_d_object()const{ return Affinely_independent_d(*this); }
 	Linear_base_d linear_base_d_object()const{ return Linear_base_d(*this); }

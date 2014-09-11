@@ -118,6 +118,7 @@ void test2(){
   typedef typename K1::Squared_length_d SL;
   typedef typename K1::Scalar_product_d SP;
   typedef typename K1::Difference_of_vectors_d DV;
+  typedef typename K1::Difference_of_points_d DP;
 
   CGAL_USE_TYPE(AT);
   CGAL_USE_TYPE(D);
@@ -174,6 +175,7 @@ void test2(){
   SL sl Kinit(squared_length_d_object);
   SP spr Kinit(scalar_product_d_object);
   DV dv Kinit(difference_of_vectors_d_object);
+  DP dp Kinit(difference_of_points_d_object);
 
   CGAL_USE(bc);
   CGAL_USE(pol);
@@ -233,6 +235,7 @@ void test2(){
   P x4=cp(0,0);
   P x5=cp(0,-1);
   P tab2[]={x1,x2,x3,x4};
+  assert(dp(x1,x2)[1]==2);
   assert(po(tab2+0,tab2+3)==CGAL::COUNTERCLOCKWISE);
   assert(sos(tab2+0,tab2+3,x4)==CGAL::ON_POSITIVE_SIDE);
   assert(sbs(tab2+0,tab2+3,x4)==CGAL::ON_BOUNDED_SIDE);
