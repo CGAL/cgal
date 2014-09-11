@@ -2590,8 +2590,9 @@ Periodic_3_triangulation_3<GT,TDS>::insert_in_conflict(const Point & p,
   // than sqrt(0.166) is fulfilled.
   if ( too_long_edge_counter == 0 ) {
     CGAL_triangulation_expensive_assertion(is_valid());
-    convert_to_1_sheeted_covering();
-    CGAL_triangulation_expensive_assertion( is_valid() );
+// TODO UNCOMMENT THE TWO FOLLOWING LINES AFTER MAIKNG P3RT3 HANDLE 1-COVER.
+//    convert_to_1_sheeted_covering();
+//    CGAL_triangulation_expensive_assertion( is_valid() );
   }
   return vh;
 }
