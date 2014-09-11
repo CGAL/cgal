@@ -39,13 +39,14 @@ public:
 public:
 /// \name Constructors
 /// \{
-    /// constructs an empty projection to hold the points.
-    /** \param size is the number of points that will be added.
+    /// constructs the weighted least-squares planar approximation of a point set.
+    /** The point set holds an fixed number of points with undefined coordinates.
+     *  \param size is the number of points in the set.
      */
     Weighted_PCA_projection_3( unsigned int size );
 
     /// constructs the weighted least-squares planar approximation of a point set.
-    /** Similar to constructing an empty projection and calling
+    /** Similar to constructing a approximation and calling
      *  <code>[set_points(points_begin, points_end, weights_begin)](\ref WeightedPCAProjection_3::set_points )</code>
      *
      *  \tparam PointIterator is an input iterator over the point collection.
@@ -56,6 +57,9 @@ public:
      *  \param points_begin is an iterator to the first point.
      *  \param points_end is a past-the-end oterator for the points.
      *  \param weights_begin is an iterator to the weight of the first point.
+     *
+     *  \pre The number of weights must be at least equal to the number of
+     *  points.
      */
     template < typename PointIterator, typename WeightIterator >
     Weighted_PCA_projection_3( PointIterator points_begin, PointIterator points_end, WeightIterator weights_begin );

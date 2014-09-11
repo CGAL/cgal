@@ -28,6 +28,7 @@
 
 #include <CGAL/utility.h>
 
+#include <CGAL/Default.h>
 #include <CGAL/Search_traits_3.h>
 #include <CGAL/Orthogonal_incremental_neighbor_search.h>
 #include <CGAL/Orthogonal_k_neighbor_search.h>
@@ -36,7 +37,9 @@
 #include <CGAL/Scale_space_reconstruction_3/internal/check3264.h>
 #include <CGAL/Scale_space_reconstruction_3/Shape_construction_3.h>
 
+#ifdef CGAL_EIGEN3_ENABLED
 #include <CGAL/Scale_space_reconstruction_3/Weighted_PCA_projection_3.h>
+#endif // CGAL_EIGEN3_ENABLED
 
 #include <boost/mpl/and.hpp>
 
@@ -79,20 +82,32 @@ namespace CGAL {
  *  scale. It must be a `Boolean_tag` type. The default value is `Tag_true`.
  *  \tparam OrderShells determines whether to collect the surface per shell. It
  *  must be a `Boolean_tag` type. The default value is `Tag_true`.
- *  \tparam WeightedPCAProjection_3 is the type of weighted PCA to use. The
- *  default value is `Weighted_PCA_projection_3<DelaunayTriangulationTraits_3>`.
+ *  \tparam WeightedPCAProjection_3 is the type of weighted PCA to use. If
+ *  \ref thirdpartyEigen 3.1.2 (or greater) is available and
+ *  CGAL_EIGEN3_ENABLED is defined, then
+ *  `Weighted_PCA_projection_3<DelaunayTriangulationTraits_3>` is provided as
+ *  default value.
  *  \tparam Concurrency_tag indicates whether to use concurrent processing. The
  *  default value is `Parallel_tag`.
  */
 #ifdef DOXYGEN_RUNNING
 template < class DelaunayTriangulationTraits_3, class FixedSurface, class OrderShells, class WeightedPCAProjection_3, class Concurrency_tag >
 #else
-template < class Gt, class FS = Tag_true, class OS = Tag_true, class WPCA = Weighted_PCA_projection_3< Gt >, class Ct = Parallel_tag >
+template < class Gt, class FS = Tag_true, class OS = Tag_true, class WPCA_ = Default, class Ct = Parallel_tag >
 #endif
 class Scale_space_surface_reconstruction_3 {
+    typedef typename Default::Get< WPCA_,
+#ifdef CGAL_EIGEN3_ENABLED
+                                   Weighted_PCA_projection_3<Gt>
+#else // CGAL_EIGEN3_ENABLED
+                                   void
+#endif // CGAL_EIGEN3_ENABLED
+                                 >::type                WPCA;
+
 public:
     typedef FS                                          FixedSurface;
     typedef OS                                          OrderShells;
+    typedef WPCA                                        WeightedPCAProjection_3;
     typedef Ct                                          Concurrency_tag;
 
 private:

@@ -68,7 +68,7 @@ private:
     Vector3 _norm;  // normal.
 
 public:
-    // constructs an empty projection to hold the points.
+    // constructs an default projection to hold the points.
     /*  \param size is the number of points that will be added.
      */
     Weighted_PCA_projection_3( unsigned int size ): _comp(false), _pts(3,size), _wts(1,size) {}
