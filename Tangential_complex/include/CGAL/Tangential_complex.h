@@ -91,9 +91,9 @@ class Tangential_complex
   typedef typename Triangulation::Vertex_handle       Tr_vertex_handle;
   typedef typename Triangulation::Full_cell_handle    Tr_full_cell_handle;
   
-  typedef typename std::vector<Vector>                Tangent_space_basis;
-  
-  typedef Point_cloud<Point>                          Points;
+  typedef std::vector<Vector>                         Tangent_space_basis;
+
+  typedef std::vector<Point>                          Points;
   typedef Point_cloud_data_structure<Points>          Points_ds;
 
   typedef std::pair<Triangulation*, Tr_vertex_handle> Tr_and_VH;
@@ -119,7 +119,7 @@ public:
   template <typename InputIterator>
   Tangential_complex(InputIterator first, InputIterator last, 
                      const Kernel &k = Kernel())
-  : m_k(k), m_points(first, last, k), m_points_ds(m_points, k) {}
+  : m_k(k), m_points(first, last), m_points_ds(m_points, k) {}
 
   /// Destructor
   ~Tangential_complex() {}
@@ -335,13 +335,17 @@ private:
     const Tr_traits &local_tr_traits = p_local_tr->geom_traits();
     Tr_vertex_handle &center_vertex = m_triangulations[i].second;
 
-    // Traits functor & objects
-    Tr_traits::Center_of_sphere_d center_of_sphere = 
-      local_tr_traits.center_of_sphere_d_object();
+    // Kernel functor & objects
+    //Kernel::Difference_of_points_d  diff_points = m_k.difference_of_points_d_object(); // CJTODO: use that
+    Get_functor<Kernel, Difference_of_points_tag>::type k_diff_pts(m_k);
+
+    // Triangulation's traits functor & objects
     Tr_traits::Squared_distance_d sqdist = 
       local_tr_traits.squared_distance_d_object();
     Tr_traits::Point_drop_weight_d drop_w = 
       local_tr_traits.point_drop_weight_d_object();
+    Tr_traits::Center_of_sphere_d center_of_sphere = 
+      local_tr_traits.center_of_sphere_d_object();
 
     // Estimate the tangent space
     const Point &center_pt = m_points[i];
@@ -352,18 +356,27 @@ private:
     // (we only need the star of p)
     //***************************************************
 
+    const int NUM_NEIGHBORS = 150;
+    std::size_t nearest_nb[NUM_NEIGHBORS];
+    FT squared_distance[NUM_NEIGHBORS];
+    m_points_ds.query_ANN(
+      center_pt, NUM_NEIGHBORS, nearest_nb, squared_distance);
+    /*const int NUM_NEIGHBORS = 150;
+    std::size_t nearest_nb[NUM_NEIGHBORS];
+    for (int ii = 0 ; ii < NUM_NEIGHBORS ; ++ii)
+      nearest_nb[ii] = ii;*/
+
     // First, compute the projected points
     std::vector<Tr_point> projected_points;
     FT max_squared_weight = 0;
-    projected_points.reserve(m_points.size() - 1);
-    Points::const_iterator it_p = m_points.begin();
-    Points::const_iterator it_p_end = m_points.end();
-    for (std::size_t j = 0 ; it_p != it_p_end ; ++it_p, ++j)
+    projected_points.reserve(NUM_NEIGHBORS);
+    for (std::size_t j = 0 ; j < NUM_NEIGHBORS ; ++j)
     {
       // ith point = p, which is already inserted
-      if (j != i)
+      std::size_t idx = nearest_nb[j];
+      //if (idx != i) // CJTODO optim?
       {
-        Tr_point wp = project_point(*it_p, center_pt, m_tangent_spaces[i]);
+        Tr_point wp = project_point(m_points[idx], center_pt, m_tangent_spaces[i]);
         projected_points.push_back(wp);
         FT w = local_tr_traits.point_weight_d_object()(wp);
         if (w > max_squared_weight)
@@ -384,41 +397,39 @@ private:
     // While building the local triangulation, we keep the radius
     // of the sphere centered at "center_vertex" and which contains all the
     // circumspheres of the star of "center_vertex"
-    // [TODO?] For now, we use non-weighted circumspheres but it could be
-    // optimized by using weighted circumspheres (which are smaller)
     FT star_sphere_squared_radius = std::numeric_limits<FT>::max();
     // Insert the other points
-    std::vector<Tr_point>::const_iterator it_wp = projected_points.begin();
-    it_p = m_points.begin();
-    for (std::size_t j = 0 ; it_p != it_p_end ; ++it_p, ++j)
+    for (std::size_t j = 0 ; j < NUM_NEIGHBORS ; ++j)
     {
+      std::size_t point_idx = nearest_nb[j];
+      Tr_point const& proj_pt = projected_points[j];
+
       // ith point = p, which is already inserted
-      if (j != i)
+      if (point_idx != i)
       {
-        if (local_tr_traits.squared_distance_d_object()(
-              drop_w(wp), drop_w(*it_wp)) 
+        if (m_k.squared_distance_d_object()(
+              center_pt, m_points[point_idx])
             > star_sphere_squared_radius)
         {
-          ++it_wp;
           continue;
         }
 
         FT squared_dist_to_tangent_plane = 
-          local_tr_traits.point_weight_d_object()(*it_wp);
+          local_tr_traits.point_weight_d_object()(proj_pt);
         FT w = CGAL::sqrt(max_squared_weight - squared_dist_to_tangent_plane);
         Tr_point wp = local_tr_traits.construct_weighted_point_d_object()(
-          drop_w(*it_wp),
+          drop_w(proj_pt),
           w);
           
         Tr_vertex_handle vh = p_local_tr->insert_if_in_star(wp, center_vertex);
         //Tr_vertex_handle vh = p_local_tr->insert(wp);
         if (vh != Tr_vertex_handle())
         {
-          vh->data() = j;
+          vh->data() = point_idx;
 
           // Let's recompute star_sphere_squared_radius
           if (p_local_tr->current_dimension() >= Intrinsic_dimension)
-          { 
+          {
             star_sphere_squared_radius = 0.;
             // Get the incident cells and look for the biggest circumsphere
             std::vector<Tr_full_cell_handle> incident_cells;
@@ -434,11 +445,40 @@ private:
               }
               else
               {
-                Tr_vertex_to_bare_point v2p(local_tr_traits);
+                //*********************************
+                Tangent_space_basis tsb;
+                tsb.reserve(Intrinsic_dimension);
+                Point const& orig = m_points[cell->vertex(0)->data()];
+                for (int ii = 1 ; ii <= Intrinsic_dimension ; ++ii)
+                { 
+                  tsb.push_back(k_diff_pts(
+                    m_points[cell->vertex(ii)->data()], orig));
+                }
+                tsb = compute_gram_schmidt_basis(tsb, m_k);
+
+                // CJTODO: write a project_point which returns a Tr_bare_point
+                // and use it here
+                std::vector<Tr_point> proj_pts;
+                std::vector<Tr_point>::const_iterator it_p = proj_pts.begin();
+                std::vector<Tr_point>::const_iterator it_p_end = proj_pts.end();
+                // For each point p
+                for (int ii = 0 ; ii <= Intrinsic_dimension ; ++ii)
+                {
+                  proj_pts.push_back(project_point(
+                    m_points[cell->vertex(ii)->data()], orig, tsb));
+                }
+                
                 Tr_bare_point c = center_of_sphere(
-                  boost::make_transform_iterator(cell->vertices_begin(), v2p),
-                  boost::make_transform_iterator(cell->vertices_end(), v2p));
-                FT sq_circumdiam = 4.*sqdist(c, drop_w(center_vertex->point()));
+                  boost::make_transform_iterator(proj_pts.begin(), drop_w),
+                  boost::make_transform_iterator(proj_pts.end(),   drop_w));
+
+                //*********************************
+                //Tr_vertex_to_global_point v2gp(m_points);
+                //Point c = k_center_of_sphere(
+                //  boost::make_transform_iterator(cell->vertices_begin(), v2gp),
+                //  boost::make_transform_iterator(cell->vertices_end(), v2gp));
+                //*********************************
+                FT sq_circumdiam = 4.*sqdist(c, drop_w(proj_pts[0]));
                 if (sq_circumdiam > star_sphere_squared_radius)
                   star_sphere_squared_radius = sq_circumdiam;
               }
@@ -446,7 +486,6 @@ private:
           }
         }
         //std::cerr << star_sphere_squared_radius << std::endl;
-        ++it_wp;
       }
     }
 

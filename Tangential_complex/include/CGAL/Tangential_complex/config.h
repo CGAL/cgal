@@ -23,8 +23,13 @@
 
 #include <CGAL/config.h>
 
+//========================= Debugging & profiling =============================
 #define CGAL_TC_PROFILING
 
-const std::size_t NUM_POINTS_FOR_PCA = 30;
+//========================= Strategy ==========================================
+//#define CGAL_TC_USE_NANOFLANN
+
+//========================= Parameters ========================================
+const std::size_t NUM_POINTS_FOR_PCA = 50;
 
 #endif // CGAL_TC_CONFIG_H

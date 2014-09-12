@@ -26,6 +26,8 @@
 #include <CGAL/Kernel_traits.h>
 #include <CGAL/Dimension.h>
 
+#ifdef CGAL_TC_USE_NANOFLANN
+
 #include "nanoflann.hpp"
 
 #include <array>
@@ -35,163 +37,26 @@
 namespace CGAL {
 namespace Tangential_complex_ {
 
-template<typename Point_>
-class Point_cloud
-: public std::vector<Point_>
-{
-public:
-  typedef std::vector<Point_>                       Base;
-  typedef Base                                      Raw_container;
-  typedef Point_                                    Point;
-  typedef typename CGAL::Kernel_traits<Point>::type Kernel;
-  typedef typename Kernel::FT                       FT;
-  
-  //typedef typename Base::iterator                   iterator;
-  //typedef typename Base::const_iterator             const_iterator;
-  
-  static const int AMB_DIM = Ambient_dimension<Point>::value;
-
-  Point_cloud(Kernel const& k)
-  : m_k(k)
-  {
-    m_mins.fill(std::numeric_limits<FT>::max());
-    m_maxs.fill(std::numeric_limits<FT>::min());
-  }
-
-  template <class InputIterator>
-  Point_cloud(InputIterator first, InputIterator last, Kernel const& k)
-  : Base(first, last), m_k(k)
-  {
-    m_mins.fill(std::numeric_limits<FT>::max());
-    m_maxs.fill(std::numeric_limits<FT>::min());
-  }
-
-  void push_back(const Point &point, bool update_bbox = false)
-  {
-    Base::push_back(point);
-
-    // Adjust bbox?
-    if (update_bbox)
-    {
-      for (int i = 0 ; i < AMB_DIM ; ++i)
-      {
-        if (point.get_param(i) < m_mins[i])
-          m_mins[i] = point.get_param(i);
-      
-        if (point.get_param(i) > m_maxs[i])
-          m_maxs[i] = point.get_param(i);
-      }
-    }
-  }
-
-  void compute_bbox(bool only_if_not_already_done = false)
-  {
-    if (only_if_not_already_done && m_mins[0] != std::numeric_limits<FT>::max())
-      return;
-
-    // Reset
-    m_mins.fill(std::numeric_limits<FT>::max());
-    m_maxs.fill(std::numeric_limits<FT>::min());
-
-    // Adjust bbox
-    for (const auto &point : *this)
-    {
-      typedef typename Kernel::Compute_coordinate_d Ccd;
-      const Ccd ccd = m_k.compute_coordinate_d_object();
-      for (int i = 0 ; i < AMB_DIM ; ++i)
-      {
-        if (ccd(point, i) < m_mins[i])
-          m_mins[i] =ccd(point, i);
-      
-        if (ccd(point, i) > m_maxs[i])
-          m_maxs[i] = ccd(point, i);
-      }
-    }
-  }
-
-  FT get_min(int dim) const
-  {
-    return m_mins[dim];
-  }
-  
-  FT get_max(int dim) const
-  {
-    return m_maxs[dim];
-  }
-
-  FT bbox_diagonal() const
-  {
-    FT sqdiag = 0;
-    for (std::size_t i = 0 ; i < AMB_DIM ; ++i)
-    {
-      FT d = m_maxs[i] - m_mins[i];
-      sqdiag += d*d;
-    }
-    return CGAL::sqrt(sqdiag);
-  }
-
-  void recenter_points_around_origin(
-    bool compute_bbox_if_not_already_done = true)
-  {
-    // If the bounding box has not been computed already
-    if (m_mins[0] == std::numeric_limits<FT>::max())
-      if (compute_bbox_if_not_already_done)
-        compute_bbox();
-      else
-        return;
-
-    // Compute centre of bbox
-    std::array<FT, AMB_DIM> transl_array;
-    for (std::size_t i = 0 ; i < AMB_DIM ; ++i)
-      transl_array[i] = -0.5*(m_maxs[i] + m_mins[i]);
-
-    Point transl(transl_array);
-
-#ifdef CGAL_LINKED_WITH_TBB
-    tbb::parallel_for(tbb::blocked_range<size_t>(0, size()),
-      [&]( const tbb::blocked_range<size_t>& r )
-    {
-      for (auto i = r.begin(); i != r.end(); ++i)
-#else
-    for (auto i = 0; i != size(); ++i)
-#endif
-    {
-        (*this)[i] += transl;
-    }
-#ifdef CGAL_LINKED_WITH_TBB
-  });
-#endif
-
-  }
-
-protected:
-  Kernel const& m_k;      //!< A const ref to the kernel
-  // Bounding box
-  std::array<FT, AMB_DIM> m_mins;
-  std::array<FT, AMB_DIM> m_maxs;
-};
-
-
-// And this is the "dataset to kd-tree" adaptor class:
-template <typename Point_cloud_>
+// "dataset to kd-tree" adaptor class
+template <typename Point_container_>
 class Point_cloud_adaptator
 {
 public:
-  typedef typename Point_cloud_::Kernel Kernel;
-  typedef typename Point_cloud_::Point  Point;
-  typedef typename Point_cloud_::FT     FT;
+  typedef typename Point_container_::value_type         Point;
+  typedef typename CGAL::Kernel_traits<Point>::type Kernel;
+  typedef typename Kernel::FT                       FT;
 
   /// The constructor that sets the data set source
-  Point_cloud_adaptator(Point_cloud_ &point_cloud, Kernel const& k) 
-    : m_points(point_cloud), m_k(k)
+  Point_cloud_adaptator(Point_container_ &points, Kernel const& k) 
+    : m_points(points), m_k(k)
   {}
 
   /// CRTP helper method
-  inline Point_cloud_ const& point_cloud() const 
+  inline Point_container_ const& points() const 
   { 
     return m_points;
   }  
-  inline Point_cloud_& point_cloud() 
+  inline Point_container_& points() 
   {
     return m_points;
   }
@@ -199,7 +64,7 @@ public:
   // Must return the number of data points
   inline size_t kdtree_get_point_count() const 
   {
-    return point_cloud().size();
+    return m_points.size();
   }
 
   // Returns the distance between the vector "p1[0:size-1]" 
@@ -208,7 +73,7 @@ public:
     const FT *p1, const size_t idx_p2, size_t size) const
   {
     Point sp(p1, p1 + size);
-    return m_k.squared_distance_d_object()(sp, point_cloud()[idx_p2]);
+    return m_k.squared_distance_d_object()(sp, points()[idx_p2]);
   }
 
   // Returns the dim'th component of the idx'th point in the class:
@@ -216,7 +81,7 @@ public:
   // immediate value, the "if/else's" are actually solved at compile time.
   inline FT kdtree_get_pt(const size_t idx, int dim) const
   {
-    return m_k.compute_coordinate_d_object()(point_cloud()[idx], dim);
+    return m_k.compute_coordinate_d_object()(points()[idx], dim);
   }
 
   // Optional bounding-box computation: return false to default to a standard 
@@ -228,13 +93,7 @@ public:
   template <class Bbox>
   bool kdtree_get_bbox(Bbox &bb) const
   {
-    for (int i = 0 ; i < bb.size() ; ++i)
-    {
-      bb[i].low = m_points.get_min(i);
-      bb[i].high = m_points.get_max(i);
-    }
-
-    return true;
+    return false;
   }
 
   Kernel const& kernel() const
@@ -243,42 +102,40 @@ public:
   }
 
 protected:  
-  Point_cloud_& m_points; //!< A ref to the data set origin
+  Point_container_& m_points; //!< A ref to the data set origin
   Kernel const& m_k;      //!< A const ref to the kernel
 
-}; // end of PointCloudAdaptor
+};
 
-template <typename Point_cloud_>
+template <typename Point_container_>
 class Point_cloud_data_structure
 {
 public:
-  typedef typename Point_cloud_::Kernel Kernel;
-  typedef typename Point_cloud_::Point  Point;
-  typedef typename Point_cloud_::FT     FT;
+  typedef typename Point_container_::value_type         Point;
+  typedef typename CGAL::Kernel_traits<Point>::type Kernel;
+  typedef typename Kernel::FT                       FT;
 
   static const int AMB_DIM = Ambient_dimension<Point>::value;
 
   /// Constructor
-  Point_cloud_data_structure(Point_cloud_ &cloud, Kernel const& k)
-  : m_adaptor(cloud, k),
+  Point_cloud_data_structure(Point_container_ &points, Kernel const& k)
+  : m_adaptor(points, k),
     m_kd_tree(AMB_DIM, 
               m_adaptor, 
               nanoflann::KDTreeSingleIndexAdaptorParams(10 /* max leaf */) )
   {
-    cloud.compute_bbox(true);
-    //cloud.recenter_points_around_origin();
     m_kd_tree.buildIndex();
   }
   
-  Point_cloud_ &point_cloud()
+  /*Point_container_ &points()
   {
-    return m_adaptor.point_cloud();
+    return m_adaptor.points();
   }
 
-  const Point_cloud_ &point_cloud() const
+  const Point_container_ &points() const
   {
-    return m_adaptor.point_cloud();
-  }
+    return m_adaptor.points();
+  }*/
 
   void query_ANN(const Point &sp,
     std::size_t k,
@@ -332,7 +189,7 @@ public:
   }
 
 protected:
-  typedef Point_cloud_adaptator<Point_cloud_> Adaptor;
+  typedef Point_cloud_adaptator<Point_container_> Adaptor;
   typedef nanoflann::KDTreeSingleIndexAdaptor<
     nanoflann::L2_Simple_Adaptor<FT, Adaptor> ,
     Adaptor,
@@ -345,5 +202,96 @@ protected:
 
 } // namespace Tangential_complex_
 } //namespace CGAL
+
+#else // !CGAL_TC_USE_NANOFLANN => use CGAL Spatial searching
+
+#include <CGAL/Orthogonal_k_neighbor_search.h>
+#include <CGAL/Search_traits.h>
+#include <CGAL/Search_traits_adapter.h>
+#include <CGAL/property_map.h>
+
+#include <boost/tuple/tuple.hpp>
+#include <boost/iterator/zip_iterator.hpp>
+#include <boost/iterator/counting_iterator.hpp>
+
+#include <utility>
+#include <limits>
+
+namespace CGAL {
+namespace Tangential_complex_ {
+
+template <typename Point_container_>
+class Point_cloud_data_structure
+{
+public:
+  typedef typename Point_container_::value_type         Point;
+  typedef typename CGAL::Kernel_traits<Point>::type Kernel;
+  typedef typename Kernel::FT                       FT;
+
+  typedef boost::tuple<Point, std::size_t>                  Point_and_idx;
+  typedef CGAL::Search_traits<
+    FT, Point, 
+    typename Kernel::Cartesian_const_iterator_d, 
+    typename Kernel::Construct_cartesian_const_iterator_d>  Traits_base;
+  typedef CGAL::Search_traits_adapter<Point_and_idx,
+    CGAL::Nth_of_tuple_property_map<0, Point_and_idx>,
+    Traits_base>                                            STraits;
+  
+  typedef CGAL::Orthogonal_k_neighbor_search<STraits>       K_neighbor_search;
+  typedef typename K_neighbor_search::Tree                  Tree;
+  typedef typename K_neighbor_search::Distance              Distance;
+
+  static const int AMB_DIM = Ambient_dimension<Point>::value;
+
+  /// Constructor
+  Point_cloud_data_structure(Point_container_ &points, Kernel const& k)
+  : m_points(points),
+    m_tree(
+      boost::make_zip_iterator(boost::make_tuple( 
+        points.begin(), 
+        boost::counting_iterator<std::size_t>(0))),
+      boost::make_zip_iterator(boost::make_tuple( 
+        points.end(), 
+        boost::counting_iterator<std::size_t>(points.size()))) )
+  {
+  }
+  
+  /*Point_container_ &points()
+  {
+    return m_points;
+  }
+
+  const Point_container_ &points() const
+  {
+    return m_points;
+  }*/
+
+  void query_ANN(const Point &sp,
+    unsigned int k,
+    size_t *neighbor_indices,
+    FT *squared_distance) const
+  {
+    // Initialize the search structure, and search all N points
+    K_neighbor_search search(m_tree, sp, k);
+     // report the N nearest neighbors and their distance
+    // This should sort all N points by increasing distance from origin
+    int i = 0;
+    for(K_neighbor_search::iterator it = search.begin(); 
+        it != search.end(); ++it, ++i)
+    {
+      neighbor_indices[i] = boost::get<1>(it->first);
+      squared_distance[i] = it->second;
+    }
+  }
+
+protected:
+  Point_container_ const& m_points;
+  Tree m_tree;
+};
+
+} // namespace Tangential_complex_
+} //namespace CGAL
+
+#endif // CGAL_TC_USE_NANOFLANN
 
 #endif // POINT_CLOUD_H
