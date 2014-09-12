@@ -150,7 +150,7 @@ public:
     
 // - - - - - - - - - - - - - - - - - - - - - - - - - - CREATION / CONSTRUCTORS
 
-    Delaunay_triangulation(int dim, &const Geom_traits k = Geom_traits())
+    Delaunay_triangulation(int dim, const Geom_traits &k = Geom_traits())
     : Base(dim, k)
     {
     }
