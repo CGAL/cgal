@@ -225,17 +225,16 @@ class Point_cloud_data_structure
 {
 public:
   typedef typename Point_container_::value_type         Point;
-  typedef typename CGAL::Kernel_traits<Point>::type Kernel;
-  typedef typename Kernel::FT                       FT;
+  typedef typename CGAL::Kernel_traits<Point>::type     Kernel;
+  typedef typename Kernel::FT                           FT;
 
-  typedef boost::tuple<Point, std::size_t>                  Point_and_idx;
   typedef CGAL::Search_traits<
-    FT, Point, 
+    FT, Point,
     typename Kernel::Cartesian_const_iterator_d, 
     typename Kernel::Construct_cartesian_const_iterator_d>  Traits_base;
-  typedef CGAL::Search_traits_adapter<Point_and_idx,
-    CGAL::Nth_of_tuple_property_map<0, Point_and_idx>,
-    Traits_base>                                            STraits;
+  // using a pointer as a special property map type
+  typedef CGAL::Search_traits_adapter<
+    std::ptrdiff_t, Point*, Traits_base>                    STraits;
   
   typedef CGAL::Orthogonal_k_neighbor_search<STraits>       K_neighbor_search;
   typedef typename K_neighbor_search::Tree                  Tree;
@@ -244,15 +243,13 @@ public:
   static const int AMB_DIM = Ambient_dimension<Point>::value;
 
   /// Constructor
-  Point_cloud_data_structure(Point_container_ &points, Kernel const& k)
+  Point_cloud_data_structure(Point_container_ const& points, Kernel const& k)
   : m_points(points),
     m_tree(
-      boost::make_zip_iterator(boost::make_tuple( 
-        points.begin(), 
-        boost::counting_iterator<std::size_t>(0))),
-      boost::make_zip_iterator(boost::make_tuple( 
-        points.end(), 
-        boost::counting_iterator<std::size_t>(points.size()))) )
+      boost::counting_iterator<std::ptrdiff_t>(0),
+      boost::counting_iterator<std::ptrdiff_t>(points.size()),
+      Tree::Splitter(),
+      STraits((Point*)&(points[0])) )
   {
   }
   
@@ -265,22 +262,48 @@ public:
   {
     return m_points;
   }*/
-
+  
+  template<typename IndexOutputIt>
   void query_ANN(const Point &sp,
     unsigned int k,
-    size_t *neighbor_indices,
-    FT *squared_distance) const
+    IndexOutputIt indices_out) const
   {
     // Initialize the search structure, and search all N points
-    K_neighbor_search search(m_tree, sp, k);
+    // Note that we need to pass the Distance explicitly since it needs to
+    // know the property map
+    K_neighbor_search search(m_tree, sp, k, FT(0.1), true,
+      Distance_adapter<std::ptrdiff_t, Point*, Euclidean_distance<Traits_base> >(
+        (Point*)&(m_points[0])) );
+
      // report the N nearest neighbors and their distance
     // This should sort all N points by increasing distance from origin
-    int i = 0;
     for(K_neighbor_search::iterator it = search.begin(); 
-        it != search.end(); ++it, ++i)
+        it != search.end(); ++it)
     {
-      neighbor_indices[i] = boost::get<1>(it->first);
-      squared_distance[i] = it->second;
+      *indices_out++ = it->first;
+    }
+  }
+
+  template<typename IndexOutputIt, typename DistanceOutputIt>
+  void query_ANN(const Point &sp,
+    unsigned int k,
+    IndexOutputIt indices_out,
+    DistanceOutputIt distances_out) const
+  {
+    // Initialize the search structure, and search all N points
+    // Note that we need to pass the Distance explicitly since it needs to
+    // know the property map
+    K_neighbor_search search(m_tree, sp, k, FT(0.1), true,
+      Distance_adapter<std::ptrdiff_t, Point*, Euclidean_distance<Traits_base> >(
+        (Point*)&(m_points[0])) );
+
+     // report the N nearest neighbors and their distance
+    // This should sort all N points by increasing distance from origin
+    for(K_neighbor_search::iterator it = search.begin(); 
+        it != search.end(); ++it)
+    {
+      *indices_out++ = it->first;
+      *distances_out++ = it->second;
     }
   }
 

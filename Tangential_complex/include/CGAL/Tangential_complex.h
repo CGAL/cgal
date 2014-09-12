@@ -358,9 +358,8 @@ private:
 
     const int NUM_NEIGHBORS = 150;
     std::size_t nearest_nb[NUM_NEIGHBORS];
-    FT squared_distance[NUM_NEIGHBORS];
     m_points_ds.query_ANN(
-      center_pt, NUM_NEIGHBORS, nearest_nb, squared_distance);
+      center_pt, NUM_NEIGHBORS, nearest_nb);
     /*const int NUM_NEIGHBORS = 150;
     std::size_t nearest_nb[NUM_NEIGHBORS];
     for (int ii = 0 ; ii < NUM_NEIGHBORS ; ++ii)
@@ -509,9 +508,8 @@ private:
     Kernel::Difference_of_vectors_d diff_vec   = m_k.difference_of_vectors_d_object();
 
     std::size_t neighbor_indices[NUM_POINTS_FOR_PCA];
-    FT squared_distance[NUM_POINTS_FOR_PCA];
     m_points_ds.query_ANN(
-      p, NUM_POINTS_FOR_PCA, neighbor_indices, squared_distance);
+      p, NUM_POINTS_FOR_PCA, neighbor_indices);
 
     //******************************* PCA *************************************
 
