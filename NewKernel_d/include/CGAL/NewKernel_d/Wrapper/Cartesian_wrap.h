@@ -79,17 +79,16 @@ struct Forward_rep {
 //};
 //#else
 template <class T,bool=Is_wrapper<T>::value,bool=Is_wrapper_iterator<T>::value> struct result_;
-template <class T> struct result_<T,false,false>{typedef T type;}; // const&
-template <class T> struct result_<T,true,false>{typedef typename decay<T>::type::Rep type;}; // const&
+template <class T> struct result_<T,false,false>{typedef T const& type;};
+template <class T> struct result_<T,true,false>{typedef typename decay<T>::type::Rep const& type;};
 template <class T> struct result_<T,false,true>{typedef transforming_iterator<Forward_rep,typename decay<T>::type> type;};
 template<class> struct result;
 template<class T> struct result<Forward_rep(T)> : result_<T> {};
 
-template <class T> typename boost::disable_if<boost::mpl::or_<Is_wrapper<T>,Is_wrapper_iterator<T> >,T>::type operator()(T const& t) const {return t;} // const&
+template <class T> typename boost::disable_if<boost::mpl::or_<Is_wrapper<T>,Is_wrapper_iterator<T> >,T>::type const& operator()(T const& t) const {return t;}
 template <class T> typename boost::disable_if<boost::mpl::or_<Is_wrapper<T>,Is_wrapper_iterator<T> >,T>::type& operator()(T& t) const {return t;}
 
-// FIXME: We should return const&, but it causes trouble inside a transform_iterator of an iterator that returns a prvalue :-(
-template <class T> typename T::Rep operator()(T const& t, typename boost::enable_if<Is_wrapper<T> >::type* = 0) const {return t.rep();}
+template <class T> typename T::Rep const& operator()(T const& t, typename boost::enable_if<Is_wrapper<T> >::type* = 0) const {return t.rep();}
 
 template <class T> transforming_iterator<Forward_rep,typename boost::enable_if<Is_wrapper_iterator<T>,T>::type> operator()(T const& t) const {return make_transforming_iterator(t,Forward_rep());}
 //#endif

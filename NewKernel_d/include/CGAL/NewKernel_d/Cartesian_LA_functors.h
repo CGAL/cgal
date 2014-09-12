@@ -180,7 +180,7 @@ template<class R_> struct Compute_cartesian_coordinate {
 #ifdef CGAL_CXX11
 	typedef decltype(std::declval<const first_argument_type>()[0]) result_type;
 #else
-	typedef RT result_type;
+	typedef RT const& result_type;
 	// RT const& doesn't work with some LA (Eigen2 for instance) so we
 	// should use plain RT or find a way to detect this.
 #endif

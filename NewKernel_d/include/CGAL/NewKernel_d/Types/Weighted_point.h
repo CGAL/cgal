@@ -57,8 +57,8 @@ template <class R_> struct Construct_weighted_point : Store_kernel<R_> {
 template <class R_> struct Point_drop_weight {
   CGAL_FUNCTOR_INIT_IGNORE(Point_drop_weight)
   typedef typename Get_type<R_, Weighted_point_tag>::type	argument_type;
-  typedef typename Get_type<R_, Point_tag>::type		result_type;
-  // Returning a reference would be too fragile
+  typedef typename Get_type<R_, Point_tag>::type const&		result_type;
+  // Returning a reference is fragile
 
   result_type operator()(argument_type const&s)const{
     return s.point();
