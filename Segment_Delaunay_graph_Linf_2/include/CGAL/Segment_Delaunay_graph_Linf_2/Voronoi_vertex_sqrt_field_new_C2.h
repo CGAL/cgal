@@ -2518,10 +2518,8 @@ private:
 
     const FT absdvtx = CGAL::abs(diffdvtx);
     const FT absdvty = CGAL::abs(diffdvty);
-    const bool is_dx_max = CGAL::compare(absdvtx, absdvty) == LARGER;
-    const FT d = is_dx_max ? absdvtx : absdvty;
-    const FT radius = q.is_segment() ? linf_radius(vv, p, q, r, type)
-              : linf_radius_pps(vv, p, q, is_dx_max, diffdvtx, diffdvty) ;
+    const FT d = CGAL::max(absdvtx, absdvty);
+    const FT radius = linf_radius(vv, p, q, r, type);
 
     Comparison_result crude = CGAL::compare(d, radius);
 
