@@ -23,6 +23,8 @@
 #include <CGAL/Triangulation.h>
 #include <CGAL/Dimension.h>
 #include <CGAL/Default.h>
+#include <CGAL/spatial_sort.h>
+#include <CGAL/Spatial_sort_traits_adapter_d.h>
 
 namespace CGAL {
 
@@ -219,14 +221,13 @@ public:
     size_type n = number_of_vertices();
     typedef std::vector<Weighted_point> WP_vec;
     WP_vec points(start, end);
-    typename Geom_traits::Point_drop_weight_d pdw =
-      geom_traits().point_drop_weight_d_object();
-    spatial_sort(
-      boost::make_transform_iterator(points.begin(), pdw),
-      boost::make_transform_iterator(points.end(), pdw),
-      typename Geom_traits::Base());
-    //spatial_sort(points.begin(), points.end(), geom_traits()); // CJTODO TEMP A REMETTRE
-    //spatial_sort(points.begin(), points.end(), Geom_traits::Base());
+
+    // CJTODO à remettre et corriger    
+    /*typedef CGAL::Spatial_sort_traits_adapter_d<
+      Geom_traits, typename Geom_traits::Point_drop_weight_d> Search_traits_d;
+    Search_traits_d st_d(geom_traits().point_drop_weight_d_object());
+    spatial_sort(points.begin(), points.end(), st_d);*/
+
     Full_cell_handle hint;
     for(typename WP_vec::const_iterator p = points.begin(); p != points.end(); ++p )
     {
