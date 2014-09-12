@@ -1,3 +1,5 @@
+//#undef CGAL_LINKED_WITH_TBB // CJTODO TEMP
+
 // Without TBB_USE_THREADING_TOOL Intel Inspector XE will report false positives in Intel TBB
 // (http://software.intel.com/en-us/articles/compiler-settings-for-threading-error-analysis-in-intel-inspector-xe/)
 #ifdef _DEBUG
@@ -18,9 +20,9 @@
 #endif
 
 #ifdef _DEBUG
-  const int NUM_POINTS = 50;
+  const int NUM_POINTS = 150;
 #else
-  const int NUM_POINTS = 5000;
+  const int NUM_POINTS = 50000;
 #endif
 
 template <typename Point>
