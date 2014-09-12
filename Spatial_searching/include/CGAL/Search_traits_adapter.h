@@ -91,16 +91,15 @@ public:
 
   struct Construct_cartesian_const_iterator_d: public Base_traits::Construct_cartesian_const_iterator_d{
     PointPropertyMap ppmap;
-    using Base_traits::Construct_cartesian_const_iterator_d::operator();
     
     Construct_cartesian_const_iterator_d(const typename Base_traits::Construct_cartesian_const_iterator_d& base, const PointPropertyMap& ppmap_)
       :Base_traits::Construct_cartesian_const_iterator_d(base), ppmap(ppmap_){}
     
     typename Base_traits::Cartesian_const_iterator_d operator()(const Point_with_info& p) const
-    { return this->operator() (get(ppmap,p)); }
+    { return Base_traits::Construct_cartesian_const_iterator_d::operator() (get(ppmap,p)); }
 
     typename Base_traits::Cartesian_const_iterator_d operator()(const Point_with_info& p, int)  const
-    { return this->operator() (get(ppmap,p),0); }
+    { return Base_traits::Construct_cartesian_const_iterator_d::operator() (get(ppmap,p),0); }
   };
   
   struct Construct_iso_box_d: public Base::Construct_iso_box_d{
