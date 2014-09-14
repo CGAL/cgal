@@ -26,6 +26,8 @@
 #include <CGAL/spatial_sort.h>
 #include <CGAL/Spatial_sort_traits_adapter_d.h>
 
+#include <boost/property_map/function_property_map.hpp>
+
 namespace CGAL {
 
 template< typename RTTraits, typename TDS_ = Default >
@@ -221,12 +223,16 @@ public:
     size_type n = number_of_vertices();
     typedef std::vector<Weighted_point> WP_vec;
     WP_vec points(start, end);
-
-    // CJTODO à remettre et corriger    
-    /*typedef CGAL::Spatial_sort_traits_adapter_d<
-      Geom_traits, typename Geom_traits::Point_drop_weight_d> Search_traits_d;
-    Search_traits_d st_d(geom_traits().point_drop_weight_d_object());
-    spatial_sort(points.begin(), points.end(), st_d);*/
+    
+    typedef boost::function_property_map<
+      typename Geom_traits::Point_drop_weight_d,
+      Point,
+      Bare_point> Drop_weight_pmap;
+    typedef CGAL::Spatial_sort_traits_adapter_d<
+      typename Geom_traits::Base, Drop_weight_pmap> Search_traits_d;
+    Search_traits_d st_d(boost::make_function_property_map<Point>(
+      geom_traits().point_drop_weight_d_object()));
+    spatial_sort(points.begin(), points.end(), st_d);
 
     Full_cell_handle hint;
     for(typename WP_vec::const_iterator p = points.begin(); p != points.end(); ++p )
