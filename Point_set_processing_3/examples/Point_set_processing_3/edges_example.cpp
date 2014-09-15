@@ -30,15 +30,21 @@ int main (int argc, char *argv[]) {
         return EXIT_FAILURE;
     }
 
-    // Estimates feature edges.
+    // Estimates edges points.
     double R = 0.2,
            r = 0.1,
            threshold = 0.16;
+    std::vector<Point> edges_points;
+    edges_points = vcm_estimate_edges(points.begin(), points.end(),
+                                      CGAL::First_of_pair_property_map<PointVectorPair>(),
+                                      R, r, threshold,
+                                      Kernel());
+
+    // Computes a graph (MST) between the edges.
     std::vector<Segment> polylines;
-    polylines = vcm_estimate_edges(points.begin(), points.end(),
-                                   CGAL::First_of_pair_property_map<PointVectorPair>(),
-                                   R, r, threshold,
-                                   Kernel());
+    polylines = construct_mst(edges_points,
+                              Kernel());
+
 
     return 0;
 }

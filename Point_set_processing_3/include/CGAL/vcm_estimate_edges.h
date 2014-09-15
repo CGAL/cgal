@@ -218,26 +218,34 @@ compute_delaunay_graph (Undirected_Graph& g, ///< constructed graph.
 /// \ingroup PkgPointSetProcessing
 /// Estimates the feature edges of the `[first, beyond)` range of points
 /// using the Voronoi Covariance Measure.
-/// It returns a vector of segments where each segment represent a polyline that belongs to the estimated feature.
+/// It returns a vector of all the points that have been estimated as edge points.
+/// It mainly consists in computing the VCM using `vcm_compute` and then
+/// determining which point must be considered as an edge one or not (using a criterion
+/// based on the eigenvalues of the covariance matrices).
+///
+/// VCM mainly consists in first computing the Voronoi diagram of the points.
+/// Then, it intersects each of the Voronoi cells with a sphere of a given radius.
+/// Finally, it computes the covariance matrices of the Voronoi cells.
+/// Additionally, it can convolve (sum) the matrices of the points contained in a sphere.
+/// This feature may be useful if the point set is noised as the convolution will reduce
+/// the influence of the noise.
+//
 /// @tparam ForwardIterator iterator over input points.
 /// @tparam PointPMap is a model of `ReadablePropertyMap` with a value_type = `Kernel::Point_3`.
-///        It can be omitted if ForwardIterator value_type is convertible to `Kernel::Point_3`.
 /// @tparam Kernel Geometric traits class.
 /// @tparam Covariance Covariance matrix type..
 template < typename ForwardIterator,
            typename PointPMap,
            typename Kernel
 >
-std::vector<typename Kernel::Segment_3>
+std::vector<typename Kernel::Point_3>
 vcm_estimate_edges (ForwardIterator first, ///< iterator over the first input point.
                     ForwardIterator beyond, ///< past-the-end iterator over the input points.
                     PointPMap point_pmap, ///< property map: value_type of ForwardIterator -> Point_3.
                     double R, ///< offset radius: radius of the sphere to intersect the Voronoi cell with.
                     double r, ///< convolution radius: all points in a sphere with this radius will be convolved.
                     double threshold, ///< threshold used to determine if a point is an edge point or not.
-                    const Kernel& k, ///< geometric traits.
-                    double rips_radius = 0.1, ///< radius used for the construction of the Rips graph.
-                    float exponent = 2 ///< exponent of the cost between edges.
+                    const Kernel& k ///< geometric traits.
 )
 {
     typedef typename Kernel::FT FT;
@@ -250,12 +258,12 @@ vcm_estimate_edges (ForwardIterator first, ///< iterator over the first input po
 
     // Compute the VCM and convolve it
     std::vector<Covariance> cov;
-    internal::vcm_offset_and_convolve(first, beyond,
-                                      point_pmap,
-                                      cov,
-                                      R,
-                                      r,
-                                      k);
+    vcm_compute(first, beyond,
+                point_pmap,
+                cov,
+                R,
+                r,
+                k);
 
     // Find the potential points on the edges
     std::vector<Point> points_on_edges;
@@ -267,6 +275,29 @@ vcm_estimate_edges (ForwardIterator first, ///< iterator over the first input po
         }
         i++;
     }
+
+    return points_on_edges;
+}
+
+/// \ingroup PkgPointSetProcessing
+/// Constructs a minimum spanning tree where the vertices are the points
+/// given in argument.
+/// First, it creates a graph where the vertices are the points and there is an edge
+/// between each vertices contained in a sphere of a given radius.
+/// The cost on the edges is the norm on the Lp space.
+/// Secondly, it constructs the MST using BGL and the Kruskal algorithm.
+/// It returns a vector of segments where each segment represent a polyline which belongs to the estimated feature.
+/// @tparam Kernel Geometric traits class.
+template < typename Kernel >
+std::vector<typename Kernel::Segment_3>
+construct_mst (std::vector<typename Kernel::Point_3> points_on_edges,
+               const Kernel& k, ///< geometric traits.
+               double rips_radius = 0.1, ///< radius used for the construction of the Rips graph.
+               float exponent = 2 ///< exponent of the cost between edges.
+)
+{
+    typedef typename Kernel::Point_3 Point;
+    typedef typename Kernel::Segment_3 Segment;
 
     // Map between points and their corresponding indices
     std::map<Point, size_t> indices;

@@ -176,21 +176,31 @@ vcm_convolve (ForwardIterator first,
 }
 /// @endcond
 
-/// @cond SKIP_IN_MANUAL
-// Compute the VCM and make the convolution using a radius.
+} // namespace internal
+
+// ----------------------------------------------------------------------------
+// Public section
+// ----------------------------------------------------------------------------
+
+/// \ingroup PkgPointSetProcessing
+/// Computes the VCM and makes the convolution using a radius.
+/// @tparam ForwardIterator iterator over input points.
+/// @tparam PointPMap is a model of `ReadablePropertyMap` with a value_type = `Kernel::Point_3`.
+/// @tparam Kernel Geometric traits class.
+/// @tparam Covariance Covariance matrix type.
 template < class ForwardIterator,
            class PointPMap,
            class Kernel,
            class Covariance
 >
 void
-vcm_offset_and_convolve (ForwardIterator first,
-                         ForwardIterator beyond,
-                         PointPMap point_pmap,
-                         std::vector<Covariance> &ccov,
-                         double R,
-                         double r,
-                         const Kernel & k)
+vcm_compute (ForwardIterator first,
+             ForwardIterator beyond,
+             PointPMap point_pmap,
+             std::vector<Covariance> &ccov,
+             double R,
+             double r,
+             const Kernel & k)
 {
     // First, compute the VCM for each point
     std::vector<Covariance> cov;
@@ -214,13 +224,6 @@ vcm_offset_and_convolve (ForwardIterator first,
                                k);
     }
 }
-/// @endcond
-
-} // namespace internal
-
-// ----------------------------------------------------------------------------
-// Public section
-// ----------------------------------------------------------------------------
 
 /// @cond SKIP_IN_MANUAL
 /// Estimates normal directions of the `[first, beyond)` range of points
@@ -229,10 +232,9 @@ vcm_offset_and_convolve (ForwardIterator first,
 ///
 /// @tparam ForwardIterator iterator over input points.
 /// @tparam PointPMap is a model of `ReadablePropertyMap` with a value_type = `Kernel::Point_3`.
-///        It can be omitted if ForwardIterator value_type is convertible to `Kernel::Point_3`.
 /// @tparam NormalPMap is a model of `WritablePropertyMap` with a value_type = `Kernel::Vector_3`.
 /// @tparam Kernel Geometric traits class.
-/// @tparam Covariance Covariance matrix type..
+/// @tparam Covariance Covariance matrix type.
 /// @pre If `nb_neighbors_convolve` is equal to -1, then the convolution is made using a radius.
 /// On the contrary, if `nb_neighbors_convolve` is different from -1, the convolution is made using
 /// this number of neighbors.
@@ -259,12 +261,12 @@ vcm_estimate_normals (ForwardIterator first, ///< iterator over the first input 
     // Compute the VCM and convolve it
     std::vector<Covariance> cov;
     if (nb_neighbors_convolve == -1) {
-        internal::vcm_offset_and_convolve(first, beyond,
-                                          point_pmap,
-                                          cov,
-                                          R,
-                                          r,
-                                          k);
+        vcm_compute(first, beyond,
+                    point_pmap,
+                    cov,
+                    R,
+                    r,
+                    k);
     } else {
         internal::vcm_offset(first, beyond,
                              point_pmap,
@@ -306,9 +308,15 @@ vcm_estimate_normals (ForwardIterator first, ///< iterator over the first input 
 /// using the Voronoi Covariance Measure with a radius for the convolution.
 /// The output normals are randomly oriented.
 ///
+/// VCM mainly consists in first computing the Voronoi diagram of the points.
+/// Then, it intersects each of the Voronoi cells with a sphere of a given radius.
+/// Finally, it computes the covariance matrices of the Voronoi cells.
+/// Additionally, it can convolve (sum) the matrices of the points contained in a sphere.
+/// This feature may be useful if the point set is noised as the convolution will reduce
+/// the influence of the noise.
+///
 /// @tparam ForwardIterator iterator over input points.
 /// @tparam PointPMap is a model of `ReadablePropertyMap` with a value_type = `Kernel::Point_3`.
-///        It can be omitted if ForwardIterator value_type is convertible to `Kernel::Point_3`.
 /// @tparam NormalPMap is a model of `WritablePropertyMap` with a value_type = `Kernel::Vector_3`.
 
 // This variant deduces the kernel from the point property map
@@ -343,9 +351,15 @@ vcm_estimate_normals (ForwardIterator first, ///< iterator over the first input 
 /// using the Voronoi Covariance Measure with a number of neighbors for the convolution.
 /// The output normals are randomly oriented.
 ///
+/// VCM mainly consists in first computing the Voronoi diagram of the points.
+/// Then, it intersects each of the Voronoi cells with a sphere of a given radius.
+/// Finally, it computes the covariance matrices of the Voronoi cells.
+/// Additionally, it can convolve (sum) the matrices of the points contained in a sphere.
+/// This feature may be useful if the point set is noised as the convolution will reduce
+/// the influence of the noise.
+///
 /// @tparam ForwardIterator iterator over input points.
 /// @tparam PointPMap is a model of `ReadablePropertyMap` with a value_type = `Kernel::Point_3`.
-///        It can be omitted if ForwardIterator value_type is convertible to `Kernel::Point_3`.
 /// @tparam NormalPMap is a model of `WritablePropertyMap` with a value_type = `Kernel::Vector_3`.
 
 // This variant deduces the kernel from the point property map

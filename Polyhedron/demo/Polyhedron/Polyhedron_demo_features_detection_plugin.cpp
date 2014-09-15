@@ -8,6 +8,7 @@
 #include "Polyhedron_demo_plugin_interface.h"
 
 #include <CGAL/vcm_estimate_edges.h>
+
 #include <CGAL/Timer.h>
 #include <CGAL/Memory_sizer.h>
 
@@ -77,16 +78,21 @@ void Polyhedron_demo_features_detection_plugin::on_actionDetectFeatures_triggere
 
     // Compute poylines
     typedef Kernel::Segment_3 Segment;
-    std::vector<Segment> polylines;
+    typedef Kernel::Point_3 Point;
+    std::vector<Point> edges_points;
     CGAL::Timer task_timer; task_timer.start();
     std::cerr << "Estimates Features using VCM (R="
         << dialog.offsetRadius() << " and r=" << dialog.convolveRadius()
         << " and threshold=" << dialog.threshold() << " and radius=" << dialog.edgeRadius() << ")...\n";
-    polylines = CGAL::vcm_estimate_edges(points->begin(), points->end(),
-                                         CGAL::make_identity_property_map(Point_set::value_type()),
-                                         dialog.offsetRadius(), dialog.convolveRadius(), dialog.threshold(),
-                                         Kernel(),
-                                         dialog.edgeRadius());
+    edges_points = CGAL::vcm_estimate_edges(points->begin(), points->end(),
+                                            CGAL::make_identity_property_map(Point_set::value_type()),
+                                            dialog.offsetRadius(), dialog.convolveRadius(), dialog.threshold(),
+                                            Kernel());
+
+    std::vector<Segment> polylines;
+    polylines = construct_mst(edges_points,
+                              Kernel(),
+                              dialog.edgeRadius());
 
     std::size_t memory = CGAL::Memory_sizer().virtual_size();
     task_timer.stop();
