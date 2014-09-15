@@ -2817,13 +2817,15 @@ namespace CGAL {
           source = tgt;
           target = src;
         }
+
+        //std::cout << "**************the new sourc: " << source << "the new target: " << target << std::endl;
         /*
          * Get the source and target segment numbers from the polyline.
          * The trimmed polyline will have trimmed end segments(containing source and target) along with complete 
          * segments in between them.
          */
-        std::size_t source_segment_number = m_poly_traits.locate(xcv, src);
-        std::size_t target_segment_number = m_poly_traits.locate(xcv, tgt);
+        std::size_t source_segment_number = m_poly_traits.locate(xcv, source);
+        std::size_t target_segment_number = m_poly_traits.locate(xcv, target);
         // std::cout << "source number: " << source_segment_number << "  Target number : " << target_segment_number << std::endl;
         // std::cout << "target segment: " << xcv[target_segment_number] << std::endl;
 
