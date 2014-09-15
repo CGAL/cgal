@@ -2824,7 +2824,8 @@ namespace CGAL {
          */
         std::size_t source_segment_number = m_poly_traits.locate(xcv, src);
         std::size_t target_segment_number = m_poly_traits.locate(xcv, tgt);
-        //std::cout << "source number: " << source_segment_number << "  Target number : " << target_segment_number << std::endl;
+        // std::cout << "source number: " << source_segment_number << "  Target number : " << target_segment_number << std::endl;
+        // std::cout << "target segment: " << xcv[target_segment_number] << std::endl;
 
         std::vector<X_monotone_segment_2> trimmed_segments;
 
@@ -2837,35 +2838,35 @@ namespace CGAL {
 
         //push the trimmed version of the source segment.
         // if(sorientation == SMALLER && source != source_max_vertex)
-        if(orientation == SMALLER && ! geom_traits->equal_2_object()(source, source_max_vertex) )
+        if( orientation == SMALLER && ! geom_traits->equal_2_object()(source, source_max_vertex) )
         {
-          if(source_segment_number != target_segment_number)
+          if( source_segment_number != target_segment_number )
             trimmed_segments.push_back( trim(xcv[source_segment_number], source, source_max_vertex) );
           else
             trimmed_segments.push_back( trim(xcv[source_segment_number], source, target) );
         }
         //else if(orientation == LARGER && source != source_min_vertex)
-        else if(orientation == LARGER && ! geom_traits->equal_2_object()(source, source_min_vertex) == EQUAL )
+        else if( orientation == LARGER && ! geom_traits->equal_2_object()(source, source_min_vertex) )
         {
-          if(source_segment_number != target_segment_number)
+          if( source_segment_number != target_segment_number )
             trimmed_segments.push_back( trim(xcv[source_segment_number], source, source_min_vertex) );
           else
             trimmed_segments.push_back( trim(xcv[source_segment_number], source, target) );
         }
         
         //push the middle segments as they are.
-        for(size_t i=source_segment_number+1; i<target_segment_number; ++i)
+        for( size_t i=source_segment_number+1; i<target_segment_number; ++i )
           trimmed_segments.push_back( xcv[i] );
 
         //push the appropriately trimmed target segment.
-        if(source_segment_number != target_segment_number)
+        if( source_segment_number != target_segment_number )
         {
           //if(orientation == SMALLER && target != target_min_vertex)
-          if(orientation == SMALLER && ! geom_traits->equal_2_object()(source, source_max_vertex) == EQUAL )
+          if( orientation == SMALLER && ! geom_traits->equal_2_object()(target, target_min_vertex) )
             trimmed_segments.push_back( trim( xcv[target_segment_number], target_min_vertex, target) );
           
           //else if (orientation == LARGER && target != target_max_vertex)
-          else if (orientation == LARGER && ! geom_traits->equal_2_object()(source, source_max_vertex) == EQUAL ) 
+          else if ( orientation == LARGER && ! geom_traits->equal_2_object()(target, target_max_vertex) ) 
             trimmed_segments.push_back( trim( xcv[target_segment_number], target_max_vertex, target) );
         }
 
