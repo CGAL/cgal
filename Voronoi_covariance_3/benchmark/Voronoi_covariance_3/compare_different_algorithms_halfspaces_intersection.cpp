@@ -1,10 +1,13 @@
+#define CGAL_PROFILE
+
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Gmpq.h>
 
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/dual/halfspaces_intersection_3.h>
-#include <CGAL/dual/halfspaces_intersection_with_construction_3.h>
+#include <CGAL/dual/halfspaces_intersection_with_constructions_3.h>
 
 #include <CGAL/Timer.h>
 #include <fstream>
@@ -49,9 +52,9 @@ double test_old (Iterator first,
 
     CGAL::Timer timer;
     timer.start();
-    CGAL::halfspaces_intersection_with_construction_3(first,
-                                                      beyond,
-                                                      poly_sphere);
+    CGAL::halfspaces_intersection_with_constructions_3(first,
+                                                       beyond,
+                                                       poly_sphere);
     timer.stop();
 
     return timer.time();

@@ -156,6 +156,77 @@ namespace CGAL
 
                 return true;
             }
+
+            template <class Plane>
+            bool collinear_plane (Plane u, Plane v) {
+                typedef typename Kernel_traits<Plane>::Kernel Kernel;
+                typedef typename Kernel::Vector_3 Vector;
+
+                Vector uu = u.orthogonal_vector();
+                Vector vv = v.orthogonal_vector();
+
+                return CGAL::cross_product(uu, vv) == Vector(0, 0, 0);
+            }
+
+            template <class Plane>
+            bool coplanar_plane (Plane u, Plane v, Plane w) {
+                typedef typename Kernel_traits<Plane>::Kernel Kernel;
+                typedef typename Kernel::Vector_3 Vector;
+                typedef typename Kernel::Point_3 Point;
+
+                Vector uu = u.orthogonal_vector();
+                Vector vv = v.orthogonal_vector();
+                Vector ww = w.orthogonal_vector();
+
+                return CGAL::orientation(uu, vv, ww) == CGAL::COPLANAR;
+            }
+
+            // Checks if the dimension of intersection of the planes
+            // is a polyhedron (dimension == 3)
+            template <class PlaneIterator>
+            bool is_intersection_dim_3 (PlaneIterator begin,
+                                        PlaneIterator end) {
+                typedef typename std::iterator_traits<PlaneIterator>::value_type Plane;
+                typedef typename Kernel_traits<Plane>::Kernel Kernel;
+                typedef typename Kernel::Vector_3 Vector;
+
+                std::list<Plane> planes(begin, end);
+
+                // Remove same planes
+                std::size_t size = planes.size();
+
+                // At least 4 points
+                if (size < 4)
+                    return false;
+
+                // Collinear
+                PlaneIterator plane1_it = planes.begin();
+                PlaneIterator plane2_it = planes.begin();
+                plane2_it++;
+
+                PlaneIterator plane3_it = planes.end();
+                plane3_it--;
+                while (plane2_it != planes.end() &&
+                       collinear_plane(*plane1_it, *plane2_it)) {
+                    plane2_it++;
+                }
+
+                if (plane2_it == planes.end()) {
+                    return false;
+                }
+
+                // Coplanar
+                while (plane2_it != planes.end() &&
+                       coplanar_plane(*plane1_it, *plane2_it, *plane3_it)) {
+                    plane2_it++;
+                }
+
+                if (plane2_it == planes.end()) {
+                    return false;
+                }
+
+                return true;
+            }
         } // namespace internal
     } // namespace Convex_hull_3
 
@@ -164,6 +235,10 @@ namespace CGAL
         void halfspaces_intersection_3 (PlaneIterator begin, PlaneIterator end,
                                         Polyhedron &P,
                                         typename Polyhedron::Vertex::Point_3 const& origin = typename Polyhedron::Vertex::Point_3(CGAL::ORIGIN)) {
+            // Checks whether the intersection if a polyhedron
+            CGAL_assertion_msg(Convex_hull_3::internal::is_intersection_dim_3(begin, end), "halfspaces_intersection_3: intersection not a polyhedron");
+
+            // Types
             typedef typename Kernel_traits<typename Polyhedron::Vertex::Point_3>::Kernel K;
             typedef Convex_hull_3::Convex_hull_traits_dual_3<K> Hull_traits_dual_3;
             typedef Polyhedron_3<Hull_traits_dual_3> Polyhedron_dual_3;
