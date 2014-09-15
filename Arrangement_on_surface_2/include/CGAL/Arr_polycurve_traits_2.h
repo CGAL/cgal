@@ -76,6 +76,10 @@ namespace CGAL {
   private:
     enum { INVALID_INDEX = 0xffffffff };
 
+    //flag required for infinity support
+    // bool has_source;
+    // bool has_target;
+
   public:
     /*! Default constructor */
     Arr_polycurve_traits_2() :
@@ -124,28 +128,6 @@ namespace CGAL {
       X_monotone_curve_2;
 
     typedef typename Geometry_traits_2::Multiplicity       Multiplicity;
-
-
-    //waqar: class to get the sides information
-    // why is this not working.. see this
-    // http://stackoverflow.com/questions/17388583/overloading-a-function-to-take-true-type-or-false-type-parameter-vs-using-an-if
-    class Get_all_sides_oblivios{
-
-      typedef Arr_polycurve_traits_2<Geometry_traits_2> Polycurve_traits_2;
-      //in case the class has a state.
-      const Polycurve_traits_2& m_poly_traits;
-
-      //constructor
-      Get_all_sides_oblivios(const Polycurve_traits_2& traits): m_poly_traits(traits) {}
-
-      typedef typename boost::is_same<Are_all_sides_oblivious_tag, Arr_all_sides_oblivious_tag>::type side_type;
-
-      bool operator()( side_type type)
-      {
-        return static_cast<bool>(side_type());
-      }
-
-    };
 
     /*! Compare the x-coordinates of two points. */
     class Compare_x_2 {
@@ -2853,15 +2835,17 @@ namespace CGAL {
         Point_2 target_min_vertex = geom_traits->construct_min_vertex_2_object()(xcv[target_segment_number]);
         Point_2 target_max_vertex = geom_traits->construct_max_vertex_2_object()(xcv[target_segment_number]);
 
-        //push the trimmed version of the source segment
-        if(orientation == SMALLER && source != source_max_vertex)
+        //push the trimmed version of the source segment.
+        // if(sorientation == SMALLER && source != source_max_vertex)
+        if(orientation == SMALLER && ! geom_traits->equal_2_object()(source, source_max_vertex) )
         {
           if(source_segment_number != target_segment_number)
             trimmed_segments.push_back( trim(xcv[source_segment_number], source, source_max_vertex) );
           else
             trimmed_segments.push_back( trim(xcv[source_segment_number], source, target) );
         }
-        else if(orientation == LARGER && source != source_min_vertex)
+        //else if(orientation == LARGER && source != source_min_vertex)
+        else if(orientation == LARGER && ! geom_traits->equal_2_object()(source, source_min_vertex) == EQUAL )
         {
           if(source_segment_number != target_segment_number)
             trimmed_segments.push_back( trim(xcv[source_segment_number], source, source_min_vertex) );
@@ -2876,10 +2860,12 @@ namespace CGAL {
         //push the appropriately trimmed target segment.
         if(source_segment_number != target_segment_number)
         {
-          if(orientation == SMALLER && target != target_min_vertex)
+          //if(orientation == SMALLER && target != target_min_vertex)
+          if(orientation == SMALLER && ! geom_traits->equal_2_object()(source, source_max_vertex) == EQUAL )
             trimmed_segments.push_back( trim( xcv[target_segment_number], target_min_vertex, target) );
           
-          else if (orientation == LARGER && target != target_max_vertex)
+          //else if (orientation == LARGER && target != target_max_vertex)
+          else if (orientation == LARGER && ! geom_traits->equal_2_object()(source, source_max_vertex) == EQUAL ) 
             trimmed_segments.push_back( trim( xcv[target_segment_number], target_max_vertex, target) );
         }
 
@@ -2892,14 +2878,6 @@ namespace CGAL {
     {
       return Trim_2(*this);
     }  
-
-
-
-
-
-
-
-
 
     //functor required by Geometry_traits with infinity support. 
     class Compare_x_at_limit_2{
