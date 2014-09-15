@@ -163,8 +163,8 @@ namespace CGAL
     template <class PlaneIterator, class Polyhedron>
         void halfspaces_intersection_3 (PlaneIterator begin, PlaneIterator end,
                                         Polyhedron &P,
-                                        typename Polyhedron::Traits::Point_3 const& origin = typename Polyhedron::Traits::Point_3(CGAL::ORIGIN)) {
-            typedef typename Polyhedron::Traits::Kernel K;
+                                        typename Polyhedron::Vertex::Point_3 const& origin = typename Polyhedron::Vertex::Point_3(CGAL::ORIGIN)) {
+            typedef typename Kernel_traits<typename Polyhedron::Vertex::Point_3>::Kernel K;
             typedef Convex_hull_3::Convex_hull_traits_dual_3<K> Hull_traits_dual_3;
             typedef Polyhedron_3<Hull_traits_dual_3> Polyhedron_dual_3;
             typedef Convex_hull_3::internal::Build_primal_polyhedron<K, Polyhedron_dual_3, Polyhedron> Builder;

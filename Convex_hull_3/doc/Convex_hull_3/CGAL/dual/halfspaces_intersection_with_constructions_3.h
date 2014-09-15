@@ -14,12 +14,14 @@ This version constructs explicitly the dual points.
 
 \tparam PlaneIterator must be an input iterator with a value type  equivalent to `Polyhedron::Traits::Plane_3`.
 \tparam Polyhedron must be a model of `ConvexHullPolyhedron_3`.
+\tparam Traits must be a model of the concept `ConvexHullTraits_3`.
  */
 
-template <class PlaneIterator, class Polyhedron>
+template <class PlaneIterator, class Polyhedron, class Traits>
 void halfspaces_intersection_with_constructions_3(PlaneIterator pbegin,
                                                   PlaneIterator pend,
                                                   Polyhedron &P,
-                                                  typename Polyhedron::Traits::Point_3 const& origin = typename Polyhedron::Traits::Point_3(CGAL::ORIGIN));
+                                                  const Traits & ch_traits = Default_traits,
+                                                  typename Polyhedron::Vertex::Point_3 const& origin = typename Polyhedron::Vertex::Point_3(CGAL::ORIGIN));
 
 } /* namespace CGAL */

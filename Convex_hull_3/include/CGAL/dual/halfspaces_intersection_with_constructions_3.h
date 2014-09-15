@@ -80,13 +80,14 @@ namespace CGAL
         };
     } // namespace internal
 
-    template <class PlaneIterator, class Polyhedron>
+    template <class PlaneIterator, class Polyhedron, class Traits>
     void halfspaces_intersection_with_constructions_3(PlaneIterator pbegin,
                                                       PlaneIterator pend,
                                                       Polyhedron &P,
-                                                      typename Polyhedron::Traits::Point_3 const& origin = typename Polyhedron::Traits::Point_3(CGAL::ORIGIN))
+                                                      const Traits & ch_traits,
+                                                      typename Polyhedron::Vertex::Point_3 const& origin = typename Polyhedron::Vertex::Point_3(CGAL::ORIGIN))
             {
-            typedef typename Polyhedron::Traits::Kernel K;
+            typedef typename Kernel_traits<typename Polyhedron::Vertex::Point_3>::Kernel K;
             typedef typename K::Point_3 Point;
             typedef typename K::Plane_3 Plane;
             typedef typename CGAL::internal::Build_dual_polyhedron<Polyhedron> Builder;
@@ -103,11 +104,24 @@ namespace CGAL
             }
 
             Polyhedron ch;
-            CGAL::convex_hull_3(dual_points.begin(), dual_points.end(), ch);
+            CGAL::convex_hull_3(dual_points.begin(), dual_points.end(), ch, ch_traits);
 
             Builder build_dual (ch, origin);
             P.delegate(build_dual);
         }
+
+    template <class PlaneIterator, class Polyhedron>
+    void halfspaces_intersection_with_constructions_3(PlaneIterator pbegin,
+                                                      PlaneIterator pend,
+                                                      Polyhedron &P,
+                                                      typename Polyhedron::Vertex::Point_3 const& origin = typename Polyhedron::Vertex::Point_3(CGAL::ORIGIN))
+    {
+        typedef typename Kernel_traits<typename Polyhedron::Vertex::Point_3>::Kernel K;
+        typedef typename K::Point_3 Point_3;
+        typedef typename internal::Convex_hull_3::Default_traits_for_Chull_3<Point_3>::type Traits;
+
+        halfspaces_intersection_with_constructions_3(pbegin, pend, P, Traits(), origin);
+    }
 } // namespace CGAL
 
 #endif // CGAL_HALFSPACES_INTERSECTION_WITH_CONSTRUCTION_3_H

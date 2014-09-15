@@ -19,6 +19,6 @@ This version does not compute the dual points by using a traits class for handli
 template <class PlaneIterator, class Polyhedron>
 void halfspaces_intersection_3 (PlaneIterator begin, PlaneIterator end,
                                 Polyhedron &P,
-                                typename Polyhedron::Traits::Point_3 const& origin = typename Polyhedron::Traits::Point_3(CGAL::ORIGIN));
+                                typename Polyhedron::Vertex::Point_3 const& origin = typename Polyhedron::Vertex::Point_3(CGAL::ORIGIN));
 
 } /* namespace CGAL */
