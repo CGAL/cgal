@@ -251,36 +251,6 @@ public:
     return (_pt);
   }
 
-  // bool has_left() const
-  // {
-  //   return true;
-  // }
-
-  // bool has_right() const
-  // {
-  //   return true;
-  // }
-
-  // Arr_parameter_space right_infinite_in_x () const
-  // {
-  //   return ARR_INTERIOR;
-  // }
-
-  // Arr_parameter_space right_infinite_in_y () const
-  // {
-  //   return ARR_INTERIOR;
-  // }
-
-  // Arr_parameter_space left_infinite_in_x () const
-  // {
-  //   return ARR_INTERIOR;
-  // }
-
-  // Arr_parameter_space left_infinite_in_y () const
-  // {
-  //   return ARR_INTERIOR;
-  // }
-
   /*!
    * Get the left endpoint (the lexicographically smaller one).
    */
@@ -482,6 +452,17 @@ public:
     cv._dir_right = ! this->_dir_right;
 
     return (cv);
+  }
+
+  Self trim(const Point_2& src, const Point_2& tgt) const
+  {
+    //this will make a copy.
+    Self cv = *this;
+
+    cv._ps = src;
+    cv._pt = tgt;
+
+    return cv;
   }
 
 private:

@@ -814,8 +814,8 @@ public:
                                 const Point_2& src,
                                 const Point_2& tgt)const
     {
-      // return (xcv.trim(src, tgt));
-      return (xcv);
+      return (xcv.trim(src, tgt));
+      //return (xcv);
     }
 
   };
