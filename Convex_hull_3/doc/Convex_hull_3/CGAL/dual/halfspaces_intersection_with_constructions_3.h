@@ -17,9 +17,9 @@ This version constructs explicitly the dual points.
  */
 
 template <class PlaneIterator, class Polyhedron>
-void halfspaces_intersection_with_construction_3(PlaneIterator pbegin,
-                                                 PlaneIterator pend,
-                                                 Polyhedron &P,
-                                                 typename Polyhedron::Traits::Point_3 const& origin = typename Polyhedron::Traits::Point_3(CGAL::ORIGIN));
+void halfspaces_intersection_with_constructions_3(PlaneIterator pbegin,
+                                                  PlaneIterator pend,
+                                                  Polyhedron &P,
+                                                  typename Polyhedron::Traits::Point_3 const& origin = typename Polyhedron::Traits::Point_3(CGAL::ORIGIN));
 
 } /* namespace CGAL */

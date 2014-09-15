@@ -66,7 +66,7 @@ point set or not. This function is used in postcondition testing for
 
 \subsection Convex_hull_3HalfspacesIntersection Halfspaces Intersection
 The functions `halfspaces_intersection_3()` and
-`halfspaces_intersection_with_construction_3()`
+`halfspaces_intersection_with_constructions_3()`
 uses the convex hull computation and the duality to compute the intersection
 of a list of halfspaces. The first version does not explicitly computes
 the dual points: the traits class handles this issue. The second one constructs
