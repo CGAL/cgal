@@ -1074,34 +1074,22 @@ public:
     {
       Equal_2 equal = m_traits->equal_2_object();
       Compare_y_at_x_2 compare_y_at_x = m_traits->compare_y_at_x_2_object();
+      Compare_x_2 compare_x_2 = m_traits->compare_x_2_object();
 
       //check if source and taget are two distinct points and they lie on the line.
       CGAL_precondition(!equal(src, tgt));
       CGAL_precondition(compare_y_at_x(src, xcv) == EQUAL);
       CGAL_precondition(compare_y_at_x(tgt, xcv) == EQUAL);
       
-      //check if the src and the tgt conform to the direction of xcv
-      // if( xcv.is_directed_right() )
-      // {
-      //   CGAL_precondition(tgt.x() > src.x());
-      // }
-
-      // if( !xcv.is_directed_right() )
-      // {
-      //   CGAL_precondition( tgt.x() < src.x() );
-      // }
-
-      // X_monotone_curve_2 trimmed_segment = X_monotone_curve_2(src, tgt);
-
       // exchange src and tgt IF they do not conform with the direction
       X_monotone_curve_2 trimmed_segment;
 
-      if( xcv.is_directed_right() && tgt.x() < src.x() )
+      if( xcv.is_directed_right() && compare_x_2(src, tgt) == LARGER  )
       {
         trimmed_segment = X_monotone_curve_2(tgt, src);
       }
 
-      else if( !xcv.is_directed_right() && tgt.x() > src.x())
+      else if( !xcv.is_directed_right() && compare_x_2(src, tgt) == SMALLER )
       {
         trimmed_segment = X_monotone_curve_2(tgt, src);
       }
