@@ -21,6 +21,7 @@
 #include <CGAL/basic.h>
 #include <CGAL/Polygon_with_holes_2.h>
 
+#include <CGAL/Minkowski_sum_2/Minkowski_sum_by_reduced_convolution_2.h>
 #include <CGAL/Minkowski_sum_2/Minkowski_sum_conv_2.h>
 #include <CGAL/Minkowski_sum_2/Minkowski_sum_decomp_2.h>
 #include <list>
@@ -28,8 +29,42 @@
 namespace CGAL {
 
 /*!
- * Compute the Minkowski sum of two simple polygons using the convolution
- * method.
+ * Computes the Minkowski sum \f$ P \oplus Q\f$ of the two given polygons.
+ * The function computes the reduced convolution of the two polygons and
+ * extracts those loops of the convolution which are part of the Minkowsi
+ * sum. This method works very efficiently, regardless of whether `P` and
+ * `Q` are convex or non-convex.
+ * Note that as the input polygons may not be convex, their Minkowski
+ * sum may not be a simple polygon. The result is therefore represented
+ * as a polygon with holes.
+ * \pre Both `P` and `Q` are simple, counterclockwise-oriented polygons.
+*/
+
+template <class Kernel_, class Container_>
+Polygon_with_holes_2<Kernel_, Container_>
+minkowski_sum_reduced_convolution_2(const Polygon_2<Kernel_, Container_>& pgn1,
+                                    const Polygon_2<Kernel_, Container_>& pgn2)
+{
+  typedef Kernel_                                    Kernel;
+  typedef Container_                                 Container;
+
+  Minkowski_sum_by_reduced_convolution_2<Kernel, Container> mink_sum;
+  Polygon_2<Kernel,Container>                               sum_bound;
+  std::list<Polygon_2<Kernel,Container> >                   sum_holes;
+
+  if (pgn1.size() > pgn2.size())
+    mink_sum (pgn1, pgn2, sum_bound, std::back_inserter(sum_holes));
+  else
+    mink_sum (pgn2, pgn1, sum_bound, std::back_inserter(sum_holes));
+
+  return (Polygon_with_holes_2<Kernel,Container> (sum_bound,
+                                                  sum_holes.begin(),
+                                                  sum_holes.end()));
+}
+
+/*!
+ * Compute the Minkowski sum of two simple polygons using the (full)
+ * convolution method.
  * Note that as the input polygons may not be convex, their Minkowski sum may
  * not be a simple polygon. The result is therefore represented as a polygon
  * with holes.
@@ -37,18 +72,30 @@ namespace CGAL {
  * \param pgn2 (in) The second polygon.
  * \return The resulting polygon with holes, representing the sum.
  */
-template <typename Kernel_, typename Container_>
+template <class Kernel_, class Container_>
 Polygon_with_holes_2<Kernel_, Container_>
-minkowski_sum_2(const Polygon_2<Kernel_, Container_>& pgn1,
-                const Polygon_2<Kernel_, Container_>& pgn2)
+minkowski_sum_full_convolution_2(const Polygon_2<Kernel_, Container_>& pgn1,
+                                 const Polygon_2<Kernel_, Container_>& pgn2)
 {
-  Kernel_ kernel;
-  return minkowski_sum_2(pgn1, pgn2, kernel);
+  typedef Kernel_                                    Kernel;
+  typedef Container_                                 Container;
+
+  Minkowski_sum_by_convolution_2<Kernel, Container> mink_sum;
+  Polygon_2<Kernel, Container>                      sum_bound;
+  std::list<Polygon_2<Kernel, Container> >          sum_holes;
+
+  if (pgn1.size() > pgn2.size())
+    mink_sum(pgn1, pgn2, sum_bound, std::back_inserter(sum_holes));
+  else
+    mink_sum(pgn2, pgn1, sum_bound, std::back_inserter(sum_holes));
+  return (Polygon_with_holes_2<Kernel, Container>(sum_bound,
+                                                  sum_holes.begin(),
+                                                  sum_holes.end()));
 }
 
 /*!
- * Compute the Minkowski sum of two simple polygons using the convolution
- * method.
+ * Compute the Minkowski sum of two simple polygons using the (full)
+ * convolution method.
  * Note that as the input polygons may not be convex, their Minkowski sum may
  * not be a simple polygon. The result is therefore represented as a polygon
  * with holes.
@@ -57,11 +104,11 @@ minkowski_sum_2(const Polygon_2<Kernel_, Container_>& pgn1,
  * \param kernel (in) The kernel.
  * \return The resulting polygon with holes, representing the sum.
  */
-template <typename Kernel_, typename Container_>
+template <class Kernel_, class Container_>
 Polygon_with_holes_2<Kernel_, Container_>
-minkowski_sum_2(const Polygon_2<Kernel_, Container_>& pgn1,
-                const Polygon_2<Kernel_, Container_>& pgn2,
-                const Kernel_& kernel)
+minkowski_sum_full_convolution_2(const Polygon_2<Kernel_, Container_>& pgn1,
+                                 const Polygon_2<Kernel_, Container_>& pgn2,
+                                 const Kernel_& kernel)
 {
   typedef Kernel_                                    Kernel;
   typedef Container_                                 Container;
@@ -77,6 +124,28 @@ minkowski_sum_2(const Polygon_2<Kernel_, Container_>& pgn1,
   return (Polygon_with_holes_2<Kernel, Container>(sum_bound,
                                                   sum_holes.begin(),
                                                   sum_holes.end()));
+}
+
+/*!
+ * Compute the Minkowski sum of two simple polygons using the convolution
+ * method. This function defaults to calling the reduced convolution method,
+ * as it is more efficient in most cases.
+ * Note that as the input polygons may not be convex, their Minkowski sum may
+ * not be a simple polygon. The result is therefore represented as a polygon
+ * with holes.
+ * \param pgn1 (in) The first polygon.
+ * \param pgn2 (in) The second polygon.
+ * \return The resulting polygon with holes, representing the sum.
+ *
+ * \sa `CGAL::minkowski_sum_reduced_convolution_2()`
+ * \sa `CGAL::minkowski_sum_full_convolution_2()`
+ */
+template <typename Kernel_, typename Container_>
+Polygon_with_holes_2<Kernel_, Container_>
+minkowski_sum_2(const Polygon_2<Kernel_, Container_>& pgn1,
+                const Polygon_2<Kernel_, Container_>& pgn2)
+{
+  return minkowski_sum_reduced_convolution_2(pgn1, pgn2);
 }
 
 /*!

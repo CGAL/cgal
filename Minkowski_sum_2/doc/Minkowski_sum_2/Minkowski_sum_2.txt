@@ -7,7 +7,7 @@ namespace CGAL {
 \anchor chapterMinkowskisum2
 
 \cgalAutoToc
-\authors Ron Wein and Efi Fogel
+\authors Ron Wein, Alon Baram, Efi Fogel, Eyal Flato, Michael Hemmer, and Sebastian Morr
 
 \section mink_secintro Introduction
 
@@ -120,6 +120,33 @@ construct the arrangement of these segments and extract the sum from this
 arrangement, computing Minkowski sum using the convolution approach usually
 generates a smaller intermediate arrangement, hence it is faster and
 consumes less space.
+<DT><B>Reduced Convolution:</B><DD>
+We can reduce the number of segments in the arrangement even further by
+noticing that only convolution segments created by a convex vertex can be part
+of the Minkowski sum. In segments of the form \f$ [p_i + q_j, p_{i+1} + q_j]\f$,
+the vertex \f$q_j\f$ has to be convex, and in segments of the form \f$
+[p_i + q_j, p_i + q_{j+1}]\f$, the vertex \f$p_i\f$ has to be convex. The
+collection of the remaining segments is called the <I>reduced convolution</I>
+\cgalCite{cgal:bl-frmsurc-11}.
+
+The winding number property can no longer be used here. Instead we define two
+different filters to identify holes in the Minkowski sum:
+<OL>
+<LI>Loops that are on the Minkowski sum's boundary have to be orientable, that
+is, all normal directions of its edges have to point either inward or
+outward.</LI>
+<LI>For any point \f$x\f$ inside of a hole of the Minkowski sum, the following
+condition holds: \f$(-P + x) \cap Q = \emptyset\f$. If, on the other hand, the
+inversed version of \f$P\f$, translated by \f$x\f$, overlaps \f$Q\f$, the loop
+is a <I>false</I> hole and is in the Minkowski sum's interior.</LI>
+</OL>
+
+After applying these two filters, only those segments which constitute the
+Minkowski sum's boundary remain. In most cases, the reduced convolution
+approach is even faster than the full convolution approach, as the induced
+arrangement is usually much smaller. However, in degenerated cases with many
+holes in the Minkowski sum, the full convolution approach can be preferable to
+avoid the costly intersection tests.
 </DL>
 
 \subsection mink_ssecsum_conv Computing Minkowski Sum using Convolutions
@@ -127,6 +154,12 @@ consumes less space.
 The function template \link minkowski_sum_2() `minkowski_sum_2(P, Q)`\endlink
 accepts two simple polygons \f$ P\f$ and \f$ Q\f$ and computes their
 Minkowski sum \f$ S = P \oplus Q\f$ using the convolution method.
+\link minkowski_sum_2() `minkowski_sum_2(P, Q)`\endlink defaults to calling the
+function \link minkowski_sum_reduced_convolution_2() `minkowski_sum_reduced_convolution_2(P, Q)`\endlink,
+which applies the reduced convolution aforementioned.
+Explicitly call the function \link minkowski_sum_full_convolution_2()
+`minkowski_sum_full_convolution_2(P, Q)`\endlink to apply
+the full convolution approach.
 The types of the operands are instances of the
 \link Polygon_2 `Polygon_2`\endlink class template. As the input polygons
 may not be convex, their Minkowski sum may not be simply connected and
@@ -545,6 +578,9 @@ applying bug fixes and other improvements. In particular, Andreas Fabri and
 Laurent Rineau helped tracing and solving several bugs in the approximated
 offset computation. They have also suggested a few algorithmic improvements
 that made their way into version 3.4, yielding a faster approximation scheme.
+During the <I>Google Summer of Code</I> 2014, Sebastian Morr, mentored by
+Michael Hemmer, implemented the reduced convolution approach, based on Alon
+Baram's~2013 master's thesis.
 
 */
 } /* namespace CGAL */

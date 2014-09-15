@@ -121,8 +121,8 @@ private:
 public:
   /*! Default constructor. */
   Minkowski_sum_by_convolution_2() :
-    m_kernel(NULL),
-    m_own_kernel(false)
+    m_kernel(new Kernel),
+    m_own_kernel(true)
   { init(); }
 
   /*! Constructor. */

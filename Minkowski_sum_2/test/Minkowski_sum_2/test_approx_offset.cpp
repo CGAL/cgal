@@ -55,10 +55,7 @@ int main (int argc, char* argv[])
     // Read the polygon from the input file.
     Polygon_2   pgn;
     const char* filename = argv[i];
-    if (! read_polygon (filename, pgn)) {
-      std::cerr << "Failed to read: <" << filename << ">." << std::endl;
-      return -1;
-    }
+    read_polygon (filename, pgn);
     
     // Read the offset radius.
     Rational r;
