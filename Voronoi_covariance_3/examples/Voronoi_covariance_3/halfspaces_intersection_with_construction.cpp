@@ -34,7 +34,8 @@ int main (void) {
 
     CGAL::halfspace_intersection_with_constructions_3(planes.begin(),
                                                       planes.end(),
-                                                      P);
+                                                      P,
+                                                      Point(0, 0, 0));
 
     std::ofstream file("halfspace_intersection_with_constructions_3.off");
     file << P;
