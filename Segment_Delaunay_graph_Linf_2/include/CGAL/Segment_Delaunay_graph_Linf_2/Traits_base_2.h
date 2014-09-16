@@ -47,7 +47,8 @@ public:
   //CGAL_SEGMENT_DELAUNAY_GRAPH_LINF_2_NS::Construct_sdg_bisector_2<K,MTag>
   //Construct_sdg_bisector_2;
 
-  typedef char Has_bisector_constructions_type;
+  // Linf traits contain bisector constructions
+  typedef Tag_true Tag_has_bisector_constructions;
 
   template<class Gt, class M>
   class Construct_sdg_bisector_2

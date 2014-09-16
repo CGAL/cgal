@@ -203,7 +203,8 @@ public:
   //			C2E, C2F, E2C, F2C>
   //Construct_sdg_bisector_2;
 
-  typedef char Has_bisector_constructions_type;
+  // Linf traits contain bisector constructions
+  typedef Tag_true Tag_has_bisector_constructions;
 
   template<class Gt, class M>
   class Construct_sdg_bisector_2
