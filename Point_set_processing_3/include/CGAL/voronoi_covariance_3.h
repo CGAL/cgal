@@ -109,6 +109,7 @@ namespace CGAL {
                     typedef typename DT::Vertex_handle Vertex_handle;
                     typedef typename DT::Geom_traits::Kernel K;
                     typedef typename K::Plane_3 Plane;
+                    typedef typename K::Point_3 Point;
                     typedef typename K::Vector_3 Vector;
                     typedef typename CGAL::Convex_hull_traits_3<K> Traits;
                     typedef typename Traits::Polyhedron_3 Polyhedron;
@@ -129,7 +130,7 @@ namespace CGAL {
                     sphere(std::back_inserter(planes));
 
                     Polyhedron P;
-                    CGAL::halfspace_intersection_3(planes.begin(), planes.end(), P);
+                    CGAL::halfspace_intersection_3(planes.begin(), planes.end(), P, Point(CGAL::ORIGIN));
 
                     // apply f to the triangles on the boundary of P
                     for (typename Polyhedron::Facet_iterator it = P.facets_begin();

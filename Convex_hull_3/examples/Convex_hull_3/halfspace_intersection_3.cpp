@@ -1,5 +1,5 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/dual/halfspaces_intersection_3.h>
+#include <CGAL/dual/halfspace_intersection_3.h>
 #include <CGAL/point_generators_3.h>
 
 #include <list>
@@ -34,9 +34,10 @@ int main (void) {
     Polyhedron_3 P;
 
     // compute the intersection
-    CGAL::halfspaces_intersection_3(planes.begin(),
-                                    planes.end(),
-                                    P);
+    CGAL::halfspace_intersection_3(planes.begin(),
+                                   planes.end(),
+                                   P,
+                                   Point(0, 0, 0));
 
     return 0;
 }
