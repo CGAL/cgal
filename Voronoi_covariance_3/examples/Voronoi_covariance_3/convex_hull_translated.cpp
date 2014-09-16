@@ -1,6 +1,6 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
-#include <CGAL/dual/halfspaces_intersection_3.h>
+#include <CGAL/dual/halfspace_intersection_3.h>
 
 #include "include/off.h"
 
@@ -65,10 +65,10 @@ int main (int argc, char *argv[]) {
 
     Polyhedron_3 P, PP;
 
-    CGAL::halfspaces_intersection_3(planes.begin(), planes.end(), P, o);
+    CGAL::halfspace_intersection_3(planes.begin(), planes.end(), P, o);
     convertToOFF<K, Polyhedron_3>("translated_cube.off", P);
 
-    CGAL::halfspaces_intersection_3(sphere_planes.begin(), sphere_planes.end(), PP, os);
+    CGAL::halfspace_intersection_3(sphere_planes.begin(), sphere_planes.end(), PP, os);
     convertToOFF<K, Polyhedron_3>("translated_sphere.off", PP);
 
     return 0;

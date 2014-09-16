@@ -232,9 +232,9 @@ namespace CGAL
 
     // Compute the intersection of halfspaces
     template <class PlaneIterator, class Polyhedron>
-        void halfspaces_intersection_3 (PlaneIterator begin, PlaneIterator end,
-                                        Polyhedron &P,
-                                        typename Polyhedron::Vertex::Point_3 const& origin = typename Polyhedron::Vertex::Point_3(CGAL::ORIGIN)) {
+        void halfspace_intersection_3 (PlaneIterator begin, PlaneIterator end,
+                                       Polyhedron &P,
+                                       typename Polyhedron::Vertex::Point_3 const& origin = typename Polyhedron::Vertex::Point_3(CGAL::ORIGIN)) {
             // Checks whether the intersection if a polyhedron
             CGAL_assertion_msg(Convex_hull_3::internal::is_intersection_dim_3(begin, end), "halfspaces_intersection_3: intersection not a polyhedron");
 

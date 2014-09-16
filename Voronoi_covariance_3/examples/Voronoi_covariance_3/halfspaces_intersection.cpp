@@ -1,5 +1,7 @@
+#define CGAL_PROFILE
+
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/dual/halfspaces_intersection_3.h>
+#include <CGAL/dual/halfspace_intersection_3.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel         K;
 typedef K::Plane_3 Plane;
@@ -14,11 +16,30 @@ int main (void) {
     planes.push_back(Plane(0, 0, 1, -1));
     planes.push_back(Plane(0, 0, -1, -1));
 
+    // Dim 1
+    /* planes.push_back(Plane(1, 0, 0, -1)); */
+    /* planes.push_back(Plane(1, 0, 0, 1)); */
+    /* planes.push_back(Plane(1, 0, 0, 2)); */
+    /* planes.push_back(Plane(1, 0, 0, 3)); */
+
+    // Dim 2
+    /* planes.push_back(Plane(1, 0, 0, -1)); */
+    /* planes.push_back(Plane(-1, 0, 0, -1)); */
+    /* planes.push_back(Plane(0, 1, 0, -1)); */
+    /* planes.push_back(Plane(0, -1, 0, -1)); */
+
+    // Dim 3 : intersection /= polyhedron
+    /* planes.push_back(Plane(1, 0, 0, -1)); */
+    /* planes.push_back(Plane(-1, 0, 0, -1)); */
+    /* planes.push_back(Plane(0, 1, 0, -1)); */
+    /* planes.push_back(Plane(0, -1, 0, -1)); */
+    /* planes.push_back(Plane(0, 0, 1, -1)); */
+
     Polyhedron_3 P;
 
-    CGAL::halfspaces_intersection_3(planes.begin(),
-                                    planes.end(),
-                                    P);
+    CGAL::halfspace_intersection_3(planes.begin(),
+                                   planes.end(),
+                                   P);
 
     return 0;
 }
