@@ -133,15 +133,15 @@ int main ()
 
   //create opposite of conic_x_mono_polycurve_2
   X_monotone_polycurve opposite_x_monotone_polycurve_1 = traits.construct_opposite_2_object()(x_polycurve_1);
-  std::cout << "Opposite of X-monotone Polycurve 1: " << opposite_x_monotone_polycurve_1 << std::endl;
+  //std::cout << "Opposite of X-monotone Polycurve 1: " << opposite_x_monotone_polycurve_1 << std::endl;
 
   //Waqar: fix this once the intersect functor for circular arc polycurve is fixed. 
   Polycurve_circ_arc_arrangment polycurve_arrangment(&traits);
   insert(polycurve_arrangment, polycurve_1);
-  //insert(polycurve_arrangment, polycurve_2);
-  //insert(polycurve_arrangment, x_polycurve_1);
-  //insert(polycurve_arrangment, x_polycurve_2);
-  // std::cout << "Arrangment Statistics: " << std::endl; 
+  insert(polycurve_arrangment, polycurve_2);
+  insert(polycurve_arrangment, x_polycurve_1);
+  insert(polycurve_arrangment, x_polycurve_2);
+  std::cout << "Arrangment Statistics: " << std::endl; 
    print_arrangement (polycurve_arrangment);
 
 
