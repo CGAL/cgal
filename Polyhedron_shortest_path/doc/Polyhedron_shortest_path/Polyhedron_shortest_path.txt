@@ -50,7 +50,7 @@ The algorithm used is based on a paper by Xin and Wang \cgalCite{XinWang2009impr
   \cgalFigureEnd
 
 \subsection Polyhedron_shortest_pathSaddleVertex Saddle Vertices
-  A <em>saddle vertex</em> on a polyhedron is a vertex \f$v\f$ where the sum surface angle of all faces incident at \f$v\f$ is greater than \f$2 \pi\f$, or, in simpler terms, one cannot flatten all the faces incident to \f$v\f$ into the plane without overlap.  Identifying and dealing with saddle vertices are important shortest path algorithms, because they form `blind spots' which cannot be reached by a single geodesic curve.
+  A <em>saddle vertex</em> on a polyhedron is a vertex \f$v\f$ where the sum surface angle of all faces incident at \f$v\f$ is greater than \f$2 \pi\f$, or, in simpler terms, one cannot flatten all the faces incident to \f$v\f$ into the plane without overlap.  Identifying and dealing with saddle vertices are important shortest path algorithms, because they form <em>blind spots</em> which cannot be reached by a single geodesic curve.
   
   \cgalFigureBegin{Saddle_vertex,saddleVertex.png}
   A visibility window (shaded blue) encounters a saddle vertex; the shaded red region behind the vertex is not reachable with a geodesic from the origin point (assuming the geodesic must stay inside the initial window).

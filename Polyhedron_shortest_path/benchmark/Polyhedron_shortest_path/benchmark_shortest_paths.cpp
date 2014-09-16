@@ -11,6 +11,7 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <CGAL/Polyhedron_3.h>
+#include <CGAL/Polyhedron_items_with_id_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
 
 #include <CGAL/Polyhedron_shortest_path/Polyhedron_shortest_path_traits.h>
@@ -29,9 +30,10 @@
 #define UNUSED(X) (void)sizeof(X)
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
-typedef CGAL::Polyhedron_3<Kernel> Polyhedron_3;
+typedef CGAL::Polyhedron_3<Kernel, CGAL::Polyhedron_items_with_id_3> Polyhedron_3;
 typedef CGAL::Polyhedron_shortest_path_default_traits<Kernel, Polyhedron_3> Traits;
 typedef Traits::Barycentric_coordinate Barycentric_coordinate;
+typedef Traits::Construct_barycentric_coordinate Construct_barycentric_coordinate;
 typedef CGAL::Polyhedron_shortest_path<Traits> Polyhedron_shortest_path;
 typedef boost::graph_traits<Polyhedron_3> GraphTraits;
 typedef GraphTraits::vertex_descriptor vertex_descriptor;
@@ -156,9 +158,10 @@ void print_results(std::ostream& stream, const std::string& filename, const Benc
 
 Barycentric_coordinate random_coordinate(CGAL::Random& rand)
 {
+  Construct_barycentric_coordinate construct_barycentric_coordinate;
   Traits::FT u = rand.uniform_01<Traits::FT>();
   Traits::FT v = rand.uniform_real(Traits::FT(0.0), Traits::FT(1.0) - u);
-  return Barycentric_coordinate(u, v, Traits::FT(1.0) - u - v);
+  return construct_barycentric_coordinate(u, v, Traits::FT(1.0) - u - v);
 }
 
 void run_benchmarks_no_id(CGAL::Random& rand, size_t numTrials, size_t numSources, size_t numQueries, Polyhedron_3& polyhedron, Benchmark_data& outData)

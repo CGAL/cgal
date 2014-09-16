@@ -6,6 +6,8 @@
 //
 // Author(s)     : Stephen Kiazyk
 
+#include <cstddef>
+
 #include <CGAL/boost/graph/properties.h>
 #include <CGAL/boost/graph/properties_Polyhedron_3.h>
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
@@ -20,7 +22,7 @@
 
 namespace CGAL {
 
-namespace PolyhedronShortestPath {
+namespace Polyhedron_shortest_paths_3 {
 
 template <class Kernel>
 class Parametric_distance_along_segment_2
@@ -342,7 +344,7 @@ public:
   {
   }
 
-  result_type operator() (const Triangle_3& t3, size_t edgeIndex, const Segment_2& segment) const
+  result_type operator() (const Triangle_3& t3, std::size_t edgeIndex, const Segment_2& segment) const
   {
     Point_3 projectedLocation3d(m_construct_projected_point_3(m_construct_line_3(m_construct_vertex_3(t3, edgeIndex), m_construct_vertex_3(t3, edgeIndex + 1)), m_construct_vertex_3(t3, edgeIndex + 2)));
     FT scalePoint = m_parametric_distance_along_segment_3(m_construct_segment_3(m_construct_vertex_3(t3, edgeIndex), m_construct_vertex_3(t3, edgeIndex + 1)), projectedLocation3d);
@@ -385,7 +387,7 @@ public:
   {
   }
 
-  Triangle_2 operator() (const Triangle_3& t3, size_t edgeIndex, const Segment_2& segment) const
+  Triangle_2 operator() (const Triangle_3& t3, std::size_t edgeIndex, const Segment_2& segment) const
   {
     Exact_flatten_triangle_3_along_segment_2 eft3as2;
     To_exact to_exact;
@@ -510,8 +512,8 @@ public:
   typedef typename GraphTraits::vertex_descriptor vertex_descriptor;
   typedef typename GraphTraits::halfedge_descriptor halfedge_descriptor;
   
-  typedef typename CGAL::PolyhedronShortestPath::Project_triangle_3_to_triangle_2<Kernel> Project_triangle_3_to_triangle_2;
-  typedef typename CGAL::PolyhedronShortestPath::Flatten_triangle_3_along_segment_2<Kernel> Flatten_triangle_3_along_segment_2;
+  typedef typename CGAL::Polyhedron_shortest_paths_3::Project_triangle_3_to_triangle_2<Kernel> Project_triangle_3_to_triangle_2;
+  typedef typename CGAL::Polyhedron_shortest_paths_3::Flatten_triangle_3_along_segment_2<Kernel> Flatten_triangle_3_along_segment_2;
   typedef typename Kernel::Orientation_2 Orientation_2;
   typedef typename Kernel::Construct_triangle_3 Construct_triangle_3;
   typedef typename Kernel::Construct_vertex_2 Construct_vertex_2;
@@ -607,8 +609,8 @@ public:
   }
 };
 
-} // namespace Polyhedron_shortest_path
+} // namespace Polyhedron_shortest_paths_3
 
 } // namespace CGAL
 
-#endif /* CGAL_POLYHEDRON_SHORTEST_PATH_INTERNAL_FUNCTION_OBJECTS_H */
+#endif /* CGAL_POLYHEDRON_SHORTEST_PATHS_3_FUNCTION_OBJECTS_H */

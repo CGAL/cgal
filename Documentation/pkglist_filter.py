@@ -17,9 +17,9 @@ def main(argv):
             if(index > 0):
                 top_level = pkg[:index]
                 lower_level = pkg[index+1:]
-                filename="/cygdrive/c/Users/stephen/Documents/Programming/CGALDev/Documentation/" + top_level + "/doc/" + lower_level + "/PackageDescription.txt"
+                filename="./" + top_level + "/doc/" + lower_level + "/PackageDescription.txt"
             else:
-                filename="/cygdrive/c/Users/stephen/Documents/Programming/CGALDev/Documentation/" + pkg + "/doc/" + pkg + "/PackageDescription.txt"
+                filename="./" + pkg + "/doc/" + pkg + "/PackageDescription.txt"
             pkgdesc = codecs.open(filename, 'r', encoding='utf-8')
             do_print=False
             for l in pkgdesc:

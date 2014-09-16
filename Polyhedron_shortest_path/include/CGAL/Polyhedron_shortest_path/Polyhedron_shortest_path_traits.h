@@ -13,6 +13,8 @@
 #include <CGAL/Polyhedron_shortest_path/function_objects.h>
 
 #include <ostream>
+#include <cstddef>
+
 #include <boost/array.hpp>
 
 namespace CGAL {
@@ -23,9 +25,9 @@ namespace CGAL {
 \brief Provides an implementation of the FaceGraphShortestPathTraits 
 model as required by the Polyhedron_shortest_path algorithm
 
-\tparam K The kernel type whose geometric primitives to use
+\tparam K The Kernel type whose geometric primitives to use
 
-\tparam F The faceGraph type the algorithm is to act on
+\tparam F The FaceGraph type the algorithm is to act on
 
 \cgalModels `PolyhedronShortestPathTraits`
 */
@@ -36,42 +38,20 @@ class Polyhedron_shortest_path_default_traits : public K
 {
 public:
 
+  /// The Kernel whose operations are used for this algorithm
   typedef K Kernel;
+  
+  /// The type of FaceGraph used by this algorithm 
   typedef F FaceGraph;
 
   typedef typename Kernel::FT FT;
   
-  class Barycentric_coordinate
-  {
-  private:
-    CGAL::cpp11::array<FT,3> m_coords;
-  public:
-    Barycentric_coordinate()
-    {
-    }
-    
-    Barycentric_coordinate(const Barycentric_coordinate& other)
-      : m_coords(other.m_coords)
-    {
-    }
-  
-    Barycentric_coordinate(const FT& a, const FT& b, const FT& c)
-    {
-      m_coords[0] = a;
-      m_coords[1] = b;
-      m_coords[2] = c;
-    }
-    
-    const FT& operator [] (size_t i) const 
-    {
-      return m_coords[i % 3];
-    }
-  };
+  typedef typename CGAL::cpp11::array<FT,3> Barycentric_coordinate;
   
   // Predicates
 public:
-  typedef typename PolyhedronShortestPath::Compare_relative_intersection_along_segment_2<Kernel> Compare_relative_intersection_along_segment_2;
-  typedef typename PolyhedronShortestPath::Is_saddle_vertex<Kernel, FaceGraph> Is_saddle_vertex;
+  typedef typename Polyhedron_shortest_paths_3::Compare_relative_intersection_along_segment_2<Kernel> Compare_relative_intersection_along_segment_2;
+  typedef typename Polyhedron_shortest_paths_3::Is_saddle_vertex<Kernel, FaceGraph> Is_saddle_vertex;
   
   // Constructions
 public:
@@ -82,7 +62,11 @@ public:
     
     result_type operator() (const FT& a, const FT& b, const FT& c) const
     {
-      return Barycentric_coordinate(a, b, c);
+      Barycentric_coordinate output;
+      output[0] = a;
+      output[1] = b;
+      output[2] = c;
+      return output;
     }
   };
   
@@ -91,18 +75,18 @@ public:
   public:
     typedef FT result_type;
     
-    result_type operator() (const Barycentric_coordinate b, int i) const
+    result_type operator() (const Barycentric_coordinate b, std::size_t i) const
     {
       return b[i % 3];
     }
   };
 
-  typedef typename PolyhedronShortestPath::Project_triangle_3_to_triangle_2<K> Project_triangle_3_to_triangle_2;
-  typedef typename PolyhedronShortestPath::Flatten_triangle_3_along_segment_2<K> Flatten_triangle_3_along_segment_2;
-  typedef typename PolyhedronShortestPath::Parametric_distance_along_segment_2<K> Parametric_distance_along_segment_2;
-  typedef typename PolyhedronShortestPath::Construct_barycentric_coordinate_in_triangle_2<K, Barycentric_coordinate, Construct_barycentric_coordinate> Construct_barycentric_coordinate_in_triangle_2;
-  typedef typename PolyhedronShortestPath::Construct_barycentric_coordinate_in_triangle_3<K, Barycentric_coordinate, Construct_barycentric_coordinate> Construct_barycentric_coordinate_in_triangle_3;
-  typedef typename PolyhedronShortestPath::Classify_barycentric_coordinate<Barycentric_coordinate, Construct_barycentric_coordinate_weight> Classify_barycentric_coordinate;
+  typedef typename Polyhedron_shortest_paths_3::Project_triangle_3_to_triangle_2<K> Project_triangle_3_to_triangle_2;
+  typedef typename Polyhedron_shortest_paths_3::Flatten_triangle_3_along_segment_2<K> Flatten_triangle_3_along_segment_2;
+  typedef typename Polyhedron_shortest_paths_3::Parametric_distance_along_segment_2<K> Parametric_distance_along_segment_2;
+  typedef typename Polyhedron_shortest_paths_3::Construct_barycentric_coordinate_in_triangle_2<K, Barycentric_coordinate, Construct_barycentric_coordinate> Construct_barycentric_coordinate_in_triangle_2;
+  typedef typename Polyhedron_shortest_paths_3::Construct_barycentric_coordinate_in_triangle_3<K, Barycentric_coordinate, Construct_barycentric_coordinate> Construct_barycentric_coordinate_in_triangle_3;
+  typedef typename Polyhedron_shortest_paths_3::Classify_barycentric_coordinate<Barycentric_coordinate, Construct_barycentric_coordinate_weight> Classify_barycentric_coordinate;
   
 private:
   Kernel m_kernel;
@@ -155,17 +139,17 @@ std::ostream& operator<<(std::ostream& os, typename Polyhedron_shortest_path_def
   return os << b[0] << " " << b[1] << " " << b[2];
 }
 
-
-
-/*!
+/*
 \ingroup PkgPolyhedronShortestPathTraitsClasses
 
+\internal
+
 \brief Provides an implementation of the FaceGraphShortestPathTraits 
-model as required by the Polyhedron_shortest_path algorithm
+model which uses an exact Kernel during the unfolding operations to achieve better overall precision
 
 \tparam K The kernel type whose geometric primitives to use
 
-\tparam F The faceGraph type the algorithm is to act on
+\tparam F The FaceGraph type the algorithm is to act on
 
 \cgalModels `PolyhedronShortestPathTraits`
 */
@@ -176,8 +160,8 @@ class Polyhedron_shortest_path_default_traits_with_robust_unfolding : public Pol
 {
 public:
   typedef K Kernel;
-  typedef typename PolyhedronShortestPath::Robust_project_triangle_3_to_triangle_2<K> Project_triangle_3_to_triangle_2;
-  typedef typename PolyhedronShortestPath::Robust_flatten_triangle_3_along_segment_2<K> Flatten_triangle_3_along_segment_2;
+  typedef typename Polyhedron_shortest_paths_3::Robust_project_triangle_3_to_triangle_2<K> Project_triangle_3_to_triangle_2;
+  typedef typename Polyhedron_shortest_paths_3::Robust_flatten_triangle_3_along_segment_2<K> Flatten_triangle_3_along_segment_2;
   
 private:
 

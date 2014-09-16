@@ -53,6 +53,8 @@ typedef CGAL::Polyhedron_shortest_path<Traits,
 
 int main()
 {
+  Traits::Construct_barycentric_coordinate construct_barycentric_coordinate;
+  
   Mesh polyhedron;
 
   OpenMesh::IO::read_mesh(polyhedron, "data/elephant.off");
@@ -108,7 +110,7 @@ int main()
     ++halfedgesCurrent;
   }
   
-  Traits::Barycentric_coordinate faceLocation(Traits::FT(0.25), Traits::FT(0.5), Traits::FT(0.25));
+  Traits::Barycentric_coordinate faceLocation = construct_barycentric_coordinate(Traits::FT(0.25), Traits::FT(0.5), Traits::FT(0.25));
   
   Traits traits;
   Polyhedron_shortest_path shortestPaths(polyhedron, vertexIndexMap, halfedgeIndexMap, faceIndexMap, boost::get(boost::vertex_point, polyhedron), traits);

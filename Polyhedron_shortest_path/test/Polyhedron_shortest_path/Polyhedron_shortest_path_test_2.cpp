@@ -11,6 +11,7 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <CGAL/Polyhedron_3.h>
+#include <CGAL/Polyhedron_items_with_id_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
 
 #include <CGAL/boost/graph/properties_Polyhedron_3.h>
@@ -39,7 +40,7 @@
 BOOST_AUTO_TEST_CASE( test_a_to_b_vs_b_t_a_distances )
 {
   typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
-  typedef CGAL::Polyhedron_3<Kernel> Polyhedron_3;
+  typedef CGAL::Polyhedron_3<Kernel, CGAL::Polyhedron_items_with_id_3> Polyhedron_3;
   typedef CGAL::Polyhedron_shortest_path_default_traits<Kernel, Polyhedron_3> Traits;
   typedef Traits::Barycentric_coordinate Barycentric_coordinate;
   typedef Traits::FT FT;
@@ -194,8 +195,8 @@ BOOST_AUTO_TEST_CASE( test_a_to_b_vs_b_t_a_distances )
       face_descriptor startFace = faces[startFaceIndex];
       face_descriptor endFace = faces[endFaceIndex];
       
-      Barycentric_coordinate startLocation = CGAL::test::random_coordinate<FT, Barycentric_coordinate>(rand);
-      Barycentric_coordinate endLocation = CGAL::test::random_coordinate<FT, Barycentric_coordinate>(rand);
+      Barycentric_coordinate startLocation = CGAL::test::random_coordinate<Traits>(rand);
+      Barycentric_coordinate endLocation = CGAL::test::random_coordinate<Traits>(rand);
 
       //shortestPaths.m_debugOutput = true;
       

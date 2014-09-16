@@ -40,10 +40,7 @@ class SCENE_POLYHEDRON_SHORTEST_PATH_ITEM_EXPORT Scene_polyhedron_shortest_path_
   
 public:
   typedef Scene_interface::Bbox Bbox;
-
-  typedef boost::property_map<Polyhedron, boost::vertex_index_t>::type VertexIndexMap;
-  typedef boost::property_map<Polyhedron, CGAL::halfedge_index_t>::type HalfedgeIndexMap;
-  typedef boost::property_map<Polyhedron, CGAL::face_index_t>::type FaceIndexMap;
+  
   typedef boost::property_map<Polyhedron, CGAL::vertex_point_t>::type VertexPointMap;
   
   typedef boost::graph_traits<Polyhedron> GraphTraits;
@@ -51,13 +48,14 @@ public:
   typedef GraphTraits::face_iterator face_iterator;
   
   typedef CGAL::Polyhedron_shortest_path_default_traits<Kernel, Polyhedron> Polyhedron_shortest_path_traits;
-  typedef CGAL::Polyhedron_shortest_path<Polyhedron_shortest_path_traits, VertexIndexMap, HalfedgeIndexMap, FaceIndexMap, VertexPointMap> Polyhedron_shortest_path;
+  typedef CGAL::Polyhedron_shortest_path<Polyhedron_shortest_path_traits> Polyhedron_shortest_path;
   typedef Polyhedron_shortest_path::Face_location Face_location;
   typedef CGAL::AABB_face_graph_triangle_primitive<Polyhedron, VertexPointMap> AABB_face_graph_primitive;
   typedef CGAL::AABB_traits<Kernel, AABB_face_graph_primitive> AABB_face_graph_traits;
   typedef CGAL::AABB_tree<AABB_face_graph_traits> AABB_face_graph_tree;
   
   typedef Polyhedron_shortest_path_traits::Barycentric_coordinate Barycentric_coordinate;
+  typedef Polyhedron_shortest_path_traits::Construct_barycentric_coordinate Construct_barycentric_coordinate;
   typedef Polyhedron_shortest_path_traits::Ray_3 Ray_3;
   typedef Polyhedron_shortest_path_traits::Point_3 Point_3;
   typedef Polyhedron_shortest_path_traits::FT FT;

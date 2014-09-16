@@ -36,6 +36,8 @@ typedef GraphTraits::face_iterator face_iterator;
 
 int main()
 {
+  Traits::Construct_barycentric_coordinate construct_barycentric_coordinate;
+  
   Polyhedron_3 polyhedron;
   
   std::ifstream inStream("data/elephant.off");
@@ -61,15 +63,10 @@ int main()
   
   face_descriptor targetFace = *facesCurrent;
   
-  Traits::Barycentric_coordinate faceLocation(Traits::FT(0.25), Traits::FT(0.5), Traits::FT(0.25));
+  Traits::Barycentric_coordinate faceLocation = construct_barycentric_coordinate(Traits::FT(0.25), Traits::FT(0.5), Traits::FT(0.25));
   
   Traits traits;
-  Polyhedron_shortest_path shortestPaths(polyhedron, 
-    CGAL::get(boost::vertex_index, polyhedron), 
-    CGAL::get(CGAL::halfedge_index, polyhedron),
-    CGAL::get(CGAL::face_index, polyhedron),
-    CGAL::get(CGAL::vertex_point, polyhedron), 
-    traits);
+  Polyhedron_shortest_path shortestPaths(polyhedron, traits);
 
   shortestPaths.construct_sequence_tree(targetFace, faceLocation);
   

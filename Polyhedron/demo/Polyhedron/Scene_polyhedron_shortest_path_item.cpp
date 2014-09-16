@@ -256,7 +256,8 @@ void Scene_polyhedron_shortest_path_item::get_as_edge_point(Scene_polyhedron_sho
     }
   }
 
-  inOutLocation.second = Barycentric_coordinate(coords[0], coords[1], coords[2]);
+  Construct_barycentric_coordinate construct_barycentric_coordinate;
+  inOutLocation.second = construct_barycentric_coordinate(coords[0], coords[1], coords[2]);
 }
 
 void Scene_polyhedron_shortest_path_item::get_as_vertex_point(Scene_polyhedron_shortest_path_item::Face_location& inOutLocation)
@@ -276,7 +277,8 @@ void Scene_polyhedron_shortest_path_item::get_as_vertex_point(Scene_polyhedron_s
   FT coords[3] = { FT(0.0), FT(0.0), FT(0.0), };
   coords[maxIndex] = FT(1.0);
   
-  inOutLocation.second = Barycentric_coordinate(coords[0], coords[1], coords[2]);
+  Construct_barycentric_coordinate construct_barycentric_coordinate;
+  inOutLocation.second = construct_barycentric_coordinate(coords[0], coords[1], coords[2]);
 }
 
 bool Scene_polyhedron_shortest_path_item::run_point_select(const Ray_3& ray)
@@ -426,13 +428,15 @@ bool Scene_polyhedron_shortest_path_item::deferred_load(Scene_polyhedron_item* p
   std::string line;
   std::size_t faceId;
   Barycentric_coordinate location;
+  Construct_barycentric_coordinate construct_barycentric_coordinate;
 
   while (std::getline(inFile, line))
   {
     std::istringstream lineStream(line);
     FT coords[3];
     lineStream >> faceId >> coords[0] >> coords[1] >> coords[2];
-    location = Barycentric_coordinate(coords[0], coords[1], coords[2]);
+    
+    location = construct_barycentric_coordinate(coords[0], coords[1], coords[2]);
     
     // std::cout << "Read in face: " << faceId << " , " << location << std::endl;
     

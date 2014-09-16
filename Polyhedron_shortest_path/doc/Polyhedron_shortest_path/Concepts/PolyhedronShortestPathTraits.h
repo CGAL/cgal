@@ -154,7 +154,7 @@ public:
   Function object type.
   Must support the result_of protocol, that is the return type of the operator()(A, B) is CGAL::cpp11::result<Intersect_2(A,B)>.
   Must provide
-  `CGAL::cpp11::result<Intersect_2(A,B)> operator()(A obj1, B obj2)`
+  `CGAL::cpp11::result_of<Intersect_2(A,B)> operator()(A obj1, B obj2)`
   to compute the intersection between obj1 and obj2, where A and B can be any one of
   Line_2,
   Ray_2,
@@ -219,21 +219,21 @@ public:
   /*!
   Function object type that provides 
   `FT operator()(Point_3 p1, Point_3 p2)`
-  to compute the squared distance between p1 and p2.
+  to compute the squared distance between `p1` and `p2`.
   */
   typedef unspecified_type Compute_squared_distance_3;
 
   /*!
   Function object type that provides 
   `Triangle_2 operator()(Triangle_3 t)`
-  which computes a 2-dimensional projection of t
+  which computes a 2-dimensional projection of `t`
   that preserves all edge lengths.
   */
   typedef unspecified_type Project_triangle_3_to_triangle_2;
   
   /*!
   Function object type that provides 
-  `Triangle_2 operator()(Triangle_3 t, size_t i, Segment_2 base)`
+  `Triangle_2 operator()(Triangle_3 t, std::size_t i, Segment_2 base)`
   which computes a 2-dimensional projection of t
   that preserves all edge lengths, such that the `i`th edge of t 
   lies along `base`.
@@ -245,8 +245,8 @@ public:
   /*! 
   Function object type that provides 
   `FT operator()(Point_2 x0, Point_2 x1, Point_2 p)`
-  which computes the parametric distance of p along the 
-  segment [x0,x1].  That is, it computes `t`, such that
+  which computes the parametric distance of `p` along the 
+  segment `[x0,x1]`.  That is, it computes `t`, such that
   `p = (1.0 - t)*x0 + t*x1`
   
   \pre p is a point along the segment [x0,x1]
@@ -262,22 +262,22 @@ public:
   
   /*!
   Function object type that provides 
-  `FT operator(Barycentric_coordinate b, size_t i)`
-  to get the ith weight of barycentric coordinate `b`.
+  `FT operator(Barycentric_coordinate b, std::size_t i)`
+  to get the `i`th weight of barycentric coordinate `b`.
   */
   typedef unspecified_type Construct_barycentric_coordinate_weight;
   
   /*!
   Function object type that provides 
   `Barycentric_coordinate operator()(Triangle_2 t, Point_2 p)`
-  which computes the Barycentric location of p in t.
+  which computes the Barycentric location of `p` in `t`.
   */
   typedef unspecified_type Construct_barycentric_coordinate_in_triangle_2;
   
   /*!
   Function object type that provides 
   `Barycentric_coordinate operator()(Triangle_3 t, Point_3 p)`
-  which computes the Barycentric location of p in t.
+  which computes the Barycentric location of `p` in `t`.
   */
   typedef unspecified_type Construct_barycentric_coordinate_in_triangle_3;
   
@@ -288,16 +288,16 @@ public:
 
   /*!
   Function object type that provides 
-  `std::pair<CGAL::internal::Barycentric_coordinate_type,size_t> operator()(Barycentric_coordinate b)`,
-  which computes the classification and nearest edge of the coordinate `b`
+  `std::pair<CGAL::Polyhedron_shortest_paths_3::Barycentric_coordinate_type,std::size_t> operator()(Barycentric_coordinate b)`,
+  which computes the classification and the associated edge (if applicable) of the coordinate `b`
   \details Returns the pair (`type`, `i`), such that `type` is:
-  - `CGAL::internal::BARYCENTRIC_COORDINATE_VERTEX` if `b` has exactly one non-zero component equal to 1, and the rest are zero
-  - `CGAL::internal::BARYCENTRIC_COORDINATE_EDGE` if `b` has exactly one zero component, and the rest sum to 1
-  - `CGAL::internal::BARYCENTRIC_COORDINATE_INTERNAL` if `b` has no non-zero component, and they all sum to 1
-  - `CGAL::internal::BARYCENTRIC_COORDINATE_EXTERNAL` if the components of `b` do not sum to 1
-  - `CGAL::internal::BARYCENTRIC_COORDINATE_INVALID` otherwise
-  If `type` is `CGAL::internal::BARYCENTRIC_COORDINATE_VERTEX`, `i` should be the index of that vertex
-  If `type` is `CGAL::internal::BARYCENTRIC_COORDINATE_EDGE`, `i` should be the index of the non-zero edge
+  - `CGAL::Polyhedron_shortest_paths_3::BARYCENTRIC_COORDINATE_VERTEX` if `b` has exactly one non-zero component equal to 1, and the rest are zero
+  - `CGAL::Polyhedron_shortest_paths_3::BARYCENTRIC_COORDINATE_EDGE` if `b` has exactly one zero component, and the rest sum to 1
+  - `CGAL::Polyhedron_shortest_paths_3::BARYCENTRIC_COORDINATE_INTERNAL` if `b` has no non-zero component, and they all sum to 1
+  - `CGAL::Polyhedron_shortest_paths_3::BARYCENTRIC_COORDINATE_EXTERNAL` if the components of `b` do not sum to 1
+  - `CGAL::Polyhedron_shortest_paths_3::BARYCENTRIC_COORDINATE_INVALID` otherwise
+  If `type` is `CGAL::Polyhedron_shortest_paths_3::BARYCENTRIC_COORDINATE_VERTEX`, `i` should be the index of that vertex
+  If `type` is `CGAL::Polyhedron_shortest_paths_3::BARYCENTRIC_COORDINATE_EDGE`, `i` should be the index of the non-zero edge
   - 0 if (0,1) are the non-zero coordinates
   - 1 if (1,2) are the non-zero coordinates
   - 2 if (2,0) are the non-zero coordinates
@@ -327,8 +327,8 @@ public:
   start point of s1, scaled by the length of s1, to the distance of the intersection 
   of s2 with l2 from the start point of s2, scaled by the length of s2.
   
-  \pre the intersection of s1 and l1 is a single point
-  \pre the intersection of s2 and l2 is a single point
+  \pre the intersection of `s1` and `l1` is a single point
+  \pre the intersection of `s2` and `l2` is a single point
   */
   typedef unspecified_type Compare_relative_intersection_along_segment_2;
   
@@ -336,8 +336,8 @@ public:
   Function object type that provides 
   `template <class VertexPointMap> bool operator()(boost::graph_traits<FaceGraph>::vertex_descriptor v, FaceGraph& p, VertexPointMap vpm)`
   that returns true if the vertex is a saddle vertex (more than 2pi surface area 
-  over all adjacent faces), and false otherwise.  vmp must be a a model of concept ReadablePropertyMap that maps from vertex_descriptor to
-  Point_3 objects.
+  over all adjacent faces), and false otherwise.  `vpm` must be a a model of concept `ReadablePropertyMap` that maps from `vertex_descriptor` to
+  `Point_3` objects.
   */
   typedef unspecified_type Is_saddle_vertex;
 

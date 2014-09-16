@@ -12,10 +12,11 @@
 #include <CGAL/number_utils.h>
 
 #include <utility>
+#include <cstddef>
 
 namespace CGAL {
 
-namespace PolyhedronShortestPath {
+namespace Polyhedron_shortest_paths_3 {
 
 template <class K, class B, class Construct_barycentric_coordinate>
 class Construct_barycentric_coordinate_in_triangle_2
@@ -120,7 +121,7 @@ public:
 };
 
 /*!
-Classify the location of a 3-tuple barycentric coordinate in a triangle
+  \brief Classification of the location of a 3-tuple barycentric coordinate in a triangle
 */
 enum Barycentric_coordinate_type
 {
@@ -136,7 +137,7 @@ class Classify_barycentric_coordinate
 {
 public:
   typedef B Barycentric_coordinate;
-  typedef std::pair<Barycentric_coordinate_type, size_t> result_type;
+  typedef std::pair<Barycentric_coordinate_type, std::size_t> result_type;
   
 private:
   Construct_barycentric_coordinate_weight m_construct_barycentric_coordinate_weight;
@@ -157,14 +158,14 @@ public:
     Construct_barycentric_coordinate_weight cbcw;
 
     bool nonZero[3];
-    size_t numNonZero = 0;
+    std::size_t numNonZero = 0;
     
     if (cbcw(baryCoords, 0) + cbcw(baryCoords, 1) + cbcw(baryCoords, 2) > 1.00001 || cbcw(baryCoords, 0) + cbcw(baryCoords, 1) + cbcw(baryCoords, 2) < 0.99999)
     {
       return std::make_pair(BARYCENTRIC_COORDINATE_EXTERNAL, 0);
     }
     
-    for (size_t i = 0; i < 3; ++i)
+    for (std::size_t i = 0; i < 3; ++i)
     {
       nonZero[i] = !CGAL::is_zero(cbcw(baryCoords, i));
       
@@ -180,7 +181,7 @@ public:
     }
     else if (numNonZero == 2)
     {
-      size_t associatedEdge = 3;
+      std::size_t associatedEdge = 3;
       
       if (!nonZero[0])
       {
@@ -199,7 +200,7 @@ public:
     }
     else if (numNonZero == 1)
     {
-      size_t associatedEdge = 3;
+      std::size_t associatedEdge = 3;
       
       if (nonZero[0])
       {
@@ -224,8 +225,8 @@ public:
   
 };
 
-} // namespace Polyhedron_shortest_path
+} // namespace Polyhedron_shortest_paths_3
 
 } // namespace CGAL
 
-#endif // CGAL_POLYHEDRON_SHORTEST_PATH_INTERNAL_BARYCENTRIC_H
+#endif // CGAL_POLYHEDRON_SHORTEST_PATHS_3_BARYCENTRIC_H

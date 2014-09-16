@@ -14,6 +14,7 @@
 #include <utility>
 #include <queue>
 #include <algorithm>
+#include <cstddef>
 
 #include <boost/array.hpp>
 #include <boost/lexical_cast.hpp>
@@ -22,6 +23,7 @@
 #include <iterator>
 
 #include <CGAL/AABB_tree.h>
+#include <CGAL/Default.h>
 
 #include <CGAL/Polyhedron_shortest_path/barycentric.h>
 #include <CGAL/Polyhedron_shortest_path/internal/Cone_tree.h>
@@ -41,28 +43,56 @@ namespace CGAL {
 Refer to those respective papers for the details of the implementation.
  
 \tparam Traits The geometric traits for this algorithm, a model of PolyhedronShortestPathTraits concept.
-
 \tparam VIM A model of the boost ReadablePropertyMap concept, provides a vertex index property map.
-
 \tparam HIM A model of the boost ReadablePropertyMap concept, provides a halfedges index property map.
-
 \tparam FIM A model of the boost ReadablePropertyMap concept, provides a face index property map.
-
 \tparam VPM A model of the boost ReadablePropertyMap concept, provides a vertex point property map.
-
- */
+*/
  
 template<class Traits, 
-  class VIM = typename boost::property_map<typename Traits::FaceGraph, CGAL::vertex_external_index_t>::type,
-  class HIM = typename boost::property_map<typename Traits::FaceGraph, halfedge_external_index_t>::type,
-  class FIM = typename boost::property_map<typename Traits::FaceGraph, face_external_index_t>::type,
-  class VPM = typename boost::property_map<typename Traits::FaceGraph, CGAL::vertex_point_t>::type>
+  class VIM = Default,
+  class HIM = Default,
+  class FIM = Default,
+  class VPM = Default>
 class Polyhedron_shortest_path
 {
 public:
 /// \name Types
 /// @{
 
+  /// The FaceGraph type which this algorithm acts on.
+  typedef typename Traits::FaceGraph FaceGraph;
+
+  /// The BGL graph traits for this FaceGraph
+  typedef typename boost::graph_traits<FaceGraph> GraphTraits;
+
+  typedef typename GraphTraits::vertex_descriptor vertex_descriptor;
+  typedef typename GraphTraits::halfedge_descriptor halfedge_descriptor;
+  typedef typename GraphTraits::face_descriptor face_descriptor;
+  
+#ifndef DOXYGEN_RUNNING
+
+  typedef typename Default::Get<
+    VIM,
+    typename boost::property_map<FaceGraph, boost::vertex_index_t>::type
+      >::type VertexIndexMap;
+  
+  typedef typename Default::Get<
+    HIM,
+    typename boost::property_map<FaceGraph, boost::halfedge_index_t>::type
+      >::type HalfedgeIndexMap;
+      
+  typedef typename Default::Get<
+    FIM,
+    typename boost::property_map<FaceGraph, boost::face_index_t>::type
+      >::type FaceIndexMap;
+      
+  typedef typename Default::Get<
+    VPM,
+    typename boost::property_map<FaceGraph, CGAL::vertex_point_t>::type
+      >::type VertexPointMap;
+
+#else
   /// The vertex index property map class
   typedef VIM VertexIndexMap;
   
@@ -74,28 +104,19 @@ public:
   
   /// The vertex point property map class
   typedef VPM VertexPointMap;
+#endif
 
-  /// The faceGraph type which this algorithm acts on.
-  typedef typename Traits::FaceGraph FaceGraph;
-
-  /// The BGL graph traits for this faceGraph
-  typedef typename boost::graph_traits<FaceGraph> GraphTraits;
-
-  typedef typename GraphTraits::vertex_descriptor vertex_descriptor;
-  typedef typename GraphTraits::halfedge_descriptor halfedge_descriptor;
-  typedef typename GraphTraits::face_descriptor face_descriptor;
-  
   /// The numeric type used by this algorithm.
   typedef typename Traits::FT FT;
   
-  /// The 3-dimensional point type of the faceGraph.
+  /// The 3-dimensional point type of the FaceGraph.
   typedef typename Traits::Point_3 Point_3;
   
-  /// An ordered triple which specifies the location within a triangle as
+  /// An ordered triple which specifies a location inside a triangle as
   /// a convex combination of its three vertices.
   typedef typename Traits::Barycentric_coordinate Barycentric_coordinate;
 
-  /// \brief An ordered pair specifying a location on the surface of the faceGraph.
+  /// \brief An ordered pair specifying a location on the surface of the FaceGraph.
   /// \details Assuming you are given the pair (`face`, `location`), the weights of 
   /// `location` are applied to the vertices of `face` in the following way
   /// the following way:
@@ -181,11 +202,11 @@ private:
   
 #if !defined(NDEBUG)
   
-  size_t m_currentNodeCount;
-  size_t m_peakNodeCount;
-  size_t m_queueAtPeakNodes;
-  size_t m_peakQueueSize;
-  size_t m_nodesAtPeakQueue;
+  std::size_t m_currentNodeCount;
+  std::size_t m_peakNodeCount;
+  std::size_t m_queueAtPeakNodes;
+  std::size_t m_peakQueueSize;
+  std::size_t m_nodesAtPeakQueue;
   
 #endif
 
@@ -194,28 +215,28 @@ public:
 
   /// \cond
 
-  size_t peak_node_count()
+  std::size_t peak_node_count()
   {
     return m_peakNodeCount;
   }
   
-  size_t current_node_count()
+  std::size_t current_node_count()
   {
     return m_currentNodeCount;
   }
   
-  size_t peak_queue_size()
+  std::size_t peak_queue_size()
   {
     return m_peakQueueSize;
   }
   
-  size_t current_memory_usage()
+  std::size_t current_memory_usage()
   {
-    size_t baseUsage = m_rootNodes.size() * sizeof(Cone_tree_node*) + m_closestToVertices.size() * sizeof(Node_distance_pair);
+    std::size_t baseUsage = m_rootNodes.size() * sizeof(Cone_tree_node*) + m_closestToVertices.size() * sizeof(Node_distance_pair);
 
-    size_t finalUsage = baseUsage + sizeof(Cone_tree_node) * m_currentNodeCount;
+    std::size_t finalUsage = baseUsage + sizeof(Cone_tree_node) * m_currentNodeCount;
     
-    for (size_t i = 0; i < m_faceOccupiers.size(); ++i)
+    for (std::size_t i = 0; i < m_faceOccupiers.size(); ++i)
     {
       finalUsage += (m_faceOccupiers[i].size() * sizeof(Cone_tree_node*)) + sizeof(std::vector<Cone_tree_node*>);
     }
@@ -223,13 +244,13 @@ public:
     return finalUsage;
   }
   
-  size_t peak_memory_usage()
+  std::size_t peak_memory_usage()
   {
-    size_t baseUsage = m_rootNodes.size() * sizeof(Cone_tree_node*) + m_vertexOccupiers.size() * sizeof(Node_distance_pair) + m_closestToVertices.size() * sizeof(Node_distance_pair);
+    std::size_t baseUsage = m_rootNodes.size() * sizeof(Cone_tree_node*) + m_vertexOccupiers.size() * sizeof(Node_distance_pair) + m_closestToVertices.size() * sizeof(Node_distance_pair);
 
-    size_t peakNodeUsage = baseUsage + (sizeof(Cone_tree_node) * m_peakNodeCount) + ((sizeof(Cone_expansion_event) + sizeof(Cone_expansion_event*)) * m_queueAtPeakNodes);
+    std::size_t peakNodeUsage = baseUsage + (sizeof(Cone_tree_node) * m_peakNodeCount) + ((sizeof(Cone_expansion_event) + sizeof(Cone_expansion_event*)) * m_queueAtPeakNodes);
     
-    size_t peakQueueUsage = baseUsage + (sizeof(Cone_expansion_event) + (sizeof(Cone_expansion_event*)) * m_peakQueueSize) + (sizeof(Cone_tree_node) * m_nodesAtPeakQueue);
+    std::size_t peakQueueUsage = baseUsage + (sizeof(Cone_expansion_event) + (sizeof(Cone_expansion_event*)) * m_peakQueueSize) + (sizeof(Cone_tree_node) * m_nodesAtPeakQueue);
     
     return std::max(peakNodeUsage, peakQueueUsage);
   }
@@ -338,6 +359,10 @@ private:
     return triangle_from_halfedge(halfedge(f, faceGraph), faceGraph, vertexPointMap);
   }
 
+  /*
+    Filtering algorithm described in Xin and Wang (2009) "Improving chen and han's algorithm on the discrete geodesic problem."
+    http://doi.acm.org/10.1145/1559755.1559761
+  */
   bool window_distance_filter(Cone_tree_node* cone, Segment_2 windowSegment, bool reversed)
   {
     typename Traits::Construct_vertex_2 cv2(m_traits.construct_vertex_2_object());
@@ -355,9 +380,9 @@ private:
     Point_2 v1;
     Point_2 v3;
     
-    size_t v1Index = get(m_vertexIndexMap, source(cone->entry_edge(), m_faceGraph));
-    size_t v2Index = get(m_vertexIndexMap, cone->target_vertex());
-    size_t v3Index = get(m_vertexIndexMap, target(cone->entry_edge(), m_faceGraph));
+    std::size_t v1Index = get(m_vertexIndexMap, source(cone->entry_edge(), m_faceGraph));
+    std::size_t v2Index = get(m_vertexIndexMap, cone->target_vertex());
+    std::size_t v3Index = get(m_vertexIndexMap, target(cone->entry_edge(), m_faceGraph));
     
     Node_distance_pair v1Distance = m_closestToVertices[v1Index];
     Node_distance_pair v2Distance = m_closestToVertices[v2Index];
@@ -436,7 +461,10 @@ private:
 
     return true;
   }
-    
+  
+  /*
+    Push a new node representing crossing the edge to the left of `cone`'s target vertex
+  */
   void expand_left_child(Cone_tree_node* cone, Segment_2 windowSegment)
   {
     typename Traits::Construct_vertex_2 cv2(m_traits.construct_vertex_2_object());
@@ -461,6 +489,9 @@ private:
     }
   }
   
+  /*
+    Push a new node representing crossing the edge to the right of `cone`'s target vertex
+  */
   void expand_right_child(Cone_tree_node* cone, Segment_2 windowSegment)
   {
     typename Traits::Construct_vertex_2 cv2(m_traits.construct_vertex_2_object());
@@ -485,34 +516,38 @@ private:
     }
   }
   
+  /*
+    Determines whether to expand `location` as a face, edge, or vertex root, depending on 
+    whether it is near to a given edge or vertex, or is an internal face location
+  */
   void expand_root(face_descriptor f, Barycentric_coordinate location)
   {
     typename Traits::Construct_barycentric_coordinate_weight cbcw(m_traits.construct_barycentric_coordinate_weight_object());
     typename Traits::Classify_barycentric_coordinate classify_barycentric_coordinate(m_traits.classify_barycentric_coordinate_object());
   
-    size_t associatedEdge;
-    CGAL::PolyhedronShortestPath::Barycentric_coordinate_type type;
+    std::size_t associatedEdge;
+    CGAL::Polyhedron_shortest_paths_3::Barycentric_coordinate_type type;
     boost::tie(type, associatedEdge) = classify_barycentric_coordinate(location);
     
     switch (type)
     {
-      case CGAL::PolyhedronShortestPath::BARYCENTRIC_COORDINATE_INTERNAL:
+      case CGAL::Polyhedron_shortest_paths_3::BARYCENTRIC_COORDINATE_INTERNAL:
         expand_face_root(f, location);
         break;
-      case CGAL::PolyhedronShortestPath::BARYCENTRIC_COORDINATE_EDGE:
+      case CGAL::Polyhedron_shortest_paths_3::BARYCENTRIC_COORDINATE_EDGE:
         {
           halfedge_descriptor he = halfedge(f, m_faceGraph);
-          for (size_t i = 0; i < associatedEdge; ++i)
+          for (std::size_t i = 0; i < associatedEdge; ++i)
           {
             he = next(he, m_faceGraph);
           }
           expand_edge_root(he, cbcw(location, associatedEdge), cbcw(location, (associatedEdge + 1) % 3));
         }
         break;
-      case CGAL::PolyhedronShortestPath::BARYCENTRIC_COORDINATE_VERTEX:
+      case CGAL::Polyhedron_shortest_paths_3::BARYCENTRIC_COORDINATE_VERTEX:
         {
           halfedge_descriptor he = halfedge(f, m_faceGraph);
-          for (size_t i = 0; i < associatedEdge; ++i)
+          for (std::size_t i = 0; i < associatedEdge; ++i)
           {
             he = next(he, m_faceGraph);
           }
@@ -525,6 +560,9 @@ private:
     }
   }
   
+  /*
+    Create source nodes facing each edge of `f`, rooted at the given `faceLocation`
+  */
   void expand_face_root(face_descriptor f, Barycentric_coordinate faceLocation)
   {
     typename Traits::Project_triangle_3_to_triangle_2 pt3t2(m_traits.project_triangle_3_to_triangle_2_object());
@@ -543,7 +581,7 @@ private:
       std::cout << "\tFace Root Expansion: id = " << get(m_faceIndexMap, f) << " , Location = " << cbcw(faceLocation, 0) << " " << cbcw(faceLocation, 1) << " " << cbcw(faceLocation, 2) << " " << std::endl;
     }
     
-    for (size_t currentVertex = 0; currentVertex < 3; ++currentVertex)
+    for (std::size_t currentVertex = 0; currentVertex < 3; ++currentVertex)
     {
       Triangle_3 face3d(triangle_from_halfedge(current));
       Triangle_2 layoutFace(pt3t2(face3d));
@@ -567,6 +605,9 @@ private:
     }
   }
 
+  /*
+    Create 'source' nodes to each size of the given edge, rooted at the specified parametric location
+  */
   void expand_edge_root(halfedge_descriptor baseEdge, FT t0, FT t1)
   {
     typename Traits::Construct_barycenter_2 cb2(m_traits.construct_barycenter_2_object());
@@ -586,7 +627,7 @@ private:
     Triangle_3 faces3d[2];
     Triangle_2 layoutFaces[2];
 
-    for (size_t i = 0; i < 2; ++i)
+    for (std::size_t i = 0; i < 2; ++i)
     {
        faces3d[i] = triangle_from_halfedge(baseEdges[i]);
        layoutFaces[i] = pt3t2(faces3d[i]);
@@ -600,7 +641,7 @@ private:
     node_created();
     m_rootNodes.push_back(edgeRoot);
     
-    for (size_t side = 0; side < 2; ++side)
+    for (std::size_t side = 0; side < 2; ++side)
     {
       if (m_debugOutput)
       {
@@ -621,6 +662,9 @@ private:
     }
   }
 
+  /*
+    Create a 'source' node for each face surrounding the given vertex.
+  */
   void expand_vertex_root(vertex_descriptor vertex)
   {
     if (m_debugOutput)
@@ -638,6 +682,9 @@ private:
     expand_pseudo_source(vertexRoot);
   }
 
+  /*
+    Create child nodes for each face surrounding the vertex occupied by `parent`, and push them to the queue
+  */
   void expand_pseudo_source(Cone_tree_node* parent)
   {
     typename Traits::Project_triangle_3_to_triangle_2 pt3t2(m_traits.project_triangle_3_to_triangle_2_object());
@@ -658,7 +705,9 @@ private:
     }
     
     // A potential optimization could be made by only expanding in the 'necessary' range (i.e. the range outside of geodesic visibility), but the
-    // benefits may be small, since the node filtering would prevent more than one-level propagation.
+    // benefits may be small, since the node filter would prevent more than one-level propagation.
+    // It would also be neccessary to distinguish expanding a root vertex node from a pseudo-source node
+    
     do
     {
       Triangle_3 face3d(triangle_from_halfedge(currentEdge));
@@ -690,6 +739,9 @@ private:
 
   }
 
+  /*
+    Returns the intersection of `segment` and the cone defined by the region to the left `leftBoundary` and right of `rightBoundary`
+  */
   bool clip_to_bounds(const Segment_2& segment, const Ray_2& leftBoundary, const Ray_2& rightBoundary, Segment_2& outSegment)
   {
     typename Traits::Construct_source_2 cs2(m_traits.construct_source_2_object());
@@ -845,6 +897,9 @@ private:
     return true;
   }
 
+  /*
+    Take a node and compute whether it is an occupier/evicts older nodes, then push any children it may have.
+  */
   void process_node(Cone_tree_node* node)
   {
     typename Traits::Compare_relative_intersection_along_segment_2 crias2(m_traits.compare_relative_intersection_along_segment_2_object());
@@ -873,7 +928,7 @@ private:
       std::cout << "\tFace = " << node->layout_face() << std::endl;
       std::cout << "\tVertices = ";
       halfedge_descriptor current = node->entry_edge();
-      for (size_t i = 0; i < 3; ++i)
+      for (std::size_t i = 0; i < 3; ++i)
       {
         std::cout << get(m_vertexIndexMap, source(current, m_faceGraph)) << " ";
         current = next(current, m_faceGraph);
@@ -892,7 +947,7 @@ private:
         std::cout << "\tContains target vertex" << std::endl;
       }
       
-      size_t entryEdgeIndex = get(m_halfedgeIndexMap, node->entry_edge());
+      std::size_t entryEdgeIndex = get(m_halfedgeIndexMap, node->entry_edge());
 
       Node_distance_pair currentOccupier = m_vertexOccupiers[entryEdgeIndex];
       FT currentNodeDistance = node->distance_from_target_to_root();
@@ -998,7 +1053,7 @@ private:
           }
         }
         
-        size_t targetVertexIndex = get(m_vertexIndexMap, node->target_vertex());
+        std::size_t targetVertexIndex = get(m_vertexIndexMap, node->target_vertex());
         
         // Check if this is now the absolute closest node, and replace the current closest as appropriate
         Node_distance_pair currentClosest = m_closestToVertices[targetVertexIndex];
@@ -1237,17 +1292,17 @@ private:
         delete_node(node->pop_middle_child(), destruction);
       }
       
-      // At the point of destruction, the faceGraph referenced may have gone out of scope, we wish to distinguish between deletion with an assumed reference
-      // to the original faceGraph, and deletion without
+      // At the point of destruction, the FaceGraph referenced may have gone out of scope, we wish to distinguish between deletion with an assumed reference
+      // to the original FaceGraph, and deletion without
       if (!node->is_root_node() && !destruction)
       {
-        size_t entryEdgeIndex = get(m_halfedgeIndexMap, node->entry_edge());
+        std::size_t entryEdgeIndex = get(m_halfedgeIndexMap, node->entry_edge());
 
         if (m_vertexOccupiers[entryEdgeIndex].first == node)
         {
           m_vertexOccupiers[entryEdgeIndex].first = NULL;
           
-          size_t targetVertexIndex = get(m_vertexIndexMap, node->target_vertex());
+          std::size_t targetVertexIndex = get(m_vertexIndexMap, node->target_vertex());
           
           if (m_closestToVertices[targetVertexIndex].first == node)
           {
@@ -1268,7 +1323,7 @@ private:
     
     for (boost::tie(current, end) = boost::vertices(m_faceGraph); current != end; ++current)
     {
-      size_t vertexIndex = get(m_vertexIndexMap, *current);
+      std::size_t vertexIndex = get(m_vertexIndexMap, *current);
     
       if (is_saddle_vertex(*current) || is_boundary_vertex(*current))
       {
@@ -1307,7 +1362,7 @@ private:
   
   void delete_all_nodes()
   {
-    for (size_t i = 0; i < m_rootNodes.size(); ++i)
+    for (std::size_t i = 0; i < m_rootNodes.size(); ++i)
     {
       delete_node(m_rootNodes[i], true);
     }
@@ -1388,7 +1443,7 @@ private:
             std::cout << "Current Node: " << current << " , Face = " << current->layout_face() << std::endl;
             halfedge_descriptor he = current->entry_edge();
             std::cout << "Face vertices: ";
-            for (size_t i = 0; i < 3; ++i)
+            for (std::size_t i = 0; i < 3; ++i)
             {
               std::cout << get(m_vertexIndexMap, source(he, m_faceGraph)) << ",";
               he = next(he, m_faceGraph);
@@ -1442,7 +1497,7 @@ private:
   {
     if (!node->is_root_node() && !node->is_null_face())
     {
-      size_t faceIndex = get(m_faceIndexMap, node->current_face());
+      std::size_t faceIndex = get(m_faceIndexMap, node->current_face());
       m_faceOccupiers[faceIndex].push_back(node);
     }
     
@@ -1456,7 +1511,7 @@ private:
       add_to_face_list(node->get_right_child());
     }
     
-    for (size_t i = 0; i < node->num_middle_children(); ++i)
+    for (std::size_t i = 0; i < node->num_middle_children(); ++i)
     {
       add_to_face_list(node->get_middle_child(i));
     }
@@ -1472,7 +1527,7 @@ private:
     return shifted_coordiate(location, node->edge_face_index());
   }
   
-  Barycentric_coordinate shifted_coordiate(Barycentric_coordinate location, size_t shift)
+  Barycentric_coordinate shifted_coordiate(Barycentric_coordinate location, std::size_t shift)
   {
     typename Traits::Construct_barycentric_coordinate_weight cbcw(m_traits.construct_barycentric_coordinate_weight_object());
     typename Traits::Construct_barycentric_coordinate cbc(m_traits.construct_barycentric_coordinate_object());
@@ -1481,14 +1536,16 @@ private:
   
   std::pair<Node_distance_pair, Barycentric_coordinate> nearest_on_face(face_descriptor f, Barycentric_coordinate location)
   {
-    size_t faceIndex = get(m_faceIndexMap, f);
+    typename Traits::Construct_barycentric_coordinate cbc(m_traits.construct_barycentric_coordinate_object());
+    
+    std::size_t faceIndex = get(m_faceIndexMap, f);
     
     Cone_tree_node* closest = NULL;
     FT closestDistance;
     
     std::vector<Cone_tree_node*>& currentFaceList = m_faceOccupiers[faceIndex];
     
-    for (size_t i = 0; i < currentFaceList.size(); ++i)
+    for (std::size_t i = 0; i < currentFaceList.size(); ++i)
     {
       Cone_tree_node* current = currentFaceList[i];
       
@@ -1517,7 +1574,7 @@ private:
     }
     else
     {
-      return std::make_pair(Node_distance_pair(NULL, FT(0.0)), Barycentric_coordinate(FT(0.0), FT(0.0), FT(0.0)));
+      return std::make_pair(Node_distance_pair(NULL, FT(0.0)), cbc(FT(0.0), FT(0.0), FT(0.0)));
     }
   }
   
@@ -1527,18 +1584,18 @@ private:
     typename Traits::Construct_barycentric_coordinate cbc(m_traits.construct_barycentric_coordinate_object());
     typename Traits::Classify_barycentric_coordinate classify_barycentric_coordinate(m_traits.classify_barycentric_coordinate_object());
     
-    size_t associatedEdge;
-    CGAL::PolyhedronShortestPath::Barycentric_coordinate_type type;
+    std::size_t associatedEdge;
+    CGAL::Polyhedron_shortest_paths_3::Barycentric_coordinate_type type;
     boost::tie(type, associatedEdge) = classify_barycentric_coordinate(location);
     
     switch (type)
     {
-      case CGAL::PolyhedronShortestPath::BARYCENTRIC_COORDINATE_INTERNAL:
+      case CGAL::Polyhedron_shortest_paths_3::BARYCENTRIC_COORDINATE_INTERNAL:
         return nearest_on_face(f, location);
-      case CGAL::PolyhedronShortestPath::BARYCENTRIC_COORDINATE_EDGE:
+      case CGAL::Polyhedron_shortest_paths_3::BARYCENTRIC_COORDINATE_EDGE:
         {
           halfedge_descriptor he = halfedge(f, m_faceGraph);
-          for (size_t i = 0; i < associatedEdge; ++i)
+          for (std::size_t i = 0; i < associatedEdge; ++i)
           {
             he = next(he, m_faceGraph);
           }
@@ -1546,7 +1603,7 @@ private:
           
           halfedge_descriptor oppositeHalfedge = opposite(he, m_faceGraph);
           
-          size_t oppositeIndex = internal::edge_index(oppositeHalfedge, m_faceGraph);
+          std::size_t oppositeIndex = internal::edge_index(oppositeHalfedge, m_faceGraph);
           
           FT oppositeLocationCoords[3] = { FT(0.0), FT(0.0), FT(0.0) };
           
@@ -1571,18 +1628,18 @@ private:
           }
         }
         break;
-      case CGAL::PolyhedronShortestPath::BARYCENTRIC_COORDINATE_VERTEX:
+      case CGAL::Polyhedron_shortest_paths_3::BARYCENTRIC_COORDINATE_VERTEX:
         {
           halfedge_descriptor he = halfedge(f, m_faceGraph);
           
-          for (size_t i = 0; i < associatedEdge; ++i)
+          for (std::size_t i = 0; i < associatedEdge; ++i)
           {
             he = next(he, m_faceGraph);
           }
           
           vertex_descriptor vertex = source(he, m_faceGraph);
 
-          return std::make_pair(m_closestToVertices[get(m_vertexIndexMap, vertex)], Barycentric_coordinate(FT(0.0), FT(0.0), FT(1.0)));
+          return std::make_pair(m_closestToVertices[get(m_vertexIndexMap, vertex)], cbc(FT(0.0), FT(0.0), FT(1.0)));
         }
         break;
         
@@ -1631,7 +1688,7 @@ private:
     {
       vertex_iterator current, end;
       
-      size_t numVertices = 0;
+      std::size_t numVertices = 0;
 
       for (boost::tie(current,end) = boost::vertices(m_faceGraph); current != end; ++current)
       {
@@ -1645,7 +1702,7 @@ private:
     
     if (m_debugOutput)
     {
-      size_t numFaces = 0;
+      std::size_t numFaces = 0;
       
       for (boost::tie(facesCurrent, facesEnd) = faces(m_faceGraph); facesCurrent != facesEnd; ++facesCurrent)
       {
@@ -1676,7 +1733,7 @@ private:
     
     }
     
-    for (size_t i = 0; i < m_faceLocations.size(); ++i)
+    for (std::size_t i = 0; i < m_faceLocations.size(); ++i)
     {
       if (m_debugOutput)
       {
@@ -1744,12 +1801,12 @@ private:
     m_faceOccupiers.clear();
     m_faceOccupiers.resize(num_faces(m_faceGraph));
     
-    for (size_t i = 0; i < m_rootNodes.size(); ++i)
+    for (std::size_t i = 0; i < m_rootNodes.size(); ++i)
     {
       add_to_face_list(m_rootNodes[i]);
     }
     
-    for (size_t i = 0; i < m_faceOccupiers.size(); ++i)
+    for (std::size_t i = 0; i < m_faceOccupiers.size(); ++i)
     {
       std::vector<Cone_tree_node*>& currentFaceList = m_faceOccupiers[i];
       std::sort(currentFaceList.begin(), currentFaceList.end(), cone_comparator);
@@ -1759,7 +1816,7 @@ private:
     {   
       std::cout << "Closest distances: " << std::endl;
       
-      for (size_t i = 0; i < m_closestToVertices.size(); ++i)
+      for (std::size_t i = 0; i < m_closestToVertices.size(); ++i)
       {
         std::cout << "\tVertex = " << i << std::endl;
         std::cout << "\tDistance = " << m_closestToVertices[i].second << std::endl;
@@ -1767,7 +1824,7 @@ private:
       
       std::cout << std::endl;
       
-      for (size_t i = 0; i < m_faceOccupiers.size(); ++i)
+      for (std::size_t i = 0; i < m_faceOccupiers.size(); ++i)
       {
         std::cout << "\tFace = " << i << std::endl;
         std::cout << "\t#Occupiers = " << m_faceOccupiers[i].size() << std::endl;
@@ -1783,10 +1840,10 @@ public:
   /// @{
   
   /*!
-  \brief Creates a shortest paths object associated with a specific faceGraph.
+  \brief Creates a shortest paths object associated with a specific FaceGraph.
   
-  \details No copy of the faceGraph is made, only a reference to the faceGraph is held.
-  Default versions of the necessary faceGraph property maps are created and
+  \details No copy of the FaceGraph is made, only a reference to the faceGraph is held.
+  Default versions of the necessary FaceGraph property maps are created and
   used with this constructor.
   
   \param faceGraph The polyhedral surface to use.  Note that it must be triangulated.
@@ -1797,9 +1854,9 @@ public:
   Polyhedron_shortest_path(FaceGraph& faceGraph, const Traits& traits = Traits())
     : m_traits(traits)
     , m_faceGraph(faceGraph)
-    , m_vertexIndexMap(CGAL::get(boost::vertex_external_index, faceGraph))
-    , m_halfedgeIndexMap(CGAL::get(halfedge_external_index, faceGraph))
-    , m_faceIndexMap(CGAL::get(face_external_index, faceGraph))
+    , m_vertexIndexMap(CGAL::get(boost::vertex_index, faceGraph))
+    , m_halfedgeIndexMap(CGAL::get(boost::halfedge_index, faceGraph))
+    , m_faceIndexMap(CGAL::get(boost::face_index, faceGraph))
     , m_vertexPointMap(CGAL::get(CGAL::vertex_point, faceGraph))
     , m_debugOutput(false)
   {
@@ -1807,9 +1864,9 @@ public:
   }
   
   /*!
-  \brief Creates a shortest paths object associated with a specific faceGraph.
+  \brief Creates a shortest paths object associated with a specific FaceGraph.
   
-  \details No copy of the faceGraph is made, only a reference to the faceGraph is held.
+  \details No copy of the FaceGraph is made, only a reference to the faceGraph is held.
   
   \param faceGraph The polyhedral surface to use.  Note that it must be triangulated.
   
@@ -1859,12 +1916,12 @@ public:
   /// @{
   
   /*!
-  \brief Compute shortest paths sequence tree from a single vertex
+  \brief Computes a shortest paths sequence tree from a single vertex
   
   \details Constructs a shortest paths sequence tree that covers shortest surface paths
-  to all locations on the faceGraph from the given source vertex.
+  from all points on the face graph to the given source vertex.
   
-  \param vertex Vertex to serve as the root location of the sequence tree
+  \param vertex A vertex to serve as the source location of the sequence tree
   */
   void construct_sequence_tree(vertex_descriptor vertex)
   {
@@ -1874,13 +1931,13 @@ public:
   }
   
   /*!
-  \brief Compute shortest paths from a single source location
+  \brief Computes a shortest paths sequence tree from a single source location 
   
   \details Constructs a shortest paths sequence tree that covers shortest surface paths
-  to all locations on the faceGraph reachable from the given source point.
+  from all points on the face graph reachable from the given source location.
   
-  \param f Handle to the face on which the source originates.
-  \param location Barycentric coordinate on face specifying the source location.
+  \param f A face of the face graph
+  \param location Barycentric coordinate on face `f` specifying the source location.
   */
   void construct_sequence_tree(face_descriptor f, Barycentric_coordinate location)
   {
@@ -1893,13 +1950,12 @@ public:
   \brief Compute a shortest path sequence tree from multiple source locations
   
   \details Constructs a shortest paths sequence tree that covers shortest surface paths
-  to all locations on the faceGraph reachable from the supplied source locations.
+  to all locations on the FaceGraph reachable from the supplied source locations.
   
-  \tparam InputIterator A ForwardIterator type which dereferences to either `Face_location`, or `vertex_descriptor`.
+  \tparam InputIterator A `ForwardIterator` which dereferences to either `Face_location`, or `vertex_descriptor`.
   
-  \param begin iterator to the first in the list of face location pairs.
-  
-  \param end iterator to one past the end of the list of face location pairs.
+  \param begin iterator to the first in the list of source point locations.
+  \param end iterator to one past the end of the list of source point locations.
   */
   template <class InputIterator>
   void construct_sequence_tree(InputIterator begin, InputIterator end)
@@ -1914,21 +1970,27 @@ public:
   /// @{
   
   /*!
-  \brief Gets the face location of the `i`th source point
-    given to this algorithm.
+  \brief Gets the face location of the `i`th source point given to this 
+    algorithm.
     
-  \param i Index of the source point to get.  Precondition: 0 <= i < num_source_locations()
+  \details The indices of the source points are assigned in order as they are 
+    retrieved from the iterator. If only a single source point was specified, 
+    it will always have index 0.
+    
+  \param i Index of the source point to get.  Precondition: `0 <= i < num_source_locations()`
+  \return The face location of the `i`th source point.
   */
-  const Face_location& get_source_location(size_t i) const
+  const Face_location& get_source_location(std::size_t i) const
   {
     return m_faceLocations[i];
   }
   
   /*!
-  \brief The total number of source points in the current
-    sequence tree, or 0 if no sequence tree is computed.
+  \brief Gets the total number of source points in the current sequence tree.
+    
+  \return The number of source points, or 0 if no sequence tree is computed yet.
   */
-  size_t num_source_locations() const
+  std::size_t num_source_locations() const
   {
     return m_faceLocations.size();
   }
@@ -1941,14 +2003,14 @@ public:
   /*!
   Computes the shortest surface distance from a vertex to any source point
   
-  \param v The vertex to act as the query point
-  
+  \param v A vertex of the face graph
   \return A pair, containing the distance to the source location, and the
-    index of the source location itself.  If no source location was 
-    reachable, the distance will be a negative value and the source 
-    location will be an index greater than the number of source points.
+    index of the source location.  If no source location was reachable (can
+    occur when the graph is disconnected), the distance will be a negative 
+    value and the source location will be an index greater than the largest 
+    index of all source points.
   */
-  std::pair<FT, size_t> shortest_distance_to_source_points(vertex_descriptor v)
+  std::pair<FT, std::size_t> shortest_distance_to_source_points(vertex_descriptor v)
   {
     Node_distance_pair result = m_closestToVertices[get(m_vertexIndexMap, v)];
     
@@ -1967,16 +2029,15 @@ public:
   /*!
   \brief Computes the shortest surface distance from any surface location to any source point
   
-  \param f Face of the faceGraph of the query point
-  
-  \param location Barycentric coordinate on face of the query point
-  
+  \param f A face of the face graph
+  \param location Barycentric coordinate of the query point on face `f`
   \return A pair, containing the distance to the source location, and the
-    index of the source location itself.  If no source location was 
-    reachable, the distance will be a negative value and the source 
-    location will be an index greater than the number of source points.
+    index of the source location itself.  If no source location was reachable (can
+    occur when the graph is disconnected), the distance will be a negative 
+    value and the source location will be an index greater than the largest 
+    index of all source points.
   */
-  std::pair<FT, size_t> shortest_distance_to_source_points(face_descriptor f, Barycentric_coordinate location)
+  std::pair<FT, std::size_t> shortest_distance_to_source_points(face_descriptor f, Barycentric_coordinate location)
   {
     std::pair<Node_distance_pair, Barycentric_coordinate> result = nearest_to_location(f, location);
     
@@ -1994,15 +2055,15 @@ public:
   
   /// @}
   
-  /// \name Shortest Path Query
+  /// \name Shortest Path Sequence Query
   /// @{
   
   /*!
   \brief Visits the sequence of edges, vertices and faces traversed by the shortest path
   from a vertex to any source point.
-  \param v The vertex to act as the query point
-  \param visitor A model of FaceGraphShortestPathVisitor to receive the shortest path
-  \return true if there exists a shortest path to v, false otherwise (may occur if the face graph is disconnected)
+  \param v A vertex of the face graph
+  \param visitor A model of `FaceGraphShortestPathVisitor` to receive the shortest path
+  \return true if there exists a shortest path from `v` to any source point, false otherwise (may occur if the face graph is disconnected)
   */
   template <class Visitor>
   bool shortest_path_sequence_to_source_points(vertex_descriptor v, Visitor& visitor)
@@ -2024,11 +2085,10 @@ public:
   \brief Visits the sequence of edges, vertices and faces traversed by the shortest path
   from any surface location to any source point.
   
-  \param f Face of the faceGraph of the query point
-  
-  \param location Barycentric coordinate on face of the query point
-  
-  \param visitor A model of FaceGraphShortestPathVisitor to receive the shortest path
+  \param f A face of the face graph
+  \param location Barycentric coordinate of the query point on face `f`
+  \param visitor A model of `FaceGraphShortestPathVisitor` to receive the shortest path
+  \return true if there exists a shortest path from the query point to any source point, false otherwise (may occur if the face graph is disconnected)
   */
   template <class Visitor>
   bool shortest_path_sequence_to_source_points(face_descriptor f, Barycentric_coordinate location, Visitor& visitor)
@@ -2047,117 +2107,107 @@ public:
       return false;
     }
   }
+  
+  /// @}
+  
+  /// \name Shortest Path Points Query
+  /// @{
 
   /*!
-  \brief Visits the sequence of points in the surface-restricted polyline from a vertex
-  to any source point (used for visualization of the shortest path).
+  \brief Computes the sequence of points in the shortest path along the 
+    surface of the face graph from the given vertex to the closest
+    source location.
   
-  \param v The vertex to act as the query point
-  
-  \param output An OutputIterator to receive the shortest path points as Point_3
+  \param v A vertex of the face graph
+  \param output An OutputIterator to receive the shortest path points as `Point_3` objects
+  \return true if there exists a shortest path to v, false otherwise (may occur if the face graph is disconnected)
   */
   template <class OutputIterator>
-  void shortest_path_points_to_source_points(vertex_descriptor v, OutputIterator output)
+  bool shortest_path_points_to_source_points(vertex_descriptor v, OutputIterator output)
   {
     *output = point(v);
     ++output;
     Point_path_visitor_wrapper<OutputIterator> wrapper(*this, output);
-    shortest_path_sequence_to_source_points(v, wrapper);
+    return shortest_path_sequence_to_source_points(v, wrapper);
   }
   
   /*!
-  \brief Visits the sequence of points in the surface-restricted polyline from any surface location
-  to any source point (used for visualization of the shortest path).
- 
-  \param f Face of the faceGraph of the query point
-  \param location Barycentric coordinate on face of the query point
-  \param output An OutputIterator to receive the shortest path points as Point_3
+  \brief Computes the sequence of points in the shortest path along the 
+    surface of the face graph from the given query location to the closest
+    source location.
+
+  \param f A face of on the face graph
+  \param location The barycentric coordinate of the query point on face `f` 
+  \param output An OutputIterator to receive the shortest path points as `Point_3` objects
+  \return true if there exists a shortest path to the query point, false otherwise (may occur if the face graph is disconnected)
   */
   template <class OutputIterator>
-  void shortest_path_points_to_source_points(face_descriptor f, Barycentric_coordinate location, OutputIterator output)
+  bool shortest_path_points_to_source_points(face_descriptor f, Barycentric_coordinate location, OutputIterator output)
   {
     *output = point(f, location);
     ++output;
     Point_path_visitor_wrapper<OutputIterator> wrapper(*this, output);
-    shortest_path_sequence_to_source_points(f, location, wrapper);
+    return shortest_path_sequence_to_source_points(f, location, wrapper);
   }
   
   /// @}
   
-  /// \name Utilities
+  /// \name Surface Point Construction
   /// @{
   
   /*!
-  \brief Returns the 3-dimensional coordinate of the given face and face location on the faceGraph.
+  \brief Returns the 3-dimensional coordinate at the barycentric coordinate 
+    of the given face.
   
-  \param f Face of the faceGraph of the query point
-  \param location Barycentric coordinate on face of the query point
+  \details The following static overloads are also available:
+  -- `static Point_3 point(face_descriptor f, Barycentric_coordinate location, const FaceGraph& faceGraph, const Traits& traits = Traits())`
+  -- `static Point_3 point(face_descriptor f, Barycentric_coordinate location, const FaceGraph& faceGraph, VertexPointMap vertexPointMap, const Traits& traits = Traits())`
+  
+  \param f A face of on the face graph
+  \param location The barycentric coordinate of the query point on face `f` 
   */
   Point_3 point(face_descriptor f, Barycentric_coordinate location) const
   {
     return point(f, location, m_faceGraph, m_vertexPointMap, m_traits);
   }
   
-  /*!
-  \brief Returns the 3-dimensional coordinate of the given face and face location on the faceGraph.
+  /// \cond
   
-  \param f Face of the faceGraph of the query point
-  \param location Barycentric coordinate on face of the query point 
-  \param faceGraph face graph to create face location on
-  \param traits Optional traits class to use
-  */
   static Point_3 point(face_descriptor f, Barycentric_coordinate location, const FaceGraph& faceGraph, const Traits& traits = Traits()) 
   {
     return point(f, location, faceGraph, CGAL::get(CGAL::vertex_point, faceGraph), traits);
   }
   
-  /*!
-  \brief Returns the 3-dimensional coordinate of the given face and face location on the faceGraph.
-  
-  \param f Face of the faceGraph of the query point
-  \param location Barycentric coordinate on face of the query point
-  \param faceGraph face graph to create face location on
-  \param vertexPointMap Point property map to get the 3d points of faceGraph
-  \param traits Optional traits class to use
-  */
   static Point_3 point(face_descriptor f, Barycentric_coordinate location, const FaceGraph& faceGraph, VertexPointMap vertexPointMap, const Traits& traits = Traits()) 
   {
     return construct_barycenter_in_triangle_3(triangle_from_face(f, faceGraph, vertexPointMap), location, traits);
   }
   
-  /*!
-  \brief Returns the 3-dimensional coordinate of the given edge and a parametric location along that edge.
+  /// \endcond
   
-  \param edge Edge of the faceGraph to use
-  \param t Parametric distance along edge
+  /*!
+  \brief Returns the 3-dimensional coordinate at the parametric location
+    along the given edge.
+  
+  \details The following static overloads are also available:
+  -- `static Point_3 point(halfedge_descriptor edge, FT t, const FaceGraph& faceGraph, const Traits& traits = Traits())`
+  -- `static static Point_3 point(halfedge_descriptor edge, FT t, const FaceGraph& faceGraph, VertexPointMap vertexPointMap, const Traits& traits = Traits())`
+
+  \param edge An edge of the face graph
+  \param t The parametric distance along edge of the desired point
   */
   Point_3 point(halfedge_descriptor edge, FT t) const
   {
     return point(edge, t, m_faceGraph, m_vertexPointMap, m_traits);
   }
   
-  /*!
-  \brief Returns the 3-dimensional coordinate of the given edge and a parametric location along that edge.
-  
-  \param edge Edge of the faceGraph to use
-  \param t Parametric distance along edge
-  \param faceGraph face graph to create face location on
-  \param traits Optional traits class to use
-  */
+  /// \cond
+
   static Point_3 point(halfedge_descriptor edge, FT t, const FaceGraph& faceGraph, const Traits& traits = Traits())
   {
     return point(edge, t, faceGraph, CGAL::get(CGAL::vertex_point, faceGraph), traits);
   }
-  
-  /*!
-  \brief Returns the 3-dimensional coordinate of the given edge and a parametric location along that edge.
-  
-  \param edge Edge of the faceGraph to use
-  \param t Parametric distance along edge
-  \param faceGraph face graph to create face location on
-  \param vertexPointMap Point property map to get the 3d points of faceGraph
-  \param traits Optional traits class to use
-  */
+
   static Point_3 point(halfedge_descriptor edge, FT t, const FaceGraph& faceGraph, VertexPointMap vertexPointMap, const Traits& traits = Traits())
   {
     typename Traits::Construct_barycenter_3 construct_barycenter_3(traits.construct_barycenter_3_object());
@@ -2166,39 +2216,44 @@ public:
     return construct_barycenter_3(get(vertexPointMap, target(edge, faceGraph)), t, get(vertexPointMap, source(edge, faceGraph)));
   }
   
-  /*!
-  \brief Returns the 3-dimensional of the given vertex.
+  /// \endcond
   
-  \param vertex Vertex of the faceGraph
+  /*!
+  \brief Returns the 3-dimensional coordinate of the given vertex.
+  
+  \param vertex A vertex of the face graph
   */
   Point_3 point(vertex_descriptor vertex) const
   {
     return get(m_vertexPointMap, vertex);
   }
   
-  /*!
-  \brief Returns a vertex location as a face location object
+  /// @}
+    
+  /// \name Surface Face Location Construction
+  /// @{
   
-  \param vertex Vertex of the face graph
+  /*!
+  \brief Returns the location of the given vertex as a `Face_location`
+  
+  \details The following static overload is also available:
+  -- `static Face_location face_location(vertex_descriptor vertex, const FaceGraph& faceGraph, const Traits& traits = Traits())`
+  
+  \param vertex A vertex of the face graph
   */
   Face_location face_location(vertex_descriptor vertex) const
   {
     return face_location(vertex, m_faceGraph, m_traits);
   }
   
-  /*!
-  \brief Returns a vertex location as a face location object
-  
-  \param vertex Vertex of parameter `faceGraph`
-  \param faceGraph face graph to create face location on
-  \param traits Optional traits class to use
-  */
+  /// \cond
+
   static Face_location face_location(vertex_descriptor vertex, const FaceGraph& faceGraph, const Traits& traits = Traits())
   {
     typename Traits::Construct_barycentric_coordinate construct_barycentric_coordinate(traits.construct_barycentric_coordinate_object());
     halfedge_descriptor he = next(halfedge(vertex, faceGraph), faceGraph);
     face_descriptor locationFace = face(he, faceGraph);
-    size_t edgeIndex = CGAL::internal::edge_index(he, faceGraph);
+    std::size_t edgeIndex = CGAL::internal::edge_index(he, faceGraph);
     
     FT coords[3] = { FT(0.0), FT(0.0), FT(0.0) };
     
@@ -2207,30 +2262,29 @@ public:
     return Face_location(locationFace, construct_barycentric_coordinate(coords[0], coords[1], coords[2]));
   }
   
-  /*!
-  \brief Returns an edge location as a face location pair
+  /// \endcond
   
-  \param he halfedge of the faceGraph
-  \param t parametric distance along he
+  /*!
+  \brief Returns a location along the given edge as a `Face_location`
+  
+  \details The following static overload is also defined:
+  -- `static Face_location face_location(halfedge_descriptor he, FT t, const FaceGraph& faceGraph, const Traits& traits = Traits())`
+  
+  \param he A halfedge of the face graph
+  \param t Parametric distance of the desired point along `he`
   */
   Face_location face_location(halfedge_descriptor he, FT t) const
   {
     return face_location(he, t, m_faceGraph, m_traits);
   }
+
+  /// \cond
   
-    /*!
-  \brief Returns an edge location as a face location pair
-  
-  \param he halfedge of the faceGraph
-  \param t parametric distance along he
-  \param faceGraph face graph to create face location on
-  \param traits Optional traits class to use
-  */
   static Face_location face_location(halfedge_descriptor he, FT t, const FaceGraph& faceGraph, const Traits& traits = Traits())
   {
     typename Traits::Construct_barycentric_coordinate cbc(traits.construct_barycentric_coordinate_object());
     face_descriptor locationFace = face(he, faceGraph);
-    size_t edgeIndex = CGAL::internal::edge_index(he, faceGraph);
+    std::size_t edgeIndex = CGAL::internal::edge_index(he, faceGraph);
     
     const FT oneMinusT(FT(1.0) - t);
     
@@ -2242,13 +2296,55 @@ public:
     return Face_location(locationFace, cbc(coords[0], coords[1], coords[2]));
   }
   
+  /// \endcond
+  
+  /// @}
+    
+  /// \name Nearest Face Location
+  /// @{
+  
   /*!
-  \brief Return the nearest face location to the given point.
+  \brief Returns the nearest face location to the given point.
+    Note that this will (re-)build an `AABB_tree` on each call. If you need 
+    to  call this function more than once, use `build_aabb_tree()` to cache a 
+    copy of the `AABB_tree`, and use the overloads of this function 
+    that accept a reference to an `AABB_tree` as input.
+    
+  \details The following static overload is also defined:
+  -- `static Face_location locate(const Point_3& location, const FaceGraph& faceGraph, VertexPointMap vertexPointMap, const Traits& traits = Traits())`
   
   \tparam AABBTraits A model of `AABBTraits` used to defined a \cgal `AABB_tree`.
   
-  \param location Point to locate on the faceGraph
-  \param tree A cached AABB to perform the point location
+  \param location Point to locate on the face graph
+  */
+  template <class AABBTraits>
+  Face_location locate(const Point_3& location) const
+  {
+    return locate<AABBTraits>(location, m_faceGraph, m_vertexPointMap, m_traits);
+  }
+  
+  /// \cond
+  
+  template <class AABBTraits>
+  static Face_location locate(const Point_3& location, const FaceGraph& faceGraph, VertexPointMap vertexPointMap, const Traits& traits = Traits())
+  {
+    AABB_tree<AABBTraits> tree;
+    build_aabb_tree(faceGraph, tree);
+    return locate(location, tree, faceGraph, vertexPointMap, traits);
+  }
+  
+  /// \endcond
+  
+  /*!
+  \brief Returns the face location nearest to the given point.
+  
+  \details The following static overload is also defined:
+  -- static Face_location locate(const Point_3& location, const AABB_tree<AABBTraits>& tree, const FaceGraph& faceGraph, VertexPointMap vertexPointMap, const Traits& traits = Traits())
+  
+  \tparam AABBTraits A model of `AABBTraits` used to defined a \cgal `AABB_tree`.
+  
+  \param location Point to locate on the face graph
+  \param tree A cached `AABB_tree` to perform the point location with
   */
   template <class AABBTraits>
   Face_location locate(const Point_3& location, const AABB_tree<AABBTraits>& tree) const
@@ -2256,17 +2352,8 @@ public:
     return locate(location, tree, m_faceGraph, m_vertexPointMap, m_traits);
   }
   
-  /*!
-  \brief Return the nearest face location to the given point.
+  /// \cond
   
-  \tparam AABBTraits A model of `AABBTraits` used to defined a \cgal `AABB_tree`.
-  
-  \param location Point to locate on the faceGraph
-  \param tree A cached AABB to perform the point location
-  \param faceGraph faceGraph Face graph to intersect
-  \param vertexPointMap Vertex point mapping for `faceGraph`
-  \param traits Optional traits class to use
-  */
   template <class AABBTraits>
   static Face_location locate(const Point_3& location, const AABB_tree<AABBTraits>& tree, const FaceGraph& faceGraph, VertexPointMap vertexPointMap, const Traits& traits = Traits())
   {
@@ -2278,51 +2365,51 @@ public:
     return Face_location(f, b);
   }
   
+  /// \endcond
+  
   /*!
-  \brief Return the nearest face location to the given point.
-    Note that this will fully build an AABB on each call, use the
-    other version in conjunction with `build_aabb_tree' 
-    if you need to call this method more than once.
+  \brief Returns the face location along `ray` nearest to its source point.
+    Note that this will (re-)build an `AABB_tree` on each call. If you need 
+    to  call this function more than once, use `build_aabb_tree()` to cache a 
+    copy of the `AABB_tree`, and use the overloads of this function 
+    that accept a reference to an `AABB_tree` as input.
   
-  \tparam AABBTraits A model of `AABBTraits` used to defined a \cgal `AABB_tree`.
+  \details The following static overload is also defined:
+  -- `static Face_location locate(const Ray_3& ray, const FaceGraph& faceGraph, VertexPointMap vertexPointMap, const Traits& traits = Traits())`
   
-  \param location Point to locate on the faceGraph
+  \tparam AABBTraits A model of `AABBTraits` used to defined an `AABB_tree`.
+  
+  \param ray Ray to intersect with the face graph
   */
   template <class AABBTraits>
-  Face_location locate(const Point_3& location) const
+  Face_location locate(const Ray_3& ray) const
   {
-    return locate<AABBTraits>(location, m_faceGraph, m_vertexPointMap, m_traits);
+    return locate<AABBTraits>(ray, m_faceGraph, m_vertexPointMap, m_traits);
   }
   
-  /*!
-  \brief Return the nearest face location to the given point.
-    Note that this will fully build an AABB on each call, use the
-    other version in conjunction with `build_aabb_tree' 
-    if you need to call this method more than once.
+  /// \cond
   
-  \tparam AABBTraits A model of `AABBTraits` used to defined a \cgal `AABB_tree`.
-  
-  \param location Point to locate on the faceGraph
-  \param faceGraph faceGraph Face graph to intersect
-  \param vertexPointMap Vertex point mapping for `faceGraph`
-  \param traits Optional traits class to use
-  */
   template <class AABBTraits>
-  static Face_location locate(const Point_3& location, const FaceGraph& faceGraph, VertexPointMap vertexPointMap, const Traits& traits = Traits())
+  static Face_location locate(const Ray_3& ray, const FaceGraph& faceGraph, VertexPointMap vertexPointMap, const Traits& traits = Traits())
   {
     AABB_tree<AABBTraits> tree;
     build_aabb_tree(faceGraph, tree);
-    return locate(location, tree, faceGraph, vertexPointMap, traits);
+    return locate(ray, tree, faceGraph, vertexPointMap, traits);
   }
   
+  /// \endcond
+  
   /*!
-  \brief Return the face location along `ray` nearest to
+  \brief Returns the face location along `ray` nearest to
     its source point.
+    
+  \details The following static overload is also defined:
+  -- static Face_location locate(const Ray_3& ray, const AABB_tree<AABBTraits>& tree, const FaceGraph& faceGraph, VertexPointMap vertexPointMap, const Traits& traits = Traits())
     
   \tparam AABBTraits A model of `AABBTraits` used to defined a \cgal `AABB_tree`.
   
-  \param ray Ray to intersect with the faceGraph
-  \param tree A cached AABB to perform the intersection
+  \param ray Ray to intersect with the face graph
+  \param tree A cached `AABB_tree` to perform the intersection with
   */
   template <class AABBTraits>
   Face_location locate(const Ray_3& ray, const AABB_tree<AABBTraits>& tree) const
@@ -2330,23 +2417,14 @@ public:
     return locate(ray, tree, m_faceGraph, m_vertexPointMap, m_traits);
   }
   
-  /*!
-  \brief Return the face location along `ray` nearest to
-    its source point.
-    
-  \tparam AABBTraits A model of `AABBTraits` used to defined a \cgal `AABB_tree`.
+  /// \cond
   
-  \param ray Ray to intersect with the faceGraph
-  \param tree A cached AABB to perform the intersection
-  \param faceGraph faceGraph Face graph to intersect
-  \param vertexPointMap Vertex point mapping for `faceGraph`
-  \param traits Optional traits class to use
-  */
   template <class AABBTraits>
   static Face_location locate(const Ray_3& ray, const AABB_tree<AABBTraits>& tree, const FaceGraph& faceGraph, VertexPointMap vertexPointMap, const Traits& traits = Traits())
   {
     typedef AABB_tree<AABBTraits> AABB_face_graph_tree;
     typename Traits::Construct_barycentric_coordinate_in_triangle_3 cbcit3(traits.construct_barycentric_coordinate_in_triangle_3_object());
+    typename Traits::Construct_barycentric_coordinate cbc(traits.construct_barycentric_coordinate_object());
     typename Traits::Compute_squared_distance_3 csd3(traits.compute_squared_distance_3_object());
     typedef typename AABB_face_graph_tree::template Intersection_and_primitive_id<Ray_3>::Type Intersection_type;
     typedef boost::optional<Intersection_type> Ray_intersection;
@@ -2360,7 +2438,7 @@ public:
     Point_3 nearestPoint = CGAL::ORIGIN;
     face_descriptor nearestFace;
     
-    for (size_t i = 0; i < intersections.size(); ++i)
+    for (std::size_t i = 0; i < intersections.size(); ++i)
     {
       if (intersections[i])
       {
@@ -2388,55 +2466,26 @@ public:
     }
     else
     {
-      return Face_location(GraphTraits::null_face(), Barycentric_coordinate());
+      return Face_location(GraphTraits::null_face(), cbc(FT(0.0), FT(0.0), FT(0.0)));
     }
   }
   
-  /*!
-  \brief Return the face location along `ray` nearest to
-    its source point.
-    Note that this will fully build an AABB on each call, use the
-    other version in conjunction with `build_aabb_tree' 
-    if you need to call this method more than once.
+  /// \endcond
   
-  \tparam AABBTraits A model of `AABBTraits` used to defined a \cgal `AABB_tree`.
-  
-  \param ray Ray to intersect with the faceGraph
-  */
-  template <class AABBTraits>
-  Face_location locate(const Ray_3& ray) const
-  {
-    return locate<AABBTraits>(ray, m_faceGraph, m_vertexPointMap, m_traits);
-  }
-  
-  /*!
-  \brief Return the face location along `ray` nearest to
-    its source point.
-    Note that this will fully build an AABB on each call, use the
-    other version in conjunction with `build_aabb_tree' 
-    if you need to call this method more than once.
-  
-  \tparam AABBTraits A model of `AABBTraits` used to defined a \cgal `AABB_tree`.
-  
-  \param ray Ray to intersect with the face graph
-  \param faceGraph Face graph to intersect
-  \param vertexPointMap Vertex point mapping for `faceGraph`
-  \param traits Optional traits class to use
-  */
-  template <class AABBTraits>
-  static Face_location locate(const Ray_3& ray, const FaceGraph& faceGraph, VertexPointMap vertexPointMap, const Traits& traits = Traits())
-  {
-    AABB_tree<AABBTraits> tree;
-    build_aabb_tree(faceGraph, tree);
-    return locate(ray, tree, faceGraph, vertexPointMap, traits);
-  }
+  /// @}
 
-  /*!
-  \brief Creates an AABB tree suitable for use with `locate`.
+  /// \name AABB Tree Construction
+  /// @{
   
+  /*!
+  \brief Creates an `AABB_tree` suitable for use with `locate`.
+  
+  \details The following static overload is also defined:
+  -- `static void build_aabb_tree(const FaceGraph& faceGraph, AABB_tree<AABBTraits>& outTree)`
+
   \tparam AABBTraits A model of `AABBTraits` used to defined a \cgal `AABB_tree`.
   
-  \param outTree Output parameter to hold the created AABB tree
+  \param outTree Output parameter to store the computed `AABB_tree`
   */
   template <class AABBTraits>
   void build_aabb_tree(AABB_tree<AABBTraits>& outTree) const
@@ -2444,14 +2493,8 @@ public:
     build_aabb_tree(m_faceGraph, outTree);
   }
   
-  /*!
-  \brief Creates an AABB tree suitable for use with `locate`.
-  
-  \tparam AABBTraits A model of `AABBTraits` used to defined a \cgal `AABB_tree`.
-  
-  \param faceGraph Face graph to build the AABB tree from
-  \param outTree Output parameter to hold the created AABB tree
-  */
+  /// \cond
+
   template <class AABBTraits>
   static void build_aabb_tree(const FaceGraph& faceGraph, AABB_tree<AABBTraits>& outTree)
   {
@@ -2460,8 +2503,9 @@ public:
     outTree.rebuild(facesStart, facesEnd, faceGraph);
     outTree.build();
   }
-  
-/// @}
+  /// \endcond
+    
+  /// @}
 
 };
 

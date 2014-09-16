@@ -21,6 +21,9 @@
 \cgalPkgSummaryEnd
 
 \cgalPkgShortInfoBegin
+
+\cgalPkgLicense{\ref licensesLGPL "LGPL"}
+\cgalPkgDependsOn{\ref PkgBGLSummary}
 \cgalPkgDemo{Operations on Polyhedra,polyhedron_3.zip}
 \cgalPkgShortInfoEnd
 
@@ -45,6 +48,14 @@
 
 ## Enums ##
 
-- `CGAL::PolyhedronShortestPath::Barycentric_coordinate_type`
+- `CGAL::Polyhedron_shortest_paths_3::Barycentric_coordinate_type`
 
 */
+
+
+/*!
+ \namespace CGAL::Polyhedron_shortest_paths_3
+ 
+ \brief Namespace containing support members specific to this package.
+ */
+

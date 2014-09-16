@@ -107,12 +107,14 @@ struct Edge_sequence_collector
   }
 };
 
-template <class FT, class B>
-B random_coordinate(CGAL::Random& rand)
+template <class Traits>
+typename Traits::Barycentric_coordinate random_coordinate(CGAL::Random& rand)
 {
+  typedef typename Traits::FT FT;
+  typename Traits::Construct_barycentric_coordinate construct_barycentric_coordinate;
   FT u = rand.uniform_real(FT(0.0), FT(1.0));
   FT v = rand.uniform_real(FT(0.0), FT(FT(1.0) - u));
-  return B(u, v, FT(FT(1.0) - u - v));
+  return construct_barycentric_coordinate(u, v, FT(FT(1.0) - u - v));
 }
 
 template <class FT>
@@ -121,6 +123,7 @@ FT squared(FT in)
   return in * in;
 }
 
+/*
 template<class FaceGraph>
 struct Plane_from_facet {
   typedef typename FaceGraph::Plane_3 Plane_3;
@@ -140,6 +143,7 @@ void construct_polyhedron_planes(FaceGraph& out)
 {
   std::transform( out.facets_begin(), out.facets_end(), out.planes_begin(), Plane_from_facet<FaceGraph>());
 }
+*/
 
 template <class FaceGraph>
 typename FaceGraph::Halfedge_handle make_regular_tetrahedron(FaceGraph& out)
@@ -153,7 +157,7 @@ typename FaceGraph::Halfedge_handle make_regular_tetrahedron(FaceGraph& out)
     typename FaceGraph::Point_3(-FT(1.0), FT(0.0), -rsqrt2),
     typename FaceGraph::Point_3(FT(0.0), FT(1.0), rsqrt2),
     typename FaceGraph::Point_3(FT(0.0), -FT(1.0), rsqrt2));
-  construct_polyhedron_planes(out);
+  //construct_polyhedron_planes(out);
   return result;
 }
 

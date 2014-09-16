@@ -76,6 +76,8 @@ size_t numVertices = 0;
 
 Face_location next_location(Polyhedron_shortest_path& shortestPath, Polyhedron_3& polyhedron, const std::vector<vertex_descriptor>& vertices)
 {
+  Traits::Construct_barycentric_coordinate construct_barycentric_coordinate;
+  
   if (randomizer)
   {
     return shortestPath.face_location(vertices[randomizer->get_int(0, vertices.size())]);
@@ -110,10 +112,10 @@ Face_location next_location(Polyhedron_shortest_path& shortestPath, Polyhedron_3
       double alpha0, alpha1, alpha2;
       std::cin >> x >> y >> alpha0 >> alpha1 >> alpha2;
       std::pair<halfedge_descriptor, bool> he = CGAL::halfedge(vertices[x], vertices[y], polyhedron);
-      return Polyhedron_shortest_path::Face_location(CGAL::face(he.first, polyhedron), Barycentric_coordinate(FT(alpha0), FT(alpha1), FT(alpha2)));
+      return Polyhedron_shortest_path::Face_location(CGAL::face(he.first, polyhedron), construct_barycentric_coordinate(FT(alpha0), FT(alpha1), FT(alpha2)));
     }
     
-    return Face_location(GraphTraits::null_face(), Barycentric_coordinate());
+    return Face_location(GraphTraits::null_face(), construct_barycentric_coordinate(FT(0.0), FT(0.0), FT(0.0)));
   }
 }
 

@@ -9,6 +9,7 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <CGAL/Polyhedron_3.h>
+#include <CGAL/Polyhedron_items_with_id_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
 
 #include <CGAL/Polyhedron_shortest_path/Polyhedron_shortest_path_traits.h>
@@ -35,7 +36,7 @@
 BOOST_AUTO_TEST_CASE( test_find_nearest_face_location_on_surface )
 {
   typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
-  typedef CGAL::Polyhedron_3<Kernel> Polyhedron_3;
+  typedef CGAL::Polyhedron_3<Kernel, CGAL::Polyhedron_items_with_id_3> Polyhedron_3;
   typedef CGAL::Polyhedron_shortest_path_default_traits<Kernel, Polyhedron_3> Traits;
   typedef Traits::Barycentric_coordinate Barycentric_coordinate;
   typedef Traits::FT FT;
@@ -90,7 +91,7 @@ BOOST_AUTO_TEST_CASE( test_find_nearest_face_location_on_surface )
 
     Triangle_3 faceTriangle = CGAL::internal::triangle_from_halfedge<Triangle_3, Polyhedron_3, VPM>(CGAL::halfedge(face, polyhedron), polyhedron, vertexPointMap);
     
-    Barycentric_coordinate location = CGAL::test::random_coordinate<FT, Barycentric_coordinate>(random);
+    Barycentric_coordinate location = CGAL::test::random_coordinate<Traits>(random);
     
     Point_3 location3d = construct_barycenter_3(faceTriangle[0], location[0], faceTriangle[1], location[1], faceTriangle[2], location[2]);
     

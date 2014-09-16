@@ -9,6 +9,7 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <CGAL/Polyhedron_3.h>
+#include <CGAL/Polyhedron_items_with_id_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
 
 #include <CGAL/Random.h>
@@ -23,7 +24,7 @@
 #include <fstream>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
-typedef CGAL::Polyhedron_3<Kernel> Polyhedron_3;
+typedef CGAL::Polyhedron_3<Kernel, CGAL::Polyhedron_items_with_id_3> Polyhedron_3;
 typedef CGAL::Polyhedron_shortest_path_default_traits<Kernel, Polyhedron_3> Traits;
 typedef CGAL::Polyhedron_shortest_path<Traits> Polyhedron_shortest_path;
 typedef boost::graph_traits<Polyhedron_3> GraphTraits;
@@ -33,9 +34,10 @@ typedef GraphTraits::face_iterator face_iterator;
 
 Traits::Barycentric_coordinate random_coordinate(CGAL::Random& rand)
 {
+  typename Traits::Construct_barycentric_coordinate construct_barycentric_coordinate;
   Traits::FT u = rand.uniform_real(Traits::FT(0.0), Traits::FT(1.0));
   Traits::FT v = rand.uniform_real(Traits::FT(0.0), Traits::FT(Traits::FT(1.0) - u));
-  return Traits::Barycentric_coordinate(u, v, Traits::FT(Traits::FT(1.0) - u - v));
+  return construct_barycentric_coordinate(u, v, Traits::FT(Traits::FT(1.0) - u - v));
 }
 
 int main()
