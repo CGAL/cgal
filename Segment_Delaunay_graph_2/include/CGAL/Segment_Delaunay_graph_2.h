@@ -1485,23 +1485,12 @@ protected:
 
 // choosing the correct bisector constructors
 private:
-  template<typename T>
-  struct CheckForTypeBis
-  {
-  private:
-    typedef char                      yes;
-    typedef struct { char array[2]; } no;
+  template <typename T, typename Tag_has_bisector_constructions>
+  struct ConstructionHelper {};
 
-    template<typename C> static yes test(
-                 typename C::Has_bisector_constructions_type*);
-    template<typename C> static no  test(...);
-  public:
-    static const bool value = sizeof(test<T>(0)) == sizeof(yes);
-  };
-
-  // default L2 constructors
-  template <typename T, bool>
-  struct ConstructionHelper
+  // take constructors from L2
+  template <typename T>
+  struct ConstructionHelper<T, Tag_false>
   {
     typedef CGAL_SEGMENT_DELAUNAY_GRAPH_2_NS::
               Construct_sdg_bisector_2<Gt,
@@ -1519,7 +1508,7 @@ private:
 
   // constructors from traits
   template <typename T>
-  struct ConstructionHelper<T, true>
+  struct ConstructionHelper<T, Tag_true>
   {
     typedef
             typename T:: template Construct_sdg_bisector_2
@@ -1538,9 +1527,9 @@ private:
   template <typename T>
   struct ConstructionChooser
   {
-    typedef typename ConstructionHelper<T, CheckForTypeBis<T>::value>::tagbis tagbis;
-    typedef typename ConstructionHelper<T, CheckForTypeBis<T>::value>::tagbisray tagbisray;
-    typedef typename ConstructionHelper<T, CheckForTypeBis<T>::value>::tagbisseg tagbisseg;
+    typedef typename ConstructionHelper<T, typename T::Tag_has_bisector_constructions>::tagbis tagbis;
+    typedef typename ConstructionHelper<T, typename T::Tag_has_bisector_constructions>::tagbisray tagbisray;
+    typedef typename ConstructionHelper<T, typename T::Tag_has_bisector_constructions>::tagbisseg tagbisseg;
   };
 
 
