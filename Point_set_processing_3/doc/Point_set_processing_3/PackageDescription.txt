@@ -37,6 +37,7 @@
 - `CGAL::mst_orient_normals()`
 - `CGAL::write_off_points()`
 - `CGAL::write_xyz_points()`
+- `CGAL::construct_mst()`
 
 */
 

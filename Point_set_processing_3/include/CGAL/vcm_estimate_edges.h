@@ -223,13 +223,8 @@ compute_delaunay_graph (Undirected_Graph& g, ///< constructed graph.
 /// determining which point must be considered as an edge one or not (using a criterion
 /// based on the eigenvalues of the covariance matrices).
 ///
-/// VCM mainly consists in first computing the Voronoi diagram of the points.
-/// Then, it intersects each of the Voronoi cells with a sphere of a given radius.
-/// Finally, it computes the covariance matrices of the Voronoi cells.
-/// Additionally, it can convolve (sum) the matrices of the points contained in a sphere.
-/// This feature may be useful if the point set is noised as the convolution will reduce
-/// the influence of the noise.
-//
+/// See `vcm_compute()` for more details on the VCM.
+///
 /// @tparam ForwardIterator iterator over input points.
 /// @tparam PointPMap is a model of `ReadablePropertyMap` with a value_type = `Kernel::Point_3`.
 /// @tparam Kernel Geometric traits class.
@@ -283,14 +278,14 @@ vcm_estimate_edges (ForwardIterator first, ///< iterator over the first input po
 /// Constructs a minimum spanning tree where the vertices are the points
 /// given in argument.
 /// First, it creates a graph where the vertices are the points and there is an edge
-/// between each vertices contained in a sphere of a given radius.
-/// The cost on the edges is the norm on the Lp space.
+/// between each vertices contained in a sphere of a given radius (`rips_radius`).
+/// The cost on the edges is the norm on the Lp space to the power p (where p = `exponent`).
 /// Secondly, it constructs the MST using BGL and the Kruskal algorithm.
 /// It returns a vector of segments where each segment represent a polyline which belongs to the estimated feature.
 /// @tparam Kernel Geometric traits class.
 template < typename Kernel >
 std::vector<typename Kernel::Segment_3>
-construct_mst (std::vector<typename Kernel::Point_3> points_on_edges,
+construct_mst (std::vector<typename Kernel::Point_3> points_on_edges, ///< estimated edges points (see `vcm_estimate_edges()`).
                const Kernel& k, ///< geometric traits.
                double rips_radius = 0.1, ///< radius used for the construction of the Rips graph.
                float exponent = 2 ///< exponent of the cost between edges.

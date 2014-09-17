@@ -223,10 +223,15 @@ Function `vcm_estimate_edges()` estimates the feature edges of the
 point set using its Voronoi Covariance Measure.
 It is based on the article \cgalCite{cgal:mog-vbcfe-11}.
 
+It first computes the VCM of the points set using `vcm_compute()`. Then, it estimates the edges
+points by testing if a ratio of eigenvalues is greater than a given threshold.
+Finally, it can construct a Minimum Spanning Tree of the resulting points using
+the `construct_mst()` function.
+
 \subsection Point_set_processing_3Example_6 Example
 
 The following example reads a point set from a file, estimates the
-features edges:
+feature edges:
 \cgalExample{Point_set_processing_3/edges_example.cpp}
 
 */ 
