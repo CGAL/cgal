@@ -145,11 +145,11 @@ void test_model_methods() {
   typedef typename Arrangement_2::Point_2            Point_2;
   typedef typename Arrangement_2::Face_handle        Face_handle;
   typedef typename Arrangement_2::Halfedge_handle    Halfedge_handle;
-  typedef typename Visibility_2::Regularization_tag  Regularization_tag;
-  typedef typename Visibility_2::Supports_general_polygon_tag
-    Supports_general_polygon_tag;
-  typedef typename Visibility_2::Supports_simple_polygon_tag 
-    Supports_simple_polygon_tag;
+  typedef typename Visibility_2::Regularization_category  Regularization_category;
+  typedef typename Visibility_2::Supports_general_polygon_category
+    Supports_general_polygon_category;
+  typedef typename Visibility_2::Supports_simple_polygon_category 
+    Supports_simple_polygon_category;
   typedef typename Arrangement_2::Geometry_traits_2::Segment_2 
     Segment_2;
 

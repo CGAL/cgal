@@ -376,7 +376,7 @@ bool run_test_case_from_file(Visibility_2 visibility, std::ifstream &input) {
     return false;
   }
 
-  if(Visibility_2::Regularization_tag::value){
+  if(Visibility_2::Regularization_category::value){
     regularize(arr_correct_out);   
   }
 
@@ -427,7 +427,7 @@ void run_tests(int case_number_simple, int case_number_non_simple) {
   
   Visibility_2 visibility;
   bool one_failed = false; 
-  if (Visibility_2::Supports_simple_polygon_tag::value 
+  if (Visibility_2::Supports_simple_polygon_category::value 
       && case_number_simple >= 1) {
     int cnt = 0;
     int cnt_passed = 0;
@@ -462,7 +462,7 @@ void run_tests(int case_number_simple, int case_number_non_simple) {
     }
     std::cout << ")" << std::endl;
   }
-  if (Visibility_2::Supports_general_polygon_tag::value
+  if (Visibility_2::Supports_general_polygon_category::value
       && case_number_non_simple >= 1) {
 
     int cnt = 0;
@@ -953,16 +953,16 @@ void simple_benchmark(Visibility_2_fst &visibility_fst,
   typedef typename Geometry_traits_2::Point_2               Point_2;
   typedef typename Geometry_traits_2::Segment_2             Segment_2;
 
-  assert(Visibility_2_fst::Regularization_tag::value 
-      == Visibility_2_snd::Regularization_tag::value);
+  assert(Visibility_2_fst::Regularization_category::value 
+      == Visibility_2_snd::Regularization_category::value);
 
   Arrangement_2 arr;
   create_arrangement_from_env_file<Arrangement_2>(arr, input);
 
   int query_cnt(0);
   double qtime1(0), qtime2(0), ptime1(0), ptime2(0);
-  if (Visibility_2_fst::Supports_general_polygon_tag::value
-    && Visibility_2_snd::Supports_general_polygon_tag::value) {
+  if (Visibility_2_fst::Supports_general_polygon_category::value
+    && Visibility_2_snd::Supports_general_polygon_category::value) {
 
     Face_const_iterator fit;
     Timer timer;
@@ -1136,7 +1136,7 @@ void pure_benchmark(  Visibility_2 &visibility,
 
   int query_cnt(0);
   double qtime(0), ptime(0);
-  if (Visibility_2::Supports_general_polygon_tag::value) {
+  if (Visibility_2::Supports_general_polygon_category::value) {
 
     Face_const_iterator fit;
     Timer timer;
@@ -1179,7 +1179,7 @@ void pure_benchmark(  Visibility_2 &visibility,
 
   // std::cout << "NAME TAG  PreProTime NQueries TimeQueries TotalTime QAVE TAVE" << std::endl; 
   std::cout << " " << visibility.name() 
-            << " " << Visibility_2::Regularization_tag::value 
+            << " " << Visibility_2::Regularization_category::value 
             << "  " << ptime 
             << " " << query_cnt 
             << " " << qtime 
@@ -1312,7 +1312,7 @@ void test_star_shape(Visibility_2 &visibility,
   std::cout << "Input arrangement has: "
             << GREEN << arr.number_of_faces()-1 << RESET
             << " faces." << std::endl;
-  if (Visibility_2::Supports_general_polygon_tag::value) {
+  if (Visibility_2::Supports_general_polygon_category::value) {
     int cnt(1);
     Face_const_iterator fit;
     for (fit = arr.faces_begin() ; fit != arr.faces_end() ; fit++) {

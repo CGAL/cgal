@@ -56,7 +56,7 @@ public:
     Preprocessed_visibility_2() : p_arr(NULL) {};
 
 	/*! Constructor given an arrangement and the Regularization tag. */
-    Preprocessed_visibility_2(Input_Arrangement_2& arr/*, Regularization_tag r_t*/): p_arr(&arr) {};
+    Preprocessed_visibility_2(Input_Arrangement_2& arr/*, Regularization_category r_t*/): p_arr(&arr) {};
 
 	bool is_attached() {
 		return (p_arr != NULL);

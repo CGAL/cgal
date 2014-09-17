@@ -47,8 +47,8 @@ using namespace std;
 namespace CGAL {
 
 template < class Arrangement_2_,
-           class RegularizationTag = CGAL::Tag_true,
-           class ConcurrencyTag = CGAL::Parallel_tag >
+           class RegularizationCategory = CGAL::Tag_true,
+           class ConcurrencyCategory = CGAL::Parallel_tag >
 class Parallel_rotational_sweep_visibility_2
 {
 
@@ -76,9 +76,9 @@ public:
   typedef typename Geometry_traits_2::FT                Number_type;
   typedef typename Geometry_traits_2::Object_2          Object_2;
 
-  typedef RegularizationTag                             Regularization_tag;
-  typedef CGAL::Tag_true                                Supports_general_polygon_tag;
-  typedef CGAL::Tag_true                                Supports_simple_polygon_tag;
+  typedef RegularizationCategory                             Regularization_category;
+  typedef CGAL::Tag_true                                Supports_general_polygon_category;
+  typedef CGAL::Tag_true                                Supports_simple_polygon_category;
 
 //private data types declaration
   typedef Ccb_halfedge_const_circulator                 Circulator;
@@ -835,7 +835,7 @@ private:
       incident.push_back( std::make_pair( vs[es[i].source_index()].alias_index(), i ) );
       incident.push_back( std::make_pair( vs[es[i].target_index()].alias_index(), i ) );
     }
-    sort_incident( ConcurrencyTag() );
+    sort_incident( ConcurrencyCategory() );
     
     int i = 0;
     while ( i < incident.size() ) {
@@ -1042,9 +1042,9 @@ private:
     if ( query_type != FACE_QUERY )
       add_box();
 
-    init_quadrant_parallel( ConcurrencyTag() );
+    init_quadrant_parallel( ConcurrencyCategory() );
 
-    init_orientation_parallel( ConcurrencyTag() );
+    init_orientation_parallel( ConcurrencyCategory() );
 
     good_vdx.reserve( vs.size() );
     for ( int i = 0; i < vs.size(); i++ )
@@ -1052,7 +1052,7 @@ private:
 
     // sort vertices by their polar angle
     compute_shifted_source();
-    sort_vertices( ConcurrencyTag() );
+    sort_vertices( ConcurrencyCategory() );
 
     // Build the reverse indexes
     for ( int i = 0; i < good_vdx.size(); i++ ) {
@@ -1139,7 +1139,7 @@ private:
      * There is a bug here. When I verified the intersection parallelly,
      * the program crashed. Thus, I use the Sequential_tag here.
      * I will solve this one later.
-    do_intersect_parallel( dp, is, ConcurrencyTag() );
+    do_intersect_parallel( dp, is, ConcurrencyCategory() );
     */
     do_intersect_parallel( dp, is, CGAL::Sequential_tag() );
     for ( int i = 0; i < es.size(); i++ ) {
@@ -1148,7 +1148,7 @@ private:
     }
 
     // initialize the first cone
-    int step = default_cone_size( ConcurrencyTag() );
+    int step = default_cone_size( ConcurrencyCategory() );
     int cone_base = 0;
     int cone_next = cone_base + step;
     if ( cone_next + 16 >= vs.size() )
@@ -1357,7 +1357,7 @@ private:
       sub_regions.push_back( Sub_region( pts_num ) );
     }
 
-    compute_visibility_parallel( ConcurrencyTag() );
+    compute_visibility_parallel( ConcurrencyCategory() );
 
     merge_result();
 
@@ -1544,7 +1544,7 @@ public:
           < Parallel_rotational_sweep_visibility_2 >
           ( geom_traits, query_pt, polygon_out, arr_out );
 
-    conditional_regularize( arr_out, Regularization_tag() );
+    conditional_regularize( arr_out, Regularization_category() );
 
     if ( arr_out.faces_begin()->is_unbounded() )
       return ++arr_out.faces_begin();
@@ -1569,7 +1569,7 @@ public:
           < Parallel_rotational_sweep_visibility_2 >
           ( geom_traits, query_pt, polygon, arr_out );
 
-    conditional_regularize( arr_out, Regularization_tag() );
+    conditional_regularize( arr_out, Regularization_category() );
 
     if ( arr_out.faces_begin()->is_unbounded() )
       return ++arr_out.faces_begin();

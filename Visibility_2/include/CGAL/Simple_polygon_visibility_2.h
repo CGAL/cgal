@@ -33,7 +33,7 @@
 
 namespace CGAL {
 
-template<class Arrangement_2_, class RegularizationTag = CGAL::Tag_true> 
+template<class Arrangement_2_, class RegularizationCategory = CGAL::Tag_true> 
 class Simple_polygon_visibility_2 {
 
 public:
@@ -62,9 +62,9 @@ public:
   typedef typename Geometry_traits_2::FT                Number_type;
   typedef typename Geometry_traits_2::Object_2          Object_2;
 
-  typedef RegularizationTag                       Regularization_tag;
-  typedef CGAL::Tag_false                         Supports_general_polygon_tag;
-  typedef CGAL::Tag_true                          Supports_simple_polygon_tag;                                        
+  typedef RegularizationCategory                       Regularization_category;
+  typedef CGAL::Tag_false                         Supports_general_polygon_category;
+  typedef CGAL::Tag_true                          Supports_simple_polygon_category;                                        
 
   Simple_polygon_visibility_2() : p_arr(NULL), geom_traits(NULL) {};
 
@@ -151,7 +151,7 @@ public:
 
     CGAL_precondition(out_arr.number_of_isolated_vertices() == 0);
     CGAL_precondition(s.size() == 0);
-    conditional_regularize(out_arr, Regularization_tag());
+    conditional_regularize(out_arr, Regularization_category());
     vertices.clear();
     if (out_arr.faces_begin()->is_unbounded()) {
       return ++out_arr.faces_begin();
@@ -237,7 +237,7 @@ public:
                                                             out_arr);
     CGAL_precondition(out_arr.number_of_isolated_vertices() == 0);
     CGAL_precondition(s.size() == 0);
-    conditional_regularize(out_arr, Regularization_tag());
+    conditional_regularize(out_arr, Regularization_category());
     vertices.clear();
     if (out_arr.faces_begin()->is_unbounded()) {
       return ++out_arr.faces_begin();

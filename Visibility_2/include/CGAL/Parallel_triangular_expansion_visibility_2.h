@@ -36,8 +36,8 @@
 namespace CGAL {
 
 template < class Arrangement_2_,
-           class RegularizationTag = CGAL::Tag_true,
-           class ConcurrencyTag = CGAL::Parallel_tag >
+           class RegularizationCategory = CGAL::Tag_true,
+           class ConcurrencyCategory = CGAL::Parallel_tag >
 class Parallel_triangular_expansion_visibility_2
 {
   typedef typename Arrangement_2_::Geometry_traits_2    Geometry_traits_2;
@@ -65,10 +65,10 @@ public:
   typedef typename Geometry_traits_2::Object_2          Object_2;
 
   // TODO 
-  typedef RegularizationTag                             Regularization_tag;
+  typedef RegularizationCategory                             Regularization_category;
   
-  typedef CGAL::Tag_true                                Supports_general_polygon_tag;
-  typedef CGAL::Tag_true                                Supports_simple_polygon_tag;    
+  typedef CGAL::Tag_true                                Supports_general_polygon_category;
+  typedef CGAL::Tag_true                                Supports_simple_polygon_category;    
 
 private:
   typedef CGAL::Triangulation_vertex_base_2<K>                     Vb;
@@ -450,7 +450,7 @@ private:
 
     Result_container results;
 
-    compute_visibility_parallel( edges, results, ConcurrencyTag() );
+    compute_visibility_parallel( edges, results, ConcurrencyCategory() );
 
     // Generate results
     std::vector<Segment_2> segs;

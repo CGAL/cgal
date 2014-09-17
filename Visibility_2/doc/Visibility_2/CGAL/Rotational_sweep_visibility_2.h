@@ -12,7 +12,7 @@ namespace CGAL {
 It must be an instance of CGAL::Arrangement_2, where its CGAL::Arrangement_2::Traits_2 must be an instance of 
 CGAL::Arr_segment_traits_2, or of CGAL::Arr_non_caching_segment_traits_2. 
 
-\tparam RegularizationTag indicates whether the output should be regularized. It can be
+\tparam RegularizationCategory indicates whether the output should be regularized. It can be
 specified by one of the following: ::Tag_true or ::Tag_false, where ::Tag_false is the default value.
 
 
@@ -23,7 +23,7 @@ specified by one of the following: ::Tag_true or ::Tag_false, where ::Tag_false 
 \sa `CGAL::Triangular_expansion_visibility_2`
 
 */
-template <typename Arrangement_2_, typename RegularizationTag = Tag_true>
+template <typename Arrangement_2_, typename RegularizationCategory = Tag_true>
 class Rotational_sweep_visibility_2 {
 public:
 
@@ -40,19 +40,19 @@ public:
 /// \name Tags 
 /// @{
   /*!
-  \copydoc ::Visibility_2::Regularization_tag
+  \copydoc ::Visibility_2::Regularization_category
   */
-  typedef RegularizationTag Regularization_tag;
+  typedef RegularizationCategory Regularization_category;
   
   /*! 
-    See \ref Visibility_2::Supports_general_polygon_tag.
+    See \ref Visibility_2::Supports_general_polygon_category.
   */
-  typedef ::Tag_true Supports_general_polygon_tag; 
+  typedef ::Tag_true Supports_general_polygon_category; 
 
   /*! 
-    See \ref Visibility_2::Supports_simple_polygon_tag.
+    See \ref Visibility_2::Supports_simple_polygon_category.
   */
-  typedef ::Tag_true Supports_simple_polygon_tag; 
+  typedef ::Tag_true Supports_simple_polygon_category; 
 /// @}
 
 

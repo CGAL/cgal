@@ -30,7 +30,7 @@
 
 namespace CGAL {
 
-template<class Arrangement_2_ , class RegularizationTag = CGAL::Tag_true >
+template<class Arrangement_2_ , class RegularizationCategory = CGAL::Tag_true >
 class Rotational_sweep_visibility_2 {
 public:
   typedef Arrangement_2_                                Arrangement_2;
@@ -55,9 +55,9 @@ public:
   typedef typename Geometry_traits_2::FT                Number_type;
   typedef typename Geometry_traits_2::Object_2          Object_2;
 
-  typedef RegularizationTag                             Regularization_tag;
-  typedef CGAL::Tag_true                                Supports_general_polygon_tag;
-  typedef CGAL::Tag_true                                Supports_simple_polygon_tag;
+  typedef RegularizationCategory                             Regularization_category;
+  typedef CGAL::Tag_true                                Supports_general_polygon_category;
+  typedef CGAL::Tag_true                                Supports_simple_polygon_category;
 
 private:
   typedef std::vector<Point_2>                          Points;
@@ -357,7 +357,7 @@ public:
         (geom_traits, q, polygon_out, arr_out);
     }
 
-    conditional_regularize(arr_out, Regularization_tag());
+    conditional_regularize(arr_out, Regularization_category());
 
     if (arr_out.faces_begin()->is_unbounded())
       return ++arr_out.faces_begin();
@@ -376,7 +376,7 @@ public:
 
     visibility_region_impl(f, q);
     Visibility_2::report_while_handling_needles<Rotational_sweep_visibility_2>(geom_traits, q, polygon, arr_out);
-    conditional_regularize(arr_out, Regularization_tag());
+    conditional_regularize(arr_out, Regularization_category());
     if (arr_out.faces_begin()->is_unbounded())
       return ++arr_out.faces_begin();
     else

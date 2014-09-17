@@ -52,32 +52,32 @@ void deploy_benchmark(CGAL::Query_choice& qchoice, std::ifstream& input) {
       (v1, v2, qchoice, input);
 }
 
-template <class Visibility_fst, class Regularization_tag>
+template <class Visibility_fst, class Regularization_category>
 void define_snd_class(std::string name2, CGAL::Query_choice& qchoice, std::ifstream& input){
   if (name2 == "S")
-    deploy_benchmark<Visibility_fst, CGAL::Simple_polygon_visibility_2<Arrangement_2, Regularization_tag> >
+    deploy_benchmark<Visibility_fst, CGAL::Simple_polygon_visibility_2<Arrangement_2, Regularization_category> >
         (qchoice, input);
   if (name2 == "T")
-    deploy_benchmark<Visibility_fst, CGAL::Triangular_expansion_visibility_2<Arrangement_2, Regularization_tag> >
+    deploy_benchmark<Visibility_fst, CGAL::Triangular_expansion_visibility_2<Arrangement_2, Regularization_category> >
         (qchoice, input);
   if (name2 == "R")
-    deploy_benchmark<Visibility_fst, CGAL::Rotational_sweep_visibility_2<Arrangement_2, Regularization_tag> >
+    deploy_benchmark<Visibility_fst, CGAL::Rotational_sweep_visibility_2<Arrangement_2, Regularization_category> >
         (qchoice, input);
   if (name2 == "PR")
-    deploy_benchmark<Visibility_fst, CGAL::Parallel_rotational_sweep_visibility_2<Arrangement_2, Regularization_tag, CGAL::Parallel_tag> >
+    deploy_benchmark<Visibility_fst, CGAL::Parallel_rotational_sweep_visibility_2<Arrangement_2, Regularization_category, CGAL::Parallel_tag> >
         (qchoice, input);
 }
 
-template <class Regularization_tag>
+template <class Regularization_category>
 void benchmark_two_classes(std::string name1, std::string name2, CGAL::Query_choice& qchoice, std::ifstream& input) {
   if (name1 == "S")
-    define_snd_class<CGAL::Simple_polygon_visibility_2<Arrangement_2, Regularization_tag>, Regularization_tag> (name2, qchoice, input);
+    define_snd_class<CGAL::Simple_polygon_visibility_2<Arrangement_2, Regularization_category>, Regularization_category> (name2, qchoice, input);
   if (name1 == "T")
-    define_snd_class<CGAL::Triangular_expansion_visibility_2<Arrangement_2, Regularization_tag>, Regularization_tag> (name2, qchoice, input);
+    define_snd_class<CGAL::Triangular_expansion_visibility_2<Arrangement_2, Regularization_category>, Regularization_category> (name2, qchoice, input);
   if (name1 == "R")
-    define_snd_class<CGAL::Rotational_sweep_visibility_2<Arrangement_2, Regularization_tag>, Regularization_tag> (name2, qchoice, input);
+    define_snd_class<CGAL::Rotational_sweep_visibility_2<Arrangement_2, Regularization_category>, Regularization_category> (name2, qchoice, input);
   if (name1 == "PR")
-    define_snd_class<CGAL::Parallel_rotational_sweep_visibility_2<Arrangement_2, Regularization_tag, CGAL::Parallel_tag>, Regularization_tag> (name2, qchoice, input);
+    define_snd_class<CGAL::Parallel_rotational_sweep_visibility_2<Arrangement_2, Regularization_category, CGAL::Parallel_tag>, Regularization_category> (name2, qchoice, input);
 }
 
 void print_usage() {

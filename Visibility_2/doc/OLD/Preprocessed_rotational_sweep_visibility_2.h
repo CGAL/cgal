@@ -16,19 +16,19 @@ a query point, which is one of the essential steps to achive linear query time. 
 
 \tparam Arrangement_2 is the type of input polygonal environment and output visibility polygon.
 
-\tparam RegularizationTag indicates whether the output should be regularized. It can be
+\tparam RegularizationCategory indicates whether the output should be regularized. It can be
 specified by one of the following: ::Tag_true or ::Tag_false, where ::Tag_false is the default value.
 
 
 \cgalModels `Visibility_2` 
 
-\sa `CGAL::Simple_polygon_visibility_2<Arrangement_2, RegularizationTag>`
-\sa `CGAL::Rotational_sweep_visibility_2<Arrangement_2, RegularizationTag>`
-\sa `CGAL::Triangular_expansion_visibility_2<Arrangement_2, RegularizationTag>`
+\sa `CGAL::Simple_polygon_visibility_2<Arrangement_2, RegularizationCategory>`
+\sa `CGAL::Rotational_sweep_visibility_2<Arrangement_2, RegularizationCategory>`
+\sa `CGAL::Triangular_expansion_visibility_2<Arrangement_2, RegularizationCategory>`
 
 
 */
-template <typename Arrangement_2, typename RegularizationTag = Tag_false>
+template <typename Arrangement_2, typename RegularizationCategory = Tag_false>
 class Preprocessed_rotational_sweep_visibility_2 {
 public:
 
@@ -68,19 +68,19 @@ public:
 /// \name Tags 
 /// @{
   /*! 
-    Tag identifying whether the regularized visibility area is computed. 
+    identifies whether the regularized visibility area is computed. 
   */
-  typedef RegularizationTag Regularization_tag;
+  typedef RegularizationCategory Regularization_category;
   
   /*! 
-    Tag identifying that the class supports general polygons (i.e.\ with holes). 
+    identifies that the class supports general polygons (i.e.\ with holes). 
   */
-  typedef ::Tag_true Supports_general_polygon_tag; 
+  typedef ::Tag_true Supports_general_polygon_category; 
 
   /*! 
-    Tag identifying that the class supports general simple polygons. 
+    identifies that the class supports general simple polygons. 
   */
-  typedef ::Tag_true Supports_simple_polygon_tag; 
+  typedef ::Tag_true Supports_simple_polygon_category; 
 /// @}
 
 

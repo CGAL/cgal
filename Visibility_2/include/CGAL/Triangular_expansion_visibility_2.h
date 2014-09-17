@@ -28,7 +28,7 @@
 
 namespace CGAL {
 
-template<class Arrangement_2_ , class RegularizationTag = CGAL::Tag_true >
+template<class Arrangement_2_ , class RegularizationCategory = CGAL::Tag_true >
 class Triangular_expansion_visibility_2 {
   typedef typename Arrangement_2_::Geometry_traits_2    Geometry_traits_2;
   typedef typename Geometry_traits_2::Kernel            K;
@@ -55,10 +55,10 @@ public:
   typedef typename Geometry_traits_2::Object_2          Object_2;
 
   // TODO 
-  typedef RegularizationTag                       Regularization_tag;
+  typedef RegularizationCategory                       Regularization_category;
   
-  typedef CGAL::Tag_true                          Supports_general_polygon_tag;
-  typedef CGAL::Tag_true                          Supports_simple_polygon_tag;    
+  typedef CGAL::Tag_true                          Supports_general_polygon_category;
+  typedef CGAL::Tag_true                          Supports_simple_polygon_category;    
 
 private:
   typedef CGAL::Triangulation_vertex_base_2<K>                     Vb;
@@ -303,7 +303,7 @@ public:
     if(ro != CGAL::CLOCKWISE && lo != CGAL::COUNTERCLOCKWISE){
       *oit++ = nvh->point(); 
     }
-    if(!Regularization_tag::value){
+    if(!Regularization_category::value){
       assert(!(ro == CGAL::COLLINEAR && lo == CGAL::COLLINEAR));
       // we have to check whether a needle starts here. 
       if(p_cdt->is_constrained(le) && !p_cdt->is_constrained(re) && ro == CGAL::COLLINEAR)

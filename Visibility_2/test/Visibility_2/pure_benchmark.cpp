@@ -51,17 +51,17 @@ void deploy_pure_benchmark(const CGAL::Query_choice& qchoice, std::ifstream& inp
 }
 
 
-template <class Regularization_tag>
+template <class Regularization_category>
 void benchmark_one_class(std::string name, const CGAL::Query_choice& qchoice, std::string input_arr_file) {
   std::ifstream input(input_arr_file.c_str());
   if (name == "S")
-    deploy_pure_benchmark<CGAL::Simple_polygon_visibility_2<Arrangement_2, Regularization_tag> > (qchoice, input);
+    deploy_pure_benchmark<CGAL::Simple_polygon_visibility_2<Arrangement_2, Regularization_category> > (qchoice, input);
   if (name == "T")
-    deploy_pure_benchmark<CGAL::Triangular_expansion_visibility_2<Arrangement_2, Regularization_tag> > (qchoice, input);
+    deploy_pure_benchmark<CGAL::Triangular_expansion_visibility_2<Arrangement_2, Regularization_category> > (qchoice, input);
   if (name == "R")
-    deploy_pure_benchmark<CGAL::Rotational_sweep_visibility_2<Arrangement_2, Regularization_tag> > (qchoice, input);
+    deploy_pure_benchmark<CGAL::Rotational_sweep_visibility_2<Arrangement_2, Regularization_category> > (qchoice, input);
   if (name == "PR")
-    deploy_pure_benchmark<CGAL::Parallel_rotational_sweep_visibility_2<Arrangement_2, Regularization_tag, CGAL::Parallel_tag> > (qchoice, input);
+    deploy_pure_benchmark<CGAL::Parallel_rotational_sweep_visibility_2<Arrangement_2, Regularization_category, CGAL::Parallel_tag> > (qchoice, input);
 }
 
 void print_usage() {
