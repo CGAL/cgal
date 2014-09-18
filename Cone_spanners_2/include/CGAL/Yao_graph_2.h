@@ -28,7 +28,7 @@
 #ifndef CGAL_YAO_GRAPH_2_H
 #define CGAL_YAO_GRAPH_2_H
 
-#include "_cxx0x_hack.h"
+#include <CGAL/Cone_spanners_2/_cxx0x_hack.h>
 
 #include <iostream>
 #include <cstdlib>
@@ -40,7 +40,7 @@
 #include <boost/config.hpp>
 #include <boost/graph/adjacency_list.hpp>
 
-#include "Cone_spanners_2.h"
+#include <CGAL/Cone_spanners_2.h>
 
 namespace CGAL {
 

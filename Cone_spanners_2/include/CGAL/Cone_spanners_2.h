@@ -31,7 +31,7 @@
 // if leda::real is used, pls modify the following definition
 #define CGAL_USE_CORE 1
 
-#include "_cxx0x_hack.h"
+#include <CGAL/Cone_spanners_2/_cxx0x_hack.h>
 
 #include <iostream>
 #include <cstdlib>
@@ -47,7 +47,8 @@
 
 namespace CGAL {
 
-/** @brief An abstract base class for different cone-based spanner graphs with a given set of
+/** \ingroup PkgConeBasedSpanners
+ * @brief An abstract base class for different cone-based spanner graphs with a given set of
  *  2D points.
  *
  *  Directed,undirected and bidirectional graphs are supported. For differences among these

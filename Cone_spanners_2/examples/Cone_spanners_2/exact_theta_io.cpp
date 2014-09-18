@@ -31,13 +31,11 @@
 #include <vector>
 #include <algorithm>
 
-#include <CGAL/basic.h>
-
 #include <boost/config.hpp>
 #include <boost/graph/adjacency_list.hpp>
 
-#include "Theta_graph_2.h"
-#include "gnuplot_output_2.h"
+#include <CGAL/Theta_graph_2.h>
+#include <CGAL/gnuplot_output_2.h>
 
 // select the kernel type
 typedef CGAL::Exact_predicates_exact_constructions_kernel_with_sqrt   Kernel;

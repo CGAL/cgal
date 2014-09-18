@@ -28,14 +28,14 @@
 #ifndef CGAL_PLANE_SCAN_TREE_2_H
 #define CGAL_PLANE_SCAN_TREE_2_H
 
-#include "_cxx0x_hack.h"
+#include <CGAL/Cone_spanners_2/_cxx0x_hack.h>
 
 #include <iostream>
 #include <algorithm>
 #include <functional>
 #include <cstring>
 
-#include "_Plane_Scan_Tree.h"
+#include <CGAL/Cone_spanners_2/_Plane_Scan_Tree.h>
 
 namespace CGAL {
 

@@ -26,7 +26,7 @@
 #ifndef CGAL__PLANE_SCAN_TREE_2_H
 #define CGAL__PLANE_SCAN_TREE_2_H
 
-#include "_cxx0x_hack.h"
+#include <CGAL/Cone_spanners_2/_cxx0x_hack.h>
 
 #include <stdexcept>
 

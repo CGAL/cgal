@@ -2,22 +2,24 @@ namespace CGAL {
 /*!
 
 \mainpage User Manual
-\anchor Chapter_PACKAGE_NAME
-\anchor chaptermine
+\anchor Chapter_ConeBasedSpannerss
+
 \cgalAutoToc
-\author AUTHOR1, AUTHOR2
+\author Weisheng Si and  Quincy Tse
 
 This chapter describes the ...
 
-\section secmydefinitions Definitions
+\section sec_CBS_mydefinitions Definitions
 
 Section on definitions here ...
 
-\section secmyexamples Examples
+\section sec_CBS_myexamples Examples
 
-\subsection myFirstExample First Example
+\subsection CBS_myFirstExample First Example
 
 The following example shows ...
+
+\cgalExample{Cone_spanners_2/theta_io.cpp}
 
 */
 } /* namespace CGAL */

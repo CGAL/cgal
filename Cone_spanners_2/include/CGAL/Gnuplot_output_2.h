@@ -28,7 +28,7 @@
 #ifndef GNUPLOT_OUTPUT_2_H
 #define GNUPLOT_OUTPUT_2_H
 
-#include "_cxx0x_hack.h"
+#include <CGAL/Cone_spanners_2/_cxx0x_hack.h>
 
 #include <iostream>
 #include <sstream>

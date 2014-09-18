@@ -28,7 +28,6 @@
 #include <fstream>
 #include <iterator>
 #include <string>
-#include <CGAL/basic.h>
 #include <vector>
 #include <algorithm>
 
@@ -40,7 +39,7 @@
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
-#include "Theta_graph_2.h"
+#include <CGAL/Theta_graph_2.h>
 
 using namespace boost;
 
