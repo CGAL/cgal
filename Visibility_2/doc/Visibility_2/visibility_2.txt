@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\mainpage 2D Visibility  
+\mainpage User Manual 
 \anchor Chapter_2D_Visibility_Computation
 \cgalAutoToc
 
