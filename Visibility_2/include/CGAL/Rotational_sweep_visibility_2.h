@@ -397,7 +397,7 @@ void detach() {
   geom_traits = NULL;
 }
 
-const Arrangement_2& arr() {
+const Arrangement_2& arrangement_2() {
   return *p_arr;
 }
 

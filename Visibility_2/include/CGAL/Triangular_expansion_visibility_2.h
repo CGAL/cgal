@@ -103,7 +103,7 @@ public:
     p_cdt = boost::shared_ptr<CDT>();
   }
 
-  const Arrangement_2& arr() {
+  const Arrangement_2& arrangement_2() {
     return *p_arr;
   }
 

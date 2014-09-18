@@ -70,7 +70,7 @@ public:
 		p_arr = NULL;
 	}
 
-	Input_Arrangement_2 arr() {
+  Input_Arrangement_2 arrangement_2()() {
 		return *p_arr;
 	}
 

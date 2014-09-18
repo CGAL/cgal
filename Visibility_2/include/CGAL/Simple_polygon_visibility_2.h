@@ -105,7 +105,7 @@ public:
   }
 
   /*! Getter method for the input arrangement*/
-  const Arrangement_2& arr() {
+  const Arrangement_2& arrangement_2() {
     return *p_arr;
   }
 

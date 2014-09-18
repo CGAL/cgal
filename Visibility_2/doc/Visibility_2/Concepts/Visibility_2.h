@@ -105,7 +105,7 @@ Detaches the arrangement from the visibility object it is currently attached to
 /*!
 Access to the attached arrangement
 */
-  const Arrangement_2& arr() const;
+  const Arrangement_2& arrangement_2() const;
 
 /*! 
 Computes the visibility region for the given query point `q` in the
@@ -120,7 +120,7 @@ must be mutual convertible to Visibility_2::Traits_2.
 \param q is the query point
 \param f is the face of the arrangement in which the visibility region is computed
 \param out_arr is the output arrangement 
-\pre `f` is a face of  `this->arr()`
+\pre `f` is a face of  `this->arrangement_2()`
 \pre `q` is in the interior of the given face `f`
 \return the face handle to the face in `out_arr` that represents interior of the visibility region
 */ 
@@ -143,7 +143,7 @@ must be mutual convertible to Visibility_2::Traits_2.
 \param q is the query point
 \param e the halfedge on which `q` is located
 \param out_arr is the output arrangement
-\pre `e` is a halfedge of `this->arr()`
+\pre `e` is a halfedge of `this->arrangement_2()`
 \pre `q` is on `e`
 \pre `q` equals to `e->target()->point()` if `q` is an endpoint of `e`
 \return a handle to the face in `out_arr` that represents the interior of the visibility region
