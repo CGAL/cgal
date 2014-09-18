@@ -72,6 +72,8 @@ create_single_source_cgal_program( "shortest_paths_elephant_multiple_sources.cpp
 
 create_single_source_cgal_program( "shortest_paths_elephant_with_id.cpp" )
 
+create_single_source_cgal_program( "shortest_paths_turbine_sequence.cpp" )
+
 if(OpenMesh_FOUND)
   create_single_source_cgal_program( "shortest_paths_elephant_OpenMesh.cpp" )
   target_link_libraries( shortest_paths_elephant_OpenMesh ${OPENMESH_LIBRARIES} )

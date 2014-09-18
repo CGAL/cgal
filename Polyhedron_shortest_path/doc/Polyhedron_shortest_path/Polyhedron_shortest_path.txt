@@ -15,20 +15,22 @@ The shortest paths computation on a mesh.
 
 \section Polyhedron_shortest_pathIntroduction Introduction
 
-Imagine one wants to plan the path of a robot moving across the surface a 3-dimensional terrain.  Using a 2-dimensional approximation would fail to capture anything interesting about the terrain we are trying to cross, and would give a poor solution.  This is often called the <em>Discrete Geodesic Problem</em>.  Although the general problem of shortest paths in 3D in the presence of obstacles is NP-Hard, it can be solved efficiently if all motion is constrained to the surface of a 3D object.
+This chapter describes functions and objects in \cgal for computing shortest paths on polyhedral surfaces.
 
-This chapter describes functions and objects in \cgal for computing shortest paths on polyhedral surfaces.  Specifically, we build a data structure to efficiently answer queries of the form: given a polyhedral surface \f$\cal{P}\f$, a set of source points \f$S\f$ living on the surface of \f$\cal{P}\f$, and a query point \f$q\f$ also on the surface of \f$\cal{P}\f$, find a shortest path \f$p\f$ between \f$q\f$ and any element \f$s \in S\f$, where \f$p\f$ is constrained to the surface of \f$\cal{P}\f$.
+An example of an application would be planning the motion of a robot across the surface a 3-dimensional terrain.  Using a 2-dimensional approximation would fail to capture anything interesting about the terrain we are trying to cross, and would give a poor solution.  This is often called the <em>Discrete Geodesic Problem</em>.  Although the general problem of shortest paths in 3D in the presence of obstacles is NP-Hard, it can be solved efficiently if all motion is constrained to the surface of a 3D object.
 
-Any graph on 3D points supporting the \cgal FaceListGraph concept may be used with this package.  
+  The algorithm in this package builds a data structure to efficiently answer queries of the form: given a polyhedral surface \f$\cal{P}\f$, a set of source points \f$S\f$ living on the surface of \f$\cal{P}\f$, and a query point \f$q\f$ also on the surface of \f$\cal{P}\f$, find a shortest path \f$p\f$ between \f$q\f$ and any element \f$s \in S\f$, where \f$p\f$ is constrained to the surface of \f$\cal{P}\f$.
 
-Note that there are no restrictions on the genus, connectivity, or convexity of the input surface, however, all of the surface's faces must be triangulated before applying this algorithm.
+Any graph on 3D points supporting the \cgal `FaceListGraph` concept may be used with this package.  
 
-The algorithm used is based on a paper by Xin and Wang \cgalCite{XinWang2009improvingchenandhan},a fast and practical algorithm for exact computation of shortest paths. It is an extension of earlier results by Chen and Han \cgalCite{ChenHan1996shortestpaths} and Mitchell, Mount, and Papadimitriou \cgalCite{MMP1987discretegeodesicproblem}.
+Note that there are no restrictions on the genus, connectivity, or convexity of the input surface.
+
+The algorithm used is based on a paper by Xin and Wang \cgalCite{XinWang2009improvingchenandhan}, a fast and practical algorithm for exact computation of shortest paths. It is an extension of earlier results by Chen and Han \cgalCite{ChenHan1996shortestpaths} and Mitchell, Mount, and Papadimitriou \cgalCite{MMP1987discretegeodesicproblem}.
 
 \section Polyhedron_shortest_pathDefinitions Definitions
 
 \subsection Polyhedron_shortest_pathGeodesics Geodesic Paths
-  A <em>geodesic</em> curve is a `locally shortest` path on the surface of some manifold, that is, it cannot be made shorter by some local perturbations.  On the surface of a polyhedron, this translates to a curve where, when the faces crossed by a the curve are unrolled into the plane, the curve forms a straight line.  A geodesic curve between two points is not necessarily a shortest path, but all shortest paths on polyhedra are formed by sequences of one or more geodesic paths joined at <em>saddle vertices</em> of the surface.
+  A <em>geodesic</em> curve is a `locally shortest` path on the surface of some manifold, that is, it cannot be made shorter by some local perturbations.  On the surface of a polyhedron, this translates to a curve where, when the faces crossed by the curve are unrolled into the plane, the curve forms a straight line.  A geodesic curve between two points is not necessarily a shortest path, but all shortest paths on polyhedra are formed by sequences of one or more geodesic paths joined at <em>saddle vertices</em> of the surface.
   
   \cgalFigureBegin{Geodesic_perspective,perspectiveGeodesic.png}
   A geodesic on the surface of a simple polyhedron.
@@ -80,20 +82,15 @@ The algorithm used is based on a paper by Xin and Wang \cgalCite{XinWang2009impr
   
 \subsection Polyhedron_shortest_pathDistanceFiltering Distance Filtering
 
-  An additional distance filter proposed by Xin and Wang helps prune the search tree even further by comparing the current node's distance to the closest distance so far of the three vertices on the current face.  Details 
-  
-\section Polyhedron_shortest_pathPractical Practical Overview
+  An additional distance filter proposed by Xin and Wang helps prune the search tree even further by comparing the current node's distance to the closest distance so far of the three vertices on the current face. Details on this method can be found in their paper \cgalCite{XinWang2009improvingchenandhan}.
+
+\section Polyhedron_shortest_pathHowToUse How To Use
 
 In order to use the algorithm, one creates an instance of the `Polyhedron_shortest_path` class, passing in a `FaceGraph`, and appropriate property maps for ID lookup of vertex, halfedge, and face items, and a map between vertices and their Point_3 locations.
 
-\subsection Polyhedron_shortest_pathUnfoldingMethods Face Unfolding/Layout Methods
-  In order to effectively compute the distance along the surface, it is necessary to unfold sequences of faces, edge-to-edge, out into a common plane.  The functor `Project_triangle_3_to_triangle_2` provides an initial layout of the first face in a sequence, by rotating a given face into the XY plane.  `Flatten_triangle_3_along_segment_2` unfolds a triangle into the plane, using a specified segment as a base.  Since this results in a chain of constructed triangles in the plane, exact representation types such as CORE::Expr or leda::real will process extremely slow (effectively adding an \f$O(n)\f$ factor to any computation) and therefore their use with this algorithm is not recommended.
-  
-  If more robustness is needed, consider using the `Polyhedron_shortest_path_default_traits_with_robust_unfolding` traits class; it implements the unfolding methods using an exact kernel in isolation, avoiding intermediate roundoff error within each operation, while still keeping the overall algorithm from becoming too slow (however it will still take much longer than with an inexact kernel).
-  
 \subsection Polyhedron_shortest_pathBarycentric Barycentric Coordinates and Face Locations
 
-  The source locations of the algorithm are specified either using vertices (specifically `boost::GraphTraits<FaceGraph>::vertex_descriptor>`, or face/location pairs, where the location is represented using a <em>Barycentric Coordinate</em> in the face. Given a point \f$p\f$ that lies inside and on the plane of triangle \f$(A,B,C)\f$, its barycentric coordinate is a real-valued triple \f$(b_0,b_1,b_2)\f$ such that \f$p = b_0\cdot~A + b_1\cdot~B + b_2\cdot~C\f$. 
+  The source locations of the algorithm are specified either using vertices (specifically `boost::GraphTraits<FaceGraph>::vertex_descriptor>`), or face/location pairs, where the location is represented using a <em>Barycentric Coordinate</em> in the face. Given a point \f$p\f$ that lies inside and on the plane of triangle \f$(A,B,C)\f$, its barycentric coordinate is a real-valued triple \f$(b_0,b_1,b_2)\f$ such that \f$p = b_0\cdot~A + b_1\cdot~B + b_2\cdot~C\f$. 
 
 \subsection Polyhedron_shortest_pathFaceGraph Face Graph
   
@@ -103,44 +100,55 @@ In order to use the algorithm, one creates an instance of the `Polyhedron_shorte
 
   The `Polyhedron_shortest_path` class must be constructed with an instance of FaceGraph, and (optionally) 
   - Vertex, Halfedge, and Face index property maps for FaceGraph
-  - A Vertex to Point_3 property map for FaceGraph
+  - A Vertex -> Point_3 property map for FaceGraph
   - An instance of the Traits class (for example if the Kernel used has local state)
   
-  The shortest paths query structure is computed using the `Polyhedron_shortest_path::construct_sequence_tree` method, with a overloads for specifying one or more source points, at either vertices or face locations.
+  The shortest paths query structure is computed using the `Polyhedron_shortest_path::construct_sequence_tree()` method, with a overloads for specifying one or more source points, at either vertices or face locations.
   
-  Simply computing shortest path distances can be accomplished with `Polyhedron_shortest_path::shortest_distance_to_source_points`, which will return the raw distance, and an ID referring to which source point was closest.
+  Simply computing shortest path distances can be accomplished with `Polyhedron_shortest_path::shortest_distance_to_source_points()`, which will return the raw distance, and an ID referring to which source point was closest.  If no shortest path exists between the (if, for example, the face graph is disconnected), a negative distance is returned.
 
-  A complete shortest path sequence can be obtained using `Polyhedron_shortest_path::shortest_path_sequence_to_source_points`, by providing a visitor object conforming to the `PolyhedronShortestPathVisitor` concept.
+  A complete shortest path sequence can be obtained using `Polyhedron_shortest_path::shortest_path_sequence_to_source_points()`, by providing a visitor object conforming to the `PolyhedronShortestPathVisitor` concept.
 
-  `Polyhedron_shortest_path::shortest_path_points_to_source_points` will return the shortest path sequence as a 3D polyline, useful for quick visualization.  
+  `Polyhedron_shortest_path::shortest_path_points_to_source_points()` will return the shortest path sequence as a 3D polyline, useful for quick visualization.  
 
-  Other utility methods exist for converting between raw surface locations, Face_location objects, and other parametric descriptions of surface locations.  See the reference manual entries for `Polyhedron_shortest_path::point`, `Polyhedron_shortest_path::face_location`, and `Polyhedron_shortest_path::locate` for details.
+  Other utility methods exist for converting between raw surface locations, Face_location objects, and other parametric descriptions of surface locations.  See the reference manual entries for `Polyhedron_shortest_path::point()`, `Polyhedron_shortest_path::face_location()`, and `Polyhedron_shortest_path::locate()` for details.
+
+\subsection Polyhedron_shortest_pathUnfoldingMethods Face Unfolding/Layout Methods
+  In order to effectively compute the distance along the surface, it is necessary to unfold sequences of faces, edge-to-edge, out into a common plane.  The functor `Project_triangle_3_to_triangle_2` provides an initial layout of the first face in a sequence, by rotating a given face into the XY plane.  `Flatten_triangle_3_along_segment_2` unfolds a triangle into the plane, using a specified segment as a base.  Since this results in a chain of constructed triangles in the plane, exact representation types such as CORE::Expr or leda::real will process extremely slow (effectively adding an \f$O(n)\f$ factor to any computation) and therefore their use with this algorithm is not recommended.
+  
+  If more robustness is needed, consider using the `Polyhedron_shortest_path_default_traits_with_robust_unfolding` traits class; it implements the unfolding methods using an exact kernel in isolation, avoiding intermediate roundoff error within each operation, while still keeping the overall algorithm from becoming too slow (however it will still take much longer than with an inexact kernel).
   
 \section Polyhedron_shortest_pathExamples Examples
 
 \subsection Polyhedron_shortest_pathSimpleExample Simple Example
 
-The following example shows how to get the shortest path to every vertex from an arbitrary source point on the surface.
-
-\cgalExample{Polyhedron_shortest_path/shortest_paths_elephant.cpp}
-
-\subsection Polyhedron_shortest_pathExampeWithId Example Using Polyhedron Items with IDs
-
-By default, the index mapping provided by the algorithm uses an external index map (which implies the cost of lookup in some kind of map).  However, if your polyhedron has ID values associated with its item types, you can save memory and space by using a direct property map instead.  The following example shows an example of this.
+The following example shows how to get the shortest path to every vertex from an arbitrary source point on the surface.  Note that this example uses the `Polyhedron_items_with_id_3` traits class.  This algorithm must store auxiliary data with each vertex, halfedge, and facet, thus it is most efficient to have unique 0-based indices assigned to each.
 
 \cgalExample{Polyhedron_shortest_path/shortest_paths_elephant_with_id.cpp}
 
+\subsection Polyhedron_shortest_pathExampeWithoutId Example Using Polyhedron Items without IDs
+
+Although it is preferred to have the indices built into each item, we can also support meshes without an ID on each item using an external index.  The following example shows how to achieve this.
+
+\cgalExample{Polyhedron_shortest_path/shortest_paths_elephant.cpp}
+
 \subsection Polyhedron_shortest_pathOpenMeshExample OpenMesh Example
 
-This is the same example as above, except using a different polyhedron model (OpenMesh).
+This is the same example as above, except it shows replacing the traits class to use a different polyhedron model, specifically an OpenMesh model.
 
 \cgalExample{Polyhedron_shortest_path/shortest_paths_elephant_OpenMesh.cpp}
 
 \subsection Polyhedron_shortest_pathMultipleSources Using Multiple Source Points
 
-This example shows using a range of FaceLocation to specify multiple source points.
+This example shows computing the sequence tree from multiple source points, using an iterator range of Face_location objects, generated at random.
 
 \cgalExample{Polyhedron_shortest_path/shortest_paths_elephant_multiple_sources.cpp}
+
+\subsection Polyhedron_shortest_pathSequenceVisitor
+
+This example shows how to use the PolyhedronShortestPathVisitor concept to get detailed information about the sequence of edges/vertices crossed by a shortest path between two face locations.
+
+\cgalExample{Polyhedron_shortest_path/shortest_paths_turbine_sequence.cpp}
 
 \section Polyhedron_shortest_pathBenchmarks Benchmarks
 
