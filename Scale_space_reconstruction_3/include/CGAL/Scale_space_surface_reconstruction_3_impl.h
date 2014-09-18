@@ -381,9 +381,7 @@ template < class InputIterator >
 typename Scale_space_surface_reconstruction_3<Gt,FS,Sh,wA,Ct>::FT
 Scale_space_surface_reconstruction_3<Gt,FS,Sh,wA,Ct>::
 estimate_neighborhood_radius( InputIterator begin, InputIterator end, unsigned int neighbors, unsigned int samples,
-                              typename boost::enable_if<
-                                boost::is_convertible< typename std::iterator_traits<InputIterator>::value_type,
-                                                       Point > >::type* ) {
+                              typename boost::enable_if< CGAL::is_iterator<InputIterator> >::type* ) {
     clear();
 	insert( begin, end );
 	return estimate_neighborhood_radius( neighbors, samples );
@@ -461,9 +459,7 @@ template < class InputIterator >
 void
 Scale_space_surface_reconstruction_3<Gt,FS,Sh,wA,Ct>::
 construct_shape( InputIterator begin, InputIterator end,
-                 typename boost::enable_if<
-                    boost::is_convertible< typename std::iterator_traits<InputIterator>::value_type,
-                                           Point > >::type* ) {
+                 typename boost::enable_if< CGAL::is_iterator<InputIterator> >::type* ) {
     deinit_shape();
     if( !has_neighborhood_radius() )
         estimate_neighborhood_radius();
@@ -496,9 +492,7 @@ template < class InputIterator >
 void
 Scale_space_surface_reconstruction_3<Gt,FS,Sh,wA,Ct>::
 reconstruct_surface( InputIterator begin, InputIterator end, unsigned int iterations,
-                     typename boost::enable_if<
-                        boost::is_convertible< typename std::iterator_traits<InputIterator>::value_type,
-                                               Point > >::type* = NULL ) {
+                     typename boost::enable_if< CGAL::is_iterator<InputIterator> >::type*) {
     // Compute the radius for which the mean ball would contain the required number of neighbors.
     clear();
     insert( begin, end );

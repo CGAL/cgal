@@ -27,7 +27,7 @@
 #include <boost/iterator/transform_iterator.hpp>
 
 #include <CGAL/utility.h>
-
+#include <CGAL/is_iterator.h>
 #include <CGAL/Default.h>
 #include <CGAL/Search_traits_3.h>
 #include <CGAL/Orthogonal_incremental_neighbor_search.h>
@@ -295,9 +295,7 @@ public:
 	void insert( InputIterator begin, InputIterator end ) {
 #else // DOXYGEN_RUNNING
 	void insert( InputIterator begin, InputIterator end,
-                 typename boost::enable_if<
-                    boost::is_convertible< typename std::iterator_traits<InputIterator>::value_type,
-                                           Point > >::type* = NULL ) {
+                     typename boost::enable_if< CGAL::is_iterator<InputIterator> >::type* = NULL ) {
 #endif // DOXYGEN_RUNNING
 		_tree.insert( begin, end );
 	}
@@ -566,9 +564,7 @@ public:
     FT estimate_neighborhood_radius( InputIterator begin, InputIterator end ) {
 #else // DOXYGEN_RUNNING
     FT estimate_neighborhood_radius( InputIterator begin, InputIterator end,
-                     typename boost::enable_if<
-                        boost::is_convertible< typename std::iterator_traits<InputIterator>::value_type,
-                                               Point > >::type* = NULL ) {
+                     typename boost::enable_if< CGAL::is_iterator<InputIterator> >::type* = NULL ) {
 #endif // DOXYGEN_RUNNING
         return estimate_neighborhood_radius( begin, end, mean_number_of_neighbors(), neighborhood_sample_size() );
     }
@@ -605,9 +601,7 @@ public:
 	FT estimate_neighborhood_radius( InputIterator begin, InputIterator end, unsigned int neighbors, unsigned int samples );
 #else // DOXYGEN_RUNNING
 	FT estimate_neighborhood_radius( InputIterator begin, InputIterator end, unsigned int neighbors, unsigned int samples,
-                                     typename boost::enable_if<
-                                        boost::is_convertible< typename std::iterator_traits<InputIterator>::value_type,
-                                                               Point > >::type* = NULL );
+                                         typename boost::enable_if< CGAL::is_iterator<InputIterator> >::type* = NULL);
 #endif // DOXYGEN_RUNNING
 
 /// \}
@@ -663,9 +657,7 @@ public:
 	void construct_scale_space( InputIterator begin, InputIterator end, unsigned int iterations = 1 ) {
 #else // DOXYGEN_RUNNING
 	void construct_scale_space( InputIterator begin, InputIterator end, unsigned int iterations = 1,
-                                     typename boost::enable_if<
-                                        boost::is_convertible< typename std::iterator_traits<InputIterator>::value_type,
-                                                               Point > >::type* = NULL ) {
+                                    typename boost::enable_if< CGAL::is_iterator<InputIterator> >::type* = NULL ) {
 #endif // DOXYGEN_RUNNING
         clear();
 		insert( begin, end );
@@ -739,9 +731,7 @@ private:
 	void construct_shape( InputIterator begin, InputIterator end );
 #else // DOXYGEN_RUNNING
 	void construct_shape( InputIterator begin, InputIterator end,
-                                     typename boost::enable_if<
-                                        boost::is_convertible< typename std::iterator_traits<InputIterator>::value_type,
-                                                               Point > >::type* = NULL );
+                              typename boost::enable_if< CGAL::is_iterator<InputIterator> >::type* = NULL );
 #endif // DOXYGEN_RUNNING
     
     // collects the surface mesh from the shape.
@@ -813,9 +803,7 @@ public:
 	void reconstruct_surface( InputIterator begin, InputIterator end, unsigned int iterations = 0 );
 #else // DOXYGEN_RUNNING
 	void reconstruct_surface( InputIterator begin, InputIterator end, unsigned int iterations = 0,
-                                     typename boost::enable_if<
-                                        boost::is_convertible< typename std::iterator_traits<InputIterator>::value_type,
-                                                               Point > >::type* = NULL );
+                                  typename boost::enable_if< CGAL::is_iterator<InputIterator> >::type* = NULL );
 #endif // DOXYGEN_RUNNING
 
 /// \}
@@ -892,7 +880,7 @@ public:
 template< typename T >
 std::ostream&
 operator<<( std::ostream& os, const CGAL::cpp11::array< T, 3 >& t ) {
-    return os << get<0>(t) << " " << get<1>(t) << " " << get<2>(t);
+    return os << t[0] << " " << t[1] << " " << t[2];
 }
 
 template< typename T >
