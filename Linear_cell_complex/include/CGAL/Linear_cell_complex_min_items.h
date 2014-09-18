@@ -43,10 +43,26 @@ namespace CGAL {
     {
       typedef CGAL::Dart<d, LCC> Dart;
 
-      typedef Cell_attribute_with_point<LCC> Vertex_attrib;    
+      typedef CGAL::Cell_attribute_with_point<LCC> Vertex_attrib;
       typedef CGAL::cpp11::tuple<Vertex_attrib> Attributes;
     };
   };
+
+  namespace Index
+  {
+  template <unsigned int d>
+  struct Linear_cell_complex_min_items
+  {
+    /// Dart_wrapper defines the type of darts used.
+    template <class LCC>
+    struct Dart_wrapper
+    {
+      typedef CGAL::Index::Dart< d, LCC> Dart;
+      typedef CGAL::Index::Cell_attribute_with_point<LCC> Vertex_attrib;
+      typedef CGAL::cpp11::tuple<Vertex_attrib> Attributes;
+    };
+  };
+  } // namespace Index
 
 } // namespace CGAL
 

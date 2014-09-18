@@ -480,7 +480,7 @@ namespace CGAL {
     }
     Dart_const_handle first_dart() const
     {
-      if (darts().begin() == darts().end()) return null_handle;
+      if (darts().begin() == darts().end()) return null_dart_handle;
       return mdarts.begin();
     }
 
@@ -3702,6 +3702,47 @@ namespace CGAL {
     { Base::template copy<CMap, Converters, Pointconverter>
           (amap, converters, pointconverter); }
   };
+  namespace Index
+  {
+  template < unsigned int d_,
+             class Items_=Combinatorial_map_min_items<d_>,
+             class Alloc_=CGAL_ALLOCATOR(int),
+             class Storage_= Combinatorial_map_storage_2<d_, Items_, Alloc_> >
+  class Combinatorial_map :
+    public Combinatorial_map_base<d_,
+                                  Combinatorial_map<d_,Items_,Alloc_, Storage_>,
+                                  Items_, Alloc_, Storage_ >
+  {
+  public:
+    typedef Combinatorial_map<d_, Items_,Alloc_, Storage_>  Self;
+    typedef Combinatorial_map_base<d_, Self, Items_, Alloc_, Storage_> Base;
+
+    typedef typename Base::Dart_handle Dart_handle;
+    typedef typename Base::Dart_const_handle Dart_const_handle;
+    typedef typename Base::Alloc Alloc;
+
+    Combinatorial_map() : Base()
+    {}
+
+    Combinatorial_map(const Self & amap)
+    { Base::template copy<Self>(amap); }
+
+    template < class CMap >
+    Combinatorial_map(const CMap & amap)
+    { Base::template copy<CMap>(amap); }
+
+    template < class CMap, typename Converters >
+    Combinatorial_map(const CMap & amap, const Converters& converters)
+    { Base::template copy<CMap, Converters>
+          (amap, converters); }
+
+    template < class CMap, typename Converters, typename Pointconverter >
+    Combinatorial_map(const CMap & amap, const Converters& converters,
+                      const Pointconverter& pointconverter)
+    { Base::template copy<CMap, Converters, Pointconverter>
+          (amap, converters, pointconverter); }
+  };
+  } // namespace Index
 
 } // namespace CGAL
 

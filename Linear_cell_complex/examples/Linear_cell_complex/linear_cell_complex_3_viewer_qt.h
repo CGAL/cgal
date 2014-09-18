@@ -39,11 +39,11 @@ struct Geom_utils;
 template<class LCC>
 struct Geom_utils<LCC,3>
 {
-  Local_point get_point(typename LCC::Vertex_attribute_const_handle vh)
-  { return converter(vh->point()); }
+  Local_point get_point(LCC& lcc, typename LCC::Vertex_attribute_const_handle vh)
+  { return converter(lcc.point_of_vertex_attribute(vh)); }
 
-  Local_point get_point(typename LCC::Dart_const_handle dh)
-  { return converter(LCC::point(dh)); }
+  Local_point get_point(LCC& lcc, typename LCC::Dart_const_handle dh)
+  { return converter(lcc.point(dh)); }
   
   Local_vector get_facet_normal(LCC& lcc, typename LCC::Dart_const_handle dh)
   {
@@ -65,14 +65,15 @@ protected:
 template<class LCC>
 struct Geom_utils<LCC,2>
 {
-  Local_point get_point(typename LCC::Vertex_attribute_const_handle vh)
+  Local_point get_point(LCC& lcc, typename LCC::Vertex_attribute_const_handle vh)
   {
-    Local_point p(converter(vh->point().x()),0,converter(vh->point().y()));
+    Local_point p(converter(lcc.point_of_vertex_attribute(vh).x()),0,
+                  converter(lcc.point_of_vertex_attribute(vh).y()));
     return p;
   }
 
-  Local_point get_point(typename LCC::Dart_const_handle dh)
-  { return get_point(LCC::vertex_attribute(dh)); }
+  Local_point get_point(LCC& lcc, typename LCC::Dart_const_handle dh)
+  { return get_point(lcc, lcc.vertex_attribute(dh)); }
 
   Local_vector get_facet_normal(LCC&, typename LCC::Dart_const_handle)
   {
@@ -99,10 +100,10 @@ CGAL::Bbox_3 bbox(LCC& lcc)
     it=lcc.vertex_attributes().begin(), itend=lcc.vertex_attributes().end();
   if ( it!=itend )
   {
-    bb = geomutils.get_point(it).bbox();
+    bb = geomutils.get_point(lcc, it).bbox();
     for( ++it; it!=itend; ++it)
     {
-      bb = bb + geomutils.get_point(it).bbox();
+      bb = bb + geomutils.get_point(lcc, it).bbox();
     }
   }
   
@@ -151,11 +152,12 @@ protected :
         ::glNormal3d(n.x(),n.y(),n.z());
       }
       
-      Local_point p = geomutils.get_point(it);
+      Local_point p = geomutils.get_point(lcc, it);
       ::glVertex3d(p.x(),p.y(),p.z());
       
       lcc.mark(it, AMark);
-      if ( lcc.dimension>=3 && !it->is_free(3) ) lcc.mark(it->beta(3), AMark);
+      if ( lcc.dimension>=3 && !lcc.is_free(it, 3) )
+        lcc.mark(lcc.beta(it, 3), AMark);
     }
     // close the polygon
     if (!flatShading)
@@ -164,7 +166,7 @@ protected :
       ::glNormal3d(n.x(),n.y(),n.z());
     }
     
-    Local_point p = geomutils.get_point(ADart);
+    Local_point p = geomutils.get_point(lcc, ADart);
     ::glVertex3d(p.x(),p.y(),p.z());    
     
     ::glEnd();
@@ -173,24 +175,24 @@ protected :
   /// Draw all the edge of the facet given by ADart
   void drawEdges(Dart_handle ADart)
   {
-    glDepthRange (0.0, 0.9);
+    glDepthRange (0.0, 0.5);
     glBegin(GL_LINES);
     ::glColor3f(.2,.2,.6);
     for (typename LCC::template Dart_of_orbit_range<1>::iterator
            it=lcc.template darts_of_orbit<1>(ADart).begin();
          it.cont(); ++it)
     {
-      Local_point p =  geomutils.get_point(it);
-      Dart_handle d2 = it->other_extremity();
+      Local_point p =  geomutils.get_point(lcc, it);
+      Dart_handle d2 = lcc.other_extremity(it);
       if ( d2!=NULL )
       {
-        Local_point p2 = geomutils.get_point(d2);
+        Local_point p2 = geomutils.get_point(lcc, d2);
         glVertex3f( p.x(),p.y(),p.z());
         glVertex3f( p2.x(),p2.y(),p2.z());
       }
     }
     glEnd();
-    glDepthRange (0.1, 1.0); 
+    glDepthRange (0.5, 1.0);
   }   
   
   virtual void draw()
@@ -213,14 +215,14 @@ protected :
       {
         if ( !lcc.is_marked(it, vertextreated) )
         {
-          Local_point p = geomutils.get_point(it);
+          Local_point p = geomutils.get_point(lcc, it);
 
-          glDepthRange (0.0, 0.9);
+          glDepthRange (0.0, 0.5);
           glBegin(GL_POINTS);
           ::glColor3f(.6,.2,.8);
           glVertex3f(p.x(),p.y(),p.z());
           glEnd();
-          glDepthRange (0.1, 1.0); 
+          glDepthRange (0.5, 1.0);
 
           CGAL::mark_cell<LCC, 0>(lcc, it, vertextreated);
         }

@@ -92,10 +92,10 @@ void constrained_delaunay_triangulation(LCC_3 &lcc, Dart_handle d1)
    {     
      vh = cdt.insert(lcc.point(it));
      vh->info()=it;
-     if( first==NULL ){
+     if( first==LCC_3::null_handle ){
        first=vh;
      }
-     if( previous!=NULL){
+     if( previous!=LCC_3::null_handle){
        CGAL_assertion( previous !=vh );
        cdt.insert_constraint(previous,vh);
      }

@@ -167,7 +167,7 @@ struct CreateAttributes
     for(typename Map::Dart_range::iterator it=map.darts().begin(),
         itend=map.darts().end(); it!=itend; ++it)
     {
-      if ( it->template attribute<i>()==map.null_handle )
+      if ( map.template attribute<i>(it)==Map::null_handle )
         map.template set_attribute<i>
             (it, map.template create_attribute<i>(++nb));
     }

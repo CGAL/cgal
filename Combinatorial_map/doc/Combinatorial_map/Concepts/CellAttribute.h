@@ -4,10 +4,11 @@
 \cgalConcept
 
 The concept `CellAttribute` represents a non void attribute associated
-with a cell of a combinatorial map. It can keep a handle to one
+with a cell of a combinatorial map. It can keep a descriptor to one
 dart of its associated cell, and can contain any information.
 
 \cgalHasModel \ref CGAL::Cell_attribute "CGAL::Cell_attribute<CMap,Info_,Tag,OnMerge,OnSplit>"
+\cgalHasModel \ref CGAL::Items::Cell_attribute "CGAL::Cell_attribute<CMap,Info_,Tag,OnMerge,OnSplit>"
 
 \sa `CombinatorialMap`
 \sa `CombinatorialMapItems`
@@ -21,14 +22,14 @@ public:
 /// @{
 
 /*!
-%Dart handle type.
+%Dart descriptor type.
 */
-typedef unspecified_type Dart_handle;
+typedef unspecified_type Dart_descriptor;
 
 /*!
-%Dart const handle type.
+%Dart const descriptor type.
 */
-typedef unspecified_type Dart_const_handle;
+typedef unspecified_type Dart_const_descriptor;
 
 /*!
 Type of the information contained in the attribute.
@@ -38,7 +39,7 @@ typedef unspecified_type Info;
 
 /*!
 Equals to \ref CGAL::Tag_true "Tag_true" to enable the storage of a
-`Dart_handle` of the associated cell, \ref CGAL::Tag_false "Tag_false" otherwise.
+`Dart_descriptor` of the associated cell, \ref CGAL::Tag_false "Tag_false" otherwise.
 */
 typedef unspecified_type Supports_cell_dart;
 
@@ -87,7 +88,7 @@ Returns one dart of the cell associated to this attribute.
 `NULL` if \ref Supports_cell_dart "Supports_cell_dart" is equal to
 \ref CGAL::Tag_false "Tag_false".
 */
-Dart_handle dart();
+Dart_descriptor dart();
 
 /*!
 Returns one dart of the cell associated to this attribute,
@@ -95,17 +96,17 @@ when it is const.
 `NULL` if \ref Supports_cell_dart "Supports_cell_dart" is equal to
 \ref CGAL::Tag_false "Tag_false".
 */
-Dart_const_handle dart() const;
+Dart_const_descriptor dart() const;
 
 /*!
-Sets the dart of the cell associated to this attribute to `ahandle`,
+Sets the dart of the cell associated to this attribute to `ah`,
 if \ref Supports_cell_dart "Supports_cell_dart" is equal to
 \ref CGAL::Tag_true "Tag_true".
 Otherwise, this method does nothing.
-\pre `ahandle` belongs to the cell associated to this attribute.
+\pre `ah` belongs to the cell associated to this attribute.
 
 */
-void set_dart(Dart_handle ahandle);
+void set_dart(Dart_descriptor ah);
 
 /*!
 Returns the information of this attribute.

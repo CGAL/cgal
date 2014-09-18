@@ -28,6 +28,7 @@
 #include <CGAL/IO/File_header_OFF.h>
 #include <CGAL/IO/File_scanner_OFF.h>
 #include <CGAL/Linear_cell_complex_incremental_builder.h>
+#include <CGAL/Unique_hash_map.h>
 #include <iostream>
 #include <map>
 #include <vector>
@@ -546,7 +547,7 @@ namespace CGAL {
   }
 
   template < class LCC >
-  void write_off(LCC& alcc, std::ostream& out)
+  void write_off(const LCC& alcc, std::ostream& out)
   {
     File_header_OFF header(false);
     header.set_binary(is_binary( out));
@@ -564,30 +565,34 @@ namespace CGAL {
                          alcc.number_of_darts(),
                          res[2]);
 
-    typedef typename LCC::Vertex_attribute_range::iterator VCI;
+    typedef typename LCC::Vertex_attribute_range::const_iterator VCI;
     VCI vit, vend = alcc.vertex_attributes().end();
+    size_t i=0;
+    CGAL::Unique_hash_map< typename LCC::Vertex_attribute_const_handle,
+        size_t, typename LCC::Hash_function > index;
     for ( vit = alcc.vertex_attributes().begin(); vit!=vend; ++vit )
     {
       writer.write_vertex( ::CGAL::to_double( vit->point().x()),
                            ::CGAL::to_double( vit->point().y()),
                            ::CGAL::to_double( vit->point().z()));
+      index[i++]=vit;
     }
 
-    typedef Inverse_index< VCI > Index;
+    /*typedef Inverse_index< VCI > Index;
     Index index( alcc.vertex_attributes().begin(),
-                 alcc.vertex_attributes().end());
+                 alcc.vertex_attributes().end());*/
     writer.write_facet_header();
 
     int m = alcc.get_new_mark();
 
-    for ( typename LCC::Dart_range::iterator itall = alcc.darts().begin(),
+    for ( typename LCC::Dart_range::const_iterator itall=alcc.darts().begin(),
             itallend = alcc.darts().end(); itall!=itallend; ++itall )
     {
       if ( !alcc.is_marked(itall, m) )
       {
         std::size_t n = 0;
         // First we count the number of vertices of the face.
-        for ( typename LCC::template Dart_of_cell_range<2>::iterator
+        for ( typename LCC::template Dart_of_cell_range<2>::const_iterator
                 itf=alcc.template darts_of_cell<2>(itall).begin(),
                 itfend=alcc.template darts_of_cell<2>(itall).end();
               itf!=itfend; ++itf, ++n );
@@ -596,13 +601,14 @@ namespace CGAL {
         writer.write_facet_begin(n);
 
         // Second we write the indices of vertices.
-        for ( typename LCC::template Dart_of_cell_range<2>::iterator
+        for ( typename LCC::template Dart_of_cell_range<2>::const_iterator
                 itf=alcc.template darts_of_cell<2>(itall).begin(),
                 itfend=alcc.template darts_of_cell<2>(itall).end();
               itf!=itfend; ++itf )
         {
           // TODO case with index
-          writer.write_facet_vertex_index(index[VCI(alcc.vertex_attribute(itf))]);
+          writer.write_facet_vertex_index(index[alcc.vertex_attribute(itf)]);
+                //index[VCI((void*)alcc.vertex_attribute(itf))]);
           alcc.mark(itf, m);
         }
         writer.write_facet_end();

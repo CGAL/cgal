@@ -764,7 +764,15 @@ void MainWindow::on_actionMerge_all_volumes_triggered()
       CGAL::remove_cell<LCC,2>(*scene.lcc,it);
       itend=scene.lcc->darts().end();
       if ( prev==scene.lcc->null_handle ) it=scene.lcc->darts().begin();
-      else { it=prev; if ( it!=itend ) ++it; }
+      else
+      {
+#ifdef CMAP_WITH_INDEX
+        it = scene.lcc->darts().index_to(prev);
+#else
+        it=prev;
+#endif
+        if ( it!=itend ) ++it;
+      }
     }
     else
       ++it;

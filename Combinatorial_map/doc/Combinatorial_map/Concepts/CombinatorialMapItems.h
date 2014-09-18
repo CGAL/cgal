@@ -10,6 +10,7 @@ of the `CombinatorialMap` concept. This inner class must define
 two types: `%Dart` and `%Attributes`.
 
 \cgalHasModel \ref CGAL::Combinatorial_map_min_items "CGAL::Combinatorial_map_min_items<d>"
+\cgalHasModel \ref CGAL::Items::Combinatorial_map_min_items "CGAL::Combinatorial_map_min_items<d>"
 
 \sa `CombinatorialMap`
 \sa `Dart`
@@ -19,8 +20,8 @@ two types: `%Dart` and `%Attributes`.
   The following examples show two possible models of the
   `CombinatorialMapItems` concept: the first one for a 4D
   combinatorial map without enabled attributes, the second one for a 3D
-  combinatorial map with edge attributes enabled, and associated with a
-  \ref CGAL::Cell_attribute "Cell_attribute" containing an `int`.
+  combinatorial map using indices, edge attributes enabled, and associated with a
+  \ref CGAL::Items::Cell_attribute "Cell_attribute" containing an `int`.
 
   \code{.cpp}
   struct Exemple_Item_4
@@ -38,8 +39,8 @@ two types: `%Dart` and `%Attributes`.
     template < class CMap >
     struct Dart_wrapper
     {
-      typedef CGAL::Dart<3, CMap> Dart;
-      typedef CGAL::Cell_attribute<CMap, int> Edge_attrib;
+      typedef CGAL::Items::Dart<3, CMap> Dart;
+      typedef CGAL::Items::Cell_attribute<CMap, int> Edge_attrib;
       typedef CGAL::cpp11::tuple<void,Edge_attrib> Attributes;
     };
   };

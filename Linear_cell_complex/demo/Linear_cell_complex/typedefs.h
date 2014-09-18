@@ -36,6 +36,8 @@
 #include <vector>
 #include <list>
 
+#define CMAP_WITH_INDEX 1
+
 // Global random
 extern CGAL::Random myrandom;
 
@@ -95,6 +97,10 @@ public:
   CGAL::Color m_color;
   char        m_status;
 };
+typedef CGAL::Linear_cell_complex_traits
+<3,CGAL::Exact_predicates_inexact_constructions_kernel> Mytraits;
+
+#ifndef CMAP_WITH_INDEX
 
 class Myitems
 {
@@ -112,10 +118,29 @@ public:
   };
 };
 
-typedef CGAL::Linear_cell_complex_traits
-<3,CGAL::Exact_predicates_inexact_constructions_kernel> Mytraits;
-
 typedef CGAL::Linear_cell_complex<3,3,Mytraits,Myitems> LCC;
+
+#else
+
+class Myitems
+{
+public:
+  template < class Refs >
+  struct Dart_wrapper
+  {
+    typedef CGAL::Index::Dart<3, Refs > Dart;
+
+    typedef CGAL::Index::Cell_attribute_with_point< Refs > Vertex_attrib;
+    typedef CGAL::Index::Cell_attribute< Refs, Volume_info> Volume_attrib;
+
+    typedef CGAL::cpp11::tuple<Vertex_attrib,void,void,
+                               Volume_attrib> Attributes;
+  };
+};
+
+typedef CGAL::Index::Linear_cell_complex<3,3,Mytraits,Myitems> LCC;
+
+#endif
 typedef LCC::Dart_handle      Dart_handle;
 typedef LCC::Vertex_attribute Vertex;
 

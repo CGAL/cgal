@@ -44,6 +44,20 @@ namespace CGAL {
     };
   };
 
+  namespace Index 
+  {
+  template <unsigned int d>
+  struct Combinatorial_map_min_items
+  {
+    /// Dart_wrapper defines the type of darts used, and enabled attributes.
+    template < class Refs >
+    struct Dart_wrapper
+    {
+      typedef CGAL::Index::Dart< d, Refs > Dart;
+      typedef CGAL::cpp11::tuple<> Attributes;
+    };
+  };
+  }
 } // namespace CGAL
 
 #endif // CGAL_COMBINATORIAL_MAP_MIN_ITEMS_H //

@@ -4,8 +4,8 @@
 \cgalConcept
 
 The concept `Dart` defines a <I>d</I>-dimensional dart. A dart mainly
-stores handles to the darts linked with itself by \f$ \beta_i\f$, \f$ \forall\f$<I>i</I>,
-0\f$ \leq\f$<I>i</I>\f$ \leq\f$<I>d</I>. Moreover, it stores also handles to each
+stores descriptors to the darts linked with itself by \f$ \beta_i\f$, \f$ \forall\f$<I>i</I>,
+0\f$ \leq\f$<I>i</I>\f$ \leq\f$<I>d</I>. Moreover, it stores also descriptors to each
 non void attribute associated with itself.
 
 \cgalHeading{Creation}
@@ -14,9 +14,10 @@ A dart `d0` is never constructed directly, but always created
 within a combinatorial map `cm` by using the method
 \ref CombinatorialMap::create_dart "cm.create_dart()". A new dart is initialized to be <I>i</I>-free,
 \f$ \forall\f$<I>i</I>: 0\f$ \leq\f$<I>i</I>\f$ \leq\f$<I>dimension</I>, and having all
-its attribute handles initialized to `NULL`, for each non `void` attribute.
+its attribute descriptors initialized to `NULL`, for each non `void` attribute.
 
 \cgalHasModel \ref CGAL::Dart "CGAL::Dart<d,CMap>"
+\cgalHasModel \ref CGAL::Dart "CGAL::Items::Dart<d,CMap>"
 
 \deprecated Since \cgal 4.4, `CombinatorialMap::null_dart_handle` is no longer a static data member. This implies to move the following methods of Dart concept into CombinatorialMap concept: `is_free`, `highest_nonfree_dimension`, `opposite` and `other_extremity`. You can define the `CGAL_CMAP_DEPRECATED` macro to keep the old behavior.
 */
@@ -38,28 +39,28 @@ static unsigned int dimension;
 /// @{
 
 /*!
-%Dart handle type.
+%Dart descriptor type.
 */
-typedef unspecified_type Dart_handle;
+typedef unspecified_type Dart_descriptor;
 
 /*!
-%Dart const handle type.
+%Dart const descriptor type.
 */
-typedef unspecified_type Dart_const_handle;
+typedef unspecified_type Dart_const_descriptor;
 
 /*!
-`Attribute_handle<i>::%type` is a handle to `i`-attributes, with 0 \f$ \leq \f$ `i` \f$ \leq \f$ `dimension`.
+`Attribute_descriptor<i>::%type` is a descriptor to `i`-attributes, with 0 \f$ \leq \f$ `i` \f$ \leq \f$ `dimension`.
 \note It can be implemented using a nested template class.
 */
 template <unsigned int i>
-using Attribute_handle = unspecified_type;
+using Attribute_descriptor = unspecified_type;
 
 /*!
-`Attribute_const_handle<i>::%type` is a const handle to `i`-attributes, with 0 \f$ \leq \f$ `i` \f$ \leq \f$ `dimension`.
+`Attribute_const_descriptor<i>::%type` is a const descriptor to `i`-attributes, with 0 \f$ \leq \f$ `i` \f$ \leq \f$ `dimension`.
 \note It can be implemented using a nested template class.
 */
 template <unsigned int i>
-using Attribute_const_handle = unspecified_type;
+using Attribute_const_descriptor = unspecified_type;
 
 /// @}
 
@@ -71,28 +72,28 @@ To simplify a future implementation, it is recommended to not use this function 
 Returns \f$ \beta_i\f$(`*this`).
 \pre 0\f$ \leq\f$<I>i</I>\f$ \leq\f$<I>dimension</I>.
 */
-Dart_handle beta(unsigned int i);
+Dart_descriptor beta(unsigned int i);
 
 /*!
 To simplify a future implementation, it is recommended to not use this function and to use \ref CombinatorialMap::beta "cmap.beta(dh,i)" instead.
 Returns \f$ \beta_i\f$(`*this`) when the dart is const.
 \pre 0\f$ \leq\f$<I>i</I>\f$ \leq\f$<I>dimension</I>.
 */
-Dart_const_handle beta(unsigned int i) const;
+Dart_const_descriptor beta(unsigned int i) const;
 
 /*!
 To simplify a future implementation, it is recommended to not use this function and to use \ref CombinatorialMap::beta "cmap.beta(dh,CGAL_BETAINV(i))" instead.
 Returns \f$ \beta_i^{-1}\f$(`*this`).
 \pre 0\f$ \leq\f$<I>i</I>\f$ \leq\f$<I>dimension</I>.
 */
-Dart_handle beta_inv(unsigned int i);
+Dart_descriptor beta_inv(unsigned int i);
 
 /*!
 To simplify a future implementation, it is recommended to not use this function and to use \ref CombinatorialMap::beta "cmap.beta(dh,CGAL_BETAINV(i))" instead.
 Returns \f$ \beta_i^{-1}\f$(`*this`) when the dart is const.
 \pre 0\f$ \leq\f$<I>i</I>\f$ \leq\f$<I>dimension</I>.
 */
-Dart_const_handle beta_inv(unsigned int i) const;
+Dart_const_descriptor beta_inv(unsigned int i) const;
 
 /*
 \deprecated This function is removed since \cgal 4.4. Use \ref CombinatorialMap::is_free "cmap.is_free(dh,i)" instead.

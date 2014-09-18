@@ -81,7 +81,7 @@ private:
     for ( LCC::Dart_range::iterator dit=lcc.darts().begin(),
             dend=lcc.darts().end(); dit!=dend; ++dit )
     {
-      if ( lcc.attribute<2>(dit)==NULL )
+      if ( lcc.attribute<2>(dit)==LCC::null_handle )
         lcc.set_attribute<2>(dit, lcc.create_attribute<2>());
     }
     assert( lcc.is_valid());

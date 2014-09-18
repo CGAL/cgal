@@ -63,25 +63,29 @@ namespace CGAL {
    * Class CMap_dart_iterator is a generic iterator. All the combinatorial
    * map iterator classes inherit from this class (or one of its subclass).
    */
-  template < typename Map_,bool Const=false >
-  class CMap_dart_iterator: public boost::mpl::if_c< Const,
+  template < typename Map_,bool Const=false, typename UseIndex=typename Map_::Use_index >
+  class CMap_dart_iterator;
+  
+  template < typename Map_,bool Const>
+  class CMap_dart_iterator<Map_, Const, Tag_false>:
+    /*public boost::mpl::if_c< Const,
       typename Map_::Dart_container::const_iterator,
-      typename Map_::Dart_container::iterator>::type
-    //public internal::CC_iterator<typename Map_::Dart_container,Const>
+      typename Map_::Dart_container::iterator>::type*/
+    public internal::CC_iterator<typename Map_::Dart_container,Const>
   {
   public:
     typedef CMap_dart_iterator<Map_,Const> Self;
 
-    typedef typename boost::mpl::if_c< Const,
+    /*typedef typename boost::mpl::if_c< Const,
           typename Map_::Dart_container::const_iterator,
-          typename Map_::Dart_container::iterator>::type Base;
+          typename Map_::Dart_container::iterator>::type Base;*/
+    typedef internal::CC_iterator<typename Map_::Dart_container,Const> Base;
 
     typedef typename boost::mpl::if_c< Const,
                                        typename Map_::Dart_const_handle,
                                        typename Map_::Dart_handle>::type
                                      Dart_handle;
-    typedef typename boost::mpl::if_c< Const, const Map_,
-                                       Map_>::type Map;
+    typedef typename boost::mpl::if_c< Const, const Map_, Map_>::type Map;
 
     typedef std::input_iterator_tag iterator_category;
     typedef typename Base::value_type value_type;
@@ -167,6 +171,112 @@ namespace CGAL {
 #endif // CGAL_CMAP_DEPRECATED
         !mmap->is_marked(mmap->beta(adart, ai, aj), amark);
     }
+  protected:
+    /// The map containing the darts to iterate on.
+    Map* mmap;
+
+    /// The initial dart of the iterator.
+    Dart_handle mfirst_dart;
+
+    /// The last operation used for the ++ operator.
+    OperationState mprev_op;
+  };
+  template < typename Map_,bool Const >
+  class CMap_dart_iterator<Map_, Const, Tag_true>:
+      /*public boost::mpl::if_c< Const,
+      typename Map_::Dart_container::const_iterator,
+      typename Map_::Dart_container::iterator>::type*/
+    public internal::CC_iterator_with_index<typename Map_::Dart_container,Const>
+  {
+  public:
+    typedef CMap_dart_iterator<Map_,Const> Self;
+
+    /*typedef typename boost::mpl::if_c< Const,
+          typename Map_::Dart_container::const_iterator,
+          typename Map_::Dart_container::iterator>::type Base;*/
+    typedef internal::CC_iterator_with_index<typename Map_::Dart_container,Const> Base;
+
+    typedef typename boost::mpl::if_c< Const,
+                                       typename Map_::Dart_const_handle,
+                                       typename Map_::Dart_handle>::type
+                                     Dart_handle;
+    typedef typename boost::mpl::if_c< Const, const Map_,
+                                       Map_>::type Map;
+
+    typedef std::input_iterator_tag iterator_category;
+    typedef typename Base::value_type value_type;
+    typedef typename Base::difference_type difference_type;
+    typedef typename Base::pointer pointer;
+    typedef typename Base::reference reference;
+
+    /// true iff this iterator is basic
+    typedef Tag_true Basic_iterator;
+
+  public:
+    /// Main constructor.
+    CMap_dart_iterator(Map& amap, Dart_handle adart):
+      Base(&amap.darts(), adart),
+      mmap(&amap),
+      mfirst_dart(adart),
+      mprev_op(OP_NONE)
+    {}
+
+    /// == operator.
+    bool operator==(const Self& aiterator) const
+    {
+      return ((*this==mmap->null_handle) && (aiterator==mmap->null_handle)) ||
+        (mfirst_dart == aiterator.mfirst_dart &&
+         static_cast<const Base&>(*this)==
+         static_cast<const Base&>(aiterator));
+    }
+
+    /// != operator.
+    bool operator!=(const Self& aiterator) const
+    { return !operator==(aiterator); }
+
+    /// Accessor to the initial dart of the iterator.
+    Dart_handle get_first_dart() const { return mfirst_dart; }
+
+    /// Accessor to the combinatorial map.
+    Map* get_combinatorial_map() const { return mmap; }
+
+    /// Rewind of the iterator to its beginning.
+    void rewind()
+    { set_current_dart(mfirst_dart); mprev_op = OP_NONE; }
+
+    /// Test if the iterator is at its end.
+    bool cont() const
+    { return this->get_current()!=mmap->null_handle; }
+
+    /// Get the previous operation used for the last ++.
+    OperationState prev_operation()  const { return mprev_op; }
+
+  protected:
+    /// Set the current dart to a given dart
+    void set_current_dart(Dart_handle adart)
+    { this->set_current(adart); }
+
+  private:
+    /// operator -- in private to invalidate the base operator.
+    Self& operator--()
+    { return *this; }
+    /// operator -- in private to invalidate the base operator.
+    Self operator--(int)
+    { return *this; }
+
+  protected:
+    /// test if adart->beta(ai) exists and is not marked for amark
+    bool is_unmarked(Dart_handle adart, unsigned int ai, unsigned amark) const
+    { return !mmap->is_marked(mmap->beta(adart,ai), amark); }
+
+    /// test if adart->beta(ai)->beta(aj) exists
+    bool exist_betaij(Dart_handle adart, unsigned int ai, unsigned int aj) const
+    { return !mmap->is_free(adart, ai) && !mmap->is_free(mmap->beta(adart, ai), aj); }
+
+    /// test if adart->beta(ai)->beta(aj) exists and is not marked for amark
+    bool is_unmarked2(Dart_handle adart, unsigned int ai, unsigned int aj,
+                      unsigned amark) const
+    { return !mmap->is_marked(mmap->beta(adart, ai, aj), amark); }
 
   protected:
     /// The map containing the darts to iterate on.

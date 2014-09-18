@@ -5,6 +5,7 @@
 The concept `CombinatorialMap` defines a <I>d</I>-dimensional combinatorial map.
 
 \cgalHasModel \ref  CGAL::Combinatorial_map "CGAL::Combinatorial_map<d,Items,Alloc>"
+\cgalHasModel \ref  CGAL::Combinatorial_map "CGAL::Items::Combinatorial_map<d,Items,Alloc>"
 
 */
  //@{
@@ -37,14 +38,14 @@ CombinatorialMap(const CMap& cmap);
 typedef unspecified_type Dart;
 
 /*!
-%Dart handle type, equal to `Dart::Dart_handle`.
+%Dart descriptor type, equal to `Dart::Dart_descriptor`.
 */
-typedef unspecified_type Dart_handle;
+typedef unspecified_type Dart_descriptor;
 
 /*!
-%Dart const handle type, equal to `Dart::Dart_const_handle`.
+%Dart const descriptor type, equal to `Dart::Dart_const_descriptor`.
 */
-typedef unspecified_type Dart_const_handle;
+typedef unspecified_type Dart_const_descriptor;
 
 /*!
 Size type (an unsigned integral type).

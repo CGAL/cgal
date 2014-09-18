@@ -6,6 +6,9 @@
 #include <iostream>
 #include <fstream>
 
+// If defined, use compact container with index; otherwise use compact
+// container with handle.
+// #define USE_COMPACT_CONTAINER_WITH_INDEX 1
 using namespace std;
 
 struct Map_2_dart_items
@@ -14,11 +17,18 @@ struct Map_2_dart_items
   template < class Refs >
   struct Dart_wrapper
   {
+#ifdef USE_COMPACT_CONTAINER_WITH_INDEX
+    typedef CGAL::Index::Dart< 2, Refs > Dart;
+    typedef CGAL::Index::Cell_attribute< Refs, int > Int_attrib;
+    typedef CGAL::Index::Cell_attribute< Refs, double > Double_attrib;
+    typedef CGAL::Index::Cell_attribute_with_point< Refs, double > Double_attrib_wp;
+#else
     typedef CGAL::Dart< 2, Refs > Dart;
 
     typedef CGAL::Cell_attribute< Refs, int > Int_attrib;
     typedef CGAL::Cell_attribute< Refs, double > Double_attrib;
     typedef CGAL::Cell_attribute_with_point< Refs, double > Double_attrib_wp;
+#endif
 
     typedef CGAL::cpp11::tuple<Double_attrib_wp, void, Double_attrib> Attributes;
   };
@@ -30,11 +40,17 @@ struct Map_2_dart_max_items_3
   template < class Refs >
   struct Dart_wrapper
   {
+#ifdef USE_COMPACT_CONTAINER_WITH_INDEX
+    typedef CGAL::Index::Dart< 2, Refs > Dart;
+    typedef CGAL::Index::Cell_attribute_with_point< Refs, int > Int_attrib_wp;
+    typedef CGAL::Index::Cell_attribute< Refs, int > Int_attrib;
+    typedef CGAL::Index::Cell_attribute< Refs, double > Double_attrib;
+#else
     typedef CGAL::Dart< 2, Refs > Dart;
-
     typedef CGAL::Cell_attribute_with_point< Refs, int > Int_attrib_wp;
     typedef CGAL::Cell_attribute< Refs, int > Int_attrib;
     typedef CGAL::Cell_attribute< Refs, double > Double_attrib;
+#endif
 
     typedef CGAL::cpp11::tuple<Int_attrib_wp, Int_attrib,
           Double_attrib> Attributes;
@@ -47,11 +63,17 @@ struct Map_3_dart_items_3
   template < class Refs >
   struct Dart_wrapper
   {
+#ifdef USE_COMPACT_CONTAINER_WITH_INDEX
+    typedef CGAL::Index::Dart< 3, Refs > Dart;
+    typedef CGAL::Index::Cell_attribute< Refs, int > Int_attrib;
+    typedef CGAL::Index::Cell_attribute< Refs, double > Double_attrib;
+    typedef CGAL::Index::Cell_attribute_with_point< Refs, double > Double_attrib_wp;
+#else
     typedef CGAL::Dart< 3, Refs > Dart;
-
     typedef CGAL::Cell_attribute< Refs, int > Int_attrib;
     typedef CGAL::Cell_attribute< Refs, double > Double_attrib;
     typedef CGAL::Cell_attribute_with_point< Refs, double > Double_attrib_wp;
+#endif
 
     typedef CGAL::cpp11::tuple<Double_attrib_wp, void,
           Int_attrib, Double_attrib> Attributes;
@@ -64,11 +86,17 @@ struct Map_3_dart_max_items_3
   template < class Refs >
   struct Dart_wrapper
   {
+#ifdef USE_COMPACT_CONTAINER_WITH_INDEX
+    typedef CGAL::Index::Dart< 3, Refs > Dart;
+    typedef CGAL::Index::Cell_attribute_with_point< Refs, int > Int_attrib_wp;
+    typedef CGAL::Index::Cell_attribute< Refs, int > Int_attrib;
+    typedef CGAL::Index::Cell_attribute< Refs, double > Double_attrib;
+#else
     typedef CGAL::Dart< 3, Refs > Dart;
-
     typedef CGAL::Cell_attribute_with_point< Refs, int > Int_attrib_wp;
     typedef CGAL::Cell_attribute< Refs, int > Int_attrib;
     typedef CGAL::Cell_attribute< Refs, double > Double_attrib;
+#endif
 
     typedef CGAL::cpp11::tuple<Int_attrib_wp, Int_attrib,
           Int_attrib, Double_attrib> Attributes;
@@ -82,10 +110,15 @@ public:
   template < class Refs >
   struct Dart_wrapper
   {
+#ifdef USE_COMPACT_CONTAINER_WITH_INDEX
+    typedef CGAL::Index::Dart< 3, Refs > Dart;
+    typedef CGAL::Index::Cell_attribute_with_point< Refs, int > Int_attrib_wp;
+    typedef CGAL::Index::Cell_attribute< Refs, int > Int_attrib;
+#else
     typedef CGAL::Dart< 3, Refs > Dart;
-
     typedef CGAL::Cell_attribute_with_point< Refs, int > Int_attrib_wp;
     typedef CGAL::Cell_attribute< Refs, int > Int_attrib;
+#endif
 
     typedef CGAL::cpp11::tuple<Int_attrib_wp, void, Int_attrib> Attributes;
   };
@@ -96,11 +129,17 @@ struct Map_dart_items_4
   template < class Refs >
   struct Dart_wrapper
   {
+#ifdef USE_COMPACT_CONTAINER_WITH_INDEX
+    typedef CGAL::Index::Dart< 4, Refs > Dart;
+    typedef CGAL::Index::Cell_attribute_with_point< Refs, int > Int_attrib_wp;
+    typedef CGAL::Index::Cell_attribute< Refs, int > Int_attrib;
+    typedef CGAL::Index::Cell_attribute< Refs, double > Double_attrib;
+#else
     typedef CGAL::Dart< 4, Refs > Dart;
-
     typedef CGAL::Cell_attribute_with_point< Refs, int > Int_attrib_wp;
     typedef CGAL::Cell_attribute< Refs, int > Int_attrib;
     typedef CGAL::Cell_attribute< Refs, double > Double_attrib;
+#endif
 
     typedef CGAL::cpp11::tuple<Int_attrib_wp, void,
           Int_attrib, void, Int_attrib>
@@ -113,11 +152,17 @@ struct Map_dart_max_items_4
   template < class Refs >
   struct Dart_wrapper
   {
+#ifdef USE_COMPACT_CONTAINER_WITH_INDEX
+    typedef CGAL::Index::Dart< 4, Refs > Dart;
+    typedef CGAL::Index::Cell_attribute_with_point< Refs, int > Int_attrib_wp;
+    typedef CGAL::Index::Cell_attribute< Refs, int > Int_attrib;
+    typedef CGAL::Index::Cell_attribute< Refs, double > Double_attrib;
+#else
     typedef CGAL::Dart< 4, Refs > Dart;
-
     typedef CGAL::Cell_attribute_with_point< Refs, int > Int_attrib_wp;
     typedef CGAL::Cell_attribute< Refs, int > Int_attrib;
     typedef CGAL::Cell_attribute< Refs, double > Double_attrib;
+#endif
 
     typedef CGAL::cpp11::tuple<Int_attrib_wp, Int_attrib,
           Int_attrib, Int_attrib, Double_attrib>
@@ -133,8 +178,42 @@ typedef CGAL::Linear_cell_complex_traits
 
 typedef CGAL::Linear_cell_complex_traits<4> Traits4_a;
 
+#ifdef USE_COMPACT_CONTAINER_WITH_INDEX
 // Point_3, void, void
-typedef CGAL::Linear_cell_complex<2,3, Traits3_a, CGAL::Linear_cell_complex_min_items<2> > Map1;
+typedef CGAL::Index::Linear_cell_complex<2,3, Traits3_a,
+CGAL::Linear_cell_complex_min_items<2> > Map1;
+
+// Point_3+double, void, double
+typedef CGAL::Index::Linear_cell_complex<2,3, Traits3_a, Map_2_dart_items > Map2;
+
+// Point_3+int, int, double
+typedef CGAL::Index::Linear_cell_complex<2,3, Traits3_b, Map_2_dart_max_items_3> Map3;
+
+// Point_3, void, void, void
+typedef CGAL::Index::Linear_cell_complex<3,3, Traits3_a,
+CGAL::Linear_cell_complex_min_items<3> > Map4;
+
+// Point_3+double, void, int, double
+typedef CGAL::Index::Linear_cell_complex<3,3, Traits3_a, Map_3_dart_items_3> Map5;
+
+// Point_3+int, int, int, double
+typedef CGAL::Index::Linear_cell_complex<3,3, Traits3_b, Map_3_dart_max_items_3> Map6;
+
+// Point_3+int, void, int, void
+typedef CGAL::Index::Linear_cell_complex<3,3, Traits3_b,
+Another_map_3_dart_items_3> Map7;
+
+// Point_4+int, void, int, void, int
+typedef CGAL::Index::Linear_cell_complex<4,4, Traits4_a, Map_dart_items_4> Map8;
+
+// Point_4+int, int, int, int, double
+typedef CGAL::Index::Linear_cell_complex<4,4, Traits4_a, Map_dart_max_items_4> Map9;
+
+#else
+
+// Point_3, void, void
+typedef CGAL::Linear_cell_complex<2,3, Traits3_a,
+CGAL::Linear_cell_complex_min_items<2> > Map1;
 
 // Point_3+double, void, double
 typedef CGAL::Linear_cell_complex<2,3, Traits3_a, Map_2_dart_items > Map2;
@@ -143,7 +222,8 @@ typedef CGAL::Linear_cell_complex<2,3, Traits3_a, Map_2_dart_items > Map2;
 typedef CGAL::Linear_cell_complex<2,3, Traits3_b, Map_2_dart_max_items_3> Map3;
 
 // Point_3, void, void, void
-typedef CGAL::Linear_cell_complex<3,3, Traits3_a, CGAL::Linear_cell_complex_min_items<3> > Map4;
+typedef CGAL::Linear_cell_complex<3,3, Traits3_a,
+CGAL::Linear_cell_complex_min_items<3> > Map4;
 
 // Point_3+double, void, int, double
 typedef CGAL::Linear_cell_complex<3,3, Traits3_a, Map_3_dart_items_3> Map5;
@@ -152,13 +232,15 @@ typedef CGAL::Linear_cell_complex<3,3, Traits3_a, Map_3_dart_items_3> Map5;
 typedef CGAL::Linear_cell_complex<3,3, Traits3_b, Map_3_dart_max_items_3> Map6;
 
 // Point_3+int, void, int, void
-typedef CGAL::Linear_cell_complex<3,3, Traits3_b, Another_map_3_dart_items_3> Map7;
+typedef CGAL::Linear_cell_complex<3,3, Traits3_b,
+Another_map_3_dart_items_3> Map7;
 
 // Point_4+int, void, int, void, int
 typedef CGAL::Linear_cell_complex<4,4, Traits4_a, Map_dart_items_4> Map8;
 
 // Point_4+int, int, int, int, double
 typedef CGAL::Linear_cell_complex<4,4, Traits4_a, Map_dart_max_items_4> Map9;
+#endif
 
 struct Converter_map9_points_into_map5_points
 {
