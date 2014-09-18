@@ -287,7 +287,6 @@ public:
      *  it was previously estimated.
      *
      *  \sa `insert(const Point& p)`.
-     *  \sa `construct_scale_space(InputIterator begin, InputIterator end, unsigned int iterations)`.
      *  \sa `reconstruct_surface(InputIterator begin, InputIterator end, unsigned int iterations)`.
      */
 	template < class InputIterator >
@@ -362,8 +361,7 @@ public:
 
     /// gives the squared radius of the neighborhood.
     /** The neighborhood radius is used by
-     *  <code>[increase_scale(...)](\ref increase_scale)</code> and
-     *  <code>[construct_scale_space(...)](\ref construct_scale_space)</code> to
+     *  <code>[increase_scale(...)](\ref increase_scale)</code> to
      *  compute the point set at the desired scale and by
      *  <code>[reconstruct_surface(...)](\ref reconstruct_surface)</code> to
      *  construct a surface from the point set at the current scale.
@@ -372,7 +370,6 @@ public:
      *  neighborhood radius has not yet been set.
      *
      *  \sa `increase_scale(unsigned int iterations)`.
-     *  \sa `construct_scale_space(InputIterator begin, InputIterator end, unsigned int iterations)`.
      *  \sa `reconstruct_surface(unsigned int iterations)`.
      *  \sa `reconstruct_surface(InputIterator begin, InputIterator end, unsigned int iterations)`.
      */
@@ -417,8 +414,7 @@ public:
     
     /// sets the squared radius of the neighborhood.
     /** The neighborhood radius is used by
-     *  <code>[increase_scale(...)](\ref increase_scale)</code> and
-     *  <code>[construct_scale_space(...)](\ref construct_scale_space)</code> to
+     *  <code>[increase_scale(...)](\ref increase_scale)</code> to
      *  compute the point set at the desired scale and by
      *  <code>[reconstruct_surface(...)](\ref reconstruct_surface)</code> to
      *  construct a surface from the point set at the current scale.
@@ -435,7 +431,6 @@ public:
      *  \sa `neighborhood_squared_radius()`.
      *  \sa `has_neighborhood_radius()`.
      *  \sa `increase_scale(unsigned int iterations)`.
-     *  \sa `construct_scale_space(InputIterator begin, InputIterator end, unsigned int iterations)`.
      *  \sa `reconstruct_surface(unsigned int iterations)`.
      *  \sa `reconstruct_surface(InputIterator begin, InputIterator end, unsigned int iterations)`.
      */
@@ -556,7 +551,6 @@ public:
      *  \sa `estimate_neighborhood_radius(InputIterator begin, InputIterator end, unsigned int neighbors, unsigned int samples)`.
      *  \sa `estimate_neighborhood_radius()`.
      *  \sa `insert(InputIterator begin, InputIterator end)`.
-     *  \sa `construct_scale_space(InputIterator begin, InputIterator end, unsigned int iterations)`.
      *  \sa `reconstruct_surface(InputIterator begin, InputIterator end, unsigned int iterations)`.
      */
 	template < class InputIterator >
@@ -624,12 +618,12 @@ public:
      *  \note If the surface was already constructed, increasing the scale
      *  will not automatically adjust the surface.
      *
-     *  \sa `construct_scale_space(InputIterator begin, InputIterator end, unsigned int iterations)`.
      *  \sa `estimate_neighborhood_radius()`.
      *  \sa `reconstruct_surface(unsigned int iterations)`.
      */
 	void increase_scale( unsigned int iterations = 1 );
-    
+
+#ifndef DOXYGEN_RUNNING
     /// constructs a scale-space of a collection of points.
     /** If the neighborhood radius has not been set before, it is automatically
      *  estimated using `estimate_neighborhood_radius()`.
@@ -653,16 +647,13 @@ public:
      *  \sa `reconstruct_surface(InputIterator begin, InputIterator end, unsigned int iterations)`.
      */
 	template < class InputIterator >
-#ifdef DOXYGEN_RUNNING
-	void construct_scale_space( InputIterator begin, InputIterator end, unsigned int iterations = 1 ) {
-#else // DOXYGEN_RUNNING
 	void construct_scale_space( InputIterator begin, InputIterator end, unsigned int iterations = 1,
                                     typename boost::enable_if< CGAL::is_iterator<InputIterator> >::type* = NULL ) {
-#endif // DOXYGEN_RUNNING
         clear();
 		insert( begin, end );
 		increase_scale( iterations );
 	}
+#endif // DOXYGEN_RUNNING
 
 /// \}
 private:
@@ -746,6 +737,10 @@ public:
     /// gives the number of triangles of the surface.
     std::size_t number_of_triangles() const { return _surface.size(); }
     
+    /// gives the number of points of the surface.
+    std::size_t number_of_points() const { return _tree.size(); }
+
+
     /// gives the number of shells of the surface.
     std::size_t number_of_shells() const {
         CGAL_assertion( Sh::value == true );
