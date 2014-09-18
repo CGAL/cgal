@@ -14,7 +14,7 @@ namespace CGAL {
 This package provides functionality to compute the visibility region within polygons in two dimensions. 
 The package is based on the package \ref PkgArrangement2Summary and uses CGAL::Arrangement_2 
 as the fundamental class to specify the input as well as the output. 
-Hence, a polygon \f$ P \f$ is represented by an bounded arrangement face \f$ f \f$
+Hence, a polygon \f$ P \f$ is represented by a bounded arrangement face \f$ f \f$
 that does not have any isolated vertices and any edge that is adjacent to \f$ f \f$ separates \f$ f \f$ from another face.
 Note that \f$ f \f$ may contain holes. 
 Similarly, a simple polygon is represented by a face without holes. 
@@ -50,7 +50,7 @@ For more information about regularization, refer to Chapter \ref PkgBooleanSetOp
 \section visibility_2_classes Classes and Algorithms
 
 Answering visibility queries is, in many ways, similar to answering point-location queries. 
-Thus, we use the same design used to implement point location. 
+Thus, we use the same design used to implement \ref PkgArrangement2Summary point location. 
 Each of the various visibility class templates employs a different 
 algorithm or \em strategy for answering 
 queries\cgalFootnote{The term \em strategy is borrowed from the 
@@ -91,7 +91,7 @@ The left hand side of Figure \cgalFigureRef{cathedral-fig} depicts the outer bou
 which is a simple polygon with 565 vertices. 
 The right hand side shows the cathedral also with its inner pillars, which is a polygon (with holes) 
 with 1153 vertices. 
-The following table shows the total runtime consumption of the computation of 
+The following table shows the total running time consumption of the computation of 
 all visibility polygons for all vertices of the cathedral. 
 
 <CENTER>
@@ -137,8 +137,8 @@ The visibility region of \f$ q \f$ in a simple polygon: (1) non-regularized visi
 \section general_polygon_example Example of Visibility in a Polygon with Holes
 The following example shows how to obtain the regularized visibility region using the model 
 `Triangular_expansion_visibility_2`, see \cgalFigureRef{general_polygon}. 
-The arrangement has six bounded faces and an unbounded face. T
-he query point \f$ q \f$ is on a vertex. 
+The arrangement has six bounded faces and an unbounded face. 
+The query point \f$ q \f$ is on a vertex. 
 The red arrow denotes the halfedge \f$ \overrightarrow{pq} \f$, 
 which also identifies the face in which the visibility region is computed.
 \cgalFigureBegin{general_polygon, general_polygon_example.png}
