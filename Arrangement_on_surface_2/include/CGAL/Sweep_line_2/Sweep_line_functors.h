@@ -14,7 +14,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Tali Zvi <talizvi@post.tau.ac.il>
 //                 Baruch Zukerman <baruchzu@post.tau.ac.il>
@@ -61,18 +61,18 @@ private:
 
   // Data members:
   const Traits_2 * m_traits;                // The geometric-traits object.
-  
+
   Arr_parameter_space  m_ps_in_x;           // Storing curve information when
   Arr_parameter_space  m_ps_in_y;           // comparing a curve end with
-  Arr_curve_end        m_index;             // boundary conditions.
+  Arr_curve_end        m_ind;               // boundary conditions.
 
 public:
-  
+
   /*! Cosntructor. */
   Compare_events (const Traits_2 * traits) :
     m_traits (traits)
   {}
-  
+
   /*!
    * Compare two existing events.
    * This operator is called by the multiset assertions only in
@@ -116,7 +116,7 @@ public:
   Comparison_result operator() (const Point_2& pt, const Event* e2) const
   {
     const bool  on_boundary2 = e2->is_on_boundary();
-    
+
     if (! on_boundary2)
     {
       // If e2 is a normal event, just compare pt and the event point.
@@ -132,7 +132,7 @@ public:
       return (LARGER);
     else if (ps_x2 == ARR_RIGHT_BOUNDARY)
       return (SMALLER);
-    
+
     // Get the curve end that e2 represents, and compare the x-position of the
     // given point and this curve end.
     Arr_curve_end         ind = _curve_end(e2);
@@ -155,13 +155,13 @@ public:
   /*!
    * Compare a curve end, which should be inserted into the event queue,
    * with an existing event point.
-   * Note that the index of the curve end as well as its boundary conditions
-   * must be set beforehand using set_index() and set_parameter_space_in_x/y(). 
+   * Note that the ind of the curve end as well as its boundary conditions
+   * must be set beforehand using set_ind() and set_parameter_space_in_x/y().
    */
   Comparison_result operator() (const X_monotone_curve_2& cv,
                                 const Event* e2) const
   {
-    return _compare_curve_end_with_event(cv, m_index, m_ps_in_x, m_ps_in_y, e2);
+    return _compare_curve_end_with_event(cv, m_ind, m_ps_in_x, m_ps_in_y, e2);
   }
 
   /// \name Set the boundary conditions of a curve end we are about to compare.
@@ -176,9 +176,9 @@ public:
     m_ps_in_y = by;
   }
 
-  void set_index (Arr_curve_end ind)
+  void set_ind (Arr_curve_end ind)
   {
-    m_index = ind;
+    m_ind = ind;
   }
   //@}
 
@@ -193,7 +193,7 @@ private:
    * \param e2 The event, which may have boundary conditions.
    * \return The comparison result of the curve end with the event.
    */
-  Comparison_result 
+  Comparison_result
   _compare_curve_end_with_event (const X_monotone_curve_2& cv,
                                  Arr_curve_end ind,
                                  Arr_parameter_space ps_x,
@@ -207,8 +207,8 @@ private:
       {
         // Both defined on the left boundary - compare them there.
         CGAL_assertion (ind == ARR_MIN_END);
-	
-	return 
+
+	return
 	  m_traits->compare_y_curve_ends_2_object() (cv, e2->curve(), ind);
       }
 
@@ -222,7 +222,7 @@ private:
       {
         // Both defined on the right boundary - compare them there.
         CGAL_assertion (ind == ARR_MAX_END);
-	
+
         return (m_traits->compare_y_curve_ends_2_object() (cv, e2->curve(),
 							   ind));
       }
@@ -230,13 +230,13 @@ private:
       // The curve end is obviously larger.
       return (LARGER);
     }
-      
+
     // Check if the event has a boundary condition in x. Note that if it
     // has a negative boundary condition, the curve end is larger than it,
     // and if it has a positive boundary condition, the curve end is smaller.
     if (e2->parameter_space_in_x() == ARR_LEFT_BOUNDARY)
       return (LARGER);
-    
+
     if (e2->parameter_space_in_x() == ARR_RIGHT_BOUNDARY)
       return (SMALLER);
 
@@ -244,17 +244,17 @@ private:
     Comparison_result res;
 
     Arr_curve_end ind2 = _curve_end(e2);
-    
+
     // Act according to the boundary sign of the event.
     if (e2->parameter_space_in_y() == ARR_BOTTOM_BOUNDARY)
     {
 
       // Compare the x-positions of the two entities.
-      res = m_traits->compare_x_curve_ends_2_object() (cv, ind, 
+      res = m_traits->compare_x_curve_ends_2_object() (cv, ind,
 						       e2->curve(), ind2);
       if (res != EQUAL)
         return (res);
-      
+
       // In case of equal x-positions, the curve end is larger than the event,
       // which lies on the bottom boundary (unless it also lies on the bottom
       // boundary).
@@ -267,11 +267,11 @@ private:
     if (e2->parameter_space_in_y() == ARR_TOP_BOUNDARY)
     {
       // Compare the x-positions of the two entities.
-      res = m_traits->compare_x_curve_ends_2_object() (cv, ind, 
+      res = m_traits->compare_x_curve_ends_2_object() (cv, ind,
 						       e2->curve(), ind2);
       if (res != EQUAL)
         return (res);
-       
+
       // In case of equal x-positions, the curve end is smaller than the event,
       // which lies on the top boundary (unless it also lies on the top
       // boundary).
@@ -313,8 +313,8 @@ class Sweep_line_event;
  * y-order. Used to maintain the order of the status line (the Y-structure)
  * in the sweep-line algorithm.
  */
-template <class Traits_, class Subcurve_> 
-class Curve_comparer 
+template <class Traits_, class Subcurve_>
+class Curve_comparer
 {
 public:
 
@@ -332,7 +332,7 @@ private:
   Event            **m_curr_event;      // Points to the current event point.
 
 public:
-  
+
   /*! Constructor. */
   template <class Sweep_event>
   Curve_comparer (const Traits_adaptor_2 * t, Sweep_event** e_ptr) :
@@ -348,10 +348,10 @@ public:
   {
     // In case to two curves are right curves at the same event, compare
     // to the right of the event point.
-    if (std::find((*m_curr_event)->right_curves_begin(), 
+    if (std::find((*m_curr_event)->right_curves_begin(),
                   (*m_curr_event)->right_curves_end(),
                   c1) != (*m_curr_event)->right_curves_end() &&
-        std::find((*m_curr_event)->right_curves_begin(), 
+        std::find((*m_curr_event)->right_curves_begin(),
                   (*m_curr_event)->right_curves_end(),
                   c2) != (*m_curr_event)->right_curves_end())
     {
@@ -359,15 +359,15 @@ public:
               (c1->last_curve(), c2->last_curve(), (*m_curr_event)->point()));
     }
 
-    Arr_parameter_space ps_x1 = 
+    Arr_parameter_space ps_x1 =
       m_traits->parameter_space_in_x_2_object()(c1->last_curve(), ARR_MIN_END);
-    Arr_parameter_space ps_y1 = 
+    Arr_parameter_space ps_y1 =
       m_traits->parameter_space_in_y_2_object()(c1->last_curve(), ARR_MIN_END);
 
     if ((ps_x1 == ARR_INTERIOR) && (ps_y1 == ARR_INTERIOR))
     {
       // The first curve has a valid left endpoint. Compare the y-position
-      // of this endpoint to the second subcurve. 
+      // of this endpoint to the second subcurve.
       return m_traits->compare_y_at_x_2_object()
         (m_traits->construct_min_vertex_2_object()(c1->last_curve()),
          c2->last_curve());
