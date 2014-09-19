@@ -1,11 +1,3 @@
-// (LicenseStuffHere)
-//
-// $URL$
-// $Id$
-// 
-//
-// Author(s)     : Stephen Kiazyk
-
 #include <CGAL/Exact_predicates_exact_constructions_kernel_with_sqrt.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
