@@ -19,7 +19,7 @@
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef CGAL::Polyhedron_3<Kernel> Polyhedron_3;
-typedef CGAL::Polyhedron_shortest_path_default_traits<Kernel, Polyhedron_3> Traits;
+typedef CGAL::Polyhedron_shortest_path_traits<Kernel, Polyhedron_3> Traits;
 typedef boost::property_map<Polyhedron_3, boost::vertex_external_index_t>::type VertexIndexMap;
 typedef boost::property_map<Polyhedron_3, CGAL::halfedge_external_index_t>::type HalfedgeIndexMap;
 typedef boost::property_map<Polyhedron_3, CGAL::face_external_index_t>::type FaceIndexMap;

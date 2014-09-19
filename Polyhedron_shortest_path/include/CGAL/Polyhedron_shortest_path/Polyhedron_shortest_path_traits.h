@@ -45,7 +45,7 @@ model as required by the Polyhedron_shortest_path algorithm
 template <
   class K, 
   class F>
-class Polyhedron_shortest_path_default_traits : public K
+class Polyhedron_shortest_path_traits : public K
 {
 public:
 
@@ -114,11 +114,11 @@ private:
   
 public:
 
-  Polyhedron_shortest_path_default_traits()
+  Polyhedron_shortest_path_traits()
   {
   }
   
-  Polyhedron_shortest_path_default_traits(const Kernel& kernel)
+  Polyhedron_shortest_path_traits(const Kernel& kernel)
     : m_kernel(kernel)
     , m_classify_barycentric_coordinate_object(m_construct_barycentric_coordinate_weight_object)
     , m_project_triangle_3_to_triangle_2_object(m_kernel)
@@ -145,7 +145,7 @@ public:
 };
 
 template <class Kernel, class FaceListGraph>
-std::ostream& operator<<(std::ostream& os, typename Polyhedron_shortest_path_default_traits<Kernel, FaceListGraph>::Barycentric_coordinate b)
+std::ostream& operator<<(std::ostream& os, typename Polyhedron_shortest_path_traits<Kernel, FaceListGraph>::Barycentric_coordinate b)
 {
   return os << b[0] << " " << b[1] << " " << b[2];
 }
@@ -168,7 +168,7 @@ model which uses an exact Kernel during the unfolding operations to achieve bett
 template <
   class K, 
   class F>
-class Polyhedron_shortest_path_default_traits_with_robust_unfolding : public Polyhedron_shortest_path_default_traits<K,F>
+class Polyhedron_shortest_path_traits_with_robust_unfolding : public Polyhedron_shortest_path_traits<K,F>
 {
 public:
   typedef K Kernel;
@@ -182,12 +182,12 @@ private:
   
 public:
 
-  Polyhedron_shortest_path_default_traits_with_robust_unfolding()
+  Polyhedron_shortest_path_traits_with_robust_unfolding()
   {
   }
   
-  Polyhedron_shortest_path_default_traits_with_robust_unfolding(const Kernel& kernel)
-    : Polyhedron_shortest_path_default_traits<K,F>(kernel)
+  Polyhedron_shortest_path_traits_with_robust_unfolding(const Kernel& kernel)
+    : Polyhedron_shortest_path_traits<K,F>(kernel)
     , m_robust_project_triangle_3_to_triangle_2_object(kernel)
     , m_robust_flatten_triangle_3_along_segment_2(kernel)
   {

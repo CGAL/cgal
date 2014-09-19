@@ -31,7 +31,7 @@
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef CGAL::Polyhedron_3<Kernel, CGAL::Polyhedron_items_with_id_3> Polyhedron_3;
-typedef CGAL::Polyhedron_shortest_path_default_traits<Kernel, Polyhedron_3> Traits;
+typedef CGAL::Polyhedron_shortest_path_traits<Kernel, Polyhedron_3> Traits;
 typedef Traits::Barycentric_coordinate Barycentric_coordinate;
 typedef Traits::Construct_barycentric_coordinate Construct_barycentric_coordinate;
 typedef CGAL::Polyhedron_shortest_path<Traits> Polyhedron_shortest_path;

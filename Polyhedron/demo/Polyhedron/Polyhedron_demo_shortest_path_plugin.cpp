@@ -36,7 +36,7 @@ private:
   typedef boost::property_map<Polyhedron, CGAL::face_index_t>::type FaceIndexMap;
   typedef boost::property_map<Polyhedron, CGAL::vertex_point_t>::type VertexPointMap;
   
-  typedef CGAL::Polyhedron_shortest_path_default_traits<Kernel, Polyhedron> Polyhedron_shortest_path_traits;
+  typedef CGAL::Polyhedron_shortest_path_traits<Kernel, Polyhedron> Polyhedron_shortest_path_traits;
   typedef CGAL::Polyhedron_shortest_path<Polyhedron_shortest_path_traits, VertexIndexMap, HalfedgeIndexMap, FaceIndexMap, VertexPointMap> Polyhedron_shortest_path;
   
   struct ShortestPathsPointsVisitor

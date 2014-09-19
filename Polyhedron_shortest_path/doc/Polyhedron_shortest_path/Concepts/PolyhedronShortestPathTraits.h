@@ -7,7 +7,7 @@ The concept `PolyhedronShortestPathTraits` describes the required types,
 predicates, and constructions required to execute the 
 `Polyhedron_shortest_path` algorithm
  
-\cgalHasModel `CGAL::Polyhedron_shortest_path_default_traits<K,P>`
+\cgalHasModel `CGAL::Polyhedron_shortest_path_traits<K,P>`
  
 */
 

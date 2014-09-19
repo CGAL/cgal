@@ -47,7 +47,7 @@ public:
   typedef GraphTraits::face_descriptor face_descriptor;
   typedef GraphTraits::face_iterator face_iterator;
   
-  typedef CGAL::Polyhedron_shortest_path_default_traits<Kernel, Polyhedron> Polyhedron_shortest_path_traits;
+  typedef CGAL::Polyhedron_shortest_path_traits<Kernel, Polyhedron> Polyhedron_shortest_path_traits;
   typedef CGAL::Polyhedron_shortest_path<Polyhedron_shortest_path_traits> Polyhedron_shortest_path;
   typedef Polyhedron_shortest_path::Face_location Face_location;
   typedef CGAL::AABB_face_graph_triangle_primitive<Polyhedron, VertexPointMap> AABB_face_graph_primitive;

@@ -33,7 +33,7 @@ BOOST_AUTO_TEST_CASE( project_triangle3D_to_triangle2D )
 {
   typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
   typedef CGAL::Polyhedron_3<Kernel> Polyhedron_3;
-  typedef CGAL::Polyhedron_shortest_path_default_traits<Kernel, Polyhedron_3> Traits;
+  typedef CGAL::Polyhedron_shortest_path_traits<Kernel, Polyhedron_3> Traits;
   
   Traits traits;
   Traits::Compute_squared_distance_2 compute_squared_distance_2(traits.compute_squared_distance_2_object());
@@ -55,7 +55,7 @@ BOOST_AUTO_TEST_CASE( test_simple_2D_barycentric_coordinates )
 {
   typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
   typedef CGAL::Polyhedron_3<Kernel> Polyhedron_3;
-  typedef CGAL::Polyhedron_shortest_path_default_traits<Kernel, Polyhedron_3> Traits;
+  typedef CGAL::Polyhedron_shortest_path_traits<Kernel, Polyhedron_3> Traits;
 
   Traits traits;
   
@@ -130,7 +130,7 @@ BOOST_AUTO_TEST_CASE( barycentric_coords_3D )
 {
   typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
   typedef CGAL::Polyhedron_3<Kernel> Polyhedron_3;
-  typedef CGAL::Polyhedron_shortest_path_default_traits<Kernel, Polyhedron_3> Traits;
+  typedef CGAL::Polyhedron_shortest_path_traits<Kernel, Polyhedron_3> Traits;
   
   Traits traits;
   
@@ -190,7 +190,7 @@ BOOST_AUTO_TEST_CASE( simple_flattening_triangle_along_edge )
 {
   typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
   typedef CGAL::Polyhedron_3<Kernel> Polyhedron_3;
-  typedef CGAL::Polyhedron_shortest_path_default_traits<Kernel, Polyhedron_3> Traits;
+  typedef CGAL::Polyhedron_shortest_path_traits<Kernel, Polyhedron_3> Traits;
   
   Traits traits;
   
@@ -232,7 +232,7 @@ BOOST_AUTO_TEST_CASE( nonsimple_flattening_triangle_along_edge )
 {
   typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
   typedef CGAL::Polyhedron_3<Kernel> Polyhedron_3;
-  typedef CGAL::Polyhedron_shortest_path_default_traits<Kernel, Polyhedron_3> Traits;
+  typedef CGAL::Polyhedron_shortest_path_traits<Kernel, Polyhedron_3> Traits;
   
   Traits traits;
   
@@ -273,7 +273,7 @@ BOOST_AUTO_TEST_CASE( detect_is_saddle_vertex )
 {
   typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
   typedef CGAL::Polyhedron_3<Kernel> Polyhedron_3;
-  typedef CGAL::Polyhedron_shortest_path_default_traits<Kernel, Polyhedron_3> Traits;
+  typedef CGAL::Polyhedron_shortest_path_traits<Kernel, Polyhedron_3> Traits;
   
   typedef boost::graph_traits<Polyhedron_3> GraphTraits;
   typedef GraphTraits::vertex_iterator vertex_iterator;
