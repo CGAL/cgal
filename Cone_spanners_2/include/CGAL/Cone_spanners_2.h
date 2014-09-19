@@ -189,26 +189,26 @@ class Cone_spanners_2 {
 
     /** @brief returns the cone spanner graph as a `boost::adjacency_list`.
      */
-    Graph get_graph() {
+    Graph graph() {
       return this->g;
     }
 
     /** @brief returns the number of cones configured. 
      */
-    const unsigned int& get_num_cones() const {
+    const unsigned int& num_cones() const {
       return num_cones;
     }
 
     /** @brief returns the vector of directions. 
      */
-    const std::vector<Direction_2>& get_directions() const {
+    const std::vector<Direction_2>& directions() const {
       return rays;
     }
 
     /** casts the cone spanner graph into a `boost::adjacency_list`. 
      */
     operator Graph() const {
-      return get_graph();
+      return graph();
     }
 
     /** Function object that orders 2D graph vertex_descriptors based on the "order
@@ -449,26 +449,26 @@ class Cone_spanners_2 <Exact_predicates_exact_constructions_kernel_with_sqrt,
 
     /** @brief returns the cone spanner graph as a `boost::adjacency_list`.
      */
-    Graph get_graph() {
+    Graph graph() {
       return this->g;
     }
 
     /** @brief returns the number of cones configured. 
      */
-    const unsigned int& get_num_cones() const {
+    const unsigned int& num_cones() const {
       return num_cones;
     }
 
     /** @brief returns the vector of directions.
      */
-    const std::vector<Direction_2>& get_directions() const {
+    const std::vector<Direction_2>& directions() const {
       return rays;
     }
 
     /** Casts the cone_spanner graph into a `boost::adjacency_list`. 
      */
     operator Graph() const {
-      return get_graph();
+      return graph();
     }
 
     /** Function object that orders 2D graph vertex_descriptors based on the "order
