@@ -4,9 +4,6 @@
 /// \defgroup PkgConeBasedSpannersConcepts Concepts
 /// \ingroup PkgConeBasedSpanners
 
-/// \defgroup PkgConeBasedSpannersAlgorithmClasses Algorithm Classes
-/// \ingroup PkgConeBasedSpanners
-
 /// \defgroup PkgConeBasedSpannersTraitsClasses Traits Classes
 /// \ingroup PkgConeBasedSpanners
 
@@ -22,18 +19,16 @@
 
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Weisheng Si and  Quincy Tse}
-\cgalPkgDesc{ConeBasedSpanners DESCRIPTION.
-The package provides ... }
+\cgalPkgDesc{This package provides ... }
 \cgalPkgManuals{Chapter_ConeBasedSpanners,PkgConeBasedSpanners}
 \cgalPkgSummaryEnd
 
 \cgalPkgShortInfoBegin
 \cgalPkgSince{X.X}
 \cgalPkgDependsOn{\ref PkgDEPENDENCY}
-\cgalPkgBib{cgal:x-x}
+\cgalPkgBib{cgal:st-cbs}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
 \cgalPkgDemo{DEMO 1,demo1.zip}
-\cgalPkgDemo{DEMO 2,demo2.zip}
 \cgalPkgShortInfoEnd
 
 \cgalPkgDescriptionEnd
