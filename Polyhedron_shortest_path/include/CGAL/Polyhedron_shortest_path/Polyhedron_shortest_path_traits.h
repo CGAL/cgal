@@ -22,7 +22,7 @@ namespace CGAL {
 /*!
 \ingroup PkgPolyhedronShortestPathTraitsClasses
 
-\brief Provides an implementation of the FaceGraphShortestPathTraits 
+\brief Provides an implementation of the PolyhedronShortestPathTraits 
 model as required by the Polyhedron_shortest_path algorithm
 
 \tparam K The Kernel type whose geometric primitives to use
@@ -38,10 +38,10 @@ class Polyhedron_shortest_path_default_traits : public K
 {
 public:
 
-  /// The Kernel whose operations are used for this algorithm
+  /// Kernel type
   typedef K Kernel;
   
-  /// The type of FaceGraph used by this algorithm 
+  /// FaceGraphType
   typedef F FaceGraph;
 
   typedef typename Kernel::FT FT;
@@ -139,17 +139,18 @@ std::ostream& operator<<(std::ostream& os, typename Polyhedron_shortest_path_def
   return os << b[0] << " " << b[1] << " " << b[2];
 }
 
-/*
+#ifndef DOXYGEN_RUNNING // needed due to a bug in doxygen
+/*!
 \ingroup PkgPolyhedronShortestPathTraitsClasses
 
 \internal
 
-\brief Provides an implementation of the FaceGraphShortestPathTraits 
+\brief Provides an implementation of the PolyhedronShortestPathTraits 
 model which uses an exact Kernel during the unfolding operations to achieve better overall precision
 
-\tparam K The kernel type whose geometric primitives to use
+\tparam K Kernel Type
 
-\tparam F The FaceGraph type the algorithm is to act on
+\tparam F FaceGraph type
 
 \cgalModels `PolyhedronShortestPathTraits`
 */
@@ -184,6 +185,7 @@ public:
   Project_triangle_3_to_triangle_2 project_triangle_3_to_triangle_2_object() const { return m_robust_project_triangle_3_to_triangle_2_object; }
   Flatten_triangle_3_along_segment_2 flatten_triangle_3_along_segment_2_object() const { return m_robust_flatten_triangle_3_along_segment_2; }
 };
+#endif
 
 } // namespace CGAL
 

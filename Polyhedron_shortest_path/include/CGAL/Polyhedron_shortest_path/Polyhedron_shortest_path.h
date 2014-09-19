@@ -334,14 +334,14 @@ private:
     return triangle_from_halfedge(edge, m_faceGraph, m_vertexPointMap);
   }
   
-  static Triangle_3 triangle_from_halfedge(halfedge_descriptor edge, const FaceGraph& faceGraph)
+  static Triangle_3 triangle_from_halfedge(halfedge_descriptor edge, const FaceGraph& g)
   {
-    return triangle_from_halfedge(edge, faceGraph, get(vertex_point, faceGraph));
+    return triangle_from_halfedge(edge, g, get(vertex_point, g));
   }
   
-  static Triangle_3 triangle_from_halfedge(halfedge_descriptor edge, const FaceGraph& faceGraph, VertexPointMap vertexPointMap)
+  static Triangle_3 triangle_from_halfedge(halfedge_descriptor edge, const FaceGraph& g, VertexPointMap vertexPointMap)
   {
-    return CGAL::internal::triangle_from_halfedge<Triangle_3, FaceGraph, VertexPointMap>(edge, faceGraph, vertexPointMap);
+    return CGAL::internal::triangle_from_halfedge<Triangle_3, FaceGraph, VertexPointMap>(edge, g, vertexPointMap);
   }
   
   Triangle_3 triangle_from_face(face_descriptor f) const
@@ -349,14 +349,14 @@ private:
     return triangle_from_face(f, m_faceGraph, m_vertexPointMap);
   }
   
-  static Triangle_3 triangle_from_face(face_descriptor f, const FaceGraph& faceGraph)
+  static Triangle_3 triangle_from_face(face_descriptor f, const FaceGraph& g)
   {
-    return triangle_from_halfedge(halfedge(f, faceGraph), faceGraph, get(vertex_point, faceGraph));
+    return triangle_from_halfedge(halfedge(f, g), g, get(vertex_point, g));
   }
   
-  static Triangle_3 triangle_from_face(face_descriptor f, const FaceGraph& faceGraph, VertexPointMap vertexPointMap)
+  static Triangle_3 triangle_from_face(face_descriptor f, const FaceGraph& g, VertexPointMap vertexPointMap)
   {
-    return triangle_from_halfedge(halfedge(f, faceGraph), faceGraph, vertexPointMap);
+    return triangle_from_halfedge(halfedge(f, g), g, vertexPointMap);
   }
 
   /*
@@ -1370,7 +1370,7 @@ private:
   
   void reset_algorithm(bool clearFaceLocations = true)
   {
-    m_closestToVertices.resize(boost::num_vertices(m_faceGraph));
+    m_closestToVertices.resize(num_vertices(m_faceGraph));
     std::fill(m_closestToVertices.begin(), m_closestToVertices.end(), Node_distance_pair(NULL, FT(0.0)));
     m_vertexOccupiers.resize(num_halfedges(m_faceGraph));
     std::fill(m_vertexOccupiers.begin(), m_vertexOccupiers.end(), Node_distance_pair(NULL, FT(0.0)));
@@ -1388,7 +1388,7 @@ private:
     
     delete_all_nodes();
     m_rootNodes.clear();
-    m_vertexIsPseudoSource.resize(boost::num_vertices(m_faceGraph));
+    m_vertexIsPseudoSource.resize(num_vertices(m_faceGraph));
 
 #if !defined(NDEBUG)
     m_currentNodeCount = 0;
@@ -1682,8 +1682,8 @@ private:
     set_vertex_types();
 
     m_vertexOccupiers.resize(num_halfedges(m_faceGraph));
-    m_closestToVertices.resize(boost::num_vertices(m_faceGraph));
-    
+    m_closestToVertices.resize(num_vertices(m_faceGraph));
+
     if (m_debugOutput)
     {
       vertex_iterator current, end;
@@ -1854,13 +1854,13 @@ public:
   \param traits Optional instance of the traits class to use.
   
   */
-  Polyhedron_shortest_path(FaceGraph& faceGraph, const Traits& traits = Traits())
+  Polyhedron_shortest_path(FaceGraph& g, const Traits& traits = Traits())
     : m_traits(traits)
-    , m_faceGraph(faceGraph)
-    , m_vertexIndexMap(get(boost::vertex_index, faceGraph))
-    , m_halfedgeIndexMap(get(boost::halfedge_index, faceGraph))
-    , m_faceIndexMap(get(boost::face_index, faceGraph))
-    , m_vertexPointMap(get(CGAL::vertex_point, faceGraph))
+    , m_faceGraph(g)
+    , m_vertexIndexMap(get(boost::vertex_index, g))
+    , m_halfedgeIndexMap(get(boost::halfedge_index, g))
+    , m_faceIndexMap(get(boost::face_index, g))
+    , m_vertexPointMap(get(CGAL::vertex_point, g))
     , m_debugOutput(false)
   {
     reset_algorithm();
@@ -1869,9 +1869,9 @@ public:
   /*!
   \brief Creates a shortest paths object associated with a specific FaceGraph.
   
-  \details No copy of the FaceGraph is made, only a reference to the faceGraph is held.
+  \details No copy of the FaceGraph is made, only a reference to the `g` is held.
   
-  \param faceGraph The surface mesh to compute shortest paths on.  Note that it must be triangulated.
+  \param g The surface mesh to compute shortest paths on.  Note that it must be triangulated.
   
   \param vertexIndexMap Property map for associating an id to each vertex, from 0 to `num_vertices(faceGraph) - 1`.
   
@@ -1883,9 +1883,9 @@ public:
   
   \param traits Optional instance of the traits class to use.
   */
-  Polyhedron_shortest_path(FaceGraph& faceGraph, VertexIndexMap vertexIndexMap, HalfedgeIndexMap halfedgeIndexMap, FaceIndexMap faceIndexMap, VertexPointMap vertexPointMap, const Traits& traits = Traits())
+  Polyhedron_shortest_path(FaceGraph& g, VertexIndexMap vertexIndexMap, HalfedgeIndexMap halfedgeIndexMap, FaceIndexMap faceIndexMap, VertexPointMap vertexPointMap, const Traits& traits = Traits())
     : m_traits(traits)
-    , m_faceGraph(faceGraph)
+    , m_faceGraph(g)
     , m_vertexIndexMap(vertexIndexMap)
     , m_halfedgeIndexMap(halfedgeIndexMap)
     , m_faceIndexMap(faceIndexMap)
@@ -1980,7 +1980,7 @@ public:
   iterator. If only a single source point was specified, it will always have 
   index 0.
     
-  \param i Index of the source point.  Precondition: `0 <= i < num_source_locations()`
+  \param i Index of the source point.  Precondition: `0 <= i < number_of_source_locations()`
   \return The face location of the `i`th source point.
   */
   const Face_location& get_source_location(std::size_t i) const
@@ -1993,7 +1993,7 @@ public:
     
   \return The number of source points, or 0 if no sequence tree is computed yet.
   */
-  std::size_t num_source_locations() const
+  std::size_t number_of_source_locations() const
   {
     return m_faceLocations.size();
   }
@@ -2025,7 +2025,7 @@ public:
     }
     else
     {
-      return std::make_pair(FT(-1.0), num_source_locations());
+      return std::make_pair(FT(-1.0), number_of_source_locations());
     }
   }
   
@@ -2052,7 +2052,7 @@ public:
     }
     else
     {
-      return std::make_pair(FT(-1.0), num_source_locations());
+      return std::make_pair(FT(-1.0), number_of_source_locations());
     }
   }
   
@@ -2065,7 +2065,7 @@ public:
   \brief Visits the sequence of edges, vertices and faces traversed by the shortest path
   from a vertex to any source point.
   \param v A vertex of the face graph
-  \param visitor A model of `FaceGraphShortestPathVisitor` to receive the shortest path
+  \param visitor A model of `PolyhedronShortestPathVisitor` to receive the shortest path
   \return true if there exists a shortest path from `v` to any source point, false otherwise (may occur if the face graph is disconnected)
   */
   template <class Visitor>
@@ -2090,7 +2090,7 @@ public:
   
   \param f A face of the face graph
   \param location Barycentric coordinate of the query point on face `f`
-  \param visitor A model of `FaceGraphShortestPathVisitor` to receive the shortest path
+  \param visitor A model of `PolyhedronShortestPathVisitor` to receive the shortest path
   \return true if there exists a shortest path from the query point to any source point, false otherwise (may occur if the face graph is disconnected)
   */
   template <class Visitor>
@@ -2163,8 +2163,8 @@ public:
     of the given face.
   
   \details The following static overloads are also available:
-  -- `static Point_3 point(face_descriptor f, Barycentric_coordinate location, const FaceGraph& faceGraph, const Traits& traits = Traits())`
-  -- `static Point_3 point(face_descriptor f, Barycentric_coordinate location, const FaceGraph& faceGraph, VertexPointMap vertexPointMap, const Traits& traits = Traits())`
+    - `static Point_3 point(face_descriptor f, Barycentric_coordinate location, const FaceGraph& g, const Traits& traits = Traits())`
+    - `static Point_3 point(face_descriptor f, Barycentric_coordinate location, const FaceGraph& g, VertexPointMap vertexPointMap, const Traits& traits = Traits())`
   
   \param f A face of on the face graph
   \param location The barycentric coordinate of the query point on face `f` 
@@ -2176,14 +2176,14 @@ public:
   
   /// \cond
   
-  static Point_3 point(face_descriptor f, Barycentric_coordinate location, const FaceGraph& faceGraph, const Traits& traits = Traits()) 
+  static Point_3 point(face_descriptor f, Barycentric_coordinate location, const FaceGraph& g, const Traits& traits = Traits()) 
   {
-    return point(f, location, faceGraph, CGAL::get(CGAL::vertex_point, faceGraph), traits);
+    return point(f, location, g, CGAL::get(CGAL::vertex_point, g), traits);
   }
   
-  static Point_3 point(face_descriptor f, Barycentric_coordinate location, const FaceGraph& faceGraph, VertexPointMap vertexPointMap, const Traits& traits = Traits()) 
+  static Point_3 point(face_descriptor f, Barycentric_coordinate location, const FaceGraph& g, VertexPointMap vertexPointMap, const Traits& traits = Traits()) 
   {
-    return construct_barycenter_in_triangle_3(triangle_from_face(f, faceGraph, vertexPointMap), location, traits);
+    return construct_barycenter_in_triangle_3(triangle_from_face(f, g, vertexPointMap), location, traits);
   }
   
   /// \endcond
@@ -2193,8 +2193,8 @@ public:
     along the given edge.
   
   \details The following static overloads are also available:
-  -- `static Point_3 point(halfedge_descriptor edge, FT t, const FaceGraph& faceGraph, const Traits& traits = Traits())`
-  -- `static static Point_3 point(halfedge_descriptor edge, FT t, const FaceGraph& faceGraph, VertexPointMap vertexPointMap, const Traits& traits = Traits())`
+    - `static Point_3 point(halfedge_descriptor edge, FT t, const FaceGraph& g, const Traits& traits = Traits())`
+    - `static Point_3 point(halfedge_descriptor edge, FT t, const FaceGraph& g, VertexPointMap vertexPointMap, const Traits& traits = Traits())`
 
   \param edge An edge of the face graph
   \param t The parametric distance along edge of the desired point
@@ -2206,17 +2206,17 @@ public:
   
   /// \cond
 
-  static Point_3 point(halfedge_descriptor edge, FT t, const FaceGraph& faceGraph, const Traits& traits = Traits())
+  static Point_3 point(halfedge_descriptor edge, FT t, const FaceGraph& g, const Traits& traits = Traits())
   {
-    return point(edge, t, faceGraph, CGAL::get(CGAL::vertex_point, faceGraph), traits);
+    return point(edge, t, g, CGAL::get(CGAL::vertex_point, g), traits);
   }
 
-  static Point_3 point(halfedge_descriptor edge, FT t, const FaceGraph& faceGraph, VertexPointMap vertexPointMap, const Traits& traits = Traits())
+  static Point_3 point(halfedge_descriptor edge, FT t, const FaceGraph& g, VertexPointMap vertexPointMap, const Traits& traits = Traits())
   {
     typename Traits::Construct_barycenter_3 construct_barycenter_3(traits.construct_barycenter_3_object());
     
     // Note: the parameter t is meant to be the weighted coordinate on the _endpoint_ (i.e. target) of the segment
-    return construct_barycenter_3(get(vertexPointMap, target(edge, faceGraph)), t, get(vertexPointMap, source(edge, faceGraph)));
+    return construct_barycenter_3(get(vertexPointMap, target(edge, g)), t, get(vertexPointMap, source(edge, g)));
   }
   
   /// \endcond
@@ -2240,7 +2240,7 @@ public:
   \brief Returns the location of the given vertex as a `Face_location`
   
   \details The following static overload is also available:
-  -- `static Face_location face_location(vertex_descriptor vertex, const FaceGraph& faceGraph, const Traits& traits = Traits())`
+    - `static Face_location face_location(vertex_descriptor vertex, const FaceGraph& g, const Traits& traits = Traits())`
   
   \param vertex A vertex of the face graph
   */
@@ -2251,12 +2251,12 @@ public:
   
   /// \cond
 
-  static Face_location face_location(vertex_descriptor vertex, const FaceGraph& faceGraph, const Traits& traits = Traits())
+  static Face_location face_location(vertex_descriptor vertex, const FaceGraph& g, const Traits& traits = Traits())
   {
     typename Traits::Construct_barycentric_coordinate construct_barycentric_coordinate(traits.construct_barycentric_coordinate_object());
-    halfedge_descriptor he = next(halfedge(vertex, faceGraph), faceGraph);
-    face_descriptor locationFace = face(he, faceGraph);
-    std::size_t edgeIndex = CGAL::internal::edge_index(he, faceGraph);
+    halfedge_descriptor he = next(halfedge(vertex, g), g);
+    face_descriptor locationFace = face(he, g);
+    std::size_t edgeIndex = CGAL::internal::edge_index(he, g);
     
     FT coords[3] = { FT(0.0), FT(0.0), FT(0.0) };
     
@@ -2270,8 +2270,8 @@ public:
   /*!
   \brief Returns a location along the given edge as a `Face_location`
   
-  \details The following static overload is also available: 
-  - `static Face_location face_location(halfedge_descriptor he, FT t, const FaceGraph& faceGraph, const Traits& traits = Traits())`
+  \details The following static overload is also available:
+    - `static Face_location face_location(halfedge_descriptor he, FT t, const FaceGraph& g, const Traits& traits = Traits())`
   
   \param he A halfedge of the face graph
   \param t Parametric distance of the desired point along `he`
@@ -2283,11 +2283,11 @@ public:
 
   /// \cond
   
-  static Face_location face_location(halfedge_descriptor he, FT t, const FaceGraph& faceGraph, const Traits& traits = Traits())
+  static Face_location face_location(halfedge_descriptor he, FT t, const FaceGraph& g, const Traits& traits = Traits())
   {
     typename Traits::Construct_barycentric_coordinate cbc(traits.construct_barycentric_coordinate_object());
-    face_descriptor locationFace = face(he, faceGraph);
-    std::size_t edgeIndex = CGAL::internal::edge_index(he, faceGraph);
+    face_descriptor locationFace = face(he, g);
+    std::size_t edgeIndex = CGAL::internal::edge_index(he, g);
     
     const FT oneMinusT(FT(1.0) - t);
     
@@ -2314,7 +2314,7 @@ public:
     that accept a reference to an `AABB_tree` as input.
     
   \details The following static overload is also available:
-  -- `static Face_location locate(const Point_3& location, const FaceGraph& faceGraph, VertexPointMap vertexPointMap, const Traits& traits = Traits())`
+    - `static Face_location locate(const Point_3& location, const FaceGraph& g, VertexPointMap vertexPointMap, const Traits& traits = Traits())`
   
   \tparam AABBTraits A model of `AABBTraits` used to defined a \cgal `AABB_tree`.
   
@@ -2329,11 +2329,11 @@ public:
   /// \cond
   
   template <class AABBTraits>
-  static Face_location locate(const Point_3& location, const FaceGraph& faceGraph, VertexPointMap vertexPointMap, const Traits& traits = Traits())
+  static Face_location locate(const Point_3& location, const FaceGraph& g, VertexPointMap vertexPointMap, const Traits& traits = Traits())
   {
     AABB_tree<AABBTraits> tree;
-    build_aabb_tree(faceGraph, tree);
-    return locate(location, tree, faceGraph, vertexPointMap, traits);
+    build_aabb_tree(g, tree);
+    return locate(location, tree, g, vertexPointMap, traits);
   }
   
   /// \endcond
@@ -2342,7 +2342,7 @@ public:
   \brief Returns the face location nearest to the given point.
   
   \details The following static overload is also available:
-  -- static Face_location locate(const Point_3& location, const AABB_tree<AABBTraits>& tree, const FaceGraph& faceGraph, VertexPointMap vertexPointMap, const Traits& traits = Traits())
+    - static Face_location locate(const Point_3& location, const AABB_tree<AABBTraits>& tree, const FaceGraph& g, VertexPointMap vertexPointMap, const Traits& traits = Traits())
   
   \tparam AABBTraits A model of `AABBTraits` used to defined a \cgal `AABB_tree`.
   
@@ -2358,13 +2358,13 @@ public:
   /// \cond
   
   template <class AABBTraits>
-  static Face_location locate(const Point_3& location, const AABB_tree<AABBTraits>& tree, const FaceGraph& faceGraph, VertexPointMap vertexPointMap, const Traits& traits = Traits())
+  static Face_location locate(const Point_3& location, const AABB_tree<AABBTraits>& tree, const FaceGraph& g, VertexPointMap vertexPointMap, const Traits& traits = Traits())
   {
     typename Traits::Construct_barycentric_coordinate_in_triangle_3 cbcit3(traits.construct_barycentric_coordinate_in_triangle_3_object());
     typename AABB_tree<AABBTraits>::Point_and_primitive_id result = tree.closest_point_and_primitive(location);
     
     face_descriptor f = result.second;
-    Barycentric_coordinate b = cbcit3(triangle_from_face(f, faceGraph, vertexPointMap), result.first);
+    Barycentric_coordinate b = cbcit3(triangle_from_face(f, g, vertexPointMap), result.first);
     return Face_location(f, b);
   }
   
@@ -2378,7 +2378,7 @@ public:
     that accept a reference to an `AABB_tree` as input.
   
   \details The following static overload is also available:
-  - `static Face_location locate(const Ray_3& ray, const FaceGraph& faceGraph, VertexPointMap vertexPointMap, const Traits& traits = Traits())`
+    - `static Face_location locate(const Ray_3& ray, const FaceGraph& g, VertexPointMap vertexPointMap, const Traits& traits = Traits())`
   
   \tparam AABBTraits A model of `AABBTraits` used to defined an `AABB_tree`.
   
@@ -2393,11 +2393,11 @@ public:
   /// \cond
   
   template <class AABBTraits>
-  static Face_location locate(const Ray_3& ray, const FaceGraph& faceGraph, VertexPointMap vertexPointMap, const Traits& traits = Traits())
+  static Face_location locate(const Ray_3& ray, const FaceGraph& g, VertexPointMap vertexPointMap, const Traits& traits = Traits())
   {
     AABB_tree<AABBTraits> tree;
-    build_aabb_tree(faceGraph, tree);
-    return locate(ray, tree, faceGraph, vertexPointMap, traits);
+    build_aabb_tree(g, tree);
+    return locate(ray, tree, g, vertexPointMap, traits);
   }
   
   /// \endcond
@@ -2407,7 +2407,7 @@ public:
     its source point.
     
   \details The following static overload is also available:
-  - static Face_location locate(const Ray_3& ray, const AABB_tree<AABBTraits>& tree, const FaceGraph& faceGraph, VertexPointMap vertexPointMap, const Traits& traits = Traits())
+    - static Face_location locate(const Ray_3& ray, const AABB_tree<AABBTraits>& tree, const FaceGraph& g, VertexPointMap vertexPointMap, const Traits& traits = Traits())
     
   \tparam AABBTraits A model of `AABBTraits` used to defined a \cgal `AABB_tree`.
   
@@ -2423,7 +2423,7 @@ public:
   /// \cond
   
   template <class AABBTraits>
-  static Face_location locate(const Ray_3& ray, const AABB_tree<AABBTraits>& tree, const FaceGraph& faceGraph, VertexPointMap vertexPointMap, const Traits& traits = Traits())
+  static Face_location locate(const Ray_3& ray, const AABB_tree<AABBTraits>& tree, const FaceGraph& g, VertexPointMap vertexPointMap, const Traits& traits = Traits())
   {
     typedef AABB_tree<AABBTraits> AABB_face_graph_tree;
     typename Traits::Construct_barycentric_coordinate_in_triangle_3 cbcit3(traits.construct_barycentric_coordinate_in_triangle_3_object());
@@ -2464,7 +2464,7 @@ public:
      
     if (foundOne)
     {
-      Barycentric_coordinate b = cbcit3(triangle_from_face(nearestFace, faceGraph, vertexPointMap), nearestPoint);
+      Barycentric_coordinate b = cbcit3(triangle_from_face(nearestFace, g, vertexPointMap), nearestPoint);
       return Face_location(nearestFace, b);
     }
     else
@@ -2484,7 +2484,7 @@ public:
   \brief Creates an `AABB_tree` suitable for use with `locate`.
   
   \details The following static overload is also available:
-  - `static void build_aabb_tree(const FaceGraph& faceGraph, AABB_tree<AABBTraits>& outTree)`
+    - `static void build_aabb_tree(const FaceGraph& g, AABB_tree<AABBTraits>& outTree)`
 
   \tparam AABBTraits A model of `AABBTraits` used to defined a \cgal `AABB_tree`.
   
@@ -2499,11 +2499,11 @@ public:
   /// \cond
 
   template <class AABBTraits>
-  static void build_aabb_tree(const FaceGraph& faceGraph, AABB_tree<AABBTraits>& outTree)
+  static void build_aabb_tree(const FaceGraph& g, AABB_tree<AABBTraits>& outTree)
   {
     face_iterator facesStart, facesEnd;
-    boost::tie(facesStart, facesEnd) = faces(faceGraph);
-    outTree.rebuild(facesStart, facesEnd, faceGraph);
+    boost::tie(facesStart, facesEnd) = faces(g);
+    outTree.rebuild(facesStart, facesEnd, g);
     outTree.build();
   }
   /// \endcond
