@@ -64,7 +64,7 @@ int main(int argc, char ** argv) {
     T t(k, input_begin, input_end, startingray);
 
     // obtain a reference to the boost::adjacency_list object of the constructed graph
-    const Graph& g = t.get_graph();
+    const Graph& g = t.graph();
     // obtain the number of vertices in the constructed graph
     unsigned int n = boost::num_vertices(g);
 

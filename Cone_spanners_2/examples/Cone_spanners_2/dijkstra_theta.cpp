@@ -67,7 +67,7 @@ int main(int argc, char ** argv) {
 
 	// copy the boost::adjacency_list object of the constructed graph from t
 	// copy is used here because we need to modify the edge property when calling the dijkstra's algorithm.
-	Graph g = t.get_graph();
+	Graph g = t.graph();
 
 	// select a source vertex for dijkstra's algorithm
 	graph_traits<Graph>::vertex_descriptor v0;
@@ -80,7 +80,7 @@ int main(int argc, char ** argv) {
 
 	// calculating edge length in Euclidean metric and store them in the edge property
 	graph_traits<Graph>::edge_iterator ei, ei_end;  
-	for (tie(ei, ei_end) = edges(g); ei != ei_end; ++ei) {
+	for (boost::tie(ei, ei_end) = edges(g); ei != ei_end; ++ei) {
 		graph_traits<Graph>::edge_descriptor e = *ei;
 		graph_traits<Graph>::vertex_descriptor  u = source(e, g);
 		graph_traits<Graph>::vertex_descriptor  v = target(e, g);

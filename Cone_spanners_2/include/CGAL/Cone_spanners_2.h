@@ -195,7 +195,7 @@ class Cone_spanners_2 {
 
     /** @brief returns the number of cones configured. 
      */
-    const unsigned int& num_cones() const {
+    const unsigned int& number_of_cones() const {
       return num_cones;
     }
 
@@ -455,7 +455,7 @@ class Cone_spanners_2 <Exact_predicates_exact_constructions_kernel_with_sqrt,
 
     /** @brief returns the number of cones configured. 
      */
-    const unsigned int& num_cones() const {
+    const unsigned int& number_of_cones() const {
       return num_cones;
     }
 
@@ -539,7 +539,7 @@ protected:
     std::vector<Direction_2>    rays;
 
 	/** Indicate the number of cones.  */
-    const unsigned int  num_cones;
+  const unsigned int  num_cones;
 
 	/** The boost::adjacency_list data structure to store the graph.  */
     Graph g;
