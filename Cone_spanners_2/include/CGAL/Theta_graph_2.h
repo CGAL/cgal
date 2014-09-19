@@ -67,8 +67,7 @@ namespace CGAL {
 		typedef typename base_class::Graph  Graph;
 		typedef typename base_class::vertex_smaller_2  vertex_smaller_2;
 
-		/** @brief Constructor
-		* Constructs a Theta_graph_2 Graph object.
+		/** @brief constructs a Theta graph object.
 		*
 		* @param k     Number of cones to divide space into
 		* @param start An iterator pointing to the first point (vertex) in the graph.
@@ -93,7 +92,7 @@ namespace CGAL {
 			build_edges();
 		}
 
-		/** @brief Copy Constructor
+		/** @brief copy constructor.
 		*  @param x  another Theta_graph_2 object to copy from.
 		*/
 		Theta_graph_2 (const Theta_graph_2& x) 

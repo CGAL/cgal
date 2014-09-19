@@ -48,8 +48,8 @@ namespace CGAL {
         * \ingroup PkgConeBasedSpanners
         * @brief A derived class for constructing Yao graphs with a given set of 2D points.
 	*  
-	*  Its base class is Cone_spanners_2.
-	*  Directed,undirected and bidirectional graphs are supported. For differences among these
+	*  Its base class is `Cone_spanners_2`.
+	*  Directed, undirected and bidirectional graphs are supported. For differences among these
 	*  three types of graphs, please see the documentation of BGL.
 	*
 	*/
@@ -70,8 +70,7 @@ namespace CGAL {
 		// a type for the set to store vertices sorted by a direction 
     	typedef std::set<typename Graph::vertex_descriptor, vertex_smaller_2> pointSet;
 
-		/** @brief Constructor
-		*  Constructs a Yao_graph_2 Graph object.
+		/** @brief constructs a Yao graph object.
 		*
 		* @param k     Number of cones to divide space into
 		* @param start An iterator pointing to the first point (vertex) in the graph.
@@ -96,8 +95,8 @@ namespace CGAL {
 			build_edges();
 		}
 
-		/** @brief Copy Constructor
-		*  @param x  another Yao_graph_2 object to copy from.
+		/** @brief copy constructor
+		*  @param x  another `Yao_graph_2` object to copy from.
 		*/
 		Yao_graph_2 (const Yao_graph_2& x) 
 			: Cone_spanners_2<Kernel, Directedness, EdgeProperty>(x) {}

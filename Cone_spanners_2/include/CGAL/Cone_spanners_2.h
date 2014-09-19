@@ -56,15 +56,15 @@ namespace CGAL {
  *
  *  The constructor of this class will compute the rays that divide the cones. This computation can
  *  be either inexact by simply dividing Pi by the number of cones (which is quick), or exact by using roots of 
- *  polynomials (entailing number types such as CORE::Expr or LEDA::Real, which are slow). 
- *  The inexact computation is done by the general class definition of Cone_spanners_2 below. 
+ *  polynomials (entailing number types such as `CORE::Expr` or `LEDA::Real`, which are slow). 
+ *  The inexact computation is done by the general class definition of `Cone_spanners_2` below. 
  *  For exact computation, a partial specialization of this class is defined.
- *  If the template parameter Kernel is Exact_predicates_exact_constructions_kernel_with_sqrt,
+ *  If the template parameter `Kernel` is `Exact_predicates_exact_constructions_kernel_with_sqrt`,
  *  this partial specialization class will be invoked. 
  *
  *  In the construction of Yao graph and Theta graph implemented by this package, 
- *  all predicates and construction functions are from CGAL. 
- *  Based on the previous paragraph, if the kernel Exact_predicates_exact_constructions_kernel_with_sqrt is used, 
+ *  all predicates and construction functions are from \cgal. 
+ *  Based on the previous paragraph, if the kernel `Exact_predicates_exact_constructions_kernel_with_sqrt` is used, 
  *  the Yao or Theta graph will be constructed exactly, otherwise inexactly.
  *
  *  Also, in the computation of rays, the direction of the first ray can be specified by passing a parameter
@@ -90,7 +90,7 @@ class Cone_spanners_2 {
 	
     /** @brief Constructor.
 	 *
-     *  Constructs a Cone_spanners_2 Graph object.
+     *  Constructs a `Cone_spanners_2` graph object.
      *
      * @param k     Number of cones to divide space into
      * @param start An iterator pointing to the first point (vertex) in the graph.
@@ -132,21 +132,19 @@ class Cone_spanners_2 {
 		}
     }
 
-    /** @brief Copy Constructor
-     *  @param x  another Cone_spanners_2 object to copy from.
+    /** @brief copy constructor
+     *  @param x  another Cone spanner object to copy from.
 	 */
     Cone_spanners_2 (const Cone_spanners_2& x) : rays(x.rays), num_cones(x.num_cones), g(x.g) {}
 
-    /** @brief Remove all vertices and edges from the graph.
+    /** @brief removes all vertices and edges from the graph.
      */
     void clear () {
       g.clear();
     }
 
-    /** @brief Inserts a new point into the graph
+    /** @brief inserts a new point into the graph.
      *  
-     *  This inserts the new point into the graph.
-     *
      *  @param p  The point to add.
      */
     void insert (const Point_2& p) 
@@ -154,9 +152,7 @@ class Cone_spanners_2 {
       g[boost::add_vertex(g)] = p;
     }
 
-    /** @brief Inserts new points into the graph
-     *  
-     *  This inserts the new points conained between the iterators [start, end)
+    /** @brief inserts the new points contained in the iterator range `[start, end)`
      *  into the graph. 
      *
      *  @param start  The iterator pointing to the first point to be added.
@@ -174,7 +170,7 @@ class Cone_spanners_2 {
       populate_vertices(start, end);
     }
 
-    /** @brief Inserts all Point_2 in the iterator into the graph as vertices.
+    /** @brief inserts the points in the iterator range `[start, end)`into the graph as vertices.
      *
      * @param start The start iterator.
      * @param end   The end iterator.
@@ -191,35 +187,26 @@ class Cone_spanners_2 {
       return this->g;
     }
 
-    /** @brief Returns the cone_spanner graph constructed.
-     *
-     * @return The cone_spanner graph as an boost::adjacency_list.
+    /** @brief returns the cone spanner graph as a `boost::adjacency_list`.
      */
     Graph get_graph() {
       return this->g;
     }
 
-    /** @brief Returns the number of cones configured. 
-	 *
-	 * @return the number of cones
-	 */
+    /** @brief returns the number of cones configured. 
+     */
     const unsigned int& get_num_cones() const {
       return num_cones;
     }
 
-    /** @brief Returns the vector of rays. 
-	 *
-	 * @return a vector of Direction_2
-	 * 
-	 */
-    const std::vector<Direction_2>& get_rays() const {
+    /** @brief returns the vector of directions. 
+     */
+    const std::vector<Direction_2>& get_directions() const {
       return rays;
     }
 
-    /** Casts the cone_spanner graph into a boost::adjacency_list. 
-	 *
-     * @return The cone_spanner graph as an boost::adjacency_list.
-	 */
+    /** casts the cone spanner graph into a `boost::adjacency_list`. 
+     */
     operator Graph() const {
       return get_graph();
     }
@@ -227,10 +214,10 @@ class Cone_spanners_2 {
     /** Function object that orders 2D graph vertex_descriptors based on the "order
      *  induced by the direction D".
      *
-     *  This function object is based on the function CGAL::compare_signed_distance_to_line_2(), 
-	 *  which orders two Point_2's according to their signed distance to a line.
+     *  This function object is based on the function `CGAL::compare_signed_distance_to_line_2()`, 
+	 *  which orders two points according to their signed distance to a line.
      *
-     *  @see  CGAL::compare_signed_distance_to_line_2()
+     *  @see  `CGAL::compare_signed_distance_to_line_2()`
      */
     struct  vertex_smaller_2
 #ifndef GXX11
@@ -285,6 +272,7 @@ class Cone_spanners_2 {
 	 */
 	virtual Graph& build_edges() = 0;
 
+#ifndef DOXYGEN_RUNNING
 protected:
 
 	/** Store the rays to divide the plane  */
@@ -295,12 +283,13 @@ protected:
 
 	/** The boost::adjacency_list data structure to store the graph.  */
     Graph g;
+#endif
 
 };      // class Cone_spanners_2
 
 
-/** @brief A partial specialization of Cone_spanners_2 for exact computation of cones with 
- * CORE::Expr (or leda::real).
+/** @brief A partial specialization of `Cone_spanners_2` for exact computation of cones with 
+ * `CORE::Expr` (or `leda::real`).
  */
 template <typename Directedness, typename EdgeProperty>
 class Cone_spanners_2 <Exact_predicates_exact_constructions_kernel_with_sqrt, 
@@ -403,21 +392,19 @@ class Cone_spanners_2 <Exact_predicates_exact_constructions_kernel_with_sqrt,
 		}
     }
 
-    /** @brief Copy Constructor
+    /** @brief copy constructor.
      *  @param x  another Cone_spanners_2 object to copy from.
 	 */
     Cone_spanners_2 (const Cone_spanners_2& x) : rays(x.rays), num_cones(x.num_cones), g(x.g) {}
 
-    /** @brief Remove all vertices and edges from the graph.
+    /** @brief removes all vertices and edges from the graph.
      */
     void clear () {
       g.clear();
     }
 
-    /** @brief Inserts a new point into the graph
-     *  
-     *  This inserts the new point into the graph.
-     *
+    /** @brief inserts a new point into the graph.
+
      *  @param p  The point to add.
      */
     void insert (const Point_2& p) 
@@ -425,9 +412,7 @@ class Cone_spanners_2 <Exact_predicates_exact_constructions_kernel_with_sqrt,
       g[boost::add_vertex(g)] = p;
     }
 
-    /** @brief Inserts new points into the graph
-     *  
-     *  This inserts the new points conained between the iterators [start, end)
+    /** @brief inserts the points in the iterator range  `[start, end)`
      *  into the graph. 
      *
      *  @param start  The iterator pointing to the first point to be added.
@@ -445,7 +430,7 @@ class Cone_spanners_2 <Exact_predicates_exact_constructions_kernel_with_sqrt,
       populate_vertices(start, end);
     }
 
-    /** @brief Inserts all Point_2 in the iterator into the graph as vertices.
+    /** @brief inserts the points in the iterator range `[start, end)` into the graph as vertices.
      *
      * @param start The start iterator.
      * @param end   The end iterator.
@@ -462,35 +447,26 @@ class Cone_spanners_2 <Exact_predicates_exact_constructions_kernel_with_sqrt,
       return this->g;
     }
 
-    /** @brief Returns the cone_spanner graph constructed.
-     *
-     * @return The cone_spanner graph as an boost::adjacency_list.
+    /** @brief returns the cone spanner graph as a `boost::adjacency_list`.
      */
     Graph get_graph() {
       return this->g;
     }
 
-    /** @brief Returns the number of cones configured. 
-	 *
-	 * @return the number of cones
-	 */
+    /** @brief returns the number of cones configured. 
+     */
     const unsigned int& get_num_cones() const {
       return num_cones;
     }
 
-    /** @brief Returns the vector of rays. 
-	 *
-	 * @return a vector of Direction_2
-	 * 
-	 */
-    const std::vector<Direction_2>& get_rays() const {
+    /** @brief returns the vector of directions.
+     */
+    const std::vector<Direction_2>& get_directions() const {
       return rays;
     }
 
-    /** Casts the cone_spanner graph into a boost::adjacency_list. 
-	 *
-     * @return The cone_spanner graph as an boost::adjacency_list.
-	 */
+    /** Casts the cone_spanner graph into a `boost::adjacency_list`. 
+     */
     operator Graph() const {
       return get_graph();
     }
@@ -499,7 +475,7 @@ class Cone_spanners_2 <Exact_predicates_exact_constructions_kernel_with_sqrt,
      *  induced by the direction D".
      *
      *  This function object is based on the function object of directionally_smaller_2 
-	 *  which orders two Point_2's according to the "order
+	 *  which orders two points according to the "order
      *  induced by the direction D".
      *
      *  @see  directionally_smaller_2
