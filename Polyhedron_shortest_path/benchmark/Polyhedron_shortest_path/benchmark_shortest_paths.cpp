@@ -164,17 +164,17 @@ Barycentric_coordinate random_coordinate(CGAL::Random& rand)
   return construct_barycentric_coordinate(u, v, Traits::FT(1.0) - u - v);
 }
 
-void run_benchmarks_no_id(CGAL::Random& rand, size_t numTrials, size_t numSources, size_t numQueries, Polyhedron_3& polyhedron, Benchmark_data& outData)
+void run_benchmarks(CGAL::Random& rand, size_t numTrials, size_t numSources, size_t numQueries, Polyhedron_3& polyhedron, Benchmark_data& outData)
 {
   boost::timer::cpu_timer timer;
   outData.reset();
   
-  outData.numVertices = boost::num_vertices(polyhedron);
-  outData.numEdges = boost::num_edges(polyhedron);
-  outData.numFaces = CGAL::num_faces(polyhedron);
-
+  outData.numVertices = num_vertices(polyhedron);
+  outData.numEdges = num_edges(polyhedron);
+  outData.numFaces = num_faces(polyhedron);
+  
   face_iterator startFace, endFace;
-  boost::tie(startFace, endFace) = CGAL::faces(polyhedron);
+  boost::tie(startFace, endFace) = faces(polyhedron);
   
   std::vector<face_descriptor> allFaces;
   
@@ -251,15 +251,25 @@ int main(int argc, char* argv[])
   else if (vm.count("polyhedron"))
   {
     Polyhedron_3 polyhedron;
+
     std::ifstream inFile(vm["polyhedron"].as<std::string>().c_str());
+    
+    if (!inFile)
+    {
+      std::cout << "Model file \"" << vm["polyhedron"].as<std::string>().c_str() << "\" does not exist." << std::endl;
+      return 1;
+    }
+    
     inFile >> polyhedron;
     inFile.close();
+    
+    CGAL::set_halfedgeds_items_id(polyhedron);
     
     Benchmark_data results;
     
     CGAL::Random rand(vm["randomseed"].as<size_t>());
     
-    run_benchmarks_no_id(
+    run_benchmarks(
       rand,
       vm["trials"].as<size_t>(),
       vm["numpoints"].as<size_t>(),

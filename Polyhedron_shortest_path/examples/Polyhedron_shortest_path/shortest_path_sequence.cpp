@@ -1,27 +1,21 @@
-// (LicenseStuffHere)
-//
-// $URL$
-// $Id$
-// 
-//
-// Author(s)     : Stephen Kiazyk
+#include <cstdlib>
+#include <iostream>
+#include <fstream>
+#include <iterator>
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+
+#include <CGAL/Random.h>
 
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Polyhedron_items_with_id_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
 
-#include <CGAL/Random.h>
-
-#include <CGAL/Polyhedron_shortest_path/Polyhedron_shortest_path_traits.h>
-#include <CGAL/Polyhedron_shortest_path/Polyhedron_shortest_path.h>
-
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/boost/graph/iterator.h>
 
-#include <iterator>
-#include <fstream>
+#include <CGAL/Polyhedron_shortest_path/Polyhedron_shortest_path_traits.h>
+#include <CGAL/Polyhedron_shortest_path/Polyhedron_shortest_path.h>
 
 enum Sequence_item_type
 {
@@ -130,16 +124,19 @@ Traits::Barycentric_coordinate random_coordinate(CGAL::Random& rand)
   return construct_barycentric_coordinate(u, v, Traits::FT(Traits::FT(1.0) - u - v));
 }
 
-int main()
+int main(int argc, char** argv)
 {
   Polyhedron_3 polyhedron;
   
-  std::ifstream inStream("data/turbine.off");
+  std::ifstream inStream(argv[1]);
   
   inStream >> polyhedron;
   
   inStream.close();
   
+  const size_t randSeed = argc > 2 ? std::atoi(argv[2]) : 8031760;
+  CGAL::Random rand(randSeed);
+
   face_iterator facesStart, facesEnd;
   boost::tie(facesStart, facesEnd) = faces(polyhedron);
   
@@ -149,36 +146,20 @@ int main()
   {
     faceList.push_back(*facesCurrent);
   }
-  
-  std::cout << "Here: " << __LINE__ << std::endl;
-  
-  CGAL::Random rand(2683696);
 
   std::vector<std::pair<Polyhedron_shortest_path::Face_location, Polyhedron_shortest_path::Face_location > > locationPairs;
-  
-  std::cout << "Here: " << __LINE__ << std::endl;
-  
+
   Traits traits;
   Polyhedron_shortest_path shortestPaths(polyhedron, traits);
   
   Polyhedron_shortest_path::Face_location startLocation(faceList[rand.get_int(0, CGAL::num_faces(polyhedron))], random_coordinate(rand));
   Polyhedron_shortest_path::Face_location endLocation(faceList[rand.get_int(0, CGAL::num_faces(polyhedron))], random_coordinate(rand));
   
-  std::cout << "Here: " << __LINE__ << std::endl;
-  
   shortestPaths.construct_sequence_tree(startLocation.first, startLocation.second);
-  
-  std::cout << "Here: " << __LINE__ << std::endl;
-  
+
   Sequence_collector<Traits> sequenceCollector(polyhedron);
   
-  std::cout << "Here: " << __LINE__ << std::endl;
-  
   shortestPaths.shortest_path_sequence_to_source_points(endLocation.first, endLocation.second, sequenceCollector);
-  
-  std::cout << "Here: " << __LINE__ << std::endl;
-  
-  std::cout << "Target Location : Face : " << endLocation.first->id() << " , (" << endLocation.second[0] << " , " << endLocation.second[1] << " , " << endLocation.second[2] << ")" << std::endl;
   
   for (size_t i = 0; i < sequenceCollector.m_sequence.size(); ++i)
   {
@@ -193,7 +174,7 @@ int main()
         std::cout << "#" << i << " : Edge : " << item.halfedge->id() << " , (" << Traits::FT(1.0) - item.edgeAlpha << " , " << item.edgeAlpha << ")" << std::endl;
         break;
       case SEQUENCE_ITEM_FACE:
-        std::cout << "Source Location : Face : " << item.face->id() << " , (" << item.faceAlpha[0] << " , " << item.faceAlpha[1] << " , " << item.faceAlpha[2] << ")" << std::endl;
+        std::cout << "#" << i << " : Face : " << item.face->id() << " , (" << item.faceAlpha[0] << " , " << item.faceAlpha[1] << " , " << item.faceAlpha[2] << ")" << std::endl;
         break;
     }
   }

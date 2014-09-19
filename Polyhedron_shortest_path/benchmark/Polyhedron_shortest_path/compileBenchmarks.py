@@ -63,7 +63,7 @@ def run_benchmarks(testConfig, outputFile):
   for model in testConfig.testModels:
     sys.stdout.write("Model = %s ... " % model);
     sys.stdout.flush();
-    result = subprocess.call(['./benchmark_shortest_paths.exe', '-p', model, '-r', str(testConfig.rand.randrange(65536)), '-t', str(testConfig.numTrials), '-n', str(testConfig.numSources), '-q', str(testConfig.numQueries)], stdout=outputFile);
+    result = subprocess.call(['./benchmark_shortest_paths.exe', '-p', model.strip(), '-r', str(testConfig.rand.randrange(65536)), '-t', str(testConfig.numTrials), '-n', str(testConfig.numSources), '-q', str(testConfig.numQueries)], stdout=outputFile);
     if result == 0:
       sys.stdout.write("Done.\n");
     else:
@@ -90,6 +90,7 @@ def print_table(infoSet, config, outFile):
   outFile.write("<center>\n");
   outFile.write("Model | Number of Vertices | Average Construction Time (s) | Average Query Time (s) | Peak Memory Usage (MB)\n");
   outFile.write("---|---|---|---|---\n");
+  
   for key in sorted(infoSet.keys()):
     outFile.write(key.split('/')[-1] + " | " + 
       infoSet[key].get("num vertices", "<crashed>") + " | " +
@@ -99,18 +100,20 @@ def print_table(infoSet, config, outFile):
   outFile.write("</center>\n");
   outFile.write('\n');
 
-# By default, I use all .off files in the data/ directory
-testModels = glob.glob("data/*.off");
 
-# Specify a file to output to, and optionally a random seed to ensure consistent tests are run
-if len(sys.argv) <= 1:
-  print("Usage: python compileBenchmarks.py <outputFile> [randomSeed]" % sys.argv[0]);
-  sys.exit(0);
-
-outFile = open(sys.argv[1], "w");
   
-if len(sys.argv) > 2:
-  globalRand = random.Random(int(sys.argv[2]));
+# Specify a file to output to, and optionally a random seed to ensure consistent tests are run
+if len(sys.argv) <= 2:
+  print("Usage: python compileBenchmarks.py <inputModels> <outputFile> [randomSeed]" % sys.argv[0]);
+  sys.exit(0);
+  
+testModelsFile = open(sys.argv[1], "r");
+testModels = list(testModelsFile);
+
+outFile = open(sys.argv[2], "w");
+  
+if len(sys.argv) > 3:
+  globalRand = random.Random(int(sys.argv[3]));
 else:
   globalRand = random.Random();
 

@@ -19,9 +19,9 @@
 
 #include <CGAL/Polyhedron_shortest_path/Polyhedron_shortest_path_traits.h>
 #include <CGAL/Polyhedron_shortest_path/Polyhedron_shortest_path.h>
-#include <CGAL/Polyhedron_shortest_path/Internal/function_objects.h>
-#include <CGAL/Polyhedron_shortest_path/Internal/Barycentric.h>
-#include <CGAL/Polyhedron_shortest_path/Internal/misc_functions.h>
+#include <CGAL/Polyhedron_shortest_path/function_objects.h>
+#include <CGAL/Polyhedron_shortest_path/barycentric.h>
+#include <CGAL/Polyhedron_shortest_path/internal/misc_functions.h>
 
 
 #include <CGAL/boost/graph/iterator.h>
@@ -50,9 +50,9 @@ BOOST_AUTO_TEST_CASE( test_a_to_b_vs_b_t_a_distances )
   typedef GraphTraits::face_descriptor face_descriptor;
   typedef GraphTraits::face_iterator face_iterator;
   typedef CGAL::Polyhedron_shortest_path<Traits> Polyhedron_shortest_path;
-  typedef boost::property_map<Polyhedron_3, boost::vertex_external_index_t>::type VIM;
-  typedef boost::property_map<Polyhedron_3, CGAL::halfedge_external_index_t>::type HIM;
-  typedef boost::property_map<Polyhedron_3, CGAL::face_external_index_t>::type FIM;
+  typedef boost::property_map<Polyhedron_3, boost::vertex_index_t>::type VIM;
+  typedef boost::property_map<Polyhedron_3, boost::halfedge_index_t>::type HIM;
+  typedef boost::property_map<Polyhedron_3, boost::face_index_t>::type FIM;
   
   Traits traits;
   
@@ -62,23 +62,25 @@ BOOST_AUTO_TEST_CASE( test_a_to_b_vs_b_t_a_distances )
 
   for (size_t meshId = 0; meshId < 3; ++meshId)
   {
-    Polyhedron_3 P;
+    Polyhedron_3 polyhedron;
     std::ifstream in(meshes[meshId].c_str());
     
-    in >> P;
+    in >> polyhedron;
     
     in.close();
     
-    VIM vertexIndexMap(CGAL::get(boost::vertex_external_index, P));
-    HIM halfedgeIndexMap(CGAL::get(CGAL::halfedge_external_index, P));
-    FIM faceIndexMap(CGAL::get(CGAL::face_external_index, P));
+    CGAL::set_halfedgeds_items_id(polyhedron);
+    
+    VIM vertexIndexMap(get(boost::vertex_index, polyhedron));
+    HIM halfedgeIndexMap(get(boost::halfedge_index, polyhedron));
+    FIM faceIndexMap(get(boost::face_index, polyhedron));
     
     vertex_iterator verticesStart;
     vertex_iterator verticesEnd;
     
     std::vector<vertex_descriptor> vertices;
     
-    boost::tie(verticesStart, verticesEnd) = boost::vertices(P);
+    boost::tie(verticesStart, verticesEnd) = boost::vertices(polyhedron);
     
     for (vertex_iterator it = verticesStart; it != verticesEnd; ++it)
     {
@@ -90,15 +92,15 @@ BOOST_AUTO_TEST_CASE( test_a_to_b_vs_b_t_a_distances )
     
     std::vector<face_descriptor> faces;
     
-    boost::tie(facesStart, facesEnd) = CGAL::faces(P);
+    boost::tie(facesStart, facesEnd) = CGAL::faces(polyhedron);
     
     for (face_iterator it = facesStart; it != facesEnd; ++it)
     {
       faces.push_back(*it);
     }
 
-    Polyhedron_shortest_path startToEndShortestPaths(P, traits);
-    Polyhedron_shortest_path endToStartShortestPaths(P, traits);
+    Polyhedron_shortest_path startToEndShortestPaths(polyhedron, traits);
+    Polyhedron_shortest_path endToStartShortestPaths(polyhedron, traits);
     
     const size_t numTests = 15;
     
@@ -154,7 +156,7 @@ BOOST_AUTO_TEST_CASE( test_a_to_b_vs_b_t_a_distances )
                 BOOST_CHECK_EQUAL(endToStartCollector.m_sequence[j].index, startToEndCollector.m_sequence[k].index);
                 break;
               case CGAL::test::SEQUENCE_ITEM_EDGE:
-                BOOST_CHECK_EQUAL(halfedgeIndexMap[endToStartCollector.m_sequence[j].halfedge], halfedgeIndexMap[CGAL::opposite(startToEndCollector.m_sequence[k].halfedge, P)]);
+                BOOST_CHECK_EQUAL(halfedgeIndexMap[endToStartCollector.m_sequence[j].halfedge], halfedgeIndexMap[CGAL::opposite(startToEndCollector.m_sequence[k].halfedge, polyhedron)]);
                 break;
               }
             }
@@ -168,7 +170,7 @@ BOOST_AUTO_TEST_CASE( test_a_to_b_vs_b_t_a_distances )
               {
                 if (items[d].type == CGAL::test::SEQUENCE_ITEM_EDGE)
                 {
-                  std::cout << "\t" << names[d] << "(edge): " << vertexIndexMap[CGAL::source(items[d].halfedge, P)] << " , " << vertexIndexMap[CGAL::target(items[d].halfedge, P)] << " : " << items[d].edgeAlpha << std::endl;
+                  std::cout << "\t" << names[d] << "(edge): " << vertexIndexMap[CGAL::source(items[d].halfedge, polyhedron)] << " , " << vertexIndexMap[CGAL::target(items[d].halfedge, polyhedron)] << " : " << items[d].edgeAlpha << std::endl;
                 }
                 else if (items[d].type == CGAL::test::SEQUENCE_ITEM_VERTEX)
                 {
@@ -242,7 +244,7 @@ BOOST_AUTO_TEST_CASE( test_a_to_b_vs_b_t_a_distances )
               BOOST_CHECK_EQUAL(endToStartCollector.m_sequence[j].index, startToEndCollector.m_sequence[k].index);
               break;
             case CGAL::test::SEQUENCE_ITEM_EDGE:
-              BOOST_CHECK_EQUAL(halfedgeIndexMap[endToStartCollector.m_sequence[j].halfedge], halfedgeIndexMap[CGAL::opposite(startToEndCollector.m_sequence[k].halfedge, P)]);
+              BOOST_CHECK_EQUAL(halfedgeIndexMap[endToStartCollector.m_sequence[j].halfedge], halfedgeIndexMap[CGAL::opposite(startToEndCollector.m_sequence[k].halfedge, polyhedron)]);
               break;
             }
           }
@@ -255,7 +257,7 @@ BOOST_AUTO_TEST_CASE( test_a_to_b_vs_b_t_a_distances )
             {
               if (items[d].type == CGAL::test::SEQUENCE_ITEM_EDGE)
               {
-                std::cout << "\t" << names[d] << "(edge): " << vertexIndexMap[CGAL::source(items[d].halfedge, P)] << " , " << vertexIndexMap[CGAL::target(items[d].halfedge, P)] << " : " << items[d].edgeAlpha << std::endl;
+                std::cout << "\t" << names[d] << "(edge): " << vertexIndexMap[CGAL::source(items[d].halfedge, polyhedron)] << " , " << vertexIndexMap[CGAL::target(items[d].halfedge, polyhedron)] << " : " << items[d].edgeAlpha << std::endl;
               }
               else if (items[d].type == CGAL::test::SEQUENCE_ITEM_VERTEX)
               {

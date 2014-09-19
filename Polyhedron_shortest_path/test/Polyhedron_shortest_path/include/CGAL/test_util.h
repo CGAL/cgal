@@ -41,9 +41,9 @@ struct Sequence_item
 };
 
 template <class Traits, 
-  class VIM = typename boost::property_map<typename Traits::FaceGraph, CGAL::vertex_external_index_t>::type,
-  class HIM = typename boost::property_map<typename Traits::FaceGraph, CGAL::halfedge_external_index_t>::type,
-  class FIM = typename boost::property_map<typename Traits::FaceGraph, CGAL::face_external_index_t>::type>
+  class VIM = typename boost::property_map<typename Traits::FaceGraph, boost::vertex_index_t>::type,
+  class HIM = typename boost::property_map<typename Traits::FaceGraph, boost::halfedge_index_t>::type,
+  class FIM = typename boost::property_map<typename Traits::FaceGraph, boost::face_index_t>::type>
 struct Edge_sequence_collector
 {
   typedef typename Traits::FaceGraph FaceGraph;
@@ -64,9 +64,9 @@ struct Edge_sequence_collector
   std::vector<Sequence_item<Traits> > m_sequence;
   
   Edge_sequence_collector(FaceGraph& p)
-    : m_vertexIndexMap(CGAL::get(boost::vertex_external_index, p))
-    , m_halfedgeIndexMap(CGAL::get(CGAL::halfedge_external_index, p))
-    , m_faceIndexMap(CGAL::get(CGAL::face_external_index, p))
+    : m_vertexIndexMap(get(boost::vertex_index, p))
+    , m_halfedgeIndexMap(get(CGAL::halfedge_index, p))
+    , m_faceIndexMap(get(CGAL::face_index, p))
   {
   }
 

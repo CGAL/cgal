@@ -48,8 +48,8 @@ BOOST_AUTO_TEST_CASE( test_find_nearest_face_location_above_surface )
   typedef GraphTraits::face_descriptor face_descriptor;
   typedef GraphTraits::face_iterator face_iterator;
   typedef CGAL::Polyhedron_shortest_path<Traits> Polyhedron_shortest_path;
-  typedef boost::property_map<Polyhedron_3, CGAL::vertex_point_t>::type VPM;
-  typedef boost::property_map<Polyhedron_3, CGAL::face_external_index_t>::type FIM;
+  typedef boost::property_map<Polyhedron_3, boost::vertex_point_t>::type VPM;
+  typedef boost::property_map<Polyhedron_3, boost::face_index_t>::type FIM;
   
   typedef CGAL::AABB_face_graph_triangle_primitive<Polyhedron_3, VPM> AABB_face_graph_primitive;
   typedef CGAL::AABB_traits<Kernel, AABB_face_graph_primitive> AABB_face_graph_traits;
@@ -64,6 +64,8 @@ BOOST_AUTO_TEST_CASE( test_find_nearest_face_location_above_surface )
   std::ifstream in("data/heightmap_20x30.off");
     
   in >> polyhedron;
+  
+  CGAL::set_halfedgeds_items_id(polyhedron);
   
   in.close();
   
@@ -84,9 +86,9 @@ BOOST_AUTO_TEST_CASE( test_find_nearest_face_location_above_surface )
   size_t numTrials = 30;
   
   typedef boost::property_map<Polyhedron_3, CGAL::vertex_point_t>::type VPM ;
-  typedef boost::property_map<Polyhedron_3, CGAL::face_external_index_t>::type FIM;
+  typedef boost::property_map<Polyhedron_3, CGAL::face_index_t>::type FIM;
 
-  FIM faceIndexMap(CGAL::get(CGAL::face_external_index, polyhedron));
+  FIM faceIndexMap(get(boost::face_index, polyhedron));
   VPM vertexPointMap(CGAL::get(CGAL::vertex_point, polyhedron));
  
   for (size_t i = 0; i < numTrials; ++i)

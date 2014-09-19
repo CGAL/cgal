@@ -66,15 +66,15 @@ include_directories( BEFORE ../../include )
 
 include( CGAL_CreateSingleSourceCGALProgram )
 
-create_single_source_cgal_program( "shortest_paths_elephant.cpp" )
+create_single_source_cgal_program( "shortest_paths_no_id.cpp" )
 
-create_single_source_cgal_program( "shortest_paths_elephant_multiple_sources.cpp" )
+create_single_source_cgal_program( "shortest_paths_multiple_sources.cpp" )
 
-create_single_source_cgal_program( "shortest_paths_elephant_with_id.cpp" )
+create_single_source_cgal_program( "shortest_paths_with_id.cpp" )
 
-create_single_source_cgal_program( "shortest_paths_turbine_sequence.cpp" )
+create_single_source_cgal_program( "shortest_path_sequence.cpp" )
 
 if(OpenMesh_FOUND)
-  create_single_source_cgal_program( "shortest_paths_elephant_OpenMesh.cpp" )
-  target_link_libraries( shortest_paths_elephant_OpenMesh ${OPENMESH_LIBRARIES} )
+  create_single_source_cgal_program( "shortest_paths_OpenMesh.cpp" )
+  target_link_libraries( shortest_paths_OpenMesh ${OPENMESH_LIBRARIES} )
 endif()

@@ -67,7 +67,7 @@ public:
   /*!
   Function object type that provides 
   `Point_2 operator()(FT x, FT y)` and 
-  `Point_2 operator()(CGAL::Origin)` to construct points with
+  `Point_2 operator()(CGAL::ORIGIN)` to construct points with
   cartesian coordinates (x,y) and (0,0) respectively.
   */
   typedef unspecified_type Construct_point_2;
@@ -152,9 +152,8 @@ public:
   
   /*!
   Function object type.
-  Must support the result_of protocol, that is the return type of the operator()(A, B) is CGAL::cpp11::result<Intersect_2(A,B)>.
   Must provide
-  `CGAL::cpp11::result_of<Intersect_2(A,B)> operator()(A obj1, B obj2)`
+  `CGAL::cpp11::result_of<Intersect_2(A,B)>() operator()(A obj1, B obj2)`
   to compute the intersection between obj1 and obj2, where A and B can be any one of
   Line_2,
   Ray_2,
@@ -343,4 +342,27 @@ public:
 
 /// @}
 
+/// \name Creation
+/// A default and copy constructor are required
+/// @{
+  
+  /*!
+  */
+  PolyhedronShortestPathTraits();
+  
+  /*!
+  */
+  PolyhedronShortestPathTraits(PolyhedronShortestPathTraits& copy);
+  
+/// @}
+  
+/// \name Operations
+/// For all of the above predicate and construction types, e.g. `Func_obj_type`, a function must exist with the name `func_obj_type_object()` that creates an instance of the construction or predicate object type. 
+/// For example:
+/// @{
+
+  Construct_point_2 construct_point_2_object();
+  
+/// @}
+  
 };

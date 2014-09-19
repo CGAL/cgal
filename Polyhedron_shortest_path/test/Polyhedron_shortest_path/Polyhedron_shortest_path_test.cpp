@@ -6,8 +6,6 @@
 //
 // Author(s)     : Stephen Kiazyk
 
-#include <CGAL/Interval_nt.h>
-
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
@@ -17,9 +15,9 @@
 
 #include <CGAL/Polyhedron_shortest_path/Polyhedron_shortest_path_traits.h>
 #include <CGAL/Polyhedron_shortest_path/Polyhedron_shortest_path.h>
-#include <CGAL/Polyhedron_shortest_path/Internal/function_objects.h>
-#include <CGAL/Polyhedron_shortest_path/Internal/Barycentric.h>
-#include <CGAL/Polyhedron_shortest_path/Internal/misc_functions.h>
+#include <CGAL/Polyhedron_shortest_path/function_objects.h>
+#include <CGAL/Polyhedron_shortest_path/barycentric.h>
+#include <CGAL/Polyhedron_shortest_path/internal/misc_functions.h>
 
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/boost/graph/iterator.h>
@@ -55,6 +53,8 @@ BOOST_AUTO_TEST_CASE( shortest_path_regular_tetrahedron )
   Polyhedron_3 P;
   
   CGAL::test::make_regular_tetrahedron(P);
+  
+  CGAL::set_halfedgeds_items_id(P);
   
   Barycentric_coordinate b = construct_barycentric_coordinate(FT(1.0) / FT(3.0), FT(1.0) / FT(3.0), FT(1.0) / FT(3.0));
   
@@ -127,6 +127,8 @@ BOOST_AUTO_TEST_CASE( test_simple_saddle_vertex_mesh )
   inFile >> P;
 
   inFile.close();
+  
+  CGAL::set_halfedgeds_items_id(P);
   
   vertex_iterator startVertex;
   vertex_iterator endVertex;
@@ -339,6 +341,8 @@ BOOST_AUTO_TEST_CASE( test_boundary_mesh )
   inFile >> P;
   
   inFile.close();
+  
+  CGAL::set_halfedgeds_items_id(P);
   
   face_iterator startFace;
   face_iterator endFace;

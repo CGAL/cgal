@@ -1680,10 +1680,10 @@ private:
   {
     reset_algorithm(false);
     set_vertex_types();
-    
+
     m_vertexOccupiers.resize(num_halfedges(m_faceGraph));
     m_closestToVertices.resize(boost::num_vertices(m_faceGraph));
-
+    
     if (m_debugOutput)
     {
       vertex_iterator current, end;
@@ -1843,21 +1843,24 @@ public:
   \brief Creates a shortest paths object associated with a specific FaceGraph.
   
   \details No copy of the FaceGraph is made, only a reference to the faceGraph is held.
-  Default versions of the necessary FaceGraph property maps are created and
-  used with this constructor.
+  Default property maps are assigned for the FaceGraph as follows:
+  - VertexIndexMap : `get(boost::vertex_index, faceGraph)
+  - HalfedgeIndexMap : `get(boost::halfedge_index, faceGraph)
+  - FaceIndexMap : `get(boost::face_index, faceGraph)
+  - VertexPointMap : `get(CGAL::vertex_point, faceGraph)
+
+  \param faceGraph The surface mesh to compute shortest paths on.  Note that it must be triangulated.
   
-  \param faceGraph The polyhedral surface to use.  Note that it must be triangulated.
-  
-  \param traits An optional instance of the traits class to use.
+  \param traits Optional instance of the traits class to use.
   
   */
   Polyhedron_shortest_path(FaceGraph& faceGraph, const Traits& traits = Traits())
     : m_traits(traits)
     , m_faceGraph(faceGraph)
-    , m_vertexIndexMap(CGAL::get(boost::vertex_index, faceGraph))
-    , m_halfedgeIndexMap(CGAL::get(boost::halfedge_index, faceGraph))
-    , m_faceIndexMap(CGAL::get(boost::face_index, faceGraph))
-    , m_vertexPointMap(CGAL::get(CGAL::vertex_point, faceGraph))
+    , m_vertexIndexMap(get(boost::vertex_index, faceGraph))
+    , m_halfedgeIndexMap(get(boost::halfedge_index, faceGraph))
+    , m_faceIndexMap(get(boost::face_index, faceGraph))
+    , m_vertexPointMap(get(CGAL::vertex_point, faceGraph))
     , m_debugOutput(false)
   {
     reset_algorithm();
@@ -1868,17 +1871,17 @@ public:
   
   \details No copy of the FaceGraph is made, only a reference to the faceGraph is held.
   
-  \param faceGraph The polyhedral surface to use.  Note that it must be triangulated.
+  \param faceGraph The surface mesh to compute shortest paths on.  Note that it must be triangulated.
   
-  \param vertexIndexMap Maps between vertices and their index.
+  \param vertexIndexMap Property map for associating an id to each vertex, from 0 to `num_vertices(faceGraph) - 1`.
   
-  \param halfedgeIndexMap Maps between halfedges and their index.
+  \param halfedgeIndexMap Property map for associating an id to each halfedge, from 0 to `num_halfedges(faceGraph) - 1`.
   
-  \param faceIndexMap Maps between faces and their index.
+  \param faceIndexMap Property map for associating an id to each face, from 0 to `num_faces(faceGraph) - 1`.
   
-  \param vertexPointMap Maps between vertices and their 3-dimensional coordinates.
+  \param vertexPointMap Property map used to access the points associated to each vertex of the graph.
   
-  \param traits An optional instance of the traits class to use.
+  \param traits Optional instance of the traits class to use.
   */
   Polyhedron_shortest_path(FaceGraph& faceGraph, VertexIndexMap vertexIndexMap, HalfedgeIndexMap halfedgeIndexMap, FaceIndexMap faceIndexMap, VertexPointMap vertexPointMap, const Traits& traits = Traits())
     : m_traits(traits)
@@ -1918,7 +1921,7 @@ public:
   /*!
   \brief Computes a shortest paths sequence tree from a single vertex
   
-  \details Constructs a shortest paths sequence tree that covers shortest surface paths
+  \details Constructs the sequence tree that covers shortest surface paths
   from all points on the face graph to the given source vertex.
   
   \param vertex A vertex to serve as the source location of the sequence tree
@@ -1933,7 +1936,7 @@ public:
   /*!
   \brief Computes a shortest paths sequence tree from a single source location 
   
-  \details Constructs a shortest paths sequence tree that covers shortest surface paths
+  \details Constructs the shortest paths sequence tree that covers shortest surface paths
   from all points on the face graph reachable from the given source location.
   
   \param f A face of the face graph
@@ -1970,14 +1973,14 @@ public:
   /// @{
   
   /*!
-  \brief Gets the face location of the `i`th source point given to this 
+  \brief Returns the face location of the `i`th source point given to this 
     algorithm.
     
-  \details The indices of the source points are assigned in order as they are 
-    retrieved from the iterator. If only a single source point was specified, 
-    it will always have index 0.
+  \details The indices of the source points are assigned in the order of the 
+  iterator. If only a single source point was specified, it will always have 
+  index 0.
     
-  \param i Index of the source point to get.  Precondition: `0 <= i < num_source_locations()`
+  \param i Index of the source point.  Precondition: `0 <= i < num_source_locations()`
   \return The face location of the `i`th source point.
   */
   const Face_location& get_source_location(std::size_t i) const
@@ -1986,7 +1989,7 @@ public:
   }
   
   /*!
-  \brief Gets the total number of source points in the current sequence tree.
+  \brief Returns the total number of source points in the current sequence tree.
     
   \return The number of source points, or 0 if no sequence tree is computed yet.
   */
@@ -2267,8 +2270,8 @@ public:
   /*!
   \brief Returns a location along the given edge as a `Face_location`
   
-  \details The following static overload is also defined:
-  -- `static Face_location face_location(halfedge_descriptor he, FT t, const FaceGraph& faceGraph, const Traits& traits = Traits())`
+  \details The following static overload is also available: 
+  - `static Face_location face_location(halfedge_descriptor he, FT t, const FaceGraph& faceGraph, const Traits& traits = Traits())`
   
   \param he A halfedge of the face graph
   \param t Parametric distance of the desired point along `he`
@@ -2310,7 +2313,7 @@ public:
     copy of the `AABB_tree`, and use the overloads of this function 
     that accept a reference to an `AABB_tree` as input.
     
-  \details The following static overload is also defined:
+  \details The following static overload is also available:
   -- `static Face_location locate(const Point_3& location, const FaceGraph& faceGraph, VertexPointMap vertexPointMap, const Traits& traits = Traits())`
   
   \tparam AABBTraits A model of `AABBTraits` used to defined a \cgal `AABB_tree`.
@@ -2338,7 +2341,7 @@ public:
   /*!
   \brief Returns the face location nearest to the given point.
   
-  \details The following static overload is also defined:
+  \details The following static overload is also available:
   -- static Face_location locate(const Point_3& location, const AABB_tree<AABBTraits>& tree, const FaceGraph& faceGraph, VertexPointMap vertexPointMap, const Traits& traits = Traits())
   
   \tparam AABBTraits A model of `AABBTraits` used to defined a \cgal `AABB_tree`.
@@ -2374,8 +2377,8 @@ public:
     copy of the `AABB_tree`, and use the overloads of this function 
     that accept a reference to an `AABB_tree` as input.
   
-  \details The following static overload is also defined:
-  -- `static Face_location locate(const Ray_3& ray, const FaceGraph& faceGraph, VertexPointMap vertexPointMap, const Traits& traits = Traits())`
+  \details The following static overload is also available:
+  - `static Face_location locate(const Ray_3& ray, const FaceGraph& faceGraph, VertexPointMap vertexPointMap, const Traits& traits = Traits())`
   
   \tparam AABBTraits A model of `AABBTraits` used to defined an `AABB_tree`.
   
@@ -2403,8 +2406,8 @@ public:
   \brief Returns the face location along `ray` nearest to
     its source point.
     
-  \details The following static overload is also defined:
-  -- static Face_location locate(const Ray_3& ray, const AABB_tree<AABBTraits>& tree, const FaceGraph& faceGraph, VertexPointMap vertexPointMap, const Traits& traits = Traits())
+  \details The following static overload is also available:
+  - static Face_location locate(const Ray_3& ray, const AABB_tree<AABBTraits>& tree, const FaceGraph& faceGraph, VertexPointMap vertexPointMap, const Traits& traits = Traits())
     
   \tparam AABBTraits A model of `AABBTraits` used to defined a \cgal `AABB_tree`.
   
@@ -2480,8 +2483,8 @@ public:
   /*!
   \brief Creates an `AABB_tree` suitable for use with `locate`.
   
-  \details The following static overload is also defined:
-  -- `static void build_aabb_tree(const FaceGraph& faceGraph, AABB_tree<AABBTraits>& outTree)`
+  \details The following static overload is also available:
+  - `static void build_aabb_tree(const FaceGraph& faceGraph, AABB_tree<AABBTraits>& outTree)`
 
   \tparam AABBTraits A model of `AABBTraits` used to defined a \cgal `AABB_tree`.
   

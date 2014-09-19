@@ -1,27 +1,21 @@
-// (LicenseStuffHere)
-//
-// $URL$
-// $Id$
-// 
-//
-// Author(s)     : Stephen Kiazyk
+#include <cstdlib>
+#include <iostream>
+#include <fstream>
+#include <iterator>
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+
+#include <CGAL/Random.h>
 
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Polyhedron_items_with_id_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
 
-#include <CGAL/Random.h>
-
-#include <CGAL/Polyhedron_shortest_path/Polyhedron_shortest_path_traits.h>
-#include <CGAL/Polyhedron_shortest_path/Polyhedron_shortest_path.h>
-
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/boost/graph/iterator.h>
 
-#include <iterator>
-#include <fstream>
+#include <CGAL/Polyhedron_shortest_path/Polyhedron_shortest_path_traits.h>
+#include <CGAL/Polyhedron_shortest_path/Polyhedron_shortest_path.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef CGAL::Polyhedron_3<Kernel, CGAL::Polyhedron_items_with_id_3> Polyhedron_3;
@@ -40,15 +34,20 @@ Traits::Barycentric_coordinate random_coordinate(CGAL::Random& rand)
   return construct_barycentric_coordinate(u, v, Traits::FT(Traits::FT(1.0) - u - v));
 }
 
-int main()
+int main(int argc, char** argv)
 {
   Polyhedron_3 polyhedron;
   
-  std::ifstream inStream("data/elephant.off");
+  std::ifstream inStream(argv[1]);
   
   inStream >> polyhedron;
   
   inStream.close();
+  
+  CGAL::set_halfedgeds_items_id(polyhedron);
+  
+  const size_t randSeed = argc > 2 ? std::atoi(argv[2]) : 6065626;
+  CGAL::Random rand(randSeed);
   
   face_iterator facesStart, facesEnd;
   boost::tie(facesStart, facesEnd) = faces(polyhedron);
@@ -59,8 +58,7 @@ int main()
   {
     faceList.push_back(*facesCurrent);
   }
-  
-  CGAL::Random rand(2379912);
+
   const size_t numSamplePoints = 30;
   
   std::vector<Polyhedron_shortest_path::Face_location> faceLocations;
@@ -76,26 +74,22 @@ int main()
   shortestPaths.construct_sequence_tree(faceLocations.begin(), faceLocations.end());
   
   vertex_iterator verticesCurrent, verticesEnd;
-  
-  std::ofstream outPaths("polylines.cgal");
-  
+
   for (boost::tie(verticesCurrent, verticesEnd) = boost::vertices(polyhedron); verticesCurrent != verticesEnd; ++verticesCurrent)
   {
     std::vector<Traits::Point_3> points;
     
     shortestPaths.shortest_path_points_to_source_points(*verticesCurrent, std::back_inserter(points));
     
-    outPaths << points.size();
+    std::cout << points.size();
     
     for (size_t i = 0; i < points.size(); ++i)
     {
-      outPaths << " " << points[i];
+      std::cout << " " << points[i];
     }
     
-    outPaths << std::endl;
+    std::cout << std::endl;
   }
-  
-  outPaths.close();
   
   return 0;
 }
