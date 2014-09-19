@@ -146,8 +146,8 @@ struct Point_from_vertex_handle
     }
 };
 
-}; // namespace Triangulation
-}; // namespace internal
+} // namespace Triangulation
+} // namespace internal
 
 } //namespace CGAL
 

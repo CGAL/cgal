@@ -146,8 +146,8 @@ private:
     }
 };
 
-}; // namespace Triangulation
-}; // namespace internal
+} // namespace Triangulation
+} // namespace internal
 
 } //namespace CGAL
 

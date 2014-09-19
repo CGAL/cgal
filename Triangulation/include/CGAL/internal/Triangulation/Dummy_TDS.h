@@ -41,8 +41,8 @@ struct Dummy_TDS
     struct Full_cell_data {};
 };
 
-}; // namespace Triangulation
-}; // namespace internal
+} // namespace Triangulation
+} // namespace internal
 
 } //namespace CGAL
 
