@@ -1,5 +1,5 @@
 @INCLUDE = ${CGAL_DOC_PACKAGE_DEFAULTS}
-PROJECT_NAME = "CGAL ${CGAL_CREATED_VERSION_NUM} - Shortest Paths on Polyhedra"
+PROJECT_NAME = "CGAL ${CGAL_CREATED_VERSION_NUM} - Triangulated Surface Mesh Shortest Paths"
 INPUT        = ${CMAKE_SOURCE_DIR}/Polyhedron_shortest_path/doc/Polyhedron_shortest_path/ \
                ${CMAKE_SOURCE_DIR}/Polyhedron_shortest_path/include
 
