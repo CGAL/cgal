@@ -507,7 +507,7 @@ public:
   }
 };
 
-template <class Kernel, class FaceGraph>
+template <class Kernel, class FaceListGraph>
 class Is_saddle_vertex
 {
 public:
@@ -519,7 +519,7 @@ public:
   typedef typename Kernel::Vector_2 Vector_2;
   typedef typename Kernel::Point_2 Point_2;
   
-  typedef typename boost::graph_traits<FaceGraph> GraphTraits;
+  typedef typename boost::graph_traits<FaceListGraph> GraphTraits;
   typedef typename GraphTraits::vertex_descriptor vertex_descriptor;
   typedef typename GraphTraits::halfedge_descriptor halfedge_descriptor;
   
@@ -562,26 +562,26 @@ public:
   {
   }
   
-  result_type operator() (vertex_descriptor v, FaceGraph& faceGraph) const 
+  result_type operator() (vertex_descriptor v, FaceListGraph& g) const 
   {
-    return (*this)(v, faceGraph, get(boost::vertex_point, faceGraph));
+    return (*this)(v, g, get(boost::vertex_point, g));
   }
   
   template<class VertexPointMap>
-  result_type operator() (vertex_descriptor v, const FaceGraph& faceGraph, VertexPointMap const& pointMap) const 
+  result_type operator() (vertex_descriptor v, const FaceListGraph& g, VertexPointMap const& pointMap) const 
   {
-    halfedge_descriptor startEdge = halfedge(v, faceGraph);
+    halfedge_descriptor startEdge = halfedge(v, g);
     
     Point_3 rootPoint(get(pointMap, v));
-    Point_3 prevPoint(get(pointMap, source(startEdge, faceGraph)));
+    Point_3 prevPoint(get(pointMap, source(startEdge, g)));
     
-    halfedge_descriptor currentEdge = next(startEdge, faceGraph);
+    halfedge_descriptor currentEdge = next(startEdge, g);
     
-    Point_3 nextPoint(get(pointMap, target(currentEdge, faceGraph)));
+    Point_3 nextPoint(get(pointMap, target(currentEdge, g)));
     
     Triangle_3 baseFace3(rootPoint, nextPoint, prevPoint);
     
-    currentEdge = opposite(currentEdge, faceGraph);
+    currentEdge = opposite(currentEdge, g);
     
     Triangle_2 baseFace2(m_project_triangle_3_to_triangle_2(baseFace3));
     
@@ -600,9 +600,9 @@ public:
     do
     {
       prevPoint = nextPoint;
-      currentEdge = next(currentEdge, faceGraph);
-      nextPoint = get(pointMap, target(currentEdge, faceGraph));
-      currentEdge = opposite(currentEdge, faceGraph);
+      currentEdge = next(currentEdge, g);
+      nextPoint = get(pointMap, target(currentEdge, g));
+      currentEdge = opposite(currentEdge, g);
       
       Triangle_3 currentFace3(m_construct_triangle_3(rootPoint, nextPoint, prevPoint));
       Triangle_2 currentFace2(m_flatten_triangle_3_along_segment_2(currentFace3, 2, nextSegment));

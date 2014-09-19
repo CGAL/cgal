@@ -28,10 +28,10 @@ enum Sequence_item_type
 template <class Traits>
 struct Sequence_item
 {
-  typedef typename Traits::FaceGraph FaceGraph;
+  typedef typename Traits::FaceListGraph FaceListGraph;
   typedef typename Traits::FT FT;
   typedef typename Traits::Barycentric_coordinate Barycentric_coordinate;
-  typedef typename boost::graph_traits<FaceGraph> GraphTraits;
+  typedef typename boost::graph_traits<FaceListGraph> GraphTraits;
   typedef typename GraphTraits::vertex_descriptor vertex_descriptor;
   typedef typename GraphTraits::halfedge_descriptor halfedge_descriptor;
   typedef typename GraphTraits::face_descriptor face_descriptor;
@@ -48,18 +48,18 @@ struct Sequence_item
 
 // A model of PolyhedronShortestPathVisitor
 template <class Traits, 
-  class VIM = typename boost::property_map<typename Traits::FaceGraph, boost::vertex_index_t>::type,
-  class HIM = typename boost::property_map<typename Traits::FaceGraph, boost::halfedge_index_t>::type,
-  class FIM = typename boost::property_map<typename Traits::FaceGraph, boost::face_index_t>::type>
+  class VIM = typename boost::property_map<typename Traits::FaceListGraph, boost::vertex_index_t>::type,
+  class HIM = typename boost::property_map<typename Traits::FaceListGraph, boost::halfedge_index_t>::type,
+  class FIM = typename boost::property_map<typename Traits::FaceListGraph, boost::face_index_t>::type>
 struct Sequence_collector
 {
-  typedef typename Traits::FaceGraph FaceGraph;
+  typedef typename Traits::FaceListGraph FaceListGraph;
   typedef typename Traits::FT FT;
   typedef typename Traits::Barycentric_coordinate Barycentric_coordinate;
   typedef VIM VertexIndexMap;
   typedef HIM HalfedgeIndexMap;
   typedef FIM FaceIndexMap;
-  typedef typename boost::graph_traits<FaceGraph> GraphTraits;
+  typedef typename boost::graph_traits<FaceListGraph> GraphTraits;
   typedef typename GraphTraits::vertex_descriptor vertex_descriptor;
   typedef typename GraphTraits::halfedge_descriptor halfedge_descriptor;
   typedef typename GraphTraits::face_descriptor face_descriptor;
@@ -70,10 +70,10 @@ struct Sequence_collector
   
   std::vector<Sequence_item<Traits> > m_sequence;
   
-  Sequence_collector(FaceGraph& p)
-    : m_vertexIndexMap(CGAL::get(boost::vertex_index, p))
-    , m_halfedgeIndexMap(CGAL::get(CGAL::halfedge_index, p))
-    , m_faceIndexMap(CGAL::get(CGAL::face_index, p))
+  Sequence_collector(FaceListGraph& g)
+    : m_vertexIndexMap(CGAL::get(boost::vertex_index, g))
+    , m_halfedgeIndexMap(CGAL::get(CGAL::halfedge_index, g))
+    , m_faceIndexMap(CGAL::get(CGAL::face_index, g))
   {
   }
   

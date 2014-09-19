@@ -36,9 +36,9 @@ namespace CGAL {
 \brief Provides an implementation of the PolyhedronShortestPathTraits 
 model as required by the Polyhedron_shortest_path algorithm
 
-\tparam K The Kernel type whose geometric primitives to use
+\tparam K A CGAL Kernel
 
-\tparam F The FaceGraph type the algorithm is to act on
+\tparam F A model of FaceListGraph
 
 \cgalModels `PolyhedronShortestPathTraits`
 */
@@ -52,8 +52,8 @@ public:
   /// Kernel type
   typedef K Kernel;
   
-  /// FaceGraphType
-  typedef F FaceGraph;
+  /// FaceListGraph Type
+  typedef F FaceListGraph;
 
   typedef typename Kernel::FT FT;
   
@@ -62,7 +62,7 @@ public:
   // Predicates
 public:
   typedef typename Polyhedron_shortest_paths_3::Compare_relative_intersection_along_segment_2<Kernel> Compare_relative_intersection_along_segment_2;
-  typedef typename Polyhedron_shortest_paths_3::Is_saddle_vertex<Kernel, FaceGraph> Is_saddle_vertex;
+  typedef typename Polyhedron_shortest_paths_3::Is_saddle_vertex<Kernel, FaceListGraph> Is_saddle_vertex;
   
   // Constructions
 public:
@@ -144,8 +144,8 @@ public:
   Parametric_distance_along_segment_2 parametric_distance_along_segment_2_object() const { return m_parametric_distance_along_segment_2_object; }
 };
 
-template <class Kernel, class FaceGraph>
-std::ostream& operator<<(std::ostream& os, typename Polyhedron_shortest_path_default_traits<Kernel, FaceGraph>::Barycentric_coordinate b)
+template <class Kernel, class FaceListGraph>
+std::ostream& operator<<(std::ostream& os, typename Polyhedron_shortest_path_default_traits<Kernel, FaceListGraph>::Barycentric_coordinate b)
 {
   return os << b[0] << " " << b[1] << " " << b[2];
 }
@@ -161,7 +161,7 @@ model which uses an exact Kernel during the unfolding operations to achieve bett
 
 \tparam K Kernel Type
 
-\tparam F FaceGraph type
+\tparam F FaceListGraph type
 
 \cgalModels `PolyhedronShortestPathTraits`
 */

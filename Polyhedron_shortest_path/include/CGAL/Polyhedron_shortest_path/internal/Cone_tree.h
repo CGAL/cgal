@@ -50,13 +50,13 @@ public:
   };
 
 private:
-  typedef typename Traits::FaceGraph FaceGraph;
+  typedef typename Traits::FaceListGraph FaceListGraph;
   typedef typename Traits::FT FT;
   typedef typename Traits::Point_2 Point_2;
   typedef typename Traits::Triangle_2 Triangle_2;
   typedef typename Traits::Segment_2 Segment_2;
   typedef typename Traits::Ray_2 Ray_2;
-  typedef typename boost::graph_traits<FaceGraph> GraphTraits;
+  typedef typename boost::graph_traits<FaceListGraph> GraphTraits;
   typedef typename GraphTraits::face_descriptor face_descriptor;
   typedef typename GraphTraits::halfedge_descriptor halfedge_descriptor;
   typedef typename GraphTraits::vertex_descriptor vertex_descriptor;
@@ -65,7 +65,7 @@ private:
 private:
   // These could be pulled back into a 'context' class to save space
   Traits& m_traits;
-  FaceGraph& m_faceGraph;
+  FaceListGraph& m_graph;
   
   halfedge_descriptor m_entryEdge;
   
@@ -96,9 +96,9 @@ private:
   }
   
 public:
-  Cone_tree_node(Traits& traits, FaceGraph& faceGraph, size_t treeId)
+  Cone_tree_node(Traits& traits, FaceListGraph& g, size_t treeId)
     : m_traits(traits)
-    , m_faceGraph(faceGraph)
+    , m_graph(g)
     , m_sourceImage(Point_2(CGAL::ORIGIN))
     , m_layoutFace(Point_2(CGAL::ORIGIN),Point_2(CGAL::ORIGIN),Point_2(CGAL::ORIGIN))
     , m_pseudoSourceDistance(0.0)
@@ -113,9 +113,9 @@ public:
   {
   }
   
-  Cone_tree_node(Traits& traits, FaceGraph& faceGraph, size_t treeId, halfedge_descriptor entryEdge)
+  Cone_tree_node(Traits& traits, FaceListGraph& g, size_t treeId, halfedge_descriptor entryEdge)
     : m_traits(traits)
-    , m_faceGraph(faceGraph)
+    , m_graph(g)
     , m_entryEdge(entryEdge)
     , m_sourceImage(Point_2(CGAL::ORIGIN))
     , m_layoutFace(Point_2(CGAL::ORIGIN),Point_2(CGAL::ORIGIN),Point_2(CGAL::ORIGIN))
@@ -131,9 +131,9 @@ public:
   {
   }
 
-  Cone_tree_node(Traits& traits, FaceGraph& faceGraph, halfedge_descriptor entryEdge, const Triangle_2& layoutFace, const Point_2& sourceImage, const FT& pseudoSourceDistance, const Point_2& windowLeft, const Point_2& windowRight, Node_type nodeType = INTERVAL)
+  Cone_tree_node(Traits& traits, FaceListGraph& g, halfedge_descriptor entryEdge, const Triangle_2& layoutFace, const Point_2& sourceImage, const FT& pseudoSourceDistance, const Point_2& windowLeft, const Point_2& windowRight, Node_type nodeType = INTERVAL)
     : m_traits(traits)
-    , m_faceGraph(faceGraph)
+    , m_graph(g)
     , m_entryEdge(entryEdge)
     , m_sourceImage(sourceImage)
     , m_layoutFace(layoutFace)
@@ -181,7 +181,7 @@ public:
   
   face_descriptor current_face() const
   {
-    return face(m_entryEdge, m_faceGraph);
+    return face(m_entryEdge, m_graph);
   }
   
   bool is_null_face() const
@@ -191,7 +191,7 @@ public:
   
   size_t edge_face_index() const
   {
-    return CGAL::internal::edge_index(entry_edge(), m_faceGraph);
+    return CGAL::internal::edge_index(entry_edge(), m_graph);
   }
   
   halfedge_descriptor entry_edge() const
@@ -201,17 +201,17 @@ public:
   
   halfedge_descriptor left_child_edge() const
   {
-    return opposite(prev(m_entryEdge, m_faceGraph), m_faceGraph);
+    return opposite(prev(m_entryEdge, m_graph), m_graph);
   }
   
   halfedge_descriptor right_child_edge() const
   {
-    return opposite(next(m_entryEdge, m_faceGraph), m_faceGraph);
+    return opposite(next(m_entryEdge, m_graph), m_graph);
   }
   
   vertex_descriptor target_vertex() const
   {
-    return target(next(m_entryEdge, m_faceGraph), m_faceGraph);
+    return target(next(m_entryEdge, m_graph), m_graph);
   }
   
   Point_2 source_image() const

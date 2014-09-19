@@ -57,10 +57,11 @@ typedef typename GraphTraits::face_iterator face_iterator;
 typedef CGAL::Polyhedron_shortest_path<Traits> Polyhedron_shortest_path;
 typedef typename Polyhedron_shortest_path::Face_location Face_location;
 typedef typename boost::property_map<Polyhedron_3, CGAL::vertex_point_t>::type VPM;
-typedef typename boost::property_map<typename Traits::FaceGraph, boost::vertex_index_t>::type VIM;
-typedef typename boost::property_map<typename Traits::FaceGraph, boost::edge_index_t>::type EIM;
-typedef typename boost::property_map<typename Traits::FaceGraph, boost::halfedge_index_t>::type HIM;
-typedef typename boost::property_map<typename Traits::FaceGraph, boost::face_index_t>::type FIM;
+typedef typename boost::property_map<typename Traits::FaceListGraph, boost::vertex_index_t>::type VIM;
+typedef typename boost::property_map<typename Traits::FaceListGraph, boost::edge_index_t>::type EIM;
+typedef typename boost::property_map<typename Traits::FaceListGraph, boost::halfedge_index_t>::type HIM;
+typedef typename boost::property_map<typename Traits::FaceListGraph, boost::face_index_t>::type FIM;
+
 
 TestMeshProgramInstance()
 {

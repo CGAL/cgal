@@ -29,28 +29,28 @@ namespace CGAL {
 
 namespace internal {
 
-template <class Triangle_3, class FaceGraph, class VertexPointMap>
-Triangle_3 triangle_from_halfedge(typename boost::graph_traits<FaceGraph>::halfedge_descriptor edge, const FaceGraph& faceGraph, VertexPointMap vertexPointMap)
+template <class Triangle_3, class FaceListGraph, class VertexPointMap>
+Triangle_3 triangle_from_halfedge(typename boost::graph_traits<FaceListGraph>::halfedge_descriptor edge, const FaceListGraph& g, VertexPointMap vertexPointMap)
 {
-  typedef typename boost::graph_traits<FaceGraph>::halfedge_descriptor halfedge_descriptor;
+  typedef typename boost::graph_traits<FaceListGraph>::halfedge_descriptor halfedge_descriptor;
   
   halfedge_descriptor e0 = edge;
-  halfedge_descriptor e1 = next(edge, faceGraph);
+  halfedge_descriptor e1 = next(edge, g);
 
-  return Triangle_3(get(vertexPointMap, boost::source(e0, faceGraph)), get(vertexPointMap, boost::target(e0, faceGraph)), get(vertexPointMap, boost::target(e1, faceGraph)));
+  return Triangle_3(get(vertexPointMap, boost::source(e0, g)), get(vertexPointMap, boost::target(e0, g)), get(vertexPointMap, boost::target(e1, g)));
 }
 
-template <class Triangle_3, class FaceGraph>
-Triangle_3 triangle_from_halfedge(typename boost::graph_traits<FaceGraph>::halfedge_descriptor edge, const FaceGraph& faceGraph)
+template <class Triangle_3, class FaceListGraph>
+Triangle_3 triangle_from_halfedge(typename boost::graph_traits<FaceListGraph>::halfedge_descriptor edge, const FaceListGraph& g)
 {
-  return triangle_from_halfedge<Triangle_3, FaceGraph, typename boost::property_map<FaceGraph, boost::vertex_point_t>::type>(edge, faceGraph, get(boost::vertex_point, faceGraph));
+  return triangle_from_halfedge<Triangle_3, FaceListGraph, typename boost::property_map<FaceListGraph, boost::vertex_point_t>::type>(edge, g, get(boost::vertex_point, g));
 }
 
 
-template <class FaceGraph>
-size_t edge_index(typename boost::graph_traits<FaceGraph>::halfedge_descriptor he, FaceGraph& p)
+template <class FaceListGraph>
+size_t edge_index(typename boost::graph_traits<FaceListGraph>::halfedge_descriptor he, FaceListGraph& p)
 {
-  typedef typename boost::graph_traits<FaceGraph> GraphTraits;
+  typedef typename boost::graph_traits<FaceListGraph> GraphTraits;
   typedef typename GraphTraits::face_descriptor face_descriptor;
   typedef typename GraphTraits::halfedge_descriptor halfedge_descriptor;
   
