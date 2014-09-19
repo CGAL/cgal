@@ -90,7 +90,7 @@ In order to use the algorithm, one creates an instance of the `Polyhedron_shorte
 
 \subsection Polyhedron_shortest_pathBarycentric Barycentric Coordinates and Face Locations
 
-  The source locations of the algorithm are specified either using vertices (specifically `boost::GraphTraits<FaceGraph>::vertex_descriptor>`), or face/location pairs, where the location is represented using a <em>Barycentric Coordinate</em> in the face. Given a point \f$p\f$ that lies inside and on the plane of triangle \f$(A,B,C)\f$, its barycentric coordinate is a real-valued triple \f$(b_0,b_1,b_2)\f$ such that \f$p = b_0\cdot~A + b_1\cdot~B + b_2\cdot~C\f$. 
+  The source locations of the algorithm are specified either using vertices (specifically `boost::GraphTraits<FaceGraph>::%vertex_descriptor>`), or face/location pairs, where the location is represented using a <em>Barycentric Coordinate</em> in the face. Given a point \f$p\f$ that lies inside and on the plane of triangle \f$(A,B,C)\f$, its barycentric coordinate is a real-valued triple \f$(b_0,b_1,b_2)\f$ such that \f$p = b_0\cdot~A + b_1\cdot~B + b_2\cdot~C\f$. 
 
 \subsection Polyhedron_shortest_pathFaceGraph Face Graph
   

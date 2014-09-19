@@ -334,7 +334,7 @@ public:
   
   /*!
   Function object type that provides 
-  `template <class VertexPointMap> bool operator()(boost::graph_traits<FaceGraph>::vertex_descriptor v, FaceGraph& p, VertexPointMap vpm)`
+  `template <class VertexPointMap> bool operator()(boost::graph_traits<FaceGraph>::%vertex_descriptor v, FaceGraph& p, VertexPointMap vpm)`
   that returns true if the vertex is a saddle vertex (more than 2pi surface area 
   over all adjacent faces), and false otherwise.  `vpm` must be a a model of concept `ReadablePropertyMap` that maps from `vertex_descriptor` to
   `Point_3` objects.
