@@ -14,8 +14,7 @@
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/boost/graph/iterator.h>
 
-#include <CGAL/Polyhedron_shortest_path/Polyhedron_shortest_path_traits.h>
-#include <CGAL/Polyhedron_shortest_path/Polyhedron_shortest_path.h>
+#include <CGAL/Polyhedron_shortest_path.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef CGAL::Polyhedron_3<Kernel, CGAL::Polyhedron_items_with_id_3> Polyhedron_3;
