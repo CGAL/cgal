@@ -1,0 +1,53 @@
+// Triangulated Surface Mesh Shortest Paths
+
+/// \defgroup PkgSurfaceMeshShortestPath Triangulated Surface Mesh Shortest Paths Reference
+
+/// \defgroup PkgSurfaceMeshShortestPathConcepts Concepts
+/// \ingroup PkgSurfaceMeshShortestPath
+
+/// \defgroup PkgSurfaceMeshShortestPathTraitsClasses Traits Classes
+/// \ingroup PkgSurfaceMeshShortestPath
+
+/*!
+\addtogroup PkgSurfaceMeshShortestPath
+\todo Make a todo list
+
+\cgalPkgDescriptionBegin{Triangulated Surface Mesh Shortest Paths,PkgSurfaceMeshShortestPathSummary}
+\cgalPkgPicture{shortestpathspackage-ico.png}
+\cgalPkgSummaryBegin
+\cgalPkgAuthors{Stephen Kiazyk, Sébastien Loriot, Éric Colin de Verdière}
+\cgalPkgDesc{The package provides methods for computing shortests path on triangulated surface meshes.  The algorithm used is based on a paper by Xin and Wang \cgalCite{XinWang2009improvingchenandhan}, itself based on an earlier algorithm by Chen and Han \cgalCite{ChenHan1996shortestpaths}.  Any graph structure supporting the \cgal FaceListGraph concept may be used with this algorithm. }
+\cgalPkgManuals{Chapter_Surface_mesh_shortest_path,PkgSurfaceMeshShortestPath}
+\cgalPkgSummaryEnd
+\cgalPkgShortInfoBegin
+\cgalPkgLicense{\ref licensesLGPL "LGPL"}
+\cgalPkgDependsOn{\ref PkgBGLSummary}
+\cgalPkgDemo{Operations on Polyhedra,polyhedron_3.zip}
+\cgalPkgShortInfoEnd
+
+\cgalPkgDescriptionEnd
+
+\cgalClassifedRefPages
+
+## Concepts ##
+
+- `SurfaceMeshShortestPathTraits`
+- `SurfaceMeshShortestPathVisitor`
+
+## Classes ##
+- `CGAL::Surface_mesh_shortest_path<SurfaceMeshShortestPathTraits,VertexIndexMap, HalfedgeIndexMap, FaceIndexMap, VertexPointMap>`
+- `CGAL::Surface_mesh_shortest_path_traits<Kernel, FaceListGraph>`
+
+## Enums ##
+
+- `CGAL::Surface_mesh_shortest_paths_3::Barycentric_coordinate_type`
+
+*/
+
+
+/*!
+ \namespace CGAL::Surface_mesh_shortest_paths_3
+ 
+ \brief Namespace containing support members specific to this package.
+ */
+

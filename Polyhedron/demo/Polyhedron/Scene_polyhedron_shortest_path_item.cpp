@@ -135,7 +135,7 @@ void Scene_polyhedron_shortest_path_item::recreate_shortest_path_object()
     delete m_shortestPaths;
   }
 
-  m_shortestPaths = new Polyhedron_shortest_path(*polyhedron(), 
+  m_shortestPaths = new Surface_mesh_shortest_path(*polyhedron(), 
             CGAL::get(boost::vertex_index, *polyhedron()), 
             CGAL::get(CGAL::halfedge_index, *polyhedron()),
             CGAL::get(CGAL::face_index, *polyhedron()),
@@ -196,7 +196,7 @@ bool Scene_polyhedron_shortest_path_item::get_mouse_ray(QMouseEvent* mouseEvent,
 
 void Scene_polyhedron_shortest_path_item::remove_nearest_point(const Face_location& faceLocation)
 {
-  Polyhedron_shortest_path_traits::Compute_squared_distance_3 computeSquaredDistance3;
+  Surface_mesh_shortest_path_traits::Compute_squared_distance_3 computeSquaredDistance3;
   
   const Point_3 pickLocation = m_shortestPaths->point(faceLocation.first, faceLocation.second);
   

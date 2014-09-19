@@ -22,8 +22,7 @@
 #include <list>
 
 #ifndef Q_MOC_RUN
-#include <CGAL/Polyhedron_shortest_path/Polyhedron_shortest_path.h>
-#include <CGAL/Polyhedron_shortest_path/Polyhedron_shortest_path_traits.h>
+#include <CGAL/Surface_mesh_shortest_path.h>
 #endif
 
 #include <CGAL/AABB_face_graph_triangle_primitive.h>
@@ -47,18 +46,18 @@ public:
   typedef GraphTraits::face_descriptor face_descriptor;
   typedef GraphTraits::face_iterator face_iterator;
   
-  typedef CGAL::Polyhedron_shortest_path_traits<Kernel, Polyhedron> Polyhedron_shortest_path_traits;
-  typedef CGAL::Polyhedron_shortest_path<Polyhedron_shortest_path_traits> Polyhedron_shortest_path;
-  typedef Polyhedron_shortest_path::Face_location Face_location;
+  typedef CGAL::Surface_mesh_shortest_path_traits<Kernel, Polyhedron> Surface_mesh_shortest_path_traits;
+  typedef CGAL::Surface_mesh_shortest_path<Surface_mesh_shortest_path_traits> Surface_mesh_shortest_path;
+  typedef Surface_mesh_shortest_path::Face_location Face_location;
   typedef CGAL::AABB_face_graph_triangle_primitive<Polyhedron, VertexPointMap> AABB_face_graph_primitive;
   typedef CGAL::AABB_traits<Kernel, AABB_face_graph_primitive> AABB_face_graph_traits;
   typedef CGAL::AABB_tree<AABB_face_graph_traits> AABB_face_graph_tree;
   
-  typedef Polyhedron_shortest_path_traits::Barycentric_coordinate Barycentric_coordinate;
-  typedef Polyhedron_shortest_path_traits::Construct_barycentric_coordinate Construct_barycentric_coordinate;
-  typedef Polyhedron_shortest_path_traits::Ray_3 Ray_3;
-  typedef Polyhedron_shortest_path_traits::Point_3 Point_3;
-  typedef Polyhedron_shortest_path_traits::FT FT;
+  typedef Surface_mesh_shortest_path_traits::Barycentric_coordinate Barycentric_coordinate;
+  typedef Surface_mesh_shortest_path_traits::Construct_barycentric_coordinate Construct_barycentric_coordinate;
+  typedef Surface_mesh_shortest_path_traits::Ray_3 Ray_3;
+  typedef Surface_mesh_shortest_path_traits::Point_3 Point_3;
+  typedef Surface_mesh_shortest_path_traits::FT FT;
   
   enum Selection_mode
   {
@@ -80,7 +79,7 @@ private:
   Messages_interface* m_messages;
   QMainWindow* m_mainWindow;
   Scene_interface* m_sceneInterface;
-  Polyhedron_shortest_path* m_shortestPaths;
+  Surface_mesh_shortest_path* m_shortestPaths;
   AABB_face_graph_tree m_aabbTree;
   
   std::string m_deferredLoadFilename;

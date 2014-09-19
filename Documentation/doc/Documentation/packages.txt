@@ -98,7 +98,7 @@ h1 {
 \package_listing{Surface_mesh_segmentation}
 \package_listing{Surface_mesh_simplification}
 \package_listing{Surface_mesh_parameterization}
-\package_listing{Polyhedron_shortest_path}
+\package_listing{Surface_mesh_shortest_path}
 \package_listing{Stream_lines_2}
 \package_listing{Ridges_3}
 \package_listing{Jet_fitting_3}

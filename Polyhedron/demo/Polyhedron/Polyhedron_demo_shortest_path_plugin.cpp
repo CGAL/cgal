@@ -36,12 +36,12 @@ private:
   typedef boost::property_map<Polyhedron, CGAL::face_index_t>::type FaceIndexMap;
   typedef boost::property_map<Polyhedron, CGAL::vertex_point_t>::type VertexPointMap;
   
-  typedef CGAL::Polyhedron_shortest_path_traits<Kernel, Polyhedron> Polyhedron_shortest_path_traits;
-  typedef CGAL::Polyhedron_shortest_path<Polyhedron_shortest_path_traits, VertexIndexMap, HalfedgeIndexMap, FaceIndexMap, VertexPointMap> Polyhedron_shortest_path;
+  typedef CGAL::Surface_mesh_shortest_path_traits<Kernel, Polyhedron> Surface_mesh_shortest_path_traits;
+  typedef CGAL::Surface_mesh_shortest_path<Surface_mesh_shortest_path_traits, VertexIndexMap, HalfedgeIndexMap, FaceIndexMap, VertexPointMap> Surface_mesh_shortest_path;
   
   struct ShortestPathsPointsVisitor
   {
-    typedef std::vector<typename Polyhedron_shortest_path::Point_3> Container; 
+    typedef std::vector<typename Surface_mesh_shortest_path::Point_3> Container; 
     Container& m_container;
 
     ShortestPathsPointsVisitor(Container& container)
@@ -49,7 +49,7 @@ private:
     {
     }
     
-    void point(const Polyhedron_shortest_path::Point_3& point)
+    void point(const Surface_mesh_shortest_path::Point_3& point)
     {
       std::cout << point << std::endl;
       m_container.push_back(point);

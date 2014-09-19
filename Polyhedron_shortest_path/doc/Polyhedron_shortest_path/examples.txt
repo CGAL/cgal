@@ -1,7 +1,0 @@
-/*!
-\example Polyhedron_shortest_path/shortest_paths_elephant.cpp
-\example Polyhedron_shortest_path/shortest_paths_elephant_with_id.cpp
-\example Polyhedron_shortest_path/shortest_paths_elephant_OpenMesh.cpp
-\example Polyhedron_shortest_path/shortest_paths_elephant_multiple_sources.cpp
-\example Polyhedron_shortest_path/shortest_paths_turbine_sequence.cpp
-*/
