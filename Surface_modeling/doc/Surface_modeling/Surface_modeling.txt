@@ -178,7 +178,7 @@ Note that the translations and the rotations are defined using a 3D vector type 
 Deformation results when running example \ref SModelingExample_2 : `deform_1.off` and `deform_2.off`.
 \cgalFigureEnd
 
-\subsubsection SModelingExample_3 Using an Enriched Polyhedron with Ids
+\subsubsection SModelingExample_3 Using Polyhedron without Ids
 In the previous examples, we used an <i>enriched</i> polyhedron storing an ID
 in its halfedges and vertices together with the default property maps
 in the deformation object to access them.
