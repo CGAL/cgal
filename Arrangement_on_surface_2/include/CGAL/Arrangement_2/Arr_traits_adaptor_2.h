@@ -12,11 +12,6 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL$
-// $Id$
-// $Date$
-//
-//
 // Author(s)     : Ron Wein             <wein@post.tau.ac.il>s
 //                 Efi Fogel            <efif@post.tau.ac.il>
 //                 Eric Berberich       <eric@mpi-inf.mpg.de>
@@ -69,15 +64,10 @@ public:
                                                     Right_side_category;
 
 protected:
-
   // left-right dispatch
   typedef CGAL::internal::Arr_left_right_implementation_dispatch<
     Left_side_category, Right_side_category > LR;
 
-  typedef typename LR::Parameter_space_in_x_2_curve_end_tag
-    Psx_2_curve_end_tag;
-  typedef typename LR::Parameter_space_in_x_2_curve_tag        Psx_2_curve_tag;
-  typedef typename LR::Parameter_space_in_x_2_point_tag        Psx_2_point_tag;
   typedef typename LR::Is_on_y_identification_2_curve_tag      Ioyi_2_curve_tag;
   typedef typename LR::Is_on_y_identification_2_point_tag      Ioyi_2_point_tag;
   typedef typename LR::Compare_y_on_boundary_2_points_tag
@@ -89,10 +79,6 @@ protected:
   typedef CGAL::internal::Arr_bottom_top_implementation_dispatch<
     Bottom_side_category, Top_side_category > BT;
 
-  typedef typename BT::Parameter_space_in_y_2_curve_end_tag
-    Psy_2_curve_end_tag;
-  typedef typename BT::Parameter_space_in_y_2_curve_tag        Psy_2_curve_tag;
-  typedef typename BT::Parameter_space_in_y_2_point_tag        Psy_2_point_tag;
   typedef typename BT::Is_on_x_identification_2_curve_tag      Ioxi_2_curve_tag;
   typedef typename BT::Is_on_x_identification_2_point_tag      Ioxi_2_point_tag;
 
@@ -112,8 +98,17 @@ protected:
   typedef typename BT::Compare_x_near_boundary_2_curve_ends_tag
     Cmp_x_nb_2_curve_ends_tag;
 
-public:
+  // Used by parameter_space_in_x
+  typedef typename Arr_two_sides_category<Left_side_category,
+                                          Right_side_category>::result
+    Left_or_right_sides_category;
 
+  // Used by parameter_space_in_y
+  typedef typename Arr_two_sides_category<Bottom_side_category,
+                                          Top_side_category>::result
+    Bottom_or_top_sides_category;
+
+public:
   /// \name Construction.
   //@{
   /*! Default constructor. */
@@ -329,7 +324,6 @@ public:
 
   //@}
 
-
   /// \name Overriden functors for boundaries.
   //@{
 
@@ -340,38 +334,22 @@ public:
    */
   class Parameter_space_in_x_2 {
   public:
-
-    /*!
-     * Obtain the location of the given curve end in x.
+    /*! Obtain the location of the given curve end in x.
      * \param xcv The curve.
      * \param ind ARR_MIN_END if we refer to xcv's minimal end,
      *            ARR_MAX_END if we refer to its maximal end.
      * \return The location of the curve end.
      */
     Arr_parameter_space operator()(const X_monotone_curve_2& xcv,
-                                    Arr_curve_end ind) const
+                                   Arr_curve_end ind) const
     {
       // The function is implemented based on the tag dispatching
       // If the traits class does not support special boundaries, we just
       // return ARR_INTERIOR.
-      return parameter_space_in_x(xcv, ind, Psx_2_curve_end_tag());
+      return parameter_space_in_x(xcv, ind, Left_or_right_sides_category());
     }
 
-    /*!
-     * Obtain the location of the given curve end in x.
-     * \param xcv The curve.
-     * \return The location of the curve end in x direction.
-     */
-    Arr_parameter_space operator()(const X_monotone_curve_2& xcv) const
-    {
-      // The function is implemented based on the tag dispatching.
-      // If the traits class does not support special boundaries, we just
-      // return ARR_INTERIOR.
-      return parameter_space_in_x(xcv, Psx_2_curve_tag());
-    }
-
-    /*!
-     * Obtain the location of the given point end in x.
+    /*! Obtain the location of the given point end in x.
      * \param p The point.
      * \return The location of the point end in x direction.
      */
@@ -380,9 +358,8 @@ public:
       // The function is implemented based on the tag dispatching
       // If the traits class does not support special boundaries, we just
       // return ARR_INTERIOR.
-      return parameter_space_in_x(p, Psx_2_point_tag());
+      return parameter_space_in_x(p, Left_or_right_sides_category());
     }
-
 
   protected:
     //! The base traits.
@@ -400,56 +377,56 @@ public:
     //! Allow its functor obtaining function calling the private constructor.
     friend class Arr_traits_basic_adaptor_2<Base>;
 
-    /*!
-     * Implementation of the operator() in case the base should be used.
-     */
+    /*! Implementation of the operator() in case the base should be used. */
     Arr_parameter_space parameter_space_in_x(const X_monotone_curve_2& xcv,
                                              Arr_curve_end ind,
-                                             Arr_use_traits_tag) const
+                                             Arr_has_identified_side_tag) const
+    {
+      // If the curve completely lies on the identification, return
+      // ARR_LEFT_BOUNDARY as an arbitrary but consistent choice.
+      if (m_base->is_on_y_identification_2_object()(xcv))
+        return ARR_LEFT_BOUNDARY;
+      return (m_base->parameter_space_in_x_2_object()(xcv, ind));
+    }
+
+    /*! Implementation of the operator() in case the base should be used. */
+    Arr_parameter_space parameter_space_in_x(const X_monotone_curve_2& xcv,
+                                             Arr_curve_end ind,
+                                             Arr_boundary_cond_tag) const
     { return (m_base->parameter_space_in_x_2_object()(xcv, ind)); }
 
-    /*!
-     * Implementation of the operator() in case the dummy should be used.
-     */
+    /*! Implementation of the operator() in case the dummy should be used. */
     Arr_parameter_space parameter_space_in_x(const X_monotone_curve_2&,
                                              Arr_curve_end,
-                                             Arr_use_dummy_tag) const
-    { return ARR_INTERIOR; }
+                                             Arr_all_sides_oblivious_tag) const
+    {
+      /*! \todo ideally we should call CGAL_error() here and avoid invocation
+       * of the functor for traits classes that have oblivious boundary
+       * conditions
+       */
+      return ARR_INTERIOR;
+    }
 
-    /*!
-     * Implementation of the operator() in case the base should be used.
-     */
-    Arr_parameter_space parameter_space_in_x(const X_monotone_curve_2& xcv,
-                                              Arr_use_traits_tag) const
-    { return (m_base->parameter_space_in_x_2_object()(xcv)); }
-
-    /*!
-     * Implementation of the operator() in case the dummy should be used.
-     */
-    Arr_parameter_space parameter_space_in_x(const X_monotone_curve_2&,
-                                              Arr_use_dummy_tag) const
-    { return ARR_INTERIOR; }
-
-    /*!
-     * Implementation of the operator() in case the base should be used.
-     */
+    /*! Implementation of the operator() in case the base should be used. */
     Arr_parameter_space parameter_space_in_x(const Point_2& p,
-                                             Arr_use_traits_tag) const
+                                             Arr_boundary_cond_tag) const
     { return m_base->parameter_space_in_x_2_object()(p); }
 
-    /*!
-     * Implementation of the operator() in case the dummy should be used.
-     */
+    /*! Implementation of the operator() in case the dummy should be used. */
     Arr_parameter_space parameter_space_in_x(const Point_2&,
-                                             Arr_use_dummy_tag) const
-    { return ARR_INTERIOR; }
+                                             Arr_all_sides_oblivious_tag) const
+    {
+      /*! \todo ideally we should call CGAL_error() here and avoid invocation
+       * of the functor for traits classes that have oblivious boundary
+       * conditions
+       */
+      return ARR_INTERIOR;
+    }
   };
 
   /*! Obtain an Parameter_space_in_x_2 function object. */
   Parameter_space_in_x_2 parameter_space_in_x_2_object() const
-  {
-    return Parameter_space_in_x_2(this);
-  }
+  { return Parameter_space_in_x_2(this); }
 
   /*! A function object that determines whether an x-monotone curve or a
    * point coincide with the vertical identification curve.
@@ -496,7 +473,7 @@ public:
     bool is_on_y_idn(const Point_2&, Arr_use_dummy_tag) const
     {
       CGAL_error();
-      return SMALLER;
+      return false;
     }
 
     bool is_on_y_idn(const X_monotone_curve_2& xcv, Arr_use_traits_tag) const
@@ -505,7 +482,7 @@ public:
     bool is_on_y_idn(const X_monotone_curve_2&, Arr_use_dummy_tag) const
     {
       CGAL_error();
-      return SMALLER;
+      return false;
     }
   };
 
@@ -647,8 +624,7 @@ public:
    */
   class Parameter_space_in_y_2 {
   public:
-    /*!
-     * Obtain the location of the given curve end in y.
+    /*! Obtain the location of the given curve end in y.
      * \param xcv The curve.
      * \param ind ARR_MIN_END if we refer to xcv's minimal end,
      *            ARR_MAX_END if we refer to its maximal end.
@@ -660,29 +636,15 @@ public:
       // The function is implemented based on the tag dispatching.
       // If the traits class does not support special boundaries, we just
       // return ARR_INTERIOR.
-      return parameter_space_in_y(xcv, ind, Psy_2_curve_end_tag());
+      return parameter_space_in_y(xcv, ind, Bottom_or_top_sides_category());
     }
 
-      /*!
-     * Obtain the location of the given curve end in y.
-     * \param xcv The curve.
-     * \return The location of the curve end in y direction.
-     */
-    Arr_parameter_space operator()(const X_monotone_curve_2& xcv) const
-    {
-      // The function is implemented based on the tag dispatching.
-      // If the traits class does not support special boundaries, we just
-      // return ARR_INTERIOR.
-      return parameter_space_in_y(xcv, Psy_2_curve_tag());
-    }
-
-    /*!
-     * Obtain the location of the given point end in y.
+    /*! Obtain the location of the given point end in y.
      * \param p The point.
      * \return The location of the point end in y direction.
      */
     Arr_parameter_space operator()(const Point_2& p) const
-    { return parameter_space_in_y(p, Psy_2_point_tag()); }
+    { return parameter_space_in_y(p, Bottom_or_top_sides_category()); }
 
   protected:
     //! The base traits.
@@ -700,49 +662,51 @@ public:
     //! Allow its functor obtaining function calling the private constructor.
     friend class Arr_traits_basic_adaptor_2<Base>;
 
-    /*!
-     * Implementation of the operator() in case the base should be used.
-     */
+    /*! Implementation of the operator() in case the base should be used. */
     Arr_parameter_space parameter_space_in_y(const X_monotone_curve_2& xcv,
                                              Arr_curve_end ind,
-                                             Arr_use_traits_tag) const
+                                             Arr_has_identified_side_tag) const
+    {
+      // If the curve completely lies on the identification, return
+      // ARR_BOTTOM_BOUNDARY as an arbitrary but consistent choice.
+      if (m_base->is_on_x_identification_2_object()(xcv))
+        return ARR_BOTTOM_BOUNDARY;
+      return m_base->parameter_space_in_y_2_object()(xcv, ind);
+    }
+
+    /*! Implementation of the operator() in case the base should be used. */
+    Arr_parameter_space parameter_space_in_y(const X_monotone_curve_2& xcv,
+                                             Arr_curve_end ind,
+                                             Arr_boundary_cond_tag) const
     { return m_base->parameter_space_in_y_2_object()(xcv, ind); }
 
-    /*!
-     * Implementation of the operator() in case the dummy should be used.
-     */
+    /*! Implementation of the operator() in case the dummy should be used. */
     Arr_parameter_space parameter_space_in_y(const X_monotone_curve_2&,
                                              Arr_curve_end,
-                                             Arr_use_dummy_tag) const
-    { return ARR_INTERIOR; }
+                                             Arr_all_sides_oblivious_tag) const
+    {
+      /*! \todo ideally we should call CGAL_error() here and avoid invocation
+       * of the functor for traits classes that have oblivious boundary
+       * conditions
+       */
+      return ARR_INTERIOR;
+    }
 
-    /*!
-     * Implementation of the operator() in case the base should be used.
-     */
-    Arr_parameter_space parameter_space_in_y(const X_monotone_curve_2& xcv,
-                                             Arr_use_traits_tag) const
-    { return (m_base->parameter_space_in_x_2_object()(xcv)); }
-
-    /*!
-     * Implementation of the operator() in case the dummy should be used.
-     */
-    Arr_parameter_space parameter_space_in_y(const X_monotone_curve_2&,
-                                             Arr_use_dummy_tag) const
-    { return ARR_INTERIOR; }
-
-    /*!
-     * Implementation of the operator() in case the base should be used.
-     */
+    /*! Implementation of the operator() in case the base should be used. */
     Arr_parameter_space parameter_space_in_y(const Point_2& p,
-                                             Arr_use_traits_tag) const
+                                             Arr_boundary_cond_tag) const
     { return m_base->parameter_space_in_y_2_object()(p); }
 
-    /*!
-     * Implementation of the operator() in case the dummy should be used.
-     */
+    /*! Implementation of the operator() in case the dummy should be used. */
     Arr_parameter_space parameter_space_in_y(const Point_2&,
-                                             Arr_use_dummy_tag) const
-    { return ARR_INTERIOR; }
+                                             Arr_all_sides_oblivious_tag) const
+    {
+      /*! \todo ideally we should call CGAL_error() here and avoid invocation
+       * of the functor for traits classes that have oblivious boundary
+       * conditions
+       */
+      return ARR_INTERIOR;
+    }
   };
 
   /*! Obtain an Parameter_space_in_y_2 function object. */
