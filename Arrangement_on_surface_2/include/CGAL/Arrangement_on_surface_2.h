@@ -88,7 +88,7 @@ public:
 
 public:
   typedef Arrangement_on_surface_2<Geometry_traits_2, Topology_traits>
-  Self;
+                                                          Self;
 
   typedef typename Geometry_traits_2::Point_2             Point_2;
   typedef typename Geometry_traits_2::X_monotone_curve_2  X_monotone_curve_2;

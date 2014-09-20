@@ -89,16 +89,12 @@ protected:
   typedef typename BT::Compare_x_near_limit_2_curve_ends_tag
     Cmp_x_nl_2_curve_ends_tag;
 
-  typedef typename BT::Compare_x_on_boundary_2_points_tag
-    Cmp_x_ob_2_points_tag;
-  typedef typename BT::Compare_x_on_boundary_2_point_curve_end_tag
-    Cmp_x_ob_2_point_curve_end_tag;
-  typedef typename BT::Compare_x_on_boundary_2_curve_ends_tag
-    Cmp_x_ob_2_curve_ends_tag;
   typedef typename BT::Compare_x_near_boundary_2_curve_ends_tag
     Cmp_x_nb_2_curve_ends_tag;
 
-  // Used by parameter_space_in_x
+  // Used by:
+  // 1. parameter_space_in_x
+  // 2. compare_x_on_boundary
   typedef typename Arr_two_sides_category<Left_side_category,
                                           Right_side_category>::result
     Left_or_right_sides_category;
@@ -972,7 +968,7 @@ public:
      * \param p2 the second point.
      */
     Comparison_result operator()(const Point_2& p1, const Point_2& p2) const
-    { return comp_x_on_bnd(p1, p2, Cmp_x_ob_2_points_tag()); }
+    { return comp_x_on_bnd(p1, p2, Left_or_right_sides_category()); }
 
     /*! Compare the x-coordinate of a point and a curve-end projected onto the
      * horizontal boundaries
@@ -983,7 +979,7 @@ public:
     Comparison_result operator()(const Point_2& pt,
                                  const X_monotone_curve_2& xcv,
                                  Arr_curve_end ce) const
-    { return comp_x_on_bnd(pt, xcv, ce, Cmp_x_ob_2_point_curve_end_tag()); }
+    { return comp_x_on_bnd(pt, xcv, ce, Left_or_right_sides_category()); }
 
     /*! Compare the x-coordinates of two curve-ends projected onto the horizontal
      * boundaries
@@ -996,48 +992,97 @@ public:
                                  Arr_curve_end ce1,
                                  const X_monotone_curve_2& xcv2,
                                  Arr_curve_end ce2) const
-    { return comp_x_on_bnd(xcv1, ce1, xcv2, ce2, Cmp_x_ob_2_curve_ends_tag()); }
+    {
+      return comp_x_on_bnd(xcv1, ce1, xcv2, ce2,
+                           Left_or_right_sides_category());
+    }
 
   private:
+    /*! Implementation for the case of identified boundaries. */
     Comparison_result comp_x_on_bnd(const Point_2& p1, const Point_2& p2,
-                                    Arr_use_traits_tag) const
+                                    Arr_has_identified_side_tag) const
+    {
+      bool on_boundary1 = m_base->is_on_y_identification_2_object()(p1);
+      bool on_boundary2 = m_base->is_on_y_identification_2_object()(p2);
+      if (on_boundary1 && on_boundary2) return EQUAL;
+      if (on_boundary1) return SMALLER;
+      if (on_boundary2) return LARGER;
+      return m_base->compare_x_on_boundary_2_object()(p1, p2);
+    }
+
+    /*! Implementation for the case the the base should be used. */
+    Comparison_result comp_x_on_bnd(const Point_2& p1, const Point_2& p2,
+                                    Arr_boundary_cond_tag) const
     { return m_base->compare_x_on_boundary_2_object()(p1, p2); }
 
+    /*! Implementation of the case the dummy should be used. */
     Comparison_result comp_x_on_bnd(const Point_2&, const Point_2&,
-                                    Arr_use_dummy_tag) const
+                                    Arr_all_sides_oblivious_tag) const
     {
       CGAL_error();
       return SMALLER;
     }
 
+    /*! Implementation for the case of identified boundaries. */
     Comparison_result comp_x_on_bnd(const Point_2& pt,
                                     const X_monotone_curve_2& xcv,
                                     Arr_curve_end ce,
-                                    Arr_use_traits_tag) const
+                                    Arr_has_identified_side_tag) const
+    {
+      bool on_boundary1 = m_base->is_on_y_identification_2_object()(pt);
+      bool on_boundary2 = m_base->is_on_y_identification_2_object()(xcv);
+      if (on_boundary1 && on_boundary2) return EQUAL;
+      if (on_boundary1) return SMALLER;
+      if (on_boundary2) return LARGER;
+      return m_base->compare_x_on_boundary_2_object()(pt, xcv, ce);
+    }
+
+    /*! Implementation for the case the the base should be used. */
+    Comparison_result comp_x_on_bnd(const Point_2& pt,
+                                    const X_monotone_curve_2& xcv,
+                                    Arr_curve_end ce,
+                                    Arr_boundary_cond_tag) const
     { return m_base->compare_x_on_boundary_2_object()(pt, xcv, ce); }
 
+    /*! Implementation of the case the dummy should be used. */
     Comparison_result comp_x_on_bnd(const Point_2&,
                                     const X_monotone_curve_2& /* xcv */,
                                     Arr_curve_end /* ce */,
-                                    Arr_use_dummy_tag) const
+                                    Arr_all_sides_oblivious_tag) const
     {
       CGAL_error();
       return SMALLER;
     }
 
-
+    /*! Implementation for the case of identified boundaries. */
     Comparison_result comp_x_on_bnd(const X_monotone_curve_2& xcv1,
                                     Arr_curve_end ce1,
                                     const X_monotone_curve_2& xcv2,
                                     Arr_curve_end ce2,
-                                     Arr_use_traits_tag) const
+                                    Arr_has_identified_side_tag) const
+    {
+      bool on_boundary1 = m_base->is_on_y_identification_2_object()(xcv1);
+      bool on_boundary2 = m_base->is_on_y_identification_2_object()(xcv2);
+      if (on_boundary1 && on_boundary2) return EQUAL;
+      if (on_boundary1) return SMALLER;
+      if (on_boundary2) return LARGER;
+      return m_base->compare_x_on_boundary_2_object()(xcv1, ce1, xcv2, ce2);
+    }
+
+    /*! Implementation for the case the the base should be used. */
+    Comparison_result comp_x_on_bnd(const X_monotone_curve_2& xcv1,
+                                    Arr_curve_end ce1,
+                                    const X_monotone_curve_2& xcv2,
+                                    Arr_curve_end ce2,
+                                    Arr_boundary_cond_tag) const
     { return m_base->compare_x_on_boundary_2_object()(xcv1, ce1, xcv2, ce2); }
 
+    /*! Implementation of the case the dummy should be used. */
     Comparison_result comp_x_on_bnd(const X_monotone_curve_2& /* xcv1 */,
                                     Arr_curve_end /* ce1 */,
                                     const X_monotone_curve_2& /* xcv2 */,
                                     Arr_curve_end /* ce2 */,
-                                    Arr_use_dummy_tag) const
+                                    Arr_all_sides_oblivious_tag) const
     {
       CGAL_error();
       return SMALLER;
@@ -1068,18 +1113,14 @@ public:
     //! Allow its functor obtaining function calling the private constructor.
     friend class Arr_traits_basic_adaptor_2<Base>;
 
-    /*!
-     * Implementation of the operator() in case the base should be used.
-     */
+    /*! Implementation of the operator() in case the base should be used. */
     Comparison_result _compare_curves(const X_monotone_curve_2& xcv1,
                                       const X_monotone_curve_2& xcv2,
                                       Arr_curve_end ce,
                                       Arr_use_traits_tag) const
     { return m_base->compare_x_near_boundary_2_object()(xcv1, xcv2, ce); }
 
-    /*!
-     * Implementation of the operator() in case the dummy should be used.
-     */
+    /*! Implementation of the operator() in case the dummy should be used. */
     Comparison_result _compare_curves(const X_monotone_curve_2&,
                                       const X_monotone_curve_2&,
                                       Arr_curve_end,
@@ -1090,7 +1131,6 @@ public:
     }
 
   public:
-
     /*! Compare the relative x-positions of two curve ends.
      * \param xcv1 The first curve.
      * \param xcv2 The second curve.
@@ -2225,12 +2265,11 @@ public:
 /*! \class
  * A traits-class adaptor that extends the basic traits-class interface.
  */
-template <class ArrangementTraits_>
+template <typename ArrangementTraits_>
 class Arr_traits_adaptor_2 :
   public Arr_traits_basic_adaptor_2<ArrangementTraits_>
 {
 public:
-
   // Traits-class geometric types.
   typedef ArrangementTraits_                             Base_traits_2;
   typedef Arr_traits_basic_adaptor_2<ArrangementTraits_> Base;
@@ -2310,16 +2349,12 @@ public:
     //! Allow its functor obtaining function calling the private constructor.
     friend class Arr_traits_adaptor_2<Base_traits_2>;
 
-    /*!
-     * Implementation of the operator() in case the Has_merge tag is true.
-     */
+    /*! Implementation of the operator() in case the Has_merge tag is true. */
     bool _are_mergeable_imp(const X_monotone_curve_2& xcv1,
                              const X_monotone_curve_2& xcv2, Tag_true) const
     { return (m_base->are_mergeable_2_object()(xcv1, xcv2)); }
 
-    /*!
-     * Implementation of the operator() in case the Has_merge tag is false.
-     */
+    /*! Implementation of the operator() in case the Has_merge tag is false. */
     bool _are_mergeable_imp(const X_monotone_curve_2&,
                             const X_monotone_curve_2&, Tag_false) const
     {
@@ -2367,17 +2402,13 @@ public:
     //! Allow its functor obtaining function calling the private constructor.
     friend class Arr_traits_adaptor_2<Base_traits_2>;
 
-    /*!
-     * Implementation of the operator() in case the HasMerge tag is true.
-     */
+    /*! Implementation of the operator() in case the HasMerge tag is true. */
     void _merge_imp(const X_monotone_curve_2& xcv1,
                     const X_monotone_curve_2& xcv2,
                     X_monotone_curve_2& c, Tag_true) const
     { return (m_base->merge_2_object()(xcv1, xcv2, c)); }
 
-    /*!
-     * Implementation of the operator() in case the HasMerge tag is false.
-     */
+    /*! Implementation of the operator() in case the HasMerge tag is false. */
     void _merge_imp(const X_monotone_curve_2&, const X_monotone_curve_2&,
                     X_monotone_curve_2&, Tag_false) const
     {

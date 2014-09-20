@@ -26,10 +26,33 @@ int main()
   Point_2 sp(0, 0, -1);
   Point_2 np(0, 0, 1);
   Vertex_handle spv = arr.insert_in_face_interior(sp, arr.reference_face());
-  X_monotone_curve_2 xcv1(Point_2(0, 0, -1), Point_2(1, 0, 0));
-  X_monotone_curve_2 xcv2(Point_2(0, 0, -1), Point_2(1, 1, 0));
-  arr.insert_from_left_vertex(xcv1, spv);
-  arr.insert_from_left_vertex(xcv2, spv);
+  Vertex_handle npv = arr.insert_in_face_interior(np, arr.reference_face());
+
+  Point_2 p1(-1,  0, 0);
+  Point_2 p2( 0, -1, 0);
+  Point_2 p3( 1,  0, 0);
+  Vertex_handle v1 = arr.insert_in_face_interior(p1, arr.reference_face());
+  Vertex_handle v2 = arr.insert_in_face_interior(p2, arr.reference_face());
+  Vertex_handle v3 = arr.insert_in_face_interior(p3, arr.reference_face());
+
+  X_monotone_curve_2 xcv_sp1(sp, p1);
+  X_monotone_curve_2 xcv_sp2(sp, p2);
+  X_monotone_curve_2 xcv_sp3(sp, p3);
+  arr.insert_at_vertices(xcv_sp1, spv, v1);
+  arr.insert_at_vertices(xcv_sp2, spv, v2);
+  arr.insert_at_vertices(xcv_sp3, spv, v3);
+
+  X_monotone_curve_2 xcv_12(p1, p2);
+  X_monotone_curve_2 xcv_23(p2, p3);
+  arr.insert_at_vertices(xcv_12, v1, v2);
+  arr.insert_at_vertices(xcv_23, v2, v3);
+
+  X_monotone_curve_2 xcv_np1(np, p1);
+  X_monotone_curve_2 xcv_np2(np, p2);
+  X_monotone_curve_2 xcv_np3(np, p3);
+  arr.insert_at_vertices(xcv_np1, npv, v1);
+  arr.insert_at_vertices(xcv_np2, npv, v2);
+  arr.insert_at_vertices(xcv_np3, npv, v3);
 
   // Print the size of the arrangement.
   std::cout << "The arrangement size:" << std::endl
