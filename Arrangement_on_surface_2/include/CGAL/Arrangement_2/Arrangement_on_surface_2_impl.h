@@ -12,10 +12,6 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL$
-// $Id$
-//
-//
 // Author(s)     : Ron Wein          <wein@post.tau.ac.il>
 //                 Efi Fogel         <efif@post.tau.ac.il>
 //                 Eric Berberich    <eric.berberich@cgal.org>
@@ -173,16 +169,13 @@ void Arrangement_on_surface_2<GeomTraits, TopTraits>::assign(const Self& arr)
   m_topol_traits.assign(arr.m_topol_traits);
 
   // Go over the vertices and create duplicates of the stored points.
-  Point_2* dup_p;
-  DVertex* p_v;
-
   typename Dcel::Vertex_iterator vit;
   for (vit = _dcel().vertices_begin(); vit != _dcel().vertices_end(); ++vit) {
-    p_v = &(*vit);
+    DVertex* p_v = &(*vit);
 
     if (! p_v->has_null_point()) {
       // Create the duplicate point and store it in the points container.
-      dup_p = _new_point(p_v->point());
+      Point_2* dup_p = _new_point(p_v->point());
 
       // Associate the vertex with the duplicated point.
       p_v->set_point(dup_p);
@@ -296,15 +289,29 @@ insert_in_face_interior(const Point_2& p, Face_handle f)
   std::cout << "face : " << &(*f) << std::endl;
 #endif
 
+  // Obtain the boundary conditions:
+  const Arr_parameter_space ps_x =
+    m_geom_traits->parameter_space_in_x_2_object()(p);
+  const Arr_parameter_space ps_y =
+    m_geom_traits->parameter_space_in_y_2_object()(p);
+
   // Create a new vertex associated with the given point.
-  // We assume the point has no boundary conditions.
-  DVertex* v = _create_vertex(p);
-  Vertex_handle vh(v);
+  // The point is either the interior of the parameter space or on the boundary.
+  DVertex* v(NULL);
+  if ((ps_x == ARR_INTERIOR) && (ps_y == ARR_INTERIOR))
+    v = _create_vertex(p);
+  else {
+    v = _create_boundary_vertex(p, ps_x, ps_y);
+
+    // Notify the topology traits on the creation of the boundary vertex.
+    m_topol_traits.notify_on_boundary_vertex_creation(v, p, ps_x, ps_y);
+  }
 
   // Insert v as an isolated vertex inside the given face.
   _insert_isolated_vertex(p_f, v);
 
   // Return a handle to the new isolated vertex.
+  Vertex_handle vh(v);
   return vh;
 }
 
@@ -2095,6 +2102,30 @@ _create_vertex(const Point_2& p)
   return v;
 }
 
+// Create a new vertex on boundary
+//
+template <typename GeomTraits, typename TopTraits>
+typename Arrangement_on_surface_2<GeomTraits, TopTraits>::DVertex*
+Arrangement_on_surface_2<GeomTraits, TopTraits>::
+_create_boundary_vertex(const Point_2& p,
+                        Arr_parameter_space ps_x, Arr_parameter_space ps_y)
+{
+  CGAL_precondition((ps_x != ARR_INTERIOR) || (ps_y != ARR_INTERIOR));
+
+  // Notify the observers that we are about to create a new boundary vertex.
+  _notify_before_create_boundary_vertex(p, ps_x, ps_y);
+
+  // Create a new vertex and set its boundary conditions.
+  DVertex* v = _dcel().new_vertex();
+  v->set_boundary(ps_x, ps_y);
+  v->set_point(_new_point(p));
+
+  // Notify the observers that we have just created a new boundary vertex.
+  _notify_after_create_boundary_vertex(Vertex_handle(v));
+
+  return v;
+}
+
 //-----------------------------------------------------------------------------
 // Create a new vertex on boundary
 //
@@ -2129,10 +2160,56 @@ _create_boundary_vertex(const X_monotone_curve_2& cv, Arr_curve_end ind,
   }
 
   // Notify the observers that we have just created a new boundary vertex.
-  Vertex_handle   vh(v);
-  _notify_after_create_boundary_vertex(vh);
+  _notify_after_create_boundary_vertex(Vertex_handle(v));
 
   return v;
+}
+
+//-----------------------------------------------------------------------------
+// Locate the DCEL features that will be used for inserting the given point,
+// which has a boundary condition, and set a proper vertex there.
+//
+template <typename GeomTraits, typename TopTraits>
+typename Arrangement_on_surface_2<GeomTraits, TopTraits>::DVertex*
+Arrangement_on_surface_2<GeomTraits, TopTraits>::
+_place_and_set_point(DFace* f, const Point_2& p,
+                     Arr_parameter_space ps_x, Arr_parameter_space ps_y)
+{
+  // Use the topology traits to locate the DCEL feature that contains the
+  // given point.
+  CGAL::Object obj = m_topol_traits.place_boundary_vertex(f, p, ps_x, ps_y);
+  DVertex* v;
+
+  // Act according to the result type.
+  DHalfedge* fict_he;
+  if (CGAL::assign(fict_he, obj)) {
+    // The point is located on a fictitious edge.
+    // Create a new vertex that corresponds to the point.
+    v = _create_boundary_vertex(p, ps_x, ps_y);
+
+    // Split the fictitious halfedge at the newly created vertex.
+    // The returned halfedge is the predecessor for the insertion of the curve
+    // end around v.
+    _notify_before_split_fictitious_edge(Halfedge_handle(fict_he),
+                                         Vertex_handle(v));
+    DHalfedge* p_pred = m_topol_traits.split_fictitious_edge(fict_he, v);
+    _notify_after_split_fictitious_edge(Halfedge_handle(p_pred),
+                                        Halfedge_handle((*p_pred)->next()));
+  }
+  else if (obj.is_empty()) {
+    // Create a new vertex that reprsents the given point.
+    v = _create_boundary_vertex(p, ps_x, ps_y);
+
+    // Notify the topology traits on the creation of the boundary vertex.
+    m_topol_traits.notify_on_boundary_vertex_creation(v, p, ps_x, ps_y);
+  }
+  else {
+    CGAL_assertion(CGAL::assign(v, obj));
+    // The vertex cpoincides with an existing vertex that represents the point.
+    // Do nothing.
+  }
+
+  return v;     // return the vertex that represents the point.
 }
 
 //-----------------------------------------------------------------------------

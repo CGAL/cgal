@@ -28,7 +28,7 @@
 
 namespace CGAL {
 
-/*! \brief constructs default */
+  //! \brief constructs default.
 template <typename GeomTraits, typename Dcel>
 Arr_spherical_topology_traits_2<GeomTraits, Dcel>::
 Arr_spherical_topology_traits_2() :
@@ -41,7 +41,7 @@ Arr_spherical_topology_traits_2() :
   m_boundary_vertices = Vertex_map(Vertex_key_comparer(m_geom_traits));
 }
 
-/*! \brief constructs from a geometry-traits object. */
+//! \brief constructs from a geometry-traits object.
 template <typename GeomTraits, typename Dcel>
 Arr_spherical_topology_traits_2<GeomTraits, Dcel>::
 Arr_spherical_topology_traits_2(const Geometry_traits_2* traits) :
@@ -54,7 +54,7 @@ Arr_spherical_topology_traits_2(const Geometry_traits_2* traits) :
   m_boundary_vertices = Vertex_map(Vertex_key_comparer(m_geom_traits));
 }
 
-/*! \brief destructs */
+//! \brief destructs.
 template <typename GeomTraits, typename Dcel>
 Arr_spherical_topology_traits_2<GeomTraits, Dcel>::
 ~Arr_spherical_topology_traits_2()
@@ -68,10 +68,9 @@ Arr_spherical_topology_traits_2<GeomTraits, Dcel>::
   }
 }
 
-/*! \brief assigns the contents of another topology-traits class */
+//! \brief assigns the contents of another topology-traits class.
 template <typename GeomTraits, typename Dcel>
-void Arr_spherical_topology_traits_2<GeomTraits, Dcel>::
-assign(const Self& other)
+void Arr_spherical_topology_traits_2<GeomTraits, Dcel>::assign(const Self& other)
 {
   // Clear the current DCEL and duplicate the other DCEL.
   m_dcel.delete_all();
@@ -96,7 +95,7 @@ assign(const Self& other)
   dcel_updated();
 }
 
-/*! \brief initializes an empty DCEL structure. */
+//! \brief initializes an empty DCEL structure.
 template <typename GeomTraits_, typename Dcel_>
 void Arr_spherical_topology_traits_2<GeomTraits_, Dcel_>::dcel_updated()
 {
@@ -138,7 +137,7 @@ void Arr_spherical_topology_traits_2<GeomTraits_, Dcel_>::dcel_updated()
   CGAL_assertion(m_spherical_face != NULL);
 }
 
-/*! \brief initializes an empty DCEL structure. */
+//! \brief initializes an empty DCEL structure.
 template <typename GeomTraits, typename Dcel>
 void Arr_spherical_topology_traits_2<GeomTraits, Dcel>::init_dcel()
 {
@@ -156,7 +155,7 @@ void Arr_spherical_topology_traits_2<GeomTraits, Dcel>::init_dcel()
   m_south_pole = NULL;
 }
 
-/*! \brief determines whether a point lies in the interior of a given face. */
+//! \brief determines whether a point lies in the interior of a given face.
 template <typename GeomTraits, typename Dcel>
 bool Arr_spherical_topology_traits_2<GeomTraits, Dcel>::
 is_in_face(const Face* f, const Point_2& p, const Vertex* v) const
@@ -418,7 +417,7 @@ is_in_face(const Face* f, const Point_2& p, const Vertex* v) const
   return (num_intersections& 0x1);
 }
 
-/*! \brief compares the relative y-position of a point and a halfedge */
+//! \brief compares the relative y-position of a point and a halfedge.
 template <typename GeomTraits, typename Dcel>
 Comparison_result
 Arr_spherical_topology_traits_2<GeomTraits, Dcel>::
@@ -428,7 +427,7 @@ compare_y_at_x(const Point_2& p, const Halfedge* he) const
   return m_geom_traits->compare_y_at_x_2_object()(p, he->curve());
 }
 
-/*! \brief determine whether a vertex is associated with a curve end */
+//! \brief determine whether a vertex is associated with a curve end.
 template <typename GeomTraits, typename Dcel>
 bool Arr_spherical_topology_traits_2<GeomTraits, Dcel>::
 are_equal(const Vertex* v,
@@ -465,7 +464,30 @@ are_equal(const Vertex* v,
   return (m_geom_traits->compare_y_on_boundary_2_object()(p1, p2) == EQUAL);
 }
 
-/*! \brief receives a notification on the creation of a new boundary vertex */
+//! \brief receives a notification on the creation of a new boundary vertex.
+template <typename GeomTraits, typename Dcel>
+void
+Arr_spherical_topology_traits_2<GeomTraits, Dcel>::
+notify_on_boundary_vertex_creation(Vertex* v,
+                                   const Point_2& p,
+                                   Arr_parameter_space
+                                     CGAL_assertion_code(ps_x),
+                                   Arr_parameter_space ps_y)
+{
+  // std::cout << "notify_on_boundary_vertex_creation()" << std::endl;
+  if (ps_y == ARR_BOTTOM_BOUNDARY) {
+    m_south_pole = v;
+    return;
+  }
+  if (ps_y == ARR_TOP_BOUNDARY) {
+    m_north_pole = v;
+    return;
+  }
+  CGAL_assertion(ps_x != ARR_INTERIOR);
+  m_boundary_vertices.insert(Vertex_value(p, v));
+}
+
+//! \brief receives a notification on the creation of a new boundary vertex.
 template <typename GeomTraits, typename Dcel>
 void
 Arr_spherical_topology_traits_2<GeomTraits, Dcel>::
@@ -517,7 +539,8 @@ let_me_decide_the_outer_ccb(std::pair< CGAL::Sign, CGAL::Sign> signs1,
 
 /*! \brief given a curve end with boundary conditions and a face that contains
  * the interior of the curve, find a place for a boundary vertex that will
- * represent the curve end along the face boundary */
+ * represent the curve end along the face boundary.
+ */
 template <typename GeomTraits, typename Dcel>
 CGAL::Object
 Arr_spherical_topology_traits_2<GeomTraits, Dcel>::
@@ -553,7 +576,8 @@ place_boundary_vertex(Face* /* f */,
 }
 
 /*! \brief locate the predecessor halfedge for the given curve around a given
- * vertex with boundary conditions. */
+ * vertex with boundary conditions.
+ */
 template <typename GeomTraits, typename Dcel>
 typename Arr_spherical_topology_traits_2<GeomTraits, Dcel>::Halfedge*
 Arr_spherical_topology_traits_2<GeomTraits,Dcel>::
@@ -633,13 +657,13 @@ locate_curve_end(const X_monotone_curve_2& xc, Arr_curve_end ind,
   return CGAL::make_object(_face_below_vertex_on_discontinuity(v));
 }
 
-/*! \brief determines whether a given boundary vertex is redundant */
+//! \brief determines whether a given boundary vertex is redundant.
 template <typename GeomTraits, typename Dcel>
 bool Arr_spherical_topology_traits_2<GeomTraits, Dcel>::
 is_redundant(const Vertex* v) const
 { return (v->halfedge() == NULL); }
 
-/* \brief erases a given redundant vertex */
+//! \brief erases a given redundant vertex.
 template <typename GeomTraits, typename Dcel>
 typename Arr_spherical_topology_traits_2<GeomTraits, Dcel>::Halfedge*
 Arr_spherical_topology_traits_2<GeomTraits, Dcel>::
