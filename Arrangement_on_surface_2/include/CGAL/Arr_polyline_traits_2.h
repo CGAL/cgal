@@ -2517,7 +2517,7 @@ namespace CGAL {
         m_poly_traits(traits)
       {}
 
-      /*! Compare the x-limit of a point with the x-coordinate of an
+      /*! Compare the x-coordinate of a point with the x-coordinate of an
        * x-curve-end on the boundary.
        * \param point the point.
        * \param xcv the x-curve, the endpoint of which is compared.

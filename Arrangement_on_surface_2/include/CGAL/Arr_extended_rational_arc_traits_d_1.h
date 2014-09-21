@@ -12,9 +12,6 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL$
-// $Id$
-//
 // Author(s)     : Oren Salzman <orenzalz@post.tau.ac.il >
 //                 Michael Hemmer <Michael.Hemmer@sophia.inria.fr>
 
@@ -54,7 +51,7 @@ namespace CGAL {
 
 #  define Min_bounded(ver) \
     ( ((ver).min_parameter_space() == ARR_BOTTOM_BOUNDARY ) ? false : true )
-  
+
 
 template <class Traits_>
 class Arr_traits_with_vertical_segments
@@ -62,30 +59,30 @@ class Arr_traits_with_vertical_segments
 public:
   typedef Traits_                                   Traits;
   typedef Arr_traits_with_vertical_segments<Traits> Self;
-  
+
   typedef typename Traits::Algebraic_kernel_d_1     Algebraic_kernel_d_1;
 
   typedef typename Traits::Point_2                  Point_2;
   typedef typename Traits::Multiplicity             Multiplicity;
   typedef typename Traits::Algebraic_real_1         Algebraic_real_1;
   typedef typename Traits::Rat_vector               Rat_vector;
-  typedef typename Traits::Coefficient              Coefficient; 
+  typedef typename Traits::Coefficient              Coefficient;
 
   typedef typename Traits::Integer                  Integer;
-  typedef typename Traits::Rational                 Rational; 
-  typedef typename Traits::Polynomial_1             Polynomial_1; 
+  typedef typename Traits::Rational                 Rational;
+  typedef typename Traits::Polynomial_1             Polynomial_1;
   typedef typename Traits::Rational_function        Rational_function;
 
-  
+
   typedef typename Traits::X_monotone_curve_2       Non_vertical_x_curve_2;
   typedef typename Traits::Curve_2                  Non_vertical_curve_2;
   typedef typename Traits::Vertical_segment         Vertical_segment;
 
-  typedef Arr_vertical_rational_arc::Rational_arc_with_ver_d_1 
+  typedef Arr_vertical_rational_arc::Rational_arc_with_ver_d_1
     <Non_vertical_x_curve_2,Algebraic_kernel_d_1>                 X_monotone_curve_2;
-  typedef Arr_vertical_rational_arc::Rational_arc_with_ver_d_1 
+  typedef Arr_vertical_rational_arc::Rational_arc_with_ver_d_1
     <Non_vertical_curve_2,Algebraic_kernel_d_1>                   Curve_2;
-  
+
   //Category tags:
   typedef Tag_true              Has_left_category;
   typedef Tag_true              Has_merge_category;
@@ -120,17 +117,17 @@ public:
     Construct_point_2 (Traits& traits) :_traits(traits) {}
     Point_2 operator() (const Rational_function& rational_function,
                         const Algebraic_real_1& x_coordinate)
-    { 
+    {
       return _traits.construct_point_2_object()(rational_function,x_coordinate);
     }
     Point_2 operator() (const Rational& x,const Rational& y)
-    { 
+    {
       return _traits.construct_point_2_object()(x,y);
     }
     Point_2 operator() (const Algebraic_real_1& x,const Rational& y)
     {
       return _traits.construct_point_2_object()(x,y);
-    }    
+    }
   }; //Construct_point_2
 
   Construct_point_2 construct_point_2_object() const {return Construct_point_2(_traits);}
@@ -140,7 +137,7 @@ public:
   private:
      Traits& _traits;
   public:
-    Construct_vertical_x_curve_2(Traits& traits) 
+    Construct_vertical_x_curve_2(Traits& traits)
       :_traits(traits)
     {}
 
@@ -183,7 +180,7 @@ public:
     {
       return _traits.construct_vertical_segment_object()(p,is_directed_up);
     }
-    
+
   };  //Construct_vertical_curve_2
 
   Construct_vertical_curve_2 construct_vertical_curve_2_object () const
@@ -193,48 +190,48 @@ public:
 
   class Construct_curve_2
   {
-  private: 
+  private:
     typedef typename Traits::Algebraic_real_1 Algebraic_real_1;
     Traits& _traits;
   public:
-    Construct_curve_2 (Traits& traits) 
+    Construct_curve_2 (Traits& traits)
       :_traits(traits)
     {}
     template <class InputIterator>
     Curve_2 operator() (InputIterator begin, InputIterator end) const
     {
-      return _traits.construct_curve_2_object()(begin,end); 
+      return _traits.construct_curve_2_object()(begin,end);
     }
     template <class InputIterator>
     Curve_2 operator() (InputIterator begin, InputIterator end,const Algebraic_real_1& x_s, bool dir_right) const
     {
-      return _traits.construct_curve_2_object()(begin,end,x_s,dir_right); 
+      return _traits.construct_curve_2_object()(begin,end,x_s,dir_right);
     }
     template <class InputIterator>
     Curve_2 operator() (InputIterator begin, InputIterator end,
                         const Algebraic_real_1& x_s, const Algebraic_real_1& x_t) const
     {
-      return _traits.construct_curve_2_object()(begin,end,x_s,x_t); 
+      return _traits.construct_curve_2_object()(begin,end,x_s,x_t);
     }
     template <class InputIterator>
     Curve_2 operator() (InputIterator begin_numer, InputIterator end_numer,
-                        InputIterator begin_denom, InputIterator end_denom) const 
+                        InputIterator begin_denom, InputIterator end_denom) const
     {
-      return _traits.construct_curve_2_object()(begin_numer, end_numer,begin_denom,end_denom); 
+      return _traits.construct_curve_2_object()(begin_numer, end_numer,begin_denom,end_denom);
     }
     template <class InputIterator>
     Curve_2 operator() (InputIterator begin_numer, InputIterator end_numer,
                         InputIterator begin_denom, InputIterator end_denom,
                         const Algebraic_real_1& x_s, bool dir_right) const
     {
-      return _traits.construct_curve_2_object()(begin_numer, end_numer,begin_denom,end_denom,x_s,dir_right); 
+      return _traits.construct_curve_2_object()(begin_numer, end_numer,begin_denom,end_denom,x_s,dir_right);
     }
     template <class InputIterator>
     Curve_2 operator() (InputIterator begin_numer, InputIterator end_numer,
                         InputIterator begin_denom, InputIterator end_denom,
                         const Algebraic_real_1& x_s, const Algebraic_real_1& x_t) const
     {
-      return _traits.construct_curve_2_object()(begin_numer, end_numer,begin_denom,end_denom,x_s,x_t); 
+      return _traits.construct_curve_2_object()(begin_numer, end_numer,begin_denom,end_denom,x_s,x_t);
     }
   };  //Construct_rational_curve_2
 
@@ -244,7 +241,7 @@ public:
   }
   class Construct_x_monotone_curve_2
   {
-  private: 
+  private:
     typedef typename Traits::Algebraic_real_1 Algebraic_real_1;
     Traits& _traits;
   public:
@@ -254,39 +251,39 @@ public:
     template <class InputIterator>
     X_monotone_curve_2 operator() (InputIterator begin, InputIterator end) const
     {
-      return _traits.construct_x_monotone_curve_2_object()(begin,end); 
+      return _traits.construct_x_monotone_curve_2_object()(begin,end);
     }
     template <class InputIterator>
     X_monotone_curve_2 operator() ( InputIterator begin, InputIterator end,
                                     const Algebraic_real_1& x_s, bool dir_right) const
     {
-      return _traits.construct_x_monotone_curve_2_object()(begin,end,x_s,dir_right); 
+      return _traits.construct_x_monotone_curve_2_object()(begin,end,x_s,dir_right);
     }
     template <class InputIterator>
     X_monotone_curve_2 operator() (InputIterator begin, InputIterator end,
                                    const Algebraic_real_1& x_s, const Algebraic_real_1& x_t) const
     {
-      return _traits.construct_x_monotone_curve_2_object()(begin,end,x_s,x_t); 
+      return _traits.construct_x_monotone_curve_2_object()(begin,end,x_s,x_t);
     }
     template <class InputIterator>
     X_monotone_curve_2 operator() ( InputIterator begin_numer, InputIterator end_numer,
-                                    InputIterator begin_denom, InputIterator end_denom) const 
+                                    InputIterator begin_denom, InputIterator end_denom) const
     {
-      return _traits.construct_x_monotone_curve_2_object()(begin_numer, end_numer,begin_denom,end_denom); 
+      return _traits.construct_x_monotone_curve_2_object()(begin_numer, end_numer,begin_denom,end_denom);
     }
     template <class InputIterator>
     X_monotone_curve_2 operator() ( InputIterator begin_numer, InputIterator end_numer,
                                     InputIterator begin_denom, InputIterator end_denom,
                                     const Algebraic_real_1& x_s, bool dir_right) const
     {
-      return _traits.construct_x_monotone_curve_2_object()(begin_numer, end_numer,begin_denom,end_denom,x_s,dir_right); 
+      return _traits.construct_x_monotone_curve_2_object()(begin_numer, end_numer,begin_denom,end_denom,x_s,dir_right);
     }
     template <class InputIterator>
     X_monotone_curve_2 operator() ( InputIterator begin_numer, InputIterator end_numer,
                                     InputIterator begin_denom, InputIterator end_denom,
                                     const Algebraic_real_1& x_s, const Algebraic_real_1& x_t) const
     {
-      return _traits.construct_x_monotone_curve_2_object()(begin_numer, end_numer,begin_denom,end_denom,x_s,x_t); 
+      return _traits.construct_x_monotone_curve_2_object()(begin_numer, end_numer,begin_denom,end_denom,x_s,x_t);
     }
   };  //Construct_rational_x_curve_2
 
@@ -299,7 +296,7 @@ public:
   //------------------------
 
   //---------------------------------------------------------------
-  //A functor that compares the x-coordinates of two points 
+  //A functor that compares the x-coordinates of two points
   class Compare_x_2
   {
   private:
@@ -347,7 +344,7 @@ public:
 
   /*! A functor that obtains the left endpoint of a curve. */
   class Construct_min_vertex_2
-  {    
+  {
   private:
     Traits& _traits;
   public:
@@ -465,7 +462,7 @@ public:
   class Compare_y_at_x_2
   {
   private:
-    Traits& _traits;    
+    Traits& _traits;
   public:
     Compare_y_at_x_2(Traits& traits) : _traits(traits) {}
     /*!
@@ -496,10 +493,10 @@ public:
       }
       Comparison_result operator() (const Vertical_segment & cv) const
       {
-        CGAL_precondition(_traits.compare_x_2_object()(_p,cv.max()) == CGAL::EQUAL);       
+        CGAL_precondition(_traits.compare_x_2_object()(_p,cv.max()) == CGAL::EQUAL);
 
         typename Traits::Compare_xy_2 compare_xy_2 = _traits.compare_xy_2_object();
-        
+
         if (Is_line(cv))
           return CGAL::EQUAL;
         if ((Max_bounded(cv)) && (!Min_bounded(cv)) )
@@ -543,7 +540,7 @@ public:
     {
     public:
       typedef boost::static_visitor <Comparison_result> Base;
-      Compare_y_at_x_left_2_visitor(Traits& traits,const Point_2& p) 
+      Compare_y_at_x_left_2_visitor(Traits& traits,const Point_2& p)
         : _traits(traits), _p(p), Base() {}
       Comparison_result operator() (const Non_vertical_x_curve_2 & cv1,
                                     const Non_vertical_x_curve_2 & cv2) const
@@ -578,7 +575,7 @@ public:
   /*! A functor that compares compares the y-coordinates of two curves
    * immediately to the left of their intersection point.
    */
-  
+
   /*! A functor that checks whether two points and two curves are identical. */
   class Equal_2
   {
@@ -609,34 +606,34 @@ public:
       if (&p1 == &p2)
         return (true);
       return _traits.equal_2_object() (p1,p2);
-   
+
     }
   private:
     class Equal_2_visitor
       : public boost::static_visitor <bool>
     {
     private:
-      typedef boost::static_visitor <bool> Base;      
+      typedef boost::static_visitor <bool> Base;
       Traits& _traits;
     public:
       Equal_2_visitor(Traits& traits) : _traits(traits), Base() {}
       bool operator() (const Non_vertical_x_curve_2& cv1,
-                       const Non_vertical_x_curve_2& cv2) const      
+                       const Non_vertical_x_curve_2& cv2) const
       {
          return _traits.equal_2_object()  (cv1,cv2);
       }
       bool operator() (const Non_vertical_x_curve_2& cv1,
-                       const Vertical_segment & cv2) const      
+                       const Vertical_segment & cv2) const
       {
-        return false; 
+        return false;
       }
       bool operator() (const Vertical_segment & cv1,
-                       const Non_vertical_x_curve_2& cv2) const      
+                       const Non_vertical_x_curve_2& cv2) const
       {
-        return false; 
+        return false;
       }
       bool operator() (const Vertical_segment & cv1,
-                       const Vertical_segment & cv2) const      
+                       const Vertical_segment & cv2) const
       {
         if (&cv1 == &cv2)
           return (true);
@@ -656,7 +653,7 @@ public:
 
         if (Min_bounded(cv1) && Min_bounded(cv2))
           return (_traits.equal_2_object() (cv1.min(),cv2.min() ));
-        
+
         return false;
       }
     };  //Equal_2_visitor
@@ -671,12 +668,12 @@ public:
   /*! A functor that divides a curve into continues (x-monotone) curves. */
   class Make_x_monotone_2
   {
-  private:    
+  private:
     Traits& _traits;
   public:
     Make_x_monotone_2(Traits& traits) : _traits(traits) {}
   template<class OutputIterator>
-    OutputIterator operator() (const Curve_2& cv, OutputIterator oi) const 
+    OutputIterator operator() (const Curve_2& cv, OutputIterator oi) const
     {
       Object_vector res (boost::apply_visitor(Make_x_monotone_2_visitor(_traits),cv.variant()));
       re_cast_object_vector(res,oi);
@@ -687,17 +684,17 @@ public:
       : public boost::static_visitor < Object_vector >
     {
     private:
-      typedef boost::static_visitor <Object_vector> Base;      
+      typedef boost::static_visitor <Object_vector> Base;
       Traits& _traits;
     public:
       Make_x_monotone_2_visitor(Traits& traits) : _traits(traits), Base() {}
-      Object_vector operator() (const Non_vertical_curve_2& cv) const      
+      Object_vector operator() (const Non_vertical_curve_2& cv) const
       {
         Object_vector vec;
         _traits.make_x_monotone_2_object() (cv,std::back_inserter(vec));
         return vec;
       }
-      Object_vector operator() (const Vertical_segment & cv) const      
+      Object_vector operator() (const Vertical_segment & cv) const
       {
         Object_vector vec;
         vec.push_back(make_object (Vertical_segment(cv)));
@@ -742,7 +739,7 @@ public:
     {
     public:
       typedef boost::static_visitor <Res_type> Base;
-      Split_2_visitor(Traits& traits,const Point_2 & p) 
+      Split_2_visitor(Traits& traits,const Point_2 & p)
                       : _traits(traits),_p(p), Base() {}
       Res_type operator() (const Non_vertical_x_curve_2& cv) const
       {
@@ -750,9 +747,9 @@ public:
         _traits.split_2_object() (cv,_p,_c1,_c2);
         return Res_type(_c1,_c2);
       }
-      Res_type operator() (const Vertical_segment & cv) const      
+      Res_type operator() (const Vertical_segment & cv) const
       {
-        typename Traits::Construct_vertical_segment 
+        typename Traits::Construct_vertical_segment
           construct_vertical_segment = _traits.construct_vertical_segment_object();
         Vertical_segment _c1,_c2;
         if (Is_line(cv))
@@ -793,7 +790,7 @@ public:
   class Intersect_2
   {
   private:
-    Traits& _traits;    
+    Traits& _traits;
   public:
     /*!
      * Find the intersections of the two given curves and insert them to the
@@ -808,7 +805,7 @@ public:
     template<class OutputIterator>
     OutputIterator operator() ( const X_monotone_curve_2& cv1,
                                 const X_monotone_curve_2& cv2,
-                                OutputIterator oi) const 
+                                OutputIterator oi) const
     {
       Object_vector res (boost::apply_visitor(Intersect_2_visitor(_traits),cv1.variant(),cv2.variant()));
       re_cast_object_vector(res,oi);
@@ -822,12 +819,12 @@ public:
       typedef boost::static_visitor <Object_vector> Base;
       Traits& _traits;
     public:
-      Intersect_2_visitor(Traits& traits) 
+      Intersect_2_visitor(Traits& traits)
                       : _traits(traits), Base() {}
 
       //intersection of two Non_vertical_x_curve_2
       Object_vector operator() (const Non_vertical_x_curve_2& cv1,
-                                const Non_vertical_x_curve_2& cv2) const      
+                                const Non_vertical_x_curve_2& cv2) const
       {
         Object_vector vec;
         _traits.intersect_2_object() (cv1,cv2,std::back_inserter(vec));
@@ -835,7 +832,7 @@ public:
       }
       //intersection of a Non_vertical_x_curve_2 and a Vertical_segment
       Object_vector operator() (const Vertical_segment& cv1,
-                                const Non_vertical_x_curve_2& cv2) const      
+                                const Non_vertical_x_curve_2& cv2) const
       {
         Object_vector vec;
         _traits.intersect_2_object() (cv2,cv1,std::back_inserter(vec));
@@ -843,7 +840,7 @@ public:
       }
       //intersection of a Non_vertical_x_curve_2 and a Vertical_segment
       Object_vector operator() (const Non_vertical_x_curve_2& cv1,
-                                const Vertical_segment& cv2) const      
+                                const Vertical_segment& cv2) const
       {
         Object_vector vec;
         _traits.intersect_2_object() (cv1,cv2,std::back_inserter(vec));
@@ -851,7 +848,7 @@ public:
       }
       //intersection of two Vertical_segment
       Object_vector operator() (const Vertical_segment& cv1,
-                                const Vertical_segment& cv2) const      
+                                const Vertical_segment& cv2) const
       {
         Object_vector vec;
         CGAL::Object object;
@@ -861,7 +858,7 @@ public:
           object = make_object(Vertical_segment(cv2));
         else if (Is_line(cv2))
           object = make_object(Vertical_segment(cv1));
-        
+
         if (object.empty() == false)
         {
           vec.push_back(object);
@@ -893,9 +890,9 @@ public:
       Object_vector intersect_ray_ray ( const Vertical_segment& ray1,
                                         const Vertical_segment& ray2) const
       {
-        typename Traits::Compare_xy_2 
+        typename Traits::Compare_xy_2
           compare_xy_2 = _traits.compare_xy_2_object();
-        typename Traits::Construct_vertical_segment 
+        typename Traits::Construct_vertical_segment
           construct_vertical_segment = _traits.construct_vertical_segment_object();
 
         CGAL_precondition (Is_ray(ray1));
@@ -951,10 +948,10 @@ public:
       {
         CGAL_precondition (Is_ray(ray));
         CGAL_precondition (Is_segment(seg));
-        
-        typename Traits::Compare_xy_2 
+
+        typename Traits::Compare_xy_2
           compare_xy_2 = _traits.compare_xy_2_object();
-        typename Traits::Construct_vertical_segment 
+        typename Traits::Construct_vertical_segment
           construct_vertical_segment = _traits.construct_vertical_segment_object();
 
         Object_vector vec;
@@ -966,7 +963,7 @@ public:
           Comparison_result cr = compare_xy_2 (ray.min(),seg.min());
           if (cr != LARGER)
             object = make_object (seg);
-          else 
+          else
           {
             cr = compare_xy_2 (ray.min(),seg.max());
             if (cr == LARGER)
@@ -983,7 +980,7 @@ public:
           Comparison_result cr = compare_xy_2 (ray.max(),seg.max());
           if (cr != SMALLER)
             object = make_object (seg);
-          else 
+          else
           {
             cr = compare_xy_2 (ray.max(),seg.min());
             if (cr == SMALLER)
@@ -1004,11 +1001,11 @@ public:
         CGAL_precondition (Is_segment(seg1));
         CGAL_precondition (Is_segment(seg2));
 
-        typename Traits::Compare_xy_2 
+        typename Traits::Compare_xy_2
           compare_xy_2 = _traits.compare_xy_2_object();
-        typename Traits::Construct_vertical_segment 
+        typename Traits::Construct_vertical_segment
           construct_vertical_segment = _traits.construct_vertical_segment_object();
-        
+
         Object_vector vec;
         CGAL::Object object;
 
@@ -1023,18 +1020,18 @@ public:
         Comparison_result cr1 = compare_xy_2 (seg1.min(),seg2.min());
         Comparison_result cr2 = compare_xy_2 (seg1.max(),seg2.max());
 
-        if (  (cr1 == CGAL::LARGER ) && 
+        if (  (cr1 == CGAL::LARGER ) &&
               (cr2 == CGAL::LARGER ) )
           object = make_object (construct_vertical_segment(seg1.min(),seg2.max()));
-        else if (  (cr1 == CGAL::LARGER ) && 
+        else if (  (cr1 == CGAL::LARGER ) &&
                    (cr2 == CGAL::SMALLER ) )
           object = make_object (construct_vertical_segment(seg1.min(),seg1.max()));
-        else if (  (cr1 == CGAL::SMALLER) && 
+        else if (  (cr1 == CGAL::SMALLER) &&
                    (cr2 == CGAL::LARGER ) )
           object = make_object (construct_vertical_segment(seg2.min(),seg2.max()));
         else  //SMALLER,SMALLER
           object = make_object (construct_vertical_segment(seg2.min(),seg1.max()));
-       
+
         vec.push_back(object);
         return vec;
       }
@@ -1071,10 +1068,10 @@ public:
       : public boost::static_visitor <bool>
     {
     private:
-      typedef boost::static_visitor <bool> Base;      
+      typedef boost::static_visitor <bool> Base;
       Traits& _traits;
     public:
-      Are_mergeable_2_visitor(Traits& traits) 
+      Are_mergeable_2_visitor(Traits& traits)
                       : _traits(traits), Base() {}
       bool operator() ( const Non_vertical_x_curve_2& cv1,
                         const Non_vertical_x_curve_2& cv2) const
@@ -1107,7 +1104,7 @@ public:
           if (_traits.equal_2_object()(cv1.min(),cv2.min()))
             return true;
         }
-        //try to merge at minimum and maximum 
+        //try to merge at minimum and maximum
         if ((Max_bounded(cv1)) && (Min_bounded(cv2)))
         {
           res = (_traits.equal_2_object()(cv1.max(),cv2.min()));
@@ -1146,7 +1143,7 @@ public:
                       const X_monotone_curve_2& cv2,
                       X_monotone_curve_2& c) const
     {
-      c = boost::apply_visitor(Merge_2_visitor(_traits),cv1.variant(),cv2.variant()); 
+      c = boost::apply_visitor(Merge_2_visitor(_traits),cv1.variant(),cv2.variant());
       return;
     }
   private:
@@ -1154,7 +1151,7 @@ public:
       : public boost::static_visitor <X_monotone_curve_2>
     {
     private:
-      typedef boost::static_visitor <X_monotone_curve_2> Base;      
+      typedef boost::static_visitor <X_monotone_curve_2> Base;
      Traits& _traits;
     public:
       Merge_2_visitor(Traits& traits) : _traits(traits), Base() {}
@@ -1177,14 +1174,14 @@ public:
       }
       X_monotone_curve_2 operator() (const Vertical_segment& cv1,const Vertical_segment& cv2) const
       {
-        typename Traits::Construct_vertical_segment 
+        typename Traits::Construct_vertical_segment
           construct_vertical_segment = _traits.construct_vertical_segment_object();
 
-        typename Traits::Compare_xy_2 
+        typename Traits::Compare_xy_2
           compare_xy_2 = _traits.compare_xy_2_object();
 
         Vertical_segment _c;
-        if ((Max_bounded(cv1)) && 
+        if ((Max_bounded(cv1)) &&
             (Max_bounded(cv2)) &&
             (compare_xy_2(cv1.max() , cv2.max()) == CGAL::EQUAL))
         {
@@ -1197,7 +1194,7 @@ public:
             return _c;
         }
 
-        if ((Min_bounded(cv1)) && 
+        if ((Min_bounded(cv1)) &&
             (Min_bounded(cv2)) &&
             (compare_xy_2(cv1.min() , cv2.min()) == CGAL::EQUAL))
         {
@@ -1210,7 +1207,7 @@ public:
             return _c;
         }
 
-        if ((Max_bounded(cv1)) && 
+        if ((Max_bounded(cv1)) &&
             (Min_bounded(cv2)) &&
             (compare_xy_2(cv1.max() , cv2.min()) == CGAL::EQUAL))
           {
@@ -1269,7 +1266,7 @@ public:
     {
       return (boost::apply_visitor(Parameter_space_in_x_2_visitor(_traits,ce),xcv.variant()));
     }
-      
+
     /*! Obtains the parameter space at a point along the x-axis.
      * \param p the point.
      * \return the parameter space at p.
@@ -1284,7 +1281,7 @@ public:
     {
     public:
       typedef boost::static_visitor <Arr_parameter_space> Base;
-      Parameter_space_in_x_2_visitor(Traits& traits,Arr_curve_end ce) 
+      Parameter_space_in_x_2_visitor(Traits& traits,Arr_curve_end ce)
                       :_traits(traits), _ce(ce), Base() {}
       Arr_parameter_space operator()(const Non_vertical_x_curve_2& xcv ) const
       {
@@ -1303,14 +1300,14 @@ public:
 
   /*! Obtain a Parameter_space_in_x_2 function object */
   Parameter_space_in_x_2 parameter_space_in_x_2_object() const
-  { 
-    return Parameter_space_in_x_2(_traits); 
+  {
+    return Parameter_space_in_x_2(_traits);
   }
-  
+
   /*! A function object that obtains the parameter space of a geometric
    * entity along the y-axis
    */
-  class Parameter_space_in_y_2 
+  class Parameter_space_in_y_2
   {
   private:
     Traits& _traits;
@@ -1347,14 +1344,14 @@ public:
     //{
     //  return ARR_INTERIOR;
     //}
-      
+
   private:
     class Parameter_space_in_y_2_visitor
       : public boost::static_visitor <Arr_parameter_space>
     {
     public:
       typedef boost::static_visitor <Arr_parameter_space> Base;
-      Parameter_space_in_y_2_visitor(Traits& traits,Arr_curve_end ce) 
+      Parameter_space_in_y_2_visitor(Traits& traits,Arr_curve_end ce)
         :_traits(traits),_ce(ce), Base() {}
       Arr_parameter_space operator()(const Non_vertical_x_curve_2& xcv ) const
       {
@@ -1392,7 +1389,7 @@ public:
      *      defined (lexicographically) to its right.
      * \return The relative position of cv1 with respect to cv2 immdiately to
      *         the right of p: SMALLER, LARGER or EQUAL.
-     */    
+     */
     Compare_y_at_x_right_2 (Traits& traits) : _traits(traits) {}
     Comparison_result operator() (const X_monotone_curve_2& cv1,
                                   const X_monotone_curve_2& cv2,
@@ -1406,27 +1403,27 @@ public:
     {
     public:
       typedef boost::static_visitor <Comparison_result> Base;
-      Compare_y_at_x_right_2_visitor(Traits& traits,const Point_2& p) 
+      Compare_y_at_x_right_2_visitor(Traits& traits,const Point_2& p)
         : _traits(traits), _p(p), Base() {}
       Comparison_result operator() (const Non_vertical_x_curve_2& cv1,
-                                    const Non_vertical_x_curve_2& cv2) const      
+                                    const Non_vertical_x_curve_2& cv2) const
       {
          return _traits.compare_y_at_x_right_2_object() (cv1,cv2,_p);
       }
       Comparison_result operator() (const Non_vertical_x_curve_2& cv1,
-                                    const Vertical_segment & cv2) const      
+                                    const Vertical_segment & cv2) const
       {
         return CGAL::SMALLER;
       }
       Comparison_result operator() (const Vertical_segment & cv1,
-                                    const Non_vertical_x_curve_2& cv2) const      
+                                    const Non_vertical_x_curve_2& cv2) const
       {
         return CGAL::LARGER;
       }
       Comparison_result operator() (const Vertical_segment & cv1,
-                                    const Vertical_segment & cv2) const      
+                                    const Vertical_segment & cv2) const
       {
-        return CGAL::EQUAL; //test bug fix        
+        return CGAL::EQUAL; //test bug fix
       }
     private:
       Traits& _traits;
@@ -1440,32 +1437,32 @@ public:
   {
     return Compare_y_at_x_right_2(_traits);
   }
-  class Compare_x_near_limit_2 
+  class Compare_x_near_boundary_2
   {
   private:
     Traits& _traits;
   public:
-    Compare_x_near_limit_2 (Traits& traits) : _traits(traits) {}
-    Comparison_result operator()( const X_monotone_curve_2& xcv1, 
-                                  const X_monotone_curve_2& xcv2, 
+    Compare_x_near_boundary_2 (Traits& traits) : _traits(traits) {}
+    Comparison_result operator()( const X_monotone_curve_2& xcv1,
+                                  const X_monotone_curve_2& xcv2,
                                   Arr_curve_end ce) const
     {
-      return (boost::apply_visitor(Compare_x_near_limit_2_visitor(_traits,ce),xcv1.variant(),xcv2.variant()));
+      return (boost::apply_visitor(Compare_x_near_boundary_2_visitor(_traits,ce),xcv1.variant(),xcv2.variant()));
     }
   private:
-    class Compare_x_near_limit_2_visitor
+    class Compare_x_near_boundary_2_visitor
       : public boost::static_visitor <Comparison_result>
     {
     public:
       typedef boost::static_visitor <Comparison_result> Base;
-      Compare_x_near_limit_2_visitor(Traits& traits,Arr_curve_end ce) 
+      Compare_x_near_boundary_2_visitor(Traits& traits,Arr_curve_end ce)
         :_traits(traits), _ce(ce), Base() {}
       Comparison_result operator()(const Non_vertical_x_curve_2& xcv1,const Non_vertical_x_curve_2& xcv2 ) const
       {
-        return _traits.compare_x_near_limit_2_object()(xcv1,xcv2,_ce);
+        return _traits.compare_x_near_boundary_2_object()(xcv1,xcv2,_ce);
       }
       Comparison_result operator()(const Non_vertical_x_curve_2& xcv1,const Vertical_segment& xcv2 ) const
-      {        
+      {
         if (_ce == ARR_MIN_END)
         {
           CGAL_precondition (xcv2.min_parameter_space() == CGAL::ARR_BOTTOM_BOUNDARY);
@@ -1477,7 +1474,7 @@ public:
           return CGAL::SMALLER;
         }
 
-        return _traits.compare_x_at_limit_2_object()(xcv2.max(),xcv1,_ce);
+        return _traits.compare_x_on_boundary_2_object()(xcv2.max(),xcv1,_ce);
       }
       Comparison_result operator()(const Vertical_segment& xcv1,const Non_vertical_x_curve_2& xcv2 ) const
       {
@@ -1498,56 +1495,56 @@ public:
           CGAL_precondition (xcv1.min_parameter_space() == CGAL::ARR_BOTTOM_BOUNDARY);
         else //_ce1 == ARR_MAX_END
           CGAL_precondition (xcv1.max_parameter_space() == CGAL::ARR_TOP_BOUNDARY);
-         
+
         if (_ce == ARR_MIN_END)
           CGAL_precondition (xcv2.min_parameter_space() == CGAL::ARR_BOTTOM_BOUNDARY);
         else //_ce2 == ARR_MAX_END
           CGAL_precondition (xcv2.max_parameter_space() == CGAL::ARR_TOP_BOUNDARY);
- 
+
         return _traits.compare_x_2_object() (xcv1.min(),xcv2.min());
       }
 
    private:
      Traits& _traits;
      Arr_curve_end _ce;
-    };  //Compare_x_near_limit_2_visitor
-  }; //Compare_x_near_limit_2
+    };  //Compare_x_near_boundary_2_visitor
+  }; //Compare_x_near_boundary_2
 
-  Compare_x_near_limit_2 compare_x_near_limit_2_object() const 
+  Compare_x_near_boundary_2 compare_x_near_boundary_2_object() const
   {
-    return Compare_x_near_limit_2(_traits);
+    return Compare_x_near_boundary_2(_traits);
   }
 
-  class Compare_x_at_limit_2 
+  class Compare_x_on_boundary_2
   {
   private:
     Traits& _traits;
   public:
-    Compare_x_at_limit_2 (Traits& traits) :_traits(traits) {}
+    Compare_x_on_boundary_2 (Traits& traits) :_traits(traits) {}
     Comparison_result operator()( const Point_2 & p,
                                   const X_monotone_curve_2 & xcv,
                                   Arr_curve_end ce) const
     {
-      return (boost::apply_visitor(Compare_x_at_limit_2_visitor_1(_traits,ce,p),xcv.variant()));
+      return (boost::apply_visitor(Compare_x_on_boundary_2_visitor_1(_traits,ce,p),xcv.variant()));
     }
     Comparison_result operator()( const X_monotone_curve_2 & xcv1,
                                   Arr_curve_end ce1,
                                   const X_monotone_curve_2 & xcv2,
                                   Arr_curve_end ce2) const
     {
-      return (boost::apply_visitor(Compare_x_at_limit_2_visitor_2(_traits,ce1,ce2),xcv1.variant(),xcv2.variant()));
+      return (boost::apply_visitor(Compare_x_on_boundary_2_visitor_2(_traits,ce1,ce2),xcv1.variant(),xcv2.variant()));
     }
   private:
-    class Compare_x_at_limit_2_visitor_1
+    class Compare_x_on_boundary_2_visitor_1
       : public boost::static_visitor <Comparison_result>
     {
     public:
       typedef boost::static_visitor <Comparison_result> Base;
-      Compare_x_at_limit_2_visitor_1(Traits& traits,Arr_curve_end ce,const Point_2 & p) 
+      Compare_x_on_boundary_2_visitor_1(Traits& traits,Arr_curve_end ce,const Point_2 & p)
         :_traits(traits), _ce(ce), _p(p), Base() {}
       Comparison_result operator()(const Non_vertical_x_curve_2& xcv ) const
       {
-        return _traits.compare_x_at_limit_2_object()(_p,xcv,_ce);
+        return _traits.compare_x_on_boundary_2_object()(_p,xcv,_ce);
       }
       Comparison_result operator()(const Vertical_segment& xcv) const
       {
@@ -1561,18 +1558,18 @@ public:
       Traits& _traits;
       Point_2 _p;
       Arr_curve_end _ce;
-    };  //Compare_x_at_limit_2_visitor_1
-        
-    class Compare_x_at_limit_2_visitor_2
+    };  //Compare_x_on_boundary_2_visitor_1
+
+    class Compare_x_on_boundary_2_visitor_2
       : public boost::static_visitor <Comparison_result>
     {
     public:
       typedef boost::static_visitor <Comparison_result> Base;
-      Compare_x_at_limit_2_visitor_2(Traits& traits,Arr_curve_end ce1,Arr_curve_end ce2) 
+      Compare_x_on_boundary_2_visitor_2(Traits& traits,Arr_curve_end ce1,Arr_curve_end ce2)
         :_traits(traits), _ce1(ce1), _ce2(ce2), Base() {}
       Comparison_result operator()(const Non_vertical_x_curve_2& xcv1,const Non_vertical_x_curve_2& xcv2 ) const
       {
-        return _traits.compare_x_at_limit_2_object()(xcv1,_ce1,xcv2,_ce2);
+        return _traits.compare_x_on_boundary_2_object()(xcv1,_ce1,xcv2,_ce2);
       }
       Comparison_result operator()(const Non_vertical_x_curve_2& xcv1,const Vertical_segment& xcv2 ) const
       {
@@ -1581,7 +1578,7 @@ public:
         else //_ce2 == ARR_MAX_END
           CGAL_precondition (xcv2.max_parameter_space() == CGAL::ARR_TOP_BOUNDARY);
 
-        return _traits.compare_x_at_limit_2_object()(xcv2.max(),xcv1,_ce1);
+        return _traits.compare_x_on_boundary_2_object()(xcv2.max(),xcv1,_ce1);
       }
       Comparison_result operator()(const Vertical_segment& xcv1,const Non_vertical_x_curve_2& xcv2 ) const
       {
@@ -1590,7 +1587,7 @@ public:
         else //_ce1 == ARR_MAX_END
           CGAL_precondition (xcv1.max_parameter_space() == CGAL::ARR_TOP_BOUNDARY);
 
-        return _traits.compare_x_at_limit_2_object()(xcv1.max(),xcv2,_ce2);
+        return _traits.compare_x_on_boundary_2_object()(xcv1.max(),xcv2,_ce2);
       }
       Comparison_result operator()(const Vertical_segment& xcv1,const Vertical_segment& xcv2 ) const
       {
@@ -1598,27 +1595,27 @@ public:
           CGAL_precondition (xcv1.min_parameter_space() == CGAL::ARR_BOTTOM_BOUNDARY);
         else //_ce1 == ARR_MAX_END
           CGAL_precondition (xcv1.max_parameter_space() == CGAL::ARR_TOP_BOUNDARY);
-         
+
         if (_ce2 == ARR_MIN_END)
           CGAL_precondition (xcv2.min_parameter_space() == CGAL::ARR_BOTTOM_BOUNDARY);
         else //_ce2 == ARR_MAX_END
           CGAL_precondition (xcv2.max_parameter_space() == CGAL::ARR_TOP_BOUNDARY);
- 
+
         return _traits.compare_x_2_object() (xcv1.min(),xcv2.min());
       }
     private:
       Traits& _traits;
       Arr_curve_end _ce1,_ce2;
-    };  //Compare_x_at_limit_2_visitor_2
-  };  //Compare_x_at_limit_2
+    };  //Compare_x_on_boundary_2_visitor_2
+  };  //Compare_x_on_boundary_2
 
-  /*! Obtain a Compare_x_at_limit_2 function object */
-  Compare_x_at_limit_2 compare_x_at_limit_2_object() const
-  { return Compare_x_at_limit_2(_traits); }
+  /*! Obtain a Compare_x_on_boundary_2 function object */
+  Compare_x_on_boundary_2 compare_x_on_boundary_2_object() const
+  { return Compare_x_on_boundary_2(_traits); }
   /*! A function object that compares the y-coordinates of arc ends near the
    * boundary of the parameter space.
    */
-  class Compare_y_near_boundary_2 
+  class Compare_y_near_boundary_2
   {
   private:
     Traits& _traits;
@@ -1645,7 +1642,7 @@ public:
     {
     public:
       typedef boost::static_visitor <Comparison_result> Base;
-      Compare_y_near_boundary_2_visitor(Traits& traits,Arr_curve_end ce) 
+      Compare_y_near_boundary_2_visitor(Traits& traits,Arr_curve_end ce)
         :_traits(traits), _ce(ce), Base() {}
       Comparison_result operator()(const Non_vertical_x_curve_2& xcv1,const Non_vertical_x_curve_2& xcv2 ) const
       {
@@ -1679,7 +1676,7 @@ public:
   Compare_y_near_boundary_2 compare_y_near_boundary_2_object() const
   { return Compare_y_near_boundary_2(_traits); }
   //@}
-  
+
   /// \name Functor definitions for the Boolean set-operation traits.
   //@{
   class Compare_endpoints_xy_2
@@ -1750,7 +1747,7 @@ public:
   }
 public:
   template<class OutputIterator>
-  static void re_cast_object_vector(const Object_vector& vec,OutputIterator& oi) 
+  static void re_cast_object_vector(const Object_vector& vec,OutputIterator& oi)
   {
     for (Object_vector::const_iterator it = vec.begin() ; it != vec.end(); ++it)
     {
@@ -1783,7 +1780,7 @@ public:
       }
       else
         CGAL_precondition(false);
-      
+
       ++oi;
     }
     return;

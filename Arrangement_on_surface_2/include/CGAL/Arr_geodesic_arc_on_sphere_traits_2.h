@@ -920,7 +920,7 @@ public:
     friend class Arr_geodesic_arc_on_sphere_traits_2<Kernel>;
 
   public:
-    /*! Compare the x-limit of a direction with the x-coordinate of an
+    /*! Compare the x-coordinate of a direction with the x-coordinate of an
      * arc end on the boundary.
      * \param point the point direction.
      * \param xcv the arc, the endpoint of which is compared.

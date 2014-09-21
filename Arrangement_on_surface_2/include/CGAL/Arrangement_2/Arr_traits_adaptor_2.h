@@ -21,6 +21,7 @@
 //                                          Efi Fogel
 //                                          Ron Wein
 //                                          Idit Haran)
+
 #ifndef CGAL_ARR_TRAITS_ADAPTOR_2_H
 #define CGAL_ARR_TRAITS_ADAPTOR_2_H
 
@@ -81,13 +82,6 @@ protected:
 
   typedef typename BT::Is_on_x_identification_2_curve_tag      Ioxi_2_curve_tag;
   typedef typename BT::Is_on_x_identification_2_point_tag      Ioxi_2_point_tag;
-
-  typedef typename BT::Compare_x_at_limit_2_point_curve_end_tag
-    Cmp_x_al_2_point_curve_end_tag;
-  typedef typename BT::Compare_x_at_limit_2_curve_ends_tag
-    Cmp_x_al_2_curve_ends_tag;
-  typedef typename BT::Compare_x_near_limit_2_curve_ends_tag
-    Cmp_x_nl_2_curve_ends_tag;
 
   typedef typename BT::Compare_x_near_boundary_2_curve_ends_tag
     Cmp_x_nb_2_curve_ends_tag;
@@ -771,176 +765,6 @@ public:
   Is_on_x_identification_2 is_on_x_identification_2_object() const
   { return Is_on_x_identification_2(this); }
 
-  /*! A functor that compares the x-limits of curve ends near the
-   * boundary of the parameter space
-   */
-  class Compare_x_at_limit_2 {
-  protected:
-    //! The base traits.
-    const Base * m_base;
-
-    /*! Constructor.
-     * \param base The base traits class. It must be passed, to handle non
-     *             stateless traits objects, (which stores data).
-     * The constructor is declared private to allow only the functor
-     * obtaining function, which is a member of the nesting class,
-     * constructing it.
-     */
-    Compare_x_at_limit_2(const Base * base) : m_base(base) {}
-
-    //! Allow its functor obtaining function calling the private constructor.
-    friend class Arr_traits_basic_adaptor_2<Base>;
-
-    /*!
-     * Implementation of the operator() in case the base should be used.
-     */
-    Comparison_result _compare_point_curve(const Point_2& p,
-                                           const X_monotone_curve_2& xcv,
-                                           Arr_curve_end ce,
-                                           Arr_use_traits_tag) const
-    { return (m_base->compare_x_at_limit_2_object()(p, xcv, ce)); }
-
-    /*!
-     * Implementation of the operator() in case the dummy should be used.
-     */
-    Comparison_result _compare_point_curve(const Point_2&,
-                                           const X_monotone_curve_2&,
-                                           Arr_curve_end,
-                                           Arr_use_dummy_tag) const
-    {
-      CGAL_error();
-      return EQUAL;
-    }
-
-    /*!
-     * Implementation of the operator() in case the base should be used.
-     */
-    Comparison_result _compare_curves(const X_monotone_curve_2& xcv1,
-                                      Arr_curve_end ce1,
-                                      const X_monotone_curve_2& xcv2,
-                                      Arr_curve_end ce2,
-                                      Arr_use_traits_tag) const
-    { return m_base->compare_x_at_limit_2_object()(xcv1, ce1, xcv2, ce2); }
-
-    /*!
-     * Implementation of the operator() in case the dummy should be used.
-     */
-    Comparison_result _compare_curves(const X_monotone_curve_2&,
-                                      Arr_curve_end,
-                                      const X_monotone_curve_2&,
-                                      Arr_curve_end,
-                                      Arr_use_dummy_tag) const
-    {
-      CGAL_error();
-      return EQUAL;
-    }
-
-  public:
-    /*! Compare the x-limits of a vertical curve and another given
-     * curve end.
-     * \param p A reference point; we refer to a vertical line incident to p.
-     * \param xcv The compared curve.
-     * \param ind ARR_MIN_END if we refer to xcv's minimal end;
-     *            ARR_MAX_END if we refer to its maximal end.
-     * \pre xcv's relevant end has a special boundary in y.
-     * \return SMALLER if p lies to the left of xcv;
-     *         LARGER if p lies to the right xcv;
-     *         EQUAL in case of an overlap.
-     */
-    Comparison_result operator()(const Point_2& p,
-                                 const X_monotone_curve_2& xcv,
-                                 Arr_curve_end ce) const
-    {
-      return _compare_point_curve(p, xcv, ce, Cmp_x_al_2_point_curve_end_tag());
-    }
-
-    /*! Compare the x-limits of two curve ends on the boundary.
-     * \param xcv1 The first curve.
-     * \param ind1 ARR_MIN_END if we refer to xcv1's minimal end;
-     *             ARR_MAX_END if we refer to its maximal end.
-     * \param xcv2 The second curve.
-     * \param ind2 ARR_MIN_END if we refer to xcv2's minimal end;
-     *             ARR_MAX_END if we refer to its maximal end.
-     * \pre Both curve ends have a special boundary in y.
-     * \return SMALLER if xcv1 lies to the left of xcv2;
-     *         LARGER if xcv1 lies to the right xcv2;
-     *         EQUAL in case of an overlap.
-     */
-    Comparison_result operator()(const X_monotone_curve_2& xcv1,
-                                 Arr_curve_end ce1,
-                                 const X_monotone_curve_2& xcv2,
-                                 Arr_curve_end ce2) const
-    {
-      return _compare_curves(xcv1, ce1, xcv2, ce2, Cmp_x_al_2_curve_ends_tag());
-    }
-  };
-
-  /*! Obtain a Compare_x_at_limit_2 function object. */
-  Compare_x_at_limit_2 compare_x_at_limit_2_object() const
-  { return Compare_x_at_limit_2(this); }
-
-  /*! A functor that compares the x-coordinates of curve ends near the
-   * boundary of the parameter space
-   */
-  class Compare_x_near_limit_2 {
-  protected:
-    //! The base traits.
-    const Base* m_base;
-
-    /*! Constructor.
-     * \param base The base traits class. It must be passed, to handle non
-     *             stateless traits objects,(which stores data).
-     * The constructor is declared private to allow only the functor
-     * obtaining function, which is a member of the nesting class,
-     * constructing it.
-     */
-    Compare_x_near_limit_2(const Base* base) : m_base(base) {}
-
-    //! Allow its functor obtaining function calling the private constructor.
-    friend class Arr_traits_basic_adaptor_2<Base>;
-
-    /*!
-     * Implementation of the operator() in case the base should be used.
-     */
-    Comparison_result _compare_curves(const X_monotone_curve_2& xcv1,
-                                      const X_monotone_curve_2& xcv2,
-                                      Arr_curve_end ce,
-                                      Arr_use_traits_tag) const
-    { return m_base->compare_x_near_limit_2_object()(xcv1, xcv2, ce); }
-
-    /*!
-     * Implementation of the operator() in case the dummy should be used.
-     */
-    Comparison_result _compare_curves(const X_monotone_curve_2&,
-                                      const X_monotone_curve_2&,
-                                      Arr_curve_end,
-                                      Arr_use_dummy_tag) const
-    {
-      CGAL_error();
-      return EQUAL;
-    }
-
-  public:
-    /*! Compare the relative x-positions of two curve ends.
-     * \param xcv1 The first curve.
-     * \param xcv2 The second curve.
-     * \param ce ARR_MIN_END if we refer to the curves' minimal end;
-     *           ARR_MAX_END if we refer to the curves' maximal end.
-     * \pre Both curve ends have a special boundary in y.
-     * \return SMALLER if xcv1 lies to the left of xcv2;
-     *         LARGER if xcv1 lies to the right xcv2;
-     *         EQUAL in case of an overlap.
-     */
-    Comparison_result operator()(const X_monotone_curve_2& xcv1,
-                                 const X_monotone_curve_2& xcv2,
-                                 Arr_curve_end ce) const
-    { return _compare_curves(xcv1, xcv2, ce, Cmp_x_nl_2_curve_ends_tag()); }
-  };
-
-  /*! Obtain a Compare_x_near_limit_2 function object. */
-  Compare_x_near_limit_2 compare_x_near_limit_2_object() const
-  { return Compare_x_near_limit_2(this); }
-
   /*! A function object that compares the x-coordinate of two given points
    * that lie on horizontal boundaries.
    */
@@ -1277,7 +1101,7 @@ public:
                                                Arr_open_side_tag) const
     {
       Comparison_result res =
-        m_self->compare_x_at_limit_2_object()(pt, xcv, ce);
+        m_self->compare_x_on_boundary_2_object()(pt, xcv, ce);
       if ((res != EQUAL) || m_self->is_vertical_2_object()(xcv)) return res;
 
       // look at the side from which the
@@ -1413,7 +1237,7 @@ public:
       // otherwise: both ends have asymptotic behaviour
       if (ce1 == ce2) { // both ends approach asymptote from one side
 	if (loc1 == loc2) { // need special y-comparison
-	  res = m_self->compare_x_near_limit_2_object()(xcv1, xcv2, ce2);
+	  res = m_self->compare_x_near_boundary_2_object()(xcv1, xcv2, ce2);
 	  return res;
 	}
 	// else: order can be determined without y-comparison
@@ -1434,7 +1258,7 @@ public:
                                           Arr_open_side_tag) const {
 
       Comparison_result res =
-        m_self->compare_x_at_limit_2_object()(xcv1, ce1, xcv2, ce2);
+        m_self->compare_x_on_boundary_2_object()(xcv1, ce1, xcv2, ce2);
       if (res == EQUAL) res = _compare_curve_ends_same_x(xcv1, ce1, xcv2, ce2);
       return res;
     }

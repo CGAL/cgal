@@ -12,10 +12,6 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL$
-// $Id$
-//
-//
 // Author(s): Ron Wein          <wein@post.tau.ac.il>
 //            Efi Fogel         <efif@post.tau.ac.il>
 //            Eric Berberich    <ericb@post.tau.ac.il>
@@ -25,6 +21,7 @@
 //                                      Ester Ezra,
 //                                      Shai Hirsch,
 //                                      and Eugene Lipovetsky)
+
 #ifndef CGAL_ARRANGEMENT_ON_SURFACE_2_H
 #define CGAL_ARRANGEMENT_ON_SURFACE_2_H
 
