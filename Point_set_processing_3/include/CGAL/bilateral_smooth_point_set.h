@@ -339,6 +339,7 @@ public:
 ///                    with a value_type = Vector_3<Kernel>.
 /// @tparam Kernel Geometric traits class.
 ///      It can be omitted and deduced automatically from PointPMap value_type.
+///      Kernel_traits are used for deducing the Kernel.
 ///
 /// @return Average point movement error. It's a convergence criterium for the algorithm.
 ///         This value could help user decide how many times of iteration is

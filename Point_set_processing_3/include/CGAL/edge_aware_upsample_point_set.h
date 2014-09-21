@@ -288,6 +288,8 @@ update_new_point(
 ///                    with a value_type = Vector_3<Kernel>.
 /// @tparam Kernel Geometric traits class.
 ///      It can be omitted and deduced automatically from PointPMap value_type.
+///      Kernel_traits are used for deducing the Kernel.
+
 /// @param output output iterator 
 ///      
 ///

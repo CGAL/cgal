@@ -322,6 +322,7 @@ compute_density_weight_for_sample_point(
 /// @tparam PointPMapOut counterpart of PointPMapIn.
 /// @tparam Kernel Geometric traits class.
 ///      It can be omitted and deduced automatically from PointPMap value_type.
+///      Kernel_traits are used for deducing the Kernel.
 
 // This variant requires all parameters.
 template <typename Concurrency_tag,
