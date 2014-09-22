@@ -201,11 +201,11 @@ BOOST_AUTO_TEST_CASE( test_simple_saddle_vertex_mesh )
   
   shortestPaths.shortest_path_sequence_to_source_points(vertexHandles[5], collector);
   
-  BOOST_CHECK_EQUAL(collector.m_sequence.size(), 2);
-  BOOST_CHECK_EQUAL(collector.m_sequence[0].type, CGAL::test::SEQUENCE_ITEM_VERTEX);
-  //BOOST_CHECK_EQUAL(collector.m_sequence[0].index, 4 || collector.m_sequence[0].index, 6);
+  BOOST_CHECK_EQUAL(collector.m_sequence.size(), 3);
   BOOST_CHECK_EQUAL(collector.m_sequence[1].type, CGAL::test::SEQUENCE_ITEM_VERTEX);
-  BOOST_CHECK_EQUAL(collector.m_sequence[1].index, 1);
+  BOOST_CHECK(collector.m_sequence[0].index == 4 || collector.m_sequence[0].index == 6);
+  BOOST_CHECK_EQUAL(collector.m_sequence[2].type, CGAL::test::SEQUENCE_ITEM_VERTEX);
+  BOOST_CHECK_EQUAL(collector.m_sequence[2].index, 1);
   
   collector.m_sequence.clear();
   
@@ -215,12 +215,12 @@ BOOST_AUTO_TEST_CASE( test_simple_saddle_vertex_mesh )
   
   shortestPaths.shortest_path_sequence_to_source_points(vertexHandles[7], collector);
   
-  BOOST_CHECK_EQUAL(collector.m_sequence.size(), 2);
-  BOOST_CHECK_EQUAL(collector.m_sequence[0].type, CGAL::test::SEQUENCE_ITEM_EDGE);
-  BOOST_CHECK_EQUAL(collector.m_sequence[0].index, halfedgeIndexMap[CGAL::halfedge(vertexHandles[4], vertexHandles[6], P).first]);
-  BOOST_CHECK_CLOSE(collector.m_sequence[0].edgeAlpha, FT(0.5), FT(0.0001));
-  BOOST_CHECK_EQUAL(collector.m_sequence[1].type, CGAL::test::SEQUENCE_ITEM_VERTEX);
-  BOOST_CHECK_EQUAL(collector.m_sequence[1].index, 1);
+  BOOST_CHECK_EQUAL(collector.m_sequence.size(), 3);
+  BOOST_CHECK_EQUAL(collector.m_sequence[1].type, CGAL::test::SEQUENCE_ITEM_EDGE);
+  BOOST_CHECK_EQUAL(collector.m_sequence[1].index, halfedgeIndexMap[CGAL::halfedge(vertexHandles[4], vertexHandles[6], P).first]);
+  BOOST_CHECK_CLOSE(collector.m_sequence[1].edgeAlpha, FT(0.5), FT(0.0001));
+  BOOST_CHECK_EQUAL(collector.m_sequence[2].type, CGAL::test::SEQUENCE_ITEM_VERTEX);
+  BOOST_CHECK_EQUAL(collector.m_sequence[2].index, 1);
   
   // Now test an internal face location sequence
   halfedge_descriptor firstCrossing = CGAL::halfedge(vertexHandles[4], vertexHandles[7], P).first;
@@ -232,13 +232,13 @@ BOOST_AUTO_TEST_CASE( test_simple_saddle_vertex_mesh )
   collector.m_sequence.clear();
   shortestPaths.shortest_path_sequence_to_source_points(CGAL::face(firstCrossing, P), construct_barycentric_coordinate(location[edgeIndex], location[(edgeIndex + 1) % 3], location[(edgeIndex + 2) % 3]), collector);
 
-  BOOST_CHECK_EQUAL(collector.m_sequence.size(), 3);
-  BOOST_CHECK_EQUAL(collector.m_sequence[0].type, CGAL::test::SEQUENCE_ITEM_EDGE);
-  BOOST_CHECK_EQUAL(collector.m_sequence[0].index, halfedgeIndexMap[firstCrossing]);
+  BOOST_CHECK_EQUAL(collector.m_sequence.size(), 4);
   BOOST_CHECK_EQUAL(collector.m_sequence[1].type, CGAL::test::SEQUENCE_ITEM_EDGE);
-  BOOST_CHECK_EQUAL(collector.m_sequence[1].index, halfedgeIndexMap[CGAL::halfedge(vertexHandles[4], vertexHandles[6], P).first]);
-  BOOST_CHECK_EQUAL(collector.m_sequence[2].type, CGAL::test::SEQUENCE_ITEM_VERTEX);
-  BOOST_CHECK_EQUAL(collector.m_sequence[2].index, 1);
+  BOOST_CHECK_EQUAL(collector.m_sequence[1].index, halfedgeIndexMap[firstCrossing]);
+  BOOST_CHECK_EQUAL(collector.m_sequence[2].type, CGAL::test::SEQUENCE_ITEM_EDGE);
+  BOOST_CHECK_EQUAL(collector.m_sequence[2].index, halfedgeIndexMap[CGAL::halfedge(vertexHandles[4], vertexHandles[6], P).first]);
+  BOOST_CHECK_EQUAL(collector.m_sequence[3].type, CGAL::test::SEQUENCE_ITEM_VERTEX);
+  BOOST_CHECK_EQUAL(collector.m_sequence[3].index, 1);
   
   // Now test with 2 source vertices
   currentVertex = startVertex;
