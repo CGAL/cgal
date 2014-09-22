@@ -274,10 +274,10 @@ public:
   { return (m_leftCurves.rend()); }
 
   /*! Returns the number of curves defined to the left of the event. */
-  size_t number_of_left_curves() { return m_leftCurves.size(); }
+  size_t number_of_left_curves() const { return m_leftCurves.size(); }
 
   /*! Returns the number of curves defined to the right of the event. */
-  size_t number_of_right_curves() { return (m_rightCurves.size()); }
+  size_t number_of_right_curves() const { return (m_rightCurves.size()); }
 
   /*! Checks if at least one curve is defined to the left of the event. */
   bool has_left_curves() const { return (! m_leftCurves.empty()); }
