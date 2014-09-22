@@ -5,132 +5,111 @@ The purpose of this file is to recompute the benchmarks section of the user manu
 
 Its intended usage is
 
-python compileBenchmarks.py <tableFile> <randomseed>
+python compileBenchmarks.py <modelsFile> <dataFileBase> <tableFileBase> <figureFileBase> <randomseed>
 
 Where:
-- <tableFile> - the file to output the tables to
+- <modelsFile> - a file, containing all models to run tests on
+- <dataFileBase> - output data files will be of the form "<dataFileBase>_<modelname>.dat", where <modelname> is the basename of the model
+- <tableFileBase> - output tables will be of the form "<outputTableBase>_#.txt", where # is the number of source points
+- <figureFileBase> - output figures will be of the form "<outputBaseName>_<type>.png" where <type> is one of {query, construction, memory}
 - <randomseed> - a positive integer to seed the randomizer
 
-Upon completion, the contents of <tableFile> can be pasted 
-directly into the user manual source file, containing the 
-run benchmarks.
+Upon completion, a set of data, table, and figure files will be generated over the testing models set.
 
 """
 
 import sys;
-import glob;
 import subprocess;
 import tempfile;
 import random;
 import re;
+import benchmark;
+import os;
 
+def make_table_file_name(tableFileBase, numSources):
+  return tableFileBase + '_' + str(numSources) + ".txt";
 
-class TestConfig:
-  """
-  Describes a benchmark test case to run over a set of models
-  """
+def make_model_data_file_name(dataFileBase, modelFile):
+  return dataFileBase + '_' + os.path.basename(modelFile).partition('.')[0] + ".dat";
+
+def make_figure_file_name(figureFileBase, modelFile):
+  return figureFileBase + '_' + os.path.basename(modelFile).partition('.')[0] + ".png";
   
-  def __init__(self, testName, testModels, numTrials, numSources, numQueries, rand):
-    """
-    testName - the name of the test as it should appear in the documentation file
-    testModels - a list of .off model files to run the test on
-    numTrials - the number of times the full test should be repeated on each mesh
-    numSources - the number of source points to use in each trial
-    numQueries - the number of query points to use in each trial
-    rand - a python random number generator, used to pass a random key to the tests
-    """
-    self.testName = testName;
-    self.testModels = testModels;
-    self.numTrials = numTrials;
-    self.numSources = numSources;
-    self.numQueries = numQueries;
-    self.rand = rand;
-    
-  def __str__(self):
-    return "%s : #Trials = %d, #Sources = %d, #Queries = %d" % (self.testName, self.numTrials, self.numSources, self.numQueries);
-
-def prepare_program():
-  cmakeCall = subprocess.call(['cmake', '-DCMAKE_CXX_FLAGS=-O2 -Wall', '-DCMAKE_BUILD_TYPE=Debug', '.']);
-  if cmakeCall != 0:
-    return False;
-  makeCall = subprocess.call(['make']);
-  if makeCall != 0:
-    return False;
-  return True;
-    
-def run_benchmarks(testConfig, outputFile):
-  print("Config: " + str(testConfig));
-  for model in testConfig.testModels:
-    sys.stdout.write("Model = %s ... " % model);
-    sys.stdout.flush();
-    result = subprocess.call(['./benchmark_shortest_paths.exe', '-p', model.strip(), '-r', str(testConfig.rand.randrange(65536)), '-t', str(testConfig.numTrials), '-n', str(testConfig.numSources), '-q', str(testConfig.numQueries)], stdout=outputFile);
-    if result == 0:
-      sys.stdout.write("Done.\n");
-    else:
-      sys.stdout.write("Error.\n");
-  return True;
-
-def process_file(file, infoset):
-  currentFile = None;
-  for line in file:
-    if line.strip():
-      tokens = list(map(lambda x: x.strip(), line.strip().split('|')));
-      if len(tokens) >= 2:
-        if tokens[0].lower() == "filename":
-          currentFile = tokens[1];
-          if currentFile not in infoset:
-            infoset[currentFile] = {};
-        else:
-          infoset[currentFile][tokens[0].lower()] = tokens[1]
-      else:
-        print(line);
+def print_to_datafiles(config, dataFileName, modelInfo):
+  file = open(dataFileName, "a");
+  file.write("%d %d %s %s %s\n" % (config.numSources, modelInfo.get("num vertices", 0), modelInfo.get('construction', '0'), modelInfo.get('query', '0'), modelInfo.get('memory (peak)', '0')));
+  file.close();
 
 def print_table(infoSet, config, outFile):
-  outFile.write("\subsection Surface_mesh_shortest_pathBenchmark%s %s\n" % (re.sub(r"\s+", "", config.testName.strip()), config.testName));
+  outFile.write("\subsection Polyhedron_shortest_pathBenchmark%s %s\n" % (re.sub(r"\s+", "", config.testName.strip()), config.testName));
   outFile.write("<center>\n");
   outFile.write("Model | Number of Vertices | Average Construction Time (s) | Average Query Time (s) | Peak Memory Usage (MB)\n");
   outFile.write("---|---|---|---|---\n");
-  
-  for key in sorted(infoSet.keys()):
+
+  for key, value in sorted(infoSet.items(), key=lambda v: int(v[1]["num vertices"])):
     outFile.write(key.split('/')[-1] + " | " + 
-      infoSet[key].get("num vertices", "<crashed>") + " | " +
-      infoSet[key].get("construction", "<crashed>") + " | " +
-      infoSet[key].get("query", "<crashed>") + " | " + 
-      infoSet[key].get("memory (peak)", "<crashed>") + "\n");
+      value.get("num vertices", "(crashed)") + " | " +
+      value.get("construction", "(crashed)") + " | " +
+      value.get("query", "(crashed)") + " | " + 
+      value.get("memory (peak)", "(crashed)") + "\n");
   outFile.write("</center>\n");
   outFile.write('\n');
-
-
   
 # Specify a file to output to, and optionally a random seed to ensure consistent tests are run
-if len(sys.argv) <= 2:
-  print("Usage: python compileBenchmarks.py <inputModels> <outputFile> [randomSeed]" % sys.argv[0]);
+if len(sys.argv) <= 5:
+  print("Usage: python %s <modelsFile> <dataFileBase> <tableFileBase> <figureFileBase> <randomseed>" % sys.argv[0]);
   sys.exit(0);
   
-testModelsFile = open(sys.argv[1], "r");
-testModels = list(testModelsFile);
-
-outFile = open(sys.argv[2], "w");
+sampleRange = reversed([1] + list(range(5, 55, 5)));
   
-if len(sys.argv) > 3:
-  globalRand = random.Random(int(sys.argv[3]));
-else:
-  globalRand = random.Random();
+testModels = benchmark.read_all_lines(sys.argv[1]);
 
-# Here I create two benchmark sets, one using a single source point each, and one using 10 source points
-testConfigs = [
-  TestConfig("Single Source Point", testModels, 20, 1, 100, globalRand),
-  TestConfig("Ten Source Points", testModels, 20, 10, 100, globalRand), 
-];
-
-if not prepare_program():
+if not benchmark.prepare_program():
   sys.exit(1);
   
-for config in testConfigs:
+rand = random.Random(int(sys.argv[5]));
+  
+dataFileBase = sys.argv[2];
+tableFileBase = sys.argv[3];
+figureFileBase = sys.argv[4];
+
+for model in testModels:
+  modelFileName = make_model_data_file_name(dataFileBase, model);
+  if os.path.exists(modelFileName):
+    os.remove(modelFileName);
+
+for numSources in sampleRange:
+  testname = "1 Source Point" if numSources == 1 else ("%d Source Points" % numSources);
+  config = benchmark.TestConfig(testname, testModels, 20, numSources, 100, rand.randint(0, 65536));
+  infoSet = {};
   infoFile = tempfile.TemporaryFile();
-  run_benchmarks(config, infoFile);
+  benchmark.run_benchmarks(config, infoFile);
   infoFile.seek(0);
   infoSet = {};
-  process_file(infoFile, infoSet);
+  benchmark.process_file(infoFile, infoSet);
   infoFile.close();
-  print_table(infoSet, config, outFile);
+  for k in infoSet.keys():
+    print_to_datafiles(config, make_model_data_file_name(dataFileBase, k), infoSet[k]);
+  tableFile = open(make_table_file_name(tableFileBase, numSources), "w");
+  print_table(infoSet, config, tableFile);
+  tableFile.close();
+    
+for runParams in [('query', 4, "Average Query Time"), ('construction', 3, "Average Construction Time"), ('memory', 5, "Peak Memory Usage")]:
+  plotCommands = [];
+    
+  for k in testModels:
+    plotCommands.append('"%s" using 1:%d with lines title "%s"' % (make_model_data_file_name(dataFileBase, k), runParams[1], os.path.basename(k)));
+
+  plotCommand = "plot " + ', '.join(plotCommands);
+
+  plotCommandFile = tempfile.TemporaryFile();
+  plotCommandFile.write('set terminal png size 1280,960;\n');
+  plotCommandFile.write('set output "%s";\n' % make_figure_file_name(figureFileBase, runParams[0]));
+  plotCommandFile.write('set xlabel "Number of Source Points";\n');
+  plotCommandFile.write('set ylabel "%s";\n' % runParams[2]);
+  plotCommandFile.write(plotCommand + ";\n");
+  plotCommandFile.write('unset output;\n');
+  plotCommandFile.write('quit\n');
+  plotCommandFile.seek(0);
+
+  subprocess.call(['gnuplot'], stdin=plotCommandFile);
