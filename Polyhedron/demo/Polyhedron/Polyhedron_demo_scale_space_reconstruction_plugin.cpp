@@ -132,8 +132,8 @@ void Polyhedron_demo_scale_space_reconstruction_plugin::on_actionScaleSpaceRecon
                                                num );
 
           typedef Recontructor::Point_iterator SS_point_iterator;
-          for(SS_point_iterator it = reconstruct.scale_space_begin(),
-                                end = reconstruct.scale_space_end(); it!=end; ++it)
+          for(SS_point_iterator it = reconstruct.points_begin(),
+                                end = reconstruct.points_end(); it!=end; ++it)
           {
             new_item_smoothed->new_vertex(it->x(), it->y(), it->z());
           }

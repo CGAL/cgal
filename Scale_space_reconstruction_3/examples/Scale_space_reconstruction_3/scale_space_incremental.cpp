@@ -22,8 +22,8 @@ void dump_reconstruction(const Reconstruction& reconstruct, std::string name)
   output << "OFF " << reconstruct.number_of_points() << " "
          << reconstruct.number_of_triangles() << " 0\n";
 
-  std::copy(reconstruct.scale_space_begin(),
-            reconstruct.scale_space_end(),
+  std::copy(reconstruct.points_begin(),
+            reconstruct.points_end(),
             std::ostream_iterator<Point>(output,"\n"));
   for( Triple_iterator it = reconstruct.surface_begin(); it != reconstruct.surface_end(); ++it )
       output << "3 " << *it << std::endl;

@@ -670,7 +670,7 @@ private:
      *  estimated.
      */
     void construct_shape() {
-		construct_shape( scale_space_begin(), scale_space_end() );
+		construct_shape( points_begin(), points_end() );
     }
     
     /// constructs the shape from an existing triangulation.
@@ -803,20 +803,20 @@ public:
 /// \name Iterators
 /// \{
     /// gives an iterator to the first point at the current scale.
-    Const_point_iterator scale_space_begin() const { return _tree.begin(); }
+    Const_point_iterator points_begin() const { return _tree.begin(); }
     /// gives an iterator to the first point at the current scale.
     /** \warning Changes to the scale-space do not cause an automatic update to
      *  the surface.
      */
-    Point_iterator scale_space_begin() { return _tree.begin(); }
+    Point_iterator points_begin() { return _tree.begin(); }
 
     /// gives a past-the-end iterator of the points at the current scale.
-    Const_point_iterator scale_space_end() const { return _tree.end(); }
+    Const_point_iterator points_end() const { return _tree.end(); }
     /// gives a past-the-end iterator of the points at the current scale.
     /** \warning Changes to the scale-space do not cause an automatic update to
      *  the surface.
      */
-    Point_iterator scale_space_end() { return _tree.end(); }
+    Point_iterator points_end() { return _tree.end(); }
 
     /// gives an iterator to the first triple in the surface.
     Const_triple_iterator surface_begin() const { return _surface.begin(); }
