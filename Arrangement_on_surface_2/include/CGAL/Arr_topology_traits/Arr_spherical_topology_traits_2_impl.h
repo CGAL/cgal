@@ -587,7 +587,6 @@ locate_around_boundary_vertex(Vertex* v,
                               Arr_parameter_space ps_x,
                               Arr_parameter_space ps_y) const
 {
-  // std::cout << "locate_around_boundary_vertex()" << std::endl;
   if (ps_y == ARR_BOTTOM_BOUNDARY) {
     CGAL_assertion(v == m_south_pole);
     return (_locate_around_pole(m_south_pole, xc, ind));
@@ -798,19 +797,34 @@ _locate_around_pole(Vertex* v,
   // pole with the query curve xc.
   typename Traits_adaptor_2::Compare_x_curve_ends_2 cmp_x_curve_ends =
     m_geom_traits->compare_x_curve_ends_2_object();
-  Arr_curve_end curr_end, next_end;
-  Comparison_result curr_res, next_res;
-  Comparison_result curr_next_res;
+  typename Traits_adaptor_2::Parameter_space_in_x_2 ps_x_op =
+    m_geom_traits->parameter_space_in_x_2_object();
 
-  curr_end =
+  Arr_curve_end curr_end =
     (curr->direction() == ARR_RIGHT_TO_LEFT) ? ARR_MIN_END : ARR_MAX_END;
-  curr_res = cmp_x_curve_ends(xc, ind, curr->curve(), curr_end);
+  Arr_parameter_space ps_x = ps_x_op(xc, ind);
+  Arr_parameter_space curr_ps_x = ps_x_op(curr->curve(), curr_end);
+
+  Comparison_result curr_res = (ps_x != curr_ps_x) ?
+    ((ps_x == ARR_LEFT_BOUNDARY) ? SMALLER : LARGER) :
+    ((ps_x != ARR_INTERIOR) ? EQUAL :
+     cmp_x_curve_ends(xc, ind, curr->curve(), curr_end));
+
   do {
-    next_end =
+    Arr_curve_end next_end =
       (next->direction() == ARR_RIGHT_TO_LEFT) ? ARR_MIN_END : ARR_MAX_END;
-    next_res = cmp_x_curve_ends(xc, ind, next->curve(), next_end);
-    curr_next_res =
-      cmp_x_curve_ends(curr->curve(), curr_end, next->curve(), next_end);
+    Arr_parameter_space next_ps_x = ps_x_op(next->curve(), next_end);
+
+    Comparison_result next_res = (ps_x != next_ps_x) ?
+      ((ps_x == ARR_LEFT_BOUNDARY) ? SMALLER : LARGER) :
+      ((ps_x != ARR_INTERIOR) ? EQUAL :
+       cmp_x_curve_ends(xc, ind, next->curve(), next_end));
+
+    Comparison_result curr_next_res = (curr_ps_x != next_ps_x) ?
+      ((curr_ps_x == ARR_LEFT_BOUNDARY) ? SMALLER : LARGER) :
+      ((curr_ps_x != ARR_INTERIOR) ? EQUAL :
+       cmp_x_curve_ends(curr->curve(), curr_end, next->curve(), next_end));
+
     if (curr_next_res == cross_res) {
       // The line of discontinuity must lie between curr and next, so the
       // comparison result of xc with the two curves should be equal:
@@ -826,6 +840,7 @@ _locate_around_pole(Vertex* v,
     curr = next;
     curr_end = next_end;
     curr_res = next_res;
+    curr_ps_x = next_ps_x;
     next = curr->next()->opposite();
   } while (curr != first);
 
