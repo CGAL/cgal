@@ -88,12 +88,13 @@ protected:
 
   // Used by:
   // 1. parameter_space_in_x
-  // 2. compare_x_on_boundary
   typedef typename Arr_two_sides_category<Left_side_category,
                                           Right_side_category>::result
     Left_or_right_sides_category;
 
-  // Used by parameter_space_in_y
+  // Used by:
+  // 1. parameter_space_in_y
+  // 2. compare_x_on_boundary
   typedef typename Arr_two_sides_category<Bottom_side_category,
                                           Top_side_category>::result
     Bottom_or_top_sides_category;
@@ -792,7 +793,7 @@ public:
      * \param p2 the second point.
      */
     Comparison_result operator()(const Point_2& p1, const Point_2& p2) const
-    { return comp_x_on_bnd(p1, p2, Left_or_right_sides_category()); }
+    { return comp_x_on_bnd(p1, p2, Bottom_or_top_sides_category()); }
 
     /*! Compare the x-coordinate of a point and a curve-end projected onto the
      * horizontal boundaries
@@ -803,7 +804,7 @@ public:
     Comparison_result operator()(const Point_2& pt,
                                  const X_monotone_curve_2& xcv,
                                  Arr_curve_end ce) const
-    { return comp_x_on_bnd(pt, xcv, ce, Left_or_right_sides_category()); }
+    { return comp_x_on_bnd(pt, xcv, ce, Bottom_or_top_sides_category()); }
 
     /*! Compare the x-coordinates of two curve-ends projected onto the horizontal
      * boundaries
@@ -818,22 +819,10 @@ public:
                                  Arr_curve_end ce2) const
     {
       return comp_x_on_bnd(xcv1, ce1, xcv2, ce2,
-                           Left_or_right_sides_category());
+                           Bottom_or_top_sides_category());
     }
 
   private:
-    /*! Implementation for the case of identified boundaries. */
-    Comparison_result comp_x_on_bnd(const Point_2& p1, const Point_2& p2,
-                                    Arr_has_identified_side_tag) const
-    {
-      bool on_boundary1 = m_base->is_on_y_identification_2_object()(p1);
-      bool on_boundary2 = m_base->is_on_y_identification_2_object()(p2);
-      if (on_boundary1 && on_boundary2) return EQUAL;
-      if (on_boundary1) return SMALLER;
-      if (on_boundary2) return LARGER;
-      return m_base->compare_x_on_boundary_2_object()(p1, p2);
-    }
-
     /*! Implementation for the case the the base should be used. */
     Comparison_result comp_x_on_bnd(const Point_2& p1, const Point_2& p2,
                                     Arr_boundary_cond_tag) const
@@ -845,20 +834,6 @@ public:
     {
       CGAL_error();
       return SMALLER;
-    }
-
-    /*! Implementation for the case of identified boundaries. */
-    Comparison_result comp_x_on_bnd(const Point_2& pt,
-                                    const X_monotone_curve_2& xcv,
-                                    Arr_curve_end ce,
-                                    Arr_has_identified_side_tag) const
-    {
-      bool on_boundary1 = m_base->is_on_y_identification_2_object()(pt);
-      bool on_boundary2 = m_base->is_on_y_identification_2_object()(xcv);
-      if (on_boundary1 && on_boundary2) return EQUAL;
-      if (on_boundary1) return SMALLER;
-      if (on_boundary2) return LARGER;
-      return m_base->compare_x_on_boundary_2_object()(pt, xcv, ce);
     }
 
     /*! Implementation for the case the the base should be used. */
@@ -876,21 +851,6 @@ public:
     {
       CGAL_error();
       return SMALLER;
-    }
-
-    /*! Implementation for the case of identified boundaries. */
-    Comparison_result comp_x_on_bnd(const X_monotone_curve_2& xcv1,
-                                    Arr_curve_end ce1,
-                                    const X_monotone_curve_2& xcv2,
-                                    Arr_curve_end ce2,
-                                    Arr_has_identified_side_tag) const
-    {
-      bool on_boundary1 = m_base->is_on_y_identification_2_object()(xcv1);
-      bool on_boundary2 = m_base->is_on_y_identification_2_object()(xcv2);
-      if (on_boundary1 && on_boundary2) return EQUAL;
-      if (on_boundary1) return SMALLER;
-      if (on_boundary2) return LARGER;
-      return m_base->compare_x_on_boundary_2_object()(xcv1, ce1, xcv2, ce2);
     }
 
     /*! Implementation for the case the the base should be used. */
@@ -1872,9 +1832,9 @@ public:
                      bool& xcv_equal_xcv1,
                      bool& xcv_equal_xcv2) const
     {
-      Compare_y_at_x_left_2   compare_y_at_x_left =
+      Compare_y_at_x_left_2 compare_y_at_x_left =
         m_self->compare_y_at_x_left_2_object();
-      Compare_y_at_x_right_2  compare_y_at_x_right =
+      Compare_y_at_x_right_2 compare_y_at_x_right =
         m_self->compare_y_at_x_right_2_object();
 
       // Initialize output flags.
@@ -1882,8 +1842,8 @@ public:
       xcv_equal_xcv2 = false;
 
       // Take care of the general 4 cases:
-      Comparison_result  l_res, r_res;
-      Comparison_result  res1, res2;
+      Comparison_result l_res, r_res;
+      Comparison_result res1, res2;
 
       if (!xcv1_to_right && !xcv2_to_right) {
         // Case 1: Both xcv1 and xcv2 are defined to the left of p.
