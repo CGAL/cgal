@@ -1387,8 +1387,7 @@ public:
   //@{
   class Is_in_x_range_2 {
   public:
-    /*!
-     * Check whether the given point is in the x-range of the given x-monotone
+    /*! Check whether a given point is in the x-range of the given x-monotone
      * curve.
      * \param xcv The x-monotone curve.
      * \param p The point.
