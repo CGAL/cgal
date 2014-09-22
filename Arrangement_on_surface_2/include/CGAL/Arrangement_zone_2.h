@@ -148,7 +148,7 @@ protected:
                                       // (0 in case of an overlap).
   bool m_found_intersect;             // Have we found an intersection
                                       // (or an overlap).
-  X_monotone_curve_2 overlap_cv;      // the currently discovered overlap.
+  X_monotone_curve_2 m_overlap_cv;    // the currently discovered overlap.
   bool m_found_overlap;               // Have we found an overlap.
   bool m_found_iso_vert;              // Check if an isolated vertex induces
                                       // the next intersection.
@@ -191,7 +191,7 @@ public:
     const Arr_parameter_space by1 =
       m_geom_traits->parameter_space_in_y_2_object()(m_cv, ARR_MIN_END);
 
-    if (bx1 == ARR_INTERIOR && by1 == ARR_INTERIOR) {
+    if ((bx1 == ARR_INTERIOR) && (by1 == ARR_INTERIOR)) {
       // The curve has a finite left endpoint with no boundary conditions:
       // locate it in the arrangement.
       m_has_left_pt = true;
@@ -202,7 +202,6 @@ public:
     else {
       // The left end of the curve has boundary conditions: use the topology
       // traits use the arrangement accessor to locate it.
-      // Note that if the curve-end is unbounded, m_left_pt does not exist.
       // Note that if the curve-end is unbounded, m_left_pt does not exist.
       m_has_left_pt = m_geom_traits->is_closed_2_object()(m_cv, ARR_MIN_END);
       m_left_on_boundary = true;

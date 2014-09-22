@@ -618,42 +618,58 @@ locate_curve_end(const X_monotone_curve_2& xc, Arr_curve_end ind,
     return CGAL::make_object(m_spherical_face);
   }
 
-  typename Vertex_map::iterator it;
-  Vertex* v = NULL;
-
   if (ps_y == ARR_BOTTOM_BOUNDARY) {
     // In case the curve end coincides with the south pole, return the vertex
     // representing the south pole, if one exists. Otherwise, search for the
     // face containing this pole.
     if (m_south_pole != NULL) return CGAL::make_object(m_south_pole);
-    it = m_boundary_vertices.begin();
-  }
-  else {
-    CGAL_assertion((ps_x == ARR_LEFT_BOUNDARY) || (ps_x == ARR_RIGHT_BOUNDARY));
 
-    // Check if the given curve end is incident to a vertex on the line of
-    // discontinuity. If so, return this vertex. Otherwise, locate the first
-    // vertex above it.
-    const Point_2& key = (ind == ARR_MIN_END) ?
-      m_geom_traits->construct_min_vertex_2_object()(xc) :
-      m_geom_traits->construct_max_vertex_2_object()(xc);
-    it = m_boundary_vertices.find(key);
-    if (it != m_boundary_vertices.end()) {
-      v = it->second;
-      return CGAL::make_object(v);
-    }
+    // If there are no vertices on the identification curve return the spherical
+    // face.
+    if (m_boundary_vertices.empty()) return CGAL::make_object(m_spherical_face);
 
-    it = m_boundary_vertices.lower_bound(key);
+    Vertex* v = m_boundary_vertices.begin()->second;
+    return CGAL::make_object(_face_below_vertex_on_discontinuity(v));
   }
 
-  // At this point, the iterator it points to a vertex on the line of
-  // discontinuity that is strictly above the curve end. If there is none,
-  // we know the curve end is contained in the spherical face. Otherwise,
-  // we return the face that lies below the vertex v.
+  CGAL_assertion((ps_x == ARR_LEFT_BOUNDARY) || (ps_x == ARR_RIGHT_BOUNDARY));
+
+  // Check if the given curve end is incident to a vertex on the line of
+  // discontinuity. If so, return this vertex. Otherwise, locate the first
+  // vertex above it.
+  const Point_2& key = (ind == ARR_MIN_END) ?
+    m_geom_traits->construct_min_vertex_2_object()(xc) :
+    m_geom_traits->construct_max_vertex_2_object()(xc);
+
+  // Find the element the key of which is equal to or greater than 'key'
+  typename Vertex_map::iterator it = m_boundary_vertices.lower_bound(key);
+
+  // If an element with the same key or a larger key does not exist, an edge
+  // associated with a vertical curve that lies on the boundary and contains
+  // the query point cannot exist either. Return the spherical face.
   if (it == m_boundary_vertices.end())
     return CGAL::make_object(m_spherical_face);
 
-  v = it->second;
+  Vertex* v = it->second;
+
+  // If the key is equal, return the vertex.
+  if (m_geom_traits->compare_y_on_boundary_2_object()(key, v->point()) == EQUAL)
+    return CGAL::make_object(v);
+
+  // The vertex v lies on the identification curve and is strictly above the
+  // curve end. Search for an edge incident to v and is associated with a
+  // vertical curve that lies on the boundary.
+  Halfedge* start = v->halfedge();
+  Halfedge* he = start;
+  do {
+    const X_monotone_curve_2& curve = he->curve();
+    if ((ARR_LEFT_TO_RIGHT == he->direction()) &&
+        (m_geom_traits->is_vertical_2_object()(curve)))
+      return CGAL::make_object(he);
+    he = he->next()->opposite();
+  } while (he != start);
+
+  // Return the face that lies below the vertex v.
   return CGAL::make_object(_face_below_vertex_on_discontinuity(v));
 }
 

@@ -92,7 +92,7 @@ void insert(Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
     if (x_curve != NULL) {
       // Inserting an x-monotone curve:
       // Initialize the zone-computation object with the given curve.
-      arr_zone.init (*x_curve, pl);
+      arr_zone.init(*x_curve, pl);
 
       // Notify the arrangement observers that a global operation is about to
       // take place.
@@ -1375,9 +1375,9 @@ OutputIterator zone(Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
 
   Zone_visitor visitor(oi);
   Arrangement_zone_2<Arrangement_on_surface_2, Zone_visitor>
-    arr_zone (arr, &visitor);
+    arr_zone(arr, &visitor);
 
-  arr_zone.init (c, pl);
+  arr_zone.init(c, pl);
   arr_zone.compute_zone();
 
   return (oi);
@@ -1429,7 +1429,7 @@ bool do_intersect(Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
   Arrangement_zone_2<Arrangement_on_surface_2, Zone_visitor>
     arr_zone(arr, &visitor);
 
-  arr_zone.init (c, pl);
+  arr_zone.init(c, pl);
   arr_zone.compute_zone();
 
   return (visitor.do_intersect());

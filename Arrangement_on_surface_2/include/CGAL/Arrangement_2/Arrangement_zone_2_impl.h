@@ -81,6 +81,7 @@ init_with_hint(const X_monotone_curve_2& cv, const Object& obj)
 template <typename Arrangement, typename ZoneVisitor>
 void Arrangement_zone_2<Arrangement, ZoneVisitor>::compute_zone()
 {
+  // std::cout << "compute_zone" << std::endl;
   // Initialize flags and set all handles to be invalid.
   bool done = false;
 
@@ -132,7 +133,7 @@ void Arrangement_zone_2<Arrangement, ZoneVisitor>::compute_zone()
         // Compute the overlapping subcurve.
         bool dummy;
         m_obj = _compute_next_intersection(m_intersect_he, false, dummy);
-        overlap_cv = object_cast<X_monotone_curve_2>(m_obj);
+        m_overlap_cv = object_cast<X_monotone_curve_2>(m_obj);
 
         // Remove the overlap from the map.
         _remove_next_intersection(m_intersect_he);
@@ -148,7 +149,7 @@ void Arrangement_zone_2<Arrangement, ZoneVisitor>::compute_zone()
 
       bool  dummy;
       m_obj = _compute_next_intersection(m_intersect_he, false, dummy);
-      overlap_cv = object_cast<X_monotone_curve_2>(m_obj);
+      m_overlap_cv = object_cast<X_monotone_curve_2>(m_obj);
 
       // Remove the overlap from the map.
       _remove_next_intersection(m_intersect_he);
@@ -208,7 +209,7 @@ void Arrangement_zone_2<Arrangement, ZoneVisitor>::compute_zone()
         bool  dummy;
         m_obj = _compute_next_intersection(m_intersect_he, false, dummy);
 
-        overlap_cv = object_cast<X_monotone_curve_2>(m_obj);
+        m_overlap_cv = object_cast<X_monotone_curve_2>(m_obj);
 
         // Remove the overlap from the map.
         _remove_next_intersection(m_intersect_he);
@@ -697,6 +698,9 @@ template <typename Arrangement, typename ZoneVisitor>
 void Arrangement_zone_2<Arrangement, ZoneVisitor>::
 _leftmost_intersection_with_face_boundary(Face_handle face, bool on_boundary)
 {
+  // std::cout << "_leftmost_intersection_with_face_boundary "
+  //           << on_boundary << std::endl;
+
   // Mark that we have not found any intersection (or overlap) yet.
   m_found_intersect = false;
   m_found_overlap = false;
@@ -839,7 +843,7 @@ _leftmost_intersection_with_face_boundary(Face_handle face, bool on_boundary)
             // Store the leftmost intersection point and the halfedge handle.
             m_intersect_p = ip;
             m_ip_mult = 0;
-            overlap_cv = *icv;
+            m_overlap_cv = *icv;
             m_intersect_he = he_curr;
             m_found_overlap = true;
           }
@@ -969,7 +973,7 @@ _leftmost_intersection_with_face_boundary(Face_handle face, bool on_boundary)
             // handle.
             m_intersect_p = ip;
             m_ip_mult = 0;
-            overlap_cv = *icv;
+            m_overlap_cv = *icv;
             m_intersect_he = he_curr;
             m_found_overlap = true;
           }
@@ -1032,6 +1036,7 @@ template <typename Arrangement, typename ZoneVisitor>
 bool Arrangement_zone_2<Arrangement, ZoneVisitor>::
 _zone_in_face(Face_handle face, bool on_boundary)
 {
+  // std::cout << "_zone_in_face " << on_boundary << std::endl;
   CGAL_precondition((! on_boundary &&
                      (((m_left_v == invalid_v) && (m_left_he == invalid_he)) ||
                       m_left_v->is_isolated())) ||
@@ -1052,7 +1057,7 @@ _zone_in_face(Face_handle face, bool on_boundary)
 
   // In this case m_found_intersect is true and m_intersect_he is the edge that
   // cv next intersects (or overlaps). If m_found_overlap is also true,
-  // then overlap_cv is set and m_intersect_p is the left endpoint of the
+  // then m_overlap_cv is set and m_intersect_p is the left endpoint of the
   // overlapping subcurve. Otherwise, m_intersect_p is a simple intersection
   // point.
   // Alternatively, if m_found_iso_vert is true, then the next intersection point
@@ -1255,21 +1260,21 @@ _zone_in_face(Face_handle face, bool on_boundary)
 }
 
 //-----------------------------------------------------------------------------
-// Compute the zone of an overlapping subcurve overlap_cv of cv and the
+// Compute the zone of an overlapping subcurve m_overlap_cv of cv and the
 // curve currently associated with m_intersect_he.
 //
 template <typename Arrangement, typename ZoneVisitor>
 bool Arrangement_zone_2<Arrangement, ZoneVisitor>::_zone_in_overlap()
 {
-  // Check if the right end of overlap_cv is bounded. If so, compute its
+  // std::cout << "_zone_in_overlap" << std::endl;
+  // Check if the right end of m_overlap_cv is bounded. If so, compute its
   // right endpoint.
   const bool cv_has_right_pt =
-    m_geom_traits->is_closed_2_object()(overlap_cv, ARR_MAX_END);
+    m_geom_traits->is_closed_2_object()(m_overlap_cv, ARR_MAX_END);
 
   Point_2 cv_right_pt;
-
   if (cv_has_right_pt)
-    cv_right_pt = m_geom_traits->construct_max_vertex_2_object() (overlap_cv);
+    cv_right_pt = m_geom_traits->construct_max_vertex_2_object()(m_overlap_cv);
 
   // Get right end-vertex of the overlapping halfedge m_intersect_he. Also make
   // sure that the overlapping halfedge is always directed to the right.
@@ -1282,16 +1287,16 @@ bool Arrangement_zone_2<Arrangement, ZoneVisitor>::_zone_in_overlap()
     m_intersect_he = m_intersect_he->twin();
   }
 
-  // Compare the two right endpoints. Note that overlap_cv cannot extend to
+  // Compare the two right endpoints. Note that m_overlap_cv cannot extend to
   // the right longer than the halfedge it overlaps. Thus, if the curve is
   // not bounded, the right vertex of m_intersect_he must lie on open boundary as
   // well.
   if (! cv_has_right_pt) {
     CGAL_assertion_code
       (const Arr_parameter_space  cv_ps_x =
-       m_geom_traits->parameter_space_in_x_2_object()(overlap_cv, ARR_MAX_END);
+       m_geom_traits->parameter_space_in_x_2_object()(m_overlap_cv, ARR_MAX_END);
        const Arr_parameter_space  cv_ps_y =
-       m_geom_traits->parameter_space_in_y_2_object()(overlap_cv, ARR_MAX_END);
+       m_geom_traits->parameter_space_in_y_2_object()(m_overlap_cv, ARR_MAX_END);
        );
     CGAL_assertion(he_right_v->parameter_space_in_x() == cv_ps_x &&
                    he_right_v->parameter_space_in_y() == cv_ps_y);
@@ -1299,11 +1304,11 @@ bool Arrangement_zone_2<Arrangement, ZoneVisitor>::_zone_in_overlap()
     m_right_v = he_right_v;
   }
   else {
-    // In this case overlap_cv has a finite right endpoint. In this case,
+    // In this case m_overlap_cv has a finite right endpoint. In this case,
     // if the right vertex of m_intersect_he is associated with a finite point,
     // we check whether it is equal to cv_right_pt. Otherwise, we know that
-    // m_intersect_he extends to the the right of overlap_cv, and there is no
-    // vertex currently associated with overlap_cv's right endpoint.
+    // m_intersect_he extends to the the right of m_overlap_cv, and there is no
+    // vertex currently associated with m_overlap_cv's right endpoint.
     if (! he_right_v->is_at_open_boundary() &&
         m_geom_traits->equal_2_object()(cv_right_pt, he_right_v->point()))
     {
@@ -1323,7 +1328,7 @@ bool Arrangement_zone_2<Arrangement, ZoneVisitor>::_zone_in_overlap()
 
   // Notify the visitor on the overlapping zone.
   Visitor_result visitor_res =
-    m_visitor->found_overlap(overlap_cv, m_intersect_he, m_left_v, m_right_v);
+    m_visitor->found_overlap(m_overlap_cv, m_intersect_he, m_left_v, m_right_v);
 
   // If the visitor has indicated we should halt the process, or it the right
   // endpoint of the overlapping curve is the right endpoint of cv then we are
