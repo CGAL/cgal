@@ -197,7 +197,7 @@ public:
     /*  Important note: Shape_construction_3 may destroy the shape and
      *  replace it by a new shape.
      */
-    void change_scale( Shape* shape, const FT& squared_radius ) const {
+    void change_scale( Shape*& shape, const FT& squared_radius ) const {
         CGAL_assertion( shape != NULL );
         Shape* tmp = construct( shape, squared_radius );
         delete shape;
