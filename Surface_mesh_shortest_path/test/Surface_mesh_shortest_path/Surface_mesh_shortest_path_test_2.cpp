@@ -58,181 +58,91 @@ BOOST_AUTO_TEST_CASE( test_a_to_b_vs_b_t_a_distances )
   
   CGAL::Random rand(2681972);
   
-  std::string meshes[3] = { "data/elephant.off", "data/saddle_vertex_mesh.off", "data/anchor.off" };
+  std::string mesh = boost::unit_test::framework::master_test_suite().argv[1];
 
-  for (size_t meshId = 0; meshId < 3; ++meshId)
+  Polyhedron_3 polyhedron;
+  std::ifstream in(mesh.c_str());
+  
+  in >> polyhedron;
+  
+  in.close();
+  
+  CGAL::set_halfedgeds_items_id(polyhedron);
+  
+  VIM vertexIndexMap(get(boost::vertex_index, polyhedron));
+  HIM halfedgeIndexMap(get(boost::halfedge_index, polyhedron));
+  FIM faceIndexMap(get(boost::face_index, polyhedron));
+  
+  vertex_iterator verticesStart;
+  vertex_iterator verticesEnd;
+  
+  std::vector<vertex_descriptor> vertices;
+  
+  boost::tie(verticesStart, verticesEnd) = boost::vertices(polyhedron);
+  
+  for (vertex_iterator it = verticesStart; it != verticesEnd; ++it)
   {
-    Polyhedron_3 polyhedron;
-    std::ifstream in(meshes[meshId].c_str());
+    vertices.push_back(*it);
+  }
+  
+  face_iterator facesStart;
+  face_iterator facesEnd;
+  
+  std::vector<face_descriptor> faces;
+  
+  boost::tie(facesStart, facesEnd) = CGAL::faces(polyhedron);
+  
+  for (face_iterator it = facesStart; it != facesEnd; ++it)
+  {
+    faces.push_back(*it);
+  }
+
+  Surface_mesh_shortest_path startToEndShortestPaths(polyhedron, traits);
+  Surface_mesh_shortest_path endToStartShortestPaths(polyhedron, traits);
+  
+  const size_t numTests = 15;
+  
+  std::cout << "Mesh: " << mesh << std::endl;
+  
+  
+  for (size_t i = 0; i < numTests; ++i)
+  {
+    size_t startVertexIndex = rand.get_int(0, vertices.size());
+    size_t endVertexIndex = rand.get_int(0, vertices.size());
     
-    in >> polyhedron;
+    vertex_descriptor startVertex = vertices[startVertexIndex];
+    vertex_descriptor endVertex = vertices[endVertexIndex];
+
+    //startToEndShortestPaths.m_debugOutput = true;
     
-    in.close();
+    startToEndShortestPaths.construct_sequence_tree(startVertex);
+
+    CGAL::test::Edge_sequence_collector<Traits> startToEndCollector(vertexIndexMap, halfedgeIndexMap, faceIndexMap);
+    startToEndShortestPaths.shortest_path_sequence_to_source_points(endVertex, startToEndCollector);
     
-    CGAL::set_halfedgeds_items_id(polyhedron);
+    FT startToEnd = startToEndShortestPaths.shortest_distance_to_source_points(endVertex).first;
     
-    VIM vertexIndexMap(get(boost::vertex_index, polyhedron));
-    HIM halfedgeIndexMap(get(boost::halfedge_index, polyhedron));
-    FIM faceIndexMap(get(boost::face_index, polyhedron));
+    //endToStartShortestPaths.m_debugOutput = true;
     
-    vertex_iterator verticesStart;
-    vertex_iterator verticesEnd;
+    endToStartShortestPaths.construct_sequence_tree(endVertex);
     
-    std::vector<vertex_descriptor> vertices;
+    CGAL::test::Edge_sequence_collector<Traits> endToStartCollector(vertexIndexMap, halfedgeIndexMap, faceIndexMap);
+    endToStartShortestPaths.shortest_path_sequence_to_source_points(startVertex, endToStartCollector);
     
-    boost::tie(verticesStart, verticesEnd) = boost::vertices(polyhedron);
+    FT endToStart = endToStartShortestPaths.shortest_distance_to_source_points(startVertex).first;
+
+    BOOST_CHECK_CLOSE(startToEnd, endToStart, FT(0.0000001));
     
-    for (vertex_iterator it = verticesStart; it != verticesEnd; ++it)
+    BOOST_CHECK_EQUAL(startToEndCollector.m_sequence.size(), endToStartCollector.m_sequence.size());
+    
+    if (startToEndCollector.m_sequence.size() == endToStartCollector.m_sequence.size())
     {
-      vertices.push_back(*it);
-    }
-    
-    face_iterator facesStart;
-    face_iterator facesEnd;
-    
-    std::vector<face_descriptor> faces;
-    
-    boost::tie(facesStart, facesEnd) = CGAL::faces(polyhedron);
-    
-    for (face_iterator it = facesStart; it != facesEnd; ++it)
-    {
-      faces.push_back(*it);
-    }
-
-    Surface_mesh_shortest_path startToEndShortestPaths(polyhedron, traits);
-    Surface_mesh_shortest_path endToStartShortestPaths(polyhedron, traits);
-    
-    const size_t numTests = 15;
-    
-    std::cout << "Mesh: " << meshes[meshId] << std::endl;
-    
-    
-    for (size_t i = 0; i < numTests; ++i)
-    {
-      size_t startVertexIndex = rand.get_int(0, vertices.size());
-      size_t endVertexIndex = rand.get_int(0, vertices.size());
-      
-      vertex_descriptor startVertex = vertices[startVertexIndex];
-      vertex_descriptor endVertex = vertices[endVertexIndex];
-
-      //startToEndShortestPaths.m_debugOutput = true;
-      
-      startToEndShortestPaths.construct_sequence_tree(startVertex);
-
-      CGAL::test::Edge_sequence_collector<Traits> startToEndCollector(vertexIndexMap, halfedgeIndexMap, faceIndexMap);
-      startToEndShortestPaths.shortest_path_sequence_to_source_points(endVertex, startToEndCollector);
-      
-      FT startToEnd = startToEndShortestPaths.shortest_distance_to_source_points(endVertex).first;
-      
-      //endToStartShortestPaths.m_debugOutput = true;
-      
-      endToStartShortestPaths.construct_sequence_tree(endVertex);
-      
-      CGAL::test::Edge_sequence_collector<Traits> endToStartCollector(vertexIndexMap, halfedgeIndexMap, faceIndexMap);
-      endToStartShortestPaths.shortest_path_sequence_to_source_points(startVertex, endToStartCollector);
-      
-      FT endToStart = endToStartShortestPaths.shortest_distance_to_source_points(startVertex).first;
-
-      BOOST_CHECK_CLOSE(startToEnd, endToStart, FT(0.0000001));
-      
-      BOOST_CHECK_EQUAL(startToEndCollector.m_sequence.size(), endToStartCollector.m_sequence.size());
-      
-      if (startToEndCollector.m_sequence.size() == endToStartCollector.m_sequence.size())
+      if (startToEndCollector.m_sequence.size() > 3)
       {
-        if (startToEndCollector.m_sequence.size() > 3)
-        {
-          size_t k = startToEndCollector.m_sequence.size() - 1;
-          
-          for (size_t j = 0; j < endToStartCollector.m_sequence.size(); ++j)
-          {
-            BOOST_CHECK_EQUAL(endToStartCollector.m_sequence[j].type, startToEndCollector.m_sequence[k].type);
-            
-            if (endToStartCollector.m_sequence[j].type == startToEndCollector.m_sequence[k].type)
-            {
-              switch (endToStartCollector.m_sequence[j].type)
-              {
-              case CGAL::test::SEQUENCE_ITEM_VERTEX:
-              case CGAL::test::SEQUENCE_ITEM_FACE:
-                BOOST_CHECK_EQUAL(endToStartCollector.m_sequence[j].index, startToEndCollector.m_sequence[k].index);
-                break;
-              case CGAL::test::SEQUENCE_ITEM_EDGE:
-                BOOST_CHECK_EQUAL(halfedgeIndexMap[endToStartCollector.m_sequence[j].halfedge], halfedgeIndexMap[CGAL::opposite(startToEndCollector.m_sequence[k].halfedge, polyhedron)]);
-                break;
-              }
-            }
-            else
-            {
-              std::string names[2] = { "STE", "ETS" };
-              CGAL::test::Sequence_item<Traits> items[2] = { startToEndCollector.m_sequence[k], endToStartCollector.m_sequence[j] };
-              Surface_mesh_shortest_path* pathStructures[2] = { &startToEndShortestPaths, &endToStartShortestPaths };
-              
-              for (size_t d = 0; d < 2; ++d)
-              {
-                if (items[d].type == CGAL::test::SEQUENCE_ITEM_EDGE)
-                {
-                  std::cout << "\t" << names[d] << "(edge): " << vertexIndexMap[CGAL::source(items[d].halfedge, polyhedron)] << " , " << vertexIndexMap[CGAL::target(items[d].halfedge, polyhedron)] << " : " << items[d].edgeAlpha << std::endl;
-                }
-                else if (items[d].type == CGAL::test::SEQUENCE_ITEM_VERTEX)
-                {
-                  std::cout << "\t" << names[d] << "(vertex): " << vertexIndexMap[items[d].vertex] << " , Distance: " << pathStructures[d]->shortest_distance_to_source_points(items[d].vertex).first << std::endl;
-                }
-              }
-            }
-            
-            if (k > 0)
-            {
-              --k;
-            }
-          }
-        }
-      }
-    }
-    
-
-    for (size_t i = 0; i < numTests; ++i)
-    {
-      size_t startFaceIndex = rand.get_int(0, faces.size());
-      size_t endFaceIndex = rand.get_int(0, faces.size());
-      
-      face_descriptor startFace = faces[startFaceIndex];
-      face_descriptor endFace = faces[endFaceIndex];
-      
-      Barycentric_coordinate startLocation = CGAL::test::random_coordinate<Traits>(rand);
-      Barycentric_coordinate endLocation = CGAL::test::random_coordinate<Traits>(rand);
-
-      //shortestPaths.m_debugOutput = true;
-      
-      startToEndShortestPaths.construct_sequence_tree(startFace, startLocation);
-
-      //CGAL::Interval_nt<true> startToEnd = startToEndShortestPaths.shortest_distance_to_location_interval(endFace, endLocation);
-      
-      FT startToEnd = startToEndShortestPaths.shortest_distance_to_source_points(endFace, endLocation).first;
-      
-      CGAL::test::Edge_sequence_collector<Traits> startToEndCollector(vertexIndexMap, halfedgeIndexMap, faceIndexMap);
-      startToEndShortestPaths.shortest_path_sequence_to_source_points(endFace, endLocation, startToEndCollector);
-      
-      endToStartShortestPaths.construct_sequence_tree(endFace, endLocation);
-      
-      //CGAL::Interval_nt<true> endToStart = endToStartShortestPaths.shortest_distance_to_location_interval(startFace, startLocation);
-      
-      FT endToStart = endToStartShortestPaths.shortest_distance_to_source_points(startFace, startLocation).first;
-
-      CGAL::test::Edge_sequence_collector<Traits> endToStartCollector(vertexIndexMap, halfedgeIndexMap, faceIndexMap);
-      endToStartShortestPaths.shortest_path_sequence_to_source_points(startFace, startLocation, endToStartCollector);
-      
-      //std::cout << std::setprecision(15) << std::endl;
-
-      BOOST_CHECK_CLOSE(startToEnd, endToStart, FT(0.0000001));
-
-      BOOST_CHECK_EQUAL(startToEndCollector.m_sequence.size(), endToStartCollector.m_sequence.size());
-      
-      if (startToEndCollector.m_sequence.size() > 3 && startToEndCollector.m_sequence.size() == endToStartCollector.m_sequence.size())
-      {
-      
+        size_t k = startToEndCollector.m_sequence.size() - 1;
+        
         for (size_t j = 0; j < endToStartCollector.m_sequence.size(); ++j)
         {
-          size_t k = endToStartCollector.m_sequence.size() - j - 1;
-          
           BOOST_CHECK_EQUAL(endToStartCollector.m_sequence[j].type, startToEndCollector.m_sequence[k].type);
           
           if (endToStartCollector.m_sequence[j].type == startToEndCollector.m_sequence[k].type)
@@ -252,6 +162,7 @@ BOOST_AUTO_TEST_CASE( test_a_to_b_vs_b_t_a_distances )
           {
             std::string names[2] = { "STE", "ETS" };
             CGAL::test::Sequence_item<Traits> items[2] = { startToEndCollector.m_sequence[k], endToStartCollector.m_sequence[j] };
+            Surface_mesh_shortest_path* pathStructures[2] = { &startToEndShortestPaths, &endToStartShortestPaths };
             
             for (size_t d = 0; d < 2; ++d)
             {
@@ -261,15 +172,101 @@ BOOST_AUTO_TEST_CASE( test_a_to_b_vs_b_t_a_distances )
               }
               else if (items[d].type == CGAL::test::SEQUENCE_ITEM_VERTEX)
               {
-                std::cout << "\t" << names[d] << "(vertex): " << vertexIndexMap[items[d].vertex] << std::endl;
+                std::cout << "\t" << names[d] << "(vertex): " << vertexIndexMap[items[d].vertex] << " , Distance: " << pathStructures[d]->shortest_distance_to_source_points(items[d].vertex).first << std::endl;
               }
+            }
+          }
+          
+          if (k > 0)
+          {
+            --k;
+          }
+        }
+      }
+    }
+  }
+  
+
+  for (size_t i = 0; i < numTests; ++i)
+  {
+    size_t startFaceIndex = rand.get_int(0, faces.size());
+    size_t endFaceIndex = rand.get_int(0, faces.size());
+    
+    face_descriptor startFace = faces[startFaceIndex];
+    face_descriptor endFace = faces[endFaceIndex];
+    
+    Barycentric_coordinate startLocation = CGAL::test::random_coordinate<Traits>(rand);
+    Barycentric_coordinate endLocation = CGAL::test::random_coordinate<Traits>(rand);
+
+    //shortestPaths.m_debugOutput = true;
+    
+    startToEndShortestPaths.construct_sequence_tree(startFace, startLocation);
+
+    //CGAL::Interval_nt<true> startToEnd = startToEndShortestPaths.shortest_distance_to_location_interval(endFace, endLocation);
+    
+    FT startToEnd = startToEndShortestPaths.shortest_distance_to_source_points(endFace, endLocation).first;
+    
+    CGAL::test::Edge_sequence_collector<Traits> startToEndCollector(vertexIndexMap, halfedgeIndexMap, faceIndexMap);
+    startToEndShortestPaths.shortest_path_sequence_to_source_points(endFace, endLocation, startToEndCollector);
+    
+    endToStartShortestPaths.construct_sequence_tree(endFace, endLocation);
+    
+    //CGAL::Interval_nt<true> endToStart = endToStartShortestPaths.shortest_distance_to_location_interval(startFace, startLocation);
+    
+    FT endToStart = endToStartShortestPaths.shortest_distance_to_source_points(startFace, startLocation).first;
+
+    CGAL::test::Edge_sequence_collector<Traits> endToStartCollector(vertexIndexMap, halfedgeIndexMap, faceIndexMap);
+    endToStartShortestPaths.shortest_path_sequence_to_source_points(startFace, startLocation, endToStartCollector);
+    
+    //std::cout << std::setprecision(15) << std::endl;
+
+    BOOST_CHECK_CLOSE(startToEnd, endToStart, FT(0.0000001));
+
+    BOOST_CHECK_EQUAL(startToEndCollector.m_sequence.size(), endToStartCollector.m_sequence.size());
+    
+    if (startToEndCollector.m_sequence.size() > 3 && startToEndCollector.m_sequence.size() == endToStartCollector.m_sequence.size())
+    {
+    
+      for (size_t j = 0; j < endToStartCollector.m_sequence.size(); ++j)
+      {
+        size_t k = endToStartCollector.m_sequence.size() - j - 1;
+        
+        BOOST_CHECK_EQUAL(endToStartCollector.m_sequence[j].type, startToEndCollector.m_sequence[k].type);
+        
+        if (endToStartCollector.m_sequence[j].type == startToEndCollector.m_sequence[k].type)
+        {
+          switch (endToStartCollector.m_sequence[j].type)
+          {
+          case CGAL::test::SEQUENCE_ITEM_VERTEX:
+          case CGAL::test::SEQUENCE_ITEM_FACE:
+            BOOST_CHECK_EQUAL(endToStartCollector.m_sequence[j].index, startToEndCollector.m_sequence[k].index);
+            break;
+          case CGAL::test::SEQUENCE_ITEM_EDGE:
+            BOOST_CHECK_EQUAL(halfedgeIndexMap[endToStartCollector.m_sequence[j].halfedge], halfedgeIndexMap[CGAL::opposite(startToEndCollector.m_sequence[k].halfedge, polyhedron)]);
+            break;
+          }
+        }
+        else
+        {
+          std::string names[2] = { "STE", "ETS" };
+          CGAL::test::Sequence_item<Traits> items[2] = { startToEndCollector.m_sequence[k], endToStartCollector.m_sequence[j] };
+          
+          for (size_t d = 0; d < 2; ++d)
+          {
+            if (items[d].type == CGAL::test::SEQUENCE_ITEM_EDGE)
+            {
+              std::cout << "\t" << names[d] << "(edge): " << vertexIndexMap[CGAL::source(items[d].halfedge, polyhedron)] << " , " << vertexIndexMap[CGAL::target(items[d].halfedge, polyhedron)] << " : " << items[d].edgeAlpha << std::endl;
+            }
+            else if (items[d].type == CGAL::test::SEQUENCE_ITEM_VERTEX)
+            {
+              std::cout << "\t" << names[d] << "(vertex): " << vertexIndexMap[items[d].vertex] << std::endl;
             }
           }
         }
       }
     }
-
   }
+
 }
 
 // Hack to trick cgal_create_CMakeLists into using this file even without a main
