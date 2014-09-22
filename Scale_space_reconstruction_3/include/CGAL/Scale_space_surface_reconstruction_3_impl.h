@@ -357,7 +357,7 @@ estimate_neighborhood_radius( unsigned int neighbors, unsigned int samples ) {
     if( !_tree.is_built() )
         _tree.build();
 
-    for( Const_point_iterator it = _tree.begin(); it != _tree.end(); ++it ) {
+    for( Point_const_iterator it = _tree.begin(); it != _tree.end(); ++it ) {
         unsigned int left = (unsigned int)( _tree.size() - handled );
         if( samples >= left || _generator.get_double() < double(samples - checked) / left ) {
             // The neighborhood should contain the point itself as well.
@@ -507,7 +507,7 @@ reconstruct_surface( InputIterator begin, InputIterator end, unsigned int iterat
 /// \endcond
 
 template < class Gt, class FS, class Sh, class wA, class Ct >
-typename Scale_space_surface_reconstruction_3<Gt,FS,Sh,wA,Ct>::Const_triple_iterator
+typename Scale_space_surface_reconstruction_3<Gt,FS,Sh,wA,Ct>::Triple_const_iterator
 Scale_space_surface_reconstruction_3<Gt,FS,Sh,wA,Ct>::shell_begin( std::size_t shell ) const {
     CGAL_assertion( Sh::value == true );
     CGAL_assertion( shell >= 0 && shell < _shells.size() );
@@ -523,7 +523,7 @@ Scale_space_surface_reconstruction_3<Gt,FS,Sh,wA,Ct>::shell_begin( std::size_t s
 }
 
 template < class Gt, class FS, class Sh, class wA, class Ct >
-typename Scale_space_surface_reconstruction_3<Gt,FS,Sh,wA,Ct>::Const_triple_iterator
+typename Scale_space_surface_reconstruction_3<Gt,FS,Sh,wA,Ct>::Triple_const_iterator
 Scale_space_surface_reconstruction_3<Gt,FS,Sh,wA,Ct>::shell_end( std::size_t shell ) const {
     CGAL_assertion( Sh::value == true );
     CGAL_assertion( shell >= 0 && shell < _shells.size() );

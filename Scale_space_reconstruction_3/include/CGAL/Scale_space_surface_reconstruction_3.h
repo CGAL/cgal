@@ -144,11 +144,11 @@ public:
 
 #ifdef DOXYGEN_RUNNING
     typedef unspecified_type                            Point_iterator;         ///< defines an iterator over the points.
-    typedef const unspecified_type                      Const_point_iterator;   ///< defines a constant iterator over the points.
+    typedef const unspecified_type                      Point_const_iterator;   ///< defines a constant iterator over the points.
 #else // DOXYGEN_RUNNING
 
     typedef typename Search_tree::iterator              Point_iterator;
-    typedef typename Search_tree::const_iterator        Const_point_iterator;
+    typedef typename Search_tree::const_iterator        Point_const_iterator;
 #endif // DOXYGEN_RUNNING
 
     typedef CGAL::cpp11::array< unsigned int, 3 >       Triple;                 ///< defines a triple of point indices indicating a triangle of the surface.
@@ -159,10 +159,10 @@ private:
 public:
 #ifdef DOXYGEN_RUNNING
     typedef unspecified_type                            Triple_iterator;        ///< defines an iterator over the triples.
-    typedef const unspecified_type                      Const_triple_iterator;  ///< defines a constant iterator over the triples.
+    typedef const unspecified_type                      Triple_const_iterator;  ///< defines a constant iterator over the triples.
 #else // DOXYGEN_RUNNING
     typedef Tripleset::iterator                         Triple_iterator;
-    typedef Tripleset::const_iterator                   Const_triple_iterator;
+    typedef Tripleset::const_iterator                   Triple_const_iterator;
 #endif // DOXYGEN_RUNNING
 
 /// \}
@@ -803,7 +803,7 @@ public:
 /// \name Iterators
 /// \{
     /// gives an iterator to the first point at the current scale.
-    Const_point_iterator points_begin() const { return _tree.begin(); }
+    Point_const_iterator points_begin() const { return _tree.begin(); }
     /// gives an iterator to the first point at the current scale.
     /** \warning Changes to the scale-space do not cause an automatic update to
      *  the surface.
@@ -811,7 +811,7 @@ public:
     Point_iterator points_begin() { return _tree.begin(); }
 
     /// gives a past-the-end iterator of the points at the current scale.
-    Const_point_iterator points_end() const { return _tree.end(); }
+    Point_const_iterator points_end() const { return _tree.end(); }
     /// gives a past-the-end iterator of the points at the current scale.
     /** \warning Changes to the scale-space do not cause an automatic update to
      *  the surface.
@@ -819,14 +819,14 @@ public:
     Point_iterator points_end() { return _tree.end(); }
 
     /// gives an iterator to the first triple in the surface.
-    Const_triple_iterator surface_begin() const { return _surface.begin(); }
+    Triple_const_iterator surface_begin() const { return _surface.begin(); }
     /// gives an iterator to the first triple in the surface.
     /** \warning Changes to the surface may change its topology.
      */
     Triple_iterator surface_begin() { return _surface.begin(); }
     
     /// gives a past-the-end iterator of the triples in the surface.
-    Const_triple_iterator surface_end() const { return _surface.end(); }
+    Triple_const_iterator surface_end() const { return _surface.end(); }
     /// gives a past-the-end iterator of the triples in the surface.
     /** \warning Changes to the surface may change its topology.
      */
@@ -837,7 +837,7 @@ public:
      *
      *  \pre `shell` is in the range [ 0, `number_of_shells()` ).
      */
-    Const_triple_iterator shell_begin( std::size_t shell ) const;
+    Triple_const_iterator shell_begin( std::size_t shell ) const;
     /// gives an iterator to the first triple in a given shell.
     /** \param shell is the index of the shell to access.
      *
@@ -852,7 +852,7 @@ public:
      *
      *  \pre `shell` is in the range [ 0, `number_of_shells()` ).
      */
-    Const_triple_iterator shell_end( std::size_t shell ) const;
+    Triple_const_iterator shell_end( std::size_t shell ) const;
 
     /// gives a past-the-end iterator of the triples in a given shell.
     /** \param shell is the index of the shell to access.

@@ -14,7 +14,7 @@ typedef CGAL::Scale_space_surface_reconstruction_3< Kernel >    Reconstruction;
 typedef Reconstruction::Point                                   Point;
 typedef std::vector< Point >                                    Pointset;
 
-typedef Reconstruction::Const_triple_iterator                   Triple_iterator;
+typedef Reconstruction::Triple_const_iterator                   Triple_iterator;
 
 int main(void) {
     // Read the data.
