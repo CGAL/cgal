@@ -249,6 +249,8 @@ _init_point(const Point_2& pt, Attribute type)
   const std::pair<Event*, bool>& pair_res =
     _push_event(pt, type, ARR_INTERIOR, ARR_INTERIOR);
 
+  // TODO ARR_INTERIOR, ARR_INTERIOR can be different here
+
   bool is_new = pair_res.second;
   m_visitor->update_event(pair_res.first, pt, is_new);
 }
@@ -279,10 +281,11 @@ template <typename Tr, typename Vis, typename Subcv, typename Evnt,
 void Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::
 _init_curve_end(const X_monotone_curve_2& cv, Arr_curve_end ind, Subcurve* sc)
 {
-  // Get the boundary conditions of the curve end.
+
   const Attribute  end_attr =
     (ind == ARR_MIN_END) ? Base_event::LEFT_END : Base_event::RIGHT_END;
 
+  // Get the parameter space of the curve end.
   Arr_parameter_space ps_x = m_traits->parameter_space_in_x_2_object()(cv, ind);
   Arr_parameter_space ps_y = m_traits->parameter_space_in_y_2_object()(cv, ind);
 
@@ -296,7 +299,7 @@ _init_curve_end(const X_monotone_curve_2& cv, Arr_curve_end ind, Subcurve* sc)
       m_traits->construct_max_vertex_2_object()(cv);
 
     pair_res = ((ps_x == ARR_INTERIOR) && (ps_y == ARR_INTERIOR)) ?
-      _push_event(pt, end_attr, ps_x, ps_y, sc) :
+      _push_event(pt,      end_attr, ps_x, ps_y, sc) :
       _push_event(cv, ind, end_attr, ps_x, ps_y, sc);
 
     // Inform the visitor in case we updated an existing event.
