@@ -989,9 +989,9 @@ insert_at_vertices(const X_monotone_curve_2& cv,
          "One of the input vertices should be the left curve end.");
     }
     else {
-      Arr_parameter_space  ps_x1 =
+      Arr_parameter_space ps_x1 =
         m_geom_traits->parameter_space_in_x_2_object()(cv, ARR_MIN_END);
-      Arr_parameter_space  ps_y1 =
+      Arr_parameter_space ps_y1 =
         m_geom_traits->parameter_space_in_y_2_object()(cv, ARR_MIN_END);
 
       // Check which vertex should be associated with the minimal curve-end
@@ -1305,8 +1305,7 @@ template <typename GeomTraits, typename TopTraits>
 typename Arrangement_on_surface_2<GeomTraits, TopTraits>::Halfedge_handle
 Arrangement_on_surface_2<GeomTraits, TopTraits>::
 insert_at_vertices(const X_monotone_curve_2& cv,
-                   Halfedge_handle prev1,
-                   Halfedge_handle prev2)
+                   Halfedge_handle prev1, Halfedge_handle prev2)
 {
 #if CGAL_ARRANGEMENT_ON_SURFACE_INSERT_VERBOSE
   std::cout << "Aos_2: insert_at_vertices (interface)" << std::endl;
@@ -1332,7 +1331,7 @@ insert_at_vertices(const X_monotone_curve_2& cv,
   Comparison_result  res;
 
   if (! at_obnd1) {
-    CGAL_precondition_code(Vertex_handle  v_right);
+    CGAL_precondition_code(Vertex_handle v_right);
 
     if (! prev1->target()->is_at_open_boundary() &&
         m_geom_traits->equal_2_object()
@@ -3998,6 +3997,7 @@ _defines_outer_ccb_of_new_face(const DHalfedge* he_to,
                                InputIterator lm_begin,
                                InputIterator lm_end) const
 {
+  std::cout << "_defines_outer_ccb_of_new_face" << std::endl;
   // Search for the leftmost vertex among the local minima
   typename Traits_adaptor_2::Parameter_space_in_x_2 parameter_space_in_x =
     m_geom_traits->parameter_space_in_x_2_object();
@@ -4121,7 +4121,7 @@ _is_above(const X_monotone_curve_2& xcv1, const X_monotone_curve_2& xcv2,
     // Both current and next curves are incident to the identification curve.
     // As v_min is the leftmost vertex, we know that their left ends must have
     // a boundary condition of type identification in y.
-    Arr_parameter_space  ps_y2 =
+    Arr_parameter_space ps_y2 =
       m_geom_traits->parameter_space_in_y_2_object()(xcv2, ARR_MIN_END);
 
     // Check if the curves lie on opposite sides of the identification curve.
@@ -4162,9 +4162,19 @@ _is_above(const X_monotone_curve_2& xcv1, const X_monotone_curve_2& xcv2,
   {
     // Compare the horizontal position of the two curve-ends at the point
     // of contraction.
-    Comparison_result x_res =
-      m_geom_traits->compare_x_curve_ends_2_object()(xcv1, ARR_MIN_END,
-                                                     xcv2, ARR_MIN_END);
+    typename Traits_adaptor_2::Compare_x_curve_ends_2 cmp_x_curve_ends =
+      m_geom_traits->compare_x_curve_ends_2_object();
+    typename Traits_adaptor_2::Parameter_space_in_x_2 ps_x_op =
+      m_geom_traits->parameter_space_in_x_2_object();
+
+    Arr_parameter_space ps_x1 = ps_x_op(xcv1, ARR_MIN_END);
+    Arr_parameter_space ps_x2 = ps_x_op(xcv2, ARR_MIN_END);
+    Comparison_result x_res = (ps_x1 != ps_x2) ?
+      ((ps_x1 == ARR_LEFT_BOUNDARY) ? SMALLER :
+       ((ps_x1 == ARR_RIGHT_BOUNDARY) ? LARGER :
+        ((ps_x2 == ARR_LEFT_BOUNDARY) ? LARGER : SMALLER))) :
+      ((ps_x1 != ARR_INTERIOR) ? EQUAL :
+       cmp_x_curve_ends(xcv1, ARR_MIN_END, xcv2, ARR_MIN_END));
 
     // Observe that if x_res == EQUAL the given subsequence is always exterior.
     return (((ps_y1 == ARR_BOTTOM_BOUNDARY) && (x_res == SMALLER)) ||
