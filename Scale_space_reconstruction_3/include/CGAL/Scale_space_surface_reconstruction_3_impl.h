@@ -487,6 +487,7 @@ reconstruct_surface( unsigned int iterations ) {
     collect_surface();
 }
 
+/// \cond internal_doc
 template < class Gt, class FS, class Sh, class wA, class Ct >
 template < class InputIterator >
 void
@@ -503,6 +504,7 @@ reconstruct_surface( InputIterator begin, InputIterator end, unsigned int iterat
     // Mesh the perturbed points.
     collect_surface();
 }
+/// \endcond
 
 template < class Gt, class FS, class Sh, class wA, class Ct >
 typename Scale_space_surface_reconstruction_3<Gt,FS,Sh,wA,Ct>::Const_triple_iterator

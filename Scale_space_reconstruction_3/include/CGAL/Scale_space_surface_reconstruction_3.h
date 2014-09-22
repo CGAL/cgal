@@ -278,16 +278,13 @@ public:
      *  \note Inserting the points does not automatically construct or
      *  update the surface.
      *
-     *  \note In order to construct the surface, either call
-     *  `reconstruct_surface(unsigned int iterations)` after inserting the
-     *  points, or insert the points using
-     *  `reconstruct_surface(InputIterator begin, InputIterator end, unsigned int iterations)`.
+     *  \note In order to construct the surface, call
+     *  `reconstruct_surface()` after inserting the points.
      *
      *  \warning Inserting new points may invalidate the neighborhood radius if
      *  it was previously estimated.
      *
      *  \sa `insert(const Point& p)`.
-     *  \sa `reconstruct_surface(InputIterator begin, InputIterator end, unsigned int iterations)`.
      */
 	template < class InputIterator >
 #ifdef DOXYGEN_RUNNING
@@ -306,7 +303,7 @@ public:
      *  update the surface.
      *
      *  \note In order to construct the surface, call
-     *  `reconstruct_surface(unsigned int iterations)`.
+     *  `#reconstruct_surface()`.
      *
      *  \warning Inserting a new point may invalidate the neighborhood radius
      *  if it was previously estimated.
@@ -361,17 +358,16 @@ public:
 
     /// gives the squared radius of the neighborhood.
     /** The neighborhood radius is used by
-     *  <code>[increase_scale(...)](\ref increase_scale)</code> to
+     *  `#increase_scale()` to
      *  compute the point set at the desired scale and by
-     *  <code>[reconstruct_surface(...)](\ref reconstruct_surface)</code> to
+     *  `#reconstruct_surface()` to
      *  construct a surface from the point set at the current scale.
      *
      *  \return the squared radius of the neighborhood, or -1 if the
      *  neighborhood radius has not yet been set.
      *
      *  \sa `increase_scale(unsigned int iterations)`.
-     *  \sa `reconstruct_surface(unsigned int iterations)`.
-     *  \sa `reconstruct_surface(InputIterator begin, InputIterator end, unsigned int iterations)`.
+     *  \sa `reconstruct_surface()`.
      */
     FT neighborhood_squared_radius() const { return _squared_radius; }
 
@@ -408,15 +404,14 @@ public:
      *  \sa `has_neighborhood_radius()`.
      *  \sa `mean_number_of_neighbors()`.
      *  \sa `estimate_neighborhood_radius()`.
-     *  \sa `estimate_neighborhood_radius(InputIterator begin, InputIterator end)`.
      */
     unsigned int neighborhood_sample_size() const { return _samples; }
     
     /// sets the squared radius of the neighborhood.
     /** The neighborhood radius is used by
-     *  <code>[increase_scale(...)](\ref increase_scale)</code> to
+     *  `#[increase_scale()` to
      *  compute the point set at the desired scale and by
-     *  <code>[reconstruct_surface(...)](\ref reconstruct_surface)</code> to
+     *  `reconstruct_surface()` to
      *  construct a surface from the point set at the current scale.
      *
      *  \param sq_radius is the squared radius of the neighborhood.
@@ -431,8 +426,7 @@ public:
      *  \sa `neighborhood_squared_radius()`.
      *  \sa `has_neighborhood_radius()`.
      *  \sa `increase_scale(unsigned int iterations)`.
-     *  \sa `reconstruct_surface(unsigned int iterations)`.
-     *  \sa `reconstruct_surface(InputIterator begin, InputIterator end, unsigned int iterations)`.
+     *  \sa `reconstruct_surface()`.
      */
     void set_neighborhood_squared_radius( const FT& sq_radius ) {
         _squared_radius = sq_radius;
@@ -476,7 +470,6 @@ public:
      *  \sa `has_neighborhood_radius()`.
      *  \sa `set_mean_number_of_neighbors(unsigned int neighbors)`.
      *  \sa `estimate_neighborhood_radius()`.
-     *  \sa `estimate_neighborhood_radius(InputIterator begin, InputIterator end)`.
      */
     void set_neighborhood_sample_size( unsigned int samples ) { _samples = samples; }
 
@@ -498,9 +491,8 @@ public:
      *  \sa `set_mean_number_of_neighbors(unsigned int neighbors)`.
      *  \sa `set_neighborhood_sample_size(unsigned int samples)`.
      *  \sa `estimate_neighborhood_radius(unsigned int neighbors, unsigned int samples)`.
-     *  \sa `estimate_neighborhood_radius(InputIterator begin, InputIterator end)`.
      *  \sa `increase_scale(unsigned int iterations)`.
-     *  \sa `reconstruct_surface(unsigned int iterations)`.
+     *  \sa `reconstruct_surface()`.
      */
     inline FT estimate_neighborhood_radius() {
         return estimate_neighborhood_radius( mean_number_of_neighbors(), neighborhood_sample_size() );
@@ -527,10 +519,10 @@ public:
      *  neighborhood radius will automatically adjust the surface.
      *
      *  \sa `estimate_neighborhood_radius()`.
-     *  \sa `estimate_neighborhood_radius(InputIterator begin, InputIterator end, unsigned int neighbors, unsigned int samples)`.
      */
 	FT estimate_neighborhood_radius( unsigned int neighbors, unsigned int samples );
     
+    /// \cond internal_doc
     /// estimates the neighborhood radius of a collection of points.
     /** This method is equivalent to running
      *  `clear()` followed by
@@ -548,10 +540,8 @@ public:
      *
      *  \sa `set_mean_number_of_neighbors(unsigned int neighbors)`.
      *  \sa `set_neighborhood_sample_size(unsigned int samples)`.
-     *  \sa `estimate_neighborhood_radius(InputIterator begin, InputIterator end, unsigned int neighbors, unsigned int samples)`.
      *  \sa `estimate_neighborhood_radius()`.
      *  \sa `insert(InputIterator begin, InputIterator end)`.
-     *  \sa `reconstruct_surface(InputIterator begin, InputIterator end, unsigned int iterations)`.
      */
 	template < class InputIterator >
 #ifdef DOXYGEN_RUNNING
@@ -562,7 +552,9 @@ public:
 #endif // DOXYGEN_RUNNING
         return estimate_neighborhood_radius( begin, end, mean_number_of_neighbors(), neighborhood_sample_size() );
     }
-    
+    /// \endcond
+
+    /// \cond internal_doc
     /// estimates the neighborhood radius of a collection of points based on a number of sample points.
     /** The neighborhood radius is expressed as the radius of the smallest ball
      *  centered on a point such that the ball contains at least a specified
@@ -587,7 +579,6 @@ public:
      *  neighborhood radius.
      *  \return the estimated neighborhood radius.
      *
-     *  \sa `estimate_neighborhood_radius(InputIterator begin, InputIterator end)`.
      *  \sa `estimate_neighborhood_radius(unsigned int neighbors, unsigned int samples)`.
      */
 	template < class InputIterator >
@@ -597,6 +588,7 @@ public:
 	FT estimate_neighborhood_radius( InputIterator begin, InputIterator end, unsigned int neighbors, unsigned int samples,
                                          typename boost::enable_if< CGAL::is_iterator<InputIterator> >::type* = NULL);
 #endif // DOXYGEN_RUNNING
+    /// \endcond
 
 /// \}
     
@@ -619,11 +611,11 @@ public:
      *  will not automatically adjust the surface.
      *
      *  \sa `estimate_neighborhood_radius()`.
-     *  \sa `reconstruct_surface(unsigned int iterations)`.
+     *  \sa `reconstruct_surface()`.
      */
 	void increase_scale( unsigned int iterations = 1 );
 
-#ifndef DOXYGEN_RUNNING
+    /// \cond internal_doc
     /// constructs a scale-space of a collection of points.
     /** If the neighborhood radius has not been set before, it is automatically
      *  estimated using `estimate_neighborhood_radius()`.
@@ -653,7 +645,7 @@ public:
 		insert( begin, end );
 		increase_scale( iterations );
 	}
-#endif // DOXYGEN_RUNNING
+    ///\endcond
 
 /// \}
 private:
@@ -746,7 +738,11 @@ public:
         CGAL_assertion( Sh::value == true );
         return _shells.size();
     }
-    
+
+    /// \cond internal_doc
+        void reconstruct_surface( unsigned int iterations);
+    /// \endcond
+
     /// constructs a triangle mesh from the point set at a fixed scale.
     /** The order of the points at the current scale is the same as the order
      *  at the original scale, meaning that the surface can interpolate the
@@ -759,18 +755,18 @@ public:
      *  If the neighborhood radius has not been set before, it is automatically
      *  estimated using `estimate_neighborhood_radius()`.
      *
-     *  \param iterations is the number of scale increase iterations to apply.
-     *  If `iterations` is 0, the point set at the current scale is used.
-     *
      *  \note This method processes the point set at the current scale. The
      *  points can be set with <code>[insert(begin, end)](\ref insert)</code>.
      *
-     *  \sa `reconstruct_surface(InputIterator begin, InputIterator end, unsigned int iterations)`.
      *  \sa `estimate_neighborhood_radius()`.
      *  \sa `increase_scale(unsigned int iterations)`.
      */
-	void reconstruct_surface( unsigned int iterations = 0 );
-    
+        void reconstruct_surface()
+        {
+          reconstruct_surface(0);
+        }
+
+    /// \cond internal_doc
     /// constructs a surface mesh from a collection of points at a fixed scale.
     /** This method is equivalent to running
      *  `clear()` followed by
@@ -800,7 +796,7 @@ public:
 	void reconstruct_surface( InputIterator begin, InputIterator end, unsigned int iterations = 0,
                                   typename boost::enable_if< CGAL::is_iterator<InputIterator> >::type* = NULL );
 #endif // DOXYGEN_RUNNING
-
+    /// \endcond
 /// \}
 
 public:
