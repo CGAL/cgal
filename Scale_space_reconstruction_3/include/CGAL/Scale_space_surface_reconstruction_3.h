@@ -820,7 +820,7 @@ public:
     Point_iterator scale_space_begin() { return _tree.begin(); }
 
     /// gives a past-the-end iterator of the points at the current scale.
-    Const_point_iterator scale_space_end() const { return _tree.begin(); }
+    Const_point_iterator scale_space_end() const { return _tree.end(); }
     /// gives a past-the-end iterator of the points at the current scale.
     /** \warning Changes to the scale-space do not cause an automatic update to
      *  the surface.
