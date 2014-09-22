@@ -1,10 +1,7 @@
 #include <CGAL/Epick_d.h>
 #include <CGAL/point_generators_d.h>
 #include <CGAL/Delaunay_triangulation.h>
-#include <CGAL/spatial_sort.h>
 #include <CGAL/algorithm.h>
-#include <CGAL/Gmpq.h>
-#include <tilted_grid.h>
 #include <vector>
 #include <string>
 #include <fstream>

@@ -49,7 +49,7 @@ void test(const int d, const string & type)
     }
     assert((nb_verts == tds.number_of_vertices()));
 
-	if( d > 1 )
+    if( d > 1 )
     {
         // insert in hole
         std::vector<Full_cell_handle> simps;
@@ -65,8 +65,8 @@ void test(const int d, const string & type)
     {
         for( int d = 1; d < tds.current_dimension() - 1; ++d )
         {
-	  //cout << '\n' << d << "-dimensional faces adjacent to " << &(*vit)
-          //      << " ( current dimension is " << tds.current_dimension() << " )";
+            //cout << '\n' << d << "-dimensional faces adjacent to " << &(*vit)
+            //      << " ( current dimension is " << tds.current_dimension() << " )";
             faces.clear();
             std::back_insert_iterator<Faces> out(faces);
             tds.incident_faces(vit, d, out);

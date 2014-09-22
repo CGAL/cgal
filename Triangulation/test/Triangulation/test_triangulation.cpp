@@ -2,7 +2,6 @@
 #include <CGAL/point_generators_d.h>
 #include <CGAL/Triangulation.h>
 #include <CGAL/algorithm.h>
-#include <tilted_grid.h>
 #include <vector>
 #include <string>
 #include <fstream>
