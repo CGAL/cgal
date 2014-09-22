@@ -806,7 +806,9 @@ _locate_around_pole(Vertex* v,
   Arr_parameter_space curr_ps_x = ps_x_op(curr->curve(), curr_end);
 
   Comparison_result curr_res = (ps_x != curr_ps_x) ?
-    ((ps_x == ARR_LEFT_BOUNDARY) ? SMALLER : LARGER) :
+    ((ps_x == ARR_LEFT_BOUNDARY) ? SMALLER :
+     ((ps_x == ARR_RIGHT_BOUNDARY) ? LARGER :
+      ((curr_ps_x == ARR_LEFT_BOUNDARY) ? LARGER : SMALLER))) :
     ((ps_x != ARR_INTERIOR) ? EQUAL :
      cmp_x_curve_ends(xc, ind, curr->curve(), curr_end));
 
@@ -816,12 +818,16 @@ _locate_around_pole(Vertex* v,
     Arr_parameter_space next_ps_x = ps_x_op(next->curve(), next_end);
 
     Comparison_result next_res = (ps_x != next_ps_x) ?
-      ((ps_x == ARR_LEFT_BOUNDARY) ? SMALLER : LARGER) :
+      ((ps_x == ARR_LEFT_BOUNDARY) ? SMALLER :
+       ((ps_x == ARR_RIGHT_BOUNDARY) ? LARGER :
+        ((next_ps_x == ARR_LEFT_BOUNDARY) ? LARGER : SMALLER))) :
       ((ps_x != ARR_INTERIOR) ? EQUAL :
        cmp_x_curve_ends(xc, ind, next->curve(), next_end));
 
     Comparison_result curr_next_res = (curr_ps_x != next_ps_x) ?
-      ((curr_ps_x == ARR_LEFT_BOUNDARY) ? SMALLER : LARGER) :
+      ((curr_ps_x == ARR_LEFT_BOUNDARY) ? SMALLER :
+       ((curr_ps_x == ARR_RIGHT_BOUNDARY) ? LARGER :
+        ((next_ps_x == ARR_LEFT_BOUNDARY) ? LARGER : SMALLER))) :
       ((curr_ps_x != ARR_INTERIOR) ? EQUAL :
        cmp_x_curve_ends(curr->curve(), curr_end, next->curve(), next_end));
 
