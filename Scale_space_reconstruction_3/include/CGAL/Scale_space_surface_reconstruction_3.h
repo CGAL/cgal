@@ -344,134 +344,6 @@ private:
 public:
 /// \name Neighborhood Size Estimation
 /// \{
-    /// checks whether the neighborhood radius has been set.
-    /** The radius can be set manually, or estimated automatically.
-     *
-     *  \return `true` iff the radius has been either set manually or estimated.
-     *
-     *  \sa `set_neighborhood_squared_radius()`.
-     *  \sa `estimate_neighborhood_squared_radius()`.
-     */
-    bool has_neighborhood_squared_radius() const {
-        return sign( _squared_radius ) == POSITIVE;
-    }
-
-    /// gives the squared radius of the neighborhood.
-    /** The neighborhood radius is used by
-     *  `#increase_scale()` to
-     *  compute the point set at the desired scale and by
-     *  `#reconstruct_surface()` to
-     *  construct a surface from the point set at the current scale.
-     *
-     *  \return the squared radius of the neighborhood, or -1 if the
-     *  neighborhood radius has not yet been set.
-     *
-     *  \sa `increase_scale(unsigned int iterations)`.
-     *  \sa `reconstruct_surface()`.
-     */
-    FT neighborhood_squared_radius() const { return _squared_radius; }
-
-    /// gives the mean number of neighbors an estimated neighborhood should contain.
-    /** This number is only used if the neighborhood radius has not been set
-     *  manually.
-     *
-     *  When the neighborhood radius is estimated, it should on average contain
-     *  this many neighbors, not counting the neighborhood center.
-     *
-     *  \return the number of neighbors a neighborhood ball centered on a point
-     *  should contain on average when the radius is estimated, not counting
-     *  the point itself.
-     *
-     *  \sa `set_mean_number_of_neighbors(unsigned int neighbors)`.
-     *  \sa `has_neighborhood_squared_radius()`.
-     *  \sa `neighborhood_sample_size()`.
-     *  \sa `estimate_neighborhood_squared_radius()`.
-     */
-    unsigned int mean_number_of_neighbors() const { return _mean_neighbors; }
-
-    /// gives the number of sample points the neighborhood estimation uses.
-    /** This number is only used if the neighborhood radius has not been set
-     *  manually.
-     *
-     *  If the number of samples is larger than the point cloud, every point is
-     *  used and the optimal neighborhood radius is computed exactly instead of
-     *  estimated.
-     *
-     *  \return the number of points sampled for neighborhood estimation.
-     *
-     *  \sa `set_neighborhood_sample_size(unsigned int samples)`.
-     *  \sa `has_neighborhood_squared_radius()`.
-     *  \sa `mean_number_of_neighbors()`.
-     *  \sa `estimate_neighborhood_squared_radius()`.
-     */
-    unsigned int neighborhood_sample_size() const { return _samples; }
-    
-    /// sets the squared radius of the neighborhood.
-    /** The neighborhood radius is used by
-     *  `#[increase_scale()` to
-     *  compute the point set at the desired scale and by
-     *  `reconstruct_surface()` to
-     *  construct a surface from the point set at the current scale.
-     *
-     *  \param sq_radius is the squared radius of the neighborhood.
-     *
-     *  \note If the neighborhood squared radius is negative when the point set
-     *  is smoothed or when the surface is computed, the neighborhood radius
-     *  will be computed automatically.
-     *
-     *  \warning If the surface was already constructed, changing the
-     *  neighborhood radius will automatically adjust the surface.
-     *
-     *  \sa `neighborhood_squared_radius()`.
-     *  \sa `has_neighborhood_squared_radius()`.
-     *  \sa `increase_scale(unsigned int iterations)`.
-     *  \sa `reconstruct_surface()`.
-     */
-    void set_neighborhood_squared_radius( const FT& sq_radius ) {
-        _squared_radius = sq_radius;
-		if( has_neighborhood_squared_radius() && has_shape() )
-            Shape_construction_3().change_scale( _shape, _squared_radius );
-    }
-
-    /// sets the mean number of neighbors an estimated neighborhood should contain.
-    /** This number is only used if the neighborhood radius has not been set
-     *  manually.
-     *
-     *  When the neighborhood radius is estimated, it should on average contain
-     *  this many neighbors, not counting the neighborhood center.
-     *
-     *  \param neighbors is the number of neighbors a neighborhood ball centered on a point
-     *  should contain on average when the radius is estimated, not counting
-     *  the point itself.
-     *
-     *  \note This does not start the estimation process.
-     *
-     *  \sa `mean_number_of_neighbors()`.
-     *  \sa `has_neighborhood_squared_radius()`.
-     *  \sa `set_neighborhood_sample_size(unsigned int samples)`.
-     */
-    void set_mean_number_of_neighbors( unsigned int neighbors ) { _mean_neighbors = neighbors; }
-    
-    /// sets the number of sample points the neighborhood estimation uses.
-    /** This number is only used if the neighborhood radius has not been set
-     *  manually.
-     *
-     *  If the number of samples is larger than the point cloud, every point is
-     *  used and the optimal neighborhood radius is computed exactly instead of
-     *  estimated.
-     *
-     *  \param samples is the number of points to sample for neighborhood
-     *  estimation.
-     *
-     *  \note This does not start the estimation process.
-     *
-     *  \sa `neighborhood_sample_size()`.
-     *  \sa `has_neighborhood_squared_radius()`.
-     *  \sa `set_mean_number_of_neighbors(unsigned int neighbors)`.
-     *  \sa `estimate_neighborhood_squared_radius()`.
-     */
-    void set_neighborhood_sample_size( unsigned int samples ) { _samples = samples; }
-
     /// estimates the neighborhood radius.
     /** This method is equivalent to running
      *  <code>[estimate_neighborhood_squared_radius( mean_number_of_neighbors(), neighborhood_sample_size() )](\ref estimate_neighborhood_squared_radius)</code>.
@@ -520,6 +392,61 @@ public:
      *  \sa `estimate_neighborhood_squared_radius()`.
      */
 	FT estimate_neighborhood_squared_radius( unsigned int neighbors, unsigned int samples );
+
+
+    /// sets the squared radius of the neighborhood.
+    /** The neighborhood radius is used by
+     *  `#[increase_scale()` to
+     *  compute the point set at the desired scale and by
+     *  `reconstruct_surface()` to
+     *  construct a surface from the point set at the current scale.
+     *
+     *  \param sq_radius is the squared radius of the neighborhood.
+     *
+     *  \note If the neighborhood squared radius is negative when the point set
+     *  is smoothed or when the surface is computed, the neighborhood radius
+     *  will be computed automatically.
+     *
+     *  \warning If the surface was already constructed, changing the
+     *  neighborhood radius will automatically adjust the surface.
+     *
+     *  \sa `neighborhood_squared_radius()`.
+     *  \sa `has_neighborhood_squared_radius()`.
+     *  \sa `increase_scale(unsigned int iterations)`.
+     *  \sa `reconstruct_surface()`.
+     */
+    void set_neighborhood_squared_radius( const FT& sq_radius ) {
+        _squared_radius = sq_radius;
+		if( has_neighborhood_squared_radius() && has_shape() )
+            Shape_construction_3().change_scale( _shape, _squared_radius );
+    }
+
+    /// gives the squared radius of the neighborhood.
+    /** The neighborhood radius is used by
+     *  `#increase_scale()` to
+     *  compute the point set at the desired scale and by
+     *  `#reconstruct_surface()` to
+     *  construct a surface from the point set at the current scale.
+     *
+     *  \return the squared radius of the neighborhood, or -1 if the
+     *  neighborhood radius has not yet been set.
+     *
+     *  \sa `increase_scale(unsigned int iterations)`.
+     *  \sa `reconstruct_surface()`.
+     */
+    FT neighborhood_squared_radius() const { return _squared_radius; }
+
+    /// checks whether the neighborhood radius has been set.
+    /** The radius can be set manually, or estimated automatically.
+     *
+     *  \return `true` iff the radius has been either set manually or estimated.
+     *
+     *  \sa `set_neighborhood_squared_radius()`.
+     *  \sa `estimate_neighborhood_squared_radius()`.
+     */
+    bool has_neighborhood_squared_radius() const {
+        return sign( _squared_radius ) == POSITIVE;
+    }
     
     /// \cond internal_doc
     /// estimates the neighborhood radius of a collection of points.
@@ -588,9 +515,85 @@ public:
                                          typename boost::enable_if< CGAL::is_iterator<InputIterator> >::type* = NULL);
 #endif // DOXYGEN_RUNNING
     /// \endcond
-
 /// \}
+
+/// \name Neighborhood Size Estimation Parameters
+/// \{
+    /// gives the mean number of neighbors an estimated neighborhood should contain.
+    /** This number is only used if the neighborhood radius has not been set
+     *  manually.
+     *
+     *  When the neighborhood radius is estimated, it should on average contain
+     *  this many neighbors, not counting the neighborhood center.
+     *
+     *  \return the number of neighbors a neighborhood ball centered on a point
+     *  should contain on average when the radius is estimated, not counting
+     *  the point itself.
+     *
+     *  \sa `set_mean_number_of_neighbors(unsigned int neighbors)`.
+     *  \sa `has_neighborhood_squared_radius()`.
+     *  \sa `neighborhood_sample_size()`.
+     *  \sa `estimate_neighborhood_squared_radius()`.
+     */
+    unsigned int mean_number_of_neighbors() const { return _mean_neighbors; }
+
+    /// gives the number of sample points the neighborhood estimation uses.
+    /** This number is only used if the neighborhood radius has not been set
+     *  manually.
+     *
+     *  If the number of samples is larger than the point cloud, every point is
+     *  used and the optimal neighborhood radius is computed exactly instead of
+     *  estimated.
+     *
+     *  \return the number of points sampled for neighborhood estimation.
+     *
+     *  \sa `set_neighborhood_sample_size(unsigned int samples)`.
+     *  \sa `has_neighborhood_squared_radius()`.
+     *  \sa `mean_number_of_neighbors()`.
+     *  \sa `estimate_neighborhood_squared_radius()`.
+     */
+    unsigned int neighborhood_sample_size() const { return _samples; }  
+
+    /// sets the mean number of neighbors an estimated neighborhood should contain.
+    /** This number is only used if the neighborhood radius has not been set
+     *  manually.
+     *
+     *  When the neighborhood radius is estimated, it should on average contain
+     *  this many neighbors, not counting the neighborhood center.
+     *
+     *  \param neighbors is the number of neighbors a neighborhood ball centered on a point
+     *  should contain on average when the radius is estimated, not counting
+     *  the point itself.
+     *
+     *  \note This does not start the estimation process.
+     *
+     *  \sa `mean_number_of_neighbors()`.
+     *  \sa `has_neighborhood_squared_radius()`.
+     *  \sa `set_neighborhood_sample_size(unsigned int samples)`.
+     */
+    void set_mean_number_of_neighbors( unsigned int neighbors ) { _mean_neighbors = neighbors; }
     
+    /// sets the number of sample points the neighborhood estimation uses.
+    /** This number is only used if the neighborhood radius has not been set
+     *  manually.
+     *
+     *  If the number of samples is larger than the point cloud, every point is
+     *  used and the optimal neighborhood radius is computed exactly instead of
+     *  estimated.
+     *
+     *  \param samples is the number of points to sample for neighborhood
+     *  estimation.
+     *
+     *  \note This does not start the estimation process.
+     *
+     *  \sa `neighborhood_sample_size()`.
+     *  \sa `has_neighborhood_squared_radius()`.
+     *  \sa `set_mean_number_of_neighbors(unsigned int neighbors)`.
+     *  \sa `estimate_neighborhood_squared_radius()`.
+     */
+    void set_neighborhood_sample_size( unsigned int samples ) { _samples = samples; }
+/// \}
+
 /// \name Scale-Space Manipulation
 /// \{
     /// increases the scale by a number of iterations.
