@@ -181,7 +181,7 @@ template<class R_> struct Orientation_of_points<R_,Dimension_tag<1>,true> : priv
 	result_type operator()(Point const&x, Point const&y) const {
 		typename Get_functor<R, Compute_point_cartesian_coordinate_tag>::type c(this->kernel());
 		// No sign_of_determinant(RT) :-(
-		return compare(c(y,0),c(x,0));
+		return CGAL::compare(c(y,0),c(x,0));
 	}
 	template<class Iter>
 	result_type operator()(Iter f, Iter CGAL_assertion_code(e))const{
