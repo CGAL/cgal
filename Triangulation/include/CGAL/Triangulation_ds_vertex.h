@@ -47,7 +47,7 @@ public:
 protected: // DATA MEMBERS
     Full_cell_handle full_cell_; // A handle to an incident full_cell
 
-public:	
+public:
     // Constructs a vertex with incident full_cell 's'
     Triangulation_ds_vertex(Full_cell_handle s) : full_cell_(s) /* Concept */
     {
@@ -61,7 +61,7 @@ public:
     /// Set 's' as an incident full_cell
     void set_full_cell(Full_cell_handle s) /* Concept */
     {
-		CGAL_precondition( Full_cell_handle() != s );
+        CGAL_precondition( Full_cell_handle() != s );
         full_cell_ = s;
     }
 
@@ -115,7 +115,7 @@ public: // FOR MEMORY MANAGEMENT
 
 template < class TDS >
 std::istream &
-operator>>(std::istream & is, Triangulation_ds_vertex<TDS> & v) /* Concept */
+operator>>(std::istream & is, Triangulation_ds_vertex<TDS> &) /* Concept */
 {
     /*if( is_ascii(is) )
     {}
@@ -125,7 +125,7 @@ operator>>(std::istream & is, Triangulation_ds_vertex<TDS> & v) /* Concept */
 
 template< class TDS >
 std::ostream &
-operator<<(std::ostream & os, const Triangulation_ds_vertex<TDS> & v) /* Concept */
+operator<<(std::ostream & os, const Triangulation_ds_vertex<TDS> &) /* Concept */
 {
     /*if( is_ascii(os) )
     {

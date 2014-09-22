@@ -342,7 +342,7 @@ public:
 
 private:
     // Some internal types to shorten notation
-    using typename Base::Coaffine_orientation_d;
+    typedef typename Base::Coaffine_orientation_d Coaffine_orientation_d;
     using Base::flat_orientation_;
     typedef Conflict_predicate<Coaffine_orientation_d, Side_of_oriented_subsphere_d>
             Conflict_pred_in_subspace;
@@ -716,7 +716,7 @@ Delaunay_triangulation<DCTraits, TDS>
 template< typename DCTraits, typename TDS >
 typename Delaunay_triangulation<DCTraits, TDS>::Vertex_handle
 Delaunay_triangulation<DCTraits, TDS>
-::insert(const Point & p, const Locate_type lt, const Face & f, const Facet & ft, const Full_cell_handle s)
+::insert(const Point & p, const Locate_type lt, const Face & f, const Facet &, const Full_cell_handle s)
 {
     switch( lt )
     {

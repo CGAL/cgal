@@ -210,7 +210,7 @@ public:
     void*   for_compact_container() const { return combinatorics_.for_compact_container(); }
     void* & for_compact_container() { return combinatorics_.for_compact_container(); }
 
-    bool is_valid(bool verbose = false, int level = 0) const /* Concept */
+    bool is_valid(bool verbose = false, int = 0) const /* Concept */
     {
         const int d = maximal_dimension();
         int i(0);
@@ -261,7 +261,7 @@ private:
 
 template < typename TDS, typename SSP >
 std::ostream &
-operator<<(std::ostream & O, const Triangulation_ds_full_cell<TDS,SSP> & s) /* Concept */
+operator<<(std::ostream & O, const Triangulation_ds_full_cell<TDS,SSP> &) /* Concept */
 {
     /*if( is_ascii(O) )
     {
@@ -273,7 +273,7 @@ operator<<(std::ostream & O, const Triangulation_ds_full_cell<TDS,SSP> & s) /* C
 
 template < typename TDS, typename SSP >
 std::istream &
-operator>>(std::istream & I, Triangulation_ds_full_cell<TDS,SSP> & s) /* Concept */
+operator>>(std::istream & I, Triangulation_ds_full_cell<TDS,SSP> &) /* Concept */
 {
     /*if( is_ascii(I) )
     {}

@@ -609,7 +609,7 @@ public:
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - INPUT / OUTPUT
 
     std::istream & read_full_cells(std::istream &, const std::vector<Vertex_handle> &);
-    std::ostream & write_full_cells(std::ostream &, std::map<Vertex_const_handle, int> &) const;
+    std::ostream & write_full_cells(std::ostream &, std::map<Vertex_const_handle, std::size_t> &) const;
 
 }; // end of ``declaration/definition'' of Triangulation_data_structure<...>
 
@@ -1299,7 +1299,7 @@ void Triangulation_data_structure<Dim, Vb, Fcb>
             ++v1;
         }
     }
-    for( int i = 0; i < edges.size(); ++i )
+    for( std::size_t i = 0; i < edges.size(); ++i )
     {
         os << std::endl << edges[i].size();
         for( std::set<int>::const_iterator nit = edges[i].begin();
@@ -1316,7 +1316,7 @@ std::istream &
 Triangulation_data_structure<Dimen, Vb, Fcb>
 ::read_full_cells(std::istream & is, const std::vector<Vertex_handle> & vertices)
 {
-    size_t m; // number of full_cells
+    std::size_t m; // number of full_cells
     int index;
     const int cd = current_dimension();
     if( is_ascii(is) )
@@ -1327,7 +1327,7 @@ Triangulation_data_structure<Dimen, Vb, Fcb>
     std::vector<Full_cell_handle> full_cells;
     full_cells.reserve(m);
     // read the vertices of each full_cell
-    size_t i = 0;
+    std::size_t i = 0;
     while( i < m )
     {
         Full_cell_handle s = new_full_cell();
@@ -1392,11 +1392,11 @@ Triangulation_data_structure<Dimen, Vb, Fcb>
 template<class Dimen, class Vb, class Fcb>
 std::ostream &
 Triangulation_data_structure<Dimen, Vb, Fcb>
-::write_full_cells(std::ostream & os, std::map<Vertex_const_handle, int> & index_of_vertex) const
+::write_full_cells(std::ostream & os, std::map<Vertex_const_handle, std::size_t> & index_of_vertex) const
 {
     std::map<Full_cell_const_handle, int> index_of_full_cell;
 
-    size_t m = number_of_full_cells();
+    std::size_t m = number_of_full_cells();
 
     if( is_ascii(os) )
         os << std::endl << m;
@@ -1462,7 +1462,7 @@ operator>>(std::istream & is, Triangulation_data_structure<Dimen, Vb, Fcb> & tr)
     typedef typename TDS::Vertex_handle                  Vertex_handle;
 
     // read current dimension and number of vertices
-    size_t n;
+    std::size_t n;
     int cd;
     if( is_ascii(is) )
         is >> cd >> n;
@@ -1484,7 +1484,7 @@ operator>>(std::istream & is, Triangulation_data_structure<Dimen, Vb, Fcb> & tr)
     vertices.resize(n);
 
     // read the vertices:
-    size_t i(0);
+    std::size_t i(0);
     while( i < n )
     {
         vertices[i] = tr.new_vertex();
@@ -1513,7 +1513,7 @@ operator<<(std::ostream & os, const Triangulation_data_structure<Dimen, Vb, Fcb>
     typedef typename TDS::Vertex_const_iterator          Vertex_iterator;
 
     // outputs dimension and number of vertices
-    size_t n = tr.number_of_vertices();
+    std::size_t n = tr.number_of_vertices();
     if( is_ascii(os) )
         os << tr.current_dimension() << std::endl << n;
     else
@@ -1526,8 +1526,8 @@ operator<<(std::ostream & os, const Triangulation_data_structure<Dimen, Vb, Fcb>
         return os;
 
     // write the vertices
-    std::map<Vertex_handle, int> index_of_vertex;
-    int i = 0;
+    std::map<Vertex_handle, std::size_t> index_of_vertex;
+    std::size_t i = 0;
     for( Vertex_iterator it = tr.vertices_begin(); it != tr.vertices_end(); ++it, ++i )
     {
         os << *it; // write the vertex

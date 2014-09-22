@@ -1181,7 +1181,7 @@ Triangulation<TT, TDS>
 }
 
 template < class TT, class TDS >
-bool Triangulation<TT, TDS>::are_incident_full_cells_valid(Vertex_const_handle v, bool verbose, int level) const
+bool Triangulation<TT, TDS>::are_incident_full_cells_valid(Vertex_const_handle v, bool verbose, int) const
 {
     if( current_dimension() <= 0 )
         return true;
