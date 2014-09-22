@@ -253,8 +253,8 @@ private:
 	void collect_facets( Tag_true );
 	void collect_facets( Tag_false );
     void collect_facets() { 
-        if( !has_neighborhood_radius() )
-            estimate_neighborhood_radius();
+        if( !has_neighborhood_squared_radius() )
+            estimate_neighborhood_squared_radius();
         collect_facets( Sh() );
     }
 
@@ -350,9 +350,9 @@ public:
      *  \return `true` iff the radius has been either set manually or estimated.
      *
      *  \sa `set_neighborhood_squared_radius()`.
-     *  \sa `estimate_neighborhood_radius()`.
+     *  \sa `estimate_neighborhood_squared_radius()`.
      */
-    bool has_neighborhood_radius() const {
+    bool has_neighborhood_squared_radius() const {
         return sign( _squared_radius ) == POSITIVE;
     }
 
@@ -383,10 +383,9 @@ public:
      *  the point itself.
      *
      *  \sa `set_mean_number_of_neighbors(unsigned int neighbors)`.
-     *  \sa `has_neighborhood_radius()`.
+     *  \sa `has_neighborhood_squared_radius()`.
      *  \sa `neighborhood_sample_size()`.
-     *  \sa `estimate_neighborhood_radius()`.
-     *  \sa `estimate_neighborhood_radius(InputIterator begin, InputIterator end)`.
+     *  \sa `estimate_neighborhood_squared_radius()`.
      */
     unsigned int mean_number_of_neighbors() const { return _mean_neighbors; }
 
@@ -401,9 +400,9 @@ public:
      *  \return the number of points sampled for neighborhood estimation.
      *
      *  \sa `set_neighborhood_sample_size(unsigned int samples)`.
-     *  \sa `has_neighborhood_radius()`.
+     *  \sa `has_neighborhood_squared_radius()`.
      *  \sa `mean_number_of_neighbors()`.
-     *  \sa `estimate_neighborhood_radius()`.
+     *  \sa `estimate_neighborhood_squared_radius()`.
      */
     unsigned int neighborhood_sample_size() const { return _samples; }
     
@@ -424,13 +423,13 @@ public:
      *  neighborhood radius will automatically adjust the surface.
      *
      *  \sa `neighborhood_squared_radius()`.
-     *  \sa `has_neighborhood_radius()`.
+     *  \sa `has_neighborhood_squared_radius()`.
      *  \sa `increase_scale(unsigned int iterations)`.
      *  \sa `reconstruct_surface()`.
      */
     void set_neighborhood_squared_radius( const FT& sq_radius ) {
         _squared_radius = sq_radius;
-		if( has_neighborhood_radius() && has_shape() )
+		if( has_neighborhood_squared_radius() && has_shape() )
             Shape_construction_3().change_scale( _shape, _squared_radius );
     }
 
@@ -448,7 +447,7 @@ public:
      *  \note This does not start the estimation process.
      *
      *  \sa `mean_number_of_neighbors()`.
-     *  \sa `has_neighborhood_radius()`.
+     *  \sa `has_neighborhood_squared_radius()`.
      *  \sa `set_neighborhood_sample_size(unsigned int samples)`.
      */
     void set_mean_number_of_neighbors( unsigned int neighbors ) { _mean_neighbors = neighbors; }
@@ -467,15 +466,15 @@ public:
      *  \note This does not start the estimation process.
      *
      *  \sa `neighborhood_sample_size()`.
-     *  \sa `has_neighborhood_radius()`.
+     *  \sa `has_neighborhood_squared_radius()`.
      *  \sa `set_mean_number_of_neighbors(unsigned int neighbors)`.
-     *  \sa `estimate_neighborhood_radius()`.
+     *  \sa `estimate_neighborhood_squared_radius()`.
      */
     void set_neighborhood_sample_size( unsigned int samples ) { _samples = samples; }
 
     /// estimates the neighborhood radius.
     /** This method is equivalent to running
-     *  <code>[estimate_neighborhood_radius( mean_number_of_neighbors(), neighborhood_sample_size() )](\ref estimate_neighborhood_radius)</code>.
+     *  <code>[estimate_neighborhood_squared_radius( mean_number_of_neighbors(), neighborhood_sample_size() )](\ref estimate_neighborhood_squared_radius)</code>.
      *
      *  This method can be called by the scale-space and surface construction
      *  methods if the neighborhood radius is not set when they are called.
@@ -490,12 +489,12 @@ public:
      *
      *  \sa `set_mean_number_of_neighbors(unsigned int neighbors)`.
      *  \sa `set_neighborhood_sample_size(unsigned int samples)`.
-     *  \sa `estimate_neighborhood_radius(unsigned int neighbors, unsigned int samples)`.
+     *  \sa `estimate_neighborhood_squared_radius(unsigned int neighbors, unsigned int samples)`.
      *  \sa `increase_scale(unsigned int iterations)`.
      *  \sa `reconstruct_surface()`.
      */
-    inline FT estimate_neighborhood_radius() {
-        return estimate_neighborhood_radius( mean_number_of_neighbors(), neighborhood_sample_size() );
+    inline FT estimate_neighborhood_squared_radius() {
+        return estimate_neighborhood_squared_radius( mean_number_of_neighbors(), neighborhood_sample_size() );
     }
 
     /// estimates the neighborhood radius based on a number of sample points.
@@ -518,16 +517,16 @@ public:
      *  \warning If the surface was already constructed, estimating the
      *  neighborhood radius will automatically adjust the surface.
      *
-     *  \sa `estimate_neighborhood_radius()`.
+     *  \sa `estimate_neighborhood_squared_radius()`.
      */
-	FT estimate_neighborhood_radius( unsigned int neighbors, unsigned int samples );
+	FT estimate_neighborhood_squared_radius( unsigned int neighbors, unsigned int samples );
     
     /// \cond internal_doc
     /// estimates the neighborhood radius of a collection of points.
     /** This method is equivalent to running
      *  `clear()` followed by
      *  <code>[insert(begin, end)](\ref insert)</code> and
-     *  finally <code>[estimate_neighborhood_radius( mean_number_of_neighbors(), neighborhood_sample_size() )](\ref estimate_neighborhood_radius)</code>.
+     *  finally <code>[estimate_neighborhood_squared_radius( mean_number_of_neighbors(), neighborhood_sample_size() )](\ref estimate_neighborhood_squared_radius)</code>.
      *
      *  This method can be called by the scale-space and surface construction
      *  methods if the neighborhood radius is not set when they are called.
@@ -540,17 +539,17 @@ public:
      *
      *  \sa `set_mean_number_of_neighbors(unsigned int neighbors)`.
      *  \sa `set_neighborhood_sample_size(unsigned int samples)`.
-     *  \sa `estimate_neighborhood_radius()`.
+     *  \sa `estimate_neighborhood_squared_radius()`.
      *  \sa `insert(InputIterator begin, InputIterator end)`.
      */
 	template < class InputIterator >
 #ifdef DOXYGEN_RUNNING
-    FT estimate_neighborhood_radius( InputIterator begin, InputIterator end ) {
+    FT estimate_neighborhood_squared_radius( InputIterator begin, InputIterator end ) {
 #else // DOXYGEN_RUNNING
-    FT estimate_neighborhood_radius( InputIterator begin, InputIterator end,
+    FT estimate_neighborhood_squared_radius( InputIterator begin, InputIterator end,
                      typename boost::enable_if< CGAL::is_iterator<InputIterator> >::type* = NULL ) {
 #endif // DOXYGEN_RUNNING
-        return estimate_neighborhood_radius( begin, end, mean_number_of_neighbors(), neighborhood_sample_size() );
+        return estimate_neighborhood_squared_radius( begin, end, mean_number_of_neighbors(), neighborhood_sample_size() );
     }
     /// \endcond
 
@@ -566,7 +565,7 @@ public:
      *  This method is equivalent to running
      *  `clear()` followed by
      *  <code>[insert(begin, end)](\ref insert)</code> and finally
-     *  <code>[estimate_neighborhood_radius(neighbors, samples)](\ref estimate_neighborhood_radius)</code>.
+     *  <code>[estimate_neighborhood_squared_radius(neighbors, samples)](\ref estimate_neighborhood_squared_radius)</code>.
      *
      *  \tparam InputIterator is an iterator over the point collection.
      *  The value type of the iterator must be a `Point`.
@@ -579,13 +578,13 @@ public:
      *  neighborhood radius.
      *  \return the estimated neighborhood radius.
      *
-     *  \sa `estimate_neighborhood_radius(unsigned int neighbors, unsigned int samples)`.
+     *  \sa `estimate_neighborhood_squared_radius(unsigned int neighbors, unsigned int samples)`.
      */
 	template < class InputIterator >
 #ifdef DOXYGEN_RUNNING
-	FT estimate_neighborhood_radius( InputIterator begin, InputIterator end, unsigned int neighbors, unsigned int samples );
+	FT estimate_neighborhood_squared_radius( InputIterator begin, InputIterator end, unsigned int neighbors, unsigned int samples );
 #else // DOXYGEN_RUNNING
-	FT estimate_neighborhood_radius( InputIterator begin, InputIterator end, unsigned int neighbors, unsigned int samples,
+	FT estimate_neighborhood_squared_radius( InputIterator begin, InputIterator end, unsigned int neighbors, unsigned int samples,
                                          typename boost::enable_if< CGAL::is_iterator<InputIterator> >::type* = NULL);
 #endif // DOXYGEN_RUNNING
     /// \endcond
@@ -599,7 +598,7 @@ public:
      *  is computed. At a higher scale, the points set is smoother.
      *
      *  If the neighborhood radius has not been set before, it is automatically
-     *  estimated using `estimate_neighborhood_radius()`.
+     *  estimated using `estimate_neighborhood_squared_radius()`.
      *
      *  \param iterations is the number of iterations to perform. If
      *  `iterations` is 0, nothing happens.
@@ -610,7 +609,7 @@ public:
      *  \note If the surface was already constructed, increasing the scale
      *  will not automatically adjust the surface.
      *
-     *  \sa `estimate_neighborhood_radius()`.
+     *  \sa `estimate_neighborhood_squared_radius()`.
      *  \sa `reconstruct_surface()`.
      */
 	void increase_scale( unsigned int iterations = 1 );
@@ -618,7 +617,7 @@ public:
     /// \cond internal_doc
     /// constructs a scale-space of a collection of points.
     /** If the neighborhood radius has not been set before, it is automatically
-     *  estimated using `estimate_neighborhood_radius()`.
+     *  estimated using `estimate_neighborhood_squared_radius()`.
      *
      *  This method is equivalent to running
      *  `clear()` followed by
@@ -634,7 +633,7 @@ public:
      *  `iterations` is 0, nothing happens.
      *
      *  \sa `insert(InputIterator begin, InputIterator end)`.
-     *  \sa `estimate_neighborhood_radius(InputIterator begin, InputIterator end)`.
+     *  \sa `estimate_neighborhood_squared_radius(InputIterator begin, InputIterator end)`.
      *  \sa `increase_scale(unsigned int iterations)`.
      *  \sa `reconstruct_surface(InputIterator begin, InputIterator end, unsigned int iterations)`.
      */
@@ -687,8 +686,8 @@ private:
      */
     void construct_shape(Triangulation& tr ) {
         deinit_shape();
-        if( !has_neighborhood_radius() )
-            estimate_neighborhood_radius();
+        if( !has_neighborhood_squared_radius() )
+            estimate_neighborhood_squared_radius();
         _shape = Shape_construction_3()( *tr, _squared_radius );
 	}
 
@@ -753,12 +752,12 @@ public:
      *  `surface_begin()` and `surface_end()`.
      *
      *  If the neighborhood radius has not been set before, it is automatically
-     *  estimated using `estimate_neighborhood_radius()`.
+     *  estimated using `estimate_neighborhood_squared_radius()`.
      *
      *  \note This method processes the point set at the current scale. The
      *  points can be set with <code>[insert(begin, end)](\ref insert)</code>.
      *
-     *  \sa `estimate_neighborhood_radius()`.
+     *  \sa `estimate_neighborhood_squared_radius()`.
      *  \sa `increase_scale(unsigned int iterations)`.
      */
         void reconstruct_surface()
@@ -774,7 +773,7 @@ public:
      *  <code>[reconstruct_surface(iterations)](\ref reconstruct_surface)</code>.
      *
      *  If the neighborhood radius has not been set before, it is automatically
-     *  estimated using `estimate_neighborhood_radius()`.
+     *  estimated using `estimate_neighborhood_squared_radius()`.
      *
      *  \tparam InputIterator is an iterator over the point collection.
      *  The value type of the iterator must be a `Point`.
@@ -786,7 +785,7 @@ public:
      *  
      *  \sa `reconstruct_surface(unsigned int iterations)`.
      *  \sa `insert(InputIterator begin, InputIterator end)`.
-     *  \sa `estimate_neighborhood_radius(InputIterator begin, InputIterator end)`.
+     *  \sa `estimate_neighborhood_squared_radius(InputIterator begin, InputIterator end)`.
      *  \sa `construct_scale_space(InputIterator begin, InputIterator end, unsigned int iterations)`.
      */
 	template < class InputIterator >

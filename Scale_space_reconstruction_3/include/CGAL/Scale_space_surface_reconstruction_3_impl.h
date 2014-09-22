@@ -347,7 +347,7 @@ shape() const {
 template < class Gt, class FS, class Sh, class wA, class Ct >
 typename Scale_space_surface_reconstruction_3<Gt,FS,Sh,wA,Ct>::FT
 Scale_space_surface_reconstruction_3<Gt,FS,Sh,wA,Ct>::
-estimate_neighborhood_radius( unsigned int neighbors, unsigned int samples ) {
+estimate_neighborhood_squared_radius( unsigned int neighbors, unsigned int samples ) {
     typename Gt::Compute_squared_distance_3 squared_distance = Gt().compute_squared_distance_3_object();
 
     unsigned int handled = 0;
@@ -380,11 +380,11 @@ template < class Gt, class FS, class Sh, class wA, class Ct >
 template < class InputIterator >
 typename Scale_space_surface_reconstruction_3<Gt,FS,Sh,wA,Ct>::FT
 Scale_space_surface_reconstruction_3<Gt,FS,Sh,wA,Ct>::
-estimate_neighborhood_radius( InputIterator begin, InputIterator end, unsigned int neighbors, unsigned int samples,
+estimate_neighborhood_squared_radius( InputIterator begin, InputIterator end, unsigned int neighbors, unsigned int samples,
                               typename boost::enable_if< CGAL::is_iterator<InputIterator> >::type* ) {
     clear();
 	insert( begin, end );
-	return estimate_neighborhood_radius( neighbors, samples );
+	return estimate_neighborhood_squared_radius( neighbors, samples );
 }
 #endif // DOXYGEN_RUNNING
 
@@ -401,8 +401,8 @@ increase_scale( unsigned int iterations ) {
     // This method must be called after filling the point collection.
     if( iterations == 0 || _tree.empty() ) return;
         
-    if( !has_neighborhood_radius() )
-        estimate_neighborhood_radius();
+    if( !has_neighborhood_squared_radius() )
+        estimate_neighborhood_squared_radius();
 
     // To enable concurrent processing, we maintain two data structures:
     // a search tree and a vector for the points after smoothing.
@@ -461,8 +461,8 @@ Scale_space_surface_reconstruction_3<Gt,FS,Sh,wA,Ct>::
 construct_shape( InputIterator begin, InputIterator end,
                  typename boost::enable_if< CGAL::is_iterator<InputIterator> >::type* ) {
     deinit_shape();
-    if( !has_neighborhood_radius() )
-        estimate_neighborhood_radius();
+    if( !has_neighborhood_squared_radius() )
+        estimate_neighborhood_squared_radius();
     _shape = Shape_construction_3().construct( begin, end, _squared_radius );
 }
 
