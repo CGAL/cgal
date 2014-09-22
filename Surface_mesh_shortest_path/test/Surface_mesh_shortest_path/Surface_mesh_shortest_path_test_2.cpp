@@ -141,9 +141,9 @@ BOOST_AUTO_TEST_CASE( test_a_to_b_vs_b_t_a_distances )
       {
         if (startToEndCollector.m_sequence.size() > 3)
         {
-          size_t k = startToEndCollector.m_sequence.size() - 2;
+          size_t k = startToEndCollector.m_sequence.size() - 1;
           
-          for (size_t j = 0; j < endToStartCollector.m_sequence.size() - 1; ++j)
+          for (size_t j = 0; j < endToStartCollector.m_sequence.size(); ++j)
           {
             BOOST_CHECK_EQUAL(endToStartCollector.m_sequence[j].type, startToEndCollector.m_sequence[k].type);
             
@@ -229,9 +229,9 @@ BOOST_AUTO_TEST_CASE( test_a_to_b_vs_b_t_a_distances )
       if (startToEndCollector.m_sequence.size() > 3 && startToEndCollector.m_sequence.size() == endToStartCollector.m_sequence.size())
       {
       
-        for (size_t j = 0; j < endToStartCollector.m_sequence.size() - 1; ++j)
+        for (size_t j = 0; j < endToStartCollector.m_sequence.size(); ++j)
         {
-          size_t k = endToStartCollector.m_sequence.size() - j - 2;
+          size_t k = endToStartCollector.m_sequence.size() - j - 1;
           
           BOOST_CHECK_EQUAL(endToStartCollector.m_sequence[j].type, startToEndCollector.m_sequence[k].type);
           

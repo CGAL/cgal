@@ -1933,7 +1933,8 @@ public:
   \brief Computes a shortest paths sequence tree from a single vertex
   
   \details Constructs the sequence tree that covers shortest surface paths
-  from all points on the face graph to the given source vertex.
+  from all points on the face graph to the given source vertex.  Any 
+  previously computed tree in this object will be overwritten.
   
   \param vertex A vertex to serve as the source location of the sequence tree
   */
@@ -1947,8 +1948,10 @@ public:
   /*!
   \brief Computes a shortest paths sequence tree from a single source location 
   
-  \details Constructs the shortest paths sequence tree that covers shortest surface paths
-  from all points on the face graph reachable from the given source location.
+  \details Constructs the shortest paths sequence tree that covers shortest 
+  surface paths from all points on the face graph reachable from the given 
+  source location. Any previously computed tree in this object will be 
+  overwritten.
   
   \param f A face of the face graph
   \param location Barycentric coordinate on face `f` specifying the source location.
@@ -2074,6 +2077,12 @@ public:
   /*!
   \brief Visits the sequence of edges, vertices and faces traversed by the shortest path
   from a vertex to any source point.
+  
+  \details Points will be returned, starting from the query vertex, back to 
+  the nearest source point. If no shortest path could be found (for example,
+  the surface is disconnected), then no calls to the visitor will be made 
+  (not even for the query vertex).
+  
   \param v A vertex of the face graph
   \param visitor A model of `SurfaceMeshShortestPathVisitor` to receive the shortest path
   \return true if there exists a shortest path from `v` to any source point, false otherwise (may occur if the face graph is disconnected)
@@ -2085,6 +2094,7 @@ public:
     
     if (current)
     {
+      visitor.vertex(v);
       visit_shortest_path(current, current->tarpoint(), visitor);
       return true;
     }
@@ -2097,6 +2107,11 @@ public:
   /*!
   \brief Visits the sequence of edges, vertices and faces traversed by the shortest path
   from any surface location to any source point.
+  
+  \details Points will be returned, starting from the query point, back to 
+  the nearest source point. If no shortest path could be found (for example,
+  the surface is disconnected), then no calls to the visitor will be made 
+  (not even for the query point).
   
   \param f A face of the face graph
   \param location Barycentric coordinate of the query point on face `f`
@@ -2112,6 +2127,7 @@ public:
     if (current)
     {
       Point_2 locationInContext = construct_barycenter_in_triangle_2(current->layout_face(), result.second);
+      visitor.face(f, location);
       visit_shortest_path(current, locationInContext, visitor);
       return true;
     }
@@ -2138,8 +2154,6 @@ public:
   template <class OutputIterator>
   bool shortest_path_points_to_source_points(vertex_descriptor v, OutputIterator output)
   {
-    *output = point(v);
-    ++output;
     Point_path_visitor_wrapper<OutputIterator> wrapper(*this, output);
     return shortest_path_sequence_to_source_points(v, wrapper);
   }
@@ -2157,8 +2171,6 @@ public:
   template <class OutputIterator>
   bool shortest_path_points_to_source_points(face_descriptor f, Barycentric_coordinate location, OutputIterator output)
   {
-    *output = point(f, location);
-    ++output;
     Point_path_visitor_wrapper<OutputIterator> wrapper(*this, output);
     return shortest_path_sequence_to_source_points(f, location, wrapper);
   }

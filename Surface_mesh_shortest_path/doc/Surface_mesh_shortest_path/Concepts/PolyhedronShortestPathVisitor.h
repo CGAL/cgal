@@ -21,8 +21,12 @@ public:
 
   /*!
   \brief Called when an edge was traversed in the shortest path sequence.
-  \param edge halfedge of the polyhedron crossed by the shortest path
-  \param t parametric distance at which the path crosses `edge`
+  \param edge halfedge of the polyhedron crossed by the shortest path. The halfedge given will be directed to the face <em>nearest</em> the query point.
+  \param t value in the range [0.0,1.0] specifying where along `edge` the shortest path crossed. 
+    - 0.0 means it crossed at `source(edge)`
+    - 1.0 means it crossed at `target(edge)`
+    - Any other value is linearly interpolated between the endpoints.
+    Note that values of 0.0 and 1.0 are possible in some degenerate situations.
   */
   void edge(halfedge_descriptor edge, FT t);
   
