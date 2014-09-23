@@ -361,12 +361,8 @@ private:
     //***************************************************
 
     const int NUM_NEIGHBORS = 150;
-    KNS_range const& ins_range = 
+    KNS_range ins_range = 
       m_points_ds.query_ANN(center_pt, NUM_NEIGHBORS);
-    /*const int NUM_NEIGHBORS = 150;
-    std::size_t nearest_nb[NUM_NEIGHBORS];
-    for (int ii = 0 ; ii < NUM_NEIGHBORS ; ++ii)
-      nearest_nb[ii] = ii;*/
 
     // First, compute the projected points
     std::vector<Tr_point> projected_points;
