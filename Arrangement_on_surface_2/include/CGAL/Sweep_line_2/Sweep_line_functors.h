@@ -1,4 +1,4 @@
-// Copyright (c) 2006,2007,2009,2010,2011 Tel-Aviv University (Israel).
+// Copyright (c) 2006,2007,2009,2010,2011,2014 Tel-Aviv University (Israel).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -20,6 +20,7 @@
 //                 Baruch Zukerman <baruchzu@post.tau.ac.il>
 //                 Ron Wein <wein@post.tau.ac.il>
 //                 Efi Fogel <efif@post.tau.ac.il>
+//                 Eric Berberich <eric.berberich@cgal.org>
 
 #ifndef CGAL_SWEEP_LINE_FUNCTORS_H
 #define CGAL_SWEEP_LINE_FUNCTORS_H
@@ -111,45 +112,14 @@ public:
 
   /*!
    * Compare a point, which should be inserted into the event queue,
-   * with an existing event point.
+   * with an existing event (which might lie on the boundary)
    */
   Comparison_result operator() (const Point_2& pt, const Event* e2) const
   {
-    const bool  on_boundary2 = e2->is_on_boundary();
+    Arr_parameter_space ps_x1 = m_traits->parameter_space_in_x_2_object()(pt);
+    Arr_parameter_space ps_y1 = m_traits->parameter_space_in_y_2_object()(pt);
 
-    if (! on_boundary2)
-    {
-      // If e2 is a normal event, just compare pt and the event point.
-      return (m_traits->compare_xy_2_object() (pt, e2->point()));
-    }
-
-    // Get the sign of the event's boundary condition in x. Note that a valid
-    // point is always larger than any negative boundary event and smaller
-    // than any positive boundary event.
-    Arr_parameter_space ps_x2 = e2->parameter_space_in_x();
-
-    if (ps_x2 == ARR_LEFT_BOUNDARY)
-      return (LARGER);
-    else if (ps_x2 == ARR_RIGHT_BOUNDARY)
-      return (SMALLER);
-
-    // Get the curve end that e2 represents, and compare the x-position of the
-    // given point and this curve end.
-    Arr_curve_end         ind = _curve_end(e2);
-    Comparison_result res =
-      m_traits->compare_x_point_curve_end_2_object()(pt, e2->curve(), ind);
-
-    if (res != EQUAL)
-      return (res);
-
-    // The event and the point has the same x-position. Get the sign of the
-    // event's boundary condition in y. Note that a valid point is always
-    // larger than any negative boundary event and smaller than any positive
-    // boundary event.
-    Arr_parameter_space ps_y2 = e2->parameter_space_in_y();
-
-    CGAL_assertion (ps_y2 != ARR_INTERIOR);
-    return (ps_y2 == ARR_BOTTOM_BOUNDARY) ? LARGER : SMALLER;
+    return _compare_point_with_event(pt, ps_x1, ps_y1, e2);
   }
 
   /*!
@@ -185,6 +155,144 @@ public:
 private:
 
   /*!
+   * Compare a given point with an event. Note that \param pt
+   * is the a curve-end ps_x1 and ps_y1 can have different values than
+   * if \param pt would be an isolated point. The connected curve
+   * determines ps_x1 and ps_y1 for a point that is a curve-end.
+   *
+   * \param pt The pint
+   * \param ps_x The boundary condition of the curve end in x.
+   * \param ps_y The boundary condition of the curve end in y.
+   * \param e2 The event, which may have boundary conditions.
+   * \return The comparison result of the curve end with the event.
+   */
+  Comparison_result
+  _compare_point_with_event (const Point_2& pt,
+                             Arr_parameter_space ps_x1,
+                             Arr_parameter_space ps_y1,
+                             const Event* e2) const {
+
+    std::cout << std::endl << "FUNCTOR pt: " << pt << std::endl;
+    Arr_parameter_space ps_x2 = e2->parameter_space_in_x();
+    Arr_parameter_space ps_y2 = e2->parameter_space_in_y();
+
+    // e1 left      e2 left      compare_y_on_boundary(pt1, pt2) REMARK: obviously points on the left boundary are allowed
+    // e1 left      e2 bottom    SMALLER
+    // e1 left      e2 interior  SMALLER
+    // e1 left      e2 top       SMALLER
+    // e1 left      e2 right     SMALLER
+
+    // e1 bottom    e2 left      LARGER
+    // e1 bottom    e2 bottom    compare_x_on_boundary(pt1, pt2) REMARK: obviously points on the bottom boundary are allowed
+    // e1 bottom    e2 interior  compare_x_on_boundary(pt1, pt2) REMARK: as one is on the boundary
+    // e1 bottom    e2 top       compare_x_on_boundary(pt1, pt2) REMARK: as one is on the boundary
+    // e1 bottom    e2 right     SMALLER
+
+    // e1 interior  e2 left      LARGER
+    // e1 interior  e2 bottom    compare_x_on_boundary(pt1, pt2) REMARK: as one is on the boundary
+    // e1 interior  e2 interior  compare_xy(pt, pt)
+    // e1 interior  e2 top       compare_x_on_boundary(pt1, pt2) REMARK: as one is on the boundary
+    // e1 interior  e2 right     SMALLER
+
+    // e1 top       e2 left      LARGER
+    // e1 top       e2 bottom    compare_x_on_boundary(pt1, pt2) REMARK: as one is on the boundary
+    // e1 top       e2 interior  compare_x_on_boundary(pt1, pt2) REMARK: as one is on the boundary
+    // e1 top       e2 top       compare_x_on_boundary(pt1, pt2) REMARK: obviously points on the top boundary are allowed
+    // e1 top       e2 right     SMALLER
+
+    // e1 right     e2 left      LARGER
+    // e1 right     e2 bottom    LARGER
+    // e1 right     e2 interior  LARGER
+    // e1 right     e2 top       LARGER
+    // e1 right     e2 right     compare_y_on_boundary(pt1, pt2) REMARK: obviously points on the right boundary are allowed
+
+    if (ps_x1 == ps_x2) {
+      // same x-partition
+      if (ps_x1 != ARR_INTERIOR) {
+        // 1L2L, 1R2R
+        // e2->point() is accessible, as pt is a point on the SAME left/right side
+        Comparison_result res = (m_traits->compare_y_on_boundary_2_object() (pt, e2->point()));
+        std::cout << "res1 " << res << std::endl;
+        return res;
+      }
+      // else both are x-interior
+      if ((ps_y1 == ARR_INTERIOR) && (ps_y2 == ARR_INTERIOR)) {
+        // both are y-interior, too 1I2I:
+        // e2->point() is accessible as e2 is INTERIOR
+        // NOTE compare_y_on_boundary could take a point that actually lies on the bottom or top side (if curve-end of a a curve on the identifaction)!!!!
+        Comparison_result res = (m_traits->compare_xy_2_object() (pt, e2->point()));
+        std::cout << "res2 " << res << std::endl;
+        return res;
+      } else {
+        // at least onex2 of pt or e2 lies on a boundary
+        // call the comparison depending on whether closed side is available
+        typedef CGAL::internal::Arr_bottom_top_implementation_dispatch<
+          Bottom_side_category, Top_side_category > BT;
+        if (e2->is_closed()) {
+          Comparison_result res = (_compare_x_point_with_closed_event(pt, e2, typename BT::Compare_x_on_boundary_2_points_tag()));
+          std::cout << "res3 " << res << std::endl;
+          return res;
+        } else {
+          Comparison_result res = (_compare_x_point_with_open_event  (pt, e2, typename BT::Compare_x_on_boundary_2_point_curve_end_tag()));
+          std::cout << "res4 " << res << std::endl;
+        return res;
+        }
+      }
+    }
+
+    // ps_x1 != ps_x2
+    // only the 14 simple ps_x different cases remain:
+    // 1L2B, 1L2I, 1L2T, 1L2R,
+    // 1B2L, 1B2R,
+    // 1I2L, 1I2R,
+    // 1T2L, 1T2R
+    // 1R2L, 1R2B, 1R2I, 1R2T
+    if (ps_x1 == ARR_LEFT_BOUNDARY) {
+      std::cout << "res5 SMALLER" << std::endl;
+      return (SMALLER);
+    }
+    if (ps_x1 == ARR_RIGHT_BOUNDARY) {
+      std::cout << "res6 LARGER" << std::endl;
+      return (LARGER);
+    }
+    // ps_x1 == ARR_INTERIOR != ps_x2
+    if (ps_x2 == ARR_LEFT_BOUNDARY) {
+      std::cout << "res7 LARGER" << std::endl;
+      return (LARGER);
+    }
+    // ps_x2 == ARR_RIGHT_BOUNDARY
+    std::cout << "res8 SMALLER" << std::endl;
+    return (SMALLER);
+  }
+
+  Comparison_result _compare_x_point_with_closed_event(const Point_2& pt, const Event* e2,
+                                                     Arr_use_traits_tag) const {
+    CGAL_assertion(e2->is_closed());
+    std::cout << "cmpA"<< std::endl;
+    return (m_traits->compare_x_on_boundary_2_object() (pt, e2->point()));
+  }
+
+  Comparison_result _compare_x_point_with_closed_event(const Point_2& pt, const Event* e2,
+                                                       Arr_use_dummy_tag) const {
+    CGAL_error();
+    return (EQUAL);
+  }
+
+  Comparison_result _compare_x_point_with_open_event(const Point_2& pt, const Event* e2,
+                                                     Arr_use_traits_tag) const {
+    CGAL_assertion(!(e2->is_closed()));
+    // e2 must be an open event here, and thus exactly one curve is incident
+    std::cout << "cmpB"<< std::endl;
+    return (m_traits->compare_x_point_curve_end_2_object() (pt, e2->curve(), _curve_end(e2)));
+  }
+
+  Comparison_result _compare_x_point_with_open_event(const Point_2& pt, const Event* e2,
+                                                     Arr_use_dummy_tag) const {
+    CGAL_error();
+    return (EQUAL);
+  }
+
+  /*!
    * Compare a given curve end with an event.
    * \param cv The curve.
    * \param ind The curve end.
@@ -196,108 +304,122 @@ private:
   Comparison_result
   _compare_curve_end_with_event (const X_monotone_curve_2& cv,
                                  Arr_curve_end ind,
-                                 Arr_parameter_space ps_x,
-                                 Arr_parameter_space ps_y,
+                                 Arr_parameter_space ps_x1,
+                                 Arr_parameter_space ps_y1,
                                  const Event* e2) const
   {
-    // Check if the curve end has a boundary condition in x.
-    if (ps_x == ARR_LEFT_BOUNDARY)
+
+    // if the curve-end is closed, use the point signature, which simplifies life
+    if (m_traits->is_closed_2_object() (cv, ind)) {
+
+      const Point_2& pt = (ind == ARR_MIN_END ?
+                           m_traits->construct_min_vertex_2_object() (cv) :
+                           m_traits->construct_max_vertex_2_object() (cv));
+
+      // call point-comparsion, BUT use ps_x1, ps_y1 of curve-end!!!!
+      return _compare_point_with_event(pt, ps_x1, ps_y1, e2);
+    }
+
+    // else cv has an OPEN end and ind, continue the "open way":
+
+    Arr_parameter_space ps_x2 = e2->parameter_space_in_x();
+    Arr_parameter_space ps_y2 = e2->parameter_space_in_y();
+
+   // Check if the curve end has a boundary condition in x.
+    if (ps_x1 == ARR_LEFT_BOUNDARY)
     {
-      if (e2->parameter_space_in_x() == ARR_LEFT_BOUNDARY)
+      if (ps_x2 == ARR_LEFT_BOUNDARY)
       {
         // Both defined on the left boundary - compare them there.
         CGAL_assertion (ind == ARR_MIN_END);
 
-	return
-	  m_traits->compare_y_curve_ends_2_object() (cv, e2->curve(), ind);
+        return m_traits->compare_y_curve_ends_2_object() (cv, e2->curve(), ind);
       }
 
       // The curve end is obviously smaller.
       return (SMALLER);
     }
 
-    if (ps_x == ARR_RIGHT_BOUNDARY)
+    if (ps_x1 == ARR_RIGHT_BOUNDARY)
     {
-      if (e2->parameter_space_in_x() == ARR_RIGHT_BOUNDARY)
+      if (ps_x2 == ARR_RIGHT_BOUNDARY)
       {
         // Both defined on the right boundary - compare them there.
         CGAL_assertion (ind == ARR_MAX_END);
 
-        return (m_traits->compare_y_curve_ends_2_object() (cv, e2->curve(),
-							   ind));
+        return (m_traits->compare_y_curve_ends_2_object() (cv, e2->curve(), ind));
       }
 
       // The curve end is obviously larger.
       return (LARGER);
     }
 
+    // ps_x1 == ARR_INTERIOR now!
+    CGAL_assertion (ps_x1 == ARR_INTERIOR);
+
     // Check if the event has a boundary condition in x. Note that if it
-    // has a negative boundary condition, the curve end is larger than it,
+    // lies on the left condition, the curve end is larger than it,
     // and if it has a positive boundary condition, the curve end is smaller.
-    if (e2->parameter_space_in_x() == ARR_LEFT_BOUNDARY)
+    if (ps_x2 == ARR_LEFT_BOUNDARY)
       return (LARGER);
 
-    if (e2->parameter_space_in_x() == ARR_RIGHT_BOUNDARY)
+    if (ps_x2 == ARR_RIGHT_BOUNDARY)
       return (SMALLER);
 
-    CGAL_assertion (ps_y != ARR_INTERIOR);
+    // ps_x2 == ARR_INTERIOR now!
+    CGAL_assertion (ps_x2 == ARR_INTERIOR);
+
+    // IMPORTANT REMARK HERE: the curve-end is OPEN and ps_x1 == ARR_INTERIOR, thus ps_y1 must be BOTTOM or TOP!
+    CGAL_assertion (ps_y1 != ARR_INTERIOR);
+
     Comparison_result res;
 
-    Arr_curve_end ind2 = _curve_end(e2);
-
-    // Act according to the boundary sign of the event.
-    if (e2->parameter_space_in_y() == ARR_BOTTOM_BOUNDARY)
+   // Act according to the parameter space of the event.
+    if (ps_y2 != ARR_INTERIOR)
     {
+      // e2 is an open event here, and thus at most one curve is incident
+      Arr_curve_end ind2 = _curve_end(e2);
 
       // Compare the x-positions of the two entities.
       res = m_traits->compare_x_curve_ends_2_object() (cv, ind,
-						       e2->curve(), ind2);
+                                                       e2->curve(), ind2);
+      // TODO here e2 can also be a closed event in which case we need to call compare_x_point_curve_end_2
+
       if (res != EQUAL)
         return (res);
 
-      // In case of equal x-positions, the curve end is larger than the event,
-      // which lies on the bottom boundary (unless it also lies on the bottom
-      // boundary).
-      if (ps_y == ARR_BOTTOM_BOUNDARY)
+      // In case of equal x-positions, the curve end, compare the boundary conditions on both
+      if (ps_y1 == ps_y2) {
+        // compare_x_curve_ends for open sides first calls compare_x_on_boundary, and if equal calls compare_x_near_boundary
         return (EQUAL);
+      }
 
-      return (LARGER);
+      return (ps_y2 == ARR_BOTTOM_BOUNDARY ? LARGER : SMALLER);
     }
 
-    if (e2->parameter_space_in_y() == ARR_TOP_BOUNDARY)
-    {
-      // Compare the x-positions of the two entities.
-      res = m_traits->compare_x_curve_ends_2_object() (cv, ind,
-						       e2->curve(), ind2);
-      if (res != EQUAL)
-        return (res);
-
-      // In case of equal x-positions, the curve end is smaller than the event,
-      // which lies on the top boundary (unless it also lies on the top
-      // boundary).
-      if (ps_y == ARR_TOP_BOUNDARY)
-        return (EQUAL);
-
-      return (SMALLER);
-    }
-
-    // If we reached here, e2 is not a boundary event and is associated with
-    // a valid point. We compare the x-position of this point with the curve
-    // end.
+    // if we reach here e2 is INTERIOR and thus associated with a valid point.
+    CGAL_assertion(ps_y2 == ARR_INTERIOR);
+    // while (xcv, ind) still lies on the bottom or top boundary,
+    // We compare the x-position of this point with the curve end:
+    CGAL_assertion(e2->is_closed());
     res = m_traits->compare_x_point_curve_end_2_object() (e2->point(), cv, ind);
 
-    if (res != EQUAL)
+    if (res != EQUAL) {
+      // and we need to flip the result
       return (CGAL::opposite(res));
+    }
 
-    // In case of equal x-positions, is the curve end has a negative boundary
-    // sign, then it lies on the bottom boundary below the event. Otherwise,
-    // it lies on the top aboundary above the event e2.
-    return (ps_y == ARR_BOTTOM_BOUNDARY) ? SMALLER : LARGER;
+    // In case of equal x-positions, if the curve end lies on the bottom boundary
+    // then it lies below e2. Otherwise, it lies on the top boundary above e2.
+    return (ps_y1 == ARR_BOTTOM_BOUNDARY) ? SMALLER : LARGER;
+
   }
 
   /*! Detemine if the given event represents a left or a right curve end. */
   inline Arr_curve_end _curve_end (const Event* e) const
   {
+    // e must be an open event here, and thus exactly one curve is incident
+    CGAL_precondition(!e->is_closed());
     return (e->has_left_curves()) ?
       ((e->is_right_end()) ? ARR_MAX_END : ARR_MIN_END) :
       ((e->is_left_end()) ? ARR_MIN_END : ARR_MAX_END);
