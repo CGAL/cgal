@@ -57,9 +57,20 @@ BOOST_AUTO_TEST_CASE( test_find_nearest_face_location_on_surface )
   
   Traits::Construct_barycenter_3 construct_barycenter_3(traits.construct_barycenter_3_object());
   
+  std::string mesh = boost::unit_test::framework::master_test_suite().argv[1];
+
+  int randSeed = 6008991;
+  
+  if (boost::unit_test::framework::master_test_suite().argc > 2)
+  {
+    randSeed = std::atoi(boost::unit_test::framework::master_test_suite().argv[2]);
+  }
+  
+  CGAL::Random random(randSeed);
+  
   Polyhedron_3 polyhedron;
   
-  std::ifstream in("data/anchor.off");
+  std::ifstream in(mesh.c_str());
     
   in >> polyhedron;
   
@@ -78,8 +89,6 @@ BOOST_AUTO_TEST_CASE( test_find_nearest_face_location_on_surface )
   {
     facesList.push_back(*facesCurrent);
   }
-  
-  CGAL::Random random(6008991);
   
   size_t numTrials = 30;
 
