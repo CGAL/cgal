@@ -1036,7 +1036,7 @@ Regular_triangulation<RTTraits, TDS>
   }
   else
   {
-    Orientation_d ori = geom_traits().orientation_d_object();
+    Orientation_d ori = geom_traits().orientation_d_object(); // CJTODO: create member variables for this?
     Power_test_d side = geom_traits().power_test_d_object();
     Conflict_pred_in_fullspace c(*this, p, ori, side);
     return c(s);
