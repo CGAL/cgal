@@ -6,7 +6,7 @@ class TestConfig:
   Describes a benchmark test case to run over a set of models
   """
   
-  def __init__(self, testName, testModels, numTrials, numSources, numQueries, randSeed):
+  def __init__(self, testName, testModels, numTrials, numSources, numQueries, randSeed, kernel="epick"):
     """
     testName - the name of the test as it should appear in the documentation file
     testModels - a list of .off model files to run the test on
@@ -21,9 +21,10 @@ class TestConfig:
     self.numSources = numSources;
     self.numQueries = numQueries;
     self.randSeed = randSeed;
+    self.kernel = kernel;
     
   def __str__(self):
-    return "%s : #Trials = %d, #Sources = %d, #Queries = %d" % (self.testName, self.numTrials, self.numSources, self.numQueries);
+    return "%s : Kernel = %s #Trials = %d, #Sources = %d, #Queries = %d" % (self.testName, self.kernel, self.numTrials, self.numSources, self.numQueries);
 
 def read_all_lines(file):
   f = open(file, "r");
@@ -55,7 +56,7 @@ def run_benchmarks(testConfig, outputFile):
   for model in testConfig.testModels:
     sys.stdout.write("Model = %s ... " % model);
     sys.stdout.flush();
-    result = subprocess.call(['./benchmark_shortest_paths.exe', '-p', model.strip(), '-r', str(testConfig.randSeed), '-t', str(testConfig.numTrials), '-n', str(testConfig.numSources), '-q', str(testConfig.numQueries)], stdout=outputFile);
+    result = subprocess.call(['./benchmark_shortest_paths.exe', '-k', testConfig.kernel, '-p', model.strip(), '-r', str(testConfig.randSeed), '-t', str(testConfig.numTrials), '-n', str(testConfig.numSources), '-q', str(testConfig.numQueries)], stdout=outputFile);
     if result == 0:
       sys.stdout.write("Done.\n");
     else:

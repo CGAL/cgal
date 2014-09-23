@@ -1,0 +1,3 @@
+data/cube.off
+data/cross.off
+data/star.off

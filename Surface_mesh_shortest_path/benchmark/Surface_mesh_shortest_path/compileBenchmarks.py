@@ -25,6 +25,7 @@ import random;
 import re;
 import benchmark;
 import os;
+import argparse;
 
 def make_table_file_name(tableFileBase, numSources):
   return tableFileBase + '_' + str(numSources) + ".txt";
@@ -37,7 +38,7 @@ def make_figure_file_name(figureFileBase, modelFile):
   
 def print_to_datafiles(config, dataFileName, modelInfo):
   file = open(dataFileName, "a");
-  file.write("%d %d %s %s %s\n" % (config.numSources, modelInfo.get("num vertices", 0), modelInfo.get('construction', '0'), modelInfo.get('query', '0'), modelInfo.get('memory (peak)', '0')));
+  file.write("%d %d %s %s %s\n" % (config.numSources, int(modelInfo.get("num vertices", 0)), modelInfo.get('construction', '0'), modelInfo.get('query', '0'), modelInfo.get('memory (peak)', '0')));
   file.close();
 
 def print_table(infoSet, config, outFile):
@@ -55,32 +56,73 @@ def print_table(infoSet, config, outFile):
   outFile.write("</center>\n");
   outFile.write('\n');
   
-# Specify a file to output to, and optionally a random seed to ensure consistent tests are run
-if len(sys.argv) <= 5:
-  print("Usage: python %s <modelsFile> <dataFileBase> <tableFileBase> <figureFileBase> <randomseed>" % sys.argv[0]);
-  sys.exit(0);
-  
-sampleRange = reversed([1] + list(range(5, 55, 5)));
-  
-testModels = benchmark.read_all_lines(sys.argv[1]);
+parser = argparse.ArgumentParser(description="Run benchmarks on multiple model files");
+
+parser.add_argument('-r', '--range', type=str, default=['1'], nargs='*', help="Can specify multiple single values, or ranges. Format is '#' or '#,#' or '#,#,#' for a single value, a range of values, or a range values of values with a specified skip");
+parser.add_argument('-f', '--modelsfile', '--modelsfiles', type=str, nargs='*', help="a file containing a list of models to test on, one per line");
+parser.add_argument('-m', '--model', '--models', type=str, nargs='*');
+parser.add_argument('-s', '--randseed', type=int, help="Random seed for tests.");
+parser.add_argument('-d', '--datafilebase', type=str, default='_modeldata', help="Base name for temporary data files (existing files will be overwritten).");
+parser.add_argument('-t', '--tablefilebase', type=str, help="Base name for generated user manual tables (will be of the form \"<tablefilebase>_#.txt\", leave blank to suppress generation)");
+parser.add_argument('-o', '--plotfilebase', type=str, help="Base name for generated plot figures (will be of the form \"<plotfilebase>_<modelname>.png\", leave blank to suppress generation)");
+parser.add_argument('-k', '--kernel', choices=['ipick', 'epick', 'epeck'], default='epick', help="Geometry kernel to use for the benchmark.");
+
+programArgs = parser.parse_args();
+
+setOfSamples = set();
+
+if programArgs.range:
+  for r in programArgs.range:
+    toks = r.split(',');
+    if len(toks) == 1:
+      setOfSamples.add(int(toks[0]));
+    elif len(toks) == 2:
+      setOfSamples.update(range(int(toks[0]), int(toks[1])));
+    elif len(toks) == 3:
+      setOfSamples.update(range(int(toks[0]), int(toks[1]), int(toks[2])));
+    else:
+      raise "Invalid range: " + r;
+
+sampleRange = reversed(sorted(list(setOfSamples)));
+
+testModels = [];
+
+if programArgs.modelsfile:
+  for modelsFile in programArgs.modelsfile:
+    testModels.extend(benchmark.read_all_lines(modelsFile));
+
+if programArgs.model:
+  for model in programArgs.model:
+    testModels.append(model);
+    
+if len(testModels) == 0:
+  print("Error, must specify at least one model to benchmark");
+  sys.exit(1);
+
+rand = random.Random(programArgs.randseed);
+
+dataFileBase = programArgs.datafilebase;
+tableFileBase = programArgs.tablefilebase;
+plotFileBase = programArgs.plotfilebase;
+
+kernel = programArgs.kernel;
+
+if tableFileBase == None and plotFileBase == None:
+  print("Error, must specify either a table output or figure output file");
+  sys.exit(1);
 
 if not benchmark.prepare_program():
+  print("Error, could not compile program");
   sys.exit(1);
   
-rand = random.Random(int(sys.argv[5]));
-  
-dataFileBase = sys.argv[2];
-tableFileBase = sys.argv[3];
-figureFileBase = sys.argv[4];
-
 for model in testModels:
-  modelFileName = make_model_data_file_name(dataFileBase, model);
-  if os.path.exists(modelFileName):
-    os.remove(modelFileName);
+  modelDataFileName = make_model_data_file_name(dataFileBase, model);
+  if os.path.exists(modelDataFileName):
+    os.remove(modelDataFileName);
 
 for numSources in sampleRange:
   testname = "1 Source Point" if numSources == 1 else ("%d Source Points" % numSources);
-  config = benchmark.TestConfig(testname, testModels, 20, numSources, 100, rand.randint(0, 65536));
+  config = benchmark.TestConfig(testname, testModels, 20, numSources, 100, rand.randint(0, 65536), kernel);
   infoSet = {};
   infoFile = tempfile.TemporaryFile();
   benchmark.run_benchmarks(config, infoFile);
@@ -90,26 +132,24 @@ for numSources in sampleRange:
   infoFile.close();
   for k in infoSet.keys():
     print_to_datafiles(config, make_model_data_file_name(dataFileBase, k), infoSet[k]);
-  tableFile = open(make_table_file_name(tableFileBase, numSources), "w");
-  print_table(infoSet, config, tableFile);
-  tableFile.close();
+  if tableFileBase != None:
+    tableFile = open(make_table_file_name(tableFileBase, numSources), "w");
+    print_table(infoSet, config, tableFile);
+    tableFile.close();
     
-for runParams in [('query', 4, "Average Query Time"), ('construction', 3, "Average Construction Time"), ('memory', 5, "Peak Memory Usage")]:
-  plotCommands = [];
-    
-  for k in testModels:
-    plotCommands.append('"%s" using 1:%d with lines title "%s"' % (make_model_data_file_name(dataFileBase, k), runParams[1], os.path.basename(k)));
-
-  plotCommand = "plot " + ', '.join(plotCommands);
-
-  plotCommandFile = tempfile.TemporaryFile();
-  plotCommandFile.write('set terminal png size 1280,960;\n');
-  plotCommandFile.write('set output "%s";\n' % make_figure_file_name(figureFileBase, runParams[0]));
-  plotCommandFile.write('set xlabel "Number of Source Points";\n');
-  plotCommandFile.write('set ylabel "%s";\n' % runParams[2]);
-  plotCommandFile.write(plotCommand + ";\n");
-  plotCommandFile.write('unset output;\n');
-  plotCommandFile.write('quit\n');
-  plotCommandFile.seek(0);
-
-  subprocess.call(['gnuplot'], stdin=plotCommandFile);
+if plotFileBase != None:
+  for runParams in [('query', 4, "Average Query Time"), ('construction', 3, "Average Construction Time"), ('memory', 5, "Peak Memory Usage")]:
+    plotCommands = [];
+    for k in testModels:
+      plotCommands.append('"%s" using 1:%d with lines title "%s"' % (make_model_data_file_name(dataFileBase, k), runParams[1], os.path.basename(k)));
+    plotCommand = "plot " + ', '.join(plotCommands);
+    plotCommandFile = tempfile.TemporaryFile();
+    plotCommandFile.write('set terminal png size 1280,960;\n');
+    plotCommandFile.write('set output "%s";\n' % make_figure_file_name(plotFileBase, runParams[0]));
+    plotCommandFile.write('set xlabel "Number of Source Points";\n');
+    plotCommandFile.write('set ylabel "%s";\n' % runParams[2]);
+    plotCommandFile.write(plotCommand + ";\n");
+    plotCommandFile.write('unset output;\n');
+    plotCommandFile.write('quit\n');
+    plotCommandFile.seek(0);
+    subprocess.call(['gnuplot'], stdin=plotCommandFile);
