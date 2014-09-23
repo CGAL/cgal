@@ -334,25 +334,18 @@ private:
   bool _is_to_left_impl(const Point_2& p, Halfedge_handle he,
                         Arr_not_all_sides_oblivious_tag) const;
 
-  /*! Check if the given point lies completely to the right of the given egde.
+  /*! Determine whether a given point lies completely to the right of a given
+   * egde.
    * \param p The point.
    * \param he The halfedge.
    * \pre he is not a fictitious edge.
-   * \return Whether p lies entirely to the right of the edge.
+   * \return if p entirely lies to the right of the edge true; otherwise false.
    */
   bool _is_to_right(const Point_2& p, Halfedge_handle he) const
   { return (_is_to_right_impl(p, he, Are_all_sides_oblivious_category())); }
 
   bool _is_to_right_impl(const Point_2& p, Halfedge_handle he,
-                         Arr_all_sides_oblivious_tag) const
-  {
-    return ((he->direction() == ARR_LEFT_TO_RIGHT &&
-             m_geom_traits->compare_xy_2_object()
-             (p, he->target()->point()) == LARGER) ||
-            (he->direction() == ARR_RIGHT_TO_LEFT &&
-             m_geom_traits->compare_xy_2_object()
-             (p, he->source()->point()) == LARGER));
-  }
+                         Arr_all_sides_oblivious_tag) const;
 
   bool _is_to_right_impl(const Point_2& p, Halfedge_handle he,
                          Arr_not_all_sides_oblivious_tag) const;

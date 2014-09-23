@@ -352,11 +352,9 @@ found_overlap(const X_monotone_curve_2& cv, Halfedge_handle he,
     m_geom_traits->parameter_space_in_y_2_object()(cv, ARR_MAX_END);
 
   // Modify (perhaps split) the overlapping arrangement edge.
-  Halfedge_handle   updated_he;
+  Halfedge_handle updated_he;
 
-  if (left_v == invalid_v &&
-      ! ((bx_l == ARR_LEFT_BOUNDARY) || (by_l != ARR_INTERIOR)))
-  {
+  if (left_v == invalid_v) {
     // Split the curve associated with he at the left endpoint of cv.
     m_geom_traits->split_2_object()
       (he->curve(),
@@ -389,25 +387,21 @@ found_overlap(const X_monotone_curve_2& cv, Halfedge_handle he,
       updated_he = updated_he->next();
     }
   }
-  else {
-    if (right_v == invalid_v &&
-        ! ((bx_r == ARR_RIGHT_BOUNDARY) || (by_r != ARR_INTERIOR)))
-    {
-      // Split the curve associated with he at the right endpoint of cv.
-      m_geom_traits->split_2_object()
-        (he->curve(),
-         m_geom_traits->construct_max_vertex_2_object()(cv),
-         m_sub_cv1, m_sub_cv2);
+  else if (right_v == invalid_v) {
+    // Split the curve associated with he at the right endpoint of cv.
+    m_geom_traits->split_2_object()
+      (he->curve(),
+       m_geom_traits->construct_max_vertex_2_object()(cv),
+       m_sub_cv1, m_sub_cv2);
 
-      // Split he, such that the left portion corresponds to the overlapping
-      // curve and the right portion corresponds to m_sub_cv2.
-      updated_he = p_arr->split_edge(he, cv, m_sub_cv2);
-    }
-    else {
-      // The entire edge is overlapped: Modify the curve associated with cv
-      // to be the overlapping curve.
-      updated_he = p_arr->modify_edge(he, cv);
-    }
+    // Split he, such that the left portion corresponds to the overlapping
+    // curve and the right portion corresponds to m_sub_cv2.
+    updated_he = p_arr->split_edge(he, cv, m_sub_cv2);
+  }
+  else {
+    // The entire edge is overlapped: Modify the curve associated with cv
+    // to be the overlapping curve.
+    updated_he = p_arr->modify_edge(he, cv);
   }
 
   // Return the updated halfedge, and indicate we should not halt the
