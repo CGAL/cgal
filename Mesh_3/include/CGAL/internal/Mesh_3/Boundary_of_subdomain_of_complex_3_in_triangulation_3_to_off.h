@@ -85,6 +85,47 @@ output_boundary_of_c3t3_to_off(const C3T3& c3t3,
   return output;
 }
 
+template <typename C3T3>
+std::ostream&
+output_boundary_of_c3t3_to_off(const C3T3& c3t3,
+                               std::ostream& output)
+{
+  typedef typename C3T3::Triangulation Triangulation;
+  typedef typename Triangulation::Vertex_handle Vertex_handle;
+
+  std::map<Vertex_handle, std::size_t> V;
+
+  std::size_t inum = 0;
+  std::size_t nfacets = 0;
+  cpp0x::array<std::size_t,3> indices={{0,0,0}};
+  std::stringstream facet_buffer,vertex_buffer;
+  for(typename C3T3::Facets_in_complex_iterator
+        fit = c3t3.facets_in_complex_begin(),
+        end = c3t3.facets_in_complex_end();
+      fit != end; ++fit)
+  {
+    typename C3T3::Subdomain_index cell_sd=c3t3.subdomain_index(fit->first);
+    typename C3T3::Subdomain_index opp_sd=c3t3.subdomain_index(fit->first->neighbor(fit->second));
+
+    ++nfacets;
+    int j=-1;
+
+
+    for (int i = 0; i < 4; ++i)
+      if (i != fit->second)
+          indices[++j]=internal::get_vertex_index((*fit).first->vertex(i), V, inum,vertex_buffer);
+    if ( (cell_sd > opp_sd) == (fit->second%2 == 1) ) std::swap(indices[0],indices[1]);
+    facet_buffer << "3" << " " << indices[0] <<" " << indices[1] <<" " << indices[2] << "\n";
+  }
+
+  output << "OFF " << inum << " " << nfacets << " 0\n";
+  output << vertex_buffer.str();
+  output << facet_buffer.str();
+
+
+  return output;
+}
+
 } // end namespace CGAL
 
 #endif // CGAL_INTERNAL_MESH_3_BOUNDARY_OF_SUDDOMAIN_OF_COMPLEX_3_IN_TRIANGULATION_3_TO_OFF_H

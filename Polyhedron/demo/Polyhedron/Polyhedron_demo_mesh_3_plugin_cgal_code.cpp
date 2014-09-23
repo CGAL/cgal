@@ -10,7 +10,6 @@
 #include <CGAL/Polyhedral_mesh_domain_with_features_3.h>
 #include <CGAL/make_mesh_3.h>
 
-#include <CGAL/internal/Mesh_3/Boundary_of_subdomain_of_complex_3_in_triangulation_3_to_off.h>
 #include <Scene_polyhedron_item.h>
 #include <Scene_polygon_soup_item.h>
 #include <fstream>
@@ -282,7 +281,7 @@ public slots:
   void export_domain_boundary_as_polyhedron()
   {
     std::stringstream off_sstream;
-    CGAL::output_boundary_of_c3t3_to_off(c3t3(), 1, off_sstream);
+    c3t3().output_boundary_to_off(off_sstream);
     std::string backup = off_sstream.str();
     // Try to read .off in a polyhedron
     Scene_polyhedron_item* item = new Scene_polyhedron_item();

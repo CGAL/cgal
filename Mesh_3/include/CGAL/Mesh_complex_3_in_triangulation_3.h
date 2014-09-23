@@ -38,6 +38,7 @@
 #include <boost/iterator/transform_iterator.hpp>
 #include <boost/iterator/iterator_adaptor.hpp>
 #include <boost/mpl/if.hpp>
+#include <CGAL/internal/Mesh_3/Boundary_of_subdomain_of_complex_3_in_triangulation_3_to_off.h>
 
 namespace CGAL {
 
@@ -72,6 +73,7 @@ public:
   typedef typename Base::Triangulation                    Triangulation;
 
   using Base::surface_patch_index;
+  using typename Base::Subdomain_index;
 
 private:
   // Type to store the edges:
@@ -330,6 +332,24 @@ public:
     typename Corner_map::const_iterator it = corners_.find(v);
     if ( corners_.end() != it ) { return it->second; }
     return Corner_index();
+  }
+
+  /**
+   * Outputs the outer boundary of the entire domain with facets oriented outward.
+   */
+  std::ostream& output_boundary_to_off(std::ostream& out) const
+  {
+    output_boundary_of_c3t3_to_off(*this, out);
+    return out;
+  }
+
+  /**
+   * Outputs the outer boundary of the selected subdomain with facets oriented outward.
+   */
+  std::ostream& output_boundary_to_off(std::ostream& out, Subdomain_index subdomain) const
+  {
+    output_boundary_of_c3t3_to_off(*this, subdomain, out);
+    return out;
   }
 
   /**

@@ -80,6 +80,16 @@ in medit format.
 */ 
 void output_to_medit(std::ofstream& os); 
 
+/**
+ * Outputs the outer boundary of the entire domain with facets oriented outward.
+ */
+std::ostream& output_boundary_to_off(std::ostream& out) const;
+
+/**
+ * Outputs the outer boundary of the selected subdomain with facets oriented outward.
+ */
+std::ostream& output_boundary_to_off(std::ostream& out, Subdomain_index subdomain) const;
+
 /// @}
 
 }; /* end Mesh_complex_3_in_triangulation_3 */
