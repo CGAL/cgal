@@ -11,11 +11,14 @@
 #include <CGAL/make_mesh_3.h>
 
 #include <CGAL/internal/Mesh_3/Boundary_of_subdomain_of_complex_3_in_triangulation_3_to_off.h>
-
+#include <Scene_polyhedron_item.h>
+#include <Scene_polygon_soup_item.h>
 #include <fstream>
+#include <sstream>
 
 #include <CGAL/Timer.h>
 
+#include <QMenu>
 
 typedef CGAL::Polyhedral_mesh_domain_with_features_3<Kernel,
                                                      Polyhedron> Mesh_domain;
@@ -54,8 +57,7 @@ public:
   typedef qglviewer::ManipulatedFrame ManipulatedFrame;
 
   Scene_c3t3_item(const C3t3& c3t3)
-    : c3t3_(c3t3), frame(new ManipulatedFrame())
-
+    : c3t3_(c3t3), frame(new ManipulatedFrame()), last_known_scene(NULL)
   {}
 
   ~Scene_c3t3_item()
@@ -276,9 +278,65 @@ private:
     return diag * 0.7;
   }
 
-  C3t3 c3t3_;
+public slots:
+  void export_domain_boundary_as_polyhedron()
+  {
+    std::stringstream off_sstream;
+    CGAL::output_boundary_of_c3t3_to_off(c3t3(), 1, off_sstream);
+    std::string backup = off_sstream.str();
+    // Try to read .off in a polyhedron
+    Scene_polyhedron_item* item = new Scene_polyhedron_item();
+    if(!item->load(off_sstream))
+    {
+      delete item;
+      off_sstream.str(backup);
 
+      // Try to read .off in a polygon soup
+      Scene_polygon_soup_item* soup_item = new Scene_polygon_soup_item;
+
+      if(!soup_item->load(off_sstream)) {
+        delete soup_item;
+        return;
+      }
+
+      soup_item->setName(QString("%1_%2").arg(this->name()).arg("boundary"));
+      last_known_scene->addItem(soup_item);
+    }
+    else{
+      item->setName(QString("%1_%2").arg(this->name()).arg("boundary"));
+      last_known_scene->addItem(item);
+    }
+  }
+
+public:
+
+  QMenu* contextMenu()
+  {
+    const char* prop_name = "Menu modified by Scene_c3t3_item.";
+
+    QMenu* menu = Scene_item::contextMenu();
+
+    // Use dynamic properties:
+    // http://doc.trolltech.com/lastest/qobject.html#property
+    bool menuChanged = menu->property(prop_name).toBool();
+
+    if(!menuChanged) {
+      QAction* actionDomainBoundaryAsPolyhedron =
+        menu->addAction(tr("Export domain boundary as polyhedron"));
+      actionDomainBoundaryAsPolyhedron->setObjectName("actionSelectNextVolume");
+      connect(actionDomainBoundaryAsPolyhedron,
+              SIGNAL(triggered()),this,
+              SLOT(export_domain_boundary_as_polyhedron()));
+    }
+    return menu;
+  }
+
+  void set_scene(Scene_interface* scene){ last_known_scene=scene; }
+
+private:
+  C3t3 c3t3_;
   qglviewer::ManipulatedFrame* frame;
+  Scene_interface* last_known_scene;
 };
 
 Scene_item* cgal_code_mesh_3(const Polyhedron* pMesh,
@@ -288,7 +346,8 @@ Scene_item* cgal_code_mesh_3(const Polyhedron* pMesh,
                              const double approx,
                              const double tet_sizing,
                              const double tet_shape,
-                             const bool protect_features)
+                             const bool protect_features,
+                             Scene_interface* scene)
 {
   if(!pMesh) return 0;
 
@@ -324,16 +383,13 @@ Scene_item* cgal_code_mesh_3(const Polyhedron* pMesh,
 
   Scene_c3t3_item* new_item = 
     new Scene_c3t3_item(CGAL::make_mesh_3<C3t3>(domain, criteria, features));
-
+  new_item->set_scene(scene);
   std::cerr << "done (" << timer.time() << " ms, " << new_item->c3t3().triangulation().number_of_vertices() << " vertices)" << std::endl;
 
   if(new_item->c3t3().triangulation().number_of_vertices() > 0)
   {
     std::ofstream medit_out("out.mesh");
     new_item->c3t3().output_to_medit(medit_out);
-
-    std::ofstream surface_out("surface_mesh.off");
-    CGAL::output_boundary_of_c3t3_to_off(new_item->c3t3(), 1, surface_out);
 
     const Scene_item::Bbox& bbox = new_item->bbox();
     new_item->setPosition((float)(bbox.xmin + bbox.xmax)/2.f,

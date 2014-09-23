@@ -22,7 +22,8 @@ Scene_item* cgal_code_mesh_3(const Polyhedron*,
                              const double approx,
                              const double tets_sizing,
                              const double tet_shape,
-                             const bool protect_features);
+                             const bool protect_features,
+                             Scene_interface* scene);
 
 class Polyhedron_demo_mesh_3_plugin : 
   public QObject,
@@ -163,7 +164,8 @@ void Polyhedron_demo_mesh_3_plugin::mesh_3()
                                              approx,
                                              tet_sizing,
                                              radius_edge,
-                                             protect_features);
+                                             protect_features,
+                                             scene);
   if(result_item) {
     result_item->setName(tr("%1 3d mesh (%2 %3 %4 %5)")
                          .arg(item->name())
