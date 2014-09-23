@@ -298,9 +298,8 @@ _init_curve_end(const X_monotone_curve_2& cv, Arr_curve_end ind, Subcurve* sc)
       m_traits->construct_min_vertex_2_object()(cv) :
       m_traits->construct_max_vertex_2_object()(cv);
 
-    pair_res = ((ps_x == ARR_INTERIOR) && (ps_y == ARR_INTERIOR)) ?
-      _push_event(pt,      end_attr, ps_x, ps_y, sc) :
-      _push_event(cv, ind, end_attr, ps_x, ps_y, sc);
+    // insert the point into the event queue, but with ps_x, ps_y of curve-end!
+    pair_res = _push_event(pt, end_attr, ps_x, ps_y, sc);
 
     // Inform the visitor in case we updated an existing event.
     Event* e = pair_res.first;
