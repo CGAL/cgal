@@ -95,6 +95,10 @@ class Tangential_complex
 
   typedef std::vector<Point>                          Points;
   typedef Point_cloud_data_structure<Points>          Points_ds;
+  typedef typename Points_ds::KNS_range               KNS_range;
+  typedef typename Points_ds::KNS_iterator            KNS_iterator;
+  typedef typename Points_ds::INS_range               INS_range;
+  typedef typename Points_ds::INS_iterator            INS_iterator;
 
   typedef std::pair<Triangulation*, Tr_vertex_handle> Tr_and_VH;
   typedef typename std::vector<Tr_and_VH>             Tr_container;
@@ -336,8 +340,8 @@ private:
     Tr_vertex_handle &center_vertex = m_triangulations[i].second;
 
     // Kernel functor & objects
-    //Kernel::Difference_of_points_d  diff_points = m_k.difference_of_points_d_object(); // CJTODO: use that
-    Get_functor<Kernel, Difference_of_points_tag>::type k_diff_pts(m_k);
+    Kernel::Difference_of_points_d k_diff_pts =
+      m_k.difference_of_points_d_object();
 
     // Triangulation's traits functor & objects
     Tr_traits::Squared_distance_d sqdist = 
@@ -357,9 +361,8 @@ private:
     //***************************************************
 
     const int NUM_NEIGHBORS = 150;
-    std::size_t nearest_nb[NUM_NEIGHBORS];
-    m_points_ds.query_ANN(
-      center_pt, NUM_NEIGHBORS, nearest_nb);
+    KNS_range const& ins_range = 
+      m_points_ds.query_ANN(center_pt, NUM_NEIGHBORS);
     /*const int NUM_NEIGHBORS = 150;
     std::size_t nearest_nb[NUM_NEIGHBORS];
     for (int ii = 0 ; ii < NUM_NEIGHBORS ; ++ii)
@@ -367,12 +370,18 @@ private:
 
     // First, compute the projected points
     std::vector<Tr_point> projected_points;
+    std::vector<std::size_t> nearest_nb;
+    nearest_nb.reserve(NUM_NEIGHBORS);
     FT max_squared_weight = 0;
     projected_points.reserve(NUM_NEIGHBORS);
-    for (std::size_t j = 0 ; j < NUM_NEIGHBORS ; ++j)
+    KNS_iterator nn_it = ins_range.begin();
+    for (std::size_t j = 0 ;
+         j < NUM_NEIGHBORS && nn_it != ins_range.end() ;
+         ++j, ++nn_it)
     {
       // ith point = p, which is already inserted
-      std::size_t idx = nearest_nb[j];
+      std::size_t idx = nn_it->first;
+      nearest_nb.push_back(idx);
       //if (idx != i) // CJTODO optim?
       {
         Tr_point wp = project_point(m_points[idx], center_pt, m_tangent_spaces[i]);
@@ -507,19 +516,21 @@ private:
     Kernel::Scalar_product_d        inner_pdct = m_k.scalar_product_d_object();
     Kernel::Difference_of_vectors_d diff_vec   = m_k.difference_of_vectors_d_object();
 
-    std::size_t neighbor_indices[NUM_POINTS_FOR_PCA];
-    m_points_ds.query_ANN(
-      p, NUM_POINTS_FOR_PCA, neighbor_indices);
+    KNS_range kns_range = m_points_ds.query_ANN(
+      p, NUM_POINTS_FOR_PCA, false);
 
     //******************************* PCA *************************************
 
     const int amb_dim = Ambient_dimension<Point>::value;
     // One row = one point
     Eigen::MatrixXd mat_points(NUM_POINTS_FOR_PCA, amb_dim);
-    for (int j = 0 ; j < NUM_POINTS_FOR_PCA ; ++j)
+    KNS_iterator nn_it = kns_range.begin();
+    for (int j = 0 ; 
+         j < NUM_POINTS_FOR_PCA && nn_it != kns_range.end() ; 
+         ++j, ++nn_it)
     {
       for (int i = 0 ; i < amb_dim ; ++i)
-        mat_points(j, i) = m_points[neighbor_indices[j]][i]; // CJTODO: Use kernel functor
+        mat_points(j, i) = m_points[nn_it->first][i]; // CJTODO: Use kernel functor
     }
     Eigen::MatrixXd centered = mat_points.rowwise() - mat_points.colwise().mean();
     Eigen::MatrixXd cov = centered.adjoint() * centered;
@@ -580,8 +591,8 @@ private:
                          const Tangent_space_basis &ts) const
   {
     Kernel::Scalar_product_d inner_pdct = m_k.scalar_product_d_object();
-    //Kernel::Difference_of_points_d  diff_points= m_k.difference_of_points_d_object(); // CJTODO: use that
-    Get_functor<Kernel, Difference_of_points_tag>::type diff_points(m_k);
+    Kernel::Difference_of_points_d diff_points =
+      m_k.difference_of_points_d_object();
 
     std::vector<FT> coords;
     // Ambiant-space coords of the projected point

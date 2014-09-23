@@ -206,6 +206,7 @@ protected:
 #else // !CGAL_TC_USE_NANOFLANN => use CGAL Spatial searching
 
 #include <CGAL/Orthogonal_k_neighbor_search.h>
+#include <CGAL/Orthogonal_incremental_neighbor_search.h>
 #include <CGAL/Search_traits.h>
 #include <CGAL/Search_traits_adapter.h>
 #include <CGAL/property_map.h>
@@ -213,6 +214,7 @@ protected:
 #include <boost/tuple/tuple.hpp>
 #include <boost/iterator/zip_iterator.hpp>
 #include <boost/iterator/counting_iterator.hpp>
+#include <boost/range/iterator_range.hpp>
 
 #include <utility>
 #include <limits>
@@ -239,6 +241,14 @@ public:
   typedef CGAL::Orthogonal_k_neighbor_search<STraits>       K_neighbor_search;
   typedef typename K_neighbor_search::Tree                  Tree;
   typedef typename K_neighbor_search::Distance              Distance;
+  typedef typename K_neighbor_search::iterator              KNS_iterator;
+  typedef K_neighbor_search                                 KNS_range;
+
+  typedef CGAL::Orthogonal_incremental_neighbor_search<
+    STraits, Distance, CGAL::Sliding_midpoint<STraits>, Tree>      
+                                                   Incremental_neighbor_search;
+  typedef typename Incremental_neighbor_search::iterator    INS_iterator;
+  typedef Incremental_neighbor_search                       INS_range;
 
   static const int AMB_DIM = Ambient_dimension<Point>::value;
 
@@ -262,49 +272,42 @@ public:
   {
     return m_points;
   }*/
-  
-  template<typename IndexOutputIt>
-  void query_ANN(const Point &sp,
+
+  KNS_range query_ANN(const 
+    Point &sp,
     unsigned int k,
-    IndexOutputIt indices_out) const
+    bool sorted = true) const
   {
     // Initialize the search structure, and search all N points
     // Note that we need to pass the Distance explicitly since it needs to
     // know the property map
-    K_neighbor_search search(m_tree, sp, k, FT(0.1), true,
-      Distance_adapter<std::ptrdiff_t, Point*, Euclidean_distance<Traits_base> >(
-        (Point*)&(m_points[0])) );
-
-     // report the N nearest neighbors and their distance
-    // This should sort all N points by increasing distance from origin
-    for(K_neighbor_search::iterator it = search.begin(); 
-        it != search.end(); ++it)
-    {
-      *indices_out++ = it->first;
-    }
+    K_neighbor_search search(
+      m_tree, 
+      sp, 
+      k, 
+      FT(0.0), 
+      true,
+      Distance_adapter<std::ptrdiff_t,Point*,Euclidean_distance<Traits_base> >(
+        (Point*)&(m_points[0])),
+      sorted);
+    
+    return search;
   }
-
-  template<typename IndexOutputIt, typename DistanceOutputIt>
-  void query_ANN(const Point &sp,
-    unsigned int k,
-    IndexOutputIt indices_out,
-    DistanceOutputIt distances_out) const
+  
+  INS_range query_incremental_ANN(const Point &sp) const
   {
     // Initialize the search structure, and search all N points
     // Note that we need to pass the Distance explicitly since it needs to
     // know the property map
-    K_neighbor_search search(m_tree, sp, k, FT(0.1), true,
-      Distance_adapter<std::ptrdiff_t, Point*, Euclidean_distance<Traits_base> >(
+    Incremental_neighbor_search search(
+      m_tree,
+      sp,
+      FT(0.0), 
+      true,
+      Distance_adapter<std::ptrdiff_t,Point*,Euclidean_distance<Traits_base> >(
         (Point*)&(m_points[0])) );
-
-     // report the N nearest neighbors and their distance
-    // This should sort all N points by increasing distance from origin
-    for(K_neighbor_search::iterator it = search.begin(); 
-        it != search.end(); ++it)
-    {
-      *indices_out++ = it->first;
-      *distances_out++ = it->second;
-    }
+    
+    return search;
   }
 
 protected:
