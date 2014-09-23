@@ -63,8 +63,8 @@ private:
   // Data members:
   const Traits_2 * m_traits;                // The geometric-traits object.
 
-  Arr_parameter_space  m_ps_in_x;           // Storing curve information when
-  Arr_parameter_space  m_ps_in_y;           // comparing a curve end with
+  Arr_parameter_space  m_ps_x;              // Storing curve information when
+  Arr_parameter_space  m_ps_y;              // comparing a curve end with
   Arr_curve_end        m_ind;               // boundary conditions.
 
 public:
@@ -116,10 +116,8 @@ public:
    */
   Comparison_result operator() (const Point_2& pt, const Event* e2) const
   {
-    Arr_parameter_space ps_x1 = m_traits->parameter_space_in_x_2_object()(pt);
-    Arr_parameter_space ps_y1 = m_traits->parameter_space_in_y_2_object()(pt);
-
-    return _compare_point_with_event(pt, ps_x1, ps_y1, e2);
+    // REMARK: use m_ps_x and m_ps_y as set from outside! do not rely on pt here anymore
+    return _compare_point_with_event(pt, m_ps_x, m_ps_y, e2);
   }
 
   /*!
@@ -131,19 +129,20 @@ public:
   Comparison_result operator() (const X_monotone_curve_2& cv,
                                 const Event* e2) const
   {
-    return _compare_curve_end_with_event(cv, m_ind, m_ps_in_x, m_ps_in_y, e2);
+    // REMARK: use m_ps_x and m_ps_y as set from outside! do not rely on cv here anymore
+    return _compare_curve_end_with_event(cv, m_ind, m_ps_x, m_ps_y, e2);
   }
 
   /// \name Set the boundary conditions of a curve end we are about to compare.
   //@{
-  void set_parameter_space_in_x (Arr_parameter_space bx)
+  void set_parameter_space_in_x (Arr_parameter_space ps_x)
   {
-    m_ps_in_x = bx;
+    m_ps_x = ps_x;
   }
 
-  void set_parameter_space_in_y (Arr_parameter_space by)
+  void set_parameter_space_in_y (Arr_parameter_space ps_y)
   {
-    m_ps_in_y = by;
+    m_ps_y = ps_y;
   }
 
   void set_ind (Arr_curve_end ind)
