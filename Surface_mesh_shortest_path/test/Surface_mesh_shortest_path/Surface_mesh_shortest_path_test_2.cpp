@@ -6,7 +6,14 @@
 //
 // Author(s)     : Stephen Kiazyk
 
+#include <cstdlib>
 #include <iomanip>
+#include <iostream>
+#include <fstream>
+#include <utility>
+#include <cmath>
+
+#include <CGAL/Random.h>
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
@@ -14,6 +21,7 @@
 #include <CGAL/Polyhedron_items_with_id_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
 
+#include <CGAL/boost/graph/iterator.h>
 #include <CGAL/boost/graph/properties_Polyhedron_3.h>
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 
@@ -23,16 +31,7 @@
 #include <CGAL/Surface_mesh_shortest_path/barycentric.h>
 #include <CGAL/Surface_mesh_shortest_path/internal/misc_functions.h>
 
-
-#include <CGAL/boost/graph/iterator.h>
-
-#include <CGAL/Random.h>
-
 #include <CGAL/test_util.h>
-#include <iostream>
-#include <fstream>
-#include <utility>
-#include <cmath>
 
 #define BOOST_TEST_MODULE Surface_mesh_shortest_path_test_2
 #include <boost/test/included/unit_test.hpp>
@@ -56,10 +55,17 @@ BOOST_AUTO_TEST_CASE( test_a_to_b_vs_b_t_a_distances )
   
   Traits traits;
   
-  CGAL::Random rand(2681972);
-  
   std::string mesh = boost::unit_test::framework::master_test_suite().argv[1];
 
+  int randSeed = 2681972;
+  
+  if (boost::unit_test::framework::master_test_suite().argc > 2)
+  {
+    randSeed = std::atoi(boost::unit_test::framework::master_test_suite().argv[2]);
+  }
+  
+  CGAL::Random rand(randSeed);
+  
   Polyhedron_3 polyhedron;
   std::ifstream in(mesh.c_str());
   
@@ -202,17 +208,13 @@ BOOST_AUTO_TEST_CASE( test_a_to_b_vs_b_t_a_distances )
     
     startToEndShortestPaths.construct_sequence_tree(startFace, startLocation);
 
-    //CGAL::Interval_nt<true> startToEnd = startToEndShortestPaths.shortest_distance_to_location_interval(endFace, endLocation);
-    
     FT startToEnd = startToEndShortestPaths.shortest_distance_to_source_points(endFace, endLocation).first;
     
     CGAL::test::Edge_sequence_collector<Traits> startToEndCollector(vertexIndexMap, halfedgeIndexMap, faceIndexMap);
     startToEndShortestPaths.shortest_path_sequence_to_source_points(endFace, endLocation, startToEndCollector);
     
     endToStartShortestPaths.construct_sequence_tree(endFace, endLocation);
-    
-    //CGAL::Interval_nt<true> endToStart = endToStartShortestPaths.shortest_distance_to_location_interval(startFace, startLocation);
-    
+
     FT endToStart = endToStartShortestPaths.shortest_distance_to_source_points(startFace, startLocation).first;
 
     CGAL::test::Edge_sequence_collector<Traits> endToStartCollector(vertexIndexMap, halfedgeIndexMap, faceIndexMap);
