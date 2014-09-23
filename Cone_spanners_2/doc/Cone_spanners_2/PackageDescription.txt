@@ -33,4 +33,12 @@
 
 \cgalPkgDescriptionEnd
 
+\cgalClassifedRefPages
+
+## Concepts ##
+- `ConeSpanners_2`
+
+## Classes ##
+- `CGAL::Yao_graph_2`
+- `CGAL::Theta_graph_2`
 */
