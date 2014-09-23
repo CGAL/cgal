@@ -97,7 +97,7 @@ PrintOpenBoundaryType (Arr_parameter_space ps_x, Arr_parameter_space ps_y)
    case ARR_BOTTOM_BOUNDARY: std::cout << "bottom boundary"; return;
    case ARR_TOP_BOUNDARY:    std::cout << "top boundary"; return;
    case ARR_INTERIOR:
-   default: CGAL_error();
+   default:                  std::cout << "interior"; return;
   }
 }
 
@@ -105,16 +105,23 @@ template <class Tr, class Visit, class Crv, class Evnt, class Alloc>
 void Basic_sweep_line_2<Tr, Visit, Crv, Evnt, Alloc>::
 PrintEvent(const Event* e)
 {
-  if (e->is_closed())
-    std::cout << e->point();
+  Arr_parameter_space x = e->parameter_space_in_x();
+  Arr_parameter_space y = e->parameter_space_in_y();
+  PrintOpenBoundaryType(x, y);
+  if (e->is_closed()) {
+    std::cout << " " << e->point();
+  }
   else
   {
-    Arr_parameter_space x = e->parameter_space_in_x();
-    Arr_parameter_space y = e->parameter_space_in_y();
-    PrintOpenBoundaryType(x, y);
-    std::cout << " with open curve: " << e->curve();
+    if (e->has_left_curves() || e->has_right_curves()) {
+      std::cout << " with open curve: " << e->curve();
+    } else {
+      std::cout << " NO curve yet!"; // this can exists if you print an event before a curve is added!
+      // added this code in order to avoid abortion
+    }
   }
   std::cout << " [left: " << e->number_of_left_curves() << ", right: " << e->number_of_right_curves() << "]";
+
 
 }
 
