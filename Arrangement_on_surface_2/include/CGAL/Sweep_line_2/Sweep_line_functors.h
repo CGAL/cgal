@@ -81,33 +81,67 @@ public:
    */
   Comparison_result operator()(const Event* e1, const Event* e2) const
   {
+#if 0
+    CGAL::set_pretty_mode(std::cout);
+    std::cout << "\ndebug" << std::endl;
+    std::cout << "e1: " << e1 << std::endl;
+    std::cout << "ps_x1: " << e1->parameter_space_in_x() << std::endl;
+    std::cout << "ps_y1: " << e1->parameter_space_in_y() << std::endl;
+    std::cout << "e2: " << e2 << std::endl;
+    std::cout << "ps_x2: " << e2->parameter_space_in_x() << std::endl;
+    std::cout << "ps_y2: " << e2->parameter_space_in_y() << std::endl;
+#endif
+
     const bool  on_boundary1 = e1->is_on_boundary();
     const bool  on_boundary2 = e2->is_on_boundary();
+
+    Comparison_result res;
 
     if (! on_boundary1 && ! on_boundary2)
     {
       // Both events do not have boundary conditions - just compare the points.
-      return (m_traits->compare_xy_2_object()(e1->point(), e2->point()));
+      res = (m_traits->compare_xy_2_object()(e1->point(), e2->point()));
+      //std::cout << "resA" << res << std::endl;
+      return res;
     }
 
-    if (! on_boundary1)
+    if (! on_boundary1 || e1->is_closed())
     {
-      // Compare the point associated with the first event with the second
-      // boundary event.
-      return ( this->operator()(e1->point(), e2) );
+      // Compare the point associated with the first event with the second boundary event.
+      res = (this->_compare_point_with_event(e1->point(),
+                                             e1->parameter_space_in_x(),
+                                             e1->parameter_space_in_y(),
+                                             e2));
+      //std::cout << "resB " << res << std::endl;
+      return res;
     }
 
-    if (! on_boundary2)
+    if (! on_boundary2 || e2->is_closed())
     {
-      // Compare the point associated with the second event with the first
-      // boundary event.
-      return (CGAL::opposite(this->operator()(e2->point(), e1)));
+      // Compare the point associated with the second event with the first boundary event.
+      res = (CGAL::opposite(this->_compare_point_with_event(e2->point(),
+                                                            e2->parameter_space_in_x(),
+                                                            e2->parameter_space_in_y(),
+                                                            e1)));
+
+      //std::cout << "resC" << res << std::endl;
+      return res;
     }
 
-    return (_compare_curve_end_with_event (e1->curve(), _curve_end(e1),
-                                           e1->parameter_space_in_x(),
-                                           e1->parameter_space_in_y(),
-                                           e2));
+    // both events are on the boundary and both are OPEN, that is,
+    // there is a curve-end stored with e1 (and with e2)
+    CGAL_assertion(!e1->is_closed());
+    CGAL_assertion(!e2->is_closed());
+    res = (this->_compare_curve_end_with_event (e1->curve(), _curve_end(e1),
+                                                e1->parameter_space_in_x(),
+                                                e1->parameter_space_in_y(),
+                                                e2));
+    CGAL_assertion(res == CGAL::opposite(this->_compare_curve_end_with_event (e2->curve(), _curve_end(e2),
+                                                                              e2->parameter_space_in_x(),
+                                                                              e2->parameter_space_in_y(),
+                                                                              e1)));
+    //std::cout << "resD" << res << std::endl;
+    return res;
   }
 
   /*!
@@ -170,8 +204,16 @@ private:
                              Arr_parameter_space ps_x1,
                              Arr_parameter_space ps_y1,
                              const Event* e2) const {
-
+#if 0
+    CGAL::set_pretty_mode(std::cout);
     std::cout << std::endl << "FUNCTOR pt: " << pt << std::endl;
+    std::cout << "ps_x1: " << ps_x1 << std::endl;
+    std::cout << "ps_y1: " << ps_y1 << std::endl;
+    std::cout << "e2: " << e2 << std::endl;
+    std::cout << "ps_x2: " << e2->parameter_space_in_x() << std::endl;
+    std::cout << "ps_y2: " << e2->parameter_space_in_y() << std::endl;
+#endif
+
     Arr_parameter_space ps_x2 = e2->parameter_space_in_x();
     Arr_parameter_space ps_y2 = e2->parameter_space_in_y();
 
@@ -211,7 +253,7 @@ private:
         // 1L2L, 1R2R
         // e2->point() is accessible, as pt is a point on the SAME left/right side
         Comparison_result res = (m_traits->compare_y_on_boundary_2_object() (pt, e2->point()));
-        std::cout << "res1 " << res << std::endl;
+        //std::cout << "res1 " << res << std::endl;
         return res;
       }
       // else both are x-interior
@@ -220,7 +262,7 @@ private:
         // e2->point() is accessible as e2 is INTERIOR
         // NOTE compare_y_on_boundary could take a point that actually lies on the bottom or top side (if curve-end of a a curve on the identifaction)!!!!
         Comparison_result res = (m_traits->compare_xy_2_object() (pt, e2->point()));
-        std::cout << "res2 " << res << std::endl;
+        //std::cout << "res2 " << res << std::endl;
         return res;
       } else {
         // at least onex2 of pt or e2 lies on a boundary
@@ -229,11 +271,11 @@ private:
           Bottom_side_category, Top_side_category > BT;
         if (e2->is_closed()) {
           Comparison_result res = (_compare_x_point_with_closed_event(pt, e2, typename BT::Compare_x_on_boundary_2_points_tag()));
-          std::cout << "res3 " << res << std::endl;
+          //std::cout << "res3 " << res << std::endl;
           return res;
         } else {
           Comparison_result res = (_compare_x_point_with_open_event  (pt, e2, typename BT::Compare_x_on_boundary_2_point_curve_end_tag()));
-          std::cout << "res4 " << res << std::endl;
+          //std::cout << "res4 " << res << std::endl;
         return res;
         }
       }
@@ -247,27 +289,27 @@ private:
     // 1T2L, 1T2R
     // 1R2L, 1R2B, 1R2I, 1R2T
     if (ps_x1 == ARR_LEFT_BOUNDARY) {
-      std::cout << "res5 SMALLER" << std::endl;
+      //std::cout << "res5 SMALLER" << std::endl;
       return (SMALLER);
     }
     if (ps_x1 == ARR_RIGHT_BOUNDARY) {
-      std::cout << "res6 LARGER" << std::endl;
+      //std::cout << "res6 LARGER" << std::endl;
       return (LARGER);
     }
     // ps_x1 == ARR_INTERIOR != ps_x2
     if (ps_x2 == ARR_LEFT_BOUNDARY) {
-      std::cout << "res7 LARGER" << std::endl;
+      //std::cout << "res7 LARGER" << std::endl;
       return (LARGER);
     }
     // ps_x2 == ARR_RIGHT_BOUNDARY
-    std::cout << "res8 SMALLER" << std::endl;
+    //std::cout << "res8 SMALLER" << std::endl;
     return (SMALLER);
   }
 
   Comparison_result _compare_x_point_with_closed_event(const Point_2& pt, const Event* e2,
                                                      Arr_use_traits_tag) const {
     CGAL_assertion(e2->is_closed());
-    std::cout << "cmpA"<< std::endl;
+    // std::cout << "cmpA"<< std::endl;
     return (m_traits->compare_x_on_boundary_2_object() (pt, e2->point()));
   }
 
@@ -281,7 +323,7 @@ private:
                                                      Arr_use_traits_tag) const {
     CGAL_assertion(!(e2->is_closed()));
     // e2 must be an open event here, and thus exactly one curve is incident
-    std::cout << "cmpB"<< std::endl;
+    // std::cout << "cmpB"<< std::endl;
     return (m_traits->compare_x_point_curve_end_2_object() (pt, e2->curve(), _curve_end(e2)));
   }
 
