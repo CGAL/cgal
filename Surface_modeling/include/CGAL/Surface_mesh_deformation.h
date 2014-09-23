@@ -17,8 +17,8 @@
 //
 // Author(s)     : Yin Xu, Andreas Fabri and Ilker O. Yaz
 
-#ifndef CGAL_DEFORM_MESH_H
-#define CGAL_DEFORM_MESH_H
+#ifndef CGAL_SURFACE_MESH_DEFORMATION_H
+#define CGAL_SURFACE_MESH_DEFORMATION_H
 
 #include <CGAL/config.h>
 #include <CGAL/internal/Surface_modeling/Weights.h>
@@ -77,9 +77,9 @@ struct Weight_calculator_selector<HalfedgeGraph, CGAL::ORIGINAL_ARAP> {
  /// @brief Class providing the functionalities for deforming a triangulated surface mesh
  ///
  /// @tparam HG a model of HalfedgeGraph
- /// @tparam VIM a model of `ReadablePropertyMap`</a>  with Deform_mesh::vertex_descriptor as key and `unsigned int` as value type.
+ /// @tparam VIM a model of `ReadablePropertyMap`</a>  with Surface_mesh_deformation::vertex_descriptor as key and `unsigned int` as value type.
  ///         The default is `boost::property_map<HG, boost::%vertex_index_t>::%type`.
- /// @tparam HIM a model of `ReadablePropertyMap`</a>  with Deform_mesh::halfedge_descriptor as key and `unsigned int` as value type.
+ /// @tparam HIM a model of `ReadablePropertyMap`</a>  with Surface_mesh_deformation::halfedge_descriptor as key and `unsigned int` as value type.
  ///         The default is `boost::property_map<HG, boost::%halfedge_index_t>::%type`.
  /// @tparam TAG tag for selecting the deformation algorithm
  /// @tparam WC a model of SurfaceModelingWeights, with `WC::Halfedge_graph` being `HG`.
@@ -95,7 +95,7 @@ struct Weight_calculator_selector<HalfedgeGraph, CGAL::ORIGINAL_ARAP> {
  /// \endcode
  /// @tparam CR a model of DeformationClosestRotationTraits_3. If \ref thirdpartyEigen "Eigen" 3.1 (or greater) is available and `CGAL_EIGEN3_ENABLED` is defined,
  /// `Deformation_Eigen_polar_closest_rotation_traits_3` is provided as default parameter.
- /// @tparam VPM a model of `ReadWritePropertyMap`</a>  with Deform_mesh::vertex_descriptor as key and a point as value type. The point type must be a model of `::RawPoint_3`.
+ /// @tparam VPM a model of `ReadWritePropertyMap`</a>  with Surface_mesh_deformation::vertex_descriptor as key and a point as value type. The point type must be a model of `::RawPoint_3`.
  /// The default is `boost::property_map<HG, CGAL::vertex_point_t>::%type`.
 template <
   class HG,
@@ -107,7 +107,7 @@ template <
   class CR = Default,
   class VPM = Default
   >
-class Deform_mesh
+class Surface_mesh_deformation
 {
 //Typedefs
 public:
@@ -202,7 +202,7 @@ public:
 /// @}
 
 private:
-  typedef Deform_mesh<HG, VIM, HIM, TAG, WC, ST, CR> Self;
+  typedef Surface_mesh_deformation<HG, VIM, HIM, TAG, WC, ST, CR> Self;
   // Repeat Halfedge_graph types
   typedef typename boost::graph_traits<Halfedge_graph>::vertex_iterator     vertex_iterator;
   typedef typename boost::graph_traits<Halfedge_graph>::halfedge_iterator       halfedge_iterator;
@@ -256,10 +256,10 @@ private:
 
 #ifndef CGAL_CFG_NO_CPP0X_DELETED_AND_DEFAULT_FUNCTIONS
 public:
-  Deform_mesh(const Self&) = delete; // no copy
+  Surface_mesh_deformation(const Self&) = delete; // no copy
 #else
 private:
-  Deform_mesh(const Self&); // no copy
+  Surface_mesh_deformation(const Self&); // no copy
 #endif
 
 
@@ -268,10 +268,10 @@ public:
 
   /// \cond SKIP_FROM_MANUAL
   //vertex_point_map set by default
-  Deform_mesh(Halfedge_graph& halfedge_graph,
-              Vertex_index_map vertex_index_map,
-              Hedge_index_map hedge_index_map
-              )
+  Surface_mesh_deformation(Halfedge_graph& halfedge_graph,
+                           Vertex_index_map vertex_index_map,
+                           Hedge_index_map hedge_index_map
+                          )
     : m_halfedge_graph(halfedge_graph), vertex_index_map(vertex_index_map), hedge_index_map(hedge_index_map),
       ros_id_map(std::vector<std::size_t>(num_vertices(halfedge_graph), (std::numeric_limits<std::size_t>::max)() )),
       is_roi_map(std::vector<bool>(num_vertices(halfedge_graph), false)),
@@ -287,9 +287,9 @@ public:
   }
 
   //vertex_point_map and hedge_index_map set by default
-  Deform_mesh(Halfedge_graph& halfedge_graph,
-              Vertex_index_map vertex_index_map
-              )
+  Surface_mesh_deformation(Halfedge_graph& halfedge_graph,
+                           Vertex_index_map vertex_index_map
+                          )
     : m_halfedge_graph(halfedge_graph), vertex_index_map(vertex_index_map),
       hedge_index_map(get(boost::halfedge_index, halfedge_graph)),
       ros_id_map(std::vector<std::size_t>(num_vertices(halfedge_graph), (std::numeric_limits<std::size_t>::max)() )),
@@ -305,8 +305,7 @@ public:
     init();
   }
   //vertex_point_map, hedge_index_map and vertex_index_map set by default
-  Deform_mesh(Halfedge_graph& halfedge_graph
-              )
+  Surface_mesh_deformation(Halfedge_graph& halfedge_graph)
     : m_halfedge_graph(halfedge_graph),
       vertex_index_map(get(boost::vertex_index, halfedge_graph)),
       hedge_index_map(get(boost::halfedge_index, halfedge_graph)),
@@ -324,12 +323,12 @@ public:
   }
 
   // Constructor with all the parameters provided
-  Deform_mesh(Halfedge_graph& halfedge_graph,
-    Vertex_index_map vertex_index_map,
-    Hedge_index_map hedge_index_map,
-    Vertex_point_map vertex_point_map,
-    Weight_calculator weight_calculator = Weight_calculator()
-    )
+  Surface_mesh_deformation(Halfedge_graph& halfedge_graph,
+                           Vertex_index_map vertex_index_map,
+                           Hedge_index_map hedge_index_map,
+                           Vertex_point_map vertex_point_map,
+                           Weight_calculator weight_calculator = Weight_calculator()
+                          )
     : m_halfedge_graph(halfedge_graph), vertex_index_map(vertex_index_map), hedge_index_map(hedge_index_map),
     ros_id_map(std::vector<std::size_t>(num_vertices(halfedge_graph), (std::numeric_limits<std::size_t>::max)() )),
     is_roi_map(std::vector<bool>(num_vertices(halfedge_graph), false)),
@@ -357,7 +356,7 @@ public:
    * @param vertex_point_map property map used to access the points associated to each vertex of the graph.
    * @param weight_calculator function object or pointer for weight calculation
    */
-  Deform_mesh(Halfedge_graph& halfedge_graph,
+  Surface_mesh_deformation(Halfedge_graph& halfedge_graph,
     Vertex_index_map vertex_index_map=get(boost::vertex_index, halfedge_graph),
     Hedge_index_map hedge_index_map=get(boost::halfedge_index, halfedge_graph),
     Vertex_point_map vertex_point_map=get(vertex_point, halfedge_graph),
@@ -1507,4 +1506,4 @@ private:
   }
 };
 } //namespace CGAL
-#endif  // CGAL_DEFORM_MESH_H
+#endif  // CGAL_SURFACE_MESH_DEFORMATION_H

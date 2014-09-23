@@ -19,7 +19,7 @@
 #include <QGLViewer/camera.h>
 
 #include "ui_Deform_mesh.h"
-#include <CGAL/Deform_mesh.h> 
+#include <CGAL/Surface_mesh_deformation.h>
 #include <boost/function_output_iterator.hpp>
 
 
@@ -60,7 +60,7 @@ put(Array_based_vertex_point_map pmap,
   (*pmap.positions)[pos+2] = val.z();
 }
 
-typedef CGAL::Deform_mesh<Polyhedron, CGAL::Default, CGAL::Default, CGAL::ORIGINAL_ARAP
+typedef CGAL::Surface_mesh_deformation<Polyhedron, CGAL::Default, CGAL::Default, CGAL::ORIGINAL_ARAP
   ,CGAL::Default, CGAL::Default, CGAL::Default, 
   Array_based_vertex_point_map> Deform_mesh;
 

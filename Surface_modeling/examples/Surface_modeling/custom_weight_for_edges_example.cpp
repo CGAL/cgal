@@ -5,7 +5,7 @@
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/boost/graph/properties_Polyhedron_3.h>
 
-#include <CGAL/Deform_mesh.h>
+#include <CGAL/Surface_mesh_deformation.h>
 
 #include <fstream>
 #include <map>
@@ -38,7 +38,7 @@ struct Weights_from_map
   std::map<halfedge_descriptor, double>* weight_map;
 };
 
-typedef CGAL::Deform_mesh<Polyhedron, Vertex_index_map, Hedge_index_map, CGAL::ORIGINAL_ARAP, Weights_from_map> Deform_mesh;
+typedef CGAL::Surface_mesh_deformation<Polyhedron, Vertex_index_map, Hedge_index_map, CGAL::ORIGINAL_ARAP, Weights_from_map> Surface_mesh_deformation;
 
 int main()
 {
@@ -74,11 +74,11 @@ int main()
   for(boost::tie(eb, ee) = halfedges(mesh); eb != ee; ++eb, ++counter) {
     put(hedge_index_map, *eb, counter);
   }
-  Deform_mesh deform_mesh(mesh,
-                          vertex_index_map,
-                          hedge_index_map,
-                          get(CGAL::vertex_point, mesh),
-                          Weights_from_map(&weight_map));
+  Surface_mesh_deformation deform_mesh(mesh,
+                                       vertex_index_map,
+                                       hedge_index_map,
+                                       get(CGAL::vertex_point, mesh),
+                                       Weights_from_map(&weight_map));
 
   // Deform mesh as desired
   // .....
