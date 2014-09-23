@@ -100,19 +100,37 @@ class Tangential_complex
   typedef typename Points_ds::INS_range               INS_range;
   typedef typename Points_ds::INS_iterator            INS_iterator;
 
-  typedef std::pair<Triangulation*, Tr_vertex_handle> Tr_and_VH;
+  // Store a local triangulation and a handle to its center vertex
+  struct Tr_and_VH
+  {
+  public:
+    Tr_and_VH()
+      : m_tr(NULL) {}
+    Tr_and_VH(int dim)
+      : m_tr(new Triangulation(dim)) {}
+    
+    ~Tr_and_VH() { delete m_tr; }
+
+    Triangulation & construct_triangulation(int dim)
+    { 
+      m_tr = new Triangulation(dim);
+      return tr();
+    }
+
+    Triangulation &      tr()       { return *m_tr; }
+    Triangulation const& tr() const { return *m_tr; }
+    
+
+    Tr_vertex_handle const& center_vertex() const { return m_center_vertex; }
+    Tr_vertex_handle & center_vertex() { return m_center_vertex; }
+
+  private:
+    Triangulation* m_tr;
+    Tr_vertex_handle m_center_vertex;
+  };
+
   typedef typename std::vector<Tr_and_VH>             Tr_container;
   typedef typename std::vector<Tangent_space_basis>   TS_container;
-
-  // Stores the index of the original Point in the ambient space
-  /*struct Tr_point_with_index 
-  : public Tr_point
-  {
-    Tr_point_with_index(const Tr_point &p, std::size_t i)
-      : Tr_point(p), index(i) {}
-
-    std::size_t index;
-  };*/
 
 public:
   /// Constructor
@@ -137,9 +155,7 @@ public:
     // We need to do that because we don't want the container to copy the
     // already-computed triangulations (while resizing) since it would
     // invalidate the vertex handles stored beside the triangulations
-    m_triangulations.resize(
-      m_points.size(), 
-      std::make_pair((Triangulation*)NULL, Tr_vertex_handle()));
+    m_triangulations.resize(m_points.size());
     m_tangent_spaces.resize(m_points.size());
     
 #ifdef CGAL_LINKED_WITH_TBB
@@ -221,15 +237,15 @@ public:
     // For each triangulation
     for ( ; it_tr != it_tr_end ; ++it_tr)
     {
-      const Triangulation &tr = *it_tr->first;
-      Tr_vertex_handle center_vh = it_tr->second;
+      Triangulation const& tr    = it_tr->tr();
+      Tr_vertex_handle center_vh = it_tr->center_vertex();
 
       std::vector<Tr_full_cell_handle> incident_cells;
       tr.incident_full_cells(center_vh, std::back_inserter(incident_cells));
 
       std::vector<Tr_full_cell_handle>::const_iterator it_c = incident_cells.begin();
       std::vector<Tr_full_cell_handle>::const_iterator it_c_end= incident_cells.end();
-      // For each triangulation
+      // For each cell
       for ( ; it_c != it_c_end ; ++it_c)
       {
         output << Intrinsic_dimension + 1 << " ";
@@ -333,11 +349,10 @@ private:
   void compute_tangent_triangulation(std::size_t i)
   {
     //std::cerr << "***********************************************" << std::endl;
-    Triangulation *p_local_tr =
-      m_triangulations[i].first = 
-        new Triangulation(Intrinsic_dimension);
-    const Tr_traits &local_tr_traits = p_local_tr->geom_traits();
-    Tr_vertex_handle &center_vertex = m_triangulations[i].second;
+    Triangulation &local_tr =
+      m_triangulations[i].construct_triangulation(Intrinsic_dimension);
+    const Tr_traits &local_tr_traits = local_tr.geom_traits();
+    Tr_vertex_handle &center_vertex = m_triangulations[i].center_vertex();
 
     // Kernel functor & objects
     Kernel::Difference_of_points_d k_diff_pts =
@@ -359,58 +374,40 @@ private:
     // Build a minimal triangulation in the tangent space
     // (we only need the star of p)
     //***************************************************
+    
+    // CJTODO: replace 1000000 with something better
+
+    // Insert p
+    Tr_point wp = local_tr_traits.construct_weighted_point_d_object()(
+      local_tr_traits.construct_point_d_object()(0, 0),
+      1000000);
+    center_vertex = local_tr.insert(wp);
+    center_vertex->data() = i;
 
     const int NUM_NEIGHBORS = 150;
-    KNS_range ins_range = 
-      m_points_ds.query_ANN(center_pt, NUM_NEIGHBORS);
+    //KNS_range ins_range = m_points_ds.query_ANN(center_pt, NUM_NEIGHBORS);
+    INS_range ins_range = m_points_ds.query_incremental_ANN(center_pt);
+    
+    // While building the local triangulation, we keep the radius
+    // of the sphere centered at "center_vertex" and which contains all the
+    // circumspheres of the star of "center_vertex"
+    FT star_sphere_squared_radius = std::numeric_limits<FT>::max();
 
-    // First, compute the projected points
-    std::vector<Tr_point> projected_points;
-    std::vector<std::size_t> nearest_nb;
-    nearest_nb.reserve(NUM_NEIGHBORS);
-    FT max_squared_weight = 0;
-    projected_points.reserve(NUM_NEIGHBORS);
-    KNS_iterator nn_it = ins_range.begin();
+    INS_iterator nn_it = ins_range.begin();
     for (std::size_t j = 0 ;
          j < NUM_NEIGHBORS && nn_it != ins_range.end() ;
          ++j, ++nn_it)
     {
       // ith point = p, which is already inserted
-      std::size_t idx = nn_it->first;
-      nearest_nb.push_back(idx);
-      //if (idx != i) // CJTODO optim?
-      {
-        Tr_point wp = project_point(m_points[idx], center_pt, m_tangent_spaces[i]);
-        projected_points.push_back(wp);
-        FT w = local_tr_traits.point_weight_d_object()(wp);
-        if (w > max_squared_weight)
-          max_squared_weight = w;
-      }
-    }
-
-    // Now we can insert the points
-
-    // Insert p
-    Tr_point wp = local_tr_traits.construct_weighted_point_d_object()(
-      local_tr_traits.construct_point_d_object()(0, 0),
-      CGAL::sqrt(max_squared_weight));
-    center_vertex = p_local_tr->insert(wp);
-    center_vertex->data() = i;
-    //std::cerr << "Inserted CENTER POINT of weight " << CGAL::sqrt(max_squared_weight) << std::endl;
-
-    // While building the local triangulation, we keep the radius
-    // of the sphere centered at "center_vertex" and which contains all the
-    // circumspheres of the star of "center_vertex"
-    FT star_sphere_squared_radius = std::numeric_limits<FT>::max();
-    // Insert the other points
-    for (std::size_t j = 0 ; j < NUM_NEIGHBORS ; ++j)
-    {
-      std::size_t point_idx = nearest_nb[j];
-      Tr_point const& proj_pt = projected_points[j];
+      std::size_t point_idx = nn_it->first;
 
       // ith point = p, which is already inserted
       if (point_idx != i)
       {
+        Tr_point proj_pt = project_point(
+          m_points[point_idx], center_pt, m_tangent_spaces[i]);
+
+        // CJTODO: à voir
         if (m_k.squared_distance_d_object()(
               center_pt, m_points[point_idx])
             > star_sphere_squared_radius)
@@ -420,29 +417,29 @@ private:
 
         FT squared_dist_to_tangent_plane = 
           local_tr_traits.point_weight_d_object()(proj_pt);
-        FT w = CGAL::sqrt(max_squared_weight - squared_dist_to_tangent_plane);
+        FT w = 1000000 - squared_dist_to_tangent_plane;
         Tr_point wp = local_tr_traits.construct_weighted_point_d_object()(
           drop_w(proj_pt),
           w);
           
-        Tr_vertex_handle vh = p_local_tr->insert_if_in_star(wp, center_vertex);
-        //Tr_vertex_handle vh = p_local_tr->insert(wp);
+        Tr_vertex_handle vh = local_tr.insert_if_in_star(wp, center_vertex);
+        //Tr_vertex_handle vh = local_tr.insert(wp);
         if (vh != Tr_vertex_handle())
         {
           vh->data() = point_idx;
 
           // Let's recompute star_sphere_squared_radius
-          if (p_local_tr->current_dimension() >= Intrinsic_dimension)
+          if (local_tr.current_dimension() >= Intrinsic_dimension)
           {
             star_sphere_squared_radius = 0.;
             // Get the incident cells and look for the biggest circumsphere
             std::vector<Tr_full_cell_handle> incident_cells;
-            p_local_tr->incident_full_cells(
+            local_tr.incident_full_cells(
               center_vertex, 
               std::back_inserter(incident_cells));
             for (auto cell : incident_cells) // CJTODO C++11
             {
-              if (p_local_tr->is_infinite(cell))
+              if (local_tr.is_infinite(cell))
               {
                 star_sphere_squared_radius = std::numeric_limits<FT>::max();
                 break;
@@ -493,14 +490,15 @@ private:
       }
     }
 
+
     // CJTODO DEBUG
     //std::cerr << "\nChecking topology and geometry..."
-    //          << (p_local_tr->is_valid(true) ? "OK.\n" : "Error.\n");
+    //          << (local_tr.is_valid(true) ? "OK.\n" : "Error.\n");
     // DEBUG: output the local mesh into an OFF file
     //std::stringstream sstr;
     //sstr << "data/local_tri_" << i << ".off";
     //std::ofstream off_stream_tr(sstr.str());
-    //CGAL::export_triangulation_to_off(off_stream_tr, *p_local_tr);
+    //CGAL::export_triangulation_to_off(off_stream_tr, local_tr);
   }
 
   Tangent_space_basis compute_tangent_space(const Point &p) const
