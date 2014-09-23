@@ -45,6 +45,7 @@ BOOST_AUTO_TEST_CASE( test_find_nearest_face_location_above_surface )
   typedef Traits::Triangle_3 Triangle_3;
   typedef Traits::Ray_3 Ray_3;
   typedef boost::graph_traits<Polyhedron_3> GraphTraits;
+  typedef GraphTraits::vertex_iterator vertex_iterator;
   typedef GraphTraits::face_descriptor face_descriptor;
   typedef GraphTraits::face_iterator face_iterator;
   typedef CGAL::Surface_mesh_shortest_path<Traits> Surface_mesh_shortest_path;
@@ -59,15 +60,26 @@ BOOST_AUTO_TEST_CASE( test_find_nearest_face_location_above_surface )
   
   Traits::Construct_barycenter_3 construct_barycenter_3(traits.construct_barycenter_3_object());
   
+  std::string mesh = boost::unit_test::framework::master_test_suite().argv[1];
+
+  int randSeed = 8326179;
+  
+  if (boost::unit_test::framework::master_test_suite().argc > 2)
+  {
+    randSeed = std::atoi(boost::unit_test::framework::master_test_suite().argv[2]);
+  }
+  
+  CGAL::Random random(randSeed);
+  
   Polyhedron_3 polyhedron;
   
-  std::ifstream in("data/heightmap_20x30.off");
+  std::ifstream in(mesh.c_str());
     
   in >> polyhedron;
   
-  CGAL::set_halfedgeds_items_id(polyhedron);
-  
   in.close();
+  
+  CGAL::set_halfedgeds_items_id(polyhedron);
   
   Surface_mesh_shortest_path shortestPaths(polyhedron, traits);
   
@@ -80,9 +92,7 @@ BOOST_AUTO_TEST_CASE( test_find_nearest_face_location_above_surface )
   {
     facesList.push_back(*facesCurrent);
   }
-  
-  CGAL::Random random(8326179);
-  
+
   size_t numTrials = 30;
   
   typedef boost::property_map<Polyhedron_3, CGAL::vertex_point_t>::type VPM ;
@@ -112,7 +122,40 @@ BOOST_AUTO_TEST_CASE( test_find_nearest_face_location_above_surface )
     BOOST_CHECK_CLOSE(location[2], faceLocation.second[2], FT(0.0001));
   }
   
-  Ray_3 outsideRay(Point_3(FT(-1.0), FT(-1.0), FT(6.0)), Point_3(FT(-1.0), FT(-1.0), FT(0.0)));
+  vertex_iterator startVertexIt, endVertexIt;
+  boost::tie(startVertexIt, endVertexIt) = boost::vertices(polyhedron);
+  
+  bool first = true;
+  
+  FT minimum[3];
+  FT maximum[3];
+  
+  for (vertex_iterator currVertexIt = startVertexIt; currVertexIt != endVertexIt; ++currVertexIt)
+  {
+    Point_3 currentPoint = get(vertexPointMap, *currVertexIt);
+
+    for (size_t i = 0; i < 3; ++i)
+    {
+      if (first)
+      {
+        minimum[i] = currentPoint[i];
+        maximum[i] = currentPoint[i];
+      }
+      else
+      {
+        minimum[i] = std::min(minimum[i], currentPoint[i]);
+        maximum[i] = std::max(maximum[i], currentPoint[i]);
+      }
+    }
+    
+    first = false;
+  }
+  
+  Point_3 minPoint(minimum[0], minimum[1], minimum[2]);
+  Point_3 maxPoint(maximum[0], maximum[1], maximum[2]);
+  Vector_3 awayDir = maxPoint - minPoint;
+
+  Ray_3 outsideRay(maxPoint + (awayDir * FT(0.2)), maxPoint + (awayDir * FT(1.0)));
   
   Surface_mesh_shortest_path::Face_location emptyFaceLocation = shortestPaths.locate<AABB_face_graph_traits>(outsideRay);
     
