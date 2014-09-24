@@ -39,7 +39,7 @@ public:
    * \brief Construction from a vector of implicit functions.
    * \param implicit_functions the vector of implicit functions.
    *
-   * Poistions vectors are built automatically so that the union of components equals the union of the functions.
+   * Position vectors are built automatically so that the union of components equals the union of the functions.
    */
   Implicit_multi_domain_to_labeling_function_wrapper (const Function_vector& implicit_functions);
 
