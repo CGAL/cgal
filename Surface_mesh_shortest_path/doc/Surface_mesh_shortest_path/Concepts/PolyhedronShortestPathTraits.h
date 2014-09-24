@@ -288,18 +288,13 @@ public:
   Function object type that provides 
   `std::pair<CGAL::Surface_mesh_shortest_paths_3::Barycentric_coordinate_type,std::size_t> operator()(Barycentric_coordinate b)`,
   which computes the classification and the associated edge (if applicable) of the coordinate `b`
-  \details Returns the pair (`type`, `i`), such that `type` is:
-  - `CGAL::Surface_mesh_shortest_paths_3::BARYCENTRIC_COORDINATE_VERTEX` if `b` has exactly one non-zero component equal to 1, and the rest are zero
-  - `CGAL::Surface_mesh_shortest_paths_3::BARYCENTRIC_COORDINATE_EDGE` if `b` has exactly one zero component, and the rest sum to 1
-  - `CGAL::Surface_mesh_shortest_paths_3::BARYCENTRIC_COORDINATE_INTERNAL` if `b` has no non-zero component, and they all sum to 1
-  - `CGAL::Surface_mesh_shortest_paths_3::BARYCENTRIC_COORDINATE_EXTERNAL` if the components of `b` do not sum to 1
-  - `CGAL::Surface_mesh_shortest_paths_3::BARYCENTRIC_COORDINATE_INVALID` otherwise
+  \details Returns the pair (`type`, `i`), such that `type` is one of the values of `CGAL::Surface_mesh_shortest_paths_3::Barycentric_coordinate_type`
   If `type` is `CGAL::Surface_mesh_shortest_paths_3::BARYCENTRIC_COORDINATE_VERTEX`, `i` should be the index of that vertex
   If `type` is `CGAL::Surface_mesh_shortest_paths_3::BARYCENTRIC_COORDINATE_EDGE`, `i` should be the index of the non-zero edge
   - 0 if (0,1) are the non-zero coordinates
   - 1 if (1,2) are the non-zero coordinates
   - 2 if (2,0) are the non-zero coordinates
-  otherwise, the value of `i` does not matter.
+  otherwise, the value of `i` is undefined.
   */
   typedef unspecified_type Classify_barycentric_coordinate;
   
