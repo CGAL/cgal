@@ -325,7 +325,7 @@ _side_of_power_sphere(const Cell_handle &c, const Weighted_point &q,
           == SMALLER;
     }
   };
-  std::sort(points, points+5, Comparare_xyz(this));
+  std::sort(points, points+5, Compare_xyz(this));
 
   // We successively look whether the leading monomial, then 2nd monomial
   // of the determinant has non null coefficient.
