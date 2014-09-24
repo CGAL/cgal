@@ -46,17 +46,17 @@ public:
   /*!
    * \brief Construction from a vector of implicit functions and a vector of vector of signs.
    * \param implicit_functions the vector of implicit functions.
-   * \param positions_vectors the vector of vector of signs. Each vector of positions describes a component.
+   * \param position_vectors the vector of vector of signs. Each vector of positions describes a component.
    * \sa `Sign`
    */
-  Implicit_multi_domain_to_labeling_function_wrapper (const Function_vector& implicit_functions, const std::vector<std::vector<Sign> >& positions_vectors);
+  Implicit_multi_domain_to_labeling_function_wrapper (const Function_vector& implicit_functions, const std::vector<std::vector<Sign> >& position_vectors);
 
   /*!
    * \brief Construction from a vector of implicit functions and a vector of strings.
    * \param implicit_functions the vector of implicit functions.
-   * \param positions_strings the vector of strings. The strings contained in this vector must contain '+' or '-' only. Each string (vector of positions) describes a component.
+   * \param position_strings the vector of strings. The strings contained in this vector must contain '+' or '-' only. Each string (vector of positions) describes a component.
    */
-  Implicit_multi_domain_to_labeling_function_wrapper (const Function_vector& implicit_functions, const std::vector<std::string>& positions_strings);
+  Implicit_multi_domain_to_labeling_function_wrapper (const Function_vector& implicit_functions, const std::vector<std::string>& position_strings);
 /// @}
 
 }; /* end Implicit_multi_domain_to_labeling_function_wrapper */
