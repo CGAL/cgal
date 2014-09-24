@@ -357,6 +357,8 @@ private:
     // Kernel functor & objects
     Kernel::Difference_of_points_d k_diff_pts =
       m_k.difference_of_points_d_object();
+    Kernel::Squared_distance_d k_sqdist = 
+      m_k.squared_distance_d_object();
 
     // Triangulation's traits functor & objects
     Tr_traits::Squared_distance_d sqdist = 
@@ -384,36 +386,33 @@ private:
     center_vertex = local_tr.insert(wp);
     center_vertex->data() = i;
 
-    const int NUM_NEIGHBORS = 150;
+    //const int NUM_NEIGHBORS = 150;
     //KNS_range ins_range = m_points_ds.query_ANN(center_pt, NUM_NEIGHBORS);
     INS_range ins_range = m_points_ds.query_incremental_ANN(center_pt);
     
     // While building the local triangulation, we keep the radius
-    // of the sphere centered at "center_vertex" and which contains all the
+    // of the sphere "star sphere" centered at "center_vertex" 
+    // and which contains all the
     // circumspheres of the star of "center_vertex"
     FT star_sphere_squared_radius = std::numeric_limits<FT>::max();
 
-    INS_iterator nn_it = ins_range.begin();
-    for (std::size_t j = 0 ;
-         j < NUM_NEIGHBORS && nn_it != ins_range.end() ;
-         ++j, ++nn_it)
+    // Insert points until we find a point which is outside "star shere"
+    for (INS_iterator nn_it = ins_range.begin() ; 
+         nn_it != ins_range.end() ; 
+         ++nn_it)
     {
-      // ith point = p, which is already inserted
-      std::size_t point_idx = nn_it->first;
+      std::size_t neighbor_point_idx = nn_it->first;
 
       // ith point = p, which is already inserted
-      if (point_idx != i)
+      if (neighbor_point_idx != i)
       {
-        Tr_point proj_pt = project_point(
-          m_points[point_idx], center_pt, m_tangent_spaces[i]);
+        const Point &neighbor_pt = m_points[neighbor_point_idx];
 
-        // CJTODO: à voir
-        if (m_k.squared_distance_d_object()(
-              center_pt, m_points[point_idx])
-            > star_sphere_squared_radius)
-        {
-          continue;
-        }
+        if (k_sqdist(center_pt, neighbor_pt) > star_sphere_squared_radius)
+          break;
+
+        Tr_point proj_pt = project_point_and_compute_weight(
+          neighbor_pt, center_pt, m_tangent_spaces[i]);
 
         FT squared_dist_to_tangent_plane = 
           local_tr_traits.point_weight_d_object()(proj_pt);
@@ -426,7 +425,7 @@ private:
         //Tr_vertex_handle vh = local_tr.insert(wp);
         if (vh != Tr_vertex_handle())
         {
-          vh->data() = point_idx;
+          vh->data() = neighbor_point_idx;
 
           // Let's recompute star_sphere_squared_radius
           if (local_tr.current_dimension() >= Intrinsic_dimension)
@@ -447,6 +446,14 @@ private:
               else
               {
                 //*********************************
+                // We don't compute the circumsphere of the simplex in the
+                // local tangent plane since it would involve to take the 
+                // weights of the points into account later
+                // (which is a problem since the ANN is performed on the
+                // points in the ambient dimension)
+                // Instead, we compute the subspace defined by the simplex
+                // and we compute the circumsphere in this subspace
+                // and we extract the diameter
                 Tangent_space_basis tsb;
                 tsb.reserve(Intrinsic_dimension);
                 Point const& orig = m_points[cell->vertex(0)->data()];
@@ -457,11 +464,8 @@ private:
                 }
                 tsb = compute_gram_schmidt_basis(tsb, m_k);
 
-                // CJTODO: write a project_point which returns a Tr_bare_point
-                // and use it here
-                std::vector<Tr_point> proj_pts;
-                std::vector<Tr_point>::const_iterator it_p = proj_pts.begin();
-                std::vector<Tr_point>::const_iterator it_p_end = proj_pts.end();
+                std::vector<Tr_bare_point> proj_pts;
+                proj_pts.reserve(Intrinsic_dimension + 1);
                 // For each point p
                 for (int ii = 0 ; ii <= Intrinsic_dimension ; ++ii)
                 {
@@ -470,16 +474,9 @@ private:
                 }
                 
                 Tr_bare_point c = center_of_sphere(
-                  boost::make_transform_iterator(proj_pts.begin(), drop_w),
-                  boost::make_transform_iterator(proj_pts.end(),   drop_w));
+                  proj_pts.begin(), proj_pts.end());
 
-                //*********************************
-                //Tr_vertex_to_global_point v2gp(m_points);
-                //Point c = k_center_of_sphere(
-                //  boost::make_transform_iterator(cell->vertices_begin(), v2gp),
-                //  boost::make_transform_iterator(cell->vertices_end(), v2gp));
-                //*********************************
-                FT sq_circumdiam = 4.*sqdist(c, drop_w(proj_pts[0]));
+                FT sq_circumdiam = 4.*sqdist(c, proj_pts[0]);
                 if (sq_circumdiam > star_sphere_squared_radius)
                   star_sphere_squared_radius = sq_circumdiam;
               }
@@ -578,11 +575,34 @@ private:
     //return compute_gram_schmidt_basis(ts, m_k);
     */
   }
+  
+  // Project the point in the tangent space
+  // The weight will be the squared distance between p and the projection of p
+  Tr_bare_point project_point(const Point &p, const Point &origin, 
+                         const Tangent_space_basis &ts) const
+  {
+    Kernel::Scalar_product_d inner_pdct = m_k.scalar_product_d_object();
+    Kernel::Difference_of_points_d diff_points =
+      m_k.difference_of_points_d_object();
+
+    std::vector<FT> coords;
+    // Ambiant-space coords of the projected point
+    coords.reserve(Intrinsic_dimension);
+    for (std::size_t i = 0 ; i < Intrinsic_dimension ; ++i)
+    {
+      // Compute the inner product p * ts[i]
+      Vector v = diff_points(p, origin);
+      FT coord = inner_pdct(v, ts[i]);
+      coords.push_back(coord);
+    }
+
+    return Tr_bare_point(Intrinsic_dimension, coords.begin(), coords.end());
+  }
 
   // Project the point in the tangent space
   // The weight will be the squared distance between p and the projection of p
-  Tr_point project_point(const Point &p, const Point &origin, 
-                         const Tangent_space_basis &ts) const
+  Tr_point project_point_and_compute_weight(
+    const Point &p, const Point &origin, const Tangent_space_basis &ts) const
   {
     Kernel::Scalar_product_d inner_pdct = m_k.scalar_product_d_object();
     Kernel::Difference_of_points_d diff_points =
