@@ -23,7 +23,7 @@
 #ifdef _DEBUG
   const int NUM_POINTS = 150;
 #else
-  const int NUM_POINTS = 50000;
+  const int NUM_POINTS = 10000;
 #endif
 
 template <typename Point>
@@ -39,18 +39,34 @@ std::vector<Point> generate_points_on_sphere(double radius)
 
 // a = big radius, b = small radius
 template <typename Point>
-std::vector<Point> generate_points_on_klein_bottle(double a, double b)
+std::vector<Point> generate_points_on_klein_bottle(
+  double a, double b, bool uniform = false)
 {
   typedef typename CGAL::Kernel_traits<Point>::type Kernel;
   typedef typename Kernel::FT FT;
   CGAL::Random rng;
 
+  // if uniform
+  int num_lines = (int)sqrt(NUM_POINTS);
+  int num_cols = NUM_POINTS/num_lines + 1;
+
   std::vector<Point> points;
   points.reserve(NUM_POINTS);
   for (int i = 0 ; i != NUM_POINTS ; ++i)
   {
-    FT u = rng.get_double(0, 6.2832);
-    FT v = rng.get_double(0, 6.2832);
+    FT u, v;
+    if (uniform)
+    {
+      int k1 = i / num_lines;
+      int k2 = i % num_lines;
+      u = 6.2832 * k1 / num_lines;
+      v = 6.2832 * k2 / num_lines;
+    }
+    else
+    { 
+      u = rng.get_double(0, 6.2832);
+      v = rng.get_double(0, 6.2832);
+    }
     points.push_back(Kernel().construct_point_d_object()(
       (a + b*cos(v))*cos(u), 
       (a + b*cos(v))*sin(u),
@@ -96,7 +112,7 @@ int main()
   output_filename << "data/test_tc_" << INTRINSIC_DIMENSION
     << "_in_R" << AMBIENT_DIMENSION << ".off";
   std::ofstream off_stream(output_filename.str());
-  tc.export_to_off(off_stream);
+  tc.export_to_off(off_stream, true);
   double export_time = t.elapsed(); t.reset();
 
   std::cerr << std::endl

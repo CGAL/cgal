@@ -183,7 +183,8 @@ public:
 #endif
   }
 
-  std::ostream &export_to_off(std::ostream & os)
+  std::ostream &export_to_off(std::ostream & os, 
+                              bool color_inconsistencies = false)
   {
     const int ambient_dim = Ambient_dimension<Point>::value;
     if (ambient_dim < 2)
@@ -251,13 +252,32 @@ public:
       for ( ; it_c != it_c_end ; ++it_c)
       {
         output << Intrinsic_dimension + 1 << " ";
-        for (int i = 0 ; i < Intrinsic_dimension + 1 ; ++i)
-          output << (*it_c)->vertex(i)->data() << " ";
+        
+        if (color_inconsistencies)
+        {
+          std::set<std::size_t> c;
+          for (int i = 0 ; i < Intrinsic_dimension + 1 ; ++i)
+          {
+            std::size_t data = (*it_c)->vertex(i)->data();
+            output << data << " ";
+            c.insert(data);
+          }
+          if (is_simplex_consistent(c))
+            output << "200 200 200";
+          else
+            output << "255 0 0";
+        }
+        else
+        {
+          for (int i = 0 ; i < Intrinsic_dimension + 1 ; ++i)
+            output << (*it_c)->vertex(i)->data() << " ";
+        }
+
         output << std::endl;
         ++num_cells;
       }
     }
-    
+
     os << "OFF \n"
        << m_points.size() << " " 
        << num_cells << " "
@@ -629,6 +649,41 @@ private:
     return Tr_point(
       Tr_bare_point(Intrinsic_dimension, coords.begin(), coords.end()), 
       m_k.squared_distance_d_object()(p, projected_pt));
+  }
+
+  // A simplex here is a list of point indices
+  bool is_simplex_consistent(std::set<std::size_t> const& simplex)
+  {
+    // Check if the simplex is in the stars of all its vertices
+    std::set<std::size_t>::const_iterator it_point_idx = simplex.begin();
+    // For each point
+    for ( ; it_point_idx != simplex.end() ; ++it_point_idx)
+    {
+      std::size_t point_idx = *it_point_idx;
+      Triangulation const& tr = m_triangulations[point_idx].tr();
+      Tr_vertex_handle center_vh = m_triangulations[point_idx].center_vertex();
+
+      std::vector<Tr_full_cell_handle> incident_cells;
+      tr.incident_full_cells(center_vh, std::back_inserter(incident_cells));
+
+      std::vector<Tr_full_cell_handle>::const_iterator it_c = incident_cells.begin();
+      std::vector<Tr_full_cell_handle>::const_iterator it_c_end= incident_cells.end();
+      // For each cell
+      bool found = false;
+      for ( ; !found && it_c != it_c_end ; ++it_c)
+      {
+        std::set<std::size_t> cell;
+        for (int i = 0 ; i < Intrinsic_dimension + 1 ; ++i)
+          cell.insert((*it_c)->vertex(i)->data());
+        if (cell == simplex)
+          found = true;
+      }
+
+      if (!found)
+        return false;
+    }
+    
+    return true;
   }
 
 private:
