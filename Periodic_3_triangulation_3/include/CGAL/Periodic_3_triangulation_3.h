@@ -255,8 +255,8 @@ public:
 	== ntc(_domain.xmax())-ntc(_domain.xmin()));
     _cover = make_array(3,3,3);
     init_tds();
-    edge_length_threshold = FT(0.166) * (_domain.xmax()-_domain.xmin())
-                                      * (_domain.xmax()-_domain.xmin());
+    edge_length_threshold = 0;//FT(0.166) * (_domain.xmax()-_domain.xmin())
+                              //        * (_domain.xmax()-_domain.xmin());
   }
 
 private:
