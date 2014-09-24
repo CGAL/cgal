@@ -149,7 +149,7 @@ public:
   void compute_tangential_complex()
   {
 #ifdef CGAL_TC_PROFILING
-    WallClockTimer t;
+    Wall_clock_timer t;
 #endif
 
     // We need to do that because we don't want the container to copy the
