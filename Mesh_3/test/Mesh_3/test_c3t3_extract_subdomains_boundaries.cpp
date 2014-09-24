@@ -83,6 +83,10 @@ int main()
   c3t3.output_boundary_to_off(off_file);
   assert( off_file.str().size() > 20 );
 
+  off_file.str("");
+  c3t3.output_facets_in_complex_to_off(off_file);
+  assert( off_file.str().size() > 20 );
+
   for (int i=0;i<4; ++i){
     off_file.str("");
     c3t3.output_boundary_to_off(off_file,i);

@@ -90,6 +90,11 @@ std::ostream& output_boundary_to_off(std::ostream& out) const;
  */
 std::ostream& output_boundary_to_off(std::ostream& out, Subdomain_index subdomain) const;
 
+/**
+ * Outputs the surface facets with a consistent orientation at the interface of two subdomains.
+ */
+std::ostream& output_facets_in_complex_to_off(std::ostream& out) const;
+
 /// @}
 
 }; /* end Mesh_complex_3_in_triangulation_3 */

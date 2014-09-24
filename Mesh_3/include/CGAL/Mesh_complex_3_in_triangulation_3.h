@@ -339,7 +339,7 @@ public:
    */
   std::ostream& output_boundary_to_off(std::ostream& out) const
   {
-    output_boundary_of_c3t3_to_off(*this, out);
+    internal::output_boundary_of_c3t3_to_off(*this, 0, out, false);
     return out;
   }
 
@@ -349,6 +349,15 @@ public:
   std::ostream& output_boundary_to_off(std::ostream& out, Subdomain_index subdomain) const
   {
     output_boundary_of_c3t3_to_off(*this, subdomain, out);
+    return out;
+  }
+
+  /**
+   * Outputs the surface facets with a consistent orientation at the interface of two subdomains.
+   */
+  std::ostream& output_facets_in_complex_to_off(std::ostream& out) const
+  {
+    internal::output_facets_in_complex_to_off(*this, out);
     return out;
   }
 

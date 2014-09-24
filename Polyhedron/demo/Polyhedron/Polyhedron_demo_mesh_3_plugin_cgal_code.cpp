@@ -278,10 +278,10 @@ private:
   }
 
 public slots:
-  void export_domain_boundary_as_polyhedron()
+  void export_facets_in_complex()
   {
     std::stringstream off_sstream;
-    c3t3().output_boundary_to_off(off_sstream);
+    c3t3().output_facets_in_complex_to_off(off_sstream);
     std::string backup = off_sstream.str();
     // Try to read .off in a polyhedron
     Scene_polyhedron_item* item = new Scene_polyhedron_item();
@@ -298,11 +298,11 @@ public slots:
         return;
       }
 
-      soup_item->setName(QString("%1_%2").arg(this->name()).arg("boundary"));
+      soup_item->setName(QString("%1_%2").arg(this->name()).arg("facets"));
       last_known_scene->addItem(soup_item);
     }
     else{
-      item->setName(QString("%1_%2").arg(this->name()).arg("boundary"));
+      item->setName(QString("%1_%2").arg(this->name()).arg("facets"));
       last_known_scene->addItem(item);
     }
   }
@@ -320,12 +320,12 @@ public:
     bool menuChanged = menu->property(prop_name).toBool();
 
     if(!menuChanged) {
-      QAction* actionDomainBoundaryAsPolyhedron =
-        menu->addAction(tr("Export domain boundary as polyhedron"));
-      actionDomainBoundaryAsPolyhedron->setObjectName("actionSelectNextVolume");
-      connect(actionDomainBoundaryAsPolyhedron,
+      QAction* actionExportFacetsInComplex =
+        menu->addAction(tr("Export facets in complex"));
+      actionExportFacetsInComplex->setObjectName("actionExportFacetsInComplex");
+      connect(actionExportFacetsInComplex,
               SIGNAL(triggered()),this,
-              SLOT(export_domain_boundary_as_polyhedron()));
+              SLOT(export_facets_in_complex()));
     }
     return menu;
   }

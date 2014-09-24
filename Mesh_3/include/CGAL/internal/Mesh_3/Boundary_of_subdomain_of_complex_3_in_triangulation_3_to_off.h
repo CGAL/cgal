@@ -29,6 +29,8 @@
 namespace CGAL {
 
 namespace internal{
+
+namespace mesh_3_export{
 template <class Vertex_handle>
 std::size_t get_vertex_index(Vertex_handle v,std::map<Vertex_handle, std::size_t>& V,std::size_t& inum,std::stringstream& vertex_buffer){
   std::pair<typename std::map<Vertex_handle, std::size_t>::iterator,bool> res=
@@ -39,13 +41,14 @@ std::size_t get_vertex_index(Vertex_handle v,std::map<Vertex_handle, std::size_t
   }
   return res.first->second;
 }
-}//namespace internal
+} // end of namespace mesh_3_export
 
 template <typename C3T3>
 std::ostream&
 output_boundary_of_c3t3_to_off(const C3T3& c3t3, 
                                typename C3T3::Subdomain_index sd_index,
-                               std::ostream& output)
+                               std::ostream& output,
+                               bool normals_point_outside_of_the_subdomain=true)
 {
   typedef typename C3T3::Triangulation Triangulation;
   typedef typename Triangulation::Vertex_handle Vertex_handle;
@@ -72,8 +75,9 @@ output_boundary_of_c3t3_to_off(const C3T3& c3t3,
     
     for (int i = 0; i < 4; ++i)
       if (i != fit->second)
-          indices[++j]=internal::get_vertex_index((*fit).first->vertex(i), V, inum,vertex_buffer);
-    if ( (cell_sd==sd_index) == (fit->second%2 == 1) ) std::swap(indices[0],indices[1]);
+          indices[++j]=mesh_3_export::get_vertex_index((*fit).first->vertex(i), V, inum,vertex_buffer);
+    if ( ( (cell_sd==sd_index) == (fit->second%2 == 1) ) == normals_point_outside_of_the_subdomain )
+      std::swap(indices[0],indices[1]);
     facet_buffer << "3" << " " << indices[0] <<" " << indices[1] <<" " << indices[2] << "\n";
   }
   
@@ -87,8 +91,8 @@ output_boundary_of_c3t3_to_off(const C3T3& c3t3,
 
 template <typename C3T3>
 std::ostream&
-output_boundary_of_c3t3_to_off(const C3T3& c3t3,
-                               std::ostream& output)
+output_facets_in_complex_to_off(const C3T3& c3t3,
+                                std::ostream& output)
 {
   typedef typename C3T3::Triangulation Triangulation;
   typedef typename Triangulation::Vertex_handle Vertex_handle;
@@ -113,7 +117,7 @@ output_boundary_of_c3t3_to_off(const C3T3& c3t3,
 
     for (int i = 0; i < 4; ++i)
       if (i != fit->second)
-          indices[++j]=internal::get_vertex_index((*fit).first->vertex(i), V, inum,vertex_buffer);
+          indices[++j]=mesh_3_export::get_vertex_index((*fit).first->vertex(i), V, inum,vertex_buffer);
     if ( (cell_sd > opp_sd) == (fit->second%2 == 1) ) std::swap(indices[0],indices[1]);
     facet_buffer << "3" << " " << indices[0] <<" " << indices[1] <<" " << indices[2] << "\n";
   }
@@ -126,6 +130,7 @@ output_boundary_of_c3t3_to_off(const C3T3& c3t3,
   return output;
 }
 
-} // end namespace CGAL
+} } // end of namespace CGAL::internal
+
 
 #endif // CGAL_INTERNAL_MESH_3_BOUNDARY_OF_SUDDOMAIN_OF_COMPLEX_3_IN_TRIANGULATION_3_TO_OFF_H
