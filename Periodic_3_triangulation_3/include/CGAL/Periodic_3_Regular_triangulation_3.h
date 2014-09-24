@@ -298,6 +298,8 @@ _side_of_power_sphere(const Cell_handle &c, const Weighted_point &q,
         o3 = this->get_offset(c,3),
         oq = offset;
 
+  CGAL_triangulation_precondition( orientation(p0, p1, p2, p3, o0, o1, o2, o3) == POSITIVE );
+
   Oriented_side os = ON_NEGATIVE_SIDE;
   os= side_of_oriented_power_sphere(p0, p1, p2, p3, q, o0, o1, o2, o3, oq);
 
@@ -311,10 +313,20 @@ _side_of_power_sphere(const Cell_handle &c, const Weighted_point &q,
          std::make_pair(q,oq)};
   const Periodic_point *points[5] ={&pts[0],&pts[1],&pts[2],&pts[3],&pts[4]};
 
-  std::sort(points, points+5,
-      typename Base::template Perturbation_order<
-    typename Gt::Compare_xyz_3 >(
-    geom_traits().compare_xyz_3_object() ) );
+  class Compare_xyz
+  {
+    const Periodic_3_Regular_triangulation_3* tr_;
+
+  public:
+    Compare_xyz (const Periodic_3_Regular_triangulation_3* tr) : tr_(tr) {}
+    bool operator() (const Periodic_point* l, const Periodic_point* r) const
+    {
+      return tr_->geom_traits().compare_xyz_3_object()(l->first, r->first, l->second, r->second)
+          == SMALLER;
+    }
+  };
+  std::sort(points, points+5, Comparare_xyz(this));
+
   // We successively look whether the leading monomial, then 2nd monomial
   // of the determinant has non null coefficient.
   // 2 iterations are enough (cf paper)
@@ -421,15 +433,15 @@ class Periodic_3_Regular_triangulation_3<GT,Tds>::Conflict_tester
 {
   // stores a pointer to the triangulation,
   // a point, and an offset
-  Weighted_point p;
   const Self *t;
+  Weighted_point p;
   // stores the offset of a point in 27-cover
   mutable Offset o;
 
 public:
   /// Constructor
   Conflict_tester(const Self *_t) : t(_t), p(Weighted_point()) {}
-  Conflict_tester(const Weighted_point &pt, const Self *_t) : p(pt), t(_t){ }
+  Conflict_tester(const Weighted_point &pt, const Self *_t) : t(_t), p(pt) { }
 
   /** The functor
     *
@@ -452,9 +464,7 @@ public:
 
   bool test_initial_cell(Cell_handle c, const Offset &off) const
   {
-    if (!(operator()(c, off)))
-      CGAL_triangulation_assertion(false);
-    return true;
+    return (operator()(c, off));
   }
 
   void set_point(const Weighted_point &_p) {
@@ -536,28 +546,28 @@ public:
     c->hide_point(p);
   }
 
-  inline void hide(Weighted_point&, Cell_handle ) const  // useless?
-  {
-    CGAL_triangulation_assertion(false);
-  }
+//  inline void hide(Weighted_point&, Cell_handle ) const  // useless?
+//  {
+//    CGAL_triangulation_assertion(false);
+//  }
+//
+//  inline void do_hide(const Weighted_point&, Cell_handle ) const // useless?
+//  {
+//    CGAL_triangulation_assertion(false);
+//  }
 
-  inline void do_hide(const Weighted_point&, Cell_handle ) const // useless?
-  {
-    CGAL_triangulation_assertion(false);
-  }
-
-  template < class Tester >
-  inline bool replace_vertex(const Weighted_point&, Vertex_handle, const Tester&) const // useless?
-  {
-    return true;
-  }
-
-  template <class Conflict_tester>
-  inline void hide_points(Vertex_handle,
-      const Conflict_tester &)
-  {
-    // No points to hide in the Delaunay triangulation.
-  }
+//  template < class Tester >
+//  inline bool replace_vertex(const Weighted_point&, Vertex_handle, const Tester&) const // useless?
+//  {
+//    return true;
+//  }
+//
+//  template <class Conflict_tester>
+//  inline void hide_points(Vertex_handle,
+//      const Conflict_tester &)
+//  {
+//    // No points to hide in the Delaunay triangulation.
+//  }
 };
 
 #ifndef CGAL_CFG_OUTOFLINE_TEMPLATE_MEMBER_DEFINITION_BUG
