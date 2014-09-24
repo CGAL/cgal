@@ -32,35 +32,155 @@
 
 #include <CGAL/Periodic_3_Regular_triangulation_3.h>
 
-#include <boost/random/uniform_real_distribution.hpp>
-#include <boost/random/random_device.hpp>
-#include <boost/random.hpp>
-
 #include <cassert>
 #include <iostream>
 #include <fstream>
 
 
-typedef CGAL::Epick K;
-typedef CGAL::Epick::FT FT;
+typedef CGAL::Epeck K;
+typedef K::FT FT;
 typedef CGAL::Regular_triangulation_euclidean_traits_3<K> Regular_traits;
 typedef CGAL::Periodic_3_Regular_triangulation_traits_3<Regular_traits> Traits;
+
+template class CGAL::Periodic_3_Regular_triangulation_3<Traits>;
+typedef CGAL::Periodic_3_Regular_triangulation_3<Traits> P3RT3;
+
 typedef typename Traits::Weighted_point Weighted_point;
 typedef typename Traits::Bare_point Bare_point;
 typedef typename Traits::Iso_cuboid_3 Iso_cuboid;
 
-template class CGAL::Periodic_3_Regular_triangulation_3<Traits>;
 
-typedef CGAL::Periodic_3_Regular_triangulation_3<Traits> P3RT3;
+template <class PeriodicTriangulation>
+void periodic_triangulation_to_medit_file (const PeriodicTriangulation& pt, std::ostream& stream)
+{
+//  typedef typename PeriodicTriangulation::Point Point;
+  typedef typename PeriodicTriangulation::Triangle Triangle;
+  typedef typename PeriodicTriangulation::Periodic_triangle_iterator Periodic_iterator;
 
+  Periodic_iterator ps_b = pt.periodic_triangles_begin(PeriodicTriangulation::STORED);
+  Periodic_iterator ps_e = pt.periodic_triangles_end(PeriodicTriangulation::STORED);
+  std::size_t ps_dist = std::distance(ps_b, ps_e);
 
-Weighted_point read_wpoint (std::istream& os)
+  stream << "MeshVersionFormatted 1\n"
+            "Dimension 3\n"
+            "Vertices\n"
+         << (ps_dist * 3)
+         << std::endl;
+
+//  for (Periodic_iterator iter = ps_b, end_iter = ps_e; iter != end_iter; ++iter)
+//  {
+//    Segment s = pt.segment(*iter);
+//    stream << s.source().x() << " " << s.source().y() << " " << s.source().z() << " 1" << '\n';
+//    stream << s.target().x() << " " << s.target().y() << " " << s.target().z() << " 1" << '\n';
+//  }
+
+  for (Periodic_iterator iter = ps_b, end_iter = ps_e; iter != end_iter; ++iter)
+  {
+    Triangle t = pt.triangle(*iter);
+    stream << t[0].x() << " " << t[0].y() << " " << t[0].z() << " 1\n";
+    stream << t[1].x() << " " << t[1].y() << " " << t[1].z() << " 1\n";
+    stream << t[2].x() << " " << t[2].y() << " " << t[2].z() << " 1\n";
+  }
+  unsigned count = 0;
+  stream << "Triangles\n" << ps_dist << std::endl;
+  for (Periodic_iterator iter = ps_b, end_iter = ps_e; iter != end_iter; ++iter)
+  {
+    stream << ++count;
+    stream << " " << ++count;
+    stream << " " << ++count;
+    stream << " 2" << '\n';
+  }
+  stream.flush();
+}
+
+template <class PeriodicTriangulation>
+void periodic_triangulation_to_medit_1_file (const PeriodicTriangulation& pt, std::ostream& stream)
+{
+//  typedef typename PeriodicTriangulation::Point Point;
+  typedef typename PeriodicTriangulation::Triangle Triangle;
+  typedef typename PeriodicTriangulation::Periodic_triangle_iterator Periodic_iterator;
+
+  Periodic_iterator ps_b = pt.periodic_triangles_begin(PeriodicTriangulation::UNIQUE);
+  Periodic_iterator ps_e = pt.periodic_triangles_end(PeriodicTriangulation::UNIQUE);
+  std::size_t ps_dist = std::distance(ps_b, ps_e);
+
+  stream << "MeshVersionFormatted 1\n"
+            "Dimension 3\n"
+            "Vertices\n"
+         << (ps_dist * 3)
+         << std::endl;
+
+//  for (Periodic_iterator iter = ps_b, end_iter = ps_e; iter != end_iter; ++iter)
+//  {
+//    Segment s = pt.segment(*iter);
+//    stream << s.source().x() << " " << s.source().y() << " " << s.source().z() << " 1" << '\n';
+//    stream << s.target().x() << " " << s.target().y() << " " << s.target().z() << " 1" << '\n';
+//  }
+
+  for (Periodic_iterator iter = ps_b, end_iter = ps_e; iter != end_iter; ++iter)
+  {
+    Triangle t = pt.triangle(*iter);
+    stream << t[0].x() << " " << t[0].y() << " " << t[0].z() << " 1\n";
+    stream << t[1].x() << " " << t[1].y() << " " << t[1].z() << " 1\n";
+    stream << t[2].x() << " " << t[2].y() << " " << t[2].z() << " 1\n";
+  }
+  unsigned count = 0;
+  stream << "Triangles\n" << ps_dist << std::endl;
+  for (Periodic_iterator iter = ps_b, end_iter = ps_e; iter != end_iter; ++iter)
+  {
+    stream << ++count;
+    stream << " " << ++count;
+    stream << " " << ++count;
+    stream << " 2" << '\n';
+  }
+  stream.flush();
+}
+
+template <class PeriodicTriangulation>
+void periodic_triangulation_to_medit_edges_file (const PeriodicTriangulation& pt, std::ostream& stream)
+{
+//  typedef typename PeriodicTriangulation::Point Point;
+  typedef typename PeriodicTriangulation::Segment Segment;
+  typedef typename PeriodicTriangulation::Periodic_segment_iterator Periodic_iterator;
+
+  Periodic_iterator ps_b = pt.periodic_segments_begin(PeriodicTriangulation::STORED);
+  Periodic_iterator ps_e = pt.periodic_segments_end(PeriodicTriangulation::STORED);
+  std::size_t ps_dist = std::distance(ps_b, ps_e);
+
+  stream << "MeshVersionFormatted 1\n"
+            "Dimension 3\n"
+            "Vertices\n"
+         << (ps_dist * 2)
+         << std::endl;
+
+  for (Periodic_iterator iter = ps_b, end_iter = ps_e; iter != end_iter; ++iter)
+  {
+    Segment t = pt.segment(*iter);
+    stream << t[1].x() << " " << t[1].y() << " " << t[1].z() << " 1\n";
+    stream << t[2].x() << " " << t[2].y() << " " << t[2].z() << " 1\n";
+  }
+  unsigned count = 0;
+  stream << "Edges\n" << ps_dist << std::endl;
+  for (Periodic_iterator iter = ps_b, end_iter = ps_e; iter != end_iter; ++iter)
+  {
+    stream << ++count;
+    stream << " " << ++count;
+    stream << " 1" << '\n';
+  }
+  stream.flush();
+}
+
+Weighted_point read_wpoint (std::istream& stream)
 {
   FT x = 0., y = 0., z = 0., w = 0.;
-  os >> x;
-  os >> y;
-  os >> z;
-  os >> w;
+  stream >> x;
+  assert(stream && !stream.eof());
+  stream >> y;
+  assert(stream && !stream.eof());
+  stream >> z;
+  assert(stream && !stream.eof());
+  stream >> w;
+  assert(stream);
   return Weighted_point(Bare_point(x, y, z), w);
 }
 
@@ -83,55 +203,63 @@ void test_insert_1 ()
   assert(p3rt3.number_of_stored_vertices() == 27);
 }
 
-void test_insert_rnd_100 ()
+void test_insert_rnd (unsigned pt_count = 100)
 {
   P3RT3 p3rt3;
 
   srand(time(NULL));
 
-//  boost::random::random_device rd;
-//  boost::mt19937 gen(rd);
-//  boost::random::uniform_real_distribution<> c_dis(0., 1.);
-//  auto gen_coord = boost::bind(c_dis, gen);
-//  boost::random::uniform_real_distribution<> w_dis(0., 0.1);
-//  auto gen_weight = boost::bind(w_dis, gen);
   auto gen_coord = [](){ return static_cast<double>(rand() % 1000) / 1000.; };
-  auto gen_weight = [](){ return static_cast<double>(rand() % 100) / 1000.; };
+  auto gen_weight = [](){ return static_cast<double>(rand() % 15600) / 1000000.; };
 
   std::ofstream stream("out");
   assert(stream);
 
-  for (unsigned cnt = 100; cnt--; )
+  for (unsigned cnt = pt_count; cnt--; )
   {
-    Weighted_point p(Bare_point(gen_coord(), gen_coord(), gen_coord()), gen_weight());
+    Weighted_point p(Bare_point(gen_coord(), gen_coord(), gen_coord()), /*rand()%2 ? 0.005f : 0.010f*/ gen_weight());
     std::cout << p << std::endl;
     stream << p << std::endl;
     p3rt3.insert(p);
     assert(p3rt3.is_valid());
   }
 
-  assert(p3rt3.number_of_vertices() == 100);
-  assert(p3rt3.number_of_stored_vertices() == 2700);
+  stream.close();
+
   assert(p3rt3.is_valid(true));
+
+  std::cout << "MEDIT" << std::endl;
+  std::ofstream medit_stream("medit_rnd_out.mesh");
+  periodic_triangulation_to_medit_file(p3rt3, medit_stream);
 }
 
 void test_insert_from_file (const char* filename)
 {
   P3RT3 p3rt3;
 
-  srand(time(NULL));
-
   std::ifstream stream(filename);
   assert(stream);
 
+  unsigned cnt = 1;
   while (stream && !(stream.eof()))
   {
     Weighted_point p = read_wpoint(stream);
     std::cout << p << std::endl;
+    assert(p.weight() <= 0.015625);
     p3rt3.insert(p);
-    assert(p3rt3.is_valid());
+    assert(!p3rt3.is_1_cover());
+    if (cnt >= 86)
+      assert(p3rt3.is_valid(true));
+    ++cnt;
   }
   assert(p3rt3.is_valid(true));
+
+  std::cout << "Number of vertices : " << p3rt3.number_of_vertices() << std::endl;
+  std::cout << "MEDIT" << std::endl;
+  std::ofstream medit_stream("medit_out.mesh");
+  periodic_triangulation_to_medit_file(p3rt3, medit_stream);
+  std::ofstream medit_stream_1("medit_out_1.mesh");
+  periodic_triangulation_to_medit_1_file(p3rt3, medit_stream_1);
 }
 
 int main (int argc, char** argv)
@@ -140,8 +268,8 @@ int main (int argc, char** argv)
 
   test_construction();
   test_insert_1();
-  if (argc > 1 && strlen(argv[1]) > 0)
-    test_insert_from_file(argv[1]);
+//  test_insert_rnd(100);
+  test_insert_from_file(argc > 1 ? argv[1] : "out");
 
   std::cout << "EXIT SUCCESS" << std::endl;
   return EXIT_SUCCESS;
