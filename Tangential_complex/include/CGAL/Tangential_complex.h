@@ -378,13 +378,11 @@ private:
     // Build a minimal triangulation in the tangent space
     // (we only need the star of p)
     //***************************************************
-    
-    // CJTODO: replace 1000000 with something better
 
     // Insert p
     Tr_point wp = local_tr_traits.construct_weighted_point_d_object()(
       local_tr_traits.construct_point_d_object()(0, 0),
-      1000000);
+      0);
     center_vertex = local_tr.insert(wp);
     center_vertex->data() = i;
 
@@ -418,7 +416,7 @@ private:
 
         FT squared_dist_to_tangent_plane = 
           local_tr_traits.point_weight_d_object()(proj_pt);
-        FT w = 1000000 - squared_dist_to_tangent_plane;
+        FT w =  -squared_dist_to_tangent_plane;
         Tr_point wp = local_tr_traits.construct_weighted_point_d_object()(
           drop_w(proj_pt),
           w);
