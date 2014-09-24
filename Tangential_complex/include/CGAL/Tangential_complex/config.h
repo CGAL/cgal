@@ -24,7 +24,7 @@
 #include <CGAL/config.h>
 
 //========================= Debugging & profiling =============================
-#define CGAL_TC_PROFILING
+//#define CGAL_TC_PROFILING
 
 //========================= Strategy ==========================================
 //#define CGAL_TC_USE_NANOFLANN

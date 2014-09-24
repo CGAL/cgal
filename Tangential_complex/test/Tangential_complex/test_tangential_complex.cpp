@@ -11,6 +11,7 @@
 #include <CGAL/point_generators_3.h>
 #include <CGAL/Random.h>
 #include <CGAL/Kernel_traits.h>
+#include <CGAL/Mesh_3/Profiling_tools.h>
 
 #include <fstream>
 #include <math.h>
@@ -77,6 +78,8 @@ int main()
 # endif
 #endif
 
+  Wall_clock_timer t;
+
   //std::vector<Point> points = generate_points_on_sphere<Point>(3.0);
   std::vector<Point> points = generate_points_on_klein_bottle<Point>(4., 3.);
 
@@ -84,14 +87,28 @@ int main()
     Kernel, 
     INTRINSIC_DIMENSION, 
     CGAL::Parallel_tag> tc(points.begin(), points.end());
+  double init_time = t.elapsed(); t.reset();
 
   tc.compute_tangential_complex();
-  
+  double computation_time = t.elapsed(); t.reset();
+
   std::stringstream output_filename;
   output_filename << "data/test_tc_" << INTRINSIC_DIMENSION
     << "_in_R" << AMBIENT_DIMENSION << ".off";
   std::ofstream off_stream(output_filename.str());
   tc.export_to_off(off_stream);
+  double export_time = t.elapsed(); t.reset();
+
+  std::cerr << std::endl
+            << "================================================" << std::endl
+            << "Computation times (seconds): " << std::endl
+            << "  * Tangential complex: " << init_time + computation_time
+            << std::endl
+            << "    - Init + kd-tree = " << init_time << std::endl
+            << "    - TC computation = " << computation_time << std::endl
+            << "  * Export to OFF: " << export_time << std::endl
+            << "================================================" << std::endl
+            << std::endl;
 
   return 0;
 }

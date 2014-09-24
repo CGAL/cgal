@@ -34,7 +34,9 @@
 #include <CGAL/Tangential_complex/utilities.h>
 #include <CGAL/Tangential_complex/Point_cloud.h>
 
-#include <CGAL/Mesh_3/Profiling_tools.h>
+#ifdef CGAL_TC_PROFILING
+# include <CGAL/Mesh_3/Profiling_tools.h>
+#endif
 
 #include <CGAL/IO/Triangulation_off_ostream.h> // CJTODO TEMP
 
