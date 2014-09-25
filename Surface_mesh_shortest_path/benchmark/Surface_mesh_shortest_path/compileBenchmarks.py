@@ -42,7 +42,7 @@ def print_to_datafiles(config, dataFileName, modelInfo):
   file.close();
 
 def print_table(infoSet, config, outFile):
-  outFile.write("\subsection Polyhedron_shortest_pathBenchmark%s %s\n" % (re.sub(r"\s+", "", config.testName.strip()), config.testName));
+  outFile.write("\subsection Surface_mesh_shortest_pathBenchmark%s %s\n" % (re.sub(r"\s+", "", config.testName.strip()), config.testName));
   outFile.write("<center>\n");
   outFile.write("Model | Number of Vertices | Average Construction Time (s) | Average Query Time (s) | Peak Memory Usage (MB)\n");
   outFile.write("---|---|---|---|---\n");

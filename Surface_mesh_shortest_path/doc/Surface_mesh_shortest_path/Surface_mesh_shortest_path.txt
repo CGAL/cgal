@@ -35,7 +35,7 @@ In order to use the algorithm, one creates an instance of the `Surface_mesh_shor
   
   Any surface mesh on 3D points supporting the \cgal `FaceListGraph` concept may be used with this package; there are no restrictions on the genus, connectivity, or convexity of the input surface.
 
-\subsection Surface_mesh_shortest_pathClass Polyhedron Shortest Path Class
+\subsection Surface_mesh_shortest_pathClass Surface Mesh Shortest Path Class
 
   The `Surface_mesh_shortest_path` class must be constructed with a model of `FaceListGraph`, and (optionally) 
   - Vertex, Halfedge, and Face index property maps for `FaceListGraph`
@@ -97,7 +97,7 @@ These benchmarks were run using randomly generated source and destination points
 
 And then pasting the contents of benchmark_table_1.txt and benchmark_table_10.txt into the doc.  For more details on how they were generated, see benchmarks/Surface_mesh_shortest_path/readme.txt
 
-\subsection Polyhedron_shortest_pathBenchmark1SourcePoint 1 Source Point
+\subsection Surface_mesh_shortest_pathBenchmark1SourcePoint 1 Source Point
 <center>
 Model | Number of Vertices | Average Construction Time (s) | Average Query Time (s) | Peak Memory Usage (MB)
 ---|---|---|---|---
@@ -122,7 +122,7 @@ turbine.off | 9210 | 1.52087 | 7.32596e-06 | 166.021
 man.off | 17495 | 1.28541 | 4.0026e-06 | 147.971
 </center>
 
-\subsection Polyhedron_shortest_pathBenchmark10SourcePoints 10 Source Points
+\subsection Surface_mesh_shortest_pathBenchmark10SourcePoints 10 Source Points
 <center>
 Model | Number of Vertices | Average Construction Time (s) | Average Query Time (s) | Peak Memory Usage (MB)
 ---|---|---|---|---
@@ -147,7 +147,7 @@ turbine.off | 9210 | 0.861633 | 3.97833e-06 | 88.9927
 man.off | 17495 | 1.14717 | 3.61002e-06 | 121.451
 </center>
 
-\subsection Polyhedron_shortest_pathQueryComparison Comparison of Construction and Query Times with multiple source points
+\subsection Surface_mesh_shortest_pathQueryComparison Comparison of Construction and Query Times with multiple source points
 
 The following figures track the construction time, query time, and peak memory usage for the various test models as the number of source points increases.  Notice that none of the values increase significantly as the number of source points increases.  In fact, in most cases, the running time and memory go down.  This is because a larger number of source points tends to result in a more flat sequence tree, which translates to reduced runtime and memory costs.
 
