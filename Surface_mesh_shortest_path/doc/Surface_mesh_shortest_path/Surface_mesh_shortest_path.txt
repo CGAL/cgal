@@ -39,12 +39,14 @@ In order to use the algorithm, one creates an instance of the `Surface_mesh_shor
 
   The `Surface_mesh_shortest_path` class must be constructed with a model of `FaceListGraph`, and (optionally) 
   - Vertex, Halfedge, and Face index property maps for `FaceListGraph`
-  - A Vertex -> Point_3 property map for FaceListGraph
-  - An instance of the Traits class (only neccessary if the traits class has local state)
+  - A Vertex -> Point_3 property map for `FaceListGraph`
+  - An instance of the Traits class (only necessary if the traits class has local state)
   
-  The shortest paths data structure is computed using the method `Surface_mesh_shortest_path::construct_sequence_tree()`, with a overloads for specifying one or more source points, at either vertices or face locations.
+  To add source points to the shortest paths computation, use the method `Surface_mesh_shortest_path::add_source_point()` (or `Surface_mesh_shortest_path::add_source_points()` to add an iterator range). This method accepts  The return value from this method, `Surface_mesh_shortest_path::Source_point_handle` is a `bidirectional_iterator`, and can be dereferenced to get the `Face_location`. Source points can be removed from the structure by passing this handle to `Surface_mesh_shortest_path::remove_source_point()`.
   
-  Computing shortest path distances can be accomplished with `Surface_mesh_shortest_path::shortest_distance_to_source_points()`, which will return the raw distance, and an ID referring to which source point was closest.  If no shortest path exists between the (if, for example, the face graph is disconnected), a negative distance is returned.
+  The shortest paths data structure will be automatically built on the first call to any shortest paths query function after any source points have been added or removed, but you can also manually (re-)build it using `Surface_mesh_shortest_path::build_sequence_tree()`. You can test if build_sequence_tree needs to be called by calling `Surface_mesh_shortest_path::changed_since_last_build()`, which will return true if any changes to the source points happened since the structure was last built.
+
+  Computing shortest path distances can be accomplished with `Surface_mesh_shortest_path::shortest_distance_to_source_points()`, which will return the raw distance, and a `Surface_mesh_shortest_path::Source_point_handle` to the source point which was closest to the query location.  If no shortest path exists between the (if, for example, the face graph is disconnected), a negative distance is returned and the handle will be equal to `Surface_mesh_shortest_path::source_points_end()`.
 
   The complete shortest path sequence can be obtained using `Surface_mesh_shortest_path::shortest_path_sequence_to_source_points()`, by providing a visitor object conforming to the `SurfaceMeshShortestPathVisitor` concept.
 

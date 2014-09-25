@@ -26,6 +26,7 @@
 #include <queue>
 #include <algorithm>
 #include <cstddef>
+#include <list>
 
 #include <boost/array.hpp>
 #include <boost/lexical_cast.hpp>
@@ -136,6 +137,106 @@ public:
   /// 2 - target(next(halfedge(`face`)))
   typedef typename std::pair<face_descriptor, Barycentric_coordinate> Face_location;
   
+private:
+  
+  typedef typename std::list<Face_location> Source_point_list;
+  typedef typename Source_point_list::iterator Source_point_underlying_iterator;
+
+public:
+  
+  /*!
+  \brief A `bidirectional_iterator` to access the source points
+  
+  \details The iterator will remain valid from the time the point
+  is added to the data structure, until after it is removed 
+  (either with `remove_source_point` or `remove_all_source_points`)
+  AND the structure is re-built.
+  */
+  class Source_point_handle
+  {
+  public:
+    typedef std::bidirectional_iterator_tag iterator_category;
+    typedef Face_location value_type;
+    typedef Face_location* pointer;
+    typedef Face_location& reference;
+  
+  private:
+    Source_point_underlying_iterator m_iterator;
+    
+    friend class Surface_mesh_shortest_path;
+  
+    Source_point_handle(Source_point_underlying_iterator it)
+      : m_iterator(it)
+    {
+    }
+  
+  public:
+    Source_point_handle()
+    {
+    }
+    
+    Source_point_handle(const Source_point_handle& other)
+      : m_iterator(other.m_iterator)
+    {
+    }
+    
+    Source_point_handle& operator=(const Source_point_handle& other)
+    {
+      m_iterator = other.m_iterator;
+    }
+    
+    const Face_location& operator*() const
+    {
+      return *m_iterator;
+    }
+    
+    const Face_location* operator->() const
+    {
+      return &(*m_iterator);
+    }
+    
+    Source_point_handle& operator++() 
+    { 
+      ++m_iterator; 
+      return *this;
+    }
+    
+    Source_point_handle operator++(int)
+    {
+      Source_point_handle temp(*this);
+      ++m_iterator;
+      return temp;
+    }
+    
+    Source_point_handle& operator--() 
+    { 
+      --m_iterator; 
+      return *this;
+    }
+    
+    Source_point_handle operator--(int)
+    {
+      Source_point_handle temp(*this);
+      --m_iterator;
+      return temp;
+    }
+  
+    bool operator==(const Source_point_handle& other)
+    {
+      return m_iterator == other.m_iterator;
+    }
+    
+    bool operator!=(const Source_point_handle& other)
+    {
+      return m_iterator != other.m_iterator;
+    }
+  };
+  
+  /// The return type from shortest path distance queries. Stores the distance
+  /// to the nearest source point, and a `Source_point_handle` to the 
+  /// source point itself
+  typedef typename std::pair<FT, Source_point_handle> Shortest_path_result;
+  
 /// @}
   
 private:
@@ -204,8 +305,10 @@ private:
   std::vector<Node_distance_pair> m_vertexOccupiers;
   std::vector<Node_distance_pair> m_closestToVertices;
   
-  std::vector<Cone_tree_node*> m_rootNodes;
-  std::vector<Face_location> m_faceLocations;
+  std::vector<std::pair<Cone_tree_node*, Source_point_handle> > m_rootNodes;
+  Source_point_list m_faceLocations;
+  Source_point_underlying_iterator m_firstNewSourcePoint;
+  Source_point_list m_deletedSourceLocations;
   
   std::vector<std::vector<Cone_tree_node*> > m_faceOccupiers;
   
@@ -380,7 +483,7 @@ private:
     typename Traits::Compute_squared_distance_2 csd2(m_traits.compute_squared_distance_2_object());
   
     Segment_2 parentEntrySegment = cone->entry_segment();
-    Point_2 v2 = cone->tarpoint();
+    Point_2 v2 = cone->target_point();
     Point_2 I = cone->source_image();
     FT d = cone->distance_from_source_to_root();
     FT d1;
@@ -531,7 +634,7 @@ private:
     Determines whether to expand `location` as a face, edge, or vertex root, depending on 
     whether it is near to a given edge or vertex, or is an internal face location
   */
-  void expand_root(face_descriptor f, Barycentric_coordinate location)
+  void expand_root(face_descriptor f, Barycentric_coordinate location, Source_point_handle sourcePointIt)
   {
     typename Traits::Construct_barycentric_coordinate_weight cbcw(m_traits.construct_barycentric_coordinate_weight_object());
     typename Traits::Classify_barycentric_coordinate classify_barycentric_coordinate(m_traits.classify_barycentric_coordinate_object());
@@ -543,7 +646,7 @@ private:
     switch (type)
     {
       case CGAL::Surface_mesh_shortest_paths_3::BARYCENTRIC_COORDINATE_INTERNAL:
-        expand_face_root(f, location);
+        expand_face_root(f, location, sourcePointIt);
         break;
       case CGAL::Surface_mesh_shortest_paths_3::BARYCENTRIC_COORDINATE_EDGE:
         {
@@ -552,7 +655,7 @@ private:
           {
             he = next(he, m_graph);
           }
-          expand_edge_root(he, cbcw(location, associatedEdge), cbcw(location, (associatedEdge + 1) % 3));
+          expand_edge_root(he, cbcw(location, associatedEdge), cbcw(location, (associatedEdge + 1) % 3), sourcePointIt);
         }
         break;
       case CGAL::Surface_mesh_shortest_paths_3::BARYCENTRIC_COORDINATE_VERTEX:
@@ -562,7 +665,7 @@ private:
           {
             he = next(he, m_graph);
           }
-          expand_vertex_root(source(he, m_graph));
+          expand_vertex_root(source(he, m_graph), sourcePointIt);
         }
         break;
       default:
@@ -574,7 +677,7 @@ private:
   /*
     Create source nodes facing each edge of `f`, rooted at the given `faceLocation`
   */
-  void expand_face_root(face_descriptor f, Barycentric_coordinate faceLocation)
+  void expand_face_root(face_descriptor f, Barycentric_coordinate faceLocation, Source_point_handle sourcePointIt)
   {
     typename Traits::Project_triangle_3_to_triangle_2 pt3t2(m_traits.project_triangle_3_to_triangle_2_object());
     typename Traits::Construct_vertex_2 cv2(m_traits.construct_vertex_2_object());
@@ -584,7 +687,7 @@ private:
     
     Cone_tree_node* faceRoot = new Cone_tree_node(m_traits, m_graph, m_rootNodes.size());
     node_created();
-    m_rootNodes.push_back(faceRoot);
+    m_rootNodes.push_back(std::make_pair(faceRoot, sourcePointIt));
     
     if (m_debugOutput)
     {
@@ -619,7 +722,7 @@ private:
   /*
     Create 'source' nodes to each size of the given edge, rooted at the specified parametric location
   */
-  void expand_edge_root(halfedge_descriptor baseEdge, FT t0, FT t1)
+  void expand_edge_root(halfedge_descriptor baseEdge, FT t0, FT t1, Source_point_handle sourcePointIt)
   {
     typename Traits::Construct_barycenter_2 cb2(m_traits.construct_barycenter_2_object());
     typename Traits::Construct_vertex_2 cv2(m_traits.construct_vertex_2_object());
@@ -650,7 +753,7 @@ private:
     
     Cone_tree_node* edgeRoot = new Cone_tree_node(m_traits, m_graph, m_rootNodes.size());
     node_created();
-    m_rootNodes.push_back(edgeRoot);
+    m_rootNodes.push_back(std::make_pair(edgeRoot, sourcePointIt));
     
     for (std::size_t side = 0; side < 2; ++side)
     {
@@ -676,7 +779,7 @@ private:
   /*
     Create a 'source' node for each face surrounding the given vertex.
   */
-  void expand_vertex_root(vertex_descriptor vertex)
+  void expand_vertex_root(vertex_descriptor vertex, Source_point_handle sourcePointIt)
   {
     if (m_debugOutput)
     {
@@ -686,7 +789,7 @@ private:
     Cone_tree_node* vertexRoot = new Cone_tree_node(m_traits, m_graph, m_rootNodes.size(), prev(halfedge(vertex, m_graph), m_graph));
 
     node_created();
-    m_rootNodes.push_back(vertexRoot);
+    m_rootNodes.push_back(std::make_pair(vertexRoot, sourcePointIt));
 
     m_closestToVertices[get(m_vertexIndexMap, vertex)] = Node_distance_pair(vertexRoot, FT(0.0));
 
@@ -1375,7 +1478,7 @@ private:
   {
     for (std::size_t i = 0; i < m_rootNodes.size(); ++i)
     {
-      delete_node(m_rootNodes[i], true);
+      delete_node(m_rootNodes[i].first, true);
     }
   }
   
@@ -1395,6 +1498,8 @@ private:
     if (clearFaceLocations)
     {
       m_faceLocations.clear();
+      m_firstNewSourcePoint = m_faceLocations.end();
+      m_deletedSourceLocations.clear();
     }
     
     delete_all_nodes();
@@ -1490,12 +1595,12 @@ private:
           break;
         case Cone_tree_node::VERTEX_SOURCE:
           visitor.vertex(target(current->entry_edge(), m_graph));
-          currentLocation = current->parent()->tarpoint();
+          currentLocation = current->parent()->target_point();
           current = current->parent();
           break;
         case Cone_tree_node::FACE_SOURCE:
           // This is guaranteed to be the final node in any sequence
-          visitor.face(m_faceLocations[current->tree_id()].first, m_faceLocations[current->tree_id()].second);
+          visitor.face(m_rootNodes[current->tree_id()].second->first, m_rootNodes[current->tree_id()].second->second);
           current = current->parent();
           break;
         default:
@@ -1610,8 +1715,7 @@ private:
           {
             he = next(he, m_graph);
           }
-          expand_edge_root(he, cbcw(location, associatedEdge), cbcw(location, (associatedEdge + 1) % 3));
-          
+
           halfedge_descriptor oppositeHalfedge = opposite(he, m_graph);
           
           std::size_t oppositeIndex = internal::edge_index(oppositeHalfedge, m_graph);
@@ -1666,25 +1770,39 @@ private:
   }
   
   template <class InputIterator>
-  void construct_sequence_tree(InputIterator begin, InputIterator end, vertex_descriptor)
+  Source_point_handle add_source_points_internal(InputIterator begin, InputIterator end, vertex_descriptor)
   {
-    m_faceLocations.clear();
+    Source_point_handle firstAdded;
+    
     for (InputIterator it = begin; it != end; ++it)
     {
-      m_faceLocations.push_back(face_location(*it));
+      Source_point_handle added = add_source_point(face_location(*it));
+      
+      if (it == begin)
+      {
+        firstAdded = added;
+      }
     }
-    construct_sequence_tree_internal();
+    
+    return firstAdded;
   }
   
   template <class InputIterator>
-  void construct_sequence_tree(InputIterator begin, InputIterator end, Face_location)
+  Source_point_handle add_source_points_internal(InputIterator begin, InputIterator end, Face_location)
   {
-    m_faceLocations.clear();
+    Source_point_handle firstAdded;
+    
     for (InputIterator it = begin; it != end; ++it)
     {
-      m_faceLocations.push_back(*it);
+      Source_point_handle added = add_source_point(it->first, it->second);
+      
+      if (it == begin)
+      {
+        firstAdded = added;
+      }
     }
-    construct_sequence_tree_internal();
+    
+    return firstAdded;
   }
   
   void construct_sequence_tree_internal()
@@ -1744,14 +1862,14 @@ private:
     
     }
     
-    for (std::size_t i = 0; i < m_faceLocations.size(); ++i)
+    for (typename Source_point_list::iterator it = m_faceLocations.begin(); it != m_faceLocations.end(); ++it)
     {
       if (m_debugOutput)
       {
-        std::cout << "Root: " << get(m_faceIndexMap, m_faceLocations[i].first) << " , " << m_faceLocations[i].second[0] << " " << m_faceLocations[i].second[1] << " " << m_faceLocations[i].second[2] << " " << std::endl;
+        std::cout << "Root: " << get(m_faceIndexMap, it->first) << " , " << it->second[0] << " " << it->second[1] << " " << it->second[2] << " " << std::endl;
       }
       
-      expand_root(m_faceLocations[i].first, m_faceLocations[i].second);
+      expand_root(it->first, it->second, Source_point_handle(it));
     }
     
     if (m_debugOutput)
@@ -1814,7 +1932,7 @@ private:
     
     for (std::size_t i = 0; i < m_rootNodes.size(); ++i)
     {
-      add_to_face_list(m_rootNodes[i]);
+      add_to_face_list(m_rootNodes[i].first);
     }
     
     for (std::size_t i = 0; i < m_faceOccupiers.size(); ++i)
@@ -1843,6 +1961,10 @@ private:
       
       std::cout << std::endl << "Done!" << std::endl;
     }
+    
+    m_firstNewSourcePoint = m_faceLocations.end();
+    m_deletedSourceLocations.clear();
+  
   }
   
 public:
@@ -1926,89 +2048,197 @@ public:
   
   /// \endcond
   
-  /// \name Sequence Tree Construction
+  /// \name Add/Remove Source Points
   /// @{
   
   /*!
-  \brief Computes a shortest paths sequence tree from a single vertex
+  \brief Inserts a single vertex as a shortest path source point
   
-  \details Constructs the sequence tree that covers shortest surface paths
-  from all points on the face graph to the given source vertex.  Any 
-  previously computed tree in this object will be overwritten.
+  \details No change to the internal shortest paths data structure occurs
+  until either `build_sequence_tree` or a shortest path query function is 
+  called.
   
   \param vertex A vertex to serve as the source location of the sequence tree
+  \return An iterator to the newly added source point
   */
-  void construct_sequence_tree(vertex_descriptor vertex)
+  Source_point_handle add_source_point(vertex_descriptor vertex)
   {
-    m_faceLocations.clear();
-    m_faceLocations.push_back(face_location(vertex));
-    construct_sequence_tree_internal();
+    Face_location location = face_location(vertex);
+    return add_source_point(location);
   }
   
   /*!
-  \brief Computes a shortest paths sequence tree from a single source location 
+  \brief Inserts a single shortest path source point
   
-  \details Constructs the shortest paths sequence tree that covers shortest 
-  surface paths from all points on the face graph reachable from the given 
-  source location. Any previously computed tree in this object will be 
-  overwritten.
+  \details No change to the internal shortest paths data structure occurs
+  until either `build_sequence_tree` or a shortest path query function is 
+  called.
   
   \param f A face of the face graph
   \param location Barycentric coordinate on face `f` specifying the source location.
+  \return An iterator to the newly added source point
   */
-  void construct_sequence_tree(face_descriptor f, Barycentric_coordinate location)
+  Source_point_handle add_source_point(face_descriptor f, Barycentric_coordinate location)
   {
-    m_faceLocations.clear();
-    m_faceLocations.push_back(std::make_pair(f, location));
-    construct_sequence_tree_internal();
+    add_source_point(std::make_pair(f, location));
   }
   
   /*!
-  \brief Compute a shortest path sequence tree from multiple source locations
+  \brief Inserts a single shortest path source point
   
-  \details Constructs a shortest paths sequence tree that covers shortest surface paths
-  to all locations on the `FaceListGraph` reachable from the supplied source locations.
+  \details No change to the internal shortest paths data structure occurs
+  until either `build_sequence_tree` or a shortest path query function is 
+  called.
   
+  \param location A `Face_location` object, specifying the face and internal location of the source point
+  \return An iterator to the newly added source point
+  */
+  Source_point_handle add_source_point(Face_location location)
+  {
+    Source_point_underlying_iterator added = m_faceLocations.insert(m_faceLocations.end(), location);
+    
+    if (m_firstNewSourcePoint == m_faceLocations.end())
+    {
+      m_firstNewSourcePoint = added;
+    }
+    
+    return Source_point_handle(added);
+  }
+  
+  /*!
+  \brief Inserts a range of shortest path source points
+  
+  \details No change to the internal shortest paths data structure occurs
+  until either `build_sequence_tree` or a shortest path query function is 
+  called.
+
   \tparam InputIterator A `ForwardIterator` which dereferences to either `Face_location`, or `vertex_descriptor`.
   
   \param begin iterator to the first in the list of source point locations.
   \param end iterator to one past the end of the list of source point locations.
+  \return An iterator to the newly added source point
   */
   template <class InputIterator>
-  void construct_sequence_tree(InputIterator begin, InputIterator end)
+  Source_point_handle add_source_points(InputIterator begin, InputIterator end)
   {
-    construct_sequence_tree(begin, end, typename std::iterator_traits<InputIterator>::value_type());
+    return add_source_points_internal(begin, end, typename std::iterator_traits<InputIterator>::value_type());
+  }
+  
+  /*!
+  \brief Removes a source point from the structure
+  
+  \details No change to the internal shortest paths data structure occurs
+  until either `build_sequence_tree` or a shortest path query function is 
+  called.  Behaviour is undefined if the source point `it` was already removed.
+  
+  \param it iterator to the source point to be removed
+  */
+  void remove_source_point(Source_point_handle it)
+  {
+    if (it == m_firstNewSourcePoint)
+    {
+      ++m_firstNewSourcePoint;
+    }
+    
+    m_deletedSourceLocations.splice(m_deletedSourceLocations.begin(), m_faceLocations, it.m_iterator);
+  }
+  
+  /*!
+  \brief Removes all source point from the structure
+  
+  \details No change to the internal shortest paths data structure occurs
+  until either `build_sequence_tree` or a shortest path query function is 
+  called. For a version which deletes all data immediately, use
+  `clear_sequence_tree()` instead.
+  */
+  void remove_all_source_points()
+  {
+    m_deletedSourceLocations.splice(m_deletedSourceLocations.begin(), m_faceLocations, m_faceLocations.begin(), m_faceLocations.end());
+    m_firstNewSourcePoint = m_faceLocations.end();
   }
   
   /// @}
   
+  /// \name Create/Destroy Shortest Paths Sequence Tree
+  /// @{
   
+  /*!
+  \brief Computes all pending changes to the sequence tree
+  
+  \details Calling this method will only perform any computation if some
+  change to the set of source points occurred since the last time
+  the sequence tree was reconstructed
+  */
+  void build_sequence_tree()
+  {
+    if (changed_since_last_build())
+    {
+      construct_sequence_tree_internal();
+    }
+  }
+  
+  /*!
+  \brief Removes all source point from the sequence tree
+  
+  \details The entire container is reset to its default state and any current
+  sequence tree is deleted.  For a version which defers deletion until
+  it is necessary, use `remove_all_source_points()`.
+  */
+  void clear_sequence_tree()
+  {
+    reset_algorithm();
+  }
+
+  /// @}
+
   /// \name Accessors
   /// @{
   
   /*!
-  \brief Returns the face location of the `i`-th source point given to this algorithm.
+  \brief Returns an iterator to the first source point location
     
-  \details The indices of the source points are assigned in the order of the 
-  iterator. If only a single source point was specified, it will always have 
-  index 0.
+  \details The elements will appear in the order they were inserted to the 
+  structure by calls to `add_source_point` or `add_source_points`.  Deleted
+  points will not appear in the sequence.
     
-  \param i Index of the source point.  Precondition: `0 <= i < number_of_source_locations()`
-  \return The face location of the `i`th source point.
+  \return An iterator to the first of the stored source points.
   */
-  const Face_location& get_source_location(std::size_t i) const
+  Source_point_handle source_points_begin() const
   {
-    return m_faceLocations[i];
+    // It is a feature of C++11 that `const_iterator` may be used in calls to `erase()`, however
+    // in order to support C++98, we must use `iterator`.  Semantically, this is correct, but
+    // I must cast away the const-ness to hide the internal uglyness
+    return Source_point_handle(const_cast<std::list<Face_location>&>(m_faceLocations).begin());
+  }
+
+  /*!
+  \brief Returns an iterator to one past the last source point location
+
+  \return An iterator to one past-the-end in the list of stored source points.
+  */
+  Source_point_handle source_points_end() const
+  {
+    return Source_point_handle(const_cast<std::list<Face_location>&>(m_faceLocations).end());
   }
   
   /*!
-  \brief Returns the total number of source points in the current sequence tree.
+  \brief Returns the total number of source points
     
-  \return The number of source points, or 0 if no sequence tree is computed yet.
+  \return The number of source points currently in the structure.
   */
   std::size_t number_of_source_locations() const
   {
     return m_faceLocations.size();
+  }
+  
+  /*!
+  \brief Determines if the structure has changed since the last time it was built
+  
+  \return true if the structure needs to be rebuilt, false otherwise
+  */
+  bool changed_since_last_build() const
+  {
+    return m_firstNewSourcePoint != m_faceLocations.end() || !m_deletedSourceLocations.empty();
   }
   
   /// @}
@@ -2017,28 +2247,29 @@ public:
   /// @{
   
   /*!
-  Computes the shortest surface distance from a vertex to any source point
+  \brief Computes the shortest surface distance from a vertex to any source point
   
   \param v A vertex of the face graph
-  \return A pair, containing the distance to the source location, and the
-    index of the source location.  If no source location was reachable (can
+  \return A pair, containing the distance to the source location, and an 
+    iterator to the source location.  If no source location was reachable (can
     occur when the graph is disconnected), the distance will be a negative 
-    value and the source location will be an index greater than the largest 
-    index of all source points.
+    value and the source location will be equal to `source_points_end()`.
   */
-  std::pair<FT, std::size_t> shortest_distance_to_source_points(vertex_descriptor v)
+  Shortest_path_result shortest_distance_to_source_points(vertex_descriptor v)
   {
+    build_sequence_tree();
+  
     Node_distance_pair result = m_closestToVertices[get(m_vertexIndexMap, v)];
     
     Cone_tree_node* current = result.first;
     
     if (current)
     {
-      return std::make_pair(result.second, current->tree_id());
+      return std::make_pair(result.second, m_rootNodes[current->tree_id()].second);
     }
     else
     {
-      return std::make_pair(FT(-1.0), number_of_source_locations());
+      return std::make_pair(FT(-1.0), source_points_end());
     }
   }
   
@@ -2047,25 +2278,26 @@ public:
   
   \param f A face of the face graph
   \param location Barycentric coordinate of the query point on face `f`
-  \return A pair, containing the distance to the source location, and the
-    index of the source location itself.  If no source location was reachable (can
+  \return A pair, containing the distance to the source location, and an 
+    iterator to the source location.  If no source location was reachable (can
     occur when the graph is disconnected), the distance will be a negative 
-    value and the source location will be an index greater than the largest 
-    index of all source points.
+    value and the source location will be equal to `source_points_end()`.
   */
-  std::pair<FT, std::size_t> shortest_distance_to_source_points(face_descriptor f, Barycentric_coordinate location)
+  Shortest_path_result shortest_distance_to_source_points(face_descriptor f, Barycentric_coordinate location)
   {
+    build_sequence_tree();
+    
     std::pair<Node_distance_pair, Barycentric_coordinate> result = nearest_to_location(f, location);
     
     Cone_tree_node* current = result.first.first;
     
     if (current)
     {
-      return std::make_pair(result.first.second, current->tree_id());
+      return std::make_pair(result.first.second, m_rootNodes[current->tree_id()].second);
     }
     else
     {
-      return std::make_pair(FT(-1.0), number_of_source_locations());
+      return std::make_pair(FT(-1.0), source_points_end());
     }
   }
   
@@ -2090,12 +2322,14 @@ public:
   template <class Visitor>
   bool shortest_path_sequence_to_source_points(vertex_descriptor v, Visitor& visitor)
   {
+    build_sequence_tree();
+    
     Cone_tree_node* current = m_closestToVertices[get(m_vertexIndexMap, v)].first;
     
     if (current)
     {
       visitor.vertex(v);
-      visit_shortest_path(current, current->tarpoint(), visitor);
+      visit_shortest_path(current, current->target_point(), visitor);
       return true;
     }
     else
@@ -2121,6 +2355,8 @@ public:
   template <class Visitor>
   bool shortest_path_sequence_to_source_points(face_descriptor f, Barycentric_coordinate location, Visitor& visitor)
   {
+    build_sequence_tree();
+    
     std::pair<Node_distance_pair, Barycentric_coordinate> result = nearest_to_location(f, location);
     Cone_tree_node* current = result.first.first;
     
@@ -2154,6 +2390,8 @@ public:
   template <class OutputIterator>
   bool shortest_path_points_to_source_points(vertex_descriptor v, OutputIterator output)
   {
+    build_sequence_tree();
+    
     Point_path_visitor_wrapper<OutputIterator> wrapper(*this, output);
     return shortest_path_sequence_to_source_points(v, wrapper);
   }
@@ -2171,6 +2409,8 @@ public:
   template <class OutputIterator>
   bool shortest_path_points_to_source_points(face_descriptor f, Barycentric_coordinate location, OutputIterator output)
   {
+    build_sequence_tree();
+    
     Point_path_visitor_wrapper<OutputIterator> wrapper(*this, output);
     return shortest_path_sequence_to_source_points(f, location, wrapper);
   }

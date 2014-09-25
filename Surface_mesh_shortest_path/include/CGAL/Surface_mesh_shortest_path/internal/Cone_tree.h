@@ -237,7 +237,7 @@ public:
   
   FT distance_from_target_to_root() const
   {
-    return distance_to_root(tarpoint());
+    return distance_to_root(target_point());
   }
   
   Ray_2 left_boundary() const
@@ -262,17 +262,19 @@ public:
   
   Ray_2 ray_to_target_vertex() const
   {
-    return Ray_2(source_image(), tarpoint());
+    return Ray_2(source_image(), target_point());
   }
   
   bool inside_window(const Point_2& point) const
   {
     typename Traits::Orientation_2 orientation_2(m_traits.orientation_2_object());
     Point_2 sourceImagePoint(source_image());
-    return orientation_2(sourceImagePoint, m_windowLeft, point) == CGAL::RIGHT_TURN && orientation_2(sourceImagePoint, m_windowRight, point) == CGAL::LEFT_TURN;
+    CGAL::Orientation leftOrientation = orientation_2(sourceImagePoint, m_windowLeft, point);
+    CGAL::Orientation rightOrientation = orientation_2(sourceImagePoint, m_windowRight, point);
+    return (leftOrientation == CGAL::RIGHT_TURN || leftOrientation == CGAL::COLLINEAR) && (rightOrientation == CGAL::LEFT_TURN || rightOrientation == CGAL::COLLINEAR);
   }
 
-  Point_2 tarpoint() const
+  Point_2 target_point() const
   {
     typename Traits::Construct_vertex_2 cv2(m_traits.construct_vertex_2_object());
     return cv2(m_layoutFace, 2);
@@ -280,7 +282,7 @@ public:
   
   bool is_target_vertex_inside_window() const
   {
-    return inside_window(tarpoint());
+    return inside_window(target_point());
   }
   
   bool has_left_side() const
@@ -292,13 +294,18 @@ public:
       return true;
     }
 
-    return orientation_2(source_image(), m_windowLeft, tarpoint()) == CGAL::RIGHT_TURN;
+    CGAL::Orientation orientation = orientation_2(source_image(), m_windowLeft, target_point());
+    
+    return (orientation == CGAL::RIGHT_TURN || orientation == CGAL::COLLINEAR);
   }
   
   bool has_right_side() const
   {
     typename Traits::Orientation_2 orientation_2(m_traits.orientation_2_object());
-    return orientation_2(source_image(), m_windowRight, tarpoint()) == CGAL::LEFT_TURN;
+    
+    CGAL::Orientation orientation = orientation_2(source_image(), m_windowRight, target_point());
+    
+    return (orientation == CGAL::LEFT_TURN || orientation == CGAL::COLLINEAR);
   }
   
   Segment_2 left_child_base_segment() const

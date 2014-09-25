@@ -200,15 +200,19 @@ struct TestMeshProgramInstance
       std::cout << "STE(location): " << faceIndexMap[startLocation.first] << " , " << startLocation.second[0] << " " << startLocation.second[1] << " " << startLocation.second[2] << " " << std::endl;
       std::cout << "ETS(location): " << faceIndexMap[endLocation.first] << " , " << endLocation.second[0] << " " << endLocation.second[1] << " " << endLocation.second[2] << " " << std::endl;
 
-      startToEndShortestPaths.construct_sequence_tree(startLocation.first, startLocation.second);
-
+      startToEndShortestPaths.clear_sequence_tree();
+      startToEndShortestPaths.add_source_point(startLocation.first, startLocation.second);
+      startToEndShortestPaths.build_sequence_tree();
+      
       CGAL::test::Edge_sequence_collector<Traits> startToEndCollector(vertexIndexMap, halfedgeIndexMap, faceIndexMap);
       
       startToEndShortestPaths.shortest_path_sequence_to_source_points(endLocation.first, endLocation.second, startToEndCollector);
 
       FT startToEnd = startToEndShortestPaths.shortest_distance_to_source_points(endLocation.first, endLocation.second).first;
 
-      endToStartShortestPaths.construct_sequence_tree(endLocation.first, endLocation.second);
+      endToStartShortestPaths.clear_sequence_tree();
+      endToStartShortestPaths.add_source_point(endLocation.first, endLocation.second);
+      endToStartShortestPaths.build_sequence_tree();
 
       CGAL::test::Edge_sequence_collector<Traits> endToStartCollector(vertexIndexMap, halfedgeIndexMap, faceIndexMap);
       endToStartShortestPaths.shortest_path_sequence_to_source_points(startLocation.first, startLocation.second, endToStartCollector);

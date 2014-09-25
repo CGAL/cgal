@@ -73,8 +73,6 @@ public:
     FACE_MODE = 2,
   };
   
-  typedef std::list<Face_location> Face_locations;
-  
 private:
   Messages_interface* m_messages;
   QMainWindow* m_mainWindow;
@@ -86,10 +84,7 @@ private:
   
   Selection_mode m_selectionMode;
   Primitives_mode m_primitivesMode;
-  
-  Face_locations m_faceLocations;
-  
-  bool m_isComputed;
+
   bool m_isTreeCached;
   
   bool m_shiftHeld;

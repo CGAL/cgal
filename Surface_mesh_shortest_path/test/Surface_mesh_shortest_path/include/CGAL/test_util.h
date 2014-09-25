@@ -123,28 +123,6 @@ FT squared(FT in)
   return in * in;
 }
 
-/*
-template<class FaceListGraph>
-struct Plane_from_facet {
-  typedef typename FaceListGraph::Plane_3 Plane_3;
-  typedef typename FaceListGraph::Facet Facet;
-  typedef typename FaceListGraph::Halfedge_handle Halfedge_handle;
-
-  Plane_3 operator()(Facet& f) {
-      Halfedge_handle h = f.halfedge();
-      return Plane_3( h->vertex()->point(),
-                                    h->next()->vertex()->point(),
-                                    h->opposite()->vertex()->point());
-  }
-};
-
-template <class FaceListGraph>
-void construct_polyhedron_planes(FaceListGraph& out)
-{
-  std::transform( out.facets_begin(), out.facets_end(), out.planes_begin(), Plane_from_facet<FaceListGraph>());
-}
-*/
-
 template <class FaceListGraph>
 typename FaceListGraph::Halfedge_handle make_regular_tetrahedron(FaceListGraph& out)
 {
@@ -157,7 +135,7 @@ typename FaceListGraph::Halfedge_handle make_regular_tetrahedron(FaceListGraph& 
   typename FaceListGraph::Point_3(-FT(1.0), FT(0.0), -rsqrt2),
   typename FaceListGraph::Point_3(FT(0.0), FT(1.0), rsqrt2),
   typename FaceListGraph::Point_3(FT(0.0), -FT(1.0), rsqrt2));
-  //construct_polyhedron_planes(out);
+
   return result;
 }
 

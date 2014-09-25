@@ -155,7 +155,7 @@ int main(int argc, char** argv)
   Surface_mesh_shortest_path::Face_location startLocation(faceList[rand.get_int(0, CGAL::num_faces(polyhedron))], random_coordinate(rand));
   Surface_mesh_shortest_path::Face_location endLocation(faceList[rand.get_int(0, CGAL::num_faces(polyhedron))], random_coordinate(rand));
   
-  shortestPaths.construct_sequence_tree(startLocation.first, startLocation.second);
+  shortestPaths.add_source_point(startLocation.first, startLocation.second);
 
   Sequence_collector<Traits> sequenceCollector(polyhedron);
   

@@ -10,7 +10,6 @@
 Scene_polyhedron_shortest_path_item::Scene_polyhedron_shortest_path_item() 
   : Scene_polyhedron_item_decorator(NULL, false)
   , m_shortestPaths(NULL)
-  , m_isComputed(false)
   , m_isTreeCached(false)
   , m_shiftHeld(false)
 {
@@ -19,7 +18,6 @@ Scene_polyhedron_shortest_path_item::Scene_polyhedron_shortest_path_item()
 Scene_polyhedron_shortest_path_item::Scene_polyhedron_shortest_path_item(Scene_polyhedron_item* polyhedronItem, Scene_interface* sceneInterface, Messages_interface* messages, QMainWindow* mainWindow) 
   : Scene_polyhedron_item_decorator(polyhedronItem, false)
   , m_shortestPaths(NULL)
-  , m_isComputed(false)
   , m_isTreeCached(false)
   , m_shiftHeld(false)
 { 
@@ -87,7 +85,7 @@ void Scene_polyhedron_shortest_path_item::draw_points() const
   
   ::glBegin(GL_POINTS);
   
-  for(Face_locations::const_iterator it = m_faceLocations.begin(); it != m_faceLocations.end(); ++it)
+  for(Surface_mesh_shortest_path::Source_point_handle it = m_shortestPaths->source_points_begin(); it != m_shortestPaths->source_points_end(); ++it) 
   {
     const Point_3& p = m_shortestPaths->point(it->first, it->second);
     ::glVertex3d(p.x(), p.y(), p.z());
@@ -142,8 +140,7 @@ void Scene_polyhedron_shortest_path_item::recreate_shortest_path_object()
             CGAL::get(CGAL::vertex_point, *polyhedron()));
             
   //m_shortestPaths->m_debugOutput = true;
-            
-  m_isComputed = false;
+
   m_isTreeCached = false;
 }
 
@@ -158,12 +155,11 @@ void Scene_polyhedron_shortest_path_item::ensure_aabb_object()
 
 void Scene_polyhedron_shortest_path_item::ensure_shortest_paths_tree()
 {
-  if (!m_isComputed)
+  if (!m_shortestPaths->changed_since_last_build())
   {
     m_messages->information(tr("Recomputing shortest paths tree..."));
-    m_shortestPaths->construct_sequence_tree(m_faceLocations.begin(), m_faceLocations.end());
+    m_shortestPaths->build_sequence_tree();
     m_messages->information(tr("Done."));
-    m_isComputed = true;
   }
 }
   
@@ -200,25 +196,25 @@ void Scene_polyhedron_shortest_path_item::remove_nearest_point(const Face_locati
   
   const Point_3 pickLocation = m_shortestPaths->point(faceLocation.first, faceLocation.second);
   
-  Face_locations::iterator found = m_faceLocations.end();
+  Surface_mesh_shortest_path::Source_point_handle found = m_shortestPaths->source_points_end();
   FT minDistance(0.0);
   const FT thresholdDistance = FT(0.4);
   
-  for (Face_locations::iterator it = m_faceLocations.begin(); it != m_faceLocations.end(); ++it)
+  for (Surface_mesh_shortest_path::Source_point_handle it = m_shortestPaths->source_points_begin(); it != m_shortestPaths->source_points_end(); ++it)
   {
     Point_3 sourceLocation = m_shortestPaths->point(it->first, it->second);
     FT distance = computeSquaredDistance3(sourceLocation, pickLocation);
     
-    if ((found == m_faceLocations.end() && distance <= thresholdDistance) || distance < minDistance)
+    if ((found == m_shortestPaths->source_points_end() && distance <= thresholdDistance) || distance < minDistance)
     {
       found = it;
       minDistance = distance;
     }
   }
   
-  if (found != m_faceLocations.end())
+  if (found != m_shortestPaths->source_points_end())
   {
-    m_faceLocations.erase(found);
+    m_shortestPaths->remove_source_point(found);
   }
 }
 
@@ -306,23 +302,19 @@ bool Scene_polyhedron_shortest_path_item::run_point_select(const Ray_3& ray)
       {
       case VERTEX_MODE:
         get_as_vertex_point(faceLocation);
-        m_faceLocations.push_back(faceLocation);
-        m_isComputed = false;
+        m_shortestPaths->add_source_point(faceLocation.first, faceLocation.second);
         break;
       case EDGE_MODE:
         get_as_edge_point(faceLocation);
-        m_faceLocations.push_back(faceLocation);
-        m_isComputed = false;
+        m_shortestPaths->add_source_point(faceLocation.first, faceLocation.second);
         break;
       case FACE_MODE:
-        m_faceLocations.push_back(faceLocation);
-        m_isComputed = false;
+        m_shortestPaths->add_source_point(faceLocation.first, faceLocation.second);
         break;
       }
       break;
     case REMOVE_POINTS_MODE:
       remove_nearest_point(faceLocation);
-      m_isComputed = false;
       break;
     case SHORTEST_PATH_MODE:
       switch (m_primitivesMode)
@@ -337,7 +329,7 @@ bool Scene_polyhedron_shortest_path_item::run_point_select(const Ray_3& ray)
         break;
       }
       
-      if (m_faceLocations.size() > 0)
+      if (m_shortestPaths->number_of_source_locations() > 0)
       {
         ensure_shortest_paths_tree();
         
@@ -415,7 +407,7 @@ bool Scene_polyhedron_shortest_path_item::deferred_load(Scene_polyhedron_item* p
     return false;
   }
   
-  m_faceLocations.clear();
+  m_shortestPaths->clear_sequence_tree();
   
   std::vector<face_descriptor> listOfFaces;
   listOfFaces.reserve(CGAL::num_faces(*polyhedron()));
@@ -440,7 +432,7 @@ bool Scene_polyhedron_shortest_path_item::deferred_load(Scene_polyhedron_item* p
     
     // std::cout << "Read in face: " << faceId << " , " << location << std::endl;
     
-    m_faceLocations.push_back(Face_location(listOfFaces[faceId], location));
+    m_shortestPaths->add_source_point(listOfFaces[faceId], location);
   }
 
   return true;
@@ -455,7 +447,7 @@ bool Scene_polyhedron_shortest_path_item::save(const std::string& file_name) con
     return false; 
   }
 
-  for(Face_locations::const_iterator it = m_faceLocations.begin(); it != m_faceLocations.end(); ++it) 
+  for(Surface_mesh_shortest_path::Source_point_handle it = m_shortestPaths->source_points_begin(); it != m_shortestPaths->source_points_end(); ++it) 
   { 
     // std::cout << "Output face location: " << it->first->id() << " , " << it->second << std::endl;
     out << it->first->id() << " " << it->second[0] << " " << it->second[1] << " " << it->second[3] << std::endl;

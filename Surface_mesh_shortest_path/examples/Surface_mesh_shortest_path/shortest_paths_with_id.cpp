@@ -64,7 +64,7 @@ int main(int argc, char** argv)
   Traits traits;
   Surface_mesh_shortest_path shortestPaths(polyhedron, traits);
  
-  shortestPaths.construct_sequence_tree(targetFace, faceLocation);
+  shortestPaths.add_source_point(targetFace, faceLocation);
   
   vertex_iterator verticesCurrent, verticesEnd;
   

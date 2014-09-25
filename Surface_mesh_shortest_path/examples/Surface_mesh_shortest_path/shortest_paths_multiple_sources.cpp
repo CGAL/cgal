@@ -70,7 +70,7 @@ int main(int argc, char** argv)
   Traits traits;
   Surface_mesh_shortest_path shortestPaths(polyhedron, traits);
 
-  shortestPaths.construct_sequence_tree(faceLocations.begin(), faceLocations.end());
+  shortestPaths.add_source_points(faceLocations.begin(), faceLocations.end());
   
   vertex_iterator verticesCurrent, verticesEnd;
 

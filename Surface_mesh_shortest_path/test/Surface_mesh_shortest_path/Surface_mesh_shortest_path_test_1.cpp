@@ -6,6 +6,12 @@
 //
 // Author(s)     : Stephen Kiazyk
 
+#include <iostream>
+#include <fstream>
+#include <utility>
+
+#include <CGAL/Random.h>
+
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
@@ -13,21 +19,16 @@
 #include <CGAL/Polyhedron_items_with_id_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
 
+#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
+#include <CGAL/boost/graph/iterator.h>
+
 #include <CGAL/Surface_mesh_shortest_path/Surface_mesh_shortest_path_traits.h>
 #include <CGAL/Surface_mesh_shortest_path/Surface_mesh_shortest_path.h>
 #include <CGAL/Surface_mesh_shortest_path/function_objects.h>
 #include <CGAL/Surface_mesh_shortest_path/barycentric.h>
 #include <CGAL/Surface_mesh_shortest_path/internal/misc_functions.h>
 
-#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
-#include <CGAL/boost/graph/iterator.h>
-
-#include <CGAL/Random.h>
-
 #include <CGAL/test_util.h>
-#include <iostream>
-#include <fstream>
-#include <utility>
 
 #define BOOST_TEST_MODULE Surface_mesh_shortest_path_test
 #include <boost/test/included/unit_test.hpp>
@@ -67,8 +68,9 @@ BOOST_AUTO_TEST_CASE( shortest_path_regular_tetrahedron )
   
   Surface_mesh_shortest_path shortestPaths(P, traits);
   //shortestPaths.m_debugOutput = true;
-  shortestPaths.construct_sequence_tree(firstFace, b);
-
+  shortestPaths.add_source_point(firstFace, b);
+  shortestPaths.build_sequence_tree();
+  
   vertex_iterator currentVertex;
   vertex_iterator endVertex;
   
@@ -145,8 +147,9 @@ BOOST_AUTO_TEST_CASE( test_simple_saddle_vertex_mesh )
 
   Surface_mesh_shortest_path shortestPaths(P, traits);
   //shortestPaths.m_debugOutput = true;
-  shortestPaths.construct_sequence_tree(currentFace, baryCoord);
-
+  Surface_mesh_shortest_path::Source_point_handle firstSourcePoint = shortestPaths.add_source_point(currentFace, baryCoord);
+  shortestPaths.build_sequence_tree();
+  
   VPM vpm = CGAL::get(CGAL::vertex_point, P);
   
   Point_3 vertexLocations[8];
@@ -203,7 +206,7 @@ BOOST_AUTO_TEST_CASE( test_simple_saddle_vertex_mesh )
   
   BOOST_CHECK_EQUAL(collector.m_sequence.size(), 3);
   BOOST_CHECK_EQUAL(collector.m_sequence[1].type, CGAL::test::SEQUENCE_ITEM_VERTEX);
-  BOOST_CHECK(collector.m_sequence[0].index == 4 || collector.m_sequence[0].index == 6);
+  BOOST_CHECK(collector.m_sequence[1].index == 4 || collector.m_sequence[1].index == 6);
   BOOST_CHECK_EQUAL(collector.m_sequence[2].type, CGAL::test::SEQUENCE_ITEM_VERTEX);
   BOOST_CHECK_EQUAL(collector.m_sequence[2].index, 1);
   
@@ -254,11 +257,8 @@ BOOST_AUTO_TEST_CASE( test_simple_saddle_vertex_mesh )
   size_t vertexIndex2 = CGAL::test::face_vertex_index(currentFace2, rootSearchVertex2, P);
   Barycentric_coordinate baryCoord2 = construct_barycentric_coordinate(vertexIndex2 == 0 ? FT(1.0) : FT(0.0), vertexIndex2 == 1 ? FT(1.0) : FT(0.0), vertexIndex2 == 2 ? FT(1.0) : FT(0.0));
   
-  std::vector<Surface_mesh_shortest_path::Face_location> faceLocations;
-  faceLocations.push_back(Surface_mesh_shortest_path::Face_location(currentFace, baryCoord));
-  faceLocations.push_back(Surface_mesh_shortest_path::Face_location(currentFace2, baryCoord2));
-  
-  shortestPaths.construct_sequence_tree(faceLocations.begin(), faceLocations.end());
+  Surface_mesh_shortest_path::Source_point_handle secondSourcePoint = shortestPaths.add_source_point(currentFace2, baryCoord2);
+  shortestPaths.build_sequence_tree();
   
   FT distanceToApexFrom2 = CGAL::sqrt(compute_squared_distance_3(vertexLocations[5], vertexLocations[7]));
 
@@ -283,14 +283,49 @@ BOOST_AUTO_TEST_CASE( test_simple_saddle_vertex_mesh )
     shorterSideLength, // direct line of sight from root
     distanceToApexFrom2,
   };
+
+  Surface_mesh_shortest_path::Source_point_handle expectedSources2[8] =
+  {
+    secondSourcePoint,
+    firstSourcePoint,
+    secondSourcePoint,
+    secondSourcePoint,
+    secondSourcePoint,
+    secondSourcePoint,
+    secondSourcePoint,
+    secondSourcePoint,
+  };
+ 
+  currentVertex = startVertex;
+  
+  for (size_t i = 0; i < 8; ++i)
+  {
+    Surface_mesh_shortest_path::Shortest_path_result result = shortestPaths.shortest_distance_to_source_points(*currentVertex);
+    
+    BOOST_CHECK_CLOSE(result.first, expectedDistances2[i], Kernel::FT(0.0001));
+    BOOST_CHECK(result.second == expectedSources2[i]);
+    ++currentVertex;
+  }
+  
+  // Test removing a source vertex
+  
+  shortestPaths.remove_source_point(firstSourcePoint);
+  shortestPaths.build_sequence_tree();
+
+  // replace the only shortest path which was not reporting to the 2nd source point
+  expectedDistances2[1] = distanceToSaddle + shorterSideLength;
   
   currentVertex = startVertex;
   
   for (size_t i = 0; i < 8; ++i)
   {
-    BOOST_CHECK_CLOSE(shortestPaths.shortest_distance_to_source_points(*currentVertex).first, expectedDistances2[i], Kernel::FT(0.0001));
+    Surface_mesh_shortest_path::Shortest_path_result result = shortestPaths.shortest_distance_to_source_points(*currentVertex);
+    
+    BOOST_CHECK_CLOSE(result.first, expectedDistances2[i], Kernel::FT(0.0001));
+    BOOST_CHECK(result.second == secondSourcePoint);
     ++currentVertex;
   }
+  
 }
   
 BOOST_AUTO_TEST_CASE( test_boundary_mesh )
@@ -382,7 +417,8 @@ BOOST_AUTO_TEST_CASE( test_boundary_mesh )
 
   Surface_mesh_shortest_path shortestPaths(P, traits);
   //shortestPaths.m_debugOutput = true;
-  shortestPaths.construct_sequence_tree(*startFace, startLocation);
+  shortestPaths.add_source_point(*startFace, startLocation);
+  shortestPaths.build_sequence_tree();
   
   Triangle_3 firstTriangle(vertexLocations[1], vertexLocations[0], vertexLocations[2]);
   

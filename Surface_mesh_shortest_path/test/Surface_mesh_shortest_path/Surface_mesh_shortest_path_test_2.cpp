@@ -121,7 +121,9 @@ BOOST_AUTO_TEST_CASE( test_a_to_b_vs_b_t_a_distances )
 
     //startToEndShortestPaths.m_debugOutput = true;
     
-    startToEndShortestPaths.construct_sequence_tree(startVertex);
+    startToEndShortestPaths.clear_sequence_tree();
+    startToEndShortestPaths.add_source_point(startVertex);
+    startToEndShortestPaths.build_sequence_tree();
 
     CGAL::test::Edge_sequence_collector<Traits> startToEndCollector(vertexIndexMap, halfedgeIndexMap, faceIndexMap);
     startToEndShortestPaths.shortest_path_sequence_to_source_points(endVertex, startToEndCollector);
@@ -130,7 +132,9 @@ BOOST_AUTO_TEST_CASE( test_a_to_b_vs_b_t_a_distances )
     
     //endToStartShortestPaths.m_debugOutput = true;
     
-    endToStartShortestPaths.construct_sequence_tree(endVertex);
+    endToStartShortestPaths.clear_sequence_tree();
+    endToStartShortestPaths.add_source_point(endVertex);
+    endToStartShortestPaths.build_sequence_tree();
     
     CGAL::test::Edge_sequence_collector<Traits> endToStartCollector(vertexIndexMap, halfedgeIndexMap, faceIndexMap);
     endToStartShortestPaths.shortest_path_sequence_to_source_points(startVertex, endToStartCollector);
@@ -206,15 +210,19 @@ BOOST_AUTO_TEST_CASE( test_a_to_b_vs_b_t_a_distances )
 
     //shortestPaths.m_debugOutput = true;
     
-    startToEndShortestPaths.construct_sequence_tree(startFace, startLocation);
+    startToEndShortestPaths.clear_sequence_tree();
+    startToEndShortestPaths.add_source_point(startFace, startLocation);
+    startToEndShortestPaths.build_sequence_tree();
 
     FT startToEnd = startToEndShortestPaths.shortest_distance_to_source_points(endFace, endLocation).first;
     
     CGAL::test::Edge_sequence_collector<Traits> startToEndCollector(vertexIndexMap, halfedgeIndexMap, faceIndexMap);
     startToEndShortestPaths.shortest_path_sequence_to_source_points(endFace, endLocation, startToEndCollector);
     
-    endToStartShortestPaths.construct_sequence_tree(endFace, endLocation);
-
+    endToStartShortestPaths.clear_sequence_tree();
+    endToStartShortestPaths.add_source_point(endFace, endLocation);
+    endToStartShortestPaths.build_sequence_tree();
+    
     FT endToStart = endToStartShortestPaths.shortest_distance_to_source_points(startFace, startLocation).first;
 
     CGAL::test::Edge_sequence_collector<Traits> endToStartCollector(vertexIndexMap, halfedgeIndexMap, faceIndexMap);
