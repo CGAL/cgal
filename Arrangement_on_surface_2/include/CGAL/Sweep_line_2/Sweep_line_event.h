@@ -285,6 +285,9 @@ public:
   /*! Checks if at least one curve is defined to the right of the event. */
   bool has_right_curves() const { return (! m_rightCurves.empty()); }
 
+  /*! Returns whether an event has no incident curves */
+  bool is_isolated() const { return m_leftCurves.empty() && m_rightCurves.empty(); }
+
   /*!
    * Get the actual event point (const version).
    * \pre The event is associated with a valid point.
