@@ -71,11 +71,11 @@ private:
 #endif
 
 public:
-  using typename Base::Halfedge_graph;
-  using typename Base::Vertex_index_map;
-  using typename Base::Hedge_index_map;
-  using typename Base::Weight_calculator;
-  using typename Base::Vertex_point_map;
+  typedef typename Base::Halfedge_graph Halfedge_graph;
+  typedef typename Base::Vertex_index_map Vertex_index_map;
+  typedef typename Base::Hedge_index_map Hedge_index_map;
+  typedef typename Base::Weight_calculator Weight_calculator;
+  typedef typename Base::Vertex_point_map Vertex_point_map;
 
   //vertex_point_map set by default
   Deform_mesh(Halfedge_graph& halfedge_graph,
