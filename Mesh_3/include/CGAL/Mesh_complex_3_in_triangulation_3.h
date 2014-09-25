@@ -71,9 +71,9 @@ public:
   typedef CurveSegmentIndex                               Curve_segment_index;
 
   typedef typename Base::Triangulation                    Triangulation;
+  typedef typename Base::Subdomain_index                  Subdomain_index;
 
   using Base::surface_patch_index;
-  using typename Base::Subdomain_index;
 
 private:
   // Type to store the edges:
