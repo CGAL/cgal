@@ -10,7 +10,7 @@ typedef CGAL::Surface_mesh<Point_3> Sm;
 int main()
 {
   Sm m;
-  Sm::vertex_descriptor u;
+  Sm::vertex_index u;
   std::cout << m.num_vertices() << "  " << m.num_removed_vertices() << std::endl;
   for(int i=0; i < 10; i++){
     u = m.add_vertex(Point_3(0,0,0));

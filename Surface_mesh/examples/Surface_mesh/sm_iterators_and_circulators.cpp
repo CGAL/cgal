@@ -8,7 +8,8 @@
 
 typedef CGAL::Simple_cartesian<double> K;
 typedef CGAL::Surface_mesh<typename K::Point_3> Mesh;
-
+typedef Mesh::Vertex_index vertex_descriptor;
+typedef Mesh::Face_index face_descriptor;
 int main()
 {
   Mesh m;
@@ -24,21 +25,21 @@ int main()
   // v            w
 
   // Add the points as vertices
-  Mesh::Vertex_descriptor u = m.add_vertex(K::Point_3(0,1,0));
-  Mesh::Vertex_descriptor v = m.add_vertex(K::Point_3(0,0,0));
-  Mesh::Vertex_descriptor w = m.add_vertex(K::Point_3(1,0,0));
-  Mesh::Vertex_descriptor x = m.add_vertex(K::Point_3(1,1,0));
+  vertex_descriptor u = m.add_vertex(K::Point_3(0,1,0));
+  vertex_descriptor v = m.add_vertex(K::Point_3(0,0,0));
+  vertex_descriptor w = m.add_vertex(K::Point_3(1,0,0));
+  vertex_descriptor x = m.add_vertex(K::Point_3(1,1,0));
 
 
 
-  std::vector<Mesh::Vertex_descriptor> vec;
+  std::vector<vertex_descriptor> vec;
   using namespace boost::assign;
   vec += u, v, w, x;
-  Mesh::Face_descriptor f = m.add_face(vec);
+  face_descriptor f = m.add_face(vec);
 
   { 
     std::cout << "all vertices " << std::endl;
-    BOOST_FOREACH(Mesh::vertex_descriptor vd, m.vertices()){
+    BOOST_FOREACH(vertex_descriptor vd, m.vertices()){
       std::cout << vd << std::endl;
     }
   }

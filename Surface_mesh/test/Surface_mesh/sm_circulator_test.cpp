@@ -54,7 +54,7 @@ BOOST_FIXTURE_TEST_CASE(circ_distance, Surface_fixture)
 BOOST_FIXTURE_TEST_CASE(emptiness, Surface_fixture)
 {
   // add an isolated vertex
-  Sm::Vertex_descriptor iv = m.add_vertex(Point_3(2,2,0));
+  Sm::Vertex_index iv = m.add_vertex(Point_3(2,2,0));
   BOOST_CHECK(m.is_isolated(iv));
 
   Sm::Vertex_around_target_range vr = m.vertices_around_target(m.halfedge(iv));

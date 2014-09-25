@@ -54,8 +54,8 @@ BOOST_AUTO_TEST_CASE( iter_inteop ) {
 }
 
 BOOST_AUTO_TEST_CASE( test_descriptors ) {
-  Sm::Vertex_descriptor v;
-  Sm::Halfedge_descriptor h;
+  Sm::Vertex_index v;
+  Sm::Halfedge_index h;
   v < v;
   h == h;
   // does not compile and so it should
@@ -65,7 +65,7 @@ BOOST_AUTO_TEST_CASE( test_descriptors ) {
 BOOST_AUTO_TEST_CASE( test_remove_edge ) 
 {
   Surface_fixture f;
-  Sm::Halfedge_descriptor wv, uw, wx, xv, vu;
+  Sm::Halfedge_index wv, uw, wx, xv, vu;
   wv = f.m.halfedge(f.w, f.v);
   BOOST_CHECK_EQUAL(f.m.target(wv), f.v);
   BOOST_CHECK(wv.is_valid());
@@ -82,7 +82,7 @@ BOOST_AUTO_TEST_CASE( test_remove_edge )
 
   f.m.set_next(uw, wx);
   f.m.set_next(xv, vu);
-  f.m.remove_edge(Sm::Edge_descriptor(wv));
+  f.m.remove_edge(Sm::Edge_index(wv));
   Sm::Halfedge_around_target_circulator a(f.m.halfedge(f.w),f.m), b(a);
   BOOST_CHECK_EQUAL(CGAL::circulator_distance(a, b), 2);
   BOOST_CHECK_EQUAL(f.m.degree(f.w), 2);
@@ -93,7 +93,7 @@ BOOST_AUTO_TEST_CASE( test_remove_edge )
   // now remove a border edge to check if this works
   // this should not lower the number of faces
   Sm::size_type old_removed_faces_size = f.m.num_removed_faces();
-  f.m.remove_edge(Sm::Edge_descriptor(wx));
+  f.m.remove_edge(Sm::Edge_index(wx));
   BOOST_CHECK_EQUAL(f.m.num_removed_faces(), old_removed_faces_size);
 }
 
@@ -102,7 +102,7 @@ BOOST_AUTO_TEST_CASE( memory_reuse_test )
 {
   Cube_fixture f;
   // buffer all faces
-  typedef std::vector<Sm::Vertex_descriptor> VecFace;
+  typedef std::vector<Sm::Vertex_index> VecFace;
   typedef std::vector<VecFace> Faces;
 
   Faces faces;
@@ -119,7 +119,7 @@ BOOST_AUTO_TEST_CASE( memory_reuse_test )
 
   Sm::Vertex_iterator vb, ve;
   for(boost::tie(vb, ve) = f.m.vertices(); vb != ve; ++vb) {
-    f.m.set_halfedge(*vb, Sm::Halfedge_descriptor());
+    f.m.set_halfedge(*vb, Sm::Halfedge_index());
   }
   
   // remove all faces
@@ -130,7 +130,7 @@ BOOST_AUTO_TEST_CASE( memory_reuse_test )
   // remove all edges
   std::size_t old_edge_size = f.m.num_edges() - f.m.num_removed_edges();
   boost::range::for_each(f.m.edges(), 
-                         boost::bind(static_cast<void (Sm::*)(Sm::Edge_descriptor)>(&Sm::remove_edge), 
+                         boost::bind(static_cast<void (Sm::*)(Sm::Edge_index)>(&Sm::remove_edge), 
                                      boost::ref(f.m), _1));
   BOOST_CHECK_EQUAL(f.m.num_faces() - f.m.num_removed_faces(), 0);
   BOOST_CHECK_EQUAL(f.m.num_edges(), old_edge_size);
@@ -139,15 +139,15 @@ BOOST_AUTO_TEST_CASE( memory_reuse_test )
   // add all again
   for(Faces::iterator it = faces.begin(); it != faces.end(); ++it) {
     std::cout << "add face " << fc++ << std::endl;
-    Sm::Face_descriptor fd = f.m.add_face(*it);
+    Sm::Face_index fd = f.m.add_face(*it);
     BOOST_CHECK(fd.is_valid());
     f.m.fix_border(f.m.halfedge(fd));
     for(VecFace::iterator it2 = it->begin(); it2 != it->end(); ++it2) { 
       std::cout << std::boolalpha << "Added: " << *it2 << " border?" << f.m.is_border(*it2) << std::endl;
 
-      Sm::Halfedge_descriptor h = f.m.halfedge(*it2);
+      Sm::Halfedge_index h = f.m.halfedge(*it2);
       std::cout << h << h.is_valid() << std::endl;
-      Sm::Face_descriptor fa = f.m.face(h);
+      Sm::Face_index fa = f.m.face(h);
       std::cout << fa << fa.is_valid() << std::endl;
 
       std::cout << h << " " << fa << std::endl;
@@ -192,7 +192,7 @@ BOOST_AUTO_TEST_CASE( test_validate )
 BOOST_AUTO_TEST_CASE(isolated_vertex_check)
 {
   Surface_fixture f;
-  Sm::Vertex_descriptor isolated = f.m.add_vertex(Point_3(10, 10, 10));
+  Sm::Vertex_index isolated = f.m.add_vertex(Point_3(10, 10, 10));
   BOOST_CHECK(f.m.is_isolated(isolated));
   BOOST_CHECK(!f.m.halfedge(isolated).is_valid());
   BOOST_CHECK(f.m.is_border(isolated));
@@ -232,8 +232,8 @@ BOOST_AUTO_TEST_CASE( point_position_accessor )
 
 BOOST_AUTO_TEST_CASE( properties ) {
   Surface_fixture f;
-  f.m.add_property_map<Sm::Vertex_descriptor, int>("illuminatiproperty", 23);
-  // CGAL::Property_map<Sm::Vertex_descriptor, int> prop = f.m.get_property_map<Sm::Vertex_descriptor, int>("illuminatiproperty");
+  f.m.add_property_map<Sm::Vertex_index, int>("illuminatiproperty", 23);
+  // CGAL::Property_map<Sm::Vertex_index, int> prop = f.m.get_property_map<Sm::Vertex_index, int>("illuminatiproperty");
 }
 
 

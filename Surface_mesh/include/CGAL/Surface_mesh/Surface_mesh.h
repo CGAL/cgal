@@ -80,20 +80,21 @@ public:
     ///
     ///@{
 
+#ifndef DOXYGEN_RUNNING
     /// Base class for vertex, halfedge, edge, and face descriptor. 
     ///
-    /// \attention Note that `Descriptor` is not a model of the concept `Handle`,
+    /// \attention Note that `Index` is not a model of the concept `Handle`,
     /// because it cannot be dereferenced.
-    /// \sa `Vertex_descriptor`, `Halfedge_descriptor`, `Edge_descriptor`, `Face_descriptor`.
+    /// \sa `Vertex_index`, `Halfedge_index`, `Edge_index`, `Face_index`.
     template<typename T>
-    class Descriptor
+    class Index
     {
     public:
         /// Constructor. %Default construction creates an invalid descriptor.
         /// We write -1, which is <a href="http://en.cppreference.com/w/cpp/concept/numeric_limits">
         /// <tt>std::numeric_limits<size_type>::max()</tt></a>
         /// as `size_type` is an unsigned type. 
-        explicit Descriptor(size_type _idx=-1) : idx_(_idx) {}
+        explicit Index(size_type _idx=-1) : idx_(_idx) {}
 
         /// Get the underlying index of this descriptor
         size_type idx() const { return idx_; }
@@ -122,86 +123,97 @@ public:
         /// increments the internal index. This operation does not
         /// guarantee that the index is valid or undeleted after the
         /// increment.
-        Descriptor& operator++() { ++idx_; return *this; }
+        Index& operator++() { ++idx_; return *this; }
         /// decrements the internal index. This operation does not
         /// guarantee that the index is valid or undeleted after the
         /// decrement.
-        Descriptor& operator--() { --idx_; return *this; }
+        Index& operator--() { --idx_; return *this; }
 
         /// increments the internal index. This operation does not
         /// guarantee that the index is valid or undeleted after the
         /// increment.
-        Descriptor operator++(int) { Descriptor tmp(*this); ++idx_; return tmp; }
+        Index operator++(int) { Index tmp(*this); ++idx_; return tmp; }
         /// decrements the internal index. This operation does not
         /// guarantee that the index is valid or undeleted after the
         /// decrement.
-        Descriptor operator--(int) { Descriptor tmp(*this); --idx_; return tmp; }
+        Index operator--(int) { Index tmp(*this); --idx_; return tmp; }
     private:
         size_type idx_;
     };
 
+#endif
 
     /// This class represents a vertex.
-    /// \sa `Halfedge_descriptor`, `Edge_descriptor`, `Face_descriptor`
-    class Vertex_descriptor : public Descriptor<Vertex_descriptor>
+    /// \cgalModels `Index`
+    /// \sa `Halfedge_index`, `Edge_index`, `Face_index`
+    class Vertex_index
+#ifndef DOXYGEN_RUNNING
+ : public Index<Vertex_index>
+#endif
     {
     public:
         /// %Default constructor (with invalid index).
-        explicit Vertex_descriptor(size_type _idx=-1) : Descriptor<Vertex_descriptor>(_idx) {}
+        explicit Vertex_index(size_type _idx=-1) : Index<Vertex_index>(_idx) {}
 
         /// prints the index and a short identification string to an ostream.
-        friend std::ostream& operator<<(std::ostream& os, typename Surface_mesh::Vertex_descriptor const& v)
+        friend std::ostream& operator<<(std::ostream& os, typename Surface_mesh::Vertex_index const& v)
         {
             return (os << 'v' << v.idx());
         }
     };
 
     /// This class represents a halfedge.
-    /// \sa `Vertex_descriptor`, `Edge_descriptor`, `Face_descriptor`
-    class Halfedge_descriptor : public Descriptor<Halfedge_descriptor>
+    /// \cgalModels `Index`
+    /// \sa `Vertex_index`, `Edge_index`, `Face_index`
+    class Halfedge_index
+#ifndef DOXYGEN_RUNNING
+      : public Index<Halfedge_index>
+#endif
     {
     public:
         /// %Default constructor (with invalid index)
-        explicit Halfedge_descriptor(size_type _idx=-1) : Descriptor<Halfedge_descriptor>(_idx) {}
+        explicit Halfedge_index(size_type _idx=-1) : Index<Halfedge_index>(_idx) {}
 
         /// prints the index and a short identification string to an ostream.
-        friend std::ostream& operator<<(std::ostream& os, typename Surface_mesh::Halfedge_descriptor const& h)
+        friend std::ostream& operator<<(std::ostream& os, typename Surface_mesh::Halfedge_index const& h)
         {
             return (os << 'h' << h.idx());
         }
     };
 
     /// This class represents a face
-    /// \sa `Vertex_descriptor`, `Halfedge_descriptor`, `Edge_descriptor`
-    class Face_descriptor : public Descriptor<Face_descriptor>
+    /// \cgalModels `Index`
+    /// \sa `Vertex_index`, `Halfedge_index`, `Edge_index`
+    class Face_index
+#ifndef DOXYGEN_RUNNING
+      : public Index<Face_index>
+#endif
     {
     public:
         /// %Default constructor (with invalid index)
-        explicit Face_descriptor(size_type _idx=-1) : Descriptor<Face_descriptor>(_idx) {}
+        explicit Face_index(size_type _idx=-1) : Index<Face_index>(_idx) {}
 
         /// prints the index and a short identification string to an ostream.
-        friend std::ostream& operator<<(std::ostream& os, typename Surface_mesh::Face_descriptor const& f)
+        friend std::ostream& operator<<(std::ostream& os, typename Surface_mesh::Face_index const& f)
         {
             return (os << 'f' << f.idx());
         }
     };
 
     /// This class represents an edge.
-    ///
-    /// Although it does not derive
-    /// from `Descriptor` it is conceptually the same. \sa `Vertex_descriptor`,
-    /// `Halfedge_descriptor`, `Face_descriptor`
-    class Edge_descriptor
+    /// \cgalModels `Index`
+    /// \sa `Vertex_index`, `Halfedge_index`, `Face_index`
+    class Edge_index
     {
     public:
         /// %Default constructor (with invalid index).
-        Edge_descriptor(size_type idx=-1) : halfedge_(idx * 2) { }
+        Edge_index(size_type idx=-1) : halfedge_(idx * 2) { }
 
-        /// constructs an `Edge_descriptor` from a halfedge.
-        Edge_descriptor(Halfedge_descriptor he) : halfedge_(he) { }
+        /// constructs an `Edge_index` from a halfedge.
+        Edge_index(Halfedge_index he) : halfedge_(he) { }
         /// @cond CGAL_DOCUMENT_INTERNALS
         /// returns the internal halfedge.
-        Halfedge_descriptor halfedge() const { return halfedge_; }
+        Halfedge_index halfedge() const { return halfedge_; }
 
         /// returns the underlying index of this descriptor.
         size_type idx() const { return halfedge_.idx() / 2; }
@@ -213,43 +225,43 @@ public:
         bool is_valid() const { return halfedge_.is_valid(); }
 
         /// Are two descriptors equal?
-        bool operator==(const Edge_descriptor& other) const { return this->idx() == other.idx(); }
+        bool operator==(const Edge_index& other) const { return this->idx() == other.idx(); }
 
         /// Are two descriptors different?
-        bool operator!=(const Edge_descriptor& other) const { return this->idx() != other.idx(); }
+        bool operator!=(const Edge_index& other) const { return this->idx() != other.idx(); }
 
         /// compares by index.
-        bool operator<(const Edge_descriptor& other) const { return this->idx() < other.idx();}
+        bool operator<(const Edge_index& other) const { return this->idx() < other.idx();}
 
         /// decrements the internal index. This operation does not
         /// guarantee that the index is valid or undeleted after the
         /// decrement.
-        Edge_descriptor& operator--() { halfedge_ = Halfedge_descriptor(halfedge_.idx() - 2); return *this; }
+        Edge_index& operator--() { halfedge_ = Halfedge_index(halfedge_.idx() - 2); return *this; }
 
         /// increments the internal index. This operation does not
         /// guarantee that the index is valid or undeleted after the
         /// increment.
-        Edge_descriptor& operator++() { halfedge_ = Halfedge_descriptor(halfedge_.idx() + 2); return *this; }
+        Edge_index& operator++() { halfedge_ = Halfedge_index(halfedge_.idx() + 2); return *this; }
 
         /// decrements internal index. This operation does not
         /// guarantee that the index is valid or undeleted after the
         /// decrement.
-        Edge_descriptor operator--(int) { Edge_descriptor tmp(*this); halfedge_ = Halfedge_descriptor(halfedge_.idx() - 2); return tmp; }
+        Edge_index operator--(int) { Edge_index tmp(*this); halfedge_ = Halfedge_index(halfedge_.idx() - 2); return tmp; }
 
         /// increments internal index. This operation does not
         /// guarantee that the index is valid or undeleted after the
         /// increment.
-        Edge_descriptor operator++(int) { Edge_descriptor tmp(*this); halfedge_ = Halfedge_descriptor(halfedge_.idx() + 2); return tmp; }
+        Edge_index operator++(int) { Edge_index tmp(*this); halfedge_ = Halfedge_index(halfedge_.idx() + 2); return tmp; }
 
         /// @endcond 
 
         /// prints the index and a short identification string to an ostream.
-        friend std::ostream& operator<<(std::ostream& os, typename Surface_mesh::Edge_descriptor const& e)
+        friend std::ostream& operator<<(std::ostream& os, typename Surface_mesh::Edge_index const& e)
         {
             return (os << 'e' << e.idx() << " on " << e.halfedge());
         }
     private:
-        Halfedge_descriptor halfedge_;
+        Halfedge_index halfedge_;
     };
 
 
@@ -262,7 +274,7 @@ private: //-------------------------------------------------- connectivity types
     struct Vertex_connectivity
     {
         /// an incoming halfedge per vertex (it will be a border halfedge for border vertices)
-        Halfedge_descriptor  halfedge_;
+        Halfedge_index  halfedge_;
     };
 
 
@@ -271,13 +283,13 @@ private: //-------------------------------------------------- connectivity types
     struct Halfedge_connectivity
     {
         /// face incident to halfedge
-        Face_descriptor      face_;
+        Face_index      face_;
         /// vertex the halfedge points to
-        Vertex_descriptor    vertex_;
+        Vertex_index    vertex_;
         /// next halfedge within a face (or along a border)
-        Halfedge_descriptor  next_halfedge_;
+        Halfedge_index  next_halfedge_;
         /// previous halfedge within a face (or along a border)
-        Halfedge_descriptor  prev_halfedge_;
+        Halfedge_index  prev_halfedge_;
     };
 
 
@@ -286,24 +298,24 @@ private: //-------------------------------------------------- connectivity types
     struct Face_connectivity
     {
         /// a halfedge that is part of the face
-        Halfedge_descriptor  halfedge_;
+        Halfedge_index  halfedge_;
     };
 
 private: //------------------------------------------------------ iterator types
-    template<typename Descriptor_>
-    class Descriptor_iterator
-      : public boost::iterator_facade< Descriptor_iterator<Descriptor_>,
-                                       Descriptor_,
+    template<typename Index_>
+    class Index_iterator
+      : public boost::iterator_facade< Index_iterator<Index_>,
+                                       Index_,
                                        std::bidirectional_iterator_tag
                                        >
     {
-        typedef boost::iterator_facade< Descriptor_iterator<Descriptor_>,
-                                        Descriptor_,
+        typedef boost::iterator_facade< Index_iterator<Index_>,
+                                        Index_,
                                         std::bidirectional_iterator_tag
                                         > Facade;
     public:
-        Descriptor_iterator() : hnd_(), mesh_(NULL) {}
-        Descriptor_iterator(const Descriptor_& h, const Surface_mesh* m)
+        Index_iterator() : hnd_(), mesh_(NULL) {}
+        Index_iterator(const Index_& h, const Surface_mesh* m)
           : hnd_(h), mesh_(m) {
             if (mesh_ && mesh_->has_garbage())
               while (mesh_->has_valid_index(hnd_) && mesh_->is_removed(hnd_)) ++hnd_;
@@ -324,14 +336,14 @@ private: //------------------------------------------------------ iterator types
             while (mesh_->has_garbage() && mesh_->has_valid_index(hnd_) && mesh_->is_removed(hnd_)) --hnd_;
         }
 
-        bool equal(const Descriptor_iterator& other) const
+        bool equal(const Index_iterator& other) const
         {
             return this->hnd_ == other.hnd_;
         }
 
-        Descriptor_& dereference() const { return const_cast<Descriptor_&>(hnd_); }
+        Index_& dereference() const { return const_cast<Index_&>(hnd_); }
 
-        Descriptor_ hnd_;
+        Index_ hnd_;
         const Surface_mesh* mesh_;
     };
 public:
@@ -341,13 +353,13 @@ public:
 
     /// \brief This class iterates linearly over all vertices. 
     ///
-    /// A model of `BidirectionalIterator` with value type `Vertex_descriptor`.
+    /// A model of `BidirectionalIterator` with value type `Vertex_index`.
     /// \sa `vertices()`
     /// \sa `Halfedge_iterator`, `Edge_iterator`, `Face_iterator`
 #ifdef DOXYGEN_RUNNING
   typedef unspecified_type Vertex_iterator;
 #else
-    typedef Descriptor_iterator<Vertex_descriptor> Vertex_iterator;
+    typedef Index_iterator<Vertex_index> Vertex_iterator;
 #endif 
 
     /// \brief The range over all vertex descriptors.
@@ -359,13 +371,13 @@ public:
 
     /// \brief This class iterates linearly over all halfedges.
     ///
-    /// A model of `BidirectionalIterator` with value type `Halfedge_descriptor`.
+    /// A model of `BidirectionalIterator` with value type `Halfedge_index`.
     /// \sa `halfedges()`
     /// \sa `Vertex_iterator`, `Edge_iterator`, `Face_iterator`
 #ifdef DOXYGEN_RUNNING
   typedef unspecified_type Halfedge_iterator;
 #else
-    typedef Descriptor_iterator<Halfedge_descriptor> Halfedge_iterator;
+    typedef Index_iterator<Halfedge_index> Halfedge_iterator;
 #endif
 
     /// \brief The range over all halfedge descriptors.
@@ -377,13 +389,13 @@ public:
 
     /// \brief This class iterates linearly over all edges.
     ///
-    /// A model of `BidirectionalIterator` with value type `Halfedge_descriptor`.
+    /// A model of `BidirectionalIterator` with value type `Halfedge_index`.
     /// \sa `edges()`
     /// \sa `Vertex_iterator`, `Halfedge_iterator`, `Face_iterator`
 #ifdef DOXYGEN_RUNNING
   typedef unspecified_type Edge_iterator;
 #else
-    typedef Descriptor_iterator<Edge_descriptor> Edge_iterator;
+    typedef Index_iterator<Edge_index> Edge_iterator;
 #endif
 
     /// \brief The range over all edge descriptors.
@@ -395,13 +407,13 @@ public:
 
     /// \brief This class iterates linearly over all faces.
     ///
-    /// A model of `BidirectionalIterator` with value type `Face_descriptor`.
+    /// A model of `BidirectionalIterator` with value type `Face_index`.
     /// \sa `faces()`
     /// \sa `Vertex_iterator`, `Halfedge_iterator`, `Edge_iterator`
 #ifdef DOXYGEN_RUNNING
   typedef unspecified_type Face_iterator;
 #else
-    typedef Descriptor_iterator<Face_descriptor> Face_iterator;
+    typedef Index_iterator<Face_index> Face_iterator;
 #endif
 
     /// \brief The range over all face descriptors.
@@ -435,13 +447,13 @@ public:
     /// Start iterator for vertices.
     Vertex_iterator vertices_begin() const
     {
-        return Vertex_iterator(Vertex_descriptor(0), this);
+        return Vertex_iterator(Vertex_index(0), this);
     }
 
     /// End iterator for vertices.
     Vertex_iterator vertices_end() const
     {
-        return Vertex_iterator(Vertex_descriptor(num_vertices()), this);
+        return Vertex_iterator(Vertex_index(num_vertices()), this);
     }
     /// @endcond
 
@@ -454,13 +466,13 @@ public:
     /// Start iterator for halfedges.
     Halfedge_iterator halfedges_begin() const
     {
-        return Halfedge_iterator(Halfedge_descriptor(0), this);
+        return Halfedge_iterator(Halfedge_index(0), this);
     }
 
     /// End iterator for halfedges.
     Halfedge_iterator halfedges_end() const
     {
-        return Halfedge_iterator(Halfedge_descriptor(num_halfedges()), this);
+        return Halfedge_iterator(Halfedge_index(num_halfedges()), this);
     }
     /// @endcond
 
@@ -474,13 +486,13 @@ public:
     /// Start iterator for edges.
     Edge_iterator edges_begin() const
     {
-        return Edge_iterator(Edge_descriptor(0), this);
+        return Edge_iterator(Edge_index(0), this);
     }
 
     /// End iterator for edges.
     Edge_iterator edges_end() const
     {
-        return Edge_iterator(Edge_descriptor(num_edges()), this);
+        return Edge_iterator(Edge_index(num_edges()), this);
     }
     /// @endcond
 
@@ -495,13 +507,13 @@ public:
     /// Start iterator for faces.
     Face_iterator faces_begin() const
     {
-        return Face_iterator(Face_descriptor(0), this);
+        return Face_iterator(Face_index(0), this);
     }
 
     /// End iterator for faces.
     Face_iterator faces_end() const
     {
-        return Face_iterator(Face_descriptor(num_faces()), this);
+        return Face_iterator(Face_index(num_faces()), this);
     }
     /// @endcond
 
@@ -511,37 +523,37 @@ public:
     }
 
     /// returns the iterator range for vertices around vertex `target(h)`, starting at `source(h)`.
-    Vertex_around_target_range vertices_around_target(Halfedge_descriptor h) const
+    Vertex_around_target_range vertices_around_target(Halfedge_index h) const
     {
       return CGAL::vertices_around_target(h,*this);
     }
 
     /// returns the iterator range for incoming halfedges around vertex `target(h)`, starting at `h`.
-    Halfedge_around_target_range halfedges_around_target(Halfedge_descriptor h) const
+    Halfedge_around_target_range halfedges_around_target(Halfedge_index h) const
     {
       return CGAL::halfedges_around_target(h,*this);
     }
 
     /// returns the iterator range for faces around vertex `target(h)`, starting at `face(h)`.
-    Face_around_target_range faces_around_target(Halfedge_descriptor h) const
+    Face_around_target_range faces_around_target(Halfedge_index h) const
     {
       return CGAL::faces_around_target(h,*this);
     }
 
     /// returns the iterator range for vertices around face `face(h)`, starting at `target(h)`.
-    Vertex_around_face_range vertices_around_face(Halfedge_descriptor h) const
+    Vertex_around_face_range vertices_around_face(Halfedge_index h) const
      {
        return CGAL::vertices_around_face(h,*this);
      }
 
     /// returns the iterator range for halfedges around face `face(h)`, starting at `h`.
-    Halfedge_around_face_range halfedges_around_face(Halfedge_descriptor h) const
+    Halfedge_around_face_range halfedges_around_face(Halfedge_index h) const
     {
       return CGAL::halfedges_around_face(h,*this);
     }
 
     /// returns the iterator range for halfedges around face `face(h)`, starting at `h`.
-    Face_around_face_range faces_around_face(Halfedge_descriptor h) const
+    Face_around_face_range faces_around_face(Halfedge_index h) const
     {
        return CGAL::faces_around_face(h,*this);
     }
@@ -560,7 +572,7 @@ public:
 
     /// \brief This class circulates clockwise through all 
     /// one-ring neighbors of a vertex. 
-    ///  A model of `BidirectionalCirculator` with value type `Vertex_descriptor`.
+    ///  A model of `BidirectionalCirculator` with value type `Vertex_index`.
     /// \sa `Halfedge_around_target_circulator`, `Face_around_target_circulator`
 
   typedef CGAL::Vertex_around_target_circulator<Surface_mesh> Vertex_around_target_circulator;
@@ -568,38 +580,38 @@ public:
 
 
     /// \brief This class circulates clockwise through all incident faces of a vertex.
-    ///  A model of `BidirectionalCirculator` with value type `Face_descriptor`.
+    ///  A model of `BidirectionalCirculator` with value type `Face_index`.
     /// \sa `Vertex_around_target_circulator`, `Halfedge_around_target_circulator`
 
   typedef CGAL::Face_around_target_circulator<Surface_mesh> Face_around_target_circulator;
 
 
     /// \brief This class circulates clockwise through all halfedges around a vertex that have this vertex as target.
-    ///  A model of `BidirectionalCirculator` with value type `Halfedge_descriptor`.
+    ///  A model of `BidirectionalCirculator` with value type `Halfedge_index`.
     /// \sa `Vertex_around_target_circulator`, `Halfedge_around_target_circulator`
 
   typedef CGAL::Halfedge_around_target_circulator<Surface_mesh> Halfedge_around_target_circulator;
 
 
     /// \brief This class circulates clockwise through all halfedges around a vertex that have this vertex as source.
-    ///  A model of `BidirectionalCirculator` with value type `Halfedge_descriptor`.
+    ///  A model of `BidirectionalCirculator` with value type `Halfedge_index`.
     /// \sa `Vertex_around_target_circulator`, `Halfedge_around_target_circulator`
 
   typedef CGAL::Halfedge_around_source_circulator<Surface_mesh> Halfedge_around_source_circulator;
 
     /// \brief This class circulates counterclockwise through all vertices around a face.
-    ///  A model of `BidirectionalCirculator` with value type `Vertex_descriptor`.
+    ///  A model of `BidirectionalCirculator` with value type `Vertex_index`.
 
   typedef  CGAL::Vertex_around_face_circulator<Surface_mesh> Vertex_around_face_circulator;
 
 
     /// \brief This class circulates counterclockwise through all halfedges around a face.
-    ///  A model of `BidirectionalCirculator` with value type `Halfedge_descriptor`.
+    ///  A model of `BidirectionalCirculator` with value type `Halfedge_index`.
 
   typedef  CGAL::Halfedge_around_face_circulator<Surface_mesh> Halfedge_around_face_circulator;
 
    /// \brief This class circulates counterclockwise through all faces around a face.
-   ///  A model of `BidirectionalCirculator` with value type `Face_descriptor`.
+   ///  A model of `BidirectionalCirculator` with value type `Face_index`.
    ///  Note that face descriptor is the same after `operator++`, if the faces share 
    ///  several halfedges.
 
@@ -609,11 +621,11 @@ public:
   /// @cond CGAL_DOCUMENT_INTERNALS
   // typedefs which make it easier to write the partial specialisation of boost::graph_traits
 
-  typedef Vertex_descriptor   vertex_descriptor;
+  typedef Vertex_index   vertex_index;
   typedef P                   vertex_property_type;
-  typedef Halfedge_descriptor halfedge_descriptor;
-  typedef Edge_descriptor     edge_descriptor;
-  typedef Face_descriptor     face_descriptor;
+  typedef Halfedge_index halfedge_index;
+  typedef Edge_index     edge_index;
+  typedef Face_index     face_index;
 
   typedef Vertex_iterator     vertex_iterator;
   typedef Halfedge_iterator   halfedge_iterator;
@@ -663,25 +675,25 @@ public:
     ///@{
 
    /// adds a new vertex, and resizes vertex properties if necessary.
-    Vertex_descriptor add_vertex()
+    Vertex_index add_vertex()
     {
       if(vertices_freelist_ != -1){
         size_type idx = vertices_freelist_;
-        vertices_freelist_ = vconn_[Vertex_descriptor(vertices_freelist_)].halfedge_.idx();
+        vertices_freelist_ = vconn_[Vertex_index(vertices_freelist_)].halfedge_.idx();
         --removed_vertices_;
-        vremoved_[Vertex_descriptor(idx)] = false;
-        return Vertex_descriptor(idx);
+        vremoved_[Vertex_index(idx)] = false;
+        return Vertex_index(idx);
       } else {
         vprops_.push_back();
-        return Vertex_descriptor(num_vertices()-1);
+        return Vertex_index(num_vertices()-1);
       }
     }
 
     /// adds a new vertex, resizes vertex properties if necessary,
     /// and sets the point property to `p`.
-    Vertex_descriptor add_vertex(const Point& p) 
+    Vertex_index add_vertex(const Point& p) 
     {
-        Vertex_descriptor v = add_vertex();
+        Vertex_index v = add_vertex();
         vpoint_[v] = p;
         return v;
     }
@@ -691,30 +703,30 @@ public:
 public:
 
     /// adds a new edge, and resizes edge and halfedge properties if necessary.
-    Halfedge_descriptor add_edge()
+    Halfedge_index add_edge()
     {
-      Halfedge_descriptor h0, h1;
+      Halfedge_index h0, h1;
       if(edges_freelist_ != -1){
         size_type idx = edges_freelist_;
-        edges_freelist_ = hconn_[Halfedge_descriptor(edges_freelist_)].next_halfedge_.idx();
+        edges_freelist_ = hconn_[Halfedge_index(edges_freelist_)].next_halfedge_.idx();
         --removed_edges_;
-        eremoved_[Edge_descriptor(Halfedge_descriptor(idx))] = false;
-        return Halfedge_descriptor(idx);
+        eremoved_[Edge_index(Halfedge_index(idx))] = false;
+        return Halfedge_index(idx);
       } else {
         eprops_.push_back();
         hprops_.push_back();
         hprops_.push_back();
 
-        return Halfedge_descriptor(num_halfedges()-2);
+        return Halfedge_index(num_halfedges()-2);
       }
     }
 
     /// adds two opposite halfedges, and resizes edge and halfedge properties if necessary.
     /// \returns the halfedge with `v1` as target
-    Halfedge_descriptor add_edge(Vertex_descriptor v0, Vertex_descriptor v1)
+    Halfedge_index add_edge(Vertex_index v0, Vertex_index v1)
     {
         CGAL_assertion(v0 != v1);
-        Halfedge_descriptor h = add_edge();
+        Halfedge_index h = add_edge();
 
         set_target(h, v1);
         set_target(opposite(h), v0);
@@ -723,37 +735,37 @@ public:
     }
 
     /// adds a new face, and resizes face properties  if necessary.
-    Face_descriptor add_face()
+    Face_index add_face()
     {
       if(faces_freelist_ != -1){
         size_type idx = faces_freelist_;
-        faces_freelist_ = fconn_[Face_descriptor(faces_freelist_)].halfedge_.idx();
+        faces_freelist_ = fconn_[Face_index(faces_freelist_)].halfedge_.idx();
         --removed_faces_;
-        fremoved_[Face_descriptor(idx)] = false;
-        return Face_descriptor(idx);
+        fremoved_[Face_index(idx)] = false;
+        return Face_index(idx);
       } else {
         fprops_.push_back();
-        return Face_descriptor(num_faces()-1);
+        return Face_index(num_faces()-1);
       }
     }
 
     /// adds a new face with vertices from a random access container.
     template <typename RandomAccessContainer>
-    Face_descriptor add_face(const RandomAccessContainer& vertices);
+    Face_index add_face(const RandomAccessContainer& vertices);
 
     /// \todo Offer a variadic version
     /// adds a new triangle connecting vertices `v0`, `v1`, `v2`
-    Face_descriptor add_face(Vertex_descriptor v0, Vertex_descriptor v1, Vertex_descriptor v2)
+    Face_index add_face(Vertex_index v0, Vertex_index v1, Vertex_index v2)
     {
-        boost::array<Vertex_descriptor, 3> 
+        boost::array<Vertex_index, 3> 
             v = {{v0, v1, v2}};
         return add_face(v);
     }
 
   /// adds a new quad connecting vertices `v0`, `v1`, `v2`, `v3`.
-    Face_descriptor add_face(Vertex_descriptor v0, Vertex_descriptor v1, Vertex_descriptor v2, Vertex_descriptor v3)
+    Face_index add_face(Vertex_index v0, Vertex_index v1, Vertex_index v2, Vertex_index v3)
     {
-        boost::array<Vertex_descriptor, 4> 
+        boost::array<Vertex_index, 4> 
             v = {{v0, v1, v2, v3}};
         return add_face(v);
     }
@@ -775,31 +787,31 @@ public:
 
     /// removes vertex `v` from the halfedge data structure without
     /// adjusting anything.
-    void remove_vertex(Vertex_descriptor v)
+    void remove_vertex(Vertex_index v)
     {
-        if(!vremoved_) vremoved_ = property_map<Vertex_descriptor, bool>("v:removed", false);
+        if(!vremoved_) vremoved_ = property_map<Vertex_index, bool>("v:removed", false);
         vremoved_[v] = true; ++removed_vertices_; garbage_ = true;
-        vconn_[v].halfedge_ = Halfedge_descriptor(vertices_freelist_);
+        vconn_[v].halfedge_ = Halfedge_index(vertices_freelist_);
         vertices_freelist_ = v.idx();
     }
 
     /// removes the two halfedges corresponding to `e` from the halfedge data structure without
     /// adjusting anything.
-    void remove_edge(Edge_descriptor e)
+    void remove_edge(Edge_index e)
     {
         eremoved_[e] = true; ++removed_edges_; garbage_ = true;
-        hconn_[Halfedge_descriptor(e.idx() << 1)].next_halfedge_ = Halfedge_descriptor(edges_freelist_ );
+        hconn_[Halfedge_index(e.idx() << 1)].next_halfedge_ = Halfedge_index(edges_freelist_ );
         edges_freelist_ = (e.idx() << 1);
     }
 
     /// removes  face `f` from the halfedge data structure without
     /// adjusting anything.
 
-    void remove_face(Face_descriptor f)
+    void remove_face(Face_index f)
     {
-        if(!fremoved_) fremoved_ = property_map<Face_descriptor, bool>("f:removed", false);
+        if(!fremoved_) fremoved_ = property_map<Face_index, bool>("f:removed", false);
         fremoved_[f] = true; ++removed_faces_; garbage_ = true;
-        fconn_[f].halfedge_ = Halfedge_descriptor(faces_freelist_);
+        fconn_[f].halfedge_ = Halfedge_index(faces_freelist_);
         faces_freelist_ = f.idx();
     }
 
@@ -885,25 +897,25 @@ public:
 
     /// returns whether vertex `v` is marked removed.
     /// \sa `collect_garbage()`
-    bool is_removed(Vertex_descriptor v) const
+    bool is_removed(Vertex_index v) const
     {
         return vremoved_[v];
     }
     /// returns whether halfedge `h` is marked removed.
     /// \sa `collect_garbage()`
-    bool is_removed(Halfedge_descriptor h) const
+    bool is_removed(Halfedge_index h) const
     {
         return eremoved_[edge(h)];
     }
     /// returns whether edge `e` is marked removed.
     /// \sa `collect_garbage()`
-    bool is_removed(Edge_descriptor e) const
+    bool is_removed(Edge_index e) const
     {
         return eremoved_[e];
     }
     /// returns whether face `f` is marked removed.
     /// \sa `collect_garbage()`
-    bool is_removed(Face_descriptor f) const
+    bool is_removed(Face_index f) const
     {
         return fremoved_[f];
     }
@@ -920,22 +932,22 @@ public:
     ///@{
 
     /// returns whether the index of vertex `v` is valid, that is within the current array bounds.
-    bool has_valid_index(Vertex_descriptor v) const
+    bool has_valid_index(Vertex_index v) const
     {
         return (0 <= v.idx()) && (v.idx() < (int)num_vertices());
     }
     /// returns whether the index of halfedge `h` is valid, that is within the current array bounds.
-    bool has_valid_index(Halfedge_descriptor h) const
+    bool has_valid_index(Halfedge_index h) const
     {
         return (0 <= h.idx()) && (h.idx() < (int)num_halfedges());
     }
     /// returns whether the index of edge `e` is valid, that is within the current array bounds.
-    bool has_valid_index(Edge_descriptor e) const
+    bool has_valid_index(Edge_index e) const
     {
         return (0 <= e.idx()) && (e.idx() < (int)num_edges());
     }
     /// returns whether the index of face `f` is valid, that is within the current array bounds.
-    bool has_valid_index(Face_descriptor f) const
+    bool has_valid_index(Face_index f) const
     {
         return (0 <= f.idx()) && (f.idx() < (int)num_faces());
     }
@@ -1012,8 +1024,8 @@ public:
     }
 
     /// performs a validity check on a single vertex.
-    bool is_valid(Vertex_descriptor v) const {
-        Halfedge_descriptor h = vconn_[v].halfedge_;
+    bool is_valid(Vertex_index v) const {
+        Halfedge_index h = vconn_[v].halfedge_;
         if(h!= null_halfedge() && (!has_valid_index(h) || is_removed(h))) {
             std::cerr << "Vertex connectivity halfedge error in " << v.idx()
                       << " with " << h.idx() << std::endl;
@@ -1023,11 +1035,11 @@ public:
     }
 
     /// performs a validity check on a single halfedge.
-    bool is_valid(Halfedge_descriptor h) const {
-        Face_descriptor f = hconn_[h].face_;
-        Vertex_descriptor v = hconn_[h].vertex_;
-        Halfedge_descriptor hn = hconn_[h].next_halfedge_;
-        Halfedge_descriptor hp = hconn_[h].prev_halfedge_;
+    bool is_valid(Halfedge_index h) const {
+        Face_index f = hconn_[h].face_;
+        Vertex_index v = hconn_[h].vertex_;
+        Halfedge_index hn = hconn_[h].next_halfedge_;
+        Halfedge_index hp = hconn_[h].prev_halfedge_;
 
         bool valid = true;
         // don't validate the face if this is a border halfedge
@@ -1063,8 +1075,8 @@ public:
     }
 
     /// performs a validity check on a single face.
-    bool is_valid(Face_descriptor f) const {
-        Halfedge_descriptor h = fconn_[f].halfedge_;
+    bool is_valid(Face_index f) const {
+        Halfedge_index h = fconn_[f].halfedge_;
         if(!has_valid_index(h) || is_removed(h)) {
             std::cerr << "Face connectivity halfedge error in " << f.idx()
                       << " with " << h.idx() << std::endl;
@@ -1081,77 +1093,77 @@ public:
     ///@{
 
     /// returns the number of incident halfedges of vertex `v`.
-    size_type degree(Vertex_descriptor v) const;
+    size_type degree(Vertex_index v) const;
 
     /// returns the number of incident halfedges of face `f`.
-    size_type degree(Face_descriptor f) const;
+    size_type degree(Face_index f) const;
 
     /// returns an incoming halfedge of vertex `v`.
     /// If `v` is a border vertex this will be a border halfedge.
     /// \invariant `target(halfedge(v)) == v`
-    Halfedge_descriptor halfedge(Vertex_descriptor v) const
+    Halfedge_index halfedge(Vertex_index v) const
     {
         return vconn_[v].halfedge_;
     }
 
     /// sets the incoming halfedge of vertex `v` to `h`.
-    void set_halfedge(Vertex_descriptor v, Halfedge_descriptor h)
+    void set_halfedge(Vertex_index v, Halfedge_index h)
     {
         vconn_[v].halfedge_ = h;
     }
 
     /// returns whether `v` is isolated, i.e., not incident to any face.
     /// \todo Should it be "not incident to a halfedge"?
-    bool is_isolated(Vertex_descriptor v) const
+    bool is_isolated(Vertex_index v) const
     {
         return !halfedge(v).is_valid();
     }
 
     /// returns the vertex the halfedge `h` emanates from.
-    Vertex_descriptor source(Halfedge_descriptor h) const
+    Vertex_index source(Halfedge_index h) const
     {
         return target(opposite(h));
     }
 
     /// returns the vertex the halfedge `h` points to.
-    Vertex_descriptor target(Halfedge_descriptor h) const
+    Vertex_index target(Halfedge_index h) const
     {
         return hconn_[h].vertex_;
     }
 
     /// sets the vertex the halfedge `h` points to to `v`.
-    void set_target(Halfedge_descriptor h, Vertex_descriptor v)
+    void set_target(Halfedge_index h, Vertex_index v)
     {
         hconn_[h].vertex_ = v;
     }
 
     /// returns the face incident to halfedge `h`.
-    Face_descriptor face(Halfedge_descriptor h) const
+    Face_index face(Halfedge_index h) const
     {
         return hconn_[h].face_;
     }
 
     /// sets the incident face to halfedge `h` to `f`.
-    void set_face(Halfedge_descriptor h, Face_descriptor f)
+    void set_face(Halfedge_index h, Face_index f)
     {
         hconn_[h].face_ = f;
     }
 
     /// returns the next halfedge within the incident face.
-    Halfedge_descriptor next(Halfedge_descriptor h) const
+    Halfedge_index next(Halfedge_index h) const
     {
         return hconn_[h].next_halfedge_;
     }
 
     /// @cond CGAL_DOCUMENT_INTERNALS
     // sets the next halfedge of `h` within the face to `nh`.
-    void set_next_only(Halfedge_descriptor h, Halfedge_descriptor nh)
+    void set_next_only(Halfedge_index h, Halfedge_index nh)
     {
       hconn_[h].next_halfedge_ = nh;
     }
 
     // sets previous halfedge of `h` to `nh`.
-    void set_prev_only(Halfedge_descriptor h, Halfedge_descriptor nh)
+    void set_prev_only(Halfedge_index h, Halfedge_index nh)
     {
       if(h != null_halfedge()){
         hconn_[h].prev_halfedge_ = nh;
@@ -1161,79 +1173,79 @@ public:
 
     /// sets the next halfedge of `h` within the face to `nh` and
     /// the previous halfedge of `nh` to `h`.
-    void set_next(Halfedge_descriptor h, Halfedge_descriptor nh)
+    void set_next(Halfedge_index h, Halfedge_index nh)
     {
       set_next_only(h, nh);
       set_prev_only(nh, h);
     }
 
     /// returns the previous halfedge within the incident face.
-    Halfedge_descriptor prev(Halfedge_descriptor h) const
+    Halfedge_index prev(Halfedge_index h) const
     {
         return hconn_[h].prev_halfedge_;
     }
 
     /// returns the opposite halfedge of `h`.
-    Halfedge_descriptor opposite(Halfedge_descriptor h) const
+    Halfedge_index opposite(Halfedge_index h) const
     {
-        return Halfedge_descriptor((h.idx() & 1) ? h.idx()-1 : h.idx()+1);
+        return Halfedge_index((h.idx() & 1) ? h.idx()-1 : h.idx()+1);
     }
 
     /// returns `opposite(next(h))`, that is the next halfedge \ref SurfaceMeshOrientation 
     /// "clockwise" around the target vertex of `h`. 
-    Halfedge_descriptor next_around_target(Halfedge_descriptor h) const
+    Halfedge_index next_around_target(Halfedge_index h) const
     {
         return prev(opposite(h));
     }
 
     /// returns `opposite(next(h))`, that is the next halfedge \ref SurfaceMeshOrientation
     /// "counterclockwise" around the target vertex of `h`. 
-    Halfedge_descriptor prev_around_target(Halfedge_descriptor h) const
+    Halfedge_index prev_around_target(Halfedge_index h) const
     {
         return opposite(next(h));
     }
 
     /// returns the edge that contains halfedge `h` as one of its two halfedges.
-    Edge_descriptor edge(Halfedge_descriptor h) const
+    Edge_index edge(Halfedge_index h) const
     {
-        return Edge_descriptor(h);
+        return Edge_index(h);
     }
 
     /// returns the halfedge corresponding to the edge `e`.
-    Halfedge_descriptor halfedge(Edge_descriptor e) const
+    Halfedge_index halfedge(Edge_index e) const
     {
-        return Halfedge_descriptor(e.halfedge());
+        return Halfedge_index(e.halfedge());
     }
 
     /// returns the i'th halfedge of edge `e`, for `i=0` or `1`.
-    Halfedge_descriptor halfedge(Edge_descriptor e, unsigned int i) const
+    Halfedge_index halfedge(Edge_index e, unsigned int i) const
     {
         CGAL_assertion(i<=1);
-        return Halfedge_descriptor((e.idx() << 1) + i);
+        return Halfedge_index((e.idx() << 1) + i);
     }
 
     /// returns the i'th vertex of edge `e`, for `i=0` or `1`.
-    Vertex_descriptor vertex(Edge_descriptor e, unsigned int i) const
+    Vertex_index vertex(Edge_index e, unsigned int i) const
     {
         CGAL_assertion(i<=1);
         return target(halfedge(e, i));
     }
 
     /// returns a halfedge of face `f`.
-    Halfedge_descriptor halfedge(Face_descriptor f) const
+    Halfedge_index halfedge(Face_index f) const
     {
         return fconn_[f].halfedge_;
     }
 
     /// sets the halfedge of face `f` to `h`.
-    void set_halfedge(Face_descriptor f, Halfedge_descriptor h)
+    void set_halfedge(Face_index f, Halfedge_index h)
     {
         fconn_[f].halfedge_ = h;
     }
 
     /// finds a halfedge between two vertices. Returns a default constructed
-    /// `Halfedge_descriptor`, if  `source` and  `target` are not connected.
-    Halfedge_descriptor halfedge(Vertex_descriptor source, Vertex_descriptor target) const;
+    /// `Halfedge_index`, if  `source` and  `target` are not connected.
+    Halfedge_index halfedge(Vertex_index source, Vertex_index target) const;
 
     ///@}
 
@@ -1242,14 +1254,14 @@ public:
     ///@{
 
     /// returns whether `v` is a border vertex.
-    bool is_border(Vertex_descriptor v) const
+    bool is_border(Vertex_index v) const
     {
-        Halfedge_descriptor h(halfedge(v));
+        Halfedge_index h(halfedge(v));
         return (!(h.is_valid() && face(h).is_valid()));
     }
 
-    /// returns whether `h` is a border halfege, i.e., if its face equals `Face_descriptor()`.
-    bool is_border(Halfedge_descriptor h) const
+    /// returns whether `h` is a border halfege, i.e., if its face equals `Face_index()`.
+    bool is_border(Halfedge_index h) const
     {
         return !face(h).is_valid();
     }
@@ -1257,7 +1269,7 @@ public:
 
     /// returns whether `e` is a border edge, i.e., if any 
     /// of its two halfedges is a border halfedge.
-    bool is_border(Edge_descriptor e) const
+    bool is_border(Edge_index e) const
     {
       return is_border(e.halfedge()) || is_border(opposite(e.halfedge()));
     }
@@ -1265,10 +1277,10 @@ public:
 
     /// returns whether `f` is a border face, i.e., if the opposite 
     /// of any of its adjacent halfedges is a border halfedge.
-    bool is_border(Face_descriptor f) const
+    bool is_border(Face_index f) const
     {
-        Halfedge_descriptor h  = halfedge(f);
-        Halfedge_descriptor hh = h;
+        Halfedge_index h  = halfedge(f);
+        Halfedge_index hh = h;
         do
         {
             if (is_border(opposite(h)))
@@ -1280,7 +1292,7 @@ public:
     }
   
   /// restores the constant time border property for vertex `v`.
-  void fix_border(Vertex_descriptor v)
+  void fix_border(Vertex_index v)
   {
     if(halfedge(v) == null_halfedge())
       return;
@@ -1295,7 +1307,7 @@ public:
 
   /// restores the constant time border property for all vertices 
   /// around the face associated to `h`.
-  void fix_border(Halfedge_descriptor h)
+  void fix_border(Halfedge_index h)
   {
     if(is_border(h)){
       Halfedge_around_face_circulator hafc(h,*this),done(hafc);
@@ -1314,7 +1326,7 @@ public:
   /// of the surface mesh.
   void fix_border()
   {
-    BOOST_FOREACH(Vertex_descriptor vd, vertices()){
+    BOOST_FOREACH(Vertex_index vd, vertices()){
       fix_border(vd);
     }
   }
@@ -1327,10 +1339,10 @@ private: //--------------------------------------------------- property handling
 
     /// @cond BROKEN_DOC
     typedef boost::fusion::map<
-      boost::fusion::pair< typename Surface_mesh::Vertex_descriptor, Property_container<Vertex_descriptor> (Surface_mesh::*)>,
-      boost::fusion::pair< typename Surface_mesh::Halfedge_descriptor, Property_container<Halfedge_descriptor> (Surface_mesh::*)>,
-      boost::fusion::pair< typename Surface_mesh::Edge_descriptor, Property_container<Edge_descriptor> (Surface_mesh::*)>,
-      boost::fusion::pair< typename Surface_mesh::Face_descriptor, Property_container<Face_descriptor> (Surface_mesh::*)> >
+      boost::fusion::pair< typename Surface_mesh::Vertex_index, Property_container<Vertex_index> (Surface_mesh::*)>,
+      boost::fusion::pair< typename Surface_mesh::Halfedge_index, Property_container<Halfedge_index> (Surface_mesh::*)>,
+      boost::fusion::pair< typename Surface_mesh::Edge_index, Property_container<Edge_index> (Surface_mesh::*)>,
+      boost::fusion::pair< typename Surface_mesh::Face_index, Property_container<Face_index> (Surface_mesh::*)> >
         map_type;
 
     map_type pmap_;
@@ -1410,16 +1422,16 @@ private: //--------------------------------------------------- property handling
     }
 
     /// returns the property for "v:point".
-    Property_map<Vertex_descriptor, Point>
+    Property_map<Vertex_index, Point>
     points() const { return vpoint_; }
 
     /// returns the point associated to vertex `v`.
     const Point&
-    point(Vertex_descriptor v) const { return vpoint_[v]; }
+    point(Vertex_index v) const { return vpoint_[v]; }
 
     /// returns the point associated to vertex `v`.
     Point&
-    point(Vertex_descriptor v) { return vpoint_[v]; }
+    point(Vertex_index v) { return vpoint_[v]; }
 
     /// @cond CGAL_DOCUMENT_INTERNALS
     /// prints property statistics to the stream `out`. The output is human-readable but
@@ -1433,26 +1445,26 @@ private: //--------------------------------------------------- property handling
  /// \name Null Elements
     ///@{
 
-  /// returns `Vertex_descriptor(-1)`.
-  static Vertex_descriptor null_vertex()
+  /// returns `Vertex_index(-1)`.
+  static Vertex_index null_vertex()
   {
-    return vertex_descriptor(-1);
+    return vertex_index(-1);
   }
 
-  /// returns `Edge_descriptor(-1)`.
-  static Edge_descriptor null_edge()
+  /// returns `Edge_index(-1)`.
+  static Edge_index null_edge()
   {
-    return edge_descriptor(-1);
+    return edge_index(-1);
   }
-  /// returns `Halfedge_descriptor(-1)`.
-  static Halfedge_descriptor null_halfedge()
+  /// returns `Halfedge_index(-1)`.
+  static Halfedge_index null_halfedge()
   {
-    return halfedge_descriptor(-1);
+    return halfedge_index(-1);
   }
-  /// returns `Face_descriptor(-1)`.
-  static Face_descriptor null_face()
+  /// returns `Face_index(-1)`.
+  static Face_index null_face()
   {
-    return face_descriptor(-1);
+    return face_index(-1);
   }
   /// @}
 
@@ -1462,23 +1474,23 @@ private: //--------------------------------------------------- helper functions
 
     /// make sure that the incoming halfedge of vertex v is a border halfedge
     /// if `v` is a border vertex.
-    void adjust_incoming_halfedge(Vertex_descriptor v);
+    void adjust_incoming_halfedge(Vertex_index v);
 
 private: //------------------------------------------------------- private data
-    Property_container<Vertex_descriptor> vprops_;
-    Property_container<Halfedge_descriptor> hprops_;
-    Property_container<Edge_descriptor> eprops_;
-    Property_container<Face_descriptor> fprops_;
+    Property_container<Vertex_index> vprops_;
+    Property_container<Halfedge_index> hprops_;
+    Property_container<Edge_index> eprops_;
+    Property_container<Face_index> fprops_;
 
-    Property_map<Vertex_descriptor, Vertex_connectivity>      vconn_;
-    Property_map<Halfedge_descriptor, Halfedge_connectivity>  hconn_;
-    Property_map<Face_descriptor, Face_connectivity>          fconn_;
+    Property_map<Vertex_index, Vertex_connectivity>      vconn_;
+    Property_map<Halfedge_index, Halfedge_connectivity>  hconn_;
+    Property_map<Face_index, Face_connectivity>          fconn_;
 
-    Property_map<Vertex_descriptor, bool>  vremoved_;
-    Property_map<Edge_descriptor, bool>    eremoved_;
-    Property_map<Face_descriptor, bool>    fremoved_;
+    Property_map<Vertex_index, bool>  vremoved_;
+    Property_map<Edge_index, bool>    eremoved_;
+    Property_map<Face_index, bool>    fremoved_;
 
-    Property_map<Vertex_descriptor, Point>   vpoint_;
+    Property_map<Vertex_index, Point>   vpoint_;
 
     size_type removed_vertices_;
     size_type removed_edges_;
@@ -1514,20 +1526,20 @@ private: //------------------------------------------------------- private data
 template <typename P>
 Surface_mesh<P>::
 Surface_mesh()
-  : pmap_(boost::fusion::make_pair< Surface_mesh::Vertex_descriptor >(&Surface_mesh::vprops_)
-          , boost::fusion::make_pair< Surface_mesh::Halfedge_descriptor >(&Surface_mesh::hprops_)
-          , boost::fusion::make_pair< Surface_mesh::Edge_descriptor >(&Surface_mesh::eprops_)
-          , boost::fusion::make_pair< Surface_mesh::Face_descriptor >(&Surface_mesh::fprops_))
+  : pmap_(boost::fusion::make_pair< Surface_mesh::Vertex_index >(&Surface_mesh::vprops_)
+          , boost::fusion::make_pair< Surface_mesh::Halfedge_index >(&Surface_mesh::hprops_)
+          , boost::fusion::make_pair< Surface_mesh::Edge_index >(&Surface_mesh::eprops_)
+          , boost::fusion::make_pair< Surface_mesh::Face_index >(&Surface_mesh::fprops_))
 {
     // allocate standard properties
     // same list is used in operator=() and assign()
-    vconn_    = add_property_map<Vertex_descriptor, Vertex_connectivity>("v:connectivity");
-    hconn_    = add_property_map<Halfedge_descriptor, Halfedge_connectivity>("h:connectivity");
-    fconn_    = add_property_map<Face_descriptor, Face_connectivity>("f:connectivity");
-    vpoint_   = add_property_map<Vertex_descriptor, Point>("v:point");
-    vremoved_ = add_property_map<Vertex_descriptor, bool>("v:removed", false);
-    eremoved_ = add_property_map<Edge_descriptor, bool>("e:removed", false);
-    fremoved_ = add_property_map<Face_descriptor, bool>("f:removed", false);
+    vconn_    = add_property_map<Vertex_index, Vertex_connectivity>("v:connectivity");
+    hconn_    = add_property_map<Halfedge_index, Halfedge_connectivity>("h:connectivity");
+    fconn_    = add_property_map<Face_index, Face_connectivity>("f:connectivity");
+    vpoint_   = add_property_map<Vertex_index, Point>("v:point");
+    vremoved_ = add_property_map<Vertex_index, bool>("v:removed", false);
+    eremoved_ = add_property_map<Edge_index, bool>("e:removed", false);
+    fremoved_ = add_property_map<Face_index, bool>("f:removed", false);
 
     removed_vertices_ = removed_edges_ = removed_faces_ = 0;
     vertices_freelist_ = edges_freelist_ = faces_freelist_ = -1;
@@ -1552,13 +1564,13 @@ operator=(const Surface_mesh<P>& rhs)
         fprops_ = rhs.fprops_;
 
         // property handles contain pointers, have to be reassigned
-        vconn_    = property_map<Vertex_descriptor, Vertex_connectivity>("v:connectivity");
-        hconn_    = property_map<Halfedge_descriptor, Halfedge_connectivity>("h:connectivity");
-        fconn_    = property_map<Face_descriptor, Face_connectivity>("f:connectivity");
-        vremoved_ = property_map<Vertex_descriptor, bool>("v:removed");
-        eremoved_ = property_map<Edge_descriptor, bool>("e:removed");
-        fremoved_ = property_map<Face_descriptor, bool>("f:removed");
-        vpoint_   = property_map<Vertex_descriptor, P>("v:point");
+        vconn_    = property_map<Vertex_index, Vertex_connectivity>("v:connectivity");
+        hconn_    = property_map<Halfedge_index, Halfedge_connectivity>("h:connectivity");
+        fconn_    = property_map<Face_index, Face_connectivity>("f:connectivity");
+        vremoved_ = property_map<Vertex_index, bool>("v:removed");
+        eremoved_ = property_map<Edge_index, bool>("e:removed");
+        fremoved_ = property_map<Face_index, bool>("f:removed");
+        vpoint_   = property_map<Vertex_index, P>("v:point");
 
         // how many elements are removed?
         removed_vertices_  = rhs.removed_vertices_;
@@ -1589,13 +1601,13 @@ assign(const Surface_mesh<P>& rhs)
         fprops_.clear();
 
         // allocate standard properties
-        vconn_    = add_property_map<Vertex_descriptor, Vertex_connectivity>("v:connectivity");
-        hconn_    = add_property_map<Halfedge_descriptor, Halfedge_connectivity>("h:connectivity");
-        fconn_    = add_property_map<Face_descriptor, Face_connectivity>("f:connectivity");
-        vpoint_   = add_property_map<Vertex_descriptor, P>("v:point");
-        vremoved_ = add_property_map<Vertex_descriptor, bool>("v:removed", false);
-        eremoved_ = add_property_map<Edge_descriptor, bool>("e:removed", false);
-        fremoved_ = add_property_map<Face_descriptor, bool>("f:removed", false);
+        vconn_    = add_property_map<Vertex_index, Vertex_connectivity>("v:connectivity");
+        hconn_    = add_property_map<Halfedge_index, Halfedge_connectivity>("h:connectivity");
+        fconn_    = add_property_map<Face_index, Face_connectivity>("f:connectivity");
+        vpoint_   = add_property_map<Vertex_index, P>("v:point");
+        vremoved_ = add_property_map<Vertex_index, bool>("v:removed", false);
+        eremoved_ = add_property_map<Edge_index, bool>("e:removed", false);
+        fremoved_ = add_property_map<Face_index, bool>("f:removed", false);
 
         // copy properties from other mesh
         vconn_.array()     = rhs.vconn_.array();
@@ -1656,22 +1668,22 @@ property_stats(std::ostream& out) const
     std::vector<std::string> props;
 
     out << "vertex properties:\n";
-    props = properties<Vertex_descriptor>();
+    props = properties<Vertex_index>();
     for (unsigned int i=0; i<props.size(); ++i)
         out << "\t" << props[i] << std::endl;
 
     out << "halfedge properties:\n";
-    props = properties<Halfedge_descriptor>();
+    props = properties<Halfedge_index>();
     for (unsigned int i=0; i<props.size(); ++i)
         out << "\t" << props[i] << std::endl;
 
     out << "edge properties:\n";
-    props = properties<Edge_descriptor>();
+    props = properties<Edge_index>();
     for (unsigned int i=0; i<props.size(); ++i)
         out << "\t" << props[i] << std::endl;
 
     out << "face properties:\n";
-    props = properties<Face_descriptor>();
+    props = properties<Face_index>();
     for (unsigned int i=0; i<props.size(); ++i)
         out << "\t" << props[i] << std::endl;
 }
@@ -1679,14 +1691,14 @@ property_stats(std::ostream& out) const
 
 //-----------------------------------------------------------------------------
 template <typename P>
-typename Surface_mesh<P>::Halfedge_descriptor
+typename Surface_mesh<P>::Halfedge_index
 Surface_mesh<P>::
-halfedge(Vertex_descriptor source, Vertex_descriptor target) const
+halfedge(Vertex_index source, Vertex_index target) const
 {
     CGAL_assertion(has_valid_index(source) && has_valid_index(target));
 
-    Halfedge_descriptor h  = halfedge(target);
-    const Halfedge_descriptor hh = h;
+    Halfedge_index h  = halfedge(target);
+    const Halfedge_index hh = h;
 
     if (h.is_valid())
     {
@@ -1699,7 +1711,7 @@ halfedge(Vertex_descriptor source, Vertex_descriptor target) const
         while (h != hh);
     }
 
-    return Halfedge_descriptor();
+    return Halfedge_index();
 }
 
 
@@ -1707,10 +1719,10 @@ halfedge(Vertex_descriptor source, Vertex_descriptor target) const
 template <typename P>
 void
 Surface_mesh<P>::
-adjust_incoming_halfedge(Vertex_descriptor v)
+adjust_incoming_halfedge(Vertex_index v)
 {
-    Halfedge_descriptor h  = halfedge(v);
-    Halfedge_descriptor hh = h;
+    Halfedge_index h  = halfedge(v);
+    Halfedge_index hh = h;
 
     if (h.is_valid())
     {
@@ -1741,20 +1753,20 @@ adjust_incoming_halfedge(Vertex_descriptor v)
 
 template <typename P>
 template <typename RandomAccessContainer>
-typename Surface_mesh<P>::Face_descriptor
+typename Surface_mesh<P>::Face_index
 Surface_mesh<P>::add_face(const RandomAccessContainer& vertices)
 {
-    Vertex_descriptor                   v;
+    Vertex_index                   v;
     unsigned int             i, ii, n((int)vertices.size()), id;
-    std::vector<Halfedge_descriptor>    halfedges(n);
+    std::vector<Halfedge_index>    halfedges(n);
     std::vector<bool>        is_new(n), needs_adjust(n, false);
-    Halfedge_descriptor                 inner_next, inner_prev,
+    Halfedge_index                 inner_next, inner_prev,
     outer_next, outer_prev,
     border_next, border_prev,
     patch_start, patch_end;
 
     // cache for set_next and vertex' set_halfedge
-    typedef std::pair<Halfedge_descriptor, Halfedge_descriptor>  NextCacheEntry;
+    typedef std::pair<Halfedge_index, Halfedge_index>  NextCacheEntry;
     typedef std::vector<NextCacheEntry>    NextCache;
 
     NextCache    next_cache;
@@ -1770,7 +1782,7 @@ Surface_mesh<P>::add_face(const RandomAccessContainer& vertices)
         if ( !is_border(vertices[i]) )
         {
             std::cerr << "Surface_meshT::add_face: complex vertex " << vertices[i] << std::endl;
-            return Face_descriptor();
+            return Face_index();
         }
 
         halfedges[i] = halfedge(vertices[i], vertices[ii]);
@@ -1781,7 +1793,7 @@ Surface_mesh<P>::add_face(const RandomAccessContainer& vertices)
             std::cerr << std::boolalpha << is_border(halfedges[i]) << std::endl;
             std::cerr << target(halfedges[i]) << std::endl;
 
-            return Face_descriptor();
+            return Face_index();
         }
     }
 
@@ -1814,7 +1826,7 @@ Surface_mesh<P>::add_face(const RandomAccessContainer& vertices)
                 if (border_next == inner_next)
                 {
                     std::cerr << "Surface_meshT::add_face: patch re-linking failed\n";
-                    return Face_descriptor();
+                    return Face_index();
                 }
 
                 // other halfedges' descriptors
@@ -1835,7 +1847,7 @@ Surface_mesh<P>::add_face(const RandomAccessContainer& vertices)
             assert(source(halfedges[i]) == vertices[i]);
       }
     // create the face
-    Face_descriptor f = add_face();
+    Face_index f = add_face();
     set_halfedge(f, halfedges[n-1]);
 
     // setup halfedges
@@ -1922,7 +1934,7 @@ Surface_mesh<P>::add_face(const RandomAccessContainer& vertices)
 template <typename P>
 typename Surface_mesh<P>::size_type
 Surface_mesh<P>::
-degree(Vertex_descriptor v) const
+degree(Vertex_index v) const
 {
     size_type count(0);
 
@@ -1941,7 +1953,7 @@ degree(Vertex_descriptor v) const
 template <typename P>
 typename Surface_mesh<P>::size_type
 Surface_mesh<P>::
-degree(Face_descriptor f) const
+degree(Face_index f) const
 {
     size_type count(0);
 
@@ -1965,21 +1977,21 @@ collect_garbage()
     nH(num_halfedges()),
     nF(num_faces());
 
-    Vertex_descriptor    v;
-    Halfedge_descriptor  h;
-    Face_descriptor      f;
+    Vertex_index    v;
+    Halfedge_index  h;
+    Face_index      f;
 
 
     // setup descriptor mapping
-    Property_map<Vertex_descriptor, Vertex_descriptor>      vmap = add_property_map<Vertex_descriptor, Vertex_descriptor>("v:garbage-collection");
-    Property_map<Halfedge_descriptor, Halfedge_descriptor>  hmap = add_property_map<Halfedge_descriptor, Halfedge_descriptor>("h:garbage-collection");
-    Property_map<Face_descriptor, Face_descriptor>          fmap = add_property_map<Face_descriptor, Face_descriptor>("f:garbage-collection");
+    Property_map<Vertex_index, Vertex_index>      vmap = add_property_map<Vertex_index, Vertex_index>("v:garbage-collection");
+    Property_map<Halfedge_index, Halfedge_index>  hmap = add_property_map<Halfedge_index, Halfedge_index>("h:garbage-collection");
+    Property_map<Face_index, Face_index>          fmap = add_property_map<Face_index, Face_index>("f:garbage-collection");
     for (i=0; i<nV; ++i)
-        vmap[Vertex_descriptor(i)] = Vertex_descriptor(i);
+        vmap[Vertex_index(i)] = Vertex_index(i);
     for (i=0; i<nH; ++i)
-        hmap[Halfedge_descriptor(i)] = Halfedge_descriptor(i);
+        hmap[Halfedge_index(i)] = Halfedge_index(i);
     for (i=0; i<nF; ++i)
-        fmap[Face_descriptor(i)] = Face_descriptor(i);
+        fmap[Face_index(i)] = Face_index(i);
 
 
 
@@ -1991,8 +2003,8 @@ collect_garbage()
         while (1)
         {
             // find first removed and last un-removed
-            while (!vremoved_[Vertex_descriptor(i0)] && i0 < i1)  ++i0;
-            while ( vremoved_[Vertex_descriptor(i1)] && i0 < i1)  --i1;
+            while (!vremoved_[Vertex_index(i0)] && i0 < i1)  ++i0;
+            while ( vremoved_[Vertex_index(i1)] && i0 < i1)  --i1;
             if (i0 >= i1) break;
 
             // swap
@@ -2000,7 +2012,7 @@ collect_garbage()
         };
 
         // remember new size
-        nV = vremoved_[Vertex_descriptor(i0)] ? i0 : i0+1;
+        nV = vremoved_[Vertex_index(i0)] ? i0 : i0+1;
     }
 
     // really remove edges
@@ -2011,8 +2023,8 @@ collect_garbage()
         while (1)
         {
             // find first removed and last un-removed
-            while (!eremoved_[Edge_descriptor(i0)] && i0 < i1) ++i0;
-            while ( eremoved_[Edge_descriptor(i1)] && i0 < i1) --i1;
+            while (!eremoved_[Edge_index(i0)] && i0 < i1) ++i0;
+            while ( eremoved_[Edge_index(i1)] && i0 < i1) --i1;
             if (i0 >= i1) break;
 
             // swap
@@ -2022,7 +2034,7 @@ collect_garbage()
         };
 
         // remember new size
-        nE = eremoved_[Edge_descriptor(i0)] ? i0 : i0+1;
+        nE = eremoved_[Edge_index(i0)] ? i0 : i0+1;
         nH = 2*nE;
     }
 
@@ -2035,8 +2047,8 @@ collect_garbage()
         while (1)
         {
             // find 1st removed and last un-removed
-            while (!fremoved_[Face_descriptor(i0)] && i0 < i1)  ++i0;
-            while ( fremoved_[Face_descriptor(i1)] && i0 < i1)  --i1;
+            while (!fremoved_[Face_index(i0)] && i0 < i1)  ++i0;
+            while ( fremoved_[Face_index(i1)] && i0 < i1)  --i1;
             if (i0 >= i1) break;
 
             // swap
@@ -2044,14 +2056,14 @@ collect_garbage()
         };
 
         // remember new size
-        nF = fremoved_[Face_descriptor(i0)] ? i0 : i0+1;
+        nF = fremoved_[Face_index(i0)] ? i0 : i0+1;
     }
 
 
     // update vertex connectivity
     for (i=0; i<nV; ++i)
     {
-        v = Vertex_descriptor(i);
+        v = Vertex_index(i);
         if (!is_isolated(v))
             set_halfedge(v, hmap[halfedge(v)]);
     }
@@ -2060,7 +2072,7 @@ collect_garbage()
     // update halfedge connectivity
     for (i=0; i<nH; ++i)
     {
-        h = Halfedge_descriptor(i);
+        h = Halfedge_index(i);
         set_target(h, vmap[target(h)]);
         set_next(h, hmap[next(h)]);
         if (!is_border(h))
@@ -2071,14 +2083,14 @@ collect_garbage()
     // update descriptors of faces
     for (i=0; i<nF; ++i)
     {
-        f = Face_descriptor(i);
+        f = Face_index(i);
         set_halfedge(f, hmap[halfedge(f)]);
     }
 
     // remove descriptor maps
-    remove_property_map<Vertex_descriptor>(vmap);
-    remove_property_map<Halfedge_descriptor>(hmap);
-    remove_property_map<Face_descriptor>(fmap);
+    remove_property_map<Vertex_index>(vmap);
+    remove_property_map<Halfedge_index>(hmap);
+    remove_property_map<Face_index>(fmap);
 
     // finally resize arrays
     vprops_.resize(nV); vprops_.shrink_to_fit();

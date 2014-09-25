@@ -5,17 +5,17 @@
 
 typedef CGAL::Simple_cartesian<double> K;
 typedef CGAL::Surface_mesh<typename K::Point_3> Mesh;
-typedef Mesh::Vertex_descriptor Vertex_descriptor;
-typedef Mesh::Face_descriptor Face_descriptor;
+typedef Mesh::Vertex_index vertex_descriptor;
+typedef Mesh::Face_index face_descriptor;
 
 int main()
 {
   Mesh m;
-  Mesh::Vertex_descriptor v0 = m.add_vertex(K::Point_3(0,2,0));
-  Mesh::Vertex_descriptor v1 = m.add_vertex(K::Point_3(2,2,0));
-  Mesh::Vertex_descriptor v2 = m.add_vertex(K::Point_3(0,0,0));
-  Mesh::Vertex_descriptor v3 = m.add_vertex(K::Point_3(2,0,0));
-  Mesh::Vertex_descriptor v4 = m.add_vertex(K::Point_3(1,1,0));
+  vertex_descriptor v0 = m.add_vertex(K::Point_3(0,2,0));
+  vertex_descriptor v1 = m.add_vertex(K::Point_3(2,2,0));
+  vertex_descriptor v2 = m.add_vertex(K::Point_3(0,0,0));
+  vertex_descriptor v3 = m.add_vertex(K::Point_3(2,0,0));
+  vertex_descriptor v4 = m.add_vertex(K::Point_3(1,1,0));
   m.add_face(v3, v1, v4);
   m.add_face(v0, v4, v1);
   m.add_face(v0, v2, v4);

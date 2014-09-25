@@ -11,10 +11,9 @@ typedef CGAL::Surface_mesh<typename K::Point_3> Mesh;
 int main()
 {
   Mesh m;
-
-  Mesh::Vertex_descriptor u;
+  Mesh::Vertex_index u;
   for(unsigned int i=0; i < 5; ++i){
-    Mesh::Vertex_descriptor v = m.add_vertex(K::Point_3(0,0,i+1));  
+    Mesh::Vertex_index v = m.add_vertex(K::Point_3(0,0,i+1));  
     if(i==2) u=v;
   }
 
@@ -34,8 +33,8 @@ int main()
   }
   
   // The status of being used or removed is stored in a property map
-  CGAL::Property_map<Mesh::Vertex_descriptor,bool> removed
-    = m.get_property_map<Mesh::Vertex_descriptor,bool>("v:removed");
+  CGAL::Property_map<Mesh::Vertex_index,bool> removed
+    = m.get_property_map<Mesh::Vertex_index,bool>("v:removed");
  
   
   std::cout << "\nIterate over used and deleted vertices\n"
@@ -45,7 +44,7 @@ int main()
     {
     unsigned int i = 0, end = m.vertices().second->idx();
     for( ; i < end; ++i) {
-      Mesh::Vertex_descriptor vh(i);
+      Mesh::Vertex_index vh(i);
       assert(m.is_removed(vh) == removed[vh]);
       std::cout << m.point(vh) << ((m.is_removed(vh)) ? "  R\n" : "\n");
     }
@@ -61,7 +60,7 @@ int main()
  {
     unsigned int i = 0, end = m.vertices().second->idx();
     for( ; i < end; ++i) {
-      Mesh::Vertex_descriptor vh(i);
+      Mesh::Vertex_index vh(i);
       std::cout << m.point(vh) << ((m.is_removed(vh)) ? "  R\n" : "\n");
     }
   }

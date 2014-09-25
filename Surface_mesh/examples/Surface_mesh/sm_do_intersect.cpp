@@ -19,8 +19,8 @@ typedef CGAL::Surface_mesh<typename K::Point_3> SM;
 typedef CGAL::Bbox_3 Bbox_3;
 typedef CGAL::Timer Timer;
 
-typedef SM::Face_descriptor Face_descriptor;
-typedef SM::Halfedge_descriptor Halfedge_descriptor;
+typedef SM::Face_index Face_descriptor;
+typedef SM::Halfedge_index Halfedge_descriptor;
 
 /// small helper to extract a triangle from a face
 Triangle_3 triangle(const SM& sm, Face_descriptor f)
