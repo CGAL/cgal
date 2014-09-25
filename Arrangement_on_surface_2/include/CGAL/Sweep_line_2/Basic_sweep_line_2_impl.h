@@ -245,11 +245,15 @@ void Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::
 _init_point(const Point_2& pt, Attribute type)
 {
   // Create the event, or obtain an existing event in the queue.
+  Arr_parameter_space ps_x = m_traits->parameter_space_in_x_2_object()(pt);
+  Arr_parameter_space ps_y = m_traits->parameter_space_in_y_2_object()(pt);
+  //CGAL::set_pretty_mode(std::cout);
+  //std::cout << "init pt ps_x: " << ps_x << std::endl;
+  //std::cout << "init pt ps_y: " << ps_y << std::endl;
+
   // Note that an isolated point does not have any boundary conditions.
   const std::pair<Event*, bool>& pair_res =
-    _push_event(pt, type, ARR_INTERIOR, ARR_INTERIOR);
-
-  // TODO ARR_INTERIOR, ARR_INTERIOR can be different here
+    _push_event(pt, type, ps_x, ps_y);
 
   bool is_new = pair_res.second;
   m_visitor->update_event(pair_res.first, pt, is_new);
@@ -636,7 +640,7 @@ std::pair<typename Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::Event*,
           bool>
 Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::
 _push_event(const Point_2& pt, Attribute type,
-            Arr_parameter_space ps_x, Arr_parameter_space ps_y, Subcurve* sc)
+            Arr_parameter_space ps_x, Arr_parameter_space ps_y, Subcurve* sc /* = NULL */)
 {
   // Look for the point in the event queue.
   Event* e;
@@ -700,7 +704,7 @@ std::pair<typename Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::Event*,
           bool>
 Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::
 _push_event(const X_monotone_curve_2& cv, Arr_curve_end ind, Attribute type,
-            Arr_parameter_space ps_x, Arr_parameter_space ps_y, Subcurve* sc)
+            Arr_parameter_space ps_x, Arr_parameter_space ps_y, Subcurve* sc /* = NULL */)
 {
   //cv has no member named 'base'
   //std::cout << "cv: " << cv.base() << std::endl;

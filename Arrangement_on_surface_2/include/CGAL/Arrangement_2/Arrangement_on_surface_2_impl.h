@@ -2169,7 +2169,7 @@ _place_and_set_point(DFace* f, const Point_2& p,
   }
   else {
     CGAL_assertion(CGAL::assign(v, obj));
-    // The vertex cpoincides with an existing vertex that represents the point.
+    // The vertex coincides with an existing vertex that represents the point.
     // Do nothing.
   }
 

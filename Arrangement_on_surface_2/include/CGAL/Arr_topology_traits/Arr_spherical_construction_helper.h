@@ -163,35 +163,37 @@ before_handle_event(Event* event)
   Arr_parameter_space ps_y = event->parameter_space_in_y();
   if ((ps_x == ARR_INTERIOR) && (ps_y == ARR_INTERIOR)) return;
 
+  if (event->is_isolated()) return;
+
   if (ps_y == ARR_BOTTOM_BOUNDARY) {
-    // Process bootom contraction boundary:
+    // Process a non-isolated event on the bottom contracted boundary:
+
     // The event has only one right curve, as there is exactly one curve
     // incident to an event with boundary conditions.
-    CGAL_assertion((event->number_of_left_curves() == 0) &&
-                   (event->number_of_right_curves() == 1));
-    const X_monotone_curve_2& xc =
-      (*(event->right_curves_begin()))->last_curve();
+    CGAL_assertion(event->number_of_left_curves()  == 0);
+    CGAL_assertion(event->number_of_right_curves() == 1);
 
     // If a vertex on the south pole does not exists, create one.
     DVertex* dv = m_top_traits->south_pole();
     Vertex_handle v = (dv) ? Vertex_handle(dv) :
-      m_arr_access.create_boundary_vertex(xc, ARR_MIN_END, ps_x, ps_y);
+      m_arr_access.create_boundary_vertex(event->point(), ps_x, ps_y);
     event->set_vertex_handle(v);
     return;
   }
 
   if (ps_y == ARR_TOP_BOUNDARY) {
-    // Process top contraction boundary:
+    // Process a non-isolated event on the top contracted boundary:
+
     // The event has only one left curve, as there is exactly one curve
-    // incident to an event with boundary conditions.
-    CGAL_assertion((event->number_of_left_curves() == 1) &&
-                   (event->number_of_right_curves() == 0));
-    const X_monotone_curve_2& xc =
-      (*(event->left_curves_begin()))->last_curve();
+    // incident to an event with boundary conditions
+    CGAL_assertion(event->number_of_left_curves()  == 0);
+    CGAL_assertion(event->number_of_right_curves() == 1);
 
     DVertex* dv = m_top_traits->north_pole();
     if (dv) {
       event->set_vertex_handle(Vertex_handle(dv));
+      const X_monotone_curve_2& xc =
+        (*(event->left_curves_begin()))->last_curve();
       DHalfedge* dprev =
         m_top_traits->locate_around_boundary_vertex(m_top_traits->north_pole(),
                                                     xc, ARR_MAX_END,
@@ -211,10 +213,9 @@ before_handle_event(Event* event)
       return;
     }
 
-    // We do not have a vertex that corresponds to the north pole.
-    // Create one.
+    // If a vertex on the north pole does not exists, create one.
     Vertex_handle v =
-      m_arr_access.create_boundary_vertex(xc, ARR_MAX_END, ps_x, ps_y);
+      m_arr_access.create_boundary_vertex(event->point(), ps_x, ps_y);
     event->set_vertex_handle(v);
 
     // Since this is the first event corresponding to the north pole,
@@ -229,38 +230,28 @@ before_handle_event(Event* event)
   }
 
   if (ps_x == ARR_LEFT_BOUNDARY) {
-    // The event has only right curves, as there is exactly one curve
-    // incident to an event with boundary conditions.
-    CGAL_assertion((event->number_of_left_curves() == 0) &&
-                   (event->number_of_right_curves() >= 1));
-    const X_monotone_curve_2& xc =
-      (*(event->right_curves_begin()))->last_curve();
+    CGAL_assertion(event->number_of_left_curves() + event->number_of_right_curves() >= 1);
 
-    // If a vertex on the line of discontinuity does not exists. create one.
-    DVertex* dv = m_top_traits->discontinuity_vertex(xc, ARR_MIN_END);
+    // If a vertex on the line of discontinuity does not exists, create one.
+    DVertex* dv = m_top_traits->discontinuity_vertex(event->point());
     Vertex_handle v = (dv) ? Vertex_handle(dv) :
-      m_arr_access.create_boundary_vertex(xc, ARR_MIN_END, ps_x, ps_y);
+      m_arr_access.create_boundary_vertex(event->point(), ps_x, ps_y);
     event->set_vertex_handle(v);
     return;
   }
 
   if (ps_x == ARR_RIGHT_BOUNDARY) {
-    // The event has only left curves, as there is exactly one curve
-    // incident to an event with boundary conditions.
-    CGAL_assertion((event->number_of_left_curves() >= 1) &&
-                   (event->number_of_right_curves() == 0));
-    const X_monotone_curve_2& xc =
-      (*(event->left_curves_begin()))->last_curve();
+    CGAL_assertion(event->number_of_left_curves() + event->number_of_right_curves() >= 1);
 
-    // If a vertex on the line of discontinuity does not exists. create one.
-    DVertex* dv = m_top_traits->discontinuity_vertex(xc, ARR_MAX_END);
+    // If a vertex on the line of discontinuity does not exists, create one.
+    DVertex* dv = m_top_traits->discontinuity_vertex(event->point());
     Vertex_handle v = (dv) ? Vertex_handle(dv) :
-      m_arr_access.create_boundary_vertex(xc, ARR_MAX_END, ps_x, ps_y);
+      m_arr_access.create_boundary_vertex(event->point(), ps_x, ps_y);
     event->set_vertex_handle(v);
     return;
   }
 }
 
-} //namespace CGAL
+} // namespace CGAL
 
 #endif

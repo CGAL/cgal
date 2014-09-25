@@ -294,9 +294,19 @@ public:
   Vertex* north_pole() { return m_north_pole; }
 
   /*! Obtain a vertex on the line of discontinuity that corresponds to
+   *  the given point (or return NULL if no such vertex exists).
+   */
+  Vertex* discontinuity_vertex(const Point_2& pt)
+  {
+    typename Vertex_map::iterator it = m_boundary_vertices.find(pt);
+    return (it != m_boundary_vertices.end()) ? it->second : NULL;
+  }
+
+  // TODO remove if all occurences have been replaced with the new signature that queries for a point
+  /*! Obtain a vertex on the line of discontinuity that corresponds to
    *  the given curve-end (or return NULL if no such vertex exists).
    */
-  Vertex* discontinuity_vertex(const X_monotone_curve_2 xc, Arr_curve_end ind)
+  Vertex* discontinuity_vertex(const X_monotone_curve_2& xc, Arr_curve_end ind)
   {
     Point_2 key = (ind == ARR_MIN_END) ?
       m_geom_traits->construct_min_vertex_2_object()(xc) :
