@@ -56,7 +56,7 @@ BOOST_AUTO_TEST_CASE( test_incremental_construction_removal )
 
   std::string mesh = boost::unit_test::framework::master_test_suite().argv[1];
 
-  int randSeed = 2681972;
+  int randSeed = 4983304;
   const size_t numTests = 15;
   
   if (boost::unit_test::framework::master_test_suite().argc > 2)
@@ -104,23 +104,16 @@ BOOST_AUTO_TEST_CASE( test_incremental_construction_removal )
   {
     size_t faceId = rand.get_int(0, faces.size());
     sourcePoints.push_back(Face_location(faces[faceId], CGAL::test::random_coordinate<Traits>(rand)));
-    handles.push_back(shortestPaths.add_source_point(sourcePoints.back().first, sourcePoints.back().second));
+    shortestPaths.add_source_point(sourcePoints.back().first, sourcePoints.back().second);
   }
-  
-  size_t pos = 0;
-  
-  for (Surface_mesh_shortest_path::Source_point_handle it = shortestPaths.source_points_begin(); it != shortestPaths.source_points_end(); ++it)
-  {
-    handles[pos] = it;
-  }
-  
+
   BOOST_CHECK_EQUAL(numInitialLocations, shortestPaths.number_of_source_locations());
   
   size_t checkNumLocations = 0;
   
   for (Surface_mesh_shortest_path::Source_point_handle it = shortestPaths.source_points_begin(); it != shortestPaths.source_points_end(); ++it)
   {
-    BOOST_CHECK(handles[checkNumLocations] == it);
+    handles.push_back(it);
     ++checkNumLocations;
   }
   
@@ -128,12 +121,8 @@ BOOST_AUTO_TEST_CASE( test_incremental_construction_removal )
   
   for (Surface_mesh_shortest_path::Source_point_handle it = shortestPaths.source_points_begin(); it != shortestPaths.source_points_end(); ++it)
   {
-    std::cout << faceIndexMap[it->first] << " : " << it->second[0] << "," << it->second[1] << "," << it->second[2] << std::endl;
-  
     Surface_mesh_shortest_path::Shortest_path_result result = shortestPaths.shortest_distance_to_source_points(it->first, it->second);
-    
-    std::cout << faceIndexMap[result.second->first] << " : " << result.second->second[0] << "," << result.second->second[1] << "," << result.second->second[2] << std::endl;
-    
+
     BOOST_CHECK_CLOSE(FT(0.0), result.first, FT(0.000001));
     BOOST_CHECK(result.second == it);
   }
@@ -156,8 +145,6 @@ BOOST_AUTO_TEST_CASE( test_incremental_construction_removal )
   for (size_t i = 0; i < sourcePoints.size(); ++i)
   {
     Surface_mesh_shortest_path::Shortest_path_result result = shortestPaths.shortest_distance_to_source_points(sourcePoints[i].first, sourcePoints[i].second);
-    
-    std::cout << faceIndexMap[sourcePoints[i].first] << " : " << sourcePoints[i].second[0] << "," << sourcePoints[i].second[1] << "," << sourcePoints[i].second[2] << std::endl;
 
     if (i % 2 != 0)
     {
