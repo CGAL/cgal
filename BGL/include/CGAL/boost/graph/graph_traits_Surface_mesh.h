@@ -46,18 +46,18 @@ private:
 
 public:
   // Graph
-  typedef typename SM::Vertex_descriptor                                        vertex_descriptor;
+  typedef typename SM::Vertex_index                                        vertex_descriptor;
   typedef typename SM::Point                                               vertex_property_type;
-  typedef typename SM::Edge_descriptor  edge_descriptor;
+  typedef typename SM::Edge_index  edge_descriptor;
   typedef boost::undirected_tag                                            directed_category;
   typedef boost::disallow_parallel_edge_tag                                edge_parallel_category; 
   typedef SM_graph_traversal_category                                      traversal_category;
 
   // HalfedgeGraph
-  typedef typename SM::halfedge_descriptor              halfedge_descriptor;
+  typedef typename SM::halfedge_index              halfedge_descriptor;
 
    // FaceGraph
-  typedef typename SM::face_descriptor   face_descriptor;
+  typedef typename SM::face_index   face_descriptor;
   
   // VertexListGraph
   typedef typename SM::Vertex_iterator   vertex_iterator;

@@ -7,6 +7,7 @@
 
 typedef CGAL::Simple_cartesian<double> K;
 typedef CGAL::Surface_mesh<typename K::Point_3> Mesh;
+typedef Mesh::Vertex_index vertex_descriptor;
 
 int main()
 {
@@ -21,14 +22,13 @@ int main()
 
   std::cout << "After insertion of 5 vertices and removal of the 3. vertex\n"
             << "# used vertices / total vertices = " 
-            << m.num_vertices() - m.num_removed_vertices()
+            << m.number_of_vertices()
             << " / " << m.num_vertices() << std::endl;
   
   std::cout << "Iterate over used vertices\n";
   {
-    Mesh::Vertex_iterator vbegin, vend;
-    for(boost::tie(vbegin, vend) = m.vertices(); vbegin != vend; ++vbegin) {
-      std::cout << m.point(*vbegin) << std::endl;
+    BOOST_FOREACH(vertex_descriptor vd, m.vertices()){
+      std::cout << m.point(vd) << std::endl;
     }
   }
   
@@ -42,9 +42,9 @@ int main()
             << m.num_vertices() - m.num_removed_vertices()
             << " / " << m.num_vertices() << std::endl;
     {
-    unsigned int i = 0, end = m.vertices().second->idx();
+    unsigned int i = 0, end = m.num_vertices();
     for( ; i < end; ++i) {
-      Mesh::Vertex_index vh(i);
+      vertex_descriptor vh(i);
       assert(m.is_removed(vh) == removed[vh]);
       std::cout << m.point(vh) << ((m.is_removed(vh)) ? "  R\n" : "\n");
     }
@@ -54,13 +54,13 @@ int main()
 
   std::cout << "\nAfter garbage collection\n"
             << "# used vertices / total vertices = "
-            << m.num_vertices() - m.num_removed_vertices()
+            << m.number_of_vertices()
             << " / " << m.num_vertices() << std::endl;
   
  {
-    unsigned int i = 0, end = m.vertices().second->idx();
+   unsigned int i = 0, end = m.num_vertices();
     for( ; i < end; ++i) {
-      Mesh::Vertex_index vh(i);
+      vertex_descriptor vh(i);
       std::cout << m.point(vh) << ((m.is_removed(vh)) ? "  R\n" : "\n");
     }
   }

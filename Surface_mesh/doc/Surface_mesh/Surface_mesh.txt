@@ -32,10 +32,10 @@ It provides the following features:
 The main class `Surface_mesh` provides four nested classes that
 represent the basic elements of the halfedge data structure:
 
-- `Surface_mesh::Vertex_descriptor`
-- `Surface_mesh::Halfedge_descriptor`
-- `Surface_mesh::Face_descriptor`
-- `Surface_mesh::Edge_descriptor`
+- `Surface_mesh::Vertex_index`
+- `Surface_mesh::Halfedge_index`
+- `Surface_mesh::Face_index`
+- `Surface_mesh::Edge_index`
 
 Descriptors are just a typed wrapper for an index
 and should be passed by value. They are
@@ -49,14 +49,14 @@ operation is not topologically valid.
 \code
 typedef Surface_mesh<Point> Mesh;
 Mesh m;
-Mesh::Vertex_descriptor u = m.add_vertex(K::Point_3(0,1,0));
-Mesh::Vertex_descriptor v = m.add_vertex(K::Point_3(0,0,0));
-Mesh::Vertex_descriptor w = m.add_vertex(K::Point_3(1,0,0));
+Mesh::Vertex_index u = m.add_vertex(K::Point_3(0,1,0));
+Mesh::Vertex_index v = m.add_vertex(K::Point_3(0,0,0));
+Mesh::Vertex_index w = m.add_vertex(K::Point_3(1,0,0));
 m.add_face(u, v, w);
 \endcode
 
-As `Surface_mesh` is index-based `Vertex_descriptor`, `Face_descriptor`, 
-`Halfedge_descriptor` and `Edge_descriptor`
+As `Surface_mesh` is index-based `Vertex_index`, `Face_index`, 
+`Halfedge_index` and `Edge_descriptor`
 don't have member functions to access connectivity or properties.
 The functions of the `Surface_mesh` instance they were
 created from needs to be used to obtain that information.
@@ -170,9 +170,9 @@ operation, this function only checks if the halfedge associated to `v`
 is a border halfedge. The user is in charge to correctly set the halfedge
 associated to a vertex after having applied an operation that might invalidate 
 this property.
-The functions `Surface_mesh::fix_border(Vertex_descriptor v)`,
-`Surface_mesh::fix_border(Halfedge_descriptor h)`, and 
- `Surface_mesh::fix_border()` allow to restore this property 
+The functions `Surface_mesh::fix_constant_border_property(Vertex_descriptor v)`,
+`Surface_mesh::fix_constant_border_property(Halfedge_descriptor h)`, and 
+ `Surface_mesh::fix_constant_border_property()` allow to restore this property 
 for a single vertex `v`, for all vertices on the boundary of the
 face of `h`, and for all vertices of the surface mesh, respectively.
 
@@ -187,15 +187,15 @@ as
 [Kruskal minimum spanning tree](http://www.boost.org/doc/libs/1_55_0/libs/graph/doc/kruskal_min_spanning_tree.html)
 directly on a surface mesh.
 
-The types and free functions of the BGL API have each an equivalent type or member function,
+The types and free functions of the BGL API have each a similar type or member function,
 for example
-| BGL   | Surface mesh |
-| :---- | :----        |
-| `boost::graph_traits<G>::vertex_descriptor` | `Surface_mesh::Vertex_descriptor` |
-| `edges(const G& g)` | `sm.edges()` |
-| `vd = source(ed,g)` | `vd = sm.source(ed)` |
-| `n = num_vertices(g)`  | `n = sm.num_vertices()` |
-| etc. | |
+| BGL   | %Surface_mesh | Remark |
+| :---- | :----        | :---   |
+| `boost::graph_traits<G>::vertex_descriptor` | `Surface_mesh::Vertex_index` | |
+| `edges(const G& g)` | `sm.edges()` | |
+| `vd = source(ed,g)` | `vd = sm.source(ed)` | |
+| `n = num_vertices(g)`  | `n = sm.number_of_vertices()` | the latter only counts non-deleted vertices |
+| etc. | | |
 
 
 
@@ -203,9 +203,9 @@ The class `Surface_mesh` is also a model of the concept `MutableFaceGraph` defin
 in the package \ref PkgBGLSummary. This and similar concepts like `HalfedgeGraph`
 refine the graph concepts of the BGL by introducing the notion of halfedges and faces,
 as well as cycles of halfedges around faces and around vertices.
-Again, there are equivalent types and functions:
+Again, there are similar types and functions:
 
-| BGL   | Surface mesh |
+| BGL   | %Surface_mesh |
 | :---- | :----        |
 | `boost::graph_traits<G>::halfedge_descriptor` | `Surface_mesh::Halfedge_descriptor` |
 | `hd = next(hd, g)` | `hd = sm.next(hd)` |
@@ -230,8 +230,7 @@ The BGL way of retrieving the index property map of a graph `g` is
 `vipm = get(boost::vertex_index, g)`, and `get(vipm, vd)` in order then
 to retrieve the index for a vertex descriptor `vd`, and it is  
 `get(vertex_index, g, vd)` to obtain the vertex index directly.
-For the `Surface_mesh` class, all an index property map has to do
-is to call `Vertex_descriptor::idx()`.
+
 
 \subsection SubsectionSurfaceMeshBglExample Example
 
@@ -263,15 +262,15 @@ the surface mesh, they are taken from the free list in case it is
 not empty. 
 
 For all elements we offer a function to obtain the number of 
-added and removed elements, as well as the number of removed elements.
-For vertices the functions are `Surface_mesh::num_vertices()`
-and `Surface_mesh::num_removed_vertices()`, respectively. The first function
-matches the free function `num_vertices(const G&)` of the \sc{Bgl}
-package. As \sc{Bgl} style algorithms use the indices of elements
+elements, as well as the number of removed elements.
+For vertices the functions are `Surface_mesh::numbr_of_vertices()`
+and `Surface_mesh::number_of_removed_vertices()`, respectively. 
+The first function is slightly different from the free function 
+`num_vertices(const G&)` of the \sc{Bgl} package. 
+As \sc{Bgl} style algorithms use the indices of elements
 to access data in temporary vectors of size `num_vertices()`
 this function must return a number larger than the largest index of 
 the elements.
-
 
 Iterators like the `Surface_mesh::Vertex_iterator` only enumerate
 elements that are not marked as deleted. 

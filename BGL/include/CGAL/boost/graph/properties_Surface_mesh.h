@@ -40,11 +40,11 @@ public:
   typedef boost::readable_property_map_tag                category;
   typedef typename CGAL::Kernel_traits<Point>::type::FT   value_type;
   typedef value_type                                      reference;
-  typedef typename SM::Edge_descriptor                        key_type;
+  typedef typename SM::Edge_index                        key_type;
 
   SM_edge_weight_pmap(const CGAL::Surface_mesh<Point>& sm)
     : pm_(sm. template get_property_map< 
-            typename SM::Vertex_descriptor,
+            typename SM::Vertex_index,
             typename SM::Point >("v:point")),
       sm_(sm)
     {}
@@ -56,7 +56,7 @@ public:
   }
 
 private:
-  typename CGAL::Property_map< typename SM::Vertex_descriptor, 
+  typename CGAL::Property_map< typename SM::Vertex_index, 
                              typename SM::Point > pm_;
   const SM& sm_;
 };
@@ -86,22 +86,22 @@ template <typename Point, typename T>
 struct property_map<CGAL::Surface_mesh<Point>, boost::vertex_property_t<T> >
 {
   typedef CGAL::Surface_mesh<Point> SM;
-  typedef typename CGAL::Property_map<typename SM::vertex_descriptor,T> type;
-  typedef typename CGAL::Property_map<typename SM::vertex_descriptor,T> const_type;
+  typedef typename CGAL::Property_map<typename SM::vertex_index,T> type;
+  typedef typename CGAL::Property_map<typename SM::vertex_index,T> const_type;
 };
 
 template <typename Point, typename T>
 typename property_map<CGAL::Surface_mesh<Point>, boost::vertex_property_t<T> >::const_type
 get(boost::vertex_property_t<T> vprop, const CGAL::Surface_mesh<Point>& sm)
 {
-  return sm.template get_property_map<typename CGAL::Surface_mesh<Point>::Vertex_descriptor, T>(vprop.s);
+  return sm.template get_property_map<typename CGAL::Surface_mesh<Point>::Vertex_index, T>(vprop.s);
 }
 
 template <typename Point, typename T>
 typename property_map<CGAL::Surface_mesh<Point>, boost::vertex_property_t<T> >::const_type
 add(boost::vertex_property_t<T> vprop, CGAL::Surface_mesh<Point>& sm)
 {
-  return sm.template add_property_map<typename CGAL::Surface_mesh<Point>::Vertex_descriptor, T>(vprop.s, vprop.t);
+  return sm.template add_property_map<typename CGAL::Surface_mesh<Point>::Vertex_index, T>(vprop.s, vprop.t);
 }
 
   template <typename K, typename V, typename P>
@@ -220,7 +220,7 @@ struct property_map<CGAL::Surface_mesh<K>, CGAL::vertex_point_t >
 {
   typedef CGAL::Surface_mesh<K> SM;
   typedef
-    typename CGAL::Property_map< typename SM::Vertex_descriptor, 
+    typename CGAL::Property_map< typename SM::Vertex_index, 
                                K
                                > type;
   typedef type const_type;

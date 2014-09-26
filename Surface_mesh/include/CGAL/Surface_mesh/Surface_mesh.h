@@ -34,6 +34,7 @@
 #include <boost/tuple/tuple.hpp>
 #include <boost/foreach.hpp>
 
+#include <CGAL/Range.h>
 #include <CGAL/circulator.h>
 #include <CGAL/assertions.h>
 #include <CGAL/Surface_mesh/Surface_mesh_fwd.h>
@@ -367,7 +368,7 @@ public:
     /// A model of <a href="http://www.boost.org/libs/range/doc/html/range/concepts/bidirectional_range.html">BidirectionalRange</a>.
     /// \sa `vertices()`
     /// \sa `Halfedge_range`, `Edge_range`, `Face_range`
-    typedef std::pair<Vertex_iterator, Vertex_iterator> Vertex_range;
+    typedef Range<Vertex_iterator> Vertex_range;
 
     /// \brief This class iterates linearly over all halfedges.
     ///
@@ -385,7 +386,7 @@ public:
     /// A model of <a href="http://www.boost.org/libs/range/doc/html/range/concepts/bidirectional_range.html">BidirectionalRange</a>.
     /// \sa `halfedges()`
     /// \sa `Vertex_range`, `Edge_range`, `Face_range`
-    typedef std::pair<Halfedge_iterator, Halfedge_iterator> Halfedge_range;
+    typedef Range<Halfedge_iterator> Halfedge_range;
 
     /// \brief This class iterates linearly over all edges.
     ///
@@ -403,7 +404,7 @@ public:
     /// A model of <a href="http://www.boost.org/libs/range/doc/html/range/concepts/bidirectional_range.html">BidirectionalRange</a>.
     /// \sa `edges()`
     /// \sa `Halfedge_range`, `Vertex_range`, `Face_range`
-    typedef std::pair<Edge_iterator, Edge_iterator> Edge_range;
+    typedef Range<Edge_iterator> Edge_range;
 
     /// \brief This class iterates linearly over all faces.
     ///
@@ -421,28 +422,28 @@ public:
     /// A model of <a href="http://www.boost.org/libs/range/doc/html/range/concepts/bidirectional_range.html">BidirectionalRange</a>.
     /// \sa `faces()`
     /// \sa `Vertex_range`, `Halfedge_range`, `Edge_range`
-    typedef std::pair<Face_iterator, Face_iterator> Face_range;
+    typedef Range<Face_iterator> Face_range;
 
 
   typedef CGAL::Vertex_around_target_iterator<Surface_mesh> Vertex_around_target_iterator;
-  typedef std::pair<Vertex_around_target_iterator,Vertex_around_target_iterator> Vertex_around_target_range;
+  typedef Range<Vertex_around_target_iterator> Vertex_around_target_range;
 
   typedef CGAL::Halfedge_around_target_iterator<Surface_mesh>  Halfedge_around_target_iterator;
-  typedef std::pair<Halfedge_around_target_iterator,Halfedge_around_target_iterator> Halfedge_around_target_range;
+  typedef Range<Halfedge_around_target_iterator> Halfedge_around_target_range;
 
   typedef CGAL::Face_around_target_iterator<Surface_mesh>  Face_around_target_iterator;
-  typedef std::pair<Face_around_target_iterator,Face_around_target_iterator> Face_around_target_range;
+  typedef Range<Face_around_target_iterator> Face_around_target_range;
 
   typedef CGAL::Vertex_around_face_iterator<Surface_mesh>  Vertex_around_face_iterator;
-  typedef std::pair<Vertex_around_face_iterator,Vertex_around_face_iterator> Vertex_around_face_range;
+  typedef Range<Vertex_around_face_iterator> Vertex_around_face_range;
 
   typedef CGAL::Halfedge_around_face_iterator<Surface_mesh>  Halfedge_around_face_iterator;
-  typedef std::pair<Halfedge_around_face_iterator,Halfedge_around_face_iterator> Halfedge_around_face_range;
+  typedef Range<Halfedge_around_face_iterator> Halfedge_around_face_range;
 
   typedef CGAL::Face_around_face_iterator<Surface_mesh>  Face_around_face_iterator;
-  typedef std::pair<Face_around_face_iterator,Face_around_face_iterator> Face_around_face_range;
+  typedef Range<Face_around_face_iterator> Face_around_face_range;
 
-   
+
     /// @cond CGAL_BEGIN_END
     /// Start iterator for vertices.
     Vertex_iterator vertices_begin() const
@@ -457,10 +458,12 @@ public:
     }
     /// @endcond
 
+
     /// returns the iterator range of the vertices of the mesh.
     Vertex_range vertices() const {
-      return std::make_pair(vertices_begin(), vertices_end());
+      return make_range(vertices_begin(), vertices_end());
     }
+
 
     /// @cond CGAL_BEGIN_END
     /// Start iterator for halfedges.
@@ -476,9 +479,10 @@ public:
     }
     /// @endcond
 
+
     /// returns the iterator range of the halfedges of the mesh.
     Halfedge_range halfedges() const {
-      return std::make_pair(halfedges_begin(), halfedges_end());
+      return make_range(halfedges_begin(), halfedges_end());
     }
 
 
@@ -496,10 +500,11 @@ public:
     }
     /// @endcond
 
+
     /// returns the iterator range of the edges of the mesh.
     Edge_range edges() const
     {
-        return std::make_pair(edges_begin(), edges_end());
+        return make_range(edges_begin(), edges_end());
     }
 
 
@@ -519,7 +524,7 @@ public:
 
     /// returns the iterator range of the faces of the mesh.
     Face_range faces() const {
-      return std::make_pair(faces_begin(), faces_end());
+      return make_range(faces_begin(), faces_end());
     }
 
     /// returns the iterator range for vertices around vertex `target(h)`, starting at `source(h)`.
@@ -826,7 +831,27 @@ public:
     /// garbage collection.
     ///@{
 
+  size_type number_of_vertices() const
+  {
+    return num_vertices() + num_removed_vertices();
+  }
  
+  size_type number_of_halfedges() const
+  {
+    return num_halfedges() + num_removed_halfedges();
+  }
+
+  size_type number_of_edges() const
+  {
+    return num_edges() + num_removed_edges();
+  }
+
+  size_type number_of_faces() const
+  {
+    return num_faces() + num_removed_faces();
+  }
+
+#ifndef DOXYGEN_RUNNING
     /// returns the number of used and removed vertices in the mesh.
     size_type num_vertices() const { return (size_type) vprops_.size(); }
 
@@ -851,10 +876,10 @@ public:
 
     /// returns the number of removed faces in the mesh.
     size_type num_removed_faces() const { return removed_faces_; }
-
+#endif
 
     /// returns `true` iff the mesh is empty, i.e., has no used vertices.
-    bool empty() const { return num_vertices() == num_removed_vertices(); }
+    bool is_empty() const { return num_vertices() == num_removed_vertices(); }
 
     /// removes all vertices, edges and faces. Collects garbage and clears all properties.
     void clear();
@@ -872,7 +897,7 @@ public:
     }
     /// @endcond
 
-    /// reserves space for vertices, faces, edges and their currently
+    /// reserves space for vertices, halfedges, edges, faces, and their currently
     /// associated properties.
     void reserve(size_type nvertices,
                  size_type nedges,
@@ -1292,7 +1317,7 @@ public:
     }
   
   /// restores the constant time border property for vertex `v`.
-  void fix_border(Vertex_index v)
+  void fix_constant_border_property(Vertex_index v)
   {
     if(halfedge(v) == null_halfedge())
       return;
@@ -1307,7 +1332,7 @@ public:
 
   /// restores the constant time border property for all vertices 
   /// around the face associated to `h`.
-  void fix_border(Halfedge_index h)
+  void fix_constant_border_property(Halfedge_index h)
   {
     if(is_border(h)){
       Halfedge_around_face_circulator hafc(h,*this),done(hafc);
@@ -1317,17 +1342,17 @@ public:
     } else {
        Vertex_around_face_circulator vafc(h,*this),done(vafc);
       do {
-        fix_border(*vafc);
+        fix_constant_border_property(*vafc);
       }while(++vafc != done);
     }
   }
 
   /// restores the constant time border property for all vertices
   /// of the surface mesh.
-  void fix_border()
+  void fix_constant_border_property()
   {
     BOOST_FOREACH(Vertex_index vd, vertices()){
-      fix_border(vd);
+      fix_constant_border_property(vd);
     }
   }
 
@@ -1508,7 +1533,8 @@ private: //------------------------------------------------------- private data
    */
 
   /// \relates Surface_mesh
-  /// Inserts the surface mesh in an output stream in Ascii OFF format.
+  /// Inserts the surface mesh in an output stream in Ascii OFF format. 
+  /// If the vertices have a normal property it is also inserted in the stream.
   template <typename P>
   std::ostream& operator<<(std::ostream& os, const Surface_mesh<P>& sm)
   {
@@ -1516,6 +1542,7 @@ private: //------------------------------------------------------- private data
   }
   /// \relates Surface_mesh
   /// Extracts the surface mesh from an input stream in Ascii OFF format.
+  /// If the vertices have a normal property it is also extracted from the stream.
   template <typename P>
   std::istream& operator>>(std::istream& is, Surface_mesh<P>& sm)
   {

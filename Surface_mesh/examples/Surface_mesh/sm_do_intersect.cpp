@@ -5,7 +5,7 @@
 #include <boost/utility/addressof.hpp>
 #include <boost/bind.hpp>
 #include <boost/functional/value_factory.hpp>
-
+#include <boost/range/algorithm/transform.hpp>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/box_intersection_d.h>
@@ -76,19 +76,20 @@ struct Callback {
 unsigned int intersect(const SM& P, const SM& Q) {
   std::vector<Box> P_boxes, Q_boxes;
   std::vector<const Box*> P_box_ptr, Q_box_ptr;
-  P_boxes.reserve(P.num_faces());
-  P_box_ptr.reserve(P.num_faces());
-  Q_boxes.reserve(Q.num_faces());
-  Q_box_ptr.reserve(Q.num_faces());
+  P_boxes.reserve(P.number_of_faces());
+  P_box_ptr.reserve(P.number_of_faces());
+  Q_boxes.reserve(Q.number_of_faces());
+  Q_box_ptr.reserve(Q.number_of_faces());
 
   // build boxes and pointers to boxes
-  std::transform(P.faces_begin(), P.faces_end(),
+  boost::transform(P.faces(),
                  std::back_inserter(P_boxes), 
                  boost::bind(boost::value_factory<Box>(), _1, boost::cref(P)));
+  
   std::transform(P_boxes.begin(), P_boxes.end(), std::back_inserter(P_box_ptr), 
                  &boost::addressof<Box>);
-
-  std::transform(Q.faces_begin(), Q.faces_end(),
+  
+  boost::transform(Q.faces(),
                  std::back_inserter(Q_boxes), 
                  boost::bind(boost::value_factory<Box>(), _1, boost::cref(Q)));
   std::transform(Q_boxes.begin(), Q_boxes.end(), std::back_inserter(Q_box_ptr),

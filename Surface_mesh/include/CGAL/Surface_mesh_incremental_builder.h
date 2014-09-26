@@ -39,9 +39,9 @@ class Surface_mesh_incremental_builder {
 public:
     typedef HalfedgeDS_                     HDS; // internal
     typedef HalfedgeDS_                     HalfedgeDS;
-    typedef typename HDS::Vertex_descriptor     Vertex_descriptor;
-    typedef typename HDS::Halfedge_descriptor   Halfedge_descriptor;
-    typedef typename HDS::Face_descriptor       Face_descriptor;
+  typedef typename boost::graph_traits<HDS>::vertex_descriptor     Vertex_descriptor;
+  typedef typename boost::graph_traits<HDS>::halfedge_descriptor   Halfedge_descriptor;
+  typedef typename boost::graph_traits<HDS>::face_descriptor       Face_descriptor;
 
     typedef typename HDS::Point          Point_3;
     typedef typename HDS::size_type         size_type;
