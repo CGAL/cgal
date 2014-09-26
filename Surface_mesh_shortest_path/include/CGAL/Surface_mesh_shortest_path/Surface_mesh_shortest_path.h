@@ -78,8 +78,13 @@ public:
   /// The BGL graph traits for this `FaceListGraph`
   typedef typename boost::graph_traits<FaceListGraph> GraphTraits;
 
+  /// Handle to vertices of `FaceListGraph`
   typedef typename GraphTraits::vertex_descriptor vertex_descriptor;
+  
+  /// Handle to halfedges of `FaceListGraph`
   typedef typename GraphTraits::halfedge_descriptor halfedge_descriptor;
+  
+  /// Handle to faces of `FaceListGraph`
   typedef typename GraphTraits::face_descriptor face_descriptor;
   
 #ifndef DOXYGEN_RUNNING
@@ -132,9 +137,9 @@ public:
   /// \details Assuming you are given the pair (`face`, `location`), the weights of 
   /// `location` are applied to the vertices of `face` in the following way
   /// the following way:
-  /// 0 - source(halfedge(`face`))
-  /// 1 - target(halfedge(`face`))
-  /// 2 - target(next(halfedge(`face`)))
+  /// - 0 -> source(halfedge(`face`))
+  /// - 1 -> target(halfedge(`face`))
+  /// - 2 -> target(next(halfedge(`face`)))
   typedef typename std::pair<face_descriptor, Barycentric_coordinate> Face_location;
   
 private:
@@ -147,10 +152,16 @@ public:
   /*!
   \brief A `bidirectional_iterator` to access the source points
   
-  \details The iterator will remain valid from the time the point
-  is added to the data structure, until after it is removed 
-  (either with `remove_source_point` or `remove_all_source_points`)
-  AND the structure is re-built.
+  \details The iterator will remain valid from the moment the point
+  is added to the data structure, until after that point is removed 
+  (either with `Surface_mesh_shortest_path::remove_source_point()` or `Surface_mesh_shortest_path::remove_all_source_points()`)
+  AND the structure is re-built (by a call to a query function, or
+  to `Surface_mesh_shortest_path::build_sequence_tree()`).  All iterators will also be invalided
+  by any call to `Surface_mesh_shortest_path::clear_sequence_tree()`.
+  
+  Dereferencing this iterator will yeild a `const Surface_mesh_shortest_path::Face_location&`.
+  
+  This iterator supports equality comparison operations.
   */
   class Source_point_handle
   {
@@ -171,15 +182,28 @@ public:
     }
   
   public:
+    /*!
+    \brief Default constructor
+    */
     Source_point_handle()
     {
     }
     
+    /*!
+    \brief Copy constructor
+    
+    \param other The handle to be copied
+    */
     Source_point_handle(const Source_point_handle& other)
       : m_iterator(other.m_iterator)
     {
     }
     
+    /*
+    \brief Copy the contents of another `Source_point_handle`
+    
+    \param other The handle to be copied
+    */
     Source_point_handle& operator=(const Source_point_handle& other)
     {
       m_iterator = other.m_iterator;
@@ -2055,7 +2079,7 @@ public:
   \brief Inserts a single vertex as a shortest path source point
   
   \details No change to the internal shortest paths data structure occurs
-  until either `build_sequence_tree` or a shortest path query function is 
+  until either `Surface_mesh_shortest_path::build_sequence_tree()` or a shortest path query function is 
   called.
   
   \param vertex A vertex to serve as the source location of the sequence tree
@@ -2071,7 +2095,7 @@ public:
   \brief Inserts a single shortest path source point
   
   \details No change to the internal shortest paths data structure occurs
-  until either `build_sequence_tree` or a shortest path query function is 
+  until either `Surface_mesh_shortest_path::build_sequence_tree()` or a shortest path query function is 
   called.
   
   \param f A face of the face graph
@@ -2087,7 +2111,7 @@ public:
   \brief Inserts a single shortest path source point
   
   \details No change to the internal shortest paths data structure occurs
-  until either `build_sequence_tree` or a shortest path query function is 
+  until either `Surface_mesh_shortest_path::build_sequence_tree()` or a shortest path query function is 
   called.
   
   \param location A `Face_location` object, specifying the face and internal location of the source point
@@ -2109,10 +2133,10 @@ public:
   \brief Inserts a range of shortest path source points
   
   \details No change to the internal shortest paths data structure occurs
-  until either `build_sequence_tree` or a shortest path query function is 
+  until either `Surface_mesh_shortest_path::build_sequence_tree()` or a shortest path query function is 
   called.
 
-  \tparam InputIterator A `ForwardIterator` which dereferences to either `Face_location`, or `vertex_descriptor`.
+  \tparam InputIterator A `ForwardIterator` which dereferences to either `Surface_mesh_shortest_path::Face_location`, or `Surface_mesh_shortest_path::vertex_descriptor`.
   
   \param begin iterator to the first in the list of source point locations.
   \param end iterator to one past the end of the list of source point locations.
@@ -2128,7 +2152,7 @@ public:
   \brief Removes a source point from the structure
   
   \details No change to the internal shortest paths data structure occurs
-  until either `build_sequence_tree` or a shortest path query function is 
+  until either `Surface_mesh_shortest_path::build_sequence_tree()` or a shortest path query function is 
   called.  Behaviour is undefined if the source point `it` was already removed.
   
   \param it iterator to the source point to be removed
@@ -2147,7 +2171,7 @@ public:
   \brief Removes all source point from the structure
   
   \details No change to the internal shortest paths data structure occurs
-  until either `build_sequence_tree` or a shortest path query function is 
+  until either `Surface_mesh_shortest_path::build_sequence_tree()` or a shortest path query function is 
   called. For a version which deletes all data immediately, use
   `clear_sequence_tree()` instead.
   */
@@ -2182,7 +2206,7 @@ public:
   
   \details The entire container is reset to its default state and any current
   sequence tree is deleted.  For a version which defers deletion until
-  it is necessary, use `remove_all_source_points()`.
+  it is necessary, use `Surface_mesh_shortest_path::remove_all_source_points()`.
   */
   void clear_sequence_tree()
   {

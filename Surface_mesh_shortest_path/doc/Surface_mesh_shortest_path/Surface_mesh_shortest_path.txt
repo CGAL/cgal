@@ -10,53 +10,64 @@ namespace CGAL {
 This package provides an algorithm to compute shortest paths on a triangulated surface mesh.
 
 \cgalFigureBegin{Shortest_path_main,shortest_paths_overview.png}
-The shortest paths computation on a mesh.
+The shortest paths computation on a terrain.
 \cgalFigureEnd
 
 \section Surface_mesh_shortest_pathIntroduction Introduction
 
 An example of an application of shortest paths would be planning the motion of a robot across the surface a 3-dimensional terrain.  Using a 2-dimensional approximation would fail to capture anything interesting about the terrain we are trying to cross, and would give a poor solution.  The problem is often called the <em>Discrete Geodesic Problem</em>.  Although the more general version of this problem, shortest paths in 3D in the presence of obstacles, is NP-Hard, when all motion is constrained to the 2D surface of an object it can be solved efficiently.
 
-  The algorithm in this package builds a data structure to efficiently answer queries of the form: given a polyhedral surface \f$\cal{P}\f$, a set of source points \f$S\f$ on \f$\cal{P}\f$, and a query point \f$q\f$ also on the surface of \f$\cal{P}\f$, find a shortest path \f$p\f$ between \f$q\f$ and any element \f$s \in S\f$, where \f$p\f$ is constrained to the surface of \f$\cal{P}\f$.
+  The algorithm in this package builds a data structure to efficiently answer queries of this form: given a polyhedral surface \f$\cal{P}\f$, a set of source points \f$S\f$ on \f$\cal{P}\f$, and a target point \f$t\f$ also on \f$\cal{P}\f$, find a shortest path \f$\lambda\f$ between \f$q\f$ and any element \f$s \in S\f$, where \f$\lambda\f$ is constrained to the surface of \f$\cal{P}\f$.
 
-The algorithm used is based on a paper by Xin and Wang \cgalCite{XinWang2009improvingchenandhan}, a fast and practical algorithm for exact computation of shortest paths. It is an extension of earlier results by Chen and Han \cgalCite{ChenHan1996shortestpaths} and Mitchell, Mount, and Papadimitriou \cgalCite{MMP1987discretegeodesicproblem}.
+The algorithm used is based on a paper by Xin and Wang \cgalCite{XinWang2009improvingchenandhan}, a fast and practical algorithm for exact computation of shortest paths. It is an extension of earlier results by Chen and Han \cgalCite{ch-spp-96} and Mitchell, Mount, and Papadimitriou \cgalCite{mmp-dgp-87} .
 
 \section Surface_mesh_shortest_pathHowToUse How To Use
 
-In order to use the algorithm, one creates an instance of the `Surface_mesh_shortest_path` class, passing in a model of the `FaceListGraph`, and appropriate property maps for ID lookup of vertex, halfedge, and face items, and a map between vertices and their Point_3 locations.
+In order to use the algorithm, one creates an instance of the `Surface_mesh_shortest_path` class, passing in a model of the `FaceListGraph`, and appropriate property maps for ID lookup of vertex, halfedge, and face items, and a map between vertices and their locations as `Point_3` instances.
 
+\subsection Surface_mesh_shortest_pathTraitsClass Traits Class
+  The `SurfaceMeshShortestPathTraits` concept provides all of the necessary geometric primitives for the shortest path algorithm. A default model of this concept is provided by `Surface_mesh_shortest_path_traits`. It requires a Cartesian geometry kernel with support for sqrt operations, and a model of the \cgal BGL `FaceListGraph` concept.
+  
+\subsubsection Surface_mesh_shortest_pathKernelRecommendataions Kernel Recommendations
+  The recommended kernel to use with this package is `CGAL::Exact_predicates_inexact_constructions`.
+  
+  It is recommended that users avoid using the `CGAL::Exact_predicates_exact_constructions_with_sqrt` kernel with this package. In order to compute the distance along the surface, it is necessary to unfold sequences of faces, edge-to-edge, out into a common plane.  The functor `Project_triangle_3_to_triangle_2` provides an initial layout of the first face in a sequence, by rotating a given face into the XY plane.  `Flatten_triangle_3_along_segment_2` unfolds a triangle into the plane, using a specified segment as a base.  Since this results in a chain of constructed triangles in the plane, the exact representation types used with this kernel (either CORE::Expr or leda::real) will process extremely slow, even on very simple inputs.  This is because the exact representations will effectively add an \f$O(n)\f$ factor to every computation.
+
+\subsubsection Surface_mesh_shortest_pathFaceListGraph Face List Graph
+  
+  The `FaceListGraph` type must support all of the \cgal BGL (boost graph library) extension operations for the `FaceListGraph` concept. Any surface mesh on 3D points may be used with this package; there are no restrictions on the genus, connectivity, or convexity of the input surface. However, additional property maps for the data items must be provided to the `Surface_mesh_shortest_path` class upon construction.
+
+\subsubsection Surface_mesh_shortest_pathIndexPropertyMaps Item Index Property Maps
+
+  The algorithm requires property maps which map each `boost::GraphTraits<FaceListGraph>::%vertex_descriptor`, `boost::GraphTraits<FaceListGraph>::%halfedge_descriptor`, and `boost::GraphTraits<FaceListGraph>::%face_descriptor` to a 0-based array index respectively. For the sake of efficiency, it is best to use a face graph which supports \f$O(1)\f$ item ID lookup.  This can be achieved, for example, by using `CGAL::Polyhedron_items_with_id_3` items traits with `CGAL::Polyhedron_3`, and then setting the ids using `CGAL::set_halfedgeds_items_id()`. This is the default supported by the `Surface_mesh_shortest_path` class.
+
+\subsubsection Surface_mesh_shortest_pathPointPropertyMap Vertex Point Property Map
+
+  The algorithm must be provided a property map which translates between a `boost::GraphTraits<FaceListGraph>::%vertex_descriptor` item and its location in 3D space as a `Point_3` instance.
+  
 \subsection Surface_mesh_shortest_pathBarycentric Barycentric Coordinates and Face Locations
 
-  The source locations of the algorithm are specified either using vertices (specifically `boost::GraphTraits<FaceListGraph>::%vertex_descriptor`), or face/location pairs, where the location is represented using a <em>Barycentric Coordinate</em> in the face. Given a point \f$p\f$ that lies inside and on the plane of triangle \f$(A,B,C)\f$, its barycentric coordinate is a real-valued triple \f$(b_0,b_1,b_2)\f$ such that \f$p = b_0\cdot~A + b_1\cdot~B + b_2\cdot~C\f$. 
-
-\subsection Surface_mesh_shortest_pathFaceListGraph Face List Graph
-  
-  The FaceListGraph type must support all of the \cgal BGL (boost graph library) extension operations for the `FaceListGraph` concept.  Also note that the algorithm makes heavy use of vertex, halfedge and face ID property maps, which maps each item to a 0-based array index.  For the sake of efficiency, it is best to use a face graph type which supports \f$O(1)\f$ item ID lookup (for example, using `CGAL::Polyhedron_items_with_id_3` items traits with `CGAL::Polyhedron_3`, and then set the ids using `CGAL::set_halfedgeds_items_id()`).
-  
-  Any surface mesh on 3D points supporting the \cgal `FaceListGraph` concept may be used with this package; there are no restrictions on the genus, connectivity, or convexity of the input surface.
+  The source and target locations of the algorithm are specified either using vertices (specifically `boost::GraphTraits<FaceListGraph>::%vertex_descriptor`), or face/location pairs, where the location is represented using a <em>Barycentric Coordinate</em> in the face. Given a point \f$p\f$ that lies inside and on the plane of triangle \f$(A,B,C)\f$, its barycentric coordinate is a real-valued triple \f$(b_0,b_1,b_2)\f$ such that \f$p = b_0\cdot~A + b_1\cdot~B + b_2\cdot~C\f$, and \f$b_0 + b_1 + b_2 = 1\f$. 
 
 \subsection Surface_mesh_shortest_pathClass Surface Mesh Shortest Path Class
 
   The `Surface_mesh_shortest_path` class must be constructed with a model of `FaceListGraph`, and (optionally) 
   - Vertex, Halfedge, and Face index property maps for `FaceListGraph`
-  - A Vertex -> Point_3 property map for `FaceListGraph`
-  - An instance of the Traits class (only necessary if the traits class has local state)
+  - A Vertex -> `Point_3` property map for `FaceListGraph`
+  - An model of the `SurfaceMeshShortestPathTraits` class (passing in an instance is only necessary if the traits class has local state)
   
-  To add source points to the shortest paths computation, use the method `Surface_mesh_shortest_path::add_source_point()` (or `Surface_mesh_shortest_path::add_source_points()` to add an iterator range). This method accepts  The return value from this method, `Surface_mesh_shortest_path::Source_point_handle` is a `bidirectional_iterator`, and can be dereferenced to get the `Face_location`. Source points can be removed from the structure by passing this handle to `Surface_mesh_shortest_path::remove_source_point()`.
+  To add source points to the shortest paths computation, use the method `Surface_mesh_shortest_path::add_source_point()` (or `Surface_mesh_shortest_path::add_source_points()` to add an iterator range). This method accepts `boost::GraphTraits<FaceListGraph>::%vertex_descriptor`, or `Surface_mesh_shortest_path::Face_location` instances as input. The return value from this method, `Surface_mesh_shortest_path::Source_point_handle` is a `bidirectional_iterator` which can be dereferenced to get the `Surface_mesh_shortest_path::Face_location` of the source point. Source points can be removed from the structure by passing this handle to `Surface_mesh_shortest_path::remove_source_point()`.
   
   The shortest paths data structure will be automatically built on the first call to any shortest paths query function after any source points have been added or removed, but you can also manually (re-)build it using `Surface_mesh_shortest_path::build_sequence_tree()`. You can test if build_sequence_tree needs to be called by calling `Surface_mesh_shortest_path::changed_since_last_build()`, which will return true if any changes to the source points happened since the structure was last built.
 
-  Computing shortest path distances can be accomplished with `Surface_mesh_shortest_path::shortest_distance_to_source_points()`, which will return the raw distance, and a `Surface_mesh_shortest_path::Source_point_handle` to the source point which was closest to the query location.  If no shortest path exists between the (if, for example, the face graph is disconnected), a negative distance is returned and the handle will be equal to `Surface_mesh_shortest_path::source_points_end()`.
+  Computing shortest path distances can be accomplished with `Surface_mesh_shortest_path::shortest_distance_to_source_points()`, which will return as a pair the raw distance to the target and a `Surface_mesh_shortest_path::Source_point_handle` to the source point which was closest to the target.  If no shortest path exists between the (if, for example, the face graph is disconnected), a negative distance is returned and the handle will be equal to `Surface_mesh_shortest_path::source_points_end()`.
 
   The complete shortest path sequence can be obtained using `Surface_mesh_shortest_path::shortest_path_sequence_to_source_points()`, by providing a visitor object conforming to the `SurfaceMeshShortestPathVisitor` concept.
 
   `Surface_mesh_shortest_path::shortest_path_points_to_source_points()` will return the shortest path sequence as a 3D polyline to an output iterator, useful for quick visualization of the shortest path.  
 
   Other utility methods exist for converting between raw surface locations, Face_location objects, and other parametric descriptions of surface locations.  See the reference manual entries for `Surface_mesh_shortest_path::point()`, `Surface_mesh_shortest_path::face_location()`, and `Surface_mesh_shortest_path::locate()` for details.
-
-\subsection Surface_mesh_shortest_pathUnfoldingMethods Face Unfolding/Layout Methods
-  In order to compute the distance along the surface, it is necessary to unfold sequences of faces, edge-to-edge, out into a common plane.  The functor `Project_triangle_3_to_triangle_2` provides an initial layout of the first face in a sequence, by rotating a given face into the XY plane.  `Flatten_triangle_3_along_segment_2` unfolds a triangle into the plane, using a specified segment as a base.  Since this results in a chain of constructed triangles in the plane, exact representation types such as CORE::Expr or leda::real will process extremely slow (effectively adding an \f$O(n)\f$ factor to any computation). Therefore their use with this algorithm is not recommended.
-
+  
 \section Surface_mesh_shortest_pathExamples Examples
 
 \subsection Surface_mesh_shortest_pathSimpleExample Simple Example
@@ -83,9 +94,9 @@ This example shows computing the sequence tree from multiple source points, usin
 
 \cgalExample{Surface_mesh_shortest_path/shortest_paths_multiple_sources.cpp}
 
-\subsection Surface_mesh_shortest_pathSequenceVisitor
+\subsection Surface_mesh_shortest_pathSequenceVisitor Shortest Path Sequence Visitor
 
-This example shows how to use the SurfaceMeshShortestPathVisitor concept to get detailed information about the sequence of edges/vertices crossed by a shortest path between two face locations.
+This example shows how to use the `SurfaceMeshShortestPathVisitor` concept to get detailed information about the sequence of edges/vertices crossed by a shortest path between two face locations.
 
 \cgalExample{Surface_mesh_shortest_path/shortest_path_sequence.cpp}
 
@@ -170,25 +181,25 @@ The following figures track the construction time, query time, and peak memory u
 \subsection Surface_mesh_shortest_pathDefinitions Definitions
 
 \subsubsection Surface_mesh_shortest_pathGeodesics Geodesic Paths
-  A <em>geodesic</em> curve is a `locally shortest` path on the surface of some manifold, that is, it cannot be made shorter by some local perturbations.  On the surface of a polyhedron, this translates to a curve where, when the faces crossed by the curve are unrolled into the plane, the curve forms a straight line.  A geodesic curve between two points is not necessarily a shortest path, but all shortest paths on polyhedra are formed by sequences of one or more geodesic paths joined at <em>saddle vertices</em> of the surface.
+  A <em>geodesic</em> curve is a `locally shortest` path on the surface of some manifold, that is, it cannot be made shorter by some local perturbations. On the surface of a polyhedron, this translates to a curve where, when the faces crossed by the curve are unrolled into the plane, the curve forms a straight line. Another way of describing it is that there is exactly \f$\pi\f$ surface angle to both sides at every point along the curve. A geodesic curve between two points is not necessarily a shortest path, but all shortest paths on polyhedra are formed by sequences of one or more geodesic paths.
   
   \cgalFigureBegin{Geodesic_perspective,perspectiveGeodesic.png}
   A geodesic on the surface of a simple polyhedron.
   \cgalFigureEnd
   
   \cgalFigureBegin{Geodesic_unrolled,unrolledGeodesic.png}
-  The same geodesic, with its faces unrolled into the plane.
+  The same geodesic, with its faces unrolled into the plane. Note in the unfolding, the geodesic forms a straight line.
   \cgalFigureEnd
 
 \subsubsection Surface_mesh_shortest_pathVisibilityWindow Visibility Window
-  A <em>visibility window</em> (or <em>visibility cone</em>) is a pair of geodesic curves which encloses a region of the polyhedron which, locally, acts like a flat surface.  Thus, operations, such as distance calculations, can be done with normal 2D euclidean operations between all points inside the window.  When a visibility window encounters a vertex (which are <em>not</em> flat), a <em>branch</em> occurs, forming a sub-window to either side.
+  A <em>visibility window</em> (or <em>visibility cone</em>) is a pair of geodesic curves which enclose a <em>locally flat</em> region of the polyhedron. Locally flat means that between every pair of points inside the window, there is exactly one geodesic path between them which also stays inside the bounds of the window. Thus, operations, such as distance calculations, can be done with normal 2D euclidean operations while inside the window.  When a visibility window encounters a vertex (which are <em>not</em> flat), a <em>branch</em> occurs, forming a sub-window to either side.
   
   \cgalFigureBegin{Visibility_window_1,visibilityCone-1.png}
   A single visibility window, before it encounters a vertex.
   \cgalFigureEnd
   
   \cgalFigureBegin{Visibility_window_2,visibilityCone-2.png}
-  After encountering a convex vertex, the visibility window branches to either side (blue on the left, red on the right).  Note that the two new windows immediately overlap on the other side of the vertex, since the surrounding surface area is less than \f$2 \pi\f$.
+  After encountering a convex vertex, the visibility window branches to either side (blue on the left, red on the right).  Note that the two new windows immediately overlap on the other side of the vertex, since the surrounding surface area is less than \f$2 \pi\f$. Points inside this region of overlap might have two possible shortest paths from the origin point.
   \cgalFigureEnd
 
 \subsubsection Surface_mesh_shortest_pathSaddleVertex Saddle Vertices
@@ -204,25 +215,25 @@ The following figures track the construction time, query time, and peak memory u
   
   Whenever a vertex of the polyhedron is encountered, a branch occurs in the sequence tree. If the vertex is a non-saddle vertex, then only two children are created, one for each edge incident to that vertex on the current face. If the vertex is a saddle vertex, in addition to the two children mentioned above, a special type of node, called a <em>pseudo-source</em>, is created which branches out in all directions from the vertex to account for the fact that some of the region around the vertex cannot be reached by a simple geodesic path from the source.
   
-  Once a sequence tree is built, the shortest path to any query point can be found relatively efficiently.
+  Once a sequence tree is built, the shortest path to any target point can be found efficiently.
 
 \subsection Surface_mesh_shortest_pathAlgorithmOverview Algorithm Overview
-  The size of the sequence tree is normally exponential in the complexity of the polyhedral model, thus a simple breadth-first is not feasible.  Rather, we apply techniques to cut down the computation time and storage size of the sequence tree by eliminating branches which are provably unable to contain shortest paths from the source point(s).  The techniques used are given in greater detail in a paper by Xin and Wang \cgalCite{XinWang2009improvingchenandhan}, which itself expands on earlier work by Chen and Han \cgalCite{ChenHan1996shortestpaths} and Mitchell, Mount, and Papadimitriou \cgalCite{MMP1987discretegeodesicproblem}.
+  The size of a sequence tree would normally be exponential in the complexity of the polyhedral model, thus a simple breadth-first is not feasible.  Rather, we apply techniques to eliminate entire branches which are provably unable to contain shortest paths from the source point(s).  The techniques used are given in greater detail in a paper by Xin and Wang \cgalCite{XinWang2009improvingchenandhan}, which itself expands on earlier work by Chen and Han \cgalCite{ch-spp-96} and Mitchell, Mount, and Papadimitriou \cgalCite{mmp-dgp-87} .
   
 \subsection Surface_mesh_shortest_pathContinuousDijkstra Continuous Dijkstra 
   Continuous Dijkstra is simply the application of the graph-search algorithm to a non-discrete setting.  As we build the search tree, newly created nodes are tagged with a distance metric, and inserted into a priority queue, such that the shortest distance nodes are always first.
 
 \subsection Surface_mesh_shortest_pathOneAngleOneSplit One angle, one split
-  This observation by Chen and Han states that out of all the branches that occur at any given vertex of the polyhedron, only a limited number have more than one child which can define shortest paths.  This is accomplished by maintaining, for each vertex, the nodes of the sequence tree which can `see' that vertex.
+  This observation by Chen and Han states that out of all the branches that occur at any given vertex of the polyhedron, only a limited number have more than one child which can define shortest paths.  This is accomplished by maintaining, for each vertex, all nodes of the sequence tree which can contain that vertex inside their visibility window.
   
 - For each vertex, only <em>one</em> two-way branch may occur per face incident to that vertex, specifically, that of the nearest node to that vertex which crosses that face.  We call that closest node the <em>occupier</em> of that vertex.
 - If the vertex is a saddle vertex, only one psuedo-source may be established at that vertex, this time by the absolute nearest node to that vertex.
 
-  This method alone decreases the running time for construction of the sequence tree construction to polynomial time.
+  This method alone can decrease the running time for construction of the sequence tree construction to polynomial time.
   
 \subsection Surface_mesh_shortest_pathDistanceFiltering Distance Filtering
 
-  An additional distance filter proposed by Xin and Wang helps prune the search tree even further by comparing the current node's distance to the closest distance so far of the three vertices on the current face. Details on this method can be found in their paper \cgalCite{XinWang2009improvingchenandhan}.
+  An additional distance filter proposed by Xin and Wang helps prune the search tree even further by comparing the current node's distance to the closest distance so far of the three vertices on the current face. Details on this method can be found in their paper \cgalCite{XinWang2009improvingchenandhan} .
 
 */
 } /* namespace CGAL */

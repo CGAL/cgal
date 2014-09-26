@@ -187,7 +187,7 @@ public:
   `Point_3 operator()(Segment_3 s, int i)`
   to return the source or target of `s`, depending on whether `i` is 0 or 1 respectively, and
   `Point_3 operator()(Triangle_3 t, int i)`
-  to return the ith vertex of `t`.
+  to return the `i`th vertex of `t`.
   */
   typedef unspecified_type Construct_vertex_3;
   
@@ -224,19 +224,17 @@ public:
   /*!
   Function object type that provides 
   `Triangle_2 operator()(Triangle_3 t)`
-  which computes a 2-dimensional projection of `t`
-  that preserves all edge lengths.
+  which computes a 2-dimensional projection of `t` that preserves edge lengths.
   */
   typedef unspecified_type Project_triangle_3_to_triangle_2;
   
   /*!
   Function object type that provides 
   `Triangle_2 operator()(Triangle_3 t, std::size_t i, Segment_2 base)`
-  which computes a 2-dimensional projection of t
-  that preserves all edge lengths, such that the `i`th edge of `t` 
-  lies along `base`.
+  which computes a 2-dimensional projection of t that preserves edge lengths,
+  such that the `i`th edge of the projection of `t` is incident to `base`.
   
-  \pre The length of the `i`th edge of t is equal to the length of `base`
+  \pre The length of the `i`th edge of `t` is equal to the length of `base`
   */
   typedef unspecified_type Flatten_triangle_3_along_segment_2;
   
@@ -247,7 +245,7 @@ public:
   segment `[x0,x1]`.  That is, it computes `t`, such that
   `p = (1.0 - t)*x0 + t*x1`
   
-  \pre p is a point along the segment [x0,x1]
+  \pre `p` is a point along the segment `[x0,x1]`
   */
   typedef unspecified_type Parametric_distance_along_segment_2;
 
@@ -289,12 +287,13 @@ public:
   `std::pair<CGAL::Surface_mesh_shortest_paths_3::Barycentric_coordinate_type,std::size_t> operator()(Barycentric_coordinate b)`,
   which computes the classification and the associated edge (if applicable) of the coordinate `b`
   \details Returns the pair (`type`, `i`), such that `type` is one of the values of `CGAL::Surface_mesh_shortest_paths_3::Barycentric_coordinate_type`
-  If `type` is `CGAL::Surface_mesh_shortest_paths_3::BARYCENTRIC_COORDINATE_VERTEX`, `i` should be the index of that vertex
-  If `type` is `CGAL::Surface_mesh_shortest_paths_3::BARYCENTRIC_COORDINATE_EDGE`, `i` should be the index of the non-zero edge
-  - 0 if (0,1) are the non-zero coordinates
-  - 1 if (1,2) are the non-zero coordinates
-  - 2 if (2,0) are the non-zero coordinates
-  otherwise, the value of `i` is undefined.
+  - If `type` is `CGAL::Surface_mesh_shortest_paths_3::BARYCENTRIC_COORDINATE_VERTEX`, `i` should be the index of that vertex
+  - If `type` is `CGAL::Surface_mesh_shortest_paths_3::BARYCENTRIC_COORDINATE_EDGE`, `i` should be the index of the non-zero edge
+    - 0 if (0,1) are the non-zero coordinates
+    - 1 if (1,2) are the non-zero coordinates
+    - 2 if (2,0) are the non-zero coordinates
+    
+  Otherwise, the value of `i` is undefined.
   */
   typedef unspecified_type Classify_barycentric_coordinate;
   

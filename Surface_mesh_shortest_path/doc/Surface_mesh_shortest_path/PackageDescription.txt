@@ -10,18 +10,21 @@
 
 /*!
 \addtogroup PkgSurfaceMeshShortestPath
-\todo Make a todo list
+\todo Modify the algorithm to support more efficient incremental construction
+\todo Add parallelization to the algorithm
+\todo Add methods for computing the ridge tree using the output of the algorithm
+\todo Add methods for computing shortest paths from geodesic sources as well
 
 \cgalPkgDescriptionBegin{Triangulated Surface Mesh Shortest Paths,PkgSurfaceMeshShortestPathSummary}
 \cgalPkgPicture{shortestpathspackage-ico.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Stephen Kiazyk, Sébastien Loriot, Éric Colin de Verdière}
-\cgalPkgDesc{The package provides methods for computing shortests path on triangulated surface meshes.  The algorithm used is based on a paper by Xin and Wang \cgalCite{XinWang2009improvingchenandhan}, itself based on an earlier algorithm by Chen and Han \cgalCite{ChenHan1996shortestpaths}.  Any graph structure supporting the \cgal FaceListGraph concept may be used with this algorithm. }
+\cgalPkgDesc{The package provides methods for computing shortest path on triangulated surface meshes.  The algorithm used is based on a paper by Xin and Wang \cgalCite{XinWang2009improvingchenandhan} .  Any graph structure supporting the \cgal `FaceListGraph` concept may be used with this algorithm. }
 \cgalPkgManuals{Chapter_Surface_mesh_shortest_path,PkgSurfaceMeshShortestPath}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
-\cgalPkgLicense{\ref licensesLGPL "LGPL"}
 \cgalPkgDependsOn{\ref PkgBGLSummary}
+\cgalPkgLicense{\ref licensesGPL "GPL"}
 \cgalPkgDemo{Operations on Polyhedra,polyhedron_3.zip}
 \cgalPkgShortInfoEnd
 
