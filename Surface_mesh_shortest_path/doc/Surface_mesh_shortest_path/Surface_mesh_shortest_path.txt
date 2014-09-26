@@ -26,12 +26,14 @@ The algorithm used is based on a paper by Xin and Wang \cgalCite{XinWang2009impr
 In order to use the algorithm, one creates an instance of the `Surface_mesh_shortest_path` class, passing in a model of the `FaceListGraph`, and appropriate property maps for ID lookup of vertex, halfedge, and face items, and a map between vertices and their locations as `Point_3` instances.
 
 \subsection Surface_mesh_shortest_pathTraitsClass Traits Class
-  The `SurfaceMeshShortestPathTraits` concept provides all of the necessary geometric primitives for the shortest path algorithm. A default model of this concept is provided by `Surface_mesh_shortest_path_traits`. It requires a Cartesian geometry kernel with support for sqrt operations, and a model of the \cgal BGL `FaceListGraph` concept.
+  The `SurfaceMeshShortestPathTraits` concept provides all of the necessary geometric primitives for the shortest path algorithm. A default model of this concept is provided by `Surface_mesh_shortest_path_traits`. It requires a Cartesian geometry kernel, and a model of the \cgal BGL `FaceListGraph` concept.
   
 \subsubsection Surface_mesh_shortest_pathKernelRecommendataions Kernel Recommendations
   The recommended kernel to use with this package is `CGAL::Exact_predicates_inexact_constructions`.
   
   It is recommended that users avoid using the `CGAL::Exact_predicates_exact_constructions_with_sqrt` kernel with this package. In order to compute the distance along the surface, it is necessary to unfold sequences of faces, edge-to-edge, out into a common plane.  The functor `Project_triangle_3_to_triangle_2` provides an initial layout of the first face in a sequence, by rotating a given face into the XY plane.  `Flatten_triangle_3_along_segment_2` unfolds a triangle into the plane, using a specified segment as a base.  Since this results in a chain of constructed triangles in the plane, the exact representation types used with this kernel (either CORE::Expr or leda::real) will process extremely slow, even on very simple inputs.  This is because the exact representations will effectively add an \f$O(n)\f$ factor to every computation.
+  
+  Although algorithm uses `sqrt` operations, it will also work on geometry kernels which do not support `sqrt` by first converting the kernel's number type to `double`, performing the `sqrt`, and converting it back. Note that it is preferable to use a kernel with directly supports `sqrt`.
 
 \subsubsection Surface_mesh_shortest_pathFaceListGraph Face List Graph
   
