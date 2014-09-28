@@ -1,10 +1,18 @@
-#ifndef CGAL_HALFSPACES_INTERSECTION_WITH_CONSTRUCTION_3_H
-#define CGAL_HALFSPACES_INTERSECTION_WITH_CONSTRUCTION_3_H
+#ifndef CGAL_HALFSPACE_INTERSECTION_WITH_CONSTRUCTION_3_H
+#define CGAL_HALFSPACE_INTERSECTION_WITH_CONSTRUCTION_3_H
 
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Polyhedron_incremental_builder_3.h>
 #include <CGAL/Origin.h>
 #include <CGAL/convex_hull_3.h>
+
+// For interior_polyhedron_3
+#include <CGAL/dual/interior_polyhedron_3.h>
+#ifdef CGAL_USE_GMP
+#include <CGAL/Gmpq.h>
+#else
+#include <CGAL/MP_Float.h>
+#endif
 
 namespace CGAL
 {
@@ -80,6 +88,9 @@ namespace CGAL
         };
     } // namespace internal
 
+    // Compute the intersection of halfspaces by constructing explicitly
+    // the dual points with the traits class for convex_hull_3 given
+    // as an argument
     template <class PlaneIterator, class Polyhedron, class Traits>
     void halfspace_intersection_with_constructions_3(PlaneIterator pbegin,
                                                      PlaneIterator pend,
@@ -110,6 +121,37 @@ namespace CGAL
             P.delegate(build_dual);
         }
 
+    // Compute the intersection of halfspaces by constructing explicitly
+    // the dual points with the traits class for convex_hull_3 given
+    // as an argument.
+    // The point inside the polyhedron is computed using linear programming.
+    template <class PlaneIterator, class Polyhedron, class Traits>
+    void halfspace_intersection_with_constructions_without_origin_3 (PlaneIterator begin, PlaneIterator end,
+                                                                     Polyhedron &P,
+                                                                     const Traits & ch_traits) {
+        // Types
+        typedef typename Kernel_traits<typename Polyhedron::Vertex::Point_3>::Kernel K;
+        typedef typename Polyhedron::Vertex::Point_3 Point_3;
+
+        // choose exact integral type
+#ifdef CGAL_USE_GMP
+        typedef CGAL::Gmpq ET;
+#else
+        typedef CGAL::MP_Float ET;
+#endif
+        // find a point inside the intersection
+        typedef Interior_polyhedron_3<K, ET> Interior_polyhedron;
+        Interior_polyhedron interior;
+        bool res = interior.find(begin, end);
+        CGAL_assertion_msg(res, "halfspace_intersection_with_constructions_without_origin_3: problem when determing an point inside");
+        Point_3 origin = interior.inside_point();
+
+        // compute the intersection
+        halfspace_intersection_with_constructions_3(begin, end, P, origin, ch_traits);
+    }
+
+    // Compute the intersection of halfspaces by constructing explicitly
+    // the dual points with the default traits class for convex_hull_3
     template <class PlaneIterator, class Polyhedron>
     void halfspace_intersection_with_constructions_3(PlaneIterator pbegin,
                                                      PlaneIterator pend,
@@ -122,7 +164,35 @@ namespace CGAL
 
         halfspace_intersection_with_constructions_3(pbegin, pend, P, origin, Traits());
     }
+
+    // Compute the intersection of halfspaces by constructing explicitly
+    // the dual points with the default traits class for convex_hull_3.
+    // The point inside the polyhedron is computed using linear programming.
+    template <class PlaneIterator, class Polyhedron>
+    void halfspace_intersection_with_constructions_without_origin_3 (PlaneIterator begin, PlaneIterator end,
+                                                                     Polyhedron &P) {
+        // Types
+        typedef typename Kernel_traits<typename Polyhedron::Vertex::Point_3>::Kernel K;
+        typedef typename Polyhedron::Vertex::Point_3 Point_3;
+        typedef typename internal::Convex_hull_3::Default_traits_for_Chull_3<Point_3>::type Traits;
+
+        // choose exact integral type
+#ifdef CGAL_USE_GMP
+        typedef CGAL::Gmpq ET;
+#else
+        typedef CGAL::MP_Float ET;
+#endif
+        // find a point inside the intersection
+        typedef Interior_polyhedron_3<K, ET> Interior_polyhedron;
+        Interior_polyhedron interior;
+        bool res = interior.find(begin, end);
+        CGAL_assertion_msg(res, "halfspace_intersection_with_constructions_without_origin_3: problem when determing an point inside");
+        Point_3 origin = interior.inside_point();
+
+        // compute the intersection
+        halfspace_intersection_with_constructions_3(begin, end, P, origin, Traits());
+    }
 } // namespace CGAL
 
-#endif // CGAL_HALFSPACES_INTERSECTION_WITH_CONSTRUCTION_3_H
+#endif // CGAL_HALFSPACE_INTERSECTION_WITH_CONSTRUCTION_3_H
 

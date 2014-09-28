@@ -11,12 +11,12 @@ typedef CGAL::Polyhedron_3<K> Polyhedron_3;
 
 int main (void) {
     std::list<Plane> planes;
-    /* planes.push_back(Plane(1, 0, 0, -1)); */
-    /* planes.push_back(Plane(-1, 0, 0, -1)); */
-    /* planes.push_back(Plane(0, 1, 0, -1)); */
-    /* planes.push_back(Plane(0, -1, 0, -1)); */
-    /* planes.push_back(Plane(0, 0, 1, -1)); */
-    /* planes.push_back(Plane(0, 0, -1, -1)); */
+    planes.push_back(Plane(1, 0, 0, -1));
+    planes.push_back(Plane(-1, 0, 0, -1));
+    planes.push_back(Plane(0, 1, 0, -1));
+    planes.push_back(Plane(0, -1, 0, -1));
+    planes.push_back(Plane(0, 0, 1, -1));
+    planes.push_back(Plane(0, 0, -1, -1));
 
     // Dim 1
     /* planes.push_back(Plane(1, 0, 0, -1)); */
@@ -25,10 +25,10 @@ int main (void) {
     /* planes.push_back(Plane(1, 0, 0, 3)); */
 
     // Dim 2
-    planes.push_back(Plane(1, 0, 0, -1));
-    planes.push_back(Plane(-1, 0, 0, -1));
-    planes.push_back(Plane(0, 1, 0, -1));
-    planes.push_back(Plane(0, -1, 0, -1));
+    /* planes.push_back(Plane(1, 0, 0, -1)); */
+    /* planes.push_back(Plane(-1, 0, 0, -1)); */
+    /* planes.push_back(Plane(0, 1, 0, -1)); */
+    /* planes.push_back(Plane(0, -1, 0, -1)); */
 
     Polyhedron_3 P;
 
