@@ -675,8 +675,6 @@ bool Arrangement_zone_2<Arrangement, ZoneVisitor>::
 _is_to_right_impl(const Point_2& p, Halfedge_handle he,
                   Arr_not_all_sides_oblivious_tag) const
 {
-  std::cout << "_is_to_right_impl: " << p << std::endl;
-
   // Check the boundary conditions of the maximal end of the curve associated
   // with the given halfedge.
   const Arr_parameter_space ps_x =
@@ -1077,7 +1075,6 @@ _zone_in_face(Face_handle face, bool on_boundary)
   if (m_has_right_pt &&
       m_geom_traits->equal_2_object()(m_intersect_p, m_right_pt))
   {
-    std::cout << "x3" << std::endl;
     // If the intersection point is cv's right endpoint, the interior of cv
     // does not intersect any existing halfedge. In this case, we only have
     // to insert cv to the arrangement and we are done.
@@ -1085,7 +1082,6 @@ _zone_in_face(Face_handle face, bool on_boundary)
     done = true;
   }
   else {
-    std::cout << "x4" << std::endl;
     // Split cv at the intersection point.
     m_geom_traits->split_2_object()(m_cv, m_intersect_p, m_sub_cv1, m_sub_cv2);
 
@@ -1098,7 +1094,6 @@ _zone_in_face(Face_handle face, bool on_boundary)
 
   const X_monotone_curve_2* p_orig_curve = NULL;
 
-  std::cout << "x5" << std::endl;
   if (! m_found_iso_vert) {
     // Check whether m_intersect_p coincides with one of the end-vertices of the
     // halfedge that cv intersects.

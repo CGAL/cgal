@@ -1387,6 +1387,7 @@ public:
   //@{
   class Is_in_x_range_2 {
   public:
+  public:
     /*! Check whether a given point is in the x-range of the given x-monotone
      * curve.
      * \param xcv The x-monotone curve.
@@ -1395,49 +1396,12 @@ public:
      */
     bool operator()(const X_monotone_curve_2& xcv, const Point_2& p) const
     {
-      Parameter_space_in_x_2 ps_x = m_self->parameter_space_in_x_2_object();
-      Parameter_space_in_y_2 ps_y = m_self->parameter_space_in_y_2_object();
-      Compare_x_2            compare_x =  m_self->compare_x_2_object();
-      Compare_x_point_curve_end_2
-        compare_x_point_curve_end = m_self->compare_x_point_curve_end_2_object();
-
-      // Compare p to the position of the left end of the curve.
-      // Note that if the left end of xcv lies at x boundary, p is obviously to
-      // its right.
-      Arr_parameter_space bx = ps_x(xcv, ARR_MIN_END);
-      if (bx == ARR_INTERIOR) {
-        Arr_parameter_space by = ps_y(xcv, ARR_MIN_END);
-
-        Comparison_result res = (by == ARR_INTERIOR) ?
-          // The left endpoint of xcv is a normal point.
-          compare_x(p, m_self->construct_min_vertex_2_object()(xcv)) :
-          // The left end of xcv lies at y boundary.
-          compare_x_point_curve_end(p, xcv, ARR_MIN_END);
-
-        // If p is to the left of the x-range return false.
-        // If p is equal, return true.
-        if (res == SMALLER) return false;
-        else if (res == EQUAL) return true;
-      }
-
-      // If necessary, compare p to the right end of the curve.
-      // Note that if this end lies at x boundary, p is obviously to its left.
-      bx = ps_x(xcv, ARR_MAX_END);
-      if (bx != ARR_INTERIOR) return true;
-
-      Arr_parameter_space by = ps_y(xcv, ARR_MAX_END);
-
-      Comparison_result res = (by == ARR_INTERIOR) ?
-        // The right endpoint of xcv is a normal point.
-        compare_x(p, m_self->construct_max_vertex_2_object()(xcv)) :
-        // The right end of xcv lies at y boundary:
-        compare_x_point_curve_end(p, xcv, ARR_MAX_END);
-
-      return (res != LARGER);
+      return is_in_x_range(xcv, p,
+                           Left_or_right_sides_category(),
+                           Bottom_or_top_sides_category());
     }
 
-    /*!
-     * Check whether the x-ranges of the given x-monotone curves overlap.
+    /*! Check whether the x-ranges of the given x-monotone curves overlap.
      * \param xcv1 The first x-monotone curve.
      * \param xcv2 The second x-monotone curve.
      * \return (true) if there is an overlap in the x-ranges of the given
@@ -1446,40 +1410,220 @@ public:
     bool operator()(const X_monotone_curve_2& xcv1,
                     const X_monotone_curve_2& xcv2) const
     {
-      Parameter_space_in_x_2  ps_x = m_self->parameter_space_in_x_2_object();
-      Parameter_space_in_y_2  ps_y = m_self->parameter_space_in_y_2_object();
-      Compare_x_2             compare_x = m_self->compare_x_2_object();
-      Construct_min_vertex_2  min_vertex =
+      return is_in_x_range(xcv1, xcv2,
+                           Left_or_right_sides_category(),
+                           Bottom_or_top_sides_category());
+    }
+
+  protected:
+    //! The base traits.
+    const Self* m_self;
+
+   /*! Constructor.
+     * \param base The base traits class. It must be passed, to handle non
+     *             stateless traits objects, (which stores data).
+     * The constructor is declared private to allow only the functor
+     * obtaining function, which is a member of the nesting class,
+     * constructing it.
+     */
+    Is_in_x_range_2(const Self* self) : m_self(self) {}
+
+    //! Allow its functor obtaining function calling the private constructor.
+    friend class Arr_traits_basic_adaptor_2<Base>;
+
+    /// \name point - curve-end.
+    //@{
+    /*! Implementation in the case of oblivious boundaries. */
+    bool is_in_x_range(const X_monotone_curve_2& xcv, const Point_2& p,
+                       Arr_all_sides_oblivious_tag,
+                       Arr_all_sides_oblivious_tag) const
+    {
+      Compare_x_2 compare_x = m_self->compare_x_2_object();
+      Comparison_result min_res =
+        compare_x(p, m_self->construct_min_vertex_2_object()(xcv));
+      if (min_res == SMALLER) return false;   // p is to the left of the x-range
+      else if (min_res == EQUAL) return true; // p coinsides with the left end
+
+      Comparison_result max_res =
+        compare_x(p, m_self->construct_max_vertex_2_object()(xcv));
+      return (max_res != LARGER);
+    }
+
+    /*! Implementation in the case of oblivious left and right boundaries
+     * non-oblivious bottom and top boundaries.
+     * \todo implement is_in_x_range(xcv, p, oblivious, not-oblivious)
+     */
+    bool is_in_x_range(const X_monotone_curve_2& xcv, const Point_2& p,
+                       Arr_all_sides_oblivious_tag, Arr_boundary_cond_tag) const
+    {
+      return is_in_x_range(xcv, p,
+                           Arr_boundary_cond_tag(), Arr_boundary_cond_tag());
+    }
+
+    /*! Implementation in the case of non-oblivious left and right boundaries.
+     * oblivious bottom and top boundaries.
+     * \todo implement is_in_x_range(xcv, p, not-oblivious, oblivious)
+     */
+    bool is_in_x_range(const X_monotone_curve_2& xcv, const Point_2& p,
+                       Arr_boundary_cond_tag, Arr_all_sides_oblivious_tag) const
+    {
+      return is_in_x_range(xcv, p,
+                           Arr_boundary_cond_tag(), Arr_boundary_cond_tag());
+    }
+
+    /*! Implementation in the case of all non-oblivious boundaries. */
+    bool is_in_x_range(const X_monotone_curve_2& xcv, const Point_2& p,
+                       Arr_boundary_cond_tag, Arr_boundary_cond_tag) const
+    {
+      Parameter_space_in_x_2 ps_x = m_self->parameter_space_in_x_2_object();
+      Parameter_space_in_y_2 ps_y = m_self->parameter_space_in_y_2_object();
+      Compare_x_2 compare_x =  m_self->compare_x_2_object();
+      Compare_x_point_curve_end_2 compare_x_point_curve_end =
+        m_self->compare_x_point_curve_end_2_object();
+      Construct_min_vertex_2 min_vertex =
         m_self->construct_min_vertex_2_object();
-      Construct_max_vertex_2  max_vertex =
+      Construct_max_vertex_2 max_vertex =
+        m_self->construct_max_vertex_2_object();
+
+      // Compare p to the left end of the curve.
+      Arr_parameter_space bx = ps_x(p);
+
+      Arr_parameter_space min_bx = ps_x(xcv, ARR_MIN_END);
+      if (ARR_LEFT_BOUNDARY == bx) {
+        return (ARR_LEFT_BOUNDARY == min_bx) ? true : false;
+      }
+
+      Arr_parameter_space max_bx = ps_x(xcv, ARR_MAX_END);
+      if (ARR_RIGHT_BOUNDARY == bx) {
+        return (ARR_RIGHT_BOUNDARY == max_bx) ? true : false;
+      }
+
+      CGAL_assertion(ARR_INTERIOR == bx);
+      if (ARR_RIGHT_BOUNDARY == min_bx) return false;
+      if (ARR_LEFT_BOUNDARY == max_bx) return false;
+
+      if (ARR_INTERIOR == min_bx) {
+        Arr_parameter_space by = ps_y(p);
+        Arr_parameter_space min_by = ps_y(xcv, ARR_MIN_END);
+        Comparison_result res_min =
+          (ARR_INTERIOR == min_by) ?
+          ((ARR_INTERIOR == by) ?
+           compare_x(p, min_vertex(xcv)) :
+           compare_x(p, min_vertex(xcv))) : //! \todo Is compare_x() correct?
+          ((ARR_INTERIOR == by) ?
+           compare_x_point_curve_end(p, xcv, ARR_MIN_END) :
+           compare_x_point_curve_end(p, xcv, ARR_MIN_END));
+        if (res_min == SMALLER) return false;
+        if (res_min == EQUAL) return true;
+      }
+
+      if (ARR_INTERIOR == max_bx) {
+        Arr_parameter_space by = ps_y(p);
+        Arr_parameter_space max_by = ps_y(xcv, ARR_MAX_END);
+        Comparison_result res_max =
+          (ARR_INTERIOR == max_by) ?
+          ((ARR_INTERIOR == by) ?
+           compare_x(p, max_vertex(xcv)) :
+           compare_x(p, max_vertex(xcv))) : //! \todo Is compare_x() correct?
+          ((ARR_INTERIOR == by) ?
+           compare_x_point_curve_end(p, xcv, ARR_MAX_END) :
+           compare_x_point_curve_end(p, xcv, ARR_MAX_END));
+        return (LARGER != res_max);
+      }
+      return true;
+    }
+    //@}
+
+    /// \name curve-end - curve-end.
+    //@{
+    /*! Implementation in the case of all oblivious boundaries. */
+    bool is_in_x_range(const X_monotone_curve_2& xcv1,
+                       const X_monotone_curve_2& xcv2,
+                       Arr_all_sides_oblivious_tag,
+                       Arr_all_sides_oblivious_tag) const
+    {
+      Compare_x_2 compare_x = m_self->compare_x_2_object();
+
+      // Compare the x-coordinates of the two left ends.
+      Construct_min_vertex_2 min_vertex =
+        m_self->construct_min_vertex_2_object();
+      Comparison_result res_min = compare_x(min_vertex(xcv1), min_vertex(xcv2));
+      const X_monotone_curve_2& xcv_left = (res_min == LARGER) ? xcv1 : xcv2;
+
+      // Compare the x-coordinates of the two right ends.
+      Construct_max_vertex_2 max_vertex =
+        m_self->construct_max_vertex_2_object();
+      Comparison_result res_max = compare_x(max_vertex(xcv1), max_vertex(xcv2));
+      const X_monotone_curve_2& xcv_right = (res_max == SMALLER) ? xcv1 : xcv2;
+
+      // Compare the x-coordiates of the left end of xcv_left and the right end
+      // of xcv_right.
+      Comparison_result res =
+        compare_x(min_vertex(xcv_left), max_vertex(xcv_right));
+      return (LARGER != res);
+    }
+
+    /*! Implementation in the case of oblivious left and right boundaries
+     * non-oblivious bottom and top boundaries.
+     * \todo implement is_in_x_range(xcv1, xcv2, oblivious, not-oblivious)
+     */
+    bool is_in_x_range(const X_monotone_curve_2& xcv1,
+                       const X_monotone_curve_2& xcv2,
+                       Arr_all_sides_oblivious_tag, Arr_boundary_cond_tag) const
+    {
+      return is_in_x_range(xcv1, xcv2,
+                           Arr_boundary_cond_tag(), Arr_boundary_cond_tag());
+    }
+
+    /*! Implementation in the case of non-oblivious left and right  boundaries
+     * oblivious bottom and top boundaries.
+     * \todo implement is_in_x_range(xcv1, xcv2, not-oblivious, oblivious)
+     */
+    bool is_in_x_range(const X_monotone_curve_2& xcv1,
+                       const X_monotone_curve_2& xcv2,
+                       Arr_boundary_cond_tag, Arr_all_sides_oblivious_tag) const
+    {
+      return is_in_x_range(xcv1, xcv2,
+                           Arr_boundary_cond_tag(), Arr_boundary_cond_tag());
+    }
+
+    /*! Implementation in the case of all non-oblivious boundaries. */
+    bool is_in_x_range(const X_monotone_curve_2& xcv1,
+                       const X_monotone_curve_2& xcv2,
+                       Arr_boundary_cond_tag,
+                       Arr_boundary_cond_tag) const
+    {
+      Parameter_space_in_x_2 ps_x = m_self->parameter_space_in_x_2_object();
+      Parameter_space_in_y_2 ps_y = m_self->parameter_space_in_y_2_object();
+      Compare_x_2 compare_x = m_self->compare_x_2_object();
+      Construct_min_vertex_2 min_vertex =
+        m_self->construct_min_vertex_2_object();
+      Construct_max_vertex_2 max_vertex =
         m_self->construct_max_vertex_2_object();
       Compare_x_point_curve_end_2 compare_x_point_curve_end =
         m_self->compare_x_point_curve_end_2_object();
       Compare_x_curve_ends_2 compare_x_curve_ends =
         m_self->compare_x_curve_ends_2_object();
 
+      const X_monotone_curve_2* xcv_left;
+      Arr_parameter_space by_left;
+
       // Locate the rightmost of the two left endpoints of the two curves.
       // Note that we guard for curve ends with special boundary.
-      Arr_parameter_space       ps_x1, ps_y1;
-      Arr_parameter_space       ps_x2, ps_y2;
-      const X_monotone_curve_2* xcv_left;
-      Arr_parameter_space       by_left;
-      Comparison_result         res;
+      Arr_parameter_space ps_x_min1 = ps_x(xcv1, ARR_MIN_END);
+      Arr_parameter_space ps_x_min2 = ps_x(xcv2, ARR_MIN_END);
 
-      ps_x1 = ps_x(xcv1, ARR_MIN_END);
-      ps_x2 = ps_x(xcv2, ARR_MIN_END);
-
-      if (ps_x1 != ARR_INTERIOR) {
+      if (ps_x_min1 != ARR_INTERIOR) {
         // If both curves are defined at x boundary, they obviously overlap in
         // their x-ranges.
-        if (ps_x2 != ARR_INTERIOR) return true;
+        if (ps_x_min2 != ARR_INTERIOR) return true;
 
         // As xcv2 is not defined at x boundary, take its left end as the
         // rightmost of the two left curve ends.
         xcv_left = &xcv2;
         by_left = ps_y(xcv2, ARR_MIN_END);
       }
-      else if (ps_x2 != ARR_INTERIOR) {
+      else if (ps_x_min2 != ARR_INTERIOR) {
         // As xcv1 is not defined at x boundary, take its left end as the
         // rightmost of the two left curve ends.
         xcv_left = &xcv1;
@@ -1488,20 +1632,16 @@ public:
       else {
         // Compare the (finite) x-coordinates of the two left ends.
         // We take special care of the case of boundaries in y.
-        ps_y1 = ps_y(xcv1, ARR_MIN_END);
-        ps_y2 = ps_y(xcv2, ARR_MIN_END);
-
-        if (ps_y1 == ARR_INTERIOR) {
-          res = (ps_y2 == ARR_INTERIOR) ?
-            compare_x(min_vertex(xcv1), min_vertex(xcv2)) :
-            compare_x_point_curve_end(min_vertex(xcv1), xcv2, ARR_MIN_END);
-        }
-        else {
-          res = (ps_y2 == ARR_INTERIOR) ?
-            opposite(compare_x_point_curve_end(min_vertex(xcv2), xcv1,
-                                               ARR_MIN_END)):
-            compare_x_curve_ends(xcv1, ARR_MIN_END, xcv2, ARR_MIN_END);
-        }
+        Arr_parameter_space ps_y1 = ps_y(xcv1, ARR_MIN_END);
+        Arr_parameter_space ps_y2 = ps_y(xcv2, ARR_MIN_END);
+        Comparison_result res = (ps_y1 == ARR_INTERIOR) ?
+          ((ps_y2 == ARR_INTERIOR) ?
+           compare_x(min_vertex(xcv1), min_vertex(xcv2)) :
+           compare_x_point_curve_end(min_vertex(xcv1), xcv2, ARR_MIN_END)) :
+          ((ps_y2 == ARR_INTERIOR) ?
+           opposite(compare_x_point_curve_end(min_vertex(xcv2), xcv1,
+                                              ARR_MIN_END)):
+           compare_x_curve_ends(xcv1, ARR_MIN_END, xcv2, ARR_MIN_END));
 
         if (res == LARGER) {
           xcv_left = &xcv1;
@@ -1516,22 +1656,22 @@ public:
       // Locate the leftmost of the two right endpoints of the two curves.
       // Note that we guard for curve ends with special boundary.
       const X_monotone_curve_2* xcv_right;
-      Arr_parameter_space       by_right;
+      Arr_parameter_space by_right;
 
-      ps_x1 = ps_x(xcv1, ARR_MAX_END);
-      ps_x2 = ps_x(xcv2, ARR_MAX_END);
+      Arr_parameter_space ps_x_max1 = ps_x(xcv1, ARR_MAX_END);
+      Arr_parameter_space ps_x_max2 = ps_x(xcv2, ARR_MAX_END);
 
-      if (ps_x1 != ARR_INTERIOR) {
+      if (ps_x_max1 != ARR_INTERIOR) {
         // If both curves are defined at x boundary, they obviously overlap in
         // their x-ranges.
-        if (ps_x2 != ARR_INTERIOR) return true;
+        if (ps_x_max2 != ARR_INTERIOR) return true;
 
         // As xcv2 is not defined at x boundary, take its right end as the
         // leftmost of the two right curve ends.
         xcv_right = &xcv2;
         by_right = ps_y(xcv2, ARR_MAX_END);
       }
-      else if (ps_x2 != ARR_INTERIOR) {
+      else if (ps_x_max2 != ARR_INTERIOR) {
         // As xcv1 is not defined at x boundary, take its right end as the
         // leftmost of the two right curve ends.
         xcv_right = &xcv1;
@@ -1540,20 +1680,17 @@ public:
       else {
         // Compare the (finite) x-coordinates of the two right ends.
         // We take special care of the case of boundaries in y.
-        ps_y1 = ps_y(xcv1, ARR_MAX_END);
-        ps_y2 = ps_y(xcv2, ARR_MAX_END);
+        Arr_parameter_space ps_y1 = ps_y(xcv1, ARR_MAX_END);
+        Arr_parameter_space ps_y2 = ps_y(xcv2, ARR_MAX_END);
 
-        if (ps_y1 == ARR_INTERIOR) {
-          res = (ps_y2 == ARR_INTERIOR) ?
-            compare_x(max_vertex(xcv1), max_vertex(xcv2)) :
-            compare_x_point_curve_end(max_vertex(xcv1), xcv2, ARR_MAX_END);
-        }
-        else {
-          res = (ps_y2 == ARR_INTERIOR) ?
-            opposite(compare_x_point_curve_end(max_vertex(xcv2), xcv1,
-                                               ARR_MAX_END)):
-            compare_x_curve_ends(xcv1, ARR_MAX_END, xcv2, ARR_MAX_END);
-        }
+        Comparison_result res = (ps_y1 == ARR_INTERIOR) ?
+          ((ps_y2 == ARR_INTERIOR) ?
+           compare_x(max_vertex(xcv1), max_vertex(xcv2)) :
+           compare_x_point_curve_end(max_vertex(xcv1), xcv2, ARR_MAX_END)) :
+          ((ps_y2 == ARR_INTERIOR) ?
+           opposite(compare_x_point_curve_end(max_vertex(xcv2), xcv1,
+                                              ARR_MAX_END)):
+           compare_x_curve_ends(xcv1, ARR_MAX_END, xcv2, ARR_MAX_END));
 
         if (res == SMALLER) {
           xcv_right = &xcv1;
@@ -1567,39 +1704,22 @@ public:
 
       // Now compare the (finite) x-coordiates of the left end of xcv_left and
       // the right end of xcv_right.
-      if (by_left == ARR_INTERIOR) {
-        res = (by_right == ARR_INTERIOR) ?
-          compare_x(min_vertex(*xcv_left), max_vertex(*xcv_right)) :
-          compare_x_point_curve_end(min_vertex(*xcv_left), *xcv_right,
-                                    ARR_MAX_END);
-      }
-      else {
-        res =  (by_right == ARR_INTERIOR) ?
-          opposite(compare_x_point_curve_end(max_vertex(*xcv_right),
-                                             *xcv_left, ARR_MIN_END)) :
-          compare_x_curve_ends(*xcv_left, ARR_MIN_END, *xcv_right, ARR_MAX_END);
-      }
+      Comparison_result res =
+        (by_left == ARR_INTERIOR) ?
+        ((by_right == ARR_INTERIOR) ?
+         compare_x(min_vertex(*xcv_left), max_vertex(*xcv_right)) :
+         compare_x_point_curve_end(min_vertex(*xcv_left), *xcv_right,
+                                   ARR_MAX_END)) :
+        ((by_right == ARR_INTERIOR) ?
+         opposite(compare_x_point_curve_end(max_vertex(*xcv_right),
+                                            *xcv_left, ARR_MIN_END)) :
+         compare_x_curve_ends(*xcv_left, ARR_MIN_END, *xcv_right, ARR_MAX_END));
 
       // The two curves overlap in their x-range if and only if the left end
       // of xcv_left is not to the right if the right end of xcv_right.
       return (res != LARGER);
     }
-
-  protected:
-    //! The traits itself.
-    const Self* m_self;
-
-    /*! Constructor.
-     * \param self The traits class itself. It must be passed, to handle non
-     *             stateless traits objects, (which stores data).
-     * The constructor is declared private to allow only the functor
-     * obtaining function, which is a member of the nesting class,
-     * constructing it.
-     */
-    Is_in_x_range_2(const Self* self) : m_self(self) {}
-
-    //! Allow its functor obtaining function calling the private constructor.
-    friend class Arr_traits_basic_adaptor_2<Base>;
+    //@}
   };
 
   /*! Obtain an Is_in_x_range_2 function object. */

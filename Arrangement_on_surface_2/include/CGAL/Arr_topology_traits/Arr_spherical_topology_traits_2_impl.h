@@ -12,9 +12,6 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL$
-// $Id$
-//
 // Author(s)     : Efi Fogel         <efif@post.tau.ac.il>
 //                 Ron Wein          <wein@post.tau.ac.il>
 
@@ -129,7 +126,6 @@ void Arr_spherical_topology_traits_2<GeomTraits_, Dcel_>::dcel_updated()
   for (; fit != this->m_dcel.faces_end(); ++fit) {
     if (fit->number_of_outer_ccbs() == 0) {
       CGAL_assertion(m_spherical_face == NULL);
-
       m_spherical_face = &(*fit);
       break;
     }
@@ -675,8 +671,7 @@ locate_curve_end(const X_monotone_curve_2& xc, Arr_curve_end ind,
 //! \brief determines whether a given boundary vertex is redundant.
 template <typename GeomTraits, typename Dcel>
 bool Arr_spherical_topology_traits_2<GeomTraits, Dcel>::
-is_redundant(const Vertex* v) const
-{ return (v->halfedge() == NULL); }
+is_redundant(const Vertex* v) const { return (v->halfedge() == NULL); }
 
 //! \brief erases a given redundant vertex.
 template <typename GeomTraits, typename Dcel>
@@ -904,7 +899,7 @@ _face_below_vertex_on_discontinuity(Vertex* v) const
     else {
       // The curve associated with the current halfedge is defined to the right
       // of v.
-      if (top_right == NULL ||
+      if ((top_right == NULL) ||
           cmp_y_at_x_op_right(curr->curve(), top_right->curve(), v->point()) ==
           LARGER)
       {
