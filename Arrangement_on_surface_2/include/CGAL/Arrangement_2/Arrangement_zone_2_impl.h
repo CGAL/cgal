@@ -675,14 +675,16 @@ bool Arrangement_zone_2<Arrangement, ZoneVisitor>::
 _is_to_right_impl(const Point_2& p, Halfedge_handle he,
                   Arr_not_all_sides_oblivious_tag) const
 {
-  // Check the boundary conditions of the maximal end of the curve associated
+   // Check the boundary conditions of the maximal end of the curve associated
   // with the given halfedge.
   const Arr_parameter_space ps_x =
     m_geom_traits->parameter_space_in_x_2_object()(he->curve(), ARR_MAX_END);
 
-  if (ps_x == ARR_RIGHT_BOUNDARY)
-    // The maximal end of the curve is to the right of any other point:
-    return (false);
+  // The maximal end of the curve is to the right of any other point:
+  if (ps_x == ARR_RIGHT_BOUNDARY) return false;
+
+  // p is to the right of any curve that lies on the left boundary.
+  if (ps_x == ARR_LEFT_BOUNDARY) return true;
 
   const Arr_parameter_space ps_y =
     m_geom_traits->parameter_space_in_y_2_object()(he->curve(), ARR_MAX_END);
@@ -692,8 +694,8 @@ _is_to_right_impl(const Point_2& p, Halfedge_handle he,
     const Comparison_result res =
       m_geom_traits->compare_x_point_curve_end_2_object()(p, he->curve(),
                                                           ARR_MAX_END);
-
-    return ((res == LARGER) || (res == EQUAL && ps_y == ARR_BOTTOM_BOUNDARY));
+    return ((res == LARGER) ||
+            ((res == EQUAL) && (ps_y == ARR_BOTTOM_BOUNDARY)));
   }
 
   // In case the maximal curve-end does not have boundary conditions, simply
