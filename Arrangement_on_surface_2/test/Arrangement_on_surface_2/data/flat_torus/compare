@@ -1,0 +1,25 @@
+compare_x 3 3 EQUAL
+compare_x 3 4 EQUAL
+compare_x 3 5 EQUAL
+compare_x 4 3 EQUAL
+compare_x 4 4 EQUAL
+compare_x 4 5 EQUAL
+compare_x 5 3 EQUAL
+compare_x 5 4 EQUAL
+compare_x 5 5 EQUAL
+#
+compare_x 9 10 EQUAL
+compare_x 9 11 SMALLER
+compare_x 9 12 SMALLER
+compare_x 10 11 SMALLER
+compare_x 10 12 SMALLER
+compare_x 11 12 EQUAL
+#
+compare_xy 4 4 EQUAL
+#
+compare_xy 9 10 SMALLER
+compare_xy 9 11 SMALLER
+compare_xy 9 12 SMALLER
+compare_xy 10 11 SMALLER
+compare_xy 10 12 SMALLER
+compare_xy 11 12 SMALLER
