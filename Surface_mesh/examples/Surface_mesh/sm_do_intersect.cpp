@@ -15,15 +15,15 @@ typedef CGAL::Exact_predicates_exact_constructions_kernel K;
 
 typedef K::Triangle_3 Triangle_3;
 typedef K::Point_3 Point_3;
-typedef CGAL::Surface_mesh<typename K::Point_3> SM;
+typedef CGAL::Surface_mesh<typename K::Point_3> Mesh;
 typedef CGAL::Bbox_3 Bbox_3;
 typedef CGAL::Timer Timer;
 
-typedef SM::Face_index Face_descriptor;
-typedef SM::Halfedge_index Halfedge_descriptor;
+typedef Mesh::Face_index Face_descriptor;
+typedef Mesh::Halfedge_index Halfedge_descriptor;
 
 /// small helper to extract a triangle from a face
-Triangle_3 triangle(const SM& sm, Face_descriptor f)
+Triangle_3 triangle(const Mesh& sm, Face_descriptor f)
 {
   Halfedge_descriptor hf = sm.halfedge(f);
   Point_3 a = sm.point(sm.target(hf));
@@ -45,14 +45,14 @@ public:
   typedef double                                   NT;
   typedef std::size_t                              ID;
   
-  Box(Face_descriptor f, const SM& sm) : Base(triangle(sm, f).bbox()), fd(f) {}
+  Box(Face_descriptor f, const Mesh& sm) : Base(triangle(sm, f).bbox()), fd(f) {}
   Box(const Bbox_3& b, Face_descriptor fd) : Base(b), fd(fd) {}
   Face_descriptor f() const { return fd; }
   ID  id() const { return static_cast<ID>(fd.idx()); }
 };
 
 struct Callback {
-  Callback(const SM& P, const SM& Q, unsigned int& i)
+  Callback(const Mesh& P, const Mesh& Q, unsigned int& i)
     : P(P), Q(Q), count(i)
   {}
 
@@ -68,12 +68,12 @@ struct Callback {
     }
   }
 
-  const SM& P;
-  const SM& Q;
+  const Mesh& P;
+  const Mesh& Q;
   unsigned int& count;
 };
 
-unsigned int intersect(const SM& P, const SM& Q) {
+unsigned int intersect(const Mesh& P, const Mesh& Q) {
   std::vector<Box> P_boxes, Q_boxes;
   std::vector<const Box*> P_box_ptr, Q_box_ptr;
   P_boxes.reserve(P.number_of_faces());
@@ -106,7 +106,7 @@ unsigned int intersect(const SM& P, const SM& Q) {
 int main(int argc, char* argv[])
 {
   std::cout.precision(17);
-  SM P, Q;
+  Mesh P, Q;
 
   if(argc < 3) {
     std::cerr << "Usage: do_intersect <mesh_1.off> <mesh_2.off>" << std::endl;

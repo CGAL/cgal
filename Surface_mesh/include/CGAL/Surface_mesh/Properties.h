@@ -361,48 +361,48 @@ private:
 /// `Property_map` enables to attach properties to the simplices of a 
 ///  surface mesh.
 /// 
-/// @tparam Key The key type of the property map. It must be a `Surface_mesh::Descriptor`.
+/// @tparam Key The key type of the property map. It must be a model of `Index`.
 /// @tparam Value The value type of the property.
 ///
 /// \cgalModels `LvaluePropertyMap`
 ///
-template <class Key, class Value>
+template <class I, class T>
 class Property_map
 /// @cond CGAL_DOCUMENT_INTERNALS
   : public boost::put_get_helper< 
-           typename Property_array<Value>::reference,
-           Property_map< Key, Value > >
+           typename Property_array<T>::reference,
+           Property_map< I, T > >
 /// @endcond
 {
     typedef void (Property_map::*bool_type)() const;
     void this_type_does_not_support_comparisons() const {}
 public:
-    typedef Key key_type;
-    typedef Value value_type;
+    typedef I key_type;
+    typedef T value_type;
     typedef boost::lvalue_property_map_tag category;
 
 #ifndef DOXYGEN_RUNNING
 
-    typedef typename Property_array<Value>::reference reference;
+    typedef typename Property_array<T>::reference reference;
 
-    typedef typename Property_array<Value>::const_reference const_reference;
+    typedef typename Property_array<T>::const_reference const_reference;
 #else 
-    /// A reference to the \c value_type of the property.
+    /// A reference to the value type of the property.
   typedef unspecified_type reference;
 
-    /// A const reference to the \c value_type of the property.
+    /// A const reference to the value type of the property.
   typedef unspecified_type const_reference;
 #endif
 
 #ifndef DOXYGEN_RUNNING
-    friend class Property_container<Key>;
+    friend class Property_container<I>;
 
     template <typename K>  friend class Surface_mesh;
 #endif
 
 public:
 /// @cond CGAL_DOCUMENT_INTERNALS
-    Property_map(Property_array<Value>* p=NULL) : parray_(p) {}
+    Property_map(Property_array<T>* p=NULL) : parray_(p) {}
 
     void reset()
     {
@@ -423,18 +423,18 @@ public:
             &Property_map::this_type_does_not_support_comparisons : 0;
     }
 #endif
-    /// Access the property associated with the key \c k.
-    reference operator[](const Key& k)
+    /// Access the property associated with the key \c i.
+    reference operator[](const I& i)
     {
       CGAL_assertion(parray_ != NULL);
-      return (*parray_)[k.idx()];
+      return (*parray_)[i.idx()];
     }
 
-    /// Access the property associated with the key \c k.
-    reference operator[](const Key& k) const
+    /// Access the property associated with the key \c i.
+    reference operator[](const I& i) const
     {
       CGAL_assertion(parray_ != NULL);
-      return (*parray_)[k.idx()];
+      return (*parray_)[i.idx()];
     }
 
     /// Allows access to the underlying storage of the property. This
@@ -443,7 +443,7 @@ public:
     /// (e.g. rendering).
     ///
     /// \returns a pointer to the underlying storage of the property.
-    const Value* data() const
+    const T* data() const
     {
       CGAL_assertion(parray_ != NULL);
       return parray_->data();
@@ -452,19 +452,19 @@ public:
     //@}
 private:
 
-    Property_array<Value>& array()
+    Property_array<T>& array()
     {
         CGAL_assertion(parray_ != NULL);
         return *parray_;
     }
 
-    const Property_array<Value>& array() const
+    const Property_array<T>& array() const
     {
         CGAL_assertion(parray_ != NULL);
         return *parray_;
     }
 
-    Property_array<Value>* parray_;
+    Property_array<T>* parray_;
 };
 
 

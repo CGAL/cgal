@@ -82,7 +82,7 @@ public:
     ///@{
 
 #ifndef DOXYGEN_RUNNING
-    /// Base class for vertex, halfedge, edge, and face descriptor. 
+    /// Base class for vertex, halfedge, edge, and face index. 
     ///
     /// \attention Note that `Index` is not a model of the concept `Handle`,
     /// because it cannot be dereferenced.
@@ -91,27 +91,27 @@ public:
     class Index
     {
     public:
-        /// Constructor. %Default construction creates an invalid descriptor.
+        /// Constructor. %Default construction creates an invalid index.
         /// We write -1, which is <a href="http://en.cppreference.com/w/cpp/concept/numeric_limits">
         /// <tt>std::numeric_limits<size_type>::max()</tt></a>
         /// as `size_type` is an unsigned type. 
         explicit Index(size_type _idx=-1) : idx_(_idx) {}
 
-        /// Get the underlying index of this descriptor
+        /// Get the underlying index of this index
         size_type idx() const { return idx_; }
 
-        /// reset descriptor to be invalid (index=-1)
+        /// reset index to be invalid (index=-1)
         void reset() { idx_=-1; }
 
-        /// return whether the descriptor is valid, i.e., the index is not equal to -1.
+        /// return whether the index is valid, i.e., the index is not equal to -1.
         bool is_valid() const { return idx_ != -1; }
 
-        /// are two descriptors equal?
+        /// are two indices equal?
         bool operator==(const T& _rhs) const {
             return idx_ == _rhs.idx_;
         }
 
-        /// are two descriptors different?
+        /// are two indices different?
         bool operator!=(const T& _rhs) const {
             return idx_ != _rhs.idx_;
         }
@@ -216,19 +216,19 @@ public:
         /// returns the internal halfedge.
         Halfedge_index halfedge() const { return halfedge_; }
 
-        /// returns the underlying index of this descriptor.
+        /// returns the underlying index of this index.
         size_type idx() const { return halfedge_.idx() / 2; }
 
-        /// resets descriptor to be invalid (index=-1)
+        /// resets index to be invalid (index=-1)
         void reset() { halfedge_.reset(); }
 
-        /// returns whether the descriptor is valid, i.e., the index is not equal to -1.
+        /// returns whether the index is valid, i.e., the index is not equal to -1.
         bool is_valid() const { return halfedge_.is_valid(); }
 
-        /// Are two descriptors equal?
+        /// Are two indices equal?
         bool operator==(const Edge_index& other) const { return this->idx() == other.idx(); }
 
-        /// Are two descriptors different?
+        /// Are two indices different?
         bool operator!=(const Edge_index& other) const { return this->idx() != other.idx(); }
 
         /// compares by index.
@@ -363,7 +363,7 @@ public:
     typedef Index_iterator<Vertex_index> Vertex_iterator;
 #endif 
 
-    /// \brief The range over all vertex descriptors.
+    /// \brief The range over all vertex indices.
     ///
     /// A model of <a href="http://www.boost.org/libs/range/doc/html/range/concepts/bidirectional_range.html">BidirectionalRange</a>.
     /// \sa `vertices()`
@@ -381,7 +381,7 @@ public:
     typedef Index_iterator<Halfedge_index> Halfedge_iterator;
 #endif
 
-    /// \brief The range over all halfedge descriptors.
+    /// \brief The range over all halfedge indices.
     ///
     /// A model of <a href="http://www.boost.org/libs/range/doc/html/range/concepts/bidirectional_range.html">BidirectionalRange</a>.
     /// \sa `halfedges()`
@@ -399,7 +399,7 @@ public:
     typedef Index_iterator<Edge_index> Edge_iterator;
 #endif
 
-    /// \brief The range over all edge descriptors.
+    /// \brief The range over all edge indices.
     ///
     /// A model of <a href="http://www.boost.org/libs/range/doc/html/range/concepts/bidirectional_range.html">BidirectionalRange</a>.
     /// \sa `edges()`
@@ -417,7 +417,7 @@ public:
     typedef Index_iterator<Face_index> Face_iterator;
 #endif
 
-    /// \brief The range over all face descriptors.
+    /// \brief The range over all face indices.
     ///
     /// A model of <a href="http://www.boost.org/libs/range/doc/html/range/concepts/bidirectional_range.html">BidirectionalRange</a>.
     /// \sa `faces()`
@@ -617,7 +617,7 @@ public:
 
    /// \brief This class circulates counterclockwise through all faces around a face.
    ///  A model of `BidirectionalCirculator` with value type `Face_index`.
-   ///  Note that face descriptor is the same after `operator++`, if the faces share 
+   ///  Note that the face index is the same after `operator++`, if the neighboring faces share 
    ///  several halfedges.
 
   typedef  CGAL::Face_around_face_circulator<Surface_mesh> Face_around_face_circulator;
@@ -758,8 +758,8 @@ public:
     template <typename RandomAccessContainer>
     Face_index add_face(const RandomAccessContainer& vertices);
 
-    /// \todo Offer a variadic version
     /// adds a new triangle connecting vertices `v0`, `v1`, `v2`
+    /// \todo Offer a variadic version
     Face_index add_face(Vertex_index v0, Vertex_index v1, Vertex_index v2)
     {
         boost::array<Vertex_index, 3> 
@@ -827,32 +827,70 @@ public:
     /// \name Memory Management
     ///
     /// Functions to check the number of used elements, the amount of space
-    /// allocated for elements, to clear the structure, and to perform
-    /// garbage collection.
+    /// allocated for elements, and to clear the structure.
     ///@{
 
+  /// returns the number of used vertices in the mesh.
   size_type number_of_vertices() const
   {
     return num_vertices() + num_removed_vertices();
   }
  
+  /// returns the number of used halfedges in the mesh.
   size_type number_of_halfedges() const
   {
     return num_halfedges() + num_removed_halfedges();
   }
 
+  /// returns the number of used edges in the mesh.
   size_type number_of_edges() const
   {
     return num_edges() + num_removed_edges();
   }
 
+  /// returns the number of used faces in the mesh.
   size_type number_of_faces() const
   {
     return num_faces() + num_removed_faces();
   }
 
-#ifndef DOXYGEN_RUNNING
-    /// returns the number of used and removed vertices in the mesh.
+    /// returns `true` iff the mesh is empty, i.e., has no used vertices.
+    bool is_empty() const { return num_vertices() == num_removed_vertices(); }
+
+    /// removes all vertices, edges and faces. Collects garbage and clears all properties.
+    void clear();
+
+ 
+    /// reserves space for vertices, halfedges, edges, faces, and their currently
+    /// associated properties.
+    void reserve(size_type nvertices,
+                 size_type nedges,
+                 size_type nfaces )
+    {
+        vprops_.reserve(nvertices);
+        hprops_.reserve(2*nedges);
+        eprops_.reserve(nedges);
+        fprops_.reserve(nfaces);
+    }
+
+
+    ///@}
+
+    
+    /// \name Garbage Collection
+    ///
+    /// While removing elements only marks them as removed
+    /// garbage collection really removes them.
+    /// The API in this section allows to check whether 
+    /// an element is removed, to get the number of
+    /// used and removed elements, and to collect garbage.
+    /// The number of used and removed elements is
+    /// an upperbound on the index, and is needed
+    /// for algorithms that temporarily store a 
+    /// property in a vector of the right size.
+
+    ///@{
+   /// returns the number of used and removed vertices in the mesh.
     size_type num_vertices() const { return (size_type) vprops_.size(); }
 
     /// returns the number of used and removed halfedges in the mesh.
@@ -876,49 +914,7 @@ public:
 
     /// returns the number of removed faces in the mesh.
     size_type num_removed_faces() const { return removed_faces_; }
-#endif
 
-    /// returns `true` iff the mesh is empty, i.e., has no used vertices.
-    bool is_empty() const { return num_vertices() == num_removed_vertices(); }
-
-    /// removes all vertices, edges and faces. Collects garbage and clears all properties.
-    void clear();
-
-    /// @cond CGAL_DOCUMENT_INTERNALS
-    /// removes unused memory from vectors. This shrinks the storage
-    /// of all properties to the minimal required size.
-    /// \attention Invalidates all existing references to properties.
-    void shrink_to_fit()
-    {
-        vprops_.shrink_to_fit();
-        hprops_.shrink_to_fit();
-        eprops_.shrink_to_fit();
-        fprops_.shrink_to_fit();
-    }
-    /// @endcond
-
-    /// reserves space for vertices, halfedges, edges, faces, and their currently
-    /// associated properties.
-    void reserve(size_type nvertices,
-                 size_type nedges,
-                 size_type nfaces )
-    {
-        vprops_.reserve(nvertices);
-        hprops_.reserve(2*nedges);
-        eprops_.reserve(nedges);
-        fprops_.reserve(nfaces);
-    }
-
-    /// checks if any vertices, faces, or edges are marked as removed.
-    /// \sa collect_garbage
-    bool has_garbage() const { return garbage_; }
-
-    /// really removes vertices, edges, and faces which were marked removed.
-    /// \sa `has_garbage()`
-    /// \todo Add a version which creates a property for the previous position
-    /// of an element. We really would need a mapping old->new, but we no longer
-    /// have arrays of the right size for old properties. How to solve that elegantly?
-  void collect_garbage();
 
     /// returns whether vertex `v` is marked removed.
     /// \sa `collect_garbage()`
@@ -944,6 +940,31 @@ public:
     {
         return fremoved_[f];
     }
+
+    /// checks if any vertices, faces, or edges are marked as removed.
+    /// \sa collect_garbage
+    bool has_garbage() const { return garbage_; }
+
+    /// really removes vertices, edges, and faces which were marked removed.
+    /// \sa `has_garbage()`
+    /// \todo Add a version which creates a property for the previous position
+    /// of an element. We really would need a mapping old->new, but we no longer
+    /// have arrays of the right size for old properties. How to solve that elegantly?
+
+    void collect_garbage();
+    /// @cond CGAL_DOCUMENT_INTERNALS
+    /// removes unused memory from vectors. This shrinks the storage
+    /// of all properties to the minimal required size.
+    /// \attention Invalidates all existing references to properties.
+
+    void shrink_to_fit()
+    {
+        vprops_.shrink_to_fit();
+        hprops_.shrink_to_fit();
+        eprops_.shrink_to_fit();
+        fprops_.shrink_to_fit();
+    }
+    /// @endcond
 
     ///@}
 
@@ -1116,40 +1137,6 @@ public:
 
     /// \name Low-Level Connectivity
     ///@{
-
-    /// returns the number of incident halfedges of vertex `v`.
-    size_type degree(Vertex_index v) const;
-
-    /// returns the number of incident halfedges of face `f`.
-    size_type degree(Face_index f) const;
-
-    /// returns an incoming halfedge of vertex `v`.
-    /// If `v` is a border vertex this will be a border halfedge.
-    /// \invariant `target(halfedge(v)) == v`
-    Halfedge_index halfedge(Vertex_index v) const
-    {
-        return vconn_[v].halfedge_;
-    }
-
-    /// sets the incoming halfedge of vertex `v` to `h`.
-    void set_halfedge(Vertex_index v, Halfedge_index h)
-    {
-        vconn_[v].halfedge_ = h;
-    }
-
-    /// returns whether `v` is isolated, i.e., not incident to any face.
-    /// \todo Should it be "not incident to a halfedge"?
-    bool is_isolated(Vertex_index v) const
-    {
-        return !halfedge(v).is_valid();
-    }
-
-    /// returns the vertex the halfedge `h` emanates from.
-    Vertex_index source(Halfedge_index h) const
-    {
-        return target(opposite(h));
-    }
-
     /// returns the vertex the halfedge `h` points to.
     Vertex_index target(Halfedge_index h) const
     {
@@ -1204,16 +1191,54 @@ public:
       set_prev_only(nh, h);
     }
 
+    /// returns an incoming halfedge of vertex `v`.
+    /// If `v` is a border vertex this will be a border halfedge.
+    /// \invariant `target(halfedge(v)) == v`
+    Halfedge_index halfedge(Vertex_index v) const
+    {
+        return vconn_[v].halfedge_;
+    }
+
+    /// sets the incoming halfedge of vertex `v` to `h`.
+    void set_halfedge(Vertex_index v, Halfedge_index h)
+    {
+        vconn_[v].halfedge_ = h;
+    }
+
+
+    /// returns a halfedge of face `f`.
+    Halfedge_index halfedge(Face_index f) const
+    {
+        return fconn_[f].halfedge_;
+    }
+
+    /// sets the halfedge of face `f` to `h`.
+    void set_halfedge(Face_index f, Halfedge_index h)
+    {
+        fconn_[f].halfedge_ = h;
+    }
+
+    /// returns the opposite halfedge of `h`. Note that there is no function `set_opposite()`.
+    Halfedge_index opposite(Halfedge_index h) const
+    {
+        return Halfedge_index((h.idx() & 1) ? h.idx()-1 : h.idx()+1);
+    }
+
+    ///@}
+
+    /// \name Low-Level Connectivity Convenience Functions
+    ///@{
+
+    /// returns the vertex the halfedge `h` emanates from.
+    Vertex_index source(Halfedge_index h) const
+    {
+        return target(opposite(h));
+    }
+
     /// returns the previous halfedge within the incident face.
     Halfedge_index prev(Halfedge_index h) const
     {
         return hconn_[h].prev_halfedge_;
-    }
-
-    /// returns the opposite halfedge of `h`.
-    Halfedge_index opposite(Halfedge_index h) const
-    {
-        return Halfedge_index((h.idx() & 1) ? h.idx()-1 : h.idx()+1);
     }
 
     /// returns `opposite(next(h))`, that is the next halfedge \ref SurfaceMeshOrientation 
@@ -1229,6 +1254,23 @@ public:
     {
         return opposite(next(h));
     }
+
+    /// returns the i'th vertex of edge `e`, for `i=0` or `1`.
+    Vertex_index vertex(Edge_index e, unsigned int i) const
+    {
+        CGAL_assertion(i<=1);
+        return target(halfedge(e, i));
+    }
+
+    /// finds a halfedge between two vertices. Returns a default constructed
+    /// `Halfedge_index`, if  `source` and  `target` are not connected.
+    Halfedge_index halfedge(Vertex_index source, Vertex_index target) const;
+
+    ///@}
+
+
+    /// \name Switching between Halfedges and Edges
+    ///@{
 
     /// returns the edge that contains halfedge `h` as one of its two halfedges.
     Edge_index edge(Halfedge_index h) const
@@ -1249,30 +1291,20 @@ public:
         return Halfedge_index((e.idx() << 1) + i);
     }
 
-    /// returns the i'th vertex of edge `e`, for `i=0` or `1`.
-    Vertex_index vertex(Edge_index e, unsigned int i) const
-    {
-        CGAL_assertion(i<=1);
-        return target(halfedge(e, i));
-    }
+    ///@}
 
-    /// returns a halfedge of face `f`.
-    Halfedge_index halfedge(Face_index f) const
-    {
-        return fconn_[f].halfedge_;
-    }
 
-    /// sets the halfedge of face `f` to `h`.
-    void set_halfedge(Face_index f, Halfedge_index h)
-    {
-        fconn_[f].halfedge_ = h;
-    }
+    /// \name Degree Functions
+    ///@{
 
-    /// finds a halfedge between two vertices. Returns a default constructed
-    /// `Halfedge_index`, if  `source` and  `target` are not connected.
-    Halfedge_index halfedge(Vertex_index source, Vertex_index target) const;
+    /// returns the number of incident halfedges of vertex `v`.
+    size_type degree(Vertex_index v) const;
+
+    /// returns the number of incident halfedges of face `f`.
+    size_type degree(Face_index f) const;
 
     ///@}
+
 
 
     /// \name Borders
@@ -1357,6 +1389,12 @@ public:
   }
 
 
+    /// returns whether `v` is isolated, i.e., not incident to a halfedge.
+    bool is_isolated(Vertex_index v) const
+    {
+        return !halfedge(v).is_valid();
+    }
+
     ///@}
 
 
@@ -1383,45 +1421,45 @@ private: //--------------------------------------------------- property handling
 
 
     /// adds a property map named `name` with value type `T` and default `t`
-    /// for descriptor type `Desc`. Returns an invalid property map if a property
+    /// for index type `I`. Returns an invalid property map if a property
     /// map named `name` already exists.
 
   
-    template<class Desc, class T>
-    Property_map<Desc, T>
+    template<class I, class T>
+    Property_map<I, T>
     add_property_map(const std::string& name, const T t=T()) {
-        return (this->*boost::fusion::at_key<Desc>(pmap_)).template add<T>(name, t);
+        return (this->*boost::fusion::at_key<I>(pmap_)).template add<T>(name, t);
     }
 
  
-    /// returns a property map named `name` with value type `T` for descriptor type `Desc`. 
+    /// returns a property map named `name` with value type `T` for index type `I`. 
     /// Returns an invalid property map, if no property map of
     /// matching type named `name` exists.
-    template <class Desc, class T>
-    Property_map<Desc, T> get_property_map(const std::string& name) const
+    template <class I, class T>
+    Property_map<I, T> property_map(const std::string& name) const
     {
-        return (this->*boost::fusion::at_key<Desc>(pmap_)).template get<T>(name);
+        return (this->*boost::fusion::at_key<I>(pmap_)).template get<T>(name);
     }
 
 
 
   /// @cond CGAL_DOCUMENT_INTERNALS
-    /// retrieves a property with key `Desc` and value type `T` with 
+    /// retrieves a property with key `I` and value type `T` with 
     /// `name`. If no such property exists one is added with the default
     /// value `t`.
-    template <class Desc, class T>
-    Property_map<Desc, T> property_map(const std::string& name, const T t=T())
+    template <class I, class T>
+    Property_map<I, T> property_map(const std::string& name, const T t=T())
     {
-        return (this->*boost::fusion::at_key<Desc>(pmap_)).template get_or_add<T>(name, t);
+        return (this->*boost::fusion::at_key<I>(pmap_)).template get_or_add<T>(name, t);
     }
   /// @endcond
 
     /// removes property map `p`. The memory allocated for that property map is
     /// freed.
-    template<class Desc, class T>
-    void remove_property_map(Property_map<Desc, T>& p)
+    template<class I, class T>
+    void remove_property_map(Property_map<I, T>& p)
     {
-        (this->*boost::fusion::at_key<Desc>(pmap_)).remove(p);
+        (this->*boost::fusion::at_key<I>(pmap_)).remove(p);
     }
 
     /// @cond CGAL_DOCUMENT_INTERNALS
@@ -1429,21 +1467,21 @@ private: //--------------------------------------------------- property handling
     /// property identified by `name`.  `typeid(void)` if `name`
     /// does not identify any property.
     ///
-    /// @tparam Desc The key type of the property. 
+    /// @tparam I The key type of the property. 
 
-    template<class Desc>
-    const std::type_info& get_property_type(const std::string& name)
+    template<class I>
+    const std::type_info& property_type(const std::string& name)
     {
-        return (this->*boost::fusion::at_key<Desc>(pmap_)).get_type(name);
+        return (this->*boost::fusion::at_key<I>(pmap_)).get_type(name);
     }
   /// @endcond
 
-    /// returns a list of all strings that describe properties with the key type `Desc`.
-    /// @tparam Desc The key type of the properties.
-    template<class Desc>
+    /// returns a list of all strings that describe properties with the key type `I`.
+    /// @tparam I The key type of the properties.
+    template<class I>
     std::vector<std::string> properties() const
     {
-        return (this->*boost::fusion::at_key<Desc>(pmap_)).properties();
+        return (this->*boost::fusion::at_key<I>(pmap_)).properties();
     }
 
     /// returns the property for "v:point".
@@ -1548,6 +1586,25 @@ private: //------------------------------------------------------- private data
   {
     return is;
   }
+
+ 
+  /// \relates Surface_mesh
+  /// returns an existing property map for a vertex, halfedge, edge, or face.
+  template <typename P, typename PropertyTag>
+  boost::property_map<Surface_mesh<P>, PropertyTag >::type
+  get(PropertyTag pt, const Surface_mesh<P>& sm);
+
+  /// \relates Surface_mesh
+  /// returns a new property map for a vertex, halfedge, edge, or face.
+  template <typename P, typename PropertyTag>
+  boost::property_map<Surface_mesh<P>, PropertyTag >::type
+  add(PropertyTag pt, const Surface_mesh<P>& sm); 
+
+/// \relates Surface_mesh
+  /// removes a property map for a vertex, halfedge, edge, or face.
+  template <typename P, typename PropertyTag>
+  void
+  remove(boost::property_map<Surface_mesh<P>,PropertyTag >::type pm, const Surface_mesh<P>& sm);
  /*! @} */
 
 template <typename P>
@@ -1856,7 +1913,7 @@ Surface_mesh<P>::add_face(const RandomAccessContainer& vertices)
                     return Face_index();
                 }
 
-                // other halfedges' descriptors
+                // other halfedges' indices
                 patch_start = next(inner_prev);
                 patch_end   = prev(inner_next);
 
@@ -1934,7 +1991,7 @@ Surface_mesh<P>::add_face(const RandomAccessContainer& vertices)
             needs_adjust[ii] = true; // (halfedge(v) == inner_next); the code is over adjusting
         }
 
-        // set face descriptor
+        // set face index
         set_face(halfedges[i], f);
     }
 
@@ -1947,7 +2004,7 @@ Surface_mesh<P>::add_face(const RandomAccessContainer& vertices)
 
 
 
-    // adjust vertices' halfedge descriptor
+    // adjust vertices' halfedge index
     for (i=0; i<n; ++i)
       if (true) //(needs_adjust[i])
             adjust_incoming_halfedge(vertices[i]);
@@ -2009,7 +2066,7 @@ collect_garbage()
     Face_index      f;
 
 
-    // setup descriptor mapping
+    // setup index mapping
     Property_map<Vertex_index, Vertex_index>      vmap = add_property_map<Vertex_index, Vertex_index>("v:garbage-collection");
     Property_map<Halfedge_index, Halfedge_index>  hmap = add_property_map<Halfedge_index, Halfedge_index>("h:garbage-collection");
     Property_map<Face_index, Face_index>          fmap = add_property_map<Face_index, Face_index>("f:garbage-collection");
@@ -2107,14 +2164,14 @@ collect_garbage()
     }
 
 
-    // update descriptors of faces
+    // update indices of faces
     for (i=0; i<nF; ++i)
     {
         f = Face_index(i);
         set_halfedge(f, hmap[halfedge(f)]);
     }
 
-    // remove descriptor maps
+    // remove index maps
     remove_property_map<Vertex_index>(vmap);
     remove_property_map<Halfedge_index>(hmap);
     remove_property_map<Face_index>(fmap);

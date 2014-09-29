@@ -13,8 +13,8 @@ typedef K::Point_3 Point;
 typedef K::Plane_3 Plane;
 typedef K::Vector_3 Vector;
 typedef K::Segment_3 Segment;
-typedef CGAL::Surface_mesh<Point> Polyhedron;
-typedef CGAL::AABB_face_graph_triangle_primitive<Polyhedron> Primitive;
+typedef CGAL::Surface_mesh<Point> Mesh;
+typedef CGAL::AABB_face_graph_triangle_primitive<Mesh> Primitive;
 typedef CGAL::AABB_traits<K, Primitive> Traits;
 typedef CGAL::AABB_tree<Traits> Tree;
 typedef boost::optional< Tree::Intersection_and_primitive_id<Segment>::Type > Segment_intersection;
@@ -27,11 +27,11 @@ int main()
     Point q(0.0, 1.0, 0.0);
     Point r(0.0, 0.0, 1.0);
     Point s(0.0, 0.0, 0.0);
-    Polyhedron polyhedron;
-    // polyhedron.make_tetrahedron(p, q, r, s);
+    Mesh m;
+    // m.make_tetrahedron(p, q, r, s);
 
     // constructs AABB tree
-    Tree tree(polyhedron.faces_begin(),polyhedron.faces_end(),polyhedron);
+    Tree tree(m.faces_begin(),m.faces_end(),m);
 #if 0
     // constructs segment query
     Point a(-0.2, 0.2, -0.2);

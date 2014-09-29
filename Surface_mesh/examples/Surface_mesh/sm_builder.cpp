@@ -25,12 +25,12 @@ public:
 };
 
 typedef CGAL::Simple_cartesian<double>     Kernel;
-typedef CGAL::Surface_mesh<Kernel::Point_3> Surface;
+typedef CGAL::Surface_mesh<Kernel::Point_3> Mesh;
 
 int main() {
-    Surface S;
-    Build_triangle<Surface> triangle;
-    triangle(S);
-    //CGAL_assertion( P.is_triangle( P.halfedges_begin()));
+    Mesh mesh;
+    Build_triangle<Mesh> triangle;
+    triangle(mesh);
+    //CGAL_assertion( mesh.is_triangle( * mesh.halfedges_begin()));
     return 0;
 }
