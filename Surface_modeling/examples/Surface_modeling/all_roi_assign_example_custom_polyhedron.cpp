@@ -43,7 +43,7 @@ struct Custom_point_3{
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/boost/graph/properties_Polyhedron_3.h>
 
-#include <CGAL/Deform_mesh.h>
+#include <CGAL/Surface_mesh_deformation.h>
 
 struct Custom_traits{
   typedef Custom_point_3 Point_3;
@@ -63,7 +63,7 @@ typedef std::map<halfedge_descriptor, std::size_t>     Internal_hedge_map;
 typedef boost::associative_property_map<Internal_vertex_map>   Vertex_index_map;
 typedef boost::associative_property_map<Internal_hedge_map>     Hedge_index_map;
 
-typedef CGAL::Deform_mesh<Polyhedron, Vertex_index_map, Hedge_index_map> Deform_mesh;
+typedef CGAL::Surface_mesh_deformation<Polyhedron, Vertex_index_map, Hedge_index_map> Surface_mesh_deformation;
 
 int main()
 {
@@ -93,7 +93,7 @@ int main()
     put(hedge_index_map, *eb, counter);
   }
 
-  Deform_mesh deform_mesh(mesh, vertex_index_map, hedge_index_map);
+  Surface_mesh_deformation deform_mesh(mesh, vertex_index_map, hedge_index_map);
 
   // Insert the whole mesh as region of interest
   boost::tie(vb, ve) = vertices(mesh);
@@ -114,7 +114,7 @@ int main()
 
   // Use set_target_position() to set the constained position
   // of control_1. control_2 remains at the last assigned positions
-  Deform_mesh::Point constrained_pos_1(-0.35, 0.40, 0.60);
+  Surface_mesh_deformation::Point constrained_pos_1(-0.35, 0.40, 0.60);
   deform_mesh.set_target_position(control_1, constrained_pos_1);
 
   // Deform the mesh, the positions of vertices of 'mesh' are updated
@@ -123,7 +123,7 @@ int main()
   deform_mesh.deform();
 
   // Set the constained position of control_2
-  Deform_mesh::Point constrained_pos_2(0.55, -0.30, 0.70);
+  Surface_mesh_deformation::Point constrained_pos_2(0.55, -0.30, 0.70);
   deform_mesh.set_target_position(control_2, constrained_pos_2);
 
 
@@ -145,7 +145,7 @@ int main()
     return 1;
   }
 
-  Deform_mesh::Point constrained_pos_3(0.55, 0.30, -0.70);
+  Surface_mesh_deformation::Point constrained_pos_3(0.55, 0.30, -0.70);
   deform_mesh.set_target_position(control_3, constrained_pos_3);
 
   deform_mesh.deform(15, 0.0);
