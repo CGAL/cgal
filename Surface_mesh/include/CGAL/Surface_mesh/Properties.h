@@ -31,6 +31,8 @@
 
 namespace CGAL {
 
+#ifndef DOXYGEN_RUNNING
+
 /// \addtogroup PkgSurface_mesh
 ///
 /// @{
@@ -470,7 +472,7 @@ private:
 
 
 ///@}
-  
+#endif // DOXYGEN_RUNNING  
 } // CGAL
 
 //=============================================================================

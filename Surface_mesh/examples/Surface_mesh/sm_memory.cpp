@@ -33,7 +33,7 @@ int main()
   }
   
   // The status of being used or removed is stored in a property map
-  CGAL::Property_map<Mesh::Vertex_index,bool> removed
+  Mesh::Property_map<Mesh::Vertex_index,bool> removed
     = m.get_property_map<Mesh::Vertex_index,bool>("v:removed");
  
   

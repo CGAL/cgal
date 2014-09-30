@@ -27,7 +27,7 @@ int main()
   m.add_property_map<face_descriptor,bool>("f:my_property", false);
   
   // give each vertex a name, the default is empty
-  CGAL::Property_map<vertex_descriptor,std::string> name 
+  Mesh::Property_map<vertex_descriptor,std::string> name 
     = m.add_property_map<vertex_descriptor,std::string>("v:name", "noname");
 
   // add some names to the vertices
@@ -35,7 +35,7 @@ int main()
   name[v2] = "world";
   
   // retrieve the point property
-  CGAL::Property_map<vertex_descriptor, K::Point_3> location = m.points();
+  Mesh::Property_map<vertex_descriptor, K::Point_3> location = m.points();
   BOOST_FOREACH( vertex_descriptor vd, m.vertices()) { 
     std::cout << name[vd] << " @ " << location[vd] << std::endl;
   }

@@ -30,7 +30,6 @@ and faces is much simpler and can be used at runtime and not at compile time.}
 ## Classes ##
 
 - `CGAL::Surface_mesh<P>`
-- `CGAL::Property_map<Key,Value>`
                 
 */
 
