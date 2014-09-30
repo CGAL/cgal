@@ -1887,6 +1887,7 @@ private: //--------------------------------------------------- property handling
 
 #endif
 
+#if 0
     /// adds a property map named `name` with value type `T` and default `t`
     /// for index type `I`. Returns an invalid property map if a property
     /// map named `name` already exists.
@@ -1897,25 +1898,24 @@ private: //--------------------------------------------------- property handling
     add_property_map(const std::string& name, const T t=T()) {
         return (this->*boost::fusion::at_key<I>(pmap_)).template add<T>(name, t);
     }
-
+#endif
  
-    /// returns a property map named `name` with value type `T` for index type `I`. 
-    /// Returns an invalid property map, if no property map of
-    /// matching type named `name` exists.
+    /// returns a property map named `name` with key type `I` and value type `T`, and a Boolean 
+    /// that is `true` if the property map gets newly created.
     template <class I, class T>
-    Property_map<I, T> property_map(const std::string& name) const
+    std::pair<Property_map<I, T>,bool> property_map(const std::string& name, const T& t=T()) const
     {
-        return (this->*boost::fusion::at_key<I>(pmap_)).template get<T>(name);
+      return (this->*boost::fusion::at_key<I>(pmap_)).template get<T>(name, t);
     }
 
 
 
   /// @cond CGAL_DOCUMENT_INTERNALS
-    /// retrieves a property with key `I` and value type `T` with 
+    /// returns a property map with key `I` and value type `T` with 
     /// `name`. If no such property exists one is added with the default
     /// value `t`.
     template <class I, class T>
-    Property_map<I, T> property_map(const std::string& name, const T t=T())
+    std::pair<Property_map<I, T>, bool> property_map(const std::string& name, const T t=T())
     {
         return (this->*boost::fusion::at_key<I>(pmap_)).template get_or_add<T>(name, t);
     }
