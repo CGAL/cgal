@@ -348,36 +348,26 @@ private: //------------------------------------------------------ iterator types
         const Surface_mesh* mesh_;
     };
 public:
-    /// \name Iterator and Range Types
+    /// \name Range Types
     ///
     ///@{
 
-    /// \brief This class iterates linearly over all vertices. 
-    ///
-    /// A model of `BidirectionalIterator` with value type `Vertex_index`.
-    /// \sa `vertices()`
-    /// \sa `Halfedge_iterator`, `Edge_iterator`, `Face_iterator`
-#ifdef DOXYGEN_RUNNING
-  typedef unspecified_type Vertex_iterator;
-#else
+#ifndef DOXYGEN_RUNNING
     typedef Index_iterator<Vertex_index> Vertex_iterator;
-#endif 
+#endif
 
     /// \brief The range over all vertex indices.
     ///
     /// A model of <a href="http://www.boost.org/libs/range/doc/html/range/concepts/bidirectional_range.html">BidirectionalRange</a>.
     /// \sa `vertices()`
     /// \sa `Halfedge_range`, `Edge_range`, `Face_range`
-    typedef Range<Vertex_iterator> Vertex_range;
-
-    /// \brief This class iterates linearly over all halfedges.
-    ///
-    /// A model of `BidirectionalIterator` with value type `Halfedge_index`.
-    /// \sa `halfedges()`
-    /// \sa `Vertex_iterator`, `Edge_iterator`, `Face_iterator`
 #ifdef DOXYGEN_RUNNING
-  typedef unspecified_type Halfedge_iterator;
+    typedef unspecified_type Vertex_range;
 #else
+    typedef Range<Vertex_iterator> Vertex_range;
+#endif
+
+#ifndef DOXYGEN_RUNNING
     typedef Index_iterator<Halfedge_index> Halfedge_iterator;
 #endif
 
@@ -386,16 +376,13 @@ public:
     /// A model of <a href="http://www.boost.org/libs/range/doc/html/range/concepts/bidirectional_range.html">BidirectionalRange</a>.
     /// \sa `halfedges()`
     /// \sa `Vertex_range`, `Edge_range`, `Face_range`
-    typedef Range<Halfedge_iterator> Halfedge_range;
-
-    /// \brief This class iterates linearly over all edges.
-    ///
-    /// A model of `BidirectionalIterator` with value type `Halfedge_index`.
-    /// \sa `edges()`
-    /// \sa `Vertex_iterator`, `Halfedge_iterator`, `Face_iterator`
 #ifdef DOXYGEN_RUNNING
-  typedef unspecified_type Edge_iterator;
+    typedef unspecified_type Halfedge_range;
 #else
+    typedef Range<Halfedge_iterator> Halfedge_range;
+#endif
+
+#ifndef DOXYGEN_RUNNING
     typedef Index_iterator<Edge_index> Edge_iterator;
 #endif
 
@@ -404,17 +391,15 @@ public:
     /// A model of <a href="http://www.boost.org/libs/range/doc/html/range/concepts/bidirectional_range.html">BidirectionalRange</a>.
     /// \sa `edges()`
     /// \sa `Halfedge_range`, `Vertex_range`, `Face_range`
-    typedef Range<Edge_iterator> Edge_range;
-
-    /// \brief This class iterates linearly over all faces.
-    ///
-    /// A model of `BidirectionalIterator` with value type `Face_index`.
-    /// \sa `faces()`
-    /// \sa `Vertex_iterator`, `Halfedge_iterator`, `Edge_iterator`
 #ifdef DOXYGEN_RUNNING
-  typedef unspecified_type Face_iterator;
+    typedef unspecified_type Edge_range;
 #else
-    typedef Index_iterator<Face_index> Face_iterator;
+    typedef Range<Edge_iterator> Edge_range;
+#endif
+
+
+#ifndef DOXYGEN_RUNNING
+  typedef unspecified_type Face_iterator;
 #endif
 
     /// \brief The range over all face indices.
@@ -422,9 +407,25 @@ public:
     /// A model of <a href="http://www.boost.org/libs/range/doc/html/range/concepts/bidirectional_range.html">BidirectionalRange</a>.
     /// \sa `faces()`
     /// \sa `Vertex_range`, `Halfedge_range`, `Edge_range`
-    typedef Range<Face_iterator> Face_range;
+ #ifdef DOXYGEN_RUNNING
+    typedef unspecified_type Face_range;
+#else
+   typedef Range<Face_iterator> Face_range;
+#endif
 
+#ifdef DOXYGEN_RUNNING 
+  typedef unspecified_type Vertex_around_target_range;
 
+  typedef unspecified_type Halfedge_around_target_range;
+
+  typedef unspecified_type Face_around_target_range;
+
+  typedef unspecified_type Vertex_around_face_range;
+
+  typedef unspecified_type Halfedge_around_face_range;
+
+  typedef unspecified_type Face_around_face_range;
+#else
   typedef CGAL::Vertex_around_target_iterator<Surface_mesh> Vertex_around_target_iterator;
   typedef Range<Vertex_around_target_iterator> Vertex_around_target_range;
 
@@ -442,7 +443,7 @@ public:
 
   typedef CGAL::Face_around_face_iterator<Surface_mesh>  Face_around_face_iterator;
   typedef Range<Face_around_face_iterator> Face_around_face_range;
-
+#endif
 
     /// @cond CGAL_BEGIN_END
     /// Start iterator for vertices.
@@ -567,6 +568,8 @@ public:
 
 
 public: 
+
+#ifndef DOXYGEN_RUNNING
     /// \name Circulator Types
     ///
     /// The following circulators enable to iterate through the elements around a face or vertex.
@@ -622,6 +625,7 @@ public:
 
   typedef  CGAL::Face_around_face_circulator<Surface_mesh> Face_around_face_circulator;
   /// @}
+#endif
 
   /// @cond CGAL_DOCUMENT_INTERNALS
   // typedefs which make it easier to write the partial specialisation of boost::graph_traits
@@ -902,6 +906,7 @@ public:
     /// returns the number of used and removed faces in the mesh.
     size_type num_faces() const { return (size_type) fprops_.size(); }
 
+#ifndef DOXYGEN_RUNNING
 
     /// returns the number of removed vertices in the mesh.
     size_type num_removed_vertices() const { return removed_vertices_; }
@@ -915,6 +920,7 @@ public:
     /// returns the number of removed faces in the mesh.
     size_type num_removed_faces() const { return removed_faces_; }
 
+#endif
 
     /// returns whether vertex `v` is marked removed.
     /// \sa `collect_garbage()`
@@ -1588,23 +1594,6 @@ private: //------------------------------------------------------- private data
   }
 
  
-  /// \relates Surface_mesh
-  /// returns an existing property map for a vertex, halfedge, edge, or face.
-  template <typename P, typename PropertyTag>
-  boost::property_map<Surface_mesh<P>, PropertyTag >::type
-  get(PropertyTag pt, const Surface_mesh<P>& sm);
-
-  /// \relates Surface_mesh
-  /// returns a new property map for a vertex, halfedge, edge, or face.
-  template <typename P, typename PropertyTag>
-  boost::property_map<Surface_mesh<P>, PropertyTag >::type
-  add(PropertyTag pt, const Surface_mesh<P>& sm); 
-
-/// \relates Surface_mesh
-  /// removes a property map for a vertex, halfedge, edge, or face.
-  template <typename P, typename PropertyTag>
-  void
-  remove(boost::property_map<Surface_mesh<P>,PropertyTag >::type pm, const Surface_mesh<P>& sm);
  /*! @} */
 
 template <typename P>

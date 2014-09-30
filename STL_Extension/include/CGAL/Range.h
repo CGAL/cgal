@@ -30,6 +30,8 @@ namespace CGAL {
   {
     typedef std::pair<T,T> Base;
 
+    typedef T iterator;
+
     Range(const T&b, const T& e)
       : Base(b,e)
     {}
