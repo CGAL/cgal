@@ -801,6 +801,10 @@ private: //------------------------------------------------------ iterator types
 public:
     /// \name Range Types
     ///
+    /// Each range `R` in this section has a nested type `R::iterator`, 
+    /// is convertible to `std:pair<R::iterator,R::iterator`, so that one can use `boost::tie()`,
+    /// and can be used with `BOOST_FOREACH()`, as well as with the Cxx11 `for(..)` loop for ranges.
+
     ///@{
 
 #ifndef DOXYGEN_RUNNING
@@ -815,7 +819,7 @@ public:
 #ifdef DOXYGEN_RUNNING
     typedef unspecified_type Vertex_range;
 #else
-    typedef Range<Vertex_iterator> Vertex_range;
+    typedef iterator_range<Vertex_iterator> Vertex_range;
 #endif
 
 #ifndef DOXYGEN_RUNNING
@@ -830,7 +834,7 @@ public:
 #ifdef DOXYGEN_RUNNING
     typedef unspecified_type Halfedge_range;
 #else
-    typedef Range<Halfedge_iterator> Halfedge_range;
+    typedef iterator_range<Halfedge_iterator> Halfedge_range;
 #endif
 
 #ifndef DOXYGEN_RUNNING
@@ -845,7 +849,7 @@ public:
 #ifdef DOXYGEN_RUNNING
     typedef unspecified_type Edge_range;
 #else
-    typedef Range<Edge_iterator> Edge_range;
+    typedef iterator_range<Edge_iterator> Edge_range;
 #endif
 
 
@@ -861,39 +865,28 @@ public:
  #ifdef DOXYGEN_RUNNING
     typedef unspecified_type Face_range;
 #else
-   typedef Range<Face_iterator> Face_range;
+   typedef iterator_range<Face_iterator> Face_range;
 #endif
 
-#ifdef DOXYGEN_RUNNING 
-  typedef unspecified_type Vertex_around_target_range;
+#ifndef DOXYGEN_RUNNING 
 
-  typedef unspecified_type Halfedge_around_target_range;
-
-  typedef unspecified_type Face_around_target_range;
-
-  typedef unspecified_type Vertex_around_face_range;
-
-  typedef unspecified_type Halfedge_around_face_range;
-
-  typedef unspecified_type Face_around_face_range;
-#else
   typedef CGAL::Vertex_around_target_iterator<Surface_mesh> Vertex_around_target_iterator;
-  typedef Range<Vertex_around_target_iterator> Vertex_around_target_range;
+  typedef iterator_range<Vertex_around_target_iterator> Vertex_around_target_range;
 
   typedef CGAL::Halfedge_around_target_iterator<Surface_mesh>  Halfedge_around_target_iterator;
-  typedef Range<Halfedge_around_target_iterator> Halfedge_around_target_range;
+  typedef iterator_range<Halfedge_around_target_iterator> Halfedge_around_target_range;
 
   typedef CGAL::Face_around_target_iterator<Surface_mesh>  Face_around_target_iterator;
-  typedef Range<Face_around_target_iterator> Face_around_target_range;
+  typedef iterator_range<Face_around_target_iterator> Face_around_target_range;
 
   typedef CGAL::Vertex_around_face_iterator<Surface_mesh>  Vertex_around_face_iterator;
-  typedef Range<Vertex_around_face_iterator> Vertex_around_face_range;
+  typedef iterator_range<Vertex_around_face_iterator> Vertex_around_face_range;
 
   typedef CGAL::Halfedge_around_face_iterator<Surface_mesh>  Halfedge_around_face_iterator;
-  typedef Range<Halfedge_around_face_iterator> Halfedge_around_face_range;
+  typedef iterator_range<Halfedge_around_face_iterator> Halfedge_around_face_range;
 
   typedef CGAL::Face_around_face_iterator<Surface_mesh>  Face_around_face_iterator;
-  typedef Range<Face_around_face_iterator> Face_around_face_range;
+  typedef iterator_range<Face_around_face_iterator> Face_around_face_range;
 #endif
 
     /// @cond CGAL_BEGIN_END
@@ -979,6 +972,7 @@ public:
       return make_range(faces_begin(), faces_end());
     }
 
+#ifndef DOXYGEN_RUNNING
     /// returns the iterator range for vertices around vertex `target(h)`, starting at `source(h)`.
     Vertex_around_target_range vertices_around_target(Halfedge_index h) const
     {
@@ -1014,6 +1008,8 @@ public:
     {
        return CGAL::faces_around_face(h,*this);
     }
+
+#endif
 
     ///@}
 
@@ -1341,8 +1337,8 @@ public:
     /// used and removed elements, and to collect garbage.
     /// The number of used and removed elements is
     /// an upperbound on the index, and is needed
-    /// for algorithms that temporarily store a 
-    /// property in a vector of the right size.
+    /// by algorithms that temporarily store a 
+    /// property in a vector of the appropriate size.
 
     ///@{
    /// returns the number of used and removed vertices in the mesh.
@@ -1461,8 +1457,8 @@ public:
     /// \name Validity Checks
     ///
     /// Functions in this group perform checks for structural
-    /// consistency of the object. They are expensive and should only
-    /// be used in debug configurations.
+    /// consistency of a complete surface mesh, or an individual element. 
+    /// They are expensive and should only be used in debug configurations.
 
     ///@{
 

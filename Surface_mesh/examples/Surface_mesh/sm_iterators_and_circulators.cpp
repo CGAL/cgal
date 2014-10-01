@@ -46,17 +46,17 @@ int main()
 
   {
     std::cout << "vertices around vertex " << v << std::endl;
-    Mesh::Vertex_around_target_circulator vbegin(m.halfedge(v),m), vend(vbegin);
+    CGAL::Vertex_around_target_circulator<Mesh> vbegin(m.halfedge(v),m), done(vbegin);
 
     do {
       std::cout << *vbegin++ << std::endl;
-    } while(vbegin != vend);
+    } while(vbegin != done);
   }
    
   { 
     std::cout << "vertices around face " << f << std::endl;
-    Mesh::Vertex_around_face_iterator vbegin, vend;
-    for(boost::tie(vbegin, vend) = m.vertices_around_face(m.halfedge(f));
+    CGAL::Vertex_around_face_iterator<Mesh> vbegin, vend;
+    for(boost::tie(vbegin, vend) = vertices_around_face(m.halfedge(f), m);
         vbegin != vend; 
         ++vbegin){
       std::cout << *vbegin << std::endl;

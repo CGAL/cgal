@@ -119,16 +119,22 @@ user might encounter.
 - `CGAL::HalfedgeDS_face_max_base_with_id`
 - `CGAL::Polyhedron_items_with_id_3`
 
-## Iterators and Circulators ##
+## Iterators ##
 - `CGAL::Halfedge_around_source_iterator`
 - `CGAL::Halfedge_around_target_iterator`
 - `CGAL::Halfedge_around_face_iterator`
-- `CGAL::Halfedge_around_source_circulator`
-- `CGAL::Halfedge_around_target_circulator`
-- `CGAL::Halfedge_around_face_circulator`
+- `CGAL::Vertex_around_target_iterator`
+- `CGAL::Face_around_target_iterator`
 - `CGAL::halfedges_around_source`
 - `CGAL::halfedges_around_target`
 - `CGAL::halfedges_around_face`
+
+## Circulators ##
+- `CGAL::Halfedge_around_source_circulator`
+- `CGAL::Halfedge_around_target_circulator`
+- `CGAL::Halfedge_around_face_circulator`
+- `CGAL::Vertex_around_target_circulator`
+- `CGAL::Face_around_target_circulator`
 
 ## Euler Operations ##
 

@@ -56,7 +56,7 @@ m.add_face(u, v, w);
 \endcode
 
 As `Surface_mesh` is index-based `Vertex_index`, `Face_index`, 
-`Halfedge_index` and `Edge_descriptor`
+`Halfedge_index` and `Edge_index`
 don't have member functions to access connectivity or properties.
 The functions of the `Surface_mesh` instance they were
 created from needs to be used to obtain that information.
@@ -76,7 +76,7 @@ in a surface mesh:  `Surface_mesh::opposite()`, `Surface_mesh::next()`,
 `Surface_mesh::prev()`, `Surface_mesh::target()`, and 
 `Surface_mesh::face()`.  What is not illustrated are the
 functions `Surface_mesh::halfedge()` overloaded for 
-`Surface_mesh::Vertex_descriptor` and `Surface_mesh::Face_descriptor`.
+`Surface_mesh::Vertex_index` and `Surface_mesh::Face_index`.
 Alternatively, one may use the free functions with the same names
 defined in the package \ref PkgBGLSummary.
 
@@ -102,30 +102,29 @@ returning ranges of elements which are compatible with the
 <a href="http://www.boost.org/libs/range/doc/html/index.html">Boost.Range</a>
 library. 
 
-It further provides circulators around faces and around vertices.
+Circulators around faces and around vertices are provided as class templates 
+in the package \ref PkgBGLSummary.
+
 Circulators around faces basically call `Surface_mesh::next()`
 in order to go from halfedge to halfedge counterclockwise around the face, and 
 when dereferenced return the halfedge or the incident vertex or the opposite face.
 
-- `Surface_mesh::Halfedge_around_face_circulator`
-- `Surface_mesh::Vertex_around_face_circulator`
-- `Surface_mesh::Face_around_face_circulator`
+- `CGAL::Halfedge_around_face_circulator<Mesh>`
+- `CGAL::Vertex_around_face_circulator<Mesh>`
+- `CGAL::Face_around_face_circulator<Mesh>`
 
 Circulators around the target vertex of an edge basically
 call `Surface_mesh::opposite(Surface_mesh::next())` in order
 to go from halfedge to halfedge clockwise around the same target vertex.
 
-- `Surface_mesh::Halfedge_around_target_circulator`
-- `Surface_mesh::Vertex_around_target_circulator`
-- `Surface_mesh::Face_around_target_circulator`
+- `CGAL::Halfedge_around_target_circulator<Mesh>`
+- `CGAL::Vertex_around_target_circulator<Mesh>`
+- `CGAL::Face_around_target_circulator<Mesh>`
 
 All circulators model `BidirectionalCirculator`. In addition to that
 they also support a conversion to `bool` for more convenient checking
 of emptiness.
 
-For all these circulators exist corresponding iterators. 
-These circulators and iterators around faces and vertices 
-are implemented as class templates  in the package \ref PkgBGLSummary.
 
 \subsection iterators_example Example
 
@@ -151,7 +150,7 @@ One property is maintained by default, namely \c "v:point". The value of
 this property has to be supplied when adding a new point to the data
 structure via `Surface_mesh::add_vertex()`. The property can be
 directly accessed using `Surface_mesh::points()` or
-`Surface_mesh::point(Surface_mesh::Vertex_descriptor v)`.
+`Surface_mesh::point(Surface_mesh::Vertex_index v)`.
 
 \subsection properties_example Example
 
@@ -165,13 +164,13 @@ A halfedge `h` is on the border, if it has no associated face, that is if
 `sm.face(h) == Surface_mesh::null_face()`.  An edge is on the border,
 if any of its halfedges is on the border.  A vertex is on the border,
 if any of its incident halfedges is on the border. In order to make 
-`Surface_mesh::is_border(Vertex_descriptor v)` a constant time 
+`Surface_mesh::is_border(Vertex_index v)` a constant time 
 operation, this function only checks if the halfedge associated to `v`
 is a border halfedge. The user is in charge to correctly set the halfedge
 associated to a vertex after having applied an operation that might invalidate 
 this property.
-The functions `Surface_mesh::fix_constant_border_property(Vertex_descriptor v)`,
-`Surface_mesh::fix_constant_border_property(Halfedge_descriptor h)`, and 
+The functions `Surface_mesh::fix_constant_border_property(Vertex_index v)`,
+`Surface_mesh::fix_constant_border_property(Halfedge_index h)`, and 
  `Surface_mesh::fix_constant_border_property()` allow to restore this property 
 for a single vertex `v`, for all vertices on the boundary of the
 face of `h`, and for all vertices of the surface mesh, respectively.
@@ -207,7 +206,7 @@ Again, there are similar types and functions:
 
 | BGL   | %Surface_mesh |
 | :---- | :----        |
-| `boost::graph_traits<G>::halfedge_descriptor` | `Surface_mesh::Halfedge_descriptor` |
+| `boost::graph_traits<G>::halfedge_descriptor` | `Surface_mesh::Halfedge_index` |
 | `hd = next(hd, g)` | `hd = sm.next(hd)` |
 | `hd = opposite(hd,g)` | `hd = sm.opposite(hd)` |
 | `hd = halfedge(vd,g)` | `hd = sm.halfedge(vd)` |
