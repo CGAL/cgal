@@ -1205,9 +1205,9 @@ public:
       }
     }
 
-    /// adds a new face with vertices from a random access container.
-    template <typename RandomAccessContainer>
-    Face_index add_face(const RandomAccessContainer& vertices);
+    /// adds a new face with vertices from a ranges.
+    template <typename Range>
+    Face_index add_face(const Range& vertices);
 
 
     /// adds a new triangle connecting vertices `v0`, `v1`, `v2`
@@ -2284,9 +2284,9 @@ adjust_incoming_halfedge(Vertex_index v)
  /// @cond CGAL_DOCUMENT_INTERNALS
 
 template <typename P>
-template <typename RandomAccessContainer>
+template <typename Range>
 typename Surface_mesh<P>::Face_index
-Surface_mesh<P>::add_face(const RandomAccessContainer& vertices)
+Surface_mesh<P>::add_face(const Range& vertices)
 {
     Vertex_index                   v;
     unsigned int             i, ii, n((int)vertices.size()), id;
