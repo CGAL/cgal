@@ -60,6 +60,66 @@ namespace CGAL {
   }
 };
 
+  template <typename T>
+  iterator_range<T>
+  make_range(const T& b, const T&e)
+  {
+    return iterator_range<T>(b,e);
+  }
+
+  template<typename T>
+  inline T range_begin( iterator_range<T> & x )
+  {
+    return x.first;
+  }
+  
+  template<typename T>
+  inline T range_end( iterator_range<T> & x )
+  {
+    return x.second;
+  }
+  
+  template<typename T>
+  inline T range_begin(const iterator_range<T>& x )
+  {
+    return x.first;
+  }
+  
+  template<typename T>
+  inline T range_end(const iterator_range<T>& x )
+  {
+    return x.second;
+  }  
 } // namespace CGAL
 
+namespace boost {
+  
+  template <typename X> 
+  struct range_iterator;
+
+  template <typename X> 
+  struct range_mutable_iterator;
+
+  template <typename X> 
+  struct range_const_iterator;
+
+  template <typename T> 
+  struct range_iterator<CGAL::iterator_range<T> >
+  {
+    typedef T type;
+  };
+
+
+  template<typename T>
+  struct range_mutable_iterator< CGAL::iterator_range<T> >
+  {
+    typedef T type;
+  };
+  
+  template<typename T>
+  struct range_const_iterator< CGAL::iterator_range<T> >
+  {
+    typedef T type;
+  };
+}
 #endif // CGAL_ITERATOR_RANGE_H
