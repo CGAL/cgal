@@ -803,7 +803,7 @@ public:
     ///
     /// Each range `R` in this section has a nested type `R::iterator`, 
     /// is convertible to `std:pair<R::iterator,R::iterator`, so that one can use `boost::tie()`,
-    /// and can be used with `BOOST_FOREACH()`, as well as with the Cxx11 `for(..)` loop for ranges.
+    /// and can be used with `BOOST_FOREACH()`, as well as with the C++11 range based `for(..)` loop.
 
     ///@{
 
@@ -1209,6 +1209,7 @@ public:
     template <typename RandomAccessContainer>
     Face_index add_face(const RandomAccessContainer& vertices);
 
+
     /// adds a new triangle connecting vertices `v0`, `v1`, `v2`
     /// \todo Offer a variadic version
     Face_index add_face(Vertex_index v0, Vertex_index v1, Vertex_index v2)
@@ -1225,6 +1226,7 @@ public:
             v = {{v0, v1, v2, v3}};
         return add_face(v);
     }
+
     ///@}
 
 

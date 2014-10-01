@@ -94,13 +94,24 @@ face are oriented counterclockwise, as illustrated in
 \cgalFigureRef{FigSurfaceMeshConnectivity}
 
 
-\section sectionSurfaceMesh_iterators Iterators and Circulators
+\section sectionSurfaceMesh_iterators Ranges and Iterators and Circulators
 
-`Surface_mesh` provides bidirectional iterators to enumerate all vertices,
+`Surface_mesh` provides iterator ranges to enumerate all vertices,
 halfedges, edges, and faces. It provides member functions
 returning ranges of elements which are compatible with the
 <a href="http://www.boost.org/libs/range/doc/html/index.html">Boost.Range</a>
 library. 
+
+\subsection circulators_example Example
+
+The following example shows how to obtain the iterator type from 
+a range, alternatives for obtaining the begin and end iterator,
+and alernatives for range-based for loops.
+
+\cgalExample{Surface_mesh/sm_iterators.cpp}
+
+
+\section sectionSurfaceMesh_circulators Circulators
 
 Circulators around faces and around vertices are provided as class templates 
 in the package \ref PkgBGLSummary.
@@ -126,11 +137,15 @@ they also support a conversion to `bool` for more convenient checking
 of emptiness.
 
 
-\subsection iterators_example Example
+\subsection circulators_example Example
 
-The following example illustrates how to use iterators and circulators.
+The following example shows how to enumerate the vertices around the
+target of a given halfedge.   The second loop shows that each of 
+these circulator types comes with an equivalent iterator and a free
+function to create an iterator range.
 
-\cgalExample{Surface_mesh/sm_iterators_and_circulators.cpp}
+\cgalExample{Surface_mesh/sm_circulators.cpp}
+
 
 \section sectionSurfaceMesh_properties Properties
 
