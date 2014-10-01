@@ -1,6 +1,5 @@
 #include <vector>
 
-#include <boost/assign.hpp>
 #include <boost/foreach.hpp>
 
 #include <CGAL/Simple_cartesian.h>
@@ -30,12 +29,7 @@ int main()
   vertex_descriptor w = m.add_vertex(K::Point_3(1,0,0));
   vertex_descriptor x = m.add_vertex(K::Point_3(1,1,0));
 
-
-
-  std::vector<vertex_descriptor> vec;
-  using namespace boost::assign;
-  vec += u, v, w, x;
-  face_descriptor f = m.add_face(vec);
+  face_descriptor f = m.add_face(u,v,w,x);
 
   { 
     std::cout << "all vertices " << std::endl;
