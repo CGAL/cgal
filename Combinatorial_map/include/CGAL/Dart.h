@@ -362,7 +362,7 @@ namespace CGAL {
     template<unsigned int, unsigned int, class, class, class>
     friend class Linear_cell_complex_storage_2;
 
-    template <class, class, class>
+    template <class, class, class, class>
     friend class Compact_container;
 
     template <class, class, class>

@@ -20,7 +20,7 @@
 #ifndef CGAL_COMBINATORIAL_MAP_ITERATORS_BASE_HH
 #define CGAL_COMBINATORIAL_MAP_ITERATORS_BASE_HH 1
 
-#include <CGAL/Compact_container.h>
+#include <CGAL/Compact_container_with_index_2.h>
 #include <queue>
 #include <boost/mpl/if.hpp>
 #include <boost/type_traits/is_same.hpp>

@@ -492,10 +492,10 @@ namespace CGAL {
     template <unsigned int, typename>
     friend struct Index::Dart;
 
-    template < unsigned int, class, class, class >
+    template < unsigned int, class, class, class, class >
     friend class Generalized_map_base;
 
-    template <int, typename>
+    template <unsigned int, typename>
     friend struct GMap_dart;
 
     template <class, class, class>

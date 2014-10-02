@@ -22,7 +22,7 @@
 
 #include <CGAL/Handle_hash_function.h>
 
-#include <CGAL/Compact_container.h>
+#include <CGAL/Compact_container_with_index_2.h>
 
 namespace CGAL {
 
@@ -403,6 +403,26 @@ namespace CGAL {
   // Thus we initialize null_dart_handle in the Combinatorial_map constructor
 #endif // CGAL_CMAP_DEPRECATED
 
+template<typename T>
+class MyIndex
+{
+public:
+ MyIndex(size_t s=-1) : idx(s)
+ {}
+ operator size_t() const
+ { return idx; } 
+ MyIndex<T>& operator++()
+ { ++idx; return *this; }
+ MyIndex<T> operator++(int)
+ { MyIndex<T> res(*this); ++idx; return res; }
+ MyIndex<T>& operator--()
+ { --idx; return *this; }
+ MyIndex<T> operator--(int)
+ {MyIndex<T> res(*this); --idx; return res;}
+private:
+ T idx;
+};
+  
   // Storage with combinatorial maps using index
   template<unsigned int d_, class Items_, class Alloc_>
   class Combinatorial_map_storage_2
@@ -460,7 +480,8 @@ namespace CGAL {
     /// The dimension of the combinatorial map.
     static const unsigned int dimension = d_;
 
-    typedef unsigned int Dart_index;
+    //    typedef unsigned int Dart_index;
+    typedef MyIndex<unsigned int> Dart_index;
 
     // Definition of old types, for backward compatibility.
     typedef Dart_index Dart_handle;
@@ -468,7 +489,7 @@ namespace CGAL {
 
     /// Value of null handle (!= null_dart_handle !!)
     typedef Dart_index Null_handle_type;
-    static const Dart_index null_handle = 0;
+    static const Dart_index null_handle; //=0;
 
     typedef Index_hash_function Hash_function;
 
@@ -742,7 +763,7 @@ namespace CGAL {
 
   public:
     /// Void dart. A dart d is i-free if beta_i(d)=null_dart_handle.
-    static const Dart_index null_dart_handle=0;
+    static const Dart_index null_dart_handle; //=0;
 
   protected:
     /// Dart container.
@@ -752,6 +773,12 @@ namespace CGAL {
     typename Helper::Attribute_containers mattribute_containers;
   };
 
+  /// null_dart_handle
+  template<unsigned int d_, class Items_, class Alloc_>
+  const typename Combinatorial_map_storage_2<d_, Items_, Alloc_>::Dart_index
+  Combinatorial_map_storage_2<d_, Items_, Alloc_>::null_dart_handle(0);
+
+  
 } // namespace CGAL
 
 #endif // CGAL_COMBINATORIAL_MAP_H //
