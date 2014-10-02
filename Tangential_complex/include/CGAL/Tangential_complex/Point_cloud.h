@@ -23,7 +23,6 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/Bbox_3.h>
-#include <CGAL/Kernel_traits.h>
 #include <CGAL/Dimension.h>
 
 #ifdef CGAL_TC_USE_NANOFLANN
@@ -38,11 +37,11 @@ namespace CGAL {
 namespace Tangential_complex_ {
 
 // "dataset to kd-tree" adaptor class
-template <typename Point_container_>
+template <typename K, typename Point_container_>
 class Point_cloud_adaptator
 {
 public:
-  typedef typename Point_container_::value_type         Point;
+  typedef typename Point_container_::value_type     Point;
   typedef typename CGAL::Kernel_traits<Point>::type Kernel;
   typedef typename Kernel::FT                       FT;
 
@@ -107,12 +106,12 @@ protected:
 
 };
 
-template <typename Point_container_>
+template <typename K, typename Point_container_>
 class Point_cloud_data_structure
 {
 public:
-  typedef typename Point_container_::value_type         Point;
-  typedef typename CGAL::Kernel_traits<Point>::type Kernel;
+  typedef typename Point_container_::value_type     Point;
+  typedef typename K                                Kernel;
   typedef typename Kernel::FT                       FT;
 
   static const int AMB_DIM = Ambient_dimension<Point>::value;
@@ -189,7 +188,7 @@ public:
   }
 
 protected:
-  typedef Point_cloud_adaptator<Point_container_> Adaptor;
+  typedef Point_cloud_adaptator<Kernel, Point_container_> Adaptor;
   typedef nanoflann::KDTreeSingleIndexAdaptor<
     nanoflann::L2_Simple_Adaptor<FT, Adaptor> ,
     Adaptor,
@@ -222,12 +221,12 @@ protected:
 namespace CGAL {
 namespace Tangential_complex_ {
 
-template <typename Point_container_>
+template <typename K, typename Point_container_>
 class Point_cloud_data_structure
 {
 public:
   typedef typename Point_container_::value_type         Point;
-  typedef typename CGAL::Kernel_traits<Point>::type     Kernel;
+  typedef typename K                                    Kernel;
   typedef typename Kernel::FT                           FT;
 
   typedef CGAL::Search_traits<

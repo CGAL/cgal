@@ -96,7 +96,7 @@ class Tangential_complex
   typedef std::vector<Vector>                         Tangent_space_basis;
 
   typedef std::vector<Point>                          Points;
-  typedef Point_cloud_data_structure<Points>          Points_ds;
+  typedef Point_cloud_data_structure<Kernel, Points>  Points_ds;
   typedef typename Points_ds::KNS_range               KNS_range;
   typedef typename Points_ds::KNS_iterator            KNS_iterator;
   typedef typename Points_ds::INS_range               INS_range;
@@ -251,6 +251,9 @@ public:
       // For each cell
       for ( ; it_c != it_c_end ; ++it_c)
       {
+        if (tr.is_infinite(*it_c)) // Don't export infinite cells
+          continue;
+
         output << Intrinsic_dimension + 1 << " ";
         
         if (color_inconsistencies)
@@ -263,7 +266,7 @@ public:
             c.insert(data);
           }
           if (is_simplex_consistent(c))
-            output << "200 200 200";
+            output << "128 128 128";
           else
             output << "255 0 0";
         }
@@ -520,6 +523,13 @@ private:
 
   Tangent_space_basis compute_tangent_space(const Point &p) const
   {
+    /*Tangent_space_basis ts;
+    ts.reserve(Intrinsic_dimension);
+    ts.push_back(Vector(1,0,0));
+    ts.push_back(Vector(0,1,0));
+
+    return ts;*/
+
     // Kernel functors
     Kernel::Construct_vector_d      constr_vec = m_k.construct_vector_d_object();
     Kernel::Squared_length_d        sqlen      = m_k.squared_length_d_object();

@@ -22,7 +22,6 @@
 #define CGAL_TC_UTILITIES_H
 
 #include <CGAL/basic.h>
-#include <CGAL/Kernel_traits.h>
 #include <CGAL/Dimension.h>
 
 #include <vector>
