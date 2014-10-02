@@ -802,7 +802,7 @@ public:
     /// \name Range Types
     ///
     /// Each range `R` in this section has a nested type `R::iterator`, 
-    /// is convertible to `std:pair<R::iterator,R::iterator`, so that one can use `boost::tie()`,
+    /// is convertible to `std:pair<R::iterator,R::iterator>`, so that one can use `boost::tie()`,
     /// and can be used with `BOOST_FOREACH()`, as well as with the C++11 range based `for(..)` loop.
 
     ///@{
@@ -2286,8 +2286,9 @@ adjust_incoming_halfedge(Vertex_index v)
 template <typename P>
 template <typename Range>
 typename Surface_mesh<P>::Face_index
-Surface_mesh<P>::add_face(const Range& vertices)
+Surface_mesh<P>::add_face(const Range& r)
 {
+  std::vector<Vertex_index> vertices(r.begin(), r.end()); // quick and dirty copy
     Vertex_index                   v;
     unsigned int             i, ii, n((int)vertices.size()), id;
     std::vector<Halfedge_index>    halfedges(n);

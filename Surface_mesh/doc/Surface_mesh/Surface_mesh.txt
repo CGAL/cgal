@@ -37,9 +37,9 @@ represent the basic elements of the halfedge data structure:
 - `Surface_mesh::Face_index`
 - `Surface_mesh::Edge_index`
 
-Descriptors are just a typed wrapper for an index
-and should be passed by value. They are
-default constructible, which yields an *invalid* element. New
+These types are just wrappers for an `unsigned int` and their
+main purpose is to guarantee type safety.  
+They are default constructible, which yields an *invalid* element. New
 simplices can be added and removed to the `Surface_mesh` through a
 set of low-level functions which do not maintain connectivity. One
 exception is `Surface_mesh::add_face()` which tries to add a new
@@ -94,7 +94,7 @@ face are oriented counterclockwise, as illustrated in
 \cgalFigureRef{FigSurfaceMeshConnectivity}
 
 
-\section sectionSurfaceMesh_iterators Ranges and Iterators and Circulators
+\section sectionSurfaceMesh_iterators Ranges and Iterators
 
 `Surface_mesh` provides iterator ranges to enumerate all vertices,
 halfedges, edges, and faces. It provides member functions
@@ -106,7 +106,7 @@ library.
 
 The following example shows how to obtain the iterator type from 
 a range, alternatives for obtaining the begin and end iterator,
-and alernatives for range-based for loops.
+and alternatives for range-based for loops.
 
 \cgalExample{Surface_mesh/sm_iterators.cpp}
 
