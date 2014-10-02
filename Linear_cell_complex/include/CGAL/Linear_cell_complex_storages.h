@@ -473,12 +473,23 @@ namespace CGAL {
     struct Attribute_type: public Helper::template Attribute_type<i>
     {};
     template<int i>
-    struct Attribute_handle: public Helper::template Attribute_handle<i>
-    {};
+    struct MyAttribute_handle: public CGAL::MyIndex<unsigned int> // public Helper::template Attribute_handle<i>
+    {
+      MyAttribute_handle(size_t s=-1) : MyIndex<unsigned int>(s)
+      {}
+    };
     template<int i>
-    struct Attribute_const_handle:
-        public Helper::template Attribute_const_handle<i>
-    {};
+    struct Attribute_handle
+    {typedef MyAttribute_handle<i> type;};
+    template<int i>
+    struct MyAttribute_const_handle:public CGAL::MyIndex<unsigned int>//Helper::template Attribute_const_handle<i>
+    {
+      MyAttribute_const_handle(size_t s=-1) : MyIndex<unsigned int>(s)
+      {}
+    };
+    template<int i>
+    struct Attribute_const_handle
+    {typedef MyAttribute_const_handle<i> type;};
     template<int i>
     struct Attribute_range: public Helper::template Attribute_range<i>
     {};
@@ -493,7 +504,12 @@ namespace CGAL {
     /// The dimension of the combinatorial map.
     static const unsigned int dimension = d_;
 
-    typedef unsigned int Dart_index;
+    //   typedef unsigned int Dart_index;
+    struct Dart_index : public CGAL::MyIndex<unsigned int>
+    {
+      Dart_index(size_t s=-1) : MyIndex<unsigned int>(s)
+      {}
+    };
 
     // Definition of old types, for backward compatibility.
     typedef Dart_index Dart_handle;
@@ -501,7 +517,7 @@ namespace CGAL {
 
     /// Value of null handle (!= null_dart_handle !!)
     typedef Dart_index Null_handle_type;
-    static const Dart_index null_handle = 0;
+    static const Dart_index null_handle;
 
     typedef Index_hash_function Hash_function;
 
@@ -789,7 +805,7 @@ namespace CGAL {
 
   public:
     /// Void dart. A dart d is i-free if beta_i(d)=null_dart_handle.
-    static const Dart_index null_dart_handle=0;
+    static const Dart_index null_dart_handle;
 
   protected:
     /// Dart container.
@@ -798,6 +814,15 @@ namespace CGAL {
     /// Tuple of attributes containers
     typename Helper::Attribute_containers mattribute_containers;
   };
+
+  /// null_dart_handle
+  template<unsigned int d_, unsigned int ambient_dim,
+           class Traits_, class Items_, class Alloc_ >
+  const typename Linear_cell_complex_storage_2<d_, ambient_dim, Traits_,
+                                               Items_, Alloc_>::Dart_index
+  Linear_cell_complex_storage_2<d_, ambient_dim, Traits_, Items_, Alloc_>::
+  null_dart_handle(0);
+
 } // namespace CGAL
 
 #endif // CGAL_LINEAR_CELL_COMPLEX_STORAGES_H //

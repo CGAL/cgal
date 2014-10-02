@@ -462,13 +462,13 @@ private:
     template<int i>
     struct Attribute_handle: public CGAL::MyIndex<unsigned int> // public Helper::template Attribute_handle<i>
     {
-      Attribute_handle(size_t s=-1) : MyIndex<unsigned int>(s)
+      explicit Attribute_handle(size_t s=-1) : MyIndex<unsigned int>(s)
       {}
     };
     template<int i>
     struct Attribute_const_handle:public CGAL::MyIndex<unsigned int>//Helper::template Attribute_const_handle<i>
     {
-      Attribute_const_handle(size_t s=-1) : MyIndex<unsigned int>(s)
+      explicit Attribute_const_handle(size_t s=-1) : MyIndex<unsigned int>(s)
       {}
     };
     template<int i>
@@ -489,7 +489,7 @@ private:
     // typedef MyIndex<unsigned int> Dart_index;
     struct Dart_index : public CGAL::MyIndex<unsigned int>
     {
-      Dart_index(size_t s=-1) : MyIndex<unsigned int>(s)
+      explicit Dart_index(size_t s=-1) : MyIndex<unsigned int>(s)
       {}
     };
 
