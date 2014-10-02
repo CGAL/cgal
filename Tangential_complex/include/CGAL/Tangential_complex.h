@@ -44,6 +44,7 @@
 #include <Eigen/Eigen>
 
 #include <boost/iterator/transform_iterator.hpp>
+#include <boost/optional.hpp>
 
 #include <vector>
 #include <utility>
@@ -54,6 +55,8 @@
 #ifdef CGAL_LINKED_WITH_TBB
 # include <tbb/parallel_for.h>
 #endif
+
+//#define CGAL_TC_EXPORT_NORMALS // Only for 3D surfaces (k=2, d=3)
 
 namespace CGAL {
 
@@ -133,6 +136,9 @@ class Tangential_complex
 
   typedef typename std::vector<Tr_and_VH>             Tr_container;
   typedef typename std::vector<Tangent_space_basis>   TS_container;
+#ifdef CGAL_TC_EXPORT_NORMALS
+  typedef typename std::vector<Vector>                Normals;
+#endif
 
 public:
   /// Constructor
@@ -159,6 +165,9 @@ public:
     // invalidate the vertex handles stored beside the triangulations
     m_triangulations.resize(m_points.size());
     m_tangent_spaces.resize(m_points.size());
+#ifdef CGAL_TC_EXPORT_NORMALS
+    m_normals.resize(m_points.size());
+#endif
     
 #ifdef CGAL_LINKED_WITH_TBB
     // Parallel
@@ -218,7 +227,10 @@ public:
     std::stringstream output;
 
     //******** VERTICES ************
-
+    
+#ifdef CGAL_TC_EXPORT_NORMALS
+    Normals::const_iterator it_n = m_normals.begin();
+#endif
     Points::const_iterator it_p = m_points.begin();
     Points::const_iterator it_p_end = m_points.end();
     // For each point p
@@ -229,6 +241,13 @@ public:
         output << (*it_p)[i] << " ";
       if (i == 2)
         output << "0";
+      
+#ifdef CGAL_TC_EXPORT_NORMALS
+      for (i = 0 ; i < num_coords ; ++i)
+        output << " " << (*it_n)[i];
+      ++it_n;
+#endif
+
       output << std::endl;
     }
 
@@ -280,6 +299,10 @@ public:
         ++num_cells;
       }
     }
+    
+#ifdef CGAL_TC_EXPORT_NORMALS
+    os << "N";
+#endif
 
     os << "OFF \n"
        << m_points.size() << " " 
@@ -395,7 +418,11 @@ private:
 
     // Estimate the tangent space
     const Point &center_pt = m_points[i];
+#ifdef CGAL_TC_EXPORT_NORMALS
+    m_tangent_spaces[i] = compute_tangent_space(center_pt, &m_normals[i]);
+#else
     m_tangent_spaces[i] = compute_tangent_space(center_pt);
+#endif
       
     //***************************************************
     // Build a minimal triangulation in the tangent space
@@ -417,7 +444,7 @@ private:
     // of the sphere "star sphere" centered at "center_vertex" 
     // and which contains all the
     // circumspheres of the star of "center_vertex"
-    FT star_sphere_squared_radius = std::numeric_limits<FT>::max();
+    boost::optional<FT> star_sphere_squared_radius;
 
     // Insert points until we find a point which is outside "star shere"
     for (INS_iterator nn_it = ins_range.begin() ; 
@@ -431,7 +458,8 @@ private:
       {
         const Point &neighbor_pt = m_points[neighbor_point_idx];
 
-        if (k_sqdist(center_pt, neighbor_pt) > star_sphere_squared_radius)
+        if (star_sphere_squared_radius 
+          && k_sqdist(center_pt, neighbor_pt) > *star_sphere_squared_radius)
           break;
 
         Tr_point proj_pt = project_point_and_compute_weight(
@@ -453,7 +481,7 @@ private:
           // Let's recompute star_sphere_squared_radius
           if (local_tr.current_dimension() >= Intrinsic_dimension)
           {
-            star_sphere_squared_radius = 0.;
+            star_sphere_squared_radius = 0;
             // Get the incident cells and look for the biggest circumsphere
             std::vector<Tr_full_cell_handle> incident_cells;
             local_tr.incident_full_cells(
@@ -463,7 +491,7 @@ private:
             {
               if (local_tr.is_infinite(cell))
               {
-                star_sphere_squared_radius = std::numeric_limits<FT>::max();
+                star_sphere_squared_radius = boost::none;
                 break;
               }
               else
@@ -500,7 +528,8 @@ private:
                   proj_pts.begin(), proj_pts.end());
 
                 FT sq_circumdiam = 4.*sqdist(c, proj_pts[0]);
-                if (sq_circumdiam > star_sphere_squared_radius)
+                if (!star_sphere_squared_radius 
+                  || sq_circumdiam > *star_sphere_squared_radius)
                   star_sphere_squared_radius = sq_circumdiam;
               }
             }
@@ -521,7 +550,11 @@ private:
     //CGAL::export_triangulation_to_off(off_stream_tr, local_tr);
   }
 
-  Tangent_space_basis compute_tangent_space(const Point &p) const
+  Tangent_space_basis compute_tangent_space(const Point &p
+#ifdef CGAL_TC_EXPORT_NORMALS
+                                            , Vector *p_normal
+#endif
+                                            ) const
   {
     /*Tangent_space_basis ts;
     ts.reserve(Intrinsic_dimension);
@@ -567,6 +600,12 @@ private:
         eig.eigenvectors().col(i).data(), 
         eig.eigenvectors().col(i).data() + amb_dim));
     }
+#ifdef CGAL_TC_EXPORT_NORMALS
+    *p_normal = constr_vec(
+        amb_dim, 
+        eig.eigenvectors().col(amb_dim - Intrinsic_dimension - 1).data(), 
+        eig.eigenvectors().col(amb_dim - Intrinsic_dimension - 1).data() + amb_dim);
+#endif
 
     //*************************************************************************
 
@@ -703,6 +742,9 @@ private:
   TS_container        m_tangent_spaces;
   Tr_container        m_triangulations; // Contains the triangulations 
                                         // and their center vertex
+#ifdef CGAL_TC_EXPORT_NORMALS
+  Normals             m_normals;
+#endif
 
 }; // /class Tangential_complex
 
