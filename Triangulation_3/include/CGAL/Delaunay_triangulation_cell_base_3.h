@@ -36,8 +36,10 @@ class Delaunay_triangulation_cell_base_3
   : public Triangulation_cell_base_3<GT, Cb>
 {
 public:
+	
+  typedef typename Geom_traits::Point_3 Point_3;
 
-  typename Geom_traits::Point_3
+  Point_3
   circumcenter(const Geom_traits& gt = Geom_traits()) const
   {
       return gt.construct_circumcenter_3_object()(this->vertex(0)->point(),
