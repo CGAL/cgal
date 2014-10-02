@@ -410,7 +410,7 @@ public:
  MyIndex(size_t s=-1) : idx(s)
  {}
  operator size_t() const
- { return idx; } 
+ { return idx; }
  MyIndex<T>& operator++()
  { ++idx; return *this; }
  MyIndex<T> operator++(int)
@@ -422,7 +422,7 @@ public:
 private:
  T idx;
 };
-  
+
   // Storage with combinatorial maps using index
   template<unsigned int d_, class Items_, class Alloc_>
   class Combinatorial_map_storage_2
@@ -460,12 +460,17 @@ private:
     struct Attribute_type: public Helper::template Attribute_type<i>
     {};
     template<int i>
-    struct Attribute_handle: public Helper::template Attribute_handle<i>
-    {};
+    struct Attribute_handle: public CGAL::MyIndex<unsigned int> // public Helper::template Attribute_handle<i>
+    {
+      Attribute_handle(size_t s=-1) : MyIndex<unsigned int>(s)
+      {}
+    };
     template<int i>
-    struct Attribute_const_handle:
-      public Helper::template Attribute_const_handle<i>
-    {};
+    struct Attribute_const_handle:public CGAL::MyIndex<unsigned int>//Helper::template Attribute_const_handle<i>
+    {
+      Attribute_const_handle(size_t s=-1) : MyIndex<unsigned int>(s)
+      {}
+    };
     template<int i>
     struct Attribute_range: public Helper::template Attribute_range<i>
     {};
@@ -480,8 +485,13 @@ private:
     /// The dimension of the combinatorial map.
     static const unsigned int dimension = d_;
 
-    //    typedef unsigned int Dart_index;
-    typedef MyIndex<unsigned int> Dart_index;
+    // typedef unsigned int Dart_index;
+    // typedef MyIndex<unsigned int> Dart_index;
+    struct Dart_index : public CGAL::MyIndex<unsigned int>
+    {
+      Dart_index(size_t s=-1) : MyIndex<unsigned int>(s)
+      {}
+    };
 
     // Definition of old types, for backward compatibility.
     typedef Dart_index Dart_handle;
@@ -778,7 +788,7 @@ private:
   const typename Combinatorial_map_storage_2<d_, Items_, Alloc_>::Dart_index
   Combinatorial_map_storage_2<d_, Items_, Alloc_>::null_dart_handle(0);
 
-  
+
 } // namespace CGAL
 
 #endif // CGAL_COMBINATORIAL_MAP_H //
