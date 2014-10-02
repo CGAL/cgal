@@ -32,7 +32,7 @@
 namespace CGAL {
 
 template < typename GT, typename Cb = Triangulation_ds_cell_base_3<> >
-class Triangulation_cell_base_3
+class Delaunay_triangulation_cell_base_3
   : public Triangulation_cell_base_3<GT, Cb>
 {
 public:
