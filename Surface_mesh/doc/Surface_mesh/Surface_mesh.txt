@@ -179,15 +179,17 @@ A halfedge `h` is on the border, if it has no associated face, that is if
 `sm.face(h) == Surface_mesh::null_face()`.  An edge is on the border,
 if any of its halfedges is on the border.  A vertex is on the border,
 if any of its incident halfedges is on the border. In order to make 
-`Surface_mesh::is_border(Vertex_index v)` a constant time 
-operation, this function only checks if the halfedge associated to `v`
-is a border halfedge. The user is in charge to correctly set the halfedge
+`Surface_mesh::is_border(Vertex_index v, bool ckeck = true)` a constant time 
+operation, the user must call the function with `check = false`, in order to only
+test whether the halfedge associated to `v` is a border halfedge. 
+
+The user is in charge to correctly set the halfedge
 associated to a vertex after having applied an operation that might invalidate 
 this property.
-The functions `Surface_mesh::fix_constant_border_property(Vertex_index v)`,
-`Surface_mesh::fix_constant_border_property(Halfedge_index h)`, and 
- `Surface_mesh::fix_constant_border_property()` allow to restore this property 
-for a single vertex `v`, for all vertices on the boundary of the
+The functions `Surface_mesh::set_vertex_halfedge_to_border_halfedge(Vertex_index v)`,
+`Surface_mesh::set_vertex_halfedge_to_border_halfedge(Halfedge_index h)`, and 
+ `Surface_mesh::set_vertex_halfedge_to_border_halfedge()` allow to set the border 
+halfedge for a single vertex `v`, for all vertices on the boundary of the
 face of `h`, and for all vertices of the surface mesh, respectively.
 
 
