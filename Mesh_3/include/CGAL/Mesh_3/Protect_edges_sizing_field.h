@@ -1245,13 +1245,13 @@ namespace details {
   // Functor used by Protect_edges_sizing_field::check_and_repopulate_edges, below
   template <typename Set>
   class Erase_element_from_set {
-    Set& set;
+    Set* set_ptr;
   public:
-    Erase_element_from_set(Set& set) : set(set) {}
+    Erase_element_from_set(Set& set) : set_ptr(&set) {}
 
     void operator()(const typename Set::key_type& x)
     {
-      set.erase(x);
+      set_ptr->erase(x);
     }
   }; // end class Erase_element_from_set
 
