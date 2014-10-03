@@ -1124,3 +1124,12 @@ gmon.*
 /Polygon/test/Polygon/polytest.ascii
 /Polygon/test/Polygon/polytest.binary
 /Polygon/test/Polygon/polytest.pretty
+/Mesh_3/test/Mesh_3/test_backward_compatibility
+/Mesh_3/test/Mesh_3/test_c3t3_extract_subdomains_boundaries
+/Mesh_3/test/Mesh_3/test_implicit_multi_domain_to_labeling_function_wrapper
+/Mesh_3/test/Mesh_3/test_labeled_mesh_domain_3
+/Mesh_3/test/Mesh_3/test_mesh_3_implicit_vector_to_labeled_function_wrapper
+/Mesh_3/test/Mesh_3/test_mesh_3_labeled_mesh_domain_3
+/Mesh_3/test/Mesh_3/test_mesh_implicit_domains
+/Mesh_3/test/Mesh_3/test_meshing_determinism
+/Mesh_3/test/Mesh_3/test_meshing_unit_tetrahedron
