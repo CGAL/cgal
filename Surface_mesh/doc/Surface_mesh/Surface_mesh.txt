@@ -151,7 +151,7 @@ function to create an iterator range.
 
 `Surface_mesh` provides a mechanism to specify new properties for
 vertices, edges, halfedges and faces at run-time. Each property is
-identified by a string and its key_type. All properties are stored as
+identified by a string and its key type. All properties are stored as
 consecutive blocks of memory. References to properties are invalidated
 whenever new elements of the key type are added to the data-structure
 or when the function `Surface_mesh::collect_garbage()` is performed. Properties will continue to

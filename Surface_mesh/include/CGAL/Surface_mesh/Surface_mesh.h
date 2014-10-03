@@ -1763,16 +1763,41 @@ public:
 
 
     /// \name Borders
+    ///
+    ///  A vertex, halfedge, or edge is on the border of a surface mesh
+    /// if it is incident to a `null_face()`.  While for a halfedge and
+    /// edge this is a constant time operation, for a vertex it means
+    /// to look at all incident halfedges.  If algorithms operating on a 
+    /// surface mesh maintain that the halfedge associates to a border vertex is
+    /// a border halfedge, this is a constant time operation too.  
+    /// This section provides functions to check if an element is on a 
+    /// border and to change the halfedge associated to a border vertex.
     ///@{
 
-    /// returns whether `v` is a border vertex.
-    bool is_border(Vertex_index v) const
+    /// returns whether `v` is a border vertex. 
+    /// \cgalAdvancedBegin
+    /// With the default value for
+    /// `check` the function iteratates over the incident halfedges.
+    /// With `check == false` the function returns `true`, if the incident
+    /// halfedge associated to vertex `v` is a border halfedge.
+    /// \cgalAdvancedEnd
+  bool is_border(Vertex_index v, bool check = true) const
     {
         Halfedge_index h(halfedge(v));
-        return (!(h.is_valid() && face(h).is_valid()));
+        if(check){
+          Halfedge_around_target_circulator hatc(h,*this), done(hatc);
+          do {
+            if(is_border(*hatc)){
+              set_halfedge(v,*hatc);
+              return true;
+            }
+          }while(++hatc != done);
+          return false;
+        }
+        return (!(is_valid(h) && is_border(h)));
     }
 
-    /// returns whether `h` is a border halfege, i.e., if its face equals `Face_index()`.
+    /// returns whether `h` is a border halfege, that is if its incident face is `sm.null_face()`.
     bool is_border(Halfedge_index h) const
     {
         return !face(h).is_valid();
@@ -1786,40 +1811,25 @@ public:
       return is_border(e.halfedge()) || is_border(opposite(e.halfedge()));
     }
 
-
-    /// returns whether `f` is a border face, i.e., if the opposite 
-    /// of any of its adjacent halfedges is a border halfedge.
-    bool is_border(Face_index f) const
-    {
-        Halfedge_index h  = halfedge(f);
-        Halfedge_index hh = h;
-        do
-        {
-            if (is_border(opposite(h)))
-                return true;
-            h = next(h);
-        }
-        while (h != hh);
-        return false;
-    }
-  
-  /// restores the constant time border property for vertex `v`.
-  void fix_constant_border_property(Vertex_index v)
+  /// iterates over the incident halfedges and sets the incident halfedge
+  /// associated to vertex `v` to a border halfedge and returns `true` if it exists.
+  bool set_vertex_halfedge_to_border_halfedge(Vertex_index v)
   {
     if(halfedge(v) == null_halfedge())
-      return;
+      return false;
     Halfedge_around_target_circulator hatc(halfedge(v),*this), done(hatc);
     do {
       if(is_border(*hatc)){
         set_halfedge(v,*hatc);
-        return;
+        return true;
       }
     }while(++hatc != done);
+    return false;
   }
 
-  /// restores the constant time border property for all vertices 
+  /// applies `set_vertex_halfedge_to_border_halfedge(Vertex_index)` on all vertices 
   /// around the face associated to `h`.
-  void fix_constant_border_property(Halfedge_index h)
+  void set_vertex_halfedge_to_border_halfedge(Halfedge_index h)
   {
     if(is_border(h)){
       Halfedge_around_face_circulator hafc(h,*this),done(hafc);
@@ -1829,17 +1839,19 @@ public:
     } else {
        Vertex_around_face_circulator vafc(h,*this),done(vafc);
       do {
-        fix_constant_border_property(*vafc);
+        set_vertex_halfedge_to_border_halfedge(*vafc);
       }while(++vafc != done);
     }
   }
 
-  /// restores the constant time border property for all vertices
+  /// applies `set_vertex_halfedge_to_border_halfedge(Vertex_index)` on all vertices 
   /// of the surface mesh.
-  void fix_constant_border_property()
+  void set_vertex_halfedge_to_border_halfedge()
   {
-    BOOST_FOREACH(Vertex_index vd, vertices()){
-      fix_constant_border_property(vd);
+    BOOST_FOREACH(Halfedge_index h, halfedges()){
+      if(is_border(h){
+          set_halfedge(target(h),h);
+        }
     }
   }
 
