@@ -35,26 +35,6 @@ namespace CGAL {
 namespace internal {
 
 template <typename G>
-struct Opposite {
-  const G* g; 
-
-  Opposite()
-    : g(NULL)
-  {}
-
-  Opposite(const G& g)
-    : g(&g)
-  {}
-
-  typedef typename boost::graph_traits<G>::halfedge_descriptor result_type;
-  typedef typename boost::graph_traits<G>::halfedge_descriptor argument_type;
-
-  result_type operator()(argument_type h) const
-  {
-    return opposite(h, *g);
-  }
-};
-template <typename G>
 struct Edge {
   const G* g; 
 
@@ -496,11 +476,11 @@ class Halfedge_around_target_circulator;
 template <typename Graph>
 class Halfedge_around_source_circulator
 #ifndef DOXYGEN_RUNNING
-  : public boost::transform_iterator<internal::Opposite<Graph>, Halfedge_around_target_circulator<Graph> >
+  : public boost::transform_iterator<internal::OppositeHalfedge<Graph>, Halfedge_around_target_circulator<Graph> >
 #endif
 {
 #ifndef DOXYGEN_RUNNING
-  typedef boost::transform_iterator<internal::Opposite<Graph>, Halfedge_around_target_circulator<Graph> > Base;
+  typedef boost::transform_iterator<internal::OppositeHalfedge<Graph>, Halfedge_around_target_circulator<Graph> > Base;
   typedef typename boost::graph_traits<Graph>::halfedge_descriptor halfedge_descriptor;
   typedef typename boost::graph_traits<Graph>::vertex_descriptor vertex_descriptor;
 #endif
@@ -516,11 +496,11 @@ public:
   {}
 
   Halfedge_around_source_circulator(halfedge_descriptor hd, const Graph& g)
-    : Base(Halfedge_around_target_circulator<Graph>(hd,g), internal::Opposite<Graph>(g))
+    : Base(Halfedge_around_target_circulator<Graph>(hd,g), internal::OppositeHalfedge<Graph>(g))
   {}
 
   Halfedge_around_source_circulator(vertex_descriptor vd, const Graph& g)
-    : Base(Halfedge_around_target_circulator<Graph>(halfedge(vd,g),g), internal::Opposite<Graph>(g))
+    : Base(Halfedge_around_target_circulator<Graph>(halfedge(vd,g),g), internal::OppositeHalfedge<Graph>(g))
   {}
 }; 
 
