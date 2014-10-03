@@ -23,6 +23,7 @@
 
 #include <CGAL/triangulation_assertions.h>
 #include <CGAL/Constrained_triangulation_2.h>
+#include <CGAL/Polygon_2.h>
 
 #ifndef CGAL_TRIANGULATION_2_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
 #include <CGAL/Spatial_sort_traits_adapter_2.h>
@@ -110,6 +111,7 @@ public:
 #endif
 
   typedef typename Geom_traits::Point_2  Point;
+  typedef CGAL::Polygon_2<Geom_traits, std::vector<Point> > Polygon;
 
 
   Constrained_Delaunay_triangulation_2(const Geom_traits& gt=Geom_traits()) 
@@ -179,7 +181,10 @@ public:
   // get_boundary_of_conflicts(const Point  &p, 
   // 			       OutputItBoundaryEdges eit, 
   // 			       Face_handle start ) const;
-   
+  
+
+  // DUAL
+  Polygon dual(Vertex_handle v) const;
 
   // INSERTION-REMOVAL
   Vertex_handle insert(const Point & a, Face_handle start = Face_handle());
@@ -865,6 +870,30 @@ virtual_insert(const Point& a,
 // virtual version of insert
 {
   return insert(a,lt,loc,li);
+}
+
+// DUALITY
+template< class Gt, class Tds, class Itag >
+typename Constrained_Delaunay_triangulation_2<Gt,Tds,Itag>::Polygon
+Constrained_Delaunay_triangulation_2<Gt,Tds,Itag>::
+dual(Vertex_handle v) const
+{
+  CGAL_triangulation_precondition( v != Vertex_handle());
+  CGAL_triangulation_precondition( !this->is_infinite(v));
+
+  // The Circulator moves ccw.
+  Face_circulator fc = this->incident_faces(v), done(fc);
+  Polygon poly;
+  do
+  {
+    if(!this->is_infinite(fc))
+      poly.push_back(this->circumcenter(face));
+    else
+      return Polygon();
+  }
+  while(++fc != done);
+  
+  return poly;
 }
 
 template < class Gt, class Tds, class Itag >  

@@ -34,6 +34,10 @@
 
 #include <boost/iterator/zip_iterator.hpp>
 #include <boost/mpl/and.hpp>
+
+#include <CGAL/Polygon_2.h>
+#include <CGAL/intersections.h>
+
 #endif //CGAL_TRIANGULATION_2_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
 
 namespace CGAL {
@@ -82,6 +86,7 @@ public:
   using Triangulation::delete_vertex;
 #endif
 
+  typedef CGAL::Polygon_2<Geom_traits,std::vector<Point> > Polygon;
 
  Delaunay_triangulation_2(const Gt& gt = Gt())
   : Triangulation_2<Gt,Tds>(gt) {}
@@ -134,6 +139,9 @@ public:
   Object dual(const Edge &e) const ;
   Object dual(const Edge_circulator& ec) const;
   Object dual(const Finite_edges_iterator& ei) const;
+  Polygon dual(Vertex_handle v) const;
+  Polygon dual(const Vertex_circulator& vc) const;
+  Polygon dual(const Finite_vertices_iterator& vi) const;
   
   //INSERTION-REMOVAL
   Vertex_handle insert(const Point  &p, 
@@ -831,7 +839,7 @@ dual(const Edge_circulator& ec) const
 {
   return dual(*ec);
 }
-  
+
 template < class Gt, class Tds >
 inline Object
 Delaunay_triangulation_2<Gt,Tds>::
@@ -839,7 +847,46 @@ dual(const Finite_edges_iterator& ei) const
 {
   return dual(*ei);
 }
-  
+
+
+template < class Gt, class Tds >
+Polygon
+Delaunay_triangulation_2<Gt,Tds>::
+dual(Vertex_handle v) const
+{
+  CGAL_triangulation_precondition( v != Vertex_handle());
+  CGAL_triangulation_precondition( !this->is_infinite(v));
+
+  // The Circulator moves ccw.
+  Face_circulator fc = this->incident_faces(v), done(fc);
+  Polygon poly;
+  do
+  {
+    if(!this->is_infinite(fc))
+      poly.push_back(this->circumcenter(face));
+    else
+      return Polygon();
+  }
+  while(++fc != done);
+
+  return poly;
+}
+
+template<class Gt, class Tds>
+Polygon
+Delaunay_triangulation_2<Gt,Tds>::
+dual (Vertex_circulator& vc) const
+{
+  return dual(*vc);
+}
+
+template<class Gt, class Tds>
+Polygon
+Delaunay_triangulation_2<Gt,Tds>::
+dual (Finite_vertices_iterator& vi) const
+{
+  return dual(*vi);
+}
 
 ///////////////////////////////////////////////////////////////
 //  INSERT
