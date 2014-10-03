@@ -819,7 +819,7 @@ public:
 #ifdef DOXYGEN_RUNNING
     typedef unspecified_type Vertex_range;
 #else
-    typedef iterator_range<Vertex_iterator> Vertex_range;
+    typedef Iterator_range<Vertex_iterator> Vertex_range;
 #endif
 
 #ifndef DOXYGEN_RUNNING
@@ -834,7 +834,7 @@ public:
 #ifdef DOXYGEN_RUNNING
     typedef unspecified_type Halfedge_range;
 #else
-    typedef iterator_range<Halfedge_iterator> Halfedge_range;
+    typedef Iterator_range<Halfedge_iterator> Halfedge_range;
 #endif
 
 #ifndef DOXYGEN_RUNNING
@@ -849,7 +849,7 @@ public:
 #ifdef DOXYGEN_RUNNING
     typedef unspecified_type Edge_range;
 #else
-    typedef iterator_range<Edge_iterator> Edge_range;
+    typedef Iterator_range<Edge_iterator> Edge_range;
 #endif
 
 
@@ -865,28 +865,28 @@ public:
  #ifdef DOXYGEN_RUNNING
     typedef unspecified_type Face_range;
 #else
-   typedef iterator_range<Face_iterator> Face_range;
+   typedef Iterator_range<Face_iterator> Face_range;
 #endif
 
 #ifndef DOXYGEN_RUNNING 
 
   typedef CGAL::Vertex_around_target_iterator<Surface_mesh> Vertex_around_target_iterator;
-  typedef iterator_range<Vertex_around_target_iterator> Vertex_around_target_range;
+  typedef Iterator_range<Vertex_around_target_iterator> Vertex_around_target_range;
 
   typedef CGAL::Halfedge_around_target_iterator<Surface_mesh>  Halfedge_around_target_iterator;
-  typedef iterator_range<Halfedge_around_target_iterator> Halfedge_around_target_range;
+  typedef Iterator_range<Halfedge_around_target_iterator> Halfedge_around_target_range;
 
   typedef CGAL::Face_around_target_iterator<Surface_mesh>  Face_around_target_iterator;
-  typedef iterator_range<Face_around_target_iterator> Face_around_target_range;
+  typedef Iterator_range<Face_around_target_iterator> Face_around_target_range;
 
   typedef CGAL::Vertex_around_face_iterator<Surface_mesh>  Vertex_around_face_iterator;
-  typedef iterator_range<Vertex_around_face_iterator> Vertex_around_face_range;
+  typedef Iterator_range<Vertex_around_face_iterator> Vertex_around_face_range;
 
   typedef CGAL::Halfedge_around_face_iterator<Surface_mesh>  Halfedge_around_face_iterator;
-  typedef iterator_range<Halfedge_around_face_iterator> Halfedge_around_face_range;
+  typedef Iterator_range<Halfedge_around_face_iterator> Halfedge_around_face_range;
 
   typedef CGAL::Face_around_face_iterator<Surface_mesh>  Face_around_face_iterator;
-  typedef iterator_range<Face_around_face_iterator> Face_around_face_range;
+  typedef Iterator_range<Face_around_face_iterator> Face_around_face_range;
 #endif
 
     /// @cond CGAL_BEGIN_END
@@ -1592,6 +1592,7 @@ public:
 
     /// \name Low-Level Connectivity
     ///@{
+
     /// returns the vertex the halfedge `h` points to.
     Vertex_index target(Halfedge_index h) const
     {
@@ -1768,7 +1769,7 @@ public:
     /// if it is incident to a `null_face()`.  While for a halfedge and
     /// edge this is a constant time operation, for a vertex it means
     /// to look at all incident halfedges.  If algorithms operating on a 
-    /// surface mesh maintain that the halfedge associates to a border vertex is
+    /// surface mesh maintain that the halfedge associated to a border vertex is
     /// a border halfedge, this is a constant time operation too.  
     /// This section provides functions to check if an element is on a 
     /// border and to change the halfedge associated to a border vertex.

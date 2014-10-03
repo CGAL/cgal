@@ -27,10 +27,10 @@ namespace CGAL {
 
   /*!
     \ingroup PkgStlExtension
-    `CGAL::iterator_range` is a...
+    `CGAL::Iterator_range` is a...
   */
   template <typename I>
-  class iterator_range
+  class Iterator_range
     : public std::pair<I,I>{
     
     typedef std::pair<I,I> Base;
@@ -40,18 +40,14 @@ namespace CGAL {
     typedef I iterator;
     typedef const I const_iterator;
 
-    iterator_range(I b, I e)
+    Iterator_range(I b, I e)
       : Base(b,e)
     {}
 
-    iterator_range(const std::pair<I,I>& ip)
+    Iterator_range(const std::pair<I,I>& ip)
       : Base(ip)
     {}
 
-    operator Base() const
-    {
-      return std::make_pair(begin(),end());
-    }
 
   const I& begin() const
   {
@@ -65,32 +61,32 @@ namespace CGAL {
 };
 
   template <typename T>
-  iterator_range<T>
+  Iterator_range<T>
   make_range(const T& b, const T&e)
   {
-    return iterator_range<T>(b,e);
+    return Iterator_range<T>(b,e);
   }
 
   template<typename T>
-  inline T range_begin( iterator_range<T> & x )
+  inline T range_begin( Iterator_range<T> & x )
   {
     return x.first;
   }
   
   template<typename T>
-  inline T range_end( iterator_range<T> & x )
+  inline T range_end( Iterator_range<T> & x )
   {
     return x.second;
   }
   
   template<typename T>
-  inline T range_begin(const iterator_range<T>& x )
+  inline T range_begin(const Iterator_range<T>& x )
   {
     return x.first;
   }
   
   template<typename T>
-  inline T range_end(const iterator_range<T>& x )
+  inline T range_end(const Iterator_range<T>& x )
   {
     return x.second;
   }  
@@ -108,20 +104,20 @@ namespace boost {
   struct range_const_iterator;
 
   template <typename T> 
-  struct range_iterator<CGAL::iterator_range<T> >
+  struct range_iterator<CGAL::Iterator_range<T> >
   {
     typedef T type;
   };
 
 
   template<typename T>
-  struct range_mutable_iterator< CGAL::iterator_range<T> >
+  struct range_mutable_iterator< CGAL::Iterator_range<T> >
   {
     typedef T type;
   };
   
   template<typename T>
-  struct range_const_iterator< CGAL::iterator_range<T> >
+  struct range_const_iterator< CGAL::Iterator_range<T> >
   {
     typedef T type;
   };

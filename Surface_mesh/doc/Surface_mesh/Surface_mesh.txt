@@ -19,13 +19,13 @@ The main differences are that it is indexed based and not pointer based,
 and that the mechanism for adding information to vertices, halfedges,
 and faces is much simpler and done at runtime and not at compile time.
 
-It provides the following features:
-- comparatively low memory footprint
-- stable under insertion and deletion
-- Vertex, face, halfedge, and edge types
-- dynamic properties
-- iterators, ranges and circulators for all common use cases
-- constant time border predicate for vertices and halfedges
+Because the data structure uses indices as descriptors for vertices, halfedges and faces
+it has a lower memory footprint than a 64-bit pointer based version.
+As the indices are contiguous, they can be used as index into vectors
+which store properties.
+
+The class `Surface_mesh` can be used through its class member functions 
+as well as through the BGL API, as it is a model of `MutableFaceGraph`.
 
 \section sectionSurfaceMeshUsage Usage
 
@@ -67,9 +67,11 @@ A surface mesh is an edge-centered data structure capable of
 maintaining incidence information of vertices, edges, and faces.  Each
 edge is represented by two halfedges with opposite orientation. Each
 halfedge stores a reference to an incident face and to an incident
-vertex. Additionally it stores a reference to the next and previous
+vertex. Additionally, it stores a reference to the next and previous
 halfedge incident to its incident face. For each face and each vertex
-an incident halfedge is stored.
+an incident halfedge is stored. Halfedges do not store the index of
+the opposite halfedge, as `Surface_mesh` stores opposite halfedges consecutively
+in memory.
 
 The following figure illustrates the functions which allow to navigate 
 in a surface mesh:  `Surface_mesh::opposite()`, `Surface_mesh::next()`, 
@@ -210,7 +212,8 @@ for example
 | `boost::graph_traits<G>::vertex_descriptor` | `Surface_mesh::Vertex_index` | |
 | `edges(const G& g)` | `sm.edges()` | |
 | `vd = source(ed,g)` | `vd = sm.source(ed)` | |
-| `n = num_vertices(g)`  | `n = sm.number_of_vertices()` | the latter only counts non-deleted vertices |
+| na  | `n = sm.number_of_vertices()` | counts non-deleted vertices amd has no BGL equivalent |
+| `n = num_vertices(g)`  | `n = sm.num_vertices()` | counts used and deleted vertices |
 | etc. | | |
 
 
