@@ -1897,25 +1897,27 @@ private: //--------------------------------------------------- property handling
 
 #endif
 
-#if 0
     /// adds a property map named `name` with value type `T` and default `t`
-    /// for index type `I`. Returns an invalid property map if a property
-    /// map named `name` already exists.
+    /// for index type `I`. Returns the property map together with a Boolean 
+    /// that is `true` if a new map was created. In case it already exists
+    /// the existing map together with `false` is returned.
 
   
     template<class I, class T>
-    Property_map<I, T>
+      std::pair<Property_map<I, T>, bool>
     add_property_map(const std::string& name, const T t=T()) {
         return (this->*boost::fusion::at_key<I>(pmap_)).template add<T>(name, t);
     }
-#endif
+
  
-    /// returns a property map named `name` with key type `I` and value type `T`, and a Boolean 
-    /// that is `true` if the property map gets newly created.
+    /// returns a property map named `name` with key type `I` and value type `T`, 
+    /// and a Boolean that is `true` if the property exists. 
+    /// In case it does not exist the Boolean is `false` and the behavior of
+    /// the property map is undefined.
     template <class I, class T>
-    std::pair<Property_map<I, T>,bool> property_map(const std::string& name, const T& t=T()) const
+    std::pair<Property_map<I, T>,bool> property_map(const std::string& name) const
     {
-      return (this->*boost::fusion::at_key<I>(pmap_)).template get<T>(name, t);
+      return (this->*boost::fusion::at_key<I>(pmap_)).template get<T>(name);
     }
 
 

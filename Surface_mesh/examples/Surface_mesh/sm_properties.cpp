@@ -29,13 +29,28 @@ int main()
   // give each vertex a name, the default is empty
   Mesh::Property_map<vertex_descriptor,std::string> name;
   bool created;
-  boost::tie(name, created) = m.property_map<vertex_descriptor,std::string>("v:name", "noname");
+  boost::tie(name, created) = m.add_property_map<vertex_descriptor,std::string>("v:name", "noname");
   assert(created);
   // add some names to the vertices
   name[v0] = "hello";
   name[v2] = "world";
-  
-  // retrieve the point property
+
+  {
+    // You can't add a property if it already exists
+    Mesh::Property_map<vertex_descriptor,std::string> name;
+    bool created;
+    boost::tie(name, created) = m.add_property_map<vertex_descriptor,std::string>("v:name", "noname");
+    assert(! created);
+  }
+
+  //  You can't get a property that does not exist
+  Mesh::Property_map<face_descriptor,std::string> gnus;
+  bool found;
+  boost::tie(gnus, found) = m.property_map<face_descriptor,std::string>("v:gnus");
+  assert(! found);
+
+
+  // retrieve the point property for which exists a convenience function
   Mesh::Property_map<vertex_descriptor, K::Point_3> location = m.points();
   BOOST_FOREACH( vertex_descriptor vd, m.vertices()) { 
     std::cout << name[vd] << " @ " << location[vd] << std::endl;
