@@ -36,7 +36,7 @@ class Delaunay_triangulation_cell_base_3
   : public Triangulation_cell_base_3<GT, Cb>
 {
 public:
-	
+  typedef GT Geom_traits;
   typedef typename Geom_traits::Point_3 Point_3;
 
   Point_3
