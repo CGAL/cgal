@@ -71,28 +71,59 @@
 
 namespace CGAL {
 
-template < class T, class Allocator_, class Increment_policy >
+template < class T, class Allocator_, class Increment_policy, class IndexType = std::size_t >
 class Compact_container_with_index_2
 {
   typedef Allocator_                                Al;
   typedef Increment_policy                          Incr_policy;
   typedef typename Default::Get< Al, CGAL_ALLOCATOR(T) >::type Allocator;
-  typedef Compact_container_with_index_2 <T, Al, Increment_policy> Self;
+  typedef Compact_container_with_index_2 <T, Al, Increment_policy, IndexType> Self;
   typedef Compact_container_with_index_traits <T>   Traits;
 public:
   typedef T                                         value_type;
+  typedef IndexType                                 size_type;
   typedef Allocator                                 allocator_type;
   typedef typename Allocator::reference             reference;
   typedef typename Allocator::const_reference       const_reference;
   typedef typename Allocator::pointer               pointer;
   typedef typename Allocator::const_pointer         const_pointer;
-  typedef typename Allocator::size_type             size_type;
   typedef typename Allocator::difference_type       difference_type;
   typedef internal::CC_iterator_with_index<Self, false> iterator;
   typedef internal::CC_iterator_with_index<Self, true>  const_iterator;
   typedef std::reverse_iterator<iterator>           reverse_iterator;
   typedef std::reverse_iterator<const_iterator>     const_reverse_iterator;
 
+  static const size_type bottom;
+
+ class handle : public internal::Handle<T,size_type>
+  {
+  public:
+
+    typedef typename Compact_container_with_index_2::size_type size_type;
+
+    explicit handle(size_type _idx= (std::numeric_limits<size_type>::max)()/2)
+      : Handle<T,size_type>(_idx)
+    {}
+
+    handle(const_iterator it)
+      : Handle<T,size_type>(it)
+    {}
+
+    handle(iterator it)
+      : Handle<T,size_type>(it)
+    {}
+
+    bool operator==(const handle& rhs) const
+    {
+      return idx() == rhs.idx();
+    }
+
+    bool operator<(const handle& rhs) const
+    {
+      return idx() < rhs.idx();
+    }
+
+  };
   friend class internal::CC_iterator_with_index<Self, false>;
   friend class internal::CC_iterator_with_index<Self, true>;
 
@@ -211,7 +242,7 @@ public:
   template < typename... Args >
   size_type emplace(const Args&... args)
   {
-    if (free_list == 0)
+    if (free_list == bottom)
       allocate_new_block();
 
     size_type ret = free_list;
@@ -226,7 +257,7 @@ public:
   // inserts a default constructed item.
   size_type emplace()
   {
-    if (free_list == 0)
+    if (free_list == bottom)
       allocate_new_block();
 
     size_type ret = free_list;
@@ -243,7 +274,7 @@ public:
   size_type
   emplace(const T1 &t1)
   {
-    if (free_list == 0)
+    if (free_list == bottom)
       allocate_new_block();
 
     size_type ret = free_list;
@@ -259,7 +290,7 @@ public:
   size_type
   emplace(const T1 &t1, const T2 &t2)
   {
-    if (free_list == 0)
+    if (free_list == bottom)
       allocate_new_block();
 
     size_type ret = free_list;
@@ -275,7 +306,7 @@ public:
   size_type
   emplace(const T1 &t1, const T2 &t2, const T3 &t3)
   {
-    if (free_list == 0)
+    if (free_list == bottom)
       allocate_new_block();
 
     size_type ret = free_list;
@@ -291,7 +322,7 @@ public:
   size_type
   emplace(const T1 &t1, const T2 &t2, const T3 &t3, const T4 &t4)
   {
-    if (free_list == 0)
+    if (free_list == bottom)
       allocate_new_block();
 
     size_type ret = free_list;
@@ -308,7 +339,7 @@ public:
   emplace(const T1 &t1, const T2 &t2, const T3 &t3, const T4 &t4,
           const T5 &t5)
   {
-    if (free_list == 0)
+    if (free_list == bottom)
       allocate_new_block();
 
     size_type ret = free_list;
@@ -326,7 +357,7 @@ public:
   emplace(const T1 &t1, const T2 &t2, const T3 &t3, const T4 &t4,
           const T5 &t5, const T6 &t6)
   {
-    if (free_list == 0)
+    if (free_list == bottom)
       allocate_new_block();
 
     size_type ret = free_list;
@@ -344,7 +375,7 @@ public:
   emplace(const T1 &t1, const T2 &t2, const T3 &t3, const T4 &t4,
           const T5 &t5, const T6 &t6, const T7 &t7)
   {
-    if (free_list == 0)
+    if (free_list == bottom)
       allocate_new_block();
 
     size_type ret = free_list;
@@ -362,7 +393,7 @@ public:
   emplace(const T1 &t1, const T2 &t2, const T3 &t3, const T4 &t4,
           const T5 &t5, const T6 &t6, const T7 &t7, const T8 &t8)
   {
-    if (free_list == 0)
+    if (free_list == bottom)
       allocate_new_block();
 
     size_type ret = free_list;
@@ -377,7 +408,7 @@ public:
 
   size_type insert(const T &t)
   {
-    if (free_list == 0)
+    if (free_list == bottom)
       allocate_new_block();
 
     size_type ret = free_list;
@@ -571,11 +602,8 @@ private:
     block_size = Incr_policy::first_block_size;
     capacity_  = 0;
     size_      = 0;
-    free_list  = 0;
+    free_list  = bottom;
     all_items  = NULL;
-
-    emplace();
-    size_=0;
   }
 
   allocator_type   alloc;
@@ -586,8 +614,12 @@ private:
   pointer          all_items;
 };
 
-/*template < class T, class Allocator, class Increment_policy >
-void Compact_container_with_index<T, Allocator, Increment_policy>::merge(Self &d)
+template < class T, class Allocator, class Increment_policy, class IndexType >
+const typename Compact_container_with_index_2<T, Allocator, Increment_policy, IndexType>::size_type
+Compact_container_with_index_2<T, Allocator, Increment_policy, IndexType>::bottom =  (std::numeric_limits<typename Compact_container_with_index_2<T, Allocator, Increment_policy, IndexType>::size_type>::max)()/2 -1;
+
+/*template < class T, class Allocator, class Increment_policy, class IndexType >
+void Compact_container_with_index<T, Allocator, Increment_policy, IndexType>::merge(Self &d)
 {
   CGAL_precondition(&d != this);
 
@@ -595,7 +627,7 @@ void Compact_container_with_index<T, Allocator, Increment_policy>::merge(Self &d
   CGAL_precondition(get_allocator() == d.get_allocator());
 
   // Concatenate the free_lists.
-  if (free_list == 0) {
+  if (free_list == bottom) {
     free_list = d.free_list;
   } else if (d.free_list != 0) {
     size_type e = free_list;
@@ -613,8 +645,8 @@ void Compact_container_with_index<T, Allocator, Increment_policy>::merge(Self &d
   d.init();
 }*/
 
-template < class T, class Allocator, class Increment_policy >
-void Compact_container_with_index_2<T, Allocator, Increment_policy>::clear()
+template < class T, class Allocator, class Increment_policy, class IndexType >
+void Compact_container_with_index_2<T, Allocator, Increment_policy, IndexType>::clear()
 {
   for (size_type i=0; i<capacity_; ++i)
   {
@@ -627,8 +659,8 @@ void Compact_container_with_index_2<T, Allocator, Increment_policy>::clear()
   init();
 }
 
-template < class T, class Allocator, class Increment_policy >
-void Compact_container_with_index_2<T, Allocator, Increment_policy>::allocate_new_block()
+template < class T, class Allocator, class Increment_policy, class IndexType >
+void Compact_container_with_index_2<T, Allocator, Increment_policy, IndexType>::allocate_new_block()
 {
   size_type oldcapacity=capacity_;
   capacity_ += block_size;

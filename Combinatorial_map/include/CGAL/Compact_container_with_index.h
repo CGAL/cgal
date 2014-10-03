@@ -95,41 +95,75 @@ struct Constant_size_policy_for_cc_with_size
 // It can be specialized.
 template < class T >
 struct Compact_container_with_index_traits {
-  static std::size_t size_t(const T &t)
+  static typename T::size_type size_t(const T &t)
   { return t.for_compact_container_with_index(); }
-  static std::size_t & size_t(T &t)
+  static typename T::size_type & size_t(T &t)
   { return t.for_compact_container_with_index(); }
 };
 
-template<class, class, class>
+template <class, class, class, class>
 class Compact_container_with_index_2;
 
 namespace internal {
   template < class DSC, bool Const>
   class CC_iterator_with_index;
+
+  template < class T, class ST >
+  class MyIndex;
 }
 
-template < class T, class Allocator_, class Increment_policy >
+template < class T, class Allocator_, class Increment_policy, class IndexType = std::size_t >
 class Compact_container_with_index
 {
   typedef Allocator_                                Al;
   typedef Increment_policy                          Incr_policy;
   typedef typename Default::Get< Al, CGAL_ALLOCATOR(T) >::type Allocator;
-  typedef Compact_container_with_index <T, Al, Increment_policy> Self;
+  typedef Compact_container_with_index <T, Al, Increment_policy, IndexType> Self;
   typedef Compact_container_with_index_traits <T>   Traits;
 public:
   typedef T                                         value_type;
+  typedef IndexType                                 size_type;
   typedef Allocator                                 allocator_type;
   typedef typename Allocator::reference             reference;
   typedef typename Allocator::const_reference       const_reference;
   typedef typename Allocator::pointer               pointer;
   typedef typename Allocator::const_pointer         const_pointer;
-  typedef typename Allocator::size_type             size_type;
   typedef typename Allocator::difference_type       difference_type;
   typedef internal::CC_iterator_with_index<Self, false> iterator;
   typedef internal::CC_iterator_with_index<Self, true>  const_iterator;
   typedef std::reverse_iterator<iterator>           reverse_iterator;
   typedef std::reverse_iterator<const_iterator>     const_reverse_iterator;
+  static const size_type bottom;
+
+  class handle : public internal::Handle<T,size_type>
+  {
+  public:
+
+    typedef typename Compact_container_with_index::size_type size_type;
+
+    explicit handle(size_type _idx= (std::numeric_limits<size_type>::max)()/2)
+      : Handle<T,size_type>(_idx)
+    {}
+
+    handle(const_iterator it)
+      : Handle<T,size_type>(it)
+    {}
+
+    handle(iterator it)
+      : Handle<T,size_type>(it)
+    {}
+
+    bool operator==(const handle& rhs) const
+    {
+      return idx() == rhs.idx();
+    }
+
+    bool operator<(const handle& rhs) const
+    {
+      return idx() < rhs.idx();
+    }
+
+  };
 
   friend class internal::CC_iterator_with_index<Self, false>;
   friend class internal::CC_iterator_with_index<Self, true>;
@@ -263,7 +297,7 @@ public:
   template < typename... Args >
   size_type emplace(const Args&... args)
   {
-    if (free_list == 0)
+    if (free_list == bottom)
       allocate_new_block();
 
     size_type ret = free_list;
@@ -278,7 +312,7 @@ public:
   // inserts a default constructed item.
   size_type emplace()
   {
-    if (free_list == 0)
+    if (free_list == bottom)
       allocate_new_block();
 
     size_type ret = free_list;
@@ -295,7 +329,7 @@ public:
   size_type
   emplace(const T1 &t1)
   {
-    if (free_list == 0)
+    if (free_list == bottom)
       allocate_new_block();
 
     size_type ret = free_list;
@@ -311,7 +345,7 @@ public:
   size_type
   emplace(const T1 &t1, const T2 &t2)
   {
-    if (free_list == 0)
+    if (free_list == bottom)
       allocate_new_block();
 
     size_type ret = free_list;
@@ -327,7 +361,7 @@ public:
   size_type
   emplace(const T1 &t1, const T2 &t2, const T3 &t3)
   {
-    if (free_list == 0)
+    if (free_list == bottom)
       allocate_new_block();
 
     size_type ret = free_list;
@@ -343,7 +377,7 @@ public:
   size_type
   emplace(const T1 &t1, const T2 &t2, const T3 &t3, const T4 &t4)
   {
-    if (free_list == 0)
+    if (free_list == bottom)
       allocate_new_block();
 
     size_type ret = free_list;
@@ -360,7 +394,7 @@ public:
   emplace(const T1 &t1, const T2 &t2, const T3 &t3, const T4 &t4,
           const T5 &t5)
   {
-    if (free_list == 0)
+    if (free_list == bottom)
       allocate_new_block();
 
     size_type ret = free_list;
@@ -378,7 +412,7 @@ public:
   emplace(const T1 &t1, const T2 &t2, const T3 &t3, const T4 &t4,
           const T5 &t5, const T6 &t6)
   {
-    if (free_list == 0)
+    if (free_list == bottom)
       allocate_new_block();
 
     size_type ret = free_list;
@@ -396,7 +430,7 @@ public:
   emplace(const T1 &t1, const T2 &t2, const T3 &t3, const T4 &t4,
           const T5 &t5, const T6 &t6, const T7 &t7)
   {
-    if (free_list == 0)
+    if (free_list == bottom)
       allocate_new_block();
 
     size_type ret = free_list;
@@ -414,7 +448,7 @@ public:
   emplace(const T1 &t1, const T2 &t2, const T3 &t3, const T4 &t4,
           const T5 &t5, const T6 &t6, const T7 &t7, const T8 &t8)
   {
-    if (free_list == 0)
+    if (free_list == bottom)
       allocate_new_block();
 
     size_type ret = free_list;
@@ -429,7 +463,7 @@ public:
 
   size_type insert(const T &t)
   {
-    if (free_list == 0)
+    if (free_list == bottom)
       allocate_new_block();
 
     size_type ret = free_list;
@@ -594,9 +628,11 @@ private:
   static const size_type mask_type = ((size_type)-1)-(((size_type)-1)/2);
 
   // Get the type of the pointee.
-  static Type static_type(const T& e)
   // TODO check if this is ok for little and big endian
-  { return (Type) ((Traits::size_t(e) & mask_type)>>(nbbits_size_type_m1)); }
+  static Type static_type(const T& e)
+  {
+    return (Type) ((Traits::size_t(e) & mask_type)>>(nbbits_size_type_m1));
+  }
 
   Type type(size_type e) const
   { return static_type(operator[](e)); }
@@ -644,11 +680,8 @@ private:
     block_size = Incr_policy::first_block_size;
     capacity_  = 0;
     size_      = 0;
-    free_list  = 0;
+    free_list      = bottom;
     all_items  = All_items();
-
-    emplace();
-    size_=0;
   }
 
   allocator_type   alloc;
@@ -658,6 +691,8 @@ private:
   size_type        free_list;
   All_items        all_items;
 };
+ template < class T, class Allocator, class Increment_policy, class IndexType >
+ const typename Compact_container_with_index<T, Allocator, Increment_policy, IndexType>::size_type Compact_container_with_index<T, Allocator, Increment_policy, IndexType>::bottom = (std::numeric_limits<typename Compact_container_with_index<T, Allocator, Increment_policy, IndexType>::size_type>::max)()/2 -1;
 
 /*template < class T, class Allocator, class Increment_policy >
 void Compact_container_with_index<T, Allocator, Increment_policy>::merge(Self &d)
@@ -668,7 +703,7 @@ void Compact_container_with_index<T, Allocator, Increment_policy>::merge(Self &d
   CGAL_precondition(get_allocator() == d.get_allocator());
 
   // Concatenate the free_lists.
-  if (free_list == 0) {
+  if (free_list == bottom) {
     free_list = d.free_list;
   } else if (d.free_list != 0) {
     size_type e = free_list;
@@ -686,8 +721,8 @@ void Compact_container_with_index<T, Allocator, Increment_policy>::merge(Self &d
   d.init();
 }*/
 
-template < class T, class Allocator, class Increment_policy >
-void Compact_container_with_index<T, Allocator, Increment_policy>::clear()
+template < class T, class Allocator, class Increment_policy, class IndexType >
+void Compact_container_with_index<T, Allocator, Increment_policy, IndexType>::clear()
 {
   for (size_type i=0; i<capacity_; ++i)
   {
@@ -703,8 +738,8 @@ void Compact_container_with_index<T, Allocator, Increment_policy>::clear()
   init();
 }
 
-template < class T, class Allocator, class Increment_policy >
-void Compact_container_with_index<T, Allocator, Increment_policy>::allocate_new_block()
+template < class T, class Allocator, class Increment_policy, class IndexType >
+void Compact_container_with_index<T, Allocator, Increment_policy, IndexType>::allocate_new_block()
 {
   pointer new_block = alloc.allocate(block_size);
   all_items.push_back(std::make_pair(new_block, block_size));
@@ -783,18 +818,20 @@ namespace internal {
   protected:
     void set_current(size_type dh)
     { m_index =  dh; }
-    
+
   protected:
-    
+
     // Only Compact_container should access these constructors.
     //template<class,class,class>
     friend class Compact_container_with_index<value_type, typename DSC::Al,
-                                               typename DSC::Incr_policy>;
-    
+                                              typename DSC::Incr_policy, typename DSC::size_type >;
+
     //template<class,class,class>
     friend class Compact_container_with_index_2<value_type, typename DSC::Al,
-                                   typename DSC::Incr_policy>;
-    
+                                                typename DSC::Incr_policy, typename DSC::size_type>;
+    template<class,class,class>
+    friend class Compact_container_with_index_3;
+
     cc_pointer m_ptr_to_cc;
     size_type m_index;
 
@@ -802,7 +839,8 @@ namespace internal {
     CC_iterator_with_index(cc_pointer ptr, int, int) : m_ptr_to_cc(ptr),
       m_index(0)
     {
-      increment(); // To jump over index=0 which is equivalent to null
+      if(m_ptr_to_cc->type(m_index) != DSC::USED)
+        increment();
     }
 
     // Construction from raw pointer and for end().
@@ -834,8 +872,6 @@ namespace internal {
       CGAL_assertion_msg(m_ptr_to_cc != NULL,
          "Decrementing a singular iterator or an empty container iterator ?");
       CGAL_assertion_msg(m_index>0, "Decrementing begin() ?");
-
-      CGAL_assertion(m_ptr_to_cc->type(0)==DSC::USED);
 
       // If it's not begin(), then it's valid, we can do --.
       do
@@ -872,7 +908,7 @@ namespace internal {
     template<class ADSC,bool AC1,bool AC2>
     friend bool operator==(const CC_iterator_with_index<ADSC,AC1>&,
                            const CC_iterator_with_index<ADSC,AC2>&);
-    
+
     template<class ADSC,bool AC1,bool AC2>
     friend bool operator!=(const CC_iterator_with_index<ADSC,AC1>&,
                            const CC_iterator_with_index<ADSC,AC2>&);
@@ -914,6 +950,80 @@ namespace internal {
     CGAL_assertion( n == NULL);
     return rhs.m_index != 0;
     }*/
+
+  template<typename T, typename IT >
+    class Handle
+    {
+    public:
+
+      typedef IT size_type;
+
+        /// Constructor. Default construction creates an invalid handle.
+      explicit Handle(size_type _idx= (std::numeric_limits<size_type>::max)()/2) : idx_(_idx) {}
+
+        /// Get the underlying index of this handle
+        size_type idx() const { return idx_; }
+
+        size_type& idx() { return idx_; }
+
+        /// reset handle to be invalid
+      void reset() { idx_= (std::numeric_limits<size_type>::max)()/2; }
+
+        /// return whether the handle is valid
+      bool is_valid() const { return idx_ != (std::numeric_limits<size_type>::max)()/2; }
+
+        /// are two handles equal?
+      bool operator==(const T& _rhs) const {
+            return idx_ == _rhs.idx_;
+        }
+
+        /// are two handles different?
+      bool operator!=(const Handle<T,IT>& _rhs) const {
+            return idx_ != _rhs.idx_;
+        }
+
+        /// Comparison by index.
+      bool operator<(const Handle<T,IT>& _rhs) const {
+            return idx_ < _rhs.idx_;
+        }
+
+        /// Increment the internal index. This operations does not
+        /// guarantee that the index is valid or undeleted after the
+        /// increment.
+        Handle& operator++() { ++idx_; return *this; }
+        /// Decrement the internal index. This operations does not
+        /// guarantee that the index is valid or undeleted after the
+        /// decrement.
+        Handle& operator--() { --idx_; return *this; }
+
+        /// Increment the internal index. This operations does not
+        /// guarantee that the index is valid or undeleted after the
+        /// increment.
+        Handle operator++(int) { Handle tmp(*this); ++idx_; return tmp; }
+        /// Decrement the internal index. This operations does not
+        /// guarantee that the index is valid or undeleted after the
+        /// decrement.
+        Handle operator--(int) { Handle tmp(*this); --idx_; return tmp; }
+    private:
+        size_type idx_;
+    };
+
+  template<typename T, typename IT1, typename IT2 >
+  class Handle2 : public Handle<T,IT2>
+    {
+      typedef Handle<T,IT2> Base;
+    public:
+
+        /// Constructor. Default construction creates an invalid handle.
+      explicit Handle2(size_type _cc_idx, size_type _idx = (std::numeric_limits<size_type>::max)()/2)
+        : Base(_idx), cc_idx_(_cc_idx) {}
+
+      size_type cc_idx() const { return cc_idx_; }
+
+      size_type& cc_idx() { return cc_idx_; }
+public:
+        size_type cc_idx_;
+  };
 
 } // namespace internal
 
