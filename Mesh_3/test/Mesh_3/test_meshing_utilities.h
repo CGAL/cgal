@@ -39,7 +39,6 @@
 #include <CGAL/Triangle_accessor_3.h>
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits.h>
-#include <CGAL/Mesh_3/Dump_c3t3.h>
 
 #include <vector>
 #include <boost/optional/optional_io.hpp>
@@ -80,8 +79,6 @@ struct Tester
     size_type v = c3t3.triangulation().number_of_vertices();
     size_type f = c3t3.number_of_facets_in_complex();
     size_type c = c3t3.number_of_cells_in_complex();
-
-    dump_c3t3(c3t3, "initial-c3t3");
 
     // Verify
     verify_c3t3(c3t3,domain,domain_type,
@@ -134,7 +131,6 @@ struct Tester
     C3t3 exude_c3t3(c3t3);
     std::cerr << "Exude...\n";
     CGAL::exude_mesh_3(exude_c3t3);
-    dump_c3t3(exude_c3t3, "after-exude");
     verify_c3t3(exude_c3t3,domain,domain_type,v,v,f,f);
     verify_c3t3_quality(c3t3,exude_c3t3);
     verify_c3t3_volume(exude_c3t3, volume*0.95, volume*1.05);
@@ -146,7 +142,6 @@ struct Tester
     C3t3 perturb_c3t3(c3t3);
     std::cerr << "Perturb...\n";
     CGAL::perturb_mesh_3(perturb_c3t3, domain, CGAL::parameters::time_limit=5);
-    dump_c3t3(perturb_c3t3, "after-perturb");
     verify_c3t3(perturb_c3t3,domain,domain_type,v,v);
     verify_c3t3_quality(c3t3,perturb_c3t3);
     verify_c3t3_volume(perturb_c3t3, volume*0.95, volume*1.05);
@@ -158,7 +153,6 @@ struct Tester
     std::cerr << "Odt...\n";
     CGAL::odt_optimize_mesh_3(odt_c3t3, domain, CGAL::parameters::time_limit=5,
                               CGAL::parameters::convergence=0.001, CGAL::parameters::freeze_bound=0.0005);
-    dump_c3t3(odt_c3t3, "after-odt");
     verify_c3t3(odt_c3t3,domain,domain_type,v,v);
     verify_c3t3_volume(odt_c3t3, volume*0.95, volume*1.05);
     verify_c3t3_hausdorff_distance(odt_c3t3, domain, domain_type, hdist);
@@ -170,7 +164,6 @@ struct Tester
     CGAL::lloyd_optimize_mesh_3(lloyd_c3t3, domain, CGAL::parameters::time_limit=5,
                                 CGAL::parameters::convergence=0.001, CGAL::parameters::freeze_bound=0.0005);
     verify_c3t3(lloyd_c3t3,domain,domain_type,v,v);
-    dump_c3t3(lloyd_c3t3, "after-lloyd");
     verify_c3t3_volume(lloyd_c3t3, volume*0.95, volume*1.05);
     verify_c3t3_hausdorff_distance(lloyd_c3t3, domain, domain_type, hdist);
   }

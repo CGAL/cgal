@@ -29,32 +29,10 @@
 #include <CGAL/IO/File_tetgen.h>
 #include <CGAL/IO/File_binary_mesh_3.h>
 
-#include <boost/lexical_cast.hpp>
-#include <boost/format.hpp>
-#include <stdexcept>
-
-template <typename T>
-T read_from_argv(int& argc, char**&argv)
-{
-  if(--argc < 0) {
-    throw std::runtime_error("not enough arguments on command line");
-  }
-  return boost::lexical_cast<T>(std::string(*(argv++ + 1)));
-}
-
-template <>
-char* read_from_argv<char*>(int& argc, char**&argv)
-{
-  if(--argc < 0) {
-    throw std::runtime_error("not enough arguments on command line");
-  }
-  return *(argv++ + 1);
-}
-
 template <typename K, typename Concurrency_tag = CGAL::Sequential_tag>
 struct Polyhedron_with_features_tester : public Tester<K>
 {
-  void operator()(int argc, char** argv) const
+  void operator()() const
   {
     typedef CGAL::Mesh_3::Robust_intersection_traits_3<K> Gt;
     typedef CGAL::Polyhedral_mesh_domain_with_features_3<Gt> Mesh_domain;
@@ -78,35 +56,13 @@ struct Polyhedron_with_features_tester : public Tester<K>
     //-------------------------------------------------------
     std::cout << "\tSeed is\t"
       << CGAL::default_random.get_seed() << std::endl;
-
-    const char* filename = read_from_argv<char*>(argc, argv);
-    std::cerr << "  testing with file " << filename << std::endl;
-
-    Mesh_domain domain(filename, &CGAL::default_random);
+    Mesh_domain domain("data/cube.off", &CGAL::default_random);
     domain.detect_features();
 
     // Set mesh criteria
-    const double ec = read_from_argv<double>(argc, argv);
-    std::cerr << "  edge_criteria: " << ec << std::endl;
-    Edge_criteria edge_criteria(ec);
-
-    const double angle = read_from_argv<double>(argc, argv);
-    const double facet_size = read_from_argv<double>(argc, argv);
-    const double facet_distance = read_from_argv<double>(argc, argv);
-    std::cerr << boost::format("  facet_criteria: \n"
-                               "    angle: %1%\n"
-                               "    facet_size: %2%\n"
-                               "    facet_distance: %3%\n")
-      % angle % facet_size % facet_distance;
-    Facet_criteria facet_criteria(angle, facet_size, facet_distance);
-
-    const double ratio = read_from_argv<double>(argc, argv);
-    const double tets_size = read_from_argv<double>(argc, argv);
-    std::cerr << boost::format("  cell_criteria: \n"
-                               "    ratio: %1%\n"
-                               "    tets_size: %2%\n")
-      % ratio % tets_size;
-    Cell_criteria cell_criteria(ratio, tets_size);
+    Edge_criteria edge_criteria(0.2);
+    Facet_criteria facet_criteria(30, 0.2, 0.02);
+    Cell_criteria cell_criteria(3, 0.2);
     Mesh_criteria criteria(edge_criteria, facet_criteria, cell_criteria);
 
     // Mesh generation
@@ -133,21 +89,19 @@ struct Polyhedron_with_features_tester : public Tester<K>
     CGAL::Mesh_3::load_binary_file(in_binary, c3t3_bis);
     assert(c3t3_bis.triangulation() == c3t3.triangulation());
 
-    // recurse on arguments
-    if(argc > 0) this->operator()(argc, argv);
   }
 };
 
-int main(int argc, char** argv)
+int main()
 {
   Polyhedron_with_features_tester<K_e_i> test_epic;
   std::cerr << "Mesh generation from a polyhedron with edges:\n";
-  test_epic(argc, argv);
+  test_epic();
   
 #ifdef CGAL_LINKED_WITH_TBB
   Polyhedron_with_features_tester<K_e_i, CGAL::Parallel_tag> test_epic_p;
   std::cerr << "Parallel mesh generation from a polyhedron with edges:\n";
-  test_epic_p(argc, argv);
+  test_epic_p();
 #endif
 
   return EXIT_SUCCESS;
