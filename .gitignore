@@ -1133,3 +1133,4 @@ gmon.*
 /Mesh_3/test/Mesh_3/test_mesh_implicit_domains
 /Mesh_3/test/Mesh_3/test_meshing_determinism
 /Mesh_3/test/Mesh_3/test_meshing_unit_tetrahedron
+/Arrangement_on_surface_2/test/Arrangement_on_surface_2/build.log
