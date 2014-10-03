@@ -449,12 +449,13 @@ namespace CGAL {
     typedef typename Dart_wrapper::Dart                   Dart;
     typedef typename Alloc_::template rebind<Dart>::other Dart_allocator;
 
+    typedef unsigned int size_type; // Type used as index.
+
     typedef Compact_container_with_index_2<Dart,Dart_allocator,
-    Constant_size_policy_for_cc_with_size<1024> >
+    Constant_size_policy_for_cc_with_size<1024>, size_type >
     Dart_container;
 
     typedef CGAL::Tag_true Use_index;
-    typedef typename Dart_container::size_type      size_type;
 
     typedef Items_ Items;
     typedef Alloc_ Alloc;
@@ -463,7 +464,7 @@ namespace CGAL {
     struct Container_for_attributes : public
         Compact_container_with_index_2<T,
         typename Alloc_::template rebind<T>::other,
-        Constant_size_policy_for_cc_with_size<1024> >
+        Constant_size_policy_for_cc_with_size<1024>, size_type >
     {};
 
     /// Typedef for attributes
@@ -473,23 +474,12 @@ namespace CGAL {
     struct Attribute_type: public Helper::template Attribute_type<i>
     {};
     template<int i>
-    struct MyAttribute_handle: public CGAL::MyIndex<unsigned int> // public Helper::template Attribute_handle<i>
-    {
-      MyAttribute_handle(size_t s=-1) : MyIndex<unsigned int>(s)
-      {}
-    };
+    struct Attribute_handle: public Helper::template Attribute_handle<i>
+    {};
     template<int i>
-    struct Attribute_handle
-    {typedef MyAttribute_handle<i> type;};
-    template<int i>
-    struct MyAttribute_const_handle:public CGAL::MyIndex<unsigned int>//Helper::template Attribute_const_handle<i>
-    {
-      MyAttribute_const_handle(size_t s=-1) : MyIndex<unsigned int>(s)
-      {}
-    };
-    template<int i>
-    struct Attribute_const_handle
-    {typedef MyAttribute_const_handle<i> type;};
+    struct Attribute_const_handle:
+        public Helper::template Attribute_const_handle<i>
+    {};
     template<int i>
     struct Attribute_range: public Helper::template Attribute_range<i>
     {};
@@ -505,11 +495,7 @@ namespace CGAL {
     static const unsigned int dimension = d_;
 
     //   typedef unsigned int Dart_index;
-    struct Dart_index : public CGAL::MyIndex<unsigned int>
-    {
-      Dart_index(size_t s=-1) : MyIndex<unsigned int>(s)
-      {}
-    };
+    typedef typename Dart_container::Index Dart_index;
 
     // Definition of old types, for backward compatibility.
     typedef Dart_index Dart_handle;

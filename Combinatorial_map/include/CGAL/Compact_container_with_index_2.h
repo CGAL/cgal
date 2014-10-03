@@ -95,34 +95,21 @@ public:
 
   static const size_type bottom;
 
- class handle : public internal::Handle<T,size_type>
+  class Index : public internal::MyIndex<T,size_type>
   {
   public:
-
     typedef typename Compact_container_with_index_2::size_type size_type;
+    typedef internal::MyIndex<T,size_type> Base;
 
-    explicit handle(size_type _idx= (std::numeric_limits<size_type>::max)()/2)
-      : Handle<T,size_type>(_idx)
+    explicit Index(size_type idx=(std::numeric_limits<size_type>::max)()/2)
+      : Base(idx)
     {}
 
-    handle(const_iterator it)
-      : Handle<T,size_type>(it)
+    Index(const const_iterator& it) : Base(it)
     {}
 
-    handle(iterator it)
-      : Handle<T,size_type>(it)
+    Index(const iterator& it) : Base(it)
     {}
-
-    bool operator==(const handle& rhs) const
-    {
-      return idx() == rhs.idx();
-    }
-
-    bool operator<(const handle& rhs) const
-    {
-      return idx() < rhs.idx();
-    }
-
   };
   friend class internal::CC_iterator_with_index<Self, false>;
   friend class internal::CC_iterator_with_index<Self, true>;
@@ -240,12 +227,12 @@ public:
   // (just forward the arguments to the constructor, to optimize a copy).
 #ifndef CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
   template < typename... Args >
-  size_type emplace(const Args&... args)
+  Index emplace(const Args&... args)
   {
     if (free_list == bottom)
       allocate_new_block();
 
-    size_type ret = free_list;
+    Index ret = free_list;
     T& e = operator[](free_list);
     static_set_type(e, USED);
     free_list = static_get_val(e);
@@ -255,12 +242,12 @@ public:
   }
 #else
   // inserts a default constructed item.
-  size_type emplace()
+  Index emplace()
   {
     if (free_list == bottom)
       allocate_new_block();
 
-    size_type ret = free_list;
+    Index ret(free_list);
     T& e = operator[](free_list);
     static_set_type(e, USED);
     free_list = static_get_val(e);
@@ -271,13 +258,12 @@ public:
   }
 
   template < typename T1 >
-  size_type
-  emplace(const T1 &t1)
+  Index emplace(const T1 &t1)
   {
     if (free_list == bottom)
       allocate_new_block();
 
-    size_type ret = free_list;
+    Index ret(free_list);
     T& e = operator[](free_list);
     static_set_type(e, USED);
     free_list = static_get_val(e);
@@ -287,13 +273,12 @@ public:
   }
 
   template < typename T1, typename T2 >
-  size_type
-  emplace(const T1 &t1, const T2 &t2)
+  Index emplace(const T1 &t1, const T2 &t2)
   {
     if (free_list == bottom)
       allocate_new_block();
 
-    size_type ret = free_list;
+    Index ret(free_list);
     T& e = operator[](free_list);
     static_set_type(e, USED);
     free_list = static_get_val(e);
@@ -303,13 +288,12 @@ public:
   }
 
   template < typename T1, typename T2, typename T3 >
-  size_type
-  emplace(const T1 &t1, const T2 &t2, const T3 &t3)
+  Index emplace(const T1 &t1, const T2 &t2, const T3 &t3)
   {
     if (free_list == bottom)
       allocate_new_block();
 
-    size_type ret = free_list;
+    Index ret(free_list);
     T& e = operator[](free_list);
     static_set_type(e, USED);
     free_list = static_get_val(e);
@@ -319,13 +303,12 @@ public:
   }
 
   template < typename T1, typename T2, typename T3, typename T4 >
-  size_type
-  emplace(const T1 &t1, const T2 &t2, const T3 &t3, const T4 &t4)
+  Index emplace(const T1 &t1, const T2 &t2, const T3 &t3, const T4 &t4)
   {
     if (free_list == bottom)
       allocate_new_block();
 
-    size_type ret = free_list;
+    Index ret(free_list);
     T& e = operator[](free_list);
     static_set_type(e, USED);
     free_list = static_get_val(e);
@@ -335,14 +318,13 @@ public:
    }
 
   template < typename T1, typename T2, typename T3, typename T4, typename T5 >
-  size_type
-  emplace(const T1 &t1, const T2 &t2, const T3 &t3, const T4 &t4,
-          const T5 &t5)
+  Index emplace(const T1 &t1, const T2 &t2, const T3 &t3, const T4 &t4,
+                const T5 &t5)
   {
     if (free_list == bottom)
       allocate_new_block();
 
-    size_type ret = free_list;
+    Index ret(free_list);
     T& e = operator[](free_list);
     static_set_type(e, USED);
     free_list = static_get_val(e);
@@ -353,14 +335,13 @@ public:
 
   template < typename T1, typename T2, typename T3, typename T4,
              typename T5, typename T6 >
-  size_type
-  emplace(const T1 &t1, const T2 &t2, const T3 &t3, const T4 &t4,
-          const T5 &t5, const T6 &t6)
+  Index emplace(const T1 &t1, const T2 &t2, const T3 &t3, const T4 &t4,
+                const T5 &t5, const T6 &t6)
   {
     if (free_list == bottom)
       allocate_new_block();
 
-    size_type ret = free_list;
+    Index ret(free_list);
     T& e = operator[](free_list);
     static_set_type(e, USED);
     free_list = static_get_val(e);
@@ -371,14 +352,13 @@ public:
 
   template < typename T1, typename T2, typename T3, typename T4,
              typename T5, typename T6, typename T7 >
-  size_type
-  emplace(const T1 &t1, const T2 &t2, const T3 &t3, const T4 &t4,
-          const T5 &t5, const T6 &t6, const T7 &t7)
+  Index emplace(const T1 &t1, const T2 &t2, const T3 &t3, const T4 &t4,
+                const T5 &t5, const T6 &t6, const T7 &t7)
   {
     if (free_list == bottom)
       allocate_new_block();
 
-    size_type ret = free_list;
+    Index ret(free_list);
     T& e = operator[](free_list);
     static_set_type(e, USED);
     free_list = static_get_val(e);
@@ -389,14 +369,13 @@ public:
 
   template < typename T1, typename T2, typename T3, typename T4,
              typename T5, typename T6, typename T7, typename T8 >
-  size_type
-  emplace(const T1 &t1, const T2 &t2, const T3 &t3, const T4 &t4,
-          const T5 &t5, const T6 &t6, const T7 &t7, const T8 &t8)
+  Index emplace(const T1 &t1, const T2 &t2, const T3 &t3, const T4 &t4,
+                const T5 &t5, const T6 &t6, const T7 &t7, const T8 &t8)
   {
     if (free_list == bottom)
       allocate_new_block();
 
-    size_type ret = free_list;
+    Index ret(free_list);
     T& e = operator[](free_list);
     static_set_type(e, USED);
     free_list = static_get_val(e);
@@ -406,12 +385,12 @@ public:
   }
 #endif // CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
 
-  size_type insert(const T &t)
+  Index insert(const T &t)
   {
     if (free_list == bottom)
       allocate_new_block();
 
-    size_type ret = free_list;
+    Index ret(free_list);
     T& e = operator[](free_list);
     static_set_type(e, USED);
     free_list = static_get_val(e);
@@ -434,7 +413,7 @@ public:
     insert(first, last);
   }
 
-  void erase(size_type x)
+  void erase(Index x)
   {
     CGAL_precondition(type(x) == USED);
     T& e = operator[](x);
@@ -563,7 +542,7 @@ private:
   // Get the type of the pointee.
   static Type static_type(const T& e)
   // TODO check if this is ok for little and big endian
-  { return (Type) ((Traits::size_t(e) & mask_type)>>(nbbits_size_type_m1)); }
+  { return (Type) ((size_type(e) & mask_type)>>(nbbits_size_type_m1)); }
 
   Type type(size_type e) const
   { return static_type(operator[](e)); }
@@ -574,19 +553,19 @@ private:
     // This out of range compare is always true and causes lots of
     // unnecessary warnings.
     // CGAL_precondition(0 <= t && t < 2);
-    Traits::size_t(e) &= ( ~mask_type | ( ((size_type)t) <<(nbbits_size_type_m1) ) );
+    size_type(e) &= ( ~mask_type | ( ((size_type)t) <<(nbbits_size_type_m1) ) );
   }
 
   // get the value of the element (removing the two bits)
   static size_type static_get_val(const T& e)
-  { return (Traits::size_t(e) & ~mask_type); }
+  { return (size_type(e) & ~mask_type); }
 
   size_type get_val(size_type e) const
   { return static_get_val(operator[](e)); }
 
   // set the value of the element and its type
   static void static_set_val(T& e, size_type v, Type t)
-  { Traits::size_t(e)=v | ( ((size_type)t) <<(nbbits_size_type_m1)); }
+  { size_type(e)=v | ( ((size_type)t) <<(nbbits_size_type_m1)); }
 
   void set_val(size_type e, size_type v, Type t)
   { static_set_val(operator[](e), v, t); }
@@ -616,7 +595,7 @@ private:
 
 template < class T, class Allocator, class Increment_policy, class IndexType >
 const typename Compact_container_with_index_2<T, Allocator, Increment_policy, IndexType>::size_type
-Compact_container_with_index_2<T, Allocator, Increment_policy, IndexType>::bottom =  (std::numeric_limits<typename Compact_container_with_index_2<T, Allocator, Increment_policy, IndexType>::size_type>::max)()/2 -1;
+Compact_container_with_index_2<T, Allocator, Increment_policy, IndexType>::bottom =  (std::numeric_limits<typename Compact_container_with_index_2<T, Allocator, Increment_policy, IndexType>::size_type>::max)()/2;
 
 /*template < class T, class Allocator, class Increment_policy, class IndexType >
 void Compact_container_with_index<T, Allocator, Increment_policy, IndexType>::merge(Self &d)

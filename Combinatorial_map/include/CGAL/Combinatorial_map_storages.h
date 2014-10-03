@@ -403,26 +403,6 @@ namespace CGAL {
   // Thus we initialize null_dart_handle in the Combinatorial_map constructor
 #endif // CGAL_CMAP_DEPRECATED
 
-template<typename T>
-class MyIndex
-{
-public:
- MyIndex(size_t s=-1) : idx(s)
- {}
- operator size_t() const
- { return idx; }
- MyIndex<T>& operator++()
- { ++idx; return *this; }
- MyIndex<T> operator++(int)
- { MyIndex<T> res(*this); ++idx; return res; }
- MyIndex<T>& operator--()
- { --idx; return *this; }
- MyIndex<T> operator--(int)
- {MyIndex<T> res(*this); --idx; return res;}
-private:
- T idx;
-};
-
   // Storage with combinatorial maps using index
   template<unsigned int d_, class Items_, class Alloc_>
   class Combinatorial_map_storage_2
@@ -436,12 +416,13 @@ private:
     typedef typename Dart_wrapper::Dart                   Dart;
     typedef typename Alloc_::template rebind<Dart>::other Dart_allocator;
 
+    typedef unsigned int size_type; // Type used as index.
+
     typedef Compact_container_with_index_2<Dart,Dart_allocator,
-    Constant_size_policy_for_cc_with_size<1024> >
+    Constant_size_policy_for_cc_with_size<1024>, size_type >
     Dart_container;
 
     typedef CGAL::Tag_true Use_index;
-    typedef typename Dart_container::size_type      size_type;
 
     typedef Items_ Items;
     typedef Alloc_ Alloc;
@@ -450,7 +431,7 @@ private:
     struct Container_for_attributes : public
         Compact_container_with_index_2<T,
         typename Alloc_::template rebind<T>::other,
-        Constant_size_policy_for_cc_with_size<1024> >
+        Constant_size_policy_for_cc_with_size<1024>, size_type >
     {};
 
     /// Typedef for attributes
@@ -460,23 +441,18 @@ private:
     struct Attribute_type: public Helper::template Attribute_type<i>
     {};
     template<int i>
-    struct Attribute_handle: public CGAL::MyIndex<unsigned int> // public Helper::template Attribute_handle<i>
-    {
-      explicit Attribute_handle(size_t s=-1) : MyIndex<unsigned int>(s)
-      {}
-    };
+    struct Attribute_handle: public Helper::template Attribute_handle<i>
+    {};
     template<int i>
-    struct Attribute_const_handle:public CGAL::MyIndex<unsigned int>//Helper::template Attribute_const_handle<i>
-    {
-      explicit Attribute_const_handle(size_t s=-1) : MyIndex<unsigned int>(s)
-      {}
-    };
+    struct Attribute_const_handle:
+        public Helper::template Attribute_const_handle<i>
+    {};
     template<int i>
     struct Attribute_range: public Helper::template Attribute_range<i>
     {};
     template<int i>
     struct Attribute_const_range:
-      public Helper::template Attribute_const_range<i>
+        public Helper::template Attribute_const_range<i>
     {};
 
     /// Number of marks
@@ -487,11 +463,7 @@ private:
 
     // typedef unsigned int Dart_index;
     // typedef MyIndex<unsigned int> Dart_index;
-    struct Dart_index : public CGAL::MyIndex<unsigned int>
-    {
-      explicit Dart_index(size_t s=-1) : MyIndex<unsigned int>(s)
-      {}
-    };
+    typedef typename Dart_container::Index Dart_index;
 
     // Definition of old types, for backward compatibility.
     typedef Dart_index Dart_handle;

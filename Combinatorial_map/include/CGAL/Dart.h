@@ -68,10 +68,10 @@ namespace CGAL {
     template <class, class, class, class>
     friend class Compact_container;
 
-    template <class, class, class>
+    template <class, class, class, class>
     friend class Compact_container_with_index;
 
-    template <class, class, class>
+    template <class, class, class, class>
     friend class Compact_container_with_index_2;
 
     template<class, unsigned int, unsigned int>
@@ -365,10 +365,10 @@ namespace CGAL {
     template <class, class, class, class>
     friend class Compact_container;
 
-    template <class, class, class>
+    template <class, class, class, class>
     friend class Compact_container_with_index;
 
-    template <class, class, class>
+    template <class, class, class, class>
     friend class Compact_container_with_index_2;
 
     template<class, unsigned int, unsigned int>
@@ -538,17 +538,13 @@ namespace CGAL {
 
    public:
     size_type for_compact_container_with_index() const
-    { return st; }
+    { return mbeta[0]; }
     size_type& for_compact_container_with_index()
-    { return st; }
+    { return mbeta[0]; }
 
   protected:
-    union
-    {
-     size_type st;
-     /// Beta for each dimension +1 (from 0 to dimension).
-     Dart_handle mbeta[dimension+1];
-    };
+    /// Beta for each dimension +1 (from 0 to dimension).
+    Dart_handle mbeta[dimension+1];
 
     /// Values of Boolean marks.
     mutable std::bitset<NB_MARKS> mmarks;

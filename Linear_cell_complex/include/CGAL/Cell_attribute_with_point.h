@@ -69,7 +69,7 @@ namespace CGAL {
     template <class, class, class, class>
     friend class Compact_container;
 
-    template <class, class, class>
+    template <class, class, class, class>
     friend class Compact_container_with_index;
 
     template <class, class, class>
@@ -130,11 +130,11 @@ namespace CGAL {
     template <class, class, class, class>
     friend class Compact_container;
 
-    template <class, class, class>
+    template <class, class, class, class>
     friend class Compact_container_with_index;
 
-    template <class, class, class>
-    friend class Compact_container_2;
+    template <class, class, class, class>
+    friend class Compact_container_with_index_2;
 
   public:
     typedef Cell_attribute<LCC, void, Tag,
@@ -182,7 +182,7 @@ namespace CGAL {
     template < unsigned int, class, class, class, class >
     friend class Combinatorial_map_base;
 
-    template <class, class, class>
+    template <class, class, class, class>
     friend class Compact_container_with_index;
 
   public:
@@ -238,7 +238,7 @@ namespace CGAL {
     template < unsigned int, class, class, class, class >
     friend class Combinatorial_map_base;
 
-    template <class, class, class>
+    template <class, class, class, class>
     friend class Compact_container_with_index;
 
   public:

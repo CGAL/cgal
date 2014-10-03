@@ -135,34 +135,21 @@ public:
   typedef std::reverse_iterator<const_iterator>     const_reverse_iterator;
   static const size_type bottom;
 
-  class handle : public internal::Handle<T,size_type>
+  class Index : public internal::MyIndex<T,size_type>
   {
   public:
-
     typedef typename Compact_container_with_index::size_type size_type;
+    typedef internal::MyIndex<T,size_type> Base;
 
-    explicit handle(size_type _idx= (std::numeric_limits<size_type>::max)()/2)
-      : Handle<T,size_type>(_idx)
+    explicit Index(size_type idx=(std::numeric_limits<size_type>::max)()/2)
+      : Base(idx)
     {}
 
-    handle(const_iterator it)
-      : Handle<T,size_type>(it)
+    Index(const const_iterator& it) : Base(it)
     {}
 
-    handle(iterator it)
-      : Handle<T,size_type>(it)
+    Index(const iterator& it) : Base(it)
     {}
-
-    bool operator==(const handle& rhs) const
-    {
-      return idx() == rhs.idx();
-    }
-
-    bool operator<(const handle& rhs) const
-    {
-      return idx() < rhs.idx();
-    }
-
   };
 
   friend class internal::CC_iterator_with_index<Self, false>;
@@ -640,13 +627,10 @@ private:
   // Sets the pointer part and the type of the pointee.
   static void static_set_type(T& e, Type t)
   {
-    // This out of range compare is always true and causes lots of
-    // unnecessary warnings.
-    // CGAL_precondition(0 <= t && t < 2);
     Traits::size_t(e) &= ( ~mask_type | ( ((size_type)t) <<(nbbits_size_type_m1) ) );
   }
 
-  // get the value of the element (removing the two bits)
+  // get the value of the element (removing the used bit)
   static size_type static_get_val(const T& e)
   { return (Traits::size_t(e) & ~mask_type); }
 
@@ -680,7 +664,7 @@ private:
     block_size = Incr_policy::first_block_size;
     capacity_  = 0;
     size_      = 0;
-    free_list      = bottom;
+    free_list  = bottom;
     all_items  = All_items();
   }
 
@@ -692,7 +676,7 @@ private:
   All_items        all_items;
 };
  template < class T, class Allocator, class Increment_policy, class IndexType >
- const typename Compact_container_with_index<T, Allocator, Increment_policy, IndexType>::size_type Compact_container_with_index<T, Allocator, Increment_policy, IndexType>::bottom = (std::numeric_limits<typename Compact_container_with_index<T, Allocator, Increment_policy, IndexType>::size_type>::max)()/2 -1;
+ const typename Compact_container_with_index<T, Allocator, Increment_policy, IndexType>::size_type Compact_container_with_index<T, Allocator, Increment_policy, IndexType>::bottom = (std::numeric_limits<typename Compact_container_with_index<T, Allocator, Increment_policy, IndexType>::size_type>::max)()/2;
 
 /*template < class T, class Allocator, class Increment_policy >
 void Compact_container_with_index<T, Allocator, Increment_policy>::merge(Self &d)
@@ -952,77 +936,67 @@ namespace internal {
     }*/
 
   template<typename T, typename IT >
-    class Handle
-    {
-    public:
+  class MyIndex
+  {
+  public:
+    typedef MyIndex<T,IT> Self;
+    typedef IT size_type;
 
-      typedef IT size_type;
+    /// Constructor. Default construction creates a kind of "NULL" index.
+    /// max/2 because the most significant bit must be equal to 0 (used).
+    explicit MyIndex(size_type idx=(std::numeric_limits<size_type>::max)()/2)
+      : m_idx(idx)
+    {}
 
-        /// Constructor. Default construction creates an invalid handle.
-      explicit Handle(size_type _idx= (std::numeric_limits<size_type>::max)()/2) : idx_(_idx) {}
+    /// Get the underlying index
+    operator size_t() const
+    { return m_idx; }
 
-        /// Get the underlying index of this handle
-        size_type idx() const { return idx_; }
+    /// reset index to be NULL
+    void reset()
+    { m_idx = (std::numeric_limits<size_type>::max)()/2; }
 
-        size_type& idx() { return idx_; }
+    /// return whether the handle is valid
+    bool is_valid() const
+    { return m_idx != (std::numeric_limits<size_type>::max)()/2; }
 
-        /// reset handle to be invalid
-      void reset() { idx_= (std::numeric_limits<size_type>::max)()/2; }
+    /// are two indices equal?
+    bool operator==(const Self& rhs) const
+    { return m_idx == rhs.m_idx; }
 
-        /// return whether the handle is valid
-      bool is_valid() const { return idx_ != (std::numeric_limits<size_type>::max)()/2; }
+    /// are two handles different?
+    bool operator!=(const Self& rhs) const
+    { return m_idx != rhs.m_idx; }
 
-        /// are two handles equal?
-      bool operator==(const T& _rhs) const {
-            return idx_ == _rhs.idx_;
-        }
+    /// Comparisons
+    bool operator<(const Self& rhs) const
+    { return m_idx < rhs.m_idx; }
+    bool operator>(const Self& rhs) const
+    { return m_idx > rhs.m_idx; }
+    bool operator<=(const Self& rhs) const
+    { return m_idx <= rhs.m_idx; }
+    bool operator>=(const Self& rhs) const
+    { return m_idx >= rhs.m_idx; }
 
-        /// are two handles different?
-      bool operator!=(const Handle<T,IT>& _rhs) const {
-            return idx_ != _rhs.idx_;
-        }
+    /// Increment the internal index. This operations does not
+    /// guarantee that the index is valid or undeleted after the
+    /// increment.
+    Self& operator++() { ++m_idx; return *this; }
+    /// Decrement the internal index. This operations does not
+    /// guarantee that the index is valid or undeleted after the
+    /// decrement.
+    Self& operator--() { --m_idx; return *this; }
 
-        /// Comparison by index.
-      bool operator<(const Handle<T,IT>& _rhs) const {
-            return idx_ < _rhs.idx_;
-        }
-
-        /// Increment the internal index. This operations does not
-        /// guarantee that the index is valid or undeleted after the
-        /// increment.
-        Handle& operator++() { ++idx_; return *this; }
-        /// Decrement the internal index. This operations does not
-        /// guarantee that the index is valid or undeleted after the
-        /// decrement.
-        Handle& operator--() { --idx_; return *this; }
-
-        /// Increment the internal index. This operations does not
-        /// guarantee that the index is valid or undeleted after the
-        /// increment.
-        Handle operator++(int) { Handle tmp(*this); ++idx_; return tmp; }
-        /// Decrement the internal index. This operations does not
-        /// guarantee that the index is valid or undeleted after the
-        /// decrement.
-        Handle operator--(int) { Handle tmp(*this); --idx_; return tmp; }
-    private:
-        size_type idx_;
-    };
-
-  template<typename T, typename IT1, typename IT2 >
-  class Handle2 : public Handle<T,IT2>
-    {
-      typedef Handle<T,IT2> Base;
-    public:
-
-        /// Constructor. Default construction creates an invalid handle.
-      explicit Handle2(size_type _cc_idx, size_type _idx = (std::numeric_limits<size_type>::max)()/2)
-        : Base(_idx), cc_idx_(_cc_idx) {}
-
-      size_type cc_idx() const { return cc_idx_; }
-
-      size_type& cc_idx() { return cc_idx_; }
-public:
-        size_type cc_idx_;
+    /// Increment the internal index. This operations does not
+    /// guarantee that the index is valid or undeleted after the
+    /// increment.
+    Self operator++(int) { Self tmp(*this); ++m_idx; return tmp; }
+    /// Decrement the internal index. This operations does not
+    /// guarantee that the index is valid or undeleted after the
+    /// decrement.
+    Self operator--(int) { Self tmp(*this); --m_idx; return tmp; }
+  private:
+    size_type m_idx;
   };
 
 } // namespace internal
