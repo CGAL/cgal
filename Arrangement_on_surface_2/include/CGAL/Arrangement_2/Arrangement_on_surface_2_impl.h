@@ -3303,8 +3303,20 @@ _split_edge(DHalfedge* e, const Point_2& p,
             const X_monotone_curve_2& cv1, const X_monotone_curve_2& cv2)
 {
   // Allocate a new vertex and associate it with the split point.
-  // Note that this point must not have any boundary conditions.
-  DVertex* v = _create_vertex(p);
+  // Obtain the boundary conditions:
+  const Arr_parameter_space ps_x =
+    m_geom_traits->parameter_space_in_x_2_object()(p);
+  const Arr_parameter_space ps_y =
+    m_geom_traits->parameter_space_in_y_2_object()(p);
+
+  DVertex* v(NULL);
+  if ((ps_x == ARR_INTERIOR) && (ps_y == ARR_INTERIOR)) v = _create_vertex(p);
+  else {
+    v = _create_boundary_vertex(p, ps_x, ps_y);
+
+    // Notify the topology traits on the creation of the boundary vertex.
+    m_topol_traits.notify_on_boundary_vertex_creation(v, p, ps_x, ps_y);
+  }
 
   // Split the edge from the given vertex.
   return (_split_edge(e, v, cv1, cv2));
@@ -3997,7 +4009,7 @@ _defines_outer_ccb_of_new_face(const DHalfedge* he_to,
                                InputIterator lm_begin,
                                InputIterator lm_end) const
 {
-  std::cout << "_defines_outer_ccb_of_new_face" << std::endl;
+  // std::cout << "_defines_outer_ccb_of_new_face" << std::endl;
   // Search for the leftmost vertex among the local minima
   typename Traits_adaptor_2::Parameter_space_in_x_2 parameter_space_in_x =
     m_geom_traits->parameter_space_in_x_2_object();

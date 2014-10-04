@@ -470,7 +470,6 @@ notify_on_boundary_vertex_creation(Vertex* v,
                                      CGAL_assertion_code(ps_x),
                                    Arr_parameter_space ps_y)
 {
-  // std::cout << "notify_on_boundary_vertex_creation()" << std::endl;
   if (ps_y == ARR_BOTTOM_BOUNDARY) {
     m_south_pole = v;
     return;
@@ -494,7 +493,6 @@ notify_on_boundary_vertex_creation(Vertex* v,
                                      CGAL_assertion_code(ps_x),
                                    Arr_parameter_space ps_y)
 {
-  // std::cout << "notify_on_boundary_vertex_creation()" << std::endl;
   if (ps_y == ARR_BOTTOM_BOUNDARY) {
     m_south_pole = v;
     return;

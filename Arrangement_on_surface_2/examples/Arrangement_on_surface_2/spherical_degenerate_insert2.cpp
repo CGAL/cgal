@@ -1,7 +1,8 @@
 //! \file examples/Arrangement_on_surface_2/aggregated_insertion.cpp
 // Using the global aggregated insertion functions.
 
-#define CGAL_IDENTIFICATION_XY CGAL_X_MINUS_11_Y_7
+// #define CGAL_IDENTIFICATION_XY CGAL_X_MINUS_11_Y_7
+// #define CGAL_ARRANGEMENT_ON_SURFACE_INSERT_VERBOSE 1
 
 #include <list>
 
@@ -32,11 +33,13 @@ int main()
   Point_2 p2(-1,  0,  1);
   X_monotone_curve_2 xcv_sp_p2(sp, p2);
   X_monotone_curve_2 xcv_np_p1(np, p1);
+  // std::cout << "Inserting " << xcv_sp_p2 << std::endl;
   insert(arr, xcv_sp_p2);
+  // std::cout << "Inserting " << xcv_np_p1 << std::endl;
   insert(arr, xcv_np_p1);
 
-  Point_2 q1(-1,  1, -1);
-  Point_2 q2(-1,  1,  1);
+  Point_2 q1(-1,  -1, -1);
+  Point_2 q2(-1,  -1,  1);
   X_monotone_curve_2 xcv_sp_q2(sp, q2);
   X_monotone_curve_2 xcv_np_q1(np, q1);
   insert(arr, xcv_sp_q2);
@@ -45,7 +48,7 @@ int main()
   X_monotone_curve_2 xcv_p1_q1(p1, q1);
   X_monotone_curve_2 xcv_p2_q2(p2, q2);
   insert(arr, xcv_p1_q1);
-  // insert(arr, xcv_p2_q2);
+  insert(arr, xcv_p2_q2);
 
   // Print the size of the arrangement.
   std::cout << "The arrangement size:" << std::endl
