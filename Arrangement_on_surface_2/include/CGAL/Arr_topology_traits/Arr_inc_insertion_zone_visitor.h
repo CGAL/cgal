@@ -340,12 +340,7 @@ Arr_inc_insertion_zone_visitor<Arrangement>::
 found_overlap(const X_monotone_curve_2& cv, Halfedge_handle he,
               Vertex_handle left_v, Vertex_handle right_v)
 {
-  // Get the boundary conditions of the curve ends.
-  const Arr_parameter_space bx_l =
-    m_geom_traits->parameter_space_in_x_2_object()(cv, ARR_MIN_END);
-  const Arr_parameter_space by_l =
-    m_geom_traits->parameter_space_in_y_2_object()(cv, ARR_MIN_END);
-
+  // Get the boundary conditions of the curve end.
   const Arr_parameter_space bx_r =
     m_geom_traits->parameter_space_in_x_2_object()(cv, ARR_MAX_END);
   const Arr_parameter_space by_r =
@@ -361,7 +356,7 @@ found_overlap(const X_monotone_curve_2& cv, Halfedge_handle he,
        m_geom_traits->construct_min_vertex_2_object()(cv),
        m_sub_cv1, m_sub_cv2);
 
-    if (right_v == invalid_v &&
+    if ((right_v == invalid_v) &&
         ! ((bx_r == ARR_RIGHT_BOUNDARY) || (by_r != ARR_INTERIOR)))
     {
       // The overlapping curve is contained strictly in the interior of he:
