@@ -98,6 +98,12 @@ namespace CGAL {
 
     typedef Handle_hash_function Hash_function;
 
+    typedef Dart_container       Dart_range;
+    typedef const Dart_container Dart_const_range;
+    /// @return a Dart_range (range through all the darts of the map).
+    Dart_range& darts()             { return mdarts;}
+    Dart_const_range& darts() const { return mdarts; }
+
     // Init
     void init_storage()
     {
@@ -111,7 +117,22 @@ namespace CGAL {
       }
     }
 
-    /** Return if this dart is free for adimension.
+    void clear_storage()
+    {
+      mnull_dart_container.clear();
+    }
+    
+    /** Test if the map is empty.
+     *  @return true iff the map is empty.
+     */
+    bool is_empty() const
+    { return mdarts.empty(); }
+
+     /// @return the number of darts.
+    size_type number_of_darts() const
+    { return mdarts.size(); }
+
+   /** Return if this dart is free for adimension.
        * @param dh a dart handle
        * @param i the dimension.
        * @return true iff dh is linked with NULL for \em adimension.
@@ -274,7 +295,7 @@ namespace CGAL {
       return ah->info();
     }
 
-    // Get the info of the given dart
+    // Get the info of the i-cell attribute associated with the given dart
     template<unsigned int i>
     typename Attribute_type<i>::type::Info & info(Dart_handle adart)
     {
@@ -502,19 +523,66 @@ namespace CGAL {
     typedef Dart_index Dart_const_handle;
 
     /// Value of null handle (!= null_dart_handle !!)
-    typedef Size_type Null_handle_type;
-    static const Size_type null_handle;
+    typedef size_type Null_handle_type;
+    static const size_type null_handle;
 
     typedef Index_hash_function Hash_function;
 
-    void init_storage()
+    //**************************************************************************
+    // Dart_range
+    struct Dart_range
+    {
+      typedef typename Dart_container::iterator iterator;
+      typedef typename Dart_container::const_iterator const_iterator;
+      Dart_range(Self &amap) : mmap(amap)
+      {}
+      iterator begin()
+      { iterator res=mmap.mdarts.begin(); ++res; return res; }
+      iterator end() { return mmap.mdarts.end(); }
+      const_iterator begin() const
+      { const_iterator res=mmap.mdarts.begin(); ++res; return res; }
+      const_iterator end() const { return mmap.mdarts.end(); }
+      size_type size()
+      { return mmap.mdarts.size()-1; }
+      bool empty() const
+      { return mmap.is_empty(); }
+    private:
+      Self & mmap;
+    };
+    typedef const Dart_range Dart_const_range;
+    
+    /// @return a Dart_range (range through all the darts of the map).
+    Dart_range& darts()             { return mdarts_range;}
+    Dart_const_range& darts() const { return mdarts_range; }
+    //**************************************************************************
+    
+    Linear_cell_complex_storage_2() : mdarts_range(*this)
     {}
 
+    void init_storage()
+    {
+      // Allocate a dart for null_dart_handle
+      null_dart_handle = mdarts.emplace();
+    }
+
+    void clear_storage()
+    {}
+
+    /** Test if the map is empty.
+     *  @return true iff the map is empty.
+     */
+    bool is_empty() const
+    { return  this->mdarts.size()==1; }
+
+    /// @return the number of darts.
+    size_type number_of_darts() const
+    { return mdarts.size()-1; }
+
     /** Return if this dart is free for adimension.
-       * @param dh a dart handle
-       * @param i the dimension.
-       * @return true iff dh is linked with NULL for \em adimension.
-       */
+     * @param dh a dart handle
+     * @param i the dimension.
+     * @return true iff dh is linked with NULL for \em adimension.
+     */
     template<unsigned int i>
     bool is_free(Dart_const_handle dh) const
     {
@@ -791,29 +859,22 @@ namespace CGAL {
 
   public:
     /// Void dart. A dart d is i-free if beta_i(d)=null_dart_handle.
-    static const Dart_index null_dart_handle;
+    Dart_index null_dart_handle;
 
   protected:
     /// Dart container.
     Dart_container mdarts;
+    Dart_range mdarts_range;
 
     /// Tuple of attributes containers
     typename Helper::Attribute_containers mattribute_containers;
   };
 
-  /// null_dart_handle
-  template<unsigned int d_, unsigned int ambient_dim,
-           class Traits_, class Items_, class Alloc_, class Size_type>
-  const typename Linear_cell_complex_storage_2<d_, ambient_dim, Traits_,
-                                               Items_, Alloc_, Size_type>::Dart_index
-  Linear_cell_complex_storage_2<d_, ambient_dim, Traits_,
-                                Items_, Alloc_, Size_type>::null_dart_handle(0);
-
   /// null_handle
   template<unsigned int d_, unsigned int ambient_dim,
            class Traits_, class Items_, class Alloc_, class Size_type>
   const Size_type Linear_cell_complex_storage_2<d_, ambient_dim, Traits_,
-                                                Items_, Alloc_, Size_type>::null_handle((std::numeric_limits<size_type>::max)()/2);
+                                                Items_, Alloc_, Size_type>::null_handle((std::numeric_limits<Size_type>::max)()/2);
 
 } // namespace CGAL
 

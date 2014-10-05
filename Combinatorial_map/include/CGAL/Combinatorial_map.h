@@ -93,6 +93,8 @@ namespace CGAL {
     typedef typename Base::Items Items;
     typedef typename Base::Alloc Alloc;
     typedef typename Base::Use_index Use_index;
+    typedef typename Base::Dart_range Dart_range;
+    typedef typename Base::Dart_const_range Dart_const_range;
 
     static const size_type NB_MARKS = Base::NB_MARKS;
     static const unsigned int dimension = Base::dimension;
@@ -119,11 +121,9 @@ namespace CGAL {
     using Base::info_of_attribute;
     using Base::info;
     using Base::dart;
-
-    /// Typedef for Dart_range, a range through all the darts of the map.
-    typedef Dart_container       Dart_range;
-    typedef const Dart_container Dart_const_range;
-
+    using Base::darts;
+    using Base::number_of_darts;
+    
     /// Typedef for attributes
     template<int i>
     struct Attribute_type: public Base::template Attribute_type<i>
@@ -333,6 +333,7 @@ namespace CGAL {
      */
     void clear()
     {
+      this->clear_storage();
       mdarts.clear();
       for ( unsigned int i = 0; i < NB_MARKS; ++i)
         this->mnb_marked_darts[i]  = 0;
@@ -341,12 +342,6 @@ namespace CGAL {
       this->init_storage();
       init_dart(null_dart_handle);
     }
-
-    /** Test if the map is empty.
-     *  @return true iff the map is empty.
-     */
-    bool is_empty() const
-    { return mdarts.empty(); }
 
     /** Create a new dart and add it to the map.
      * The marks of the darts are initialised with mmask_marks, i.e. the dart
@@ -466,22 +461,18 @@ namespace CGAL {
       mdarts.erase(adart);
     }
 
-    /// @return a Dart_range (range through all the darts of the map).
-    Dart_range& darts()             { return mdarts;}
-    Dart_const_range& darts() const { return mdarts; }
-
     /** Get the first dart of this map.
      * @return the first dart.
      */
     Dart_handle first_dart()
     {
       if (darts().begin() == darts().end()) return null_handle;
-      return mdarts.begin();
+      return darts().begin();
     }
     Dart_const_handle first_dart() const
     {
       if (darts().begin() == darts().end()) return null_dart_handle;
-      return mdarts.begin();
+      return darts().begin();
     }
 
     /// @return the Dart_handle corresponding to the given dart.
@@ -1158,10 +1149,6 @@ namespace CGAL {
 
       return valid;
     }
-
-    /// @return the number of darts.
-    size_type number_of_darts() const
-    { return mdarts.size(); }
 
     /// @return an estimation of the bytes used by the combinatorial map.
     size_type bytes() const

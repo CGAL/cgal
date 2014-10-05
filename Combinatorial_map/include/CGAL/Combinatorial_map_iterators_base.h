@@ -215,7 +215,7 @@ namespace CGAL {
   public:
     /// Main constructor.
     CMap_dart_iterator(Map& amap, Dart_handle adart):
-      Base(&amap.darts(), adart),
+      Base(&amap.mdarts, adart),
       mmap(&amap),
       mfirst_dart(adart),
       mprev_op(OP_NONE)
