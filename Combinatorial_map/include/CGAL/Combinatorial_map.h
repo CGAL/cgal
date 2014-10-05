@@ -3707,11 +3707,11 @@ namespace CGAL {
   template < unsigned int d_,
              class Items_=Combinatorial_map_min_items<d_>,
              class Alloc_=CGAL_ALLOCATOR(int),
-             class Storage_= Combinatorial_map_storage_2<d_, Items_, Alloc_> >
+             class Storage_= Combinatorial_map_storage_2<d_, Items_, Alloc_, unsigned int> >
   class Combinatorial_map :
     public Combinatorial_map_base<d_,
                                   Combinatorial_map<d_,Items_,Alloc_, Storage_>,
-                                  Items_, Alloc_, Storage_ >
+                                  Items_, Alloc_, Storage_>
   {
   public:
     typedef Combinatorial_map<d_, Items_,Alloc_, Storage_>  Self;

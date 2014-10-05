@@ -879,7 +879,7 @@ template < unsigned int d_, unsigned int ambient_dim = d_,
            class CMap = Combinatorial_map_base,
            class Storage_ = Linear_cell_complex_storage_2<d_, ambient_dim,
                                                           Traits_, Items_,
-                                                          Alloc_> >
+                                                          Alloc_, unsigned int> >
   class Linear_cell_complex : public Linear_cell_complex_base<d_,
       ambient_dim, Traits_, Items_, Alloc_, CMap,
       Linear_cell_complex<d_, ambient_dim,

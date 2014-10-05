@@ -56,13 +56,13 @@ namespace CGAL {
     template<unsigned int, class, class>
     friend class Combinatorial_map_storage_1;
 
-    template<unsigned int, class, class>
+    template<unsigned int, class, class, class>
     friend class Combinatorial_map_storage_2;
 
     template<unsigned int, unsigned int, class, class, class>
     friend class Linear_cell_complex_storage_1;
 
-    template<unsigned int, unsigned int, class, class, class>
+    template<unsigned int, unsigned int, class, class, class, class>
     friend class Linear_cell_complex_storage_2;
 
     template <class, class, class, class>
@@ -353,13 +353,13 @@ namespace CGAL {
     template<unsigned int, class, class>
     friend class Combinatorial_map_storage_1;
 
-    template<unsigned int, class, class>
+    template<unsigned int, class, class, class>
     friend class Combinatorial_map_storage_2;
 
     template<unsigned int, unsigned int, class, class, class>
     friend class Linear_cell_complex_storage_1;
 
-    template<unsigned int, unsigned int, class, class, class>
+    template<unsigned int, unsigned int, class, class, class, class>
     friend class Linear_cell_complex_storage_2;
 
     template <class, class, class, class>
@@ -536,11 +536,11 @@ namespace CGAL {
         mbeta[i] = adart.mbeta[i];
     }
 
-   public:
+  public:
     size_type for_compact_container_with_index() const
-    { return mbeta[0]; }
+    { return mbeta[0].for_compact_container_with_index(); }
     size_type& for_compact_container_with_index()
-    { return mbeta[0]; }
+    { return mbeta[0].for_compact_container_with_index(); }
 
   protected:
     /// Beta for each dimension +1 (from 0 to dimension).

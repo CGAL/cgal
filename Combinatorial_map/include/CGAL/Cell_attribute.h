@@ -464,17 +464,17 @@ namespace CGAL {
 
   public:
     /// Get the reference counting.
-    unsigned int get_nb_refs() const
+    typename Refs::size_type get_nb_refs() const
     { return mrefcounting; }
 
-    std::size_t for_compact_container_with_index() const
+    typename Refs::size_type for_compact_container_with_index() const
     { return mrefcounting; }
-    std::size_t & for_compact_container_with_index()
+    typename Refs::size_type & for_compact_container_with_index()
     { return mrefcounting; }
 
   private:
     /// Reference counting: the number of darts linked to this cell.
-    std::size_t mrefcounting;
+    typename Refs::size_type mrefcounting;
   };
 
   /** Definition of cell attribute.
@@ -576,13 +576,13 @@ namespace CGAL {
 
   public:
     /// Get the reference counting.
-    unsigned int get_nb_refs() const
+    typename Refs::size_type get_nb_refs() const
     { return mrefcounting; }
 
-    std::size_t for_compact_container_with_index() const
-    { return mrefcounting; }
-    std::size_t & for_compact_container_with_index()
-    { return mrefcounting; }
+    typename Refs::size_type for_compact_container_with_index() const
+    { return mdart.for_compact_container_with_index(); }
+    typename Refs::size_type & for_compact_container_with_index()
+    { return mdart.for_compact_container_with_index(); }
 
   private:
     /// Reference counting: the number of darts linked to this cell.
@@ -658,7 +658,6 @@ namespace CGAL {
 
     bool operator!=(const Self& other) const
     { return !operator==(other); }
-
 
     // protected:
     /// Default contructor.

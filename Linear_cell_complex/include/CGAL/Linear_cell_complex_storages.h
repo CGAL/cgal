@@ -432,7 +432,7 @@ namespace CGAL {
   // as template parameter of Dart_wrapper. If we inherit, Self is not
   // the correct type.)
   template<unsigned int d_, unsigned int ambient_dim,
-           class Traits_, class Items_, class Alloc_ >
+           class Traits_, class Items_, class Alloc_, class Size_type >
   class Linear_cell_complex_storage_2
   {
   public:
@@ -441,7 +441,7 @@ namespace CGAL {
     typedef typename Traits_::FT     FT;
 
     typedef Linear_cell_complex_storage_2<d_, ambient_dim, Traits_,
-    Items_, Alloc_> Self;
+                                          Items_, Alloc_, Size_type> Self;
 
     typedef internal::Combinatorial_map_helper<Self> Helper;
 
@@ -449,7 +449,7 @@ namespace CGAL {
     typedef typename Dart_wrapper::Dart                   Dart;
     typedef typename Alloc_::template rebind<Dart>::other Dart_allocator;
 
-    typedef unsigned int size_type; // Type used as index.
+    typedef Size_type size_type; // Type used as index.
 
     typedef Compact_container_with_index_2<Dart,Dart_allocator,
     Constant_size_policy_for_cc_with_size<1024>, size_type >
@@ -489,7 +489,7 @@ namespace CGAL {
     {};
 
     /// Number of marks
-    static const size_type NB_MARKS = 32;
+    static const unsigned int NB_MARKS = 32;
 
     /// The dimension of the combinatorial map.
     static const unsigned int dimension = d_;
@@ -502,8 +502,8 @@ namespace CGAL {
     typedef Dart_index Dart_const_handle;
 
     /// Value of null handle (!= null_dart_handle !!)
-    typedef Dart_index Null_handle_type;
-    static const Dart_index null_handle;
+    typedef Size_type Null_handle_type;
+    static const Size_type null_handle;
 
     typedef Index_hash_function Hash_function;
 
@@ -803,11 +803,17 @@ namespace CGAL {
 
   /// null_dart_handle
   template<unsigned int d_, unsigned int ambient_dim,
-           class Traits_, class Items_, class Alloc_ >
+           class Traits_, class Items_, class Alloc_, class Size_type>
   const typename Linear_cell_complex_storage_2<d_, ambient_dim, Traits_,
-                                               Items_, Alloc_>::Dart_index
-  Linear_cell_complex_storage_2<d_, ambient_dim, Traits_, Items_, Alloc_>::
-  null_dart_handle(0);
+                                               Items_, Alloc_, Size_type>::Dart_index
+  Linear_cell_complex_storage_2<d_, ambient_dim, Traits_,
+                                Items_, Alloc_, Size_type>::null_dart_handle(0);
+
+  /// null_handle
+  template<unsigned int d_, unsigned int ambient_dim,
+           class Traits_, class Items_, class Alloc_, class Size_type>
+  const Size_type Linear_cell_complex_storage_2<d_, ambient_dim, Traits_,
+                                                Items_, Alloc_, Size_type>::null_handle((std::numeric_limits<size_type>::max)()/2);
 
 } // namespace CGAL
 

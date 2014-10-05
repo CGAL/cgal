@@ -78,7 +78,7 @@ class Compact_container_with_index_2
   typedef Increment_policy                          Incr_policy;
   typedef typename Default::Get< Al, CGAL_ALLOCATOR(T) >::type Allocator;
   typedef Compact_container_with_index_2 <T, Al, Increment_policy, IndexType> Self;
-  typedef Compact_container_with_index_traits <T>   Traits;
+  typedef Compact_container_with_index_traits <T, IndexType>   Traits;
 public:
   typedef T                                         value_type;
   typedef IndexType                                 size_type;
@@ -101,7 +101,7 @@ public:
     typedef typename Compact_container_with_index_2::size_type size_type;
     typedef internal::MyIndex<T,size_type> Base;
 
-    explicit Index(size_type idx=(std::numeric_limits<size_type>::max)()/2)
+    Index(size_type idx=(std::numeric_limits<size_type>::max)()/2)
       : Base(idx)
     {}
 
@@ -542,7 +542,7 @@ private:
   // Get the type of the pointee.
   static Type static_type(const T& e)
   // TODO check if this is ok for little and big endian
-  { return (Type) ((size_type(e) & mask_type)>>(nbbits_size_type_m1)); }
+  { return (Type) ((Traits::size_t(e) & mask_type)>>(nbbits_size_type_m1)); }
 
   Type type(size_type e) const
   { return static_type(operator[](e)); }
@@ -553,19 +553,19 @@ private:
     // This out of range compare is always true and causes lots of
     // unnecessary warnings.
     // CGAL_precondition(0 <= t && t < 2);
-    size_type(e) &= ( ~mask_type | ( ((size_type)t) <<(nbbits_size_type_m1) ) );
+    Traits::size_t(e) &= ( ~mask_type | ( ((size_type)t) <<(nbbits_size_type_m1) ) );
   }
 
   // get the value of the element (removing the two bits)
   static size_type static_get_val(const T& e)
-  { return (size_type(e) & ~mask_type); }
+  { return (Traits::size_t(e) & ~mask_type); }
 
   size_type get_val(size_type e) const
   { return static_get_val(operator[](e)); }
 
   // set the value of the element and its type
   static void static_set_val(T& e, size_type v, Type t)
-  { size_type(e)=v | ( ((size_type)t) <<(nbbits_size_type_m1)); }
+  { Traits::size_t(e)=v | ( ((size_type)t) <<(nbbits_size_type_m1)); }
 
   void set_val(size_type e, size_type v, Type t)
   { static_set_val(operator[](e), v, t); }

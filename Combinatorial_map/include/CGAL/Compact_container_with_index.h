@@ -93,11 +93,11 @@ struct Constant_size_policy_for_cc_with_size
 
 // The traits class describes the way to access the size_type.
 // It can be specialized.
-template < class T >
+  template < class T, class size_type >
 struct Compact_container_with_index_traits {
-  static typename T::size_type size_t(const T &t)
+  static size_type size_t(const T &t)
   { return t.for_compact_container_with_index(); }
-  static typename T::size_type & size_t(T &t)
+  static size_type & size_t(T &t)
   { return t.for_compact_container_with_index(); }
 };
 
@@ -119,7 +119,7 @@ class Compact_container_with_index
   typedef Increment_policy                          Incr_policy;
   typedef typename Default::Get< Al, CGAL_ALLOCATOR(T) >::type Allocator;
   typedef Compact_container_with_index <T, Al, Increment_policy, IndexType> Self;
-  typedef Compact_container_with_index_traits <T>   Traits;
+  typedef Compact_container_with_index_traits <T, IndexType>   Traits;
 public:
   typedef T                                         value_type;
   typedef IndexType                                 size_type;
@@ -618,7 +618,7 @@ private:
   // TODO check if this is ok for little and big endian
   static Type static_type(const T& e)
   {
-    return (Type) ((Traits::size_t(e) & mask_type)>>(nbbits_size_type_m1));
+    return (Type) ((Traits::size_t(e).get_idx() & mask_type)>>(nbbits_size_type_m1));
   }
 
   Type type(size_type e) const
@@ -627,19 +627,20 @@ private:
   // Sets the pointer part and the type of the pointee.
   static void static_set_type(T& e, Type t)
   {
-    Traits::size_t(e) &= ( ~mask_type | ( ((size_type)t) <<(nbbits_size_type_m1) ) );
+    Traits::size_t(e).get_idx()
+      &= ( ~mask_type | ( ((size_type)t) <<(nbbits_size_type_m1) ) );
   }
 
   // get the value of the element (removing the used bit)
   static size_type static_get_val(const T& e)
-  { return (Traits::size_t(e) & ~mask_type); }
+  { return (Traits::size_t(e).get_idx() & ~mask_type); }
 
   size_type get_val(size_type e) const
   { return static_get_val(operator[](e)); }
 
   // set the value of the element and its type
   static void static_set_val(T& e, size_type v, Type t)
-  { Traits::size_t(e)=v | ( ((size_type)t) <<(nbbits_size_type_m1)); }
+  { Traits::size_t(e).get_idx()=v | ( ((size_type)t) <<(nbbits_size_type_m1)); }
 
   void set_val(size_type e, size_type v, Type t)
   { static_set_val(operator[](e), v, t); }
@@ -939,12 +940,17 @@ namespace internal {
   class MyIndex
   {
   public:
+    template < class, class, class, class >
+    friend class Compact_container_with_index;
+    template < class, class, class, class >
+    friend class Compact_container_with_index_2;
+    
     typedef MyIndex<T,IT> Self;
     typedef IT size_type;
 
     /// Constructor. Default construction creates a kind of "NULL" index.
     /// max/2 because the most significant bit must be equal to 0 (used).
-    explicit MyIndex(size_type idx=(std::numeric_limits<size_type>::max)()/2)
+    MyIndex(size_type idx=(std::numeric_limits<size_type>::max)()/2)
       : m_idx(idx)
     {}
 
@@ -960,23 +966,23 @@ namespace internal {
     bool is_valid() const
     { return m_idx != (std::numeric_limits<size_type>::max)()/2; }
 
-    /// are two indices equal?
-    bool operator==(const Self& rhs) const
-    { return m_idx == rhs.m_idx; }
+    // /// are two indices equal?
+    // bool operator==(const Self& rhs) const
+    // { return m_idx == rhs.m_idx; }
 
-    /// are two handles different?
-    bool operator!=(const Self& rhs) const
-    { return m_idx != rhs.m_idx; }
+    // /// are two handles different?
+    // bool operator!=(const Self& rhs) const
+    // { return m_idx != rhs.m_idx; }
 
-    /// Comparisons
-    bool operator<(const Self& rhs) const
-    { return m_idx < rhs.m_idx; }
-    bool operator>(const Self& rhs) const
-    { return m_idx > rhs.m_idx; }
-    bool operator<=(const Self& rhs) const
-    { return m_idx <= rhs.m_idx; }
-    bool operator>=(const Self& rhs) const
-    { return m_idx >= rhs.m_idx; }
+    // /// Comparisons
+    // bool operator<(const Self& rhs) const
+    // { return m_idx < rhs.m_idx; }
+    // bool operator>(const Self& rhs) const
+    // { return m_idx > rhs.m_idx; }
+    // bool operator<=(const Self& rhs) const
+    // { return m_idx <= rhs.m_idx; }
+    // bool operator>=(const Self& rhs) const
+    // { return m_idx >= rhs.m_idx; }
 
     /// Increment the internal index. This operations does not
     /// guarantee that the index is valid or undeleted after the
@@ -995,6 +1001,12 @@ namespace internal {
     /// guarantee that the index is valid or undeleted after the
     /// decrement.
     Self operator--(int) { Self tmp(*this); --m_idx; return tmp; }
+
+    size_type   for_compact_container_with_index() const
+    { return m_idx; }
+    size_type & for_compact_container_with_index()
+    { return m_idx; }
+
   private:
     size_type m_idx;
   };
