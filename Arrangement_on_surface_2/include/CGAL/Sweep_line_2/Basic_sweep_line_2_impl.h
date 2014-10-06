@@ -247,9 +247,11 @@ _init_point(const Point_2& pt, Attribute type)
   // Create the event, or obtain an existing event in the queue.
   Arr_parameter_space ps_x = m_traits->parameter_space_in_x_2_object()(pt);
   Arr_parameter_space ps_y = m_traits->parameter_space_in_y_2_object()(pt);
-  //CGAL::set_pretty_mode(std::cout);
-  //std::cout << "init pt ps_x: " << ps_x << std::endl;
-  //std::cout << "init pt ps_y: " << ps_y << std::endl;
+#if 0
+  CGAL::set_pretty_mode(std::cout);
+  std::cout << "init pt ps_x: " << ps_x << std::endl;
+  std::cout << "init pt ps_y: " << ps_y << std::endl;
+#endif
 
   // Note that an isolated point does not have any boundary conditions.
   const std::pair<Event*, bool>& pair_res =
@@ -707,7 +709,7 @@ _push_event(const X_monotone_curve_2& cv, Arr_curve_end ind, Attribute type,
             Arr_parameter_space ps_x, Arr_parameter_space ps_y, Subcurve* sc /* = NULL */)
 {
   //cv has no member named 'base'
-  //std::cout << "cv: " << cv.base() << std::endl;
+  //std::cout << "cv: " << cv << std::endl;
 
   // Look for the curve end in the event queue.
   Event* e;
@@ -741,8 +743,14 @@ _push_event(const X_monotone_curve_2& cv, Arr_curve_end ind, Attribute type,
     // The event associated with the given curve end already exists in the
     // queue, so we just have to update it.
     e = *(pair_res.first);
-    CGAL_assertion((e->parameter_space_in_x() == ps_x) &&
-                   (e->parameter_space_in_y() == ps_y));
+#if 0
+    std::cout << "ps_x: " << ps_x << std::endl;
+    std::cout << "ps_y: " << ps_y << std::endl;
+    std::cout << "es_x: " << e->parameter_space_in_x() << std::endl;
+    std::cout << "es_y: " << e->parameter_space_in_y() << std::endl;
+#endif
+    CGAL_assertion(e->parameter_space_in_x() == ps_x);
+    CGAL_assertion(e->parameter_space_in_y() == ps_y);
 
     e->set_attribute(type);
   }

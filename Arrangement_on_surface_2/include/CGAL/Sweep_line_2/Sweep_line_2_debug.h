@@ -86,19 +86,7 @@ template <class Tr, class Visit, class Crv, class Evnt, class Alloc>
 void Basic_sweep_line_2<Tr, Visit, Crv, Evnt, Alloc>::
 PrintOpenBoundaryType (Arr_parameter_space ps_x, Arr_parameter_space ps_y)
 {
-  switch (ps_x) {
-   case ARR_LEFT_BOUNDARY:  std::cout << "left boundary"; return;
-   case ARR_RIGHT_BOUNDARY: std::cout << "right boundary"; return;
-   case ARR_INTERIOR:
-   default: break;
-  }
-
-  switch (ps_y) {
-   case ARR_BOTTOM_BOUNDARY: std::cout << "bottom boundary"; return;
-   case ARR_TOP_BOUNDARY:    std::cout << "top boundary"; return;
-   case ARR_INTERIOR:
-   default:                  std::cout << "interior"; return;
-  }
+  std::cout << "[" << ps_x << "," << ps_y << "]";
 }
 
 template <class Tr, class Visit, class Crv, class Evnt, class Alloc>

@@ -440,26 +440,11 @@ public:
   void Sweep_line_event<Traits, Subcurve>::Print()
   {
     std::cout << "\tEvent info: "  << "\n" ;
-    if (this->is_closed())
+    Arr_parameter_space ps_x = this->parameter_space_in_x();
+    Arr_parameter_space ps_y = this->parameter_space_in_y();
+    std::cout << "\t[" << ps_x << "," << ps_y << "]";
+    if (this->is_closed()) {
       std::cout << "\t" << m_point << "\n" ;
-    else {
-      std::cout << "\t";
-      Arr_parameter_space ps_x = this->parameter_space_in_x();
-      Arr_parameter_space ps_y = this->parameter_space_in_y();
-
-      switch (ps_x) {
-       case ARR_LEFT_BOUNDARY:  std::cout << "left boundary"; break;
-       case ARR_RIGHT_BOUNDARY: std::cout << "right boundary"; break;
-       case ARR_INTERIOR:
-       default:
-        switch (ps_y) {
-         case ARR_BOTTOM_BOUNDARY: std::cout << "bottom boundary"; break;
-         case ARR_TOP_BOUNDARY:    std::cout << "top boundary"; break;
-         case ARR_INTERIOR:
-         default:
-          CGAL_error();
-        }
-      }
     }
     std::cout << "\n";
 
