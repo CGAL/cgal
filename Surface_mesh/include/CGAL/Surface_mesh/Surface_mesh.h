@@ -1211,7 +1211,6 @@ public:
 
 
     /// adds a new triangle connecting vertices `v0`, `v1`, `v2`
-    /// \todo Offer a variadic version
     Face_index add_face(Vertex_index v0, Vertex_index v1, Vertex_index v2)
     {
         boost::array<Vertex_index, 3> 
