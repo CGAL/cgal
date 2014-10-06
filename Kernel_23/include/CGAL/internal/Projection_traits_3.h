@@ -498,7 +498,7 @@ public:
   typedef Intersect_projected_3<Rp,dim>                       Intersect_2;
   typedef Compute_squared_radius_projected<Rp,dim>            Compute_squared_radius_2;
   typedef Compute_scalar_product_projected_3<Rp,dim>          Compute_scalar_product_2;
-  typedef Compute_squared_length_projected_3<Rp,dim>          Compute_squared_length_3;
+  typedef Compute_squared_length_projected_3<Rp,dim>          Compute_squared_length_2;
   typedef typename Rp::Construct_segment_3                    Construct_segment_2;
   typedef typename Rp::Construct_translated_point_3           Construct_translated_point_2;
   typedef typename Rp::Construct_midpoint_3                   Construct_midpoint_2;
@@ -693,8 +693,8 @@ public:
   Collinear_are_ordered_along_line_2 collinear_are_ordered_along_line_2_object() const
     {return Collinear_are_ordered_along_line_2();}
 
-  Compute_squared_length_3 compute_squared_length_3_object() const
-    {return Compute_squared_length_3();}
+  Compute_squared_length_2 compute_squared_length_2_object() const
+    {return Compute_squared_length_2();}
 
 };
   

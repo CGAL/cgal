@@ -4,9 +4,6 @@
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Epic;
 typedef CGAL::Projection_traits_xy_3<Epic> K;
 
-typedef K::Orientation_2 Orientation_2;
-typedef K::Intersect_2 Intersect_2;
-
 typedef K::Point_2 Point_2;
 typedef K::Vector_2 Vector_2;
 
@@ -30,7 +27,7 @@ int main()
   assert( k.collinear_are_ordered_along_line_2_object()(p3,q3,r3) ==
           CGAL::collinear_are_ordered_along_line(p2,q2,r2) );
 
-  assert( k.compute_squared_length_3_object()(v3) ==
+  assert( k.compute_squared_length_2_object()(v3) ==
           v2.squared_length() );
 
  return 0;
