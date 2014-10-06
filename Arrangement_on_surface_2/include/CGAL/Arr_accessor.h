@@ -312,7 +312,7 @@ public:
    * \param ps_y The parameter space in y.
    * \param notify Should we send a notification to the topology traits
    *               on the creation of the vertex (true by default).
-   * \pre Either ps_x or ps_y does not equal ARR_INTERIOR.
+   * \pre One of ps_x or ps_y does not equal ARR_INTERIOR.
    * \return A handle for the newly created vertex.
    */
   Vertex_handle create_boundary_vertex(const Point_2& pt,
@@ -320,7 +320,8 @@ public:
                                        Arr_parameter_space ps_y,
                                        bool notify = true)
   {
-    std::cout << "accessor cbv for pt: " << pt << std::endl;
+    CGAL_precondition(ps_x != ARR_INTERIOR || ps_y != ARR_INTERIOR);
+
     DVertex* v = p_arr->_create_boundary_vertex (pt, ps_x, ps_y);
 
     CGAL_assertion(v != NULL);
@@ -340,7 +341,7 @@ public:
    * \param ps_y The parameter space in y.
    * \param notify Should we send a notification to the topology traits
    *               on the creation of the vertex (true by default).
-   * \pre Either ps_x or ps_y does not equal ARR_INTERIOR.
+   * \pre One of ps_x or ps_y does not equal ARR_INTERIOR.
    * \return A handle for the newly created vertex.
    */
   Vertex_handle create_boundary_vertex(const X_monotone_curve_2& cv,
@@ -349,8 +350,7 @@ public:
                                        Arr_parameter_space ps_y,
                                        bool notify = true)
   {
-    CGAL_precondition(ps_x != ARR_INTERIOR ||
-                      ps_x == ARR_INTERIOR && ps_y != ARR_INTERIOR);
+    CGAL_precondition(ps_x != ARR_INTERIOR || ps_y != ARR_INTERIOR);
 
     DVertex* v = p_arr->_create_boundary_vertex (cv, ind, ps_x, ps_y);
 
