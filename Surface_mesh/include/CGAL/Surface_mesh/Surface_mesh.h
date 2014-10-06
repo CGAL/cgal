@@ -1900,7 +1900,7 @@ private: //--------------------------------------------------- property handling
     */
     ///@{
 
-  /// Model of `LValuePropertyMap` with `I` as key type and `T` as value type, where `I`
+  /// Model of `LvaluePropertyMap` with `I` as key type and `T` as value type, where `I`
   /// is either a vertex, halfedge, edge, or face index type.
 #ifdef DOXYGEN_RUNNING
   template <class I, class T>
