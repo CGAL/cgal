@@ -281,9 +281,9 @@ the surface mesh, they are taken from the free list in case it is
 not empty. 
 
 For all elements we offer a function to obtain the number of 
-elements, as well as the number of removed elements.
-For vertices the functions are `Surface_mesh::numbr_of_vertices()`
-and `Surface_mesh::number_of_removed_vertices()`, respectively. 
+used elements, as well as the number of used and removed elements.
+For vertices the functions are `Surface_mesh::number_of_vertices()`
+and `Surface_mesh::num_vertices()`, respectively. 
 The first function is slightly different from the free function 
 `num_vertices(const G&)` of the \sc{Bgl} package. 
 As \sc{Bgl} style algorithms use the indices of elements

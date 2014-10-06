@@ -38,7 +38,7 @@ namespace CGAL {
   public:
 
     typedef I iterator;
-    typedef const I const_iterator;
+    typedef I const_iterator;
 
     Iterator_range(I b, I e)
       : Base(b,e)
@@ -49,12 +49,12 @@ namespace CGAL {
     {}
 
 
-  const I& begin() const
+  I begin() const
   {
     return this->first;
   }
 
-  const I& end() const
+  I end() const
   {
     return this->second;
   }

@@ -27,7 +27,7 @@ Type              | Description
 
 Expression        |  returns                               | Description
 ----------------- | ---------------                        | -----------------------
-`faces(g)`        |  `CGAL::Iterator_range<face_iterator>` | An iterator range over all faces, convertible to `std::pair<face_iterator, face_iterator>`
+`faces(g)`        |  `std::pair<face_iterator, face_iterator>` | An iterator range over all faces. 
 `num_faces(g)`    |  `faces_size_type`                     | An upper bound of the number of faces of the graph.
 
 \attention `num_faces()` may return a number larger than `std::distance(faces(g).first, faces(g).second)`.

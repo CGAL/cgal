@@ -1341,6 +1341,11 @@ public:
     /// an upperbound on the index, and is needed
     /// by algorithms that temporarily store a 
     /// property in a vector of the appropriate size.
+    /// Note however that by garbage collecting elements get new indices.
+    /// In case you store vertex descriptors in an auxiliary data structure
+    /// or in a property these vertex descriptors are potentially no longer 
+    /// refering to the right vertices. 
+
 
     ///@{
    /// returns the number of used and removed vertices in the mesh.
@@ -1575,6 +1580,14 @@ public:
         return valid;
     }
 
+
+    /// performs a validity check on a single face.
+    bool is_valid(Edge_index e) const {
+      Halfedge_index h = halfedge(e);
+      return is_valid(h) && is_valid(opposite(h));
+    }
+
+
     /// performs a validity check on a single face.
     bool is_valid(Face_index f) const {
         Halfedge_index h = fconn_[f].halfedge_;
@@ -1621,6 +1634,12 @@ public:
     Halfedge_index next(Halfedge_index h) const
     {
         return hconn_[h].next_halfedge_;
+    }
+
+    /// returns the previous halfedge within the incident face.
+    Halfedge_index prev(Halfedge_index h) const
+    {
+        return hconn_[h].prev_halfedge_;
     }
 
     /// @cond CGAL_DOCUMENT_INTERNALS
@@ -1691,12 +1710,6 @@ public:
         return target(opposite(h));
     }
 
-    /// returns the previous halfedge within the incident face.
-    Halfedge_index prev(Halfedge_index h) const
-    {
-        return hconn_[h].prev_halfedge_;
-    }
-
     /// returns `opposite(next(h))`, that is the next halfedge \ref SurfaceMeshOrientation 
     /// "clockwise" around the target vertex of `h`. 
     Halfedge_index next_around_target(Halfedge_index h) const
@@ -1765,8 +1778,9 @@ public:
 
     /// \name Borders
     ///
-    ///  A vertex, halfedge, or edge is on the border of a surface mesh
-    /// if it is incident to a `null_face()`.  While for a halfedge and
+    ///  A halfedge, or edge is on the border of a surface mesh
+    /// if it is incident to a `null_face()`.  A vertex is on a border
+    /// if it is incident to a border halfedge. While for a halfedge and
     /// edge this is a constant time operation, for a vertex it means
     /// to look at all incident halfedges.  If algorithms operating on a 
     /// surface mesh maintain that the halfedge associated to a border vertex is
@@ -2052,7 +2066,8 @@ private: //------------------------------------------------------- private data
 
   /// \relates Surface_mesh
   /// Inserts the surface mesh in an output stream in Ascii OFF format. 
-  /// If the vertices have a normal property it is also inserted in the stream.
+  /// If the vertices have the property "v:normal" it is also inserted in the stream.
+  /// \note `operator<<(std::ostream&,const P&)` must be defined.
   template <typename P>
   std::ostream& operator<<(std::ostream& os, const Surface_mesh<P>& sm)
   {
@@ -2060,7 +2075,8 @@ private: //------------------------------------------------------- private data
   }
   /// \relates Surface_mesh
   /// Extracts the surface mesh from an input stream in Ascii OFF format.
-  /// If the vertices have a normal property it is also extracted from the stream.
+  /// If the vertices have the property "v:normal" it is also extracted from the stream.
+  /// \note `operator>>(std::istream&,const P&)` must be defined.
   template <typename P>
   std::istream& operator>>(std::istream& is, Surface_mesh<P>& sm)
   {
