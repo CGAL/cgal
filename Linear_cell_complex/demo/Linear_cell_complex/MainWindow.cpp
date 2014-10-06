@@ -752,30 +752,31 @@ void MainWindow::on_actionMerge_all_volumes_triggered()
   timer.start();
 #endif
 
-  Dart_handle prev = scene.lcc->null_handle;
+  LCC::Dart_range::iterator prev;
+  bool first = true;
   for (LCC::Dart_range::iterator it(scene.lcc->darts().begin()),
        itend=scene.lcc->darts().end(); it!=itend; )
   {
     if ( !scene.lcc->is_free(it,3) &&
          scene.lcc->info<3>(it).is_filled_and_visible() &&
          scene.lcc->info<3>(scene.lcc->beta(it,3))
-          .is_filled_and_visible())
+          .is_filled_and_visible() )
     {
       CGAL::remove_cell<LCC,2>(*scene.lcc,it);
       itend=scene.lcc->darts().end();
-      if ( prev==scene.lcc->null_handle ) it=scene.lcc->darts().begin();
+      if ( first ) it=scene.lcc->darts().begin();
       else
       {
-#ifdef CMAP_WITH_INDEX
-        it = scene.lcc->darts().index_to(prev);
-#else
         it=prev;
-#endif
         if ( it!=itend ) ++it;
       }
     }
     else
+    {
+      first=false;
+      prev=it;
       ++it;
+    }
   }
 
 #ifdef CGAL_PROFILE_LCC_DEMO
