@@ -29,7 +29,6 @@ int main()
   vertex_descriptor w = m.add_vertex(K::Point_3(1,0,0));
   vertex_descriptor x = m.add_vertex(K::Point_3(1,1,0));
 
-  vec += u, v, w, x;
   face_descriptor f = m.add_face(u,v,w,x);
  
   {

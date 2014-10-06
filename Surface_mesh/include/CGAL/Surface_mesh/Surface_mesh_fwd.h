@@ -13,8 +13,6 @@ namespace CGAL {
 template<typename K>
 class Surface_mesh;
 
-template <class Key, class Value>
-class Property;
   
 } // CGAL
 #endif

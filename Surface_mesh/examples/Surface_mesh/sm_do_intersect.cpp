@@ -48,7 +48,7 @@ public:
   Box(Face_descriptor f, const Mesh& sm) : Base(triangle(sm, f).bbox()), fd(f) {}
   Box(const Bbox_3& b, Face_descriptor fd) : Base(b), fd(fd) {}
   Face_descriptor f() const { return fd; }
-  ID  id() const { return static_cast<ID>(fd.idx()); }
+  ID  id() const { return static_cast<ID>(fd); }
 };
 
 struct Callback {

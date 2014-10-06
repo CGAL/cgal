@@ -239,14 +239,16 @@ public:
     }
 
     // add a property with name \c name and default value \c t
-    template <class T> Property_map<Key, T> add(const std::string& name, const T t=T())
+    template <class T> 
+    std::pair<Property_map<Key, T>,bool>
+    add(const std::string& name, const T t=T())
     {
         // if a property with this name already exists, return an invalid property
         for (unsigned int i=0; i<parrays_.size(); ++i)
         {
             if (parrays_[i]->name() == name)
             {
-                return Property_map<Key, T>();
+              return std::make_pair(Property_map<Key, T>(), false);
             }
         }
 
@@ -254,7 +256,7 @@ public:
         Property_array<T>* p = new Property_array<T>(name, t);
         p->resize(size_);
         parrays_.push_back(p);
-        return Property_map<Key, T>(p);
+        return std::make_pair(Property_map<Key, T>(p),true);
     }
 
 

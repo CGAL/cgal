@@ -12,6 +12,7 @@ typedef Mesh::Face_index face_descriptor;
 
 int main()
 {
+
   Mesh m;
   vertex_descriptor v0 = m.add_vertex(K::Point_3(0,2,0));
   vertex_descriptor v1 = m.add_vertex(K::Point_3(2,2,0));
@@ -23,13 +24,12 @@ int main()
   m.add_face(v0, v2, v4);
   m.add_face(v2, v3, v4);
 
-  // add a Boolean property to all faces and initialize it to false
-  m.property_map<face_descriptor,bool>("f:my_property", false);
-  
+
+
   // give each vertex a name, the default is empty
   Mesh::Property_map<vertex_descriptor,std::string> name;
   bool created;
-  boost::tie(name, created) = m.add_property_map<vertex_descriptor,std::string>("v:name", "noname");
+  boost::tie(name, created) = m.add_property_map<vertex_descriptor,std::string>("v:name","");
   assert(created);
   // add some names to the vertices
   name[v0] = "hello";
@@ -39,7 +39,7 @@ int main()
     // You can't add a property if it already exists
     Mesh::Property_map<vertex_descriptor,std::string> name;
     bool created;
-    boost::tie(name, created) = m.add_property_map<vertex_descriptor,std::string>("v:name", "noname");
+    boost::tie(name, created) = m.add_property_map<vertex_descriptor,std::string>("v:name", "");
     assert(! created);
   }
 

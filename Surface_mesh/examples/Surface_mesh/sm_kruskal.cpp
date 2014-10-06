@@ -48,7 +48,7 @@ kruskal(const Mesh& P)
     edge_descriptor e = *it ;
     vertex_descriptor s = source(e,P);
     vertex_descriptor t = target(e,P);
-    std::cout << "      " << s.idx() << ", " << t.idx() <<  ", -1\n";
+    std::cout << "      " << s << ", " << t <<  ", -1\n";
   }
 
   std::cout << "]\n"
