@@ -209,7 +209,7 @@ The types and free functions of the BGL API have each a similar type or member f
 for example
 | BGL   | %Surface_mesh | Remark |
 | :---- | :----        | :---   |
-| `boost::graph_traits<G>::vertex_descriptor` | `Surface_mesh::Vertex_index` | |
+| `boost::graph_traits<G>::%vertex_descriptor` | `Surface_mesh::Vertex_index` | |
 | `edges(const G& g)` | `sm.edges()` | |
 | `vd = source(ed,g)` | `vd = sm.source(ed)` | |
 | na  | `n = sm.number_of_vertices()` | counts non-deleted vertices amd has no BGL equivalent |
@@ -226,7 +226,7 @@ Again, there are similar types and functions:
 
 | BGL   | %Surface_mesh |
 | :---- | :----        |
-| `boost::graph_traits<G>::halfedge_descriptor` | `Surface_mesh::Halfedge_index` |
+| `boost::graph_traits<G>::%halfedge_descriptor` | `Surface_mesh::Halfedge_index` |
 | `hd = next(hd, g)` | `hd = sm.next(hd)` |
 | `hd = opposite(hd,g)` | `hd = sm.opposite(hd)` |
 | `hd = halfedge(vd,g)` | `hd = sm.halfedge(vd)` |
