@@ -186,8 +186,8 @@ before_handle_event(Event* event)
 
     // The event has only one left curve, as there is exactly one curve
     // incident to an event with boundary conditions
-    CGAL_assertion(event->number_of_left_curves()  == 0);
-    CGAL_assertion(event->number_of_right_curves() == 1);
+    CGAL_assertion(event->number_of_left_curves()  == 1);
+    CGAL_assertion(event->number_of_right_curves() == 0);
 
     DVertex* dv = m_top_traits->north_pole();
     if (dv) {
