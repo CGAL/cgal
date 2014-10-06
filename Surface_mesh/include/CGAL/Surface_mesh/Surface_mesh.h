@@ -1717,28 +1717,28 @@ public:
     }
 
     /// returns `opposite(next(h))`, that is the next halfedge \ref SurfaceMeshOrientation 
-    /// "clockwise" around the target vertex of `h`. 
+    /// "clockwise" around the target vertex of `h`.
     Halfedge_index next_around_target(Halfedge_index h) const
     {
         return opposite(next(h));
     }
 
-    /// returns `prev(opposite(h))`, that is the next halfedge \ref SurfaceMeshOrientation
-    /// "counterclockwise" around the target vertex of `h`. 
+    /// returns `prev(opposite(h))`, that is the previous halfedge \ref SurfaceMeshOrientation
+    /// "clockwise" around the target vertex of `h`.
     Halfedge_index prev_around_target(Halfedge_index h) const
     {
         return prev(opposite(h));
     }
 
     /// returns `next(opposite(h))`, that is the next halfedge \ref SurfaceMeshOrientation 
-    /// "clockwise" around the source vertex of `h`. 
+    /// "clockwise" around the source vertex of `h`.
     Halfedge_index next_around_source(Halfedge_index h) const
     {
         return next(opposite(h));
     }
 
-    /// returns `opposite(prev(h))`, that is the next halfedge \ref SurfaceMeshOrientation
-    /// "counterclockwise" around the source vertex of `h`. 
+    /// returns `opposite(prev(h))`, that is the previous halfedge \ref SurfaceMeshOrientation
+    /// "clockwise" around the source vertex of `h`.
     Halfedge_index prev_around_source(Halfedge_index h) const
     {
         return opposite(prev(h));
