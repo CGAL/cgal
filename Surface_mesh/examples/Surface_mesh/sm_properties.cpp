@@ -14,10 +14,6 @@ int main()
 {
 
   Mesh m;
-  std::cin >> m;
-  std::cout << m << std::endl;
-
-  m.clear();
   vertex_descriptor v0 = m.add_vertex(K::Point_3(0,2,0));
   vertex_descriptor v1 = m.add_vertex(K::Point_3(2,2,0));
   vertex_descriptor v2 = m.add_vertex(K::Point_3(0,0,0));
@@ -61,8 +57,6 @@ int main()
   
   // delete the string property again
   m.remove_property_map(name);
-
-  std::cout << m <<std::endl;
 
   return 0;
 }
