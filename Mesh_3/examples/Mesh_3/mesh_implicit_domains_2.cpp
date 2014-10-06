@@ -1,13 +1,3 @@
-
-//******************************************************************************
-// File Description :
-// Outputs to out.mesh a mesh of implicit domains. These domains are defined
-// by a vector of functions. Each n-uplet of sign of function values defines a
-// subdomain.
-//******************************************************************************
-
-
-
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <CGAL/Mesh_triangulation_3.h>
@@ -46,14 +36,14 @@ int main()
 {
   // Define functions
   Function f1(&torus_function);
-  Function f2(&sphere_function<5>);
+  Function f2(&sphere_function<3>);
 
   Function_vector v;
   v.push_back(f1);
   v.push_back(f2);
 
   std::vector<std::string> vps;
-  vps.push_back("--");
+  vps.push_back("+-");
 
   // Domain (Warning: Sphere_3 constructor uses square radius !)
   Mesh_domain domain(Function_wrapper(v, vps), K::Sphere_3(CGAL::ORIGIN, 5.*5.));
