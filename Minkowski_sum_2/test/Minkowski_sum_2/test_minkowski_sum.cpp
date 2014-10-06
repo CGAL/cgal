@@ -2,6 +2,7 @@
 
 #include <CGAL/minkowski_sum_2.h>
 #include <CGAL/Small_side_angle_bisector_decomposition_2.h>
+#include <CGAL/Polygon_vertical_decomposition_2.h>
 #include <CGAL/Polygon_convex_decomposition_2.h>
 #include <CGAL/Boolean_set_operations_2.h>
 #include <CGAL/Timer.h>
@@ -19,78 +20,82 @@ bool are_equal(const Polygon_with_holes_2& ph1,
                const Polygon_with_holes_2& ph2)
 {
   std::list<Polygon_with_holes_2> sym_diff;
-  CGAL::symmetric_difference (ph1, ph2, std::back_inserter(sym_diff));
+  CGAL::symmetric_difference(ph1, ph2, std::back_inserter(sym_diff));
   return sym_diff.empty();
 }
 
-typedef enum
-{
+typedef enum {
   REDUCED_CONVOLUTION,
   FULL_CONVOLUTION,
   SSAB_DECOMP,
   OPT_DECOMP,
   HM_DECOMP,
-  GREENE_DECOMP
+  GREENE_DECOMP,
+  VERTICAL_DECOMP
 } Strategy;
 
-static const char *strategy_names[] =
-{
+static const char* strategy_names[] = {
   "reduced convolution",
   "full convolution",
   "small-side angle-bisector decomposition",
   "optimal convex decomposition",
   "Hertel-Mehlhorn decomposition",
-  "Greene decomosition"
+  "Greene decomosition",
+  "Vertical decomosition"
 };
 
-Polygon_with_holes_2 compute_minkowski_sum_2(Polygon_2 &p, Polygon_2 &q, Strategy strategy)
+Polygon_with_holes_2 compute_minkowski_sum_2(Polygon_2& p, Polygon_2& q,
+                                             Strategy strategy)
 {
-  switch (strategy)
-  {
-    case REDUCED_CONVOLUTION:
-      {
-        return minkowski_sum_reduced_convolution_2 (p, q);
-        break;
-      }
-    case FULL_CONVOLUTION:
-      {
-        return minkowski_sum_full_convolution_2 (p, q);
-        break;
-      }
-    case SSAB_DECOMP:
-      {
-        CGAL::Small_side_angle_bisector_decomposition_2<Kernel> decomp;
-        return minkowski_sum_2(p, q, decomp);
-        break;
-      }
-    case OPT_DECOMP:
-      {
-        CGAL::Optimal_convex_decomposition_2<Kernel> decomp;
-        return minkowski_sum_2(p, q, decomp);
-        break;
-      }
-    case HM_DECOMP:
-      {
-        CGAL::Hertel_Mehlhorn_convex_decomposition_2<Kernel> decomp;
-        return minkowski_sum_2(p, q, decomp);
-        break;
-      }
-    case GREENE_DECOMP:
-      {
-        CGAL::Greene_convex_decomposition_2<Kernel> decomp;
-        return minkowski_sum_2(p, q, decomp);
-        break;
-      }
+  switch (strategy) {
+   case REDUCED_CONVOLUTION:
+    return minkowski_sum_reduced_convolution_2(p, q);
+
+   case FULL_CONVOLUTION:
+    return minkowski_sum_full_convolution_2(p, q);
+
+   case SSAB_DECOMP:
+    {
+     CGAL::Small_side_angle_bisector_decomposition_2<Kernel> decomp;
+     return minkowski_sum_2(p, q, decomp);
+    }
+
+   case OPT_DECOMP:
+    {
+     CGAL::Optimal_convex_decomposition_2<Kernel> decomp;
+     return minkowski_sum_2(p, q, decomp);
+    }
+
+   case HM_DECOMP:
+    {
+     CGAL::Hertel_Mehlhorn_convex_decomposition_2<Kernel> decomp;
+     return minkowski_sum_2(p, q, decomp);
+    }
+
+   case GREENE_DECOMP:
+    {
+     CGAL::Greene_convex_decomposition_2<Kernel> decomp;
+     return minkowski_sum_2(p, q, decomp);
+    }
+
+   case VERTICAL_DECOMP:
+    {
+     CGAL::Polygon_vertical_decomposition_2<Kernel> decomp;
+     return minkowski_sum_2(p, q, decomp);
+    }
   }
 }
 
-int main (int argc, char **argv)
+int main(int argc, char* argv[])
 {
-  if (argc < 2)
-  {
-    std::cerr << "Usage: " << argv[0] << " [method flag] [polygon files]..." << std::endl;
-    std::cerr << "For the method flag, use a subset of the letters 'rfsohg'." << std::endl;
-    std::cerr << "The program will compute the Minkowski sum of the first and second polygon, of the third and fourth, and so on." << std::endl;
+  if (argc < 2) {
+    std::cerr << "Usage: " << argv[0] << " [method flag] [polygon files]..."
+              << std::endl;
+    std::cerr << "For the method flag, use a subset of the letters 'rfsohg'."
+              << std::endl;
+    std::cerr << "The program will compute the Minkowski sum of the first "
+              << "and second polygon, of the third and fourth, and so on."
+              << std::endl;
     return 1;
   }
 
@@ -98,8 +103,7 @@ int main (int argc, char **argv)
   CGAL::Timer timer;
 
   std::list<Strategy> strategies;
-  for (int i = 0; i < strlen(argv[1]); i++)
-  {
+  for (int i = 0; i < strlen(argv[1]); ++i) {
     switch (argv[1][i]) {
       case 'r':
         strategies.push_back(REDUCED_CONVOLUTION);
@@ -119,6 +123,9 @@ int main (int argc, char **argv)
       case 'g':
         strategies.push_back(GREENE_DECOMP);
         break;
+      case 'v':
+        strategies.push_back(VERTICAL_DECOMP);
+        break;
       default:
         std::cerr << "Unknown flag '" << argv[1][i] << "'" << std::endl;
         return 1;
@@ -126,17 +133,15 @@ int main (int argc, char **argv)
   }
 
   int i = 2;
-  while (i+1 < argc)
-  {
+  while (i+1 < argc) {
     std::cout << "Testing " << argv[i] << " + " << argv[i+1] << std::endl;
-    read_polygon (argv[i], p);
-    read_polygon (argv[i+1], q);
+    read_polygon(argv[i], p);
+    read_polygon(argv[i+1], q);
 
     bool compare = false;
     Polygon_with_holes_2 reference;
-
-    for (std::list<Strategy>::iterator it = strategies.begin(); it != strategies.end(); it++)
-    {
+    std::list<Strategy>::iterator it;
+    for (it = strategies.begin(); it != strategies.end(); ++it) {
       std::cout << "Using " << strategy_names[*it] << ": ";
       timer.reset();
       timer.start();
@@ -144,20 +149,14 @@ int main (int argc, char **argv)
       timer.stop();
       std::cout << timer.time() << " s " << std::flush;
 
-      if (compare)
-      {
-        if (are_equal(reference, result))
-        {
-          std::cout << "(OK)";
-        }
-        else
-        {
+      if (compare) {
+        if (are_equal(reference, result)) std::cout << "(OK)";
+        else {
           std::cout << "(ERROR: different result)";
           return 1;
         }
       }
-      else
-      {
+      else {
         compare = true;
         reference = result;
       }
