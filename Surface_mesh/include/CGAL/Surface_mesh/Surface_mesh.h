@@ -1955,8 +1955,6 @@ private: //--------------------------------------------------- property handling
     }
 
 
-
-  /// @cond CGAL_DOCUMENT_INTERNALS
     /// returns a property map with key `I` and value type `T` with 
     /// `name`. If no such property exists one is added with the default
     /// value `t`.
@@ -1966,7 +1964,7 @@ private: //--------------------------------------------------- property handling
     {
         return (this->*boost::fusion::at_key<I>(pmap_)).template get_or_add<T>(name, t);
     }
-  /// @endcond
+
 
     /// removes property map `p`. The memory allocated for that property map is
     /// freed.
@@ -2091,8 +2089,28 @@ private: //------------------------------------------------------- private data
   template <typename P>
   std::ostream& operator<<(std::ostream& os, const Surface_mesh<P>& sm)
   {
+    typedef Surface_mesh<P> Mesh;
+    typedef typename Mesh::Vertex_index Vertex_index;
+    typedef typename Mesh::Face_index Face_index;
+
+    os << "OFF\n" << sm.num_vertices() << " " << sm.num_faces() << " 0\n";
+    std::vector<int> reindex;
+    reindex.resize(sm.num_vertices());
+    int n = 0;
+    BOOST_FOREACH(Vertex_index v, sm.vertices()){
+      os << sm.point(v) << std::endl;
+      reindex[v]=n++;
+    }
+
+    BOOST_FOREACH(Face_index f, sm.faces()){
+      os << sm.degree(f);
+      BOOST_FOREACH(Vertex_index v, CGAL::vertices_around_face(sm.halfedge(f),sm)){
+        os << " " << reindex[v];
+      }
+      os << "\n";
+    }
     return os;
-  }
+    }
   /// \relates Surface_mesh
   /// Extracts the surface mesh from an input stream in Ascii OFF format.
   /// If the vertices have the property "v:normal" it is also extracted from the stream.
@@ -2100,6 +2118,32 @@ private: //------------------------------------------------------- private data
   template <typename P>
   std::istream& operator>>(std::istream& is, Surface_mesh<P>& sm)
   {
+    typedef Surface_mesh<P> Mesh;
+    typedef typename Mesh::Vertex_index Vertex_index;
+    typedef typename Mesh::Face_index Face_index;
+    typedef typename Mesh::size_type size_type;
+    sm.clear();
+    int n, f, e;
+    std::string off;
+    is >> off;
+    assert(off == "OFF");
+    is >> n >> f >> e;
+    sm.reserve(n,2*f,e);
+    P p;
+    for(int i=0; i < n; i++){
+      is >> p;
+      sm.add_vertex(p);
+    }
+    std::vector<size_type> vr;
+    std::size_t d;
+    for(std::size_t i=0; i < f; i++){
+      is >> d;
+      vr.resize(d);
+      for(std::size_t j=0; j<d; j++){
+        is >> vr[j];
+      }
+      sm.add_face(vr);
+    }
     return is;
   }
 
@@ -2363,12 +2407,11 @@ Surface_mesh<P>::add_face(const Range& r)
     // test for topological errors
     for (i=0, ii=1; i<n; ++i, ++ii, ii%=n)
     {
-        if ( !is_border(vertices[i]) )
+      if ( !(is_isolated(vertices[i]) || is_border(vertices[i]) ) )
         {
             std::cerr << "Surface_meshT::add_face: complex vertex " << vertices[i] << std::endl;
             return Face_index();
         }
-
         halfedges[i] = halfedge(vertices[i], vertices[ii]);
         is_new[i]    = !halfedges[i].is_valid();
         if (!is_new[i] && !is_border(halfedges[i]))

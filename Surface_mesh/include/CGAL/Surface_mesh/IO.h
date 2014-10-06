@@ -66,13 +66,13 @@ bool read_off_binary(Surface_mesh<Point_3>& mesh,
     Point_3            p;
     Vector_3           n, c;
     Vector_2           t;
-    typename Mesh::Vertex_descriptor  v;
+    typename Mesh::Vertex_index  v;
 
     // properties
-    Property_map<typename Mesh::Vertex_descriptor, Normal>              normals;
-    Property_map<typename Mesh::Vertex_descriptor, Texture_coordinate>  texcoords;
-    if (has_normals)   normals   = mesh.template get_property_map<typename Mesh::Vertex_descriptor, Normal>("v:normal");
-    if (has_texcoords) texcoords = mesh.template get_property_map<typename Mesh::Vertex_descriptor, Texture_coordinate>("v:texcoord");
+    Mesh::Property_map<typename Mesh::Vertex_index, Normal>              normals;
+    Mesh::Property_map<typename Mesh::Vertex_index, Texture_coordinate>  texcoords;
+    if (has_normals)   normals   = mesh.template get_or_add_property_map<typename Mesh::Vertex_index, Normal>("v:normal");
+    if (has_texcoords) texcoords = mesh.template get_or_add_property_map<typename Mesh::Vertex_index, Texture_coordinate>("v:texcoord");
 
 
     // #Vertice, #Faces, #Edges
@@ -107,7 +107,7 @@ bool read_off_binary(Surface_mesh<Point_3>& mesh,
 
 
     // read faces: #N v[1] v[2] ... v[n-1]
-    std::vector<typename Mesh::Vertex_descriptor> vertices;
+    std::vector<typename Mesh::Vertex_index> vertices;
     for (i=0; i<nF; ++i)
     {
         internal::read(in, nV);
@@ -115,7 +115,7 @@ bool read_off_binary(Surface_mesh<Point_3>& mesh,
         for (j=0; j<nV; ++j)
         {
             internal::read(in, idx);
-            vertices[j] = typename Mesh::Vertex_descriptor(idx);
+            vertices[j] = typename Mesh::Vertex_index(idx);
         }
         if(!mesh.add_face(vertices).is_valid()) {
           // adding a face did not succeed, stop reading the rest
@@ -142,14 +142,14 @@ bool read_off_ascii(Surface_mesh<Point_3>& mesh,
     char                    line[100], *lp;
     unsigned int            i, j, items, idx, nc;
     unsigned int            nV, nF, nE;
-    typename Mesh::Vertex_descriptor   v;
+    typename Mesh::Vertex_index   v;
 
     // properties
-    Property_map<typename Mesh::Vertex_descriptor, Normal>                 normals;
-    Property_map<typename Mesh::Vertex_descriptor, Texture_coordinate>     texcoords;
+    Mesh::Property_map<typename Mesh::Vertex_index, Normal>                 normals;
+    Mesh::Property_map<typename Mesh::Vertex_index, Texture_coordinate>     texcoords;
     
-    if (has_normals)   normals   = mesh.template get_property_map<typename Mesh::Vertex_descriptor, Normal>("v:normal");
-    if (has_texcoords) texcoords = mesh.template get_property_map<typename Mesh::Vertex_descriptor, Texture_coordinate>("v:texcoord");
+    if (has_normals)   normals   = mesh.template get_or_add_property_map<typename Mesh::Vertex_index, Normal>("v:normal");
+    if (has_texcoords) texcoords = mesh.template get_or_add_property_map<typename Mesh::Vertex_index, Texture_coordinate>("v:texcoord");
 
     int c;
     do {
@@ -206,7 +206,7 @@ bool read_off_ascii(Surface_mesh<Point_3>& mesh,
     }
 
     // read faces: #N v[1] v[2] ... v[n-1]
-    std::vector<typename Mesh::Vertex_descriptor> vertices;
+    std::vector<typename Mesh::Vertex_index> vertices;
     for (i=0; i<nF; ++i)
     {
         // read line
@@ -228,7 +228,7 @@ bool read_off_ascii(Surface_mesh<Point_3>& mesh,
         {
             items = sscanf(lp, "%d%n", (int*)&idx, &nc);
             CGAL_assertion(items == 1);
-            vertices[j] = typename Mesh::Vertex_descriptor(idx);
+            vertices[j] = typename Mesh::Vertex_index(idx);
             lp += nc;
         }
 
@@ -343,8 +343,8 @@ bool write_off(const Surface_mesh<K>& mesh, const std::string& filename)
 
 
     // vertices
-    Property_map<typename Mesh::Vertex_descriptor, Point_3> points 
-      = mesh.template get_property_map<typename Mesh::Vertex_descriptor, Point_3>("v:point");
+    Mesh::Property_map<typename Mesh::Vertex_index, Point_3> points 
+      = mesh.template property_map<typename Mesh::Vertex_index, Point_3>("v:point");
     for (typename Mesh::Vertex_iterator vit=mesh.vertices_begin(); vit!=mesh.vertices_end(); ++vit)
     {
         const Point_3& p = points[*vit];
