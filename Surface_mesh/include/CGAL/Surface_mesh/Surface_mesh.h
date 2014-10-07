@@ -2084,7 +2084,7 @@ private: //------------------------------------------------------- private data
 
   /// \relates Surface_mesh
   /// Inserts the surface mesh in an output stream in Ascii OFF format. 
-  /// If the vertices have the property "v:normal" it is also inserted in the stream.
+  /// None of the proprties is inserted in the stream.
   /// \note `operator<<(std::ostream&,const P&)` must be defined.
   template <typename P>
   std::ostream& operator<<(std::ostream& os, const Surface_mesh<P>& sm)
@@ -2113,7 +2113,7 @@ private: //------------------------------------------------------- private data
     }
   /// \relates Surface_mesh
   /// Extracts the surface mesh from an input stream in Ascii OFF format.
-  /// If the vertices have the property "v:normal" it is also extracted from the stream.
+  /// The operator does not read files with vertex normals or textures.
   /// \note `operator>>(std::istream&,const P&)` must be defined.
   template <typename P>
   std::istream& operator>>(std::istream& is, Surface_mesh<P>& sm)
