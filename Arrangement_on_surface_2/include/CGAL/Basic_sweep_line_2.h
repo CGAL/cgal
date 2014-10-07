@@ -490,27 +490,27 @@ protected:
                                       Arr_parameter_space ps_y,
                                       Subcurve* sc = NULL);
 
-  void _update_event_at_open_boundary(Event* e,
-                                      const X_monotone_curve_2& cv,
-                                      Arr_curve_end ind,
-                                      bool is_new)
+  void _update_event_at_boundary(Event* e,
+                                 const X_monotone_curve_2& cv,
+                                 Arr_curve_end ind,
+                                 bool is_new)
   {
-    _update_event_at_open_boundary(e, cv, ind, is_new,
-                                   Are_all_sides_oblivious_category());
+    _update_event_at_boundary(e, cv, ind, is_new,
+                              Are_all_sides_oblivious_category());
   }
 
-  void _update_event_at_open_boundary(Event* e,
-                                      const X_monotone_curve_2& cv,
-                                      Arr_curve_end ind,
-                                      bool is_new,
-                                      Arr_not_all_sides_oblivious_tag)
+  void _update_event_at_boundary(Event* e,
+                                 const X_monotone_curve_2& cv,
+                                 Arr_curve_end ind,
+                                 bool is_new,
+                                 Arr_not_all_sides_oblivious_tag)
   { m_visitor->update_event(e, cv, ind, is_new); }
 
-  void _update_event_at_open_boundary(Event* /* e */,
-                                      const X_monotone_curve_2& /* cv */,
-                                      Arr_curve_end /* ind */,
-                                      bool /* is_new */,
-                                      Arr_all_sides_oblivious_tag)
+  void _update_event_at_boundary(Event* /* e */,
+                                 const X_monotone_curve_2& /* cv */,
+                                 Arr_curve_end /* ind */,
+                                 bool /* is_new */,
+                                 Arr_all_sides_oblivious_tag)
   { CGAL_error(); }
 
 #ifdef CGAL_SL_VERBOSE
