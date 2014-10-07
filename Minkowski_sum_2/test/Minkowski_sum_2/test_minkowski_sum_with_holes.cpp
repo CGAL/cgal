@@ -1,9 +1,8 @@
 #include <CGAL/basic.h>
 
 #include <CGAL/minkowski_sum_2.h>
-#include <CGAL/Small_side_angle_bisector_decomposition_2.h>
 #include <CGAL/Polygon_vertical_decomposition_2.h>
-#include <CGAL/Polygon_convex_decomposition_2.h>
+#include <CGAL/Polygon_triangulation_decomposition_2.h>
 #include <CGAL/Boolean_set_operations_2.h>
 #include <CGAL/Timer.h>
 
@@ -25,62 +24,28 @@ bool are_equal(const Polygon_with_holes_2& ph1,
 }
 
 typedef enum {
-  REDUCED_CONVOLUTION,
-  FULL_CONVOLUTION,
-  SSAB_DECOMP,
-  OPT_DECOMP,
-  HM_DECOMP,
-  GREENE_DECOMP,
-  VERTICAL_DECOMP
+  VERTICAL_DECOMP,
+  TRIANGULATION_DECOMP
 } Strategy;
 
 static const char* strategy_names[] = {
-  "reduced convolution",
-  "full convolution",
-  "small-side angle-bisector decomposition",
-  "optimal convex decomposition",
-  "Hertel-Mehlhorn decomposition",
-  "Greene decomosition",
-  "Vertical decomosition"
+  "Vertical decomosition",
+  "Constrained triangulation decomosition"
 };
 
-Polygon_with_holes_2 compute_minkowski_sum_2(Polygon_2& p, Polygon_2& q,
+Polygon_with_holes_2 compute_minkowski_sum_2(Polygon_with_holes_2& p,
+                                             Polygon_with_holes_2& q,
                                              Strategy strategy)
 {
   switch (strategy) {
-   case REDUCED_CONVOLUTION:
-    return minkowski_sum_reduced_convolution_2(p, q);
-
-   case FULL_CONVOLUTION:
-    return minkowski_sum_full_convolution_2(p, q);
-
-   case SSAB_DECOMP:
-    {
-     CGAL::Small_side_angle_bisector_decomposition_2<Kernel> decomp;
-     return minkowski_sum_2(p, q, decomp);
-    }
-
-   case OPT_DECOMP:
-    {
-     CGAL::Optimal_convex_decomposition_2<Kernel> decomp;
-     return minkowski_sum_2(p, q, decomp);
-    }
-
-   case HM_DECOMP:
-    {
-     CGAL::Hertel_Mehlhorn_convex_decomposition_2<Kernel> decomp;
-     return minkowski_sum_2(p, q, decomp);
-    }
-
-   case GREENE_DECOMP:
-    {
-     CGAL::Greene_convex_decomposition_2<Kernel> decomp;
-     return minkowski_sum_2(p, q, decomp);
-    }
-
    case VERTICAL_DECOMP:
     {
      CGAL::Polygon_vertical_decomposition_2<Kernel> decomp;
+     return minkowski_sum_2(p, q, decomp);
+    }
+   case TRIANGULATION_DECOMP:
+    {
+     CGAL::Polygon_triangulation_decomposition_2<Kernel> decomp;
      return minkowski_sum_2(p, q, decomp);
     }
   }
@@ -99,34 +64,21 @@ int main(int argc, char* argv[])
     return 1;
   }
 
-  Polygon_2 p, q;
+  Polygon_with_holes_2 p, q;
   CGAL::Timer timer;
 
   std::list<Strategy> strategies;
   for (int i = 0; i < strlen(argv[1]); ++i) {
     switch (argv[1][i]) {
-      case 'r':
-        strategies.push_back(REDUCED_CONVOLUTION);
-        break;
-      case 'f':
-        strategies.push_back(FULL_CONVOLUTION);
-        break;
-      case 's':
-        strategies.push_back(SSAB_DECOMP);
-        break;
-      case 'o':
-        strategies.push_back(OPT_DECOMP);
-        break;
-      case 'h':
-        strategies.push_back(HM_DECOMP);
-        break;
-      case 'g':
-        strategies.push_back(GREENE_DECOMP);
-        break;
       case 'v':
         strategies.push_back(VERTICAL_DECOMP);
         break;
-      default:
+
+      case 't':
+        strategies.push_back(TRIANGULATION_DECOMP);
+        break;
+
+     default:
         std::cerr << "Unknown flag '" << argv[1][i] << "'" << std::endl;
         return 1;
     }
@@ -135,8 +87,8 @@ int main(int argc, char* argv[])
   int i = 2;
   while (i+1 < argc) {
     std::cout << "Testing " << argv[i] << " + " << argv[i+1] << std::endl;
-    if (! read_polygon(argv[i], p)) return -1;
-    if (! read_polygon(argv[i+1], q)) return -1;
+    if (!read_polygon(argv[i], p)) return -1;
+    if (!read_polygon(argv[i+1], q)) return -1;
 
     bool compare = false;
     Polygon_with_holes_2 reference;
