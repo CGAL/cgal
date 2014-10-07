@@ -371,20 +371,23 @@ public:
     /*! Implementation of the operator() in case the base should be used. */
     Arr_parameter_space parameter_space_in_x(const X_monotone_curve_2& xcv,
                                              Arr_curve_end ind,
-                                             Arr_has_identified_side_tag) const
+                                             /* Left and Right */ Arr_has_identified_side_tag) const
     {
-      // If the curve completely lies on the identification, return
+      // If the curve completely lies on the left-right identification, return
       // ARR_LEFT_BOUNDARY as an arbitrary but consistent choice.
-      if (m_base->is_on_y_identification_2_object()(xcv))
+      if (m_base->is_on_y_identification_2_object()(xcv)) {
         return ARR_LEFT_BOUNDARY;
+      }
       return (m_base->parameter_space_in_x_2_object()(xcv, ind));
     }
 
     /*! Implementation of the operator() in case the base should be used. */
     Arr_parameter_space parameter_space_in_x(const X_monotone_curve_2& xcv,
                                              Arr_curve_end ind,
-                                             Arr_boundary_cond_tag) const
-    { return (m_base->parameter_space_in_x_2_object()(xcv, ind)); }
+                                             /* Left or Right */ Arr_boundary_cond_tag) const
+    {
+      return (m_base->parameter_space_in_x_2_object()(xcv, ind));
+    }
 
     /*! Implementation of the operator() in case the dummy should be used. */
     Arr_parameter_space parameter_space_in_x(const X_monotone_curve_2&,
@@ -398,10 +401,24 @@ public:
       return ARR_INTERIOR;
     }
 
+     /*! Implementation of the operator() in case the base should be used. */
+    Arr_parameter_space parameter_space_in_x(const Point_2& p,
+                                             /* Left and Right */ Arr_has_identified_side_tag) const
+    {
+      // if the point lies on the left-right identification, return
+      // ARR_LEFT_BOUNDARY as an arbitrary but consistent choice
+      if (m_base->is_on_y_identification_2_object()(p)) {
+        return ARR_LEFT_BOUNDARY;
+      }
+      return m_base->parameter_space_in_x_2_object()(p);
+    }
+
     /*! Implementation of the operator() in case the base should be used. */
     Arr_parameter_space parameter_space_in_x(const Point_2& p,
-                                             Arr_boundary_cond_tag) const
-    { return m_base->parameter_space_in_x_2_object()(p); }
+                                             /* Left or Right */ Arr_boundary_cond_tag) const
+    {
+      return m_base->parameter_space_in_x_2_object()(p);
+    }
 
     /*! Implementation of the operator() in case the dummy should be used. */
     Arr_parameter_space parameter_space_in_x(const Point_2&,
@@ -440,7 +457,7 @@ public:
     friend class Arr_traits_basic_adaptor_2<Base>;
 
   public:
-    /*! Determones whether a point lies on the vertical identification curve
+    /*! Determines whether a point lies on the vertical identification curve
      * \param p the point.
      * \return true if p lies on the vertical identification curve, and
      * false otherwise.
@@ -448,7 +465,7 @@ public:
     bool operator()(const Point_2& p) const
     { return is_on_y_idn(p, Ioyi_2_point_tag()); }
 
-    /*! Determones whether an x-monotone curve coicide with the vertical
+    /*! Determines whether an x-monotone curve coicide with the vertical
      * identification curve
      * \param xcv the point.
      * \return true if xcv coincides with an identification curve,
@@ -656,21 +673,23 @@ public:
     /*! Implementation of the operator() in case the base should be used. */
     Arr_parameter_space parameter_space_in_y(const X_monotone_curve_2& xcv,
                                              Arr_curve_end ind,
-                                             Arr_has_identified_side_tag) const
+                                             /* Bottom and Top */ Arr_has_identified_side_tag) const
     {
-      // If the curve completely lies on the identification, return
+      // If the curve completely lies on the bottom-top identification, return
       // ARR_BOTTOM_BOUNDARY as an arbitrary but consistent choice.
-      if (m_base->is_on_x_identification_2_object()(xcv))
+      if (m_base->is_on_x_identification_2_object()(xcv)) {
         return ARR_BOTTOM_BOUNDARY;
+      }
       return m_base->parameter_space_in_y_2_object()(xcv, ind);
     }
 
     /*! Implementation of the operator() in case the base should be used. */
     Arr_parameter_space parameter_space_in_y(const X_monotone_curve_2& xcv,
                                              Arr_curve_end ind,
-                                             Arr_boundary_cond_tag) const
-    { return m_base->parameter_space_in_y_2_object()(xcv, ind); }
-
+                                             /* Bottom or Top */ Arr_boundary_cond_tag) const
+    {
+      return m_base->parameter_space_in_y_2_object()(xcv, ind);
+    }
     /*! Implementation of the operator() in case the dummy should be used. */
     Arr_parameter_space parameter_space_in_y(const X_monotone_curve_2&,
                                              Arr_curve_end,
@@ -685,7 +704,19 @@ public:
 
     /*! Implementation of the operator() in case the base should be used. */
     Arr_parameter_space parameter_space_in_y(const Point_2& p,
-                                             Arr_boundary_cond_tag) const
+                                             /* Bottom and Top */ Arr_has_identified_side_tag) const
+    {
+      // if the point lies on the bottom-top identification, return
+      // ARR_BOTTOM_BOUNDARY as an arbitrary but consistent choice
+      if (m_base->is_on_x_identification_2_object()(p)) {
+        return ARR_BOTTOM_BOUNDARY;
+      }
+      return m_base->parameter_space_in_x_2_object()(p);
+    }
+
+    /*! Implementation of the operator() in case the base should be used. */
+    Arr_parameter_space parameter_space_in_y(const Point_2& p,
+                                             /* Bottom or Top */ Arr_boundary_cond_tag) const
     { return m_base->parameter_space_in_y_2_object()(p); }
 
     /*! Implementation of the operator() in case the dummy should be used. */
@@ -725,7 +756,7 @@ public:
     friend class Arr_traits_basic_adaptor_2<Base>;
 
   public:
-    /*! Determones whether a point lies on the horizontal identification curve
+    /*! Determines whether a point lies on the horizontal identification curve
      * \param p the point.
      * \return true if p lies on the vertical identification curve, and
      * false otherwise.
@@ -733,7 +764,7 @@ public:
     bool operator()(const Point_2& p) const
     { return is_on_idn(p, Ioxi_2_point_tag()); }
 
-    /*! Determones whether an x-monotone curve coicide with the horizontal
+    /*! Determines whether an x-monotone curve coicide with the horizontal
      * identification curve
      * \param xcv the point.
      * \return true if xcv coincides with an identification curve,
@@ -826,6 +857,11 @@ public:
     /*! Implementation for the case the the base should be used. */
     Comparison_result comp_x_on_bnd(const Point_2& p1, const Point_2& p2,
                                     Arr_boundary_cond_tag) const
+    { return m_base->compare_x_on_boundary_2_object()(p1, p2); }
+
+    /*! Implementation for the case the the base should be used. */
+    Comparison_result comp_x_on_bnd(const Point_2& p1, const Point_2& p2,
+                                    Arr_has_closed_side_tag) const
     { return m_base->compare_x_on_boundary_2_object()(p1, p2); }
 
     /*! Implementation of the case the dummy should be used. */
@@ -1060,9 +1096,21 @@ public:
                                                Arr_curve_end ce,
                                                Arr_open_side_tag) const
     {
+      // pt must be interior
+      // xcv,ce must be bottom or top
+      CGAL_precondition(m_self->parameter_space_in_y_2_object() (pt) == ARR_INTERIOR);
+      CGAL_precondition_code(Arr_parameter_space ps_y2 = m_self->parameter_space_in_y_2_object() (xcv,ce));
+      CGAL_precondition(ps_y2 == ARR_BOTTOM_BOUNDARY || ps_y2 == ARR_TOP_BOUNDARY);
+
       Comparison_result res =
         m_self->compare_x_on_boundary_2_object()(pt, xcv, ce);
-      if ((res != EQUAL) || m_self->is_vertical_2_object()(xcv)) return res;
+      if (res != EQUAL) {
+        return res;
+      }
+      CGAL_assertion(res == EQUAL);
+      if (m_self->is_vertical_2_object()(xcv)) {
+        return (m_self->parameter_space_in_y_2_object() (xcv,ce)) == ARR_BOTTOM_BOUNDARY ? LARGER : SMALLER;
+      }
 
       // look at the side from which the
       // vertical asymptote is approached

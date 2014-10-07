@@ -599,7 +599,7 @@ namespace Compare_x_on_boundary_2 {
 
   template <>
   struct Points< Arr_open_side_tag > {
-    typedef Arr_use_traits_tag type;
+    typedef Arr_use_dummy_tag type;
   };
 
   template <>
@@ -609,7 +609,7 @@ namespace Compare_x_on_boundary_2 {
 
   template <>
   struct Points< Arr_contracted_side_tag > {
-    typedef Arr_use_dummy_tag type;
+    typedef Arr_use_traits_tag type;
   };
 
   template <>
@@ -631,7 +631,7 @@ namespace Compare_x_on_boundary_2 {
 
   template <>
   struct Point_curve_end< Arr_open_side_tag > {
-    typedef Arr_use_dummy_tag type;
+    typedef Arr_use_traits_tag type;
   };
 
   template <>
@@ -663,12 +663,12 @@ namespace Compare_x_on_boundary_2 {
 
   template <>
   struct Curve_ends< Arr_open_side_tag > {
-    typedef Arr_use_dummy_tag type;
+    typedef Arr_use_traits_tag type;
   };
 
   template <>
   struct Curve_ends< Arr_closed_side_tag > {
-    typedef Arr_use_dummy_tag type;
+    typedef Arr_use_traits_tag type;
   };
 
   template <>
