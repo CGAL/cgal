@@ -977,11 +977,6 @@ public:
                                  const X_monotone_curve_2& xcv2,
                                  Arr_curve_end ce2) const
     {
-      CGAL_precondition_code
-        (const Point_2& p1 = (ce1 == ARR_MIN_END) ? xcv1.left() : xcv1.right(););
-      CGAL_precondition_code
-        (const Point_2& p2 = (ce2 == ARR_MIN_END) ? xcv2.left() : xcv2.right(););
-
       CGAL_precondition(!xcv1.is_on_boundary());
       CGAL_precondition(!xcv2.is_on_boundary());
 

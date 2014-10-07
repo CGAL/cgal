@@ -97,8 +97,6 @@ public:
     const bool is_isolated1 = e1->is_isolated();
     const bool is_isolated2 = e2->is_isolated();
 
-    Comparison_result res;
-
     if (is_isolated1) {
       const Point_2& pt1 = e1->point();
       Arr_parameter_space ps_x1 = e1->parameter_space_in_x();
