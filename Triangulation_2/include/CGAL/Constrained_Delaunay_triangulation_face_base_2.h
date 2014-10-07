@@ -2,7 +2,6 @@
 #define CGAL_CONSTRAINED_TRIANGULATION_FACE_BASE_2_2_H
 
 #include <CGAL/triangulation_assertions.h>
-#include <CGAL/Constrained_Delaunay_triangulation_2.h>
 #include <CGAL/Constrained_triangulation_face_base_2.h>
 
 namespace CGAL {

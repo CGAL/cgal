@@ -23,6 +23,7 @@
 
 #include <CGAL/Qt/ConstrainedTriangulationGraphicsItem.h>
 #include <QBrush>
+#include <QPen>
 
 namespace CGAL {
 
@@ -38,6 +39,7 @@ public:
     : Base(t_),
       visible_in_domain(true),
       in_domain_brush(::Qt::blue)
+      , visible_voronoi(false)
   {
   }
   
@@ -64,11 +66,35 @@ public:
     this->update();
   }
 
+  const QPen& voronoiPen() const
+  {
+    return voronoi_pen;
+  }
+
+  void setVoronoiPen(const QPen& pen)
+  {
+    voronoi_pen = pen;
+  }
+
+  bool visibleVoronoiEdges() const
+  {
+    return visible_voronoi;
+  }
+
+  void setVisibleVoronoiEdges(const bool b)
+  {
+    visible_voronoi = b;
+    this->update();
+  }
+
 protected:
   void drawAll(QPainter *painter);
 
   bool visible_in_domain;
+  bool visible_voronoi;
+
   QBrush in_domain_brush;
+  QPen voronoi_pen;
 };
 
 template <typename T>
@@ -84,6 +110,30 @@ DelaunayMeshTriangulationGraphicsItem<T>::drawAll(QPainter *painter)
 	++fit){
       if(fit->is_in_domain()){
 	this->painterostream << this->t->triangle(fit);
+      }
+    }
+  }
+  if(this->visibleVoronoiEdges()){
+    painter->setBrush(::Qt::NoBrush);
+    painter->setPen(this->voronoiPen());
+    this->painterostream = PainterOstream<typename T::Geom_traits>(painter);
+    for(typename T::Finite_vertices_iterator
+          vit = this->t->finite_vertices_begin();
+          vit != this->t->finite_vertices_end();
+          ++vit)
+    {
+      typename T::Cvd_cell cell = this->t->dual(vit);
+      for(typename T::Cvd_cell::segment_iterator sit = cell.segments_begin();
+        sit != cell.segments_end();
+        ++sit)
+      {
+        this->painterostream << *sit;
+      }
+      for(typename T::Cvd_cell::ray_iterator rit = cell.rays_begin();
+        rit != cell.rays_end();
+        ++rit)
+      {
+        this->painterostream << *rit;
       }
     }
   }

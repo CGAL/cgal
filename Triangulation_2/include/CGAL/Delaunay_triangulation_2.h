@@ -35,8 +35,6 @@
 #include <boost/iterator/zip_iterator.hpp>
 #include <boost/mpl/and.hpp>
 
-#include <CGAL/Polygon_2.h>
-#include <CGAL/intersections.h>
 
 #endif //CGAL_TRIANGULATION_2_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
 
@@ -52,7 +50,6 @@ public:
   typedef typename Geom_traits::Point_2       Point;
   typedef typename Geom_traits::Segment_2     Segment;
   typedef typename Geom_traits::Triangle_2    Triangle;
-  
 
   typedef typename Geom_traits::Orientation_2 Orientation_2;
   typedef typename Geom_traits::Compare_x_2   Compare_x;
@@ -85,8 +82,6 @@ public:
   using Triangulation::fill_hole_delaunay;
   using Triangulation::delete_vertex;
 #endif
-
-  typedef CGAL::Polygon_2<Geom_traits,std::vector<Point> > Polygon;
 
  Delaunay_triangulation_2(const Gt& gt = Gt())
   : Triangulation_2<Gt,Tds>(gt) {}
@@ -139,9 +134,16 @@ public:
   Object dual(const Edge &e) const ;
   Object dual(const Edge_circulator& ec) const;
   Object dual(const Finite_edges_iterator& ei) const;
-  Polygon dual(Vertex_handle v) const;
-  Polygon dual(const Vertex_circulator& vc) const;
-  Polygon dual(const Finite_vertices_iterator& vi) const;
+  
+  template<typename OutputIterator>
+  OutputIterator dual(Vertex_handle v,
+                      OutputIterator oit) const;
+  template<typename OutputIterator>
+  OutputIterator dual(const Vertex_circulator& vc,
+                      OutputIterator oit) const;
+  template<typename OutputIterator>
+  OutputIterator dual(const Finite_vertices_iterator& vi,
+                      OutputIterator oit) const;
   
   //INSERTION-REMOVAL
   Vertex_handle insert(const Point  &p, 
@@ -850,40 +852,82 @@ dual(const Finite_edges_iterator& ei) const
 
 
 template < class Gt, class Tds >
-Polygon
+template<typename OutputIterator>
+OutputIterator
 Delaunay_triangulation_2<Gt,Tds>::
-dual(Vertex_handle v) const
+dual(Vertex_handle v, OutputIterator oit) const
 {
   CGAL_triangulation_precondition( v != Vertex_handle());
   CGAL_triangulation_precondition( !this->is_infinite(v));
 
   // The Circulator moves ccw.
+  std::vector<Segment> segments;
+  std::vector<Ray> rays;
   Face_circulator fc = this->incident_faces(v), done(fc);
-  Polygon poly;
+  Point prev_cc;
+  bool first_ = true;
   do
   {
-    if(!this->is_infinite(fc))
-      poly.push_back(this->circumcenter(face));
-    else
-      return Polygon();
+    if(!this->is_infinite(fc)) //finite edges (= segments)
+    {
+      if(first_)
+        prev_cc = this->circumcenter(fc);
+      else
+      {
+        Point cc = this->circumcenter(fc);
+        *oit++ = Segment(cc, prev_cc);
+        prev_cc = cc;
+      }
+      first_ = false;
+    }
+    else // infinite edges (= rays)
+    {
+      first_ = true;//for next segment
+      //find the one finite edge
+      for(int i = 0; i < 3; ++i)
+      {
+        if(!this->is_infinite(fc,i))
+        {
+          Point m = CGAL::midpoint(fc->vertex(cw(i))->point(),
+                                   fc->vertex(ccw(i))->point());
+          Face_handle fn = fc->neighbor(i);
+
+          Point opp = fn->vertex(fn->index(fc))->point();
+          double dot_prod = (m-cc)*(m-opp);
+          if(dot_prod > 0.)      *oit++ = Ray(cc, m);
+          else if(dot_prod < 0.) *oit++ = Ray(cc, Vector(m, cc));
+          else //0. cc and m are the same point
+          {
+            Segment se = this->segment(Face_handle(fc,i));
+            Vector_2 normal = se.supporting_line().perpendicular(m).to_vector();
+            if(normal * (m - opp) > 0.)
+              *oit++ = Ray(cc, normal);
+            else
+              *oit++ = Ray(cc, -normal);
+          }
+        }
+      }
+    }
   }
   while(++fc != done);
 
-  return poly;
+  return oit;
 }
 
 template<class Gt, class Tds>
-Polygon
+template<typename OutputIterator>
+OutputIterator
 Delaunay_triangulation_2<Gt,Tds>::
-dual (Vertex_circulator& vc) const
+dual(const Vertex_circulator& vc, OutputIterator oit) const
 {
   return dual(*vc);
 }
 
 template<class Gt, class Tds>
-Polygon
+template<typename OutputIterator>
+OutputIterator
 Delaunay_triangulation_2<Gt,Tds>::
-dual (Finite_vertices_iterator& vi) const
+dual(const Finite_vertices_iterator& vi, OutputIterator oit) const
 {
   return dual(*vi);
 }

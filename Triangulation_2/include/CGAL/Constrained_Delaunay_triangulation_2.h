@@ -23,7 +23,7 @@
 
 #include <CGAL/triangulation_assertions.h>
 #include <CGAL/Constrained_triangulation_2.h>
-#include <CGAL/Polygon_2.h>
+#include <CGAL/Constrained_voronoi_diagram_2.h>
 
 #ifndef CGAL_TRIANGULATION_2_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
 #include <CGAL/Spatial_sort_traits_adapter_2.h>
@@ -111,8 +111,6 @@ public:
 #endif
 
   typedef typename Geom_traits::Point_2  Point;
-  typedef CGAL::Polygon_2<Geom_traits, std::vector<Point> > Polygon;
-
 
   Constrained_Delaunay_triangulation_2(const Geom_traits& gt=Geom_traits()) 
     : Ctr(gt) { }
@@ -184,7 +182,19 @@ public:
   
 
   // DUAL
-  Polygon dual(Vertex_handle v) const;
+  typedef CGAL::Constrained_voronoi_diagram_2<CDt> CVD;
+  typedef typename CVD::Cvd_cell                   Cvd_cell;
+  Cvd_cell dual(Vertex_handle v) const;
+
+  template<typename OutputIterator>
+  OutputIterator dual(Vertex_handle v,
+                      OutputIterator oit) const;
+  template<typename OutputIterator>
+  OutputIterator dual(const Vertex_circulator& vc,
+                      OutputIterator oit) const;
+  template<typename OutputIterator>
+  OutputIterator dual(const Finite_vertices_iterator& vi,
+                      OutputIterator oit) const;
 
   // INSERTION-REMOVAL
   Vertex_handle insert(const Point & a, Face_handle start = Face_handle());
@@ -873,27 +883,48 @@ virtual_insert(const Point& a,
 }
 
 // DUALITY
+//OutputIterator should be able to collect Segments and Rays
 template< class Gt, class Tds, class Itag >
-typename Constrained_Delaunay_triangulation_2<Gt,Tds,Itag>::Polygon
+template<typename OutputIterator>
+OutputIterator
+Constrained_Delaunay_triangulation_2<Gt,Tds,Itag>::
+dual(Vertex_handle v, OutputIterator oit) const
+{
+  CGAL_triangulation_precondition( v != Vertex_handle());
+  CGAL_triangulation_precondition( !this->is_infinite(v));
+
+  CVD diagram(this);
+  return diagram.cvd_cell(v, oit);
+}
+
+template< class Gt, class Tds, class Itag >
+typename Constrained_Delaunay_triangulation_2<Gt,Tds,Itag>::Cvd_cell
 Constrained_Delaunay_triangulation_2<Gt,Tds,Itag>::
 dual(Vertex_handle v) const
 {
   CGAL_triangulation_precondition( v != Vertex_handle());
   CGAL_triangulation_precondition( !this->is_infinite(v));
 
-  // The Circulator moves ccw.
-  Face_circulator fc = this->incident_faces(v), done(fc);
-  Polygon poly;
-  do
-  {
-    if(!this->is_infinite(fc))
-      poly.push_back(this->circumcenter(face));
-    else
-      return Polygon();
-  }
-  while(++fc != done);
-  
-  return poly;
+  CVD diagram(this);
+  return diagram.cvd_cell(v);
+}
+
+template< class Gt, class Tds, class Itag >
+template<typename OutputIterator>
+OutputIterator
+Constrained_Delaunay_triangulation_2<Gt,Tds,Itag>::
+dual(const Vertex_circulator& vc, OutputIterator oit) const
+{
+  return dual(*vc, oit);
+}
+
+template< class Gt, class Tds, class Itag >
+template<typename OutputIterator>
+OutputIterator
+Constrained_Delaunay_triangulation_2<Gt,Tds,Itag>::
+dual(const Finite_vertices_iterator& vi, OutputIterator oit) const
+{
+  return dual(*vi, oit);
 }
 
 template < class Gt, class Tds, class Itag >  

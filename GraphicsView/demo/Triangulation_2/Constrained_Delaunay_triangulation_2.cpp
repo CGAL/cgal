@@ -43,7 +43,7 @@ typedef K::Point_2 Point_2;
 typedef K::Segment_2 Segment_2;
 typedef K::Iso_rectangle_2 Iso_rectangle_2;
 typedef CGAL::Triangulation_vertex_base_2<K>  Vertex_base;
-typedef CGAL::Constrained_triangulation_face_base_2<K> Face_base;
+typedef CGAL::Delaunay_mesh_face_base_2<K> Face_base;
 
 template <class Gt,
           class Fb >
@@ -222,6 +222,8 @@ public slots:
 
   void on_actionShow_constrained_edges_toggled(bool checked);
 
+  void on_actionShow_voronoi_edges_toggled(bool checked);
+
   void on_actionShow_faces_in_domain_toggled(bool checked);
 
   void on_actionInsertPolyline_toggled(bool checked);
@@ -276,6 +278,8 @@ MainWindow::MainWindow()
 		   dgi, SLOT(modelChanged()));
 
   dgi->setVerticesPen(QPen(Qt::red, 3, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+  dgi->setVoronoiPen(QPen(Qt::darkGreen, 0, Qt::DashLine, Qt::RoundCap, Qt::RoundJoin));
+
   dgi->setZValue(-1);
   scene.addItem(dgi);
 
@@ -306,6 +310,7 @@ MainWindow::MainWindow()
   this->actionShowDelaunay->setChecked(true);
   this->actionShow_faces_in_domain->setChecked(true);
   this->actionShow_constrained_edges->setChecked(true);
+  this->actionShow_voronoi_edges->setChecked(false);
 
   //
   // Setup the scene and the view
@@ -390,6 +395,13 @@ void
 MainWindow::on_actionShow_constrained_edges_toggled(bool checked)
 {
   dgi->setVisibleConstraints(checked);
+  update();
+}
+
+void
+MainWindow::on_actionShow_voronoi_edges_toggled(bool checked)
+{
+  dgi->setVisibleVoronoiEdges(checked);
   update();
 }
 
@@ -542,7 +554,6 @@ MainWindow::loadEdgConstraints(QString fileName)
   emit(changed());
   actionRecenter->trigger();
 }
-
 
 void
 MainWindow::on_actionRecenter_triggered()
