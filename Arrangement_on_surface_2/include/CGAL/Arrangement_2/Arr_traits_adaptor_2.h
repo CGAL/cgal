@@ -1214,43 +1214,53 @@ public:
     {
       CGAL::Comparison_result res = CGAL::EQUAL;
 
-      CGAL::Arr_parameter_space loc1 =
+      CGAL::Arr_parameter_space ps_y1 =
         m_self->parameter_space_in_y_2_object()(xcv1, ce1);
-      CGAL::Arr_parameter_space loc2 =
+      CGAL::Arr_parameter_space ps_y2 =
         m_self->parameter_space_in_y_2_object()(xcv2, ce2);
       bool vert1 = m_self->is_vertical_2_object()(xcv1);
       bool vert2 = m_self->is_vertical_2_object()(xcv2);
 
       // now we are in the open case: ARR_MIN_END > vertical > ARR_MAX_END
       if (vert1) {
-	if (!vert2) {
-	  res = ((ce2 == CGAL::ARR_MIN_END) ? CGAL::SMALLER : CGAL::LARGER);
-	  return res;
-	}
-	// both are vertical
-	if (loc1 == loc2) { // both ends converge to the same infinity
-	  res = CGAL::EQUAL;
-	  return res;
-	}
-	res = (loc1 == CGAL::ARR_BOTTOM_BOUNDARY ?
-               CGAL::SMALLER : CGAL::LARGER);
-	return res;
+        if (!vert2) {
+          res = ((ce2 == CGAL::ARR_MIN_END) ? CGAL::SMALLER : CGAL::LARGER);
+          return res;
+        }
+        // both are vertical
+        if (ps_y1 == ps_y2) { // both ends converge to the same infinity
+          res = CGAL::EQUAL;
+          return res;
+        }
+        if (ps_y1 == CGAL::ARR_BOTTOM_BOUNDARY) {
+          return SMALLER;
+        }
+        if (ps_y1 == CGAL::ARR_TOP_BOUNDARY) {
+          return LARGER;
+        }
+        if (ps_y2 == CGAL::ARR_BOTTOM_BOUNDARY) {
+          return LARGER;
+        }
+        if (ps_y2 == CGAL::ARR_TOP_BOUNDARY) {
+          return SMALLER;
+        }
+        return res;
       }
 
       if (vert2) {
-	res = ((ce1 == CGAL::ARR_MIN_END) ? CGAL::LARGER : CGAL::SMALLER);
-	return res;
+        res = ((ce1 == CGAL::ARR_MIN_END) ? CGAL::LARGER : CGAL::SMALLER);
+        return res;
       }
 
       // otherwise: both ends have asymptotic behaviour
       if (ce1 == ce2) { // both ends approach asymptote from one side
-	if (loc1 == loc2) { // need special y-comparison
-	  res = m_self->compare_x_near_boundary_2_object()(xcv1, xcv2, ce2);
-	  return res;
-	}
-	// else: order can be determined without y-comparison
-	res = CGAL::EQUAL;
-	return res;
+        if (ps_y1 == ps_y2) { // need special y-comparison
+          res = m_self->compare_x_near_boundary_2_object()(xcv1, xcv2, ce2);
+          return res;
+        }
+        // else: order can be determined without y-comparison
+        res = CGAL::EQUAL;
+        return res;
       }
       // curve ends approach vertical asymptote (or singularity) from
       // different sides => no comparisons required
@@ -1267,7 +1277,9 @@ public:
 
       Comparison_result res =
         m_self->compare_x_on_boundary_2_object()(xcv1, ce1, xcv2, ce2);
-      if (res == EQUAL) res = _compare_curve_ends_same_x(xcv1, ce1, xcv2, ce2);
+      if (res == EQUAL) {
+        res = _compare_curve_ends_same_x(xcv1, ce1, xcv2, ce2);
+      }
       return res;
     }
 
@@ -1280,7 +1292,9 @@ public:
 
       Comparison_result res =
         m_self->compare_x_on_boundary_2_object()(xcv1, ce1, xcv2, ce2);
-      if (res == EQUAL) res = _compare_curve_ends_same_x(xcv1, ce1, xcv2, ce2);
+      if (res == EQUAL) {
+        res = _compare_curve_ends_same_x(xcv1, ce1, xcv2, ce2);
+      }
       return res;
     }
 
