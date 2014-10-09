@@ -408,6 +408,25 @@ public:
   }
 };
 
+template <class R, int dim>
+struct Angle_projected_3{
+  typedef typename R::Point_3   Point_3;
+  typedef typename R::Point_2   Point_2;
+
+  typename R::FT x(const Point_3 &p) const { return Projector<R,dim>::x(p); }
+  typename R::FT y(const Point_3 &p) const { return Projector<R,dim>::y(p); }
+
+  Point_2 project(const Point_3& p) const
+  {
+    return Point_2(x(p),y(p));
+  }
+
+  CGAL::Angle operator()(const Point_3& p, const Point_3& q, const Point_3& r) const
+  {
+    return CGAL::angle(project(p), project(q), project(r));
+  }
+};
+
 template < class R, int dim >
 class Projection_traits_3 {
 public:
@@ -425,7 +444,7 @@ public:
   typedef typename Projector<R,dim>::Compare_x_2              Compare_x_2;
   typedef typename Projector<R,dim>::Compare_y_2              Compare_y_2;
   typedef Orientation_projected_3<Rp,dim>                     Orientation_2;
-  typedef typename Rp::Angle_3                                Angle_2;
+  typedef Angle_projected_3<Rp,dim>                           Angle_2;
   typedef Side_of_oriented_circle_projected_3<Rp,dim>         Side_of_oriented_circle_2;
   typedef Less_signed_distance_to_line_projected_3<Rp,dim>    Less_signed_distance_to_line_2;
   typedef Side_of_bounded_circle_projected_3<Rp,dim>          Side_of_bounded_circle_2;
