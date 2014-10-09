@@ -243,6 +243,8 @@ public:
           {
             set_surface_patch_index(c, i, 
                                     surface_patch_index(mirror_facet));
+            c->set_facet_surface_center(i,
+              mirror_facet.first->get_facet_surface_center(mirror_facet.second));
           }
         }
         /*int i_inf;
