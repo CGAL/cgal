@@ -15,6 +15,7 @@ class Cvd_cell
 public:
   typedef typename Cdt::Geom_traits::Segment_2    Segment;
   typedef typename Cdt::Geom_traits::Ray_2        Ray;
+  typedef typename Cdt::Geom_traits::Point_2      Point;
   typedef CGAL::Dispatch_output_iterator<
     CGAL::cpp11::tuple<Segment, Ray>,
     CGAL::cpp11::tuple<std::back_insert_iterator<std::vector<Segment> >,
@@ -45,9 +46,13 @@ public:
   bool is_valid() const { return m_is_valid; }
   bool& is_valid()      { return m_is_valid; }
 
-  bool is_infinite() const
+  bool is_infinite() const 
   {
     return !m_rays.empty();
+  }
+  bool is_empty() const
+  {
+    return m_rays.empty() && m_segments.empty();
   }
 
 public:
@@ -62,6 +67,18 @@ public:
   }
 
 public:
+  std::size_t number_of_vertices() const
+  {
+    return m_segments.size();
+  }
+
+  Point point(const int& i) const
+  {
+    CGAL_assertion(i >= 0 && i < m_segments.size());
+    return m_segments[i].source();
+  }
+
+public:
   //access iterators
   typedef typename std::vector<Segment>::iterator       segment_iterator;
   typedef typename std::vector<Ray>::iterator           ray_iterator;
@@ -71,6 +88,33 @@ public:
 
   ray_iterator rays_begin()       { return m_rays.begin(); }
   ray_iterator rays_end()         { return m_rays.end(); }
+
+  CGAL_assertion_code(
+public:
+  bool is_simply_ccw_oriented() const
+  {
+    segment_iterator sit = segments_begin();
+    Segment s1 = *sit++;
+    for(; sit != segments_end(); ++sit)
+    {
+      Segment s2 = *sit;
+      if(s1.target() != s2.source())
+        return false;
+
+      typedef typename Cdt::Geom_traits::Vector_2 Vector;
+      Vector v1(v->point(), s1.source());
+      Vector v2(v->point(), s1.target());
+      Vector v3(v->point(), s2.target());
+
+      if(CGAL::orientation(v1, v2) != CGAL::LEFT_TURN
+        || CGAL::orientation(v2, v3) != CGAL::LEFT_TURN)
+        return false;
+
+      s = s2;
+    }
+    return true;
+  }
+  );//end CGAL_assertion_code
 
 }; //end CLASS Cvd_cell
 
