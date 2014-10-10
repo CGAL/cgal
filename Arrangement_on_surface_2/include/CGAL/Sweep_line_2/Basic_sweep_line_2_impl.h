@@ -292,6 +292,11 @@ _init_curve_end(const X_monotone_curve_2& cv, Arr_curve_end ind, Subcurve* sc)
   // Get the parameter space of the curve end.
   Arr_parameter_space ps_x = m_traits->parameter_space_in_x_2_object()(cv, ind);
   Arr_parameter_space ps_y = m_traits->parameter_space_in_y_2_object()(cv, ind);
+#if 0
+  CGAL::set_pretty_mode(std::cout);
+  std::cout << "init ce ps_x: " << ps_x << std::endl;
+  std::cout << "init ce ps_y: " << ps_y << std::endl;
+#endif
 
   // Create the corresponding event and push it into the event queue.
   std::pair<Event*, bool> pair_res = _push_event(cv, ind, end_attr, ps_x, ps_y, sc);
@@ -643,6 +648,8 @@ _push_event(const Point_2& pt, Attribute type,
 
     e->set_attribute(type);
   }
+  CGAL_assertion(e->parameter_space_in_x() == ps_x);
+  CGAL_assertion(e->parameter_space_in_y() == ps_y);
 
   // If we are given a subcurve that the event represents one of its
   // endpoints, update the event and the subcurve records accordingly.
