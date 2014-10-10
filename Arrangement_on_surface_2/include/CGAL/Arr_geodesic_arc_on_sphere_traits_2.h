@@ -915,7 +915,6 @@ public:
     friend class Arr_geodesic_arc_on_sphere_traits_2<Kernel>;
 
   public:
-    // TODO check the preconditions here!
     /*! Compare the x-coordinate of a direction with the x-coordinate of an
      * arc end projected onto the boundary.
      * \param point the point direction.
