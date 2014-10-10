@@ -511,7 +511,7 @@ protected:
                                  Arr_curve_end /* ind */,
                                  bool /* is_new */,
                                  Arr_all_sides_oblivious_tag)
-  { CGAL_error(); }
+  { /* empty on purpose */ }
 
 #ifdef CGAL_SL_VERBOSE
   void PrintEventQueue();
