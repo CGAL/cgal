@@ -312,15 +312,40 @@ public:
 
   /*!
    * Get a curve associated with the event (const version).
-   * \pre The event has incident curves.
+   *
+   * \pre The event does not lie on the boundary.
+   * \pre The event is not isolated.
+   *
    */
   const X_monotone_curve_2& curve() const
   {
+    CGAL_precondition(!this->is_on_boundary());
+    CGAL_precondition(!this->is_isolated());
     if (has_left_curves())
       return (m_leftCurves.front()->last_curve());
 
     CGAL_assertion (has_right_curves());
     return (m_rightCurves.front()->last_curve());
+  }
+
+  /*!
+   * Get a curve associated with the event and writes as side-effect the respective end to \param ce
+   * (const version).
+   * \param ce reference to a curve-end that is written as side-effect.
+   * \pre The event lies on the boundary.
+   * \pre The event is not isolated.
+   */
+  const X_monotone_curve_2& boundary_touching_curve(Arr_curve_end& ce) const {
+    CGAL_precondition(this->is_on_boundary());
+    CGAL_precondition(!this->is_isolated());
+    if (has_left_curves()) {
+      ce = ARR_MAX_END;
+      return m_leftCurves.front()->last_curve();
+    }
+
+    CGAL_assertion (has_right_curves());
+    ce = ARR_MIN_END;
+    return m_rightCurves.front()->last_curve();
   }
 
   /*! Set the event point. */
