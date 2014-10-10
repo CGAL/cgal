@@ -526,15 +526,15 @@ _create_intersection_point(const Point_2& xp,
                            Subcurve*& c1, Subcurve*& c2,
                            bool is_overlap)
 {
-  // insert the event and check if an event at this point already exists.   
-  const std::pair<Event*, bool>& pair_res = 
+  // insert the event and check if an event at this point already exists.
+  const std::pair<Event*, bool>& pair_res =
     this->_push_event(xp, Base_event::DEFAULT, ARR_INTERIOR, ARR_INTERIOR);
 
 
   Event* e = pair_res.first;
   if (pair_res.second) {
     CGAL_PRINT("A new event is created .. (" << xp << std::endl);
-    // a new event is creatd , which inidicates
+    // a new event is created , which indicates
     // that the intersection point cannot be one
     //of the end-points of two curves
 
