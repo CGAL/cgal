@@ -557,6 +557,12 @@ public:
                   (*m_curr_event)->right_curves_end(),
                   c2) != (*m_curr_event)->right_curves_end())
     {
+      // if more than two curves are right to an event, then the event must be closed!
+      // TODO do we want this even on the left boundary?
+      // TODO what if two open curves have the same asymptote? then the could also end
+      //      up in a single event, but there is no point available
+      // TODO call compare_y_near_boundary
+      CGAL_assertion((*m_curr_event)->is_closed());
       return (m_traits->compare_y_at_x_right_2_object()
               (c1->last_curve(), c2->last_curve(), (*m_curr_event)->point()));
     }
@@ -575,18 +581,23 @@ public:
          c2->last_curve());
     }
 
+    // and now the handling for curves that are related to the boundary
+
     // We use the fact that the two curves are interior disjoint. As c2 is
-    // already in the status line, then if c1 left end has a negative boundary
-    // condition it obviously above it.
+    // already in the status line, then if c1 minimal end lies on the left boundary
+    // c1 is obviously above c2.
     CGAL_assertion (ps_x1 != ARR_RIGHT_BOUNDARY);
 
     if (ps_x1 == ARR_LEFT_BOUNDARY)
       return (LARGER);
 
-    // For similar reasons, if c1 begins on the bottom boundary it is below
-    // c2, if it is on the top boundary it is above it.
+    // For similar reasons, if c1 begins on the bottom boundary c1 is below c2,
+    // and if c1 begins on the top boundary c1 is above c2.
     CGAL_assertion (ps_y1 != ARR_INTERIOR);
     return (ps_y1 == ARR_BOTTOM_BOUNDARY) ? SMALLER : LARGER;
+
+    // at the right boundary curves are only removed
+    // TODO vertical in closed right boundary?!
   }
 
   /*!
@@ -594,6 +605,8 @@ public:
    */
   Comparison_result operator() (const Point_2& pt, const Subcurve *sc) const
   {
+    // TODO compare_y_near_boundary if pt is on boundary
+    // TODO check how statusline is initialized for open boundary
     return (m_traits->compare_y_at_x_2_object()(pt, sc->last_curve()));
   }
 
