@@ -96,36 +96,38 @@ public:
 
     const bool is_isolated1 = e1->is_isolated();
     const bool is_isolated2 = e2->is_isolated();
+    const bool is_closed_interior1 = e1->is_closed() && !e1->is_on_boundary();
+    const bool is_closed_interior2 = e2->is_closed() && !e2->is_on_boundary();
 
-    if (is_isolated1) {
+    if (is_isolated1 || is_closed_interior1) {
       const Point_2& pt1 = e1->point();
       Arr_parameter_space ps_x1 = e1->parameter_space_in_x();
       Arr_parameter_space ps_y1 = e1->parameter_space_in_y();
-      if (is_isolated2) {
+      if (is_isolated2 || is_closed_interior2) {
         const Point_2& pt2 = e2->point();
         Arr_parameter_space ps_x2 = e2->parameter_space_in_x();
         Arr_parameter_space ps_y2 = e2->parameter_space_in_y();
         return _compare_points(pt1, ps_x1, ps_y1, pt2, ps_x2, ps_y2);
       } else {
-        const X_monotone_curve_2& cv2 = e2->curve(); // TODO curve() might not be unique
-        Arr_curve_end ind2 = _curve_end(e2);
+        Arr_curve_end ind2;
+        const X_monotone_curve_2& cv2 = e2->boundary_touching_curve(ind2);
         Arr_parameter_space ps_x2 = e2->parameter_space_in_x();
         Arr_parameter_space ps_y2 = e2->parameter_space_in_y();
-        return _compare_point_curve_end(pt1, ps_x1, ps_x2, cv2, ind2, ps_x2, ps_y2);
+        return _compare_point_curve_end(pt1, ps_x1, ps_y1, cv2, ind2, ps_x2, ps_y2);
       }
     } else {
-      const X_monotone_curve_2& cv1 = e1->curve(); // TODO curve() might not be unique
-        Arr_curve_end ind1 = _curve_end(e1);
-        Arr_parameter_space ps_x1 = e1->parameter_space_in_x();
-        Arr_parameter_space ps_y1 = e1->parameter_space_in_y();
-      if (is_isolated2) {
+      Arr_curve_end ind1;
+      const X_monotone_curve_2& cv1 = e1->boundary_touching_curve(ind1);
+      Arr_parameter_space ps_x1 = e1->parameter_space_in_x();
+      Arr_parameter_space ps_y1 = e1->parameter_space_in_y();
+      if (is_isolated2 || is_closed_interior2) {
         const Point_2& pt2 = e2->point();
         Arr_parameter_space ps_x2 = e2->parameter_space_in_x();
         Arr_parameter_space ps_y2 = e2->parameter_space_in_y();
         return CGAL::opposite(_compare_point_curve_end(pt2, ps_x2, ps_y2, cv1, ind1, ps_x1, ps_y1));
       } else {
-        const X_monotone_curve_2& cv2 = e2->curve(); // TODO curve() might not be unique
-        Arr_curve_end ind2 = _curve_end(e2);
+        Arr_curve_end ind2;
+        const X_monotone_curve_2& cv2 = e2->boundary_touching_curve(ind2);
         Arr_parameter_space ps_x2 = e2->parameter_space_in_x();
         Arr_parameter_space ps_y2 = e2->parameter_space_in_y();
         return _compare_curve_ends(cv1, ind1, ps_x1, ps_y1, cv2, ind2, ps_x2, ps_y2);
@@ -146,14 +148,16 @@ public:
     Arr_parameter_space ps_x2 = e2->parameter_space_in_x();
     Arr_parameter_space ps_y2 = e2->parameter_space_in_y();
 
-    if (e2->is_isolated()) {
+    const bool is_isolated2 = e2->is_isolated();
+    const bool is_closed_interior2 = e2->is_closed() && !e2->is_on_boundary();
+    if (is_isolated2 || is_closed_interior2) {
       const Point_2& pt2 = e2->point();
       return _compare_points(pt1, ps_x1, ps_y1, pt2, ps_x2, ps_y2);
     }
 
     // else
-    const X_monotone_curve_2& cv2 = e2->curve(); // TODO curve() might not be unique
-    Arr_curve_end ind2 = _curve_end(e2);
+    Arr_curve_end ind2;
+    const X_monotone_curve_2& cv2 = e2->boundary_touching_curve(ind2);
     return _compare_point_curve_end(pt1, ps_x1, ps_y1, cv2, ind2, ps_x2, ps_y2);
   }
 
@@ -172,14 +176,16 @@ public:
     Arr_parameter_space ps_x2 = e2->parameter_space_in_x();
     Arr_parameter_space ps_y2 = e2->parameter_space_in_y();
 
-    if (e2->is_isolated()) {
+    const bool is_isolated2 = e2->is_isolated();
+    const bool is_closed_interior2 = e2->is_closed() && !e2->is_on_boundary();
+    if (is_isolated2 || is_closed_interior2) {
       const Point_2& pt2 = e2->point();
       return CGAL::opposite(_compare_point_curve_end(pt2, ps_x2, ps_y2, cv1, ind1, ps_x1, ps_y1));
     }
 
     // else
-    const X_monotone_curve_2& cv2 = e2->curve(); // TODO curve() might not be unique
-    Arr_curve_end ind2 = _curve_end(e2);
+    Arr_curve_end ind2;
+    const X_monotone_curve_2& cv2 = e2->boundary_touching_curve(ind2);
     return _compare_curve_ends(cv1, ind1, ps_x1, ps_y1, cv2, ind2, ps_x2, ps_y2);
   }
 
@@ -187,7 +193,6 @@ public:
 
   //!\name Set the boundary conditions of a curve end we are about to compare.
   //!@{
-
 
   //! sets ps_x
   void set_parameter_space_in_x (Arr_parameter_space ps_x)
@@ -463,15 +468,6 @@ private:
     return _compare_sides(ps_x1, ps_y1, ps_x2, ps_y2);
   }
 
-  /*! Determine if the given event represents a left or a right curve end. */
-  inline Arr_curve_end _curve_end (const Event* e) const
-  {
-    // e must be an open event here, and thus exactly one curve is incident
-    // TODO see TODO above CGAL_precondition(!e->is_closed());
-    return (e->has_left_curves()) ?
-      ((e->is_right_end()) ? ARR_MAX_END : ARR_MIN_END) :
-      ((e->is_left_end()) ? ARR_MIN_END : ARR_MAX_END);
-  }
 };
 
 // Forward decleration:
