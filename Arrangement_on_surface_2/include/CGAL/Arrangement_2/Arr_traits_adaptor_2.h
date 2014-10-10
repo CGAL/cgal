@@ -1,4 +1,4 @@
-// Copyright (c) 2005,2006,2007,2009,2010,2011 Tel-Aviv University (Israel).
+// Copyright (c) 2005,2006,2007,2009,2010,2011,2014 Tel-Aviv University (Israel).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -12,9 +12,9 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// Author(s)     : Ron Wein             <wein@post.tau.ac.il>s
+// Author(s)     : Ron Wein             <wein@post.tau.ac.il>
 //                 Efi Fogel            <efif@post.tau.ac.il>
-//                 Eric Berberich       <eric@mpi-inf.mpg.de>
+//                 Eric Berberich       <eric.berberich@cgal.org>
 //                 (based on old version by Iddo Hanniel
 //                                          Eyal Flato
 //                                          Oren Nechushtan
@@ -479,19 +479,13 @@ public:
     { return m_base->is_on_y_identification_2_object()(p); }
 
     bool is_on_y_idn(const Point_2&, Arr_use_dummy_tag) const
-    {
-      CGAL_error();
-      return false;
-    }
+    { CGAL_error(); return false; }
 
     bool is_on_y_idn(const X_monotone_curve_2& xcv, Arr_use_traits_tag) const
     { return m_base->is_on_y_identification_2_object()(xcv); }
 
     bool is_on_y_idn(const X_monotone_curve_2&, Arr_use_dummy_tag) const
-    {
-      CGAL_error();
-      return false;
-    }
+    { CGAL_error(); return false; }
   };
 
   /*! Obtain a Is_on_y_identification_2 function object. */
@@ -535,10 +529,7 @@ public:
     Comparison_result comp_y_near_bnd(const X_monotone_curve_2&,
                                       const X_monotone_curve_2&,
                                       Arr_curve_end, Arr_use_dummy_tag) const
-    {
-      CGAL_error();
-      return EQUAL;
-    }
+    { CGAL_error(); return EQUAL; }
 
   public:
     /*!
@@ -598,10 +589,7 @@ public:
      */
     Comparison_result comp_y_on_bnd(const Point_2&, const Point_2&,
                                     Arr_use_dummy_tag) const
-    {
-      CGAL_error();
-      return SMALLER;
-    }
+    { CGAL_error(); return SMALLER; }
 
   public:
     /*! Compare the relative y-positions of two points.
@@ -778,19 +766,13 @@ public:
     { return m_base->is_on_x_identification_2_object()(p); }
 
     bool is_on_x_idn(const Point_2&, Arr_use_dummy_tag) const
-    {
-      CGAL_error();
-      return SMALLER;
-    }
+    { CGAL_error(); return SMALLER; }
 
     bool is_on_x_idn(const X_monotone_curve_2& xcv, Arr_use_traits_tag) const
     { return m_base->is_on_x_identification_2_object()(xcv); }
 
     bool is_on_x_idn(const X_monotone_curve_2&, Arr_use_dummy_tag) const
-    {
-      CGAL_error();
-      return SMALLER;
-    }
+    { CGAL_error(); return SMALLER; }
   };
 
   /*! Obtain a Is_on_x_identification_2 function object. */
@@ -824,7 +806,7 @@ public:
      * \param p2 the second point.
      */
     Comparison_result operator()(const Point_2& p1, const Point_2& p2) const
-    { return comp_x_on_bnd(p1, p2, Bottom_or_top_sides_category()); }
+    { return comp_x_on_bnd(p1, p2, Bottom_side_category(), Top_side_category()); }
 
     /*! Compare the x-coordinate of a point and a curve-end projected onto the
      * horizontal boundaries
@@ -854,23 +836,30 @@ public:
     }
 
   private:
-    /*! Implementation for the case the the base should be used. */
+
+    // there are three cases that need the functor (where at least one side is closed)
+
+    /*! Implementation for identificatied sides calls the base. */
     Comparison_result comp_x_on_bnd(const Point_2& p1, const Point_2& p2,
-                                    Arr_boundary_cond_tag) const
+                                    Arr_identified_side_tag, Arr_identified_side_tag) const
     { return m_base->compare_x_on_boundary_2_object()(p1, p2); }
 
-    /*! Implementation for the case the the base should be used. */
+    /*! Implementation for closed top side calls the base. */
     Comparison_result comp_x_on_bnd(const Point_2& p1, const Point_2& p2,
-                                    Arr_has_closed_side_tag) const
+                                    Arr_boundary_side_tag, Arr_closed_side_tag) const
     { return m_base->compare_x_on_boundary_2_object()(p1, p2); }
 
-    /*! Implementation of the case the dummy should be used. */
-    Comparison_result comp_x_on_bnd(const Point_2&, const Point_2&,
-                                    Arr_all_sides_oblivious_tag) const
-    {
-      CGAL_error();
-      return SMALLER;
-    }
+    /*! Implementation for closed bottom side calls the base. */
+    Comparison_result comp_x_on_bnd(const Point_2& p1, const Point_2& p2,
+                                    Arr_closed_side_tag, Arr_boundary_side_tag) const
+    { return m_base->compare_x_on_boundary_2_object()(p1, p2); }
+
+    // for all other cases an error is generated
+    /*! Implementation for the cases no base is called. */
+    Comparison_result comp_x_on_bnd(const Point_2& p1, const Point_2& p2,
+                                    Arr_boundary_side_tag, Arr_boundary_side_tag) const
+    { CGAL_error(); return SMALLER; }
+
 
     /*! Implementation for the case the the base should be used. */
     Comparison_result comp_x_on_bnd(const Point_2& pt,
@@ -884,10 +873,7 @@ public:
                                     const X_monotone_curve_2& /* xcv */,
                                     Arr_curve_end /* ce */,
                                     Arr_all_sides_oblivious_tag) const
-    {
-      CGAL_error();
-      return SMALLER;
-    }
+    { CGAL_error(); return SMALLER; }
 
     /*! Implementation for the case the the base should be used. */
     Comparison_result comp_x_on_bnd(const X_monotone_curve_2& xcv1,
@@ -903,10 +889,7 @@ public:
                                     const X_monotone_curve_2& /* xcv2 */,
                                     Arr_curve_end /* ce2 */,
                                     Arr_all_sides_oblivious_tag) const
-    {
-      CGAL_error();
-      return SMALLER;
-    }
+    { CGAL_error(); return SMALLER; }
   };
 
   /*! Obtain a Compare_x_on_boundary_2 function object. */
@@ -945,10 +928,7 @@ public:
                                       const X_monotone_curve_2&,
                                       Arr_curve_end,
                                       Arr_use_dummy_tag) const
-    {
-      CGAL_error();
-      return EQUAL;
-    }
+    { CGAL_error(); return EQUAL; }
 
   public:
     /*! Compare the relative x-positions of two curve ends.
@@ -1007,11 +987,11 @@ public:
       return res;
     }
 
-    // for non-open
+    // for closed and identified
     Comparison_result _compare_curve_ends(const X_monotone_curve_2& xcv1,
                                           const X_monotone_curve_2& xcv2,
                                           Arr_curve_end ce,
-                                          Arr_oblivious_side_tag) const
+                                          Arr_non_oblivious_side_tag) const
     {
       Comparison_result res =
         m_self->compare_y_on_boundary_2_object()(
@@ -1020,6 +1000,13 @@ public:
       );
       return res;
     }
+
+    // for oblivious and contracted
+    Comparison_result _compare_curve_ends(const X_monotone_curve_2& xcv1,
+                                          const X_monotone_curve_2& xcv2,
+                                          Arr_curve_end ce,
+                                          Arr_boundary_side_tag) const
+    { CGAL_error(); return EQUAL; }
 
   public:
     /*! Compare the relative y-positions of two curve ends.
@@ -1212,7 +1199,7 @@ public:
                                                  const X_monotone_curve_2& xcv2,
                                                  Arr_curve_end ce2) const
     {
-      CGAL::Comparison_result res = CGAL::EQUAL;
+      //CGAL::Comparison_result res = CGAL::EQUAL;
 
       CGAL::Arr_parameter_space ps_y1 =
         m_self->parameter_space_in_y_2_object()(xcv1, ce1);
@@ -1224,12 +1211,13 @@ public:
       // now we are in the open case: ARR_MIN_END > vertical > ARR_MAX_END
       if (vert1) {
         if (!vert2) {
-          res = ((ce2 == CGAL::ARR_MIN_END) ? CGAL::SMALLER : CGAL::LARGER);
+          Comparison_result res = ((ce2 == CGAL::ARR_MIN_END) ? CGAL::SMALLER : CGAL::LARGER);
           return res;
         }
         // both are vertical
         if (ps_y1 == ps_y2) { // both ends converge to the same infinity
-          res = CGAL::EQUAL;
+          //std::cout << "resBB1 EQUAL" << std::endl;
+          Comparison_result res = CGAL::EQUAL;
           return res;
         }
         if (ps_y1 == CGAL::ARR_BOTTOM_BOUNDARY) {
@@ -1244,27 +1232,48 @@ public:
         if (ps_y2 == CGAL::ARR_TOP_BOUNDARY) {
           return SMALLER;
         }
-        return res;
       }
 
       if (vert2) {
-        res = ((ce1 == CGAL::ARR_MIN_END) ? CGAL::LARGER : CGAL::SMALLER);
+        Comparison_result res = ((ce1 == CGAL::ARR_MIN_END) ? CGAL::LARGER : CGAL::SMALLER);
         return res;
       }
 
       // otherwise: both ends have asymptotic behaviour
-      if (ce1 == ce2) { // both ends approach asymptote from one side
-        if (ps_y1 == ps_y2) { // need special y-comparison
-          res = m_self->compare_x_near_boundary_2_object()(xcv1, xcv2, ce2);
+      if (ps_y1 == ps_y2) { // need special y-comparison
+        if (ce1 == ce2) { // both ends approach asymptote from one side
+          Comparison_result res = m_self->compare_x_near_boundary_2_object()(xcv1, xcv2, ce2);
+          return res;
+        } else {
+          // same x, same boundary side, one is max, the other is min
+          //_compare_curve_ends_same_x_different_ends(ce1, ce2);
+          // TODO
+          Comparison_result res = ((ce1 == CGAL::ARR_MIN_END) ? CGAL::LARGER : CGAL::SMALLER);
+          //std::cout << "resBBB: " << res << std::endl;
           return res;
         }
-        // else: order can be determined without y-comparison
-        res = CGAL::EQUAL;
-        return res;
       }
-      // curve ends approach vertical asymptote (or singularity) from
-      // different sides => no comparisons required
-      res = ((ce1 == CGAL::ARR_MIN_END) ? CGAL::LARGER : CGAL::SMALLER);
+      if (ce1 == ce2) {
+        // curve ends approach same vertical asymptote (or singularity) from
+        // same sides but towards different sides
+        if (ps_y1 == CGAL::ARR_BOTTOM_BOUNDARY) {
+          return SMALLER;
+        }
+        if (ps_y1 == CGAL::ARR_TOP_BOUNDARY) {
+          return LARGER;
+        }
+        if (ps_y2 == CGAL::ARR_BOTTOM_BOUNDARY) {
+          return LARGER;
+        }
+        if (ps_y2 == CGAL::ARR_TOP_BOUNDARY) {
+          return SMALLER;
+        }
+      }
+
+      // curve ends approach same vertical asymptote (or singularity) from
+      // different sides
+      // TODO
+      Comparison_result res = ((ce1 == CGAL::ARR_MIN_END) ? CGAL::LARGER : CGAL::SMALLER);
       return res;
     }
 
@@ -1278,8 +1287,10 @@ public:
       Comparison_result res =
         m_self->compare_x_on_boundary_2_object()(xcv1, ce1, xcv2, ce2);
       if (res == EQUAL) {
+        //std::cout << "resAA: " << res << std::endl;
         res = _compare_curve_ends_same_x(xcv1, ce1, xcv2, ce2);
       }
+      //std::cout << "resAB: " << res << std::endl;
       return res;
     }
 
@@ -1298,12 +1309,12 @@ public:
       return res;
     }
 
-    // for others
+    // for closed and identified
     Comparison_result _compare_curve_ends(const X_monotone_curve_2& xcv1,
                                           Arr_curve_end ce1,
                                           const X_monotone_curve_2& xcv2,
                                           Arr_curve_end ce2,
-                                          Arr_oblivious_side_tag) const
+                                          Arr_non_oblivious_side_tag) const
     {
       Comparison_result res =
         m_self->compare_x_on_boundary_2_object()
@@ -1311,6 +1322,14 @@ public:
          m_self->construct_vertex_at_curve_end_2_object()(xcv2, ce2));
       return res;
     }
+
+    // dummy
+    Comparison_result _compare_curve_ends(const X_monotone_curve_2& xcv1,
+                                          Arr_curve_end ce1,
+                                          const X_monotone_curve_2& xcv2,
+                                          Arr_curve_end ce2,
+                                          Arr_oblivious_side_tag) const
+    { CGAL_error(); return CGAL::EQUAL; }
 
   public:
     /*! Compare the relative x-positions of two curve ends.
@@ -1408,7 +1427,7 @@ public:
     //! Allow its functor obtaining function calling the private constructor.
     friend class Arr_traits_basic_adaptor_2<Base>;
 
-    inline bool _is_closed(Arr_oblivious_side_tag) const { return true; }
+    inline bool _is_closed(Arr_boundary_side_tag) const { return true; }
 
     inline bool _is_closed(Arr_open_side_tag) const { return false; }
 
