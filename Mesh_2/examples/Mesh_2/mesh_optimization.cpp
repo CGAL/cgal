@@ -1,3 +1,5 @@
+#define CGAL_MESH_2_OPTIMIZER_VERBOSE
+
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
 #include <CGAL/Delaunay_mesher_2.h>

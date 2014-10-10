@@ -72,7 +72,7 @@ public:
     return m_segments.size();
   }
 
-  Point point(const int& i) const
+  Point point(const std::size_t& i) const
   {
     CGAL_assertion(i >= 0 && i < m_segments.size());
     return m_segments[i].source();
@@ -80,37 +80,44 @@ public:
 
 public:
   //access iterators
-  typedef typename std::vector<Segment>::iterator       segment_iterator;
-  typedef typename std::vector<Ray>::iterator           ray_iterator;
+  typedef typename std::vector<Segment>::iterator  segment_iterator;
+  typedef typename std::vector<Ray>::iterator      ray_iterator;
+  typedef typename std::vector<Segment>::const_iterator  const_segment_iterator;
+  typedef typename std::vector<Ray>::const_iterator      const_ray_iterator;
 
-  segment_iterator segments_begin()       { return m_segments.begin(); }
-  segment_iterator segments_end()         { return m_segments.end(); }
+  segment_iterator segments_begin()        { return m_segments.begin(); }
+  segment_iterator segments_end()          { return m_segments.end(); }
+  const_segment_iterator segments_cbegin() const { return m_segments.cbegin();}
+  const_segment_iterator segments_cend()   const { return m_segments.cend(); }
 
   ray_iterator rays_begin()       { return m_rays.begin(); }
   ray_iterator rays_end()         { return m_rays.end(); }
+  const_ray_iterator rays_cbegin() const { return m_rays.cbegin();}
+  const_ray_iterator rays_cend()   const { return m_rays.cend(); }
 
   CGAL_assertion_code(
 public:
   bool is_simply_ccw_oriented() const
   {
-    segment_iterator sit = segments_begin();
+    typedef typename Cdt::Geom_traits::Vector_2 Vector;
+    const_segment_iterator sit = segments_cbegin();
     Segment s1 = *sit++;
-    for(; sit != segments_end(); ++sit)
+    for(; sit != segments_cend(); ++sit)
     {
       Segment s2 = *sit;
       if(s1.target() != s2.source())
         return false;
 
-      typedef typename Cdt::Geom_traits::Vector_2 Vector;
-      Vector v1(v->point(), s1.source());
-      Vector v2(v->point(), s1.target());
-      Vector v3(v->point(), s2.target());
+      Point p = vertex()->point();
+      Vector v1(p, s1.source());
+      Vector v2(p, s1.target());
+      Vector v3(p, s2.target());
 
       if(CGAL::orientation(v1, v2) != CGAL::LEFT_TURN
         || CGAL::orientation(v2, v3) != CGAL::LEFT_TURN)
         return false;
 
-      s = s2;
+      s1 = s2;
     }
     return true;
   }
