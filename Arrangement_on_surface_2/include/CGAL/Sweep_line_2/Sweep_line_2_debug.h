@@ -99,18 +99,7 @@ PrintEvent(const Event* e)
   if (e->is_closed()) {
     std::cout << " " << e->point();
   }
-  else
-  {
-    if (e->has_left_curves() || e->has_right_curves()) {
-      std::cout << " with open curve: " << e->curve();
-    } else {
-      std::cout << " NO curve yet!"; // this can exists if you print an event before a curve is added!
-      // added this code in order to avoid abortion
-    }
-  }
   std::cout << " [left: " << e->number_of_left_curves() << ", right: " << e->number_of_right_curves() << "]";
-
-
 }
 
 #endif

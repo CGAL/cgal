@@ -30,6 +30,7 @@
 
 #include <list>
 #include <CGAL/Sweep_line_2/Sweep_line_subcurve.h>
+#include <CGAL/Arrangement_2/Arr_traits_adaptor_2.h>
 
 namespace CGAL {
 
@@ -71,6 +72,7 @@ public:
   //struct SC_container { typedef std::list<SC> other; };
   typedef std::list<Subcurve*>                          Subcurve_container;
   typedef typename Subcurve_container::iterator         Subcurve_iterator;
+  typedef typename Subcurve_container::const_iterator   Subcurve_const_iterator;
   typedef typename Subcurve_container::reverse_iterator
     Subcurve_reverse_iterator;
 
@@ -431,13 +433,13 @@ public:
   }
 
 #ifdef CGAL_SL_VERBOSE
-  void Print();
+  void Print() const;
 #endif
 };
 
 #ifdef CGAL_SL_VERBOSE
   template<typename Traits, typename Subcurve>
-  void Sweep_line_event<Traits, Subcurve>::Print()
+  void Sweep_line_event<Traits, Subcurve>::Print() const
   {
     std::cout << "\tEvent info: "  << "\n" ;
     Arr_parameter_space ps_x = this->parameter_space_in_x();
@@ -449,7 +451,7 @@ public:
     std::cout << "\n";
 
     std::cout << "\tLeft curves: \n" ;
-    Subcurve_iterator iter;
+    Subcurve_const_iterator iter;
     for (iter = m_leftCurves.begin(); iter != m_leftCurves.end(); ++iter) {
       std::cout << "\t";
       (*iter)->Print();

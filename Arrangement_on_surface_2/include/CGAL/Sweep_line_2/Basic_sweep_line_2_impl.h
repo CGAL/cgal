@@ -18,7 +18,7 @@
 //
 // Author(s)     : Baruch Zukerman  <baruchzu@post.tau.ac.il>
 //                 Efi Fogel        <efif@post.tau.ac.il>
-//                 Eric Berberich   <ericb@post.tau.ac.il>
+//                 Eric Berberich   <eric.berberich@cgal.org>
 //                 (based on old version by Tali Zvi)
 
 #ifndef CGAL_BASIC_SWEEP_LINE_2_IMPL_H
@@ -253,7 +253,6 @@ _init_point(const Point_2& pt, Attribute type)
   std::cout << "init pt ps_y: " << ps_y << std::endl;
 #endif
 
-  // Note that an isolated point does not have any boundary conditions.
   const std::pair<Event*, bool>& pair_res =
     _push_event(pt, type, ps_x, ps_y);
 
@@ -287,7 +286,6 @@ template <typename Tr, typename Vis, typename Subcv, typename Evnt,
 void Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::
 _init_curve_end(const X_monotone_curve_2& cv, Arr_curve_end ind, Subcurve* sc)
 {
-
   const Attribute  end_attr =
     (ind == ARR_MIN_END) ? Base_event::LEFT_END : Base_event::RIGHT_END;
 
@@ -296,10 +294,7 @@ _init_curve_end(const X_monotone_curve_2& cv, Arr_curve_end ind, Subcurve* sc)
   Arr_parameter_space ps_y = m_traits->parameter_space_in_y_2_object()(cv, ind);
 
   // Create the corresponding event and push it into the event queue.
-  std::pair<Event*, bool> pair_res;
-
-  // The curve end is open, insert it into the event queue.
-  pair_res = _push_event(cv, ind, end_attr, ps_x, ps_y, sc);
+  std::pair<Event*, bool> pair_res = _push_event(cv, ind, end_attr, ps_x, ps_y, sc);
 
   // Inform the visitor in case we updated an existing event.
   Event* e = pair_res.first;
@@ -635,7 +630,7 @@ _push_event(const Point_2& pt, Attribute type,
   const std::pair<Event_queue_iterator, bool>& pair_res =
     m_queue->find_lower(pt, m_queueEventLess);
   const bool exist = pair_res.second;
-  if (! exist) {
+  if (!exist) {
     // The point is not found in the event queue - create a new event and
     // insert it into the queue.
     e = _allocate_event(pt, type, ps_x, ps_y);
@@ -661,11 +656,11 @@ _push_event(const Point_2& pt, Attribute type,
     else {
       CGAL_assertion(type == Base_event::RIGHT_END);
       sc->set_right_event(e);
-      e->add_curve_to_left(sc);
+      e->add_curve_to_left(sc, m_traits);
     }
   }
 
-  if (! exist) {
+  if (!exist) {
     // Insert the new event into the queue using the hint we got when we
     // looked for it.
     m_queue->insert_before(pair_res.first, e);
@@ -705,7 +700,7 @@ _push_event(const X_monotone_curve_2& cv, Arr_curve_end ind, Attribute type,
     m_queue->find_lower(cv, m_queueEventLess);
   const bool exist = pair_res.second;
 
-  if (! exist) {
+  if (!exist) {
     // The curve end is not found in the event queue - create a new event and
     // insert it into the queue.
     if (m_traits->is_closed_2_object()(cv, ind)) {
