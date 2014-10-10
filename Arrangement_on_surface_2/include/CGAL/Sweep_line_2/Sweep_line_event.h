@@ -138,50 +138,53 @@ public:
   }
 
   /*! Add a subcurve to the container of left curves. */
-  void add_curve_to_left(Subcurve* curve)
+  void add_curve_to_left(Subcurve* sc)
   {
     // Look for the subcurve.
     Subcurve_iterator iter;
 
     //std::cout << "add_curve_to_left, curve: ";
-    //curve->Print();
+    //sc->Print();
 
     for (iter = m_leftCurves.begin(); iter != m_leftCurves.end(); ++iter) {
       //std::cout << "add_curve_to_left, iter: ";
       //(*iter)->Print();
 
       // Do nothing if the curve exists.
-      if ((curve == *iter) || (*iter)->is_inner_node(curve)) {
+      if ((sc == *iter) || (*iter)->is_inner_node(sc)) {
         //std::cout << "add_curve_to_left, curve exists" << std::endl;
         return;
       }
 
       // Replace the existing curve in case of overlap.
       // EBEB 2011-10-27: Fixed to detect overlaps correctly
-      if (curve != *iter && curve->has_common_leaf(*iter)) {
+      if (sc != *iter && sc->has_common_leaf(*iter)) {
         //std::cout << "add_curve_to_left, curve overlaps" << std::endl;
-        *iter = curve;
+        *iter = sc;
         return;
       }
     }
 
     // The curve does not exist - insert it to the container.
-    m_leftCurves.push_back(curve);
+    m_leftCurves.push_back(sc);
     // std::cout << "add_curve_to_left, pushed back" << std::endl;
 
     //this->Print();
   }
 
   /*! Add a subcurve to the container of left curves (without checks). */
-  void push_back_curve_to_left(Subcurve* curve)
-  { m_leftCurves.push_back(curve); }
+  void push_back_curve_to_left(Subcurve* sc)
+  {
+    m_leftCurves.push_back(sc);
+  }
+
 
   /*! Add a subcurve to the container of right curves. */
   std::pair<bool, Subcurve_iterator>
-  add_curve_to_right(Subcurve* curve, const Traits_2* tr)
+  add_curve_to_right(Subcurve* sc)
   {
     if (m_rightCurves.empty()) {
-      m_rightCurves.push_back(curve);
+      m_rightCurves.push_back(sc);
       return (std::make_pair(false, m_rightCurves.begin()));
     }
 
@@ -196,11 +199,11 @@ public:
     Comparison_result res;
 
     while ((res = tr->compare_y_at_x_right_2_object()
-            (curve->last_curve(), (*iter)->last_curve(), m_point)) == LARGER)
+            (sc->last_curve(), (*iter)->last_curve(), m_point)) == LARGER)
     {
       ++iter;
       if (iter == m_rightCurves.end()) {
-        m_rightCurves.insert(iter, curve);
+        m_rightCurves.insert(iter, sc);
         return std::make_pair(false, --iter);
       }
     }
@@ -210,7 +213,7 @@ public:
       return std::make_pair(true, iter);
     }
 
-    m_rightCurves.insert(iter, curve);
+    m_rightCurves.insert(iter, sc);
     return std::make_pair(false, --iter);
   }
 

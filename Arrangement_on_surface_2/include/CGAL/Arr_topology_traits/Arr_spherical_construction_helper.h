@@ -1,4 +1,4 @@
-// Copyright (c) 2007,2009,2010,2011 Tel-Aviv University (Israel).
+// Copyright (c) 2007,2009,2010,2011,2014 Tel-Aviv University (Israel).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -18,6 +18,7 @@
 //
 // Author(s)     : Ron Wein <wein@post.tau.ac.il>
 //                 Efi Fogel <efif@post.tau.ac.il>
+//                 Eric Berberich <eric.berberich@cgal.org>
 
 #ifndef CGAL_ARR_SPHERICAL_CONSTRUCTION_HELPER_H
 #define CGAL_ARR_SPHERICAL_CONSTRUCTION_HELPER_H
@@ -133,6 +134,7 @@ public:
   {
     // If we insert an edge whose right end lies on the north pole, we have
     // to flip the order of predecessor halfegdes.
+    // TODO what about the corner?
     return (event->parameter_space_in_x() == ARR_INTERIOR &&
             event->parameter_space_in_y() == ARR_TOP_BOUNDARY);
   }
@@ -165,29 +167,26 @@ before_handle_event(Event* event)
 
   if (event->is_isolated()) return;
 
-  if (ps_y == ARR_BOTTOM_BOUNDARY) {
-    // Process a non-isolated event on the bottom contracted boundary:
+  // Comment: In the sweep-line event order the events of poles belong to the left and right
+  // boundary. However, here the vertices of the poles are identified by the
+  // event's trais to belong to the bottom and top boundary.
 
-    // The event has only one right curve, as there is exactly one curve
-    // incident to an event with boundary conditions.
-    CGAL_assertion(event->number_of_left_curves()  == 0);
-    CGAL_assertion(event->number_of_right_curves() == 1);
+  if (ps_y == ARR_BOTTOM_BOUNDARY /* subsumes LEFT-BOTTOM and RIGHT-BOTTOM corner */) {
+    // Process a non-isolated event on the bottom contracted boundary.
 
     // If a vertex on the south pole does not exists, create one.
     DVertex* dv = m_top_traits->south_pole();
-    Vertex_handle v = (dv) ? Vertex_handle(dv) :
-      m_arr_access.create_boundary_vertex(event->point(), ps_x, ps_y);
+    Vertex_handle v =
+      (dv) ? Vertex_handle(dv) : m_arr_access.create_boundary_vertex(event->point(), ps_x, ps_y);
     event->set_vertex_handle(v);
     return;
   }
 
-  if (ps_y == ARR_TOP_BOUNDARY) {
-    // Process a non-isolated event on the top contracted boundary:
-
-    // The event has only one left curve, as there is exactly one curve
-    // incident to an event with boundary conditions
-    CGAL_assertion(event->number_of_left_curves()  == 1);
-    CGAL_assertion(event->number_of_right_curves() == 0);
+  if (ps_y == ARR_TOP_BOUNDARY /* subsumes LEFT-TOP and RIGHT-TOP corner */) {
+    // Process a non-isolated event on the top contracted boundary.
+    // The process is more complicated than for the bottom boundary,
+    // as the touching the top boundary influences the list of
+    // halfedges seen in the reference face
 
     DVertex* dv = m_top_traits->north_pole();
     if (dv) {
@@ -212,6 +211,7 @@ before_handle_event(Event* event)
       splice_indices_list(prev->next());
       return;
     }
+    // else
 
     // If a vertex on the north pole does not exists, create one.
     Vertex_handle v =
@@ -230,26 +230,29 @@ before_handle_event(Event* event)
   }
 
   if (ps_x == ARR_LEFT_BOUNDARY) {
-    CGAL_assertion(event->number_of_left_curves() + event->number_of_right_curves() >= 1);
+    // Process a non-isolated event on the left identified boundary.
+    // It might be the end of a vertical curve.
 
     // If a vertex on the line of discontinuity does not exists, create one.
     DVertex* dv = m_top_traits->discontinuity_vertex(event->point());
-    Vertex_handle v = (dv) ? Vertex_handle(dv) :
-      m_arr_access.create_boundary_vertex(event->point(), ps_x, ps_y);
+    Vertex_handle v =
+      (dv) ? Vertex_handle(dv) : m_arr_access.create_boundary_vertex(event->point(), ps_x, ps_y);
     event->set_vertex_handle(v);
     return;
   }
 
   if (ps_x == ARR_RIGHT_BOUNDARY) {
-    CGAL_assertion(event->number_of_left_curves() + event->number_of_right_curves() >= 1);
+    // Process a non-isolated event on the right identified boundary.
+    // Note: cannnot be vertical, only curves approaching the right side are possible.
 
     // If a vertex on the line of discontinuity does not exists, create one.
     DVertex* dv = m_top_traits->discontinuity_vertex(event->point());
-    Vertex_handle v = (dv) ? Vertex_handle(dv) :
-      m_arr_access.create_boundary_vertex(event->point(), ps_x, ps_y);
+    Vertex_handle v =
+      (dv) ? Vertex_handle(dv) : m_arr_access.create_boundary_vertex(event->point(), ps_x, ps_y);
     event->set_vertex_handle(v);
     return;
   }
+
 }
 
 } // namespace CGAL
