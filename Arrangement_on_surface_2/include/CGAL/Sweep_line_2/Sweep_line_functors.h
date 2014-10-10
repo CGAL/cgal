@@ -258,7 +258,6 @@ private:
                  Arr_parameter_space ps_x2,
                  Arr_parameter_space ps_y2) const {
 
-    CGAL_precondition(ps_x1 != ps_x2);
     // only the 14 simple ps_x different cases remain:
     // 1L2B, 1L2I, 1L2T, 1L2R,
     // 1B2L, 1B2R,
@@ -267,20 +266,50 @@ private:
     // 1R2L, 1R2B, 1R2I, 1R2T
     if (ps_x1 == ARR_LEFT_BOUNDARY) {
       //std::cout << "res4 SMALLER" << std::endl;
-      return (SMALLER);
+      return SMALLER;
     }
     if (ps_x1 == ARR_RIGHT_BOUNDARY) {
       //std::cout << "res5 LARGER" << std::endl;
-      return (LARGER);
+      return LARGER;
     }
     // ps_x1 == ARR_INTERIOR != ps_x2
     if (ps_x2 == ARR_LEFT_BOUNDARY) {
       //std::cout << "res6 LARGER" << std::endl;
-      return (LARGER);
+      return LARGER;
     }
-    // ps_x2 == ARR_RIGHT_BOUNDARY
-    //std::cout << "res7 SMALLER" << std::endl;
-    return (SMALLER);
+    if (ps_x2 == ARR_RIGHT_BOUNDARY) {
+      //std::cout << "res7 SMALLER" << std::endl;
+      return SMALLER;
+    }
+
+    // at this point objects have same interior x-coordinates, and at least one lies
+    // on a bottom/top boundary
+    CGAL_assertion(ps_x1 == ARR_INTERIOR);
+    CGAL_assertion(ps_x2 == ARR_INTERIOR);
+    CGAL_assertion(ps_y1 != ARR_INTERIOR || ps_y2 != ARR_INTERIOR);
+
+    // else same x, compare y
+    if (ps_y1 == ps_y2) {
+      //std::cout << "res8 EQUAL" << std::endl;
+      return EQUAL;
+    }
+    if (ps_y1 == ARR_BOTTOM_BOUNDARY) {
+      //std::cout << "res9 SMALLER" << std::endl;
+      return SMALLER;
+    }
+    if (ps_y1 == ARR_TOP_BOUNDARY) {
+      //std::cout << "res10 LARGER" << std::endl;
+      return LARGER;
+    }
+    if (ps_y2 == ARR_BOTTOM_BOUNDARY) {
+      //std::cout << "res11 LARGER" << std::endl;
+      return LARGER;
+    }
+    if (ps_y2 == ARR_TOP_BOUNDARY) {
+      //std::cout << "res12 SMALLER" << std::endl;
+      return SMALLER;
+    }
+    CGAL_error(); return EQUAL; /* should not reach here */
   }
 
   /*! Compare two given isolated points.
@@ -324,13 +353,15 @@ private:
       if ((ps_y1 == ARR_INTERIOR) && (ps_y2 == ARR_INTERIOR)) {
         // both are y-interior, too 1I2I:
         Comparison_result res = m_traits->compare_xy_2_object() (pt1, pt2);
-        //std::cout << "res2 " << res << std::endl;
+        std::cout << "res2 " << res << std::endl;
         return res;
       } else {
         // at least one of pt1 or pt22 lies on a boundary
         Comparison_result res = m_traits->compare_x_on_boundary_2_object() (pt1, pt2);
-        //std::cout << "res3 " << res << std::endl;
-        return res;
+        if (res != EQUAL) {
+          //std::cout << "res3 " << res << std::endl;
+          return res;
+        }
       }
     }
 
@@ -371,12 +402,10 @@ private:
 
     if (ps_x1 == ps_x2) {
       // same x-partition
-
-      // second point must be accessible, as pt1 is an isolated point on the SAME left/right side or INTERIOR
-      const Point_2& pt2 = m_traits->construct_vertex_at_curve_end_2_object()(cv2, ind2);
-
       if (ps_x1 != ARR_INTERIOR) {
         // 1L2L, 1R2R
+        // second point must be accessible, as pt1 is an isolated point on the SAME left/right side
+        const Point_2& pt2 = m_traits->construct_vertex_at_curve_end_2_object()(cv2, ind2);
         Comparison_result res = m_traits->compare_y_on_boundary_2_object() (pt1, pt2);
         //std::cout << "res1 " << res << std::endl;
         return res;
@@ -384,18 +413,23 @@ private:
       // else both are x-interior
       if ((ps_y1 == ARR_INTERIOR) && (ps_y2 == ARR_INTERIOR)) {
         // both are y-interior, too 1I2I:
+        // second point must be accessible, as curve-end is INTERIOR
+        const Point_2& pt2 = m_traits->construct_vertex_at_curve_end_2_object()(cv2, ind2);
         Comparison_result res = m_traits->compare_xy_2_object()(pt1, pt2);
         //std::cout << "res2 " << res << std::endl;
         return res;
       } else {
         // at least one of pt1 or cv2 lies on a boundary
         Comparison_result res = m_traits->compare_x_point_curve_end_2_object() (pt1, cv2, ind2);
-        //std::cout << "res3 " << res << std::endl;
-        return res;
+        if (res != EQUAL) {
+          //std::cout << "res3 " << res << std::endl;
+          return res;
+        }
       }
     }
 
-    return _compare_sides(ps_x1, ps_y1, ps_x2, ps_y2);
+    Comparison_result res = _compare_sides(ps_x1, ps_y1, ps_x2, ps_y2);
+    return res;
   }
 
    /*! Compares two given curve-ends.
@@ -432,11 +466,9 @@ private:
 
     if (ps_x1 == ps_x2) {
       // same x-partition
-
       // second point must be accessible, as pt1 is an isolated point on the SAME left/right side or INTERIOR
       if (ps_x1 != ARR_INTERIOR) {
         // 1L2L, 1R2R
-
         if (m_traits->is_vertical_2_object()(cv1) || m_traits->is_vertical_2_object()(cv2)) {
           const Point_2& pt1 = m_traits->construct_vertex_at_curve_end_2_object()(cv1, ind1);
           const Point_2& pt2 = m_traits->construct_vertex_at_curve_end_2_object()(cv2, ind2);
@@ -461,11 +493,15 @@ private:
         // at least one of pt1 or cv2 lies on a boundary
         Comparison_result res = m_traits->compare_x_curve_ends_2_object() (cv1, ind1, cv2, ind2);
         //std::cout << "res3 " << res << std::endl;
-        return res;
+        if (res != EQUAL) {
+          //std::cout << "res3 " << res << std::endl;
+          return res;
+        }
       }
     }
 
-    return _compare_sides(ps_x1, ps_y1, ps_x2, ps_y2);
+    Comparison_result res = _compare_sides(ps_x1, ps_y1, ps_x2, ps_y2);
+    return res;
   }
 
 };
