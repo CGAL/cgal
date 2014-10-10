@@ -18,10 +18,10 @@ CGAL 4.4:
 
   o Triangulated Surface Mesh Deformation (new package)
 
-    This package allows to deform a triangulated surface mesh under positional
-    constraints of some of its vertices without requiring any additional
-    structure other than the surface mesh itself. The methods provided
-    implements an as-rigid-as-possible deformation.
+    This package allows to deform a triangulated surface mesh under
+    positional constraints of some of its vertices without requiring any
+    additional structure other than the surface mesh itself. The methods
+    provided implements an as-rigid-as-possible deformation.
 
 
   o Breaking change in the support of Boost Graph Library
@@ -32,20 +32,20 @@ CGAL 4.4:
 
       - Deprecation of halfedge_graph_traits.
 
-      - A model of HalfedgeGraph is considered as an undirected graph. Thus any
-        call to edges() should be replaced by halfedges() and num_edges() now
-        returns the number of (undirected) edges.
+      - A model of HalfedgeGraph is considered as an undirected graph. Thus
+        any call to edges() should be replaced by halfedges() and
+        num_edges() now returns the number of (undirected) edges.
 
-      - Breaking change: is_border_edge and is_border_halfedge properties are
-        removed. The free functions is_border() and is_border_edge() should be
-        used instead.
+      - Breaking change: is_border_edge and is_border_halfedge properties
+        are removed. The free functions is_border() and is_border_edge()
+        should be used instead.
 
 
   o 3D Triangulations
 
-    Add an experimental parallel version of the Delaunay triangulation and the
-    regular triangulation algorithms, which allows parallel insertion and
-    removal of point ranges.
+    Add an experimental parallel version of the Delaunay triangulation and
+    the regular triangulation algorithms, which allows parallel insertion
+    and removal of point ranges.
 
 
   o 3D Mesh Generation
