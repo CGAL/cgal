@@ -1759,67 +1759,33 @@ namespace CGAL {
               // polylines: Output the overlapping segment.
               right_overlap = true;
 
-              if (left_res == SMALLER) 
+              std::vector<CGAL::Object> int_seg;
+              intersect(cv1[i1], cv2[i2], std::back_inserter(int_seg));
+
+              for(int i=0; i<int_seg.size(); ++i)
               {
-               std::vector<CGAL::Object> int_seg;
-                intersect(cv1[i1], cv2[i2], std::back_inserter(int_seg));
-
-                for(int i=0; i<int_seg.size(); ++i)
+                const X_monotone_segment_2 *x_seg = CGAL::object_cast<X_monotone_segment_2> (&(int_seg[i]));
+                if( x_seg != NULL )
                 {
-                  const X_monotone_segment_2 *x_seg = CGAL::object_cast<X_monotone_segment_2> (&(int_seg[i]));
-                  if( x_seg != NULL )
-                  {
-                    X_monotone_segment_2 seg = *x_seg;
+                  X_monotone_segment_2 seg = *x_seg;
 
-                    // If for some reason the segment intersection
-                    // results in left oriented curve.
-                    if( !seg.is_directed_right() )
-                      seg = construct_opposite(seg);
-                    ocv.push_back(seg);
-                  }
-                  
-                  const Point_2_pair *p_ptr = CGAL::object_cast<Point_2_pair> (&(int_seg[i]));
-                  if( p_ptr != NULL )
-                  {
-                    // Any point that is not equal to the max_vertex of the segment should be inserted into oi.
-                    // The max_vertex of the current segment (if intersecting) will be taken care of 
-                    // as the min_vertex of the next curve in the next iteration.
-                    if( !equal( p_ptr->first, max_vertex(cv1[i1]) )  )
-                      *oi++ = make_object(*p_ptr);
-                  }
-                }              
-              }
-
-              else 
-              {
-               std::vector<CGAL::Object> int_seg;
-                intersect(cv1[i1], cv2[i2], std::back_inserter(int_seg));
-
-                for(int i=0; i<int_seg.size(); ++i)
-                {
-                  const X_monotone_segment_2 *x_seg = CGAL::object_cast<X_monotone_segment_2> (&(int_seg[i]));
-                  if( x_seg != NULL )
-                  {
-                    X_monotone_segment_2 seg = *x_seg;
-
-                    // If for some reason the segment intersection
-                    // results in left oriented curve.
-                    if( !seg.is_directed_right() )
-                      seg = construct_opposite(seg);
-                    ocv.push_back(seg);
-                  }
-                  
-                  const Point_2_pair *p_ptr = CGAL::object_cast<Point_2_pair> (&(int_seg[i]));
-                  if( p_ptr != NULL )
-                  {
-                    // Any point that is not equal to the max_vertex of the segment should be inserted into oi.
-                    // The max_vertex of the current segment (if intersecting) will be taken care of 
-                    // as the min_vertex of the next curve in the next iteration.
-                    if( !equal( p_ptr->first, max_vertex(cv1[i1]) )  )
-                      *oi++ = make_object(*p_ptr);
-                  }
+                  // If for some reason the segment intersection
+                  // results in left oriented curve.
+                  if( !seg.is_directed_right() )
+                    seg = construct_opposite(seg);
+                  ocv.push_back(seg);
                 }
-              }
+                
+                const Point_2_pair *p_ptr = CGAL::object_cast<Point_2_pair> (&(int_seg[i]));
+                if( p_ptr != NULL )
+                {
+                  // Any point that is not equal to the max_vertex of the segment should be inserted into oi.
+                  // The max_vertex of the current segment (if intersecting) will be taken care of 
+                  // as the min_vertex of in the next iteration.
+                  if( !equal( p_ptr->first, max_vertex(cv1[i1]) )  )
+                    *oi++ = make_object(*p_ptr);
+                }
+              }              
             }
             
             else if (left_coincides && !right_coincides) 
