@@ -18,15 +18,15 @@ int main ()
 #include <vector>
 #include <list>
 
-#include <CGAL/Arr_polyline_traits_2.h>
+#include <CGAL/Arr_polycurve_traits_2.h>
 #include <CGAL/Arr_conic_traits_2.h>
 #include <CGAL/Arrangement_2.h>
 #include "arr_print.h"
 
 
-////////////////////
-//conic traits
-////////////////////
+/*
+/  Conic traits
+*/
 typedef CGAL::CORE_algebraic_number_traits                                Nt_traits;
 typedef Nt_traits::Rational                                               Rational;
 typedef Nt_traits::Algebraic                                              Algebraic;
@@ -36,7 +36,7 @@ typedef CGAL::Arr_conic_traits_2<Rat_kernel, Alg_kernel, Nt_traits>       Conic_
 typedef Conic_traits_2::Point_2                                           Conic_point_2;
 typedef Conic_traits_2::Curve_2                                           Conic_curve_2;
 typedef Conic_traits_2::X_monotone_curve_2                                Conic_x_monotone_curve_2;
-typedef CGAL::Arr_polyline_traits_2<Conic_traits_2>                       Polycurve_conic_traits_2;
+typedef CGAL::Arr_polycurve_traits_2<Conic_traits_2>                      Polycurve_conic_traits_2;
 typedef Polycurve_conic_traits_2::X_monotone_curve_2                      X_monotone_polycurve;
 typedef Polycurve_conic_traits_2::Curve_2                                 Polycurve;
 typedef CGAL::Arrangement_2<Polycurve_conic_traits_2>                     Polycurve_conic_arrangment;

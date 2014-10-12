@@ -18,18 +18,18 @@ int main ()
 #include <CGAL/CORE_algebraic_number_traits.h>
 #include <vector>
 #include <list>
-#include <CGAL/Arr_polyline_traits_2.h>
+#include <CGAL/Arr_polycurve_traits_2.h>
 #include <CGAL/Arr_circle_segment_traits_2.h>
 #include <CGAL/Arrangement_2.h>
 #include "arr_print.h"
 
-///////////////
-//circle segment traits
-//////////////
+/*
+/  Circle segment traits
+*/
 typedef CGAL::Quotient<CGAL::MP_Float>                                    Number_type;
 typedef CGAL::Cartesian<Number_type>                                      Kernel;
 typedef CGAL::Arr_circle_segment_traits_2<Kernel>                         Arc_traits_2;
-typedef CGAL::Arr_polyline_traits_2<Arc_traits_2>                         Polycurve_arc_traits_2;
+typedef CGAL::Arr_polycurve_traits_2<Arc_traits_2>                        Polycurve_arc_traits_2;
 
 typedef Arc_traits_2::CoordNT                                             CoordNT;
 typedef Arc_traits_2::Point_2                                             Point_2;
@@ -72,7 +72,7 @@ int main ()
   //create polycurve
   Polycurve polycurve_1 = traits.construct_curve_2_object()(curves.begin(), curves.end() );
 
-  //Another polycurve
+  //Empty the vector in order to create another polycurve.
   curves.clear();
   
   Kernel::Point_2  center = Kernel::Point_2 (-10, 10);
@@ -117,8 +117,6 @@ int main ()
 
   //create x-monotone polycurve
   x_curves.clear();
-
-  
   x_curves.push_back(xc3);
   x_curves.push_back(xc4);
 
@@ -133,16 +131,16 @@ int main ()
 
   //create opposite of conic_x_mono_polycurve_2
   X_monotone_polycurve opposite_x_monotone_polycurve_1 = traits.construct_opposite_2_object()(x_polycurve_1);
-  //std::cout << "Opposite of X-monotone Polycurve 1: " << opposite_x_monotone_polycurve_1 << std::endl;
+  std::cout << "Opposite of X-monotone Polycurve 1: " << opposite_x_monotone_polycurve_1 << std::endl;
 
-  //Waqar: fix this once the intersect functor for circular arc polycurve is fixed. 
+  // Print the arrangment.
   Polycurve_circ_arc_arrangment polycurve_arrangment(&traits);
   insert(polycurve_arrangment, polycurve_1);
   insert(polycurve_arrangment, polycurve_2);
-  insert(polycurve_arrangment, x_polycurve_1);
+  //insert(polycurve_arrangment, x_polycurve_1);
   insert(polycurve_arrangment, x_polycurve_2);
   std::cout << "Arrangment Statistics: " << std::endl; 
-   print_arrangement (polycurve_arrangment);
+  print_arrangement (polycurve_arrangment);
 
 
   return 0;
