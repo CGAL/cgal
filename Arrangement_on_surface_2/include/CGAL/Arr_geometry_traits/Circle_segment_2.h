@@ -2513,33 +2513,8 @@ protected:
   {
     Self  arc = *this;
 
-    // Make sure that both ps and pt lie on the arc.
-    CGAL_precondition (this->_circ_point_position (ps) == EQUAL);
-    CGAL_precondition (this->_circ_point_position (pt) == EQUAL );
-
-    //make sure ps and pt are not the same
-    CGAL_precondition(!ps.equals(pt));
-
-    // Make sure that the endpoints conform with the direction of the arc.
-    if( this->is_directed_right() && ps.x() > pt.x() )
-    {
-      //CGAL_precondition( ps.x() < pt.x() );
-      arc._source = pt;
-      arc._target = ps;
-    }
-
-    else if( !this->is_directed_right() && (pt.x() > ps.x()) )
-    {
-      //CGAL_precondition( ps.x() > pt.x() );
-      arc._source = pt;
-      arc._target = ps;
-    }
-
-    else
-    {
-      arc._source = ps;
-      arc._target = pt;
-    }
+    arc._source = ps;
+    arc._target = pt;
 
     return arc;
   }
