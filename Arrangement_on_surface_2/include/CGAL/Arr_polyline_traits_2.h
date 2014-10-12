@@ -45,7 +45,7 @@ namespace CGAL{
 
 // If no template instantiation is provided, it will be instantiated 
 // with Arr_segment_traits.	
-template < typename SegmentTraits_2 = Arr_segment_traits_2<> >
+template < typename SegmentTraits_2 >
 
 class Arr_polyline_traits_2 : public Arr_polycurve_traits_2<SegmentTraits_2>
 {
