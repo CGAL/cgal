@@ -36,6 +36,7 @@
 #include <CGAL/basic.h>
 #include <CGAL/tags.h>
 #include <CGAL/Arr_segment_traits_2.h>
+ // Rename it as polycurve as well. 
 #include <CGAL/Arr_geometry_traits/Polyline_2.h>
 #include <CGAL/Arr_tags.h>
 #include <CGAL/Arr_enums.h>
@@ -75,10 +76,6 @@ namespace CGAL {
 
   private:
     enum { INVALID_INDEX = 0xffffffff };
-
-    //flag required for infinity support
-    // bool has_source;
-    // bool has_target;
 
   public:
     /*! Default constructor */
@@ -1612,6 +1609,7 @@ namespace CGAL {
     Split_2 split_2_object() const
     { return Split_2(*this); }
 
+
     class Intersect_2 {
     protected:
       typedef Arr_polycurve_traits_2<Geometry_traits_2>       Polycurve_traits_2;
@@ -1635,15 +1633,10 @@ namespace CGAL {
        */
       template <typename OutputIterator>
        OutputIterator
-       //waqar
-      //typename boost::enable_if_c<Has_line_segment_constructor::value, OutputIterator>::type
       operator()(const X_monotone_curve_2& cv1,
                  const X_monotone_curve_2& cv2,
                  OutputIterator oi) const
-                 //typename boost::enable_if_c< Has_line_segment_constructor::value >::type* = 0) const
       {
-        //waqar
-        //CGAL_static_assertion_msg((Has_line_segment_constructor::value), "X_monotone_curve_2 does not support construction from Line_segment!");
         const Geometry_traits_2* geom_traits = m_poly_traits.geometry_traits_2();
         Compare_y_at_x_2 cmp_y_at_x = m_poly_traits.compare_y_at_x_2_object();
         typename Geometry_traits_2::Equal_2 equal = geom_traits->equal_2_object();
@@ -1655,6 +1648,10 @@ namespace CGAL {
           geom_traits->intersect_2_object();
         typename Geometry_traits_2::Compare_endpoints_xy_2 cmp_seg_endpts =
           geom_traits->compare_endpoints_xy_2_object();
+        typename Geometry_traits_2::Construct_opposite_2 construct_opposite = 
+          geom_traits->construct_opposite_2_object();
+
+        typedef std::pair<Point_2,Multiplicity> Point_2_pair;  
 
         Comparison_result dir1 = cmp_seg_endpts(cv1[0]);
         Comparison_result dir2 = cmp_seg_endpts(cv2[0]);
@@ -1749,115 +1746,85 @@ namespace CGAL {
 
             right_overlap = false;
 
-            if (!right_coincides && !left_coincides) {
+            if (!right_coincides && !left_coincides) 
+            {
               // Non of the endpoints of the current segment of one polyline
               // coincides with the curent segment of the other polyline:
               // Output the intersection if exists.
               oi = intersect(cv1[i1], cv2[i2], oi);
             }
-            else if (right_coincides && left_coincides) {
+            else if (right_coincides && left_coincides) 
+            {
               // An overlap exists between the current segments of the
               // polylines: Output the overlapping segment.
               right_overlap = true;
 
-              typename Geometry_traits_2::Trim_2 trim = geom_traits->trim_2_object();
-              typename Geometry_traits_2::Construct_opposite_2 construct_opposite = geom_traits->construct_opposite_2_object();
+              if (left_res == SMALLER) 
+              {
+               std::vector<CGAL::Object> int_seg;
+                intersect(cv1[i1], cv2[i2], std::back_inserter(int_seg));
 
-              if (left_res == SMALLER) {
-                if (right_res == SMALLER) {
+                for(int i=0; i<int_seg.size(); ++i)
+                {
+                  const X_monotone_segment_2 *x_seg = CGAL::object_cast<X_monotone_segment_2> (&(int_seg[i]));
+                  if( x_seg != NULL )
+                  {
+                    X_monotone_segment_2 seg = *x_seg;
 
-                  X_monotone_segment_2 seg = trim(cv2[i2], min_vertex(cv2[i2]), max_vertex(cv1[i1]));
-
-                  // X_monotone_segment_2 seg; 
-
-                  // if( cv2[i2].is_directed_right() && cv1[i1].is_directed_right() )
-                  // {
-                  //   //both curves are directed right.
-                  //   seg = trim(cv1[i1], min_vertex(cv2[i2]), max_vertex(cv1[i1]));
-                  // }
-
-                  // else if( !cv2[i2].is_directed_right() && !cv1[i1].is_directed_right() )
-                  // {
-                  //   //both curves are directed left.
-                  //   seg = trim(cv1[i1], min_vertex(cv1[i1]), max_vertex(cv2[i2]));
-                  // }
-                  // else if( !cv2[i2].is_directed_right() && cv1[i1].is_directed_right() )
-                  // {
-                  //   //Cv2 is directed left and cv1 is directed right.
-                  //   seg = trim(cv1[i1], max_vertex(cv2[i2]), max_vertex(cv1[i1]));
-                  // }
-                  // else
-                  // {
-                  //   //Cv2 is directed right and cv1 is directed left.
-                  //   seg = trim(cv1[i1], min_vertex(cv1[i1]), min_vertex(cv2[i2]));
-                  // }
+                    // If for some reason the segment intersection
+                    // results in left oriented curve.
+                    if( !seg.is_directed_right() )
+                      seg = construct_opposite(seg);
+                    ocv.push_back(seg);
+                  }
                   
-                  //since the overlapping curve should only be directed right.
-                  if( !seg.is_directed_right() )
-                    seg = construct_opposite(seg);
-
-                  ocv.push_back(seg);
-                }
-                else {
-
-                  X_monotone_segment_2 seg = cv2[i2];
-
-                  //since the overlapping curve should only be directed right.
-                  if( !seg.is_directed_right() )
-                    seg = construct_opposite(seg);
-
-                  ocv.push_back(seg);
-                }
+                  const Point_2_pair *p_ptr = CGAL::object_cast<Point_2_pair> (&(int_seg[i]));
+                  if( p_ptr != NULL )
+                  {
+                    // Any point that is not equal to the max_vertex of the segment should be inserted into oi.
+                    // The max_vertex of the current segment (if intersecting) will be taken care of 
+                    // as the min_vertex of the next curve in the next iteration.
+                    if( !equal( p_ptr->first, max_vertex(cv1[i1]) )  )
+                      *oi++ = make_object(*p_ptr);
+                  }
+                }              
               }
 
-              else {
-                if (right_res == SMALLER) {
+              else 
+              {
+               std::vector<CGAL::Object> int_seg;
+                intersect(cv1[i1], cv2[i2], std::back_inserter(int_seg));
 
-                  X_monotone_segment_2 seg = cv1[i1];
+                for(int i=0; i<int_seg.size(); ++i)
+                {
+                  const X_monotone_segment_2 *x_seg = CGAL::object_cast<X_monotone_segment_2> (&(int_seg[i]));
+                  if( x_seg != NULL )
+                  {
+                    X_monotone_segment_2 seg = *x_seg;
 
-                  //since the overlapping curve should only be directed right.
-                  if( !seg.is_directed_right() )
-                    seg = construct_opposite(seg);
+                    // If for some reason the segment intersection
+                    // results in left oriented curve.
+                    if( !seg.is_directed_right() )
+                      seg = construct_opposite(seg);
+                    ocv.push_back(seg);
+                  }
                   
-                  ocv.push_back(seg);
-
-                }
-                else {
-                  X_monotone_segment_2 seg = trim(cv1[i1], min_vertex(cv1[i1]), max_vertex(cv2[i2]));
-
-                  // X_monotone_segment_2 seg;
-
-                  // if( cv2[i2].is_directed_right() && cv1[i1].is_directed_right() )
-                  // {
-                  //   //both curves are directed right.
-                  //   seg = trim(cv2[i2], min_vertex(cv1[i1]), max_vertex(cv2[i2]));
-                  // }
-
-                  // else if( !cv2[i2].is_directed_right() && !cv1[i1].is_directed_right() )
-                  // {
-                  //   //both curves are directed left.
-                  //   seg = trim(cv2[i2], min_vertex(cv2[i2]), max_vertex(cv1[i1]));
-                  // }
-                  // else if( !cv2[i2].is_directed_right() && cv1[i1].is_directed_right() )
-                  // {
-                  //   //Cv2 is directed left and cv1 is directed right.
-                  //   seg = trim(cv2[i2], min_vertex(cv2[i2]), min_vertex(cv1[i1]));
-                  // }
-                  // else
-                  // {
-                  //   //Cv2 is directed right and cv1 is directed left.
-                  //   seg = trim(cv2[i2], max_vertex(cv1[i1]), max_vertex(cv2[i2]));
-                  // }
-
-                  //since the overlapping curve should only be directed right.
-                  if( !seg.is_directed_right() )
-                    seg = construct_opposite(seg);
-                  
-                  ocv.push_back(seg);
+                  const Point_2_pair *p_ptr = CGAL::object_cast<Point_2_pair> (&(int_seg[i]));
+                  if( p_ptr != NULL )
+                  {
+                    // Any point that is not equal to the max_vertex of the segment should be inserted into oi.
+                    // The max_vertex of the current segment (if intersecting) will be taken care of 
+                    // as the min_vertex of the next curve in the next iteration.
+                    if( !equal( p_ptr->first, max_vertex(cv1[i1]) )  )
+                      *oi++ = make_object(*p_ptr);
+                  }
                 }
               }
             }
-            else if (left_coincides && !right_coincides) {
+            
+            else if (left_coincides && !right_coincides) 
+            {
+              std::cout << "Left is coinciding but right is not." << std::endl;
               // The left point of the current segment of one polyline
               // coincides with the current segment of the other polyline.
               if (left_overlap) {
