@@ -88,8 +88,7 @@ namespace CGAL {
  *  \tparam wA must be a model of `WeightedPCAProjection_3` and determines how
  *  to approximate a weighted point set. If \ref thirdpartyEigen 3.1.2 (or
  *  greater) is available and CGAL_EIGEN3_ENABLED is defined, then
- *  `Weighted_PCA_approximation_3<DelaunayTriangulationTraits_3>` is provided
- *  as default value.
+ *  `Weighted_PCA_approximation_3<DelaunayTriangulationTraits_3>` is used by default.
  *  \tparam Ct indicates whether to use concurrent processing. It must be
  *  either `Sequential_tag` or `Parallel_tag` (the default value).
  */
@@ -728,23 +727,6 @@ private:
 public:
 /// \name Surface Reconstruction
 /// \{
-    /// gives the number of triangles of the surface.
-    std::size_t number_of_triangles() const { return _surface.size(); }
-    
-    /// gives the number of points of the surface.
-    std::size_t number_of_points() const { return _tree.size(); }
-
-
-    /// gives the number of shells of the surface.
-    std::size_t number_of_shells() const {
-        CGAL_assertion( Sh::value == true );
-        return _shells.size();
-    }
-
-    /// \cond internal_doc
-        void reconstruct_surface( unsigned int iterations);
-    /// \endcond
-
     /// constructs a triangle mesh from the point set at a fixed scale.
     /** The order of the points at the current scale is the same as the order
      *  at the original scale, meaning that the surface can interpolate the
@@ -767,6 +749,23 @@ public:
         {
           reconstruct_surface(0);
         }
+
+    /// gives the number of triangles of the surface.
+    std::size_t number_of_triangles() const { return _surface.size(); }
+    
+    /// gives the number of points of the surface.
+    std::size_t number_of_points() const { return _tree.size(); }
+
+
+    /// gives the number of shells of the surface.
+    std::size_t number_of_shells() const {
+        CGAL_assertion( Sh::value == true );
+        return _shells.size();
+    }
+
+    /// \cond internal_doc
+        void reconstruct_surface( unsigned int iterations);
+    /// \endcond
 
     /// \cond internal_doc
     /// constructs a surface mesh from a collection of points at a fixed scale.
