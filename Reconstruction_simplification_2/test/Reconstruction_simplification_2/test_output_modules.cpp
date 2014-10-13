@@ -6,9 +6,6 @@
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Reconstruction_simplification_2.h>
-#include <CGAL/List_output.h>
-#include <CGAL/Index_output.h>
-#include <CGAL/Tds_output.h>
 
 #include<fstream>
 #include<iostream>
@@ -50,9 +47,11 @@ typedef Rt_2::Vertex_iterator Vertex_iterator;
 typedef Rt_2::Edge Edge;
 
 
+
 void test_list_output(Rs_2& rs2);
 void test_index_output(Rs_2& rs2);
 void test_tds_output(Rs_2& rs2);
+
 
 
 void print_edge(Edge edge) {
@@ -77,8 +76,45 @@ int main ()
 	rs2.reconstruct(100); //100 steps
 
 	test_list_output(rs2);
-	test_tds_output(rs2);
 	test_index_output(rs2);
+	test_tds_output(rs2);
+
+}
+
+
+void test_index_output(Rs_2& rs2) {
+
+	std::cout <<"(-------------Off OUTPUT---------- )" << std::endl;
+
+    rs2.extract_index_output(std::cout);
+
+    //print
+
+    //test cardinalities
+    std::ostringstream buffer;
+    rs2.extract_index_output(buffer);
+
+    std::stringstream stream(buffer.str());
+	std::vector<std::string> res;
+	while (1){
+		std::string line;
+		std::getline(stream,line);
+		if (!stream.good())
+			break;
+		res.push_back(line);
+	}
+
+	assert(res.size() == 110);
+
+	assert(res.front() == "OFF 60 0 31");
+
+	for (int i = 61; i < 79; i++) {
+		assert(res[i].substr(0,2) == "1 ");
+	}
+
+	for (int i = 79; i < 110; i++) {
+		assert(res[i].substr(0,2) == "2 ");
+	}
 }
 
 void test_list_output(Rs_2& rs2) {
@@ -94,9 +130,7 @@ void test_list_output(Rs_2& rs2) {
 	Point_it point_it(isolated_points);
 	Edge_it  edge_it(edges);
 
-	CGAL::List_output<K, Point_it, Edge_it> list_output(point_it, edge_it);
-
-    rs2.extract_solid_elements(list_output);
+	rs2.extract_list_output(point_it, edge_it);
 
     int vertex_count = 0;
 	for (std::vector<Point>::iterator it = isolated_points.begin();
@@ -121,10 +155,8 @@ void test_tds_output(Rs_2& rs2) {
 
 	std::cout <<"(-------------Tds OUTPUT---------- )" << std::endl;
 
-	CGAL::Tds_output<K> tds_output;
-	rs2.extract_solid_elements(tds_output);
 	Rt_2 rt2;
-	tds_output.extract_reconstruction_tds(rt2);
+	rs2.extract_tds_output(rt2);
 
 	int vertex_count = 0;
 	for (Vertex_iterator vi = rt2.vertices_begin();
@@ -145,51 +177,10 @@ void test_tds_output(Rs_2& rs2) {
 		if (relevance > 0) {
 			print_edge(*ei);
 
-			std::cout << "mass "   << tds_output.get_mass(*ei) << std::endl;
-			std::cout << "cost "   << tds_output.get_cost(*ei) << std::endl;
-			std::cout << "length " << tds_output.get_length(*ei) << std::endl;
-
 			edge_count++;
 		}
 	}
 	std::cout <<"edge_count " << edge_count << std::endl;
 	assert(edge_count == 31);
 
-}
-void test_index_output(Rs_2& rs2) {
-
-	std::cout <<"(-------------Off OUTPUT---------- )" << std::endl;
-
-	CGAL::Index_output<K> index_output;
-
-    rs2.extract_solid_elements(index_output);
-
-    //print
-    index_output.get_os_output(std::cout);
-
-    //test cardinalities
-    std::ostringstream buffer;
-    index_output.get_os_output(buffer);
-
-    std::stringstream stream(buffer.str());
-	std::vector<std::string> res;
-	while (1){
-		std::string line;
-		std::getline(stream,line);
-		if (!stream.good())
-			break;
-		res.push_back(line);
-	}
-
-	assert(res.size() == 110);
-
-	assert(res.front() == "OFF 60 0 31");
-
-	for (int i = 61; i < 79; i++) {
-		assert(res[i].substr(0,2) == "1 ");
-	}
-
-	for (int i = 79; i < 110; i++) {
-		assert(res[i].substr(0,2) == "2 ");
-	}
 }

@@ -262,25 +262,186 @@ protected:
 	 /// \endcond
 
 
+
 	/*!
+	 Returns the solid edges and vertics present after the reconstruction
+	 process finished.
 
-		 Returns the solid edges and vertics present after the reconstruction
-		 process finished.
+	\details It takes two `Output-Iterators`, one for storing the
+	isolated points and one for storing the edges of the reconstructed shape.
 
-	 	 \details Instantiates a new Reconstruction_simplification_2 object
-				  for a given collection of point-mass pairs.
 
-		 \tparam OutputModule Concept for accessing the output
+	\tparam Kernel is the geometric kernel, used for the reconstruction and
+						simplification task.
 
-		 \param output An OutputModule in which the solid edges and vertics are
-		  	  stored.
-	*/
-	template <class OutputModule>
-	void extract_solid_elements(OutputModule& output) {
-		output.store_solid_elements(m_dt);
+	\tparam Output_Vertex_Iterator The `Output-Iterator` type for storing the points
+
+	\tparam Output_Edge_Iterator The `Output-Iterator` type for storing the
+											edges (as Segments).
+	 */
+	template<class Output_Vertex_Iterator, class Output_Edge_Iterator>
+	void extract_list_output(Output_Vertex_Iterator v_it, Output_Edge_Iterator e_it) {
+
+		for (Vertex_iterator vi = m_dt.vertices_begin();
+						vi != m_dt.vertices_end(); ++vi)
+		{
+
+			bool incident_edges_have_sample = false;
+			typename Triangulation::Edge_circulator start = m_dt.incident_edges(vi);
+			typename Triangulation::Edge_circulator cur   = start;
+
+			do {
+				if (!m_dt.is_ghost(*cur)) {
+					incident_edges_have_sample = true;
+					break;
+				}
+				++cur;
+			} while (cur != start);
+
+			if (!incident_edges_have_sample) {
+				if ((*vi).has_sample_assigned()) {
+					Point p = (*vi).point();
+					*v_it = p;
+					v_it++;
+				}
+			}
+		}
+
+		for (Finite_edges_iterator ei = m_dt.finite_edges_begin(); ei != m_dt.finite_edges_end(); ++ei)
+		{
+			Edge edge = *ei;
+			if (m_dt.is_ghost(edge))
+				continue;
+
+	        int index = edge.second;
+	        Vertex_handle source = edge.first->vertex( (index+1)%3 );
+	        Vertex_handle target = edge.first->vertex( (index+2)%3 );
+
+	        typename Kernel::Segment_2  s(source->point(), target->point());
+			*e_it = s;
+			e_it++;
+		}
+
+
 	}
 
+
+	/*!
+
+
+	 Returns the solid edges and vertics present after the reconstruction
+	 process finished.
+
+	Writes the edges and vertices of the output simplex into an `std::ostream`
+	in an indexed format.
+
+	\param os The `std::ostream` where the indexed data will be written to.
+	*/
+	void extract_index_output(std::ostream& os) {
+
+		typedef typename Kernel::Segment_2 Segment;
+		typedef std::back_insert_iterator<std::vector<Point> >   Point_it;
+		typedef std::back_insert_iterator<std::vector<Segment> > Edge_it;
+
+				std::vector<Point> isolated_points;
+		std::vector<Segment> edges;
+
+		extract_list_output(Point_it(isolated_points), Edge_it(edges));
+
+		//vertices_of_edges
+		std::set<Point> edge_vertices;
+		for (typename std::vector<Segment>::iterator it = edges.begin();
+						it != edges.end(); it++) {
+
+			Point a = (*it).source();
+			Point b = (*it).target();
+
+			edge_vertices.insert(a);
+			edge_vertices.insert(b);
+		}
+
+		os << "OFF " << isolated_points.size() + edge_vertices.size() <<
+				" 0 " << edges.size()  << std::endl;
+
+		for (typename std::vector<Point>::iterator it = isolated_points.begin();
+					it != isolated_points.end(); it++) {
+			os << *it << std::endl;
+		}
+
+		for (typename std::set<Point>::iterator it = edge_vertices.begin();
+				it != edge_vertices.end(); it++) {
+
+			os << *it << std::endl;
+		}
+
+		for (int i = 0; i < isolated_points.size(); i++) {
+			os << "1 " <<  i << std::endl;
+		}
+
+		for (typename std::vector<Segment>::iterator it = edges.begin();
+				it != edges.end(); it++) {
+
+			//save_one_edge(os, *it,edge_vertices);
+
+			Point a = (*it).source();
+			Point b = (*it).target();
+
+			typename std::set<Point>::iterator it_a = edge_vertices.find(a);
+			typename std::set<Point>::iterator it_b = edge_vertices.find(b);
+
+			int pos_a = std::distance(edge_vertices.begin(), it_a);
+			int pos_b = std::distance(edge_vertices.begin(), it_b);
+
+			os << "2 "  << pos_a + isolated_points.size() << " "
+					<< pos_b + isolated_points.size() << std::endl;
+
+
+
+		}
+	}
+
+
 	 /// \cond SKIP_IN_MANUAL
+	void extract_tds_output(Triangulation& rt2) {
+		rt2 = m_dt;
+		//mark vertices
+		for (Vertex_iterator vi = rt2.vertices_begin();
+			  vi != rt2.vertices_end(); ++vi)
+		{
+
+			bool incident_edges_have_sample = false;
+			typename Triangulation::Edge_circulator start = rt2.incident_edges(vi);
+			typename Triangulation::Edge_circulator cur = start;
+
+			do {
+			  if (!rt2.is_ghost(*cur)) {
+				  incident_edges_have_sample = true;
+				  break;
+			  }
+			  ++cur;
+			} while (cur != start);
+
+			if (!incident_edges_have_sample) {
+			  if ((*vi).has_sample_assigned())
+				  (*vi).set_relevance(1);
+			}
+		}
+
+
+		//mark edges
+		for (Finite_edges_iterator ei = rt2.finite_edges_begin(); ei != rt2.finite_edges_end(); ++ei)
+		{
+			Edge edge = *ei;
+			FT relevance = 0;
+			if (!rt2.is_ghost(edge)) {
+				relevance = rt2.get_edge_relevance(edge); // >= 0
+			}
+			edge.first->relevance(edge.second) = relevance;
+		}
+	}
+
+
+
 	template <class Vector>
 	Vector random_vec(const double scale)
 	{

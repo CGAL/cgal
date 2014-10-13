@@ -8,9 +8,6 @@
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Reconstruction_simplification_2.h>
-#include <CGAL/List_output.h>
-#include <CGAL/Index_output.h>
-#include <CGAL/Tds_output.h>
 
 #include<fstream>
 #include<iostream>
@@ -104,9 +101,7 @@ void list_output(Rs_2& rs2) {
 	Point_it point_it(isolated_points);
 	Edge_it  edge_it(edges);
 
-	CGAL::List_output<K, Point_it, Edge_it> list_output(point_it, edge_it);
-
-    rs2.extract_solid_elements(list_output);
+	rs2.extract_list_output(point_it, edge_it);
 
 	for (std::vector<Point>::iterator it = isolated_points.begin();
 			it != isolated_points.end(); it++) {
@@ -123,10 +118,8 @@ void tds_output(Rs_2& rs2) {
 
 	std::cout << "(-------------Tds output---------- )" << std::endl;
 
-	CGAL::Tds_output<K> tds_output;
-	rs2.extract_solid_elements(tds_output);
 	Rt_2 rt2;
-	tds_output.extract_reconstruction_tds(rt2);
+	rs2.extract_tds_output(rt2);
 
 	for (Vertex_iterator vi = rt2.vertices_begin();
 					  vi != rt2.vertices_end(); ++vi) {
@@ -149,10 +142,5 @@ void index_output(Rs_2& rs2) {
 
 	std::cout << "(-------------Off output---------- )" << std::endl;
 
-	CGAL::Index_output<K> index_output;
-
-    rs2.extract_solid_elements(index_output);
-
-    index_output.get_os_output(std::cout);
-
+	rs2.extract_index_output(std::cout);
 }

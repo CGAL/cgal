@@ -7,7 +7,6 @@
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Reconstruction_simplification_2.h>
-#include <CGAL/List_output.h>
 
 
 #include<fstream>
@@ -84,9 +83,7 @@ int main ()
 	Point_it point_it(isolated_points);
 	Edge_it  edge_it(edges);
 
-	CGAL::List_output<K, Point_it, Edge_it> list_output(point_it, edge_it);
-
-    rs2.extract_solid_elements(list_output);
+	rs2.extract_list_output(point_it, edge_it);
 
     std::cerr << "Isolated Vertices" << std::endl;
     for (std::vector<Point>::iterator it = isolated_points.begin();

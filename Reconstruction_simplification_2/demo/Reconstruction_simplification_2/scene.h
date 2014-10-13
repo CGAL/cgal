@@ -11,7 +11,7 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include "Reconstruction_simplification_kerneled_2.h"
 #include "../../include/CGAL/Reconstruction_simplification_2.h"
-#include "../../include/CGAL/List_output.h"
+
 
 
 #include "third/CImg.h"
@@ -414,9 +414,7 @@ public:
 		Point_it point_it(isolated_points);
 		Edge_it  edge_it(edges);
 
-		CGAL::List_output<K, Point_it, Edge_it> list_output(point_it, edge_it);
-
-		m_pwsrec->extract_solid_elements(list_output);
+		m_pwsrec->extract_list_output(point_it, edge_it);
 
 		int vertex_count = 0;
 		for (std::vector<Point>::iterator it = isolated_points.begin();

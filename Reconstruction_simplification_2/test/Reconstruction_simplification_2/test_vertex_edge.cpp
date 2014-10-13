@@ -7,7 +7,6 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Reconstruction_simplification_2.h>
 #include <CGAL/Reconstruction_triangulation_2.h>
-#include <CGAL/Tds_output.h>
 
 #include "testing_tools.h"
 
@@ -74,11 +73,8 @@ void test_edge_collapse() {
     	rs2(points.begin(), points.end(), point_pmap, mass_pmap);
 
 
-    CGAL::Tds_output<K> tds_output;
-    rs2.extract_solid_elements(tds_output);
-
     Rt_2 rt2;
-    tds_output.extract_reconstruction_tds(rt2);
+    rs2.extract_tds_output(rt2);
 
     FT min_priority = 1000;
     R_edge_2 contract_edge;
@@ -138,10 +134,8 @@ void test_num_of_vertices_in_triangulation() {
 	   rs2.insert_point(point, false, nb++);
     }
 
-    CGAL::Tds_output<K> tds_output;
-    rs2.extract_solid_elements(tds_output);
     Rt_2 rt2;
-    tds_output.extract_reconstruction_tds(rt2);
+    rs2.extract_tds_output(rt2);
 
     //test if vertices are indeed added to the Reconstruction_triangulation_2
     assert(points.size() == rt2.number_of_vertices());
