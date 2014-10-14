@@ -25,6 +25,7 @@
 
 //========================= Debugging & profiling =============================
 //#define CGAL_TC_PROFILING
+#define CGAL_TC_VERBOSE
 
 //========================= Strategy ==========================================
 //#define CGAL_TC_USE_NANOFLANN

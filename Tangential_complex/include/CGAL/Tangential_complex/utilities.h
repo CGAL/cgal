@@ -35,17 +35,17 @@ namespace Tangential_complex_ {
     std::vector<typename K::Vector_d> const& input_basis,
     K const& kernel)
   {
-    typedef typename K::Vector_d Vector;
-    typedef std::vector<Vector> Basis;
-    const int D = Ambient_dimension<Vector>::value;
+    typedef typename K::FT            FT;
+    typedef typename K::Vector_d      Vector;
+    typedef std::vector<Vector>       Basis;
+
+    const int D = Ambient_dimension<Vector>::value; // CJTODO: use Point_dimension_d or similar
     
     // Kernel functors
     K::Squared_length_d        sqlen      = kernel.squared_length_d_object();
     K::Scaled_vector_d         scaled_vec = kernel.scaled_vector_d_object();
-    //K::Scalar_product_d        inner_pdct = kernel.scalar_product_d_object();
-    //K::Difference_of_vectors_d diff_vec   = kernel.difference_of_vectors_d_object();
-    Get_functor<K, Scalar_product_tag>::type inner_pdct(kernel); // CJTODO TEMP
-    Get_functor<K, Difference_of_vectors_tag>::type diff_vec(kernel);
+    K::Scalar_product_d        inner_pdct = kernel.scalar_product_d_object();
+    K::Difference_of_vectors_d diff_vec   = kernel.difference_of_vectors_d_object();
 
     Basis output_basis;
 
@@ -63,7 +63,8 @@ namespace Tangential_complex_ {
         u = diff_vec(u, u_proj);
       }
 
-      output_basis.push_back(scaled_vec(u, 1./CGAL::sqrt(sqlen(u))));
+      output_basis.push_back(
+        scaled_vec(u, FT(1)/CGAL::sqrt(sqlen(u))));
     }
 
     return output_basis;

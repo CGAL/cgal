@@ -21,10 +21,27 @@
 #endif
 
 #ifdef _DEBUG
-  const int NUM_POINTS = 150;
+  const int NUM_POINTS = 6;
 #else
-  const int NUM_POINTS = 10000;
+  const int NUM_POINTS = 50000;
 #endif
+
+template <typename Point>
+std::vector<Point> generate_points_on_plane()
+{
+  typedef typename CGAL::Kernel_traits<Point>::type Kernel;
+  typedef typename Kernel::FT FT;
+  CGAL::Random rng;
+  std::vector<Point> points;
+  points.reserve(NUM_POINTS);
+  for (int i = 0 ; i != NUM_POINTS ; ++i)
+  {
+    FT x = rng.get_double(0, 5);
+    FT y = rng.get_double(0, 5);
+    points.push_back(Kernel().construct_point_d_object()(x, y, 0));
+  }
+  return points;
+}
 
 template <typename Point>
 std::vector<Point> generate_points_on_sphere(double radius)
@@ -39,7 +56,46 @@ std::vector<Point> generate_points_on_sphere(double radius)
 
 // a = big radius, b = small radius
 template <typename Point>
-std::vector<Point> generate_points_on_klein_bottle(
+std::vector<Point> generate_points_on_klein_bottle_3D(
+  double a, double b, bool uniform = false)
+{
+  typedef typename CGAL::Kernel_traits<Point>::type Kernel;
+  typedef typename Kernel::FT FT;
+  CGAL::Random rng;
+
+  // if uniform
+  int num_lines = (int)sqrt(NUM_POINTS);
+  int num_cols = NUM_POINTS/num_lines + 1;
+
+  std::vector<Point> points;
+  points.reserve(NUM_POINTS);
+  for (int i = 0 ; i != NUM_POINTS ; ++i)
+  {
+    FT u, v;
+    if (uniform)
+    {
+      int k1 = i / num_lines;
+      int k2 = i % num_lines;
+      u = 6.2832 * k1 / num_lines;
+      v = 6.2832 * k2 / num_lines;
+    }
+    else
+    { 
+      u = rng.get_double(0, 6.2832);
+      v = rng.get_double(0, 6.2832);
+    }
+    double tmp = cos(u/2)*sin(v) - sin(u/2)*sin(2.*v);
+    points.push_back(Kernel().construct_point_d_object()(
+      (a + b*tmp)*cos(u), 
+      (a + b*tmp)*sin(u),
+      b*(sin(u/2)*sin(v) + cos(u/2)*sin(2.*v))));
+  }
+  return points;
+}
+
+// a = big radius, b = small radius
+template <typename Point>
+std::vector<Point> generate_points_on_klein_bottle_4D(
   double a, double b, bool uniform = false)
 {
   typedef typename CGAL::Kernel_traits<Point>::type Kernel;
@@ -94,37 +150,49 @@ int main()
 # endif
 #endif
 
-  Wall_clock_timer t;
+  int i = 0;
+  bool stop = false;
+  //for ( ; !stop ; ++i)
+  {
+    Wall_clock_timer t;
+    CGAL::default_random = CGAL::Random(i);
+    std::cerr << "Random seed = " << i << std::endl;
+  
+    //std::vector<Point> points = generate_points_on_plane<Point>();
+    //std::vector<Point> points = generate_points_on_sphere<Point>(3.0);
+    //std::vector<Point> points = generate_points_on_klein_bottle_3D<Point>(4., 3.);
+    std::vector<Point> points = generate_points_on_klein_bottle_4D<Point>(4., 3.);
 
-  //std::vector<Point> points = generate_points_on_sphere<Point>(3.0);
-  std::vector<Point> points = generate_points_on_klein_bottle<Point>(4., 3.);
+    CGAL::Tangential_complex<
+      Kernel, 
+      INTRINSIC_DIMENSION, 
+      CGAL::Parallel_tag> tc(points.begin(), points.end());
+    double init_time = t.elapsed(); t.reset();
 
-  CGAL::Tangential_complex<
-    Kernel, 
-    INTRINSIC_DIMENSION, 
-    CGAL::Parallel_tag> tc(points.begin(), points.end());
-  double init_time = t.elapsed(); t.reset();
+    tc.compute_tangential_complex();
+    double computation_time = t.elapsed(); t.reset();
 
-  tc.compute_tangential_complex();
-  double computation_time = t.elapsed(); t.reset();
+    std::set<std::set<std::size_t> > incorrect_simplices;
+    //stop = !tc.check_if_all_simplices_are_in_the_ambient_delaunay(&incorrect_simplices);
 
-  std::stringstream output_filename;
-  output_filename << "data/test_tc_" << INTRINSIC_DIMENSION
-    << "_in_R" << AMBIENT_DIMENSION << ".off";
-  std::ofstream off_stream(output_filename.str());
-  tc.export_to_off(off_stream, true);
-  double export_time = t.elapsed(); t.reset();
+    std::stringstream output_filename;
+    output_filename << "data/test_tc_" << INTRINSIC_DIMENSION
+      << "_in_R" << AMBIENT_DIMENSION << ".off";
+    std::ofstream off_stream(output_filename.str());
+    tc.export_to_off(off_stream, true, &incorrect_simplices, true);
+    double export_time = t.elapsed(); t.reset();
 
-  std::cerr << std::endl
-            << "================================================" << std::endl
-            << "Computation times (seconds): " << std::endl
-            << "  * Tangential complex: " << init_time + computation_time
-            << std::endl
-            << "    - Init + kd-tree = " << init_time << std::endl
-            << "    - TC computation = " << computation_time << std::endl
-            << "  * Export to OFF: " << export_time << std::endl
-            << "================================================" << std::endl
-            << std::endl;
+    std::cerr << std::endl
+      << "================================================" << std::endl
+      << "Computation times (seconds): " << std::endl
+      << "  * Tangential complex: " << init_time + computation_time
+      << std::endl
+      << "    - Init + kd-tree = " << init_time << std::endl
+      << "    - TC computation = " << computation_time << std::endl
+      << "  * Export to OFF: " << export_time << std::endl
+      << "================================================" << std::endl
+      << std::endl;
+  }
 
   return 0;
 }

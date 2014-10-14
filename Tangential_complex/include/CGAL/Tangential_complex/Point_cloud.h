@@ -114,7 +114,7 @@ public:
   typedef typename K                                Kernel;
   typedef typename Kernel::FT                       FT;
 
-  static const int AMB_DIM = Ambient_dimension<Point>::value;
+  static const int AMB_DIM = Ambient_dimension<Point>::value; // CJTODO: use Point_dimension_d or similar
 
   /// Constructor
   Point_cloud_data_structure(Point_container_ &points, Kernel const& k)
@@ -249,10 +249,10 @@ public:
   typedef typename Incremental_neighbor_search::iterator    INS_iterator;
   typedef Incremental_neighbor_search                       INS_range;
 
-  static const int AMB_DIM = Ambient_dimension<Point>::value;
+  static const int AMB_DIM = Ambient_dimension<Point>::value; // CJTODO: use Point_dimension_d or similar
 
   /// Constructor
-  Point_cloud_data_structure(Point_container_ const& points, Kernel const& k)
+  Point_cloud_data_structure(Point_container_ const& points)
   : m_points(points),
     m_tree(
       boost::counting_iterator<std::ptrdiff_t>(0),
@@ -284,7 +284,7 @@ public:
       m_tree, 
       sp, 
       k, 
-      FT(0.0), 
+      FT(0), 
       true,
       Distance_adapter<std::ptrdiff_t,Point*,Euclidean_distance<Traits_base> >(
         (Point*)&(m_points[0])),
@@ -301,7 +301,7 @@ public:
     Incremental_neighbor_search search(
       m_tree,
       sp,
-      FT(0.0), 
+      FT(0), 
       true,
       Distance_adapter<std::ptrdiff_t,Point*,Euclidean_distance<Traits_base> >(
         (Point*)&(m_points[0])) );

@@ -31,8 +31,10 @@
 #include <CGAL/Epick_d.h>
 #include <CGAL/Regular_triangulation_euclidean_traits.h>
 #include <CGAL/Regular_triangulation.h>
+#include <CGAL/Delaunay_triangulation.h>
 #include <CGAL/Tangential_complex/utilities.h>
 #include <CGAL/Tangential_complex/Point_cloud.h>
+#include <CGAL/Combination_enumerator.h>
 
 #ifdef CGAL_TC_PROFILING
 # include <CGAL/Mesh_3/Profiling_tools.h>
@@ -47,10 +49,12 @@
 #include <boost/optional.hpp>
 
 #include <vector>
+#include <set>
 #include <utility>
 #include <sstream>
 #include <iostream>
 #include <limits>
+#include <algorithm>
 
 #ifdef CGAL_LINKED_WITH_TBB
 # include <tbb/parallel_for.h>
@@ -141,15 +145,12 @@ class Tangential_complex
 #endif
 
 public:
-  /// Constructor
-  Tangential_complex(const Kernel &k = Kernel())
-  : m_k(k){}
   
   /// Constructor for a range of points
   template <typename InputIterator>
   Tangential_complex(InputIterator first, InputIterator last, 
                      const Kernel &k = Kernel())
-  : m_k(k), m_points(first, last), m_points_ds(m_points, k) {}
+  : m_k(k), m_points(first, last), m_points_ds(m_points) {}
 
   /// Destructor
   ~Tangential_complex() {}
@@ -173,7 +174,6 @@ public:
     // Parallel
     if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
     {
-      // Apply moves in triangulation
       tbb::parallel_for(tbb::blocked_range<size_t>(0, m_points.size()),
         Compute_tangent_triangulation(*this)
       );
@@ -192,10 +192,16 @@ public:
 #endif
   }
 
-  std::ostream &export_to_off(std::ostream & os, 
-                              bool color_inconsistencies = false)
+  std::ostream &export_to_off(
+    std::ostream & os, 
+    bool color_inconsistencies = false,
+    std::set<std::set<std::size_t> > const* excluded_simplices = NULL,
+    bool show_excluded_vertices_in_color = false)
   {
-    const int ambient_dim = Ambient_dimension<Point>::value;
+    if (m_points.empty())
+      return os;
+
+    const int ambient_dim = m_k.point_dimension_d_object()(*m_points.begin());
     if (ambient_dim < 2)
     {
       std::cerr << "Error: export_to_off => ambient dimension should be >= 2."
@@ -211,8 +217,6 @@ public:
                 << std::endl;
     }
 
-    int num_coords = min(ambient_dim, 3);
-
     if (Intrinsic_dimension < 1 || Intrinsic_dimension > 3)
     {
       std::cerr << "Error: export_to_off => intrinsic dimension should be "
@@ -225,80 +229,11 @@ public:
     }
 
     std::stringstream output;
-
-    //******** VERTICES ************
-    
-#ifdef CGAL_TC_EXPORT_NORMALS
-    Normals::const_iterator it_n = m_normals.begin();
-#endif
-    Points::const_iterator it_p = m_points.begin();
-    Points::const_iterator it_p_end = m_points.end();
-    // For each point p
-    for ( ; it_p != it_p_end ; ++it_p)
-    {
-      int i = 0;
-      for ( ; i < num_coords ; ++i)
-        output << (*it_p)[i] << " ";
-      if (i == 2)
-        output << "0";
-      
-#ifdef CGAL_TC_EXPORT_NORMALS
-      for (i = 0 ; i < num_coords ; ++i)
-        output << " " << (*it_n)[i];
-      ++it_n;
-#endif
-
-      output << std::endl;
-    }
-
-    //******** CELLS ************
-
-    std::size_t num_cells = 0;
-    Tr_container::const_iterator it_tr = m_triangulations.begin();
-    Tr_container::const_iterator it_tr_end = m_triangulations.end();
-    // For each triangulation
-    for ( ; it_tr != it_tr_end ; ++it_tr)
-    {
-      Triangulation const& tr    = it_tr->tr();
-      Tr_vertex_handle center_vh = it_tr->center_vertex();
-
-      std::vector<Tr_full_cell_handle> incident_cells;
-      tr.incident_full_cells(center_vh, std::back_inserter(incident_cells));
-
-      std::vector<Tr_full_cell_handle>::const_iterator it_c = incident_cells.begin();
-      std::vector<Tr_full_cell_handle>::const_iterator it_c_end= incident_cells.end();
-      // For each cell
-      for ( ; it_c != it_c_end ; ++it_c)
-      {
-        if (tr.is_infinite(*it_c)) // Don't export infinite cells
-          continue;
-
-        output << Intrinsic_dimension + 1 << " ";
-        
-        if (color_inconsistencies)
-        {
-          std::set<std::size_t> c;
-          for (int i = 0 ; i < Intrinsic_dimension + 1 ; ++i)
-          {
-            std::size_t data = (*it_c)->vertex(i)->data();
-            output << data << " ";
-            c.insert(data);
-          }
-          if (is_simplex_consistent(c))
-            output << "128 128 128";
-          else
-            output << "255 0 0";
-        }
-        else
-        {
-          for (int i = 0 ; i < Intrinsic_dimension + 1 ; ++i)
-            output << (*it_c)->vertex(i)->data() << " ";
-        }
-
-        output << std::endl;
-        ++num_cells;
-      }
-    }
+    std::size_t num_cells, num_vertices;
+    export_vertices_to_off(output, num_vertices);
+    export_simplices_to_off(
+      output, num_cells, color_inconsistencies, 
+      excluded_simplices, show_excluded_vertices_in_color);
     
 #ifdef CGAL_TC_EXPORT_NORMALS
     os << "N";
@@ -311,6 +246,121 @@ public:
        << output.str();
 
     return os;
+  }
+  
+  bool check_if_all_simplices_are_in_the_ambient_delaunay(
+    std::set<std::set<std::size_t> > * incorrect_simplices = NULL)
+  {
+    if (m_points.empty())
+      return true;
+
+    const int ambient_dim = m_k.point_dimension_d_object()(*m_points.begin());
+    typedef typename Delaunay_triangulation<
+      Kernel,
+      Triangulation_data_structure
+      <
+        Kernel::Dimension,
+        Triangulation_vertex<Kernel, std::size_t>
+      >
+    >                                                         DT;
+    typedef typename DT::Vertex_handle                        DT_VH;
+    typedef typename DT::Finite_full_cell_const_iterator      FFC_it;
+    typedef std::set<std::size_t>                             Indexed_simplex;
+    
+    //-------------------------------------------------------------------------
+    // Build the ambient Delaunay triangulation
+    // Then save its simplices into "amb_dt_simplices"
+    //-------------------------------------------------------------------------
+
+    DT ambient_dt(ambient_dim);
+    std::size_t i = 0;
+    for (Point const& p : m_points) // CJTODO C++11
+    {
+      DT_VH vh = ambient_dt.insert(p);
+      vh->data() = i;
+      ++i;
+    }
+    
+    std::set<Indexed_simplex> amb_dt_simplices;
+
+    for (FFC_it cit = ambient_dt.finite_full_cells_begin() ;
+         cit != ambient_dt.finite_full_cells_end() ; ++cit )
+    {
+      CGAL::Combination_enumerator<int> combi(
+        Intrinsic_dimension + 1, 0, ambient_dim + 1);
+
+      for ( ; !combi.finished() ; ++combi)
+      {
+        Indexed_simplex simplex;
+        for (int i = 0 ; i < Intrinsic_dimension + 1 ; ++i)
+          simplex.insert(cit.base()->vertex(combi[i])->data());
+
+        amb_dt_simplices.insert(simplex);
+      }
+    }
+    
+    //-------------------------------------------------------------------------
+    // Parse the TC and save its simplices into "stars_simplices"
+    //-------------------------------------------------------------------------
+
+    std::set<Indexed_simplex> stars_simplices;
+
+    Tr_container::const_iterator it_tr = m_triangulations.begin();
+    Tr_container::const_iterator it_tr_end = m_triangulations.end();
+    // For each triangulation
+    for ( ; it_tr != it_tr_end ; ++it_tr)
+    {
+      Triangulation const& tr    = it_tr->tr();
+      Tr_vertex_handle center_vh = it_tr->center_vertex();
+
+      std::vector<Tr_full_cell_handle> incident_cells;
+      tr.incident_full_cells(center_vh, std::back_inserter(incident_cells));
+      
+      std::vector<Tr_full_cell_handle>::const_iterator it_c = incident_cells.begin();
+      std::vector<Tr_full_cell_handle>::const_iterator it_c_end= incident_cells.end();
+      // For each cell
+      for ( ; it_c != it_c_end ; ++it_c)
+      {
+        if (tr.is_infinite(*it_c))
+        {
+          std::cerr << "Warning: infinite cell in star" << std::endl;
+          continue;
+        }
+        Indexed_simplex simplex;
+        for (int i = 0 ; i < Intrinsic_dimension + 1 ; ++i)
+          simplex.insert((*it_c)->vertex(i)->data());
+
+        stars_simplices.insert(simplex);
+      }
+    }
+    
+    //-------------------------------------------------------------------------
+    // Check if simplices of "stars_simplices" are all in "amb_dt_simplices"
+    //-------------------------------------------------------------------------
+
+    std::set<Indexed_simplex> diff;
+    if (!incorrect_simplices)
+      incorrect_simplices = &diff;
+    set_difference(stars_simplices.begin(),  stars_simplices.end(),
+                   amb_dt_simplices.begin(), amb_dt_simplices.end(),
+                   std::inserter(*incorrect_simplices, 
+                                 incorrect_simplices->begin()) );
+
+    if (!incorrect_simplices->empty())
+    {
+      std::cerr 
+        << "ERROR check_if_all_simplices_are_in_the_ambient_delaunay:"
+        << std::endl
+        << "  Number of simplices in ambient DT: " << amb_dt_simplices.size() 
+        << std::endl
+        << "  Number of unique simplices in TC stars: " << stars_simplices.size() 
+        << std::endl
+        << "  Number of wrong simplices: " << incorrect_simplices->size() 
+        << std::endl;
+      return false;
+    }
+    else
+      return true;
   }
 
 private:
@@ -556,13 +606,6 @@ private:
 #endif
                                             ) const
   {
-    /*Tangent_space_basis ts;
-    ts.reserve(Intrinsic_dimension);
-    ts.push_back(Vector(1,0,0));
-    ts.push_back(Vector(0,1,0));
-
-    return ts;*/
-
     // Kernel functors
     Kernel::Construct_vector_d      constr_vec = m_k.construct_vector_d_object();
     Kernel::Squared_length_d        sqlen      = m_k.squared_length_d_object();
@@ -574,8 +617,8 @@ private:
       p, NUM_POINTS_FOR_PCA, false);
 
     //******************************* PCA *************************************
-
-    const int amb_dim = Ambient_dimension<Point>::value;
+    
+    const int amb_dim = m_k.point_dimension_d_object()(p);
     // One row = one point
     Eigen::MatrixXd mat_points(NUM_POINTS_FOR_PCA, amb_dim);
     KNS_iterator nn_it = kns_range.begin();
@@ -584,7 +627,7 @@ private:
          ++j, ++nn_it)
     {
       for (int i = 0 ; i < amb_dim ; ++i)
-        mat_points(j, i) = m_points[nn_it->first][i]; // CJTODO: Use kernel functor
+        mat_points(j, i) = CGAL::to_double(m_points[nn_it->first][i]); // CJTODO: Use kernel functor
     }
     Eigen::MatrixXd centered = mat_points.rowwise() - mat_points.colwise().mean();
     Eigen::MatrixXd cov = centered.adjoint() * centered;
@@ -610,7 +653,7 @@ private:
     //*************************************************************************
 
     //Vector n = m_k.point_to_vector_d_object()(p);
-    //n = scaled_vec(n, 1./sqrt(sqlen(n)));
+    //n = scaled_vec(n, FT(1)/sqrt(sqlen(n)));
     //std::cerr << "IP = " << inner_pdct(n, ts[0]) << " & " << inner_pdct(n, ts[1]) << std::endl;
 
     return compute_gram_schmidt_basis(ts, m_k);
@@ -623,18 +666,20 @@ private:
               p[0] * t1[1] - p[1] * t1[0]);
     
     // Normalize t1 and t2
-    Kernel::Scaled_vector_d scale = m_k.scaled_vector_d_object();
+    Kernel::Squared_length_d sqlen      = m_k.squared_length_d_object();
+    Kernel::Scaled_vector_d  scaled_vec = m_k.scaled_vector_d_object();
 
     Tangent_space_basis ts;
     ts.reserve(Intrinsic_dimension);
-    ts.push_back(scale(t1, 1./CGAL::sqrt(sqlen(t1))));
-    ts.push_back(scale(t2, 1./CGAL::sqrt(sqlen(t2))));
+    ts.push_back(scaled_vec(t1, FT(1)/CGAL::sqrt(sqlen(t1))));
+    ts.push_back(scaled_vec(t2, FT(1)/CGAL::sqrt(sqlen(t2))));
 
-    return ts;
+    return ts;*/
 
+    /*
     // Alternative code (to be used later)
     //Vector n = m_k.point_to_vector_d_object()(p);
-    //n = scaled_vec(n, 1./sqrt(sqlen(n)));
+    //n = scaled_vec(n, FT(1)/sqrt(sqlen(n)));
     //Vector t1(12., 15., 65.);
     //Vector t2(32., 5., 85.);
     //Tangent_space_basis ts;
@@ -673,29 +718,43 @@ private:
   Tr_point project_point_and_compute_weight(
     const Point &p, const Point &origin, const Tangent_space_basis &ts) const
   {
+    const int point_dim = m_k.point_dimension_d_object()(p);
     Kernel::Scalar_product_d inner_pdct = m_k.scalar_product_d_object();
     Kernel::Difference_of_points_d diff_points =
       m_k.difference_of_points_d_object();
+    Kernel::Construct_cartesian_const_iterator_d ccci = 
+      m_k.construct_cartesian_const_iterator_d_object();
+    
+    Vector v = diff_points(p, origin);
 
     std::vector<FT> coords;
     // Ambiant-space coords of the projected point
-    std::vector<FT> p_proj(origin.cartesian_begin(), origin.cartesian_end()); // CJTODO: use kernel functors?
+    std::vector<FT> p_proj(ccci(origin), ccci(origin, 0));
     coords.reserve(Intrinsic_dimension);
     for (std::size_t i = 0 ; i < Intrinsic_dimension ; ++i)
     {
       // Compute the inner product p * ts[i]
-      Vector v = diff_points(p, origin);
       FT coord = inner_pdct(v, ts[i]);
       coords.push_back(coord);
 
       // p_proj += coord * v;
-      for (int j = 0 ; j < Ambient_dimension<Point>::value ; ++j)
-        p_proj[i] += coord * ts[i][j];
+      for (int j = 0 ; j < point_dim ; ++j)
+        p_proj[j] += coord * ts[i][j];
     }
 
-    Point projected_pt(Ambient_dimension<Point>::value, 
-                       p_proj.begin(), p_proj.end());
-    return Tr_point(
+    // CJTODO TEMP: test it
+    /*Kernel::Construct_vector_d c_vec = m_k.construct_vector_d_object();
+    Kernel::Scaled_vector_d scaled_vec = m_k.scaled_vector_d_object();
+    Point proj_pt = origin;
+    for (int i = 0 ; i < Intrinsic_dimension ; ++i)
+    {
+      Vector base_i = c_vec(point_dim, ts[i].begin(), ts[i].end());
+      FT coef = inner_pdct(v, base_i);
+      proj_pt = proj_pt + scaled_vec(base_i, coef);
+    }*/
+
+    Point projected_pt(point_dim, p_proj.begin(), p_proj.end());
+    return Tr_point( // CJTODO: use kernel constructions
       Tr_bare_point(Intrinsic_dimension, coords.begin(), coords.end()), 
       m_k.squared_distance_d_object()(p, projected_pt));
   }
@@ -733,6 +792,137 @@ private:
     }
     
     return true;
+  }
+
+  std::ostream &export_vertices_to_off(
+    std::ostream & os, std::size_t &num_vertices)
+  {
+    if (m_points.empty())
+    {
+      num_vertices = 0;
+      return os;
+    }
+
+    const int ambient_dim = m_k.point_dimension_d_object()(*m_points.begin());
+    int num_coords = min(ambient_dim, 3);
+#ifdef CGAL_TC_EXPORT_NORMALS
+    Normals::const_iterator it_n = m_normals.begin();
+#endif
+    Points::const_iterator it_p = m_points.begin();
+    Points::const_iterator it_p_end = m_points.end();
+    // For each point p
+    for ( ; it_p != it_p_end ; ++it_p)
+    {
+      int i = 0;
+      for ( ; i < num_coords ; ++i)
+        os << CGAL::to_double((*it_p)[i]) << " "; // CJTODO: use kernel functors, not []
+      if (i == 2)
+        os << "0";
+      
+#ifdef CGAL_TC_EXPORT_NORMALS
+      for (i = 0 ; i < num_coords ; ++i)
+        os << " " << CGAL::to_double((*it_n)[i]); // CJTODO: use kernel functors, not []
+      ++it_n;
+#endif
+
+      os << std::endl;
+    }
+
+    num_vertices = m_points.size();
+    return os;
+  }
+  
+  std::ostream &export_simplices_to_off(
+    std::ostream & os, std::size_t &num_cells, 
+    bool color_inconsistencies = false,
+    std::set<std::set<std::size_t> > const* excluded_simplices = NULL,
+    bool show_excluded_vertices_in_color = false)
+  {
+    num_cells = 0;
+    std::size_t num_inconsistent_simplices = 0;
+    Tr_container::const_iterator it_tr = m_triangulations.begin();
+    Tr_container::const_iterator it_tr_end = m_triangulations.end();
+    // For each triangulation
+    for ( ; it_tr != it_tr_end ; ++it_tr)
+    {
+      Triangulation const& tr    = it_tr->tr();
+      Tr_vertex_handle center_vh = it_tr->center_vertex();
+
+      // Color for this star
+      std::stringstream color;
+      //color << rand()%256 << " " << 100+rand()%156 << " " << 100+rand()%156;
+      color << 128 << " " << 128 << " " << 128;
+
+      std::vector<Tr_full_cell_handle> incident_cells;
+      tr.incident_full_cells(center_vh, std::back_inserter(incident_cells));
+
+      std::vector<Tr_full_cell_handle>::const_iterator it_c = incident_cells.begin();
+      std::vector<Tr_full_cell_handle>::const_iterator it_c_end= incident_cells.end();
+      // For each cell
+      for ( ; it_c != it_c_end ; ++it_c)
+      {
+        if (tr.is_infinite(*it_c)) // Don't export infinite cells
+          continue;
+
+        if (color_inconsistencies || excluded_simplices)
+        {
+          std::set<std::size_t> c;
+          std::stringstream sstr_c;
+          for (int i = 0 ; i < Intrinsic_dimension + 1 ; ++i)
+          {
+            std::size_t data = (*it_c)->vertex(i)->data();
+            sstr_c << data << " ";
+            c.insert(data);
+          }
+
+          bool excluded = 
+            (excluded_simplices
+            && excluded_simplices->find(c) != excluded_simplices->end());
+          
+          if (!excluded)
+          {
+            os << Intrinsic_dimension + 1 << " " << sstr_c.str() << " ";
+            if (color_inconsistencies && is_simplex_consistent(c))
+              os << color.str();
+            else
+            {
+              os << "255 0 0";
+              ++num_inconsistent_simplices;
+            }
+            ++num_cells;
+          }
+          else if (show_excluded_vertices_in_color)
+          {
+            os << Intrinsic_dimension + 1 << " " 
+               << sstr_c.str() << " "
+               << "0 0 255";
+            ++num_cells;
+          }
+        }
+        else
+        {
+          os << Intrinsic_dimension + 1 << " ";
+          for (int i = 0 ; i < Intrinsic_dimension + 1 ; ++i)
+            os << (*it_c)->vertex(i)->data() << " ";
+          ++num_cells;
+        }
+
+        os << std::endl;
+      }
+    }
+
+#ifdef CGAL_TC_VERBOSE
+    std::cerr << std::endl
+      << "================================================" << std::endl
+      << "Export to OFF:\n"
+      << "  * Total number of simplices in stars (incl. duplicates): " 
+      << num_cells << std::endl
+      << "  * Number of inconsistent simplices in stars (incl. duplicates): " 
+      << num_inconsistent_simplices << std::endl
+      << "================================================" << std::endl;
+#endif
+
+    return os;
   }
 
 private:
