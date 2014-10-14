@@ -574,14 +574,9 @@ private:
   static
   void order_three_handles(Handle& h1, Handle& h2, Handle& h3)
   {
-    std::vector<Handle> handles;
-    handles.push_back(h1);
-    handles.push_back(h2);
-    handles.push_back(h3);
-    std::sort(handles.begin(), handles.end());
-    h1 = handles[0];
-    h2 = handles[1];
-    h3 = handles[2];
+    if(h1 > h2) std::swap(h1, h2);
+    if(h2 > h3) std::swap(h2, h3);
+    if(h1 > h2) std::swap(h1, h2);
   }
 
   /**
