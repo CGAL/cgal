@@ -73,6 +73,7 @@ template <class Base_> struct Kernel_d_interface : public Base_ {
 	typedef typename Get_functor<Base, In_flat_power_test_tag>::type In_flat_power_test_d;
 	typedef typename Get_functor<Base, Point_to_vector_tag>::type Point_to_vector_d;
 	typedef typename Get_functor<Base, Vector_to_point_tag>::type Vector_to_point_d;
+	typedef typename Get_functor<Base, Translated_point_tag>::type Translated_point_d;
 	typedef typename Get_functor<Base, Scaled_vector_tag>::type Scaled_vector_d;
 	typedef typename Get_functor<Base, Difference_of_vectors_tag>::type Difference_of_vectors_d;
 	typedef typename Get_functor<Base, Difference_of_points_tag>::type Difference_of_points_d;
@@ -184,6 +185,7 @@ template <class Base_> struct Kernel_d_interface : public Base_ {
 	In_flat_power_test_d in_flat_power_test_d_object()const{ return In_flat_power_test_d(*this); }
 	Point_to_vector_d point_to_vector_d_object()const{ return Point_to_vector_d(*this); }
 	Vector_to_point_d vector_to_point_d_object()const{ return Vector_to_point_d(*this); }
+	Translated_point_d translated_point_d_object()const{ return Translated_point_d(*this); }
 	Scaled_vector_d scaled_vector_d_object()const{ return Scaled_vector_d(*this); }
 	Difference_of_vectors_d difference_of_vectors_d_object()const{ return Difference_of_vectors_d(*this); }
 	Difference_of_points_d difference_of_points_d_object()const{ return Difference_of_points_d(*this); }

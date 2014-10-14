@@ -121,6 +121,7 @@ void test2(){
   typedef typename K1::Scalar_product_d SP;
   typedef typename K1::Difference_of_vectors_d DV;
   typedef typename K1::Difference_of_points_d DP;
+  typedef typename K1::Translated_point_d TP;
 
   CGAL_USE_TYPE(AT);
   CGAL_USE_TYPE(D);
@@ -178,6 +179,7 @@ void test2(){
   SP spr Kinit(scalar_product_d_object);
   DV dv Kinit(difference_of_vectors_d_object);
   DP dp Kinit(difference_of_points_d_object);
+  TP tp Kinit(translated_point_d_object);
 
   CGAL_USE(bc);
   CGAL_USE(pol);
@@ -331,6 +333,8 @@ void test2(){
   assert(abs(sd(cent0,psp1)-25)<.0001);
   assert(abs(sd(cent0,psp2)-25)<.0001);
 #endif
+  P x2py1 = tp(x2,y1);
+  assert(x2py1[1]==-2);
   Sp un1; CGAL_USE(un1);
   H un2; CGAL_USE(un2);
   S un3; CGAL_USE(un3);
