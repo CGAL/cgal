@@ -482,7 +482,7 @@ private:
 
     // Insert p
     Tr_point wp = local_tr_traits.construct_weighted_point_d_object()(
-      local_tr_traits.construct_point_d_object()(Intrinsic_dimension),
+      local_tr_traits.construct_point_d_object()(Intrinsic_dimension, ORIGIN),
       0);
     center_vertex = local_tr.insert(wp);
     center_vertex->data() = i;
@@ -509,7 +509,7 @@ private:
       {
         const Point &neighbor_pt = m_points[neighbor_point_idx];
 
-        if (star_sphere_squared_radius 
+        if (star_sphere_squared_radius
           && k_sqdist(center_pt, neighbor_pt) > *star_sphere_squared_radius)
           break;
 
