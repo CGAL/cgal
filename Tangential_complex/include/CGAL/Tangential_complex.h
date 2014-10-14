@@ -259,7 +259,7 @@ public:
       Kernel,
       Triangulation_data_structure
       <
-        Kernel::Dimension,
+        typename Kernel::Dimension,
         Triangulation_vertex<Kernel, std::size_t>
       >
     >                                                         DT;
@@ -373,7 +373,8 @@ private:
 
     bool operator()(Point const& p1, Point const& p2)
     {
-      Kernel::Squared_distance_d sqdist = m_k.squared_distance_d_object();
+      typename Kernel::Squared_distance_d sqdist = 
+        m_k.squared_distance_d_object();
       return sqdist(p1, m_ref) < sqdist(p2, m_ref);
     }
 
@@ -453,9 +454,9 @@ private:
     Tr_vertex_handle &center_vertex = m_triangulations[i].center_vertex();
 
     // Kernel functor & objects
-    Kernel::Difference_of_points_d k_diff_pts =
+    typename Kernel::Difference_of_points_d k_diff_pts =
       m_k.difference_of_points_d_object();
-    Kernel::Squared_distance_d k_sqdist = 
+    typename Kernel::Squared_distance_d k_sqdist = 
       m_k.squared_distance_d_object();
 
     // Triangulation's traits functor & objects
@@ -481,7 +482,7 @@ private:
 
     // Insert p
     Tr_point wp = local_tr_traits.construct_weighted_point_d_object()(
-      local_tr_traits.construct_point_d_object()(0, 0),
+      local_tr_traits.construct_point_d_object()(Intrinsic_dimension),
       0);
     center_vertex = local_tr.insert(wp);
     center_vertex->data() = i;
@@ -513,7 +514,7 @@ private:
           break;
 
         Tr_point proj_pt = project_point_and_compute_weight(
-          neighbor_pt, center_pt, m_tangent_spaces[i]);
+          neighbor_pt, center_pt, m_tangent_spaces[i], local_tr_traits);
 
         FT squared_dist_to_tangent_plane = 
           local_tr_traits.point_weight_d_object()(proj_pt);
@@ -607,11 +608,18 @@ private:
                                             ) const
   {
     // Kernel functors
-    Kernel::Construct_vector_d      constr_vec = m_k.construct_vector_d_object();
-    Kernel::Squared_length_d        sqlen      = m_k.squared_length_d_object();
-    Kernel::Scaled_vector_d         scaled_vec = m_k.scaled_vector_d_object();
-    Kernel::Scalar_product_d        inner_pdct = m_k.scalar_product_d_object();
-    Kernel::Difference_of_vectors_d diff_vec   = m_k.difference_of_vectors_d_object();
+    typename Kernel::Construct_vector_d      constr_vec =
+      m_k.construct_vector_d_object();
+    typename Kernel::Compute_coordinate_d    coord = 
+      m_k.compute_coordinate_d_object();
+    typename Kernel::Squared_length_d        sqlen =
+      m_k.squared_length_d_object();
+    typename Kernel::Scaled_vector_d         scaled_vec =
+      m_k.scaled_vector_d_object();
+    typename Kernel::Scalar_product_d        inner_pdct =
+      m_k.scalar_product_d_object();
+    typename Kernel::Difference_of_vectors_d diff_vec =
+      m_k.difference_of_vectors_d_object();
 
     KNS_range kns_range = m_points_ds.query_ANN(
       p, NUM_POINTS_FOR_PCA, false);
@@ -627,7 +635,7 @@ private:
          ++j, ++nn_it)
     {
       for (int i = 0 ; i < amb_dim ; ++i)
-        mat_points(j, i) = CGAL::to_double(m_points[nn_it->first][i]); // CJTODO: Use kernel functor
+        mat_points(j, i) = CGAL::to_double(coord(m_points[nn_it->first], i));
     }
     Eigen::MatrixXd centered = mat_points.rowwise() - mat_points.colwise().mean();
     Eigen::MatrixXd cov = centered.adjoint() * centered;
@@ -666,8 +674,8 @@ private:
               p[0] * t1[1] - p[1] * t1[0]);
     
     // Normalize t1 and t2
-    Kernel::Squared_length_d sqlen      = m_k.squared_length_d_object();
-    Kernel::Scaled_vector_d  scaled_vec = m_k.scaled_vector_d_object();
+    typename Kernel::Squared_length_d sqlen      = m_k.squared_length_d_object();
+    typename Kernel::Scaled_vector_d  scaled_vec = m_k.scaled_vector_d_object();
 
     Tangent_space_basis ts;
     ts.reserve(Intrinsic_dimension);
@@ -695,8 +703,9 @@ private:
   Tr_bare_point project_point(const Point &p, const Point &origin, 
                          const Tangent_space_basis &ts) const
   {
-    Kernel::Scalar_product_d inner_pdct = m_k.scalar_product_d_object();
-    Kernel::Difference_of_points_d diff_points =
+    typename Kernel::Scalar_product_d inner_pdct = 
+      m_k.scalar_product_d_object();
+    typename Kernel::Difference_of_points_d diff_points =
       m_k.difference_of_points_d_object();
 
     std::vector<FT> coords;
@@ -716,13 +725,15 @@ private:
   // Project the point in the tangent space
   // The weight will be the squared distance between p and the projection of p
   Tr_point project_point_and_compute_weight(
-    const Point &p, const Point &origin, const Tangent_space_basis &ts) const
+    const Point &p, const Point &origin, const Tangent_space_basis &ts,
+    const Tr_traits &tr_traits) const
   {
     const int point_dim = m_k.point_dimension_d_object()(p);
-    Kernel::Scalar_product_d inner_pdct = m_k.scalar_product_d_object();
-    Kernel::Difference_of_points_d diff_points =
+    typename Kernel::Scalar_product_d inner_pdct =
+      m_k.scalar_product_d_object();
+    typename Kernel::Difference_of_points_d diff_points =
       m_k.difference_of_points_d_object();
-    Kernel::Construct_cartesian_const_iterator_d ccci = 
+    typename Kernel::Construct_cartesian_const_iterator_d ccci =
       m_k.construct_cartesian_const_iterator_d_object();
     
     Vector v = diff_points(p, origin);
@@ -742,21 +753,14 @@ private:
         p_proj[j] += coord * ts[i][j];
     }
 
-    // CJTODO TEMP: test it
-    /*Kernel::Construct_vector_d c_vec = m_k.construct_vector_d_object();
-    Kernel::Scaled_vector_d scaled_vec = m_k.scaled_vector_d_object();
-    Point proj_pt = origin;
-    for (int i = 0 ; i < Intrinsic_dimension ; ++i)
-    {
-      Vector base_i = c_vec(point_dim, ts[i].begin(), ts[i].end());
-      FT coef = inner_pdct(v, base_i);
-      proj_pt = proj_pt + scaled_vec(base_i, coef);
-    }*/
-
     Point projected_pt(point_dim, p_proj.begin(), p_proj.end());
-    return Tr_point( // CJTODO: use kernel constructions
-      Tr_bare_point(Intrinsic_dimension, coords.begin(), coords.end()), 
-      m_k.squared_distance_d_object()(p, projected_pt));
+
+    return tr_traits.construct_weighted_point_d_object()
+    (
+      tr_traits.construct_point_d_object()(
+        Intrinsic_dimension, coords.begin(), coords.end()),
+      m_k.squared_distance_d_object()(p, projected_pt)
+    );
   }
 
   // A simplex here is a list of point indices
@@ -804,6 +808,11 @@ private:
     }
 
     const int ambient_dim = m_k.point_dimension_d_object()(*m_points.begin());
+
+    // Kernel functors
+    typename Kernel::Compute_coordinate_d coord = 
+      m_k.compute_coordinate_d_object();
+
     int num_coords = min(ambient_dim, 3);
 #ifdef CGAL_TC_EXPORT_NORMALS
     Normals::const_iterator it_n = m_normals.begin();
@@ -815,13 +824,13 @@ private:
     {
       int i = 0;
       for ( ; i < num_coords ; ++i)
-        os << CGAL::to_double((*it_p)[i]) << " "; // CJTODO: use kernel functors, not []
+        os << CGAL::to_double(coord(*it_p, i)) << " ";
       if (i == 2)
         os << "0";
       
 #ifdef CGAL_TC_EXPORT_NORMALS
       for (i = 0 ; i < num_coords ; ++i)
-        os << " " << CGAL::to_double((*it_n)[i]); // CJTODO: use kernel functors, not []
+        os << " " << CGAL::to_double(coord(*it_n, i));
       ++it_n;
 #endif
 
