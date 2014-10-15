@@ -119,7 +119,7 @@ BOOST_AUTO_TEST_CASE( test_simple_saddle_vertex_mesh )
 
   Traits::Compute_squared_distance_3 compute_squared_distance_3(traits.compute_squared_distance_3_object());
   Traits::Compute_squared_distance_2 compute_squared_distance_2(traits.compute_squared_distance_2_object());
-  Traits::Flatten_triangle_3_along_segment_2 flatten_triangle_3_along_segment_2(traits.flatten_triangle_3_along_segment_2_object());
+  Traits::Construct_triangle_3_along_segment_2_flattening flatten_triangle_3_along_segment_2(traits.construct_triangle_3_along_segment_2_flattening_object());
   Traits::Construct_barycentric_coordinate construct_barycentric_coordinate(traits.construct_barycentric_coordinate_object());
   
   std::ifstream inFile("data/saddle_vertex_mesh.off");
@@ -347,11 +347,11 @@ BOOST_AUTO_TEST_CASE( test_boundary_mesh )
 
   Traits traits;
   
-  Traits::Project_triangle_3_to_triangle_2 project_triangle_3_to_triangle_2(traits.project_triangle_3_to_triangle_2_object());
+  Traits::Construct_triangle_3_to_triangle_2_projection project_triangle_3_to_triangle_2(traits.construct_triangle_3_to_triangle_2_projection_object());
   Traits::Compute_squared_distance_3 compute_squared_distance_3(traits.compute_squared_distance_3_object());
   Traits::Compute_squared_distance_2 compute_squared_distance_2(traits.compute_squared_distance_2_object());
   Traits::Construct_barycenter_3 construct_barycenter_3(traits.construct_barycenter_3_object());
-  Traits::Flatten_triangle_3_along_segment_2 flatten_triangle_3_along_segment_2(traits.flatten_triangle_3_along_segment_2_object());
+  Traits::Construct_triangle_3_along_segment_2_flattening flatten_triangle_3_along_segment_2(traits.construct_triangle_3_along_segment_2_flattening_object());
   Traits::Construct_barycentric_coordinate construct_barycentric_coordinate(traits.construct_barycentric_coordinate_object());
   
   struct Construct_barycenter_in_triangle_3

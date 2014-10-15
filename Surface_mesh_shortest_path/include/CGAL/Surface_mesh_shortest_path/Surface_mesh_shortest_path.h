@@ -607,7 +607,7 @@ private:
   void expand_left_child(Cone_tree_node* cone, Segment_2 windowSegment)
   {
     typename Traits::Construct_vertex_2 cv2(m_traits.construct_vertex_2_object());
-    typename Traits::Flatten_triangle_3_along_segment_2 ft3as2(m_traits.flatten_triangle_3_along_segment_2_object());
+    typename Traits::Construct_triangle_3_along_segment_2_flattening ft3as2(m_traits.construct_triangle_3_along_segment_2_flattening_object());
     
     assert(cone->m_pendingLeftSubtree != NULL);
     
@@ -634,7 +634,7 @@ private:
   void expand_right_child(Cone_tree_node* cone, Segment_2 windowSegment)
   {
     typename Traits::Construct_vertex_2 cv2(m_traits.construct_vertex_2_object());
-    typename Traits::Flatten_triangle_3_along_segment_2 ft3as2(m_traits.flatten_triangle_3_along_segment_2_object());
+    typename Traits::Construct_triangle_3_along_segment_2_flattening ft3as2(m_traits.construct_triangle_3_along_segment_2_flattening_object());
     
     assert(cone->m_pendingRightSubtree != NULL);
     
@@ -704,7 +704,7 @@ private:
   */
   void expand_face_root(face_descriptor f, Barycentric_coordinate faceLocation, Source_point_handle sourcePointIt)
   {
-    typename Traits::Project_triangle_3_to_triangle_2 pt3t2(m_traits.project_triangle_3_to_triangle_2_object());
+    typename Traits::Construct_triangle_3_to_triangle_2_projection pt3t2(m_traits.construct_triangle_3_to_triangle_2_projection_object());
     typename Traits::Construct_vertex_2 cv2(m_traits.construct_vertex_2_object());
   
     halfedge_descriptor start = halfedge(f, m_graph);
@@ -751,7 +751,7 @@ private:
   {
     typename Traits::Construct_barycenter_2 cb2(m_traits.construct_barycenter_2_object());
     typename Traits::Construct_vertex_2 cv2(m_traits.construct_vertex_2_object());
-    typename Traits::Project_triangle_3_to_triangle_2 pt3t2(m_traits.project_triangle_3_to_triangle_2_object());
+    typename Traits::Construct_triangle_3_to_triangle_2_projection pt3t2(m_traits.construct_triangle_3_to_triangle_2_projection_object());
     typename Traits::Construct_triangle_2 ct2(m_traits.construct_triangle_2_object());
     
     if (m_debugOutput)
@@ -826,7 +826,7 @@ private:
   */
   void expand_pseudo_source(Cone_tree_node* parent)
   {
-    typename Traits::Project_triangle_3_to_triangle_2 pt3t2(m_traits.project_triangle_3_to_triangle_2_object());
+    typename Traits::Construct_triangle_3_to_triangle_2_projection pt3t2(m_traits.construct_triangle_3_to_triangle_2_projection_object());
     typename Traits::Construct_vertex_2 cv2(m_traits.construct_vertex_2_object());
     
     parent->m_pendingMiddleSubtree = NULL;
@@ -890,7 +890,7 @@ private:
     typename Traits::Intersect_2 i2(m_traits.intersect_2_object());
     typename Traits::Orientation_2 o2(m_traits.orientation_2_object());
     typename Traits::Construct_point_on_2 cpo2(m_traits.construct_point_on_2_object());
-    typename Traits::Parametric_distance_along_segment_2 pdas2(m_traits.parametric_distance_along_segment_2_object());
+    typename Traits::Compute_parametric_distance_along_segment_2 pdas2(m_traits.compute_parametric_distance_along_segment_2_object());
   
     typedef typename cpp11::result_of<typename Traits::Intersect_2(Line_2, Line_2)>::type LineLineIntersectResult;
 
@@ -1544,7 +1544,7 @@ private:
   template <class Visitor>
   void visit_shortest_path(Cone_tree_node* startNode, const Point_2& startLocation, Visitor& visitor)
   {
-    typename Traits::Parametric_distance_along_segment_2 parametric_distance_along_segment_2(m_traits.parametric_distance_along_segment_2_object());
+    typename Traits::Compute_parametric_distance_along_segment_2 parametric_distance_along_segment_2(m_traits.compute_parametric_distance_along_segment_2_object());
     typename Traits::Construct_ray_2 construct_ray_2(m_traits.construct_ray_2_object());
     typename Traits::Construct_segment_2 construct_segment_2(m_traits.construct_segment_2_object());
     typename Traits::Construct_line_2 construct_line_2(m_traits.construct_line_2_object());
@@ -1595,8 +1595,8 @@ private:
             std::cout << "Inside cone: " << (current->inside_window(currentLocation) ? "Yes" : "No") << std::endl;
             std::cout << "Current Source: " << current->source_image() << std::endl;
             std::cout << "Current Segment: " << entrySegment << std::endl;
-            std::cout << "Current Left Window: " << current->window_left() << "  ,  " << m_traits.parametric_distance_along_segment_2_object()(entrySegment.start(), entrySegment.end(), current->window_left()) << std::endl;
-            std::cout << "Current Right Window: " << current->window_right() << "  ,  " << m_traits.parametric_distance_along_segment_2_object()(entrySegment.start(), entrySegment.end(), current->window_right()) << std::endl;
+            std::cout << "Current Left Window: " << current->window_left() << "  ,  " << m_traits.compute_parametric_distance_along_segment_2_object()(entrySegment.start(), entrySegment.end(), current->window_left()) << std::endl;
+            std::cout << "Current Right Window: " << current->window_right() << "  ,  " << m_traits.compute_parametric_distance_along_segment_2_object()(entrySegment.start(), entrySegment.end(), current->window_right()) << std::endl;
             std::cout << "Current Segment Intersection: " << *result << std::endl;
             std::cout << "Edge: (" << get(m_vertexIndexMap, source(current->entry_edge(), m_graph)) << "," << get(m_vertexIndexMap, target(current->entry_edge(), m_graph)) << ")  :  " << t0 << std::endl;
           }

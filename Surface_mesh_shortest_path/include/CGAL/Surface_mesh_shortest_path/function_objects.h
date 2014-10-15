@@ -36,7 +36,7 @@ namespace CGAL {
 namespace Surface_mesh_shortest_paths_3 {
 
 template <class Kernel>
-class Parametric_distance_along_segment_2
+class Compute_parametric_distance_along_segment_2
 {
 public:
   typedef typename Kernel::FT FT;
@@ -63,11 +63,11 @@ private:
   
   
 public:
-  Parametric_distance_along_segment_2()
+  Compute_parametric_distance_along_segment_2()
   {
   }
   
-  Parametric_distance_along_segment_2(const Kernel& kernel)
+  Compute_parametric_distance_along_segment_2(const Kernel& kernel)
     : m_intersect_2(kernel.intersect_2_object())
     , m_construct_cartesian_const_iterator_2(kernel.construct_cartesian_const_iterator_2_object())
     , m_construct_vector_2(kernel.construct_vector_2_object())
@@ -187,7 +187,7 @@ public:
 };
 
 template<class K>
-class Project_triangle_3_to_triangle_2
+class Construct_triangle_3_to_triangle_2_projection
 {
 public:
   typedef typename K::Vector_3 Vector_3;
@@ -217,11 +217,11 @@ private:
   Construct_triangle_2 m_construct_triangle_2;
 
 public:
-  Project_triangle_3_to_triangle_2()
+  Construct_triangle_3_to_triangle_2_projection()
   {
   }
   
-  Project_triangle_3_to_triangle_2(const K& kernel)
+  Construct_triangle_3_to_triangle_2_projection(const K& kernel)
     : m_compute_squared_distance_3(kernel.compute_squared_distance_3_object())
     , m_construct_line_3(kernel.construct_line_3_object())
     , m_construct_vertex_3(kernel.construct_vertex_3_object())
@@ -260,7 +260,7 @@ public:
   typedef typename K::Triangle_3 Triangle_3;
   typedef typename K::Triangle_2 Triangle_2;
   typedef Exact_predicates_exact_constructions_kernel_with_sqrt EKSQRT;
-  typedef Project_triangle_3_to_triangle_2<EKSQRT> Exact_project_triangle_3_to_triangle_2;
+  typedef Construct_triangle_3_to_triangle_2_projection<EKSQRT> Exact_project_triangle_3_to_triangle_2;
   typedef Cartesian_converter<K, EKSQRT>  To_exact;
   typedef Cartesian_converter<EKSQRT, K>  Back_from_exact;
 
@@ -284,7 +284,7 @@ public:
 };
 
 template<class K>
-class Flatten_triangle_3_along_segment_2
+class Construct_triangle_3_along_segment_2_flattening
 {
 public:
   typedef typename K::Vector_3 Vector_3;
@@ -333,11 +333,11 @@ private:
   Construct_triangle_2 m_construct_triangle_2;
   
 public:
-  Flatten_triangle_3_along_segment_2()
+  Construct_triangle_3_along_segment_2_flattening()
   {
   }
   
-  Flatten_triangle_3_along_segment_2(const K& kernel)
+  Construct_triangle_3_along_segment_2_flattening(const K& kernel)
     : m_compute_squared_distance_3(kernel.compute_squared_distance_3_object())
     , m_construct_projected_point_3(kernel.construct_projected_point_3_object())
     , m_construct_perpendicular_vector_2(kernel.construct_perpendicular_vector_2_object())
@@ -385,7 +385,7 @@ public:
   typedef typename K::Triangle_2 Triangle_2;
   
   typedef Exact_predicates_exact_constructions_kernel_with_sqrt EKSQRT;
-  typedef Flatten_triangle_3_along_segment_2<EKSQRT> Exact_flatten_triangle_3_along_segment_2;
+  typedef Construct_triangle_3_along_segment_2_flattening<EKSQRT> Exact_flatten_triangle_3_along_segment_2;
   typedef Cartesian_converter<K, EKSQRT>  To_exact;
   typedef Cartesian_converter<EKSQRT, K>  Back_from_exact;
 
@@ -429,7 +429,7 @@ public:
   typedef CGAL::Comparison_result result_type;
  
 private:
-  Parametric_distance_along_segment_2<K> m_parametric_distance_along_segment_2;
+  Compute_parametric_distance_along_segment_2<K> m_parametric_distance_along_segment_2;
   Intersect_2 m_intersect_2;
   Compare_distance_2 m_compare_distance_2;
   Construct_line_2 m_construct_line_2;
@@ -523,8 +523,8 @@ public:
   typedef typename GraphTraits::vertex_descriptor vertex_descriptor;
   typedef typename GraphTraits::halfedge_descriptor halfedge_descriptor;
   
-  typedef typename CGAL::Surface_mesh_shortest_paths_3::Project_triangle_3_to_triangle_2<Kernel> Project_triangle_3_to_triangle_2;
-  typedef typename CGAL::Surface_mesh_shortest_paths_3::Flatten_triangle_3_along_segment_2<Kernel> Flatten_triangle_3_along_segment_2;
+  typedef typename CGAL::Surface_mesh_shortest_paths_3::Construct_triangle_3_to_triangle_2_projection<Kernel> Construct_triangle_3_to_triangle_2_projection;
+  typedef typename CGAL::Surface_mesh_shortest_paths_3::Construct_triangle_3_along_segment_2_flattening<Kernel> Construct_triangle_3_along_segment_2_flattening;
   typedef typename Kernel::Orientation_2 Orientation_2;
   typedef typename Kernel::Construct_triangle_3 Construct_triangle_3;
   typedef typename Kernel::Construct_vertex_2 Construct_vertex_2;
@@ -535,8 +535,8 @@ public:
   typedef typename Kernel::Boolean result_type;
   
 private:
-  Project_triangle_3_to_triangle_2 m_project_triangle_3_to_triangle_2;
-  Flatten_triangle_3_along_segment_2 m_flatten_triangle_3_along_segment_2;
+  Construct_triangle_3_to_triangle_2_projection m_project_triangle_3_to_triangle_2;
+  Construct_triangle_3_along_segment_2_flattening m_flatten_triangle_3_along_segment_2;
   Construct_triangle_3 m_construct_triangle_3;
   mutable Construct_vertex_2 m_construct_vertex_2;
   Construct_segment_2 m_construct_segment_2;
@@ -550,7 +550,7 @@ public:
   {
   }
   
-  Is_saddle_vertex(const Kernel& kernel, const Project_triangle_3_to_triangle_2& pt3tt2, const Flatten_triangle_3_along_segment_2& ft3as2)
+  Is_saddle_vertex(const Kernel& kernel, const Construct_triangle_3_to_triangle_2_projection& pt3tt2, const Construct_triangle_3_along_segment_2_flattening& ft3as2)
     : m_orientation_2(kernel.orientation_2_object())
     , m_construct_triangle_3(kernel.construct_triangle_3_object())
     , m_construct_vertex_2(kernel.construct_vertex_2_object())

@@ -225,7 +225,7 @@ public:
   `Triangle_2 operator()(Triangle_3 t)`
   which computes a 2-dimensional projection of `t` that preserves edge lengths.
   */
-  typedef unspecified_type Project_triangle_3_to_triangle_2;
+  typedef unspecified_type Construct_triangle_3_to_triangle_2_projection;
   
   /*!
   Function object type that provides 
@@ -235,7 +235,7 @@ public:
   
   \pre The length of the `i`th edge of `t` is equal to the length of `base`
   */
-  typedef unspecified_type Flatten_triangle_3_along_segment_2;
+  typedef unspecified_type Construct_triangle_3_along_segment_2_flattening;
   
   /*! 
   Function object type that provides 
@@ -246,7 +246,7 @@ public:
   
   \pre `p` is a point along the segment `[x0,x1]`
   */
-  typedef unspecified_type Parametric_distance_along_segment_2;
+  typedef unspecified_type Compute_parametric_distance_along_segment_2;
 
   /*!
   Function object type that provides 
