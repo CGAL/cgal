@@ -191,7 +191,57 @@ public:
               << " seconds." << std::endl;
 #endif
   }
+  
+  // Return a pair<num_simplices, num_inconsistent_simplices>
+  std::pair<std::size_t, std::size_t> number_of_inconsistent_simplices()
+  {
+    std::size_t num_simplices = 0;
+    std::size_t num_inconsistent_simplices = 0;
+    Tr_container::const_iterator it_tr = m_triangulations.begin();
+    Tr_container::const_iterator it_tr_end = m_triangulations.end();
+    // For each triangulation
+    for ( ; it_tr != it_tr_end ; ++it_tr)
+    {
+      Triangulation const& tr    = it_tr->tr();
+      Tr_vertex_handle center_vh = it_tr->center_vertex();
 
+      std::vector<Tr_full_cell_handle> incident_cells;
+      tr.incident_full_cells(center_vh, std::back_inserter(incident_cells));
+
+      std::vector<Tr_full_cell_handle>::const_iterator it_c = incident_cells.begin();
+      std::vector<Tr_full_cell_handle>::const_iterator it_c_end= incident_cells.end();
+      // For each cell
+      for ( ; it_c != it_c_end ; ++it_c)
+      {
+        std::set<std::size_t> c;
+        for (int i = 0 ; i < Intrinsic_dimension + 1 ; ++i)
+        {
+          std::size_t data = (*it_c)->vertex(i)->data();
+          c.insert(data);
+        }
+
+        if (!is_simplex_consistent(c))
+          ++num_inconsistent_simplices;
+        ++num_simplices;
+      }
+    }
+
+#ifdef CGAL_TC_VERBOSE
+    std::cerr << std::endl
+      << "================================================" << std::endl
+      << "Inconsistencies:\n"
+      << "  * Total number of simplices in stars (incl. duplicates): " 
+      << num_simplices << std::endl
+      << "  * Number of inconsistent simplices in stars (incl. duplicates): " 
+      << num_inconsistent_simplices << std::endl
+      << "  * Percentage of inconsistencies: " 
+      << 100 * num_inconsistent_simplices / num_simplices << "%" << std::endl
+      << "================================================" << std::endl;
+#endif
+
+    return std::make_pair(num_simplices, num_inconsistent_simplices);
+  }
+  
   std::ostream &export_to_off(
     std::ostream & os, 
     bool color_inconsistencies = false,
@@ -229,10 +279,10 @@ public:
     }
 
     std::stringstream output;
-    std::size_t num_cells, num_vertices;
+    std::size_t num_simplices, num_vertices;
     export_vertices_to_off(output, num_vertices);
     export_simplices_to_off(
-      output, num_cells, color_inconsistencies, 
+      output, num_simplices, color_inconsistencies, 
       excluded_simplices, show_excluded_vertices_in_color);
     
 #ifdef CGAL_TC_EXPORT_NORMALS
@@ -241,7 +291,7 @@ public:
 
     os << "OFF \n"
        << m_points.size() << " " 
-       << num_cells << " "
+       << num_simplices << " "
        << "0 \n"
        << output.str();
 
@@ -840,14 +890,14 @@ private:
     num_vertices = m_points.size();
     return os;
   }
-  
+
   std::ostream &export_simplices_to_off(
-    std::ostream & os, std::size_t &num_cells, 
+    std::ostream & os, std::size_t &num_simplices, 
     bool color_inconsistencies = false,
     std::set<std::set<std::size_t> > const* excluded_simplices = NULL,
     bool show_excluded_vertices_in_color = false)
   {
-    num_cells = 0;
+    num_simplices = 0;
     std::size_t num_inconsistent_simplices = 0;
     Tr_container::const_iterator it_tr = m_triangulations.begin();
     Tr_container::const_iterator it_tr_end = m_triangulations.end();
@@ -898,14 +948,14 @@ private:
               os << "255 0 0";
               ++num_inconsistent_simplices;
             }
-            ++num_cells;
+            ++num_simplices;
           }
           else if (show_excluded_vertices_in_color)
           {
             os << Intrinsic_dimension + 1 << " " 
                << sstr_c.str() << " "
                << "0 0 255";
-            ++num_cells;
+            ++num_simplices;
           }
         }
         else
@@ -913,7 +963,7 @@ private:
           os << Intrinsic_dimension + 1 << " ";
           for (int i = 0 ; i < Intrinsic_dimension + 1 ; ++i)
             os << (*it_c)->vertex(i)->data() << " ";
-          ++num_cells;
+          ++num_simplices;
         }
 
         os << std::endl;
@@ -925,9 +975,11 @@ private:
       << "================================================" << std::endl
       << "Export to OFF:\n"
       << "  * Total number of simplices in stars (incl. duplicates): " 
-      << num_cells << std::endl
+      << num_simplices << std::endl
       << "  * Number of inconsistent simplices in stars (incl. duplicates): " 
       << num_inconsistent_simplices << std::endl
+      << "  * Percentage of inconsistencies: " 
+      << 100 * num_inconsistent_simplices / num_simplices << "%" << std::endl
       << "================================================" << std::endl;
 #endif
 
