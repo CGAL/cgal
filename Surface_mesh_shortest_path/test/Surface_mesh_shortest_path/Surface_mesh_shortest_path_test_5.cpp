@@ -107,7 +107,7 @@ BOOST_AUTO_TEST_CASE( test_incremental_construction_removal )
     shortestPaths.add_source_point(sourcePoints.back().first, sourcePoints.back().second);
   }
 
-  BOOST_CHECK_EQUAL(numInitialLocations, shortestPaths.number_of_source_locations());
+  BOOST_CHECK_EQUAL(numInitialLocations, shortestPaths.number_of_source_points());
   
   size_t checkNumLocations = 0;
   
@@ -117,7 +117,7 @@ BOOST_AUTO_TEST_CASE( test_incremental_construction_removal )
     ++checkNumLocations;
   }
   
-  BOOST_CHECK_EQUAL(checkNumLocations, shortestPaths.number_of_source_locations());
+  BOOST_CHECK_EQUAL(checkNumLocations, shortestPaths.number_of_source_points());
   
   for (Surface_mesh_shortest_path::Source_point_handle it = shortestPaths.source_points_begin(); it != shortestPaths.source_points_end(); ++it)
   {
@@ -139,7 +139,7 @@ BOOST_AUTO_TEST_CASE( test_incremental_construction_removal )
     }
   }
   
-  BOOST_CHECK_EQUAL(numInitialLocations / 2, shortestPaths.number_of_source_locations());
+  BOOST_CHECK_EQUAL(numInitialLocations / 2, shortestPaths.number_of_source_points());
   
   // and ensure that they are indeed removed
   for (size_t i = 0; i < sourcePoints.size(); ++i)

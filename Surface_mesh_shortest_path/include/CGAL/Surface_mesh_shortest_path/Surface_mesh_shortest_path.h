@@ -53,12 +53,16 @@ namespace CGAL {
 
 \details Uses an optimized variation of Chen and Han's \f$ O(n^2) \f$ algorithm by Xin and Wang. 
 Refer to those respective papers for the details of the implementation.
- 
-\tparam Traits The geometric traits for this algorithm, a model of SurfaceMeshShortestPathTraits concept.
-\tparam VIM A model of the boost ReadablePropertyMap concept, provides a vertex index property map.
-\tparam HIM A model of the boost ReadablePropertyMap concept, provides a halfedges index property map.
-\tparam FIM A model of the boost ReadablePropertyMap concept, provides a face index property map.
-\tparam VPM A model of the boost ReadablePropertyMap concept, provides a vertex point property map.
+
+\tparam Traits a model of `SurfaceMeshShortestPathTraits`.
+\tparam VIM a model of `ReadablePropertyMap` with `vertex_descriptor` as key and `unsigned int` as value type.
+            The default is `boost::property_map<HG, boost::%vertex_index_t>::%type`.
+\tparam HIM a model of `ReadablePropertyMap` with `halfedge_descriptor` as key and `unsigned int` as value type.
+            The default is `boost::property_map<HG, boost::%halfedge_index_t>::%type`.
+\tparam FIM a model of `ReadablePropertyMap` with `face_descriptor` as key and `unsigned int` as value type.
+            The default is `boost::property_map<HG, boost::%face_index_t>::%type`.
+\tparam VPM a model of `ReadablePropertyMap` with `vertex_descriptor` as key and `Traits::Point_3` as value type.
+            The default is `boost::property_map<HG, CGAL::vertex_point_t>::%type`.
 */
  
 template<class Traits, 
@@ -134,12 +138,11 @@ public:
   typedef typename Traits::Barycentric_coordinate Barycentric_coordinate;
 
   /// \brief An ordered pair specifying a location on the surface of the `FaceListGraph`.
-  /// \details Assuming you are given the pair (`face`, `location`), the weights of 
-  /// `location` are applied to the vertices of `face` in the following way
-  /// the following way:
-  /// - 0 -> source(halfedge(`face`))
-  /// - 1 -> target(halfedge(`face`))
-  /// - 2 -> target(next(halfedge(`face`)))
+  /// \details Given the pair (`face`, `bc`), such that `bc` is `(w0, w1, w2)`,
+  ///  the correspondance with the weights in `bc` and the vertices of `face` is the following:
+  /// - w0 -> source(halfedge(`face`))
+  /// - w1 -> target(halfedge(`face`))
+  /// - w2 -> target(next(halfedge(`face`)))
   typedef typename std::pair<face_descriptor, Barycentric_coordinate> Face_location;
   
 private:
@@ -151,15 +154,13 @@ public:
   
   /*!
   \brief A `bidirectional_iterator` to access the source points
-  
-  \details The iterator will remain valid from the moment the point
-  is added to the data structure, until after that point is removed 
-  (either with `Surface_mesh_shortest_path::remove_source_point()` or `Surface_mesh_shortest_path::remove_all_source_points()`)
-  AND the structure is re-built (by a call to a query function, or
-  to `Surface_mesh_shortest_path::build_sequence_tree()`).  All iterators will also be invalided
-  by any call to `Surface_mesh_shortest_path::clear_sequence_tree()`.
-  
-  Dereferencing this iterator will yeild a `const Surface_mesh_shortest_path::Face_location&`.
+
+  \details An iterator becomes invalid if:
+   - the corresponding point is removed (either with `Surface_mesh_shortest_path::remove_source_point()` or `Surface_mesh_shortest_path::remove_all_source_points()`).
+   - the structure is re-built (triggered by a shortest path query or a call to `Surface_mesh_shortest_path::build_sequence_tree()`).
+   - the structure is cleared (`Surface_mesh_shortest_path::clear_sequence_tree()`).
+
+  Dereferencing this iterator yields a `const Surface_mesh_shortest_path::Face_location&`.
   
   This iterator supports equality comparison operations.
   */
@@ -183,7 +184,7 @@ public:
   
   public:
     /*!
-    \brief Default constructor
+    \brief %Default constructor
     */
     Source_point_handle()
     {
@@ -191,8 +192,6 @@ public:
     
     /*!
     \brief Copy constructor
-    
-    \param other The handle to be copied
     */
     Source_point_handle(const Source_point_handle& other)
       : m_iterator(other.m_iterator)
@@ -1998,19 +1997,9 @@ public:
   /// @{
   
   /*!
-  \brief Creates a shortest paths object associated with a specific `FaceListGraph`.
+  \brief Creates a shortest paths object using `g` as input.
   
-  \details No copy of the `FaceListGraph` is made, only a reference to `g` is held.
-  Default property maps are assigned for the `FaceListGraph` as follows:
-  - VertexIndexMap : `get(boost::vertex_index, faceGraph)
-  - HalfedgeIndexMap : `get(boost::halfedge_index, faceGraph)
-  - FaceIndexMap : `get(boost::face_index, faceGraph)
-  - VertexPointMap : `get(CGAL::vertex_point, faceGraph)
-
-  \param g The surface mesh to compute shortest paths on.  Note that it must be triangulated.
-  
-  \param traits Optional instance of the traits class to use.
-  
+  Equivalent to `Surface_mesh_shortest_path(g, get(boost::vertex_index, g), get(boost::halfedge_index, g), get(boost::face_index, g), get(CGAL::vertex_point, g), traits)`
   */
   Surface_mesh_shortest_path(FaceListGraph& g, const Traits& traits = Traits())
     : m_traits(traits)
@@ -2025,17 +2014,17 @@ public:
   }
   
   /*!
-  \brief Creates a shortest paths object associated with a specific `FaceListGraph`.
+  \brief Creates a shortest paths object using `g` as input.
   
   \details No copy of the `FaceListGraph` is made, only a reference to the `g` is held.
   
   \param g The surface mesh to compute shortest paths on.  Note that it must be triangulated.
   
-  \param vertexIndexMap Property map for associating an id to each vertex, from 0 to `num_vertices(faceGraph) - 1`.
+  \param vertexIndexMap Property map associating an id to each vertex, from 0 to `num_vertices(g) - 1`.
   
-  \param halfedgeIndexMap Property map for associating an id to each halfedge, from 0 to `num_halfedges(faceGraph) - 1`.
+  \param halfedgeIndexMap Property map associating an id to each halfedge, from 0 to `num_halfedges(g) - 1`.
   
-  \param faceIndexMap Property map for associating an id to each face, from 0 to `num_faces(faceGraph) - 1`.
+  \param faceIndexMap Property map associating an id to each face, from 0 to `num_faces(g) - 1`.
   
   \param vertexPointMap Property map used to access the points associated to each vertex of the graph.
   
@@ -2073,35 +2062,35 @@ public:
   
   /// \endcond
   
-  /// \name Add/Remove Source Points
+  /// \name Addition and Removal of Source Points
   /// @{
   
   /*!
-  \brief Inserts a single vertex as a shortest path source point
+  \brief Adds `v` as a source for the shortest path queries.
   
   \details No change to the internal shortest paths data structure occurs
-  until either `Surface_mesh_shortest_path::build_sequence_tree()` or a shortest path query function is 
-  called.
+  until either `Surface_mesh_shortest_path::build_sequence_tree()` or
+  the first shortest path query is done.
   
-  \param vertex A vertex to serve as the source location of the sequence tree
-  \return An iterator to the newly added source point
+  \return An iterator to the source point added
+  \todo split in 2 handle and iterator
   */
-  Source_point_handle add_source_point(vertex_descriptor vertex)
+  Source_point_handle add_source_point(vertex_descriptor v)
   {
     Face_location location = face_location(vertex);
     return add_source_point(location);
   }
   
   /*!
-  \brief Inserts a single shortest path source point
+  \brief Adds a point inside the face `f` as a source for the shortest path queries.
   
   \details No change to the internal shortest paths data structure occurs
-  until either `Surface_mesh_shortest_path::build_sequence_tree()` or a shortest path query function is 
-  called.
+  until either `Surface_mesh_shortest_path::build_sequence_tree()` or
+  the first shortest path query is done.
   
   \param f A face of the face graph
-  \param location Barycentric coordinate on face `f` specifying the source location.
-  \return An iterator to the newly added source point
+  \param location Barycentric coordinate in face `f` specifying the source location.
+  \return An iterator to the source point added
   */
   Source_point_handle add_source_point(face_descriptor f, Barycentric_coordinate location)
   {
@@ -2109,14 +2098,8 @@ public:
   }
   
   /*!
-  \brief Inserts a single shortest path source point
-  
-  \details No change to the internal shortest paths data structure occurs
-  until either `Surface_mesh_shortest_path::build_sequence_tree()` or a shortest path query function is 
-  called.
-  
-  \param location A `Face_location` object, specifying the face and internal location of the source point
-  \return An iterator to the newly added source point
+  \brief Adds a point inside a face as a source for the shortest path queries, 
+  equivalent to `Surface_mesh_shortest_path::add_source_point(location.first, location.second);`
   */
   Source_point_handle add_source_point(Face_location location)
   {
@@ -2131,17 +2114,17 @@ public:
   }
   
   /*!
-  \brief Inserts a range of shortest path source points
+  \brief Adds a range of points as sources for the shortest path queries.
   
   \details No change to the internal shortest paths data structure occurs
-  until either `Surface_mesh_shortest_path::build_sequence_tree()` or a shortest path query function is 
-  called.
+  until either `Surface_mesh_shortest_path::build_sequence_tree()` or
+  the first shortest path query is done.
 
   \tparam InputIterator A `ForwardIterator` which dereferences to either `Surface_mesh_shortest_path::Face_location`, or `Surface_mesh_shortest_path::vertex_descriptor`.
   
   \param begin iterator to the first in the list of source point locations.
   \param end iterator to one past the end of the list of source point locations.
-  \return An iterator to the newly added source point
+  \return An iterator to the first source point added.
   */
   template <class InputIterator>
   Source_point_handle add_source_points(InputIterator begin, InputIterator end)
@@ -2150,11 +2133,12 @@ public:
   }
   
   /*!
-  \brief Removes a source point from the structure
+  \brief Removes a source point for the shortest path queries.
   
   \details No change to the internal shortest paths data structure occurs
-  until either `Surface_mesh_shortest_path::build_sequence_tree()` or a shortest path query function is 
-  called.  Behaviour is undefined if the source point `it` was already removed.
+  until either `Surface_mesh_shortest_path::build_sequence_tree()` or
+  the first shortest path query is done.
+  Behaviour is undefined if the source point `it` was already removed.
   
   \param it iterator to the source point to be removed
   */
@@ -2169,12 +2153,12 @@ public:
   }
   
   /*!
-  \brief Removes all source point from the structure
+  \brief Removes all source point for the shortest path queries.
   
   \details No change to the internal shortest paths data structure occurs
-  until either `Surface_mesh_shortest_path::build_sequence_tree()` or a shortest path query function is 
-  called. For a version which deletes all data immediately, use
-  `clear_sequence_tree()` instead.
+  until either `Surface_mesh_shortest_path::build_sequence_tree()` or
+  the first shortest path query is done.
+  For a version which deletes all data immediately, use `clear_sequence_tree()` instead.
   */
   void remove_all_source_points()
   {
@@ -2184,15 +2168,15 @@ public:
   
   /// @}
   
-  /// \name Create/Destroy Shortest Paths Sequence Tree
+  /// \name Creation and Destruction of the Shortest Paths Sequence Tree
   /// @{
   
   /*!
-  \brief Computes all pending changes to the sequence tree
+  \brief Computes all pending changes to the internal sequence tree
   
-  \details Calling this method will only perform any computation if some
+  \details A call to this method will only trigger a computation only if some
   change to the set of source points occurred since the last time
-  the sequence tree was reconstructed
+  the sequence tree was computed.
   */
   void build_sequence_tree()
   {
@@ -2251,13 +2235,13 @@ public:
     
   \return The number of source points currently in the structure.
   */
-  std::size_t number_of_source_locations() const
+  std::size_t number_of_source_points() const
   {
     return m_faceLocations.size();
   }
   
   /*!
-  \brief Determines if the structure has changed since the last time it was built
+  \brief Determines if the internal sequence tree is valid (already built and no new source point has been added).
   
   \return true if the structure needs to be rebuilt, false otherwise
   */
@@ -2268,7 +2252,7 @@ public:
   
   /// @}
   
-  /// \name Shortest Distance Query
+  /// \name Shortest Distance Queries
   /// @{
   
   /*!
@@ -2328,7 +2312,7 @@ public:
   
   /// @}
   
-  /// \name Shortest Path Sequence Query
+  /// \name Shortest Path Sequence Queries
   /// @{
   
   /*!
@@ -2400,7 +2384,7 @@ public:
   
   /// @}
   
-  /// \name Shortest Path Points Query
+  /// \name Shortest Path Point Queries
   /// @{
 
   /*!
@@ -2442,7 +2426,7 @@ public:
   
   /// @}
   
-  /// \name Surface Point Construction
+  /// \name Surface Point Constructions
   /// @{
   
   /*!
@@ -2520,7 +2504,7 @@ public:
   
   /// @}
     
-  /// \name Surface Face Location Construction
+  /// \name Surface Face Location Constructions
   /// @{
   
   /*!
@@ -2590,10 +2574,10 @@ public:
   
   /// @}
     
-  /// \name Nearest Face Location
+  /// \name Nearest Face Location Queries
   /// @{
   
-  /*!
+  /*
   \brief Returns the nearest face location to the given point.
     Note that this will (re-)build an `AABB_tree` on each call. If you need 
     to  call this function more than once, use `build_aabb_tree()` to cache a 
@@ -2634,7 +2618,7 @@ public:
   \tparam AABBTraits A model of `AABBTraits` used to defined a \cgal `AABB_tree`.
   
   \param location Point to locate on the face graph
-  \param tree A cached `AABB_tree` to perform the point location with
+  \param tree A `AABB_tree` containing the triangular faces of the input surface mesh to perform the point location with
   */
   template <class AABBTraits>
   Face_location locate(const Point_3& location, const AABB_tree<AABBTraits>& tree) const
@@ -2657,7 +2641,7 @@ public:
   
   /// \endcond
   
-  /*!
+  /*
   \brief Returns the face location along `ray` nearest to its source point.
     Note that this will (re-)build an `AABB_tree` on each call. If you need 
     to  call this function more than once, use `build_aabb_tree()` to cache a 
@@ -2699,7 +2683,7 @@ public:
   \tparam AABBTraits A model of `AABBTraits` used to defined a \cgal `AABB_tree`.
   
   \param ray Ray to intersect with the face graph
-  \param tree A cached `AABB_tree` to perform the intersection with
+  \param tree A `AABB_tree` containing the triangular faces of the input surface mesh to perform the point location with
   */
   template <class AABBTraits>
   Face_location locate(const Ray_3& ray, const AABB_tree<AABBTraits>& tree) const
@@ -2763,11 +2747,8 @@ public:
   /// \endcond
   
   /// @}
-
-  /// \name AABB Tree Construction
-  /// @{
   
-  /*!
+  /*
   \brief Creates an `AABB_tree` suitable for use with `locate`.
   
   \details The following static overload is also available:
@@ -2794,8 +2775,6 @@ public:
     outTree.build();
   }
   /// \endcond
-    
-  /// @}
 
 };
 
