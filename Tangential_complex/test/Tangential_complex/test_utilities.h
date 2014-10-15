@@ -27,6 +27,7 @@
 #define CGAL_TC_TEST_TEST_UTILITIES_H
 
 #include <CGAL/Random.h>
+#include <CGAL/point_generators_2.h>
 #include <CGAL/point_generators_3.h>
 #include <CGAL/point_generators_d.h>
 
@@ -44,6 +45,18 @@ std::vector<Point> generate_points_on_plane(std::size_t num_points)
     FT y = rng.get_double(0, 5);
     points.push_back(Kernel().construct_point_d_object()(x, y, 0));
   }
+  return points;
+}
+
+template <typename Point>
+std::vector<Point> generate_points_on_circle_2(
+  std::size_t num_points, double radius)
+{
+  CGAL::Random_points_on_circle_2<Point> generator(radius);
+  std::vector<Point> points;
+  points.reserve(NUM_POINTS);
+  for (int i = 0 ; i != NUM_POINTS ; ++i)
+    points.push_back(*generator++);
   return points;
 }
 
@@ -141,10 +154,10 @@ std::vector<Point> generate_points_on_klein_bottle_4D(
       v = rng.get_double(0, 6.2832);
     }
     points.push_back(Kernel().construct_point_d_object()(
-      (a + b*cos(v))*cos(u) + rng.get_double(0, 0.01),
-      (a + b*cos(v))*sin(u) + rng.get_double(0, 0.01),
-      b*sin(v)*cos(u/2) + rng.get_double(0, 0.01),
-      b*sin(v)*sin(u/2) + rng.get_double(0, 0.01)) );
+      (a + b*cos(v))*cos(u) /*+ rng.get_double(0, 0.01)*/,
+      (a + b*cos(v))*sin(u) /*+ rng.get_double(0, 0.01)*/,
+      b*sin(v)*cos(u/2)     /*+ rng.get_double(0, 0.01)*/,
+      b*sin(v)*sin(u/2)     /*+ rng.get_double(0, 0.01)*/) );
   }
   return points;
 }
