@@ -11,7 +11,6 @@
 #include <CGAL/Epick_d.h>
 #include <CGAL/Tangential_complex.h>
 #include <CGAL/Random.h>
-#include <CGAL/Kernel_traits.h>
 #include <CGAL/Mesh_3/Profiling_tools.h>
 
 #include <fstream>
@@ -38,7 +37,7 @@ int main()
 #endif
 
   const int INTRINSIC_DIMENSION = 1;
-  const int AMBIENT_DIMENSION = 2;
+  const int AMBIENT_DIMENSION = 3;
 
   typedef CGAL::Epick_d<CGAL::Dimension_tag<AMBIENT_DIMENSION> > Kernel;
   typedef Kernel::Point_d                                        Point;
@@ -51,12 +50,14 @@ int main()
     CGAL::default_random = CGAL::Random(i);
     std::cerr << "Random seed = " << i << std::endl;
   
-    std::vector<Point> points = generate_points_on_circle_2<Point>(NUM_POINTS, 3.);
-    //std::vector<Point> points = generate_points_on_plane<Point>(NUM_POINTS);
-    //std::vector<Point> points = generate_points_on_sphere_3<Point>(NUM_POINTS, 3.0);
-    //std::vector<Point> points = generate_points_on_sphere_d<Point>(NUM_POINTS, AMBIENT_DIMENSION, 3.0);
-    //std::vector<Point> points = generate_points_on_klein_bottle_3D<Point>(NUM_POINTS, 4., 3.);
-    //std::vector<Point> points = generate_points_on_klein_bottle_4D<Point>(NUM_POINTS, 4., 3.);
+    std::vector<Point> points = 
+      //generate_points_on_circle_2<Kernel>(NUM_POINTS, 3.);
+      generate_points_on_moment_curve<Kernel>(NUM_POINTS, AMBIENT_DIMENSION, 0., 1.);
+      //generate_points_on_plane<Kernel>(NUM_POINTS);
+      //generate_points_on_sphere_3<Kernel>(NUM_POINTS, 3.0);
+      //generate_points_on_sphere_d<Kernel>(NUM_POINTS, AMBIENT_DIMENSION, 3.0);
+      //generate_points_on_klein_bottle_3D<Kernel>(NUM_POINTS, 4., 3.);
+      //generate_points_on_klein_bottle_4D<Kernel>(NUM_POINTS, 4., 3.);
 
     CGAL::Tangential_complex<
       Kernel, 

@@ -31,10 +31,10 @@
 #include <CGAL/point_generators_3.h>
 #include <CGAL/point_generators_d.h>
 
-template <typename Point>
-std::vector<Point> generate_points_on_plane(std::size_t num_points)
+template <typename Kernel>
+std::vector<typename Kernel::Point_d> generate_points_on_plane(std::size_t num_points)
 {
-  typedef typename CGAL::Kernel_traits<Point>::type Kernel;
+  typedef typename Kernel::Point_d Point;
   typedef typename Kernel::FT FT;
   CGAL::Random rng;
   std::vector<Point> points;
@@ -48,8 +48,31 @@ std::vector<Point> generate_points_on_plane(std::size_t num_points)
   return points;
 }
 
-template <typename Point>
-std::vector<Point> generate_points_on_circle_2(
+template <typename Kernel>
+std::vector<typename Kernel::Point_d> generate_points_on_moment_curve(
+  std::size_t num_points, int dim,
+  typename Kernel::FT min_x , typename Kernel::FT max_x)
+{
+  typedef typename Kernel::Point_d Point;
+  typedef typename Kernel::FT FT;
+  CGAL::Random rng;
+  std::vector<Point> points;
+  points.reserve(NUM_POINTS);
+  for (int i = 0 ; i != NUM_POINTS ; ++i)
+  {
+    FT x = rng.get_double(min_x, max_x);
+    std::vector<FT> coords;
+    coords.reserve(dim);
+    for (int p = 1 ; p <= dim ; ++p)
+      coords.push_back(std::pow(CGAL::to_double(x), p));
+    points.push_back(
+      Kernel().construct_point_d_object()(dim, coords.begin(), coords.end()));
+  }
+  return points;
+}
+
+template <typename Kernel>
+std::vector<typename Kernel::Point_d> generate_points_on_circle_2(
   std::size_t num_points, double radius)
 {
   CGAL::Random_points_on_circle_2<Point> generator(radius);
@@ -60,8 +83,8 @@ std::vector<Point> generate_points_on_circle_2(
   return points;
 }
 
-template <typename Point>
-std::vector<Point> generate_points_on_sphere_3(
+template <typename Kernel>
+std::vector<typename Kernel::Point_d> generate_points_on_sphere_3(
   std::size_t num_points, double radius)
 {
   CGAL::Random_points_on_sphere_3<Point> generator(radius);
@@ -72,8 +95,8 @@ std::vector<Point> generate_points_on_sphere_3(
   return points;
 }
 
-template <typename Point>
-std::vector<Point> generate_points_on_sphere_d(
+template <typename Kernel>
+std::vector<typename Kernel::Point_d> generate_points_on_sphere_d(
   std::size_t num_points, int dim, double radius)
 {
   CGAL::Random_points_on_sphere_d<Point> generator(dim, radius);
@@ -85,11 +108,11 @@ std::vector<Point> generate_points_on_sphere_d(
 }
 
 // a = big radius, b = small radius
-template <typename Point>
-std::vector<Point> generate_points_on_klein_bottle_3D(
+template <typename Kernel>
+std::vector<typename Kernel::Point_d> generate_points_on_klein_bottle_3D(
   std::size_t num_points, double a, double b, bool uniform = false)
 {
-  typedef typename CGAL::Kernel_traits<Point>::type Kernel;
+  typedef typename Kernel::Point_d Point;
   typedef typename Kernel::FT FT;
   CGAL::Random rng;
 
@@ -124,11 +147,11 @@ std::vector<Point> generate_points_on_klein_bottle_3D(
 }
 
 // a = big radius, b = small radius
-template <typename Point>
-std::vector<Point> generate_points_on_klein_bottle_4D(
+template <typename Kernel>
+std::vector<typename Kernel::Point_d> generate_points_on_klein_bottle_4D(
   std::size_t num_points, double a, double b, bool uniform = false)
 {
-  typedef typename CGAL::Kernel_traits<Point>::type Kernel;
+  typedef typename Kernel::Point_d Point;
   typedef typename Kernel::FT FT;
   CGAL::Random rng;
 
