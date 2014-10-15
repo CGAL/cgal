@@ -77,9 +77,8 @@ namespace CGAL {
     \cgalModels 
     `ArrConstructionFromTwoPointsTraits_2` 
     (required by push_back and Push_front functors)
-    `ArrTrimTraits_2` 
     `ArrApproximateTraits_2`(if the template parameter
-    `GeometryTraits` models the concept as well)
+    `SegmentTraits` models the concept as well)
     \cgalModels `ArrangementDirectionalXMonotoneTraits_2`
 
 
@@ -285,6 +284,18 @@ namespace CGAL {
 
       /// @} /* end of operations */
     }; /* end of Arr_polyline_traits_2::Push_front_2 */
+
+    class Trim_2
+    {
+    public:
+       /*!\brief
+       * returns a trimmed version of the polycurve with src and tgt as end vertices.
+       * Src and tgt will be swaped if they do not conform to the direction of the polycurve.
+       */
+      X_monotone_curve_2 operator()(const X_monotone_curve_2& xcv, 
+                                  const Point_2& src,
+                                  const Point_2& tgt)const
+    };      
 
 
     /*!

@@ -12,7 +12,11 @@ namespace CGAL {
   /*!
     \ingroup PkgArrangement2TraitsClasses
 
-    The traits class `Arr_polycurve_traits_2` handles piecewise linear
+    Note: The `GeometryTraits` can comprise of Line_segments, Conic_arcs,
+          Circular_arc, Bezier_curves or Linear_curves. A portion or a part 
+          of any of the above mentioned geometric traits is called a segment.
+
+    The traits class `Arr_polycurve_traits_2` handles piecewise linear/nonlinear
     segments, commonly referred to as a polycurve. A polycurve is a
     chain of segments, where each two neighboring segments in the
     chain share a common endpoint; that is, the polycurve is
@@ -28,16 +32,10 @@ namespace CGAL {
     template-parameter to handle the segments that compose the
     polycurve segments.
 
-    Note: The `GeometryTraits` can comprise of Line_segments, Conic_arcs,
-          Circular_arc, Bezier_curves or Linear_curves. A portion or a part 
-          of any of the above mentioned geometric traits is called a segment.
-
     The type substituting the template parameter `GeometryTraits` when
     the template Arr_polycurve_traits_2 is instantiated must be a model
     of the concepts
-      - `ArrangementTraits_2`
-      - `ArrConstructionFromTwoPointsTraits_2`
-      - `ArrTrimTraits_2` and
+      - `ArrangementTraits_2` and
       - `ArrangementDirectionalXMonotoneTraits_2`.
 
     If, in addition, the GeometryTraits models the concept
@@ -82,16 +80,14 @@ namespace CGAL {
     is included.
 
     \cgalModels `ArrangementTraits_2`
-    \cgalModels `ArrConstructionFromTwoPointsTraits_2`
-                `ArrTrimTraits_2` 
-                `ArrApproximateTraits_2`(if the template parameter
+    \cgalModels `ArrApproximateTraits_2`(if the template parameter
                 `GeometryTraits` models the concept as well)
     \cgalModels `ArrangementDirectionalXMonotoneTraits_2`
 
     \sa `Arr_segment_traits_2<Kernel>`
-    \sa `Arr_conic_tratis_2`
-    \sa `Arr_circular_arc_tratis_2`
-    /sa `Arr_bezier_traits_2`
+    \sa `Arr_conic_tratis_2<RatKernel,AlgKernel,NtTraits>`
+    \sa `Arr_circle_segment_tratis_2<Kernel>`
+    /sa `Arr_Bezier_curve_traits_2<RatKernel,AlgKernel,NtTraits>`
     \sa `Arr_non_caching_segment_traits_2<Kernel>`
     \sa `CGAL_ALWAYS_LEFT_TO_RIGHT`
   */
@@ -130,16 +126,6 @@ namespace CGAL {
       /// @{
 
       /*!
-        Return a polycurve connecting the two given endpoints.
-        \param p The first point.
-        \param q The second point.
-        \pre `p` and `q` are distinct.
-        \return A segment connecting `p` and `q`.
-        \in this case the polycurve actually will be a polyline.
-      */
-      Curve_2 operator()(const Point_2& p, const Point_2& q) const;
-
-      /*!
         Return a polycurve that comprises of one given segment.
         \param seg input segment
         \pre `seg` is not degenerated (not tested)
@@ -149,7 +135,7 @@ namespace CGAL {
 
       /*!
         Construct a well-oriented polycurve from a range of either
-        `GeometryTraits::Point_2` or `GeometryTraits::Segment_2`.
+        `GeometryTraits::Point_2` or `GeometryTraits::Curve_2`.
 
          \param begin iterator pointing to the first element in the
                 range.
@@ -194,16 +180,6 @@ namespace CGAL {
       /// \name Operations
       /// @{
 
-//      /*!
-//       * Append a point `p` to an existing polycurve `cv` at the back.
-//       * \param cv a polycurve. Note, `cv` is not (necessarily)
-//       *        \f$ x\f$-monotone.
-//       * \param p a point to be appended to `cv` at the back.
-//       * \pre `cv` contains at least one segment.
-//       * \pre GeometryTraits is a model of ArrConstructionFromTwoPointsTraits_2.
-//       */
-//      void operator()(Curve_2& cv, const Point_2& p) const;
-
       /*!
         Append a segment `seg` to an existing polycurve `cv` at the back.
         If `cv` is empty, `seg` will be its first segment.
@@ -212,19 +188,6 @@ namespace CGAL {
                to `cv`
       */
       void operator()(Curve_2& cv, const Segment_2& seg) const;
-
-//      /*!
-//       * Append a point `p` to an existing \f$x\f$-monotone polycurve `xcv` at
-//       * the back.
-//       * \param xcv the existing \f$x\f$-monotone polycurve
-//       * \param p the point to be pushed back.
-//       * \pre `xcv` contains at least one segment
-//       * \pre `p` is either to the right of `xcv` if it is oriented
-//       *      left-to-right or it is to its left if `xcv` is oriented
-//       *      right-to-left.
-//       * \pre GeometryTraits is a model of ArrConstructionFromTwoPointsTraits_2.
-//       */
-//      void operator()(const X_monotone_curve_2& xcv, Point_2& p) const;
 
       /*!
        * Append a segment `seg` to an existing \f$x\f$-monotone polycurve `xcv`
@@ -251,16 +214,6 @@ namespace CGAL {
       /// \name Operations
       /// @{
 
-//      /*!
-//       * Append a point `p` to an existing polycurve `cv` at the front.
-//       * \param cv a polycurve. Note, `cv` is not (necessarily)
-//       *        \f$ x\f$-monotone.
-//       * \param p a point to be appended to `cv` at the back.
-//       * \pre `cv` contains at least one segment.
-//       * \pre GeometryTraits is a model of ArrConstructionFromTwoPointsTraits_2.
-//       */
-//      void operator()(Curve_2& cv, const Point_2& p) const;
-
       /*!
         Append a segment `seg` to an existing polycurve `cv` at the front.
         If `cv` is empty, `seg` will be its first segment.
@@ -269,19 +222,6 @@ namespace CGAL {
         to `cv`
       */
       void operator()(Curve_2& cv, const Segment_2& seg) const;
-
-//      /*!
-//       * Append a point `p` to an existing \f$x\f$-monotone polycurve `xcv` at
-//      * the front.
-//       * \param xcv the existing \f$x\f$-monotone polycurve
-//       * \param p the point to be pushed back.
-//       * \pre `xcv` contains at least one segment
-//       * \pre `p` is either to the left of `xcv` if it is oriented
-//       *      left-to-right or it is to its right if `xcv` is oriented
-//       *      right-to-left.
-//       * \pre GeometryTraits is a model of ArrConstructionFromTwoPointsTraits_2.
-//       */
-//      void operator()(const X_monotone_curve_2& xcv, Point_2& p) const;
 
       /*!
        * Append a segment `seg` to an existing \f$x\f$-monotone polycurve `xcv`
@@ -299,6 +239,17 @@ namespace CGAL {
       /// @} /* end of operations */
     }; /* end of Arr_polycurve_traits_2::Push_front_2 */
 
+    class Trim_2
+    {
+    public:
+       /*!\brief
+       * returns a trimmed version of the polycurve with src and tgt as end vertices.
+       * Src and tgt will be swaped if they do not conform to the direction of the polycurve.
+       */
+      X_monotone_curve_2 operator()(const X_monotone_curve_2& xcv, 
+                                  const Point_2& src,
+                                  const Point_2& tgt)const
+    };
 
     /*!
      * Cut the given segment into x-monotone sub-segments and insert them
@@ -317,18 +268,6 @@ namespace CGAL {
       */
       template<class OutputIterator>
       OutputIterator operator()(const Curve_2& cv, OutputIterator oi) const;
-    };
-
-    class Trim_2
-    {
-    public:
-       /*!\brief
-       * returns a trimmed version of the polycurve with src and tgt as end vertices.
-       * Src and tgt will be swaped if they do not conform to the direction of the polycurve.
-       */
-      X_monotone_curve_2 operator()(const X_monotone_curve_2& xcv, 
-                                  const Point_2& src,
-                                  const Point_2& tgt)const
     };
 
     /*!  The `Curve_2` type nested in the `Arr_polycurve_traits_2`
