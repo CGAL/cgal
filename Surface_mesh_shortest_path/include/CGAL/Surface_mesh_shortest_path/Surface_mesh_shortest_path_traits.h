@@ -57,6 +57,7 @@ public:
 
   typedef typename Kernel::FT FT;
   
+  /// Barycentric coordinate type
   typedef typename CGAL::cpp11::array<FT,3> Barycentric_coordinate;
   
   // Predicates
@@ -111,7 +112,7 @@ private:
   Compare_relative_intersection_along_segment_2 m_compare_relative_intersection_along_segment_2_object;
   Is_saddle_vertex m_is_saddle_vertex_object;
   Parametric_distance_along_segment_2 m_parametric_distance_along_segment_2_object;
-  
+
 public:
 
   Surface_mesh_shortest_path_traits()

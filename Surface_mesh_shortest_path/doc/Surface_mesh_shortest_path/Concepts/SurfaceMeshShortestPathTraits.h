@@ -3,9 +3,9 @@
 
 \cgalConcept
  
-The concept `SurfaceMeshShortestPathTraits` describes the required types, 
-predicates, and constructions required to execute the 
-`Surface_mesh_shortest_path` algorithm
+The concept `SurfaceMeshShortestPathTraits` describes the types,
+predicates, and constructions required by the traits class parameter of
+`Surface_mesh_shortest_path`.
  
 \cgalHasModel `CGAL::Surface_mesh_shortest_path_traits<K,P>`
  
@@ -21,7 +21,7 @@ public:
   /// A model of the concept `FaceListGraph`
   typedef unspecified_type FaceListGraph;
   
-  /// A model of the concept `FieldWithSqrt`.
+  /// A model of the concept `FieldWithSqrt` or a model of both `Field` and `RealEmbeddable`.
   typedef unspecified_type FT;
   
   /// The 2-dimensional point type
@@ -46,7 +46,6 @@ public:
   typedef unspecified_type Barycentric_coordinate;
   
   /// The 3-dimensional point type
-  /// (Must be exactly the same type used by `FaceListGraph`).
   typedef unspecified_type Point_3;
   
   /// The 3-dimensional vector type
@@ -112,7 +111,7 @@ public:
   `Point_2 operator()(Segment_2 s, int i)`
   to return the source or target of `s`, depending on whether `i` is 0 or 1 respectively, and
   `Point_2 operator()(Triangle_2 t, int i)`
-  to return the ith vertex of `t`.
+  to return the `i`th vertex of `t`.
   */
   typedef unspecified_type Construct_vertex_2;
   
@@ -336,13 +335,7 @@ public:
 /// @}
 
 /// \name Creation
-/// A default and copy constructor are required
 /// @{
-  
-  /*!
-  */
-  SurfaceMeshShortestPathTraits();
-  
   /*!
   */
   SurfaceMeshShortestPathTraits(SurfaceMeshShortestPathTraits& copy);
