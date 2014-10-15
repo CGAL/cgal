@@ -77,9 +77,9 @@ struct Weight_calculator_selector<HalfedgeGraph, CGAL::ORIGINAL_ARAP> {
  /// @brief Class providing the functionalities for deforming a triangulated surface mesh
  ///
  /// @tparam HG a model of HalfedgeGraph
- /// @tparam VIM a model of `ReadablePropertyMap`</a>  with Surface_mesh_deformation::vertex_descriptor as key and `unsigned int` as value type.
+ /// @tparam VIM a model of `ReadablePropertyMap` with `Surface_mesh_deformation::vertex_descriptor` as key and `unsigned int` as value type.
  ///         The default is `boost::property_map<HG, boost::%vertex_index_t>::%type`.
- /// @tparam HIM a model of `ReadablePropertyMap`</a>  with Surface_mesh_deformation::halfedge_descriptor as key and `unsigned int` as value type.
+ /// @tparam HIM a model of `ReadablePropertyMap` with `Surface_mesh_deformation::halfedge_descriptor` as key and `unsigned int` as value type.
  ///         The default is `boost::property_map<HG, boost::%halfedge_index_t>::%type`.
  /// @tparam TAG tag for selecting the deformation algorithm
  /// @tparam WC a model of SurfaceModelingWeights, with `WC::Halfedge_graph` being `HG`.
