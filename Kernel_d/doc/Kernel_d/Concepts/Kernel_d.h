@@ -38,6 +38,11 @@ a number type that is a model for `RingNumberType`
 */ 
 typedef unspecified_type RT; 
 
+/*!
+the dimension of the ambient space. It must be either `Dimension_tag<d>` for some integer d or `Dynamic_dimension_tag`.
+*/
+typedef unspecified_type Dimension;
+
 /// @} 
 
 /// \name Coordinate Access 
