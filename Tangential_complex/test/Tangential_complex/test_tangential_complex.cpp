@@ -6,9 +6,10 @@
 # define TBB_USE_THREADING_TOOL
 #endif
 
+#include "test_utilities.h"
+
 #include <CGAL/Epick_d.h>
 #include <CGAL/Tangential_complex.h>
-#include <CGAL/point_generators_3.h>
 #include <CGAL/Random.h>
 #include <CGAL/Kernel_traits.h>
 #include <CGAL/Mesh_3/Profiling_tools.h>
@@ -21,121 +22,15 @@
 #endif
 
 #ifdef _DEBUG
-  const int NUM_POINTS = 6;
+  const int NUM_POINTS = 50;
 #else
-  const int NUM_POINTS = 50000;
+  const int NUM_POINTS = 500;
 #endif
-
-template <typename Point>
-std::vector<Point> generate_points_on_plane()
-{
-  typedef typename CGAL::Kernel_traits<Point>::type Kernel;
-  typedef typename Kernel::FT FT;
-  CGAL::Random rng;
-  std::vector<Point> points;
-  points.reserve(NUM_POINTS);
-  for (int i = 0 ; i != NUM_POINTS ; ++i)
-  {
-    FT x = rng.get_double(0, 5);
-    FT y = rng.get_double(0, 5);
-    points.push_back(Kernel().construct_point_d_object()(x, y, 0));
-  }
-  return points;
-}
-
-template <typename Point>
-std::vector<Point> generate_points_on_sphere(double radius)
-{
-  CGAL::Random_points_on_sphere_3<Point> generator(radius);
-  std::vector<Point> points;
-  points.reserve(NUM_POINTS);
-  for (int i = 0 ; i != NUM_POINTS ; ++i)
-    points.push_back(*generator++);
-  return points;
-}
-
-// a = big radius, b = small radius
-template <typename Point>
-std::vector<Point> generate_points_on_klein_bottle_3D(
-  double a, double b, bool uniform = false)
-{
-  typedef typename CGAL::Kernel_traits<Point>::type Kernel;
-  typedef typename Kernel::FT FT;
-  CGAL::Random rng;
-
-  // if uniform
-  int num_lines = (int)sqrt(NUM_POINTS);
-  int num_cols = NUM_POINTS/num_lines + 1;
-
-  std::vector<Point> points;
-  points.reserve(NUM_POINTS);
-  for (int i = 0 ; i != NUM_POINTS ; ++i)
-  {
-    FT u, v;
-    if (uniform)
-    {
-      int k1 = i / num_lines;
-      int k2 = i % num_lines;
-      u = 6.2832 * k1 / num_lines;
-      v = 6.2832 * k2 / num_lines;
-    }
-    else
-    { 
-      u = rng.get_double(0, 6.2832);
-      v = rng.get_double(0, 6.2832);
-    }
-    double tmp = cos(u/2)*sin(v) - sin(u/2)*sin(2.*v);
-    points.push_back(Kernel().construct_point_d_object()(
-      (a + b*tmp)*cos(u), 
-      (a + b*tmp)*sin(u),
-      b*(sin(u/2)*sin(v) + cos(u/2)*sin(2.*v))));
-  }
-  return points;
-}
-
-// a = big radius, b = small radius
-template <typename Point>
-std::vector<Point> generate_points_on_klein_bottle_4D(
-  double a, double b, bool uniform = false)
-{
-  typedef typename CGAL::Kernel_traits<Point>::type Kernel;
-  typedef typename Kernel::FT FT;
-  CGAL::Random rng;
-
-  // if uniform
-  int num_lines = (int)sqrt(NUM_POINTS);
-  int num_cols = NUM_POINTS/num_lines + 1;
-
-  std::vector<Point> points;
-  points.reserve(NUM_POINTS);
-  for (int i = 0 ; i != NUM_POINTS ; ++i)
-  {
-    FT u, v;
-    if (uniform)
-    {
-      int k1 = i / num_lines;
-      int k2 = i % num_lines;
-      u = 6.2832 * k1 / num_lines;
-      v = 6.2832 * k2 / num_lines;
-    }
-    else
-    { 
-      u = rng.get_double(0, 6.2832);
-      v = rng.get_double(0, 6.2832);
-    }
-    points.push_back(Kernel().construct_point_d_object()(
-      (a + b*cos(v))*cos(u), 
-      (a + b*cos(v))*sin(u),
-      b*sin(v)*cos(u/2),
-      b*sin(v)*sin(u/2)));
-  }
-  return points;
-}
 
 int main()
 {
-  const int INTRINSIC_DIMENSION = 2;
-  const int AMBIENT_DIMENSION = 4;
+  const int INTRINSIC_DIMENSION = 4;
+  const int AMBIENT_DIMENSION = 5;
 
   typedef CGAL::Epick_d<CGAL::Dimension_tag<AMBIENT_DIMENSION> > Kernel;
   typedef Kernel::Point_d                                        Point;
@@ -158,10 +53,11 @@ int main()
     CGAL::default_random = CGAL::Random(i);
     std::cerr << "Random seed = " << i << std::endl;
   
-    //std::vector<Point> points = generate_points_on_plane<Point>();
-    //std::vector<Point> points = generate_points_on_sphere<Point>(3.0);
-    //std::vector<Point> points = generate_points_on_klein_bottle_3D<Point>(4., 3.);
-    std::vector<Point> points = generate_points_on_klein_bottle_4D<Point>(4., 3.);
+    //std::vector<Point> points = generate_points_on_plane<Point>(NUM_POINTS);
+    //std::vector<Point> points = generate_points_on_sphere_3<Point>(NUM_POINTS, 3.0);
+    std::vector<Point> points = generate_points_on_sphere_d<Point>(NUM_POINTS, AMBIENT_DIMENSION, 3.0);
+    //std::vector<Point> points = generate_points_on_klein_bottle_3D<Point>(NUM_POINTS, 4., 3.);
+    //std::vector<Point> points = generate_points_on_klein_bottle_4D<Point>(NUM_POINTS, 4., 3.);
 
     CGAL::Tangential_complex<
       Kernel, 
@@ -179,7 +75,11 @@ int main()
     output_filename << "data/test_tc_" << INTRINSIC_DIMENSION
       << "_in_R" << AMBIENT_DIMENSION << ".off";
     std::ofstream off_stream(output_filename.str());
-    tc.export_to_off(off_stream, true, &incorrect_simplices, true);
+    if (INTRINSIC_DIMENSION <= 3)
+      tc.export_to_off(off_stream, true, &incorrect_simplices, true);
+    else
+      tc.number_of_inconsistent_simplices();
+
     double export_time = t.elapsed(); t.reset();
 
     std::cerr << std::endl
