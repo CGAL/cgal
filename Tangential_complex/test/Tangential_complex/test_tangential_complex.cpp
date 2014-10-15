@@ -29,14 +29,6 @@
 
 int main()
 {
-  const int INTRINSIC_DIMENSION = 4;
-  const int AMBIENT_DIMENSION = 5;
-
-  typedef CGAL::Epick_d<CGAL::Dimension_tag<AMBIENT_DIMENSION> > Kernel;
-  typedef Kernel::Point_d                                        Point;
- 
-  //CGAL::default_random = CGAL::Random(0); // NO RANDOM
-
 #ifdef CGAL_LINKED_WITH_TBB
 # ifdef _DEBUG
   tbb::task_scheduler_init init(1);
@@ -45,6 +37,12 @@ int main()
 # endif
 #endif
 
+  const int INTRINSIC_DIMENSION = 1;
+  const int AMBIENT_DIMENSION = 2;
+
+  typedef CGAL::Epick_d<CGAL::Dimension_tag<AMBIENT_DIMENSION> > Kernel;
+  typedef Kernel::Point_d                                        Point;
+ 
   int i = 0;
   bool stop = false;
   //for ( ; !stop ; ++i)
@@ -53,9 +51,10 @@ int main()
     CGAL::default_random = CGAL::Random(i);
     std::cerr << "Random seed = " << i << std::endl;
   
+    std::vector<Point> points = generate_points_on_circle_2<Point>(NUM_POINTS, 3.);
     //std::vector<Point> points = generate_points_on_plane<Point>(NUM_POINTS);
     //std::vector<Point> points = generate_points_on_sphere_3<Point>(NUM_POINTS, 3.0);
-    std::vector<Point> points = generate_points_on_sphere_d<Point>(NUM_POINTS, AMBIENT_DIMENSION, 3.0);
+    //std::vector<Point> points = generate_points_on_sphere_d<Point>(NUM_POINTS, AMBIENT_DIMENSION, 3.0);
     //std::vector<Point> points = generate_points_on_klein_bottle_3D<Point>(NUM_POINTS, 4., 3.);
     //std::vector<Point> points = generate_points_on_klein_bottle_4D<Point>(NUM_POINTS, 4., 3.);
 
