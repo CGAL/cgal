@@ -33,10 +33,10 @@ namespace CGAL {
 /*!
 \ingroup PkgSurfaceMeshShortestPathTraitsClasses
 
-\brief Provides an implementation of the `SurfaceMeshShortestPathTraits`
-model as required by the `Surface_mesh_shortest_path` algorithm
+\brief A model of the concept `SurfaceMeshShortestPathTraits`
+as required by the `Surface_mesh_shortest_path` class.
 
-\tparam K A CGAL Kernel
+\tparam K A \cgal %Kernel
 
 \tparam F A model of FaceListGraph
 

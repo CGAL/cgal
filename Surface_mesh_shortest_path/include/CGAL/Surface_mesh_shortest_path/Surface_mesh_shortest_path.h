@@ -2076,7 +2076,7 @@ public:
   */
   Source_point_iterator add_source_point(vertex_descriptor v)
   {
-    Face_location location = face_location(vertex);
+    Face_location location = face_location(v);
     return add_source_point(location);
   }
   
@@ -2087,8 +2087,8 @@ public:
   until either `Surface_mesh_shortest_path::build_sequence_tree()` or
   the first shortest path query is done.
   
-  \param f A face of the face graph
-  \param location Barycentric coordinate in face `f` specifying the source location.
+  \param f A face of the input face graph
+  \param location Barycentric coordinate in face `f` specifying the source point.
   \return An iterator to the source point added
   */
   Source_point_iterator add_source_point(face_descriptor f, Barycentric_coordinate location)
@@ -2230,9 +2230,7 @@ public:
   }
   
   /*!
-  \brief Returns the total number of source points
-    
-  \return The number of source points currently in the structure.
+  \brief Returns the total number of source points used for the shortest path queries.
   */
   std::size_t number_of_source_points() const
   {
@@ -2257,11 +2255,11 @@ public:
   /*!
   \brief Computes the shortest surface distance from a vertex to any source point
   
-  \param v A vertex of the face graph
-  \return A pair, containing the distance to the source location, and an 
-    iterator to the source location.  If no source location was reachable (can
+  \param v A vertex of the input face graph
+  \return A pair, containing the distance to the source point, and an 
+    iterator to the source point.  If no source point was reachable (can
     occur when the graph is disconnected), the distance will be a negative 
-    value and the source location will be equal to `source_points_end()`.
+    value and the source point iterator will be equal to `source_points_end()`.
   */
   Shortest_path_result shortest_distance_to_source_points(vertex_descriptor v)
   {
@@ -2284,12 +2282,12 @@ public:
   /*!
   \brief Computes the shortest surface distance from any surface location to any source point
   
-  \param f A face of the face graph
+  \param f A face of the input face graph
   \param location Barycentric coordinate of the query point on face `f`
-  \return A pair, containing the distance to the source location, and an 
-    iterator to the source location.  If no source location was reachable (can
+  \return A pair, containing the distance to the source point, and an 
+    iterator to the source point.  If no source point was reachable (can
     occur when the graph is disconnected), the distance will be a negative 
-    value and the source location will be equal to `source_points_end()`.
+    value and the source point iterator will be equal to `source_points_end()`.
   */
   Shortest_path_result shortest_distance_to_source_points(face_descriptor f, Barycentric_coordinate location)
   {
@@ -2318,14 +2316,14 @@ public:
   \brief Visits the sequence of edges, vertices and faces traversed by the shortest path
   from a vertex to any source point.
   
-  \details Points will be returned, starting from the query vertex, back to 
+  \details Visits simplices, starting from the query vertex, back to 
   the nearest source point. If no shortest path could be found (for example,
   the surface is disconnected), then no calls to the visitor will be made 
   (not even for the query vertex).
   
-  \param v A vertex of the face graph
+  \param v A vertex of the input face graph
   \param visitor A model of `SurfaceMeshShortestPathVisitor` to receive the shortest path
-  \return true if there exists a shortest path from `v` to any source point, false otherwise (may occur if the face graph is disconnected)
+  \return true if there exists a shortest path from `v` to any source point, false otherwise (may occur if the input face graph is disconnected)
   */
   template <class Visitor>
   bool shortest_path_sequence_to_source_points(vertex_descriptor v, Visitor& visitor)
@@ -2350,15 +2348,15 @@ public:
   \brief Visits the sequence of edges, vertices and faces traversed by the shortest path
   from any surface location to any source point.
   
-  \details Points will be returned, starting from the query point, back to 
+  \details Visits simplices, starting from the query point, back to 
   the nearest source point. If no shortest path could be found (for example,
   the surface is disconnected), then no calls to the visitor will be made 
   (not even for the query point).
   
-  \param f A face of the face graph
+  \param f A face of the input face graph
   \param location Barycentric coordinate of the query point on face `f`
   \param visitor A model of `SurfaceMeshShortestPathVisitor` to receive the shortest path
-  \return true if there exists a shortest path from the query point to any source point, false otherwise (may occur if the face graph is disconnected)
+  \return true if there exists a shortest path from the query point to any source point, false otherwise (may occur if the input face graph is disconnected)
   */
   template <class Visitor>
   bool shortest_path_sequence_to_source_points(face_descriptor f, Barycentric_coordinate location, Visitor& visitor)
@@ -2388,12 +2386,12 @@ public:
 
   /*!
   \brief Computes the sequence of points in the shortest path along the 
-    surface of the face graph from the given vertex to the closest
-    source location.
+    surface of the input face graph from the given vertex to the closest
+    source point.
   
-  \param v A vertex of the face graph
+  \param v A vertex of the input face graph
   \param output An OutputIterator to receive the shortest path points as `Point_3` objects
-  \return true if there exists a shortest path to v, false otherwise (may occur if the face graph is disconnected)
+  \return true if there exists a shortest path to v, false otherwise (may occur if the input face graph is disconnected)
   */
   template <class OutputIterator>
   bool shortest_path_points_to_source_points(vertex_descriptor v, OutputIterator output)
@@ -2406,13 +2404,13 @@ public:
   
   /*!
   \brief Computes the sequence of points in the shortest path along the 
-    surface of the face graph from the given query location to the closest
-    source location.
+    surface of the input face graph from the given query location to the closest
+    source point.
 
-  \param f A face of on the face graph
+  \param f A face of on the input face graph
   \param location The barycentric coordinate of the query point on face `f` 
   \param output An OutputIterator to receive the shortest path points as `Point_3` objects
-  \return true if there exists a shortest path to the query point, false otherwise (may occur if the face graph is disconnected)
+  \return true if there exists a shortest path to the query point, false otherwise (may occur if the input face graph is disconnected)
   */
   template <class OutputIterator>
   bool shortest_path_points_to_source_points(face_descriptor f, Barycentric_coordinate location, OutputIterator output)
@@ -2436,7 +2434,7 @@ public:
     - `static Point_3 point(face_descriptor f, Barycentric_coordinate location, const FaceListGraph& g, const Traits& traits = Traits())`
     - `static Point_3 point(face_descriptor f, Barycentric_coordinate location, const FaceListGraph& g, VertexPointMap vertexPointMap, const Traits& traits = Traits())`
   
-  \param f A face of on the face graph
+  \param f A face of on the input face graph
   \param location The barycentric coordinate of the query point on face `f` 
   */
   Point_3 point(face_descriptor f, Barycentric_coordinate location) const
@@ -2466,7 +2464,7 @@ public:
     - `static Point_3 point(halfedge_descriptor edge, FT t, const FaceListGraph& g, const Traits& traits = Traits())`
     - `static Point_3 point(halfedge_descriptor edge, FT t, const FaceListGraph& g, VertexPointMap vertexPointMap, const Traits& traits = Traits())`
 
-  \param edge An edge of the face graph
+  \param edge An edge of the input face graph
   \param t The parametric distance along edge of the desired point
   */
   Point_3 point(halfedge_descriptor edge, FT t) const
@@ -2494,7 +2492,7 @@ public:
   /*!
   \brief Returns the 3-dimensional coordinate of the given vertex.
   
-  \param vertex A vertex of the face graph
+  \param vertex A vertex of the input face graph
   */
   Point_3 point(vertex_descriptor vertex) const
   {
@@ -2512,7 +2510,7 @@ public:
   \details The following static overload is also available:
     - `static Face_location face_location(vertex_descriptor vertex, const FaceListGraph& g, const Traits& traits = Traits())`
   
-  \param vertex A vertex of the face graph
+  \param vertex A vertex of the input face graph
   */
   Face_location face_location(vertex_descriptor vertex) const
   {
@@ -2543,7 +2541,7 @@ public:
   \details The following static overload is also available:
     - `static Face_location face_location(halfedge_descriptor he, FT t, const FaceListGraph& g, const Traits& traits = Traits())`
   
-  \param he A halfedge of the face graph
+  \param he A halfedge of the input face graph
   \param t Parametric distance of the desired point along `he`
   */
   Face_location face_location(halfedge_descriptor he, FT t) const
@@ -2584,16 +2582,16 @@ public:
     that accept a reference to an `AABB_tree` as input.
     
   \details The following static overload is also available:
-    - `static Face_location locate(const Point_3& location, const FaceListGraph& g, VertexPointMap vertexPointMap, const Traits& traits = Traits())`
+    - `static Face_location locate(const Point_3& p, const FaceListGraph& g, VertexPointMap vertexPointMap, const Traits& traits = Traits())`
   
   \tparam AABBTraits A model of `AABBTraits` used to defined a \cgal `AABB_tree`.
   
-  \param location Point to locate on the face graph
+  \param p Point to locate on the input face graph
   */
   template <class AABBTraits>
-  Face_location locate(const Point_3& location) const
+  Face_location locate(const Point_3& p) const
   {
-    return locate<AABBTraits>(location, m_graph, m_vertexPointMap, m_traits);
+    return locate<AABBTraits>(p, m_graph, m_vertexPointMap, m_traits);
   }
   
   /// \cond
@@ -2612,17 +2610,17 @@ public:
   \brief Returns the face location nearest to the given point.
   
   \details The following static overload is also available:
-    - static Face_location locate(const Point_3& location, const AABB_tree<AABBTraits>& tree, const FaceListGraph& g, VertexPointMap vertexPointMap, const Traits& traits = Traits())
+    - static Face_location locate(const Point_3& p, const AABB_tree<AABBTraits>& tree, const FaceListGraph& g, VertexPointMap vertexPointMap, const Traits& traits = Traits())
   
   \tparam AABBTraits A model of `AABBTraits` used to defined a \cgal `AABB_tree`.
   
-  \param location Point to locate on the face graph
+  \param p Point to locate on the input face graph
   \param tree A `AABB_tree` containing the triangular faces of the input surface mesh to perform the point location with
   */
   template <class AABBTraits>
-  Face_location locate(const Point_3& location, const AABB_tree<AABBTraits>& tree) const
+  Face_location locate(const Point_3& p, const AABB_tree<AABBTraits>& tree) const
   {
-    return locate(location, tree, m_graph, m_vertexPointMap, m_traits);
+    return locate(p, tree, m_graph, m_vertexPointMap, m_traits);
   }
   
   /// \cond
@@ -2652,7 +2650,7 @@ public:
   
   \tparam AABBTraits A model of `AABBTraits` used to defined an `AABB_tree`.
   
-  \param ray Ray to intersect with the face graph
+  \param ray Ray to intersect with the input face graph
   */
   template <class AABBTraits>
   Face_location locate(const Ray_3& ray) const
@@ -2681,7 +2679,7 @@ public:
     
   \tparam AABBTraits A model of `AABBTraits` used to defined a \cgal `AABB_tree`.
   
-  \param ray Ray to intersect with the face graph
+  \param ray Ray to intersect with the input face graph
   \param tree A `AABB_tree` containing the triangular faces of the input surface mesh to perform the point location with
   */
   template <class AABBTraits>
