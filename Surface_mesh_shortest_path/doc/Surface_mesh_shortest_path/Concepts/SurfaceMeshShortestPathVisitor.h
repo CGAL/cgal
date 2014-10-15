@@ -3,9 +3,9 @@
 
 \cgalConcept
 
-The concept `SurfaceMeshShortestPathVisitor` describes the visitor type
+The concept `SurfaceMeshShortestPathVisitor` describes the requirements of the visitor type
 used to collect the edges and vertices traversed by a shortest path on the
-surface of a polyhedron. 
+surface of a triangulated surface mesh.
 
 The methods are called in the order of the shortest path sequence along the
  surface, starting with the target point and ending with the source point.
@@ -28,6 +28,7 @@ public:
     - Any other value is linearly interpolated between the endpoints.
     
     Note that values of 0.0 and 1.0 are possible in some situations, and may not be reported as vertices.
+  \todo Shall we handle this internally?
   */
   void edge(halfedge_descriptor edge, FT t);
   
