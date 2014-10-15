@@ -11,7 +11,7 @@ typedef CGAL::Exact_predicates_inexact_constructions_kernel     Kernel;
 typedef CGAL::Scale_space_surface_reconstruction_3< Kernel >    Reconstruction;
 
 typedef Reconstruction::Point                                   Point;
-typedef std::vector< Point >                                    Pointset;
+typedef std::vector< Point >                                    Point_collection;
 
 typedef Reconstruction::Triple_const_iterator                   Triple_iterator;
 
@@ -31,7 +31,7 @@ void dump_reconstruction(const Reconstruction& reconstruct, std::string name)
 
 int main(void) {
     // Read the data.
-    Pointset points;
+    Point_collection points;
     std::ifstream in("data/kitten.off");
     std::cout << "Reading " << std::flush;
     if( !in || !CGAL::read_off_points( in, std::back_inserter( points ) ) ) {
