@@ -1,11 +1,3 @@
-// (LicenseStuffHere)
-//
-// $URL$
-// $Id$
-// 
-//
-// Author(s)     : Stephen Kiazyk
-
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 

@@ -1,11 +1,3 @@
-// (LicenseStuffHere)
-//
-// $URL$
-// $Id$
-// 
-//
-// Author(s)     : Stephen Kiazyk
-
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <CGAL/Polyhedron_3.h>

@@ -1,11 +1,3 @@
-// (LicenseStuffHere)
-//
-// $URL$
-// $Id$
-// 
-//
-// Author(s)     : Stephen Kiazyk
-
 #include <iostream>
 #include <fstream>
 #include <utility>
