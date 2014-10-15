@@ -15,8 +15,17 @@ namespace CGAL {
 \cgalAutoToc
 \author %CGAL Editorial Board
 
+This chapter is for the %CGAL newbie, who knows C++ and has 
+a basic knowledge of geometric algorithms. The first section
+shows how to define a point and segment class, and how to
+apply geometric predicates on them. The section further raises
+the awareness that that there are serious issues when using
+floating point numbers for coordinates. In the second section
+you see how the 2D convex hull function gets its input
+and where it puts the result.  The third section shows what
+we mean with a \em Traits class.
 
-\section intro_Three Three Points, One Segment, and an Orientation Test
+\section intro_Three Three Points and One Segment
 
 In this first example we see how to construct some points
 and a segment, and we perform some basic operations on them.
@@ -68,16 +77,21 @@ constructions.  An example for that is the convex hull algorithm.
 The output is a subset of the input, and all the algorithm 
 does is to compare coordinates and perform orientation tests. 
 
-At first sight the kernel doing exact predicates and constructions
+At a first glance the kernel doing exact predicates and constructions
 seems to be the perfect choice, but performance requirements
-or limited memory resources make that it it is not.
+or limited memory resources make that it is not. Also for many
+algorithms it is irrelevant to do exact constructions. For example
+a surface mesh simplification algorithm that iteratively contracts
+an edge, by collapsing it to the midpoint of the edge.
+
 Most \cgal packages explain what kind of kernel they need or support.
 
 
-\section intro_convex_hull Passing a Sequence of Points to an Algorithm
+\section intro_convex_hull The Convex Hull of a Sequence of Points
 
-All examples in this section computing the 2D convex hull of a set of points.
-The points are given by a begin/end iterator pair denoting a sequence of points.
+All examples in this section compute the 2D convex hull of a set of points.
+The convex hull function expects by a begin/end iterator pair denoting a sequence of points,
+and it writes the points on the convex hull into an output iterator.
 
 \subsection intro_array The Convex Hull of Points in a Built-in Array
 
@@ -165,7 +179,7 @@ containers. If you don't know the \stl, you maybe better first
 familiarize yourself with its basic ideas.
 
 
-\section intro_traits About Traits Classes
+\section intro_traits About Kernels and Traits Classes
 
 If you look at the manual page of the function `convex_hull_2()`
 and the other 2D convex hull algorithms, you see that they come in two
