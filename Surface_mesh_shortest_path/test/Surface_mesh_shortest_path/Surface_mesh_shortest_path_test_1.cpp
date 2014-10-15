@@ -147,7 +147,7 @@ BOOST_AUTO_TEST_CASE( test_simple_saddle_vertex_mesh )
 
   Surface_mesh_shortest_path shortestPaths(P, traits);
   //shortestPaths.m_debugOutput = true;
-  Surface_mesh_shortest_path::Source_point_handle firstSourcePoint = shortestPaths.add_source_point(currentFace, baryCoord);
+  Surface_mesh_shortest_path::Source_point_iterator firstSourcePoint = shortestPaths.add_source_point(currentFace, baryCoord);
   shortestPaths.build_sequence_tree();
   
   VPM vpm = CGAL::get(CGAL::vertex_point, P);
@@ -257,7 +257,7 @@ BOOST_AUTO_TEST_CASE( test_simple_saddle_vertex_mesh )
   size_t vertexIndex2 = CGAL::test::face_vertex_index(currentFace2, rootSearchVertex2, P);
   Barycentric_coordinate baryCoord2 = construct_barycentric_coordinate(vertexIndex2 == 0 ? FT(1.0) : FT(0.0), vertexIndex2 == 1 ? FT(1.0) : FT(0.0), vertexIndex2 == 2 ? FT(1.0) : FT(0.0));
   
-  Surface_mesh_shortest_path::Source_point_handle secondSourcePoint = shortestPaths.add_source_point(currentFace2, baryCoord2);
+  Surface_mesh_shortest_path::Source_point_iterator secondSourcePoint = shortestPaths.add_source_point(currentFace2, baryCoord2);
   shortestPaths.build_sequence_tree();
   
   FT distanceToApexFrom2 = CGAL::sqrt(compute_squared_distance_3(vertexLocations[5], vertexLocations[7]));
@@ -284,7 +284,7 @@ BOOST_AUTO_TEST_CASE( test_simple_saddle_vertex_mesh )
     distanceToApexFrom2,
   };
 
-  Surface_mesh_shortest_path::Source_point_handle expectedSources2[8] =
+  Surface_mesh_shortest_path::Source_point_iterator expectedSources2[8] =
   {
     secondSourcePoint,
     firstSourcePoint,

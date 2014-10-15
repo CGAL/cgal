@@ -96,7 +96,7 @@ BOOST_AUTO_TEST_CASE( test_incremental_construction_removal )
   const size_t numInitialLocations = 10;
   
   std::vector<Face_location> sourcePoints;
-  std::vector<Surface_mesh_shortest_path::Source_point_handle> handles;
+  std::vector<Surface_mesh_shortest_path::Source_point_iterator> handles;
   
   // First, try adding a few locations 
   
@@ -111,7 +111,7 @@ BOOST_AUTO_TEST_CASE( test_incremental_construction_removal )
   
   size_t checkNumLocations = 0;
   
-  for (Surface_mesh_shortest_path::Source_point_handle it = shortestPaths.source_points_begin(); it != shortestPaths.source_points_end(); ++it)
+  for (Surface_mesh_shortest_path::Source_point_iterator it = shortestPaths.source_points_begin(); it != shortestPaths.source_points_end(); ++it)
   {
     handles.push_back(it);
     ++checkNumLocations;
@@ -119,7 +119,7 @@ BOOST_AUTO_TEST_CASE( test_incremental_construction_removal )
   
   BOOST_CHECK_EQUAL(checkNumLocations, shortestPaths.number_of_source_points());
   
-  for (Surface_mesh_shortest_path::Source_point_handle it = shortestPaths.source_points_begin(); it != shortestPaths.source_points_end(); ++it)
+  for (Surface_mesh_shortest_path::Source_point_iterator it = shortestPaths.source_points_begin(); it != shortestPaths.source_points_end(); ++it)
   {
     Surface_mesh_shortest_path::Shortest_path_result result = shortestPaths.shortest_distance_to_source_points(it->first, it->second);
 

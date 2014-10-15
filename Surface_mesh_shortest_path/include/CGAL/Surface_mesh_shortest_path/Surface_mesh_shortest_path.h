@@ -164,7 +164,7 @@ public:
   
   This iterator supports equality comparison operations.
   */
-  class Source_point_handle
+  class Source_point_iterator
   {
   public:
     typedef std::bidirectional_iterator_tag iterator_category;
@@ -177,7 +177,7 @@ public:
     
     friend class Surface_mesh_shortest_path;
   
-    Source_point_handle(Source_point_underlying_iterator it)
+    Source_point_iterator(Source_point_underlying_iterator it)
       : m_iterator(it)
     {
     }
@@ -186,24 +186,24 @@ public:
     /*!
     \brief %Default constructor
     */
-    Source_point_handle()
+    Source_point_iterator()
     {
     }
     
     /*!
     \brief Copy constructor
     */
-    Source_point_handle(const Source_point_handle& other)
+    Source_point_iterator(const Source_point_iterator& other)
       : m_iterator(other.m_iterator)
     {
     }
     
     /*
-    \brief Copy the contents of another `Source_point_handle`
+    \brief Copy the contents of another `Source_point_iterator`
     
-    \param other The handle to be copied
+    \param other The iterator to be copied
     */
-    Source_point_handle& operator=(const Source_point_handle& other)
+    Source_point_iterator& operator=(const Source_point_iterator& other)
     {
       m_iterator = other.m_iterator;
       return *this;
@@ -219,47 +219,47 @@ public:
       return &(*m_iterator);
     }
     
-    Source_point_handle& operator++() 
+    Source_point_iterator& operator++() 
     { 
       ++m_iterator; 
       return *this;
     }
     
-    Source_point_handle operator++(int)
+    Source_point_iterator operator++(int)
     {
-      Source_point_handle temp(*this);
+      Source_point_iterator temp(*this);
       ++m_iterator;
       return temp;
     }
     
-    Source_point_handle& operator--() 
+    Source_point_iterator& operator--() 
     { 
       --m_iterator; 
       return *this;
     }
     
-    Source_point_handle operator--(int)
+    Source_point_iterator operator--(int)
     {
-      Source_point_handle temp(*this);
+      Source_point_iterator temp(*this);
       --m_iterator;
       return temp;
     }
   
-    bool operator==(const Source_point_handle& other)
+    bool operator==(const Source_point_iterator& other)
     {
       return m_iterator == other.m_iterator;
     }
     
-    bool operator!=(const Source_point_handle& other)
+    bool operator!=(const Source_point_iterator& other)
     {
       return m_iterator != other.m_iterator;
     }
   };
   
   /// The return type from shortest path distance queries. Stores the distance
-  /// to the nearest source point, and a `Source_point_handle` to the 
+  /// to the nearest source point, and a `Source_point_iterator` to the 
   /// source point itself
-  typedef typename std::pair<FT, Source_point_handle> Shortest_path_result;
+  typedef typename std::pair<FT, Source_point_iterator> Shortest_path_result;
   
 /// @}
   
@@ -329,7 +329,7 @@ private:
   std::vector<Node_distance_pair> m_vertexOccupiers;
   std::vector<Node_distance_pair> m_closestToVertices;
   
-  std::vector<std::pair<Cone_tree_node*, Source_point_handle> > m_rootNodes;
+  std::vector<std::pair<Cone_tree_node*, Source_point_iterator> > m_rootNodes;
   Source_point_list m_faceLocations;
   Source_point_underlying_iterator m_firstNewSourcePoint;
   Source_point_list m_deletedSourceLocations;
@@ -658,7 +658,7 @@ private:
     Determines whether to expand `location` as a face, edge, or vertex root, depending on 
     whether it is near to a given edge or vertex, or is an internal face location
   */
-  void expand_root(face_descriptor f, Barycentric_coordinate location, Source_point_handle sourcePointIt)
+  void expand_root(face_descriptor f, Barycentric_coordinate location, Source_point_iterator sourcePointIt)
   {
     typename Traits::Construct_barycentric_coordinate_weight cbcw(m_traits.construct_barycentric_coordinate_weight_object());
     typename Traits::Classify_barycentric_coordinate classify_barycentric_coordinate(m_traits.classify_barycentric_coordinate_object());
@@ -701,7 +701,7 @@ private:
   /*
     Create source nodes facing each edge of `f`, rooted at the given `faceLocation`
   */
-  void expand_face_root(face_descriptor f, Barycentric_coordinate faceLocation, Source_point_handle sourcePointIt)
+  void expand_face_root(face_descriptor f, Barycentric_coordinate faceLocation, Source_point_iterator sourcePointIt)
   {
     typename Traits::Construct_triangle_3_to_triangle_2_projection pt3t2(m_traits.construct_triangle_3_to_triangle_2_projection_object());
     typename Traits::Construct_vertex_2 cv2(m_traits.construct_vertex_2_object());
@@ -746,7 +746,7 @@ private:
   /*
     Create 'source' nodes to each size of the given edge, rooted at the specified parametric location
   */
-  void expand_edge_root(halfedge_descriptor baseEdge, FT t0, FT t1, Source_point_handle sourcePointIt)
+  void expand_edge_root(halfedge_descriptor baseEdge, FT t0, FT t1, Source_point_iterator sourcePointIt)
   {
     typename Traits::Construct_barycenter_2 cb2(m_traits.construct_barycenter_2_object());
     typename Traits::Construct_vertex_2 cv2(m_traits.construct_vertex_2_object());
@@ -803,7 +803,7 @@ private:
   /*
     Create a 'source' node for each face surrounding the given vertex.
   */
-  void expand_vertex_root(vertex_descriptor vertex, Source_point_handle sourcePointIt)
+  void expand_vertex_root(vertex_descriptor vertex, Source_point_iterator sourcePointIt)
   {
     if (m_debugOutput)
     {
@@ -1794,13 +1794,13 @@ private:
   }
   
   template <class InputIterator>
-  Source_point_handle add_source_points_internal(InputIterator begin, InputIterator end, vertex_descriptor)
+  Source_point_iterator add_source_points_internal(InputIterator begin, InputIterator end, vertex_descriptor)
   {
-    Source_point_handle firstAdded;
+    Source_point_iterator firstAdded;
     
     for (InputIterator it = begin; it != end; ++it)
     {
-      Source_point_handle added = add_source_point(face_location(*it));
+      Source_point_iterator added = add_source_point(face_location(*it));
       
       if (it == begin)
       {
@@ -1812,13 +1812,13 @@ private:
   }
   
   template <class InputIterator>
-  Source_point_handle add_source_points_internal(InputIterator begin, InputIterator end, Face_location)
+  Source_point_iterator add_source_points_internal(InputIterator begin, InputIterator end, Face_location)
   {
-    Source_point_handle firstAdded;
+    Source_point_iterator firstAdded;
     
     for (InputIterator it = begin; it != end; ++it)
     {
-      Source_point_handle added = add_source_point(it->first, it->second);
+      Source_point_iterator added = add_source_point(it->first, it->second);
       
       if (it == begin)
       {
@@ -1893,7 +1893,7 @@ private:
         std::cout << "Root: " << get(m_faceIndexMap, it->first) << " , " << it->second[0] << " " << it->second[1] << " " << it->second[2] << " " << std::endl;
       }
       
-      expand_root(it->first, it->second, Source_point_handle(it));
+      expand_root(it->first, it->second, Source_point_iterator(it));
     }
     
     if (m_debugOutput)
@@ -2073,9 +2073,8 @@ public:
   the first shortest path query is done.
   
   \return An iterator to the source point added
-  \todo split in 2 handle and iterator
   */
-  Source_point_handle add_source_point(vertex_descriptor v)
+  Source_point_iterator add_source_point(vertex_descriptor v)
   {
     Face_location location = face_location(vertex);
     return add_source_point(location);
@@ -2092,7 +2091,7 @@ public:
   \param location Barycentric coordinate in face `f` specifying the source location.
   \return An iterator to the source point added
   */
-  Source_point_handle add_source_point(face_descriptor f, Barycentric_coordinate location)
+  Source_point_iterator add_source_point(face_descriptor f, Barycentric_coordinate location)
   {
     return add_source_point(std::make_pair(f, location));
   }
@@ -2101,7 +2100,7 @@ public:
   \brief Adds a point inside a face as a source for the shortest path queries, 
   equivalent to `Surface_mesh_shortest_path::add_source_point(location.first, location.second);`
   */
-  Source_point_handle add_source_point(Face_location location)
+  Source_point_iterator add_source_point(Face_location location)
   {
     Source_point_underlying_iterator added = m_faceLocations.insert(m_faceLocations.end(), location);
     
@@ -2110,7 +2109,7 @@ public:
       m_firstNewSourcePoint = added;
     }
     
-    return Source_point_handle(added);
+    return Source_point_iterator(added);
   }
   
   /*!
@@ -2127,7 +2126,7 @@ public:
   \return An iterator to the first source point added.
   */
   template <class InputIterator>
-  Source_point_handle add_source_points(InputIterator begin, InputIterator end)
+  Source_point_iterator add_source_points(InputIterator begin, InputIterator end)
   {
     return add_source_points_internal(begin, end, typename std::iterator_traits<InputIterator>::value_type());
   }
@@ -2142,7 +2141,7 @@ public:
   
   \param it iterator to the source point to be removed
   */
-  void remove_source_point(Source_point_handle it)
+  void remove_source_point(Source_point_iterator it)
   {
     if (it == m_firstNewSourcePoint)
     {
@@ -2212,12 +2211,12 @@ public:
     
   \return An iterator to the first of the stored source points.
   */
-  Source_point_handle source_points_begin() const
+  Source_point_iterator source_points_begin() const
   {
     // It is a feature of C++11 that `const_iterator` may be used in calls to `erase()`, however
     // in order to support C++98, we must use `iterator`.  Semantically, this is correct, but
     // I must cast away the const-ness to hide the internal uglyness
-    return Source_point_handle(const_cast<std::list<Face_location>&>(m_faceLocations).begin());
+    return Source_point_iterator(const_cast<std::list<Face_location>&>(m_faceLocations).begin());
   }
 
   /*!
@@ -2225,9 +2224,9 @@ public:
 
   \return An iterator to one past-the-end in the list of stored source points.
   */
-  Source_point_handle source_points_end() const
+  Source_point_iterator source_points_end() const
   {
-    return Source_point_handle(const_cast<std::list<Face_location>&>(m_faceLocations).end());
+    return Source_point_iterator(const_cast<std::list<Face_location>&>(m_faceLocations).end());
   }
   
   /*!
