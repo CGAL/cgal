@@ -290,7 +290,7 @@ public:
 #endif
 
     os << "OFF \n"
-       << m_points.size() << " " 
+       << num_vertices << " " 
        << num_simplices << " "
        << "0 \n"
        << output.str();
@@ -856,7 +856,11 @@ private:
       num_vertices = 0;
       return os;
     }
-
+    
+    // If Intrinsic_dimension = 1, we output each point two times
+    // to be able to export each segment as a flat triangle with 3 different
+    // indices (otherwise, Meshlab detects degenerated simplices)
+    const int N = (Intrinsic_dimension == 1 ? 2 : 1);
     const int ambient_dim = m_k.point_dimension_d_object()(*m_points.begin());
 
     // Kernel functors
@@ -872,22 +876,26 @@ private:
     // For each point p
     for ( ; it_p != it_p_end ; ++it_p)
     {
-      int i = 0;
-      for ( ; i < num_coords ; ++i)
-        os << CGAL::to_double(coord(*it_p, i)) << " ";
-      if (i == 2)
-        os << "0";
+      for (int ii = 0 ; ii < N ; ++ii)
+      {
+        int i = 0;
+        for ( ; i < num_coords ; ++i)
+          os << CGAL::to_double(coord(*it_p, i)) << " ";
+        if (i == 2)
+          os << "0";
       
 #ifdef CGAL_TC_EXPORT_NORMALS
-      for (i = 0 ; i < num_coords ; ++i)
-        os << " " << CGAL::to_double(coord(*it_n, i));
+        for (i = 0 ; i < num_coords ; ++i)
+          os << " " << CGAL::to_double(coord(*it_n, i));
+#endif
+        os << std::endl;
+      }
+#ifdef CGAL_TC_EXPORT_NORMALS
       ++it_n;
 #endif
-
-      os << std::endl;
     }
 
-    num_vertices = m_points.size();
+    num_vertices = N*m_points.size();
     return os;
   }
 
@@ -897,6 +905,11 @@ private:
     std::set<std::set<std::size_t> > const* excluded_simplices = NULL,
     bool show_excluded_vertices_in_color = false)
   {
+    // If Intrinsic_dimension = 1, each point is output two times
+    // (see export_vertices_to_off)
+    int factor = (Intrinsic_dimension == 1 ? 2 : 1);
+    int OFF_simplices_dim = 
+      (Intrinsic_dimension == 1 ? 3 : Intrinsic_dimension + 1);
     num_simplices = 0;
     std::size_t num_inconsistent_simplices = 0;
     Tr_container::const_iterator it_tr = m_triangulations.begin();
@@ -927,12 +940,16 @@ private:
         {
           std::set<std::size_t> c;
           std::stringstream sstr_c;
+          std::size_t data;
           for (int i = 0 ; i < Intrinsic_dimension + 1 ; ++i)
           {
-            std::size_t data = (*it_c)->vertex(i)->data();
-            sstr_c << data << " ";
+            data = (*it_c)->vertex(i)->data();
+            sstr_c << data*factor << " ";
             c.insert(data);
           }
+          // See export_vertices_to_off
+          if (Intrinsic_dimension == 1)
+            sstr_c << (data*factor + 1) << " ";
 
           bool excluded = 
             (excluded_simplices
@@ -940,7 +957,7 @@ private:
           
           if (!excluded)
           {
-            os << Intrinsic_dimension + 1 << " " << sstr_c.str() << " ";
+            os << OFF_simplices_dim << " " << sstr_c.str() << " ";
             if (color_inconsistencies && is_simplex_consistent(c))
               os << color.str();
             else
@@ -952,7 +969,7 @@ private:
           }
           else if (show_excluded_vertices_in_color)
           {
-            os << Intrinsic_dimension + 1 << " " 
+            os << OFF_simplices_dim << " " 
                << sstr_c.str() << " "
                << "0 0 255";
             ++num_simplices;
@@ -960,9 +977,17 @@ private:
         }
         else
         {
-          os << Intrinsic_dimension + 1 << " ";
+          os << OFF_simplices_dim << " ";
+          std::size_t data;
           for (int i = 0 ; i < Intrinsic_dimension + 1 ; ++i)
-            os << (*it_c)->vertex(i)->data() << " ";
+          {
+            data = (*it_c)->vertex(i)->data();
+            os << data*factor << " ";
+          }
+          // See export_vertices_to_off
+          if (Intrinsic_dimension == 1)
+            os << (data*factor + 1) << " ";
+
           ++num_simplices;
         }
 
