@@ -158,7 +158,7 @@ public:
   \details An iterator becomes invalid if:
    - the corresponding point is removed (either with `Surface_mesh_shortest_path::remove_source_point()` or `Surface_mesh_shortest_path::remove_all_source_points()`).
    - the structure is re-built (triggered by a shortest path query or a call to `Surface_mesh_shortest_path::build_sequence_tree()`).
-   - the structure is cleared (`Surface_mesh_shortest_path::clear_sequence_tree()`).
+   - the structure is cleared (`Surface_mesh_shortest_path::clear()`).
 
   Dereferencing this iterator yields a `const Surface_mesh_shortest_path::Face_location&`.
   
@@ -2158,7 +2158,7 @@ public:
   \details No change to the internal shortest paths data structure occurs
   until either `Surface_mesh_shortest_path::build_sequence_tree()` or
   the first shortest path query is done.
-  For a version which deletes all data immediately, use `clear_sequence_tree()` instead.
+  For a version which deletes all data immediately, use `clear()` instead.
   */
   void remove_all_source_points()
   {
@@ -2187,13 +2187,13 @@ public:
   }
   
   /*!
-  \brief Removes all source point from the sequence tree
+  \brief Removes all data, the class is as if it was constructed.
   
-  \details The entire container is reset to its default state and any current
-  sequence tree is deleted.  For a version which defers deletion until
+  \details All internal containers are cleared  and the internal
+  sequence tree is also cleared.  For a version which defers deletion until
   it is necessary, use `Surface_mesh_shortest_path::remove_all_source_points()`.
   */
-  void clear_sequence_tree()
+  void clear()
   {
     reset_algorithm();
   }

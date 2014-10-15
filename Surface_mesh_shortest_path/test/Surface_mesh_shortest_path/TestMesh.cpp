@@ -200,7 +200,7 @@ struct TestMeshProgramInstance
       std::cout << "STE(location): " << faceIndexMap[startLocation.first] << " , " << startLocation.second[0] << " " << startLocation.second[1] << " " << startLocation.second[2] << " " << std::endl;
       std::cout << "ETS(location): " << faceIndexMap[endLocation.first] << " , " << endLocation.second[0] << " " << endLocation.second[1] << " " << endLocation.second[2] << " " << std::endl;
 
-      startToEndShortestPaths.clear_sequence_tree();
+      startToEndShortestPaths.clear();
       startToEndShortestPaths.add_source_point(startLocation.first, startLocation.second);
       startToEndShortestPaths.build_sequence_tree();
       
@@ -210,7 +210,7 @@ struct TestMeshProgramInstance
 
       FT startToEnd = startToEndShortestPaths.shortest_distance_to_source_points(endLocation.first, endLocation.second).first;
 
-      endToStartShortestPaths.clear_sequence_tree();
+      endToStartShortestPaths.clear();
       endToStartShortestPaths.add_source_point(endLocation.first, endLocation.second);
       endToStartShortestPaths.build_sequence_tree();
 

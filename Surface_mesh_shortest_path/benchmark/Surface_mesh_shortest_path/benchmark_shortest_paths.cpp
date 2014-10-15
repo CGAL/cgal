@@ -215,7 +215,7 @@ void run_benchmarks(CGAL::Random& rand, size_t numTrials, size_t numSources, siz
       sourcePoints.push_back(Face_location(sourceFace, sourceLocation));
     }
 
-    shortestPaths.clear_sequence_tree();
+    shortestPaths.clear();
     shortestPaths.add_source_points(sourcePoints.begin(), sourcePoints.end());
     
     timer.start();

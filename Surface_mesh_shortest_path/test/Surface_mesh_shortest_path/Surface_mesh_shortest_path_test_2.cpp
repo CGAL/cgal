@@ -121,7 +121,7 @@ BOOST_AUTO_TEST_CASE( test_a_to_b_vs_b_t_a_distances )
 
     //startToEndShortestPaths.m_debugOutput = true;
     
-    startToEndShortestPaths.clear_sequence_tree();
+    startToEndShortestPaths.clear();
     startToEndShortestPaths.add_source_point(startVertex);
     startToEndShortestPaths.build_sequence_tree();
 
@@ -132,7 +132,7 @@ BOOST_AUTO_TEST_CASE( test_a_to_b_vs_b_t_a_distances )
     
     //endToStartShortestPaths.m_debugOutput = true;
     
-    endToStartShortestPaths.clear_sequence_tree();
+    endToStartShortestPaths.clear();
     endToStartShortestPaths.add_source_point(endVertex);
     endToStartShortestPaths.build_sequence_tree();
     
@@ -210,7 +210,7 @@ BOOST_AUTO_TEST_CASE( test_a_to_b_vs_b_t_a_distances )
 
     //shortestPaths.m_debugOutput = true;
     
-    startToEndShortestPaths.clear_sequence_tree();
+    startToEndShortestPaths.clear();
     startToEndShortestPaths.add_source_point(startFace, startLocation);
     startToEndShortestPaths.build_sequence_tree();
 
@@ -219,7 +219,7 @@ BOOST_AUTO_TEST_CASE( test_a_to_b_vs_b_t_a_distances )
     CGAL::test::Edge_sequence_collector<Traits> startToEndCollector(vertexIndexMap, halfedgeIndexMap, faceIndexMap);
     startToEndShortestPaths.shortest_path_sequence_to_source_points(endFace, endLocation, startToEndCollector);
     
-    endToStartShortestPaths.clear_sequence_tree();
+    endToStartShortestPaths.clear();
     endToStartShortestPaths.add_source_point(endFace, endLocation);
     endToStartShortestPaths.build_sequence_tree();
     
