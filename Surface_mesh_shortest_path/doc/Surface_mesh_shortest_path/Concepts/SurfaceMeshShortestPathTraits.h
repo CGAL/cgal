@@ -152,11 +152,8 @@ public:
   Function object type.
   Must provide
   `CGAL::cpp11::result_of<Intersect_2(A,B)>::%type operator()(A obj1, B obj2)`
-  to compute the intersection between `obj1` and `obj2`, where `A` and `B` can be any one of
-  `Line_2`,
-  `Ray_2`,
-  `Segment_2`,
-  type objects.
+  to compute the intersection between `obj1` and `obj2`, where `A` and `B` can be any type amongst
+  `Line_2`, `Ray_2`, `Segment_2`.
   */
   typedef unspecified_type Intersect_2;
   
@@ -244,7 +241,7 @@ public:
   segment `[x0,x1]`.  That is, it computes `t`, such that
   `p = (1.0 - t)*x0 + t*x1`
   
-  \pre `p` is a point along the segment `[x0,x1]`
+  \pre `p` is a point in the segment `[x0,x1]`
   */
   typedef unspecified_type Compute_parametric_distance_along_segment_2;
 
@@ -286,13 +283,12 @@ public:
   `std::pair<CGAL::Surface_mesh_shortest_paths_3::Barycentric_coordinate_type,std::size_t> operator()(Barycentric_coordinate b)`,
   which computes the classification and the associated edge (if applicable) of the coordinate `b`
   \details Returns the pair (`type`, `i`), such that `type` is one of the values of `CGAL::Surface_mesh_shortest_paths_3::Barycentric_coordinate_type`
-  - If `type` is `CGAL::Surface_mesh_shortest_paths_3::BARYCENTRIC_COORDINATE_VERTEX`, `i` should be the index of that vertex
-  - If `type` is `CGAL::Surface_mesh_shortest_paths_3::BARYCENTRIC_COORDINATE_EDGE`, `i` should be the index of the non-zero edge
+  - If `type` is `CGAL::Surface_mesh_shortest_paths_3::BARYCENTRIC_COORDINATE_VERTEX`, `i` is the index of that vertex
+  - If `type` is `CGAL::Surface_mesh_shortest_paths_3::BARYCENTRIC_COORDINATE_EDGE`, `i` is the index of the non-zero edge
     - 0 if (0,1) are the non-zero coordinates
     - 1 if (1,2) are the non-zero coordinates
     - 2 if (2,0) are the non-zero coordinates
-    
-  Otherwise, the value of `i` is undefined.
+  - Otherwise, the value of `i` is undefined.
   */
   typedef unspecified_type Classify_barycentric_coordinate;
   
@@ -315,19 +311,19 @@ public:
   `CGAL::Comparison_result operator()(Segment_2 s1, Line_2 l1, Segment_2 s2, Line_2 l2)`.
   This compares the relative parametric intersections of `s1` with `l1` against `s2` with `l2`.
   That is, compare the distance of the intersection of `s1` with `l1` from the 
-  start point of `s1`, scaled by the length of `s1`, to the distance of the intersection 
-  of `s2` with `l2` from the start point of `s2`, scaled by the length of `s2`.
+  source of `s1`, scaled by the length of `s1`, to the distance of the intersection 
+  of `s2` with `l2` from the source of `s2`, scaled by the length of `s2`.
   
-  \pre the intersection of `s1` and `l1` is a single point
-  \pre the intersection of `s2` and `l2` is a single point
+  \pre the intersection of `s1` and `l1` is a point
+  \pre the intersection of `s2` and `l2` is a point
   */
   typedef unspecified_type Compare_relative_intersection_along_segment_2;
   
   /*!
   Function object type that provides 
-  `template <class VertexPointMap> bool operator()(boost::graph_traits<FaceGraph>::%vertex_descriptor v, FaceGraph& p, VertexPointMap vpm)`
+  `template <class VertexPointMap> bool operator()(boost::graph_traits<FaceListGraph>::%vertex_descriptor v, FaceListGraph& g, VertexPointMap vpm)`
   that returns true if the vertex is a saddle vertex (more than \f$ 2 \pi \f$ surface area 
-  over all adjacent faces), and false otherwise.  `vpm` must be a a model of concept `ReadablePropertyMap` that maps from `vertex_descriptor` to
+  over all adjacent faces), and false otherwise.  `vpm` must be a model of concept `ReadablePropertyMap` that maps from `vertex_descriptor` to
   `Point_3` objects.
   */
   typedef unspecified_type Is_saddle_vertex;
