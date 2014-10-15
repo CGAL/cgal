@@ -54,7 +54,6 @@ BOOST_AUTO_TEST_CASE( test_find_nearest_face_location_above_surface )
   
   typedef CGAL::AABB_face_graph_triangle_primitive<Polyhedron_3, VPM> AABB_face_graph_primitive;
   typedef CGAL::AABB_traits<Kernel, AABB_face_graph_primitive> AABB_face_graph_traits;
-  typedef CGAL::AABB_tree<AABB_face_graph_traits> AABB_face_graph_tree;
   
   Traits traits;
   

@@ -207,6 +207,7 @@ public:
     Source_point_handle& operator=(const Source_point_handle& other)
     {
       m_iterator = other.m_iterator;
+      return *this;
     }
     
     const Face_location& operator*() const
@@ -2104,7 +2105,7 @@ public:
   */
   Source_point_handle add_source_point(face_descriptor f, Barycentric_coordinate location)
   {
-    add_source_point(std::make_pair(f, location));
+    return add_source_point(std::make_pair(f, location));
   }
   
   /*!
