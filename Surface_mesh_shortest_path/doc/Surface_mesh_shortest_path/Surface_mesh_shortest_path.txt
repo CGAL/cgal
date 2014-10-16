@@ -74,33 +74,30 @@ In order to use the algorithm, one creates an instance of the `Surface_mesh_shor
 
 \subsection Surface_mesh_shortest_pathSimpleExample Simple Example
 
-The following example shows how to get the shortest path to every vertex from an arbitrary source point on the surface.  Note that this example uses the `Polyhedron_items_with_id_3` traits class.  This algorithm must store auxiliary data with each vertex, halfedge, and facet, thus it is most efficient to have unique 0-based indices assigned to each.
+The following example shows how to get the shortest path to every vertex from an arbitrary source point on the surface.  Note that this example uses the `Polyhedron_items_with_id_3` item class.  The shortest path class needs to have an index associated to each vertex, halfedge and face.Using this item class provide an efficient direct access to the required indices.
 
 \cgalExample{Surface_mesh_shortest_path/shortest_paths_with_id.cpp}
 
 \subsection Surface_mesh_shortest_pathExampeWithoutId Example Using Polyhedron Items without IDs
 
-Although it is preferred to have the indices built into each item, we can also support meshes without an ID on each item using an external index.  The following example shows how to achieve this.
+Although it is better to have an index built into each simplex, you can also use a surface mesh without internal indices by using external indices.
+The following example shows how to proceed in this case.
 
 \cgalExample{Surface_mesh_shortest_path/shortest_paths_no_id.cpp}
 
-\subsection Surface_mesh_shortest_pathOpenMeshExample OpenMesh Example
-
-This is the same example as above, except it shows replacing the traits class to use a different polyhedron model, specifically an OpenMesh model.
-
-\cgalExample{Surface_mesh_shortest_path/shortest_paths_OpenMesh.cpp}
-
 \subsection Surface_mesh_shortest_pathMultipleSources Using Multiple Source Points
 
-This example shows computing the sequence tree from multiple source points, using an iterator range of Face_location objects, generated at random.
+This example shows how to compute the sequence tree from multiple source points, using an iterator range of `Face_location` objects generated at random.
 
 \cgalExample{Surface_mesh_shortest_path/shortest_paths_multiple_sources.cpp}
 
 \subsection Surface_mesh_shortest_pathSequenceVisitor Shortest Path Sequence Visitor
 
-This example shows how to use the `SurfaceMeshShortestPathVisitor` concept to get detailed information about the sequence of edges/vertices crossed by a shortest path between two face locations.
+This example shows how to implement a model of the `SurfaceMeshShortestPathVisitor` concept to get detailed information about the sequence of simplicies crossed by a shortest path.
 
 \cgalExample{Surface_mesh_shortest_path/shortest_path_sequence.cpp}
+
+\todo add an example using the AABB-tree
 
 \section Surface_mesh_shortest_pathBenchmarks Benchmarks
 

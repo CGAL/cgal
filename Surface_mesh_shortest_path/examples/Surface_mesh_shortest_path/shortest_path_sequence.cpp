@@ -11,173 +11,114 @@
 #include <CGAL/Polyhedron_items_with_id_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
 
-
+#include <CGAL/Surface_mesh_shortest_path.h>
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/boost/graph/iterator.h>
 
-#include <CGAL/Surface_mesh_shortest_path.h>
-
-enum Sequence_item_type
-{
-  SEQUENCE_ITEM_VERTEX,
-  SEQUENCE_ITEM_EDGE,
-  SEQUENCE_ITEM_FACE,
-};
-
-// Stores a single item in a shortest paths sequence (edge, vertex, crossed, or a face end-point).
-template <class Traits>
-struct Sequence_item
-{
-  typedef typename Traits::FaceListGraph FaceListGraph;
-  typedef typename Traits::FT FT;
-  typedef typename Traits::Barycentric_coordinate Barycentric_coordinate;
-  typedef typename boost::graph_traits<FaceListGraph> GraphTraits;
-  typedef typename GraphTraits::vertex_descriptor vertex_descriptor;
-  typedef typename GraphTraits::halfedge_descriptor halfedge_descriptor;
-  typedef typename GraphTraits::face_descriptor face_descriptor;
-  
-  Sequence_item_type type;
-  size_t index;
-  Barycentric_coordinate faceAlpha;
-  FT edgeAlpha;
-  
-  halfedge_descriptor halfedge;
-  vertex_descriptor vertex;
-  face_descriptor face;
-};
-
-// A model of SurfaceMeshShortestPathVisitor
-template <class Traits, 
-  class VIM = typename boost::property_map<typename Traits::FaceListGraph, boost::vertex_index_t>::type,
-  class HIM = typename boost::property_map<typename Traits::FaceListGraph, boost::halfedge_index_t>::type,
-  class FIM = typename boost::property_map<typename Traits::FaceListGraph, boost::face_index_t>::type>
-struct Sequence_collector
-{
-  typedef typename Traits::FaceListGraph FaceListGraph;
-  typedef typename Traits::FT FT;
-  typedef typename Traits::Barycentric_coordinate Barycentric_coordinate;
-  typedef VIM VertexIndexMap;
-  typedef HIM HalfedgeIndexMap;
-  typedef FIM FaceIndexMap;
-  typedef typename boost::graph_traits<FaceListGraph> GraphTraits;
-  typedef typename GraphTraits::vertex_descriptor vertex_descriptor;
-  typedef typename GraphTraits::halfedge_descriptor halfedge_descriptor;
-  typedef typename GraphTraits::face_descriptor face_descriptor;
-
-  VertexIndexMap m_vertexIndexMap;
-  HalfedgeIndexMap m_halfedgeIndexMap;
-  FaceIndexMap m_faceIndexMap;
-  
-  std::vector<Sequence_item<Traits> > m_sequence;
-  
-  Sequence_collector(FaceListGraph& g)
-    : m_vertexIndexMap(CGAL::get(boost::vertex_index, g))
-    , m_halfedgeIndexMap(CGAL::get(CGAL::halfedge_index, g))
-    , m_faceIndexMap(CGAL::get(CGAL::face_index, g))
-  {
-  }
-  
-  void edge(halfedge_descriptor he, FT alpha)
-  {
-    Sequence_item<Traits> item;
-    item.type = SEQUENCE_ITEM_EDGE;
-    item.index = m_halfedgeIndexMap[he];
-    item.edgeAlpha = alpha;
-    item.halfedge = he;
-    m_sequence.push_back(item);
-  }
-  
-  void vertex(vertex_descriptor v)
-  {
-    Sequence_item<Traits> item;
-    item.type = SEQUENCE_ITEM_VERTEX;
-    item.index = m_vertexIndexMap[v];
-    item.vertex = v;
-    m_sequence.push_back(item);
-  }
-  
-  void face(face_descriptor f, Barycentric_coordinate alpha)
-  {
-    Sequence_item<Traits> item;
-    item.type = SEQUENCE_ITEM_FACE;
-    item.index = m_faceIndexMap[f];
-    item.faceAlpha = alpha;
-    item.face = f;
-    m_sequence.push_back(item);
-  }
-};
+#include <boost/variant.hpp>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef CGAL::Polyhedron_3<Kernel, CGAL::Polyhedron_items_with_id_3> Polyhedron_3;
 typedef CGAL::Surface_mesh_shortest_path_traits<Kernel, Polyhedron_3> Traits;
 typedef CGAL::Surface_mesh_shortest_path<Traits> Surface_mesh_shortest_path;
-typedef boost::graph_traits<Polyhedron_3> GraphTraits;
-typedef GraphTraits::vertex_iterator vertex_iterator;
-typedef GraphTraits::face_descriptor face_descriptor;
-typedef GraphTraits::face_iterator face_iterator;
+typedef Traits::Barycentric_coordinate Barycentric_coordinate;
+typedef boost::graph_traits<Polyhedron_3> Graph_traits;
+typedef Graph_traits::vertex_iterator vertex_iterator;
+typedef Graph_traits::face_iterator face_iterator;
+typedef Graph_traits::vertex_descriptor vertex_descriptor;
+typedef Graph_traits::face_descriptor face_descriptor;
+typedef Graph_traits::halfedge_descriptor halfedge_descriptor;
 
-Traits::Barycentric_coordinate random_coordinate(CGAL::Random& rand)
+// A model of SurfaceMeshShortestPathVisitor storing simplicies
+// using boost::variant
+struct Sequence_collector
 {
-  typename Traits::Construct_barycentric_coordinate construct_barycentric_coordinate;
-  Traits::FT u = rand.uniform_real(Traits::FT(0.0), Traits::FT(1.0));
-  Traits::FT v = rand.uniform_real(Traits::FT(0.0), Traits::FT(Traits::FT(1.0) - u));
-  return construct_barycentric_coordinate(u, v, Traits::FT(Traits::FT(1.0) - u - v));
-}
+  typedef boost::variant< vertex_descriptor,
+                         std::pair<halfedge_descriptor,double>,
+                         std::pair<face_descriptor, Barycentric_coordinate> > Simplex;
+  std::vector< Simplex > sequence;
+
+  void edge(halfedge_descriptor he, double alpha)
+  {
+
+    sequence.push_back( std::make_pair(he, alpha) );
+  }
+
+  void vertex(vertex_descriptor v)
+  {
+    sequence.push_back( v );
+  }
+
+  void face(face_descriptor f, Barycentric_coordinate alpha)
+  {
+    sequence.push_back( std::make_pair(f, alpha) );
+  }
+};
+
+// A visitor to print what a variant contains using boost::apply_visitor
+struct Print_visitor : public boost::static_visitor<> {
+  int i;
+  Polyhedron_3& g;
+
+  Print_visitor(Polyhedron_3& g) :i(-1), g(g) {}
+
+  void operator()(vertex_descriptor v)
+  {
+    std::cout << "#" << ++i << " : Vertex : " << get(boost::vertex_index, g)[v] << "\n";
+  }
+
+  void operator()(const std::pair<halfedge_descriptor,double>& h_a)
+  {
+    std::cout << "#" << ++i << " : Edge : " << get(CGAL::halfedge_index, g)[h_a.first] << " , ("
+                                            << 1.0 - h_a.second << " , "
+                                            << h_a.second << ")\n";
+  }
+
+  void operator()(const std::pair<face_descriptor, Barycentric_coordinate>& f_bc)
+  {
+    std::cout << "#" << ++i << " : Face : " << get(CGAL::face_index, g)[f_bc.first] << " , ("
+                                            << f_bc.second[0] << " , "
+                                            << f_bc.second[1] << " , "
+                                            << f_bc.second[2] << ")\n";
+  }
+};
 
 int main(int argc, char** argv)
 {
+  // read input polyhedron
   Polyhedron_3 polyhedron;
-  
-  std::ifstream inStream(argv[1]);
-  
-  inStream >> polyhedron;
-  
-  inStream.close();
-  
-  const size_t randSeed = argc > 2 ? std::atoi(argv[2]) : 8031760;
+  std::ifstream input(argv[1]);
+  input >> polyhedron;
+  input.close();
+
+  // initialize indices of vertices, halfedges and facets
+  CGAL::set_halfedgeds_items_id(polyhedron);
+
+  // pick up a random face
+  const size_t randSeed = argc > 2 ? std::atoi(argv[2]) : 7915421;
   CGAL::Random rand(randSeed);
+  const int target_face_index = rand.get_int(0, num_faces(polyhedron));
+  face_iterator face_it = faces(polyhedron).first;
+  std::advance(face_it,target_face_index);
+  // ... and define a barycentric coordinate inside the face
+  Barycentric_coordinate face_location = {{0.25, 0.5, 0.25}};
 
-  face_iterator facesStart, facesEnd;
-  boost::tie(facesStart, facesEnd) = faces(polyhedron);
-  
-  std::vector<face_descriptor> faceList;
-  
-  for (face_iterator facesCurrent = facesStart; facesCurrent != facesEnd; ++facesCurrent)
-  {
-    faceList.push_back(*facesCurrent);
-  }
+  // construct a shortest path query object and add a source point
+  Surface_mesh_shortest_path shortest_paths(polyhedron);
+  shortest_paths.add_source_point(*face_it, face_location);
 
-  std::vector<std::pair<Surface_mesh_shortest_path::Face_location, Surface_mesh_shortest_path::Face_location > > locationPairs;
+  // pick a random target point inside a face
+  face_it = faces(polyhedron).first;
+  std::advance(face_it, rand.get_int(0, num_faces(polyhedron)));
 
-  Traits traits;
-  Surface_mesh_shortest_path shortestPaths(polyhedron, traits);
-  
-  Surface_mesh_shortest_path::Face_location startLocation(faceList[rand.get_int(0, CGAL::num_faces(polyhedron))], random_coordinate(rand));
-  Surface_mesh_shortest_path::Face_location endLocation(faceList[rand.get_int(0, CGAL::num_faces(polyhedron))], random_coordinate(rand));
-  
-  shortestPaths.add_source_point(startLocation.first, startLocation.second);
+  // collect the sequence of simplicies crossed by the shortest path
+  Sequence_collector sequence_collector;
+  shortest_paths.shortest_path_sequence_to_source_points(*face_it, face_location, sequence_collector);
 
-  Sequence_collector<Traits> sequenceCollector(polyhedron);
-  
-  shortestPaths.shortest_path_sequence_to_source_points(endLocation.first, endLocation.second, sequenceCollector);
-  
-  for (size_t i = 0; i < sequenceCollector.m_sequence.size(); ++i)
-  {
-    Sequence_item<Traits>& item = sequenceCollector.m_sequence[i];
-    
-    switch (item.type)
-    {
-      case SEQUENCE_ITEM_VERTEX:
-        std::cout << "#" << i << " : Vertex : " << item.vertex->id() << std::endl;
-        break;
-      case SEQUENCE_ITEM_EDGE:
-        std::cout << "#" << i << " : Edge : " << item.halfedge->id() << " , (" << Traits::FT(1.0) - item.edgeAlpha << " , " << item.edgeAlpha << ")" << std::endl;
-        break;
-      case SEQUENCE_ITEM_FACE:
-        std::cout << "#" << i << " : Face : " << item.face->id() << " , (" << item.faceAlpha[0] << " , " << item.faceAlpha[1] << " , " << item.faceAlpha[2] << ")" << std::endl;
-        break;
-    }
-  }
-  
+  // print the sequence using the visitor pattern
+  Print_visitor print_visitor(polyhedron);
+  for (size_t i = 0; i < sequence_collector.sequence.size(); ++i)
+    boost::apply_visitor(print_visitor, sequence_collector.sequence[i]);
+
   return 0;
 }

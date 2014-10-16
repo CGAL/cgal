@@ -21,67 +21,51 @@ typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 
 typedef OpenMesh::PolyMesh_ArrayKernelT<> Mesh;
 
-typedef boost::graph_traits<Mesh> GraphTraits;
-typedef GraphTraits::vertex_descriptor vertex_descriptor;
-typedef GraphTraits::vertex_iterator vertex_iterator;
-typedef GraphTraits::halfedge_descriptor halfedge_descriptor;
-typedef GraphTraits::halfedge_iterator halfedge_iterator;
-typedef GraphTraits::face_descriptor face_descriptor;
-typedef GraphTraits::face_iterator face_iterator;
+typedef boost::graph_traits<Mesh> Graph_traits;
+typedef Graph_traits::vertex_descriptor vertex_descriptor;
+typedef Graph_traits::vertex_iterator vertex_iterator;
+typedef Graph_traits::face_descriptor face_descriptor;
+typedef Graph_traits::face_iterator face_iterator;
 
 typedef CGAL::Surface_mesh_shortest_path_traits<Kernel, Mesh> Traits;
 typedef CGAL::Surface_mesh_shortest_path<Traits> Surface_mesh_shortest_path;
 
 int main(int argc, char** argv)
 {
-  Traits::Construct_barycentric_coordinate construct_barycentric_coordinate;
-  
+  // read the input surface mesh
   Mesh polyhedron;
-
   OpenMesh::IO::read_mesh(polyhedron, argv[1]);
 
-  const size_t randSeed = argc > 2 ? std::atoi(argv[2]) : 9601263;
+  // pick up a random face
+  const size_t randSeed = argc > 2 ? std::atoi(argv[2]) : 7915421;
   CGAL::Random rand(randSeed);
-  
-  const size_t targetFaceIndex = rand.get_int(0, num_faces(polyhedron));
-  
-  face_iterator facesCurrent, facesEnd;
-  boost::tie(facesCurrent, facesEnd) = faces(polyhedron);
-  
-  size_t currentFaceIndex = 0;
-  
-  while (currentFaceIndex < targetFaceIndex)
-  {
-    ++facesCurrent;
-    ++currentFaceIndex;
-  }
-  
-  face_descriptor targetFace = *facesCurrent;
+  const int target_face_index = rand.get_int(0, num_faces(polyhedron));
+  face_iterator face_it = faces(polyhedron).first;
+  std::advance(face_it,target_face_index);
+  // ... and define a barycentric coordinate inside the face
+  Traits::Barycentric_coordinate face_location = {{0.25, 0.5, 0.25}};
 
-  Traits::Barycentric_coordinate faceLocation = construct_barycentric_coordinate(Traits::FT(0.25), Traits::FT(0.5), Traits::FT(0.25));
-  
-  Traits traits;
-  Surface_mesh_shortest_path shortestPaths(polyhedron, traits);
+  // construct a shortest path query object and add a source point
+  Surface_mesh_shortest_path shortest_paths(polyhedron);
+  shortest_paths.add_source_point(*face_it, face_location);
 
-  shortestPaths.add_source_point(targetFace, faceLocation);
-  
-  vertex_iterator verticesCurrent, verticesEnd;
-
-  for (boost::tie(verticesCurrent, verticesEnd) = boost::vertices(polyhedron); verticesCurrent != verticesEnd; ++verticesCurrent)
+  // For all vertices in the polyhedron, compute the points of
+  // the shortest path to the source point and write them
+  // into a file readable using the CGAL Polyhedron demo
+  std::ofstream output("shortest_paths_OpenMesh.cgal");
+  vertex_iterator vit, vit_end;
+  for ( boost::tie(vit, vit_end) = vertices(polyhedron);
+        vit != vit_end; ++vit)
   {
     std::vector<Traits::Point_3> points;
-    
-    shortestPaths.shortest_path_points_to_source_points(*verticesCurrent, std::back_inserter(points));
-    
-    std::cout << points.size();
-    
-    for (size_t i = 0; i < points.size(); ++i)
-    {
-      std::cout << " " << points[i];
-    }
-    
-    std::cout << std::endl;
+    shortest_paths.shortest_path_points_to_source_points(*vit, std::back_inserter(points));
+
+    // print the points
+    output << points.size() << " ";
+    for (std::size_t i = 0; i < points.size(); ++i)
+      output << " " << points[i];
+    output << std::endl;
   }
-  
+
   return 0;
 }

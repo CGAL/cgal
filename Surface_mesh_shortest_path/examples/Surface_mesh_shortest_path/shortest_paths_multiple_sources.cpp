@@ -11,84 +11,70 @@
 #include <CGAL/Polyhedron_items_with_id_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
 
+#include <CGAL/Surface_mesh_shortest_path.h>
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/boost/graph/iterator.h>
 
-#include <CGAL/Surface_mesh_shortest_path.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef CGAL::Polyhedron_3<Kernel, CGAL::Polyhedron_items_with_id_3> Polyhedron_3;
 typedef CGAL::Surface_mesh_shortest_path_traits<Kernel, Polyhedron_3> Traits;
 typedef CGAL::Surface_mesh_shortest_path<Traits> Surface_mesh_shortest_path;
-typedef boost::graph_traits<Polyhedron_3> GraphTraits;
-typedef GraphTraits::vertex_iterator vertex_iterator;
-typedef GraphTraits::face_descriptor face_descriptor;
-typedef GraphTraits::face_iterator face_iterator;
-
-Traits::Barycentric_coordinate random_coordinate(CGAL::Random& rand)
-{
-  typename Traits::Construct_barycentric_coordinate construct_barycentric_coordinate;
-  Traits::FT u = rand.uniform_real(Traits::FT(0.0), Traits::FT(1.0));
-  Traits::FT v = rand.uniform_real(Traits::FT(0.0), Traits::FT(Traits::FT(1.0) - u));
-  return construct_barycentric_coordinate(u, v, Traits::FT(Traits::FT(1.0) - u - v));
-}
+typedef Surface_mesh_shortest_path::Face_location Face_location;
+typedef boost::graph_traits<Polyhedron_3> Graph_traits;
+typedef Graph_traits::vertex_iterator vertex_iterator;
+typedef Graph_traits::face_iterator face_iterator;
+typedef Graph_traits::face_descriptor face_descriptor;
 
 int main(int argc, char** argv)
 {
+  // read input polyhedron
   Polyhedron_3 polyhedron;
-  
-  std::ifstream inStream(argv[1]);
-  
-  inStream >> polyhedron;
-  
-  inStream.close();
-  
+  std::ifstream input(argv[1]);
+  input >> polyhedron;
+  input.close();
+
+  // initialize indices of vertices, halfedges and facets
   CGAL::set_halfedgeds_items_id(polyhedron);
-  
-  const size_t randSeed = argc > 2 ? std::atoi(argv[2]) : 6065626;
+
+  // pick up some source points inside faces,
+  const size_t randSeed = argc > 2 ? std::atoi(argv[2]) : 7915421;
   CGAL::Random rand(randSeed);
-  
-  face_iterator facesStart, facesEnd;
-  boost::tie(facesStart, facesEnd) = faces(polyhedron);
-  
-  std::vector<face_descriptor> faceList;
-  
-  for (face_iterator facesCurrent = facesStart; facesCurrent != facesEnd; ++facesCurrent)
+  // by copying the faces in a vector to get a direct access to faces
+  std::size_t nb_faces=num_faces(polyhedron);
+  face_iterator fit, fit_end;
+  boost::tie(fit, fit_end) = faces(polyhedron);
+  std::vector<face_descriptor> face_vector(fit, fit_end);
+  // and creating a vector of Face_location objects
+  const std::size_t nb_source_points = 30;
+  Traits::Barycentric_coordinate face_location = {{0.25, 0.5, 0.25}};
+  std::vector<Face_location> faceLocations(nb_source_points, Face_location(face_descriptor(), face_location));
+  for (std::size_t i = 0; i < nb_source_points; ++i)
   {
-    faceList.push_back(*facesCurrent);
+    faceLocations[i].first=face_vector[rand.get_int(0, nb_faces)];
   }
 
-  const size_t numSamplePoints = 30;
+  // construct a shortest path query object and add a range of source points
+  Surface_mesh_shortest_path shortest_paths(polyhedron);
+  shortest_paths.add_source_points(faceLocations.begin(), faceLocations.end());
   
-  std::vector<Surface_mesh_shortest_path::Face_location> faceLocations;
-  
-  for (size_t i = 0; i < numSamplePoints; ++i)
-  {
-    faceLocations.push_back(Surface_mesh_shortest_path::Face_location(faceList[rand.get_int(0, CGAL::num_faces(polyhedron))], random_coordinate(rand)));
-  }
-  
-  Traits traits;
-  Surface_mesh_shortest_path shortestPaths(polyhedron, traits);
-
-  shortestPaths.add_source_points(faceLocations.begin(), faceLocations.end());
-  
-  vertex_iterator verticesCurrent, verticesEnd;
-
-  for (boost::tie(verticesCurrent, verticesEnd) = boost::vertices(polyhedron); verticesCurrent != verticesEnd; ++verticesCurrent)
+  // For all vertices in the polyhedron, compute the points of
+  // the shortest path to the source point and write them
+  // into a file readable using the CGAL Polyhedron demo
+  std::ofstream output("shortest_paths_multiple_sources.cgal");
+  vertex_iterator vit, vit_end;
+  for ( boost::tie(vit, vit_end) = vertices(polyhedron);
+        vit != vit_end; ++vit)
   {
     std::vector<Traits::Point_3> points;
-    
-    shortestPaths.shortest_path_points_to_source_points(*verticesCurrent, std::back_inserter(points));
-    
-    std::cout << points.size();
-    
-    for (size_t i = 0; i < points.size(); ++i)
-    {
-      std::cout << " " << points[i];
-    }
-    
-    std::cout << std::endl;
+    shortest_paths.shortest_path_points_to_source_points(*vit, std::back_inserter(points));
+
+    // print the points
+    output << points.size() << " ";
+    for (std::size_t i = 0; i < points.size(); ++i)
+      output << " " << points[i];
+    output << std::endl;
   }
-  
+
   return 0;
 }
