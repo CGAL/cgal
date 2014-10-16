@@ -230,6 +230,7 @@ public:
     std::cerr << std::endl
       << "================================================" << std::endl
       << "Inconsistencies:\n"
+      << "  * Number of vertices: " << m_points.size() << std::endl
       << "  * Total number of simplices in stars (incl. duplicates): " 
       << num_simplices << std::endl
       << "  * Number of inconsistent simplices in stars (incl. duplicates): " 
@@ -920,6 +921,9 @@ private:
       Triangulation const& tr    = it_tr->tr();
       Tr_vertex_handle center_vh = it_tr->center_vertex();
 
+      if (tr.current_dimension() < Intrinsic_dimension)
+        continue;
+
       // Color for this star
       std::stringstream color;
       //color << rand()%256 << " " << 100+rand()%156 << " " << 100+rand()%156;
@@ -999,12 +1003,15 @@ private:
     std::cerr << std::endl
       << "================================================" << std::endl
       << "Export to OFF:\n"
+      << "  * Number of vertices: " << m_points.size() << std::endl
       << "  * Total number of simplices in stars (incl. duplicates): " 
       << num_simplices << std::endl
       << "  * Number of inconsistent simplices in stars (incl. duplicates): " 
       << num_inconsistent_simplices << std::endl
       << "  * Percentage of inconsistencies: " 
-      << 100 * num_inconsistent_simplices / num_simplices << "%" << std::endl
+      << (num_simplices > 0 ? 
+          100 * num_inconsistent_simplices / num_simplices : 0) << "%" 
+      << std::endl
       << "================================================" << std::endl;
 #endif
 
