@@ -262,6 +262,19 @@ public:
   {
   }
   
+  /// Constructor
+  Point_cloud_data_structure(
+    Point_container_ const& points, 
+    std::size_t begin_idx, std::size_t past_the_end_idx)
+  : m_points(points),
+    m_tree(
+      boost::counting_iterator<std::ptrdiff_t>(begin_idx),
+      boost::counting_iterator<std::ptrdiff_t>(past_the_end_idx),
+      Tree::Splitter(),
+      STraits((Point*)&(points[0])) )
+  {
+  }
+  
   /*Point_container_ &points()
   {
     return m_points;
