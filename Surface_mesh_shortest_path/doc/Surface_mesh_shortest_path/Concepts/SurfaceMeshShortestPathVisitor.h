@@ -21,8 +21,8 @@ public:
 
   /*!
   \brief Called when an edge was traversed in the shortest path sequence.
-  \param edge halfedge of the polyhedron crossed by the shortest path. The halfedge will be directed toward the face <em>nearest</em> to the target point.
-  \param t value in the range [0.0,1.0] specifying where along `edge` the shortest path crossed. 
+  \param edge halfedge of the polyhedron crossed by the shortest path. The halfedge is directed toward the face <em>nearest</em> to the target point.
+  \param alpha value in the range [0.0,1.0] specifying where along `edge` the shortest path crossed.
     - 0.0 means it crossed at `source(edge)`
     - 1.0 means it crossed at `target(edge)`
     - Any other value is linearly interpolated between the endpoints.
@@ -30,7 +30,7 @@ public:
     Note that values of 0.0 and 1.0 are possible in some situations, and may not be reported as vertices.
   \todo Shall we handle this internally?
   */
-  void operator()(halfedge_descriptor edge, FT t);
+  void operator()(halfedge_descriptor edge, FT alpha);
   
   /*!
   \brief Called when a vertex is encountered in the shortest path sequence.
