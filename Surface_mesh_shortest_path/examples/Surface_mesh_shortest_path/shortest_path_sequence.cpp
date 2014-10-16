@@ -38,18 +38,18 @@ struct Sequence_collector
                          std::pair<face_descriptor, Barycentric_coordinate> > Simplex;
   std::vector< Simplex > sequence;
 
-  void edge(halfedge_descriptor he, double alpha)
+  void operator()(halfedge_descriptor he, double alpha)
   {
 
     sequence.push_back( std::make_pair(he, alpha) );
   }
 
-  void vertex(vertex_descriptor v)
+  void operator()(vertex_descriptor v)
   {
     sequence.push_back( v );
   }
 
-  void face(face_descriptor f, Barycentric_coordinate alpha)
+  void operator()(face_descriptor f, Barycentric_coordinate alpha)
   {
     sequence.push_back( std::make_pair(f, alpha) );
   }

@@ -77,7 +77,7 @@ struct Edge_sequence_collector
   {
   }
   
-  void edge(halfedge_descriptor he, FT alpha)
+  void operator()(halfedge_descriptor he, FT alpha)
   {
     Sequence_item<Traits> item;
     item.type = SEQUENCE_ITEM_EDGE;
@@ -87,7 +87,7 @@ struct Edge_sequence_collector
     m_sequence.push_back(item);
   }
   
-  void vertex(vertex_descriptor v)
+  void operator()(vertex_descriptor v)
   {
     Sequence_item<Traits> item;
     item.type = SEQUENCE_ITEM_VERTEX;
@@ -96,7 +96,7 @@ struct Edge_sequence_collector
     m_sequence.push_back(item);
   }
   
-  void face(face_descriptor f, Barycentric_coordinate alpha)
+  void operator()(face_descriptor f, Barycentric_coordinate alpha)
   {
     Sequence_item<Traits> item;
     item.type = SEQUENCE_ITEM_FACE;

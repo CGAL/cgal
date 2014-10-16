@@ -30,13 +30,13 @@ public:
     Note that values of 0.0 and 1.0 are possible in some situations, and may not be reported as vertices.
   \todo Shall we handle this internally?
   */
-  void edge(halfedge_descriptor edge, FT t);
+  void operator()(halfedge_descriptor edge, FT t);
   
   /*!
   \brief Called when a vertex is encountered in the shortest path sequence.
   \param vertex the vertex of the polyhedron encountered by the shortest path.
   */
-  void vertex(vertex_descriptor vertex);
+  void operator()(vertex_descriptor vertex);
   
   /*!
   \brief Called when a face location is encountered in the shortest path sequence.
@@ -46,5 +46,5 @@ public:
   \param face a face of the polyhedron encountered at the start or the end of the shortest path.
   \param location the barycentric coordinate inside `face` of this point on the path.
   */
-  void face(face_descriptor face, Barycentric_coordinate location);
+  void operator()(face_descriptor face, Barycentric_coordinate location);
 };

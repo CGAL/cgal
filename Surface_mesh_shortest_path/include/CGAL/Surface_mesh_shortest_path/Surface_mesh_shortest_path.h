@@ -297,19 +297,19 @@ private:
     {
     }
     
-    void edge(halfedge_descriptor edge, FT t)
+    void operator()(halfedge_descriptor edge, FT t)
     {
       *m_output = m_owner.point(edge, t);
       ++m_output;
     }
     
-    void vertex(vertex_descriptor vertex)
+    void operator()(vertex_descriptor vertex)
     {
       *m_output = m_owner.point(vertex);
       ++m_output;
     }
     
-    void face(face_descriptor f, Barycentric_coordinate location)
+    void operator()(face_descriptor f, Barycentric_coordinate location)
     {
       *m_output = m_owner.point(f, location);
       ++m_output;
@@ -1600,7 +1600,7 @@ private:
             std::cout << "Edge: (" << get(m_vertexIndexMap, source(current->entry_edge(), m_graph)) << "," << get(m_vertexIndexMap, target(current->entry_edge(), m_graph)) << ")  :  " << t0 << std::endl;
           }
           
-          visitor.edge(current->entry_edge(), t0);
+          visitor(current->entry_edge(), t0);
 
           if (current->is_left_child())
           {
@@ -1618,13 +1618,13 @@ private:
         }
           break;
         case Cone_tree_node::VERTEX_SOURCE:
-          visitor.vertex(target(current->entry_edge(), m_graph));
+          visitor(target(current->entry_edge(), m_graph));
           currentLocation = current->parent()->target_point();
           current = current->parent();
           break;
         case Cone_tree_node::FACE_SOURCE:
           // This is guaranteed to be the final node in any sequence
-          visitor.face(m_rootNodes[current->tree_id()].second->first, m_rootNodes[current->tree_id()].second->second);
+          visitor(m_rootNodes[current->tree_id()].second->first, m_rootNodes[current->tree_id()].second->second);
           current = current->parent();
           break;
         default:
@@ -2334,7 +2334,7 @@ public:
     
     if (current)
     {
-      visitor.vertex(v);
+      visitor(v);
       visit_shortest_path(current, current->target_point(), visitor);
       return true;
     }
@@ -2369,7 +2369,7 @@ public:
     if (current)
     {
       Point_2 locationInContext = construct_barycenter_in_triangle_2(current->layout_face(), result.second);
-      visitor.face(f, location);
+      visitor(f, location);
       visit_shortest_path(current, locationInContext, visitor);
       return true;
     }
