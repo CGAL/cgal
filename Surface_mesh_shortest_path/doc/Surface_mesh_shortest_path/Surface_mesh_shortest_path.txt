@@ -127,13 +127,16 @@ This example shows how to implement a model of the `SurfaceMeshShortestPathVisit
 
 \section Surface_mesh_shortest_pathBenchmarks Benchmarks
 
-These benchmarks were run using randomly generated source and destination points over multiple trials.  It can be re-generated using 
+These benchmarks were run using randomly generated source and destination points over multiple trials.
 
+<!--
+They can be re-generated using
 \code{.sh}
 > ./run_benchmarks.sh
 \endcode
 
 And then pasting the contents of benchmark_table_1.txt and benchmark_table_10.txt into the doc.  For more details on how they were generated, see benchmarks/Surface_mesh_shortest_path/readme.txt
+-->
 
 \subsection Surface_mesh_shortest_pathBenchmark1SourcePoint 1 Source Point
 <center>
@@ -206,14 +209,14 @@ The following figures track the construction time, query time, and peak memory u
 \subsection Surface_mesh_shortest_pathDefinitions Definitions
 
 \subsubsection Surface_mesh_shortest_pathGeodesics Geodesic Paths
-  A <em>geodesic</em> curve is a `locally shortest` path on the surface of some manifold, that is, it cannot be made shorter by some local perturbations. On the surface of a polyhedron, this translates to a curve where, when the faces crossed by the curve are unrolled into the plane, the curve forms a straight line. Another way of describing it is that there is exactly \f$\pi\f$ surface angle to both sides at every point along the curve. A geodesic curve between two points is not necessarily a shortest path, but all shortest paths on polyhedra are formed by sequences of one or more geodesic paths.
+  A <em>geodesic</em> curve is a `locally shortest` path on the surface of some manifold, that is, it cannot be made shorter by some local perturbations. On the surface of a polyhedron, this translates to a curve where, when the faces crossed by the curve are unfolled into the plane, the curve forms a straight line. Another way of describing it is that there is exactly \f$\pi\f$ surface angle to both sides at every point along the curve. A geodesic curve between two points is not necessarily a shortest path, but all shortest paths on polyhedra are formed by sequences of one or more geodesic paths.
   
   \cgalFigureBegin{Geodesic_perspective,perspectiveGeodesic.png}
   A geodesic on the surface of a simple polyhedron.
   \cgalFigureEnd
   
   \cgalFigureBegin{Geodesic_unrolled,unrolledGeodesic.png}
-  The same geodesic, with its faces unrolled into the plane. Note in the unfolding, the geodesic forms a straight line.
+  The same geodesic, with its faces unfolded into the plane. Note in the unfolding, the geodesic forms a straight line.
   \cgalFigureEnd
 
 \subsubsection Surface_mesh_shortest_pathVisibilityWindow Visibility Window
@@ -228,7 +231,7 @@ The following figures track the construction time, query time, and peak memory u
   \cgalFigureEnd
 
 \subsubsection Surface_mesh_shortest_pathSaddleVertex Saddle Vertices
-  A <em>saddle vertex</em> on a polyhedron is a vertex \f$v\f$ where the sum surface angle of all faces incident at \f$v\f$ is greater than \f$2 \pi\f$, or, in simpler terms, one cannot flatten all the faces incident to \f$v\f$ into the plane without overlap.  Identifying and dealing with saddle vertices are important shortest path algorithms, because they form <em>blind spots</em> which cannot be reached by a single geodesic curve.
+  A <em>saddle vertex</em> on a polyhedron is a vertex \f$v\f$ where the sum of surface angles of all faces incident at \f$v\f$ is greater than \f$2 \pi\f$, or, in simpler terms, one cannot flatten all the faces incident to \f$v\f$ into the plane without overlap.  Identifying and dealing with saddle vertices are important in shortest path algorithms, because they form <em>blind spots</em> which cannot be reached by a single geodesic curve.
   
   \cgalFigureBegin{Saddle_vertex,saddleVertex.png}
   A visibility window (shaded blue) encounters a saddle vertex; the shaded red region behind the vertex is not reachable with a geodesic from the origin point (assuming the geodesic must stay inside the initial window).
@@ -252,7 +255,7 @@ The following figures track the construction time, query time, and peak memory u
   This observation by Chen and Han states that out of all the branches that occur at any given vertex of the polyhedron, only a limited number have more than one child which can define shortest paths.  This is accomplished by maintaining, for each vertex, all nodes of the sequence tree which can contain that vertex inside their visibility window.
   
 - For each vertex, only <em>one</em> two-way branch may occur per face incident to that vertex, specifically, that of the nearest node to that vertex which crosses that face.  We call that closest node the <em>occupier</em> of that vertex.
-- If the vertex is a saddle vertex, only one psuedo-source may be established at that vertex, this time by the absolute nearest node to that vertex.
+- If the vertex is a saddle vertex, only one pseudo-source may be established at that vertex, this time by the absolute nearest node to that vertex.
 
   This method alone can decrease the running time for construction of the sequence tree construction to polynomial time.
   
