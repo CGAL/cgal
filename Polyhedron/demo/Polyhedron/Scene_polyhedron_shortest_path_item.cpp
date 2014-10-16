@@ -85,7 +85,7 @@ void Scene_polyhedron_shortest_path_item::draw_points() const
   
   ::glBegin(GL_POINTS);
   
-  for(Surface_mesh_shortest_path::Source_point_handle it = m_shortestPaths->source_points_begin(); it != m_shortestPaths->source_points_end(); ++it) 
+  for(Surface_mesh_shortest_path::Source_point_iterator it = m_shortestPaths->source_points_begin(); it != m_shortestPaths->source_points_end(); ++it) 
   {
     const Point_3& p = m_shortestPaths->point(it->first, it->second);
     ::glVertex3d(p.x(), p.y(), p.z());
@@ -196,11 +196,11 @@ void Scene_polyhedron_shortest_path_item::remove_nearest_point(const Face_locati
   
   const Point_3 pickLocation = m_shortestPaths->point(faceLocation.first, faceLocation.second);
   
-  Surface_mesh_shortest_path::Source_point_handle found = m_shortestPaths->source_points_end();
+  Surface_mesh_shortest_path::Source_point_iterator found = m_shortestPaths->source_points_end();
   FT minDistance(0.0);
   const FT thresholdDistance = FT(0.4);
   
-  for (Surface_mesh_shortest_path::Source_point_handle it = m_shortestPaths->source_points_begin(); it != m_shortestPaths->source_points_end(); ++it)
+  for (Surface_mesh_shortest_path::Source_point_iterator it = m_shortestPaths->source_points_begin(); it != m_shortestPaths->source_points_end(); ++it)
   {
     Point_3 sourceLocation = m_shortestPaths->point(it->first, it->second);
     FT distance = computeSquaredDistance3(sourceLocation, pickLocation);
@@ -329,7 +329,7 @@ bool Scene_polyhedron_shortest_path_item::run_point_select(const Ray_3& ray)
         break;
       }
       
-      if (m_shortestPaths->number_of_source_locations() > 0)
+      if (m_shortestPaths->number_of_source_points() > 0)
       {
         ensure_shortest_paths_tree();
         
@@ -407,7 +407,7 @@ bool Scene_polyhedron_shortest_path_item::deferred_load(Scene_polyhedron_item* p
     return false;
   }
   
-  m_shortestPaths->clear_sequence_tree();
+  m_shortestPaths->clear();
   
   std::vector<face_descriptor> listOfFaces;
   listOfFaces.reserve(CGAL::num_faces(*polyhedron()));
@@ -447,7 +447,7 @@ bool Scene_polyhedron_shortest_path_item::save(const std::string& file_name) con
     return false; 
   }
 
-  for(Surface_mesh_shortest_path::Source_point_handle it = m_shortestPaths->source_points_begin(); it != m_shortestPaths->source_points_end(); ++it) 
+  for(Surface_mesh_shortest_path::Source_point_iterator it = m_shortestPaths->source_points_begin(); it != m_shortestPaths->source_points_end(); ++it) 
   { 
     // std::cout << "Output face location: " << it->first->id() << " , " << it->second << std::endl;
     out << it->first->id() << " " << it->second[0] << " " << it->second[1] << " " << it->second[3] << std::endl;
