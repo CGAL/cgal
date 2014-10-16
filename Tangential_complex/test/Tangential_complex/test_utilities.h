@@ -30,6 +30,42 @@
 #include <CGAL/point_generators_2.h>
 #include <CGAL/point_generators_3.h>
 #include <CGAL/point_generators_d.h>
+#include <CGAL/Tangential_complex/Point_cloud.h>
+
+template <typename Kernel, typename Point_container>
+std::vector<typename Point_container::value_type>
+sparsify_point_set(
+  const Kernel &k, Point_container const& input_pts, 
+  typename Kernel::FT min_squared_dist)
+{
+  typedef typename Point_container::value_type Point;
+  typedef typename CGAL::Point_cloud_data_structure<Kernel, Point_container> Points_ds;
+  
+  typename Kernel::Squared_distance_d sqdist = k.squared_distance_d_object();
+
+  // Create the output container and push the first point into it
+  std::vector<typename Point_container::value_type> output;
+  Point_container::const_iterator it_pt = input_pts.begin();
+  output.push_back(*it_pt);
+  ++it_pt;
+
+  // Parse the following points, and add them if they are not too close to
+  // the other points
+  std::size_t c = 1;
+  for ( ;
+       it_pt != input_pts.end();
+       ++it_pt)
+  {
+    Points_ds points_ds(output, 0, c);
+    if (points_ds.query_ANN(*it_pt, 1).begin()->second >= min_squared_dist)
+    {
+      output.push_back(*it_pt);
+      ++c;
+    }
+  }
+
+  return output;
+}
 
 template <typename Kernel>
 std::vector<typename Kernel::Point_d> generate_points_on_plane(std::size_t num_points)
@@ -181,6 +217,49 @@ std::vector<typename Kernel::Point_d> generate_points_on_klein_bottle_4D(
       (a + b*cos(v))*sin(u) /*+ rng.get_double(0, 0.01)*/,
       b*sin(v)*cos(u/2)     /*+ rng.get_double(0, 0.01)*/,
       b*sin(v)*sin(u/2)     /*+ rng.get_double(0, 0.01)*/) );
+  }
+  return points;
+}
+
+
+// a = big radius, b = small radius
+template <typename Kernel>
+std::vector<typename Kernel::Point_d>
+generate_points_on_klein_bottle_variant_5D(
+  std::size_t num_points, double a, double b, bool uniform = false)
+{
+  typedef typename Kernel::Point_d Point;
+  typedef typename Kernel::FT FT;
+  CGAL::Random rng;
+
+  // if uniform
+  int num_lines = (int)sqrt(NUM_POINTS);
+  int num_cols = NUM_POINTS/num_lines + 1;
+
+  std::vector<Point> points;
+  points.reserve(NUM_POINTS);
+  for (int i = 0 ; i != NUM_POINTS ; ++i)
+  {
+    FT u, v;
+    if (uniform)
+    {
+      int k1 = i / num_lines;
+      int k2 = i % num_lines;
+      u = 6.2832 * k1 / num_lines;
+      v = 6.2832 * k2 / num_lines;
+    }
+    else
+    { 
+      u = rng.get_double(0, 6.2832);
+      v = rng.get_double(0, 6.2832);
+    }
+    FT x1 = (a + b*cos(v))*cos(u);
+    FT x2 = (a + b*cos(v))*sin(u);
+    FT x3 = b*sin(v)*cos(u/2);
+    FT x4 = b*sin(v)*sin(u/2);
+    FT x5 = x1 + x2 + x3 + x4;
+
+    points.push_back(Kernel().construct_point_d_object()(x1, x2, x3, x4, x5) );
   }
   return points;
 }

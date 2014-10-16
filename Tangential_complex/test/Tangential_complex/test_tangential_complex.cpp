@@ -23,7 +23,7 @@
 #ifdef _DEBUG
   const int NUM_POINTS = 50;
 #else
-  const int NUM_POINTS = 500;
+  const int NUM_POINTS = 5000;
 #endif
 
 int main()
@@ -36,33 +36,38 @@ int main()
 # endif
 #endif
 
-  const int INTRINSIC_DIMENSION = 1;
-  const int AMBIENT_DIMENSION = 3;
+  const int INTRINSIC_DIMENSION = 2;
+  const int AMBIENT_DIMENSION = 4;
 
   typedef CGAL::Epick_d<CGAL::Dimension_tag<AMBIENT_DIMENSION> > Kernel;
+  typedef Kernel::FT                                             FT;
   typedef Kernel::Point_d                                        Point;
  
   int i = 0;
   bool stop = false;
   //for ( ; !stop ; ++i)
   {
+    Kernel k;
     Wall_clock_timer t;
     CGAL::default_random = CGAL::Random(i);
     std::cerr << "Random seed = " << i << std::endl;
   
     std::vector<Point> points = 
       //generate_points_on_circle_2<Kernel>(NUM_POINTS, 3.);
-      generate_points_on_moment_curve<Kernel>(NUM_POINTS, AMBIENT_DIMENSION, 0., 1.);
+      //generate_points_on_moment_curve<Kernel>(NUM_POINTS, AMBIENT_DIMENSION, 0., 1.);
       //generate_points_on_plane<Kernel>(NUM_POINTS);
       //generate_points_on_sphere_3<Kernel>(NUM_POINTS, 3.0);
       //generate_points_on_sphere_d<Kernel>(NUM_POINTS, AMBIENT_DIMENSION, 3.0);
       //generate_points_on_klein_bottle_3D<Kernel>(NUM_POINTS, 4., 3.);
-      //generate_points_on_klein_bottle_4D<Kernel>(NUM_POINTS, 4., 3.);
+      generate_points_on_klein_bottle_4D<Kernel>(NUM_POINTS, 4., 3.);
+      //generate_points_on_klein_bottle_variant_5D<Kernel>(NUM_POINTS, 4., 3.);
+
+    points = sparsify_point_set(k, points, FT(0.2)*FT(0.2));
 
     CGAL::Tangential_complex<
       Kernel, 
       INTRINSIC_DIMENSION, 
-      CGAL::Parallel_tag> tc(points.begin(), points.end());
+      CGAL::Parallel_tag> tc(points.begin(), points.end(), k);
     double init_time = t.elapsed(); t.reset();
 
     tc.compute_tangential_complex();
