@@ -1,5 +1,5 @@
-#include <CGAL/Barycentric_coordinates_2/Segment_coordinates_2.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
+#include <CGAL/Barycentric_coordinates_2/Segment_coordinates_2.h>
 
 // Namespace alias.
 namespace BC = CGAL::Barycentric_coordinates;
@@ -17,8 +17,8 @@ using std::cout; using std::endl; using std::string;
 int main()
 {
     // Construct a segment.
-    const Point first_vertex  = Point(0, Scalar(2)/Scalar(5));
-    const Point second_vertex = Point(2, Scalar(2)/Scalar(5));
+    const Point  first_vertex(0, Scalar(2)/Scalar(5));
+    const Point second_vertex(2, Scalar(2)/Scalar(5));
 
     // Instantiate three interior and two exterior query points.
     const Point query_points[5] = { Point(Scalar(2) /Scalar(5), Scalar(2)/Scalar(5)), // interior query points
@@ -29,13 +29,13 @@ int main()
                                   };
 
     // Compute segment coordinates for all the defined points.
-    // We use a static function and return segment coordinates stored in the CGAL::cpp11::array<FT,2> data structure.
+    // We use a global function and return the segment coordinates stored in an array of the type CGAL::cpp11::array<FT,2>.
     cout << endl << "Computed segment coordinates are: " << endl << endl;
     for(int i = 0; i < 5; ++i) {
         const Pair pair = BC::compute_segment_coordinates_2(first_vertex, second_vertex, query_points[i], Kernel());
 
         // Output both coordinates for each point.
-        cout << "Pair of coordinates # " << i + 1 << " = (" << pair[1] << ", " << pair[2] << ");" << endl;
+        cout << "Pair of coordinates # " << i + 1 << " = (" << pair[0] << ", " << pair[1] << ");" << endl;
     }
     cout << endl;
 

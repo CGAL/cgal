@@ -79,7 +79,7 @@ public:
     /// \name Creation
     /// @{
 
-    /// Creates the class `Segment_coordinates_2` that implements the behaviour of segment coordinates with respect to an arbitrary non-degenerate segment along an arbitrary line in the plane.
+    /// Creates the class `Segment_coordinates_2` that implements segment coordinates with respect to an arbitrary non-degenerate segment along an arbitrary line in the plane.
     /// The segment is given by its two vertices.
     /// \pre Segment is not degenerate.
     Segment_coordinates_2(const Point_2 &first_vertex, const Point_2 &second_vertex, const Traits &b_traits = Traits()) :
@@ -203,6 +203,7 @@ private:
 // Global functions
 
 /*!
+   \anchor seg_coord_global
  * \relates Segment_coordinates_2
  * This is a global function that takes both vertices of a segment and computes segment coordinates at a given query point with respect to these vertices.
  

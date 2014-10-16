@@ -55,8 +55,6 @@ namespace Barycentric_coordinates {
 \cgalModels `BarycentricCoordinates_2`
 
 \pre The provided polygon is strictly convex.
- 
-\attention Weight functions (coordinates without normalization) are allowed to be computed for an arbitrary polygon.
 
 */
 

@@ -28,11 +28,13 @@
 #include <vector>
 
 // CGAL headers.
+#include <CGAL/utils.h> 
 #include <CGAL/assertions.h>
-#include <CGAL/number_utils.h> 
+#include <CGAL/number_utils.h>
 
 // Boost headers.
 #include <boost/mpl/has_xxx.hpp>
+#include <boost/optional/optional.hpp>
 
 // CGAL namespace.
 namespace CGAL {
@@ -309,23 +311,24 @@ private:
 
         // Following section 4.2 from [2] we denote P_j = r_j*r_{j+1} + dot_product(d_j, d_{j+1}).
         // Vector s_i from [1] corresponds to that one with the name d_i in [2].
-        for(int j = 0; j < n-1; ++j) P[j] = r[j]*r[j+1] + s[j]*s[j+1];
-        P[n-1] = r[n-1]*r[0] + s[n-1]*s[0];
+        for(int j = 0; j < n-1; ++j)
+            P[j] = CGAL::max(r[j]*r[j+1] + scalar_product_2(s[j], s[j+1]), FT(0));
+        P[n-1] = CGAL::max(r[n-1]*r[0] + scalar_product_2(s[n-1], s[0]), FT(0));
 
         // Compute mean value weights using the formula (16) from [2].
         // Since the formula (16) always gives positive values, we have to add a proper sign to all the weight functions.
-        weight[0] = r[n-1]*r[1] - s[n-1]*s[1];
+        weight[0] = r[n-1]*r[1] - scalar_product_2(s[n-1], s[1]);
         for(int j = 1; j < n-1; ++j) weight[0] *= P[j];
         weight[0] = sign_of_weight(A[n-1], A[0], B[0])*sqrt(weight[0]);
 
         for(int i = 1; i < n-1; ++i) {
-            weight[i] = r[i-1]*r[i+1] - s[i-1]*s[i+1];
+            weight[i] = r[i-1]*r[i+1] - scalar_product_2(s[i-1], s[i+1]);
             for(int j = 0; j < i-1; ++j) weight[i] *= P[j];
             for(int j = i+1; j < n; ++j) weight[i] *= P[j];
             weight[i] = sign_of_weight(A[i-1], A[i], B[i])*sqrt(weight[i]);
         }
 
-        weight[n-1] = r[n-2]*r[0] - s[n-2]*s[0];
+        weight[n-1] = r[n-2]*r[0] - scalar_product_2(s[n-2], s[0]);
         for(int j = 0; j < n-2; ++j) weight[n-1] *= P[j];
         weight[n-1] = sign_of_weight(A[n-2], A[n-1], B[n-1])*sqrt(weight[n-1]);
 

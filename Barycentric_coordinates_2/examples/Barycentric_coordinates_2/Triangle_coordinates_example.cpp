@@ -1,8 +1,5 @@
-#include <CGAL/Barycentric_coordinates_2/Triangle_coordinates_2.h>
 #include <CGAL/Simple_cartesian.h>
-
-// Namespace alias.
-namespace BC = CGAL::Barycentric_coordinates;
+#include <CGAL/Barycentric_coordinates_2/Triangle_coordinates_2.h>
 
 // Some convenient typedefs.
 typedef CGAL::Simple_cartesian<double> Kernel;
@@ -12,16 +9,16 @@ typedef Kernel::Point_2 Point;
 
 typedef std::vector<Scalar> Scalar_vector;
 
-typedef BC::Triangle_coordinates_2<Kernel> Triangle_coordinates;
+typedef CGAL::Barycentric_coordinates::Triangle_coordinates_2<Kernel> Triangle_coordinates;
 
 using std::cout; using std::endl; using std::string;
 
 int main()
 {
     // Construct a triangle.
-    const Point first_vertex  = Point(0.0f, 0.0f);
-    const Point second_vertex = Point(2.0f, 0.5f);
-    const Point third_vertex  = Point(1.0f, 2.0f);
+    const Point  first_vertex(0.0f, 0.0f);
+    const Point second_vertex(2.0f, 0.5f);
+    const Point  third_vertex(1.0f, 2.0f);
 
     // Create an std::vector to store coordinates.
     Scalar_vector coordinates;
@@ -29,7 +26,7 @@ int main()
     // Instantiate the class Triangle_coordinates_2 for the triangle defined above.
     Triangle_coordinates triangle_coordinates(first_vertex, second_vertex, third_vertex);
 
-    // Print some information about the triangle and coordinate functions.
+    // Print some information about the triangle and coordinates.
     triangle_coordinates.print_information();
 
     // Instantiate some interior, boundary, and exterior query points for which we compute coordinates.

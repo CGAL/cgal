@@ -44,7 +44,7 @@ namespace Barycentric_coordinates {
 
 /*!
  * \ingroup PkgBarycentric_coordinates_2
- * The class `Generalized_barycentric_coordinates_2` implements the behaviour of generalized barycentric coordinates along the polygon's boundary and provides a common interface for all coordinate classes.
+ * The class `Generalized_barycentric_coordinates_2` implements generalized barycentric coordinates along the polygon's boundary and provides a common interface for all coordinate classes.
  * This class is parameterized by a coordinate class `Coordinate_2`, and a traits class `Traits`.
 
 \tparam Coordinate_2 must be a model of the concept `BarycentricCoordinates_2`.
@@ -81,7 +81,7 @@ public:
     /// \name Creation
     /// @{
 
-    /// Creates the class `Generalized_barycentric_coordinates_2` that implements the behaviour of generalized barycentric coordinates along the polygon's boundary given by a range of vertices `[first_vertex, last_vertex)`.
+    /// Creates the class `Generalized_barycentric_coordinates_2` that implements generalized barycentric coordinates along the polygon's boundary given by a range of vertices `[first_vertex, last_vertex)`.
     /// `InputIterator` must be an input iterator with a value type equivalent to `Traits::Point_2`.
     /// \pre Number of the polygon's vertices > 2.
     /// \pre The provided polygon is simple.

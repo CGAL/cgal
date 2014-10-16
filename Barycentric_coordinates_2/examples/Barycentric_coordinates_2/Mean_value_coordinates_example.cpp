@@ -1,9 +1,6 @@
-#include <CGAL/Barycentric_coordinates_2/Generalized_barycentric_coordinates_2.h>
 #include <CGAL/Barycentric_coordinates_2/Mean_value_2.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-
-// Namespace alias.
-namespace BC = CGAL::Barycentric_coordinates;
+#include <CGAL/Barycentric_coordinates_2/Generalized_barycentric_coordinates_2.h>
 
 // Some convenient typedefs.
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
@@ -14,12 +11,11 @@ typedef Kernel::Point_2 Point;
 typedef std::vector<Scalar> Scalar_vector;
 typedef std::vector<Point>  Point_vector;
 
-typedef Point_vector::iterator InputIterator;
 typedef std::back_insert_iterator<Scalar_vector> Vector_insert_iterator;
 typedef boost::optional<Vector_insert_iterator> Output_type;
 
-typedef BC::Mean_value_2<Kernel> Mean_value;
-typedef BC::Generalized_barycentric_coordinates_2<Mean_value, Kernel> Mean_value_coordinates;
+typedef CGAL::Barycentric_coordinates::Mean_value_2<Kernel> Mean_value;
+typedef CGAL::Barycentric_coordinates::Generalized_barycentric_coordinates_2<Mean_value, Kernel> Mean_value_coordinates;
 
 using std::cout; using std::endl; using std::string;
 
@@ -38,7 +34,7 @@ int main()
     // Instantiate the class with mean value coordinates for the polygon defined above.
     Mean_value_coordinates mean_value_coordinates(vertices.begin(), vertices.end());
 
-    // Print some information about the polygon and coordinate functions.
+    // Print some information about the polygon and coordinates.
     mean_value_coordinates.print_information();
 
     // Instantiate some interior points in the polygon.
@@ -52,9 +48,10 @@ int main()
     // Compute mean value coordinates for all the defined interior points.
 
     // We speed up the computation using the O(n) algorithm called with the parameter CGAL::Barycentric_coordinates::FAST.
+    // The default one is CGAL::Barycentric_coordinates::PRECISE.
     const CGAL::Barycentric_coordinates::Type_of_algorithm type_of_algorithm = CGAL::Barycentric_coordinates::FAST;
 
-    // Use the parameter query_point_location = CGAL::Barycentric_coordinates::ON_BOUNDED_SIDE.
+    // We also speed up the computation by using the parameter query_point_location = CGAL::Barycentric_coordinates::ON_BOUNDED_SIDE.
     const CGAL::Barycentric_coordinates::Query_point_location query_point_location = CGAL::Barycentric_coordinates::ON_BOUNDED_SIDE;
 
     for(int i = 0; i < number_of_interior_points; ++i) {
@@ -68,7 +65,7 @@ int main()
             cout << "Coordinate " << j + 1 << " = " << coordinates[i * number_of_vertices + j] << endl;
     }
 
-    // If we need only the unnormalized weights for the last point, we can compute them as follows.
+    // If we need only the unnormalized weights for some point (lets take the last one), we can compute them as follows.
 
     // Instantiate an std::vector to store weights.
     Scalar_vector weights;
@@ -84,14 +81,14 @@ int main()
     // Invert this sum.
     const Scalar mv_inverted_denominator = Scalar(1) / mv_denominator;
 
-    // Output mean value weights.
+    // Output the mean value weights.
     const string status = (result ? "SUCCESS." : "FAILURE.");
     cout << endl << "Status of the weights' computation for the point " << last_point_index + 1 << ": " << status << endl;
 
     for(int j = 0; j < number_of_vertices; ++j)
         cout << "Weight " << j + 1 << " = " << weights[j] << endl;
 
-    // Now, if we normalize the weight functions, we recover values of the mean value coordinates for the last point computed earlier.
+    // Now, if we normalize the weights, we recover values of the mean value coordinates for the last point computed earlier.
     cout << endl << "After normalization, for the point " << last_point_index + 1 << " mean value coordinates are " << endl;
     for(int j = 0; j < number_of_vertices; ++j)
         cout << "Coordinate " << j + 1 << " = " << weights[j] * mv_inverted_denominator << endl;

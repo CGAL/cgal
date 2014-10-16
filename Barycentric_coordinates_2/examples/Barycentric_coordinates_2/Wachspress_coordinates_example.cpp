@@ -1,11 +1,8 @@
 #include <CGAL/convex_hull_2.h>
-#include <CGAL/point_generators_2.h>
-#include <CGAL/Barycentric_coordinates_2/Generalized_barycentric_coordinates_2.h>
-#include <CGAL/Barycentric_coordinates_2/Wachspress_2.h>
 #include <CGAL/Simple_cartesian.h>
-
-// Namespace alias.
-namespace BC = CGAL::Barycentric_coordinates;
+#include <CGAL/point_generators_2.h>
+#include <CGAL/Barycentric_coordinates_2/Wachspress_2.h>
+#include <CGAL/Barycentric_coordinates_2/Generalized_barycentric_coordinates_2.h>
 
 // Some convenient typedefs.
 typedef CGAL::Simple_cartesian<double> Kernel;
@@ -18,10 +15,8 @@ typedef std::vector<Point>  Point_vector;
 
 typedef CGAL::Creator_uniform_2<double, Point> Creator;
 
-typedef Point_vector::iterator InputIterator;
-
-typedef BC::Wachspress_2<Kernel> Wachspress;
-typedef BC::Generalized_barycentric_coordinates_2<Wachspress, Kernel> Wachspress_coordinates;
+typedef CGAL::Barycentric_coordinates::Wachspress_2<Kernel> Wachspress;
+typedef CGAL::Barycentric_coordinates::Generalized_barycentric_coordinates_2<Wachspress, Kernel> Wachspress_coordinates;
 
 using std::cout; using std::endl; using std::string;
 
@@ -46,7 +41,7 @@ int main()
     // Instantiate the class with Wachspress coordinates for the convex polygon defined above.
     Wachspress_coordinates wachspress_coordinates(vertices.begin(), vertices.end());
 
-    // Print some information about the polygon and coordinate functions.
+    // Print some information about the polygon and coordinates.
     wachspress_coordinates.print_information();
     
     // Compute Wachspress coordinates for all the randomly defined points.

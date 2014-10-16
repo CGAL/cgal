@@ -81,7 +81,7 @@ public:
     /// \name Creation
     /// @{
 
-    /// Creates the class `Triangle_coordinates_2` that implements the behaviour of triangle coordinates with respect to an arbitrary non-degenerate triangle in the plane.
+    /// Creates the class `Triangle_coordinates_2` that implements triangle coordinates with respect to an arbitrary non-degenerate triangle in the plane.
     /// The triangle is given by its three vertices.
     /// \pre Triangle is not degenerate.
     Triangle_coordinates_2(const Point_2 &first_vertex, const Point_2 &second_vertex, const Point_2 &third_vertex, const Traits &b_traits = Traits()) :

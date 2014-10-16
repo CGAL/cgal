@@ -2,7 +2,7 @@
 \ingroup PkgBarycentric_coordinates_2Concepts
 \cgalConcept
 
-Requirements of the template parameter `Coordinate_2` for the class `CGAL::Barycentric_coordinates::Generalized_barycentric_coordinates_2` with a set of two-dimensional generalized barycentric coordinates. 
+Requirements of the template parameter `Coordinate_2` for the class `CGAL::Barycentric_coordinates::Generalized_barycentric_coordinates_2`.
 
 \cgalHasModel `CGAL::Barycentric_coordinates::Wachspress_2`
 \cgalHasModel `CGAL::Barycentric_coordinates::Mean_value_2`
@@ -17,7 +17,7 @@ public:
 /// \name Creation
 /// @{
 
-/// Creates a class that implements behaviour of generalized barycentric coordinates for any query point that does not belong to the polygon's boundary.
+/// Creates a class that implements generalized barycentric coordinates for any query point that does not belong to the polygon's boundary.
 /// The polygon is given by a range of vertices of the type `Traits::Point_2` stored in a container of the type <a href="http://en.cppreference.com/w/cpp/container/vector">`std::vector`</a>.
 BarycentricCoordinates_2(const std::vector<Traits::Point_2> &vertices, const Traits &barycentric_traits);
 

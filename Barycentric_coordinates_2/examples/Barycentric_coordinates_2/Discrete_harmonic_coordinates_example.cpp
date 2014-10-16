@@ -1,9 +1,6 @@
-#include <CGAL/Barycentric_coordinates_2/Generalized_barycentric_coordinates_2.h>
-#include <CGAL/Barycentric_coordinates_2/Discrete_harmonic_2.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
-
-// Namespace alias.
-namespace BC = CGAL::Barycentric_coordinates;
+#include <CGAL/Barycentric_coordinates_2/Discrete_harmonic_2.h>
+#include <CGAL/Barycentric_coordinates_2/Generalized_barycentric_coordinates_2.h>
 
 // Some convenient typedefs.
 typedef CGAL::Exact_predicates_exact_constructions_kernel Kernel;
@@ -14,12 +11,11 @@ typedef Kernel::Point_2 Point;
 typedef std::vector<Scalar> Scalar_vector;
 typedef std::vector<Point>  Point_vector;
 
-typedef Point_vector::iterator InputIterator;
 typedef std::back_insert_iterator<Scalar_vector> Vector_insert_iterator;
 typedef boost::optional<Vector_insert_iterator> Output_type;
 
-typedef BC::Discrete_harmonic_2<Kernel> Discrete_harmonic;
-typedef BC::Generalized_barycentric_coordinates_2<Discrete_harmonic, Kernel> Discrete_harmonic_coordinates;
+typedef CGAL::Barycentric_coordinates::Discrete_harmonic_2<Kernel> Discrete_harmonic;
+typedef CGAL::Barycentric_coordinates::Generalized_barycentric_coordinates_2<Discrete_harmonic, Kernel> Discrete_harmonic_coordinates;
 
 using std::cout; using std::endl; using std::string;
 
@@ -37,7 +33,7 @@ int main()
     // Instantiate the class with discrete harmonic coordinates for the unit square defined above.
     Discrete_harmonic_coordinates discrete_harmonic_coordinates(vertices.begin(), vertices.end());
 
-    // Print some information about the polygon and coordinate functions.
+    // Print some information about the polygon and coordinates.
     discrete_harmonic_coordinates.print_information();
 
     // Instantiate the center point of the unit square.

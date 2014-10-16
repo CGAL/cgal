@@ -1,6 +1,6 @@
 #include <CGAL/Real_timer.h>
-#include <CGAL/Barycentric_coordinates_2/Triangle_coordinates_2.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Barycentric_coordinates_2/Triangle_coordinates_2.h>
 
 // Construct an iterator that takes as input the current data type and pointer to the first element in the standard C++ array.
 template<typename Scalar>
@@ -21,9 +21,6 @@ public:
     inline void operator++ () { ++pointer; }
 };
 
-// Namespace alias.
-namespace BC = CGAL::Barycentric_coordinates;
-
 // Some convenient typedefs.
 typedef CGAL::Real_timer Timer;
 
@@ -34,7 +31,7 @@ typedef Kernel::Point_2 Point;
 
 typedef overwrite_iterator<Scalar> Overwrite_iterator;
 
-typedef BC::Triangle_coordinates_2<Kernel> Triangle_coordinates;
+typedef CGAL::Barycentric_coordinates::Triangle_coordinates_2<Kernel> Triangle_coordinates;
 
 using std::cout; using std::endl; using std::string;
 
@@ -55,9 +52,9 @@ int main()
     const Scalar y_step = one / Scalar(number_of_y_coordinates);
 
     // Create a right triangle with a slight offset from zero.
-    const Point first_vertex  = Point(zero - x_step, zero - x_step);
-    const Point second_vertex = Point(two + y_step , zero - x_step);
-    const Point third_vertex  = Point(zero - x_step, two + y_step );
+    const Point  first_vertex(zero - x_step, zero - x_step);
+    const Point second_vertex(two  + y_step, zero - x_step);
+    const Point  third_vertex(zero - x_step, two  + y_step);
 
     // Instantiate the class Triangle_coordinates_2 for the right triangle defined above.
     Triangle_coordinates triangle_coordinates(first_vertex, second_vertex, third_vertex);
