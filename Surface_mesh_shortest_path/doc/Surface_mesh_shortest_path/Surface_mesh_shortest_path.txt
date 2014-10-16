@@ -15,61 +15,87 @@ The shortest paths computation on a terrain.
 
 \section Surface_mesh_shortest_pathIntroduction Introduction
 
-An example of an application of shortest paths would be planning the motion of a robot across the surface a 3-dimensional terrain.  Using a 2-dimensional approximation would fail to capture anything interesting about the terrain we are trying to cross, and would give a poor solution.  The problem is often called the <em>Discrete Geodesic Problem</em>.  Although the more general version of this problem, shortest paths in 3D in the presence of obstacles, is NP-Hard, when all motion is constrained to the 2D surface of an object it can be solved efficiently.
+The motion planning of a robot across the surface of a 3-dimensional terrain is a typical application of the shortest path computation
+Using a 2-dimensional approximation would fail to capture anything interesting about the terrain we are trying to cross, and would give a poor solution.  The problem is often called the <em>Discrete Geodesic Problem</em>.  Although the more general version of this problem, shortest paths in 3D in the presence of obstacles, is NP-Hard, when the motion is constrained to the 2D surface of an object it can be solved efficiently.
 
-  The algorithm in this package builds a data structure to efficiently answer queries of this form: given a polyhedral surface \f$\cal{P}\f$, a set of source points \f$S\f$ on \f$\cal{P}\f$, and a target point \f$t\f$ also on \f$\cal{P}\f$, find a shortest path \f$\lambda\f$ between \f$q\f$ and any element \f$s \in S\f$, where \f$\lambda\f$ is constrained to the surface of \f$\cal{P}\f$.
+The algorithm implemented in this package builds a data structure to efficiently answer queries of the following form:
+Given a triangulated surface mesh \f$\cal{M}\f$, a set of source points \f$S\f$ on \f$\cal{M}\f$, and a target point \f$t\f$ also on \f$\cal{M}\f$, find a shortest path \f$\lambda\f$ between \f$t\f$ and any element in \f$ S \f$, where \f$\lambda\f$ is constrained to the surface of \f$\cal{M}\f$.
 
 The algorithm used is based on a paper by Xin and Wang \cgalCite{XinWang2009improvingchenandhan}, a fast and practical algorithm for exact computation of shortest paths. It is an extension of earlier results by Chen and Han \cgalCite{ch-spp-96} and Mitchell, Mount, and Papadimitriou \cgalCite{mmp-dgp-87} .
 
-\section Surface_mesh_shortest_pathHowToUse How To Use
-
-In order to use the algorithm, one creates an instance of the `Surface_mesh_shortest_path` class, passing in a model of the `FaceListGraph`, and appropriate property maps for ID lookup of vertex, halfedge, and face items, and a map between vertices and their locations as `Point_3` instances.
-
-\subsection Surface_mesh_shortest_pathTraitsClass Traits Class
-  The `SurfaceMeshShortestPathTraits` concept provides all of the necessary geometric primitives for the shortest path algorithm. A default model of this concept is provided by `Surface_mesh_shortest_path_traits`. It requires a Cartesian geometry kernel, and a model of the \cgal BGL `FaceListGraph` concept.
-  
-\subsubsection Surface_mesh_shortest_pathKernelRecommendataions Kernel Recommendations
-  The recommended kernel to use with this package is `CGAL::Exact_predicates_inexact_constructions`.
-  
-  It is recommended that users avoid using the `CGAL::Exact_predicates_exact_constructions_with_sqrt` kernel with this package. In order to compute the distance along the surface, it is necessary to unfold sequences of faces, edge-to-edge, out into a common plane.  The functor `Construct_triangle_3_to_triangle_2_projection` provides an initial layout of the first face in a sequence, by rotating a given face into the XY plane.  `Construct_triangle_3_along_segment_2_flattening` unfolds a triangle into the plane, using a specified segment as a base.  Since this results in a chain of constructed triangles in the plane, the exact representation types used with this kernel (either CORE::Expr or leda::real) will process extremely slow, even on very simple inputs.  This is because the exact representations will effectively add an \f$O(n)\f$ factor to every computation.
-  
-  Although algorithm uses `sqrt` operations, it will also work on geometry kernels which do not support `sqrt` by first converting the kernel's number type to `double`, performing the `sqrt`, and converting it back. Note that it is preferable to use a kernel with directly supports `sqrt`.
-
-\subsubsection Surface_mesh_shortest_pathFaceListGraph Face List Graph
-  
-  The `FaceListGraph` type must support all of the \cgal BGL (boost graph library) extension operations for the `FaceListGraph` concept. Any surface mesh on 3D points may be used with this package; there are no restrictions on the genus, connectivity, or convexity of the input surface. However, additional property maps for the data items must be provided to the `Surface_mesh_shortest_path` class upon construction.
-
-\subsubsection Surface_mesh_shortest_pathIndexPropertyMaps Item Index Property Maps
-
-  The algorithm requires property maps which map each `boost::GraphTraits<FaceListGraph>::%vertex_descriptor`, `boost::GraphTraits<FaceListGraph>::%halfedge_descriptor`, and `boost::GraphTraits<FaceListGraph>::%face_descriptor` to a 0-based array index respectively. For the sake of efficiency, it is best to use a face graph which supports \f$O(1)\f$ item ID lookup.  This can be achieved, for example, by using `CGAL::Polyhedron_items_with_id_3` items traits with `CGAL::Polyhedron_3`, and then setting the ids using `CGAL::set_halfedgeds_items_id()`. This is the default supported by the `Surface_mesh_shortest_path` class.
-
-\subsubsection Surface_mesh_shortest_pathPointPropertyMap Vertex Point Property Map
-
-  The algorithm must be provided a property map which translates between a `boost::GraphTraits<FaceListGraph>::%vertex_descriptor` item and its location in 3D space as a `Point_3` instance.
-  
-\subsection Surface_mesh_shortest_pathBarycentric Barycentric Coordinates and Face Locations
-
-  The source and target locations of the algorithm are specified either using vertices (specifically `boost::GraphTraits<FaceListGraph>::%vertex_descriptor`), or face/location pairs, where the location is represented using a <em>Barycentric Coordinate</em> in the face. Given a point \f$p\f$ that lies inside and on the plane of triangle \f$(A,B,C)\f$, its barycentric coordinate is a real-valued triple \f$(b_0,b_1,b_2)\f$ such that \f$p = b_0\cdot~A + b_1\cdot~B + b_2\cdot~C\f$, and \f$b_0 + b_1 + b_2 = 1\f$. 
+\section Surface_mesh_shortest_pathHowToUse  User Interface Description
 
 \subsection Surface_mesh_shortest_pathClass Surface Mesh Shortest Path Class
 
-  The `Surface_mesh_shortest_path` class must be constructed with a model of `FaceListGraph`, and (optionally) 
-  - Vertex, Halfedge, and Face index property maps for `FaceListGraph`
-  - A Vertex -> `Point_3` property map for `FaceListGraph`
-  - An model of the `SurfaceMeshShortestPathTraits` class (passing in an instance is only necessary if the traits class has local state)
-  
-  To add source points to the shortest paths computation, use the method `Surface_mesh_shortest_path::add_source_point()` (or `Surface_mesh_shortest_path::add_source_points()` to add an iterator range). This method accepts `boost::GraphTraits<FaceListGraph>::%vertex_descriptor`, or `Surface_mesh_shortest_path::Face_location` instances as input. The return value from this method, `Surface_mesh_shortest_path::Source_point_iterator` is a `bidirectional_iterator` which can be dereferenced to get the `Surface_mesh_shortest_path::Face_location` of the source point. Source points can be removed from the structure by passing this iterator to `Surface_mesh_shortest_path::remove_source_point()`.
-  
-  The shortest paths data structure will be automatically built on the first call to any shortest paths query function after any source points have been added or removed, but you can also manually (re-)build it using `Surface_mesh_shortest_path::build_sequence_tree()`. You can test if build_sequence_tree needs to be called by calling `Surface_mesh_shortest_path::changed_since_last_build()`, which will return true if any changes to the source points happened since the structure was last built.
+The main class of this package is `Surface_mesh_shortest_path`.
+In the following we describe the typical workflow when using this class
 
-  Computing shortest path distances can be accomplished with `Surface_mesh_shortest_path::shortest_distance_to_source_points()`, which will return as a pair the raw distance to the target and a `Surface_mesh_shortest_path::Source_point_iterator` to the source point which was closest to the target.  If no shortest path exists between the (if, for example, the face graph is disconnected), a negative distance is returned and the iterator will be equal to `Surface_mesh_shortest_path::source_points_end()`.
+\subsubsection Surface_mesh_shortest_pathClassInput Specifying the Input
 
-  The complete shortest path sequence can be obtained using `Surface_mesh_shortest_path::shortest_path_sequence_to_source_points()`, by providing a visitor object conforming to the `SurfaceMeshShortestPathVisitor` concept.
+The shortest paths are computed on a triangulated surface mesh, represented by a model of
+the `FaceListGraph` concept. There is no restriction on the genus, connectivity, or convexity
+of the input surface mesh.
 
-  `Surface_mesh_shortest_path::shortest_path_points_to_source_points()` will return the shortest path sequence as a 3D polyline to an output iterator, useful for quick visualization of the shortest path.  
+For efficiency reason, index property maps for vertices, halfedges and faces are internally used. For each simplex
+type the property map must provide an index between 0 and the number of simplices. We recommand to use
+the class `CGAL::Polyhedron_3` as model of `FaceListGraph` with the item class `CGAL::Polyhedron_items_with_id_3`,
+for which default property maps are provided.
+This item class associates to each simplex an index that provides a \f$O(1)\f$ time access to the indices.
+Note that the initialization of the property maps requires a call to`CGAL::set_halfedgeds_items_id()`.
 
-  Other utility methods exist for converting between raw surface locations, Face_location objects, and other parametric descriptions of surface locations.  See the reference manual entries for `Surface_mesh_shortest_path::point()`, `Surface_mesh_shortest_path::face_location()`, and `Surface_mesh_shortest_path::locate()` for details.
-  
+The access to the embedding of each vertex is done using a point vertex property map associating to each vertex a 3D point.
+%Defaults are provided for CGAL classes.
+
+If the traits class used holds some local states, it must also be passed to the class when constructing it
+(the default one provided does not).
+
+\subsubsection Surface_mesh_shortest_pathClassSource Specifying the Source Points
+
+The set of source points for shortest path queries can be populated one by one or using a range.
+A source point can be specified using either a vertex of the input surface mesh or a face of the input surface mesh
+with some barycentric coordinate.
+Given a point \f$p\f$ that lies inside a triangle face \f$(A,B,C)\f$, its barycentric coordinate is a weight triple \f$(b_0,b_1,b_2)\f$ such that \f$p = b_0\cdot~A + b_1\cdot~B + b_2\cdot~C\f$, and \f$b_0 + b_1 + b_2 = 1\f$.
+
+\subsubsection Surface_mesh_shortest_pathClassBuild Building the Internal Sequence Tree
+
+A time consumming operation for shortest path queries consists in building an internal data structure used
+to make the queries. This data structure is call the sequence tree.
+It will be built automatically when the first shortest path query is done and will be reused
+for any subsequent query as long as the set of source points does not change. Each time the
+set of source points is changed the sequence tree need to be rebuilt (if already built).
+Note that it can also be built manually by a call to`Surface_mesh_shortest_path::build_sequence_tree()`.
+
+\subsubsection Surface_mesh_shortest_pathClassQueries Shortest Path Queries
+
+As for specifying the source points, the target point for a shortest path query
+can be specified using either a vertex of the input surface mesh or a face of the input surface mesh
+and a barycentric coordinate.
+
+There are three different kind of query functions that can be called using the class `Surface_mesh_shortest_path`.
+Given a target point, all these functions compute the shortest path between that target point and the set of
+source points:
+
+- `Surface_mesh_shortest_path::shortest_distance_to_source_points()` provides the closest source point to the target point together with the length of the shortest path.
+- `Surface_mesh_shortest_path::shortest_path_points_to_source_points()` provides all the intersection points of the shortest path with the edges and vertices of the input surface mesh (including the source and the target point). This function is useful for visualization purpose.
+- `Surface_mesh_shortest_path::shortest_path_sequence_to_source_points` gives access to the complete sequence of simplices crossed by the shortest path using a visitor object model of the concept `SurfaceMeshShortestPathVisitor`.
+
+\subsubsection Surface_mesh_shortest_pathClassMore Additional Convenience Functionalities
+
+Some convenience functions are provided to compute:
+- the point on the input surface mesh specified as a face of the input surface mesh and a barycentric coordinate.
+- the closest point on the input surface mesh (specified as a face of the input surface mesh and a barycentric coordinate) to a given 3D point. Those function are using the class `CGAL::AABB_tree`.
+
+\subsection Surface_mesh_shortest_pathKernelRecommendataions Kernel Recommendations
+In short, we recommend to use a \cgal kernel with exact predicates such as `CGAL::Exact_predicates_inexact_constructions_kernel`.
+
+If you need the constructions to be exact (for the shortest path point computation for example), you should use a kernel with exact constructions.
+Although the algorithm uses square root operations, it will also work on geometry kernels which do not support them by first converting
+the kernel's number type to `double`, using the `std::sqrt`, and converting it back. Note that it would be preferable to use a kernel
+with directly supports square roots to get the most precision of the shortest path computations.
+
+Using a kernel such as `CGAL::Exact_predicates_exact_constructions_kernel_with_sqrt` with this package will indeed provide the exact shortest paths,
+but it will be extremely slow. Indeed, in order to compute the distance along the surface, it is necessary to unfold sequences of faces, edge-to-edge, out into a common plane.  The functor `Construct_triangle_3_to_triangle_2_projection` provides an initial layout of the first face in a sequence, by rotating a given face into the XY plane.  `Construct_triangle_3_along_segment_2_flattening` unfolds a triangle into the plane, using a specified segment as a base.  Since this results in a chain of constructed triangles in the plane, the exact representation types used with this kernel (either `CORE::Expr` or `leda::real`) will process extremely slow, even on very simple inputs.  This is because the exact representations will effectively add an \f$O(n)\f$ factor to every computation.
+
 \section Surface_mesh_shortest_pathExamples Examples
 
 \subsection Surface_mesh_shortest_pathSimpleExample Simple Example

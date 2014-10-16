@@ -10,6 +10,7 @@
 
 /*!
 \addtogroup PkgSurfaceMeshShortestPath
+\todo shall all queries return the distance and the shortest path, potentially using boost::optional? Think about update the user manual
 \todo Modify the algorithm to support more efficient incremental construction
 \todo Add parallelization to the algorithm
 \todo Add methods for computing the ridge tree using the output of the algorithm
