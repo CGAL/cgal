@@ -37,7 +37,7 @@ the `FaceListGraph` concept. There is no restriction on the genus, connectivity,
 of the input surface mesh.
 
 For efficiency reason, index property maps for vertices, halfedges and faces are internally used. For each simplex
-type the property map must provide an index between 0 and the number of simplices. We recommand to use
+type the property map must provide an index between 0 and the number of simplices. We recommend to use
 the class `CGAL::Polyhedron_3` as model of `FaceListGraph` with the item class `CGAL::Polyhedron_items_with_id_3`,
 for which default property maps are provided.
 This item class associates to each simplex an index that provides a \f$O(1)\f$ time access to the indices.
@@ -58,7 +58,7 @@ Given a point \f$p\f$ that lies inside a triangle face \f$(A,B,C)\f$, its baryce
 
 \subsubsection Surface_mesh_shortest_pathClassBuild Building the Internal Sequence Tree
 
-A time consumming operation for shortest path queries consists in building an internal data structure used
+A time consuming operation for shortest path queries consists in building an internal data structure used
 to make the queries. This data structure is call the sequence tree.
 It will be built automatically when the first shortest path query is done and will be reused
 for any subsequent query as long as the set of source points does not change. Each time the
@@ -209,7 +209,7 @@ The following figures track the construction time, query time, and peak memory u
 \subsection Surface_mesh_shortest_pathDefinitions Definitions
 
 \subsubsection Surface_mesh_shortest_pathGeodesics Geodesic Paths
-  A <em>geodesic</em> curve is a `locally shortest` path on the surface of some manifold, that is, it cannot be made shorter by some local perturbations. On the surface of a polyhedron, this translates to a curve where, when the faces crossed by the curve are unfolled into the plane, the curve forms a straight line. Another way of describing it is that there is exactly \f$\pi\f$ surface angle to both sides at every point along the curve. A geodesic curve between two points is not necessarily a shortest path, but all shortest paths on polyhedra are formed by sequences of one or more geodesic paths.
+  A <em>geodesic</em> curve is a `locally shortest` path on the surface of some manifold, that is, it cannot be made shorter by some local perturbations. On the surface of a polyhedron, this translates to a curve where, when the faces crossed by the curve are unfolded into the plane, the curve forms a straight line. Another way of describing it is that there is exactly \f$\pi\f$ surface angle to both sides at every point along the curve. A geodesic curve between two points is not necessarily a shortest path, but all shortest paths on polyhedra are formed by sequences of one or more geodesic paths.
   
   \cgalFigureBegin{Geodesic_perspective,perspectiveGeodesic.png}
   A geodesic on the surface of a simple polyhedron.
