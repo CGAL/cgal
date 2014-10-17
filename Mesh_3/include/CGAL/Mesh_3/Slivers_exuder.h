@@ -1371,7 +1371,8 @@ template <typename C3T3, typename SC, typename V_, typename FT>
 boost::optional<typename Slivers_exuder<C3T3,SC,V_,FT>::Umbrella >
 Slivers_exuder<C3T3,SC,V_,FT>::
 get_umbrella(const Facet_vector& facets,//internal_facets of conflict zone
-             const Vertex_handle& v) const
+
+             const Vertex_handle& /* v no longer used */) const
 {
   Umbrella umbrella; //std::map<Ordered_edge, Patch_and_counter>
 
