@@ -18,7 +18,9 @@
 
 namespace CGAL {
     /*!
-     \brief Cylinder_shape implements Shape_base. The cylinder is parameterized by the axis, i.e. point and direction, and the radius.
+     \brief Cylinder_shape implements Shape_base. 
+            The cylinder is parameterized by the axis,
+            i.e. point and direction, and the radius.
      */
   template <class Sd_traits>
   class Cylinder_shape : public Shape_base<Sd_traits> {
@@ -62,7 +64,7 @@ namespace CGAL {
 
   protected:
       /// \cond SKIP_IN_MANUAL
-    virtual void create_shape(const std::vector<int> &indices) {
+    virtual void create_shape(const std::vector<size_t> &indices) {
       Point p1 = get(this->m_point_pmap, *(this->m_first + indices[0]));
       Point p2 = get(this->m_point_pmap, *(this->m_first + indices[1]));
       //Point p3 = get(this->m_point_pmap, (this->m_first + indices[2]));
@@ -79,7 +81,8 @@ namespace CGAL {
       }
       axis = axis * (1.0 / axisL);
 
-      // establish two directions in the plane axis * x = 0, whereas xDir is the projected n1
+      // establish two directions in the plane axis * x = 0, 
+      // whereas xDir is the projected n1
       Vector xDir = n1 - (n1 * axis) * axis;
       xDir = xDir * (1.0 / sqrt(xDir.squared_length()));
       Vector yDir = CGAL::cross_product(axis, xDir);
@@ -101,13 +104,18 @@ namespace CGAL {
 
       m_axis = Line(m_point_on_axis, axis);
 
-      if (squared_distance(p1) > this->m_epsilon || (cos_to_normal(p1, n1) < this->m_normal_threshold)) {
+      if (squared_distance(p1) > this->m_epsilon ||
+          (cos_to_normal(p1, n1) < this->m_normal_threshold)) {
         this->m_isValid = false;
         return;
       }
     }
 
-    void parameters(std::vector<std::pair<FT, FT> > &parameterSpace, const std::vector<int> &indices, FT min[2], FT max[2]) const {
+    void parameters(std::vector<std::pair<FT, FT> > &parameterSpace,
+                    const std::vector<size_t> &indices,
+                    FT min[2],
+                    FT max[2]) const {
+
       Vector d1 = Vector(0, 0, 1);
       Vector a = m_axis.to_vector();
       a = a * (1.0 / sqrt(a.squared_length()));
@@ -119,7 +127,8 @@ namespace CGAL {
         d2 = CGAL::cross_product(m_axis.to_vector(), d1);
         l = d2.squared_length();
         if (l < 0.0001) {
-          std::cout << "Cylinder::pointOnPrimitive() construction failed!" << std::endl;
+          std::cout << "Cylinder::pointOnPrimitive() \
+                       construction failed!" << std::endl;
         }
       }
       d2 = d2 / sqrt(l);
@@ -131,7 +140,8 @@ namespace CGAL {
       FT c = 1.0 / 2 * M_PI * m_radius;
 
       // first one separate for initializing min/max
-      Vector vec = get(this->m_point_pmap, *(this->m_first + indices[0])) - m_point_on_axis;
+      Vector vec = get(this->m_point_pmap,
+                       *(this->m_first + indices[0])) - m_point_on_axis;
       FT v = vec * a;
       vec = vec - ((vec * a) * a);
       vec = vec * (1.0 / sqrt(vec.squared_length()));
@@ -146,8 +156,9 @@ namespace CGAL {
       min[0] = max[0] = u;
       min[1] = max[1] = v;
 
-      for (unsigned int i = 0;i<indices.size();i++) {
-        Vector vec = get(this->m_point_pmap, *(this->m_first + indices[i])) - m_point_on_axis;
+      for (size_t i = 0;i<indices.size();i++) {
+        Vector vec = get(this->m_point_pmap,
+                         *(this->m_first + indices[i])) - m_point_on_axis;
         FT v = vec * a;
         vec = vec - ((vec * a) * a);
         vec = vec * (1.0 / sqrt(vec.squared_length()));
@@ -166,19 +177,21 @@ namespace CGAL {
       }
     }
 
-    void parameter_extend(const Point &center, FT width, FT min[2], FT max[2]) const {
-      //V length of axis in box? not enough
-      FT maxLambda = (std::numeric_limits<double>::max)(), minLambda = -(std::numeric_limits<double>::max)();
+    void parameter_extend(const Point &center,
+                          FT width, 
+                          FT min[2],
+                          FT max[2]) const {
+      FT maxLambda = (std::numeric_limits<double>::max)(),
+         minLambda = -(std::numeric_limits<double>::max)();
+
       Vector a = m_axis.to_vector();
       Point p = m_point_on_axis;
 
-      for (unsigned int i = 0;i<3;i++) {
+      for (size_t i = 0;i<3;i++) {
         if (abs(a[i]) > 0.001) {
           FT l1 = (center[i] + width + m_radius - p[i]) / a[i];
           FT l2 = (center[i] - width - m_radius - p[i]) / a[i];
-          if (l1 * l2 > 0) {
-            std::cout << "Cylinder::parameterExtend(): dim 0, l1*l2 > 0" << std::endl;
-          }
+
           minLambda = (std::max<FT>)(minLambda, (std::min<FT>)(l1, l2));
           maxLambda = (std::min<FT>)(maxLambda, (std::max<FT>)(l1, l2));
         }
@@ -200,12 +213,18 @@ namespace CGAL {
       return d * d;
     }
 
-    void squared_distance(std::vector<FT> &dists, const std::vector<int> &shapeIndex, const std::vector<unsigned int> &indices) {
+    void squared_distance(std::vector<FT> &dists,
+                          const std::vector<int> &shapeIndex,
+                          const std::vector<size_t> &indices) {
       Vector a = m_axis.to_vector();
       a = a * (1.0 / sqrt(a.squared_length()));
-      for (unsigned int i = 0;i<indices.size();i++) {
+      for (size_t i = 0;i<indices.size();i++) {
+
         if (shapeIndex[indices[i]] == -1) {
-          Vector v = get(this->m_point_pmap, *(this->m_first + indices[i])) - m_point_on_axis;
+          Vector v = get(this->m_point_pmap,
+                         *(this->m_first + indices[i]))
+                         - m_point_on_axis;
+
           v = v - ((v * a) * a);
           dists[i] = sqrt(v.squared_length()) - m_radius;
           dists[i] = dists[i] * dists[i];
@@ -213,15 +232,22 @@ namespace CGAL {
       }
     }
 
-    void cos_to_normal(std::vector<FT> &angles, const std::vector<int> &shapeIndex, const std::vector<unsigned int> &indices) const {
+    void cos_to_normal(std::vector<FT> &angles,
+                       const std::vector<int> &shapeIndex, 
+                       const std::vector<size_t> &indices) const {
       Vector a = m_axis.to_vector();
       a = a * (1.0 / sqrt(a.squared_length()));
-      for (unsigned int i = 0;i<indices.size();i++) {
+      for (size_t i = 0;i<indices.size();i++) {
         if (shapeIndex[indices[i]] == -1) {
-          Vector v = get(this->m_point_pmap, *(this->m_first + indices[i])) - m_point_on_axis;
+
+          Vector v = get(this->m_point_pmap,
+                         *(this->m_first + indices[i])) 
+                         - m_point_on_axis;
+
           v = v - ((v * a) * a);
           v = v * (1.0 / sqrt(v.squared_length()));
-          angles[i] = abs(v * get(this->m_normal_pmap, *(this->m_first + indices[i])));
+          angles[i] = abs(v * get(this->m_normal_pmap,
+                                  *(this->m_first + indices[i])));
         }
       }
     }
@@ -235,7 +261,7 @@ namespace CGAL {
       return abs(v * _n);
     }
 
-    virtual int required_samples() const {
+    virtual size_t required_samples() const {
       return 2;
     }
 

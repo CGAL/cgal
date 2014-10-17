@@ -42,15 +42,17 @@ namespace CGAL {
       return m_sphere.center();
     }
       /*!
-       Helper function to write center, radius of the sphere and number of assigned points into a string.
+       Helper function to write center, 
+       radius of the sphere and number of assigned points into a string.
        */
     std::string info() const {
       std::stringstream sstr;
       Point c = m_sphere.center();
       FT r = sqrt(m_sphere.squared_radius());
 
-      sstr << "Type: sphere center: (" << c.x() << ", " << c.y() << ", " << c.z() << ") radius:" << r
-        << " #Pts: " <<  this->m_indices.size();
+      sstr << "Type: sphere center: (" << c.x() << ", " << c.y();
+      sstr << ", " << c.z() << ") radius:" << r;
+      sstr << " #Pts: " <<  this->m_indices.size();
 
       return sstr.str();
     }
@@ -64,7 +66,7 @@ namespace CGAL {
 
   protected:
       /// \cond SKIP_IN_MANUAL
-      void create_shape(const std::vector<int> &indices) {
+      void create_shape(const std::vector<size_t> &indices) {
       Point p1 = get(this->m_point_pmap, *(this->m_first + indices[0]));
       Point p2 = get(this->m_point_pmap, *(this->m_first + indices[1]));
       Point p3 = get(this->m_point_pmap, *(this->m_first + indices[2]));
@@ -74,8 +76,10 @@ namespace CGAL {
       Vector n3 = get(this->m_normal_pmap, *(this->m_first + indices[2]));
 
 
-      // Determine center: select midpoint of shortest line segment between p1 and p2
+      // Determine center: select midpoint of shortest line segment
+      //  between p1 and p2
       // implemented from "3D game engine design" by Eberly 2001
+
       Vector diff = p1 - p2;
       FT a = n1 * n1;
       FT b = -(n1 * n2);
@@ -95,7 +99,8 @@ namespace CGAL {
       FT s = (b * e - c * d) * invDet;
       FT t = (d * b - a * e) * invDet;
 
-      Point center = CGAL::ORIGIN + 0.5 * (((p1 + s * n1) - CGAL::ORIGIN) + ((p2 + t * n2) - CGAL::ORIGIN));
+      Point center = CGAL::ORIGIN + 0.5 * (((p1 + s * n1) - CGAL::ORIGIN)
+                     + ((p2 + t * n2) - CGAL::ORIGIN));
 
       Vector v1 = (p1 - center);
       Vector v2 = (p2 - center);
@@ -110,7 +115,8 @@ namespace CGAL {
       v1 = v1 * (1.0 / d1);
       v2 = v2 * (1.0 / d2);
 
-      if (n1 * v1 < this->m_normal_threshold || n2 * v2 < this->m_normal_threshold) {
+      if (n1 * v1 < this->m_normal_threshold ||
+          n2 * v2 < this->m_normal_threshold) {
         this->m_isValid = false;
         return;
       }
@@ -121,7 +127,8 @@ namespace CGAL {
 
       m_radius = (d1 + d2) * 0.5;
 
-      if (abs(d3 - m_radius) > this->m_epsilon || n3 * v3 < this->m_normal_threshold) {
+      if (abs(d3 - m_radius) > this->m_epsilon ||
+          n3 * v3 < this->m_normal_threshold) {
         this->m_isValid = false;
         return;
       }
@@ -129,10 +136,15 @@ namespace CGAL {
       m_sphere = Sphere(center, m_radius * m_radius);
     }
 
-    void parameters(std::vector<std::pair<FT, FT> > &parameterSpace, const std::vector<int> &indices, FT min[2], FT max[2]) const {
+    void parameters(std::vector<std::pair<FT, FT> > &parameterSpace,
+                    const std::vector<size_t> &indices, FT min[2], 
+                    FT max[2]) const {
     }
 
-    void parameter_extend(const Point &center, FT width, FT min[2], FT max[2]) const {
+    void parameter_extend(const Point &center, 
+                          FT width, 
+                          FT min[2],
+                          FT max[2]) const {
     }
 
     FT squared_distance(const Point &_p) const {
@@ -140,21 +152,33 @@ namespace CGAL {
       return d*d;
     }
 
-    void squared_distance(std::vector<FT> &dists, const std::vector<int> &shapeIndex, const std::vector<unsigned int> &indices) {
-      for (unsigned int i = 0;i<indices.size();i++) {
+    void squared_distance(std::vector<FT> &dists,
+      const std::vector<int> &shapeIndex,
+      const std::vector<size_t> &indices) {
+
+      for (size_t i = 0;i<indices.size();i++) {
         if (shapeIndex[indices[i]] == -1) {
-          dists[i] = sqrt((m_sphere.center() - get(this->m_point_pmap, *(this->m_first + indices[i]))).squared_length()) - m_radius;
+          dists[i] = sqrt((m_sphere.center()
+            - get(this->m_point_pmap,
+                  *(this->m_first + indices[i]))).squared_length())
+            - m_radius;
+
           dists[i] = dists[i] * dists[i];
         }
       }
     }
 
-    void cos_to_normal(std::vector<FT> &angles, const std::vector<int> &shapeIndex, const std::vector<unsigned int> &indices) const {
-      for (unsigned int i = 0;i<indices.size();i++) {
+    void cos_to_normal(std::vector<FT> &angles,
+                       const std::vector<int> &shapeIndex, 
+                       const std::vector<size_t> &indices) const {
+      for (size_t i = 0;i<indices.size();i++) {
         if (shapeIndex[indices[i]] == -1) {
-          Vector n = m_sphere.center() - get(this->m_point_pmap, *(this->m_first + indices[i]));
+          Vector n = m_sphere.center()
+            - get(this->m_point_pmap, *(this->m_first + indices[i]));
+
           n = n * (1.0 / (sqrt(n.squared_length())));
-          angles[i] = abs(get(this->m_normal_pmap, *(this->m_first + indices[i])) * n);
+          angles[i] = abs(get(this->m_normal_pmap,
+                              *(this->m_first + indices[i])) * n);
         }
       }
     }
@@ -165,7 +189,7 @@ namespace CGAL {
       return abs(_n * n);
     }
       
-      virtual int required_samples() const {
+      virtual size_t required_samples() const {
           return 3;
       }
 

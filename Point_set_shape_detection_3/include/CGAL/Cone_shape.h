@@ -19,7 +19,10 @@
 
 namespace CGAL {
     /*!
-     \brief Cone_shape implements Shape_base. The cone is parameterized by its apex, the axis and the opening angle. This representation models an infinite single-cone and does not consider a base plane.
+     \brief Cone_shape implements Shape_base.
+      The cone is parameterized by its apex, the axis and the opening angle.
+      This representation models an infinite single-cone
+       and does not consider a base plane.
      */
 
   template <class Sd_traits>
@@ -57,20 +60,23 @@ namespace CGAL {
       }
       
       /*!
-       Helper function to write apex, axis and angle of the cone and number of assigned points into a string.
+       Helper function to write apex, axis and angle of the cone and
+       number of assigned points into a string.
        */
       std::string info() const {
           std::stringstream sstr;
           
-          sstr << "Type: cone apex: (" << m_apex.x() << ", " << m_apex.y() << ", " << m_apex.z() << ") axis: (" << m_axis.x() << ", " << m_axis.y() << ", " << m_axis.z() << ") angle:" << m_angle
-          << " #Pts: " << this->m_indices.size();
+          sstr << "Type: cone apex: (" << m_apex.x() << ", " << m_apex.y();
+          sstr << ", " << m_apex.z() << ") axis: (" << m_axis.x() << ", ";
+          sstr << m_axis.y() << ", " << m_axis.z() << ") angle:" << m_angle;
+          sstr << " #Pts: " << this->m_indices.size();
           
           return sstr.str();
       }
 
   protected:
       /// \cond SKIP_IN_MANUAL
-      virtual void create_shape(const std::vector<int> &indices) {
+      virtual void create_shape(const std::vector<size_t> &indices) {
       Point p1 = get(this->m_point_pmap, *(this->m_first + indices[0]));
       Point p2 = get(this->m_point_pmap, *(this->m_first + indices[1]));
       Point p3 = get(this->m_point_pmap, *(this->m_first + indices[2]));
@@ -84,10 +90,12 @@ namespace CGAL {
       Vector lineDir = CGAL::cross_product(n1, n2);
       lineDir = lineDir * 1.0 / (sqrt(lineDir.squared_length()));
 
-      // lineDir not normalized direction of intersection lines of two planes (p1, n1) and (p2, n2)
+      // lineDir not normalized direction of intersection lines
+      //  of two planes (p1, n1) and (p2, n2)
       // get point on line by moving point p1 onto line
       Vector orthLineInPlane = CGAL::cross_product(n1, lineDir);
-      orthLineInPlane = orthLineInPlane * 1.0 / (sqrt(orthLineInPlane.squared_length()));
+      orthLineInPlane = orthLineInPlane * 
+                        1.0 / (sqrt(orthLineInPlane.squared_length()));
 
       // distance of p1 to (p2, n2)
       FT d = (p1 - CGAL::ORIGIN) * n2 - (p2 - CGAL::ORIGIN) * n2;
@@ -140,19 +148,27 @@ namespace CGAL {
       this->m_isValid = true;
     }
 
-    void parameters(std::vector<std::pair<FT, FT> > &parameterSpace, const std::vector<int> &indices, FT min[2], FT max[2]) const {
+    void parameters(std::vector<std::pair<FT, FT> > &parameterSpace,
+                    const std::vector<size_t> &indices,
+                    FT min[2],
+                    FT max[2]) const {
     }
 
-    void parameter_extend(const Point &center, FT width, FT min[2], FT max[2]) const {
+    void parameter_extend(const Point &center,
+                          FT width, 
+                          FT min[2],
+                          FT max[2]) const {
     }
 
     FT squared_distance(const Point &_p) const {
       Vector toApex = _p - m_apex;
       FT a = toApex.squared_length();
+
       // projection on axis
       FT b = toApex * m_axis;
+
       // distance to axis
-      FT l = sqrt(a - b * b); // should never be negative as m_axis is normalized
+      FT l = sqrt(a - b * b);
       FT c = m_cosAng * l;
       FT d = m_nSinAng * b;
 
@@ -160,15 +176,22 @@ namespace CGAL {
       return (b < 0 && c - d < 0) ? a : abs(c + d) * abs(c + d);
     }
 
-    void squared_distance(std::vector<FT> &dists, const std::vector<int> &shapeIndex, const std::vector<unsigned int> &indices) {
-      for (unsigned int i = 0;i<indices.size();i++) {
+    void squared_distance(std::vector<FT> &dists,
+      const std::vector<int> &shapeIndex,
+      const std::vector<size_t> &indices) {
+
+      for (size_t i = 0;i<indices.size();i++) {
         if (shapeIndex[indices[i]] == -1) {
-          Vector toApex = get(this->m_point_pmap, *(this->m_first + indices[i])) - m_apex;
+          Vector toApex = get(this->m_point_pmap,
+                              *(this->m_first + indices[i])) - m_apex;
+
           FT a = toApex.squared_length();
+
           // projection on axis
           FT b = toApex * m_axis;
+
           // distance to axis
-          FT l = sqrt(a - b * b); // should never be negative as m_axis is normalized
+          FT l = sqrt(a - b * b);
           FT c = m_cosAng * l;
           FT d = m_nSinAng * b;
 
@@ -182,17 +205,23 @@ namespace CGAL {
       }
     }
 
-    void cos_to_normal(std::vector<FT> &angles, const std::vector<int> &shapeIndex, const std::vector<unsigned int> &indices) const {
-      for (unsigned int i = 0;i<indices.size();i++) {
+    void cos_to_normal(std::vector<FT> &angles,
+                       const std::vector<int> &shapeIndex, 
+                       const std::vector<size_t> &indices) const {
+      for (size_t i = 0;i<indices.size();i++) {
         if (shapeIndex[indices[i]] == -1) {
           // construct vector orthogonal to axis in direction of the point
-          Vector a = get(this->m_point_pmap, *(this->m_first + indices[i])) - m_apex;
-          Vector b = CGAL::cross_product(m_axis, CGAL::cross_product(m_axis, a));
+          Vector a = get(this->m_point_pmap, 
+                         *(this->m_first + indices[i])) - m_apex;
+
+          Vector b = CGAL::cross_product(m_axis, 
+                                         CGAL::cross_product(m_axis, a));
           b = (a * b < 0) ? -b : b;
           b = b * 1.0 / sqrt(b.squared_length());
           b = m_cosAng * b + m_nSinAng * m_axis;
 
-          angles[i] = abs(get(this->m_normal_pmap, *(this->m_first + indices[i])) * b);
+          angles[i] = abs(get(this->m_normal_pmap, 
+                              *(this->m_first + indices[i])) * b);
         }
       }
     }
@@ -208,7 +237,7 @@ namespace CGAL {
       return abs(_n * b);
     }
       
-      virtual int required_samples() const {
+      virtual size_t required_samples() const {
           return 3;
       }
 

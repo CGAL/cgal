@@ -61,7 +61,7 @@ namespace CGAL {
       Indices into the input data of all points assigned to this shape.
     */
 
-    const std::vector<int> &assigned_points() {
+    const std::vector<size_t> &assigned_points() {
       return m_indices;
     }
       
@@ -108,12 +108,18 @@ namespace CGAL {
     void update_points(const std::vector<int> &shapeIndex) {
       if (!m_indices.size())
         return;
-      int start = 0, end = m_indices.size() - 1;
+      size_t start = 0, end = m_indices.size() - 1;
       while (start < end) {
-        while (shapeIndex[m_indices[start]] == -1 && start < end) start++;
-        while (shapeIndex[m_indices[end]] != -1 && start < end) end--;
-        if (shapeIndex[m_indices[start]] != -1 && shapeIndex[m_indices[end]] == -1 && start < end) {
-          unsigned int tmp = m_indices[start];
+        while (shapeIndex[m_indices[start]] == -1
+          && start < end) start++;
+
+        while (shapeIndex[m_indices[end]] != -1
+          && start < end) end--;
+
+        if (shapeIndex[m_indices[start]] != -1
+          && shapeIndex[m_indices[end]] == -1
+          && start < end) {
+          size_t tmp = m_indices[start];
           m_indices[start] = m_indices[end];
           m_indices[end] = tmp;
         }
@@ -127,14 +133,30 @@ namespace CGAL {
     }
 
     virtual FT squared_distance(const Point &p) const = 0;
-    virtual void squared_distance(std::vector<FT> &dists, const std::vector<int> &shapeIndex, const std::vector<unsigned int> &indices) = 0;
+
+    virtual void squared_distance(std::vector<FT> &dists,
+                                  const std::vector<int> &shapeIndex,
+                                  const std::vector<size_t> &indices) = 0;
+
     virtual FT cos_to_normal(const Point &p, const Vector &n) const = 0;
-    virtual void cos_to_normal(std::vector<FT> &angles, const std::vector<int> &shapeIndex, const std::vector<unsigned int> &indices) const = 0;
 
-    virtual void parameter_extend(const Point &center, FT width, FT min[2], FT max[2]) const = 0;
-    virtual void parameters(std::vector<std::pair<FT, FT> > &parameterSpace, const std::vector<int> &indices, FT min[2], FT max[2]) const = 0;
+    virtual void cos_to_normal(std::vector<FT> &angles,
+                               const std::vector<int> &shapeIndex,
+                               const std::vector<size_t> &indices) const = 0;
 
-    unsigned int connected_component(FT m_bitmapEpsilon, const Point &center, FT width) {
+    virtual void parameter_extend(const Point &center,
+                                  FT width,
+                                  FT min[2],
+                                  FT max[2]) const = 0;
+
+    virtual void parameters(std::vector<std::pair<FT, FT> > &parameterSpace,
+                            const std::vector<size_t> &indices,
+                            FT min[2],
+                            FT max[2]) const = 0;
+
+    size_t connected_component(FT m_bitmapEpsilon,
+                               const Point &center,
+                               FT width) {
       if (m_indices.size() == 0)
         return 0;
 
@@ -145,10 +167,6 @@ namespace CGAL {
       if (!supports_connected_component())
         return m_indices.size();
 
-      //ccCount++;
-      //clock_t s, e;
-      //s = clock();
-
       FT min[2], max[2];
       //parameterExtend(center, width, min, max);
       std::vector<std::pair<FT, FT> > parameterSpace;
@@ -156,13 +174,13 @@ namespace CGAL {
 
       parameters(parameterSpace, m_indices, min, max);
       int iMin[2], iMax[2];
-      iMin[0] = min[0] / m_bitmapEpsilon;
-      iMin[1] = min[1] / m_bitmapEpsilon;
-      iMax[0] = max[0] / m_bitmapEpsilon;
-      iMax[1] = max[1] / m_bitmapEpsilon;
+      iMin[0] = (int) (min[0] / m_bitmapEpsilon);
+      iMin[1] = (int) (min[1] / m_bitmapEpsilon);
+      iMax[0] = (int) (max[0] / m_bitmapEpsilon);
+      iMax[1] = (int) (max[1] / m_bitmapEpsilon);
 
-      int uExtend = abs(iMax[0] - iMin[0]) + 2;
-      int vExtend = abs(iMax[1] - iMin[1]) + 2;
+      size_t uExtend = abs(iMax[0] - iMin[0]) + 2;
+      size_t vExtend = abs(iMax[1] - iMin[1]) + 2;
 
       std::vector<std::vector<int> > bitmap;
       std::vector<bool> visited;
@@ -172,7 +190,7 @@ namespace CGAL {
       bool wrapU = wraps_u();
       bool wrapV = wraps_v();
 
-      for (unsigned int i = 0;i<parameterSpace.size();i++) {
+      for (size_t i = 0;i<parameterSpace.size();i++) {
         int u = (parameterSpace[i].first - min[0]) / m_bitmapEpsilon;
         int v = (parameterSpace[i].second - min[1]) / m_bitmapEpsilon;
         if (u < 0 || u >= uExtend) {
@@ -198,18 +216,18 @@ namespace CGAL {
         bitmap[v * uExtend + u].push_back(m_indices[i]);
       }
 
-      std::vector<std::vector<int> > cluster;
-      for (unsigned int i = 0;i<(uExtend * vExtend);i++) {
-        cluster.push_back(std::vector<int>());
+      std::vector<std::vector<size_t> > cluster;
+      for (size_t i = 0;i<(uExtend * vExtend);i++) {
+        cluster.push_back(std::vector<size_t>());
         if (bitmap[i].empty())
           continue;
         if (visited[i])
           continue;
 
-        std::stack<int> fields;
+        std::stack<size_t> fields;
         fields.push(i);
         while (!fields.empty()) {
-          int f = fields.top();
+          size_t f = fields.top();
           fields.pop();
           if (visited[f])
             continue;
@@ -218,7 +236,8 @@ namespace CGAL {
             continue;
 
           // copy indices
-          std::copy(bitmap[f].begin(), bitmap[f].end(), std::back_inserter(cluster.back()));
+          std::copy(bitmap[f].begin(), bitmap[f].end(),
+                               std::back_inserter(cluster.back()));
 
           // grow 8-neighborhood
           int vIndex = f / uExtend;
@@ -269,7 +288,7 @@ namespace CGAL {
       }
 
       int maxCluster = 0;
-      for (unsigned int i = 1;i<cluster.size();i++) {
+      for (size_t i = 1;i<cluster.size();i++) {
         if (cluster[i].size() > cluster[maxCluster].size()) {
           maxCluster = i;
         }
@@ -277,13 +296,15 @@ namespace CGAL {
 
       m_indices = cluster[maxCluster];
 
-      //e = clock();
-      //ccTime += e - s;
-
       return m_score = m_indices.size();
     }
 
-    void compute(const std::set<int> &indices, Input_iterator first, Point_pmap point_pmap, Normal_pmap normal_pmap, FT epsilon, FT normal_threshold) {
+    void compute(const std::set<size_t> &indices,
+                 Input_iterator first,
+                 Point_pmap point_pmap,
+                 Normal_pmap normal_pmap,
+                 FT epsilon,
+                 FT normal_threshold) {
       if (indices.size() < required_samples())
         return;
 
@@ -293,28 +314,31 @@ namespace CGAL {
       m_epsilon = epsilon;
       m_normal_threshold = normal_threshold;
 
-      std::vector<int> output(indices.begin(), indices.end());
+      std::vector<size_t> output(indices.begin(), indices.end());
 
       create_shape(output);
     }
 
-    virtual void create_shape(const std::vector<int> &indices) = 0;
+    virtual void create_shape(const std::vector<size_t> &indices) = 0;
 
     inline bool operator<(const Shape &c) const {
       return expected_value() < c.expected_value();
     }
 
-    unsigned int cost_function(const std::vector<int> &shapeIndex, FT epsilon, FT normal_threshold, const std::vector<unsigned int> &indices) {
+    size_t cost_function(const std::vector<int> &shapeIndex,
+                         FT epsilon,
+                         FT normal_threshold,
+                         const std::vector<size_t> &indices) {
       std::vector<FT> dists, angles;
       dists.resize(indices.size());
       squared_distance(dists, shapeIndex, indices);
       angles.resize(indices.size());
       cos_to_normal(angles, shapeIndex, indices);
 
-      unsigned int scoreBefore = m_indices.size();
+      size_t scoreBefore = m_indices.size();
 
       FT eps = epsilon * epsilon;
-      for (unsigned int i = 0;i<indices.size();i++) {
+      for (size_t i = 0;i<indices.size();i++) {
         if (shapeIndex[indices[i]] == -1) {
           if (dists[i] <= eps && angles[i] > normal_threshold)
             m_indices.push_back(indices[i]);
@@ -331,17 +355,27 @@ namespace CGAL {
     }
 
     void compute_bound(const int sizeS1, const int sizeP) {
-      hypergeometrical_dist(-2 - sizeS1, -2 - sizeP, -1 - signed(m_indices.size()), m_lower_bound, m_upper_bound);
+      hypergeometrical_dist(-2 - sizeS1,
+                            -2 - sizeP,
+                            -1 - signed(m_indices.size()),
+                            m_lower_bound, m_upper_bound);
+
       m_lower_bound = -1 - m_lower_bound;
       m_upper_bound = -1 - m_upper_bound;
     }
 
-    void hypergeometrical_dist(const int UN, const int x, const FT n, FT &low, FT &high) {
+    void hypergeometrical_dist(const int UN, 
+                               const int x,
+                               const FT n, 
+                               FT &low,
+                               FT &high) {
       if (UN == 1 || UN == 0)
-        printf("something wrong here, denominator is zero (UN %d)!! \n", UN);
+        printf("something wrong here, \
+               denominator is zero (UN %d)!! \n", UN);
       if (x > UN)
-        printf("SizeP1 smaller than sizeP, something wrong (and sqrt may be negative !!!!");
-      FT sq = sqrtf(x * n * (UN- x) * (UN - n) / (UN - 1));
+        printf("SizeP1 smaller than sizeP, something wrong \
+               (and sqrt may be negative !!!!");
+      FT sq = sqrt(x * n * (UN- x) * (UN - n) / (UN - 1));
       low  = (x * n - sq) / UN;
       high = (x * n + sq)/UN;
 
@@ -350,7 +384,7 @@ namespace CGAL {
       }
     }
 
-    virtual int required_samples() const = 0;
+    virtual size_t required_samples() const = 0;
 
     virtual bool supports_connected_component() const = 0;
     virtual bool wraps_u() const = 0;
@@ -358,23 +392,29 @@ namespace CGAL {
 
   protected:
     FT m_epsilon;
-    FT m_normal_threshold;	 //deviation of normal, used during first check of the 3 normal
+
+    //deviation of normal, used during first check of the 3 normal
+    FT m_normal_threshold;
 
     bool m_isValid;
     FT m_lower_bound;
     FT m_upper_bound;
 
-    unsigned int m_score;
+    size_t m_score;
 
     FT m_sum_expected_value;
-    int m_nb_subset_used;		//count the number of subset used so far for the score, and thus indicate the next one to use
+
+    //count the number of subset used so far for the score,
+    //and thus indicate the next one to use
+    size_t m_nb_subset_used;
     bool m_has_connected_component;
 
-    std::vector<int> m_indices;	//indices of the points fitting to the candidate
+    //indices of the points fitting to the candidate
+    std::vector<size_t> m_indices;
     Input_iterator m_first;
     Point_pmap m_point_pmap;
-      Normal_pmap m_normal_pmap;
-      /// \endcond
+    Normal_pmap m_normal_pmap;
+    /// \endcond
   };
 
   namespace internal {

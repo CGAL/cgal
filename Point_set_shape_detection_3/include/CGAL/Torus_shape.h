@@ -38,11 +38,16 @@ namespace CGAL {
       return m_center;
     }
       /*!
-       Helper function to write center point, symmetry axis and the two radii into a string.
+       Helper function to write center point, symmetry axis
+       and the two radii into a string.
        */
     std::string info() const {
       std::stringstream sstr;
-      sstr << "Type: torus center(" << m_center.x() << ", " << m_center.y() << ", " << m_center.z() << ") axis(" << m_axis.x() << ", " << m_axis.y() << ", " << m_axis.z() << ") major radius = " << m_majorRad << " minor radius = " << m_minorRad << " #Pts: " << this->m_indices.size();
+      sstr << "Type: torus center(" << m_center.x() << ", " << m_center.y();
+      sstr << ", " << m_center.z() << ") axis(" << m_axis.x() << ", ";
+      sstr << m_axis.y() << ", " << m_axis.z() << ") major radius = ";
+      sstr << m_majorRad << " minor radius = " << m_minorRad << " #Pts: ";
+      sstr << this->m_indices.size();
 
       return sstr.str();
     }
@@ -64,7 +69,7 @@ namespace CGAL {
 
   protected:
       /// \cond SKIP_IN_MANUAL
-      void create_shape(const std::vector<int> &indices) {
+      void create_shape(const std::vector<size_t> &indices) {
       Point p1 = get(this->m_point_pmap, *(this->m_first + indices[0]));
       Point p2 = get(this->m_point_pmap, *(this->m_first + indices[1]));
       Point p3 = get(this->m_point_pmap, *(this->m_first + indices[2]));
@@ -75,7 +80,8 @@ namespace CGAL {
       Vector n3 = get(this->m_normal_pmap, *(this->m_first + indices[2]));
       Vector n4 = get(this->m_normal_pmap, *(this->m_first + indices[3]));
 
-      // Implemented method from 'Geometric least-squares fitting of spheres, cylinders, cones and tori' by G. Lukacs,A.D. Marshall, R. R. Martin
+      // Implemented method from 'Geometric least-squares fitting of spheres,
+      // cylinders, cones and tori' by G. Lukacs,A.D. Marshall, R. R. Martin
       double a01 = CGAL::cross_product(n1, n2) * n3;
       double b01 = CGAL::cross_product(n1, n2) * n4;
       double a0 = CGAL::cross_product(p3 - p2, n1) * n3;
@@ -146,11 +152,17 @@ namespace CGAL {
       //validate points and normals
     }
 
-    void parameters(std::vector<std::pair<FT, FT> > &parameterSpace, const std::vector<int> &indices, FT min[2], FT max[2]) const {
+    void parameters(std::vector<std::pair<FT, FT> > &parameterSpace,
+                    const std::vector<size_t> &indices, 
+                    FT min[2],
+                    FT max[2]) const {
       return;
     }
 
-    void parameter_extend(const Point &center, FT width, FT min[2], FT max[2]) const {
+    void parameter_extend(const Point &center,
+                          FT width,
+                          FT min[2],
+                          FT max[2]) const {
       return;
     }
 
@@ -158,13 +170,9 @@ namespace CGAL {
       Vector d = _p - m_center;
       // height over symmetry plane
       FT p = d * m_axis;
+
       // distance from axis in plane
       FT l = sqrt(d * d - p * p);
-
-      /*
-      Vector inPlane = CGAL::cross_product(m_axis, CGAL::cross_product(m_axis, d));
-      if (inPlane * d < 0)
-      inPlane = -inPlane;*/
 
       // inPlane distance from circle
       FT l2 = m_majorRad - l;
@@ -175,8 +183,11 @@ namespace CGAL {
       return l * l;
     }
 
-    void squared_distance(std::vector<FT> &dists, const std::vector<int> &shapeIndex, const std::vector<unsigned int> &indices) {
-      for (unsigned int i = 0;i<indices.size();i++) {
+    void squared_distance(std::vector<FT> &dists,
+      const std::vector<int> &shapeIndex,
+      const std::vector<size_t> &indices) {
+
+      for (size_t i = 0;i<indices.size();i++) {
         if (shapeIndex[indices[i]] == -1) {
           Point po = get(this->m_point_pmap, *(this->m_first + i));
           Vector d = po - m_center;
@@ -195,8 +206,10 @@ namespace CGAL {
       }
     }
 
-    void cos_to_normal(std::vector<FT> &angles, const std::vector<int> &shapeIndex, const std::vector<unsigned int> &indices) const {
-      for (unsigned int i = 0;i<indices.size();i++) {
+    void cos_to_normal(std::vector<FT> &angles,
+                       const std::vector<int> &shapeIndex,
+                       const std::vector<size_t> &indices) const {
+      for (size_t i = 0;i<indices.size();i++) {
         if (shapeIndex[indices[i]] == -1) {
           Vector d = get(this->m_point_pmap, *(this->m_first + i)) - m_center;
           // height over symmetry plane
@@ -204,12 +217,14 @@ namespace CGAL {
           // distance from axis in plane
           //FT l = sqrt(d * d - p * p);
 
-          Vector inPlane = CGAL::cross_product(m_axis, CGAL::cross_product(m_axis, d));
+          Vector inPlane = CGAL::cross_product(m_axis,
+                                              CGAL::cross_product(m_axis, d));
           if (inPlane * d < 0)
             inPlane = -inPlane;
           inPlane = inPlane / sqrt(inPlane.squared_length());
 
-          d = get(this->m_point_pmap, *(this->m_first + i)) - (m_center + inPlane * m_majorRad);
+          d = get(this->m_point_pmap, *(this->m_first + i))
+              - (m_center + inPlane * m_majorRad);
           d = d / sqrt(d.squared_length());
           angles[i] = abs(d * get(this->m_normal_pmap, *(this->m_first + i)));
         }
@@ -223,7 +238,8 @@ namespace CGAL {
       // distance from axis in plane
       //FT l = sqrt(d * d - p * p);
 
-      Vector inPlane = CGAL::cross_product(m_axis, CGAL::cross_product(m_axis, d));
+      Vector inPlane = CGAL::cross_product(m_axis,
+                                           CGAL::cross_product(m_axis, d));
       if (inPlane * d < 0)
         inPlane = -inPlane;
       inPlane = inPlane / sqrt(inPlane.squared_length());
@@ -233,7 +249,7 @@ namespace CGAL {
       return abs(d * _n);
     }
       
-      virtual int required_samples() const {
+      virtual size_t required_samples() const {
           return 4;
       }
 
@@ -250,23 +266,6 @@ namespace CGAL {
     }
 
   private:
-    /*
-    FT getCircle(Point &center, const Vector &axis, FT &majorRad, FT &minorRad) const {
-    // create spin image
-    Geom_traits::Point_2 pts[4];
-    for (unsigned int i = 0;i<4;i++) {
-    Vector d = first[i].first - center;
-    FT p = d * axis;
-    pts[i] = Geom_traits::Point_2(p, sqrt(d * d - p * p));
-    }
-    Geom_traits::Circle_2 c(pts[0], pts[1], pts[2]);
-    minorRad = c.squared_radius();
-    majorRad = c.center().y();
-    center = center + c.center().x() * axis;
-
-    return abs((pts[3] - c.center()).squared_length() - c.squared_radius());
-    }*/
-
     Point m_center;
     Vector m_axis;
     FT m_majorRad;
