@@ -111,6 +111,7 @@ template <typename Kernel>
 std::vector<typename Kernel::Point_d> generate_points_on_circle_2(
   std::size_t num_points, double radius)
 {
+  typedef typename Kernel::Point_d Point;
   CGAL::Random_points_on_circle_2<Point> generator(radius);
   std::vector<Point> points;
   points.reserve(NUM_POINTS);
@@ -123,6 +124,7 @@ template <typename Kernel>
 std::vector<typename Kernel::Point_d> generate_points_on_sphere_3(
   std::size_t num_points, double radius)
 {
+  typedef typename Kernel::Point_d Point;
   CGAL::Random_points_on_sphere_3<Point> generator(radius);
   std::vector<Point> points;
   points.reserve(NUM_POINTS);
@@ -135,6 +137,7 @@ template <typename Kernel>
 std::vector<typename Kernel::Point_d> generate_points_on_sphere_d(
   std::size_t num_points, int dim, double radius)
 {
+  typedef typename Kernel::Point_d Point;
   CGAL::Random_points_on_sphere_d<Point> generator(dim, radius);
   std::vector<Point> points;
   points.reserve(NUM_POINTS);
