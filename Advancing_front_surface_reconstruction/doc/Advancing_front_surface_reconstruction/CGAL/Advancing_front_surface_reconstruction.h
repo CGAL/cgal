@@ -179,12 +179,15 @@ describing the faces of the reconstructed surface.
 \tparam IndicesOutputIterator must be an output iterator to which 
 `CGAL::cpp11::tuple<std::size_t,std::size_t,std::size_t>` can be assigned.
 
+\param begin iterator on the first point of the sequence
+\param end past the end iterator the point sequence
+\param out output iterator
 \param K  described in Section \ref AFSR_Boundaries
 \param beta described in Section \ref AFSR_Selection
 
 */
   template <class PointInputIterator, IndicesOutputIterator>
-  void advancing_front_surface_reconstruction(PointInputIterator b, PointInputIterator e, IndicesOutputIterator out, double K=5, double beta= 0.18 );
+  void advancing_front_surface_reconstruction(PointInputIterator begin, PointInputIterator end, IndicesOutputIterator out, double K=5, double beta= 0.18 );
 
 
 } /* end namespace CGAL */
