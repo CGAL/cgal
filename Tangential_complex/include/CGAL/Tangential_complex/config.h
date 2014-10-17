@@ -32,5 +32,6 @@
 
 //========================= Parameters ========================================
 const std::size_t NUM_POINTS_FOR_PCA = 50;
+const double INPUT_SPARSITY = 0.5;
 
 #endif // CGAL_TC_CONFIG_H

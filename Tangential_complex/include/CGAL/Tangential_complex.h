@@ -103,6 +103,7 @@ class Tangential_complex
   typedef std::vector<Vector>                         Tangent_space_basis;
 
   typedef std::vector<Point>                          Points;
+  typedef std::vector<FT>                             Weights;
   typedef Point_cloud_data_structure<Kernel, Points>  Points_ds;
   typedef typename Points_ds::KNS_range               KNS_range;
   typedef typename Points_ds::KNS_iterator            KNS_iterator;
@@ -150,10 +151,18 @@ public:
   template <typename InputIterator>
   Tangential_complex(InputIterator first, InputIterator last, 
                      const Kernel &k = Kernel())
-  : m_k(k), m_points(first, last), m_points_ds(m_points) {}
+  : m_k(k), 
+    m_points(first, last),
+    m_points_ds(m_points) 
+  {}
 
   /// Destructor
   ~Tangential_complex() {}
+
+  std::size_t number_of_vertices()
+  {
+    return m_points.size();
+  }
 
   void compute_tangential_complex()
   {
@@ -166,6 +175,7 @@ public:
     // invalidate the vertex handles stored beside the triangulations
     m_triangulations.resize(m_points.size());
     m_tangent_spaces.resize(m_points.size());
+    m_weights.resize(m_points.size(), FT(0));
 #ifdef CGAL_TC_EXPORT_NORMALS
     m_normals.resize(m_points.size());
 #endif
@@ -192,8 +202,136 @@ public:
 #endif
   }
   
+  void refresh_tangential_complex()
+  {
+#ifdef CGAL_TC_PROFILING
+    Wall_clock_timer t;
+#endif
+    
+#ifdef CGAL_LINKED_WITH_TBB
+    // Parallel
+    if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
+    {
+      tbb::parallel_for(tbb::blocked_range<size_t>(0, m_points.size()),
+        Compute_tangent_triangulation(*this, true)
+      );
+    }
+    // Sequential
+    else
+#endif // CGAL_LINKED_WITH_TBB
+    {
+      for (std::size_t i = 0 ; i < m_points.size() ; ++i)
+        compute_tangent_triangulation(i, true);
+    }
+    
+#ifdef CGAL_TC_PROFILING
+    std::cerr << "Tangential complex refreshed in " << t.elapsed() 
+              << " seconds." << std::endl;
+#endif
+  }
+  
+  void fix_inconsistencies()
+  {
+    Kernel::Point_drop_weight_d drop_w = m_k.point_drop_weight_d_object();
+    Kernel::Construct_weighted_point_d cwp = 
+      m_k.construct_weighted_point_d_object();
+    
+    std::pair<std::size_t, std::size_t> stats_before =
+      number_of_inconsistent_simplices(false);
+
+    bool done = false;
+    while (!done) 
+    {
+      std::size_t num_failures = 0;
+      Tr_container::const_iterator it_tr = m_triangulations.begin();
+      Tr_container::const_iterator it_tr_end = m_triangulations.end();
+      // For each triangulation
+      for (int pt_idx = 0 ; it_tr != it_tr_end ; ++it_tr, ++pt_idx)
+      {
+        Triangulation const& tr    = it_tr->tr();
+        Tr_vertex_handle center_vh = it_tr->center_vertex();
+
+        std::vector<Tr_full_cell_handle> incident_cells;
+        tr.incident_full_cells(center_vh, std::back_inserter(incident_cells));
+
+        std::vector<Tr_full_cell_handle>::const_iterator it_c = incident_cells.begin();
+        std::vector<Tr_full_cell_handle>::const_iterator it_c_end= incident_cells.end();
+        // For each cell
+        for ( ; it_c != it_c_end ; ++it_c)
+        {
+          std::set<std::size_t> c;
+          for (int i = 0 ; i < Intrinsic_dimension + 1 ; ++i)
+          {
+            std::size_t data = (*it_c)->vertex(i)->data();
+            c.insert(data);
+          }
+
+          // Inconsistent?
+          if (!is_simplex_consistent(c))
+          {
+            bool fixed = false;
+            // Try to find a weight that solves the inconsistency
+            for (int i = 0 ; i < 50 && !fixed ; ++i)
+            {
+              CGAL::Random rng;
+              m_weights[pt_idx] = 
+                rng.get_double(0., (0.5*0.5*INPUT_SPARSITY*INPUT_SPARSITY));
+
+              for (std::size_t j : c) // CJTODO: C++11
+                compute_tangent_triangulation(j);
+
+              fixed = is_simplex_consistent(c);
+            }
+            if (!fixed)
+              ++num_failures;
+            
+            refresh_tangential_complex(); // CJTODO: heavy computation!
+          }
+        }
+      }
+      
+      std::pair<std::size_t, std::size_t> stats_after =
+        number_of_inconsistent_simplices(false);
+
+#ifdef CGAL_TC_VERBOSE
+      std::cerr << std::endl
+        << "================================================" << std::endl
+        << "Inconsistencies:\n"
+        << "  * Number of vertices: " << m_points.size() << std::endl
+        << std::endl
+        << "  * BEFORE fix_inconsistencies:" << std::endl
+        << "    - Total number of simplices in stars (incl. duplicates): " 
+        << stats_before.first << std::endl
+        << "    - Number of inconsistent simplices in stars (incl. duplicates): " 
+        << stats_before.second << std::endl
+        << "    - Percentage of inconsistencies: " 
+        << 100. * stats_before.second / stats_before.first << "%" 
+        << std::endl
+        << std::endl
+        << "  * AFTER fix_inconsistencies:" << std::endl
+        << "    - Total number of simplices in stars (incl. duplicates): " 
+        << stats_after.first << std::endl
+        << "    - Number of inconsistent simplices in stars (incl. duplicates): " 
+        << stats_after.second << std::endl
+        << "    - Percentage of inconsistencies: " 
+        << 100. * stats_after.second / stats_before.first << "%" 
+        << std::endl
+        << "================================================" << std::endl;
+#endif
+      done = (stats_after.second == 0);
+      stats_before = stats_after;
+    }
+  }
+  
+
   // Return a pair<num_simplices, num_inconsistent_simplices>
-  std::pair<std::size_t, std::size_t> number_of_inconsistent_simplices()
+  std::pair<std::size_t, std::size_t> number_of_inconsistent_simplices(
+#ifdef CGAL_TC_VERBOSE
+    bool verbose = true
+#else
+    bool verbose = false
+#endif
+    )
   {
     std::size_t num_simplices = 0;
     std::size_t num_inconsistent_simplices = 0;
@@ -213,32 +351,26 @@ public:
       // For each cell
       for ( ; it_c != it_c_end ; ++it_c)
       {
-        std::set<std::size_t> c;
-        for (int i = 0 ; i < Intrinsic_dimension + 1 ; ++i)
-        {
-          std::size_t data = (*it_c)->vertex(i)->data();
-          c.insert(data);
-        }
-
-        if (!is_simplex_consistent(c))
+        if (!is_simplex_consistent(*it_c))
           ++num_inconsistent_simplices;
         ++num_simplices;
       }
     }
 
-#ifdef CGAL_TC_VERBOSE
-    std::cerr << std::endl
-      << "================================================" << std::endl
-      << "Inconsistencies:\n"
-      << "  * Number of vertices: " << m_points.size() << std::endl
-      << "  * Total number of simplices in stars (incl. duplicates): " 
-      << num_simplices << std::endl
-      << "  * Number of inconsistent simplices in stars (incl. duplicates): " 
-      << num_inconsistent_simplices << std::endl
-      << "  * Percentage of inconsistencies: " 
-      << 100 * num_inconsistent_simplices / num_simplices << "%" << std::endl
-      << "================================================" << std::endl;
-#endif
+    if (verbose)
+    {
+      std::cerr << std::endl
+        << "================================================" << std::endl
+        << "Inconsistencies:\n"
+        << "  * Number of vertices: " << m_points.size() << std::endl
+        << "  * Total number of simplices in stars (incl. duplicates): " 
+        << num_simplices << std::endl
+        << "  * Number of inconsistent simplices in stars (incl. duplicates): " 
+        << num_inconsistent_simplices << std::endl
+        << "  * Percentage of inconsistencies: " 
+        << 100 * num_inconsistent_simplices / num_simplices << "%" << std::endl
+        << "================================================" << std::endl;
+    }
 
     return std::make_pair(num_simplices, num_inconsistent_simplices);
   }
@@ -475,11 +607,14 @@ private:
   class Compute_tangent_triangulation
   {
     Tangential_complex & m_tc;
+    bool m_tangent_spaces_are_already_computed;
 
   public:
     // Constructor
-    Compute_tangent_triangulation(Tangential_complex &tc)
-    : m_tc(tc)
+    Compute_tangent_triangulation(
+      Tangential_complex &tc, bool tangent_spaces_are_already_computed = false)
+    : m_tc(tc), 
+      m_tangent_spaces_are_already_computed(tangent_spaces_are_already_computed)
     {}
 
     // Constructor
@@ -491,12 +626,16 @@ private:
     void operator()( const tbb::blocked_range<size_t>& r ) const
     {
       for( size_t i = r.begin() ; i != r.end() ; ++i)
-        m_tc.compute_tangent_triangulation(i);
+      {
+        m_tc.compute_tangent_triangulation(
+          i, m_tangent_spaces_are_already_computed);
+      }
     }
   };
 #endif // CGAL_LINKED_WITH_TBB
 
-  void compute_tangent_triangulation(std::size_t i)
+  void compute_tangent_triangulation(
+    std::size_t i, bool tangent_spaces_are_already_computed = false)
   {
     //std::cerr << "***********************************************" << std::endl;
     Triangulation &local_tr =
@@ -520,11 +659,14 @@ private:
 
     // Estimate the tangent space
     const Point &center_pt = m_points[i];
+    if (!tangent_spaces_are_already_computed)
+    {
 #ifdef CGAL_TC_EXPORT_NORMALS
-    m_tangent_spaces[i] = compute_tangent_space(center_pt, &m_normals[i]);
+      m_tangent_spaces[i] = compute_tangent_space(center_pt, &m_normals[i]);
 #else
-    m_tangent_spaces[i] = compute_tangent_space(center_pt);
+      m_tangent_spaces[i] = compute_tangent_space(center_pt);
 #endif
+    }
       
     //***************************************************
     // Build a minimal triangulation in the tangent space
@@ -534,7 +676,7 @@ private:
     // Insert p
     Tr_point wp = local_tr_traits.construct_weighted_point_d_object()(
       local_tr_traits.construct_point_d_object()(Intrinsic_dimension, ORIGIN),
-      0);
+      m_weights[i]);
     center_vertex = local_tr.insert(wp);
     center_vertex->data() = i;
 
@@ -569,7 +711,7 @@ private:
 
         FT squared_dist_to_tangent_plane = 
           local_tr_traits.point_weight_d_object()(proj_pt);
-        FT w =  -squared_dist_to_tangent_plane;
+        FT w = -squared_dist_to_tangent_plane + m_weights[neighbor_point_idx];
         Tr_point wp = local_tr_traits.construct_weighted_point_d_object()(
           drop_w(proj_pt),
           w);
@@ -813,6 +955,18 @@ private:
       m_k.squared_distance_d_object()(p, projected_pt)
     );
   }
+  
+  // A simplex here is a local tri's full cell handle
+  bool is_simplex_consistent(Tr_full_cell_handle fch)
+  {
+    std::set<std::size_t> c;
+    for (int i = 0 ; i < Intrinsic_dimension + 1 ; ++i)
+    {
+      std::size_t data = fch->vertex(i)->data();
+      c.insert(data);
+    }
+    return is_simplex_consistent(c);
+  }
 
   // A simplex here is a list of point indices
   bool is_simplex_consistent(std::set<std::size_t> const& simplex)
@@ -1010,7 +1164,7 @@ private:
       << num_inconsistent_simplices << std::endl
       << "  * Percentage of inconsistencies: " 
       << (num_simplices > 0 ? 
-          100 * num_inconsistent_simplices / num_simplices : 0) << "%" 
+          100. * num_inconsistent_simplices / num_simplices : 0.) << "%" 
       << std::endl
       << "================================================" << std::endl;
 #endif
@@ -1021,6 +1175,7 @@ private:
 private:
   const Kernel        m_k;
   Points              m_points;
+  Weights             m_weights;
   Points_ds           m_points_ds;
   TS_container        m_tangent_spaces;
   Tr_container        m_triangulations; // Contains the triangulations 
