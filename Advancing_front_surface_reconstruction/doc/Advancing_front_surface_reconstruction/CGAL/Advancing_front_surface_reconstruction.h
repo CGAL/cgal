@@ -106,7 +106,7 @@ tds_2();
 /*! 
 returns the underlying 3D Delaunay triangulation. 
 */ 
-const Triangulation_3_& 
+const Triangulation_3& 
 triangulation_3(); 
 
 
