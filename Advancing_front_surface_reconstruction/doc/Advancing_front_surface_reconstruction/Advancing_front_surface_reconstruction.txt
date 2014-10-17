@@ -8,7 +8,6 @@ namespace CGAL {
 \cgalAutoToc
 \author Tran Kai Frank Da and David Cohen-Steiner
 
-\image html afsr.png 
 
 Surface reconstruction from an unstructured point set is to find
 a surface that approximates these points. Several techniques have
@@ -49,6 +48,24 @@ examples.
 A detailed description of the algorithm and the underlying theory can be found
 in \cgalCite{cgal:csd-gdbsra-04}.
 
+
+
+The first step of the algorithm is the construction of a 3D Delaunay 
+triangulation of the point set.
+The Delaunay triangle with the smallest radius is the starting point
+for the greedy algorithm. It is the initial surface and it has three
+boundary edges.
+
+The algorithm maintains a priority queue of
+candidate triangles, that is of triangles incident to the boundary
+edges of the current surface.  The priority is the \em plausibility.  
+While this priority queue
+is not empty, the algorithm selects the most plausible candidate triangle and adds into the
+surface, and inserts new candidate triangles into the priority queue in case
+there are new boundary edges. As the algorithm creates a two-manifold surface
+some candidate triangles can not be selected due to <em>topological constraints</em> which are explained next.
+
+
 \subsection AFSR_Topology Topological Constraints
 
 Any triangle \f$t\f$ considered as next potential candidate has to share an
@@ -71,7 +88,7 @@ third vertex on edge \f$e\f$.
 
 We call a triangle on which the above operations can be applied *valid*.
 
-\subsection AFSR_Selection Selection Criteria
+\subsection AFSR_Selection Plausibility of a Candidate Triangle
 
 Valid triangles for an edge on the boundary are compared through what
 we call their *radius*.  The radius of a triangle \f$t\f$ is the radius of
@@ -98,20 +115,6 @@ of the algorithm \f$ \alpha_\mathrm{sliver} = 5\pi/6 \f$.
 We define the *plausibility* grade \f$ p(t) \f$ as \f$ 1/r_t \f$, if
 \f$ \beta_t < \beta \f$, and \f$ -\beta_t \f$ else.  The parameter \f$
 \beta \f$ can be chosen by the user and is by default \f$ \pi/6\f$.
-
-\subsection AFSR_Algorithm The Algorithm
-
-The first step of the algorithm is the construction of a 3D Delaunay 
-triangulation of the point set.
-The Delaunay triangle with the smallest radius is the starting point
-for the greedy algorithm.
-
-The algorithm maintains a priority queue of
-candidate triangles, that is of triangles incident to the boundary
-edges.  The priority is the plausibility.  While this priority queue
-is not empty, the algorithm adds the most plausible candidate into the
-surface, and inserts new candidate triangles into the priority queue in case
-there are new boundary edges.
 
 
 \subsection AFSR_Boundaries Dealing with Multiple Components, Boundaries and Sharp Edges

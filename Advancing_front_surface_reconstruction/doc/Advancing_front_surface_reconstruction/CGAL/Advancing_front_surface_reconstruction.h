@@ -90,6 +90,10 @@ Advancing_front_surface_reconstruction(Dt& dt);
 
 /*! 
 calls the surface reconstruction function with the default parameters.
+
+\param K  described in Section \ref AFSR_Boundaries
+\param beta described in Section \ref AFSR_Selection
+
 */ 
   void operator()(double K=5, double beta= 0.18);
 
@@ -175,6 +179,8 @@ describing the faces of the reconstructed surface.
 \tparam IndicesOutputIterator must be an output iterator to which 
 `CGAL::cpp11::tuple<std::size_t,std::size_t,std::size_t>` can be assigned.
 
+\param K  described in Section \ref AFSR_Boundaries
+\param beta described in Section \ref AFSR_Selection
 
 */
   template <class PointInputIterator, IndicesOutputIterator>
