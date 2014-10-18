@@ -663,7 +663,7 @@ _push_event(const Point_2& pt, Attribute type,
     else {
       CGAL_assertion(type == Base_event::RIGHT_END);
       sc->set_right_event(e);
-      e->add_curve_to_left(sc, m_traits);
+      e->add_curve_to_left(sc);
     }
   }
 
