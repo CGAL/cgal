@@ -2,6 +2,7 @@
 #define CGAL_MINKOWSKI_SUM_BY_REDUCED_CONVOLUTION_2_H
 
 #include <CGAL/basic.h>
+#include <CGAL/connect_holes.h>
 #include <CGAL/Arrangement_with_history_2.h>
 #include <CGAL/Arr_segment_traits_2.h>
 
@@ -28,6 +29,7 @@ private:
 
   // Basic types:
   typedef CGAL::Polygon_2<Kernel, Container> Polygon_2;
+  typedef CGAL::Polygon_with_holes_2<Kernel, Container> Polygon_with_holes_2;
   typedef typename Kernel::Point_2 Point_2;
   typedef typename Kernel::Vector_2 Vector_2;
   typedef typename Kernel::Direction_2 Direction_2;
@@ -83,6 +85,36 @@ public:
     CGAL_precondition(pgn1.orientation() == COUNTERCLOCKWISE);
     CGAL_precondition(pgn2.orientation() == COUNTERCLOCKWISE);
 
+    common_operator(pgn1, pgn2, outer_boundary, holes);
+  }
+
+  template <class OutputIterator>
+  void operator()(const Polygon_with_holes_2 &pgn1, const Polygon_with_holes_2 &pgn2,
+                  Polygon_2 &outer_boundary, OutputIterator holes) const
+  {
+    Polygon_2 p_pseudo_simple, q_pseudo_simple;
+
+    std::list<Point_2> points;
+    connect_holes(pgn1, std::back_inserter(points));
+    for (typename std::list<Point_2>::iterator it = points.begin(); it != points.end(); it++) {
+      p_pseudo_simple.push_back(*it);
+    }
+
+    points.clear();
+    connect_holes(pgn2, std::back_inserter(points));
+    for (typename std::list<Point_2>::iterator it = points.begin(); it != points.end(); it++) {
+      q_pseudo_simple.push_back(*it);
+    }
+
+    common_operator(p_pseudo_simple, q_pseudo_simple, outer_boundary, holes);
+  }
+
+private:
+
+  template <class OutputIterator>
+  void common_operator(const Polygon_2 &pgn1, const Polygon_2 &pgn2,
+                  Polygon_2 &outer_boundary, OutputIterator holes) const
+  {
     // Initialize collision detector. It operates on pgn2 and on the inversed pgn1:
     const Polygon_2 inversed_pgn1 = transform(Aff_transformation_2<Kernel>(SCALING, -1), pgn1);
     AABB_collision_detector_2<Kernel, Container> collision_detector(pgn2, inversed_pgn1);
@@ -105,8 +137,6 @@ public:
       handle_face(arr, face, holes, collision_detector);
     }
   }
-
-private:
 
   // Builds the reduced convolution using a fiber grid approach. For each
   // starting vertex, try to add two outgoing next states. If a visited
