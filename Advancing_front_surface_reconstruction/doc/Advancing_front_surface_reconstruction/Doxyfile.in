@@ -7,3 +7,4 @@ INPUT                      =  ${CMAKE_SOURCE_DIR}/Advancing_front_surface_recons
 
 
 
+MULTILINE_CPP_IS_BRIEF = YES

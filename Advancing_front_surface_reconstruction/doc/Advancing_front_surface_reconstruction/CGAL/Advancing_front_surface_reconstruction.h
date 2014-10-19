@@ -91,11 +91,11 @@ Advancing_front_surface_reconstruction(Dt& dt);
 /*! 
 calls the surface reconstruction function with the default parameters.
 
-\param K  described in Section \ref AFSR_Boundaries
+\param k  described in Section \ref AFSR_Boundaries
 \param beta described in Section \ref AFSR_Selection
 
 */ 
-  void operator()(double K=5, double beta= 0.18);
+  void operator()(double k=5, double beta= 0.18);
 
 /*! 
 returns the reconstructed surface.
@@ -184,7 +184,7 @@ describing the faces of the reconstructed surface.
 
 */
   template <class PointInputIterator, IndicesOutputIterator>
-  void advancing_front_surface_reconstruction(PointInputIterator b, PointInputIterator e, IndicesOutputIterator out, double K=5, double beta= 0.18 );
+  IndicesOutputIterator advancing_front_surface_reconstruction(PointInputIterator b, PointInputIterator e, IndicesOutputIterator out, double k=5, double beta= 0.18 );
 
 
 } /* end namespace CGAL */

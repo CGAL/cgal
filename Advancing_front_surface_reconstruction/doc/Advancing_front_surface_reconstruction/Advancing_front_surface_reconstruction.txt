@@ -141,8 +141,8 @@ would be very different.  These heuristic facts can be used for
 boundary detection.
 
 We discard any candidate triangle \f$ t \f$, for an edge \f$ e \f$
-such that \f$ p(t) < 0\f$, and \f$ r_t > K r_{t'}\f$ where \f$ t'\f$ is 
-the triangle on the surface incident on \f$ e \f$. The parameter \f$ K \f$ 
+such that \f$ p(t) < 0\f$, and \f$ r_t > k r_{t'}\f$ where \f$ t'\f$ is 
+the triangle on the surface incident on \f$ e \f$. The parameter \f$ k \f$ 
 can be chosen by the user and is by default 5.
 
 
