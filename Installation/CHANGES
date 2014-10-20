@@ -1,7 +1,7 @@
 
 -------------------------------- Release 4.5 --------------------------------
 
-Release date: September/October 2014
+Release date: October 2014
 
 
 * Installation
@@ -27,7 +27,10 @@ Release date: September/October 2014
   - This package allows to deform a triangulated surface mesh under positional
     constraints of some of its vertices without requiring any additional
     structure other than the surface mesh itself. The methods provided
-    implements an as-rigid-as-possible deformation.
+    implements an as-rigid-as-possible deformation. Note that the main class
+    name has changed between the 4.5-beta1 and the 4.5 releases to better match
+    the CGAL naming conventions (from CGAL::Deform_mesh to CGAL::
+    Surface_mesh_deformation).
 
 
 * CGAL and the Boost Graph Library (major changes)
