@@ -77,9 +77,9 @@ Polyhedron_demo_polylines_io_plugin::load(QFileInfo fileinfo) {
   return item;
 }
 
-bool Polyhedron_demo_polylines_io_plugin::canSave(const Scene_item*)
+bool Polyhedron_demo_polylines_io_plugin::canSave(const Scene_item* item)
 {
-  return true;
+  return qobject_cast<const Scene_polylines_item*>(item) != 0;
 }
 
 bool Polyhedron_demo_polylines_io_plugin::save(const Scene_item* item, QFileInfo fileinfo)
