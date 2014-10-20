@@ -141,7 +141,7 @@ void print_results(std::ostream& stream, const std::string& filename, const Benc
   stream << "Num Faces | " << outData.numFaces << std::endl;
   
   stream << "Construction  | " << outData.constructionTime.average_float() / 1.0e9 << " | " << double(outData.constructionTime.minimum()) / 1.0e9 << " | " << double(outData.constructionTime.maximum()) / 1.0e9 << " |" << std::endl;
-  stream << "Query         | " << outData.queryTime.average_float() / 1.0e9 << " | " << double(outData.queryTime.minimum()) / 1.0e9 << " | " << double(outData.queryTime.maximum()) / 1.0e9 << " |" << std::endl;
+  stream << "Query         | " << 1.0 / (outData.queryTime.average_float() / 1.0e9) << " | " << double(outData.queryTime.minimum()) / 1.0e9 << " | " << double(outData.queryTime.maximum()) / 1.0e9 << " |" << std::endl;
 #if !defined(NDEBUG)
   stream << "Memory (Peak) | " << outData.peakMemoryUsage.average_float() / 1.0e6 << " | " << double(outData.peakMemoryUsage.minimum()) / 1.0e6 << " | " << double(outData.peakMemoryUsage.maximum()) / 1.0e6 << " |" << std::endl;
 #endif

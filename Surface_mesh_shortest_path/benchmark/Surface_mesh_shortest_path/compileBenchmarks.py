@@ -44,7 +44,7 @@ def print_to_datafiles(config, dataFileName, modelInfo):
 def print_table(infoSet, config, outFile):
   outFile.write("\subsection Surface_mesh_shortest_pathBenchmark%s %s\n" % (re.sub(r"\s+", "", config.testName.strip()), config.testName));
   outFile.write("<center>\n");
-  outFile.write("Model | Number of Vertices | Average Construction Time (s) | Average Query Time (s) | Peak Memory Usage (MB)\n");
+  outFile.write("Model | Number of Vertices | Average Construction Time (s) | Average Queries Per Second | Peak Memory Usage (MB)\n");
   outFile.write("---|---|---|---|---\n");
 
   for key, value in sorted(infoSet.items(), key=lambda v: int(v[1]["num vertices"])):
@@ -66,6 +66,8 @@ parser.add_argument('-d', '--datafilebase', type=str, default='_modeldata', help
 parser.add_argument('-t', '--tablefilebase', type=str, help="Base name for generated user manual tables (will be of the form \"<tablefilebase>_#.txt\", leave blank to suppress generation)");
 parser.add_argument('-o', '--plotfilebase', type=str, help="Base name for generated plot figures (will be of the form \"<plotfilebase>_<modelname>.png\", leave blank to suppress generation)");
 parser.add_argument('-k', '--kernel', choices=['ipick', 'epick', 'epeck'], default='epick', help="Geometry kernel to use for the benchmark.");
+parser.add_argument('-n', '--numtrials', type=int, default=20, help="Specify the number of complete trial runs on each model.");
+parser.add_argument('-q', '--numqueries', type=int, default=100, help="Specify the number of shortest path queries to run per trial.");
 
 programArgs = parser.parse_args();
 
@@ -114,7 +116,7 @@ if tableFileBase == None and plotFileBase == None:
 if not benchmark.prepare_program():
   print("Error, could not compile program");
   sys.exit(1);
-  
+
 for model in testModels:
   modelDataFileName = make_model_data_file_name(dataFileBase, model);
   if os.path.exists(modelDataFileName):
@@ -122,7 +124,7 @@ for model in testModels:
 
 for numSources in sampleRange:
   testname = "1 Source Point" if numSources == 1 else ("%d Source Points" % numSources);
-  config = benchmark.TestConfig(testname, testModels, 20, numSources, 100, rand.randint(0, 65536), kernel);
+  config = benchmark.TestConfig(testname, testModels, programArgs.numtrials, numSources, programArgs.numqueries, rand.randint(0, 65536), kernel);
   infoSet = {};
   infoFile = tempfile.TemporaryFile();
   benchmark.run_benchmarks(config, infoFile);
@@ -138,7 +140,7 @@ for numSources in sampleRange:
     tableFile.close();
     
 if plotFileBase != None:
-  for runParams in [('query', 4, "Average Query Time"), ('construction', 3, "Average Construction Time"), ('memory', 5, "Peak Memory Usage")]:
+  for runParams in [('query', 4, "Average Queries Per Second"), ('construction', 3, "Average Construction Time"), ('memory', 5, "Peak Memory Usage")]:
     plotCommands = [];
     for k in testModels:
       plotCommands.append('"%s" using 1:%d with lines title "%s"' % (make_model_data_file_name(dataFileBase, k), runParams[1], os.path.basename(k)));

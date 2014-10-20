@@ -27,8 +27,9 @@ public:
     - 1.0 means it crossed at `target(edge)`
     - Any other value is linearly interpolated between the endpoints.
     
-    Note that values of 0.0 and 1.0 are possible in some situations, and may not be reported as vertices.
-  \todo Shall we handle this internally?
+    Note that values of 0.0 and 1.0 are possible in some situations, and may not be reported as vertices. 
+    In particular, this will occur if the vertex crossed by the path is not a saddle vertex (less than \f$2\pi\f$ surface area).
+    This is because from the perspective of the algorithm, this is indistinguishable from crossing anywhere else along the edge.
   */
   void operator()(halfedge_descriptor edge, FT alpha);
   

@@ -127,7 +127,10 @@ This example shows how to implement a model of the `SurfaceMeshShortestPathVisit
 
 \section Surface_mesh_shortest_pathBenchmarks Benchmarks
 
-These benchmarks were run using randomly generated source and destination points over multiple trials.
+These benchmarks were run using randomly generated source and destination points over multiple trials. 
+The measurements were executed using CGAL 4.5, under Cygwin 1.7.32, using the Gnu
+C++ compiler version 4.8.3 with options "-O3 -Wall -DCGAL_NDEBUG". The system used
+was had a 64bit Intel Core i3 2.20GHz processor with 6GB of RAM
 
 <!--
 They can be re-generated using
@@ -138,54 +141,54 @@ They can be re-generated using
 And then pasting the contents of benchmark_table_1.txt and benchmark_table_10.txt into the doc.  For more details on how they were generated, see benchmarks/Surface_mesh_shortest_path/readme.txt
 -->
 
-\subsection Surface_mesh_shortest_pathBenchmark1SourcePoint 1 Source Point
+\subsection Surface_mesh_shortest_pathBenchmark1SourcePoint Single Source Point
 <center>
-Model | Number of Vertices | Average Construction Time (s) | Average Query Time (s) | Peak Memory Usage (MB)
+Model | Number of Vertices | Average Construction Time (s) | Average Queries Per Second | Peak Memory Usage (MB)
 ---|---|---|---|---
-ellipsoid.off | 162 | 0.0027295 | 7.40586e-07 | 0.407711
-anchor.off | 519 | 0.0299827 | 2.32319e-06 | 3.91138
-rotor.off | 600 | 0.0216147 | 1.61736e-06 | 3.12876
-spool.off | 649 | 0.0262101 | 1.88397e-06 | 3.71902
-handle.off | 1165 | 0.0536712 | 2.46942e-06 | 7.31243
-couplingdown.off | 1841 | 0.0812034 | 2.32528e-06 | 9.98382
-bones.off | 2154 | 0.00677263 | 4.36882e-07 | 0.998184
-mushroom.off | 2337 | 0.168037 | 3.44629e-06 | 21.8545
-elephant.off | 2775 | 0.112904 | 2.27093e-06 | 13.8964
-cow.off | 2904 | 0.137597 | 2.71387e-06 | 17.4167
-knot1.off | 3200 | 0.204201 | 3.21024e-06 | 25.4091
-retinal.off | 3643 | 0.241778 | 3.4899e-06 | 30.5278
-femur.off | 3897 | 0.17326 | 2.49904e-06 | 21.5583
-knot2.off | 5760 | 0.179074 | 2.02929e-06 | 22.6905
-bull.off | 6200 | 0.308128 | 2.85312e-06 | 34.882
-fandisk.off | 6475 | 0.610659 | 4.30535e-06 | 72.7803
-lion-head.off | 8356 | 0.759157 | 4.19128e-06 | 86.1152
-turbine.off | 9210 | 1.52087 | 7.32596e-06 | 166.021
-man.off | 17495 | 1.28541 | 4.0026e-06 | 147.971
+ellipsoid.off | 162 | 0.00258805 | 1.21972e+06 | 0.39548
+anchor.off | 519 | 0.0580262 | 230461 | 3.88799
+rotor.off | 600 | 0.0386633 | 326175 | 3.10571
+spool.off | 649 | 0.0418305 | 299766 | 3.75773
+handle.off | 1165 | 0.0976167 | 227343 | 7.66706
+couplingdown.off | 1841 | 0.138467 | 246833 | 10.1731
+bones.off | 2154 | 0.0101125 | 1.31834e+06 | 0.865896
+mushroom.off | 2337 | 0.206034 | 202582 | 22.5804
+elephant.off | 2775 | 0.136177 | 313785 | 14.0987
+cow.off | 2904 | 0.259104 | 206515 | 17.4796
+knot1.off | 3200 | 0.279455 | 207084 | 25.314
+retinal.off | 3643 | 0.255788 | 247617 | 29.8031
+femur.off | 3897 | 0.25332 | 264825 | 21.4806
+knot2.off | 5760 | 0.295655 | 309593 | 22.5549
+bull.off | 6200 | 0.513506 | 209994 | 34.983
+fandisk.off | 6475 | 0.609507 | 198768 | 71.3617
+lion-head.off | 8356 | 1.23863 | 145810 | 86.6908
+turbine.off | 9210 | 2.23755 | 93079.5 | 172.072
+man.off | 17495 | 1.59015 | 187519 | 148.358
 </center>
 
-\subsection Surface_mesh_shortest_pathBenchmark10SourcePoints 10 Source Points
+\subsection Surface_mesh_shortest_pathBenchmark10SourcePoints Ten Source Points
 <center>
-Model | Number of Vertices | Average Construction Time (s) | Average Query Time (s) | Peak Memory Usage (MB)
+Model | Number of Vertices | Average Construction Time (s) | Average Queries Per Second | Peak Memory Usage (MB)
 ---|---|---|---|---
-ellipsoid.off | 162 | 0.00194863 | 6.27676e-07 | 0.242311
-anchor.off | 519 | 0.027487 | 2.04003e-06 | 3.34674
-rotor.off | 600 | 0.015236 | 1.15787e-06 | 2.0513
-spool.off | 649 | 0.0154939 | 1.21151e-06 | 2.1055
-handle.off | 1165 | 0.035476 | 1.74682e-06 | 4.60842
-couplingdown.off | 1841 | 0.0650064 | 1.91965e-06 | 7.80432
-bones.off | 2154 | 0.0316228 | 1.09652e-06 | 3.86604
-mushroom.off | 2337 | 0.0977199 | 2.19256e-06 | 11.7491
-elephant.off | 2775 | 0.0957201 | 1.98378e-06 | 11.2864
-cow.off | 2904 | 0.109437 | 2.22009e-06 | 13.0479
-knot1.off | 3200 | 0.139582 | 2.30477e-06 | 16.3045
-retinal.off | 3643 | 0.165497 | 2.46546e-06 | 18.5969
-femur.off | 3897 | 0.147421 | 2.13258e-06 | 16.9767
-knot2.off | 5760 | 0.305406 | 2.69684e-06 | 34.0953
-bull.off | 6200 | 0.285024 | 2.46339e-06 | 30.669
-fandisk.off | 6475 | 0.35459 | 2.7666e-06 | 39.328
-lion-head.off | 8356 | 0.542517 | 3.10691e-06 | 58.5894
-turbine.off | 9210 | 0.861633 | 3.97833e-06 | 88.9927
-man.off | 17495 | 1.14717 | 3.61002e-06 | 121.451
+ellipsoid.off | 162 | 0.00321017 | 911025 | 0.245674
+anchor.off | 519 | 0.03601 | 353062 | 3.19274
+rotor.off | 600 | 0.015864 | 805416 | 1.97554
+spool.off | 649 | 0.0165743 | 802701 | 2.09675
+handle.off | 1165 | 0.0294564 | 646057 | 4.62122
+couplingdown.off | 1841 | 0.126045 | 272465 | 7.80517
+bones.off | 2154 | 0.055434 | 536646 | 4.0203
+mushroom.off | 2337 | 0.139285 | 290425 | 11.462
+elephant.off | 2775 | 0.167269 | 285076 | 11.2743
+cow.off | 2904 | 0.15432 | 328549 | 13.0676
+knot1.off | 3200 | 0.114051 | 454640 | 16.1735
+retinal.off | 3643 | 0.233208 | 287869 | 18.6274
+femur.off | 3897 | 0.128097 | 457112 | 16.8295
+knot2.off | 5760 | 0.413548 | 260195 | 33.484
+bull.off | 6200 | 0.371713 | 297560 | 30.522
+fandisk.off | 6475 | 0.545929 | 223865 | 39.5607
+lion-head.off | 8356 | 0.70097 | 229449 | 59.6597
+turbine.off | 9210 | 1.35703 | 157301 | 90.7139
+man.off | 17495 | 1.75936 | 185194 | 122.541
 </center>
 
 \subsection Surface_mesh_shortest_pathQueryComparison Comparison of Construction and Query Times with multiple source points

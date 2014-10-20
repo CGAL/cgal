@@ -40,7 +40,7 @@ def prepare_program():
   """
   Call cmake for the benchmark program in the current directory.  Specifies O2 to ensure optimized build, but Debug to allow NDEBUG sections to be included (for memory benchmarking for example)
   """
-  cmakeCall = subprocess.call(['cmake', '-DCMAKE_CXX_FLAGS=-O2 -Wall', '-DCMAKE_BUILD_TYPE=Debug', '.']);
+  cmakeCall = subprocess.call(['cmake', '-DCMAKE_CXX_FLAGS=-O3 -Wall -DCGAL_NDEBUG', '-DCMAKE_BUILD_TYPE=Debug', '.']);
   if cmakeCall != 0:
     return False;
   makeCall = subprocess.call(['make']);
