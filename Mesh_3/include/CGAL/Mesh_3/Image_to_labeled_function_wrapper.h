@@ -86,9 +86,9 @@ public:
       const int py = static_cast<int>(p.y()/r_im_.vy());
       const int pz = static_cast<int>(p.z()/r_im_.vz());
 
-      const int dimx = r_im_.xdim();
-      const int dimy = r_im_.ydim();
-      const int dimz = r_im_.zdim();
+      const std::size_t dimx = r_im_.xdim();
+      const std::size_t dimy = r_im_.ydim();
+      const std::size_t dimz = r_im_.zdim();
 
       if(px < 0 ||
          py < 0 ||
