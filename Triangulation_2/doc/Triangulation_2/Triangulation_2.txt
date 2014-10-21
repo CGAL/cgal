@@ -253,7 +253,7 @@ a vertex class and a face class.
 for these template parameters
 and provide default models for these concepts.
 The vertex and base classes are templated by the geometric
-traits which allows them to have some knowledge of the geometric
+traits class which allows them to have some knowledge of the geometric
 primitives of the triangulation. 
 Those default vertex and face base classes
 can be replaced by 
@@ -281,16 +281,16 @@ class.
 \cgalFigureRef{Triangulation_2D_Fig_derivation_tree} summarizes the derivation dependencies
 of \cgal 2D triangulations classes.
 Any 2D triangulation class is parametrized by
-a geometric traits and a triangulation data structure.
+a geometric traits class and a triangulation data structure.
 While a unique concept `TriangulationDataStructure_2`
 describes the triangulation data structure requirements
 for any triangulation class, 
-the concept of geometric traits actually depends
+the requirements on the geometric traits class actually depend
 on the triangulation class.
 In general, the requirements for the vertex and face base classes 
 are described by the basic concepts `TriangulationVertexBase_2`
 and `TriangulationFaceBase_2`. However, some triangulation
-classes requires base classes implementing
+classes require base classes implementing
 refinements 
 of the basic concepts.
 
@@ -415,7 +415,7 @@ of the triangulation data structure.
 
 \subsection Subsubsection_2D_Triangulation_Basic_Geometric_Traits Geometric Traits 
 
-The geometric traits of a triangulation 
+The geometric traits class of a triangulation 
 is required to provide
 the geometric objects (points, segments and triangles)
 building up the triangulation
@@ -468,7 +468,7 @@ respectively.
 The following program creates a triangulation of 2D points
 using the default kernel 
 `Exact_predicate_inexact_constructions_kernel`
-as geometric traits and the default triangulation data structure.
+as geometric traits class and the default triangulation data structure.
 The input points are read from a file 
 and inserted in the triangulation.
 Finally points on the convex hull are written to <TT>cout</TT>. 
@@ -510,7 +510,7 @@ of the dual Voronoi diagram.
 Geometric Traits 
 --------------
 
-The geometric traits has to be a model of the concept
+The geometric traits class has to be a model of the concept
 `DelaunayTriangulationTraits_2`
 which refines the concept `TriangulationTraits_2`.
 In particular this concept provides
@@ -734,7 +734,7 @@ the vertices and edges of the dual power diagrams.
 
 \subsection Triangulation_2TheGeometricTraits The Geometric Traits
 
-The geometric traits of a regular triangulation
+The geometric traits class of a regular triangulation
 must provide a weighted point type
 and a power test on these weighted points.
 The concept 
@@ -773,7 +773,7 @@ the concept `TriangulationVertexBase_2`
 and provides a default model 
 for this concept.
 
-The base face type of a regular triangulation
+The face base type of a regular triangulation
 is required to provide a list of hidden vertices,
 designed to store the points hidden by the face. It has to be a model
 of the concept `RegularTriangulationFaceBase_2`.
@@ -804,7 +804,7 @@ There are three versions of constrained triangulations.
 <UL>
 <LI>In the basic version, the constrained triangulation 
 does not handle intersecting constraints, and the set of input 
-constraints is required to be a set of segments that do not intersect
+constraints is required to be a set of segments that do not intersect,
 except possibly at their endpoints. Any number of constrained edges
 are allowed to share the same endpoint. Vertical constrained edges or
 constrained edges with null length are allowed.
@@ -844,9 +844,9 @@ are dealt with. This parameter has to be instantiated
 by one of the following classes:
 - `No_intersection_tag` when input constraints do not
 intersect 
-- `Exact_predicates_tag` if the geometric traits provides
+- `Exact_predicates_tag` if the geometric traits class provides
 exact predicates but approximate constructions 
-- `Exact_intersections_tag` when an exact predicates
+- `Exact_intersections_tag` when exact predicates
 and exact constructions are provided.
 
 The class `Constrained_triangulation_2<Traits,Tds, Itag>`
@@ -864,12 +864,12 @@ overwritten and thus does not take care of the constraints.
 
 \subsection Triangulation_2TheGeometricTraits_1 The Geometric Traits
 
-The geometric traits of a constraint triangulation
+The geometric traits class of a constraint triangulation
 has to be a model
 of the concept `TriangulationTraits_2`.
 When intersections of input constraints are supported, 
 the geometric traits class has to be a model 
-of the concept `ConstrainedTriangulationTraits_2`
+of the concept `ConstrainedTriangulationTraits_2`,
 which refines the concept `TriangulationTraits_2`
 providing additional function object types
 to compute the intersection of two segments.
@@ -877,14 +877,14 @@ to compute the intersection of two segments.
 \subsection Triangulation_2TheFaceBaseClassofaConstrained The Face Base Class of a Constrained Triangulation
 
 The information about constrained edges is stored in the 
-faces of the triangulation. The base face of a Constrained Triangulation
+faces of the triangulation. The face base of a Constrained Triangulation
 has to be a model for the concept `ConstrainedTriangulationFaceBase_2`
 which refines the concept `TriangulationFaceBase_2`.
 The concept `ConstrainedTriangulationFaceBase_2`
 requires member functions
-the get and set the constrained status of the edges.
+that get and set the constrained status of the edges.
 
-\cgal provides a default base face class
+\cgal provides a default face base class
 for constrained triangulations. This class, named
 `Constrained_triangulation_face_base_2<Traits>`,
 derives from the class
@@ -899,7 +899,7 @@ Constrained and Constrained Delaunay triangulation: the constraining edges are t
 \section Section_2D_Triangulations_Constrained_Delaunay Constrained Delaunay Triangulations 
 
 A constrained Delaunay triangulation is a triangulation with
-constrained edges which tries to be as much Delaunay as possible.
+constrained edges which try to be as much Delaunay as possible.
 As constrained edges are not necessarily Delaunay edges,
 the triangles of a constrained Delaunay triangulation do not
 necessarily fulfill the empty circle property
@@ -914,11 +914,11 @@ no vertex visible
 from the interior of the facet.
 As in the case of constrained triangulations, three different versions
 of Delaunay constrained triangulations are provided. The first version
-handle set of constraints which do not intersect except possibly
+handles a set of constraints which do not intersect except possibly
 at the endpoints. The two other versions 
 handle intersecting input constraints. One of them
 is designed to be robust
-when used in conjunction with a geometric traits
+when used in conjunction with a geometric traits class
 providing exact predicates and approximate constructions
 (such as a `Filtered_kernel` or any kernel providing
 filtered exact predicates). The third version is designed to be used
@@ -955,15 +955,15 @@ property.
 
 \subsection Triangulation_2TheGeometricTraits_2 The Geometric Traits
 
-The geometric traits 
+The geometric traits class 
 of a constrained Delaunay triangulation is required
 to provide the `side_of_oriented_circle` predicate as the geometric traits
-of a Delaunay triangulation and has to a model of the concept
+class of a Delaunay triangulation, and has to a model of the concept
 `DelaunayTriangulationTraits_2`. When intersecting input
 constraints
-are supported the geometric traits is further required 
+is supported, the geometric traits class is further required 
 to provide function objects to compute constraints intersections.
-Then the geometric traits has to be at the same time a model
+Then, the geometric traits class has to be at the same time a model
 of the concept `ConstrainedTriangulationTraits_2`.
 
 \subsection Triangulation_2TheFaceBaseClass The Face Base Class
@@ -971,7 +971,7 @@ of the concept `ConstrainedTriangulationTraits_2`.
 Information about the status (constrained or not)
 of the edges of the triangulation has to be stored
 in the face class
-and the base face class
+and the face base class
 of a constrained Delaunay triangulation has to be a model
 of `ConstrainedTriangulationFaceBase_2`.
 
