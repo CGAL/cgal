@@ -2321,24 +2321,29 @@ public:
   
   \param v A vertex of the input face graph
   \param visitor A model of `SurfaceMeshShortestPathVisitor` to receive the shortest path
-  \return true if there exists a shortest path from `v` to any source point, false otherwise (may occur if the input face graph is disconnected)
+  \return A pair, containing the distance to the source point, and an 
+    iterator to the source point.  If no source point was reachable (can
+    occur when the graph is disconnected), the distance will be a negative 
+    value and the source point iterator will be equal to `source_points_end()`.
   */
   template <class Visitor>
-  bool shortest_path_sequence_to_source_points(vertex_descriptor v, Visitor& visitor)
+  Shortest_path_result
+  shortest_path_sequence_to_source_points(vertex_descriptor v, Visitor& visitor)
   {
     build_sequence_tree();
     
-    Cone_tree_node* current = m_closestToVertices[get(m_vertexIndexMap, v)].first;
+    Node_distance_pair result = m_closestToVertices[get(m_vertexIndexMap, v)];
+    Cone_tree_node* current = result.first;
     
     if (current)
     {
       visitor(v);
       visit_shortest_path(current, current->target_point(), visitor);
-      return true;
+      return std::make_pair(result.second, m_rootNodes[current->tree_id()].second);
     }
     else
     {
-      return false;
+      return std::make_pair(FT(-1.0), source_points_end());
     }
   }
   
@@ -2354,10 +2359,14 @@ public:
   \param f A face of the input face graph
   \param location Barycentric coordinate of the query point on face `f`
   \param visitor A model of `SurfaceMeshShortestPathVisitor` to receive the shortest path
-  \return true if there exists a shortest path from the query point to any source point, false otherwise (may occur if the input face graph is disconnected)
+  \return A pair, containing the distance to the source point, and an 
+    iterator to the source point.  If no source point was reachable (can
+    occur when the graph is disconnected), the distance will be a negative 
+    value and the source point iterator will be equal to `source_points_end()`.
   */
   template <class Visitor>
-  bool shortest_path_sequence_to_source_points(face_descriptor f, Barycentric_coordinate location, Visitor& visitor)
+  Shortest_path_result
+  shortest_path_sequence_to_source_points(face_descriptor f, Barycentric_coordinate location, Visitor& visitor)
   {
     build_sequence_tree();
     
@@ -2369,11 +2378,11 @@ public:
       Point_2 locationInContext = construct_barycenter_in_triangle_2(current->layout_face(), result.second);
       visitor(f, location);
       visit_shortest_path(current, locationInContext, visitor);
-      return true;
+      return std::make_pair(result.first.second, m_rootNodes[current->tree_id()].second);
     }
     else
     {
-      return false;
+      return std::make_pair(FT(-1.0), source_points_end());
     }
   }
   
@@ -2389,10 +2398,14 @@ public:
   
   \param v A vertex of the input face graph
   \param output An OutputIterator to receive the shortest path points as `Point_3` objects
-  \return true if there exists a shortest path to v, false otherwise (may occur if the input face graph is disconnected)
+  \return A pair, containing the distance to the source point, and an 
+    iterator to the source point.  If no source point was reachable (can
+    occur when the graph is disconnected), the distance will be a negative 
+    value and the source point iterator will be equal to `source_points_end()`.
   */
   template <class OutputIterator>
-  bool shortest_path_points_to_source_points(vertex_descriptor v, OutputIterator output)
+  Shortest_path_result
+  shortest_path_points_to_source_points(vertex_descriptor v, OutputIterator output)
   {
     build_sequence_tree();
     
@@ -2408,10 +2421,14 @@ public:
   \param f A face of on the input face graph
   \param location The barycentric coordinate of the query point on face `f` 
   \param output An OutputIterator to receive the shortest path points as `Point_3` objects
-  \return true if there exists a shortest path to the query point, false otherwise (may occur if the input face graph is disconnected)
+  \return A pair, containing the distance to the source point, and an 
+    iterator to the source point.  If no source point was reachable (can
+    occur when the graph is disconnected), the distance will be a negative 
+    value and the source point iterator will be equal to `source_points_end()`.
   */
   template <class OutputIterator>
-  bool shortest_path_points_to_source_points(face_descriptor f, Barycentric_coordinate location, OutputIterator output)
+  Shortest_path_result
+  shortest_path_points_to_source_points(face_descriptor f, Barycentric_coordinate location, OutputIterator output)
   {
     build_sequence_tree();
     
