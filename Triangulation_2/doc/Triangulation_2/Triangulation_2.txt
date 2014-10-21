@@ -929,7 +929,7 @@ The \cgal class
 is designed to represent
 constrained Delaunay triangulations.
 
-As in the case of constraints triangulation, the third parameter 
+As in the case of constrained triangulations, the third parameter 
 `Itag` is the intersection tag
 and serves to choose how intersecting constraints
 are dealt with. It can be instantiated with one of the following
@@ -948,7 +948,7 @@ the class `Constrained_triangulation_2<Traits,Tds,Itag>`.
 The constrained Delaunay triangulation
 has member functions to override the 
 insertion and removal of a point or of a constraint.
-Each of those member function takes care
+Each of those member functions takes care
 to restore
 the constrained empty circle
 property.
@@ -958,7 +958,7 @@ property.
 The geometric traits class 
 of a constrained Delaunay triangulation is required
 to provide the `side_of_oriented_circle` predicate as the geometric traits
-class of a Delaunay triangulation, and has to a model of the concept
+class of a Delaunay triangulation, and has to be a model of the concept
 `DelaunayTriangulationTraits_2`. When intersecting input
 constraints
 is supported, the geometric traits class is further required 
@@ -970,7 +970,7 @@ of the concept `ConstrainedTriangulationTraits_2`.
 
 Information about the status (constrained or not)
 of the edges of the triangulation has to be stored
-in the face class
+in the face class,
 and the face base class
 of a constrained Delaunay triangulation has to be a model
 of `ConstrainedTriangulationFaceBase_2`.
@@ -1114,7 +1114,7 @@ vertex class with additional functionalities.
 
 \subsection Subsection_2D_Triangulations_Hierarchy_Examples Examples For the Use of a Triangulation Hierarchy 
 
-The following program is example
+The following program is an example
 for the standard use of a triangulation hierarchy
 to enhance the efficiency
 of a Delaunay triangulation. The program outputs the number of vertices
@@ -1152,7 +1152,7 @@ To insure flexibility, the triangulation data structure is templated by the
 vertex and face base classes. Also since incidence and adjacency
 relations are stored in vertices and faces, the base classes have to
 know the types of handles on vertices and faces provided
-by the triangulation data structure. Thus the vertex and base
+by the triangulation data structure. Thus the vertex and face base
 classes have to be themselves parameterized by the triangulation data
 structure, and there is a cyclic dependency on template parameter.
 
@@ -1197,7 +1197,7 @@ or `Triangulation_face_base_with_info_2<Info,Traits,Vb>`
 can be used. Those classes have
 a template parameter `Info` devoted to
 handle additional information.
-The following examples shows how to add a 
+The following examples show how to add a 
 `Color` in the triangulation faces.
 
 \cgalExample{Triangulation_2/colored_face.cpp}
