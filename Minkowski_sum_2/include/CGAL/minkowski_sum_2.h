@@ -63,6 +63,34 @@ minkowski_sum_reduced_convolution_2(const Polygon_2<Kernel_, Container_>& pgn1,
 }
 
 /*!
+ * Computes the Minkowski sum \f$ P \oplus Q\f$ of the two given
+ * polygons-with-holes.
+ * The function computes the reduced convolution of the two polygons and
+ * extracts those loops of the convolution which are part of the Minkowsi
+ * sum. This method works very efficiently, regardless of whether `P` and
+ * `Q` are convex or non-convex.
+ * The result is also represented as a polygon with holes.
+*/
+template <class Kernel_, class Container_>
+Polygon_with_holes_2<Kernel_, Container_>
+minkowski_sum_reduced_convolution_2(const Polygon_with_holes_2<Kernel_, Container_>& pgn1,
+                                    const Polygon_with_holes_2<Kernel_, Container_>& pgn2)
+{
+  typedef Kernel_                                    Kernel;
+  typedef Container_                                 Container;
+
+  Minkowski_sum_by_reduced_convolution_2<Kernel, Container> mink_sum;
+  Polygon_2<Kernel,Container>                               sum_bound;
+  std::list<Polygon_2<Kernel,Container> >                   sum_holes;
+
+  mink_sum (pgn1, pgn2, sum_bound, std::back_inserter(sum_holes));
+
+  return (Polygon_with_holes_2<Kernel,Container> (sum_bound,
+                                                  sum_holes.begin(),
+                                                  sum_holes.end()));
+}
+
+/*!
  * Compute the Minkowski sum of two simple polygons using the (full)
  * convolution method.
  * Note that as the input polygons may not be convex, their Minkowski sum may

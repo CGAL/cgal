@@ -24,13 +24,15 @@ bool are_equal(const Polygon_with_holes_2& ph1,
 }
 
 typedef enum {
+  REDUCED_CONVOLUTION,
   VERTICAL_DECOMP,
   TRIANGULATION_DECOMP
 } Strategy;
 
 static const char* strategy_names[] = {
-  "Vertical decomosition",
-  "Constrained triangulation decomosition"
+  "reduced convolution",
+  "vertical decomposition",
+  "constrained triangulation decomposition"
 };
 
 Polygon_with_holes_2 compute_minkowski_sum_2(Polygon_with_holes_2& p,
@@ -38,6 +40,10 @@ Polygon_with_holes_2 compute_minkowski_sum_2(Polygon_with_holes_2& p,
                                              Strategy strategy)
 {
   switch (strategy) {
+   case REDUCED_CONVOLUTION:
+    {
+     return minkowski_sum_reduced_convolution_2(p, q);
+    }
    case VERTICAL_DECOMP:
     {
      CGAL::Polygon_vertical_decomposition_2<Kernel> decomp;
@@ -70,6 +76,10 @@ int main(int argc, char* argv[])
   std::list<Strategy> strategies;
   for (int i = 0; i < strlen(argv[1]); ++i) {
     switch (argv[1][i]) {
+      case 'r':
+        strategies.push_back(REDUCED_CONVOLUTION);
+        break;
+
       case 'v':
         strategies.push_back(VERTICAL_DECOMP);
         break;
