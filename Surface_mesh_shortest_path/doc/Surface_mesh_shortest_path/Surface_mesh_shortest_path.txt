@@ -128,8 +128,8 @@ This example shows how to implement a model of the `SurfaceMeshShortestPathVisit
 \section Surface_mesh_shortest_pathBenchmarks Benchmarks
 
 These benchmarks were run using randomly generated source and destination points over multiple trials. 
-The measurements were executed using CGAL 4.5, under Cygwin 1.7.32, using the Gnu
-C++ compiler version 4.8.3 with options "-O3 -Wall -DCGAL_NDEBUG". The system used
+The measurements were executed using \cgal 4.5, under Cygwin 1.7.32, using the Gnu
+C++ compiler version 4.8.3 with options `-O3 -DNDEBUG`. The system used
 was had a 64bit Intel Core i3 2.20GHz processor with 6GB of RAM
 
 <!--
