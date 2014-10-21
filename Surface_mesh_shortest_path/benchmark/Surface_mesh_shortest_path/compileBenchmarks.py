@@ -138,7 +138,7 @@ for numSources in sampleRange:
     tableFile = open(make_table_file_name(tableFileBase, numSources), "w");
     print_table(infoSet, config, tableFile);
     tableFile.close();
-    
+
 if plotFileBase != None:
   for runParams in [('query', 4, "Average Queries Per Second"), ('construction', 3, "Average Construction Time"), ('memory', 5, "Peak Memory Usage")]:
     plotCommands = [];
@@ -146,7 +146,7 @@ if plotFileBase != None:
       plotCommands.append('"%s" using 1:%d with lines title "%s"' % (make_model_data_file_name(dataFileBase, k), runParams[1], os.path.basename(k)));
     plotCommand = "plot " + ', '.join(plotCommands);
     plotCommandFile = tempfile.TemporaryFile();
-    plotCommandFile.write('set terminal png size 1280,960;\n');
+    plotCommandFile.write('set terminal png size 640,480;\n');
     plotCommandFile.write('set output "%s";\n' % make_figure_file_name(plotFileBase, runParams[0]));
     plotCommandFile.write('set xlabel "Number of Source Points";\n');
     plotCommandFile.write('set ylabel "%s";\n' % runParams[2]);
