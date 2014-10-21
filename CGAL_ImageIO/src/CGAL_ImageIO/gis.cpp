@@ -246,7 +246,7 @@ int readGisHeader( const char* name,_image* im)
   
   if ( !fgetns(str, _LGTH_STRING_, im) ) 
     { ImageIO_free( str ); return -1; }
-  status = sscanf( str,"%u %u %u %u", &(im->xdim), &(im->ydim), 
+  status = sscanf( str,"%zu %zu %zu %zu", &(im->xdim), &(im->ydim), 
 		   &(im->zdim), &(im->vdim) );
   switch ( status ) {
   case 2 :    im->zdim = 1;
@@ -635,12 +635,12 @@ int writeGisHeader( const _image* inr )
 
   /* dimensions
    */
-  sprintf( str, "%d %d", inr->xdim, inr->ydim );
+  sprintf( str, "%zu %zu", inr->xdim, inr->ydim );
   if ( inr->vdim > 1 ) {
-    sprintf( str+strlen(str), " %d %d", inr->zdim, inr->vdim );
+    sprintf( str+strlen(str), " %zu %zu", inr->zdim, inr->vdim );
   }
   else if ( inr->zdim > 1 ) {
-    sprintf( str+strlen(str), " %d", inr->zdim );
+    sprintf( str+strlen(str), " %zu", inr->zdim );
   }
   sprintf( str+strlen(str), "\n" );
 

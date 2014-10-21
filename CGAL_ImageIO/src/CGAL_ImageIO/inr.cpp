@@ -116,7 +116,7 @@ int _writeInrimageHeader(const _image *im, ENDIANNESS end) {
     }
 
     /* write header information */
-    sprintf(buf, "%s\nXDIM=%i\nYDIM=%i\nZDIM=%i\nVDIM=%d\nTYPE=%s\nPIXSIZE=%i bits\n%sCPU=%s\nVX=%f\nVY=%f\nVZ=%f\n",
+    sprintf(buf, "%s\nXDIM=%zu\nYDIM=%zu\nZDIM=%zu\nVDIM=%zu\nTYPE=%s\nPIXSIZE=%zu bits\n%sCPU=%s\nVX=%f\nVY=%f\nVZ=%f\n",
 	    INR4_MAGIC, im->xdim, im->ydim, im->zdim, im->vdim,
 	    type, im->wdim*8, scale, endianness, im->vx, im->vy, im->vz);
 
@@ -237,16 +237,16 @@ int readInrimageHeader(const char *,_image *im) {
     while(str[0] != '#' && str[0] != '\0') {
 
       if(!strncmp(str, "XDIM=", 5)) {
-	if(sscanf(str+5, "%u", &im->xdim) != 1) return -1;
+	if(sscanf(str+5, "%zu", &im->xdim) != 1) return -1;
       }
       else if(!strncmp(str, "YDIM=", 5)) {
-	if(sscanf(str+5, "%u", &im->ydim) != 1) return -1;
+	if(sscanf(str+5, "%zu", &im->ydim) != 1) return -1;
       }
       else if(!strncmp(str, "ZDIM=", 5)) {
-	if(sscanf(str+5, "%u", &im->zdim) != 1) return -1;
+	if(sscanf(str+5, "%zu", &im->zdim) != 1) return -1;
       }
       else if(!strncmp(str, "VDIM=", 5)) {
-	if(sscanf(str+5, "%u", &im->vdim) != 1) return -1;
+	if(sscanf(str+5, "%zu", &im->vdim) != 1) return -1;
 	if(im->vdim == 1) im->vectMode = VM_SCALAR;
 	else im->vectMode = VM_INTERLACED;
       }

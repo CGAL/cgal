@@ -219,7 +219,7 @@ int writePpmImage( char *name,_image *im )
   ImageIO_write( im, string, strlen( string ) );
   sprintf( string, "# CREATOR: pnm.c $Revision$ $Date$\n" );
   ImageIO_write( im, string, strlen( string ) );
-  sprintf( string, "%d %d\n", im->xdim, im->ydim );
+  sprintf( string, "%zu %zu\n", im->xdim, im->ydim );
   ImageIO_write( im, string, strlen( string ) );
   max = 0;
   switch ( im->wdim ) {
@@ -527,7 +527,7 @@ int writePgmImage(char *name,_image *im  )
   ImageIO_write( im, string, strlen( string ) );
   sprintf( string, "# CREATOR: pnm.c $Revision$ $Date$\n" );
   ImageIO_write( im, string, strlen( string ) );
-  sprintf( string, "%d %d\n", im->xdim, im->ydim );
+  sprintf( string, "%zu %zu\n", im->xdim, im->ydim );
   ImageIO_write( im, string, strlen( string ) );
   max = 0;
   switch ( im->wdim ) {
