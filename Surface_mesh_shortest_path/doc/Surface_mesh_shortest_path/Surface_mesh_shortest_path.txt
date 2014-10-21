@@ -266,5 +266,11 @@ The following figures track the construction time, query time, and peak memory u
 
   An additional distance filter proposed by Xin and Wang helps prune the search tree even further by comparing the current node's distance to the closest distance so far of the three vertices on the current face. Details on this method can be found in their paper \cgalCite{XinWang2009improvingchenandhan} .
 
+\section Surface_mesh_shortest_pathImplementationhistory Design and Implementation History
+The initial implementation of this package is the result of the work of Stephen Kiazyk during the 2014 season
+of the Google Summer of Code. He has been mentored by Sébastien Loriot and Éric Colin de Verdière
+who also contributed to the documentation and the API definition.
+
+
 */
 } /* namespace CGAL */
