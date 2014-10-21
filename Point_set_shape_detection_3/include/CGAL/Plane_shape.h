@@ -29,8 +29,7 @@ namespace CGAL {
        */
     std::string info() const {
       std::stringstream sstr;
-      Vector normal = m_plane.orthogonal_vector();
-      sstr << "Type: plane (" << normal.x() << ", " << normal.y() << ", " << normal.z() << ")x - " << m_plane.d() << "= 0" << " #Pts: " << this->m_indices.size();
+      sstr << "Type: plane (" << m_normal.x() << ", " << m_normal.y() << ", " << m_normal.z() << ")x - " << m_d << "= 0" << " #Pts: " << this->m_indices.size();
 
       return sstr.str();
     }
@@ -39,14 +38,14 @@ namespace CGAL {
        */
 
     operator Plane_3() const {
-      return m_plane;
+      return Plane_3(m_normal.x(), m_normal.y(), m_normal.z(), m_d);
     }
             
       /*!
        Normal vector of the plane.
        */
     Vector normal() const {
-      return m_plane.orthogonal_vector();
+      return m_normal;
     }
 
   protected:
@@ -56,11 +55,10 @@ namespace CGAL {
       Point p2 = get(this->m_point_pmap, *(this->m_first + indices[1]));
       Point p3 = get(this->m_point_pmap, *(this->m_first + indices[2]));
 
-      m_plane = Plane_3(p1, p2, p3);
+      m_normal = CGAL::cross_product(p1 - p2, p1 - p3);
 
-      m_normal = m_plane.orthogonal_vector();
       m_normal = m_normal * (1.0 / sqrt(m_normal.squared_length()));
-      m_d = p1[0] * m_normal[0] + p1[1] * m_normal[1] + p1[2] * m_normal[2];
+      m_d = -(p1[0] * m_normal[0] + p1[1] * m_normal[1] + p1[2] * m_normal[2]);
 
       //check deviation of the 3 normal
       Vector l_v;
@@ -73,10 +71,10 @@ namespace CGAL {
         }
 
         m_point_on_primitive = p1;
-        m_base1 = m_plane.base1();
+        m_base1 = CGAL::cross_product(p1 - p2, m_normal);
         m_base1 = m_base1 * (1.0 / sqrt(m_base1.squared_length()));
 
-        m_base2 = m_plane.base2();
+        m_base2 = CGAL::cross_product(m_base1, m_normal);
         m_base2 = m_base2 * (1.0 / sqrt(m_base2.squared_length()));
       }
     }
@@ -101,37 +99,17 @@ namespace CGAL {
       }
     }
 
-    void parameter_extend(const Point &center, FT width, FT min[2], FT max[2]) const {
-      min[0] = min[1] = max[0] = max[1] = 0;
-      Point corner[8];
-      corner[0] = center + Vector(width, width, width);
-      corner[1] = center + Vector(-width, width, width);
-      corner[2] = center + Vector(width, -width, width);
-      corner[3] = center + Vector(-width, -width, width);
-      corner[4] = center + Vector(width, width, -width);
-      corner[5] = center + Vector(-width, width, -width);
-      corner[6] = center + Vector(width, -width, -width);
-      corner[7] = center + Vector(-width, -width, -width);
-
-      for (size_t i = 0;i<8;i++) {
-        Vector p = (corner[i] - m_plane.point());
-        FT u = p * m_base1;
-        FT v = p * m_base2;
-        min[0] = (std::min)(min[0], u);
-        min[1] = (std::min)(min[1], v);
-        max[0] = (std::max)(max[0], u);
-        max[1] = (std::max)(max[1], v);
-      }
-    }
-
     FT squared_distance(const Point &_p) const {
-      return CGAL::squared_distance (m_plane, _p);
+      FT d = (_p - m_point_on_primitive) * m_normal;
+      return d * d;
     }
     
     void squared_distance(std::vector<FT> &dists, const std::vector<int> &shapeIndex, const std::vector<size_t> &indices) {
       for (size_t i = 0;i<indices.size();i++) {
-        if (shapeIndex[indices[i]] == -1)
-          dists[i] = CGAL::squared_distance(m_plane, get(this->m_point_pmap, *(this->m_first + indices[i])));
+        if (shapeIndex[indices[i]] == -1) {
+          FT d = (get(this->m_point_pmap, *(this->m_first + indices[i])) - m_point_on_primitive) * m_normal;
+          dists[i] = d * d;
+        }
       }
     }
 
@@ -163,7 +141,6 @@ namespace CGAL {
     }
 
   private:
-    Plane_3	m_plane;
     Point m_point_on_primitive;
     Vector m_base1, m_base2, m_normal;
     FT m_d;

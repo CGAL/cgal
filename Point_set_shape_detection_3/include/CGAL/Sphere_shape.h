@@ -17,10 +17,8 @@ namespace CGAL {
   public:
     typedef typename Sd_traits::Input_iterator Input_iterator;///< random access iterator for input data.
     typedef typename Sd_traits::Geom_traits::FT FT; ///< number type.
-    //typedef typename Sd_traits::Geom_traits::Line_3 Line;
     typedef typename Sd_traits::Geom_traits::Point_3 Point;///< point type.
     typedef typename Sd_traits::Geom_traits::Vector_3 Vector;///< vector type.
-    //typedef typename Sd_traits::Geom_traits::Plane_3 Plane;
     typedef typename Sd_traits::Geom_traits::Sphere_3 Sphere;///< sphere type.
     typedef typename Sd_traits::Point_pmap Point_pmap;   ///< property map to access the location of an input point.
     typedef typename Sd_traits::Normal_pmap Normal_pmap; ///< property map to access the unoriented normal of an input point.
@@ -61,7 +59,7 @@ namespace CGAL {
        Access to the radius of the sphere.
        */
     FT radius() const {
-      return m_radius;
+      return sqrt(m_sphere.squared_radius());
     }
 
   protected:
@@ -125,15 +123,15 @@ namespace CGAL {
       FT d3 = sqrt(v3.squared_length());
       v3 = v3 * (1.0 / d3);
 
-      m_radius = (d1 + d2) * 0.5;
+      FT radius = (d1 + d2) * 0.5;
 
-      if (abs(d3 - m_radius) > this->m_epsilon ||
+      if (abs(d3 - radius) > this->m_epsilon ||
           n3 * v3 < this->m_normal_threshold) {
         this->m_isValid = false;
         return;
       }
 
-      m_sphere = Sphere(center, m_radius * m_radius);
+      m_sphere = Sphere(center, radius * radius);
     }
 
     void parameters(std::vector<std::pair<FT, FT> > &parameterSpace,
@@ -141,14 +139,8 @@ namespace CGAL {
                     FT max[2]) const {
     }
 
-    void parameter_extend(const Point &center, 
-                          FT width, 
-                          FT min[2],
-                          FT max[2]) const {
-    }
-
     FT squared_distance(const Point &_p) const {
-      FT d = sqrt((m_sphere.center() - _p).squared_length()) - m_radius;
+      FT d = sqrt((m_sphere.center() - _p).squared_length()) - sqrt(m_sphere.squared_radius());
       return d*d;
     }
 
@@ -156,12 +148,14 @@ namespace CGAL {
       const std::vector<int> &shapeIndex,
       const std::vector<size_t> &indices) {
 
+      FT radius = sqrt(m_sphere.squared_radius());
+
       for (size_t i = 0;i<indices.size();i++) {
         if (shapeIndex[indices[i]] == -1) {
           dists[i] = sqrt((m_sphere.center()
             - get(this->m_point_pmap,
                   *(this->m_first + indices[i]))).squared_length())
-            - m_radius;
+            - radius;
 
           dists[i] = dists[i] * dists[i];
         }
@@ -193,22 +187,22 @@ namespace CGAL {
           return 3;
       }
 
-    // U is longitude
     virtual bool supports_connected_component() const {
       return false;
     }
 
+    // U is longitude
     virtual bool wraps_u() const {
       return true;
     }
 
+    // V is latitude
     virtual bool wraps_v() const {
       return false;
     }
 
   private:
     Sphere m_sphere;
-    FT m_radius;
 /// \endcond
   };
 }

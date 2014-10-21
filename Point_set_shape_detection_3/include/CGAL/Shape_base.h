@@ -144,11 +144,6 @@ namespace CGAL {
                                const std::vector<int> &shapeIndex,
                                const std::vector<size_t> &indices) const = 0;
 
-    virtual void parameter_extend(const Point &center,
-                                  FT width,
-                                  FT min[2],
-                                  FT max[2]) const = 0;
-
     virtual void parameters(std::vector<std::pair<FT, FT> > &parameterSpace,
                             const std::vector<size_t> &indices,
                             FT min[2],
@@ -179,13 +174,13 @@ namespace CGAL {
       iMax[0] = (int) (max[0] / m_bitmapEpsilon);
       iMax[1] = (int) (max[1] / m_bitmapEpsilon);
 
-      size_t uExtend = abs(iMax[0] - iMin[0]) + 2;
-      size_t vExtend = abs(iMax[1] - iMin[1]) + 2;
+      size_t uExtent = abs(iMax[0] - iMin[0]) + 2;
+      size_t vExtent = abs(iMax[1] - iMin[1]) + 2;
 
       std::vector<std::vector<int> > bitmap;
       std::vector<bool> visited;
-      bitmap.resize(uExtend * vExtend);
-      visited.resize(uExtend * vExtend, false);
+      bitmap.resize(uExtent * vExtent);
+      visited.resize(uExtent * vExtent, false);
 
       bool wrapU = wraps_u();
       bool wrapV = wraps_v();
@@ -193,31 +188,31 @@ namespace CGAL {
       for (size_t i = 0;i<parameterSpace.size();i++) {
         int u = (parameterSpace[i].first - min[0]) / m_bitmapEpsilon;
         int v = (parameterSpace[i].second - min[1]) / m_bitmapEpsilon;
-        if (u < 0 || u >= uExtend) {
+        if (u < 0 || u >= uExtent) {
           if (wrapU) {
-            while (u < 0) u += uExtend;
-            while (u >= uExtend) u-= uExtend;
+            while (u < 0) u += uExtent;
+            while (u >= uExtent) u-= uExtent;
           }
           else {
             std::cout << "cc: u out of bounds: " << u << std::endl;
-            u = (u < 0) ? 0 : (u >= uExtend) ? uExtend - 1 : u;
+            u = (u < 0) ? 0 : (u >= uExtent) ? uExtent - 1 : u;
           }
         }
-        if (v < 0 || v >= vExtend) {
+        if (v < 0 || v >= vExtent) {
           if (wrapV) {
-            while (v < 0) v += vExtend;
-            while (v >= vExtend) v-= vExtend;
+            while (v < 0) v += vExtent;
+            while (v >= vExtent) v-= vExtent;
           }
           else {
             std::cout << "cc: v out of bounds: " << u << std::endl;
-            v = (v < 0) ? 0 : (v >= vExtend) ? vExtend - 1 : v;
+            v = (v < 0) ? 0 : (v >= vExtent) ? vExtent - 1 : v;
           }
         }
-        bitmap[v * uExtend + u].push_back(m_indices[i]);
+        bitmap[v * uExtent + u].push_back(m_indices[i]);
       }
 
       std::vector<std::vector<size_t> > cluster;
-      for (size_t i = 0;i<(uExtend * vExtend);i++) {
+      for (size_t i = 0;i<(uExtent * vExtent);i++) {
         cluster.push_back(std::vector<size_t>());
         if (bitmap[i].empty())
           continue;
@@ -240,21 +235,21 @@ namespace CGAL {
                                std::back_inserter(cluster.back()));
 
           // grow 8-neighborhood
-          int vIndex = f / uExtend;
-          int uIndex = f % uExtend;
+          int vIndex = f / uExtent;
+          int uIndex = f % uExtent;
           bool upperBorder = vIndex == 0;
-          bool lowerBorder = vIndex == (vExtend - 1);
+          bool lowerBorder = vIndex == (vExtent - 1);
           bool leftBorder = uIndex == 0;
-          bool rightBorder = uIndex == (uExtend - 1);
+          bool rightBorder = uIndex == (uExtent - 1);
 
           int n;
           if (!upperBorder) {
-            n = f - uExtend;
+            n = f - uExtent;
             if (!visited[n])
               fields.push(n);
           }
           else if (wrapV) {
-            n = f + (vExtend - 1) * uExtend;
+            n = f + (vExtent - 1) * uExtent;
             if (!visited[n]) fields.push(n);
           }
 
@@ -263,16 +258,16 @@ namespace CGAL {
             if (!visited[n]) fields.push(n);
           }
           else if (wrapU) {
-            n = f + uExtend - 1;
+            n = f + uExtent - 1;
             if (!visited[n]) fields.push(n);
           }
 
           if (!lowerBorder) {
-            n = f + uExtend;
+            n = f + uExtent;
             if (!visited[n]) fields.push(n);
           }
           else if (wrapV) {
-            n = f - (vExtend - 1) * uExtend;
+            n = f - (vExtent - 1) * uExtent;
             if (!visited[n]) fields.push(n);
           }
 
@@ -281,7 +276,7 @@ namespace CGAL {
             if (!visited[n]) fields.push(n);
           }
           else if (wrapU) {
-            n = f - uExtend + 1;
+            n = f - uExtent + 1;
             if (!visited[n]) fields.push(n);
           }
         }

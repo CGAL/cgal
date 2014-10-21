@@ -177,33 +177,6 @@ namespace CGAL {
       }
     }
 
-    void parameter_extend(const Point &center,
-                          FT width, 
-                          FT min[2],
-                          FT max[2]) const {
-      FT maxLambda = (std::numeric_limits<double>::max)(),
-         minLambda = -(std::numeric_limits<double>::max)();
-
-      Vector a = m_axis.to_vector();
-      Point p = m_point_on_axis;
-
-      for (size_t i = 0;i<3;i++) {
-        if (abs(a[i]) > 0.001) {
-          FT l1 = (center[i] + width + m_radius - p[i]) / a[i];
-          FT l2 = (center[i] - width - m_radius - p[i]) / a[i];
-
-          minLambda = (std::max<FT>)(minLambda, (std::min<FT>)(l1, l2));
-          maxLambda = (std::min<FT>)(maxLambda, (std::max<FT>)(l1, l2));
-        }
-      }
-
-      min[1] = minLambda;
-      max[1] = maxLambda;
-      //U circumfence
-      min[0] = 0;
-      max[0] = (2 * M_PI * m_radius);
-    }
-
     FT squared_distance(const Point &_p) const {
       Vector a = m_axis.to_vector();
       a = a * (1.0 / sqrt(a.squared_length()));

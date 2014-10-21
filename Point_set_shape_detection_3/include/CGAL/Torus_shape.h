@@ -159,13 +159,6 @@ namespace CGAL {
       return;
     }
 
-    void parameter_extend(const Point &center,
-                          FT width,
-                          FT min[2],
-                          FT max[2]) const {
-      return;
-    }
-
     FT squared_distance(const Point &_p) const {
       Vector d = _p - m_center;
       // height over symmetry plane

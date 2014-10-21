@@ -154,12 +154,6 @@ namespace CGAL {
                     FT max[2]) const {
     }
 
-    void parameter_extend(const Point &center,
-                          FT width, 
-                          FT min[2],
-                          FT max[2]) const {
-    }
-
     FT squared_distance(const Point &_p) const {
       Vector toApex = _p - m_apex;
       FT a = toApex.squared_length();
