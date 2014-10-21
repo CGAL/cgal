@@ -216,6 +216,8 @@ namespace CGAL {
 	CGAL_DECL_COMPUTE(Hyperplane_translation);
 	CGAL_DECL_COMPUTE(Value_at);
 	CGAL_DECL_COMPUTE(Point_weight);
+	CGAL_DECL_COMPUTE(Power_distance);
+	CGAL_DECL_COMPUTE(Power_distance_to_point);
 #undef CGAL_DECL_COMPUTE
 
 #define CGAL_DECL_ITER_OBJ(X,Y,Z,C) struct X##_tag {}; \
@@ -269,6 +271,7 @@ namespace CGAL {
 	CGAL_DECL_CONSTRUCT(Construct_max_vertex,Point);
 	CGAL_DECL_CONSTRUCT(Construct_circumcenter,Point);
 	CGAL_DECL_CONSTRUCT(Point_drop_weight,Point);
+	CGAL_DECL_CONSTRUCT(Power_center,Weighted_point);
 #undef CGAL_DECL_CONSTRUCT
 #if 0
 #define CGAL_DECL_ITER_CONSTRUCT(X,Y) struct X##_tag {}; \

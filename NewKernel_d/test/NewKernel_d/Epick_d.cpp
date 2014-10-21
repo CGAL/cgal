@@ -84,6 +84,7 @@ void test2(){
   typedef typename K1::Ray_d R;
   typedef typename K1::Iso_box_d IB;
   typedef typename K1::Flat_orientation_d FO;
+  typedef typename K1::Weighted_point_d WP;
 
   //typedef K1::Construct_point CP;
   typedef typename K1::Construct_point_d CP;
@@ -377,6 +378,16 @@ void test2(){
   assert(cc(bl,1)==-1);
   assert(cc(tr,0)==4);
   assert(cc(tr,1)==5);
+
+  WP tw[]={cwp(cp(5,0),1.5),cwp(cp(2,std::sqrt(3)),1),cwp(cp(2,-std::sqrt(3)),1)};
+  WP xw=pc(tw+0,tw+3);
+  assert(abs(pod(xw,tw[0]))<.0001);
+  assert(abs(pod(xw,tw[1]))<.0001);
+  assert(abs(pod(xw,tw[2]))<.0001);
+  assert(pdw(xw)[0]<2.95);
+  assert(pdw(xw)[0]>2.5);
+  assert(pw(xw)<2.95);
+  assert(pw(xw)>2.5);
 
   Sp un1; CGAL_USE(un1);
   H un2; CGAL_USE(un2);
