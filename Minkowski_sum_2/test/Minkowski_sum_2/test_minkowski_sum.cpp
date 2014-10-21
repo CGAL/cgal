@@ -2,6 +2,7 @@
 
 #include <CGAL/minkowski_sum_2.h>
 #include <CGAL/Small_side_angle_bisector_decomposition_2.h>
+#include <CGAL/Polygon_triangulation_decomposition_2.h>
 #include <CGAL/Polygon_vertical_decomposition_2.h>
 #include <CGAL/Polygon_convex_decomposition_2.h>
 #include <CGAL/Boolean_set_operations_2.h>
@@ -31,6 +32,7 @@ typedef enum {
   OPT_DECOMP,
   HM_DECOMP,
   GREENE_DECOMP,
+  TRIANGULATION_DECOMP,
   VERTICAL_DECOMP
 } Strategy;
 
@@ -41,6 +43,7 @@ static const char* strategy_names[] = {
   "optimal convex decomposition",
   "Hertel-Mehlhorn decomposition",
   "Greene decomosition",
+  "Triangulation",
   "Vertical decomosition"
 };
 
@@ -75,6 +78,12 @@ Polygon_with_holes_2 compute_minkowski_sum_2(Polygon_2& p, Polygon_2& q,
    case GREENE_DECOMP:
     {
      CGAL::Greene_convex_decomposition_2<Kernel> decomp;
+     return minkowski_sum_2(p, q, decomp);
+    }
+
+   case TRIANGULATION_DECOMP:
+    {
+     CGAL::Polygon_triangulation_decomposition_2<Kernel> decomp;
      return minkowski_sum_2(p, q, decomp);
     }
 
@@ -122,6 +131,9 @@ int main(int argc, char* argv[])
         break;
       case 'g':
         strategies.push_back(GREENE_DECOMP);
+        break;
+      case 't':
+        strategies.push_back(TRIANGULATION_DECOMP);
         break;
       case 'v':
         strategies.push_back(VERTICAL_DECOMP);

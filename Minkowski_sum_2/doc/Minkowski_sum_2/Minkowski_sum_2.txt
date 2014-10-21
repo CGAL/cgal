@@ -210,14 +210,21 @@ In order to compute Minkowski sums of two polygon \f$ P \f$ and
 \f$ Q \f$ using the decomposition method, issue the call
 `minkowski_sum_2(P, Q, decomp)`, where `decomp` is an object of a type
 that models the concept `PolygonConvexDecomposition`, which in turn
-refines a `Functor` concept variant. Namely, it provides a function
-operator (`operator()`) that accepts a planar polygon and returns a
-range of convex polygons that represents its convex decomposition.
+refines a `Functor` concept variant. Namely, it requires the provision
+of a function operator (`operator()`) that accepts a planar polygon and
+returns a range of convex polygons that represents its convex decomposition.
+If at least one of \f$ P \f$ or \f$ Q \f$ is a polygon with holes,
+`decomp` is an object of a type that models the concept
+`PolygonWithHolesConvexDecomposition`, which refines the concept
+`PolygonConvexDecomposition` and adds a requirement for the provision
+of a function operator (`operator()`) that accepts a planar polygon with
+holes.
 
-The Minkowski-sum package includes five models of the concept
-`PolygonConvexDecomposition_2` as described below. The first three are
-class templates that wrap the decomposition functions included in the
-\ref Chapter_2D_Polygon "Planar Polygon Partitioning" package.
+The Minkowski-sum package includes four models of the concept
+`PolygonConvexDecomposition_2` and two models of the refined concept
+`PolygonWithHolesConvexDecomposition_2` as described below. The first
+three are class templates that wrap the decomposition functions included
+in the \ref Chapter_2D_Polygon "Planar Polygon Partitioning" package.
 
 <UL>
 <LI>The `Optimal_convex_decomposition_2<Kernel>` class template uses
@@ -265,14 +272,22 @@ sub-polygons. In case it is not possible to eliminate two reflex
 vertices at once any more, each reflex vertex is eliminated by a
 diagonal that is closest to the angle bisector emanating from this
 vertex and having rational-coordinate endpoints on both sides.
+</UL>
 
+The following two models the refined concept
+`PolygonWithHolesConvexDecomposition_2`. An instance of any one these
+two types can be used to decompose a polygon with holes. You can pass
+the instance as the third argument to call
+`minkowski_sum_2(P, Q, decomp)` to compute the Minkowski sum of two
+polygons with holes, \f$P \f$ and \f$Q \f$.
+<UL>
 <LI>The `Polygon_vertical_decomposition_2<Kernel>` class template
 uses vertical decomposition to decompose the underlying arrangement;
 see \ref chapterArrangement_on_surface_2 "2D Arrangements" package.
-An instance of this template can be used to decompose a polygon with
-holes. You can pass an instance of this template as the third argument
-to call `minkowski_sum_2(P, Q, decomp)` to compute the Minkowski sum
-of two polygons with holes, \f$P \f$ and \f$Q \f$.
+
+<LI>The `Polygon_triangulation_decomposition_2<Kernel>` class template
+uses constrained triangulation to decompose the input polygons, which
+may have holes, into triangles.
 </UL>
 
 The example below demonstrates the computation of the Minkowski sum of
