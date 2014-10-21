@@ -231,7 +231,6 @@ Please refer to \cgalCite{Schnabel07} for more information.
 
       m_global_octree = new Indexed_octree(first, beyond);
       m_global_octree->createTree();
-      //m_global_octree->verify();
     }	 
 
     /// \cond SKIP_IN_MANUAL
@@ -260,7 +259,8 @@ Please refer to \cgalCite{Schnabel07} for more information.
   /*!
     This function registers a shape type for detection.
   */ 
-    void add_shape_factory(internal::Shape_factory_base *factory ///< Factory for shape type defined by 'Shape_factory<"shape_type">'.
+    template <class S>
+    void add_shape_factory(Shape_factory<S> *factory///< Factory for shape type defined by 'Shape_factory<"shape_type">'
       ) {
       m_shapeFactories.push_back(factory);
     }
