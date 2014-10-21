@@ -1570,8 +1570,6 @@ private:
 
           assert(cgalIntersection);
           
-          // TODO: This isn't getting template substituted properly in the OpenMesh version
-          // I have no fucking clue why
           Point_2* result = boost::get<Point_2, Point_2, Line_2>(&*cgalIntersection);
           
           assert(result && "Error, did not get point intersection on path walk to source");
