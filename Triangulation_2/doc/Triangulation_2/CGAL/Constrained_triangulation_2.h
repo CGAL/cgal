@@ -13,7 +13,7 @@ struct No_intersection_tag{};
 /*!
 \ingroup PkgTriangulation2TriangulationClasses
 
-Intersection tag for constrained triangulations, if an exact predicates and exact constructions are provided.
+Intersection tag for constrained triangulations, if exact predicates and exact constructions are provided.
 */
 struct Exact_intersections_tag{};
 
@@ -46,7 +46,7 @@ There are three versions of constrained triangulations
 <LI>In the basic version, the constrained triangulation 
 does not handle intersecting constraints, and the set of input 
 constraints is required to be a set of polylines that do not intersect 
-except possibly at their points. Any number of constrained edges 
+except possibly at their endpoints. Any number of constrained edges 
 are allowed to share the same endpoint. Vertical constrained edges 
 are allowed as well as 
 constrained edges with null length. 
@@ -54,7 +54,7 @@ constrained edges with null length.
 In those versions, input constraints are allowed to be 
 intersecting, overlapping or partially 
 overlapping polylines. 
-The triangulation introduce additional vertices at each point which 
+The triangulation introduces additional vertices at each point which 
 is a proper intersection point of two 
 constraints. A single constraint intersecting other 
 constraints will then appear as the union of several 
@@ -85,7 +85,7 @@ of the concept `TriangulationTraits_2`.
 When intersection of input constraints are supported, 
 the geometric traits class 
 is required to provide additional function object types 
-to compute the intersection of two segments of polylines. 
+to compute the intersection of two segments or polylines. 
 It has then to be a model of the concept 
 `ConstrainedTriangulationTraits_2`. 
 
@@ -111,16 +111,16 @@ faces of the triangulation. Thus the nested `Face`
 type of a constrained triangulation offers 
 additional functionalities to deal with this information. 
 These additional functionalities 
-induce additional requirements on the base face class 
+induce additional requirements on the face base class 
 plugged into the triangulation data structure of 
 a constrained Delaunay triangulation. 
-The base face of a constrained Delaunay triangulation 
+The face base of a constrained Delaunay triangulation 
 has to be a model of the concept 
 `ConstrainedTriangulationFaceBase_2`. 
 
 \cgal provides default instantiations for the template parameters 
 `Tds` and `Itag`, and for the `ConstrainedTriangulationFaceBase_2`. 
-If `Gt` is the geometric traits 
+If `Gt` is the geometric traits class 
 parameter, 
 the default for 
 `ConstrainedTriangulationFaceBase_2` is the class 
@@ -218,7 +218,7 @@ OutputItEdges out) const;
 
 /*!
 Inserts point `p` and restores the status (constrained or not) of all 
-the touched edges. If present `f` is used as an hint 
+the touched edges. If present, `f` is used as an hint 
 for the location of `p`. 
 */ 
 Vertex_handle insert(Point p, Face_handle f = Face_handle() ); 

@@ -26,7 +26,7 @@ triangulation.
 The constraint hierarchy 
 keeps track of the input constraints and of their refinement 
 in the triangulation. This data structure 
-maintains for each input constraints 
+maintains for each input constraint
 the sequence of intersection vertices added on this constraint. 
 The constraint hierarchy also allows the user to retrieve the set 
 of constrained edges of the triangulation, and for each 
@@ -59,7 +59,7 @@ typedef Itag Intersection_tag;
   
 /*!
 The identifier of a polyline constraint. For reasons of backward compatibility of
-function that returned `std::pair<Vertex_handle,Vertex_handle>` instead of `Constraint_id`
+functions that returned `std::pair<Vertex_handle,Vertex_handle>` instead of `Constraint_id`,
 the id class has a conversion operator for the pair.
 */
   typedef unspecified_type Constraint_id;
@@ -224,7 +224,7 @@ void insert_constraint(Vertex_handle va, Vertex_handle vb);
 /*!
 Inserts a polyline defined by the points in the range `[first,last)`.
 Returns the constraint id.
-The polyline is considered as a polygon if the first and last point are equal or if  `close = true`. This allows for example to pass the vertex range of a `Polygon_2`.
+The polyline is considered as a polygon if the first and last points are equal or if  `close = true`. This allows for example to pass the vertex range of a `Polygon_2`.
 \tparam PointIterator must be an `InputIterator` with the value type `Point`. 
 */
 template < class PointIterator>
@@ -246,7 +246,7 @@ template <class ConstraintIterator>
 std::size_t insert_constraints(ConstraintIterator first, ConstraintIterator last);
 
 /*!
-Same as above except that each constraints is given as a pair of indices of the points
+Same as above except that each constraint is given as a pair of indices of the points
 in the range [points_first, points_last). The indices must go from 0 to `std::distance(points_first, points_last)`
 \tparam PointIterator is an `InputIterator` with the value type `Point`.
 \tparam IndicesIterator is an `InputIterator` with `std::pair<Int, Int>` where `Int` is an integral type implicitly convertible to `std::size_t`
@@ -345,7 +345,7 @@ The polyline simplification algorithm described in Chapter
 operates on polyline constraints. The algorithm removes
 vertices of a constraint and at the same time  from the triangulation.
 The points of removed vertices are nevertheless kept
-in the the polyline constraint.
+in the polyline constraint.
 This allows the simplification algorithm to compute the error
 introduced by the simplification process by comparing the 
 current sequence (vertices) to the original sequence (points).
@@ -361,7 +361,7 @@ The simplification algorithm uses the following types and functions.
 An iterator on the points of the chain of sub-constraints representing a
 constraint. The value type of this iterator is `Point`.
 A \link Constrained_triangulation_plus_2::Vertices_in_constraint_iterator `Vertices_in_constraint_iterator`\endlink can be converted into
-a `Points_in_constraint_iterator`, but not the other way round.
+a `Points_in_constraint_iterator`, but not the other way around.
 \cgalAdvancedEnd
 */
 typedef unspecified_type Points_in_constraint_iterator;
