@@ -12,7 +12,7 @@ These default base class can be used directly or can serve as a base to derive
 other base classes with some additional attribute (a color for example) 
 tuned for specific applications. 
 
-\tparam Triangulation_face_base_2 is a geometric traits class. 
+\tparam Traits must be a geometric traits class.
 The geometric traits is actually not used by the class. 
 
 \tparam Fb has to be a model of the concept `TriangulationDSFaceBase_2` 
