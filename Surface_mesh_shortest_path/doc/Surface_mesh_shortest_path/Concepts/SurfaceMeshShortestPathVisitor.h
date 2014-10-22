@@ -21,7 +21,7 @@ public:
 
   /*!
   \brief Called when an edge was traversed in the shortest path sequence.
-  \param edge halfedge of the polyhedron crossed by the shortest path. The halfedge is directed toward the face <em>nearest</em> to the target point.
+  \param edge halfedge of the surace mesh crossed by the shortest path. The halfedge is directed toward the face <em>nearest</em> to the target point.
   \param alpha value in the range [0.0,1.0] specifying where along `edge` the shortest path crossed.
     - 0.0 means it crossed at `source(edge)`
     - 1.0 means it crossed at `target(edge)`
@@ -35,7 +35,7 @@ public:
   
   /*!
   \brief Called when a vertex is encountered in the shortest path sequence.
-  \param vertex the vertex of the polyhedron encountered by the shortest path.
+  \param vertex the vertex of the surface mesh encountered by the shortest path.
   */
   void operator()(vertex_descriptor vertex);
   
@@ -44,7 +44,7 @@ public:
   \remarks This will only be called as the first and/or last element in the path 
   sequence, and only if the target/source point is an internal face location 
   (i.e. not on an edge or at a vertex).
-  \param face a face of the polyhedron encountered at the start or the end of the shortest path.
+  \param face a face of the surface mesh encountered at the start or the end of the shortest path.
   \param location the barycentric coordinate inside `face` of this point on the path.
   */
   void operator()(face_descriptor face, Barycentric_coordinate location);
