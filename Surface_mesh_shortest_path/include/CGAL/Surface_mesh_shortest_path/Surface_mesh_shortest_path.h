@@ -258,7 +258,7 @@ public:
   
   /// The return type from shortest path distance queries. Stores the distance
   /// to the nearest source point, and a `Source_point_iterator` to the 
-  /// source point itself
+  /// source point itself.
   typedef typename std::pair<FT, Source_point_iterator> Shortest_path_result;
   
 /// @}
@@ -1997,7 +1997,7 @@ public:
   /*!
   \brief Creates a shortest paths object using `g` as input.
   
-  Equivalent to `Surface_mesh_shortest_path(g, get(boost::vertex_index, g), get(boost::halfedge_index, g), get(boost::face_index, g), get(CGAL::vertex_point, g), traits)`
+  Equivalent to `Surface_mesh_shortest_path(g, get(boost::vertex_index, g), get(boost::halfedge_index, g), get(boost::face_index, g), get(CGAL::vertex_point, g), traits)`.
   */
   Surface_mesh_shortest_path(FaceListGraph& g, const Traits& traits = Traits())
     : m_traits(traits)
@@ -2150,7 +2150,7 @@ public:
   }
   
   /*!
-  \brief Removes all source point for the shortest path queries.
+  \brief Removes all source points for the shortest path queries.
   
   \details No change to the internal shortest paths data structure occurs
   until either `Surface_mesh_shortest_path::build_sequence_tree()` or
@@ -2204,7 +2204,7 @@ public:
   \brief Returns an iterator to the first source point location
     
   \details The elements will appear in the order they were inserted to the 
-  structure by calls to `add_source_point` or `add_source_points`.  Deleted
+  structure by calls to `add_source_point()` or `add_source_points()`.  Deleted
   points will not appear in the sequence.
     
   \return An iterator to the first of the stored source points.
@@ -2551,7 +2551,7 @@ public:
   /// \endcond
   
   /*!
-  \brief Returns a location along the given edge as a `Face_location`
+  \brief Returns a location along the given edge as a `Face_location`.
   
   \details The following static overload is also available:
     - `static Face_location face_location(halfedge_descriptor he, FT t, const FaceListGraph& g, const Traits& traits = Traits())`
@@ -2599,7 +2599,7 @@ public:
   \details The following static overload is also available:
     - `static Face_location locate(const Point_3& p, const FaceListGraph& g, VertexPointMap vertexPointMap, const Traits& traits = Traits())`
   
-  \tparam AABBTraits A model of `AABBTraits` used to defined a \cgal `AABB_tree`.
+  \tparam AABBTraits A model of `AABBTraits` used to define a \cgal `AABB_tree`.
   
   \param p Point to locate on the input face graph
   */
@@ -2627,7 +2627,7 @@ public:
   \details The following static overload is also available:
     - static Face_location locate(const Point_3& p, const AABB_tree<AABBTraits>& tree, const FaceListGraph& g, VertexPointMap vertexPointMap, const Traits& traits = Traits())
   
-  \tparam AABBTraits A model of `AABBTraits` used to defined a \cgal `AABB_tree`.
+  \tparam AABBTraits A model of `AABBTraits` used to define a \cgal `AABB_tree`.
   
   \param p Point to locate on the input face graph
   \param tree A `AABB_tree` containing the triangular faces of the input surface mesh to perform the point location with
@@ -2663,7 +2663,7 @@ public:
   \details The following static overload is also available:
     - `static Face_location locate(const Ray_3& ray, const FaceListGraph& g, VertexPointMap vertexPointMap, const Traits& traits = Traits())`
   
-  \tparam AABBTraits A model of `AABBTraits` used to defined an `AABB_tree`.
+  \tparam AABBTraits A model of `AABBTraits` used to define an `AABB_tree`.
   
   \param ray Ray to intersect with the input face graph
   */
@@ -2692,7 +2692,7 @@ public:
   \details The following static overload is also available:
     - static Face_location locate(const Ray_3& ray, const AABB_tree<AABBTraits>& tree, const FaceListGraph& g, VertexPointMap vertexPointMap, const Traits& traits = Traits())
     
-  \tparam AABBTraits A model of `AABBTraits` used to defined a \cgal `AABB_tree`.
+  \tparam AABBTraits A model of `AABBTraits` used to define a \cgal `AABB_tree`.
   
   \param ray Ray to intersect with the input face graph
   \param tree A `AABB_tree` containing the triangular faces of the input surface mesh to perform the point location with
@@ -2766,7 +2766,7 @@ public:
   \details The following static overload is also available:
     - `static void build_aabb_tree(const FaceListGraph& g, AABB_tree<AABBTraits>& outTree)`
 
-  \tparam AABBTraits A model of `AABBTraits` used to defined a \cgal `AABB_tree`.
+  \tparam AABBTraits A model of `AABBTraits` used to define a \cgal `AABB_tree`.
   
   \param outTree Output parameter to store the computed `AABB_tree`
   */

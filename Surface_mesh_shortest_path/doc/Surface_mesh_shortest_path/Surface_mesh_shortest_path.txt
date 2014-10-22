@@ -41,12 +41,12 @@ type the property map must provide an index between 0 and the number of simplice
 the class `CGAL::Polyhedron_3` as model of `FaceListGraph` with the item class `CGAL::Polyhedron_items_with_id_3`,
 for which default property maps are provided.
 This item class associates to each simplex an index that provides a \f$O(1)\f$ time access to the indices.
-Note that the initialization of the property maps requires a call to`CGAL::set_halfedgeds_items_id()`.
+Note that the initialization of the property maps requires a call to `CGAL::set_halfedgeds_items_id()`.
 
 The access to the embedding of each vertex is done using a point vertex property map associating to each vertex a 3D point.
 %Defaults are provided for CGAL classes.
 
-If the traits class used holds some local states, it must also be passed to the class when constructing it
+If the traits class used holds some local state, it must also be passed to the class when constructing it
 (the default one provided does not).
 
 \subsubsection Surface_mesh_shortest_pathClassSource Specifying the Source Points
@@ -59,11 +59,11 @@ Given a point \f$p\f$ that lies inside a triangle face \f$(A,B,C)\f$, its baryce
 \subsubsection Surface_mesh_shortest_pathClassBuild Building the Internal Sequence Tree
 
 A time consuming operation for shortest path queries consists in building an internal data structure used
-to make the queries. This data structure is call the sequence tree.
+to make the queries. This data structure is called the <em>sequence tree</em>.
 It will be built automatically when the first shortest path query is done and will be reused
 for any subsequent query as long as the set of source points does not change. Each time the
-set of source points is changed the sequence tree need to be rebuilt (if already built).
-Note that it can also be built manually by a call to`Surface_mesh_shortest_path::build_sequence_tree()`.
+set of source points is changed the sequence tree needs to be rebuilt (if already built).
+Note that it can also be built manually by a call to `Surface_mesh_shortest_path::build_sequence_tree()`.
 
 \subsubsection Surface_mesh_shortest_pathClassQueries Shortest Path Queries
 
@@ -76,7 +76,7 @@ Given a target point, all these functions compute the shortest path between that
 source points:
 
 - `Surface_mesh_shortest_path::shortest_distance_to_source_points()` provides the closest source point to the target point together with the length of the shortest path.
-- `Surface_mesh_shortest_path::shortest_path_points_to_source_points()` provides all the intersection points of the shortest path with the edges and vertices of the input surface mesh (including the source and the target point). This function is useful for visualization purpose.
+- `Surface_mesh_shortest_path::shortest_path_points_to_source_points()` provides all the intersection points of the shortest path with the edges and vertices of the input surface mesh (including the source and the target point). This function is useful for visualization purposes.
 - `Surface_mesh_shortest_path::shortest_path_sequence_to_source_points` gives access to the complete sequence of simplices crossed by the shortest path using a visitor object model of the concept `SurfaceMeshShortestPathVisitor`.
 
 \subsubsection Surface_mesh_shortest_pathClassMore Additional Convenience Functionalities
@@ -94,7 +94,7 @@ the kernel's number type to `double`, using the `std::sqrt`, and converting it b
 with directly supports square roots to get the most precision of the shortest path computations.
 
 Using a kernel such as `CGAL::Exact_predicates_exact_constructions_kernel_with_sqrt` with this package will indeed provide the exact shortest paths,
-but it will be extremely slow. Indeed, in order to compute the distance along the surface, it is necessary to unfold sequences of faces, edge-to-edge, out into a common plane.  The functor `Construct_triangle_3_to_triangle_2_projection` provides an initial layout of the first face in a sequence, by rotating a given face into the XY plane.  `Construct_triangle_3_along_segment_2_flattening` unfolds a triangle into the plane, using a specified segment as a base.  Since this results in a chain of constructed triangles in the plane, the exact representation types used with this kernel (either `CORE::Expr` or `leda::real`) will process extremely slow, even on very simple inputs.  This is because the exact representations will effectively add an \f$O(n)\f$ factor to every computation.
+but it will be extremely slow. Indeed, in order to compute the distance along the surface, it is necessary to unfold sequences of faces, edge-to-edge, out into a common plane.  The functor `Construct_triangle_3_to_triangle_2_projection` provides an initial layout of the first face in a sequence, by rotating a given face into the `xy`-plane.  `Construct_triangle_3_along_segment_2_flattening` unfolds a triangle into the plane, using a specified segment as a base.  Since this results in a chain of constructed triangles in the plane, the exact representation types used with this kernel (either `CORE::Expr` or `leda::real`) will process extremely slow, even on very simple inputs.  This is because the exact representations will effectively add an \f$O(n)\f$ factor to every computation.
 
 \section Surface_mesh_shortest_pathExamples Examples
 
@@ -130,6 +130,8 @@ This example shows how to implement a model of the `SurfaceMeshShortestPathVisit
 These benchmarks were run using randomly generated source and destination points over multiple trials. 
 The measurements were executed using \cgal 4.5, under Cygwin 1.7.32, using the Gnu
 C++ compiler version 4.8.3 with options `-O3 -DNDEBUG`. The system used
+The measurements were executed using CGAL 4.5, under Cygwin 1.7.32, using the GNU
+C++ compiler version 4.8.3 with options "-O3 -Wall -DCGAL_NDEBUG". The system used
 was had a 64bit Intel Core i3 2.20GHz processor with 6GB of RAM
 
 <!--
@@ -212,7 +214,7 @@ The following figures track the construction time, query time, and peak memory u
 \subsection Surface_mesh_shortest_pathDefinitions Definitions
 
 \subsubsection Surface_mesh_shortest_pathGeodesics Geodesic Paths
-  A <em>geodesic</em> curve is a `locally shortest` path on the surface of some manifold, that is, it cannot be made shorter by some local perturbations. On the surface of a polyhedron, this translates to a curve where, when the faces crossed by the curve are unfolded into the plane, the curve forms a straight line. Another way of describing it is that there is exactly \f$\pi\f$ surface angle to both sides at every point along the curve. A geodesic curve between two points is not necessarily a shortest path, but all shortest paths on polyhedra are formed by sequences of one or more geodesic paths.
+  A <em>geodesic</em> curve is a <em>locally shortest</em> path on the surface of some manifold, that is, it cannot be made shorter by some local perturbations. On the surface of a polyhedron, this translates to a curve where, when the faces crossed by the curve are unfolded into the plane, the curve forms a straight line. Another way of describing it is that there is exactly \f$\pi\f$ surface angle to both sides at every point along the curve. A geodesic curve between two points is not necessarily a shortest path, but all shortest paths on polyhedra are formed by sequences of one or more geodesic paths.
   
   \cgalFigureBegin{Geodesic_perspective,perspectiveGeodesic.png}
   A geodesic on the surface of a simple polyhedron.
@@ -223,7 +225,7 @@ The following figures track the construction time, query time, and peak memory u
   \cgalFigureEnd
 
 \subsubsection Surface_mesh_shortest_pathVisibilityWindow Visibility Window
-  A <em>visibility window</em> (or <em>visibility cone</em>) is a pair of geodesic curves which enclose a <em>locally flat</em> region of the polyhedron. Locally flat means that between every pair of points inside the window, there is exactly one geodesic path between them which also stays inside the bounds of the window. Thus, operations, such as distance calculations, can be done with normal 2D euclidean operations while inside the window.  When a visibility window encounters a vertex (which are <em>not</em> flat), a <em>branch</em> occurs, forming a sub-window to either side.
+  A <em>visibility window</em> (or <em>visibility cone</em>) is a pair of geodesic curves which enclose a <em>locally flat</em> region of the polyhedron. Locally flat means that between every pair of points inside the window, there is exactly one geodesic path between them which also stays inside the bounds of the window. Thus, operations, such as distance calculations, can be done with normal 2D %Euclidean operations while inside the window.  When a visibility window encounters a vertex (which are <em>not</em> flat), a <em>branch</em> occurs, forming a sub-window to either side.
   
   \cgalFigureBegin{Visibility_window_1,visibilityCone-1.png}
   A single visibility window, before it encounters a vertex.
@@ -254,7 +256,7 @@ The following figures track the construction time, query time, and peak memory u
 \subsection Surface_mesh_shortest_pathContinuousDijkstra Continuous Dijkstra 
   Continuous Dijkstra is simply the application of the graph-search algorithm to a non-discrete setting.  As we build the search tree, newly created nodes are tagged with a distance metric, and inserted into a priority queue, such that the shortest distance nodes are always first.
 
-\subsection Surface_mesh_shortest_pathOneAngleOneSplit One angle, one split
+\subsection Surface_mesh_shortest_pathOneAngleOneSplit One Angle, One Split
   This observation by Chen and Han states that out of all the branches that occur at any given vertex of the polyhedron, only a limited number have more than one child which can define shortest paths.  This is accomplished by maintaining, for each vertex, all nodes of the sequence tree which can contain that vertex inside their visibility window.
   
 - For each vertex, only <em>one</em> two-way branch may occur per face incident to that vertex, specifically, that of the nearest node to that vertex which crosses that face.  We call that closest node the <em>occupier</em> of that vertex.
