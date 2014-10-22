@@ -21,7 +21,7 @@ public:
 
   /*!
   \brief Called when an edge was traversed in the shortest path sequence.
-  \param edge halfedge of the surace mesh crossed by the shortest path. The halfedge is directed toward the face <em>nearest</em> to the target point.
+  \param edge halfedge of the surface mesh crossed by the shortest path. The halfedge is directed toward the face <em>nearest</em> to the target point.
   \param alpha value in the range [0.0,1.0] specifying where along `edge` the shortest path crossed.
     - 0.0 means it crossed at `source(edge)`
     - 1.0 means it crossed at `target(edge)`
