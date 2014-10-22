@@ -36,15 +36,15 @@ namespace CGAL {
 \brief A model of the concept `SurfaceMeshShortestPathTraits`
 as required by the `Surface_mesh_shortest_path` class.
 
-\tparam K A \cgal %Kernel
+\tparam K A \cgal Kernel
 
-\tparam F A model of FaceListGraph
+\tparam G A model of FaceListGraph
 
 \cgalModels `SurfaceMeshShortestPathTraits`
 */
 template <
   class K, 
-  class F>
+  class G>
 class Surface_mesh_shortest_path_traits : public K
 {
 public:
@@ -53,7 +53,7 @@ public:
   typedef K Kernel;
   
   /// FaceListGraph Type
-  typedef F FaceListGraph;
+  typedef G FaceListGraph;
 
   typedef typename Kernel::FT FT;
   
@@ -162,14 +162,14 @@ model which uses an exact Kernel during the unfolding operations to achieve bett
 
 \tparam K Kernel Type
 
-\tparam F FaceListGraph type
+\tparam G FaceListGraph type
 
 \cgalModels `SurfaceMeshShortestPathTraits`
 */
 template <
   class K, 
-  class F>
-class Surface_mesh_shortest_path_traits_with_robust_unfolding : public Surface_mesh_shortest_path_traits<K,F>
+  class G>
+class Surface_mesh_shortest_path_traits_with_robust_unfolding : public Surface_mesh_shortest_path_traits<K,G>
 {
 public:
   typedef K Kernel;
@@ -188,7 +188,7 @@ public:
   }
   
   Surface_mesh_shortest_path_traits_with_robust_unfolding(const Kernel& kernel)
-    : Surface_mesh_shortest_path_traits<K,F>(kernel)
+    : Surface_mesh_shortest_path_traits<K,G>(kernel)
     , m_robust_construct_triangle_3_to_triangle_2_projection_object(kernel)
     , m_robust_flatten_triangle_3_along_segment_2(kernel)
   {

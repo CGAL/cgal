@@ -49,7 +49,7 @@ namespace CGAL {
 /*!
 \ingroup PkgSurfaceMeshShortestPath
 
-\brief Computes shortest surface paths from one or more source points on a polyhedral surface
+\brief Computes shortest surface paths from one or more source points on a surface mesh.
 
 \details Uses an optimized variation of Chen and Han's \f$ O(n^2) \f$ algorithm by Xin and Wang. 
 Refer to those respective papers for the details of the implementation.
@@ -138,11 +138,11 @@ public:
   typedef typename Traits::Barycentric_coordinate Barycentric_coordinate;
 
   /// \brief An ordered pair specifying a location on the surface of the `FaceListGraph`.
-  /// \details Given the pair (`face`, `bc`), such that `bc` is `(w0, w1, w2)`,
-  ///  the correspondance with the weights in `bc` and the vertices of `face` is the following:
-  /// - w0 -> source(halfedge(`face`))
-  /// - w1 -> target(halfedge(`face`))
-  /// - w2 -> target(next(halfedge(`face`)))
+  /// \details If `g` is the input graph and given the pair (`f`, `bc`) such that `bc` is `(w0, w1, w2)`,
+  ///  the correspondance with the weights in `bc` and the vertices of the face `f` is the following:
+  /// - `w0 = source(halfedge(f,g),g)`
+  /// - `w1 = target(halfedge(f,g),g)`
+  /// - `w2 = target(next(halfedge(f,g),g),g)`
   typedef typename std::pair<face_descriptor, Barycentric_coordinate> Face_location;
   
 private:

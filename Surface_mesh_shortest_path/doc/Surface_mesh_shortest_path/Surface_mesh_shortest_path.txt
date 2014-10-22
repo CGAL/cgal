@@ -10,7 +10,7 @@ namespace CGAL {
 This package provides an algorithm to compute shortest paths on a triangulated surface mesh.
 
 \cgalFigureBegin{Shortest_path_main,shortest_paths_overview.png}
-The shortest paths computation on a terrain.
+Shortest paths on a terrain using one source point represented by a green square.
 \cgalFigureEnd
 
 \section Surface_mesh_shortest_pathIntroduction Introduction
@@ -214,10 +214,10 @@ The following figures track the construction time, query time, and peak memory u
 \subsection Surface_mesh_shortest_pathDefinitions Definitions
 
 \subsubsection Surface_mesh_shortest_pathGeodesics Geodesic Paths
-  A <em>geodesic</em> curve is a <em>locally shortest</em> path on the surface of some manifold, that is, it cannot be made shorter by some local perturbations. On the surface of a polyhedron, this translates to a curve where, when the faces crossed by the curve are unfolded into the plane, the curve forms a straight line. Another way of describing it is that there is exactly \f$\pi\f$ surface angle to both sides at every point along the curve. A geodesic curve between two points is not necessarily a shortest path, but all shortest paths on polyhedra are formed by sequences of one or more geodesic paths.
+  A <em>geodesic</em> curve is a <em>locally shortest</em> path on the surface of some manifold, that is, it cannot be made shorter by some local perturbations. On a surface mesh, this translates to a curve where, when the faces crossed by the curve are unfolded into the plane, the curve forms a straight line. Another way of describing it is that there is exactly \f$\pi\f$ surface angle to both sides at every point along the curve. A geodesic curve between two points is not necessarily a shortest path, but all shortest paths on surface meshes are formed by sequences of one or more geodesic paths.
   
   \cgalFigureBegin{Geodesic_perspective,perspectiveGeodesic.png}
-  A geodesic on the surface of a simple polyhedron.
+  A geodesic on the surface of a simple surface mesh.
   \cgalFigureEnd
   
   \cgalFigureBegin{Geodesic_unrolled,unrolledGeodesic.png}
@@ -225,7 +225,7 @@ The following figures track the construction time, query time, and peak memory u
   \cgalFigureEnd
 
 \subsubsection Surface_mesh_shortest_pathVisibilityWindow Visibility Window
-  A <em>visibility window</em> (or <em>visibility cone</em>) is a pair of geodesic curves which enclose a <em>locally flat</em> region of the polyhedron. Locally flat means that between every pair of points inside the window, there is exactly one geodesic path between them which also stays inside the bounds of the window. Thus, operations, such as distance calculations, can be done with normal 2D %Euclidean operations while inside the window.  When a visibility window encounters a vertex (which are <em>not</em> flat), a <em>branch</em> occurs, forming a sub-window to either side.
+  A <em>visibility window</em> (or <em>visibility cone</em>) is a pair of geodesic curves which enclose a <em>locally flat</em> region of the surface mesh. Locally flat means that between every pair of points inside the window, there is exactly one geodesic path between them which also stays inside the bounds of the window. Thus, operations, such as distance calculations, can be done with normal 2D %Euclidean operations while inside the window.  When a visibility window encounters a vertex (which are <em>not</em> flat), a <em>branch</em> occurs, forming a sub-window to either side.
   
   \cgalFigureBegin{Visibility_window_1,visibilityCone-1.png}
   A single visibility window, before it encounters a vertex.
@@ -236,7 +236,7 @@ The following figures track the construction time, query time, and peak memory u
   \cgalFigureEnd
 
 \subsubsection Surface_mesh_shortest_pathSaddleVertex Saddle Vertices
-  A <em>saddle vertex</em> on a polyhedron is a vertex \f$v\f$ where the sum of surface angles of all faces incident at \f$v\f$ is greater than \f$2 \pi\f$, or, in simpler terms, one cannot flatten all the faces incident to \f$v\f$ into the plane without overlap.  Identifying and dealing with saddle vertices are important in shortest path algorithms, because they form <em>blind spots</em> which cannot be reached by a single geodesic curve.
+  A <em>saddle vertex</em> on a surface mesh is a vertex \f$v\f$ where the sum of surface angles of all faces incident at \f$v\f$ is greater than \f$2 \pi\f$, or, in simpler terms, one cannot flatten all the faces incident to \f$v\f$ into the plane without overlap.  Identifying and dealing with saddle vertices are important in shortest path algorithms, because they form <em>blind spots</em> which cannot be reached by a single geodesic curve.
   
   \cgalFigureBegin{Saddle_vertex,saddleVertex.png}
   A visibility window (shaded blue) encounters a saddle vertex; the shaded red region behind the vertex is not reachable with a geodesic from the origin point (assuming the geodesic must stay inside the initial window).
@@ -246,18 +246,18 @@ The following figures track the construction time, query time, and peak memory u
 
   In order to compute shortest paths, we build a <em>sequence tree</em> (or <em>cone tree</em>) from each source point.  The sequence tree describes the combinatoric structure of all potential shortest paths originating from a single source point, by organizing them into a hierarchy of visibility windows.
   
-  Whenever a vertex of the polyhedron is encountered, a branch occurs in the sequence tree. If the vertex is a non-saddle vertex, then only two children are created, one for each edge incident to that vertex on the current face. If the vertex is a saddle vertex, in addition to the two children mentioned above, a special type of node, called a <em>pseudo-source</em>, is created which branches out in all directions from the vertex to account for the fact that some of the region around the vertex cannot be reached by a simple geodesic path from the source.
+  Whenever a vertex of the surface mesh is encountered, a branch occurs in the sequence tree. If the vertex is a non-saddle vertex, then only two children are created, one for each edge incident to that vertex on the current face. If the vertex is a saddle vertex, in addition to the two children mentioned above, a special type of node, called a <em>pseudo-source</em>, is created which branches out in all directions from the vertex to account for the fact that some of the region around the vertex cannot be reached by a simple geodesic path from the source.
   
   Once a sequence tree is built, the shortest path to any target point can be found efficiently.
 
 \subsection Surface_mesh_shortest_pathAlgorithmOverview Algorithm Overview
-  The size of a sequence tree would normally be exponential in the complexity of the polyhedral model, thus a simple breadth-first is not feasible.  Rather, we apply techniques to eliminate entire branches which are provably unable to contain shortest paths from the source point(s).  The techniques used are given in greater detail in a paper by Xin and Wang \cgalCite{XinWang2009improvingchenandhan}, which itself expands on earlier work by Chen and Han \cgalCite{ch-spp-96} and Mitchell, Mount, and Papadimitriou \cgalCite{mmp-dgp-87} .
+  The size of a sequence tree would normally be exponential in the complexity of the surface mesh model, thus a simple breadth-first is not feasible.  Rather, we apply techniques to eliminate entire branches which are provably unable to contain shortest paths from the source point(s).  The techniques used are given in greater detail in a paper by Xin and Wang \cgalCite{XinWang2009improvingchenandhan}, which itself expands on earlier work by Chen and Han \cgalCite{ch-spp-96} and Mitchell, Mount, and Papadimitriou \cgalCite{mmp-dgp-87} .
   
 \subsection Surface_mesh_shortest_pathContinuousDijkstra Continuous Dijkstra 
   Continuous Dijkstra is simply the application of the graph-search algorithm to a non-discrete setting.  As we build the search tree, newly created nodes are tagged with a distance metric, and inserted into a priority queue, such that the shortest distance nodes are always first.
 
 \subsection Surface_mesh_shortest_pathOneAngleOneSplit One Angle, One Split
-  This observation by Chen and Han states that out of all the branches that occur at any given vertex of the polyhedron, only a limited number have more than one child which can define shortest paths.  This is accomplished by maintaining, for each vertex, all nodes of the sequence tree which can contain that vertex inside their visibility window.
+  This observation by Chen and Han states that out of all the branches that occur at any given vertex of the surface mesh, only a limited number have more than one child which can define shortest paths.  This is accomplished by maintaining, for each vertex, all nodes of the sequence tree which can contain that vertex inside their visibility window.
   
 - For each vertex, only <em>one</em> two-way branch may occur per face incident to that vertex, specifically, that of the nearest node to that vertex which crosses that face.  We call that closest node the <em>occupier</em> of that vertex.
 - If the vertex is a saddle vertex, only one pseudo-source may be established at that vertex, this time by the absolute nearest node to that vertex.
