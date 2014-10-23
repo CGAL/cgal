@@ -126,16 +126,31 @@ public:
   If `OneFaceGraphPerTree` is CGAL::Tag_true, constructs a `Shared_data` object from a reference to the polyhedon `graph`.
   */
   static unspecified_type construct_shared_data( FaceGraph& graph );
+  #else
+  typedef typename Base::Id Id;
   #endif
 
   // constructors
   /*!
     \tparam Iterator an input iterator with `Id` as value type.
     Constructs a primitive.
+    If `VertexPointPMap` is the default of the class, an additional constructor
+    is available with `vppm` set to `boost::get(vertex_point, graph)`.
   */
   template <class Iterator>
   AABB_face_graph_triangle_primitive(Iterator it, const FaceGraph& graph, VertexPointPMap vppm)
     : Base( Id_(*it),
+            Triangle_property_map(const_cast<FaceGraph*>(&graph),vppm),
+            Point_property_map(const_cast<FaceGraph*>(&graph),vppm) )
+  {}
+
+  /*!
+    Constructs a primitive.
+    If `VertexPointPMap` is the default of the class, an additional constructor
+    is available with `vppm` set to `boost::get(vertex_point, graph)`.
+  */
+  AABB_face_graph_triangle_primitive(Id id, const FaceGraph& graph, VertexPointPMap vppm)
+    : Base( Id_(id),
             Triangle_property_map(const_cast<FaceGraph*>(&graph),vppm),
             Point_property_map(const_cast<FaceGraph*>(&graph),vppm) )
   {}
@@ -147,14 +162,14 @@ public:
             Triangle_property_map(const_cast<FaceGraph*>(&graph)),
             Point_property_map(const_cast<FaceGraph*>(&graph)) )
   {}
+
+  AABB_face_graph_triangle_primitive(Id id, const FaceGraph& graph)
+    : Base( Id_(id),
+            Triangle_property_map(const_cast<FaceGraph*>(&graph)),
+            Point_property_map(const_cast<FaceGraph*>(&graph)) )
+  {}
 #ifndef CGAL_NO_DEPRECATED_CODE
   // for backward compatibility with Polyhedron::facets_begin()
-  AABB_face_graph_triangle_primitive(typename boost::graph_traits<FaceGraph>::face_descriptor fd, FaceGraph& graph)
-    : Base( Id_(fd),
-            Triangle_property_map(&graph),
-            Point_property_map(&graph) )
-  {}
-
   AABB_face_graph_triangle_primitive(
       typename internal_aabb_tree::Get_facet_const_handle<FaceGraph>::type fd,
       FaceGraph& graph
