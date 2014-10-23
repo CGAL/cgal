@@ -71,12 +71,16 @@ The value type of this iterator is `Constraint_id`.
 */ 
 typedef unspecified_type Constraint_iterator; 
 
+/*!
+A sub-constraint is a pair of vertices that correspond to an `Edge`. 
+ */
+typedef std::pair<Vertex_handle, Vertex_handle> Subconstraint;
+
 /*! 
 An iterator 
 to visit all the sub-constraints of the triangulation. 
 The order of visit is undefined. 
-The value type of this iterator is a pair 
-`std::pair<Vertex_handle, Vertex_handle>` 
+The value type of this iterator is `Sub_constraint` 
 corresponding to the vertices of the 
 sub-constraint. 
 */ 

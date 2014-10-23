@@ -31,11 +31,11 @@ struct Exact_predicates_tag{};
 
 A constrained triangulation is a triangulation of a set of points 
 which has to include among its edges 
-a given set of segments joining the points.
+a given set of polylines joining the points.
 
-The given segments (or polylines) are 
+The given polylines are 
 called *constraints* and the corresponding 
-edges in the triangulation are called *constrained edges* or *sub-constraints*. 
+edges in the triangulation are called *constrained edges*. 
 
 
 The endpoints of constrained edges are of course vertices of the 
@@ -85,7 +85,7 @@ of the concept `TriangulationTraits_2`.
 When intersection of input constraints are supported, 
 the geometric traits class 
 is required to provide additional function object types 
-to compute the intersection of two segments or polylines. 
+to compute the intersection of two segments. 
 It has then to be a model of the concept 
 `ConstrainedTriangulationTraits_2`. 
 
@@ -155,6 +155,15 @@ public:
 */ 
 typedef std::pair<Point,Point> Constraint; 
 
+/*! 
+A bidirectional iterator to visit 
+all the edges `e` of the triangulation which are constrained. 
+The order of visit is undefined. 
+The value type of this iterator is `Edge`. 
+*/ 
+typedef unspecified_type Constrained_edges_iterator; 
+
+
 /*!
 The intersection tag which decides how 
 intersections between input constraints are dealt with. 
@@ -207,13 +216,21 @@ template<class OutputItEdges>
 OutputItEdges incident_constraints(Vertex_handle v, 
 OutputItEdges out) const; 
 
+
+/*!
+returns an iterator that enumerates the constrained edges. 
+*/
+Constrained_edges_iterator constrained_edges_begin() const;
+
+/*!
+returns the past-the-end iterator. 
+*/ 
+Constrained_edges_iterator constrained_edges_end() const;
+
 /// @} 
 
 /// \name Insertion and Removal 
 ///
-/// As the triangulation one obtains depends on the insertion order
-/// we only provide low level functions for inserting a point or a
-/// segment constraint, and no function for inserting a polyline or polygon.
 /// @{
 
 /*!

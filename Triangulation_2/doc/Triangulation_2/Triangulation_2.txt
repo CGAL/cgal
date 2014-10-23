@@ -793,9 +793,9 @@ of vertices and the number of hidden vertices.
 
 A constrained triangulation is a triangulation of a set of points
 that has to include among its edges 
-a given set of segments or polylines joining the points. The segments or 
+a given set of polylines joining the points. The
 polylines are called *constraints*. The corresponding 
-edges are called *constrained edges*, or *sub-constraints*.
+edges are called *constrained edges*.
 
 The endpoints of constrained edges are of course vertices of the
 triangulation. However, the triangulation may
@@ -1012,11 +1012,12 @@ When intersections of input constraints are supported,
 the base class constructs a triangulation of the arrangement
 of the constraints,
 introducing new vertices at each proper intersection
-point and refining the input constraints into sub-constraints.
-These sub-constraints are constrained edges of the
-triangulation. The data structure maintains for each 
+point and refining the input constraints into *sub-constraints*.
+A sub-constraint is a pair of vertex handles and corresponds to a constrained edge of the
+triangulation, which is a pair of a face handle and an index. The data structure maintains for each 
 input constraint
-the sequence of intersection vertices added on this constraint.
+the sequence of vertices on this constraint. These vertices are
+either part of the input or intersection points.
 The constraint hierarchy also allows the user to retrieve the set
 of constrained edges of the triangulation, and for each
 constrained edge, the set of input constraints that overlap it.
@@ -1029,6 +1030,9 @@ In this case, the `Constrained_triangulation_plus_2<Tr>`
 avoids cascading in the computations of intersection points:
 The intersection of a segment and a constrained edge is
 computed with a segment overlapping the constained edge.
+
+
+
 
 \subsection Triangulation_2ExampleBuildingaTriangulated Example: Building a Triangulated Arrangement of Polylines
 
@@ -1125,6 +1129,36 @@ The following program shows how to use
 a triangulation hierarchy in conjunction with a constrained 
 triangulation plus.
 \cgalExample{Triangulation_2/constrained_hierarchy_plus.cpp}
+
+
+\section Triangulation_2_Edges_Constraints Edges, Constrained Edges, Constraints, and Sub-Constraints
+
+This section recalls the definition of edges, constrained edges, constraints and subconstraint,
+as it is confusing at the first sight.
+
+`Edge` is defined as  `typedef std::pair<Face_handle>, int> Edge`. For a pair `(fh,i)` it is the edge of the face `*fh`,
+which is opposite to the `i`'th vertex.
+
+A <em>constrained edge</em> `e` is an edge of a constrained triangulation `ct`, for which `ct.is_constrained(e) == true`.
+All constrained triangulations offer a `Constrained_edges_iterator` which allows to 
+enumerate the constrained edges.
+
+A <em>constraint</em> is a polyline, and hence potentially a segment, which is given as input and
+which is split into constrained edges in the triangulation. 
+
+`Subconstraint` is defined as `typedef std::pair<Vertex_handle,Vertex_handle> Subconstraint`.  The two vertex handles must
+be vertices of the same face, that is a sub-constraint has an equivalent edge. 
+
+A `Constraint_id` is a type that allows to identify a constraint.
+
+Only the class `Constrained_triangulation_plus_2` allows 
+- to enumerate the constraints with a `Constraint_iterator` with value type  `Constraint_id`,
+- to obtain all constraints that cover an edge or sub-constraint,
+- to traverse the sequence of vertices of a constraint with a `Vertices_in_constraint_iterator`.  
+- to enumerate the sub-constraints with a `Subconstraint_iterator`, with value type  `Subconstraint`.
+  This iterator is similar to the `Contrained_edges_iterator`.  
+
+
 
 \section Section_2D_Triangulations_Flexibility Flexibility 
 
