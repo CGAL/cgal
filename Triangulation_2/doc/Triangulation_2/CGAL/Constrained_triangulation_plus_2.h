@@ -369,7 +369,7 @@ typedef unspecified_type Points_in_constraint_iterator;
 /*!
 \cgalAdvancedBegin
 Removes the vertex at `vicq` from the constraint and the triangulation.
-Only the vertex but not the point is removed from the constraint `cid`.
+Only the vertex but not the point is removed from the constraint.
 \pre The vertices `vicp`, `vicq`, and `vicr` must be three successive 
 vertices in a constraint.
 \pre No other constraint must pass through `vicq`.
