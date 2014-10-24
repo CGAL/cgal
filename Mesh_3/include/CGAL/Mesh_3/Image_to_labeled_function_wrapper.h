@@ -93,9 +93,9 @@ public:
       if(px < 0 ||
          py < 0 ||
          pz < 0 ||
-         px+1 >= dimx ||
-         py+1 >= dimy ||
-         pz+1 >= dimz)
+         px+1 >= static_cast<int>(dimx) ||
+         py+1 >= static_cast<int>(dimy) ||
+         pz+1 >= static_cast<int>(dimz) )
       {
         return 0;
       }
