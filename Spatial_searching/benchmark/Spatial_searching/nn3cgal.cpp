@@ -70,12 +70,13 @@ int main(int argc,char *argv[])
 
   t.start();
   // Insert data points in the tree
-  Tree_3 tree(data_points_3.begin(), data_points_3.end());
+  Tree_3 tree(data_points_3.begin(), data_points_3.end(),Splitter(bucketsize));
   tree.build();
   t.stop();
   std::cerr << "build " << t.time() << " sec\n";
   int items=0,leafs=0,internals=0;
   Points result(NN_number);
+  tree.statistics(std::cerr);
 
   t.reset();t.start();
   bool dump = true;
@@ -89,10 +90,6 @@ int main(int argc,char *argv[])
         std::cerr << result[i].x()<<" "<<result[i].y()<<" "<<result[i].z() << std::endl;
 		
       }
-	}
-	if(dump){
-		tree.statistics(std::cerr);
-		tree.print();
 	}
     dump = false;
 	//items += search.items_visited();
