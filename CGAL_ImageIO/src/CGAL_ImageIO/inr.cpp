@@ -293,7 +293,7 @@ int readInrimageHeader(const char *,_image *im) {
 	 insight (GM).
       */
       else if(!strncmp(str, "PIXSIZE=", 8)) {
-	if(sscanf(str+8, "%u", &im->wdim) != 1) return -1;
+	if(sscanf(str+8, "%zu", &im->wdim) != 1) return -1;
 	if(im->wdim != 8 && im->wdim != 16 && im->wdim != 32 &&
 	   im->wdim != 64) return -1;
 	

@@ -255,7 +255,7 @@ typedef struct point_image {
   void *data;
 
   /** Image word size (in bytes) */
-  unsigned int wdim;
+  std::size_t wdim;
   /** Image format to use for I/0. Should not be set by user */
   PTRIMAGE_FORMAT imageFormat;
   /** Data buffer vectors are interlaced or non interlaced */
@@ -545,7 +545,7 @@ namespace IMAGEIO {
 //
 // The following definition are for the evaluate function.
 // 
-template <WORD_KIND wordKind, SIGN sign, unsigned int wdim>
+template <WORD_KIND wordKind, SIGN sign, std::size_t wdim>
 struct Word_type_generator
 {
 };
