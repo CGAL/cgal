@@ -80,9 +80,10 @@ namespace CGAL {
  *  `DelaunayTriangulationTraits_3`. It must have a `RealEmbeddable` field
  *  number type. Generally, `Exact_predicates_inexact_constructions_kernel` is
  *  preferred.
- *  \tparam FS determines whether the surface is constructed for a fixed
- *  neighborhood radius. It must be a `Boolean_tag` type. The default value is
- *  `Tag_true`.
+ *  \tparam FS determines whether the surface is expected to be constructed
+ *  for a fixed neighborhood radius. It must be a `Boolean_tag` type. The default value is
+ *  `Tag_true`. Note that the value of this parameter does not change the result but
+ *  only has an impact on the run-time.
  *  \tparam Sh determines whether to collect the surface per shell. It
  *  must be a `Boolean_tag` type. The default value is `Tag_true`.
  *  \tparam wA must be a model of `WeightedPCAProjection_3` and determines how
