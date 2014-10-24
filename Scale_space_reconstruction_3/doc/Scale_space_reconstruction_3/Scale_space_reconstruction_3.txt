@@ -24,7 +24,7 @@ The problem of surface reconstruction from a point sample is ill-defined. Becaus
 
 For real-world data sets we also have to contend with noise and outliers, small errors in the point location and points that do not sample the surface respectively. These are generally caused by faults in the measurement procedure. Unless we actually know the surface sampled, we cannot determine whether a distinctive point is an outlier, is caused by noise, or samples a small feature of the surface.
 
-To overcome these obstacles, we model the point set at different scales using a scale-space \cgalCite{cgal:dmsl-ssmrp-11}. For our purpose, a \em scale is an abstraction level of the point set. At a lower, finer scale the point set describes smaller features of the object. Conversely at a higher, coarser scale the point set only describes larger features. A \em scale-space describes the point set at a dynamic scale. It is a four-dimensional space with the scale as fourth dimension. \cgalFigureRef{chapterScaleSpaceReconstruction3figScales} shows an example point set at different scales.
+To overcome these obstacles, we model the point set at different scales using a scale-space \cgalCite{cgal:dmsl-ssmrp-11}. For our purpose, a \em scale is an abstraction level of the point set. At a lower, finer scale the point set describes smaller features of the object. Conversely at a higher, coarser scale the point set only describes larger features. A \em scale-space describes the point set at a dynamic scale. It is a four-dimensional space with the scale as fourth dimension. Increasing the scale is similar to smoothing the underlying surface described by the point set. \cgalFigureRef{chapterScaleSpaceReconstruction3figScales} shows an example point set at different scales.
 
 \cgalFigureBegin{chapterScaleSpaceReconstruction3figScales, scale_space_pts.png}
 The black point set contains a smooth region, a region with large features, and a region with either small features or noisy points. The blue points show the point cloud at a higher scale.
@@ -33,7 +33,7 @@ The black point set contains a smooth region, a region with large features, and 
 Small changes in scale result in small changes in the points set that depends on the local shape. As the scale increases, the geometry approaches a number of points based on the connected components. Given a set of points at a fixed scale, the point set at a higher scale can be determined unambiguously, but this is not the case for the point set at a lower scale, as demonstrated by \cgalFigureRef{chapterScaleSpaceReconstruction3figLine}
 
 \cgalFigureBegin{chapterScaleSpaceReconstruction3figLine, line.png}
-The black points and crosses show two different point sets. The blue boxes show both point sets at a higher scale. Note that given just the blue points, we cannot determine its point set at a lower scale.
+The black points and crosses show two different point sets. The blue boxes show both point sets at a higher scale. Note that given just the blue boxes, we cannot determine its point set at a lower scale.
 \cgalFigureEnd
 
 The scale-space surface reconstruction method works in two phases. Firstly, a scale-space is constructed from the point set and an intersection of this space at a higher scale \f$ s \f$ is computed. Then, a triangulated surface mesh of the point set at scale \f$ s \f$ is computed. Neighboring triangles in the mesh have consistent orientation, as expressed using the <em>right-hand rule</em> on the ordered vertices of the triangle.
@@ -66,7 +66,7 @@ The method provides access to intermediate results and the user can adjust these
 \subsection ScaleSpaceReconstruction3secParam Parameter Settings
 
 
-The scale-space surface reconstruction method has two main global parameters: the radius of the neighborhood ball and the number of scale increase iterations. If no appropriate neighborhood radius is known, this can be estimated using two parameters: the mean number of neighbors and the number of samples. We have empirically determined values for each of these parameters that work well on a broad spectrum of data sets. However, we advise to carefully fine-tune these parameters for each data set type.
+The scale-space surface reconstruction method has two main global parameters: the radius of the neighborhood ball and the number iterations of increasing the scale. If no appropriate neighborhood radius is known, this can be estimated using another two parameters: the mean number of neighbors and the number of samples. We have empirically determined values for each of these parameters that work well on a broad spectrum of data sets. However, we advise to carefully fine-tune these parameters for each type of data set.
 
 The scale-space reconstruction operates locally. Points within a local neighborhood influence each other when increasing the scale. Similarly, points near each other in space are more likely to be near each other on the reconstructed surface. Therefore, it is important to have a good indication of which points are near each other. This proximity is expressed in the neighborhood ball radius parameter.
 
@@ -89,7 +89,7 @@ The neighborhood size is estimated using `Orthogonal_k_neighbor_search`. The poi
 
 The scale-space is constructed at the original scale of the points. An iteration of increasing the the scale is computed using a weighted PCA procedure. By default we use the efficient \ref thirdpartyEigen libraries for this procedure. It is also possible to provide your own model for the `WeightedApproximation_3` concept and provide it as a template parameter. The PCA procedure is performed locally per point, so it can performed with parallel computing if both Intel TBB is linked and the `Ct` template parameter is set to `Parallel_tag`.
 
-The mesh reconstruction is performed by filtering an `Alpha_shape_3` or `Fixed_alpha_shape_3` of the point set at a fixed scale. Which shape is used is captured in the `FS` template parameter of `Scale_space_surface_reconstruction_3`.
+The mesh reconstruction is performed by filtering an `Alpha_shape_3` or `Fixed_alpha_shape_3` of the point set at a fixed scale. Which shape is used is captured in the `FS` template parameter of `Scale_space_surface_reconstruction_3`. This filtering constructs a triangle for each regular facet of the \f$ \alpha \f$-shape; each singular facet results in two triangles facing opposite directions. If the `Sh` is set to `Tag_true`, these triangles are ordered per oriented connected component.
 
 The resulting surface is stored as a collection of triples. Each triple contains three indices to the point set. The scale iterations do not change the order of the points. This means these indices can be applied on the point set at its original scale to get an interpolating surface, called \em reverting the scale of the surface. The indices may also be applied to the point set at the current scale to get a smoothed surface. This smoothed surface will generally have shrunk somewhat compared to the reverted surface.
 
