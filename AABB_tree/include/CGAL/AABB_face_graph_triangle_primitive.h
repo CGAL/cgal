@@ -25,26 +25,8 @@
 #include <CGAL/AABB_primitive.h>
 #include <CGAL/internal/AABB_tree/Halfedge_and_face_graph_property_maps.h>
 #include <CGAL/Default.h>
-#include <boost/mpl/has_xxx.hpp>
 
 namespace CGAL {
-
-
-#ifndef CGAL_NO_DEPRECATED_CODE
-namespace internal_aabb_tree{
-  BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(Has_facet_const_handle,Facet_const_handle,false)
-  template <class FaceGraph,
-            bool has_facet_const_handle=Has_facet_const_handle<FaceGraph>::value>
-  struct Get_facet_const_handle{
-    typedef typename FaceGraph::Facet_const_handle type;
-  };
-  
-  template <class FaceGraph>
-  struct Get_facet_const_handle<FaceGraph,false>{
-    typedef void* type;
-  };
-}
-#endif
 
 /*!
  * \ingroup PkgAABB_tree
@@ -168,16 +150,6 @@ public:
             Triangle_property_map(const_cast<FaceGraph*>(&graph)),
             Point_property_map(const_cast<FaceGraph*>(&graph)) )
   {}
-#ifndef CGAL_NO_DEPRECATED_CODE
-  // for backward compatibility with Polyhedron::facets_begin()
-  AABB_face_graph_triangle_primitive(
-      typename internal_aabb_tree::Get_facet_const_handle<FaceGraph>::type fd,
-      FaceGraph& graph
-  ) : Base( Id_(fd.remove_const()),
-            Triangle_property_map(&graph),
-            Point_property_map(&graph) )
-  {}
-#endif
 #endif
 
   /// \internal
