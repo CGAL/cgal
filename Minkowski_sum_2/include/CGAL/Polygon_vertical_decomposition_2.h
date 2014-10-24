@@ -172,7 +172,8 @@ private:
   template <typename Polygon_, typename OutputIterator_>
   OutputIterator_ decomp(const Polygon_& pgn, OutputIterator_ oi) const
   {
-    General_polygon_set_2 gps(*m_traits);
+    const Traits_2& traits = *m_traits;
+    General_polygon_set_2 gps(traits);
     gps.insert(pgn);
     Arrangement_2& arr = gps.arrangement();
     My_observer obs(arr);

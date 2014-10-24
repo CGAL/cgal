@@ -14,7 +14,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
 
@@ -27,12 +27,12 @@
 namespace CGAL {
 
 template <class Kernel_, bool Filer_ = true>
-class Gps_circle_segment_traits_2 : 
+class Gps_circle_segment_traits_2 :
   public Gps_traits_2<Arr_circle_segment_traits_2<Kernel_, Filer_> >
 {
 public:
-  Gps_circle_segment_traits_2<Kernel_, Filer_>(bool use_cache = false): 
-      Gps_traits_2<Arr_circle_segment_traits_2<Kernel_, Filer_> >()
+  Gps_circle_segment_traits_2<Kernel_, Filer_>(bool use_cache = false) :
+    Gps_traits_2<Arr_circle_segment_traits_2<Kernel_, Filer_> >()
   {
     this->m_use_cache = use_cache;
   }
