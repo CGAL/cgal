@@ -80,70 +80,70 @@ set(OLD_QT_VERSION ${QT_VERSION_mem})
 set (USE_QT_VERSION_temp ${USE_QT_VERSION})
 
 if(USE_QT_VERSION_temp)
-	set(QT_VERSION_CHOICE FALSE)
-	set(QT_VERSION Qt${USE_QT_VERSION})
+  set(QT_VERSION_CHOICE FALSE)
+  set(QT_VERSION Qt${USE_QT_VERSION})
 else()
-	set(QT_VERSION_CHOICE TRUE)
+  set(QT_VERSION_CHOICE TRUE)
 endif()
 
 set (OLDCGALQt_version_temp ${OLD_CGAL_QT_VERSION})
 set (CGALQt_version_temp ${CGAL_QT_VERSION})
 
 if (OLDCGALQt_version_temp AND CGALQt_version_temp)
-	if(NOT (${CGAL_QT_VERSION} STREQUAL ${OLD_CGAL_QT_VERSION}) )
-		UNSET(QT_CHOICE CACHE)
-	endif()
+  if(NOT (${CGAL_QT_VERSION} STREQUAL ${OLD_CGAL_QT_VERSION}) )
+    UNSET(QT_CHOICE CACHE)
+  endif()
 endif()
 
 #Same as before. 
 set (CGAL_QT_VERSION_temp ${CGAL_QT_VERSION})
 
 if(NOT CGAL_QT_VERSION_temp)
-	set(CGAL_QT_VERSION "5")
+  set(CGAL_QT_VERSION "5")
 else()
-        message(STATUS "Qt configuration : libCGAL_Qt${CGAL_QT_VERSION} has been asked.")
+  message(STATUS "Qt configuration : libCGAL_Qt${CGAL_QT_VERSION} has been asked.")
 endif()
 
-	if(${QT_VERSION_CHOICE})
-		cache_set(OLD_CGAL_QT_VERSION ${CGAL_QT_VERSION})
+if(${QT_VERSION_CHOICE})
+  cache_set(OLD_CGAL_QT_VERSION ${CGAL_QT_VERSION})
 
-		set (QT_CHOICE ${CGAL_QT_VERSION} CACHE STRING "Choice of Qt version for find_package(Qt4or5).")
-		SET_PROPERTY(CACHE QT_CHOICE PROPERTY STRINGS 4 5)
-		set(QT_VERSION Qt${QT_CHOICE})
+  set (QT_CHOICE ${CGAL_QT_VERSION} CACHE STRING "Choice of Qt version for find_package(Qt4or5).")
+  SET_PROPERTY(CACHE QT_CHOICE PROPERTY STRINGS 4 5)
+  set(QT_VERSION Qt${QT_CHOICE})
 
-		#Save the current version of Qt considered.
-                cache_set(QT_VERSION_mem ${QT_VERSION})
-	endif()
+  #Save the current version of Qt considered.
+  cache_set(QT_VERSION_mem ${QT_VERSION})
+endif()
 
-	#Check if we switch Qt version (from 4 to 5 or 5 to 4)
-	if( OLD_QT_VERSION )
-		if(NOT ${OLD_QT_VERSION} STREQUAL ${QT_VERSION})
-                        message("Switch from ${OLD_QT_VERSION} to ${QT_VERSION}")
-			message("Think to change the version of externals libraries that depending on Qt and to clean the build directory before make the project.")
-			set(QT_QMAKE_CHANGED TRUE)
-		endif()
-	endif()
+#Check if we switch Qt version (from 4 to 5 or 5 to 4)
+if( OLD_QT_VERSION )
+  if(NOT ${OLD_QT_VERSION} STREQUAL ${QT_VERSION})
+    message("Switch from ${OLD_QT_VERSION} to ${QT_VERSION}")
+    message("Think to change the version of externals libraries that depending on Qt and to clean the build directory before make the project.")
+    set(QT_QMAKE_CHANGED TRUE)
+  endif()
+endif()
 
-	if(${QT_VERSION} STREQUAL "Qt4")
-		UNSET(QT4} CACHE)
-		UNSET(QT4_FOUND CACHE)
-		UNSET(QT_VERSION_USED CACHE)
-		
-		#We say that we want the version 4 of the Qt library.
-		set(QT_VERSION_USED 4)
-        endif()
-	
-	find_package(${QT_VERSION})
-	
-	if(${QT_VERSION} STREQUAL "Qt4" AND QT4_FOUND)
-		include(${QT_USE_FILE})
-		set(QT4 TRUE)
+if(${QT_VERSION} STREQUAL "Qt4")
+  UNSET(QT4} CACHE)
+  UNSET(QT4_FOUND CACHE)
+  UNSET(QT_VERSION_USED CACHE)
 
-		UNSET(QT4 CACHE)
-		UNSET(QT5_fOUND CACHE)
+  #We say that we want the version 4 of the Qt library.
+  set(QT_VERSION_USED 4)
+endif()
 
-		message("Qt4 found")
-	endif()
-	
-	#To the functions differences between Qt4 and Qt5.	
-	include(QtChoice)
+find_package(${QT_VERSION})
+
+if(${QT_VERSION} STREQUAL "Qt4" AND QT4_FOUND)
+  include(${QT_USE_FILE})
+  set(QT4 TRUE)
+
+  UNSET(QT4 CACHE)
+  UNSET(QT5_fOUND CACHE)
+
+  message("Qt4 found")
+endif()
+
+#To the functions differences between Qt4 and Qt5.
+include(QtChoice)
