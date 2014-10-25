@@ -198,7 +198,11 @@ ENDIF()
 
 EXEC_PROGRAM(${QT_QMAKE_EXECUTABLE} ARGS "-query QT_VERSION" OUTPUT_VARIABLE QTVERSION)
 IF(NOT QTVERSION MATCHES "5.*")
-  message(FATAL_ERROR "Found Qt${QTVERSION} instead of Qt5. Please, manually set QT_QMAKE_EXECUTABLE.")
+  if(Qt5_FIND_REQUIRED)
+    message(FATAL_ERROR "Found Qt${QTVERSION} instead of Qt5. Please, manually set QT_QMAKE_EXECUTABLE.")
+  else()
+    return()
+  endif()
 ENDIF(NOT QTVERSION MATCHES "5.*")
 
 #When the QT_QMAKE_EXECUTABLE Qt version is 5. we will check :

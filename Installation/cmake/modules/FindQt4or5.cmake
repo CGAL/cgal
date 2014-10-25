@@ -133,7 +133,7 @@ if(${QT_VERSION} STREQUAL "Qt4")
   set(QT_VERSION_USED 4)
 endif()
 
-find_package(${QT_VERSION})
+find_package(${QT_VERSION} QUIET)
 
 if(${QT_VERSION} STREQUAL "Qt4" AND QT4_FOUND)
   include(${QT_USE_FILE})
