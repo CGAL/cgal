@@ -3,11 +3,11 @@
 #
 #	This file has on purpose to search and include Qt5 modules wanted by the user.
 #
-#	To make this findQt5.cmake compatible with the Qt4 find_package, we use the QT_USE_QT* flags.
+#	To make this FindQt5.cmake compatible with the Qt4 find_package, we use the QT_USE_QT* flags.
 #
-#	However, if the used does not set the flag QT_USE_QTCORE, this one is automatically set when findQt5 called.
+#	However, if the used does not set the flag QT_USE_QTCORE, this one is automatically set when FindQt5 called.
 #
-#	NOTICE : Some part of this file are porting from findQt4.cmake by Kitware, Inc.
+#	NOTICE : Some part of this file are porting from FindQt4.cmake by Kitware, Inc.
 #
 #
 #==========================================================Success========================================================
