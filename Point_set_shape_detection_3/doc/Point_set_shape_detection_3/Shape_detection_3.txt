@@ -9,14 +9,14 @@ namespace CGAL {
 
 \section Point_set_shape_detection_3Introduction Introduction
 
-This \cgal component implements the RANSAC method for shape detection published in \cite cgal:-erpcsd-07. The method takes an unstructured point set with unoriented normals as input and provides a list of detected shapes with associated points on its surface (see \cgalFigureRef{Point_set_shape_detection_3_overview}). The supported shape types are plane, sphere, cylinder, cone and torus.
+This \cgal component implements the efficient RANSAC method for primitive shape detection contributed by Schnabel et al. in 2007 \cite cgal:-erpcsd-07. The method takes as input an unstructured point set with unoriented normals and provides as output a list of detected primitive shapes with associated point sets (see \cgalFigureRef{Point_set_shape_detection_3_overview}). The primitive shapes supported are plane, sphere, cylinder, cone and torus.
 
 \cgalFigureBegin{Point_set_shape_detection_3_overview,overview2.png}
 Left: Input point set. Right: Points colored by detected primitive. 
 \cgalFigureEnd
 
 \section Point_set_shape_detection_3Method Method
-The method takes a point set of surface samples and provides a set of shapes covering the input data. The shapes are detected from the input data following a ransac approach, i.e. random sample consensus. A minimal number of points are randomly drawn from the input data to construct shape candidates. These candidates are tested against the input data to determine how many points support the shape. The support of a point is decided on its location and orientation relative to the shape. Based on the number of supporting points a shape candidate is kept or discarded. The principle of this method is to repeatedly extract the shape among the other shape candidates with the highest number of supporting points. By choosing the candidate with the highest number of points the method gains robustness against outliers and noise.
+The method takes as input a point set sampled from surfaces and provides as output a set of shapes well approximating all or a subset of the input points. The shapes are detected via a RANSAC approach based on random sample consensus. A minimal number of points are randomly drawn from the input data to construct shape candidates. These candidates are tested against the input data to determine how many points support the shape. The support of a point is decided on its location and orientation relative to the shape. Based on the number of supporting points a shape candidate is kept or discarded. The principle of this method is to repeatedly extract the shape among the other shape candidates with the highest number of supporting points. By choosing the candidate with the highest number of points the method gains robustness against outliers and noise.
 
 However, testing all possible shape candidates against all input data to find the largest shape is impractical. A reduction in computation time is gained by testing shape candidates only against subsets of the input data thus early rejecting candidates with low support. Only a subset of all possible shape candidates is constructed until the probability to miss the largest candidate is low. The search thoroughness is controlled by a user-specified parameter.
 
