@@ -16,7 +16,7 @@ Left: Input point set. Right: Points colored by detected primitive.
 \cgalFigureEnd
 
 \section Point_set_shape_detection_3Method Method
-The method takes as input a point set sampled from surfaces and provides as output a set of shapes well approximating all or a subset of the input points. The shapes are detected via a RANSAC approach based on random sample consensus. A minimal number of points are randomly drawn from the input data to construct shape candidates. These candidates are tested against the input data to determine how many points support the shape. The support of a point is decided on its location and orientation relative to the shape. Based on the number of supporting points a shape candidate is kept or discarded. The principle of this method is to repeatedly extract the shape among the other shape candidates with the highest number of supporting points. By choosing the candidate with the highest number of points the method gains robustness against outliers and noise.
+The method takes as input a point set sampled on surfaces and provides as output a set of shapes well approximating all or a subset of the input points. The shapes are detected via a RANSAC approach based on random sample consensus. A minimal number of points are randomly drawn from the input data to construct shape candidates. These candidates are tested against the input data to determine how many points support the shape. The support of a point is decided on its location and orientation relative to the shape. Based on the number of supporting points a shape candidate is kept or discarded. The principle of this method is to repeatedly extract the shape among the other shape candidates with the highest number of supporting points. By choosing the candidate with the highest number of points the method gains robustness against outliers and noise.
 
 However, testing all possible shape candidates against all input data to find the largest shape is impractical. A reduction in computation time is gained by testing shape candidates only against subsets of the input data thus early rejecting candidates with low support. Only a subset of all possible shape candidates is constructed until the probability to miss the largest candidate is low. The search thoroughness is controlled by a user-specified parameter.
 
@@ -50,14 +50,14 @@ The main class `Shape_detection_3` takes a template parameter `Shape_detection_t
 
 Typical usage consists of four steps:
 
--# Providing input data via constructor
+-# Providing input data via a range iterator
 -# Registering shape factories
--# Choosing parametrization and detection
--# Accessing the extracted shapes
+-# Choosing parameters and detection
+-# Retrieving the detected shapes
 
 \subsection Point_set_shape_detection_3Usage_minimal Basic example
 
-The following minimalistic example reads a point set from a file and performs a detection of planes. The default parameterization is used for detection.
+The following minimalistic example reads a point set from a file and detects only planes. The default parameters are used for detection.
 
 \cgalExample{shape_detection_3_basic.cpp}
 
@@ -75,7 +75,7 @@ This example shows how to access the points assigned to a shape. In addition, th
 
 
 \section Point_set_shape_detection_3Performance Performance
-
+ 
 The running time and the detection performance depend on the chosen parameters. A more selective parameterization leads to a higher running time. It leads to smaller shapes, more shape candidates are generated to find the largest shape. A typical performance graph depending on the epsilon parameter for a plane detection in a complex scene with around 5 million points is shown in \cgalFigureRef{Point_set_shape_detection_3_performace_epsilon}. Epsilon is considered to be the main parameter as it specifies the fitting tolerance distance between a point and a shape. The probability parameter controls the rigorosity of search for the largest candidate in each iteration. While it does not affect the number of detected shapes, it has a small effect on the size of the found shapes and increases the running time. A performance graph depending on the chosen probability parameter is shown in \cgalFigureRef{Point_set_shape_detection_3_performace_probability}.
 
 \cgalFigureBegin{Point_set_shape_detection_3_performace_epsilon,epsilon_graph.png}
