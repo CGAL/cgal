@@ -2,7 +2,7 @@ namespace CGAL {
 /*!
 
 \mainpage User Manual 
-\anchor Chapter_Shape_Detection_In_Point_Sets
+\anchor Chapter_Point_Set_Shape_Detection
 \cgalAutoToc
 
 \authors Sven Oesau, Yannick Verdie, Clément Jamin
@@ -21,7 +21,7 @@ The method follows a ransac approach, i.e. random sample consensus. Points are r
 
 However, testing all possible shape candidates against all input data to determine the largest shape is impractical. Therefore, only a certain amount of shape candidates is tested against a subset of the input data. The search thoroughness is controlled by a parameter that specifies the probability to miss the largest candidate. A lower probability provides a higher reliability and determinism at the cost of running time.
 
-The metric to decide whether a point supports a shape is based on the euclidean distance to the shape and the deviation from the point normal to the normal of the shape in the point projected onto the surface. Two user-specified parameters, epsilon and normal_threshold, control the tolerance for distance and deviation. Additionally there is a connectivity criteria. The number of supporting points of a shape corresponds to the largest cluster of points fitting the metric. In a cluster of points, each point has a neighbor in the cluster within a certain user-specified distance, called cluster_epsilon.
+The metric to decide whether a point supports a shape is based on the Euclidean distance to the shape and the deviation from the point normal to the normal of the shape in the point projected onto the surface. Two user-specified parameters, epsilon and normal_threshold, control the tolerance for distance and deviation. Additionally there is a connectivity criteria. The number of supporting points of a shape corresponds to the largest cluster of points fitting the metric. In a cluster of points, each point has a neighbor in the cluster within a certain user-specified distance, called cluster_epsilon.
 
 The candidate with the highest number of supporting points is repeatedly extracted until no candidate can be found with a minimum number of supporting points specified by the user.
 The algorithm is described in full detail in \cite cgal:-erpcsd-07.

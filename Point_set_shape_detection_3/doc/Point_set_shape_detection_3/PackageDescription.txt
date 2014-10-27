@@ -1,14 +1,14 @@
-/// \defgroup PkgPointSetShapeDetection3 Shape Detection in Point Sets Reference
+/// \defgroup PkgPointSetShapeDetection3 Point Set Shape Detection Reference
 /*!
 \addtogroup PkgPointSetShapeDetection3
 
-\cgalPkgDescriptionBegin{Shape Detection in Point Sets, PkgPointSetShapeDetection3Summary}
+\cgalPkgDescriptionBegin{Point Set Shape Detection, PkgPointSetShapeDetection3Summary}
 \cgalPkgPicture{shapes_detail.png}
 
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Sven Oesau, Yannick Verdie, Clément Jamin}
 \cgalPkgDesc{This package implements a ransac-based shape detection algorithm for point sets with unoriented normals.}
-\cgalPkgManuals{Chapter_Shape Detection in Point Sets, PkgPointSetShapeDetection3}
+\cgalPkgManuals{Chapter_Point Set Shape Detection, PkgPointSetShapeDetection3}
 \cgalPkgSummaryEnd
 
 \cgalPkgShortInfoBegin
