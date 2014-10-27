@@ -62,6 +62,14 @@ namespace CGAL {
       return sqrt(m_sphere.squared_radius());
     }
 
+    /*!
+      Provides the squared Euclidean distance of the point to the shape.
+      */
+    FT squared_distance(const Point &_p) const {
+      FT d = sqrt((m_sphere.center() - _p).squared_length()) - sqrt(m_sphere.squared_radius());
+      return d*d;
+    }
+
   protected:
       /// \cond SKIP_IN_MANUAL
       void create_shape(const std::vector<size_t> &indices) {
@@ -137,11 +145,6 @@ namespace CGAL {
     void parameters(std::vector<std::pair<FT, FT> > &parameterSpace,
                     const std::vector<size_t> &indices, FT min[2], 
                     FT max[2]) const {
-    }
-
-    FT squared_distance(const Point &_p) const {
-      FT d = sqrt((m_sphere.center() - _p).squared_length()) - sqrt(m_sphere.squared_radius());
-      return d*d;
     }
 
     void squared_distance(std::vector<FT> &dists,

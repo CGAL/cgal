@@ -61,7 +61,7 @@ namespace CGAL {
       Indices into the input data of all points assigned to this shape.
     */
 
-    const std::vector<size_t> &assigned_points() {
+    const std::vector<size_t> &assigned_points() const {
       return m_indices;
     }
       
@@ -70,6 +70,11 @@ namespace CGAL {
      */
     
     virtual std::string info() const = 0;
+
+    /*!
+      Provides the squared Euclidean distance of the point to the shape.
+     */
+    virtual FT squared_distance(const Point &p) const = 0;
 
   protected:
       /// \cond SKIP_IN_MANUAL
@@ -131,8 +136,6 @@ namespace CGAL {
     bool is_valid() const {
       return m_isValid;
     }
-
-    virtual FT squared_distance(const Point &p) const = 0;
 
     virtual void squared_distance(std::vector<FT> &dists,
                                   const std::vector<int> &shapeIndex,

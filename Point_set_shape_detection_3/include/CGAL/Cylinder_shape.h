@@ -43,8 +43,8 @@ namespace CGAL {
       Point c = m_axis.point();
       Vector a = m_axis.to_vector();
 
-      sstr << "Type: cylinder c: (" << c.x() << ", " << c.y() << ", " << c.z() << ") a: (" << a.x() << ", " << a.y() << ", " << a.z() << ") r:" << m_radius
-        << " ev: " << this->expected_value() << " s: " << this->m_nb_subset_used << " #Pts: " <<  this->m_indices.size();
+      sstr << "Type: cylinder center: (" << c.x() << ", " << c.y() << ", " << c.z() << ") axis: (" << a.x() << ", " << a.y() << ", " << a.z() << ") radius:" << m_radius
+        << " #Pts: " <<  this->m_indices.size();
 
       return sstr.str();
     }
@@ -60,6 +60,18 @@ namespace CGAL {
        */
     FT radius() const {
       return m_radius;
+    }
+
+    /*!
+      Provides the squared Euclidean distance of the point to the shape.
+      */ 
+    FT squared_distance(const Point &_p) const {
+      Vector a = m_axis.to_vector();
+      a = a * (1.0 / sqrt(a.squared_length()));
+      Vector v = _p - m_point_on_axis;
+      v = v - ((v * a) * a);
+      FT d = sqrt(v.squared_length()) - m_radius;
+      return d * d;
     }
 
   protected:
@@ -177,14 +189,6 @@ namespace CGAL {
       }
     }
 
-    FT squared_distance(const Point &_p) const {
-      Vector a = m_axis.to_vector();
-      a = a * (1.0 / sqrt(a.squared_length()));
-      Vector v = _p - m_point_on_axis;
-      v = v - ((v * a) * a);
-      FT d = sqrt(v.squared_length()) - m_radius;
-      return d * d;
-    }
 
     void squared_distance(std::vector<FT> &dists,
                           const std::vector<int> &shapeIndex,

@@ -138,11 +138,12 @@ Please refer to \cgalCite{Schnabel07} for more information.
        \brief parameters for Shape_detection_3.
        */
     struct Parameters {
-      FT probability;        ///< Probability to control search thoroughness.
-      size_t min_points; ///< Minimum number of points of a shape.
-      FT epsilon;            ///< Maximal euclidian distance allowed between point and shape.
-      FT normal_threshold;	      ///< Maximum normal deviation from point normal to normal on shape at projected point.
-      FT cluster_epsilon;	  ///< Maximum distance between points to be considered connected.
+      Parameters() : probability(0.01), min_points(SIZE_MAX), normal_threshold(0.9), epsilon(-1), cluster_epsilon(-1) {}
+      FT probability;         ///< Probability to control search thoroughness. The default value is 0.05.
+      size_t min_points;      ///< Minimum number of points of a shape. The default value is 1% of the number input points.
+      FT epsilon;             ///< Maximal euclidian distance allowed between point and shape. The default value is 1% of the bounding box diagonal.
+      FT normal_threshold;	  ///< Maximum normal deviation from point normal to normal on shape at projected point. The default value is 0.9, which corresponds to a tolerance of approximately 25 degrees.
+      FT cluster_epsilon;	    ///< Maximum distance between points to be considered connected. The default value is 1% of the bounding box diagonal.
     };
     /// @}
 
@@ -192,7 +193,7 @@ Please refer to \cgalCite{Schnabel07} for more information.
       m_availableOctreeSizes.resize(m_num_subsets);
       m_direct_octrees = new Direct_octree *[m_num_subsets];
       std::cout << "subSetSizes: ";
-      for (size_t s = m_num_subsets - 1;s >= 0;--s) {
+      for (int s = m_num_subsets - 1;s >= 0;--s) {
         size_t subsetSize = remainingPoints;
         std::vector<size_t> indices(subsetSize);
         if (s) {
@@ -205,11 +206,11 @@ Please refer to \cgalCite{Schnabel07} for more information.
           }
 
           // move points to the end of the point vector
-          for (size_t i = subsetSize - 1;i >= 0;i--) {
+          for (int i = subsetSize - 1;i >= 0;i--) {
             typename std::iterator_traits<Input_iterator>::value_type
               tmp = (*last);
-            *last = first[indices[i]];
-            first[indices[i]] = tmp;
+            *last = first[indices[size_t(i)]];
+            first[indices[size_t(i)]] = tmp;
             last--;
           }
           m_direct_octrees[s] = new Direct_octree(last + 1,
@@ -274,12 +275,23 @@ Please refer to \cgalCite{Schnabel07} for more information.
       after have to be registered with 'add_shape_factory' before.
     */ 
     void detect(
-      const Parameters &options ///< Parameterization for the shape detection.
+      const Parameters &options = Parameters()///< Parameterization for the shape detection.
                 ) {
       //no shape types for detection, exit
       if (m_shapeFactories.size() == 0) return;
 
+      // use bounding box diagonal as reference for default values
+      Bbox_3 bbox = m_global_octree->boundingBox();
+      FT bboxDiagonal = sqrt((bbox.xmax() - bbox.xmin()) * (bbox.xmax() - bbox.xmin()) + (bbox.ymax() - bbox.ymin()) * (bbox.ymax() - bbox.ymin()) + (bbox.zmax() - bbox.zmin()) * (bbox.zmax() - bbox.zmin()));
+
       m_options = options;
+
+      // epsilon or cluster_epsilon have been set by the user? if not, derive from bounding box diagonal
+      m_options.epsilon = (m_options.epsilon < 0) ? bboxDiagonal * 0.01 : m_options.epsilon;
+      m_options.cluster_epsilon = (m_options.cluster_epsilon < 0) ? bboxDiagonal * 0.01 : m_options.cluster_epsilon;
+
+      // minimum number of points has been set?
+      m_options.min_points = (m_options.min_points >= m_numAvailablePoints) ? 0.001 * m_numAvailablePoints : m_options.min_points;
       
       // initializing the shape index
       m_shapeIndex.resize(m_numAvailablePoints, -1);
@@ -335,14 +347,14 @@ Please refer to \cgalCite{Schnabel07} for more information.
                        m_inputIterator_first,
                        m_point_pmap,
                        m_normal_pmap,
-                       options.epsilon, 
-                       options.normal_threshold);
+                       m_options.epsilon, 
+                       m_options.normal_threshold);
 
             if (p->is_valid()) {
               improveBound(p, m_numAvailablePoints - numInvalid, 1, 500);
 
               //evaluate the candidate
-              if(p->max_bound() >= options.min_points) {
+              if(p->max_bound() >= m_options.min_points) {
                 if (bestExp < p->expected_value())
                   bestExp = p->expected_value();
 
@@ -587,7 +599,7 @@ Please refer to \cgalCite{Schnabel07} for more information.
       if (candidates.size() == 1)
         return candidates.back();
 
-      size_t index_worse_candidate = 0;
+      int index_worse_candidate = 0;
       bool improved = true;
 
       while (index_worse_candidate < candidates.size() - 1 && improved) {
@@ -604,7 +616,7 @@ Please refer to \cgalCite{Schnabel07} for more information.
                      _SizeP, m_num_subsets,
                      m_options.min_points);
 
-        size_t position_stop;
+        int position_stop;
 
         //Take all those intersecting the best one, check for equal ones
         for (position_stop = candidates.size() - 2;

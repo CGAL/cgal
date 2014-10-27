@@ -67,6 +67,26 @@ namespace CGAL {
       return m_minorRad;
     }
 
+    /*!
+      Provides the squared Euclidean distance of the point to the shape.
+      */
+    FT squared_distance(const Point &_p) const {
+      Vector d = _p - m_center;
+      // height over symmetry plane
+      FT p = d * m_axis;
+
+      // distance from axis in plane
+      FT l = sqrt(d * d - p * p);
+
+      // inPlane distance from circle
+      FT l2 = m_majorRad - l;
+
+      // distance from torus
+      l = sqrt(p * p + l2 * l2) - m_minorRad;
+
+      return l * l;
+    }
+
   protected:
       /// \cond SKIP_IN_MANUAL
       void create_shape(const std::vector<size_t> &indices) {
@@ -157,23 +177,6 @@ namespace CGAL {
                     FT min[2],
                     FT max[2]) const {
       return;
-    }
-
-    FT squared_distance(const Point &_p) const {
-      Vector d = _p - m_center;
-      // height over symmetry plane
-      FT p = d * m_axis;
-
-      // distance from axis in plane
-      FT l = sqrt(d * d - p * p);
-
-      // inPlane distance from circle
-      FT l2 = m_majorRad - l;
-
-      // distance from torus
-      l = sqrt(p * p + l2 * l2) - m_minorRad;
-
-      return l * l;
     }
 
     void squared_distance(std::vector<FT> &dists,

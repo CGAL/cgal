@@ -74,6 +74,25 @@ namespace CGAL {
           return sstr.str();
       }
 
+      /*!
+      Provides the squared Euclidean distance of the point to the shape.
+      */ 
+      FT squared_distance(const Point &_p) const {
+        Vector toApex = _p - m_apex;
+        FT a = toApex.squared_length();
+
+        // projection on axis
+        FT b = toApex * m_axis;
+
+        // distance to axis
+        FT l = sqrt(a - b * b);
+        FT c = m_cosAng * l;
+        FT d = m_nSinAng * b;
+
+        // far on other side?
+        return (b < 0 && c - d < 0) ? a : abs(c + d) * abs(c + d);
+      }
+
   protected:
       /// \cond SKIP_IN_MANUAL
       virtual void create_shape(const std::vector<size_t> &indices) {
@@ -152,22 +171,12 @@ namespace CGAL {
                     const std::vector<size_t> &indices,
                     FT min[2],
                     FT max[2]) const {
-    }
-
-    FT squared_distance(const Point &_p) const {
-      Vector toApex = _p - m_apex;
-      FT a = toApex.squared_length();
-
-      // projection on axis
-      FT b = toApex * m_axis;
-
-      // distance to axis
-      FT l = sqrt(a - b * b);
-      FT c = m_cosAng * l;
-      FT d = m_nSinAng * b;
-
-      // far on other side?
-      return (b < 0 && c - d < 0) ? a : abs(c + d) * abs(c + d);
+        Vector a = CGAL::cross_product(Vector(0, 1, 0), m_axis);
+        if (a.squared_length() < 0.01)
+          a = CGAL::cross_product(Vector(0, 0, 1), m_axis);
+        a = a * 1.0 / sqrt(a.squared_length());
+        Vector b = CGAL::cross_product(m_axis, a);
+        b = b * 1.0 / sqrt(b.squared_length());
     }
 
     void squared_distance(std::vector<FT> &dists,

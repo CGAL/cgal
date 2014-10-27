@@ -48,6 +48,14 @@ namespace CGAL {
       return m_normal;
     }
 
+    /*!
+      Provides the squared Euclidean distance of the point to the shape.
+      */
+    FT squared_distance(const Point &_p) const {
+      FT d = (_p - m_point_on_primitive) * m_normal;
+      return d * d;
+    }
+
   protected:
       /// \cond SKIP_IN_MANUAL
     virtual void create_shape(const std::vector<size_t> &indices) {
@@ -97,11 +105,6 @@ namespace CGAL {
         max[1] = (std::max<FT>)(max[1], v);
         parameterSpace[i] = std::pair<FT, FT>(u, v);
       }
-    }
-
-    FT squared_distance(const Point &_p) const {
-      FT d = (_p - m_point_on_primitive) * m_normal;
-      return d * d;
     }
     
     void squared_distance(std::vector<FT> &dists, const std::vector<int> &shapeIndex, const std::vector<size_t> &indices) {

@@ -564,8 +564,12 @@ namespace CGAL {
       void setBucketSize(size_t bucketSize) {
         m_bucketSize = bucketSize;
       }
+
+      const Bbox_3 &boundingBox() {
+        return m_bBox;
+      }
         
-      void buildBoundingCube() {
+      const Bbox_3 &buildBoundingCube() {
         FT min[] = {(std::numeric_limits<FT>::max)(),
                     (std::numeric_limits<FT>::max)(),
                     (std::numeric_limits<FT>::max)()};
@@ -583,11 +587,15 @@ namespace CGAL {
           max[2] = (std::max<FT>)(max[2], p.z());
         }
 
+        m_bBox = Bbox_3(min[0], min[1], min[2], max[0], max[1], max[2]);
+
         m_width = (std::max)(max[0] - min[0], 
           (std::max)(max[1] - min[1], max[2] - min[2])) * 0.5;
         m_center = Point((min[0] + max[0]) * 0.5,
                          (min[1] + max[1]) * 0.5,
                          (min[2] + max[2]) * 0.5);
+
+        return m_bBox;
       }
 
       // returns index of last point below threshold
@@ -655,7 +663,7 @@ namespace CGAL {
                first : (first == origFirst) ? -1 : first - 1;
       }
 
-      //Bbox_3 m_bBox;
+      Bbox_3 m_bBox;
       Cell *m_root;
       Point m_center;
       FT m_width;
