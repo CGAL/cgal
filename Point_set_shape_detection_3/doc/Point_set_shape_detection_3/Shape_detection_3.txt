@@ -16,9 +16,9 @@ Left: Input point set. Right: Points colored by detected primitive.
 \cgalFigureEnd
 
 \section Point_set_shape_detection_3Method Method
-The method takes as input a point set with unoriented normals and provides as output a set of primitive shapes covering all or part of the input points. The shapes are detected via a RANSAC-type approach, i.e., a random sample consensus. The basic RANSAC approach repeats the following steps: (1) Randomly select a subset of the input points. (2) Fit a primitive shape to the selected subset. (3) Count the number of inliers to the primitive, i.e., the points within a user-specified error tolerance to the primitive shape. Steps 1, 2  and 3 are repeated for a prescribed number of iterations and the largest primitive shape with highest number of inliers is kept. 
+The method takes as input a point set with unoriented normals and provides as output a set of primitive shapes covering all or part of the input points. The primitive shapes are detected via a RANSAC-type approach, i.e., a random sample consensus. The basic RANSAC approach repeats the following steps: (1) Randomly select a subset of the input points. (2) Fit a primitive shape to the selected subset. (3) Count the number of inliers to the primitive, i.e., the points within a user-specified error tolerance to the primitive. Steps 1, 2  and 3 are repeated for a prescribed number of iterations and the largest primitive with highest number of inliers is kept. 
 
-In our context the error between a point and a primitive shape is defined by its distance and normal deviation to the shape. A random subset corresponds to the minimal number of points (with normals) required to uniquely define a primitive shape.
+In our context the error between a point and a primitive is defined by its distance and normal deviation to the shape. A random subset corresponds to the minimal number of points (with normals) required to uniquely define a primitive.
 
 For very large point sets however the basic RANSAC method is not practical when testing all possible primitive shape candidates against the input data in order to find the largest primitive shapes. The main idea behind the efficient RANSAC consists of testing shape candidates only against subsets of the input data. Only a subset of all possible shape candidates is constructed until the probability to miss the largest candidate is lower than a user-specified parameter. The largest primitive shape is repeatedly extracted until no more primitive shape, covering a minimum number of points, can be extracted.
 
@@ -27,7 +27,7 @@ The support of a primitive shape refers to the footprint of the points covered b
 The output of the shape detection algorithm is a set of primitive shapes with associated points, and all remaining points not covered by primitive shapes. Each input point can be assigned to at most one primitive shape. 
 
 \section Point_set_shape_detection_3Parameters Parameters
-The method depends on five parameters:
+The algorithm requires five parameters:
 - \f$epsilon\f$ and \f$normal deviation\f$:
 The support of a point to a shape is decided by a metric based on the Euclidean distance and the normal deviation from the point to its closest projection onto the shape. The epsilon parameter specifies the maximal tolerated Euclidean distance between a point and a shape. A high choice of epsilon leads to a detection of fewer larger shapes and a less detailed outcome. A low value for epsilon allows for a higher recovery of details, but may lead to an oversegmentation or lower coverage. The impact on the outcome is depicted in fig. \cgalFigureRef{Point_set_shape_detection_3_parameter_epsilon_variation}. The effect on performance is evaluated in section \ref Point_set_shape_detection_3Performance.
 \cgalFigureBegin{Point_set_shape_detection_3_parameter_epsilon_variation,epsilon_variation.png}
@@ -42,7 +42,7 @@ The cluster_epsilon parameter impacts the connectivity of points on a shape. The
 \cgalFigureEnd
 
 - \f$search thoroughness\f$:
-The search thoroughness is controlled by a parameter that specifies the probability to miss the largest candidate. A lower probability provides a higher reliability and determinism at the cost of running time.
+The search endurance is controlled by a parameter that specifies the probability to miss the largest candidate. A lower probability provides a higher reliability and determinism at the cost of longer running times.
 
 - \f$minimum number of points\f$:
 The minimum number of points for a shape is specified by the user to control the termination of the method. A shape candidate is dropped after evaluation on a subset of the input data, if the estimated support for the whole input data does not meet the specified minimum with a certain probability. However, if the final number of supporting points is only determined during extraction, even smaller shapes will get extracted.
@@ -52,10 +52,11 @@ The main class `Shape_detection_3` takes a template parameter `Shape_detection_t
 
 Typical usage consists of four steps:
 
--# Providing input data via a range iterator
--# Registering shape factories
--# Choosing parameters and detection
--# Retrieving the detected shapes
+-# Provide input data via a range iterator
+-# Register shape factories
+-# Choose parameters 
+-# Detect
+-# Retrieve detected shapes
 
 \subsection Point_set_shape_detection_3Usage_minimal Basic example
 
@@ -65,23 +66,23 @@ The following minimalistic example reads a point set from a file and detects onl
 
 \subsection Point_set_shape_detection_3Usage_parameters Manual parameterization and different shape types
 
-This example shows the manual selection of parameters using the `Shape_detection::Parameters` struct. The detection has been extended to all shape types. A basic output of the detected shapes is provided after processing. The provided model is mostly piece-wise planar with some cylindrical and smooth surface parts.
+This example shows the user selection of parameters using the `Shape_detection::Parameters` struct. The detection has been extended to all shape types. A basic output of the detected shapes is provided after processing. The input point set is sampled on a surface mostly composed of piece-wise planar and cylindrical parts, in addition to free-form parts.
 
 \cgalExample{shape_detection_3_parameters.cpp}
 
 \subsection Point_set_shape_detection_3Usage_point_access Measuring mean error
 
-This example shows how to access the points assigned to a shape. In addition, the CGAL::Timer is used to measure the running performance of the method.
+This example shows how to access the points assigned to a shape. In addition, a timer measures the running performance of the method.
 
 \cgalExample{shape_detection_3_point_access.cpp}
 
 
 \section Point_set_shape_detection_3Performance Performance
  
-The running time and the detection performance depend on the chosen parameters. A more selective parameterization leads to a higher running time. It leads to smaller shapes, more shape candidates are generated to find the largest shape. A typical performance graph depending on the epsilon parameter for a plane detection in a complex scene with around 5 million points is shown in \cgalFigureRef{Point_set_shape_detection_3_performace_epsilon}. Epsilon is considered to be the main parameter as it specifies the fitting tolerance distance between a point and a shape. The probability parameter controls the rigorosity of search for the largest candidate in each iteration. While it does not affect the number of detected shapes, it has a small effect on the size of the found shapes and increases the running time. A performance graph depending on the chosen probability parameter is shown in \cgalFigureRef{Point_set_shape_detection_3_performace_probability}.
+The running time and detection performance depend on the chosen parameters. Selective error tolerance parameters lead to higher running times. It leads to smaller shapes as many shape candidates are generated to find the largest shape. We plot the detection performance against the epsilon error tolerance parameter for detecting planes in a complex scene with 5M points, see\cgalFigureRef{Point_set_shape_detection_3_performace_epsilon}. The probability parameter controls the endurance when searching for the largest candidate at each iteration. It barely impacts the number of detected shapes, has a moderate impact on the size of the detected shapes and increases the running times. We plot the performance against the probability parameter, see \cgalFigureRef{Point_set_shape_detection_3_performace_probability}.
 
 \cgalFigureBegin{Point_set_shape_detection_3_performace_epsilon,epsilon_graph.png}
-The graph shows the amount of detected shapes (violet) and the coverage (green), i.e. assignedPoints / totalPoints, depending on the chosen epsilon parameter. A higher value of epsilon, i.e. a more tolerant metric, leads to fewer but larger shapes and a shorter running time.
+The graph depicts the number of detected shapes (purple) and the coverage (green), i.e., the ratio assignedPoints / totalPoints, depending on epsilon parameter. A higher value for epsilon, i.e., a more tolerant error, leads to fewer but larger shapes and shorter running times.
 \cgalFigureEnd
 
 \cgalFigureBegin{Point_set_shape_detection_3_performace_probability,prob_graph.png}
