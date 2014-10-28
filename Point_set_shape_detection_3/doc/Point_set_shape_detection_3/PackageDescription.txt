@@ -7,7 +7,7 @@
 
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Sven Oesau, Yannick Verdie, Clément Jamin}
-\cgalPkgDesc{This package implements a ransac-based shape detection algorithm for point sets with unoriented normals.}
+\cgalPkgDesc{This package implements an efficient RANSAC-based primitive shape detection algorithm for point sets with unoriented normals. The types of shapes covered are plane, sphere, cylinder, cone and torus.}
 \cgalPkgManuals{Chapter_Point Set Shape Detection, PkgPointSetShapeDetection3}
 \cgalPkgSummaryEnd
 
