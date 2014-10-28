@@ -338,10 +338,11 @@ bool Scene_polyhedron_shortest_path_item::run_point_select(const Ray_3& ray)
         polylines->polylines.push_back(Scene_polylines_item::Polyline());
             
         m_messages->information(tr("Computing shortest path polyline..."));
-            
-        m_shortestPaths->shortest_path_points_to_source_points(faceLocation.first, faceLocation.second, std::back_inserter(polylines->polylines.back()));
 
-        m_messages->information(tr("Done"));
+        QTime time;
+        time.start();
+        m_shortestPaths->shortest_path_points_to_source_points(faceLocation.first, faceLocation.second, std::back_inserter(polylines->polylines.back()));
+        std::cout << "ok (" << time.elapsed() << " ms)" << std::endl;
         
         polylines->setName(tr("%1 (shortest path)").arg(polyhedron_item()->name()));
         polylines->setColor(Qt::red);
