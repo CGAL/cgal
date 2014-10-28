@@ -50,7 +50,7 @@ struct TFC_data< Vertex_handle, Full_cell_handle, Dimen, TDS_full_cell_default_s
     void* & for_compact_container()       { return vertices_.for_compact_container(); }
     int dimension() const { return ( vertices_.size() - 1 ); }
     void set_mirror_index(const int, const int) {}
-    typedef unsigned long Xor_type; // TODO: choose a type that works for sure in 32bits and 64bits machines
+    typedef std::ptrdiff_t Xor_type;
     Xor_type xor_of_vertices(const int cur_dim) const
     {
         Xor_type result(0);
