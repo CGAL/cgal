@@ -23,7 +23,7 @@ typedef std::vector<Point_with_normal> Point_list;
 typedef CGAL::Identity_property_map<Point_with_normal> Point_pmap;
 typedef CGAL::Normal_of_point_with_normal_pmap<Kernel> Normal_pmap;
 
-// In Shape_detection_traits_3 the used types, i.e. Point and Vector types
+// In Shape_detection_traits_3 the basic types, i.e., Point and Vector types
 // as well as iterator type and property maps, are defined.
 typedef CGAL::Shape_detection_traits_3<Kernel,
   Point_list::iterator, Point_pmap, Normal_pmap> ShapeDetectionTraits;
@@ -33,9 +33,9 @@ typedef CGAL::Shape_detection_3<ShapeDetectionTraits> Shape_detection;
 int main(int argc, char **argv) {
   Point_list points;
 
-  // Loading a point set from file. 
-  // read_xyz_points_and_normals takes an OutputIterator for storing the points
-  // and a property map to store the normal vector with each point.
+  // Loading a point set from a file. 
+  // read_xyz_points_and_normals takes an OutputIterator for writing the points
+  // and a property map for storing the normal vector associated to each point.
   std::ifstream stream("cube.xyz");
 
   if (!stream ||
@@ -46,20 +46,20 @@ int main(int argc, char **argv) {
       return EXIT_FAILURE;
   }
 
-  // Creation of the instance and providing the input data.
+  // Instantiates shape detection engine and provides input data.
   Shape_detection sd(points.begin(),
     points.end(), Point_pmap(), Normal_pmap());
 
-  // Shapes to be searched for are registered
+  // Shapes to be detected are registered
   // by using the template Shape_factory
   sd.add_shape_factory(new 
     CGAL::Shape_factory<CGAL::Plane_shape<ShapeDetectionTraits> >);
 
-  // The actual shape detection with default parameters.
+  // Detects registered shapes with default parameters.
   sd.detect();
 
-  // Print results.
-  std::cout << sd.number_of_shapes() << " primitives" << std::endl;
+  // Prints number of detected shapes.
+  std::cout << sd.number_of_shapes() << " shapes detected." << std::endl;
 
   return EXIT_SUCCESS;
 }

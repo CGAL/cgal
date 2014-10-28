@@ -46,8 +46,7 @@ int main(int argc, char **argv) {
       return EXIT_FAILURE;
   }
 
-  // For time measurement we take the time
-  // before setting up the shape detection.
+  // Measure time before setting up the shape detection.
   CGAL::Timer time;
   time.start();
 
@@ -55,18 +54,17 @@ int main(int argc, char **argv) {
   Shape_detection sd(points.begin(),
     points.end(), Point_pmap(), Normal_pmap());
 
-  // Shapes to be searched for are registered
-  // by using the template Shape_factory
+  // Registers detection of planes
   sd.add_shape_factory(new 
     CGAL::Shape_factory<CGAL::Plane_shape<ShapeDetectionTraits> >);
 
-  // The actual shape detection.
+  // Detects shapes.
   sd.detect();
 
-  // Take the time afterwards.
+  // Measures time after detection.
   time.stop();
 
-  // Print results.
+  // Prints number of assigned shapes and unsassigned points.
   std::cout << "time: " << time.time() * 1000 << "ms" << std::endl;
   std::cout << sd.number_of_shapes() << " primitives, "
     << sd.number_of_unassigned_points()
@@ -76,33 +74,37 @@ int main(int argc, char **argv) {
   // an iterator to the detected shapes.
   Shape_detection::Shape_iterator it = sd.shapes_begin();
   while (it != sd.shapes_end()) {
+	
     const Shape_detection::Shape *shape = *it;
     // Using Shape_base::info() for printing 
     // the parameters of the detected shape.
     std::cout << (*it)->info();
 
-    // Determine mean distance of points to detected shape.
-    FT mean_distance = 0;
-    // Iterate through indices of points assigned to each shape.
+    // Sum distances of points to detected shapes.
+    FT sum_distances = 0.f;
+		
+    // Iterate through point indices assigned to each detected shape.
     std::vector<size_t>::const_iterator
       indexIt = (*it)->assigned_points().begin();
 
     while (indexIt != (*it)->assigned_points().end()) {
-      // Retrieve point
+      
+			// Retrieve point
       const Point &p = *(points.begin() + (*indexIt));
+			
       // Add Euclidean distance between point and shape.
-      mean_distance += sqrt((*it)->squared_distance(p));
+      sum_distances += sqrt((*it)->squared_distance(p));
 
       // Proceed with next point.
       indexIt++;
     }
 
-    // Divide sum of distance by number of points.
-    mean_distance /= shape->assigned_points().size();
+    // Compute average distance.
+    const FT average_distance = sum_distances / shape->assigned_points().size();
 
-    std::cout << " mean error: " << mean_distance << std::endl;
+    std::cout << " average distance: " << average_distance << std::endl;
 
-    // Proceed with next shape.
+    // Proceed with next detected shape.
     it++;
   }
 
