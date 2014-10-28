@@ -13,6 +13,7 @@
 #include <CGAL/use.h>
 #include <iostream>
 #include <CGAL/NewKernel_d/Types/Weighted_point.h>
+#include <cmath>
 
 //typedef CGAL::Cartesian_base_d<double,CGAL::Dimension_tag<2> > K0;
 //typedef CGAL::Cartesian_base_d<CGAL::Interval_nt_advanced,CGAL::Dimension_tag<2> > KA;
@@ -120,6 +121,7 @@ void test2(){
   typedef typename K1::Scalar_product_d SP;
   typedef typename K1::Difference_of_vectors_d DV;
   typedef typename K1::Difference_of_points_d DP;
+  typedef typename K1::Translated_point_d TP;
 
   CGAL_USE_TYPE(AT);
   CGAL_USE_TYPE(D);
@@ -177,6 +179,7 @@ void test2(){
   SP spr Kinit(scalar_product_d_object);
   DV dv Kinit(difference_of_vectors_d_object);
   DP dp Kinit(difference_of_points_d_object);
+  TP tp Kinit(translated_point_d_object);
 
   CGAL_USE(bc);
   CGAL_USE(pol);
@@ -185,11 +188,12 @@ void test2(){
   CGAL_USE(cli);
   CGAL_USE(cr);
   CGAL_USE(cib);
+  using std::abs;
   P a=cp(3,4);
   assert(pd(a)==2);
   assert(pv(a)[1]==4);
   P b=vp(cv(5,6,7));
-  assert(fabs(b[0]-5./7)<.0001);
+  assert(abs(b[0]-5./7)<.0001);
   assert(lc(b,a,1));
   assert(!lc(a,b,0));
   int rr[]={3,5,2};
@@ -203,8 +207,8 @@ void test2(){
   assert(cl(a,c)==CGAL::SMALLER);
   assert(ll(b,c));
   assert(cl(c,b)==CGAL::LARGER);
-  assert(fabs(m(a,c)[0]-3)<.0001);
-  assert(fabs(m(a,c)[1]-4.5)<.0001);
+  assert(abs(m(a,c)[0]-3)<.0001);
+  assert(abs(m(a,c)[1]-4.5)<.0001);
   P d=cp(r,r+3,CGAL::Homogeneous_tag());
   S s=cs(c,d);
   std::cout << cc(a,1) << std::endl;
@@ -253,9 +257,9 @@ void test2(){
   assert(v.size()==1);
   assert(lr(tab3+0,tab3+2)==1);
   H h=ch(tab2+1,tab2+3);
-  assert(fabs(va(h,x2)-1)<.0001);
-  assert(fabs(va(h,x3)-1)<.0001);
-  assert(fabs(va(h,x1)+1)<.0001);
+  assert(abs(va(h,x2)-1)<.0001);
+  assert(abs(va(h,x3)-1)<.0001);
+  assert(abs(va(h,x1)+1)<.0001);
   H h2=ch(tab2+1,tab2+3,x1,CGAL::ON_POSITIVE_SIDE);
   assert(hops(h2,x1));
   assert(os(h2,x1)==CGAL::ON_POSITIVE_SIDE);
@@ -312,20 +316,25 @@ void test2(){
   Sp sp = csp(tabz+0,tabz+3);
   P cent0=cos(sp);
   P cent1=cos(tabz+0,tabz+3);
-  assert(fabs(cent0[0]-2)<.0001);
-  assert(fabs(cent0[1]+3)<.0001);
-  assert(fabs(cent1[0]-2)<.0001);
-  assert(fabs(cent1[1]+3)<.0001);
-  assert(fabs(sp.squared_radius()-25)<.0001);
+  assert(abs(cent0[0]-2)<.0001);
+  assert(abs(cent0[1]+3)<.0001);
+  assert(abs(cent1[0]-2)<.0001);
+  assert(abs(cent1[1]+3)<.0001);
+  assert(abs(sp.squared_radius()-25)<.0001);
+#if 1
+  // Fails for an exact kernel
   P psp0=ps(sp,0);
   P psp1=ps(sp,1);
   P psp2=ps(sp,2);
   assert(!ed(psp0,psp1));
   assert(!ed(psp0,psp2));
   assert(!ed(psp2,psp1));
-  assert(fabs(sd(cent0,psp0)-25)<.0001);
-  assert(fabs(sd(cent0,psp1)-25)<.0001);
-  assert(fabs(sd(cent0,psp2)-25)<.0001);
+  assert(abs(sd(cent0,psp0)-25)<.0001);
+  assert(abs(sd(cent0,psp1)-25)<.0001);
+  assert(abs(sd(cent0,psp2)-25)<.0001);
+#endif
+  P x2py1 = tp(x2,y1);
+  assert(x2py1[1]==-2);
   Sp un1; CGAL_USE(un1);
   H un2; CGAL_USE(un2);
   S un3; CGAL_USE(un3);
@@ -418,6 +427,7 @@ void test3(){
   SD sd Kinit(squared_distance_d_object);
   PD pd Kinit(point_dimension_d_object);
   AI ai Kinit(affinely_independent_d_object);
+  using std::abs;
   P a; // Triangulation needs this :-(
   a=cp(2,3,4);
   assert(pd(a)==3);
@@ -441,7 +451,7 @@ void test3(){
     std::cout << *i << ' ';
   std::cout << '\n';
   P e=cp(-2,3,0);
-  assert(fabs(sd(e,a)-32)<.0001);
+  assert(abs(sd(e,a)-32)<.0001);
   P tab[]={a,b,c,d,e};
   std::cout << po (&tab[0],tab+4) << ' ';
   std::cout << sos(&tab[0],tab+5) << ' ';

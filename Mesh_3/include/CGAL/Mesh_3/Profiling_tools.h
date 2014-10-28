@@ -28,10 +28,10 @@
 // TBB timers
 #ifdef CGAL_LINKED_WITH_TBB
   #include <tbb/tick_count.h>
-  struct WallClockTimer
+  struct Wall_clock_timer
   {
     tbb::tick_count t;
-    WallClockTimer()
+    Wall_clock_timer()
     {
       t = tbb::tick_count::now();
     }
@@ -48,10 +48,10 @@
 #else
   #include <CGAL/Real_timer.h>
 
-  struct WallClockTimer
+  struct Wall_clock_timer
   {
     CGAL::Real_timer t;
-    WallClockTimer()
+    Wall_clock_timer()
     {
       t.start();
     }
