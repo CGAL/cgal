@@ -24,6 +24,8 @@
 #include <CGAL/Compact_container.h>
 #include <CGAL/internal/Static_or_dynamic_array.h>
 
+#include <boost/cstdint.hpp>
+
 namespace CGAL {
 
 // POLICY TAG
@@ -50,7 +52,11 @@ struct TFC_data< Vertex_handle, Full_cell_handle, Dimen, TDS_full_cell_default_s
     void* & for_compact_container()       { return vertices_.for_compact_container(); }
     int dimension() const { return ( vertices_.size() - 1 ); }
     void set_mirror_index(const int, const int) {}
+#ifdef BOOST_NO_INT64_T
     typedef std::ptrdiff_t Xor_type;
+#else
+    typedef boost::int_least64_t Xor_type;
+#endif
     Xor_type xor_of_vertices(const int cur_dim) const
     {
         Xor_type result(0);
