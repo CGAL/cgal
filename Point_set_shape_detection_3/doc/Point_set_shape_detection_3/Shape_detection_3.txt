@@ -22,7 +22,7 @@ In our context the error between a point and a shape is defined by its distance 
 
 For very large point sets however the basic RANSAC method is not practical when testing all possible shape candidates against the input data in order to find the largest shapes. The main idea behind the efficient RANSAC consists of testing shape candidates only against subsets of the input data. Only a subset of all possible shape candidates is constructed until the probability to miss the largest candidate is lower than a user-specified parameter. The largest shape is repeatedly extracted until no more shapes, restricted to cover a minimum number of points, can be extracted. An additional gain in efficiency is achieved through exploiting the normal attributes during initial shape construction and inlier enumeration.
 
-The support of a shape refers to the footprint of the points covered by the primitive. To avoid generating shapes with fragmented support we impose a connectivity constraint by considering only one connected component selected as the one covering the largest number of inliers.
+The support of a shape refers to the footprint of the points covered by the primitive. To avoid generating shapes with fragmented support we impose a connectivity constraint by considering only one connected component, referred to as cluster, selected as the one covering the largest number of inliers.
 
 The output of the shape detection algorithm is a set of shapes with associated points, and all remaining points not covered by shapes. Each input point can be assigned to at most one shape. 
 
@@ -37,20 +37,19 @@ We depict the impact of epsilon on the level of details of the detection. The in
 \cgalFigureEnd
 
 - \f$cluster_epsilon\f$:
-The clustering of supporting points of a shape is controlled by a user-specified parameter, cluster_epsilon. The supporting points are transformed into a 2D parameter space of the shape. The parameter space is chosen to minimize distortion and to preserve arc-length as well as possible. A connected component search is performed in the discretized 2D parameter space to identify the largest cluster of supporting points. The cluster_epsilon specifies the discretization of the parameter space. Thus the cluster_epsilon corresponds to the Euclidean distance between points to consider them to be connected. Due to the layout of the discretization points up to a distance of \f$2\sqrt{2}\, cluster\_epsilon\f$ can still be considered connected. The impact of the choice of cluster_epsilon is depicted in fig. 
-\cgalFigureRef{Point_set_shape_detection_3_parameter_connectivity}. 
+Clustering of the points into connected components covered by a detected shape is controlled via parameter cluster_epsilon. The points covered by a shape are mapped to a 2D parameter space chosen to minimize distortion and best preserve arc-length distances. This 2D parameter space is discretized using a regular grid, and a connected component search is performed to identify the largest cluster. Parameter cluster_epsilon defines the spacing between two cells of the regular grid, so that two points separated by a distance of at most \f$2\sqrt{2}\, cluster\_epsilon\f$ are considered adjacent. The impact of parameter cluster_epsilon is depicted by Figure \cgalFigureRef{Point_set_shape_detection_3_parameter_connectivity}. 
 \cgalFigureBegin{Point_set_shape_detection_3_parameter_connectivity,varying_connectivity.png}
-The cluster_epsilon parameter impacts the connectivity of points on a shape. The synthetic data set consists of points sampled on four coplanar squares. A large cluster_epsilon leads to the extraction of all points as one shape (left). Choosing a cluster_epsilon such that the four squares get extracted separately leads also to the loss of a few points within each square due to the random sampling (mid). A small value of cluster_epsilon leads to an oversegmentation (right).
+Parameter cluster_epsilon controls the connectivity of the points covered by a detected shape. The input point set is sampled on four coplanar squares. Left: a large value for cluster_epsilon leads to detecting a single planar shape. Middle: a middle value for cluster_epsilon yields the detection of four squares. Notice that few points within the squares are not detected as not connected. Right: a small value for cluster_epsilon leads to oversegmentation.
 \cgalFigureEnd
 
 - \f$search thoroughness\f$:
-The search endurance is controlled by a parameter that specifies the probability to miss the largest candidate. A lower probability provides a higher reliability and determinism at the cost of longer running times.
+The search endurance parameter defines the probability to miss the largest candidate shape. A lower probability provides a higher reliability and determinism at the cost of longer running times.
 
 - \f$minimum number of points\f$:
-The minimum number of points for a shape is specified by the user to control the termination of the method. A shape candidate is dropped after evaluation on a subset of the input data, if the estimated support for the whole input data does not meet the specified minimum with a certain probability. However, if the final number of supporting points is only determined during extraction, even smaller shapes will get extracted.
+The minimum number of points provides control over termination of the algorithm. A shape candidate considered for detection is dropped if it covers less than this minimum number of points. Note that during detection the number of points covered by a shape are determined globally, i.e., independently from the number of connected components that are split at a final shape extraction step. 
 
 \section Point_set_shape_detection_3Usage Usage
-The main class `Shape_detection_3` takes a template parameter `Shape_detection_traits_3` where the geometric types and the input format is specified. The concept of property maps is used, as this is provides flexibility to use own data structures. The first parameter of the `Shape_detection_traits_3` class is the commonly used Kernel. For the use of property maps, an iterator type and two maps to map that iterator to a point and a normal are specified in the `Shape_detection_traits_3` class. The property maps concept is explained in detail in Chapter \ref chapterProperty_map.
+The main class `Shape_detection_3` takes a template parameter `Shape_detection_traits_3` that defines the geometric types and input format. Property maps provides a means to interface with user-specific data structures. The first parameter of the `Shape_detection_traits_3` class is the common Kernel. In order to match the constraints of property maps, an iterator type and two maps that map an iterator to a point and a normal are specified in the `Shape_detection_traits_3` class. The concept behind property maps is detailed in Chapter \ref chapterProperty_map.
 
 Typical usage consists of four steps:
 
@@ -60,21 +59,21 @@ Typical usage consists of four steps:
 -# Detect
 -# Retrieve detected shapes
 
-\subsection Point_set_shape_detection_3Usage_minimal Basic example
+\subsection Point_set_shape_detection_3Usage_minimal Basic planar shape detection
 
-The following minimalistic example reads a point set from a file and detects only planes. The default parameters are used for detection.
+The following minimal example reads a point set from a file and detects only planar shapes. The default parameters are used for detection.
 
 \cgalExample{shape_detection_3_basic.cpp}
 
-\subsection Point_set_shape_detection_3Usage_parameters Manual parameterization and different shape types
+\subsection Point_set_shape_detection_3Usage_parameters Setting parameters and using different types of shape
 
-This example shows the user selection of parameters using the `Shape_detection::Parameters` struct. The detection has been extended to all shape types. A basic output of the detected shapes is provided after processing. The input point set is sampled on a surface mostly composed of piece-wise planar and cylindrical parts, in addition to free-form parts.
+This example illustrates the user selection of parameters using the `Shape_detection::Parameters` struct. Shape detection is extended to all types of shape. A basic output of the detected shapes is provided after processing. The input point set is sampled on a surface mostly composed of piece-wise planar and cylindrical parts, in addition to free-form parts.
 
 \cgalExample{shape_detection_3_parameters.cpp}
 
-\subsection Point_set_shape_detection_3Usage_point_access Measuring mean error
+\subsection Point_set_shape_detection_3Usage_point_access Retrieving points associated to shapes
 
-This example shows how to access the points assigned to a shape. In addition, a timer measures the running performance of the method.
+This example illustrates how to access the points assigned to each shape and to measure the mean error. A timer measures the running performance.
 
 \cgalExample{shape_detection_3_point_access.cpp}
 
@@ -88,7 +87,7 @@ The graph depicts the number of detected shapes (purple) and the coverage (green
 \cgalFigureEnd
 
 \cgalFigureBegin{Point_set_shape_detection_3_performace_probability,prob_graph.png}
-The graph displays as the same characteristic numbers depending on the chosen search rigorisity, i.e. probability to miss the largest primitive in an iteration. The number of shapes is stable, while the coverage increases, when the probability is lowered. However the running time increases significantly as a lot more candidates are generated during each iteration of the method.
+The graph depicts the time, coverage and number of detected primitives against the search endurance parameter, i.e., the probability to miss the largest primitive at each iteration. The number of shapes is stable and the coverage increases when the probability is lowered. The running times increase significantly as a lot more candidates are generated during each iteration of the method.
 \cgalFigureEnd
 
 */ 
