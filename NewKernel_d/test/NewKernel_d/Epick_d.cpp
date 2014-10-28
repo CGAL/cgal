@@ -74,6 +74,7 @@ void test2(){
   typedef typename K1::Ray_d R;
   typedef typename K1::Iso_box_d IB;
   typedef typename K1::Flat_orientation_d FO;
+  typedef typename K1::Weighted_point_d WP;
 
   //typedef K1::Construct_point CP;
   typedef typename K1::Construct_point_d CP;
@@ -122,6 +123,12 @@ void test2(){
   typedef typename K1::Difference_of_vectors_d DV;
   typedef typename K1::Difference_of_points_d DP;
   typedef typename K1::Translated_point_d TP;
+  typedef typename CGAL::Get_functor<K1, CGAL::Power_center_tag>::type PC;
+  typedef typename CGAL::Get_functor<K1, CGAL::Power_distance_tag>::type PoD;
+  typedef typename K1::Weighted_point_d WP;
+  typedef typename K1::Construct_weighted_point_d CWP;
+  typedef typename K1::Point_drop_weight_d PDW;
+  typedef typename K1::Point_weight_d PW;
 
   CGAL_USE_TYPE(AT);
   CGAL_USE_TYPE(D);
@@ -180,6 +187,11 @@ void test2(){
   DV dv Kinit(difference_of_vectors_d_object);
   DP dp Kinit(difference_of_points_d_object);
   TP tp Kinit(translated_point_d_object);
+  PC pc (k);
+  CWP cwp Kinit(construct_weighted_point_d_object);
+  PDW pdw Kinit(point_drop_weight_d_object);
+  PW pw Kinit(point_weight_d_object);
+  PoD pod (k);
 
   CGAL_USE(bc);
   CGAL_USE(pol);
@@ -335,6 +347,16 @@ void test2(){
 #endif
   P x2py1 = tp(x2,y1);
   assert(x2py1[1]==-2);
+  WP tw[]={cwp(cp(5,0),1.5),cwp(cp(2,std::sqrt(3)),1),cwp(cp(2,-std::sqrt(3)),1)};
+  WP xw=pc(tw+0,tw+3);
+  assert(abs(pod(xw,tw[0]))<.0001);
+  assert(abs(pod(xw,tw[1]))<.0001);
+  assert(abs(pod(xw,tw[2]))<.0001);
+  assert(pdw(xw)[0]<2.95);
+  assert(pdw(xw)[0]>2.5);
+  assert(pw(xw)<2.95);
+  assert(pw(xw)>2.5);
+
   Sp un1; CGAL_USE(un1);
   H un2; CGAL_USE(un2);
   S un3; CGAL_USE(un3);
