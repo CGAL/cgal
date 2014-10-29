@@ -1,5 +1,5 @@
-#ifndef POLYHEDRON_DEMO_IO_PLUGIN_INTERFACE_H
-#define POLYHEDRON_DEMO_IO_PLUGIN_INTERFACE_H
+#ifndef MESH_3_DEMO_IO_PLUGIN_INTERFACE_H
+#define MESH_3_DEMO_IO_PLUGIN_INTERFACE_H
 
 #include <QFileInfo>
 #include <QStringList>
@@ -21,6 +21,6 @@ public:
 };
 
 Q_DECLARE_INTERFACE(Io_plugin_interface,
-                    "com.geometryfactory.PolyhedronDemo.IOPluginInterface/1.0")
+                    "com.geometryfactory.Mesh3Demo.IOPluginInterface/1.0")
 
 #endif // POLYHEDRON_DEMO_IO_PLUGIN_INTERFACE_H
