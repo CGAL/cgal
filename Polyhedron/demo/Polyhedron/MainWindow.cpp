@@ -453,7 +453,9 @@ void MainWindow::loadPlugins()
         QObject *obj = loader.instance();
         if(obj) {
           obj->setObjectName(name);
-          if (!initPlugin(obj) && !initIOPlugin(obj))
+          bool init1 = initPlugin(obj);
+          bool init2 = initIOPlugin(obj);
+          if (!init1 && !init2)
             qdebug << "not for this program";
           else
             qdebug << "success";

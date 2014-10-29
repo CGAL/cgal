@@ -186,7 +186,9 @@ void MainWindow::loadPlugins()
       loader.setFileName(pluginsDir.absoluteFilePath(fileName));
       QObject *obj = loader.instance();
       if(obj) {
-        if (!initPlugin(obj) && !initIOPlugin(obj))
+        bool init1 = initPlugin(obj);
+        bool init2 = initIOPlugin(obj);
+        if (!init1 && !init2)
           qdebug << "not for this program";
         else
           qdebug << "success";
