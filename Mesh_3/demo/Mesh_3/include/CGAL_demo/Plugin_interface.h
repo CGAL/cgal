@@ -22,6 +22,6 @@ public:
 };
 
 Q_DECLARE_INTERFACE(Plugin_interface,
-                    "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
+                    "com.geometryfactory.Mesh3Demo.PluginInterface/1.0")
 
 #endif // POLYHEDRON_DEMO_PLUGIN_INTERFACE_H
