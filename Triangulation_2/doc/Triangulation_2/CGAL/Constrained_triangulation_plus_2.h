@@ -4,33 +4,36 @@ namespace CGAL {
 /*!
 \ingroup PkgTriangulation2TriangulationClasses
 
-The class `Constrained_triangulation_plus_2` 
-implements a constrained triangulation that
-maintains an additional data structure, called the constraint hierarchy, 
-which keeps track of the input constraints and of their refinement 
-in the triangulation. 
+The class `Constrained_triangulation_plus_2<Tr>`
+provides a constrained triangulation with an additional data
+structure called the *constraint hierarchy* 
+that keeps track of the input constraints and of their refinement
+in the triangulation.
+The class `Constrained_triangulation_plus_2<Tr>`
+inherits from its template parameter Tr, which has to be instantiated
+by a constrained or constrained Delaunay triangulation.
+According to its intersection tag, the base class
+will support intersecting input constraints or not.
+When intersections of input constraints are supported,
+the base class constructs a triangulation of the arrangement
+of the constraints,
+introducing new vertices at each proper intersection
+point.
 
-The class `Constrained_triangulation_plus_2<Tr>` 
-inherits from its template parameter Tr, which has to be instantiated 
-by a constrained or constrained Delaunay triangulation. 
 
-According to its intersection tag, the base class 
-will support intersecting input constraints or not. 
-When intersections of input constraints are supported, 
-the base class constructs a triangulation of the arrangement 
-of the constraints, 
-introducing new vertices at each proper intersection 
-point and refining the input constraints into sub-constraints. 
-These sub-constraints are constrained edges of the 
-triangulation. 
-The constraint hierarchy 
-keeps track of the input constraints and of their refinement 
-in the triangulation. This data structure 
-maintains for each input constraint
-the sequence of intersection vertices added on this constraint. 
-The constraint hierarchy also allows the user to retrieve the set 
-of constrained edges of the triangulation, and for each 
-constrained edge, the set of input constraints it overlaps with. 
+The data structure maintains for each input constraint
+the sequence of vertices on this constraint. These vertices are
+either vertices of the input constraint or intersection points.
+
+Two consecutive vertices of an input constraint form a *subconstraint*.
+A suconstraint is a pair of vertex handles and corresponds to a constrained edge of the
+triangulation, which is a pair of a face handle and an index. 
+
+The constraint hierarchy also allows to retrieve the set
+of subconstraints of the triangulation (not ordered along constraints).
+It further allows to retrieve for a subconstraint, the set of input constraints that overlap it.
+As it is straightforward to obtain a subconstraint from a constrained edge `e`,
+one can obtain the input constraints which overlap `e`.
 
 \tparam Tr must be either a CGAL::Constrained_triangulation_2 or a CGAL::Constrained_Delaunay_triangulation_2
 
@@ -72,30 +75,30 @@ The value type of this iterator is `Constraint_id`.
 typedef unspecified_type Constraint_iterator; 
 
 /*!
-A sub-constraint is a pair of vertices that correspond to an `Edge`. 
+A subconstraint is a pair of vertices that correspond to an `Edge`. 
  */
 typedef std::pair<Vertex_handle, Vertex_handle> Subconstraint;
 
 /*! 
 An iterator 
-to visit all the sub-constraints of the triangulation. 
+to visit all the subconstraints of the triangulation. 
 The order of visit is undefined. 
-The value type of this iterator is `Sub_constraint` 
+The value type of this iterator is `Subconstraint` 
 corresponding to the vertices of the 
-sub-constraint. 
+subconstraint. 
 */ 
 typedef unspecified_type Subconstraint_iterator; 
 
 /*! 
 An iterator on the 
-vertices of the chain of sub-constraints representing a 
+vertices of the chain of subconstraints representing a 
 constraint. The value type of this iterator is `Vertex_handle`. 
 */ 
 typedef unspecified_type Vertices_in_constraint_iterator; 
 
 /*! 
 A context allows to access the vertices of a constraint that passes 
-through a sub-constraint.
+through a subconstraint.
 
 */ 
   class Context {
@@ -120,7 +123,7 @@ through a sub-constraint.
 
 /*! 
 An iterator on 
-constraints enclosing a given sub-constraint. The value type of this 
+constraints enclosing a given subconstraint. The value type of this 
 iterator 
 is `Context`. 
 */ 
@@ -284,18 +287,18 @@ Constraint_iterator constraints_end() const;
 
 /*! 
 Returns a `Subconstraint_iterator` pointing on the first 
-sub-constraint. 
+subconstraint. 
 */ 
 Subconstraint_iterator subconstraints_begin() const; 
 
 /*! 
 Returns a `Subconstraint_iterator` pointing past the end 
-sub-constraint. 
+subconstraint. 
 */ 
 Subconstraint_iterator subconstraints_end() const; 
 
 /*! 
-Returns the number of constraints enclosing the sub-constraint 
+Returns the number of constraints enclosing the subconstraint 
 `(va,vb)`. 
 \pre `va` and `vb` refer to the vertices of a constrained edge of the triangulation. 
 */ 
@@ -304,7 +307,7 @@ Vertex_handle vb) const;
 
 /*! 
 Returns the `Context` relative to one of the constraints 
-enclosing the sub-constraint `(va,vb)`. 
+enclosing the subconstraint `(va,vb)`. 
 \pre `va` and `vb` refer to the vertices of a constrained edge of the triangulation. 
 */ 
 Context context(Vertex_handle va, Vertex_handle vb) const; 
@@ -312,7 +315,7 @@ Context context(Vertex_handle va, Vertex_handle vb) const;
 /*! 
 Returns an iterator pointing on the first `Context` 
 of the sequence of contexts
-corresponding to the constraints enclosing the sub-constraint`(va,vb)`. 
+corresponding to the constraints enclosing the subconstraint`(va,vb)`. 
 \pre `va` and `vb` refer to the vertices of a constrained edge of the triangulation. 
 */ 
 Context_iterator contexts_begin(Vertex_handle va, 
@@ -321,7 +324,7 @@ Vertex_handle vb) const;
 /*! 
 Returns an iterator past the end `Context` 
 of the sequence of contexts
-corresponding to the constraints enclosing the sub-constraint `(va,vb)`. 
+corresponding to the constraints enclosing the subconstraint `(va,vb)`. 
 \pre `va` and `vb` refer to the vertices of a constrained edge of the triangulation. 
 */ 
 Context_iterator contexts_end(Vertex_handle va, 
@@ -362,7 +365,7 @@ The simplification algorithm uses the following types and functions.
 
 /*!
 \cgalAdvancedBegin
-An iterator on the points of the chain of sub-constraints representing a
+An iterator on the points of the chain of subconstraints representing a
 constraint. The value type of this iterator is `Point`.
 A \link Constrained_triangulation_plus_2::Vertices_in_constraint_iterator `Vertices_in_constraint_iterator`\endlink can be converted into
 a `Points_in_constraint_iterator`, but not the other way around.
