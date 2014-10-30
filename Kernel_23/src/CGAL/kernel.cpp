@@ -22,18 +22,5 @@
 //
 // Author(s)     : Andreas Fabri, Stefan Schirra
  
-#include <CGAL/Origin.h>
-#include <CGAL/aff_transformation_tags.h>
-
-namespace CGAL {
-
-Translation             TRANSLATION;
-Rotation                ROTATION;
-Scaling                 SCALING;
-Reflection              REFLECTION;
-Identity_transformation IDENTITY;
-
-const Origin      ORIGIN = Origin();
-const Null_vector NULL_VECTOR = Null_vector();
-
-} //namespace CGAL
+#include <CGAL/Origin_impl.h>
+#include <CGAL/aff_transformation_tags_impl.h>

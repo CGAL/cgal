@@ -304,7 +304,9 @@ void swallow(std::istream &is, char d);
 CGAL_EXPORT
 void swallow(std::istream &is, const std::string& s );
 
-
+#ifdef CGAL_HEADER_ONLY
+#include <CGAL/IO/io_impl.h>
+#endif // CGAL_HEADER_ONLY
 
 } //namespace CGAL
 

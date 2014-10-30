@@ -95,4 +95,8 @@ CGAL_EXPORT extern const Color YELLOW ;
 
 } //namespace CGAL
 
+#ifdef CGAL_HEADER_ONLY
+#include <CGAL/IO/Color_impl.h>
+#endif // CGAL_HEADER_ONLY
+
 #endif  // CGAL_COLOR_H

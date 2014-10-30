@@ -1,9 +1,9 @@
-// Copyright (c) 1997  
+// Copyright (c) 1999
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
@@ -18,11 +18,18 @@
 //
 // $URL$
 // $Id$
-// 
 //
-// Author(s)     : Lutz Kettner  <kettner@mpi-sb.mpg.de>
+//
+// Author(s)     : Andreas Fabri, Stefan Schirra
 
-#include <CGAL/IO/File_scanner_OFF.h>
-#include <CGAL/IO/File_scanner_OFF_impl.h>
+#include <CGAL/aff_transformation_tags.h>
 
-// EOF //
+namespace CGAL {
+
+const Translation             TRANSLATION;
+const Rotation                ROTATION;
+const Scaling                 SCALING;
+const Reflection              REFLECTION;
+const Identity_transformation IDENTITY;
+
+} //namespace CGAL

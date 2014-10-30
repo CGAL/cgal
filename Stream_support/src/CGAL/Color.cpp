@@ -23,7 +23,7 @@
 // Author(s)     : Andreas Fabri, Hervé Brönnimann
 
 #include <CGAL/IO/Color.h>
-
+#include <CGAL/IO/Color_impl.h>
 
 namespace CGAL {
 

@@ -1,9 +1,9 @@
-// Copyright (c) 1997  
+// Copyright (c) 1997
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
@@ -18,11 +18,6 @@
 //
 // $URL$
 // $Id$
-// 
 //
-// Author(s)     : Lutz Kettner  <kettner@mpi-sb.mpg.de>
-
-#include <CGAL/IO/File_scanner_OFF.h>
-#include <CGAL/IO/File_scanner_OFF_impl.h>
-
-// EOF //
+//
+// Author(s)     : Andreas Fabri, Hervé Brönnimann

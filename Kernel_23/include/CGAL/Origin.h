@@ -42,4 +42,8 @@ CGAL_EXPORT extern const Null_vector NULL_VECTOR;
 
 } //namespace CGAL
 
+#ifdef CGAL_HEADER_ONLY
+#include <CGAL/Origin_impl.h>
+#endif // CGAL_HEADER_ONLY
+
 #endif // CGAL_ORIGIN_H

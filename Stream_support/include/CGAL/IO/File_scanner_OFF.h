@@ -462,5 +462,9 @@ file_scan_normal( File_scanner_OFF& scanner, Vector& v) {
 
 } //namespace CGAL
 
+#ifdef CGAL_HEADER_ONLY
+#include <CGAL/IO/File_scanner_OFF_impl.h>
+#endif // CGAL_HEADER_ONLY
+
 #endif // CGAL_IO_FILE_SCANNER_OFF_H //
 // EOF //
