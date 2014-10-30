@@ -25,8 +25,12 @@
 #include <CGAL/IO/io.h>
 #include <CGAL/IO/io_impl.h>
 
+#ifndef CGAL_HEADER_ONLY
+
 namespace CGAL {
 
 int IO::mode = std::ios::xalloc();
 
 } //namespace CGAL
+
+#endif

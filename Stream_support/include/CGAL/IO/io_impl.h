@@ -22,6 +22,12 @@
 //
 // Author(s)     : Andreas Fabri
 
+#ifdef CGAL_HEADER_ONLY
+#define CGAL_INLINE_FUNCTION inline
+#else
+#define CGAL_INLINE_FUNCTION
+#endif
+
 #include <CGAL/basic.h>
 #include <CGAL/assertions.h>
 
@@ -30,65 +36,85 @@
 
 namespace CGAL {
 
+#ifdef CGAL_HEADER_ONLY
+inline
+static int& get_static_mode()
+{
+  static int IO::mode = std::ios::xalloc();
+  return IO::mode;
+}
+#else // CGAL_HEADER_ONLY
+inline
+static int& get_static_mode()
+{ return IO::mode; }
+#endif // CGAL_HEADER_ONLY
+
+CGAL_INLINE_FUNCTION
 IO::Mode
 get_mode(std::ios& i)
 {
-    return static_cast<IO::Mode>(i.iword(IO::mode));
+    return static_cast<IO::Mode>(i.iword(get_static_mode()));
 }
 
+CGAL_INLINE_FUNCTION
 IO::Mode
 set_ascii_mode(std::ios& i)
 {
     IO::Mode m = get_mode(i);
-    i.iword(IO::mode) = IO::ASCII;
+    i.iword(get_static_mode()) = IO::ASCII;
     return m;
 }
 
-
+CGAL_INLINE_FUNCTION
 IO::Mode
 set_binary_mode(std::ios& i)
 {
     IO::Mode m = get_mode(i);
-    i.iword(IO::mode) = IO::BINARY;
+    i.iword(get_static_mode()) = IO::BINARY;
     return m;
 }
 
 
+CGAL_INLINE_FUNCTION
 IO::Mode
 set_pretty_mode(std::ios& i)
 {
     IO::Mode m = get_mode(i);
-    i.iword(IO::mode) = IO::PRETTY;
+    i.iword(get_static_mode()) = IO::PRETTY;
     return m;
 }
 
+CGAL_INLINE_FUNCTION
 IO::Mode
 set_mode(std::ios& i, IO::Mode m)
 {
     IO::Mode old = get_mode(i);
-    i.iword(IO::mode) = m;
+    i.iword(get_static_mode()) = m;
     return old;
 }
 
+CGAL_INLINE_FUNCTION
 bool
 is_pretty(std::ios& i)
 {
-    return i.iword(IO::mode) == IO::PRETTY;
+    return i.iword(get_static_mode()) == IO::PRETTY;
 }
 
+CGAL_INLINE_FUNCTION
 bool
 is_ascii(std::ios& i)
 {
-    return i.iword(IO::mode) == IO::ASCII;
+    return i.iword(get_static_mode()) == IO::ASCII;
 }
 
-
+CGAL_INLINE_FUNCTION
 bool
 is_binary(std::ios& i)
 {
-    return i.iword(IO::mode) == IO::BINARY;
+    return i.iword(get_static_mode()) == IO::BINARY;
 }
 
+CGAL_INLINE_FUNCTION
 const char*
 mode_name( IO::Mode m) {
     static const char* const names[] = {"ASCII", "PRETTY", "BINARY" };
@@ -96,6 +122,7 @@ mode_name( IO::Mode m) {
     return names[m];
 }
 
+CGAL_INLINE_FUNCTION
 void
 swallow(std::istream &is, char d) {
     char c;
@@ -107,6 +134,7 @@ swallow(std::istream &is, char d) {
     }
 }
 
+CGAL_INLINE_FUNCTION
 void
 swallow(std::istream &is, const std::string& s ) {
     std::string t;
