@@ -134,16 +134,16 @@ public:
     for(; cit!=e; ++cit){
       Constraint_id cid = *cit;
       Vertices_in_constraint_iterator it = pct.vertices_in_constraint_begin(cid);
-      (*it)->unremovable() = true;
+      (*it)->removable() = false;
       for(; it != pct.vertices_in_constraint_end(cid); ++it){
         if(vertices.find(*it) != vertices.end()){
-          (*it)->unremovable() = true;
+          (*it)->removable() = false;
         } else {
           vertices.insert(*it);
         }
       }
       it = boost::prior(it);
-      (*it)->unremovable() = true;
+      (*it)->removable() = false;
     }
   }
 
@@ -155,7 +155,7 @@ public:
     for(Vertices_in_constraint_iterator it = pct.vertices_in_constraint_begin(cid);
         it != pct.vertices_in_constraint_end(cid);
         ++it){
-      if(! (*it)->unremovable()){
+      if((*it)->removable()){
         Vertices_in_constraint_iterator u = boost::prior(it);
         Vertices_in_constraint_iterator w = boost::next(it);
         
@@ -187,7 +187,7 @@ public:
   is_removable(Vertices_in_constraint_iterator it)
   {
     typedef typename PCT::Geom_traits Geom_traits;
-    if((*it)->unremovable()) {
+    if(! (*it)->removable()) {
       return false;
     }
     
@@ -261,14 +261,14 @@ operator()()
     }
   Vertices_in_constraint_iterator v = (*mpq).top();
   (*mpq).pop();
-  if(stop(pct, v, (*v)->cost(), pct_initial_number_of_vertices, pct.number_of_vertices())){
+  if(stop(pct, *v, (*v)->cost(), pct_initial_number_of_vertices, pct.number_of_vertices())){
     return false;
   }
   if(is_removable(v)){
     Vertices_in_constraint_iterator u = boost::prior(v), w = boost::next(v);
     pct.simplify(u,v,w);
     
-    if(! (*u)->unremovable()){
+    if((*u)->removable()){
       Vertices_in_constraint_iterator uu = boost::prior(u);
       boost::optional<double> dist = cost(pct, uu,u,w);
       if(! dist){
@@ -281,7 +281,7 @@ operator()()
       }
     }
     
-    if(! (*w)->unremovable()){
+    if((*w)->removable()){
       Vertices_in_constraint_iterator ww = boost::next(w);
       boost::optional<double> dist = cost(pct, u,w,ww);
       if(! dist){
@@ -361,14 +361,14 @@ Simplifies an open or closed polyline given as an iterator range of 2D \cgal poi
 \tparam PointIterator must be an iterator with value type `CGAL::Kernel::Point_2`.
 \tparam CostFunction must be a model of `PolylineSimplificationCostFunction`
 \tparam StopFunction must be a model of `PolylineSimplificationStopPredicate`
-\tparam OutputIterator must be an output iterator to which `CGAL::Kernel::Point_2` can be assigned.
+\tparam PointOutputIterator must be an output iterator to which `CGAL::Kernel::Point_2` can be assigned.
 */
-  template <class PointIterator, class CostFunction, class StopFunction, class OutputIterator>
+  template <class PointIterator, class CostFunction, class StopFunction, class PointOutputIterator>
   OutputIterator
   simplify(PointIterator b, PointIterator e,
            CostFunction cost,
            StopFunction stop,
-           OutputIterator out,
+           PointOutputIterator out,
            bool close = false)
 {
   typedef typename std::iterator_traits<PointIterator>::value_type Point_2;
@@ -405,18 +405,25 @@ Simplifies an open or closed polyline given as an iterator range of 2D \cgal poi
 /*!
 \ingroup  PkgPolylineSimplification2Functions
 
-Simplifies a single polyline in a triangulation with polylines as constraints.
+Simplifies a single polyline in a triangulation with polylines as constraints. 
+
+\param ct The underlying constrained Delaunay triangulation with constraint hierarchy which embeds the polyline constraints
+\returns the number of removed vertices
+\tparam Tr  must be `CGAL::Constrained_Delaunay_triangulation_2` with a vertex type that
+is model of  `PolylineSimplificationVertexBase_2`.
+\tparam CostFunction must be a model of `PolylineSimplificationCostFunction`
+\tparam StopFunction must be a model of `PolylineSimplificationStopPredicate`
 */
 template <class Tr, class CostFunction, class StopFunction>
 std::size_t
-simplify(CGAL::Constrained_triangulation_plus_2<Tr>& pct,
+simplify(CGAL::Constrained_triangulation_plus_2<Tr>& ct,
          typename CGAL::Constrained_triangulation_plus_2<Tr>::Constraint_id cid,
          CostFunction cost,
          StopFunction stop,
          bool keep_points = false)
 {
   typedef CGAL::Constrained_triangulation_plus_2<Tr> PCT;
-  Polyline_simplification_2<PCT, CostFunction, StopFunction> simplifier(pct, cid, cost, stop);
+  Polyline_simplification_2<PCT, CostFunction, StopFunction> simplifier(ct, cid, cost, stop);
 
   while(simplifier()){}
   if(! keep_points){
@@ -428,18 +435,23 @@ simplify(CGAL::Constrained_triangulation_plus_2<Tr>& pct,
 /*!
 \ingroup  PkgPolylineSimplification2Functions
 Simplifies all polylines in a triangulation with polylines as constraints.
-The vertex type must be a model of `PolylineSimplificationVertexBase_2`.
+\param ct The underlying constrained Delaunay triangulation with constraint hierarchy which embeds the polyline constraints
+\returns the number of removed vertices
+\tparam Tr  must be `CGAL::Constrained_Delaunay_triangulation_2` with a vertex type that
+is model of  `PolylineSimplificationVertexBase_2`.
+\tparam CostFunction must be a model of `PolylineSimplificationCostFunction`
+\tparam StopFunction must be a model of `PolylineSimplificationStopPredicate`
 */
 
 template <class Tr, class CostFunction, class StopFunction>
 std::size_t
-simplify(CGAL::Constrained_triangulation_plus_2<Tr>& pct,
+simplify(CGAL::Constrained_triangulation_plus_2<Tr>& ct,
          CostFunction cost,
          StopFunction stop,
          bool keep_points = false)
 {
   typedef CGAL::Constrained_triangulation_plus_2<Tr> PCT;
-  Polyline_simplification_2<PCT, CostFunction, StopFunction> simplifier(pct, cost, stop);
+  Polyline_simplification_2<PCT, CostFunction, StopFunction> simplifier(ct, cost, stop);
 
   while(simplifier()){}
   if(! keep_points){

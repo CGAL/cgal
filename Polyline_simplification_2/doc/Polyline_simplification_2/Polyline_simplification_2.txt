@@ -117,15 +117,15 @@ cartographic contours, there are both dense and spare areas, so a good
 strategy is to use a scaled or an absolute maximum depending on the
 case.
 
-The hybrid distance measure uses a parameter `R` to indicate which
+The hybrid distance measure uses a parameter \f$R\f$ to indicate which
 measure to use: if \f$v_2\f$ , i.e., the minimum distance to adjacent
-vertices, is below `R`, the scaled maximum is used, otherwise the
+vertices, is below\f$R\f$, the scaled maximum is used, otherwise the
 absolute maximum is used.
 
 The cost of removing vertex `q` is \f$v_1/v_2\f$, if \f$v_2 <R\f$, and
 \f$v_1/R\f$, otherwise.
 
-As Dyken\&al. explain, the choice of a good value for `R` is problem
+As Dyken\&al. explain, the choice of a good value for \f$R\f$ is problem
 specific.  It may depend on the pen size or the pixel size when
 drawing, or on the grid size when the polyline points are on a grid.
 

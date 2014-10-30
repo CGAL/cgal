@@ -48,15 +48,15 @@ public:
   };
 
   Vertex_base_2() 
-    : Base(), m_unremovable(false), m_cost(-1.0) 
+    : Base(), m_removable(true), m_cost(-1.0) 
   {}
   
-  bool m_unremovable;
+  bool m_removable;
   FT m_cost;
 
-  bool& unremovable()
+  bool& removable()
   {
-    return m_unremovable;
+    return m_removable;
   }
 
   FT& cost()

@@ -40,9 +40,9 @@ public :
   Stop_below_count_ratio_threshold( double threshold ) : mThres(threshold) {}
 
   /// Returns `true` when `( current_count / initial_count )` is smaller or equal than the threshold.
-  template<class ConstrainedDelaunayTriangulation, class VertexHandle>  
+  template<class ConstrainedDelaunayTriangulation> // , class VertexHandle>  
   bool operator()( ConstrainedDelaunayTriangulation const& 
-                 , VertexHandle                     const& 
+                   , typename ConstrainedDelaunayTriangulation::Vertex_handle                     const& 
                  , double                                  
                  , std::size_t                             initial_count
                  , std::size_t                             current_count

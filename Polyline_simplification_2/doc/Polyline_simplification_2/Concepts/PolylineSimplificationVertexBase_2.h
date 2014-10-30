@@ -29,7 +29,7 @@ public:
 
 /*! The Boolean that indicates whether the vertex can be removed.
 */ 
-bool& unremovable(); 
+bool& removable(); 
 
 /*! The cost if the vertex got removed.
 */ 
