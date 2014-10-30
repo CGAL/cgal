@@ -159,7 +159,14 @@ public slots:
   void on_Sample_random_points_from_bbox() {
     
     // calculate bbox of selected polyhedron items
-    boost::optional<Scene_interface::Bbox> bbox;
+    boost::optional<Scene_interface::Bbox> bbox
+      = boost::make_optional(false, Scene_interface::Bbox());
+    // Workaround a bug in g++-4.8.3:
+    //   http://stackoverflow.com/a/21755207/1728537
+    // Using boost::make_optional to copy-initialize 'bbox' hides the
+    //   warning about '*bbox' not being initialized.
+    // -- Laurent Rineau, 2014/10/30
+
     foreach(Scene_interface::Item_id id, scene->selectionIndices()) {
       Scene_polyhedron_item* poly_item = qobject_cast<Scene_polyhedron_item*>(scene->item(id));
       if(poly_item) {
