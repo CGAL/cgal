@@ -19,7 +19,7 @@ typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef Kernel::FT FT;
 typedef Kernel::Point_3 Point;
 typedef CGAL::Point_with_normal_3<Kernel> Point_with_normal;
-typedef std::vector<Point_with_normal> Point_list;
+typedef std::vector<Point_with_normal> Pwn_list;
 typedef CGAL::Identity_property_map<Point_with_normal> Point_pmap;
 typedef CGAL::Normal_of_point_with_normal_pmap<Kernel> Normal_pmap;
 
@@ -31,18 +31,18 @@ typedef CGAL::Shape_detection_3<ShapeDetectionTraits> Shape_detection;
 
 
 int main(int argc, char **argv) {
-  Point_list points;
+  Pwn_list points;
 
   // Loading a point set from file. 
   // read_xyz_points_and_normals takes an OutputIterator for storing the points
   // and a property map to store the normal vector with each point.
-  std::ifstream stream("cube.xyz");
+  std::ifstream stream("cube.pwn");
 
   if (!stream ||
     !CGAL::read_xyz_points_and_normals(stream,
     std::back_inserter(points),
     Normal_pmap())) {
-      std::cerr << "Error: cannot read file cube.xyz" << std::endl;
+      std::cerr << "Error: cannot read file cube.pwn" << std::endl;
       return EXIT_FAILURE;
   }
 
@@ -80,31 +80,30 @@ int main(int argc, char **argv) {
     // the parameters of the detected shape.
     std::cout << (*it)->info();
 
-    // Sum distances of points to detected shapes.
+    // Sums distances of points to detected shapes.
     FT sum_distances = 0.f;
 		
-    // Iterate through point indices assigned to each detected shape.
+    // Iterates through point indices assigned to each detected shape.
     std::vector<size_t>::const_iterator
-      indexIt = (*it)->assigned_points().begin();
+      index_it = (*it)->assigned_points().begin();
 
-    while (indexIt != (*it)->assigned_points().end()) {
+    while (index_it != (*it)->assigned_points().end()) {
       
-			// Retrieve point
-      const Point &p = *(points.begin() + (*indexIt));
+			// Retrieves point
+      const Point &p = *(points.begin() + (*index_it));
 			
-      // Add Euclidean distance between point and shape.
+      // Adds Euclidean distance between point and shape.
       sum_distances += sqrt((*it)->squared_distance(p));
 
-      // Proceed with next point.
-      indexIt++;
+      // Proceeds with next point.
+      index_it++;
     }
 
-    // Compute average distance.
+    // Computes and prints average distance.
     const FT average_distance = sum_distances / shape->assigned_points().size();
-
     std::cout << " average distance: " << average_distance << std::endl;
 
-    // Proceed with next detected shape.
+    // Proceeds with next detected shape.
     it++;
   }
 

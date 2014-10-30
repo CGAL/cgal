@@ -19,7 +19,7 @@ typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef Kernel::FT FT;
 typedef Kernel::Point_3 Point;
 typedef CGAL::Point_with_normal_3<Kernel> Point_with_normal;
-typedef std::vector<Point_with_normal> Point_list;
+typedef std::vector<Point_with_normal> Pwn_list;
 typedef CGAL::Identity_property_map<Point_with_normal> Point_pmap;
 typedef CGAL::Normal_of_point_with_normal_pmap<Kernel> Normal_pmap;
 
@@ -31,18 +31,20 @@ typedef CGAL::Shape_detection_3<ShapeDetectionTraits> Shape_detection;
 
 
 int main(int argc, char **argv) {
-  Point_list points;
 
-  // Loading a point set from a file. 
+  // List of points with normals.
+  Pwn_list points;
+	
+  // Loads input point set from a file. 
   // read_xyz_points_and_normals takes an OutputIterator for writing the points
   // and a property map for storing the normal vector associated to each point.
-  std::ifstream stream("cube.xyz");
+  std::ifstream stream("cube.pwn");
 
   if (!stream ||
     !CGAL::read_xyz_points_and_normals(stream,
     std::back_inserter(points),
     Normal_pmap())) {
-      std::cerr << "Error: cannot read file cube.xyz" << std::endl;
+      std::cerr << "Error: cannot read file cube.pwn" << std::endl;
       return EXIT_FAILURE;
   }
 
@@ -50,8 +52,7 @@ int main(int argc, char **argv) {
   Shape_detection sd(points.begin(),
     points.end(), Point_pmap(), Normal_pmap());
 
-  // Shapes to be detected are registered
-  // by using the template Shape_factory
+  // Registers planar shapes via the template Shape_factory
   sd.add_shape_factory(new 
     CGAL::Shape_factory<CGAL::Plane_shape<ShapeDetectionTraits> >);
 
