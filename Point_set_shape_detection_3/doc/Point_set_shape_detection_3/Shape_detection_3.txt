@@ -20,7 +20,7 @@ The method takes as input a point set with unoriented normals and provides as ou
 
 In our context the error between a point and a shape is defined by its distance and normal deviation to the shape. A random subset corresponds to the minimal number of points (with normals) required to uniquely define a primitive.
 
-For very large point sets however the basic RANSAC method is not practical when testing all possible shape candidates against the input data in order to find the largest shapes. The main idea behind the efficient RANSAC consists of testing shape candidates only against subsets of the input data. Only a subset of all possible shape candidates is constructed until the probability to miss the largest candidate is lower than a user-specified parameter. The largest shape is repeatedly extracted until no more shapes, restricted to cover a minimum number of points, can be extracted. An additional gain in efficiency is achieved through exploiting the normal attributes during initial shape construction and inlier enumeration.
+For very large point sets however the basic RANSAC method is not practical when testing all possible shape candidates against the input data in order to find the largest shape. The main idea behind the efficient RANSAC consists of testing shape candidates only against subsets of the input data. Only a subset of all possible shape candidates is constructed until the probability to miss the largest candidate is lower than a user-specified parameter. The largest shape is repeatedly extracted until no more shapes, restricted to cover a minimum number of points, can be extracted. An additional gain in efficiency is achieved through exploiting the normal attributes during initial shape construction and inlier enumeration.
 
 The support of a shape refers to the footprint of the points covered by the primitive. To avoid generating shapes with fragmented support we impose a connectivity constraint by considering only one connected component, referred to as cluster, selected as the one covering the largest number of inliers.
 
@@ -28,30 +28,28 @@ The output of the shape detection algorithm is a set of shapes with associated p
 
 \section Point_set_shape_detection_3Parameters Parameters
 The algorithm requires five parameters:
-- \f$epsilon\f$ and \f$normal deviation\f$:
-The error between a point-with-normal and a shape is defined by its Euclidean distance and normal deviation to the shape. The normal deviation is computed between the normal at the point and the normal to the shape at the closest projection onto the primitive. 
-
-Parameter epsilon defines the maximum tolerance Euclidean distance between a point and a shape. A high value for epsilon leads to the detection of fewer large shapes and hence a less detailed detection. A low value for epsilon yields a more detailed detection, but may lead to either oversegmentation when all input points are sampled on primitive shapes, or lower coverage. The impact of this parameter is depicted by Figure \cgalFigureRef{Point_set_shape_detection_3_parameter_epsilon_variation}. Its impact on performance is evaluated in Section \ref Point_set_shape_detection_3Performance.
-\cgalFigureBegin{Point_set_shape_detection_3_parameter_epsilon_variation,epsilon_variation.png}
-We depict the impact of epsilon on the level of details of the detection. The input point set is sampled from the mesh shown left. Middle left: detection of planar shapes with epsilon set to 2.0 (one color per detected shape). Most details such as chimneys on the roof are not separated. Middle right:  detection with epsilon set to 0.5. The facades are correctly detected and some details of the roof are detected. Right: setting epsilon to 0.25 yields a more detailed but slightly oversegmented detection.
+- \f$epsilon\f$ and \f$normal\, deviation\f$:
+The error between a point-with-normal and a shape is defined by its Euclidean distance and normal deviation to the shape. The normal deviation is computed between the normal at the point and the normal to the shape at the closest projection onto the primitive. Parameter epsilon defines the maximum tolerance Euclidean distance between a point and a shape. A high value for epsilon leads to the detection of fewer large shapes and hence a less detailed detection. A low value for epsilon yields a more detailed detection, but may lead to either oversegmentation when all input points are sampled on primitive shapes, or lower coverage. The impact of this parameter is depicted by Figure \cgalFigureRef{Point_set_shape_detection_3_parameter_epsilon_variation}. Its impact on performance is evaluated in Section \ref Point_set_shape_detection_3Performance.
+\cgalFigureBegin{Point_set_shape_detection_3_parameter_epsilon_variation,epsilon_variation2.png}
+We depict the impact of epsilon on the level of details of the detection. The input point set on the left is sampled from a mesh. Middle left: detection of planar shapes with epsilon set to 2.0 (one color per detected shape). Most details such as chimneys on the roof are not separated. Middle right:  detection with epsilon set to 0.5. The facades are correctly detected and some details of the roof are detected. Right: setting epsilon to 0.25 yields a more detailed but slightly oversegmented detection.
 \cgalFigureEnd
 
-- \f$cluster_epsilon\f$:
+- \f$cluster\_epsilon\f$:
 Clustering of the points into connected components covered by a detected shape is controlled via parameter cluster_epsilon. The points covered by a shape are mapped to a 2D parameter space chosen to minimize distortion and best preserve arc-length distances. This 2D parameter space is discretized using a regular grid, and a connected component search is performed to identify the largest cluster. Parameter cluster_epsilon defines the spacing between two cells of the regular grid, so that two points separated by a distance of at most \f$2\sqrt{2}\, cluster\_epsilon\f$ are considered adjacent. The impact of parameter cluster_epsilon is depicted by Figure \cgalFigureRef{Point_set_shape_detection_3_parameter_connectivity}. 
 \cgalFigureBegin{Point_set_shape_detection_3_parameter_connectivity,varying_connectivity.png}
 Parameter cluster_epsilon controls the connectivity of the points covered by a detected shape. The input point set is sampled on four coplanar squares. Left: a large value for cluster_epsilon leads to detecting a single planar shape. Middle: a middle value for cluster_epsilon yields the detection of four squares. Notice that few points within the squares are not detected as not connected. Right: a small value for cluster_epsilon leads to oversegmentation.
 \cgalFigureEnd
 
-- \f$search thoroughness\f$:
+- \f$probability\f$:
 The search endurance parameter defines the probability to miss the largest candidate shape. A lower probability provides a higher reliability and determinism at the cost of longer running times.
 
-- \f$minimum number of points\f$:
-The minimum number of points provides control over termination of the algorithm. A shape candidate considered for detection is dropped if it covers less than this minimum number of points. Note that during detection the number of points covered by a shape are determined globally, i.e., independently from the number of connected components that are split at a final shape extraction step. 
+- \f$minimum\, number\, of\, points\f$:
+The minimum number of points is a non strict parameter to control the termination of the algorithm. The search for shapes is continued until no further shapes can be found with a higher support. Depending on the chosen probability, shapes might be extracted with a number of points lower than the specified parameter.
 
 \section Point_set_shape_detection_3Usage Usage
 The main class `Shape_detection_3` takes a template parameter `Shape_detection_traits_3` that defines the geometric types and input format. Property maps provides a means to interface with user-specific data structures. The first parameter of the `Shape_detection_traits_3` class is the common Kernel. In order to match the constraints of property maps, an iterator type and two maps that map an iterator to a point and a normal are specified in the `Shape_detection_traits_3` class. The concept behind property maps is detailed in Chapter \ref chapterProperty_map.
 
-Typical usage consists of four steps:
+Typical usage consists of five steps:
 
 -# Provide input data via a range iterator
 -# Register shape factories
@@ -80,14 +78,14 @@ This example illustrates how to access the points assigned to each shape and to 
 
 \section Point_set_shape_detection_3Performance Performance
  
-The running time and detection performance depend on the chosen parameters. Selective error tolerance parameters lead to higher running times. It leads to smaller shapes as many shape candidates are generated to find the largest shape. We plot the detection performance against the epsilon error tolerance parameter for detecting planes in a complex scene with 5M points, see\cgalFigureRef{Point_set_shape_detection_3_performace_epsilon}. The probability parameter controls the endurance when searching for the largest candidate at each iteration. It barely impacts the number of detected shapes, has a moderate impact on the size of the detected shapes and increases the running times. We plot the performance against the probability parameter, see \cgalFigureRef{Point_set_shape_detection_3_performace_probability}.
+The running time and detection performance depend on the chosen parameters. Selective error tolerance parameters lead to higher running times. It leads to smaller shapes as many shape candidates are generated to find the largest shape. We plot the detection performance against the epsilon error tolerance parameter for detecting planes in a complex scene with 5M points, see \cgalFigureRef{Point_set_shape_detection_3_performace_epsilon}. The probability parameter controls the endurance when searching for the largest candidate at each iteration. It barely impacts the number of detected shapes, has a moderate impact on the size of the detected shapes and increases the running times. We plot the performance against the probability parameter, see \cgalFigureRef{Point_set_shape_detection_3_performace_probability}.
 
 \cgalFigureBegin{Point_set_shape_detection_3_performace_epsilon,epsilon_graph.png}
 The graph depicts the number of detected shapes (purple) and the coverage (green), i.e., the ratio assignedPoints / totalPoints, depending on epsilon parameter. A higher value for epsilon, i.e., a more tolerant error, leads to fewer but larger shapes and shorter running times.
 \cgalFigureEnd
 
 \cgalFigureBegin{Point_set_shape_detection_3_performace_probability,prob_graph.png}
-The graph depicts the time, coverage and number of detected primitives against the search endurance parameter, i.e., the probability to miss the largest primitive at each iteration. The number of shapes is stable and the coverage increases when the probability is lowered. The running times increase significantly as a lot more candidates are generated during each iteration of the method.
+The graph depicts the time, coverage and number of detected primitives against the search endurance parameter, i.e., the probability to miss the largest shape at each iteration. The number of shapes is stable and the coverage increases when the probability is lowered. The running times increase significantly as a lot more candidates are generated during each iteration of the method.
 \cgalFigureEnd
 
 */ 
