@@ -88,13 +88,11 @@ namespace CGAL {
   /*!
 \brief Implementation of a RANSAC method for shape detection.
 
-Given a point set in 3D space with unoriented normals sampled from a surface,
-the method detects sets of connected points on the surface of shapes.
-Each point in the input data will be assigned to at most one shape.
-This implementation follows the algorithm published by \cgalCite{Schnabel07}.
-
-Some properties: each point gets assigned to at most one shape
-Please refer to \cgalCite{Schnabel07} for more information.
+Given a point set in 3D space with unoriented normals sampled surfaces,
+the method detects sets of connected points on the surface of primitive shapes.
+Each input point is assigned to at most one detected primitive shape.
+This implementation follows the algorithm published by Schnabel
+et al. in 2007 \cgalCite{Schnabel07}.
 
 \tparam Shape detection traits class. 
 
