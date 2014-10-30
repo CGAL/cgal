@@ -2,7 +2,6 @@
 #define CGAL_MINKOWSKI_SUM_BY_REDUCED_CONVOLUTION_2_H
 
 #include <CGAL/basic.h>
-#include <CGAL/connect_holes.h>
 #include <CGAL/Arrangement_with_history_2.h>
 #include <CGAL/Arr_segment_traits_2.h>
 
@@ -92,31 +91,17 @@ public:
   void operator()(const Polygon_with_holes_2 &pgn1, const Polygon_with_holes_2 &pgn2,
                   Polygon_2 &outer_boundary, OutputIterator holes) const
   {
-    Polygon_2 p_pseudo_simple, q_pseudo_simple;
-
-    std::list<Point_2> points;
-    connect_holes(pgn1, std::back_inserter(points));
-    for (typename std::list<Point_2>::iterator it = points.begin(); it != points.end(); it++) {
-      p_pseudo_simple.push_back(*it);
-    }
-
-    points.clear();
-    connect_holes(pgn2, std::back_inserter(points));
-    for (typename std::list<Point_2>::iterator it = points.begin(); it != points.end(); it++) {
-      q_pseudo_simple.push_back(*it);
-    }
-
-    common_operator(p_pseudo_simple, q_pseudo_simple, outer_boundary, holes);
+    common_operator(pgn1, pgn2, outer_boundary, holes);
   }
 
 private:
 
   template <class OutputIterator>
-  void common_operator(const Polygon_2 &pgn1, const Polygon_2 &pgn2,
+  void common_operator(const Polygon_with_holes_2 &pgn1, const Polygon_with_holes_2 &pgn2,
                   Polygon_2 &outer_boundary, OutputIterator holes) const
   {
     // Initialize collision detector. It operates on pgn2 and on the inversed pgn1:
-    const Polygon_2 inversed_pgn1 = transform(Aff_transformation_2<Kernel>(SCALING, -1), pgn1);
+    const Polygon_with_holes_2 inversed_pgn1 = transform(Aff_transformation_2<Kernel>(SCALING, -1), pgn1);
     AABB_collision_detector_2<Kernel, Container> collision_detector(pgn2, inversed_pgn1);
 
     // Compute the reduced convolution (see section 4.1 of Alon's master's thesis)
@@ -135,6 +120,44 @@ private:
     for (Face_iterator face = arr.faces_begin(); face != arr.faces_end(); ++face)
     {
       handle_face(arr, face, holes, collision_detector);
+    }
+  }
+
+  // Builds the reduced convolution for each pair of loop in the two
+  // polygons-with-holes.
+  void build_reduced_convolution(const Polygon_with_holes_2 &pgnwh1, const Polygon_with_holes_2 &pgnwh2,
+                                 Segment_list &reduced_convolution) const
+  {
+    for (int x = 0; x < 1+pgnwh1.number_of_holes(); x++)
+    {
+      for (int y = 0; y < 1+pgnwh2.number_of_holes(); y++)
+      {
+
+        if (x != 0 && y != 0)
+        {
+          continue;
+        }
+
+        Polygon_2 pgn1, pgn2;
+
+        if (x == 0) {
+          pgn1 = pgnwh1.outer_boundary();
+        } else {
+          typename Polygon_with_holes_2::Hole_const_iterator it1 = pgnwh1.holes_begin();
+          for (int count = 0; count < x-1; count++) { it1++; }
+          pgn1 = *it1;
+        }
+
+        if (y == 0) {
+          pgn2 = pgnwh2.outer_boundary();
+        } else {
+          typename Polygon_with_holes_2::Hole_const_iterator it2 = pgnwh2.holes_begin();
+          for (int count = 0; count < y-1; count++) { it2++; }
+          pgn2 = *it2;
+        }
+
+        build_reduced_convolution(pgn1, pgn2, reduced_convolution);
+      }
     }
   }
 
@@ -405,6 +428,31 @@ private:
     {
       return midpoint(v, min_q);
     }
+  }
+
+  template <class Transformation>
+  Polygon_with_holes_2 transform(const Transformation& t, const Polygon_with_holes_2 & p) const
+  {
+    Polygon_2 p1;
+    for(unsigned int i = 0; i< p.outer_boundary().size(); ++i)
+    {
+      p1.push_back(p.outer_boundary().vertex(i));
+    }
+
+    Polygon_with_holes_2 result(CGAL::transform(t, p1));
+
+    typename Polygon_with_holes_2::Hole_const_iterator it = p.holes_begin();
+    while(it != p.holes_end())
+    {
+      Polygon_2 p2;
+      for(unsigned int i = 0; i< (*it).size(); ++i)
+      {
+        p2.push_back((*it).vertex(i));
+      }
+      result.add_hole(CGAL::transform(t, p2));
+      ++it;
+    }
+    return result;
   }
 };
 
