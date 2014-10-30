@@ -41,9 +41,9 @@ public :
   Stop_above_cost_threshold( double aThreshold ) : mThres(aThreshold) {}
 
   /// Returns `true` when `cost` is smaller or equal than the threshold.
-  template<class ConstrainedDelaunayTriangulation, class VertexHandle>
-  bool operator()( ConstrainedDelaunayTriangulation const& cdt
-                 , VertexHandle                     const& p
+  template<class Tr>
+  bool operator()(const Constrained_triangulation_plus_2<Tr>& ct
+                  , typename Constrained_triangulation_plus_2<Tr>::Vertex_handle q
                  , double                                  cost
                  , std::size_t                             initial_count
                  , std::size_t                             current_count

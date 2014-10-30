@@ -27,7 +27,7 @@ is model of `PolylineSimplificationVertexBase_2`.
   */
   template<class Tr>
   bool operator()( const CGAL::Constrained_triangulation_plus_2<Tr>& ct
-                  , CGAL::Constrained_triangulation_plus_2<Tr>::VertexHandle const& q
+                  , CGAL::Constrained_triangulation_plus_2<Tr>::Vertex_handle q
                  , double cost
                  , std::size_t initial_count
                  , std::size_t current_count

@@ -364,7 +364,7 @@ Simplifies an open or closed polyline given as an iterator range of 2D \cgal poi
 \tparam PointOutputIterator must be an output iterator to which `CGAL::Kernel::Point_2` can be assigned.
 */
   template <class PointIterator, class CostFunction, class StopFunction, class PointOutputIterator>
-  OutputIterator
+  PointOutputIterator
   simplify(PointIterator b, PointIterator e,
            CostFunction cost,
            StopFunction stop,
@@ -427,7 +427,7 @@ simplify(CGAL::Constrained_triangulation_plus_2<Tr>& ct,
 
   while(simplifier()){}
   if(! keep_points){
-    pct.remove_points_from_constraint(cid);
+    ct.remove_points_from_constraint(cid);
   }
   return simplifier.number_of_removed_vertices();
 }
@@ -455,7 +455,7 @@ simplify(CGAL::Constrained_triangulation_plus_2<Tr>& ct,
 
   while(simplifier()){}
   if(! keep_points){
-    pct.remove_points_from_constraints();
+    ct.remove_points_from_constraints();
   }
   return simplifier.number_of_removed_vertices();
 }

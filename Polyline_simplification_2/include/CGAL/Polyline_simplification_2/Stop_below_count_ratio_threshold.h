@@ -41,8 +41,8 @@ public :
 
   /// Returns `true` when `( current_count / initial_count )` is smaller or equal than the threshold.
   template<class ConstrainedDelaunayTriangulation> // , class VertexHandle>  
-  bool operator()( ConstrainedDelaunayTriangulation const& 
-                   , typename ConstrainedDelaunayTriangulation::Vertex_handle                     const& 
+  bool operator()(const ConstrainedDelaunayTriangulation & 
+                   , typename ConstrainedDelaunayTriangulation::Vertex_handle 
                  , double                                  
                  , std::size_t                             initial_count
                  , std::size_t                             current_count

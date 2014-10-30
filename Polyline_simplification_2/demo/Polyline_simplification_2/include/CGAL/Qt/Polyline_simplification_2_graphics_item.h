@@ -199,11 +199,11 @@ PolylineSimplificationGraphicsItem<PCT>::paintVertices(QPainter *painter)
         it != this->t->vertices_in_constraint_end(*cit);
         it++){
         QPointF point = matrix.map(convert((*it)->point()));  
-        if ( (*it)->unremovable() )       
-          painter->setPen(this->unremovableVerticesPen());
-        else 
+        if ( (*it)->removable() )       
           painter->setPen(this->verticesPen());
-        
+        else 
+          painter->setPen(this->unremovableVerticesPen());
+
         painter->drawPoint(point);
       }
     }

@@ -50,14 +50,14 @@ public:
   /// between `p` and `r`, and the straight line segment `p->r`.
 
     template<class Tr>
-    boost::optional<typename CGAL::Constrained_triangulation_plus_2<Tr>::Geom_traits::FT>
-    operator()(const CGAL::Constrained_triangulation_plus_2<Tr>& pct
-               , typename CGAL::Constrained_triangulation_plus_2<Tr>::Vertices_in_constraint_iterator p
-               , typename CGAL::Constrained_triangulation_plus_2<Tr>::Vertices_in_constraint_iterator q
-               , typename CGAL::Constrained_triangulation_plus_2<Tr>::Vertices_in_constraint_iterator r) const
+    boost::optional<typename Constrained_triangulation_plus_2<Tr>::Geom_traits::FT>
+    operator()(const Constrained_triangulation_plus_2<Tr>& pct
+               , typename Constrained_triangulation_plus_2<Tr>::Vertices_in_constraint_iterator p
+               , typename Constrained_triangulation_plus_2<Tr>::Vertices_in_constraint_iterator q
+               , typename Constrained_triangulation_plus_2<Tr>::Vertices_in_constraint_iterator r) const
   {
-    typedef typename CGAL::Constrained_triangulation_plus_2<Tr>::Points_in_constraint_iterator Points_in_constraint_iterator;
-    typedef typename CGAL::Constrained_triangulation_plus_2<Tr>::Geom_traits Geom_traits ;
+    typedef typename Constrained_triangulation_plus_2<Tr>::Points_in_constraint_iterator Points_in_constraint_iterator;
+    typedef typename Constrained_triangulation_plus_2<Tr>::Geom_traits Geom_traits ;
     typedef typename Geom_traits::FT                                  FT;
     typedef typename Geom_traits::Compute_squared_distance_2 Compute_squared_distance ;
     typedef typename Geom_traits::Construct_segment_2        Construct_segment ;
