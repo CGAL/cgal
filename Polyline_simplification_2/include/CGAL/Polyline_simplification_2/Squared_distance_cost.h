@@ -33,8 +33,8 @@ class Constrained_triangulation_plus_2;
 namespace Polyline_simplification_2
 {
 
-/// \addtogroup PkgPolylineSimplification2Classes
-/// @{
+/// \ingroup PkgPolylineSimplification2Classes
+
 /// This class is a cost function which calculates the cost as the square of the distance between the original and simplified polylines.
 ///
 /// \cgalModels `PolylineSimplificationCostFunction`.
@@ -85,7 +85,6 @@ public:
 
 };
 
-  /// @}
 
 } // namespace Polyline_simplification_2
 

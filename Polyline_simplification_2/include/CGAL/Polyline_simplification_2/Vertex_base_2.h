@@ -27,8 +27,7 @@ namespace CGAL {
 
 namespace Polyline_simplification_2 {
 
-/// \addtogroup PkgPolylineSimplification2Classes
-/// @{
+/// \ingroup PkgPolylineSimplification2Classes
 
 /// A vertex base class with data members needed by the simplification algorithm.
 
@@ -65,7 +64,6 @@ public:
   }
 };
 
-/// @}
 
 } // Polyline_simplification_2
 } // CGAL

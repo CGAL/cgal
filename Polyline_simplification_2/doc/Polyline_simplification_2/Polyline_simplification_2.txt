@@ -14,12 +14,12 @@ of \cgal.
 
 \section Section_PolylineSimplification_Introduction Introduction
 
-Polyline simplification is the process of reducing the
+<em>Polyline simplification</em> is the process of reducing the
 number of vertices used in a set of polylines while keeping the
 overall shape as much as possible.
 
 
-Topology preserving polyline simplification means that neither
+<em>Topology preserving polyline simplification</em> means that neither
 intersections are introduced, nor the nesting level of a polygon
 changes: islands do not intersect a simplified coastline, and islands
 stay in the water.
@@ -101,7 +101,7 @@ the candidate vertex `q` and all its adjacent vertices (except `p` and
 regions of the same polyline.
 
 Let \f$t_0,...,t_m\f$ be the points of the vertices adjacent to vertex
-`q`, different from `p` and `r` and let \f$ v_2 = \max \{ sdist((p,r),
+`q`, different from `p` and `r` and let \f$ v_2 = \min \{ sdist((p,r),
 t_i) | i=0,..,n\}\f$. The cost of removing vertex `q` is
 \f$v_1/v_2\f$.
 
@@ -163,7 +163,10 @@ In the example we mark further polyline vertices as not removable.
 This package provides a convenience function
 `Polyline_simplification_2::mark_vertices_unremovable()` that marks
 the vertices with smallest and largest `x` and `y` coordinates of each
-polyline constraint as non-removable.  Finally, we iterate
+polyline constraint as non-removable.  This is rather simplistic, and 
+in a real world application one would mark vertices as unremovable 
+because they are important.
+Finally, we iterate
 over all vertices of all polyline constraints.
 
 \cgalExample{Polyline_simplification_2/simplify.cpp}

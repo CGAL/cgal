@@ -25,8 +25,8 @@ namespace CGAL {
 
 namespace Polyline_simplification_2
 {
-/// \addtogroup PkgPolylineSimplification2Classes
-/// @{
+/// \ingroup PkgPolylineSimplification2Classes
+
 
 /// This class is a cost function which calculates the cost as a scaled variant of the square of the distance between the original and simplified polylines.
 ///
@@ -90,7 +90,7 @@ public:
 
 };
 
-/// @}
+
 
 } // namespace Polyline_simplification_2
 

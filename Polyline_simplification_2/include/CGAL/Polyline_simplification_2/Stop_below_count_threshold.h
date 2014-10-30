@@ -25,8 +25,7 @@ namespace CGAL {
 namespace Polyline_simplification_2
 {
 
-/// \addtogroup PkgPolylineSimplification2Classes
-/// @{
+/// \ingroup PkgPolylineSimplification2Classes
 
 /// This class is a stop predicate returning `true` when the number of 
 /// vertices is smaller than a certain threshold.
@@ -55,7 +54,6 @@ private:
   
   std::size_t mThres ;
 };    
-  /// @}
 } // namespace Polyline_simplification_2
 
 } //namespace CGAL

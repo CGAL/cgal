@@ -1,4 +1,4 @@
-/// \defgroup PkgPolylineSimplification2 2D PolylineSimplification Reference
+/// \defgroup PkgPolylineSimplification2 2D Polyline Simplification Reference
 /// \defgroup PkgPolylineSimplification2Concepts Concepts
 /// \ingroup PkgPolylineSimplification2
 
