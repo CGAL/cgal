@@ -26,7 +26,7 @@ the sequence of vertices on this constraint. These vertices are
 either vertices of the input constraint or intersection points.
 
 Two consecutive vertices of an input constraint form a *subconstraint*.
-A suconstraint is a pair of vertex handles and corresponds to a constrained edge of the
+A subconstraint is a pair of vertex handles and corresponds to a constrained edge of the
 triangulation, which is a pair of a face handle and an index. 
 
 The constraint hierarchy also allows to retrieve the set
