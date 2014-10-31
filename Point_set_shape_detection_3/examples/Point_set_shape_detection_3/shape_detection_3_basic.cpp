@@ -23,7 +23,7 @@ typedef CGAL::Shape_detection_traits_3<Kernel,
 typedef CGAL::Shape_detection_3<Traits>                     Shape_detection;
 
 
-int main(int argc, char **argv) 
+int main() 
 {
   // List of points with normals.
   Pwn_list points;
