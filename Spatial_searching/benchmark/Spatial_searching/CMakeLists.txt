@@ -33,6 +33,7 @@ if ( CGAL_FOUND )
   create_single_source_cgal_program( "Nearest_neighbor_searching_2D.cpp" )
   create_single_source_cgal_program( "Nearest_neighbor_searching_2D_user_defined.cpp" )
   create_single_source_cgal_program( "Split_data.cpp" )
+create_single_source_cgal_program( "nn3cgal.cpp" )
 
 else()
   

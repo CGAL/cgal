@@ -21,13 +21,17 @@
 
 #ifndef CGAL_KD_TREE_TRAITS_POINT_H
 #define CGAL_KD_TREE_TRAITS_POINT_H
+#include <CGAL\Dimension.h>
 
 
 namespace CGAL {
-  template <class FT_, class Point, class CartesianCoordinateIterator, class ConstructCartesianCoordinateIterator>
+  template <class FT_, class Point, class CartesianCoordinateIterator, class ConstructCartesianCoordinateIterator, int D>
   class Search_traits {
     
   public:
+
+    typedef typename Dimension_tag<D> Dimension;
+
     typedef CartesianCoordinateIterator Cartesian_const_iterator_d;
     typedef ConstructCartesianCoordinateIterator Construct_cartesian_const_iterator_d;
     typedef Point Point_d;

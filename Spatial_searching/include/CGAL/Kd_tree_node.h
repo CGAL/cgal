@@ -42,6 +42,7 @@ namespace CGAL {
     typedef typename TreeTraits::FT FT;
     typedef typename Kd_tree<TreeTraits,Splitter,UseExtendedNode>::Separator Separator;
     typedef typename Kd_tree<TreeTraits,Splitter,UseExtendedNode>::Point_d_iterator Point_d_iterator;
+	typedef typename TreeTraits::Dimension D;
 
   private:
 
@@ -264,7 +265,7 @@ namespace CGAL {
     template <class OutputIterator, class FuzzyQueryItem>
     OutputIterator 
     search(OutputIterator it, const FuzzyQueryItem& q,
-	   Kd_tree_rectangle<FT>& b) const
+	   Kd_tree_rectangle<FT,D>& b) const
     {
       if (is_leaf()) { 
 	if (n>0) 

@@ -60,6 +60,7 @@ public:
   typedef typename std::vector<Point_d>::const_iterator const_iterator;
 
   typedef typename std::vector<Point_d>::size_type size_type;
+  typedef typename SearchTraits::Dimension D;
 
 private:
   SearchTraits traits_;
@@ -68,7 +69,7 @@ private:
 
   Node_handle tree_root;
 
-  Kd_tree_rectangle<FT>* bbox;
+  Kd_tree_rectangle<FT,D>* bbox;
   std::vector<Point_d> pts;
 
   // Instead of storing the points in arrays in the Kd_tree_node
@@ -210,7 +211,7 @@ public:
       data.push_back(&pts[i]);
     }
     Point_container c(dim, data.begin(), data.end(),traits_);
-    bbox = new Kd_tree_rectangle<FT>(c.bounding_box());
+    bbox = new Kd_tree_rectangle<FT,D>(c.bounding_box());
     if (c.size() <= split.bucket_size()){
       tree_root = create_leaf_node(c);
     }else {
@@ -335,7 +336,7 @@ public:
     root()->print();
   }
 
-  const Kd_tree_rectangle<FT>&
+  const Kd_tree_rectangle<FT,D>&
   bounding_box() const
   {
     if(! is_built()){
