@@ -66,9 +66,8 @@ CGAL_ImageIO:
 CGAL_Qt4:
 
 DONE #include "/home/gdamiand/sources/CGAL/GraphicsView/src/CGAL_Qt4/utility.cpp"
-
-#include "/home/gdamiand/sources/CGAL/GraphicsView/src/CGAL_Qt4/resources.cpp"
-#include "/home/gdamiand/sources/CGAL/GraphicsView/src/CGAL_Qt4/debug.cpp"
-#include "/home/gdamiand/sources/CGAL/GraphicsView/src/CGAL_Qt4/GraphicsViewPolylineInput.cpp"
-#include "/home/gdamiand/sources/CGAL/GraphicsView/src/CGAL_Qt4/DemosMainWindow.cpp"
-#include "/home/gdamiand/sources/CGAL/GraphicsView/src/CGAL_Qt4/GraphicsViewNavigation.cpp"
+DONE #include "/home/gdamiand/sources/CGAL/GraphicsView/src/CGAL_Qt4/resources.cpp"
+DONE #include "/home/gdamiand/sources/CGAL/GraphicsView/src/CGAL_Qt4/debug.cpp"
+DONE #include "/home/gdamiand/sources/CGAL/GraphicsView/src/CGAL_Qt4/GraphicsViewPolylineInput.cpp"
+DONE #include "/home/gdamiand/sources/CGAL/GraphicsView/src/CGAL_Qt4/DemosMainWindow.cpp"
+DONE #include "/home/gdamiand/sources/CGAL/GraphicsView/src/CGAL_Qt4/GraphicsViewNavigation.cpp"

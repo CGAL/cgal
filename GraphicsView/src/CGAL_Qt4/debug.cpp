@@ -19,35 +19,9 @@
 // Author(s)     : Andreas Fabri <Andreas.Fabri@geometryfactory.com>
 //                 Laurent Rineau <Laurent.Rineau@geometryfactory.com>
 
+#ifndef CGAL_HEADER_ONLY
+
 #include <CGAL/Qt/debug.h>
-#include <QDir>
+#include <CGAL/Qt/debug_impl.h>
 
-#include <iostream>
-
-namespace CGAL {
-namespace Qt {
-
-
-void traverse_resources(const QString& name, const QString& dirname, int indent)
-{
-  std::cerr << qPrintable(QString(indent, ' '))
-            << qPrintable(name);
-  QString fullname = 
-    dirname.isEmpty() ?
-    name :
-    dirname + "/" + name;
-  QDir dir(fullname);
-  if(dir.exists()) {
-    std::cerr << "/\n";
-    Q_FOREACH(QString path, dir.entryList())
-    {
-      traverse_resources(path, fullname, indent + 2);
-    }
-  }
-  else {
-    std::cerr << "\n";
-  }
-}
-
-} // namesapce Qt
-} // namespace CGAL
+#endif // CGAL_HEADER_ONLY

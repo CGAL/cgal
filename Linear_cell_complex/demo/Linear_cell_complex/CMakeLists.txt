@@ -11,7 +11,7 @@ else()
   cmake_policy(VERSION 2.6)
 endif()
 
-add_definitions(-DCGAL_HEADER_ONLY)
+# add_definitions(-DCGAL_HEADER_ONLY)
 
 ## To add expensive tests
 # add_definitions("-DCGAL_CHECK_EXPENSIVE")
