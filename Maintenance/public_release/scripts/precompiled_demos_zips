@@ -47,7 +47,14 @@ pushd Spatial_searching_2_Demo;         zip ../spatial_searching.zip *;         
 pushd Linear_cell_complex_Demo;         zip ../linear_cell_complex_3.zip *;          popd
 
 # CGAL-4.2 but was forgot -> published with 4.3
-pushd Arrangement_on_surface_2_Demo;    zip ../arrangements_2.zip *;                  popd
+pushd Arrangement_on_surface_2_Demo;    zip ../arrangements_2.zip *;                 popd
+
+# CGAL-4.5
+pushd Periodic_2_triangulation_2_Demo;  zip ../Periodic_2_Delaunay_triangulation_2.zip *;
+                                                                                     popd
+# probably an error, in CGAL-4.5:
+rm -rf Surface_modeling_Demo
+
 
 # check
 echo CHECK now
