@@ -84,7 +84,10 @@ public:
     CGAL_precondition(pgn1.orientation() == COUNTERCLOCKWISE);
     CGAL_precondition(pgn2.orientation() == COUNTERCLOCKWISE);
 
-    common_operator(pgn1, pgn2, outer_boundary, holes);
+    const Polygon_with_holes_2 pwh1(pgn1);
+    const Polygon_with_holes_2 pwh2(pgn2);
+
+    common_operator(pwh1, pwh2, outer_boundary, holes);
   }
 
   template <class OutputIterator>
