@@ -1,4 +1,14 @@
 
+-------------------------------- Release 4.5.1 --------------------------------
+
+Release date: XX 2014
+
+
+* 3D Mesh Generation
+
+  - Fix a bug in the sliver exudation preservation of boundaries.
+
+
 -------------------------------- Release 4.5 --------------------------------
 
 Release date: October 2014

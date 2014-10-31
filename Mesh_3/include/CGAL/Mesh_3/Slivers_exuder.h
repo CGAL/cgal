@@ -38,6 +38,7 @@
 #include <boost/bind.hpp>
 #include <boost/format.hpp>
 #include <boost/type_traits/is_convertible.hpp>
+#include <boost/optional.hpp>
 
 #include <CGAL/Timer.h>
 
@@ -403,7 +404,8 @@ private: // Types
   // weighted point conflict zone. Such facets are represented by their edge
   // which do not contain the pumped vertex
   typedef std::pair<Vertex_handle,Vertex_handle> Ordered_edge;
-  typedef std::map<Ordered_edge, Surface_patch_index > Umbrella;
+  typedef std::pair<Surface_patch_index, std::size_t> Patch_and_counter;
+  typedef std::map<Ordered_edge, Patch_and_counter> Umbrella;
 
   // Boundary_facets_from_outside represents the facet of the conflict zone
   // seen from outside of it. It stores Surface_patch_index of the facet, and
@@ -531,14 +533,15 @@ private:
   /**
    * Returns the umbrella of internal_facets vector
    */
-  Umbrella get_umbrella(const Facet_vector& internal_facets,
-                        const Vertex_handle& v) const;
+  boost::optional<Umbrella>
+  get_umbrella(const Facet_vector& internal_facets,
+               const Vertex_handle& v) const;
 
   /**
    * Updates the mesh with new_point
    */
   template <bool pump_vertices_on_surfaces>
-  void update_mesh(const Weighted_point& new_point,
+  bool update_mesh(const Weighted_point& new_point,
                    const Vertex_handle& old_vertex,
                    bool *could_lock_zone = NULL);
 
@@ -565,6 +568,15 @@ private:
   {
     if( h2 < h1 )
       std::swap(h1, h2);
+  }
+
+  template <typename Handle>
+  static
+  void order_three_handles(Handle& h1, Handle& h2, Handle& h3)
+  {
+    if(h1 > h2) std::swap(h1, h2);
+    if(h2 > h3) std::swap(h2, h3);
+    if(h1 > h2) std::swap(h1, h2);
   }
 
   /**
@@ -1110,9 +1122,10 @@ pump_vertex(const Vertex_handle& pumped_vertex,
     Weighted_point wp(pumped_vertex->point(), best_weight);
 
     // Insert weighted point into mesh
-    update_mesh<pump_vertices_on_surfaces>(wp, pumped_vertex, could_lock_zone);
-
-    return true;
+    // note it can fail if the mesh is non-manifold at pumped_vertex
+    return update_mesh<pump_vertices_on_surfaces>(wp,
+                                                  pumped_vertex,
+                                                  could_lock_zone);
   }
 
   return false;
@@ -1355,12 +1368,13 @@ get_best_weight(const Vertex_handle& v, bool *could_lock_zone) const
 
 
 template <typename C3T3, typename SC, typename V_, typename FT>
-typename Slivers_exuder<C3T3,SC,V_,FT>::Umbrella
+boost::optional<typename Slivers_exuder<C3T3,SC,V_,FT>::Umbrella >
 Slivers_exuder<C3T3,SC,V_,FT>::
-get_umbrella(const Facet_vector& facets,
-             const Vertex_handle& v) const
+get_umbrella(const Facet_vector& facets,//internal_facets of conflict zone
+
+             const Vertex_handle& /* v no longer used */) const
 {
-  Umbrella umbrella;
+  Umbrella umbrella; //std::map<Ordered_edge, Patch_and_counter>
 
   // Insert into umbrella surface_index of facets which are on the surface
   typename Facet_vector::const_iterator fit = facets.begin();
@@ -1368,9 +1382,53 @@ get_umbrella(const Facet_vector& facets,
   {
     if ( c3t3_.is_in_complex(*fit) )
     {
-      Ordered_edge edge = get_opposite_ordered_edge(*fit, v);
-      umbrella.insert(std::make_pair(edge, c3t3_.surface_patch_index(*fit)));
+      Facet f = *fit;
+      Vertex_handle v1 = f.first->vertex((f.second+1)%4);
+      Vertex_handle v2 = f.first->vertex((f.second+2)%4);
+      Vertex_handle v3 = f.first->vertex((f.second+3)%4);
+      order_three_handles(v1, v2, v3);
+      std::vector<Ordered_edge> edges;
+      edges.push_back(Ordered_edge(v1, v2));
+      edges.push_back(Ordered_edge(v2, v3));
+      edges.push_back(Ordered_edge(v1, v3));
+
+      for(std::size_t i = 0; i < 3; ++i)
+      {
+        Ordered_edge oe = edges[i];
+        typename Umbrella::iterator uit = umbrella.find(oe);
+        if(uit == umbrella.end()) //umbrella does not contain oe yet
+        {
+          umbrella.insert(std::make_pair(oe,
+            std::make_pair(c3t3_.surface_patch_index(f), 1)));
+        }
+        else //umbrella already contains oe. Increment counter or return
+        {
+          std::size_t count = (*uit).second.second;
+          if(count == 2) //there will be more than 3 after insertion
+            return boost::none; //non-manifold configuration
+
+          umbrella.insert(uit,
+            std::make_pair(oe,
+              std::make_pair(c3t3_.surface_patch_index(f), count + 1)));
+        }
+      }
     }
+  }
+
+  // erase edges that have been counted twice
+  //each Oriented_edge should appear only once
+  // twice means it belongs to two internal facets that are restricted
+  // three or more corresponds to a non-manifold geometry
+  typename Umbrella::iterator uit = umbrella.begin();
+  while(uit != umbrella.end())
+  {
+    if((*uit).second.second == 2)
+    {
+      typename Umbrella::iterator to_be_erased = uit++;
+      umbrella.erase(to_be_erased);
+    }
+    else
+      ++uit;
   }
 
   return umbrella;
@@ -1438,6 +1496,8 @@ Slivers_exuder<C3T3,SC,V_,FT>::get_opposite_ordered_edge(
   const Facet& facet,
   const Vertex_handle& vertex) const
 {
+  CGAL_assertion(tr_.has_vertex(facet, vertex));
+
   Vertex_handle v1;
   Vertex_handle v2;
 
@@ -1484,7 +1544,7 @@ restore_internal_facets(const Umbrella& umbrella,
     const typename Umbrella::const_iterator um_it = umbrella.find(edge);
     if( um_it != umbrella.end() )
     {
-      c3t3_.add_to_complex(*fit, um_it->second);
+      c3t3_.add_to_complex(*fit, um_it->second.first);
     }
   }
 }
@@ -1492,7 +1552,7 @@ restore_internal_facets(const Umbrella& umbrella,
 
 template <typename C3T3, typename SC, typename V_, typename FT>
 template <bool pump_vertices_on_surfaces>
-void
+bool
 Slivers_exuder<C3T3,SC,V_,FT>::
 update_mesh(const Weighted_point& new_point,
             const Vertex_handle& old_vertex,
@@ -1516,13 +1576,16 @@ update_mesh(const Weighted_point& new_point,
                      could_lock_zone);
 
   if (could_lock_zone && *could_lock_zone == false)
-    return;
+    return false;
 
   // Get some datas to restore mesh
   Boundary_facets_from_outside boundary_facets_from_outside =
     get_boundary_facets_from_outside(boundary_facets);
 
-  Umbrella umbrella = get_umbrella(internal_facets, old_vertex);
+  boost::optional<Umbrella> umbrella
+    = get_umbrella(internal_facets, old_vertex);
+  if(umbrella == boost::none)
+    return false; //abort pumping this vertex
 
   // Delete old cells from queue (they aren't in the triangulation anymore)
   this->delete_cells_from_queue(deleted_cells);
@@ -1546,10 +1609,12 @@ update_mesh(const Weighted_point& new_point,
   // Restore mesh
   restore_cells_and_boundary_facets<pump_vertices_on_surfaces>(
     boundary_facets_from_outside, new_vertex);
-  restore_internal_facets(umbrella, new_vertex);
+  restore_internal_facets(*umbrella, new_vertex);
 
   // Only true for sequential version
   CGAL_assertion(could_lock_zone || nb_vert == tr_.number_of_vertices());
+
+  return true;//pump was done successfully
 }
 
 
