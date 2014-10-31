@@ -22,7 +22,11 @@
 //
 // Author(s)     : Lutz Kettner  <kettner@mpi-sb.mpg.de>
 
+#ifndef CGAL_HEADER_ONLY
+
 #include <CGAL/IO/File_scanner_OFF.h>
 #include <CGAL/IO/File_scanner_OFF_impl.h>
+
+#endif // CGAL_HEADER_ONLY
 
 // EOF //

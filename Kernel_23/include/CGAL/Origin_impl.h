@@ -22,8 +22,6 @@
 //
 // Author(s)     : Andreas Fabri, Stefan Schirra
 
-#include <CGAL/Origin.h>
-
 namespace CGAL {
 
 const Origin      ORIGIN = Origin();

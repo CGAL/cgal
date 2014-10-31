@@ -29,7 +29,6 @@
 #endif
 
 #include <CGAL/Simple_cartesian.h>
-#include <CGAL/Bbox_2_Line_2_intersection.h>
 typedef CGAL::Simple_cartesian<double> Lcart;
 
 
@@ -82,7 +81,6 @@ Bbox_2_Line_2_pair::operator=(Bbox_2_Line_2_pair const &o)
     *pimpl = *o.pimpl;
     return *this;
 }
-
 
 CGAL_INLINE_FUNCTION
 Bbox_2_Line_2_pair::Intersection_results
@@ -172,7 +170,6 @@ Bbox_2_Line_2_pair::intersection_type() const
     pimpl->_result = SEGMENT;
     return pimpl->_result;
 }
-
 
 CGAL_INLINE_FUNCTION
 bool

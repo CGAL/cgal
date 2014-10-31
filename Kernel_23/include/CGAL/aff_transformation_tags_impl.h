@@ -22,8 +22,6 @@
 //
 // Author(s)     : Andreas Fabri, Stefan Schirra
 
-#include <CGAL/aff_transformation_tags.h>
-
 namespace CGAL {
 
 const Translation             TRANSLATION;

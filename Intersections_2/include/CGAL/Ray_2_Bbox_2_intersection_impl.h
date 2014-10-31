@@ -29,7 +29,6 @@
 #endif
 
 #include <CGAL/Simple_cartesian.h>
-#include <CGAL/Ray_2_Bbox_2_intersection.h>
 typedef CGAL::Simple_cartesian<double> Rcart;
 
 

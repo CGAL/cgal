@@ -22,5 +22,9 @@
 //
 // Author(s)     : Geert-Jan Giezeman and Sven Schönherr
 
+#ifndef CGAL_HEADER_ONLY
+
 #include <CGAL/assertions.h>
 #include <CGAL/assertions_impl.h>
+
+#endif // CGAL_HEADER_ONLY

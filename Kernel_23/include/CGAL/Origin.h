@@ -33,12 +33,15 @@ namespace CGAL {
 class Origin
 {};
 
-CGAL_EXPORT extern const Origin ORIGIN;
-
 class Null_vector
 {};
 
+#ifndef CGAL_HEADER_ONLY
+
+CGAL_EXPORT extern const Origin ORIGIN;
 CGAL_EXPORT extern const Null_vector NULL_VECTOR;
+
+#endif
 
 } //namespace CGAL
 

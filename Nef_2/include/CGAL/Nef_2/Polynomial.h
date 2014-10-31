@@ -1752,7 +1752,7 @@ template <class NT>
 std::ostream& operator << (std::ostream& os, const Polynomial<NT>& p)
 {
   int i;
-  switch( os.iword(CGAL::IO::mode) )
+  switch( get_mode(os) )
   {
     case CGAL::IO::ASCII :
       os << p.degree() << ' ';
@@ -1788,7 +1788,7 @@ std::istream& operator >> (std::istream& is, Polynomial<NT>& p) {
     char ch;
     NT   c;
     bool pretty = false;
-    switch( is.iword(CGAL::IO::mode) ) { 
+    switch( get_mode(is) ) {
     case CGAL::IO::ASCII : 
     case CGAL::IO::PRETTY : 
         is >> ch;

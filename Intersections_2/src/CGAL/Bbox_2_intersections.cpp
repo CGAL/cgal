@@ -22,5 +22,12 @@
 //
 // Author(s)     : Geert-Jan Giezeman
 
+#ifndef CGAL_HEADER_ONLY
+
+#include <CGAL/Bbox_2_Line_2_intersection.h>
 #include <CGAL/Bbox_2_Line_2_intersection_impl.h>
+
+#include <CGAL/Ray_2_Bbox_2_intersection.h>
 #include <CGAL/Ray_2_Bbox_2_intersection_impl.h>
+
+#endif // CGAL_HEADER_ONLY

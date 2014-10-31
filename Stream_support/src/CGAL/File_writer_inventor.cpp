@@ -22,7 +22,11 @@
 //
 // Author(s)     : Lutz Kettner  <kettner@mpi-sb.mpg.de>
 
+#ifndef CGAL_HEADER_ONLY
+
 #include <CGAL/IO/File_writer_inventor.h>
 #include <CGAL/IO/File_writer_inventor_impl.h>
+
+#endif // CGAL_HEADER_ONLY
 
 // EOF //

@@ -21,6 +21,13 @@
 // 
 //
 // Author(s)     : Andreas Fabri, Stefan Schirra
- 
+
+#ifndef CGAL_HEADER_ONLY
+
+#include <CGAL/Origin.h>
 #include <CGAL/Origin_impl.h>
+
+#include <CGAL/aff_transformation_tags.h>
 #include <CGAL/aff_transformation_tags_impl.h>
+
+#endif // CGAL_HEADER_ONLY

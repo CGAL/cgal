@@ -22,6 +22,12 @@
 //
 // Author(s)     : Geert-Jan Giezeman and Sven Schönherr
 
+#ifdef CGAL_HEADER_ONLY
+#define CGAL_INLINE_FUNCTION inline
+#else
+#define CGAL_INLINE_FUNCTION
+#endif
+
 #include <CGAL/config.h>
 #include <CGAL/assertions.h>
 #include <CGAL/assertions_behaviour.h>
@@ -34,15 +40,37 @@ namespace CGAL {
 
 namespace {
 
-  // behaviour variables
+#ifdef CGAL_HEADER_ONLY
+
+inline Failure_behaviour& get_static_error_behaviour()
+{
+  static Failure_behaviour _error_behaviour = THROW_EXCEPTION;
+  return _error_behaviour;
+}
+inline Failure_behaviour& get_static_warning_behaviour()
+{
+  static Failure_behaviour _warning_behaviour = CONTINUE;
+  return _warning_behaviour;
+}
+
+#else // CGAL_HEADER_ONLY
+
+// behaviour variables
 // -------------------
 
 Failure_behaviour _error_behaviour   = THROW_EXCEPTION;
 Failure_behaviour _warning_behaviour = CONTINUE;
 
+inline Failure_behaviour& get_static_error_behaviour()
+{ return _error_behaviour; }
+inline Failure_behaviour& get_static_warning_behaviour()
+{ return _warning_behaviour; }
+
+#endif // CGAL_HEADER_ONLY
 
 // standard error handlers
 // -----------------------
+CGAL_INLINE_FUNCTION
 void
 _standard_error_handler(
         const char* what,
@@ -53,7 +81,7 @@ _standard_error_handler(
 {
 #if defined(__GNUG__) && !defined(__llvm__)
     // After g++ 3.4, std::terminate defaults to printing to std::cerr itself.
-    if (_error_behaviour == THROW_EXCEPTION)
+    if (get_static_error_behaviour() == THROW_EXCEPTION)
         return;
 #endif
     std::cerr << "CGAL error: " << what << " violation!" << std::endl
@@ -68,6 +96,7 @@ _standard_error_handler(
 
 // standard warning handler
 // ------------------------
+CGAL_INLINE_FUNCTION
 void
 _standard_warning_handler( const char *,
                           const char* expr,
@@ -77,7 +106,7 @@ _standard_warning_handler( const char *,
 {
 #if defined(__GNUG__) && !defined(__llvm__)
     // After g++ 3.4, std::terminate defaults to printing to std::cerr itself.
-    if (_warning_behaviour == THROW_EXCEPTION)
+    if (get_static_warning_behaviour() == THROW_EXCEPTION)
         return;
 #endif
     std::cerr << "CGAL warning: check violation!" << std::endl
@@ -89,24 +118,45 @@ _standard_warning_handler( const char *,
 	 << std::endl;
 }
 
+#ifdef CGAL_HEADER_ONLY
+
+inline Failure_function& get_static_error_handler()
+{
+  static Failure_function _error_handler = _standard_error_handler;
+  return _error_handler;
+}
+inline Failure_function& get_static_warning_handler()
+{
+  static Failure_function _warning_handler = _standard_warning_handler;
+  return _warning_handler;
+}
+
+#else // CGAL_HEADER_ONLY
 // default handler settings
 // ------------------------
 Failure_function _error_handler   = _standard_error_handler;
 Failure_function _warning_handler = _standard_warning_handler;
 
+inline Failure_function& get_static_error_handler()
+{ return _error_handler; }
+inline Failure_function& get_static_warning_handler()
+{ return _warning_handler; }
+
+#endif // CGAL_HEADER_ONLY
 
 } // anonymous namespace
 
 // failure functions
 // -----------------
+CGAL_INLINE_FUNCTION
 void
 assertion_fail( const char* expr,
                 const char* file,
                 int         line,
                 const char* msg)
 {
-    _error_handler("assertion", expr, file, line, msg);
-    switch (_error_behaviour) {
+    get_static_error_handler()("assertion", expr, file, line, msg);
+    switch (get_static_error_behaviour()) {
     case ABORT:
         std::abort();
     case EXIT:
@@ -120,14 +170,15 @@ assertion_fail( const char* expr,
     }
 }
 
+CGAL_INLINE_FUNCTION
 void
 precondition_fail( const char* expr,
                    const char* file,
                    int         line,
                    const char* msg)
 {
-    _error_handler("precondition", expr, file, line, msg);
-    switch (_error_behaviour) {
+    get_static_error_handler()("precondition", expr, file, line, msg);
+    switch (get_static_error_behaviour()) {
     case ABORT:
         std::abort();
     case EXIT:
@@ -141,14 +192,15 @@ precondition_fail( const char* expr,
     }
 }
 
+CGAL_INLINE_FUNCTION
 void
 postcondition_fail(const char* expr,
                    const char* file,
                    int         line,
                    const char* msg)
 {
-    _error_handler("postcondition", expr, file, line, msg);
-    switch (_error_behaviour) {
+    get_static_error_handler()("postcondition", expr, file, line, msg);
+    switch (get_static_error_behaviour()) {
     case ABORT:
         std::abort();
     case EXIT:
@@ -165,14 +217,15 @@ postcondition_fail(const char* expr,
 
 // warning function
 // ----------------
+CGAL_INLINE_FUNCTION
 void
 warning_fail( const char* expr,
               const char* file,
               int         line,
               const char* msg)
 {
-    _warning_handler("warning", expr, file, line, msg);
-    switch (_warning_behaviour) {
+    get_static_warning_handler()("warning", expr, file, line, msg);
+    switch (get_static_warning_behaviour()) {
     case ABORT:
         std::abort();
     case EXIT:
@@ -189,35 +242,39 @@ warning_fail( const char* expr,
 
 // error handler set functions
 // ---------------------------
+CGAL_INLINE_FUNCTION
 Failure_function
 set_error_handler( Failure_function handler)
 {
-    Failure_function result = _error_handler;
-    _error_handler = handler;
+    Failure_function result = get_static_error_handler();
+    get_static_error_handler() = handler;
     return result;
 }
 
+CGAL_INLINE_FUNCTION
 Failure_function
 set_warning_handler( Failure_function handler)
 {
-    Failure_function result = _warning_handler;
-    _warning_handler = handler;
+    Failure_function result = get_static_warning_handler();
+    get_static_warning_handler() = handler;
     return result;
 }
 
+CGAL_INLINE_FUNCTION
 Failure_behaviour
 set_error_behaviour(Failure_behaviour eb)
 {
-    Failure_behaviour result = _error_behaviour;
-    _error_behaviour = eb;
+    Failure_behaviour result = get_static_error_behaviour();
+    get_static_error_behaviour() = eb;
     return result;
 }
 
+CGAL_INLINE_FUNCTION
 Failure_behaviour
 set_warning_behaviour(Failure_behaviour eb)
 {
-    Failure_behaviour result = _warning_behaviour;
-    _warning_behaviour = eb;
+    Failure_behaviour result = get_static_warning_behaviour();
+    get_static_warning_behaviour() = eb;
     return result;
 }
 

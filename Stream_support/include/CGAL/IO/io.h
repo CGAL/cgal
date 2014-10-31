@@ -39,7 +39,9 @@ namespace CGAL {
 
 class IO {
 public:
+#ifndef CGAL_HEADER_ONLY
     CGAL_EXPORT static int mode;
+#endif // CGAL_HEADER_ONLY
     enum Mode {ASCII = 0, PRETTY, BINARY};
 };
 
@@ -167,8 +169,13 @@ CGAL_EXPORT
 bool
 is_binary(std::ios& i);
 
+extern
+std::ostream& operator<<( std::ostream& out, const Color& col);
 
-  inline std::istream& extract(std::istream& is, double &d)
+extern
+std::istream &operator>>(std::istream &is, Color& col);
+
+inline std::istream& extract(std::istream& is, double &d)
 {
 #if defined( _MSC_VER ) && ( _MSC_VER > 1600 )
   std::string s;
@@ -251,49 +258,6 @@ read(std::istream& is, T& t)
     read(is, t, typename Io_traits<T>::Io_tag());
 }
 
-
-inline
-std::ostream& operator<<( std::ostream& out, const Color& col)
-{
-    switch(out.iword(IO::mode)) {
-    case IO::ASCII :
-        return out << static_cast<int>(col.red())   << ' '
-		   << static_cast<int>(col.green()) << ' '
-		   << static_cast<int>(col.blue());
-    case IO::BINARY :
-        write(out, static_cast<int>(col.red()));
-        write(out, static_cast<int>(col.green()));
-        write(out, static_cast<int>(col.blue()));
-        return out;
-    default:
-        return out << "Color(" << static_cast<int>(col.red()) << ", "
-		   << static_cast<int>(col.green()) << ", "
-                   << static_cast<int>(col.blue()) << ')';
-    }
-}
-
-inline
-std::istream &operator>>(std::istream &is, Color& col)
-{
-    int r = 0, g = 0, b = 0;
-    switch(is.iword(IO::mode)) {
-    case IO::ASCII :
-        is >> r >> g >> b;
-        break;
-    case IO::BINARY :
-        read(is, r);
-        read(is, g);
-        read(is, b);
-        break;
-    default:
-        std::cerr << "" << std::endl;
-        std::cerr << "Stream must be in ascii or binary mode" << std::endl;
-        break;
-    }
-    col = Color((unsigned char)r,(unsigned char)g,(unsigned char)b);
-    return is;
-}
-
 CGAL_EXPORT
 const char* mode_name( IO::Mode m );
 
@@ -304,10 +268,10 @@ void swallow(std::istream &is, char d);
 CGAL_EXPORT
 void swallow(std::istream &is, const std::string& s );
 
+} //namespace CGAL
+
 #ifdef CGAL_HEADER_ONLY
 #include <CGAL/IO/io_impl.h>
 #endif // CGAL_HEADER_ONLY
-
-} //namespace CGAL
 
 #endif // CGAL_IO_H

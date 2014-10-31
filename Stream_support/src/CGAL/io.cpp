@@ -22,10 +22,10 @@
 //
 // Author(s)     : Andreas Fabri
 
+#ifndef CGAL_HEADER_ONLY
+
 #include <CGAL/IO/io.h>
 #include <CGAL/IO/io_impl.h>
-
-#ifndef CGAL_HEADER_ONLY
 
 namespace CGAL {
 

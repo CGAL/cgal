@@ -37,16 +37,18 @@
 namespace CGAL {
 
 #ifdef CGAL_HEADER_ONLY
-inline
-static int& get_static_mode()
+namespace {
+inline int& get_static_mode()
 {
-  static int IO::mode = std::ios::xalloc();
-  return IO::mode;
+  static int mode = std::ios::xalloc();
+  return mode;
 }
+} // namespace
 #else // CGAL_HEADER_ONLY
-inline
-static int& get_static_mode()
+namespace {
+inline int& get_static_mode()
 { return IO::mode; }
+} // namespace
 #endif // CGAL_HEADER_ONLY
 
 CGAL_INLINE_FUNCTION
@@ -120,6 +122,48 @@ mode_name( IO::Mode m) {
     static const char* const names[] = {"ASCII", "PRETTY", "BINARY" };
     CGAL_assertion( IO::ASCII <= m && m <= IO::BINARY );
     return names[m];
+}
+
+CGAL_INLINE_FUNCTION
+std::ostream& operator<<( std::ostream& out, const Color& col)
+{
+    switch(out.iword(get_static_mode())) {
+    case IO::ASCII :
+        return out << static_cast<int>(col.red())   << ' '
+     << static_cast<int>(col.green()) << ' '
+     << static_cast<int>(col.blue());
+    case IO::BINARY :
+        write(out, static_cast<int>(col.red()));
+        write(out, static_cast<int>(col.green()));
+        write(out, static_cast<int>(col.blue()));
+        return out;
+    default:
+        return out << "Color(" << static_cast<int>(col.red()) << ", "
+     << static_cast<int>(col.green()) << ", "
+                   << static_cast<int>(col.blue()) << ')';
+    }
+}
+
+CGAL_INLINE_FUNCTION
+std::istream &operator>>(std::istream &is, Color& col)
+{
+    int r = 0, g = 0, b = 0;
+    switch(is.iword(get_static_mode())) {
+    case IO::ASCII :
+        is >> r >> g >> b;
+        break;
+    case IO::BINARY :
+        read(is, r);
+        read(is, g);
+        read(is, b);
+        break;
+    default:
+        std::cerr << "" << std::endl;
+        std::cerr << "Stream must be in ascii or binary mode" << std::endl;
+        break;
+    }
+    col = Color((unsigned char)r,(unsigned char)g,(unsigned char)b);
+    return is;
 }
 
 CGAL_INLINE_FUNCTION
