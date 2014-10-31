@@ -1,0 +1,74 @@
+CGAL:
+
+Clement:
+
+#include "/home/gdamiand/sources/CGAL/Geomview/src/CGAL/Geomview_stream.cpp"
+#include "/home/gdamiand/sources/CGAL/Nef_2/src/CGAL/NefPolynomial.cpp"
+#include "/home/gdamiand/sources/CGAL/Kinetic_data_structures/src/CGAL/JAMA_numeric_solver.cpp"
+#include "/home/gdamiand/sources/CGAL/Kinetic_data_structures/src/CGAL/KDS_Log.cpp"
+#include "/home/gdamiand/sources/CGAL/Kinetic_data_structures/src/CGAL/numeric_solvers_support.cpp"
+#include "/home/gdamiand/sources/CGAL/Kinetic_data_structures/src/CGAL/Turkowski_numeric_solver.cpp"
+#include "/home/gdamiand/sources/CGAL/Profiling_tools/src/CGAL/Timer.cpp" // static mais doit pouvoir se remplacer en membre
+#include "/home/gdamiand/sources/CGAL/Profiling_tools/src/CGAL/Real_timer.cpp" // static mais doit pouvoir se remplacer en membre
+#include "/home/gdamiand/sources/CGAL/Random_numbers/src/CGAL/Random.cpp" // static mais doit pouvoir se remplacer en membre
+#include "/home/gdamiand/sources/CGAL/Number_types/src/CGAL/test_FPU_rounding_mode.cpp" // static const
+#include "/home/gdamiand/sources/CGAL/Modular_arithmetic/src/CGAL/Residue_type.cpp"
+#include "/home/gdamiand/sources/CGAL/Modular_arithmetic/src/CGAL/primes.cpp"
+
+Guillaume
+
+#include "/home/gdamiand/sources/CGAL/STL_Extension/src/CGAL/assertions.cpp" // variables globales
+#include "/home/gdamiand/sources/CGAL/Stream_support/src/CGAL/io.cpp" // variable statique de classe
+#include "/home/gdamiand/sources/CGAL/Stream_support/src/CGAL/Color.cpp" // constantes globales
+#include "/home/gdamiand/sources/CGAL/Kernel_23/src/CGAL/kernel.cpp" // constantes globales
+#include "/home/gdamiand/sources/CGAL/Number_types/src/CGAL/Interval_arithmetic.cpp" // constante globale
+
+#include "/home/gdamiand/sources/CGAL/Intersections_2/src/CGAL/Bbox_2_intersections.cpp"
+#include "/home/gdamiand/sources/CGAL/Stream_support/src/CGAL/File_header_extended_OFF.cpp"
+#include "/home/gdamiand/sources/CGAL/Stream_support/src/CGAL/File_writer_inventor.cpp"
+#include "/home/gdamiand/sources/CGAL/Stream_support/src/CGAL/File_header_OFF.cpp"
+#include "/home/gdamiand/sources/CGAL/Stream_support/src/CGAL/File_scanner_OFF.cpp"
+#include "/home/gdamiand/sources/CGAL/Stream_support/src/CGAL/File_writer_OFF.cpp"
+#include "/home/gdamiand/sources/CGAL/Stream_support/src/CGAL/File_writer_VRML_2.cpp"
+#include "/home/gdamiand/sources/CGAL/Stream_support/src/CGAL/File_writer_wavefront.cpp"
+
+CGAL_Core:
+
+#include "/home/gdamiand/sources/CGAL/CGAL_Core/src/CGAL_Core/CoreIO.cpp"
+#include "/home/gdamiand/sources/CGAL/CGAL_Core/src/CGAL_Core/CoreAux.cpp"
+#include "/home/gdamiand/sources/CGAL/CGAL_Core/src/CGAL_Core/CoreDefs.cpp"
+#include "/home/gdamiand/sources/CGAL/CGAL_Core/src/CGAL_Core/Expr.cpp"
+#include "/home/gdamiand/sources/CGAL/CGAL_Core/src/CGAL_Core/GmpIO.cpp"
+#include "/home/gdamiand/sources/CGAL/CGAL_Core/src/CGAL_Core/BigFloat.cpp"
+#include "/home/gdamiand/sources/CGAL/CGAL_Core/src/CGAL_Core/Real.cpp"
+#include "/home/gdamiand/sources/CGAL/CGAL_Core/src/CGAL_Core/extLong.cpp"
+
+CGAL_ImageIO:
+
+#include "/home/gdamiand/sources/CGAL/CGAL_ImageIO/src/CGAL_ImageIO/bmpread.cpp"
+#include "/home/gdamiand/sources/CGAL/CGAL_ImageIO/src/CGAL_ImageIO/mincio.cpp"
+#include "/home/gdamiand/sources/CGAL/CGAL_ImageIO/src/CGAL_ImageIO/analyze.cpp"
+#include "/home/gdamiand/sources/CGAL/CGAL_ImageIO/src/CGAL_ImageIO/recline.cpp"
+#include "/home/gdamiand/sources/CGAL/CGAL_ImageIO/src/CGAL_ImageIO/convert.cpp"
+#include "/home/gdamiand/sources/CGAL/CGAL_ImageIO/src/CGAL_ImageIO/recbuffer.cpp"
+#include "/home/gdamiand/sources/CGAL/CGAL_ImageIO/src/CGAL_ImageIO/gif.cpp"
+#include "/home/gdamiand/sources/CGAL/CGAL_ImageIO/src/CGAL_ImageIO/reech4x4.cpp"
+#include "/home/gdamiand/sources/CGAL/CGAL_ImageIO/src/CGAL_ImageIO/gis.cpp"
+#include "/home/gdamiand/sources/CGAL/CGAL_ImageIO/src/CGAL_ImageIO/bmp.cpp"
+#include "/home/gdamiand/sources/CGAL/CGAL_ImageIO/src/CGAL_ImageIO/bmpendian.cpp"
+#include "/home/gdamiand/sources/CGAL/CGAL_ImageIO/src/CGAL_ImageIO/iris.cpp"
+#include "/home/gdamiand/sources/CGAL/CGAL_ImageIO/src/CGAL_ImageIO/fgetns.cpp"
+#include "/home/gdamiand/sources/CGAL/CGAL_ImageIO/src/CGAL_ImageIO/Image_3.cpp"
+#include "/home/gdamiand/sources/CGAL/CGAL_ImageIO/src/CGAL_ImageIO/pnm.cpp"
+#include "/home/gdamiand/sources/CGAL/CGAL_ImageIO/src/CGAL_ImageIO/ImageIO.cpp"
+#include "/home/gdamiand/sources/CGAL/CGAL_ImageIO/src/CGAL_ImageIO/inr.cpp"
+
+CGAL_Qt4:
+
+DONE #include "/home/gdamiand/sources/CGAL/GraphicsView/src/CGAL_Qt4/utility.cpp"
+
+#include "/home/gdamiand/sources/CGAL/GraphicsView/src/CGAL_Qt4/resources.cpp"
+#include "/home/gdamiand/sources/CGAL/GraphicsView/src/CGAL_Qt4/debug.cpp"
+#include "/home/gdamiand/sources/CGAL/GraphicsView/src/CGAL_Qt4/GraphicsViewPolylineInput.cpp"
+#include "/home/gdamiand/sources/CGAL/GraphicsView/src/CGAL_Qt4/DemosMainWindow.cpp"
+#include "/home/gdamiand/sources/CGAL/GraphicsView/src/CGAL_Qt4/GraphicsViewNavigation.cpp"
