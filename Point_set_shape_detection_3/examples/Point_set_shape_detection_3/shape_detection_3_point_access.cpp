@@ -2,7 +2,8 @@
 #include <CGAL/IO/read_xyz_points.h>
 #include <CGAL/Point_with_normal_3.h>
 #include <CGAL/property_map.h>
-#include <CGAL/Timer.h> 
+#include <CGAL/Timer.h>
+#include <CGAL/number_utils.h>
 
 #include <CGAL/Shape_detection_3.h>
 #include <CGAL/Plane_shape.h>
@@ -90,7 +91,7 @@ int main()
       const Point &p = *(points.begin() + (*index_it));
 
       // Adds Euclidean distance between point and shape.
-      sum_distances += sqrt((*it)->squared_distance(p));
+      sum_distances += CGAL::sqrt((*it)->squared_distance(p));
 
       // Proceeds with next point.
       index_it++;
