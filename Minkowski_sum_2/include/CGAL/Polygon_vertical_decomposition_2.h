@@ -138,12 +138,31 @@ public:
     }
   }
 
-  /*!
-   * Obtain the traits
+  /*! Obtain the traits
    * \return the traits
    */
   const Traits_2& traits() const { return *m_traits; }
 
+  /*! Decompose a polygon into convex sub-polygons.
+   * \param pgn The input polygon.
+   * \param oi An output iterator of convex polygons.
+   * \return A past-the-end iterator for the sub-polygons.
+   */
+  template <typename OutputIterator_>
+  OutputIterator_ operator()(const Polygon_2& pgn, OutputIterator_ oi) const
+  { return decomp(pgn, oi); }
+
+  /*! Decompose a polygon with holes into convex sub-polygons.
+   * \param pgn The input polygon.
+   * \param oi An output iterator of convex polygons.
+   * \return A past-the-end iterator for the sub-polygons.
+   */
+  template <typename OutputIterator_>
+  OutputIterator_
+  operator()(const Polygon_with_holes_2& pgn, OutputIterator_ oi) const
+  { return decomp(pgn, oi); }
+
+private:
   /*!
    * Decompose a polygon-with-holes into convex sub-polygons.
    * \param pgn The input polygon.
@@ -151,9 +170,10 @@ public:
    * \return A past-the-end iterator for the sub-polygons.
    */
   template <typename Polygon_, typename OutputIterator_>
-  OutputIterator_ operator()(const Polygon_& pgn, OutputIterator_ oi) const
+  OutputIterator_ decomp(const Polygon_& pgn, OutputIterator_ oi) const
   {
-    General_polygon_set_2 gps(*m_traits);
+    const Traits_2& traits = *m_traits;
+    General_polygon_set_2 gps(traits);
     gps.insert(pgn);
     Arrangement_2& arr = gps.arrangement();
     My_observer obs(arr);
@@ -175,7 +195,6 @@ public:
     return oi;
   }
 
-private:
   // Add a vertical segment from the given vertex to some other arrangement
   // feature.
   Halfedge_const_handle

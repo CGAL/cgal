@@ -68,13 +68,41 @@ public:
    * \param oi An output iterator of convex polygons.
    * \return A past-the-end iterator for the sub-polygons.
    */
-  template <typename Polygon_, typename OutputIterator_>
-  OutputIterator_ operator()(const Polygon_& pgm, OutputIterator_ oi) const
+  template <typename OutputIterator_>
+  OutputIterator_ operator()(const Polygon_2& pgm, OutputIterator_ oi) const
   {
-    typedef Polygon_                                      Polygon_with_holes_2;
+    CDT cdt;
 
-    typedef typename Polygon_with_holes_2::Polygon_2      Polygon_2;
+    // Insert boundary:
+    insert_polygon(cdt, pgm);
 
+    // Mark facets that are inside the domain bounded by the polygon
+    mark_domains(cdt);
+
+    typename CDT::Finite_faces_iterator fit;
+    for (fit = cdt.finite_faces_begin(); fit != cdt.finite_faces_end(); ++fit) {
+      if (! fit->info().in_domain()) continue;
+      typename CDT::Vertex_handle vh0 = fit->vertex(0);
+      typename CDT::Vertex_handle vh1 = fit->vertex(1);
+      typename CDT::Vertex_handle vh2 = fit->vertex(2);
+      Polygon_2 pgn;
+      pgn.push_back(vh0->point());
+      pgn.push_back(vh1->point());
+      pgn.push_back(vh2->point());
+      *oi++ = pgn;
+    }
+    return oi;
+  }
+
+  /*! Decompose a polygon-with-holes into convex sub-polygons.
+   * \param pgn The input polygon.
+   * \param oi An output iterator of convex polygons.
+   * \return A past-the-end iterator for the sub-polygons.
+   */
+  template <typename OutputIterator_>
+  OutputIterator_
+  operator()(const Polygon_with_holes_2& pgm, OutputIterator_ oi) const
+  {
     CDT cdt;
 
     // Insert outer boundary:

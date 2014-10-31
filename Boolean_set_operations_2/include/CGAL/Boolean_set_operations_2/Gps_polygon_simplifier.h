@@ -46,7 +46,7 @@ class Gps_polygon_simplifier
   typedef typename Traits_2::Polygon_with_holes_2     Polygon_with_holes_2;
   typedef typename Traits_2::Construct_curves_2       Construct_curves_2;
 
-  typedef Gps_simplifier_traits<Traits_2>              Meta_traits;
+  typedef Gps_simplifier_traits<Traits_2>             Meta_traits;
   typedef typename Meta_traits::Curve_data            Curve_data;
   typedef typename Meta_traits::X_monotone_curve_2    Meta_X_monotone_curve_2;
   typedef typename Arrangement_2::Halfedge_handle     Halfedge_handle;
@@ -56,7 +56,7 @@ class Gps_polygon_simplifier
   typedef typename Arrangement_2::Edge_iterator       Edge_iterator;
   typedef typename Arrangement_2::Vertex_handle       Vertex_handle;
   typedef typename Arrangement_2::Ccb_halfedge_const_circulator
-                                                      Ccb_halfedge_const_circulator;
+    Ccb_halfedge_const_circulator;
   typedef typename Arrangement_2::Ccb_halfedge_circulator
                                                       Ccb_halfedge_circulator;
   typedef Arr_construction_subcurve<Meta_traits>      Subcurve;
@@ -83,8 +83,8 @@ class Gps_polygon_simplifier
   typedef Gps_bfs_scanner<Arrangement_2, Bfs_visitor> Bfs_scanner;
 
 protected:
-  Arrangement_2*       m_arr;
-  Meta_traits*         m_traits;
+  Arrangement_2* m_arr;
+  const Meta_traits* m_traits;
   bool                 m_own_traits;
   Visitor              m_visitor;
   Sweep_line_2         m_sweep_line;
@@ -93,7 +93,7 @@ protected:
 
 public:
    /*! Constructor. */
-  Gps_polygon_simplifier(Arrangement_2& arr, Traits_2& tr) :
+  Gps_polygon_simplifier(Arrangement_2& arr, const Traits_2& tr) :
     m_arr(&arr),
     m_traits(new Meta_traits(tr)),
     m_own_traits(true),
@@ -113,7 +113,7 @@ public:
   void simplify(const Polygon_2& pgn)
   {
     Construct_curves_2 ctr_curves =
-      reinterpret_cast<Traits_2*>(m_traits)->construct_curves_2_object();
+      reinterpret_cast<const Traits_2*>(m_traits)->construct_curves_2_object();
 
     std::list<Meta_X_monotone_curve_2> curves_list;
 
