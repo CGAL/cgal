@@ -16,17 +16,17 @@
 
 // Type declarations
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
-typedef Kernel::FT FT;
-typedef CGAL::Point_with_normal_3<Kernel> Point_with_normal;
-typedef std::vector<Point_with_normal> Pwn_list;
-typedef CGAL::Identity_property_map<Point_with_normal> Point_pmap;
-typedef CGAL::Normal_of_point_with_normal_pmap<Kernel> Normal_pmap;
+typedef Kernel::FT                                          FT;
+typedef CGAL::Point_with_normal_3<Kernel>                   Point_with_normal;
+typedef std::vector<Point_with_normal>                      Pwn_list;
+typedef CGAL::Identity_property_map<Point_with_normal>      Point_pmap;
+typedef CGAL::Normal_of_point_with_normal_pmap<Kernel>      Normal_pmap;
 
 // In Shape_detection_traits_3 the basic types, i.e., Point and Vector types
 // as well as iterator type and property maps, are defined.
 typedef CGAL::Shape_detection_traits_3<Kernel,
-  Point_list::iterator, Point_pmap, Normal_pmap> Traits;
-typedef CGAL::Shape_detection_3<Traits> Shape_detection;
+  Point_list::iterator, Point_pmap, Normal_pmap>            Traits;
+typedef CGAL::Shape_detection_3<Traits>                     Shape_detection;
 
 
 int main(int argc, char **argv) 
@@ -73,19 +73,19 @@ int main(int argc, char **argv)
   Shape_detection::Parameters parameters;
 
   // 5% probability to miss the largest primitive on each iteration.
-  parameters.probability = 0.05f;
+  parameters.probability = 0.05;
  
   // Detect shapes with at least 500 points.
   parameters.min_points = 500;
 
   // 0.002 maximum Euclidean distance between a point and a shape.
-  parameters.epsilon = 0.002f;
+  parameters.epsilon = 0.002;
  
   // 0.01 maximum Euclidean distance between points to be clustered.
-  parameters.cluster_epsilon = 0.01f;
+  parameters.cluster_epsilon = 0.01;
  
   // 0.9 < dot(surface_normal, point_normal); maximum normal deviation.    
-  parameters.normal_threshold = 0.9f;   
+  parameters.normal_threshold = 0.9;   
   
   // Detects shapes
   sd.detect(parameters);
