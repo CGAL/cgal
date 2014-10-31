@@ -17,7 +17,6 @@
 // Type declarations
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef Kernel::FT FT;
-typedef Kernel::Point_3 Point;
 typedef CGAL::Point_with_normal_3<Kernel> Point_with_normal;
 typedef std::vector<Point_with_normal> Pwn_list;
 typedef CGAL::Identity_property_map<Point_with_normal> Point_pmap;
@@ -26,11 +25,12 @@ typedef CGAL::Normal_of_point_with_normal_pmap<Kernel> Normal_pmap;
 // In Shape_detection_traits_3 the basic types, i.e., Point and Vector types
 // as well as iterator type and property maps, are defined.
 typedef CGAL::Shape_detection_traits_3<Kernel,
-  Point_list::iterator, Point_pmap, Normal_pmap> ShapeDetectionTraits;
-typedef CGAL::Shape_detection_3<ShapeDetectionTraits> Shape_detection;
+  Point_list::iterator, Point_pmap, Normal_pmap> Traits;
+typedef CGAL::Shape_detection_3<Traits> Shape_detection;
 
 
-int main(int argc, char **argv) {
+int main(int argc, char **argv) 
+{
   Pwn_list points;
 
   // Loads point set from a file. 
@@ -40,8 +40,9 @@ int main(int argc, char **argv) {
 
   if (!stream ||
     !CGAL::read_xyz_points_and_normals(stream,
-                                       std::back_inserter(points),
-                                       Normal_pmap())) {
+      std::back_inserter(points),
+      Normal_pmap())) 
+  {
     std::cerr << "Error: cannot read file cube.pwn" << std::endl;
     return EXIT_FAILURE;
   }
@@ -52,21 +53,21 @@ int main(int argc, char **argv) {
     
   // Shapes to be detected are registered
   // by using the template Shape_factory
-	
-  sd.add_shape_factory(new 
-    CGAL::Shape_factory<CGAL::Plane_shape<ShapeDetectionTraits> >);
 
   sd.add_shape_factory(new 
-    CGAL::Shape_factory<CGAL::Cylinder_shape<ShapeDetectionTraits> >);
+    CGAL::Shape_factory<CGAL::Plane_shape<Traits> >);
 
   sd.add_shape_factory(new 
-    CGAL::Shape_factory<CGAL::Sphere_shape<ShapeDetectionTraits> >);
+    CGAL::Shape_factory<CGAL::Cylinder_shape<Traits> >);
 
   sd.add_shape_factory(new 
-    CGAL::Shape_factory<CGAL::Cone_shape<ShapeDetectionTraits> >);
+    CGAL::Shape_factory<CGAL::Sphere_shape<Traits> >);
 
   sd.add_shape_factory(new 
-    CGAL::Shape_factory<CGAL::Torus_shape<ShapeDetectionTraits> >);
+    CGAL::Shape_factory<CGAL::Cone_shape<Traits> >);
+
+  sd.add_shape_factory(new 
+    CGAL::Shape_factory<CGAL::Torus_shape<Traits> >);
     
   // Setting parameters for shape detection.
   Shape_detection::Parameters parameters;

@@ -6,31 +6,27 @@
 
 #include <CGAL/Shape_detection_3.h>
 #include <CGAL/Plane_shape.h>
-#include <CGAL/Cylinder_shape.h>
-#include <CGAL/Cone_shape.h>
-#include <CGAL/Sphere_shape.h>
-#include <CGAL/Torus_shape.h>
 
 #include <iostream>
 #include <fstream>
 
 // Type declarations
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
-typedef Kernel::FT FT;
-typedef Kernel::Point_3 Point;
-typedef CGAL::Point_with_normal_3<Kernel> Point_with_normal;
-typedef std::vector<Point_with_normal> Pwn_list;
-typedef CGAL::Identity_property_map<Point_with_normal> Point_pmap;
-typedef CGAL::Normal_of_point_with_normal_pmap<Kernel> Normal_pmap;
+typedef Kernel::FT                                          FT;
+typedef CGAL::Point_with_normal_3<Kernel>                   Point_with_normal;
+typedef std::vector<Point_with_normal>                      Pwn_list;
+typedef CGAL::Identity_property_map<Point_with_normal>      Point_pmap;
+typedef CGAL::Normal_of_point_with_normal_pmap<Kernel>      Normal_pmap;
 
 // In Shape_detection_traits_3 the used types, i.e. Point and Vector types
 // as well as iterator type and property maps, are defined.
 typedef CGAL::Shape_detection_traits_3<Kernel,
-  Point_list::iterator, Point_pmap, Normal_pmap> ShapeDetectionTraits;
-typedef CGAL::Shape_detection_3<ShapeDetectionTraits> Shape_detection;
+  Point_list::iterator, Point_pmap, Normal_pmap>            Traits;
+typedef CGAL::Shape_detection_3<Traits>                     Shape_detection;
 
 
-int main(int argc, char **argv) {
+int main(int argc, char **argv) 
+{
   Pwn_list points;
 
   // Loading a point set from file. 
@@ -40,8 +36,9 @@ int main(int argc, char **argv) {
 
   if (!stream ||
     !CGAL::read_xyz_points_and_normals(stream,
-    std::back_inserter(points),
-    Normal_pmap())) {
+      std::back_inserter(points),
+      Normal_pmap())) 
+  {
       std::cerr << "Error: cannot read file cube.pwn" << std::endl;
       return EXIT_FAILURE;
   }
@@ -56,7 +53,7 @@ int main(int argc, char **argv) {
 
   // Registers detection of planes
   sd.add_shape_factory(new 
-    CGAL::Shape_factory<CGAL::Plane_shape<ShapeDetectionTraits> >);
+    CGAL::Shape_factory<CGAL::Plane_shape<Traits> >);
 
   // Detects shapes.
   sd.detect();
@@ -74,24 +71,24 @@ int main(int argc, char **argv) {
   // an iterator to the detected shapes.
   Shape_detection::Shape_iterator it = sd.shapes_begin();
   while (it != sd.shapes_end()) {
-	
+
     const Shape_detection::Shape *shape = *it;
     // Using Shape_base::info() for printing 
     // the parameters of the detected shape.
     std::cout << (*it)->info();
 
     // Sums distances of points to detected shapes.
-    FT sum_distances = 0.f;
-		
+    FT sum_distances = 0;
+
     // Iterates through point indices assigned to each detected shape.
     std::vector<size_t>::const_iterator
       index_it = (*it)->assigned_points().begin();
 
     while (index_it != (*it)->assigned_points().end()) {
       
-			// Retrieves point
+      // Retrieves point
       const Point &p = *(points.begin() + (*index_it));
-			
+
       // Adds Euclidean distance between point and shape.
       sum_distances += sqrt((*it)->squared_distance(p));
 
@@ -100,7 +97,7 @@ int main(int argc, char **argv) {
     }
 
     // Computes and prints average distance.
-    const FT average_distance = sum_distances / shape->assigned_points().size();
+    FT average_distance = sum_distances / shape->assigned_points().size();
     std::cout << " average distance: " << average_distance << std::endl;
 
     // Proceeds with next detected shape.

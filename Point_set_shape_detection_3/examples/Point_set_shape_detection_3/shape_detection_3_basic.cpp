@@ -33,9 +33,10 @@ int main(int argc, char **argv)
   // and a property map for storing the normal vector associated to each point.
   std::ifstream stream("cube.pwn");
 
-  if (!stream || !CGAL::read_xyz_points_and_normals(stream,
-    std::back_inserter(points),
-    Normal_pmap()))
+  if (!stream || 
+    !CGAL::read_xyz_points_and_normals(stream,
+      std::back_inserter(points),
+      Normal_pmap()))
   {
       std::cerr << "Error: cannot read file cube.pwn" << std::endl;
       return EXIT_FAILURE;
