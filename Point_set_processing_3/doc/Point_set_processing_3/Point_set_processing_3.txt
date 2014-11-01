@@ -11,15 +11,12 @@
 
 \section Point_set_processing_3Introduction Introduction
 
-This \cgal component implements methods to analyze and process
-unorganized 3D point sets. The input is an unorganized 3D point set,
-possibly with normal attributes (unoriented or oriented). This point
-set can be analyzed to measure geometric properties such as average
+This \cgal component implements methods to analyze and process 3D point sets. The input is an unorganized 3D point set, possibly with normal attributes (unoriented or oriented). The input point set can be analyzed to measure geometric properties such as average
 spacing between the points and their `k` nearest neighbors. It
 can be processed with functions devoted to the simplification, regularization, upsampling, outlier removal, smoothing, normal estimation and normal orientation. The processing of point sets is often needed in applications dealing with measurement data, such as surface reconstruction from laser scanned data (see \cgalFigureRef{Point_set_processing_3figintroduction}).
 
 \cgalFigureBegin{Point_set_processing_3figintroduction,introduction.jpg}
-Point set processing. Left: 275K points sampled on the statue of an elephant with a Minolta laser scanner. Right: point set after clean-up and simplification to 17K points.
+Point set processing. Left: 275K points sampled on the statue of an elephant with a Minolta laser scanner. Right: point set after outlier removal, denoising and simplification to 17K points.
 \cgalFigureEnd
 
 In the context of surface reconstruction we can position the elements
@@ -252,7 +249,7 @@ Riemannian graph over the input points (the graph of the `k`
 nearest neighbor points) and propagates a seed normal orientation
 within a minimum spanning tree computed over this graph. The result is
 an oriented normal vector for each input unoriented normal, except for
-the normals which could not be successfully oriented.
+the normals which cannot be successfully oriented.
 
 \cgalFigureBegin{Point_set_processing_3figmst_orient_normals,mst_orient_normals.jpg}
 Normal orientation of a sampled cube surface. Left: unoriented normals. Right: orientation of right face normals is propagated to bottom face.
@@ -270,7 +267,7 @@ normals:
 
 \section Point_set_processing_3Upsampling Upsampling
 
-Function `edge_aware_upsample_point_set()` generates a much denser point set that has applications in point-based rendering, hole filling, and sparse surface reconstruction.
+Function `edge_aware_upsample_point_set()` generates a denser point set that has applications in point-based rendering, hole filling, and sparse surface reconstruction.
 The algorithm can progressively upsample the point set while approaching the edge singularities, 
 see <a href="http://web.siat.ac.cn/~huihuang/EAR/EAR_page.html">[Huang et al. 2013]</a>.
 
@@ -286,7 +283,7 @@ For example, as shown in the following figure, high value is preferable when one
 
 
 \cgalFigureBegin{Point_set_processing_3figUpsample_edge_sensitivity, upsample_edge_sensitivity.jpg}
-Upsample results for different edge-sensitivity parameter values. The input containing 850 points is upsampled to 1,500 points in all cases depicted.
+Upsampling for different edge-sensitivity parameter values. The input containing 850 points is upsampled to 1,500 points in all cases depicted.
 \cgalFigureEnd
 
 \subsubsection Point_set_processing_3Upsample_Parameter2 Parameter: sharpness_angle
@@ -295,66 +292,13 @@ This parameter controls the preservation of sharp features.
 \cgalFigureBegin{Point_set_processing_3figUpsample_sharpness_angle, upsample_sharpness_angle.jpg}
 \cgalFigureEnd
 \cgalFigureBegin{Point_set_processing_3figUpsample_sharpness_angle, upsample_sharpness_angle.jpg}
-Upsample results for different sharpness_angle parameter values. The input containing 850 points is upsampled to 425K points in all cases depicted. 
+Upsampling for different sharpness_angle parameter values. The input containing 850 points is upsampled to 425K points in all cases depicted. 
 \cgalFigureEnd
 
-\section Point_set_processing_3DesignAndImpl Design and Implementation History
-
-\subsection Point_set_processing_3TheoreticalFoundations Theoretical Foundations
-
-The \cgal mesh generation package implements a meshing engine based 
-on the method of Delaunay refinement introduced by Chew \cgalCite{c-gqmgc-93} and Ruppert \cgalCite{r-draq2d-95}
-and pioneered in 3D by Shewchuk \cgalCite{s-tmgdr-98}. 
-It uses the notion of restricted Delaunay triangulation
-to approximate 1-dimensional curved features and curved surface patches
-and rely on the work of Boissonnat and Oudot \cgalCite{cgal:bo-pgsms-05}
-and Oudot et al. \cgalCite{cgal:ory-mvbss-05}
-to achieve accurate representation of boundary and subdividing surfaces in the mesh.
-The mechanism of protecting balls, used to ensure a fair representation
-of 1-dimensional features, if any, and the termination of the refinement process
-whatever may be the input geometry, in particular whatever small dihedral angles may form
-the boundary and subdivision surface patches,
-was pioneered by Cheng et al. \cgalCite{cgal:cdr-drpsc-07} and further experimented by Dey, Levine et al.
-\cgalCite{cgal:cdl-pdma-07}.
-The optimization phase involves global optimization processes, a perturbation process
-and a sliver exudation process. The global optimizers are based on Lloyd smoothing \cgalCite{cgal:dfg-cvtaa-99t}, \cgalCite{cgal:dw-tmgob-02}
-and odt smoothing \cgalCite{cgal::c-mssbo-04}, \cgalCite{cgal:acyd-vtm-05}, where odt means
-<I>optimal Delaunay triangulation</I>. The perturbation process 
-is mainly based on the work of Tournois \cgalCite{cgal:t-om-09}
-and Tournois et al. \cgalCite{cgal:twad-iropitmg-09},
-while the exudation process is, the now famous, optimization by weighting described
-in Edelsbrunner et al. \cgalCite{cgal:cdeft-slive-00}.
 
 \subsection Point_set_processing_3ImplementationHistory Implementation History
 
-Work on the package `Mesh_3` started during the PhD thesis of Laurent Rineau
-advised by Mariette Yvinec. A code prototype, together
-with a first version of design and specifications \cgalCite{cgal:ry-gsddrm-06}
-came out of their collaboration.
-
-From the beginning of 2009, most of the work has been performed by Stéphane
-Tayeb, in collaboration with Mariette Yvinec, Laurent Rineau, Pierre Alliez and Jane Tournois.
-First, Stéphane released the first public version of the package, implementing the specifications
-written by Laurent and Mariette.
-
-The optimization processes are
-heavily based on the work of Jane Tournois and Pierre Alliez
-during the PhD of Jane advised by Pierre. The optimization phase was imported
-in the mesh generation package by Stéphane Tayeb
-and appeared first in release 3.6 of \cgal.
-
-In collaboration with Laurent Rineau, Stéphane also added demos and examples.
-After some experiments on medical imaging data performed by
-Dobrina Boltcheva et al. \cgalCite{cgal:byb-mgmmi-09}, \cgalCite{cgal:-byb-fpdmgmmi-09}, the handling
-of 1-dimensional features was worked out by Laurent Rineau, Stéphane Tayeb
-and Mariette Yvinec. It appeared first in the release 3.8 of \cgal.
-
-Started from GSoC'2013, three new algorithms were implemented by Shihao Wu & Clément Jamin,
-including WLOP, bilateral smoothing and upsampling. 
-
-
-
-
+Pierre Alliez and Laurent Saboret contributed the initial component. Nader Salman contributed the grid simplification. Started from GSoC'2013, three new algorithms were implemented by Shihao Wu and Clément Jamin: WLOP, bilateral smoothing and upsampling. 
 
 */ 
 } /* namespace CGAL */
