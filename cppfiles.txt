@@ -3,7 +3,6 @@ CGAL:
 Clement:
 
 #include "/home/gdamiand/sources/CGAL/Geomview/src/CGAL/Geomview_stream.cpp"
-#include "/home/gdamiand/sources/CGAL/Nef_2/src/CGAL/NefPolynomial.cpp"
 #include "/home/gdamiand/sources/CGAL/Kinetic_data_structures/src/CGAL/JAMA_numeric_solver.cpp"
 #include "/home/gdamiand/sources/CGAL/Kinetic_data_structures/src/CGAL/KDS_Log.cpp"
 #include "/home/gdamiand/sources/CGAL/Kinetic_data_structures/src/CGAL/numeric_solvers_support.cpp"
@@ -17,20 +16,21 @@ Clement:
 
 Guillaume
 
-#include "/home/gdamiand/sources/CGAL/STL_Extension/src/CGAL/assertions.cpp" // variables globales
-#include "/home/gdamiand/sources/CGAL/Stream_support/src/CGAL/io.cpp" // variable statique de classe
-#include "/home/gdamiand/sources/CGAL/Stream_support/src/CGAL/Color.cpp" // constantes globales
-#include "/home/gdamiand/sources/CGAL/Kernel_23/src/CGAL/kernel.cpp" // constantes globales
-#include "/home/gdamiand/sources/CGAL/Number_types/src/CGAL/Interval_arithmetic.cpp" // constante globale
+DONE #include "/home/gdamiand/sources/CGAL/STL_Extension/src/CGAL/assertions.cpp" // variables globales
+DONE #include "/home/gdamiand/sources/CGAL/Stream_support/src/CGAL/io.cpp" // variable statique de classe
+DONE #include "/home/gdamiand/sources/CGAL/Stream_support/src/CGAL/Color.cpp" // constantes globales
+DONE #include "/home/gdamiand/sources/CGAL/Kernel_23/src/CGAL/kernel.cpp" // constantes globales
+DONE #include "/home/gdamiand/sources/CGAL/Number_types/src/CGAL/Interval_arithmetic.cpp" // constante globale
 
-#include "/home/gdamiand/sources/CGAL/Intersections_2/src/CGAL/Bbox_2_intersections.cpp"
-#include "/home/gdamiand/sources/CGAL/Stream_support/src/CGAL/File_header_extended_OFF.cpp"
-#include "/home/gdamiand/sources/CGAL/Stream_support/src/CGAL/File_writer_inventor.cpp"
-#include "/home/gdamiand/sources/CGAL/Stream_support/src/CGAL/File_header_OFF.cpp"
-#include "/home/gdamiand/sources/CGAL/Stream_support/src/CGAL/File_scanner_OFF.cpp"
-#include "/home/gdamiand/sources/CGAL/Stream_support/src/CGAL/File_writer_OFF.cpp"
-#include "/home/gdamiand/sources/CGAL/Stream_support/src/CGAL/File_writer_VRML_2.cpp"
-#include "/home/gdamiand/sources/CGAL/Stream_support/src/CGAL/File_writer_wavefront.cpp"
+DONE #include "/home/gdamiand/sources/CGAL/Intersections_2/src/CGAL/Bbox_2_intersections.cpp"
+DONE #include "/home/gdamiand/sources/CGAL/Stream_support/src/CGAL/File_header_extended_OFF.cpp"
+DONE #include "/home/gdamiand/sources/CGAL/Stream_support/src/CGAL/File_writer_inventor.cpp"
+DONE #include "/home/gdamiand/sources/CGAL/Stream_support/src/CGAL/File_header_OFF.cpp"
+DONE #include "/home/gdamiand/sources/CGAL/Stream_support/src/CGAL/File_scanner_OFF.cpp"
+DONE #include "/home/gdamiand/sources/CGAL/Stream_support/src/CGAL/File_writer_OFF.cpp"
+DONE #include "/home/gdamiand/sources/CGAL/Stream_support/src/CGAL/File_writer_VRML_2.cpp"
+DONE #include "/home/gdamiand/sources/CGAL/Stream_support/src/CGAL/File_writer_wavefront.cpp"
+DONE #include "/home/gdamiand/sources/CGAL/Nef_2/src/CGAL/NefPolynomial.cpp"
 
 CGAL_Core:
 
