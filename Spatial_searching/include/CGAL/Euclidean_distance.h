@@ -28,30 +28,32 @@
 #include <boost/mpl/has_xxx.hpp>
 
 
-#ifndef HAS_DIMENSION
-#define HAS_DIMENSION
-BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(has_dimension,Dimension,false);
-#endif
-
 namespace CGAL {
 
   template <class SearchTraits>
   class Euclidean_distance;
 
-  template <class SearchTraits, bool has_dim = has_dimension<SearchTraits>::value>
-  struct Euclidean_distance_base;
-
-  template <class SearchTraits>
-  struct Euclidean_distance_base<SearchTraits,true>{
-	  typedef typename SearchTraits::Dimension Dimension;
-  };
-
-  template <class SearchTraits>
-  struct Euclidean_distance_base<SearchTraits,false>{
-	  typedef Dynamic_dimension_tag Dimension;
-  };
-  
+    
   namespace internal{
+	    #ifndef HAS_DIMENSION_TAG
+		#define HAS_DIMENSION_TAG
+		BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(has_dimension,Dimension,false);
+		#endif
+
+	  template <class SearchTraits, bool has_dim = has_dimension<SearchTraits>::value>
+	  struct Euclidean_distance_base;
+
+	  template <class SearchTraits>
+	  struct Euclidean_distance_base<SearchTraits,true>{
+		  typedef typename SearchTraits::Dimension Dimension;
+	  };
+
+	  template <class SearchTraits>
+	  struct Euclidean_distance_base<SearchTraits,false>{
+		  typedef Dynamic_dimension_tag Dimension;
+	  };
+
+
     template <class SearchTraits>
     struct Spatial_searching_default_distance{
       typedef ::CGAL::Euclidean_distance<SearchTraits> type;
@@ -69,7 +71,7 @@ namespace CGAL {
     typedef typename SearchTraits::Point_d Point_d;
     typedef Point_d Query_item;
 
-	typedef typename Euclidean_distance_base<SearchTraits>::Dimension D;
+	typedef typename internal::Euclidean_distance_base<SearchTraits>::Dimension D;
 	
 
     	// default constructor

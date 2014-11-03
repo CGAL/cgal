@@ -42,18 +42,25 @@ namespace CGAL {
 	template <class Traits> 
 class Point_container;
 
-	template <class SearchTraits, bool has_dim = has_dimension<SearchTraits>::value>
-  struct Point_container_base;
+namespace internal{
+	    #ifndef HAS_DIMENSION_TAG
+		#define HAS_DIMENSION_TAG
+		BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(has_dimension,Dimension,false);
+		#endif
 
-  template <class SearchTraits>
-  struct Point_container_base<SearchTraits,true>{
-	  typedef typename SearchTraits::Dimension Dimension;
-  };
+		template <class SearchTraits, bool has_dim = has_dimension<SearchTraits>::value>
+	  struct Point_container_base;
 
-  template <class SearchTraits>
-  struct Point_container_base<SearchTraits,false>{
-	  typedef Dynamic_dimension_tag Dimension;
-  };
+	  template <class SearchTraits>
+	  struct Point_container_base<SearchTraits,true>{
+		  typedef typename SearchTraits::Dimension Dimension;
+	  };
+
+	  template <class SearchTraits>
+	  struct Point_container_base<SearchTraits,false>{
+		  typedef Dynamic_dimension_tag Dimension;
+	  };
+}
 
 template <class Traits> 
 class Point_container {
@@ -67,7 +74,7 @@ public:
   
   typedef typename Point_vector::iterator iterator;
   typedef typename Point_vector::const_iterator const_iterator;
-  typedef typename Point_container_base<Traits>::Dimension D;
+  typedef typename internal::Point_container_base<Traits>::Dimension D;
 private:
   Traits traits;
   // the iterator range of the Point_container 
