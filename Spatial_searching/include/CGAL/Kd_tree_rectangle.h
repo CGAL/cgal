@@ -233,7 +233,7 @@ namespace CGAL {
   }; // of class Kd_tree_rectangle
 
 
-  // Partial specialization for dimension == 0, which means dimension at runtime
+  // Partial specialization for dynamic dimension, which means dimension at runtime
 
   template <class FT_> 
   class Kd_tree_rectangle<FT_, Dynamic_dimension_tag> {

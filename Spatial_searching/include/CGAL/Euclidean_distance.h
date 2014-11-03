@@ -21,13 +21,35 @@
 
 #ifndef CGAL_EUCLIDEAN_DISTANCE_H
 #define CGAL_EUCLIDEAN_DISTANCE_H
+
 #include <CGAL/Kd_tree_rectangle.h>
 #include <CGAL/number_utils.h>
+#include <CGAL/Dimension.h>
+#include <boost/mpl/has_xxx.hpp>
+
+
+#ifndef HAS_DIMENSION
+#define HAS_DIMENSION
+BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(has_dimension,Dimension,false);
+#endif
 
 namespace CGAL {
 
   template <class SearchTraits>
   class Euclidean_distance;
+
+  template <class SearchTraits, bool has_dim = has_dimension<SearchTraits>::value>
+  struct Euclidean_distance_base;
+
+  template <class SearchTraits>
+  struct Euclidean_distance_base<SearchTraits,true>{
+	  typedef typename SearchTraits::Dimension Dimension;
+  };
+
+  template <class SearchTraits>
+  struct Euclidean_distance_base<SearchTraits,false>{
+	  typedef Dynamic_dimension_tag Dimension;
+  };
   
   namespace internal{
     template <class SearchTraits>
@@ -46,7 +68,9 @@ namespace CGAL {
     typedef typename SearchTraits::FT    FT;
     typedef typename SearchTraits::Point_d Point_d;
     typedef Point_d Query_item;
-	typedef typename SearchTraits::Dimension D;
+
+	typedef typename Euclidean_distance_base<SearchTraits>::Dimension D;
+	
 
     	// default constructor
     	Euclidean_distance(const SearchTraits& traits_=SearchTraits()):traits(traits_) {}

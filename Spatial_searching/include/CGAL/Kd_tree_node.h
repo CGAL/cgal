@@ -42,7 +42,7 @@ namespace CGAL {
     typedef typename TreeTraits::FT FT;
     typedef typename Kd_tree<TreeTraits,Splitter,UseExtendedNode>::Separator Separator;
     typedef typename Kd_tree<TreeTraits,Splitter,UseExtendedNode>::Point_d_iterator Point_d_iterator;
-	typedef typename TreeTraits::Dimension D;
+	typedef typename Kd_tree<TreeTraits,Splitter,UseExtendedNode>::D D;
 
   private:
 
@@ -275,7 +275,7 @@ namespace CGAL {
       }
       else {
 	// after splitting b denotes the lower part of b
-	Kd_tree_rectangle<FT> b_upper(b);
+	Kd_tree_rectangle<FT,D> b_upper(b);
 	b.split(b_upper, sep.cutting_dimension(),
 		sep.cutting_value());
                              

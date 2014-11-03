@@ -22,9 +22,30 @@
 #define  CGAL_K_NEIGHBOR_SEARCH_H
 
 #include <CGAL/internal/K_neighbor_search.h>
+#include <boost/mpl/has_xxx.hpp>
+
+
+#ifndef HAS_DIMENSION
+#define HAS_DIMENSION
+BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(has_dimension,Dimension,false);
+#endif
 
 namespace CGAL {
+	template <class SearchTraits, class Distance,class Splitter,class Tree>
+class K_neighbor_search;
 
+	template <class SearchTraits, bool has_dim = has_dimension<SearchTraits>::value>
+  struct K_neighbor_search_base;
+
+  template <class SearchTraits>
+  struct K_neighbor_search_base<SearchTraits,true>{
+	  typedef typename SearchTraits::Dimension Dimension;
+  };
+
+  template <class SearchTraits>
+  struct K_neighbor_search_base<SearchTraits,false>{
+	  typedef Dynamic_dimension_tag Dimension;
+  };
 template <class SearchTraits, 
           class Distance= typename internal::Spatial_searching_default_distance<SearchTraits>::type,
           class Splitter= Sliding_midpoint<SearchTraits> ,
@@ -34,7 +55,7 @@ class K_neighbor_search: public internal::K_neighbor_search<SearchTraits,Distanc
   
 public:
   typedef typename Base::FT FT;  
-  typedef typename SearchTraits::DIMENSION D;
+  typedef typename K_neighbor_search_base<SearchTraits>::Dimension D;
 
   K_neighbor_search(const Tree& tree, const typename Base::Query_item& q,  
     unsigned int k=1, FT Eps=FT(0.0), bool Search_nearest=true, const Distance& d=Distance(),bool sorted=true)
@@ -57,10 +78,10 @@ private:
       int new_cut_dim=N->cutting_dimension();
       FT  new_cut_val=N->cutting_value();
 
-      Kd_tree_rectangle<FT> r_lower(r);
+      Kd_tree_rectangle<FT,D> r_lower(r);
 
       // modifies also r_lower to lower half
-      Kd_tree_rectangle<FT> r_upper(r_lower);
+      Kd_tree_rectangle<FT,D> r_upper(r_lower);
       r_lower.split(r_upper, new_cut_dim, new_cut_val);
 
       FT distance_to_lower_half;

@@ -30,8 +30,30 @@
 #include <CGAL/Kd_tree_rectangle.h>
 
 #include <boost/optional.hpp>
+#ifndef HAS_DIMENSION
+#define HAS_DIMENSION
+BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(has_dimension,Dimension,false);
+#endif
+
+
 
 namespace CGAL {
+
+	template <class Traits> 
+class Point_container;
+
+	template <class SearchTraits, bool has_dim = has_dimension<SearchTraits>::value>
+  struct Point_container_base;
+
+  template <class SearchTraits>
+  struct Point_container_base<SearchTraits,true>{
+	  typedef typename SearchTraits::Dimension Dimension;
+  };
+
+  template <class SearchTraits>
+  struct Point_container_base<SearchTraits,false>{
+	  typedef Dynamic_dimension_tag Dimension;
+  };
 
 template <class Traits> 
 class Point_container {
@@ -45,7 +67,7 @@ public:
   
   typedef typename Point_vector::iterator iterator;
   typedef typename Point_vector::const_iterator const_iterator;
-  typedef typename Traits::Dimension D;
+  typedef typename Point_container_base<Traits>::Dimension D;
 private:
   Traits traits;
   // the iterator range of the Point_container 

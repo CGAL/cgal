@@ -29,12 +29,34 @@
 #include <CGAL/Kd_tree_node.h>
 #include <CGAL/Splitters.h>
 #include <CGAL/Compact_container.h>
+#include <boost/mpl/has_xxx.hpp>
+
+#ifndef HAS_DIMENSION
+#define HAS_DIMENSION
+BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(has_dimension,Dimension,false);
+#endif
 
 #ifdef CGAL_HAS_THREADS
 #include <boost/thread/mutex.hpp>
 #endif
 
 namespace CGAL {
+
+	template <class SearchTraits, class Splitter_, class UseExtendedNode >
+class Kd_tree;
+
+ template <class SearchTraits, bool has_dim = has_dimension<SearchTraits>::value>
+  struct Kd_tree_base;
+
+  template <class SearchTraits>
+  struct Kd_tree_base<SearchTraits,true>{
+	  typedef typename SearchTraits::Dimension Dimension;
+  };
+
+  template <class SearchTraits>
+  struct Kd_tree_base<SearchTraits,false>{
+	  typedef Dynamic_dimension_tag Dimension;
+  };
 
   //template <class SearchTraits, class Splitter_=Median_of_rectangle<SearchTraits>, class UseExtendedNode = Tag_true >
 template <class SearchTraits, class Splitter_=Sliding_midpoint<SearchTraits>, class UseExtendedNode = Tag_true >
@@ -60,7 +82,10 @@ public:
   typedef typename std::vector<Point_d>::const_iterator const_iterator;
 
   typedef typename std::vector<Point_d>::size_type size_type;
-  typedef typename SearchTraits::Dimension D;
+
+  
+
+  typedef typename Kd_tree_base<SearchTraits>::Dimension D;
 
 private:
   SearchTraits traits_;
@@ -290,7 +315,7 @@ public:
       if(! is_built()){
 	const_build();
       }
-      Kd_tree_rectangle<FT> b(*bbox);
+      Kd_tree_rectangle<FT,D> b(*bbox);
       tree_root->search(it,q,b);
     }
     return it;

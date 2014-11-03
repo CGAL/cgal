@@ -25,12 +25,12 @@
 
 
 namespace CGAL {
-  template <class FT_, class Point, class CartesianCoordinateIterator, class ConstructCartesianCoordinateIterator, int D>
+  template <class FT_, class Point, class CartesianCoordinateIterator, class ConstructCartesianCoordinateIterator, typename D>
   class Search_traits {
     
   public:
 
-    typedef typename Dimension_tag<D> Dimension;
+    typedef D Dimension;
 
     typedef CartesianCoordinateIterator Cartesian_const_iterator_d;
     typedef ConstructCartesianCoordinateIterator Construct_cartesian_const_iterator_d;
