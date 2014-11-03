@@ -67,7 +67,7 @@ namespace CGAL
 
                             B.begin_surface(_dual.size_of_facets(),
                                             _dual.size_of_vertices(),
-                                            _dual.size_of_vertices());
+                                            _dual.size_of_halfedges());
 
                             std::map <Facet_const_handle, size_t> primal_vertices;
                             size_t n = 0;
