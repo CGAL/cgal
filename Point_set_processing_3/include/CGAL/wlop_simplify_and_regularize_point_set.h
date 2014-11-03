@@ -304,8 +304,9 @@ compute_density_weight_for_sample_point(
 ///
 /// The core of the algorithm is a Weighted Locally Optimal projection operator
 /// with a density uniformization term. 
-/// For more details, please see:
-/// http://web.siat.ac.cn/~huihuang/WLOP/WLOP_page.html
+/// For more details, please refer to this paper:
+/// Huang, Hui, et al. "Consolidation of unorganized point clouds for surface reconstruction." 
+/// ACM Transactions on Graphics (TOG). Vol. 28. No. 5. ACM, 2009.
 /// (please cite the paper if you use this function).
 /// @tparam Concurrency_tag enables sequential versus parallel algorithm.
 ///                         Possible values are `Sequential_tag`

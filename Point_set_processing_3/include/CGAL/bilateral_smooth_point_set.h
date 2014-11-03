@@ -322,7 +322,9 @@ public:
 /// This algorithm performs a bilateral point set denoising (smoothing) 
 ///  with sharp features preservation. Both point positions and normals will be
 /// modeifed.
-/// For more information, see: http://web.siat.ac.cn/~huihuang/EAR/EAR_page.html
+/// For more details, please refert to this paper: 
+/// Huang, Hui, et al. "Edge-aware point set resampling." 
+/// ACM Transactions on Graphics (TOG) 32.1 (2013): 9.
 /// (please cite the paper if you use this function).
 /// \pre Normals must be unit vectors
 /// \pre k >= 2
