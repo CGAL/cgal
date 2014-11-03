@@ -820,7 +820,7 @@ add_face_to_border(typename boost::graph_traits<Graph>::halfedge_descriptor h1,
  * </UL>
  * \returns vertex `vkept` (which can be either `v0` or `v1`).
  * \pre g must be a triangulated graph
- * \pre `safisfies_link_condition(v0v1,g) == true`.
+ * \pre `satisfies_link_condition(v0v1,g) == true`.
  */
 template<typename Graph>
 typename boost::graph_traits<Graph>::vertex_descriptor
@@ -961,6 +961,21 @@ collapse_edge(typename boost::graph_traits<Graph>::edge_descriptor v0v1,
   return lP_Erased ? q : p ;
 }
 
+/**
+ * Collapses the edge `v0v1` replacing it with v0 or v1, as described in the paragraph above
+ * and guarantees that an edge `e2`, for which `get(edge_is_constrained_map, e2)==true`, 
+ * is not removed after the collapse.
+ * 
+ *
+ * \tparam Graph must be a model of `MutableFaceGraph`
+ * \tparam EdgeIsConstrainedMap mut be a model of `ReadablePropertyMap` with the edge descriptor of `Graph` 
+ *       as key type and a Boolean as value type. It indicates if an edge is constrained or not. 
+ *
+ * \pre This function requires `g` to be an oriented 2-manifold with or without boundaries. 
+ *       Furthermore, the edge `v0v1` must satisfy the link condition, which guarantees that the surface mesh is also 2-manifold after the edge collapse. 
+ * \pre `get(edge_is_constrained_map, v0v1)==false`. 
+ * \pre  `v0` and `v1` are not both incident to a constrained edge. 
+ */
 
 template<typename Graph, typename EdgeIsConstrainedMap>
 typename boost::graph_traits<Graph>::vertex_descriptor
@@ -1141,7 +1156,7 @@ collapse_edge(typename boost::graph_traits<Graph>::halfedge_descriptor coll,
  */
   template<typename Graph>
 bool
-  safisfies_link_condition(typename boost::graph_traits<Graph>::edge_descriptor e,
+  satisfies_link_condition(typename boost::graph_traits<Graph>::edge_descriptor e,
                            Graph& g)
 {
     typedef typename boost::graph_traits<Graph>::vertex_descriptor vertex_descriptor;
