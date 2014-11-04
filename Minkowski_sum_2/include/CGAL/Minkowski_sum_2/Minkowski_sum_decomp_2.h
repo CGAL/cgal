@@ -289,11 +289,12 @@ private:
    */
   void simplify(Arrangement_2& arr) const
   {
-    typename Arrangement_2::Vertex_iterator vit;
-    for (vit = arr.vertices_begin(); vit != arr.vertices_end(); ++vit) {
-      if (vit->degree() != 2) continue;
+    typename Arrangement_2::Vertex_iterator vit = arr.vertices_begin();
+    while (vit != arr.vertices_end()) {
+      typename Arrangement_2::Vertex_iterator curr = vit++;
+      if (curr->degree() != 2) continue;
       typename Arrangement_2::Halfedge_around_vertex_circulator eit =
-        vit->incident_halfedges();
+        curr->incident_halfedges();
       const typename Arrangement_2::Geometry_traits_2* traits =
         arr.geometry_traits();
       if (traits->are_mergeable_2_object()(eit->curve(), eit->next()->curve()))
