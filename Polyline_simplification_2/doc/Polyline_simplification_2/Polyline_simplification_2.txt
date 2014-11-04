@@ -83,7 +83,7 @@ The maximum squared distance is the maximum of the squared Euclidean
 distances between each point on the original polyline between `p` and
 `r` and the line segment `(p,r)`. Let \f$s_0,...,s_n\f$ be the points
 strictly between `p` and `r` on the original polyline.  The cost of
-removing vertex `q` is: \f$ v_1 = \max \{ squared_distance((p,r), s_i) |
+removing vertex `q` is: \f$ v_1 = \max \{ squared\_distance((p,r), s_i) |
 i=0,..,n\} \f$
 
 \cgalFigureBegin{figure_maxDist,maxDist.png}
@@ -101,7 +101,7 @@ the candidate vertex `q` and all its adjacent vertices (except `p` and
 regions of the same polyline.
 
 Let \f$t_0,...,t_m\f$ be the points of the vertices adjacent to vertex
-`q`, different from `p` and `r` and let \f$ v_2 = \min \{ squared_distance((p,r),
+`q`, different from `p` and `r` and let \f$ v_2 = \min \{ squared\_distance((p,r),
 t_i) | i=0,..,n\}\f$. The cost of removing vertex `q` is
 \f$v_1/v_2\f$.  See also Figure \ref figure_scaledAndHybrid.
 
@@ -183,8 +183,8 @@ call `Polyline_simplification_2::simplify()` once again for the same
 polyline constraint, while measuring the simplification error against
 the original polyline.
 
-The print function traverses each polyline constraint twice. First to
-print the points on the simplified polyline, and then to print the
+The print function traverses each polyline constraint twice. First we
+print the points on the simplified polyline, and then we print the
 points of the original polyline.
 
 At the end we remove the points that were kept from the constraints.

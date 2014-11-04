@@ -22,7 +22,7 @@ public:
 
 
 /*! 
-Given a vertex in constraint iterator `viq` computes `vip= std::prev(viq)` and vir = std::next(vir)`, and the cost of removing vertex `*viq`, replacing edges `(*vip,*viq)` and `(*viq,*vir)` with edge `(*vip,*vir)`. 
+Given a vertex in constraint iterator `viq` computes `vip=std::prev(viq)` and `vir=std::next(vir)`, and the cost of removing vertex `*viq`, replacing edges `(*vip,*viq)` and `(*viq,*vir)` with edge `(*vip,*vir)`. 
 
 \param ct The underlying constrained Delaunay triangulation with constraint hierarchy which embeds the polyline constraints
 \param viq The vertex in constraint iterator of the vertex to remove
