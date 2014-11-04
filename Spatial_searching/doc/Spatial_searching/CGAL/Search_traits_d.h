@@ -5,13 +5,16 @@ namespace CGAL {
 
 The class `Search_traits_d` can be used as a template parameter of the kd tree 
 and the search classes. `Kernel` must be a \cgal kernel. 
-
+\cgalModifBegin
+Added Dimension
+\cgalModifEnd
 `Kernel` must be a d-dimensional \cgal kernel. 
 
 \cgalHeading{Parameters}
 
-Expects for the template argument a model of the concept `Kernel_d`, 
-for example `Cartesian_d<double>`. 
+Expects for the first template argument a model of the concept `Kernel_d` 
+(for example `Cartesian_d<double>`) and for the second argument a `Dimension_tag`
+(default value is `Dynamic_dimension_tag`).
 
 \cgalModels `SearchTraits`
 \cgalModels `RangeSearchTraits`
@@ -21,12 +24,18 @@ for example `Cartesian_d<double>`.
 \sa `Search_traits<Point,CartesianConstIterator,ConstructCartesianConstIterator>` 
 
 */
-template< typename Kernel >
+template< typename Kernel, typename Dim >
 class Search_traits_d {
 public:
 
 /// \name Types 
 /// @{
+
+/*!
+Dimension type. Either `Dimension_tag<int dim>`
+or `Dynamic_dimension_tag`.
+*/
+typedef Dim Dimension;
 
 /*!
 Number type. 
