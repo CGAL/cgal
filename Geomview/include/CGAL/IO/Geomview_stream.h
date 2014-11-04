@@ -593,4 +593,8 @@ operator>>(Geomview_stream &gv, Point_3<R> &point)
 
 } //namespace CGAL
 
+#ifdef CGAL_HEADER_ONLY
+#include <CGAL/IO/Geomview_stream_impl.h>
+#endif // CGAL_HEADER_ONLY
+
 #endif // CGAL_GEOMVIEW_STREAM_H

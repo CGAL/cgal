@@ -2,7 +2,6 @@ CGAL:
 
 Clement:
 
-#include "/home/gdamiand/sources/CGAL/Geomview/src/CGAL/Geomview_stream.cpp"
 #include "/home/gdamiand/sources/CGAL/Kinetic_data_structures/src/CGAL/JAMA_numeric_solver.cpp"
 #include "/home/gdamiand/sources/CGAL/Kinetic_data_structures/src/CGAL/KDS_Log.cpp"
 #include "/home/gdamiand/sources/CGAL/Kinetic_data_structures/src/CGAL/numeric_solvers_support.cpp"
@@ -22,6 +21,7 @@ DONE #include "/home/gdamiand/sources/CGAL/Stream_support/src/CGAL/Color.cpp" //
 DONE #include "/home/gdamiand/sources/CGAL/Kernel_23/src/CGAL/kernel.cpp" // constantes globales
 DONE #include "/home/gdamiand/sources/CGAL/Number_types/src/CGAL/Interval_arithmetic.cpp" // constante globale
 
+DONE #include "/home/gdamiand/sources/CGAL/Geomview/src/CGAL/Geomview_stream.cpp"
 DONE #include "/home/gdamiand/sources/CGAL/Intersections_2/src/CGAL/Bbox_2_intersections.cpp"
 DONE #include "/home/gdamiand/sources/CGAL/Stream_support/src/CGAL/File_header_extended_OFF.cpp"
 DONE #include "/home/gdamiand/sources/CGAL/Stream_support/src/CGAL/File_writer_inventor.cpp"
