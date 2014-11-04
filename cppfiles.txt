@@ -32,6 +32,15 @@ DONE #include "/home/gdamiand/sources/CGAL/Stream_support/src/CGAL/File_writer_V
 DONE #include "/home/gdamiand/sources/CGAL/Stream_support/src/CGAL/File_writer_wavefront.cpp"
 DONE #include "/home/gdamiand/sources/CGAL/Nef_2/src/CGAL/NefPolynomial.cpp"
 
+CGAL_Qt4:
+
+DONE #include "/home/gdamiand/sources/CGAL/GraphicsView/src/CGAL_Qt4/utility.cpp"
+DONE #include "/home/gdamiand/sources/CGAL/GraphicsView/src/CGAL_Qt4/resources.cpp"
+DONE #include "/home/gdamiand/sources/CGAL/GraphicsView/src/CGAL_Qt4/debug.cpp"
+DONE #include "/home/gdamiand/sources/CGAL/GraphicsView/src/CGAL_Qt4/GraphicsViewPolylineInput.cpp"
+DONE #include "/home/gdamiand/sources/CGAL/GraphicsView/src/CGAL_Qt4/DemosMainWindow.cpp"
+DONE #include "/home/gdamiand/sources/CGAL/GraphicsView/src/CGAL_Qt4/GraphicsViewNavigation.cpp"
+
 CGAL_Core:
 
 #include "/home/gdamiand/sources/CGAL/CGAL_Core/src/CGAL_Core/CoreIO.cpp"
@@ -62,12 +71,3 @@ CGAL_ImageIO:
 #include "/home/gdamiand/sources/CGAL/CGAL_ImageIO/src/CGAL_ImageIO/pnm.cpp"
 #include "/home/gdamiand/sources/CGAL/CGAL_ImageIO/src/CGAL_ImageIO/ImageIO.cpp"
 #include "/home/gdamiand/sources/CGAL/CGAL_ImageIO/src/CGAL_ImageIO/inr.cpp"
-
-CGAL_Qt4:
-
-DONE #include "/home/gdamiand/sources/CGAL/GraphicsView/src/CGAL_Qt4/utility.cpp"
-DONE #include "/home/gdamiand/sources/CGAL/GraphicsView/src/CGAL_Qt4/resources.cpp"
-DONE #include "/home/gdamiand/sources/CGAL/GraphicsView/src/CGAL_Qt4/debug.cpp"
-DONE #include "/home/gdamiand/sources/CGAL/GraphicsView/src/CGAL_Qt4/GraphicsViewPolylineInput.cpp"
-DONE #include "/home/gdamiand/sources/CGAL/GraphicsView/src/CGAL_Qt4/DemosMainWindow.cpp"
-DONE #include "/home/gdamiand/sources/CGAL/GraphicsView/src/CGAL_Qt4/GraphicsViewNavigation.cpp"
