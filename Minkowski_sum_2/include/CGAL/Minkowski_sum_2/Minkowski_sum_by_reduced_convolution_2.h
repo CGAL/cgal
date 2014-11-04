@@ -51,6 +51,7 @@ private:
   Ccb_halfedge_circulator;
   typedef typename Arrangement_history_2::Originating_curve_iterator
   Originating_curve_iterator;
+  typedef typename Arrangement_history_2::Inner_ccb_iterator Inner_ccb_iterator;
 
   // Function object types:
   typename Kernel::Construct_translated_point_2 f_add;
@@ -275,7 +276,7 @@ private:
     std::vector<Direction_2> directions;
     unsigned int n = p.size();
 
-    for (int i = 0; i < n-1; ++i)
+    for (unsigned int i = 0; i < n-1; ++i)
     {
       directions.push_back(f_direction(f_vector(p[i], p[i+1])));
     }
@@ -302,7 +303,8 @@ private:
   void get_outer_loop(Arrangement_history_2 &arr,
                       Polygon_2 &outer_boundary) const
   {
-    Ccb_halfedge_circulator circ_start = *(arr.unbounded_face()->holes_begin());
+    Inner_ccb_iterator icit = arr.unbounded_face()->inner_ccbs_begin();
+    Ccb_halfedge_circulator circ_start = *icit;
     Ccb_halfedge_circulator circ = circ_start;
 
     do
