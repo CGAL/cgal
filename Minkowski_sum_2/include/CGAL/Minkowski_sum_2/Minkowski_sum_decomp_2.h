@@ -243,8 +243,6 @@ public:
     (*m_decomposition_strategy)(pgn1, std::back_inserter(sub_pgns1));
     (*m_decomposition_strategy)(pgn2, std::back_inserter(sub_pgns2));
 
-    std::cout << "After Decomposition" << std::endl;
-
     return operator()(sub_pgns1.begin(), sub_pgns1.end(),
                       sub_pgns2.begin(), sub_pgns2.end());
   }
