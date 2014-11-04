@@ -46,7 +46,7 @@ namespace CGAL_MINIBALL_NAMESPACE {
     bool Support_set<Traits>::push(const Sphere& ball) {
       CGAL_MINIBALL_DO_DEBUG(is_spanning_was_called = false);
 
-      if (m > D)
+      if ((std::ptrdiff_t)m > D)
         return false;
 
       b[m] = &ball;
