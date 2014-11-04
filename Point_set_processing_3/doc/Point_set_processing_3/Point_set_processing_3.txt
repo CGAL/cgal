@@ -143,10 +143,9 @@ one arbitrarily chosen point. This algorithm is slower than
 
 Function `wlop_simplify_and_regularize_point_set()` not only simplifies, 
 but also regularizes downsampled points. This is an implementation of
-the WLOP (Weighted Locally Optimal Projection) algorithm 
-<a href="http://web.siat.ac.cn/~huihuang/WLOP/WLOP_page.html">[Huang et al. 2009]</a>.
+the Weighted Locally Optimal Projection (WLOP) algorithm \cgalCite{wlop-2009}.
 
- 
+
 \subsection Point_set_processing_3Example_3 Grid simplification example
 
 The following example reads a point set and simplifies it by clustering.
@@ -194,7 +193,8 @@ projecting each point onto a smooth parametric surface patch
 
 Function `bilateral_smooth_point_set()` smooths the input point set by
 iteratively projecting each point onto the implicit surface patch fitted over its `k` nearest neighbors.
-Bilateral projection preserves sharp features according to the normal (gradient) information. Normals are thus required as input. See formula (2) and (4) in paper <a href="http://web.siat.ac.cn/~huihuang/EAR/EAR_page.html">[Huang et al. 2013]</a>.
+Bilateral projection preserves sharp features according to the normal (gradient) information. 
+Normals are thus required as input. See formula (2) and (4) in \cgalCite{ear-2013}.
 
 \subsection Point_set_processing_3Example_5 Jet smoothing example
 
