@@ -40,7 +40,7 @@ public:
   /// Initializes the cost function.
   Scaled_squared_distance_cost() {}
 
-  /// Given a vertex in constraint iterator `vicq` computes `vicp= std::prev(vicq)` and `vicr = std::next(vicr)`,
+  /// Given a vertex in constraint iterator `vicq` computes `vicp=std::prev(vicq)` and `vicr=std::next(vicq)`,
   /// returns the maximum of the square distances between each point along the original subpolyline
   /// between `vicp` and `vicr`,
   /// and the straight line segment  from `*vicp->point() to *vicr->point()` divided by the shortest squared distance between
