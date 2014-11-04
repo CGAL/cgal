@@ -24,8 +24,12 @@ it has a lower memory footprint than a 64-bit pointer based version.
 As the indices are contiguous, they can be used as index into vectors
 which store properties.
 
+When elements are removed, they are only marked as removed, and a garbage
+collection function must be called to really remove them. 
+
 The class `Surface_mesh` can be used through its class member functions 
-as well as through the BGL API, as it is a model of `MutableFaceGraph`.
+as well as through the BGL API, as it is a model of the concepts 
+`MutableFaceGraph` and `FaceListGraph`.
 
 \section sectionSurfaceMeshUsage Usage
 
@@ -152,14 +156,13 @@ function to create an iterator range.
 \section sectionSurfaceMesh_properties Properties
 
 `Surface_mesh` provides a mechanism to specify new properties for
-vertices, edges, halfedges and faces at run-time. Each property is
+vertices, halfedges, edges, and faces at run-time. Each property is
 identified by a string and its key type. All properties are stored as
 consecutive blocks of memory. References to properties are invalidated
 whenever new elements of the key type are added to the data-structure
 or when the function `Surface_mesh::collect_garbage()` is performed. Properties will continue to
 exist after an element has been deleted (their destructor is not
-called) and will still be accessible when `Property::data()` is
-called. Trying to access a property through an invalidated element
+called). Trying to access a property through an invalidated element
 will result in undefined behavior.
 
 
@@ -212,8 +215,8 @@ for example
 | `boost::graph_traits<G>::%vertex_descriptor` | `Surface_mesh::Vertex_index` | |
 | `edges(const G& g)` | `sm.edges()` | |
 | `vd = source(ed,g)` | `vd = sm.source(ed)` | |
-| na  | `n = sm.number_of_vertices()` | counts non-deleted vertices amd has no BGL equivalent |
-| `n = num_vertices(g)`  | `n = sm.num_vertices()` | counts used and deleted vertices |
+| na  | `n = sm.number_of_vertices()` | counts non-deleted vertices and has no BGL equivalent |
+| `n = num_vertices(g)`  | `n = sm.number_of_vertices() +  sm.number_of_removed_vertices()` | counts used and deleted vertices |
 | etc. | | |
 
 

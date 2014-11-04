@@ -55,10 +55,12 @@ namespace CGAL {
   /// The main difference is that it is indexed based and not pointer based,
   /// and that the mechanism for adding information to vertices, halfedges,
   /// and faces is much simpler and done at runtime and not at compile time.
-  /// @tparam P The type of the "point" property of a vertex. There is no requirement on `P`,
+  /// When elements are removed, they are only marked as removed, and a garbage
+  /// collection function must be called to really remove them. 
+  /// @tparam P The type of the \em point property of a vertex. There is no requirement on `P`,
   ///         besides being default constructible and assignable. 
   ///         In typical use cases it will be a 2D or 3D point type.
-
+  /// \cgalModels `MutableFaceGraph` and `FaceListGraph`
 
 template <typename P>
 class Surface_mesh
@@ -810,7 +812,7 @@ public:
     ///
     /// Each range `R` in this section has a nested type `R::iterator`, 
     /// is convertible to `std:pair<R::iterator,R::iterator>`, so that one can use `boost::tie()`,
-    /// and can be used with `BOOST_FOREACH()`, as well as with the C++11 range based `for(..)` loop.
+    /// and can be used with `BOOST_FOREACH()`, as well as with the C++11 range based for-loop.
 
     ///@{
 
@@ -820,7 +822,7 @@ public:
 
     /// \brief The range over all vertex indices.
     ///
-    /// A model of <a href="http://www.boost.org/libs/range/doc/html/range/concepts/bidirectional_range.html">BidirectionalRange</a>.
+    /// A model of <a href="http://www.boost.org/libs/range/doc/html/range/concepts/bidirectional_range.html">BidirectionalRange</a> with value type `Vertex_index`.
     /// \sa `vertices()`
     /// \sa `Halfedge_range`, `Edge_range`, `Face_range`
 #ifdef DOXYGEN_RUNNING
@@ -835,7 +837,7 @@ public:
 
     /// \brief The range over all halfedge indices.
     ///
-    /// A model of <a href="http://www.boost.org/libs/range/doc/html/range/concepts/bidirectional_range.html">BidirectionalRange</a>.
+    /// A model of <a href="http://www.boost.org/libs/range/doc/html/range/concepts/bidirectional_range.html">BidirectionalRange</a> with value type `Halfedge_index`.
     /// \sa `halfedges()`
     /// \sa `Vertex_range`, `Edge_range`, `Face_range`
 #ifdef DOXYGEN_RUNNING
@@ -850,7 +852,7 @@ public:
 
     /// \brief The range over all edge indices.
     ///
-    /// A model of <a href="http://www.boost.org/libs/range/doc/html/range/concepts/bidirectional_range.html">BidirectionalRange</a>.
+    /// A model of <a href="http://www.boost.org/libs/range/doc/html/range/concepts/bidirectional_range.html">BidirectionalRange</a> with value type `Edge_index`.
     /// \sa `edges()`
     /// \sa `Halfedge_range`, `Vertex_range`, `Face_range`
 #ifdef DOXYGEN_RUNNING
@@ -865,7 +867,7 @@ public:
 #endif
     /// \brief The range over all face indices.
     ///
-    /// A model of <a href="http://www.boost.org/libs/range/doc/html/range/concepts/bidirectional_range.html">BidirectionalRange</a>.
+    /// A model of <a href="http://www.boost.org/libs/range/doc/html/range/concepts/bidirectional_range.html">BidirectionalRange</a> with value type `Face_index`.
     /// \sa `faces()`
     /// \sa `Vertex_range`, `Halfedge_range`, `Edge_range`
  #ifdef DOXYGEN_RUNNING
@@ -1285,36 +1287,41 @@ public:
 
     /// \name Memory Management
     ///
-    /// Functions to check the number of used elements, the amount of space
+    /// Functions to check the number of elements, the amount of space
     /// allocated for elements, and to clear the structure.
     ///@{
 
-  /// returns the number of used vertices in the mesh.
+  /// returns the number of vertices in the mesh.
   size_type number_of_vertices() const
   {
     return num_vertices() + num_removed_vertices();
   }
  
-  /// returns the number of used halfedges in the mesh.
+  /// returns the number of halfedges in the mesh.
   size_type number_of_halfedges() const
   {
     return num_halfedges() + num_removed_halfedges();
   }
 
-  /// returns the number of used edges in the mesh.
+  /// returns the number of edges in the mesh.
   size_type number_of_edges() const
   {
     return num_edges() + num_removed_edges();
   }
 
-  /// returns the number of used faces in the mesh.
+  /// returns the number of faces in the mesh.
   size_type number_of_faces() const
   {
     return num_faces() + num_removed_faces();
   }
 
-    /// returns `true` iff the mesh is empty, i.e., has no used vertices.
-    bool is_empty() const { return num_vertices() == num_removed_vertices(); }
+    /// returns `true` iff the mesh is empty, i.e., has no vertices, halfedges and faces.
+    bool is_empty() const
+  {
+    return ( num_vertices() == num_removed_vertices()
+             && num_halfedges() == num_removed_halfedges()
+             && num_faces() == num_removed_faces());
+  }
 
     /// removes all vertices, edges and faces. Collects garbage and clears all properties.
     void clear();
@@ -1342,18 +1349,19 @@ public:
     /// garbage collection really removes them.
     /// The API in this section allows to check whether 
     /// an element is removed, to get the number of
-    /// used and removed elements, and to collect garbage.
-    /// The number of used and removed elements is
+    /// removed elements, and to collect garbage.
+    /// The number of elements together with the number of  removed elements is
     /// an upperbound on the index, and is needed
     /// by algorithms that temporarily store a 
     /// property in a vector of the appropriate size.
     /// Note however that by garbage collecting elements get new indices.
-    /// In case you store vertex descriptors in an auxiliary data structure
-    /// or in a property these vertex descriptors are potentially no longer 
-    /// refering to the right vertices. 
+    /// In case you store indices in an auxiliary data structure
+    /// or in a property these indices are potentially no longer 
+    /// refering to the right elements. 
 
 
     ///@{
+#ifndef DOXYGEN_RUNNING
    /// returns the number of used and removed vertices in the mesh.
     size_type num_vertices() const { return (size_type) vprops_.size(); }
 
@@ -1366,21 +1374,21 @@ public:
     /// returns the number of used and removed faces in the mesh.
     size_type num_faces() const { return (size_type) fprops_.size(); }
 
-#ifndef DOXYGEN_RUNNING
+#endif
 
-    /// returns the number of removed vertices in the mesh.
+    /// returns the number of vertices in the mesh which are marked removed.
     size_type num_removed_vertices() const { return removed_vertices_; }
 
-    /// returns the number of removed halfedges in the mesh.
+    /// returns the number of halfedges in the mesh which are marked removed.
     size_type num_removed_halfedges() const { return 2*removed_edges_; }
 
-    /// returns the number of removed edges in the mesh.
+    /// returns the number of edges in the mesh which are marked removed.
     size_type num_removed_edges() const { return removed_edges_; }
 
-    /// returns the number of removed faces in the mesh.
+    /// returns the number offaces in the mesh which are marked removed.
     size_type num_removed_faces() const { return removed_faces_; }
 
-#endif
+
 
     /// returns whether vertex `v` is marked removed.
     /// \sa `collect_garbage()`
@@ -1413,11 +1421,13 @@ public:
 
     /// really removes vertices, edges, and faces which were marked removed.
     /// \sa `has_garbage()`
-    /// \todo Add a version which creates a property for the previous position
-    /// of an element. We really would need a mapping old->new, but we no longer
-    /// have arrays of the right size for old properties. How to solve that elegantly?
-
+    /// \attention By garbage collecting elements get new indices.
+    /// In case you store indices in an auxiliary data structure
+    /// or in a property these indices are potentially no longer 
+    /// refering to the right elements. 
     void collect_garbage();
+
+
     /// @cond CGAL_DOCUMENT_INTERNALS
     /// removes unused memory from vectors. This shrinks the storage
     /// of all properties to the minimal required size.
@@ -1587,7 +1597,7 @@ public:
     }
 
 
-    /// performs a validity check on a single face.
+    /// performs a validity check on a single ede.
     bool is_valid(Edge_index e) const {
       Halfedge_index h = halfedge(e);
       return is_valid(h) && is_valid(opposite(h));
@@ -1890,7 +1900,7 @@ public:
   }
 
 
-    /// returns whether `v` is isolated, i.e., not incident to a halfedge.
+    /// returns whether `v` is isolated, i.e., incident to `Surface_mesh::null_halfedge()`.
     bool is_isolated(Vertex_index v) const
     {
         return !halfedge(v).is_valid();
@@ -1916,6 +1926,10 @@ private: //--------------------------------------------------- property handling
  
 
  /*! \name Property Handling
+
+ A `Property_map<I,T>` allows to associate properties of type `T` to a vertex, halfdge, edge, or face index type I.
+ Properties can be added, and looked up with a string, and they can be removed at runtime.
+ The \em point property of type `P` is associated to the string "v:point". 
 
     */
     ///@{
@@ -1988,7 +2002,7 @@ private: //--------------------------------------------------- property handling
     }
   /// @endcond
 
-    /// returns a list of all strings that describe properties with the key type `I`.
+    /// returns a vector with all strings that describe properties with the key type `I`.
     /// @tparam I The key type of the properties.
     template<class I>
     std::vector<std::string> properties() const
@@ -1996,7 +2010,7 @@ private: //--------------------------------------------------- property handling
         return (this->*boost::fusion::at_key<I>(pmap_)).properties();
     }
 
-    /// returns the property for "v:point".
+    /// returns the property for the string "v:point".
     Property_map<Vertex_index, Point>
     points() const { return vpoint_; }
 
@@ -2084,8 +2098,8 @@ private: //------------------------------------------------------- private data
 
   /// \relates Surface_mesh
   /// Inserts the surface mesh in an output stream in Ascii OFF format. 
-  /// None of the proprties is inserted in the stream.
-  /// \note `operator<<(std::ostream&,const P&)` must be defined.
+  /// Only the \em point property is inserted in the stream.
+  /// \pre `operator<<(std::ostream&,const P&)` must be defined.
   template <typename P>
   std::ostream& operator<<(std::ostream& os, const Surface_mesh<P>& sm)
   {
@@ -2113,8 +2127,9 @@ private: //------------------------------------------------------- private data
     }
   /// \relates Surface_mesh
   /// Extracts the surface mesh from an input stream in Ascii OFF format.
-  /// The operator does not read files with vertex normals or textures.
-  /// \note `operator>>(std::istream&,const P&)` must be defined.
+  /// The operator only reads the point property and does not read files 
+  /// with vertex normals or textures.
+  /// \pre `operator>>(std::istream&,const P&)` must be defined.
   template <typename P>
   std::istream& operator>>(std::istream& is, Surface_mesh<P>& sm)
   {
