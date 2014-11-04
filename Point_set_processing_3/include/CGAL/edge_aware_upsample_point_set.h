@@ -317,7 +317,7 @@ edge_aware_upsample_point_set(
   const typename Kernel::FT edge_senstivity,  ///<  
                     ///< larger values of edge-sensitivity give higher priority 
                     ///< to inserting points along the sharp features.
-                    ///< The range of possible value is [0, infinite).
+                    ///< The range of possible value is [0, 1].
   const typename Kernel::FT neighbor_radius, ///< 
                     ///< initial size of neighbors,
                     ///< indicates the radius of the biggest hole that will be filled.
@@ -338,8 +338,10 @@ edge_aware_upsample_point_set(
   CGAL_point_set_processing_precondition(sharpness_angle >= 0 
                                        &&sharpness_angle <= 90);
   CGAL_point_set_processing_precondition(edge_senstivity >= 0 
-                                       &&edge_senstivity <= 5);
+                                       &&edge_senstivity <= 1);
   CGAL_point_set_processing_precondition(neighbor_radius > 0);
+
+  edge_senstivity *= 10;  // just project [0, 1] to [0, 10].
 
   std::size_t number_of_input = std::distance(first, beyond);
   CGAL_point_set_processing_precondition(number_of_output > number_of_input);

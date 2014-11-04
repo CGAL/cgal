@@ -304,8 +304,7 @@ compute_density_weight_for_sample_point(
 /// dense point cloud. 
 /// The core of the algorithm is a Weighted Locally Optimal projection operator
 /// with a density uniformization term. 
-/// For more details, please refer to this paper:
-/// \cgalCite{WLOP2009}  
+/// For more details, please refer to this paper: \cgalCite{WLOP2009}.  
 /// @tparam Concurrency_tag enables sequential versus parallel algorithm.
 ///                         Possible values are `Sequential_tag`
 ///                         and `Parallel_tag`.
