@@ -172,7 +172,7 @@ Computing density weights for each point is an optional preprocessing. For examp
 Comparison between with and without density: Left: input. Middle: `require_uniform_sampling = false`. Right: `require_uniform_sampling=true`. 
 \cgalFigureEnd
 
-\subsubsection Point_set_processing_3WLOP_parallel_performance Parallel Performance: 
+\subsubsection Point_set_processing_3WLOP_parallel_performance Parallel Performance
 A parallel version of WLOP is provided and requires the executable to be linked against the 
 <a href="http://www.threadingbuildingblocks.org">Intel TBB library</a>.
 To control the number of threads used, the user may use the tbb::task_scheduler_init class.
