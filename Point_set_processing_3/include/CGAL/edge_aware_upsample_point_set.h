@@ -63,7 +63,7 @@ base_point_selection(
   const rich_grid_internal::Rich_point<Kernel>& query, ///< 3D point to project
   const std::vector<rich_grid_internal::Rich_point<Kernel> >& 
                     neighbor_points,///< neighbor sample points
-  const typename Kernel::FT edge_senstivity,///< edge senstivity parameter
+  const typename Kernel::FT edge_sensitivity,///< edge senstivity parameter
   unsigned int& output_base_index ///< base point index
   )
 {
@@ -86,7 +86,7 @@ base_point_selection(
     Vector diff_v_t = t - v.pt;
     Point mid_point = v.pt + (diff_v_t * FT(0.5));
     
-    FT dot_produce = std::pow((FT(2.0) - vm * tm), edge_senstivity);
+    FT dot_produce = std::pow((FT(2.0) - vm * tm), edge_sensitivity);
 
     Vector diff_t_mid = mid_point - t;
     FT project_t = diff_t_mid * tm;
@@ -314,14 +314,15 @@ edge_aware_upsample_point_set(
                     ///< control the preservation of sharp features. The bigger
                     ///< the smoother the result will be.
                     ///< The range of possible value is [0, 90].
-  typename Kernel::FT edge_senstivity,  ///<  
+  typename Kernel::FT edge_sensitivity,  ///<  
                     ///< larger values of edge-sensitivity give higher priority 
                     ///< to inserting points along the sharp features.
                     ///< The range of possible value is [0, 1].
   const typename Kernel::FT neighbor_radius, ///< 
                     ///< initial size of neighbors,
                     ///< indicates the radius of the biggest hole that will be filled.
-  const unsigned int number_of_output,///< points number of the output.                            
+  const unsigned int number_of_output_points,///< required number of points in 
+                                             ///< the output
   const Kernel& /*kernel*/ ///< geometric traits.
 )
 {
@@ -337,14 +338,14 @@ edge_aware_upsample_point_set(
   CGAL_point_set_processing_precondition(first != beyond);
   CGAL_point_set_processing_precondition(sharpness_angle >= 0 
                                        &&sharpness_angle <= 90);
-  CGAL_point_set_processing_precondition(edge_senstivity >= 0 
-                                       &&edge_senstivity <= 1);
+  CGAL_point_set_processing_precondition(edge_sensitivity >= 0 
+                                       &&edge_sensitivity <= 1);
   CGAL_point_set_processing_precondition(neighbor_radius > 0);
 
-  edge_senstivity *= 10;  // just project [0, 1] to [0, 10].
+  edge_sensitivity *= 10;  // just project [0, 1] to [0, 10].
 
   std::size_t number_of_input = std::distance(first, beyond);
-  CGAL_point_set_processing_precondition(number_of_output > number_of_input);
+  CGAL_point_set_processing_precondition(number_of_output_points > number_of_input);
 
   Timer task_timer;
 
@@ -422,7 +423,7 @@ edge_aware_upsample_point_set(
         double density2 = upsample_internal::
                               base_point_selection(v,
                                                     neighbor_rich_points,
-                                                    edge_senstivity,
+                                                    edge_sensitivity,
                                                     base_index);
         sum_density += density2;
         count_density++;
@@ -470,7 +471,7 @@ edge_aware_upsample_point_set(
         FT density2 = upsample_internal::
                               base_point_selection(v,
                                                    neighbor_rich_points,
-                                                   edge_senstivity,
+                                                   edge_sensitivity,
                                                    base_index);
 
         // test if it pass the density threshold
@@ -506,7 +507,7 @@ edge_aware_upsample_point_set(
                                             current_radius,
                                             sharpness_bandwidth);
 
-        if (rich_point_set.size() >= number_of_output)
+        if (rich_point_set.size() >= number_of_output_points)
         {
           break;
         }
@@ -516,14 +517,14 @@ edge_aware_upsample_point_set(
    #endif
       if (count_not_pass == 0 || 
           loop >= max_loop_time || 
-          rich_point_set.size() >= number_of_output)
+          rich_point_set.size() >= number_of_output_points)
       {
         break;
       }
 
     }
 
-    if (rich_point_set.size() >= number_of_output)
+    if (rich_point_set.size() >= number_of_output_points)
     {
       break;
     }
@@ -565,7 +566,7 @@ edge_aware_upsample_point_set(
   PointPMap point_pmap, ///< property map:  OutputIterator -> Point_3.
   NormalPMap normal_pmap, ///< property map: OutputIterator -> Vector_3.
   double sharpness_angle,  ///< control sharpness(0-90)
-  double edge_senstivity,  ///< edge senstivity(0-5)
+  double edge_sensitivity,  ///< edge senstivity(0-5)
   double neighbor_radius, ///< initial size of neighbors.
   const unsigned int number_of_output_points,///< number of iterations. 
   const Kernel& kernel) ///< geometric traits.
@@ -578,7 +579,7 @@ edge_aware_upsample_point_set(
     point_pmap,
     normal_pmap,
     sharpness_angle, 
-    edge_senstivity,
+    edge_sensitivity,
     neighbor_radius, 
     number_of_output_points,
     kernel);
@@ -602,7 +603,7 @@ edge_aware_upsample_point_set(
   PointPMap point_pmap, ///< property map: OutputIterator -> Point_3.
   NormalPMap normal_pmap, ///< property map: OutputIterator -> Vector_3.
   double sharpness_angle,  ///< control sharpness(0-90)
-  double edge_senstivity,  ///< edge senstivity(0-5)
+  double edge_sensitivity,  ///< edge senstivity(0-5)
   double neighbor_radius, ///< initial size of neighbors.
   const unsigned int number_of_output_points///< number of iterations.   
   )
@@ -616,7 +617,7 @@ edge_aware_upsample_point_set(
     point_pmap,
     normal_pmap,
     sharpness_angle, 
-    edge_senstivity,
+    edge_sensitivity,
     neighbor_radius, 
     number_of_output_points,
     Kernel());
@@ -637,7 +638,7 @@ edge_aware_upsample_point_set(
   PointPMap point_pmap, ///< property map: OutputIterator -> Point_3.
   NormalPMap normal_pmap, ///< property map: OutputIterator -> Vector_3.
   double sharpness_angle,  ///< control sharpness(0-90)
-  double edge_senstivity,  ///< edge senstivity(0-5)
+  double edge_sensitivity,  ///< edge senstivity(0-5)
   double neighbor_radius, ///< initial size of neighbors.
   const unsigned int number_of_output_points///< number of iterations.    
   )
@@ -650,7 +651,7 @@ edge_aware_upsample_point_set(
     point_pmap,
     normal_pmap,
     sharpness_angle, 
-    edge_senstivity,
+    edge_sensitivity,
     neighbor_radius, 
     number_of_output_points);
 }
@@ -670,7 +671,7 @@ edge_aware_upsample_point_set(
   OutputIterator output, ///< output iterator over points.
   NormalPMap normal_pmap,///< property map: OutputIterator->Vector_3.
   double sharpness_angle,  ///< control sharpness(0-90)
-  double edge_senstivity,  ///< edge senstivity(0-5)
+  double edge_sensitivity,  ///< edge senstivity(0-5)
   double neighbor_radius, ///< initial size of neighbors.
   const unsigned int number_of_output_points///< number of iterations.   
   ) 
@@ -686,7 +687,7 @@ edge_aware_upsample_point_set(
 #endif
     normal_pmap,
     sharpness_angle, 
-    edge_senstivity,
+    edge_sensitivity,
     neighbor_radius, 
     number_of_output_points);
 }
@@ -704,7 +705,7 @@ edge_aware_upsample_point_set(
   OutputIterator output, ///< output iterator over points.
   NormalPMap normal_pmap, ///< property map:  OutputIterator -> Vector_3.
   double sharpness_angle,  ///< control sharpness(0-90)
-  double edge_senstivity,  ///< edge senstivity(0-5)
+  double edge_sensitivity,  ///< edge senstivity(0-5)
   double neighbor_radius, ///< initial size of neighbors.
   const unsigned int number_of_output_points///< number of iterations.     
   )
@@ -716,7 +717,7 @@ edge_aware_upsample_point_set(
     output,
     normal_pmap,
     sharpness_angle, 
-    edge_senstivity,
+    edge_sensitivity,
     neighbor_radius, 
     number_of_output_points);
 }
