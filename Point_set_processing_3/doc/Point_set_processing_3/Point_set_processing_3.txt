@@ -290,8 +290,6 @@ Upsampling for different edge-sensitivity parameter values. The input containing
 This parameter controls the preservation of sharp features.
 
 \cgalFigureBegin{Point_set_processing_3figUpsample_sharpness_angle, upsample_sharpness_angle.jpg}
-\cgalFigureEnd
-\cgalFigureBegin{Point_set_processing_3figUpsample_sharpness_angle, upsample_sharpness_angle.jpg}
 Upsampling for different sharpness_angle parameter values. The input containing 850 points is upsampled to 425K points in all cases depicted. 
 \cgalFigureEnd
 
