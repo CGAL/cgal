@@ -1031,9 +1031,9 @@ one can obtain the input constraints which overlap `e`.
 \subsection Subsection_Edges_and_Constraints Edges, Constrained Edges, Constraints, and Subconstraints
 
 All triangulation classes define the type `Edge` as  `typedef std::pair<Face_handle>, int> Edge`.
-For a pair `(fh,i)` it is the edge of the face `*fh`,which is opposite to the `i`'th vertex.
+For a pair `(fh,i)` it is the edge of the face `*fh`, which is opposite to the `i`'th vertex.
 
-A <em>constrained edge</em> `e` as an edge of a constrained triangulation `ct`, for which `ct.is_constrained(e) == true`.
+A <em>constrained edge</em> `e` is an edge of a constrained triangulation `ct`, for which `ct.is_constrained(e)` returns `true`.
 
 A <em>constraint</em> is a polyline which is given as input (in the simplest case just a segment), and
 which is split into constrained edges in the triangulation. 
@@ -1072,10 +1072,10 @@ Computation of an intersection with an input constraint instead of with an edge.
 
 When inserting a constraint, say a segment `s` in the triangulation, this segment may intersect a constrained  edge `e`
 with the vertices `p` and `q`.
-The algorithm could  compute the intersection point `i` of `s` with the segment `(p,q)`. Because these points may be previously constructed
-intersection points, as `q` in the figure above, it is better to obtain an input constraint `c` that overlaps the edge. If `c` is a segment
-the algorithm intersects `s` with `c`. If `c` is a polyline, the algorithm finds two vertices on the input constraint that
-define a segment that overlaps `e`.
+The algorithm could  compute the intersection point `i` of `s` with the segment `[p,q]`. Because these points may be previously constructed
+intersection points, as `q` in the figure above, it is better to use an input constraint `c` that overlaps the edge. If `c` is a segment,
+the algorithm intersects `s` with `c`. If `c` is a polyline, the algorithm finds two vertices from the input constraint that
+define an input segment that overlaps `e`.
 
 
 
@@ -1105,7 +1105,7 @@ through the edge.
 
 The class `Triangulation_hierarchy_2<Tr>`
 implements a triangulation augmented with
-a data structure to answer efficiently point location queries.
+a data structure to efficiently answer point location queries.
 The data structure is a hierarchy 
 of triangulations. The triangulation at the lowest level is
 the original triangulation where operations and point location are to 
