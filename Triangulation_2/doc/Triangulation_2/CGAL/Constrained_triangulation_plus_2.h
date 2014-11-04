@@ -378,7 +378,9 @@ typedef unspecified_type Points_in_constraint_iterator;
 
 Removes the vertex at `vicq` from the constraint and the triangulation.
 Only the vertex but not the point is removed from the constraint.
-Let `vip` and `viq` be defined as `vip = std::prev(vicq)` and vir = std::next(vicr)`,
+
+
+\pre Let `vip` and `viq` be defined as `vip = std::prev(vicq)` and `vir = std::next(vicr)`.
 \pre `vicq` must neither be the first, nor the last vertex on a constraint.
 \pre No other constraint must pass through `vicq`.
 \pre The line segment between `*vicp->point()` and `*vicr->point()` must not intersect any constraint.
