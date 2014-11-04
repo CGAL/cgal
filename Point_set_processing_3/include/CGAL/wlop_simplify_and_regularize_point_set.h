@@ -330,7 +330,7 @@ template <typename Concurrency_tag,
           typename PointPMapIn,
           typename PointPMapOut,
           typename Kernel>
-void
+OutputIterator
 wlop_simplify_and_regularize_point_set(
   RandomAccessIterator first,  ///< iterator over the first input point.
   RandomAccessIterator beyond, ///< past-the-end iterator over the input points.
@@ -574,7 +574,7 @@ wlop_simplify_and_regularize_point_set(
     *output++ = *sample_iter;
   }
 
-  return;
+  return output;
 }
 
 /// @cond SKIP_IN_MANUAL
@@ -585,7 +585,7 @@ template <typename Concurrency_tag,
           typename RandomAccessIterator, 
           typename PointPMapIn,
           typename PointPMapOut>
-void 
+OutputIterator 
 wlop_simplify_and_regularize_point_set(
   RandomAccessIterator  first,  ///< iterator over the first input point
   RandomAccessIterator  beyond, ///< past-the-end iterator
@@ -623,7 +623,7 @@ template <typename Concurrency_tag,
           typename OutputIterator,     
           typename RandomAccessIterator,
           typename PointPMap>
-void
+OutputIterator
 wlop_simplify_and_regularize_point_set(
   RandomAccessIterator  first,  ///< iterator over the first input point
   RandomAccessIterator  beyond, ///< past-the-end iterator
@@ -659,7 +659,7 @@ wlop_simplify_and_regularize_point_set(
 template <typename Concurrency_tag, 
           typename OutputIterator,     
           typename RandomAccessIterator >
-void
+OutputIterator
 wlop_simplify_and_regularize_point_set(
   RandomAccessIterator  first,  ///< iterator over the first input point
   RandomAccessIterator  beyond, ///< past-the-end iterator

@@ -302,7 +302,7 @@ template <typename OutputIteratorValueType,
           typename PointPMap, 
           typename NormalPMap,
           typename Kernel>
-void
+OutputIterator
 edge_aware_upsample_point_set(
   ForwardIterator first,  ///< iterator over the first input point.
   ForwardIterator beyond, ///< past-the-end iterator over the input points.
@@ -314,7 +314,7 @@ edge_aware_upsample_point_set(
                     ///< control the preservation of sharp features. The bigger
                     ///< the smoother the result will be.
                     ///< The range of possible value is [0, 90].
-  const typename Kernel::FT edge_senstivity,  ///<  
+  typename Kernel::FT edge_senstivity,  ///<  
                     ///< larger values of edge-sensitivity give higher priority 
                     ///< to inserting points along the sharp features.
                     ///< The range of possible value is [0, 1].
@@ -546,7 +546,7 @@ edge_aware_upsample_point_set(
     *output++ = pwn;
   }
  
-  return;
+  return output;
 }
 
 
@@ -557,7 +557,7 @@ template <typename OutputIterator,
           typename PointPMap,
           typename NormalPMap,
           typename Kernel>
-void
+OutputIterator
 edge_aware_upsample_point_set(
   ForwardIterator first, ///< iterator over the first input point
   ForwardIterator beyond, ///< past-the-end iterator
@@ -594,7 +594,7 @@ template <typename OutputIteratorValueType,
           typename ForwardIterator,
           typename PointPMap,
           typename NormalPMap>
-void
+OutputIterator
 edge_aware_upsample_point_set(
   ForwardIterator first, ///< iterator over the first input point
   ForwardIterator beyond, ///< past-the-end iterator
@@ -629,7 +629,7 @@ template <typename OutputIterator,
           typename ForwardIterator,
           typename PointPMap,
           typename NormalPMap>
-void
+OutputIterator
 edge_aware_upsample_point_set(
   ForwardIterator first, ///< iterator over the first input point
   ForwardIterator beyond, ///< past-the-end iterator
@@ -663,7 +663,7 @@ template <typename OutputIteratorValueType,
           typename OutputIterator,
           typename ForwardIterator,
           typename NormalPMap>
-void
+OutputIterator
 edge_aware_upsample_point_set(
   ForwardIterator first, ///< iterator over the first input point
   ForwardIterator beyond, ///< past-the-end iterator
@@ -694,11 +694,10 @@ edge_aware_upsample_point_set(
 
 
 /// @cond SKIP_IN_MANUAL
-template <typename OutputIteratorValueType,
-          typename OutputIterator,
+template <typename OutputIterator,
           typename ForwardIterator,
           typename NormalPMap>
-bool
+OutputIterator
 edge_aware_upsample_point_set(
   ForwardIterator first, ///< iterator over the first input point
   ForwardIterator beyond, ///< past-the-end iterator
@@ -711,7 +710,7 @@ edge_aware_upsample_point_set(
   )
 {
   // just deduce value_type of OutputIterator
-  return upsample_point_set
+  return edge_aware_upsample_point_set
     <typename value_type_traits<OutputIterator>::type>(
     first, beyond,
     output,
