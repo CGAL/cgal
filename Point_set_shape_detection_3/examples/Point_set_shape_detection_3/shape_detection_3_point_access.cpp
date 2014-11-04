@@ -22,7 +22,7 @@ typedef CGAL::Normal_of_point_with_normal_pmap<Kernel>      Normal_pmap;
 // In Shape_detection_traits_3 the used types, i.e. Point and Vector types
 // as well as iterator type and property maps, are defined.
 typedef CGAL::Shape_detection_traits_3<Kernel,
-  Point_list::iterator, Point_pmap, Normal_pmap>            Traits;
+  Pwn_list::iterator, Point_pmap, Normal_pmap>            Traits;
 typedef CGAL::Shape_detection_3<Traits>                     Shape_detection;
 
 
@@ -88,7 +88,7 @@ int main()
     while (index_it != (*it)->assigned_points().end()) {
       
       // Retrieves point
-      const Point &p = *(points.begin() + (*index_it));
+      const Point_with_normal &p = *(points.begin() + (*index_it));
 
       // Adds Euclidean distance between point and shape.
       sum_distances += CGAL::sqrt((*it)->squared_distance(p));
