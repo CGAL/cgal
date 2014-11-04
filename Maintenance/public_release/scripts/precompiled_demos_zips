@@ -36,7 +36,7 @@ pushd Largest_empty_rect_2_Demo;        zip ../largest_empty_rect_2.zip *;      
 pushd Apollonius_graph_2_Demo;          zip ../apollonius_graph_2.zip *;             popd
 pushd Stream_lines_2_Demo;              zip ../streamlines.zip *;                    popd
 pushd Triangulation_3_Demo;             zip ../triangulation_3.zip *;                popd
-pushd Circular_kernel_3_Demo;           zip ../triangulation_3.zip *;                popd
+#pushd Circular_kernel_3_Demo;           zip ../triangulation_3.zip *;                popd
 pushd Alpha_shapes_2_Demo;              zip ../alpha_shapes_2.zip *;                 popd
 pushd Generator_Demo;                   zip ../generator.zip *;                      popd
 pushd L1_Voronoi_diagram_2_Demo;        zip ../l1_voronoi_diagram_2.zip *;           popd
@@ -55,6 +55,8 @@ pushd Periodic_2_triangulation_2_Demo;  zip ../Periodic_2_Delaunay_triangulation
 # probably an error, in CGAL-4.5:
 rm -rf Surface_modeling_Demo
 
+# Demo not announced in the CGAL manual, from CGAL-3.8:
+rm -rf Circular_kernel_3_Demo
 
 # check
 echo CHECK now
