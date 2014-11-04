@@ -308,8 +308,7 @@ public:
 
 public:
   /*! Default constructor. */
-  Arr_segment_traits_2()
-  { std::cout << "Arr_segment_traits_2" << std::endl; }
+  Arr_segment_traits_2() {}
 
   /// \name Basic functor definitions.
   //@{
