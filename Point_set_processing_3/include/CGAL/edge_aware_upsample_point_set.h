@@ -274,7 +274,7 @@ update_new_point(
 /// approaching the edge singularities, which generates a denser point set that
 /// has applications in point-based rendering, hole filling, 
 /// and sparse surface reconstruction.
-/// For more details, please refert to this paper: \cgalCite{EAR2013}.  
+/// For more details, please refert to this paper: \cgalCite{ear-2013}.  
 /// @tparam OutputIteratorValueType type of objects that in `OutputIterator`.
 ///         It is default to `value_type_traits<OutputIterator>::%type` 
 ///         and can be omitted when the default is fine. It should contain both 

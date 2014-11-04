@@ -323,7 +323,7 @@ public:
 ///  point onto the implicit surface patch fitted over its k nearest neighbors.
 ///  Bilateral projection preserves sharp features according to the normal
 /// (gradient) information. Both point positions and normals will be modified.  
-/// For more details, please see formula (2) and (4) in paper \cgalCite{EAR2013}.  
+/// For more details, please see formula (2) and (4) in paper \cgalCite{ear-2013}.  
 /// \pre Normals must be unit vectors
 /// \pre k >= 2
 ///
