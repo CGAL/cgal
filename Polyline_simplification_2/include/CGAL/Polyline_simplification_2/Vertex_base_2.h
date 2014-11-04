@@ -39,6 +39,10 @@ class Vertex_base_2
   typedef typename K::FT FT;
   typedef Vb                                            Base;
   typedef typename Base::Triangulation_data_structure   Tds;
+
+  bool m_removable;
+  FT m_cost;
+
 public:
   template < typename TDS2 >
   struct Rebind_TDS {
@@ -50,17 +54,25 @@ public:
     : Base(), m_removable(true), m_cost(-1.0) 
   {}
   
-  bool m_removable;
-  FT m_cost;
 
-  bool& removable()
+  bool is_removable() const
   {
     return m_removable;
   }
 
-  FT& cost()
+  void set_removable(bool b)
+  {
+    m_removable = b;
+  }
+
+  FT cost() const
   {
     return m_cost;
+  }
+
+  void set_cost(const FT& ft)
+  {
+    m_cost = ft;
   }
 };
 

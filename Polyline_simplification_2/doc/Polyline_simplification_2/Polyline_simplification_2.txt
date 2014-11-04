@@ -83,7 +83,7 @@ The maximum squared distance is the maximum of the squared Euclidean
 distances between each point on the original polyline between `p` and
 `r` and the line segment `(p,r)`. Let \f$s_0,...,s_n\f$ be the points
 strictly between `p` and `r` on the original polyline.  The cost of
-removing vertex `q` is: \f$ v_1 = \max \{ sdist((p,r), s_i) |
+removing vertex `q` is: \f$ v_1 = \max \{ squared_distance((p,r), s_i) |
 i=0,..,n\} \f$
 
 \cgalFigureBegin{figure_maxDist,maxDist.png}
@@ -101,9 +101,9 @@ the candidate vertex `q` and all its adjacent vertices (except `p` and
 regions of the same polyline.
 
 Let \f$t_0,...,t_m\f$ be the points of the vertices adjacent to vertex
-`q`, different from `p` and `r` and let \f$ v_2 = \min \{ sdist((p,r),
+`q`, different from `p` and `r` and let \f$ v_2 = \min \{ squared_distance((p,r),
 t_i) | i=0,..,n\}\f$. The cost of removing vertex `q` is
-\f$v_1/v_2\f$.
+\f$v_1/v_2\f$.  See also Figure \ref figure_scaledAndHybrid.
 
 This distance measure gives lower priority to vertices with close
 neighboring polylines.
@@ -157,16 +157,7 @@ In the second example we insert several polygons in a
 type we have to use `CGAL::Polyline_simplification_2::Vertex_base_2`
 as vertices may be marked as non-removable. The simplification
 algorithm marks the first and last vertex of polyline constraints
-as well as intersections.
- 
-In the example we mark further polyline vertices as not removable. 
-This package provides a convenience function
-`Polyline_simplification_2::mark_vertices_unremovable()` that marks
-the vertices with smallest and largest `x` and `y` coordinates of each
-polyline constraint as non-removable.  This is rather simplistic, and 
-in a real world application one would mark vertices as unremovable 
-because they are important.
-Finally, we iterate
+as well as intersections.  Finally, we iterate
 over all vertices of all polyline constraints.
 
 \cgalExample{Polyline_simplification_2/simplify.cpp}

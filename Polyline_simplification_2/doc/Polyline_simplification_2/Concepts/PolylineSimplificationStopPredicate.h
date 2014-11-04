@@ -22,12 +22,12 @@ public :
   \param initial_count The initial number of vertices in the entire polyline set (including intersection vertices not in any source polyline)
   \param current_count The current number of vertices
   \return `true` if the algorithm should stop, `false` if it should continue.
-\tparam Tr must be `CGAL::Constrained_Delaunay_triangulation_2` with a vertex type that
+\tparam CDT must be `CGAL::Constrained_Delaunay_triangulation_2` with a vertex type that
 is model of `PolylineSimplificationVertexBase_2`.
   */
-  template<class Tr>
-  bool operator()( const CGAL::Constrained_triangulation_plus_2<Tr>& ct
-                  , CGAL::Constrained_triangulation_plus_2<Tr>::Vertex_handle q
+  template<class CDT>
+  bool operator()( const CGAL::Constrained_triangulation_plus_2<CDT>& ct
+                  , CGAL::Constrained_triangulation_plus_2<CDT>::Vertex_handle q
                  , double cost
                  , std::size_t initial_count
                  , std::size_t current_count

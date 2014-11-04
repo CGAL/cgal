@@ -298,7 +298,7 @@ void MainWindow::on_actionSimplify_triggered()
   // wait cursor
   QApplication::setOverrideCursor(Qt::WaitCursor);
 
-  PS2::mark_vertices_unremovable(m_pct);
+  
   try
   {
     switch( getSimplificationMode() )

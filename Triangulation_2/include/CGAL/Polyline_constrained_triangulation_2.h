@@ -610,11 +610,10 @@ public:
     hierarchy.remove_constraint(va,vb);
   }
 
-  void simplify(Vertices_in_constraint_iterator u,
-                Vertices_in_constraint_iterator v,
-                Vertices_in_constraint_iterator w)
-
+  void simplify(Vertices_in_constraint_iterator v)
   {
+    Vertices_in_constraint_iterator u = boost::prior(v);
+    Vertices_in_constraint_iterator w = boost::next(v);
     hierarchy.simplify(u,v,w);
     
     Triangulation::remove_incident_constraints(*v);

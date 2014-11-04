@@ -22,22 +22,18 @@ public:
 
 
 /*! 
-Given three consecutive polyline vertices `*vip, *viq, *vir`, calculates the cost of removing vertex `*viq`, replacing edges `(*vip,*viq)` and `(*viq,*vir)` with edge `(*vip,*vir)`. 
+Given a vertex in constraint iterator `viq` computes `vip= std::prev(viq)` and vir = std::next(vir)`, and the cost of removing vertex `*viq`, replacing edges `(*vip,*viq)` and `(*viq,*vir)` with edge `(*vip,*vir)`. 
 
 \param ct The underlying constrained Delaunay triangulation with constraint hierarchy which embeds the polyline constraints
-\param vip The first vertex
-\param viq The second vertex
-\param vir The third vertex
+\param viq The vertex in constraint iterator of the vertex to remove
 \returns The cost for removing `*viq`. A result of `boost::none` can be used to indicate an infinite or uncomputable cost.
 
-\tparam Tr must be `CGAL::Constrained_Delaunay_triangulation_2` with a vertex type that
-is model of `PolylineSimplificationVertexBase_2`. `Tr::Geom_traits` must provide a functor `Compute_squared_distance` with an operator `Tr::Geom_traits::FT operator()(Tr::Point, Tr::Point)`.
+\tparam CDT must be `CGAL::Constrained_Delaunay_triangulation_2` with a vertex type that
+is model of `PolylineSimplificationVertexBase_2`. `CDT::Geom_traits` must provide a functor `Compute_squared_distance` with an operator `CDT::Geom_traits::FT operator()(CDT::Geom_traits::Point_2, CDT::Geom_traits::Point_2)`.
 */ 
-  boost::optional<CGAL::Constrained_triangulation_plus_2<Tr>::Geom_traits::FT>
-  operator()(CGAL::Constrained_triangulation_plus_2<Tr> const& ct,
-             CGAL::Constrained_triangulation_plus_2<Tr>::Vertices_in_constraint_iterator vip,
-             CGAL::Constrained_triangulation_plus_2<Tr>::Vertices_in_constraint_iterator viq,
-             CGAL::Constrained_triangulation_plus_2<Tr>::Vertices_in_constraint_iterator vir) const;}
+  boost::optional<CGAL::Constrained_triangulation_plus_2<CDT>::Geom_traits::FT>
+  operator()(CGAL::Constrained_triangulation_plus_2<CDT> const& ct,
+             CGAL::Constrained_triangulation_plus_2<CDT>::Vertices_in_constraint_iterator viq) const;}
 
 }; /* end TriangulationVertexBase_2 */
 

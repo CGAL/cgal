@@ -20,6 +20,7 @@
 #ifndef CGAL_POLYLINE_SIMPLIFICATION_2_STOP_BELOW_COUNT_RATIO_THRESHOLD_H
 #define CGAL_POLYLINE_SIMPLIFICATION_2_STOP_BELOW_COUNT_RATIO_THRESHOLD_H
 
+#include <CGAL/Constrained_triangulation_plus_2.h>
 
 namespace CGAL {
 
@@ -40,9 +41,12 @@ public :
   Stop_below_count_ratio_threshold( double threshold ) : mThres(threshold) {}
 
   /// Returns `true` when `( current_count / initial_count )` is smaller or equal than the threshold.
-  template<class ConstrainedDelaunayTriangulation> // , class VertexHandle>  
-  bool operator()(const ConstrainedDelaunayTriangulation & 
-                   , typename ConstrainedDelaunayTriangulation::Vertex_handle 
+  /// \tparam CDT  must be `CGAL::Constrained_Delaunay_triangulation_2` with a vertex type that
+  /// is model of  `PolylineSimplificationVertexBase_2`.
+
+  template<class CDT>  
+  bool operator()(const Constrained_triangulation_plus_2<CDT> & 
+                  , typename Constrained_triangulation_plus_2<CDT>::Vertex_handle 
                  , double                                  
                  , std::size_t                             initial_count
                  , std::size_t                             current_count

@@ -43,7 +43,6 @@
 
 ## Global Functions ##
 - `CGAL::Polyline_simplification_2::simplify()`
-- `CGAL::Polyline_simplification_2::mark_vertices_unremovable()`
 
 */
 

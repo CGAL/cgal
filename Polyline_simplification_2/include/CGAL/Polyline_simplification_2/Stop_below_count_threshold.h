@@ -39,9 +39,12 @@ public :
   Stop_below_count_threshold( std::size_t threshold ) : mThres(threshold) {}
   
   /// Returns `true` when `current_count` is smaller or equal than the threshold.
-  template<class Tr>  
-  bool operator()(const Constrained_triangulation_plus_2<Tr>& ct
-                  , typename Constrained_triangulation_plus_2<Tr>::Vertex_handle & q
+  /// \tparam CDT  must be `CGAL::Constrained_Delaunay_triangulation_2` with a vertex type that
+  /// is model of  `PolylineSimplificationVertexBase_2`.
+
+  template<class CDT>  
+  bool operator()(const Constrained_triangulation_plus_2<CDT>& ct
+                  , typename Constrained_triangulation_plus_2<CDT>::Vertex_handle & q
                  , double                                  cost
                  , std::size_t                             initial_count
                  , std::size_t                             current_count

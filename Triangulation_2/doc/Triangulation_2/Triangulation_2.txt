@@ -1015,28 +1015,67 @@ introducing new vertices at each proper intersection
 point.
 
 
-The data structure maintains for each input constraint
+The constraint hierarchy maintains for each input constraint
 the sequence of vertices on this constraint. These vertices are
 either vertices of the input constraint or intersection points.
 
 Two consecutive vertices of an input constraint form a *subconstraint*.
-A subconstraint is a pair of vertex handles and corresponds to a constrained edge of the
-triangulation, which is a pair of a face handle and an index. 
-
-The constraint hierarchy also allows to retrieve the set
+The constraint hierarchy allows to retrieve the set
 of subconstraints of the triangulation (not ordered along constraints).
+
 It further allows to retrieve for a subconstraint, the set of input constraints that overlap it.
 As it is straightforward to obtain a subconstraint from a constrained edge `e`,
 one can obtain the input constraints which overlap `e`.
+
+
+\subsection Subsection_Edges_and_Constraints Edges, Constrained Edges, Constraints, and Subconstraints
+
+All triangulation classes define the type `Edge` as  `typedef std::pair<Face_handle>, int> Edge`.
+For a pair `(fh,i)` it is the edge of the face `*fh`,which is opposite to the `i`'th vertex.
+
+A <em>constrained edge</em> `e` as an edge of a constrained triangulation `ct`, for which `ct.is_constrained(e) == true`.
+
+A <em>constraint</em> is a polyline which is given as input (in the simplest case just a segment), and
+which is split into constrained edges in the triangulation. 
+
+The type `Subconstraint` is defined as `typedef std::pair<Vertex_handle,Vertex_handle> Subconstraint`.  The two vertex handles must
+be the vertices of a constrained edge.
+
+The type `Constraint_id` allows to identify a constraint.
+
+
+All constrained triangulation classes of \cgal allow to insert constraints, have the notion of constrained edges,
+and offer a `Constrained_edges_iterator`.
+
+Only the class `Constrained_triangulation_plus_2` allows 
+- to enumerate the constraints with a `Constraint_iterator` with value type `Constraint_id`,
+- to obtain all constraints that overlap with a constrained edge or a subconstraint,
+- to traverse the sequence of vertices of a constraint with a `Vertices_in_constraint_iterator`,  
+- to enumerate the subconstraints in the triangulation with a `Subconstraint_iterator`, with value type `Subconstraint`.
+  This iterator is similar to the `Constrained_edges_iterator`.  
+
+\subsection Subsection_Constrained_plus_avoids_cascacding The Intersection Tag
 
 The class `Constrained_triangulation_plus_2<Tr>`
 is especially useful when the base constrained triangulation class
 handles intersections of constraints and uses an exact number type,
 i.e.\ when its intersection tag is `Exact_intersections_tag`.
 In this case, the `Constrained_triangulation_plus_2<Tr>`
-avoids cascading in the computations of intersection points:
-The intersection of a segment as part of an input constraint and a constrained edge`e` is
-computed with a segment of a previously inserted input constraint overlapping the constrained edge `e`, instead of the segment defined by the two vertices of the constrained edge.
+avoids cascading in the computations of intersection points.
+
+
+This is best explained with an example.
+
+\cgalFigureBegin{figuretri_avoidcascading,CDTplusAvoidCascading.png}
+Computation of an intersection with an input constraint instead of with an edge.
+\cgalFigureEnd
+
+When inserting a constraint, say a segment `s` in the triangulation, this segment may intersect a constrained  edge `e`
+with the vertices `p` and `q`.
+The algorithm could  compute the intersection point `i` of `s` with the segment `(p,q)`. Because these points may be previously constructed
+intersection points, as `q` in the figure above, it is better to obtain an input constraint `c` that overlaps the edge. If `c` is a segment
+the algorithm intersects `s` with `c`. If `c` is a polyline, the algorithm finds two vertices on the input constraint that
+define a segment that overlaps `e`.
 
 
 
@@ -1137,35 +1176,6 @@ a triangulation hierarchy in conjunction with a constrained triangulation with a
 
 \cgalExample{Triangulation_2/constrained_hierarchy_plus.cpp}
 
-
-\section Triangulation_2_Edges_Constraints Edges, Constrained Edges, Constraints, and Subconstraints
-
-This section recalls the definition of edges, constrained edges, constraints and subconstraint.
-
-`Edge` is defined as  `typedef std::pair<Face_handle>, int> Edge`. For a pair `(fh,i)` it is the edge of the face `*fh`,
-which is opposite to the `i`'th vertex.
-
-A <em>constrained edge</em> `e` is an edge of a constrained triangulation `ct`, for which `ct.is_constrained(e) == true`.
-All constrained triangulations offer a `Constrained_edges_iterator` which allows to 
-enumerate the constrained edges.
-
-A <em>constraint</em> is a polyline, and hence potentially a segment, which is given as input and
-which is split into constrained edges in the triangulation. 
-
-`Subconstraint` is defined as `typedef std::pair<Vertex_handle,Vertex_handle> Subconstraint`.  The two vertex handles must
-be vertices of the same face, that is a subconstraint corresponds to an edge.  
-
-A `Constraint_id` is a type that allows to identify a constraint.
-
-All constrained triangulation classes allow to insert constraints, have the notion of constrained edges,
-and offer a  `Contrained_edges_iterator`.
-
-Only the class `Constrained_triangulation_plus_2` allows 
-- to enumerate the constraints with a `Constraint_iterator` with value type `Constraint_id`,
-- to obtain all constraints that overlap with a constrained edge or a subconstraint,
-- to traverse the sequence of vertices of a constraint with a `Vertices_in_constraint_iterator`,  
-- to enumerate the subconstraints in the triangulation with a `Subconstraint_iterator`, with value type `Subconstraint`.
-  This iterator is similar to the `Contrained_edges_iterator`.  
 
 
 

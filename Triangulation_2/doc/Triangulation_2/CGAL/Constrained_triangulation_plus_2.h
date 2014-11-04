@@ -315,7 +315,7 @@ Context context(Vertex_handle va, Vertex_handle vb) const;
 /*! 
 Returns an iterator pointing on the first `Context` 
 of the sequence of contexts
-corresponding to the constraints enclosing the subconstraint`(va,vb)`. 
+corresponding to the constraints enclosing the subconstraint `(va,vb)`. 
 \pre `va` and `vb` refer to the vertices of a constrained edge of the triangulation. 
 */ 
 Context_iterator contexts_begin(Vertex_handle va, 
@@ -375,20 +375,19 @@ typedef unspecified_type Points_in_constraint_iterator;
 
 /*!
 \cgalAdvancedBegin
+
 Removes the vertex at `vicq` from the constraint and the triangulation.
 Only the vertex but not the point is removed from the constraint.
-\pre The vertices `vicp`, `vicq`, and `vicr` must be three successive 
-vertices in a constraint.
+Let `vip` and `viq` be defined as `vip = std::prev(vicq)` and vir = std::next(vicr)`,
+\pre `vicq` must neither be the first, nor the last vertex on a constraint.
 \pre No other constraint must pass through `vicq`.
-\pre The line segment between `vicp` and `vicr` must not intersect any constraint.
+\pre The line segment between `*vicp->point()` and `*vicr->point()` must not intersect any constraint.
 \pre All vertices of the triangulation must be a vertex of a constaint.
 \cgalAdvancedEnd
  */
 
 void
-  simplify(Vertices_in_constraint_iterator vicp,
-           Vertices_in_constraint_iterator vicq,
-           Vertices_in_constraint_iterator vicr);
+simplify(Vertices_in_constraint_iterator vicq);
 
 /*!
 \cgalAdvancedBegin

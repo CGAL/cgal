@@ -57,7 +57,6 @@ int main( )
     }
   }
 
-  PS::mark_vertices_unremovable(ct,cid);
   PS::simplify(ct, cid, Cost(), Stop(0.5), keep_points);
   print(ct, cid);
   PS::simplify(ct, cid, Cost(), Stop(0.5), keep_points);

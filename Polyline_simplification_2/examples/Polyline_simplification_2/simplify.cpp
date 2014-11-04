@@ -29,7 +29,6 @@ int main( )
   while(std::cin >> P){
     ct.insert_constraint(P);
   }
-  PS::mark_vertices_unremovable(ct);
   PS::simplify(ct, Cost(), Stop(0.5));
 
   for(Constraint_iterator cit = ct.constraints_begin();

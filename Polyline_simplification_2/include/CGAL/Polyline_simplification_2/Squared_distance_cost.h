@@ -20,6 +20,7 @@
 #ifndef CGAL_POLYLINE_SIMPLIFICATION_2_SQUARED_DISTANCE_COST_H
 #define CGAL_POLYLINE_SIMPLIFICATION_2_SQUARED_DISTANCE_COST_H
 
+#include <CGAL/algorithm.h>
 
 namespace CGAL {
 
@@ -45,19 +46,20 @@ public:
 
   /// Initializes the cost function
   Squared_distance_cost() {}
-  
-  /// Returns the maximum of the square distances between each point along the original subpolyline,
-  /// between `p` and `r`, and the straight line segment `p->r`.
 
-    template<class Tr>
-    boost::optional<typename Constrained_triangulation_plus_2<Tr>::Geom_traits::FT>
-    operator()(const Constrained_triangulation_plus_2<Tr>& pct
-               , typename Constrained_triangulation_plus_2<Tr>::Vertices_in_constraint_iterator p
-               , typename Constrained_triangulation_plus_2<Tr>::Vertices_in_constraint_iterator q
-               , typename Constrained_triangulation_plus_2<Tr>::Vertices_in_constraint_iterator r) const
+   /// Given a vertex in constraint iterator `vicq` computes `vicp = std::prev(vicq)` and vicr = std::next(vicr)`,
+  /// returns the maximum of the square distances between each point along the original subpolyline,
+  /// between `vicp` and `vicr`, and the straight line segment  from `*vicp->point() to *vicr->point()`.
+  /// \tparam CDT  must be `CGAL::Constrained_Delaunay_triangulation_2` with a vertex type that
+  /// is model of  `PolylineSimplificationVertexBase_2`.
+
+    template<class CDT>
+    boost::optional<typename Constrained_triangulation_plus_2<CDT>::Geom_traits::FT>
+    operator()(const Constrained_triangulation_plus_2<CDT>& pct
+               , typename Constrained_triangulation_plus_2<CDT>::Vertices_in_constraint_iterator vicq)const
   {
-    typedef typename Constrained_triangulation_plus_2<Tr>::Points_in_constraint_iterator Points_in_constraint_iterator;
-    typedef typename Constrained_triangulation_plus_2<Tr>::Geom_traits Geom_traits ;
+    typedef typename Constrained_triangulation_plus_2<CDT>::Points_in_constraint_iterator Points_in_constraint_iterator;
+    typedef typename Constrained_triangulation_plus_2<CDT>::Geom_traits Geom_traits ;
     typedef typename Geom_traits::FT                                  FT;
     typedef typename Geom_traits::Compute_squared_distance_2 Compute_squared_distance ;
     typedef typename Geom_traits::Construct_segment_2        Construct_segment ;
@@ -66,14 +68,18 @@ public:
 
     Compute_squared_distance compute_squared_distance = pct.geom_traits().compute_squared_distance_2_object() ;
     Construct_segment        construct_segment        = pct.geom_traits().construct_segment_2_object() ;
-    
-    Point const& lP = (*p)->point();
-    Point const& lR = (*r)->point();
+    typedef typename Constrained_triangulation_plus_2<CDT>::Vertices_in_constraint_iterator Vertices_in_constraint_iterator;
+
+    Vertices_in_constraint_iterator vicp = boost::prior(vicq); 
+    Vertices_in_constraint_iterator vicr = boost::next(vicq); 
+ 
+    Point const& lP = (*vicp)->point();
+    Point const& lR = (*vicr)->point();
 
     Segment lP_R = construct_segment(lP, lR) ;
 
     FT d1 = 0.0;
-    Points_in_constraint_iterator pp(p), rr(r);
+    Points_in_constraint_iterator pp(vicp), rr(vicr);
     ++pp;
 
     for ( ;pp != rr; ++pp )

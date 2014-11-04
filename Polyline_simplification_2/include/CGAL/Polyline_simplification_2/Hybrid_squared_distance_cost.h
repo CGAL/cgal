@@ -20,6 +20,7 @@
 #ifndef CGAL_POLYLINE_SIMPLIFICATION_2_HYBRID_SQUARED_DISTANCE_COST_H
 #define CGAL_POLYLINE_SIMPLIFICATION_2_HYBRID_SQUARED_DISTANCE_COST_H
 
+#include <CGAL/algorithm.h>
 
 namespace CGAL {
 
@@ -40,22 +41,23 @@ public:
   /// Initializes the cost function with the specified `ratio`
   Hybrid_squared_distance_cost( FT ratio ) : mSquaredRatio(ratio*ratio) {}
 
-  /// Returns the maximal square distance between each point along the original subpolyline,
-  /// between `p` and `r`,
-  /// and the straight line segment `p->r` divided by the smallest of
+  /// Given a vertex in constraint iterator `vicq` computes `vicp= std::prev(vicq)` and vicr = std::next(vicr)`,
+  /// returns the maximal square distance between each point along the original subpolyline,
+  /// between `vicp` and `vicr`,
+  /// and the straight line segment from `*vicp->point() to *vicr->point()` divicded by the smallest of
   /// - the square of the ratio given to the constructor of the cost function,
-  /// - and the shortest squared distance between that segment and each of the vertices adjacent to `q`.
- template<class Tr>
- boost::optional<typename Constrained_triangulation_plus_2<Tr>::Geom_traits::FT>
-    operator()(  const Constrained_triangulation_plus_2<Tr>& pct
-                                  , typename Constrained_triangulation_plus_2<Tr>::Vertices_in_constraint_iterator p
-                                  , typename Constrained_triangulation_plus_2<Tr>::Vertices_in_constraint_iterator q
-                                  , typename Constrained_triangulation_plus_2<Tr>::Vertices_in_constraint_iterator r) const
+  /// - and the shortest squared distance between that segment and each of the vertices adjacent to `vicq`.
+  /// \tparam CDT  must be `CGAL::Constrained_Delaunay_triangulation_2` with a vertex type that
+  /// is model of  `PolylineSimplificationVertexBase_2`.
+ template<class CDT>
+ boost::optional<typename Constrained_triangulation_plus_2<CDT>::Geom_traits::FT>
+    operator()(  const Constrained_triangulation_plus_2<CDT>& pct
+                 , typename Constrained_triangulation_plus_2<CDT>::Vertices_in_constraint_iterator vicq) const
   {
-    typedef typename Constrained_triangulation_plus_2<Tr>::Points_in_constraint_iterator Points_in_constraint_iterator;
-    typedef typename Constrained_triangulation_plus_2<Tr>::Vertex_handle Vertex_handle;
-    typedef typename Constrained_triangulation_plus_2<Tr>::Vertex_circulator Vertex_circulator;
-    typedef typename Constrained_triangulation_plus_2<Tr>::Geom_traits Geom_traits ;
+    typedef typename Constrained_triangulation_plus_2<CDT>::Points_in_constraint_iterator Points_in_constraint_iterator;
+    typedef typename Constrained_triangulation_plus_2<CDT>::Vertex_handle Vertex_handle;
+    typedef typename Constrained_triangulation_plus_2<CDT>::Vertex_circulator Vertex_circulator;
+    typedef typename Constrained_triangulation_plus_2<CDT>::Geom_traits Geom_traits ;
     typedef typename Geom_traits::Compute_squared_distance_2 Compute_squared_distance;
     typedef typename Geom_traits::Construct_segment_2        Construct_segment;
     typedef typename Geom_traits::Segment_2                  Segment;
@@ -63,15 +65,19 @@ public:
 
     Compute_squared_distance compute_squared_distance = pct.geom_traits().compute_squared_distance_2_object() ;
     Construct_segment        construct_segment        = pct.geom_traits().construct_segment_2_object() ;
+    typedef typename Constrained_triangulation_plus_2<CDT>::Vertices_in_constraint_iterator Vertices_in_constraint_iterator;
 
-    Point const& lP = (*p)->point();
-    Point const& lQ = (*q)->point();
-    Point const& lR = (*r)->point();
+    Vertices_in_constraint_iterator vicp = boost::prior(vicq); 
+    Vertices_in_constraint_iterator vicr = boost::next(vicq); 
+
+    Point const& lP = (*vicp)->point();
+    Point const& lQ = (*vicq)->point();
+    Point const& lR = (*vicr)->point();
 
     Segment lP_R = construct_segment(lP, lR) ;
 
     FT d1 = 0.0;
-    Points_in_constraint_iterator pp(p), rr(r);
+    Points_in_constraint_iterator pp(vicp), rr(vicr);
     ++pp;
 
     for ( ;pp != rr; ++pp )
@@ -79,10 +85,10 @@ public:
 
     FT d2 = (std::numeric_limits<double>::max)() ;
 
-    Vertex_circulator vc = (*q)->incident_vertices(), done(vc);
+    Vertex_circulator vc = (*vicq)->incident_vertices(), done(vc);
     do {
-      if((vc != pct.infinite_vertex()) && (vc != *p) && (vc != *r)){
-        d2 = (std::min)(d2, compute_squared_distance(vc->point(), (*q)->point()));
+      if((vc != pct.infinite_vertex()) && (vc != *vicp) && (vc != *vicr)){
+        d2 = (std::min)(d2, compute_squared_distance(vc->point(), (*vicq)->point()));
       }
       ++vc;
     }while(vc != done);

@@ -29,12 +29,15 @@ public:
 
 /*! The Boolean that indicates whether the vertex can be removed.
 */ 
-bool& removable(); 
+bool is_removable() const; 
+ 
+void set_removable(bool b);
 
 /*! The cost if the vertex got removed.
 */ 
 FT& cost(); 
 
+  void set_cost(const FT& ft);
 /// @} 
 
 
