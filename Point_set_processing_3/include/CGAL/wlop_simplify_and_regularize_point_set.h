@@ -298,16 +298,14 @@ compute_density_weight_for_sample_point(
 
 //=============================================================================
 /// \ingroup PkgPointSetProcessing
+/// This is an implementation of the WLOP algorithm.
 /// The WLOP simplification algorithm can produce a set of 
 /// denoised, outlier-free and evenly distributed particles over the original 
-/// dense point cloud, so as to improve the reliability of other algorithms. 
-///
+/// dense point cloud. 
 /// The core of the algorithm is a Weighted Locally Optimal projection operator
 /// with a density uniformization term. 
 /// For more details, please refer to this paper:
-/// Huang, Hui, et al. "Consolidation of unorganized point clouds for surface reconstruction." 
-/// ACM Transactions on Graphics (TOG). Vol. 28. No. 5. ACM, 2009.
-/// (please cite the paper if you use this function).
+/// \cgalCite{WLOP2009}  
 /// @tparam Concurrency_tag enables sequential versus parallel algorithm.
 ///                         Possible values are `Sequential_tag`
 ///                         and `Parallel_tag`.

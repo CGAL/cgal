@@ -271,11 +271,10 @@ update_new_point(
 
 /// \ingroup PkgPointSetProcessing
 /// This method progressively upsample the point set while 
-/// approaching the edge singularities. 
-/// For more details, please refert to this paper: 
-/// Huang, Hui, et al. "Edge-aware point set resampling." 
-/// ACM Transactions on Graphics (TOG) 32.1 (2013): 9.
-/// (please cite the paper if you use this function).
+/// approaching the edge singularities, which generates a denser point set that
+/// has applications in point-based rendering, hole filling, 
+/// and sparse surface reconstruction.
+/// For more details, please refert to this paper: \cgalCite{EAR2013}.  
 /// @tparam OutputIteratorValueType type of objects that in `OutputIterator`.
 ///         It is default to `value_type_traits<OutputIterator>::%type` 
 ///         and can be omitted when the default is fine. It should contain both 
