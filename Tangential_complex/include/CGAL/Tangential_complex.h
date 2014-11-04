@@ -58,6 +58,7 @@
 
 #ifdef CGAL_LINKED_WITH_TBB
 # include <tbb/parallel_for.h>
+# include <tbb/queuing_mutex.h>
 #endif
 
 //#define CGAL_TC_EXPORT_NORMALS // Only for 3D surfaces (k=2, d=3)
@@ -119,12 +120,19 @@ class Tangential_complex
     Tr_and_VH(int dim)
       : m_tr(new Triangulation(dim)) {}
     
-    ~Tr_and_VH() { delete m_tr; }
+    ~Tr_and_VH() { destroy_triangulation(); }
 
     Triangulation & construct_triangulation(int dim)
-    { 
+    {
+      delete m_tr;
       m_tr = new Triangulation(dim);
       return tr();
+    }
+
+    void destroy_triangulation()
+    {
+      delete m_tr;
+      m_tr = NULL;
     }
 
     Triangulation &      tr()       { return *m_tr; }
@@ -139,8 +147,13 @@ class Tangential_complex
     Tr_vertex_handle m_center_vertex;
   };
 
-  typedef typename std::vector<Tr_and_VH>             Tr_container;
   typedef typename std::vector<Tangent_space_basis>   TS_container;
+  typedef typename std::vector<Tr_and_VH>             Tr_container;
+#ifdef CGAL_LINKED_WITH_TBB
+  // CJTODO: test other mutexes 
+  // http://www.threadingbuildingblocks.org/docs/help/reference/synchronization/mutexes/mutex_concept.htm
+  typedef tbb::queuing_mutex                          Tr_mutex; 
+#endif
 #ifdef CGAL_TC_EXPORT_NORMALS
   typedef typename std::vector<Vector>                Normals;
 #endif
@@ -174,6 +187,9 @@ public:
     // already-computed triangulations (while resizing) since it would
     // invalidate the vertex handles stored beside the triangulations
     m_triangulations.resize(m_points.size());
+#ifdef CGAL_LINKED_WITH_TBB
+    m_tr_mutexes.resize(m_points.size());
+#endif
     m_tangent_spaces.resize(m_points.size());
     m_weights.resize(m_points.size(), FT(0));
 #ifdef CGAL_TC_EXPORT_NORMALS
@@ -236,60 +252,39 @@ public:
     Kernel::Construct_weighted_point_d cwp = 
       m_k.construct_weighted_point_d_object();
     
+#ifdef CGAL_TC_VERBOSE
+      std::cerr << "Fixing inconsistencies..." << std::endl;
+#endif
+
     std::pair<std::size_t, std::size_t> stats_before =
       number_of_inconsistent_simplices(false);
+    
+#ifdef CGAL_TC_VERBOSE
+      std::cerr << "Initial number of inconsistencies: " 
+        << stats_before.second << std::endl;
+#endif
 
     bool done = false;
     while (!done) 
     {
-      std::size_t num_failures = 0;
-      Tr_container::const_iterator it_tr = m_triangulations.begin();
-      Tr_container::const_iterator it_tr_end = m_triangulations.end();
-      // For each triangulation
-      for (int pt_idx = 0 ; it_tr != it_tr_end ; ++it_tr, ++pt_idx)
+// CJTODO: the parallel version is not working for now
+/*#ifdef CGAL_LINKED_WITH_TBB
+      // Parallel
+      if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
       {
-        Triangulation const& tr    = it_tr->tr();
-        Tr_vertex_handle center_vh = it_tr->center_vertex();
-
-        std::vector<Tr_full_cell_handle> incident_cells;
-        tr.incident_full_cells(center_vh, std::back_inserter(incident_cells));
-
-        std::vector<Tr_full_cell_handle>::const_iterator it_c = incident_cells.begin();
-        std::vector<Tr_full_cell_handle>::const_iterator it_c_end= incident_cells.end();
-        // For each cell
-        for ( ; it_c != it_c_end ; ++it_c)
-        {
-          std::set<std::size_t> c;
-          for (int i = 0 ; i < Intrinsic_dimension + 1 ; ++i)
-          {
-            std::size_t data = (*it_c)->vertex(i)->data();
-            c.insert(data);
-          }
-
-          // Inconsistent?
-          if (!is_simplex_consistent(c))
-          {
-            bool fixed = false;
-            // Try to find a weight that solves the inconsistency
-            for (int i = 0 ; i < 50 && !fixed ; ++i)
-            {
-              CGAL::Random rng;
-              m_weights[pt_idx] = 
-                rng.get_double(0., (0.5*0.5*INPUT_SPARSITY*INPUT_SPARSITY));
-
-              for (std::size_t j : c) // CJTODO: C++11
-                compute_tangent_triangulation(j);
-
-              fixed = is_simplex_consistent(c);
-            }
-            if (!fixed)
-              ++num_failures;
-            
-            refresh_tangential_complex(); // CJTODO: heavy computation!
-          }
-        }
+        tbb::parallel_for(
+          tbb::blocked_range<size_t>(0, m_triangulations.size()),
+          Try_to_solve_inconsistencies_in_a_local_triangulation(*this)
+        );
       }
-      
+      // Sequential
+      else
+#endif // CGAL_LINKED_WITH_TBB*/
+      {
+        for (std::size_t i = 0 ; i < m_triangulations.size() ; ++i)
+          try_to_solve_inconsistencies_in_a_local_triangulation(i);
+      }
+
       std::pair<std::size_t, std::size_t> stats_after =
         number_of_inconsistent_simplices(false);
 
@@ -973,7 +968,8 @@ private:
   {
     // Check if the simplex is in the stars of all its vertices
     std::set<std::size_t>::const_iterator it_point_idx = simplex.begin();
-    // For each point
+    // For each point p of the simplex, we parse the incidents cells of p
+    // and we check if "simplex" is among them
     for ( ; it_point_idx != simplex.end() ; ++it_point_idx)
     {
       std::size_t point_idx = *it_point_idx;
@@ -1001,6 +997,97 @@ private:
     }
     
     return true;
+  }
+
+#ifdef CGAL_LINKED_WITH_TBB
+  // Functor for try_to_solve_inconsistencies_in_a_local_triangulation function
+  class Try_to_solve_inconsistencies_in_a_local_triangulation
+  {
+    Tangential_complex & m_tc;
+
+  public:
+    // Constructor
+    Try_to_solve_inconsistencies_in_a_local_triangulation(
+      Tangential_complex &tc)
+    : m_tc(tc)
+    {}
+
+    // Constructor
+    Try_to_solve_inconsistencies_in_a_local_triangulation(
+      const Compute_tangent_triangulation &ctt)
+    : m_tc(ctt.m_tc)
+    {}
+
+    // operator()
+    void operator()( const tbb::blocked_range<size_t>& r ) const
+    {
+      for( size_t i = r.begin() ; i != r.end() ; ++i)
+        m_tc.try_to_solve_inconsistencies_in_a_local_triangulation(i);
+    }
+  };
+#endif // CGAL_LINKED_WITH_TBB
+
+  void try_to_solve_inconsistencies_in_a_local_triangulation(
+                                                          std::size_t tr_index)
+  {
+#ifdef CGAL_LINKED_WITH_TBB
+    Tr_mutex::scoped_lock lock(m_tr_mutexes[tr_index]);
+#endif
+
+    Triangulation const& tr    = m_triangulations[tr_index].tr();
+    Tr_vertex_handle center_vh = m_triangulations[tr_index].center_vertex();
+
+    std::vector<Tr_full_cell_handle> incident_cells;
+    tr.incident_full_cells(center_vh, std::back_inserter(incident_cells));
+
+    std::vector<Tr_full_cell_handle>::const_iterator it_c = 
+                                                        incident_cells.begin();
+    std::vector<Tr_full_cell_handle>::const_iterator it_c_end= 
+                                                        incident_cells.end();
+    // For each cell
+    for ( ; it_c != it_c_end ; ++it_c)
+    {
+      std::set<std::size_t> c;
+      for (int i = 0 ; i < Intrinsic_dimension + 1 ; ++i)
+      {
+        std::size_t data = (*it_c)->vertex(i)->data();
+        c.insert(data);
+      }
+
+      // Inconsistent?
+      if (!is_simplex_consistent(c))
+      {
+        CGAL::Random rng;
+        for (std::size_t j : c) // CJTODO: C++11
+        {
+          m_weights[j] = 
+            rng.get_double(0., (0.5*0.5*INPUT_SPARSITY*INPUT_SPARSITY));
+        }
+
+        for (std::size_t j : c) // CJTODO: C++11
+        {    
+#ifdef CGAL_LINKED_WITH_TBB
+          if (j == tr_index)
+          {
+            compute_tangent_triangulation(j);
+          }
+          else
+          {
+            Tr_mutex::scoped_lock lock(m_tr_mutexes[j]);
+            compute_tangent_triangulation(j);
+          }
+#else
+          compute_tangent_triangulation(j);
+#endif
+        }
+
+        refresh_tangential_complex(); // CJTODO: heavy computation!
+
+        // We will try the other cells next time (incident_cells is not
+        // valid anymore here)
+        break;
+      }
+    }
   }
 
   std::ostream &export_vertices_to_off(
@@ -1173,15 +1260,18 @@ private:
   }
 
 private:
-  const Kernel        m_k;
-  Points              m_points;
-  Weights             m_weights;
-  Points_ds           m_points_ds;
-  TS_container        m_tangent_spaces;
-  Tr_container        m_triangulations; // Contains the triangulations 
-                                        // and their center vertex
+  const Kernel              m_k;
+  Points                    m_points;
+  Weights                   m_weights;
+  Points_ds                 m_points_ds;
+  TS_container              m_tangent_spaces;
+  Tr_container              m_triangulations; // Contains the triangulations 
+                                              // and their center vertex
+#ifdef CGAL_LINKED_WITH_TBB
+  std::vector<Tr_mutex>     m_tr_mutexes;
+#endif
 #ifdef CGAL_TC_EXPORT_NORMALS
-  Normals             m_normals;
+  Normals                   m_normals;
 #endif
 
 }; // /class Tangential_complex
