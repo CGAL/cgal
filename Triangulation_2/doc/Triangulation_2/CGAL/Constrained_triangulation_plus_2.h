@@ -374,12 +374,23 @@ vertices_in_constraint_end(Vertex_handle va, Vertex_handle vb) const;
 The polyline simplification algorithm described in Chapter
 \ref Chapter_2D_Polyline_simplification 
 operates on polyline constraints. The algorithm removes
-vertices of a constraint and at the same time  from the triangulation.
-The points of removed vertices are nevertheless kept
-in the polyline constraint.
-This allows the simplification algorithm to compute the error
-introduced by the simplification process by comparing the 
-current sequence (vertices) to the original sequence (points).
+in each simplification step
+a vertex of a constraint and at the same time from the triangulation.
+The class `Constrained_triangulation_plus_2` stores
+for each constraint not only the sequence of vertices but
+also the original sequence of points at those vertices.
+As the `Vertices_in_constraint_iterator` allows to enumerate 
+the current set of vertices, the `Points_in_constraint_iterator` 
+allows to enumerate  the points that were in the constraint 
+before the simplification algorithm started.
+
+The simplification algorithm can compute the error introduced by 
+each simplification step:
+it is the distance of the current sequence (vertices) to the original
+sequence (points).
+
+The points which do not correspond to a vertex can be removed 
+either for a single constraint or for all constraints.
 
 The simplification algorithm uses the following types and functions.
 \cgalAdvancedEnd
@@ -389,8 +400,8 @@ The simplification algorithm uses the following types and functions.
 
 /*!
 \cgalAdvancedBegin
-An iterator on the points of the chain of subconstraints representing a
-constraint. The value type of this iterator is `Point`.
+An iterator on the points of the of the original constraint
+before simplification steps are applied. The value type of this iterator is `Point`.
 A \link Constrained_triangulation_plus_2::Vertices_in_constraint_iterator `Vertices_in_constraint_iterator`\endlink can be converted into
 a `Points_in_constraint_iterator`, but not the other way around.
 \cgalAdvancedEnd
@@ -419,7 +430,7 @@ Removes the points that were kept in the constraint `cid`.
 \cgalAdvancedEnd
 */
 size_type
-remove_points_from_constraint(Constraint_id cid);
+remove_points_without_vertex_from_constraint(Constraint_id cid);
 
 
 /*!
@@ -428,7 +439,7 @@ Removes the points that were kept in the constraints.
 \cgalAdvancedEnd
  */
 void
-remove_points_from_constraints();
+remove_points_without_vertex_from_constraints();
 
 
 
