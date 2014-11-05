@@ -1154,7 +1154,8 @@ public:
     }
 
     /// adds a new vertex, resizes vertex properties if necessary,
-    /// and sets the point property to `p`.
+    /// and sets the \em point property to `p`.
+    /// \note Several vertices may have the same point property.
     Vertex_index add_vertex(const Point& p) 
     {
         Vertex_index v = add_vertex();
@@ -1186,7 +1187,11 @@ public:
     }
 
     /// adds two opposite halfedges, and resizes edge and halfedge properties if necessary.
+    /// Sets the targets of the halfedge to the given vertices, but does not modify the halfedge
+    /// associated to the vertices.
+    /// \note The function does not check whether there is already an edge between the vertices.
     /// \returns the halfedge with `v1` as target
+
     Halfedge_index add_edge(Vertex_index v0, Vertex_index v1)
     {
         CGAL_assertion(v0 != v1);
@@ -1198,7 +1203,7 @@ public:
         return h;
     }
 
-    /// adds a new face, and resizes face properties  if necessary.
+    /// adds a new face, and resizes face properties if necessary.
     Face_index add_face()
     {
       if(faces_freelist_ != -1){
@@ -1213,12 +1218,17 @@ public:
       }
     }
 
-    /// adds a new face with vertices from a ranges.
+    /// if possible, adds a new face with vertices from a range with value type `Vertex_index`.
+    /// The function adds halfedges between successive vertices if they are not yet indicent to halfedges,
+    /// or updates the connectivity of halfedges already in place. 
+    /// Resizes halfedge, edge, and face properties if necessary.
+    /// \returns the face index of the added face, or `Surface_mesh::null_face()` if the face could not be added.
     template <typename Range>
     Face_index add_face(const Range& vertices);
 
 
-    /// adds a new triangle connecting vertices `v0`, `v1`, `v2`
+    /// adds a new triangle connecting vertices `v0`, `v1`, `v2`.
+    /// \returns the face index of the added face, or `Surface_mesh::null_face()` if the face could not be added.
     Face_index add_face(Vertex_index v0, Vertex_index v1, Vertex_index v2)
     {
         boost::array<Vertex_index, 3> 
@@ -1226,7 +1236,8 @@ public:
         return add_face(v);
     }
 
-  /// adds a new quad connecting vertices `v0`, `v1`, `v2`, `v3`.
+    /// adds a new quad connecting vertices `v0`, `v1`, `v2`, `v3`.
+    /// \returns the face index of the added face, or `Surface_mesh::null_face()` if the face could not be added.
     Face_index add_face(Vertex_index v0, Vertex_index v1, Vertex_index v2, Vertex_index v3)
     {
         boost::array<Vertex_index, 4> 
