@@ -23,7 +23,7 @@ int main()
   std::cout << "After insertion of 5 vertices and removal of the 3. vertex\n"
             << "# used vertices / total vertices = " 
             << m.number_of_vertices()
-            << " / " << m.num_vertices() << std::endl;
+            << " / " << m.number_of_vertices() + m.number_of_removed_vertices() << std::endl;
   
   std::cout << "Iterate over used vertices\n";
   {
@@ -40,9 +40,9 @@ int main()
   std::cout << "\nIterate over used and deleted vertices\n"
             << "# used vertices / total vertices = " 
             << m.number_of_vertices()
-            << " / " << m.num_vertices() << std::endl;
+            << " / " << m.number_of_vertices() + m.number_of_removed_vertices() << std::endl;
     {
-    unsigned int i = 0, end = m.num_vertices();
+    unsigned int i = 0, end = m.number_of_vertices() + m.number_of_removed_vertices();
     for( ; i < end; ++i) {
       vertex_descriptor vh(i);
       assert(m.is_removed(vh) == removed[vh]);
@@ -55,10 +55,10 @@ int main()
   std::cout << "\nAfter garbage collection\n"
             << "# used vertices / total vertices = "
             << m.number_of_vertices()
-            << " / " << m.num_vertices() << std::endl;
+            << " / " << m.number_of_vertices() + m.number_of_removed_vertices() << std::endl;
   
  {
-   unsigned int i = 0, end = m.num_vertices();
+   unsigned int i = 0, end = m.number_of_vertices() + m.number_of_removed_vertices();
     for( ; i < end; ++i) {
       vertex_descriptor vh(i);
       std::cout << m.point(vh) << ((m.is_removed(vh)) ? "  R\n" : "\n");

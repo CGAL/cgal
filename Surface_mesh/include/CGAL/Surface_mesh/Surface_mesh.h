@@ -1305,33 +1305,33 @@ public:
   /// returns the number of vertices in the mesh.
   size_type number_of_vertices() const
   {
-    return num_vertices() + num_removed_vertices();
+    return num_vertices() + number_of_removed_vertices();
   }
  
   /// returns the number of halfedges in the mesh.
   size_type number_of_halfedges() const
   {
-    return num_halfedges() + num_removed_halfedges();
+    return num_halfedges() + number_of_removed_halfedges();
   }
 
   /// returns the number of edges in the mesh.
   size_type number_of_edges() const
   {
-    return num_edges() + num_removed_edges();
+    return num_edges() + number_of_removed_edges();
   }
 
   /// returns the number of faces in the mesh.
   size_type number_of_faces() const
   {
-    return num_faces() + num_removed_faces();
+    return num_faces() + number_of_removed_faces();
   }
 
     /// returns `true` iff the mesh is empty, i.e., has no vertices, halfedges and faces.
     bool is_empty() const
   {
-    return ( num_vertices() == num_removed_vertices()
-             && num_halfedges() == num_removed_halfedges()
-             && num_faces() == num_removed_faces());
+    return ( num_vertices() == number_of_removed_vertices()
+             && num_halfedges() == number_of_removed_halfedges()
+             && num_faces() == number_of_removed_faces());
   }
 
     /// removes all vertices, halfedge, edges and faces. Collects garbage and clears all properties.
@@ -1388,16 +1388,16 @@ public:
 #endif
 
     /// returns the number of vertices in the mesh which are marked removed.
-    size_type num_removed_vertices() const { return removed_vertices_; }
+    size_type number_of_removed_vertices() const { return removed_vertices_; }
 
     /// returns the number of halfedges in the mesh which are marked removed.
-    size_type num_removed_halfedges() const { return 2*removed_edges_; }
+    size_type number_of_removed_halfedges() const { return 2*removed_edges_; }
 
     /// returns the number of edges in the mesh which are marked removed.
-    size_type num_removed_edges() const { return removed_edges_; }
+    size_type number_of_removed_edges() const { return removed_edges_; }
 
     /// returns the number offaces in the mesh which are marked removed.
-    size_type num_removed_faces() const { return removed_faces_; }
+    size_type number_of_removed_faces() const { return removed_faces_; }
 
 
 
