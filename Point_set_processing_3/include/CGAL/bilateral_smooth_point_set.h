@@ -332,14 +332,14 @@ public:
 ///                         and `Parallel_tag`.
 /// @tparam ForwardIterator iterator over input points.
 /// @tparam PointPMap is a model of `ReadablePropertyMap` 
-///         with a value_type = Point_3<Kernel>.
-///         It can be omitted if ForwardIterator::value_type is convertible to 
-///         Point_3<Kernel>.
+///         with a value_type = `Kernel::Point_3`.
+///         It can be omitted if `ForwardIterator::value_type` is convertible to 
+///         `Kernel::Point_3`.
 /// @tparam NormalPMap is a model of `ReadablePropertyMap` 
-///                    with a value_type = Vector_3<Kernel>.
+///                    with a value_type = `Kernel::Vector_3`.
 /// @tparam Kernel Geometric traits class.
-///      It can be omitted and deduced automatically from PointPMap value_type.
-///      Kernel_traits are used for deducing the Kernel.
+///      It can be omitted and deduced automatically from PointPMap's value_type.
+///      `Kernel_traits` are used for deducing the kernel.
 ///
 /// @return Average point movement error. It's a convergence criterium for the algorithm.
 ///         This value can help the user to decide how many iterations are
@@ -354,12 +354,13 @@ template <typename Concurrency_tag,
 double
 bilateral_smooth_point_set(
   ForwardIterator first,    ///< forward iterator to the first input point.
-  ForwardIterator beyond,   ///< iterator to the past-the-end input point.
+  ForwardIterator beyond,   ///< past-the-end iterator.
   PointPMap point_pmap,     ///< property map: value_type of ForwardIterator -> Point_3.
   NormalPMap normal_pmap,   ///< property map: value_type of ForwardIterator -> Vector_3.
-  unsigned int k,           ///< size of neighborhood. The bigger the smoother the result will be.
-  typename Kernel::FT sharpness_angle,  ///< control sharpness of the result, 
-                            ///< the bigger the smoother the result will be.
+  unsigned int k,           ///< size of neighborhood. The bigger the value is, 
+                            ///< the smoother the result will be.
+  typename Kernel::FT sharpness_angle,  ///< control sharpness of the result.
+                            ///< The bigger the value is, the smoother the result will be.
                             ///< The range of possible value is [0, 90].
   const Kernel& /*kernel*/) ///< geometric traits.
 {
@@ -575,9 +576,9 @@ template <typename Concurrency_tag,
           typename NormalPMap>
 double
 bilateral_smooth_point_set(
-  ForwardIterator first,     ///< first input point.
-  ForwardIterator beyond,    ///< past-the-end input point.
-  PointPMap point_pmap,      ///< property map OutputIterator -> Point_3.
+  ForwardIterator first,      ///< forward iterator to the first input point.
+  ForwardIterator beyond,     ///< past-the-end iterator.
+  PointPMap point_pmap,        ///< property map OutputIterator -> Point_3.
   NormalPMap normal_pmap,    ///< property map ForwardIterator -> Vector_3.
   const unsigned int k,      ///< number of neighbors.
   double sharpness_angle     ///< control sharpness(0-90)
@@ -602,11 +603,11 @@ template <typename Concurrency_tag,
           typename NormalPMap>
 double
 bilateral_smooth_point_set(
-  ForwardIterator first,        ///< first input point.
-  ForwardIterator beyond,       ///< past-the-end input point.
-  const unsigned int k,         ///< number of neighbors.
-  double sharpness_angle,       ///< control sharpness(0-90)
-  NormalPMap normal_pmap)       ///< property map OutputIterator -> Vector_3.
+  ForwardIterator first,    ///< forward iterator to the first input point.
+  ForwardIterator beyond,   ///< past-the-end iterator.
+  const unsigned int k,     ///< number of neighbors.
+  double sharpness_angle,   ///< control sharpness(0-90)
+  NormalPMap normal_pmap)   ///< property map OutputIterator -> Vector_3.
 {
   return bilateral_smooth_point_set<Concurrency_tag>(
     first, beyond,

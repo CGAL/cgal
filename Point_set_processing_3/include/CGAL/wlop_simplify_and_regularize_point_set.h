@@ -304,20 +304,20 @@ compute_density_weight_for_sample_point(
 /// dense point cloud. 
 /// The core of the algorithm is a Weighted Locally Optimal projection operator
 /// with a density uniformization term. 
-/// For more details, please refer to this paper: \cgalCite{wlop-2009}.  
+/// For more details, please refer to \cgalCite{wlop-2009}.  
 /// @tparam Concurrency_tag enables sequential versus parallel algorithm.
 ///                         Possible values are `Sequential_tag`
 ///                         and `Parallel_tag`.
 /// @tparam OutputIterator Type of the output iterator. 
-///         The type of the objects is Kernel::Point_3.
-/// @tparam RandomAccessIterator iterator over input points.
+///         The type of the objects is `Kernel::Point_3`.
+/// @tparam RandomAccessIterator Iterator over input points.
 /// @tparam PointPMap is a model of `ReadablePropertyMap` 
-///         with a value_type = Point_3<Kernel>.
+///         with a value_type = `Kernel::Point_3`.
 ///         It can be omitted if RandomAccessIterator value_type is convertible  
-///         to Point_3<Kernel>.
+///         to `Kernel::Point_3`.
 /// @tparam Kernel Geometric traits class.
-///      It can be omitted and deduced automatically from PointPMap value_type.
-///      Kernel_traits are used for deducing the Kernel.
+///      It can be omitted and deduced automatically from PointPMap's value_type.
+///      `Kernel_traits` are used for deducing the kernel.
 
 // This variant requires all parameters.
 template <typename Concurrency_tag,
@@ -331,21 +331,23 @@ wlop_simplify_and_regularize_point_set(
   RandomAccessIterator beyond, ///< past-the-end iterator.
   OutputIterator output,       ///< output iterator where output points are put.
   PointPMap point_pmap,        ///< property map: value_type of 
-                               ///< RandomAccessIterator -> Point_3
+                               ///< `RandomAccessIterator` -> `Kernel::Point_3`
   double select_percentage,    ///< percentage of points to retain. 
                                ///< Default: 5%.
   double radius,               ///< neighbors radius.
-                               ///< key parameter that need to be fine tune.  
+                               ///< key parameter that needs to be finely tuned.  
                                ///< The result will be irregular if this value is too small. 
                                ///< The process will be slow, and the result will be
                                ///< too smooth if this value is too big.
-                               ///< Usually, a radius that containing "4 rings" of 
+                               ///< Usually, a radius containing the "4 ring" of 
                                ///< neighbor points is a good start.
                                ///< Default: 0.05 * diameter of bounding box.
   unsigned int iter_number,    ///< number of iterations. Default: 35.
-                               ///< the more iterations, the more regular the result will be.
-  bool require_uniform_sampling,///< an optional preprocessing, turn it on if the distribution
-                               ///< of input is highly nonuniform. Default: false. 
+                               ///< More iterations give a more regular result.
+  bool require_uniform_sampling,///< an optional preprocessing, which should be
+                               ///< turned on if the distribution
+                               ///< of the input points is highly nonuniform. 
+                               ///< Default: false. 
   const Kernel&                ///< geometric traits.
 )
 {
