@@ -403,6 +403,10 @@ Simplifies an open or closed polyline given as an iterator range of 2D \cgal poi
 Simplifies a single polyline in a triangulation with polylines as constraints. 
 
 \param ct The underlying constrained Delaunay triangulation with constraint hierarchy which embeds the polyline constraints
+\param cid The constraint identifier of the polyline constraint to simplify
+\param cost The cost function
+\param stop The stop function
+\param keep_points The flag that allows to only remove vertices but not the points in the polyline constraint
 \returns the number of removed vertices
 \tparam CDT  must be `CGAL::Constrained_Delaunay_triangulation_2` with a vertex type that
 is model of  `PolylineSimplificationVertexBase_2`.
@@ -431,6 +435,9 @@ simplify(CGAL::Constrained_triangulation_plus_2<CDT>& ct,
 \ingroup  PkgPolylineSimplification2Functions
 Simplifies all polylines in a triangulation with polylines as constraints.
 \param ct The underlying constrained Delaunay triangulation with constraint hierarchy which embeds the polyline constraints
+\param cost The cost function
+\param stop The stop function
+\param keep_points The flag that allows to only remove vertices but not the points in the polyline constraint
 \returns the number of removed vertices
 \tparam CDT  must be `CGAL::Constrained_Delaunay_triangulation_2` with a vertex type that
 is model of  `PolylineSimplificationVertexBase_2`.

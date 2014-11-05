@@ -43,6 +43,7 @@ class Vertex_base_2
   bool m_removable;
   FT m_cost;
 
+#ifndef DOXYGEN_RUNNING
 public:
   template < typename TDS2 >
   struct Rebind_TDS {
@@ -74,6 +75,7 @@ public:
   {
     m_cost = ft;
   }
+#endif
 };
 
 
