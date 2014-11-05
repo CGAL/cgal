@@ -333,7 +333,7 @@ wlop_simplify_and_regularize_point_set(
   PointPMap point_pmap,        ///< property map: value_type of 
                                ///< `RandomAccessIterator` -> `Kernel::Point_3`
   double select_percentage,    ///< percentage of points to retain. 
-                               ///< Default: 5%.
+                               ///< %Default: 5\%.
   double radius,               ///< neighbors radius.
                                ///< key parameter that needs to be finely tuned.  
                                ///< The result will be irregular if this value is too small. 
@@ -341,13 +341,13 @@ wlop_simplify_and_regularize_point_set(
                                ///< too smooth if this value is too big.
                                ///< Usually, a radius containing the "4 ring" of 
                                ///< neighbor points is a good start.
-                               ///< Default: 0.05 * diameter of bounding box.
-  unsigned int iter_number,    ///< number of iterations. Default: 35.
+                               ///< %Default: 0.05 * diameter of bounding box.
+  unsigned int iter_number,    ///< number of iterations. %Default: 35.
                                ///< More iterations give a more regular result.
   bool require_uniform_sampling,///< an optional preprocessing, which should be
                                ///< turned on if the distribution
                                ///< of the input points is highly nonuniform. 
-                               ///< Default: false. 
+                               ///< %Default: false. 
   const Kernel&                ///< geometric traits.
 )
 {
