@@ -268,8 +268,7 @@ normals:
 \section Point_set_processing_3Upsampling Upsampling
 
 Function `edge_aware_upsample_point_set()` generates a denser point set that has applications in point-based rendering, hole filling, and sparse surface reconstruction.
-The algorithm can progressively upsample the point set while approaching the edge singularities, 
-see <a href="http://web.siat.ac.cn/~huihuang/EAR/EAR_page.html">[Huang et al. 2013]</a>.
+The algorithm can progressively upsample the point set while approaching the edge singularities, see \cgalCite{ear-2013} for more detail.
 
 \subsection Point_set_processing_3Example_8 Example
 
@@ -279,7 +278,7 @@ The following example reads a point set from a file, upsamples it to get a much 
 
 \subsubsection Point_set_processing_3Upsample_Parameter1 Parameter: edge_sensitivity
 This parameter controls where the new points are inserted. Larger values of edge-sensitivity give higher priority to inserting points along the sharp features.
-For example, as shown in the following figure, high value is preferable when one wants to insert more points on sharp features, where the local gradient is high, e.g., darts, cusps, creases and corners. In contrast, points are evenly inserted when edge_sensitivity is set to 0. The range of possible value is [0, infinite). 
+For example, as shown in the following figure, high value is preferable when one wants to insert more points on sharp features, where the local gradient is high, e.g., darts, cusps, creases and corners. In contrast, points are evenly inserted when edge_sensitivity is set to 0. The range of possible value is [0, 1]. 
 
 
 \cgalFigureBegin{Point_set_processing_3figUpsample_edge_sensitivity, upsample_edge_sensitivity.jpg}
