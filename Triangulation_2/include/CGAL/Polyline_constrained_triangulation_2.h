@@ -508,7 +508,7 @@ public:
 private:
   template < class InputIterator>
   Constraint_id insert_constraint_seq_impl(InputIterator first, InputIterator last, bool is_polygon)
-  {
+  {<
     Face_handle hint;
     std::vector<Vertex_handle> vertices;
     for(;first!= last; first++){
@@ -519,7 +519,7 @@ private:
 	vertices.push_back(vh);
       }
     }
-    if(is_polygon) {
+    if(is_polygon && (vertices.size()>1) && (vertices.front() != vertices.back())){
       vertices.push_back(vertices.front());
     }
 

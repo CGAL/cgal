@@ -213,7 +213,9 @@ size_type
 insert(PointIterator first, PointIterator last); 
 
 /*! 
-Inserts the constraint segment `ab` in the triangulation. 
+Inserts the constraint segment `ab` in the triangulation.
+If the two points are equal the point is inserted but no constraint,
+and `Constrained_id(NULL)`is returned.
 */ 
 Constraint_id insert_constraint(Point a, Point b);
 
@@ -224,14 +226,20 @@ Inserts the constraint `c`.
 
 /*! 
 Inserts a constraint whose endpoints are the vertices 
-pointed by `va` and `vb` in the triangulation. 
+pointed by `va` and `vb` in the triangulation.
+If the two vertex handles are equal no constraint is inserted,
+and `Constrained_id(NULL)`is returned.
 */ 
 Constraint_id insert_constraint(Vertex_handle va, Vertex_handle vb);
 
 /*!
-Inserts a polyline defined by the points in the range `[first,last)`.
-Returns the constraint id.
-The polyline is considered as a polygon if the first and last points are equal or if  `close = true`. This allows for example to pass the vertex range of a `Polygon_2`.
+Inserts a polyline defined by the points in the range `[first,last)`
+and returns the constraint id.
+The polyline is considered as a closed curve if the first and last point are equal or if  `close == true`. This allows for example to pass the vertex range of a `Polygon_2`.
+When enumerating the vertices of a closed polyline constraint with a  `Vertices_in_constraint_iterator` the first and last vertex are the same.
+In case the range is empty `Constrained_id(NULL)`is returned.
+In case all points are equal the point is inserted but no constraint,
+and `Constrained_id(NULL)`is returned.
 \tparam PointIterator must be an `InputIterator` with the value type `Point`. 
 */
 template < class PointIterator>
