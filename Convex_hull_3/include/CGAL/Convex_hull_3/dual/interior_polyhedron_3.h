@@ -58,8 +58,6 @@
 
 template <class Kernel, class ET>
 class Interior_polyhedron_3 {
-    private:
-
         // 3D
         typedef typename Kernel::FT FT;
         typedef typename Kernel::Plane_3 Plane;
@@ -76,16 +74,10 @@ class Interior_polyhedron_3 {
         Point m_optimal_point;
 
     public:
-        Interior_polyhedron_3() {}
-        ~Interior_polyhedron_3() {}
-
-    public:
         Point& inside_point() { return m_inside_point; }
         const Point& inside_point() const { return m_inside_point; }
         Point& optimal_point() { return m_optimal_point; }
         const Point& optimal_point() const { return m_optimal_point; }
-
-    public:
 
         // Determines if a value is infinite or not
         template<typename T>
