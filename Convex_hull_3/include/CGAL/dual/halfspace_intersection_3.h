@@ -96,7 +96,7 @@ namespace CGAL
                                 result_inter result = CGAL::intersection(pp1, pp2, pp3);
                                 CGAL_assertion_msg(result,
                                                    "halfspace_intersection_3: no intersection");
-                                CGAL_assertion_msg(boost::get<Point_3>(& *result),
+                                CGAL_assertion_msg(boost::get<Point_3>(& *result) != NULL,
                                                    "halfspace_intersection_3: intersection is not a point");
 
                                 const Point_3* pp = boost::get<Point_3>(& *result);
@@ -257,7 +257,7 @@ namespace CGAL
         typedef Interior_polyhedron_3<K, ET> Interior_polyhedron;
         Interior_polyhedron interior;
         bool res = interior.find(begin, end);
-        CGAL_assertion_msg(res, "halfspace_intersection_without_origin_3: problem when determing an point inside");
+        CGAL_assertion_msg(res, "halfspace_intersection_without_origin_3: problem when determing a point inside");
         Point_3 origin = interior.inside_point();
 
         // compute the intersection

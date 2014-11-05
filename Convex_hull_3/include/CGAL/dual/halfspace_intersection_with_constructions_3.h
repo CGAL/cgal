@@ -143,7 +143,7 @@ namespace CGAL
         typedef Interior_polyhedron_3<K, ET> Interior_polyhedron;
         Interior_polyhedron interior;
         bool res = interior.find(begin, end);
-        CGAL_assertion_msg(res, "halfspace_intersection_with_constructions_without_origin_3: problem when determing an point inside");
+        CGAL_assertion_msg(res, "halfspace_intersection_with_constructions_without_origin_3: problem when determing a point inside");
         Point_3 origin = interior.inside_point();
 
         // compute the intersection
