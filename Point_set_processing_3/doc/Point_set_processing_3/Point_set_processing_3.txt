@@ -188,6 +188,12 @@ at each point from the set by linear least squares fitting of a plane
 over its `k` nearest neighbors. This algorithm is simpler and
 faster than `jet_estimate_normals()`.
 
+Function `vcm_estimate_normals()` estimates the normal direction
+at each point from the set by using the Voronoi Covariance Measure
+of the point set. This algorithm is more complex and slower than
+the previous algorithms. It is based on the
+article \cgalCite{cgal:mog-vbcfe-11}.
+
 \section Point_set_processing_3NormalOrientation Normal Orientation
 
 Function `mst_orient_normals()` orients the normals of a set of
@@ -210,6 +216,23 @@ The following example reads a point set from a file, estimates the
 normals through PCA over the 6 nearest neighbors and orients the
 normals:
 \cgalExample{Point_set_processing_3/normals_example.cpp}
+
+\section Point_set_processing_3FeaturesEstimation Feature Edges Estimation
+
+Function `vcm_estimate_edges()` estimates the feature edges of the
+point set using its Voronoi Covariance Measure.
+It is based on the article \cgalCite{cgal:mog-vbcfe-11}.
+
+It first computes the VCM of the points set using `vcm_compute()`. Then, it estimates the edges
+points by testing if a ratio of eigenvalues is greater than a given threshold.
+Finally, it can construct a Minimum Spanning Tree of the resulting points using
+the `construct_mst()` function.
+
+\subsection Point_set_processing_3Example_6 Example
+
+The following example reads a point set from a file, estimates the
+feature edges:
+\cgalExample{Point_set_processing_3/edges_example.cpp}
 
 */ 
 } /* namespace CGAL */
