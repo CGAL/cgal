@@ -28,7 +28,7 @@
 #include <CGAL/convex_hull_3.h>
 
 // For interior_polyhedron_3
-#include <CGAL/dual/interior_polyhedron_3.h>
+#include <CGAL/Convex_hull_3/dual/interior_polyhedron_3.h>
 #ifdef CGAL_USE_GMP
 #include <CGAL/Gmpq.h>
 #else

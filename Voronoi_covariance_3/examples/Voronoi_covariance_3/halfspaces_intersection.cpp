@@ -1,7 +1,7 @@
 #define CGAL_PROFILE
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/dual/halfspace_intersection_3.h>
+#include <CGAL/Convex_hull_3/dual/halfspace_intersection_3.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel         K;
 typedef K::Plane_3 Plane;

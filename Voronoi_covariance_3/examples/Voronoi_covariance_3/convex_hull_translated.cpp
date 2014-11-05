@@ -1,6 +1,6 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
-#include <CGAL/dual/halfspace_intersection_3.h>
+#include <CGAL/Convex_hull_3/dual/halfspace_intersection_3.h>
 
 #include "include/off.h"
 

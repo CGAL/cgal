@@ -6,8 +6,8 @@
 #include <CGAL/Gmpq.h>
 
 #include <CGAL/Polyhedron_3.h>
-#include <CGAL/dual/halfspace_intersection_3.h>
-#include <CGAL/dual/halfspace_intersection_with_constructions_3.h>
+#include <CGAL/Convex_hull_3/dual/halfspace_intersection_3.h>
+#include <CGAL/Convex_hull_3/dual/halfspace_intersection_with_constructions_3.h>
 
 #include <CGAL/Timer.h>
 #include <fstream>

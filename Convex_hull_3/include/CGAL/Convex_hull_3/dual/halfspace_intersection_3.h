@@ -24,14 +24,14 @@
 
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Polyhedron_incremental_builder_3.h>
-#include <CGAL/dual/Convex_hull_traits_dual_3.h>
+#include <CGAL/Convex_hull_3/dual/Convex_hull_traits_dual_3.h>
 #include <CGAL/Origin.h>
 #include <CGAL/convex_hull_3.h>
 #include <CGAL/intersections.h>
 #include <CGAL/assertions.h>
 
 // For interior_polyhedron_3
-#include <CGAL/dual/interior_polyhedron_3.h>
+#include <CGAL/Convex_hull_3/dual/interior_polyhedron_3.h>
 #ifdef CGAL_USE_GMP
 #include <CGAL/Gmpq.h>
 #else

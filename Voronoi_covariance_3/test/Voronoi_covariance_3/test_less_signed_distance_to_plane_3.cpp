@@ -2,7 +2,7 @@
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
-#include <CGAL/dual/Convex_hull_traits_dual_3.h>
+#include <CGAL/Convex_hull_3/dual/Convex_hull_traits_dual_3.h>
 #include <CGAL/Convex_hull_traits_3.h>
 
 #include "include/to_dual.h"
