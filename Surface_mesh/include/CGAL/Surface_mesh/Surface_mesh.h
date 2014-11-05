@@ -1254,7 +1254,7 @@ public:
     /// adjusting anything.
     void remove_vertex(Vertex_index v)
     {
-        vremoved_ = get_or_add_property_map<Vertex_index, bool>("v:removed", false);
+        vremoved_ = add_property_map<Vertex_index, bool>("v:removed", false);
         vremoved_[v] = true; ++removed_vertices_; garbage_ = true;
         vconn_[v].halfedge_ = Halfedge_index(vertices_freelist_);
         vertices_freelist_ = (size_type)v;
@@ -1264,7 +1264,7 @@ public:
     /// adjusting anything.
     void remove_edge(Edge_index e)
     {
-        eremoved_ = get_or_add_property_map<Vertex_index, bool>("e:removed", false);
+        eremoved_ = add_property_map<Vertex_index, bool>("e:removed", false);
         eremoved_[e] = true; ++removed_edges_; garbage_ = true;
         hconn_[Halfedge_index((size_type)e << 1)].next_halfedge_ = Halfedge_index(edges_freelist_ );
         edges_freelist_ = ((size_type)e << 1);
@@ -1275,7 +1275,7 @@ public:
 
     void remove_face(Face_index f)
     {
-        fremoved_ = get_or_add_property_map<Face_index, bool>("f:removed", false);
+        fremoved_ = add_property_map<Face_index, bool>("f:removed", false);
         fremoved_[f] = true; ++removed_faces_; garbage_ = true;
         fconn_[f].halfedge_ = Halfedge_index(faces_freelist_);
         faces_freelist_ = (size_type)f;
@@ -1966,17 +1966,6 @@ private: //--------------------------------------------------- property handling
     std::pair<Property_map<I, T>,bool> property_map(const std::string& name) const
     {
       return (this->*boost::fusion::at_key<I>(pmap_)).template get<T>(name);
-    }
-
-
-    /// returns a property map with key `I` and value type `T` with 
-    /// `name`. If no such property exists one is added with the default
-    /// value `t`.
-    template <class I, class T>
-    Property_map<I, T> 
-    get_or_add_property_map(const std::string& name, const T t=T())
-    {
-        return (this->*boost::fusion::at_key<I>(pmap_)).template get_or_add<T>(name, t);
     }
 
 
