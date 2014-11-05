@@ -304,7 +304,14 @@ compute_density_weight_for_sample_point(
 /// dense point cloud. 
 /// The core of the algorithm is a Weighted Locally Optimal projection operator
 /// with a density uniformization term. 
-/// For more details, please refer to \cgalCite{wlop-2009}.  
+/// For more details, please refer to \cgalCite{wlop-2009}.
+///
+/// A parallel version of WLOP is provided and requires the executable to be 
+/// linked against the <a href="http://www.threadingbuildingblocks.org">Intel TBB library</a>.
+/// To control the number of threads used, the user may use the tbb::task_scheduler_init class.
+/// See the <a href="http://www.threadingbuildingblocks.org/documentation">TBB documentation</a> 
+/// for more details.
+///
 /// @tparam Concurrency_tag enables sequential versus parallel algorithm.
 ///                         Possible values are `Sequential_tag`
 ///                         and `Parallel_tag`.

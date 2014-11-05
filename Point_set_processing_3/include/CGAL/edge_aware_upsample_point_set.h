@@ -273,9 +273,9 @@ update_new_point(
 /// \ingroup PkgPointSetProcessing
 /// This method progressively upsamples the point set while 
 /// approaching the edge singularities, which generates a denser point set that
-/// has applications in point-based rendering, hole filling, 
-/// and sparse surface reconstruction.
-/// For more details, please refer to \cgalCite{ear-2013}.  
+/// has applications in point-based rendering, hole filling, and sparse surface
+/// reconstruction. Correct normals of points are required as input. For more 
+/// details, please refer to \cgalCite{ear-2013}.  
 /// @tparam OutputIterator Type of the output iterator. 
 ///         The type of the objects is 
 ///         `std::pair<Kernel::Point_3, Kernel::Vector_3>`.
