@@ -1323,7 +1323,7 @@ public:
              && num_faces() == num_removed_faces());
   }
 
-    /// removes all vertices, edges and faces. Collects garbage and clears all properties.
+    /// removes all vertices, halfedge, edges and faces. Collects garbage and clears all properties.
     void clear();
 
  
@@ -1415,11 +1415,11 @@ public:
         return fremoved_[f];
     }
 
-    /// checks if any vertices, faces, or edges are marked as removed.
+    /// checks if any vertices, halfedges, edges, or faces are marked as removed.
     /// \sa collect_garbage
     bool has_garbage() const { return garbage_; }
 
-    /// really removes vertices, edges, and faces which were marked removed.
+    /// really removes vertices, halfedges, edges, and faces which are marked removed.
     /// \sa `has_garbage()`
     /// \attention By garbage collecting elements get new indices.
     /// In case you store indices in an auxiliary data structure
