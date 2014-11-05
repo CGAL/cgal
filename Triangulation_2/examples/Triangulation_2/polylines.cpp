@@ -36,16 +36,16 @@ print(const CDTP& cdtp, Cid cid)
 void 
 contexts(const CDTP& cdtp)
 {
-  CDTP::Subconstraint_iterator beg, end;
-  beg = cdtp.subconstraints_begin();
-  end = cdtp.subconstraints_end();
+  CDTP::Subconstraint_iterator
+    beg = cdtp.subconstraints_begin(),
+    end = cdtp.subconstraints_end();
 
   for(; beg!=end; ++beg){
     Vertex_handle vp = beg->first, vq = beg->second;
 
     if(cdtp.number_of_enclosing_constraints(vp, vq) == 2){
-      CDTP::Context_iterator cbeg = cdtp.contexts_begin(vp,vq);
-      CDTP::Context_iterator cend = cdtp.contexts_end(vp,vq);
+      CDTP::Context_iterator cbeg = cdtp.contexts_begin(vp,vq),
+        cend = cdtp.contexts_end(vp,vq);
       std::cout << "subconstraint " << vp->point() << " " << vq->point() 
                 << " is on constraints starting at:\n";
       for(; cbeg !=  cend; ++cbeg){

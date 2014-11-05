@@ -63,7 +63,7 @@ typedef Itag Intersection_tag;
 /*!
 The identifier of a polyline constraint. For reasons of backward compatibility of
 functions that returned `std::pair<Vertex_handle,Vertex_handle>` instead of `Constraint_id`,
-the id class has a conversion operator for the pair.
+the id class has a conversion operator to `std::pair<Vertex_handle,Vertex_handle>`.
 */
   typedef unspecified_type Constraint_id;
 
@@ -215,7 +215,7 @@ insert(PointIterator first, PointIterator last);
 /*! 
 Inserts the constraint segment `ab` in the triangulation. 
 */ 
-void insert_constraint(Point a, Point b); 
+Constraint_id insert_constraint(Point a, Point b);
 
 /*! 
 Inserts the constraint `c`. 
@@ -226,7 +226,7 @@ Inserts the constraint `c`.
 Inserts a constraint whose endpoints are the vertices 
 pointed by `va` and `vb` in the triangulation. 
 */ 
-void insert_constraint(Vertex_handle va, Vertex_handle vb); 
+Constraint_id insert_constraint(Vertex_handle va, Vertex_handle vb);
 
 /*!
 Inserts a polyline defined by the points in the range `[first,last)`.
@@ -321,7 +321,7 @@ corresponding to the constraints enclosing the subconstraint `(va,vb)`.
 Context_iterator contexts_begin(Vertex_handle va, 
 Vertex_handle vb) const; 
 
-/*! 
+/*!
 Returns an iterator past the end `Context` 
 of the sequence of contexts
 corresponding to the constraints enclosing the subconstraint `(va,vb)`. 
@@ -330,17 +330,33 @@ corresponding to the constraints enclosing the subconstraint `(va,vb)`.
 Context_iterator contexts_end(Vertex_handle va, 
 Vertex_handle vb) const; 
 
-/*! 
+/*!
 Returns an iterator on the first vertex on the constraint `cid`. 
 */ 
 Vertices_in_constraint_iterator 
 vertices_in_constraint_begin(Constraint_id cid) const; 
 
-/*! 
+/*!
 Returns an iterator past the last vertex on the constraint `cid`. 
 */ 
 Vertices_in_constraint_iterator 
 vertices_in_constraint_end(Constraint_id cid) const; 
+
+/*!
+\deprecated Returns an iterator on the first vertex on the constraint `cid`.
+\attention This function only works for constraints that were inserted
+as a pair of points or pair of vertex handles.
+*/
+Vertices_in_constraint_iterator
+vertices_in_constraint_begin(Vertex_handle va, Vertex_handle vb) const; 
+
+/*!
+\deprecated Returns an iterator past the last vertex on the constraint `cid`.
+\attention This function only works for constraints that were inserted
+as a pair of points or pair of vertex handles.
+*/
+Vertices_in_constraint_iterator
+vertices_in_constraint_end(Vertex_handle va, Vertex_handle vb) const; 
 
 /// @}
 
