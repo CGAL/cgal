@@ -408,6 +408,21 @@ a `Points_in_constraint_iterator`, but not the other way around.
 */
 typedef unspecified_type Points_in_constraint_iterator;
 
+
+/*!
+\cgalAdvancedBegin
+Returns an iterator to the first point on the constraint before any simplification step.
+\cgalAdvancedEnd
+*/
+Points_in_constraint_iterator points_in_constraint_begin(Constraint_id cid) const;
+  
+/*!
+\cgalAdvancedBegin
+Returns an iterator past the last point on the constraint before any simplification step.
+\cgalAdvancedEnd
+*/
+Points_in_constraint_iterator points_in_constraint_end(Constraint_id cid) const ;
+
 /*!
 \cgalAdvancedBegin
 Removes the vertex at `vicq` from the constraint and the triangulation.
