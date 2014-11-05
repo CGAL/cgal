@@ -551,8 +551,8 @@ template <typename OutputIterator,
           typename NormalPMap>
 OutputIterator
 edge_aware_upsample_point_set(
-  ForwardIterator first, ///< iterator over the first input point
-  ForwardIterator beyond, ///< past-the-end iterator
+  ForwardIterator first,    ///< forward iterator to the first input point.
+  ForwardIterator beyond,   ///< past-the-end iterator.
   OutputIterator output, ///< output iterator over points.
   PointPMap point_pmap, ///< property map: OutputIterator -> Point_3.
   NormalPMap normal_pmap, ///< property map: OutputIterator -> Vector_3.

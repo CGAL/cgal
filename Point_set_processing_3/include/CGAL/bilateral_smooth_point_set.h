@@ -342,8 +342,8 @@ public:
 ///      Kernel_traits are used for deducing the Kernel.
 ///
 /// @return Average point movement error. It's a convergence criterium for the algorithm.
-///         This value could help user decide how many times of iteration is
-///         sufficient.          
+///         This value can help the user to decide how many iterations are
+///         sufficient.
 
 // This variant requires all parameters.
 template <typename Concurrency_tag,
@@ -353,8 +353,8 @@ template <typename Concurrency_tag,
           typename Kernel>
 double
 bilateral_smooth_point_set(
-  ForwardIterator first,    ///< iterator over the first input point.
-  ForwardIterator beyond,   ///< past-the-end iterator over the input points.
+  ForwardIterator first,    ///< forward iterator to the first input point.
+  ForwardIterator beyond,   ///< iterator to the past-the-end input point.
   PointPMap point_pmap,     ///< property map: value_type of ForwardIterator -> Point_3.
   NormalPMap normal_pmap,   ///< property map: value_type of ForwardIterator -> Vector_3.
   unsigned int k,           ///< size of neighborhood. The bigger the smoother the result will be.

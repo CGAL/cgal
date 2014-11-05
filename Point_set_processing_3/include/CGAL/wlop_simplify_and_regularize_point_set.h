@@ -327,8 +327,8 @@ template <typename Concurrency_tag,
           typename Kernel>
 OutputIterator
 wlop_simplify_and_regularize_point_set(
-  RandomAccessIterator first,  ///< iterator over the first input point.
-  RandomAccessIterator beyond, ///< past-the-end iterator over the input points.
+  RandomAccessIterator first,  ///< random-access iterator to the first input point.
+  RandomAccessIterator beyond, ///< past-the-end iterator.
   OutputIterator output,       ///< output iterator where output points are put.
   PointPMap point_pmap,        ///< property map: value_type of 
                                ///< RandomAccessIterator -> Point_3
@@ -613,10 +613,10 @@ template <typename Concurrency_tag,
           typename PointPMap>
 OutputIterator
 wlop_simplify_and_regularize_point_set(
-  RandomAccessIterator  first,  ///< iterator over the first input point
-  RandomAccessIterator  beyond, ///< past-the-end iterator
-  OutputIterator output,        ///< add back-inserter
-  PointPMap point_pmap,   ///< property map RandomAccessIterator  -> Point_3
+  RandomAccessIterator first,  ///< forward iterator to the first input point.
+  RandomAccessIterator beyond, ///< past-the-end iterator.
+  OutputIterator output,    ///< add back-inserter
+  PointPMap point_pmap,     ///< property map RandomAccessIterator  -> Point_3
   const double select_percentage = 5, ///< percentage of points to retain
   double neighbor_radius = -1, ///< size of neighbors.
   const unsigned int max_iter_number = 35, ///< number of iterations.
@@ -644,9 +644,9 @@ template <typename Concurrency_tag,
           typename RandomAccessIterator >
 OutputIterator
 wlop_simplify_and_regularize_point_set(
-  RandomAccessIterator  first,  ///< iterator over the first input point
-  RandomAccessIterator  beyond, ///< past-the-end iterator
-  OutputIterator output,        ///< add back-inserter
+  RandomAccessIterator  first,  ///< iterator to the first input point.
+  RandomAccessIterator  beyond, ///< past-the-end iterator.
+  OutputIterator output,        ///< add back-inserter.
   const double select_percentage = 5, ///< percentage of points to retain
   double neighbor_radius = -1,  ///< size of neighbors.
   const unsigned int max_iter_number = 35, ///< number of iterations.
