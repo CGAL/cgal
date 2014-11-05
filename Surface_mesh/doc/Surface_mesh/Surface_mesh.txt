@@ -63,7 +63,7 @@ As `Surface_mesh` is index-based `Vertex_index`, `Face_index`,
 `Halfedge_index` and `Edge_index`
 don't have member functions to access connectivity or properties.
 The functions of the `Surface_mesh` instance they were
-created from needs to be used to obtain that information.
+created from must be used to obtain that information.
 
 \section sectionSurfaceMeshConnectivity Connectivity 
 
