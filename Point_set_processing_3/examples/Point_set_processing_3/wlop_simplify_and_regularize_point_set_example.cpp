@@ -36,27 +36,6 @@ int main(void)
                            points.end(),
                            std::back_inserter(output));
   //with default parameters ends
-
-
-  //with all parameters begins
-  /*
-  //Algorithm parameters
-  const double select_percentage = 2;       // percentage of points to retain.
-  const double neighbor_radius = 0.03;      // size of neighbors.
-  const unsigned int iter_number = 30;      // number of iterations.
-  const bool require_uniform_sampling = true;  // optional pre-processing. 
-                                       
-  CGAL::wlop_simplify_and_regularize_point_set
-                          <CGAL::Parallel_tag> // parallel version
-                          (points.begin(),
-                           points.end(),
-                           back_inserter(output),
-                           select_percentage, 
-                           neighbor_radius,
-                           iter_number,
-                           require_uniform_sampling);
-  */
-  //with all parameters ends
   
   std::ofstream out(OUTPUT_FILENAME.c_str()); 
   if (!out || !CGAL::write_xyz_points(
