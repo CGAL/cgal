@@ -27,16 +27,20 @@ public:
 /// \name Access Functions 
 /// @{
 
-/*! The Boolean that indicates whether the vertex can be removed.
+/*! indicates whether the vertex can be removed.
 */ 
 bool is_removable() const; 
- 
+
+/*! allows to set whether the vertex can be removed.
+*/
 void set_removable(bool b);
 
-/*! The cost if the vertex got removed.
+/*! returns the cost of the vertex removal.
 */ 
-FT& cost(); 
+FT cost() const; 
 
+/*! allows to set the cost of the vertex removal.
+*/
   void set_cost(const FT& ft);
 /// @} 
 
