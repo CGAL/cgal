@@ -825,13 +825,6 @@ evaluation of predicates and exact computation of intersections.)
 </UL>
 </UL>
 
-In order to retrieve the constrained edges of a constraint, or
-the constraints overlapping with a constrained edge, we provide
-the class `Constrained_triangulation_plus_2`. This class maintains
-a constraint hierarchy data structure. See
-Section \ref Section_2D_Triangulations_Constrained_Plus for details.
-This class should also be used when doing exact intersection computations
-as it avoids the cascading of intersection computations.
 
 \image html constraints.png
 \image latex constraints.png
@@ -857,10 +850,19 @@ from a list of pairs of points which represent the constraints.
 The class `Constrained_triangulation_2<Traits,Tds,Itag>`
 overrides the insertion and removal of a point to take care of the
 information about constrained edges. The class also allows inline
-insertion of a new constraint, given by its two endpoints
+insertion of a new constraint, given as sequence of points
 or the removal of a constraint.
 In current version, function `move()` is not 
 overwritten and thus does not take care of the constraints.
+
+In order to retrieve the constrained edges of a constraint, or
+the constraints overlapping with a constrained edge, we provide
+the class `Constrained_triangulation_plus_2`. This class maintains
+a constraint hierarchy data structure. See
+Section \ref Section_2D_Triangulations_Constrained_Plus for details.
+This class should also be used when doing exact intersection computations
+as it avoids the cascading of intersection computations.
+
 
 \subsection Triangulation_2TheGeometricTraits_1 The Geometric Traits
 

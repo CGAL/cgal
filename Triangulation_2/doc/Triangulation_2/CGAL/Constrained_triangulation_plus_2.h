@@ -375,7 +375,6 @@ typedef unspecified_type Points_in_constraint_iterator;
 
 /*!
 \cgalAdvancedBegin
-
 Removes the vertex at `vicq` from the constraint and the triangulation.
 Only the vertex but not the point is removed from the constraint.
 
