@@ -31,6 +31,7 @@
 #include <CGAL/AABB_halfedge_graph_segment_primitive.h>
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/internal/AABB_tree/Primitive_helper.h>
+#include <CGAL/use.h>
 
 #include <boost/mem_fn.hpp>
 
@@ -219,7 +220,12 @@ struct Primitive_generator<SEGMENT, K, Polyhedron>
 
     typedef typename boost::graph_traits<Polyhedron>
       ::edge_iterator iterator;
-    iterator begin(Polyhedron& p) { return CGAL::edges(p).first; }
+    iterator begin(Polyhedron& p) {
+      // test the availability of primitive constructor
+      Primitive foobar(*(edges(p).first), p);
+      CGAL_USE(foobar);
+      return CGAL::edges(p).first;
+    }
     iterator end(Polyhedron& p) { return CGAL::edges(p).second; }
 };
 
@@ -229,7 +235,12 @@ struct Primitive_generator<TRIANGLE, K, Polyhedron>
     typedef CGAL::AABB_face_graph_triangle_primitive<Polyhedron> Primitive;
 
   typedef typename boost::graph_traits<Polyhedron>::face_iterator iterator;
-  iterator begin(Polyhedron& p) { return faces(p).first; }
+  iterator begin(Polyhedron& p) {
+      // test the availability of primitive constructor
+      Primitive foobar(*(faces(p).first), p);
+      CGAL_USE(foobar);
+      return faces(p).first;
+  }
     iterator end(Polyhedron& p) { return faces(p).second; }
 };
 
