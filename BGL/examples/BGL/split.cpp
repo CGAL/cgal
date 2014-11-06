@@ -91,10 +91,12 @@ int main()
   vertex_descriptor  vdp, vdq; 
   for(int i=0; i < n; i++){
     std::cin >> p >> q;
+   
     if(p == q){
       //std::cerr << "ignore degenerate segment"<< std::endl;
       continue;
     }
+    
     Segment_2 s = (p < q)? Segment_2(p,q) : Segment_2(q,p);
     if(segments.find(s) != segments.end()){
       //std::cerr << "ignore duplicate segment"<< std::endl;
@@ -102,7 +104,7 @@ int main()
     } else {
       segments.insert(s);
     }
-
+    
     if(p2vd.find(p) == p2vd.end()){
       vdp =  add_vertex(g);
       g[vdp] = p;
@@ -119,7 +121,7 @@ int main()
     }
     boost::add_edge(vdp, vdq, g);
   }
-
+  /*
   { 
     typedef boost::graph_traits<G>::vertex_iterator vertex_iterator; 
     vertex_iterator b,e;
@@ -128,7 +130,7 @@ int main()
       std::cerr << degree(*b,g) << std::endl;
     }
   }
-  std::cerr <<  "A  " << std::endl;
+  */
    CGAL::split_graph_into_polylines( g,
                                       polyline_visitor,
                                      CGAL::IsTerminalDefault() );
@@ -137,9 +139,17 @@ int main()
    
    for(std::list<Polyline>::iterator it = polylines.begin(); it!= polylines.end(); ++it){
      Polyline& poly = *it;
-     std::cout << poly.size() ;
-     for(int j=0; j < poly.size(); j++){
-       std::cout << "  " << poly[j];
+     // std::cout << poly.size() ;
+     std::size_t n;
+     if(poly.front() == poly.back()){
+       std::cout << "POLYGON" << std::endl;
+       n = poly.size() -1;
+     }else{
+       std::cout << "POLYLINE" << std::endl;
+       n = poly.size();
+     }
+     for(int j=0; j < n; j++){
+       std::cout << poly[j] << std::endl;
      }
      std::cout << std::endl;
    }
