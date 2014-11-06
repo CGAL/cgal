@@ -1833,14 +1833,14 @@ public:
     /// returns whether `v` is a border vertex. 
     /// \cgalAdvancedBegin
     /// With the default value for
-    /// `check` the function iteratates over the incident halfedges.
-    /// With `check == false` the function returns `true`, if the incident
+    /// `check_all_incident_halfedges` the function iteratates over the incident halfedges.
+    /// With `check_all_incident_halfedges == false` the function returns `true`, if the incident
     /// halfedge associated to vertex `v` is a border halfedge.
     /// \cgalAdvancedEnd
-  bool is_border(Vertex_index v, bool check = true) const
+  bool is_border(Vertex_index v, bool check_all_incident_halfedges = true) const
     {
         Halfedge_index h(halfedge(v));
-        if(check){
+        if(check_all_incident_halfedges){
           Halfedge_around_target_circulator hatc(h,*this), done(hatc);
           do {
             if(is_border(*hatc)){

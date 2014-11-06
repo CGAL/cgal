@@ -17,9 +17,10 @@ surface. It is an alternative to the \cgal packages \ref PkgHDSSummary
 and \ref PkgPolyhedronSummary.
 The main differences are that it is indexed based and not pointer based,
 and that the mechanism for adding information to vertices, halfedges,
-and faces is much simpler and done at runtime and not at compile time.
+edges, and faces is much simpler and done at runtime and not at compile time.
 
-Because the data structure uses indices as descriptors for vertices, halfedges and faces
+Because the data structure uses indices as descriptors for vertices, halfedges,
+edges and faces
 it has a lower memory footprint than a 64-bit pointer based version.
 As the indices are contiguous, they can be used as index into vectors
 which store properties.
@@ -28,8 +29,8 @@ When elements are removed, they are only marked as removed, and a garbage
 collection function must be called to really remove them. 
 
 The class `Surface_mesh` can be used through its class member functions 
-as well as through the BGL API, as it is a model of the concepts 
-`MutableFaceGraph` and `FaceListGraph`.
+as well as through the BGL API as described in the package \ref PkgBGLSummary,
+as it is a model of the concepts `MutableFaceGraph` and `FaceListGraph`.
 
 \section sectionSurfaceMeshUsage Usage
 
@@ -87,7 +88,7 @@ Alternatively, one may use the free functions with the same names
 defined in the package \ref PkgBGLSummary.
 
 \cgalFigureBegin{FigSurfaceMeshConnectivity,connectivity.svg}
-Connectivity of halfedges and vertices in a surface mesh.
+Connectivity of halfedges and vertices in a surface mesh seen from outside.
 \cgalFigureEnd
  
 \anchor  SurfaceMeshOrientation
@@ -165,12 +166,21 @@ exist after an element has been deleted (their destructor is not
 called). Trying to access a property through an invalidated element
 will result in undefined behavior.
 
-
 One property is maintained by default, namely \c "v:point". The value of
 this property has to be supplied when adding a new point to the data
 structure via `Surface_mesh::add_vertex()`. The property can be
 directly accessed using `Surface_mesh::points()` or
 `Surface_mesh::point(Surface_mesh::Vertex_index v)`.
+
+When an element is removed, it is only marked as removed, and
+it gets physically removed when `collect_garbage()` is called.
+Garbage collection will also physically remove the properties
+of these elements, but that may be later as you expect, or 
+even lead to dangling pointers if the property was storage 
+allocated on the heap with a function as `new()`. In this case
+you might call `delete()` before removing the element, or 
+collect it for later deletion, or use a shared pointer which
+deletes when the last reference disappears.
 
 \subsection properties_example Example
 
@@ -180,13 +190,20 @@ This example shows how to use the most common features of the property system.
 
 \section sectionSurfaceMesh_borders Borders
 
+A halfedge stores a reference to a face, its \em associated face. 
 A halfedge `h` is on the border, if it has no associated face, that is if
 `sm.face(h) == Surface_mesh::null_face()`.  An edge is on the border,
 if any of its halfedges is on the border.  A vertex is on the border,
-if any of its incident halfedges is on the border. In order to make 
-`Surface_mesh::is_border(Vertex_index v, bool ckeck = true)` a constant time 
-operation, the user must call the function with `check = false`, in order to only
-test whether the halfedge associated to `v` is a border halfedge. 
+if any of its incident halfedges is on the border. 
+
+A vertex has only one associated halfedge. If the user takes care that the
+associated halfedge is a border halfedge, in case the vertex is on the
+border, there is no need to look at all incident halfedges in the
+`is_border()` function for vertices. 
+In order to only check if the associated halfedge is on the border
+the function
+`Surface_mesh::is_border(Vertex_index v, bool ckeck_all_incident_halfedges = true)`
+must be called with `check_all_incident_halfedges = false`. 
 
 The user is in charge to correctly set the halfedge
 associated to a vertex after having applied an operation that might invalidate 
@@ -216,7 +233,7 @@ for example
 | `edges(const G& g)` | `sm.edges()` | |
 | `vd = source(ed,g)` | `vd = sm.source(ed)` | |
 | na  | `n = sm.number_of_vertices()` | counts non-deleted vertices and has no BGL equivalent |
-| `n = num_vertices(g)`  | `n = sm.number_of_vertices() +  sm.number_of_removed_vertices()` | counts used and deleted vertices |
+| `n = num_vertices(g)`  | `n = sm.number_of_vertices() +  sm.number_of_removed_vertices()` | counts used and deleted vertices in order to have an upper bound on the largest vertex index used|
 | etc. | | |
 
 
@@ -235,7 +252,8 @@ Again, there are similar types and functions:
 | `hd = halfedge(vd,g)` | `hd = sm.halfedge(vd)` |
 | etc. | |
 
-The BGL API enables us to write geometric algorithms operating
+The BGL API described
+in the package \ref PkgBGLSummary enables us to write geometric algorithms operating
 on surface meshes, that work for any model of `FaceGraph`, or
 `MutableFaceGraph`. That is surface mesh simplification, deformation,
 or segmentation algorithms work for `Surface_mesh` and `Polyhedron_3`, 
@@ -248,7 +266,8 @@ This allows algorithms to create a vector of the approriate size
 in order to store per vertex information. For example a Boolean
 for storing if a vertex has already been visited during a graph traversal.
 
-The BGL way of retrieving the index property map of a graph `g` is
+
+The BGL way of retrieving the vertex index property map of a graph `g` is
 `vipm = get(boost::vertex_index, g)`, and `get(vipm, vd)` in order then
 to retrieve the index for a vertex descriptor `vd`, and it is  
 `get(vertex_index, g, vd)` to obtain the vertex index directly.
