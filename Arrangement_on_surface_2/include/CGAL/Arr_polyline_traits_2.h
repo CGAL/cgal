@@ -959,8 +959,6 @@ namespace CGAL {
       template<class OutputIterator>
       OutputIterator operator()(const Curve_2& cv, OutputIterator oi) const
       {
-        std::cout << std::endl;
-
         typedef typename Curve_2::Segment_const_iterator const_seg_iterator;
 
         // If the polyline is empty, return.
