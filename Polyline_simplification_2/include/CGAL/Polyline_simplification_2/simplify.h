@@ -426,7 +426,7 @@ simplify(CGAL::Constrained_triangulation_plus_2<CDT>& ct,
 
   while(simplifier()){}
   if(! keep_points){
-    ct.remove_points_from_constraint(cid);
+    ct.remove_points_without_corresponding_vertex(cid);
   }
   return simplifier.number_of_removed_vertices();
 }
@@ -457,7 +457,7 @@ simplify(CGAL::Constrained_triangulation_plus_2<CDT>& ct,
 
   while(simplifier()){}
   if(! keep_points){
-    ct.remove_points_from_constraints();
+    ct.remove_points_without_corresponding_vertex();
   }
   return simplifier.number_of_removed_vertices();
 }

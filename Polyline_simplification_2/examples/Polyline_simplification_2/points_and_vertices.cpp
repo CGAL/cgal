@@ -60,7 +60,7 @@ int main( )
   PS::simplify(ct, cid, Cost(), Stop(0.5), keep_points);
   print(ct, cid);
   PS::simplify(ct, cid, Cost(), Stop(0.5), keep_points);
-  ct.remove_points_from_constraint(cid);
+  ct.remove_points_without_corresponding_vertex(cid);
   print(ct, cid);  
 
   return 0;

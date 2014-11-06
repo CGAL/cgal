@@ -427,8 +427,8 @@ Points_in_constraint_iterator points_in_constraint_end(Constraint_id cid) const 
 \cgalAdvancedBegin
 Removes the vertex at `vicq` from the constraint and the triangulation.
 The point of that vertex remains stored in the sequence of original points
-of the constraint until `remove_points_without_vertex_from_constraint(Constraint_id)`
-or `remove_points_without_vertex_from_constraints()` is called.
+of the constraint until `remove_points_without_corresponding_vertex(Constraint_id)`
+or `remove_points_without_corresponding_vertex()` is called.
 
 The polyline simplification algorithm described in Chapter
 \ref Chapter_2D_Polyline_simplification 

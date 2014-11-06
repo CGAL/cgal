@@ -623,13 +623,13 @@ public:
     Triangulation::insert_constraint(*u, *w);
   }
 
-  std::size_t remove_points_from_constraint(Constraint_id cid)
+  std::size_t remove_points_without_corresponding_vertex(Constraint_id cid)
   {
-    return hierarchy.remove_points_from_constraint(cid);
+    return hierarchy.remove_points_without_corresponding_vertex(cid);
   }
-  std::size_t remove_points_from_constraints()
+  std::size_t remove_points_without_corresponding_vertex()
   {
-    return hierarchy.remove_points_from_constraints();
+    return hierarchy.remove_points_without_corresponding_vertex();
   }
 
 

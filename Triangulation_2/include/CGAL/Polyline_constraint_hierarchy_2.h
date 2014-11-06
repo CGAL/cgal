@@ -253,8 +253,8 @@ public:
                 Vertex_it v,
                 Vertex_it w);
 
-  std::size_t remove_points_from_constraint(Constraint_id);
-  std::size_t remove_points_from_constraints();
+  std::size_t remove_points_without_corresponding_vertex(Constraint_id);
+  std::size_t remove_points_without_corresponding_vertex();
 
   Constraint_id concatenate(Constraint_id first, Constraint_id second);
   Constraint_id concatenate2(Constraint_id first, Constraint_id second);
@@ -648,7 +648,7 @@ void Polyline_constraint_hierarchy_2<T,Data>::simplify(Vertex_it uc,
 
 template <class T, class Data>
 std::size_t
-Polyline_constraint_hierarchy_2<T,Data>::remove_points_from_constraint(Constraint_id cid)
+Polyline_constraint_hierarchy_2<T,Data>::remove_points_without_corresponding_vertex(Constraint_id cid)
 {
   std::size_t n = 0;
   for(Point_it it = points_in_constraint_begin(cid); 
@@ -663,11 +663,11 @@ Polyline_constraint_hierarchy_2<T,Data>::remove_points_from_constraint(Constrain
 
 template <class T, class Data>
 std::size_t
-Polyline_constraint_hierarchy_2<T,Data>::remove_points_from_constraints()
+Polyline_constraint_hierarchy_2<T,Data>::remove_points_without_corresponding_vertex()
 {
   std::size_t n = 0;
   for(C_iterator it = constraint_set.begin(); it!= constraint_set.end(); ++it){
-    n+= remove_points_from_constraint(*it);
+    n+= remove_points_without_corresponding_vertex(*it);
   }
   return n;
 }
