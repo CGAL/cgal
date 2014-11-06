@@ -110,8 +110,10 @@
     <addaction name="actionShow_constrained_edges"/>
     <addaction name="actionShow_voronoi_edges"/>
     <addaction name="actionShow_faces_in_domain"/>
-    <addaction name="actionShow_blind_faces"/>
     <addaction name="actionCircumcenter"/>
+    <addaction name="separator"/>
+    <addaction name="actionShow_blind_faces"/>
+    <addaction name="actionTagBlindFaces"/>
     <addaction name="separator"/>
     <addaction name="actionRecenter"/>
     <addaction name="actionMakeGabrielConform"/>
@@ -333,6 +335,11 @@
    </property>
    <property name="text">
     <string>Show blind faces (for CVD)</string>
+   </property>
+  </action>
+  <action name="actionTagBlindFaces">
+   <property name="text">
+    <string>Tag blind faces</string>
    </property>
   </action>
  </widget>

@@ -11,6 +11,7 @@
 #include <CGAL/Delaunay_mesh_size_criteria_2.h>
 #include <CGAL/Lipschitz_sizing_field_2.h>
 #include <CGAL/Lipschitz_sizing_field_criteria_2.h>
+#include <CGAL/Constrained_voronoi_diagram_2.h>
 #include <CGAL/Triangulation_conformer_2.h>
 #include <CGAL/Random.h>
 #include <CGAL/point_generators_2.h>
@@ -98,6 +99,7 @@ typedef Enriched_face_base_2<K, Face_base> Fb;
 typedef CGAL::Triangulation_data_structure_2<Vertex_base, Fb>  TDS;
 typedef CGAL::Exact_predicates_tag              Itag;
 typedef CGAL::Constrained_Delaunay_triangulation_2<K, TDS, Itag> CDT;
+typedef CGAL::Constrained_voronoi_diagram_2<CDT> CVD;
 typedef CGAL::Delaunay_mesh_size_criteria_2<CDT> Criteria;
 
 typedef CGAL::Lipschitz_sizing_field_2<K> Lipschitz_sizing_field;
@@ -257,6 +259,8 @@ public slots:
   void on_actionMakeLipschitzDelaunayMesh_triggered();
 
   void on_actionInsertRandomPoints_triggered();
+
+  void on_actionTagBlindFaces_triggered();
 
 signals:
   void changed();
@@ -686,8 +690,6 @@ MainWindow::on_actionMakeLipschitzDelaunayMesh_triggered()
   emit(changed());
 }
 
-
-
 void
 MainWindow::on_actionInsertRandomPoints_triggered()
 {
@@ -718,6 +720,20 @@ MainWindow::on_actionInsertRandomPoints_triggered()
     points.push_back(*pg++);
   }
   cdt.insert(points.begin(), points.end());
+  // default cursor
+  QApplication::restoreOverrideCursor();
+  emit(changed());
+}
+
+void
+MainWindow::on_actionTagBlindFaces_triggered()
+{
+  // wait cursor
+  QApplication::setOverrideCursor(Qt::WaitCursor);
+
+  CVD voronoi(&cdt);
+  voronoi.tag_faces_blind();
+
   // default cursor
   QApplication::restoreOverrideCursor();
   emit(changed());
