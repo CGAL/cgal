@@ -200,7 +200,7 @@ public:
   // if true, set corresponding barrier constraint
   void tag_faces_blind()
   {
-    if(dimension() < 2)
+    if(m_pCdt->dimension() < 2)
       return;
 
     tag_all_faces_blind(false);
@@ -265,7 +265,8 @@ public:
 
     if(!m_pCdt->is_infinite(seed) 
        && !seed->blind() 
-       && triangle(seed).area() != 0) //to avoid flat triangles outside the domain
+       && m_pCdt->triangle(seed).area() != 0)
+       //to avoid flat triangles outside the domain
     {
       std::stack<Face_handle> faces;
       faces.push(seed);
@@ -274,9 +275,9 @@ public:
       {
         Face_handle f = faces.top();
         faces.pop();
-        m_pCdt->tag_face_blind(f, constraint);
-        if( f->blind())
-          m_pCdt->push_unvisited_neighbors(f, faces);
+        this->tag_face_blind(f, constraint);
+        if(f->blind())
+          this->push_unvisited_neighbors(f, faces);
       }
     }
   }
@@ -291,7 +292,7 @@ public:
       Edge edge_i = Edge(f, i);
       if(!m_pCdt->is_constrained(edge_i) &&
           !fi->blind() &&
-          !is_infinite(fi)) 
+          !m_pCdt->is_infinite(fi)) 
         faces.push(fi);
     }
   }
