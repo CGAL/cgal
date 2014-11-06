@@ -1092,19 +1092,16 @@ public:
     {
       // pt must be interior
       // xcv,ce must be bottom or top
-      CGAL_precondition(m_self->parameter_space_in_y_2_object() (pt) == ARR_INTERIOR);
-      CGAL_precondition_code(Arr_parameter_space ps_y2 = m_self->parameter_space_in_y_2_object() (xcv,ce));
-      CGAL_precondition(ps_y2 == ARR_BOTTOM_BOUNDARY || ps_y2 == ARR_TOP_BOUNDARY);
+      CGAL_precondition
+        (m_self->parameter_space_in_y_2_object()(pt) == ARR_INTERIOR);
+      CGAL_precondition_code(Arr_parameter_space ps_y2 =
+                             m_self->parameter_space_in_y_2_object()(xcv,ce));
+      CGAL_precondition((ps_y2 == ARR_BOTTOM_BOUNDARY) ||
+                        (ps_y2 == ARR_TOP_BOUNDARY));
 
       Comparison_result res =
         m_self->compare_x_on_boundary_2_object()(pt, xcv, ce);
-      if (res != EQUAL) {
-        return res;
-      }
-      CGAL_assertion(res == EQUAL);
-      if (m_self->is_vertical_2_object()(xcv)) {
-        return (m_self->parameter_space_in_y_2_object() (xcv,ce)) == ARR_BOTTOM_BOUNDARY ? LARGER : SMALLER;
-      }
+      if ((res != EQUAL) || m_self->is_vertical_2_object()(xcv)) return res;
 
       // look at the side from which the
       // vertical asymptote is approached
