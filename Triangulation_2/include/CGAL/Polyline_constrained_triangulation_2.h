@@ -508,7 +508,7 @@ public:
 private:
   template < class InputIterator>
   Constraint_id insert_constraint_seq_impl(InputIterator first, InputIterator last, bool is_polygon)
-  {<
+  {
     Face_handle hint;
     std::vector<Vertex_handle> vertices;
     for(;first!= last; first++){

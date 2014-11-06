@@ -150,8 +150,8 @@ MainWindow::MainWindow()
     
   QObject::connect(this, SIGNAL(changed()), mGI, SLOT(modelChanged()));
 
-  mGI->setVerticesPen(QPen(Qt::red, 3, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
-  mGI->setUnremovableVerticesPen(QPen(Qt::blue, 3, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+  mGI->setVerticesPen(QPen(Qt::black, 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+  mGI->setUnremovableVerticesPen(QPen(Qt::blue, 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
   mGI->setZValue(-1);
   mGI->setVisibleEdges(false);
   mGI->setVisibleConstraints(true);
