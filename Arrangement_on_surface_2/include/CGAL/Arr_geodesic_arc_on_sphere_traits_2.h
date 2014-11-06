@@ -834,13 +834,17 @@ public:
     }
 
     /*! Obtains the parameter space at a point along the x-axis.
-     * Every non-interior point is assumed to lie on the left-right identification.
+     * Every non-interior point is assumed to lie on the left-right
+     * identification.
      * Points at the poles additionally lie on the bottom or top boundary.
      * \param p the point.
      * \return the parameter space at p.
      */
     Arr_parameter_space operator()(const Point_2& p) const
-    { return (p.is_no_boundary()) ? ARR_INTERIOR : ARR_LEFT_BOUNDARY; }
+    {
+      CGAL_precondition(p.is_no_boundary());
+      return ARR_INTERIOR;
+    }
   };
 
   /*! Obtain a Parameter_space_in_x_2 function object */
@@ -953,8 +957,8 @@ public:
       return m_traits->compare_x(p, q);
     }
 
-    /*! Compare the x-coordinates of two arc ends projected onto the boundary of the
-     * parameter space.
+    /*! Compare the x-coordinates of two arc ends projected onto the boundary
+     * of the parameter space.
      * \param xcv1 the first arc.
      * \param ce1 the first arc end indicator -
      *            ARR_MIN_END - the minimal end of xcv1 or
@@ -970,12 +974,26 @@ public:
      *         LARGER  - x(xcv1, ce1) > x(xcv2, ce2).
      * \pre xcv1 does not coincide with the vertical identification curve.
      * \pre xcv2 does not coincide with the vertical identification curve.
+     * \pre the ce1 end of the arc xcv1 lies on a pole (implying ce1 is
+     *      vertical).
+     * \pre the ce2 end of the arc xcv2 lies on a pole (implying ce2 is
+     *      vertical).
      */
     Comparison_result operator()(const X_monotone_curve_2& xcv1,
                                  Arr_curve_end ce1,
                                  const X_monotone_curve_2& xcv2,
                                  Arr_curve_end ce2) const
     {
+      CGAL_precondition_code
+        (const Point_2& p1 = (ce1 == ARR_MIN_END) ? xcv1.left() : xcv1.right(););
+      CGAL_precondition(!p1.is_no_boundary());
+      CGAL_precondition_code
+        (const Point_2& p2 = (ce2 == ARR_MIN_END) ? xcv2.left() : xcv2.right(););
+      CGAL_precondition(!p2.is_no_boundary());
+
+      CGAL_precondition(xcv1.is_vertical());
+      CGAL_precondition(xcv2.is_vertical());
+
       CGAL_precondition(!xcv1.is_on_boundary());
       CGAL_precondition(!xcv2.is_on_boundary());
 
@@ -993,40 +1011,19 @@ public:
       return m_traits->compare_x(p, q);
     }
 
-    /*! Compare the x-coordinate of two isolated points projected onto the boundary.
-     * At least one of them must be an isolated point on the bottom or top boundary,
-     * which makes the decision easier than for curve-ends.
-     * Note: Should never be called for non-isolated points. However, there is no chance
-     * to have precondition for this, as a point does not store incident arcs.
-     * \param p1 the first point.
-     * \param p2 the second point.
-     * \return the order of the two points
-     * \pre p1.is_min_boundary() || p1.is_max_boundary() || p2.is_min_boundary() || p2.is_max_boundary()
+    /*! \todo This operator should be removed! The general code should never
+     * call this operator for this traits!
      */
     Comparison_result operator()(const Point_2& p1, const Point_2& p2) const
     {
-      // one of the points must be an isolated point on the contraction
-      CGAL_assertion(p1.is_min_boundary() || p1.is_max_boundary() || p2.is_min_boundary() || p2.is_max_boundary());
-      Arr_parameter_space ps_y1 = (p1.is_min_boundary()) ? ARR_BOTTOM_BOUNDARY : (p1.is_max_boundary()) ? ARR_TOP_BOUNDARY : ARR_INTERIOR;
-      Arr_parameter_space ps_y2 = (p2.is_min_boundary()) ? ARR_BOTTOM_BOUNDARY : (p2.is_max_boundary()) ? ARR_TOP_BOUNDARY : ARR_INTERIOR;
-      if (ps_y1 == ARR_INTERIOR) {
-        return LARGER;
-      }
-      if (ps_y2 == ARR_INTERIOR) {
-        return SMALLER;
-      }
-
-      if (ps_y1 == ps_y2) {
-        return EQUAL;
-      }
-      return (ps_y1 == ARR_BOTTOM_BOUNDARY ? SMALLER : LARGER);
+      CGAL_error(); return EQUAL;
     }
   };
 
-  /*! Obtain a Compare_x_on_boundary_2 function object */
+  /*! Obtain a Compare_x_on_boundary_2 function object.
+   */
   Compare_x_on_boundary_2 compare_x_on_boundary_2_object() const
   { return Compare_x_on_boundary_2(this); }
-
 
   /*! A functor that compares the x-coordinates of arc ends near the
    * boundary of the parameter space.
