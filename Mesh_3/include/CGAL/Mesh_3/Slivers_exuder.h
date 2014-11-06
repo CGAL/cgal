@@ -24,6 +24,8 @@
 #define CGAL_MESH_3_SLIVERS_EXUDER_H
 
 #include <CGAL/Mesh_3/config.h>
+#include <CGAL/Mesh_3/Concurrent_mesher_config.h>
+#include <CGAL/Bbox_3.h>
 
 #include <CGAL/Double_map.h>
 #include <CGAL/iterator.h>
