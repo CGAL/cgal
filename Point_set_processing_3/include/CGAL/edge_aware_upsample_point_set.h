@@ -272,23 +272,23 @@ update_new_point(
 
 /// \ingroup PkgPointSetProcessing
 /// This method progressively upsamples the point set while 
-/// approaching the edge singularities, which generates a denser point set that
+/// approaching the edge singularities (detected by normal variation), which generates a denser point set that
 /// has applications in point-based rendering, hole filling, and sparse surface
-/// reconstruction. Correct normals of points are required as input. For more 
+/// reconstruction. Normals of points are required as input. For more 
 /// details, please refer to \cgalCite{ear-2013}.  
 /// @tparam OutputIterator Type of the output iterator. 
-///         The type of the objects is 
+///         The type of the objects put in it is 
 ///         `std::pair<Kernel::Point_3, Kernel::Vector_3>`.
 ///         Note that the user may use a 
 ///         <A HREF="http://www.boost.org/libs/iterator/doc/function_output_iterator.html">function_output_iterator</A>
-///         to output objects with a different type.
+///         to match specific needs.
 /// @tparam ForwardIterator iterator over input points.
 /// @tparam PointPMap is a model of `ReadablePropertyMap` 
-///         with a value_type = `Kernel::Point_3`.
+///         with the value type of `ForwardIterator` as key and `Kernel::Point_3` as value type.
 ///         It can be omitted if ForwardIterator::value_type is convertible to 
 ///         `Kernel::Point_3`.
-/// @tparam NormalPMap is a model of `ReadablePropertyMap` 
-///                    with a value_type = `Kernel::Vector_3`.
+/// @tparam NormalPMap is a model of `ReadablePropertyMap` with the value type of `ForwardIterator` as key
+///         and `Kernel::Vector_3` as value type.
 /// @tparam Kernel Geometric traits class.
 ///      It can be omitted and deduced automatically from PointPMap's value_type.
 ///      `Kernel_traits` are used for deducing the kernel.
@@ -302,15 +302,15 @@ template <typename OutputIterator,
           typename Kernel>
 OutputIterator
 edge_aware_upsample_point_set(
-  ForwardIterator first,  ///< forward iterator to the first input point.
+  ForwardIterator first,  ///< forward iterator on the first input point.
   ForwardIterator beyond, ///< past-the-end iterator.
   OutputIterator output,  ///< output iterator where output points and normals 
                           ///< are put.
-  PointPMap point_pmap, ///< property map: value_type of `ForwardIterator` -> `Kernel::Point_3`
-  NormalPMap normal_pmap, ///< property map: value_type of `ForwardIterator` -> `Kernel::Vector_3`.
+  PointPMap point_pmap,   ///< point property map.
+  NormalPMap normal_pmap, ///< vector property map.
   const typename Kernel::FT sharpness_angle,  ///< 
                     ///< controls the preservation of sharp features. 
-                    ///< The bigger the value is,
+                    ///< The larger the value is,
                     ///< the smoother the result will be.
                     ///< The range of possible value is [0, 90].
                     ///< See section \ref Point_set_processing_3Upsample_Parameter2
@@ -318,13 +318,13 @@ edge_aware_upsample_point_set(
   typename Kernel::FT edge_sensitivity,  ///<  
                     ///< larger values of edge-sensitivity give higher priority 
                     ///< to inserting points along sharp features.
-                    ///< The range of possible values is [0, 1].
+                    ///< The range of possible values is `[0, 1]`.
                     ///< See section \ref Point_set_processing_3Upsample_Parameter1
                     ///< for an example.
   const typename Kernel::FT neighbor_radius, ///< 
-                    ///< indicates the radius of the biggest hole that will be filled.
-  const unsigned int number_of_output_points,///< required number of output
-                                             ///< points
+                    ///< indicates the radius of the largest hole that should be filled.
+  const unsigned int number_of_output_points,///< number of output
+                                             ///< points to generate.
   const Kernel& /*kernel*/ ///< geometric traits.
 )
 {

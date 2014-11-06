@@ -298,11 +298,11 @@ compute_density_weight_for_sample_point(
 
 //=============================================================================
 /// \ingroup PkgPointSetProcessing
-/// This is an implementation of the WLOP algorithm.
+/// This is an implementation of the Weighted Locally Optimal Projection (WLOP) simplification algorithm.
 /// The WLOP simplification algorithm can produce a set of 
 /// denoised, outlier-free and evenly distributed particles over the original 
 /// dense point cloud. 
-/// The core of the algorithm is a Weighted Locally Optimal projection operator
+/// The core of the algorithm is a Weighted Locally Optimal Projection operator
 /// with a density uniformization term. 
 /// For more details, please refer to \cgalCite{wlop-2009}.
 ///
@@ -319,7 +319,7 @@ compute_density_weight_for_sample_point(
 ///         The type of the objects is `Kernel::Point_3`.
 /// @tparam RandomAccessIterator Iterator over input points.
 /// @tparam PointPMap is a model of `ReadablePropertyMap` 
-///         with a value_type = `Kernel::Point_3`.
+///         with the value type of `ForwardIterator` as key and `Kernel::Point_3` as value type.
 ///         It can be omitted if RandomAccessIterator value_type is convertible  
 ///         to `Kernel::Point_3`.
 /// @tparam Kernel Geometric traits class.
@@ -337,24 +337,21 @@ wlop_simplify_and_regularize_point_set(
   RandomAccessIterator first,  ///< random-access iterator to the first input point.
   RandomAccessIterator beyond, ///< past-the-end iterator.
   OutputIterator output,       ///< output iterator where output points are put.
-  PointPMap point_pmap,        ///< property map: value_type of 
-                               ///< `RandomAccessIterator` -> `Kernel::Point_3`
+  PointPMap point_pmap,        ///< point property map.
   double select_percentage,    ///< percentage of points to retain. 
-                               ///< %Default: 5\%.
-  double radius,               ///< neighbors radius.
-                               ///< key parameter that needs to be finely tuned.  
-                               ///< The result will be irregular if this value is too small. 
-                               ///< The process will be slow, and the result will be
-                               ///< too smooth if this value is too big.
-                               ///< Usually, a radius containing the "4 ring" of 
-                               ///< neighbor points is a good start.
-                               ///< %Default: 0.05 * diameter of bounding box.
+                               ///< The default value is set to 5(\%).
+  double radius,               ///< spherical neighborhood radius.
+                               ///< This is a key parameter that needs to be finely tuned.  
+                               ///< The result will be irregular if too small, but a larger
+                               ///< value will impact the runtime.
+                               ///< In practice, choosing a radius such that each point has at least4 neighbors
+                               ///< gives satisfactory result.
+                               ///< The default value is set to `0.05 * diameter of bounding box`.
   unsigned int iter_number,    ///< number of iterations. %Default: 35.
                                ///< More iterations give a more regular result.
-  bool require_uniform_sampling,///< an optional preprocessing, which should be
-                               ///< turned on if the distribution
-                               ///< of the input points is highly nonuniform. 
-                               ///< %Default: false. 
+  bool require_uniform_sampling,///< an optional preprocessing, which will give better result
+                               ///< if the distribution of the input points is highly non-uniform. 
+                               ///< The default value is false. 
   const Kernel&                ///< geometric traits.
 )
 {

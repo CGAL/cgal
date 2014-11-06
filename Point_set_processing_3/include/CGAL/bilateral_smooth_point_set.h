@@ -319,11 +319,11 @@ public:
 //=============================================================================
 /// \ingroup PkgPointSetProcessing
 /// 
-/// This function smooths the input point set by iteratively projecting each 
+/// This function smooths an input point set by iteratively projecting each 
 ///  point onto the implicit surface patch fitted over its k nearest neighbors.
 ///  Bilateral projection preserves sharp features according to the normal
 /// (gradient) information. Both point positions and normals will be modified.  
-/// For more details, please see formula (2) and (4) in paper \cgalCite{ear-2013}.  
+/// For more details, please see formula (2) and (4) in \cgalCite{ear-2013}.  
 ///
 /// A parallel version of this function is provided and requires the executable to be 
 /// linked against the <a href="http://www.threadingbuildingblocks.org">Intel TBB library</a>.
@@ -339,11 +339,11 @@ public:
 ///                         and `Parallel_tag`.
 /// @tparam ForwardIterator iterator over input points.
 /// @tparam PointPMap is a model of `ReadablePropertyMap` 
-///         with a value_type = `Kernel::Point_3`.
+///         with the value type of `ForwardIterator` as key and `Kernel::Point_3` as value type.
 ///         It can be omitted if `ForwardIterator::value_type` is convertible to 
 ///         `Kernel::Point_3`.
-/// @tparam NormalPMap is a model of `ReadablePropertyMap` 
-///                    with a value_type = `Kernel::Vector_3`.
+/// @tparam NormalPMap is a model of `ReadablePropertyMap` with the value type of `ForwardIterator` as key
+///         and `Kernel::Vector_3` as value type.
 /// @tparam Kernel Geometric traits class.
 ///      It can be omitted and deduced automatically from PointPMap's value_type.
 ///      `Kernel_traits` are used for deducing the kernel.
@@ -360,14 +360,14 @@ template <typename Concurrency_tag,
           typename Kernel>
 double
 bilateral_smooth_point_set(
-  ForwardIterator first,    ///< forward iterator to the first input point.
+  ForwardIterator first,    ///< forward iterator on the first input point.
   ForwardIterator beyond,   ///< past-the-end iterator.
-  PointPMap point_pmap,     ///< property map: value_type of ForwardIterator -> Point_3.
-  NormalPMap normal_pmap,   ///< property map: value_type of ForwardIterator -> Vector_3.
-  unsigned int k,           ///< size of neighborhood. The bigger the value is, 
-                            ///< the smoother the result will be.
-  typename Kernel::FT sharpness_angle,  ///< control sharpness of the result.
-                            ///< The bigger the value is, the smoother the result will be.
+  PointPMap point_pmap,     ///< point property map.
+  NormalPMap normal_pmap,   ///< normal property map.
+  unsigned int k,           ///< size of the neighborhood for the implicit surface patch fitting.
+                            ///< The larger the value is, the smoother the result will be.
+  typename Kernel::FT sharpness_angle,  ///< controls the sharpness of the result.
+                            ///< The larger the value is, the smoother the result will be.
                             ///< The range of possible value is [0, 90].
   const Kernel& /*kernel*/) ///< geometric traits.
 {
