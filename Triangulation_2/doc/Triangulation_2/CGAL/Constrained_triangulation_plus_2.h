@@ -431,11 +431,11 @@ of the constraint until `remove_points_without_vertex_from_constraint(Constraint
 or `remove_points_without_vertex_from_constraints()` is called.
 
 
-\pre Let `vip` and `vir` be defined as `vip = std::prev(vicq)` and `vir = std::next(vicr)`.
+\pre All vertices of the triangulation must be a vertex of a constaint.
 \pre `vicq` must neither be the first, nor the last vertex on a constraint.
 \pre There must be no other constraint passing through `vicq`.
+\pre Let `vip` and `vir` be defined as `vip = std::prev(vicq)` and `vir = std::next(vicr)`.
 \pre The line segment between `*vicp->point()` and `*vicr->point()` must not intersect any constraint.
-\pre All vertices of the triangulation must be a vertex of a constaint.
 \cgalAdvancedEnd
  */
 void
