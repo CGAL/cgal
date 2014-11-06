@@ -384,13 +384,13 @@ the current set of vertices, the `Points_in_constraint_iterator`
 allows to enumerate  the points that were in the constraint 
 before the simplification algorithm started.
 
-The simplification algorithm can compute the error introduced by 
+It allows the simplification algorithm to compute the error introduced by 
 each simplification step:
 it is the distance of the current sequence (vertices) to the original
 sequence (points).
 
-The points which do not correspond to a vertex can be removed 
-either for a single constraint or for all constraints.
+Those stored points which do not correspond to a vertex can be removed 
+afterward either for a single constraint or for all constraints.
 
 The simplification algorithm uses the following types and functions.
 \cgalAdvancedEnd
@@ -426,7 +426,9 @@ Points_in_constraint_iterator points_in_constraint_end(Constraint_id cid) const 
 /*!
 \cgalAdvancedBegin
 Removes the vertex at `vicq` from the constraint and the triangulation.
-Only the vertex but not the point is removed from the constraint.
+The point of that vertex remains stored in the sequence of original points
+of the constraint until `remove_points_without_vertex_from_constraint(Constraint_id)`
+or `remove_points_without_vertex_from_constraints()` is called.
 
 
 \pre Let `vip` and `vir` be defined as `vip = std::prev(vicq)` and `vir = std::next(vicr)`.
@@ -441,7 +443,7 @@ simplify(Vertices_in_constraint_iterator vicq);
 
 /*!
 \cgalAdvancedBegin
-Removes the points that were kept in the constraint `cid`.
+Removes the original points of the constraint `cid` that were stored.
 \cgalAdvancedEnd
 */
 size_type
@@ -450,7 +452,7 @@ remove_points_without_vertex_from_constraint(Constraint_id cid);
 
 /*!
 \cgalAdvancedBegin
-Removes the points that were kept in the constraints.
+Removes all the original points of constraints that were stored.
 \cgalAdvancedEnd
  */
 void
