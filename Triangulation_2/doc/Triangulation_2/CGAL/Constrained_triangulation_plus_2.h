@@ -430,6 +430,10 @@ The point of that vertex remains stored in the sequence of original points
 of the constraint until `remove_points_without_vertex_from_constraint(Constraint_id)`
 or `remove_points_without_vertex_from_constraints()` is called.
 
+The polyline simplification algorithm described in Chapter
+\ref Chapter_2D_Polyline_simplification 
+operates on polyline constraints and applies `simplify()` to vertices in
+constraints based on a cost and stop function.
 
 \pre All vertices of the triangulation must be a vertex of a constaint.
 \pre `vicq` must neither be the first, nor the last vertex on a constraint.
@@ -443,20 +447,22 @@ simplify(Vertices_in_constraint_iterator vicq);
 
 /*!
 \cgalAdvancedBegin
-Removes the original points of the constraint `cid` that were stored.
+Removes the original points that correspond to vertices in the constraint `cid` which have
+been removed by the `simplify()` function.
 \cgalAdvancedEnd
 */
 size_type
-remove_points_without_vertex_from_constraint(Constraint_id cid);
+remove_points_without_corresponding_vertex(Constraint_id cid);
 
 
 /*!
 \cgalAdvancedBegin
-Removes all the original points of constraints that were stored.
+Removes all original points that correspond to vertices in the constraints which have
+been removed by the `simplify()` function.
 \cgalAdvancedEnd
  */
 void
-remove_points_without_vertex_from_constraints();
+remove_points_without_corresponding_vertex();
 
 
 
