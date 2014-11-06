@@ -371,23 +371,20 @@ public:
     /*! Implementation of the operator() in case the base should be used. */
     Arr_parameter_space parameter_space_in_x(const X_monotone_curve_2& xcv,
                                              Arr_curve_end ind,
-                                             /* Left and Right */ Arr_has_identified_side_tag) const
+                                             Arr_has_identified_side_tag) const
     {
       // If the curve completely lies on the left-right identification, return
       // ARR_LEFT_BOUNDARY as an arbitrary but consistent choice.
-      if (m_base->is_on_y_identification_2_object()(xcv)) {
+      if (m_base->is_on_y_identification_2_object()(xcv))
         return ARR_LEFT_BOUNDARY;
-      }
       return (m_base->parameter_space_in_x_2_object()(xcv, ind));
     }
 
     /*! Implementation of the operator() in case the base should be used. */
     Arr_parameter_space parameter_space_in_x(const X_monotone_curve_2& xcv,
                                              Arr_curve_end ind,
-                                             /* Left or Right */ Arr_boundary_cond_tag) const
-    {
-      return (m_base->parameter_space_in_x_2_object()(xcv, ind));
-    }
+                                             Arr_boundary_cond_tag) const
+    { return (m_base->parameter_space_in_x_2_object()(xcv, ind)); }
 
     /*! Implementation of the operator() in case the dummy should be used. */
     Arr_parameter_space parameter_space_in_x(const X_monotone_curve_2&,
@@ -403,22 +400,19 @@ public:
 
      /*! Implementation of the operator() in case the base should be used. */
     Arr_parameter_space parameter_space_in_x(const Point_2& p,
-                                             /* Left and Right */ Arr_has_identified_side_tag) const
+                                             Arr_has_identified_side_tag) const
     {
       // if the point lies on the left-right identification, return
       // ARR_LEFT_BOUNDARY as an arbitrary but consistent choice
-      if (m_base->is_on_y_identification_2_object()(p)) {
+      if (m_base->is_on_y_identification_2_object()(p))
         return ARR_LEFT_BOUNDARY;
-      }
       return m_base->parameter_space_in_x_2_object()(p);
     }
 
     /*! Implementation of the operator() in case the base should be used. */
     Arr_parameter_space parameter_space_in_x(const Point_2& p,
-                                             /* Left or Right */ Arr_boundary_cond_tag) const
-    {
-      return m_base->parameter_space_in_x_2_object()(p);
-    }
+                                             Arr_boundary_cond_tag) const
+    { return m_base->parameter_space_in_x_2_object()(p); }
 
     /*! Implementation of the operator() in case the dummy should be used. */
     Arr_parameter_space parameter_space_in_x(const Point_2&,
@@ -806,7 +800,9 @@ public:
      * \param p2 the second point.
      */
     Comparison_result operator()(const Point_2& p1, const Point_2& p2) const
-    { return comp_x_on_bnd(p1, p2, Bottom_side_category(), Top_side_category()); }
+    {
+      return comp_x_on_bnd(p1, p2, Bottom_side_category(), Top_side_category());
+    }
 
     /*! Compare the x-coordinate of a point and a curve-end projected onto the
      * horizontal boundaries
@@ -837,29 +833,40 @@ public:
 
   private:
 
-    // there are three cases that need the functor (where at least one side is closed)
+    // There are three cases that need the functor (where at least one side is
+    // closed)
 
     /*! Implementation for identificatied sides calls the base. */
     Comparison_result comp_x_on_bnd(const Point_2& p1, const Point_2& p2,
-                                    Arr_identified_side_tag, Arr_identified_side_tag) const
-    { return m_base->compare_x_on_boundary_2_object()(p1, p2); }
+                                    Arr_has_identified_side_tag) const
+    {
+      return m_base->compare_x_on_boundary_2_object()(p1, p2);
+    }
+
+    Comparison_result comp_x_on_bnd(const Point_2& p1, const Point_2& p2,
+                                    Arr_boundary_cond_tag) const
+    {
+      return m_base->compare_x_on_boundary_2_object()(p1, p2);
+    }
 
     /*! Implementation for closed top side calls the base. */
     Comparison_result comp_x_on_bnd(const Point_2& p1, const Point_2& p2,
-                                    Arr_boundary_side_tag, Arr_closed_side_tag) const
+                                    Arr_boundary_side_tag, Arr_closed_side_tag)
+      const
     { return m_base->compare_x_on_boundary_2_object()(p1, p2); }
 
     /*! Implementation for closed bottom side calls the base. */
     Comparison_result comp_x_on_bnd(const Point_2& p1, const Point_2& p2,
-                                    Arr_closed_side_tag, Arr_boundary_side_tag) const
+                                    Arr_closed_side_tag, Arr_boundary_side_tag)
+      const
     { return m_base->compare_x_on_boundary_2_object()(p1, p2); }
 
     // for all other cases an error is generated
     /*! Implementation for the cases no base is called. */
     Comparison_result comp_x_on_bnd(const Point_2& p1, const Point_2& p2,
-                                    Arr_boundary_side_tag, Arr_boundary_side_tag) const
+                                    Arr_boundary_side_tag,
+                                    Arr_boundary_side_tag) const
     { CGAL_error(); return SMALLER; }
-
 
     /*! Implementation for the case the the base should be used. */
     Comparison_result comp_x_on_bnd(const Point_2& pt,
