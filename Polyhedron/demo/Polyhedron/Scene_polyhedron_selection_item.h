@@ -285,7 +285,13 @@ public:
   }
   Bbox bbox() const 
   {
-    boost::optional<CGAL::Bbox_3> item_bbox;
+    // Workaround a bug in g++-4.8.3:
+    //   http://stackoverflow.com/a/21755207/1728537
+    // Using boost::make_optional to copy-initialize 'item_bbox' hides the
+    //   warning about '*item_bbox' not being initialized.
+    // -- Laurent Rineau, 2014/10/30
+    boost::optional<CGAL::Bbox_3> item_bbox
+      = boost::make_optional(false, CGAL::Bbox_3());
 
     for(Selection_set_vertex::const_iterator v_it = selected_vertices.begin(); 
         v_it != selected_vertices.end(); ++v_it) {

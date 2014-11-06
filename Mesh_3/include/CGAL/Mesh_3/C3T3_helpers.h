@@ -1355,7 +1355,7 @@ private:
 
     std::size_t vertex_id(const std::size_t& i) const
     {
-      CGAL_precondition(i >= 0 && i < 4);
+      CGAL_precondition(i < 4);
       return vertices_[i];
     }
 
