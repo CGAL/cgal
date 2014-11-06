@@ -1048,10 +1048,8 @@ insert_point(Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
     arr.geometry_traits()->split_2_object()((*hh)->curve(), p,
                                             sub_cv1, sub_cv2);
 
-    std::cout << "before" << std::endl;
     typename Arr::Halfedge_handle split_he =
       arr.split_edge(arr.non_const_handle(*hh), sub_cv1, sub_cv2);
-    std::cout << "after" << std::endl;
 
     // The new vertex is the target of the returned halfedge.
     vh_for_p = split_he->target();
