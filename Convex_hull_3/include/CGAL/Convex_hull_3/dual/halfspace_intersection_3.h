@@ -201,7 +201,6 @@ namespace CGAL
             bool coplanar_plane (Plane u, Plane v, Plane w) {
                 typedef typename Kernel_traits<Plane>::Kernel Kernel;
                 typedef typename Kernel::Vector_3 Vector;
-                typedef typename Kernel::Point_3 Point;
 
                 Vector uu = u.orthogonal_vector();
                 Vector vv = v.orthogonal_vector();
@@ -217,7 +216,6 @@ namespace CGAL
                                         PlaneIterator end) {
                 typedef typename std::iterator_traits<PlaneIterator>::value_type Plane;
                 typedef typename Kernel_traits<Plane>::Kernel Kernel;
-                typedef typename Kernel::Vector_3 Vector;
 
                 std::list<Plane> planes(begin, end);
 
