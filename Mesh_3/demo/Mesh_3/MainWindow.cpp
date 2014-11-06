@@ -180,18 +180,21 @@ void MainWindow::loadPlugins()
   QDir pluginsDir(qApp->applicationDirPath());
   Q_FOREACH (QString fileName, pluginsDir.entryList(QDir::Files)) {
     if(fileName.contains("plugin") && QLibrary::isLibrary(fileName)) {
-      qDebug("### Loading \"%s\"...", fileName.toUtf8().data());
+      QDebug qdebug = qDebug();
+      qdebug << "### Loading \"" << fileName.toUtf8().data() << "\"... ";
       QPluginLoader loader;
       loader.setFileName(pluginsDir.absoluteFilePath(fileName));
       QObject *obj = loader.instance();
       if(obj) {
-        initPlugin(obj);
-        initIOPlugin(obj);
+        bool init1 = initPlugin(obj);
+        bool init2 = initIOPlugin(obj);
+        if (!init1 && !init2)
+          qdebug << "not for this program";
+        else
+          qdebug << "success";
       }
       else {
-        qDebug("Error loading \"%s\": %s",
-               qPrintable(fileName),
-               qPrintable(loader.errorString()));
+        qdebug << "error: " << qPrintable(loader.errorString());
       }
     }
   }
