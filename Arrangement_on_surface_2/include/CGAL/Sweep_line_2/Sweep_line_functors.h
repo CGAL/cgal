@@ -353,7 +353,7 @@ private:
       if ((ps_y1 == ARR_INTERIOR) && (ps_y2 == ARR_INTERIOR)) {
         // both are y-interior, too 1I2I:
         Comparison_result res = m_traits->compare_xy_2_object() (pt1, pt2);
-        std::cout << "res2 " << res << std::endl;
+        // std::cout << "res2 " << res << std::endl;
         return res;
       } else {
         // at least one of pt1 or pt22 lies on a boundary
