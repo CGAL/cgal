@@ -226,6 +226,8 @@ public slots:
 
   void on_actionShow_faces_in_domain_toggled(bool checked);
 
+  void on_actionShow_blind_faces_toggled(bool checked);
+
   void on_actionInsertPolyline_toggled(bool checked);
   
   void on_actionCircumcenter_toggled(bool checked);
@@ -409,6 +411,13 @@ void
 MainWindow::on_actionShow_faces_in_domain_toggled(bool checked)
 {
   dgi->setVisibleFacesInDomain(checked);
+  update();
+}
+
+void
+MainWindow::on_actionShow_blind_faces_toggled(bool checked)
+{
+  dgi->setVisibleBlindFaces(checked);
   update();
 }
 

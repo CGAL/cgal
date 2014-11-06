@@ -110,6 +110,7 @@
     <addaction name="actionShow_constrained_edges"/>
     <addaction name="actionShow_voronoi_edges"/>
     <addaction name="actionShow_faces_in_domain"/>
+    <addaction name="actionShow_blind_faces"/>
     <addaction name="actionCircumcenter"/>
     <addaction name="separator"/>
     <addaction name="actionRecenter"/>
@@ -324,6 +325,14 @@
    </property>
    <property name="text">
     <string>Show Voronoi edges (CVD)</string>
+   </property>
+  </action>
+  <action name="actionShow_blind_faces">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Show blind faces (for CVD)</string>
    </property>
   </action>
  </widget>

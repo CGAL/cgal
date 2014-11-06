@@ -38,7 +38,9 @@ public:
   DelaunayMeshTriangulationGraphicsItem(T  * t_)
     : Base(t_),
       visible_in_domain(true),
+      visible_blind_faces(false),
       in_domain_brush(::Qt::blue)
+      , blind_brush(::Qt::gray)
       , visible_voronoi(false)
   {
   }
@@ -55,6 +57,16 @@ public:
     in_domain_brush = brush;
   }
 
+  const QBrush& blindFacesBrush() const
+  {
+    return blind_brush;
+  }
+
+  void setBlindFacesBrush(const QBrush& brush)
+  {
+    blind_brush = brush;
+  }
+
   bool visibleFacesInDomain() const
   {
     return visible_in_domain;
@@ -63,6 +75,17 @@ public:
   void setVisibleFacesInDomain(const bool b)
   {
     visible_in_domain = b;
+    this->update();
+  }
+
+  bool visibleBlindFaces() const
+  {
+    return visible_blind_faces;
+  }
+
+  void setVisibleBlindFaces(const bool b)
+  {
+    visible_blind_faces = b;
     this->update();
   }
 
@@ -91,9 +114,11 @@ protected:
   void drawAll(QPainter *painter);
 
   bool visible_in_domain;
+  bool visible_blind_faces;
   bool visible_voronoi;
 
   QBrush in_domain_brush;
+  QBrush blind_brush;
   QPen voronoi_pen;
 };
 
@@ -109,6 +134,18 @@ DelaunayMeshTriangulationGraphicsItem<T>::drawAll(QPainter *painter)
 	fit != this->t->finite_faces_end();
 	++fit){
       if(fit->is_in_domain()){
+	this->painterostream << this->t->triangle(fit);
+      }
+    }
+  }
+  if(visibleBlindFaces()) {
+    this->painterostream = PainterOstream<typename T::Geom_traits>(painter);
+    painter->setBrush(blindFacesBrush());
+    painter->setPen(::Qt::NoPen);
+    for(typename T::Finite_faces_iterator fit = this->t->finite_faces_begin();
+	fit != this->t->finite_faces_end();
+	++fit){
+      if(fit->blind()){
 	this->painterostream << this->t->triangle(fit);
       }
     }
@@ -148,6 +185,14 @@ DelaunayMeshTriangulationGraphicsItem<T>::operator()(typename T::Face_handle fh)
     if(fh->is_in_domain()){
       this->painterostream = PainterOstream<typename T::Geom_traits>(this->m_painter);
       this->m_painter->setBrush(facesInDomainBrush());
+      this->m_painter->setPen(::Qt::NoPen) ;
+      this->painterostream << this->t->triangle(fh);
+    }
+  }
+  if(visibleBlindFaces()) {
+    if(fh->blind()){
+      this->painterostream = PainterOstream<typename T::Geom_traits>(this->m_painter);
+      this->m_painter->setBrush(blindFacesBrush());
       this->m_painter->setPen(::Qt::NoPen) ;
       this->painterostream << this->t->triangle(fh);
     }
