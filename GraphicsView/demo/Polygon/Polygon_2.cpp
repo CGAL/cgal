@@ -176,6 +176,7 @@ MainWindow::MainWindow()
   this->setupOptionsMenu();
   this->addAboutDemo(":/cgal/help/about_Polygon_2.html");
   this->addAboutCGAL();
+  this->setupExportSVG(action_Export_SVG, graphicsView);
 
   this->addRecentFiles(this->menuFile, this->actionQuit);
   connect(this, SIGNAL(openRecentFile(QString)),
