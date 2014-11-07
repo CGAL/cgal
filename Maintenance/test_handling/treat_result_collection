@@ -8,6 +8,8 @@ use strict;
 
 
 
+my $currentdir=cwd();
+
 my $scriptsdir;
 my $unpack_dir_base;
 my $unpack_dir;
@@ -16,13 +18,11 @@ my $lockfile="cgal_testannounce.lock";
 #my $announcements_dir="/private/CGAL/testannouncements";
 my $announcements_dir="/u/termite/0/user/spion/CGAL/testannouncements";
 my $lock_cmd= "/usr/local/bin/lockfile";
-my $currentdir;
-my $ftp_results_dir="/var/CGAL/cgaltest-chroot/home/cgaltest/incoming/";
+my $ftp_results_dir="$currentdir/incoming/";
 my $check_file="processed_test_results";
  
 my ($cgal_version,$tarname,@results);
 
-$currentdir=cwd();
 $testresult_dir="$currentdir/TESTRESULTS";
 $scriptsdir="$currentdir";
 $unpack_dir_base="$currentdir";

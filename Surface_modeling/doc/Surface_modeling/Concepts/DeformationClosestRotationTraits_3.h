@@ -2,7 +2,7 @@
 \ingroup PkgSurfaceModelingConcepts
 \cgalConcept
 
-@brief Concept describing the set of requirements for computing a 3x3 rotation matrix that is close to a given 3x3 matrix, together with basic computations used in the class `CGAL::Deform_mesh`.
+@brief Concept describing the set of requirements for computing a 3x3 rotation matrix that is close to a given 3x3 matrix, together with basic computations used in the class `CGAL::Surface_mesh_deformation`.
 The definition of close depends on the model.
 The fact that some basic operations are hidden behind a function is to allow to benefit from optimizations like expression template from libraries used
 to implement models of this concept.

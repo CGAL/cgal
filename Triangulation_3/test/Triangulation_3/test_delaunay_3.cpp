@@ -21,6 +21,9 @@
 #define CGAL_NO_DEPRECATION_WARNINGS
 
 #include <CGAL/Delaunay_triangulation_3.h>
+#include <CGAL/Triangulation_data_structure_3.h>
+#include <CGAL/Triangulation_vertex_base_3.h>
+#include <CGAL/Delaunay_triangulation_cell_base_3.h>
 #include <CGAL/Triangulation_cell_base_with_circumcenter_3.h>
 
 bool del=true;
@@ -39,7 +42,15 @@ int main()
   
   _test_cls_delaunay_3( Cls() );
   _test_cls_delaunay_3( Cls_with_epec() );
-  
+
+  typedef CGAL::Triangulation_data_structure_3<
+    CGAL::Triangulation_vertex_base_3<K>,
+    CGAL::Delaunay_triangulation_cell_base_3<K> >   Tds_Delaunay_Cb;
+  typedef CGAL::Delaunay_triangulation_3<
+    EPIC, Tds_Delaunay_Cb>                          Cls_with_Delaunay_Cb;
+
+  _test_cls_delaunay_3( Cls_with_Delaunay_Cb() );
+
 #ifdef CGAL_LINKED_WITH_TBB
   typedef CGAL::Spatial_lock_grid_3<
     CGAL::Tag_priority_blocking>                      Lock_ds;

@@ -82,7 +82,7 @@
      <x>0</x>
      <y>0</y>
      <width>568</width>
-     <height>26</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -93,6 +93,7 @@
     <addaction name="actionClear"/>
     <addaction name="actionLoadPolygon"/>
     <addaction name="actionSavePolygon"/>
+    <addaction name="action_Export_SVG"/>
     <addaction name="separator"/>
     <addaction name="actionQuit"/>
    </widget>
@@ -232,6 +233,11 @@
   <action name="actionMaximumAreaKGon">
    <property name="text">
     <string>Maximum Area Triangle</string>
+   </property>
+  </action>
+  <action name="action_Export_SVG">
+   <property name="text">
+    <string>&amp;Export SVG...</string>
    </property>
   </action>
  </widget>

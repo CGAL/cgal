@@ -6,7 +6,7 @@
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/boost/graph/properties_Polyhedron_3.h>
 
-#include <CGAL/Deform_mesh.h>
+#include <CGAL/Surface_mesh_deformation.h>
 
 #include <fstream>
 #include <map>
@@ -23,7 +23,7 @@ typedef boost::graph_traits<Polyhedron>::out_edge_iterator    out_edge_iterator;
 
 typedef Eigen::Vector3d                                                Vector3d;
 
-typedef CGAL::Deform_mesh<Polyhedron>                               Deform_mesh;
+typedef CGAL::Surface_mesh_deformation<Polyhedron>     Surface_mesh_deformation;
 
 // Collect the vertices which are at distance less or equal to k
 // from the vertex v in the graph of vertices connected by the edges of P
@@ -65,7 +65,7 @@ int main()
   set_halfedgeds_items_id(mesh);
 
   // Create the deformation object
-  Deform_mesh deform_mesh(mesh);
+  Surface_mesh_deformation deform_mesh(mesh);
 
   // Select and insert the vertices of the region of interest
   vertex_iterator vb, ve;

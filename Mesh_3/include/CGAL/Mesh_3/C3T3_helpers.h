@@ -1355,7 +1355,7 @@ private:
 
     std::size_t vertex_id(const std::size_t& i) const
     {
-      CGAL_precondition(i >= 0 && i < 4);
+      CGAL_precondition(i < 4);
       return vertices_[i];
     }
 
@@ -1477,8 +1477,16 @@ private:
 
         c->set_facet_surface_center(i, facet_surface_center_[old_i]);
         c->set_facet_surface_center_index(i, surface_center_index_table_[old_i]);
-        //here we don't need to update mirror_facet because it's been either
-        //backuped, or unchanged
+
+        //we need to update mirror_facet when the i-th neighbor is
+        // an infinite cell
+        Cell_handle c2 = c->neighbor(i);
+        if(c3t3.triangulation().is_infinite(c2))
+        {
+          const int i2 = c2->index(c);
+          c2->set_facet_surface_center(i2, facet_surface_center_[old_i]);
+          c2->set_facet_surface_center_index(i2, surface_center_index_table_[old_i]);
+        }
       }
     }
 

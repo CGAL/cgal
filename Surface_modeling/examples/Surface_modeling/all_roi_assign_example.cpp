@@ -6,7 +6,7 @@
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/boost/graph/properties_Polyhedron_3.h>
 
-#include <CGAL/Deform_mesh.h>
+#include <CGAL/Surface_mesh_deformation.h>
 
 #include <fstream>
 
@@ -17,7 +17,7 @@ typedef CGAL::Polyhedron_3<Kernel, CGAL::Polyhedron_items_with_id_3> Polyhedron;
 typedef boost::graph_traits<Polyhedron>::vertex_descriptor    vertex_descriptor;
 typedef boost::graph_traits<Polyhedron>::vertex_iterator        vertex_iterator;
 
-typedef CGAL::Deform_mesh<Polyhedron> Deform_mesh;
+typedef CGAL::Surface_mesh_deformation<Polyhedron> Surface_mesh_deformation;
 
 int main()
 {
@@ -33,7 +33,7 @@ int main()
   set_halfedgeds_items_id(mesh);
 
   // Create a deformation object
-  Deform_mesh deform_mesh(mesh);
+  Surface_mesh_deformation deform_mesh(mesh);
 
   // Definition of the region of interest (use the whole mesh)
   vertex_iterator vb,ve;
@@ -57,7 +57,7 @@ int main()
 
   // Use set_target_position() to set the constained position
   // of control_1. control_2 remains at the last assigned positions
-  Deform_mesh::Point constrained_pos_1(-0.35, 0.40, 0.60);
+  Surface_mesh_deformation::Point constrained_pos_1(-0.35, 0.40, 0.60);
   deform_mesh.set_target_position(control_1, constrained_pos_1);
 
   // Deform the mesh, the positions of vertices of 'mesh' are updated
@@ -66,7 +66,7 @@ int main()
   deform_mesh.deform();
 
   // Set the constained position of control_2
-  Deform_mesh::Point constrained_pos_2(0.55, -0.30, 0.70);
+  Surface_mesh_deformation::Point constrained_pos_2(0.55, -0.30, 0.70);
   deform_mesh.set_target_position(control_2, constrained_pos_2);
 
   // Call the function deform() with one-time parameters:
@@ -89,7 +89,7 @@ int main()
   }
 
   // Deform the mesh
-  Deform_mesh::Point constrained_pos_3(0.55, 0.30, -0.70);
+  Surface_mesh_deformation::Point constrained_pos_3(0.55, 0.30, -0.70);
   deform_mesh.set_target_position(control_3, constrained_pos_3);
 
   deform_mesh.deform(15, 0.0);

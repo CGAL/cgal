@@ -2,6 +2,7 @@ message("Configuring libCGAL_Qt4")
 
 set( QT_USE_QTMAIN   TRUE )
 set( QT_USE_QTOPENGL TRUE )
+set( QT_USE_QTSVG    TRUE )
 find_package(Qt4 QUIET)
 
 find_package(OpenGL QUIET )

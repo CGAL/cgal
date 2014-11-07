@@ -80,6 +80,7 @@ protected:
   void setupOptionsMenu(QMenu* menu  = 0);
   void addAboutCGAL(QMenu* menu  = 0);
   void addAboutDemo(QString htmlResourceName, QMenu* menu  = 0);
+  void setupExportSVG(QAction*, QGraphicsView*);
 
   void addRecentFiles(QMenu* menu, QAction* insertBefore = 0);
 
@@ -92,6 +93,8 @@ protected slots:
   void setUseOpenGL(bool checked);
   void popupAboutCGAL();
   void popupAboutDemo();
+
+  void exportSVG();
 
   void openRecentFile_aux();
   void addToRecentFiles(QString fileName);
