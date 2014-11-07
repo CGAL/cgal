@@ -28,11 +28,17 @@ namespace Mesh_2
           const CDT& cdt,
           const Sizing_field& sizing_field = Sizing_field()) const
     {
+      if(cdt.are_there_incident_constraints(v))
+        return CGAL::NULL_VECTOR;
+
       Point_2 p = v->point();
       Vector_2 move = CGAL::NULL_VECTOR;
       FT sum_masses(0);
 
       Cvd_cell cell = cdt.dual(v);
+      if(cell.is_infinite())
+        return CGAL::NULL_VECTOR; //center of mass is at infinity!
+
       CGAL_assertion(cell.number_of_vertices() > 2);
 
       typename Cvd_cell::segment_iterator sit = cell.segments_begin();
