@@ -464,8 +464,6 @@ void MainWindow::loadOSM(QString fileName)
     
     std::vector<Point_2> poly ;
     
-    bool lIsClosed = true ;
-    
     while ( std::getline(ifs,line) )
     {
       line = trim_right(line);

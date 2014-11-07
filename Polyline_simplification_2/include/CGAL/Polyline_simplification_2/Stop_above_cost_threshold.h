@@ -45,11 +45,11 @@ public :
   /// is model of  `PolylineSimplificationVertexBase_2`.
 
   template<class CDT>
-  bool operator()(const Constrained_triangulation_plus_2<CDT>& ct
-                  , typename Constrained_triangulation_plus_2<CDT>::Vertex_handle q
+  bool operator()(const Constrained_triangulation_plus_2<CDT>&
+                  , typename Constrained_triangulation_plus_2<CDT>::Vertex_handle
                   , typename CDT::Geom_traits::FT          cost
-                 , std::size_t                             initial_count
-                 , std::size_t                             current_count
+                 , std::size_t
+                 , std::size_t
                  ) const
   {
     return cost >= mThres ;
