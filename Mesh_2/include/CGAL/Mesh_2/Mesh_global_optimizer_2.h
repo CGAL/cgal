@@ -103,13 +103,15 @@ public:
       vit != cdt_.finite_vertices_end();
       ++vit )
     {
-      moving_vertices.insert(vit);
+      if(!cdt_.are_there_incident_constraints(vit))
+        moving_vertices.insert(vit);
     }
 
 #ifdef CGAL_MESH_2_OPTIMIZER_VERBOSE
   double initial_vertices_nb = static_cast<double>(moving_vertices.size());
   double step_begin = timer.time();
   std::cerr << "Running " << Mf::name() << "-smoothing..." << std::endl;
+  std::cerr << "(" << initial_vertices_nb << " vertices moving)" << std::endl;
 #endif
 
     // Initialize big moves (stores the largest moves)
