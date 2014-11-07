@@ -1,4 +1,5 @@
 //#define CGAL_USE_BOOST_BIMAP
+#define CGAL_MESH_2_VERBOSE
 
 #include <fstream>
 #include <vector>
@@ -13,6 +14,7 @@
 #include <CGAL/Lipschitz_sizing_field_criteria_2.h>
 #include <CGAL/Constrained_voronoi_diagram_2.h>
 #include <CGAL/Triangulation_conformer_2.h>
+#include <CGAL/lloyd_optimize_mesh_2.h>
 #include <CGAL/Random.h>
 #include <CGAL/point_generators_2.h>
 #include <CGAL/Timer.h>
@@ -261,6 +263,8 @@ public slots:
   void on_actionInsertRandomPoints_triggered();
 
   void on_actionTagBlindFaces_triggered();
+
+  void on_actionLloyd_optimization_triggered();
 
 signals:
   void changed();
@@ -733,6 +737,26 @@ MainWindow::on_actionTagBlindFaces_triggered()
 
   CVD voronoi(&cdt);
   voronoi.tag_faces_blind();
+
+  // default cursor
+  QApplication::restoreOverrideCursor();
+  emit(changed());
+}
+
+void
+MainWindow::on_actionLloyd_optimization_triggered()
+{
+  // wait cursor
+  QApplication::setOverrideCursor(Qt::WaitCursor);
+
+  bool ok;
+  int nb = QInputDialog::getInt(this, tr("QInputDialog::getInteger()"),
+    tr("Number of iterations :"),
+    1/*val*/, 0/*min*/, 1000/*max*/, 1/*step*/, &ok);
+  if(ok)
+  {
+    CGAL::lloyd_optimize_mesh_2(cdt, nb);
+  }
 
   // default cursor
   QApplication::restoreOverrideCursor();

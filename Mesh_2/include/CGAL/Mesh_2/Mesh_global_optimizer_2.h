@@ -83,7 +83,7 @@ public:
     , sq_freeze_ratio_(freeze_ratio * freeze_ratio)
     , convergence_ratio_(convergence_ratio)
     , move_function_(move_function)
-    , sizing_field_(cdt)
+    , sizing_field_()
   {}
   
   /// Time accessors
@@ -318,6 +318,12 @@ private:
 
     // Update cdt
     moving_vertices.clear();
+  }
+
+public:
+  void set_sizing_field(const Sizing_field& sf)
+  {
+    sizing_field_ = sf;
   }
 
 private:

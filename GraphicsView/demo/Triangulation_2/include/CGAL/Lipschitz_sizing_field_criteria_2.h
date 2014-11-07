@@ -146,7 +146,7 @@ public:
 
       // compute the sizing field at the centroid of the vertices
       const Point_2& pg = centroid(pa, pb, pc);
-      double squared_size_bound = sizing_field->query(pg);
+      double squared_size_bound = sizing_field->operator()(pg);
       squared_size_bound *= squared_size_bound;
 
       if( squared_size_bound != 0 )

@@ -22,7 +22,7 @@ public:
   {
   }
 
-  virtual double query(const Point& p) const = 0;
+  virtual double operator()(const Point& p) const = 0;
 };
 
 }//namespace CGAL

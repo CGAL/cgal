@@ -107,7 +107,7 @@ public:
     return *this;
   }
 
-  double query(const Point& p) const
+  double operator()(const Point& p) const
   {
     if(points.empty() || points.size() == 1)
       return K;

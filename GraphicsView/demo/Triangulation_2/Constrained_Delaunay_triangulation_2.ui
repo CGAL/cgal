@@ -103,6 +103,8 @@
     <property name="title">
      <string>&amp;Tools</string>
     </property>
+    <addaction name="actionRecenter"/>
+    <addaction name="separator"/>
     <addaction name="actionInsertPolyline"/>
     <addaction name="separator"/>
     <addaction name="actionShowDelaunay"/>
@@ -115,11 +117,12 @@
     <addaction name="actionShow_blind_faces"/>
     <addaction name="actionTagBlindFaces"/>
     <addaction name="separator"/>
-    <addaction name="actionRecenter"/>
     <addaction name="actionMakeGabrielConform"/>
     <addaction name="actionMakeDelaunayConform"/>
     <addaction name="actionMakeDelaunayMesh"/>
     <addaction name="actionMakeLipschitzDelaunayMesh"/>
+    <addaction name="separator"/>
+    <addaction name="actionLloyd_optimization"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuEdit"/>
@@ -340,6 +343,11 @@
   <action name="actionTagBlindFaces">
    <property name="text">
     <string>Tag blind faces</string>
+   </property>
+  </action>
+  <action name="actionLloyd_optimization">
+   <property name="text">
+    <string>Lloyd optimization</string>
    </property>
   </action>
  </widget>
