@@ -230,6 +230,8 @@ for example
 | BGL   | %Surface_mesh | Remark |
 | :---- | :----        | :---   |
 | `boost::graph_traits<G>::%vertex_descriptor` | `Surface_mesh::Vertex_index` | |
+| `boost::graph_traits<G>::%edge_descriptor` | `Surface_mesh::Edge_index` | |
+| `vertices(const G& g)` | `sm.vertices()` | |
 | `edges(const G& g)` | `sm.edges()` | |
 | `vd = source(ed,g)` | `vd = sm.source(ed)` | |
 | na  | `n = sm.number_of_vertices()` | counts non-deleted vertices and has no BGL equivalent |
@@ -242,12 +244,16 @@ The class `Surface_mesh` is also a model of the concept `MutableFaceGraph` defin
 in the package \ref PkgBGLSummary. This and similar concepts like `HalfedgeGraph`
 refine the graph concepts of the BGL by introducing the notion of halfedges and faces,
 as well as cycles of halfedges around faces and around vertices.
-Again, there are similar types and functions:
+Again, there are similar types and functions, for example:
 
 | BGL   | %Surface_mesh |
 | :---- | :----        |
 | `boost::graph_traits<G>::%halfedge_descriptor` | `Surface_mesh::Halfedge_index` |
+| `boost::graph_traits<G>::%face_descriptor` | `Surface_mesh::Face_index` | |
+| `halfedges(const G& g)` | `sm.halfedges()` | |
+| `faces(const G& g)` | `sm.faces()` | |
 | `hd = next(hd, g)` | `hd = sm.next(hd)` |
+| `hd = prev(hd, g)` | `hd = sm.prev(hd)` |
 | `hd = opposite(hd,g)` | `hd = sm.opposite(hd)` |
 | `hd = halfedge(vd,g)` | `hd = sm.halfedge(vd)` |
 | etc. | |
