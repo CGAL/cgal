@@ -298,9 +298,6 @@ private:
   void update_mesh(const Moves_vector& moves,
                    Vertex_set& moving_vertices)
   {
-    // Facets that have to be updated
-    std::set<Face_handle> outdated_faces;
-
     // Apply moves in triangulation
     for(typename Moves_vector::const_iterator it = moves.begin() ;
         it != moves.end() ;
@@ -321,15 +318,6 @@ private:
 
     // Update cdt
     moving_vertices.clear();
-    reset_faces(outdated_faces.begin(), outdated_faces.end());
-  }
-
-  template<typename FaceIterator>
-  void reset_faces(FaceIterator begin,
-                   FaceIterator end)
-  {
-    ;//ToDo
-    // update "inside" and "blind"
   }
 
 private:
