@@ -97,7 +97,9 @@ public:
       ++vc;
     }while(vc != done);
 
-    return d1 / d2 ;
+    return d2_uninitialized ? 
+      boost::optional<FT>(boost::none) :
+      boost::optional<FT>(d1 / d2);
   }
 
 };
