@@ -149,9 +149,8 @@ public:
 #endif
     }
 
-    timer.stop();
-
 #ifdef CGAL_MESH_2_OPTIMIZER_VERBOSE
+    timer.stop();
     std::cerr << std::endl;
     if ( check_convergence() )
       std::cerr << "Convergence reached" << std::endl;
