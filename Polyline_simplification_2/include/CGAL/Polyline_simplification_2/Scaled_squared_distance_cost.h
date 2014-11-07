@@ -48,7 +48,7 @@ public:
   /// \tparam CDT  must be `CGAL::Constrained_Delaunay_triangulation_2` with a vertex type that
   /// is model of  `PolylineSimplificationVertexBase_2`.
     template<class CDT>
-    boost::optional<typename Constrained_triangulation_plus_2<CDT>::Geom_traits::FT>
+    boost::optional<typename CDT::Geom_traits::FT>
     operator()(const Constrained_triangulation_plus_2<CDT>& pct
                , typename Constrained_triangulation_plus_2<CDT>::Vertices_in_constraint_iterator vicq) const
   {
@@ -74,19 +74,25 @@ public:
      
     Segment lP_R = construct_segment(lP, lR) ;
 
-    FT d1 = 0.0;
+    FT d1(0);
     Points_in_constraint_iterator pp(vicp), rr(vicr);
     ++pp;
     
     for ( ;pp != rr; ++pp )
       d1 = (std::max)(d1, compute_squared_distance( lP_R, *pp ) ) ;
 
-    double d2 = (std::numeric_limits<double>::max)() ;
+    
+    FT d2;
+    bool d2_uninitialized = true;
 
     Vertex_circulator vc = (*vicq)->incident_vertices(), done(vc);
     do {
       if((vc != pct.infinite_vertex()) && (vc != *vicp) && (vc != *vicr)){
-        d2 = (std::min)(d2, compute_squared_distance(vc->point(), (*vicq)->point()));
+        if(d2_uninitialized){
+          d2 = compute_squared_distance(vc->point(), (*vicq)->point());
+        } else {
+          d2 = (std::min)(d2, compute_squared_distance(vc->point(), (*vicq)->point()));
+        }
       }
       ++vc;
     }while(vc != done);

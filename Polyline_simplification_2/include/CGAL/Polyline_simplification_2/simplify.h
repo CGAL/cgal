@@ -33,7 +33,7 @@
 #include <CGAL/algorithm.h>
 
 // Needed for Polygon_2
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
 #include <CGAL/Constrained_triangulation_plus_2.h>
 #include <list>
@@ -67,6 +67,8 @@ public:
   typedef typename PCT::Vertex_handle Vertex_handle;
   typedef typename PCT::Vertex_circulator Vertex_circulator;
 
+  typedef typename PCT::Geom_traits::FT FT;
+  
   PCT& pct;
   CostFunction cost;
   StopFunction stop;
@@ -154,14 +156,13 @@ public:
         it != pct.vertices_in_constraint_end(cid);
         ++it){
       if((*it)->is_removable()){
-        boost::optional<double> dist = cost(pct, it);
+        boost::optional<FT> dist = cost(pct, it);
         if(dist){
           (*it)->set_cost(*dist);
           (*mpq).push(it);
           ++n;
         } else {
-          (*it)->set_cost((std::numeric_limits<double>::max)());
-          std::cerr << "could not compute a cost" << std::endl;
+          // no need to set the costs as this vertex is not in the priority queue
         } 
       }
     }
@@ -265,7 +266,7 @@ operator()()
     
     if((*u)->is_removable()){
       Vertices_in_constraint_iterator uu = boost::prior(u);
-      boost::optional<double> dist = cost(pct, u);
+      boost::optional<FT> dist = cost(pct, u);
       if(! dist){
         std::cerr << "undefined cost not handled yet" << std::endl;
       } else {
@@ -278,7 +279,7 @@ operator()()
     
     if((*w)->is_removable()){
       Vertices_in_constraint_iterator ww = boost::next(w);
-      boost::optional<double> dist = cost(pct, w);
+      boost::optional<FT> dist = cost(pct, w);
       if(! dist){
         std::cerr << "undefined cost not handled yet" << std::endl;
       } else {
@@ -308,17 +309,23 @@ operator()()
 
 Simplifies a single polygon.
 
+\tparam Traits must be a model of `PolylineSimplificationTraits_2`
 \tparam CostFunction must be a model of `PolylineSimplificationCostFunction`.
 \tparam StopFunction must be a model of `PolylineSimplificationStopPredicate`
+
+\attention Any \cgal kernel can be used for `Traits`, but as the traits
+class is used for internally using a constrained Delaunay triangulation,
+it should be a kernel with at least exact predicates.
 */
-template <class PolygonTraits_2, class Container, class CostFunction, class StopFunction>
-                  CGAL::Polygon_2<PolygonTraits_2,Container>
-                  simplify(const CGAL::Polygon_2<PolygonTraits_2,Container>& polygon,
+template <class Traits, class Container, class CostFunction, class StopFunction>
+                  CGAL::Polygon_2<Traits,Container>
+                  simplify(const CGAL::Polygon_2<Traits,Container>& polygon,
                            CostFunction cost,
                            StopFunction stop)
 {
-  typedef typename PolygonTraits_2::Point_2 Point_2;
-  typedef typename CGAL::Kernel_traits<Point_2>::type K;
+  typedef typename Traits K;
+  typedef K::Point_2 Point_2;
+
   typedef Vertex_base_2< K > Vb;
   typedef CGAL::Constrained_triangulation_face_base_2<K> Fb;
   typedef CGAL::Triangulation_data_structure_2<Vb,Fb> TDS;
@@ -335,7 +342,7 @@ template <class PolygonTraits_2, class Container, class CostFunction, class Stop
   Polyline_simplification_2<PCT, CostFunction, StopFunction> simplifier(pct, cost, stop);
   while(simplifier()){}
 
-  CGAL::Polygon_2<PolygonTraits_2,Container> result;
+  CGAL::Polygon_2<Traits,Container> result;
   Vertices_in_constraint_iterator beg = pct.vertices_in_constraint_begin(cid);
   Vertices_in_constraint_iterator end = pct.vertices_in_constraint_end(cid);
   for(; beg!=end;){

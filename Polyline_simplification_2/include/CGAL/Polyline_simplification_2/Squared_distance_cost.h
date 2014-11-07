@@ -54,7 +54,7 @@ public:
   /// is model of  `PolylineSimplificationVertexBase_2`.
 
     template<class CDT>
-    boost::optional<typename Constrained_triangulation_plus_2<CDT>::Geom_traits::FT>
+    boost::optional<typename CDT::Geom_traits::FT>
     operator()(const Constrained_triangulation_plus_2<CDT>& pct
                , typename Constrained_triangulation_plus_2<CDT>::Vertices_in_constraint_iterator vicq)const
   {
