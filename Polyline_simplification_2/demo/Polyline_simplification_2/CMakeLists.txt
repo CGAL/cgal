@@ -1,10 +1,6 @@
 # Created by the script cgal_create_cmake_script
 # This is the CMake script for compiling a CGAL application.
 
-# ** DEVELOPMENT**  CMakeLists.txt.. 
-# It requires the env var $CGAL_SVN with the location of a svn working copy
-# And $CGAL_DIR with the location of a CGAL installation
-
 project (Polyline_simplification_2)
 
 cmake_minimum_required(VERSION 2.4.5)
@@ -26,18 +22,6 @@ set( QT_USE_QTOPENGL  TRUE )
 
 find_package(Qt4)
 
-if ( NOT CGAL_SVN )
-  set( CGAL_SVN_env "$ENV{CGAL_SVN}" )
-  if ( NOT "${CGAL_SVN_env}" STREQUAL "" )
-    set( CGAL_SVN ${CGAL_SVN_env} CACHE FILEPATH "Location of the CGAL svn working copy" )
-  else()  
-    set( CGAL_SVN "NOTFOUND" CACHE FILEPATH "Location of the CGAL svn working copy" )
-  endif()
-endif()
-
-include_directories (BEFORE ../../../../../trunk/GraphicsView/include)
-
-# include_directories (BEFORE ${CGAL_SVN}/GraphicsView/include)
 include_directories (BEFORE ${CMAKE_CURRENT_SOURCE_DIR}/include)
 include_directories (BEFORE ${CMAKE_CURRENT_SOURCE_DIR}/../../include )
 include_directories (BEFORE ${CMAKE_CURRENT_BINARY_DIR})
