@@ -32,7 +32,7 @@ public:
   Cvd_cell(Vertex_handle v)
     : m_vertex(v)
     , m_segments()
-    , m_rays(2)
+    , m_rays()
     , m_is_valid(false)
   { }
 
@@ -219,6 +219,7 @@ public:
     }
   }
 
+private:
   // test face for blindness with respect to the edge constraint
   void tag_face_blind(Face_handle& f, const Edge& constraint)
   {  
@@ -309,19 +310,6 @@ public:
   /*--------------------------------------------------------------
   ---------------------- BVD CONSTRUCTION ------------------------
   --------------------------------------------------------------*/
-
-  void construct_bvd()
-  {
-    this->clear();
-    tag_faces_blind();
-        
-    for(Finite_vertices_iterator v = m_pCdt->finite_vertices_begin();
-        v != m_pCdt->finite_vertices_end();
-        ++v)
-    {
-      this->push_back(m_pCdt->cvd_cell(v));
-    }
-  }
 
   // assemble a cell of the bounded Voronoi diagram
   // incident to vertex v
