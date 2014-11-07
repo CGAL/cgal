@@ -82,20 +82,20 @@ public:
     }
     else
     {
-      const int px = static_cast<int>(p.x()/r_im_.vx());
-      const int py = static_cast<int>(p.y()/r_im_.vy());
-      const int pz = static_cast<int>(p.z()/r_im_.vz());
+      const std::ptrdiff_t px = static_cast<std::ptrdiff_t>(p.x()/r_im_.vx());
+      const std::ptrdiff_t py = static_cast<std::ptrdiff_t>(p.y()/r_im_.vy());
+      const std::ptrdiff_t pz = static_cast<std::ptrdiff_t>(p.z()/r_im_.vz());
 
-      const std::size_t dimx = r_im_.xdim();
-      const std::size_t dimy = r_im_.ydim();
-      const std::size_t dimz = r_im_.zdim();
+      const std::ptrdiff_t dimx = static_cast<std::ptrdiff_t>(r_im_.xdim());
+      const std::ptrdiff_t dimy = static_cast<std::ptrdiff_t>(r_im_.ydim());
+      const std::ptrdiff_t dimz = static_cast<std::ptrdiff_t>(r_im_.zdim());
 
       if(px < 0 ||
          py < 0 ||
          pz < 0 ||
-         px+1 >= static_cast<int>(dimx) ||
-         py+1 >= static_cast<int>(dimy) ||
-         pz+1 >= static_cast<int>(dimz) )
+         px+1 >= dimx ||
+         py+1 >= dimy ||
+         pz+1 >= dimz)
       {
         return 0;
       }
