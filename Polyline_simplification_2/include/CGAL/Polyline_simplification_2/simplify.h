@@ -323,8 +323,8 @@ template <class Traits, class Container, class CostFunction, class StopFunction>
                            CostFunction cost,
                            StopFunction stop)
 {
-  typedef typename Traits K;
-  typedef K::Point_2 Point_2;
+  typedef Traits K;
+  typedef typename K::Point_2 Point_2;
 
   typedef Vertex_base_2< K > Vb;
   typedef CGAL::Constrained_triangulation_face_base_2<K> Fb;
