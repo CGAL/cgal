@@ -15,7 +15,7 @@ class PolylineSimplificationStopPredicate
 public :
   /*!
   Indicates if the simplification must be stopped.
-  This is called right before each vertex is about to be removed
+  This is called right before each vertex is about to be removed.
   \param ct The underlying constrained Delaunay triangulation with constraint hierarchy which embeds the polyline constraints
   \param q The current vertex about to be removed
   \param cost The associated cost for removing the current vertex (as given by `PolylineSimplificationCostFunction`)

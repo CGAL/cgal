@@ -26,10 +26,11 @@ Given a vertex in constraint iterator `viq` computes `vip=std::prev(viq)` and `v
 
 \param ct The underlying constrained Delaunay triangulation with constraint hierarchy which embeds the polyline constraints
 \param viq The vertex in constraint iterator of the vertex to remove
-\returns The cost for removing `*viq`. A result of `boost::none` can be used to indicate an infinite or uncomputable cost.
+\returns The cost for removing `*viq`. The value `boost::none` can be returned to indicate an infinite or uncomputable cost.
 
 \tparam CDT must be `CGAL::Constrained_Delaunay_triangulation_2` with a vertex type that
-is model of `PolylineSimplificationVertexBase_2`. `CDT::Geom_traits` must provide a functor `Compute_squared_distance` with an operator `CDT::Geom_traits::FT operator()(CDT::Geom_traits::Point_2, CDT::Geom_traits::Point_2)`.
+is model of `PolylineSimplificationVertexBase_2`. `CDT::Geom_traits` must provide a functor `Compute_squared_distance_2` with an operator `CDT::Geom_traits::FT operator()(CDT::Geom_traits::Point_2, CDT::Geom_traits::Point_2)`
+that returns the squared distance between the two points.
 */ 
   boost::optional<CGAL::Constrained_triangulation_plus_2<CDT>::Geom_traits::FT>
   operator()(CGAL::Constrained_triangulation_plus_2<CDT> const& ct,

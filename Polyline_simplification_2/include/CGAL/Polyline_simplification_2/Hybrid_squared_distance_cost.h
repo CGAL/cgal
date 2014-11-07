@@ -41,12 +41,15 @@ public:
   /// Initializes the cost function with the specified `ratio`
   Hybrid_squared_distance_cost( FT ratio ) : mSquaredRatio(ratio*ratio) {}
 
+  /// Compute the hybrid squared distance cost.
+  /// 
   /// Given a vertex in constraint iterator `vicq` computes `vicp=std::prev(vicq)` and `vicr=std::next(vicq)`,
   /// returns the maximal square distance between each point along the original subpolyline,
   /// between `vicp` and `vicr`,
   /// and the straight line segment from `*vicp->point() to *vicr->point()` divided by the smallest of
   /// - the square of the ratio given to the constructor of the cost function,
   /// - and the shortest squared distance between that segment and each of the vertices adjacent to `vicq`.
+  ///
   /// \tparam CDT  must be `CGAL::Constrained_Delaunay_triangulation_2` with a vertex type that
   /// is model of  `PolylineSimplificationVertexBase_2`.
  template<class CDT>
