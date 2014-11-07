@@ -40,12 +40,12 @@
 - `PolylineSimplificationVertexBase_2`
 
 ## Classes ##
-- `CGAL::Squared_distance_cost`
-- `CGAL::Scaled_squared_distance_cost`
-- `CGAL::Hybrid_squared_distance_cost`
-- `CGAL::Stop_above_cost_threshold`
-- `CGAL::Stop_below_count_threshold`
-- `CGAL::Stop_below_count_ratio_threshold`
+- `CGAL::Polyline_simplification_2::Squared_distance_cost`
+- `CGAL::Polyline_simplification_2::Scaled_squared_distance_cost`
+- `CGAL::Polyline_simplification_2::Hybrid_squared_distance_cost`
+- `CGAL::Polyline_simplification_2::Stop_above_cost_threshold`
+- `CGAL::Polyline_simplification_2::Stop_below_count_threshold`
+- `CGAL::Polyline_simplification_2::Stop_below_count_ratio_threshold`
 - `CGAL::Polyline_simplification_2::Vertex_base_2`
 
 ## Global Functions ##

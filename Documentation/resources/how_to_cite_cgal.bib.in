@@ -117,7 +117,7 @@
 }
 
 @incollection{cgal:cpt-cgk2-${CGAL_RELEASE_YEAR_ID}
-, author =  "Pedro Machado Manh\~{a}es de Castro and Sylvain Pion and Monique Teillaud"
+, author =  "Pedro Machado Manh\~aes de Castro and Sylvain Pion and Monique Teillaud"
 , title =   "{2D} Circular Geometry Kernel"
 , publisher =  "{CGAL Editorial Board}"
 , edition =     "{${CGAL_CREATED_VERSION_NUM}}"
@@ -127,7 +127,7 @@
 }
 
 @incollection{cgal:cclt-sgk3-${CGAL_RELEASE_YEAR_ID}
-, author =  "Pedro Machado Manh\~{a}es de Castro and Fr{\'e}d{\'e}ric Cazals and S{\'e}bastien Loriot and Monique Teillaud"
+, author =  "Pedro Machado Manh\~aes de Castro and Fr{\'e}d{\'e}ric Cazals and S{\'e}bastien Loriot and Monique Teillaud"
 , title =   "{3D} Spherical Geometry Kernel"
 , publisher =  "{CGAL Editorial Board}"
 , edition =     "{${CGAL_CREATED_VERSION_NUM}}"
@@ -243,6 +243,16 @@
 , edition =     "{${CGAL_CREATED_VERSION_NUM}}"
 , booktitle =   "{CGAL} User and Reference Manual"
 , url = "http://doc.cgal.org/${CGAL_CREATED_VERSION_NUM}/Manual/packages.html#PkgMinkowskiSum2Summary"
+, year =        ${CGAL_BUILD_YEAR4}
+}
+
+@incollection{cgal:f-ps2-${CGAL_RELEASE_YEAR_ID}
+, author =  "Andreas Fabri"
+, title =   "{2D} Polyline Simplification"
+, publisher =  "{CGAL Editorial Board}"
+, edition =     "{${CGAL_CREATED_VERSION_NUM}}"
+, booktitle =   "{CGAL} User and Reference Manual"
+, url = "http://doc.cgal.org/${CGAL_CREATED_VERSION_NUM}/Manual/packages.html#PkgPolylineSimplification2Summary"
 , year =        ${CGAL_BUILD_YEAR4}
 }
 
