@@ -18,7 +18,6 @@ set( QT_USE_QTXML    TRUE )
 set( QT_USE_QTMAIN   TRUE )
 set( QT_USE_QTSCRIPT  TRUE )
 set( QT_USE_QTOPENGL  TRUE )
-set( QT_USE_QTSVG     TRUE )
 
 
 #find_package(Qt4)
