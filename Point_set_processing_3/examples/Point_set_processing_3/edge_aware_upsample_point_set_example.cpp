@@ -39,7 +39,7 @@ int main(void)
 
   //Algorithm parameters
   const double sharpness_angle = 25;   // control sharpness of the result.
-  const double edge_senstivity = 0;    // higher values will sample more points near the edges          
+  const double edge_sensitivity = 0;    // higher values will sample more points near the edges          
   const double neighbor_radius = 0.2;  // initial size of neighborhood.
   const unsigned int number_of_output_points = points.size() * 50;   
 
@@ -51,7 +51,7 @@ int main(void)
             CGAL::First_of_pair_property_map<PointVectorPair>(),
             CGAL::Second_of_pair_property_map<PointVectorPair>(),
             sharpness_angle, 
-            edge_senstivity,
+            edge_sensitivity,
             neighbor_radius,
             number_of_output_points);
 
