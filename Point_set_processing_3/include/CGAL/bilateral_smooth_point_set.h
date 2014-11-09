@@ -338,15 +338,15 @@ public:
 ///                         Possible values are `Sequential_tag`
 ///                         and `Parallel_tag`.
 /// @tparam ForwardIterator iterator over input points.
-/// @tparam PointPMap is a model of `ReadablePropertyMap` 
+/// @tparam PointPMap is a model of `ReadWritePropertyMap` 
 ///         with the value type of `ForwardIterator` as key and `Kernel::Point_3` as value type.
-///         It can be omitted if `ForwardIterator::value_type` is convertible to 
+///         It can be omitted if the value type of `ForwardIterator` is convertible to 
 ///         `Kernel::Point_3`.
-/// @tparam NormalPMap is a model of `ReadablePropertyMap` with the value type of `ForwardIterator` as key
+/// @tparam NormalPMap is a model of `ReadWritePropertyMap` with the value type of `ForwardIterator` as key
 ///         and `Kernel::Vector_3` as value type.
 /// @tparam Kernel Geometric traits class.
-///      It can be omitted and deduced automatically from PointPMap's value_type.
-///      `Kernel_traits` are used for deducing the kernel.
+///      It can be omitted and deduced automatically from the value type of  `PointPMap`
+///      using `Kernel_traits`.
 ///
 /// @return Average point movement error. It's a convergence criterium for the algorithm.
 ///         This value can help the user to decide how many iterations are

@@ -316,15 +316,15 @@ compute_density_weight_for_sample_point(
 ///                         Possible values are `Sequential_tag`
 ///                         and `Parallel_tag`.
 /// @tparam OutputIterator Type of the output iterator. 
-///         The type of the objects is `Kernel::Point_3`.
+///         It must accept objects of type `Kernel::Point_3`.
 /// @tparam RandomAccessIterator Iterator over input points.
 /// @tparam PointPMap is a model of `ReadablePropertyMap` 
 ///         with the value type of `ForwardIterator` as key and `Kernel::Point_3` as value type.
 ///         It can be omitted if RandomAccessIterator value_type is convertible  
 ///         to `Kernel::Point_3`.
 /// @tparam Kernel Geometric traits class.
-///      It can be omitted and deduced automatically from PointPMap's value_type.
-///      `Kernel_traits` are used for deducing the kernel.
+///      It can be omitted and deduced automatically from the value type of  `PointPMap`
+///      using `Kernel_traits`.
 
 // This variant requires all parameters.
 template <typename Concurrency_tag,
@@ -339,7 +339,7 @@ wlop_simplify_and_regularize_point_set(
   OutputIterator output,       ///< output iterator where output points are put.
   PointPMap point_pmap,        ///< point property map.
   double select_percentage,    ///< percentage of points to retain. 
-                               ///< The default value is set to 5(\%).
+                               ///< The default value is set to 5 (\%).
   double radius,               ///< spherical neighborhood radius.
                                ///< This is a key parameter that needs to be finely tuned.  
                                ///< The result will be irregular if too small, but a larger

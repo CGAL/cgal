@@ -290,8 +290,8 @@ update_new_point(
 /// @tparam NormalPMap is a model of `ReadablePropertyMap` with the value type of `ForwardIterator` as key
 ///         and `Kernel::Vector_3` as value type.
 /// @tparam Kernel Geometric traits class.
-///      It can be omitted and deduced automatically from PointPMap's value_type.
-///      `Kernel_traits` are used for deducing the kernel.
+///      It can be omitted and deduced automatically from the value type of  `PointPMap`
+///      using `Kernel_traits`.
 ///
 
 // This variant requires all parameters.
