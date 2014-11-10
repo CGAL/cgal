@@ -893,8 +893,8 @@ derives from the class
 `Triangulation_face_base_2<Traits>`
 and adds three Boolean data members to store the status of its edges.
 
-\cgalFigureBegin{Triangulation_2D_Fig_constrained,poisson_del_poisson.png}
-Constrained and Constrained Delaunay triangulation: the constraining edges are the green edges, a constrained triangulation is shown on the left, the constrained Delaunay triangulation with two examples of circumcircles is shown on the right.
+\cgalFigureBegin{Triangulation_2D_Fig_constrained,poisson_del_poisson.svg}
+Constrained and Constrained Delaunay triangulation: the constraining edges are the black edges, a constrained triangulation is shown on the left, the constrained Delaunay triangulation with two examples of circumcircles is shown on the right.
 \cgalFigureEnd
 
 
