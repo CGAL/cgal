@@ -24,7 +24,7 @@ available in \cgal:
 basic triangulations (Section \ref Section_2D_Triangulations_Basic),
 Delaunay triangulations
 (Section \ref Section_2D_Triangulations_Delaunay),
-regular triangulationssub
+regular triangulations
 (Section \ref Section_2D_Triangulations_Regular),
 constrained triangulations
 (Section \ref Section_2D_Triangulations_Constrained),
