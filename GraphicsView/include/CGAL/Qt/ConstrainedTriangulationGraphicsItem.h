@@ -48,6 +48,11 @@ public:
     return constraints_pen;
   }
 
+  QPen& constraintsPen()
+  {
+    return constraints_pen;
+  }
+
   void setConstraintsPen(const QPen& pen)
   {
     constraints_pen = pen;

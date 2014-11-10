@@ -12,8 +12,8 @@ in the triangulation.
 The class `Constrained_triangulation_plus_2<Tr>`
 inherits from its template parameter Tr, which has to be instantiated
 by a constrained or constrained Delaunay triangulation.
-According to its intersection tag, the base class
-will support intersecting input constraints or not.
+The intersection tag of the base class determines whether 
+intersecting input constraints are supported or not.
 When intersections of input constraints are supported,
 the base class constructs a triangulation of the arrangement
 of the constraints,
@@ -31,9 +31,9 @@ triangulation, which is a pair of a face handle and an index.
 
 The constraint hierarchy also allows to retrieve the set
 of subconstraints of the triangulation (not ordered along constraints).
-It further allows to retrieve for a subconstraint, the set of input constraints that overlap it.
+It further allows to retrieve for a subconstraint, the set of input constraints that induce it.
 As it is straightforward to obtain a subconstraint from a constrained edge `e`,
-one can obtain the input constraints which overlap `e`.
+one can obtain the input constraints which induce `e`.
 
 \tparam Tr must be either a CGAL::Constrained_triangulation_2 or a CGAL::Constrained_Delaunay_triangulation_2
 
@@ -56,9 +56,9 @@ The triangulation base class.
 typedef Tr Triangulation; 
 
 /*! 
-The intersection tag.
+The intersection tag as defined in `Tr`.
 */ 
-typedef Itag Intersection_tag; 
+  typedef Tr::Intersection_tag Intersection_tag; 
   
 /*!
 The identifier of a polyline constraint. For reasons of backward compatibility of
@@ -107,16 +107,21 @@ through a subconstraint.
       returns the constraint id.
      */
     Constraint_id id() const;
+
     /*!
       returns the first vertex of the enclosing constraint.
      */
     Vertices_in_constraint_iterator vertices_begin() const;
+
   /*!
-      returns the past the end of the vertices of the enclosing constraint.
+      returns the past-the-end of the vertices of the enclosing constraint.
      */
     Vertices_in_constraint_iterator vertices_end() const;
+
   /*!
-    returns the current vertex of the enclosing constraint.
+    returns the iterator `vici`  of the enclosing constraint
+    for which `*vici` and `*std::next(vici)`
+    correspond to the two vertices of the subconstraint.
      */
     Vertices_in_constraint_iterator current() const;
   }; 
@@ -282,26 +287,24 @@ void remove_constraint(Constraint_id cid);
 /// @{
 
 /*! 
-Returns a `Constraint_iterator` pointing on the first 
-constraint. 
+Returns a `Constraint_iterator` that points at the first 
+constraint of the triangulation. 
 */ 
 Constraint_iterator constraints_begin() const; 
 
 /*! 
-Returns a `Constraint_iterator` pointing past the end 
-constraint. 
+Returns the past-the-end iterator of the constraints of the triangulation. 
 */ 
 Constraint_iterator constraints_end() const; 
 
 /*! 
-Returns a `Subconstraint_iterator` pointing on the first 
-subconstraint. 
+Returns a `Subconstraint_iterator` pointing at the first 
+subconstraint of the triangulation. 
 */ 
 Subconstraint_iterator subconstraints_begin() const; 
 
 /*! 
-Returns a `Subconstraint_iterator` pointing past the end 
-subconstraint. 
+Returns the past-the-end iterator of the subconstraints of the triangulation. 
 */ 
 Subconstraint_iterator subconstraints_end() const; 
 
@@ -321,7 +324,7 @@ enclosing the subconstraint `(va,vb)`.
 Context context(Vertex_handle va, Vertex_handle vb) const; 
 
 /*! 
-Returns an iterator pointing on the first `Context` 
+Returns an iterator pointing at the first `Context` 
 of the sequence of contexts
 corresponding to the constraints enclosing the subconstraint `(va,vb)`. 
 \pre `va` and `vb` refer to the vertices of a constrained edge of the triangulation. 
@@ -435,9 +438,9 @@ The polyline simplification algorithm described in Chapter
 operates on polyline constraints and applies `simplify()` to vertices in
 constraints based on a cost and stop function.
 
-\pre All vertices of the triangulation must be a vertex of a constaint.
-\pre `vicq` must neither be the first, nor the last vertex on a constraint.
-\pre There must be no other constraint passing through `vicq`.
+\pre All vertices of the triangulation must be a vertex of a constraint.
+\pre `vicq` must neither be the first nor the last vertex on a constraint.
+\pre The vertex referred by vicq is not contained in any other constraint.
 \pre Let `vip` and `vir` be defined as `vip = std::prev(vicq)` and `vir = std::next(vicr)`.
 \pre The line segment between `*vicp->point()` and `*vicr->point()` must not intersect any constraint.
 \cgalAdvancedEnd

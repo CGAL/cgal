@@ -7,14 +7,14 @@ namespace CGAL {
 \cgalAutoToc
 \author Mariette Yvinec
 
-\image html tr1dt1.png
+\image html tr1dt1.svg
 \image latex tr1dt1.png
 
 This chapter describes the two dimensional triangulations
 of \cgal. 
 Section \ref Section_2D_Triangulations_Definitions recalls the
 main definitions about triangulations.
-Sections \ref Section_2D_Triangulations_Representation discusses
+Section \ref Section_2D_Triangulations_Representation discusses
 the way two-dimensional triangulations are represented in \cgal.
 Section \ref Section_2D_Triangulations_Software_Design presents
 the overall software
@@ -1025,14 +1025,13 @@ Two consecutive vertices of an input constraint form a *subconstraint*.
 The constraint hierarchy allows to retrieve the set
 of subconstraints of the triangulation (not ordered along constraints).
 
-It further allows to retrieve for a subconstraint, the set of input constraints that overlap it.
+It further allows to retrieve for a subconstraint, the set of input constraints that induce it.
 As it is straightforward to obtain a subconstraint from a constrained edge `e`,
-one can obtain the input constraints which overlap `e`.
-
+one can easily obtain the input constraints that induce `e`.
 
 \subsection Subsection_Edges_and_Constraints Edges, Constrained Edges, Constraints, and Subconstraints
 
-All triangulation classes define the type `Edge` as  `typedef std::pair<Face_handle>, int> Edge`.
+All triangulation classes define the type `Edge` as  `typedef std::pair<Face_handle, int> Edge`.
 For a pair `(fh,i)` it is the edge of the face `*fh`, which is opposite to the `i`'th vertex.
 
 A <em>constrained edge</em> `e` is an edge of a constrained triangulation `ct`, for which `ct.is_constrained(e)` returns `true`.
@@ -1049,12 +1048,24 @@ The type `Constraint_id` allows to identify a constraint.
 All constrained triangulation classes of \cgal allow to insert constraints, have the notion of constrained edges,
 and offer a `Constrained_edges_iterator`.
 
-Only the class `Constrained_triangulation_plus_2` allows 
-- to enumerate the constraints with a `Constraint_iterator` with value type `Constraint_id`,
-- to obtain all constraints that overlap with a constrained edge or a subconstraint,
-- to traverse the sequence of vertices of a constraint with a `Vertices_in_constraint_iterator`,  
-- to enumerate the subconstraints in the triangulation with a `Subconstraint_iterator`, with value type `Subconstraint`.
-  This iterator is similar to the `Constrained_edges_iterator`.  
+The class `Constrained_triangulation_plus_2` provides the means to
+- traverse all the constraints of the triangulation using an iterator of type `Constraint_iterator` the value type of which is `Constraint_id`,
+- obtain all constraints that induce a constrained edge or a subconstraint,
+- traverse the sequence of vertices of a constraint  using an iterator of type `Vertices_in_constraint_iterator`, the value type of which is `Vertex_handle` 
+- enumerate the subconstraints in the triangulation  using an iterator of type `Subconstraint_iterator`,the value type of which is `Subconstraint`.
+
+Note that the `Constrained_edges_iterator` and the `Subconstraint_iterator` are quite similar.
+The `Constrained_edges_iterator` iterates over all edges and enumerates those that are constrained,
+which means that the time of traversal will be linear in the number of total edges.
+whereas the `Subconstraint_iterator` traverses a set of subconstraints stored in the triangulation.
+
+On the other hand, as a subconstraint is only a pair
+of vertex handles, determining the corresponding `Edge`
+takes the smaller degree of the two vertices,
+wheresas obtaining an Edge from a subconstraint is
+a constant time operation.
+
+
 
 \subsection Subsection_Constrained_plus_avoids_cascacding The Intersection Tag
 
@@ -1096,7 +1107,7 @@ For an edge we can further find out how many and which polyline
 constraints pass through it. For an edge we can obtain an iterator
 range with value type `Constrained_triangulation_plus_2::Context`.
 From a context we can obtain the `Constrained_triangulation_plus_2::Constraint_id`, and an iterator
-pointing to the vertex in the polyline constraint that passes 
+pointing at the vertex in the polyline constraint that passes 
 through the edge.
 
 

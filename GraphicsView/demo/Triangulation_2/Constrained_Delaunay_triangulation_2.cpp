@@ -275,7 +275,9 @@ MainWindow::MainWindow()
   QObject::connect(this, SIGNAL(changed()),
 		   dgi, SLOT(modelChanged()));
 
-  dgi->setVerticesPen(QPen(Qt::red, 3, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+  dgi->verticesPen().setColor(Qt::black);
+  dgi->edgesPen().setColor(QColor("#333333"));
+  dgi->constraintsPen().setColor(QColor("#000080"));
   dgi->setZValue(-1);
   scene.addItem(dgi);
 
