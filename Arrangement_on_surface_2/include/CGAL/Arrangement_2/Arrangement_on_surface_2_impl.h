@@ -40,6 +40,7 @@
  */
 
 #include <CGAL/function_objects.h>
+#include <CGAL/use.h>
 
 namespace CGAL {
 
@@ -909,6 +910,8 @@ insert_at_vertices(const X_monotone_curve_2& cv,
                    Vertex_handle v1, Vertex_handle v2,
                    Face_handle f)
 {
+  CGAL_USE(f);
+
   // Determine which one of the given vertices matches the left end of the
   // given curve.
   const bool at_obnd1 = !m_geom_traits->is_closed_2_object()(cv, ARR_MIN_END);

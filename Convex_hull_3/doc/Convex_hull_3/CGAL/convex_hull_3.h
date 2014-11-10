@@ -5,7 +5,8 @@ namespace CGAL {
 
 \brief computes the convex hull of the set of points in the range
 [`first`, `last`). The polyhedron `P` is cleared, then
-the convex hull is stored in `P`.
+the convex hull is stored in `P`. Note that the convex hull will be triangulated,
+that is `P` will contain only triangular facets.
  
 \attention This function does not compute the plane equations of the faces of `P`.
 
@@ -45,6 +46,8 @@ void convex_hull_3(InputIterator first, InputIterator last, Polyhedron_3& P, con
 \brief computes the convex hull of the set of points in the range
 [`first`, `last`). The result, which may be a point, a segment,
 a triangle, or a polyhedron, is stored in `ch_object`. 
+In the case the result is a polyhedron, the convex hull will be triangulated,
+that is the polyhedron will contain only triangular facets.
 
 \attention This function does not compute the plane equations of the faces of `P`
 in case the result is a polyhedron.

@@ -29,7 +29,7 @@ public:
 
 /// \name Creation
 /// @{
-  /// Default constructor. Required only if the default parameter is used in the constructor of `CGAL::Deform_mesh`.
+  /// Default constructor. Required only if the default parameter is used in the constructor of `CGAL::Surface_mesh_deformation`.
   SurfaceModelingWeights();
 /// @}
 

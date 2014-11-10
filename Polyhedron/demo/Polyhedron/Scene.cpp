@@ -344,9 +344,9 @@ Scene::draw_aux(bool with_names, Viewer_interface* viewer)
           item.draw_edges();
         }
       }
-      if(with_names) {
-        ::glPopName();
-      }
+    }
+    if(with_names) {
+      ::glPopName();
     }
   }
 
@@ -372,15 +372,15 @@ Scene::draw_aux(bool with_names, Viewer_interface* viewer)
         else
           item.draw_points();
       }
-      if(with_names) {
-        ::glPopName();
-      }
+    }
+    if(with_names) {
+      ::glPopName();
     }
   }
 
 #ifdef CGAL_GLEW_ENABLED
   // Splatting
-  if(ms_splatting->isSupported())
+  if(!with_names && ms_splatting->isSupported())
   {
     ms_splatting->beginVisibilityPass();
     for(int index = 0; index < m_entries.size(); ++index)

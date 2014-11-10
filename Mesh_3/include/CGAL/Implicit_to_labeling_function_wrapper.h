@@ -37,10 +37,13 @@
 #endif
 
 #include <boost/dynamic_bitset.hpp>
-
-namespace CGAL {
+#include <boost/type_traits/remove_reference.hpp>
+#include <boost/type_traits/remove_cv.hpp>
 
 #include <CGAL/config.h>
+#include <CGAL/assertions.h>
+
+namespace CGAL {
 
 /**
  * @class Implicit_to_labeling_function_wrapper

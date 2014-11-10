@@ -72,7 +72,7 @@ uniform float oneOverEwaRadius;
 //    Vertex Shader
 //--------------------------------------------------------------------------------
 
-#ifdef __VisibilityVP__
+#ifdef GLSPLAT__VisibilityVP__
 varying vec2 scaledFragCenter2d;
 void VisibilityVP(void)
 {
@@ -138,7 +138,7 @@ void VisibilityVP(void)
 //    Fragment Shader
 //--------------------------------------------------------------------------------
 
-#ifdef __VisibilityFP__
+#ifdef GLSPLAT__VisibilityFP__
 varying vec2 scaledFragCenter2d;
 uniform vec3 rayCastParameter1;
 uniform vec3 rayCastParameter2;
@@ -176,7 +176,7 @@ void VisibilityFP(void)
 
 #endif
 
-#ifdef __AttributeVP__
+#ifdef GLSPLAT__AttributeVP__
 
 varying vec2 scaledFragCenter2d;
 
@@ -264,7 +264,7 @@ void AttributeVP(void)
 //    Fragment Shader
 //--------------------------------------------------------------------------------
 
-#ifdef __AttributeFP__
+#ifdef GLSPLAT__AttributeFP__
 // this sampler is only used by this fragment shader
 
 varying vec2 scaledFragCenter2d;

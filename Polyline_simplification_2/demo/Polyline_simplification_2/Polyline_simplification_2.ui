@@ -149,6 +149,7 @@
     <addaction name="separator" />
     <addaction name="actionClear" />
     <addaction name="actionLoadConstraints" />
+    <addaction name="action_Export_SVG"/>
     <addaction name="separator" />
     <addaction name="actionQuit" />
    </widget>
@@ -164,7 +165,6 @@
     <addaction name="actionRecenter" />
    </widget>
    <addaction name="menuFile" />
-   <addaction name="menuEdit" />
    <addaction name="menuTools" />
   </widget>
   <action name="actionAbout" >
@@ -190,7 +190,7 @@
     <bool>true</bool>
    </property>
    <property name="checked" >
-    <bool>false</bool>
+    <bool>true</bool>
    </property>
    <property name="icon" >
     <iconset resource="../icons/Input.qrc" >
@@ -266,8 +266,11 @@
     <string>Ctrl+S</string>
    </property>
   </action>
-  
-
+  <action name="action_Export_SVG">
+   <property name="text">
+    <string>&amp;Export SVG...</string>
+   </property>
+  </action>
  </widget>
  <resources>
   <include location="Polyline_simplification_2.qrc" />

@@ -1,7 +1,17 @@
 
+-------------------------------- Release 4.5.1 --------------------------------
+
+Release date: XX 2014
+
+
+* 3D Mesh Generation
+
+  - Fix a bug in the sliver exudation preservation of boundaries.
+
+
 -------------------------------- Release 4.5 --------------------------------
 
-Release date: September 2014
+Release date: October 2014
 
 
 * Installation
@@ -22,15 +32,18 @@ Release date: September 2014
   - CGAL is now compatible with the new CMake version 3.0.
 
 
-* dD Geometry Kernel
+* Triangulated Surface Mesh Deformation (new package)
 
-  - A new model Epick_d of the Kernel_d concept is introduced. It provides
-    better performance through arithmetic filtering and specializations for
-    fixed dimensions. It may not work with compilers as old as gcc-4.2, but was
-    tested with gcc-4.4.
+  - This package allows to deform a triangulated surface mesh under positional
+    constraints of some of its vertices without requiring any additional
+    structure other than the surface mesh itself. The methods provided
+    implements an as-rigid-as-possible deformation. Note that the main class
+    name has changed between the 4.5-beta1 and the 4.5 releases to better match
+    the CGAL naming conventions (from CGAL::Deform_mesh to CGAL::
+    Surface_mesh_deformation).
 
 
-* CGAL and the Boost Graph Library (Major changes)
+* CGAL and the Boost Graph Library (major changes)
 
   - Cleanup of the HalfedgeGraph concept. In particular:
 
@@ -70,6 +83,19 @@ Release date: September 2014
     graph_traits_PolyMesh_ArrayKernelT.h.
 
 
+* dD Geometry Kernel
+
+  - A new model Epick_d of the Kernel_d concept is introduced. It provides
+    better performance through arithmetic filtering and specializations for
+    fixed dimensions. It may not work with compilers as old as gcc-4.2, but was
+    tested with gcc-4.4.
+
+
+* 3D Convex Hulls
+
+  - Clean up the documentation of the concepts
+
+
 * 2D Arrangements
 
   - Fixed a bug in removing an unbounded curve (e.g., a ray) from an
@@ -83,11 +109,11 @@ Release date: September 2014
     private kd_tree package.
 
 
-* Spatial_searching
+* 3D Triangulations
 
-  - Added methods reserve(size_t size) and size_t capacity() to class Kd_tree
-    to allocate memory to store size points and to report that number (STL
-    compliance).
+  - Add an experimental parallel version of the Delaunay triangulation and the
+    regular triangulation algorithms, which allows parallel insertion and
+    removal of point ranges.
 
 
 * 3D Mesh Generation
@@ -104,21 +130,21 @@ Release date: September 2014
   - Add an experimental parallel version of the 3D mesh refinement and mesh
     optimization methods.
 
-
-* STL_extension
-
-  - Add Compact_container::operator[], allowing a direct access to the ith
-    element of a compact container.
-
-  - Add Concurrent_compact_container, a compact container which allows
-    concurrent insertion and removal.
+  - Add caching of circumcenters to Regular_triangulation_cell_base_3. The
+    cache value is computed when cell->circumcenter() or rt.dual(cell)
+    functions are called.
 
 
-* Triangulation_3
+* Point Set Processing and Surface Reconstruction from Point Sets
 
-  - Add an experimental parallel version of the Delaunay triangulation and the
-    Regular triangulation algorithms, which allows parallel insertion and
-    removal of point ranges.
+  - The former demo has been removed and is fully merge in the Polyhedron demo.
+
+
+* Point Set Processing
+
+  - Workaround a bug in dijsktra shortest path of boost 1.54 by shipping and
+    using the boost header from the 1.55 release. This header will be used only
+    if you are using the version 1.54 of boost.
 
 
 * Triangulated Surface Mesh Simplification
@@ -140,29 +166,20 @@ Release date: September 2014
     former behavior.
 
 
-* Triangulated Surface Mesh Deformation (new package)
+* dD Spatial Searching
 
-  - This package allows to deform a triangulated surface mesh under positional
-    constraints of some of its vertices without requiring any additional
-    structure other than the surface mesh itself. The methods provided
-    implements an as-rigid-as-possible deformation.
-
-
-* 3D Convex Hulls
-
-  - Clean up the documentation of the concepts
+  - Added methods reserve(size_t size) and size_t capacity() to class Kd_tree
+    to allocate memory to store size points and to report that number (STL
+    compliance).
 
 
-* Point Set Processing and Surface Reconstruction from Point Sets
+* STL Extensions for CGAL
 
-  - The former demo has been removed and is fully merge in the Polyhedron demo.
+  - Add Compact_container::operator[], allowing a direct access to the ith
+    element of a compact container.
 
-
-* Point Set Processing
-
-  - Workaround a bug in dijsktra shortest path of boost 1.54 by shipping and
-    using the boost header from the 1.55 release. This header will be used only
-    if you are using the version 1.54 of boost.
+  - Add Concurrent_compact_container, a compact container which allows
+    concurrent insertion and removal.
 
 
 -------------------------------- Release 4.4 --------------------------------
@@ -271,10 +288,6 @@ Release date: April 2014
 
   - Improve the use of cache values in Mesh_cell_base_3 to (re)compute
     circumcenters and sliver criterion values only when needed.
-
-  - Add caching of circumcenters to Regular_triangulation_cell_base_3. The
-    cache value is computed when cell->circumcenter() or rt.dual(cell)
-    functions are called.
 
 
 * Triangulated Surface Mesh Simplification

@@ -33,6 +33,7 @@
 #ifndef CGAL_NO_ASSERTIONS
 #  include <boost/math/special_functions/next.hpp> // for float_prior
 #endif
+#include <boost/function_output_iterator.hpp>
 
 namespace CGAL {
 namespace Mesh_3 {
@@ -1194,6 +1195,7 @@ change_ball_size(const Vertex_handle& v, const FT size, const bool special_ball)
     c3t3_.remove_from_complex(v);
   }
 
+  unchecked_vertices_.erase(v);
   // Change v size
   c3t3_.triangulation().remove(v);
  
@@ -1235,11 +1237,25 @@ change_ball_size(const Vertex_handle& v, const FT size, const bool special_ball)
   }
 
   // Update unchecked vertices
-  unchecked_vertices_.erase(v);
   unchecked_vertices_.insert(new_v);
   return new_v;
 }
+namespace details {
 
+  // Functor used by Protect_edges_sizing_field::check_and_repopulate_edges, below
+  template <typename Set>
+  class Erase_element_from_set {
+    Set* set_ptr;
+  public:
+    Erase_element_from_set(Set& set) : set_ptr(&set) {}
+
+    void operator()(const typename Set::key_type& x)
+    {
+      set_ptr->erase(x);
+    }
+  }; // end class Erase_element_from_set
+
+} // end namespace details
 
 template <typename C3T3, typename MD, typename Sf>
 void
@@ -1249,7 +1265,8 @@ check_and_repopulate_edges()
 #ifdef CGAL_MESH_3_PROTECTION_DEBUG
   std::cerr << "check_and_repopulate_edges()\n";
 #endif
-  std::set<Vertex_handle> vertices;
+  typedef std::set<Vertex_handle> Vertices;
+  Vertices vertices;
   std::copy( unchecked_vertices_.begin(), unchecked_vertices_.end(),
              std::inserter(vertices,vertices.begin()) );
   
@@ -1260,15 +1277,11 @@ check_and_repopulate_edges()
   {
     Vertex_handle v = *vertices.begin();
     vertices.erase(vertices.begin());
-    
-    Vertex_vector erased_vertices;
-    check_and_fix_vertex_along_edge(v, std::back_inserter(erased_vertices));
-    
-    for ( typename Vertex_vector::iterator vit = erased_vertices.begin(), 
-         vend = erased_vertices.end() ; vit != vend ; ++vit )
-    {
-      vertices.erase(*vit);
-    }
+
+    details::Erase_element_from_set<Vertices> erase_from_vertices(vertices);
+
+    check_and_fix_vertex_along_edge(v,
+      boost::make_function_output_iterator(erase_from_vertices));
   }
 }
 

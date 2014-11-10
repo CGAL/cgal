@@ -28,7 +28,7 @@ COMPILERS_localhost="${COMPILERS_localhost} x86-64_Darwin-13.0_Apple-llvm-gcc-4.
 COMPILERS_localhost="${COMPILERS_localhost} x86-64_Darwin-13.0_Apple-clang-3.2_Release-cpp11"
 COMPILERS_localhost="${COMPILERS_localhost} x86-64_Darwin-13.0_Apple-clang-3.2_Debug"
 COMPILERS_localhost="${COMPILERS_localhost} x86-64_Darwin-13.0_Apple-clang-3.2_Release"
-#COMPILERS_localhost="${COMPILERS_localhost} x86-64_Darwin-13.0_Apple-clang-5.1_Release-LEDA-without-GMP"
+COMPILERS_localhost="${COMPILERS_localhost} x86-64_Darwin-13.0_Apple-clang-5.1_Release-LEDA-without-GMP"
 BUILD_ON_localhost=all
 
 REFERENCE_PLATFORMS_DIR=$CGAL_ROOT/reference_platforms
@@ -38,3 +38,6 @@ UPLOAD_RESULT_DESTINATION="cgaltest@cgaltest.geometryfactory.com:incoming"
 
 EIGEN3_DIR=/Users/cgaltester/eigen-hg-git
 export EIGEN3_DIR
+
+ULIMIT_OPTIONS="-v 5000000 -c 0 -t 3600"
+export ULIMIT_OPTIONS

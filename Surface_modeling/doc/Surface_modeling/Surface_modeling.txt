@@ -64,11 +64,11 @@ The sparse matrix definition depends on the weighting scheme
 and on the unconstrained and control vertices.
 The right term depends only on the target positions of the control vertices.
 
-The deformation process is handled by the class `Deform_mesh` and the
+The deformation process is handled by the class `Surface_mesh_deformation` and the
 surface mesh is represented as a halfedge data structure that must
 be a model of the `HalfedgeGraph` concept.
 
-The class `Deform_mesh` provides two groups of functions for
+The class `Surface_mesh_deformation` provides two groups of functions for
 the preprocessing (sparse matrix definition) and the deformation (right hand term definition).
 
 \subsection Preprocess_section Preprocessing
@@ -91,7 +91,7 @@ This function also extends the ROI by adding as <em>fixed control vertex</em> an
 to a vertex of the ROI. The target position of a fixed control vertex is its current position and cannot be changed.
 -->
 
-The function `Deform_mesh::preprocess()` returns `true` if the factorization is successful, and `false` otherwise.
+The function `Surface_mesh_deformation::preprocess()` returns `true` if the factorization is successful, and `false` otherwise.
 
 Rank deficiency is the main reason for failure. Typical failure cases are:
   - All the vertices are in the ROI and no control vertices are set
@@ -116,26 +116,26 @@ to be applied to a control vertex or a range of control vertices).
 Note that a rotation or a translation of a control vertex is always applied on its last target position set:
 they are cumulative.
 
-The deformation of the surface mesh happens when calling the function `Deform_mesh::deform()`. The number of optimization iterations
+The deformation of the surface mesh happens when calling the function `Surface_mesh_deformation::deform()`. The number of optimization iterations
 varies depending on whether the user chooses a fixed number of iterations or a stopping criterion based on the energy variation.
 
 After the call to the deformation function, the input surface mesh is updated and the control vertices are at
 their target positions and the unconstrained vertices are moved accordingly.
-The function `Deform_mesh::deform()` can be called several times consecutively, in particular
+The function `Surface_mesh_deformation::deform()` can be called several times consecutively, in particular
 if the convergence has not been reached yet (otherwise it has no effect).
 
 \warning Vertices can be inserted into or erased from the ROI and the set of control vertices at any time.
 In particular, any vertex that is no longer inside the ROI will be assigned to its original position when
-`Deform_mesh::preprocess()` is first called.
-The original positions can be updated by calling `Deform_mesh::overwrite_initial_geometry()` (
+`Surface_mesh_deformation::preprocess()` is first called.
+The original positions can be updated by calling `Surface_mesh_deformation::overwrite_initial_geometry()` (
 which will also require a new preprocessing step).
-This behavior is illustrated in the video \ref Surface_Modeling_Demo_Tutorial.
+This behavior is illustrated in \ref SModelingVideo_1 "Video 1".
 
 \subsection Surface_modeling_arap_or_spokes_and_rims As-Rigid-As-Possible and Spokes-and-Rims Deformation Techniques
 Two deformation techniques are provided by this package. This section summarizes from the user point of view what is
 explained in details in the section \ref Surface_Modeling_Overview.
 
-The As-Rigid-As-Possible deformation technique requires the use of a positive weighting scheme to garantee
+The As-Rigid-As-Possible deformation technique requires the use of a positive weighting scheme to guarantee
 the correct minimization of the energy. When using the default cotangent weighting scheme, this means that
 the input surface mesh must be <em>clean</em>. That is, that for all edges in the surface mesh
 the sum of the angles opposite to the edge in the incident triangles is less that \f$ \pi \f$.
@@ -160,7 +160,7 @@ However, this technique is more dependent on the discretization of the deformed 
 
 \subsubsection SModelingExample_1 Using the Whole Surface Mesh as Region-of-Interest
 In this example, the whole surface mesh is used as ROI and a few vertices are added as control vertices.
-`Deform_mesh::set_target_position()` is used for setting the target positions of the control vertices.
+`Surface_mesh_deformation::set_target_position()` is used for setting the target positions of the control vertices.
 
 \cgalExample{Surface_modeling/all_roi_assign_example.cpp}
 
@@ -178,7 +178,7 @@ Note that the translations and the rotations are defined using a 3D vector type 
 Deformation results when running example \ref SModelingExample_2 : `deform_1.off` and `deform_2.off`.
 \cgalFigureEnd
 
-\subsubsection SModelingExample_3 Using an Enriched Polyhedron with Ids
+\subsubsection SModelingExample_3 Using Polyhedron without Ids
 In the previous examples, we used an <i>enriched</i> polyhedron storing an ID
 in its halfedges and vertices together with the default property maps
 in the deformation object to access them.
@@ -199,33 +199,44 @@ Another example is given in the manual page of the concept `::SurfaceModelingWei
 \cgalExample{Surface_modeling/custom_weight_for_edges_example.cpp}
 
 \section Surface_Modeling_Demo How to Use the Demo
-\todo Update these videos when the demo is stable
 
 A plugin for the polyhedron demo is available to test the algorithm. The following video tutorials explain how to use it.
+When the deformation dock window is open, the picking of control vertices and of the ROI is done by pressing <i>Shift</i>
+and clicking with the left button of the mouse.
+The displacement of the vertices is triggered when the <i>Ctrl</i> button is pressed.
 
-\subsection Surface_Modeling_Demo_Showcase An Introduction and Real World Example
-@htmlonly
+\anchor SModelingVideo_1
+\htmlonly
 <center>
-<iframe width="420" height="315" src="http://www.youtube.com/embed/WvC47fVSPGU" frameborder="0" allowfullscreen></iframe>
-
-<iframe width="420" height="315" src="http://www.youtube.com/embed/0oTi5aKdcmg" frameborder="0" allowfullscreen></iframe>
+<iframe width="560" height="315" src="http://www.youtube.com/embed/akpYaDLuaUI?rel=0" frameborder="0" allowfullscreen></iframe>
 </center>
-@endhtmlonly
+<div class="cgal_video_caption"> <a class="el" href="index.html#SModelingVideo_1">Video 1</a> Grouping of control vertices.</div>
+\endhtmlonly
 
-\subsection Surface_Modeling_Demo_Tutorial Demonstration for Deleting Control Vertices / ROI and Overwrite
-
-@htmlonly
+\anchor SModelingVideo_2
+\htmlonly
 <center>
-<iframe width="420" height="315" src="http://www.youtube.com/embed/xPAG_AOLvU0" frameborder="0" allowfullscreen></iframe>
+<iframe width="560" height="315" src="http://www.youtube.com/embed/1cpnkx_YG5E?rel=0" frameborder="0" allowfullscreen></iframe>
 </center>
-@endhtmlonly
+<div class="cgal_video_caption"> <a class="el" href="index.html#SModelingVideo_2">Video 2</a>
+Convergence: this video shows that upon fast changes of the positions of the control vertices,
+more iteration steps are needed to reach the convergence.</div>
+\endhtmlonly
+
+\anchor SModelingVideo_3
+\htmlonly
+<center>
+<iframe width="560" height="315" src="http://www.youtube.com/embed/-1rO-RdbudM?rel=0" frameborder="0" allowfullscreen></iframe>
+</center>
+<div class="cgal_video_caption"> <a class="el" href="index.html#SModelingVideo_3">Video 3</a> A complete example: changing the pose of a dinausor.</div>
+\endhtmlonly
 
 
-\section Surface_Modeling_Overview Deformations Techniques, Energies and Weighting Scheme
-This section gives the theorical background to make the user manual self-contained
+\section Surface_Modeling_Overview Deformation Techniques, Energies and Weighting Schemes
+This section gives the theoretical background to make the user manual self-contained
 and at the same time explains where the weights comes in. This allows advanced users
 of this package to tune the weighting scheme by developing a model of the concept
-`SurfaceModelingWeights` used in the class `Deform_mesh`.
+`SurfaceModelingWeights` used in the class `Surface_mesh_deformation`.
 
 \subsection Surface_Modeling_Overview_Preliminaries Preliminaries
 \subsubsection Surface_Modeling_Overview_Laplacian Laplacian Representation

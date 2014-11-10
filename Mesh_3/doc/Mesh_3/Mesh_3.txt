@@ -579,6 +579,37 @@ constructor of the `Mesh_criteria` instance.
 Cut view of a 3D mesh produced from an implicit domain
 \cgalFigureEnd
 
+\subsection Mesh_3MeshingMultipleDomains Meshing Multiple Domains
+
+\anchor Mesh_3_subsection_examples_multi_domain
+
+\subsubsection Mesh_3MeshingMultipleDomains_1 Construction from a vector of implicit functions
+
+The following code produces a 3D mesh for a domain consisting of several subdomains.
+It uses `Implicit_multi_domain_to_labeling_function_wrapper` as model of `ImplicitFunction` which is required by `Labeled_mesh_domain_3`.
+
+\cgalFigureRef{figuremulti_domain} shows a view and a cut view of the
+resulting mesh.
+
+\cgalExample{Mesh_3/mesh_implicit_domains.cpp}
+\cgalFigureBegin{figuremulti_domain,multi_domain.jpg,multi_domain_cut.jpg}
+View (left) and cut view (right) of a 3D mesh of a torus intersecting sphere.
+\cgalFigureEnd
+
+\subsubsection Mesh_3MeshingMultipleDomains_2 Construction from a vector of implicit functions and a vector of strings
+
+The following code produces a 3D mesh for a domain consisting of several subdomains too.
+Here, the set of subdomains is given by a vector of vector of signs, whereas the set was built automatically in the previous example.
+Each subdomain corresponds to a sign vector [s1, s2, ..., sn] where si is the sign of the function fi(p) at a point p of the subdomain.
+
+\cgalFigureRef{figuremulti_domain} shows a view of the
+resulting mesh.
+
+\cgalExample{Mesh_3/mesh_implicit_domains_2.cpp}
+\cgalFigureBegin{figuremulti_domain,multi_domain_2.jpg}
+View of a 3D mesh of the relative complement of a torus in a sphere.
+\cgalFigureEnd
+
 \subsection Mesh_33DPolyhedralDomains 3D Polyhedral Domains
 
 \anchor Mesh_3_subsection_examples_polyhedral

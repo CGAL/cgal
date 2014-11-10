@@ -58,7 +58,6 @@ public:
                  , typename Constrained_triangulation_plus_2<CDT>::Vertices_in_constraint_iterator vicq) const
   {
     typedef typename Constrained_triangulation_plus_2<CDT>::Points_in_constraint_iterator Points_in_constraint_iterator;
-    typedef typename Constrained_triangulation_plus_2<CDT>::Vertex_handle Vertex_handle;
     typedef typename Constrained_triangulation_plus_2<CDT>::Vertex_circulator Vertex_circulator;
     typedef typename Constrained_triangulation_plus_2<CDT>::Geom_traits Geom_traits ;
     typedef typename Geom_traits::Compute_squared_distance_2 Compute_squared_distance;
@@ -74,7 +73,6 @@ public:
     Vertices_in_constraint_iterator vicr = boost::next(vicq); 
 
     Point const& lP = (*vicp)->point();
-    Point const& lQ = (*vicq)->point();
     Point const& lR = (*vicr)->point();
 
     Segment lP_R = construct_segment(lP, lR) ;
@@ -86,23 +84,17 @@ public:
     for ( ;pp != rr; ++pp )
       d1 = (std::max)(d1, compute_squared_distance( lP_R, *pp ) ) ;
 
-    FT d2;
-    bool d2_uninitialized = true;
+    FT d2 = mSquaredRatio;
 
     Vertex_circulator vc = (*vicq)->incident_vertices(), done(vc);
     do {
       if((vc != pct.infinite_vertex()) && (vc != *vicp) && (vc != *vicr)){
-        if(d2_uninitialized){
-          d2 = compute_squared_distance(vc->point(), (*vicq)->point());
-          d2_uninitialized = false;
-        } else {
-          d2 = (std::min)(d2, compute_squared_distance(vc->point(), (*vicq)->point()));
-        }
+	d2 = (std::min)(d2, compute_squared_distance(vc->point(), (*vicq)->point()));
       }
       ++vc;
     }while(vc != done);
 
-    return d1 / (std::min)(d2, mSquaredRatio) ;
+    return d1 / d2;
   }
 
 private:

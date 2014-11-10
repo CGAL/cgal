@@ -196,6 +196,7 @@ MainWindow::MainWindow()
   this->setupOptionsMenu();
   this->addAboutDemo(":/cgal/help/about_Polyline_simplification_2.html");
   this->addAboutCGAL();
+  this->setupExportSVG(action_Export_SVG, graphicsView);
 
   this->addRecentFiles(this->menuFile, this->actionQuit);
   connect(this, SIGNAL(openRecentFile(QString)), this, SLOT(open(QString)));
@@ -463,8 +464,6 @@ void MainWindow::loadOSM(QString fileName)
     std::string line ;
     
     std::vector<Point_2> poly ;
-    
-    bool lIsClosed = true ;
     
     while ( std::getline(ifs,line) )
     {

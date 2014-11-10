@@ -1,0 +1,26 @@
+#!/bin/zsh
+
+cd /srv/CGAL/www/Members/testsuite
+
+if [ -z "$1" -o -z "$2" ]; then
+  printf "Example usage: %s 4.5-I-149 4.6-Ic-30 [DIFF_OPTION]...\n" "$0"
+  exit 1
+fi
+
+from="CGAL-$1"
+to="CGAL-$2"
+pager=${PAGER:-less}
+
+shift
+shift
+
+if ! [ -e "./$from" ]; then
+  printf "The CGAL release %s was not tested!\n" "$from"
+  exit 1
+fi
+if ! [ -e "./$to" ]; then
+  printf "The CGAL release %s was not tested!\n" "$to"
+  exit 1
+fi
+
+for f in ${from}/results*txt; do diff -U0 ${1+"$@"} $f ${f/$from/$to}; done |& less

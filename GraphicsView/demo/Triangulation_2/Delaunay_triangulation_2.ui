@@ -89,6 +89,7 @@
     <addaction name="actionClear" />
     <addaction name="actionLoadPoints" />
     <addaction name="actionSavePoints" />
+    <addaction name="actionExport_SVG" />
     <addaction name="separator" />
     <addaction name="actionQuit" />
    </widget>
@@ -124,6 +125,11 @@
   <action name="actionAboutCGAL" >
    <property name="text" >
     <string>About &amp;CGAL</string>
+   </property>
+  </action>
+  <action name="actionExport_SVG">
+   <property name="text">
+    <string>&amp;Export SVG...</string>
    </property>
   </action>
   <action name="actionQuit" >

@@ -352,7 +352,7 @@ satisfies_link_condition()
 {
   Surface_fixture_7<T> f;
 
-  assert(CGAL::Euler::safisfies_link_condition(*edges(f.m).first,f.m));
+  assert(CGAL::Euler::satisfies_link_condition(*edges(f.m).first,f.m));
 }
 
 

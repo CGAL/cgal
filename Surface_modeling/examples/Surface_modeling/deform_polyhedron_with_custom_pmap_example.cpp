@@ -5,7 +5,7 @@
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/boost/graph/properties_Polyhedron_3.h>
 #include <CGAL/property_map.h>
-#include <CGAL/Deform_mesh.h>
+#include <CGAL/Surface_mesh_deformation.h>
 
 #include <fstream>
 
@@ -25,7 +25,7 @@ typedef boost::associative_property_map<Vertex_id_map>           Vertex_id_pmap;
 typedef boost::associative_property_map<Hedge_id_map>             Hedge_id_pmap;
 
 
-typedef CGAL::Deform_mesh<Polyhedron, Vertex_id_pmap, Hedge_id_pmap> Deform_mesh;
+typedef CGAL::Surface_mesh_deformation<Polyhedron, Vertex_id_pmap, Hedge_id_pmap> Surface_mesh_deformation;
 
 int main()
 {
@@ -51,9 +51,9 @@ int main()
   for(boost::tie(eb, ee) = halfedges(mesh); eb != ee; ++eb, ++counter)
     hedge_index_map[*eb]=counter;
 
-  Deform_mesh deform_mesh( mesh,
-                           Vertex_id_pmap(vertex_index_map),
-                           Hedge_id_pmap(hedge_index_map) );
+  Surface_mesh_deformation deform_mesh( mesh,
+                                        Vertex_id_pmap(vertex_index_map),
+                                        Hedge_id_pmap(hedge_index_map) );
 
   // Now deform mesh as desired
   // .....

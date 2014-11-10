@@ -366,6 +366,30 @@ bool EdgeCollapse<M,SP,VIM,VPM,EIM,ECTM,CF,PF,V>::Is_collapse_topologically_vali
                    << ")" 
                    );
 
+  // Simple tests handling the case of non-manifold situations at a vertex or edge (pinching)
+  // (even if we advertise one should not use a surface mesh with such features)
+  if ( aProfile.left_face_exists () )
+  {
+    if ( CGAL::is_border( opposite(aProfile.v1_vL(), mSurface), mSurface ) &&
+         CGAL::is_border( opposite(aProfile.vL_v0(), mSurface), mSurface )
+        ) return false;
+
+    if ( aProfile.right_face_exists () &&
+         CGAL::is_border( opposite(aProfile.vR_v1(), mSurface), mSurface ) &&
+         CGAL::is_border( opposite(aProfile.v0_vR(), mSurface), mSurface )
+        ) return false;
+  }
+  else{
+    if ( aProfile.right_face_exists () )
+    {
+      if ( CGAL::is_border( opposite(aProfile.vR_v1(), mSurface), mSurface ) &&
+           CGAL::is_border( opposite(aProfile.v0_vR(), mSurface), mSurface )
+          ) return false;
+    }
+    else
+      return false;
+  }
+
   // The following loop checks the link condition for v0_v1.
   // Specifically, that for every vertex 'k' adjacent to both 'p and 'q', 'pkq' is a face of the mesh.
   // 

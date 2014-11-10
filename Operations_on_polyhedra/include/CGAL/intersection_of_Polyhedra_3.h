@@ -186,8 +186,8 @@ struct Order_along_a_halfedge{
   Order_along_a_halfedge(Halfedge_handle hedge_,const Nodes_vector& nodes_):nodes(nodes_),hedge(hedge_){}
   bool operator()(int i,int j) const {
     //returns true, iff q lies strictly between p and r.
+    typename Nodes_vector::Protector p;
     try{
-      typename Nodes_vector::Protector p;
       CGAL::internal::use(p);
 
       return CGAL::collinear_are_strictly_ordered_along_line(nodes.to_interval(hedge->vertex()->point()),

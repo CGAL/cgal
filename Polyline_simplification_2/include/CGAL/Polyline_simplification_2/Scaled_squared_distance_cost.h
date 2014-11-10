@@ -53,7 +53,6 @@ public:
                , typename Constrained_triangulation_plus_2<CDT>::Vertices_in_constraint_iterator vicq) const
   {
     typedef typename Constrained_triangulation_plus_2<CDT>::Points_in_constraint_iterator Points_in_constraint_iterator;
-    typedef typename Constrained_triangulation_plus_2<CDT>::Vertex_handle Vertex_handle;
     typedef typename Constrained_triangulation_plus_2<CDT>::Vertex_circulator Vertex_circulator;
     typedef typename Constrained_triangulation_plus_2<CDT>::Geom_traits Geom_traits ;
     typedef typename Geom_traits::FT                                  FT;
@@ -90,6 +89,7 @@ public:
       if((vc != pct.infinite_vertex()) && (vc != *vicp) && (vc != *vicr)){
         if(d2_uninitialized){
           d2 = compute_squared_distance(vc->point(), (*vicq)->point());
+	  d2_uninitialized = false;
         } else {
           d2 = (std::min)(d2, compute_squared_distance(vc->point(), (*vicq)->point()));
         }
@@ -97,7 +97,9 @@ public:
       ++vc;
     }while(vc != done);
 
-    return d1 / d2 ;
+    return d2_uninitialized ? 
+      boost::optional<FT>(boost::none) :
+      boost::optional<FT>(d1 / d2);
   }
 
 };
