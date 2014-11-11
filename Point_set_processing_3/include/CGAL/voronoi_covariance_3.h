@@ -3,7 +3,7 @@
 
 #include <list>
 #include <CGAL/array.h>
-#include <CGAL/Voronoi_covariance_3/voronoi_covariance_sphere_3.h>
+#include <CGAL/voronoi_covariance_sphere_3.h>
 #include <CGAL/Convex_hull_3/dual/halfspace_intersection_3.h>
 
 namespace CGAL {
