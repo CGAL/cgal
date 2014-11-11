@@ -4,7 +4,7 @@ namespace CGAL {
 \ingroup PkgConvexHull3Functions
 
 \brief computes robustly the intersection of the halfspaces defined by the planes contained in the range [`begin`, `end`) without constructing the dual points. The result is stored in the polyhedron `P`.
-`origin` is a point strictly inside the polyhedron.
+If `origin` is given then it must be a point strictly inside the polyhedron. If an interior point is not given then it is computed using a linear program and thus is slower than the first approach.
 This version does not compute the dual points, but instead it uses a traits class for handling predicates for dual points without computing them.
 
 \attention Halfspaces are considered as lower halfspaces that is to say if the plane's equation is \f$ a\, x +b\, y +c\, z + d = 0 \f$ then the corresponding halfspace is defined by \f$ a\, x +b\, y +c\, z + d \le 0 \f$ .
@@ -22,6 +22,6 @@ This version does not compute the dual points, but instead it uses a traits clas
 template <class PlaneIterator, class Polyhedron>
 void halfspace_intersection_3 (PlaneIterator begin, PlaneIterator end,
                                Polyhedron &P,
-                               typename Polyhedron::Vertex::Point_3 const& origin);
+                               Point_3 origin);
 
 } /* namespace CGAL */

@@ -257,37 +257,13 @@ namespace CGAL
         } // namespace internal
     } // namespace Convex_hull_3
 
-    // Compute the intersection of halfspaces by computing a point
-    // inside the polyhedron (using linear programming)
-    template <class PlaneIterator, class Polyhedron>
-    void halfspace_intersection_without_origin_3 (PlaneIterator begin, PlaneIterator end,
-                                                  Polyhedron &P) {
-        // Types
-        typedef typename Kernel_traits<typename Polyhedron::Vertex::Point_3>::Kernel K;
-        typedef typename Polyhedron::Vertex::Point_3 Point_3;
-
-        // choose exact integral type
-#ifdef CGAL_USE_GMP
-        typedef CGAL::Gmpq ET;
-#else
-        typedef CGAL::MP_Float ET;
-#endif
-        // find a point inside the intersection
-        typedef Interior_polyhedron_3<K, ET> Interior_polyhedron;
-        Interior_polyhedron interior;
-        bool res = interior.find(begin, end);
-        CGAL_assertion_msg(res, "halfspace_intersection_without_origin_3: problem when determing a point inside");
-        Point_3 origin = interior.inside_point();
-
-        // compute the intersection
-        halfspace_intersection_3(begin, end, P, origin);
-    }
-
-    // Compute the intersection of halfspaces with the origin given by the user
+    // Compute the intersection of halfspaces.
+    // If the user gives an origin then the function used it, otherwise, it is
+    // computed using a linear program.
     template <class PlaneIterator, class Polyhedron>
     void halfspace_intersection_3 (PlaneIterator begin, PlaneIterator end,
                                    Polyhedron &P,
-                                   typename Polyhedron::Vertex::Point_3 const& origin) {
+                                   boost::optional<typename Polyhedron::Vertex::Point_3> const& origin) {
         // Checks whether the intersection if a polyhedron
         CGAL_assertion_msg(Convex_hull_3::internal::is_intersection_dim_3(begin, end), "halfspace_intersection_3: intersection not a polyhedron");
 
@@ -296,18 +272,61 @@ namespace CGAL
         typedef Convex_hull_3::Convex_hull_traits_dual_3<K> Hull_traits_dual_3;
         typedef Polyhedron_3<Hull_traits_dual_3> Polyhedron_dual_3;
         typedef Convex_hull_3::internal::Build_primal_polyhedron<K, Polyhedron_dual_3, Polyhedron> Builder;
+        typedef typename Polyhedron::Vertex::Point_3 Point_3;
 
-        Hull_traits_dual_3 dual_traits(origin);
+        if (origin) {
+            Point_3 p_origin = boost::get(origin);
+            Hull_traits_dual_3 dual_traits(p_origin);
 
-        Polyhedron_dual_3 dual_convex_hull;
-        CGAL::convex_hull_3(begin, end, dual_convex_hull, dual_traits);
-        Builder build_primal(dual_convex_hull, origin);
-        P.delegate(build_primal);
+            Polyhedron_dual_3 dual_convex_hull;
+            CGAL::convex_hull_3(begin, end, dual_convex_hull, dual_traits);
+            Builder build_primal(dual_convex_hull, p_origin);
+            P.delegate(build_primal);
 
-        // Posterior check if the origin is inside the computed polyhedron
-        Polyhedron Q(P);
-        CGAL_assertion_msg(!Convex_hull_3::internal::point_inside_convex_polyhedron(Q, origin), "halfspace_intersection_3: origin not in the polyhedron");
+            // Posterior check if the origin is inside the computed polyhedron
+            Polyhedron Q(P);
+            CGAL_assertion_msg(!Convex_hull_3::internal::point_inside_convex_polyhedron(Q, p_origin), "halfspace_intersection_3: origin not in the polyhedron");
+        } else {
+          // choose exact integral type
+#ifdef CGAL_USE_GMP
+          typedef CGAL::Gmpq ET;
+#else
+          typedef CGAL::MP_Float ET;
+#endif
+          // find a point inside the intersection
+          typedef Interior_polyhedron_3<K, ET> Interior_polyhedron;
+          Interior_polyhedron interior;
+          bool res = interior.find(begin, end);
+          CGAL_assertion_msg(res, "halfspace_intersection_without_origin_3: problem when determing a point inside");
+          Point_3 origin = interior.inside_point();
+
+          Hull_traits_dual_3 dual_traits(origin);
+
+          Polyhedron_dual_3 dual_convex_hull;
+          CGAL::convex_hull_3(begin, end, dual_convex_hull, dual_traits);
+          Builder build_primal(dual_convex_hull, origin);
+          P.delegate(build_primal);
+
+          // Posterior check if the origin is inside the computed polyhedron
+          Polyhedron Q(P);
+          CGAL_assertion_msg(!Convex_hull_3::internal::point_inside_convex_polyhedron(Q, origin), "halfspace_intersection_3: origin not in the polyhedron");
+        }
     }
+
+  // Compute the intersection of halfspaces by computing a point inside.
+  template <class PlaneIterator, class Polyhedron>
+  void halfspace_intersection_3 (PlaneIterator begin, PlaneIterator end,
+                                 Polyhedron &P) {
+    halfspace_intersection_3(begin, end , P, boost::none);
+  }
+
+  // Compute the intersection of halfspaces (an interior point is given.)
+  template <class PlaneIterator, class Polyhedron>
+  void halfspace_intersection_3 (PlaneIterator begin, PlaneIterator end,
+                                 Polyhedron &P,
+                                 typename Polyhedron::Vertex::Point_3 const& origin) {
+    halfspace_intersection_3(begin, end , P, boost::optional<typename Polyhedron::Vertex::Point_3>(origin));
+  }
 } // namespace CGAL
 
 #endif // CGAL_HALFSPACE_INTERSECTION_3_H
