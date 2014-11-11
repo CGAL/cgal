@@ -838,16 +838,9 @@ public:
 
     /*! Implementation for identificatied sides calls the base. */
     Comparison_result comp_x_on_bnd(const Point_2& p1, const Point_2& p2,
-                                    Arr_has_identified_side_tag) const
-    {
-      return m_base->compare_x_on_boundary_2_object()(p1, p2);
-    }
-
-    Comparison_result comp_x_on_bnd(const Point_2& p1, const Point_2& p2,
-                                    Arr_boundary_cond_tag) const
-    {
-      return m_base->compare_x_on_boundary_2_object()(p1, p2);
-    }
+                                    Arr_identified_side_tag,
+                                    Arr_identified_side_tag) const
+    { return m_base->compare_x_on_boundary_2_object()(p1, p2); }
 
     /*! Implementation for closed top side calls the base. */
     Comparison_result comp_x_on_bnd(const Point_2& p1, const Point_2& p2,
