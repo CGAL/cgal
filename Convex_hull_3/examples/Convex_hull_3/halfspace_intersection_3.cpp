@@ -38,7 +38,7 @@ int main (void) {
                                    planes.end(),
                                    P,
                                    Point(0, 0, 0));
-
+    
     return 0;
 }
 
