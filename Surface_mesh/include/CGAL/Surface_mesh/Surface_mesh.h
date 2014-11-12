@@ -1305,25 +1305,25 @@ public:
   /// returns the number of vertices in the mesh.
   size_type number_of_vertices() const
   {
-    return num_vertices() + number_of_removed_vertices();
+    return num_vertices() - number_of_removed_vertices();
   }
  
   /// returns the number of halfedges in the mesh.
   size_type number_of_halfedges() const
   {
-    return num_halfedges() + number_of_removed_halfedges();
+    return num_halfedges() - number_of_removed_halfedges();
   }
 
   /// returns the number of edges in the mesh.
   size_type number_of_edges() const
   {
-    return num_edges() + number_of_removed_edges();
+    return num_edges() - number_of_removed_edges();
   }
 
   /// returns the number of faces in the mesh.
   size_type number_of_faces() const
   {
-    return num_faces() + number_of_removed_faces();
+    return num_faces() - number_of_removed_faces();
   }
 
     /// returns `true` iff the mesh is empty, i.e., has no vertices, halfedges and faces.
@@ -2107,7 +2107,7 @@ private: //------------------------------------------------------- private data
     typedef typename Mesh::Vertex_index Vertex_index;
     typedef typename Mesh::Face_index Face_index;
 
-    os << "OFF\n" << sm.num_vertices() << " " << sm.num_faces() << " 0\n";
+    os << "OFF\n" << sm.number_of_vertices() << " " << sm.number_of_faces() << " 0\n";
     std::vector<int> reindex;
     reindex.resize(sm.num_vertices());
     int n = 0;

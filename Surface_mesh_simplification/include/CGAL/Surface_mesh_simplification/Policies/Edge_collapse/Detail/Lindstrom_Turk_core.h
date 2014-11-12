@@ -53,7 +53,6 @@ public:
   
   typedef typename GraphTraits::vertex_descriptor vertex_descriptor ;
   typedef typename GraphTraits::halfedge_descriptor   halfedge_descriptor ;
-  typedef typename GraphTraits::in_edge_iterator  in_edge_iterator ;
   
   typedef LindstromTurk_params Params ;
   
