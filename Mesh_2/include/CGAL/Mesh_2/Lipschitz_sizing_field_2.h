@@ -76,11 +76,17 @@ public:
 			   const double k = 1.0)
     : K(k)
   {
+#ifdef CGAL_MESH_2_OPTIMIZER_VERBOSE
+  std::cout << "Building sizing field..." << std::flush;
+#endif
     points = std::list<Point>(first, beyond);
     generate_delaunay();
     extract_poles();
     generate_sites();
     generate_apollonius();
+#ifdef CGAL_MESH_2_OPTIMIZER_VERBOSE
+  std::cout << "done." << std::endl;
+#endif
   }
 
   // assignment operator, copies point set and K

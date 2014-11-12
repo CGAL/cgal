@@ -1,5 +1,5 @@
 //#define CGAL_USE_BOOST_BIMAP
-#define CGAL_MESH_2_VERBOSE
+#define CGAL_MESH_2_OPTIMIZER_VERBOSE
 
 #include <fstream>
 #include <vector>
