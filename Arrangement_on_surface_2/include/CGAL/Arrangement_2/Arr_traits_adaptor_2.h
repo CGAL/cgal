@@ -371,7 +371,7 @@ public:
     /*! Implementation of the operator() in case the base should be used. */
     Arr_parameter_space parameter_space_in_x(const X_monotone_curve_2& xcv,
                                              Arr_curve_end ind,
-                                             Arr_has_identified_side_tag) const
+                                             /* Left and Right */ Arr_has_identified_side_tag) const
     {
       // If the curve completely lies on the left-right identification, return
       // ARR_LEFT_BOUNDARY as an arbitrary but consistent choice.
@@ -383,13 +383,13 @@ public:
     /*! Implementation of the operator() in case the base should be used. */
     Arr_parameter_space parameter_space_in_x(const X_monotone_curve_2& xcv,
                                              Arr_curve_end ind,
-                                             Arr_boundary_cond_tag) const
+                                             /* Left or Right */ Arr_boundary_cond_tag) const
     { return (m_base->parameter_space_in_x_2_object()(xcv, ind)); }
 
     /*! Implementation of the operator() in case the dummy should be used. */
     Arr_parameter_space parameter_space_in_x(const X_monotone_curve_2&,
                                              Arr_curve_end,
-                                             Arr_all_sides_oblivious_tag) const
+                                             /* Left or Right */ Arr_all_sides_oblivious_tag) const
     {
       /*! \todo ideally we should call CGAL_error() here and avoid invocation
        * of the functor for traits classes that have oblivious boundary
@@ -400,7 +400,7 @@ public:
 
      /*! Implementation of the operator() in case the base should be used. */
     Arr_parameter_space parameter_space_in_x(const Point_2& p,
-                                             Arr_has_identified_side_tag) const
+                                             /* Left and Right */ Arr_has_identified_side_tag) const
     {
       // if the point lies on the left-right identification, return
       // ARR_LEFT_BOUNDARY as an arbitrary but consistent choice
@@ -411,12 +411,12 @@ public:
 
     /*! Implementation of the operator() in case the base should be used. */
     Arr_parameter_space parameter_space_in_x(const Point_2& p,
-                                             Arr_boundary_cond_tag) const
+                                             /* Left or Right */ Arr_boundary_cond_tag) const
     { return m_base->parameter_space_in_x_2_object()(p); }
 
     /*! Implementation of the operator() in case the dummy should be used. */
     Arr_parameter_space parameter_space_in_x(const Point_2&,
-                                             Arr_all_sides_oblivious_tag) const
+                                             /* Left or Right */ Arr_all_sides_oblivious_tag) const
     {
       /*! \todo ideally we should call CGAL_error() here and avoid invocation
        * of the functor for traits classes that have oblivious boundary
