@@ -2141,13 +2141,14 @@ private: //------------------------------------------------------- private data
     int n, f, e;
     std::string off;
     is >> off;
-    assert(off == "OFF");
+    assert(off == "OFF" || off == "COFF");
     is >> n >> f >> e;
     sm.reserve(n,2*f,e);
     P p;
     for(int i=0; i < n; i++){
       is >> p;
       sm.add_vertex(p);
+      is.ignore((std::numeric_limits<std::streamsize>::max)(), '\n');
     }
     std::vector<size_type> vr;
     std::size_t d;
