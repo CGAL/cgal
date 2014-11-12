@@ -247,33 +247,33 @@ int readInrimageHeader(const char *,_image *im) {
 
       if(!strncmp(str, "XDIM=", 5)) {
         std::istringstream iss(str+5);
-        if(!(iss >> im->xdim).good()) return -1;
+        if(!(iss >> im->xdim)) return -1;
       }
       else if(!strncmp(str, "YDIM=", 5)) {
         std::istringstream iss(str+5);
-        if(!(iss >> im->ydim).good()) return -1;
+        if(!(iss >> im->ydim)) return -1;
       }
       else if(!strncmp(str, "ZDIM=", 5)) {
         std::istringstream iss(str+5);
-        if(!(iss >> im->zdim).good()) return -1;
+        if(!(iss >> im->zdim)) return -1;
       }
       else if(!strncmp(str, "VDIM=", 5)) {
         std::istringstream iss(str+5);
-        if(!(iss >> im->vdim).good()) return -1;
+        if(!(iss >> im->vdim)) return -1;
 	if(im->vdim == 1) im->vectMode = VM_SCALAR;
 	else im->vectMode = VM_INTERLACED;
       }
       else if(!strncmp(str, "VX=", 3)) {
         std::istringstream iss(str+3);
-        if(!(iss >> im->vx).good()) return -1;
+        if(!(iss >> im->vx)) return -1;
       }
       else if(!strncmp(str, "VY=", 3)) {
         std::istringstream iss(str+3);
-        if(!(iss >> im->vy).good()) return -1;
+        if(!(iss >> im->vy)) return -1;
       }
       else if(!strncmp(str, "VZ=", 3)) {
         std::istringstream iss(str+3);
-        if(!(iss >> im->vz).good()) return -1;
+        if(!(iss >> im->vz)) return -1;
       }
       else if(!strncmp(str, "TYPE=", 5)) {
 	if(!strncmp(str+5, "float", 5)) im->wordKind = WK_FLOAT;
@@ -310,7 +310,7 @@ int readInrimageHeader(const char *,_image *im) {
       */
       else if(!strncmp(str, "PIXSIZE=", 8)) {
         std::istringstream iss(str+8);
-        if(!(iss >> im->wdim).good()) return -1;
+        if(!(iss >> im->wdim)) return -1;
 	if(im->wdim != 8 && im->wdim != 16 && im->wdim != 32 &&
 	   im->wdim != 64) return -1;
 	
@@ -338,40 +338,40 @@ int readInrimageHeader(const char *,_image *im) {
 
       else if(!strncmp(str, "XO=", 3)) {
         std::istringstream iss(str+3);
-        if(!(iss >> im->cx).good()) return -1;
+        if(!(iss >> im->cx)) return -1;
       }
       else if(!strncmp(str, "YO=", 3)) {
         std::istringstream iss(str+3);
-        if(!(iss >> im->cy).good()) return -1;
+        if(!(iss >> im->cy)) return -1;
       }
       else if(!strncmp(str, "ZO=", 3)) {
         std::istringstream iss(str+3);
-        if(!(iss >> im->cz).good()) return -1;
+        if(!(iss >> im->cz)) return -1;
       }
 
       else if(!strncmp(str, "TX=", 3)) {
         std::istringstream iss(str+3);
-        if(!(iss >> im->tx).good()) return -1;
+        if(!(iss >> im->tx)) return -1;
       }
       else if(!strncmp(str, "TY=", 3)) {
         std::istringstream iss(str+3);
-        if(!(iss >> im->ty).good()) return -1;
+        if(!(iss >> im->ty)) return -1;
       }
       else if(!strncmp(str, "TZ=", 3)) {
         std::istringstream iss(str+3);
-        if(!(iss >> im->tz).good()) return -1;
+        if(!(iss >> im->tz)) return -1;
       }
       else if(!strncmp(str, "RX=", 3)) {
         std::istringstream iss(str+3);
-        if(!(iss >> im->rx).good()) return -1;
+        if(!(iss >> im->rx)) return -1;
       }
       else if(!strncmp(str, "RY=", 3)) {
         std::istringstream iss(str+3);
-        if(!(iss >> im->ry).good()) return -1;
+        if(!(iss >> im->ry)) return -1;
       }
       else if(!strncmp(str, "RZ=", 3)) {
         std::istringstream iss(str+3);
-        if(!(iss >> im->rz).good()) return -1;
+        if(!(iss >> im->rz)) return -1;
       }
 
       if(!fgetns(str, 257, im)) return -1;
