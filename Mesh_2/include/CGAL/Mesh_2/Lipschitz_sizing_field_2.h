@@ -15,28 +15,28 @@
 #include <CGAL/Apollonius_graph_2.h>
 #include <CGAL/Apollonius_graph_traits_2.h>
 
-#include <CGAL/Sizing_field_2.h>
+#include <CGAL/Mesh_2/Sizing_field_2.h>
 
 namespace CGAL
 {
 
-template <typename Kernel>
+template <typename Geom_traits>
 class Lipschitz_sizing_field_2 
-	: public virtual Sizing_field_2<Kernel>
+	: public virtual Sizing_field_2<Geom_traits>
 {
 public:
-  typedef Point_2<Kernel> Point;
+  typedef typename Geom_traits::Point_2 Point;
     
-  typedef Delaunay_triangulation_2<Kernel> Delaunay_triangulation;
+  typedef Delaunay_triangulation_2<Geom_traits> Delaunay_triangulation;
   typedef typename Delaunay_triangulation::All_faces_iterator Face_iterator;
   typedef typename Delaunay_triangulation::Finite_vertices_iterator Vertex_iterator;
   typedef typename Delaunay_triangulation::Face_circulator Face_circulator;
     
-  typedef Search_traits_2<Kernel> Tree_traits;
+  typedef Search_traits_2<Geom_traits> Tree_traits;
   typedef Orthogonal_k_neighbor_search<Tree_traits> Neighbor_search;
   typedef typename Neighbor_search::Tree Search_tree;
     
-  typedef Apollonius_graph_traits_2<Kernel> Apollonius_traits;
+  typedef Apollonius_graph_traits_2<Geom_traits> Apollonius_traits;
   typedef Apollonius_graph_2<Apollonius_traits> Apollonius_graph;
   typedef typename Apollonius_traits::Site_2 Site;
 

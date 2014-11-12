@@ -25,23 +25,25 @@
 #ifndef CGAL_MESH_2_UNIFORM_SIZING_FIELD_H
 #define CGAL_MESH_2_UNIFORM_SIZING_FIELD_H
 
+#include <CGAL/Mesh_2/Sizing_field_2.h>
+
 namespace CGAL {
 
 namespace Mesh_2 {
   
-template <typename Tr>
+template <typename Geom_traits>
 class Uniform_sizing_field
+  : public virtual Sizing_field_2<Geom_traits>
 {
-  typedef typename Tr::Geom_traits   Gt;
-  typedef typename Tr::Point         Point_2;
-  typedef typename Gt::FT            FT;
+  typedef typename Geom_traits::Point_2       Point_2;
+  typedef typename Geom_traits::FT            FT;
   
 public:
   // Vertices of mesh triangulation do not need to be updated 
   static const bool is_vertex_update_needed = false;
   
 public:
-  Uniform_sizing_field(const Tr&) {}
+  Uniform_sizing_field() {}
 
   FT operator()(const Point_2&) const { return FT(1); }
 };

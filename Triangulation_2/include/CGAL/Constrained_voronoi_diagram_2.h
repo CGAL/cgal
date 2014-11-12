@@ -156,11 +156,10 @@ public:
   typedef typename Cdt::size_type              size_type;
   typedef typename Cdt::Locate_type            Locate_type;
 
-  typedef typename Cdt::Geom_traits             Kernel;
-  typedef typename Kernel::FT                   FT;
-  typedef typename Kernel::Point_2              Point;
-  typedef typename Kernel::Vector_2             Vector;
-  typedef typename Kernel::Line_2               Line;
+  typedef typename Geom_traits::FT                   FT;
+  typedef typename Geom_traits::Point_2              Point;
+  typedef typename Geom_traits::Vector_2             Vector;
+  typedef typename Geom_traits::Line_2               Line;
   typedef typename Cdt::Segment                 Segment;
   typedef typename Cdt::Triangle                Triangle;
 

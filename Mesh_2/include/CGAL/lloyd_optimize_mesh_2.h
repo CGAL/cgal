@@ -3,10 +3,7 @@
 
 #include <CGAL/Mesh_2/Mesh_global_optimizer_2.h>
 #include <CGAL/Mesh_2/Lloyd_move_2.h>
-#include <CGAL/Delaunay_mesher_2.h>
-#include <CGAL/Delaunay_mesh_size_criteria_2.h>
-
-#include <CGAL/Constrained_voronoi_diagram_2.h>
+#include <CGAL/Mesh_2/Lipschitz_sizing_field_2.h>
 
 namespace CGAL
 {
@@ -29,20 +26,7 @@ namespace CGAL
     typedef CGAL::Mesh_2::Lloyd_move_2<CDT, Lip_sizing> Mf;
     CGAL::Mesh_2::Mesh_global_optimizer_2<CDT, Mf> lloyd(cdt);
     lloyd.set_sizing_field(size);
-
-    CGAL::Constrained_voronoi_diagram_2<CDT> cvd(&cdt);
-    for(unsigned int i = 0; i < nb_iterations; ++i)
-    {
-      cvd.tag_faces_blind();
-      lloyd(1/*nb_iterations*/);
-    }
-    cvd.tag_faces_blind();//update blindness
-
-    //update inside/outside info
-    typedef CGAL::Lipschitz_sizing_field_criteria_2<CDT, Lip_sizing>
-      Lip_criteria;
-    CGAL::Delaunay_mesher_2<CDT, Lip_criteria> mesher(cdt);
-    mesher.mark_facets();
+    lloyd(nb_iterations);
   }
 
 } //end namespace CGAL

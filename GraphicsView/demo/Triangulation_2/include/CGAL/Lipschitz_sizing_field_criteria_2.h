@@ -6,7 +6,7 @@
 #include <utility>
 #include <ostream>
 
-#include <CGAL/Lipschitz_sizing_field_2.h>
+#include <CGAL/Mesh_2/Lipschitz_sizing_field_2.h>
 
 
 namespace CGAL

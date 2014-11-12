@@ -10,7 +10,7 @@
 #include <CGAL/Delaunay_mesher_2.h>
 #include <CGAL/Delaunay_mesh_face_base_2.h>
 #include <CGAL/Delaunay_mesh_size_criteria_2.h>
-#include <CGAL/Lipschitz_sizing_field_2.h>
+#include <CGAL/Mesh_2/Lipschitz_sizing_field_2.h>
 #include <CGAL/Lipschitz_sizing_field_criteria_2.h>
 #include <CGAL/Constrained_voronoi_diagram_2.h>
 #include <CGAL/Triangulation_conformer_2.h>
