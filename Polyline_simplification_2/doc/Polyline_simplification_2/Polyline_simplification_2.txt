@@ -106,7 +106,7 @@ regions of the same polyline.
 Let \f$t_0,...,t_m\f$ be the points of the vertices adjacent to vertex
 `q`, different from `p` and `r` and let \f$ v_2 = \min \{ squared\_distance((p,r),
 t_i) | i=0,..,n\}\f$. The cost of removing vertex `q` is
-\f$v_1/v_2\f$.  See also Figure \ref figure_scaledAndHybrid.
+\f$v_1/v_2\f$.  See also Figure \cgalFigureRef{figure_scaledAndHybrid}.
 
 This distance measure gives lower priority to vertices with close
 neighboring polylines.
