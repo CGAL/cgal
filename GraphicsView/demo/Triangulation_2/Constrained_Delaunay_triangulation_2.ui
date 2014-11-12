@@ -286,7 +286,7 @@
   </action>
   <action name="actionMakeDelaunayMesh">
    <property name="text">
-    <string>Make Delaunay mesh</string>
+    <string>Make Delaunay mesh...</string>
    </property>
   </action>
   <action name="actionMakeLipschitzDelaunayMesh">
