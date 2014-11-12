@@ -76,8 +76,8 @@ public:
    * Constructor
    */
   Mesh_global_optimizer_2(CDT& cdt,
-                        const FT& freeze_ratio = 0., //no criterion
                         const FT& convergence_ratio = 0., //no criterion
+                        const FT& freeze_ratio = 0., //no criterion
                         const MoveFunction move_function = MoveFunction())
     : cdt_(cdt)
     , sq_freeze_ratio_(freeze_ratio * freeze_ratio)
@@ -137,6 +137,8 @@ public:
       // Update mesh with those moves
       update_mesh(moves, moving_vertices);
 
+      // ToDo : freeze vertices that do not move enough
+
       move_function_.after_move(cdt_);
 
 #ifdef CGAL_MESH_2_OPTIMIZER_VERBOSE
@@ -162,7 +164,8 @@ public:
     timer.stop();
     std::cerr << std::endl;
     if ( check_convergence() )
-      std::cerr << "Convergence reached" << std::endl;
+      std::cerr << "Convergence reached for ratio "
+                << convergence_ratio_ << std::endl;
     std::cerr << "Total optimization time: " << timer.time()
               << "s" << std::endl << std::endl;
 #endif
@@ -316,14 +319,10 @@ private:
       //function not available, see Constrained_triangulation_2
       cdt_.remove(v);
       cdt_.insert(new_position);
-      //todo : insert new faces to outdated_faces
 
       if( is_time_limit_reached() )
         break;
     }
-
-    // Update cdt
-    moving_vertices.clear();
   }
 
 public:
