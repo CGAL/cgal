@@ -6,7 +6,7 @@ namespace CGAL {
 
 The class `Constrained_triangulation_plus_2<Tr>`
 provides a constrained triangulation with an additional data
-structure called the *constraint hierarchy* 
+structure
 that keeps track of the input constraints and of their refinement
 in the triangulation.
 The class `Constrained_triangulation_plus_2<Tr>`
@@ -29,9 +29,9 @@ Two consecutive vertices of an input constraint form a *subconstraint*.
 A subconstraint is a pair of vertex handles and corresponds to a constrained edge of the
 triangulation, which is a pair of a face handle and an index. 
 
-The constraint hierarchy also allows to retrieve the set
+The triangulation also enables the retrieval of the set
 of subconstraints of the triangulation (not ordered along constraints).
-It further allows to retrieve for a subconstraint, the set of input constraints that induce it.
+It further enables the retrieval of the set of input constraints that induce a subconstraint,.
 As it is straightforward to obtain a subconstraint from a constrained edge `e`,
 one can obtain the input constraints which induce `e`.
 
@@ -97,7 +97,7 @@ constraint. The value type of this iterator is `Vertex_handle`.
 typedef unspecified_type Vertices_in_constraint_iterator; 
 
 /*! 
-A context allows to access the vertices of a constraint that passes 
+A context enables the access to the vertices of a constraint that pass 
 through a subconstraint.
 
 */ 
@@ -169,7 +169,7 @@ const Geom_traits& gt= Geom_traits());
 
 /*! 
 Assignment. All the vertices and faces are duplicated. 
-The constraint hierarchy is also duplicated. 
+The bidirectional mapping between constraints and subconstraints is also duplicated.
 */ 
 Constrained_triangulation_plus_2 operator=(const 
 Constrained_triangulation_plus_2& tr); 
@@ -240,8 +240,8 @@ Constraint_id insert_constraint(Vertex_handle va, Vertex_handle vb);
 /*!
 Inserts a polyline defined by the points in the range `[first,last)`
 and returns the constraint id.
-The polyline is considered as a closed curve if the first and last point are equal or if  `close == true`. This allows for example to pass the vertex range of a `Polygon_2`.
-When enumerating the vertices of a closed polyline constraint with a  `Vertices_in_constraint_iterator` the first and last vertex are the same.
+The polyline is considered as a closed curve if the first and last point are equal or if  `close == true`. This enables for example passing the vertex range of a `Polygon_2`.
+When traversing the vertices of a closed polyline constraint with a  `Vertices_in_constraint_iterator` the first and last vertex are the same.
 In case the range is empty `Constrained_id(NULL)`is returned.
 In case all points are equal the point is inserted but no constraint,
 and `Constrained_id(NULL)`is returned.
@@ -283,7 +283,7 @@ void remove_constraint(Constraint_id cid);
 
 /// @} 
 
-/// \name Queries 
+/// \name Access 
 /// @{
 
 /*! 
@@ -382,12 +382,12 @@ a vertex of a constraint and at the same time from the triangulation.
 The class `Constrained_triangulation_plus_2` stores
 for each constraint not only the sequence of vertices but
 also the original sequence of points at those vertices.
-As the `Vertices_in_constraint_iterator` allows to enumerate 
+As the `Vertices_in_constraint_iterator` enables the traversal of
 the current set of vertices, the `Points_in_constraint_iterator` 
-allows to enumerate  the points that were in the constraint 
+enables the traversal of the points that were in the constraint 
 before the simplification algorithm started.
 
-It allows the simplification algorithm to compute the error introduced by 
+It enables the simplification algorithm to compute the error introduced by 
 each simplification step:
 it is the distance of the current sequence (vertices) to the original
 sequence (points).
@@ -438,7 +438,7 @@ The polyline simplification algorithm described in Chapter
 operates on polyline constraints and applies `simplify()` to vertices in
 constraints based on a cost and stop function.
 
-\pre All vertices of the triangulation must be a vertex of a constraint.
+\pre Each vertex of the triangulation must be either a vertex of a constraint or a vertex at the intersection of constraints.
 \pre `vicq` must neither be the first nor the last vertex on a constraint.
 \pre The vertex referred by vicq is not contained in any other constraint.
 \pre Let `vip` and `vir` be defined as `vip = std::prev(vicq)` and `vir = std::next(vicr)`.

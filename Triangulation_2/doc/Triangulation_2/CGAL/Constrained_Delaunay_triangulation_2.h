@@ -191,7 +191,7 @@ void insert_constraint(Vertex_handle va, Vertex_handle vb);
 
 /*!
 Inserts a polyline defined by the points in the range `[first,last)`.
-The polyline is considered as a polygon if the first and last point are equal or if  `close = true`. This allows for example to pass the vertex range of a `Polygon_2`.
+The polyline is considered as a polygon if the first and last point are equal or if  `close = true`. This enables for example passing the vertex range of a `Polygon_2`.
 \tparam PointIterator must be an `InputIterator` with the value type `Point`. 
 */
 template < class PointIterator>

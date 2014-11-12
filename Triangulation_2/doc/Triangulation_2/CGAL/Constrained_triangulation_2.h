@@ -47,13 +47,12 @@ There are three versions of constrained triangulations
 does not handle intersecting constraints, and the set of input 
 constraints is required to be a set of polylines that do not intersect 
 except possibly at their endpoints. Any number of constrained edges 
-are allowed to share the same endpoint. Vertical constrained edges 
-are allowed as well as 
-constrained edges with null length. 
+may share the same endpoint. Constrained edges may be vertical or
+have zero length. 
 <LI>The two other versions support intersecting input constraints. 
-In those versions, input constraints are allowed to be 
+In those versions, input constraints may consist of 
 intersecting, overlapping or partially 
-overlapping polylines. 
+overlapping segments. 
 The triangulation introduces additional vertices at each point which 
 is a proper intersection point of two 
 constraints. A single constraint intersecting other 
@@ -280,7 +279,7 @@ void insert_constraint(const Vertex_handle & va, const Vertex_handle & vb);
 
 /*!
 Inserts a polyline defined by the points in the range `[first,last)`.
-The polyline is considered as a polygon if the first and last point are equal or if  `close = true`. This allows for example to pass the vertex range of a `Polygon_2`.
+The polyline is considered as a polygon if the first and last point are equal or if  `close = true`. This enables for example passing the vertex range of a `Polygon_2`.
 \tparam PointIterator must be an `InputIterator` with the value type `Point`. 
 */
 template < class PointIterator>
