@@ -215,7 +215,6 @@ namespace CGAL
             bool is_intersection_dim_3 (PlaneIterator begin,
                                         PlaneIterator end) {
                 typedef typename std::iterator_traits<PlaneIterator>::value_type Plane;
-                typedef typename Kernel_traits<Plane>::Kernel Kernel;
 
                 std::list<Plane> planes(begin, end);
 
