@@ -1013,6 +1013,8 @@ public:
 
     /*! \todo This operator should be removed! The general code should never
      * call this operator for this traits!
+     * Once we do a better dispatching of the functors (LR-ident + TB-contraction),
+     * an implementation of this signature becomes obsolete.
      */
     Comparison_result operator()(const Point_2& p1, const Point_2& p2) const
     {
