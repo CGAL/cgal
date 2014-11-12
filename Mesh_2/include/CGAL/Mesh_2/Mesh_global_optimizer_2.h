@@ -76,8 +76,8 @@ public:
    * Constructor
    */
   Mesh_global_optimizer_2(CDT& cdt,
-                        const FT& freeze_ratio = 0.01,
-                        const FT& convergence_ratio = 0.01,
+                        const FT& freeze_ratio = 0., //no criterion
+                        const FT& convergence_ratio = 0., //no criterion
                         const MoveFunction move_function = MoveFunction())
     : cdt_(cdt)
     , sq_freeze_ratio_(freeze_ratio * freeze_ratio)
@@ -96,6 +96,7 @@ public:
     CGAL::Timer timer;
     timer.start();
 #endif
+
     // Fill set containing moving vertices
     Vertex_set moving_vertices;
     for(typename Tr::Finite_vertices_iterator
@@ -124,6 +125,8 @@ public:
     int i = -1;
     while ( ++i < nb_iterations && ! is_time_limit_reached() )
     {
+      move_function_.before_move(cdt_);
+
       // Compute move for each vertex
       Moves_vector moves = compute_moves(moving_vertices);
 
@@ -134,29 +137,32 @@ public:
       // Update mesh with those moves
       update_mesh(moves, moving_vertices);
 
+      move_function_.after_move(cdt_);
+
 #ifdef CGAL_MESH_2_OPTIMIZER_VERBOSE
+      double time = timer.time();
       double moving_vertices_size = static_cast<double>(moving_vertices.size());
       std::cerr << boost::format("\r             \r"
-                                 "end interation %1% (%2$.1f frozen), %3% / %4% (%5%), last step:%6$.2fs, step avg:%7$.2fs, avg large move:%8$.3f          ")
-      % i
-      % ((1. - moving_vertices_size/initial_vertices_nb)*100.) 
+        "end iteration %1% (%2%%% frozen), %3% / %4%, last step:%5$.2fs, step avg:%6$.2fs, avg large move:%7$.3f          ")
+      % (i+1)
+      % ((1. - moving_vertices_size/initial_vertices_nb)*100.)
       % moving_vertices_size
       % initial_vertices_nb
-      % moves.size() 
-      % (running_time_.time() - step_begin)
-      % (running_time_.time() / (i+1))
+      % (time - step_begin)
+      % (time / (i+1))
       % sum_moves_;
-    
-      step_begin = timer.time();
+
+      step_begin = time;
 #endif
     }
+
+    move_function_.after_all_moves(cdt_);
 
 #ifdef CGAL_MESH_2_OPTIMIZER_VERBOSE
     timer.stop();
     std::cerr << std::endl;
     if ( check_convergence() )
       std::cerr << "Convergence reached" << std::endl;
-
     std::cerr << "Total optimization time: " << timer.time()
               << "s" << std::endl << std::endl;
 #endif
@@ -288,7 +294,7 @@ private:
         ++it)
       sum += CGAL::sqrt(*it);
 
-#ifdef CGAL_MESH_3_OPTIMIZER_VERBOSE
+#ifdef CGAL_MESH_2_OPTIMIZER_VERBOSE
     sum_moves_ = sum/big_moves_.size();
 #endif
 

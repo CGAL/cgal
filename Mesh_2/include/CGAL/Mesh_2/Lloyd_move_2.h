@@ -2,13 +2,16 @@
 #define CGAL_LLOYD_MOVE_2_H
 
 #include <CGAL/Mesh_2/Uniform_sizing_field_2.h>
+#include <CGAL/Delaunay_mesher_2.h>
+#include <CGAL/Delaunay_mesh_size_criteria_2.h>
+#include <CGAL/Constrained_voronoi_diagram_2.h>
 
 namespace CGAL
 {
 namespace Mesh_2
 {
   template<typename CDT,
-           typename SizingField = Uniform_sizing_field<CDT> >
+           typename SizingField = Uniform_sizing_field<typename CDT::Geom_traits> >
   class Lloyd_move_2
   {
     typedef typename CDT::Vertex_handle          Vertex_handle;
@@ -36,7 +39,7 @@ namespace Mesh_2
       FT sum_masses(0);
 
       Cvd_cell cell = cdt.dual(v);
-      if(cell.is_infinite())
+      if(cell.is_infinite() || cell.is_empty())
         return CGAL::NULL_VECTOR; //center of mass is at infinity!
 
       CGAL_assertion(cell.number_of_vertices() > 2);
@@ -61,6 +64,25 @@ namespace Mesh_2
       return move / sum_masses;
     }
 
+  public:
+    void before_move(CDT& cdt)
+    {
+      update_blind_faces(cdt);
+    }
+
+    void after_move(CDT& cdt)
+    {
+      //update inside/outside tags
+      typedef CGAL::Delaunay_mesh_size_criteria_2<CDT> Criteria;
+      CGAL::Delaunay_mesher_2<CDT, Criteria> mesher(cdt);
+      mesher.mark_facets();
+    }
+
+    void after_all_moves(CDT& cdt)
+    {
+      update_blind_faces(cdt);
+    }
+
   private:
     FT density_2d(const Point_2& p,
                   const Sizing_field& sizing_field) const
@@ -70,6 +92,13 @@ namespace Mesh_2
 
       // 1 / s^(d+2)
       return ( 1/(s*s*s*s) );
+    }
+
+    void update_blind_faces(CDT& cdt)
+    {
+      //update blindness
+      CGAL::Constrained_voronoi_diagram_2<CDT> cvd(&cdt);
+      cvd.tag_faces_blind();
     }
 
 #ifdef CGAL_MESH_2_OPTIMIZER_VERBOSE

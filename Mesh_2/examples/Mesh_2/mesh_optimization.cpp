@@ -6,9 +6,7 @@
 #include <CGAL/Delaunay_mesh_face_base_2.h>
 #include <CGAL/Delaunay_mesh_size_criteria_2.h>
 
-#include <CGAL/Mesh_2/Mesh_global_optimizer_2.h>
-#include <CGAL/Mesh_2/Lloyd_move_2.h>
-#include <CGAL/Mesh_2/Odt_move_2.h>
+#include <CGAL/lloyd_optimize_mesh_2.h>
 
 #include <iostream>
 
@@ -19,11 +17,6 @@ typedef CGAL::Triangulation_data_structure_2<Vb, Fb>        Tds;
 typedef CGAL::Constrained_Delaunay_triangulation_2<K, Tds>  CDT;
 typedef CGAL::Delaunay_mesh_size_criteria_2<CDT>            Criteria;
 typedef CGAL::Delaunay_mesher_2<CDT, Criteria>              Mesher;
-
-typedef CGAL::Mesh_2::Mesh_global_optimizer_2<CDT,
-          CGAL::Mesh_2::Lloyd_move_2<CDT> >         Lloyd_optimizer;
-typedef CGAL::Mesh_2::Mesh_global_optimizer_2<CDT,
-          CGAL::Mesh_2::Odt_move_2<CDT> >           Odt_optimizer;
 
 typedef CDT::Vertex_handle Vertex_handle;
 typedef CDT::Point Point;
@@ -55,13 +48,7 @@ int main()
   std::cout << "Number of vertices: " << cdt.number_of_vertices() << std::endl;
 
   std::cout << "Run Lloyd optimization...";
-  Lloyd_optimizer lloyd(cdt);
-  lloyd(10);
-  std::cout << " done." << std::endl;
-
-  std::cout << "Run ODT optimization...";
-  Odt_optimizer odt(cdt);
-  odt(10);
+  CGAL::lloyd_optimize_mesh_2(cdt, 10);
   std::cout << " done." << std::endl;
 
   std::cout << "Number of vertices: " << cdt.number_of_vertices() << std::endl;
