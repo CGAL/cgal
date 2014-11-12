@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\Ingroup PkgConvexHull3Functions
+\ingroup PkgConvexHull3Functions
 
 \brief computes the intersection of the halfspaces defined by the planes contained in the range [`begin`, `end`). The result is stored in the polyhedron `P`.
 If `origin` is given then it must be a point strictly inside the polyhedron. If an interior point is not given then it is computed using a linear program and thus is slower than the first approach.
