@@ -206,6 +206,15 @@
 , year =        ${CGAL_BUILD_YEAR4}
 }
 
+@incollection{cgal:bsmf-hds-${CGAL_RELEASE_YEAR_ID}
+, author =  "Mario Botsch and Daniel Sieger and Philipp Moeller and Andreas Fabri"
+, title =   "Surface Mesh"
+, publisher =  "{CGAL Editorial Board}"
+, edition =     "{${CGAL_CREATED_VERSION_NUM}}"
+, booktitle =   "{CGAL} User and Reference Manual"
+, url = "http://doc.cgal.org/${CGAL_CREATED_VERSION_NUM}/Manual/packages.html#PkgSurfaceMeshSummary"
+, year =        ${CGAL_BUILD_YEAR4}
+}
 @incollection{cgal:d-cm-${CGAL_RELEASE_YEAR_ID}
 , author =  "Guillaume Damiand"
 , title =   "Combinatorial Maps"
