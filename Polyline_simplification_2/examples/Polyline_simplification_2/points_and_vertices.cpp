@@ -49,7 +49,7 @@ int main( )
   CT ct;
   Polygon_2 P;
   Constraint_id cid;
-  int largest = 0;
+  std::size_t largest = 0;
   while(std::cin >> P){
     Constraint_id cid2 = ct.insert_constraint(P);
     if(P.size() > largest){
