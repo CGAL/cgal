@@ -687,11 +687,20 @@ MainWindow::on_actionMakeLipschitzDelaunayMesh_triggered()
   initializeID(cdt);
   discoverComponents(cdt);
 
-  std::size_t nv = cdt.number_of_vertices();
-  Lipschitz_sizing_field field(points.begin(), points.end(), 0.7 ); // k-lipschitz with k=1
-  Lipschitz_criteria criteria(0.125, &field);
+  bool ok;
+  double d = QInputDialog::getDouble(this, tr("Shape criterion"),
+    tr("B = "), 0.125, 0.005, 100, 4, &ok);
+  double shape = ok ? d : 0.125;
+  d = QInputDialog::getDouble(this, tr("k-Lipschitz sizing field"),
+    tr("k = "), 1., 0.01, 500, 5, &ok);
+  double klip = ok ? d : 1.;
+
+  Lipschitz_sizing_field field(points.begin(), points.end(), klip);
+  Lipschitz_criteria criteria(shape, &field);
   Lipschitz_mesher mesher(cdt);
   mesher.set_criteria(criteria);
+
+  std::size_t nv = cdt.number_of_vertices();
   mesher.init(true);
   //  mesher.set_seeds(m_seeds.begin(),m_seeds.end(),false);
   mesher.refine_mesh();
