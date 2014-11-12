@@ -243,12 +243,12 @@ public:
     std::pair<Property_map<Key, T>,bool>
     add(const std::string& name, const T t=T())
     {
-        // if a property with this name already exists, return an invalid property
+        // if a property with this name already exists, return it
         for (unsigned int i=0; i<parrays_.size(); ++i)
         {
             if (parrays_[i]->name() == name)
             {
-              return std::make_pair(Property_map<Key, T>(), false);
+              return std::make_pair(Property_map<Key, T>(dynamic_cast<Property_array<T>*>(parrays_[i])), true);
             }
         }
 
@@ -256,7 +256,7 @@ public:
         Property_array<T>* p = new Property_array<T>(name, t);
         p->resize(size_);
         parrays_.push_back(p);
-        return std::make_pair(Property_map<Key, T>(p),true);
+        return std::make_pair(Property_map<Key, T>(p),false);
     }
 
 

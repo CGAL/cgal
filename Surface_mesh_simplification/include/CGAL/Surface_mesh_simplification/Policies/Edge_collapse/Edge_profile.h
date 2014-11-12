@@ -143,7 +143,7 @@ public :
   
 private:
 
-  typedef typename GraphTraits::in_edge_iterator  in_edge_iterator ;
+  //  typedef typename GraphTraits::in_edge_iterator  in_edge_iterator ;
   
   bool is_border(halfedge_descriptor e) const
   {
