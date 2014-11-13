@@ -70,8 +70,6 @@ int main( int argc, char** argv )
   }
 
   is >> surface_mesh  ;
-
-  assert(surface_mesh.is_valid());
   
   Surface_mesh::Property_map<halfedge_descriptor,std::pair<Point_3, Point_3> > constrained_halfedges;
 
