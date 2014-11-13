@@ -168,6 +168,17 @@ bool
 is_binary(std::ios& i);
 
 
+#ifdef CGAL_GENERIC_EXTRACT
+  template <typename T>
+  inline std::istream& extract(std::istream& is, T &t)
+  {
+    is >> t;
+    return is;
+  }
+
+  template <>
+#endif
+
   inline std::istream& extract(std::istream& is, double &d)
 {
 #if defined( _MSC_VER ) && ( _MSC_VER > 1600 )
