@@ -134,9 +134,9 @@ public:
   double vy() const { return image_ptr->vy; }
   double vz() const { return image_ptr->vz; }
 
-  float value(const unsigned int i,
-              const unsigned int j,
-              const unsigned int k) const
+  float value(const std::size_t i,
+              const std::size_t j,
+              const std::size_t k) const
   {
     return ::evaluate(image(),i,j,k);
   }
