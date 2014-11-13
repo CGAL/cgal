@@ -39,9 +39,6 @@ struct Border_is_constrained_edge_map{
   typedef value_type reference;
   typedef boost::readable_property_map_tag category;
 
-  Border_is_constrained_edge_map()
-  {}
-
   Border_is_constrained_edge_map(const Surface_mesh& sm)
     : sm_ptr(&sm)
   {}
@@ -74,6 +71,7 @@ int main( int argc, char** argv )
 
   is >> surface_mesh  ;
 
+  assert(surface_mesh.is_valid());
   
   Surface_mesh::Property_map<edge_descriptor,std::pair<Point_3, Point_3> > constrained_edges;
 
@@ -83,7 +81,7 @@ int main( int argc, char** argv )
   BOOST_FOREACH(edge_descriptor ed, surface_mesh.edges()){
     if(surface_mesh.is_border(ed)){
       constrained_edges[ed] = std::make_pair(surface_mesh.point(source(ed,surface_mesh)),
-                                               surface_mesh.point(target(ed,surface_mesh)));
+                                             surface_mesh.point(target(ed,surface_mesh)));
       ++nb_border_edges;
     }
   }
@@ -91,15 +89,15 @@ int main( int argc, char** argv )
   // Contract the surface mesh as much as possible
   SMS::Count_stop_predicate<Surface_mesh> stop(0);
 
+  Border_is_constrained_edge_map bem(surface_mesh);
+  
   // This the actual call to the simplification algorithm.
   // The surface mesh and stop conditions are mandatory arguments.
-  // The index maps are needed because the vertices and edges
-  // of this surface mesh lack an "id()" field.
   int r = SMS::edge_collapse
             (surface_mesh
             ,stop
-            ,CGAL::edge_is_constrained_map(Border_is_constrained_edge_map(surface_mesh))
-                  .get_placement(Placement())
+            ,CGAL::edge_is_constrained_map(bem)
+             .get_placement(Placement(bem))
             );
 
   std::cout << "\nFinished...\n" << r << " edges removed.\n"
