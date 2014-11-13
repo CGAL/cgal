@@ -24,8 +24,8 @@ typedef CGAL::Simple_cartesian<double> Kernel;
 typedef Kernel::Point_3 Point_3;
 
 typedef CGAL::Surface_mesh<Point_3> Surface_mesh; 
+  typedef boost::graph_traits<Surface_mesh>::halfedge_descriptor halfedge_descriptor;
   typedef boost::graph_traits<Surface_mesh>::edge_descriptor edge_descriptor;
-  typedef boost::graph_traits<Surface_mesh>::edge_iterator edge_iterator;
 
 namespace SMS = CGAL::Surface_mesh_simplification ;
 
@@ -44,7 +44,7 @@ struct Border_is_constrained_edge_map{
   {}
 
   friend bool get(Border_is_constrained_edge_map m, const key_type& edge) {
-    return  m.sm_ptr->is_border(edge);
+    return  CGAL::is_border(edge, *m.sm_ptr);
   }
 };
 
@@ -73,15 +73,15 @@ int main( int argc, char** argv )
 
   assert(surface_mesh.is_valid());
   
-  Surface_mesh::Property_map<edge_descriptor,std::pair<Point_3, Point_3> > constrained_edges;
+  Surface_mesh::Property_map<halfedge_descriptor,std::pair<Point_3, Point_3> > constrained_halfedges;
 
-  constrained_edges = surface_mesh.add_property_map<edge_descriptor,std::pair<Point_3, Point_3>>("e:vertices").first;
+  constrained_halfedges = surface_mesh.add_property_map<halfedge_descriptor,std::pair<Point_3, Point_3>>("h:vertices").first;
 
   std::size_t nb_border_edges=0;
-  BOOST_FOREACH(edge_descriptor ed, surface_mesh.edges()){
-    if(surface_mesh.is_border(ed)){
-      constrained_edges[ed] = std::make_pair(surface_mesh.point(source(ed,surface_mesh)),
-                                             surface_mesh.point(target(ed,surface_mesh)));
+  BOOST_FOREACH(halfedge_descriptor hd, halfedges(surface_mesh)){
+    if(CGAL::is_border(hd,surface_mesh)){
+      constrained_halfedges[hd] = std::make_pair(surface_mesh.point(source(hd,surface_mesh)),
+                                                 surface_mesh.point(target(hd,surface_mesh)));
       ++nb_border_edges;
     }
   }
@@ -105,6 +105,16 @@ int main( int argc, char** argv )
 
   std::ofstream os( argc > 2 ? argv[2] : "out.off" ) ; os << surface_mesh ;
 
+  // now check!
+  BOOST_FOREACH(halfedge_descriptor hd, halfedges(surface_mesh)){
+    if(CGAL::is_border(hd,surface_mesh)){
+      --nb_border_edges;
+      constrained_halfedges[hd] == std::make_pair(surface_mesh.point(source(hd,surface_mesh)),
+                                                  surface_mesh.point(target(hd,surface_mesh)));
+
+    }
+  }
+  assert( nb_border_edges==0 );
 
   return 0 ;
 }
