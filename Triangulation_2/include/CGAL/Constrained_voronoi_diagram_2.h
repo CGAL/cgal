@@ -435,32 +435,6 @@ private:
     return false;
   }
 
-
-//----------------------------------------------------
-//------------------ TOOLS ---------------------------
-//----------------------------------------------------
-
-  bool is_inside(const Point& query)
-  {
-    Face_handle f = locate(query);
-    if(f == NULL)
-      return false;
-    if(f->location() == INSIDE)
-      return true;
-    return false;
-  }
-
-  bool incident_constraints(Vertex_handle v)
-  {
-    Edge_circulator e = incident_edges(v);
-    Edge_circulator end = e;
-    CGAL_For_all(e,end)
-      if((*e).first->is_constrained((*e).second))
-        return true;
-    return false;
-  }
-
-
 };// class Constrained_voronoi_diagram
 
 } //namespace CGAL
