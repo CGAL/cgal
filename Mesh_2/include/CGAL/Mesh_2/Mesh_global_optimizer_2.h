@@ -38,6 +38,7 @@
 #include <boost/lambda/lambda.hpp>
 #include <boost/lambda/bind.hpp>
 #include <boost/format.hpp>
+#include <boost/math/constants/constants.hpp>
 
 namespace CGAL {
 
@@ -329,6 +330,42 @@ public:
   void set_sizing_field(const Sizing_field& sf)
   {
     sizing_field_ = sf;
+  }
+
+  void output_angles_histogram(std::ostream& os)
+  {
+    double min_angle = 180.;
+    double max_angle = 0.;
+
+    //fill histogram
+    std::vector<int> histo(180,0);
+    for(typename CDT::Finite_faces_iterator fit = cdt_.finite_faces_begin();
+        fit != cdt_.finite_faces_end();
+        ++fit)
+    {
+      typename CDT::Triangle tr = cdt_.triangle(fit);
+      for(int i = 0; i < 3; ++i)
+      {
+        Vector_2 v1(tr[i], tr[(i+1)%3]);
+        Vector_2 v2(tr[i], tr[(i+2)%3]);
+        v1 = v1 / CGAL::sqrt(v1.squared_length());
+        v2 = v2 / CGAL::sqrt(v2.squared_length());
+
+        using namespace boost::math::constants;
+        double angle = std::acos(v1 * v2) * 180. / pi<double>();
+        histo[ std::min(179, int(angle)) ]++;
+
+        min_angle = (std::min)(min_angle, angle);
+        max_angle = (std::max)(max_angle, angle);
+      }
+    }
+
+    //output histogram to os
+    os << "# Min angle = " << min_angle << std::endl;
+    os << "# Max angle = " << max_angle << std::endl;
+    os << std::endl << "## Histogram ##" << std::endl;
+    for(unsigned int i = 0; i < 180; ++i)
+      os << i << "\t" << histo[i] << std::endl;
   }
 
 private:

@@ -4,6 +4,7 @@
 #include <CGAL/Mesh_2/Mesh_global_optimizer_2.h>
 #include <CGAL/Mesh_2/Lloyd_move_2.h>
 #include <CGAL/Mesh_2/Lipschitz_sizing_field_2.h>
+#include <fstream>
 
 namespace CGAL
 {
@@ -24,12 +25,24 @@ namespace CGAL
         points.insert(vit->point());
     Lip_sizing size(points.begin(), points.end());
 
-
     typedef CGAL::Mesh_2::Lloyd_move_2<CDT, Lip_sizing> Mf;
     CGAL::Mesh_2::Mesh_global_optimizer_2<CDT, Mf> lloyd(cdt,
                                                          convergence_ratio);
     lloyd.set_sizing_field(size);
+
+#ifdef CGAL_MESH_2_OPTIMIZERS_DEBUG
+    std::ofstream os("before_lloyd.angles.txt");
+    lloyd.output_angles_histogram(os);
+    os.close();
+#endif
+
     lloyd(nb_iterations);
+
+#ifdef CGAL_MESH_2_OPTIMIZERS_DEBUG
+    std::ofstream os2("after_lloyd.angles.txt");
+    lloyd.output_angles_histogram(os2);
+    os2.close();
+#endif
   }
 
 } //end namespace CGAL
