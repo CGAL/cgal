@@ -25,22 +25,16 @@ int main () {
 
     // Simple true test with equal planes
     K::Plane_3 p(1, 1, 1, 1), q(1, 1, 1, 1), r(1, 1, 1, 1), s(1, 1, 1, 1);
-    /* std::cout << coplanar_dual(p, q, r, s) << std::endl; */
-    /* std::cout << coplanar(to_dual<K>(p), to_dual<K>(q), to_dual<K>(r), to_dual<K>(s)) << std::endl; */
     assert(coplanar_dual(p, q, r, s) == true);
     assert(coplanar_dual(p, q, r, s) == coplanar(to_dual<K>(p), to_dual<K>(q), to_dual<K>(r), to_dual<K>(s)));
 
     // Simple true test
     K::Plane_3 p2(1, 1, 1, -1), q2(2, 1, 1, -1), r2(2, 2, 1, -1), s2(1, 2, 1, -1);
-    /* std::cout << coplanar_dual(p2, q2, r2, s2) << std::endl; */
-    /* std::cout << coplanar(to_dual<K>(p2), to_dual<K>(q2), to_dual<K>(r2), to_dual<K>(s2)) << std::endl; */
     assert(coplanar_dual(p2, q2, r2, s2) == true);
     assert(coplanar_dual(p2, q2, r2, s2) == coplanar(to_dual<K>(p2), to_dual<K>(q2), to_dual<K>(r2), to_dual<K>(s2)));
 
     // Simple false test
     K::Plane_3 p3(1, 1, 1, -1), q3(2, 1, 1, -1), r3(2, 2, 1, -1), s3(1, 1, 2, -1);
-    /* std::cout << coplanar_dual(p3, q3, r3, s3) << std::endl; */
-    /* std::cout << coplanar(to_dual<K>(p3), to_dual<K>(q3), to_dual<K>(r3), to_dual<K>(s3)) << std::endl; */
     assert(coplanar_dual(p3, q3, r3, s3) == false);
     assert(coplanar_dual(p3, q3, r3, s3) == coplanar(to_dual<K>(p3), to_dual<K>(q3), to_dual<K>(r3), to_dual<K>(s3)));
 

@@ -28,30 +28,22 @@ int main (void) {
 
     // True test with equal planes
     Plane p(1, 1, 1, 1), q(1, 1, 1, 1);
-    /* std::cout << equal_dual(p, q) << std::endl; */
-    /* std::cout << equal(to_dual<K>(p), to_dual<K>(q)) << std::endl; */
     assert(equal_dual(p, q) == true);
     assert(equal_dual(p, q) == equal(to_dual<K>(p), to_dual<K>(q)));
 
     // True test with planes whose coefficients are multiple of the other
     Plane pp(1, 1, 1, 1), qq(2, 2, 2, 2);
-    /* std::cout << equal_dual(pp, qq) << std::endl; */
-    /* std::cout << equal(to_dual<K>(pp), to_dual<K>(qq)) << std::endl; */
     assert(equal_dual(pp, qq) == true);
     assert(equal_dual(pp, qq) == equal(to_dual<K>(pp), to_dual<K>(qq)));
 
     // False test with non equal planes
     Plane p2(1, 2, 1, 1), q2(2, 2, 2, 2);
-    /* std::cout << equal_dual(p2, q2) << std::endl; */
-    /* std::cout << equal(to_dual<K>(p2), to_dual<K>(q2)) << std::endl; */
     assert(equal_dual(p2, q2) == false);
     assert(equal_dual(p2, q2) == equal(to_dual<K>(p2), to_dual<K>(q2)));
 
     // True test using exact computation
     double x = 1.123456789, y = 1.987654321, e=1e-15;
     Plane ppp(x, x, x, x), qqq(y+e, y+e, y+e, y+e);
-    /* std::cout << equal_dual(ppp, qqq) << std::endl; */
-    /* std::cout << equal(to_dual<K>(ppp), to_dual<K>(qqq)) << std::endl; */
     assert(equal_dual(ppp, qqq) == true);
     assert(equal_dual(ppp, qqq) == equal(to_dual<K>(ppp), to_dual<K>(qqq)));
 
