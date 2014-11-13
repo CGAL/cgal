@@ -6,6 +6,9 @@
 #include <CGAL/boost/graph/graph_traits_Surface_mesh.h>
 #include <CGAL/boost/graph/Euler_operations.h>
 #include <CGAL/Simple_cartesian.h>
+#include <CGAL/Surface_mesh_simplification/edge_collapse.h>
+#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Count_ratio_stop_predicate.h>
+#include <CGAL/Memory_sizer.h>
 
 typedef CGAL::Simple_cartesian<double> K;
 typedef K::Point_3 Point_3;
@@ -22,16 +25,16 @@ public:
 
   Surface_mesh_performance() : Performance_test_2()
   {
-    points   = mesh.property_map<Surface_mesh::Vertex_descriptor,Point_3>("v:point");
+    points = mesh.property_map<Surface_mesh::Vertex_index,Point_3>("v:point").first;
   }
 
 
 private:
 
   Surface_mesh mesh;
-  CGAL::Property_map<Surface_mesh::Vertex_descriptor,Point_3> points;
-  CGAL::Property_map<Surface_mesh::Vertex_descriptor,Vector_3> vnormals;
-  CGAL::Property_map<Surface_mesh::Face_descriptor,Vector_3> fnormals;
+  Surface_mesh::Property_map<Surface_mesh::Vertex_index,Point_3> points;
+  Surface_mesh::Property_map<Surface_mesh::Vertex_index,Vector_3> vnormals;
+  Surface_mesh::Property_map<Surface_mesh::Face_index,Vector_3> fnormals;
 
 
 private:
@@ -47,7 +50,10 @@ private:
 
   virtual bool read_mesh(const char* _filename)
   {
-    return CGAL::read_off(mesh, _filename);
+    CGAL::Memory_sizer ms;
+    bool b = CGAL::read_off(mesh, _filename);
+    std::cout << "memory consumption: " << ms.virtual_size() << "  " << ms.resident_size() << std::endl;
+    return b;
   }
 
 
@@ -111,15 +117,15 @@ private:
   virtual void normal_test()
   {
 
-    vnormals = mesh.add_property_map<Surface_mesh::Vertex_descriptor,Vector_3>("v:normal");
-    fnormals = mesh.add_property_map<Surface_mesh::Face_descriptor,Vector_3>("f:normal");
+    vnormals = mesh.add_property_map<Surface_mesh::Vertex_index,Vector_3>("v:normal").first;
+    fnormals = mesh.add_property_map<Surface_mesh::Face_index,Vector_3>("f:normal").first;
     Surface_mesh::Vertex_iterator vit, vend=mesh.vertices_end();
     Surface_mesh::Face_iterator   fit, fend=mesh.faces_end();
     Surface_mesh::Face_around_target_circulator vfit, vfend;
 
     for (fit=mesh.faces_begin(); fit!=fend; ++fit)
     {
-      Surface_mesh::Halfedge_descriptor  h = mesh.halfedge(*fit);
+      Surface_mesh::Halfedge_index  h = mesh.halfedge(*fit);
       const Point_3& p0 = points[mesh.target(h)];
       h = mesh.next(h);
       const Point_3& p1 = points[mesh.target(h)];
@@ -186,7 +192,7 @@ private:
 
 
     // compute new positions of old vertices
-    CGAL::Property_map<Surface_mesh::Vertex_descriptor,Point_3> new_pos = mesh.add_property_map<Surface_mesh::Vertex_descriptor,Point_3>("v:np");
+    Surface_mesh::Property_map<Surface_mesh::Vertex_index,Point_3> new_pos = mesh.add_property_map<Surface_mesh::Vertex_index,Point_3>("v:np").first;
     for (vit=mesh.vertices_begin(); vit!=vend; ++vit)
     {
       if (!mesh.is_border(*vit))
@@ -218,7 +224,7 @@ private:
       } while (++fvit!=fvend);
 
       p = CGAL::ORIGIN + (p-CGAL::ORIGIN)/c;
-      Surface_mesh::Vertex_descriptor v = mesh.target(CGAL::Euler::add_center_vertex(mesh.halfedge(*fit),mesh));
+      Surface_mesh::Vertex_index v = mesh.target(CGAL::Euler::add_center_vertex(mesh.halfedge(*fit),mesh));
       points[v] = p;
     }
 
@@ -252,22 +258,34 @@ private:
     // split faces
     Point_3  p(0,0,0);
     for (fit=mesh.faces_begin(); fit!=fend; ++fit){
-      Surface_mesh::Vertex_descriptor v = mesh.target(CGAL::Euler::add_center_vertex(mesh.halfedge(*fit),mesh));
+      Surface_mesh::Vertex_index v = mesh.target(CGAL::Euler::add_center_vertex(mesh.halfedge(*fit),mesh));
       points[v] = p;
     }
     int i = 0;
     // collapse new edges
     vit = vend; vend=mesh.vertices_end();
     for (; vit!=vend; ++vit){
-      Surface_mesh::Halfedge_descriptor he = mesh.halfedge(*vit);
-      Surface_mesh::Vertex_descriptor vd = mesh.source(he);
+      Surface_mesh::Halfedge_index he = mesh.halfedge(*vit);
+      Surface_mesh::Vertex_index vd = mesh.source(he);
       Point_3 p = mesh.point(vd);
-      Surface_mesh::Vertex_descriptor vkept = CGAL::Euler::collapse_edge(mesh.edge(he), mesh);
+      Surface_mesh::Vertex_index vkept = CGAL::Euler::collapse_edge(mesh.edge(he), mesh);
       mesh.point(vkept) = p;
     }
     // remove deleted items
-    mesh.collect_garbage();
+    //mesh.collect_garbage();
   }
+
+
+  virtual void lindstrom_test(const char* _filename)
+  {
+    namespace SMS = CGAL::Surface_mesh_simplification ;
+
+    mesh.clear();
+    bool b = CGAL::read_off(mesh, _filename);
+    SMS::Count_ratio_stop_predicate<Surface_mesh> stop(0.1);
+    int r = SMS::edge_collapse(mesh, stop);
+  }
+
 
 };
 //=============================================================================

@@ -2,12 +2,17 @@
 
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Polyhedron_3.h>
+#include <CGAL/Polyhedron_items_with_id_3.h>
 #include <CGAL/HalfedgeDS_vector.h>
 #include <CGAL/HalfedgeDS_list.h>
 #include <CGAL/HalfedgeDS_vertex_base.h>
 #include <CGAL/HalfedgeDS_halfedge_base.h>
 #include <CGAL/HalfedgeDS_face_base.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
+#include <CGAL/Surface_mesh_simplification/edge_collapse.h>
+#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Count_ratio_stop_predicate.h>
+#include <CGAL/Memory_sizer.h>
+
 #include <iostream>
 #include <fstream>
 #include "performance_2.h"
@@ -18,7 +23,8 @@
 
 //*****************************************************************************
 // control whether Polyhedron stores vertex and face normals
-#define HAS_NORMALS 1
+#define EXTENDED 1
+// #define HAS_NORMALS 1
 //*****************************************************************************
 
 
@@ -68,7 +74,7 @@ public:
   template <class Refs, class Traits>
   struct Face_wrapper
   {
-#if HAS_NORMALS
+#ifdef  HAS_NORMALS
     typedef MyFace<Refs> Face;
 #else
     typedef CGAL::HalfedgeDS_face_base<Refs> Face;
@@ -76,8 +82,11 @@ public:
   };
 };
 
+#ifdef  EXTENDED
+typedef CGAL::Polyhedron_3<CGALKernel,CGAL::Polyhedron_items_with_id_3> Polyhedron;
+#else 
 typedef CGAL::Polyhedron_3<CGALKernel, MyItems, CGAL::HalfedgeDS_list> Polyhedron;
-
+#endif
 
 
 
@@ -101,8 +110,10 @@ private:
 
   virtual bool read_mesh(const char* _filename)
   {
+    CGAL::Memory_sizer ms;
     std::ifstream ifs(_filename);
     ifs >> P;
+    std::cout << "memory consumption: " << ms.virtual_size() << "  " << ms.resident_size() << std::endl;
     return true;
   }
 
@@ -422,6 +433,37 @@ private:
       P.join_vertex(pq);
       lP_Erased = true ;
     }
+  }
+
+  virtual void lindstrom_test(const char* _filename)
+  {
+    namespace SMS = CGAL::Surface_mesh_simplification ;
+#ifdef EXTENDED
+    P.clear();
+
+    std::ifstream ifs(_filename);
+
+    ifs >> P;
+      int index = 0 ;
+  
+  for( Polyhedron::Halfedge_iterator eb = P.halfedges_begin()
+     , ee = P.halfedges_end()
+     ; eb != ee
+     ; ++ eb
+     ) 
+    eb->id() = index++;
+
+  index = 0 ;
+  for( Polyhedron::Vertex_iterator vb = P.vertices_begin()
+     , ve = P.vertices_end()
+     ; vb != ve
+     ; ++ vb
+     ) 
+    vb->id() = index++; 
+
+  SMS::Count_ratio_stop_predicate<Polyhedron> stop(0.1);
+  int r = SMS::edge_collapse(P, stop); 
+#endif    
   }
 
 };

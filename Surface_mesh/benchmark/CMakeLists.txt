@@ -34,3 +34,7 @@ add_executable(performance_2
 )
 
 target_link_libraries(performance_2 ${CGAL_LIBRARIES})
+
+include( CGAL_CreateSingleSourceCGALProgram )
+create_single_source_cgal_program( "sm_sms.cpp" )
+create_single_source_cgal_program( "poly_sms.cpp" )

@@ -10,7 +10,7 @@
 #include <iostream>
 //#include <sys/resource.h>
 #include <CGAL/assertions.h>
-
+#include <CGAL/Timer.h>
 #include "Stop_watch.h"
 
 
@@ -72,6 +72,12 @@ public:
     display_info();
 
     timer.start();
+    lindstrom_test(input);
+    timer.stop();
+    std::cout << "Lindstrom   : " << timer << std::endl;
+    display_info();
+
+    timer.start();
     if (!write_mesh(output)) { std::cerr << "write error\n"; exit(1); }
     timer.stop();
     std::cout << "Write mesh  : " << timer << std::endl;
@@ -89,6 +95,7 @@ protected:
   virtual void normal_test()      {}
   virtual void smoothing_test()   {}
   virtual void subdivision_test() {}
+  virtual void lindstrom_test(const char* _filename)=0;
   virtual void collapse_test()    {}
   virtual void display_info()     {}
 };

@@ -3,6 +3,7 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Linear_cell_complex.h>
 #include <CGAL/Linear_cell_complex_constructors.h>
+#include <CGAL/Memory_sizer.h>
 #include <iostream>
 #include <fstream>
 #include "performance_2.h"
@@ -75,6 +76,7 @@ private:
 
   virtual bool read_mesh(const char* _filename)
   {
+    CGAL::Memory_sizer ms;
     std::ifstream ifs(_filename);
     CGAL::load_off(lcc, ifs);
 
@@ -84,6 +86,7 @@ private:
       if ( lcc.attribute<2>(dit)==NULL )
         lcc.set_attribute<2>(dit, lcc.create_attribute<2>());
     }
+    std::cout << "memory consumption: " << ms.virtual_size() << "  " << ms.resident_size() << std::endl;
     assert( lcc.is_valid());
     return true;
   }
@@ -378,5 +381,10 @@ private:
       contract_face(o1);
     }
   }
+  virtual void lindstrom_test(const char* _filename)
+  {
+  
+  }
+
 };
 //=============================================================================
