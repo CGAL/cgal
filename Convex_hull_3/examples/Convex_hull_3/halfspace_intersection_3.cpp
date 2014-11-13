@@ -34,13 +34,13 @@ int main (void) {
     Polyhedron_3 P;
 
     // compute the intersection
-    // if a point inside the intersection is unknow, pass boost::none
+    // if a point inside the intersection is unknown, pass boost::none
     // to automatically found one using linear programming
     CGAL::halfspace_intersection_3(planes.begin(),
                                    planes.end(),
                                    P,
                                    Point(0, 0, 0));
-    
+
     return 0;
 }
 

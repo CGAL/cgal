@@ -25,22 +25,16 @@ int main () {
 
     // Simple true test with equal planes
     Plane p(1, 1, 1, 1), q(1, 1, 1, 1), r(1, 1, 1, 1);
-    /* std::cout << collinear_dual(p, q, r) << std::endl; */
-    /* std::cout << collinear(to_dual<K>(p), to_dual<K>(q), to_dual<K>(r)) << std::endl; */
     assert(collinear_dual(p, q, r) == true);
     assert(collinear_dual(p, q, r) == collinear(to_dual<K>(p), to_dual<K>(q), to_dual<K>(r)));
 
     // Simple true test with non equal planes
     Plane p2(1, 1, 1, -1), q2(2, 2, 2, -1), r2(3, 3, 3, -1);
-    /* std::cout << collinear_dual(p2, q2, r2) << std::endl; */
-    /* std::cout << collinear(to_dual<K>(p2), to_dual<K>(q2), to_dual<K>(r2)) << std::endl; */
     assert(collinear_dual(p2, q2, r2) == true);
     assert(collinear_dual(p2, q2, r2) == collinear(to_dual<K>(p2), to_dual<K>(q2), to_dual<K>(r2)));
 
     // Simple false test
     Plane p3(1, 1, 1, -1), q3(2, 2, 2, -1), r3(3, 3, 2, -1);
-    /* std::cout << collinear_dual(p3, q3, r3) << std::endl; */
-    /* std::cout << collinear(to_dual<K>(p3), to_dual<K>(q3), to_dual<K>(r3)) << std::endl; */
     assert(collinear_dual(p3, q3, r3) == false);
     assert(collinear_dual(p3, q3, r3) == collinear(to_dual<K>(p3), to_dual<K>(q3), to_dual<K>(r3)));
 
@@ -48,8 +42,6 @@ int main () {
     double almost1 = 0.9999999999;
     Plane p4(0, 0, 0, -1), q4(1, 1, 1, -1);
     Plane r4(almost1, almost1, almost1+1e-15, -1);
-    /* std::cout << collinear_dual(p4, q4, r4) << std::endl; */
-    /* std::cout << collinear(to_dual<K>(p4), to_dual<K>(q4), to_dual<K>(r4)) << std::endl; */
     assert(collinear_dual(p4, q4, r4) == false);
     assert(collinear_dual(p4, q4, r4) == collinear(to_dual<K>(p4), to_dual<K>(q4), to_dual<K>(r4)));
 

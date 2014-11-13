@@ -27,26 +27,18 @@ int main () {
     Plane r(2, 0, 0, -1), rr(4, 0, 0, -1);
 
     // True
-    /* std::cout << less_distance_to_point_dual(p, q, rr) << std::endl; */
-    /* std::cout << less_distance_to_point(to_dual<K>(p), to_dual<K>(q), to_dual<K>(rr)) << std::endl; */
     assert(less_distance_to_point_dual(p, q, rr) == true);
     assert(less_distance_to_point_dual(p, q, rr) == less_distance_to_point(to_dual<K>(p), to_dual<K>(q), to_dual<K>(rr)));
 
     // False
-    /* std::cout << less_distance_to_point_dual(p, q, r) << std::endl; */
-    /* std::cout << less_distance_to_point(to_dual<K>(p), to_dual<K>(q), to_dual<K>(r)) << std::endl; */
     assert(less_distance_to_point_dual(p, q, r) == false);
     assert(less_distance_to_point_dual(p, q, r) == less_distance_to_point(to_dual<K>(p), to_dual<K>(q), to_dual<K>(r)));
 
     // Tests if r is one of the two first points
     // False
-    /* std::cout << less_distance_to_point_dual(p, q, p) << std::endl; */
-    /* std::cout << less_distance_to_point(to_dual<K>(p), to_dual<K>(q), to_dual<K>(p)) << std::endl; */
     assert(less_distance_to_point_dual(p, q, p) == false);
     assert(less_distance_to_point_dual(p, q, p) == less_distance_to_point(to_dual<K>(p), to_dual<K>(q), to_dual<K>(p)));
 
-    /* std::cout << less_distance_to_point_dual(p, q, q) << std::endl; */
-    /* std::cout << less_distance_to_point(to_dual<K>(p), to_dual<K>(q), to_dual<K>(q)) << std::endl; */
     assert(less_distance_to_point_dual(p, q, q) == false);
     assert(less_distance_to_point_dual(p, q, q) == less_distance_to_point(to_dual<K>(p), to_dual<K>(q), to_dual<K>(q)));
 
