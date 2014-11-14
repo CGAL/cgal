@@ -41,7 +41,7 @@ contexts(const CDTP& cdtp)
     end = cdtp.subconstraints_end();
 
   for(; beg!=end; ++beg){
-    Vertex_handle vp = beg->first, vq = beg->second;
+    Vertex_handle vp = beg->first.first, vq = beg->first.second;
 
     if(cdtp.number_of_enclosing_constraints(vp, vq) == 2){
       CDTP::Context_iterator cbeg = cdtp.contexts_begin(vp,vq),

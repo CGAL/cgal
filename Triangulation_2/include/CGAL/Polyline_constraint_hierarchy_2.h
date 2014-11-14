@@ -29,7 +29,6 @@
 #include <CGAL/Skiplist.h>
 #include <CGAL/Iterator_project.h>
 #include <CGAL/triangulation_assertions.h>
-#include <boost/iterator/transform_iterator.hpp>
 
 namespace CGAL {
 
@@ -177,15 +176,7 @@ public:
   typedef std::map<Edge,   Context_list* >        Sc_to_c_map;
   typedef typename Constraint_set::iterator C_iterator;
   typedef typename Sc_to_c_map::const_iterator    Sc_iterator;
-
-  struct First
-    : public std::unary_function<std::pair<Edge, Context_list*>,Edge>  {
-    Edge operator()(const std::pair<Edge, Context_list*>& p) const
-    {
-      return p.first;
-    } 
-  };
-  typedef boost::transform_iterator<First,Sc_iterator> Subconstraint_iterator;
+  typedef Sc_iterator Subconstraint_iterator;
   
 private:
   // data for the 1d hierarchy
@@ -270,14 +261,13 @@ public:
 
   Subconstraint_iterator subconstraint_begin() const
   { 
-    First f;
-    return boost::make_transform_iterator(sc_to_c_map.begin(),f); 
+    return sc_to_c_map.begin(); 
   }
 
   Subconstraint_iterator subconstraint_end() const
   { 
-    First f;
-    return boost::make_transform_iterator(sc_to_c_map.end(),f);   }
+    return sc_to_c_map.end();   
+  }
 
   Sc_iterator sc_begin() const{ return sc_to_c_map.begin(); }
   Sc_iterator sc_end()   const{ return sc_to_c_map.end();   }

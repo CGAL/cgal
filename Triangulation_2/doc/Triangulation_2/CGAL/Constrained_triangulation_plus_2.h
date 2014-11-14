@@ -25,6 +25,7 @@ The data structure maintains for each input constraint
 the sequence of vertices on this constraint. These vertices are
 either vertices of the input constraint or intersection points.
 
+\todo The following description does not match the code
 Two consecutive vertices of an input constraint form a *subconstraint*.
 A subconstraint is a pair of vertex handles and corresponds to a constrained edge of the
 triangulation, which is a pair of a face handle and an index. 
@@ -75,7 +76,8 @@ The value type of this iterator is `Constraint_id`.
 typedef unspecified_type Constraint_iterator; 
 
 /*!
-A subconstraint is a pair of vertices that correspond to an `Edge`. 
+A subconstraint is a pair of vertices that correspond to an `Edge`.
+\todo The documentation does not match the code
  */
 typedef std::pair<Vertex_handle, Vertex_handle> Subconstraint;
 
