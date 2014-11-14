@@ -9,6 +9,7 @@
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
 #include <CGAL/Delaunay_mesher_2.h>
 #include <CGAL/Delaunay_mesh_face_base_2.h>
+#include <CGAL/Delaunay_mesh_vertex_base_2.h>
 #include <CGAL/Delaunay_mesh_size_criteria_2.h>
 #include <CGAL/Mesh_2/Lipschitz_sizing_field_2.h>
 #include <CGAL/Lipschitz_sizing_field_criteria_2.h>
@@ -45,7 +46,7 @@ typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef K::Point_2 Point_2;
 typedef K::Segment_2 Segment_2;
 typedef K::Iso_rectangle_2 Iso_rectangle_2;
-typedef CGAL::Triangulation_vertex_base_2<K>  Vertex_base;
+typedef CGAL::Delaunay_mesh_vertex_base_2<K>  Vertex_base;
 typedef CGAL::Delaunay_mesh_face_base_2<K> Face_base;
 
 template <class Gt,
@@ -104,7 +105,7 @@ typedef CGAL::Constrained_Delaunay_triangulation_2<K, TDS, Itag> CDT;
 typedef CGAL::Constrained_voronoi_diagram_2<CDT> CVD;
 typedef CGAL::Delaunay_mesh_size_criteria_2<CDT> Criteria;
 
-typedef CGAL::Lipschitz_sizing_field_2<K> Lipschitz_sizing_field;
+typedef CGAL::Lipschitz_sizing_field_2<CDT> Lipschitz_sizing_field;
 typedef CGAL::Lipschitz_sizing_field_criteria_2<CDT, Lipschitz_sizing_field> Lipschitz_criteria;
 typedef CGAL::Delaunay_mesher_2<CDT, Lipschitz_criteria> Lipschitz_mesher;
 
