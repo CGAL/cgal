@@ -36,7 +36,7 @@ class Random_points_in_sphere_3 : public Random_generator_base<P> {
     void generate_point();
 public:
     typedef Random_points_in_sphere_3<P,Creator> This;
-    Random_points_in_sphere_3( double r = 1, Random& rnd = get_default_random())
+    Random_points_in_sphere_3( double r = 1, Random& rnd = CGAL::get_default_random())
         // g is an input iterator creating points of type `P' uniformly
         // distributed in the open sphere with radius r, i.e. |`*g'| < r .
         // Three random numbers are needed from `rnd' for each point
@@ -75,7 +75,7 @@ class Random_points_on_sphere_3 : public Random_generator_base<P> {
     void generate_point();
 public:
     typedef Random_points_on_sphere_3<P,Creator> This;
-    Random_points_on_sphere_3( double r = 1, Random& rnd = get_default_random())
+    Random_points_on_sphere_3( double r = 1, Random& rnd = CGAL::get_default_random())
         // g is an input iterator creating points of type `P' uniformly
         // distributed on the sphere with radius r, i.e. |`*g'| == r . A
         // two random numbers are needed from `rnd' for each point.
@@ -113,7 +113,7 @@ class Random_points_in_cube_3 : public Random_generator_base<P>{
     void generate_point();
 public:
     typedef Random_points_in_cube_3<P,Creator> This;
-    Random_points_in_cube_3( double a = 1, Random& rnd = get_default_random())
+    Random_points_in_cube_3( double a = 1, Random& rnd = CGAL::get_default_random())
     : Random_generator_base<P>( a, rnd) { generate_point(); }
     This& operator++()    {
         generate_point();

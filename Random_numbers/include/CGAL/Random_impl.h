@@ -33,17 +33,6 @@
 
 namespace CGAL {
 
-#ifdef CGAL_HEADER_ONLY
-inline Random& get_default_random()
-{
-  static Random default_random;
-  return default_random;
-}
-#else // CGAL_HEADER_ONLY
-inline Random& get_default_random()
-{ return Random::default_random; }
-#endif // CGAL_HEADER_ONLY
-
 // Class implementation (continued)
 // ================================
 

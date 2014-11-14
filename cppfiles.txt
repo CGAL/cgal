@@ -1,15 +1,6 @@
-CGAL:
-
-Clement:
-
-#include "/home/gdamiand/sources/CGAL/Kinetic_data_structures/src/CGAL/JAMA_numeric_solver.cpp"
-#include "/home/gdamiand/sources/CGAL/Kinetic_data_structures/src/CGAL/KDS_Log.cpp"
-#include "/home/gdamiand/sources/CGAL/Kinetic_data_structures/src/CGAL/numeric_solvers_support.cpp"
-#include "/home/gdamiand/sources/CGAL/Kinetic_data_structures/src/CGAL/Turkowski_numeric_solver.cpp"
-
-#include "/home/gdamiand/sources/CGAL/Modular_arithmetic/src/CGAL/Residue_type.cpp"
-
 Guillaume
+
+CGAL:
 
 DONE #include "/home/gdamiand/sources/CGAL/STL_Extension/src/CGAL/assertions.cpp" // variables globales
 DONE #include "/home/gdamiand/sources/CGAL/Stream_support/src/CGAL/io.cpp" // variable statique de classe
@@ -21,6 +12,7 @@ DONE #include "/home/gdamiand/sources/CGAL/Profiling_tools/src/CGAL/Timer.cpp" /
 DONE #include "/home/gdamiand/sources/CGAL/Profiling_tools/src/CGAL/Real_timer.cpp" // variable statique de classe
 DONE #include "/home/gdamiand/sources/CGAL/Random_numbers/src/CGAL/Random.cpp" // variable globale; utilisée directement (donc pb pour header only) -> we need to replace the use of CGAL::default_random by CGAL::get_default_random().
 DONE #include "/home/gdamiand/sources/CGAL/Modular_arithmetic/src/CGAL/primes.cpp" // constante globale
+DONE #include "/home/gdamiand/sources/CGAL/Modular_arithmetic/src/CGAL/Residue_type.cpp" // variables globales (! version multi-thread !)
 
 DONE #include "/home/gdamiand/sources/CGAL/Geomview/src/CGAL/Geomview_stream.cpp"
 DONE #include "/home/gdamiand/sources/CGAL/Intersections_2/src/CGAL/Bbox_2_intersections.cpp"
@@ -41,6 +33,15 @@ DONE #include "/home/gdamiand/sources/CGAL/GraphicsView/src/CGAL_Qt4/debug.cpp"
 DONE #include "/home/gdamiand/sources/CGAL/GraphicsView/src/CGAL_Qt4/GraphicsViewPolylineInput.cpp"
 DONE #include "/home/gdamiand/sources/CGAL/GraphicsView/src/CGAL_Qt4/DemosMainWindow.cpp"
 DONE #include "/home/gdamiand/sources/CGAL/GraphicsView/src/CGAL_Qt4/GraphicsViewNavigation.cpp"
+
+Clement:
+
+CGAL:
+
+#include "/home/gdamiand/sources/CGAL/Kinetic_data_structures/src/CGAL/JAMA_numeric_solver.cpp"
+#include "/home/gdamiand/sources/CGAL/Kinetic_data_structures/src/CGAL/KDS_Log.cpp"
+#include "/home/gdamiand/sources/CGAL/Kinetic_data_structures/src/CGAL/numeric_solvers_support.cpp"
+#include "/home/gdamiand/sources/CGAL/Kinetic_data_structures/src/CGAL/Turkowski_numeric_solver.cpp"
 
 CGAL_Core:
 

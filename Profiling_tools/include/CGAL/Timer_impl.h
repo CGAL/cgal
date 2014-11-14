@@ -57,21 +57,6 @@
 // For the numerical limits
 #include <cfloat>
 
-#ifdef CGAL_HEADER_ONLY
-namespace {
-inline bool& get_static_timer_m_failed()
-{
-  static bool m_failed = false;
-  return m_failed;
-}
-} // namespace
-#else // CGAL_HEADER_ONLY
-namespace {
-inline bool& get_static_timer_m_failed()
-{ return Timer::m_failed; }
-} // namespace
-#endif // CGAL_HEADER_ONLY
-
 namespace CGAL {
 
 // Member functions for Timer

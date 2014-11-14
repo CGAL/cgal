@@ -32,73 +32,6 @@
 
 namespace CGAL {
 
-#ifdef CGAL_HAS_THREADS
-
-#ifdef CGAL_HEADER_ONLY
-inline boost::thread_specific_ptr<int>& get_static_prime_int_()
-{
-  static boost::thread_specific_ptr<int> prime_int_;
-  return prime_int_;
-}
-inline boost::thread_specific_ptr<double>& get_static_prime_()
-{
-  static boost::thread_specific_ptr<double> prime_;
-  return prime_;
-}
-inline boost::thread_specific_ptr<double>& get_static_prime_inv_()
-{
-  static boost::thread_specific_ptr<double> prime_inv_;
-  return prime_inv_;
-}
-#else // CGAL_HEADER_ONLY
-inline boost::thread_specific_ptr<int>& get_static_prime_int_()
-{ return Residue::prime_int_; }
-inline boost::thread_specific_ptr<double>& get_static_prime_()
-{ return Residue::prime_; }
-inline boost::thread_specific_ptr<double>& get_static_prime_inv_()
-{ return Residue::prime_inv_; }
-#endif // CGAL_HEADER_ONLY
-
-#else // CGAL_HAS_THREADS
-
-#ifdef CGAL_HEADER_ONLY
-inline int& get_static_prime_int()
-{
-  static int prime_int = 67111067;
-  return prime_int;
-}
-inline double& get_static_prime()
-{
-  static double prime = 67111067.0;
-  return prime;
-}
-inline double& get_static_prime_inv()
-{
-  static double prime_inv = 1/67111067.0;
-  return prime_inv;
-}
-#else // CGAL_HEADER_ONLY
-inline int& get_static_prime_int()
-{ return Residue::prime_int; }
-inline double& get_static_prime()
-{ return Residue::prime; }
-inline double& get_static_prime_inv()
-{ return Residue::prime_inv; }
-#endif // CGAL_HEADER_ONLY
-
-#endif // CGAL_HAS_THREADS
-
-#ifdef CGAL_HEADER_ONLY
-inline double& get_static_CST_CUT()
-{
-  static double CST_CUT = std::ldexp( 3., 51 );
-  return CST_CUT;
-}
-#else // CGAL_HEADER_ONLY
-inline double& get_static_CST_CUT()
-{ return Residue::CST_CUT; }
-#endif // CGAL_HEADER_ONLY
-
 class Residue;
 
 Residue operator + (const Residue&);
@@ -106,6 +39,20 @@ Residue operator - (const Residue&);
 
 std::ostream& operator << (std::ostream& os, const Residue& p);
 std::istream& operator >> (std::istream& is, Residue& p);
+
+#ifdef CGAL_HAS_THREADS
+
+#ifdef CGAL_HEADER_ONLY
+#else // CGAL_HEADER_ONLY
+#endif // CGAL_HEADER_ONLY
+
+#else // CGAL_HAS_THREADS
+
+#ifdef CGAL_HEADER_ONLY
+#else // CGAL_HEADER_ONLY
+#endif // CGAL_HEADER_ONLY
+
+#endif // CGAL_HAS_THREADS
 
 /*! \ingroup CGAL_Modular_traits
  * \brief This class represents the Field Z mod p.
@@ -127,16 +74,46 @@ public:
   typedef Residue NT;
 
 private:
-#ifndef CGAL_HEADER_ONLY
+#ifdef CGAL_HEADER_ONLY
+  static const double& get_static_CST_CUT()
+  {
+    static const double CST_CUT = std::ldexp( 3., 51 );
+    return CST_CUT;
+  }
+#else // CGAL_HEADER_ONLY
   CGAL_EXPORT static const double  CST_CUT;
+  static const double& get_static_CST_CUT()
+  { return Residue::CST_CUT; }
 #endif // CGAL_HEADER_ONLY
 
 #ifdef CGAL_HAS_THREADS
 
-#ifndef CGAL_HEADER_ONLY
+#ifdef CGAL_HEADER_ONLY
+  static boost::thread_specific_ptr<int>& get_static_prime_int_()
+  {
+  static boost::thread_specific_ptr<int> prime_int_;
+  return prime_int_;
+  }
+  static boost::thread_specific_ptr<double>& get_static_prime_()
+  {
+  static boost::thread_specific_ptr<double> prime_;
+  return prime_;
+  }
+  static boost::thread_specific_ptr<double>& get_static_prime_inv_()
+  {
+  static boost::thread_specific_ptr<double> prime_inv_;
+  return prime_inv_;
+  }
+#else // CGAL_HEADER_ONLY
   CGAL_EXPORT static boost::thread_specific_ptr<int>    prime_int_;
   CGAL_EXPORT static boost::thread_specific_ptr<double> prime_;
   CGAL_EXPORT static boost::thread_specific_ptr<double> prime_inv_;
+  static boost::thread_specific_ptr<int>& get_static_prime_int_()
+  { return Residue::prime_int_; }
+  static boost::thread_specific_ptr<double>& get_static_prime_()
+  { return Residue::prime_; }
+  static boost::thread_specific_ptr<double>& get_static_prime_inv_()
+  { return Residue::prime_inv_; }
 #endif // CGAL_HEADER_ONLY
 
   static void init_class_for_thread(){
@@ -167,10 +144,33 @@ private:
   }
 #else // CGAL_HAS_THREADS
 
-#ifndef CGAL_HEADER_ONLY
+#ifdef CGAL_HEADER_ONLY
+  static int& get_static_prime_int()
+  {
+  static int prime_int = 67111067;
+  return prime_int;
+  }
+  static double& get_static_prime()
+  {
+  static double prime = 67111067.0;
+  return prime;
+  }
+  static double& get_static_prime_inv()
+  {
+  static double prime_inv = 1/67111067.0;
+  return prime_inv;
+  }
+
+#else //
   CGAL_EXPORT  static int prime_int;
   CGAL_EXPORT  static double prime;
   CGAL_EXPORT  static double prime_inv;
+  static int& get_static_prime_int()
+  { return Residue::prime_int; }
+  static double& get_static_prime()
+  { return Residue::prime; }
+  static double& get_static_prime_inv()
+  { return Residue::prime_inv; }
 #endif // CGAL_HEADER_ONLY
   static int get_prime_int(){ return get_static_prime_int();}
   static double get_prime()    { return get_static_prime();}

@@ -48,8 +48,16 @@ private:
     int         interv;
     bool        running;
 
-#ifndef CGAL_HEADER_ONLY
+#ifdef CGAL_HEADER_ONLY
+    static bool& get_static_timer_m_failed()
+    {
+      static bool m_failed = false;
+      return m_failed;
+    }
+#else // CGAL_HEADER_ONLY
     static bool m_failed;
+    static bool& get_static_timer_m_failed()
+    { return CGAL::Timer::m_failed; }
 #endif // CGAL_HEADER_ONLY
 
     double   user_process_time() const; // in seconds

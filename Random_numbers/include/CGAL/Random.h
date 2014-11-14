@@ -228,6 +228,17 @@ public:
 CGAL_EXPORT extern  Random  default_random;
 #endif // CGAL_HEADER_ONLY
 
+#ifdef CGAL_HEADER_ONLY
+inline Random& get_default_random()
+{
+  static Random default_random;
+  return default_random;
+}
+#else // CGAL_HEADER_ONLY
+inline Random& get_default_random()
+{ return default_random; }
+#endif // CGAL_HEADER_ONLY
+
 } //namespace CGAL
 
 #ifdef CGAL_HEADER_ONLY

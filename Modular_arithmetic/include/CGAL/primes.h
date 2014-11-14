@@ -28,7 +28,7 @@
 namespace CGAL { 
 namespace internal {
 #ifndef CGAL_HEADER_ONLY
-CGAL_EXPORT extern int primes[2000];
+CGAL_EXPORT extern const int primes[2000];
 #endif // CGAL_HEADER_ONLY
 
 static inline 

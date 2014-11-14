@@ -39,7 +39,6 @@ struct Check_FPU_rounding_mode_is_restored {
 
   ~Check_FPU_rounding_mode_is_restored()
   {
-    std::cout<<"DELETE  ~Check_FPU_rounding_mode_is_restored()"<<std::endl;
     CGAL_assertion_msg( FPU_get_cw() == mode,
                         "The default FPU rounding mode has not been restored "
                         " before the exit of the program. "
