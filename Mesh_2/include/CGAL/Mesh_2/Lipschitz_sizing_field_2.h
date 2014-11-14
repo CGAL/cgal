@@ -20,11 +20,12 @@
 namespace CGAL
 {
 
-template <typename Geom_traits>
+template <typename Tr>
 class Lipschitz_sizing_field_2 
-	: public virtual Sizing_field_2<Geom_traits>
+	: public virtual Sizing_field_2<Tr>
 {
 public:
+  typedef typename Tr::Geom_traits      Geom_traits;
   typedef typename Geom_traits::Point_2 Point;
     
   typedef Delaunay_triangulation_2<Geom_traits> Delaunay_triangulation;
@@ -56,7 +57,13 @@ public:
   };
 
 public:
-    
+  // default constructor: empty point set and K = 1.0
+  Lipschitz_sizing_field_2(Tr& tr)
+    : Lipschitz_sizing_field_2()
+  {
+    //todo : use vertices of tr as sites
+  }
+
   // default constructor: empty point set and K = 1.0
   Lipschitz_sizing_field_2()
     : K(1.0)

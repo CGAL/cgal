@@ -11,7 +11,8 @@ namespace CGAL
 namespace Mesh_2
 {
   template<typename CDT,
-           typename SizingField = Uniform_sizing_field<typename CDT::Geom_traits> >
+           typename SizingField
+           = Uniform_sizing_field_2<typename CDT::Geom_traits> >
   class Lloyd_move_2
   {
     typedef typename CDT::Vertex_handle          Vertex_handle;

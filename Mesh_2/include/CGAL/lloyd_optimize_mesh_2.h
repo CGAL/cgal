@@ -3,7 +3,7 @@
 
 #include <CGAL/Mesh_2/Mesh_global_optimizer_2.h>
 #include <CGAL/Mesh_2/Lloyd_move_2.h>
-#include <CGAL/Mesh_2/Lipschitz_sizing_field_2.h>
+#include <CGAL/Mesh_2/Mesh_sizing_field.h>
 #include <fstream>
 
 namespace CGAL
@@ -14,21 +14,11 @@ namespace CGAL
                              const unsigned int nb_iterations = 1,
                              const double convergence_ratio = 0.001)
   {
-    typedef typename CDT::Geom_traits Gt;
-    typedef CGAL::Lipschitz_sizing_field_2<Gt> Lip_sizing;
+    typedef Mesh_2::Mesh_sizing_field<CDT>           Sizing;
+    typedef Mesh_2::Lloyd_move_2<CDT, Sizing>        Mv;
+    typedef Mesh_2::Mesh_global_optimizer_2<CDT, Mv> Optimizer;
 
-    std::set<typename Gt::Point_2> points;
-    for(typename CDT::Finite_vertices_iterator
-      vit = cdt.finite_vertices_begin();
-      vit != cdt.finite_vertices_end();
-      ++vit)
-        points.insert(vit->point());
-    Lip_sizing size(points.begin(), points.end());
-
-    typedef CGAL::Mesh_2::Lloyd_move_2<CDT, Lip_sizing> Mf;
-    CGAL::Mesh_2::Mesh_global_optimizer_2<CDT, Mf> lloyd(cdt,
-                                                         convergence_ratio);
-    lloyd.set_sizing_field(size);
+    Optimizer lloyd(cdt, convergence_ratio);
 
 #ifdef CGAL_MESH_2_OPTIMIZERS_DEBUG
     std::ofstream os("before_lloyd.angles.txt");
@@ -36,6 +26,7 @@ namespace CGAL
     os.close();
 #endif
 
+    //run optimization
     lloyd(nb_iterations);
 
 #ifdef CGAL_MESH_2_OPTIMIZERS_DEBUG

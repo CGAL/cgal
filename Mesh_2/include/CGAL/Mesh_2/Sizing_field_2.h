@@ -8,17 +8,21 @@
 namespace CGAL
 {
 
-template <typename Geom_traits>
+template <typename Tr>
 class Sizing_field_2 // pure virtual class
 {    
 public:
-  typedef typename Geom_traits::Point_2 Point_2;
-  typedef typename Geom_traits::FT      FT;
+  typedef typename Tr::Geom_traits::Point_2 Point_2;
+  typedef typename Tr::Geom_traits::FT      FT;
 
 public:
   Sizing_field_2()
   {
   }
+  Sizing_field_2(Tr& tr)
+  {
+  }
+
   virtual ~Sizing_field_2()
   {
   }

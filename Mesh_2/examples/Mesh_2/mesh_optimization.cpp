@@ -1,9 +1,11 @@
 #define CGAL_MESH_2_OPTIMIZER_VERBOSE
+#define CGAL_MESH_2_OPTIMIZERS_DEBUG
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
 #include <CGAL/Delaunay_mesher_2.h>
 #include <CGAL/Delaunay_mesh_face_base_2.h>
+#include <CGAL/Delaunay_mesh_vertex_base_2.h>
 #include <CGAL/Delaunay_mesh_size_criteria_2.h>
 
 #include <CGAL/lloyd_optimize_mesh_2.h>
@@ -11,7 +13,7 @@
 #include <iostream>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
-typedef CGAL::Triangulation_vertex_base_2<K>                Vb;
+typedef CGAL::Delaunay_mesh_vertex_base_2<K>                Vb;
 typedef CGAL::Delaunay_mesh_face_base_2<K>                  Fb;
 typedef CGAL::Triangulation_data_structure_2<Vb, Fb>        Tds;
 typedef CGAL::Constrained_Delaunay_triangulation_2<K, Tds>  CDT;
@@ -38,11 +40,10 @@ int main()
 
   std::cout << "Number of vertices: " << cdt.number_of_vertices() << std::endl;
 
-  std::cout << "Meshing the triangulation with default criterias..."
-            << std::endl;
+  std::cout << "Meshing..." << std::endl;
 
   Mesher mesher(cdt);
-  mesher.set_criteria(Criteria(0.125, 0.5));
+  mesher.set_criteria(Criteria(0.125, 0.05));
   mesher.refine_mesh();
   
   std::cout << "Number of vertices: " << cdt.number_of_vertices() << std::endl;

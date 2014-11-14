@@ -31,20 +31,21 @@ namespace CGAL {
 
 namespace Mesh_2 {
   
-template <typename Geom_traits>
-class Uniform_sizing_field
-  : public virtual Sizing_field_2<Geom_traits>
+template <typename Tr>
+class Uniform_sizing_field_2
+  : public virtual Sizing_field_2<Tr>
 {
-  typedef typename Geom_traits::Point_2       Point_2;
-  typedef typename Geom_traits::FT            FT;
+  typedef typename Tr::Geom_traits::Point_2       Point_2;
+  typedef typename Tr::Geom_traits::FT            FT;
   
 public:
   // Vertices of mesh triangulation do not need to be updated 
   static const bool is_vertex_update_needed = false;
-  
-public:
-  Uniform_sizing_field() {}
 
+public:
+  Uniform_sizing_field_2(Tr& tr) {}
+
+public:
   FT operator()(const Point_2&) const { return FT(1); }
 };
   

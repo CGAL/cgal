@@ -84,8 +84,9 @@ public:
     , sq_freeze_ratio_(freeze_ratio * freeze_ratio)
     , convergence_ratio_(convergence_ratio)
     , move_function_(move_function)
-    , sizing_field_()
-  {}
+    , sizing_field_(cdt)
+  {
+  }
   
   /// Time accessors
   void set_time_limit(double time) { time_limit_ = time; }
@@ -315,11 +316,14 @@ private:
     {
       const Vertex_handle& v = it->first;
       const Point_2& new_position = it->second;
+      const FT size = v->sizing_info();
 
       //cdt_.move(v, new_position);
       //function not available, see Constrained_triangulation_2
       cdt_.remove(v);
-      cdt_.insert(new_position);
+      Vertex_handle new_v = cdt_.insert(new_position);
+
+      new_v->set_sizing_info(size);
 
       if( is_time_limit_reached() )
         break;
@@ -327,10 +331,6 @@ private:
   }
 
 public:
-  void set_sizing_field(const Sizing_field& sf)
-  {
-    sizing_field_ = sf;
-  }
 
   void output_angles_histogram(std::ostream& os)
   {
