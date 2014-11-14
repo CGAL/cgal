@@ -59,7 +59,7 @@ CGAL::Timer timer;
 void random_d_tuple_in_range(p_int V, int d, int l, int h)
 {
   for(int i = 0; i<d; ++i)
-    V[i] = CGAL::default_random.get_int(l,h);
+    V[i] = CGAL::get_default_random().get_int(l,h);
 }
 
 void random_d_tuples_in_range(pp_int V, int n, int d, int l, int h)

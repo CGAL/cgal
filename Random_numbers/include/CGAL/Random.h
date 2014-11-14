@@ -222,12 +222,16 @@ public:
     boost::rand48 rng;
 };
 
+#ifndef CGAL_HEADER_ONLY
 // Global variables
 // ================
 CGAL_EXPORT extern  Random  default_random;
+#endif // CGAL_HEADER_ONLY
 
 } //namespace CGAL
 
+#ifdef CGAL_HEADER_ONLY
+#include <CGAL/Random_impl.h>
+#endif // CGAL_HEADER_ONLY
+
 #endif // CGAL_RANDOM_H
-
-

@@ -61,7 +61,7 @@ int main(int argc, char** argv)
   std::cerr << "Filling f with " << number_of_elements << " random integers...\n";
   for(unsigned int n=0; n<number_of_elements; n++)
   {
-    int i=CGAL::default_random.get_int(0,1000);
+    int i=CGAL::get_default_random().get_int(0,1000);
     f.insert(i, i*i);
   }
 

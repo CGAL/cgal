@@ -78,7 +78,7 @@ class QP_partial_filtered_pricing
 
     // creation
     QP_partial_filtered_pricing( bool     randomize = false,
-				  Random&  random    = default_random,
+				  Random&  random    = get_default_random(),
 				  ET2NT    et2nt     = ET2NT());
 
     // operations

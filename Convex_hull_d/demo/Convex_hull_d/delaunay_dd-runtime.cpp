@@ -54,7 +54,7 @@ CGAL::Point_d<R> random_point_in_range(int d,int l,int h,
 {
   std::vector<int> V(d+1); V[d]=1;
   for(int i = 0; i<d; ++i)
-    V[i] = CGAL::default_random.get_int(l,h);
+    V[i] = CGAL::get_default_random().get_int(l,h);
   return CGAL::Point_d<R>(d,V.begin(),V.end());
 }
 

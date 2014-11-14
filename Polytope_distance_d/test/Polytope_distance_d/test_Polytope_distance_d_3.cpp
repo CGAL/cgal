@@ -55,7 +55,7 @@ typedef  CGAL::Polytope_distance_d_traits_3<HK1, RT, double> HTraits1;
 #include "test_Polytope_distance_d.h"
 
 template <class K, class Traits>
-void process () 
+void process ()
 {
   // generate point set
   std::vector<typename K::Point_3>  p_points, q_points;
@@ -67,28 +67,28 @@ void process ()
     for ( i = 0; i < 50; ++i) {
       p_points.push_back
 	(typename K::Point_3(
-			     CGAL::default_random( 0x100000),
-			     CGAL::default_random( 0x100000), 
-			     CGAL::default_random( 0x100000), 
+			     CGAL::get_default_random()( 0x100000),
+			     CGAL::get_default_random()( 0x100000),
+			     CGAL::get_default_random()( 0x100000),
 			     hom));
     }
     hom = 3.0;
     for ( i = 0; i < 50; ++i) {
       q_points.push_back
 	(typename K::Point_3(
-			     -CGAL::default_random( 0x100000),
-			     -CGAL::default_random( 0x100000),
-			     -CGAL::default_random( 0x100000),
+			     -CGAL::get_default_random()( 0x100000),
+			     -CGAL::get_default_random()( 0x100000),
+			     -CGAL::get_default_random()( 0x100000),
 			     hom));
     }
   }
-    
+
   // call test function
   CGAL::test_Polytope_distance_d( p_points.begin(), p_points.end(),
 				  q_points.begin(), q_points.end(),
 				  Traits(), 1);
 }
-    
+
 // main
 // ----
 int
@@ -97,5 +97,5 @@ main()
     process<CK1, CTraits1>();
     process<HK1, HTraits1>();
 }
- 
+
 // ===== EOF ==================================================================

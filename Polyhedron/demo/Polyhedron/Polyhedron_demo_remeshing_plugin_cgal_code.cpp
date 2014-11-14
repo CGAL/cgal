@@ -285,7 +285,7 @@ Scene_item* cgal_code_remesh(QWidget* parent,
                                   triangulation.dimension() < 3 );
         n = triangulation.number_of_vertices())
     {
-      const int pos = CGAL::default_random.get_int(0, (int)polyhedron_points.size());
+      const int pos = CGAL::get_default_random().get_int(0, (int)polyhedron_points.size());
       triangulation.insert(polyhedron_points[pos]);
     }
   }
