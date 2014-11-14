@@ -343,6 +343,8 @@ public:
         fit != cdt_.finite_faces_end();
         ++fit)
     {
+      if(!fit->is_in_domain())
+        continue;
       typename CDT::Triangle tr = cdt_.triangle(fit);
       for(int i = 0; i < 3; ++i)
       {
