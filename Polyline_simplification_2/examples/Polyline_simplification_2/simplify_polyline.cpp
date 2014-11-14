@@ -26,7 +26,7 @@ int main( )
   PS::simplify(polyline.begin(), polyline.end(), cost, Stop(0.5), std::back_inserter(result));
   
   std::cout.precision(12);
-  for(int i=0; i < result.size(); ++i){
+  for(std::size_t i=0; i < result.size(); ++i){
     std::cout << result[i] << std::endl;
   }
   return 0;
