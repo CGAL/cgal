@@ -9,7 +9,6 @@ Clement:
 #include "/home/gdamiand/sources/CGAL/Profiling_tools/src/CGAL/Timer.cpp" // static mais doit pouvoir se remplacer en membre
 #include "/home/gdamiand/sources/CGAL/Profiling_tools/src/CGAL/Real_timer.cpp" // static mais doit pouvoir se remplacer en membre
 #include "/home/gdamiand/sources/CGAL/Random_numbers/src/CGAL/Random.cpp" // static mais doit pouvoir se remplacer en membre
-#include "/home/gdamiand/sources/CGAL/Number_types/src/CGAL/test_FPU_rounding_mode.cpp" // static const
 #include "/home/gdamiand/sources/CGAL/Modular_arithmetic/src/CGAL/Residue_type.cpp"
 #include "/home/gdamiand/sources/CGAL/Modular_arithmetic/src/CGAL/primes.cpp"
 
@@ -20,6 +19,7 @@ DONE #include "/home/gdamiand/sources/CGAL/Stream_support/src/CGAL/io.cpp" // va
 DONE #include "/home/gdamiand/sources/CGAL/Stream_support/src/CGAL/Color.cpp" // constantes globales
 DONE #include "/home/gdamiand/sources/CGAL/Kernel_23/src/CGAL/kernel.cpp" // constantes globales
 DONE #include "/home/gdamiand/sources/CGAL/Number_types/src/CGAL/Interval_arithmetic.cpp" // constante globale
+DONE #include "/home/gdamiand/sources/CGAL/Number_types/src/CGAL/test_FPU_rounding_mode.cpp" // static const (ok car utilisé que pour debug)
 
 DONE #include "/home/gdamiand/sources/CGAL/Geomview/src/CGAL/Geomview_stream.cpp"
 DONE #include "/home/gdamiand/sources/CGAL/Intersections_2/src/CGAL/Bbox_2_intersections.cpp"

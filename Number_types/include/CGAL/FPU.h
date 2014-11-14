@@ -422,11 +422,25 @@ FPU_get_cw (void)
     return cw;
 }
 
+} // namespace CGAL
+
+#ifdef CGAL_HEADER_ONLY
+#include <CGAL/test_FPU_rounding_mode_impl.h>
+#endif // CGAL_HEADER_ONLY
+
+namespace CGAL {
+
+// User interface (cont):
+
 inline
 void
 FPU_set_cw (FPU_CW_t cw)
 {
-    CGAL_IA_SETFPCW(cw);
+#ifndef CGAL_NDEBUG
+  const Check_FPU_rounding_mode_is_restored & tmp = get_static_check_fpu_rounding_mode_is_restored();
+#endif
+
+  CGAL_IA_SETFPCW(cw);
 }
 
 inline

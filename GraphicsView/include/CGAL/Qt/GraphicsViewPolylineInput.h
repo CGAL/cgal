@@ -34,6 +34,7 @@ class QGraphicsScene;
 class QGraphicsSceneMouseEvent;
 class QGraphicsItem;
 class QGraphicsPathItem;
+class QGraphicsLineItem;
 class QKeyEvent;
 class QEvent;
 class QObject;

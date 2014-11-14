@@ -35,8 +35,6 @@
 #include <QEvent>
 #include <QKeyEvent>
 
-#include <CGAL/Qt/GraphicsViewPolylineInput.h>
-
 namespace CGAL {
 namespace Qt {
 

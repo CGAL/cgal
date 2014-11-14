@@ -22,6 +22,10 @@
 //
 // Author(s)     : Sylvain Pion
  
+#ifndef CGAL_HEADER_ONLY
+
 #include <CGAL/basic.h>
 #include <CGAL/FPU.h>
 #include <CGAL/Interval_arithmetic_impl.h>
+
+#endif
