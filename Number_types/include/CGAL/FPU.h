@@ -437,7 +437,9 @@ void
 FPU_set_cw (FPU_CW_t cw)
 {
 #ifndef CGAL_NDEBUG
+#ifdef CGAL_HEADER_ONLY
   const Check_FPU_rounding_mode_is_restored & tmp = get_static_check_fpu_rounding_mode_is_restored();
+#endif
 #endif
 
   CGAL_IA_SETFPCW(cw);
