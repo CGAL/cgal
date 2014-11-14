@@ -338,7 +338,6 @@ template <class Traits, class Container, class CostFunction, class StopFunction>
 
   Constraint_id cid = pct.insert_constraint(polygon);
 
-  bool keep_points = false;
   Polyline_simplification_2<PCT, CostFunction, StopFunction> simplifier(pct, cost, stop);
   while(simplifier()){}
 
@@ -387,7 +386,6 @@ Simplifies an open or closed polyline given as an iterator range of 2D \cgal poi
 
   Constraint_id cid = pct.insert_constraint(b,e, close);
 
-  bool keep_points = false;
   Polyline_simplification_2<PCT, CostFunction, StopFunction> simplifier(pct, cost, stop);
   while(simplifier()){}
 
