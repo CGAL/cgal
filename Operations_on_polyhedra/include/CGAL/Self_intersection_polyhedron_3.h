@@ -64,7 +64,7 @@ struct Intersect_facets
 
 // members
   FaceGraph& m_polyhedron;
-  Ppmap m_point;
+  const Ppmap m_point;
   mutable OutputIterator  m_iterator;
   mutable bool            m_intersected;
   mutable boost::function_output_iterator<Output_iterator_with_bool> m_iterator_wrapper;
@@ -77,7 +77,7 @@ struct Intersect_facets
   Intersect_facets(const FaceGraph& polyhedron, OutputIterator it, const Kernel& kernel)
     : 
     m_polyhedron(const_cast<FaceGraph&>(polyhedron)),
-    m_point(get(vertex_point_t(),polyhedron)),
+    m_point(get(vertex_point_t(),m_polyhedron)),
     m_iterator(it),
     m_intersected(false),
     m_iterator_wrapper(Output_iterator_with_bool(&m_iterator, &m_intersected)),

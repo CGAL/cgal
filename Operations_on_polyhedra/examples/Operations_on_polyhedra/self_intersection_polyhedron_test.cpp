@@ -15,8 +15,8 @@
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef K::Point_3 Point;
 typedef K::Triangle_3 Triangle;
-// typedef CGAL::Polyhedron_3<K> Polyhedron;
-typedef CGAL::Surface_mesh<K::Point_3> Polyhedron;
+ typedef CGAL::Polyhedron_3<K> Polyhedron;
+//typedef CGAL::Surface_mesh<K::Point_3> Polyhedron;
 typedef boost::graph_traits<Polyhedron>::face_descriptor face_descriptor;
 
 
