@@ -34,7 +34,7 @@
 
 #include <boost/function_output_iterator.hpp>
 #include <boost/type_traits/is_const.hpp>
-#include <boost/mpl/if.hpp>
+#include <boost/graph/graph_traits.hpp>
 
 namespace CGAL {
 namespace internal {
@@ -59,8 +59,9 @@ struct Intersect_facets
 // typedefs
   typedef typename Kernel::Segment_3    Segment;
   typedef typename Kernel::Triangle_3   Triangle;
-  typedef typename Polyhedron::Halfedge_const_handle Halfedge_const_handle;
+  typedef typename boost::graph_traits<Polyhedron>::halfedge_descriptor halfedge_descriptor;
 // members
+  Polyhedron& m_polyhedron;
   mutable OutputIterator  m_iterator;
   mutable bool            m_intersected;
   mutable boost::function_output_iterator<Output_iterator_with_bool> m_iterator_wrapper;
@@ -69,8 +70,9 @@ struct Intersect_facets
   typename Kernel::Construct_triangle_3 triangle_functor;
   typename Kernel::Do_intersect_3       do_intersect_3_functor;
 
-  Intersect_facets(OutputIterator it, const Kernel& kernel)
+  Intersect_facets(const Polyhedron& polyhedron, OutputIterator it, const Kernel& kernel)
     : 
+    m_polyhedron(const_cast<Polyhedron&>(polyhedron)),
     m_iterator(it),
     m_intersected(false),
     m_iterator_wrapper(Output_iterator_with_bool(&m_iterator, &m_intersected)),
@@ -82,73 +84,66 @@ struct Intersect_facets
   void operator()(const Box* b,
     const Box* c) const
   {
-    Halfedge_const_handle h = b->handle()->halfedge();
+    halfedge_descriptor h  = halfedge(b->handle(),m_polyhedron);
 
     // check for shared egde --> no intersection
-    if(h->opposite()->facet() == c->handle() ||
-      h->next()->opposite()->facet() == c->handle() ||
-      h->next()->next()->opposite()->facet() == c->handle())
+    if(face(opposite(h,m_polyhedron),m_polyhedron) == c->handle() ||
+       face(opposite(next(h,m_polyhedron),m_polyhedron),m_polyhedron) == c->handle() ||
+       face(opposite(next(next(h,m_polyhedron),m_polyhedron),m_polyhedron),m_polyhedron) == c->handle())
       return;
 
     // check for shared vertex --> maybe intersection, maybe not
-    Halfedge_const_handle g = c->handle()->halfedge();
-    Halfedge_const_handle v;
+    halfedge_descriptor g = halfedge(c->handle(),m_polyhedron);
+    halfedge_descriptor v;
 
-    if(h->vertex() == g->vertex())
+    if(target(h,m_polyhedron) == target(g,m_polyhedron))
       v = g;
-    if(h->vertex() == g->next()->vertex())
-      v = g->next();
-    if(h->vertex() == g->next()->next()->vertex())
-      v = g->next()->next();
+    if(target(h,m_polyhedron) == target(next(g,m_polyhedron),m_polyhedron))
+      v = next(g,m_polyhedron);
+    if(target(h,m_polyhedron) == target(next(next(g,m_polyhedron),m_polyhedron),m_polyhedron))
+      v = next(next(g,m_polyhedron),m_polyhedron);
 
-    if(v == Halfedge_const_handle())
-    {
-      h = h->next();
-      if(h->vertex() == g->vertex())
-  v = g;
-      if(h->vertex() == g->next()->vertex())
-  v = g->next();
-      if(h->vertex() == g->next()->next()->vertex())
-  v = g->next()->next();
-      if(v == Halfedge_const_handle())
-      {
-  h = h->next();
-  if(h->vertex() == g->vertex())
-    v = g;
-  if(h->vertex() == g->next()->vertex())
-    v = g->next();
-  if(h->vertex() == g->next()->next()->vertex())
-    v = g->next()->next();
+    if(v == halfedge_descriptor()){
+      h = next(h,m_polyhedron);
+      if(target(h,m_polyhedron) == target(g,m_polyhedron))
+        v = g;
+      if(target(h,m_polyhedron) == target(next(g,m_polyhedron),m_polyhedron))
+        v = next(g,m_polyhedron);
+      if(target(h,m_polyhedron) == target(next(next(g,m_polyhedron),m_polyhedron),m_polyhedron))
+        v = next(next(g,m_polyhedron),m_polyhedron);
+      if(v == halfedge_descriptor()){
+        h = next(h,m_polyhedron);
+        if(target(h,m_polyhedron) == target(g,m_polyhedron))
+          v = g;
+        if(target(h,m_polyhedron) == target(next(g,m_polyhedron),m_polyhedron))
+          v = next(g,m_polyhedron);
+        if(target(h,m_polyhedron) == target(next(next(g,m_polyhedron),m_polyhedron),m_polyhedron))
+          v = next(next(g,m_polyhedron),m_polyhedron);
       }
     }
 
-    if(v != Halfedge_const_handle())
-    {
+    if(v != halfedge_descriptor()){
       // found shared vertex: 
-      CGAL_assertion(h->vertex() == v->vertex());
+      CGAL_assertion(target(h,m_polyhedron) == target(v,m_polyhedron));
       // geometric check if the opposite segments intersect the triangles
-      Triangle t1 = triangle_functor( h->vertex()->point(), h->next()->vertex()->point(), h->next()->next()->vertex()->point());
-      Triangle t2 = triangle_functor( v->vertex()->point(), v->next()->vertex()->point(), v->next()->next()->vertex()->point());
-
-      Segment s1 = segment_functor( h->next()->vertex()->point(), h->next()->next()->vertex()->point());
-      Segment s2 = segment_functor( v->next()->vertex()->point(), v->next()->next()->vertex()->point());
-
-      if(do_intersect_3_functor(t1,s2))
-      {
+      Triangle t1 = triangle_functor( target(h,m_polyhedron)->point(), target(next(h,m_polyhedron),m_polyhedron)->point(), target(next(next(h,m_polyhedron),m_polyhedron),m_polyhedron)->point());
+      Triangle t2 = triangle_functor( target(v,m_polyhedron)->point(), target(next(v,m_polyhedron),m_polyhedron)->point(), target(next(next(v,m_polyhedron),m_polyhedron),m_polyhedron)->point());
+      
+      Segment s1 = segment_functor( target(next(h,m_polyhedron),m_polyhedron)->point(), target(next(next(h,m_polyhedron),m_polyhedron),m_polyhedron)->point());
+      Segment s2 = segment_functor( target(next(v,m_polyhedron),m_polyhedron)->point(), target(next(next(v,m_polyhedron),m_polyhedron),m_polyhedron)->point());
+      
+      if(do_intersect_3_functor(t1,s2)){
         *m_iterator_wrapper++ = std::make_pair(b->handle(), c->handle());
-      }
-      else if(do_intersect_3_functor(t2,s1))
-      {
+      } else if(do_intersect_3_functor(t2,s1)){
         *m_iterator_wrapper++ = std::make_pair(b->handle(), c->handle());
       }
       return;
     }
-
+    
     // check for geometric intersection
-    Triangle t1 = triangle_functor( h->vertex()->point(), h->next()->vertex()->point(), h->next()->next()->vertex()->point());
-    Triangle t2 = triangle_functor( g->vertex()->point(), g->next()->vertex()->point(), g->next()->next()->vertex()->point());
-    if(do_intersect_3_functor(t1, t2))
-    {
+    Triangle t1 = triangle_functor( target(h,m_polyhedron)->point(), target(next(h,m_polyhedron),m_polyhedron)->point(), target(next(next(h,m_polyhedron),m_polyhedron),m_polyhedron)->point());
+    Triangle t2 = triangle_functor( target(g,m_polyhedron)->point(), target(next(g,m_polyhedron),m_polyhedron)->point(), target(next(next(g,m_polyhedron),m_polyhedron),m_polyhedron)->point());
+    if(do_intersect_3_functor(t1, t2)){
       *m_iterator_wrapper++ = std::make_pair(b->handle(), c->handle());
     }
   } // end operator ()
@@ -222,15 +217,9 @@ self_intersect(Polyhedron& polyhedron, OutputIterator out, const GeomTraits& geo
 {
   CGAL_assertion(polyhedron.is_pure_triangle());
 
-  typedef typename boost::mpl::if_c< boost::is_const<Polyhedron>::value,
-                                    typename Polyhedron::Facet_const_iterator,
-                                    typename Polyhedron::Facet_iterator
-                                   >::type Facet_it;
+  typedef typename boost::graph_traits<Polyhedron>::face_iterator Facet_it;
 
-  typedef typename boost::mpl::if_c< boost::is_const<Polyhedron>::value,
-                                       typename Polyhedron::Facet_const_handle, 
-                                       typename Polyhedron::Facet_handle
-                                     >::type Facet_hdl;
+  typedef typename boost::graph_traits<Polyhedron>::face_descriptor Facet_hdl;
 
   typedef typename CGAL::Box_intersection_d::Box_with_handle_d<double, 3, Facet_hdl> Box;
 
@@ -238,18 +227,20 @@ self_intersect(Polyhedron& polyhedron, OutputIterator out, const GeomTraits& geo
   std::vector<Box> boxes;
   boxes.reserve(polyhedron.size_of_facets());
 
-  Facet_it f;
-  for(f = polyhedron.facets_begin();
-    f != polyhedron.facets_end();
-    f++)
-    boxes.push_back(Box( f->halfedge()->vertex()->point().bbox() +
-    f->halfedge()->next()->vertex()->point().bbox() +
-    f->halfedge()->next()->next()->vertex()->point().bbox(),
-    f));
+  Facet_it fi,e;
 
+  for(boost::tie(fi,e)= faces(polyhedron);
+    fi != e;
+      ++fi){
+    Facet_hdl f = *fi;
+    boxes.push_back(Box( target(halfedge(f,polyhedron),polyhedron)->point().bbox() +
+                         target(next(halfedge(f,polyhedron),polyhedron),polyhedron)->point().bbox() +
+                         target(next(next(halfedge(f,polyhedron),polyhedron),polyhedron),polyhedron)->point().bbox(),
+    f));
+  }
   // generate box pointers
   std::vector<const Box*> box_ptr;
-  box_ptr.reserve(polyhedron.size_of_facets());
+  box_ptr.reserve(num_faces(polyhedron));
   typename std::vector<Box>::iterator b;
   for(b = boxes.begin();
     b != boxes.end();
@@ -257,7 +248,7 @@ self_intersect(Polyhedron& polyhedron, OutputIterator out, const GeomTraits& geo
     box_ptr.push_back(&*b);
 
   // compute self-intersections filtered out by boxes
-  internal::Intersect_facets<Polyhedron,GeomTraits,Box,OutputIterator> intersect_facets(out, geom_traits);
+  internal::Intersect_facets<Polyhedron,GeomTraits,Box,OutputIterator> intersect_facets(polyhedron, out, geom_traits);
   std::ptrdiff_t cutoff = 2000;
   CGAL::box_self_intersection_d(box_ptr.begin(), box_ptr.end(),intersect_facets,cutoff);
   return std::make_pair(intersect_facets.m_intersected, intersect_facets.m_iterator);

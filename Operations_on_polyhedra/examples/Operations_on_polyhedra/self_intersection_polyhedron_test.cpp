@@ -5,16 +5,16 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Self_intersection_polyhedron_3.h>
 #include <CGAL/Polyhedron_3.h>
+#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
 
 #include <CGAL/Timer.h>
-#include <boost/lexical_cast.hpp>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef K::Point_3 Point;
 typedef K::Triangle_3 Triangle;
 typedef CGAL::Polyhedron_3<K> Polyhedron;
-typedef Polyhedron::Facet_const_handle Facet_const_handle;
+typedef boost::graph_traits<Polyhedron>::face_descriptor face_descriptor;
 
 int main(int, char** argv) {
   std::ifstream input(argv[1]);
@@ -27,7 +27,7 @@ int main(int, char** argv) {
   CGAL::Timer timer;
   timer.start();
 
-  std::vector<std::pair<Facet_const_handle, Facet_const_handle> > intersected_tris;
+  std::vector<std::pair<face_descriptor, face_descriptor> > intersected_tris;
   bool intersecting_1 = CGAL::self_intersect<K>(poly, back_inserter(intersected_tris)).first;
   assert(intersecting_1 == !intersected_tris.empty());
 
