@@ -8,7 +8,6 @@ Clement:
 #include "/home/gdamiand/sources/CGAL/Kinetic_data_structures/src/CGAL/Turkowski_numeric_solver.cpp"
 
 #include "/home/gdamiand/sources/CGAL/Modular_arithmetic/src/CGAL/Residue_type.cpp"
-#include "/home/gdamiand/sources/CGAL/Modular_arithmetic/src/CGAL/primes.cpp"
 
 Guillaume
 
@@ -21,6 +20,7 @@ DONE #include "/home/gdamiand/sources/CGAL/Number_types/src/CGAL/test_FPU_roundi
 DONE #include "/home/gdamiand/sources/CGAL/Profiling_tools/src/CGAL/Timer.cpp" // variable statique de classe
 DONE #include "/home/gdamiand/sources/CGAL/Profiling_tools/src/CGAL/Real_timer.cpp" // variable statique de classe
 DONE #include "/home/gdamiand/sources/CGAL/Random_numbers/src/CGAL/Random.cpp" // variable globale; utilisée directement (donc pb pour header only) -> we need to replace the use of CGAL::default_random by CGAL::get_default_random().
+DONE #include "/home/gdamiand/sources/CGAL/Modular_arithmetic/src/CGAL/primes.cpp" // constante globale
 
 DONE #include "/home/gdamiand/sources/CGAL/Geomview/src/CGAL/Geomview_stream.cpp"
 DONE #include "/home/gdamiand/sources/CGAL/Intersections_2/src/CGAL/Bbox_2_intersections.cpp"

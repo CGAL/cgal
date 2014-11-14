@@ -27,7 +27,9 @@
 
 namespace CGAL { 
 namespace internal {
+#ifndef CGAL_HEADER_ONLY
 CGAL_EXPORT extern int primes[2000];
+#endif // CGAL_HEADER_ONLY
 
 static inline 
 int get_next_lower_prime(int current_prime){
@@ -62,5 +64,9 @@ int get_next_lower_prime(int current_prime){
 
 }
 }
+
+#ifdef CGAL_HEADER_ONLY
+#include <CGAL/primes_impl.h>
+#endif // CGAL_HEADER_ONLY
 
 #endif // CGAL_PRIMES_H
