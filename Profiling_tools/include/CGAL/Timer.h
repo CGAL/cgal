@@ -48,7 +48,9 @@ private:
     int         interv;
     bool        running;
 
+#ifndef CGAL_HEADER_ONLY
     static bool m_failed;
+#endif // CGAL_HEADER_ONLY
 
     double   user_process_time() const; // in seconds
     double   compute_precision() const; // in seconds
@@ -111,6 +113,10 @@ inline double Timer::time() const {
 }
 
 } //namespace CGAL
+
+#ifdef CGAL_HEADER_ONLY
+#include <CGAL/Timer_impl.h>
+#endif // CGAL_HEADER_ONLY
 
 #endif // CGAL_TIMER_H //
 // EOF //
