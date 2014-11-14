@@ -148,6 +148,7 @@ public:
   using Triangulation::geom_traits;
   using Triangulation::cw;
   using Triangulation::ccw;
+  using Triangulation::incident_faces;
 
 protected:
   Constraint_hierarchy hierarchy;
@@ -185,6 +186,7 @@ public:
 
   Constrained_triangulation_plus_2(std::list<std::pair<Point,Point> > constraints,
                                        const Geom_traits& gt=Geom_traits() )
+    : Triangulation(gt)
   {
     insert_constraints(constraints.begin(), constraints.end());
     CGAL_triangulation_postcondition( this->is_valid() );
@@ -359,11 +361,11 @@ public:
     hierarchy.swap(cid, aux);
     remove_constraint(aux, std::back_inserter(fc));
 
-    if(head){
+    if(head.vl_ptr()){
       hierarchy.concatenate2(head, cid);
     }
 
-    if(tail){
+    if(tail.vl_ptr()){
       hierarchy.concatenate(cid, tail);
     }
     fc.write_faces(out);
@@ -446,7 +448,7 @@ public:
     pos = vertices_in_constraint_begin(aux2);
     concatenate(aux1, aux2);
 
-    if(head){
+    if(head.vl_ptr()){
       //std::cout << "concatenate head" << std::endl;
       remove_constraint(cid, std::back_inserter(fc));
       hierarchy.concatenate(head, aux1);
@@ -456,7 +458,7 @@ public:
       head = cid;
     }
 
-    if(tail){
+    if(tail.vl_ptr()){
       //std::cout << "concatenate tail" << std::endl;
       concatenate(head, tail);
     }
