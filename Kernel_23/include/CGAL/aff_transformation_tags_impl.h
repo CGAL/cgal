@@ -24,10 +24,22 @@
 
 namespace CGAL {
 
+#ifdef CGAL_HEADER_ONLY
+
 const Translation             TRANSLATION;
 const Rotation                ROTATION;
 const Scaling                 SCALING;
 const Reflection              REFLECTION;
 const Identity_transformation IDENTITY;
+
+#else // CGAL_HEADER_ONLY
+
+Translation             TRANSLATION;
+Rotation                ROTATION;
+Scaling                 SCALING;
+Reflection              REFLECTION;
+Identity_transformation IDENTITY;
+
+#endif // CGAL_HEADER_ONLY
 
 } //namespace CGAL
