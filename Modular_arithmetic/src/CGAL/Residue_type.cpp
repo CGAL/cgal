@@ -19,6 +19,7 @@
 
 #ifndef CGAL_HEADER_ONLY
 
+#include <CGAL/Residue.h>
 #include <CGAL/Modular_arithmetic/Residue_type.h>
 
 namespace CGAL{
