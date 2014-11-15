@@ -217,7 +217,7 @@ void test_insert_rnd (unsigned pt_count = 100)
 
   for (unsigned cnt = pt_count; cnt--; )
   {
-    Weighted_point p(Bare_point(gen_coord(), gen_coord(), gen_coord()), /*rand()%2 ? 0.005f : 0.010f*/ gen_weight());
+    Weighted_point p(Bare_point(gen_coord(), gen_coord(), gen_coord()), 0.005/*rand()%2 ? 0.005f : 0.010f*/ /*gen_weight()*/);
     std::cout << p << std::endl;
     stream << p << std::endl;
     p3rt3.insert(p);
@@ -262,14 +262,30 @@ void test_insert_from_file (const char* filename)
   periodic_triangulation_to_medit_1_file(p3rt3, medit_stream_1);
 }
 
+void test_insert_rt3_pointset ()
+{
+  P3RT3 p3rt3(Iso_cuboid(Bare_point(-100,-100,-100),Bare_point(100,100,100)));
+
+  for (int a=0;a!=10;a++)
+    for (int b=0;b!=5;b++)
+      for (int d=0;d!=5;d++)
+      {
+        Weighted_point p( Bare_point(a*b-d*a + (a-b)*10 +a , a-b+d +5*b, a*a-d*d+b), a*b-a*d );
+        std::cout << p << std::endl;
+        p3rt3.insert(p);
+      }
+  assert(p3rt3.is_valid(true));
+}
+
 int main (int argc, char** argv)
 {
   std::cout << "TESTING ..." << std::endl;
 
   test_construction();
   test_insert_1();
-//  test_insert_rnd(100);
-  test_insert_from_file(argc > 1 ? argv[1] : "out");
+  test_insert_rt3_pointset();
+  test_insert_rnd(100);
+//  test_insert_from_file(argc > 1 ? argv[1] : "out");
 
   std::cout << "EXIT SUCCESS" << std::endl;
   return EXIT_SUCCESS;
