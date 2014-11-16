@@ -1888,6 +1888,31 @@ public:
    * \return an object of type Is_in_x_range.
    */
   Is_in_x_range is_in_x_range_object() const { return Is_in_x_range(); }
+
+  /*! Extractor for the flat-torus point used by the traits-class.
+   */
+  template <typename InputStream_>
+  InputStream_& read(InputStream_& is, Point_2& point)
+  // friend InputStream_& operator>>(InputStream_& is, Point_2& point)
+  {
+    typename Kernel::Point_2 p;
+    is >> p;
+    point = Point_2(p);
+    return is;
+  }
+
+  /*! Extractor for the flat-torus x-monotone curve used by the traits-class.
+   */
+  template <typename InputStream_>
+  InputStream_& read(InputStream_& is, X_monotone_curve_2& xcv)
+  // friend InputStream_& operator>>(InputStream_& is, X_monotone_curve_2& xcv)
+  {
+    Point_2 source, target;
+    read(is, source);
+    read(is, target);
+    xcv = construct_x_monotone_curve_2_object()(source, target);
+    return is;
+  }
 };
 
 //! Represent a point on a torus using 2 coordinates in the range [0,1].
@@ -2172,8 +2197,12 @@ public:
 
   /*! Obtain the x-coordinate of the source point.
    * \return the x-coordinate of the source point.
+   * The following four functions cannot return a reference because for some
+   * kernels, e.g., the Epec kernel, the x() and y() member functions of the
+   * point do not return a reference. (They return a local variable.)
+   * \todo Return a reference when possible. Is it possible?
    */
-  const FT& source_x() const
+  const FT source_x() const
   {
     static FT zero(0);
     static FT one(1);
@@ -2185,7 +2214,7 @@ public:
   /*! Obtain the y-coordinate of the source point.
    * \return the y-coordinate of the source point.
    */
-  const FT& source_y() const
+  const FT source_y() const
   {
     static FT zero(0);
     static FT one(1);
@@ -2197,7 +2226,7 @@ public:
   /*! Obtain the x-coordinate of the target point.
    * \return the x-coordinate of the target point.
    */
-  const FT& target_x() const
+  const FT target_x() const
   {
     static FT zero(0);
     static FT one(1);
@@ -2209,7 +2238,7 @@ public:
   /*! Obtain the y-coordinate of the target point.
    * \return the y-coordinate of the target point.
    */
-  const FT& target_y() const
+  const FT target_y() const
   {
     static FT zero(0);
     static FT one(1);
@@ -2395,32 +2424,6 @@ operator<<(OutputStream_& os, const Arr_curve_on_flat_torus_3<Kernel_>& cv)
 #endif
   os << ")";
   return os;
-}
-
-/*! Extractor for the flat-torus point used by the traits-class.
- */
-template <typename Kernel_, typename InputStream>
-InputStream& operator>>(InputStream& is,
-                        Arr_point_on_flat_torus_3<Kernel_>& point)
-{
-  typedef Kernel_       Kernel;
-  typename Kernel::Point_2 p;
-  is >> p;
-  point(p);
-  return is;
-}
-
-/*! Extractor for the flat-torus x-monotone curve used by the traits-class */
-template <typename Kernel_, typename InputStream_>
-InputStream_& operator>>(InputStream_& is,
-                         Arr_x_monotone_curve_on_flat_torus_3<Kernel_>& xcv)
-{
-  typedef Kernel_       Kernel;
-  Arr_point_on_flat_torus_3<Kernel> source, target;
-  is >> source;
-  is >> target;
-  xcv(source, target);
-  return is;
 }
 
 } //namespace CGAL

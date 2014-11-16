@@ -2,8 +2,9 @@
 #include <cstring>
 #include <vector>
 
-#include <CGAL/Gmpq.h>
-#include <CGAL/Cartesian.h>
+// #include <CGAL/Gmpq.h>
+// #include <CGAL/Cartesian.h>
+#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Arrangement_on_surface_2.h>
 #include <CGAL/Arr_flat_torus_traits_2.h>
 #include <CGAL/Arr_toroidal_topology_traits_2.h>
@@ -12,8 +13,9 @@
 #include <CGAL/Arr_vertical_decomposition_2.h>
 #include <CGAL/IO/Arr_iostream.h>
 
-typedef CGAL::Gmpq                                           Number_type;
-typedef CGAL::Cartesian<Number_type>                         Kernel;
+// typedef CGAL::Gmpq                                           Number_type;
+// typedef CGAL::Cartesian<Number_type>                         Kernel;
+typedef CGAL::Exact_predicates_exact_constructions_kernel    Kernel;
 // TODO
 typedef CGAL::Arr_flat_torus_traits_2<Kernel>                Geom_traits_2;
 typedef Geom_traits_2::Point_2                               Point_2;
@@ -29,6 +31,8 @@ typedef Arrangement_2::Vertex_const_handle                   Vertex_const_handle
 
 bool test_one_file(std::ifstream& in_file, bool /* verbose */)
 {
+  Geom_traits_2 traits;
+
   unsigned int i;
 
   // Read the points:
@@ -36,17 +40,14 @@ bool test_one_file(std::ifstream& in_file, bool /* verbose */)
   in_file >> num_of_points;
   std::cout << "#pts: " << num_of_points << std::endl;
   std::vector<Point_2> points(num_of_points);
-  for (i = 0; i < num_of_points; ++i)
-    in_file >> points[i];
+  for (i = 0; i < num_of_points; ++i) traits.read(in_file, points[i]);
 
   // Read the curves:
   unsigned int num_of_curves;
   in_file >> num_of_curves;
   std::cout << "#cvs: " << num_of_curves << std::endl;
   std::vector< X_monotone_curve_2 > xcurves(num_of_curves);
-  for (i = 0; i < num_of_curves; ++i) {
-    in_file >> xcurves[i];
-  }
+  for (i = 0; i < num_of_curves; ++i) traits.read(in_file, xcurves[i]);
 
   // Read the isolated points.
   unsigned int num_of_isolated_points;
@@ -69,7 +70,7 @@ bool test_one_file(std::ifstream& in_file, bool /* verbose */)
   std::cout << "#e: " << num_edges_left << std::endl;
   std::cout << "#f: " << num_faces_left << std::endl;
 
-  Arrangement_2 arr;
+  Arrangement_2 arr(&traits);
   std::vector<Halfedge_handle> halfedges;
   std::vector< X_monotone_curve_2 >::const_iterator xit;
 

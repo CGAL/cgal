@@ -360,6 +360,18 @@ public:
   //@{
 
   /*! Receive a notification on the creation of a new boundary vertex that
+   * corresponds to a point.
+   * \param v The new boundary vertex.
+   * \param p The point.
+   * \param ps_x The boundary condition of the curve end in x.
+   * \param ps_y The boundary condition of the curve end in y.
+   */
+  void notify_on_boundary_vertex_creation(Vertex* v,
+                                          const Point_2& p,
+                                          Arr_parameter_space ps_x,
+                                          Arr_parameter_space ps_y);
+
+  /*! Receive a notification on the creation of a new boundary vertex that
    * corresponds to the given curve end.
    * \param v The new boundary vertex.
    * \param xc The x-monotone curve.

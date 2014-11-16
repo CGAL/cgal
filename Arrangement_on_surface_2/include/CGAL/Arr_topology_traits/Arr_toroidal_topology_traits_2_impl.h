@@ -217,6 +217,19 @@ number_of_valid_faces() const
   return (m_dcel.size_of_faces());
 }
 
+//! \brief receives a notification on the creation of a new boundary vertex.
+template <typename GeomTraits, typename Dcel>
+void
+Arr_toroidal_topology_traits_2<GeomTraits, Dcel>::
+notify_on_boundary_vertex_creation(Vertex* v,
+                                   const Point_2& p,
+                                   Arr_parameter_space
+                                     CGAL_assertion_code(ps_x),
+                                   Arr_parameter_space ps_y)
+{
+  CGAL_error();
+  /* dummy implementation */ return;
+}
 
 /*! \brief receives a notification on the creation of a new boundary vertex */
 template <class GeomTraits, class Dcel>
