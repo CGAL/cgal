@@ -1275,7 +1275,9 @@ public:
         X_monotone_curve_2 xcv = ctr(from, to);
         *oi++ = make_object(xcv);
         xs = x_next_y;
-        --yt_quotient;
+        // \todo The decrementor operator is not supported for the Epec kernel?
+        // --yt_quotient;
+        yt_quotient = yt_quotient - 1;
       }
       // rest
       Point_2 curr(xs, 0);
@@ -1285,7 +1287,9 @@ public:
         X_monotone_curve_2 xcv = ctr(curr, to);
         *oi++ = make_object(xcv);
         xs = x_next_y;
-        --yt_quotient;
+        // --yt_quotient;
+        // \todo The decrementor operator is not supported for the Epec kernel?
+        yt_quotient = yt_quotient - 1;
         curr = Point_2(xs, 0);
       }
       // last
@@ -1358,7 +1362,9 @@ public:
         Point_2 to(1, y_next_x);
         *oi++ = operator()(from, to, oi);
         ys = y_next_x;
-        --xt_quotient;
+        // \todo The decrementor operator is not supported for the Epec kernel?
+        // --xt_quotient;
+        xt_quotient = xt_quotient - 1;
       }
       // rest
       Point_2 curr(0, ys);
@@ -1367,7 +1373,9 @@ public:
         Point_2 to(1, y_next_x);
         *oi++ = operator()(curr, to, oi);
         ys = y_next_x;
-        --xt_quotient;
+        // \todo The decrementor operator is not supported for the Epec kernel?
+        // --xt_quotient;
+        xt_quotient = xt_quotient - 1;
         curr = Point_2(0, ys);
       }
       // last
@@ -1911,6 +1919,19 @@ public:
     read(is, source);
     read(is, target);
     xcv = construct_x_monotone_curve_2_object()(source, target);
+    return is;
+  }
+
+  /*! Extractor for the flat-torus curve used by the traits-class.
+   */
+  template <typename InputStream_>
+  InputStream_& read(InputStream_& is, Curve_2& cv)
+  // friend InputStream_& operator>>(InputStream_& is, Curve_2& xcv)
+  {
+    Point_2 source, target;
+    read(is, source);
+    read(is, target);
+    cv = construct_curve_2_object()(source, target);
     return is;
   }
 };
