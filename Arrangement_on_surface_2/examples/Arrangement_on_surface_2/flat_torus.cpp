@@ -33,24 +33,24 @@ bool test_one_file(std::ifstream& in_file, bool /* verbose */)
 {
   Geom_traits_2 traits;
 
-  unsigned int i;
+  size_t i;
 
   // Read the points:
-  unsigned int num_of_points;
+  size_t num_of_points;
   in_file >> num_of_points;
   std::cout << "#pts: " << num_of_points << std::endl;
   std::vector<Point_2> points(num_of_points);
   for (i = 0; i < num_of_points; ++i) traits.read(in_file, points[i]);
 
-  // Read the curves:
-  unsigned int num_of_curves;
-  in_file >> num_of_curves;
-  std::cout << "#cvs: " << num_of_curves << std::endl;
-  std::vector< X_monotone_curve_2 > xcurves(num_of_curves);
-  for (i = 0; i < num_of_curves; ++i) traits.read(in_file, xcurves[i]);
+  // Read the x-monotone curves:
+  size_t num_of_xcurves;
+  in_file >> num_of_xcurves;
+  std::cout << "#xcvs: " << num_of_xcurves << std::endl;
+  std::vector<X_monotone_curve_2> xcurves(num_of_xcurves);
+  for (i = 0; i < num_of_xcurves; ++i) traits.read(in_file, xcurves[i]);
 
   // Read the isolated points.
-  unsigned int num_of_isolated_points;
+  size_t num_of_isolated_points;
   in_file >> num_of_isolated_points;
   std::cout << "#ipts: " << num_of_isolated_points << std::endl;
   std::vector<unsigned int> isolated_points(num_of_isolated_points);
@@ -58,7 +58,7 @@ bool test_one_file(std::ifstream& in_file, bool /* verbose */)
     in_file >> isolated_points[i];
 
   // Read the number of edges to remove.
-  unsigned int num_edges_to_remove;
+  size_t num_edges_to_remove;
   in_file >> num_edges_to_remove;
   std::cout << "#e2r: " << num_edges_to_remove << std::endl;
 
