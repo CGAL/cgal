@@ -60,10 +60,10 @@ struct Intersect_facets
   typedef typename Kernel::Segment_3    Segment;
   typedef typename Kernel::Triangle_3   Triangle;
   typedef typename boost::graph_traits<FaceGraph>::halfedge_descriptor halfedge_descriptor;
-  typedef typename boost::property_map<FaceGraph, boost::vertex_point_t>::type Ppmap;
+  typedef typename boost::property_map<FaceGraph, boost::vertex_point_t>::const_type Ppmap;
 
 // members
-  FaceGraph& m_polyhedron;
+  const FaceGraph& m_polyhedron;
   const Ppmap m_point;
   mutable OutputIterator  m_iterator;
   mutable bool            m_intersected;
@@ -76,8 +76,8 @@ struct Intersect_facets
   
   Intersect_facets(const FaceGraph& polyhedron, OutputIterator it, const Kernel& kernel)
     : 
-    m_polyhedron(const_cast<FaceGraph&>(polyhedron)),
-    m_point(get(vertex_point_t(),m_polyhedron)),
+    m_polyhedron(polyhedron),
+    m_point(get(vertex_point, m_polyhedron)),
     m_iterator(it),
     m_intersected(false),
     m_iterator_wrapper(Output_iterator_with_bool(&m_iterator, &m_intersected)),
@@ -218,7 +218,7 @@ concept SelfIntersectionTraits{
  */
 template <class GeomTraits, class FaceGraph, class OutputIterator>
 std::pair<bool, OutputIterator>
-self_intersect(FaceGraph& polyhedron, OutputIterator out, const GeomTraits& geom_traits = GeomTraits())
+self_intersect(const FaceGraph& polyhedron, OutputIterator out, const GeomTraits& geom_traits = GeomTraits())
 {
   //CGAL_assertion(polyhedron.is_pure_triangle());
 
@@ -228,9 +228,9 @@ self_intersect(FaceGraph& polyhedron, OutputIterator out, const GeomTraits& geom
 
   typedef typename CGAL::Box_intersection_d::Box_with_handle_d<double, 3, Facet_hdl> Box;
 
-  typedef typename boost::property_map<FaceGraph, CGAL::vertex_point_t>::type Ppmap;
+  typedef typename boost::property_map<FaceGraph, CGAL::vertex_point_t>::const_type Ppmap;
 
-  Ppmap m_point = get(CGAL::vertex_point_t(),polyhedron);
+  Ppmap m_point = get(CGAL::vertex_point, polyhedron);
 
   // make one box per facet
   std::vector<Box> boxes;
