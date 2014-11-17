@@ -94,10 +94,8 @@ public:
 
   void operator()(const int nb_iterations)
   {
-#ifdef CGAL_MESH_2_OPTIMIZER_VERBOSE
-    CGAL::Timer timer;
-    timer.start();
-#endif
+    running_time_.reset();
+    running_time_.start();
 
     // Fill set containing moving vertices
     Vertex_set moving_vertices;
@@ -112,7 +110,7 @@ public:
 
 #ifdef CGAL_MESH_2_OPTIMIZER_VERBOSE
   double initial_vertices_nb = static_cast<double>(moving_vertices.size());
-  double step_begin = timer.time();
+  double step_begin = running_time_.time();
   std::cerr << "Running " << Mf::name() << "-smoothing..." << std::endl;
   std::cerr << "(" << initial_vertices_nb << " vertices moving)" << std::endl;
 #endif
@@ -144,7 +142,7 @@ public:
       move_function_.after_move(cdt_);
 
 #ifdef CGAL_MESH_2_OPTIMIZER_VERBOSE
-      double time = timer.time();
+      double time = running_time_.time();
       double moving_vertices_size = static_cast<double>(moving_vertices.size());
       std::cerr << boost::format("\r             \r"
         "end iteration %1% (%2%%% frozen), %3% / %4%, last step:%5$.2fs, step avg:%6$.2fs, avg large move:%7$.3f          ")
@@ -155,20 +153,23 @@ public:
       % (time - step_begin)
       % (time / (i+1))
       % sum_moves_;
-
-      step_begin = time;
+      step_begin = running_time_.time();
 #endif
     }
 
     move_function_.after_all_moves(cdt_);
 
 #ifdef CGAL_MESH_2_OPTIMIZER_VERBOSE
-    timer.stop();
+    running_time_.stop();
     std::cerr << std::endl;
-    if ( check_convergence() )
-      std::cerr << "Convergence reached for ratio "
-                << convergence_ratio_ << std::endl;
-    std::cerr << "Total optimization time: " << timer.time()
+    if ( is_time_limit_reached() )
+      std::cerr << "Time limit reached" << std::endl;
+    else if ( check_convergence() )
+      std::cerr << "Convergence reached" << std::endl;
+    else if ( i >= nb_iterations )
+      std::cerr << "Max iteration number reached" << std::endl;
+
+    std::cerr << "Total optimization time: " << running_time_.time()
               << "s" << std::endl << std::endl;
 #endif
   }
@@ -286,7 +287,8 @@ private:
 
   bool is_time_limit_reached() const
   {
-    return ( (time_limit() > 0) && (running_time_.time() > time_limit()) );      
+    return (time_limit() > 0)
+        && (running_time_.time() > time_limit());
   }
 
   bool check_convergence() const
