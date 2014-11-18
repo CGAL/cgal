@@ -23,8 +23,8 @@ int main()
 {
     // Construct a unit square.
     const int number_of_vertices = 4;
-    Point_vector vertices;
-    vertices.resize(number_of_vertices);
+    Point_vector vertices(number_of_vertices);
+    
     vertices[0] = Point(0, 0); vertices[1] = Point(1, 0); vertices[2] = Point(1, 1); vertices[3] = Point(0, 1);
 
     // Create an std::vector to store coordinates.

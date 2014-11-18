@@ -1,14 +1,11 @@
-// Author(s) : Dmitry Anisimov.
-// We test speed of Mean Value weights on a set of automatically generated
+// Author: Dmitry Anisimov.
+// We test speed of mean value weights on a set of automatically generated
 // points inside a unit square. We use inexact kernel.
 
 #include <CGAL/Real_timer.h>
-
-#include <CGAL/Polygon_2.h>
-
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-
-#include <CGAL/Mean_value_coordinates_2.h>
+#include <CGAL/Barycentric_coordinates_2/Mean_value_2.h>
+#include <CGAL/Barycentric_coordinates_2/Generalized_barycentric_coordinates_2.h>
 
 typedef CGAL::Real_timer Timer;
 
@@ -17,12 +14,13 @@ typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef Kernel::FT      Scalar;
 typedef Kernel::Point_2 Point;
 
-typedef CGAL::Polygon_2<Kernel> Polygon;
-
 typedef std::vector<Scalar> Weight_vector;
+typedef std::vector<Point>  Point_vector;
+
 typedef Weight_vector::iterator Overwrite_iterator;
 
-typedef CGAL::Barycentric_coordinates::Mean_value_coordinates_2<Polygon, Overwrite_iterator> Mean_value_coordinates;
+typedef CGAL::Barycentric_coordinates::Mean_value_2<Kernel> Mean_value;
+typedef CGAL::Barycentric_coordinates::Generalized_barycentric_coordinates_2<Mean_value, Kernel> Mean_value_coordinates;
 
 using std::cout; using std::endl; using std::string;
 
@@ -37,17 +35,14 @@ int main()
     const Scalar x_step = one / Scalar(number_of_x_coordinates);
     const Scalar y_step = one / Scalar(number_of_y_coordinates);
 
-    const Point vertices[4] = { Point(zero - x_step, zero - y_step),
-                                Point(one  + x_step, zero - y_step),
-                                Point(one  + x_step, one  + y_step),
-                                Point(zero - x_step, one  + y_step)
-                              };
-    const Polygon unit_square(vertices, vertices + 4);
+    Point_vector vertices(4);
 
-    Mean_value_coordinates mean_value_coordinates(unit_square);
+    vertices[0] = Point(zero - x_step, zero - y_step); vertices[1] = Point(one  + x_step, zero - y_step);
+    vertices[2] = Point(one  + x_step, one  + y_step); vertices[3] = Point(zero - x_step, one  + y_step);
 
-    Weight_vector weights;
-    weights.resize(4);
+    Mean_value_coordinates mean_value_coordinates(vertices.begin(), vertices.end());
+
+    Weight_vector weights(4);
     Overwrite_iterator it = weights.begin();
 
     Timer time_to_compute;

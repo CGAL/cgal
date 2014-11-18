@@ -41,7 +41,7 @@ int main()
     coordinates.reserve(number_of_query_points * 3);
 
     // Compute triangle coordinates for these points.
-    cout << endl << "Computed triangle coordinates are: " << endl << endl;
+    cout << endl << "Computed triangle coordinates: " << endl << endl;
     for(int i = 0; i < number_of_query_points; ++i) {
 
         triangle_coordinates(query_points[i], std::inserter(coordinates, coordinates.end()));

@@ -1,14 +1,11 @@
-// Author(s) : Dmitry Anisimov.
+// Author: Dmitry Anisimov.
 // We test speed of Wachspress coordinates on a set of automatically generated
 // points inside a regular polygon with 100 vertices. We use inexact kernel.
 
 #include <CGAL/Real_timer.h>
-
-#include <CGAL/Polygon_2.h>
-
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-
-#include <CGAL/Wachspress_coordinates_2.h>
+#include <CGAL/Barycentric_coordinates_2/Wachspress_2.h>
+#include <CGAL/Barycentric_coordinates_2/Generalized_barycentric_coordinates_2.h>
 
 typedef CGAL::Real_timer Timer;
 
@@ -17,14 +14,13 @@ typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef Kernel::FT      Scalar;
 typedef Kernel::Point_2 Point;
 
-typedef CGAL::Polygon_2<Kernel> Polygon;
-
 typedef std::vector<Scalar> Scalar_vector;
 typedef std::vector<Point>  Point_vector;
 
 typedef Scalar_vector::iterator Overwrite_iterator;
 
-typedef CGAL::Barycentric_coordinates::Wachspress_coordinates_2<Polygon, Overwrite_iterator> Wachspress_coordinates;
+typedef CGAL::Barycentric_coordinates::Wachspress_2<Kernel> Wachspress;
+typedef CGAL::Barycentric_coordinates::Generalized_barycentric_coordinates_2<Wachspress, Kernel> Wachspress_coordinates;
 
 using std::cout; using std::endl; using std::string;
 
@@ -57,12 +53,9 @@ int main()
 
     generate_regular_polygon(number_of_vertices, polygon_radius, vertices);
 
-    const Polygon regular_polygon(vertices.begin(), vertices.end());
+    Wachspress_coordinates wachspress_coordinates(vertices.begin(), vertices.end());
 
-    Wachspress_coordinates wachspress_coordinates(regular_polygon);
-
-    Scalar_vector coordinates;
-    coordinates.resize(number_of_vertices);
+    Scalar_vector coordinates(number_of_vertices);
     Overwrite_iterator it = coordinates.begin();
 
     Timer time_to_compute;
@@ -73,7 +66,7 @@ int main()
         time_to_compute.start();
         for(Scalar x = -one; x <= one; x += x_step) {
             for(Scalar y = -one; y <= one; y += y_step)
-                wachspress_coordinates.compute(Point(x, y), it, CGAL::BC::ON_BOUNDED_SIDE);
+                wachspress_coordinates(Point(x, y), it, CGAL::Barycentric_coordinates::ON_BOUNDED_SIDE);
         }
         time_to_compute.stop();
 

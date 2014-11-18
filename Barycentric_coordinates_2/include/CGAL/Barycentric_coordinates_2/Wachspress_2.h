@@ -32,7 +32,7 @@
 #include <CGAL/Barycentric_coordinates_2/barycentric_enum_2.h>
 
 // Boost headers.
-#include <boost/optional.hpp>
+#include <boost/optional/optional.hpp>
 
 // CGAL namespace.
 namespace CGAL {
@@ -104,36 +104,50 @@ public:
 
     // Computation of Wachspress Basis Functions
 
-    // This function computes Wachspress barycentric coordinates for a chosen query point on the bounded side of a strictly convex polygon with the O(n^2) precise algorithm.
+    // This function computes Wachspress barycentric coordinates for a chosen query point on the bounded side of a strictly convex polygon.
     // \pre The provided polygon is strictly convex. 
     template<class OutputIterator>
-        inline boost::optional<OutputIterator> coordinates_on_bounded_side_precise(const Point_2 &query_point, OutputIterator &output)
+        inline boost::optional<OutputIterator> coordinates_on_bounded_side(const Point_2 &query_point, OutputIterator &output, const Type_of_algorithm type_of_algorithm)
     {   
-        return coordinates_on_bounded_side_precise_2(query_point, output);
+        switch(type_of_algorithm)
+        {
+            case PRECISE:
+            return coordinates_on_bounded_side_precise_2(query_point, output);
+            break;
+
+            case FAST:
+            return coordinates_on_bounded_side_fast_2(query_point, output);
+            break;
+        }
+
+        // Pointer cannot be here. Something went wrong.
+        const bool type_of_algorithm_failure = true;
+        CGAL_postcondition( !type_of_algorithm_failure );
+        if(!type_of_algorithm_failure) return boost::optional<OutputIterator>(output);
+        else return boost::optional<OutputIterator>();
     }
 
-    // This function computes Wachspress barycentric coordinates for a chosen query point on the bounded side of a strictly convex polygon with the O(n) fast algorithm.
-    // \pre The provided polygon is strictly convex. 
+    // This function computes Wachspress barycentric coordinates for a chosen query point on the unbounded side of a strictly convex polygon.
+    // \pre The provided polygon is strictly convex.
     template<class OutputIterator>
-        inline boost::optional<OutputIterator> coordinates_on_bounded_side_fast(const Point_2 &query_point, OutputIterator &output)
+        inline boost::optional<OutputIterator> coordinates_on_unbounded_side(const Point_2 &query_point, OutputIterator &output, const Type_of_algorithm type_of_algorithm, const bool warning_tag = true)
     {   
-        return coordinates_on_bounded_side_fast_2(query_point, output);
-    }
+        switch(type_of_algorithm)
+        {
+            case PRECISE:
+            return coordinates_on_unbounded_side_precise_2(query_point, output, warning_tag);
+            break;
 
-    // This function computes Wachspress barycentric coordinates for a chosen query point on the unbounded side of a strictly convex polygon with the O(n^2) precise algorithm.
-    // \pre The provided polygon is strictly convex. 
-    template<class OutputIterator>
-        inline boost::optional<OutputIterator> coordinates_on_unbounded_side_precise(const Point_2 &query_point, OutputIterator &output, const bool warning_tag = true)
-    {   
-        return coordinates_on_unbounded_side_precise_2(query_point, output, warning_tag);
-    }
+            case FAST:
+            return coordinates_on_unbounded_side_fast_2(query_point, output, warning_tag);
+            break;
+        }
 
-    // This function computes Wachspress barycentric coordinates for a chosen query point on the unbounded side of a strictly convex polygon with the O(n) fast algorithm.
-    // \pre The provided polygon is strictly convex. 
-    template<class OutputIterator>
-        inline boost::optional<OutputIterator> coordinates_on_unbounded_side_fast(const Point_2 &query_point, OutputIterator &output, const bool warning_tag = true)
-    {   
-        return coordinates_on_unbounded_side_fast_2(query_point, output, warning_tag);
+        // Pointer cannot be here. Something went wrong.
+        const bool type_of_algorithm_failure = true;
+        CGAL_postcondition( !type_of_algorithm_failure );
+        if(!type_of_algorithm_failure) return boost::optional<OutputIterator>(output);
+        else return boost::optional<OutputIterator>();
     }
 
     // Information Functions

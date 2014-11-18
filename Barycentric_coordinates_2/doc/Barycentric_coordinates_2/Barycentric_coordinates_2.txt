@@ -1,4 +1,3 @@
-
 namespace CGAL {
 
 /*!
@@ -33,6 +32,26 @@ The output of the computation is a set of coordinate values at the current query
 
 \section gbc_examples Examples
 
+\subsection seg_example Segment Coordinates
+This is a simple example to show the use of the global function \ref seg_coord_global "CGAL::Barycentric_coordinates::compute_segment_coordinates_2()". We compute coordinates at three green points along the segment \f$[v_0, v_1]\f$ and at two blue points outside this segment but along its supporting line. We use the exact kernel and return coordinates as an array of two values. Again, the symmetry of the query points helps us to recognize errors that may have occured during the computation.
+
+\anchor seg_coord_example
+\cgalFigureBegin{seg__example,segment_coordinates_example.png}
+Example's point pattern.
+\cgalFigureEnd
+
+\cgalExample{Barycentric_coordinates_2/Segment_coordinates_example.cpp}
+
+\subsection tri_example Triangle Coordinates
+In this example we show how to use the class `CGAL::Barycentric_coordinates::Triangle_coordinates_2` with the `Simple_cartesian` kernel for double type. We compute coordinates for three sets of points: interior (green), boundary (red), and exterior (blue). Note that some of the coordinate values for the exterior points are negative. We use a standard container of the type <a href="http://en.cppreference.com/w/cpp/container/vector">`std::vector`</a> and <a href="http://en.cppreference.com/w/cpp/iterator/insert_iterator">`std::insert_iterator`</a> to access and store the resulting coordinate values.
+
+\anchor tri_coord_example
+\cgalFigureBegin{tri__example,triangle_coordinates_example.png}
+Example's point pattern.
+\cgalFigureEnd
+
+\cgalExample{Barycentric_coordinates_2/Triangle_coordinates_example.cpp}
+
 \subsection wp_example Wachspress Coordinates
 In the following example we create 1000 random points, then we take the convex hull of this set of points as our polygon, and compute Wachspress coordinates at all the defined points. We use the `Simple_cartesian` kernel with double type as a traits class and store obtained coordinate values in a container of the type <a href="http://en.cppreference.com/w/cpp/container/vector">`std::vector`</a>. The output iterator is <a href="http://en.cppreference.com/w/cpp/iterator/back_insert_iterator">`std::back_insert_iterator`</a>.
 
@@ -57,26 +76,6 @@ Example's point pattern.
 \cgalFigureEnd
 
 \cgalExample{Barycentric_coordinates_2/Mean_value_coordinates_example.cpp}
-
-\subsection tri_example Triangle Coordinates
-In this example we show how to use the class `CGAL::Barycentric_coordinates::Triangle_coordinates_2` with the `Simple_cartesian` kernel for double type. We compute coordinates for three sets of points: interior (green), boundary (red), and exterior (blue). Note that some of the coordinate values for the exterior points are negative. We use a standard container of the type <a href="http://en.cppreference.com/w/cpp/container/vector">`std::vector`</a> and <a href="http://en.cppreference.com/w/cpp/iterator/insert_iterator">`std::insert_iterator`</a> to access and store the resulting coordinate values.
-
-\anchor tri_coord_example
-\cgalFigureBegin{tri__example,triangle_coordinates_example.png}
-Example's point pattern.
-\cgalFigureEnd
-
-\cgalExample{Barycentric_coordinates_2/Triangle_coordinates_example.cpp}
-
-\subsection seg_example Segment Coordinates
-This is a simple example to show the use of the global function \ref seg_coord_global "CGAL::Barycentric_coordinates::compute_segment_coordinates_2()". We compute coordinates at three green points along the segment \f$[v_0, v_1]\f$ and at two blue points outside this segment but along its supporting line. We use the exact kernel and return coordinates as an array of two values. Again, the symmetry of the query points helps us to recognize errors that may have occured during the computation.
-
-\anchor seg_coord_example
-\cgalFigureBegin{seg__example,segment_coordinates_example.png}
-Example's point pattern.
-\cgalFigureEnd
-
-\cgalExample{Barycentric_coordinates_2/Segment_coordinates_example.cpp}
 
 \subsection height_inter_example Height Interpolation for Terrain Modelling
 

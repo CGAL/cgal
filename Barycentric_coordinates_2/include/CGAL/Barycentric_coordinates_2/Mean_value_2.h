@@ -36,6 +36,9 @@
 #include <boost/mpl/has_xxx.hpp>
 #include <boost/optional/optional.hpp>
 
+// Barycentric coordinates headers.
+#include <CGAL/Barycentric_coordinates_2/barycentric_enum_2.h>
+
 // CGAL namespace.
 namespace CGAL {
 
@@ -159,32 +162,48 @@ public:
 
     // Computation of Mean Value Basis Functions
 
-    // This function computes mean value barycentric coordinates for a chosen query point on the bounded side of a simple polygon with the O(n^2) precise algorithm.
+    // This function computes mean value barycentric coordinates for a chosen query point on the bounded side of a simple polygon.
     template<class OutputIterator>
-        inline boost::optional<OutputIterator> coordinates_on_bounded_side_precise(const Point_2 &query_point, OutputIterator &output)
+        inline boost::optional<OutputIterator> coordinates_on_bounded_side(const Point_2 &query_point, OutputIterator &output, const Type_of_algorithm type_of_algorithm)
     {   
-        return coordinates_on_bounded_side_precise_2(query_point, output);
+        switch(type_of_algorithm)
+        {
+            case PRECISE:
+            return coordinates_on_bounded_side_precise_2(query_point, output);
+            break;
+
+            case FAST:
+            return coordinates_on_bounded_side_fast_2(query_point, output);
+            break;
+        }
+
+        // Pointer cannot be here. Something went wrong.
+        const bool type_of_algorithm_failure = true;
+        CGAL_postcondition( !type_of_algorithm_failure );
+        if(!type_of_algorithm_failure) return boost::optional<OutputIterator>(output);
+        else return boost::optional<OutputIterator>();
     }
 
-    // This function computes mean value barycentric coordinates for a chosen query point on the bounded side of a simple polygon with the O(n) fast algorithm.
+    // This function computes mean value barycentric coordinates for a chosen query point on the unbounded side of a simple polygon.
     template<class OutputIterator>
-        inline boost::optional<OutputIterator> coordinates_on_bounded_side_fast(const Point_2 &query_point, OutputIterator &output)
+        inline boost::optional<OutputIterator> coordinates_on_unbounded_side(const Point_2 &query_point, OutputIterator &output, const Type_of_algorithm type_of_algorithm)
     {   
-        return coordinates_on_bounded_side_fast_2(query_point, output);
-    }
+        switch(type_of_algorithm)
+        {
+            case PRECISE:
+            return coordinates_on_unbounded_side_precise_2(query_point, output);
+            break;
 
-    // This function computes mean value barycentric coordinates for a chosen query point on the unbounded side of a simple polygon with the O(n^2) precise algorithm.
-    template<class OutputIterator>
-        inline boost::optional<OutputIterator> coordinates_on_unbounded_side_precise(const Point_2 &query_point, OutputIterator &output)
-    {   
-        return coordinates_on_unbounded_side_precise_2(query_point, output);
-    }
+            case FAST:
+            return coordinates_on_unbounded_side_fast_2(query_point, output);
+            break;
+        }
 
-    // This function computes mean value barycentric coordinates for a chosen query point on the unbounded side of a simple polygon with the O(n) fast algorithm.
-    template<class OutputIterator>
-        inline boost::optional<OutputIterator> coordinates_on_unbounded_side_fast(const Point_2 &query_point, OutputIterator &output)
-    {   
-        return coordinates_on_unbounded_side_fast_2(query_point, output);
+        // Pointer cannot be here. Something went wrong.
+        const bool type_of_algorithm_failure = true;
+        CGAL_postcondition( !type_of_algorithm_failure );
+        if(!type_of_algorithm_failure) return boost::optional<OutputIterator>(output);
+        else return boost::optional<OutputIterator>();
     }
 
     // Information Functions
@@ -427,7 +446,7 @@ private:
         boost::optional<OutputIterator> coordinates_on_unbounded_side_precise_2(const Point_2 &query_point, OutputIterator &output)
     {
         // Use the same formulas as for the bounded side since they are also valid on the unbounded side.
-        return coordinates_on_bounded_side_precise(query_point, output);
+        return coordinates_on_bounded_side_precise_2(query_point, output);
     }
 
     // Compute mean value coordinates on the unbounded side of the polygon with the fast O(n) but less precise algorithm.
@@ -436,7 +455,7 @@ private:
         boost::optional<OutputIterator> coordinates_on_unbounded_side_fast_2(const Point_2 &query_point, OutputIterator &output)
     {
         // Use the same formulas as for the bounded side since they are also valid on the unbounded side.
-        return coordinates_on_bounded_side_fast(query_point, output);
+        return coordinates_on_bounded_side_fast_2(query_point, output);
     }
 
     // OTHER FUNCTIONS.

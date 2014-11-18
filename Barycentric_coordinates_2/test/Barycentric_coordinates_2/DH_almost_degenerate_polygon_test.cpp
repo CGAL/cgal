@@ -1,47 +1,41 @@
-// Author(s) : Dmitry Anisimov.
+// Author: Dmitry Anisimov.
 // We use an almost degenerate parallelogram of length 1 and height 1.0e-200 and an exact data type
-// in order to test Discrete Harmonic coordinates computed for some points from its interior.
+// in order to test discrete harmonic coordinates computed for some points from its interior.
 // The test itself consists of generating some strictly interior points and then checking
 // the constant and linear precision properties of obtained coordinates. Coordinates for the center
 // point are also checked to be 1/4 exactly.
 
 // Does not work with inexact kernel. We get division by zero due to W = 0.
 
-#include <CGAL/Polygon_2.h>
-
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
-
-#include <CGAL/Discrete_harmonic_coordinates_2.h>
+#include <CGAL/Barycentric_coordinates_2/Discrete_harmonic_2.h>
+#include <CGAL/Barycentric_coordinates_2/Generalized_barycentric_coordinates_2.h>
 
 typedef CGAL::Exact_predicates_exact_constructions_kernel Kernel;
 
 typedef Kernel::FT      Scalar;
 typedef Kernel::Point_2 Point;
 
-typedef CGAL::Polygon_2<Kernel> Polygon;
-
 typedef std::vector<Scalar> Coordinate_vector;
+typedef std::vector<Point>  Point_vector;
+
 typedef std::back_insert_iterator<Coordinate_vector> Vector_insert_iterator;
 
-typedef CGAL::Barycentric_coordinates::DH_coordinates_2<Polygon, Coordinate_vector> Discrete_harmonic_coordinates;
+typedef CGAL::Barycentric_coordinates::Discrete_harmonic_2<Kernel> Discrete_harmonic;
+typedef CGAL::Barycentric_coordinates::Generalized_barycentric_coordinates_2<Discrete_harmonic, Kernel> Discrete_harmonic_coordinates;
 
-typedef std::pair<Vector_insert_iterator, bool> Output_type;
+typedef boost::optional<Vector_insert_iterator> Output_type;
 
 using std::cout; using std::endl; using std::string;
 
 int main()
 {
-    const Point vertices[4] = { Point(0, 0                                 ),
-                                Point(1, 0                                 ),
-                                Point(1, Scalar(1)/Scalar(pow(10.0, 200.0))),
-                                Point(0, Scalar(1)/Scalar(pow(10.0, 200.0)))
-                              };
+    Point_vector vertices(4);
 
-    const Polygon parallelogram(vertices, vertices + 4);
+    vertices[0] = Point(0, 0);                                  vertices[1] = Point(1, 0);
+    vertices[2] = Point(1, Scalar(1)/Scalar(pow(10.0, 200.0))); vertices[3] = Point(0, Scalar(1)/Scalar(pow(10.0, 200.0)));
 
-    Discrete_harmonic_coordinates discrete_harmonic_coordinates(parallelogram);
-
-    Coordinate_vector coordinates;
+    Discrete_harmonic_coordinates discrete_harmonic_coordinates(vertices.begin(), vertices.end());
 
     const Point query_points[31] = { Point(Scalar(1)/Scalar(pow(10.0, 300.0)), Scalar(1)/Scalar(pow(10.0, 300.0))) ,
                                      Point(Scalar(1)/Scalar(pow(10.0, 300.0)), Scalar(1)/Scalar(pow(10.0, 280.0))) ,
@@ -77,33 +71,35 @@ int main()
                                      Point(Scalar(1) - Scalar(1)/Scalar(pow(10.0, 300.0)), Scalar(1)/Scalar(pow(10.0, 200.05))),
 
                                      Point(Scalar(1)/Scalar(2),
-                                           Scalar(1)/Scalar(2)*Scalar(parallelogram.vertex(0).y() + parallelogram.vertex(3).y()))
+                                           Scalar(1)/Scalar(2)*Scalar(vertices[0].y() + vertices[3].y()))
                                    };
+
+    Coordinate_vector coordinates;
 
     int count = 0;
     const Point zero(0, 0);
     for(int i = 0; i < 31; ++i) {
-        const Output_type result = discrete_harmonic_coordinates.compute(query_points[i], coordinates);
+        const Output_type result = discrete_harmonic_coordinates(query_points[i], coordinates);
 
         const Scalar coordinate_sum = coordinates[count + 0] +
                                       coordinates[count + 1] +
                                       coordinates[count + 2] +
                                       coordinates[count + 3] ;
 
-        const Point linear_combination( parallelogram.vertex(0).x()*coordinates[count + 0] +
-                                        parallelogram.vertex(1).x()*coordinates[count + 1] +
-                                        parallelogram.vertex(2).x()*coordinates[count + 2] +
-                                        parallelogram.vertex(3).x()*coordinates[count + 3] ,
-                                        parallelogram.vertex(0).y()*coordinates[count + 0] +
-                                        parallelogram.vertex(1).y()*coordinates[count + 1] +
-                                        parallelogram.vertex(2).y()*coordinates[count + 2] +
-                                        parallelogram.vertex(3).y()*coordinates[count + 3] );
+        const Point linear_combination( vertices[0].x()*coordinates[count + 0] +
+                                        vertices[1].x()*coordinates[count + 1] +
+                                        vertices[2].x()*coordinates[count + 2] +
+                                        vertices[3].x()*coordinates[count + 3] ,
+                                        vertices[0].y()*coordinates[count + 0] +
+                                        vertices[1].y()*coordinates[count + 1] +
+                                        vertices[2].y()*coordinates[count + 2] +
+                                        vertices[3].y()*coordinates[count + 3] );
 
         const Point difference(linear_combination.x() - query_points[i].x(), linear_combination.y() - query_points[i].y());
 
         if( (coordinate_sum != Scalar(1)) || (difference != zero) )
         {
-            cout << endl << result.second << " DH_almost_degenerate_polygon_test: FAILED." << endl << endl;
+            cout << endl << "DH_almost_degenerate_polygon_test: FAILED." << endl << endl;
             exit(EXIT_FAILURE);
         }
         count += 4;
@@ -115,7 +111,7 @@ int main()
         coordinates[122] - quater != Scalar(0) ||
         coordinates[123] - quater != Scalar(0)  )
     {
-        cout << endl << 1 << " DH_almost_degenerate_polygon_test: FAILED." << endl << endl;
+        cout << endl << "DH_almost_degenerate_polygon_test: FAILED." << endl << endl;
         exit(EXIT_FAILURE);
     }
 

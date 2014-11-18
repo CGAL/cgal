@@ -1,46 +1,45 @@
-// Author(s) : Dmitry Anisimov.
-// In this test we compute Discrete Harmonic coordinates for ~2400 strictly interior points
-// with respect to a triangle and compare them with those from Triangle coordinates.
+// Author: Dmitry Anisimov.
+// In this test we compute discrete harmonic coordinates for ~2400 strictly interior points
+// with respect to a triangle and compare them with those from triangle coordinates.
 // They must be the same. The chosen data type is exact.
 
-// Does not work with inexact kernel. We get inconsistency when comparing Triangle and Discrete Harmonic coordinates.
-
-#include <CGAL/Polygon_2.h>
+// Does not work with inexact kernel. We get inconsistency when comparing triangle and discrete harmonic coordinates.
 
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
-
-#include <CGAL/Triangle_coordinates_2.h>
-#include <CGAL/Discrete_harmonic_coordinates_2.h>
+#include <CGAL/Barycentric_coordinates_2/Triangle_coordinates_2.h>
+#include <CGAL/Barycentric_coordinates_2/Discrete_harmonic_2.h>
+#include <CGAL/Barycentric_coordinates_2/Generalized_barycentric_coordinates_2.h>
 
 typedef CGAL::Exact_predicates_exact_constructions_kernel Kernel;
 
 typedef Kernel::FT         Scalar;
 typedef Kernel::Point_2    Point;
-typedef Kernel::Triangle_2 Triangle;
-
-typedef CGAL::Polygon_2<Kernel> Polygon;
 
 typedef std::vector<Scalar> Coordinate_vector;
+typedef std::vector<Point>  Point_vector;
+
 typedef std::back_insert_iterator<Coordinate_vector> Vector_insert_iterator;
 
-typedef CGAL::Barycentric_coordinates::Tri_coordinates_2<Triangle, Coordinate_vector>        Triangle_coordinates;
-typedef CGAL::Barycentric_coordinates::DH_coordinates_2<Polygon, Coordinate_vector> Discrete_harmonic_coordinates;
+typedef CGAL::Barycentric_coordinates::Triangle_coordinates_2<Kernel> Triangle_coordinates;
+typedef CGAL::Barycentric_coordinates::Discrete_harmonic_2<Kernel> Discrete_harmonic;
+typedef CGAL::Barycentric_coordinates::Generalized_barycentric_coordinates_2<Discrete_harmonic, Kernel> Discrete_harmonic_coordinates;
 
-typedef std::pair<Vector_insert_iterator, bool> Output_type;
+typedef boost::optional<Vector_insert_iterator> Output_type;
 
 using std::cout; using std::endl; using std::string;
 
 int main()
 {
-    const Triangle tri_triangle( Point(0, 0), Point(1, 0), Point(0, 1) );
+    const Point first_vertex  = Point(0, 0);
+    const Point second_vertex = Point(1, 0);
+    const Point third_vertex  = Point(0, 1);
 
-    Triangle_coordinates triangle_coordinates(tri_triangle);
+    Triangle_coordinates triangle_coordinates(first_vertex, second_vertex, third_vertex);
 
-    const Point vertices[3] = { Point(0, 0), Point(1, 0), Point(0, 1) };
+    Point_vector vertices(3);
+    vertices[0] = first_vertex; vertices[1] = second_vertex; vertices[2] = third_vertex;
 
-    const Polygon dh_triangle(vertices, vertices + 3);
-
-    Discrete_harmonic_coordinates discrete_harmonic_coordinates(dh_triangle);
+    Discrete_harmonic_coordinates discrete_harmonic_coordinates(vertices.begin(), vertices.end());
 
     Coordinate_vector tri_coordinates;
     Coordinate_vector  dh_coordinates;
@@ -55,14 +54,14 @@ int main()
         for(Scalar y = step; y < limit; y += step) {
             const Point point(x, y);
 
-            const Output_type tri_result = triangle_coordinates.compute(point, tri_coordinates);
-            const Output_type  dh_result = discrete_harmonic_coordinates.compute(point, dh_coordinates);
+            const Output_type tri_result = triangle_coordinates(point, tri_coordinates);
+            const Output_type  dh_result = discrete_harmonic_coordinates(point, dh_coordinates);
 
             if( tri_coordinates[count + 0] - dh_coordinates[count + 0] != Scalar(0) ||
                 tri_coordinates[count + 1] - dh_coordinates[count + 1] != Scalar(0) ||
                 tri_coordinates[count + 2] - dh_coordinates[count + 2] != Scalar(0)  )
             {
-                cout << endl << tri_result.second << " " << dh_result.second << " DH_triangle_test: FAILED." << endl << endl;
+                cout << endl << "DH_triangle_test: FAILED." << endl << endl;
                 exit(EXIT_FAILURE);
             }
             count += 3;

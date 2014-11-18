@@ -184,7 +184,7 @@ public:
     // This function accepts a container of the type <a href="http://en.cppreference.com/w/cpp/container/vector">`std::vector`</a> 
     // and returns an iterator of the type <a href="http://en.cppreference.com/w/cpp/iterator/back_insert_iterator">`std::back_insert_iterator`</a>
     // that is placed past-the-end of the resulting sequence of coordinate values.
-    inline boost::optional<std::back_insert_iterator<std::vector<FT> > > compute(const Point_2 &query_point, std::vector<FT> &output_vector, Query_point_location query_point_location = UNSPECIFIED_LOCATION, Type_of_algorithm type_of_algorithm = PRECISE)
+    inline boost::optional<std::back_insert_iterator<std::vector<FT> > > operator()(const Point_2 &query_point, std::vector<FT> &output_vector, Query_point_location query_point_location = UNSPECIFIED_LOCATION, Type_of_algorithm type_of_algorithm = PRECISE)
     {
         output_vector.reserve(output_vector.size() + number_of_vertices); 
         typedef typename std::back_insert_iterator<std::vector<FT> > OutputIterator;
@@ -368,23 +368,7 @@ private:
     {
         CGAL_precondition( CGAL::bounded_side_2(vertex.begin(), vertex.end(), query_point, barycentric_traits) == CGAL::ON_BOUNDED_SIDE );
 
-        // Choose an algorithm to compute coordinates on the bounded side of the polygon.
-        switch(type_of_algorithm)
-        {
-        case PRECISE:
-            return coordinate.coordinates_on_bounded_side_precise(query_point, output);
-            break;
-
-        case FAST:
-            return coordinate.coordinates_on_bounded_side_fast(query_point, output);
-            break;
-        }
-
-        // Pointer cannot be here. Something went wrong.
-        const bool type_of_algorithm_failure = true;
-        CGAL_postcondition( !type_of_algorithm_failure );
-        if(!type_of_algorithm_failure) return boost::optional<OutputIterator>(output);
-        else return boost::optional<OutputIterator>();
+        return coordinate.coordinates_on_bounded_side(query_point, output, type_of_algorithm);
     }
 
     // COORDINATES ON BOUNDARY.
@@ -582,23 +566,7 @@ private:
     {
         CGAL_precondition( CGAL::bounded_side_2(vertex.begin(), vertex.end(), query_point, barycentric_traits) == CGAL::ON_UNBOUNDED_SIDE );
 
-        // Choose an algorithm to compute coordinates on the unbounded side of the polygon.
-        switch(type_of_algorithm)
-        {
-        case PRECISE:
-            return coordinate.coordinates_on_unbounded_side_precise(query_point, output);
-            break;
-
-        case FAST:
-            return coordinate.coordinates_on_unbounded_side_fast(query_point, output);
-            break;
-        }
-
-        // Pointer cannot be here. Something went wrong.
-        const bool type_of_algorithm_failure = true;
-        CGAL_postcondition( !type_of_algorithm_failure );
-        if(!type_of_algorithm_failure) return boost::optional<OutputIterator>(output);
-        else return boost::optional<OutputIterator>();
+        return coordinate.coordinates_on_unbounded_side(query_point, output, type_of_algorithm);
     }
 
     // HELP FUNCTIONS.

@@ -45,7 +45,7 @@ int main()
     wachspress_coordinates.print_information();
     
     // Compute Wachspress coordinates for all the randomly defined points.
-    cout << endl << "Computed Wachspress coordinates are: " << endl << endl;
+    cout << endl << "Computed Wachspress coordinates: " << endl << endl;
     for(int i = 0; i < number_of_points; ++i) {
         // Compute coordinates.
         Scalar_vector coordinates;

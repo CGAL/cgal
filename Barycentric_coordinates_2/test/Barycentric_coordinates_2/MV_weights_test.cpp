@@ -1,44 +1,40 @@
-// Author(s) : Dmitry Anisimov.
-// In this test we compute Mean Value weights for ~9800 strictly interior points with respect to
-// a pentagon. Then we sum them up and normalize by this sum. What we expect is Mean Value coordinates.
+// Author: Dmitry Anisimov.
+// In this test we compute mean value weights for ~9800 strictly interior points with respect to
+// a pentagon. Then we sum them up and normalize by this sum. What we expect is mean value coordinates.
 // The chosen data type is exact. The used epsilon is 1.0e-14.
 
 // Does not work with inexact kernel. We get inconsistency when comparing coordinates and expected_coordinates.
 
-#include <CGAL/Polygon_2.h>
-
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
-
-#include <CGAL/Mean_value_coordinates_2.h>
+#include <CGAL/Barycentric_coordinates_2/Mean_value_2.h>
+#include <CGAL/Barycentric_coordinates_2/Generalized_barycentric_coordinates_2.h>
 
 typedef CGAL::Exact_predicates_exact_constructions_kernel Kernel;
 
 typedef Kernel::FT      Scalar;
 typedef Kernel::Point_2 Point;
 
-typedef CGAL::Polygon_2<Kernel> Polygon;
-
 typedef std::vector<Scalar> Coordinate_vector;
+typedef std::vector<Point>  Point_vector;
+
 typedef std::back_insert_iterator<Coordinate_vector> Vector_insert_iterator;
 
-typedef CGAL::Barycentric_coordinates::MV_coordinates_2<Polygon, Coordinate_vector> Mean_value_coordinates;
+typedef CGAL::Barycentric_coordinates::Mean_value_2<Kernel> Mean_value;
+typedef CGAL::Barycentric_coordinates::Generalized_barycentric_coordinates_2<Mean_value, Kernel> Mean_value_coordinates;
 
-typedef std::pair<Vector_insert_iterator, bool> Output_type;
+typedef boost::optional<Vector_insert_iterator> Output_type;
 
 using std::cout; using std::endl; using std::string;
 
 int main()
 {
-   const Point vertices[5] = { Point(0                   , 0                  ),
-                               Point(1                   , 0                  ),
-                               Point(Scalar(5) /Scalar(4), Scalar(3)/Scalar(4)),
-                               Point(Scalar(1) /Scalar(2), Scalar(3)/Scalar(2)),
-                               Point(Scalar(-1)/Scalar(4), Scalar(3)/Scalar(4))
-                             };
+    Point_vector vertices(5);
 
-    const Polygon pentagon(vertices, vertices + 5);
+    vertices[0] = Point(0, 0);                                      vertices[1] = Point(1, 0);                                      
+    vertices[2] = Point(Scalar(5) /Scalar(4), Scalar(3)/Scalar(4)); vertices[3] = Point(Scalar(1)/Scalar(2), Scalar(3)/Scalar(2)); 
+    vertices[4] = Point(Scalar(-1)/Scalar(4), Scalar(3)/Scalar(4));
 
-    Mean_value_coordinates mean_value_coordinates(pentagon);
+    Mean_value_coordinates mean_value_coordinates(vertices.begin(), vertices.end());
 
     Coordinate_vector weights;
     Coordinate_vector coordinates;
@@ -65,7 +61,7 @@ int main()
 
             for(int j = 0; j < 5; ++j) coordinates.push_back(weights[count + j] * inverted_W);
 
-            const Output_type c_result = mean_value_coordinates.compute(point, expected_coordinates);
+            const Output_type c_result = mean_value_coordinates(point, expected_coordinates);
 
             if( coordinates[count + 0] - expected_coordinates[count + 0] > epsilon ||
                 coordinates[count + 1] - expected_coordinates[count + 1] > epsilon ||
@@ -73,7 +69,7 @@ int main()
                 coordinates[count + 3] - expected_coordinates[count + 3] > epsilon ||
                 coordinates[count + 4] - expected_coordinates[count + 4] > epsilon  )
             {
-                cout << endl << w_result.second << " " << c_result.second << " MV_weights_test: FAILED." << endl << endl;
+                cout << endl << "MV_weights_test: FAILED." << endl << endl;
                 exit(EXIT_FAILURE);
             }
             count += 5;

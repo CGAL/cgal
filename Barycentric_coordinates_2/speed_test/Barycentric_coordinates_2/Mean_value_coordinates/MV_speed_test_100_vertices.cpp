@@ -1,14 +1,11 @@
-// Author(s) : Dmitry Anisimov.
-// We test speed of Mean Value coordinates on a set of automatically generated
+// Author: Dmitry Anisimov.
+// We test speed of mean value coordinates on a set of automatically generated
 // points inside a regular polygon with 100 vertices. We use inexact kernel.
 
 #include <CGAL/Real_timer.h>
-
-#include <CGAL/Polygon_2.h>
-
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-
-#include <CGAL/Mean_value_coordinates_2.h>
+#include <CGAL/Barycentric_coordinates_2/Mean_value_2.h>
+#include <CGAL/Barycentric_coordinates_2/Generalized_barycentric_coordinates_2.h>
 
 typedef CGAL::Real_timer Timer;
 
@@ -17,14 +14,13 @@ typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef Kernel::FT      Scalar;
 typedef Kernel::Point_2 Point;
 
-typedef CGAL::Polygon_2<Kernel> Polygon;
-
 typedef std::vector<Scalar> Scalar_vector;
 typedef std::vector<Point>  Point_vector;
 
 typedef Scalar_vector::iterator Overwrite_iterator;
 
-typedef CGAL::Barycentric_coordinates::Mean_value_coordinates_2<Polygon, Overwrite_iterator> Mean_value_coordinates;
+typedef CGAL::Barycentric_coordinates::Mean_value_2<Kernel> Mean_value;
+typedef CGAL::Barycentric_coordinates::Generalized_barycentric_coordinates_2<Mean_value, Kernel> Mean_value_coordinates;
 
 using std::cout; using std::endl; using std::string;
 
@@ -57,12 +53,9 @@ int main()
 
     generate_regular_polygon(number_of_vertices, polygon_radius, vertices);
 
-    const Polygon regular_polygon(vertices.begin(), vertices.end());
+    Mean_value_coordinates mean_value_coordinates(vertices.begin(), vertices.end());
 
-    Mean_value_coordinates mean_value_coordinates(regular_polygon);
-
-    Scalar_vector coordinates;
-    coordinates.resize(number_of_vertices);
+    Scalar_vector coordinates(number_of_vertices);
     Overwrite_iterator it = coordinates.begin();
 
     Timer time_to_compute;
@@ -73,7 +66,7 @@ int main()
         time_to_compute.start();
         for(Scalar x = -one; x <= one; x += x_step) {
             for(Scalar y = -one; y <= one; y += y_step)
-                mean_value_coordinates.compute(Point(x, y), it, CGAL::BC::ON_BOUNDED_SIDE);
+                mean_value_coordinates(Point(x, y), it, CGAL::Barycentric_coordinates::ON_BOUNDED_SIDE);
         }
         time_to_compute.stop();
 

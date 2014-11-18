@@ -1,14 +1,11 @@
-// Author(s) : Dmitry Anisimov.
-// We test speed of Discrete Harmonic coordinates on a set of automatically generated
+// Author: Dmitry Anisimov.
+// We test speed of discrete harmonic coordinates on a set of automatically generated
 // points inside a unit square. We use inexact kernel.
 
 #include <CGAL/Real_timer.h>
-
-#include <CGAL/Polygon_2.h>
-
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-
-#include <CGAL/Discrete_harmonic_coordinates_2.h>
+#include <CGAL/Barycentric_coordinates_2/Discrete_harmonic_2.h>
+#include <CGAL/Barycentric_coordinates_2/Generalized_barycentric_coordinates_2.h>
 
 typedef CGAL::Real_timer Timer;
 
@@ -17,12 +14,13 @@ typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef Kernel::FT      Scalar;
 typedef Kernel::Point_2 Point;
 
-typedef CGAL::Polygon_2<Kernel> Polygon;
-
 typedef std::vector<Scalar> Coordinate_vector;
+typedef std::vector<Point>  Point_vector;
+
 typedef Coordinate_vector::iterator Overwrite_iterator;
 
-typedef CGAL::Barycentric_coordinates::Discrete_harmonic_coordinates_2<Polygon, Overwrite_iterator> Discrete_harmonic_coordinates;
+typedef CGAL::Barycentric_coordinates::Discrete_harmonic_2<Kernel> Discrete_harmonic;
+typedef CGAL::Barycentric_coordinates::Generalized_barycentric_coordinates_2<Discrete_harmonic, Kernel> Discrete_harmonic_coordinates;
 
 using std::cout; using std::endl; using std::string;
 
@@ -37,17 +35,14 @@ int main()
     const Scalar x_step = one / Scalar(number_of_x_coordinates);
     const Scalar y_step = one / Scalar(number_of_y_coordinates);
 
-    const Point vertices[4] = { Point(zero - x_step, zero - y_step),
-                                Point(one  + x_step, zero - y_step),
-                                Point(one  + x_step, one  + y_step),
-                                Point(zero - x_step, one  + y_step)
-                              };
-    const Polygon unit_square(vertices, vertices + 4);
+    Point_vector vertices(4);
 
-    Discrete_harmonic_coordinates discrete_harmonic_coordinates(unit_square);
+    vertices[0] = Point(zero - x_step, zero - y_step); vertices[1] = Point(one  + x_step, zero - y_step);
+    vertices[2] = Point(one  + x_step, one  + y_step); vertices[3] = Point(zero - x_step, one  + y_step);
 
-    Coordinate_vector coordinates;
-    coordinates.resize(4);
+    Discrete_harmonic_coordinates discrete_harmonic_coordinates(vertices.begin(), vertices.end());
+
+    Coordinate_vector coordinates(4);
     Overwrite_iterator it = coordinates.begin();
 
     Timer time_to_compute;
@@ -58,7 +53,7 @@ int main()
         time_to_compute.start();
         for(Scalar x = zero; x <= one; x += x_step) {
             for(Scalar y = zero; y <= one; y += y_step)
-                discrete_harmonic_coordinates.compute(Point(x, y), it, CGAL::BC::ON_BOUNDED_SIDE);
+                discrete_harmonic_coordinates(Point(x, y), it, CGAL::Barycentric_coordinates::ON_BOUNDED_SIDE);
         }
         time_to_compute.stop();
 

@@ -30,7 +30,7 @@ int main()
 
     // Compute segment coordinates for all the defined points.
     // We use a global function and return the segment coordinates stored in an array of the type CGAL::cpp11::array<FT,2>.
-    cout << endl << "Computed segment coordinates are: " << endl << endl;
+    cout << endl << "Computed segment coordinates: " << endl << endl;
     for(int i = 0; i < 5; ++i) {
         const Pair pair = BC::compute_segment_coordinates_2(first_vertex, second_vertex, query_points[i], Kernel());
 

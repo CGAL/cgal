@@ -14,7 +14,6 @@
 // General.
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef CGAL::Projection_traits_xy_3<Kernel>                Projection;
-// typedef Kernel Projection;
 
 typedef Projection::FT      Scalar;
 typedef Projection::Point_2 Point;
@@ -48,9 +47,8 @@ int main()
     // Construct a polygon bounding a piece of three-dimensional terrain.
     // Note that z-coordinate of each vertex represents the height function.
     // Projection in 2D is done automatically by the Projection traits class.
-    Point_vector vertices;
     const int number_of_vertices = 50;
-    vertices.resize(number_of_vertices);
+    Point_vector vertices(number_of_vertices);
 
     vertices[0]  = Point(0.03, 0.05, 0.000); vertices[1]  = Point(0.07, 0.04, 10.00); vertices[2]  = Point(0.10, 0.04, 20.00);
     vertices[3]  = Point(0.14, 0.04, 30.00); vertices[4]  = Point(0.17, 0.07, 40.00); vertices[5]  = Point(0.19, 0.09, 50.00);
@@ -106,6 +104,8 @@ int main()
     // Store all new interior points with interpolated data here.
     std::vector<Point> points(cdt.number_of_vertices());
 
+    cout << endl << "Result of the height interpolation: " << endl << endl;
+
     // Compute coordinates and interpolate the boundary data to the polygon's interior.
     int index = 0;
     for(Vertex_iterator vertex_iterator = cdt.finite_vertices_begin(); vertex_iterator != cdt.finite_vertices_end(); ++vertex_iterator) {
@@ -122,6 +122,7 @@ int main()
         cout << "The interpolated height with index " << index << " is " << f << ";" << endl;
         ++index;
     }
+    cout << endl;
 
     return EXIT_SUCCESS;
 }
