@@ -106,12 +106,14 @@
     <addaction name="actionRecenter"/>
     <addaction name="separator"/>
     <addaction name="actionInsertPolyline"/>
+    <addaction name="actionInsertSeeds_OnOff"/>
     <addaction name="separator"/>
     <addaction name="actionShowDelaunay"/>
     <addaction name="actionShowVoronoi"/>
     <addaction name="actionShow_constrained_edges"/>
     <addaction name="actionShow_voronoi_edges"/>
     <addaction name="actionShow_faces_in_domain"/>
+    <addaction name="actionShow_seeds"/>
     <addaction name="actionCircumcenter"/>
     <addaction name="separator"/>
     <addaction name="actionShow_blind_faces"/>
@@ -348,6 +350,22 @@
   <action name="actionLloyd_optimization">
    <property name="text">
     <string>Lloyd optimization</string>
+   </property>
+  </action>
+  <action name="actionInsertSeeds_OnOff">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Insert seeds (on/off)</string>
+   </property>
+  </action>
+  <action name="actionShow_seeds">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Show seeds</string>
    </property>
   </action>
  </widget>

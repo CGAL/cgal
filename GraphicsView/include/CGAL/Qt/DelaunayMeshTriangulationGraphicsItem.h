@@ -24,6 +24,7 @@
 #include <CGAL/Qt/ConstrainedTriangulationGraphicsItem.h>
 #include <QBrush>
 #include <QPen>
+#include <list>
 
 namespace CGAL {
 
@@ -33,6 +34,7 @@ template <typename T>
 class DelaunayMeshTriangulationGraphicsItem : public ConstrainedTriangulationGraphicsItem<T>
 {
   typedef ConstrainedTriangulationGraphicsItem<T> Base;
+  typedef typename T::Point Point;
 
 public:
   DelaunayMeshTriangulationGraphicsItem(T  * t_)
@@ -42,6 +44,9 @@ public:
       in_domain_brush(::Qt::blue)
       , blind_brush(::Qt::gray)
       , visible_voronoi(false)
+      , seeds_begin()
+      , seeds_end()
+      , visible_seeds(false)
   {
   }
   
@@ -89,6 +94,21 @@ public:
     this->update();
   }
 
+  bool visibleSeeds() const
+  {
+    return visible_seeds;
+  }
+
+  void setVisibleSeeds(const bool b,
+    typename std::list<Point>::iterator begin,
+    typename std::list<Point>::iterator end)
+  {
+    visible_seeds = b;
+    seeds_begin = begin;
+    seeds_end = end;
+    this->update();
+  }
+
   const QPen& voronoiPen() const
   {
     return voronoi_pen;
@@ -116,7 +136,9 @@ protected:
   bool visible_in_domain;
   bool visible_blind_faces;
   bool visible_voronoi;
-
+  bool visible_seeds;
+  typename std::list<Point>::iterator seeds_begin, seeds_end;
+  
   QBrush in_domain_brush;
   QBrush blind_brush;
   QPen voronoi_pen;
@@ -173,6 +195,15 @@ DelaunayMeshTriangulationGraphicsItem<T>::drawAll(QPainter *painter)
         this->painterostream << *rit;
       }
     }
+  }
+  if(this->visibleSeeds())
+  {
+    painter->setBrush(::Qt::NoBrush);
+    painter->setPen(::Qt::darkRed);
+    this->painterostream = PainterOstream<typename T::Geom_traits>(painter);
+    typename std::list<Point>::iterator sit;
+    for(sit = seeds_begin; sit != seeds_end; ++sit)
+      this->painterostream << *sit;
   }
   Base::drawAll(painter);
 }

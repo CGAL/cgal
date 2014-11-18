@@ -185,12 +185,14 @@ class MainWindow :
 private:  
   CDT cdt; 
   QGraphicsScene scene;
-  std::list<Point_2> seeds;
+  std::list<Point_2> m_seeds;
+  bool m_seed_insertion_mode_ON;
 
   CGAL::Qt::DelaunayMeshTriangulationGraphicsItem<CDT> * dgi;
 
   CGAL::Qt::GraphicsViewPolylineInput<K> * pi;
   CGAL::Qt::TriangulationCircumcircle<CDT> *tcc;
+
 public:
   MainWindow();
 
@@ -233,7 +235,11 @@ public slots:
 
   void on_actionShow_blind_faces_toggled(bool checked);
 
+  void on_actionShow_seeds_toggled(bool checked);
+
   void on_actionInsertPolyline_toggled(bool checked);
+
+  void on_actionInsertSeeds_OnOff_toggled(bool checked);
   
   void on_actionCircumcenter_toggled(bool checked);
 
@@ -300,7 +306,7 @@ MainWindow::MainWindow()
   pi = new CGAL::Qt::GraphicsViewPolylineInput<K>(this, &scene, 0, true); // inputs polylines which are not closed
   QObject::connect(pi, SIGNAL(generate(CGAL::Object)),
 		   this, SLOT(processInput(CGAL::Object)));
-    
+  m_seed_insertion_mode_ON = false; //handle insertion of seeds
 
   tcc = new CGAL::Qt::TriangulationCircumcircle<CDT>(&scene, &cdt, this);
   tcc->setPen(QPen(Qt::red, 0, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
@@ -322,6 +328,8 @@ MainWindow::MainWindow()
   this->actionShow_faces_in_domain->setChecked(true);
   this->actionShow_constrained_edges->setChecked(true);
   this->actionShow_voronoi_edges->setChecked(false);
+  this->actionShow_seeds->setChecked(true);
+  this->actionInsertSeeds_OnOff->setChecked(false);
 
   //
   // Setup the scene and the view
@@ -352,24 +360,21 @@ MainWindow::MainWindow()
 void
 MainWindow::processInput(CGAL::Object o)
 {
-
   std::list<Point_2> points;
   if(CGAL::assign(points, o)){
     if(points.size() == 1) {
-      cdt.insert(points.front());
+      if(m_seed_insertion_mode_ON)
+      {
+        std::cout << "Insert seed at " << points.front() << std::endl;
+        m_seeds.push_back(points.front());
+      }
+      else
+        cdt.insert(points.front());
     }
     else {
-      /*
-      std::cout.precision(12);
-      std::cout << points.size() << std::endl;
-      for( std::list<Point_2>::iterator it =  points.begin(); it != points.end(); ++it){
-	std::cout << *it << std::endl;
-      }
-      */
       insert_polyline(points.begin(), points.end());
     }
   }
-
 
   initializeID(cdt);
   discoverComponents(cdt);
@@ -394,6 +399,17 @@ MainWindow::on_actionInsertPolyline_toggled(bool checked)
   }
 }
 
+void
+MainWindow::on_actionInsertSeeds_OnOff_toggled(bool checked)
+{
+  m_seed_insertion_mode_ON = checked;
+  actionInsertSeeds_OnOff->setChecked(checked);
+  if(checked){
+    scene.installEventFilter(pi);
+  } else {
+    scene.removeEventFilter(pi);
+  }
+}
 
 void
 MainWindow::on_actionShowDelaunay_toggled(bool checked)
@@ -427,6 +443,13 @@ void
 MainWindow::on_actionShow_blind_faces_toggled(bool checked)
 {
   dgi->setVisibleBlindFaces(checked);
+  update();
+}
+
+void
+MainWindow::on_actionShow_seeds_toggled(bool checked)
+{
+  dgi->setVisibleSeeds(checked, m_seeds.begin(), m_seeds.end());
   update();
 }
 
@@ -657,7 +680,12 @@ MainWindow::on_actionMakeDelaunayMesh_triggered()
   double edge_len = ok ? d : 0.;
 
   std::size_t nv = cdt.number_of_vertices();
-  CGAL::refine_Delaunay_mesh_2(cdt, Criteria(shape, edge_len), true);
+
+  CGAL::refine_Delaunay_mesh_2(cdt,
+      m_seeds.begin(), m_seeds.end(),
+      Criteria(shape, edge_len),
+      false);//mesh the subdomains including NO seed
+
   timer.stop();
   nv = cdt.number_of_vertices() - nv;
   initializeID(cdt);
@@ -703,7 +731,9 @@ MainWindow::on_actionMakeLipschitzDelaunayMesh_triggered()
 
   std::size_t nv = cdt.number_of_vertices();
   mesher.init(true);
-  //  mesher.set_seeds(m_seeds.begin(),m_seeds.end(),false);
+  mesher.set_seeds(m_seeds.begin(), m_seeds.end(),
+                   false);//mesh the subdomains including NO seed
+
   mesher.refine_mesh();
   nv = cdt.number_of_vertices() - nv;
   statusBar()->showMessage(QString("Added %1 vertices").arg(nv), 2000);
@@ -773,7 +803,7 @@ MainWindow::on_actionLloyd_optimization_triggered()
     1/*val*/, 0/*min*/, 1000/*max*/, 1/*step*/, &ok);
   if(ok)
   {
-    CGAL::lloyd_optimize_mesh_2(cdt, nb);
+    CGAL::lloyd_optimize_mesh_2(cdt, max_iteration_number = nb);
   }
 
   // default cursor
