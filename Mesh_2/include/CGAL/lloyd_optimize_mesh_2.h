@@ -4,6 +4,7 @@
 #include <CGAL/Mesh_2/Mesh_global_optimizer_2.h>
 #include <CGAL/Mesh_2/Lloyd_move_2.h>
 #include <CGAL/Mesh_2/Mesh_sizing_field.h>
+#include <CGAL/Mesh_optimization_return_code.h>
 #include <fstream>
 
 #include <boost/parameter.hpp>
@@ -18,7 +19,7 @@ BOOST_PARAMETER_NAME( (freeze_bound, tag) freeze_bound_)
 namespace CGAL
 {
   BOOST_PARAMETER_FUNCTION(
-  (void),
+  (Mesh_optimization_return_code),
   lloyd_optimize_mesh_2,
   tag,
   (required (in_out(cdt),*))
@@ -38,8 +39,9 @@ namespace CGAL
   }
 
   template<typename CDT>
-  void lloyd_optimize_mesh_2_impl(CDT& cdt,
-                             const unsigned int max_iterations,
+  Mesh_optimization_return_code
+  lloyd_optimize_mesh_2_impl(CDT& cdt,
+                             const int max_iterations,
                              const double convergence_ratio,
                              const double freeze_bound,
                              const double time_limit)
@@ -65,13 +67,15 @@ namespace CGAL
       : max_iterations;
 
     //run optimization
-    lloyd(nb_iterations);
+    Mesh_optimization_return_code rc = lloyd(nb_iterations);
 
 #ifdef CGAL_MESH_2_OPTIMIZERS_DEBUG
     std::ofstream os2("after_lloyd.angles.txt");
     lloyd.output_angles_histogram(os2);
     os2.close();
 #endif
+
+    return rc;
   }
 
 } //end namespace CGAL

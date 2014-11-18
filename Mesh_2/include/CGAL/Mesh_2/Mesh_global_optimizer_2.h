@@ -31,6 +31,7 @@
 
 #include <CGAL/Timer.h>
 #include <CGAL/Origin.h>
+#include <CGAL/Mesh_optimization_return_code.h>
 
 #include <vector>
 #include <list>
@@ -92,7 +93,7 @@ public:
   void set_time_limit(double time) { time_limit_ = time; }
   double time_limit() const { return time_limit_; }
 
-  void operator()(const int nb_iterations)
+  Mesh_optimization_return_code operator()(const int nb_iterations)
   {
     running_time_.reset();
     running_time_.start();
@@ -172,10 +173,9 @@ public:
     }
 
     move_function_.after_all_moves(cdt_);
+    running_time_.stop();
 
 #ifdef CGAL_MESH_2_OPTIMIZER_VERBOSE
-    running_time_.stop();
-    std::cerr << std::endl;
     if(sq_freeze_ratio_ > 0. && moving_vertices.empty())
       std::cerr << "All vertices frozen" << std::endl;
     else if(sq_freeze_ratio_ > 0. && convergence_stop)
@@ -190,6 +190,19 @@ public:
     std::cerr << "Total optimization time: " << running_time_.time()
               << "s" << std::endl << std::endl;
 #endif
+
+    if( sq_freeze_ratio_ > 0. && moving_vertices.empty() )
+      return ALL_VERTICES_FROZEN;
+    else if( sq_freeze_ratio_ > 0. && convergence_stop )
+      return CANT_IMPROVE_ANYMORE;
+    else if( is_time_limit_reached() )
+      return TIME_LIMIT_REACHED;
+    else if( check_convergence() )
+      return CONVERGENCE_REACHED;
+    else if( i >= nb_iterations )
+      return MAX_ITERATION_NUMBER_REACHED;
+    else
+      return MESH_OPTIMIZATION_UNKNOWN_ERROR;
   }
 
 private:
