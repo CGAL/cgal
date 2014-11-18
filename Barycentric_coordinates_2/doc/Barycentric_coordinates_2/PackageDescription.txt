@@ -14,7 +14,7 @@
 \cgalPkgManuals{Chapter_2D_Generalized_Barycentric_Coordinates, PkgBarycentric_coordinates_2}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
-\cgalPkgSince{4.5}
+\cgalPkgSince{4.6}
 \cgalPkgBib{cgal:abha-gbc}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
 \cgalPkgShortInfoEnd
