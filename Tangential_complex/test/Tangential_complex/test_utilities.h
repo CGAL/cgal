@@ -35,7 +35,7 @@
 template <typename Kernel, typename Point_container>
 std::vector<typename Point_container::value_type>
 sparsify_point_set(
-  const Kernel &k, Point_container const& input_pts, 
+  const Kernel &k, Point_container const& input_pts,
   typename Kernel::FT min_squared_dist)
 {
   typedef typename Point_container::value_type Point;
@@ -173,13 +173,13 @@ std::vector<typename Kernel::Point_d> generate_points_on_klein_bottle_3D(
       v = 6.2832 * k2 / num_lines;
     }
     else
-    { 
+    {
       u = rng.get_double(0, 6.2832);
       v = rng.get_double(0, 6.2832);
     }
     double tmp = cos(u/2)*sin(v) - sin(u/2)*sin(2.*v);
     points.push_back(Kernel().construct_point_d_object()(
-      (a + b*tmp)*cos(u), 
+      (a + b*tmp)*cos(u),
       (a + b*tmp)*sin(u),
       b*(sin(u/2)*sin(v) + cos(u/2)*sin(2.*v))));
   }
@@ -212,7 +212,7 @@ std::vector<typename Kernel::Point_d> generate_points_on_klein_bottle_4D(
       v = 6.2832 * k2 / num_lines;
     }
     else
-    { 
+    {
       u = rng.get_double(0, 6.2832);
       v = rng.get_double(0, 6.2832);
     }
@@ -253,7 +253,7 @@ generate_points_on_klein_bottle_variant_5D(
       v = 6.2832 * k2 / num_lines;
     }
     else
-    { 
+    {
       u = rng.get_double(0, 6.2832);
       v = rng.get_double(0, 6.2832);
     }

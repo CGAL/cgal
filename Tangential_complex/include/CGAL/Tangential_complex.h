@@ -66,10 +66,10 @@
 namespace CGAL {
 
 using namespace Tangential_complex_;
-  
+
 /// The class Tangential_complex represents a tangential complex
 template <
-  typename Kernel, 
+  typename Kernel,
   int Intrinsic_dimension,
   typename Concurrency_tag = CGAL::Parallel_tag,
   typename Tr = Regular_triangulation
@@ -119,7 +119,7 @@ class Tangential_complex
       : m_tr(NULL) {}
     Tr_and_VH(int dim)
       : m_tr(new Triangulation(dim)) {}
-    
+
     ~Tr_and_VH() { destroy_triangulation(); }
 
     Triangulation & construct_triangulation(int dim)
@@ -137,7 +137,7 @@ class Tangential_complex
 
     Triangulation &      tr()       { return *m_tr; }
     Triangulation const& tr() const { return *m_tr; }
-    
+
 
     Tr_vertex_handle const& center_vertex() const { return m_center_vertex; }
     Tr_vertex_handle & center_vertex() { return m_center_vertex; }
@@ -150,23 +150,23 @@ class Tangential_complex
   typedef typename std::vector<Tangent_space_basis>   TS_container;
   typedef typename std::vector<Tr_and_VH>             Tr_container;
 #ifdef CGAL_LINKED_WITH_TBB
-  // CJTODO: test other mutexes 
+  // CJTODO: test other mutexes
   // http://www.threadingbuildingblocks.org/docs/help/reference/synchronization/mutexes/mutex_concept.htm
-  typedef tbb::queuing_mutex                          Tr_mutex; 
+  typedef tbb::queuing_mutex                          Tr_mutex;
 #endif
 #ifdef CGAL_TC_EXPORT_NORMALS
   typedef typename std::vector<Vector>                Normals;
 #endif
 
 public:
-  
+
   /// Constructor for a range of points
   template <typename InputIterator>
-  Tangential_complex(InputIterator first, InputIterator last, 
+  Tangential_complex(InputIterator first, InputIterator last,
                      const Kernel &k = Kernel())
-  : m_k(k), 
+  : m_k(k),
     m_points(first, last),
-    m_points_ds(m_points) 
+    m_points_ds(m_points)
   {}
 
   /// Destructor
@@ -195,7 +195,7 @@ public:
 #ifdef CGAL_TC_EXPORT_NORMALS
     m_normals.resize(m_points.size());
 #endif
-    
+
 #ifdef CGAL_LINKED_WITH_TBB
     // Parallel
     if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
@@ -211,19 +211,19 @@ public:
       for (std::size_t i = 0 ; i < m_points.size() ; ++i)
         compute_tangent_triangulation(i);
     }
-    
+
 #ifdef CGAL_TC_PROFILING
-    std::cerr << "Tangential complex computed in " << t.elapsed() 
+    std::cerr << "Tangential complex computed in " << t.elapsed()
               << " seconds." << std::endl;
 #endif
   }
-  
+
   void refresh_tangential_complex()
   {
 #ifdef CGAL_TC_PROFILING
     Wall_clock_timer t;
 #endif
-    
+
 #ifdef CGAL_LINKED_WITH_TBB
     // Parallel
     if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
@@ -239,33 +239,33 @@ public:
       for (std::size_t i = 0 ; i < m_points.size() ; ++i)
         compute_tangent_triangulation(i, true);
     }
-    
+
 #ifdef CGAL_TC_PROFILING
-    std::cerr << "Tangential complex refreshed in " << t.elapsed() 
+    std::cerr << "Tangential complex refreshed in " << t.elapsed()
               << " seconds." << std::endl;
 #endif
   }
-  
+
   void fix_inconsistencies()
   {
     typename Kernel::Point_drop_weight_d drop_w = m_k.point_drop_weight_d_object();
     typename Kernel::Construct_weighted_point_d cwp =
       m_k.construct_weighted_point_d_object();
-    
+
 #ifdef CGAL_TC_VERBOSE
       std::cerr << "Fixing inconsistencies..." << std::endl;
 #endif
 
     std::pair<std::size_t, std::size_t> stats_before =
       number_of_inconsistent_simplices(false);
-    
+
 #ifdef CGAL_TC_VERBOSE
-      std::cerr << "Initial number of inconsistencies: " 
+      std::cerr << "Initial number of inconsistencies: "
         << stats_before.second << std::endl;
 #endif
 
     bool done = false;
-    while (!done) 
+    while (!done)
     {
 // CJTODO: the parallel version is not working for now
 /*#ifdef CGAL_LINKED_WITH_TBB
@@ -295,21 +295,21 @@ public:
         << "  * Number of vertices: " << m_points.size() << std::endl
         << std::endl
         << "  * BEFORE fix_inconsistencies:" << std::endl
-        << "    - Total number of simplices in stars (incl. duplicates): " 
+        << "    - Total number of simplices in stars (incl. duplicates): "
         << stats_before.first << std::endl
-        << "    - Number of inconsistent simplices in stars (incl. duplicates): " 
+        << "    - Number of inconsistent simplices in stars (incl. duplicates): "
         << stats_before.second << std::endl
-        << "    - Percentage of inconsistencies: " 
-        << 100. * stats_before.second / stats_before.first << "%" 
+        << "    - Percentage of inconsistencies: "
+        << 100. * stats_before.second / stats_before.first << "%"
         << std::endl
         << std::endl
         << "  * AFTER fix_inconsistencies:" << std::endl
-        << "    - Total number of simplices in stars (incl. duplicates): " 
+        << "    - Total number of simplices in stars (incl. duplicates): "
         << stats_after.first << std::endl
-        << "    - Number of inconsistent simplices in stars (incl. duplicates): " 
+        << "    - Number of inconsistent simplices in stars (incl. duplicates): "
         << stats_after.second << std::endl
-        << "    - Percentage of inconsistencies: " 
-        << 100. * stats_after.second / stats_before.first << "%" 
+        << "    - Percentage of inconsistencies: "
+        << 100. * stats_after.second / stats_before.first << "%"
         << std::endl
         << "================================================" << std::endl;
 #endif
@@ -317,7 +317,7 @@ public:
       stats_before = stats_after;
     }
   }
-  
+
 
   // Return a pair<num_simplices, num_inconsistent_simplices>
   std::pair<std::size_t, std::size_t> number_of_inconsistent_simplices(
@@ -360,20 +360,20 @@ public:
         << "================================================" << std::endl
         << "Inconsistencies:\n"
         << "  * Number of vertices: " << m_points.size() << std::endl
-        << "  * Total number of simplices in stars (incl. duplicates): " 
+        << "  * Total number of simplices in stars (incl. duplicates): "
         << num_simplices << std::endl
-        << "  * Number of inconsistent simplices in stars (incl. duplicates): " 
+        << "  * Number of inconsistent simplices in stars (incl. duplicates): "
         << num_inconsistent_simplices << std::endl
-        << "  * Percentage of inconsistencies: " 
+        << "  * Percentage of inconsistencies: "
         << 100 * num_inconsistent_simplices / num_simplices << "%" << std::endl
         << "================================================" << std::endl;
     }
 
     return std::make_pair(num_simplices, num_inconsistent_simplices);
   }
-  
+
   std::ostream &export_to_off(
-    std::ostream & os, 
+    std::ostream & os,
     bool color_inconsistencies = false,
     std::set<std::set<std::size_t> > const* excluded_simplices = NULL,
     bool show_excluded_vertices_in_color = false)
@@ -386,14 +386,14 @@ public:
     {
       std::cerr << "Error: export_to_off => ambient dimension should be >= 2."
                 << std::endl;
-      os << "Error: export_to_off => ambient dimension should be >= 2." 
+      os << "Error: export_to_off => ambient dimension should be >= 2."
          << std::endl;
       return os;
     }
     if (ambient_dim > 3)
     {
       std::cerr << "Warning: export_to_off => ambient dimension should be "
-                   "<= 3. Only the first 3 coordinates will be exported." 
+                   "<= 3. Only the first 3 coordinates will be exported."
                 << std::endl;
     }
 
@@ -412,22 +412,22 @@ public:
     std::size_t num_simplices, num_vertices;
     export_vertices_to_off(output, num_vertices);
     export_simplices_to_off(
-      output, num_simplices, color_inconsistencies, 
+      output, num_simplices, color_inconsistencies,
       excluded_simplices, show_excluded_vertices_in_color);
-    
+
 #ifdef CGAL_TC_EXPORT_NORMALS
     os << "N";
 #endif
 
     os << "OFF \n"
-       << num_vertices << " " 
+       << num_vertices << " "
        << num_simplices << " "
        << "0 \n"
        << output.str();
 
     return os;
   }
-  
+
   bool check_if_all_simplices_are_in_the_ambient_delaunay(
     std::set<std::set<std::size_t> > * incorrect_simplices = NULL)
   {
@@ -456,7 +456,7 @@ public:
       DT_VH vh = ambient_dt.insert(p);
       vh->data() = i;
     }
-    
+
     std::set<Indexed_simplex> amb_dt_simplices;
 
     for (FFC_it cit = ambient_dt.finite_full_cells_begin() ;
@@ -511,7 +511,7 @@ public:
         stars_simplices.insert(simplex);
       }
     }
-    
+
     //-------------------------------------------------------------------------
     // Check if simplices of "stars_simplices" are all in "amb_dt_simplices"
     //-------------------------------------------------------------------------
@@ -521,19 +521,19 @@ public:
       incorrect_simplices = &diff;
     set_difference(stars_simplices.begin(),  stars_simplices.end(),
                    amb_dt_simplices.begin(), amb_dt_simplices.end(),
-                   std::inserter(*incorrect_simplices, 
+                   std::inserter(*incorrect_simplices,
                                  incorrect_simplices->begin()) );
 
     if (!incorrect_simplices->empty())
     {
-      std::cerr 
+      std::cerr
         << "ERROR check_if_all_simplices_are_in_the_ambient_delaunay:"
         << std::endl
-        << "  Number of simplices in ambient DT: " << amb_dt_simplices.size() 
+        << "  Number of simplices in ambient DT: " << amb_dt_simplices.size()
         << std::endl
-        << "  Number of unique simplices in TC stars: " << stars_simplices.size() 
+        << "  Number of unique simplices in TC stars: " << stars_simplices.size()
         << std::endl
-        << "  Number of wrong simplices: " << incorrect_simplices->size() 
+        << "  Number of wrong simplices: " << incorrect_simplices->size()
         << std::endl;
       return false;
     }
@@ -551,7 +551,7 @@ private:
 
     bool operator()(Point const& p1, Point const& p2)
     {
-      typename Kernel::Squared_distance_d sqdist = 
+      typename Kernel::Squared_distance_d sqdist =
         m_k.squared_distance_d_object();
       return sqdist(p1, m_ref) < sqdist(p2, m_ref);
     }
@@ -608,7 +608,7 @@ private:
     // Constructor
     Compute_tangent_triangulation(
       Tangential_complex &tc, bool tangent_spaces_are_already_computed = false)
-    : m_tc(tc), 
+    : m_tc(tc),
       m_tangent_spaces_are_already_computed(tangent_spaces_are_already_computed)
     {}
 
@@ -641,7 +641,7 @@ private:
     // Kernel functor & objects
     typename Kernel::Difference_of_points_d k_diff_pts =
       m_k.difference_of_points_d_object();
-    typename Kernel::Squared_distance_d k_sqdist = 
+    typename Kernel::Squared_distance_d k_sqdist =
       m_k.squared_distance_d_object();
 
     // Triangulation's traits functor & objects
@@ -662,7 +662,7 @@ private:
       m_tangent_spaces[i] = compute_tangent_space(center_pt);
 #endif
     }
-      
+
     //***************************************************
     // Build a minimal triangulation in the tangent space
     // (we only need the star of p)
@@ -678,16 +678,16 @@ private:
     //const int NUM_NEIGHBORS = 150;
     //KNS_range ins_range = m_points_ds.query_ANN(center_pt, NUM_NEIGHBORS);
     INS_range ins_range = m_points_ds.query_incremental_ANN(center_pt);
-    
+
     // While building the local triangulation, we keep the radius
-    // of the sphere "star sphere" centered at "center_vertex" 
+    // of the sphere "star sphere" centered at "center_vertex"
     // and which contains all the
     // circumspheres of the star of "center_vertex"
     boost::optional<FT> star_sphere_squared_radius;
 
     // Insert points until we find a point which is outside "star shere"
-    for (INS_iterator nn_it = ins_range.begin() ; 
-         nn_it != ins_range.end() ; 
+    for (INS_iterator nn_it = ins_range.begin() ;
+         nn_it != ins_range.end() ;
          ++nn_it)
     {
       std::size_t neighbor_point_idx = nn_it->first;
@@ -704,13 +704,13 @@ private:
         Tr_point proj_pt = project_point_and_compute_weight(
           neighbor_pt, center_pt, m_tangent_spaces[i], local_tr_traits);
 
-        FT squared_dist_to_tangent_plane = 
+        FT squared_dist_to_tangent_plane =
           local_tr_traits.point_weight_d_object()(proj_pt);
         FT w = -squared_dist_to_tangent_plane + m_weights[neighbor_point_idx];
         Tr_point wp = local_tr_traits.construct_weighted_point_d_object()(
           drop_w(proj_pt),
           w);
-          
+
         Tr_vertex_handle vh = local_tr.insert_if_in_star(wp, center_vertex);
         //Tr_vertex_handle vh = local_tr.insert(wp);
         if (vh != Tr_vertex_handle())
@@ -724,7 +724,7 @@ private:
             // Get the incident cells and look for the biggest circumsphere
             std::vector<Tr_full_cell_handle> incident_cells;
             local_tr.incident_full_cells(
-              center_vertex, 
+              center_vertex,
               std::back_inserter(incident_cells));
             for (typename std::vector<Tr_full_cell_handle>::iterator cit =
                  incident_cells.begin(); cit != incident_cells.end(); ++cit)
@@ -739,7 +739,7 @@ private:
               {
                 //*********************************
                 // We don't compute the circumsphere of the simplex in the
-                // local tangent plane since it would involve to take the 
+                // local tangent plane since it would involve to take the
                 // weights of the points into account later
                 // (which is a problem since the ANN is performed on the
                 // points in the ambient dimension)
@@ -750,7 +750,7 @@ private:
                 tsb.reserve(Intrinsic_dimension);
                 Point const& orig = m_points[cell->vertex(0)->data()];
                 for (int ii = 1 ; ii <= Intrinsic_dimension ; ++ii)
-                { 
+                {
                   tsb.push_back(k_diff_pts(
                     m_points[cell->vertex(ii)->data()], orig));
                 }
@@ -764,12 +764,12 @@ private:
                   proj_pts.push_back(project_point(
                     m_points[cell->vertex(ii)->data()], orig, tsb));
                 }
-                
+
                 Tr_bare_point c = center_of_sphere(
                   proj_pts.begin(), proj_pts.end());
 
                 FT sq_circumdiam = 4.*sqdist(c, proj_pts[0]);
-                if (!star_sphere_squared_radius 
+                if (!star_sphere_squared_radius
                   || sq_circumdiam > *star_sphere_squared_radius)
                   star_sphere_squared_radius = sq_circumdiam;
               }
@@ -800,7 +800,7 @@ private:
     // Kernel functors
     typename Kernel::Construct_vector_d      constr_vec =
       m_k.construct_vector_d_object();
-    typename Kernel::Compute_coordinate_d    coord = 
+    typename Kernel::Compute_coordinate_d    coord =
       m_k.compute_coordinate_d_object();
     typename Kernel::Squared_length_d        sqlen =
       m_k.squared_length_d_object();
@@ -815,13 +815,13 @@ private:
       p, NUM_POINTS_FOR_PCA, false);
 
     //******************************* PCA *************************************
-    
+
     const int amb_dim = m_k.point_dimension_d_object()(p);
     // One row = one point
     Eigen::MatrixXd mat_points(NUM_POINTS_FOR_PCA, amb_dim);
     KNS_iterator nn_it = kns_range.begin();
-    for (int j = 0 ; 
-         j < NUM_POINTS_FOR_PCA && nn_it != kns_range.end() ; 
+    for (int j = 0 ;
+         j < NUM_POINTS_FOR_PCA && nn_it != kns_range.end() ;
          ++j, ++nn_it)
     {
       for (int i = 0 ; i < amb_dim ; ++i)
@@ -837,14 +837,14 @@ private:
     for (int i = amb_dim - 1 ; i >= amb_dim - Intrinsic_dimension ; --i)
     {
       ts.push_back(constr_vec(
-        amb_dim, 
-        eig.eigenvectors().col(i).data(), 
+        amb_dim,
+        eig.eigenvectors().col(i).data(),
         eig.eigenvectors().col(i).data() + amb_dim));
     }
 #ifdef CGAL_TC_EXPORT_NORMALS
     *p_normal = constr_vec(
-        amb_dim, 
-        eig.eigenvectors().col(amb_dim - Intrinsic_dimension - 1).data(), 
+        amb_dim,
+        eig.eigenvectors().col(amb_dim - Intrinsic_dimension - 1).data(),
         eig.eigenvectors().col(amb_dim - Intrinsic_dimension - 1).data() + amb_dim);
 #endif
 
@@ -862,7 +862,7 @@ private:
     Vector t2(p[1] * t1[2] - p[2] * t1[1],
               p[2] * t1[0] - p[0] * t1[2],
               p[0] * t1[1] - p[1] * t1[0]);
-    
+
     // Normalize t1 and t2
     typename Kernel::Squared_length_d sqlen      = m_k.squared_length_d_object();
     typename Kernel::Scaled_vector_d  scaled_vec = m_k.scaled_vector_d_object();
@@ -887,13 +887,13 @@ private:
     //return compute_gram_schmidt_basis(ts, m_k);
     */
   }
-  
+
   // Project the point in the tangent space
   // The weight will be the squared distance between p and the projection of p
-  Tr_bare_point project_point(const Point &p, const Point &origin, 
+  Tr_bare_point project_point(const Point &p, const Point &origin,
                          const Tangent_space_basis &ts) const
   {
-    typename Kernel::Scalar_product_d inner_pdct = 
+    typename Kernel::Scalar_product_d inner_pdct =
       m_k.scalar_product_d_object();
     typename Kernel::Difference_of_points_d diff_points =
       m_k.difference_of_points_d_object();
@@ -925,7 +925,7 @@ private:
       m_k.difference_of_points_d_object();
     typename Kernel::Construct_cartesian_const_iterator_d ccci =
       m_k.construct_cartesian_const_iterator_d_object();
-    
+
     Vector v = diff_points(p, origin);
 
     std::vector<FT> coords;
@@ -952,7 +952,7 @@ private:
       m_k.squared_distance_d_object()(p, projected_pt)
     );
   }
-  
+
   // A simplex here is a local tri's full cell handle
   bool is_simplex_consistent(Tr_full_cell_handle fch)
   {
@@ -997,7 +997,7 @@ private:
       if (!found)
         return false;
     }
-    
+
     return true;
   }
 
@@ -1101,7 +1101,7 @@ private:
       num_vertices = 0;
       return os;
     }
-    
+
     // If Intrinsic_dimension = 1, we output each point two times
     // to be able to export each segment as a flat triangle with 3 different
     // indices (otherwise, Meshlab detects degenerated simplices)
@@ -1109,7 +1109,7 @@ private:
     const int ambient_dim = m_k.point_dimension_d_object()(*m_points.begin());
 
     // Kernel functors
-    typename Kernel::Compute_coordinate_d coord = 
+    typename Kernel::Compute_coordinate_d coord =
       m_k.compute_coordinate_d_object();
 
     int num_coords = min(ambient_dim, 3);
@@ -1128,7 +1128,7 @@ private:
           os << CGAL::to_double(coord(*it_p, i)) << " ";
         if (i == 2)
           os << "0";
-      
+
 #ifdef CGAL_TC_EXPORT_NORMALS
         for (i = 0 ; i < num_coords ; ++i)
           os << " " << CGAL::to_double(coord(*it_n, i));
@@ -1145,7 +1145,7 @@ private:
   }
 
   std::ostream &export_simplices_to_off(
-    std::ostream & os, std::size_t &num_simplices, 
+    std::ostream & os, std::size_t &num_simplices,
     bool color_inconsistencies = false,
     std::set<std::set<std::size_t> > const* excluded_simplices = NULL,
     bool show_excluded_vertices_in_color = false)
@@ -1153,7 +1153,7 @@ private:
     // If Intrinsic_dimension = 1, each point is output two times
     // (see export_vertices_to_off)
     int factor = (Intrinsic_dimension == 1 ? 2 : 1);
-    int OFF_simplices_dim = 
+    int OFF_simplices_dim =
       (Intrinsic_dimension == 1 ? 3 : Intrinsic_dimension + 1);
     num_simplices = 0;
     std::size_t num_inconsistent_simplices = 0;
@@ -1199,10 +1199,10 @@ private:
           if (Intrinsic_dimension == 1)
             sstr_c << (data*factor + 1) << " ";
 
-          bool excluded = 
+          bool excluded =
             (excluded_simplices
             && excluded_simplices->find(c) != excluded_simplices->end());
-          
+
           if (!excluded)
           {
             os << OFF_simplices_dim << " " << sstr_c.str() << " ";
@@ -1217,7 +1217,7 @@ private:
           }
           else if (show_excluded_vertices_in_color)
           {
-            os << OFF_simplices_dim << " " 
+            os << OFF_simplices_dim << " "
                << sstr_c.str() << " "
                << "0 0 255";
             ++num_simplices;
@@ -1248,13 +1248,13 @@ private:
       << "================================================" << std::endl
       << "Export to OFF:\n"
       << "  * Number of vertices: " << m_points.size() << std::endl
-      << "  * Total number of simplices in stars (incl. duplicates): " 
+      << "  * Total number of simplices in stars (incl. duplicates): "
       << num_simplices << std::endl
-      << "  * Number of inconsistent simplices in stars (incl. duplicates): " 
+      << "  * Number of inconsistent simplices in stars (incl. duplicates): "
       << num_inconsistent_simplices << std::endl
-      << "  * Percentage of inconsistencies: " 
-      << (num_simplices > 0 ? 
-          100. * num_inconsistent_simplices / num_simplices : 0.) << "%" 
+      << "  * Percentage of inconsistencies: "
+      << (num_simplices > 0 ?
+          100. * num_inconsistent_simplices / num_simplices : 0.) << "%"
       << std::endl
       << "================================================" << std::endl;
 #endif
@@ -1268,7 +1268,7 @@ private:
   Weights                   m_weights;
   Points_ds                 m_points_ds;
   TS_container              m_tangent_spaces;
-  Tr_container              m_triangulations; // Contains the triangulations 
+  Tr_container              m_triangulations; // Contains the triangulations
                                               // and their center vertex
 #ifdef CGAL_LINKED_WITH_TBB
   std::vector<Tr_mutex>     m_tr_mutexes;

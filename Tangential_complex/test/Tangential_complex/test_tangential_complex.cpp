@@ -51,8 +51,8 @@ int main()
     Wall_clock_timer t;
     CGAL::default_random = CGAL::Random(i);
     std::cerr << "Random seed = " << i << std::endl;
-  
-    std::vector<Point> points = 
+
+    std::vector<Point> points =
       //generate_points_on_circle_2<Kernel>(NUM_POINTS, 3.);
       //generate_points_on_moment_curve<Kernel>(NUM_POINTS, AMBIENT_DIMENSION, 0., 1.);
       //generate_points_on_plane<Kernel>(NUM_POINTS);
@@ -64,12 +64,12 @@ int main()
 
     points = sparsify_point_set(
       k, points, FT(INPUT_SPARSITY)*FT(INPUT_SPARSITY));
-    std::cerr << "Number of points after sparsification: " 
+    std::cerr << "Number of points after sparsification: "
       << points.size() << std::endl;
 
     CGAL::Tangential_complex<
-      Kernel, 
-      INTRINSIC_DIMENSION, 
+      Kernel,
+      INTRINSIC_DIMENSION,
       CGAL::Parallel_tag> tc(points.begin(), points.end(), k);
     double init_time = t.elapsed(); t.reset();
 

@@ -46,27 +46,27 @@ public:
   typedef typename Kernel::FT                       FT;
 
   /// The constructor that sets the data set source
-  Point_cloud_adaptator(Point_container_ &points, Kernel const& k) 
+  Point_cloud_adaptator(Point_container_ &points, Kernel const& k)
     : m_points(points), m_k(k)
   {}
 
   /// CRTP helper method
-  inline Point_container_ const& points() const 
-  { 
+  inline Point_container_ const& points() const
+  {
     return m_points;
-  }  
-  inline Point_container_& points() 
+  }
+  inline Point_container_& points()
   {
     return m_points;
   }
 
   // Must return the number of data points
-  inline size_t kdtree_get_point_count() const 
+  inline size_t kdtree_get_point_count() const
   {
     return m_points.size();
   }
 
-  // Returns the distance between the vector "p1[0:size-1]" 
+  // Returns the distance between the vector "p1[0:size-1]"
   // and the data point with index "idx_p2" stored in the class:
   inline FT kdtree_distance(
     const FT *p1, const size_t idx_p2, size_t size) const
@@ -76,18 +76,18 @@ public:
   }
 
   // Returns the dim'th component of the idx'th point in the class:
-  // Since this is inlined and the "dim" argument is typically an 
+  // Since this is inlined and the "dim" argument is typically an
   // immediate value, the "if/else's" are actually solved at compile time.
   inline FT kdtree_get_pt(const size_t idx, int dim) const
   {
     return m_k.compute_coordinate_d_object()(points()[idx], dim);
   }
 
-  // Optional bounding-box computation: return false to default to a standard 
+  // Optional bounding-box computation: return false to default to a standard
   // bbox computation loop.
-  // Return true if the BBOX was already computed by the class and returned 
+  // Return true if the BBOX was already computed by the class and returned
   // in "bb" so it can be avoided to redo it again.
-  // Look at bb.size() to find out the expected dimensionality 
+  // Look at bb.size() to find out the expected dimensionality
   // (e.g. 2 or 3 for point clouds)
   template <class Bbox>
   bool kdtree_get_bbox(Bbox &bb) const
@@ -100,7 +100,7 @@ public:
     return m_k;
   }
 
-protected:  
+protected:
   Point_container_& m_points; //!< A ref to the data set origin
   Kernel const& m_k;      //!< A const ref to the kernel
 
@@ -119,13 +119,13 @@ public:
   /// Constructor
   Point_cloud_data_structure(Point_container_ &points, Kernel const& k)
   : m_adaptor(points, k),
-    m_kd_tree(AMB_DIM, 
-              m_adaptor, 
+    m_kd_tree(AMB_DIM,
+              m_adaptor,
               nanoflann::KDTreeSingleIndexAdaptorParams(10 /* max leaf */) )
   {
     m_kd_tree.buildIndex();
   }
-  
+
   /*Point_container_ &points()
   {
     return m_adaptor.points();
@@ -150,19 +150,19 @@ public:
     nanoflann::KNNResultSet<FT> result_set(k);
     result_set.init(neighbor_indices, squared_distance);
     m_kd_tree.findNeighbors(result_set,
-                            &sp_vec[0], 
+                            &sp_vec[0],
                             nanoflann::SearchParams());
 
     /*std::cout << "knnSearch(nn="<< num_results <<"): \n";
     for (int i = 0 ; i < num_results ; ++i)
     {
       std::cout << "  * neighbor_indices = " << neighbor_indices [i]
-                << " (out_dist_sqr = " << squared_distance[i] << ")" 
+                << " (out_dist_sqr = " << squared_distance[i] << ")"
                 << std::endl;
     }*/
   }
-  
-  void query_ball(const Point &sp, 
+
+  void query_ball(const Point &sp,
                   const FT radius,
                   std::vector<std::pair<std::size_t, FT> > &neighbors,
                   bool sort_output = true)
@@ -182,7 +182,7 @@ public:
     for (const auto idx_and_dist : neighbors)
     {
       std::cout << "  * neighbor_indices = " << idx_and_dist.first
-                << " (out_dist_sqr = " << idx_and_dist.second << ")" 
+                << " (out_dist_sqr = " << idx_and_dist.second << ")"
                 << std::endl;
     }*/
   }
@@ -244,7 +244,7 @@ public:
   typedef K_neighbor_search                                 KNS_range;
 
   typedef CGAL::Orthogonal_incremental_neighbor_search<
-    STraits, Distance, CGAL::Sliding_midpoint<STraits>, Tree>      
+    STraits, Distance, CGAL::Sliding_midpoint<STraits>, Tree>
                                                    Incremental_neighbor_search;
   typedef typename Incremental_neighbor_search::iterator    INS_iterator;
   typedef Incremental_neighbor_search                       INS_range;
@@ -262,7 +262,7 @@ public:
 
   /// Constructor
   Point_cloud_data_structure(
-    Point_container_ const& points, 
+    Point_container_ const& points,
     std::size_t begin_idx, std::size_t past_the_end_idx)
   : m_points(points),
     m_tree(
@@ -272,7 +272,7 @@ public:
       STraits((Point*)&(points[0])) )
   {
   }
-  
+
   /*Point_container_ &points()
   {
     return m_points;
@@ -283,7 +283,7 @@ public:
     return m_points;
   }*/
 
-  KNS_range query_ANN(const 
+  KNS_range query_ANN(const
     Point &sp,
     unsigned int k,
     bool sorted = true) const
@@ -292,18 +292,18 @@ public:
     // Note that we need to pass the Distance explicitly since it needs to
     // know the property map
     K_neighbor_search search(
-      m_tree, 
-      sp, 
-      k, 
-      FT(0), 
+      m_tree,
+      sp,
+      k,
+      FT(0),
       true,
       Distance_adapter<std::ptrdiff_t,Point*,Euclidean_distance<Traits_base> >(
         (Point*)&(m_points[0])),
       sorted);
-    
+
     return search;
   }
-  
+
   INS_range query_incremental_ANN(const Point &sp) const
   {
     // Initialize the search structure, and search all N points
@@ -312,11 +312,11 @@ public:
     Incremental_neighbor_search search(
       m_tree,
       sp,
-      FT(0), 
+      FT(0),
       true,
       Distance_adapter<std::ptrdiff_t,Point*,Euclidean_distance<Traits_base> >(
         (Point*)&(m_points[0])) );
-    
+
     return search;
   }
 
