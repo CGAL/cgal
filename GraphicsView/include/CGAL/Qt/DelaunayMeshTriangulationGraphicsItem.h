@@ -198,7 +198,7 @@ DelaunayMeshTriangulationGraphicsItem<T>::drawAll(QPainter *painter)
   }
   if(this->visibleSeeds())
   {
-    painter->setBrush(::Qt::NoBrush);
+    painter->setBrush(::Qt::SolidPattern);
     painter->setPen(::Qt::darkRed);
     this->painterostream = PainterOstream<typename T::Geom_traits>(painter);
     typename std::list<Point>::iterator sit;
