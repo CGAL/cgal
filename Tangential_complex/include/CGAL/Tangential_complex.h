@@ -253,16 +253,24 @@ public:
       m_k.construct_weighted_point_d_object();
     
 #ifdef CGAL_TC_VERBOSE
-      std::cerr << "Fixing inconsistencies..." << std::endl;
+    std::cerr << "Fixing inconsistencies..." << std::endl;
 #endif
 
     std::pair<std::size_t, std::size_t> stats_before =
       number_of_inconsistent_simplices(false);
     
 #ifdef CGAL_TC_VERBOSE
-      std::cerr << "Initial number of inconsistencies: " 
-        << stats_before.second << std::endl;
+    std::cerr << "Initial number of inconsistencies: " 
+      << stats_before.second << std::endl;
 #endif
+
+    if (stats_before.second == 0)
+    {
+#ifdef CGAL_TC_VERBOSE
+      std::cerr << "Nothing to fix." << std::endl;
+#endif
+      return;
+    }
 
     bool done = false;
     while (!done) 
@@ -346,6 +354,9 @@ public:
       // For each cell
       for ( ; it_c != it_c_end ; ++it_c)
       {
+        if (tr.is_infinite(*it_c)) // Don't check infinite cells
+          continue;
+
         if (!is_simplex_consistent(*it_c))
           ++num_inconsistent_simplices;
         ++num_simplices;
