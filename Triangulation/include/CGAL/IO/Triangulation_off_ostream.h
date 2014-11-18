@@ -94,7 +94,7 @@ input_point(std::istream & is, const Traits &traits, P & p)
 {
   typedef typename Traits::FT FT;
   std::vector<FT> coords;
-  
+
   std::string line;
   for(;;)
   {
@@ -125,7 +125,7 @@ operator>>(std::istream &is, typename Wrap::Point_d<K> & p)
   typedef typename Wrap::Point_d<K> P;
   typedef typename K::FT FT;
   std::vector<FT> coords;
-  
+
   std::string line;
   for(;;)
   {
@@ -175,7 +175,7 @@ operator>>(std::istream &is, typename Wrap::Weighted_point_d<K> & wp)
 
 template < class GT, class TDS >
 std::ostream &
-export_triangulation_to_off(std::ostream & os, 
+export_triangulation_to_off(std::ostream & os,
                             const Triangulation<GT,TDS> & tr,
                             bool in_3D_export_surface_only = false)
 {
@@ -188,7 +188,7 @@ export_triangulation_to_off(std::ostream & os,
   typedef typename Tr::Full_cell_const_iterator         Full_cell_iterator;
   typedef typename Tr::Full_cell                        Full_cell;
   typedef typename Full_cell::Vertex_handle_const_iterator Full_cell_vertex_iterator;
-  
+
   if (tr.maximal_dimension() < 2 || tr.maximal_dimension() > 3)
   {
     std::cerr << "Warning: export_tds_to_off => dimension should be 2 or 3.";
@@ -199,11 +199,11 @@ export_triangulation_to_off(std::ostream & os,
   size_t n = tr.number_of_vertices();
 
   std::stringstream output;
-  
+
   // write the vertices
   std::map<Vertex_handle, int> index_of_vertex;
   int i = 0;
-  for(Finite_vertex_iterator it = tr.finite_vertices_begin(); 
+  for(Finite_vertex_iterator it = tr.finite_vertices_begin();
       it != tr.finite_vertices_end(); ++it, ++i)
   {
     Triangulation_IO::output_point(output, tr.geom_traits(), it->point());
@@ -213,7 +213,7 @@ export_triangulation_to_off(std::ostream & os,
     index_of_vertex[it.base()] = i;
   }
   CGAL_assertion( i == n );
-  
+
   size_t number_of_triangles = 0;
   if (tr.maximal_dimension() == 2)
   {
@@ -248,7 +248,7 @@ export_triangulation_to_off(std::ostream & os,
               output << index_of_vertex[*vit] << " ";
           }
           output << std::endl;
-          ++number_of_triangles; 
+          ++number_of_triangles;
         }
       }
     }
@@ -284,7 +284,7 @@ export_triangulation_to_off(std::ostream & os,
   }
 
   os << "OFF \n"
-     << n << " " 
+     << n << " "
      << number_of_triangles << " 0\n"
      << output.str();
 
