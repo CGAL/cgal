@@ -2,7 +2,7 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/K_neighbor_search.h>
 #include <CGAL/Orthogonal_k_neighbor_search.h>
-#include <CGAL/Search_traits_3.h>
+#include <CGAL/Search_traits_2.h>
 #include <CGAL/Timer.h>
 
 #include <iostream>
@@ -11,8 +11,8 @@
 #include <boost/lexical_cast.hpp>
 
 typedef CGAL::Simple_cartesian<double> K;
-typedef CGAL::Search_traits_3<K> TreeTraits_3;
-typedef K::Point_3 Point_3;
+typedef CGAL::Search_traits_2<K> TreeTraits_3;
+typedef K::Point_2 Point_3;
 typedef CGAL::Euclidean_distance<TreeTraits_3> Distance;
 typedef CGAL::Sliding_midpoint<TreeTraits_3> Splitter;
 typedef CGAL::Orthogonal_k_neighbor_search<TreeTraits_3,Distance> Neighbor_search_3;
@@ -47,8 +47,8 @@ void read(Points& points, char* argv)
   for(int i=0; i < n; i++){
     CGAL::read(data,x);
 	CGAL::read(data,y);
-	CGAL::read(data,z);
-    points.push_back(Point_3(x,y,z));
+//	CGAL::read(data,z);
+    points.push_back(Point_3(x,y));
   }
 #endif
   data.close();
@@ -87,7 +87,7 @@ int main(int argc,char *argv[])
     for (Neighbor_search_3::iterator it = search.begin(); it != search.end();it++, i++) {
       result[i] = it->first;
       if(dump){
-        std::cerr << result[i].x()<<" "<<result[i].y()<<" "<<result[i].z() << std::endl;
+        std::cerr << result[i].x()<<" "<<result[i].y()<< std::endl;
 		
       }
 	}
