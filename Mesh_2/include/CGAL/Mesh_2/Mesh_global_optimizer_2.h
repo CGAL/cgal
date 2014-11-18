@@ -121,6 +121,9 @@ public:
                                             moving_vertices.size()/200);
     big_moves_.resize(big_moves_size, FT(0));
 
+    std::size_t nb_vertices_moved = -1;
+    bool convergence_stop = false;
+
     // Iterate
     int i = -1;
     while ( ++i < nb_iterations && ! is_time_limit_reached() )
@@ -130,17 +133,28 @@ public:
       // Compute move for each vertex
       Moves_vector moves = compute_moves(moving_vertices);
 
+      //Pb with Freeze : sometimes a few vertices continue moving indefinitely
+      //if the nb of moving vertices is < 2% of total nb AND does not decrease
+      if(sq_freeze_ratio_ > 0.
+        && nb_vertices_moved < 0.01 * initial_vertices_nb
+        && nb_vertices_moved == moving_vertices.size())
+      { 
+        // we should stop because we are 
+        // probably entering an infinite instable loop
+        convergence_stop = true;
+        break;
+      }
+
       // Stop if convergence or time_limit is reached
       if ( check_convergence() || is_time_limit_reached() )
         break;
 
       // Update mesh with those moves
       update_mesh(moves, moving_vertices);
-
-      // ToDo : freeze vertices that do not move enough
+      nb_vertices_moved = moving_vertices.size();
 
       move_function_.after_move(cdt_);
-
+ 
 #ifdef CGAL_MESH_2_OPTIMIZER_VERBOSE
       double time = running_time_.time();
       double moving_vertices_size = static_cast<double>(moving_vertices.size());
@@ -162,7 +176,11 @@ public:
 #ifdef CGAL_MESH_2_OPTIMIZER_VERBOSE
     running_time_.stop();
     std::cerr << std::endl;
-    if ( is_time_limit_reached() )
+    if(sq_freeze_ratio_ > 0. && moving_vertices.empty())
+      std::cerr << "All vertices frozen" << std::endl;
+    else if(sq_freeze_ratio_ > 0. && convergence_stop)
+      std::cerr << "Can't improve anymore" << std::endl;
+    else if ( is_time_limit_reached() )
       std::cerr << "Time limit reached" << std::endl;
     else if ( check_convergence() )
       std::cerr << "Convergence reached" << std::endl;
@@ -178,7 +196,7 @@ private:
   /**
    * Returns moves for vertices of set \c moving_vertices
    */
-  Moves_vector compute_moves(const Vertex_set& moving_vertices)
+  Moves_vector compute_moves(Vertex_set& moving_vertices)
   {
     typename Gt::Construct_translated_point_2 translate =
       Gt().construct_translated_point_2_object();
@@ -188,19 +206,23 @@ private:
     moves.reserve(moving_vertices.size());
 
     // reset worst_move list
-    std::fill(big_moves_.begin(),big_moves_.end(),FT(0));
+    std::fill(big_moves_.begin(), big_moves_.end(), FT(0));
 
     // Get move for each moving vertex
     for ( typename Vertex_set::const_iterator vit = moving_vertices.begin() ;
-      vit != moving_vertices.end() ;
-      ++vit )
+      vit != moving_vertices.end() ; )
     {
-      Vector_2 move = compute_move(*vit);
+      Vertex_handle oldv = *vit;
+      Vector_2 move = compute_move(oldv);
+      ++vit;
+
       if ( CGAL::NULL_VECTOR != move )
       {
-        Point_2 new_position = translate((*vit)->point(), move);
-        moves.push_back(std::make_pair(*vit,new_position));
+        Point_2 new_position = translate(oldv->point(), move);
+        moves.push_back(std::make_pair(oldv, new_position));
       }
+      else if(sq_freeze_ratio_ > 0.) //freezing ON
+        moving_vertices.erase(oldv);
 
       // Stop if time_limit_ is reached
       if ( is_time_limit_reached() )

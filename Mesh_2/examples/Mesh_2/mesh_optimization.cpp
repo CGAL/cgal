@@ -51,7 +51,8 @@ int main()
   std::cout << "Run Lloyd optimization...";
   CGAL::lloyd_optimize_mesh_2(cdt,
     convergence = 0,
-    time_limit = 10);
+    freeze_bound = 0.005,
+    time_limit = 0);
   std::cout << " done." << std::endl;
 
   std::cout << "Number of vertices: " << cdt.number_of_vertices() << std::endl;
