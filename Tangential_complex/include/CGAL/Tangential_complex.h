@@ -96,11 +96,11 @@ class Tangential_complex
 
   typedef Tr                                          Triangulation;
   typedef typename Triangulation::Geom_traits         Tr_traits;
-  typedef typename Triangulation::Point               Tr_point;
+  typedef typename Triangulation::Weighted_point      Tr_point;
   typedef typename Triangulation::Bare_point          Tr_bare_point;
   typedef typename Triangulation::Vertex_handle       Tr_vertex_handle;
   typedef typename Triangulation::Full_cell_handle    Tr_full_cell_handle;
-  
+
   typedef std::vector<Vector>                         Tangent_space_basis;
 
   typedef std::vector<Point>                          Points;
@@ -248,8 +248,8 @@ public:
   
   void fix_inconsistencies()
   {
-    Kernel::Point_drop_weight_d drop_w = m_k.point_drop_weight_d_object();
-    Kernel::Construct_weighted_point_d cwp = 
+    typename Kernel::Point_drop_weight_d drop_w = m_k.point_drop_weight_d_object();
+    typename Kernel::Construct_weighted_point_d cwp =
       m_k.construct_weighted_point_d_object();
     
 #ifdef CGAL_TC_VERBOSE
@@ -330,8 +330,8 @@ public:
   {
     std::size_t num_simplices = 0;
     std::size_t num_inconsistent_simplices = 0;
-    Tr_container::const_iterator it_tr = m_triangulations.begin();
-    Tr_container::const_iterator it_tr_end = m_triangulations.end();
+    typename Tr_container::const_iterator it_tr = m_triangulations.begin();
+    typename Tr_container::const_iterator it_tr_end = m_triangulations.end();
     // For each triangulation
     for ( ; it_tr != it_tr_end ; ++it_tr)
     {
@@ -341,8 +341,10 @@ public:
       std::vector<Tr_full_cell_handle> incident_cells;
       tr.incident_full_cells(center_vh, std::back_inserter(incident_cells));
 
-      std::vector<Tr_full_cell_handle>::const_iterator it_c = incident_cells.begin();
-      std::vector<Tr_full_cell_handle>::const_iterator it_c_end= incident_cells.end();
+      typename std::vector<Tr_full_cell_handle>::const_iterator it_c =
+                                                         incident_cells.begin();
+      typename std::vector<Tr_full_cell_handle>::const_iterator it_c_end =
+                                                           incident_cells.end();
       // For each cell
       for ( ; it_c != it_c_end ; ++it_c)
       {
@@ -433,30 +435,26 @@ public:
       return true;
 
     const int ambient_dim = m_k.point_dimension_d_object()(*m_points.begin());
-    typedef typename Delaunay_triangulation<
-      Kernel,
-      Triangulation_data_structure
-      <
-        typename Kernel::Dimension,
-        Triangulation_vertex<Kernel, std::size_t>
-      >
-    >                                                         DT;
+    typedef Delaunay_triangulation<Kernel,
+                                   Triangulation_data_structure<
+                                     typename Kernel::Dimension,
+                                     Triangulation_vertex<Kernel, std::size_t>
+                                   > >                        DT;
     typedef typename DT::Vertex_handle                        DT_VH;
     typedef typename DT::Finite_full_cell_const_iterator      FFC_it;
     typedef std::set<std::size_t>                             Indexed_simplex;
-    
+
     //-------------------------------------------------------------------------
     // Build the ambient Delaunay triangulation
     // Then save its simplices into "amb_dt_simplices"
     //-------------------------------------------------------------------------
 
     DT ambient_dt(ambient_dim);
-    std::size_t i = 0;
-    for (Point const& p : m_points) // CJTODO C++11
+    for (std::size_t i=0; i<m_points.size(); ++i)
     {
+      const Point& p = m_points[i];
       DT_VH vh = ambient_dt.insert(p);
       vh->data() = i;
-      ++i;
     }
     
     std::set<Indexed_simplex> amb_dt_simplices;
@@ -476,15 +474,15 @@ public:
         amb_dt_simplices.insert(simplex);
       }
     }
-    
+
     //-------------------------------------------------------------------------
     // Parse the TC and save its simplices into "stars_simplices"
     //-------------------------------------------------------------------------
 
     std::set<Indexed_simplex> stars_simplices;
 
-    Tr_container::const_iterator it_tr = m_triangulations.begin();
-    Tr_container::const_iterator it_tr_end = m_triangulations.end();
+    typename Tr_container::const_iterator it_tr = m_triangulations.begin();
+    typename Tr_container::const_iterator it_tr_end = m_triangulations.end();
     // For each triangulation
     for ( ; it_tr != it_tr_end ; ++it_tr)
     {
@@ -493,9 +491,11 @@ public:
 
       std::vector<Tr_full_cell_handle> incident_cells;
       tr.incident_full_cells(center_vh, std::back_inserter(incident_cells));
-      
-      std::vector<Tr_full_cell_handle>::const_iterator it_c = incident_cells.begin();
-      std::vector<Tr_full_cell_handle>::const_iterator it_c_end= incident_cells.end();
+
+      typename std::vector<Tr_full_cell_handle>::const_iterator it_c =
+                                                         incident_cells.begin();
+      typename std::vector<Tr_full_cell_handle>::const_iterator it_c_end =
+                                                           incident_cells.end();
       // For each cell
       for ( ; it_c != it_c_end ; ++it_c)
       {
@@ -563,8 +563,8 @@ private:
 
   struct Tr_vertex_to_global_point
   {
-    typedef typename Tr_vertex_handle	argument_type;
-    typedef typename Point	result_type;
+    typedef Tr_vertex_handle argument_type;
+    typedef Point result_type;
 
     Tr_vertex_to_global_point(Points const& points)
       : m_points(points) {}
@@ -580,8 +580,8 @@ private:
 
   struct Tr_vertex_to_bare_point
   {
-    typedef typename Tr_vertex_handle	argument_type;
-    typedef typename Tr_bare_point	result_type;
+    typedef Tr_vertex_handle argument_type;
+    typedef Tr_bare_point result_type;
 
     Tr_vertex_to_bare_point(Tr_traits const& traits)
       : m_traits(traits) {}
@@ -645,11 +645,11 @@ private:
       m_k.squared_distance_d_object();
 
     // Triangulation's traits functor & objects
-    Tr_traits::Squared_distance_d sqdist = 
+    typename Tr_traits::Squared_distance_d sqdist =
       local_tr_traits.squared_distance_d_object();
-    Tr_traits::Point_drop_weight_d drop_w = 
+    typename Tr_traits::Point_drop_weight_d drop_w =
       local_tr_traits.point_drop_weight_d_object();
-    Tr_traits::Center_of_sphere_d center_of_sphere = 
+    typename Tr_traits::Center_of_sphere_d center_of_sphere =
       local_tr_traits.center_of_sphere_d_object();
 
     // Estimate the tangent space
@@ -726,8 +726,10 @@ private:
             local_tr.incident_full_cells(
               center_vertex, 
               std::back_inserter(incident_cells));
-            for (auto cell : incident_cells) // CJTODO C++11
+            for (typename std::vector<Tr_full_cell_handle>::iterator cit =
+                 incident_cells.begin(); cit != incident_cells.end(); ++cit)
             {
+              Tr_full_cell_handle cell = *cit;
               if (local_tr.is_infinite(cell))
               {
                 star_sphere_squared_radius = boost::none;
@@ -979,8 +981,8 @@ private:
       std::vector<Tr_full_cell_handle> incident_cells;
       tr.incident_full_cells(center_vh, std::back_inserter(incident_cells));
 
-      std::vector<Tr_full_cell_handle>::const_iterator it_c = incident_cells.begin();
-      std::vector<Tr_full_cell_handle>::const_iterator it_c_end= incident_cells.end();
+      typename std::vector<Tr_full_cell_handle>::const_iterator it_c = incident_cells.begin();
+      typename std::vector<Tr_full_cell_handle>::const_iterator it_c_end= incident_cells.end();
       // For each cell
       bool found = false;
       for ( ; !found && it_c != it_c_end ; ++it_c)
@@ -1040,9 +1042,9 @@ private:
     std::vector<Tr_full_cell_handle> incident_cells;
     tr.incident_full_cells(center_vh, std::back_inserter(incident_cells));
 
-    std::vector<Tr_full_cell_handle>::const_iterator it_c = 
+    typename std::vector<Tr_full_cell_handle>::const_iterator it_c =
                                                         incident_cells.begin();
-    std::vector<Tr_full_cell_handle>::const_iterator it_c_end= 
+    typename std::vector<Tr_full_cell_handle>::const_iterator it_c_end=
                                                         incident_cells.end();
     // For each cell
     for ( ; it_c != it_c_end ; ++it_c)
@@ -1058,14 +1060,15 @@ private:
       if (!is_simplex_consistent(c))
       {
         CGAL::Random rng;
-        for (std::size_t j : c) // CJTODO: C++11
+        for (std::set<std::size_t>::iterator it=c.begin(); it!=c.end(); ++it)
         {
-          m_weights[j] = 
+          m_weights[*it] =
             rng.get_double(0., (0.5*0.5*INPUT_SPARSITY*INPUT_SPARSITY));
         }
 
-        for (std::size_t j : c) // CJTODO: C++11
-        {    
+        for (std::set<std::size_t>::iterator it=c.begin(); it!=c.end(); ++it)
+        {
+          std::size_t j = *it;
 #ifdef CGAL_LINKED_WITH_TBB
           if (j == tr_index)
           {
@@ -1113,8 +1116,8 @@ private:
 #ifdef CGAL_TC_EXPORT_NORMALS
     Normals::const_iterator it_n = m_normals.begin();
 #endif
-    Points::const_iterator it_p = m_points.begin();
-    Points::const_iterator it_p_end = m_points.end();
+    typename Points::const_iterator it_p = m_points.begin();
+    typename Points::const_iterator it_p_end = m_points.end();
     // For each point p
     for ( ; it_p != it_p_end ; ++it_p)
     {
@@ -1154,8 +1157,8 @@ private:
       (Intrinsic_dimension == 1 ? 3 : Intrinsic_dimension + 1);
     num_simplices = 0;
     std::size_t num_inconsistent_simplices = 0;
-    Tr_container::const_iterator it_tr = m_triangulations.begin();
-    Tr_container::const_iterator it_tr_end = m_triangulations.end();
+    typename Tr_container::const_iterator it_tr = m_triangulations.begin();
+    typename Tr_container::const_iterator it_tr_end = m_triangulations.end();
     // For each triangulation
     for ( ; it_tr != it_tr_end ; ++it_tr)
     {
@@ -1173,8 +1176,8 @@ private:
       std::vector<Tr_full_cell_handle> incident_cells;
       tr.incident_full_cells(center_vh, std::back_inserter(incident_cells));
 
-      std::vector<Tr_full_cell_handle>::const_iterator it_c = incident_cells.begin();
-      std::vector<Tr_full_cell_handle>::const_iterator it_c_end= incident_cells.end();
+      typename std::vector<Tr_full_cell_handle>::const_iterator it_c = incident_cells.begin();
+      typename std::vector<Tr_full_cell_handle>::const_iterator it_c_end= incident_cells.end();
       // For each cell
       for ( ; it_c != it_c_end ; ++it_c)
       {

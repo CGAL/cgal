@@ -226,7 +226,7 @@ class Point_cloud_data_structure
 {
 public:
   typedef typename Point_container_::value_type         Point;
-  typedef typename K                                    Kernel;
+  typedef K                                             Kernel;
   typedef typename Kernel::FT                           FT;
 
   typedef CGAL::Search_traits<
@@ -254,14 +254,12 @@ public:
   /// Constructor
   Point_cloud_data_structure(Point_container_ const& points)
   : m_points(points),
-    m_tree(
-      boost::counting_iterator<std::ptrdiff_t>(0),
-      boost::counting_iterator<std::ptrdiff_t>(points.size()),
-      Tree::Splitter(),
-      STraits((Point*)&(points[0])) )
-  {
-  }
-  
+    m_tree(boost::counting_iterator<std::ptrdiff_t>(0),
+           boost::counting_iterator<std::ptrdiff_t>(points.size()),
+           typename Tree::Splitter(),
+           STraits((Point*)&(points[0])) )
+  { }
+
   /// Constructor
   Point_cloud_data_structure(
     Point_container_ const& points, 
@@ -270,7 +268,7 @@ public:
     m_tree(
       boost::counting_iterator<std::ptrdiff_t>(begin_idx),
       boost::counting_iterator<std::ptrdiff_t>(past_the_end_idx),
-      Tree::Splitter(),
+      typename Tree::Splitter(),
       STraits((Point*)&(points[0])) )
   {
   }

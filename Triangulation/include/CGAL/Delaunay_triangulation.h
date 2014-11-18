@@ -75,6 +75,8 @@ public: // PUBLIC NESTED TYPES
     typedef typename Base::Full_cell_iterator       Full_cell_iterator;
     typedef typename Base::Full_cell_const_handle   Full_cell_const_handle;
     typedef typename Base::Full_cell_const_iterator Full_cell_const_iterator;
+    typedef typename Base::Finite_full_cell_const_iterator
+                                                    Finite_full_cell_const_iterator;
 
     typedef typename Base::size_type                size_type;
     typedef typename Base::difference_type          difference_type;
@@ -861,8 +863,8 @@ Delaunay_triangulation<DCTraits, TDS>
   int dim = current_dimension();
   if (dim == maximal_dimension())
   {
-    for (Finite_full_cell_const_iterator cit = finite_full_cells_begin() ;
-         cit != finite_full_cells_end() ; ++cit )
+    for (Finite_full_cell_const_iterator cit = this->finite_full_cells_begin() ;
+         cit != this->finite_full_cells_end() ; ++cit )
     {
       Full_cell_const_handle ch = cit.base();
       for(int i = 0; i < dim+1 ; ++i ) 

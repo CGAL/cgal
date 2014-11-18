@@ -40,22 +40,22 @@ namespace Tangential_complex_ {
     typedef std::vector<Vector>       Basis;
 
     const int D = Ambient_dimension<Vector>::value; // CJTODO: use Point_dimension_d or similar
-    
+
     // Kernel functors
-    K::Squared_length_d        sqlen      = kernel.squared_length_d_object();
-    K::Scaled_vector_d         scaled_vec = kernel.scaled_vector_d_object();
-    K::Scalar_product_d        inner_pdct = kernel.scalar_product_d_object();
-    K::Difference_of_vectors_d diff_vec   = kernel.difference_of_vectors_d_object();
+    typename K::Squared_length_d        sqlen      = kernel.squared_length_d_object();
+    typename K::Scaled_vector_d         scaled_vec = kernel.scaled_vector_d_object();
+    typename K::Scalar_product_d        inner_pdct = kernel.scalar_product_d_object();
+    typename K::Difference_of_vectors_d diff_vec   = kernel.difference_of_vectors_d_object();
 
     Basis output_basis;
 
-    Basis::const_iterator inb_it = input_basis.begin();
-    Basis::const_iterator inb_it_end = input_basis.end();
+    typename Basis::const_iterator inb_it = input_basis.begin();
+    typename Basis::const_iterator inb_it_end = input_basis.end();
     for (int i = 0 ; inb_it != inb_it_end ; ++inb_it, ++i)
     {
       Vector u = *inb_it;
 
-      Basis::iterator outb_it = output_basis.begin();
+      typename Basis::iterator outb_it = output_basis.begin();
       for (int j = 0 ; j < i ; ++j)
       {
         Vector const& ej = *outb_it;

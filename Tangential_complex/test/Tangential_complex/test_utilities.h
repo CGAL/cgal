@@ -39,13 +39,14 @@ sparsify_point_set(
   typename Kernel::FT min_squared_dist)
 {
   typedef typename Point_container::value_type Point;
-  typedef typename CGAL::Point_cloud_data_structure<Kernel, Point_container> Points_ds;
-  
+  typedef typename CGAL::Tangential_complex_::Point_cloud_data_structure<Kernel,
+                                                    Point_container>  Points_ds;
+
   typename Kernel::Squared_distance_d sqdist = k.squared_distance_d_object();
 
   // Create the output container and push the first point into it
   std::vector<typename Point_container::value_type> output;
-  Point_container::const_iterator it_pt = input_pts.begin();
+  typename Point_container::const_iterator it_pt = input_pts.begin();
   output.push_back(*it_pt);
   ++it_pt;
 
@@ -74,8 +75,8 @@ std::vector<typename Kernel::Point_d> generate_points_on_plane(std::size_t num_p
   typedef typename Kernel::FT FT;
   CGAL::Random rng;
   std::vector<Point> points;
-  points.reserve(NUM_POINTS);
-  for (int i = 0 ; i != NUM_POINTS ; ++i)
+  points.reserve(num_points);
+  for (int i = 0 ; i != num_points ; ++i)
   {
     FT x = rng.get_double(0, 5);
     FT y = rng.get_double(0, 5);
@@ -93,8 +94,8 @@ std::vector<typename Kernel::Point_d> generate_points_on_moment_curve(
   typedef typename Kernel::FT FT;
   CGAL::Random rng;
   std::vector<Point> points;
-  points.reserve(NUM_POINTS);
-  for (int i = 0 ; i != NUM_POINTS ; ++i)
+  points.reserve(num_points);
+  for (int i = 0 ; i != num_points ; ++i)
   {
     FT x = rng.get_double(min_x, max_x);
     std::vector<FT> coords;
@@ -114,8 +115,8 @@ std::vector<typename Kernel::Point_d> generate_points_on_circle_2(
   typedef typename Kernel::Point_d Point;
   CGAL::Random_points_on_circle_2<Point> generator(radius);
   std::vector<Point> points;
-  points.reserve(NUM_POINTS);
-  for (int i = 0 ; i != NUM_POINTS ; ++i)
+  points.reserve(num_points);
+  for (int i = 0 ; i != num_points ; ++i)
     points.push_back(*generator++);
   return points;
 }
@@ -127,8 +128,8 @@ std::vector<typename Kernel::Point_d> generate_points_on_sphere_3(
   typedef typename Kernel::Point_d Point;
   CGAL::Random_points_on_sphere_3<Point> generator(radius);
   std::vector<Point> points;
-  points.reserve(NUM_POINTS);
-  for (int i = 0 ; i != NUM_POINTS ; ++i)
+  points.reserve(num_points);
+  for (int i = 0 ; i != num_points ; ++i)
     points.push_back(*generator++);
   return points;
 }
@@ -140,8 +141,8 @@ std::vector<typename Kernel::Point_d> generate_points_on_sphere_d(
   typedef typename Kernel::Point_d Point;
   CGAL::Random_points_on_sphere_d<Point> generator(dim, radius);
   std::vector<Point> points;
-  points.reserve(NUM_POINTS);
-  for (int i = 0 ; i != NUM_POINTS ; ++i)
+  points.reserve(num_points);
+  for (int i = 0 ; i != num_points ; ++i)
     points.push_back(*generator++);
   return points;
 }
@@ -156,12 +157,12 @@ std::vector<typename Kernel::Point_d> generate_points_on_klein_bottle_3D(
   CGAL::Random rng;
 
   // if uniform
-  int num_lines = (int)sqrt(NUM_POINTS);
-  int num_cols = NUM_POINTS/num_lines + 1;
+  int num_lines = (int)sqrt(num_points);
+  int num_cols = num_points/num_lines + 1;
 
   std::vector<Point> points;
-  points.reserve(NUM_POINTS);
-  for (int i = 0 ; i != NUM_POINTS ; ++i)
+  points.reserve(num_points);
+  for (int i = 0 ; i != num_points ; ++i)
   {
     FT u, v;
     if (uniform)
@@ -195,12 +196,12 @@ std::vector<typename Kernel::Point_d> generate_points_on_klein_bottle_4D(
   CGAL::Random rng;
 
   // if uniform
-  int num_lines = (int)sqrt(NUM_POINTS);
-  int num_cols = NUM_POINTS/num_lines + 1;
+  int num_lines = (int)sqrt(num_points);
+  int num_cols = num_points/num_lines + 1;
 
   std::vector<Point> points;
-  points.reserve(NUM_POINTS);
-  for (int i = 0 ; i != NUM_POINTS ; ++i)
+  points.reserve(num_points);
+  for (int i = 0 ; i != num_points ; ++i)
   {
     FT u, v;
     if (uniform)
@@ -236,12 +237,12 @@ generate_points_on_klein_bottle_variant_5D(
   CGAL::Random rng;
 
   // if uniform
-  int num_lines = (int)sqrt(NUM_POINTS);
-  int num_cols = NUM_POINTS/num_lines + 1;
+  int num_lines = (int)sqrt(num_points);
+  int num_cols = num_points/num_lines + 1;
 
   std::vector<Point> points;
-  points.reserve(NUM_POINTS);
-  for (int i = 0 ; i != NUM_POINTS ; ++i)
+  points.reserve(num_points);
+  for (int i = 0 ; i != num_points ; ++i)
   {
     FT u, v;
     if (uniform)

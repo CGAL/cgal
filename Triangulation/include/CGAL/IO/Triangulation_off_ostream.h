@@ -124,8 +124,8 @@ operator>>(std::istream &is, typename Wrap::Weighted_point_d<K> & wp)
   std::vector<FT> coords;
   while (line_sstr >> temp)
     coords.push_back(temp);
-  
-  std::vector<FT>::iterator last = coords.end() - 1;
+
+  typename std::vector<FT>::iterator last = coords.end() - 1;
   P p = P(coords.begin(), last);
   wp = WP(p, *last);
 

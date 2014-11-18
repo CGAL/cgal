@@ -68,8 +68,9 @@ public: // PUBLIC NESTED TYPES
   typedef typename Base::Full_cell                Full_cell;
   typedef typename Base::Facet                    Facet;
   typedef typename Base::Face                     Face;
-  
+
   typedef Maximal_dimension_                      Maximal_dimension;
+  typedef typename Base::Point                    Point;
   typedef typename RTTraits::Bare_point           Bare_point;
   typedef typename RTTraits::Weighted_point       Weighted_point;
 

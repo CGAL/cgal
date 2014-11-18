@@ -90,7 +90,7 @@ int main()
       std::stringstream output_filename;
       output_filename << "data/test_tc_" << INTRINSIC_DIMENSION
         << "_in_R" << AMBIENT_DIMENSION << ".off";
-      std::ofstream off_stream(output_filename.str());
+      std::ofstream off_stream(output_filename.str().c_str());
       tc.export_to_off(off_stream, true, &incorrect_simplices, true);
       double export_time = t.elapsed(); t.reset();
     }
