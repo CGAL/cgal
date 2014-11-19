@@ -171,6 +171,16 @@ int main(int argc, char* argv[])
       else {
         compare = true;
         reference = result;
+
+        int n = result.outer_boundary().size();
+        typename Polygon_with_holes_2::Hole_const_iterator it = result.holes_begin();
+        while(it != result.holes_end())
+        {
+          n += (*it).size();
+          ++it;
+        }
+
+        std::cout << std::endl << "Result has " << n << " vertices and " << result.number_of_holes() << " holes.";
       }
       std::cout << std::endl;
     }
