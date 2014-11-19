@@ -29,7 +29,7 @@ if ( CGAL_FOUND )
 
     create_single_source_cgal_program( "test_delaunay.cpp" )
     create_single_source_cgal_program( "test_tds.cpp" )
-    #create_single_source_cgal_program( "test_torture.cpp" )
+    create_single_source_cgal_program( "test_torture.cpp" )
     create_single_source_cgal_program( "test_triangulation.cpp" )
 
   else()

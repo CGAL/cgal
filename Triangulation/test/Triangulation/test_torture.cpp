@@ -12,6 +12,7 @@
 
 using namespace std;
 
+// Inserts N^D points then removes min(N^D, 100) points
 template<typename DC >
 void test(const int D, const int d, const int N, bool no_transform)
 {
@@ -96,7 +97,8 @@ void test(const int D, const int d, const int N, bool no_transform)
     if( dc.current_dimension() > 3 )
     {
         std::random_shuffle(points.begin(), points.end());
-        points.resize(100);
+        if (points.size() > 100)
+          points.resize(100);
     }
     cout << " Removing " << points.size() << " points.";
     dc.remove(points.begin(), points.end());
@@ -127,8 +129,8 @@ void go(const int N, const int nb_trials)
 
 int main(int argc, char **argv)
 {
-    int N = 5;
-    int nb_trials = 4;
+    int N = 3;
+    int nb_trials = 2;
     unsigned int rand_init = static_cast<unsigned int>(time(NULL));
     if( argc > 1 )
         N = atoi(argv[1]);
@@ -142,7 +144,9 @@ int main(int argc, char **argv)
     go<2>(N, nb_trials);
     go<3>(N, nb_trials);
     go<4>(N, nb_trials);
+#ifdef NDEBUG
     go<5>(N, nb_trials);
+#endif
     cout << std::endl;
     return 0;
 }
