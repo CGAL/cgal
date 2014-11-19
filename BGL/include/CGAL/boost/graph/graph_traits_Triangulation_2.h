@@ -267,6 +267,8 @@ namespace boost {
     typedef CGAL::detail::Edge<CGAL::Triangulation_2<GT,TDS>, typename CGAL::Triangulation_2<GT,TDS>::Edge>  edge_descriptor;
     typedef typename CGAL::Triangulation_2<GT,TDS>::All_edges_iterator  edge_iterator;
 
+    typedef typename CGAL::Triangulation_2<GT,TDS>::Edge halfedge_descriptor;
+
     typedef CGAL::detail::boost_all_vertices_iterator<Triangulation> vertex_iterator;
     typedef CGAL::detail::boost_all_faces_iterator<Triangulation> face_iterator;
     typedef CGAL::Counting_iterator<CGAL::detail::Out_edge_circulator<typename Triangulation::Edge_circulator, edge_descriptor>, edge_descriptor > out_edge_iterator;
@@ -303,6 +305,39 @@ namespace boost {
          const CGAL::Triangulation_2<Gt,Tds>& g)
   {
     return e.first->vertex(g.cw(e.second));
+  }
+
+  template <class Gt, class Tds>
+  typename graph_traits< CGAL::Triangulation_2<Gt,Tds> >::vertex_descriptor
+  source(typename graph_traits< CGAL::Triangulation_2<Gt,Tds> >::hlfedge_descriptor e,
+         const CGAL::Triangulation_2<Gt,Tds>& g)
+  {
+    return e.first->vertex(g.ccw(e.second));
+  }
+
+  template <class Gt, class Tds>
+  typename graph_traits< CGAL::Triangulation_2<Gt,Tds> >::vertex_descriptor
+  target(typename graph_traits< CGAL::Triangulation_2<Gt,Tds> >::halfedge_descriptor e,
+         const CGAL::Triangulation_2<Gt,Tds>& g)
+  {
+    return e.first->vertex(g.cw(e.second));
+  }
+
+  template <class Gt, class Tds>
+  typename graph_traits< CGAL::Triangulation_2<Gt,Tds> >::face_descriptor
+  face(typename graph_traits< CGAL::Triangulation_2<Gt,Tds> >::halfedge_descriptor e,
+         const CGAL::Triangulation_2<Gt,Tds>& g)
+  {
+    return e.first;
+  }
+
+  template <class Gt, class Tds>
+  typename graph_traits< CGAL::Triangulation_2<Gt,Tds> >::halfedge_descriptor
+  halfedge(typename graph_traits< CGAL::Triangulation_2<Gt,Tds> >::face_descriptor f,
+         const CGAL::Triangulation_2<Gt,Tds>& g)
+  {
+    typedef typename graph_traits< CGAL::Triangulation_2<Gt,Tds> >::halfedge_descriptor halfedge_descriptor;
+    return halfedge_descriptor(f,0);
   }
 
   template <class Gt, class Tds>

@@ -36,6 +36,7 @@ typedef Is_finite<Triangulation> Filter;
 //typedef boost::filtered_graph<Triangulation,Filter,Filter> Finite_triangulation;
 // TODO: introduce CGAL::Filtered_face_graph, as filtered_graph does not know Halfedge/Face
 typedef boost::graph_traits<Triangulation>::vertex_descriptor vertex_descriptor;
+typedef boost::graph_traits<Triangulation>::halfedge_descriptor halfedge_descriptor;
 typedef boost::graph_traits<Triangulation>::face_descriptor face_descriptor;
 typedef boost::graph_traits<Triangulation>::vertex_iterator vertex_iterator;
 typedef boost::graph_traits<Triangulation>::face_iterator face_iterator;
@@ -74,6 +75,7 @@ main(int,char*[])
   face_iterator fit,fe;
   for(boost::tie(fit,fe) = boost::faces(t); fit!= fe; ++fit){
     face_descriptor fd = *fit;
+    halfedge_descriptor hd = boost::halfedge(fd,t);
   }
 
   return 0;
