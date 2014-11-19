@@ -191,6 +191,60 @@ public:
   }
 };
 
+template < class T>
+class boost_all_faces_iterator {
+protected:
+ typename T::All_faces_iterator nt;
+public:
+  typedef typename T::All_faces_iterator  Iterator;
+  typedef boost_all_faces_iterator<T> Self;
+
+  typedef typename std::iterator_traits<Iterator>::iterator_category iterator_category;
+  typedef typename T::Face_handle  value_type;
+  typedef typename std::iterator_traits<Iterator>::difference_type           difference_type;
+  typedef value_type      reference;
+  typedef value_type      pointer;
+
+  // CREATION
+  // --------
+
+  boost_all_faces_iterator()
+  {}
+
+  boost_all_faces_iterator( Iterator j) : nt(j) {}
+
+  // OPERATIONS Forward Category
+  // ---------------------------
+
+
+  bool operator==( const Self& i) const { return ( nt == i.nt); }
+  bool operator!=( const Self& i) const { return !(nt == i.nt );   }
+  value_type  operator*() const  { return nt; }
+  value_type    operator->()  { return nt; }
+
+  Self& operator++() {
+    ++nt;
+    return *this;
+  }
+
+  Self  operator++(int) {
+    Self tmp = *this;
+    ++*this;
+    return tmp;
+  }
+
+  Self& operator--() {
+    --nt;
+    return *this;
+  }
+
+  Self  operator--(int) {
+    Self tmp = *this;
+    --*this;
+    return tmp;
+  }
+};
+
 
   } // namespace detail
 } // namespace CGAL
@@ -209,10 +263,12 @@ namespace boost {
     typedef CGAL::Triangulation_2<GT,TDS> Triangulation;
 
     typedef typename CGAL::Triangulation_2<GT,TDS>::Vertex_handle vertex_descriptor;
+    typedef typename CGAL::Triangulation_2<GT,TDS>::Face_handle face_descriptor;
     typedef CGAL::detail::Edge<CGAL::Triangulation_2<GT,TDS>, typename CGAL::Triangulation_2<GT,TDS>::Edge>  edge_descriptor;
     typedef typename CGAL::Triangulation_2<GT,TDS>::All_edges_iterator  edge_iterator;
 
     typedef CGAL::detail::boost_all_vertices_iterator<Triangulation> vertex_iterator;
+    typedef CGAL::detail::boost_all_faces_iterator<Triangulation> face_iterator;
     typedef CGAL::Counting_iterator<CGAL::detail::Out_edge_circulator<typename Triangulation::Edge_circulator, edge_descriptor>, edge_descriptor > out_edge_iterator;
     typedef CGAL::Counting_iterator<CGAL::detail::In_edge_circulator<typename Triangulation::Edge_circulator, edge_descriptor>, edge_descriptor > in_edge_iterator;
     typedef CGAL::Counting_iterator<typename Triangulation::Vertex_circulator> Incident_vertices_iterator;
@@ -268,6 +324,17 @@ namespace boost {
   edges(const CGAL::Triangulation_2<Gt,Tds>& g)
   {    
     return std::make_pair(g.all_edges_begin(), g.all_edges_end());
+  }
+
+  template <class Gt, class Tds>
+  inline std::pair<
+    typename graph_traits< CGAL::Triangulation_2<Gt,Tds> >::face_iterator,
+    typename graph_traits< CGAL::Triangulation_2<Gt,Tds> >::face_iterator >  
+  faces(const CGAL::Triangulation_2<Gt,Tds>& g)
+  {
+    typedef typename graph_traits< CGAL::Triangulation_2<Gt,Tds> >::face_iterator
+      Iter;
+    return std::make_pair( Iter(g.all_faces_begin()), Iter(g.all_faces_end()) );
   }
 
   template <class Gt, class Tds>
