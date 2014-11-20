@@ -60,7 +60,7 @@ void find_face_from_vertices( const TDS & tds,
     typedef typename TDS::Full_cell::Vertex_handle_iterator Vertex_h_iterator;
 
     // get the dimension of the face we want to build
-    int fdim(face_vertices.size() - 1);
+    std::size_t fdim(face_vertices.size() - 1);
     if( fdim <= 0) exit(-1);
 
     // find all full cells incident to the first vertex of |face|
@@ -71,7 +71,7 @@ void find_face_from_vertices( const TDS & tds,
     // Iterate over the cells to find one which contains the face_vertices
     for( typename Cells::iterator cit = cells.begin(); cit != cells.end(); ++cit){
         // find if the cell *cit contains the Face |face|
-        int i(0);
+        std::size_t i = 0;
         for( ; i <= fdim; ++i ) {
             Vertex_handle face_v(face_vertices[i]);
             bool found(false);
