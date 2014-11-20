@@ -57,7 +57,7 @@ main(int,char*[])
   //Filter is_finite(t);
   //Finite_triangulation ft(t, is_finite, is_finite);
 
-  t.insert(Point(0,0));
+  t.insert(Point(0.1,0));
   t.insert(Point(1,0));
   t.insert(Point(0.2,0.2));
   t.insert(Point(0,1));
@@ -111,5 +111,12 @@ main(int,char*[])
     ++index;
   }
   std::cerr << index << " halfedges" << std::endl;
+
+  std::cerr << num_vertices(t) << " " << num_edges(t) << " " << num_halfedges(t) << " " << num_faces(t) << std::endl;
+
+  typedef boost::property_map<Triangulation, boost::vertex_point_t>::type Ppmap;
+  Ppmap ppmap = get(boost::vertex_point, t);
+  ppmap[*(++vertices(t).first)] = Point(78,12);
+  std::cout << ppmap[*(++vertices(t).first)] << std::endl;
   return 0;
 }
