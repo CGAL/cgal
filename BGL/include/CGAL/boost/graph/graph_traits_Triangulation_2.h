@@ -267,7 +267,37 @@ namespace boost {
     typedef CGAL::detail::Edge<CGAL::Triangulation_2<GT,TDS>, typename CGAL::Triangulation_2<GT,TDS>::Edge>  edge_descriptor;
     typedef typename CGAL::Triangulation_2<GT,TDS>::All_edges_iterator  edge_iterator;
 
-    typedef typename CGAL::Triangulation_2<GT,TDS>::Edge halfedge_descriptor;
+
+    // with just a typedef to Edge VC++ has ambiguities for function `next()`
+    struct halfedge_descriptor
+    {
+      face_descriptor first;
+      int second;
+      operator std::pair<face_descriptor, int>() { return std::make_pair(first,second); }
+      
+      halfedge_descriptor()
+      {}
+      
+      halfedge_descriptor(const typename Triangulation::Edge& e)
+        : first(e.first), second(e.second)
+      {}
+      
+      halfedge_descriptor(face_descriptor fd, int i)
+        : first(fd), second(i)
+      {}
+      
+      bool operator==(const halfedge_descriptor& other) const
+      {
+        return (first == other.first) && (second == other.second);
+      }
+      
+      bool operator!=(const halfedge_descriptor& other) const
+      {
+        return (first != other.first) || (second != other.second);
+      }
+    };
+
+    typedef typename CGAL::Triangulation_2<GT,TDS>::All_halfedges_iterator  halfedge_iterator;
 
     typedef CGAL::detail::boost_all_vertices_iterator<Triangulation> vertex_iterator;
     typedef CGAL::detail::boost_all_faces_iterator<Triangulation> face_iterator;
@@ -292,6 +322,36 @@ namespace boost {
 namespace CGAL {
 
   template <class Gt, class Tds>
+  typename boost::graph_traits< CGAL::Triangulation_2<Gt,Tds> >::halfedge_descriptor
+  next(typename boost::graph_traits< CGAL::Triangulation_2<Gt,Tds> >::halfedge_descriptor e,
+       const CGAL::Triangulation_2<Gt,Tds>& g)
+  {
+    typedef typename boost::graph_traits< CGAL::Triangulation_2<Gt,Tds> >::halfedge_descriptor halfedge_descriptor;
+    return halfedge_descriptor(e.first, g.ccw(e.second));
+  }
+
+
+  template <class Gt, class Tds>
+  typename boost::graph_traits< CGAL::Triangulation_2<Gt,Tds> >::halfedge_descriptor
+  prev(typename boost::graph_traits< CGAL::Triangulation_2<Gt,Tds> >::halfedge_descriptor e,
+       const CGAL::Triangulation_2<Gt,Tds>& g)
+  {
+    typedef typename boost::graph_traits< CGAL::Triangulation_2<Gt,Tds> >::halfedge_descriptor halfedge_descriptor;
+    return halfedge_descriptor(e.first, g.cw(e.second));
+  }
+
+  
+
+  template <class Gt, class Tds>
+  typename boost::graph_traits< CGAL::Triangulation_2<Gt,Tds> >::halfedge_descriptor
+  opposite(typename boost::graph_traits< CGAL::Triangulation_2<Gt,Tds> >::halfedge_descriptor e,
+       const CGAL::Triangulation_2<Gt,Tds>& g)
+  {
+    
+    return g.mirror_edge(e);
+  }
+  
+  template <class Gt, class Tds>
   typename boost::graph_traits< CGAL::Triangulation_2<Gt,Tds> >::vertex_descriptor
   source(typename boost::graph_traits< CGAL::Triangulation_2<Gt,Tds> >::edge_descriptor e,
          const CGAL::Triangulation_2<Gt,Tds>& g)
@@ -309,7 +369,7 @@ namespace CGAL {
 
   template <class Gt, class Tds>
   typename boost::graph_traits< CGAL::Triangulation_2<Gt,Tds> >::vertex_descriptor
-  source(typename boost::graph_traits< CGAL::Triangulation_2<Gt,Tds> >::hlfedge_descriptor e,
+  source(typename boost::graph_traits< CGAL::Triangulation_2<Gt,Tds> >::halfedge_descriptor e,
          const CGAL::Triangulation_2<Gt,Tds>& g)
   {
     return e.first->vertex(g.ccw(e.second));
@@ -359,6 +419,15 @@ namespace CGAL {
   edges(const CGAL::Triangulation_2<Gt,Tds>& g)
   {    
     return std::make_pair(g.all_edges_begin(), g.all_edges_end());
+  }
+
+  template <class Gt, class Tds>
+  inline std::pair<
+    typename boost::graph_traits< CGAL::Triangulation_2<Gt,Tds> >::halfedge_iterator,
+    typename boost::graph_traits< CGAL::Triangulation_2<Gt,Tds> >::halfedge_iterator >  
+  halfedges(const CGAL::Triangulation_2<Gt,Tds>& g)
+  {    
+    return std::make_pair(g.all_halfedges_begin(), g.all_halfedges_end());
   }
 
   template <class Gt, class Tds>

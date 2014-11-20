@@ -57,7 +57,8 @@ class Triangulation_data_structure_2
   typedef typename Vb::template Rebind_TDS<Tds>::Other  Vertex_base;
   typedef typename Fb::template Rebind_TDS<Tds>::Other  Face_base;
 
-  friend class Triangulation_ds_edge_iterator_2<Tds>;
+  friend class Triangulation_ds_edge_iterator_2<Tds,false>;
+  friend class Triangulation_ds_edge_iterator_2<Tds,true>;
   friend class Triangulation_ds_face_circulator_2<Tds>;
   friend class Triangulation_ds_edge_circulator_2<Tds>;
   friend class Triangulation_ds_vertex_circulator_2<Tds>;
@@ -87,6 +88,7 @@ public:
   typedef typename Vertex_range::iterator            Vertex_iterator;
 
   typedef Triangulation_ds_edge_iterator_2<Tds>      Edge_iterator;
+  typedef Triangulation_ds_edge_iterator_2<Tds,false> Halfedge_iterator;
 
   typedef Triangulation_ds_face_circulator_2<Tds>    Face_circulator;
   typedef Triangulation_ds_vertex_circulator_2<Tds>  Vertex_circulator;
@@ -95,7 +97,8 @@ public:
   typedef Vertex_iterator                            Vertex_handle;
   typedef Face_iterator                              Face_handle;
 
-  typedef std::pair<Face_handle, int>                Edge;
+  typedef std::pair<Face_handle,int> Edge;
+
   typedef std::list<Edge> List_edges;
 
 protected:
@@ -179,6 +182,14 @@ public:
 
   Edge_iterator edges_end() const {
     return Edge_iterator(this,1);
+  }
+  
+  Halfedge_iterator halfedges_begin() const {
+    return Halfedge_iterator(this);
+  }
+
+  Halfedge_iterator halfedges_end() const {
+    return Halfedge_iterator(this,1);
   }
   
   Face_circulator incident_faces(Vertex_handle v, 

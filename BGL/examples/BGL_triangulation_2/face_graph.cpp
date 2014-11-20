@@ -37,9 +37,12 @@ typedef Is_finite<Triangulation> Filter;
 // TODO: introduce CGAL::Filtered_face_graph, as filtered_graph does not know Halfedge/Face
 typedef boost::graph_traits<Triangulation>::vertex_descriptor vertex_descriptor;
 typedef boost::graph_traits<Triangulation>::halfedge_descriptor halfedge_descriptor;
+typedef boost::graph_traits<Triangulation>::halfedge_iterator halfedge_iterator;
 typedef boost::graph_traits<Triangulation>::face_descriptor face_descriptor;
 typedef boost::graph_traits<Triangulation>::vertex_iterator vertex_iterator;
 typedef boost::graph_traits<Triangulation>::face_iterator face_iterator;
+typedef boost::graph_traits<Triangulation>::edge_iterator edge_iterator;
+typedef boost::graph_traits<Triangulation>::edge_descriptor edge_descriptor;
 
 typedef std::map<vertex_descriptor,int> VertexIndexMap;
 VertexIndexMap vertex_id_map;
@@ -72,11 +75,41 @@ main(int,char*[])
     }
   }
 
+  std::cerr << index << " vertices" << std::endl;
+  index = 0;
   face_iterator fit,fe;
   for(boost::tie(fit,fe) = faces(t); fit!= fe; ++fit){
     face_descriptor fd = *fit;
     halfedge_descriptor hd = halfedge(fd,t);
+    halfedge_descriptor n = next(hd,t);
+    
+    halfedge_descriptor nn = next(n,t);
+    if(next(nn,t) != hd){
+      std::cerr << "the face is not a triangle" << std::endl;
+    }
+    
+    ++index;
+  }
+  
+  std::cerr << index << " faces" << std::endl;
+  index = 0;
+
+  edge_iterator eit,ee;
+  for(boost::tie(eit,ee) = edges(t); eit!= ee; ++eit){
+    edge_descriptor ed = *eit;
+    vertex_descriptor vd = source(ed,t);
+    ++index;
   }
 
+  std::cerr << index << " edges" << std::endl;
+  index = 0;
+
+  halfedge_iterator hit,he;
+  for(boost::tie(hit,he) = halfedges(t); hit!= he; ++hit){
+    halfedge_descriptor hd = *hit;
+    vertex_descriptor vd = source(hd,t);
+    ++index;
+  }
+  std::cerr << index << " halfedges" << std::endl;
   return 0;
 }
