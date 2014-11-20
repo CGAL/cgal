@@ -3,6 +3,7 @@
 
 #include <fstream>
 #include <vector>
+#include <list>
 
 // CGAL headers
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
@@ -31,6 +32,7 @@
 
 // GraphicsView items and event filters (input classes)
 #include "TriangulationCircumcircle.h"
+#include "DelaunayMeshInsertSeeds.h"
 #include <CGAL/Qt/GraphicsViewPolylineInput.h>
 #include <CGAL/Qt/DelaunayMeshTriangulationGraphicsItem.h>
 #include <CGAL/Qt/Converter.h>
@@ -157,8 +159,10 @@ discoverComponent(const CDT & ct,
   }
 }
 
-void 
-discoverComponents(const CDT & ct)
+template<typename SeedList>
+void
+discoverComponents(const CDT & ct,
+                   const SeedList& seeds)
 {
   if (ct.dimension()!=2) return;
   int index = 0;
@@ -170,6 +174,36 @@ discoverComponents(const CDT & ct)
     Face_handle n = e.first->neighbor(e.second);
     if(n->counter() == -1){
       discoverComponent(ct, n, e.first->counter()+1, border);
+    }
+  }
+
+  //mark components with a seed
+  for(SeedList::const_iterator sit = seeds.begin();
+      sit != seeds.end();
+      ++sit)
+  {
+    CDT::Face_handle fh_loc = ct.locate(*sit);
+
+    if(fh_loc == NULL || !fh_loc->is_in_domain())
+      continue;
+
+    std::list<CDT::Face_handle> queue;
+    queue.push_back(fh_loc);
+    while(!queue.empty())
+    {
+      CDT::Face_handle f = queue.front();
+      queue.pop_front();
+      f->set_in_domain(false);
+
+      for(int i = 0; i < 3; ++i)
+      {
+        CDT::Face_handle ni = f->neighbor(i);
+        if(ni->is_in_domain()
+          && !ct.is_constrained(CDT::Edge(f,i))) //same component
+        {
+          queue.push_back(ni);
+        }
+      }
     }
   }
 } 
@@ -186,12 +220,12 @@ private:
   CDT cdt; 
   QGraphicsScene scene;
   std::list<Point_2> m_seeds;
-  bool m_seed_insertion_mode_ON;
 
   CGAL::Qt::DelaunayMeshTriangulationGraphicsItem<CDT> * dgi;
 
   CGAL::Qt::GraphicsViewPolylineInput<K> * pi;
   CGAL::Qt::TriangulationCircumcircle<CDT> *tcc;
+  CGAL::Qt::DelaunayMeshInsertSeeds<CDT> *dms;
 
 public:
   MainWindow();
@@ -310,11 +344,13 @@ MainWindow::MainWindow()
   pi = new CGAL::Qt::GraphicsViewPolylineInput<K>(this, &scene, 0, true); // inputs polylines which are not closed
   QObject::connect(pi, SIGNAL(generate(CGAL::Object)),
 		   this, SLOT(processInput(CGAL::Object)));
-  m_seed_insertion_mode_ON = false; //handle insertion of seeds
 
   tcc = new CGAL::Qt::TriangulationCircumcircle<CDT>(&scene, &cdt, this);
   tcc->setPen(QPen(Qt::red, 0, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
-  
+
+  dms = new CGAL::Qt::DelaunayMeshInsertSeeds<CDT>(&scene, &cdt, this);//input seeds
+  QObject::connect(dms, SIGNAL(generate(CGAL::Object)),
+                   this, SLOT(processInput(CGAL::Object)));
 
   // 
   // Manual handling of actions
@@ -364,24 +400,27 @@ MainWindow::MainWindow()
 void
 MainWindow::processInput(CGAL::Object o)
 {
+  // Polygon
   std::list<Point_2> points;
-  if(CGAL::assign(points, o)){
-    if(points.size() == 1) {
-      if(m_seed_insertion_mode_ON)
-      {
-        std::cout << "Insert seed at " << points.front() << std::endl;
-        m_seeds.push_back(points.front());
-      }
-      else
-        cdt.insert(points.front());
-    }
-    else {
+  if(CGAL::assign(points, o))
+  {
+    if(points.size() == 1)
+      cdt.insert(points.front());
+    else
       insert_polyline(points.begin(), points.end());
+  }
+  else
+  {
+    // Seed (from Shift + left clic)
+    Point_2 p;
+    if(CGAL::assign(p, o))
+    {
+      m_seeds.push_back(p);
     }
   }
 
   initializeID(cdt);
-  discoverComponents(cdt);
+  discoverComponents(cdt, m_seeds);
   emit(changed());
 }
 
@@ -406,12 +445,11 @@ MainWindow::on_actionInsertPolyline_toggled(bool checked)
 void
 MainWindow::on_actionInsertSeeds_OnOff_toggled(bool checked)
 {
-  m_seed_insertion_mode_ON = checked;
-  actionInsertSeeds_OnOff->setChecked(checked);
   if(checked){
-    scene.installEventFilter(pi);
+    std::cout << "Insert seeds with Shift + Left click" << std::endl;
+    scene.installEventFilter(dms);
   } else {
-    scene.removeEventFilter(pi);
+    scene.removeEventFilter(dms);
   }
 }
 
@@ -474,6 +512,7 @@ void
 MainWindow::on_actionClear_triggered()
 {
   cdt.clear();
+  m_seeds.clear();
   emit(changed());
 }
 
@@ -513,7 +552,7 @@ MainWindow::loadFile(QString fileName)
   ifs >> cdt;
   if(!ifs) abort();
   initializeID(cdt);
-  discoverComponents(cdt);
+  discoverComponents(cdt, m_seeds);
   emit(changed());
   actionRecenter->trigger();
 }
@@ -549,7 +588,7 @@ MainWindow::loadPolygonConstraints(QString fileName)
   
   
   initializeID(cdt);
-  discoverComponents(cdt);
+  discoverComponents(cdt, m_seeds);
   emit(changed());
   actionRecenter->trigger();
 }
@@ -593,7 +632,7 @@ MainWindow::loadEdgConstraints(QString fileName)
   tim.stop();
   statusBar()->showMessage(QString("Insertion took %1 seconds").arg(tim.time()), 2000);
   initializeID(cdt);
-  discoverComponents(cdt);
+  discoverComponents(cdt, m_seeds);
   // default cursor
   QApplication::restoreOverrideCursor();
   emit(changed());
@@ -639,7 +678,7 @@ MainWindow::on_actionMakeGabrielConform_triggered()
   CGAL::make_conforming_Gabriel_2(cdt);
   nv = cdt.number_of_vertices() - nv;
   initializeID(cdt);
-  discoverComponents(cdt);
+  discoverComponents(cdt, m_seeds);
   statusBar()->showMessage(QString("Added %1 vertices").arg(nv), 2000);
   // default cursor
   QApplication::restoreOverrideCursor();
@@ -655,7 +694,7 @@ MainWindow::on_actionMakeDelaunayConform_triggered()
   std::size_t nv = cdt.number_of_vertices();
   CGAL::make_conforming_Delaunay_2(cdt);
   initializeID(cdt);
-  discoverComponents(cdt);
+  discoverComponents(cdt, m_seeds);
   nv = cdt.number_of_vertices() - nv;
   statusBar()->showMessage(QString("Added %1 vertices").arg(nv), 2000);
    // default cursor
@@ -672,7 +711,7 @@ MainWindow::on_actionMakeDelaunayMesh_triggered()
   CGAL::Timer timer;
   timer.start();
   initializeID(cdt);
-  discoverComponents(cdt);
+  discoverComponents(cdt, m_seeds);
 
   bool ok;
   double d = QInputDialog::getDouble(this, tr("Shape criterion"),
@@ -693,7 +732,7 @@ MainWindow::on_actionMakeDelaunayMesh_triggered()
   timer.stop();
   nv = cdt.number_of_vertices() - nv;
   initializeID(cdt);
-  discoverComponents(cdt);
+  discoverComponents(cdt, m_seeds);
   statusBar()->showMessage(QString("Added %1 vertices in %2 seconds").arg(nv).arg(timer.time()), 2000);
   // default cursor
   QApplication::restoreOverrideCursor();
@@ -718,7 +757,7 @@ MainWindow::on_actionMakeLipschitzDelaunayMesh_triggered()
   }
 
   initializeID(cdt);
-  discoverComponents(cdt);
+  discoverComponents(cdt, m_seeds);
 
   bool ok;
   double d = QInputDialog::getDouble(this, tr("Shape criterion"),
