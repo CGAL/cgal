@@ -844,10 +844,16 @@ MainWindow::on_actionLloyd_optimization_triggered()
   int nb = QInputDialog::getInt(this, tr("QInputDialog::getInteger()"),
     tr("Number of iterations :"),
     1/*val*/, 0/*min*/, 1000/*max*/, 1/*step*/, &ok);
-  if(ok)
+  if(!ok)
   {
-    CGAL::lloyd_optimize_mesh_2(cdt, max_iteration_number = nb);
+    QApplication::restoreOverrideCursor();
+    return;
   }
+
+  CGAL::lloyd_optimize_mesh_2(cdt,
+      max_iteration_number = nb,
+      seeds_begin = m_seeds.begin(),
+      seeds_end = m_seeds.end());
 
   // default cursor
   QApplication::restoreOverrideCursor();

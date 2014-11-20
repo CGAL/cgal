@@ -32,9 +32,12 @@
 #include <CGAL/Timer.h>
 #include <CGAL/Origin.h>
 #include <CGAL/Mesh_optimization_return_code.h>
+#include <CGAL/Delaunay_mesh_size_criteria_2.h>
 
 #include <vector>
 #include <list>
+#include <algorithm>
+#include <iterator>
 
 #include <boost/lambda/lambda.hpp>
 #include <boost/lambda/bind.hpp>
@@ -86,12 +89,27 @@ public:
     , convergence_ratio_(convergence_ratio)
     , move_function_(move_function)
     , sizing_field_(cdt)
+    , seeds_()
   {
   }
   
   /// Time accessors
   void set_time_limit(double time) { time_limit_ = time; }
   double time_limit() const { return time_limit_; }
+
+  /** The value type of \a InputIterator should be \c Point, and represents
+      seeds.
+  */
+  template<typename InputIterator>
+  void set_seeds(InputIterator b, InputIterator e)
+  {
+    if(b != e)
+    {
+      seeds_.clear();
+      std::copy(b, e, std::back_inserter(seeds_));
+    }
+    std::cout << "seeds : " << seeds_.size() << std::endl;
+  }
 
   Mesh_optimization_return_code operator()(const int nb_iterations)
   {
@@ -129,7 +147,7 @@ public:
     int i = -1;
     while ( ++i < nb_iterations && ! is_time_limit_reached() )
     {
-      move_function_.before_move(cdt_);
+      this->before_move();
 
       // Compute move for each vertex
       Moves_vector moves = compute_moves(moving_vertices);
@@ -154,7 +172,7 @@ public:
       update_mesh(moves, moving_vertices);
       nb_vertices_moved = moving_vertices.size();
 
-      move_function_.after_move(cdt_);
+      this->after_move();
  
 #ifdef CGAL_MESH_2_OPTIMIZER_VERBOSE
       double time = running_time_.time();
@@ -172,7 +190,7 @@ public:
 #endif
     }
 
-    move_function_.after_all_moves(cdt_);
+    this->after_all_moves();
     running_time_.stop();
 
 #ifdef CGAL_MESH_2_OPTIMIZER_VERBOSE
@@ -367,6 +385,39 @@ private:
     }
   }
 
+  void before_move()
+  {
+    update_blind_faces();
+  }
+
+  void after_move()
+  {
+    std::cout << std::endl << "[AM] ";
+    //update inside/outside tags
+    bool mark = false;
+    typedef CGAL::Delaunay_mesh_size_criteria_2<CDT> Criteria;
+    CGAL::Delaunay_mesher_2<CDT, Criteria>::mark_facets(cdt_,
+      seeds_.begin(),
+      seeds_.end(),
+      mark/*faces that are not in domain are tagged false*/);
+    //Connected components of seeds are marked with the value of
+    //  \a mark. Other components are marked with \c !mark. The connected
+    //  component of infinite faces is always marked with \c false.
+    std::cout << seeds_.size() << " Ok" << std::endl;
+  }
+
+  void after_all_moves()
+  {
+    update_blind_faces();
+  }
+
+  void update_blind_faces()
+  {
+    //update blindness
+    CGAL::Constrained_voronoi_diagram_2<CDT> cvd(&cdt_);
+    cvd.tag_faces_blind();
+  }
+
 public:
 
   void output_angles_histogram(std::ostream& os)
@@ -416,6 +467,7 @@ private:
   FT convergence_ratio_;
   MoveFunction move_function_;
   Sizing_field sizing_field_;
+  std::list<Point_2> seeds_;
 
   double time_limit_;
   CGAL::Timer running_time_;

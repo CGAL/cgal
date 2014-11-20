@@ -15,6 +15,8 @@ BOOST_PARAMETER_NAME( (max_iteration_number, tag) max_iteration_number_ )
 BOOST_PARAMETER_NAME( (convergence, tag) convergence_)
 BOOST_PARAMETER_NAME( (time_limit, tag) time_limit_ )
 BOOST_PARAMETER_NAME( (freeze_bound, tag) freeze_bound_)
+BOOST_PARAMETER_NAME( (seeds_begin, tag) seeds_begin_)
+BOOST_PARAMETER_NAME( (seeds_end, tag) seeds_end_)
 
 namespace CGAL
 {
@@ -28,6 +30,8 @@ namespace CGAL
     (convergence_, *, 0.001 )
     (time_limit_, *, 0. )
     (freeze_bound_, *, 0.001 )
+    (seeds_begin_, *, NULL)
+    (seeds_end_, *, NULL)
     )
   )
   {
@@ -35,16 +39,20 @@ namespace CGAL
       max_iteration_number_,
       convergence_,
       freeze_bound_,
-      time_limit_);
+      time_limit_,
+      seeds_begin_,
+      seeds_end_);
   }
 
-  template<typename CDT>
+  template<typename CDT, typename InputIterator>
   Mesh_optimization_return_code
   lloyd_optimize_mesh_2_impl(CDT& cdt,
                              const int max_iterations,
                              const double convergence_ratio,
                              const double freeze_bound,
-                             const double time_limit)
+                             const double time_limit,
+                             InputIterator seeds_begin,
+                             InputIterator seeds_end)
   {
     typedef Mesh_2::Mesh_sizing_field<CDT>           Sizing;
     typedef Mesh_2::Lloyd_move_2<CDT, Sizing>        Mv;
@@ -54,6 +62,7 @@ namespace CGAL
                     convergence_ratio,
                     freeze_bound);
     lloyd.set_time_limit(time_limit);
+    lloyd.set_seeds(seeds_begin, seeds_end);
 
 #ifdef CGAL_MESH_2_OPTIMIZERS_DEBUG
     std::ofstream os("before_lloyd.angles.txt");
