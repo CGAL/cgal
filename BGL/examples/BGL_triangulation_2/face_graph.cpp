@@ -65,7 +65,7 @@ main(int,char*[])
   int index = 0;
   // boost::tie assigns the first and second element of the std::pair
   // returned by boost::vertices to the variables vit and ve
-  for(boost::tie(vit,ve)=boost::vertices(t); vit!=ve; ++vit ){
+  for(boost::tie(vit,ve) = vertices(t); vit!=ve; ++vit ){
     vertex_descriptor  vd = *vit;
     if(! t.is_infinite(vd)){
       vertex_id_map[vd]= index++;
@@ -73,9 +73,9 @@ main(int,char*[])
   }
 
   face_iterator fit,fe;
-  for(boost::tie(fit,fe) = boost::faces(t); fit!= fe; ++fit){
+  for(boost::tie(fit,fe) = faces(t); fit!= fe; ++fit){
     face_descriptor fd = *fit;
-    halfedge_descriptor hd = boost::halfedge(fd,t);
+    halfedge_descriptor hd = halfedge(fd,t);
   }
 
   return 0;

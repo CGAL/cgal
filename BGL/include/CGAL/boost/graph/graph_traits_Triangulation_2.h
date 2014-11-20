@@ -289,64 +289,64 @@ namespace boost {
 } // namespace boost
 
 
-namespace boost {
+namespace CGAL {
 
   template <class Gt, class Tds>
-  typename graph_traits< CGAL::Triangulation_2<Gt,Tds> >::vertex_descriptor
-  source(typename graph_traits< CGAL::Triangulation_2<Gt,Tds> >::edge_descriptor e,
+  typename boost::graph_traits< CGAL::Triangulation_2<Gt,Tds> >::vertex_descriptor
+  source(typename boost::graph_traits< CGAL::Triangulation_2<Gt,Tds> >::edge_descriptor e,
          const CGAL::Triangulation_2<Gt,Tds>& g)
   {
     return e.first->vertex(g.ccw(e.second));
   }
 
   template <class Gt, class Tds>
-  typename graph_traits< CGAL::Triangulation_2<Gt,Tds> >::vertex_descriptor
-  target(typename graph_traits< CGAL::Triangulation_2<Gt,Tds> >::edge_descriptor e,
+  typename boost::graph_traits< CGAL::Triangulation_2<Gt,Tds> >::vertex_descriptor
+  target(typename boost::graph_traits< CGAL::Triangulation_2<Gt,Tds> >::edge_descriptor e,
          const CGAL::Triangulation_2<Gt,Tds>& g)
   {
     return e.first->vertex(g.cw(e.second));
   }
 
   template <class Gt, class Tds>
-  typename graph_traits< CGAL::Triangulation_2<Gt,Tds> >::vertex_descriptor
-  source(typename graph_traits< CGAL::Triangulation_2<Gt,Tds> >::hlfedge_descriptor e,
+  typename boost::graph_traits< CGAL::Triangulation_2<Gt,Tds> >::vertex_descriptor
+  source(typename boost::graph_traits< CGAL::Triangulation_2<Gt,Tds> >::hlfedge_descriptor e,
          const CGAL::Triangulation_2<Gt,Tds>& g)
   {
     return e.first->vertex(g.ccw(e.second));
   }
 
   template <class Gt, class Tds>
-  typename graph_traits< CGAL::Triangulation_2<Gt,Tds> >::vertex_descriptor
-  target(typename graph_traits< CGAL::Triangulation_2<Gt,Tds> >::halfedge_descriptor e,
+  typename boost::graph_traits< CGAL::Triangulation_2<Gt,Tds> >::vertex_descriptor
+  target(typename boost::graph_traits< CGAL::Triangulation_2<Gt,Tds> >::halfedge_descriptor e,
          const CGAL::Triangulation_2<Gt,Tds>& g)
   {
     return e.first->vertex(g.cw(e.second));
   }
 
   template <class Gt, class Tds>
-  typename graph_traits< CGAL::Triangulation_2<Gt,Tds> >::face_descriptor
-  face(typename graph_traits< CGAL::Triangulation_2<Gt,Tds> >::halfedge_descriptor e,
+  typename boost::graph_traits< CGAL::Triangulation_2<Gt,Tds> >::face_descriptor
+  face(typename boost::graph_traits< CGAL::Triangulation_2<Gt,Tds> >::halfedge_descriptor e,
          const CGAL::Triangulation_2<Gt,Tds>& g)
   {
     return e.first;
   }
 
   template <class Gt, class Tds>
-  typename graph_traits< CGAL::Triangulation_2<Gt,Tds> >::halfedge_descriptor
-  halfedge(typename graph_traits< CGAL::Triangulation_2<Gt,Tds> >::face_descriptor f,
+  typename boost::graph_traits< CGAL::Triangulation_2<Gt,Tds> >::halfedge_descriptor
+  halfedge(typename boost::graph_traits< CGAL::Triangulation_2<Gt,Tds> >::face_descriptor f,
          const CGAL::Triangulation_2<Gt,Tds>& g)
   {
-    typedef typename graph_traits< CGAL::Triangulation_2<Gt,Tds> >::halfedge_descriptor halfedge_descriptor;
+    typedef typename boost::graph_traits< CGAL::Triangulation_2<Gt,Tds> >::halfedge_descriptor halfedge_descriptor;
     return halfedge_descriptor(f,0);
   }
 
   template <class Gt, class Tds>
   inline std::pair<
-    typename graph_traits< CGAL::Triangulation_2<Gt,Tds> >::vertex_iterator,
-    typename graph_traits< CGAL::Triangulation_2<Gt,Tds> >::vertex_iterator >  
+    typename boost::graph_traits< CGAL::Triangulation_2<Gt,Tds> >::vertex_iterator,
+    typename boost::graph_traits< CGAL::Triangulation_2<Gt,Tds> >::vertex_iterator >  
   vertices(const CGAL::Triangulation_2<Gt,Tds>& g)
   {
-    typedef typename graph_traits< CGAL::Triangulation_2<Gt,Tds> >::vertex_iterator
+    typedef typename boost::graph_traits< CGAL::Triangulation_2<Gt,Tds> >::vertex_iterator
       Iter;
     return std::make_pair( Iter(g.all_vertices_begin()), Iter(g.all_vertices_end()) );
   }
@@ -354,8 +354,8 @@ namespace boost {
 
   template <class Gt, class Tds>
   inline std::pair<
-    typename graph_traits< CGAL::Triangulation_2<Gt,Tds> >::edge_iterator,
-    typename graph_traits< CGAL::Triangulation_2<Gt,Tds> >::edge_iterator >  
+    typename boost::graph_traits< CGAL::Triangulation_2<Gt,Tds> >::edge_iterator,
+    typename boost::graph_traits< CGAL::Triangulation_2<Gt,Tds> >::edge_iterator >  
   edges(const CGAL::Triangulation_2<Gt,Tds>& g)
   {    
     return std::make_pair(g.all_edges_begin(), g.all_edges_end());
@@ -363,22 +363,22 @@ namespace boost {
 
   template <class Gt, class Tds>
   inline std::pair<
-    typename graph_traits< CGAL::Triangulation_2<Gt,Tds> >::face_iterator,
-    typename graph_traits< CGAL::Triangulation_2<Gt,Tds> >::face_iterator >  
+    typename boost::graph_traits< CGAL::Triangulation_2<Gt,Tds> >::face_iterator,
+    typename boost::graph_traits< CGAL::Triangulation_2<Gt,Tds> >::face_iterator >  
   faces(const CGAL::Triangulation_2<Gt,Tds>& g)
   {
-    typedef typename graph_traits< CGAL::Triangulation_2<Gt,Tds> >::face_iterator
+    typedef typename boost::graph_traits< CGAL::Triangulation_2<Gt,Tds> >::face_iterator
       Iter;
     return std::make_pair( Iter(g.all_faces_begin()), Iter(g.all_faces_end()) );
   }
 
   template <class Gt, class Tds>
-  typename graph_traits< CGAL::Triangulation_2<Gt,Tds> >::degree_size_type
+  typename boost::graph_traits< CGAL::Triangulation_2<Gt,Tds> >::degree_size_type
   out_degree(
-    typename graph_traits< CGAL::Triangulation_2<Gt,Tds> >::vertex_descriptor u, 
+    typename boost::graph_traits< CGAL::Triangulation_2<Gt,Tds> >::vertex_descriptor u, 
     const CGAL::Triangulation_2<Gt,Tds>& g)
   {
-    typename graph_traits< CGAL::Triangulation_2<Gt,Tds> >::degree_size_type deg = 0;
+    typename boost::graph_traits< CGAL::Triangulation_2<Gt,Tds> >::degree_size_type deg = 0;
     typename CGAL::Triangulation_2<Gt,Tds>::Edge_circulator c = g.incident_edges(u), done(c);
     if ( c != 0) {
         do {
@@ -390,15 +390,15 @@ namespace boost {
 
   template <class Gt, class Tds>
   inline std::pair<
-    typename graph_traits< CGAL::Triangulation_2<Gt,Tds> >::out_edge_iterator,
-    typename graph_traits< CGAL::Triangulation_2<Gt,Tds> >::out_edge_iterator >  
+    typename boost::graph_traits< CGAL::Triangulation_2<Gt,Tds> >::out_edge_iterator,
+    typename boost::graph_traits< CGAL::Triangulation_2<Gt,Tds> >::out_edge_iterator >  
   out_edges(
-    typename graph_traits< CGAL::Triangulation_2<Gt,Tds> >::vertex_descriptor u, 
+    typename boost::graph_traits< CGAL::Triangulation_2<Gt,Tds> >::vertex_descriptor u, 
     const CGAL::Triangulation_2<Gt,Tds>& g)
   {
     typename CGAL::Triangulation_2<Gt,Tds>::Edge_circulator ec(u,u->face());
-    typename graph_traits< CGAL::Triangulation_2<Gt,Tds> >::degree_size_type out_deg = out_degree(u,g);
-    typedef typename graph_traits< CGAL::Triangulation_2<Gt,Tds> >
+    typename boost::graph_traits< CGAL::Triangulation_2<Gt,Tds> >::degree_size_type out_deg = out_degree(u,g);
+    typedef typename boost::graph_traits< CGAL::Triangulation_2<Gt,Tds> >
       ::out_edge_iterator Iter;
     
     return std::make_pair( Iter(ec), Iter(ec,out_deg) );
@@ -406,43 +406,43 @@ namespace boost {
 
   template <class Gt, class Tds>
   inline std::pair<
-    typename graph_traits< CGAL::Triangulation_2<Gt,Tds> >::in_edge_iterator,
-    typename graph_traits< CGAL::Triangulation_2<Gt,Tds> >::in_edge_iterator >  
+    typename boost::graph_traits< CGAL::Triangulation_2<Gt,Tds> >::in_edge_iterator,
+    typename boost::graph_traits< CGAL::Triangulation_2<Gt,Tds> >::in_edge_iterator >  
   in_edges(
-    typename graph_traits< CGAL::Triangulation_2<Gt,Tds> >::vertex_descriptor u, 
+    typename boost::graph_traits< CGAL::Triangulation_2<Gt,Tds> >::vertex_descriptor u, 
     const CGAL::Triangulation_2<Gt,Tds>& g)
   {
     typename CGAL::Triangulation_2<Gt,Tds>::Edge_circulator ec(u,u->face());
-    typename graph_traits< CGAL::Triangulation_2<Gt,Tds> >::degree_size_type out_deg = out_degree(u,g);
-    typedef typename graph_traits< CGAL::Triangulation_2<Gt,Tds> >
+    typename boost::graph_traits< CGAL::Triangulation_2<Gt,Tds> >::degree_size_type out_deg = out_degree(u,g);
+    typedef typename boost::graph_traits< CGAL::Triangulation_2<Gt,Tds> >
       ::in_edge_iterator Iter;
     return std::make_pair( Iter(ec), Iter(ec,out_deg) );
   }
 
   template <class Gt, class Tds>
   inline std::pair<
-    typename graph_traits< CGAL::Triangulation_2<Gt,Tds> >::adjacency_iterator,
-    typename graph_traits< CGAL::Triangulation_2<Gt,Tds> >::adjacency_iterator >  
+    typename boost::graph_traits< CGAL::Triangulation_2<Gt,Tds> >::adjacency_iterator,
+    typename boost::graph_traits< CGAL::Triangulation_2<Gt,Tds> >::adjacency_iterator >  
   adjacent_vertices(
-    typename graph_traits< CGAL::Triangulation_2<Gt,Tds> >::vertex_descriptor u, 
+    typename boost::graph_traits< CGAL::Triangulation_2<Gt,Tds> >::vertex_descriptor u, 
     const CGAL::Triangulation_2<Gt,Tds>& g)
   {
     typename CGAL::Triangulation_2<Gt,Tds>::Vertex_circulator vc = out_edge_iterator(u,u.face());
-    typename graph_traits< CGAL::Triangulation_2<Gt,Tds> >::degree_size_type out_deg = out_degree(u,g);
-    typedef typename graph_traits< CGAL::Triangulation_2<Gt,Tds> >
+    typename boost::graph_traits< CGAL::Triangulation_2<Gt,Tds> >::degree_size_type out_deg = out_degree(u,g);
+    typedef typename boost::graph_traits< CGAL::Triangulation_2<Gt,Tds> >
       ::adjacency_iterator Iter;
     return std::make_pair( Iter(vc), Iter(vc,out_deg) );
   }
 
   template <class Gt, class Tds>
-  typename graph_traits< CGAL::Triangulation_2<Gt,Tds> >::vertices_size_type
+  typename boost::graph_traits< CGAL::Triangulation_2<Gt,Tds> >::vertices_size_type
   num_vertices(const CGAL::Triangulation_2<Gt,Tds>& g)
   {
     return g.number_of_vertices()+1;
   }  
 
   template <class Gt, class Tds>
-  typename graph_traits< CGAL::Triangulation_2<Gt,Tds> >::edges_size_type
+  typename boost::graph_traits< CGAL::Triangulation_2<Gt,Tds> >::edges_size_type
   num_edges(const CGAL::Triangulation_2<Gt,Tds>& g)
   {
 
@@ -450,12 +450,12 @@ namespace boost {
   }  
 
   template <class Gt, class Tds>
-  typename graph_traits< CGAL::Triangulation_2<Gt,Tds> >::degree_size_type
+  typename boost::graph_traits< CGAL::Triangulation_2<Gt,Tds> >::degree_size_type
   in_degree(
-    typename graph_traits< CGAL::Triangulation_2<Gt,Tds> >::vertex_descriptor u, 
+    typename boost::graph_traits< CGAL::Triangulation_2<Gt,Tds> >::vertex_descriptor u, 
     const CGAL::Triangulation_2<Gt,Tds>& g)
   {
-    typename graph_traits< CGAL::Triangulation_2<Gt,Tds> >::degree_size_type deg = 0;
+    typename boost::graph_traits< CGAL::Triangulation_2<Gt,Tds> >::degree_size_type deg = 0;
     typename CGAL::Triangulation_2<Gt,Tds>::Edge_circulator c = g.incident_edges(u), done(c);
     if ( c != 0) {
         do {
@@ -466,12 +466,12 @@ namespace boost {
   }
 
   template <class Gt, class Tds>
-  typename graph_traits< CGAL::Triangulation_2<Gt,Tds> >::degree_size_type
+  typename boost::graph_traits< CGAL::Triangulation_2<Gt,Tds> >::degree_size_type
   degree(
-    typename graph_traits< CGAL::Triangulation_2<Gt,Tds> >::vertex_descriptor u, 
+    typename boost::graph_traits< CGAL::Triangulation_2<Gt,Tds> >::vertex_descriptor u, 
     const CGAL::Triangulation_2<Gt,Tds>& g)
   {
-    typename graph_traits< CGAL::Triangulation_2<Gt,Tds> >::degree_size_type deg = 0;
+    typename boost::graph_traits< CGAL::Triangulation_2<Gt,Tds> >::degree_size_type deg = 0;
     typename CGAL::Triangulation_2<Gt,Tds>::Edge_circulator c = g.incident_edges(u), done(c);
     if ( c != 0) {
         do {
@@ -485,10 +485,10 @@ namespace boost {
   // property maps
   template <class Gt, class Tds>
   class T2_vertex_id_map
-    : public put_get_helper<int, T2_vertex_id_map<Gt,Tds> >
+    : public boost::put_get_helper<int, T2_vertex_id_map<Gt,Tds> >
   {
   public:
-    typedef readable_property_map_tag category;
+    typedef boost::readable_property_map_tag category;
     typedef int value_type;
     typedef int reference;
     typedef typename CGAL::Triangulation_2<Gt,Tds>::Vertex_handle key_type;
@@ -503,10 +503,10 @@ namespace boost {
 
   template <class Gt, class Tds>
   class T2_edge_id_map
-    : public put_get_helper<int, T2_edge_id_map<Gt,Tds> >
+    : public boost::put_get_helper<int, T2_edge_id_map<Gt,Tds> >
   {
   public:
-    typedef readable_property_map_tag category;
+    typedef boost::readable_property_map_tag category;
     typedef int value_type;
     typedef int reference;
     typedef typename CGAL::Triangulation_2<Gt,Tds>::Edge key_type;
@@ -521,12 +521,12 @@ namespace boost {
 
   template <class Gt, class Tds>
   class T2_edge_weight_map
-    : public put_get_helper<typename Gt::FT, T2_edge_weight_map<Gt, Tds> >
+    : public boost::put_get_helper<typename Gt::FT, T2_edge_weight_map<Gt, Tds> >
   {
   private:
     const CGAL::Triangulation_2<Gt,Tds>& tr;
   public:
-    typedef readable_property_map_tag category;
+    typedef boost::readable_property_map_tag category;
     typedef typename Gt::FT value_type;
     typedef value_type reference;
     typedef typename CGAL::Triangulation_2<Gt,Tds>::Edge key_type;
@@ -543,21 +543,21 @@ namespace boost {
 
   template <class Gt, class Tds>
   inline T2_vertex_id_map<Gt,Tds>
-  get(vertex_index_t, const CGAL::Triangulation_2<Gt,Tds>&) {
+  get(boost::vertex_index_t, const CGAL::Triangulation_2<Gt,Tds>&) {
     T2_vertex_id_map<Gt,Tds> m;
     return m;
   }
 
   template <class Gt, class Tds>
   inline T2_edge_id_map<Gt,Tds>
-  get(edge_index_t, const CGAL::Triangulation_2<Gt,Tds>&) {
+  get(boost::edge_index_t, const CGAL::Triangulation_2<Gt,Tds>&) {
     T2_edge_id_map<Gt,Tds> m;
     return m;
   }
 
   template <class Gt, class Tds>
   inline T2_edge_weight_map<Gt,Tds>
-  get(edge_weight_t, const CGAL::Triangulation_2<Gt,Tds>& g) {
+  get(boost::edge_weight_t, const CGAL::Triangulation_2<Gt,Tds>& g) {
     T2_edge_weight_map<Gt,Tds> m(g);
     return m;
   }
@@ -566,7 +566,7 @@ namespace boost {
   struct T2_property_map { };
 
   template <>
-  struct T2_property_map<vertex_index_t> {
+  struct T2_property_map<boost::vertex_index_t> {
     template <class Gt, class Tds>
     struct bind_ {
       typedef T2_vertex_id_map<Gt,Tds> type;
@@ -576,7 +576,7 @@ namespace boost {
 
 
   template <>
-  struct T2_property_map<edge_index_t> {
+  struct T2_property_map<boost::edge_index_t> {
     template <class Gt, class Tds>
     struct bind_ {
       typedef T2_edge_id_map<Gt,Tds> type;
@@ -586,7 +586,7 @@ namespace boost {
 
 
   template <>
-  struct T2_property_map<edge_weight_t> {
+  struct T2_property_map<boost::edge_weight_t> {
     template <class Gt, class Tds>
     struct bind_ {
       typedef T2_edge_weight_map<Gt,Tds> type;
@@ -594,11 +594,14 @@ namespace boost {
     };
   };
 
+} // namespace CGAL
+
+namespace boost {
   // g++ 'enumeral_type' in template unification not implemented workaround
   template <class Gt, class Tds, class Tag>
   struct property_map<CGAL::Triangulation_2<Gt,Tds>, Tag> {
     typedef typename 
-      T2_property_map<Tag>::template bind_<Gt,Tds> map_gen;
+    CGAL::T2_property_map<Tag>::template bind_<Gt,Tds> map_gen;
     typedef typename map_gen::type type;
     typedef typename map_gen::const_type const_type;
   };
@@ -607,10 +610,15 @@ namespace boost {
   template <class Gt, class Tds, class Tag>
   struct property_map<const CGAL::Triangulation_2<Gt,Tds>, Tag> {
     typedef typename 
-      T2_property_map<Tag>::template bind_<Gt,Tds> map_gen;
+    CGAL::T2_property_map<Tag>::template bind_<Gt,Tds> map_gen;
     typedef typename map_gen::type type;
     typedef typename map_gen::const_type const_type;
   };
+
+} // namespace boost
+
+
+namespace CGAL {
 
   template <class Gt, class Tds, class PropertyTag, class Key>
   inline
@@ -630,6 +638,9 @@ namespace boost {
     put(pmap, key, value);
   }
 
+} // namespace CGAL 
+
+namespace boost {
 
   // What are those needed for ???
   template <typename Gt, typename Tds>
