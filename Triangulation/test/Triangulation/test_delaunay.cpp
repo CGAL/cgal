@@ -16,14 +16,9 @@ void test(const int d, const string & type, const int N)
     // we must write 'typename' below, because we are in a template-function,
     // so the parser has no way to know that DC contains sub-types, before
     // instanciating the function.
-    typedef typename DC::Vertex Vertex;
-    typedef typename DC::Vertex_handle Vertex_handle;
-    typedef typename DC::Full_cell Full_cell;
     typedef typename DC::Full_cell_handle Full_cell_handle;
-    typedef typename DC::Facet Facet;
     typedef typename DC::Face Face;
     typedef typename DC::Point Point;
-    typedef typename DC::Geom_traits::RT RT;
     typedef typename DC::Finite_full_cell_const_iterator Finite_full_cell_const_iterator;
     typedef typename DC::Finite_vertex_iterator Finite_vertex_iterator;
 

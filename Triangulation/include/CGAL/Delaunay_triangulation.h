@@ -777,7 +777,6 @@ Delaunay_triangulation<DCTraits, TDS>
 ::insert_in_conflicting_cell(const Point & p, const Full_cell_handle s)
 {
     typedef std::vector<Full_cell_handle> Full_cell_h_vector;
-    typedef typename Full_cell_h_vector::iterator SHV_iterator;
     static Full_cell_h_vector cs; // for storing conflicting full_cells.
     cs.clear();
     // cs.reserve(64);

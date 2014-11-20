@@ -14,11 +14,7 @@ void test(const int d, const string & type, int N)
     // we must write 'typename' below, because we are in a template-function,
     // so the parser has no way to know that T contains sub-types, before
     // instanciating the function.
-    typedef typename T::Vertex Vertex;
-    typedef typename T::Vertex_handle Vertex_handle;
-    typedef typename T::Full_cell Full_cell;
     typedef typename T::Full_cell_handle Full_cell_handle;
-    typedef typename T::Facet Facet;
     typedef typename T::Point Point;
     typedef typename T::Geom_traits::RT RT;
     typedef typename T::Finite_full_cell_const_iterator Finite_full_cell_const_iterator;

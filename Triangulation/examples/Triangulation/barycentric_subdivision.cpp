@@ -15,7 +15,6 @@ template< typename TDS >
 void barycentric_subdivide(TDS & tds, typename TDS::Full_cell_handle fc)
 { /* This function builds the barycentric subdivision of a single
      full cell |fc| from a triangulation data structure |tds|.  */
-    typedef typename TDS::Full_cell_handle Full_cell_handle;
     typedef typename TDS::Vertex_handle Vertex_handle;
     typedef typename TDS::Face Face;
     const int dim = tds.current_dimension();
@@ -56,7 +55,6 @@ void find_face_from_vertices( const TDS & tds,
 { /* The main goal of this function is to find a full cell that
      contains a given set of vertices |face_vertices|. Then, it
      builds a corresponding |face|. */
-    typedef typename TDS::Face                    Face;
     typedef typename TDS::Vertex_handle           Vertex_handle;
     typedef typename TDS::Full_cell_handle        Full_cell_handle;
     typedef typename TDS::Full_cell::Vertex_handle_iterator Vertex_h_iterator;

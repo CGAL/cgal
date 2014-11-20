@@ -1226,11 +1226,8 @@ operator>>(std::istream & is, Triangulation<TT, TDS> & tr)
   // of vertices, plus the non combinatorial information on each full_cell
   // - the neighbors of each full_cell by their index in the preceding list
 {
-    typedef Triangulation<TT, TDS> T;
+    typedef Triangulation<TT, TDS>            T;
     typedef typename T::Vertex_handle         Vertex_handle;
-    typedef typename T::Vertex_iterator       Vertex_iterator;
-    typedef typename T::Full_cell_handle        Full_cell_handle;
-    typedef typename T::Full_cell_iterator      Full_cell_iterator;
 
     // read current dimension and number of vertices
     size_t n;
@@ -1284,8 +1281,6 @@ operator<<(std::ostream & os, const Triangulation<TT, TDS> & tr)
     typedef Triangulation<TT, TDS> T;
     typedef typename T::Vertex_const_handle         Vertex_handle;
     typedef typename T::Vertex_const_iterator       Vertex_iterator;
-    typedef typename T::Full_cell_const_handle        Full_cell_handle;
-    typedef typename T::Full_cell_const_iterator      Full_cell_iterator;
 
     // outputs dimensions and number of vertices
     size_t n = tr.number_of_vertices();
