@@ -294,8 +294,12 @@ MainWindow::MainWindow()
   QObject::connect(this, SIGNAL(changed()),
 		   dgi, SLOT(modelChanged()));
 
-  dgi->setVerticesPen(QPen(Qt::red, 3, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
-  dgi->setVoronoiPen(QPen(Qt::darkGreen, 0, Qt::DashLine, Qt::RoundCap, Qt::RoundJoin));
+  dgi->setVerticesPen(
+    QPen(Qt::red, 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+  dgi->setVoronoiPen(
+    QPen(Qt::darkGreen, 0, Qt::DashLine, Qt::RoundCap, Qt::RoundJoin));
+  dgi->setSeedsPen(
+    QPen(Qt::darkBlue, 3, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
 
   dgi->setZValue(-1);
   scene.addItem(dgi);

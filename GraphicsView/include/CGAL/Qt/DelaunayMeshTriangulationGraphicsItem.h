@@ -119,6 +119,16 @@ public:
     voronoi_pen = pen;
   }
 
+  const QPen& seedsPen() const
+  {
+    return seeds_pen;
+  }
+
+  void setSeedsPen(const QPen& pen)
+  {
+    seeds_pen = pen;
+  }
+
   bool visibleVoronoiEdges() const
   {
     return visible_voronoi;
@@ -142,6 +152,7 @@ protected:
   QBrush in_domain_brush;
   QBrush blind_brush;
   QPen voronoi_pen;
+  QPen seeds_pen;
 };
 
 template <typename T>
@@ -199,7 +210,7 @@ DelaunayMeshTriangulationGraphicsItem<T>::drawAll(QPainter *painter)
   if(this->visibleSeeds())
   {
     painter->setBrush(::Qt::SolidPattern);
-    painter->setPen(::Qt::darkRed);
+    painter->setPen(this->seedsPen());
     this->painterostream = PainterOstream<typename T::Geom_traits>(painter);
     typename std::list<Point>::iterator sit;
     for(sit = seeds_begin; sit != seeds_end; ++sit)
