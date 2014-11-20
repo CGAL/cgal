@@ -712,17 +712,21 @@ MainWindow::on_actionMakeDelaunayMesh_triggered()
   timer.start();
   initializeID(cdt);
   discoverComponents(cdt, m_seeds);
+  timer.stop();
+  QApplication::restoreOverrideCursor();
 
   bool ok;
-  double d = QInputDialog::getDouble(this, tr("Shape criterion"),
+  double shape = QInputDialog::getDouble(this, tr("Shape criterion"),
     tr("B = "), 0.125, 0.005, 100, 4, &ok);
-  double shape = ok ? d : 0.125;
+  if(!ok) return;
 
-  d = QInputDialog::getDouble(this, tr("Size criterion"),
+  double edge_len = QInputDialog::getDouble(this, tr("Size criterion"),
     tr("S = "), 0., 0., std::numeric_limits<double>::max(), 5, &ok);
-  double edge_len = ok ? d : 0.;
+  if(!ok) return;
 
+  QApplication::setOverrideCursor(Qt::WaitCursor);
   std::size_t nv = cdt.number_of_vertices();
+  timer.start();
 
   CGAL::refine_Delaunay_mesh_2(cdt,
       m_seeds.begin(), m_seeds.end(),
@@ -737,7 +741,6 @@ MainWindow::on_actionMakeDelaunayMesh_triggered()
   // default cursor
   QApplication::restoreOverrideCursor();
   emit(changed());
-
 }
 
 void
