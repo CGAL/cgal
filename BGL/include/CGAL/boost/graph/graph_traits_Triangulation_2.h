@@ -397,11 +397,25 @@ namespace CGAL {
   template <class Gt, class Tds>
   typename boost::graph_traits< Triangulation_2<Gt,Tds> >::halfedge_descriptor
   halfedge(typename boost::graph_traits< Triangulation_2<Gt,Tds> >::face_descriptor f,
-         const Triangulation_2<Gt,Tds>& g)
+           const Triangulation_2<Gt,Tds>& g)
   {
     typedef typename boost::graph_traits< Triangulation_2<Gt,Tds> >::halfedge_descriptor halfedge_descriptor;
     return halfedge_descriptor(f,0);
   }
+
+
+  template <class Gt, class Tds>
+  typename boost::graph_traits< Triangulation_2<Gt,Tds> >::halfedge_descriptor
+  halfedge(typename boost::graph_traits< Triangulation_2<Gt,Tds> >::vertex_descriptor v,
+           const Triangulation_2<Gt,Tds>& g)
+  {
+    typedef typename boost::graph_traits< Triangulation_2<Gt,Tds> >::halfedge_descriptor halfedge_descriptor;
+    typedef typename boost::graph_traits< Triangulation_2<Gt,Tds> >::face_descriptor face_descriptor;
+    face_descriptor fd = v->face();
+    int i = fd->index(v);
+    return halfedge_descriptor(fd,g.ccw(i));
+  }
+
 
   template <class Gt, class Tds>
   inline std::pair<

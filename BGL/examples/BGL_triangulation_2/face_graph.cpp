@@ -1,9 +1,11 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Triangulation_2.h>
 #include <CGAL/boost/graph/graph_traits_Triangulation_2.h>
+#include <CGAL/boost/graph/iterator.h>
 
 #include <CGAL/boost/graph/dijkstra_shortest_paths.h>
 #include <boost/graph/filtered_graph.hpp>
+#include <boost/foreach.hpp>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef K::Point_2 Point;
@@ -116,7 +118,14 @@ main(int,char*[])
 
   typedef boost::property_map<Triangulation, boost::vertex_point_t>::type Ppmap;
   Ppmap ppmap = get(boost::vertex_point, t);
+ 
+
+  BOOST_FOREACH(vertex_descriptor vd, vertices_around_target(*vertices(t).first, t)){
+    std::cout <<  ppmap[vd] << std::endl;
+  }
+
   ppmap[*(++vertices(t).first)] = Point(78,12);
-  std::cout << ppmap[*(++vertices(t).first)] << std::endl;
+  std::cout << " changed point of vertex " << ppmap[*(++vertices(t).first)] << std::endl;
+
   return 0;
 }
