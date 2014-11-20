@@ -4,7 +4,7 @@
 \cgalConcept
 
 The concept `TriangulationDSVertexBase_2` describes the requirements for the 
-vertex base class of a `Triangulation_data_structure_2<Vb,Fb>`. 
+vertex base class of a `CGAL::Triangulation_data_structure_2<Vb,Fb>`. 
 
 Note that if the `CGAL::Triangulation_data_structure_2` 
 is plugged into a triangulation class, 

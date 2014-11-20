@@ -96,6 +96,12 @@ struct Has_type_different_from <T, No, true>
 #endif
 
 	template<class T> struct Scale {
+#ifndef CGAL_CXX11
+		template<class> struct result;
+		template<class FT> struct result<Scale(FT)> {
+			typedef FT type;
+		};
+#endif
 		T const& scale;
 		Scale(T const& t):scale(t){}
 		template<class FT>

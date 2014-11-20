@@ -70,6 +70,9 @@ template <class Base_> struct Kernel_d_interface : public Base_ {
 	typedef typename Get_functor<Base, In_flat_side_of_oriented_sphere_tag>::type In_flat_side_of_oriented_sphere_d;
 	typedef typename Get_functor<Base, Point_to_vector_tag>::type Point_to_vector_d;
 	typedef typename Get_functor<Base, Vector_to_point_tag>::type Vector_to_point_d;
+	typedef typename Get_functor<Base, Scaled_vector_tag>::type Scaled_vector_d;
+	typedef typename Get_functor<Base, Difference_of_vectors_tag>::type Difference_of_vectors_d;
+	typedef typename Get_functor<Base, Difference_of_points_tag>::type Difference_of_points_d;
 	typedef typename Get_functor<Base, Construct_ttag<Point_tag> >::type Construct_point_d;
 	typedef typename Get_functor<Base, Construct_ttag<Vector_tag> >::type Construct_vector_d;
 	typedef typename Get_functor<Base, Construct_ttag<Segment_tag> >::type Construct_segment_d;
@@ -129,6 +132,8 @@ template <class Base_> struct Kernel_d_interface : public Base_ {
 	};
 	typedef typename Construct_cartesian_const_iterator_d::result_type Cartesian_const_iterator_d;
 	typedef typename Get_functor<Base, Squared_distance_tag>::type Squared_distance_d;
+	typedef typename Get_functor<Base, Squared_length_tag>::type Squared_length_d;
+	typedef typename Get_functor<Base, Scalar_product_tag>::type Scalar_product_d;
 	typedef typename Get_functor<Base, Affine_rank_tag>::type Affine_rank_d;
 	typedef typename Get_functor<Base, Affinely_independent_tag>::type Affinely_independent_d;
 	typedef typename Get_functor<Base, Contained_in_linear_hull_tag>::type Contained_in_linear_hull_d;
@@ -170,6 +175,9 @@ template <class Base_> struct Kernel_d_interface : public Base_ {
 	In_flat_side_of_oriented_sphere_d in_flat_side_of_oriented_sphere_d_object()const{ return In_flat_side_of_oriented_sphere_d(*this); }
 	Point_to_vector_d point_to_vector_d_object()const{ return Point_to_vector_d(*this); }
 	Vector_to_point_d vector_to_point_d_object()const{ return Vector_to_point_d(*this); }
+	Scaled_vector_d scaled_vector_d_object()const{ return Scaled_vector_d(*this); }
+	Difference_of_vectors_d difference_of_vectors_d_object()const{ return Difference_of_vectors_d(*this); }
+	Difference_of_points_d difference_of_points_d_object()const{ return Difference_of_points_d(*this); }
 	Affine_rank_d affine_rank_d_object()const{ return Affine_rank_d(*this); }
 	Affinely_independent_d affinely_independent_d_object()const{ return Affinely_independent_d(*this); }
 	Linear_base_d linear_base_d_object()const{ return Linear_base_d(*this); }
@@ -187,6 +195,8 @@ template <class Base_> struct Kernel_d_interface : public Base_ {
 	Construct_sphere_d construct_sphere_d_object()const{ return Construct_sphere_d(*this); }
 	Construct_hyperplane_d construct_hyperplane_d_object()const{ return Construct_hyperplane_d(*this); }
 	Squared_distance_d squared_distance_d_object()const{ return Squared_distance_d(*this); }
+	Squared_length_d squared_length_d_object()const{ return Squared_length_d(*this); }
+	Scalar_product_d scalar_product_d_object()const{ return Scalar_product_d(*this); }
 	Center_of_sphere_d center_of_sphere_d_object()const{ return Center_of_sphere_d(*this); }
 	Construct_direction_d construct_direction_d_object()const{ return Construct_direction_d(*this); }
 	Construct_line_d construct_line_d_object()const{ return Construct_line_d(*this); }
