@@ -90,6 +90,7 @@ public:
     , move_function_(move_function)
     , sizing_field_(cdt)
     , seeds_()
+    , seeds_mark_(false)
   {
   }
   
@@ -101,12 +102,15 @@ public:
       seeds.
   */
   template<typename InputIterator>
-  void set_seeds(InputIterator b, InputIterator e)
+  void set_seeds(InputIterator b,
+                 InputIterator e,
+                 const bool mark = false)
   {
     if(b != e)
     {
       seeds_.clear();
       std::copy(b, e, std::back_inserter(seeds_));
+      seeds_mark_ = mark;
     }
     std::cout << "seeds : " << seeds_.size() << std::endl;
   }
@@ -392,18 +396,15 @@ private:
 
   void after_move()
   {
-    std::cout << std::endl << "[AM] ";
     //update inside/outside tags
-    bool mark = false;
     typedef CGAL::Delaunay_mesh_size_criteria_2<CDT> Criteria;
     CGAL::Delaunay_mesher_2<CDT, Criteria>::mark_facets(cdt_,
       seeds_.begin(),
       seeds_.end(),
-      mark/*faces that are not in domain are tagged false*/);
+      seeds_mark_/*faces that are not in domain are tagged false*/);
     //Connected components of seeds are marked with the value of
     //  \a mark. Other components are marked with \c !mark. The connected
     //  component of infinite faces is always marked with \c false.
-    std::cout << seeds_.size() << " Ok" << std::endl;
   }
 
   void after_all_moves()
@@ -468,6 +469,7 @@ private:
   MoveFunction move_function_;
   Sizing_field sizing_field_;
   std::list<Point_2> seeds_;
+  bool seeds_mark_;
 
   double time_limit_;
   CGAL::Timer running_time_;
