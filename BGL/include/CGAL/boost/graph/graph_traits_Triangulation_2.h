@@ -296,6 +296,13 @@ namespace boost {
       {
         return (first != other.first) || (second != other.second);
       }
+
+      bool operator<(const halfedge_descriptor& other) const
+      {
+        if(first < other.first) return true;
+        if(first > other.first) return false;
+        return second  < other.second;
+      }
     };
 
     typedef typename CGAL::Triangulation_2<GT,TDS>::All_halfedges_iterator  halfedge_iterator;
@@ -316,6 +323,11 @@ namespace boost {
     typedef size_type halfedges_size_type;
     typedef size_type faces_size_type;
     typedef size_type degree_size_type;
+
+  // nulls
+  static vertex_descriptor   null_vertex() { return vertex_descriptor(); }
+  static face_descriptor     null_face()   { return face_descriptor(); }
+  static halfedge_descriptor     null_halfedge()   { return halfedge_descriptor(); }
   };
 
 
@@ -403,7 +415,6 @@ namespace CGAL {
     return halfedge_descriptor(f,0);
   }
 
-
   template <class Gt, class Tds>
   typename boost::graph_traits< Triangulation_2<Gt,Tds> >::halfedge_descriptor
   halfedge(typename boost::graph_traits< Triangulation_2<Gt,Tds> >::vertex_descriptor v,
@@ -414,6 +425,24 @@ namespace CGAL {
     face_descriptor fd = v->face();
     int i = fd->index(v);
     return halfedge_descriptor(fd,g.ccw(i));
+  }
+
+  template <class Gt, class Tds>
+  typename boost::graph_traits< Triangulation_2<Gt,Tds> >::halfedge_descriptor
+  halfedge(typename boost::graph_traits< Triangulation_2<Gt,Tds> >::edge_descriptor e,
+           const Triangulation_2<Gt,Tds>& g)
+  {
+    typedef typename boost::graph_traits< Triangulation_2<Gt,Tds> >::halfedge_descriptor halfedge_descriptor;
+    return halfedge_descriptor(e.first,e.second);
+  }
+
+  template <class Gt, class Tds>
+  typename boost::graph_traits< Triangulation_2<Gt,Tds> >::edge_descriptor
+  edge(typename boost::graph_traits< Triangulation_2<Gt,Tds> >::halfedge_descriptor e,
+           const Triangulation_2<Gt,Tds>& g)
+  {
+    typedef typename boost::graph_traits< Triangulation_2<Gt,Tds> >::edge_descriptor edge_descriptor;
+    return edge_descriptor(e.first,e.second);
   }
 
 
@@ -603,7 +632,7 @@ namespace CGAL {
 
   template <class Gt, class Tds>
   class T2_vertex_point_map
-    : public boost::put_get_helper<typename Tds::Vertex::Point, T2_vertex_id_map<Gt,Tds> >
+    : public boost::put_get_helper<typename Tds::Vertex::Point, T2_vertex_point_map<Gt,Tds> >
   {
   public:
     typedef boost::readable_property_map_tag category;
