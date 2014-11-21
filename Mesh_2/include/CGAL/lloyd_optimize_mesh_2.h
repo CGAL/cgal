@@ -5,6 +5,8 @@
 #include <CGAL/Mesh_2/Lloyd_move_2.h>
 #include <CGAL/Mesh_2/Mesh_sizing_field.h>
 #include <CGAL/Mesh_optimization_return_code.h>
+#include <CGAL/iterator.h>
+
 #include <fstream>
 
 #include <boost/parameter.hpp>
@@ -30,18 +32,42 @@ namespace CGAL
     (convergence_, *, 0.001 )
     (time_limit_, *, 0. )
     (freeze_bound_, *, 0.001 )
-    (seeds_begin_, *, NULL)
-    (seeds_end_, *, NULL)
+    (seeds_begin_, *, CGAL::Emptyset_iterator())//see comments below
+    (seeds_end_, *, CGAL::Emptyset_iterator())//see comments below
     )
   )
   {
     return lloyd_optimize_mesh_2_impl(cdt,
-      max_iteration_number_,
-      convergence_,
-      freeze_bound_,
-      time_limit_,
-      seeds_begin_,
-      seeds_end_);
+                                      max_iteration_number_,
+                                      convergence_,
+                                      freeze_bound_,
+                                      time_limit_,
+                                      seeds_begin_,
+                                      seeds_end_);
+  }
+
+  /**
+  * this partial specialization is a workaround
+  * to avoid compilation errors when seeds_begin and seeds_end are
+  * not initialized. Indeed, there is no way to have a
+  * "default empty iterator" for these named parameters.
+  * Emptyset_iterator implements OutputIterator, 
+  * but stands here for "any empty input iterator"
+  * (and any other type could).
+  */
+  template<typename CDT>
+  Mesh_optimization_return_code
+  lloyd_optimize_mesh_2_impl(CDT& cdt,
+                             const int max_iterations,
+                             const double convergence_ratio,
+                             const double freeze_bound,
+                             const double time_limit,
+                             CGAL::Emptyset_iterator,
+                             CGAL::Emptyset_iterator)
+  {
+    std::list<typename CDT::Point> seeds;
+    return lloyd_optimize_mesh_2_impl(cdt, max_iterations, convergence_ratio,
+      freeze_bound, time_limit, seeds.begin(), seeds.end());
   }
 
   template<typename CDT, typename InputIterator>
