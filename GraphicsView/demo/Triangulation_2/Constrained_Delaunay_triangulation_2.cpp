@@ -51,56 +51,7 @@ typedef K::Iso_rectangle_2 Iso_rectangle_2;
 typedef CGAL::Delaunay_mesh_vertex_base_2<K>  Vertex_base;
 typedef CGAL::Delaunay_mesh_face_base_2<K> Face_base;
 
-template <class Gt,
-          class Fb >
-class Enriched_face_base_2 : public Fb {
-public:
-  typedef Gt Geom_traits;
-  typedef typename Fb::Vertex_handle Vertex_handle;
-  typedef typename Fb::Face_handle Face_handle;
-
-  template < typename TDS2 >
-  struct Rebind_TDS {
-    typedef typename Fb::template Rebind_TDS<TDS2>::Other Fb2;
-    typedef Enriched_face_base_2<Gt,Fb2> Other;
-  };
-
-protected:
-  int status;
-
-public:
-  Enriched_face_base_2(): Fb(), status(-1) {};
-
-  Enriched_face_base_2(Vertex_handle v0, 
-		       Vertex_handle v1, 
-		       Vertex_handle v2)
-    : Fb(v0,v1,v2), status(-1) {};
-
-  Enriched_face_base_2(Vertex_handle v0, 
-		       Vertex_handle v1, 
-		       Vertex_handle v2,
-		       Face_handle n0, 
-		       Face_handle n1, 
-		       Face_handle n2)
-    : Fb(v0,v1,v2,n0,n1,n2), status(-1) {};
-
-  inline
-  bool is_in_domain() const { return (status%2 == 1); };
-
-  inline
-  void set_in_domain(const bool b) { status = (b ? 1 : 0); };
-
-  inline 
-  void set_counter(int i) { status = i; };
-
-  inline 
-  int counter() const { return status; };
-
-  inline 
-  int& counter() { return status; };
-}; // end class Enriched_face_base_2
-
-typedef Enriched_face_base_2<K, Face_base> Fb;
+typedef Face_base Fb;
 typedef CGAL::Triangulation_data_structure_2<Vertex_base, Fb>  TDS;
 typedef CGAL::Exact_predicates_tag              Itag;
 typedef CGAL::Constrained_Delaunay_triangulation_2<K, TDS, Itag> CDT;
@@ -117,44 +68,25 @@ typedef CDT::All_faces_iterator All_faces_iterator;
 
 
 void
-initializeID(const CDT& ct)
+discoverInfiniteComponent(const CDT & ct)
 {
-  for(All_faces_iterator it = ct.all_faces_begin(); it != ct.all_faces_end(); ++it){
-    it->set_counter(-1);
-  }
-}
-
-
-void 
-discoverComponent(const CDT & ct, 
-		  Face_handle start, 
-		  int index, 
-		  std::list<CDT::Edge>& border )
-{
-  if(start->counter() != -1){
-    return;
-  }
+  //when this function is called, all faces are set "in_domain"
+  Face_handle start = ct.infinite_face();
   std::list<Face_handle> queue;
   queue.push_back(start);
 
-  while(! queue.empty()){
+  while(! queue.empty())
+  {
     Face_handle fh = queue.front();
     queue.pop_front();
-    if(fh->counter() == -1){
-      fh->counter() = index;
-      fh->set_in_domain(index%2 == 1);
-      for(int i = 0; i < 3; i++){
-	CDT::Edge e(fh,i);
-	Face_handle n = fh->neighbor(i);
-	if(n->counter() == -1){
-	  if(ct.is_constrained(e)){
-	    border.push_back(e);
-	  } else {
-	    queue.push_back(n);
-	  }
-	}
-	
-      }
+    fh->set_in_domain(false);
+
+    for(int i = 0; i < 3; i++)
+    {
+      Face_handle fi = fh->neighbor(i);
+      if(fi->is_in_domain()
+        && !ct.is_constrained(CDT::Edge(fh,i)))
+        queue.push_back(fi);
     }
   }
 }
@@ -164,20 +96,19 @@ void
 discoverComponents(const CDT & ct,
                    const SeedList& seeds)
 {
-  if (ct.dimension()!=2) return;
-  int index = 0;
-  std::list<CDT::Edge> border;
-  discoverComponent(ct, ct.infinite_face(), index++, border);
-  while(! border.empty()){
-    CDT::Edge e = border.front();
-    border.pop_front();
-    Face_handle n = e.first->neighbor(e.second);
-    if(n->counter() == -1){
-      discoverComponent(ct, n, e.first->counter()+1, border);
-    }
-  }
+  if (ct.dimension() != 2)
+    return;
 
-  //mark components with a seed
+  // tag all faces inside
+  for(CDT::All_faces_iterator fit = ct.all_faces_begin();
+      fit != ct.all_faces_end();
+      ++fit)
+      fit->set_in_domain(true);
+
+  // mark "outside" infinite component of the object
+  discoverInfiniteComponent(ct);
+
+  // mark "outside" components with a seed
   for(SeedList::const_iterator sit = seeds.begin();
       sit != seeds.end();
       ++sit)
@@ -331,9 +262,9 @@ MainWindow::MainWindow()
   dgi->setVerticesPen(
     QPen(Qt::red, 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
   dgi->setVoronoiPen(
-    QPen(Qt::darkGreen, 0, Qt::DashLine, Qt::RoundCap, Qt::RoundJoin));
+    QPen(Qt::darkGreen, 2, Qt::DashLine, Qt::RoundCap, Qt::RoundJoin));
   dgi->setSeedsPen(
-    QPen(Qt::darkBlue, 3, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+    QPen(Qt::darkBlue, 5, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
 
   dgi->setZValue(-1);
   scene.addItem(dgi);
@@ -368,7 +299,7 @@ MainWindow::MainWindow()
   this->actionShow_faces_in_domain->setChecked(true);
   this->actionShow_constrained_edges->setChecked(true);
   this->actionShow_voronoi_edges->setChecked(false);
-  this->actionShow_seeds->setChecked(true);
+  this->actionShow_seeds->setChecked(false);
   this->actionInsertSeeds_OnOff->setChecked(false);
 
   //
@@ -419,7 +350,6 @@ MainWindow::processInput(CGAL::Object o)
     }
   }
 
-  initializeID(cdt);
   discoverComponents(cdt, m_seeds);
   emit(changed());
 }
@@ -551,7 +481,6 @@ MainWindow::loadFile(QString fileName)
   std::ifstream ifs(qPrintable(fileName));
   ifs >> cdt;
   if(!ifs) abort();
-  initializeID(cdt);
   discoverComponents(cdt, m_seeds);
   emit(changed());
   actionRecenter->trigger();
@@ -586,8 +515,6 @@ MainWindow::loadPolygonConstraints(QString fileName)
     }
   }
   
-  
-  initializeID(cdt);
   discoverComponents(cdt, m_seeds);
   emit(changed());
   actionRecenter->trigger();
@@ -631,7 +558,6 @@ MainWindow::loadEdgConstraints(QString fileName)
 
   tim.stop();
   statusBar()->showMessage(QString("Insertion took %1 seconds").arg(tim.time()), 2000);
-  initializeID(cdt);
   discoverComponents(cdt, m_seeds);
   // default cursor
   QApplication::restoreOverrideCursor();
@@ -677,7 +603,6 @@ MainWindow::on_actionMakeGabrielConform_triggered()
   std::size_t nv = cdt.number_of_vertices();
   CGAL::make_conforming_Gabriel_2(cdt);
   nv = cdt.number_of_vertices() - nv;
-  initializeID(cdt);
   discoverComponents(cdt, m_seeds);
   statusBar()->showMessage(QString("Added %1 vertices").arg(nv), 2000);
   // default cursor
@@ -693,7 +618,6 @@ MainWindow::on_actionMakeDelaunayConform_triggered()
   QApplication::setOverrideCursor(Qt::WaitCursor);
   std::size_t nv = cdt.number_of_vertices();
   CGAL::make_conforming_Delaunay_2(cdt);
-  initializeID(cdt);
   discoverComponents(cdt, m_seeds);
   nv = cdt.number_of_vertices() - nv;
   statusBar()->showMessage(QString("Added %1 vertices").arg(nv), 2000);
@@ -710,7 +634,6 @@ MainWindow::on_actionMakeDelaunayMesh_triggered()
   QApplication::setOverrideCursor(Qt::WaitCursor);
   CGAL::Timer timer;
   timer.start();
-  initializeID(cdt);
   discoverComponents(cdt, m_seeds);
   timer.stop();
   QApplication::restoreOverrideCursor();
@@ -735,8 +658,6 @@ MainWindow::on_actionMakeDelaunayMesh_triggered()
 
   timer.stop();
   nv = cdt.number_of_vertices() - nv;
-  initializeID(cdt);
-  discoverComponents(cdt, m_seeds);
   statusBar()->showMessage(QString("Added %1 vertices in %2 seconds").arg(nv).arg(timer.time()), 2000);
   // default cursor
   QApplication::restoreOverrideCursor();
@@ -759,7 +680,6 @@ MainWindow::on_actionMakeLipschitzDelaunayMesh_triggered()
     }
   }
 
-  initializeID(cdt);
   discoverComponents(cdt, m_seeds);
 
   bool ok;
