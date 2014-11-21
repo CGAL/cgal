@@ -1,0 +1,10 @@
+@INCLUDE = ${CGAL_DOC_PACKAGE_DEFAULTS}
+
+PROJECT_NAME =  "CGAL ${CGAL_CREATED_VERSION_NUM} - Hole Filling"
+INPUT =  ${CMAKE_SOURCE_DIR}/Hole_filling/doc/Hole_filling/ \
+         ${CMAKE_SOURCE_DIR}/Hole_filling/include
+
+# custom options for this package
+EXTRACT_ALL                =  false
+HIDE_UNDOC_CLASSES         =  true
+WARN_IF_UNDOCUMENTED       =  false

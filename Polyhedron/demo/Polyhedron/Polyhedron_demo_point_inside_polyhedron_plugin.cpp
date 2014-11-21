@@ -6,7 +6,7 @@
 #include "Scene_points_with_normal_item.h"
 #include "Scene_interface.h"
 
-#include "Polyhedron_demo_plugin_interface.h"
+#include "Polyhedron_demo_plugin_helper.h"
 #include "Polyhedron_type.h"
 
 #include <CGAL/Timer.h>
@@ -30,7 +30,7 @@ typedef CGAL::Exact_predicates_inexact_constructions_kernel Epic_kernel;
 
 class Polyhedron_demo_point_inside_polyhedron_plugin :
   public QObject,
-  public Polyhedron_demo_plugin_interface
+  public Polyhedron_demo_plugin_helper
 {
   Q_OBJECT
   Q_INTERFACES(Polyhedron_demo_plugin_interface)
@@ -64,12 +64,12 @@ public:
 
     dock_widget = new QDockWidget("Point Inside Polyhedron", mw);
     dock_widget->setVisible(false);
-    ui_widget = new Ui::Point_inside_polyhedron();
-    ui_widget->setupUi(dock_widget);
-    mw->addDockWidget(Qt::LeftDockWidgetArea, dock_widget);
+    ui_widget.setupUi(dock_widget);
 
-    connect(ui_widget->Select_button,  SIGNAL(clicked()), this, SLOT(on_Select_button())); 
-    connect(ui_widget->Sample_random_points_from_bbox,  SIGNAL(clicked()), this, SLOT(on_Sample_random_points_from_bbox())); 
+    add_dock_widget(dock_widget);
+
+    connect(ui_widget.Select_button,  SIGNAL(clicked()), this, SLOT(on_Select_button())); 
+    connect(ui_widget.Sample_random_points_from_bbox,  SIGNAL(clicked()), this, SLOT(on_Sample_random_points_from_bbox())); 
     
   }
 private:
@@ -81,12 +81,16 @@ private:
   };
 
 public slots:
-  void point_inside_polyhedron_action() { dock_widget->show(); }
+  void point_inside_polyhedron_action() { 
+    dock_widget->show();
+    dock_widget->raise();
+  }
+
   void on_Select_button() 
   {
-    bool inside = ui_widget->Inside_check_box->isChecked();
-    bool on_boundary = ui_widget->On_boundary_check_box->isChecked();
-    bool outside = ui_widget->Outside_check_box->isChecked();
+    bool inside = ui_widget.Inside_check_box->isChecked();
+    bool on_boundary = ui_widget.On_boundary_check_box->isChecked();
+    bool outside = ui_widget.Outside_check_box->isChecked();
 
     if(!(inside || on_boundary || outside)) {
       print_message("Error: please check at least one parameter check box.");
@@ -217,13 +221,11 @@ public slots:
     scene->addItem(point_item);
   }
 private:
-  QMainWindow* mw;
-  Scene_interface* scene;
   Messages_interface* messages;
   QAction* actionPointInsidePolyhedron;
 
   QDockWidget* dock_widget;
-  Ui::Point_inside_polyhedron* ui_widget;
+  Ui::Point_inside_polyhedron ui_widget;
 
 }; // end Polyhedron_demo_point_inside_polyhedron_plugin
 
