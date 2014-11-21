@@ -38,6 +38,9 @@ if( NOT CGAL_TweakFindBoost )
     set(CGAL_Boost_USE_STATIC_LIBS_DEFAULT OFF)
   endif()
 
+  option(Boost_DEBUG "Activate the debug messages of the script FindBoost" OFF)
+  mark_as_advanced(Boost_DEBUG)
+
   option(CGAL_Boost_USE_STATIC_LIBS "Link with static Boost libraries" ${CGAL_Boost_USE_STATIC_LIBS_DEFAULT})
   mark_as_advanced(CGAL_Boost_USE_STATIC_LIBS)
 
