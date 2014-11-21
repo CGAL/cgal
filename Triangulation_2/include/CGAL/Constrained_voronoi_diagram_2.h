@@ -297,15 +297,6 @@ private:
     }
   }
 
-  void tag_faces_location(const int location)
-  {
-    for(All_faces_iterator f = all_faces_begin();
-      f != all_faces_end();
-      f++)
-      f->location() = location;
-  }
-
-
   /*--------------------------------------------------------------
   ---------------------- BVD CONSTRUCTION ------------------------
   --------------------------------------------------------------*/
@@ -408,20 +399,9 @@ private:
   OutputIterator infinite_cvd_cell(Vertex_handle v,
                                    OutputIterator oit) const
   {
+    //TODO
     return oit;
   }
-
-  ////returns true IFF generator's cell is clipped by at least one constrained Edge
-  //bool bvd_cell_is_clipped(const Vertex_handle generator)
-  //{
-  //  Face_circulator face = m_pCdt->incident_faces(generator);
-  //  Face_circulator begin = face;
-  //  CGAL_For_all(face, begin){
-  //    if(face->blind())
-  //      return true;
-  //  }
-  //  return false;
-  //}
 
   //returns true iff generators's cell is on the convex hull
   bool bvd_cell_is_infinite(const Vertex_handle generator) const

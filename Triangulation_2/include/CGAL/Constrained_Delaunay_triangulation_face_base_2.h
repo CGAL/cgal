@@ -21,13 +21,7 @@ public:
   typedef typename Kernel::Point_2      Point;
   typedef typename Kernel::Segment_2    Segment;
 
-public:
-  enum {INSIDE = -1,
-        UNDETERMINED = 0,
-        OUTSIDE = 1};
-
 private:
-  int m_location; // inside / outside / undetermined
   bool m_blind;
   Edge m_blinding_constraint;
 
@@ -42,7 +36,6 @@ public:
 public:
   CDT_face_base()
     : Base(),
-      m_location(UNDETERMINED),
       m_blind(false)
   {
   }
@@ -50,7 +43,6 @@ public:
                 Vertex_handle v2,
                 Vertex_handle v3)
     : Base(v1,v2,v3),
-      m_location(UNDETERMINED),
       m_blind(false)
   {
   }
@@ -61,20 +53,14 @@ public:
                 Face_handle f2,
                 Face_handle f3)
     : Base(v1,v2,v3,f1,f2,f3),
-      m_location(UNDETERMINED),
       m_blind(false)
   {
   }
   CDT_face_base(Face_handle f)
     : Base(f),
-      m_location(f->location()),
       m_blind(false)
   {
   }
-
-  // inside/outside/undetermined
-  const int location() const { return m_location; }
-  int& location() { return m_location; }
 
   // sees its circumcenter or not?
   const bool& blind() const { return m_blind; }
@@ -84,7 +70,6 @@ public:
   // to see its circumcenter 
   const Edge& blinding_constraint() const { return m_blinding_constraint; }
   Edge& blinding_constraint() { return m_blinding_constraint; }
-
 };
 
 } //namespace CGAL 
