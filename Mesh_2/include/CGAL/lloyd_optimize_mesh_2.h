@@ -71,7 +71,7 @@ namespace CGAL
   {
     std::list<typename CDT::Point> seeds;
     return lloyd_optimize_mesh_2_impl(cdt, max_iterations, convergence_ratio,
-      freeze_bound, time_limit, seeds.begin(), seeds.end());
+      freeze_bound, time_limit, seeds.begin(), seeds.end(), mark);
   }
 
   template<typename CDT, typename InputIterator>
