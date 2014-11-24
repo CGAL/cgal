@@ -5,7 +5,7 @@ namespace CGAL {
 \ingroup PkgModularArithmetic
 \anchor Residue 
 
-\brief The class `Residue` represents a finite field \f$ \Z{/p\Z}\f$, 
+\brief The class `Residue` represents a finite field \f$ \mathbb{Z}{/p\mathbb{Z}}\f$, 
 for some prime number \f$ p\f$. 
 
 The prime number \f$ p\f$ is stored in a static member variable. 
@@ -14,10 +14,16 @@ However, already existing objects do not lose their value with respect to the
 old prime and can be reused after restoring the old prime. 
 Since the type is based on double 
 arithmetic the prime is restricted to values less than \f$ 2^{26}\f$. 
-The initial value of \f$ p\f$ is 67111067. 
+The initial value of \f$ p\f$ is 67108859.
 
 \attention Note that changing the prime invalidates already existing objects 
 of this type.
+
+\cgalAdvancedBegin
+The default primes \f$ p\f$ satisfy the additional property that \f$ 2\f$ is a
+primitive root of unity of maximum order (i.e., \f$ p-1\f$) in \f$ \mathbb{Z}{/p\mathbb{Z}}\f$.
+Equivalently, \f$ 2\f$ generates the multiplicative group \f$ (\mathbb{Z}{/p\mathbb{Z}})^\times\f$.
+\cgalAdvancedEnd
 
 Please note that the implementation of class `Residue` requires a mantissa 
 precision according to the IEEE Standard for Floating-Point Arithmetic (IEEE 754). 
