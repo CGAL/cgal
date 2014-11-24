@@ -6,6 +6,7 @@
 #include <fstream>
 #include <string>
 #include <CGAL/Timer.h>
+#include <CGAL/IO/io.h>
 #include <boost/lexical_cast.hpp>
 
 
@@ -27,7 +28,7 @@ int main(int argc, char* argv[])
     std::cerr << "operator"<< std::endl;
     t.start();
     for(int i=0; i<n; i++){
-      CGAL::extract(std::cin, d);
+      std::cin >> d;
       sum+= d;
     }
     t.stop();
@@ -64,6 +65,16 @@ int main(int argc, char* argv[])
     for(int i=0; i<n; i++){
       std::cin >> sd;
       sscanf(sd.c_str(),"%lf", &d);
+      sum+= d;
+    }
+    t.stop();
+  } 
+
+  if(choice == 4){
+    std::cerr << "iformat"<< std::endl;
+    t.start();
+    for(int i=0; i<n; i++){
+      std::cin >> CGAL::iformat(d);
       sum+= d;
     }
     t.stop();
