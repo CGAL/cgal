@@ -8,7 +8,7 @@
 namespace CGAL {
 
 template <class Cdt>
-class Cvd_cell
+class Cvd_cell_2
 {
   typedef typename Cdt::Vertex_handle    Vertex_handle;
 
@@ -29,14 +29,14 @@ private:
   bool m_is_valid;
   
 public:
-  Cvd_cell(Vertex_handle v)
+  Cvd_cell_2(Vertex_handle v)
     : m_vertex(v)
     , m_segments()
     , m_rays()
     , m_is_valid(false)
   { }
 
-  bool operator<(const Cvd_cell& cell) const
+  bool operator<(const Cvd_cell_2& cell) const
   {
     return m_vertex < cell.vertex();
   };
@@ -123,19 +123,19 @@ public:
   }
   );//end CGAL_assertion_code
 
-}; //end CLASS Cvd_cell
+}; //end CLASS Cvd_cell_2
 
 
 // Cdt should be of the type Constrained_Delaunay_triangulation_face_base_2
 template <class Cdt>
 class Constrained_voronoi_diagram_2
-  : public std::list< Cvd_cell<Cdt> >
+  : public std::list< Cvd_cell_2<Cdt> >
 {
-  typedef std::list< Cvd_cell<Cdt> > Base;
+  typedef std::list< Cvd_cell_2<Cdt> > Base;
 
 public:
-  typedef Constrained_voronoi_diagram_2<Cdt>         Cvd; 
-  typedef typename Cvd_cell<Cdt>                     Cvd_cell;
+  typedef Constrained_voronoi_diagram_2<Cdt>         Cvd;
+  typedef Cvd_cell_2<Cdt>                            Cvd_cell;
   typedef typename Cvd_cell::Construction_dispatcher Construction_dispatcher;
 
 public:
