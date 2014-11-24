@@ -130,8 +130,8 @@ public:
         moving_vertices.insert(vit);
     }
 
-#ifdef CGAL_MESH_2_OPTIMIZER_VERBOSE
   double initial_vertices_nb = static_cast<double>(moving_vertices.size());
+#ifdef CGAL_MESH_2_OPTIMIZER_VERBOSE
   double step_begin = running_time_.time();
   std::cerr << "Running " << Mf::name() << "-smoothing..." << std::endl;
   std::cerr << "(" << initial_vertices_nb << " vertices moving)" << std::endl;
