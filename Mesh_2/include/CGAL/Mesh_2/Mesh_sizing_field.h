@@ -106,8 +106,8 @@ private:
 
   FT average_incident_edge_length(const Vertex_handle& v) const
   {
-    typename CDT::Edge_circulator ec = tr_.incident_edges(v);
-    typename CDT::Edge_circulator end = ec;
+    typename Tr::Edge_circulator ec = tr_.incident_edges(v);
+    typename Tr::Edge_circulator end = ec;
 
     FT sum_len(0.);
     FT nb = 0.;
