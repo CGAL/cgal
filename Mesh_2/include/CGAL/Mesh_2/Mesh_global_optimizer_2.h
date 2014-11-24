@@ -112,7 +112,6 @@ public:
       std::copy(b, e, std::back_inserter(seeds_));
       seeds_mark_ = mark;
     }
-    std::cout << "seeds : " << seeds_.size() << std::endl;
   }
 
   Mesh_optimization_return_code operator()(const int nb_iterations)
