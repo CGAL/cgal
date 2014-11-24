@@ -208,9 +208,9 @@ void Volume::search_for_connected_components(PointsOutputIterator it,
 					     DomainsOutputIterator dom_it,
 					     TransformOperator transform)
 {
-  const unsigned int nx = m_image.xdim();
-  const unsigned int ny = m_image.ydim();
-  const unsigned int nz = m_image.zdim();
+  const std::size_t nx = m_image.xdim();
+  const std::size_t ny = m_image.ydim();
+  const std::size_t nz = m_image.zdim();
 
   const double max_v = (std::max)((std::max)(m_image.vx(),
                                              m_image.vy()),
@@ -220,14 +220,15 @@ void Volume::search_for_connected_components(PointsOutputIterator it,
   typedef typename TransformOperator::result_type Label;
 
   boost::multi_array<Marker, 3> visited(boost::extents[nx][ny][nz]);
-  typedef boost::tuple<int, int, int, int> Indices;
-  typedef std::queue<Indices> Indices_queue;
-  typedef std::vector<Indices> Border_vector;
+  typedef boost::tuple<std::size_t, std::size_t, std::size_t, std::size_t>
+                                Indices;
+  typedef std::queue<Indices>   Indices_queue;
+  typedef std::vector<Indices>  Border_vector;
 
   int number_of_connected_components = 0;
-  for(unsigned int i=0;i<nx;i++)
-    for(unsigned int j=0;j<ny;j++)
-      for(unsigned int k=0;k<nz;k++)
+  for(std::size_t i=0; i<nx; i++)
+    for(std::size_t j=0; j<ny; j++)
+      for(std::size_t k=0; k<nz; k++)
       {
         if(visited[i][j][k]>0)
           continue;
@@ -272,10 +273,10 @@ void Volume::search_for_connected_components(PointsOutputIterator it,
           queue.pop();
 
           // warning: those indices i, j and k are local to the while loop
-          const int i = boost::get<0>(indices);
-          const int j = boost::get<1>(indices);
-          const int k = boost::get<2>(indices);
-          const int depth = boost::get<3>(indices);
+          const std::size_t i = boost::get<0>(indices);
+          const std::size_t j = boost::get<1>(indices);
+          const std::size_t k = boost::get<2>(indices);
+          const std::size_t depth = boost::get<3>(indices);
 
           if(visited[i][j][k] < pass)
           {
