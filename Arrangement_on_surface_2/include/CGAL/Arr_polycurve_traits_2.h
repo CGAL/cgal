@@ -67,6 +67,17 @@ namespace CGAL {
      Top_side_category, Right_side_category>::result
     Are_all_sides_oblivious_tag;
 
+    //linear traits
+    typedef typename Arr_has_open_sides_two
+    <Left_side_category, Top_side_category>::result Arr_two_open_side_tag;
+
+    //geodesic on spheres
+    typedef typename Arr_has_contracted_sides_two
+    <Bottom_side_category, Top_side_category>::result Arr_two_contracted_sides_tag;
+
+    typedef typename Arr_has_identified_sides
+    <Left_side_category, Right_side_category>::result Arr_two_identified_sides_tag;
+
   private:
     typedef Arr_polycurve_traits_2<Geometry_traits_2>  Self;
 
@@ -937,6 +948,69 @@ namespace CGAL {
     Construct_opposite_2 construct_opposite_2_object() const
     { return Construct_opposite_2(*this); }
 
+
+
+
+
+
+
+
+
+
+
+
+
+    class Test {
+    protected:
+      typedef Arr_polycurve_traits_2<Geometry_traits_2> Polycurve_traits_2;
+      /*! The traits (in case it has state) */
+      const Polycurve_traits_2& m_poly_traits;
+
+    public:
+      /*! Constructor */
+      Test(const Polycurve_traits_2& traits) :
+        m_poly_traits(traits) {}
+      
+      X_monotone_curve_2 operator()(const X_monotone_curve_2& xcv) const
+      {
+        if( boost::is_same<Are_all_sides_oblivious_tag, Arr_oblivious_side_tag>::value )
+        {
+          std::cout << "all sides are oblivious" << std::cout;
+        }
+        else if ( boost::is_same< Are_all_sides_oblivious_tag, Arr_open_side_tag >::value )
+        {
+         std::cout << "all sides are not oblivious" << std::cout; 
+        }
+        return xcv;
+      }
+    };
+
+    Test test_object() const
+    { return Test(*this); }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     ///@}
 
     /// \name Construction functors(based on the segment traits).
@@ -1120,113 +1194,14 @@ namespace CGAL {
     public:
       /*! Constructor. */
       Push_back_2(const Polycurve_traits_2& traits) : m_poly_traits(traits) {}
-      
-      // Waqar: Disabled
-      // /* Append a point `p` to an existing polyline `cv` at the back. */
-      // void operator()(Curve_2& cv, const Point_2& p) const
-      // {
-      //   //waqar
-      //   //CGAL_static_assertion_msg((Has_construct_x_monotone_curve_from_two_points_category()), "X_monotone_curve_2 does not support construction from two points!");
-      //   //typename boost::enable_if_c< Has_construct_x_monotone_curve_from_two_points_category::value >::type* = 0
-      //   typedef typename Curve_2::Segments_size_type size_type;
-      //   size_type num_seg = cv.number_of_segments();
-      //   CGAL_precondition(num_seg > 0);
-      //   int last_seg = num_seg-1;
-
-      //   const Geometry_traits_2* geom_traits = m_poly_traits.geometry_traits_2();
-      //   typename Geometry_traits_2::Compare_endpoints_xy_2 cmp_seg_endpts =
-      //     geom_traits->compare_endpoints_xy_2_object();
-
-      //   /*
-      //    * Since it is desired to maintain `cv` well-oriented, we have
-      //    * to append the segment [cv[last_seg].target(),p]. The
-      //    * following test determines which end of the last segment is
-      //    * the target, i.e. the actual end of `cv`.
-      //    */
-      //   if (cmp_seg_endpts(cv[last_seg]) == SMALLER) {
-      //     typename Geometry_traits_2::Construct_max_vertex_2 get_max_v =
-      //       geom_traits->construct_max_vertex_2_object();
-      //     cv.push_back(Segment_2(get_max_v(cv[last_seg]), p));
-      //   }
-      //   else {
-      //     typename Geometry_traits_2::Construct_min_vertex_2 get_min_v =
-      //       geom_traits->construct_min_vertex_2_object();
-      //     cv.push_back(Segment_2(get_min_v(cv[last_seg]), p));
-      //   }
-      // }
 
 
       /* Append a segment `seg` to an existing polyline `cv`. If `cv` is
          empty, `seg` will be its first segment. */
       void operator()(Curve_2& cv, const Segment_2& seg) const
       {
-        // //in case a line is being pushed.
-        //  typedef typename X_monotone_curve_2::Segments_size_type size_type;
-        //    size_type num_seg = cv.number_of_segments();
-        
-        // CGAL_precondition_msg ( !( !seg.has_left() && !seg.has_right() ), 
-        //                         "Lines can not be pushed into polycurve"
-        //                        );
-        
-        // //precondition if the last segment already is a ray
-        // CGAL_precondition_msg( ( cv[num_seg-1].right_infinite_in_x() == CGAL::ARR_INTERIOR && 
-        //                          cv[num_seg-1].right_infinite_in_y() == CGAL::ARR_INTERIOR &&
-        //                          cv[num_seg-1].left_infinite_in_x() == CGAL::ARR_INTERIOR && 
-        //                          cv[num_seg-1].left_infinite_in_y() == CGAL::ARR_INTERIOR),
-        //                        "Segment can not be pushed. Polycurve reaches infinity at target"
-        //                       );
         cv.push_back(seg); 
       }
-
-      //Waqar: Disabled.
-      // /* Append a point `p` to an existing polyline `xcv` at the back. */
-      // void operator()(X_monotone_curve_2& xcv, const Point_2& p) const
-      // {
-      //   //waqar
-      //   //CGAL_static_assertion_msg((Has_construct_x_monotone_curve_from_two_points_category()), "X_monotone_curve_2 does not support construction from two points!");
-      //   typedef typename X_monotone_curve_2::Segments_size_type size_type;
-      //   size_type num_seg = xcv.number_of_segments();
-      //   CGAL_precondition(num_seg > 0);
-
-      //   const Geometry_traits_2* geom_traits = m_poly_traits.geometry_traits_2();
-      //   CGAL_precondition_code
-      //     (
-      //      typename Geometry_traits_2::Compare_x_2 comp_x =
-      //        geom_traits->compare_x_2_object();
-      //      typename Geometry_traits_2::Compare_xy_2 comp_xy =
-      //        geom_traits->compare_xy_2_object();
-      //      Is_vertical_2 is_vertical = m_poly_traits.is_vertical_2_object();
-      //      );
-
-      //   if (geom_traits->compare_endpoints_xy_2_object()(xcv[0]) == SMALLER) {
-      //     // xcv is oriented left-to-right
-      //     typename Geometry_traits_2::Construct_max_vertex_2 get_max_v =
-      //       geom_traits->construct_max_vertex_2_object();
-      //     CGAL_precondition
-      //       (
-      //        (!is_vertical(xcv) &&
-      //         (comp_x(get_max_v(xcv[num_seg-1]), p) == SMALLER)) ||
-      //        (is_vertical(xcv) &&
-      //         (comp_x(get_max_v(xcv[num_seg-1]), p) == EQUAL) &&
-      //         (comp_xy(get_max_v(xcv[num_seg-1]), p) == SMALLER))
-      //        );
-      //     xcv.push_back(X_monotone_segment_2(get_max_v(xcv[num_seg-1]), p));
-      //   }
-      //   else {
-      //     // xcv is oriented right-to-left
-      //     typename Geometry_traits_2::Construct_min_vertex_2 get_min_v =
-      //       geom_traits->construct_min_vertex_2_object();
-      //     CGAL_precondition
-      //       (
-      //        (!is_vertical(xcv) &&
-      //         (comp_x(get_min_v(xcv[num_seg-1]), p) == LARGER)) ||
-      //        (is_vertical(xcv) &&
-      //         (comp_x(get_min_v(xcv[num_seg-1]), p) == EQUAL) &&
-      //         (comp_xy(get_min_v(xcv[num_seg-1]), p) == LARGER))
-      //        );
-      //     xcv.push_back(X_monotone_segment_2(get_min_v(xcv[num_seg-1]), p));
-      //   }
-      // }
 
       /* Append a segment `seg` to an existing polyline `xcv` at the back. */
       void operator()(X_monotone_curve_2& xcv,
@@ -1234,19 +1209,6 @@ namespace CGAL {
       {
         typedef typename X_monotone_curve_2::Segments_size_type size_type;
            size_type num_seg = xcv.number_of_segments();
-
-        
-        // CGAL_precondition_msg ( !( !seg.has_left() && !seg.has_right() ), 
-        //                         "Lines can not be pushed into polycurve"
-        //                        );
-        
-        // //precondition if the last segment already is a ray
-        // CGAL_precondition_msg( ( xcv[num_seg-1].right_infinite_in_x() == CGAL::ARR_INTERIOR && 
-        //                          xcv[num_seg-1].right_infinite_in_y() == CGAL::ARR_INTERIOR &&
-        //                          xcv[num_seg-1].left_infinite_in_x() == CGAL::ARR_INTERIOR && 
-        //                          xcv[num_seg-1].left_infinite_in_y() == CGAL::ARR_INTERIOR),
-        //                        "Segment can not be pushed. Polycurve reaches infinity at target"
-        //                       );
 
         CGAL_precondition_code
           (
@@ -1264,6 +1226,8 @@ namespace CGAL {
              geom_traits->equal_2_object();
            typename Geometry_traits_2::Is_vertical_2 is_vertical =
              geom_traits->is_vertical_2_object();
+          Polycurve_traits_2::Compare_endpoints_xy_2 cmp_poly_endpts = 
+             m_poly_traits.compare_endpoints_xy_2_object()
            );
 
         CGAL_precondition_msg((num_seg == 0) ||
@@ -1274,9 +1238,69 @@ namespace CGAL {
 
         CGAL_precondition_msg((num_seg == 0) || (cmp_seg_endpts(xcv[0]) == dir),
                               "xcv and seg do not have the same orientation!");
+
+    
+    CGAL_precondition_code
+    (
+        //traits has open sides
+        //******** ask how these tags work?
+        if( Arr_two_open_side_tag() )
+        {
+          CGAL_precondition_msg(((seg.right_infinite_in_x() == CGAL::ARR_INTERIOR && seg.right_infinite_in_y() == CGAL::ARR_INTERIOR ) ||
+                                 (seg.left_infinite_in_x() == CGAL::ARR_INTERIOR && seg.left_infinite_in_y() == CGAL::ARR_INTERIOR) )  ||
+                                 (num_seg ==0),
+                                 "Lines can not be pushed if there is already one or more segments present in the polycurve."
+                                );
+
+          if(num_seg!=0)
+          {
+            //checks for Ray insertion
+            if( cmp_seg_endpts(seg)==SMALLER  && 
+                (seg.right_infinite_in_x() == CGAL::ARR_RIGHT_BOUNDARY || 
+                seg.right_infinite_in_y() == CGAL::ARR_TOP_BOUNDARY || 
+                seg.right_infinite_in_y() == CGAL::ARR_TOP_BOUNDARY    )
+              )
+              {
+                CGAL_precondition_msg(equal(get_max_v(xcv[num_seg-1]),get_min_v(seg)), "Ray does not extend to the right.");
+              }
+
+            else if( cmp_seg_endpts(seg)==LARGER  && 
+                (seg.left_infinite_in_x() == CGAL::ARR_LEFT_BOUNDARY || 
+                 seg.left_infinite_in_y() == CGAL::ARR_TOP_BOUNDARY || 
+                 seg.left_infinite_in_y() == CGAL::ARR_TOP_BOUNDARY    )
+              )
+              {
+                CGAL_precondition_msg(equal(get_min_v(xcv[num_seg-1]),get_max_v(seg)), "Ray does not extend to the left.");
+              } 
+
+              //checks for segment insertion
+              if( seg.right_infinite_in_x() == ARR_INTERIOR && seg.right_infinite_in_y() == ARR_INTERIOR  &&
+                  seg.left_infinite_in_x() == ARR_INTERIOR && seg.left_infinite_in_y() == ARR_INTERIOR )
+              {
+                CGAL_precondition_msg( (((dir != SMALLER) ||
+                                        equal(get_max_v(xcv[num_seg-1]),
+                                          get_min_v(seg)))),
+                              "Seg does not extend to the right!");
+
+                CGAL_precondition_msg((((dir != LARGER) ||
+                                equal(get_min_v(xcv[num_seg-1]),
+                                      get_max_v(seg)))),
+                              "Seg does not extend to the left!");
+
+                CGAL_precondition_msg( !equal(get_min_v(seg), get_max_v(seg)),
+                                "Seg degenerates to a point!");
+              } 
+          }
+        }
+
+        if( Arr_two_identified_sides_tag() && Arr_two_contracted_sides_tag() )
+        {
+          // curves need to be split at the boundary. i.e. if the source or target of the polycurve is reaching one of these boundaries
+          // then new curve can not be pushed. 
+          // ALSO:: take care of these conditions while the polycurve is being created with iterator. 
+        }  
         
         if( boost::is_same<Are_all_sides_oblivious_tag, Arr_oblivious_side_tag>::value )
-        //if(1)
         {
         
           CGAL_precondition_msg((num_seg == 0) ||
@@ -1297,21 +1321,7 @@ namespace CGAL {
                                 "Seg does not extend to the left!");
 
         }
-        // else
-        // {
-        //   CGAL_precondition_msg((num_seg == 0) ||
-        //                         (((dir != SMALLER) ||
-        //                           equal(get_max_v(xcv[num_seg-1]),
-        //                                 seg.left()))),
-        //                         "Seg does not extend to the right!");
-
-        //   CGAL_precondition_msg((num_seg == 0) ||
-        //                         (((dir != LARGER) ||
-        //                           equal(get_min_v(xcv[num_seg-1]),
-        //                                 seg.right()))),
-        //                         "Seg does not extend to the left!");
-        // }
-        
+    );    
         xcv.push_back(seg);
       }
     };
@@ -1334,105 +1344,16 @@ namespace CGAL {
       /*! Constructor. */
       Push_front_2(const Polycurve_traits_2& traits) : m_poly_traits(traits) {}
 
-      // Waqar: Disabled
-      // /* Append a point `p` to an existing polyline `cv` at the front. */
-      // void operator()(Curve_2& cv, const Point_2& p) const
-      // {
-      //   //waqar
-      //   //CGAL_static_assertion_msg((Has_construct_x_monotone_curve_from_two_points_category()), "X_monotone_curve_2 does not support construction from two points!");
-
-      //   CGAL_precondition_code
-      //     (
-      //      typedef typename Curve_2::Segments_size_type size_type;
-      //      size_type num_seg = cv.number_of_segments();
-      //      );
-      //   CGAL_precondition(num_seg > 0);
-
-      //   const Geometry_traits_2* geom_traits = m_poly_traits.geometry_traits_2();
-      //   typename Geometry_traits_2::Compare_endpoints_xy_2 cmp_seg_endpts =
-      //     geom_traits->compare_endpoints_xy_2_object();
-
-      //   if (cmp_seg_endpts(cv[0]) == SMALLER) {
-      //     typename Geometry_traits_2::Construct_min_vertex_2 get_min_v =
-      //       geom_traits->construct_min_vertex_2_object();
-      //     cv.push_front(Segment_2(p, get_min_v(cv[0])));
-      //   }
-      //   else {
-      //     typename Geometry_traits_2::Construct_max_vertex_2 get_max_v =
-      //       geom_traits->construct_max_vertex_2_object();
-      //     cv.push_front(Segment_2(p, get_max_v(cv[0])));
-      //   }
-      // }
-
-
       /* Append a segment `seg` to an existing polyline `cv` at the front. */
       void operator()(Curve_2& cv, const Segment_2& seg) const
-      {
-         //in case a line or ray is being pushed.
-        // CGAL_precondition_msg ( !( !seg.has_left() || !seg.has_right() ), 
-        //                         "Line or ray can not be pushed fronted into polycurve"
-        //                        ); 
+      { 
         cv.push_front(seg); 
       }
-
-      // Waqar: Disabled
-      // /* Append a point `p` to an existing polyline `xcv` at the front. */
-      // void operator()(const X_monotone_curve_2& xcv, Point_2& p) const
-      // {
-      //   //waqar
-      //   //CGAL_static_assertion_msg((Has_construct_x_monotone_curve_from_two_points_category()), "X_monotone_curve_2 does not support construction from two points!");
-
-      //   const Geometry_traits_2* geom_traits = m_poly_traits.geometry_traits_2();
-      //   CGAL_precondition_code
-      //     (
-      //      typedef typename X_monotone_curve_2::Segments_size_type size_type;
-      //      size_type num_seg = xcv.number_of_segments();
-      //      typename Geometry_traits_2::Compare_x_2 comp_x =
-      //        geom_traits->compare_x_2_object();
-      //      typename Geometry_traits_2::Compare_xy_2 comp_xy =
-      //        geom_traits->compare_xy_2_object();
-      //      Is_vertical_2 is_vertical = m_poly_traits.is_vertical_2_object();
-      //      );
-      //   CGAL_precondition(num_seg > 0);
-
-      //   if (geom_traits->compare_endpoints_xy_2_object()(xcv[0]) == SMALLER) {
-      //     // xcv is oriented left-to-right
-      //     typename Geometry_traits_2::Construct_max_vertex_2 get_max_v =
-      //       geom_traits->construct_max_vertex_2_object();
-      //     CGAL_precondition
-      //       (
-      //        (!is_vertical(xcv) &&
-      //         (comp_x(get_max_v(xcv[0]), p) == LARGER)) ||
-      //        (is_vertical(xcv) &&
-      //         (comp_x(get_max_v(xcv[0]), p) == EQUAL) &&
-      //         (comp_xy(get_max_v(xcv[0]), p) == LARGER))
-      //        );
-      //     xcv.push_front(X_monotone_segment_2(p, get_max_v(xcv[0])));
-      //   }
-      //   else {
-      //     // xcv is oriented right-to-left
-      //     typename Geometry_traits_2::Construct_min_vertex_2 get_min_v =
-      //       geom_traits->construct_min_vertex_2_object();
-      //     CGAL_precondition
-      //       (
-      //        (!is_vertical(xcv) &&
-      //         (comp_x(get_min_v(xcv[0]), p) == SMALLER)) ||
-      //        (is_vertical(xcv) &&
-      //         (comp_x(get_min_v(xcv[0]), p) == EQUAL) &&
-      //         (comp_xy(get_min_v(xcv[0]), p) == SMALLER))
-      //        );
-      //     xcv.push_front(X_monotone_segment_2(p, get_min_v(xcv[0])));
-      //   }
-      // }
 
       /* Append a segment `seg` to an existing polyline `xcv` at the front. */
       void operator()(X_monotone_curve_2& xcv,
                       const X_monotone_segment_2& seg) const
       {
-        // //in case a line or ray is being pushed.
-        // CGAL_precondition_msg ( !( !seg.has_left() || !seg.has_right() ), 
-        //                         "Line or ray can not be pushed fronted into polycurve"
-        //                        );
         CGAL_precondition_code
           (
            typedef typename X_monotone_curve_2::Segments_size_type size_type;
@@ -1461,21 +1382,76 @@ namespace CGAL {
 
         CGAL_precondition_msg((num_seg == 0) || (cmp_seg_endpts(xcv[0]) == dir),
                               "xcv and seg do not have the same orientation!");
+  CGAL_precondition_code
+  (
+        if( boost::is_same<Are_all_sides_oblivious_tag, Arr_oblivious_side_tag>::value )
+        {
+          CGAL_precondition_msg((num_seg == 0) ||
+                                !equal(get_min_v(seg), get_max_v(seg)),
+                                "Seg degenerates to a point!");
 
-        CGAL_precondition_msg((num_seg == 0) ||
-                              !equal(get_min_v(seg), get_max_v(seg)),
-                              "Seg degenerates to a point!");
+          CGAL_precondition_msg((num_seg == 0) ||
+                                (((dir != SMALLER) ||
+                                  equal(get_min_v(xcv[0]), get_max_v(seg)))),
+                                "Seg does not connect to theleft!");
 
-        CGAL_precondition_msg((num_seg == 0) ||
-                              (((dir != SMALLER) ||
-                                equal(get_min_v(xcv[0]), get_max_v(seg)))),
-                              "Seg does not extend to the left!");
+          CGAL_precondition_msg((num_seg == 0) ||
+                                (((dir != LARGER) ||
+                                  equal(get_max_v(xcv[0]), get_min_v(seg)))),
+                                "Seg does not connect to the right!");
+        }
+        //traits has open sides
+        //******** ask how these tags work?
+        if( Arr_two_open_side_tag() )
+        {
+          CGAL_precondition_msg(((seg.right_infinite_in_x() == CGAL::ARR_INTERIOR && seg.right_infinite_in_y() == CGAL::ARR_INTERIOR ) ||
+                                 (seg.left_infinite_in_x() == CGAL::ARR_INTERIOR && seg.left_infinite_in_y() == CGAL::ARR_INTERIOR) )  ||
+                                 (num_seg ==0),
+                                 "Lines can not be pushed if there is already one or more segments present in the polycurve."
+                                );
 
-        CGAL_precondition_msg((num_seg == 0) ||
-                              (((dir != LARGER) ||
-                                equal(get_max_v(xcv[0]), get_min_v(seg)))),
-                              "Seg does not extend to the right!");
+          if(num_seg!=0)
+          {
+            //checks for Ray insertion
+            if( ( cmp_seg_endpts(seg)==SMALLER  && 
+                  (seg.right_infinite_in_x() == CGAL::ARR_RIGHT_BOUNDARY || 
+                  seg.right_infinite_in_y() == CGAL::ARR_TOP_BOUNDARY    || 
+                  seg.right_infinite_in_y() == CGAL::ARR_TOP_BOUNDARY)        ) ||
+              ( cmp_seg_endpts(seg)==LARGER  && 
+                (seg.left_infinite_in_x() == CGAL::ARR_LEFT_BOUNDARY || 
+                 seg.left_infinite_in_y() == CGAL::ARR_TOP_BOUNDARY || 
+                 seg.left_infinite_in_y() == CGAL::ARR_TOP_BOUNDARY))
+              )
+              {
+                CGAL_precondition_msg(false, "Ray can not be pushed front.");
+              }
 
+              //checks for segment insertion
+              if( seg.right_infinite_in_x() == ARR_INTERIOR && seg.right_infinite_in_y() == ARR_INTERIOR  &&
+                  seg.left_infinite_in_x() == ARR_INTERIOR && seg.left_infinite_in_y() == ARR_INTERIOR )
+              {
+                CGAL_precondition_msg((num_seg == 0) ||
+                                !equal(get_min_v(seg), get_max_v(seg)),
+                                "Seg degenerates to a point!");
+
+                CGAL_precondition_msg( (((dir != SMALLER) ||
+                                        equal(get_min_v(xcv[0]), get_max_v(seg)))),
+                                      "Seg does not connect to the left!");
+
+                CGAL_precondition_msg( (((dir != LARGER) ||
+                                        equal(get_max_v(xcv[0]), get_min_v(seg)))),
+                                      "Seg does not connect to the right!");
+              } 
+          }
+        }
+
+        if( Arr_two_identified_sides_tag() && Arr_two_contracted_sides_tag() )
+        {
+          // curves need to be split at the boundary. i.e. if the source or target of the polycurve is reaching one of these boundaries
+          // then new curve can not be pushed. 
+          // ALSO:: take care of these conditions while the polycurve is being created with iterator. 
+        }  
+  );      
         xcv.push_front(seg);
       }
     };
