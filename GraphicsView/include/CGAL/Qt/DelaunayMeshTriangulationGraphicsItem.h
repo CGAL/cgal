@@ -22,6 +22,7 @@
 #define CGAL_QT_DELAUNAY_MESH_TRIANGULATION_GRAPHICS_ITEM_H
 
 #include <CGAL/Qt/ConstrainedTriangulationGraphicsItem.h>
+#include <CGAL/Qt/Converter.h>
 #include <QBrush>
 #include <QPen>
 #include <list>
@@ -34,6 +35,7 @@ template <typename T>
 class DelaunayMeshTriangulationGraphicsItem : public ConstrainedTriangulationGraphicsItem<T>
 {
   typedef ConstrainedTriangulationGraphicsItem<T> Base;
+  typedef typename T::Geom_traits Geom_traits;
   typedef typename T::Point Point;
 
 public:
@@ -48,6 +50,7 @@ public:
       , seeds_end()
       , visible_seeds(false)
   {
+    setSeedsPen(QPen(::Qt::black, 10.));
   }
   
   void operator()(typename T::Face_handle fh);
@@ -142,6 +145,7 @@ public:
 
 protected:
   void drawAll(QPainter *painter);
+  void paintSeeds(QPainter *painter);
 
   bool visible_in_domain;
   bool visible_blind_faces;
@@ -207,16 +211,30 @@ DelaunayMeshTriangulationGraphicsItem<T>::drawAll(QPainter *painter)
       }
     }
   }
+  paintSeeds(painter);
+
+  Base::drawAll(painter);
+}
+
+template <typename T>
+void
+DelaunayMeshTriangulationGraphicsItem<T>::paintSeeds(QPainter *painter)
+{
   if(this->visibleSeeds())
   {
-    painter->setBrush(::Qt::SolidPattern);
+    Converter<Geom_traits> convert;
     painter->setPen(this->seedsPen());
-    this->painterostream = PainterOstream<typename T::Geom_traits>(painter);
+    QMatrix matrix = painter->matrix();
+    painter->resetMatrix();
+
     typename std::list<Point>::iterator sit;
     for(sit = seeds_begin; sit != seeds_end; ++sit)
-      this->painterostream << *sit;
+    {
+      std::cout << (*sit) << std::endl;
+      painter->drawPoint(matrix.map(convert(*sit)));
+    }
+    painter->setMatrix(matrix);
   }
-  Base::drawAll(painter);
 }
 
 template <typename T>
