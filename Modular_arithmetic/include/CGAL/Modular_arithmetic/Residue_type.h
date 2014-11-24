@@ -45,7 +45,7 @@ std::istream& operator >> (std::istream& is, Residue& p);
  *  
  * This class uses the type double for representation. 
  * Therefore the value of p is restricted to primes less than 2^26.
- * By default p is set to 67111067.
+ * By default p is set to 67108859.
  *
  * It provides the standard operators +,-,*,/ as well as in&output.
  * 
