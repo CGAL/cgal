@@ -14,21 +14,23 @@
 int main(int argc, char* argv[])
 {
   CGAL::Timer t;
-  int choice = 0;
-  if(argc>1){
-    choice = boost::lexical_cast<int>(argv[1]);
-  }
-  std::string off;
-  int n,f,z;
-  double d, sum=0;
-  std::cin >> off >> n >> f >> z;
-  n*=3;
-
+  int repeat = boost::lexical_cast<int>(argv[1]);
+  int choice = boost::lexical_cast<int>(argv[2]);
+ 
+   double sum=0;
+  for(int j=0; j<repeat;++j){
+    std::ifstream in(argv[3]);
+    std::string off;
+    int n,f,z;
+    double d;
+    in >> off >> n >> f >> z;
+    n*=3;
+    
   if(choice == 0){
     std::cerr << "operator"<< std::endl;
     t.start();
     for(int i=0; i<n; i++){
-      std::cin >> d;
+      in >> d;
       sum+= d;
     }
     t.stop();
@@ -39,7 +41,7 @@ int main(int argc, char* argv[])
     t.start();
     std::string sd;
     for(int i=0; i<n; i++){
-      std::cin >> sd;
+      in >> sd;
       d = boost::lexical_cast<double>(sd);
       sum+= d;
     }
@@ -51,7 +53,7 @@ int main(int argc, char* argv[])
     t.start();
     std::string sd;
     for(int i=0; i<n; i++){
-      std::cin >> sd;
+      in >> sd;
       d = strtod(sd.c_str(),NULL);
       sum+= d;
     }
@@ -63,7 +65,7 @@ int main(int argc, char* argv[])
     t.start();
     std::string sd;
     for(int i=0; i<n; i++){
-      std::cin >> sd;
+      in >> sd;
       sscanf(sd.c_str(),"%lf", &d);
       sum+= d;
     }
@@ -74,10 +76,11 @@ int main(int argc, char* argv[])
     std::cerr << "iformat"<< std::endl;
     t.start();
     for(int i=0; i<n; i++){
-      std::cin >> CGAL::iformat(d);
+      in >> CGAL::iformat(d);
       sum+= d;
     }
     t.stop();
+  }
   }
   std::cerr.precision(17);
   std::cerr << "sum = " << sum << std::endl;
