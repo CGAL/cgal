@@ -16,7 +16,7 @@
 // $URL$
 // $Id$
 //
-// Author(s)     : Sylvain Pion, Michael Hemmer
+// Author(s)     : Sylvain Pion, Michael Hemmer, Alexander Kobel
 
 #ifndef CGAL_RESIDUE_TYPE_H
 #define CGAL_RESIDUE_TYPE_H
@@ -156,6 +156,8 @@ private:
     /* a^-1, using Bezout (extended Euclidian algorithm). */
     static inline 
     double RES_inv (double ri1){
+        CGAL_precondition (ri1 != 0.0);
+
         double bi = 0.0;
         double bi1 = 1.0;
         double ri = get_prime();
@@ -227,8 +229,8 @@ public:
     }
 
     //! constructor of Residue, from long 
-    Residue(long n){
-        x_= RES_reduce((double)n);
+    Residue (long n) {
+        x_= RES_soft_reduce (static_cast< double > (n % get_prime_int()));
     }
    
     //! Access operator for x, \c const 
