@@ -163,7 +163,8 @@ template <typename T>
 void 
 DelaunayMeshTriangulationGraphicsItem<T>::drawAll(QPainter *painter)
 {
-  if(visibleFacesInDomain()) {
+  if(visibleFacesInDomain())
+  {
     this->painterostream = PainterOstream<typename T::Geom_traits>(painter);
     painter->setBrush(facesInDomainBrush());
     painter->setPen(::Qt::NoPen);
@@ -174,8 +175,10 @@ DelaunayMeshTriangulationGraphicsItem<T>::drawAll(QPainter *painter)
 	this->painterostream << this->t->triangle(fit);
       }
     }
+    painter->setBrush(::Qt::NoBrush);
   }
-  if(visibleBlindFaces()) {
+  if(visibleBlindFaces())
+  {
     this->painterostream = PainterOstream<typename T::Geom_traits>(painter);
     painter->setBrush(blindFacesBrush());
     painter->setPen(::Qt::NoPen);
@@ -186,10 +189,14 @@ DelaunayMeshTriangulationGraphicsItem<T>::drawAll(QPainter *painter)
 	this->painterostream << this->t->triangle(fit);
       }
     }
-  }
-  if(this->visibleVoronoiEdges()){
     painter->setBrush(::Qt::NoBrush);
-    painter->setPen(this->voronoiPen());
+  }
+  if(this->visibleVoronoiEdges())
+  {
+    painter->setBrush(::Qt::NoBrush);
+    painter->setPen(::Qt::darkGreen);
+//    painter->setPen(this->voronoiPen());
+
     this->painterostream = PainterOstream<typename T::Geom_traits>(painter);
     for(typename T::Finite_vertices_iterator
           vit = this->t->finite_vertices_begin();
