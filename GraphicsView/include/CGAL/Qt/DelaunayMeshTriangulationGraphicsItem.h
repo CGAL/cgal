@@ -229,10 +229,8 @@ DelaunayMeshTriangulationGraphicsItem<T>::paintSeeds(QPainter *painter)
 
     typename std::list<Point>::iterator sit;
     for(sit = seeds_begin; sit != seeds_end; ++sit)
-    {
-      std::cout << (*sit) << std::endl;
       painter->drawPoint(matrix.map(convert(*sit)));
-    }
+
     painter->setMatrix(matrix);
   }
 }
