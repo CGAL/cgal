@@ -232,6 +232,11 @@ public:
     Residue (long n) {
         x_= RES_soft_reduce (static_cast< double > (n % get_prime_int()));
     }
+
+    //! constructor of Residue, from long long
+    Residue (long long n) {
+        x_= RES_soft_reduce (static_cast< double > (n % get_prime_int()));
+    }
    
     //! Access operator for x, \c const 
     const double& x() const { return x_; }
