@@ -23,7 +23,7 @@
 namespace CGAL { 
 namespace internal {
 
-int primes [2000] = {
+const int primes [2000] = {
   /*
    * Generated in SAGE with:
    *
