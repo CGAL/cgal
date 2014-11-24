@@ -347,6 +347,8 @@ MainWindow::processInput(CGAL::Object o)
     if(CGAL::assign(p, o))
     {
       m_seeds.push_back(p);
+      if(actionShow_seeds->isChecked())
+        dgi->setVisibleSeeds(true, m_seeds.begin(), m_seeds.end());
     }
   }
 
