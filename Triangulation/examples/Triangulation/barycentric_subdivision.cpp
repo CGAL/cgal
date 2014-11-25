@@ -87,8 +87,11 @@ void find_face_from_vertices( const TDS & tds,
         }
         if( i > fdim ) {// the full cell |*cit| contains |face|
             face.set_full_cell(*cit);
-            for( int i = 0; i <= fdim; ++i )
-                face.set_index(i, (*cit)->index(face_vertices[i]));
+            for( std::size_t i = 0; i <= fdim; ++i )
+            {
+              face.set_index(static_cast<int>(i), 
+                             (*cit)->index(face_vertices[i]));
+            }
             return;
         }
     }
