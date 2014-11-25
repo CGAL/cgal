@@ -23,6 +23,8 @@ typedef CGAL::Delaunay_mesher_2<CDT, Criteria>              Mesher;
 typedef CDT::Vertex_handle Vertex_handle;
 typedef CDT::Point Point;
 
+using namespace parameters;
+
 int main()
 {
   CDT cdt;
