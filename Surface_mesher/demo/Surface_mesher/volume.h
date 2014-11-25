@@ -304,12 +304,12 @@ void Volume::search_for_connected_components(PointsOutputIterator it,
             // (i_n, j_n, k_n) are indices of neighbors.
             for(int n = 0; n < 6; ++n)
             {
-              const int i_n = i + neighbors_offset[n][0];
-              const int j_n = j + neighbors_offset[n][1];
-              const int k_n = k + neighbors_offset[n][2];
-              if(i_n < 0 || i_n >= static_cast<int>(nx) ||
-                 j_n < 0 || j_n >= static_cast<int>(ny) ||
-                 k_n < 0 || k_n >= static_cast<int>(nz))
+              const ptrdiff_t i_n = i + neighbors_offset[n][0];
+              const ptrdiff_t j_n = j + neighbors_offset[n][1];
+              const ptrdiff_t k_n = k + neighbors_offset[n][2];
+              if(i_n < 0 || i_n >= static_cast<ptrdiff_t>(nx) ||
+                 j_n < 0 || j_n >= static_cast<ptrdiff_t>(ny) ||
+                 k_n < 0 || k_n >= static_cast<ptrdiff_t>(nz))
               {
                 voxel_is_on_border = true;
                 continue;
