@@ -35,6 +35,10 @@ BOOST_AUTO_TEST_CASE( standard_iterators )
   boost::tie(vb, ve) = f.m.vertices();
   test_iterator(vb, ve, 5);
 
+  Sm::Halfedge_iterator hb, he;
+  boost::tie(hb, he) = f.m.halfedges();
+  test_iterator(hb, he, 14);
+
   Sm::Edge_iterator eb, ee;
   boost::tie(eb, ee) = f.m.edges();
   test_iterator(eb, ee, 7);
@@ -92,9 +96,9 @@ BOOST_AUTO_TEST_CASE( test_remove_edge )
 
   // now remove a border edge to check if this works
   // this should not lower the number of faces
-  Sm::size_type old_removed_faces_size = f.m.num_removed_faces();
+  Sm::size_type old_removed_faces_size = f.m.number_of_removed_faces();
   f.m.remove_edge(Sm::Edge_index(wx));
-  BOOST_CHECK_EQUAL(f.m.num_removed_faces(), old_removed_faces_size);
+  BOOST_CHECK_EQUAL(f.m.number_of_removed_faces(), old_removed_faces_size);
 }
 
 
@@ -123,50 +127,45 @@ BOOST_AUTO_TEST_CASE( memory_reuse_test )
   }
   
   // remove all faces
-  std::size_t old_face_size = f.m.num_faces() - f.m.num_removed_faces();
+  std::size_t old_face_size = f.m.number_of_faces(); 
+  std::size_t old_removed_face_size = f.m.number_of_removed_faces();
   boost::range::for_each(f.m.faces(), boost::bind(&Sm::remove_face, boost::ref(f.m), _1));
-  BOOST_CHECK_EQUAL(f.m.num_faces() - f.m.num_removed_faces(), 0);
-  BOOST_CHECK_EQUAL(f.m.num_faces(), old_face_size);
+  BOOST_CHECK_EQUAL(f.m.number_of_faces(), 0);
+  BOOST_CHECK_EQUAL(f.m.number_of_removed_faces(), old_face_size + old_removed_face_size);
   // remove all edges
-  std::size_t old_edge_size = f.m.num_edges() - f.m.num_removed_edges();
+  std::size_t old_edge_size = f.m.number_of_edges();
+  std::size_t old_removed_edge_size = f.m.number_of_removed_edges();
   boost::range::for_each(f.m.edges(), 
                          boost::bind(static_cast<void (Sm::*)(Sm::Edge_index)>(&Sm::remove_edge), 
                                      boost::ref(f.m), _1));
-  BOOST_CHECK_EQUAL(f.m.num_faces() - f.m.num_removed_faces(), 0);
-  BOOST_CHECK_EQUAL(f.m.num_edges(), old_edge_size);
+  BOOST_CHECK_EQUAL(f.m.number_of_faces() , 0);
+  BOOST_CHECK_EQUAL(f.m.number_of_removed_edges(), old_edge_size + old_removed_edge_size);
 
   int fc = 0;
   // add all again
   for(Faces::iterator it = faces.begin(); it != faces.end(); ++it) {
-    std::cout << "add face " << fc++ << std::endl;
     Sm::Face_index fd = f.m.add_face(*it);
     BOOST_CHECK(fd.is_valid());
-    f.m.fix_border(f.m.halfedge(fd));
+    f.m.set_vertex_halfedge_to_border_halfedge(f.m.halfedge(fd));
     for(VecFace::iterator it2 = it->begin(); it2 != it->end(); ++it2) { 
-      std::cout << std::boolalpha << "Added: " << *it2 << " border?" << f.m.is_border(*it2) << std::endl;
 
       Sm::Halfedge_index h = f.m.halfedge(*it2);
-      std::cout << h << h.is_valid() << std::endl;
       Sm::Face_index fa = f.m.face(h);
-      std::cout << fa << fa.is_valid() << std::endl;
 
-      std::cout << h << " " << fa << std::endl;
-      std::cout << std::boolalpha << "deleted" << f.m.is_removed(fa) << f.m.is_removed(h) << std::endl;
     }
-
-    std::cout << "success" << std::endl;
   }
   
-  BOOST_CHECK_EQUAL(f.m.num_edges() - f.m.num_removed_edges(), old_edge_size);
-  BOOST_CHECK_EQUAL(f.m.num_edges() - f.m.num_removed_faces(), old_face_size);
+  BOOST_CHECK_EQUAL(f.m.number_of_edges() , old_edge_size);
+  BOOST_CHECK_EQUAL(f.m.number_of_faces() , old_face_size);
 
 
   // remove all vertices
-  std::size_t old_size = f.m.num_vertices() - f.m.num_removed_vertices();
+  std::size_t old_size = f.m.number_of_vertices();
+  std::size_t old_removed_size = f.m.number_of_removed_vertices();
 
   boost::range::for_each(f.m.vertices(), boost::bind(&Sm::remove_vertex, boost::ref(f.m), _1));
-  BOOST_CHECK_EQUAL(f.m.num_vertices() - f.m.num_removed_vertices(), 0);
-  BOOST_CHECK_EQUAL(f.m.num_vertices(), old_size);
+  BOOST_CHECK_EQUAL(f.m.number_of_vertices() , 0);
+  BOOST_CHECK_EQUAL(f.m.number_of_removed_vertices(), old_size + old_removed_size);
 
   for(unsigned int i = 0; i < old_size; ++i)
   {
@@ -174,7 +173,7 @@ BOOST_AUTO_TEST_CASE( memory_reuse_test )
   }
 
   // the size must remain the same
-  BOOST_CHECK_EQUAL(f.m.num_vertices() - f.m.num_removed_vertices(), old_size);
+  BOOST_CHECK_EQUAL(f.m.number_of_vertices(), old_size);
 }
 
 BOOST_AUTO_TEST_CASE( test_validate )
@@ -195,7 +194,7 @@ BOOST_AUTO_TEST_CASE(isolated_vertex_check)
   Sm::Vertex_index isolated = f.m.add_vertex(Point_3(10, 10, 10));
   BOOST_CHECK(f.m.is_isolated(isolated));
   BOOST_CHECK(!f.m.halfedge(isolated).is_valid());
-  BOOST_CHECK(f.m.is_border(isolated));
+  BOOST_CHECK(! f.m.is_border(isolated));
   BOOST_CHECK(f.m.degree(isolated) == 0);
 }
 

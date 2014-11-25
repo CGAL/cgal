@@ -37,8 +37,8 @@ struct Surface_fixture {
   }
 
   Sm m;
-  Sm::Vertex_descriptor u, v, w, x, y;
-  Sm::Face_descriptor f1, f2, f3;
+  Sm::Vertex_index u, v, w, x, y;
+  Sm::Face_index f1, f2, f3;
 
   ~Surface_fixture() {}
 };
@@ -71,8 +71,8 @@ struct Surface_fixture_2 {
   }
 
   Sm m;
-  Sm::Vertex_descriptor u, v, w, x, y;
-  Sm::Face_descriptor f1, f2, f3, f4;
+  Sm::Vertex_index u, v, w, x, y;
+  Sm::Face_index f1, f2, f3, f4;
 
   ~Surface_fixture_2() {}
 };
@@ -96,7 +96,7 @@ struct Surface_fixture_3 {
     y = m.add_vertex(Point_3(2,0,0));
     z = m.add_vertex(Point_3(2,1,0));
 
-    std::vector<Sm::Vertex_descriptor> vec;
+    std::vector<Sm::Vertex_index> vec;
     using namespace boost::assign;
     vec += u, v, w, x;
     f1 = m.add_face(vec);
@@ -106,8 +106,8 @@ struct Surface_fixture_3 {
   }
 
   Sm m;
-  Sm::Vertex_descriptor u, v, w, x, y, z;
-  Sm::Face_descriptor f1, f2;
+  Sm::Vertex_index u, v, w, x, y, z;
+  Sm::Face_index f1, f2;
 
   ~Surface_fixture_3() {}
 };

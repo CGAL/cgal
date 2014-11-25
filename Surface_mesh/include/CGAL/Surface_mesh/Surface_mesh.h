@@ -1840,6 +1840,9 @@ public:
   bool is_border(Vertex_index v, bool check_all_incident_halfedges = true) const
     {
         Halfedge_index h(halfedge(v));
+        if (h == null_halfedge()){
+          return false;
+        }
         if(check_all_incident_halfedges){
           Halfedge_around_target_circulator hatc(h,*this), done(hatc);
           do {
@@ -1870,8 +1873,9 @@ public:
   /// associated to vertex `v` to a border halfedge and returns `true` if it exists.
   bool set_vertex_halfedge_to_border_halfedge(Vertex_index v)
   {
-    if(halfedge(v) == null_halfedge())
+    if(halfedge(v) == null_halfedge()){
       return false;
+    }
     Halfedge_around_target_circulator hatc(halfedge(v),*this), done(hatc);
     do {
       if(is_border(*hatc)){
@@ -2207,13 +2211,13 @@ operator=(const Surface_mesh<P>& rhs)
         fprops_ = rhs.fprops_;
 
         // property handles contain pointers, have to be reassigned
-        vconn_    = property_map<Vertex_index, Vertex_connectivity>("v:connectivity");
-        hconn_    = property_map<Halfedge_index, Halfedge_connectivity>("h:connectivity");
-        fconn_    = property_map<Face_index, Face_connectivity>("f:connectivity");
-        vremoved_ = property_map<Vertex_index, bool>("v:removed");
-        eremoved_ = property_map<Edge_index, bool>("e:removed");
-        fremoved_ = property_map<Face_index, bool>("f:removed");
-        vpoint_   = property_map<Vertex_index, P>("v:point");
+        vconn_    = property_map<Vertex_index, Vertex_connectivity>("v:connectivity").first;
+        hconn_    = property_map<Halfedge_index, Halfedge_connectivity>("h:connectivity").first;
+        fconn_    = property_map<Face_index, Face_connectivity>("f:connectivity").first;
+        vremoved_ = property_map<Vertex_index, bool>("v:removed").first;
+        eremoved_ = property_map<Edge_index, bool>("e:removed").first;
+        fremoved_ = property_map<Face_index, bool>("f:removed").first;
+        vpoint_   = property_map<Vertex_index, P>("v:point").first;
 
         // how many elements are removed?
         removed_vertices_  = rhs.removed_vertices_;
@@ -2487,6 +2491,7 @@ Surface_mesh<P>::add_face(const Range& r)
     for (i=0, ii=1; i<n; ++i, ++ii, ii%=n)
       if (is_new[i]){
             halfedges[i] = add_edge(vertices[i], vertices[ii]);
+            set_face(opposite(halfedges[i]), null_face()); // as it may be recycled we have to reset it  
             assert(source(halfedges[i]) == vertices[i]);
       }
     // create the face
@@ -2580,7 +2585,9 @@ Surface_mesh<P>::
 degree(Vertex_index v) const
 {
     size_type count(0);
-
+    if(halfedge(v) == null_halfedge()){
+      return 0;
+    }
     Vertex_around_target_circulator vvit(halfedge(v), *this);
     Vertex_around_target_circulator vvend = vvit;
     if(vvit) do
@@ -2599,7 +2606,9 @@ Surface_mesh<P>::
 degree(Face_index f) const
 {
     size_type count(0);
-
+    if(halfedge(f) == null_halfedge()){
+      return 0;
+    }
     Vertex_around_face_circulator fvit(halfedge(f),*this);
     Vertex_around_face_circulator fvend = fvit;
     if(fvit) do {
