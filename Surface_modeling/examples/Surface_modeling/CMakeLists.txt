@@ -28,9 +28,11 @@ if ( CGAL_FOUND )
 
     create_single_source_cgal_program( "all_roi_assign_example.cpp" )
     create_single_source_cgal_program( "all_roi_assign_example_custom_polyhedron.cpp" )
+    create_single_source_cgal_program( "all_roi_assign_example_Surface_mesh.cpp" )
     create_single_source_cgal_program( "custom_weight_for_edges_example.cpp" )
     create_single_source_cgal_program( "deform_polyhedron_with_custom_pmap_example.cpp" )
     create_single_source_cgal_program( "k_ring_roi_translate_rotate_example.cpp" )
+    create_single_source_cgal_program( "k_ring_roi_translate_rotate_Surface_mesh.cpp" )
 
     find_package( OpenMesh QUIET )
     if ( OpenMesh_FOUND )
