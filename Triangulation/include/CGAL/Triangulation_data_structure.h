@@ -609,7 +609,7 @@ public:
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - INPUT / OUTPUT
 
     std::istream & read_full_cells(std::istream &, const std::vector<Vertex_handle> &);
-    std::ostream & write_full_cells(std::ostream &, std::map<Vertex_const_handle, std::size_t> &) const;
+    std::ostream & write_full_cells(std::ostream &, std::map<Vertex_const_handle, int> &) const;
 
 }; // end of ``declaration/definition'' of Triangulation_data_structure<...>
 
@@ -1392,7 +1392,7 @@ Triangulation_data_structure<Dimen, Vb, Fcb>
 template<class Dimen, class Vb, class Fcb>
 std::ostream &
 Triangulation_data_structure<Dimen, Vb, Fcb>
-::write_full_cells(std::ostream & os, std::map<Vertex_const_handle, std::size_t> & index_of_vertex) const
+::write_full_cells(std::ostream & os, std::map<Vertex_const_handle, int> & index_of_vertex) const
 {
     std::map<Full_cell_const_handle, int> index_of_full_cell;
 
@@ -1526,8 +1526,8 @@ operator<<(std::ostream & os, const Triangulation_data_structure<Dimen, Vb, Fcb>
         return os;
 
     // write the vertices
-    std::map<Vertex_handle, std::size_t> index_of_vertex;
-    std::size_t i = 0;
+    std::map<Vertex_handle, int> index_of_vertex;
+    int i = 0;
     for( Vertex_iterator it = tr.vertices_begin(); it != tr.vertices_end(); ++it, ++i )
     {
         os << *it; // write the vertex
