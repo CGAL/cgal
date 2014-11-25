@@ -26,6 +26,7 @@
 #include <boost/iterator/transform_iterator.hpp>
 
 #include <CGAL/boost/graph/properties_Surface_mesh.h>
+#include <CGAL/boost/graph/iterator.h>
 
 #include <CGAL/Surface_mesh.h>
 
@@ -77,9 +78,9 @@ public:
   typedef typename SM::size_type              degree_size_type;
 
   
-  //typedef CGAL::In_edge_iterator<SM> in_edge_iterator;
+  typedef CGAL::In_edge_iterator<SM> in_edge_iterator;
 
-  //typedef CGAL::Out_edge_iterator<SM> out_edge_iterator;
+  typedef CGAL::Out_edge_iterator<SM> out_edge_iterator;
 
   // nulls
   static vertex_descriptor   null_vertex() { return vertex_descriptor(); }
@@ -193,7 +194,7 @@ edges(const CGAL::Surface_mesh<P>& sm)
 }
 
   
-  /*
+
 template <typename P>
 std::pair<typename boost::graph_traits<CGAL::Surface_mesh<P> >::in_edge_iterator,
           typename boost::graph_traits<CGAL::Surface_mesh<P> >::in_edge_iterator>
@@ -214,7 +215,7 @@ out_edges(typename boost::graph_traits<CGAL::Surface_mesh<P> >::vertex_descripto
   typedef typename boost::graph_traits<CGAL::Surface_mesh<P> >::out_edge_iterator Iter;
   return std::make_pair(Iter(halfedge(v,sm),sm), Iter(halfedge(v,sm),sm,1));
 }
-  */
+
 
 
 template<typename P>
