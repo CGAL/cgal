@@ -113,15 +113,15 @@ read_xyz_points_and_normals(
     else {
       iss.clear();
       iss.str(line);
-      if (iss >> x >> y >> z)
+      if (iss >> iformat(x) >> iformat(y) >> iformat(z)
         {
           Point point(x,y,z);
           Vector normal = CGAL::NULL_VECTOR;
           // ... + normal...
-          if (iss >> nx)
+          if (iss >> iformat(nx))
             {
               // In case we could read one number, we expect that there are two more
-              if(iss  >> ny >> nz){
+              if(iss  >> iformat(ny) >> iformat(nz)){
                 normal = Vector(nx,ny,nz);
               } else {
                 std::cerr << "Error line " << lineNumber << " of file" << std::endl;

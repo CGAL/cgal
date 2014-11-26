@@ -279,7 +279,7 @@ extract(std::istream& is, Vector_3<R>& v, const Cartesian_tag&)
   typename R::FT x, y, z;
   switch(is.iword(IO::mode)) {
     case IO::ASCII :
-      is >> x >> y >> z;
+      is >> iformat(x) >> iformat(y) >> iformat(z);
       break;
     case IO::BINARY :
       read(is, x);
