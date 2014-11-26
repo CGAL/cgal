@@ -28,7 +28,7 @@
 #include <CGAL/algorithm.h>
 #include <CGAL/Kd_tree_node.h>
 #include <CGAL/Splitters.h>
-#include <CGAL/Compact_container.h>
+#include <deque>
 
 #ifdef CGAL_HAS_THREADS
 #include <boost/thread/mutex.hpp>
@@ -48,11 +48,17 @@ public:
 
   typedef typename SearchTraits::FT FT;
   typedef Kd_tree_node<SearchTraits, Splitter, UseExtendedNode > Node;
+  typedef Kd_tree_leaf_node<SearchTraits, Splitter, UseExtendedNode > Leaf_node;
+  typedef Kd_tree_internal_node<SearchTraits, Splitter, UseExtendedNode > Internal_node;
   typedef Kd_tree<SearchTraits, Splitter> Tree;
   typedef Kd_tree<SearchTraits, Splitter,UseExtendedNode> Self;
 
-  typedef typename Compact_container<Node>::iterator Node_handle;
-  typedef typename Compact_container<Node>::const_iterator Node_const_handle;
+  typedef Node* Node_handle;
+  typedef const Node* Node_const_handle;
+  typedef Leaf_node* Leaf_node_handle;
+  typedef const Leaf_node* Leaf_node_const_handle;
+  typedef Internal_node* Internal_node_handle;
+  typedef const Internal_node* Internal_node_const_handle;
   typedef typename std::vector<const Point_d*>::const_iterator Point_d_iterator;
   typedef typename std::vector<const Point_d*>::const_iterator Point_d_const_iterator;
   typedef typename Splitter::Separator Separator;
@@ -64,7 +70,8 @@ public:
 private:
   SearchTraits traits_;
   Splitter split;
-  Compact_container<Node> nodes;
+  std::deque<Internal_node> internal_nodes;
+  std::deque<Leaf_node> leaf_nodes;
 
   Node_handle tree_root;
 
@@ -97,7 +104,9 @@ private:
   Node_handle
   create_leaf_node(Point_container& c)
   {
-    Node_handle nh = nodes.emplace(static_cast<unsigned int>(c.size()), Node::LEAF);
+    Leaf_node node(true,static_cast<unsigned int>(c.size()));
+    leaf_nodes.push_back(node);
+    Node_handle nh = leaf_nodes.back();
 
     nh->data = c.begin();
     return nh;
@@ -370,11 +379,14 @@ public:
       const_build();
     }
     s << "Tree statistics:" << std::endl;
-    s << "Number of items stored: "
+    /*s << "Number of items stored: ";
+    if(root()->is_leaf())
+    {
+
       << root()->num_items() << std::endl;
     s << "Number of nodes: "
       << root()->num_nodes() << std::endl;
-    s << " Tree depth: " << root()->depth() << std::endl;
+    s << " Tree depth: " << root()->depth() << std::endl;*/
     return s;
   }
 

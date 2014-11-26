@@ -92,13 +92,9 @@ int main(int argc,char *argv[])
       }
 	}
     dump = false;
-	//items += search.items_visited();
-	//leafs += search.leaf_visited();
-	//internals += search.internal_visited();
   }
   t.stop();
   std::cerr << "queries " << t.time() << " sec\n";
- // std::cerr << items <<" items "<<internals<< " internals "<<leafs<<  " leafs visited\n";
   std::cerr << "done\n";
   return 0;
 }
