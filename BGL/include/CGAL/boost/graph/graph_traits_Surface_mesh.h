@@ -174,48 +174,40 @@ target(typename boost::graph_traits<CGAL::Surface_mesh<P> >::halfedge_descriptor
 }
     
 template <typename P>
-std::pair<typename boost::graph_traits<CGAL::Surface_mesh<P> >::vertex_iterator,
-          typename boost::graph_traits<CGAL::Surface_mesh<P> >::vertex_iterator>
+Iterator_range<typename boost::graph_traits<CGAL::Surface_mesh<P> >::vertex_iterator>
 vertices(const CGAL::Surface_mesh<P>& sm)
 {
-  return std::make_pair(sm.vertices_begin(), sm.vertices_end()); 
+  return sm.vertices(); 
 }
 
  
 template <typename P>
-std::pair<typename boost::graph_traits<CGAL::Surface_mesh<P> >::edge_iterator,
-          typename boost::graph_traits<CGAL::Surface_mesh<P> >::edge_iterator>
+Iterator_range<typename boost::graph_traits<CGAL::Surface_mesh<P> >::edge_iterator>
 edges(const CGAL::Surface_mesh<P>& sm)
 {
-  typedef typename boost::graph_traits<CGAL::Surface_mesh<P> >::edge_iterator iterator;
-  iterator beg(sm.edges_begin());
-  iterator end(sm.edges_end());
-  return std::make_pair(beg,end); 
+  return sm.edges(); 
 }
 
-  
 
 template <typename P>
-std::pair<typename boost::graph_traits<CGAL::Surface_mesh<P> >::in_edge_iterator,
-          typename boost::graph_traits<CGAL::Surface_mesh<P> >::in_edge_iterator>
+Iterator_range<typename boost::graph_traits<CGAL::Surface_mesh<P> >::in_edge_iterator>
 in_edges(typename boost::graph_traits<CGAL::Surface_mesh<P> >::vertex_descriptor v,
          const CGAL::Surface_mesh<P>& sm)
 {
   typedef typename boost::graph_traits<CGAL::Surface_mesh<P> >::in_edge_iterator Iter;
 
-  return std::make_pair(Iter(halfedge(v,sm),sm), Iter(halfedge(v,sm),sm,1));
+  return make_range(Iter(halfedge(v,sm),sm), Iter(halfedge(v,sm),sm,1));
 }
 
+
 template <typename P>
-std::pair<typename boost::graph_traits<CGAL::Surface_mesh<P> >::out_edge_iterator,
-          typename boost::graph_traits<CGAL::Surface_mesh<P> >::out_edge_iterator>
+Iterator_range<typename boost::graph_traits<CGAL::Surface_mesh<P> >::out_edge_iterator>
 out_edges(typename boost::graph_traits<CGAL::Surface_mesh<P> >::vertex_descriptor v,
           const CGAL::Surface_mesh<P>& sm)
 {
   typedef typename boost::graph_traits<CGAL::Surface_mesh<P> >::out_edge_iterator Iter;
-  return std::make_pair(Iter(halfedge(v,sm),sm), Iter(halfedge(v,sm),sm,1));
+  return make_range(Iter(halfedge(v,sm),sm), Iter(halfedge(v,sm),sm,1));
 }
-
 
 
 template<typename P>
@@ -302,12 +294,12 @@ halfedge(typename boost::graph_traits<CGAL::Surface_mesh<P> >::vertex_descriptor
 // HalfedgeListGraph
 //
 template <typename P>
-std::pair<typename boost::graph_traits<CGAL::Surface_mesh<P> >::halfedge_iterator,
-          typename boost::graph_traits<CGAL::Surface_mesh<P> >::halfedge_iterator>
+Iterator_range<typename boost::graph_traits<CGAL::Surface_mesh<P> >::halfedge_iterator>
 halfedges(const CGAL::Surface_mesh<P>& sm)
 {
-  return std::make_pair(sm.halfedges_begin(), sm.halfedges_end());
+  return sm.halfedges();
 }
+
 
 template <typename P>
 typename boost::graph_traits<CGAL::Surface_mesh<P> >::halfedges_size_type
@@ -354,15 +346,7 @@ set_halfedge(typename boost::graph_traits<CGAL::Surface_mesh<P> >::vertex_descri
 
 template<typename P>
 void
-adjust_border_halfedge(typename boost::graph_traits<CGAL::Surface_mesh<P> >::vertex_descriptor v,
-                       CGAL::Surface_mesh<P>& sm)
-{
-  sm.fix_border(v);
-}
-
-template<typename P>
-void
-garbage_collection(CGAL::Surface_mesh<P>& sm)
+collect_garbage(CGAL::Surface_mesh<P>& sm)
 {
   sm.collect_garbage();
 }
@@ -430,11 +414,10 @@ num_faces(const CGAL::Surface_mesh<P>& sm)
 }
   
 template <typename P>
-std::pair<typename boost::graph_traits<CGAL::Surface_mesh<P> >::face_iterator,
-          typename boost::graph_traits<CGAL::Surface_mesh<P> >::face_iterator>
+Iterator_range<typename boost::graph_traits<CGAL::Surface_mesh<P> >::face_iterator>
 faces(const CGAL::Surface_mesh<P>& sm)
 {
-  return std::make_pair(sm.faces_begin(), sm.faces_end()); 
+  return sm.faces(); 
 }
  
 
