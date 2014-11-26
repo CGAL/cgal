@@ -1422,7 +1422,7 @@ Triangulation_data_structure<Dimen, Vb, Fcb>
         os << (*it);
     }
 
-    CGAL_assertion( i == m );
+    CGAL_assertion( (std::size_t) i == m );
 
     // write the neighbors of each full_cell
     if( is_ascii(os) )
@@ -1533,7 +1533,7 @@ operator<<(std::ostream & os, const Triangulation_data_structure<Dimen, Vb, Fcb>
         os << *it; // write the vertex
         index_of_vertex[it] = i;
     }
-    CGAL_assertion( i == n );
+    CGAL_assertion( (std::size_t) i == n );
 
     // output the combinatorial information
     return tr.write_full_cells(os, index_of_vertex);
