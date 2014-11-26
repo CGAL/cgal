@@ -15,7 +15,7 @@ functor the version without offsets.
 
 \cgalRefines `DelaunayTriangulationTraits_3` 
 
-\cgalHasModel CGAL::Periodic_3_triangulation_traits_3 
+\cgalHasModel CGAL::Periodic_3_Delaunay_triangulation_traits_3 
 
 \sa `DelaunayTriangulationTraits_3` 
 
@@ -329,12 +329,12 @@ typedef unspecified_type Construct_circumcenter_3;
 /*!
 Default constructor. 
 */ 
-Periodic_3_triangulation_traits_3(); 
+Periodic_3_Delaunay_triangulation_traits_3(); 
 
 /*!
 Copy constructor. 
 */ 
-Periodic_3_triangulation_traits_3(const Periodic_triangulation_traits_3 & tr); 
+Periodic_3_Delaunay_triangulation_traits_3(const Periodic_triangulation_traits_3 & tr); 
 
 /// @} 
 

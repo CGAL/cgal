@@ -30,7 +30,7 @@
 #include <CGAL/Interval_nt.h>
 #include <CGAL/Uncertain.h>
 #include <CGAL/Profile_counter.h>
-#include <CGAL/Periodic_3_triangulation_traits_3.h>
+#include <CGAL/Periodic_3_Delaunay_triangulation_traits_3.h>
 
 namespace CGAL {
 
@@ -76,14 +76,14 @@ struct Offset_converter_3
   typedef typename Converter::Source_kernel Source_kernel;
   typedef typename Converter::Target_kernel Target_kernel;
 
-  typedef typename Periodic_3_triangulation_traits_base_3<Source_kernel>
+  typedef typename Periodic_3_Delaunay_triangulation_traits_base_3<Source_kernel>
                    ::Offset  Source_off;
-  typedef typename Periodic_3_triangulation_traits_base_3<Source_kernel>
+  typedef typename Periodic_3_Delaunay_triangulation_traits_base_3<Source_kernel>
                    ::Point_3  Source_pt;
 
-  typedef typename Periodic_3_triangulation_traits_base_3<Target_kernel>
+  typedef typename Periodic_3_Delaunay_triangulation_traits_base_3<Target_kernel>
                    ::Offset  Target_off;
-  typedef typename Periodic_3_triangulation_traits_base_3<Target_kernel>
+  typedef typename Periodic_3_Delaunay_triangulation_traits_base_3<Target_kernel>
                    ::Point_3  Target_pt;
 
 
@@ -99,16 +99,16 @@ struct Offset_converter_3
 // The argument is supposed to be a Filtered_kernel like kernel.
 template < typename K, typename Off >
 class Periodic_3_triangulation_filtered_traits_base_3
-  : public Periodic_3_triangulation_traits_base_3<K, Off>
+  : public Periodic_3_Delaunay_triangulation_traits_base_3<K, Off>
 {
-  typedef Periodic_3_triangulation_traits_base_3<K, Off> Base;
+  typedef Periodic_3_Delaunay_triangulation_traits_base_3<K, Off> Base;
 
   // Exact traits is based on the exact kernel.
-  typedef Periodic_3_triangulation_traits_3<typename K::Exact_kernel,
+  typedef Periodic_3_Delaunay_triangulation_traits_3<typename K::Exact_kernel,
                                             Off>
                                                    Exact_traits;
   // Filtering traits is based on the filtering kernel.
-  typedef Periodic_3_triangulation_traits_3<typename K::Approximate_kernel,
+  typedef Periodic_3_Delaunay_triangulation_traits_3<typename K::Approximate_kernel,
                                             Off>
                                                    Filtering_traits;
 private:

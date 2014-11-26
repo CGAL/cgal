@@ -1,12 +1,12 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Periodic_3_triangulation_traits_3.h>
+#include <CGAL/Periodic_3_Delaunay_triangulation_traits_3.h>
 #include <CGAL/Periodic_3_Delaunay_triangulation_3.h>
 
 #include <iostream>
 #include <vector>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
-typedef CGAL::Periodic_3_triangulation_traits_3<K> GT;
+typedef CGAL::Periodic_3_Delaunay_triangulation_traits_3<K> GT;
 
 typedef CGAL::Periodic_3_Delaunay_triangulation_3<GT> PDT;
 

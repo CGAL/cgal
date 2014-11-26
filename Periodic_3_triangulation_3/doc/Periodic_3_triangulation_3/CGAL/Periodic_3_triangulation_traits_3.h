@@ -4,7 +4,7 @@ namespace CGAL {
 /*!
 \ingroup PkgPeriodic3Triangulation3TraitsClasses
 
-The class `Periodic_3_triangulation_traits_3` is designed as a default traits class for the 
+The class `Periodic_3_Delaunay_triangulation_traits_3` is designed as a default traits class for the 
 class `Periodic_3_triangulation_3<Periodic_3TriangulationTraits_3,TriangulationDataStructure_3>`. 
 
 \tparam Traits must be a model of the `DelaunayTriangulationTraits_3` concept. 
@@ -19,7 +19,7 @@ instantiation of `CGAL::Filtered_kernel`.
 \cgalModels `Periodic_3DelaunayTriangulationTraits_3`
 */
 template< typename Traits, typename Periodic_3Offset_3 >
-class Periodic_3_triangulation_traits_3 : public Traits {
+class Periodic_3_Delaunay_triangulation_traits_3 : public Traits {
 public:
-}; /* end Periodic_3_triangulation_traits_3 */
+}; /* end Periodic_3_Delaunay_triangulation_traits_3 */
 } /* end namespace CGAL */

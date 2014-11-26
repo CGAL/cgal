@@ -22,11 +22,10 @@
 #ifndef CGAL_PERIODIC_3_TRIANGULATION_TRAITS_3_H
 #define CGAL_PERIODIC_3_TRIANGULATION_TRAITS_3_H
 
-#define CGAL_DEPRECATED_HEADER "<CGAL/Periodic_3_triangulation_traits_3.h>"
-#define CGAL_REPLACEMENT_HEADER "<CGAL/Periodic_3_Delaunay_triangulation_traits_3.h>"
 #include <CGAL/basic.h>
 #include <CGAL/Periodic_3_offset_3.h>
 #include <CGAL/triangulation_assertions.h>
+
 
 namespace CGAL { 
 
@@ -118,13 +117,13 @@ private:
 };
 
 template < class Kernel, class Off = typename CGAL::Periodic_3_offset_3 >
-class Periodic_3_triangulation_traits_base_3
+class Periodic_3_Delaunay_triangulation_traits_base_3
   : public Kernel
 {
 public:
   typedef Kernel                                                 K;
   typedef Off                                                    Offset;
-  typedef Periodic_3_triangulation_traits_base_3< K, Offset >    Self;  
+  typedef Periodic_3_Delaunay_triangulation_traits_base_3< K, Offset >    Self;
 
   typedef typename K::RT                RT;
   typedef typename K::FT                FT;
@@ -244,7 +243,7 @@ protected:
 };
 
 template < typename K, typename Off = CGAL::Periodic_3_offset_3 >
-class Periodic_3_triangulation_traits_3;
+class Periodic_3_Delaunay_triangulation_traits_3;
 
 } //namespace CGAL
 
@@ -260,13 +259,13 @@ template < typename K, typename Off >
 class Periodic_3_triangulation_filtered_traits_3;
 
 template < class K, class Off>
-class Periodic_3_triangulation_traits_3
-  : public Periodic_3_triangulation_traits_base_3<K, Off>
+class Periodic_3_Delaunay_triangulation_traits_3
+  : public Periodic_3_Delaunay_triangulation_traits_base_3<K, Off>
 {
 };
 
 template < typename CK, typename Off >
-class Periodic_3_triangulation_traits_3 < Filtered_kernel<CK>, Off>
+class Periodic_3_Delaunay_triangulation_traits_3 < Filtered_kernel<CK>, Off>
   : public Periodic_3_triangulation_filtered_traits_3 <
   Filtered_kernel<CK>, Off >
 {
@@ -275,7 +274,7 @@ public:
 };
 
 template < class Off >
-class Periodic_3_triangulation_traits_3<CGAL::Epick, Off>
+class Periodic_3_Delaunay_triangulation_traits_3<CGAL::Epick, Off>
   : public Periodic_3_triangulation_filtered_traits_3<CGAL::Epick, Off>
 {
   typedef CGAL::Epick Kernel;
