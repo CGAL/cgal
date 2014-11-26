@@ -231,8 +231,16 @@ BOOST_AUTO_TEST_CASE( point_position_accessor )
 
 BOOST_AUTO_TEST_CASE( properties ) {
   Surface_fixture f;
-  f.m.add_property_map<Sm::Vertex_index, int>("illuminatiproperty", 23);
-  // CGAL::Property_map<Sm::Vertex_index, int> prop = f.m.get_property_map<Sm::Vertex_index, int>("illuminatiproperty");
+  
+
+  Sm::Property_map<Sm::Vertex_index, int> prop;
+  bool exists = true;
+
+  boost::tie(prop,exists) = f.m.add_property_map<Sm::Vertex_index, int>("illuminatiproperty", 23);
+  BOOST_CHECK(exists == false);
+
+  boost::tie(prop,exists)= f.m.add_property_map<Sm::Vertex_index, int>("illuminatiproperty");
+  BOOST_CHECK(exists == true);
 }
 
 
