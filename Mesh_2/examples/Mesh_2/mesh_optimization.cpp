@@ -23,7 +23,6 @@ typedef CGAL::Delaunay_mesher_2<CDT, Criteria>              Mesher;
 typedef CDT::Vertex_handle Vertex_handle;
 typedef CDT::Point Point;
 
-using namespace parameters;
 
 int main()
 {
@@ -52,9 +51,9 @@ int main()
 
   std::cout << "Run Lloyd optimization...";
   CGAL::lloyd_optimize_mesh_2(cdt,
-    convergence = 0,
-    freeze_bound = 0.005,
-    time_limit = 0);
+    parameters::convergence = 0,
+    parameters::freeze_bound = 0.005,
+    parameters::time_limit = 0);
   std::cout << " done." << std::endl;
 
   std::cout << "Number of vertices: " << cdt.number_of_vertices() << std::endl;
