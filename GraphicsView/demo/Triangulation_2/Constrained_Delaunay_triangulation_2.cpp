@@ -66,6 +66,7 @@ typedef CDT::Vertex_handle Vertex_handle;
 typedef CDT::Face_handle Face_handle;
 typedef CDT::All_faces_iterator All_faces_iterator;
 
+using namespace parameters;
 
 void
 discoverInfiniteComponent(const CDT & ct)
