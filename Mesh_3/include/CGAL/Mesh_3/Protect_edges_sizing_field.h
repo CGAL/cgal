@@ -234,7 +234,7 @@ private:
 			   InputIterator last,
 			   const Curve_segment_index& index,
 			   ErasedVeOutIt out);
-  
+
   template <typename InputIterator, typename ErasedVeOutIt>
   ErasedVeOutIt
   analyze_and_repopulate(InputIterator begin,
@@ -377,7 +377,6 @@ operator()(const bool refine)
     std::cerr << "refine_balls() done. Nb of points in triangulation: "
               << c3t3_.triangulation().number_of_vertices() << std::endl;
 #endif
-    debug_dump_c3t3("dump-mesh-after-protect_edges.binary.cgal", c3t3_);
     CGAL_assertion(minimal_size_ > 0 || c3t3_.is_valid());
  }
   
@@ -618,7 +617,7 @@ smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index,
 #ifdef CGAL_MESH_3_PROTECTION_DEBUG
     typename Tr::Point nearest_point;
 #endif
-    for(typename std::vector<Vertex_handle>::const_iterator 
+    for(typename std::vector<Vertex_handle>::const_iterator
           it = vertices_in_conflict_zone.begin(),
           end = vertices_in_conflict_zone.end(); it != end ; ++it )
     {
@@ -964,8 +963,8 @@ insert_balls(const Vertex_handle& vp,
     std::cerr << "  middle point: " << new_point << std::endl;
     std::cerr << "  new weight: " << point_weight << std::endl;
 #endif
-    std::pair<Vertex_handle, ErasedVeOutIt> pair = 
-      smart_insert_point(new_point, 
+    std::pair<Vertex_handle, ErasedVeOutIt> pair =
+      smart_insert_point(new_point,
 			 point_weight,
 			 dim,
 			 index,
@@ -1126,8 +1125,6 @@ refine_balls()
         { new_sizes[vb] = sb_new; }
       }
     }
-    CGAL_assertion(std::is_sorted(new_sizes.begin(),
-				  new_sizes.end()));
 
     // The std::map with Vertex_handle as the key is not robust, because
     // the time stamp of vertices can change during the following loop. The
@@ -1334,8 +1331,6 @@ check_and_repopulate_edges()
 
     check_and_fix_vertex_along_edge(v,
       boost::make_function_output_iterator(erase_from_vertices));
-    CGAL_assertion(std::is_sorted(vertices.begin(),
-				  vertices.end()));
   }
 }
 
