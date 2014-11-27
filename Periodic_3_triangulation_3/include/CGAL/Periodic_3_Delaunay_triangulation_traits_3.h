@@ -250,13 +250,13 @@ class Periodic_3_Delaunay_triangulation_traits_3;
 // Partial specialization for Filtered_kernel<CK>.
 #include <CGAL/Filtered_kernel.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Periodic_3_triangulation_filtered_traits_3.h>
+#include <CGAL/Periodic_3_Delaunay_triangulation_filtered_traits_3.h>
 
 namespace CGAL {
 
 // This declaration is needed to break the cyclic dependency.
 template < typename K, typename Off >
-class Periodic_3_triangulation_filtered_traits_3;
+class Periodic_3_Delaunay_triangulation_filtered_traits_3;
 
 template < class K, class Off>
 class Periodic_3_Delaunay_triangulation_traits_3
@@ -266,7 +266,7 @@ class Periodic_3_Delaunay_triangulation_traits_3
 
 template < typename CK, typename Off >
 class Periodic_3_Delaunay_triangulation_traits_3 < Filtered_kernel<CK>, Off>
-  : public Periodic_3_triangulation_filtered_traits_3 <
+  : public Periodic_3_Delaunay_triangulation_filtered_traits_3 <
   Filtered_kernel<CK>, Off >
 {
 public:
@@ -275,7 +275,7 @@ public:
 
 template < class Off >
 class Periodic_3_Delaunay_triangulation_traits_3<CGAL::Epick, Off>
-  : public Periodic_3_triangulation_filtered_traits_3<CGAL::Epick, Off>
+  : public Periodic_3_Delaunay_triangulation_filtered_traits_3<CGAL::Epick, Off>
 {
   typedef CGAL::Epick Kernel;
 };
