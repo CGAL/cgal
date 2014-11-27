@@ -1099,15 +1099,15 @@ test_polycurve_conic_traits()
   local kernel=$CARTESIAN_KERNEL;
   local geom_traits=$POLYCURVE_CONIC_GEOM_TRAITS;
   local flags="-DTEST_NT=$nt -DTEST_KERNEL=$kernel -DTEST_GEOM_TRAITS=$geom_traits";
-  
+
   compile_test_with_flags test_traits conic_polycurve "$flags"
   if [ -n "${SUCCESS}" ] ; then
-    
-    # The input arguments for the execute_commands_new_structure, 
+
+    # The input arguments for the execute_commands_new_structure,
     # 1. Polycurve_conics is the directory name in "data"
     # 2. polycurve_conic_traits is a string
     # Execute_command_new_structure will only run the test on functors provided as the third, fourth and so on arguments.
-    # To see how the input data directory should be structured for each functor, check the execute_commands_new_structure function in this file. 
+    # To see how the input data directory should be structured for each functor, check the execute_commands_new_structure function in this file.
     execute_commands_new_structure polycurves_conics polycurve_conic_traits \
       COMPARE_Y_AT_X \
       INTERSECT \
@@ -1144,7 +1144,7 @@ test_polycurve_circular_arc_traits()
   local kernel=$CARTESIAN_KERNEL;
   local geom_traits=$POLYCURVE_CIRCULAR_ARC_GEOM_TRAITS;
   local flags="-DTEST_NT=$nt -DTEST_KERNEL=$kernel -DTEST_GEOM_TRAITS=$geom_traits";
-  
+
   compile_test_with_flags test_traits circular_arc_polycurve "$flags"
   if [ -n "${SUCCESS}" ] ; then
    execute_commands_new_structure Polycurves_circular_arcs polycurve_circular_arc_traits \
@@ -1166,7 +1166,7 @@ test_polycurve_circular_arc_traits()
     MERGE \
     COMPARE_ENDPOINTS_XY \
     INTERSECT
-    
+
   else
    echo "   ERROR:    not executed   test_traits polyline_traits" >> $ERRORFILE
   fi
@@ -1182,7 +1182,7 @@ test_polycurve_bezier_traits()
   local kernel=$CARTESIAN_KERNEL;
   local geom_traits=$POLYCURVE_BEZIER_GEOM_TRAITS;
   local flags="-DTEST_NT=$nt -DTEST_KERNEL=$kernel -DTEST_GEOM_TRAITS=$geom_traits";
-  
+
   compile_test_with_flags test_traits bezier_polycurve "$flags"
   if [ -n "${SUCCESS}" ] ; then
    execute_commands_new_structure Polycurves_bezier test_polycurve_bezier_traits \
@@ -1203,9 +1203,9 @@ test_polycurve_bezier_traits()
     # COMPARE_X_POLYCURVE \
     # COMPARE_XY_POLYCURVE \
     # CONSTRUCT_OPPOSITE \
-    
+
     # INTERSECT
-    
+
   else
    echo "   ERROR:    not executed   test_traits polyline_traits" >> $ERRORFILE
   fi
@@ -1636,25 +1636,10 @@ if [ "${TEST_WITH_CMAKE}" != "FALSE" ]; then
     compile_and_run construction_test_suite_generator
 fi
 
-# waqar start
-
-#test_polycurve_bezier_traits
-test_polycurve_conic_traits
-#test_polycurve_circular_arc_traits
-#test_circle_segments_traits
-test_polyline_traits
-#test_circular_arc_traits
-#test_conic_traits
-
-
-# waqar end
-
-#commenting of the code below it
-if [ 1 -eq 0 ]; then
-
 test_segment_traits
 test_non_caching_segment_traits
 test_polyline_traits
+test_polycurve_conic_traits
 test_non_caching_polyline_traits
 test_linear_traits
 test_conic_traits
@@ -1719,8 +1704,6 @@ test_spherical_arcs_traits_adaptor
 compile_and_run test_removal
 compile_and_run test_unbounded_removal
 compile_and_run test_spherical_removal
-
-fi
 
 # if any error occured then append the full error description file to error file
 
