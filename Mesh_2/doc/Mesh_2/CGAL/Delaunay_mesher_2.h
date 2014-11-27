@@ -38,6 +38,8 @@ components including at least one seed, or the union of the bounded
 connected components that do no contain any seed. Note that the unbounded 
 component of the plane is never meshed. 
 
+\sa `lloyd_optimize_mesh_2()`
+
 */
 template< typename CDT, typename Criteria >
 class Delaunay_mesher_2 {
