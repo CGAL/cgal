@@ -52,9 +52,11 @@ private:
   compute_neighbors_general(typename Base::Node_const_handle N, const Kd_tree_rectangle<FT>& r) 
   {
     if (!(N->is_leaf())) {
+       Tree::Internal_node_const_handle node = 
+        static_cast<Tree::Internal_node_const_handle>(N);
       this->number_of_internal_nodes_visited++;
-      int new_cut_dim=N->cutting_dimension();
-      FT  new_cut_val=N->cutting_value();
+      int new_cut_dim=node->cutting_dimension();
+      FT  new_cut_val=node->cutting_value();
 
       Kd_tree_rectangle<FT> r_lower(r);
 
@@ -97,14 +99,14 @@ private:
             (distance_to_lower_half >= 
              distance_to_upper_half))  )
         {
-          compute_neighbors_general(N->lower(), r_lower);
+          compute_neighbors_general(node->lower(), r_lower);
           if (branch(distance_to_upper_half)) 
-            compute_neighbors_general (N->upper(), r_upper);
+            compute_neighbors_general (node->upper(), r_upper);
         }  
       else
-        {	compute_neighbors_general(N->upper(), r_upper);
+        {	compute_neighbors_general(node->upper(), r_upper);
         if (branch(distance_to_lower_half)) 
-          compute_neighbors_general (N->lower(), 
+          compute_neighbors_general (node->lower(), 
                                      r_lower);
         }
 
@@ -112,9 +114,11 @@ private:
     else
       {
         // n is a leaf
+         Tree::Leaf_node_const_handle node = 
+          static_cast<Tree::Leaf_node_const_handle>(N);
         this->number_of_leaf_nodes_visited++;
-        if (N->size() > 0)
-          for (typename Base::Point_d_iterator it = N->begin(); it != N->end(); it++) {
+        if (node->size() > 0)
+          for (typename Base::Point_d_iterator it = node->begin(); it != node->end(); it++) {
             this->number_of_items_visited++;
             FT distance_to_query_object =
               this->distance_instance.transformed_distance(this->query_object,**it);

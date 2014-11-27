@@ -63,53 +63,57 @@ private:
   {
     if (!(N->is_leaf())) 
     {
+      Tree::Internal_node_const_handle node = 
+        static_cast<Tree::Internal_node_const_handle>(N);
       this->number_of_internal_nodes_visited++;
-      int new_cut_dim=N->cutting_dimension();
+      int new_cut_dim=node->cutting_dimension();
       FT old_off, new_rd;
-      FT new_off = *(query_object_it + new_cut_dim) - N->cutting_value();
+      FT new_off = *(query_object_it + new_cut_dim) - node->cutting_value();
       if ( ((new_off <  FT(0.0)) && (this->search_nearest)) ||
            ((new_off >= FT(0.0)) && (!this->search_nearest)) ) 
       {
-        compute_neighbors_orthogonally(N->lower(),rd);
+        compute_neighbors_orthogonally(node->lower(),rd);
         if (this->search_nearest) {
-          old_off= *(query_object_it + new_cut_dim) - N->low_value();
+          old_off= *(query_object_it + new_cut_dim) - node->low_value();
           if (old_off>FT(0.0)) 
             old_off=FT(0.0);
         }
         else {	
-          old_off= *(query_object_it + new_cut_dim) - N->high_value();
+          old_off= *(query_object_it + new_cut_dim) - node->high_value();
           if (old_off<FT(0.0)) 
             old_off=FT(0.0);
         }
         new_rd = this->distance_instance.new_distance(rd,old_off,new_off,new_cut_dim);
         if (this->branch(new_rd)) 
-          compute_neighbors_orthogonally(N->upper(), new_rd);                               
+          compute_neighbors_orthogonally(node->upper(), new_rd);                               
       }
       else // compute new distance
       {
-        compute_neighbors_orthogonally(N->upper(),rd); 
+        compute_neighbors_orthogonally(node->upper(),rd); 
         if (this->search_nearest) {
-          old_off= N->high_value() - *(query_object_it + new_cut_dim);
+          old_off= node->high_value() - *(query_object_it + new_cut_dim);
           if (old_off>FT(0.0)) 
             old_off=FT(0.0);
         }
         else  {       
-          old_off= N->low_value() - *(query_object_it + new_cut_dim);
+          old_off= node->low_value() - *(query_object_it + new_cut_dim);
           if (old_off<FT(0.0)) 
             old_off=FT(0.0);
         }  
         new_rd = this->distance_instance. new_distance(rd,old_off,new_off,new_cut_dim);
         if (this->branch(new_rd)) 
-          compute_neighbors_orthogonally(N->lower(), new_rd);       
+          compute_neighbors_orthogonally(node->lower(), new_rd);       
       }
     }
     else
     {
       // n is a leaf
+      Tree::Leaf_node_const_handle node = 
+        static_cast<Tree::Leaf_node_const_handle>(N);
       this->number_of_leaf_nodes_visited++;
-      if (N->size() > 0)
+      if (node->size() > 0)
       {
-        for (typename Base::Point_d_iterator it=N->begin(); it != N->end(); it++) 
+        for (typename Base::Point_d_iterator it=node->begin(); it != node->end(); it++) 
         {
           this->number_of_items_visited++;
           FT distance_to_query_object=

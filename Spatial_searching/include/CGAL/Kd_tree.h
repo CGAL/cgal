@@ -104,11 +104,13 @@ private:
   Node_handle
   create_leaf_node(Point_container& c)
   {
-    Leaf_node node(true,static_cast<unsigned int>(c.size()));
-    leaf_nodes.push_back(node);
-    Node_handle nh = leaf_nodes.back();
+    Leaf_node node(true , static_cast<unsigned int>(c.size()));
+    node.data = c.begin();
 
-    nh->data = c.begin();
+    leaf_nodes.push_back(node);
+    Leaf_node_handle nh = &leaf_nodes.back();
+
+   
     return nh;
   }
 
@@ -136,29 +138,34 @@ private:
   Node_handle
   create_internal_node_use_extension(Point_container& c)
   {
-    Node_handle nh = nodes.emplace(Node::EXTENDED_INTERNAL);
+    Internal_node node(false);
+    
+
 
     Point_container c_low(c.dimension(),traits_);
-    split(nh->separator(), c, c_low);
+    split(node.separator(), c, c_low);
 
-    int cd  = nh->separator().cutting_dimension();
+    int cd  = node.separator().cutting_dimension();
 
-    nh->low_val = c_low.bounding_box().min_coord(cd);
-    nh->high_val = c.bounding_box().max_coord(cd);
+    node.low_val = c_low.bounding_box().min_coord(cd);
+    node.high_val = c.bounding_box().max_coord(cd);
 
-    CGAL_assertion(nh->separator().cutting_value() >= nh->low_val);
-    CGAL_assertion(nh->separator().cutting_value() <= nh->high_val);
+    CGAL_assertion(node.separator().cutting_value() >= node.low_val);
+    CGAL_assertion(node.separator().cutting_value() <= node.high_val);
 
     if (c_low.size() > split.bucket_size()){
-      nh->lower_ch = create_internal_node_use_extension(c_low);
+      node.lower_ch = create_internal_node_use_extension(c_low);
     }else{
-      nh->lower_ch = create_leaf_node(c_low);
+      node.lower_ch = create_leaf_node(c_low);
     }
     if (c.size() > split.bucket_size()){
-      nh->upper_ch = create_internal_node_use_extension(c);
+      node.upper_ch = create_internal_node_use_extension(c);
     }else{
-      nh->upper_ch = create_leaf_node(c);
+      node.upper_ch = create_leaf_node(c);
     }
+
+    internal_nodes.push_back(node);
+    Internal_node_handle nh = &internal_nodes.back();
 
     return nh;
   }
@@ -169,21 +176,25 @@ private:
   Node_handle
   create_internal_node(Point_container& c)
   {
-    Node_handle nh = nodes.emplace(Node::INTERNAL);
+    Internal_node node(false);
 
     Point_container c_low(c.dimension(),traits_);
-    split(nh->separator(), c, c_low);
+    split(node.separator(), c, c_low);
 
     if (c_low.size() > split.bucket_size()){
-      nh->lower_ch = create_internal_node(c_low);
+      node.lower_ch = create_internal_node(c_low);
     }else{
-      nh->lower_ch = create_leaf_node(c_low);
+      node.lower_ch = create_leaf_node(c_low);
     }
     if (c.size() > split.bucket_size()){
-      nh->upper_ch = create_internal_node(c);
+      node.upper_ch = create_internal_node(c);
     }else{
-      nh->upper_ch = create_leaf_node(c);
+      node.upper_ch = create_leaf_node(c);
     }
+
+    internal_nodes.push_back(node);
+    Internal_node_handle nh = &internal_nodes.back();
+
     return nh;
   }
 
@@ -248,7 +259,8 @@ public:
   void invalidate_built()
   {
     if(is_built()){
-      nodes.clear();
+      internal_nodes.clear();
+      leaf_nodes.clear();
       data.clear();
       delete bbox;
       built_ = false;
@@ -379,14 +391,11 @@ public:
       const_build();
     }
     s << "Tree statistics:" << std::endl;
-    /*s << "Number of items stored: ";
-    if(root()->is_leaf())
-    {
-
+    s << "Number of items stored: "
       << root()->num_items() << std::endl;
     s << "Number of nodes: "
       << root()->num_nodes() << std::endl;
-    s << " Tree depth: " << root()->depth() << std::endl;*/
+    s << " Tree depth: " << root()->depth() << std::endl;
     return s;
   }
 
