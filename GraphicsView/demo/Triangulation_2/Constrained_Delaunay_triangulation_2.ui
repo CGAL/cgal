@@ -89,6 +89,7 @@
     <addaction name="actionClear" />
     <addaction name="actionLoadConstraints" />
     <addaction name="actionSaveConstraints" />
+    <addaction name="actionExport_SVG"/>
     <addaction name="separator" />
     <addaction name="actionQuit" />
    </widget>
@@ -314,6 +315,11 @@
    </property>
    <property name="shortcut" >
     <string>Ctrl+F</string>
+   </property>
+  </action>
+  <action name="actionExport_SVG">
+   <property name="text">
+    <string>&amp;Export SVG...</string>
    </property>
   </action>
  </widget>

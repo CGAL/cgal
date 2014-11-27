@@ -22,7 +22,6 @@
 #ifndef CGAL_SQUARED_DISTANCE_POINT_3_TRIANGLE_3_H
 #define CGAL_SQUARED_DISTANCE_POINT_3_TRIANGLE_3_H
 
-#include <CGAL/kernel_basic.h>
 #include <CGAL/squared_distance_3_0.h>
 #include <CGAL/squared_distance_3_1.h>
 #include <CGAL/wmult.h>

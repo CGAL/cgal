@@ -38,6 +38,7 @@
 #include <boost/iterator/transform_iterator.hpp>
 #include <boost/iterator/iterator_adaptor.hpp>
 #include <boost/mpl/if.hpp>
+#include <CGAL/internal/Mesh_3/Boundary_of_subdomain_of_complex_3_in_triangulation_3_to_off.h>
 
 namespace CGAL {
 
@@ -70,6 +71,7 @@ public:
   typedef CurveSegmentIndex                               Curve_segment_index;
 
   typedef typename Base::Triangulation                    Triangulation;
+  typedef typename Base::Subdomain_index                  Subdomain_index;
 
   using Base::surface_patch_index;
 
@@ -243,6 +245,8 @@ public:
           {
             set_surface_patch_index(c, i, 
                                     surface_patch_index(mirror_facet));
+            c->set_facet_surface_center(i,
+              mirror_facet.first->get_facet_surface_center(mirror_facet.second));
           }
         }
         /*int i_inf;
@@ -330,6 +334,33 @@ public:
     typename Corner_map::const_iterator it = corners_.find(v);
     if ( corners_.end() != it ) { return it->second; }
     return Corner_index();
+  }
+
+  /**
+   * Outputs the outer boundary of the entire domain with facets oriented outward.
+   */
+  std::ostream& output_boundary_to_off(std::ostream& out) const
+  {
+    internal::output_boundary_of_c3t3_to_off(*this, 0, out, false);
+    return out;
+  }
+
+  /**
+   * Outputs the outer boundary of the selected subdomain with facets oriented outward.
+   */
+  std::ostream& output_boundary_to_off(std::ostream& out, Subdomain_index subdomain) const
+  {
+    output_boundary_of_c3t3_to_off(*this, subdomain, out);
+    return out;
+  }
+
+  /**
+   * Outputs the surface facets with a consistent orientation at the interface of two subdomains.
+   */
+  std::ostream& output_facets_in_complex_to_off(std::ostream& out) const
+  {
+    internal::output_facets_in_complex_to_off(*this, out);
+    return out;
   }
 
   /**

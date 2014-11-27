@@ -7,7 +7,7 @@
 #include <CGAL/boost/graph/properties_Polyhedron_3.h>
 #include <boost/foreach.hpp>
 // #define CGAL_DEFORM_MESH_USE_EXPERIMENTAL_SR_ARAP
-#include <CGAL/Deform_mesh.h>
+#include <CGAL/Surface_mesh_deformation.h>
 
 #include <fstream>
 
@@ -18,7 +18,7 @@ typedef CGAL::Polyhedron_3<Kernel, CGAL::Polyhedron_items_with_id_3> Polyhedron;
 typedef boost::graph_traits<Polyhedron>::vertex_descriptor    vertex_descriptor;
 typedef boost::graph_traits<Polyhedron>::vertex_iterator        vertex_iterator;
 
-typedef CGAL::Deform_mesh<Polyhedron,CGAL::Default, CGAL::Default, CGAL::ORIGINAL_ARAP> Deform_mesh;
+typedef CGAL::Surface_mesh_deformation<Polyhedron,CGAL::Default, CGAL::Default, CGAL::ORIGINAL_ARAP> Surface_mesh_deformation;
 
 int main(int argc,char** argv)
 {
@@ -39,7 +39,7 @@ int main(int argc,char** argv)
   set_halfedgeds_items_id(mesh);
 
   // Create a deformation object
-  Deform_mesh deform_mesh(mesh);
+  Surface_mesh_deformation deform_mesh(mesh);
 
   // Definition of the region of interest (use the whole mesh)
   vertex_iterator vb,ve;
@@ -82,7 +82,7 @@ int main(int argc,char** argv)
   Kernel::Aff_transformation_3 aff(m00, m01, m02, m03, m10, m11, m12, m13, m20, m21, m22, m23);
   BOOST_FOREACH(vertex_descriptor vd, control_vertices)
   {
-    Deform_mesh::Point pos = vd->point().transform(aff);
+    Surface_mesh_deformation::Point pos = vd->point().transform(aff);
     deform_mesh.set_target_position(vd, pos);
   }
 

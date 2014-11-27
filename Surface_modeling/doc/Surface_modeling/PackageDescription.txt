@@ -26,7 +26,7 @@ under positional constraints of some of its vertices, without requiring any addi
 
 
 ## Main Class ##
-- `#CGAL::Deform_mesh`
+- `#CGAL::Surface_mesh_deformation`
 
 ## Concepts ##
 - `DeformationClosestRotationTraits_3`

@@ -38,6 +38,8 @@
 // for viewportsBbox(QGraphicsScene*)
 #include <CGAL/Qt/utility.h>
 
+#include <QSvgGenerator>
+
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef K::Point_2 Point_2;
 typedef K::Segment_2 Segment_2;
@@ -243,6 +245,8 @@ public slots:
   void on_actionSaveConstraints_triggered();
 
   void saveConstraints(QString);
+
+  void on_actionExport_SVG_triggered();
 
   void on_actionMakeGabrielConform_triggered();
 
@@ -571,6 +575,29 @@ MainWindow::saveConstraints(QString fileName)
 {
   std::ofstream output(qPrintable(fileName));
   if (output) output << cdt;
+}
+
+
+void
+MainWindow::on_actionExport_SVG_triggered()
+{
+  QString fileName = QFileDialog::getSaveFileName(this,
+						  tr("Export to SVG"),
+						  ".",
+						  tr("SVG (*.svg)\n"));
+
+  QSvgGenerator svg;
+  svg.setFileName(fileName);
+
+  svg.setSize(this->graphicsView->size());
+  svg.setViewBox(this->graphicsView->geometry());
+  svg.setTitle(tr("Constrained_Delaunay_triangulation_2 drawing"));
+  svg.setDescription(tr("Generated using CGAL Constrained_Delaunay_triangulation_2 demo"));
+
+  QPainter painter;
+  painter.begin(&svg);
+  this->graphicsView->render(&painter);
+  painter.end();
 }
 
 

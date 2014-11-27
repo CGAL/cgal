@@ -149,6 +149,9 @@ inline double IA_opacify(double x)
   // volatile). In case of trouble, use volatile instead.
 # ifdef CGAL_HAS_SSE2
   asm volatile ("" : "+x"(x) );
+# elif (defined __VFP_FP__ && !defined __SOFTFP__) || defined __aarch64__
+  // ARM
+  asm volatile ("" : "+w"(x) );
 # else
   asm volatile ("" : "+m"(x) );
 # endif

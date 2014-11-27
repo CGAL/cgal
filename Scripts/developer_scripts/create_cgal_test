@@ -151,6 +151,11 @@ if [ \$# -ne 0 ] ; then
 else
   echo "Run all tests."
 EOF
+
+  # workaround for Cygwin, to avoid that the 'sort' from
+  # C:\Windows\system32 is used instead of /usr/bin/sort
+  PATH=/usr/bin:$PATH
+
   for file in `ls *.C *.cpp 2>/dev/null | sort` ; do
     if [ -n "`grep '\<main\>' $file`" ] ; then
       tmp=`basename $file .C`

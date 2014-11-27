@@ -40,6 +40,7 @@ An integer type representing the number of edges
 */ 
 typedef unspecified_type size_type; 
 
+
 /// @} 
 
 /// \name Operations 
@@ -101,6 +102,11 @@ the edge will not be collapsed.
 void OnCollapsing( Profile const& profile 
 , boost::optional<Point> placement 
 ); 
+
+/*!
+Called when an edge has been collapsed and replaced by the vertex `vd`
+*/
+void OnCollapsed( Profile const&, Profile::vertex_descriptor const& vd) {}
 
 /*!
 Called for each selected edge which cannot be 

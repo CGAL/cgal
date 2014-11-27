@@ -68,6 +68,10 @@ a.el {
     font-weight: normal;
 }
 
+.memproto a {
+    font-weight: bold;
+}
+
 .PkgSummary {
     width: 60%;
 }
