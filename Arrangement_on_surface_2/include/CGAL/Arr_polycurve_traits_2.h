@@ -12,10 +12,6 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL$
-// $Id$
-//
-//
 // Author(s)     : Efi Fogel <efif@post.tau.ac.il>
 //                 Ron Wein  <wein@post.tau.ac.il>
 //                 Dror Atariah <dror.atariah@fu-berlin.de>
@@ -1473,7 +1469,7 @@ public:
           if (cmp_seg_endpts(seg2) == LARGER){
             xcv1.push_back(seg2);
           }
-          else{
+          else {
             // seg2 has to be reversed
             seg2 = m_poly_traits.geometry_traits_2()->
               construct_opposite_2_object()(seg2);
@@ -1482,7 +1478,8 @@ public:
 
           if (cmp_seg_endpts(seg1) == LARGER){
             xcv2.push_back(seg1);
-          } else {
+          }
+          else {
             // seg2 has to be reversed
             seg1 = m_poly_traits.geometry_traits_2()->
               construct_opposite_2_object()(seg1);
@@ -1619,12 +1616,13 @@ public:
       bool right_coincides = left_coincides;
       bool right_overlap = false;
 
-      while (((dir1==SMALLER) && (dir2 == SMALLER) && (i1 < n1) &&(i2 < n2))||
-             ((dir1!=SMALLER) && (dir2 == SMALLER) &&
+      while (((dir1 == SMALLER) && (dir2 == SMALLER) &&
+              (i1 < n1) && (i2 < n2)) ||
+             ((dir1 != SMALLER) && (dir2 == SMALLER) &&
               (i1 != INVALID_INDEX) && (i2 < n2)) ||
-             ((dir1==SMALLER) && (dir2 != SMALLER) && (i1 < n1) &&
+             ((dir1 == SMALLER) && (dir2 != SMALLER) && (i1 < n1) &&
               (i2 != INVALID_INDEX)) ||
-             ((dir1!=SMALLER) && (dir2 != SMALLER) &&
+             ((dir1 != SMALLER) && (dir2 != SMALLER) &&
               (i1 != INVALID_INDEX) && (i2 != INVALID_INDEX)))
       {
         right_res = compare_xy(cv1[i1], ARR_MAX_END, cv2[i2], ARR_MAX_END);
