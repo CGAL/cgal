@@ -18,6 +18,7 @@
 // 
 // Author(s)     : Ron Wein     <wein@post.tau.ac.il>
 //                 Iddo Hanniel <iddoh@cs.technion.ac.il>
+//                 Waqar Khan   <wkhan@mpi-inf.mpg.de>
 
 #ifndef CGAL_ARR_BEZIER_CURVE_TRAITS_2_H
 #define CGAL_ARR_BEZIER_CURVE_TRAITS_2_H
