@@ -2,6 +2,15 @@
 
 /// \defgroup PkgMesh2Concepts Concepts
 /// \ingroup PkgMesh2
+
+/// \defgroup PkgMesh2Functions Mesh Generation Functions
+/// \ingroup PkgMesh2
+/// The main function to generate a mesh is `refine_Delaunay_mesh_2()`. 
+/// The function `lloyd_optimize_mesh_2()` allows to optimize an existing mesh.
+
+/// \defgroup PkgMesh2Enum Enumerations
+/// \ingroup PkgMesh2
+
 /*!
 \addtogroup PkgMesh2
 \cgalPkgDescriptionBegin{2D Conforming Triangulations and Meshes,PkgMesh2Summary}
@@ -32,11 +41,13 @@ The package can handle intersecting input constraints  and set no restriction on
 - `DelaunayMeshTraits_2`
 - `MeshingCriteria_2`
 - `DelaunayMeshFaceBase_2`
+- `DelaunayMeshVertexBase_2`
 
 ## Classes##
 - `CGAL::Triangulation_conformer_2<CDT>`
 - `CGAL::Delaunay_mesher_2<CDT, Criteria>`
 - `CGAL::Delaunay_mesh_face_base_2<Traits, Fb>`
+- `CGAL::Delaunay_mesh_vertex_base_2<Traits, Vb>`
 - `CGAL::Delaunay_mesh_criteria_2<CDT>`
 - `CGAL::Delaunay_mesh_size_criteria_2<CDT>`
 - `CGAL::Mesh_2::Face_badness`

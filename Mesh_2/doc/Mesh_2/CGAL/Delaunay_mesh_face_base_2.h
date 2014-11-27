@@ -19,7 +19,7 @@ specific application.
 be the same as the one used for the Delaunay mesh. 
 
 \tparam Fb is the base class from which `Delaunay_mesh_face_base_2` 
-derives. It must be a model of the `TriangulationFaceBase_2` concept. 
+derives. It must be a model of the `ConstrainedTriangulationFaceBase_2` concept. 
 
 
 \cgalModels `DelaunayMeshFaceBase_2`
