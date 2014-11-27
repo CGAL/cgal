@@ -28,9 +28,9 @@ int main()
 {
   CDT cdt;
 
-  Vertex_handle va = cdt.insert(Point(-4,0));
-  Vertex_handle vb = cdt.insert(Point(0,-1));
-  Vertex_handle vc = cdt.insert(Point(4,0));
+  Vertex_handle va = cdt.insert(Point(-2,0));
+  Vertex_handle vb = cdt.insert(Point(0,-2));
+  Vertex_handle vc = cdt.insert(Point(2,0));
   Vertex_handle vd = cdt.insert(Point(0,1));
   cdt.insert(Point(2, 0.6));
 
@@ -51,9 +51,7 @@ int main()
 
   std::cout << "Run Lloyd optimization...";
   CGAL::lloyd_optimize_mesh_2(cdt,
-    parameters::convergence = 0,
-    parameters::freeze_bound = 0.005,
-    parameters::time_limit = 0);
+    parameters::max_iteration_number = 10);
   std::cout << " done." << std::endl;
 
   std::cout << "Number of vertices: " << cdt.number_of_vertices() << std::endl;
