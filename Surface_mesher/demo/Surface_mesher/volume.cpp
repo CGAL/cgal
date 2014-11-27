@@ -801,9 +801,9 @@ void Volume::display_surface_mesher_result()
 
     values_list->save_values(fileinfo.absoluteFilePath());
 
-    unsigned int nx = m_image.xdim();
-    unsigned int ny = m_image.ydim();
-    unsigned int nz = m_image.zdim();
+    std::size_t nx = m_image.xdim();
+    std::size_t ny = m_image.ydim();
+    std::size_t nz = m_image.zdim();
     if(nx * ny * nz == 0)
     {
       status_message("No volume loaded.");

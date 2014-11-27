@@ -24,6 +24,7 @@
 #endif
 
 #include <string.h>
+#include <sstream>
 
 #include "pnm.h"
 #include "fgetns.h"
@@ -167,8 +168,8 @@ int readPpmImage(const char *name,_image *im)
   } while ( max == 0 );
 
 
-  im->xdim = x;
-  im->ydim = y;
+  im->xdim = static_cast<std::size_t>(x);
+  im->ydim = static_cast<std::size_t>(y);
   im->zdim = 1;
   im->vdim = 3;
 
@@ -194,7 +195,7 @@ int readPpmImage(const char *name,_image *im)
 
 int writePpmImage( char *name,_image *im )
 {
-  char string[256];
+  std::ostringstream string;
   int max;
   unsigned int i;
 
@@ -214,13 +215,11 @@ int writePpmImage( char *name,_image *im )
     fprintf(stderr, "writeInrimage: error: unable to open file \'%s\'\n", name );
     return ImageIO_OPENING;
   }
-  
-  sprintf( string, "%s\n", PPM_MAGIC );
-  ImageIO_write( im, string, strlen( string ) );
-  sprintf( string, "# CREATOR: pnm.c $Revision$ $Date$\n" );
-  ImageIO_write( im, string, strlen( string ) );
-  sprintf( string, "%d %d\n", im->xdim, im->ydim );
-  ImageIO_write( im, string, strlen( string ) );
+
+  string << PPM_MAGIC << "\n";
+  string << "# CREATOR: pnm.c $Revision$ $Date$\n";
+  string << im->xdim << " " << im->ydim << "\n";
+
   max = 0;
   switch ( im->wdim ) {
   case 1 :
@@ -240,8 +239,9 @@ int writePpmImage( char *name,_image *im )
   }
 
   if ( max == 0 ) max = 1;
-  sprintf( string, "%d\n", max );
-  ImageIO_write( im, string, strlen( string ) );
+  string << max << "\n";
+  ImageIO_write(im, string.str().data(), string.str().length());
+
   if ( im->wdim == 1 || ( im->wdim == 2 && max > 255 ) ) {
     ImageIO_write( im, im->data, im->xdim*im->ydim*3*im->wdim );
   }
@@ -527,7 +527,7 @@ int writePgmImage(char *name,_image *im  )
   ImageIO_write( im, string, strlen( string ) );
   sprintf( string, "# CREATOR: pnm.c $Revision$ $Date$\n" );
   ImageIO_write( im, string, strlen( string ) );
-  sprintf( string, "%d %d\n", im->xdim, im->ydim );
+  sprintf( string, "%zu %zu\n", im->xdim, im->ydim );
   ImageIO_write( im, string, strlen( string ) );
   max = 0;
   switch ( im->wdim ) {

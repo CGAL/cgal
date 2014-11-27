@@ -19,7 +19,8 @@
 //
 // Author(s)     :  ASCLEPIOS Project (INRIA Sophia-Antipolis), Laurent Rineau
 
-#include <string.h>
+#include <string>
+#include <sstream>
 
 #include "gis.h" 
 #include "inr.h"
@@ -240,14 +241,17 @@ int readGisHeader( const char* name,_image* im)
   char *s, *str = NULL;
   int status;
   int n=0, nusermax = 20;
-  
 
   str = (char*)ImageIO_alloc( _LGTH_STRING_+1 );
   
   if ( !fgetns(str, _LGTH_STRING_, im) ) 
     { ImageIO_free( str ); return -1; }
-  status = sscanf( str,"%u %u %u %u", &(im->xdim), &(im->ydim), 
-		   &(im->zdim), &(im->vdim) );
+
+  std::istringstream iss;
+  iss.str(str);
+  iss >> im->xdim >> im->ydim >> im->zdim >> im->vdim;
+
+  status = iss.str().length();
   switch ( status ) {
   case 2 :    im->zdim = 1;
   case 3 :    im->vdim = 1;
@@ -624,95 +628,86 @@ int readGisHeader( const char* name,_image* im)
 int writeGisHeader( const _image* inr )
 {
   const char *proc = "writeGisHeader";
-  char *str = NULL;
-  
+  std::ostringstream oss;
+
   if ( inr->vectMode == VM_NON_INTERLACED ) {
     fprintf( stderr, "%s: can not write non interlaced data\n", proc );
     return -1;
   }
 
-  str = (char*)ImageIO_alloc( _LGTH_STRING_ );
-
   /* dimensions
    */
-  sprintf( str, "%d %d", inr->xdim, inr->ydim );
+  oss << " " << inr->xdim << " " << inr->ydim;
   if ( inr->vdim > 1 ) {
-    sprintf( str+strlen(str), " %d %d", inr->zdim, inr->vdim );
+    oss << " " << inr->zdim << " " << inr->vdim;
   }
   else if ( inr->zdim > 1 ) {
-    sprintf( str+strlen(str), " %d", inr->zdim );
+    oss << " " << inr->zdim;
   }
-  sprintf( str+strlen(str), "\n" );
+  oss << "\n";
 
   /* type
    */
-  sprintf( str+strlen(str), "-type " );
+  oss << "-type ";
   switch ( inr->wordKind ) {
   case WK_FIXED :
     switch( inr->sign ) {
     case SGN_UNSIGNED :
-      sprintf( str+strlen(str), "U" );
-      sprintf( str+strlen(str), "%d", 8*inr->wdim );
+      oss << "U" << 8*inr->wdim;
       break;
     case SGN_SIGNED :
-      sprintf( str+strlen(str), "S" );
-      sprintf( str+strlen(str), "%d", 8*inr->wdim );
+      oss << "S" << 8*inr->wdim;
       break;
     default :
       fprintf( stderr, "%s: unknown wordSign\n", proc );
-      ImageIO_free( str );
       return -1;    
     }
     break;
   case WK_FLOAT :
     if ( inr->wdim == sizeof( float ) ) {
-      sprintf( str+strlen(str), "FLOAT" );
+      oss << "FLOAT";
     }
     else if ( inr->wdim  == sizeof( double ) ) {
-      sprintf( str+strlen(str), "DOUBLE" );
+      oss << "DOUBLE";
     }
     else {
       fprintf( stderr, "%s: unknown WK_FLOAT word dim\n", proc );
-      ImageIO_free( str );
       return -1;    
     }
     break;
   default :
     fprintf( stderr, "%s: unknown wordKind for image\n", proc );
-    ImageIO_free( str );
     return -1;  
   }
-  sprintf( str+strlen(str), "\n" );
+  oss << "\n";
   
-  sprintf( str+strlen(str), "-dx %f\n", inr->vx );
-  sprintf( str+strlen(str), "-dy %f\n", inr->vy );
-  if ( inr->zdim > 1 ) 
-    sprintf( str+strlen(str), "-dz %f\n", inr->vz );
-  
+  oss << "-dx "<< inr->vx <<"\n";
+  oss << "-dy "<< inr->vy <<"\n";
+  if ( inr->zdim > 1 )
+    oss << "-dz " << inr->vz << "\n";
+
   if ( inr->wdim > 1 ) {
-    sprintf( str+strlen(str), "-bo " );
+    oss << "-bo ";
     switch ( _getEndianness() ) {
     default :
     case END_LITTLE :
-      sprintf( str+strlen(str), "DCBA" ); break;
+      oss << "DCBA"; break;
     case END_BIG :
-      sprintf( str+strlen(str), "ABCD" );   break;
+      oss << "ABCD"; break;
     }
-    sprintf( str+strlen(str), "\n" );
+    oss << "\n";
   }
   switch ( inr->dataMode ) {
   default :
   case DM_BINARY :
-    sprintf( str+strlen(str), "-om binar\n" );
+    oss << "-om binar\n";
     break;
   case DM_ASCII :
-    sprintf( str+strlen(str), "-om ascii\n" );
+    oss << "-om ascii\n";
   }
-  if( ImageIO_write( inr, str, strlen(str)) == 0) {
-    ImageIO_free( str );
+  if( ImageIO_write( inr, oss.str().data(), oss.str().length()) == 0) {
     return -1;
   }
-  ImageIO_free( str );
   return 1;
 }
 
