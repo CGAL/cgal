@@ -445,10 +445,12 @@ namespace CGAL {
 	    delete The_node_top->first;
 	    delete The_node_top;
 
-	    while (!(N->is_leaf())) { 
+	    while (!(N->is_leaf())) {
+              Tree::Internal_node_const_handle node = 
+                static_cast<Tree::Internal_node_const_handle>(N);
 	      number_of_internal_nodes_visited++;
-	      int new_cut_dim = N->cutting_dimension();
-	      FT  new_cut_val = N->cutting_value();
+	      int new_cut_dim = node->cutting_dimension();
+	      FT  new_cut_val = node->cutting_value();
                         
 	      Node_box* lower_box = new Node_box(*B);
 	      Node_box* upper_box = new Node_box(*B); 
@@ -461,18 +463,18 @@ namespace CGAL {
 		  distance.min_distance_to_rectangle(query_point, *upper_box);
 		if (distance_to_box_lower <= distance_to_box_upper) {
 
-		  Cell* C_upper = new Cell(upper_box, N->upper());
+		  Cell* C_upper = new Cell(upper_box, node->upper());
 		  Cell_with_distance *Upper_Child =
 		    new Cell_with_distance(C_upper,distance_to_box_upper);
 		  PriorityQueue.push(Upper_Child);
-		  N=N->lower();
+		  N=node->lower();
 		  B=lower_box;
 		} else {
-		  Cell* C_lower = new Cell(lower_box, N->lower());
+		  Cell* C_lower = new Cell(lower_box, node->lower());
 		  Cell_with_distance *Lower_Child =
 		    new Cell_with_distance(C_lower,distance_to_box_lower);
 		  PriorityQueue.push(Lower_Child);
-		  N=N->upper();
+		  N=node->upper();
 		  B=upper_box;
 		}
 	      }
@@ -482,27 +484,29 @@ namespace CGAL {
 		FT distance_to_box_upper =
 		  distance.max_distance_to_rectangle(query_point, *upper_box);
 		if (distance_to_box_lower >= distance_to_box_upper) {
-		  Cell* C_upper = new Cell(upper_box, N->upper());
+		  Cell* C_upper = new Cell(upper_box, node->upper());
 		  Cell_with_distance *Upper_Child =
 		    new Cell_with_distance(C_upper,distance_to_box_upper);
 		  PriorityQueue.push(Upper_Child);
-		  N=N->lower();
+		  N=node->lower();
 		  B=lower_box;
 		}
 		else {
-		  Cell* C_lower = new Cell(lower_box, N->lower());
+		  Cell* C_lower = new Cell(lower_box, node->lower());
 		  Cell_with_distance *Lower_Child =
 		    new Cell_with_distance(C_lower,distance_to_box_lower);
 		  PriorityQueue.push(Lower_Child);
-		  N=N->upper();
+		  N=node->upper();
 		  B=upper_box;
 		}
 	      }
 	    }
 	    delete B;
+             Tree::Leaf_node_const_handle node = 
+              static_cast<Tree::Leaf_node_const_handle>(N);
 	    number_of_leaf_nodes_visited++;
-	    if (N->size() > 0) {
-	      for (Point_d_iterator it = N->begin(); it != N->end(); it++) {
+	    if (node->size() > 0) {
+	      for (Point_d_iterator it = node->begin(); it != node->end(); it++) {
 		number_of_items_visited++;
 		FT distance_to_query_point=
 		  distance.transformed_distance(query_point,**it);

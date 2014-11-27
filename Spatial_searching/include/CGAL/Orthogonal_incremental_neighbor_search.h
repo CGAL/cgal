@@ -253,59 +253,63 @@ namespace CGAL {
 	  delete The_node_top;
 	  FT copy_rd=rd;
 	  while (!(N->is_leaf())) { // compute new distance
+            Tree::Internal_node_const_handle node = 
+              static_cast<Tree::Internal_node_const_handle>(N);
 	    number_of_internal_nodes_visited++;
-	    int new_cut_dim=N->cutting_dimension();
+	    int new_cut_dim=node->cutting_dimension();
 	    FT old_off, new_rd;
 	    FT new_off =
 	      *(query_point_it + new_cut_dim) -
-	      N->cutting_value();
+	      node->cutting_value();
 	    if (new_off < FT(0.0)) {
 	      old_off=
-		*(query_point_it + new_cut_dim)-N->low_value();
+		*(query_point_it + new_cut_dim)-node->low_value();
 	      if (old_off>FT(0.0)) old_off=FT(0.0);
 	      new_rd=
 		Orthogonal_distance_instance.new_distance(copy_rd,old_off,new_off,new_cut_dim);
 	      CGAL_assertion(new_rd >= copy_rd);
 	      if (search_nearest_neighbour) {
 		Node_with_distance *Upper_Child =
-		  new Node_with_distance(N->upper(), new_rd);
+		  new Node_with_distance(node->upper(), new_rd);
 		PriorityQueue.push(Upper_Child);
-		N=N->lower();
+		N=node->lower();
 	      }
 	      else {
 		Node_with_distance *Lower_Child =
-		  new Node_with_distance(N->lower(), copy_rd);
+		  new Node_with_distance(node->lower(), copy_rd);
 		PriorityQueue.push(Lower_Child);
-		N=N->upper();
+		N=node->upper();
 		copy_rd=new_rd;
 	      }
 
 	    }
 	    else { // compute new distance
-	      old_off= N->high_value() -
+	      old_off= node->high_value() -
 		*(query_point_it+new_cut_dim);
 	      if (old_off>FT(0.0)) old_off=FT(0.0);
 	      new_rd=Orthogonal_distance_instance.new_distance(copy_rd,old_off,new_off,new_cut_dim);  
 	      CGAL_assertion(new_rd >= copy_rd);
 	      if (search_nearest_neighbour) {
 		Node_with_distance *Lower_Child =
-		  new Node_with_distance(N->lower(), new_rd);
+		  new Node_with_distance(node->lower(), new_rd);
 		PriorityQueue.push(Lower_Child);
-		N=N->upper();
+		N=node->upper();
 	      }
 	      else {
 		Node_with_distance *Upper_Child =
-		  new Node_with_distance(N->upper(), copy_rd);
+		  new Node_with_distance(node->upper(), copy_rd);
 		PriorityQueue.push(Upper_Child);
-		N=N->lower();
+		N=node->lower();
 		copy_rd=new_rd;
 	      }
 	    }
 	  }
 	  // n is a leaf
+          Tree::Leaf_node_const_handle node = 
+            static_cast<Tree::Leaf_node_const_handle>(N);
 	  number_of_leaf_nodes_visited++;
-	  if (N->size() > 0) {
-	    for (Point_d_iterator it=N->begin(); it != N->end(); it++) {
+	  if (node->size() > 0) {
+	    for (Point_d_iterator it=node->begin(); it != node->end(); it++) {
 	      number_of_items_visited++;
 	      FT distance_to_query_point=
 		Orthogonal_distance_instance.transformed_distance(query_point,**it);
