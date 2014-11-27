@@ -31,7 +31,7 @@
 #include <CGAL/Arr_tags.h>
 #include <CGAL/Arr_geometry_traits/Segment_assertions.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
-#include <CGAL/Arr_enums.h> 
+#include <CGAL/Arr_enums.h>
 #include <fstream>
 
 
@@ -68,7 +68,6 @@ public:
   typedef Tag_true                        Has_left_category;
   typedef Tag_true                        Has_merge_category;
   typedef Tag_false                       Has_do_intersect_category;
-  typedef Tag_true                        Has_construct_x_monotone_curve_from_two_points_category;
 
   typedef Arr_oblivious_side_tag          Left_side_category;
   typedef Arr_oblivious_side_tag          Bottom_side_category;
@@ -296,36 +295,6 @@ public:
       CGAL_precondition (! is_degen);
       return (is_vert);
     }
-
-    // bool has_left() const
-    // {
-    //   return true;
-    // }
-
-    // bool has_right() const
-    // {
-    //   return true;
-    // }
-
-    // Arr_parameter_space right_infinite_in_x () const
-    // {
-    //   return ARR_INTERIOR;
-    // }
-
-    // Arr_parameter_space right_infinite_in_y () const
-    // {
-    //   return ARR_INTERIOR;
-    // }
-
-    // Arr_parameter_space left_infinite_in_x () const
-    // {
-    //   return ARR_INTERIOR;
-    // }
-
-    // Arr_parameter_space left_infinite_in_y () const
-    // {
-    //   return ARR_INTERIOR;
-    // }
 
     /*!
      * Check if the curve is directed lexicographic from left to right
@@ -1057,7 +1026,7 @@ public:
     friend class Arr_segment_traits_2<Kernel>;
     /*!\brief
      * Returns a trimmed version of a line
-     * 
+     *
      * \param xseg The x-mnotone segmet
      * \param src the new start endpoint
      * \param tgt the new end endpoint
@@ -1068,7 +1037,7 @@ public:
      */
   public:
 
-    X_monotone_curve_2 operator()(const X_monotone_curve_2& xcv, 
+    X_monotone_curve_2 operator()(const X_monotone_curve_2& xcv,
                                 const Point_2& src,
                                 const Point_2& tgt)const
     {
@@ -1080,7 +1049,7 @@ public:
       CGAL_precondition(!equal(src, tgt));
       CGAL_precondition(compare_y_at_x(src, xcv) == EQUAL);
       CGAL_precondition(compare_y_at_x(tgt, xcv) == EQUAL);
-      
+
       // exchange src and tgt IF they do not conform with the direction
       X_monotone_curve_2 trimmed_segment;
 
@@ -1098,7 +1067,7 @@ public:
       {
         trimmed_segment = X_monotone_curve_2(src, tgt);
       }
-      
+
       return (trimmed_segment);
     }
 
