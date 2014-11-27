@@ -8,7 +8,12 @@
 \cgalPkgPicture{Mesh_2/fig/delaunaymesh-small.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthor{Laurent Rineau}
-\cgalPkgDesc{This package implements a Delaunay refinement algorithm to construct  conforming triangulations and 2D meshes.  Conforming Delaunay triangulations are obtained from constrained Delaunay triangulations by refining constrained edges until they are Delaunay edges. Conforming Gabriel triangulations  are obtained by further refining constrained edges until they become Gabriel edges.  The package provides also a 2D mesh generator that refines triangles and constrained edges until user defined size and shape criteria on triangles are satisfied.  The package can handle intersecting input constraints  and set no restriction on the angle formed  by two constraints sharing an endpoint.}
+\cgalPkgDesc{This package implements a Delaunay refinement algorithm to construct conforming triangulations and 2D meshes. 
+Conforming Delaunay triangulations are obtained from constrained Delaunay triangulations by refining constrained edges until they are Delaunay edges.
+Conforming Gabriel triangulations  are obtained by further refining constrained edges until they become Gabriel edges.
+The package provides also a 2D mesh generator that refines triangles and constrained edges until user defined size and shape criteria on triangles are satisfied.
+The generated meshes can be optimized using the Lloyd algorithm, also provided in this package.
+The package can handle intersecting input constraints  and set no restriction on the angle formed  by two constraints sharing an endpoint.}
 \cgalPkgManuals{Chapter_2D_Conforming_Triangulations_and_Meshes,PkgMesh2}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
@@ -40,5 +45,9 @@
 - `CGAL::make_conforming_Delaunay_2`
 - `CGAL::make_conforming_Gabriel_2`
 - `CGAL::refine_Delaunay_mesh_2`
+- `CGAL::lloyd_optimize_mesh_2`
+
+## Enumerations ##
+- `CGAL::Mesh_optimization_return_code`
 
 */
