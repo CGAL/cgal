@@ -14,7 +14,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Ron Wein          <wein@post.tau.ac.il>
 //                 Baruch Zukerman   <baruchzu@post.tau.ac.il>
@@ -40,7 +40,7 @@ namespace CGAL {
  * A traits class for maintaining an arrangement of circles.
  */
 template <class Kernel_, bool Filter = true>
-class Arr_circle_segment_traits_2 
+class Arr_circle_segment_traits_2
 {
 public:
 
@@ -60,14 +60,12 @@ public:
   typedef Tag_true                                     Has_left_category;
   typedef Tag_true                                     Has_merge_category;
   typedef Tag_false                                    Has_do_intersect_category;
-  typedef Tag_false                                    Has_construct_x_monotone_curve_from_two_points_category;
-  //typedef boost::false_type                             Has_construct_x_monotone_curve_from_two_points_category;
 
   typedef Arr_oblivious_side_tag                       Left_side_category;
   typedef Arr_oblivious_side_tag                       Bottom_side_category;
   typedef Arr_oblivious_side_tag                       Top_side_category;
   typedef Arr_oblivious_side_tag                       Right_side_category;
-    
+
 protected:
 
   // Type definition for the intersection points mapping.
@@ -85,7 +83,7 @@ public:
   {}
 
   /*! Get the next curve index. */
-  static unsigned int get_index () 
+  static unsigned int get_index ()
   {
     static unsigned int index = 0;
     return (++index);
@@ -400,7 +398,7 @@ public:
     {}
 
     /*!
-     * Cut the given conic curve (ocv.is_in_x_range (p)r conic arc) into x-monotone subcurves 
+     * Cut the given conic curve (ocv.is_in_x_range (p)r conic arc) into x-monotone subcurves
      * and insert them to the given output iterator.
      * \param cv The curve.
      * \param oi The output iterator, whose value-type is Object. The returned
@@ -430,7 +428,7 @@ public:
       const typename Kernel::Circle_2&  circ = cv.supporting_circle();
       CGAL::Sign   sign_rad = CGAL::sign (circ.squared_radius());
       CGAL_precondition (sign_rad != NEGATIVE);
-      
+
       if (sign_rad == ZERO)
       {
         // Create an isolated point.
@@ -438,7 +436,7 @@ public:
         ++oi;
         return (oi);
       }
-      
+
       // The curve is circular: compute the to vertical tangency points
       // of the supporting circle.
       Point_2         vpts[2];
@@ -454,7 +452,7 @@ public:
                                                cv.orientation(),
                                                index));
         ++oi;
-        
+
         *oi = make_object (X_monotone_curve_2 (circ,
                                                vpts[1], vpts[0],
                                                cv.orientation(),
@@ -472,7 +470,7 @@ public:
                                                  cv.orientation(),
                                                  index));
           ++oi;
-        
+
           *oi = make_object (X_monotone_curve_2 (circ,
                                                  vpts[0], vpts[1],
                                                  cv.orientation(),
@@ -493,7 +491,7 @@ public:
                                                  cv.orientation(),
                                                  index));
           ++oi;
-        
+
           *oi = make_object (X_monotone_curve_2 (circ,
                                                  vpts[0], cv.target(),
                                                  cv.orientation(),
@@ -512,7 +510,7 @@ public:
           ++oi;
         }
       }
-      
+
       return (oi);
     }
   };
@@ -623,7 +621,7 @@ public:
 
     /*! The traits (in case it has state) */
     const Traits* m_traits;
-    
+
     /*! Constructor
      * \param traits the traits (in case it has state)
      */
@@ -697,7 +695,7 @@ public:
   Construct_opposite_2 construct_opposite_2_object() const
   {
     return Construct_opposite_2();
-  } 
+  }
 
   class Trim_2
   {
@@ -707,7 +705,7 @@ public:
 
     /*! The traits (in case it has state) */
     const Traits* m_traits;
-    
+
     /*! Constructor
      * \param traits the traits (in case it has state)
      */
@@ -718,7 +716,7 @@ public:
   public:
     /*!\brief
      * Returns a trimmed version of an arc
-     * 
+     *
      * \param xcv The arc
      * \param src the new first endpoint
      * \param tgt the new second endpoint
@@ -727,7 +725,7 @@ public:
      * \pre src != tgt
      * \pre both points must be interior and must lie on \c cv
      */
-    X_monotone_curve_2 operator()(const X_monotone_curve_2& xcv, 
+    X_monotone_curve_2 operator()(const X_monotone_curve_2& xcv,
                                 const Point_2& src,
                                 const Point_2& tgt)const
     {
@@ -745,7 +743,7 @@ public:
           (! xcv.is_directed_right() && compare_x_2(src, tgt) == SMALLER) )
         return ( xcv.trim(tgt, src) );
 
-      else  
+      else
         return (xcv.trim(src, tgt));
     }
 

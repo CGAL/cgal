@@ -14,7 +14,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Ron Wein          <wein@post.tau.ac.il>
 //               : Waqar Khan        <wkhan@mpi-inf.mpg.de>
@@ -51,20 +51,19 @@ public:
   typedef Kernel_                         Kernel;
   typedef typename Kernel::FT             FT;
 
-  typedef typename Algebraic_structure_traits<FT>::Is_exact 
+  typedef typename Algebraic_structure_traits<FT>::Is_exact
                                           Has_exact_division;
 
   // Category tags:
   typedef Tag_true                        Has_left_category;
   typedef Tag_true                        Has_merge_category;
   typedef Tag_false                       Has_do_intersect_category;
-  typedef Tag_true                        Has_construct_x_monotone_curve_from_two_points_category;
 
   typedef Arr_open_side_tag               Left_side_category;
   typedef Arr_open_side_tag               Bottom_side_category;
   typedef Arr_open_side_tag               Top_side_category;
   typedef Arr_open_side_tag               Right_side_category;
-  
+
   typedef typename Kernel::Line_2         Line_2;
   typedef typename Kernel::Ray_2          Ray_2;
   typedef typename Kernel::Segment_2      Segment_2;
@@ -165,7 +164,7 @@ public:
       has_target = true;
 
       Comparison_result  res = kernel.compare_xy_2_object()(ps, pt);
-      
+
       CGAL_assertion (res != EQUAL);
       is_degen = false;
       is_right = (res == SMALLER);
@@ -285,7 +284,7 @@ public:
     {
       if (is_right)
         return (has_source);
-      else 
+      else
         return (has_target);
     }
 
@@ -321,8 +320,8 @@ public:
       CGAL_precondition_code (
         Kernel    kernel;
       );
-      CGAL_precondition 
-        (Segment_assertions::_assert_is_point_on (p, l, 
+      CGAL_precondition
+        (Segment_assertions::_assert_is_point_on (p, l,
                                                   Has_exact_division()) &&
          (! check_validity || ! has_right() ||
           kernel.compare_xy_2_object() (p, right()) == SMALLER));
@@ -397,7 +396,7 @@ public:
     {
       if (is_right)
         return (has_target);
-      else 
+      else
         return (has_source);
     }
 
@@ -422,8 +421,8 @@ public:
       CGAL_precondition_code (
         Kernel    kernel;
       );
-      CGAL_precondition 
-        (Segment_assertions::_assert_is_point_on (p, l, 
+      CGAL_precondition
+        (Segment_assertions::_assert_is_point_on (p, l,
                                                   Has_exact_division()) &&
          (! check_validity || ! has_left() ||
           kernel.compare_xy_2_object() (p, left()) == LARGER));
@@ -530,7 +529,7 @@ public:
       else
       {
         // p is obviously to the right.
-        res2 = SMALLER;          
+        res2 = SMALLER;
       }
 
       return (res2 != LARGER);
@@ -633,7 +632,7 @@ public:
 
     //! Allow its functor obtaining function calling the private constructor.
     friend class Arr_linear_traits_2<Kernel>;
-    
+
   public:
     /*!
      * Compare the x-coordinates of two points.
@@ -661,7 +660,7 @@ public:
   //waqar add functor start()
   class Compare_endpoints_xy_2{
   public:
-    
+
     Comparison_result operator() (const X_monotone_curve_2& xcv) const
     {
       return (xcv.is_directed_right()) ? (SMALLER) : (LARGER);
@@ -690,19 +689,19 @@ public:
 
     //! Allow its functor obtaining function calling the private constructor.
     friend class Arr_linear_traits_2<Kernel>;
-  
+
   public:
-    X_monotone_curve_2 operator()( const X_monotone_curve_2 xcv, 
-                                   const Point_2 src, 
+    X_monotone_curve_2 operator()( const X_monotone_curve_2 xcv,
+                                   const Point_2 src,
                                    const Point_2 tgt )
     {
       /*
        * "Line_segment, line, and ray" will become line segments
-       * when trimmed. 
+       * when trimmed.
       */
       Equal_2 equal = Equal_2();
       Compare_y_at_x_2 compare_y_at_x = m_traits->compare_y_at_x_2_object();
-      
+
       //preconditions
       //check if source and taget are two distinct points and they lie on the line.
       CGAL_precondition(!equal(src, tgt));
@@ -714,14 +713,14 @@ public:
 
       if( xcv.is_directed_right() && tgt.x() < src.x() )
         trimmed_segment = Segment_2(tgt, src);
-  
+
 
       else if( !xcv.is_directed_right() && tgt.x() > src.x())
         trimmed_segment = Segment_2(tgt, src);
 
       else
         trimmed_segment = Segment_2(src, tgt);
-      
+
       return trimmed_segment;
     }
 
@@ -750,7 +749,7 @@ public:
 
     //! Allow its functor obtaining function calling the private constructor.
     friend class Arr_linear_traits_2<Kernel>;
-  
+
   public:
 
     X_monotone_curve_2 operator()(const X_monotone_curve_2& xcv)const
@@ -763,12 +762,12 @@ public:
       {
         opp_xcv = Segment_2(xcv.target(), xcv.source());
       }
-      
+
       if( xcv.is_line() )
       {
-        opp_xcv = Line_2(xcv.get_pt(), xcv.get_ps()); 
+        opp_xcv = Line_2(xcv.get_pt(), xcv.get_ps());
       }
-      
+
       if( xcv.is_ray() )
       {
         Point_2 opp_tgt = Point_2( -(xcv.get_pt().x()), -(xcv.get_pt().y()));
@@ -908,7 +907,7 @@ public:
 
     //! Allow its functor obtaining function calling the private constructor.
     friend class Arr_linear_traits_2<Kernel>;
-    
+
   public:
     /*!
      * Return the location of the given point with respect to the input curve.
@@ -934,7 +933,7 @@ public:
       typename Kernel::Compare_y_2  compare_y = kernel->compare_y_2_object();
       const Comparison_result res1 =
         cv.has_left() ? compare_y (p, cv.left()) : LARGER;
-      const Comparison_result res2 = 
+      const Comparison_result res2 =
         cv.has_right() ? compare_y (p, cv.right()) : SMALLER;
 
       return (res1 == res2) ? res1 : EQUAL;
@@ -979,8 +978,8 @@ public:
         typename Kernel::Compare_xy_2 compare_xy = kernel.compare_xy_2_object();
       );
 
-      CGAL_precondition 
-        (Segment_assertions::_assert_is_point_on (p, cv1, 
+      CGAL_precondition
+        (Segment_assertions::_assert_is_point_on (p, cv1,
                                                   Has_exact_division()) &&
          Segment_assertions::_assert_is_point_on (p, cv2,
                                                   Has_exact_division()));
@@ -1038,7 +1037,7 @@ public:
       );
 
       CGAL_precondition
-        (Segment_assertions::_assert_is_point_on (p, cv1, 
+        (Segment_assertions::_assert_is_point_on (p, cv1,
                                                   Has_exact_division()) &&
          Segment_assertions::_assert_is_point_on (p, cv2,
                                                   Has_exact_division()));
@@ -1086,7 +1085,7 @@ public:
 
       // Check that the two supporting lines are the same.
       if (! equal (cv1.supp_line(), cv2.supp_line()) &&
-          ! equal (cv1.supp_line(), 
+          ! equal (cv1.supp_line(),
                    kernel.construct_opposite_line_2_object()(cv2.supp_line())))
       {
         return (false);
@@ -1167,7 +1166,7 @@ public:
   /*! Obtain a Parameter_space_in_x_2 function object */
   Parameter_space_in_x_2 parameter_space_in_x_2_object() const
   { return Parameter_space_in_x_2(); }
-  
+
   /*! A function object that obtains the parameter space of a geometric
    * entity along the y-axis
    */
@@ -1245,7 +1244,7 @@ public:
      * \return the comparison result:
      *         SMALLER - x(p) < x(xc, ce);
      *         EQUAL   - x(p) = x(xc, ce);
-     *         LARGER  - x(p) > x(xc, ce).     
+     *         LARGER  - x(p) > x(xc, ce).
      * \pre p lies in the interior of the parameter space.
      * \pre the ce end of the line xcv lies on a boundary, implying
      *      that xcv1 is vertical.
@@ -1344,7 +1343,7 @@ public:
   /*! Obtain a Compare_x_near_limit_2 function object */
   Compare_x_near_limit_2 compare_x_near_limit_2_object() const
   { return Compare_x_near_limit_2(); }
-    
+
 
   /*! A function object that compares the y-limits of arc ends on the
    * boundary of the parameter space.
@@ -1366,7 +1365,7 @@ public:
 
     //! Allow its functor obtaining function calling the private constructor.
     friend class Arr_linear_traits_2<Kernel>;
-    
+
   public:
     /*! Compare the y-limits of 2 lines at their ends on the boundary
      * of the parameter space at x = +/- oo.
@@ -1414,9 +1413,9 @@ public:
   /*! Obtain a Compare_y_limit_on_boundary_2 function object */
   Compare_y_near_boundary_2 compare_y_near_boundary_2_object() const
   { return Compare_y_near_boundary_2(this); }
-  
+
   //@}
-  
+
   /// \name Functor definitions for supporting intersections.
   //@{
 
@@ -1528,7 +1527,7 @@ public:
 
       // Check whether we have a single intersection point.
       const Point_2  *ip = object_cast<Point_2> (&obj);
-      
+
       if (ip != NULL)
       {
         // Check whether the intersection point ip lies on both segments.
@@ -1640,8 +1639,8 @@ public:
       typename Kernel::Equal_2  equal = kernel.equal_2_object();
 
       // Check whether the two curves have the same supporting line.
-      if (! equal (cv1.supp_line(), cv2.supp_line()) && 
-          ! equal (cv1.supp_line(), 
+      if (! equal (cv1.supp_line(), cv2.supp_line()) &&
+          ! equal (cv1.supp_line(),
                    kernel.construct_opposite_line_2_object()(cv2.supp_line())))
         return (false);
 
@@ -1670,7 +1669,7 @@ public:
 
     /*! The traits (in case it has state) */
     const Traits* m_traits;
-    
+
     /*! Constructor
      * \param traits the traits (in case it has state)
      */
@@ -1707,7 +1706,7 @@ public:
         if (cv2.has_right())
           c.set_right(cv2.right());
         else
-          c.set_right();      // Unbounded endpoint. 
+          c.set_right();      // Unbounded endpoint.
       }
       else {
         CGAL_precondition(cv2.has_right() && cv1.has_left() &&
@@ -1741,7 +1740,7 @@ public:
      * \param p The exact point.
      * \param i The coordinate index (either 0 or 1).
      * \pre i is either 0 or 1.
-     * \return An approximation of p's x-coordinate (if i == 0), or an 
+     * \return An approximation of p's x-coordinate (if i == 0), or an
      *         approximation of p's y-coordinate (if i == 1).
      */
     Approximate_number_type operator() (const Point_2& p,
@@ -1800,7 +1799,7 @@ template <class Kernel_>
 class Arr_linear_object_2 :
     public Arr_linear_traits_2<Kernel_>::_Linear_object_cached_2
 {
-  typedef typename Arr_linear_traits_2<Kernel_>::_Linear_object_cached_2 
+  typedef typename Arr_linear_traits_2<Kernel_>::_Linear_object_cached_2
                                                                    Base;
 
 public:
@@ -1820,7 +1819,7 @@ public:
   Arr_linear_object_2 () :
     Base()
   {}
-    
+
   /*!
    * Constructor from two points.
    * \param s The source point.

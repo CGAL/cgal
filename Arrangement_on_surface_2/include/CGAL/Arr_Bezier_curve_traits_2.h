@@ -14,8 +14,8 @@
 //
 // $URL$
 // $Id$
-// 
-// 
+//
+//
 // Author(s)     : Ron Wein     <wein@post.tau.ac.il>
 //                 Iddo Hanniel <iddoh@cs.technion.ac.il>
 //                 Waqar Khan   <wkhan@mpi-inf.mpg.de>
@@ -24,7 +24,7 @@
 #define CGAL_ARR_BEZIER_CURVE_TRAITS_2_H
 
 /*! \file
- * Definition of the Arr_Bezier_curve_traits_2 class. 
+ * Definition of the Arr_Bezier_curve_traits_2 class.
  */
 
 #include <CGAL/tags.h>
@@ -41,7 +41,7 @@ namespace CGAL {
  * A traits class for maintaining an arrangement of Bezier curves with
  * rational control points.
  *
- * The class is templated with four parameters: 
+ * The class is templated with four parameters:
  * Rat_kernel A kernel that defines the type of control points.
  * Alg_kernel A geometric kernel, where Alg_kernel::FT is the number type
  *            for the coordinates of arrangement vertices and is used to
@@ -55,7 +55,7 @@ namespace CGAL {
  */
 template <class RatKernel_, class AlgKernel_, class NtTraits_,
           class BoundingTraits_ = Bezier_bounding_rational_traits<RatKernel_> >
-class Arr_Bezier_curve_traits_2 
+class Arr_Bezier_curve_traits_2
 {
 public:
 
@@ -67,19 +67,18 @@ public:
                                     Alg_kernel,
                                     Nt_traits,
                                     Bounding_traits>   Self;
- 
+
   typedef typename Nt_traits::Integer            Integer;
   typedef typename Rat_kernel::FT                Rational;
   typedef typename Alg_kernel::FT                Algebraic;
 
   typedef typename Rat_kernel::Point_2           Rat_point_2;
   typedef typename Alg_kernel::Point_2           Alg_point_2;
-  
+
   // Category tags:
   typedef Tag_true                               Has_left_category;
   typedef Tag_true                               Has_merge_category;
   typedef Tag_false                              Has_do_intersect_category;
-  typedef Tag_true                               Has_construct_x_monotone_curve_from_two_points_category;
 
   typedef Arr_oblivious_side_tag                 Left_side_category;
   typedef Arr_oblivious_side_tag                 Bottom_side_category;
@@ -341,7 +340,7 @@ public:
     Comparison_result operator() (const Point_2& p,
                                   const X_monotone_curve_2& cv) const
     {
-      return (cv.point_position (p, 
+      return (cv.point_position (p,
                                  const_cast<Bezier_cache&> (*p_cache)));
     }
   };
@@ -545,7 +544,7 @@ public:
 
         if (bound.type == Bounding_traits::Bez_point_bound::RATIONAL_PT)
         {
-          CGAL_assertion (CGAL::compare (bound.t_min, bound.t_max) == EQUAL); 
+          CGAL_assertion (CGAL::compare (bound.t_min, bound.t_max) == EQUAL);
           Rational  t0 = bound.t_min;
 
           pt = Point_2 (B, t0);
@@ -728,7 +727,7 @@ public:
 
     /*! The traits (in case it has state) */
     const Traits* m_traits;
-    
+
     /*! Constructor
      * \param traits the traits (in case it has state)
      */
@@ -750,7 +749,7 @@ public:
                      X_monotone_curve_2& c) const
     {
       CGAL_precondition(m_traits->are_mergeable_2_object()(cv2, cv1));
-      
+
       c = cv1.merge (cv2);
       return;
     }
@@ -803,7 +802,7 @@ public:
 
     /*! The traits (in case it has state) */
     const Traits* m_traits;
-    
+
     /*! Constructor
      * \param traits the traits (in case it has state)
      */
@@ -813,7 +812,7 @@ public:
                                            Nt_traits, Bounding_traits>;
     /*!\brief
      * Returns a trimmed version of an arc
-     * 
+     *
      * \param xcv The arc
      * \param src the new first endpoint
      * \param tgt the new second endpoint
@@ -824,7 +823,7 @@ public:
      */
   public:
 
-    X_monotone_curve_2 operator()(const X_monotone_curve_2& xcv, 
+    X_monotone_curve_2 operator()(const X_monotone_curve_2& xcv,
                                 const Point_2& src,
                                 const Point_2& tgt)const
     {
@@ -841,10 +840,10 @@ public:
       if( xcv.is_directed_right() && compare_x_2(src, tgt) == LARGER )
         return ( xcv.trim(tgt, src) );
 
-      else if( ! xcv.is_directed_right() && compare_x_2(src, tgt) == SMALLER )  
+      else if( ! xcv.is_directed_right() && compare_x_2(src, tgt) == SMALLER )
         return ( xcv.trim(tgt, src) );
 
-      else  
+      else
         return (xcv.trim(src, tgt));
     }
 
