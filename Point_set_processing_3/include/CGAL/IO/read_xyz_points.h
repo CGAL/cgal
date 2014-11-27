@@ -113,7 +113,7 @@ read_xyz_points_and_normals(
     else {
       iss.clear();
       iss.str(line);
-      if (iss >> iformat(x) >> iformat(y) >> iformat(z)
+      if (iss >> iformat(x) >> iformat(y) >> iformat(z))
         {
           Point point(x,y,z);
           Vector normal = CGAL::NULL_VECTOR;
