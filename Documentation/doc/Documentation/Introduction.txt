@@ -51,6 +51,7 @@ as the next example shows.
 
 \cgalExample{Kernel_23/surprising.cpp}
 
+
 When reading the code, we would assume that it prints three times "collinear", 
 but as the fractions are not representable as double precision number
 the collinearity test will internally compute a determinant of a 3x3 matrix
@@ -208,7 +209,7 @@ For `ch_graham_andrew()` it must provide the following nested types:
 
 
 As you can guess, `Left_turn_2` is responsible for the orientation
-test, while `Less_xy_2` does the sorting. The requirements these
+test, while `Less_xy_2` is used for sorting the points. The requirements these
 types have to satisfy are documented in full with the concept
 `ConvexHullTraits_2`.
 
@@ -229,7 +230,8 @@ ch_graham_andrew( InputIterator  first,
 There are two obvious questions: What can be used as argument for
 this template parameter? And why do we have template parameters at all?
 
-Any %CGAL `Kernel` provides what is required by `ConvexHullTraits_2`.
+To answer the first question, any model of the %CGAL concept `Kernel` provides
+what is required by the concept `ConvexHullTraits_2`.
 
 As for the second question, think about an application where we want to 
 compute the convex hull of 3D points projected into the `yz` plane. Using
@@ -251,6 +253,32 @@ given by a direction, which is hardwired in the class
 `Projection_traits_yz_3`.
 
 
+\section intro_concept Concepts and Models
+
+In the previous section we wrote that "Any model of the %CGAL concept
+`Kernel` provides what is required by the concept `ConvexHullTraits_2`".
+
+A \em concept is a set of requirements on a type, namely that it has
+certain nested types, certain member functions, or comes with certain
+free functions that take the type as  it.   A \em model of a concept
+is a class that fulfills the requirements of the concept.
+
+Let's have a look at the following function.
+
+\code{.cpp}
+template <T>
+T
+duplicate(T t)
+{
+  return t;
+}
+\endcode
+
+If you want to instantiate this function with a class `C` this
+class must at least provide a copy constructor, and we could
+say that class `C` must be a model of  [CopyConstructible](http://en.cppreference.com/w/cpp/concept/CopyConstructible).  A singleton class does not fulfill this requirment.
+
+Another function
 
 \section intro_further Further Reading
 
