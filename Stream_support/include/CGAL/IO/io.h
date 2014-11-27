@@ -97,14 +97,34 @@ template <>
 class Input_rep<double> {
     double& t;
 public:
-    //! initialize with a reference to \a t.
-    Input_rep( double& tt) : t(tt) {}
-    //! perform the input, calls \c operator\>\> by default.
-    std::istream& operator()( std::istream& is) const 
+  //! initialize with a reference to \a t.
+  Input_rep( double& tt) : t(tt) {}
+
+  std::istream& operator()( std::istream& is) const 
   {  
-    std::string s;
-    is >> s;
-    sscanf(s.c_str(), "%lf", &t);
+    std::string buffer;
+    char c;
+    do {
+      c = is.get();
+    }while (isspace(c));
+    if(c == '-'){
+      buffer += '-';
+    } else if(c != '+'){
+      is.unget();
+    }
+    bool cont = true;
+    do {
+      c = is.get();
+      if(isdigit(c) || (c =='.') || (c =='E') || (c =='e')){
+        buffer += c;
+      }else{
+        cont = false;
+      }
+    }while(cont);
+    
+    is.unget();
+
+    sscanf(buffer.c_str(), "%lf", &t);
     return is; 
   }
 };
