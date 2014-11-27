@@ -27,6 +27,7 @@
 
 #include <CGAL/boost/graph/properties.h>
 #include <CGAL/Triangulation_2.h>
+#include <CGAL/Iterator_range.h>
 
 // The functions and classes in this file allows the user to
 // treat a CGAL Triangulation_2 object as a boost graph "as is". No
@@ -447,44 +448,36 @@ namespace CGAL {
 
 
   template <class Gt, class Tds>
-  inline std::pair<
-    typename boost::graph_traits< Triangulation_2<Gt,Tds> >::vertex_iterator,
-    typename boost::graph_traits< Triangulation_2<Gt,Tds> >::vertex_iterator >  
+  inline Iterator_range<typename boost::graph_traits< Triangulation_2<Gt,Tds> >::vertex_iterator>  
   vertices(const Triangulation_2<Gt,Tds>& g)
   {
     typedef typename boost::graph_traits< Triangulation_2<Gt,Tds> >::vertex_iterator
       Iter;
-    return std::make_pair( Iter(g.all_vertices_begin()), Iter(g.all_vertices_end()) );
+    return make_range( Iter(g.all_vertices_begin()), Iter(g.all_vertices_end()) );
   }
 
 
   template <class Gt, class Tds>
-  inline std::pair<
-    typename boost::graph_traits< Triangulation_2<Gt,Tds> >::edge_iterator,
-    typename boost::graph_traits< Triangulation_2<Gt,Tds> >::edge_iterator >  
+  inline Iterator_range<typename boost::graph_traits< Triangulation_2<Gt,Tds> >::edge_iterator>  
   edges(const Triangulation_2<Gt,Tds>& g)
   {    
-    return std::make_pair(g.all_edges_begin(), g.all_edges_end());
+    return make_range(g.all_edges_begin(), g.all_edges_end());
   }
 
   template <class Gt, class Tds>
-  inline std::pair<
-    typename boost::graph_traits< Triangulation_2<Gt,Tds> >::halfedge_iterator,
-    typename boost::graph_traits< Triangulation_2<Gt,Tds> >::halfedge_iterator >  
+  inline Iterator_range<typename boost::graph_traits< Triangulation_2<Gt,Tds> >::halfedge_iterator >  
   halfedges(const Triangulation_2<Gt,Tds>& g)
   {    
-    return std::make_pair(g.all_halfedges_begin(), g.all_halfedges_end());
+    return make_range(g.all_halfedges_begin(), g.all_halfedges_end());
   }
 
   template <class Gt, class Tds>
-  inline std::pair<
-    typename boost::graph_traits< Triangulation_2<Gt,Tds> >::face_iterator,
-    typename boost::graph_traits< Triangulation_2<Gt,Tds> >::face_iterator >  
+  inline Iterator_range<typename boost::graph_traits< Triangulation_2<Gt,Tds> >::face_iterator >  
   faces(const Triangulation_2<Gt,Tds>& g)
   {
     typedef typename boost::graph_traits< Triangulation_2<Gt,Tds> >::face_iterator
       Iter;
-    return std::make_pair( Iter(g.all_faces_begin()), Iter(g.all_faces_end()) );
+    return make_range( Iter(g.all_faces_begin()), Iter(g.all_faces_end()) );
   }
 
   template <class Gt, class Tds>
@@ -504,9 +497,7 @@ namespace CGAL {
   }
 
   template <class Gt, class Tds>
-  inline std::pair<
-    typename boost::graph_traits< Triangulation_2<Gt,Tds> >::out_edge_iterator,
-    typename boost::graph_traits< Triangulation_2<Gt,Tds> >::out_edge_iterator >  
+  inline Iterator_range<typename boost::graph_traits< Triangulation_2<Gt,Tds> >::out_edge_iterator >  
   out_edges(
     typename boost::graph_traits< Triangulation_2<Gt,Tds> >::vertex_descriptor u, 
     const Triangulation_2<Gt,Tds>& g)
@@ -516,13 +507,11 @@ namespace CGAL {
     typedef typename boost::graph_traits< Triangulation_2<Gt,Tds> >
       ::out_edge_iterator Iter;
     
-    return std::make_pair( Iter(ec), Iter(ec,out_deg) );
+    return make_range( Iter(ec), Iter(ec,out_deg) );
   }
 
   template <class Gt, class Tds>
-  inline std::pair<
-    typename boost::graph_traits< Triangulation_2<Gt,Tds> >::in_edge_iterator,
-    typename boost::graph_traits< Triangulation_2<Gt,Tds> >::in_edge_iterator >  
+  inline Iterator_range<typename boost::graph_traits< Triangulation_2<Gt,Tds> >::in_edge_iterator >  
   in_edges(
     typename boost::graph_traits< Triangulation_2<Gt,Tds> >::vertex_descriptor u, 
     const Triangulation_2<Gt,Tds>& g)
@@ -531,13 +520,11 @@ namespace CGAL {
     typename boost::graph_traits< Triangulation_2<Gt,Tds> >::degree_size_type out_deg = out_degree(u,g);
     typedef typename boost::graph_traits< Triangulation_2<Gt,Tds> >
       ::in_edge_iterator Iter;
-    return std::make_pair( Iter(ec), Iter(ec,out_deg) );
+    return make_range( Iter(ec), Iter(ec,out_deg) );
   }
 
   template <class Gt, class Tds>
-  inline std::pair<
-    typename boost::graph_traits< Triangulation_2<Gt,Tds> >::adjacency_iterator,
-    typename boost::graph_traits< Triangulation_2<Gt,Tds> >::adjacency_iterator >  
+  inline Iterator_range<typename boost::graph_traits< Triangulation_2<Gt,Tds> >::adjacency_iterator>  
   adjacent_vertices(
     typename boost::graph_traits< Triangulation_2<Gt,Tds> >::vertex_descriptor u, 
     const Triangulation_2<Gt,Tds>& g)
@@ -546,7 +533,7 @@ namespace CGAL {
     typename boost::graph_traits< Triangulation_2<Gt,Tds> >::degree_size_type out_deg = out_degree(u,g);
     typedef typename boost::graph_traits< Triangulation_2<Gt,Tds> >
       ::adjacency_iterator Iter;
-    return std::make_pair( Iter(vc), Iter(vc,out_deg) );
+    return make_range( Iter(vc), Iter(vc,out_deg) );
   }
 
   template <class Gt, class Tds>
