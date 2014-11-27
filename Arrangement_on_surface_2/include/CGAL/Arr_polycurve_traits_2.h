@@ -949,68 +949,6 @@ namespace CGAL {
     { return Construct_opposite_2(*this); }
 
 
-
-
-
-
-
-
-
-
-
-
-
-    class Test {
-    protected:
-      typedef Arr_polycurve_traits_2<Geometry_traits_2> Polycurve_traits_2;
-      /*! The traits (in case it has state) */
-      const Polycurve_traits_2& m_poly_traits;
-
-    public:
-      /*! Constructor */
-      Test(const Polycurve_traits_2& traits) :
-        m_poly_traits(traits) {}
-      
-      X_monotone_curve_2 operator()(const X_monotone_curve_2& xcv) const
-      {
-        if( boost::is_same<Are_all_sides_oblivious_tag, Arr_oblivious_side_tag>::value )
-        {
-          std::cout << "all sides are oblivious" << std::cout;
-        }
-        else if ( boost::is_same< Are_all_sides_oblivious_tag, Arr_open_side_tag >::value )
-        {
-         std::cout << "all sides are not oblivious" << std::cout; 
-        }
-        return xcv;
-      }
-    };
-
-    Test test_object() const
-    { return Test(*this); }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     ///@}
 
     /// \name Construction functors(based on the segment traits).
@@ -1211,8 +1149,7 @@ namespace CGAL {
            size_type num_seg = xcv.number_of_segments();
 
         CGAL_precondition_code
-          (
-           
+        (   
            const Geometry_traits_2* geom_traits =
              m_poly_traits.geometry_traits_2();
            typename Geometry_traits_2::Compare_endpoints_xy_2 cmp_seg_endpts =
@@ -1226,102 +1163,75 @@ namespace CGAL {
              geom_traits->equal_2_object();
            typename Geometry_traits_2::Is_vertical_2 is_vertical =
              geom_traits->is_vertical_2_object();
+           typename Geometry_traits_2::Parameter_space_in_x_2 ps_x =
+             geom_traits->parameter_space_in_x_2_object();
+             typename Geometry_traits_2::Parameter_space_in_y_2 ps_y =
+             geom_traits->parameter_space_in_y_2_object();
           Polycurve_traits_2::Compare_endpoints_xy_2 cmp_poly_endpts = 
-             m_poly_traits.compare_endpoints_xy_2_object()
-           );
+             m_poly_traits.compare_endpoints_xy_2_object();
 
-        CGAL_precondition_msg((num_seg == 0) ||
-                              ( (is_vertical(xcv[0]) && is_vertical(seg)) ||
-                                (!is_vertical(xcv[0]) && !is_vertical(seg))
-                              ),
-                              "xcv is vertical and seg is not or vice versa!");
+          CGAL_precondition_msg((num_seg == 0) ||
+                                ( (is_vertical(xcv[0]) && is_vertical(seg)) ||
+                                  (!is_vertical(xcv[0]) && !is_vertical(seg))
+                                ),
+                                "xcv is vertical and seg is not or vice versa!");
 
-        CGAL_precondition_msg((num_seg == 0) || (cmp_seg_endpts(xcv[0]) == dir),
-                              "xcv and seg do not have the same orientation!");
+          CGAL_precondition_msg((num_seg == 0) || (cmp_seg_endpts(xcv[0]) == dir),
+                                "xcv and seg do not have the same orientation!");
 
-    
-    CGAL_precondition_code
-    (
-        //traits has open sides
-        //******** ask how these tags work?
-        if( Arr_two_open_side_tag() )
-        {
-          CGAL_precondition_msg(((seg.right_infinite_in_x() == CGAL::ARR_INTERIOR && seg.right_infinite_in_y() == CGAL::ARR_INTERIOR ) ||
-                                 (seg.left_infinite_in_x() == CGAL::ARR_INTERIOR && seg.left_infinite_in_y() == CGAL::ARR_INTERIOR) )  ||
-                                 (num_seg ==0),
-                                 "Lines can not be pushed if there is already one or more segments present in the polycurve."
-                                );
+          const Arr_parameter_space min_x_seg = ps_x(seg, ARR_MIN_END);
+          const Arr_parameter_space min_y_seg = ps_y(seg, ARR_MIN_END);
+          const Arr_parameter_space max_x_seg = ps_x(seg, ARR_MAX_END);
+          const Arr_parameter_space max_y_seg = ps_y(seg, ARR_MAX_END);
 
-          if(num_seg!=0)
+          const Arr_parameter_space min_x_cv = ( (num_seg>0) ? ps_x(xcv[num_seg-1], ARR_MIN_END) : ARR_INTERIOR );
+          const Arr_parameter_space min_y_cv = ( (num_seg>0) ? ps_y(xcv[num_seg-1], ARR_MIN_END) : ARR_INTERIOR );
+          const Arr_parameter_space max_x_cv = ( (num_seg>0) ? ps_x(xcv[num_seg-1], ARR_MAX_END) : ARR_INTERIOR );
+          const Arr_parameter_space max_y_cv = ( (num_seg>0) ? ps_y(xcv[num_seg-1], ARR_MAX_END) : ARR_INTERIOR );
+          
+          // A segment should not be pushed if the polycurve is directed to the right and reaches the boundary.  
+          CGAL_precondition_msg(((dir != SMALLER) || 
+                                ( max_x_cv == ARR_INTERIOR && max_y_cv == ARR_INTERIOR)), 
+                                "Polycurve reaches the boundary to the right. Can not push back any segment further." );
+
+          // A segment should not be pushed if the polycurve is directed to the left and reaches the boundary.
+          CGAL_precondition_msg( ((dir != LARGER) || 
+                                 ( min_x_cv == ARR_INTERIOR && min_y_cv == ARR_INTERIOR)), 
+                                "Polycurve reaches the boundary to the left. Can not push back any segment further." );
+
+          // Something like a line should not be pushed if there is already a segment present in the polycurve.
+          CGAL_precondition_msg( ( (min_x_seg == ARR_INTERIOR && min_y_seg == ARR_INTERIOR) || 
+                                   (max_x_seg == ARR_INTERIOR && max_y_seg == ARR_INTERIOR) ||
+                                  (num_seg == 0) ),
+                                "Segment reaching the boundary at both ends can not be pushed if there is already one or more segments present in the polycurve.");
+
+          if( min_x_seg == ARR_INTERIOR && min_y_seg == ARR_INTERIOR &&
+              max_x_seg == ARR_INTERIOR && max_y_seg == ARR_INTERIOR )
           {
-            //checks for Ray insertion
-            if( cmp_seg_endpts(seg)==SMALLER  && 
-                (seg.right_infinite_in_x() == CGAL::ARR_RIGHT_BOUNDARY || 
-                seg.right_infinite_in_y() == CGAL::ARR_TOP_BOUNDARY || 
-                seg.right_infinite_in_y() == CGAL::ARR_TOP_BOUNDARY    )
-              )
-              {
-                CGAL_precondition_msg(equal(get_max_v(xcv[num_seg-1]),get_min_v(seg)), "Ray does not extend to the right.");
-              }
-
-            else if( cmp_seg_endpts(seg)==LARGER  && 
-                (seg.left_infinite_in_x() == CGAL::ARR_LEFT_BOUNDARY || 
-                 seg.left_infinite_in_y() == CGAL::ARR_TOP_BOUNDARY || 
-                 seg.left_infinite_in_y() == CGAL::ARR_TOP_BOUNDARY    )
-              )
-              {
-                CGAL_precondition_msg(equal(get_min_v(xcv[num_seg-1]),get_max_v(seg)), "Ray does not extend to the left.");
-              } 
-
-              //checks for segment insertion
-              if( seg.right_infinite_in_x() == ARR_INTERIOR && seg.right_infinite_in_y() == ARR_INTERIOR  &&
-                  seg.left_infinite_in_x() == ARR_INTERIOR && seg.left_infinite_in_y() == ARR_INTERIOR )
-              {
-                CGAL_precondition_msg( (((dir != SMALLER) ||
-                                        equal(get_max_v(xcv[num_seg-1]),
-                                          get_min_v(seg)))),
-                              "Seg does not extend to the right!");
-
-                CGAL_precondition_msg((((dir != LARGER) ||
-                                equal(get_min_v(xcv[num_seg-1]),
-                                      get_max_v(seg)))),
-                              "Seg does not extend to the left!");
-
-                CGAL_precondition_msg( !equal(get_min_v(seg), get_max_v(seg)),
-                                "Seg degenerates to a point!");
-              } 
+            CGAL_precondition_msg((num_seg == 0) ||
+                                  !equal(get_min_v(seg), get_max_v(seg)),
+                                  "Seg degenerates to a point!");
           }
-        }
 
-        if( Arr_two_identified_sides_tag() && Arr_two_contracted_sides_tag() )
-        {
-          // curves need to be split at the boundary. i.e. if the source or target of the polycurve is reaching one of these boundaries
-          // then new curve can not be pushed. 
-          // ALSO:: take care of these conditions while the polycurve is being created with iterator. 
-        }  
-        
-        if( boost::is_same<Are_all_sides_oblivious_tag, Arr_oblivious_side_tag>::value )
-        {
-        
-          CGAL_precondition_msg((num_seg == 0) ||
-                                !equal(get_min_v(seg), get_max_v(seg)),
-                                "Seg degenerates to a point!");
+          if( min_x_seg == ARR_INTERIOR && min_y_seg == ARR_INTERIOR )
+          {
+            CGAL_precondition_msg((num_seg == 0) ||
+                                  (((dir != SMALLER) ||
+                                    equal(get_max_v(xcv[num_seg-1]),
+                                    get_min_v(seg)))),
+                                    "Seg does not connect to the right!");
+          }
 
+          if( max_x_seg == ARR_INTERIOR && max_y_seg == ARR_INTERIOR )
+          {
+            CGAL_precondition_msg((num_seg == 0) ||
+                                  (((dir != LARGER) ||
+                                    equal(get_min_v(xcv[num_seg-1]),
+                                    get_max_v(seg)))),
+                                    "Seg does not connect to the left!");
+          }
+        ); // precondition code ends
 
-          CGAL_precondition_msg((num_seg == 0) ||
-                                (((dir != SMALLER) ||
-                                  equal(get_max_v(xcv[num_seg-1]),
-                                        get_min_v(seg)))),
-                                "Seg does not extend to the right!");
-
-          CGAL_precondition_msg((num_seg == 0) ||
-                                (((dir != LARGER) ||
-                                  equal(get_min_v(xcv[num_seg-1]),
-                                        get_max_v(seg)))),
-                                "Seg does not extend to the left!");
-
-        }
-    );    
         xcv.push_back(seg);
       }
     };
@@ -1354,105 +1264,88 @@ namespace CGAL {
       void operator()(X_monotone_curve_2& xcv,
                       const X_monotone_segment_2& seg) const
       {
-        CGAL_precondition_code
+          CGAL_precondition_code
           (
-           typedef typename X_monotone_curve_2::Segments_size_type size_type;
-           size_type num_seg = xcv.number_of_segments();
-           const Geometry_traits_2* geom_traits =
-             m_poly_traits.geometry_traits_2();
-           typename Geometry_traits_2::Compare_endpoints_xy_2 cmp_seg_endpts =
-             geom_traits->compare_endpoints_xy_2_object();
-           Comparison_result dir = cmp_seg_endpts(seg);
-           typename Geometry_traits_2::Construct_max_vertex_2 get_max_v =
-             geom_traits->construct_max_vertex_2_object();
-           typename Geometry_traits_2::Construct_min_vertex_2 get_min_v =
-             geom_traits->construct_min_vertex_2_object();
-           typename Geometry_traits_2::Compare_xy_2 comp_xy =
-             geom_traits->compare_xy_2_object();
-           typename Geometry_traits_2::Equal_2 equal =
-             geom_traits->equal_2_object();
-           typename Geometry_traits_2::Is_vertical_2 is_vertical =
-             geom_traits->is_vertical_2_object();
-           );
+            typedef typename X_monotone_curve_2::Segments_size_type size_type;
+               size_type num_seg = xcv.number_of_segments();
+            const Geometry_traits_2* geom_traits =
+                 m_poly_traits.geometry_traits_2();
+            typename Geometry_traits_2::Compare_endpoints_xy_2 cmp_seg_endpts =
+                 geom_traits->compare_endpoints_xy_2_object();
+            Comparison_result dir = cmp_seg_endpts(seg);
+            typename Geometry_traits_2::Construct_max_vertex_2 get_max_v =
+                 geom_traits->construct_max_vertex_2_object();
+            typename Geometry_traits_2::Construct_min_vertex_2 get_min_v =
+                 geom_traits->construct_min_vertex_2_object();
+            typename Geometry_traits_2::Compare_xy_2 comp_xy =
+                 geom_traits->compare_xy_2_object();
+            typename Geometry_traits_2::Equal_2 equal =
+                 geom_traits->equal_2_object();
+            typename Geometry_traits_2::Parameter_space_in_x_2 ps_x =
+                 geom_traits->parameter_space_in_x_2_object();
+            typename Geometry_traits_2::Parameter_space_in_y_2 ps_y =
+                 geom_traits->parameter_space_in_y_2_object();
+            typename Geometry_traits_2::Is_vertical_2 is_vertical =
+                 geom_traits->is_vertical_2_object();
+             
 
-        CGAL_precondition_msg((num_seg == 0) ||
-                              ((is_vertical(xcv[0]) && is_vertical(seg)) ||
-                               (!is_vertical(xcv[0]) && !is_vertical(seg))),
-                              "xcv is vertical and seg is not or vice versa!");
+            CGAL_precondition_msg((num_seg == 0) ||
+                                  ((is_vertical(xcv[0]) && is_vertical(seg)) ||
+                                   (!is_vertical(xcv[0]) && !is_vertical(seg))),
+                                  "xcv is vertical and seg is not or vice versa!");
 
-        CGAL_precondition_msg((num_seg == 0) || (cmp_seg_endpts(xcv[0]) == dir),
-                              "xcv and seg do not have the same orientation!");
-  CGAL_precondition_code
-  (
-        if( boost::is_same<Are_all_sides_oblivious_tag, Arr_oblivious_side_tag>::value )
-        {
-          CGAL_precondition_msg((num_seg == 0) ||
-                                !equal(get_min_v(seg), get_max_v(seg)),
-                                "Seg degenerates to a point!");
+            CGAL_precondition_msg((num_seg == 0) || (cmp_seg_endpts(xcv[0]) == dir),
+                                  "xcv and seg do not have the same orientation!");
 
-          CGAL_precondition_msg((num_seg == 0) ||
-                                (((dir != SMALLER) ||
-                                  equal(get_min_v(xcv[0]), get_max_v(seg)))),
-                                "Seg does not connect to theleft!");
+            const Arr_parameter_space min_x_seg = ps_x(seg, ARR_MIN_END);
+            const Arr_parameter_space min_y_seg = ps_y(seg, ARR_MIN_END);
+            const Arr_parameter_space max_x_seg = ps_x(seg, ARR_MAX_END);
+            const Arr_parameter_space max_y_seg = ps_y(seg, ARR_MAX_END);
 
-          CGAL_precondition_msg((num_seg == 0) ||
-                                (((dir != LARGER) ||
-                                  equal(get_max_v(xcv[0]), get_min_v(seg)))),
-                                "Seg does not connect to the right!");
-        }
-        //traits has open sides
-        //******** ask how these tags work?
-        if( Arr_two_open_side_tag() )
-        {
-          CGAL_precondition_msg(((seg.right_infinite_in_x() == CGAL::ARR_INTERIOR && seg.right_infinite_in_y() == CGAL::ARR_INTERIOR ) ||
-                                 (seg.left_infinite_in_x() == CGAL::ARR_INTERIOR && seg.left_infinite_in_y() == CGAL::ARR_INTERIOR) )  ||
-                                 (num_seg ==0),
-                                 "Lines can not be pushed if there is already one or more segments present in the polycurve."
-                                );
+            const Arr_parameter_space min_x_cv = ( (num_seg>0) ? ps_x(xcv[num_seg-1], ARR_MIN_END) : ARR_INTERIOR );
+            const Arr_parameter_space min_y_cv = ( (num_seg>0) ? ps_y(xcv[num_seg-1], ARR_MIN_END) : ARR_INTERIOR );
+            const Arr_parameter_space max_x_cv = ( (num_seg>0) ? ps_x(xcv[num_seg-1], ARR_MAX_END) : ARR_INTERIOR );
+            const Arr_parameter_space max_y_cv = ( (num_seg>0) ? ps_y(xcv[num_seg-1], ARR_MAX_END) : ARR_INTERIOR );
 
-          if(num_seg!=0)
-          {
-            //checks for Ray insertion
-            if( ( cmp_seg_endpts(seg)==SMALLER  && 
-                  (seg.right_infinite_in_x() == CGAL::ARR_RIGHT_BOUNDARY || 
-                  seg.right_infinite_in_y() == CGAL::ARR_TOP_BOUNDARY    || 
-                  seg.right_infinite_in_y() == CGAL::ARR_TOP_BOUNDARY)        ) ||
-              ( cmp_seg_endpts(seg)==LARGER  && 
-                (seg.left_infinite_in_x() == CGAL::ARR_LEFT_BOUNDARY || 
-                 seg.left_infinite_in_y() == CGAL::ARR_TOP_BOUNDARY || 
-                 seg.left_infinite_in_y() == CGAL::ARR_TOP_BOUNDARY))
-              )
-              {
-                CGAL_precondition_msg(false, "Ray can not be pushed front.");
-              }
+            // Something like line should not be pushed if there is already a segment present in the polycurve.
+            CGAL_precondition_msg( ( (min_x_seg == ARR_INTERIOR && min_y_seg == ARR_INTERIOR) || 
+                                     (max_x_seg == ARR_INTERIOR && max_y_seg == ARR_INTERIOR) ||
+                                    (num_seg == 0) ),
+                                  "Segment reaching the boundary at both ends can not be pushed if there is already one or more segments present in the polycurve.");
 
-              //checks for segment insertion
-              if( seg.right_infinite_in_x() == ARR_INTERIOR && seg.right_infinite_in_y() == ARR_INTERIOR  &&
-                  seg.left_infinite_in_x() == ARR_INTERIOR && seg.left_infinite_in_y() == ARR_INTERIOR )
-              {
-                CGAL_precondition_msg((num_seg == 0) ||
-                                !equal(get_min_v(seg), get_max_v(seg)),
-                                "Seg degenerates to a point!");
+            // Something like Ray should not be pushed front if there is already one or more segments present in polycurve.
+            CGAL_precondition_msg( ( (dir == SMALLER && max_x_seg == ARR_INTERIOR && 
+                                       max_y_seg == ARR_INTERIOR) ||
+                                      (dir == LARGER && min_x_seg == ARR_INTERIOR && 
+                                       min_y_seg == ARR_INTERIOR) || (num_seg ==0) ), 
+                                    "Segment reaching the boundary at the connecting end can not be pushed ");  
 
-                CGAL_precondition_msg( (((dir != SMALLER) ||
-                                        equal(get_min_v(xcv[0]), get_max_v(seg)))),
-                                      "Seg does not connect to the left!");
+            if( min_x_seg == ARR_INTERIOR && min_y_seg == ARR_INTERIOR &&
+                  max_x_seg == ARR_INTERIOR && max_y_seg == ARR_INTERIOR )
+            {
+              CGAL_precondition_msg((num_seg == 0) ||
+                                    !equal(get_min_v(seg), get_max_v(seg)),
+                                    "Seg degenerates to a point!");
+            }
 
-                CGAL_precondition_msg( (((dir != LARGER) ||
-                                        equal(get_max_v(xcv[0]), get_min_v(seg)))),
-                                      "Seg does not connect to the right!");
-              } 
-          }
-        }
+            if( max_x_seg == ARR_INTERIOR && max_y_seg == ARR_INTERIOR )
+            {
+              CGAL_precondition_msg((num_seg == 0) ||
+                                    (((dir != SMALLER) ||
+                                      equal(get_min_v(xcv[0]), get_max_v(seg)))),
+                                    "Seg does not connect to the left!");
+            }
 
-        if( Arr_two_identified_sides_tag() && Arr_two_contracted_sides_tag() )
-        {
-          // curves need to be split at the boundary. i.e. if the source or target of the polycurve is reaching one of these boundaries
-          // then new curve can not be pushed. 
-          // ALSO:: take care of these conditions while the polycurve is being created with iterator. 
-        }  
-  );      
-        xcv.push_front(seg);
+            if( min_x_seg == ARR_INTERIOR && min_y_seg == ARR_INTERIOR )
+            {
+              CGAL_precondition_msg((num_seg == 0) ||
+                                    (((dir != LARGER) ||
+                                      equal(get_max_v(xcv[0]), get_min_v(seg)))),
+                                    "Seg does not connect to the right!");
+
+            }
+        ); // precondition code ends      
+          xcv.push_front(seg);
       }
     };
 
