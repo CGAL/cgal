@@ -110,6 +110,7 @@
     <addaction name="separator"/>
     <addaction name="actionShowDelaunay"/>
     <addaction name="actionShowVoronoi"/>
+    <addaction name="actionShowTriangulationInDomain"/>
     <addaction name="actionShow_constrained_edges"/>
     <addaction name="actionShow_voronoi_edges"/>
     <addaction name="actionShow_faces_in_domain"/>
@@ -366,6 +367,14 @@
    </property>
    <property name="text">
     <string>Show seeds</string>
+   </property>
+  </action>
+  <action name="actionShowTriangulationInDomain">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Show triangulation in domain only</string>
    </property>
   </action>
  </widget>

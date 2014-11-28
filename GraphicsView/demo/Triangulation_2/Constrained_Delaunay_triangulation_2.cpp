@@ -193,6 +193,8 @@ public slots:
 
   void on_actionShowDelaunay_toggled(bool checked);
 
+  void on_actionShowTriangulationInDomain_toggled(bool checked);
+
   void on_actionShow_constrained_edges_toggled(bool checked);
 
   void on_actionShow_voronoi_edges_toggled(bool checked);
@@ -297,6 +299,7 @@ MainWindow::MainWindow()
   // Check two actions 
   this->actionInsertPolyline->setChecked(true);
   this->actionShowDelaunay->setChecked(true);
+  this->actionShowTriangulationInDomain->setChecked(false);
   this->actionShow_faces_in_domain->setChecked(true);
   this->actionShow_constrained_edges->setChecked(true);
   this->actionShow_voronoi_edges->setChecked(false);
@@ -390,6 +393,23 @@ void
 MainWindow::on_actionShowDelaunay_toggled(bool checked)
 {
   dgi->setVisibleEdges(checked);
+  if(checked)
+  {
+    dgi->setVisibleInsideEdges(false);
+    actionShowTriangulationInDomain->setChecked(false);
+  }
+  update();
+}
+
+void
+MainWindow::on_actionShowTriangulationInDomain_toggled(bool checked)
+{
+  dgi->setVisibleInsideEdges(checked);
+  if(checked)
+  {
+    dgi->setVisibleEdges(false);
+    actionShowDelaunay->setChecked(false);
+  }
   update();
 }
 

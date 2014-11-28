@@ -32,7 +32,8 @@ namespace CGAL {
 namespace Qt {
 
 template <typename T>
-class DelaunayMeshTriangulationGraphicsItem : public ConstrainedTriangulationGraphicsItem<T>
+class DelaunayMeshTriangulationGraphicsItem
+  : public ConstrainedTriangulationGraphicsItem<T>
 {
   typedef ConstrainedTriangulationGraphicsItem<T> Base;
   typedef typename T::Geom_traits Geom_traits;
@@ -49,6 +50,7 @@ public:
       , seeds_begin()
       , seeds_end()
       , visible_seeds(false)
+      , visible_inside_edges(false)
   {
     setSeedsPen(QPen(::Qt::black, 10.));
   }
@@ -143,6 +145,18 @@ public:
     this->update();
   }
 
+  bool visibleInsideEdges() const
+  {
+    return visible_inside_edges;
+  }
+
+  void setVisibleInsideEdges(const bool b)
+  {
+    visible_inside_edges = b;
+    update();
+  }
+
+
 protected:
   void drawAll(QPainter *painter);
   void paintSeeds(QPainter *painter);
@@ -151,6 +165,7 @@ protected:
   bool visible_blind_faces;
   bool visible_voronoi;
   bool visible_seeds;
+  bool visible_inside_edges;
   typename std::list<Point>::iterator seeds_begin, seeds_end;
   
   QBrush in_domain_brush;
@@ -173,6 +188,20 @@ DelaunayMeshTriangulationGraphicsItem<T>::drawAll(QPainter *painter)
 	++fit){
       if(fit->is_in_domain()){
 	this->painterostream << this->t->triangle(fit);
+      }
+    }
+    painter->setBrush(::Qt::NoBrush);
+  }
+  if(visibleInsideEdges())
+  {
+    this->painterostream = PainterOstream<typename T::Geom_traits>(painter);
+    painter->setBrush(::Qt::NoBrush);
+    painter->setPen(this->edgesPen());
+    for(typename T::Finite_faces_iterator fit = this->t->finite_faces_begin();
+        fit != this->t->finite_faces_end();
+        ++fit){
+      if(fit->is_in_domain()){
+        this->painterostream << this->t->triangle(fit);
       }
     }
     painter->setBrush(::Qt::NoBrush);
