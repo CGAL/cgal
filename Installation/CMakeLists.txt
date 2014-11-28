@@ -340,10 +340,11 @@ endif()
 #   CGAL-4.3   : 10.0.2 (Nothing different in CGAL compiled libraries¹.)
 #   CGAL-4.4   : 10.0.3 (Nothing different in CGAL compiled libraries¹.)
 #   CGAL-4.5   : 10.0.4 (Nothing different in CGAL compiled libraries¹.)
+#   CGAL-4.6   : 11.0.0 (int->size_t in CGAL_ImageIO)
 # ¹) According to http://upstream-tracker.org/versions/cgal.html
 
-set( CGAL_SONAME_VERSION "10" )
-set( CGAL_SOVERSION      "10.0.4" )
+set( CGAL_SONAME_VERSION "11" )
+set( CGAL_SOVERSION      "11.0.0" )
 
 message( STATUS "CGAL_SONAME_VERSION=${CGAL_SONAME_VERSION}" )
 message( STATUS "CGAL_SOVERSION     =${CGAL_SOVERSION}" )

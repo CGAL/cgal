@@ -211,13 +211,13 @@ typedef struct imformat {
 /** Image descriptor */
 typedef struct point_image {
   /** Image x dimension (number of columns) */
-  unsigned int xdim;
+  std::size_t xdim;
   /** Image y dimension (number of rows) */
-  unsigned int ydim;
+  std::size_t ydim;
   /** Image z dimension (number of planes) */
-  unsigned int zdim;
+  std::size_t zdim;
   /** Image vectorial dimension */
-  unsigned int vdim;
+  std::size_t vdim;
 
   /** Image voxel size in x dimension */
   double vx;
@@ -255,7 +255,7 @@ typedef struct point_image {
   void *data;
 
   /** Image word size (in bytes) */
-  unsigned int wdim;
+  std::size_t wdim;
   /** Image format to use for I/0. Should not be set by user */
   PTRIMAGE_FORMAT imageFormat;
   /** Data buffer vectors are interlaced or non interlaced */
@@ -545,7 +545,7 @@ namespace IMAGEIO {
 //
 // The following definition are for the evaluate function.
 // 
-template <WORD_KIND wordKind, SIGN sign, unsigned int wdim>
+template <WORD_KIND wordKind, SIGN sign, std::size_t wdim>
 struct Word_type_generator
 {
 };
@@ -599,13 +599,13 @@ struct Word_type_generator<WK_FIXED, SGN_UNSIGNED, 4>
   typedef boost::uint32_t type;
 };
 
-template <WORD_KIND wordKind, SIGN sign, unsigned int wdim>
+template <WORD_KIND wordKind, SIGN sign, std::size_t wdim>
 inline
 typename Word_type_generator<wordKind, sign, wdim>::type
 static_evaluate(const _image* image,
-                const unsigned int i,
-                const unsigned int j,
-                const unsigned int k)
+                const std::size_t i,
+                const std::size_t j,
+                const std::size_t k)
 {
   typedef typename Word_type_generator<wordKind, sign, wdim>::type Word;
 
@@ -616,9 +616,9 @@ template <typename Word>
 inline
 Word
 static_evaluate(const _image* image,
-                const unsigned int i,
-                const unsigned int j,
-                const unsigned int k)
+                const std::size_t i,
+                const std::size_t j,
+                const std::size_t k)
 {
   return ((Word*)image->data)[(k * image->ydim + j) * image->xdim + i];
 }
@@ -693,7 +693,7 @@ static_evaluate(const _image* image,
     break;                                                                                 \
   }
 
-CGAL_IMAGEIO_EXPORT float evaluate(const _image* image,const unsigned int  i,const unsigned int  j,const unsigned int  k);
+CGAL_IMAGEIO_EXPORT float evaluate(const _image* image,const std::size_t i,const std::size_t j,const std::size_t k);
 
 
 /** convert the data of the image to float 

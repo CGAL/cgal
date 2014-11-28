@@ -22,7 +22,8 @@
 #include "inr.h"
 #include "fgetns.h"
 
-#include <string.h>
+#include <string>
+#include <sstream>
 
 /* Magic header for inrimages v4 */
 #define INR4_MAGIC "#INRIMAGE-4#{"
@@ -69,6 +70,7 @@ static void concatStringElement(const stringListHead *strhead,
 int _writeInrimageHeader(const _image *im, ENDIANNESS end) {
   unsigned int pos, i;
   char type[30], endianness[5], buf[257], scale[20];
+  std::ostringstream oss;
 
   Set_numeric_locale num_locale("C");
 
@@ -116,34 +118,41 @@ int _writeInrimageHeader(const _image *im, ENDIANNESS end) {
     }
 
     /* write header information */
-    sprintf(buf, "%s\nXDIM=%i\nYDIM=%i\nZDIM=%i\nVDIM=%d\nTYPE=%s\nPIXSIZE=%i bits\n%sCPU=%s\nVX=%f\nVY=%f\nVZ=%f\n",
-	    INR4_MAGIC, im->xdim, im->ydim, im->zdim, im->vdim,
-	    type, im->wdim*8, scale, endianness, im->vx, im->vy, im->vz);
+    oss << INR4_MAGIC << "\n";
+    oss << "XDIM=" << im->xdim << "\n";
+    oss << "YDIM=" << im->ydim << "\n";
+    oss << "ZDIM=" << im->zdim << "\n";
+    oss << "VDIM=" << im->vdim << "\n";
+    oss << "TYPE=" << type << "\n";
+    oss << "PIXSIZE=" << im->wdim*8 <<" bits\n";
+    oss << scale << "CPU=" << endianness << "\n";
+    oss << "VX=" << im->vx << "\n";
+    oss << "VY=" << im->vy << "\n";
+    oss << "VZ=" << im->vz << "\n";
 
     if ( im->cx != 0 ) 
-      sprintf(buf+strlen(buf), "XO=%d\n", im->cx );
+      oss << "XO="<< im->cx << "\n";
     if ( im->cy != 0 ) 
-      sprintf(buf+strlen(buf), "YO=%d\n", im->cy );
+      oss << "YO="<< im->cy << "\n";
     if ( im->cz != 0 ) 
-      sprintf(buf+strlen(buf), "ZO=%d\n", im->cz );
+      oss << "ZO="<< im->cz << "\n";
     if ( im->tx != 0.0 ) 
-      sprintf(buf+strlen(buf), "TX=%f\n", im->tx );
+      oss << "TX="<< im->tx << "\n";
     if ( im->ty != 0.0 ) 
-      sprintf(buf+strlen(buf), "TY=%f\n", im->ty );
+      oss << "TY="<< im->ty << "\n";
     if ( im->tz != 0.0 ) 
-      sprintf(buf+strlen(buf), "TZ=%f\n", im->tz );
-
+      oss << "TZ="<< im->tz << "\n";
     if ( im->rx != 0.0 ) 
-      sprintf(buf+strlen(buf), "RX=%f\n", im->rx );
+      oss << "RX="<< im->rx <<"\n";
     if ( im->ry != 0.0 ) 
-      sprintf(buf+strlen(buf), "RY=%f\n", im->ry );
+      oss << "RY="<< im->ry << "\n";
     if ( im->rz != 0.0 ) 
-      sprintf(buf+strlen(buf), "RZ=%f\n", im->rz );
+      oss << "RZ=" << im->rz <<"\n";
 
-
-    pos = strlen(buf);  
+    pos = oss.str().length();
     
-    if(ImageIO_write(im, buf, strlen(buf)) == 0) return -1;
+    if(ImageIO_write(im, oss.str().data(), oss.str().length()) == 0)
+      return -1;
     
     
     /* write user strings */
@@ -237,27 +246,34 @@ int readInrimageHeader(const char *,_image *im) {
     while(str[0] != '#' && str[0] != '\0') {
 
       if(!strncmp(str, "XDIM=", 5)) {
-	if(sscanf(str+5, "%u", &im->xdim) != 1) return -1;
+        std::istringstream iss(str+5);
+        if(!(iss >> im->xdim)) return -1;
       }
       else if(!strncmp(str, "YDIM=", 5)) {
-	if(sscanf(str+5, "%u", &im->ydim) != 1) return -1;
+        std::istringstream iss(str+5);
+        if(!(iss >> im->ydim)) return -1;
       }
       else if(!strncmp(str, "ZDIM=", 5)) {
-	if(sscanf(str+5, "%u", &im->zdim) != 1) return -1;
+        std::istringstream iss(str+5);
+        if(!(iss >> im->zdim)) return -1;
       }
       else if(!strncmp(str, "VDIM=", 5)) {
-	if(sscanf(str+5, "%u", &im->vdim) != 1) return -1;
+        std::istringstream iss(str+5);
+        if(!(iss >> im->vdim)) return -1;
 	if(im->vdim == 1) im->vectMode = VM_SCALAR;
 	else im->vectMode = VM_INTERLACED;
       }
       else if(!strncmp(str, "VX=", 3)) {
-	if(sscanf(str+3, "%lf", &im->vx) != 1) return -1;
+        std::istringstream iss(str+3);
+        if(!(iss >> im->vx)) return -1;
       }
       else if(!strncmp(str, "VY=", 3)) {
-	if(sscanf(str+3, "%lf", &im->vy) != 1) return -1;
+        std::istringstream iss(str+3);
+        if(!(iss >> im->vy)) return -1;
       }
       else if(!strncmp(str, "VZ=", 3)) {
-	if(sscanf(str+3, "%lf", &im->vz) != 1) return -1;
+        std::istringstream iss(str+3);
+        if(!(iss >> im->vz)) return -1;
       }
       else if(!strncmp(str, "TYPE=", 5)) {
 	if(!strncmp(str+5, "float", 5)) im->wordKind = WK_FLOAT;
@@ -293,7 +309,8 @@ int readInrimageHeader(const char *,_image *im) {
 	 insight (GM).
       */
       else if(!strncmp(str, "PIXSIZE=", 8)) {
-	if(sscanf(str+8, "%u", &im->wdim) != 1) return -1;
+        std::istringstream iss(str+8);
+        if(!(iss >> im->wdim)) return -1;
 	if(im->wdim != 8 && im->wdim != 16 && im->wdim != 32 &&
 	   im->wdim != 64) return -1;
 	
@@ -320,32 +337,41 @@ int readInrimageHeader(const char *,_image *im) {
       }
 
       else if(!strncmp(str, "XO=", 3)) {
-	if(sscanf(str+3, "%d", &im->cx) != 1) return -1;
+        std::istringstream iss(str+3);
+        if(!(iss >> im->cx)) return -1;
       }
       else if(!strncmp(str, "YO=", 3)) {
-	if(sscanf(str+3, "%d", &im->cy) != 1) return -1;
+        std::istringstream iss(str+3);
+        if(!(iss >> im->cy)) return -1;
       }
       else if(!strncmp(str, "ZO=", 3)) {
-	if(sscanf(str+3, "%d", &im->cz) != 1) return -1;
+        std::istringstream iss(str+3);
+        if(!(iss >> im->cz)) return -1;
       }
 
       else if(!strncmp(str, "TX=", 3)) {
-	if(sscanf(str+3, "%f", &im->tx) != 1) return -1;
+        std::istringstream iss(str+3);
+        if(!(iss >> im->tx)) return -1;
       }
       else if(!strncmp(str, "TY=", 3)) {
-	if(sscanf(str+3, "%f", &im->ty) != 1) return -1;
+        std::istringstream iss(str+3);
+        if(!(iss >> im->ty)) return -1;
       }
       else if(!strncmp(str, "TZ=", 3)) {
-	if(sscanf(str+3, "%f", &im->tz) != 1) return -1;
+        std::istringstream iss(str+3);
+        if(!(iss >> im->tz)) return -1;
       }
       else if(!strncmp(str, "RX=", 3)) {
-	if(sscanf(str+3, "%f", &im->rx) != 1) return -1;
+        std::istringstream iss(str+3);
+        if(!(iss >> im->rx)) return -1;
       }
       else if(!strncmp(str, "RY=", 3)) {
-	if(sscanf(str+3, "%f", &im->ry) != 1) return -1;
+        std::istringstream iss(str+3);
+        if(!(iss >> im->ry)) return -1;
       }
       else if(!strncmp(str, "RZ=", 3)) {
-	if(sscanf(str+3, "%f", &im->rz) != 1) return -1;
+        std::istringstream iss(str+3);
+        if(!(iss >> im->rz)) return -1;
       }
 
       if(!fgetns(str, 257, im)) return -1;

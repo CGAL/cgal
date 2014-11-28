@@ -35,27 +35,27 @@ class Image_accessor
 public:
   Image_accessor(const Image& im, int dx=1, int dy=1, int dz=1);
   
-  bool is_vertex_active(unsigned int i, unsigned int j, unsigned int k) const;
-  const QColor& vertex_color(unsigned int i, unsigned int j, unsigned int k) const;
-  void normal(unsigned int i, unsigned int j, unsigned int k,
+  bool is_vertex_active(std::size_t i, std::size_t j, std::size_t k) const;
+  const QColor& vertex_color(std::size_t i, std::size_t j, std::size_t k) const;
+  void normal(std::size_t i, std::size_t j, std::size_t k,
               float& x, float& y, float& z) const;
   
   int dx() const { return dx_; }
   int dy() const { return dy_; }
   int dz() const { return dz_; }
-  unsigned int xdim() const { return im_.xdim(); }
-  unsigned int ydim() const { return im_.ydim(); }
-  unsigned int zdim() const { return im_.zdim(); }
+  std::size_t xdim() const { return im_.xdim(); }
+  std::size_t ydim() const { return im_.ydim(); }
+  std::size_t zdim() const { return im_.zdim(); }
   double vx() const { return im_.vx(); }
   double vy() const { return im_.vy(); }
   double vz() const { return im_.vz(); }
   
 private:
-  unsigned char non_null_neighbor_data(unsigned int i,
-                                       unsigned int j,
-                                       unsigned int k) const;
+  unsigned char non_null_neighbor_data(std::size_t i,
+                                       std::size_t j,
+                                       std::size_t k) const;
   
-  unsigned char image_data(unsigned int i, unsigned int j, unsigned int k) const;
+  unsigned char image_data(std::size_t i, std::size_t j, std::size_t k) const;
   
   void add_to_normal(unsigned char v,
                      float& x, float& y, float& z,
@@ -77,15 +77,15 @@ Image_accessor::Image_accessor(const Image& im, int dx, int dy, int dz)
 , default_color_()
 , colors_()
 {
-  const unsigned int xdim = im_.xdim();
-  const unsigned int ydim = im_.ydim();
-  const unsigned int zdim = im_.zdim();  
+  const std::size_t xdim = im_.xdim();
+  const std::size_t ydim = im_.ydim();
+  const std::size_t zdim = im_.zdim();  
   
-  for(unsigned int i=0 ; i<xdim ; i+=dx_)
+  for(std::size_t i=0 ; i<xdim ; i+=dx_)
   { 
-    for(unsigned int j=0 ; j<ydim ; j+=dy_)
+    for(std::size_t j=0 ; j<ydim ; j+=dy_)
     { 
-      for(unsigned int k=0 ; k<zdim ; k+=dz_)
+      for(std::size_t k=0 ; k<zdim ; k+=dz_)
       {
         unsigned char c = image_data(i,j,k);
         if ( 0 != c ) { colors_.insert(std::make_pair(c,QColor())); }
@@ -106,7 +106,7 @@ Image_accessor::Image_accessor(const Image& im, int dx, int dy, int dz)
 
 bool 
 Image_accessor::
-is_vertex_active(unsigned int i, unsigned int j, unsigned int k) const
+is_vertex_active(std::size_t i, std::size_t j, std::size_t k) const
 {
   unsigned char v1 = image_data(i-dx_, j-dy_, k-dz_);
   unsigned char v2 = image_data(i-dx_, j-dy_, k  );
@@ -129,7 +129,7 @@ is_vertex_active(unsigned int i, unsigned int j, unsigned int k) const
 }
 
 const QColor&
-Image_accessor::vertex_color(unsigned int i, unsigned int j, unsigned int k) const
+Image_accessor::vertex_color(std::size_t i, std::size_t j, std::size_t k) const
 {
   unsigned char c = non_null_neighbor_data(i,j,k);
   if ( 0 == c ) { return default_color_; }
@@ -141,7 +141,7 @@ Image_accessor::vertex_color(unsigned int i, unsigned int j, unsigned int k) con
 }
 
 unsigned char
-Image_accessor::image_data(unsigned int i, unsigned int j, unsigned int k) const
+Image_accessor::image_data(std::size_t i, std::size_t j, std::size_t k) const
 {
   if ( i<im_.xdim() && j<im_.ydim() && k<im_.zdim() )
     return CGAL::IMAGEIO::static_evaluate<unsigned char>(im_.image(),i,j,k);
@@ -151,7 +151,7 @@ Image_accessor::image_data(unsigned int i, unsigned int j, unsigned int k) const
 
 unsigned char
 Image_accessor::
-non_null_neighbor_data(unsigned int i, unsigned int j, unsigned int k) const
+non_null_neighbor_data(std::size_t i, std::size_t j, std::size_t k) const
 {
   unsigned char v = image_data(i-dx_, j-dy_, k-dz_);
   if ( v != 0 ) { return v; }
@@ -182,7 +182,7 @@ non_null_neighbor_data(unsigned int i, unsigned int j, unsigned int k) const
 
 void
 Image_accessor::
-normal(unsigned int i, unsigned int j, unsigned int k,
+normal(std::size_t i, std::size_t j, std::size_t k,
        float& x, float& y, float& z) const
 {
   unsigned char v = image_data(i-dx_, j-dy_, k-dz_);
@@ -245,16 +245,16 @@ public:
   std::size_t quad_size() const { return quad_size_*sizeof(GLuint); }
   
 private:
-  void treat_vertex(unsigned int i, unsigned int j, unsigned int k);
+  void treat_vertex(std::size_t i, std::size_t j, std::size_t k);
   
-  void push_color(unsigned int i, unsigned int j, unsigned int k);
-  void push_normal(unsigned int i, unsigned int j, unsigned int k);
-  void push_vertex(unsigned int i, unsigned int j, unsigned int k);
-  void push_quads(unsigned int i, unsigned int j, unsigned int k);
+  void push_color(std::size_t i, std::size_t j, std::size_t k);
+  void push_normal(std::size_t i, std::size_t j, std::size_t k);
+  void push_vertex(std::size_t i, std::size_t j, std::size_t k);
+  void push_quads(std::size_t i, std::size_t j, std::size_t k);
   void push_quad(int pos1, int pos2, int pos3, int pos4);
   
-  int compute_position(unsigned int i, unsigned int j, unsigned int k) const;
-  int vertex_index(unsigned int i, unsigned int j, unsigned int k) const;
+  int compute_position(std::size_t i, std::size_t j, std::size_t k) const;
+  int vertex_index(std::size_t i, std::size_t j, std::size_t k) const;
   
   void create_arrays();
   
@@ -308,7 +308,7 @@ void
 Vertex_buffer_helper::
 fill_buffer_data()
 {
-  unsigned int i,j,k;
+  std::size_t i,j,k;
   
   for ( i = 0 ; i <= data_.xdim() ; i+=dx() )
   {  
@@ -325,7 +325,7 @@ fill_buffer_data()
 }
 
 void
-Vertex_buffer_helper::treat_vertex(unsigned int i, unsigned int j, unsigned int k)
+Vertex_buffer_helper::treat_vertex(std::size_t i, std::size_t j, std::size_t k)
 {
   if ( data_.is_vertex_active(i,j,k) )
   {
@@ -337,7 +337,7 @@ Vertex_buffer_helper::treat_vertex(unsigned int i, unsigned int j, unsigned int 
 }
 
 void
-Vertex_buffer_helper::push_color(unsigned int i, unsigned int j, unsigned int k)
+Vertex_buffer_helper::push_color(std::size_t i, std::size_t j, std::size_t k)
 {
   const QColor& color = data_.vertex_color(i,j,k);
   if ( ! color.isValid() ) { return; }
@@ -348,7 +348,7 @@ Vertex_buffer_helper::push_color(unsigned int i, unsigned int j, unsigned int k)
 }
 
 void
-Vertex_buffer_helper::push_normal(unsigned int i, unsigned int j, unsigned int k)
+Vertex_buffer_helper::push_normal(std::size_t i, std::size_t j, std::size_t k)
 {
   float x=0.f, y=0.f, z=0.f;
   data_.normal(i,j,k,x,y,z);
@@ -364,7 +364,7 @@ Vertex_buffer_helper::push_normal(unsigned int i, unsigned int j, unsigned int k
 }
 
 void
-Vertex_buffer_helper::push_vertex(unsigned int i, unsigned int j, unsigned int k)
+Vertex_buffer_helper::push_vertex(std::size_t i, std::size_t j, std::size_t k)
 {
   indices_.insert(std::make_pair(compute_position(i,j,k),
                                  vertices_.size()/3)); 
@@ -375,7 +375,7 @@ Vertex_buffer_helper::push_vertex(unsigned int i, unsigned int j, unsigned int k
 }
 
 void
-Vertex_buffer_helper::push_quads(unsigned int i, unsigned int j, unsigned int k)
+Vertex_buffer_helper::push_quads(std::size_t i, std::size_t j, std::size_t k)
 {
   int pos1 = vertex_index(i-dx(), j     , k);
   int pos2 = vertex_index(i-dx(), j-dy(), k);
@@ -410,16 +410,17 @@ Vertex_buffer_helper::push_quad(int pos1, int pos2, int pos3, int pos4)
 
 int
 Vertex_buffer_helper::
-compute_position(unsigned int i, unsigned int j, unsigned int k) const
+compute_position(std::size_t i, std::size_t j, std::size_t k) const
 {
-  return   i/dx() * (data_.ydim()/dy()+1) * (data_.zdim()/dz()+1)
+  return  static_cast<int>(
+    i/dx() * (data_.ydim()/dy()+1) * (data_.zdim()/dz()+1)
          + j/dy() * (data_.zdim()/dz()+1)
-         + k/dz();
+         + k/dz());
 }
 
 int
 Vertex_buffer_helper::
-vertex_index(unsigned int i, unsigned int j, unsigned int k) const
+vertex_index(std::size_t i, std::size_t j, std::size_t k) const
 {
   if ( i > data_.xdim() || j > data_.ydim() || k > data_.zdim() )
   {

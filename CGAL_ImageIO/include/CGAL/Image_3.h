@@ -32,7 +32,7 @@
 
 #include <limits>
 #include <set>
-
+#include <cstdlib>
 
 #if defined(BOOST_MSVC)
 #  pragma warning(push)
@@ -124,19 +124,19 @@ public:
     image()->data = d;
   }
 
-  unsigned int xdim() const { return image_ptr->xdim; }
-  unsigned int ydim() const { return image_ptr->ydim; }
-  unsigned int zdim() const { return image_ptr->zdim; }
+  std::size_t xdim() const { return image_ptr->xdim; }
+  std::size_t ydim() const { return image_ptr->ydim; }
+  std::size_t zdim() const { return image_ptr->zdim; }
 
-  unsigned int size() const { return xdim() * ydim() * zdim(); }
+  std::size_t size() const { return xdim() * ydim() * zdim(); }
 
   double vx() const { return image_ptr->vx; }
   double vy() const { return image_ptr->vy; }
   double vz() const { return image_ptr->vz; }
 
-  float value(const unsigned int i,
-              const unsigned int j,
-              const unsigned int k) const
+  float value(const std::size_t i,
+              const std::size_t j,
+              const std::size_t k) const
   {
     return ::evaluate(image(),i,j,k);
   }
@@ -237,10 +237,10 @@ Image_3::trilinear_interpolation(const Coord_type& x,
   const Coord_type lx = x / image()->vx;
   const Coord_type ly = y / image()->vy;
   const Coord_type lz = z / image()->vz;
-  const int dimx = xdim();
-  const int dimy = ydim();
-  const int dimz = zdim();
-  const int dimxy = dimx*dimy;
+  const std::size_t dimx = xdim();
+  const std::size_t dimy = ydim();
+  const std::size_t dimz = zdim();
+  const std::size_t dimxy = dimx*dimy;
   
   if(lx < 0 ||
      ly < 0 ||
@@ -425,9 +425,9 @@ Image_3::labellized_trilinear_interpolation(const Coord_type& x,
   Coord_type lx = x / image()->vx;
   Coord_type ly = y / image()->vy;
   Coord_type lz = z / image()->vz;
-  const int dimx = xdim();
-  const int dimy = ydim();
-  const int dimz = zdim();
+  const std::size_t dimx = xdim();
+  const std::size_t dimy = ydim();
+  const std::size_t dimz = zdim();
   
   if( lx < 0 ||
       ly < 0 ||
