@@ -140,7 +140,7 @@ public:
     // Initialize big moves (stores the largest moves)
     big_moves_.clear();
     std::size_t big_moves_size = (std::max)(std::size_t(1),
-                                            moving_vertices.size()/200);
+                                            moving_vertices.size()/100);
     big_moves_.resize(big_moves_size, FT(0));
 
     std::size_t nb_vertices_moved = -1;
@@ -277,14 +277,14 @@ private:
     if ( FT(0) == local_sq_size )
       return CGAL::NULL_VECTOR;
 
-    FT local_move_sq_length = (move * move);
+    FT local_move_sq_ratio = (move * move) / local_sq_size;
 
     // Move point only if displacement is big enough w.r.t local size
-    if ( local_move_sq_length/local_sq_size < sq_freeze_ratio_ )
+    if ( local_move_sq_ratio < sq_freeze_ratio_ )
       return CGAL::NULL_VECTOR;
 
     // Update big moves
-    update_big_moves(local_move_sq_length);
+    update_big_moves(local_move_sq_ratio);
 
     return move;
   }
