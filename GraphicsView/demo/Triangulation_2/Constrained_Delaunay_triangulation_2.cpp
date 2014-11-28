@@ -1,5 +1,6 @@
 //#define CGAL_USE_BOOST_BIMAP
 #define CGAL_MESH_2_OPTIMIZER_VERBOSE
+#define CGAL_MESH_2_OPTIMIZERS_DEBUG
 
 #include <fstream>
 #include <vector>
@@ -710,12 +711,12 @@ MainWindow::on_actionMakeLipschitzDelaunayMesh_triggered()
   discoverComponents(cdt, m_seeds);
 
   bool ok;
-  double d = QInputDialog::getDouble(this, tr("Shape criterion"),
+  double shape = QInputDialog::getDouble(this, tr("Shape criterion"),
     tr("B = "), 0.125, 0.005, 100, 4, &ok);
-  double shape = ok ? d : 0.125;
-  d = QInputDialog::getDouble(this, tr("k-Lipschitz sizing field"),
+  if(!ok) return;
+  double klip = QInputDialog::getDouble(this, tr("k-Lipschitz sizing field"),
     tr("k = "), 1., 0.01, 500, 5, &ok);
-  double klip = ok ? d : 1.;
+  if(!ok) return;
 
   Lipschitz_sizing_field field(points.begin(), points.end(), klip);
   Lipschitz_criteria criteria(shape, &field);
