@@ -36,7 +36,8 @@ namespace CGAL {
     FT the_aspect_ratio;
     
   public:
-    Splitter_base(unsigned int bucket_size = 3, 
+	  //default bucket_size should be 10
+    Splitter_base(unsigned int bucket_size = 10, 
 		  FT aspect_ratio = FT(3))
       : the_bucket_size(bucket_size),
 	the_aspect_ratio(aspect_ratio)
@@ -184,17 +185,27 @@ namespace CGAL {
     {
       CGAL_assertion(c0.is_valid());
       CGAL_assertion(c1.is_valid());
-      sep = Separator(c0.max_span_coord(),
-		      (c0.max_span_upper() + c0.max_span_lower())/FT(2));
+	  int cutdim = c0.max_span_coord();
+
+	  //Bugfix: avoid linear tree in degenerated cases
+	  if(c0.tight_bounding_box().min_coord(cutdim) != c0.tight_bounding_box().max_coord(cutdim)){
+		  sep = Separator(cutdim,
+				  (c0.max_span_upper() + c0.max_span_lower())/FT(2));
+	  }
+	  else{
+		  cutdim = c0.max_tight_span_coord();
+		  sep = Separator(cutdim,
+				  (c0.max_tight_span_upper() + c0.max_tight_span_lower())/FT(2));
+	  }
 
       FT max_span_lower = 
-	c0.tight_bounding_box().min_coord(c0.max_span_coord());
+	c0.tight_bounding_box().min_coord(cutdim);
 
-      CGAL_assertion(max_span_lower >= c0.max_span_lower());
+      CGAL_assertion(max_span_lower >= c0.bounding_box().min_coord(cutdim));
       FT max_span_upper = 
-	c0.tight_bounding_box().max_coord(c0.max_span_coord());
+	c0.tight_bounding_box().max_coord(cutdim);
       
-      CGAL_assertion(max_span_upper <= c0.max_span_upper());
+      CGAL_assertion(max_span_upper <= c0.bounding_box().max_coord(cutdim));
       if (max_span_upper <= sep.cutting_value()) {
 	sep.set_cutting_value(max_span_upper); 
       };      

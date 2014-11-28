@@ -1,4 +1,4 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <!-- $Id$
      $URL$
 -->
@@ -138,6 +138,14 @@ and <code>src/</code> directories).
   </ul>
 <!-- Geometry Processing -->
 <!-- Spatial Searching and Sorting -->
+    <h3>Spatial Searching</h3>
+    <ul>
+        <li>
+            Fixed a bug in <code>CGAL::Splitters.h</code> sliding mitdpoint rule, 
+            where degenerated point sets (e.g.,points on segment)
+            caused the kd-tree to get linear.
+        </li>
+    </ul>
 <!-- Geometric Optimization -->
 <!-- Interpolation -->
 <!-- Support Library -->
