@@ -23,7 +23,8 @@ the awareness that that there are serious issues when using
 floating point numbers for coordinates. In the second section
 you see how the 2D convex hull function gets its input
 and where it puts the result.  The third section shows what
-we mean with a \em Traits class.
+we mean with a \em Traits class, and the fourth section explains
+the notion of \em concept and \em model.
 
 \section intro_Three Three Points and One Segment
 
@@ -260,7 +261,7 @@ Kernel provides what is required by the concept ConvexHullTraits_2".
 
 A \em concept is a set of requirements on a type, namely that it has
 certain nested types, certain member functions, or comes with certain
-free functions that take the type as  it.   A \em model of a concept
+free functions that take the type as it.   A \em model of a concept
 is a class that fulfills the requirements of the concept.
 
 Let's have a look at the following function.
@@ -275,8 +276,9 @@ duplicate(T t)
 \endcode
 
 If you want to instantiate this function with a class `C` this
-class must at least provide a copy constructor, and we could
-say that class `C` must be a model of  [CopyConstructible](http://en.cppreference.com/w/cpp/concept/CopyConstructible).  A singleton class does not fulfill this requirment.
+class must at least provide a copy constructor, and we 
+say that class `C` must be a model of `CopyConstructible`. 
+A singleton class does not fulfill this requirment.
 
 Another example is the function
 
@@ -288,10 +290,15 @@ T& std::min(const T& a, constT& b)
 } 
 \endcode
 
-This function only compiles if the `operator<<(..)` is defined for the type used as `T`.
+This function only compiles if the `operator<<(..)` is defined for the type used as `T`,
+and we say that the type must be a model of `LessThanComparable`.
 
 An example for a concept with required free functions is the `HalfedgeGraph` in the
-\cgal package CGAL and the BGL.
+\cgal package \ref PkgBGLSummary. In order to be a model of `HalfedgeGraph` a class `G` 
+there must be a global function `halfedges(const G&)`, etc.
+
+An example for a concept with a required traits class is `InputIterator`.
+There must exist a specialization of the class `std::iterator_traits`.
 
 \section intro_further Further Reading
 

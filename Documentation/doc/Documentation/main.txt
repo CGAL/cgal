@@ -2,32 +2,13 @@
 
 \mainpage
 
-This is the beta version of the %CGAL Manual generated with doxygen.
- As it was generated semi-automatically from LaTeX sources of an
-inhouse documentation tool, followed by months of postprocessing
-we are happy about user feedback how we might improve things and
-where we have documentation bugs.
-
-For that we have set up a [tracker](https://gforge.inria.fr/tracker/?atid=13845&group_id=52&func=browse) where you can submit documentation bugs.
-
-During beta we only provide the manual online, so that we can
-publish fixes quickly.
-
-About %CGAL
-==========
 
 The goal of the \cgal Open Source Project is to provide easy access to
 efficient and reliable geometric algorithms in the form of a C++
-library. %CGAL is used in various areas needing geometric computation,
-such as: computer graphics, scientific visualization, computer aided
-design and modeling, geographic information systems, molecular
-biology, medical imaging, robotics and motion planning, mesh
-generation, numerical methods... More on the [Projects Using %CGAL](http://www.cgal.org/projects.html) web page. 
+library. 
 
 The Computational Geometry Algorithms Library offers data structures
-and algorithms like triangulations, Voronoi diagrams, Boolean
-operations on polygons and on polyhedra, arrangements of curves, mesh
-generation, geometry processing, convex hull algorithms, to name just
+and algorithms like \ref PartTriangulationsAndDelaunayTriangulations "triangulations", \ref PartVoronoiDiagrams "Voronoi diagrams",  \ref PartPolygons,  \ref PartPolyhedra, \ref PartArrangements "arrangements of curves", \ref PartMeshing "mesh generation", \ref PartGeometryProcessing "geometry processing", \ref PartConvexHullAlgorithms "convex hull algorithms", to name just
 a few.
 
 All these data structures and algorithms operate on geometric objects
@@ -50,7 +31,8 @@ manual*. The user manual gives the general idea and comes with examples.
 The reference manual presents the \sc{Api} of the various classes
 and functions.
 
-The manual has a package overview, gives a short paragraph what the package is about, what license
+The manual has a \ref packages  with a short paragraph explaining
+what each package is about, what license
 it has, and on which other packages it depends. It further provides
 links to precompiled demo programs for the Windows platform.
 
