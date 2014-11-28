@@ -18,6 +18,5 @@ int main()
     Point_2 p(0,0), q(1, 1), r(2, 2);
     std::cout << (CGAL::collinear(p,q,r) ? "collinear\n" : "not collinear\n");   
   }  
-  std::cout << std::flush;
   return 0;
 }

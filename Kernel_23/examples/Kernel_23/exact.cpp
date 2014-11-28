@@ -15,6 +15,5 @@ int main()
     std::cout << (CGAL::collinear(p,m,r) ? "collinear\n" : "not collinear\n");   
   }
  
-  std::cout << std::flush;
   return 0;
 }
