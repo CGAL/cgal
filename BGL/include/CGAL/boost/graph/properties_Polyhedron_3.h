@@ -24,6 +24,7 @@
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/Unique_hash_map.h>
 #include <CGAL/squared_distance_2_1.h>
+#include <boost/shared_ptr.hpp>
 
 #define CGAL_HDS_PARAM_ template < class Traits, class Items, class Alloc> class HDS
 
@@ -41,13 +42,17 @@ public:
   typedef std::size_t                      reference;
   typedef Handle                           key_type;
 
+private:
+  typedef CGAL::Unique_hash_map<key_type,std::size_t> Map;
+
+public:
   template <typename InputIterator>
   Polyhedron_index_map_external(InputIterator begin, InputIterator end, std::size_t max)
-    : map_(begin, end, 0, std::size_t(-1), max) {}
+    : map_(new Map(begin, end, 0, std::size_t(-1), max)) {}
 
-  reference operator[](const key_type& k) const { return map_[k]; }
+  reference operator[](const key_type& k) const { return (*map_)[k]; }
 private:
-  CGAL::Unique_hash_map<key_type,std::size_t> map_;
+   boost::shared_ptr<Map> map_;
 };
 
 // Special case for edges.
@@ -61,18 +66,22 @@ public:
   typedef std::size_t                                               reference;
   typedef typename boost::graph_traits<Polyhedron>::edge_descriptor key_type;
 
+private:
+  typedef CGAL::Unique_hash_map<key_type,std::size_t> Map;
+
+public:
   Polyhedron_edge_index_map_external(Polyhedron& p)
-    : map_(std::size_t(-1), num_halfedges(p))
+    : map_(new Map(std::size_t(-1), num_halfedges(p)))
   {
     unsigned int data = 0;
     typename boost::graph_traits<Polyhedron>::edge_iterator it, end;
     for(boost::tie(it, end) = edges(p); it != end; ++it, ++data)
-      map_[*it] = data;
+      (*map_)[*it] = data;
   }
 
-  reference operator[](const key_type& k) const { return map_[k]; }
+  reference operator[](const key_type& k) const { return (*map_)[k]; }
 private:
-  CGAL::Unique_hash_map<key_type,std::size_t> map_;
+  boost::shared_ptr<Map> map_;
 };
 
 template<typename Handle>
