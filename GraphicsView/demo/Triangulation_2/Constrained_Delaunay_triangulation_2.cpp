@@ -446,6 +446,10 @@ MainWindow::on_actionClear_triggered()
 {
   cdt.clear();
   m_seeds.clear();
+
+  if(actionShow_seeds->isChecked())
+    dgi->setVisibleSeeds(true, m_seeds.end(), m_seeds.end());
+
   emit(changed());
 }
 
