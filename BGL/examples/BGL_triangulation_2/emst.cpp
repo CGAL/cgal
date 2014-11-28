@@ -75,7 +75,7 @@ main(int,char*[])
 
   // In the function call you can see a named parameter: vertex_index_map
    std::list<edge_descriptor> mst;
-   boost::kruskal_minimum_spanning_tree(t,
+   boost::kruskal_minimum_spanning_tree(ft,
 					std::back_inserter(mst),
 					vertex_index_map(vertex_index_pmap));
 
