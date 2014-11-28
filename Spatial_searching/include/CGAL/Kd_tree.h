@@ -236,6 +236,21 @@ public:
     }else {
       tree_root = create_internal_node(c, UseExtendedNode());
     }
+
+	std::vector<Point_d> ptstmp;
+	ptstmp.resize(pts.size());
+	for (std::size_t i = 0; i < pts.size(); ++i){
+		ptstmp[i] = *data[i];
+	}
+	pts.swap(ptstmp);
+
+	for (std::size_t i = 0; i < leaf_nodes.size(); ++i){
+		std::size_t off = leaf_nodes[i].begin() - data.begin();
+		leaf_nodes[i].data = pts.begin() + off;
+		//data[i] = &(pts[i]);
+	}
+
+
     built_ = true;
   }
 
