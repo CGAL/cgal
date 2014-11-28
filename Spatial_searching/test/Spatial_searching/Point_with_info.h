@@ -5,6 +5,7 @@ struct My_point_with_info
 {
   typedef Pt Point;
   Pt p;
+  My_point_with_info(){}
   explicit My_point_with_info(const Pt& pt):p(pt){}
   const Pt& point() const {return p;}
   int dimension() const { return p.dimension();}
