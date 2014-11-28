@@ -34,6 +34,7 @@ namespace CGAL {
     public:
 
     typedef typename SearchTraits::FT FT;
+    typedef typename SearchTraits::Dimension Dimension;
     private:
 
     Point_d c;
@@ -75,7 +76,7 @@ namespace CGAL {
         }
 
         
-	bool inner_range_intersects(const Kd_tree_rectangle<FT>& rectangle) const {                          
+	bool inner_range_intersects(const Kd_tree_rectangle<FT,Dimension>& rectangle) const {                          
                 // test whether the interior of a sphere
 		// with radius (r-eps) intersects r, i.e.
                 // if the minimal distance of r to c is less than r-eps
@@ -98,7 +99,7 @@ namespace CGAL {
 	}
 
 
-	bool outer_range_contains(const Kd_tree_rectangle<FT>& rectangle) const { 
+	bool outer_range_contains(const Kd_tree_rectangle<FT,Dimension>& rectangle) const { 
         // test whether the interior of a sphere
 	// with radius (r+eps) is contained by r, i.e.
         // if the minimal distance of the boundary of r 

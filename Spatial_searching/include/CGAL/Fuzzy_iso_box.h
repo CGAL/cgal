@@ -58,6 +58,7 @@ namespace CGAL {
     typedef typename SearchTraits::Point_d Point_d;
     typedef typename SearchTraits::Iso_box_d Iso_box_d;
     typedef typename SearchTraits::FT FT;
+    typedef typename SearchTraits::Dimension Dimension;
     typedef typename SearchTraits::Construct_min_vertex_d Construct_min_vertex_d;
     typedef typename SearchTraits::Construct_max_vertex_d Construct_max_vertex_d;
     typedef typename SearchTraits::Cartesian_const_iterator_d Cartesian_const_iterator_d;
@@ -121,7 +122,7 @@ namespace CGAL {
 		return true; 
         }
 
-	bool inner_range_intersects(const Kd_tree_rectangle<FT>& rectangle) const { 
+	bool inner_range_intersects(const Kd_tree_rectangle<FT,Dimension>& rectangle) const { 
 	  Cartesian_const_iterator_d minit= min_begin, maxit = max_begin;   
  		for (unsigned int i = 0; i < dim; ++i, ++minit, ++maxit) {
         		if ( ((*maxit)-eps < rectangle.min_coord(i)) 
@@ -131,7 +132,7 @@ namespace CGAL {
 	}
 
 
-	bool outer_range_contains(const Kd_tree_rectangle<FT>& rectangle) const {  
+	bool outer_range_contains(const Kd_tree_rectangle<FT,Dimension>& rectangle) const {  
 	  Cartesian_const_iterator_d minit= min_begin, maxit = max_begin;   
     		for (unsigned int i = 0; i < dim; ++i, ++minit, ++maxit) {
         		if (  ((*maxit)+eps < rectangle.max_coord(i) ) 

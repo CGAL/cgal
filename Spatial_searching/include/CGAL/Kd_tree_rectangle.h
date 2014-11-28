@@ -55,7 +55,7 @@ namespace CGAL {
   };
 
 
-  template <class FT_, typename D> 
+  template <class FT_, typename D = Dynamic_dimension_tag> 
   class Kd_tree_rectangle {
   public:
     typedef FT_ FT;
@@ -73,7 +73,7 @@ namespace CGAL {
     inline void 
     set_upper_bound(int i, const FT& x) 
     {
-      CGAL_assertion(i >= 0 && i < D);
+      CGAL_assertion(i >= 0 && i < D::value);
       CGAL_assertion(x >= lower_[i]);
       upper_[i] = x;
       set_max_span();
@@ -82,7 +82,7 @@ namespace CGAL {
     inline void 
     set_lower_bound(int i, const FT& x) 
     {
-      CGAL_assertion(i >= 0 && i < D);
+      CGAL_assertion(i >= 0 && i < D::value);
       CGAL_assertion(x <= upper_[i]);
       lower_[i] = x;
       set_max_span();
@@ -162,7 +162,7 @@ namespace CGAL {
     inline FT 
     min_coord(int i) const 
     {
-      CGAL_assertion(lower_ != NULL);
+      CGAL_assertion(lower_.size() != 0);
       return lower_[i];
     }
     
@@ -197,7 +197,7 @@ namespace CGAL {
     void
     split(Kd_tree_rectangle& r, int d, FT value)
     {
-      CGAL_assertion(d >= 0 && d < D);
+      CGAL_assertion(d >= 0 && d < D::value);
       CGAL_assertion(lower_[d] <= value && value <= upper_[d]);
       
       //Kd_tree_rectangle* r = new Kd_tree_rectangle(*this);

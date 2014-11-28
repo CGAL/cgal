@@ -29,8 +29,29 @@
 
 #include <CGAL/number_utils.h>
 #include <CGAL/Kd_tree_rectangle.h>
+#include <CGAL/Dimension.h>
 
 namespace CGAL {
+
+  namespace internal{
+	    #ifndef HAS_DIMENSION_TAG
+		#define HAS_DIMENSION_TAG
+		BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(has_dimension,Dimension,false);
+	    #endif
+
+	  template <class SearchTraits, bool has_dim = has_dimension<SearchTraits>::value>
+	  struct Weighted_Minkowski_distance_base;
+
+	  template <class SearchTraits>
+	  struct Weighted_Minkowski_distance_base<SearchTraits,true>{
+		  typedef typename SearchTraits::Dimension Dimension;
+	  };
+
+	  template <class SearchTraits>
+	  struct Weighted_Minkowski_distance_base<SearchTraits,false>{
+		  typedef Dynamic_dimension_tag Dimension;
+	  };
+   }
 
   template <class SearchTraits>
   class Weighted_Minkowski_distance {
@@ -41,6 +62,7 @@ namespace CGAL {
     typedef Point_d                        Query_item;
     typedef typename SearchTraits::FT      FT;
     typedef std::vector<FT>                Weight_vector;
+    typedef typename internal::Euclidean_distance_base<SearchTraits>::Dimension Dimension;
 
     private:
 
@@ -123,7 +145,7 @@ namespace CGAL {
     inline 
     FT 
     min_distance_to_rectangle(const Query_item& q,
-			      const Kd_tree_rectangle<FT>& r) const 
+			      const Kd_tree_rectangle<FT,Dimension>& r) const 
     {
       FT distance = FT(0);
       typename SearchTraits::Construct_cartesian_const_iterator_d construct_it=
@@ -159,7 +181,7 @@ namespace CGAL {
     inline 
     FT
     max_distance_to_rectangle(const Query_item& q,
-			      const Kd_tree_rectangle<FT>& r) const {
+			      const Kd_tree_rectangle<FT,Dimension>& r) const {
       FT distance=FT(0);
       typename SearchTraits::Construct_cartesian_const_iterator_d construct_it=
         traits.construct_cartesian_const_iterator_d_object();

@@ -25,7 +25,7 @@
 
 
 namespace CGAL {
-  template <class FT_, class Point, class CartesianCoordinateIterator, class ConstructCartesianCoordinateIterator, typename D>
+  template <class FT_, class Point, class CartesianCoordinateIterator, class ConstructCartesianCoordinateIterator, typename D = Dynamic_dimension_tag>
   class Search_traits {
     
   public:

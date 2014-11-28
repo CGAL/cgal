@@ -162,7 +162,7 @@ namespace CGAL {
     template <class OutputIterator, class FuzzyQueryItem>
     OutputIterator 
     search(OutputIterator it, const FuzzyQueryItem& q,
-	   Kd_tree_rectangle<FT>& b) const
+	   Kd_tree_rectangle<FT,D>& b) const
     {
       if (is_leaf()) { 
         Leaf_node_const_handle node = 
@@ -176,7 +176,7 @@ namespace CGAL {
          Internal_node_const_handle node = 
           static_cast<Internal_node_const_handle>(this);
 	// after splitting b denotes the lower part of b
-	Kd_tree_rectangle<FT> b_upper(b);
+	Kd_tree_rectangle<FT,D> b_upper(b);
 	b.split(b_upper, node->cutting_dimension(),
 		node->cutting_value());
                              

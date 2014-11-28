@@ -23,8 +23,29 @@
 #define CGAL_MANHATTAN_DISTANCE_ISO_BOX_POINT_H
 
 #include <CGAL/Kd_tree_rectangle.h>
+#include <CGAL/Dimension.h>
 
 namespace CGAL {
+
+  namespace internal{
+	    #ifndef HAS_DIMENSION_TAG
+		#define HAS_DIMENSION_TAG
+		BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(has_dimension,Dimension,false);
+	    #endif
+
+	  template <class SearchTraits, bool has_dim = has_dimension<SearchTraits>::value>
+	  struct Manhattan_distance_iso_box_point_base;
+
+	  template <class SearchTraits>
+	  struct Manhattan_distance_iso_box_point_base<SearchTraits,true>{
+		  typedef typename SearchTraits::Dimension Dimension;
+	  };
+
+	  template <class SearchTraits>
+	  struct Manhattan_distance_iso_box_point_base<SearchTraits,false>{
+		  typedef Dynamic_dimension_tag Dimension;
+	  };
+   }
 
   template <class SearchTraits>
   class Manhattan_distance_iso_box_point {
@@ -35,6 +56,7 @@ namespace CGAL {
     typedef typename SearchTraits::Iso_box_d Iso_box_d;
     typedef typename SearchTraits::FT    FT;
     typedef Iso_box_d                  Query_item;
+    typedef typename internal::Manhattan_distance_iso_box_point_base<SearchTraits>::Dimension Dimension;
 
     
     Manhattan_distance_iso_box_point(const SearchTraits& traits_=SearchTraits()):traits(traits_) {}
@@ -62,7 +84,7 @@ namespace CGAL {
 
 
     inline FT min_distance_to_rectangle(const Query_item& q,
-					      const Kd_tree_rectangle<FT>& r) const {
+					      const Kd_tree_rectangle<FT,Dimension>& r) const {
 		FT distance = FT(0);
 		typename SearchTraits::Construct_cartesian_const_iterator_d construct_it=
                   traits.construct_cartesian_const_iterator_d_object();
@@ -82,7 +104,7 @@ namespace CGAL {
     inline 
     FT 
     max_distance_to_rectangle(const Query_item& q,
-			      const Kd_tree_rectangle<FT>& r) const {
+			      const Kd_tree_rectangle<FT,Dimension>& r) const {
       FT distance=FT(0);
       typename SearchTraits::Construct_cartesian_const_iterator_d construct_it=
         traits.construct_cartesian_const_iterator_d_object();

@@ -43,10 +43,11 @@ namespace CGAL {
     typedef Tree_     Tree;
     typedef typename SearchTraits::Point_d Point_d;
     typedef typename SearchTraits::FT FT;
+    typedef typename SearchTraits::Dimension Dimension;
     typedef typename Tree::Point_d_iterator Point_d_iterator;
     typedef typename Tree::Node_const_handle Node_const_handle;
     typedef typename Tree::Splitter Splitter;
-    typedef Kd_tree_rectangle<FT> Node_box;
+    typedef Kd_tree_rectangle<FT,Dimension> Node_box;
     typedef typename Distance::Query_item Query_item;
 
     class Cell {
