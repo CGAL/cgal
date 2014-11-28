@@ -31,7 +31,32 @@
 
 #include <boost/optional.hpp>
 
+
+
 namespace CGAL {
+
+	template <class Traits> 
+class Point_container;
+
+namespace internal{
+	    #ifndef HAS_DIMENSION_TAG
+		#define HAS_DIMENSION_TAG
+		BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(has_dimension,Dimension,false);
+		#endif
+
+		template <class SearchTraits, bool has_dim = has_dimension<SearchTraits>::value>
+	  struct Point_container_base;
+
+	  template <class SearchTraits>
+	  struct Point_container_base<SearchTraits,true>{
+		  typedef typename SearchTraits::Dimension Dimension;
+	  };
+
+	  template <class SearchTraits>
+	  struct Point_container_base<SearchTraits,false>{
+		  typedef Dynamic_dimension_tag Dimension;
+	  };
+}
 
 template <class Traits> 
 class Point_container {
@@ -45,7 +70,7 @@ public:
   
   typedef typename Point_vector::iterator iterator;
   typedef typename Point_vector::const_iterator const_iterator;
-  
+  typedef typename internal::Point_container_base<Traits>::Dimension D;
 private:
   Traits traits;
   // the iterator range of the Point_container 
@@ -53,20 +78,20 @@ private:
   boost::optional<iterator> m_e ;
   
   int built_coord;    // a coordinate for which the pointer list is built
-  Kd_tree_rectangle<FT> bbox;       // bounding box, i.e. rectangle of node
-  Kd_tree_rectangle<FT> tbox;       // tight bounding box, 
+  Kd_tree_rectangle<FT,D> bbox;       // bounding box, i.e. rectangle of node
+  Kd_tree_rectangle<FT,D> tbox;       // tight bounding box, 
   // i.e. minimal enclosing bounding
   // box of points
 	                	    
 public:
 
-  inline const Kd_tree_rectangle<FT>& 
+  inline const Kd_tree_rectangle<FT,D>& 
   bounding_box() const 
   { 
     return bbox; 
   }
   
-  inline const Kd_tree_rectangle<FT>&
+  inline const Kd_tree_rectangle<FT,D>&
   tight_bounding_box() const 
   { 
     return tbox; 

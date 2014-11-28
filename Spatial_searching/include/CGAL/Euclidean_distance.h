@@ -21,15 +21,39 @@
 
 #ifndef CGAL_EUCLIDEAN_DISTANCE_H
 #define CGAL_EUCLIDEAN_DISTANCE_H
+
 #include <CGAL/Kd_tree_rectangle.h>
 #include <CGAL/number_utils.h>
+#include <CGAL/Dimension.h>
+#include <boost/mpl/has_xxx.hpp>
+
 
 namespace CGAL {
 
   template <class SearchTraits>
   class Euclidean_distance;
-  
+
+    
   namespace internal{
+	    #ifndef HAS_DIMENSION_TAG
+		#define HAS_DIMENSION_TAG
+		BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(has_dimension,Dimension,false);
+		#endif
+
+	  template <class SearchTraits, bool has_dim = has_dimension<SearchTraits>::value>
+	  struct Euclidean_distance_base;
+
+	  template <class SearchTraits>
+	  struct Euclidean_distance_base<SearchTraits,true>{
+		  typedef typename SearchTraits::Dimension Dimension;
+	  };
+
+	  template <class SearchTraits>
+	  struct Euclidean_distance_base<SearchTraits,false>{
+		  typedef Dynamic_dimension_tag Dimension;
+	  };
+
+
     template <class SearchTraits>
     struct Spatial_searching_default_distance{
       typedef ::CGAL::Euclidean_distance<SearchTraits> type;
@@ -46,6 +70,9 @@ namespace CGAL {
     typedef typename SearchTraits::FT    FT;
     typedef typename SearchTraits::Point_d Point_d;
     typedef Point_d Query_item;
+
+	typedef typename internal::Euclidean_distance_base<SearchTraits>::Dimension D;
+	
 
     	// default constructor
     	Euclidean_distance(const SearchTraits& traits_=SearchTraits()):traits(traits_) {}
@@ -64,7 +91,7 @@ namespace CGAL {
 
 
 	inline FT min_distance_to_rectangle(const Query_item& q,
-					    const Kd_tree_rectangle<FT>& r) const {
+					    const Kd_tree_rectangle<FT,D>& r) const {
 		FT distance = FT(0);
 		typename SearchTraits::Construct_cartesian_const_iterator_d construct_it=traits.construct_cartesian_const_iterator_d_object();
                 typename SearchTraits::Cartesian_const_iterator_d qit = construct_it(q),
@@ -82,7 +109,7 @@ namespace CGAL {
 	}
 
 	inline FT max_distance_to_rectangle(const Query_item& q,
-					     const Kd_tree_rectangle<FT>& r) const {
+					     const Kd_tree_rectangle<FT,D>& r) const {
 		FT distance=FT(0);
 		typename SearchTraits::Construct_cartesian_const_iterator_d construct_it=traits.construct_cartesian_const_iterator_d_object();
                 typename SearchTraits::Cartesian_const_iterator_d qit = construct_it(q),

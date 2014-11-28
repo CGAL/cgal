@@ -45,6 +45,7 @@ namespace CGAL {
     typedef typename TreeTraits::FT FT;
     typedef typename Kd_tree<TreeTraits,Splitter,UseExtendedNode>::Separator Separator;
     typedef typename Kd_tree<TreeTraits,Splitter,UseExtendedNode>::Point_d_iterator Point_d_iterator;
+	typedef typename Kd_tree<TreeTraits,Splitter,UseExtendedNode>::D D;
 
     bool leaf;
 
