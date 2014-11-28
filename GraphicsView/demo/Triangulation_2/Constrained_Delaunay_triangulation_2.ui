@@ -108,6 +108,7 @@
     <addaction name="actionInsertPolyline"/>
     <addaction name="actionInsertSeeds_OnOff"/>
     <addaction name="separator"/>
+    <addaction name="actionShowVertices"/>
     <addaction name="actionShowDelaunay"/>
     <addaction name="actionShowVoronoi"/>
     <addaction name="actionShowTriangulationInDomain"/>
@@ -375,6 +376,17 @@
    </property>
    <property name="text">
     <string>Show triangulation in domain only</string>
+   </property>
+  </action>
+  <action name="actionShowVertices">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Show vertices</string>
    </property>
   </action>
  </widget>

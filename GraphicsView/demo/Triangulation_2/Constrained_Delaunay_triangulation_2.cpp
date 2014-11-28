@@ -192,6 +192,8 @@ public slots:
 
   void processInput(CGAL::Object o);
 
+  void on_actionShowVertices_toggled(bool checked);
+
   void on_actionShowDelaunay_toggled(bool checked);
 
   void on_actionShowTriangulationInDomain_toggled(bool checked);
@@ -300,6 +302,7 @@ MainWindow::MainWindow()
   // Check two actions 
   this->actionInsertPolyline->setChecked(true);
   this->actionShowDelaunay->setChecked(true);
+  this->actionShowVertices->setChecked(true);
   this->actionShowTriangulationInDomain->setChecked(false);
   this->actionShow_faces_in_domain->setChecked(true);
   this->actionShow_constrained_edges->setChecked(true);
@@ -399,6 +402,13 @@ MainWindow::on_actionShowDelaunay_toggled(bool checked)
     dgi->setVisibleInsideEdges(false);
     actionShowTriangulationInDomain->setChecked(false);
   }
+  update();
+}
+
+void
+MainWindow::on_actionShowVertices_toggled(bool checked)
+{
+  dgi->setVisibleVertices(checked);
   update();
 }
 
