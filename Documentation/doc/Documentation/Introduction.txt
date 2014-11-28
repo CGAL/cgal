@@ -255,8 +255,8 @@ given by a direction, which is hardwired in the class
 
 \section intro_concept Concepts and Models
 
-In the previous section we wrote that "Any model of the %CGAL concept
-`Kernel` provides what is required by the concept `ConvexHullTraits_2`".
+In the previous section we wrote that "Any model of the CGAL concept
+Kernel provides what is required by the concept ConvexHullTraits_2".
 
 A \em concept is a set of requirements on a type, namely that it has
 certain nested types, certain member functions, or comes with certain
@@ -278,7 +278,20 @@ If you want to instantiate this function with a class `C` this
 class must at least provide a copy constructor, and we could
 say that class `C` must be a model of  [CopyConstructible](http://en.cppreference.com/w/cpp/concept/CopyConstructible).  A singleton class does not fulfill this requirment.
 
-Another function
+Another example is the function
+
+\code{.cpp}
+template <typename T> 
+T& std::min(const T& a, constT& b)
+{
+  return (a<b)?a:b;
+} 
+\endcode
+
+This function only compiles if the `operator<<(..)` is defined for the type used as `T`.
+
+An example for a concept with required free functions is the `HalfedgeGraph` in the
+\cgal package CGAL and the BGL.
 
 \section intro_further Further Reading
 
