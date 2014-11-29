@@ -21,6 +21,7 @@
 #include <CGAL/basic.h>
 #include <CGAL/Polygon_with_holes_2.h>
 
+#include <CGAL/Minkowski_sum_2/Hole_filter_2.h>
 #include <CGAL/Minkowski_sum_2/Minkowski_sum_by_reduced_convolution_2.h>
 #include <CGAL/Minkowski_sum_2/Minkowski_sum_conv_2.h>
 #include <CGAL/Minkowski_sum_2/Minkowski_sum_decomp_2.h>
@@ -79,11 +80,19 @@ minkowski_sum_reduced_convolution_2(const Polygon_with_holes_2<Kernel_, Containe
   typedef Kernel_                                    Kernel;
   typedef Container_                                 Container;
 
+  Hole_filter_2<Kernel, Container> hole_filter;
+
+  Polygon_with_holes_2<Kernel,Container> filtered_pgn1;
+  Polygon_with_holes_2<Kernel,Container> filtered_pgn2;
+
+  hole_filter(pgn1, pgn2, filtered_pgn1);
+  hole_filter(pgn2, pgn1, filtered_pgn2);
+
   Minkowski_sum_by_reduced_convolution_2<Kernel, Container> mink_sum;
   Polygon_2<Kernel,Container>                               sum_bound;
   std::list<Polygon_2<Kernel,Container> >                   sum_holes;
 
-  mink_sum (pgn1, pgn2, sum_bound, std::back_inserter(sum_holes));
+  mink_sum (filtered_pgn1, filtered_pgn2, sum_bound, std::back_inserter(sum_holes));
 
   return (Polygon_with_holes_2<Kernel,Container> (sum_bound,
                                                   sum_holes.begin(),
@@ -252,7 +261,16 @@ minkowski_sum_2(const Polygon_with_holes_2<Kernel_, Container_>& pgn1,
 {
   typename Minkowski_sum_by_decomposition_2<DecompositionStrategy_,
                                             Container_>::Traits_2 traits;
-  return minkowski_sum_2(pgn1, pgn2, decomposition_strategy, traits);
+
+  Hole_filter_2<Kernel_, Container_> hole_filter;
+
+  Polygon_with_holes_2<Kernel_,Container_> filtered_pgn1;
+  Polygon_with_holes_2<Kernel_,Container_> filtered_pgn2;
+
+  hole_filter(pgn1, pgn2, filtered_pgn1);
+  hole_filter(pgn2, pgn1, filtered_pgn2);
+
+  return minkowski_sum_2(filtered_pgn1, filtered_pgn2, decomposition_strategy, traits);
 }
 
 /*!
@@ -282,7 +300,16 @@ minkowski_sum_2(const Polygon_with_holes_2<Kernel_, Container_>& pgn1,
 
   Minkowski_sum_by_decomposition_2<Decomposition_strategy, Container>
     mink_sum(decomposition_strategy, traits);
-  Polygon_with_holes_2<Kernel, Container> sum = mink_sum(pgn1, pgn2);
+
+  Hole_filter_2<Kernel_, Container_> hole_filter;
+
+  Polygon_with_holes_2<Kernel_,Container_> filtered_pgn1;
+  Polygon_with_holes_2<Kernel_,Container_> filtered_pgn2;
+
+  hole_filter(pgn1, pgn2, filtered_pgn1);
+  hole_filter(pgn2, pgn1, filtered_pgn2);
+
+  Polygon_with_holes_2<Kernel, Container> sum = mink_sum(filtered_pgn1, filtered_pgn2);
   return sum;
 }
 
@@ -305,6 +332,9 @@ minkowski_sum_2(const Polygon_2<Kernel_, Container_>& pgn1,
 {
   typename Minkowski_sum_by_decomposition_2<DecompositionStrategy_,
                                             Container_>::Traits_2 traits;
+
+  // TODO: Apply Hole_filter_2
+
   return minkowski_sum_2(pgn1, pgn2, decomposition_strategy, traits);
 }
 
@@ -335,6 +365,9 @@ minkowski_sum_2(const Polygon_2<Kernel_, Container_>& pgn1,
 
   Minkowski_sum_by_decomposition_2<Decomposition_strategy, Container>
     mink_sum(decomposition_strategy, traits);
+
+  // TODO: Apply Hole_filter_2
+
   Polygon_with_holes_2<Kernel, Container> sum = mink_sum(pgn1, pgn2);
   return sum;
 }
