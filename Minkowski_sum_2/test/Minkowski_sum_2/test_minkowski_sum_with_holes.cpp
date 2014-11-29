@@ -4,12 +4,12 @@
 #include <CGAL/Polygon_vertical_decomposition_2.h>
 #include <CGAL/Polygon_triangulation_decomposition_2.h>
 #include <CGAL/Boolean_set_operations_2.h>
-#include <CGAL/Timer.h>
 
 #include "read_polygon.h"
 
 #include <string.h>
 #include <list>
+#include <boost/timer.hpp>
 
 typedef CGAL::Exact_predicates_exact_constructions_kernel Kernel;
 typedef CGAL::Polygon_2<Kernel> Polygon_2;
@@ -71,7 +71,7 @@ int main(int argc, char* argv[])
   }
 
   Polygon_with_holes_2 p, q;
-  CGAL::Timer timer;
+  boost::timer timer;
 
   std::list<Strategy> strategies;
   for (int i = 0; i < strlen(argv[1]); ++i) {
@@ -105,11 +105,10 @@ int main(int argc, char* argv[])
     std::list<Strategy>::iterator it;
     for (it = strategies.begin(); it != strategies.end(); ++it) {
       std::cout << "Using " << strategy_names[*it] << ": ";
-      timer.reset();
-      timer.start();
+      timer.restart();
       Polygon_with_holes_2 result = compute_minkowski_sum_2(p, q, *it);
-      timer.stop();
-      std::cout << timer.time() << " s " << std::flush;
+      double secs = timer.elapsed();
+      std::cout << secs << " s " << std::flush;
 
       if (compare) {
         if (are_equal(reference, result)) std::cout << "(OK)";
