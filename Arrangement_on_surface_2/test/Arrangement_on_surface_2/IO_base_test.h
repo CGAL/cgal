@@ -4,7 +4,7 @@
 template <typename GeomTraits_>
 class IO_base_test {
 public:
-  typedef GeomTraits_                                 Geom_traits;
+  typedef GeomTraits_                                   Geom_traits;
   typedef typename Geom_traits::Point_2                 Point_2;
   typedef typename Geom_traits::X_monotone_curve_2      X_monotone_curve_2;
   typedef typename Geom_traits::Curve_2                 Curve_2;
@@ -67,6 +67,7 @@ template <typename InputStream_>
 bool IO_base_test<GeomTraits_>::
 read_xcurve(InputStream_& is, typename GeomTraits_::X_monotone_curve_2& xcv)
 {
+  typedef GeomTraits_   Geom_traits;
   Basic_number_type x1, y1, x2, y2;
   is >> x1 >> y1 >> x2 >> y2;
   CGAL_assertion(!is.fail());
@@ -74,7 +75,7 @@ read_xcurve(InputStream_& is, typename GeomTraits_::X_monotone_curve_2& xcv)
   Point_2 p2(x2, y2);
   CGAL_assertion(p1 != p2);
 
-  xcv = typename GeomTraits_::X_monotone_curve_2(p1, p2);
+  xcv = typename Geom_traits::X_monotone_curve_2(p1, p2);
   return true;
 }
 
@@ -83,13 +84,14 @@ template <typename InputStream_>
 bool IO_base_test<GeomTraits_>::
 read_curve(InputStream_& is, typename GeomTraits_::Curve_2& cv)
 {
+  typedef GeomTraits_   Geom_traits;
   Basic_number_type x1, y1, x2, y2;
   is >> x1 >> y1 >> x2 >> y2;
   Point_2 p1(x1, y1);
   Point_2 p2(x2, y2);
   CGAL_assertion(p1 != p2);
   //Waqar::error
-  cv = typename GeomTraits_::Curve_2(p1, p2);
+  cv = typename Geom_traits::Curve_2(p1, p2);
   return true;
 }
 
@@ -1937,7 +1939,10 @@ Circular_kernel::Circular_arc_2 read_arc(char type, InputStream_& is)
 template <>
 template <typename InputStream_>
 bool IO_base_test<Base_geom_traits>::read_point(InputStream_& is, Point_2& p)
-{ return read_arc_point<Base_geom_traits, InputStream_>(is, p); }
+{
+  typedef InputStream_  Input_stream
+  return read_arc_point<Base_geom_traits, Input_stream>(is, p);
+}
 
 /*! Read an x-monotone line arc curve */
 template <>
@@ -1978,7 +1983,10 @@ bool IO_base_test<Base_geom_traits>::read_curve(InputStream_& is, Curve_2& cv)
 template <>
 template <typename InputStream_>
 bool IO_base_test<Base_geom_traits>::read_point(InputStream_& is, Point_2& p)
-{ return read_arc_point<Base_geom_traits, InputStream_>(is, p); }
+{
+  typedef InputStream_  Input_stream
+  return read_arc_point<Base_geom_traits, Input_stream>(is, p);
+}
 
 /*! Read an x-monotone circular arc curve */
 template <>
@@ -2025,7 +2033,9 @@ bool IO_base_test<Base_geom_traits>::read_curve(InputStream_& is, Curve_2& cv)
 template <>
 template <typename InputStream_>
 bool IO_base_test<Base_geom_traits>::read_point(InputStream_& is, Point_2& p)
-{ return read_arc_point<Base_geom_traits, InputStream_>(is, p); }
+{
+  typedef InputStream_  Input_stream
+  return read_arc_point<Base_geom_traits, Input_stream>(is, p); }
 
 /*! Read an x-monotone circular-line arc curve */
 template <>
