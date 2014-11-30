@@ -1151,10 +1151,12 @@ Circular_kernel::Line_arc_2 read_line(char type, InputStream_& is)
   std::cout << "should never happen Line_arc_2 " << type <<std::endl;
   return Circular_kernel::Line_arc_2(); //should never happen
 }
+
 #endif
 
 #if TEST_GEOM_TRAITS == CIRCULAR_ARC_GEOM_TRAITS || \
   TEST_GEOM_TRAITS == CIRCULAR_LINE_ARC_GEOM_TRAITS
+
 template <typename InputStream_>
 Circular_kernel::Circular_arc_2 read_arc(char type, InputStream_& is)
 {
