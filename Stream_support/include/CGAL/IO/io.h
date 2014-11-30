@@ -115,7 +115,7 @@ public:
     bool cont = true;
     do {
       c = is.get();
-      if(isdigit(c) || (c =='.') || (c =='E') || (c =='e')){
+      if(isdigit(c) || (c =='.') || (c =='E') || (c =='e') || (c =='-')){
         buffer += c;
       }else{
         cont = false;
