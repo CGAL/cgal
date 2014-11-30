@@ -26,6 +26,7 @@
  * arrangement package.
  */
 
+#include <list>
 #include <iterator>
 #include <boost/type_traits/is_same.hpp>
 #include <boost/utility/enable_if.hpp>
@@ -270,10 +271,7 @@ public:
 
     /* Append a segment `seg` to an existing polyline `cv` at the front. */
     void operator()(Curve_2& cv, const Segment_2& seg) const
-    {
-      //cv.push_front(seg);
-      Base::Push_front_2::operator()(cv, seg);
-    }
+    { Base::Push_front_2::operator()(cv, seg); }
 
     /* Append a point `p` to an existing polyline `xcv` at the front. */
     void operator()(const X_monotone_curve_2& xcv, Point_2& p) const
@@ -287,7 +285,8 @@ public:
          geom_traits->compare_x_2_object();
          typename SegmentTraits_2::Compare_xy_2 comp_xy =
          geom_traits->compare_xy_2_object();
-         typename Base::Is_vertical_2 is_vertical = m_poly_traits.is_vertical_2_object();
+         typename Base::Is_vertical_2 is_vertical =
+           m_poly_traits.is_vertical_2_object();
          );
       CGAL_precondition(num_seg > 0);
 
@@ -327,8 +326,234 @@ public:
     { Base::Push_front_2::operator()(xcv, seg); }
   };
 
-  /*! Get a Push_front_2 functor object. */
+  /*! Obtain a Push_front_2 functor object. */
   Push_front_2 push_front_2_object() const { return Push_front_2(*this); }
+
+  /*! Construct a general curve. */
+  class Construct_curve_2 : public Base::Construct_curve_2 {
+  protected:
+    typedef Arr_polyline_traits_2<Geometry_traits_2>       Polyline_traits_2;
+
+  public:
+    /*! Constructor.
+     */
+    Construct_curve_2(const Polyline_traits_2& traits) :
+      Base::Construct_curve_2(traits)
+    {}
+
+    /* Obtain an polyline connecting two given endpoints.
+     */
+    Curve_2 operator()(const Point_2& p, const Point_2& q) const
+    { Base::Construct_curve_2::operator()(p, q); }
+
+    /* Obtain a polyline consists of one given segment.
+     */
+    Curve_2 operator()(const Segment_2& seg) const
+    { return Base::Construct_curve_2::operator()(seg); }
+
+    /* Construct a well-oriented polyline from a range of either
+     * `SegmentTraits::Point_2` or `SegmentTraits::Segment_2`.
+     */
+    template <typename ForwardIterator>
+    Curve_2 operator()(ForwardIterator begin, ForwardIterator end) const
+    {
+      typedef typename std::iterator_traits<ForwardIterator>::value_type VT;
+      typedef typename boost::is_same<VT, Point_2>::type Is_point;
+      // Dispatch the range to the appropriate implementation.
+      return constructor_impl(begin, end, Is_point());
+    }
+
+    /*! Construction implementation from a range of segments.
+     *  Note that the segments in the range are NOT necessarily x-monotone,
+     *  thus it is impossible to test (even in precondition) whether the input
+     *  forms a continuous and well oriented polyline.
+     *  \pre Range should contain at least one segment.
+     */
+    template <typename ForwardIterator>
+    Curve_2 constructor_impl(ForwardIterator begin, ForwardIterator end,
+                             boost::false_type type) const
+    { return Base::Construct_curve_2::operator()(begin, end); }
+
+    /*! Construction of a polyline from a range of points.
+     * \pre The range contains at least two points
+     * \pre Consecutive points are disjoint.
+     * \return Well-oriented polyline connecting the given points. The order
+     *         of the vertices is determined by their order in the range.
+     *         Furthermore, the orientation of the polyline is induced by
+     *         their order.
+     */
+    template <typename ForwardIterator>
+    Curve_2 constructor_impl(ForwardIterator begin, ForwardIterator end,
+                             boost::true_type) const
+    {
+      // The range must contain at least two points.
+      CGAL_precondition_msg(std::distance(begin, end) > 1,
+                            "Range of points must contain at least 2 points");
+
+      // Container of the segments to be constructed from the range of points
+      std::list<Segment_2> segs;
+
+      CGAL_precondition_code
+        (
+         typename Geometry_traits_2::Equal_2 equal =
+         m_poly_traits.geometry_traits_2()->equal_2_object();
+         );
+
+      // Check whether there are no points in the range:
+      ForwardIterator next = begin;
+      ForwardIterator curr = next++;
+
+      // Construct a segment from each two adjacent points.
+      Curve_2 cv;
+      while (next != end) {
+        CGAL_precondition_msg(!equal(*curr,*next),
+                              "Cannot construct a degenerated segment");
+        segs.push_back(Segment_2(*curr, *next));
+        curr = next++;
+      }
+
+      return operator()(segs.begin(), segs.end());
+    }
+  };
+
+  /*! Obtain a Construct_curve_2 functor object. */
+  Construct_curve_2 construct_curve_2_object() const
+  { return Construct_curve_2(*this); }
+
+  /*! Construct an x-monotone curve. */
+  class Construct_x_monotone_curve_2 :
+    public Base::Construct_x_monotone_curve_2
+  {
+  protected:
+    typedef Arr_polyline_traits_2<Geometry_traits_2>       Polyline_traits_2;
+
+  public:
+    /*! Constructor.
+     */
+    Construct_x_monotone_curve_2(const Polyline_traits_2& traits) :
+      Base::Construct_x_monotone_curve_2(traits)
+    {}
+
+    /*! Obtain an x-monotone polyline connecting two given endpoints.
+     * \param p The first point.
+     * \param q The second point.
+     * \pre p and q must not be the same.
+     * \return A segment connecting p and q.
+     */
+    X_monotone_curve_2 operator()(const Point_2& p, const Point_2& q) const
+    { return Base::Construct_x_monotone_curve_2::operator()(p, q); }
+
+    /*! Obtain an x-monotone polyline that consists of one given segment.
+     * \param seg input segment.
+     * \pre seg is not degenerated.
+     * \return An x-monotone polyline with one segment.
+     */
+    X_monotone_curve_2 operator()(const X_monotone_segment_2& seg) const
+    { return Base::Construct_x_monotone_curve_2::operator()(seg); }
+
+    /*! Construct an x-monotone polyline from a range of elements.
+     * \pre Range should from a continuous well-oriented x-monotone polyline.
+     */
+    template <typename ForwardIterator>
+    X_monotone_curve_2 operator()(ForwardIterator begin, ForwardIterator end)
+      const
+    {
+      typedef typename std::iterator_traits<ForwardIterator>::value_type VT;
+      typedef typename boost::is_same<VT, Point_2>::type Is_point;
+      // Dispatch the range to the appropriate implementation.
+      return constructor_impl(begin, end, Is_point());
+    }
+
+    /*! Construction implementation from a range of segments.
+     * \param begin An iterator pointing to the first segment in the range.
+     * \param end An iterator pointing to the past-the-end segment
+     * in the range.
+     * \pre The range contains at least one segment.
+     * \pre Segments correspond to a well-oriented polyline. That
+     *      is, the target of the i-th segment is an source of the
+     *      (i+1)th segment.
+     * \pre The sequence of segments in the range forms a weak x-monotone
+     *      polyline.
+     * \pre The container should support bidirectional iteration.
+     * \return A continuous, well-oriented x-monotone polyline which
+     *         is directed either left-to-right or right-to-left
+     *         depending on the segments in the input.
+     */
+    template <typename ForwardIterator>
+    X_monotone_curve_2 constructor_impl(ForwardIterator begin,
+                                        ForwardIterator end,
+                                        boost::false_type type) const
+    { return Base::Construct_x_monotone_curve_2::operator()(begin, end); }
+
+    /*! Construction of an x-monotone polyline from a range of points.
+     * The polyline may be oriented left-to-right or right-to-left
+     * depending on the lexicographical order of the points in the
+     * input.
+     * \pre Range contains at least two points.
+     * \pre No two consecutive points are the same.
+     * \pre The points form an continuous well-oriented x-monotone polyline.
+     * \post By the construction the returned polyline is well-oriented.
+     */
+    template <typename ForwardIterator>
+    X_monotone_curve_2 constructor_impl(ForwardIterator begin,
+                                        ForwardIterator end,
+                                        boost::true_type) const
+    {
+      // The range must contain at least two points.
+      CGAL_precondition_msg(std::distance(begin, end) > 1,
+                            "Range of points must contain at least 2 points");
+
+      // Container of the segments to be constructed from the range of points
+      std::list<X_monotone_segment_2> segs;
+      // Make sure the range of points contains at least two points.
+      ForwardIterator next = begin;
+      ForwardIterator curr = next++;
+
+      CGAL_precondition_code
+        (
+         const Geometry_traits_2* geom_traits =
+           m_poly_traits.geometry_traits_2();
+         // Initialize two comparison functors
+         typename Geometry_traits_2::Compare_x_2 compare_x =
+           geom_traits->compare_x_2_object();
+         typename Geometry_traits_2::Compare_xy_2 compare_xy =
+           geom_traits->compare_xy_2_object();
+         // Make sure there is no changed of directions.
+         // Saves the comp_x between the first two points
+         const Comparison_result cmp_x_res = compare_x(*curr, *next);
+         // Save the comp_xy between the first two points
+         const Comparison_result cmp_xy_res = compare_xy(*curr, *next);
+         );
+
+      // Assure that the first two points are not the same.
+      // Note that this also assures that non of the consecutive
+      // points are equal in the whole range.
+      CGAL_precondition(cmp_xy_res != EQUAL);
+
+      while (next != end) {
+        CGAL_precondition(compare_xy(*curr, *next) == cmp_xy_res);
+        CGAL_precondition(compare_x(*curr, *next) == cmp_x_res);
+
+        segs.push_back(X_monotone_segment_2(*curr, *next));
+        curr = next++;
+      }
+
+#ifdef CGAL_ALWAYS_LEFT_TO_RIGHT
+      if (m_poly_traits.geometry_traits_2()->
+          compare_endpoints_xy_2_object()(*segs.begin()) == LARGER)
+      {
+        X_monotone_curve_2 xcv(segs.begin(), segs.end());
+        return m_poly_traits.construct_opposite_2_object()(xcv);
+      }
+#endif
+
+      return operator()(segs.begin(), segs.end());
+    }
+  };
+
+  /*! Obtain a Construct_x_monotone_curve_2 functor object. */
+  Construct_x_monotone_curve_2 construct_x_monotone_curve_2_object() const
+  { return Construct_x_monotone_curve_2(*this); }
 
   // These functors are defined in the base class.
   // class Compare_x_2 {};
@@ -349,8 +574,6 @@ public:
   // class Intersect_2 {};
   // class Are_mergeable_2 {};
   // class Merge_2 {};
-  // class Construct_curve_2 {};
-  // class Construct_x_monotone_curve_2 {};
   // class Trim_2{};
 };
 

@@ -613,7 +613,7 @@ public:
     Compare_y_at_x_2(const Polycurve_traits_2& traits) :
       m_poly_traits(traits) {}
 
-    /*! Return the location of the given point with respect to the input curve.
+    /*! Obtain the location of the given point with respect to the input curve.
      * \param p The point.
      * \param xcv The polyline curve.
      * \pre p is in the x-range of cv.
@@ -633,7 +633,7 @@ public:
       return geom_traits->compare_y_at_x_2_object()(p, xcv[i]);
     }
 
-    /*! Return the location of the given curve_end with respect to the input
+    /*! Obtain the location of the given curve_end with respect to the input
      * curve.
      * \param xcv The polyline curve.
      * \param ce the curve-end indicator of the x-monotone segment xl:
@@ -1651,7 +1651,7 @@ public:
           std::vector<CGAL::Object> int_seg;
           intersect(cv1[i1], cv2[i2], std::back_inserter(int_seg));
 
-          for (int i = 0; i < int_seg.size(); ++i) {
+          for (size_t i = 0; i < int_seg.size(); ++i) {
             const X_monotone_segment_2* x_seg =
               CGAL::object_cast<X_monotone_segment_2> (&(int_seg[i]));
             if (x_seg != NULL) {
@@ -2014,7 +2014,7 @@ public:
       m_poly_traits(traits)
     {}
 
-    /* Returns an polyline connecting the two given endpoints. */
+    /* Obtain a polyline connecting the two given endpoints. */
     Curve_2 operator()(const Point_2& p, const Point_2& q) const
     {
       CGAL_precondition_msg(!m_poly_traits.
@@ -2023,7 +2023,7 @@ public:
       return Curve_2(Segment_2(p,q));
     }
 
-    /* Returns a polyline consists of one given segment. */
+    /* Obtain a polyline consists of one given segment. */
     Curve_2 operator()(const Segment_2& seg) const { return Curve_2(seg); }
 
     /* Construct a well-oriented polyline from a range of either
@@ -2050,31 +2050,7 @@ public:
     template <typename ForwardIterator>
     Curve_2 constructor_impl(ForwardIterator begin, ForwardIterator end,
                              boost::true_type) const
-    {
-      // Container of the segments to be created.
-      std::vector<Segment_2> segs;
-
-      // The range must contain at least two points.
-      CGAL_precondition_msg(std::distance(begin,end)>1,
-                            "Range of points must contain at least 2 points");
-      CGAL_precondition_code
-        (
-         typename Geometry_traits_2::Equal_2 equal =
-         m_poly_traits.geometry_traits_2()->equal_2_object();
-         );
-      ForwardIterator curr = begin;
-      ForwardIterator next = curr;
-      ++next;
-      while (next != end) {
-        CGAL_precondition_msg(!equal(*curr,*next),
-                              "Cannot construct a degenerated segment");
-        segs.push_back(Segment_2(*curr,*next));
-        ++next;
-        ++curr;
-      }
-
-      return Curve_2(segs.begin(), segs.end());
-    }
+    {  CGAL_error_msg("Cannot construct a polycurve from a range of points!"); }
 
     /*! Construction implementation from a range of segments.
      *  Note that the segments in the range are NOT necessarily x-monotone,
@@ -2107,7 +2083,7 @@ public:
     Construct_x_monotone_curve_2(const Polycurve_traits_2& traits) :
       m_poly_traits(traits) {}
 
-    /*! Returns an x-monotone polyline connecting the two given endpoints.
+    /*! Obtain an x-monotone polyline connecting the two given endpoints.
      * \param p The first point.
      * \param q The second point.
      * \pre p and q must not be the same.
@@ -2133,10 +2109,10 @@ public:
       return X_monotone_curve_2(seg);
     }
 
-    /*! Returns an x-monotone polyline consists of one given segment.
+    /*! Obtain an x-monotone polyline that consists of one given segment.
      * \param seg input segment.
      * \pre seg is not degenerated.
-     * \return An x-monotone polyline with one segment, namely seg.
+     * \return An x-monotone polyline with one segment.
      */
     X_monotone_curve_2 operator()(const X_monotone_segment_2& seg) const
     {
@@ -2185,8 +2161,8 @@ public:
       return constructor_impl(begin, end, Is_point());
     }
 
-    /*! Construct an x-monotone polyline from a range of points. The
-     * polyline may be oriented left-to-right or right-to-left
+    /*! Construct an x-monotone polyline from a range of points.
+     * The polyline may be oriented left-to-right or right-to-left
      * depending on the lexicographical order of the points in the
      * input.
      * \pre Range contains at least two points.
@@ -2198,59 +2174,9 @@ public:
     X_monotone_curve_2 constructor_impl(ForwardIterator begin,
                                         ForwardIterator end,
                                         boost::true_type) const
-    {
-      // Vector of the segments to be constructed from the range of points
-      std::vector<X_monotone_segment_2> segs;
-      // Make sure the range of points contains at least two points.
-      ForwardIterator ps = begin;
-      CGAL_precondition(ps != end);
-      ForwardIterator pt = ps;
-      ++pt;
-      CGAL_precondition_msg((pt != end),
-                            "Range of points must contain at least 2 points");
+    { CGAL_error_msg("Cannot construct a polycurve from a range of points!"); }
 
-      CGAL_precondition_code
-        (
-         const Geometry_traits_2* geom_traits =
-           m_poly_traits.geometry_traits_2();
-         // Initialize two comparison functors
-         typename Geometry_traits_2::Compare_x_2 compare_x =
-           geom_traits->compare_x_2_object();
-         typename Geometry_traits_2::Compare_xy_2 compare_xy =
-           geom_traits->compare_xy_2_object();
-         // Make sure there is no changed of directions.
-         // Saves the comp_x between the first two points
-         const Comparison_result cmp_x_res = compare_x(*ps, *pt);
-         // Save the comp_xy between the first two points
-         const Comparison_result cmp_xy_res = compare_xy(*ps, *pt);
-         );
-
-      // Assure that the first two points are not the same.
-      // Note that this also assures that non of the consecutive
-      // points are equal in the whole range.
-      CGAL_precondition(cmp_xy_res != EQUAL);
-
-      while (pt != end) {
-        CGAL_precondition(compare_xy(*ps, *pt) == cmp_xy_res);
-        CGAL_precondition(compare_x(*ps, *pt) == cmp_x_res);
-
-        segs.push_back(X_monotone_segment_2(*ps,*pt));
-        ++ps; ++pt;
-      }
-
-#ifdef CGAL_ALWAYS_LEFT_TO_RIGHT
-      if (m_poly_traits.geometry_traits_2()->
-          compare_endpoints_xy_2_object()(*segs.begin()) == LARGER)
-      {
-        X_monotone_curve_2 xcv(segs.begin(), segs.end());
-        return m_poly_traits.construct_opposite_2_object()(xcv);
-      }
-#endif
-
-      return X_monotone_curve_2(segs.begin(), segs.end());
-    }
-
-    /*! Returns an x-monotone polyline from a range of segments.
+    /*! Obtain an x-monotone polyline from a range of segments.
      * \param begin An iterator pointing to the first segment in the range.
      * \param end An iterator pointing to the past-the-end segment
      * in the range.
@@ -2727,7 +2653,8 @@ public:
       // and also that min end segment is always placed at position 0 of the
       // vector.
       // Comfirm with Eric.
-      unsigned int index = (ce == ARR_MIN_END) ? 0 : xcv.number_of_segments()-1;
+      unsigned int index =
+        (ce == ARR_MIN_END) ? 0 : xcv.number_of_segments() - 1;
       return index;
     }
 
@@ -2965,7 +2892,7 @@ private:
    * Roadmap: locate() should return an iterator to the located segment
    */
 
-  /*! Return the index of the segment in the polyline that contains the
+  /*! Obtain the index of the segment in the polyline that contains the
    * point q in its x-range. The function performs a binary search, so if the
    * point q is in the x-range of the polyline with n segments, the segment
    * containing it can be located in O(log n) operations.
@@ -2975,8 +2902,7 @@ private:
    *         If q is not in the x-range of cv, returns INVALID_INDEX.
    */
   template <typename Compare>
-  std::size_t locate_gen(const X_monotone_curve_2& cv,
-                         Compare compare) const
+  std::size_t locate_gen(const X_monotone_curve_2& cv, Compare compare) const
   {
     // The direction of cv. SMALLER means left-to-right and
     // otherwise right-to-left
@@ -3142,7 +3068,8 @@ private:
       Comparison_result res = compare_x(min_vertex(xcv[0]), q);
       if (res != EQUAL) return INVALID_INDEX;
 
-      Compare_points<Compare_xy_2> compare(geom_traits, compare_xy_2_object(), q);
+      Compare_points<Compare_xy_2> compare(geom_traits,
+                                           compare_xy_2_object(), q);
       return locate_gen(xcv, compare);
     }
 
