@@ -5,7 +5,7 @@
 #include <iostream>
 int main ()
 {
-  std::cout << "Sorry, this example needs CORE ..." << std::endl; 
+  std::cout << "Sorry, this example needs CORE ..." << std::endl;
   return 0;
 }
 
@@ -25,7 +25,7 @@ int main ()
 
 
 /*
-/  Conic traits
+/  Conic traits.
 */
 typedef CGAL::CORE_algebraic_number_traits                                Nt_traits;
 typedef Nt_traits::Rational                                               Rational;
@@ -45,21 +45,19 @@ int main ()
 {
   Polycurve_conic_traits_2 traits;
   
-  //polycurve constructors
+  // Polycurve construction functors
   Polycurve_conic_traits_2::Construct_x_monotone_curve_2 construct_x_mono_polycurve = traits.construct_x_monotone_curve_2_object();
   Polycurve_conic_traits_2::Construct_curve_2  construct_polycurve = traits.construct_curve_2_object();
 
-  //Containers to store conic curves that will be used to create polycurve.
+  // Containers to store conic curves that will be used to create polycurve.
   std::vector<Conic_curve_2> conic_curves;
   std::vector<Conic_x_monotone_curve_2> xmono_conic_curves_2;
 
-  //create polycurves
-  
-  //y=x^2
+  // Create polycurves
+  // y=x^2
   Conic_curve_2     c3(1,0,0,0,-1,0,CGAL::COUNTERCLOCKWISE, Conic_point_2( Algebraic(0), Algebraic(0) ), Conic_point_2( Algebraic(3), Algebraic(9) ) );
   Conic_curve_2     c4(1,0,0,0,-1,0,CGAL::COUNTERCLOCKWISE, Conic_point_2( Algebraic(3), Algebraic(9) ), Conic_point_2( Algebraic(5), Algebraic(25) ) );
   Conic_curve_2     c5(0,1,0,1,0,0, CGAL::COUNTERCLOCKWISE, Conic_point_2( Algebraic(-25), Algebraic(-5) ), Conic_point_2( Algebraic(0), Algebraic(0) ) );
-
 
   Conic_curve_2     c6(1,1,0,6,-26,162,CGAL::COUNTERCLOCKWISE, Conic_point_2( Algebraic(-7), Algebraic(13) ), Conic_point_2( Algebraic(-3), Algebraic(9) ) );
   Conic_curve_2     c7(1,0,0,0,-1,0,CGAL::COUNTERCLOCKWISE, Conic_point_2( Algebraic(-3), Algebraic(9) ), Conic_point_2( Algebraic(0), Algebraic(0) ) );
@@ -75,17 +73,13 @@ int main ()
   Conic_curve_2     c11( 0,1,0,-1,0,0,CGAL::COUNTERCLOCKWISE, Conic_point_2( Algebraic(25), Algebraic(-5) ), Conic_point_2( Algebraic(0), Algebraic(0) ) );
   Conic_curve_2     c12( 1,0,0,0,-1,0,CGAL::COUNTERCLOCKWISE, Conic_point_2( Algebraic(0), Algebraic(0) ), Conic_point_2( Algebraic(5), Algebraic(25) ) );
   
-  //construct poly-curve
+  // Construct poly-curve
   conic_curves.clear();
   conic_curves.push_back(c11);
   conic_curves.push_back(c12);
   Polycurve conic_polycurve_2 = construct_polycurve( conic_curves.begin(), conic_curves.end() );
 
-  /* VERY IMPORTANT
-  For efficiency reasons, we recommend users not to construct x-monotone conic arc directly, 
-  but rather use the Make_x_monotone_2 functor supplied by the conic-arc traits class to convert conic curves to x-monotone curves.
-  */
-  //Construct x-monotone conic curves from conic curves
+  // Construct x-monotone conic curves from conic curves
   Conic_x_monotone_curve_2 xc3 (c3);
   Conic_x_monotone_curve_2 xc4 (c4);
   Conic_x_monotone_curve_2 xc5 (c5);
@@ -93,39 +87,32 @@ int main ()
   Conic_x_monotone_curve_2 xc7 (c7);
   Conic_x_monotone_curve_2 xc8 (c8);
   
-
-  //construct x-monotone poly-curve
+  // construct x-monotone poly-curve from x-monotone conic curves.
   xmono_conic_curves_2.clear();
   xmono_conic_curves_2.push_back(xc5);
   xmono_conic_curves_2.push_back(xc3);
   xmono_conic_curves_2.push_back(xc4);
   X_monotone_polycurve conic_x_mono_polycurve_1 = construct_x_mono_polycurve(xmono_conic_curves_2.begin(), xmono_conic_curves_2.end());
 
-  //construct x-monotone poly-curve
+  // construct x-monotone poly-curve.
   xmono_conic_curves_2.clear();
   xmono_conic_curves_2.push_back(xc6);
   xmono_conic_curves_2.push_back(xc7);
   xmono_conic_curves_2.push_back(xc8);
   X_monotone_polycurve conic_x_mono_polycurve_2 = construct_x_mono_polycurve(xmono_conic_curves_2.begin(), xmono_conic_curves_2.end());
 
-  //Print the Polycurves.
-  std::cout << std::endl;
-  std::cout << "Polycurve 1: " << conic_polycurve_1 << std::endl;
-  std::cout << "Polycurve 2: " << conic_polycurve_2 << std::endl;
-  std::cout << "X-monotone Polycurve 1: " << conic_x_mono_polycurve_1 << std::endl;
-  std::cout << "X-monotone Polycurve 2: " << conic_x_mono_polycurve_2 << std::endl;
+  // Insert the Polycurves into arrangment and print.
+  Polycurve_conic_arrangment x_pc_arrangment(&traits);
+  insert(x_pc_arrangment, conic_x_mono_polycurve_1);
+  insert(x_pc_arrangment, conic_x_mono_polycurve_2);
+  std::cout << "X-monotone polycurve arrangement Statistics: " << std::endl;
+  print_arrangement (x_pc_arrangment);
 
-  //create opposite of conic_x_mono_polycurve_2
-  X_monotone_polycurve opposite_x_monotone_polycurve_2 = traits.construct_opposite_2_object()(conic_x_mono_polycurve_2);
-  std::cout << "Opposite of X-monotone Polycurve 2: " << opposite_x_monotone_polycurve_2 << std::endl;
-
-  Polycurve_conic_arrangment Conic_arrangment(&traits);
-  insert(Conic_arrangment, conic_polycurve_1);
-  insert(Conic_arrangment, conic_polycurve_2);
-  insert(Conic_arrangment, conic_x_mono_polycurve_1);
-  insert(Conic_arrangment, conic_x_mono_polycurve_2);
-  std::cout << "Arrangment Statistics: " << std::endl; 
-  print_arrangement (Conic_arrangment);
+  Polycurve_conic_arrangment pc_arrangment(&traits);
+  insert(pc_arrangment, conic_polycurve_1);
+  insert(pc_arrangment, conic_polycurve_2);
+  std::cout << "Polycurve arrangement Statistics: " << std::endl;
+  print_arrangement (pc_arrangment);
   
   return 0;
 }
