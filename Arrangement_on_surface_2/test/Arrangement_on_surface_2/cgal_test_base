@@ -1195,6 +1195,7 @@ test_polycurve_bezier_traits()
     VERTEX \
     ARE_MERGEABLE \
     COMPARE_ENDPOINTS_XY
+    # TODO (add data for these tests)
     # COMPARE_Y_AT_X \
     # SPLIT \
     # COMPARE_Y_AT_X_LEFT \
@@ -1640,6 +1641,8 @@ test_segment_traits
 test_non_caching_segment_traits
 test_polyline_traits
 test_polycurve_conic_traits
+test_polycurve_circular_arc_traits
+test_polycurve_bezier_traits
 test_non_caching_polyline_traits
 test_linear_traits
 test_conic_traits
