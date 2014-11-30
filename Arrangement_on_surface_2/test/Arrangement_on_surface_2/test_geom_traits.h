@@ -64,6 +64,22 @@
 #elif TEST_GEOM_TRAITS == FLAT_TORUS_GEOM_TRAITS
 #include <CGAL/Arr_flat_torus_traits_2.h>
 
+//for the time being this will run for conic polycurves only
+#elif TEST_GEOM_TRAITS == POLYCURVE_CONIC_GEOM_TRAITS
+#include <CGAL/CORE_algebraic_number_traits.h>
+#include <CGAL/Arr_polycurve_traits_2.h>
+#include <CGAL/Arr_conic_traits_2.h>
+
+
+#elif TEST_GEOM_TRAITS == POLYCURVE_CIRCULAR_ARC_GEOM_TRAITS
+#include <CGAL/Arr_polycurve_traits_2.h>
+#include <CGAL/Arr_circle_segment_traits_2.h>
+
+#elif TEST_GEOM_TRAITS == POLYCURVE_BEZIER_GEOM_TRAITS
+#include <CGAL/CORE_algebraic_number_traits.h>
+#include <CGAL/Arr_Bezier_curve_traits_2.h>
+#include <CGAL/Arr_polycurve_traits_2.h>
+
 #else
 #error No geometry traits (GEOM_TRAITS) specified!
 #endif
