@@ -4,7 +4,7 @@
 template <typename GeomTraits_>
 class IO_base_test {
 public:
-  typedef GeomTraits_                                  Geom_traits;
+  typedef GeomTraits_                                   Geom_traits;
   typedef typename Geom_traits::Point_2                 Point_2;
   typedef typename Geom_traits::X_monotone_curve_2      X_monotone_curve_2;
   typedef typename Geom_traits::Curve_2                 Curve_2;
