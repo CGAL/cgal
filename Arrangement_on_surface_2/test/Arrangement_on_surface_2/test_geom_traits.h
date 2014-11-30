@@ -62,6 +62,9 @@
 #elif TEST_GEOM_TRAITS == ALGEBRAIC_GEOM_TRAITS
 #include <CGAL/Arr_algebraic_segment_traits_2.h>
 
+#elif TEST_GEOM_TRAITS == FLAT_TORUS_GEOM_TRAITS
+#include <CGAL/Arr_flat_torus_traits_2.h>
+
 //for the time being this will run for conic polycurves only
 #elif TEST_GEOM_TRAITS == POLYCURVE_CONIC_GEOM_TRAITS
 #include <CGAL/CORE_algebraic_number_traits.h>
@@ -96,7 +99,7 @@ typedef CGAL::Arr_non_caching_segment_traits_2<Kernel>  Base_geom_traits;
 #elif TEST_GEOM_TRAITS == POLYLINE_GEOM_TRAITS
 typedef CGAL::Arr_segment_traits_2<Kernel>              Segment_traits;
 typedef CGAL::Arr_polyline_traits_2<Segment_traits>     Base_geom_traits;
-// Poly curves needs some testing where Segments and X-monotone segments are required 
+// Poly curves needs some testing where Segments and X-monotone segments are required
 // instead of polycurves/x-monotone polycurves.
 typedef Base_geom_traits::Segment_2               Segment_2;
 typedef Base_geom_traits::X_monotone_segment_2    X_monotone_segment_2;
@@ -105,7 +108,7 @@ typedef Base_geom_traits::X_monotone_segment_2    X_monotone_segment_2;
 #elif TEST_GEOM_TRAITS == NON_CACHING_POLYLINE_GEOM_TRAITS
 typedef CGAL::Arr_non_caching_segment_traits_2<Kernel>  Segment_traits;
 typedef CGAL::Arr_polyline_traits_2<Segment_traits>     Base_geom_traits;
-// Poly curves needs some testing where Segments and X-monotone segments are required 
+// Poly curves needs some testing where Segments and X-monotone segments are required
 // instead of polycurves/x-monotone polycurves.
 typedef Base_geom_traits::Segment_2               Segment_2;
 typedef Base_geom_traits::X_monotone_segment_2    X_monotone_segment_2;
@@ -220,7 +223,7 @@ typedef Conic_traits_2::Rat_point_2                   Rat_point;
 typedef Conic_traits_2::Rat_circle_2                  Rat_circle;
 typedef Conic_traits_2::Rat_segment_2                 Rat_segment;
 
-// Poly curves needs some testing where Segments and X-monotone segments are required 
+// Poly curves needs some testing where Segments and X-monotone segments are required
 // instead of polycurves/x-monotone polycurves.
 typedef Base_geom_traits::Segment_2               Segment_2;
 typedef Base_geom_traits::X_monotone_segment_2    X_monotone_segment_2;
@@ -238,7 +241,7 @@ typedef Rat_kernel::Line_2                                    Line_2;
 typedef Rat_kernel::Point_2                                   Rat_point_2;
 typedef Circle_segment_traits_2::Point_2 					  Point_2;
 
-// Poly curves needs some testing where Segments and X-monotone segments are required 
+// Poly curves needs some testing where Segments and X-monotone segments are required
 // instead of polycurves/x-monotone polycurves.
 typedef Base_geom_traits::Segment_2               Segment_2;
 typedef Base_geom_traits::X_monotone_segment_2    X_monotone_segment_2;
@@ -257,7 +260,7 @@ typedef Rat_kernel::Point_2 															Control_point_2;
 typedef Bezier_tratis::Point_2 															Point_2;
 
 typedef CGAL::Arr_polycurve_traits_2<Bezier_tratis>     								Base_geom_traits;
-// Poly curves needs some testing where Segments and X-monotone segments are required 
+// Poly curves needs some testing where Segments and X-monotone segments are required
 // instead of polycurves/x-monotone polycurves.
 typedef Base_geom_traits::Segment_2               										Segment_2;
 typedef Base_geom_traits::X_monotone_segment_2    										X_monotone_segment_2;
