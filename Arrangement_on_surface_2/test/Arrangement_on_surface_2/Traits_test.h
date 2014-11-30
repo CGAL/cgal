@@ -980,7 +980,7 @@ intersect_wrapper(std::istringstream& str_stream)
     unsigned int id;                    // The id of the point or x-monotone
     str_stream >> id;                   // ... curve respectively
 
-    unsigned int multiplicity;
+    Multiplicity multiplicity;
     if (type == 0) str_stream >> multiplicity;
 
     unsigned int exp_type = 1;
