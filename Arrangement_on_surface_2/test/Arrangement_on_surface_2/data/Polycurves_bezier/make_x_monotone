@@ -1,0 +1,7 @@
+# -*- comment-start: "#"; -*-
+# 
+# Format
+# <command>	<polycurve > <Number of x-monotone curves expected> <0 for point 1 for curve> <id of xcurves or points> (Repeat the type and ID for n constructed x-monotone curves times)
+#
+#make_x_monotone 0 2 1 5 1 7
+#make_x_monotone 1 2 1 6 1 0

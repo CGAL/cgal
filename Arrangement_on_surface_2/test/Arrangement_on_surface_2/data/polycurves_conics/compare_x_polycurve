@@ -1,0 +1,10 @@
+# -*- comment-start: "#"; -*-
+#
+# Same as coompare_x_2 but this one will work on x-monotone segments (polycurve segment).
+# Format:
+# <command> <x-segment 1 id> <x-segment 2 id> <Comparison end of x-segment 1> <Comparison end of x-segment 2> <expected result>
+#
+compare_x_polycurve 0 1 1 1 LARGER
+compare_x_polycurve 0 1 0 1 EQUAL
+compare_x_polycurve 0 1 1 0 LARGER
+compare_x_polycurve 0 1 0 0 LARGER

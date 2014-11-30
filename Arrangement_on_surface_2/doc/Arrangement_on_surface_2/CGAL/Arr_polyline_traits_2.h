@@ -35,7 +35,8 @@ namespace CGAL {
       - `ArrangementDirectionalXMonotoneTraits_2`.
 
     If, in addition, the segment traits models the concept
-    `ArrangementLandmarkTraits_2` then `Arr_polyline_traits_2` models
+    `ArrConstructionFromTwoPointsTraits_2, ArrApproximateTraits_2
+    and ArrTrimTraits_2` then `Arr_polyline_traits_2` models
     this concept as well. If no type is provided, then
     `Arr_segment_traits_2` (instantiated with
     `Exact_predicates_exact_constructions_kernel` as the kernel) is
@@ -73,10 +74,13 @@ namespace CGAL {
     the macro `CGAL_ALWAYS_LEFT_TO_RIGHT` to 1 before any \cgal header
     is included.
 
-    \cgalModels `ArrangementTraits_2`
-    \cgalModels `ArrangementLandmarkTraits_2` (if the template parameter
-                `SegmentTraits` models the concept as well)
+    \cgalModels 
+    `ArrConstructionFromTwoPointsTraits_2` 
+    (required by push_back and Push_front functors)
+    `ArrApproximateTraits_2`(if the template parameter
+    `SegmentTraits` models the concept as well)
     \cgalModels `ArrangementDirectionalXMonotoneTraits_2`
+
 
     \sa `Arr_segment_traits_2<Kernel>`
     \sa `Arr_non_caching_segment_traits_2<Kernel>`
@@ -280,6 +284,18 @@ namespace CGAL {
 
       /// @} /* end of operations */
     }; /* end of Arr_polyline_traits_2::Push_front_2 */
+
+    class Trim_2
+    {
+    public:
+       /*!\brief
+       * returns a trimmed version of the polycurve with src and tgt as end vertices.
+       * Src and tgt will be swaped if they do not conform to the direction of the polycurve.
+       */
+      X_monotone_curve_2 operator()(const X_monotone_curve_2& xcv, 
+                                  const Point_2& src,
+                                  const Point_2& tgt)const
+    };      
 
 
     /*!
