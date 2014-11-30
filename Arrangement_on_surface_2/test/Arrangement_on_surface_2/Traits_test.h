@@ -426,7 +426,7 @@ compare_y_at_x_wrapper(std::istringstream& str_stream)
 
   unsigned int real_answer =
     this->m_geom_traits.compare_y_at_x_2_object()(this->m_points[id1],
-                                             this->m_xcurves[id2]);
+                                                  this->m_xcurves[id2]);
   return this->compare(exp_answer, real_answer);
 }
 
@@ -618,7 +618,7 @@ intersect_wrapper(std::istringstream& str_stream)
     str_stream >> type;
     unsigned int id;                    // The id of the point or x-monotone
     str_stream >> id;                   // ... curve respectively
-    unsigned int multiplicity;
+    Multiplicity multiplicity;
     if (type == 0) str_stream >> multiplicity;
     unsigned int exp_type = 1;
     const X_monotone_curve_2 * xcv_ptr =
@@ -732,13 +732,14 @@ Traits_test<Geom_traits_T>::merge_wrapper_imp(std::istringstream& str_stream,
 
   unsigned int id1, id2, id;
   str_stream >> id1 >> id2 >> id;
-  X_monotone_curve_2 cv;
+  X_monotone_curve_2 xcv;
   std::cout << "Test: merge( " << this->m_xcurves[id1] << ", "
             << this->m_xcurves[id2] << " ) ? " << this->m_xcurves[id] << " ";
 
   this->m_geom_traits.merge_2_object()(this->m_xcurves[id1],
-                                       this->m_xcurves[id2], cv);
-  return this->compare_curves(this->m_xcurves[id], cv);
+                                       this->m_xcurves[id2], xcv);
+  std::cout << "Merge: " << xcv << std::endl;
+  return this->compare_curves(this->m_xcurves[id], xcv);
 }
 
 /*! Tests Approximate_2.
@@ -1204,20 +1205,33 @@ compare_x_on_boundary_wrapper_imp(std::istringstream& str_stream,
   std::pair<Enum_type, unsigned int> next_input =
     this->get_next_input(str_stream);
   // second argument can be number or text (either xcurve or curve_end)
-  bool curves_op = next_input.first == Base::NUMBER;
+  bool points_op1 = next_input.first == Base::NUMBER;
   CGAL::Arr_curve_end cv_end1 = CGAL::ARR_MIN_END, cv_end2 = CGAL::ARR_MIN_END;
 
-  if (curves_op) {
+  bool points_op2;
+  CGAL::Comparison_result exp_answer;
+  if (points_op1) {
     id2 = static_cast<unsigned int>(next_input.second);
     next_input = this->get_next_input(str_stream);
-    assert(next_input.first == Base::CURVE_END);
-    cv_end1 = static_cast<CGAL::Arr_curve_end>(next_input.second);
-
-    std::cout << this->m_points[id1] << " , "
-              << this->m_xcurves[id2]<< " , "
-              << this->curve_end_str(cv_end1) << " ) ? ";
+    points_op2 = next_input.first != Base::CURVE_END;
+    if (points_op2) {
+      assert(next_input.first == Base::SIGN);
+      std::cout << this->m_points[id1] << " , "
+                << this->m_points[id2] << " ) ? ";
+      exp_answer = static_cast<CGAL::Comparison_result>(next_input.second);
+    }
+    else {
+      cv_end1 = static_cast<CGAL::Arr_curve_end>(next_input.second);
+      std::cout << this->m_points[id1] << " , "
+                << this->m_xcurves[id2] << " , "
+                << this->curve_end_str(cv_end1) << " ) ? ";
+      next_input = this->get_next_input(str_stream);
+      assert(next_input.first == Base::SIGN);
+      exp_answer = static_cast<CGAL::Comparison_result>(next_input.second);
+    }
   }
-  else if (next_input.first == Base::CURVE_END) {
+  else {
+    assert(next_input.first == Base::CURVE_END);
     cv_end1 = static_cast<CGAL::Arr_curve_end>(next_input.second);
     next_input = this->get_next_input(str_stream);
     assert(next_input.first == Base::NUMBER);
@@ -1230,21 +1244,24 @@ compare_x_on_boundary_wrapper_imp(std::istringstream& str_stream,
               << this->curve_end_str(cv_end1) << ", "
               << this->m_xcurves[id2] << " , "
               << this->curve_end_str(cv_end2) << " ) ? ";
+
+    next_input = this->get_next_input(str_stream);
+    assert(next_input.first == Base::SIGN);
+    exp_answer = static_cast<CGAL::Comparison_result>(next_input.second);
   }
-  else CGAL_error();
 
-  next_input = this->get_next_input(str_stream);
-  assert(next_input.first == Base::SIGN);
-  CGAL::Comparison_result exp_answer =
-    static_cast<CGAL::Comparison_result>(next_input.second);
-  std::cout << (exp_answer == CGAL::SMALLER ? "SMALLER":
-               (exp_answer == CGAL::LARGER ? "LARGER":"EQUAL")) << " ";
+  std::cout << ((exp_answer == CGAL::SMALLER) ? "SMALLER":
+                ((exp_answer == CGAL::LARGER) ? "LARGER":"EQUAL")) << " ";
 
-  real_answer = (curves_op) ?
-    this->m_geom_traits.compare_x_on_boundary_2_object()
-    (this->m_points[id1], this->m_xcurves[id2], cv_end1) :
-    this->m_geom_traits.compare_x_on_boundary_2_object()
-    (this->m_xcurves[id1], cv_end1,this->m_xcurves[id2], cv_end2);
+  real_answer = (points_op2) ?
+    (this->m_geom_traits.compare_x_on_boundary_2_object()
+     (this->m_points[id1], this->m_points[id2])) :
+    ((points_op1) ?
+     (this->m_geom_traits.compare_x_on_boundary_2_object()
+      (this->m_points[id1], this->m_xcurves[id2], cv_end1)) :
+     (this->m_geom_traits.compare_x_on_boundary_2_object()
+      (this->m_xcurves[id1], cv_end1, this->m_xcurves[id2], cv_end2)));
+
   return this->compare(exp_answer, real_answer);
 }
 

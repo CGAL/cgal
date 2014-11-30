@@ -47,10 +47,12 @@ BEZIER_GEOM_TRAITS=10
 GEODESIC_ARC_ON_SPHERE_GEOM_TRAITS=11
 RATIONAL_ARC_GEOM_TRAITS=12
 ALGEBRAIC_GEOM_TRAITS=13
+FLAT_TORUS_GEOM_TRAITS=14
 
 PLANAR_BOUNDED_TOPOL_TRAITS=0
 PLANAR_UNBOUNDED_TOPOL_TRAITS=1
 SPHERICAL_TOPOL_TRAITS=2
+TOROIDAL_TOPOL_TRAITS=3
 
 DOUBLE_NT=0
 MP_FLOAT_NT=1
@@ -1340,6 +1342,42 @@ test_spherical_arc_traits()
 }
 
 #---------------------------------------------------------------------#
+# flat torus traits
+#---------------------------------------------------------------------#
+test_flat_torus_traits()
+{
+  local nt=$CGAL_GMPQ_NT;
+  local kernel=$CARTESIAN_KERNEL;
+  local geom_traits=$FLAT_TORUS_GEOM_TRAITS;
+  local flags="-DTEST_NT=$nt -DTEST_KERNEL=$kernel -DTEST_GEOM_TRAITS=$geom_traits";
+
+  compile_test_with_flags test_traits flat_torus "$flags"
+  if [ -n "${SUCCESS}" ] ; then
+    # execute_commands_old_structure flat_torus flat_torus_traits \
+    #   COMPARE_Y_AT_X_LEFT COMPARE_Y_AT_X_RIGHT INTERSECT \
+    #   CONSTRUCTOR \
+    #   COMPARE MAKE_X_MONOTONE SPLIT MERGE ASSERTIONS ARE_MERGEABLE
+
+    execute_commands_new_structure flat_torus flat_torus_traits \
+	COMPARE VERTEX IS_VERTICAL \
+        COMPARE_Y_AT_X COMPARE_Y_AT_X_LEFT COMPARE_Y_AT_X_RIGHT \
+	MAKE_X_MONOTONE \
+        INTERSECT \
+	SPLIT ARE_MERGEABLE MERGE \
+	PARAMETER_SPACE_X PARAMETER_SPACE_Y \
+	COMPARE_X_ON_BOUNDARY COMPARE_X_NEAR_BOUNDARY \
+	COMPARE_Y_NEAR_BOUNDARY
+
+    # run_trapped_test test_traits \
+    #   data/flat_torus/compare.pt data/flat_torus/compare.xcv \
+    #   data/empty.zero data/flat_torus/compare flat_torus_traits
+  else
+    echo "   ERROR:    not executed   test_traits flat_torus_traits" >> $ERRORFILE
+  fi
+  clean_tests
+}
+
+#---------------------------------------------------------------------#
 # rational arc traits
 #---------------------------------------------------------------------#
 test_rational_arc_traits()
@@ -1465,77 +1503,78 @@ if [ "${TEST_WITH_CMAKE}" != "FALSE" ]; then
     configure
 fi
 
-if [ "${TEST_WITH_CMAKE}" != "FALSE" ]; then
-    compile_and_run construction_test_suite_generator
-fi
+# if [ "${TEST_WITH_CMAKE}" != "FALSE" ]; then
+#     compile_and_run construction_test_suite_generator
+# fi
 
-test_segment_traits
-test_non_caching_segment_traits
-test_polyline_traits
-test_non_caching_polyline_traits
-test_linear_traits
-test_conic_traits
+# test_segment_traits
+# test_non_caching_segment_traits
+# test_polyline_traits
+# test_non_caching_polyline_traits
+# test_linear_traits
+# test_conic_traits
 
-test_line_arc_traits 		# "line arcs" (segments) only
-test_circular_arc_traits 	# circular arcs only
-test_circular_line_arc_traits 	# for both
+# test_line_arc_traits 		# "line arcs" (segments) only
+# test_circular_arc_traits 	# circular arcs only
+# test_circular_line_arc_traits 	# for both
 
-test_circle_segments_traits
-test_bezier_traits
+# test_circle_segments_traits
+# test_bezier_traits
 
-test_spherical_arc_traits
+# test_spherical_arc_traits
+test_flat_torus_traits
 
-test_rational_arc_traits
+# test_rational_arc_traits
 
-test_algebraic_traits_core
-test_algebraic_traits_gmp
-test_algebraic_traits_leda
+# test_algebraic_traits_core
+# test_algebraic_traits_gmp
+# test_algebraic_traits_leda
 
-compile_and_run test_insertion
-compile_and_run test_unbounded_rational_insertion
-compile_and_run test_unbounded_rational_direct_insertion
-compile_and_run test_rational_function_traits_2
-compile_and_run test_iso_verts
+# compile_and_run test_insertion
+# compile_and_run test_unbounded_rational_insertion
+# compile_and_run test_unbounded_rational_direct_insertion
+# compile_and_run test_rational_function_traits_2
+# compile_and_run test_iso_verts
 
-compile_and_run test_vert_ray_shoot_vert_segments
+# compile_and_run test_vert_ray_shoot_vert_segments
 
-test_construction_segments
-test_construction_linear
-test_construction_spherical_arcs
+# test_construction_segments
+# test_construction_linear
+# test_construction_spherical_arcs
 
-test_overlay_segments
-test_overlay_spherical_arcs
+# test_overlay_segments
+# test_overlay_spherical_arcs
 
-test_point_location_segments
-test_point_location_segments_version
-test_point_location_segments_conversion
-test_point_location_circle_segments
-test_point_location_linear
+# test_point_location_segments
+# test_point_location_segments_version
+# test_point_location_segments_conversion
+# test_point_location_circle_segments
+# test_point_location_linear
 
-test_point_location_dynamic_segments
+# test_point_location_dynamic_segments
 
-test_batched_point_location_segments
-test_batched_point_location_linear
-test_batched_point_location_spherical_arcs
+# test_batched_point_location_segments
+# test_batched_point_location_linear
+# test_batched_point_location_spherical_arcs
 
-test_vertical_decomposition_segments
-test_vertical_decomposition_linear
+# test_vertical_decomposition_segments
+# test_vertical_decomposition_linear
 # test_vertical_decomposition_spherical_arcs
 
-compile_and_run test_dual
-compile_and_run test_do_intersect
-compile_and_run test_zone
+# compile_and_run test_dual
+# compile_and_run test_do_intersect
+# compile_and_run test_zone
 
-compile_and_run test_observer
-compile_and_run test_do_equal
+# compile_and_run test_observer
+# compile_and_run test_do_equal
 
-test_segment_traits_adaptor
-test_linear_traits_adaptor
-test_spherical_arcs_traits_adaptor
+# test_segment_traits_adaptor
+# test_linear_traits_adaptor
+# test_spherical_arcs_traits_adaptor
 
-compile_and_run test_removal
-compile_and_run test_unbounded_removal
-compile_and_run test_spherical_removal
+# compile_and_run test_removal
+# compile_and_run test_unbounded_removal
+# compile_and_run test_spherical_removal
 
 # if any error occured then append the full error description file to error file
 
