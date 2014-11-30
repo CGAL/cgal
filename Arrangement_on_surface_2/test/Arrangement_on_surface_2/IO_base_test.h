@@ -12,8 +12,9 @@ public:
 #if TEST_GEOM_TRAITS == POLYCURVE_CONIC_GEOM_TRAITS || \
     TEST_GEOM_TRAITS == POLYCURVE_CIRCULAR_ARC_GEOM_TRAITS || \
     TEST_GEOM_TRAITS == POLYCURVE_BEZIER_GEOM_TRAITS || \
-    TEST_GEOM_TRAITS == POLYLINE_GEOM_TRAITS
-  // Poly curves needs some testing where Segments and X-monotone segments are required 
+    TEST_GEOM_TRAITS == POLYLINE_GEOM_TRAITS ||\
+    TEST_GEOM_TRAITS == NON_CACHING_POLYLINE_GEOM_TRAITS
+  // Poly curves needs some testing where Segments and X-monotone segments are required
   // instead of polycurves/x-monotone polycurves.
   template <typename stream>
   bool read_segment(stream& is, Segment_2& seg);
@@ -135,7 +136,7 @@ bool IO_base_test<Base_geom_traits>::read_xcurve(stream& is,
   }
   //waqar: debugging remove later
   // for(int i=0; i<points.size(); i++)
-  //       std::cout << "*#*#*#*# points are: " << points[i] << std::endl; 
+  //       std::cout << "*#*#*#*# points are: " << points[i] << std::endl;
 
   xcv = m_geom_traits.construct_x_monotone_curve_2_object()(points.begin(),
                                                             points.end());
@@ -164,7 +165,7 @@ template <typename stream>
 bool IO_base_test<Base_geom_traits>::read_segment(stream& is, Segment_2& seg)
 {
   Basic_number_type x, y;
-  
+
   is >> x >> y;
   Point_2 p_src(x, y);
 
@@ -183,7 +184,7 @@ bool IO_base_test<Base_geom_traits>::read_xsegment(stream& is,
                                                  X_monotone_segment_2& xseg)                               //read x-segment
 {
   Basic_number_type x, y;
-  
+
   is >> x >> y;
   Point_2 p_src(x, y);
 
@@ -194,7 +195,7 @@ bool IO_base_test<Base_geom_traits>::read_xsegment(stream& is,
   xseg = X_monotone_segment_2(p_src, p_tgt);
 
   return true;
-}  
+}
 
 //polycurve_conic
 #elif TEST_GEOM_TRAITS == POLYCURVE_CONIC_GEOM_TRAITS
@@ -323,12 +324,12 @@ template <typename stream>
 bool IO_base_test<Base_geom_traits>::read_xcurve(stream& is,
                                                  X_monotone_curve_2& xcv)                               //read x-curve
 {
-  //since we are dealing with polycurve, we will make more than 1 conic curves (polycurve compatible) 
-  //and return the x-monotone-constructed polycurve. 
-  
+  //since we are dealing with polycurve, we will make more than 1 conic curves (polycurve compatible)
+  //and return the x-monotone-constructed polycurve.
+
   //to store x-monotoneConic curves i.e in Arr_polyline_traits_2 they are called X_monotone_segment_2
   std::vector<X_monotone_segment_2> conic_x_monotone_segments;
-  
+
   Segment_2 tmp_cv;
 
   // Get the arc type:
@@ -341,31 +342,31 @@ bool IO_base_test<Base_geom_traits>::read_xcurve(stream& is,
 
   for(int i=0; i<number_of_curves; i++)
   {
-    if ((type == 'a') || (type == 'A'))  
+    if ((type == 'a') || (type == 'A'))
     {
       if( !read_general_curve(is, tmp_cv) )
         return false;
 
       X_monotone_segment_2 tmp_xcv(tmp_cv);
-      conic_x_monotone_segments.push_back ( tmp_xcv );  
+      conic_x_monotone_segments.push_back ( tmp_xcv );
     }
 
-    else if ((type == 'c') || (type == 'C')) 
+    else if ((type == 'c') || (type == 'C'))
     {
       if( !read_general_conic(is, tmp_cv) )
         return false;
 
       X_monotone_segment_2 tmp_xcv(tmp_cv);
-      conic_x_monotone_segments.push_back ( tmp_xcv );  
+      conic_x_monotone_segments.push_back ( tmp_xcv );
     }
-    
-    else if ((type == 'i') || (type == 'I')) 
+
+    else if ((type == 'i') || (type == 'I'))
     {
       if( !read_general_arc(is, tmp_cv) )
         return false;
 
       X_monotone_segment_2 tmp_xcv(tmp_cv);
-      conic_x_monotone_segments.push_back ( tmp_xcv );  
+      conic_x_monotone_segments.push_back ( tmp_xcv );
     }
 
     else
@@ -375,10 +376,10 @@ bool IO_base_test<Base_geom_traits>::read_xcurve(stream& is,
     }
 
   } //for loop
-  
+
   //construct x-monotone polycurve
   xcv = m_geom_traits.construct_x_monotone_curve_2_object()(conic_x_monotone_segments.begin(), conic_x_monotone_segments.end());
-  
+
   return true;
 }
 
@@ -387,9 +388,9 @@ template <>
 template <typename stream>
 bool IO_base_test<Base_geom_traits>::read_curve(stream& is, Curve_2& cv)
 {
-  //since we are dealing with polycurve, we will make more than 1 conic curves (polycurve compatible) 
-  //and return the constructed polycurve. 
-  
+  //since we are dealing with polycurve, we will make more than 1 conic curves (polycurve compatible)
+  //and return the constructed polycurve.
+
   //to store Conic curves i.e in Arr_polyline_traits_2 they are called Segment_2
   std::vector<Segment_2> conic_segments;
 
@@ -405,38 +406,38 @@ bool IO_base_test<Base_geom_traits>::read_curve(stream& is, Curve_2& cv)
 
   for(int i=0; i<number_of_curves; i++)
   {
-    
-    if ((type == 'a') || (type == 'A')) 
-    { 
+
+    if ((type == 'a') || (type == 'A'))
+    {
       if( !read_general_curve(is, tmp_cv) )
         return false;
 
-      conic_segments.push_back( tmp_cv );  
+      conic_segments.push_back( tmp_cv );
     }
-    
-    else if ((type == 'c') || (type == 'C')) 
+
+    else if ((type == 'c') || (type == 'C'))
     {
       if( !read_general_conic(is, tmp_cv) )
         return false;
 
       conic_segments.push_back( tmp_cv );
     }
-    
-    else if ((type == 'i') || (type == 'I')) 
+
+    else if ((type == 'i') || (type == 'I'))
     {
       if( !read_general_arc(is, tmp_cv) )
         return false;
 
       conic_segments.push_back( tmp_cv );
     }
-    
+
     // Enable these later if needed.
     //else if ((type == 'e') || (type == 'E')) return read_partial_ellipse(is, cv);
     //else if ((type == 'h') || (type == 'H')) return read_hyperbola(is, cv);
     //else if ((type == 'p') || (type == 'P')) return read_parabola(is, cv);
     //else if ((type == 'f') || (type == 'F')) return read_full_ellipse(is, cv);
     //else if ((type == 's') || (type == 'S')) return read_segment(is, cv);
-    
+
     // If we reached here, we have an unknown conic type:
     else
     {
@@ -445,10 +446,10 @@ bool IO_base_test<Base_geom_traits>::read_curve(stream& is, Curve_2& cv)
     }
 
   } //for loop
-  
-  //construct the polycurve 
+
+  //construct the polycurve
   cv = m_geom_traits.construct_curve_2_object()(conic_segments.begin(), conic_segments.end());
-  
+
   return true;
 }
 
@@ -477,14 +478,14 @@ bool IO_base_test<Base_geom_traits>::read_xsegment(stream& is,
   char type;
   is >> type;
   Segment_2 tmp_seg;
-  
+
   if( !read_general_curve(is, tmp_seg) )
         return false;
 
   xseg = X_monotone_segment_2(tmp_seg);
 
   return true;
-}  
+}
 
 #elif TEST_GEOM_TRAITS == POLYCURVE_CIRCULAR_ARC_GEOM_TRAITS
 
@@ -517,13 +518,13 @@ bool IO_base_test<Base_geom_traits>::read_xcurve(stream& is,
 
   for(unsigned int i=0; i<number_of_segments; i++)
   {
-  
-    if ((type == 'x') || (type == 'X')) 
+
+    if ((type == 'x') || (type == 'X'))
     {
       Rat_point_2 circle_center;
       Point_2 ps, pt;
       Rat_nt circle_radius;
-      
+
       int point_x, point_y;
       is >> point_x >> point_y;
       circle_center = Rat_point_2(point_x, point_y);
@@ -534,7 +535,7 @@ bool IO_base_test<Base_geom_traits>::read_xcurve(stream& is,
         return false;
 
       Circle_2 c = Circle_2 (circle_center, circle_radius, orientation);
-      
+
       is >> point_x >> point_y;
       ps = Point_2 ( Number_type(point_x, 1), Number_type(point_y, 1) );
 
@@ -551,7 +552,7 @@ bool IO_base_test<Base_geom_traits>::read_xcurve(stream& is,
       return false;
     }
   } //for loop
-  
+
   //construct x-monotone polycurve
   xcv = m_geom_traits.construct_x_monotone_curve_2_object()(x_segments.begin(), x_segments.end());
 
@@ -575,12 +576,12 @@ bool IO_base_test<Base_geom_traits>::read_curve(stream& is, Curve_2& cv)
   for(unsigned int i=0; i<number_of_segments; i++)
   {
 
-    if ((type == 'c') || (type == 'C')) 
+    if ((type == 'c') || (type == 'C'))
     {
       Rat_point_2 circle_center;
       Point_2 ps, pt;
       Rat_nt circle_radius;
-      
+
       int point_x, point_y;
       is >> point_x >> point_y;
       circle_center = Rat_point_2(point_x, point_y);
@@ -589,7 +590,7 @@ bool IO_base_test<Base_geom_traits>::read_curve(stream& is, Curve_2& cv)
 
       if(!read_orientation(is, orientation))
         return false;
-      
+
       is >> point_x >> point_y;
       ps = Point_2 ( Number_type(point_x, 1), Number_type(point_y, 1) );
 
@@ -606,7 +607,7 @@ bool IO_base_test<Base_geom_traits>::read_curve(stream& is, Curve_2& cv)
       return false;
     }
   } //for loop
-  
+
   //construct polycurve
   cv = m_geom_traits.construct_curve_2_object()(segments.begin(), segments.end());
 
@@ -625,7 +626,7 @@ bool IO_base_test<Base_geom_traits>::read_segment(stream& is, Segment_2& seg)
   Rat_point_2 circle_center;
   Point_2 ps, pt;
   Rat_nt circle_radius;
-  
+
   int point_x, point_y;
   is >> point_x >> point_y;
   circle_center = Rat_point_2(point_x, point_y);
@@ -636,7 +637,7 @@ bool IO_base_test<Base_geom_traits>::read_segment(stream& is, Segment_2& seg)
 
   if(!read_orientation(is, orientation))
     return false;
-  
+
   is >> point_x >> point_y;
   ps = Point_2 ( Number_type(point_x, 1), Number_type(point_y, 1) );
 
@@ -658,13 +659,13 @@ bool IO_base_test<Base_geom_traits>::read_xsegment(stream& is,
   //we dont need to check this type as it has already been checked in the IO_test.h
   char type;
   is >> type;
-  
+
   CGAL::Orientation orientation;
 
   Rat_point_2 circle_center;
   Point_2 ps, pt;
   Rat_nt circle_radius;
-  
+
   int point_x, point_y;
   is >> point_x >> point_y;
   circle_center = Rat_point_2(point_x, point_y);
@@ -675,7 +676,7 @@ bool IO_base_test<Base_geom_traits>::read_xsegment(stream& is,
     return false;
 
   Circle_2 c = Circle_2 (circle_center, circle_radius, orientation);
-  
+
   is >> point_x >> point_y;
   ps = Point_2 ( Number_type(point_x, 1), Number_type(point_y, 1) );
 
@@ -702,7 +703,7 @@ bool IO_base_test<Base_geom_traits>::read_point(stream& is, Point_2& p)
   Segment_2 seg;
   if( !read_segment(is, seg) )
     return false;
-  
+
   Point_2 point;
   if(type == 'r')
   {
@@ -741,7 +742,7 @@ bool IO_base_test<Base_geom_traits>::read_segment(stream& is, Segment_2& seg)
     int point_x, point_y;
     is >> point_x >> point_y;
     point_vector.push_back( Control_point_2(point_x, point_y) );
-  } 
+  }
   //get the non x-monotone bezier segment
   seg = Segment_2( point_vector.begin(), point_vector.end() );
   return true;
@@ -768,7 +769,7 @@ bool IO_base_test<Base_geom_traits>::read_xsegment(stream& is,
     int point_x, point_y;
     is >> point_x >> point_y;
     point_vector.push_back( Control_point_2(point_x, point_y) );
-  } 
+  }
   //get the non x-monotone bezier segment
   Segment_2 seg (point_vector.begin(), point_vector.end());
 
@@ -780,7 +781,7 @@ bool IO_base_test<Base_geom_traits>::read_xsegment(stream& is,
   xseg = x_segment;
 
   return true;
-} 
+}
 
 
 template <>
@@ -799,7 +800,7 @@ bool IO_base_test<Base_geom_traits>::read_xcurve(stream& is,
   unsigned int number_of_segments;
   is >> number_of_segments;
 
-  if ((type == 'x') || (type == 'X')) 
+  if ((type == 'x') || (type == 'X'))
   {
     for(unsigned int i=0; i<number_of_segments; i++)
     {
@@ -813,7 +814,7 @@ bool IO_base_test<Base_geom_traits>::read_xcurve(stream& is,
         int point_x, point_y;
         is >> point_x >> point_y;
         point_vector.push_back( Control_point_2(point_x, point_y) );
-      } 
+      }
       //get the non x-monotone bezier segment
       Segment_2 seg (point_vector.begin(), point_vector.end());
 
@@ -824,7 +825,7 @@ bool IO_base_test<Base_geom_traits>::read_xcurve(stream& is,
 
       x_segments.push_back( x_seg );
 
-    } //for loop (number of segments) 
+    } //for loop (number of segments)
   }
 
   else
@@ -853,7 +854,7 @@ bool IO_base_test<Base_geom_traits>::read_curve(stream& is, Curve_2& cv)
   unsigned int number_of_segments;
   is >> number_of_segments;
 
-  if ((type == 'c') || (type == 'C')) 
+  if ((type == 'c') || (type == 'C'))
   {
     for(unsigned int i=0; i<number_of_segments; i++)
     {
@@ -867,13 +868,13 @@ bool IO_base_test<Base_geom_traits>::read_curve(stream& is, Curve_2& cv)
         int point_x, point_y;
         is >> point_x >> point_y;
         point_vector.push_back( Control_point_2(point_x, point_y) );
-      } 
+      }
       //get the non x-monotone bezier segment
       Segment_2 seg (point_vector.begin(), point_vector.end());
 
       segments.push_back( seg );
 
-    } //for loop (number of segments) 
+    } //for loop (number of segments)
   }
 
   else
