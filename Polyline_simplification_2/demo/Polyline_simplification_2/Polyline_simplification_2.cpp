@@ -367,7 +367,7 @@ std::string trim_right ( std::string str )
   return std::string("") ;  
 }
 
-enum { POLYGON, POLYLINE, POINT } ;
+enum { POLYGON, POLYLINE, POINT_2 } ;
 
 void MainWindow::loadPoly(QString fileName)
 {
@@ -388,7 +388,7 @@ void MainWindow::loadPoly(QString fileName)
     
     if ( line.size() > 0 )
     {
-      int lCode = POINT ;
+      int lCode = POINT_2 ;
       
       if ( line == "POLYGON" )    
       {
@@ -401,7 +401,7 @@ void MainWindow::loadPoly(QString fileName)
         lIsClosed = false ; 
       }
       
-      if ( lCode == POINT )
+      if ( lCode == POINT_2 )
       {
         double x,y ;
         

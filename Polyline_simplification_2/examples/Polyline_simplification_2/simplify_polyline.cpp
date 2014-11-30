@@ -8,13 +8,13 @@ namespace PS = CGAL::Polyline_simplification_2;
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef K::Point_2 Point_2;
-typedef std::list<Point_2> Polyline;
+typedef std::list<Point_2> Polyline_2;
 typedef PS::Stop_above_cost_threshold Stop;
 typedef PS::Squared_distance_cost Cost;
 
 int main( )
 {
-  Polyline polyline;
+  Polyline_2 polyline;
   int n;
   Point_2 p;
   std::cin >> n;
