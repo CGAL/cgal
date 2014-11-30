@@ -535,7 +535,7 @@ private:
     insert_subconstraint(vertices[0],vertices[1]); 
 
     if(n>2){
-      for(int j=1; j<n-1; j++){
+      for(std::size_t j=1; j<n-1; j++){
 	hierarchy.append_constraint(ca, vertices[j], vertices[j+1]);
 	insert_subconstraint(vertices[j], vertices[j+1]);
       }
