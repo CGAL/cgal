@@ -332,7 +332,8 @@ bool read_app_point(InputStream_& is, Point_2& p)
 
 /*! */
 template <typename InputStream_>
-bool read_orientation_and_end_points(InputStream_& is, CGAL::Orientation& orient,
+bool read_orientation_and_end_points(InputStream_& is,
+                                     CGAL::Orientation& orient,
                                      Point_2& source, Point_2& target)
 {
   // Read the orientation.
