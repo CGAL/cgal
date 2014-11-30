@@ -1882,6 +1882,7 @@ Circular_kernel::Line_arc_2 read_line(char type, InputStream_& is)
   std::cout << "should never happen Line_arc_2 " << type <<std::endl;
   return Circular_kernel::Line_arc_2(); //should never happen
 }
+
 #endif
 
 #if TEST_GEOM_TRAITS == CIRCULAR_ARC_GEOM_TRAITS || \
@@ -2030,7 +2031,8 @@ template <typename InputStream_>
 bool IO_base_test<Base_geom_traits>::read_point(InputStream_& is, Point_2& p)
 {
   typedef InputStream_  Input_stream
-  return read_arc_point<Base_geom_traits, Input_stream>(is, p); }
+  return read_arc_point<Base_geom_traits, Input_stream>(is, p);
+}
 
 /*! Read an x-monotone circular-line arc curve */
 template <>
