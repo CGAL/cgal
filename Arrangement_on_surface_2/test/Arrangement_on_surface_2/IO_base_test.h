@@ -74,7 +74,6 @@ read_xcurve(InputStream_& is, typename GeomTraits_::X_monotone_curve_2& xcv)
   Point_2 p1(x1, y1);
   Point_2 p2(x2, y2);
   CGAL_assertion(p1 != p2);
-
   xcv = typename Geom_traits::X_monotone_curve_2(p1, p2);
   return true;
 }
@@ -90,7 +89,6 @@ read_curve(InputStream_& is, typename GeomTraits_::Curve_2& cv)
   Point_2 p1(x1, y1);
   Point_2 p2(x2, y2);
   CGAL_assertion(p1 != p2);
-  //Waqar::error
   cv = typename Geom_traits::Curve_2(p1, p2);
   return true;
 }
@@ -1885,9 +1883,6 @@ Circular_kernel::Line_arc_2 read_line(char type, InputStream_& is)
   return Circular_kernel::Line_arc_2(); //should never happen
 }
 #endif
-
-
-
 
 #if TEST_GEOM_TRAITS == CIRCULAR_ARC_GEOM_TRAITS || \
   TEST_GEOM_TRAITS == CIRCULAR_LINE_ARC_GEOM_TRAITS
