@@ -332,7 +332,7 @@ public:
   /*! Construct a general curve. */
   class Construct_curve_2 : public Base::Construct_curve_2 {
   protected:
-    typedef Arr_polyline_traits_2<Geometry_traits_2>       Polyline_traits_2;
+    typedef Arr_polyline_traits_2<Segment_traits_2>         Polyline_traits_2;
 
   public:
     /*! Constructor.
@@ -395,8 +395,8 @@ public:
 
       CGAL_precondition_code
         (
-         typename Geometry_traits_2::Equal_2 equal =
-         m_poly_traits.geometry_traits_2()->equal_2_object();
+         typename Segment_traits_2::Equal_2 equal =
+         this->m_poly_traits.geometry_traits_2()->equal_2_object();
          );
 
       // Check whether there are no points in the range:
@@ -425,7 +425,7 @@ public:
     public Base::Construct_x_monotone_curve_2
   {
   protected:
-    typedef Arr_polyline_traits_2<Geometry_traits_2>       Polyline_traits_2;
+    typedef Arr_polyline_traits_2<Segment_traits_2>     Polyline_traits_2;
 
   public:
     /*! Constructor.
@@ -511,12 +511,12 @@ public:
 
       CGAL_precondition_code
         (
-         const Geometry_traits_2* geom_traits =
-           m_poly_traits.geometry_traits_2();
+         const Segment_traits_2* geom_traits =
+           this->m_poly_traits.geometry_traits_2();
          // Initialize two comparison functors
-         typename Geometry_traits_2::Compare_x_2 compare_x =
+         typename Segment_traits_2::Compare_x_2 compare_x =
            geom_traits->compare_x_2_object();
-         typename Geometry_traits_2::Compare_xy_2 compare_xy =
+         typename Segment_traits_2::Compare_xy_2 compare_xy =
            geom_traits->compare_xy_2_object();
          // Make sure there is no changed of directions.
          // Saves the comp_x between the first two points
