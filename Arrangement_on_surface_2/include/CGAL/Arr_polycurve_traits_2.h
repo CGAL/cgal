@@ -1659,7 +1659,8 @@ public:
 
               // If for some reason the segment intersection
               // results in left oriented curve.
-              if (!seg.is_directed_right()) seg = construct_opposite(seg);
+              if ( cmp_seg_endpts(seg) == LARGER)
+                seg = construct_opposite(seg);
               ocv.push_back(seg);
             }
 
