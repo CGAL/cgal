@@ -1202,7 +1202,7 @@ template <>
 template <typename InputStream_>
 bool IO_base_test<Base_geom_traits>::read_point(InputStream_& is, Point_2& p)
 {
-  typedef InputStream_  Input_stream
+  typedef InputStream_  Input_stream;
   return read_arc_point<Base_geom_traits, Input_stream>(is, p);
 }
 
@@ -1246,7 +1246,7 @@ template <>
 template <typename InputStream_>
 bool IO_base_test<Base_geom_traits>::read_point(InputStream_& is, Point_2& p)
 {
-  typedef InputStream_  Input_stream
+  typedef InputStream_  Input_stream;
   return read_arc_point<Base_geom_traits, Input_stream>(is, p);
 }
 
@@ -1296,7 +1296,7 @@ template <>
 template <typename InputStream_>
 bool IO_base_test<Base_geom_traits>::read_point(InputStream_& is, Point_2& p)
 {
-  typedef InputStream_  Input_stream
+  typedef InputStream_  Input_stream;
   return read_arc_point<Base_geom_traits, Input_stream>(is, p);
 }
 
