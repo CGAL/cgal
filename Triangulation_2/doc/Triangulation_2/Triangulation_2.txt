@@ -1110,7 +1110,7 @@ through the edge.
 
 
 
-\cgalExample{Triangulation_2/polylines.cpp}
+\cgalExample{Triangulation_2/polylines_triangulation.cpp}
 
 \section Section_2D_Triangulations_Hierarchy The Triangulation Hierarchy 
 
