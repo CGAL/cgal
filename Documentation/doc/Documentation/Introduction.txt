@@ -292,12 +292,13 @@ T& std::min(const T& a, constT& b)
 This function only compiles if the `operator<<(..)` is defined for the type used as `T`,
 and we say that the type must be a model of `LessThanComparable`.
 
-An example for a concept with required free functions is the `HalfedgeGraph` in the
-\cgal package \ref PkgBGLSummary. In order to be a model of `HalfedgeGraph` a class `G` 
+An example for a concept with required free functions is the `HalfedgeListGraph` in the
+\cgal package \ref PkgBGLSummary. In order to be a model of `HalfedgeListGraph` a class `G` 
 there must be a global function `halfedges(const G&)`, etc.
 
 An example for a concept with a required traits class is `InputIterator`.
-For a model of an `InputIterator` a specialization of the class `std::iterator_traits`
+For a model of an `InputIterator` a specialization of the class 
+<a href="http://en.cppreference.com/w/cpp/iterator/iterator_traits"> `std::iterator_traits`</a>
 must exist (or the generic template must be applicable).
 
 \section intro_further Further Reading
