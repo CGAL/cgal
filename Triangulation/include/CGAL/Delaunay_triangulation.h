@@ -149,7 +149,8 @@ public:
     // the two "covertices" around the sub-simplex. Useful for traversing the
     // boundary of a hole. NOT DOCUMENTED
     typedef cpp11::tuple<Full_cell_handle, int, int>    Rotor;
-    Full_cell_handle full_cell(const Rotor & r) const // NOT DOCUMENTED
+
+    /*Full_cell_handle full_cell(const Rotor & r) const // NOT DOCUMENTED
     {
         return cpp11::get<0>(r);
     }
@@ -160,12 +161,12 @@ public:
     int index_of_second_covertex(const Rotor & r) const // NOT DOCUMENTED
     {
         return cpp11::get<2>(r);
-    }
+    }*/
     Rotor rotate_rotor(Rotor & r) // NOT DOCUMENTED...
     {
-        int opposite = full_cell(r)->mirror_index(index_of_covertex(r));
-        Full_cell_handle s = full_cell(r)->neighbor(index_of_covertex(r));
-        int new_second = s->index(full_cell(r)->vertex(index_of_second_covertex(r)));
+        int opposite = cpp11::get<0>(r)->mirror_index(cpp11::get<1>(r));
+        Full_cell_handle s = cpp11::get<0>(r)->neighbor(cpp11::get<1>(r));
+        int new_second = s->index(cpp11::get<0>(r)->vertex(cpp11::get<2>(r)));
         return Rotor(s, new_second, opposite);
     }
     
@@ -665,16 +666,16 @@ Delaunay_triangulation<DCTraits, TDS>
             Rotor light_r(light_s, li, light_i);
             typename Dark_triangulation::Rotor dark_r(dark_s, di, dark_i);
             
-            while( simps.contains(full_cell(light_r)->neighbor(index_of_covertex(light_r))) )
+            while (simps.contains(cpp11::get<0>(light_r)->neighbor(cpp11::get<1>(light_r))))
                 light_r = rotate_rotor(light_r);
 
-            while( conflict_zone.contains(dark_side.full_cell(dark_r)->neighbor(dark_side.index_of_covertex(dark_r))) )
+            while (conflict_zone.contains(cpp11::get<0>(dark_r)->neighbor(cpp11::get<1>(dark_r))))
                 dark_r = dark_side.rotate_rotor(dark_r);
 
-            Dark_s_handle dark_ns = dark_side.full_cell(dark_r);
-            int dark_ni = dark_side.index_of_covertex(dark_r);
-            Full_cell_handle light_ns = full_cell(light_r);
-            int light_ni = index_of_covertex(light_r);
+            Dark_s_handle dark_ns = cpp11::get<0>(dark_r);
+            int dark_ni = cpp11::get<1>(dark_r);
+            Full_cell_handle light_ns = cpp11::get<0>(light_r);
+            int light_ni = cpp11::get<1>(light_r);
             // mark dark_r as visited:
             // TODO try by marking with Dark_v_handle (vertex)
             Dark_s_handle outside = dark_ns->neighbor(dark_ni);
