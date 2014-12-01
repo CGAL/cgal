@@ -59,7 +59,23 @@ page has a link to the concept, and the API is mainly documented
 on the reference manual page of the concept.  As a concept
 may refine another concept, the full API of a class is sometimes
 distributed over the pages of base classes and over the pages
-of several concepts
+of several concepts.
+
+Let's have a look at the following concepts and models.
+
+\cgalFigureBegin{Manuak_Fig_concept_model,ConceptModel.svg}
+Models and concepts
+\cgalFigureEnd
+
+On the reference manual page of the class `Derived` you
+will find a link to its base class `Base`, and a link to
+the concept `DerivedConcept`.  Only the member function
+`Derived::two()` is documented in the reference manual
+page of `Derived`, as it inherits the method `one()` from
+its base class, and as it has to implement `eins()`
+and `zwei()`, because it is model of the concepts
+`DerivedConcept` and `BaseConcept`.
+
 
 
 Demos and Examples
