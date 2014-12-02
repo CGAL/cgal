@@ -126,7 +126,7 @@ split_graph_into_polylines(const Graph& graph,
   typedef boost::adjacency_list <boost::setS, // this avoids parallel edges
                                  boost::vecS, 
                                  boost::undirectedS,
-                                 vertex_descriptor > G;
+                                 Graph_vertex_descriptor > G;
 
   typedef typename boost::graph_traits<G>::vertex_descriptor vertex_descriptor;
   typedef typename boost::graph_traits<G>::vertex_iterator vertex_iterator;
