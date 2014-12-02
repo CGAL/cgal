@@ -38,10 +38,10 @@ Clement:
 
 CGAL:
 
-#include "/home/gdamiand/sources/CGAL/Kinetic_data_structures/src/CGAL/JAMA_numeric_solver.cpp"
-#include "/home/gdamiand/sources/CGAL/Kinetic_data_structures/src/CGAL/KDS_Log.cpp"
-#include "/home/gdamiand/sources/CGAL/Kinetic_data_structures/src/CGAL/numeric_solvers_support.cpp"
-#include "/home/gdamiand/sources/CGAL/Kinetic_data_structures/src/CGAL/Turkowski_numeric_solver.cpp"
+DONE #include "/home/gdamiand/sources/CGAL/Kinetic_data_structures/src/CGAL/JAMA_numeric_solver.cpp"
+DONE #include "/home/gdamiand/sources/CGAL/Kinetic_data_structures/src/CGAL/KDS_Log.cpp"
+DONE #include "/home/gdamiand/sources/CGAL/Kinetic_data_structures/src/CGAL/numeric_solvers_support.cpp"
+DONE #include "/home/gdamiand/sources/CGAL/Kinetic_data_structures/src/CGAL/Turkowski_numeric_solver.cpp"
 
 CGAL_Core:
 
