@@ -23,6 +23,7 @@
 #include <map> 
 #include <set> 
 #include <boost/foreach.hpp>
+#include <boost/graph/adjacency_list.hpp>
 #include <iostream>
 
 
@@ -138,7 +139,7 @@ split_graph_into_polylines(const Graph& graph,
     std::map<typename boost::graph_traits<Graph>::vertex_descriptor,
              typename boost::graph_traits<G>::vertex_descriptor> v2vmap;
     
-    BOOST_FOREACH(vertex_descriptor v, vertices(graph)){
+    BOOST_FOREACH(Graph_vertex_descriptor v, vertices(graph)){
       vertex_descriptor vc = add_vertex(g);
       g[vc] = v;
       v2vmap[v] = vc; 
