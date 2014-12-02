@@ -37,6 +37,11 @@
 #endif
 #endif
 
+#ifdef CGAL_HEADER_ONLY
+#undef CGAL_EXPORT // CJTODO: TEMPORARY
+#define CGAL_EXPORT
+#endif
+
 namespace CGAL {
 
 // function declarations

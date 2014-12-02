@@ -37,6 +37,11 @@
 #include <boost/random/variate_generator.hpp>
 
 
+#ifdef CGAL_HEADER_ONLY
+#undef CGAL_EXPORT // CJTODO: TEMPORARY
+#define CGAL_EXPORT
+#endif
+
 namespace CGAL {
 
 class Random {

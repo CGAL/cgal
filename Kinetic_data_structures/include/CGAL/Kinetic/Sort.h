@@ -277,7 +277,7 @@ public:
 #endif
 	write(std::cerr);
 	std::cerr << std::endl;
-	++internal::audit_failures__;
+	++internal::get_static_audit_failures();
 
 	if (!wrote_objects_) {
 	  wrote_objects_=true;
@@ -311,7 +311,7 @@ public:
 #endif
 	write(std::cerr);
 	std::cerr << std::endl;
-	++internal::audit_failures__;
+	++internal::get_static_audit_failures();
 
 	if (!wrote_objects_) {
 	  wrote_objects_=true;
