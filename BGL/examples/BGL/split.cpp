@@ -15,7 +15,7 @@ typedef boost::adjacency_list < boost::listS,
 
 typedef boost::graph_traits<G>::vertex_descriptor vertex_descriptor;
 
-typedef std::vector<Point_2> Polyline;
+typedef std::vector<Point_2> Polyline_2;
 
 struct Is_terminal
 {
@@ -30,10 +30,10 @@ struct Is_terminal
 template <typename Graph> 
 struct Polyline_visitor
 {
-  std::list<Polyline>& polylines;
+  std::list<Polyline_2>& polylines;
   const Graph& points_pmap;
 
-  Polyline_visitor(std::list<Polyline>& lines,
+  Polyline_visitor(std::list<Polyline_2>& lines,
                    const Graph& points_property_map)
     : polylines(lines),
       points_pmap(points_property_map)
@@ -41,13 +41,13 @@ struct Polyline_visitor
 
   void start_new_polyline()
   {
-    Polyline V;
+    Polyline_2 V;
     polylines.push_back(V);
   }
 
   void add_node(typename boost::graph_traits<Graph>::vertex_descriptor vd)
   {
-    Polyline& polyline = polylines.back();
+    Polyline_2& polyline = polylines.back();
     polyline.push_back(points_pmap[vd]);
   }
 };
@@ -57,7 +57,7 @@ int main()
 {
   G g;
 
-  std::list<Polyline> polylines;  
+  std::list<Polyline_2> polylines;  
   Polyline_visitor<G> polyline_visitor(polylines, g);
   std::map<Point_2, vertex_descriptor> p2vd;
 
@@ -93,7 +93,7 @@ int main()
    std::cout.precision(17);
 
    
-   for(std::list<Polyline>::iterator it = polylines.begin(); it!= polylines.end(); ++it){
+   for(std::list<Polyline_2>::iterator it = polylines.begin(); it!= polylines.end(); ++it){
      Polyline& poly = *it;
      std::size_t n;
      if(poly.front() == poly.back()){
