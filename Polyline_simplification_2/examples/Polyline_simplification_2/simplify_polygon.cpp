@@ -10,7 +10,7 @@ typedef CGAL::Polygon_2<K>                   Polygon_2;
 typedef PS::Stop_below_count_ratio_threshold Stop;
 typedef PS::Squared_distance_cost            Cost;
 
-int main( )
+int main()
 {
   Polygon_2 polygon;
   std::cin >> polygon;

@@ -1,3 +1,4 @@
+#include <iostream>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Polygon_2.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
@@ -22,7 +23,7 @@ typedef CT::Points_in_constraint_iterator   Points_in_constraint_iterator;
 typedef PS::Stop_below_count_ratio_threshold Stop;
 typedef PS::Squared_distance_cost Cost;
 
-int main( )
+int main()
 {
   CT ct;
   Polygon_2 P;

@@ -12,7 +12,7 @@ typedef std::list<Point_2> Polyline_2;
 typedef PS::Stop_above_cost_threshold Stop;
 typedef PS::Squared_distance_cost Cost;
 
-int main( )
+int main()
 {
   Polyline_2 polyline;
   int n;

@@ -1,3 +1,4 @@
+#include <iostream>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Polygon_2.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
@@ -43,7 +44,7 @@ void print(const CT& ct, Constraint_id cid)
 }
 
 
-int main( )
+int main()
 {
   const bool keep_points = true;
   CT ct;
