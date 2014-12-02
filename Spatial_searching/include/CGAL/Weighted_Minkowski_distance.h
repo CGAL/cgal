@@ -179,6 +179,49 @@ namespace CGAL {
     }
 
     inline 
+    FT 
+    min_distance_to_rectangle(const Query_item& q,
+			      const Kd_tree_rectangle<FT,Dimension>& r,std::vector<FT>& dists) {
+      FT distance = FT(0);
+      typename SearchTraits::Construct_cartesian_const_iterator_d construct_it=
+        traits.construct_cartesian_const_iterator_d_object();
+      Coord_iterator qit = construct_it(q), qe = construct_it(q,1);
+      if (power == FT(0))
+	{
+	  for (unsigned int i = 0; qit != qe; ++qit, ++i) {
+	    if (the_weights[i]*(r.min_coord(i) - 
+				(*qit)) > distance){
+              dists[i] = (r.min_coord(i)-
+		(*qit));
+	      distance = the_weights[i] * dists[i];
+            }
+	    if (the_weights[i] * ((*qit) - r.max_coord(i)) > 
+		distance){
+                  dists[i] = 
+		((*qit)-r.max_coord(i));
+	      distance = the_weights[i] * dists[i];
+            }
+	  }
+	}
+      else
+	{
+	  for (unsigned int i = 0; qit != qe; ++qit, ++i) {
+	    if ((*qit) < r.min_coord(i)){
+              dists[i] = r.min_coord(i)-(*qit);
+	      distance += the_weights[i] * 
+		std::pow(dists[i],power);
+            }
+	    if ((*qit) > r.max_coord(i)){
+              dists[i] = (*qit)-r.max_coord(i);
+	      distance += the_weights[i] * 
+		std::pow(dists[i],power);
+            }
+	  }
+	};
+      return distance;
+    }
+
+    inline 
     FT
     max_distance_to_rectangle(const Query_item& q,
 			      const Kd_tree_rectangle<FT,Dimension>& r) const {
@@ -210,6 +253,51 @@ namespace CGAL {
 	      distance += the_weights[i] * std::pow(r.max_coord(i)-(*qit),power);
 	    else
 	      distance += the_weights[i] * std::pow((*qit)-r.min_coord(i),power);
+	  }
+	};
+      return distance;
+    }
+
+     inline 
+    FT
+    max_distance_to_rectangle(const Query_item& q,
+			      const Kd_tree_rectangle<FT,Dimension>& r,std::vector<FT>& dists) {
+      FT distance=FT(0);
+      typename SearchTraits::Construct_cartesian_const_iterator_d construct_it=
+        traits.construct_cartesian_const_iterator_d_object();
+      Coord_iterator qit = construct_it(q), qe = construct_it(q,1);
+      if (power == FT(0))
+	{
+	  for (unsigned int i = 0; qit != qe; ++qit, ++i) {
+	    if ((*qit) >= (r.min_coord(i) + 
+			 r.max_coord(i))/FT(2.0)) {
+	      if (the_weights[i] * ((*qit) - 
+				    r.min_coord(i)) > distance){
+                dists[i] = (*qit)-r.min_coord(i);
+		distance = the_weights[i] * 
+		  (dists[i]);
+              }
+	      else
+		if (the_weights[i] * 
+		    (r.max_coord(i) - (*qit)) > distance){
+                      dists[i] =  r.max_coord(i)-(*qit);
+		  distance = the_weights[i] * 
+		    (dists[i]);
+                }
+            }
+	  }
+	}
+      else
+	{
+	  for (unsigned int i = 0; qit != qe; ++qit, ++i) {
+	    if ((*qit) <= (r.min_coord(i)+r.max_coord(i))/FT(2.0)){
+              dists[i] = r.max_coord(i)-(*qit);
+	      distance += the_weights[i] * std::pow(dists[i],power);
+            }
+	    else{
+              dists[i] = (*qit)-r.min_coord(i);
+	      distance += the_weights[i] * std::pow(dists[i],power);
+            }
 	  }
 	};
       return distance;

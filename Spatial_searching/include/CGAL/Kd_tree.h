@@ -175,9 +175,14 @@ private:
     split(node.separator(), c, c_low);
 
     int cd  = node.separator().cutting_dimension();
-
-    node.low_val = c_low.bounding_box().min_coord(cd);
-    node.high_val = c.bounding_box().max_coord(cd);
+    if(!c_low.empty())
+      node.low_val = c_low.tight_bounding_box().max_coord(cd);
+    else
+      node.low_val = c_low.bounding_box().min_coord(cd);
+    if(!c.empty())
+      node.high_val = c.tight_bounding_box().min_coord(cd);
+    else
+      node.high_val = c.bounding_box().max_coord(cd);
 
     CGAL_assertion(node.separator().cutting_value() >= node.low_val);
     CGAL_assertion(node.separator().cutting_value() <= node.high_val);

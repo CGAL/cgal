@@ -87,10 +87,11 @@ int main(int argc,char *argv[])
     for (Neighbor_search_3::iterator it = search.begin(); it != search.end();it++, i++) {
       result[i] = it->first;
       if(dump){
-        std::cerr << result[i].x()<<" "<<result[i].y()<< std::endl;
-		
+        std::cerr << result[i].x()<<" "<<result[i].y()<<" "<<result[i].z()<< std::endl;
       }
-	}
+    }
+    if(dump)
+      search.statistics(std::cerr);	
     dump = false;
   }
   t.stop();

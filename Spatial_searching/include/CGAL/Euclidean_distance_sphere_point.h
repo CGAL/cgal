@@ -107,6 +107,28 @@ namespace CGAL {
 		return distance;
 	}
 
+        inline FT min_distance_to_rectangle(const Sphere_d& q,
+					     const Kd_tree_rectangle<FT,Dimension>& r,std::vector<FT>& dists) {
+                Point_d c= Construct_center_d()(q);
+		FT distance = FT(0);
+		Construct_cartesian_const_iterator_d construct_it=traits.construct_cartesian_const_iterator_d_object();
+                Cartesian_const_iterator_d cit = construct_it(c),
+		  ce = construct_it(c,1);
+		for (unsigned int i = 0; cit != ce; ++i, ++cit) {
+			if ((*cit) < r.min_coord(i)){
+                                dists[i] =(r.min_coord(i)-(*cit));
+				distance += dists[i] * dists[i];
+                        }
+			else if ((*cit) > r.max_coord(i)){
+                                dists[i] = ((*cit)-r.max_coord(i));
+				distance +=  dists[i] * dists[i];
+                        }			
+		};
+                distance += - Compute_squared_radius_d()(q);
+                if (distance<0) distance=FT(0);
+		return distance;
+	}
+
 	inline FT max_distance_to_rectangle(const Sphere_d& q,
 					      const Kd_tree_rectangle<FT,Dimension>& r) const {
 	  Construct_center_d construct_center_d;
@@ -120,6 +142,29 @@ namespace CGAL {
 					distance += (r.max_coord(i)-(*cit))*(r.max_coord(i)-(*cit));
 				else
 					distance += ((*cit)-r.min_coord(i))*((*cit)-r.min_coord(i));
+		};
+		distance += - Compute_squared_radius_d()(q);
+                if (distance<0) distance=FT(0);
+		return distance;
+	}
+
+        inline FT max_distance_to_rectangle(const Sphere_d& q,
+					      const Kd_tree_rectangle<FT,Dimension>& r,std::vector<FT>& dists) {
+	  Construct_center_d construct_center_d;
+                Point_d c = construct_center_d(q);
+		FT distance=FT(0);
+		Construct_cartesian_const_iterator_d construct_it=traits.construct_cartesian_const_iterator_d_object();
+                Cartesian_const_iterator_d cit = construct_it(c),
+		  ce = construct_it(c,1);
+		for (unsigned int i = 0; cit != ce; ++i, ++cit) {
+				if ((*cit) <= (r.min_coord(i)+r.max_coord(i))/FT(2.0)){
+                                        dists[i] = (r.max_coord(i)-(*cit));
+					distance += dists[i] * dists[i];
+                                }
+				else{
+                                        dists[i] = ((*cit)-r.min_coord(i));
+					distance += dists[i] * dists[i];
+                                }
 		};
 		distance += - Compute_squared_radius_d()(q);
                 if (distance<0) distance=FT(0);

@@ -108,6 +108,26 @@ namespace CGAL {
 		return distance;
 	}
 
+        inline FT min_distance_to_rectangle(const Query_item& q,
+					    const Kd_tree_rectangle<FT,D>& r,std::vector<FT>& dists) {
+		FT distance = FT(0);
+		typename SearchTraits::Construct_cartesian_const_iterator_d construct_it=traits.construct_cartesian_const_iterator_d_object();
+                typename SearchTraits::Cartesian_const_iterator_d qit = construct_it(q),
+		  qe = construct_it(q,1);
+		for(unsigned int i = 0;qit != qe; i++, qit++){
+		  if((*qit) < r.min_coord(i)){
+                                dists[i] = (r.min_coord(i)-(*qit));
+				distance += dists[i] * dists[i];
+                  }
+		  else if ((*qit) > r.max_coord(i)){
+                                dists[i] = ((*qit)-r.max_coord(i));
+				distance +=  dists[i] * dists[i];
+                  }
+			
+		}
+		return distance;
+	}
+
 	inline FT max_distance_to_rectangle(const Query_item& q,
 					     const Kd_tree_rectangle<FT,D>& r) const {
 		FT distance=FT(0);
@@ -119,6 +139,25 @@ namespace CGAL {
 					distance += (r.max_coord(i)-(*qit))*(r.max_coord(i)-(*qit));
 				else
 					distance += ((*qit)-r.min_coord(i))*((*qit)-r.min_coord(i));
+		};
+		return distance;
+	}
+
+        inline FT max_distance_to_rectangle(const Query_item& q,
+					     const Kd_tree_rectangle<FT,D>& r,std::vector<FT>& dists ) {
+		FT distance=FT(0);
+		typename SearchTraits::Construct_cartesian_const_iterator_d construct_it=traits.construct_cartesian_const_iterator_d_object();
+                typename SearchTraits::Cartesian_const_iterator_d qit = construct_it(q),
+		  qe = construct_it(q,1);
+		for(unsigned int i = 0;qit != qe; i++, qit++){
+				if ((*qit) <= (r.min_coord(i)+r.max_coord(i))/FT(2.0)){
+                                        dists[i] = (r.max_coord(i)-(*qit));
+					distance += dists[i] * dists[i];
+                                }
+				else{
+                                        dists[i] = ((*qit)-r.min_coord(i));
+					distance += dists[i] * dists[i];
+                                }
 		};
 		return distance;
 	}

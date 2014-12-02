@@ -175,14 +175,14 @@ namespace CGAL {
     std::ostream& 
     print(std::ostream& s) const 
     {
-      s << "Rectangle dimension = " << D;
+      s << "Rectangle dimension = " << D::value;
       s << "\n lower: ";
-      for (int i=0; i < D; ++i)
+      for (int i=0; i < D::value; ++i)
 	s << lower_[i] << " ";
       // std::copy(lower_, lower_ + D,
       // 	      std::ostream_iterator<FT>(s," "));
       s << "\n upper: ";
-      for (int j=0; j < D; ++j)
+      for (int j=0; j < D::value; ++j)
 	s << upper_[j] << " ";
       // std::copy(upper_, upper_ + D,
       //	      std::ostream_iterator<FT>(s," "));
