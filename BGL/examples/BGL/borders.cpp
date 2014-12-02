@@ -28,9 +28,7 @@ struct Is_border {
 };
 
 typedef boost::filtered_graph<G,Is_border> FG;
-
 typedef boost::graph_traits<FG>::edge_descriptor edge_descriptor;
-
 typedef boost::graph_traits<G>::vertex_descriptor vertex_descriptor;
 
 typedef std::vector<Point_3> Polyline_3;
@@ -45,16 +43,12 @@ struct Is_terminal
 };
 
 
-template <typename Graph> 
 struct Polyline_visitor
 {
   std::list<Polyline_3>& polylines;
-  const Graph& points_pmap;
 
-  Polyline_visitor(std::list<Polyline_3>& lines,
-                   const Graph& points_property_map)
-    : polylines(lines),
-      points_pmap(points_property_map)
+  Polyline_visitor(std::list<Polyline_3>& lines)
+    : polylines(lines)
   {}
 
   void start_new_polyline()
@@ -63,7 +57,7 @@ struct Polyline_visitor
     polylines.push_back(V);
   }
 
-  void add_node(typename boost::graph_traits<Graph>::vertex_descriptor vd)
+  void add_node(boost::graph_traits<G>::vertex_descriptor vd)
   {
     Polyline_3& polyline = polylines.back();
     polyline.push_back(vd->point());
@@ -81,7 +75,7 @@ int main()
   FG fg(g,ib);
 
   std::list<Polyline_3> polylines;  
-  Polyline_visitor<FG> polyline_visitor(polylines, fg);
+  Polyline_visitor polyline_visitor(polylines);
 
    CGAL::split_graph_into_polylines( fg,
                                      polyline_visitor,
