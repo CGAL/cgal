@@ -129,7 +129,6 @@ split_graph_into_polylines(const Graph& graph,
                                  Graph_vertex_descriptor > G;
 
   typedef typename boost::graph_traits<G>::vertex_descriptor vertex_descriptor;
-  typedef typename boost::graph_traits<G>::vertex_iterator vertex_iterator;
   typedef typename boost::graph_traits<G>::edge_descriptor edge_descriptor;
   typedef typename boost::graph_traits<G>::out_edge_iterator out_edge_iterator;
   
