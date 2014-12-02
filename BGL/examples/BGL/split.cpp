@@ -2,14 +2,11 @@
 #include <CGAL/Simple_cartesian.h>
 #include <iostream>
 #include <map>
-#include <set>
 #include <boost/graph/adjacency_list.hpp>
 #include <CGAL/boost/graph/split_graph_into_polylines.h>
 
 typedef CGAL::Simple_cartesian<double> K;
 typedef K::Point_2 Point_2;
-typedef K::Segment_2 Segment_2;
-
 
 typedef boost::adjacency_list < boost::listS,
                                 boost::vecS, 
@@ -25,7 +22,7 @@ struct Is_terminal
   template <typename VertexDescriptor, typename Graph>
   bool operator ()(VertexDescriptor vd , const Graph& g )
   {
-    return degree(vd,g) != 2;
+    return false; // degree(vd,g) != 2; is a bad test in case of parallel edges
   }
 };
 
@@ -34,10 +31,10 @@ template <typename Graph>
 struct Polyline_visitor
 {
   std::list<Polyline>& polylines;
-  Graph& points_pmap;
+  const Graph& points_pmap;
 
   Polyline_visitor(std::list<Polyline>& lines,
-                   Graph& points_property_map)
+                   const Graph& points_property_map)
     : polylines(lines),
       points_pmap(points_property_map)
   {}
@@ -56,28 +53,10 @@ struct Polyline_visitor
 };
 
 
-struct LessSegment {
-  bool operator()(const Segment_2& a, const Segment_2& b) const
-  {
-    if(a.source() < b.source()){
-      return true;
-    }
-    if(a.source() > b.source()){
-      return false;
-    }
-    if(a.target() < b.target()){
-      return true;
-    }
-    if(a.target() > b.target()){
-      return false;
-    }
-    return false;
-  }
-};
-
 int main()
 {
   G g;
+
   std::list<Polyline> polylines;  
   Polyline_visitor<G> polyline_visitor(polylines, g);
   std::map<Point_2, vertex_descriptor> p2vd;
@@ -85,35 +64,21 @@ int main()
   int n;
   std::cin >> n; // number of segments
 
-  std::set<Segment_2,LessSegment> segments;
 
   Point_2 p, q;
   vertex_descriptor  vdp, vdq; 
   for(int i=0; i < n; i++){
     std::cin >> p >> q;
    
-    if(p == q){
-      //std::cerr << "ignore degenerate segment"<< std::endl;
-      continue;
-    }
-    
-    Segment_2 s = (p < q)? Segment_2(p,q) : Segment_2(q,p);
-    if(segments.find(s) != segments.end()){
-      //std::cerr << "ignore duplicate segment"<< std::endl;
-      continue;
-    } else {
-      segments.insert(s);
-    }
-    
     if(p2vd.find(p) == p2vd.end()){
-      vdp =  add_vertex(g);
+      vdp = add_vertex(g);
       g[vdp] = p;
       p2vd[p] = vdp;
     } else {
       vdp = p2vd[p];
     }
     if(p2vd.find(q) == p2vd.end()){
-      vdq =  add_vertex(g);
+      vdq = add_vertex(g);
       g[vdq] = q;
       p2vd[q] = vdq;
     } else {
@@ -121,25 +86,15 @@ int main()
     }
     boost::add_edge(vdp, vdq, g);
   }
-  /*
-  { 
-    typedef boost::graph_traits<G>::vertex_iterator vertex_iterator; 
-    vertex_iterator b,e;
-    boost::tie(b,e) = vertices(g);
-    for(; b!= e; ++b){
-      std::cerr << degree(*b,g) << std::endl;
-    }
-  }
-  */
+
    CGAL::split_graph_into_polylines( g,
-                                      polyline_visitor,
-                                     CGAL::IsTerminalDefault() );
+                                     polyline_visitor,
+                                     Is_terminal() );
    std::cout.precision(17);
 
    
    for(std::list<Polyline>::iterator it = polylines.begin(); it!= polylines.end(); ++it){
      Polyline& poly = *it;
-     // std::cout << poly.size() ;
      std::size_t n;
      if(poly.front() == poly.back()){
        std::cout << "POLYGON" << std::endl;
