@@ -105,8 +105,8 @@ namespace CGAL {
     Kd_tree_rectangle(int d) 
       : max_span_coord_(0)
     {
-      lower_.assign(FT(0));
-      upper_.assign(FT(0));
+      lower_.fill(FT(0));
+      upper_.fill(FT(0));
     }
 
     Kd_tree_rectangle() 
