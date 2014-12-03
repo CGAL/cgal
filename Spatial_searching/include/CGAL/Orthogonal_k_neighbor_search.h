@@ -52,21 +52,24 @@ public:
         dists[i]=0;
 
     FT distance_to_root;
-    if (this->search_nearest) 
+    if (this->search_nearest){ 
       distance_to_root = this->distance_instance.min_distance_to_rectangle(q, tree.bounding_box(),dists);
-    else 
+      compute_nearest_neighbors_orthogonally(tree.root(), distance_to_root,dists);
+    }
+    else {
       distance_to_root = this->distance_instance.max_distance_to_rectangle(q, tree.bounding_box(),dists);
-
+      compute_furthest_neighbors_orthogonally(tree.root(), distance_to_root,dists);
+    }
 
     
       
-    compute_neighbors_orthogonally(tree.root(), distance_to_root,dists);      
+          
       
     if (sorted) this->queue.sort();
   }
 private:
 
-  void compute_neighbors_orthogonally(typename Base::Node_const_handle N, FT rd,std::vector<FT>& dists)
+  void compute_nearest_neighbors_orthogonally(typename Base::Node_const_handle N, FT rd,std::vector<FT>& dists)
   {
     if (!(N->is_leaf())) 
     {
@@ -79,40 +82,76 @@ private:
       FT val = *(query_object_it + new_cut_dim);
       FT diff1 = val - node->high_value();
       FT diff2 = val - node->low_value();
-      if ( ((diff1 + diff2 <  FT(0.0)) && (this->search_nearest)) ||
-           ((diff1 + diff2 >= FT(0.0)) && (!this->search_nearest)) ) 
+      if ( (diff1 + diff2 <  FT(0.0)) ) 
       {
-        if (this->search_nearest) {
           new_off = diff1;
           bestChild = node->lower();
-          otherChild = node->upper();
-        }
-        else {
-          new_off= diff2;
-          bestChild = node->upper();
-          otherChild = node->lower();
-        }                          
+          otherChild = node->upper();                      
       }
       else // compute new distance
       {
-        if (this->search_nearest) {
           new_off= diff2;
           bestChild = node->upper();
           otherChild = node->lower();
-        }
-        else  {
-          new_off= diff1;
-          bestChild = node->lower();
-          otherChild = node->upper();
-        }  
-             
       }
-      compute_neighbors_orthogonally(bestChild, rd,dists); 
+      compute_nearest_neighbors_orthogonally(bestChild, rd,dists); 
       FT dst=dists[new_cut_dim];
       FT new_rd = this->distance_instance.new_distance(rd,dst,new_off,new_cut_dim);
       dists[new_cut_dim]=new_off;
         if (this->branch(new_rd)) 
-          compute_neighbors_orthogonally(otherChild, new_rd,dists); 
+          compute_nearest_neighbors_orthogonally(otherChild, new_rd,dists); 
+      dists[new_cut_dim]=dst;
+    }
+    else
+    {
+      // n is a leaf
+      Tree::Leaf_node_const_handle node = 
+        static_cast<Tree::Leaf_node_const_handle>(N);
+      this->number_of_leaf_nodes_visited++;
+      if (node->size() > 0)
+      {
+        for (typename Base::Point_d_iterator it=node->begin(); it != node->end(); it++) 
+        {
+          this->number_of_items_visited++;
+          FT distance_to_query_object=
+            this->distance_instance.transformed_distance(this->query_object,**it);
+          this->queue.insert(std::make_pair(*it,distance_to_query_object));
+        }
+      }
+    }
+  }    
+
+   void compute_furthest_neighbors_orthogonally(typename Base::Node_const_handle N, FT rd,std::vector<FT>& dists)
+  {
+    if (!(N->is_leaf())) 
+    {
+      Tree::Internal_node_const_handle node = 
+        static_cast<Tree::Internal_node_const_handle>(N);
+      this->number_of_internal_nodes_visited++;
+      int new_cut_dim=node->cutting_dimension();
+      Base::Node_const_handle bestChild, otherChild;
+      FT new_off;
+      FT val = *(query_object_it + new_cut_dim);
+      FT diff1 = val - node->high_value();
+      FT diff2 = val - node->low_value();
+      if ( (diff1 + diff2 >= FT(0.0)) ) 
+      {
+          new_off= diff2;
+          bestChild = node->upper();
+          otherChild = node->lower();
+      }
+      else // compute new distance
+      {
+          new_off= diff1;
+          bestChild = node->lower();
+          otherChild = node->upper();             
+      }
+      compute_furthest_neighbors_orthogonally(bestChild, rd,dists); 
+      FT dst=dists[new_cut_dim];
+      FT new_rd = this->distance_instance.new_distance(rd,dst,new_off,new_cut_dim);
+      dists[new_cut_dim]=new_off;
+        if (this->branch(new_rd)) 
+          compute_furthest_neighbors_orthogonally(otherChild, new_rd,dists); 
       dists[new_cut_dim]=dst;
     }
     else
