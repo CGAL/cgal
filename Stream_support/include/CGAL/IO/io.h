@@ -121,7 +121,7 @@ public:
         cont = false;
       }
     }while(cont);
-    
+    is.clear(is.rdstate() & ~std::ios_base::failbit);
     is.unget();
 
     sscanf(buffer.c_str(), "%lf", &t);
