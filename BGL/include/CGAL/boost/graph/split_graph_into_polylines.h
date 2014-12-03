@@ -108,7 +108,7 @@ void split_graph_into_polylines(Graph& graph,
 } // namespace internal
 
   
-/// Split graph into polylines delimited by node of degree different from 2,
+/// Split graph into polylines delimited by vertices of degree different from 2,
 /// and vertices for which `is_terminal(v,graph)==true`.
 /// Then the graph is visited and Visitor is called to describe the polylines
 /// Graph must be undirected
