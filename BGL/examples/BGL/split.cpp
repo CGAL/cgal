@@ -94,7 +94,7 @@ int main()
 
    
    for(std::list<Polyline_2>::iterator it = polylines.begin(); it!= polylines.end(); ++it){
-     Polyline& poly = *it;
+     Polyline_2& poly = *it;
      std::size_t n;
      if(poly.front() == poly.back()){
        std::cout << "POLYGON" << std::endl;
