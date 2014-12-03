@@ -19,8 +19,8 @@
 // Author(s)     : Sylvain Pion <Sylvain.Pion@sophia.inria.fr>
 //                 Manuel Caroli <Manuel.Caroli@sophia.inria.fr>
  
-#ifndef CGAL_PERIODIC_3_TRIANGULATION_STATICALLY_FILTERED_TRAITS_3_H
-#define CGAL_PERIODIC_3_TRIANGULATION_STATICALLY_FILTERED_TRAITS_3_H
+#ifndef CGAL_PERIODIC_3_DELAUNAY_TRIANGULATION_STATICALLY_FILTERED_TRAITS_3_H
+#define CGAL_PERIODIC_3_DELAUNAY_TRIANGULATION_STATICALLY_FILTERED_TRAITS_3_H
 
 // This class gathers optimized predicates written by hand, using
 // a few steps of filtering.  It should work if the initial traits has
@@ -37,6 +37,7 @@
 
 #include <CGAL/internal/Static_filters/tools.h>
 #include <CGAL/internal/Static_filters/Periodic_3_orientation_3.h>
+#include <CGAL/internal/Static_filters/Periodic_3_side_of_oriented_sphere_3.h>
 
 // TODO :
 // - add more predicates :
@@ -45,20 +46,27 @@ namespace CGAL {
 
 // The K_base argument is supposed to provide exact primitives.
 template < typename Traits >
-class Periodic_3_triangulation_statically_filtered_traits_3 : public Traits
+class Periodic_3_Delaunay_triangulation_statically_filtered_traits_3 : public Traits
 {
-  typedef Periodic_3_triangulation_statically_filtered_traits_3<Traits> Self;
+  typedef Periodic_3_Delaunay_triangulation_statically_filtered_traits_3<Traits> Self;
 
 public:
 
   typedef internal::Static_filters_predicates::Periodic_3_orientation_3<Traits>
     Orientation_3;
+  typedef internal::Static_filters_predicates::Periodic_3_side_of_oriented_sphere_3<Traits>
+    Side_of_oriented_sphere_3;
 
   Orientation_3 orientation_3_object() const {
     return Orientation_3(&this->_domain,&this->_domain_e,&this->_domain_f);
+  }
+  Side_of_oriented_sphere_3  side_of_oriented_sphere_3_object() const {
+    return Side_of_oriented_sphere_3(&this->_domain,
+                                     &this->_domain_e,
+                                     &this->_domain_f);
   }
 };
 
 } //namespace CGAL
 
-#endif // CGAL_PERIODIC_3_TRIANGULATION_STATICALLY_FILTERED_TRAITS_3_H
+#endif // CGAL_PERIODIC_3_DELAUNAY_TRIANGULATION_STATICALLY_FILTERED_TRAITS_3_H

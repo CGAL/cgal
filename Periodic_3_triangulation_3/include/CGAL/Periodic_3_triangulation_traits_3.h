@@ -60,16 +60,6 @@ public:
   typedef Traits_with_offsets_adaptor<Self, typename K::Orientation_3>
       Orientation_3;
   
-  // Delaunay specific predicates
-  typedef Traits_with_offsets_adaptor<Self,
-				      typename K::Side_of_oriented_sphere_3>
-      Side_of_oriented_sphere_3;
-  typedef Traits_with_offsets_adaptor<Self, typename K::Compare_distance_3>
-      Compare_distance_3;
-   typedef Traits_with_offsets_adaptor<Self,
- 				      typename K::Side_of_bounded_sphere_3>
-       Side_of_bounded_sphere_3;
-
   // Degenerate dimension predicates
   typedef Traits_with_offsets_adaptor<Self, typename K::Coplanar_orientation_3>
       Coplanar_orientation_3;
@@ -86,11 +76,6 @@ public:
       Construct_triangle_3;
   typedef Traits_with_offsets_adaptor<Self, typename K::Construct_tetrahedron_3>
       Construct_tetrahedron_3;
-
-  // Delaunay specific constructions
-  typedef Traits_with_offsets_adaptor<Self,
-				      typename K::Construct_circumcenter_3>
-      Construct_circumcenter_3;
 
   // Access
   void set_domain(const Iso_cuboid_3& domain) {
@@ -110,14 +95,6 @@ public:
   orientation_3_object() const {
     return Orientation_3(&_domain);
   }
-  Side_of_oriented_sphere_3
-  side_of_oriented_sphere_3_object() const {
-    return Side_of_oriented_sphere_3(&_domain);
-  }
-  Compare_distance_3
-  compare_distance_3_object() const {
-    return Compare_distance_3(&_domain);
-  }
   Coplanar_orientation_3
   coplanar_orientation_3_object() const {
     return Coplanar_orientation_3(&_domain);
@@ -125,10 +102,6 @@ public:
   Coplanar_side_of_bounded_circle_3
   coplanar_side_of_bounded_circle_3_object() const {
     return Coplanar_side_of_bounded_circle_3(&_domain);
-  }
-  Side_of_bounded_sphere_3
-  side_of_bounded_sphere_3_object() const {
-    return Side_of_bounded_sphere_3(&_domain);
   }
   Construct_point_3
   construct_point_3_object() const {
@@ -145,10 +118,6 @@ public:
   Construct_tetrahedron_3
   construct_tetrahedron_3_object() const {
     return Construct_tetrahedron_3(&_domain);
-  }
-  Construct_circumcenter_3
-  construct_circumcenter_3_object() const {
-    return Construct_circumcenter_3(&_domain);
   }
 
 protected:

@@ -154,23 +154,10 @@ public:
             Offset_converter_3<C2F> >  Coplanar_side_of_bounded_circle_3;
 
   typedef Filtered_periodic_predicate<
-            typename Exact_traits::Side_of_oriented_sphere_3,
-            typename Filtering_traits::Side_of_oriented_sphere_3,
-            Offset_converter_3<C2E>,
-            Offset_converter_3<C2F> >  Side_of_oriented_sphere_3;
-
-  typedef Filtered_periodic_predicate<
             typename Exact_traits::Compare_distance_3,
             typename Filtering_traits::Compare_distance_3,
             Offset_converter_3<C2E>,
             Offset_converter_3<C2F> >  Compare_distance_3;
-
-  typedef Filtered_periodic_predicate<
-            typename Exact_traits::Side_of_bounded_sphere_3,
-            typename Filtering_traits::Side_of_bounded_sphere_3,
-            Offset_converter_3<C2E>,
-            Offset_converter_3<C2F> >  Side_of_bounded_sphere_3;
-
 
   Compare_xyz_3 compare_xyz_3_object() const
   { return Compare_xyz_3(&_domain_e,&_domain_f);}
@@ -185,20 +172,10 @@ public:
   coplanar_side_of_bounded_circle_3_object() const 
   { return Coplanar_side_of_bounded_circle_3(&_domain_e,&_domain_f); }
 
-  Side_of_oriented_sphere_3 side_of_oriented_sphere_3_object() const
-  { return Side_of_oriented_sphere_3(&_domain_e,&_domain_f);}
-
-  Compare_distance_3 compare_distance_3_object() const
-  { return Compare_distance_3(&_domain_e,&_domain_f);}
-
-  Side_of_bounded_sphere_3 side_of_bounded_sphere_3_object() const
-  { return Side_of_bounded_sphere_3(&_domain_e,&_domain_f);}
-
   // The following are inherited since they are constructions :
   // Construct_segment_3
   // Construct_triangle_3
   // Construct_tetrahedron_3
-  // Construct_circumcenter_3
 
  protected:
   Exact_iso_cuboid_3 _domain_e;
