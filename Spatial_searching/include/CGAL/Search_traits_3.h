@@ -32,7 +32,7 @@ namespace CGAL {
 
   public:
 
-   typedef typename Dimension_tag<3> Dimension;
+    typedef Dimension_tag<3> Dimension;
     typedef typename K::Cartesian_const_iterator_3 Cartesian_const_iterator_d;
     typedef typename K::Construct_cartesian_const_iterator_3 Construct_cartesian_const_iterator_d;
     typedef typename K::Point_3 Point_d;
