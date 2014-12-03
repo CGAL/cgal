@@ -140,7 +140,7 @@ namespace CGAL {
           static_cast<Leaf_node_const_handle>(this);
 	  indent(d);
 	  std::cout << "leaf" << std::endl;
-	  if (node.size()>0) 
+	  if (node->size()>0) 
 	    for (Point_d_iterator i=node->begin(); i != node->end(); i++) 
 	      {indent(d);std::cout << **i << std::endl;} 
 	}
