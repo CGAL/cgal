@@ -139,7 +139,6 @@ split_graph_into_polylines(const Graph& graph,
                      typename boost::graph_traits<G>::vertex_descriptor> V2vmap;
     V2vmap v2vmap;
     
-    
     BOOST_FOREACH(Graph_vertex_descriptor v, vertices(graph)){
       vertex_descriptor vc = add_vertex(g);
       g[vc] = v;
@@ -150,7 +149,7 @@ split_graph_into_polylines(const Graph& graph,
     BOOST_FOREACH(Graph_edge_descriptor e, edges(graph)){
       Graph_vertex_descriptor vs = source(e,graph);
       Graph_vertex_descriptor vt = target(e,graph);
-      vertex_descriptor vsc, vtc; 
+      vertex_descriptor vsc, vtc;
       if(vs == vt){
         std::cerr << "ignore self loop\n";
       }else{
@@ -159,14 +158,14 @@ split_graph_into_polylines(const Graph& graph,
         if((it = v2vmap.find(vs)) == v2vmap.end()){
           vsc = add_vertex(g);
           g[vsc] = vs;
-          v2vmap[vs] = vsc; 
+          v2vmap[vs] = vsc;
         }else{
           vsc = it->second;
         }
         if((it = v2vmap.find(vt)) == v2vmap.end()){
           vtc = add_vertex(g);
           g[vtc] = vt;
-          v2vmap[vt] = vtc; 
+          v2vmap[vt] = vtc;
         }else{
           vtc = it->second;
         }
