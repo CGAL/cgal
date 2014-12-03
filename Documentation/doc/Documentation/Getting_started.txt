@@ -9,6 +9,10 @@
   the notion of  <em>traits classes</em> which define what primitives are used
   by a geometric algorithm, the notions of \em concept and \em model.
   
+- \subpage manual gives an idea where you should look for documentation.
+  The documentation for a class, may be spread over manual pages of
+  base classes, and reference manual pages of concepts the class is a model of.
+  
 
 - \subpage preliminaries lists the licenses under which the %CGAL datastructures and algorithms are distributed, how to control inlining, thread safety, code deprecation, checking of pre- and postconditions, and how to alter the failure behavior. 
 
