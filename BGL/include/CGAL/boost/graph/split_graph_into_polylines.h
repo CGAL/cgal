@@ -95,7 +95,7 @@ void split_graph_into_polylines(Graph& graph,
                         typename boost::graph_traits<Graph>::degree_size_type
                           n = degree(v, graph);
                         
-                        CGAL_assertion(n == 1 || n == 2);
+                        CGAL_assertion( n == 0 || n == 1 || n == 2);
                       }
                       BOOST_FOREACH(edge_descriptor e, edges(graph)){
                         vertex_descriptor v = target(e, graph);
