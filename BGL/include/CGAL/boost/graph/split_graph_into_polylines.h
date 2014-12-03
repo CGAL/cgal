@@ -135,8 +135,10 @@ split_graph_into_polylines(const Graph& graph,
   // we make a copy of the input graph
   G g;
   {
-    std::map<typename boost::graph_traits<Graph>::vertex_descriptor,
-             typename boost::graph_traits<G>::vertex_descriptor> v2vmap;
+    typedef std::map<typename boost::graph_traits<Graph>::vertex_descriptor,
+                     typename boost::graph_traits<G>::vertex_descriptor> V2vmap;
+    V2vmap v2vmap;
+    
     
     BOOST_FOREACH(Graph_vertex_descriptor v, vertices(graph)){
       vertex_descriptor vc = add_vertex(g);
@@ -148,10 +150,27 @@ split_graph_into_polylines(const Graph& graph,
     BOOST_FOREACH(Graph_edge_descriptor e, edges(graph)){
       Graph_vertex_descriptor vs = source(e,graph);
       Graph_vertex_descriptor vt = target(e,graph);
+      vertex_descriptor vsc, vtc; 
       if(vs == vt){
         std::cerr << "ignore self loop\n";
       }else{
-        add_edge(v2vmap[vs],v2vmap[vt],g);
+        typename V2vmap::iterator it;
+
+        if((it = v2vmap.find(vs)) == v2vmap.end()){
+          vsc = add_vertex(g);
+          g[vsc] = vs;
+          v2vmap[vs] = vsc; 
+        }else{
+          vsc = it->second;
+        }
+        if((it = v2vmap.find(vt)) == v2vmap.end()){
+          vtc = add_vertex(g);
+          g[vtc] = vt;
+          v2vmap[vt] = vtc; 
+        }else{
+          vtc = it->second;
+        }
+        add_edge(vsc,vtc,g);
       }
     }
   }  
