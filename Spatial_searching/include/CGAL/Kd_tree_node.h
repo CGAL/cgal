@@ -138,12 +138,12 @@ namespace CGAL {
       if (is_leaf()) {
         Leaf_node_const_handle node = 
           static_cast<Leaf_node_const_handle>(this);
-	  indent(d);
-	  std::cout << "leaf" << std::endl;
-	  if (node->size()>0) 
-	    for (Point_d_iterator i=node->begin(); i != node->end(); i++) 
-	      {indent(d);std::cout << **i << std::endl;} 
-	}
+	indent(d);
+	std::cout << "leaf" << std::endl;
+	if (node->size()>0)
+	  for (Point_d_iterator i=node->begin(); i != node->end(); i++)
+	  {indent(d);std::cout << **i << std::endl;}
+      }
       else {
         Internal_node_const_handle node = 
           static_cast<Internal_node_const_handle>(this);
