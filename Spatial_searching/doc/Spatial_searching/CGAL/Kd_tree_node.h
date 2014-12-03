@@ -5,7 +5,7 @@ namespace CGAL {
 
 The class `Kd_tree_node` implements a node class for a `k-d` tree. 
 
-A node is either a `Kd_tree_leaf_node` or an `Kd_tree_internal_node`.
+A node is either a `Kd_tree_leaf_node` or a `Kd_tree_internal_node`.
 A leaf node contains one or more points. An internal node contains 
 a pointer to its lower child, a pointer to its
 upper child, and a pointer to its separator. If extended nodes are 
