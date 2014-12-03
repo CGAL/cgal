@@ -78,8 +78,8 @@ private:
   compute_neighbors_general(typename Base::Node_const_handle N, const Kd_tree_rectangle<FT,D>& r) 
   {
     if (!(N->is_leaf())) {
-       Tree::Internal_node_const_handle node = 
-        static_cast<Tree::Internal_node_const_handle>(N);
+       typename Tree::Internal_node_const_handle node =
+        static_cast<typename Tree::Internal_node_const_handle>(N);
       this->number_of_internal_nodes_visited++;
       int new_cut_dim=node->cutting_dimension();
       FT  new_cut_val=node->cutting_value();
@@ -140,8 +140,8 @@ private:
     else
       {
         // n is a leaf
-         Tree::Leaf_node_const_handle node = 
-          static_cast<Tree::Leaf_node_const_handle>(N);
+         typename Tree::Leaf_node_const_handle node =
+          static_cast<typename Tree::Leaf_node_const_handle>(N);
         this->number_of_leaf_nodes_visited++;
         if (node->size() > 0)
           for (typename Base::Point_d_iterator it = node->begin(); it != node->end(); it++) {

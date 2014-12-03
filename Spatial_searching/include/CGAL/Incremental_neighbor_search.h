@@ -447,8 +447,8 @@ namespace CGAL {
 	    delete The_node_top;
 
 	    while (!(N->is_leaf())) {
-              Tree::Internal_node_const_handle node = 
-                static_cast<Tree::Internal_node_const_handle>(N);
+              typename Tree::Internal_node_const_handle node =
+                static_cast<typename Tree::Internal_node_const_handle>(N);
 	      number_of_internal_nodes_visited++;
 	      int new_cut_dim = node->cutting_dimension();
 	      FT  new_cut_val = node->cutting_value();
@@ -503,8 +503,8 @@ namespace CGAL {
 	      }
 	    }
 	    delete B;
-             Tree::Leaf_node_const_handle node = 
-              static_cast<Tree::Leaf_node_const_handle>(N);
+             typename Tree::Leaf_node_const_handle node =
+              static_cast<typename Tree::Leaf_node_const_handle>(N);
 	    number_of_leaf_nodes_visited++;
 	    if (node->size() > 0) {
 	      for (Point_d_iterator it = node->begin(); it != node->end(); it++) {
