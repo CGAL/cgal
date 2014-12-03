@@ -201,6 +201,7 @@ namespace CGAL {
     friend class Kd_tree<TreeTraits,Splitter,UseExtendedNode>;
     
     typedef typename Kd_tree<TreeTraits,Splitter,UseExtendedNode>::Point_d_iterator Point_d_iterator;
+    typedef Kd_tree_node< TreeTraits, Splitter, UseExtendedNode> Base;
 
   private:
     
@@ -215,11 +216,11 @@ namespace CGAL {
     {}
 
     Kd_tree_leaf_node(bool leaf_ ) 
-      : leaf(leaf_) 
+      : Base(leaf_)
     {}
 
     Kd_tree_leaf_node(bool leaf_,unsigned int n_ ) 
-      : Kd_tree_node(leaf_), n(n_)
+      : Base(leaf_), n(n_)
     {}
 
     // members for all nodes
@@ -253,6 +254,7 @@ namespace CGAL {
 
     friend class Kd_tree<TreeTraits,Splitter,UseExtendedNode>;
 
+    typedef Kd_tree_node< TreeTraits, Splitter, UseExtendedNode> Base;
     typedef typename Kd_tree<TreeTraits,Splitter,UseExtendedNode>::Node_handle Node_handle;
     typedef typename Kd_tree<TreeTraits,Splitter,UseExtendedNode>::Node_const_handle Node_const_handle;
 
@@ -278,7 +280,7 @@ namespace CGAL {
     {}
 
     Kd_tree_internal_node(bool leaf_) 
-      : Kd_tree_node(leaf_) 
+      : Base(leaf_)
     {}
     
     
