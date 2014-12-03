@@ -26,6 +26,11 @@ public:
 /// @{
 
 /*!
+Dimension Tag.
+*/
+typedef unspecified_type D;
+
+/*!
 Point type. 
 */ 
 typedef Traits::Point_d Point_d; 
@@ -67,12 +72,12 @@ bool contains(const Point_d& p) const;
 test whether the inner sphere intersects the rectangle 
 associated with a node of a tree. 
 */ 
-bool inner_range_intersects(const Kd_tree_rectangle<FT>& rectangle) const; 
+bool inner_range_intersects(const Kd_tree_rectangle<FT,D>& rectangle) const; 
 
 /*!
 test whether the outer sphere encloses the rectangle associated with a node of a tree. 
 */ 
-bool outer_range_contains(const Kd_tree_rectangle<FT>& rectangle) const; 
+bool outer_range_contains(const Kd_tree_rectangle<FT,D>& rectangle) const; 
 
 /// @}
 

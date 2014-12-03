@@ -20,6 +20,11 @@ Search traits.
 */ 
 typedef unspecified_type SearchTraits; 
 
+
+/*!
+Dimension tag.
+*/
+typedef unspecified_type D;
 /*!
 Point type. 
 */ 
@@ -109,7 +114,7 @@ Node_const_handle root() const;
 Returns a const 
 reference to the bounding box of the root node of the tree. 
 */ 
-const Kd_tree_rectangle<SearchTraits::FT>& bounding_box() const; 
+const Kd_tree_rectangle<SearchTraits::FT,D>& bounding_box() const; 
 
 /*!
 

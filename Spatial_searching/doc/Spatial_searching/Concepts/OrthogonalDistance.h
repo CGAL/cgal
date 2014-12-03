@@ -6,6 +6,10 @@ Requirements of an orthogonal distance class supporting incremental distance upd
 To optimize distance computations transformed distances are used. 
 E.g., for an Euclidean distance the transformed distance is the squared Euclidean distance. 
 
+\cgalModifBegin
+Added overloads to min_dist and max_dist
+\cgalModifEnd
+
 \cgalRefines `GeneralDistance` 
 
 \cgalHasModel `CGAL::Euclidean_distance<Traits>`
@@ -18,6 +22,11 @@ public:
 
 /// \name Types 
 /// @{
+
+/*!
+Dimension Tag.
+*/
+typedef unspecified_type D;
 
 /*!
 Number type. 
@@ -58,13 +67,29 @@ FT transformed_distance(Query_item q, Point_d r) const;
 Returns the transformed distance between `q` and 
 the point on the boundary of `r` closest to `q`. 
 */ 
-FT min_distance_to_rectangle(Query_item q, Kd_tree_rectangle<FT> r) const; 
+FT min_distance_to_rectangle(Query_item q, Kd_tree_rectangle<FT,D> r) const; 
+
+/*!
+Returns the transformed distance between `q` and 
+the point on the boundary of `r` closest to `q`.
+Stores the components of the distance in each
+dimension in `dists`.
+*/ 
+FT min_distance_to_rectangle(Query_item q, Kd_tree_rectangle<FT,D> r, vector<FT>& dists); 
 
 /*!
 Returns the transformed distance between `q` and 
 the point on the boundary of `r` farthest to `q`. 
 */ 
-FT max_distance_to_rectangle(Query_item q, Kd_tree_rectangle<FT> r) const; 
+FT max_distance_to_rectangle(Query_item q, Kd_tree_rectangle<FT,D> r) const; 
+
+/*!
+Returns the transformed distance between `q` and 
+the point on the boundary of `r` farthest to `q`.
+Stores the components of the distance in each
+dimension in `dists`.
+*/ 
+FT max_distance_to_rectangle(Query_item q, Kd_tree_rectangle<FT,D> r, vector<FT>& dists); 
 
 /*!
 Returns the transformed distance. 

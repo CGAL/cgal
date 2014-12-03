@@ -200,7 +200,6 @@ namespace CGAL {
 
     friend class Kd_tree<TreeTraits,Splitter,UseExtendedNode>;
     
-    typedef typename TreeTraits::FT FT;
     typedef typename Kd_tree<TreeTraits,Splitter,UseExtendedNode>::Point_d_iterator Point_d_iterator;
 
   private:
@@ -256,11 +255,9 @@ namespace CGAL {
 
     typedef typename Kd_tree<TreeTraits,Splitter,UseExtendedNode>::Node_handle Node_handle;
     typedef typename Kd_tree<TreeTraits,Splitter,UseExtendedNode>::Node_const_handle Node_const_handle;
-    typedef typename TreeTraits::Point_d Point_d;
 
     typedef typename TreeTraits::FT FT;
     typedef typename Kd_tree<TreeTraits,Splitter,UseExtendedNode>::Separator Separator;
-    typedef typename Kd_tree<TreeTraits,Splitter,UseExtendedNode>::Point_d_iterator Point_d_iterator;
 
   private:
     

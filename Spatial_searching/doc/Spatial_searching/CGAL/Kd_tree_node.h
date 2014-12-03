@@ -5,12 +5,13 @@ namespace CGAL {
 
 The class `Kd_tree_node` implements a node class for a `k-d` tree. 
 
-A node is either a leaf node, an internal node or an
-extended internal node.  A leaf node contains one or more points. An
-internal node contains a pointer to its lower child, a pointer to its
-upper child, and a pointer to its separator.  An extended internal
-node is an internal node containing the lower and upper limit of an
-extended node's rectangle along the node's cutting dimension.
+A node is either a `Kd_tree_leaf_node` or an `Kd_tree_internal_node`.
+A leaf node contains one or more points. An internal node contains 
+a pointer to its lower child, a pointer to its
+upper child, and a pointer to its separator. If extended nodes are 
+used, it also contains the upper limit of the lower child's 
+tight rectangle and the lower limit of the upper child's tight rectangle 
+along the node's cutting dimension.
 
 \cgalHeading{Parameters}
 
@@ -24,42 +25,6 @@ public:
 
 /// \name Types 
 /// @{
-
-/*!
-Denotes type of node. 
-*/ 
-
-enum Node_type {LEAF, INTERNAL, EXTENDED_INTERNAL};
-
-/*!
-Number type. 
-*/ 
-typedef Traits::FT FT; 
-
-/*!
-Point type. 
-*/ 
-typedef Traits::Point_d Point_d; 
-
-/*!
-Separator type. 
-*/ 
-typedef Splitter::Separator Separator; 
-
-/*!
-const iterator over points. 
-*/ 
-typedef Kd_tree<Traits,Splitter,UseExtendedNode>::Point_d_iterator Point_d_iterator; 
-
-/*!
-Node handle. 
-*/ 
-typedef Kd_tree<Traits,Splitter,UseExtendedNode>::Node_handle Node_handle; 
-
-/*!
-const node handle. 
-*/ 
-typedef Kd_tree<Traits,Splitter,UseExtendedNode>::Node_const_handle Node_const_handle; 
 
 /// @} 
 
@@ -83,6 +48,27 @@ Indicates whether a node is a leaf node.
 */ 
 bool is_leaf() const; 
 
+/// @}
+
+}; /* end Kd_tree_node */
+
+template < class TreeTraits, class Splitter, class UseExtendedNode > 
+  class Kd_tree_leaf_node : public Kd_tree_node< TreeTraits, Splitter, UseExtendedNode >{
+  public:
+
+/// \name Types 
+/// @{
+
+/*!
+const iterator over points. 
+*/ 
+typedef Kd_tree<Traits,Splitter,UseExtendedNode>::Point_d_iterator Point_d_iterator; 
+
+/// @}
+
+/// \name Operations 
+/// @{
+
 /*!
 Returns the number of items stored in a leaf node. 
 */ 
@@ -97,6 +83,41 @@ Point_d_iterator begin() const;
 Returns the appropriate past-the-end const iterator. 
 */ 
 Point_d_iterator end() const; 
+
+/// @}
+}; /* end Kd_tree_leaf_node */
+
+template < class TreeTraits, class Splitter, class UseExtendedNode > 
+  class Kd_tree_internal_node : public Kd_tree_node< TreeTraits, Splitter, UseExtendedNode >{
+public:
+
+/// \name Types 
+/// @{
+
+/*!
+Number type. 
+*/ 
+typedef Traits::FT FT; 
+
+/*!
+Node handle. 
+*/ 
+typedef Kd_tree<Traits,Splitter,UseExtendedNode>::Node_handle Node_handle; 
+
+/*!
+const node handle. 
+*/ 
+typedef Kd_tree<Traits,Splitter,UseExtendedNode>::Node_const_handle Node_const_handle; 
+
+/*!
+Separator type. 
+*/ 
+typedef Splitter::Separator Separator; 
+
+/// @}
+
+/// \name Operations 
+/// @{
 
 /*!
 Returns a handle to the lower child of an internal node. 
@@ -124,18 +145,30 @@ Returns a reference to the separator.
 Separator& separator(); 
 
 /*!
-Returns the lower limit of an extended node's rectangle 
+Returns the cutting dimension. 
+*/ 
+int cutting_dimension() const;
+
+/*!
+Returns the cutting value. 
+*/ 
+int cutting_value() const;
+
+/*!
+Returns the upper limit of an extended node's 
+lower child's tight rectangle 
 along the node's cutting dimension. 
 */ 
 FT low_value() const; 
 
 /*!
-Returns the upper limit of an extended node's rectangle 
+Returns the lower limit of an extended node's
+upper child's tight rectangle 
 along the node's cutting dimension. 
 */ 
 FT high_value() const; 
 
 /// @}
+}; /* end Kd_tree_leaf_node */
 
-}; /* end Kd_tree_node */
 } /* end namespace CGAL */

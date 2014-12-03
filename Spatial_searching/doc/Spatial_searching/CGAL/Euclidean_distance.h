@@ -26,6 +26,12 @@ public:
 /// @{
 
 /*!
+Dimension Tag.
+*/
+typedef Traits::Dimension D;
+
+
+/*!
 Number type. 
 */ 
 typedef Traits::FT FT; 
@@ -64,13 +70,27 @@ FT transformed_distance(Query_item q, Point_d p) const;
 Returns the squared Euclidean distance between `q` and 
 the point on the boundary of `r` closest to `q`. 
 */ 
-FT min_distance_to_rectangle(Query_item q, Kd_tree_rectangle<FT> r) const; 
+FT min_distance_to_rectangle(Query_item q, Kd_tree_rectangle<FT,D> r) const; 
+
+/*!
+Returns the squared Euclidean distance between `q` and 
+the point on the boundary of `r` closest to `q`. Stores 
+the components of the distance in each dimension in `dists`. 
+*/ 
+FT min_distance_to_rectangle(Query_item q, Kd_tree_rectangle<FT,D> r, vector<FT>& dists); 
 
 /*!
 Returns the squared Euclidean distance, where \f$ d\f$ denotes the distance between `q` and 
 the point on the boundary of `r` farthest to `q`. 
 */ 
-FT max_distance_to_rectangle(Query_item q, Kd_tree_rectangle<FT> r;) const; 
+FT max_distance_to_rectangle(Query_item q, Kd_tree_rectangle<FT,D> r) const; 
+
+/*!
+Returns the squared Euclidean distance, where \f$ d\f$ denotes the distance between `q` and 
+the point on the boundary of `r` farthest to `q`. Stores the components of the distance in 
+each dimension in `dists`.
+*/ 
+FT max_distance_to_rectangle(Query_item q, Kd_tree_rectangle<FT,D> r, vector<FT>& dists); 
 
 /*!
 Updates the squared `dist` incrementally 

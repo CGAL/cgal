@@ -370,7 +370,7 @@ public:
 /*!
 Constructor. 
 */ 
-Sliding_fair(unsigned int bucket_size); 
+Sliding_midpoint(unsigned int bucket_size); 
 
 /// @} 
 

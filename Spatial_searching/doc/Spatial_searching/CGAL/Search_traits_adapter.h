@@ -108,6 +108,11 @@ public:
 
 /*!
 
+*/
+BaseTraits::Dimension D
+
+/*!
+
 */ 
 Key Point_d; 
 

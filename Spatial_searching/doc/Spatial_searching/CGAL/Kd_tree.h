@@ -30,6 +30,11 @@ public:
 /// @{
 
 /*!
+Dimension Tag.
+*/
+typedef unspecified_type D;
+
+/*!
 Point class.
 */
 typedef Traits::Point_d Point_d;
@@ -164,7 +169,7 @@ Node_const_handle root() const;
 Returns a const reference to the bounding box of the
 root node of the tree.
 */
-const Kd_tree_rectangle<FT>& bounding_box() const;
+const Kd_tree_rectangle<FT,D>& bounding_box() const;
 
 /*!
 Inserts statistics of the tree into the output stream `s`.
