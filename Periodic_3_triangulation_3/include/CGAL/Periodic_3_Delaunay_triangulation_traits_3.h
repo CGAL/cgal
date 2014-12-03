@@ -19,102 +19,17 @@
 // Author(s)     : Nico Kruithof <Nico.Kruithof@sophia.inria.fr>
 //                 Manuel Caroli <Manuel.Caroli@sophia.inria.fr>
 
-#ifndef CGAL_PERIODIC_3_TRIANGULATION_TRAITS_3_H
-#define CGAL_PERIODIC_3_TRIANGULATION_TRAITS_3_H
+#ifndef CGAL_PERIODIC_3_DELAUNAY_TRIANGULATION_TRAITS_3_H
+#define CGAL_PERIODIC_3_DELAUNAY_TRIANGULATION_TRAITS_3_H
 
 #include <CGAL/basic.h>
 #include <CGAL/Periodic_3_offset_3.h>
+#include <CGAL/Traits_with_offsets_adaptor.h>
+#include <CGAL/Periodic_3_construct_point_3.h>
 #include <CGAL/triangulation_assertions.h>
 
 
 namespace CGAL { 
-
-template < class K, class Functor_ >
-  class Traits_with_offsets_adaptor {
-  typedef K Kernel;
-  typedef Functor_ Functor;
-  
-  typedef typename Kernel::Point_3       Point;
-  typedef typename Kernel::Offset        Offset;
- public:
-  typedef typename Kernel::Iso_cuboid_3  Iso_cuboid_3;
-
-public:
-  typedef typename Functor::result_type result_type;
-
-  Traits_with_offsets_adaptor(const Iso_cuboid_3 * dom) : _domain(dom) { }
-
-  result_type operator()(const Point& p0, const Point& p1,
-      const Offset& o0, const Offset& o1) const {
-    return Functor()(pp(p0,o0),pp(p1,o1));
-  }
-  result_type operator()(const Point& p0, const Point& p1, const Point& p2,
-      const Offset& o0, const Offset& o1, const Offset& o2) const {
-    return Functor()(pp(p0,o0),pp(p1,o1),pp(p2,o2));
-  }
-  result_type operator()(const Point& p0, const Point& p1,
-      const Point& p2, const Point& p3,
-      const Offset& o0, const Offset& o1,
-      const Offset& o2, const Offset& o3) const {
-    return Functor()(pp(p0,o0),pp(p1,o1),pp(p2,o2),pp(p3,o3));
-  }
-  result_type operator()(const Point& p0, const Point& p1,
-      const Point& p2, const Point& p3, const Point& p4,
-      const Offset& o0, const Offset& o1, const Offset& o2,
-      const Offset& o3, const Offset& o4) const {
-    return Functor()(pp(p0,o0),pp(p1,o1),pp(p2,o2),
-	pp(p3,o3),pp(p4,o4));
-  }
-
-  result_type operator()(const Point& p0, const Point& p1) const {
-    return Functor()(p0, p1);
-  }
-  result_type operator()(const Point& p0, const Point& p1,
-      const Point& p2) const {
-    return Functor()(p0, p1, p2);
-  }
-  result_type operator()(const Point& p0, const Point& p1,
-      const Point& p2, const Point& p3) const {
-    return Functor()(p0, p1, p2, p3);
-  }
-  result_type operator()(const Point& p0, const Point& p1,
-      const Point& p2, const Point& p3, const Point& p4) const {
-    return Functor()(p0, p1, p2, p3, p4);
-  }
-
-private:
-  Point pp(const Point &p, const Offset &o) const {
-    return Point(p.x()+(_domain->xmax()-_domain->xmin())*o.x(),
-		 p.y()+(_domain->ymax()-_domain->ymin())*o.y(),
-		 p.z()+(_domain->zmax()-_domain->zmin())*o.z());
-  }
- public:
-  const Iso_cuboid_3* _domain;
-};
-
-template < typename K, typename Construct_point_3_base>
-class Periodic_3_construct_point_3 : public Construct_point_3_base
-{
-  typedef K Kernel;
-
-public:
-  typedef typename Kernel::Point_3       Point;
-  typedef typename Kernel::Offset        Offset;
-  typedef typename Kernel::Iso_cuboid_3  Iso_cuboid_3;
-
-  typedef Point       result_type;
-
-  Periodic_3_construct_point_3(const Iso_cuboid_3 & dom) : _dom(dom) { }
-
-  Point operator() ( const Point& p, const Offset& o ) const {
-    return Point(p.x()+(_dom.xmax()-_dom.xmin())*o.x(),
-	p.y()+(_dom.ymax()-_dom.ymin())*o.y(),
-	p.z()+(_dom.zmax()-_dom.zmin())*o.z());
-  }
-
-private:
-  Iso_cuboid_3 _dom;
-};
 
 template < class Kernel, class Off = typename CGAL::Periodic_3_offset_3 >
 class Periodic_3_Delaunay_triangulation_traits_base_3
@@ -282,4 +197,4 @@ class Periodic_3_Delaunay_triangulation_traits_3<CGAL::Epick, Off>
 
 } //namespace CGAL
 
-#endif // CGAL_PERIODIC_3_TRIANGULATION_TRAITS_3_H
+#endif // CGAL_PERIODIC_3_DELAUNAY_TRIANGULATION_TRAITS_3_H
