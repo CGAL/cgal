@@ -21,7 +21,7 @@
 
 #ifndef CGAL_KD_TREE_TRAITS_POINT_H
 #define CGAL_KD_TREE_TRAITS_POINT_H
-#include <CGAL\Dimension.h>
+#include <CGAL/Dimension.h>
 
 
 namespace CGAL {

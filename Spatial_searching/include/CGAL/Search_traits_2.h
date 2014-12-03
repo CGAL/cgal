@@ -21,7 +21,7 @@
 
 #ifndef CGAL_SEARCH_TRAITS_2_H
 #define CGAL_SEARCH_TRAITS_2_H
-#include <CGAL\Dimension.h>
+#include <CGAL/Dimension.h>
 
 namespace CGAL {
 
