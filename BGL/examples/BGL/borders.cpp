@@ -93,7 +93,7 @@ int main()
        std::cout << "POLYLINE" << std::endl;
        n = poly.size();
      }
-     for(int j=0; j < n; j++){
+     for(std::size_t j=0; j < n; j++){
        std::cout << poly[j] << std::endl;
      }
      std::cout << std::endl;
