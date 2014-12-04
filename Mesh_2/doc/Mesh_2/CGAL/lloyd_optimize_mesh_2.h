@@ -113,8 +113,8 @@ lloyd_optimize_mesh_2(CDT& cdt,
   std::size_t parameters::max_iteration_number=0,
   double parameters::convergence=0.001,
   double parameters::freeze_bound = 0.001,
-  PointIterator parameters::seeds_begin = InputIterator(),
-  PointIterator parameters::seeds_end = InputIterator(),
+  PointIterator parameters::seeds_begin = PointIterator(),
+  PointIterator parameters::seeds_end = PointIterator(),
   bool parameters::mark = false);
 
 } /* namespace CGAL */
