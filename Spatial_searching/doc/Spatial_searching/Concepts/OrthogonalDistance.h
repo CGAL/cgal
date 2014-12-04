@@ -75,7 +75,7 @@ the point on the boundary of `r` closest to `q`.
 Stores the components of the distance in each
 dimension in `dists`.
 */ 
-FT min_distance_to_rectangle(Query_item q, Kd_tree_rectangle<FT,D> r, vector<FT>& dists); 
+  FT min_distance_to_rectangle(Query_item q, Kd_tree_rectangle<FT,D> r, std::vector<FT>& dists); 
 
 /*!
 Returns the transformed distance between `q` and 
@@ -89,7 +89,7 @@ the point on the boundary of `r` farthest to `q`.
 Stores the components of the distance in each
 dimension in `dists`.
 */ 
-FT max_distance_to_rectangle(Query_item q, Kd_tree_rectangle<FT,D> r, vector<FT>& dists); 
+  FT max_distance_to_rectangle(Query_item q, Kd_tree_rectangle<FT,D> r, std::vector<FT>& dists); 
 
 /*!
 Returns the transformed distance. 

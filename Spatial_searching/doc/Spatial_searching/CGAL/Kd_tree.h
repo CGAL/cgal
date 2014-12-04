@@ -7,13 +7,13 @@ The class `Kd_tree` defines a `k-d` tree.
 
 \cgalHeading{Parameters}
 
-Expects for the first template argument a model of the concept
+\tparam Traits must be a model of the concept
 `SearchTraits`, for example `Search_traits_2<Simple_cartesian<double> >`.
 
-Expects for the second template argument a model for the concept `Splitter`.
+\tparam Splitter must be a model for the concept `Splitter`.
 It defaults to `Sliding_midpoint<Traits>`.
 
-Expects for the third template argument `Tag_true`, if the
+\tparam UseExtendedNode must be  `Tag_true`, if the
 tree shall be built with extended nodes, and `Tag_false` otherwise.
 
 \sa `CGAL::Kd_tree_node<Traits>`
@@ -30,7 +30,7 @@ public:
 /// @{
 
 /*!
-Dimension Tag.
+Dimension tag.
 */
 typedef unspecified_type D;
 

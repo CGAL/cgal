@@ -21,7 +21,7 @@
 
 #ifndef CGAL_SEARCH_TRAITS_2_H
 #define CGAL_SEARCH_TRAITS_2_H
-#include <CGAL\Dimension.h>
+#include <CGAL/Dimension.h>
 
 namespace CGAL {
 
@@ -31,7 +31,7 @@ namespace CGAL {
   class Search_traits_2 {
 
   public:
-    typedef typename Dimension_tag<2> Dimension;
+    typedef Dimension_tag<2> Dimension;
     typedef typename K::Point_2 Point_d;
     typedef typename K::Iso_rectangle_2 Iso_box_d;
     typedef typename K::Circle_2 Sphere_d;

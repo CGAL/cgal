@@ -10,7 +10,7 @@
 // normal_estimation_test points1.xyz points2.xyz...
 
 // With iterator debugging this testsuite takes to long and the process gets killed
-#define _HAS_ITERATOR_DEBUGGING 0
+//#define _HAS_ITERATOR_DEBUGGING 0
 
 // CGAL
 #include <CGAL/Simple_cartesian.h>

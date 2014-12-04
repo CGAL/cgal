@@ -73,11 +73,11 @@ private:
   {
     if (!(N->is_leaf())) 
     {
-      Tree::Internal_node_const_handle node = 
-        static_cast<Tree::Internal_node_const_handle>(N);
+      typename Tree::Internal_node_const_handle node =
+        static_cast<typename Tree::Internal_node_const_handle>(N);
       this->number_of_internal_nodes_visited++;
       int new_cut_dim=node->cutting_dimension();
-      Base::Node_const_handle bestChild, otherChild;
+      typename Base::Node_const_handle bestChild, otherChild;
       FT new_off;
       FT val = *(query_object_it + new_cut_dim);
       FT diff1 = val - node->high_value();
@@ -105,8 +105,8 @@ private:
     else
     {
       // n is a leaf
-      Tree::Leaf_node_const_handle node = 
-        static_cast<Tree::Leaf_node_const_handle>(N);
+      typename Tree::Leaf_node_const_handle node =
+        static_cast<typename Tree::Leaf_node_const_handle>(N);
       this->number_of_leaf_nodes_visited++;
       if (node->size() > 0)
       {
@@ -125,11 +125,11 @@ private:
   {
     if (!(N->is_leaf())) 
     {
-      Tree::Internal_node_const_handle node = 
-        static_cast<Tree::Internal_node_const_handle>(N);
+      typename Tree::Internal_node_const_handle node = 
+        static_cast<typename Tree::Internal_node_const_handle>(N);
       this->number_of_internal_nodes_visited++;
       int new_cut_dim=node->cutting_dimension();
-      Base::Node_const_handle bestChild, otherChild;
+      typename Base::Node_const_handle bestChild, otherChild;
       FT new_off;
       FT val = *(query_object_it + new_cut_dim);
       FT diff1 = val - node->high_value();
@@ -157,8 +157,8 @@ private:
     else
     {
       // n is a leaf
-      Tree::Leaf_node_const_handle node = 
-        static_cast<Tree::Leaf_node_const_handle>(N);
+      typename Tree::Leaf_node_const_handle node = 
+        static_cast<typename Tree::Leaf_node_const_handle>(N);
       this->number_of_leaf_nodes_visited++;
       if (node->size() > 0)
       {
