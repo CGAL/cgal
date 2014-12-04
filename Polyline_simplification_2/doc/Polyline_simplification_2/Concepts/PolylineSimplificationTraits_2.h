@@ -19,7 +19,7 @@ public:
 A function object to compute a squared distance for two points. 
 Provides the operator: 
 
-`FT operator()(Point_2 p, Point_2 q)` 
+`unspecified_type operator()(Point_2 p, Point_2 q)` 
 which returns the squared distance between `p` and `q`. 
 */ 
 typedef unspecified_type Compute_squared_distance_2;

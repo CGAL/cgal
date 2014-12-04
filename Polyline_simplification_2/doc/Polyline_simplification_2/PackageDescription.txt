@@ -21,9 +21,9 @@
 \cgalPkgManuals{Chapter_2D_Polyline_simplification,PkgPolylineSimplification2}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
-\cgalPkgSince{4.3}
+\cgalPkgSince{4.6}
 \cgalPkgDependsOn{\ref PkgTriangulation2Summary}
-\cgalPkgBib{cgal:fc-ps2}
+\cgalPkgBib{cgal:f-ps2}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
 \cgalPkgDemo{Polygon Demo,polygon_2.zip}
 \cgalPkgShortInfoEnd
