@@ -28,6 +28,7 @@
 
 
 #include <cstdio>
+#include <cctype>
 #include <string>
 #include <iostream>
 #include <CGAL/tags.h>
