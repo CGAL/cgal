@@ -33,6 +33,24 @@
 
 namespace CGAL {
 
+// Comparison functor that compares two Vertex_handle.
+// Used as 'Compare' functor for the constraint hierarchy.
+template < class Tr >
+class Pct2_vertex_handle_less_xy {
+  const Tr* tr_p;
+
+public:
+  Pct2_vertex_handle_less_xy(const Tr* tr_p) : tr_p(tr_p) {}
+
+  typedef typename Tr::Vertex_handle Vertex_handle;
+
+  bool operator()(const Vertex_handle& va,
+                  const Vertex_handle& vb) const
+  {
+    return tr_p->compare_xy(va->point(), vb->point()) == SMALLER;
+  }
+}; // end class template Pct2_vertex_handle_less_xy
+
 // Tr the base triangulation class 
 // Tr has to be Constrained or Constrained_Delaunay with Constrained_triangulation_plus_vertex_base
 
@@ -100,6 +118,7 @@ Default::Get< Tr_, Constrained_Delaunay_triangulation_2<
 public:
   typedef Tr                                   Triangulation;
   typedef typename Tr::Intersection_tag        Intersection_tag;
+  typedef Constrained_triangulation_plus_2<Tr_> Self;
   typedef Tr                                   Base;
 
   typedef typename Triangulation::Edge             Edge;
@@ -122,7 +141,9 @@ public:
   typedef typename Triangulation::List_vertices    List_vertices;
   typedef typename Triangulation::List_constraints List_constraints;
 
-  typedef Polyline_constraint_hierarchy_2<Vertex_handle, Point> Constraint_hierarchy;
+  typedef Pct2_vertex_handle_less_xy<Self>         Vh_less_xy;
+  typedef Polyline_constraint_hierarchy_2<Vertex_handle, Vh_less_xy, Point>
+                                                   Constraint_hierarchy;
 public:
   typedef Tag_true                                Constraint_hierarchy_tag;
 
@@ -160,10 +181,14 @@ public:
   }
 
   Constrained_triangulation_plus_2(const Geom_traits& gt=Geom_traits()) 
-    : Triangulation(gt) { }
+    : Triangulation(gt)
+    , hierarchy(Vh_less_xy(this))
+  { }
 
   Constrained_triangulation_plus_2(const Constrained_triangulation_plus_2& ctp)
-    : Triangulation()    { copy_triangulation(ctp);}
+    : Triangulation()
+    , hierarchy(Vh_less_xy(this))
+  { copy_triangulation(ctp);}
 
   virtual ~Constrained_triangulation_plus_2() {}
 
@@ -175,9 +200,10 @@ public:
 
   template<class InputIterator>
   Constrained_triangulation_plus_2(InputIterator first,
-                                       InputIterator last,
-                                       const Geom_traits& gt=Geom_traits() )
+				   InputIterator last,
+				   const Geom_traits& gt=Geom_traits() )
      : Triangulation(gt)
+     , hierarchy(Vh_less_xy(this))
   {
     insert_constraints(first, last);
     CGAL_triangulation_postcondition( this->is_valid() );
@@ -185,8 +211,9 @@ public:
 
 
   Constrained_triangulation_plus_2(std::list<std::pair<Point,Point> > constraints,
-                                       const Geom_traits& gt=Geom_traits() )
+				   const Geom_traits& gt=Geom_traits() )
     : Triangulation(gt)
+     , hierarchy(Vh_less_xy(this))
   {
     insert_constraints(constraints.begin(), constraints.end());
     CGAL_triangulation_postcondition( this->is_valid() );

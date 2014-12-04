@@ -33,8 +33,9 @@
 namespace CGAL {
 
 // T               is expected to be Vertex_handle
+// Compare         is a comparison operator for type T
 // Data            is intended to store info on a Vertex
-template <class T, class Data>
+template <class T, class Compare, class Data>
 class Polyline_constraint_hierarchy_2
 {
 public:
@@ -138,20 +139,26 @@ public:
     }
   };
 
-  struct Cmp {
-    bool operator()(const std::pair<Vertex_handle, Vertex_handle>& e0, 
-                    const std::pair<Vertex_handle, Vertex_handle>& e1) const
-    {
-      if(&*e0.first < &*e1.first) return true;
-      if((&*e0.first == &*e1.first)&& (&*e0.second < &*e1.second)) return true;
-      return false;
+  class Pair_compare {
+    Compare comp;
+
+  public:
+    Pair_compare(const Compare& comp) : comp(comp) {}
+
+    bool operator()(const Edge& e1, const Edge& e2) const {
+      if(comp(e1.first, e2.first)) {
+        return true;
+      } else if((! comp(e2.first, e1.first)) && //  !less(e1,e2) && !less(e2,e1) == equal
+                comp(e1.second, e2.second)) {
+        return true;
+      } else {
+        return false;
+      }
     }
   };
 
-  std::map<std::pair<Vertex_handle, Vertex_handle>,Constraint_id,Cmp> constraint_map;
-
   class Context {
-    friend class Polyline_constraint_hierarchy_2<T,Data>;
+    friend class Polyline_constraint_hierarchy_2<T,Compare,Data>;
   private:
     Vertex_list*    enclosing;
     Vertex_it       pos;
@@ -172,19 +179,28 @@ public:
   typedef std::list<Context>              Context_list;
   typedef typename Context_list::iterator Context_iterator;
 
-  typedef std::set<Constraint_id>                  Constraint_set;
-  typedef std::map<Edge,   Context_list* >        Sc_to_c_map;
+  typedef std::set<Constraint_id>           Constraint_set;
+  typedef std::map<Edge, Context_list*,
+		   Pair_compare>            Sc_to_c_map;
   typedef typename Constraint_set::iterator C_iterator;
   typedef typename Sc_to_c_map::const_iterator    Sc_iterator;
   typedef Sc_iterator Subconstraint_iterator;
   
 private:
   // data for the 1d hierarchy
+  Compare          comp;
   Constraint_set   constraint_set;
   Sc_to_c_map      sc_to_c_map;
+  std::map<std::pair<Vertex_handle, Vertex_handle>,
+	   Constraint_id,
+	   Pair_compare> constraint_map;
   
 public:
-  Polyline_constraint_hierarchy_2() { }
+  Polyline_constraint_hierarchy_2(const Compare& comp)
+    : comp(comp)
+    , sc_to_c_map(Pair_compare(comp))
+    , constraint_map(Pair_compare(comp))
+  { }
   Polyline_constraint_hierarchy_2(const Polyline_constraint_hierarchy_2& ch); 
   ~Polyline_constraint_hierarchy_2(){ clear();}
   void clear();
@@ -293,24 +309,27 @@ public:
   void   print() const;
 };
 
-template <class T, class Data> 
-Polyline_constraint_hierarchy_2<T,Data>::
+template <class T, class Compare, class Data>
+Polyline_constraint_hierarchy_2<T,Compare,Data>::
 Polyline_constraint_hierarchy_2(const Polyline_constraint_hierarchy_2& ch)
+  : comp(comp)
+  , sc_to_c_map(Pair_compare(comp))
+  , constraint_map(Pair_compare(comp))
 {
   copy(ch);
 }
 
-template <class T, class Data> 
-Polyline_constraint_hierarchy_2<T,Data>&
-Polyline_constraint_hierarchy_2<T,Data>::
+template <class T, class Compare, class Data>
+Polyline_constraint_hierarchy_2<T,Compare,Data>&
+Polyline_constraint_hierarchy_2<T,Compare,Data>::
 operator=(const Polyline_constraint_hierarchy_2& ch){
   copy(ch);
   return *this;
 }
 
-template <class T, class Data> 
+template <class T, class Compare, class Data>
 void
-Polyline_constraint_hierarchy_2<T,Data>::
+Polyline_constraint_hierarchy_2<T,Compare,Data>::
 copy(const Polyline_constraint_hierarchy_2& ch1)
 {
   // create a identity transfer vertex map
@@ -325,9 +344,9 @@ copy(const Polyline_constraint_hierarchy_2& ch1)
   copy(ch1, vmap);
 }
 
-template <class T, class Data> 
+template <class T, class Compare, class Data>
 void
-Polyline_constraint_hierarchy_2<T,Data>::
+Polyline_constraint_hierarchy_2<T,Compare,Data>::
 copy(const Polyline_constraint_hierarchy_2& ch1, std::map<Vertex_handle,Vertex_handle>& vmap)
   // copy with a transfer vertex map
 {
@@ -367,13 +386,14 @@ copy(const Polyline_constraint_hierarchy_2& ch1, std::map<Vertex_handle,Vertex_h
     sc_to_c_map[make_edge(uu2,vv2)] = hcl2;
   }
 
+  comp = ch1.comp;
   return;
 }
 
 
-template <class T, class Data> 
+template <class T, class Compare, class Data>
 void
-Polyline_constraint_hierarchy_2<T,Data>::
+Polyline_constraint_hierarchy_2<T,Compare,Data>::
 swap(Polyline_constraint_hierarchy_2& ch)
 {
   constraint_set.swap(ch.constraint_set);
@@ -382,24 +402,24 @@ swap(Polyline_constraint_hierarchy_2& ch)
 
 
 /*
-template <class T, class Data> 
-bool Polyline_constraint_hierarchy_2<T,Data>::
+template <class T, class Compare, class Data>
+bool Polyline_constraint_hierarchy_2<T,Compare,Data>::
 is_constrained_edge(T va, T vb) const
 {
   return( c_to_sc_map.find(make_edge(va, vb)) != c_to_sc_map.end() );
 }
 */
 
-template <class T, class Data> 
-bool Polyline_constraint_hierarchy_2<T,Data>::
+template <class T, class Compare, class Data>
+bool Polyline_constraint_hierarchy_2<T,Compare,Data>::
 is_subconstrained_edge(T va, T vb) const
 {
   return( sc_to_c_map.find(make_edge(va, vb)) != sc_to_c_map.end() );
 }
 
 
-template <class T, class Data> 
-bool Polyline_constraint_hierarchy_2<T,Data>::
+template <class T, class Compare, class Data>
+bool Polyline_constraint_hierarchy_2<T,Compare,Data>::
 vertices_in_constraint(Constraint hc, 
 		       Vertex_it& v_first,
 		       Vertex_it& v_past ) const
@@ -412,8 +432,8 @@ vertices_in_constraint(Constraint hc,
 }
 
 // af: obsolete
-template <class T, class Data>
-bool Polyline_constraint_hierarchy_2<T,Data>::
+template <class T, class Compare, class Data>
+bool Polyline_constraint_hierarchy_2<T,Compare,Data>::
 enclosing_constraint(Edge he, Constraint& hc) const
 {
   Context_iterator hcit, past;
@@ -424,8 +444,8 @@ enclosing_constraint(Edge he, Constraint& hc) const
 
 
 // used by Constrained_triangulation_plus_2::intersect with Exact_intersection_tag
-template <class T, class Data>
-bool Polyline_constraint_hierarchy_2<T,Data>::
+template <class T, class Compare, class Data>
+bool Polyline_constraint_hierarchy_2<T,Compare,Data>::
 enclosing_constraint(T  vaa, T  vbb, T& va, T& vb) const
 {
   Context_iterator hcit, past;
@@ -452,8 +472,8 @@ enclosing_constraint(T  vaa, T  vbb, T& va, T& vb) const
 }
 
 // af: obsolete
-template <class T, class Data>
-bool Polyline_constraint_hierarchy_2<T,Data>::
+template <class T, class Compare, class Data>
+bool Polyline_constraint_hierarchy_2<T,Compare,Data>::
 enclosing_constraints(T vaa, T vbb , Constraint_list& hcl) const
 {
   Context_iterator hcit, past;
@@ -465,9 +485,9 @@ enclosing_constraints(T vaa, T vbb , Constraint_list& hcl) const
   return true;
 }
 
-template <class T, class Data>
-typename Polyline_constraint_hierarchy_2<T,Data>::Context
-Polyline_constraint_hierarchy_2<T,Data>::
+template <class T, class Compare, class Data>
+typename Polyline_constraint_hierarchy_2<T,Compare,Data>::Context
+Polyline_constraint_hierarchy_2<T,Compare,Data>::
 context(T va, T vb)
 {
   Context_iterator hcit, past;
@@ -475,9 +495,9 @@ context(T va, T vb)
   return *hcit;
 }
 
-template <class T, class Data>
+template <class T, class Compare, class Data>
 std::size_t 
-Polyline_constraint_hierarchy_2<T,Data>::
+Polyline_constraint_hierarchy_2<T,Compare,Data>::
 number_of_enclosing_constraints(T va, T vb) const
 {
   Context_list* hcl;
@@ -485,9 +505,9 @@ number_of_enclosing_constraints(T va, T vb) const
   return hcl->size();
 }
 
-template <class T, class Data>
-typename Polyline_constraint_hierarchy_2<T,Data>::Context_iterator
-Polyline_constraint_hierarchy_2<T,Data>::
+template <class T, class Compare, class Data>
+typename Polyline_constraint_hierarchy_2<T,Compare,Data>::Context_iterator
+Polyline_constraint_hierarchy_2<T,Compare,Data>::
 contexts_begin(T va, T vb) const
 {
    Context_iterator first, last;
@@ -495,9 +515,9 @@ contexts_begin(T va, T vb) const
    return first;
 }
 
-template <class T, class Data>
-typename Polyline_constraint_hierarchy_2<T,Data>::Context_iterator
-Polyline_constraint_hierarchy_2<T,Data>::
+template <class T, class Compare, class Data>
+typename Polyline_constraint_hierarchy_2<T,Compare,Data>::Context_iterator
+Polyline_constraint_hierarchy_2<T,Compare,Data>::
 contexts_end(T va, T vb) const
 {   
    Context_iterator first, last;
@@ -505,9 +525,9 @@ contexts_end(T va, T vb) const
    return last;
 } 
 
-template <class T, class Data>
+template <class T, class Compare, class Data>
 void
-Polyline_constraint_hierarchy_2<T,Data>::
+Polyline_constraint_hierarchy_2<T,Compare,Data>::
 swap(Constraint_id first, Constraint_id second){
     // We have to look at all subconstraints
   for(Vertex_it it = first.vl_ptr()->skip_begin(), succ = it, end = first.vl_ptr()->skip_end(); 
@@ -561,9 +581,9 @@ swap(Constraint_id first, Constraint_id second){
 }
 
 
-template <class T, class Data>
+template <class T, class Compare, class Data>
 void
-Polyline_constraint_hierarchy_2<T,Data>::
+Polyline_constraint_hierarchy_2<T,Compare,Data>::
 remove_constraint(Constraint_id cid){
   constraint_set.erase(cid);
   
@@ -598,8 +618,8 @@ remove_constraint(Constraint_id cid){
 // This function removes vertex v from the polyline constraint
 // It only works for one polyline passing through v
 // and for the case that the constrained edge u,w has no intersections
-template <class T, class Data>
-void Polyline_constraint_hierarchy_2<T,Data>::simplify(Vertex_it uc,
+template <class T, class Compare, class Data>
+void Polyline_constraint_hierarchy_2<T,Compare,Data>::simplify(Vertex_it uc,
                                                        Vertex_it vc,
                                                        Vertex_it wc)
 
@@ -639,9 +659,9 @@ void Polyline_constraint_hierarchy_2<T,Data>::simplify(Vertex_it uc,
 }
 
 
-template <class T, class Data>
+template <class T, class Compare, class Data>
 std::size_t
-Polyline_constraint_hierarchy_2<T,Data>::remove_points_without_corresponding_vertex(Constraint_id cid)
+Polyline_constraint_hierarchy_2<T,Compare,Data>::remove_points_without_corresponding_vertex(Constraint_id cid)
 {
   std::size_t n = 0;
   for(Point_it it = points_in_constraint_begin(cid); 
@@ -654,9 +674,9 @@ Polyline_constraint_hierarchy_2<T,Data>::remove_points_without_corresponding_ver
   return n;
 }
 
-template <class T, class Data>
+template <class T, class Compare, class Data>
 std::size_t
-Polyline_constraint_hierarchy_2<T,Data>::remove_points_without_corresponding_vertex()
+Polyline_constraint_hierarchy_2<T,Compare,Data>::remove_points_without_corresponding_vertex()
 {
   std::size_t n = 0;
   for(C_iterator it = constraint_set.begin(); it!= constraint_set.end(); ++it){
@@ -666,9 +686,9 @@ Polyline_constraint_hierarchy_2<T,Data>::remove_points_without_corresponding_ver
 }
 
 
-template <class T, class Data>
-typename Polyline_constraint_hierarchy_2<T,Data>::Constraint_id
-Polyline_constraint_hierarchy_2<T,Data>::concatenate(Constraint_id first, Constraint_id second)
+template <class T, class Compare, class Data>
+typename Polyline_constraint_hierarchy_2<T,Compare,Data>::Constraint_id
+Polyline_constraint_hierarchy_2<T,Compare,Data>::concatenate(Constraint_id first, Constraint_id second)
 {
   constraint_set.erase(first);
   constraint_set.erase(second);
@@ -719,9 +739,9 @@ Polyline_constraint_hierarchy_2<T,Data>::concatenate(Constraint_id first, Constr
   return first;
 }
 
-template <class T, class Data>
-typename Polyline_constraint_hierarchy_2<T,Data>::Constraint_id
-Polyline_constraint_hierarchy_2<T,Data>::concatenate2(Constraint_id first, Constraint_id second)
+template <class T, class Compare, class Data>
+typename Polyline_constraint_hierarchy_2<T,Compare,Data>::Constraint_id
+Polyline_constraint_hierarchy_2<T,Compare,Data>::concatenate2(Constraint_id first, Constraint_id second)
 {  
   constraint_set.erase(first);
   constraint_set.erase(second);
@@ -775,9 +795,9 @@ Polyline_constraint_hierarchy_2<T,Data>::concatenate2(Constraint_id first, Const
   // split a constraint in two constraints, so that vcit becomes the first
   // vertex of the new constraint
   // returns the new constraint 
-template <class T, class Data>
-typename Polyline_constraint_hierarchy_2<T,Data>::Constraint_id
-Polyline_constraint_hierarchy_2<T,Data>::split(Constraint_id first, Vertex_it vcit)
+template <class T, class Compare, class Data>
+typename Polyline_constraint_hierarchy_2<T,Compare,Data>::Constraint_id
+Polyline_constraint_hierarchy_2<T,Compare,Data>::split(Constraint_id first, Vertex_it vcit)
 {
   constraint_set.erase(first);
   Vertex_list* second = new Vertex_list;
@@ -809,9 +829,9 @@ Polyline_constraint_hierarchy_2<T,Data>::split(Constraint_id first, Vertex_it vc
   return second;
 }
 
-template <class T, class Data>
-typename Polyline_constraint_hierarchy_2<T,Data>::Constraint_id
-Polyline_constraint_hierarchy_2<T,Data>::split2(Constraint_id first, Vertex_it vcit)
+template <class T, class Compare, class Data>
+typename Polyline_constraint_hierarchy_2<T,Compare,Data>::Constraint_id
+Polyline_constraint_hierarchy_2<T,Compare,Data>::split2(Constraint_id first, Vertex_it vcit)
 {
   constraint_set.erase(first);
   Vertex_list* second = new Vertex_list;
@@ -848,9 +868,9 @@ Polyline_constraint_hierarchy_2<T,Data>::split2(Constraint_id first, Vertex_it v
 when a constraint is inserted,
 it is, at first, both  a constraint and a subconstraint
  */
-template <class T, class Data>
-typename Polyline_constraint_hierarchy_2<T,Data>::Vertex_list*
-Polyline_constraint_hierarchy_2<T,Data>::
+template <class T, class Compare, class Data>
+typename Polyline_constraint_hierarchy_2<T,Compare,Data>::Vertex_list*
+Polyline_constraint_hierarchy_2<T,Compare,Data>::
 insert_constraint(T va, T vb){
   Edge        he = make_edge(va, vb);
   Vertex_list*  children = new Vertex_list; 
@@ -877,9 +897,9 @@ insert_constraint(T va, T vb){
 }
 
 
-template <class T, class Data>
+template <class T, class Compare, class Data>
 void
-Polyline_constraint_hierarchy_2<T,Data>::
+Polyline_constraint_hierarchy_2<T,Compare,Data>::
 append_constraint(Constraint_id cid, T va, T vb){
   Edge        he = make_edge(va, vb);
   Context_list* fathers;
@@ -902,8 +922,8 @@ append_constraint(Constraint_id cid, T va, T vb){
 }
 
 
-template <class T, class Data>
-void Polyline_constraint_hierarchy_2<T,Data>::
+template <class T, class Compare, class Data>
+void Polyline_constraint_hierarchy_2<T,Compare,Data>::
 clear()
 {
   C_iterator cit;
@@ -924,8 +944,8 @@ clear()
 }
 
 
-template <class T, class Data>
-bool Polyline_constraint_hierarchy_2<T,Data>::
+template <class T, class Compare, class Data>
+bool Polyline_constraint_hierarchy_2<T,Compare,Data>::
 next_along_sc(T va, T vb, T& w) const
 {
   // find the next vertex after vb along any enclosing constrained
@@ -953,8 +973,8 @@ next_along_sc(T va, T vb, T& w) const
   Attention, le point v DOIT etre un point de Steiner,
   et les segments va,v et v,vb sont des sous contraintes.
 */
-template <class T, class Data>
-void Polyline_constraint_hierarchy_2<T,Data>::
+template <class T, class Compare, class Data>
+void Polyline_constraint_hierarchy_2<T,Compare,Data>::
 remove_Steiner(T v, T va, T vb)
 {
   // remove a Steiner point
@@ -985,16 +1005,16 @@ remove_Steiner(T v, T va, T vb)
   same as add_Steiner
   precondition : va,vb est une souscontrainte. 
 */
-template <class T, class Data>
-void Polyline_constraint_hierarchy_2<T,Data>::
+template <class T, class Compare, class Data>
+void Polyline_constraint_hierarchy_2<T,Compare,Data>::
 split_constraint(T va, T vb, T vc){
   add_Steiner(va, vb, vc);
 }
 
 
-template <class T, class Data>
+template <class T, class Compare, class Data>
 void 
-Polyline_constraint_hierarchy_2<T,Data>::
+Polyline_constraint_hierarchy_2<T,Compare,Data>::
 add_Steiner(T va, T vb, T vc){
   Context_list* hcl;
   if(!get_contexts(va,vb,hcl)) CGAL_triangulation_assertion(false);
@@ -1045,19 +1065,19 @@ add_Steiner(T va, T vb, T vc){
 }
 
 
-template <class T, class Data>
+template <class T, class Compare, class Data>
 inline
-typename Polyline_constraint_hierarchy_2<T,Data>::Edge
-Polyline_constraint_hierarchy_2<T,Data>::
+typename Polyline_constraint_hierarchy_2<T,Compare,Data>::Edge
+Polyline_constraint_hierarchy_2<T,Compare,Data>::
 make_edge(T va, T vb) const
 {
-  return (va<vb) ? Edge(va,vb) : Edge(vb,va);
+  return comp(va, vb) ? Edge(va,vb) : Edge(vb,va);
 }
 
-template <class T, class Data>
+template <class T, class Compare, class Data>
 inline
 bool
-Polyline_constraint_hierarchy_2<T,Data>::
+Polyline_constraint_hierarchy_2<T,Compare,Data>::
 get_contexts(T va, T vb, Context_list* & hcl) const
 {
   Sc_iterator sc_iter = sc_to_c_map.find(make_edge(va,vb));
@@ -1066,10 +1086,10 @@ get_contexts(T va, T vb, Context_list* & hcl) const
   return true;
 }
 
-template <class T, class Data>
+template <class T, class Compare, class Data>
 inline
 bool
-Polyline_constraint_hierarchy_2<T,Data>::
+Polyline_constraint_hierarchy_2<T,Compare,Data>::
 get_contexts(T va, T vb, 
 	     Context_iterator& ctxt, 
 	     Context_iterator& past) const
@@ -1083,19 +1103,19 @@ get_contexts(T va, T vb,
 
 
 
-template <class T, class Data>
+template <class T, class Compare, class Data>
 inline
-typename Polyline_constraint_hierarchy_2<T,Data>::Vertex_it
-Polyline_constraint_hierarchy_2<T,Data>::
+typename Polyline_constraint_hierarchy_2<T,Compare,Data>::Vertex_it
+Polyline_constraint_hierarchy_2<T,Compare,Data>::
 get_pos(T va, T vb) const
   //return pos in the first context
 {
     return (*sc_to_c_map.find(make_edge(va,vb))).second->begin().pos;
 }
 
-template <class T, class Data>
+template <class T, class Compare, class Data>
 void
-Polyline_constraint_hierarchy_2<T,Data>::
+Polyline_constraint_hierarchy_2<T,Compare,Data>::
 oriented_end(T va, T vb, T& vc) const
 {
   Context_iterator ctxt, past;
@@ -1107,9 +1127,9 @@ oriented_end(T va, T vb, T& vc) const
 }
 
 
-template <class T, class Data>
+template <class T, class Compare, class Data>
 void
-Polyline_constraint_hierarchy_2<T,Data>::
+Polyline_constraint_hierarchy_2<T,Compare,Data>::
 print() const
 { 
   C_iterator hcit;
