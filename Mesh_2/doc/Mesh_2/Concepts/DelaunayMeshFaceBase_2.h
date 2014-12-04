@@ -21,7 +21,14 @@ meshing domain or not.
 class DelaunayMeshFaceBase_2 {
 public:
 
-/// \name Access Functions
+/// \name Typedef
+/// @{
+/*! A typedef to describe an edge
+*/
+typedef std::pair<DelaunayMeshFaceBase_2, int> Edge;
+/// @}
+
+/// \name Functions
 /// @{
 
 /*!
@@ -54,6 +61,7 @@ its circumcenter.
 Edge blinding_constraint() const;
 
 /*!
+sets the edge that makes this face blind.
 \pre is_blind() returns true
 \pre e is a constrained edge
 */
