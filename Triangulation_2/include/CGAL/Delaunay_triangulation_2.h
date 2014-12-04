@@ -134,17 +134,7 @@ public:
   Object dual(const Edge &e) const ;
   Object dual(const Edge_circulator& ec) const;
   Object dual(const Finite_edges_iterator& ei) const;
-  
-  template<typename OutputIterator>
-  OutputIterator dual(Vertex_handle v,
-                      OutputIterator oit) const;
-  template<typename OutputIterator>
-  OutputIterator dual(const Vertex_circulator& vc,
-                      OutputIterator oit) const;
-  template<typename OutputIterator>
-  OutputIterator dual(const Finite_vertices_iterator& vi,
-                      OutputIterator oit) const;
-  
+
   //INSERTION-REMOVAL
   Vertex_handle insert(const Point  &p, 
 		       Face_handle start = Face_handle() );
@@ -850,87 +840,6 @@ dual(const Finite_edges_iterator& ei) const
   return dual(*ei);
 }
 
-
-template < class Gt, class Tds >
-template<typename OutputIterator>
-OutputIterator
-Delaunay_triangulation_2<Gt,Tds>::
-dual(Vertex_handle v, OutputIterator oit) const
-{
-  CGAL_triangulation_precondition( v != Vertex_handle());
-  CGAL_triangulation_precondition( !this->is_infinite(v));
-
-  // The Circulator moves ccw.
-  std::vector<Segment> segments;
-  std::vector<Ray> rays;
-  Face_circulator fc = this->incident_faces(v), done(fc);
-  Point prev_cc;
-  bool first_ = true;
-  do
-  {
-    if(!this->is_infinite(fc)) //finite edges (= segments)
-    {
-      if(first_)
-        prev_cc = this->circumcenter(fc);
-      else
-      {
-        Point cc = this->circumcenter(fc);
-        *oit++ = Segment(cc, prev_cc);
-        prev_cc = cc;
-      }
-      first_ = false;
-    }
-    else // infinite edges (= rays)
-    {
-      first_ = true;//for next segment
-      //find the one finite edge
-      for(int i = 0; i < 3; ++i)
-      {
-        if(!this->is_infinite(fc,i))
-        {
-          Point m = CGAL::midpoint(fc->vertex(cw(i))->point(),
-                                   fc->vertex(ccw(i))->point());
-          Face_handle fn = fc->neighbor(i);
-
-          Point opp = fn->vertex(fn->index(fc))->point();
-          double dot_prod = (m-cc)*(m-opp);
-          if(dot_prod > 0.)      *oit++ = Ray(cc, m);
-          else if(dot_prod < 0.) *oit++ = Ray(cc, Vector(m, cc));
-          else //0. cc and m are the same point
-          {
-            Segment se = this->segment(Face_handle(fc,i));
-            Vector_2 normal = se.supporting_line().perpendicular(m).to_vector();
-            if(normal * (m - opp) > 0.)
-              *oit++ = Ray(cc, normal);
-            else
-              *oit++ = Ray(cc, -normal);
-          }
-        }
-      }
-    }
-  }
-  while(++fc != done);
-
-  return oit;
-}
-
-template<class Gt, class Tds>
-template<typename OutputIterator>
-OutputIterator
-Delaunay_triangulation_2<Gt,Tds>::
-dual(const Vertex_circulator& vc, OutputIterator oit) const
-{
-  return dual(*vc);
-}
-
-template<class Gt, class Tds>
-template<typename OutputIterator>
-OutputIterator
-Delaunay_triangulation_2<Gt,Tds>::
-dual(const Finite_vertices_iterator& vi, OutputIterator oit) const
-{
-  return dual(*vi);
-}
 
 ///////////////////////////////////////////////////////////////
 //  INSERT

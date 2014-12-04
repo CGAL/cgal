@@ -414,7 +414,7 @@ private:
   void update_blind_faces()
   {
     //update blindness
-    CGAL::Constrained_voronoi_diagram_2<CDT> cvd(&cdt_);
+    CGAL::Constrained_voronoi_diagram_2<CDT> cvd(cdt_);
     cvd.tag_faces_blind();
   }
 

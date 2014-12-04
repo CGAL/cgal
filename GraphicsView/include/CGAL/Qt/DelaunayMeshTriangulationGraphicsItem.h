@@ -227,19 +227,20 @@ DelaunayMeshTriangulationGraphicsItem<T>::drawAll(QPainter *painter)
 //    painter->setPen(this->voronoiPen());
 
     this->painterostream = PainterOstream<typename T::Geom_traits>(painter);
+    typedef CGAL::Cvd_cell_2<T> Cvd_cell;
     for(typename T::Finite_vertices_iterator
           vit = this->t->finite_vertices_begin();
           vit != this->t->finite_vertices_end();
           ++vit)
     {
-      typename T::Cvd_cell cell = this->t->dual(vit);
-      for(typename T::Cvd_cell::segment_iterator sit = cell.segments_begin();
+      Cvd_cell cell = CGAL::dual(*(this->t), vit);
+      for(typename Cvd_cell::segment_iterator sit = cell.segments_begin();
         sit != cell.segments_end();
         ++sit)
       {
         this->painterostream << *sit;
       }
-      for(typename T::Cvd_cell::ray_iterator rit = cell.rays_begin();
+      for(typename Cvd_cell::ray_iterator rit = cell.rays_begin();
         rit != cell.rays_end();
         ++rit)
       {

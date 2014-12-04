@@ -787,7 +787,7 @@ MainWindow::on_actionTagBlindFaces_triggered()
   // wait cursor
   QApplication::setOverrideCursor(Qt::WaitCursor);
 
-  CVD voronoi(&cdt);
+  CVD voronoi(cdt);
   voronoi.tag_faces_blind();
 
   // default cursor

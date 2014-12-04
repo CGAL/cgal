@@ -15,12 +15,13 @@ namespace Mesh_2
   {
     typedef typename CDT::Vertex_handle          Vertex_handle;
     typedef typename CDT::Geom_traits::Point_2   Point_2;
-    typedef typename CDT::Cvd_cell               Cvd_cell;
-
     typedef typename CDT::Geom_traits::Segment_2  Segment;
     typedef typename CDT::Geom_traits::Triangle_2 Triangle;
     typedef typename CDT::Geom_traits::FT         FT;
     typedef typename CDT::Geom_traits::Vector_2   Vector_2;
+
+    typedef typename CGAL::Constrained_voronoi_diagram_2<CDT> CVD;
+    typedef typename CVD::Cvd_cell               Cvd_cell;
 
   public:
     typedef SizingField Sizing_field;
@@ -37,7 +38,7 @@ namespace Mesh_2
       Vector_2 move = CGAL::NULL_VECTOR;
       FT sum_masses(0);
 
-      Cvd_cell cell = cdt.dual(v);
+      Cvd_cell cell = CGAL::dual(cdt, v);
       if(cell.is_infinite() || cell.is_empty())
         return CGAL::NULL_VECTOR; //center of mass is at infinity!
 

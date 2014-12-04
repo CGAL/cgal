@@ -1,8 +1,6 @@
 #ifndef CGAL_CONSTRAINED_VORONOI_DIAGRAM_2_H
 #define CGAL_CONSTRAINED_VORONOI_DIAGRAM_2_H
 
-#include <CGAL/Polygon_2.h>
-
 #include <utility>
 
 namespace CGAL {
@@ -126,13 +124,11 @@ public:
 }; //end CLASS Cvd_cell_2
 
 
-// Cdt should be of the type Constrained_Delaunay_triangulation_face_base_2
+// Cdt should be of the type Constrained_Delaunay_triangulation_2
+// and the face base shoul be Constrained_Delaunay_triangulation_face_base_2
 template <class Cdt>
 class Constrained_voronoi_diagram_2
-  : public std::list< Cvd_cell_2<Cdt> >
 {
-  typedef std::list< Cvd_cell_2<Cdt> > Base;
-
 public:
   typedef Constrained_voronoi_diagram_2<Cdt>         Cvd;
   typedef Cvd_cell_2<Cdt>                            Cvd_cell;
@@ -163,34 +159,25 @@ public:
   typedef typename Cdt::Segment                 Segment;
   typedef typename Cdt::Triangle                Triangle;
 
-  typedef typename Base::iterator       iterator;
-  typedef typename Base::const_iterator const_iterator;
-
 protected:
-  const Cdt* m_pCdt;
+  const Cdt& m_cdt;
 
 public:
-  Cvd(const Cdt* p_cdt)
-    : Base()
-    , m_pCdt(p_cdt)
+  Cvd(const Cdt& cdt)
+    : m_cdt(cdt)
   {
   }
-
-  enum {INSIDE = -1,
-        UNDETERMINED = 0,
-        OUTSIDE = 1};
 
   //----------------------------------------------------------------
   //--------------------ABOUT FACES SIGHT---------------------------
   //----------------------------------------------------------------
 
 public:
-
   // blind = false IFF each face sees its circumcenter
   void tag_all_faces_blind(const bool blind) 
   {
-    for(All_faces_iterator f = m_pCdt->all_faces_begin();
-         f != m_pCdt->all_faces_end();
+    for(All_faces_iterator f = m_cdt.all_faces_begin();
+         f != m_cdt.all_faces_end();
          ++f)
       f->blind() = blind;
   }
@@ -199,21 +186,21 @@ public:
   // if true, set corresponding barrier constraint
   void tag_faces_blind()
   {
-    if(m_pCdt->dimension() < 2)
+    if(m_cdt.dimension() < 2)
       return;
 
     tag_all_faces_blind(false);
 
     // for each constrained edge, mark blinded triangles
-    for(Finite_edges_iterator e = m_pCdt->finite_edges_begin();
-         e != m_pCdt->finite_edges_end();
+    for(Finite_edges_iterator e = m_cdt.finite_edges_begin();
+         e != m_cdt.finite_edges_end();
          ++e)
     {
       Edge edge = *e;
-      if(m_pCdt->is_constrained(edge))
+      if(m_cdt.is_constrained(edge))
       {
         tag_neighbors_blind(edge);
-        tag_neighbors_blind(m_pCdt->mirror_edge(edge));
+        tag_neighbors_blind(m_cdt.mirror_edge(edge));
       }
     }
   }
@@ -222,8 +209,8 @@ private:
   // test face for blindness with respect to the edge constraint
   void tag_face_blind(Face_handle& f, const Edge& constraint)
   {  
-    if(segment_hides_circumcenter(m_pCdt->segment(constraint),
-                                  m_pCdt->triangle(f)))
+    if(segment_hides_circumcenter(m_cdt.segment(constraint),
+                                  m_cdt.triangle(f)))
     {
       f->blind() = true;
       f->blinding_constraint() = constraint;
@@ -260,12 +247,12 @@ private:
   // seed and its neighbor faces, on the same side of Edge than seed.
   void tag_neighbors_blind(const Edge& constraint)
   {
-    CGAL_assertion(m_pCdt->is_constrained(constraint));
+    CGAL_assertion(m_cdt.is_constrained(constraint));
     Face_handle seed = constraint.first;
 
-    if(!m_pCdt->is_infinite(seed) 
+    if(!m_cdt.is_infinite(seed) 
        && !seed->blind() 
-       && m_pCdt->triangle(seed).area() != 0)
+       && m_cdt.triangle(seed).area() != 0)
        //to avoid flat triangles outside the domain
     {
       std::stack<Face_handle> faces;
@@ -290,9 +277,9 @@ private:
     {
       Face_handle fi = f->neighbor(i);
       Edge edge_i = Edge(f, i);
-      if(!m_pCdt->is_constrained(edge_i) &&
+      if(!m_cdt.is_constrained(edge_i) &&
           !fi->blind() &&
-          !m_pCdt->is_infinite(fi)) 
+          !m_cdt.is_infinite(fi)) 
         faces.push(fi);
     }
   }
@@ -301,19 +288,7 @@ private:
   ---------------------- BVD CONSTRUCTION ------------------------
   --------------------------------------------------------------*/
 
-  // assemble a cell of the bounded Voronoi diagram
-  // incident to vertex v
 public:
-  template<typename OutputIterator>
-  OutputIterator cvd_cell(Vertex_handle v, OutputIterator oit) const
-  {
-    if(bvd_cell_is_infinite(v))
-      infinite_cvd_cell(v, oit);
-    else
-      finite_cvd_cell(v, oit);
-    return oit;
-  }
-
   Cvd_cell cvd_cell(Vertex_handle v) const
   {
     Cvd_cell cell(v);
@@ -329,31 +304,45 @@ public:
     return cell;
   }
 
+// assemble a cell of the bounded Voronoi diagram
+// incident to vertex v
+// OutputIterator should be able to collect Segments and Rays
+private:
+  template<typename OutputIterator>
+  OutputIterator cvd_cell(Vertex_handle v, OutputIterator oit) const
+  {
+    if(bvd_cell_is_infinite(v))
+      infinite_cvd_cell(v, oit);
+    else
+      finite_cvd_cell(v, oit);
+    return oit;
+  }
+
 private:
   template <typename OutputIterator>
   OutputIterator finite_cvd_cell(Vertex_handle v, OutputIterator oit) const
   {
     std::vector<Point> polygon;
     
-    CGAL_assertion(!m_pCdt->is_infinite(v));
-    Face_circulator face = m_pCdt->incident_faces(v);
+    CGAL_assertion(!m_cdt.is_infinite(v));
+    Face_circulator face = m_cdt.incident_faces(v);
     Face_circulator end = face;
     Face_circulator next = face;
 
     CGAL_For_all(face, end)
     {
       next++;
-      Line line(m_pCdt->circumcenter(face), m_pCdt->circumcenter(next));
+      Line line(m_cdt.circumcenter(face), m_cdt.circumcenter(next));
       Point intersect;
 
       if(!face->blind()) //face sees
       {
-        polygon.push_back(m_pCdt->circumcenter(face));
+        polygon.push_back(m_cdt.circumcenter(face));
         if(next->blind())  //next doesn't
         {
-          CGAL_assertion(do_intersect(line, m_pCdt->segment(next->blinding_constraint())));
+          CGAL_assertion(do_intersect(line, m_cdt.segment(next->blinding_constraint())));
           CGAL::assign(intersect,
-            CGAL::intersection(line, Line(m_pCdt->segment(next->blinding_constraint()))));
+            CGAL::intersection(line, Line(m_cdt.segment(next->blinding_constraint()))));
           polygon.push_back(intersect);
         }
       }
@@ -361,26 +350,26 @@ private:
       {
         if(!next->blind()) //next sees
         {
-          CGAL_assertion(do_intersect(line, m_pCdt->segment(face->blinding_constraint())));
+          CGAL_assertion(do_intersect(line, m_cdt.segment(face->blinding_constraint())));
           CGAL::assign(intersect,
-            CGAL::intersection(line, Line(m_pCdt->segment(face->blinding_constraint()))));
+            CGAL::intersection(line, Line(m_cdt.segment(face->blinding_constraint()))));
           polygon.push_back(intersect);
         }
         else //next doesn't
         {
           if(face->blinding_constraint() != next->blinding_constraint()
-            && face->blinding_constraint() != m_pCdt->mirror_edge(next->blinding_constraint()))
+            && face->blinding_constraint() != m_cdt.mirror_edge(next->blinding_constraint()))
             // the 2 blinding_constraints are different
           {
-            CGAL_assertion(do_intersect(line, m_pCdt->segment(face->blinding_constraint())));
+            CGAL_assertion(do_intersect(line, m_cdt.segment(face->blinding_constraint())));
             CGAL::assign(intersect,
-              CGAL::intersection(line, Line(m_pCdt->segment(face->blinding_constraint()))));
+              CGAL::intersection(line, Line(m_cdt.segment(face->blinding_constraint()))));
             polygon.push_back(intersect);
 
             Point intersection2;
-            CGAL_assertion(do_intersect(line, m_pCdt->segment(next->blinding_constraint())));
+            CGAL_assertion(do_intersect(line, m_cdt.segment(next->blinding_constraint())));
             CGAL::assign(intersection2,
-              CGAL::intersection(line, Line(m_pCdt->segment(next->blinding_constraint()))));
+              CGAL::intersection(line, Line(m_cdt.segment(next->blinding_constraint()))));
             polygon.push_back(intersection2);
           }
           //else: it's the same constraint--> do nothing
@@ -406,16 +395,99 @@ private:
   //returns true iff generators's cell is on the convex hull
   bool bvd_cell_is_infinite(const Vertex_handle generator) const
   {
-    Face_circulator face = m_pCdt->incident_faces(generator);
+    Face_circulator face = m_cdt.incident_faces(generator);
     Face_circulator begin = face;
     CGAL_For_all(face, begin){
-      if(m_pCdt->is_infinite(face))
+      if(m_cdt.is_infinite(face))
         return true;
     }
     return false;
   }
 
 };// class Constrained_voronoi_diagram
+
+
+template<typename Tr>
+Cvd_cell_2<Tr> dual(const Tr& tr,
+                    const typename Tr::Vertex_handle& v)
+{
+  CGAL_triangulation_precondition( v != Tr::Vertex_handle());
+  CGAL_triangulation_precondition( !tr.is_infinite(v));
+
+  Constrained_voronoi_diagram_2<Tr> diagram(tr);
+  return diagram.cvd_cell(v);
+}
+
+// dual(v) implementation for Delaunay_triangulation_2
+//template<typename Tr, typename OutputIterator>
+//OutputIterator
+//dual(const Tr& tr,
+//     typename Tr::Vertex_handle v,
+//     OutputIterator oit)
+//{
+//  typedef Tr::Vertex_handle         Vertex_handle;
+//  typedef Tr::Face_handle           Face_handle;
+//  typedef Tr::Point                 Point;
+//  typedef Tr::Segment               Segment;
+//  typedef Tr::Geom_traits::Ray_2    Ray;
+//  typedef Tr::Geom_traits::Vector_2 Vector_2;
+//
+//  CGAL_triangulation_precondition( v != Vertex_handle());
+//  CGAL_triangulation_precondition( !tr.is_infinite(v));
+//
+//  // The Circulator moves ccw.
+//  std::vector<Segment> segments;
+//  std::vector<Ray> rays;
+//  Tr::Face_circulator fc = tr.incident_faces(v), done(fc);
+//  Point prev_cc;
+//  bool first_ = true;
+//  do
+//  {
+//    if(!tr.is_infinite(fc)) //finite edges (= segments)
+//    {
+//      if(first_)
+//        prev_cc = tr.circumcenter(fc);
+//      else
+//      {
+//        Point cc = tr.circumcenter(fc);
+//        *oit++ = Segment(cc, prev_cc);
+//        prev_cc = cc;
+//      }
+//      first_ = false;
+//    }
+//    else // infinite edges (= rays)
+//    {
+//      first_ = true;//for next segment
+//      //find the one finite edge
+//      for(int i = 0; i < 3; ++i)
+//      {
+//        if(!tr.is_infinite(fc,i))
+//        {
+//          Point m = CGAL::midpoint(fc->vertex(cw(i))->point(),
+//                                   fc->vertex(ccw(i))->point());
+//          Face_handle fn = fc->neighbor(i);
+//
+//          Point opp = fn->vertex(fn->index(fc))->point();
+//          double dot_prod = (m-cc)*(m-opp);
+//          if(dot_prod > 0.)      *oit++ = Ray(cc, m);
+//          else if(dot_prod < 0.) *oit++ = Ray(cc, Vector(m, cc));
+//          else //0. cc and m are the same point
+//          {
+//            Segment se = this->segment(Face_handle(fc,i));
+//            Vector_2 normal = se.supporting_line().perpendicular(m).to_vector();
+//            if(normal * (m - opp) > 0.)
+//              *oit++ = Ray(cc, normal);
+//            else
+//              *oit++ = Ray(cc, -normal);
+//          }
+//        }
+//      }
+//    }
+//  }
+//  while(++fc != done);
+//
+//  return oit;
+//}
 
 } //namespace CGAL
 #endif // CGAL_CONSTRAINED_VORONOI_DIAGRAM_2_H
