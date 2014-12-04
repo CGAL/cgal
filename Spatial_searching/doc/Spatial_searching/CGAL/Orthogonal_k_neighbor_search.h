@@ -13,14 +13,14 @@ using an orthogonal distance class.
 for example `Search_traits_2<Simple_cartesian<double> >`. 
 
 \tparam OrthogonalDistance must be a model of the
-concept `GeneralDistance`. If `Traits` is 
+concept `OrthogonalDistance`. If `Traits` is 
 `Search_traits_adapter<Key,PointPropertyMap,BaseTraits>` 
 the default type is `Distance_adapter<Key,PointPropertyMap,Euclidean_distance<BaseTraits> >`, 
 and `Euclidean_distance<Traits>` otherwise. 
 
 The default type is `Euclidean_distance<Traits>`. 
 
-\tparam mut be a model of the concept `Splitter`. 
+\tparam Splitter must be a model of the concept `Splitter`. 
 The default type is `Sliding_midpoint<Traits>`. 
 
 \tparam SpatialTree must be a model of the concept `SpatialTree`. 
