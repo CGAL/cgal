@@ -90,8 +90,6 @@ int main(int argc,char *argv[])
         std::cerr << result[i].x()<<" "<<result[i].y()<<" "<<result[i].z()<< std::endl;
       }
     }
-    if(dump)
-      search.statistics(std::cerr);	
     dump = false;
   }
   t.stop();
