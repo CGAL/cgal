@@ -63,13 +63,22 @@ public:
   }
 
   // sees its circumcenter or not?
-  const bool& blind() const { return m_blind; }
-  bool& blind(){ return m_blind; }
+  const bool is_blind() const { return m_blind; }
+  void set_blind(const bool b){ m_blind = b; }
 
   // if blind, the constrained edge that prevents the face
   // to see its circumcenter 
-  const Edge& blinding_constraint() const { return m_blinding_constraint; }
-  Edge& blinding_constraint() { return m_blinding_constraint; }
+  const Edge& blinding_constraint() const
+  {
+    CGAL_precondition(this->is_blind());
+    return m_blinding_constraint;
+  }
+  void set_blinding_constraint(const Edge& e)
+  {
+    CGAL_precondition(this->is_blind());
+    CGAL_precondition(e.first->is_constrained(e.second));
+    m_blinding_constraint = e;
+  }
 };
 
 } //namespace CGAL 

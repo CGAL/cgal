@@ -214,7 +214,7 @@ DelaunayMeshTriangulationGraphicsItem<T>::drawAll(QPainter *painter)
     for(typename T::Finite_faces_iterator fit = this->t->finite_faces_begin();
 	fit != this->t->finite_faces_end();
 	++fit){
-      if(fit->blind()){
+      if(fit->is_blind()){
 	this->painterostream << this->t->triangle(fit);
       }
     }
@@ -285,7 +285,7 @@ DelaunayMeshTriangulationGraphicsItem<T>::operator()(typename T::Face_handle fh)
     }
   }
   if(visibleBlindFaces()) {
-    if(fh->blind()){
+    if(fh->is_blind()){
       this->painterostream = PainterOstream<typename T::Geom_traits>(this->m_painter);
       this->m_painter->setBrush(blindFacesBrush());
       this->m_painter->setPen(::Qt::NoPen) ;

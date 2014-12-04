@@ -179,7 +179,7 @@ public:
     for(All_faces_iterator f = m_cdt.all_faces_begin();
          f != m_cdt.all_faces_end();
          ++f)
-      f->blind() = blind;
+      f->set_blind(blind);
   }
 
   // blind test for each face
@@ -212,8 +212,8 @@ private:
     if(segment_hides_circumcenter(m_cdt.segment(constraint),
                                   m_cdt.triangle(f)))
     {
-      f->blind() = true;
-      f->blinding_constraint() = constraint;
+      f->set_blind(true);
+      f->set_blinding_constraint(constraint);
     }
   }
 
@@ -251,7 +251,7 @@ private:
     Face_handle seed = constraint.first;
 
     if(!m_cdt.is_infinite(seed) 
-       && !seed->blind() 
+       && !seed->is_blind() 
        && m_cdt.triangle(seed).area() != 0)
        //to avoid flat triangles outside the domain
     {
@@ -263,7 +263,7 @@ private:
         Face_handle f = faces.top();
         faces.pop();
         this->tag_face_blind(f, constraint);
-        if(f->blind())
+        if(f->is_blind())
           this->push_unvisited_neighbors(f, faces);
       }
     }
@@ -278,7 +278,7 @@ private:
       Face_handle fi = f->neighbor(i);
       Edge edge_i = Edge(f, i);
       if(!m_cdt.is_constrained(edge_i) &&
-          !fi->blind() &&
+          !fi->is_blind() &&
           !m_cdt.is_infinite(fi)) 
         faces.push(fi);
     }
@@ -335,10 +335,10 @@ private:
       Line line(m_cdt.circumcenter(face), m_cdt.circumcenter(next));
       Point intersect;
 
-      if(!face->blind()) //face sees
+      if(!face->is_blind()) //face sees
       {
         polygon.push_back(m_cdt.circumcenter(face));
-        if(next->blind())  //next doesn't
+        if(next->is_blind())  //next doesn't
         {
           CGAL_assertion(do_intersect(line, m_cdt.segment(next->blinding_constraint())));
           CGAL::assign(intersect,
@@ -348,7 +348,7 @@ private:
       }
       else //face doesn't see
       {
-        if(!next->blind()) //next sees
+        if(!next->is_blind()) //next sees
         {
           CGAL_assertion(do_intersect(line, m_cdt.segment(face->blinding_constraint())));
           CGAL::assign(intersect,
