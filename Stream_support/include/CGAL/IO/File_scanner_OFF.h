@@ -203,7 +203,7 @@ public:
             m_in >> iformat(d);
             z = int(d);
             if ( is_homogeneous()) {
-              m_in >> iformat(d);
+                m_in >> iformat(d);
                 w = int(d);
             }
         }
@@ -224,7 +224,7 @@ public:
                     z /= w;
                 }
             } else {
-              m_in >> iformat(x) >> iformat(y) >> iformat(z);
+                m_in >> iformat(x) >> iformat(y) >> iformat(z);
                 if ( is_homogeneous()) {
                     float w;
                     m_in >> iformat(w);
@@ -262,7 +262,7 @@ public:
                     y = fy / fw;
                     z = fz / fw;
                 } else
-                  m_in >> iformat(x) >> iformat(y) >> iformat(z);
+                    m_in >> iformat(x) >> iformat(y) >> iformat(z);
             }
         }
     }
@@ -316,9 +316,9 @@ public:
                 if ( is_homogeneous())
                     I_Binary_read_big_endian_float32( m_in, w);
             } else {
-              m_in >> iformat(x) >> iformat(y) >> iformat(z);
+                m_in >> iformat(x) >> iformat(y) >> iformat(z);
                 if ( is_homogeneous())
-                  m_in >> iformat(w);
+                    m_in >> iformat(w);
             }
         }
     }
@@ -339,9 +339,9 @@ public:
                     w = f;
                 }
             } else {
-              m_in >> iformat(x) >> iformat(y) >> iformat(z);
+                m_in >> iformat(x) >> iformat(y) >> iformat(z);
                 if ( is_homogeneous())
-                  m_in >> iformat(w);
+                    m_in >> iformat(w);
             }
         }
     }
@@ -370,7 +370,7 @@ public:
                 m_in >> iformat(d);
                 z = int(d);
                 if ( is_homogeneous()) {
-                  m_in >> iformat(d);
+                    m_in >> iformat(d);
                     w = int(d);
                 }
             }
