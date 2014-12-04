@@ -46,7 +46,7 @@ void print(const CT& ct, Constraint_id cid)
 
 int main()
 {
-  const bool keep_points = true;
+  const bool remove_points = false;
   CT ct;
   Polygon_2 P;
   Constraint_id cid;
@@ -58,9 +58,9 @@ int main()
     }
   }
 
-  PS::simplify(ct, cid, Cost(), Stop(0.5), keep_points);
+  PS::simplify(ct, cid, Cost(), Stop(0.5), remove_points);
   print(ct, cid);
-  PS::simplify(ct, cid, Cost(), Stop(0.5), keep_points);
+  PS::simplify(ct, cid, Cost(), Stop(0.5), remove_points);
   ct.remove_points_without_corresponding_vertex(cid);
   print(ct, cid);  
 

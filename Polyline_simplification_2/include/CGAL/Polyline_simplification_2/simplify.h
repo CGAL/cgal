@@ -407,11 +407,11 @@ Simplifies an open or closed polyline given as an iterator range of 2D \cgal poi
 
 Simplifies a single polyline in a triangulation with polylines as constraints. 
 
-\param ct The underlying constrained Delaunay triangulation with constraint hierarchy which embeds the polyline constraints
+\param ct The underlying constrained Delaunay triangulation which embeds the polyline constraints
 \param cid The constraint identifier of the polyline constraint to simplify
 \param cost The cost function
 \param stop The stop function
-\param keep_points The flag that allows to only remove vertices but not the points in the polyline constraint
+\param remove_points  If `true` the function `ct.remove_points_without_corresponding_vertex()` is called.
 \returns the number of removed vertices
 \tparam CDT  must be `CGAL::Constrained_Delaunay_triangulation_2` with a vertex type that
 is model of  `PolylineSimplificationVertexBase_2`.
@@ -424,13 +424,13 @@ simplify(CGAL::Constrained_triangulation_plus_2<CDT>& ct,
          typename CGAL::Constrained_triangulation_plus_2<CDT>::Constraint_id cid,
          CostFunction cost,
          StopFunction stop,
-         bool keep_points = false)
+         bool remove_points = true)
 {
   typedef CGAL::Constrained_triangulation_plus_2<CDT> PCT;
   Polyline_simplification_2<PCT, CostFunction, StopFunction> simplifier(ct, cid, cost, stop);
 
   while(simplifier()){}
-  if(! keep_points){
+  if(remove_points){
     ct.remove_points_without_corresponding_vertex(cid);
   }
   return simplifier.number_of_removed_vertices();
@@ -439,10 +439,10 @@ simplify(CGAL::Constrained_triangulation_plus_2<CDT>& ct,
 /*!
 \ingroup  PkgPolylineSimplification2Functions
 Simplifies all polylines in a triangulation with polylines as constraints.
-\param ct The underlying constrained Delaunay triangulation with constraint hierarchy which embeds the polyline constraints
+\param ct The underlying constrained Delaunay triangulation which embeds the polyline constraints
 \param cost The cost function
 \param stop The stop function
-\param keep_points The flag that allows to only remove vertices but not the points in the polyline constraint
+\param remove_points If `true` the function `ct.remove_points_without_corresponding_vertex()` is called.
 \returns the number of removed vertices
 \tparam CDT  must be `CGAL::Constrained_Delaunay_triangulation_2` with a vertex type that
 is model of  `PolylineSimplificationVertexBase_2`.
@@ -455,13 +455,13 @@ std::size_t
 simplify(CGAL::Constrained_triangulation_plus_2<CDT>& ct,
          CostFunction cost,
          StopFunction stop,
-         bool keep_points = false)
+         bool remove_points = true)
 {
   typedef CGAL::Constrained_triangulation_plus_2<CDT> PCT;
   Polyline_simplification_2<PCT, CostFunction, StopFunction> simplifier(ct, cost, stop);
 
   while(simplifier()){}
-  if(! keep_points){
+  if(remove_points){
     ct.remove_points_without_corresponding_vertex();
   }
   return simplifier.number_of_removed_vertices();
