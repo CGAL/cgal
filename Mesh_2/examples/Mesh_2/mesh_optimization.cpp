@@ -1,5 +1,6 @@
 #define CGAL_MESH_2_OPTIMIZER_VERBOSE
-#define CGAL_MESH_2_OPTIMIZERS_DEBUG
+//#define CGAL_MESH_2_OPTIMIZERS_DEBUG
+//#define CGAL_MESH_2_SIZING_FIELD_USE_BARYCENTRIC_COORDINATES
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
