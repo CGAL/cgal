@@ -99,7 +99,9 @@ private:
       FT new_rd = this->distance_instance.new_distance(rd,dst,new_off,new_cut_dim);
       dists[new_cut_dim]=new_off;
         if (this->branch(new_rd)) 
+        {
           compute_nearest_neighbors_orthogonally(otherChild, new_rd,dists); 
+        }
       dists[new_cut_dim]=dst;
     }
     else
@@ -108,6 +110,8 @@ private:
       typename Tree::Leaf_node_const_handle node =
         static_cast<typename Tree::Leaf_node_const_handle>(N);
       this->number_of_leaf_nodes_visited++;
+      FT worst_dist = this->queue.top().second;
+      bool full = this->queue.full();
       if (node->size() > 0)
       {
         for (typename Base::Point_d_iterator it=node->begin(); it != node->end(); it++) 
@@ -115,6 +119,7 @@ private:
           this->number_of_items_visited++;
           FT distance_to_query_object=
             this->distance_instance.transformed_distance(this->query_object,**it);
+          if(!full || distance_to_query_object < worst_dist)
           this->queue.insert(std::make_pair(*it,distance_to_query_object));
         }
       }
@@ -160,6 +165,8 @@ private:
       typename Tree::Leaf_node_const_handle node = 
         static_cast<typename Tree::Leaf_node_const_handle>(N);
       this->number_of_leaf_nodes_visited++;
+      FT worst_dist = this->queue.top().second;
+      bool full = this->queue.full();
       if (node->size() > 0)
       {
         for (typename Base::Point_d_iterator it=node->begin(); it != node->end(); it++) 
@@ -167,6 +174,7 @@ private:
           this->number_of_items_visited++;
           FT distance_to_query_object=
             this->distance_instance.transformed_distance(this->query_object,**it);
+          if(!full || distance_to_query_object < worst_dist)
           this->queue.insert(std::make_pair(*it,distance_to_query_object));
         }
       }
