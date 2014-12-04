@@ -30,13 +30,8 @@
 // logic and is not plug'n play (requires users providing bounds).
 // If it should be provided again, it should probably be separate.
 
-#include <CGAL/basic.h>
+#include <CGAL/Periodic_3_triangulation_statically_filtered_traits_3.h>
 
-#include <CGAL/Kernel/function_objects.h>
-#include <CGAL/Cartesian/function_objects.h>
-
-#include <CGAL/internal/Static_filters/tools.h>
-#include <CGAL/internal/Static_filters/Periodic_3_orientation_3.h>
 #include <CGAL/internal/Static_filters/Periodic_3_side_of_oriented_sphere_3.h>
 
 // TODO :
@@ -46,20 +41,15 @@ namespace CGAL {
 
 // The K_base argument is supposed to provide exact primitives.
 template < typename Traits >
-class Periodic_3_Delaunay_triangulation_statically_filtered_traits_3 : public Traits
+class Periodic_3_Delaunay_triangulation_statically_filtered_traits_3 : public Periodic_3_triangulation_statically_filtered_traits_3<Traits>
 {
   typedef Periodic_3_Delaunay_triangulation_statically_filtered_traits_3<Traits> Self;
 
 public:
 
-  typedef internal::Static_filters_predicates::Periodic_3_orientation_3<Traits>
-    Orientation_3;
   typedef internal::Static_filters_predicates::Periodic_3_side_of_oriented_sphere_3<Traits>
     Side_of_oriented_sphere_3;
 
-  Orientation_3 orientation_3_object() const {
-    return Orientation_3(&this->_domain,&this->_domain_e,&this->_domain_f);
-  }
   Side_of_oriented_sphere_3  side_of_oriented_sphere_3_object() const {
     return Side_of_oriented_sphere_3(&this->_domain,
                                      &this->_domain_e,
