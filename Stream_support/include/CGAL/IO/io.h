@@ -92,7 +92,8 @@ public:
 };
 
 
-#if defined( _MSC_VER ) && ( _MSC_VER > 1600 ) && (! defined( CGAL_NO_IFORMAT_DOUBLE ))
+#if CGAL_FORCE_IFORMAT_DOUBLE || \
+  ( ( _MSC_VER > 1600 ) && (! defined( CGAL_NO_IFORMAT_DOUBLE )) )
 template <>
 class Input_rep<double> {
     double& t;
@@ -101,30 +102,47 @@ public:
   Input_rep( double& tt) : t(tt) {}
 
   std::istream& operator()( std::istream& is) const 
-  {  
+  {
+    typedef std::istream istream;
+    typedef istream::char_type char_type;
+    typedef istream::int_type int_type;
+    typedef istream::traits_type traits_type;
+
     std::string buffer;
-    char c;
+    buffer.reserve(32);
+
+    char_type c;
     do {
-      c = is.get();
-    }while (isspace(c));
+      const int_type i = is.get();
+      if(i == traits_type::eof()) {
+	return is;
+      }
+      c = static_cast<char_type>(i);
+    }while (std::isspace(c));
     if(c == '-'){
       buffer += '-';
     } else if(c != '+'){
       is.unget();
     }
-    bool cont = true;
     do {
-      c = is.get();
-      if(isdigit(c) || (c =='.') || (c =='E') || (c =='e') || (c =='-')){
+      const int_type i = is.get();
+      if(i == traits_type::eof()) {
+	is.clear(is.rdstate() & ~std::ios_base::failbit);
+	break;
+      }
+      c = static_cast<char_type>(i);
+      if(std::isdigit(c) || (c =='.') || (c =='E') || (c =='e') || (c =='-')){
         buffer += c;
       }else{
-        cont = false;
+	is.unget();
+	break;
       }
-    }while(cont);
-    is.clear(is.rdstate() & ~std::ios_base::failbit);
-    is.unget();
+    }while(true);
 
-    sscanf(buffer.c_str(), "%lf", &t);
+    if(sscanf(buffer.c_str(), "%lf", &t) != 1) {
+      // if a 'buffer' does not contain a double, set the fail bit.
+      is.setstate(std::ios_base::failbit);
+    }
     return is; 
   }
 };
