@@ -237,18 +237,18 @@ generate_points_on_klein_bottle_variant_5D(
   CGAL::Random rng;
 
   // if uniform
-  int num_lines = (int)sqrt(num_points);
-  int num_cols = num_points/num_lines + 1;
+  std::size_t num_lines = (std::size_t)sqrt(num_points);
+  std::size_t num_cols = num_points/num_lines + 1;
 
   std::vector<Point> points;
   points.reserve(num_points);
-  for (int i = 0 ; i != num_points ; ++i)
+  for (std::size_t i = 0 ; i != num_points ; ++i)
   {
     FT u, v;
     if (uniform)
     {
-      int k1 = i / num_lines;
-      int k2 = i % num_lines;
+      std::size_t k1 = i / num_lines;
+      std::size_t k2 = i % num_lines;
       u = 6.2832 * k1 / num_lines;
       v = 6.2832 * k2 / num_lines;
     }
