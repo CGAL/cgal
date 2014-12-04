@@ -101,7 +101,7 @@ lloyd_optimize_mesh_2(cdt,
 
 \endcode
 
-\sa `CGAL::Mesh_optimization_return_code` 
+\sa `Mesh_optimization_return_code` 
 \sa `CGAL::refine_Delaunay_mesh_2()`
 
 */
