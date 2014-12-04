@@ -78,7 +78,9 @@ namespace CGAL {
     	Euclidean_distance(const SearchTraits& traits_=SearchTraits()):traits(traits_) {}
 
 
-	inline FT transformed_distance(const Query_item& q, const Point_d& p) const {
+
+
+    inline FT transformed_distance(const Query_item& q, const Point_d& p, Dynamic_dimension_tag dt) const {
 	        FT distance = FT(0);
 		typename SearchTraits::Construct_cartesian_const_iterator_d construct_it=traits.construct_cartesian_const_iterator_d_object();
                 typename SearchTraits::Cartesian_const_iterator_d qit = construct_it(q),
@@ -88,6 +90,22 @@ namespace CGAL {
 		}
         	return distance;
 	}
+
+    template < int DIM >
+    inline FT transformed_distance(const Query_item& q, const Point_d& p, Dimension_tag<DIM> dt) const {
+      std::cerr << "here goes the generic code" <<std::endl;
+        	return 0;
+	}
+
+    //    template <>
+    inline FT transformed_distance(const Query_item& q, const Point_d& p, Dimension_tag<2> dt) const {
+      std::cerr << "here goes the unrolled code for 3D" <<std::endl;
+        	return 0;
+	}
+
+ inline FT transformed_distance(const Query_item& q, const Point_d& p) const {
+   return transformed_distance(q,p, D());
+ }
 
 
 	inline FT min_distance_to_rectangle(const Query_item& q,
