@@ -45,7 +45,6 @@
 #include <Eigen/Core>
 #include <Eigen/Eigen>
 
-#include <boost/iterator/transform_iterator.hpp>
 #include <boost/optional.hpp>
 
 #include <vector>
@@ -658,10 +657,13 @@ private:
     // Triangulation's traits functor & objects
     typename Tr_traits::Squared_distance_d sqdist =
       local_tr_traits.squared_distance_d_object();
+    typename Tr_traits::Point_weight_d point_weight =
+      local_tr_traits.point_weight_d_object();
     typename Tr_traits::Point_drop_weight_d drop_w =
       local_tr_traits.point_drop_weight_d_object();
-    typename Tr_traits::Center_of_sphere_d center_of_sphere =
-      local_tr_traits.center_of_sphere_d_object();
+    /*typename Tr_traits::Power_center_d power_center =
+      local_tr_traits.power_center_d_object();*/ // CJTODO
+    typename Get_functor<Tr_traits, Power_center_tag>::type power_center(local_tr_traits);
 
     // Estimate the tangent space
     const Point &center_pt = m_points[i];
@@ -695,6 +697,7 @@ private:
     // and which contains all the
     // circumspheres of the star of "center_vertex"
     boost::optional<FT> star_sphere_squared_radius;
+    FT star_sphere_squared_radius_plus_margin = 0;
 
     // Insert points until we find a point which is outside "star shere"
     for (INS_iterator nn_it = ins_range.begin() ;
@@ -709,7 +712,8 @@ private:
         const Point &neighbor_pt = m_points[neighbor_point_idx];
 
         if (star_sphere_squared_radius
-          && k_sqdist(center_pt, neighbor_pt) > *star_sphere_squared_radius)
+          && k_sqdist(center_pt, neighbor_pt)
+             > star_sphere_squared_radius_plus_margin)
           break;
 
         Tr_point proj_pt = project_point_and_compute_weight(
@@ -726,6 +730,12 @@ private:
         //Tr_vertex_handle vh = local_tr.insert(wp);
         if (vh != Tr_vertex_handle())
         {
+          // CJTODO TEMP TEST
+          /*if (star_sphere_squared_radius
+            && k_sqdist(center_pt, neighbor_pt)
+               > star_sphere_squared_radius_plus_margin)
+            std::cout << "ARGGGGGGGH" << std::endl;*/
+
           vh->data() = neighbor_point_idx;
 
           // Let's recompute star_sphere_squared_radius
@@ -748,41 +758,24 @@ private:
               }
               else
               {
-                //*********************************
-                // We don't compute the circumsphere of the simplex in the
-                // local tangent plane since it would involve to take the
-                // weights of the points into account later
-                // (which is a problem since the ANN is performed on the
-                // points in the ambient dimension)
-                // Instead, we compute the subspace defined by the simplex
-                // and we compute the circumsphere in this subspace
-                // and we extract the diameter
-                Tangent_space_basis tsb;
-                tsb.reserve(Intrinsic_dimension);
-                Point const& orig = m_points[cell->vertex(0)->data()];
-                for (int ii = 1 ; ii <= Intrinsic_dimension ; ++ii)
-                {
-                  tsb.push_back(k_diff_pts(
-                    m_points[cell->vertex(ii)->data()], orig));
-                }
-                tsb = compute_gram_schmidt_basis(tsb, m_k);
-
-                std::vector<Tr_bare_point> proj_pts;
-                proj_pts.reserve(Intrinsic_dimension + 1);
+                std::vector<Tr_point> cell_pts;
+                cell_pts.reserve(Intrinsic_dimension + 1);
                 // For each point p
                 for (int ii = 0 ; ii <= Intrinsic_dimension ; ++ii)
-                {
-                  proj_pts.push_back(project_point(
-                    m_points[cell->vertex(ii)->data()], orig, tsb));
-                }
+                  cell_pts.push_back(cell->vertex(ii)->point());
 
-                Tr_bare_point c = center_of_sphere(
-                  proj_pts.begin(), proj_pts.end());
+                Tr_point c = power_center(cell_pts.begin(), cell_pts.end());
+                FT sq_power_sphere_diam = 4*point_weight(c);
 
-                FT sq_circumdiam = 4.*sqdist(c, proj_pts[0]);
                 if (!star_sphere_squared_radius
-                  || sq_circumdiam > *star_sphere_squared_radius)
-                  star_sphere_squared_radius = sq_circumdiam;
+                  || sq_power_sphere_diam > *star_sphere_squared_radius)
+                {
+                  star_sphere_squared_radius = sq_power_sphere_diam;
+                  star_sphere_squared_radius_plus_margin =
+                    CGAL::sqrt(sq_power_sphere_diam) + 0.5*INPUT_SPARSITY;
+                  star_sphere_squared_radius_plus_margin *= 
+                    star_sphere_squared_radius_plus_margin; // squared
+                }
               }
             }
           }
