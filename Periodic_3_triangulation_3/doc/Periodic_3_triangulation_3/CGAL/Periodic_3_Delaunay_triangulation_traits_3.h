@@ -4,10 +4,10 @@ namespace CGAL {
 /*!
 \ingroup PkgPeriodic3Triangulation3TraitsClasses
 
-The class `Periodic_3_triangulation_traits_3` is designed as a default traits class for the
-class `Periodic_3_triangulation_3<Periodic_3TriangulationTraits_3,TriangulationDataStructure_3>`. 
+The class `Periodic_3_Delaunay_triangulation_traits_3` is designed as a default traits class for the
+class `Periodic_3_Delaunay_triangulation_3<Periodic_3DelaunayTriangulationTraits_3,TriangulationDataStructure_3>`.
 
-\tparam Traits must be a model of the `Periodic_3TriangulationTraits_3` concept.
+\tparam Traits must be a model of the `Periodic_3DelaunayTriangulationTraits_3` concept.
 \tparam Periodic_3Offset_3 must be a model of the concept `Periodic_3Offset_3` and defaults to `Periodic_3_offset_3`. 
 
 Note that this template class is specialized for 
@@ -16,10 +16,10 @@ filtered predicates. This holds implicitly for
 `CGAL::Exact_predicates_inexact_constructions_kernel`, as it is an 
 instantiation of `CGAL::Filtered_kernel`. 
 
-\cgalModels `Periodic_3TriangulationTraits_3`
+\cgalModels `Periodic_3DelaunayTriangulationTraits_3`
 */
 template< typename Traits, typename Periodic_3Offset_3 >
-class Periodic_3_triangulation_traits_3 : public Traits {
+class Periodic_3_Delaunay_triangulation_traits_3 : public Traits {
 public:
-}; /* end Periodic_3_triangulation_traits_3 */
+}; /* end Periodic_3_Delaunay_triangulation_traits_3 */
 } /* end namespace CGAL */
