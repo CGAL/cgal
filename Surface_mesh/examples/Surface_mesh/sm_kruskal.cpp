@@ -60,11 +60,7 @@ kruskal(const Mesh& P)
 int main() {
 
   Mesh P;
-  vertex_descriptor va = P.add_vertex(Point(1,0,0));
-  vertex_descriptor vb = P.add_vertex(Point(0,1,0));
-  vertex_descriptor vc = P.add_vertex(Point(0,0,1));
-
-  P.add_face(va,vb,vc);
+  std::cin >> P;
 
   kruskal(P);
 
