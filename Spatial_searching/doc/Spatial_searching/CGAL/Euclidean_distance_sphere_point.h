@@ -11,7 +11,7 @@ Euclidean distance between a \f$ d\f$-dimensional sphere and a
 
 \cgalHeading{Parameters}
 
-Expects for the template argument a model of the concept `SearchTraits`, 
+\tparam Traits must be a model of the concept `SearchTraits`, 
 for example `Simple_cartesian_d<double>`. 
 
 \cgalModels `GeneralDistance`

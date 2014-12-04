@@ -71,41 +71,65 @@ namespace CGAL {
     typedef typename SearchTraits::Point_d Point_d;
     typedef Point_d Query_item;
 
-	typedef typename internal::Euclidean_distance_base<SearchTraits>::Dimension D;
+    typedef typename internal::Euclidean_distance_base<SearchTraits>::Dimension D;
 	
 
-    	// default constructor
-    	Euclidean_distance(const SearchTraits& traits_=SearchTraits()):traits(traits_) {}
+    // default constructor
+    Euclidean_distance(const SearchTraits& traits_=SearchTraits()):traits(traits_) {}
 
+    
+    inline FT transformed_distance(const Query_item& q, const Point_d& p) const {
+        return transformed_distance(q,p, D());
+    }
 
-
-
+    //Dynamic version for runtime dimension
     inline FT transformed_distance(const Query_item& q, const Point_d& p, Dynamic_dimension_tag dt) const {
-	        FT distance = FT(0);
-		typename SearchTraits::Construct_cartesian_const_iterator_d construct_it=traits.construct_cartesian_const_iterator_d_object();
-                typename SearchTraits::Cartesian_const_iterator_d qit = construct_it(q),
-		  qe = construct_it(q,1), pit = construct_it(p);
-		for(; qit != qe; qit++, pit++){
-		  distance += ((*qit)-(*pit))*((*qit)-(*pit));
-		}
-        	return distance;
+        FT distance = FT(0);
+	typename SearchTraits::Construct_cartesian_const_iterator_d construct_it=traits.construct_cartesian_const_iterator_d_object();
+        typename SearchTraits::Cartesian_const_iterator_d qit = construct_it(q),
+	qe = construct_it(q,1), pit = construct_it(p);
+	for(; qit != qe; qit++, pit++){
+	    distance += ((*qit)-(*pit))*((*qit)-(*pit));
 	}
+        return distance;
+    }
 
+    //Generic version for DIM > 3
     template < int DIM >
     inline FT transformed_distance(const Query_item& q, const Point_d& p, Dimension_tag<DIM> dt) const {
-      std::cerr << "here goes the generic code" <<std::endl;
-        	return 0;
-	}
+        FT distance = FT(0);
+        typename SearchTraits::Construct_cartesian_const_iterator_d construct_it=traits.construct_cartesian_const_iterator_d_object();
+        typename SearchTraits::Cartesian_const_iterator_d qit = construct_it(q),
+          qe = construct_it(q,1), pit = construct_it(p);
+        for(; qit != qe; qit++, pit++){
+	  distance += ((*qit)-(*pit))*((*qit)-(*pit));
+        }
+        return distance;
+    }
 
-    //    template <>
+    //DIM = 2 loop unrolled
     inline FT transformed_distance(const Query_item& q, const Point_d& p, Dimension_tag<2> dt) const {
-      std::cerr << "here goes the unrolled code for 3D" <<std::endl;
-        	return 0;
-	}
+        typename SearchTraits::Construct_cartesian_const_iterator_d construct_it=traits.construct_cartesian_const_iterator_d_object();
+        typename SearchTraits::Cartesian_const_iterator_d qit = construct_it(q),pit = construct_it(p);
+        FT distance = square(*qit - *pit);
+        qit++;pit++;
+        distance += square(*qit - *pit);
+        return distance;
+    }
 
- inline FT transformed_distance(const Query_item& q, const Point_d& p) const {
-   return transformed_distance(q,p, D());
- }
+    //DIM = 3 loop unrolled
+    inline FT transformed_distance(const Query_item& q, const Point_d& p, Dimension_tag<3> dt) const {
+        typename SearchTraits::Construct_cartesian_const_iterator_d construct_it=traits.construct_cartesian_const_iterator_d_object();
+        typename SearchTraits::Cartesian_const_iterator_d qit = construct_it(q),pit = construct_it(p);
+        FT distance = square(*qit - *pit);
+        qit++;pit++;
+        distance += square(*qit - *pit);
+        qit++;pit++;
+        distance += square(*qit - *pit);
+        return distance;
+    }
+
+ 
 
 
 	inline FT min_distance_to_rectangle(const Query_item& q,

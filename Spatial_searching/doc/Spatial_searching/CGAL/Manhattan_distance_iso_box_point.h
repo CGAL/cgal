@@ -12,7 +12,7 @@ and a `d`-dimensional iso-box defined as a `k-d` tree rectangle.
 
 \cgalHeading{Parameters}
 
-Expects for the template argument a model for the concept 
+\tparam Traits must be a model for the concept 
 `SearchTraits`, for example `Search_traits_3<Simple_cartesian<double> >`. 
 
 \cgalModels `GeneralDistance`

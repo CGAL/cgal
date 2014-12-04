@@ -10,7 +10,7 @@ Added Dimension
 \cgalModifEnd
 \cgalHeading{Parameters}
 
-Expects for the template argument a model of the concept `Kernel`, 
+\tparam Kernel must be a model of the concept `Kernel`, 
 for example `Simple_cartesian<double>` or `Simple_cartesian<Gmpq>`. 
 
 \cgalModels `SearchTraits`

@@ -16,12 +16,12 @@ the ratio of the resulting rectangles.
 
 \cgalHeading{Parameters}
 
-Expects for the first template argument a model of 
+\tparam Traits must be a model of 
 the concept `SearchTraits`, 
 for example `Simple_cartesian<double>`. 
 
-Expects for the second template argument a model of the concept `SpatialSeparator`. 
-It has as default value the type, `Plane_separator<Traits::FT>`. 
+\tparam SpatialSeparator must be a model of the concept `SpatialSeparator`. 
+It has as default value the type `Plane_separator<Traits::FT>`. 
 
 \cgalModels `Splitter`
 

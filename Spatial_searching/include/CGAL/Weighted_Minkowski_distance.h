@@ -119,9 +119,11 @@ namespace CGAL {
     }
 
 
+
+    //Dynamic version for runtime dimension
     inline 
     FT 
-    transformed_distance(const Query_item& q, const Point_d& p) const
+    transformed_distance(const Query_item& q, const Point_d& p, Dynamic_dimension_tag dt) const
     {
       FT distance = FT(0);
       typename SearchTraits::Construct_cartesian_const_iterator_d construct_it=
@@ -140,7 +142,87 @@ namespace CGAL {
 	    the_weights[i] * std::pow(CGAL::abs((*qit)-(*pit)),power);
       return distance;
     }
-    
+
+    //Generic version for DIM > 3
+    template <int DIM>
+    inline FT 
+    transformed_distance(const Query_item& q, const Point_d& p, Dimension_tag<DIM> dt) const
+    {
+      FT distance = FT(0);
+      typename SearchTraits::Construct_cartesian_const_iterator_d construct_it=
+        traits.construct_cartesian_const_iterator_d_object();
+      Coord_iterator qit = construct_it(q),
+	             qe = construct_it(q,1), 
+	             pit = construct_it(p);
+      if (power == FT(0)) {
+	for (unsigned int i = 0; qit != qe; ++qit, ++i)
+	  if (the_weights[i] * CGAL::abs((*qit) - (*pit)) > distance)
+	    distance = the_weights[i] * CGAL::abs((*qit)-(*pit));
+      }
+      else
+	for (unsigned int i = 0; qit != qe; ++qit, ++i)
+	  distance += 
+	    the_weights[i] * std::pow(CGAL::abs((*qit)-(*pit)),power);
+      return distance;
+    }
+
+    //DIM = 2 loop unrolled
+    inline FT 
+    transformed_distance(const Query_item& q, const Point_d& p, Dimension_tag<2> dt) const
+    {
+      FT distance = FT(0);
+      typename SearchTraits::Construct_cartesian_const_iterator_d construct_it=
+        traits.construct_cartesian_const_iterator_d_object();
+      Coord_iterator qit = construct_it(q),
+	             pit = construct_it(p);
+      if (power == FT(0)) {
+	  if (the_weights[0] * CGAL::abs((*qit) - (*pit)) > distance)
+	    distance = the_weights[0] * CGAL::abs((*qit)-(*pit));
+          qit++;pit++;
+          if (the_weights[1] * CGAL::abs((*qit) - (*pit)) > distance)
+	    distance = the_weights[1] * CGAL::abs((*qit)-(*pit));
+      }
+      else{
+	  distance += 
+	    the_weights[0] * std::pow(CGAL::abs((*qit)-(*pit)),power);
+          qit++;pit++;
+          distance += 
+	    the_weights[1] * std::pow(CGAL::abs((*qit)-(*pit)),power);
+      }
+      return distance;
+    }
+
+    //DIM = 3 loop unrolled
+    inline FT 
+    transformed_distance(const Query_item& q, const Point_d& p, Dimension_tag<3> dt) const
+    {
+      FT distance = FT(0);
+      typename SearchTraits::Construct_cartesian_const_iterator_d construct_it=
+        traits.construct_cartesian_const_iterator_d_object();
+      Coord_iterator qit = construct_it(q),
+	             pit = construct_it(p);
+      if (power == FT(0)) {
+	  if (the_weights[0] * CGAL::abs((*qit) - (*pit)) > distance)
+	    distance = the_weights[0] * CGAL::abs((*qit)-(*pit));
+          qit++;pit++;
+          if (the_weights[1] * CGAL::abs((*qit) - (*pit)) > distance)
+	    distance = the_weights[1] * CGAL::abs((*qit)-(*pit));
+          qit++;pit++;
+          if (the_weights[2] * CGAL::abs((*qit) - (*pit)) > distance)
+	    distance = the_weights[2] * CGAL::abs((*qit)-(*pit));
+      }
+      else{
+	  distance += 
+	    the_weights[0] * std::pow(CGAL::abs((*qit)-(*pit)),power);
+          qit++;pit++;
+          distance += 
+	    the_weights[1] * std::pow(CGAL::abs((*qit)-(*pit)),power);
+          qit++;pit++;
+          distance += 
+	    the_weights[2] * std::pow(CGAL::abs((*qit)-(*pit)),power);
+      }
+      return distance;
+    }
 
     inline 
     FT 

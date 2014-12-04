@@ -10,12 +10,12 @@ in a nearest neighbor search algorithm, this class must be used as distance.
 
 \cgalHeading{Parameters}
 
-`Key` is a type that is associated to a point of type `Base_distance::Point_d`. 
+\tparam Key is a type that is associated to a point of type `Base_distance::Point_d`. 
 
-`PointPropertyMap` is a model of `LvaluePropertyMap`
+\tparam PointPropertyMap is a model of `LvaluePropertyMap`
 with `Key` as `key_type` and `Base_distance::Point_d` as `value_type`. 
 
-`Base_distance` is a model of either `GeneralDistance` or `OrthogonalDistance`. 
+\tparam Base_distance is a model of either `GeneralDistance` or `OrthogonalDistance`. 
 
 \cgalModels `GeneralDistance` if Base_distance is a model of `GeneralDistance`
 \cgalModels `OrthogonalDistance` if Base_distance is a model of `OrthogonalDistance`

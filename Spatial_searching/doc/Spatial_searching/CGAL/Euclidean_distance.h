@@ -9,7 +9,7 @@ To optimize distance computations squared distances are used.
 
 \cgalHeading{Parameters}
 
-Expects for the first template argument a model of the concept 
+\tparam Traits must be a model of the concept 
 `SearchTraits`, for example `Search_traits_2<Simple_cartesian<double> >`. 
 
 \cgalModels `OrthogonalDistance`

@@ -10,7 +10,7 @@ as inner approximation a sphere with radius \f$ r-\epsilon\f$.
 
 \cgalHeading{Parameters}
 
-Expects for the template argument a model of the concept 
+\tparam Traits must be a model of the concept 
 `SearchTraits`, for example `CGAL::Cartesian_d<double>`. 
 
 \cgalModels `FuzzyQueryItem`

@@ -12,8 +12,10 @@ Added Dimension
 
 \cgalHeading{Parameters}
 
-Expects for the first template argument a model of the concept `Kernel_d` 
-(for example `Cartesian_d<double>`) and for the second argument a `Dimension_tag`
+\tparam Kernel must be a model of the concept `Kernel_d` 
+(for example `Cartesian_d<double>`) 
+
+\tparam Dim must be a `Dimension_tag`
 (default value is `Dynamic_dimension_tag`).
 
 \cgalModels `SearchTraits`

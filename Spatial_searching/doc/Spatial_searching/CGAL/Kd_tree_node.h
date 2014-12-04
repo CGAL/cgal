@@ -15,8 +15,10 @@ along the node's cutting dimension.
 
 \cgalHeading{Parameters}
 
-Expects for the template argument a model of the concept `SearchTraits`, 
+\tparam Traits must be a model of the concept `SearchTraits`, 
 for example `Search_traits_2<Simple_cartesian<double> >`, or `Cartesian_d<double>`. 
+
+\tparam Splitter must be a model of the concept `Splitter`.
 
 */
 template< typename Traits, typename Splitter, typename UseExtendedNode >
