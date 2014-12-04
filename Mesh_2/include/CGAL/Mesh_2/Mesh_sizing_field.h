@@ -91,7 +91,19 @@ private:
     const FT& sa = f->vertex(0)->sizing_info();
     const FT& sb = f->vertex(1)->sizing_info();
     const FT& sc = f->vertex(2)->sizing_info();
+#ifndef CGAL_MESH_2_SIZING_FIELD_USE_BARYCENTRIC_COORDINATES
     return ( (sa + sb + sc) / 3. );
+#else
+    const Point_2& a = f->vertex(0)->point();
+    const Point_2& b = f->vertex(1)->point();
+    const Point_2& c = f->vertex(2)->point();
+    double abc_inv = 1. / CGAL::area(a, b, c);
+    double alpha = CGAL::area(p, b, c) * abc_inv;
+    double beta = CGAL::area(a, p, c) * abc_inv;
+    double gamma = CGAL::area(a, b, p) * abc_inv;
+
+    return alpha * sa + beta * sb + gamma * sc;
+#endif
   }
 
   /**
@@ -101,7 +113,18 @@ private:
   FT interpolate_on_edge_vertices(const Point_2& p,
                                   const Face_handle& f) const
   {
-    return 1.;//todo
+    CGAL_precondition(tr_.is_infinite(f));
+    int finite_i = -1;
+    for(int i = 0; i < 3; ++i)
+    {
+      if(!tr_.is_infinite(f, i))
+        finite_i = i;
+    }
+    CGAL_assertion(finite_i != -1);
+
+    const FT& sa = f->vertex(tr_.cw(finite_i))->sizing_info();
+    const FT& sb = f->vertex(tr_.ccw(finite_i))->sizing_info();
+    return 0.5 * (sa + sb);
   }
 
   FT average_incident_edge_length(const Vertex_handle& v) const
