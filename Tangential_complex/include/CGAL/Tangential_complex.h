@@ -66,6 +66,19 @@ namespace CGAL {
 
 using namespace Tangential_complex_;
 
+class Vertex_data
+{
+public:
+  Vertex_data(std::size_t data = std::numeric_limits<std::size_t>::max())
+    : m_data(data)
+  {}
+  operator std::size_t() { return m_data; }
+  operator std::size_t() const { return m_data; }
+    
+private:
+  std::size_t m_data;
+};
+
 /// The class Tangential_complex represents a tangential complex
 template <
   typename Kernel,
@@ -81,7 +94,7 @@ template <
       typename Regular_triangulation_euclidean_traits<
         Epick_d<Dimension_tag<Intrinsic_dimension> > >::Dimension,
       Triangulation_vertex<Regular_triangulation_euclidean_traits<
-        Epick_d<Dimension_tag<Intrinsic_dimension> > >, std::size_t >,
+        Epick_d<Dimension_tag<Intrinsic_dimension> > >, Vertex_data >,
       Triangulation_full_cell<Regular_triangulation_euclidean_traits<
         Epick_d<Dimension_tag<Intrinsic_dimension> > > >
     >
@@ -448,7 +461,7 @@ public:
     typedef Delaunay_triangulation<Kernel,
                                    Triangulation_data_structure<
                                      typename Kernel::Dimension,
-                                     Triangulation_vertex<Kernel, std::size_t>
+                                     Triangulation_vertex<Kernel, Vertex_data>
                                    > >                        DT;
     typedef typename DT::Vertex_handle                        DT_VH;
     typedef typename DT::Finite_full_cell_const_iterator      FFC_it;
@@ -974,6 +987,8 @@ private:
     for ( ; it_point_idx != simplex.end() ; ++it_point_idx)
     {
       std::size_t point_idx = *it_point_idx;
+      if (point_idx == std::numeric_limits<std::size_t>::max())
+        continue;
       Triangulation const& tr = m_triangulations[point_idx].tr();
       Tr_vertex_handle center_vh = m_triangulations[point_idx].center_vertex();
 
@@ -1037,6 +1052,7 @@ private:
 
     Triangulation const& tr    = m_triangulations[tr_index].tr();
     Tr_vertex_handle center_vh = m_triangulations[tr_index].center_vertex();
+    const Tr_traits &local_tr_traits = tr.geom_traits();
 
     std::vector<Tr_full_cell_handle> incident_cells;
     tr.incident_full_cells(center_vh, std::back_inserter(incident_cells));
@@ -1048,6 +1064,9 @@ private:
     // For each cell
     for ( ; it_c != it_c_end ; ++it_c)
     {
+
+#ifdef CGAL_TC_ONLY_CHANGE_SIMPLEX_WEIGHTS
+
       std::set<std::size_t> c;
       for (int i = 0 ; i < Intrinsic_dimension + 1 ; ++i)
       {
@@ -1089,6 +1108,103 @@ private:
         // valid anymore here)
         break;
       }
+#else      
+      // Inconsistent?
+      // N.B.: we don't test infinite cells
+      if (!is_simplex_consistent(*it_c))
+      {
+        // Get the k + 2 closest points
+
+        /*int point_dim = m_k.point_dimension_d_object()(*m_points.begin());
+        std::vector<FT> center(point_dim, FT(0));
+        for (int i = 0 ; i < point_dim ; ++i)
+        {
+          for (int j = 0 ; j < Intrinsic_dimension + 1 ; ++j)
+          {
+            std::size_t data = (*it_c)->vertex(j)->data();
+            const Point &p = m_points[data];
+            center[i] += p[i];
+          }
+          center[i] /= (Intrinsic_dimension + 1);
+        }
+        Point global_center(center.begin(), center.end());*/
+        
+        std::vector<std::size_t> cell_idx; // CJTODO TEMP
+        for (int i = 0 ; i < Intrinsic_dimension + 1 ; ++i)
+          cell_idx.push_back((*it_c)->vertex(i)->data());
+
+        std::vector<Tr_point> simplex_pts;
+        for (int i = 0 ; i < Intrinsic_dimension + 1 ; ++i)
+          simplex_pts.push_back((*it_c)->vertex(i)->point());
+
+        //typename Tr_traits::Power_center_d power_center =
+        //  local_tr_traits.power_center_d_object(); // CJTODO
+        typename Get_functor<Tr_traits, Power_center_tag>::type power_center(local_tr_traits);
+        typename Tr_traits::Compute_coordinate_d coord =
+          local_tr_traits.compute_coordinate_d_object();
+        
+        typename Kernel::Translated_point_d k_transl =
+          m_k.translated_point_d_object();
+        typename Kernel::Scaled_vector_d k_scaled_vec =
+          m_k.scaled_vector_d_object();
+
+        // CJTODO URGENT : que se passe-t-il si c'est un simplex infini ?
+        Tr_point local_center = power_center(simplex_pts.begin(), simplex_pts.end());
+        Point global_center = m_points[tr_index];
+        const Tangent_space_basis &tsb = m_tangent_spaces[tr_index];
+        for (int i = 0 ; i < Intrinsic_dimension ; ++i)
+        {
+          global_center = k_transl(
+            global_center, 
+            k_scaled_vec(tsb[i], coord(local_center, i)));
+        }
+        
+        KNS_range kns_range = m_points_ds.query_ANN(global_center, Intrinsic_dimension + 2);
+        std::vector<std::size_t> neighbors;
+        for (KNS_iterator nn_it = kns_range.begin() ;
+             nn_it != kns_range.end() ;
+             ++nn_it)
+        {
+          neighbors.push_back(nn_it->first);
+        }
+
+        CGAL::Random rng;
+        for (std::vector<std::size_t>::iterator it = neighbors.begin(); 
+             it != neighbors.end() ; 
+             ++it)
+        {
+          m_weights[*it] =
+            rng.get_double(0., (0.5*0.5*INPUT_SPARSITY*INPUT_SPARSITY));
+        }
+
+        for (std::vector<std::size_t>::iterator it = neighbors.begin(); 
+             it != neighbors.end() ; 
+             ++it)
+        {
+          std::size_t j = *it;
+#ifdef CGAL_LINKED_WITH_TBB
+          if (j == tr_index)
+          {
+            compute_tangent_triangulation(j, true);
+          }
+          else
+          {
+            Tr_mutex::scoped_lock lock(m_tr_mutexes[j]);
+            compute_tangent_triangulation(j, true);
+          }
+#else
+          compute_tangent_triangulation(j, true);
+#endif
+        }
+
+        refresh_tangential_complex(); // CJTODO: heavy computation!
+
+        // We will try the other cells next time (incident_cells is not
+        // valid anymore here)
+        break;
+      }
+
+#endif
     }
   }
 
