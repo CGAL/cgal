@@ -30,6 +30,7 @@
 #include <QInputDialog>
 #include <QDragEnterEvent>
 #include <QDropEvent>
+#include <QMessageBox>
 
 // GraphicsView items and event filters (input classes)
 #include "TriangulationCircumcircle.h"
@@ -162,6 +163,8 @@ private:
 
 public:
   MainWindow();
+
+  void clear();
 
 private:
   template <typename Iterator> 
@@ -475,20 +478,37 @@ MainWindow::on_actionCircumcenter_toggled(bool checked)
 void
 MainWindow::on_actionClear_triggered()
 {
+  clear();
+  emit(changed());
+}
+
+void
+MainWindow::clear()
+{
   cdt.clear();
   m_seeds.clear();
 
   if(actionShow_seeds->isChecked())
     dgi->setVisibleSeeds(true, m_seeds.end(), m_seeds.end());
-
-  emit(changed());
 }
-
 
 void 
 MainWindow::open(QString fileName)
 {
   if(! fileName.isEmpty()){
+    if(cdt.number_of_vertices() > 0)
+    {
+      QMessageBox msgBox(QMessageBox::Warning,
+        "Open new polygon",
+        "Do you really want to clear the current mesh?",
+        (QMessageBox::Yes | QMessageBox::No),
+        this);
+      int ret = msgBox.exec();
+      if(ret == QMessageBox::Yes)
+        clear();
+      else
+        return;
+    }
     if(fileName.endsWith(".cgal")){
       loadFile(fileName);
       this->addToRecentFiles(fileName);
@@ -500,6 +520,7 @@ MainWindow::open(QString fileName)
       this->addToRecentFiles(fileName);
     }
   }
+  emit(changed());
 }
 
 void
