@@ -167,6 +167,8 @@ namespace CGAL {
         this->mnb_times_reserved_marks[i] = 0;
       }
 
+      this->automatic_attributes_management = true;
+
       init_dart(null_dart_handle);
 
       CGAL_assertion(number_of_darts()==0);
@@ -1159,8 +1161,8 @@ namespace CGAL {
       return valid;
     }
 
-    /// validate the map
-    void validate_attributes()
+    /// correct invalid attributes in the map
+    void correct_invalid_attributes()
     {
       std::vector<int> marks(dimension+1);
       for ( int i=0; i<=dimension; ++i)
@@ -1174,7 +1176,7 @@ namespace CGAL {
              itend(darts().end()); it!=itend; ++it)
       {
         Helper::template Foreach_enabled_attributes
-          <internal::Validate_attribute_functor<Self> >::
+          <internal::Correct_invalid_attributes_functor<Self> >::
           run(this,it,&marks);
 
       }
@@ -3658,6 +3660,26 @@ namespace CGAL {
       return false;
     }
 
+    /** Test if the attributes of this map are automatically updated.
+     * @return true iff the boolean automatic_attributes_management is set to true.
+     */
+    bool are_attributes_automatically_managed() const
+    {
+      return automatic_attributes_management;
+    }
+
+    /** Sets the automatic_attributes_management boolean.
+     */
+    void set_automatic_attributes_management(bool automatic_attributes_management)
+    {
+      if (this->automatic_attributes_management == false && automatic_attributes_management == true)
+      {
+        correct_invalid_attributes();
+      }
+
+      this->automatic_attributes_management = automatic_attributes_management;
+    }
+
   protected:
     /// Number of times each mark is reserved. 0 if the mark is free.
     mutable size_type mnb_times_reserved_marks[NB_MARKS];
@@ -3679,6 +3701,9 @@ namespace CGAL {
 
     /// Number of marked darts for each used marks.
     mutable size_type mnb_marked_darts[NB_MARKS];
+
+    /// Automatic management of the attributes: true means attributes are allways maintained updated
+    bool automatic_attributes_management;
 
     /// Tuple of unary and binary functors (for all non void attributes).
     typename Helper::Split_functors m_onsplit_functors;

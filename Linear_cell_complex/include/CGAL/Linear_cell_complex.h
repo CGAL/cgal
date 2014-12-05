@@ -350,9 +350,9 @@ namespace CGAL {
 
     /** validate the lcc
      */
-    void validate_attributes()
+    void correct_invalid_attributes()
     {
-      Base::validate_attributes();
+      Base::correct_invalid_attributes();
 
       // Each dart needs to have a 0-embedding
       for (typename Dart_range::iterator it(this->darts().begin()),
@@ -800,6 +800,20 @@ namespace CGAL {
       }
 
       return res;
+    }
+
+    /** Return the status of the managment of the attributes of the CMap
+     */
+    bool are_attributes_automatically_managed() const
+    {
+      return Base::are_attributes_automatically_managed();
+    }
+
+    /** Set the status of the managment of the attributes of the CMap
+     */
+    void set_update_attributes(bool automatic_attributes_management)
+    {
+      Base::set_automatic_attributes_management(automatic_attributes_management);
     }
   };
 

@@ -72,7 +72,7 @@ insert_cell_0_in_cell_1( CMap& amap, typename CMap::Dart_handle adart,
 
     amap.basic_link_beta_1(*it, d1);
 
-    if (update_attributes)
+    if (amap.are_attributes_automatically_managed())
     {
       // We copy all the attributes except for dim=0
       CMap::Helper::template Foreach_enabled_attributes_except
@@ -100,7 +100,7 @@ insert_cell_0_in_cell_1( CMap& amap, typename CMap::Dart_handle adart,
   amap.free_mark(m);
   amap.free_mark(mark);
 
-  if (update_attributes)
+  if (amap.are_attributes_automatically_managed())
   {
     CGAL::internal::Degroup_attribute_functor_run<CMap, 1>::
       run(&amap, adart, amap.template beta<1>(adart));
@@ -175,7 +175,7 @@ insert_cell_0_in_cell_2( CMap& amap, typename CMap::Dart_handle adart,
       if ( prev!=amap.null_handle )
         amap.template basic_link_beta_for_involution<2>(prev, n1);
 
-      if (update_attributes)
+      if (amap.are_attributes_automatically_managed())
       {
         CGAL::internal::Set_i_attribute_of_dart_functor<CMap, 0>::
             run(&amap, n1, ah);
@@ -201,7 +201,7 @@ insert_cell_0_in_cell_2( CMap& amap, typename CMap::Dart_handle adart,
             nn2=amap.create_dart();
             amap.link_beta_0(amap.beta(cur, dim), nn2);
             amap.basic_link_beta_for_involution(n2, nn2, dim);
-            if (update_attributes)
+            if (amap.are_attributes_automatically_managed())
             {
               CGAL::internal::Set_i_attribute_of_dart_functor<CMap, 0>::
                   run(&amap, nn2, ah);
@@ -261,7 +261,7 @@ insert_cell_0_in_cell_2( CMap& amap, typename CMap::Dart_handle adart,
         amap.unmark(amap.beta(*itd, dim), treated);
     }
     if ( *itd!=adart )
-      if (update_attributes)
+      if (amap.are_attributes_automatically_managed())
       {
         CGAL::internal::Degroup_attribute_functor_run<CMap, 2>::
             run(&amap, adart, *itd);
@@ -351,7 +351,7 @@ insert_dangling_cell_1_in_cell_2( CMap& amap,
           (amap.beta(it1, dim, CGAL_BETAINV(s1), 2), d2, dim);
       }
     }
-    if (update_attributes)
+    if (amap.are_attributes_automatically_managed())
     {
       CGAL::internal::Set_i_attribute_of_dart_functor<CMap, 0>::
           run(&amap, d1, ah);
@@ -490,7 +490,7 @@ insert_cell_1_in_cell_2(CMap& amap,
     amap.mark(it1,treated);
   }
 
-  if (update_attributes)
+  if (amap.are_attributes_automatically_managed())
   {
     CGAL::internal::Degroup_attribute_functor_run<CMap, 2>::run(&amap, d1, d2);
   }
@@ -702,7 +702,7 @@ insert_cell_2_in_cell_3(CMap& amap, InputIterator afirst, InputIterator alast,
   if ( withBeta3 )
   { // Here we cannot use Degroup_attribute_functor_run as new darts do not
     // have their 3-attribute
-    if (update_attributes)
+    if (amap.are_attributes_automatically_managed())
     {
       CGAL::internal::Degroup_attribute_functor_run<CMap, 3>::
           run(&amap, first, amap.template beta<3>(first));

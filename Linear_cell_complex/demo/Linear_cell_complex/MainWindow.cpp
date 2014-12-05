@@ -1193,6 +1193,12 @@ void MainWindow::onMengerInc()
 
   this->mengerLevel++;
 
+  if (!mengerUpdateAttributes)
+  {
+    scene.lcc->set_update_attributes(false);
+  }
+  std::cout << "automatic_attributes_management=" << scene.lcc->are_attributes_automatically_managed() << std::endl;
+
   std::vector<Dart_handle> edges;
   std::vector<Dart_handle> faces;
   unsigned int nbvolinit = (unsigned int)mengerVolumes.size();
@@ -1278,8 +1284,11 @@ void MainWindow::onMengerInc()
         update_volume_list_add(scene.lcc->attribute<3>(mengerVolumes[i]));
     }
 
-    std::cout << "validate scene..." << std::endl;
-    scene.lcc->validate_attributes();
+    // validate_attributes is called in set_update_attributes
+    // std::cout << "validate scene..." << std::endl;
+    // scene.lcc->validate_attributes();
+
+    scene.lcc->set_update_attributes(true);
   }
 
 #ifdef CGAL_PROFILE_LCC_DEMO
@@ -1306,16 +1315,16 @@ void MainWindow::split_edge_in_three(Dart_handle dh)
   LCC::Point p3 = LCC::Traits::Construct_translated_point() (p1,v2);
   LCC::Point p4 = LCC::Traits::Construct_translated_point() (p1,v3);
 
-  (scene.lcc)->insert_point_in_cell<1>(dh,p4,mengerUpdateAttributes);
-  (scene.lcc)->insert_point_in_cell<1>(dh,p3,mengerUpdateAttributes);
+  (scene.lcc)->insert_point_in_cell<1>(dh,p4);
+  (scene.lcc)->insert_point_in_cell<1>(dh,p3);
 }
 
 void MainWindow::split_face_in_three(Dart_handle dh)
 {
   CGAL::insert_cell_1_in_cell_2(*(scene.lcc),scene.lcc->beta(dh,1,1,1),
-                                scene.lcc->beta(dh,0,0),mengerUpdateAttributes);
+                                scene.lcc->beta(dh,0,0));
   CGAL::insert_cell_1_in_cell_2(*(scene.lcc),scene.lcc->beta(dh,1,1),
-                                scene.lcc->beta(dh,0),mengerUpdateAttributes);
+                                scene.lcc->beta(dh,0));
 }
 
 void MainWindow::split_face_in_nine(Dart_handle dh)
@@ -1323,10 +1332,10 @@ void MainWindow::split_face_in_nine(Dart_handle dh)
   Dart_handle d2 = scene.lcc->beta(dh,1,1,1,1,1,1,1);
 
   Dart_handle e2= CGAL::insert_cell_1_in_cell_2(*(scene.lcc),
-                                                scene.lcc->beta(dh,1,1),d2,mengerUpdateAttributes);
+                                                scene.lcc->beta(dh,1,1),d2);
   Dart_handle e1= CGAL::insert_cell_1_in_cell_2(*(scene.lcc),
                                                 scene.lcc->beta(dh,1),
-                                                scene.lcc->beta(d2,1),mengerUpdateAttributes);
+                                                scene.lcc->beta(d2,1));
 
   split_edge_in_three(e1);
   split_edge_in_three(e2);
@@ -1359,12 +1368,12 @@ void MainWindow::split_vol_in_three(Dart_handle dh, bool removecenter)
                   scene.lcc->beta(dh,2,1,1,2,1,1,2) );
 
   Dart_handle f1=
-      insert_cell_2_in_cell_3(*(scene.lcc),edges1.begin(),edges1.end(),mengerUpdateAttributes);
+      insert_cell_2_in_cell_3(*(scene.lcc),edges1.begin(),edges1.end());
 
   Dart_handle f2=
-      insert_cell_2_in_cell_3(*(scene.lcc),edges2.begin(),edges2.end(),mengerUpdateAttributes);
+      insert_cell_2_in_cell_3(*(scene.lcc),edges2.begin(),edges2.end());
 
-  if (mengerUpdateAttributes)
+  if (scene.lcc->are_attributes_automatically_managed())
   {
     scene.lcc->info<3>(f1).color()=
       (CGAL::Color(myrandom.get_int(0,256),
@@ -1379,12 +1388,12 @@ void MainWindow::split_vol_in_three(Dart_handle dh, bool removecenter)
   }
 
   if ( removecenter )
-    CGAL::remove_cell<LCC,3>(*scene.lcc,f1,mengerUpdateAttributes);
+    CGAL::remove_cell<LCC,3>(*scene.lcc,f1);
   else
   {
     mengerVolumes.push_back(f1);
 
-    if (mengerUpdateAttributes)
+    if (scene.lcc->are_attributes_automatically_managed())
       update_volume_list_add(scene.lcc->attribute<3>(f1));
   }
 
@@ -1413,12 +1422,12 @@ void MainWindow::split_vol_in_nine(Dart_handle dh, bool removecenter)
   CGAL_assertion( curd==scene.lcc->beta(dh,1,2,1,1,2) );
 
   Dart_handle f1=
-      insert_cell_2_in_cell_3(*(scene.lcc),edges1.begin(),edges1.end(),mengerUpdateAttributes);
+      insert_cell_2_in_cell_3(*(scene.lcc),edges1.begin(),edges1.end());
 
   Dart_handle f2=
-      insert_cell_2_in_cell_3(*(scene.lcc),edges2.begin(),edges2.end(),mengerUpdateAttributes);
+      insert_cell_2_in_cell_3(*(scene.lcc),edges2.begin(),edges2.end());
 
-  if (mengerUpdateAttributes)
+  if (scene.lcc->are_attributes_automatically_managed())
   {
     scene.lcc->info<3>(f1).color()=
       (CGAL::Color(myrandom.get_int(0,256),
@@ -1443,7 +1452,7 @@ void MainWindow::split_vol_in_nine(Dart_handle dh, bool removecenter)
   split_vol_in_three(scene.lcc->beta(f2,2,1),removecenter);
 
   if ( removecenter )
-    CGAL::remove_cell<LCC,3>(*scene.lcc,f1,mengerUpdateAttributes);
+    CGAL::remove_cell<LCC,3>(*scene.lcc,f1);
   else
   {
     mengerVolumes.push_back(scene.lcc->beta(f1,2,1));
@@ -1473,12 +1482,12 @@ void MainWindow::split_vol_in_twentyseven(Dart_handle dh)
   CGAL_assertion( curd==scene.lcc->beta(dh,1,1,2,1,1,2) );
 
   Dart_handle f1=
-      insert_cell_2_in_cell_3(*(scene.lcc),edges1.begin(),edges1.end(),mengerUpdateAttributes);
+      insert_cell_2_in_cell_3(*(scene.lcc),edges1.begin(),edges1.end());
 
   Dart_handle f2=
-      insert_cell_2_in_cell_3(*(scene.lcc),edges2.begin(),edges2.end(),mengerUpdateAttributes);
+      insert_cell_2_in_cell_3(*(scene.lcc),edges2.begin(),edges2.end());
 
-  if (mengerUpdateAttributes)
+  if (scene.lcc->are_attributes_automatically_managed())
   {
     scene.lcc->info<3>(f1).color()=
       (CGAL::Color(myrandom.get_int(0,256),
@@ -1701,7 +1710,7 @@ void MainWindow::onMengerDec()
 
   if (!mengerUpdateAttributes)
   {
-    scene.lcc->validate_attributes();
+    scene.lcc->correct_invalid_attributes();
   }
 
 #ifdef CGAL_PROFILE_LCC_DEMO
@@ -1976,7 +1985,7 @@ void MainWindow::onSierpinskiCarpetInc()
     std::cout << "BOOST_NO_VARIADIC_TEMPLATES" << " not defined" << std::endl;
 #endif
 
-    scene.lcc->validate_attributes();
+    scene.lcc->correct_invalid_attributes();
 
     // maintenant que la scène est valide, on offre la possibilité de calculer une géométrie qui correspond à un tapis de Sierpinski
     if (isComputableGeometry)
@@ -2747,7 +2756,7 @@ void MainWindow::onSierpinskiCarpetDec()
 
   if (!duringConstructionUpdateAttributes)
   {
-    scene.lcc->validate_attributes();
+    scene.lcc->correct_invalid_attributes();
   }
 
 #ifdef CGAL_PROFILE_LCC_DEMO
@@ -2931,7 +2940,7 @@ void MainWindow::onSierpinskiTriangleInc()
         update_volume_list_add(scene.lcc->attribute<3>(sierpinskiTriangleSurfaces[i]));
     }
 
-    scene.lcc->validate_attributes();
+    scene.lcc->correct_invalid_attributes();
   }
 
   // std::cout << removedTriangles.size() << std::endl;
@@ -3153,7 +3162,7 @@ void MainWindow::onSierpinskiTriangleDec()
 
   if (!sierpinskiTriangleUpdateAttributes)
   {
-    scene.lcc->validate_attributes();
+    scene.lcc->correct_invalid_attributes();
   }
 
 #ifdef CGAL_PROFILE_LCC_DEMO

@@ -361,7 +361,7 @@ namespace CGAL
         ++res;
       }
 
-      if (update_attributes)
+      if (amap.are_attributes_automatically_managed())
       {
         // We group the two edges incident if they exist.
         if ( dg1!=amap.null_handle )
@@ -423,7 +423,7 @@ namespace CGAL
         }
       }
 
-      if (update_attributes)
+      if (amap.are_attributes_automatically_managed())
       {
         // We test the split of all the incident cells for all the non
         // void attributes.
