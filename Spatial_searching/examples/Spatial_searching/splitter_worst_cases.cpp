@@ -24,12 +24,19 @@ int main()
   }
 
   Sliding_midpoint sliding(10);
+  Median_of_rectangle median(10);
+
   Tree_sliding tree1(sliding_worst_case.begin(), sliding_worst_case.end() , sliding);
   tree1.build();
 
   std::cout << "Worst case tree for Sliding midpoint and Midpoint of max spread : "<<std::endl;
   tree1.statistics(std::cout);
   tree1.clear();
+  std::cout<<std::endl<<"Same data, different splitter:"<<std::endl;
+
+  Tree_median tree2(sliding_worst_case.begin(), sliding_worst_case.end() , median );
+  tree2.statistics(std::cout);
+  tree2.clear();
 
   Points median_worst_case;
   for(int i = 0 ; i < 19 ; ++i){
@@ -37,13 +44,20 @@ int main()
   }
   median_worst_case.push_back(Point_2(20,0));
 
-  Median_of_rectangle median(10);
-  Tree_median tree2(median_worst_case.begin() , median_worst_case.end() , median);
+ 
+  Tree_median tree3(median_worst_case.begin() , median_worst_case.end() , median);
 
-  tree2.build();
+  tree3.build();
   std::cout <<std::endl<< "Worst case tree for Median of rectangle, Median of max spread : "<<std::endl;
-  tree2.statistics(std::cout);
-  tree2.clear();
+  tree3.statistics(std::cout);
+  tree3.clear();
 
+  std::cout<<std::endl<<"Same data, different splitter:"<<std::endl;
+
+  Tree_sliding tree4(median_worst_case.begin() , median_worst_case.end() , sliding);
+
+  tree4.build();
+  tree4.statistics(std::cout);
+  tree4.clear();
   return 0;
 }
