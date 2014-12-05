@@ -1071,15 +1071,15 @@ private:
 #ifdef CGAL_LINKED_WITH_TBB
           if (j == tr_index)
           {
-            compute_tangent_triangulation(j);
+            compute_tangent_triangulation(j, true);
           }
           else
           {
             Tr_mutex::scoped_lock lock(m_tr_mutexes[j]);
-            compute_tangent_triangulation(j);
+            compute_tangent_triangulation(j, true);
           }
 #else
-          compute_tangent_triangulation(j);
+          compute_tangent_triangulation(j, true);
 #endif
         }
 
