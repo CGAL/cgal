@@ -76,7 +76,7 @@ std::vector<typename Kernel::Point_d> generate_points_on_plane(std::size_t num_p
   CGAL::Random rng;
   std::vector<Point> points;
   points.reserve(num_points);
-  for (int i = 0 ; i != num_points ; ++i)
+  for (std::size_t i = 0 ; i != num_points ; ++i)
   {
     FT x = rng.get_double(0, 5);
     FT y = rng.get_double(0, 5);
@@ -95,7 +95,7 @@ std::vector<typename Kernel::Point_d> generate_points_on_moment_curve(
   CGAL::Random rng;
   std::vector<Point> points;
   points.reserve(num_points);
-  for (int i = 0 ; i != num_points ; ++i)
+  for (std::size_t i = 0 ; i != num_points ; ++i)
   {
     FT x = rng.get_double(min_x, max_x);
     std::vector<FT> coords;
@@ -116,7 +116,7 @@ std::vector<typename Kernel::Point_d> generate_points_on_circle_2(
   CGAL::Random_points_on_circle_2<Point> generator(radius);
   std::vector<Point> points;
   points.reserve(num_points);
-  for (int i = 0 ; i != num_points ; ++i)
+  for (std::size_t i = 0 ; i != num_points ; ++i)
     points.push_back(*generator++);
   return points;
 }
@@ -129,7 +129,7 @@ std::vector<typename Kernel::Point_d> generate_points_on_sphere_3(
   CGAL::Random_points_on_sphere_3<Point> generator(radius);
   std::vector<Point> points;
   points.reserve(num_points);
-  for (int i = 0 ; i != num_points ; ++i)
+  for (std::size_t i = 0 ; i != num_points ; ++i)
     points.push_back(*generator++);
   return points;
 }
@@ -142,7 +142,7 @@ std::vector<typename Kernel::Point_d> generate_points_on_sphere_d(
   CGAL::Random_points_on_sphere_d<Point> generator(dim, radius);
   std::vector<Point> points;
   points.reserve(num_points);
-  for (int i = 0 ; i != num_points ; ++i)
+  for (std::size_t i = 0 ; i != num_points ; ++i)
     points.push_back(*generator++);
   return points;
 }
@@ -157,18 +157,18 @@ std::vector<typename Kernel::Point_d> generate_points_on_klein_bottle_3D(
   CGAL::Random rng;
 
   // if uniform
-  int num_lines = (int)sqrt(num_points);
-  int num_cols = num_points/num_lines + 1;
+  std::size_t num_lines = (std::size_t)sqrt(num_points);
+  std::size_t num_cols = num_points/num_lines + 1;
 
   std::vector<Point> points;
   points.reserve(num_points);
-  for (int i = 0 ; i != num_points ; ++i)
+  for (std::size_t i = 0 ; i != num_points ; ++i)
   {
     FT u, v;
     if (uniform)
     {
-      int k1 = i / num_lines;
-      int k2 = i % num_lines;
+      std::size_t k1 = i / num_lines;
+      std::size_t k2 = i % num_lines;
       u = 6.2832 * k1 / num_lines;
       v = 6.2832 * k2 / num_lines;
     }
@@ -196,18 +196,18 @@ std::vector<typename Kernel::Point_d> generate_points_on_klein_bottle_4D(
   CGAL::Random rng;
 
   // if uniform
-  int num_lines = (int)sqrt(num_points);
-  int num_cols = num_points/num_lines + 1;
+  std::size_t num_lines = (std::size_t)sqrt(num_points);
+  std::size_t num_cols = num_points/num_lines + 1;
 
   std::vector<Point> points;
   points.reserve(num_points);
-  for (int i = 0 ; i != num_points ; ++i)
+  for (std::size_t i = 0 ; i != num_points ; ++i)
   {
     FT u, v;
     if (uniform)
     {
-      int k1 = i / num_lines;
-      int k2 = i % num_lines;
+      std::size_t k1 = i / num_lines;
+      std::size_t k2 = i % num_lines;
       u = 6.2832 * k1 / num_lines;
       v = 6.2832 * k2 / num_lines;
     }
