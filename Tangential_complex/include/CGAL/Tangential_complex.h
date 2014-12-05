@@ -710,6 +710,7 @@ private:
       if (neighbor_point_idx != i)
       {
         const Point &neighbor_pt = m_points[neighbor_point_idx];
+        FT neighbor_weight = m_weights[neighbor_point_idx];
 
         if (star_sphere_squared_radius
           && k_sqdist(center_pt, neighbor_pt)
@@ -717,17 +718,11 @@ private:
           break;
 
         Tr_point proj_pt = project_point_and_compute_weight(
-          neighbor_pt, center_pt, m_tangent_spaces[i], local_tr_traits);
+          neighbor_pt, neighbor_weight, center_pt, m_tangent_spaces[i], 
+          local_tr_traits);
 
-        FT squared_dist_to_tangent_plane =
-          local_tr_traits.point_weight_d_object()(proj_pt);
-        FT w = -squared_dist_to_tangent_plane + m_weights[neighbor_point_idx];
-        Tr_point wp = local_tr_traits.construct_weighted_point_d_object()(
-          drop_w(proj_pt),
-          w);
-
-        Tr_vertex_handle vh = local_tr.insert_if_in_star(wp, center_vertex);
-        //Tr_vertex_handle vh = local_tr.insert(wp);
+        Tr_vertex_handle vh = local_tr.insert_if_in_star(proj_pt, center_vertex);
+        //Tr_vertex_handle vh = local_tr.insert(proj_pt);
         if (vh != Tr_vertex_handle())
         {
           // CJTODO TEMP TEST
@@ -919,7 +914,7 @@ private:
   // Project the point in the tangent space
   // The weight will be the squared distance between p and the projection of p
   Tr_point project_point_and_compute_weight(
-    const Point &p, const Point &origin, const Tangent_space_basis &ts,
+    const Point &p, FT w, const Point &origin, const Tangent_space_basis &ts,
     const Tr_traits &tr_traits) const
   {
     const int point_dim = m_k.point_dimension_d_object()(p);
@@ -953,7 +948,7 @@ private:
     (
       tr_traits.construct_point_d_object()(
         Intrinsic_dimension, coords.begin(), coords.end()),
-      m_k.squared_distance_d_object()(p, projected_pt)
+      w - m_k.squared_distance_d_object()(p, projected_pt)
     );
   }
 
