@@ -156,15 +156,10 @@ void kdtree_demo(int argc, char** argv)
 			if(dump)
 			std::cerr <<cloud.pts[ret_index[k]] << std::endl;
 		  }
-		  if(dump){
-			  std::cerr << "Tree has:\n"<<index.items<< " items\n"<<index.internals <<" internals\n"<< index.leafs<<" leafs\n"<<index.depth()<<" depth\n";
-			  index.print_mem_usage();
-		  }
 		  dump=false;
         }
         timer.stop();
         std::cout << sum << " done in " << timer.time() << " sec."<< std::endl;
-	std::cerr << index.count_items <<" items "<<index.count_internals<< " internals "<<index.count_leafs<<  " leafs visited\n";
 }
 
 int main(int argc, char** argv)
