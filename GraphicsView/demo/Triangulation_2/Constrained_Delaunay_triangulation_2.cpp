@@ -521,6 +521,7 @@ MainWindow::open(QString fileName)
     }
   }
   emit(changed());
+  actionRecenter->trigger();
 }
 
 void
