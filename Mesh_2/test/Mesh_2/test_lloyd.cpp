@@ -7,6 +7,7 @@
 #include <CGAL/Delaunay_mesh_size_criteria_2.h>
 #include <CGAL/Delaunay_mesher_2.h>
 #include <CGAL/lloyd_optimize_mesh_2.h>
+#include <CGAL/Mesh_optimization_return_code.h>
 
 #include "test_utilities.h"
 
@@ -58,14 +59,16 @@ struct Lloyd_tester
 
     const size_type number_of_constraints = number_of_constrained_edges(cdt);
     const size_type number_of_vertices1 = cdt.number_of_vertices();
-    CGAL::lloyd_optimize_mesh_2(cdt,
-      max_iteration_number = 10,
-      convergence = 0.001,
-      freeze_bound = 0.001,
-      seeds_begin = seeds.begin(),
-      seeds_end = seeds.end());
+    CGAL::Mesh_optimization_return_code rc
+      = CGAL::lloyd_optimize_mesh_2(cdt,
+              max_iteration_number = 10,
+              convergence = 0.001,
+              freeze_bound = 0.001,
+              seeds_begin = seeds.begin(),
+              seeds_end = seeds.end());
     const size_type number_of_vertices2 = cdt.number_of_vertices();
-    std::cerr << " done.\nNumber of vertices: " << cdt.number_of_vertices() << "\n\n";
+    std::cerr << " done (return code = "<< rc <<").\n";
+    std::cerr << "Number of vertices: " << cdt.number_of_vertices() << "\n\n";
 
     assert( cdt.is_valid() );
     assert( number_of_vertices1 == cdt.number_of_vertices());
