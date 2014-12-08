@@ -197,7 +197,7 @@ along this dimension.
 
 <DT><B> Worst case for median rules</B><DD>
 
-The tree can become linear for the median rules, if many points are colinear in a dimension 
+The tree can become linear for the median rules, if many points are collinear in a dimension 
 which is not the cutting dimension.
 \cgalFigureBegin{Spatial_searchingmedianworstcase, Median_worst_case.jpg}
 Worst case point set in 2d.\n
@@ -357,12 +357,12 @@ splitting rule, needed to set the maximal allowed bucket size.
 
 \cgalExample{Spatial_searching/using_fair_splitting_rule.cpp}
 
-\subsection Spatial_searchingExampleforWorstCaseScenarios Example for worst-case scenarios for different splitters
+\subsection Spatial_searchingExampleforWorstCaseScenarios Example for Worst-Case Scenarios for Different Splitters
 
 This example program has two 2-dimensional data sets: The first one containing 
-colinear points with exponential increasing distances and the second
-one with colinear points in dimension 1 and one point with a distance
-exceeding the spread of the other points in distance 2. These are 
+collinear points with exponential increasing distances and the second
+one with collinear points in the firstdimension and one point with a distance
+exceeding the spread of the other points in the second dimension. These are 
 the worst cases for the midpoint/median rules and can also occur in 
 higher dimensions. 
 
@@ -370,7 +370,7 @@ higher dimensions.
 
 \section Performance Performance
 
-\subsection OrthogonalPerfomance Performance of the orthogonal search
+\subsection OrthogonalPerfomance Performance of the Orthogonal Search
 
 We took the gargoyle data set (Surface) from aim@shape, and generated the same number of random points in the bbox of the gargoyle (Random). 
 We then consider three scenarios as data/queries.
@@ -456,8 +456,11 @@ distance, to avoid the expensive computation of square roots, squared
 distances are used instead of the Euclidean distance itself.
 
 \section Spatial_searchingImplementationHistory Implementation History
-The initial implementation of this package by Hans Tangelder and Andreas Fabri was optimized
-in speed and memory consumption by Markus Overtheil during an internship in 2014.
+
+The initial implementation of this package by Hans Tangelder and
+Andreas Fabri was optimized in speed and memory consumption by Markus
+Overtheil during an internship at GeometryFactory in 2014.
+
 */ 
 } /* namespace CGAL */
 
