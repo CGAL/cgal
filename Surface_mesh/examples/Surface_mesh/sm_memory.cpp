@@ -21,11 +21,11 @@ int main()
   m.remove_vertex(u);
 
   std::cout << "After insertion of 5 vertices and removal of the 3. vertex\n"
-            << "# used vertices / total vertices = " 
+            << "# vertices  / # vertices + # removed vertices = " 
             << m.number_of_vertices()
             << " / " << m.number_of_vertices() + m.number_of_removed_vertices() << std::endl;
   
-  std::cout << "Iterate over used vertices\n";
+  std::cout << "Iterate over vertices\n";
   {
     BOOST_FOREACH(vertex_descriptor vd, m.vertices()){
       std::cout << m.point(vd) << std::endl;
@@ -37,8 +37,8 @@ int main()
     = m.property_map<Mesh::Vertex_index,bool>("v:removed").first;
  
   
-  std::cout << "\nIterate over used and deleted vertices\n"
-            << "# used vertices / total vertices = " 
+  std::cout << "\nIterate over vertices and deleted vertices\n"
+            << "# vertices / # vertices + # removed vertices = " 
             << m.number_of_vertices()
             << " / " << m.number_of_vertices() + m.number_of_removed_vertices() << std::endl;
     {
@@ -53,7 +53,7 @@ int main()
   m.collect_garbage();
 
   std::cout << "\nAfter garbage collection\n"
-            << "# used vertices / total vertices = "
+            << "# vertices / # vertices + # removed vertices = "
             << m.number_of_vertices()
             << " / " << m.number_of_vertices() + m.number_of_removed_vertices() << std::endl;
   
