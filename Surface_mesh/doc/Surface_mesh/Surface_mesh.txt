@@ -31,8 +31,8 @@ collection function must be called to really remove them.
 The class `Surface_mesh` can be used through its class member functions 
 as well as through the BGL API as described in the package \ref PkgBGLSummary,
 as it is a model of the concepts `MutableFaceGraph` and `FaceListGraph`.
-The latter allows to apply the mesh simplification, segmentation, and deformation
-algorithms on a surface mesh.
+Therefore it is possible to apply the mesh simplification, segmentation, and deformation
+algorithms of \cgal on a surface mesh.
 
 
 \section sectionSurfaceMeshUsage Usage
@@ -103,6 +103,7 @@ then we look at the surface such that the halfedges around a
 face are oriented counterclockwise, as illustrated in
 \cgalFigureRef{FigSurfaceMeshConnectivity}
 
+The connectivity does not allow to represent faces with holes.
 
 \section sectionSurfaceMesh_iterators Ranges and Iterators
 
@@ -116,7 +117,7 @@ library.
 
 The following example shows how to obtain the iterator type from 
 a range, alternatives for obtaining the begin and end iterator,
-and alternatives for range-based for loops.
+and alternatives for range-based loops.
 
 \cgalExample{Surface_mesh/sm_iterators.cpp}
 
@@ -314,8 +315,8 @@ used elements, as well as the number of used and removed elements.
 For vertices the functions are `Surface_mesh::number_of_vertices()`
 and `Surface_mesh::number_of_removed_vertices()`, respectively. 
 The first function is slightly different from the free function 
-`num_vertices(const G&)` of the \sc{Bgl} package. 
-As \sc{Bgl} style algorithms use the indices of elements
+`num_vertices(const G&)` of the BGL package. 
+As BGL style algorithms use the indices of elements
 to access data in temporary vectors of size `num_vertices()`
 this function must return a number larger than the largest index of 
 the elements.
@@ -330,7 +331,7 @@ associated with the surface mesh.
 
 Note however that by garbage collecting elements get new indices.
 In case you store vertex descriptors in an auxiliary data structure
-or in a property these vertex descriptors are potentially no longer 
+or in a property these vertex descriptors are most probably no longer 
 refering to the right vertices. 
 
 \subsection SubsectionSurfaceMeshMemoryManagementExample Example
