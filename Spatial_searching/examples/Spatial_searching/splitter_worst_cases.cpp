@@ -32,7 +32,7 @@ int main()
   std::cout << "Worst case tree for Sliding midpoint and Midpoint of max spread : "<<std::endl;
   tree1.statistics(std::cout);
   tree1.clear();
-  std::cout<<std::endl<<"Same data, different splitter:"<<std::endl;
+  std::cout<<std::endl<<"Same data with median splitter:"<<std::endl;
 
   Tree_median tree2(sliding_worst_case.begin(), sliding_worst_case.end() , median );
   tree2.statistics(std::cout);
@@ -52,7 +52,7 @@ int main()
   tree3.statistics(std::cout);
   tree3.clear();
 
-  std::cout<<std::endl<<"Same data, different splitter:"<<std::endl;
+  std::cout<<std::endl<<"Same data with midpoint splitter:"<<std::endl;
 
   Tree_sliding tree4(median_worst_case.begin() , median_worst_case.end() , sliding);
 
