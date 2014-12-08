@@ -144,11 +144,11 @@ private:
           static_cast<typename Tree::Leaf_node_const_handle>(N);
         this->number_of_leaf_nodes_visited++;
         if (node->size() > 0)
-          for (typename Base::Point_d_iterator it = node->begin(); it != node->end(); it++) {
+          for (typename Tree::iterator it = node->begin(); it != node->end(); it++) {
             this->number_of_items_visited++;
             FT distance_to_query_object =
-              this->distance_instance.transformed_distance(this->query_object,**it);
-            this->queue.insert(std::make_pair(*it,distance_to_query_object));
+              this->distance_instance.transformed_distance(this->query_object,*it);
+            this->queue.insert(std::make_pair(&(*it),distance_to_query_object));
           }
       }
   }

@@ -325,12 +325,12 @@ namespace CGAL {
             static_cast<typename Tree::Leaf_node_const_handle>(N);
 	  number_of_leaf_nodes_visited++;
 	  if (node->size() > 0) {
-	    for (Point_d_iterator it=node->begin(); it != node->end(); it++) {
+	    for (typename Tree::iterator it=node->begin(); it != node->end(); it++) {
 	      number_of_items_visited++;
 	      FT distance_to_query_point=
-		Orthogonal_distance_instance.transformed_distance(query_point,**it);
+		Orthogonal_distance_instance.transformed_distance(query_point,*it);
 	      Point_with_transformed_distance *NN_Candidate=
-		new Point_with_transformed_distance(**it,distance_to_query_point);
+		new Point_with_transformed_distance(*it,distance_to_query_point);
 	      Item_PriorityQueue.push(NN_Candidate);
 	    }
 	    // old top of PriorityQueue has been processed,

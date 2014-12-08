@@ -134,7 +134,8 @@ private:
   create_leaf_node(Point_container& c)
   {
     Leaf_node node(true , static_cast<unsigned int>(c.size()));
-    node.data = c.begin();
+    int tmp = c.begin() - data.begin();
+    node.data = pts.begin() + tmp;
 
     leaf_nodes.push_back(node);
     Leaf_node_handle nh = &leaf_nodes.back();
@@ -279,10 +280,6 @@ public:
     }
     pts.swap(ptstmp);
     
-    for (std::size_t i = 0; i < pts.size(); ++i){
-      data[i] = &(pts[i]);
-    }
-
     built_ = true;
   }
 

@@ -45,7 +45,8 @@ namespace CGAL {
     typedef typename TreeTraits::FT FT;
     typedef typename Kd_tree<TreeTraits,Splitter,UseExtendedNode>::Separator Separator;
     typedef typename Kd_tree<TreeTraits,Splitter,UseExtendedNode>::Point_d_iterator Point_d_iterator;
-	typedef typename Kd_tree<TreeTraits,Splitter,UseExtendedNode>::D D;
+    typedef typename Kd_tree<TreeTraits,Splitter,UseExtendedNode>::iterator iterator;
+    typedef typename Kd_tree<TreeTraits,Splitter,UseExtendedNode>::D D;
 
     bool leaf;
 
@@ -111,8 +112,8 @@ namespace CGAL {
          Leaf_node_const_handle node = 
           static_cast<Leaf_node_const_handle>(this);
 	 if (node->size()>0) 
-	    for (Point_d_iterator i=node->begin(); i != node->end(); i++) 
-	      {*it=**i; ++it;} 
+	    for (iterator i=node->begin(); i != node->end(); i++) 
+	      {*it=*i; ++it;} 
 	}
       else {
          Internal_node_const_handle node = 
@@ -141,8 +142,8 @@ namespace CGAL {
 	indent(d);
 	std::cout << "leaf" << std::endl;
 	if (node->size()>0)
-	  for (Point_d_iterator i=node->begin(); i != node->end(); i++)
-	  {indent(d);std::cout << **i << std::endl;}
+	  for (iterator i=node->begin(); i != node->end(); i++)
+	  {indent(d);std::cout << *i << std::endl;}
       }
       else {
         Internal_node_const_handle node = 
@@ -168,9 +169,9 @@ namespace CGAL {
         Leaf_node_const_handle node = 
           static_cast<Leaf_node_const_handle>(this);
 	if (node->size()>0) 
-	  for (Point_d_iterator i=node->begin(); i != node->end(); i++) 
-	    if (q.contains(**i)) 
-	      {*it=**i; ++it;}
+	  for (iterator i=node->begin(); i != node->end(); i++) 
+	    if (q.contains(*i)) 
+	      {*it=*i; ++it;}
       }
       else {
          Internal_node_const_handle node = 
@@ -200,14 +201,16 @@ namespace CGAL {
 
     friend class Kd_tree<TreeTraits,Splitter,UseExtendedNode>;
     
-    typedef typename Kd_tree<TreeTraits,Splitter,UseExtendedNode>::Point_d_iterator Point_d_iterator;
+    typedef typename Kd_tree<TreeTraits,Splitter,UseExtendedNode>::iterator iterator;
     typedef Kd_tree_node< TreeTraits, Splitter, UseExtendedNode> Base;
+    typedef typename TreeTraits::Point_d Point_d;
 
   private:
     
     // private variables for leaf nodes
     unsigned int n; // denotes number of items in a leaf node
-    Point_d_iterator data; // iterator to data in leaf node
+    iterator data; // iterator to data in leaf node
+
                     
   public:
 		
@@ -234,14 +237,14 @@ namespace CGAL {
     }
   
     inline 
-    Point_d_iterator
+    iterator
     begin() const  
     {
       return data;
     }
 
     inline 
-    Point_d_iterator 
+    iterator 
     end() const 
     {
       return data + n;

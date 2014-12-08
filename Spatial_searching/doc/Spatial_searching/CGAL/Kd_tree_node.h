@@ -64,7 +64,7 @@ template < class TreeTraits, class Splitter, class UseExtendedNode >
 /*!
 const iterator over points. 
 */ 
-typedef Kd_tree<Traits,Splitter,UseExtendedNode>::Point_d_iterator Point_d_iterator; 
+typedef Kd_tree<Traits,Splitter,UseExtendedNode>::iterator iterator; 
 
 /// @}
 
@@ -79,12 +79,12 @@ unsigned int size() const;
 /*!
 Returns a const iterator to the first item in a leaf node. 
 */ 
-Point_d_iterator begin() const; 
+iterator begin() const; 
 
 /*!
 Returns the appropriate past-the-end const iterator. 
 */ 
-Point_d_iterator end() const; 
+iterator end() const; 
 
 /// @}
 }; /* end Kd_tree_leaf_node */
