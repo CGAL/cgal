@@ -148,7 +148,6 @@ typename Traits::Value
 sorted_matrix_search(InputIterator f, InputIterator l, Traits t)
 {
   BOOST_USING_STD_MAX();
-  using std::nth_element;
   using std::iter_swap;
   using std::find_if;
   using std::remove_if;
@@ -257,7 +256,7 @@ sorted_matrix_search(InputIterator f, InputIterator l, Traits t)
     
 
     // compute upper median of cell's minima:
-    nth_element(active_cells.begin(),
+    std::nth_element(active_cells.begin(),
                 active_cells.begin() + upper_median_rank,
                 active_cells.end(),
                 boost::bind(
@@ -270,7 +269,7 @@ sorted_matrix_search(InputIterator f, InputIterator l, Traits t)
     Value lower_median = (lower_median_cell->min)();
     
     // compute lower median of cell's maxima:
-    nth_element(active_cells.begin(),
+    std::nth_element(active_cells.begin(),
                 active_cells.begin() + lower_median_rank,
                 active_cells.end(),
                 boost::bind(
