@@ -104,25 +104,23 @@ public:
   typedef typename Constraint_list::iterator Constraint_it;
 
   struct Constraint_id {
-    // first and second are publicly exposed for backward compatibility
-    std::pair<Vertex_handle, Vertex_handle> first;
     Vertex_list* second;
 
     Constraint_id(): second(NULL) {}
 
     Constraint_id(Vertex_list* vl)
       : second(vl)
-    {
-      if (second!=NULL)
-        first=std::pair<Vertex_handle, Vertex_handle>(vl->front().vertex(),
-                                                      vl->back().vertex());
-    }
+    {}
 
     Vertex_list* vl_ptr() const {return second;}
 
-    operator std::pair< std::pair<Vertex_handle, Vertex_handle>, Vertex_list* >()
-    {
-      return std::make_pair(first, second);
+    operator std::pair<Vertex_handle, Vertex_handle>()
+    { 
+      if (second!=NULL){
+        return std::make_pair(second->front().vertex(),
+                              second->back().vertex());
+      } 
+      return std::make_pair(Vertex_handle(),Vertex_handle());
     }
 
     bool operator == (const Constraint_id& other) const

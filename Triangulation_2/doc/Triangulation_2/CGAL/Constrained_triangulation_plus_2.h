@@ -62,9 +62,10 @@ The intersection tag as defined in `Tr`.
   typedef Tr::Intersection_tag Intersection_tag; 
   
 /*!
-The identifier of a polyline constraint. For reasons of backward compatibility of
+The identifier of a polyline constraint. 
+The class is model of `Assignable`, `CopyConstructible`, `DefaultConstructible`, and  `Comparable`.  For reasons of backward compatibility of
 functions that returned `std::pair<Vertex_handle,Vertex_handle>` instead of `Constraint_id`,
-the id class has a conversion operator to `std::pair<Vertex_handle,Vertex_handle>`.
+the id class has a conversion operator to `std::pair<Vertex_handle,Vertex_handle>`.  
 */
   typedef unspecified_type Constraint_id;
 
@@ -222,7 +223,7 @@ insert(PointIterator first, PointIterator last);
 /*! 
 Inserts the constraint segment `ab` in the triangulation.
 If the two points are equal the point is inserted but no constraint,
-and `Constrained_id(NULL)`is returned.
+and the default constructed `Constraint_id` is returned.
 */ 
 Constraint_id insert_constraint(Point a, Point b);
 
@@ -235,7 +236,7 @@ Inserts the constraint `c`.
 Inserts a constraint whose endpoints are the vertices 
 pointed by `va` and `vb` in the triangulation.
 If the two vertex handles are equal no constraint is inserted,
-and `Constrained_id(NULL)`is returned.
+and the default constructed `Constraint_id` is returned.
 */ 
 Constraint_id insert_constraint(Vertex_handle va, Vertex_handle vb);
 
