@@ -278,8 +278,12 @@ public:
     for (std::size_t i = 0; i < pts.size(); ++i){
       ptstmp[i] = *data[i];
     }
+    for(std::size_t i = 0; i < leaf_nodes.size(); ++i){
+      int tmp = leaf_nodes[i].begin() - pts.begin();
+      leaf_nodes[i].data = ptstmp.begin() + tmp;
+    }
     pts.swap(ptstmp);
-    
+
     built_ = true;
   }
 
