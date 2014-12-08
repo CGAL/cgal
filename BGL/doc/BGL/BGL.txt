@@ -9,7 +9,7 @@ namespace CGAL {
 
 Many geometric data structures can be interpreted as graphs as they consist of
 vertices and edges. This is the case for the halfedge data structure,
-for the polyhedron, for the arrangement, and for the 2D triangulation classes. With means of
+for the polyhedral surface, for the arrangement, and for the 2D triangulation classes. With means of
 duality one can also interpret faces as vertices and edges between adjacent
 faces as edges of the dual graph.
 
@@ -28,8 +28,8 @@ sequence of halfedges around vertices and around faces.
 This chapter is organized as follows. Section \ref BGLA  present
 the ideas of \sc{Bgl} in a nutshell. Section \ref BGLHeader explains
 where to find header files and the chosen naming conventions, as we blend two
-different libraries. The three following sections give examples for
-how the polyhedron, the arrangement, and the 2D triangulation classes
+different libraries. The four  following sections give examples for
+how the surface mesh, the polyhedron, the arrangement, and the 2D triangulation classes
 are adapted to \sc{Bgl}. Finally, Section \ref BGLExtensions introduces
 the `HalfedgeGraph` which is an extension to the graph concepts of the \sc{Bgl}.
 
@@ -165,7 +165,25 @@ The %Euler operations are in the namespace `CGAL::Euler`, as the function `remov
 the same time a low level and an %Euler operation.
 Concerning the naming conventions we have to use those of \sc{Bgl}, as we have to fulfill the requirements of the concepts defined in \sc{Bgl}.
 
-\section BGLPolyhedral Polyhedral Surfaces as Model of the Boost Graph Concept
+\section BGLSurface_mesh The Class Surface_mesh as Model of the Boost Graph Concept
+
+The class `Surface_mesh` is a model of most of \sc{Bgl} graph
+concepts as well as the concepts provided by \cgal. A full list can
+be found in the documentation of `boost::graph_traits`. The examples show how to use some of
+the \sc{Bgl} algorithms with `Surface_mesh` and show how to use
+the concepts provided by \cgal to implement a simple algorithm.
+
+\subsection BGLExampleMinimumSpanningTreeofaSurfaceMesh Example: Minimum Spanning Tree of a Surface_mesh
+
+The following example program computes the minimum spanning tree on a surface mesh.
+More examples can be found in the chapters
+\ref PkgSurfaceMeshSimplificationSummary, \ref PkgSurfaceSegmentationSummary, and \ref PkgSurfaceModelingSummary.
+
+\cgalExample{BGL_surface_mesh/prim.cpp}
+
+
+
+\section BGLPolyhedral The Class Polyhedron_3 as Model of the Boost Graph Concept
 
 The class `Polyhedron_3` is a model of most of \sc{Bgl} graph
 concepts as well as the concepts provided by \cgal. A full list can
