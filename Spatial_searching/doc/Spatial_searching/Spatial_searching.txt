@@ -174,6 +174,15 @@ the midpoint of rectangle rule. If the data points lie only on one
 side it avoids this by sliding the separator, computed by
 the midpoint of rectangle rule, to the nearest data point.
 
+<DT><B> Worst case for midpoint rules</B><DD>
+
+As all the midpoint rules cut the bounding box in the middle of the longest side, the tree will
+become linear for a dataset with exponential increasing distances in one dimension.
+
+\cgalFigureBegin{Spatial_searchingslidingworstcase, Sliding_worst_case.jpg}
+Worst case point set in 2d.
+\cgalFigureEnd
+
 <DT><B> `Median_of_rectangle`</B><DD>
 
 The splitting dimension is the dimension of the longest side of the rectangle.
@@ -185,6 +194,15 @@ along this dimension.
 The splitting dimension is the dimension of the longest side of the rectangle.
 The splitting value is defined by the median of the coordinates of the data points
 along this dimension.
+
+<DT><B> Worst case for median rules</B><DD>
+
+The tree can become linear for the median rules, if many points are colinear in a dimension 
+which is not the cutting dimension.
+\cgalFigureBegin{Spatial_searchingmedianworstcase, Median_worst_case.jpg}
+Worst case point set in 2d.\n
+a is longer than b, so this will be the cutting dimension.
+\cgalFigureEnd
 
 <DT><B> `Fair`</B><DD>
 
@@ -350,6 +368,27 @@ higher dimensions.
 
 \cgalExample{Spatial_searching/splitter_worst_cases.cpp}
 
+\section Performance Performance
+
+\subsection OrthogonalPerfomance Performance of the orthogonal search
+
+We took the gargoyle data set (Surface) from aim@shape, and generated the same number of random points in the bbox of the gargoyle (Random). 
+We then consider three scenarios as data/queries.
+The data set contains 800K points. For each query point we compute the 10 closest points, with the default splitter and the default bucket size. 
+The values are the average of five tests each.
+Machine : 
+
+<center>
+Surface/Surface  | Surface/Random | Random/Random
+---------------------| -------------------------:  | --------------------------------------------------------:
+  a              |  b                        | c
+</center>
+
+\cgalFigureBegin{Spatial_searchingfigbenchmark,gargoyle.png}
+Benchmark dataset(downsampled for visualization).\n
+Blue: Gargoyle surface. Green: Gargoyle bbox random.
+\cgalFigureEnd
+
 \section Spatial_searchingSoftware Software Design
 
 \subsection Kd_tree_subsection The k-d tree 
@@ -416,6 +455,9 @@ instead of the distance itself. For instance for the Euclidean
 distance, to avoid the expensive computation of square roots, squared
 distances are used instead of the Euclidean distance itself.
 
+\section Spatial_searchingImplementationHistory Implementation History
+The initial implementation of this package by Hans Tangelder and Andreas Fabri was optimized
+in speed and memory consumption by Markus Overtheil during an internship in 2014.
 */ 
 } /* namespace CGAL */
 
