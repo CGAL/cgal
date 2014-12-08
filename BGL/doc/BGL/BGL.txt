@@ -179,6 +179,9 @@ The following example program computes the minimum spanning tree on a surface me
 More examples can be found in the chapters
 \ref PkgSurfaceMeshSimplificationSummary, \ref PkgSurfaceSegmentationSummary, and \ref PkgSurfaceModelingSummary.
 
+The surface mesh class uses integer indices to address vertices and edges,
+and it comes with a built-in property mechanism that maps nicely on the \sc{Bgl}.
+
 \cgalExample{BGL_surface_mesh/prim.cpp}
 
 

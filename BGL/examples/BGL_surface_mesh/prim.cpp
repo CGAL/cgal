@@ -2,23 +2,21 @@
 #include <CGAL/Surface_mesh.h>
 
 #include <iostream>
-#include <fstream>
-#include <list>
 
 #include <boost/graph/prim_minimum_spanning_tree.hpp>
-
+#include <boost/foreach.hpp>
 
 typedef CGAL::Simple_cartesian<double>                       Kernel;
 typedef Kernel::Point_3                                      Point;
 typedef CGAL::Surface_mesh<Point>                            Mesh;
 
 typedef boost::graph_traits<Mesh>::vertex_descriptor vertex_descriptor;
-typedef boost::graph_traits<Mesh>::vertex_iterator   vertex_iterator;
-typedef boost::graph_traits<Mesh>::edge_descriptor   edge_descriptor;
 
-void
-prim(Mesh& P)
+int main() 
 {
+  Mesh P;
+  std::cin >> P;
+
   Mesh::Property_map<vertex_descriptor,vertex_descriptor> predecessor;
   predecessor = P.add_property_map<vertex_descriptor,vertex_descriptor>("v:predecessor").first;
 
@@ -36,35 +34,22 @@ prim(Mesh& P)
     "      coord Coordinate {\n"
     "        point [ \n";
 
-  vertex_iterator vb,ve;
-  for(boost::tie(vb, ve) = vertices(P); vb!=ve; ++vb){
-    std::cout <<  "        " << P.point(*vb) << "\n";
+  BOOST_FOREACH(vertex_descriptor vd, vertices(P)){
+    std::cout <<  "        " << P.point(vd) << "\n";
   }
-
+  
   std::cout << "        ]\n"
-               "     }\n"
+    "     }\n"
     "      coordIndex [\n"; 
-
-  for(boost::tie(vb, ve) = vertices(P); vb!=ve; ++vb){
-    if(predecessor[*vb]!=*vb){
-      int s = *vb;
-      int t = predecessor[*vb];
-      std::cout << "      " << s << ", " << t <<  ", -1\n";
+  BOOST_FOREACH(vertex_descriptor vd, vertices(P)){
+    if(predecessor[vd]!=vd){
+      std::cout << "      " << std::size_t(vd) << ", " << std::size_t(predecessor[vd]) <<  ", -1\n";
     }
   }
-
+  
   std::cout << "]\n"
     "  }#IndexedLineSet\n"
     "}# Shape\n";
-}
-
-
-int main() {
-
-  Mesh P;
-  std::cin >> P;
-
-  prim(P);
 
   return 0;
 }
