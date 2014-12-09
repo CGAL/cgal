@@ -160,21 +160,32 @@ namespace CGAL {
           dists[i] = 0;
         }
         
-        // if (search_nearest) 
-	distance_to_root=
-	  Orthogonal_distance_instance.min_distance_to_rectangle(q,
-								  tree.bounding_box(),dists);
-        // else distance_to_root=
-   	// Orthogonal_Distance_instance->max_distance_to_rectangle(q,
-	//					tree.bounding_box());
+        if (search_nearest){ 
+	  distance_to_root=
+	    Orthogonal_distance_instance.min_distance_to_rectangle(q,
+								    tree.bounding_box(),dists);
+          Node_with_distance *The_Root = new Node_with_distance(tree.root(),
+							        distance_to_root,dists);
+          PriorityQueue.push(The_Root);
 
-        Node_with_distance *The_Root = new Node_with_distance(tree.root(),
+          // rd is the distance of the top of the priority queue to q
+          rd=get<1>(*The_Root);
+          Compute_the_next_nearest_neighbour();
+        }
+         else{
+           distance_to_root=
+   	 Orthogonal_distance_instance.max_distance_to_rectangle(q,
+						tree.bounding_box());
+           Node_with_distance *The_Root = new Node_with_distance(tree.root(),
 							      distance_to_root,dists);
         PriorityQueue.push(The_Root);
 
         // rd is the distance of the top of the priority queue to q
         rd=get<1>(*The_Root);
-        Compute_the_next_nearest_neighbour();
+        Compute_the_next_furthest_neighbour();
+         }
+
+        
       }
 
       // * operator
@@ -189,7 +200,10 @@ namespace CGAL {
       operator++() 
       {
         Delete_the_current_item_top();
-        Compute_the_next_nearest_neighbour();
+        if(search_nearest_neighbour)
+          Compute_the_next_nearest_neighbour();
+        else
+          Compute_the_next_furthest_neighbour();
         return *this;
       }
 
@@ -250,10 +264,92 @@ namespace CGAL {
         // compute the next item
         bool next_neighbour_found=false;
         if (!(Item_PriorityQueue.empty())) {
-	  if (search_nearest_neighbour)
 	    next_neighbour_found=
 	      (multiplication_factor*rd > Item_PriorityQueue.top()->second);
-	  else
+        }
+	typename SearchTraits::Construct_cartesian_const_iterator_d construct_it=traits.construct_cartesian_const_iterator_d_object();
+	typename SearchTraits::Cartesian_const_iterator_d query_point_it = construct_it(query_point);
+        // otherwise browse the tree further
+        while ((!next_neighbour_found) && (!PriorityQueue.empty())) {
+	  Node_with_distance* The_node_top=PriorityQueue.top();
+	  Node_const_handle N= get<0>(*The_node_top);
+          dists = get<2>(*The_node_top);
+	  PriorityQueue.pop();
+	  delete The_node_top;
+	  FT copy_rd=rd;
+	  while (!(N->is_leaf())) { // compute new distance
+            typename Tree::Internal_node_const_handle node =
+            static_cast<typename Tree::Internal_node_const_handle>(N);
+	    number_of_internal_nodes_visited++;
+	    int new_cut_dim=node->cutting_dimension();
+	    FT new_rd,dst = dists[new_cut_dim];
+	    FT val = *(query_point_it + new_cut_dim);
+            FT diff1 = val - node->high_value();
+            FT diff2 = val - node->low_value();
+	    if (diff1 + diff2 < FT(0.0)) {
+              new_rd=
+		Orthogonal_distance_instance.new_distance(copy_rd,dst,diff1,new_cut_dim);
+                
+	      CGAL_assertion(new_rd >= copy_rd);
+                dists[new_cut_dim] = diff1;
+                Node_with_distance *Upper_Child =
+		  new Node_with_distance(node->upper(), new_rd,dists);
+		PriorityQueue.push(Upper_Child);
+                dists[new_cut_dim] = dst;
+		N=node->lower();
+
+	    }
+	    else { // compute new distance
+	      new_rd=Orthogonal_distance_instance.new_distance(copy_rd,dst,diff2,new_cut_dim);  
+	      CGAL_assertion(new_rd >= copy_rd);
+                dists[new_cut_dim] = diff2;
+		Node_with_distance *Lower_Child =
+		  new Node_with_distance(node->lower(), new_rd,dists);
+		PriorityQueue.push(Lower_Child);
+                dists[new_cut_dim] = dst;
+		N=node->upper();
+	    }
+	  }
+	  // n is a leaf
+          typename Tree::Leaf_node_const_handle node =
+            static_cast<typename Tree::Leaf_node_const_handle>(N);
+	  number_of_leaf_nodes_visited++;
+	  if (node->size() > 0) {
+	    for (typename Tree::iterator it=node->begin(); it != node->end(); it++) {
+	      number_of_items_visited++;
+	      FT distance_to_query_point=
+		Orthogonal_distance_instance.transformed_distance(query_point,*it);
+	      Point_with_transformed_distance *NN_Candidate=
+		new Point_with_transformed_distance(*it,distance_to_query_point);
+	      Item_PriorityQueue.push(NN_Candidate);
+	    }
+	    // old top of PriorityQueue has been processed,
+	    // hence update rd
+                
+	    if (!(PriorityQueue.empty()))  {
+	      rd = get<1>(*PriorityQueue.top());
+		next_neighbour_found =
+                  (multiplication_factor*rd > 
+		   Item_PriorityQueue.top()->second);
+	    }
+	    else // priority queue empty => last neighbour found
+	      {
+		next_neighbour_found=true;
+	      }
+
+	    number_of_neighbours_computed++;
+	  }
+        }   // next_neighbour_found or priority queue is empty
+        // in the latter case also the item priority quee is empty
+      }
+
+
+      void 
+      Compute_the_next_furthest_neighbour() 
+      {
+        // compute the next item
+        bool next_neighbour_found=false;
+        if (!(Item_PriorityQueue.empty())) {
 	    next_neighbour_found=
 	      (rd < multiplication_factor*Item_PriorityQueue.top()->second);
         }
@@ -281,43 +377,23 @@ namespace CGAL {
 		Orthogonal_distance_instance.new_distance(copy_rd,dst,diff1,new_cut_dim);
                 
 	      CGAL_assertion(new_rd >= copy_rd);
-	      if (search_nearest_neighbour) {
-                dists[new_cut_dim] = diff1;
-                Node_with_distance *Upper_Child =
-		  new Node_with_distance(node->upper(), new_rd,dists);
-		PriorityQueue.push(Upper_Child);
-                dists[new_cut_dim] = dst;
-		N=node->lower();
-	      }
-	      else {
 		Node_with_distance *Lower_Child =
 		  new Node_with_distance(node->lower(), copy_rd,dists);
 		PriorityQueue.push(Lower_Child);
 		N=node->upper();
                 dists[new_cut_dim] = diff1;
 		copy_rd=new_rd;
-	      }
 
 	    }
 	    else { // compute new distance
 	      new_rd=Orthogonal_distance_instance.new_distance(copy_rd,dst,diff2,new_cut_dim);  
 	      CGAL_assertion(new_rd >= copy_rd);
-	      if (search_nearest_neighbour) {
-                dists[new_cut_dim] = diff2;
-		Node_with_distance *Lower_Child =
-		  new Node_with_distance(node->lower(), new_rd,dists);
-		PriorityQueue.push(Lower_Child);
-                dists[new_cut_dim] = dst;
-		N=node->upper();
-	      }
-	      else {
 		Node_with_distance *Upper_Child =
 		  new Node_with_distance(node->upper(), copy_rd);
 		PriorityQueue.push(Upper_Child);
 		N=node->lower();
                 dists[new_cut_dim] = diff2;
 		copy_rd=new_rd;
-	      }
 	    }
 	  }
 	  // n is a leaf
@@ -338,11 +414,6 @@ namespace CGAL {
                 
 	    if (!(PriorityQueue.empty()))  {
 	      rd = get<1>(*PriorityQueue.top());
-	      if (search_nearest_neighbour)
-		next_neighbour_found =
-                  (multiplication_factor*rd > 
-		   Item_PriorityQueue.top()->second);
-	      else
 		next_neighbour_found =
                   (multiplication_factor*rd < 
 		   Item_PriorityQueue.top()->second);
