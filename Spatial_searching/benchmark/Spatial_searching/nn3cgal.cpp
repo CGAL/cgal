@@ -56,7 +56,6 @@ void read(Points& points, char* argv)
 
 int main(int argc,char *argv[]) 
 {
-  int NN_number = 10;
   Points query_points_3, data_points_3;
 
   Point_3 p;
@@ -70,6 +69,9 @@ int main(int argc,char *argv[])
  
   int bucketsize = (argc>4) ? boost::lexical_cast<int>(argv[4]) : 10;
   std::cerr << "bucketsize = "  << bucketsize <<std::endl;
+
+  int NN_number = (argc>5) ? boost::lexical_cast<int>(argv[5]) : 10;
+  std::cerr << "k = "  << NN_number <<std::endl;
 
   t.start();
   // Insert data points in the tree
