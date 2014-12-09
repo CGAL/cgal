@@ -110,7 +110,11 @@ void kdtree_demo(int argc, char** argv)
           queries.push_back(Point<double>(x,y,z));
         }
 
-        int bucketsize = (argc>3) ? boost::lexical_cast<int>(argv[3]) : 10;
+        int runs = (argc>3) ? boost::lexical_cast<int>(argv[3]) : 1;
+        std::cerr << "runs = "  << runs <<std::endl;
+ 
+        int bucketsize = (argc>4) ? boost::lexical_cast<int>(argv[4]) : 10;
+        std::cerr << "bucketsize = "  << bucketsize <<std::endl;
 
 	num_t query_pt[3] = { 0, 0, 0};
 
@@ -136,30 +140,35 @@ void kdtree_demo(int argc, char** argv)
         int size = queries.size();
         
         std::cout << "start search" << std::endl;
-		bool dump = true;
-        timer.reset();
-        timer.start();
-		nanoflann::KNNResultSet<num_t> resultSet(num_results);
+        bool dump = true;
         double sum = 0;
-        for(int i = 0 ; i < size; i++){
-          query_pt[0] = queries[i].x;
-          query_pt[1] = queries[i].y;
-          query_pt[2] = queries[i].z;
-		    resultSet.init(ret_index, out_dist_sqr );
-          index.findNeighbors(resultSet, &query_pt[0], nanoflann::SearchParams(10,0));
 
-          //std::cout << "knnSearch(nn="<<num_results<<"): \n";
-          //std::cout << "ret_index=" << ret_index << " out_dist_sqr=" << out_dist_sqr << endl;
-          //std::cout << cloud.pts[ret_index] << std::endl;
-          for (int k=0; k<num_results; ++k){
-            sum += cloud.pts[ret_index[k]].x;
-			if(dump)
-			std::cerr <<cloud.pts[ret_index[k]] << std::endl;
-		  }
-		  dump=false;
+        for(int i=0;i<runs;++i){
+          timer.reset();
+          timer.start();
+          nanoflann::KNNResultSet<num_t> resultSet(num_results);
+         
+          for(int i = 0 ; i < size; i++){
+            query_pt[0] = queries[i].x;
+            query_pt[1] = queries[i].y;
+            query_pt[2] = queries[i].z;
+	    resultSet.init(ret_index, out_dist_sqr );
+            index.findNeighbors(resultSet, &query_pt[0], nanoflann::SearchParams(10,0));
+
+            for (int k=0; k<num_results; ++k){
+	      if(dump)
+	        std::cerr <<cloud.pts[ret_index[k]] << std::endl;
+	    }
+		    dump=false;
+          }
+          timer.stop();
+          sum += timer.time();
         }
-        timer.stop();
-        std::cout << sum << " done in " << timer.time() << " sec."<< std::endl;
+        std::cerr<<std::endl << "total: " << sum << " sec\n";
+        if(runs>1){
+          std::cerr << "average: " << sum/runs << " sec\n";
+        }
+          std::cerr << "done\n";
 }
 
 int main(int argc, char** argv)

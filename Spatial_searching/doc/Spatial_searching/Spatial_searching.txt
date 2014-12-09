@@ -173,16 +173,16 @@ plane the sliding midpoint rule computes the same separator as
 the midpoint of rectangle rule. If the data points lie only on one
 side it avoids this by sliding the separator, computed by
 the midpoint of rectangle rule, to the nearest data point.
-
-<DT><B> Worst case for midpoint rules</B><DD>
+</DL>
 
 As all the midpoint rules cut the bounding box in the middle of the longest side, the tree will
 become linear for a dataset with exponential increasing distances in one dimension.
 
 \cgalFigureBegin{Spatial_searchingslidingworstcase, Sliding_worst_case.jpg}
-Worst case point set in 2d.
+Midpoint worst case point set in 2d.
 \cgalFigureEnd
 
+<DL>
 <DT><B> `Median_of_rectangle`</B><DD>
 
 The splitting dimension is the dimension of the longest side of the rectangle.
@@ -194,16 +194,17 @@ along this dimension.
 The splitting dimension is the dimension of the longest side of the rectangle.
 The splitting value is defined by the median of the coordinates of the data points
 along this dimension.
+</DL>
 
-<DT><B> Worst case for median rules</B><DD>
 
 The tree can become linear for the median rules, if many points are colinear in a dimension 
 which is not the cutting dimension.
 \cgalFigureBegin{Spatial_searchingmedianworstcase, Median_worst_case.jpg}
-Worst case point set in 2d.\n
+Median worst case point set in 2d.\n
 a is longer than b, so this will be the cutting dimension.
 \cgalFigureEnd
 
+<DL>
 <DT><B> `Fair`</B><DD>
 
 This splitting rule is a compromise between the median of rectangle
@@ -315,8 +316,8 @@ such an iterator for a point. We next need a distance class
 \cgalExample{Spatial_searching/Distance.h}
 
 We are ready to put the pieces together.
-The class `Search_traits<..>` which you see in the next file is then a mere 
-wrapper for all these types. The searching itself works exactly as for \cgal kernels.
+The class `Search_traits<..>` ,which you see in the next file, is a mere 
+wrapper for all our defined types. The searching itself works exactly as for \cgal kernels.
 
 \cgalExample{Spatial_searching/user_defined_point_and_distance.cpp}
 

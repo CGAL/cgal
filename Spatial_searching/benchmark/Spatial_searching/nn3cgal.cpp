@@ -14,8 +14,8 @@ typedef CGAL::Simple_cartesian<double> K;
 typedef CGAL::Search_traits_3<K> TreeTraits_3;
 typedef K::Point_3 Point_3;
 typedef CGAL::Euclidean_distance<TreeTraits_3> Distance;
-typedef CGAL::Sliding_midpoint<TreeTraits_3> Splitter;
-typedef CGAL::Orthogonal_k_neighbor_search<TreeTraits_3,Distance> Neighbor_search_3;
+typedef CGAL::Fair<TreeTraits_3> Splitter;
+typedef CGAL::Orthogonal_k_neighbor_search<TreeTraits_3,Distance,Splitter> Neighbor_search_3;
 typedef Neighbor_search_3::Tree Tree_3;
 typedef CGAL::Timer Timer;
 
@@ -64,8 +64,11 @@ int main(int argc,char *argv[])
 
   read(data_points_3, argv[1]);
   read(query_points_3, argv[2]);
+
+  int runs = (argc>3) ? boost::lexical_cast<int>(argv[3]) : 1;
+  std::cerr << "runs = "  << runs <<std::endl;
  
-  int bucketsize = (argc>3) ? boost::lexical_cast<int>(argv[3]) : 10;
+  int bucketsize = (argc>4) ? boost::lexical_cast<int>(argv[4]) : 10;
   std::cerr << "bucketsize = "  << bucketsize <<std::endl;
 
   t.start();
@@ -77,23 +80,31 @@ int main(int argc,char *argv[])
   int items=0,leafs=0,internals=0;
   Points result(NN_number);
   tree.statistics(std::cerr);
-
-  t.reset();t.start();
+  double sum=0;
   bool dump = true;
-  for(Points::iterator it = query_points_3.begin(); it != query_points_3.end(); ++it) {
-    // Initialize the search structure, and search all NN_number neighbors
-    Neighbor_search_3 search(tree, *it, NN_number);
-    int i=0;
-    for (Neighbor_search_3::iterator it = search.begin(); it != search.end();it++, i++) {
-      result[i] = it->first;
-      if(dump){
-        std::cerr << result[i].x()<<" "<<result[i].y()<<" "<<result[i].z()<< std::endl;
+
+  for(int i = 0 ; i<runs; ++i){
+
+    t.reset();t.start();
+    for(Points::iterator it = query_points_3.begin(); it != query_points_3.end(); ++it) {
+      // Initialize the search structure, and search all NN_number neighbors
+      Neighbor_search_3 search(tree, *it, NN_number);
+      int i=0;
+      for (Neighbor_search_3::iterator it = search.begin(); it != search.end();it++, i++) {
+        result[i] = it->first;
+        if(dump){
+          std::cerr << result[i].x()<<" "<<result[i].y()<<" "<<result[i].z()<< std::endl;
+        }
       }
+      dump = false;
     }
-    dump = false;
+    t.stop();
+    sum += t.time();
   }
-  t.stop();
-  std::cerr << "queries " << t.time() << " sec\n";
-  std::cerr << "done\n";
+  std::cerr<<std::endl << "total: " << sum << " sec\n";
+  if(runs>1){
+    std::cerr << "average: " << sum/runs << " sec\n";
+  }
+    std::cerr << "done\n";
   return 0;
 }
