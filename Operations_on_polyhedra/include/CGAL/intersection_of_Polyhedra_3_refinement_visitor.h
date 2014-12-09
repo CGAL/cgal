@@ -2145,6 +2145,8 @@ public:
     Polyhedron* Poly_B = boost::next(polyhedron_to_map_node_to_polyhedron_vertex.begin())->first;
     Inside_poly_test* inside_A_test_ptr=NULL;
     Inside_poly_test* inside_B_test_ptr=NULL;
+    bool Poly_A_is_closed = Poly_A->is_closed();
+    bool Poly_B_is_closed = Poly_B->is_closed();
 
     #ifdef CGAL_COREFINEMENT_DEBUG
     final_map().display_characteristics(std::cout); std::cout << "\n";
@@ -2170,12 +2172,22 @@ public:
         Inside_poly_test* inside_test_ptr;
         if ( current_poly==Poly_A)
         {
+          // is the polyhedron is not closed, we set Poly_A to be outside by default
+          if (!Poly_B_is_closed){
+            info.outside.insert(Poly_B);
+            continue;
+          }
           test_poly=Poly_B;
           if (inside_B_test_ptr == NULL) inside_B_test_ptr=new Inside_poly_test(*Poly_B);
           inside_test_ptr=inside_B_test_ptr;
         }
         else
         {
+          // is the polyhedron is not closed, we set Poly_B to be outside by default
+          if (!Poly_A_is_closed){
+            info.outside.insert(Poly_A);
+            continue;
+          }
           test_poly=Poly_A;
           if (inside_A_test_ptr == NULL) inside_A_test_ptr=new Inside_poly_test(*Poly_A);
           inside_test_ptr=inside_A_test_ptr;
