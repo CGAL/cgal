@@ -3,6 +3,10 @@ namespace CGAL {
 /*!
 \ingroup AdvancedClasses
 
+\cgalModifBegin
+Was split in leaf and internal node.
+\cgalModifEnd
+
 The class `Kd_tree_node` implements a node class for a `k-d` tree. 
 
 A node is either a `Kd_tree_leaf_node` or a `Kd_tree_internal_node`.
@@ -53,7 +57,13 @@ bool is_leaf() const;
 /// @}
 
 }; /* end Kd_tree_node */
+/*!
+\ingroup AdvancedClasses
 
+\cgalModifBegin
+New class.
+\cgalModifEnd
+*/
 template < class TreeTraits, class Splitter, class UseExtendedNode > 
   class Kd_tree_leaf_node : public Kd_tree_node< TreeTraits, Splitter, UseExtendedNode >{
   public:
@@ -89,6 +99,13 @@ iterator end() const;
 /// @}
 }; /* end Kd_tree_leaf_node */
 
+/*!
+\ingroup AdvancedClasses
+
+\cgalModifBegin
+New class.
+\cgalModifEnd
+*/
 template < class TreeTraits, class Splitter, class UseExtendedNode > 
   class Kd_tree_internal_node : public Kd_tree_node< TreeTraits, Splitter, UseExtendedNode >{
 public:

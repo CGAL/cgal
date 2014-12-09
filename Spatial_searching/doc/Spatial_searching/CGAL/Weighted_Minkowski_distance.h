@@ -2,6 +2,9 @@ namespace CGAL {
 
 /*!
 \ingroup DistanceClasses
+\cgalModifBegin
+Added overloads to min_dist and max_dist to initialize distance vector
+\cgalModifEnd
 
 The class `Weighted_Minkowski_distance` provides an implementation of the concept `OrthogonalDistance`, with a weighted 
 Minkowski metric on \f$ d\f$-dimensional points 
