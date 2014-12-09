@@ -375,14 +375,23 @@ higher dimensions.
 
 We took the gargoyle data set (Surface) from aim@shape, and generated the same number of random points in the bbox of the gargoyle (Random). 
 We then consider three scenarios as data/queries.
-The data set contains 800K points. For each query point we compute the 10 closest points, with the default splitter and the default bucket size. 
-The values are the average of five tests each.
-Machine : 
+The data set contains 800K points. For each query point we compute the K=10,20,30 closest points, with the default splitter and for the bucket size 10 (default) and 20. 
+
+The results were produced with the release 4.6 of \cgal, on an Intel i7 2.7 Ghz 
+laptop with 16 GB RAM, compiled with Visual C++ 2012 with the /O2 option.
+
+The values are the average of ten tests each.
+
 
 <center>
-Surface/Surface  | Surface/Random | Random/Random
----------------------| -------------------------:  | --------------------------------------------------------:
-  a              |  b                        | c
+k | bucket size | Surface/Surface  | Surface/Random | Random/Random
+--|------------:|-----------------:|---------------:|----------------:
+10|       10    |        0.89      |     11.48      |     2.63         
+10|       20    |        0.89      |      9.80      |     2.25         
+20|       10    |        1.60      |     13.41      |     4.06          
+20|       20    |        1.59      |     11.62      |     3.46         
+30|       10    |        2.35      |     15.52      |     5.42          
+30|       20    |        2.33      |     13.50      |     4.61         
 </center>
 
 \cgalFigureBegin{Spatial_searchingfigbenchmark,gargoyle.png}
