@@ -103,7 +103,7 @@ iterator end() const;
 \ingroup AdvancedClasses
 
 \cgalModifBegin
-New class.
+New class. High and low value have different meanings than before.
 \cgalModifEnd
 */
 template < class TreeTraits, class Splitter, class UseExtendedNode > 
