@@ -29,10 +29,10 @@ void dump_reconstruction(const Reconstruction& reconstruct, std::string name)
       output << "3 " << *it << std::endl;
 }
 
-int main(void) {
+int main(int argc, char* argv[]) {
     // Read the data.
     Point_collection points;
-    std::ifstream in("data/kitten.off");
+    std::ifstream in(argv[1]);
     std::cout << "Reading " << std::flush;
     if( !in || !CGAL::read_off_points( in, std::back_inserter( points ) ) ) {
         std::cerr << "Error: cannot read file" << std::endl;
