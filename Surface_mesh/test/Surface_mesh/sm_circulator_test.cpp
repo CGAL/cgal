@@ -17,7 +17,7 @@ BOOST_FIXTURE_TEST_CASE(circ_size, Surface_fixture)
   
   BOOST_CHECK_EQUAL(CGAL::circulator_size(vvc), 4);
   BOOST_CHECK_EQUAL(CGAL::circulator_size(hvc), 4);
-  BOOST_CHECK_EQUAL(CGAL::circulator_size(fvc), 3);
+  BOOST_CHECK_EQUAL(CGAL::circulator_size(fvc), 4);
   BOOST_CHECK_EQUAL(CGAL::circulator_size(vaf), 3);
   BOOST_CHECK_EQUAL(CGAL::circulator_size(hfc), 3);
   
