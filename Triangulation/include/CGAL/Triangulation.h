@@ -696,8 +696,8 @@ public:
             Full_cell_handle n = s->neighbor(i);
             if( ! t_.is_infinite(n) )
                 return false;
-            // FIXME: infinite vertex is NOT at index 0 a priori.
-            n->vertex(0)->set_point(p_);
+            int inf_v_index = n->index(infinite_vertex());
+            n->vertex(inf_v_index)->set_point(p_);
             bool ok = (POSITIVE == ori_(t_.points_begin(n), t_.points_begin(n) + cur_dim_ + 1));
             return ok;
         }
@@ -850,8 +850,8 @@ Triangulation<TT, TDS>
     // infinite one...
     CGAL_precondition( is_infinite(s) );
     CGAL_precondition( 1 == current_dimension() );
-    // FIXME: infinite vertex is NOT at index 0 a priori. But I'm not sure it's a problem here.
-    bool swap = (0 == s->neighbor(0)->index(s));
+    int inf_v_index = s->index(infinite_vertex());
+    bool swap = (0 == s->neighbor(inf_v_index)->index(s));
     Vertex_handle v = tds().insert_in_full_cell(s);
     v->set_point(p);
     if( swap )
@@ -888,8 +888,9 @@ Triangulation<TT, TDS>
             ochtp(*this, p, ori);
         tds().gather_full_cells(s, ochtp, out);
     }
-    // FIXME: infinite vertex is NOT at index 0 a priori.
-    Vertex_handle v = insert_in_hole(p, simps.begin(), simps.end(), Facet(s, 0));
+    int inf_v_index = s->index(infinite_vertex());
+    Vertex_handle v = insert_in_hole(
+      p, simps.begin(), simps.end(), Facet(s, inf_v_index));
     return v;
 }
 
@@ -905,8 +906,9 @@ Triangulation<TT, TDS>
     v->set_point(p);
     if( current_dimension() >= 1 )
     {
-        // FIXME: infinite vertex is NOT at index 0 a priori.
-        Full_cell_handle s = infinite_vertex()->full_cell()->neighbor(0);
+        Full_cell_handle inf_v_cell = infinite_vertex()->full_cell();
+        int inf_v_index = inf_v_cell->index(infinite_vertex());
+        Full_cell_handle s = inf_v_cell->neighbor(inf_v_index);
         Orientation o = orientation(s);
         CGAL_assertion( COPLANAR != o );
             if( NEGATIVE == o )
@@ -958,15 +960,21 @@ Triangulation<TT, TDS>
 
     // if we don't know where to start, we start from any bounded full_cell
     if( Full_cell_handle() == start )
+    {
         // THE HACK THAT NOBODY SHOULD DO... BUT DIFFICULT TO WORK AROUND
         // THIS... TODO: WORK AROUND IT
-        // FIXME: infinite vertex is NOT at index 0 a priori.
-        s = const_cast<Self*>(this)->infinite_full_cell()->neighbor(0);
+        Full_cell_handle inf_c = const_cast<Self*>(this)->infinite_full_cell();
+        int inf_v_index = inf_c->index(infinite_vertex());
+        s = inf_c->neighbor(inf_v_index);
+    }
     else
     {
         s = start;
         if( is_infinite(s) )
-            s = s->neighbor(0); // FIXME: index of infinite vertex is not zero ( not 0)
+        {
+            int inf_v_index = s->index(infinite_vertex());
+            s = s->neighbor(inf_v_index);
+        }
     }
 
     // Check if query |p| is outside the affine hull
