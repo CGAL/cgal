@@ -94,34 +94,34 @@ neighbor must not be smaller than \f$ r/(1+\epsilon)\f$. Obviously, for
 \f$ \epsilon=0\f$ we get the exact result, and the larger \f$ \epsilon\f$ is,
 the less exact the result.
 
-Neighbor searching is implemented by the following four classes.
+We distinguish between orthogonal distances for point queries and
+general distances for other spatial objects. 
 
-The class `Orthogonal_k_neighbor_search<Traits,
-OrthogonalDistance, Splitter, SpatialTree>` implements the standard
+Orthogonal distance:
+
+General distance:
+
+The following two classes implement the standard
 search strategy for orthogonal distances like the weighted Minkowski
-distance. It requires the use of extended nodes in the spatial tree
-and supports only `k` neighbor searching for point queries.
+distance. The second one is a specialization for incremental neighbor 
+searching and distance browsing. Both require extendes nodes.
 
-The class `K_neighbor_search<Traits, GeneralDistance,
-Splitter, SpatialTree>` implements the standard search strategy for
-general distances like the Manhattan distance for iso-rectangles.
-It does not require the use of extended nodes in the spatial tree and supports
-only `k` neighbor searching for queries defined by points or spatial
-objects.
+`Orthogonal_k_neighbor_search<Traits,
+OrthogonalDistance, Splitter, SpatialTree>` 
 
-The class `Orthogonal_incremental_neighbor_search<Traits,
-GeneralDistance, Splitter, SpatialTree>` implements the incremental
-search strategy for general distances like the weighted Minkowski
-distance. It requires the use of extended nodes in the spatial tree
-and supports incremental neighbor searching and distance browsing for
-point queries.
+`Orthogonal_incremental_neighbor_search<Traits,
+OrthogonalDistance, Splitter, SpatialTree>` 
 
-The class `Incremental_neighbor_search<Traits,
-GeneralDistance, Splitter, SpatialTree>` implements the incremental
-search strategy for general distances like the Manhattan distance for
-iso-rectangles. It does not require the use of extended nodes in the
-spatial tree and supports incremental neighbor searching and distance
-browsing for queries defined by points or spatial objects.
+The other two classes implement the standard search strategy for
+general distances like the Manhattan distance for iso-rectangle queries.
+Again, the second one is a specialization for incremental neighbor 
+searching and distance browsing .
+
+`K_neighbor_search<Traits, GeneralDistance,
+Splitter, SpatialTree>` 
+
+`Incremental_neighbor_search<Traits,
+GeneralDistance, Splitter, SpatialTree>` 
 
 \subsection Spatial_searchingRangeSearching Range Searching
 

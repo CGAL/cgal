@@ -51,7 +51,7 @@ typedef unspecified_type Query_item;
 /*!
 Constructor implementing distance for `d`-dimensional points. 
 */ 
-OrthogonalDistance(int d); 
+OrthogonalDistance(); 
 
 /// @} 
 
@@ -72,8 +72,8 @@ FT min_distance_to_rectangle(Query_item q, Kd_tree_rectangle<FT,D> r) const;
 /*!
 Returns the transformed distance between `q` and 
 the point on the boundary of `r` closest to `q`.
-Stores the components of the distance in each
-dimension in `dists`.
+The vector `dists` has the size of the dimension of the data points
+and is filled with the distance in each dimension.
 */ 
   FT min_distance_to_rectangle(Query_item q, Kd_tree_rectangle<FT,D> r, std::vector<FT>& dists); 
 
@@ -86,8 +86,8 @@ FT max_distance_to_rectangle(Query_item q, Kd_tree_rectangle<FT,D> r) const;
 /*!
 Returns the transformed distance between `q` and 
 the point on the boundary of `r` farthest to `q`.
-Stores the components of the distance in each
-dimension in `dists`.
+The vector `dists` has the size of the dimension of the data points
+and is filled with the distance in each dimension.
 */ 
   FT max_distance_to_rectangle(Query_item q, Kd_tree_rectangle<FT,D> r, std::vector<FT>& dists); 
 

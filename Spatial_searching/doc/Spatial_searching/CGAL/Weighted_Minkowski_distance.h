@@ -82,7 +82,7 @@ FT min_distance_to_rectangle(Point_d q, Kd_tree_rectangle<FT,D> r) const;
 
 /*!
 Returns \f$ d^{power}\f$, where \f$ d\f$ denotes the distance between the query item `q` and 
-the point on the boundary of `r` closest to `q`. Stores the components of the distance in each
+the point on the boundary of `r` closest to `q`. Stores the distances in each
 dimension in `dists`.
 */ 
 FT min_distance_to_rectangle(Point_d q, Kd_tree_rectangle<FT,D> r, vector<FT>& dists); 
@@ -95,7 +95,7 @@ FT max_distance_to_rectangle(Point_d q, Kd_tree_rectangle<FT,D> r) const;
 
 /*!
 Returns \f$ d^{power}\f$, where \f$ d\f$ denotes the distance between the query item `q` and 
-the point on the boundary of `r` farthest to `q`. Stores the components of the distance in each
+the point on the boundary of `r` farthest to `q`. Stores the distances in each
 dimension in `dists`.
 */ 
 FT max_distance_to_rectangle(Point_d q, Kd_tree_rectangle<FT,D> r, vector<FT>& dists) ; 

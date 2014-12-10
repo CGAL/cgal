@@ -79,7 +79,7 @@ FT min_distance_to_rectangle(Query_item q, Kd_tree_rectangle<FT,D> r) const;
 /*!
 Returns the squared Euclidean distance between `q` and 
 the point on the boundary of `r` closest to `q`. Stores 
-the components of the distance in each dimension in `dists`. 
+the distances in each dimension in `dists`. 
 */ 
 FT min_distance_to_rectangle(Query_item q, Kd_tree_rectangle<FT,D> r, vector<FT>& dists); 
 
@@ -91,7 +91,7 @@ FT max_distance_to_rectangle(Query_item q, Kd_tree_rectangle<FT,D> r) const;
 
 /*!
 Returns the squared Euclidean distance, where \f$ d\f$ denotes the distance between `q` and 
-the point on the boundary of `r` farthest to `q`. Stores the components of the distance in 
+the point on the boundary of `r` farthest to `q`. Stores the distances in 
 each dimension in `dists`.
 */ 
 FT max_distance_to_rectangle(Query_item q, Kd_tree_rectangle<FT,D> r, vector<FT>& dists); 
