@@ -24,14 +24,21 @@
 #include <CGAL/config.h>
 
 //========================= Debugging & profiling =============================
-//#define CGAL_TC_PROFILING
+#define CGAL_TC_PROFILING
 #define CGAL_TC_VERBOSE
+
+// Solving inconsistencies: only change the weights of the inconsistent simplex
+// or more?
+#define CGAL_TC_ONLY_CHANGE_SIMPLEX_WEIGHTS
+
+// Otherwise...
+const int CGAL_TC_NUMBER_OF_ADDITIONNAL_PERTURBED_POINTS = 1;
 
 //========================= Strategy ==========================================
 //#define CGAL_TC_USE_NANOFLANN
 
 //========================= Parameters ========================================
 const std::size_t NUM_POINTS_FOR_PCA = 50;
-const double INPUT_SPARSITY = 0.5;
+const double INPUT_SPARSITY = 0.1;
 
 #endif // CGAL_TC_CONFIG_H

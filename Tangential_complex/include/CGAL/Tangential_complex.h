@@ -241,7 +241,8 @@ public:
     if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
     {
       tbb::parallel_for(tbb::blocked_range<size_t>(0, m_points.size()),
-        Compute_tangent_triangulation(*this, true)
+        Compute_tangent_triangulation(*this, 
+          true) //tangent_spaces_are_already_computed 
       );
     }
     // Sequential
@@ -249,8 +250,12 @@ public:
 #endif // CGAL_LINKED_WITH_TBB
     {
       for (std::size_t i = 0 ; i < m_points.size() ; ++i)
-        compute_tangent_triangulation(i, true);
+      {
+        compute_tangent_triangulation(i, 
+          true); // tangent_spaces_are_already_computed
+      }
     }
+    
 
 #ifdef CGAL_TC_PROFILING
     std::cerr << "Tangential complex refreshed in " << t.elapsed()
@@ -1084,25 +1089,7 @@ private:
             rng.get_double(0., (0.5*0.5*INPUT_SPARSITY*INPUT_SPARSITY));
         }
 
-        for (std::set<std::size_t>::iterator it=c.begin(); it!=c.end(); ++it)
-        {
-          std::size_t j = *it;
-#ifdef CGAL_LINKED_WITH_TBB
-          if (j == tr_index)
-          {
-            compute_tangent_triangulation(j, true);
-          }
-          else
-          {
-            Tr_mutex::scoped_lock lock(m_tr_mutexes[j]);
-            compute_tangent_triangulation(j, true);
-          }
-#else
-          compute_tangent_triangulation(j, true);
-#endif
-        }
-
-        refresh_tangential_complex(); // CJTODO: heavy computation!
+        refresh_tangential_complex();
 
         // We will try the other cells next time (incident_cells is not
         // valid anymore here)
@@ -1110,7 +1097,6 @@ private:
       }
 #else      
       // Inconsistent?
-      // N.B.: we don't test infinite cells
       if (!is_simplex_consistent(*it_c))
       {
         // Get the k + 2 closest points
@@ -1128,10 +1114,6 @@ private:
           center[i] /= (Intrinsic_dimension + 1);
         }
         Point global_center(center.begin(), center.end());*/
-        
-        std::vector<std::size_t> cell_idx; // CJTODO TEMP
-        for (int i = 0 ; i < Intrinsic_dimension + 1 ; ++i)
-          cell_idx.push_back((*it_c)->vertex(i)->data());
 
         std::vector<Tr_point> simplex_pts;
         for (int i = 0 ; i < Intrinsic_dimension + 1 ; ++i)
@@ -1148,7 +1130,6 @@ private:
         typename Kernel::Scaled_vector_d k_scaled_vec =
           m_k.scaled_vector_d_object();
 
-        // CJTODO URGENT : que se passe-t-il si c'est un simplex infini ?
         Tr_point local_center = power_center(simplex_pts.begin(), simplex_pts.end());
         Point global_center = m_points[tr_index];
         const Tangent_space_basis &tsb = m_tangent_spaces[tr_index];
@@ -1159,7 +1140,10 @@ private:
             k_scaled_vec(tsb[i], coord(local_center, i)));
         }
         
-        KNS_range kns_range = m_points_ds.query_ANN(global_center, Intrinsic_dimension + 2);
+        KNS_range kns_range = m_points_ds.query_ANN(
+          global_center, 
+          Intrinsic_dimension + 1 
+          + CGAL_TC_NUMBER_OF_ADDITIONNAL_PERTURBED_POINTS);
         std::vector<std::size_t> neighbors;
         for (KNS_iterator nn_it = kns_range.begin() ;
              nn_it != kns_range.end() ;
@@ -1176,28 +1160,8 @@ private:
           m_weights[*it] =
             rng.get_double(0., (0.5*0.5*INPUT_SPARSITY*INPUT_SPARSITY));
         }
-
-        for (std::vector<std::size_t>::iterator it = neighbors.begin(); 
-             it != neighbors.end() ; 
-             ++it)
-        {
-          std::size_t j = *it;
-#ifdef CGAL_LINKED_WITH_TBB
-          if (j == tr_index)
-          {
-            compute_tangent_triangulation(j, true);
-          }
-          else
-          {
-            Tr_mutex::scoped_lock lock(m_tr_mutexes[j]);
-            compute_tangent_triangulation(j, true);
-          }
-#else
-          compute_tangent_triangulation(j, true);
-#endif
-        }
-
-        refresh_tangential_complex(); // CJTODO: heavy computation!
+        
+        refresh_tangential_complex();
 
         // We will try the other cells next time (incident_cells is not
         // valid anymore here)
@@ -1379,8 +1343,10 @@ private:
 
 private:
   const Kernel              m_k;
+  
   Points                    m_points;
   Weights                   m_weights;
+
   Points_ds                 m_points_ds;
   TS_container              m_tangent_spaces;
   Tr_container              m_triangulations; // Contains the triangulations
