@@ -35,7 +35,7 @@ int main()
   name[v2] = "world";
 
   {
-    // You can't add a property if it already exists
+    // You get an existing property, and created will be false
     Mesh::Property_map<vertex_descriptor,std::string> name;
     bool created;
     boost::tie(name, created) = m.add_property_map<vertex_descriptor,std::string>("v:name", "");

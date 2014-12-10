@@ -51,5 +51,6 @@ int main()
     "  }#IndexedLineSet\n"
     "}# Shape\n";
 
+  P.remove_property_map(predecessor);
   return 0;
 }
