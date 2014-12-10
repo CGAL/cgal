@@ -22,16 +22,15 @@ if ( CGAL_FOUND )
   include( CGAL_CreateSingleSourceCGALProgram )
 
   include_directories (BEFORE "../../include")
-  include_directories (BEFORE "../include")
 
   create_single_source_cgal_program( "sm_aabbtree.cpp" )
+  create_single_source_cgal_program( "sm_bgl.cpp" )
+  create_single_source_cgal_program( "sm_circulators.cpp" )
   create_single_source_cgal_program( "sm_do_intersect.cpp" )
   create_single_source_cgal_program( "sm_iterators.cpp" )
-  create_single_source_cgal_program( "sm_circulators.cpp" )
-  create_single_source_cgal_program( "sm_properties.cpp" )
-  create_single_source_cgal_program( "sm_memory.cpp" )
   create_single_source_cgal_program( "sm_kruskal.cpp" )
-  create_single_source_cgal_program( "sm_bgl.cpp" )
+  create_single_source_cgal_program( "sm_memory.cpp" )
+  create_single_source_cgal_program( "sm_properties.cpp" )
 
 else()
   

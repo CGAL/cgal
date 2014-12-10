@@ -69,8 +69,8 @@ bool read_off_binary(Surface_mesh<Point_3>& mesh,
     typename Mesh::Vertex_index  v;
 
     // properties
-    Mesh::Property_map<typename Mesh::Vertex_index, Normal>              normals;
-    Mesh::Property_map<typename Mesh::Vertex_index, Texture_coordinate>  texcoords;
+    typename Mesh:: template Property_map<typename Mesh::Vertex_index, Normal>              normals;
+    typename Mesh:: template Property_map<typename Mesh::Vertex_index, Texture_coordinate>  texcoords;
     if (has_normals)   normals   = mesh.template add_property_map<typename Mesh::Vertex_index, Normal>("v:normal").first;
     if (has_texcoords) texcoords = mesh.template add_property_map<typename Mesh::Vertex_index, Texture_coordinate>("v:texcoord").first;
 
@@ -145,8 +145,8 @@ bool read_off_ascii(Surface_mesh<Point_3>& mesh,
     typename Mesh::Vertex_index   v;
 
     // properties
-    Mesh::Property_map<typename Mesh::Vertex_index, Normal>                 normals;
-    Mesh::Property_map<typename Mesh::Vertex_index, Texture_coordinate>     texcoords;
+    typename Mesh::template Property_map<typename Mesh::Vertex_index, Normal>                 normals;
+    typename Mesh::template Property_map<typename Mesh::Vertex_index, Texture_coordinate>     texcoords;
     
     if (has_normals)   normals   = mesh.template add_property_map<typename Mesh::Vertex_index, Normal>("v:normal").first;
     if (has_texcoords) texcoords = mesh.template add_property_map<typename Mesh::Vertex_index, Texture_coordinate>("v:texcoord").first;
@@ -343,7 +343,7 @@ bool write_off(const Surface_mesh<K>& mesh, const std::string& filename)
 
 
     // vertices
-    Mesh::Property_map<typename Mesh::Vertex_index, Point_3> points 
+    typename Mesh::template Property_map<typename Mesh::Vertex_index, Point_3> points 
       = mesh.template property_map<typename Mesh::Vertex_index, Point_3>("v:point").first;
     for (typename Mesh::Vertex_iterator vit=mesh.vertices_begin(); vit!=mesh.vertices_end(); ++vit)
     {
@@ -360,7 +360,7 @@ bool write_off(const Surface_mesh<K>& mesh, const std::string& filename)
         typename Surface_mesh<K>::Vertex_around_face_circulator fvit(mesh.halfedge(*fit),mesh), fvend=fvit;
         do
         {
-          Surface_mesh<K>::size_type idx = *fvit;
+          typename Surface_mesh<K>::size_type idx = *fvit;
           fprintf(out, " %d", idx);
         }
         while (++fvit != fvend);

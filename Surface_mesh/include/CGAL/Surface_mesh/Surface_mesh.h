@@ -169,7 +169,7 @@ public: // virtual interface of Base_property_array
 
     virtual Base_property_array* clone() const
     {
-        Property_array<T>* p = new Property_array<T>(name_, value_);
+        Property_array<T>* p = new Property_array<T>(this->name_, this->value_);
         p->data_ = data_;
         return p;
     }
@@ -338,7 +338,7 @@ public:
     // delete a property
     template <class T> void remove(Property_map<Key, T>& h)
     {
-        std::vector<Base_property_array*>::iterator it=parrays_.begin(), end=parrays_.end();
+        typename std::vector<Base_property_array*>::iterator it=parrays_.begin(), end=parrays_.end();
         for (; it!=end; ++it)
         {
             if (*it == h.parray_)
@@ -1505,38 +1505,44 @@ public:
             valid = valid && next(*it).is_valid();
             valid = valid && opposite(*it).is_valid();
             if(!valid) {
-                std::cerr << "Integrity of halfedge " << *it << " corrupted."  << std::endl;
+                if (verbose)
+                  std::cerr << "Integrity of halfedge " << *it << " corrupted."  << std::endl;
                 break;
             }
 
             valid = valid && (opposite(*it) != *it);
             valid = valid && (opposite(opposite(*it)) == *it);
             if(!valid) {
+              if (verbose)
                 std::cerr << "Integrity of opposite halfedge of " << *it << " corrupted."  << std::endl;
                 break;
             }
 
             valid = valid && (next(prev(*it)) == *it);
             if(!valid) {
-                std::cerr << "Integrity of previous halfedge of " << *it << " corrupted."  << std::endl;
+                if (verbose)
+                  std::cerr << "Integrity of previous halfedge of " << *it << " corrupted."  << std::endl;
                 break;
             }
 
             valid = valid && (prev(next(*it)) == *it);
             if(!valid) {
-                std::cerr << "Integrity of next halfedge of " << *it << " corrupted."  << std::endl;
+                if (verbose)
+                  std::cerr << "Integrity of next halfedge of " << *it << " corrupted."  << std::endl;
                 break;
             }
 
             valid = valid && target(*it).is_valid();
             if(!valid) {
-                std::cerr << "Integrity of vertex of halfedge " << *it << " corrupted."  << std::endl;
+                if (verbose)
+                  std::cerr << "Integrity of vertex of halfedge " << *it << " corrupted."  << std::endl;
                 break;
             }
 
             valid = valid && (target(*it) == target(opposite(next(*it))));
             if(!valid) {
-                std::cerr << "Halfedge vertex of next opposite is not the same for " << *it << "."  << std::endl;
+                if (verbose)
+                  std::cerr << "Halfedge vertex of next opposite is not the same for " << *it << "."  << std::endl;
                 break;
             }
         }
@@ -1546,7 +1552,8 @@ public:
                 // not an isolated vertex
                 valid = valid && (target(halfedge(*it)) == *it);
                 if(!valid) {
-                    std::cerr << "Halfedge of " << *it << " is not an incoming halfedge." << std::endl;
+                    if (verbose)
+                      std::cerr << "Halfedge of " << *it << " is not an incoming halfedge." << std::endl;
                     break;
                 }
             }
@@ -2138,8 +2145,6 @@ private: //------------------------------------------------------- private data
   std::istream& operator>>(std::istream& is, Surface_mesh<P>& sm)
   {
     typedef Surface_mesh<P> Mesh;
-    typedef typename Mesh::Vertex_index Vertex_index;
-    typedef typename Mesh::Face_index Face_index;
     typedef typename Mesh::size_type size_type;
     sm.clear();
     int n, f, e;

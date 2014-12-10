@@ -9,6 +9,8 @@
 #include <CGAL/Surface_mesh_simplification/edge_collapse.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Count_stop_predicate.h>
 
+#include <CGAL/use.h>
+
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Epic;
 typedef CGAL::Projection_traits_xy_3<Epic>  K;
 typedef K::Point_2 Point;
@@ -111,6 +113,7 @@ main(int,char*[])
   for(boost::tie(eit,ee) = edges(t); eit!= ee; ++eit){
     edge_descriptor ed = *eit;
     vertex_descriptor vd = source(ed,t);
+    CGAL_USE(vd);
     ++index;
   }
 
@@ -121,6 +124,7 @@ main(int,char*[])
   for(boost::tie(hit,he) = halfedges(t); hit!= he; ++hit){
     halfedge_descriptor hd = *hit;
     vertex_descriptor vd = source(hd,t);
+    CGAL_USE(vd);
     ++index;
   }
   std::cerr << index << " halfedges" << std::endl;
@@ -142,12 +146,12 @@ main(int,char*[])
   // The surface and stop conditions are mandatory arguments.
   // The index maps are needed because the vertices and edges
   // of this surface lack an "id()" field.
-  int r = SMS::edge_collapse
-            (t
-            ,stop
-            ,CGAL::vertex_index_map(vertex_index_pmap) 
-                  .halfedge_index_map  (halfedge_index_pmap)
-            );
+  SMS::edge_collapse
+    (t
+    ,stop
+    ,CGAL::vertex_index_map(vertex_index_pmap) 
+          .halfedge_index_map  (halfedge_index_pmap)
+    );
 
 
   ppmap[*(++vertices(t).first)] = Point(78,1,2);

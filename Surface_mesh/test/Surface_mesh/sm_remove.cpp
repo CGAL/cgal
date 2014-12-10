@@ -11,12 +11,12 @@ int main()
 {
   Sm m;
   Sm::vertex_index u;
-  std::cout << m.num_vertices() << "  " << m.num_removed_vertices() << std::endl;
+  std::cout << m.num_vertices() << "  " << m.number_of_removed_vertices() << std::endl;
   for(int i=0; i < 10; i++){
     u = m.add_vertex(Point_3(0,0,0));
     m.remove_vertex(u);
   }
 
-  std::cout << m.num_vertices() << "  " << m.num_removed_vertices() << std::endl;
+  std::cout << m.num_vertices() << "  " << m.number_of_removed_vertices() << std::endl;
   return 0;
 }

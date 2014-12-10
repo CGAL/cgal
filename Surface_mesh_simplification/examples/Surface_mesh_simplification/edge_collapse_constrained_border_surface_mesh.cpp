@@ -73,7 +73,7 @@ int main( int argc, char** argv )
   
   Surface_mesh::Property_map<halfedge_descriptor,std::pair<Point_3, Point_3> > constrained_halfedges;
 
-  constrained_halfedges = surface_mesh.add_property_map<halfedge_descriptor,std::pair<Point_3, Point_3>>("h:vertices").first;
+  constrained_halfedges = surface_mesh.add_property_map<halfedge_descriptor,std::pair<Point_3, Point_3> >("h:vertices").first;
 
   std::size_t nb_border_edges=0;
   BOOST_FOREACH(halfedge_descriptor hd, halfedges(surface_mesh)){

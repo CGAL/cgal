@@ -372,7 +372,7 @@ halfedge(typename boost::graph_traits<OpenMesh::PolyMesh_ArrayKernelT<K> >::vert
 // HalfedgeListGraph
 //
 template <typename K>
-CGA::Iterator_range<typename boost::graph_traits<OpenMesh::PolyMesh_ArrayKernelT<K> >::halfedge_iterator>
+CGAL::Iterator_range<typename boost::graph_traits<OpenMesh::PolyMesh_ArrayKernelT<K> >::halfedge_iterator>
 halfedges(const OpenMesh::PolyMesh_ArrayKernelT<K>& sm)
 {
   return CGAL::make_range(sm.halfedges_sbegin(), sm.halfedges_end());

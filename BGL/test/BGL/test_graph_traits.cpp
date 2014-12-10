@@ -50,12 +50,12 @@ void test_edge_iterators(const G& g)
   typedef typename Traits::edge_descriptor edge_descriptor;
   typedef typename Traits::edge_iterator edge_iterator;
 
-  assert(g.size_of_halfedges() / 2 == num_edges(g));
+  // assert(g.size_of_halfedges() / 2 == num_edges(g));
   
   // do we iterate as many as that?
   edge_iterator eb, ee;
   boost::tie(eb, ee) = edges(g);
-  assert(std::distance(eb, ee) == static_cast<std::ptrdiff_t>(g.size_of_halfedges() / 2));
+  assert(std::distance(eb, ee) == num_edges(g));
 
   id_map ids;
   unsigned int count = 0;

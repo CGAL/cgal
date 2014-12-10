@@ -527,7 +527,7 @@ add_face(InputIterator begin, InputIterator end, CGAL::Surface_mesh<P>& sm)
 template<typename P>
 bool is_valid(CGAL::Surface_mesh<P>& sm, bool verbose = false)
 {
-  return true;
+  return sm.is_valid(verbose);
 }
 
 } // namespace CGAL

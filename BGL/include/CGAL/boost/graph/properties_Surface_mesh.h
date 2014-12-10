@@ -94,7 +94,7 @@ template <typename Point, typename T>
 typename property_map<CGAL::Surface_mesh<Point>, boost::vertex_property_t<T> >::const_type
 get(boost::vertex_property_t<T> vprop, const CGAL::Surface_mesh<Point>& sm)
 {
-  return sm.template property_map<typename CGAL::Surface_mesh<Point>::Vertex_index, T>(vprop.s);
+  return sm.template get_property_map<typename CGAL::Surface_mesh<Point>::Vertex_index, T>(vprop.s);
 }
 
 template <typename Point, typename T>
@@ -261,7 +261,7 @@ put(CGAL::vertex_point_t p, const CGAL::Surface_mesh<K>& g,
     const K& point) {
   typedef CGAL::Surface_mesh<K> SM;
   CGAL_assertion(g.is_valid(x));
-  typename SM::Property_map< typename boost::graph_traits<SM>::vertex_descriptor, 
+  typename SM::template Property_map< typename boost::graph_traits<SM>::vertex_descriptor, 
                     K> prop = get(p, g);
   prop[x] = point;
 }

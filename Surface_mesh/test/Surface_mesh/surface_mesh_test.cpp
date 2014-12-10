@@ -10,6 +10,8 @@
 #include <boost/bind.hpp>
 #include <boost/range/algorithm.hpp>
 
+#include <CGAL/use.h>
+
 BOOST_AUTO_TEST_CASE( constructors_test )
 {
   Sm mesh;
@@ -141,7 +143,6 @@ BOOST_AUTO_TEST_CASE( memory_reuse_test )
   BOOST_CHECK_EQUAL(f.m.number_of_faces() , 0);
   BOOST_CHECK_EQUAL(f.m.number_of_removed_edges(), old_edge_size + old_removed_edge_size);
 
-  int fc = 0;
   // add all again
   for(Faces::iterator it = faces.begin(); it != faces.end(); ++it) {
     Sm::Face_index fd = f.m.add_face(*it);
@@ -151,7 +152,7 @@ BOOST_AUTO_TEST_CASE( memory_reuse_test )
 
       Sm::Halfedge_index h = f.m.halfedge(*it2);
       Sm::Face_index fa = f.m.face(h);
-
+      CGAL_USE(fa);
     }
   }
   

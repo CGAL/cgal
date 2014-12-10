@@ -366,7 +366,7 @@ namespace CGAL {
   put(PropertyTag p, CGAL::Delaunay_triangulation_2<Gt,Tds>& g, 
       const Key& key, const Value& value)
   {
-    typedef typename property_map<CGAL::Delaunay_triangulation_2<Gt,Tds>, PropertyTag>::type Map;
+    typedef typename boost::property_map<CGAL::Delaunay_triangulation_2<Gt,Tds>, PropertyTag>::type Map;
     Map pmap = get(p, g);
     put(pmap, key, value);
   }

@@ -402,7 +402,7 @@ namespace CGAL {
   template <class Gt, class Tds>
   typename boost::graph_traits< Triangulation_2<Gt,Tds> >::face_descriptor
   face(typename boost::graph_traits< Triangulation_2<Gt,Tds> >::halfedge_descriptor e,
-         const Triangulation_2<Gt,Tds>& g)
+         const Triangulation_2<Gt,Tds>&)
   {
     return e.first;
   }
@@ -410,7 +410,7 @@ namespace CGAL {
   template <class Gt, class Tds>
   typename boost::graph_traits< Triangulation_2<Gt,Tds> >::halfedge_descriptor
   halfedge(typename boost::graph_traits< Triangulation_2<Gt,Tds> >::face_descriptor f,
-           const Triangulation_2<Gt,Tds>& g)
+           const Triangulation_2<Gt,Tds>&)
   {
     typedef typename boost::graph_traits< Triangulation_2<Gt,Tds> >::halfedge_descriptor halfedge_descriptor;
     return halfedge_descriptor(f,0);
@@ -431,7 +431,7 @@ namespace CGAL {
   template <class Gt, class Tds>
   typename boost::graph_traits< Triangulation_2<Gt,Tds> >::halfedge_descriptor
   halfedge(typename boost::graph_traits< Triangulation_2<Gt,Tds> >::edge_descriptor e,
-           const Triangulation_2<Gt,Tds>& g)
+           const Triangulation_2<Gt,Tds>&)
   {
     typedef typename boost::graph_traits< Triangulation_2<Gt,Tds> >::halfedge_descriptor halfedge_descriptor;
     return halfedge_descriptor(e.first,e.second);
@@ -440,7 +440,7 @@ namespace CGAL {
   template <class Gt, class Tds>
   typename boost::graph_traits< Triangulation_2<Gt,Tds> >::edge_descriptor
   edge(typename boost::graph_traits< Triangulation_2<Gt,Tds> >::halfedge_descriptor e,
-           const Triangulation_2<Gt,Tds>& g)
+           const Triangulation_2<Gt,Tds>&)
   {
     typedef typename boost::graph_traits< Triangulation_2<Gt,Tds> >::edge_descriptor edge_descriptor;
     return edge_descriptor(e.first,e.second);
@@ -619,23 +619,23 @@ namespace CGAL {
 
   template <class Gt, class Tds>
   class T2_vertex_point_map
-    : public boost::put_get_helper<typename Tds::Vertex::Point, T2_vertex_point_map<Gt,Tds> >
   {
   public:
-    typedef boost::readable_property_map_tag category;
+    typedef boost::lvalue_property_map_tag category;
     typedef typename Tds::Vertex::Point value_type;
     typedef value_type& reference;
     typedef typename CGAL::Triangulation_2<Gt,Tds>::Vertex_handle key_type;
-    
-    T2_vertex_point_map()
-    {}
-    
-    value_type operator[](key_type vh) const {
+
+    friend reference get(T2_vertex_point_map<Gt,Tds>, key_type vh)
+    { 
       return vh->point(); 
     }
-
-    reference operator[](key_type vh) {
-      return vh->point(); 
+    friend void put(T2_vertex_point_map<Gt,Tds>, key_type vh, const reference v)
+    {
+      vh->point()=v; 
+    }
+    reference operator[](key_type vh) const {
+      return vh->point();
     }
   };
 
@@ -790,7 +790,7 @@ namespace CGAL {
   put(PropertyTag p, Triangulation_2<Gt,Tds>& g, 
       const Key& key, const Value& value)
   {
-    typedef typename property_map<Triangulation_2<Gt,Tds>, PropertyTag>::type Map;
+    typedef typename boost::property_map<Triangulation_2<Gt,Tds>, PropertyTag>::type Map;
     Map pmap = get(p, g);
     put(pmap, key, value);
   }

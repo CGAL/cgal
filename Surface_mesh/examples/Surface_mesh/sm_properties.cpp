@@ -48,10 +48,6 @@ int main()
   boost::tie(gnus, found) = m.property_map<face_descriptor,std::string>("v:gnus");
   assert(! found);
 
-
-  typedef boost::property_map<Mesh, boost::vertex_point_t>::type Ppmap;
-  Ppmap  ppmap = m.points();
-
   // retrieve the point property for which exists a convenience function
   Mesh::Property_map<vertex_descriptor, K::Point_3> location = m.points();
   BOOST_FOREACH( vertex_descriptor vd, m.vertices()) { 

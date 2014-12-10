@@ -2,6 +2,7 @@
 #include <CGAL/Surface_mesh.h>
 
 #include <iostream>
+#include <fstream>
 #include <list>
 
 #include <boost/graph/kruskal_min_spanning_tree.hpp>
@@ -57,10 +58,11 @@ kruskal(const Mesh& P)
 }
 
 
-int main() {
+int main(int,char** argv) {
 
   Mesh P;
-  std::cin >> P;
+  std::ifstream input(argv[1]);
+  input >> P;
 
   kruskal(P);
 
