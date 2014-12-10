@@ -2,6 +2,7 @@
 #include <CGAL/Surface_mesh.h>
 
 #include <iostream>
+#include <fstream>
 
 #include <boost/graph/prim_minimum_spanning_tree.hpp>
 #include <boost/foreach.hpp>
@@ -12,11 +13,12 @@ typedef CGAL::Surface_mesh<Point>                            Mesh;
 
 typedef boost::graph_traits<Mesh>::vertex_descriptor vertex_descriptor;
 
-int main() 
+int main(int argc, char* argv[]) 
 {
   Mesh P;
-  std::cin >> P;
-
+  //std::cin >> P;
+  std::ifstream in(argv[1]);
+  in >> P;
   Mesh::Property_map<vertex_descriptor,vertex_descriptor> predecessor;
   predecessor = P.add_property_map<vertex_descriptor,vertex_descriptor>("v:predecessor").first;
 

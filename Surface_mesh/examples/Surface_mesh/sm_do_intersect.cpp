@@ -116,7 +116,7 @@ int main(int argc, char* argv[])
   std::ifstream inP(argv[1]);
   inP >> P;
   
-  std::ifstream inQ(argv[1]);
+  std::ifstream inQ(argv[2]);
   inQ >> Q;
   Timer timer;
   timer.start();
@@ -127,4 +127,5 @@ int main(int argc, char* argv[])
 
   return 0;
 }
+
 
