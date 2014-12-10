@@ -38,32 +38,58 @@ sparsify_point_set(
   const Kernel &k, Point_container const& input_pts,
   typename Kernel::FT min_squared_dist)
 {
-  typedef typename Point_container::value_type Point;
-  typedef typename CGAL::Tangential_complex_::Point_cloud_data_structure<Kernel,
-                                                    Point_container>  Points_ds;
+  typedef typename Point_container::value_type  Point;
+  typedef typename CGAL::Tangential_complex_::Point_cloud_data_structure<
+    Kernel, Point_container>                    Points_ds;
+  typedef typename Points_ds::INS_iterator      INS_iterator;
+  typedef typename Points_ds::INS_range         INS_range;
 
   typename Kernel::Squared_distance_d sqdist = k.squared_distance_d_object();
+  
+#ifdef CGAL_TC_PROFILING
+    Wall_clock_timer t;
+#endif
 
-  // Create the output container and push the first point into it
+  // Create the output container
   std::vector<typename Point_container::value_type> output;
-  typename Point_container::const_iterator it_pt = input_pts.begin();
-  output.push_back(*it_pt);
-  ++it_pt;
+  
+  Points_ds points_ds(input_pts);
 
   // Parse the following points, and add them if they are not too close to
   // the other points
-  std::size_t c = 1;
-  for ( ;
+  std::size_t pt_idx = 0;
+  for (typename Point_container::const_iterator it_pt = input_pts.begin() ;
        it_pt != input_pts.end();
-       ++it_pt)
+       ++it_pt, ++pt_idx)
   {
-    Points_ds points_ds(output, 0, c);
-    if (points_ds.query_ANN(*it_pt, 1).begin()->second >= min_squared_dist)
+    INS_range ins_range = points_ds.query_incremental_ANN(*it_pt);
+
+    // Drop it if there is another point that:
+    // - is closer that min_squared_dist
+    // - and has a higher index
+    for (INS_iterator nn_it = ins_range.begin() ;
+        nn_it != ins_range.end() ;
+        ++nn_it)
     {
-      output.push_back(*it_pt);
-      ++c;
+      std::size_t neighbor_point_idx = nn_it->first;
+      typename Kernel::FT sq_dist = nn_it->second;
+      // The neighbor is further, we keep the point
+      if (sq_dist >= min_squared_dist)
+      {
+        output.push_back(*it_pt);
+        break;
+      }
+      // The neighbor is close and it has a higher index
+      else if (neighbor_point_idx > pt_idx)
+        break; // We drop the point
+      // Otherwise, we go the next closest point
     }
   }
+  
+#ifdef CGAL_TC_PROFILING
+    std::cerr << "Point set sparsified in " << t.elapsed()
+              << " seconds." << std::endl;
+#endif
 
   return output;
 }
