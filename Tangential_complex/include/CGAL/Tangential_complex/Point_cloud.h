@@ -283,6 +283,13 @@ public:
     return m_points;
   }*/
 
+  // Be careful, this function invalidates the tree,
+  // which will be recomputed at the next query
+  void insert(std::ptrdiff_t point_idx)
+  {
+    m_tree.insert(point_idx);
+  }
+
   KNS_range query_ANN(const
     Point &sp,
     unsigned int k,
