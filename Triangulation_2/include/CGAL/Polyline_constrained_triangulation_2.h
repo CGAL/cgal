@@ -31,6 +31,12 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Triangulation_2/insert_constraints.h>
 
+#if defined(BOOST_MSVC)
+#  pragma warning(push)
+#  pragma warning(disable:4355)
+//warning C4355: 'this' : used in base member initializer list
+#endif
+
 namespace CGAL {
 
 // Comparison functor that compares two Vertex_handle.
@@ -1185,4 +1191,7 @@ points_in_constraint_end(Constraint_id cid) const
 
 } //namespace CGAL
 
+#if defined(BOOST_MSVC)
+#  pragma warning(pop)
+#endif
 #endif //CGAL_CONSTRAINED_TRIANGULATION_PLUS_2_H

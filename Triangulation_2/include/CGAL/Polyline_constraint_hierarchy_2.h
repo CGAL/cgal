@@ -208,9 +208,7 @@ public:
   bool is_subconstrained_edge(T va, T vb) const;
   bool is_constrained_edge(T va, T vb) const;
   bool is_constrained_vertex(T v) const;
-  bool vertices_in_constraint(Constraint hc,  
-			      Vertex_it& v_first,
-			      Vertex_it& v_past) const;
+
   Vertex_it vertices_in_constraint_begin(Constraint_id cid) const
   { return cid.vl_ptr()->skip_begin(); }
   Vertex_it vertices_in_constraint_end(Constraint_id cid) const
@@ -310,7 +308,7 @@ public:
 template <class T, class Compare, class Data>
 Polyline_constraint_hierarchy_2<T,Compare,Data>::
 Polyline_constraint_hierarchy_2(const Polyline_constraint_hierarchy_2& ch)
-  : comp(comp)
+  : comp(ch.comp)
   , sc_to_c_map(Pair_compare(comp))
   , constraint_map(Pair_compare(comp))
 {
@@ -415,19 +413,6 @@ is_subconstrained_edge(T va, T vb) const
   return( sc_to_c_map.find(make_edge(va, vb)) != sc_to_c_map.end() );
 }
 
-
-template <class T, class Compare, class Data>
-bool Polyline_constraint_hierarchy_2<T,Compare,Data>::
-vertices_in_constraint(Constraint hc, 
-		       Vertex_it& v_first,
-		       Vertex_it& v_past ) const
-{
-  Sc_iterator sc_iter = sc_to_c_map.find(hc);
-  if( sc_iter == sc_to_c_map.end() )
-    return false;
-  v_first = (*sc_iter).second;
-  return true;
-}
 
 // af: obsolete
 template <class T, class Compare, class Data>
