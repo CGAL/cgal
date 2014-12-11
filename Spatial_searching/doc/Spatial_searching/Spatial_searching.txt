@@ -126,7 +126,6 @@ in constant time (independent of dimension) with
 This strategy can be used if and only if the distance changes only in one dimension at a time,
 which is the case for point queries.
 
-General distance:
 
 The following two classes implement the standard
 search strategy for orthogonal distances like the weighted Minkowski
