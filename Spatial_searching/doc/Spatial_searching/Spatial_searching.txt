@@ -94,10 +94,37 @@ neighbor must not be smaller than \f$ r/(1+\epsilon)\f$. Obviously, for
 \f$ \epsilon=0\f$ we get the exact result, and the larger \f$ \epsilon\f$ is,
 the less exact the result.
 
-We distinguish between orthogonal distances for point queries and
-general distances for other spatial objects. 
+While searching the nearest neighbor the algorithm descends the kd-tree
+and has to decide two things for each node : Which child node should be visited 
+first and could there be possible nearest neighbors in the other child. This 
+basically comes down to computing the distance to the further child, because the
+distance to the closer child is the same as the one to the parent. There are 
+two options now:<br>
+-# In general, we compute the distance with the given metric. This is the
+<I>k-neighbor search</I> with a <I>general distance</I> class.
+-# For point queries we can "update" the distance, because it is only 
+changed in one dimension at a time. This is the <I>orthogonal k-neighbor search</I>
+with an <I>orthogonal distance</I> class.
+The following example shows the orthogonal distance computation in detail:
 
-Orthogonal distance:
+\cgalFigureBegin{Spatial_searchingorthogonaldistance, orthogonalDistance.svg}
+Orthogonal distance computation technique
+\cgalFigureEnd
+
+Assume we are searching the nearest neighbor, descending the kd-tree, with \f$ R_{p} \f$
+as the parent rectangle and \f$ R_{lo} \f$ and \f$ R_{hi}\f$ as its childs in the current step.
+Further assume \f$ R_{lo} \f$ is closer to query point \f$q\f$. Let \f$cd\f$ denote the cutting dimension and let 
+\f$cv\f$ denote the cutting value. At this point we already know the distance \f$rd_{p}\f$
+to the parent rectangle and need to check if \f$R_{hi}\f$ could contain 
+nearest neighbors. Because \f$R_{lo}\f$ is the closer rectangle, its distance
+to \f$q\f$, \f$rd_{lo}\f$, is the same as \f$rd_{p}\f$. 
+Notice that for each dimension \f$i \neq cd \f$, \f$ \mathrm{dists}_{lo}[i] = \mathrm{dists}_{hi}[i]\f$, 
+since these coordinates are not affected by the current cut. So the new distance along the 
+cutting dimension is \f$ \mathrm{dists}_{hi}[cd] = cv - q[cd]\f$. Now we can compute \f$rd_{hi}\f$
+in constant time (independent of dimension) with 
+\f$rd_{hi} = rd_{p} - \mathrm{dists}_{lo}[cd]^2 + (cv - q[cd])^2\f$.<br>
+This strategy can be used if and only if the distance changes only in one dimension at a time,
+which is the case for point queries.
 
 General distance:
 
