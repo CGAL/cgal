@@ -6,12 +6,12 @@
 # define TBB_USE_THREADING_TOOL
 #endif
 
-#include "test_utilities.h"
-
 #include <CGAL/Epick_d.h>
 #include <CGAL/Tangential_complex.h>
 #include <CGAL/Random.h>
 #include <CGAL/Mesh_3/Profiling_tools.h>
+
+#include "test_utilities.h"
 
 #include <fstream>
 #include <math.h>
@@ -23,7 +23,7 @@
 #ifdef _DEBUG
   const int NUM_POINTS = 50;
 #else
-  const int NUM_POINTS = 100;
+  const int NUM_POINTS = 10000;
 #endif
 
 int main()
@@ -51,7 +51,10 @@ int main()
     Wall_clock_timer t;
     CGAL::default_random = CGAL::Random(i);
     std::cerr << "Random seed = " << i << std::endl;
-
+    
+#ifdef CGAL_TC_PROFILING
+    Wall_clock_timer t_gen;
+#endif
     std::vector<Point> points =
       //generate_points_on_circle_2<Kernel>(NUM_POINTS, 3.);
       //generate_points_on_moment_curve<Kernel>(NUM_POINTS, AMBIENT_DIMENSION, 0., 1.);
@@ -61,6 +64,11 @@ int main()
       //generate_points_on_klein_bottle_3D<Kernel>(NUM_POINTS, 4., 3.);
       generate_points_on_klein_bottle_4D<Kernel>(NUM_POINTS, 4., 3.);
       //generate_points_on_klein_bottle_variant_5D<Kernel>(NUM_POINTS, 4., 3.);
+    
+#ifdef CGAL_TC_PROFILING
+    std::cerr << "Point set generated in " << t_gen.elapsed()
+              << " seconds." << std::endl;
+#endif
 
     points = sparsify_point_set(
       k, points, FT(INPUT_SPARSITY)*FT(INPUT_SPARSITY));

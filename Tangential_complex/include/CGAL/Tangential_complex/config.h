@@ -29,13 +29,14 @@
 
 // Solving inconsistencies: only change the weights of the inconsistent simplex
 // or more?
-#define CGAL_TC_ONLY_CHANGE_SIMPLEX_WEIGHTS
+//#define CGAL_TC_ONLY_CHANGE_SIMPLEX_WEIGHTS
 
 // Otherwise...
 const int CGAL_TC_NUMBER_OF_ADDITIONNAL_PERTURBED_POINTS = 1;
 
 //========================= Strategy ==========================================
 //#define CGAL_TC_USE_NANOFLANN
+//#define CGAL_TC_USE_SLOW_BUT_ACCURATE_SPARSIFIER
 
 //========================= Parameters ========================================
 const std::size_t NUM_POINTS_FOR_PCA = 50;
