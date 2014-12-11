@@ -8,8 +8,9 @@ struct Node {
 
 
 struct Plane_separator{ 
+  unsigned int cutting_dim;
   double cutting_val;
-  boost::uint16_t cutting_dim;
+  
 };
 
 
@@ -19,7 +20,7 @@ struct Plane_separator{
   };
 
   struct InternalB : public Node {
-  boost::uint16_t cutting_dim;
+  unsigned int cutting_dim;
   double cutting_val;
     double d;
   };
@@ -32,7 +33,7 @@ struct Plane_separator{
   };
 
   struct Leaf : public Node {
-    boost::uint16_t i;
+    unsigned int i;
     double d;
   };
 

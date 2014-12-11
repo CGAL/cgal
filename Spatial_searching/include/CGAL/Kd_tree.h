@@ -30,6 +30,7 @@
 #include <CGAL/Splitters.h>
 #include <deque>
 #include <boost/mpl/has_xxx.hpp>
+#include <CGAL/Memory_sizer.h>
 
 #ifdef CGAL_HAS_THREADS
 #include <boost/thread/mutex.hpp>
@@ -171,11 +172,12 @@ private:
     Internal_node node(false);
     
 
-
+    Separator sep;
     Point_container c_low(c.dimension(),traits_);
-    split(node.separator(), c, c_low);
+    split(sep, c, c_low);
+    node.set_separator(sep);
 
-    int cd  = node.separator().cutting_dimension();
+    int cd  = node.cutting_dimension();
     if(!c_low.empty())
       node.low_val = c_low.tight_bounding_box().max_coord(cd);
     else
@@ -185,8 +187,8 @@ private:
     else
       node.high_val = c.bounding_box().max_coord(cd);
 
-    CGAL_assertion(node.separator().cutting_value() >= node.low_val);
-    CGAL_assertion(node.separator().cutting_value() <= node.high_val);
+    CGAL_assertion(node.cutting_value() >= node.low_val);
+    CGAL_assertion(node.cutting_value() <= node.high_val);
 
     if (c_low.size() > split.bucket_size()){
       node.lower_ch = create_internal_node_use_extension(c_low);
@@ -212,9 +214,11 @@ private:
   create_internal_node(Point_container& c)
   {
     Internal_node node(false);
+    Separator sep;
 
     Point_container c_low(c.dimension(),traits_);
-    split(node.separator(), c, c_low);
+    split(sep, c, c_low);
+    node.set_separator(sep);
 
     if (c_low.size() > split.bucket_size()){
       node.lower_ch = create_internal_node(c_low);
@@ -283,6 +287,8 @@ public:
       leaf_nodes[i].data = ptstmp.begin() + tmp;
     }
     pts.swap(ptstmp);
+
+    data.clear();
 
     built_ = true;
   }
@@ -438,12 +444,15 @@ public:
     if(! is_built()){
       const_build();
     }
+    Memory_sizer mem;
+
     s << "Tree statistics:" << std::endl;
     s << "Number of items stored: "
       << root()->num_items() << std::endl;
     s << "Number of nodes: "
       << root()->num_nodes() << std::endl;
     s << " Tree depth: " << root()->depth() << std::endl;
+    s << "Memory: " << mem.resident_size() << std::endl;
     return s;
   }
 

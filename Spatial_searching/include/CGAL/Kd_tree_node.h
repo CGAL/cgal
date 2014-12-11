@@ -269,10 +269,10 @@ namespace CGAL {
   private:
     
        // private variables for internal nodes
-
+    int cut_dim;
+    FT cut_val;
     Node_handle lower_ch, upper_ch;
 
-    Separator sep;
 
     // private variables for extended internal nodes
     FT low_val;
@@ -321,19 +321,24 @@ namespace CGAL {
   	
     // inline Separator& separator() {return sep; }
     // use instead
+    inline
+    void set_separator(Separator& sep){
+      cut_dim = sep.cutting_dimension();
+      cut_val = sep.cutting_value();
+    }
   	
     inline 
     FT 
     cutting_value() const 
     {
-      return sep.cutting_value();
+      return cut_val;
     }
   	
     inline 
     int 
     cutting_dimension() const 
     {
-      return sep.cutting_dimension();
+      return cut_dim;
     }
 
     // members for extended internal node only
@@ -352,11 +357,11 @@ namespace CGAL {
     }
        
 
-    Separator& 
+    /*Separator& 
     separator() 
     {
-      return sep;
-    }
+      return Separator(cutting_dimension,cutting_value);
+    }*/
 	
 
   };//internal node
@@ -376,10 +381,10 @@ namespace CGAL {
   private:
     
        // private variables for internal nodes
+    int cut_dim;
+    FT cut_val;
 
     Node_handle lower_ch, upper_ch;
-
-    Separator sep;
                 
   public:
 
@@ -424,19 +429,25 @@ namespace CGAL {
   	
     // inline Separator& separator() {return sep; }
     // use instead
+
+    inline
+    void set_separator(Separator& sep){
+      cut_dim = sep.cutting_dimension();
+      cut_val = sep.cutting_value();
+    }
   	
     inline 
     FT 
     cutting_value() const 
     {
-      return sep.cutting_value();
+      return cut_val;
     }
   	
     inline 
     int 
     cutting_dimension() const 
     {
-      return sep.cutting_dimension();
+      return cut_dim;
     }
 
     // members for extended internal node only
@@ -455,11 +466,11 @@ namespace CGAL {
     }
        
 
-    Separator& 
+   /* Separator& 
     separator() 
     {
-      return sep;
-    }
+      return Separator(cutting_dimension,cutting_value);
+    }*/
 	
 
   };//internal node
