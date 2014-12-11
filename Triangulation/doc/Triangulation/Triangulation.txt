@@ -438,7 +438,7 @@ created full cells. The second part of code example below shows how one can have
 access to both the conflict zone and the created full cells, while still
 retaining an efficient update of the Delaunay triangulation.
 
-\cgalExample{delaunay.cpp}
+\cgalExample{delaunay_triangulation.cpp}
 
 # Complexity and Performances #
 
