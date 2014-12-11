@@ -42,7 +42,7 @@ int main()
     std::cerr << "Error: vertex property map named 'visited' already exists\n";
   }
 
-  remove_property(vs_pm, m);
+  remove(vs_pm, m);
   
   return 0;
 }

@@ -90,26 +90,7 @@ struct property_map<CGAL::Surface_mesh<Point>, boost::vertex_property_t<T> >
   typedef type const_type;
 };
 
-template <typename Point, typename T>
-typename property_map<CGAL::Surface_mesh<Point>, boost::vertex_property_t<T> >::const_type
-get(boost::vertex_property_t<T> vprop, const CGAL::Surface_mesh<Point>& sm)
-{
-  return sm.template get_property_map<typename CGAL::Surface_mesh<Point>::Vertex_index, T>(vprop.s);
-}
 
-template <typename Point, typename T>
-typename property_map<CGAL::Surface_mesh<Point>, boost::vertex_property_t<T> >::const_type
-add(boost::vertex_property_t<T> vprop, CGAL::Surface_mesh<Point>& sm)
-{
-  return sm.template add_property_map<typename CGAL::Surface_mesh<Point>::Vertex_index, T>(vprop.s, vprop.t);
-}
-
-  template <typename K, typename V, typename P>
-void
-  remove(typename CGAL::Surface_mesh<P>::template Property_map<K,V> pm, CGAL::Surface_mesh<P>& sm)
-{
-  return sm.remove_property_map(pm);
-}
 #endif
 
 
@@ -267,5 +248,31 @@ put(CGAL::vertex_point_t p, const CGAL::Surface_mesh<K>& g,
 }
 
 } // boost
+
+#if 1
+// 
+namespace CGAL {
+template <typename Point, typename T>
+typename boost::property_map<CGAL::Surface_mesh<Point>, boost::vertex_property_t<T> >::const_type
+get(boost::vertex_property_t<T> vprop, const CGAL::Surface_mesh<Point>& sm)
+{
+  return sm.template get_property_map<typename CGAL::Surface_mesh<Point>::Vertex_index, T>(vprop.s).first;
+}
+
+template <typename Point, typename T>
+typename boost::property_map<CGAL::Surface_mesh<Point>, boost::vertex_property_t<T> >::const_type
+add(boost::vertex_property_t<T> vprop, CGAL::Surface_mesh<Point>& sm)
+{
+  return sm.template add_property_map<typename CGAL::Surface_mesh<Point>::Vertex_index, T>(vprop.s, vprop.t).first;
+}
+
+template <typename Pmap,typename P>
+void
+remove(Pmap pm, CGAL::Surface_mesh<P>& sm)
+{
+  return sm.remove_property_map(pm);
+}
+} // namespace CGAL
+#endif
 
 #endif /* CGAL_PROPERTIES_SURFACE_MESH_H */
