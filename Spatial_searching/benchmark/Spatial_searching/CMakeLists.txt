@@ -35,6 +35,7 @@ if ( CGAL_FOUND )
   create_single_source_cgal_program( "Split_data.cpp" )
 create_single_source_cgal_program( "nn3cgal.cpp" )
 create_single_source_cgal_program( "nn3nanoflan.cpp" )
+create_single_source_cgal_program( "sizeof.cpp" )
 
 else()
   
