@@ -165,7 +165,7 @@ neighbors. Its vertices and neighbors are indexed from \f$ 0\f$ to \f$ d \f$. Th
 of its neighbors have the following meaning: the \f$ i\f$-th neighbor of \f$ \sigma\f$
 is the unique neighbor of \f$ \sigma\f$ that does not contain the \f$ i\f$-th vertex of
 \f$ \sigma\f$; in other words, it is the neighbor of \f$ \sigma\f$ <I>opposite</I> to
-the \f$ i\f$-th vertex of \f$ \sigma\f$ (Figure \cgalFigureRef{triangulationfigfullcell}).
+the \f$ i\f$-th vertex of \f$ \sigma\f$ (Figure 
 
 The vertices and full cells of the triangulations are accessed through
 `handles` and `iterators`. A handle is a model of the
@@ -450,7 +450,27 @@ for inserting one point in a triangulation of \f$ n\f$ random points.
 In the worst case, the expected complexity is 
 \f$ O(n^{\lceil\frac{d}{2}\rceil}+n\log n)\f$.
 
-The actual timing are the following:
+We provide below (Figure \cgalFigureRef{Triangulationfigbenchmarks}) the
+performance of the Delaunay triangulation on randomly distributed points. 
+The machine used is a PC running 
+Windows 7 64-bits with an Intel Xeon CPU clocked at 2.80 GHz with 32GB of RAM.
+The program has been compiled with Microsoft Visual C++ 2012 in Release mode.
+
+\cgalFigureAnchor{Triangulationfigbenchmarks}
+
+<CENTER>
+<TABLE CELLSPACING=15>
+<tr><td ALIGN=LEFT NOWRAP COLSPAN=9><HR></td></tr>
+<tr><th ALIGN=RIGHT NOWRAP>Dimension</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th><th>7</th><th>8</th></tr>
+<tr><td ALIGN=LEFT NOWRAP COLSPAN=9><HR></td></tr>
+<tr><td>Inserting 100 points</td><td>0.003</td><td>0.007</td><td>0.03</td><td>0.14</td><td>0.56</td><td>2.7</td><td>11.3</td></tr>
+<tr><td>Inserting 1000 points</td><td>0.015</td><td>0.056</td><td>0.52</td><td>3.5</td><td>26.2</td><td>185</td><td>1385</td></tr>
+<tr><td ALIGN=LEFT NOWRAP COLSPAN=9><HR></td></tr>
+</TABLE>
+</CENTER>
+\cgalFigureCaptionBegin{Triangulationfigbenchmarks}
+Running times in seconds for algorithms on Delaunay triangulations.
+\cgalFigureCaptionEnd
 
 This section will be completed, when the code will be fully ready (and
 preferably with the new Kernel).
