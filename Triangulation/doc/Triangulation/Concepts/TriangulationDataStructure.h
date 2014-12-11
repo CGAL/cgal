@@ -782,8 +782,8 @@ public:
 /// @{
   
 /*!
-A handle to a cell, which must be the same as the
-nested type `TriangulationDataStructure::Full_cell_handle`.
+A handle to a vertex, which must be the same as the
+nested type `TriangulationDataStructure::Vertex_handle`.
 */
 typedef unspecified_type Vertex_handle;
 
