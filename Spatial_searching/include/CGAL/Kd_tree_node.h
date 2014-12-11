@@ -252,7 +252,9 @@ namespace CGAL {
  
   }; //leaf node
 
-  template < class TreeTraits, class Splitter, class UseExtendedNode > 
+
+
+  template < class TreeTraits, class Splitter, class UseExtendedNode> 
   class Kd_tree_internal_node : public Kd_tree_node< TreeTraits, Splitter, UseExtendedNode >{
 
     friend class Kd_tree<TreeTraits,Splitter,UseExtendedNode>;
@@ -275,6 +277,109 @@ namespace CGAL {
     // private variables for extended internal nodes
     FT low_val;
     FT high_val;
+                
+  public:
+
+    // default constructor
+    Kd_tree_internal_node() 
+    {}
+
+    Kd_tree_internal_node(bool leaf_) 
+      : Base(leaf_)
+    {}
+    
+    
+    // members for internal node and extended internal node
+
+    inline 
+    Node_const_handle 
+    lower() const 
+    {
+      return lower_ch; 
+    }
+
+    inline 
+    Node_const_handle 
+    upper() const 
+    {
+      return upper_ch; 
+    }
+
+    inline 
+    Node_handle 
+    lower()
+    {
+      return lower_ch; 
+    }
+
+    inline 
+    Node_handle 
+    upper()
+    {
+      return upper_ch; 
+    }
+  	
+    // inline Separator& separator() {return sep; }
+    // use instead
+  	
+    inline 
+    FT 
+    cutting_value() const 
+    {
+      return sep.cutting_value();
+    }
+  	
+    inline 
+    int 
+    cutting_dimension() const 
+    {
+      return sep.cutting_dimension();
+    }
+
+    // members for extended internal node only
+    inline 
+    FT
+    low_value() const 
+    { 
+      return low_val; 
+    }
+    
+    inline 
+    FT
+    high_value() const 
+    {
+      return high_val; 
+    }
+       
+
+    Separator& 
+    separator() 
+    {
+      return sep;
+    }
+	
+
+  };//internal node
+
+ template < class TreeTraits, class Splitter> 
+ class Kd_tree_internal_node<TreeTraits,Splitter,Tag_false> : public Kd_tree_node< TreeTraits, Splitter, Tag_false >{
+
+    friend class Kd_tree<TreeTraits,Splitter,Tag_false>;
+
+    typedef Kd_tree_node< TreeTraits, Splitter, Tag_false> Base;
+    typedef typename Kd_tree<TreeTraits,Splitter,Tag_false>::Node_handle Node_handle;
+    typedef typename Kd_tree<TreeTraits,Splitter,Tag_false>::Node_const_handle Node_const_handle;
+
+    typedef typename TreeTraits::FT FT;
+    typedef typename Kd_tree<TreeTraits,Splitter,Tag_false>::Separator Separator;
+
+  private:
+    
+       // private variables for internal nodes
+
+    Node_handle lower_ch, upper_ch;
+
+    Separator sep;
                 
   public:
 
