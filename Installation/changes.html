@@ -145,6 +145,19 @@ and <code>src/</code> directories).
             where degenerated point sets (e.g.,points on segment)
             caused the kd-tree to get linear.
         </li>
+        <li>
+            Improved performance of <code>orthogonal_k_neighbor_search</code>.
+        </li>
+        <li>
+            <b>Breaking change:</b> The concept <code>OrthogonalDistance</code> has
+            new function overloads for <code>min_distance_to_rectangle</code> and
+            <code>max_distance_to_rectangle</code> with an additional reference 
+            parameter <code>std::vector</code>.
+        </li>
+        <li>
+            Derived <code>kd_tree_leaf_node</code> and <code>kd_tree_internal_node</code>
+            from <code>kd_tree_node</code> to save memory.
+        </li>
     </ul>
 <!-- Geometric Optimization -->
 <!-- Interpolation -->
