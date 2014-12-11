@@ -44,11 +44,14 @@
 #endif // CGAL_TEST_SUITE and NDEBUG
 
 // Workaround to the following bug:
-//   https://bugreports.qt.nokia.com/browse/QTBUG-22829
+// https://bugreports.qt-project.org/browse/QTBUG-22829
 #ifdef Q_MOC_RUN
 // When Qt moc runs on CGAL files, do not process
 // <boost/type_traits/has_operator.hpp>
 #  define BOOST_TT_HAS_OPERATOR_HPP_INCLUDED
+// do not include <boost/random.hpp> either
+// it includes <boost/type_traits/has_binary_operator.hpp>
+#  define BOOST_RANDOM_HPP
 #endif
 
 // The following header file defines among other things  BOOST_PREVENT_MACRO_SUBSTITUTION 
