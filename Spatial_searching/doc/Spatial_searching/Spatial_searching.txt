@@ -11,7 +11,12 @@ namespace CGAL {
 \section Spatial_searchingIntroduction Introduction
 
 \cgalModifBegin
-Pointed out worst cases for splitters and added example.
+Changes in the User Manual:
+<ul>
+<li> Pointed out worst cases for splitters and added example.
+<li> Added benchmarks
+<li> Added implemenation history
+</ul>
 \cgalModifEnd
 The spatial searching package implements exact and approximate
 distance browsing by providing implementations of algorithms
