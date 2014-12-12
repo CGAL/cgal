@@ -1,1 +1,1 @@
-data/*.xyz
+data/before_upsample.xyz
