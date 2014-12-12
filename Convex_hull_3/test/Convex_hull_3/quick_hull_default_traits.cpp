@@ -1,3 +1,4 @@
+#include <CGAL/Exact_rational.h>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
@@ -7,23 +8,14 @@
 #include <CGAL/assertions.h>
 #include <boost/type_traits.hpp>
 
-#ifdef CGAL_USE_LEDA
-#  include <CGAL/leda_rational.h>
-typedef leda_rational                   Precise_rational;
-#elif defined CGAL_USE_GMP
-#  include <CGAL/Gmpz.h>
-#  include <CGAL/Quotient.h>
-typedef CGAL::Quotient<CGAL::Gmpz>      Precise_rational;
-#else
-#  include <CGAL/MP_Float.h>
-#  include <CGAL/Quotient.h>
-typedef CGAL::Quotient<CGAL::MP_Float>  Precise_rational;
-#endif
+
+typedef CGAL::Exact_rational Exact_rational;
+
 
 typedef CGAL::Exact_predicates_exact_constructions_kernel   EPEC;
 typedef CGAL::Exact_predicates_inexact_constructions_kernel EPIC;
 typedef CGAL::Simple_cartesian<double>                      SCD;
-typedef CGAL::Simple_cartesian<Precise_rational>            SCR;
+typedef CGAL::Simple_cartesian<Exact_rational>            SCR;
 
 using namespace CGAL::internal::Convex_hull_3;
 

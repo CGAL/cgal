@@ -27,6 +27,7 @@
 #ifndef CGAL_MESH_CRITERIA_3_H
 #define CGAL_MESH_CRITERIA_3_H
 
+#include <CGAL/Mesh_3/config.h>
 #include <CGAL/Mesh_3/global_parameters.h>
 #include <CGAL/Mesh_edge_criteria_3.h>
 #include <CGAL/Mesh_facet_criteria_3.h>
@@ -35,6 +36,12 @@
 namespace CGAL {
   
 namespace parameters {
+
+// see <CGAL/config.h>
+CGAL_PRAGMA_DIAG_PUSH
+// see <CGAL/Mesh_3/config.h>
+CGAL_MESH_3_IGNORE_BOOST_PARAMETER_NAME_WARNINGS
+
   BOOST_PARAMETER_NAME( (edge_size, tag) edge_size_ )
   BOOST_PARAMETER_NAME( (edge_sizing_field, tag) edge_sizing_field_ )
   BOOST_PARAMETER_NAME( (facet_angle, tag) facet_angle_ )
@@ -47,6 +54,9 @@ namespace parameters {
   BOOST_PARAMETER_NAME( (cell_size, tag) cell_size_ )
   BOOST_PARAMETER_NAME( (cell_sizing_field, tag) cell_sizing_field_ )
   BOOST_PARAMETER_NAME( (sizing_field, tag) sizing_field_ )
+
+CGAL_PRAGMA_DIAG_POP
+
 } // end namespace parameters
   
 namespace internal {

@@ -4,15 +4,16 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
-
-// Adaptor for Polyhedron_3
-#include <CGAL/Surface_mesh_simplification/HalfedgeGraph_Polyhedron_3.h>
+#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 
 // Simplification function
 #include <CGAL/Surface_mesh_simplification/edge_collapse.h>
 
 // Stop-condition policy
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Count_stop_predicate.h>
+#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Edge_length_cost.h>
+#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Midpoint_placement.h>
+
 
 typedef CGAL::Simple_cartesian<double> Kernel;
 typedef CGAL::Polyhedron_3<Kernel> Surface_mesh; 
@@ -37,8 +38,10 @@ int main( int argc, char** argv )
   int r = SMS::edge_collapse
             (surface_mesh
             ,stop
-            ,CGAL::vertex_index_map(boost::get(CGAL::vertex_external_index,surface_mesh)) 
-                  .edge_index_map  (boost::get(CGAL::edge_external_index  ,surface_mesh)) 
+            ,CGAL::vertex_index_map(get(CGAL::vertex_external_index,surface_mesh)) 
+             .halfedge_index_map  (get(CGAL::halfedge_external_index  ,surface_mesh)) 
+             .get_cost (SMS::Edge_length_cost <Surface_mesh>())
+             .get_placement(SMS::Midpoint_placement<Surface_mesh>())
             );
   
   std::cout << "\nFinished...\n" << r << " edges removed.\n" 

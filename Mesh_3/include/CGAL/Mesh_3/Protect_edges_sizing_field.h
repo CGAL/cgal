@@ -918,6 +918,9 @@ insert_balls(const Vertex_handle& vp,
     std::cerr << "Number of to-be-inserted balls is: " 
               << n << "\n  between points ("
               << vp->point() << ") and (" << vq->point()
+              << ") (geodesic distance: "
+              << domain_.geodesic_distance(vp->point(), vq->point(),
+                                           curve_index)
               << ")\n";
 #endif
     const Bare_point new_point =
@@ -1197,7 +1200,8 @@ change_ball_size(const Vertex_handle& v, const FT size, const bool special_ball)
   CGAL_assertion_code(Tr& tr = c3t3_.triangulation());
   CGAL_assertion_code(Cell_handle ch = tr.locate(p));
   CGAL_assertion_code(std::vector<Vertex_handle> hidden_vertices);
-  CGAL_assertion_code(tr.vertices_inside_conflict_zone(Weighted_point(p, w),
+  CGAL_assertion_code(if(tr.dimension() > 1)
+                      tr.vertices_inside_conflict_zone(Weighted_point(p, w),
                                                        ch,
                                                        std::back_inserter(hidden_vertices)));
 

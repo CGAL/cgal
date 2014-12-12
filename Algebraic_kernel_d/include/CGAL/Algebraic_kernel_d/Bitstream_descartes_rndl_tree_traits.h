@@ -146,7 +146,11 @@ public:
     Bitstream_descartes_rndl_tree_traits(const Bitstream_coefficient_kernel& kernel)
       : Base(kernel){} 
  
-    Bitstream_descartes_rndl_tree_traits(const Self& traits = get_default_instance())
+    Bitstream_descartes_rndl_tree_traits()
+      : Base(static_cast<const Base&>(get_default_instance())){}
+
+    // explicit copy-constructor, required by VC9
+    Bitstream_descartes_rndl_tree_traits(const Self& traits)
       : Base(static_cast<const Base&>(traits)){}
   
     //! @}

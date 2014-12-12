@@ -1,3 +1,9 @@
+
+#ifdef CGAL_GLEW_ENABLED
+# include "GlSplat/GlSplat.h"
+#endif
+
+
 #include <CGAL/check_gl_error.h>
 #include "config.h"
 #include "Scene.h"
@@ -14,6 +20,7 @@
 #include <QApplication>
 #include <QPointer>
 #include <QList>
+#include <QAbstractProxyModel>
 
 namespace {
   void CGALglcolor(QColor c)
@@ -21,6 +28,16 @@ namespace {
     ::glColor4d(c.red()/255.0, c.green()/255.0, c.blue()/255.0, c.alpha()/255.0);
   }
 }
+
+#ifdef CGAL_GLEW_ENABLED
+GlSplat::SplatRenderer* Scene::ms_splatting = 0;
+int Scene::ms_splattingCounter = 0;
+GlSplat::SplatRenderer* Scene::splatting()
+{
+  assert(ms_splatting!=0 && "A Scene object must be created before requesting the splatting object");
+  return ms_splatting;
+}
+#endif
 
 Scene::Scene(QObject* parent)
   : QAbstractListModel(parent),
@@ -32,16 +49,22 @@ Scene::Scene(QObject* parent)
                                     double, double, double)),
           this, SLOT(setSelectionRay(double, double, double, 
                                      double, double, double)));
+#ifdef CGAL_GLEW_ENABLED
+  if(ms_splatting==0)
+    ms_splatting  = new GlSplat::SplatRenderer();
+  ms_splattingCounter++;
+#endif
 }
 
 Scene::Item_id
 Scene::addItem(Scene_item* item)
 {
+  Bbox bbox_before = bbox();
   m_entries.push_back(item);
-
   connect(item, SIGNAL(itemChanged()),
           this, SLOT(itemChanged()));
-  emit updated_bbox();
+  if(bbox_before + item->bbox() != bbox_before)
+  { emit updated_bbox(); }
   emit updated();
   QAbstractListModel::reset();
   Item_id id = m_entries.size() - 1;
@@ -139,12 +162,23 @@ Scene::~Scene()
     delete item_ptr;
   }
   m_entries.clear();
+
+#ifdef CGAL_GLEW_ENABLED
+  if((--ms_splattingCounter)==0)
+    delete ms_splatting;
+#endif
 }
 
 Scene_item*
 Scene::item(Item_id index) const
 {
   return m_entries.value(index); // QList::value checks bounds
+}
+
+Scene::Item_id 
+Scene::item_id(Scene_item* scene_item) const
+{
+  return m_entries.indexOf(scene_item);
 }
 
 int
@@ -176,6 +210,9 @@ Scene::duplicate(Item_id index)
 
 void Scene::initializeGL()
 {
+#ifdef CGAL_GLEW_ENABLED
+  ms_splatting->init();
+#endif
 }
 
 // workaround for Qt-4.2.
@@ -328,10 +365,7 @@ Scene::draw_aux(bool with_names, Viewer_interface* viewer)
         ::glPolygonMode(GL_FRONT_AND_BACK,GL_POINT);
         ::glPointSize(2.f);
         ::glLineWidth(1.0f);
-        if(index == selected_item)
-          CGALglcolor(Qt::black);
-        else
-          CGALglcolor(item.color().lighter(50));
+        CGALglcolor(item.color());
 
         if(viewer)
           item.draw_points(viewer);
@@ -343,6 +377,34 @@ Scene::draw_aux(bool with_names, Viewer_interface* viewer)
       }
     }
   }
+
+#ifdef CGAL_GLEW_ENABLED
+  // Splatting
+  if(ms_splatting->isSupported())
+  {
+    ms_splatting->beginVisibilityPass();
+    for(int index = 0; index < m_entries.size(); ++index)
+    {
+      Scene_item& item = *m_entries[index];
+      if(item.visible() && item.renderingMode() == Splatting)
+      {
+        item.draw_splats();
+      }
+    }
+    ms_splatting->beginAttributePass();
+    for(int index = 0; index < m_entries.size(); ++index)
+    {
+      Scene_item& item = *m_entries[index];
+      if(item.visible() && item.renderingMode() == Splatting)
+      {
+        CGALglcolor(item.color());
+        item.draw_splats();
+      }
+    }
+    ms_splatting->finalize();
+  }
+#endif
+
 }
 
 // workaround for Qt-4.2 (see above)
@@ -505,7 +567,12 @@ Scene::setData(const QModelIndex &index,
   {
     RenderingMode rendering_mode = static_cast<RenderingMode>(value.toInt());
     // Find next supported rendering mode
-    while ( ! item->supportsRenderingMode(rendering_mode) ) {
+    while ( ! item->supportsRenderingMode(rendering_mode) 
+#ifdef CGAL_GLEW_ENABLED
+         || (rendering_mode==Splatting && !Scene::splatting()->isSupported())
+#endif
+    )
+    {
       rendering_mode = static_cast<RenderingMode>( (rendering_mode+1) % NumberOfRenderingMode );
     }
     item->setRenderingMode(rendering_mode);
@@ -543,14 +610,14 @@ int Scene::selectionBindex() const {
 
 QItemSelection Scene::createSelection(int i)
 {
-  return QItemSelection(QAbstractItemModel::createIndex(i, 0),
-    QAbstractItemModel::createIndex(i, LastColumn));
+  return QItemSelection(this->createIndex(i, 0),
+                        this->createIndex(i, LastColumn));
 }
 
 QItemSelection Scene::createSelectionAll()
 {
-  return QItemSelection(QAbstractItemModel::createIndex(0, 0),
-    QAbstractItemModel::createIndex(m_entries.size() - 1 , LastColumn));
+  return QItemSelection(this->createIndex(0, 0),
+                        this->createIndex(m_entries.size() - 1 , LastColumn));
 }
 
 void Scene::itemChanged()
@@ -566,22 +633,24 @@ void Scene::itemChanged(Item_id i)
     return;
 
   m_entries[i]->changed();
-  emit dataChanged(QAbstractItemModel::createIndex(i, 0),
-    QAbstractItemModel::createIndex(i, LastColumn));
+  emit dataChanged(this->createIndex(i, 0),
+                   this->createIndex(i, LastColumn));
 }
 
 void Scene::itemChanged(Scene_item* item)
 {
   item->changed();
-  emit dataChanged(QAbstractItemModel::createIndex(0, 0),
-    QAbstractItemModel::createIndex(m_entries.size() - 1, LastColumn));
+  emit dataChanged(this->createIndex(0, 0),
+                   this->createIndex(m_entries.size() - 1, LastColumn));
 }
 
 bool SceneDelegate::editorEvent(QEvent *event, QAbstractItemModel *model,
 				const QStyleOptionViewItem &option,
 				const QModelIndex &index)
 {
-  Scene *scene = static_cast<Scene*>(model);
+  QAbstractProxyModel* proxyModel = dynamic_cast<QAbstractProxyModel*>(model);
+  Q_ASSERT(proxyModel);
+  Scene *scene = dynamic_cast<Scene*>(proxyModel->sourceModel());
   Q_ASSERT(scene);
   switch(index.column()) {
   case Scene::VisibleColumn:
@@ -648,8 +717,8 @@ bool SceneDelegate::editorEvent(QEvent *event, QAbstractItemModel *model,
       else {
 	scene->item_B = index.row();
       }
-      scene->dataChanged(scene->createIndex(Scene::ABColumn, 0),
-	scene->createIndex(Scene::ABColumn, scene->rowCount()));
+      scene->dataChanged(scene->createIndex(0, Scene::ABColumn),
+                         scene->createIndex(scene->rowCount() - 1, Scene::ABColumn));
     }
     return false;
     break;
@@ -696,8 +765,8 @@ void Scene::setItemVisible(int index, bool b)
   if( index < 0 || index >= m_entries.size() )
     return;
   m_entries[index]->setVisible(b);
-  emit dataChanged(QAbstractItemModel::createIndex(index, VisibleColumn),
-    QAbstractItemModel::createIndex(index, VisibleColumn));
+  emit dataChanged(this->createIndex(index, VisibleColumn),
+                   this->createIndex(index, VisibleColumn));
 }
 
 void Scene::setSelectionRay(double orig_x,
@@ -723,8 +792,8 @@ void Scene::setItemA(int i)
   {
     item_B = -1;
   }
-  emit dataChanged(QAbstractItemModel::createIndex(0, ABColumn),
-    QAbstractItemModel::createIndex(m_entries.size()-1, ABColumn));
+  emit dataChanged(this->createIndex(0, ABColumn),
+                   this->createIndex(m_entries.size()-1, ABColumn));
 }
 
 void Scene::setItemB(int i)
@@ -735,8 +804,8 @@ void Scene::setItemB(int i)
     item_A = -1;
   }
   emit updated();
-  emit dataChanged(QAbstractItemModel::createIndex(0, ABColumn),
-    QAbstractItemModel::createIndex(m_entries.size()-1, ABColumn));
+  emit dataChanged(this->createIndex(0, ABColumn),
+                   this->createIndex(m_entries.size()-1, ABColumn));
 }
 
 Scene::Bbox Scene::bbox() const

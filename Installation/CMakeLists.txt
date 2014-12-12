@@ -19,6 +19,21 @@ else()
   cmake_policy(VERSION 2.6)
 endif()
 
+#
+# Compatibility with CMake 3.0
+#
+if(POLICY CMP0026)
+  # Allow the LOCATION target property
+  # http://www.cmake.org/cmake/help/v3.0/policy/CMP0026.html
+  cmake_policy(SET CMP0026 OLD)
+endif()
+if(POLICY CMP0042)
+  # Do not enable the use of MACOSX_RPATH
+  # http://www.cmake.org/cmake/help/v3.0/policy/CMP0042.html
+  cmake_policy(SET CMP0042 OLD)
+endif()
+
+
 #--------------------------------------------------------------------------------------------------
 #
 #                                    -= PACKAGE SETUP =-
@@ -324,11 +339,11 @@ endif()
 #   CGAL-4.2   : 10.0.1 (Nothing different in CGAL compiled libraries¹.)
 #   CGAL-4.3   : 10.0.2 (Nothing different in CGAL compiled libraries¹.)
 #   CGAL-4.4   : 10.0.3 (Nothing different in CGAL compiled libraries¹.)
-
-# ¹) According to abi-http://upstream-tracker.org/versions/cgal.html
+#   CGAL-4.5   : 10.0.4 (Nothing different in CGAL compiled libraries¹.)
+# ¹) According to http://upstream-tracker.org/versions/cgal.html
 
 set( CGAL_SONAME_VERSION "10" )
-set( CGAL_SOVERSION      "10.0.3" )
+set( CGAL_SOVERSION      "10.0.4" )
 
 message( STATUS "CGAL_SONAME_VERSION=${CGAL_SONAME_VERSION}" )
 message( STATUS "CGAL_SOVERSION     =${CGAL_SOVERSION}" )
@@ -512,7 +527,7 @@ endmacro()
 #  External libs Qt3 and Qt34are configured when Qt3 or Qt4 as lib of cgal are required
 #  Coin is used in KDS, but no FindCoin or FindCOIN exists
 #  There exists FindF2C, FindIPE, FindMKL, but they are only used to support supporting libs
-list (INSERT CGAL_SUPPORTING_3RD_PARTY_LIBRARIES 0 GMP MPFR ZLIB OpenGL LEDA MPFI RS RS3 OpenNL TAUCS Eigen3 BLAS LAPACK QGLViewer ESBTL Coin3D NTL IPE)
+list (INSERT CGAL_SUPPORTING_3RD_PARTY_LIBRARIES 0 GMP MPFR ZLIB OpenGL LEDA MPFI RS RS3 OpenNL Eigen3 BLAS LAPACK QGLViewer ESBTL Coin3D NTL IPE)
 if (NOT WIN32)
   # GMPXX is not supported on WIN32 machines
   list (INSERT CGAL_SUPPORTING_3RD_PARTY_LIBRARIES 1 GMPXX)
@@ -534,7 +549,41 @@ set_special_prefix(QGLViewer QGLVIEWER)
 set_special_prefix(Coin3D COIN3D)
 
 # some libraries are essential (stl and Boost.Thread are treated in another way) 
-list (INSERT CGAL_ESSENTIAL_3RD_PARTY_LIBRARIES 0 GMP MPFR)
+if($ENV{CGAL_DISABLE_GMP})
+  set(CGAL_DISABLE_GMP ON CACHE INTERNAL "")
+endif()
+if(CGAL_DISABLE_GMP)
+  message("Disable the GMP support")
+  list(LENGTH CGAL_ESSENTIAL_3RD_PARTY_LIBRARIES CGAL_ESSENTIAL_LENGTH)
+  if(NOT CGAL_ESSENTIAL_LENGTH EQUAL 0)
+    list(REMOVE_ITEM CGAL_ESSENTIAL_3RD_PARTY_LIBRARIES GMP MPFR)
+  endif()
+  unset(CGAL_CONFIGURED_LIBRARIES)
+  unset(CGAL_CONFIGURED_LIBRARIES CACHE)
+  unset(GMP_FOUND)
+  unset(GMP_FOUND CACHE)
+  unset(GMPXX_FOUND)
+  unset(GMPXX_FOUND CACHE)
+  unset(MPFR_FOUND)
+  unset(MPFR_FOUND CACHE)
+  unset(WITH_CGAL_Core)
+  unset(WITH_CGAL_Core CACHE)
+  unset(WITH_GMP)
+  unset(WITH_GMP CACHE)
+  unset(WITH_GMPXX)
+  unset(WITH_GMPXX CACHE)
+  unset(WITH_MPFR)
+  unset(WITH_MPFR CACHE)
+
+  # Nasty trick to make sure <gmp.h> is not used when CGAL_DISABLE_GMP is TRUE
+  file(WRITE "${CMAKE_BINARY_DIR}/include/gmp.h"
+    "#error GMP is disabled by the CMake option CGAL_DISABLE_GMP")
+else()
+  list(APPEND      CGAL_ESSENTIAL_3RD_PARTY_LIBRARIES GMP MPFR)
+  # Where CMake is run several times, to avoid duplicates
+  list (REMOVE_DUPLICATES CGAL_ESSENTIAL_3RD_PARTY_LIBRARIES)
+  file(REMOVE "${CMAKE_BINARY_DIR}/include/gmp.h")
+endif()
 hide_variable(CGAL_ESSENTIAL_3RD_PARTY_LIBRARIES)
 
 foreach (lib ${CGAL_SUPPORTING_3RD_PARTY_LIBRARIES}) 
@@ -820,11 +869,6 @@ install(FILES     ${CGAL_MODULES_REL_DIR}/UseCGAL.cmake   DESTINATION ${CGAL_INS
 if ( GMP_IN_AUXILIARY )
   install(DIRECTORY auxiliary/gmp/include/ DESTINATION ${CGAL_INSTALL_INC_DIR} )
   install(DIRECTORY auxiliary/gmp/lib/     DESTINATION ${CGAL_INSTALL_LIB_DIR} )
-endif()
-
-if ( TAUCS_IN_AUXILIARY )
-  install(DIRECTORY auxiliary/taucs/include/ DESTINATION ${CGAL_INSTALL_INC_DIR} )
-  install(DIRECTORY auxiliary/taucs/lib/     DESTINATION ${CGAL_INSTALL_LIB_DIR} )
 endif()
 
 if ( ZLIB_IN_AUXILIARY )

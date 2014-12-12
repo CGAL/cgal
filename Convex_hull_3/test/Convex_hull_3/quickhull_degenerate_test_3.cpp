@@ -1,4 +1,4 @@
-#include <CGAL/basic.h>
+#include <CGAL/Exact_rational.h>
 #include <CGAL/Cartesian.h>
 
 #include <fstream>
@@ -9,21 +9,9 @@
 #include <CGAL/point_generators_3.h>
 #include <cassert>
 
-#ifdef CGAL_USE_LEDA
-#  include <CGAL/leda_rational.h>
-typedef leda_rational                   Precise_rational;
-#elif defined CGAL_USE_GMP
-#  include <CGAL/Gmpz.h>
-#  include <CGAL/Quotient.h>
-typedef CGAL::Quotient<CGAL::Gmpz>      Precise_rational;
-#else
-#  include <CGAL/MP_Float.h>
-#  include <CGAL/Quotient.h>
-typedef CGAL::Quotient<CGAL::MP_Float>  Precise_rational;
-#endif
 
-
-typedef CGAL::Cartesian< Precise_rational >     R;
+typedef CGAL::Exact_rational Exact_rational;
+typedef CGAL::Cartesian< Exact_rational >     R;
 typedef CGAL::Convex_hull_traits_3<R>           Traits;
 typedef Traits::Polyhedron_3                    Polyhedron_3;
 
@@ -34,7 +22,7 @@ typedef R::Triangle_3				Triangle_3;
 typedef R::Plane_3   				Plane_3;
 
 
-typedef CGAL::Creator_uniform_3<Precise_rational, Point_3>    Creator;
+typedef CGAL::Creator_uniform_3<Exact_rational, Point_3>    Creator;
 typedef CGAL::Random_points_in_sphere_3<Point_3,Creator>      Generator;
 
 void test_coplanar_xy()

@@ -14,7 +14,7 @@
 // $URL$
 // $Id$
 // 
-// Author: Luis Peñaranda <luis.penaranda@gmx.com>
+// Author: Luis PeÃ±aranda <luis.penaranda@gmx.com>
 
 #ifndef CGAL_GMPFR_H
 #define CGAL_GMPFR_H
@@ -164,6 +164,7 @@ namespace Eigen {
     typedef CGAL::Gmpfr Nested;
 
     static inline Real epsilon() { return 0; }
+    static inline Real dummy_precision() { return 0; }
 
     enum {
       IsInteger = 0,

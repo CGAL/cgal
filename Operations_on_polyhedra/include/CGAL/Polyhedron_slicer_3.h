@@ -24,7 +24,7 @@
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits.h>
 #include <CGAL/AABB_halfedge_graph_segment_primitive.h>
-#include <CGAL/boost/graph/halfedge_graph_traits_Polyhedron_3.h>
+#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 
 #include <CGAL/Vector_3.h>
 #include <CGAL/Point_3.h>
@@ -48,7 +48,7 @@ template<class Polyhedron, class Kernel>
 class Polyhedron_slicer_3
 {
 private:
-  typedef AABB_halfedge_graph_segment_primitive<const Polyhedron>    AABB_primitive;
+  typedef AABB_halfedge_graph_segment_primitive<Polyhedron>         AABB_primitive;
   typedef AABB_traits<Kernel, AABB_primitive>                       AABB_traits_;
   typedef AABB_tree<AABB_traits_>                                   AABB_tree_;
 
@@ -59,12 +59,13 @@ private:
   typedef typename Kernel::Segment_3  Segment;
   typedef typename Kernel::Point_3    Point;
 
-  typedef typename Polyhedron::Edge_const_iterator   Edge_const_iterator;
-  typedef typename Polyhedron::Halfedge_const_handle Halfedge_const_handle;
-  typedef typename Polyhedron::Facet_const_handle    Facet_const_handle;
-  typedef typename Polyhedron::Vertex_const_handle   Vertex_const_handle;
-  typedef typename Polyhedron::Halfedge_around_vertex_const_circulator Halfedge_around_vertex_const_circulator;
-  typedef typename Polyhedron::Halfedge_around_facet_const_circulator  Halfedge_around_facet_const_circulator;
+  typedef typename boost::graph_traits<Polyhedron>::edge_descriptor   Edge_const_handle;
+  typedef typename boost::graph_traits<Polyhedron>::edge_iterator   Edge_const_iterator;
+  typedef typename boost::graph_traits<Polyhedron>::halfedge_descriptor Halfedge_const_handle;
+  typedef typename boost::graph_traits<Polyhedron>::face_descriptor    Facet_const_handle;
+  typedef typename boost::graph_traits<Polyhedron>::vertex_descriptor   Vertex_const_handle;
+  typedef Halfedge_around_target_circulator<Polyhedron> Halfedge_around_vertex_const_circulator;
+  typedef Halfedge_around_face_circulator<Polyhedron>  Halfedge_around_facet_const_circulator;
 
   // to unite halfedges under an "edge"
   struct Edge_comparator {
@@ -127,6 +128,7 @@ private:
   typename Kernel::Intersect_3 intersect_3_functor;
   AABB_tree_ tree;
   mutable Node_graph node_graph;
+  Polyhedron& polyhedron;
 
   boost::tuple<Point, Intersection_type, Vertex_const_handle>
   halfedge_intersection(Halfedge_const_handle hf, const Plane& plane) const
@@ -177,11 +179,11 @@ private:
     Vertex_g v_g = boost::add_vertex(node_graph);
     node_graph[v_g].point = v->point();
 
-    Halfedge_around_vertex_const_circulator around_vertex_c = v->vertex_begin();
+    Halfedge_around_vertex_const_circulator around_vertex_c(v,polyhedron), done(around_vertex_c);
     do {
-      edge_node_map[around_vertex_c].put(v_g);
+      edge_node_map[*around_vertex_c].put(v_g);
     } 
-    while(++around_vertex_c != v->vertex_begin());
+    while(++around_vertex_c != done);
   }
   
   void add_intersection_edge_to_facet_neighbors(Halfedge_const_handle hf, Edge_node_map& edge_node_map) const {
@@ -212,11 +214,11 @@ private:
     Node_pair& hf_node_pair = edge_node_map.find(hf)->second;
     Vertex_g v_g = node_graph[hf_node_pair.v1].point == v->point() ? hf_node_pair.v1 : hf_node_pair.v2;// find node containing v
 
-    Halfedge_around_vertex_const_circulator around_vertex_c = v->vertex_begin();
+    Halfedge_around_vertex_const_circulator around_vertex_c(v, polyhedron), done(around_vertex_c);
     do {
-      if(around_vertex_c->is_border()) { continue;} 
-      Node_pair& around_vertex_node_pair = edge_node_map.find(around_vertex_c)->second;
-      Halfedge_around_facet_const_circulator around_facet_c = around_vertex_c->facet_begin();
+      if((*around_vertex_c)->is_border()) { continue;} 
+      Node_pair& around_vertex_node_pair = edge_node_map.find(*around_vertex_c)->second;
+      Halfedge_around_facet_const_circulator around_facet_c(*around_vertex_c,polyhedron), done2(around_facet_c);
       do {
         CGAL_assertion(around_vertex_node_pair.vertex_count != 0);
         if(around_vertex_node_pair.v1 != v_g) {
@@ -226,9 +228,9 @@ private:
           boost::add_edge(around_vertex_node_pair.v2, v_g, node_graph); 
         }
       } 
-      while(++around_facet_c != around_vertex_c->facet_begin());
+      while(++around_facet_c != done2);
     } 
-    while(++around_vertex_c != v->vertex_begin());
+    while(++around_vertex_c != done);
   }
 
   template<class OutputIterator>
@@ -237,17 +239,17 @@ private:
     node_graph.clear();
 
     // find out intersecting halfedges (note that tree contains edges only with custom comparator)
-    std::vector<Halfedge_const_handle> intersected_edges;
+    std::vector<Edge_const_handle> intersected_edges;
     tree.all_intersected_primitives(plane, std::back_inserter(intersected_edges));
 
     // create node graph from segments
     // each node is associated with multiple edges
     Edge_node_map edge_node_map;
     Edge_intersection_map edge_intersection_map;
-    for(typename std::vector<Halfedge_const_handle>::iterator it = intersected_edges.begin();
+    for(typename std::vector<Edge_const_handle>::iterator it = intersected_edges.begin();
       it != intersected_edges.end(); ++it)
     {
-      Halfedge_const_handle hf = *it;
+      Halfedge_const_handle hf = halfedge(*it,polyhedron);
       Node_pair& assoc_nodes = edge_node_map[hf];
       CGAL_assertion(assoc_nodes.vertex_count < 3); // every Node_pair can at most contain 2 nodes
 
@@ -297,10 +299,10 @@ private:
     } // for(typename std::vector<Halfedge_const_handle>::iterator it = intersected_edges.begin()...
     
     // introduce node connectivity
-    for(typename std::vector<Halfedge_const_handle>::iterator it = intersected_edges.begin();
+    for(typename std::vector<Edge_const_handle>::iterator it = intersected_edges.begin();
       it != intersected_edges.end(); ++it)
     {
-      Halfedge_const_handle hf = *it;
+      Halfedge_const_handle hf = halfedge(*it,polyhedron);
       Edge_intersection_map_iterator intersection_it = edge_intersection_map.find(hf);
       CGAL_assertion(intersection_it != edge_intersection_map.end());
 
@@ -419,9 +421,10 @@ public:
   */
   Polyhedron_slicer_3(const Polyhedron& polyhedron, const Kernel& kernel = Kernel())
   : intersect_3_functor(kernel.intersect_3_object()),
-    tree( undirected_edges(polyhedron).first,
-          undirected_edges(polyhedron).second,
-          polyhedron)
+    tree( edges(polyhedron).first,
+          edges(polyhedron).second,
+          polyhedron),
+    polyhedron(const_cast<Polyhedron&>(polyhedron))
   { }
 
   /**

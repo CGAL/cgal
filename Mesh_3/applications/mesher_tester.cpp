@@ -14,8 +14,8 @@
 #include <CGAL/Mesh_complex_3_in_triangulation_3.h>
 #include <CGAL/Mesh_criteria_3.h>
 // Implicit domain
-#include <CGAL/Mesh_3/Implicit_to_labeled_function_wrapper.h>
-#include <CGAL/Mesh_3/Labeled_mesh_domain_3.h>
+#include <CGAL/Implicit_to_labeling_function_wrapper.h>
+#include <CGAL/Labeled_mesh_domain_3.h>
 
 #include <CGAL/make_mesh_3.h>
 #include "../examples/Mesh_3/implicit_functions.h"
@@ -63,9 +63,9 @@ typedef CGAL::Polyhedron_3<Geom_traits> Polyhedron;
 typedef CGAL::Polyhedral_mesh_domain_3<Polyhedron, Geom_traits> Polyhedral_domain; 
 // Implicit domain
 typedef FT_to_point_function_wrapper<K::FT, K::Point_3> I_Function;
-typedef CGAL::Mesh_3::Implicit_vector_to_labeled_function_wrapper<I_Function, K> I_Function_wrapper;
+typedef CGAL::Implicit_multi_domain_to_labeling_function_wrapper<I_Function> I_Function_wrapper;
 typedef I_Function_wrapper::Function_vector I_Function_vector;
-typedef CGAL::Mesh_3::Labeled_mesh_domain_3<I_Function_wrapper, K> Implicit_domain;
+typedef CGAL::Labeled_mesh_domain_3<I_Function_wrapper, K> Implicit_domain;
 // 3D Image
 typedef CGAL::Image_3 Image;
 typedef CGAL::Labeled_image_mesh_domain_3<Image,K> Image_domain;
@@ -121,7 +121,7 @@ void set_implicit_function(I_Function_vector& v,
 {
 	if(vm.count(function_name))
 	{
-		v.push_back(&f);
+		v.push_back(f);
 		std::cout << function_name << " ";
 	}
 }
@@ -398,7 +398,7 @@ void mesh(const std::string& data, const po::variables_map& vm)
     //Load the domain
     std::cout << "****** [" << filename << "] Create domain...";
     std::flush(std::cout);
-    Domain_builder<Domain> domain_builder(it->string());
+    Domain_builder<Domain> domain_builder(it->path().string());
     std::cout <<"done (" << timer.time() << "s) ******\n\n";
     
     while(std::getline(file_param,line_param))

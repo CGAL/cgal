@@ -272,105 +272,6 @@ operator!=(const Interval_nt<Protected> &a, const Interval_nt<Protected> &b)
 { return ! (a == b); }
 
 
-// Mixed operators with int.
-
-template <bool Protected>
-inline
-Uncertain<bool>
-operator<(int a, const Interval_nt<Protected> &b)
-{
-  if (a < b.inf()) return true;
-  if (a >= b.sup()) return false;
-  return Uncertain<bool>::indeterminate();
-}
-
-template <bool Protected>
-inline
-Uncertain<bool>
-operator>(int a, const Interval_nt<Protected> &b)
-{ return b < a; }
-
-template <bool Protected>
-inline
-Uncertain<bool>
-operator<=(int a, const Interval_nt<Protected> &b)
-{
-  if (a <= b.inf()) return true;
-  if (a >  b.sup()) return false;
-  return Uncertain<bool>::indeterminate();
-}
-
-template <bool Protected>
-inline
-Uncertain<bool>
-operator>=(int a, const Interval_nt<Protected> &b)
-{ return b <= a; }
-
-template <bool Protected>
-inline
-Uncertain<bool>
-operator==(int a, const Interval_nt<Protected> &b)
-{
-  if (b.inf() >  a || b.sup() <  a) return false;
-  if (b.inf() == a && b.sup() == a) return true;
-  return Uncertain<bool>::indeterminate();
-}
-
-template <bool Protected>
-inline
-Uncertain<bool>
-operator!=(int a, const Interval_nt<Protected> &b)
-{ return ! (a == b); }
-
-template <bool Protected>
-inline
-Uncertain<bool>
-operator<(const Interval_nt<Protected> &a, int b)
-{
-  if (a.sup()  < b) return true;
-  if (a.inf() >= b) return false;
-  return Uncertain<bool>::indeterminate();
-}
-
-template <bool Protected>
-inline
-Uncertain<bool>
-operator>(const Interval_nt<Protected> &a, int b)
-{ return b < a; }
-
-template <bool Protected>
-inline
-Uncertain<bool>
-operator<=(const Interval_nt<Protected> &a, int b)
-{
-  if (a.sup() <= b) return true;
-  if (a.inf() >  b) return false;
-  return Uncertain<bool>::indeterminate();
-}
-
-template <bool Protected>
-inline
-Uncertain<bool>
-operator>=(const Interval_nt<Protected> &a, int b)
-{ return b <= a; }
-
-template <bool Protected>
-inline
-Uncertain<bool>
-operator==(const Interval_nt<Protected> &a, int b)
-{
-  if (b >  a.sup() || b <  a.inf()) return false;
-  if (b == a.sup() && b == a.inf()) return true;
-  return Uncertain<bool>::indeterminate();
-}
-
-template <bool Protected>
-inline
-Uncertain<bool>
-operator!=(const Interval_nt<Protected> &a, int b)
-{ return ! (a == b); }
-
-
 // Mixed operators with double.
 
 template <bool Protected>
@@ -620,22 +521,6 @@ operator+ (const Interval_nt<Protected> & a, double b)
   return a+Interval_nt<Protected>(b);
 }
 
-template <bool Protected>
-inline
-Interval_nt<Protected>
-operator+ (int a, const Interval_nt<Protected> & b)
-{
-  return Interval_nt<Protected>(a)+b;
-}
-
-template <bool Protected>
-inline
-Interval_nt<Protected>
-operator+ (const Interval_nt<Protected> & a, int b)
-{
-  return a+Interval_nt<Protected>(b);
-}
-
 template< bool Protected >
 inline
 Interval_nt<Protected>
@@ -665,22 +550,6 @@ template <bool Protected>
 inline
 Interval_nt<Protected>
 operator- (const Interval_nt<Protected> & a, double b)
-{
-  return a-Interval_nt<Protected>(b);
-}
-
-template <bool Protected>
-inline
-Interval_nt<Protected>
-operator- (int a, const Interval_nt<Protected> & b)
-{
-  return Interval_nt<Protected>(a)-b;
-}
-
-template <bool Protected>
-inline
-Interval_nt<Protected>
-operator- (const Interval_nt<Protected> & a, int b)
 {
   return a-Interval_nt<Protected>(b);
 }
@@ -756,22 +625,6 @@ operator* (const Interval_nt<Protected> & a, double b)
 template <bool Protected>
 inline
 Interval_nt<Protected>
-operator* (int a, const Interval_nt<Protected> & b)
-{
-  return Interval_nt<Protected>(a)*b;
-}
-
-template <bool Protected>
-inline
-Interval_nt<Protected>
-operator* (const Interval_nt<Protected> & a, int b)
-{
-  return a*Interval_nt<Protected>(b);
-}
-
-template <bool Protected>
-inline
-Interval_nt<Protected>
 operator/ (const Interval_nt<Protected> &a, const Interval_nt<Protected> & b)
 {
   typedef Interval_nt<Protected> IA;
@@ -822,22 +675,6 @@ template <bool Protected>
 inline
 Interval_nt<Protected>
 operator/ (const Interval_nt<Protected> & a, double b)
-{
-  return a/Interval_nt<Protected>(b);
-}
-
-template <bool Protected>
-inline
-Interval_nt<Protected>
-operator/ (int a, const Interval_nt<Protected> & b)
-{
-  return Interval_nt<Protected>(a)/b;
-}
-
-template <bool Protected>
-inline
-Interval_nt<Protected>
-operator/ (const Interval_nt<Protected> & a, int b)
 {
   return a/Interval_nt<Protected>(b);
 }
@@ -1433,6 +1270,7 @@ namespace Eigen {
     typedef CGAL::Interval_nt<b> Nested;
 
     static inline Real epsilon() { return 0; }
+    static inline Real dummy_precision() { return 0; }
 
     // Costs could depend on b.
     enum {

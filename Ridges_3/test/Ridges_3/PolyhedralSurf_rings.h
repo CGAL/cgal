@@ -1,5 +1,5 @@
-#ifndef _PSURF_RINGS_H_
-#define _PSURF_RINGS_H_
+#ifndef _POLYSURF_RINGS_H_
+#define _POLYSURF_RINGS_H_
 
 using namespace std;
 

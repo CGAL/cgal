@@ -24,7 +24,7 @@
  *
  * $Id$
  *
- * Copyright©INRIA 1999
+ * CopyrightÂ©INRIA 1999
  *
  * AUTHOR:
  * Gregoire Malandain (greg@sophia.inria.fr)

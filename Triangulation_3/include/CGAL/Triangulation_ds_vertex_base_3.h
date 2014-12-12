@@ -36,17 +36,22 @@ public:
   template <typename TDS2>
   struct Rebind_TDS { typedef Triangulation_ds_vertex_base_3<TDS2> Other; };
 
+  
   Triangulation_ds_vertex_base_3()
-    : _c() {}
+    : _c(), visited_for_vertex_extractor(false) 
+  {}
 
   Triangulation_ds_vertex_base_3(Cell_handle c)
-    : _c(c) {}
+    : _c(c), visited_for_vertex_extractor(false) 
+  {}
 
-  Cell_handle cell() const
-  { return _c; }
+  Cell_handle cell() const 
+  { return _c; }  
 
   void set_cell(Cell_handle c)
-  { _c = c; }
+  {
+    _c = c;
+  }
 
   // the following trivial is_valid allows
   // the user of derived cell base classes
@@ -64,6 +69,13 @@ public:
 
 private:
   Cell_handle _c;
+
+  // The typedef and the bool are used by Triangulation_data_structure::Vertex_extractor
+  // The names are chooses complicated so that we do not have to document them
+  // (privacy by obfuscation)
+  public:
+  typedef bool Has_visited_for_vertex_extractor;
+  bool visited_for_vertex_extractor;
 };
 
 template < class TDS >

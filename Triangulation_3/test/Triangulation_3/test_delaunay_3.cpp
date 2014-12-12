@@ -27,6 +27,7 @@ bool del=true;
 
 #include <CGAL/_test_types.h>
 #include <CGAL/_test_cls_delaunay_3.h>
+#include <CGAL/_test_cls_parallel_triangulation_3.h>
 
 // Explicit instantiation of the whole class :
 template class CGAL::Delaunay_triangulation_3<K>;
@@ -35,9 +36,25 @@ int main()
 {
   typedef CGAL::Delaunay_triangulation_3<EPIC>  Cls;
   typedef CGAL::Delaunay_triangulation_3<EPEC>  Cls_with_epec;
-
+  
   _test_cls_delaunay_3( Cls() );
   _test_cls_delaunay_3( Cls_with_epec() );
+  
+#ifdef CGAL_LINKED_WITH_TBB
+  typedef CGAL::Spatial_lock_grid_3<
+    CGAL::Tag_priority_blocking>                      Lock_ds;
+  typedef CGAL::Triangulation_data_structure_3< 
+    CGAL::Triangulation_vertex_base_3<EPIC>, 
+    CGAL::Triangulation_cell_base_3<EPIC>, 
+    CGAL::Parallel_tag >	                            Tds_parallel;
+  typedef CGAL::Delaunay_triangulation_3<
+    EPIC, Tds_parallel, CGAL::Default, Lock_ds>       Cls_parallel;
+  // The following test won't do things in parallel since it doesn't provide
+  // a lock data structure
+  _test_cls_delaunay_3( Cls_parallel() );
+  // This test performs parallel operations
+  _test_cls_parallel_triangulation_3( Cls_parallel() );
+#endif
 
   // Second version for the circumcenter storing cell base class.
   typedef CGAL::Triangulation_vertex_base_3<K>                 Vb;

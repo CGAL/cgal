@@ -31,6 +31,7 @@ void _test_for_given_domain(const Traits & traits,
 {
   typedef typename Traits::Point_3                   Point;
   typedef typename Traits::Vector_3                  Vector;
+  CGAL_USE_TYPE(Vector);
   typedef typename Traits::Periodic_3_offset_3       Offset;
   CGAL_USE_TYPE(typename Traits::Iso_cuboid_3);
   typedef typename Traits::Segment_3                 Segment;

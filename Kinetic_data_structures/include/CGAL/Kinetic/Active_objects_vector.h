@@ -35,6 +35,11 @@
 #include <CGAL/iterator.h>
 #include <boost/iterator/transform_iterator.hpp>
 
+#if defined(BOOST_MSVC)
+#  pragma warning(push)
+#  pragma warning(disable:4267) // warning C4267: 'argument' : conversion from 'size_t' to 'int', possible loss of data
+#endif
+
 namespace CGAL { namespace Kinetic {
 
 //! Holds a set of moving points and creates notifications when changes occur.
@@ -365,4 +370,9 @@ inline std::istream &operator>>(std::istream &in, Active_objects_vector<V> &v) {
 }
 
 } } //namespace CGAL::Kinetic
+
+#if defined(BOOST_MSVC)
+#  pragma warning(pop)
+#endif
+
 #endif

@@ -20,7 +20,7 @@
 // $Id$
 // 
 //
-// Author(s)     : Andreas Fabri, Hervé Brönnimann
+// Author(s)     : Andreas Fabri, HervÃ© BrÃ¶nnimann
 
 #include <CGAL/IO/Color.h>
 

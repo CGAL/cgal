@@ -28,10 +28,6 @@ if ( CGAL_FOUND )
 
   # VisualC++ optimization for applications dealing with large data
   if (MSVC)
-    # Use /EHa option to catch stack overflows.
-    # Note: TAUCS needs a stack >= 2MB. CGAL default is 10MB.
-    string(REGEX REPLACE "/EH[asc]*" "/EHa" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
-
     # Use /FR to turn on IntelliSense
     SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /FR")
 
@@ -55,19 +51,14 @@ if ( CGAL_FOUND )
   find_package(Eigen3 3.1.0)
   if (EIGEN3_FOUND)
     include( ${EIGEN3_USE_FILE} )
-  else()
-    find_package(TAUCS)
-    if(TAUCS_FOUND)
-      include( ${TAUCS_USE_FILE} )
-    endif(TAUCS_FOUND)
   endif()
   
-  if (EIGEN3_FOUND OR TAUCS_FOUND)
-    # Executables that require Eigen 3 or TAUCS
+  if (EIGEN3_FOUND)
+    # Executables that require Eigen 3
     create_single_source_cgal_program( "poisson_reconstruction_example.cpp" )
     create_single_source_cgal_program( "poisson_reconstruction.cpp" )
   else()
-    message(STATUS "NOTICE: The examples needs Eigen 3.1 (or greater) or the TAUCS library and will not be compiled.")
+    message(STATUS "NOTICE: The examples need Eigen 3.1 (or greater) will not be compiled.")
   endif()
 
   

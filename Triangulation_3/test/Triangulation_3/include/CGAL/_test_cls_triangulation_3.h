@@ -52,7 +52,7 @@ _test_cls_triangulation_3_input_output(const Triangulation & T,
   std::cout << "    I/O" << std::endl;
   {
     std::ofstream oFile(filename, std::ios::out);
-    oFile << T;
+    oFile << T << std::endl;
   }
   std::ifstream iFile(filename, std::ios::in);
   Triangulation Tfromfile;

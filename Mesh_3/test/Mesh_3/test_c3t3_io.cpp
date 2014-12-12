@@ -240,11 +240,8 @@ struct Test_c3t3_io {
         return false;
       }
     }
-#ifdef WIN32
-#  ifdef _MSC_VER
-#    pragma message("Note: The Triangulation_3 facets iterator is not deterministic")
-#  endif
-#else // not WIN32
+#if 0
+    // Note: The Triangulation_3 facets iterator order changes after a reload
     for(typename Tr::Finite_facets_iterator 
           fit1 = t1.finite_facets_begin(),
           fit2 = t2.finite_facets_begin(),
@@ -255,6 +252,12 @@ struct Test_c3t3_io {
       typename Tr::Cell_handle c2 = fit2->first;
       int i1 = fit1->second;
       int i2 = fit2->second;
+      // CJ: this may cause an assertion because the 2 C3T3s may have 
+      // facets in different orders.
+      // This is because the Finite_facets_iterator compares the
+      // addresses of cells to ensure parsing unique facets. The 
+      // facets are stored in a Compact_container, which doesn't 
+      /// guarantee any order in memory (and even in the container itself)
       assert(i1 == i2);
       if( c1->surface_patch_index(i1) != 
           c2->surface_patch_index(i2) )
@@ -329,6 +332,10 @@ struct Test_c3t3_io {
               << c3t3_bis
               << "\n******end******" << std::endl;
     assert(stream);
+    std::ostringstream ss_c3t3, ss_c3t3_bis;
+    ss_c3t3 << c3t3;
+    ss_c3t3_bis << c3t3_bis;
+    assert(ss_c3t3.str() == ss_c3t3_bis.str());
     return check_equality(c3t3, c3t3_bis);
   }
 

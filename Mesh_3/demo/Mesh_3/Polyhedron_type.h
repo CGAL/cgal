@@ -9,6 +9,7 @@ typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 
 // surface mesh
 #include <CGAL/Polyhedron_3.h>
+#include <CGAL/Mesh_polyhedron_3.h>
 
 #include "Polyhedron_type_fwd.h"
 
@@ -23,7 +24,7 @@ typedef Kernel::Triangle_3 Triangle;
 typedef Kernel::Iso_cuboid_3 Iso_cuboid;
 typedef Kernel::Plane_3 Plane_3;
 
-// surface mesh
-typedef CGAL::Polyhedron_3<Kernel> Polyhedron;
+// surface mesh, Patch_id is pair<int,int>
+typedef CGAL::Mesh_polyhedron_3<Kernel, Patch_id>::type Polyhedron;
 
 #endif // POLYHEDRON_TYPE_H

@@ -5,7 +5,19 @@
 #include <cassert>
 
 // choose number type
-#ifdef CGAL_USE_GMP
+#ifdef CGAL_USE_LEDA
+
+#  include <CGAL/leda_rational.h>
+typedef leda_rational                     exact_ring_t;
+typedef leda_rational                     exact_field_t;
+
+namespace CGAL {
+// needed for the drawing methods
+leda_rational sqrt(const leda_rational& x) {
+  return leda_rational(  CGAL::sqrt( CGAL::to_double(x) )  );
+}
+}
+#elif defined( CGAL_USE_GMP )
 
 #  include <CGAL/Gmpq.h>
 typedef CGAL::Gmpq                     exact_ring_t;

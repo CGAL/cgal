@@ -295,7 +295,7 @@ _test_cls_delaunay_3(const Triangulation &)
       std::cout << "    I/O" << std::endl;
       {
         std::ofstream oFileT1("Test1_triangulation_IO_3",std::ios::out);
-        oFileT1 << T0;
+        oFileT1 << T0 << std::endl;
       }
       std::ifstream iFileT1("Test1_triangulation_IO_3",std::ios::in);
       iFileT1 >> Tfromfile;
@@ -316,7 +316,7 @@ _test_cls_delaunay_3(const Triangulation &)
       std::cout << "    I/O" << std::endl;
       {
 	std::ofstream oFileT2("Test2_triangulation_IO_3",std::ios::out);
-        oFileT2 << T0;
+        oFileT2 << T0 << std::endl;
       }
       std::ifstream iFileT2("Test2_triangulation_IO_3",std::ios::in);
       iFileT2 >> Tfromfile;
@@ -338,7 +338,7 @@ _test_cls_delaunay_3(const Triangulation &)
       std::cout << "    I/O" << std::endl;
       {
         std::ofstream oFileT3("Test3_triangulation_IO_3",std::ios::out);
-        oFileT3 << T0;
+        oFileT3 << T0 << std::endl;
       }
       std::ifstream iFileT3("Test3_triangulation_IO_3",std::ios::in);
       iFileT3 >> Tfromfile;

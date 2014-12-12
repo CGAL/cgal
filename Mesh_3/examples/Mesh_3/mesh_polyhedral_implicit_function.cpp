@@ -13,7 +13,7 @@
 #include <CGAL/Mesh_complex_3_in_triangulation_3.h>
 #include <CGAL/Mesh_criteria_3.h>
 
-#include <CGAL/Mesh_3/Labeled_mesh_domain_3.h>
+#include <CGAL/Labeled_mesh_domain_3.h>
 #include <CGAL/Mesh_3/polyhedral_to_labeled_function_wrapper.h>
 #include <CGAL/make_mesh_3.h>
 
@@ -26,7 +26,7 @@
 struct K: public CGAL::Exact_predicates_inexact_constructions_kernel {};
 typedef CGAL::Polyhedron_3<K> Polyhedron;
 typedef CGAL::Mesh_3::Polyhedral_to_labeled_function_wrapper<Polyhedron, K> Polyhedral_wrapper;
-typedef CGAL::Mesh_3::Labeled_mesh_domain_3<Polyhedral_wrapper, K> Mesh_domain;
+typedef CGAL::Labeled_mesh_domain_3<Polyhedral_wrapper, K> Mesh_domain;
 
 // Triangulation
 typedef CGAL::Mesh_triangulation_3<Mesh_domain>::type Tr;

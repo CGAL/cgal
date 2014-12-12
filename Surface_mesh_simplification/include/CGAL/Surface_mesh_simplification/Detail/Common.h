@@ -40,7 +40,6 @@
 
 #include <CGAL/Cartesian/MatrixC33.h>
 #include <CGAL/Modifiable_priority_queue.h>
-#include <CGAL/boost/graph/halfedge_graph_traits.h>
 
 namespace CGAL {
 

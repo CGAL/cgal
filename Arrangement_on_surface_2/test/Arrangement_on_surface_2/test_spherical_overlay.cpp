@@ -5,7 +5,7 @@
 #include <cstring>
 #include <vector>
 
-#include <CGAL/Gmpq.h>
+#include <CGAL/Exact_rational.h>
 #include <CGAL/Cartesian.h>
 #include <CGAL/Arr_geodesic_arc_on_sphere_traits_2.h>
 #include <CGAL/Arr_curve_data_traits_2.h>
@@ -16,7 +16,7 @@
 #include <CGAL/IO/Arr_iostream.h>
 #include <CGAL/IO/Arr_text_formatter.h>
 
-typedef CGAL::Gmpq                                        Number_type;
+typedef CGAL::Exact_rational                              Number_type;
 typedef CGAL::Cartesian<Number_type>                      Kernel;
 typedef CGAL::Arr_geodesic_arc_on_sphere_traits_2<Kernel> Base_geom_traits;
 typedef Base_geom_traits::Point_2                         Base_point_2;

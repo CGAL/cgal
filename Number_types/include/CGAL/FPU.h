@@ -149,9 +149,17 @@ inline double IA_opacify(double x)
   // volatile). In case of trouble, use volatile instead.
 # ifdef CGAL_HAS_SSE2
   asm volatile ("" : "+x"(x) );
+# elif (defined __VFP_FP__ && !defined __SOFTFP__) || defined __aarch64__
+  // ARM
+  asm volatile ("" : "+w"(x) );
 # else
   asm volatile ("" : "+m"(x) );
 # endif
+  return x;
+#elif defined __xlC__
+  // PowerPC - XL C++ (the z/OS version supposedly does not define this macro)
+  // If we give it an alternative "+fm", it gets confused and generates worse code.
+  asm volatile ("" : "+f"(x) );
   return x;
 #elif defined __GNUG__
   // Intel used not to emulate this perfectly, we'll see.

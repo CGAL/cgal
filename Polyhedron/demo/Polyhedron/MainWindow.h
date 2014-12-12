@@ -21,6 +21,7 @@ class QMenu;
 class Polyhedron_demo_io_plugin_interface;
 class Polyhedron_demo_plugin_interface;
 class Scene_item;
+class QSortFilterProxyModel;
 
 namespace Ui {
   class MainWindow;
@@ -71,6 +72,8 @@ public slots:
   bool load_script(QString filename);
   bool load_script(QFileInfo);
 
+  void setFocusToQuickSearch();
+
   void selectSceneItem(int i);
   void showSelectedPoint(double, double, double);
   void unSelectSceneItem(int i);
@@ -86,6 +89,8 @@ public slots:
                  QString actionText,
                  QString menuName);
   void viewerShow(float, float, float);
+  void viewerShow(float, float, float, float, float, float);
+  void viewerShowObject();
 
   void information(QString);
   void warning(QString);
@@ -143,6 +148,7 @@ protected slots:
 
   void filterOperations();
 
+  void on_actionRecenterScene_triggered();
 protected:
   void loadPlugins();
   bool initPlugin(QObject*);
@@ -162,6 +168,7 @@ private:
 
   Scene* scene;
   Viewer* viewer;
+  QSortFilterProxyModel* proxyModel;
   QTreeView* sceneView;
   Ui::MainWindow* ui;
   QVector<Polyhedron_demo_io_plugin_interface*> io_plugins;

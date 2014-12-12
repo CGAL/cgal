@@ -28,8 +28,8 @@ Input_facets_AABB_tree* get_aabb_tree(Scene_polyhedron_item* item)
     Polyhedron* poly = item->polyhedron();
     if(poly) {
       Input_facets_AABB_tree* tree = 
-        new Input_facets_AABB_tree(poly->facets_begin(),
-                                   poly->facets_end(),
+        new Input_facets_AABB_tree(faces(*poly).first,
+                                   faces(*poly).second,
                                    *poly);
       item->setProperty(aabb_property_name, 
                         QVariant::fromValue<void*>(tree));
@@ -230,6 +230,7 @@ void Scene_polyhedron_item::enable_facets_picking(bool b)
 
 void Scene_polyhedron_item::set_erase_next_picked_facet(bool b)
 {
+  if(b) { facet_picking_m = true; } // automatically activate facet_picking
   erase_next_picked_facet_m = b;
 }
 
@@ -299,6 +300,7 @@ void
 Scene_polyhedron_item::
 changed()
 {
+  emit item_is_about_to_be_changed();
   delete_aabb_tree(this);
   init();
   Base::changed();
@@ -377,20 +379,42 @@ Scene_polyhedron_item::select(double orig_x,
                 nearest_v = v;
               }
             }
-            std::cerr << "Selected vertex: " << v->point() << std::endl;
+
             emit selected_vertex((void*)(&*nearest_v));
+          }
+
+          if(QObject::receivers(SIGNAL(selected_edge(void*))) > 0
+            || QObject::receivers(SIGNAL(selected_halfedge(void*))) > 0)
+          {
+            Polyhedron::Halfedge_around_facet_circulator 
+              he_it = selected_fh->facet_begin(),
+              around_end = he_it;
+
+            Polyhedron::Halfedge_handle nearest_h = he_it;
+            Kernel::FT sq_dist = CGAL::squared_distance(*closest_point,
+              Kernel::Segment_3(he_it->vertex()->point(), he_it->opposite()->vertex()->point()));
+
+            while(++he_it != around_end) {
+              Kernel::FT new_sq_dist = CGAL::squared_distance(*closest_point,
+                Kernel::Segment_3(he_it->vertex()->point(), he_it->opposite()->vertex()->point()));
+              if(new_sq_dist < sq_dist) {
+                sq_dist = new_sq_dist;
+                nearest_h = he_it;
+              }
+            }
+
+            emit selected_halfedge((void*)(&*nearest_h));
+            emit selected_edge((void*)(std::min)(&*nearest_h, &*nearest_h->opposite()));
           }
           
           emit selected_facet((void*)(&*selected_fh));
           if(erase_next_picked_facet_m) {
             polyhedron()->erase_facet(selected_fh->halfedge());
             polyhedron()->normalize_border();
-            set_erase_next_picked_facet(false);
+            //set_erase_next_picked_facet(false);
             changed();
             emit itemChanged();
           }
-          std::cerr << "Facet selected. patch_id="
-                    << selected_fh->patch_id() << std::endl;
         }
       }
     }

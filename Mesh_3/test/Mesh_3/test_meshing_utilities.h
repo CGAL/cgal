@@ -1,4 +1,4 @@
-// Copyright (c) 2009 INRIA Sophia-Antipolis (France).
+// Copyright (c) 2009, 2014 INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -33,6 +33,7 @@
 #include <CGAL/make_mesh_3.h>
 #include <CGAL/refine_mesh_3.h>
 #include <CGAL/optimize_mesh_3.h>
+#include <CGAL/remove_far_points_in_mesh_3.h>
 
 #include <CGAL/Mesh_3/Triangle_accessor_primitive.h>
 #include <CGAL/Triangle_accessor_3.h>
@@ -107,15 +108,16 @@ struct Tester
     int n = 0;
     while ( c3t3.triangulation().number_of_vertices() != v && ++n < 11 )
     {
+      v = c3t3.triangulation().number_of_vertices();
+
       refine_mesh_3(c3t3,domain,criteria,
                     CGAL::parameters::no_exude(),
                     CGAL::parameters::no_perturb(),
                     CGAL::parameters::no_reset_c3t3());
-      
-      v = c3t3.triangulation().number_of_vertices();
-      f = c3t3.number_of_facets_in_complex();
-      c = c3t3.number_of_cells_in_complex();
     }
+
+    f = c3t3.number_of_facets_in_complex();
+    c = c3t3.number_of_cells_in_complex(); 
     assert ( n < 11 );
 #endif
     
@@ -263,8 +265,8 @@ struct Tester
 
   // For polyhedral domains, do nothing.
   template<typename C3t3, typename MeshDomain>
-  void verify_c3t3_combinatorics(const C3t3& c3t3,
-                                 const MeshDomain& domain,
+  void verify_c3t3_combinatorics(const C3t3&,
+                                 const MeshDomain&,
                                  const Polyhedral_tag) const
   {}
 
@@ -330,8 +332,8 @@ struct Tester
 
   // For bissection domains, do nothing.
   template<typename C3t3, typename MeshDomain>
-  double compute_hausdorff_distance(const C3t3& c3t3,
-                                    const MeshDomain& domain,
+  double compute_hausdorff_distance(const C3t3&,
+                                    const MeshDomain&,
                                     const Bissection_tag) const
   {
     return 0.;
@@ -375,14 +377,22 @@ struct Tester
                                       const double reference_value) const
   {
     double hdist = compute_hausdorff_distance(c3t3, domain, Polyhedral_tag());
-    assert(hdist <= reference_value*1.01);
+#ifdef CGAL_LINKED_WITH_TBB
+    // Parallel
+    typedef typename C3t3::Concurrency_tag Concurrency_tag;
+
+    if (boost::is_convertible<Concurrency_tag, CGAL::Parallel_tag>::value)
+      assert(hdist <= reference_value*4.);
+    else
+#endif //CGAL_LINKED_WITH_TBB
+      assert(hdist <= reference_value*1.01);
   }
 
   template<typename C3t3, typename MeshDomain>
-  void verify_c3t3_hausdorff_distance(const C3t3& c3t3,
-                                      const MeshDomain& domain,
+  void verify_c3t3_hausdorff_distance(const C3t3&,
+                                      const MeshDomain&,
                                       const Bissection_tag,
-                                      const double reference_value) const
+                                      const double) const
   { //nothing to do
   }
 };

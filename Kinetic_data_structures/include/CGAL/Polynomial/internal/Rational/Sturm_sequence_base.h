@@ -29,6 +29,7 @@
 
 #ifndef POLYNOMIAL_NO_CGAL
 #include <CGAL/MP_Float.h>
+#include <CGAL/Quotient.h>
 #endif
 
 namespace CGAL { namespace POLYNOMIAL { namespace internal {
@@ -81,7 +82,7 @@ class Sturm_sequence_base
         }
 
 #ifdef POLYNOMIAL_USE_CGAL
-        void normalize(Polynomial& r, const CGAL::MP_Float&) {
+        void normalize(Polynomial& r, const CGAL::Quotient<CGAL::MP_Float>&) {
 // THE FOLLOWING HACK HAS BEEN DONE SO THAT MP_Float HOPEFULLY
 // DOES NOT RUN OUT OF EXPONENT BITS WHEN THE STURM SEQUENCE IS
 // COMPUTED

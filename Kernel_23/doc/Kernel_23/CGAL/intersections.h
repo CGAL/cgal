@@ -21,7 +21,7 @@ namespace CGAL {
 /*!
 \addtogroup do_intersect_grp
 
-\brief 
+\brief
 \details Depending on which \cgal kernel is used, different overloads of this global
 function are available.
 */
@@ -33,7 +33,7 @@ function are available.
 \sa `do_intersect_circular_grp`
 \sa `do_intersect_spherical_grp`
 \sa `intersection_grp`
-  
+
 \details See Chapter  \ref chapterkernel23 "2D and 3D Geometry Kernel" for details on a linear kernel instantiation.
 */
 
@@ -85,13 +85,13 @@ bool do_intersect(Type1<Kernel> obj1, Type2<Kernel> obj2);
 /*!
 \addtogroup intersection_grp
 
-\brief 
+\brief
 \details Depending on which \cgal kernel is used, different overloads of this global
 function are available.
 
 \cgalHeading{Notes on Backward Compatibility}
 
-The \ref intersection_grp function used to return an `Object`, but starting with 
+The \ref intersection_grp function used to return an `Object`, but starting with
 \cgal 4.2 the
 return type is determined by a metafunction defined by the kernel. To
 preserve backward compatibility `Object` can be
@@ -120,7 +120,7 @@ both `obj1` and `obj2`.  Note that for objects like triangles and
 polygons that enclose a bounded region, this region is considered part
 of the object.  If a segment lies completely inside a triangle, then
 those two objects intersect and the intersection region is the
-complete segment. 
+complete segment.
 
 Here, `Intersect_23` means either `Intersect_2` or `Intersect_3`,
 depending on the arguments.
@@ -318,47 +318,49 @@ p    <TD>Point_3, or Segment_3</TD>
 
 \cgalHeading{Example}
 
-The following example demonstrates the most common use of 
+The following example demonstrates the most common use of
 `intersection` routines with the 2D and 3D Linear %Kernel.
 
 \code
 #include <CGAL/intersections.h>
 
-template<typename R>
+template <typename R>
 struct Intersection_visitor {
   typedef void result_type;
-  void operator()(const Point_2<R>& p) const 
-  { // handle point
+  void operator()(const Point_2<R>& p) const
+  {
+    // handle point
   }
-  void operator()(const Segment_2<R>& s) const 
-  { 
-    // handle segment 
+  void operator()(const Segment_2<R>& s) const
+  {
+    // handle segment
   }
 };
 
-template <class R>
-void foo(const Segment_2<R>& seg, const Line_2<R>& lin)
+template <typename R>
+void foo (const Segment_2<R>& seg, const Line_2<R>& lin)
 {
   // with C++11 support
   // auto result = intersection(seg, lin);
 
   // without C++11
-  cpp11::result_of<R::Intersect_2(Segment_2<R>, Line_2<R>)>::type 
+  cpp11::result_of<R::Intersect_2(Segment_2<R>, Line_2<R>)>::type
     result = intersection(seg, lin);
 
-  if(result) { boost::apply_visitor(Intersection_visitor(), *result); } 
-  else { 
-    // no intersection 
+  if (result) { boost::apply_visitor(Intersection_visitor(), *result); }
+  else {
+    // no intersection
   }
 
   // alternatively:
-  if(result) {
-    if(const Segment_2<R>* s = boost::get<Segment_2>(&*result)) {
+  if (result) {
+    if (const Segment_2<R>* s = boost::get<Segment_2>(&*result)) {
       // handle segment
     } else {
-      const Point_2<R>* p = boost::get<Point_2>(&*result);
+      const Point_2<R>* p = boost::get<Point_2<R> >(&*result);
       // handle point
     }
+  }
 }
 \endcode
 
@@ -379,7 +381,7 @@ returns the intersection of 3 planes, which can be a
 point, a line, a plane, or empty.
 */
 template <typename Kernel>
-boost::optional< boost::variant< Point_3, Line_3, Plane_3 > > 
+boost::optional< boost::variant< Point_3, Line_3, Plane_3 > >
 intersection(const Plane_3<Kernel>& pl1,
              const Plane_3<Kernel>& pl2,
              const Plane_3<Kernel>& pl3);

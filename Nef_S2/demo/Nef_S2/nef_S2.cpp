@@ -20,14 +20,14 @@
 
 #include <CGAL/basic.h>
 
-#include <CGAL/Gmpz.h>
+#include <CGAL/Exact_integer.h>
 #include <CGAL/Homogeneous.h>
 #include <CGAL/Nef_polyhedron_S2.h>
 #include <CGAL/Nef_S2/create_random_Nef_S2.h>
 #include <CGAL/IO/Qt_widget_Nef_S2.h>
 #include <qapplication.h>
 
-typedef CGAL::Gmpz RT;
+typedef CGAL::Exact_integer RT;
 typedef CGAL::Homogeneous<RT> Kernel;
 typedef CGAL::Nef_polyhedron_S2<Kernel> Nef_polyhedron_S2;
 

@@ -279,9 +279,14 @@ private:
       #endif        
     }
 public:
+
     //! \name Constructors
+
+    //! default constructor
+    Polynomial() : Base(static_cast<const Base&>(get_default_instance())) {}
+
     //! copy constructor: copy existing polynomial (shares rep)
-    Polynomial(const Self& p = get_default_instance()) : Base(static_cast<const Base&>(p)) {}
+    Polynomial(const Self& p) : Base(static_cast<const Base&>(p)) {}
         
     //! construct the constant polynomial a0 from any type convertible to NT
     template <class T>

@@ -1,4 +1,4 @@
-source /home/lrineau/infrastructure/reference-platforms/setup-taucs-64bits
+#source /home/lrineau/infrastructure/reference-platforms/setup-taucs-64bits
 
 source /home/lrineau/infrastructure/reference-platforms/setup-mkl-64bits
 

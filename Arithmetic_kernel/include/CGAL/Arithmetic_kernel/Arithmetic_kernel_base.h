@@ -27,6 +27,8 @@
 #ifndef CGAL_ARITHMETIC_KERNEL_ARITHMETIC_KERNEL_BASE_H
 #define CGAL_ARITHMETIC_KERNEL_ARITHMETIC_KERNEL_BASE_H
 
+#include <CGAL/tags.h>
+
 namespace CGAL {
 namespace internal{
 

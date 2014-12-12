@@ -18,9 +18,9 @@ typedef CGAL::Polyhedron_3<K> Polyhedron;
 void generate_near_boundary(const Polyhedron& poly, std::vector<Point>& points, std::vector<bool>& on_boundary) {
   CGAL_assertion(poly.is_pure_triangle());
 
-  std::size_t exp_size = poly.size_of_vertices() + poly.size_of_vertices() + poly.size_of_halfedges() / 2;
-  points.resize(exp_size);
-  on_boundary.resize(exp_size);
+  std::size_t exp_size = poly.size_of_vertices() + poly.size_of_facets() + poly.size_of_halfedges() / 2;
+  points.reserve(exp_size);
+  on_boundary.reserve(exp_size);
 
   // put vertices
   for(Polyhedron::Vertex_const_iterator vb = poly.vertices_begin(); vb != poly.vertices_end(); ++vb) {
@@ -85,7 +85,6 @@ void test(
   std::cerr << "  Preprocessing took " << timer.time() << " sec." << std::endl;
   timer.reset();  
 
-  timer.start();
   int nb_inside = 0;
   int nb_boundary = 0;
   for(std::size_t i = 0; i < points.size(); ++i) {
@@ -128,8 +127,8 @@ void from_file(const char* file_name, std::vector<Point>& points) {
   in.close();
 }
 
-int main() {
-  std::ifstream input("elephant.off");
+int main(int, char** argv) {
+  std::ifstream input(argv[1]);
   Polyhedron poly;
   if ( !input || !(input >> poly) || poly.empty() ){
     std::cerr << "Error: can not read file.";
@@ -141,7 +140,6 @@ int main() {
   std::vector<bool> on_boundary;
   generate_near_boundary(poly, points, on_boundary);
   test(poly, points, on_boundary);
-  to_file("elephant_3_boundary.txt", points);
 
   points.clear();
   const int nb_query = (int)1.e6;

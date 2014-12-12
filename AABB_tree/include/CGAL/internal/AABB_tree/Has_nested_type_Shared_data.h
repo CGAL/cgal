@@ -36,7 +36,7 @@ namespace internal{
 BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(Has_nested_type_Shared_data,Shared_data,false)
 
 // Utility class used by AABB_face_graph_triangle_primitive and AABB_halfedge_graph_segment_primitive
-// to implement the Consruct_shared_data static function.
+// to implement the Construct_shared_data static function.
 template<class Graph, class Base, class ObjectPropertyMap, class PointPropertyMap, class HasSharedDataTag>
 struct Cstr_shared_data;
 
@@ -48,6 +48,12 @@ struct Cstr_shared_data<Graph, Base, ObjectPropertyMap, PointPropertyMap, ::CGAL
   {
     return Base::construct_shared_data(ObjectPropertyMap(&graph), PointPropertyMap(&graph));
   }
+
+  template <class VertexPmap>
+  static Shared_data construct_shared_data(Graph& graph, const VertexPmap& vpm)
+  {
+    return Base::construct_shared_data(ObjectPropertyMap(&graph, vpm), PointPropertyMap(&graph, vpm));
+  }
 };
 
 template<class Graph, class Base, class ObjectPropertyMap, class PointPropertyMap>
@@ -55,6 +61,12 @@ struct Cstr_shared_data<Graph, Base, ObjectPropertyMap, PointPropertyMap, ::CGAL
 {
   typedef void* Shared_data;
   static Shared_data construct_shared_data(Graph&)
+  {
+    return NULL;
+  }
+
+  template <class VertexPmap>
+  static Shared_data construct_shared_data(Graph&, VertexPmap)
   {
     return NULL;
   }

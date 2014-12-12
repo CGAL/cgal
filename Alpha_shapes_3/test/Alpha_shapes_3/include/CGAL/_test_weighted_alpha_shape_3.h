@@ -37,8 +37,9 @@ file_input(std::ifstream& is, std::list<Weighted_point>& L)
   typename Weighted_point::Point p;
   for( ; n>0 ; n--)
     {
-      is >> p;
-      L.push_back(Weighted_point(p,5*(n/10)));
+      if(is >> p) {
+        L.push_back(Weighted_point(p,5*(n/10)));
+      }
     }
   std::cout << "Points inserted" << std::endl;
   return true;

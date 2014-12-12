@@ -57,6 +57,25 @@
 # TBB_MALLOCPROXY_DEBUG_LIBRARY, the TBB debug malloc_proxy library (not included in TBB_LIBRARIES since it's optionnal)
 # TBB_MALLOCPROXY_RELEASE_LIBRARY, the TBB release malloc_proxy library (not included in TBB_LIBRARIES since it's optionnal)
 
+include(CheckCXXSourceCompiles)
+
+# Usage:
+#   try_TBB_with_pthread(<result_var_name> [additional linker args...])
+function(try_TBB_with_pthread result_var)
+    set(TBB_try_ts_source "
+          #include <tbb/enumerable_thread_specific.h>
+          int main() {
+            tbb::enumerable_thread_specific<
+              bool*,
+              tbb::cache_aligned_allocator<bool*>,
+              tbb::ets_key_per_instance> grid;
+          }
+          ")
+    set(CMAKE_REQUIRED_LIBRARIES ${ALL_TBB_LIBRARIES} ${ARGN})
+    set(CMAKE_REQUIRED_INCLUDES ${TBB_INCLUDE_DIR})
+    check_cxx_source_compiles("${TBB_try_ts_source}" ${result_var})
+    set(${result_var} ${${result_var}} PARENT_SCOPE)
+endfunction(try_TBB_with_pthread)
 
 if (WIN32)
     # has em64t/vc8 em64t/vc9
@@ -309,6 +328,21 @@ if (TBB_INCLUDE_DIR)
             endif (TBB_MALLOC_DEBUG_LIBRARY)
         endif (TBB_MALLOC_RELEASE_LIBRARY)
 
+        if(UNIX AND NOT APPLE)
+            # On Fedora, code using TBB might need -pthread
+
+            # First check without pthread
+            try_TBB_with_pthread(TBB_without_pthread)
+
+            if(NOT TBB_without_pthread)
+                # Then check with -pthread
+                try_TBB_with_pthread(TBB_with_pthread -pthread)
+                if(TBB_with_pthread)
+                    list(APPEND ALL_TBB_LIBRARIES general -pthread)
+                endif(TBB_with_pthread)
+                endif(NOT TBB_without_pthread)
+        endif(UNIX AND NOT APPLE)
+
         set (TBB_LIBRARIES ${ALL_TBB_LIBRARIES}
              CACHE PATH "TBB libraries" FORCE)
 
@@ -331,8 +365,10 @@ if (TBB_INCLUDE_DIR)
 endif (TBB_INCLUDE_DIR)
 
 if (NOT TBB_FOUND)
-    message("ERROR: Intel TBB NOT found! Please define the TBBROOT (or TBB_INSTALL_DIR) and/or TBB_ARCH_PLATFORM environment variables.")
-    message(STATUS "Looked for Threading Building Blocks in ${_TBB_INSTALL_DIR}")
+    if(NOT TBB_FIND_QUIETLY)
+        message("ERROR: Intel TBB NOT found! Please define the TBBROOT (or TBB_INSTALL_DIR) and/or TBB_ARCH_PLATFORM environment variables.")
+        message(STATUS "Looked for Threading Building Blocks in ${_TBB_INSTALL_DIR}")
+    endif(NOT TBB_FIND_QUIETLY)
     SET(TBB_INSTALL_DIR "TBB_INSTALL_DIR_NOT_FOUND" CACHE STRING "Intel TBB install directory")
     # do only throw fatal, if this pkg is REQUIRED
     if (TBB_FIND_REQUIRED)
@@ -350,3 +386,8 @@ if (TBB_FOUND)
 endif (TBB_FOUND)
 
 set(TBB_USE_FILE "UseTBB")
+
+### ** Emacs settings **
+### Local Variables:
+### cmake-tab-width: 4
+### End:

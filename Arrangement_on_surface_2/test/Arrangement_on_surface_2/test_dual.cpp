@@ -1,29 +1,16 @@
+
+#include <CGAL/Exact_rational.h>
 #include <CGAL/Cartesian.h>
 #include <CGAL/Arr_segment_traits_2.h>
 #include <CGAL/Arr_extended_dcel.h>
 #include <CGAL/Arrangement_2.h>
 
-#include <climits> // needed as <boost/graph/dijkstra_shortest_paths.hpp> forgot it.
-#include <boost/graph/dijkstra_shortest_paths.hpp>
+#include <CGAL/boost/graph/dijkstra_shortest_paths.h>
 
 #include <CGAL/graph_traits_Dual_Arrangement_2.h>
 
-#ifdef CGAL_USE_GMP
-
-  // GMP is installed. Use the GMP rational number-type.
-  #include <CGAL/Gmpq.h>
-
-  typedef CGAL::Gmpq                                         Number_type;
-
-#else
-
-  // GMP is not installed. Use CGAL's exact rational number-type.
-  #include <CGAL/MP_Float.h>
-  #include <CGAL/Quotient.h>
-
-  typedef CGAL::Quotient<CGAL::MP_Float>                     Number_type;
-
-#endif
+// leda_rational, or Gmpq, or Quotient<MP_float>
+typedef CGAL::Exact_rational                                 Number_type;
 
 typedef CGAL::Cartesian<Number_type>                         Kernel;
 typedef CGAL::Arr_segment_traits_2<Kernel>                   Traits_2;

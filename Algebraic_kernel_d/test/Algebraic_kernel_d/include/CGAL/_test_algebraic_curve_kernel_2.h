@@ -93,7 +93,9 @@ void test_algebraic_curve_kernel_2() {
     typedef typename AK_2::Algebraic_real_2 Algebraic_real_2;
 
     typedef typename AK_2::Coordinate_1 Coordinate_1;
+    CGAL_USE_TYPE(Coordinate_1);
     typedef typename AK_2::Coordinate_2 Coordinate_2;
+    CGAL_USE_TYPE(Coordinate_2);
 
     Poly_2 polys[ACK_2_n_polys];
 

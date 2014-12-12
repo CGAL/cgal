@@ -66,7 +66,7 @@ namespace CGAL {
     template < unsigned int, class, class, class, class >
     friend class Combinatorial_map_base;
 
-    template <class, class>
+    template <class, class, class, class>
     friend class Compact_container;
 
   public:
@@ -121,7 +121,7 @@ namespace CGAL {
     template < unsigned int, class, class, class, class  >
     friend class Combinatorial_map_base;
 
-    template <class, class>
+    template <class, class, class, class>
     friend class Compact_container;
 
   public:

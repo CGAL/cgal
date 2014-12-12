@@ -34,29 +34,37 @@
 
 
 // declare the CGAL function
+#ifndef CGAL_MESH_3_DEMO_DISABLE_ODT
 Optimizer_thread* cgal_code_odt_mesh_3(Scene_c3t3_item& c3t3_item,
                                        const double time_limit,
                                        const double convergence_ratio,
                                        const double freeze_ratio,
                                        const int max_iteration_number,
                                        const bool create_new_item);
+#endif
 
+#ifndef CGAL_MESH_3_DEMO_DISABLE_LLOYD
 Optimizer_thread* cgal_code_lloyd_mesh_3(Scene_c3t3_item& c3t3_item,
                                          const double time_limit,
                                          const double convergence_ratio,
                                          const double freeze_ratio,
                                          const int max_iteration_number,
                                          const bool create_new_item);
+#endif
 
+#ifndef CGAL_MESH_3_DEMO_DISABLE_PERTURBER
 Optimizer_thread* cgal_code_perturb_mesh_3(Scene_c3t3_item& c3t3_item,
                                            const double time_limit,
                                            const double sliver_bound,
                                            const bool create_new_item);
+#endif
 
+#ifndef CGAL_MESH_3_DEMO_DISABLE_EXUDER
 Optimizer_thread* cgal_code_exude_mesh_3(Scene_c3t3_item& c3t3_item,
                                          const double time_limit,
                                          const double sliver_bound,
                                          const bool create_new_item);
+#endif
 
 QString translate(CGAL::Mesh_optimization_return_code rc);
 
@@ -77,10 +85,18 @@ public:
   inline virtual QList<QAction*> actions() const;
   
 public slots:
+#ifndef CGAL_MESH_3_DEMO_DISABLE_ODT
   void odt();
+#endif
+#ifndef CGAL_MESH_3_DEMO_DISABLE_LLOYD
   void lloyd();
+#endif
+#ifndef CGAL_MESH_3_DEMO_DISABLE_PERTURBER
   void perturb();
+#endif
+#ifndef CGAL_MESH_3_DEMO_DISABLE_EXUDER
   void exude();
+#endif
   
   void optimization_done(Optimizer_thread* t);
   void status_report(QString s);
@@ -127,29 +143,37 @@ init(QMainWindow* mainWindow,
   this->mw = mainWindow;
   
   // Create menu items
+#ifndef CGAL_MESH_3_DEMO_DISABLE_ODT
   actionOdt = this->getActionFromMainWindow(mw, "actionOdt");
   if( NULL != actionOdt )
   {
     connect(actionOdt, SIGNAL(triggered()), this, SLOT(odt()));
   }
+#endif
   
+#ifndef CGAL_MESH_3_DEMO_DISABLE_LLOYD
   actionLloyd = this->getActionFromMainWindow(mw, "actionLloyd");
   if( NULL != actionLloyd )
   {
     connect(actionLloyd, SIGNAL(triggered()), this, SLOT(lloyd()));
   }
+#endif
   
+#ifndef CGAL_MESH_3_DEMO_DISABLE_PERTURBER
   actionPerturb = this->getActionFromMainWindow(mw, "actionPerturb");
   if( NULL != actionPerturb )
   {
     connect(actionPerturb, SIGNAL(triggered()), this, SLOT(perturb()));
   }
+#endif
   
+#ifndef CGAL_MESH_3_DEMO_DISABLE_EXUDER
   actionExude = this->getActionFromMainWindow(mw, "actionExude");
   if( NULL != actionExude )
   {
     connect(actionExude, SIGNAL(triggered()), this, SLOT(exude()));
   }
+#endif
   
   msg = msg_interface;
 }
@@ -164,6 +188,7 @@ Mesh_3_optimization_plugin::actions() const
 }
 
 
+#ifndef CGAL_MESH_3_DEMO_DISABLE_ODT
 void
 Mesh_3_optimization_plugin::odt()
 {
@@ -228,8 +253,10 @@ Mesh_3_optimization_plugin::odt()
   launch_thread(opt_thread, "Odt iterations are running...");
   QApplication::restoreOverrideCursor();
 }
+#endif
 
 
+#ifndef CGAL_MESH_3_DEMO_DISABLE_LLOYD
 void
 Mesh_3_optimization_plugin::lloyd()
 {
@@ -294,8 +321,10 @@ Mesh_3_optimization_plugin::lloyd()
   launch_thread(opt_thread, "Lloyd iterations are running...");
   QApplication::restoreOverrideCursor();
 }
+#endif
 
 
+#ifndef CGAL_MESH_3_DEMO_DISABLE_PERTURBER
 void
 Mesh_3_optimization_plugin::perturb()
 {
@@ -356,8 +385,10 @@ Mesh_3_optimization_plugin::perturb()
   launch_thread(opt_thread, "Sliver perturbation is running...");
   QApplication::restoreOverrideCursor();
 }
+#endif
 
 
+#ifndef CGAL_MESH_3_DEMO_DISABLE_EXUDER
 void
 Mesh_3_optimization_plugin::exude()
 {
@@ -418,6 +449,7 @@ Mesh_3_optimization_plugin::exude()
   launch_thread(opt_thread, "Sliver exudation is running...");
   QApplication::restoreOverrideCursor();
 }
+#endif
 
 
 Scene_c3t3_item*

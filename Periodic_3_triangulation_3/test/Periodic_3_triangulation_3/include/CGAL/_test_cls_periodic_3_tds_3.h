@@ -36,6 +36,7 @@ _test_cls_periodic_3_tds_3( const Tds &)
 
   typedef typename Tds::Vertex            Vertex;
   typedef typename Tds::Cell              Cell;
+  CGAL_USE_TYPE(Cell);
   typedef typename Tds::Edge              Edge;
   CGAL_USE_TYPE(typename Tds::Facet);
 

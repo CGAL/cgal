@@ -1,9 +1,6 @@
 
-
+#include <CGAL/Exact_rational.h>
 #include <CGAL/Simple_cartesian.h>
-#include <CGAL/MP_Float.h>
-#include <CGAL/Quotient.h>
-#include <CGAL/Gmpq.h>
 
 #include <CGAL/Arr_segment_traits_2.h>
 #include<CGAL/Arr_curve_data_traits_2.h>
@@ -17,21 +14,24 @@
 
 #include "utils.h"
 
-typedef CGAL::Gmpq                                  Number_type;
-typedef CGAL::Simple_cartesian<Number_type>         Kernel;
-typedef CGAL::Arr_segment_traits_2<Kernel>          Base_traits;
-typedef Base_traits::Curve_2                        Base_curve_2;
-typedef Base_traits::X_monotone_curve_2             Base_x_monotone_curve_2;
-typedef std::plus<unsigned int>                     Unsigned_plus;
-typedef CGAL::Arr_curve_data_traits_2<Base_traits, unsigned int, Unsigned_plus>
-                                                    Traits_2;
-typedef Traits_2::Curve_2                           Curve_2;
-typedef Traits_2::Point_2                           Point_2;
-typedef Traits_2::X_monotone_curve_2                X_monotone_curve_2;
-typedef CGAL::Arrangement_2<Traits_2>               Arrangement_2;
-typedef Arrangement_2::Vertex_iterator              Vertex_iterator;
-typedef Arrangement_2::Edge_iterator                Edge_iterator;
-typedef std::vector<Curve_2>                        Curve_container;
+typedef CGAL::Exact_rational                          Number_type;
+typedef CGAL::Simple_cartesian<Number_type>           Kernel;
+typedef CGAL::Arr_segment_traits_2<Kernel>            Base_traits_2;
+typedef Base_traits_2::Curve_2                        Base_curve_2;
+typedef Base_traits_2::X_monotone_curve_2             Base_x_monotone_curve_2;
+typedef CGAL::Arr_curve_data_traits_2<Base_traits_2,
+                                      unsigned int,
+                                      std::plus<unsigned int> >  
+                                                      Traits_2;
+typedef Traits_2::Curve_2                             Curve_2;
+typedef Traits_2::Point_2                             Point_2;
+typedef Traits_2::X_monotone_curve_2                  X_monotone_curve_2;
+typedef CGAL::Arrangement_2<Traits_2>                 Arrangement_2;
+typedef Arrangement_2::Vertex_iterator                Vertex_iterator;
+typedef Arrangement_2::Edge_iterator                  Edge_iterator;
+typedef std::vector<Curve_2>                          Curve_container;
+
+
 
 int main(int argc, char* argv[])
 {

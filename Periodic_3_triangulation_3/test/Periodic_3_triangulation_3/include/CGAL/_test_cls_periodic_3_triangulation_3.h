@@ -62,35 +62,53 @@ _test_cls_periodic_3_triangulation_3(const PeriodicTriangulation &,
   typedef typename P3T3::Offset                  Offset;
   typedef typename P3T3::Iso_cuboid              Iso_cuboid;
   typedef typename P3T3::Covering_sheets         Covering_sheets;
+  CGAL_USE_TYPE(Covering_sheets);
 
   typedef typename P3T3::Point                   Point;
   typedef typename P3T3::Segment                 Segment;
   typedef typename P3T3::Triangle                Triangle;
   typedef typename P3T3::Tetrahedron             Tetrahedron;
+  CGAL_USE_TYPE(Segment);
+  CGAL_USE_TYPE(Triangle);
+  CGAL_USE_TYPE(Tetrahedron);
 
   typedef typename P3T3::Periodic_point          Periodic_point;
   typedef typename P3T3::Periodic_segment        Periodic_segment;
   typedef typename P3T3::Periodic_triangle       Periodic_triangle;
   typedef typename P3T3::Periodic_tetrahedron    Periodic_tetrahedron;
+  CGAL_USE_TYPE(Periodic_point);
+  CGAL_USE_TYPE(Periodic_segment);
+  CGAL_USE_TYPE(Periodic_triangle);
+  CGAL_USE_TYPE(Periodic_tetrahedron);
 
   typedef typename P3T3::Vertex                  Vertex;
   typedef typename P3T3::Cell                    Cell;
   typedef typename P3T3::Edge                    Edge;
   typedef typename P3T3::Facet                   Facet;
+  CGAL_USE_TYPE(Vertex);
+  CGAL_USE_TYPE(Cell);
 
   typedef typename P3T3::Vertex_handle           Vertex_handle;
   typedef typename P3T3::Cell_handle             Cell_handle; 
 
   typedef typename P3T3::size_type               size_type;
   typedef typename P3T3::difference_type         difference_type;
+  CGAL_USE_TYPE(size_type);
+  CGAL_USE_TYPE(difference_type);
 
   typedef typename P3T3::Cell_iterator           Cell_iterator;
   typedef typename P3T3::Facet_iterator          Facet_iterator;
   typedef typename P3T3::Edge_iterator           Edge_iterator;
   typedef typename P3T3::Vertex_iterator         Vertex_iterator;
+  CGAL_USE_TYPE(Cell_iterator);
+  CGAL_USE_TYPE(Facet_iterator);
+  CGAL_USE_TYPE(Edge_iterator);
+  CGAL_USE_TYPE(Vertex_iterator);
 
   typedef typename P3T3::Cell_circulator         Cell_circulator;
   typedef typename P3T3::Facet_circulator        Facet_circulator;
+  CGAL_USE_TYPE(Cell_circulator);
+  CGAL_USE_TYPE(Facet_circulator);
 
   typedef typename P3T3::Periodic_tetrahedron_iterator
                                                  Periodic_tetrahedron_iterator;
@@ -99,9 +117,14 @@ _test_cls_periodic_3_triangulation_3(const PeriodicTriangulation &,
   typedef typename P3T3::Periodic_segment_iterator
                                                  Periodic_segment_iterator;
   typedef typename P3T3::Periodic_point_iterator Periodic_point_iterator;
+  CGAL_USE_TYPE(Periodic_tetrahedron_iterator);
+  CGAL_USE_TYPE(Periodic_triangle_iterator);
+  CGAL_USE_TYPE(Periodic_segment_iterator);
+  CGAL_USE_TYPE(Periodic_point_iterator);
 
   typedef typename P3T3::Locate_type             Locate_type;
   typedef typename P3T3::Iterator_type           Iterator_type;
+  CGAL_USE_TYPE(Iterator_type);
 
   std::cout<<"Creating triangulations to test on"<<std::endl;
   std::cout<<"  non-degenerate, 3-sheeted covering"<<std::endl;
@@ -396,6 +419,11 @@ _test_cls_periodic_3_triangulation_3(const PeriodicTriangulation &,
   assert(!PT3.are_equal(Facet(ch,1),nb,i));
 
   std::cout<<"Point location"<<std::endl;
+  ch = PT3_deg.inexact_locate(Point(0.5,0.5,0.5));
+  assert( PT3_deg.tetrahedron(PT3_deg.periodic_tetrahedron(ch))
+      == PT3_deg.geom_traits().construct_tetrahedron_3_object()(
+    Point(0,0,0), Point(0,2,0), Point(0,0,2), Point(2,0,0)) );
+
   ch = PT3_deg.locate(Point(0.5,0.5,0.5));
   assert( PT3_deg.tetrahedron(PT3_deg.periodic_tetrahedron(ch))
       == PT3_deg.geom_traits().construct_tetrahedron_3_object()(

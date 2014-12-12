@@ -84,18 +84,9 @@ sub reformat_results($)
 	if (/ZLIB_VERSION = '([^']+)'/) {
 	    $ZLIB="$1";
 	}
-# 	if (/BLAS_VERSION = '([^']+)'/) {
-# 	    $BLAS="+";
-# 	}
-# 	if (/LAPACK_VERSION = '([^']+)'/) {
-# 	    $LAPACK="+";
-# 	}
 	if (/OPENGL_VERSION = '([^']+)'/) {
 	    $OPENGL="$1";
 	}
-# 	if (/TAUCS_VERSION = '([^']+)'/) {
-# 	    $TAUCS="$1";
-# 	}
 	if (/GMP_VERSION = '([^']+)'/) {
 	    $GMP="$1";
 	}

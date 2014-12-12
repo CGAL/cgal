@@ -1,0 +1,5 @@
+2014/08/28 Laurent Rineau
+  I have removed 'nearly_collinear.poly' from the selection, because it
+  creates a sort if infinite loop that eats memory (up to 60GiB in several
+  hours), when LEDA is used as number type. And even with Gmpq, the result
+  is strange.

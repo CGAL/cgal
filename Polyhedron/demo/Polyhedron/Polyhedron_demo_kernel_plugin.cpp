@@ -11,7 +11,7 @@
 #include "Polyhedron_demo_plugin_interface.h"
 
 #include <CGAL/Polyhedron_kernel.h>
-#include <CGAL/Gmpzf.h>
+#include <CGAL/Exact_integer.h>
 #include <CGAL/convex_hull_3.h>
 
 #include <CGAL/Dualizer.h>
@@ -58,7 +58,7 @@ void Polyhedron_demo_kernel_plugin::on_actionKernel_triggered()
   {
     Polyhedron* pMesh = item->polyhedron();
 
-    typedef CGAL::Gmpzf ET; // choose exact integral type
+    typedef CGAL::Exact_integer ET; // choose exact integral type
     typedef Polyhedron_kernel<Kernel,ET> Polyhedron_kernel;
 
     // get triangles from polyhedron

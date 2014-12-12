@@ -19,7 +19,6 @@
 !define ViaFTP
 
 Var Platform
-Var IsTAUCSInstalled
 
 !ifdef ViaFTP
   !define DownloadOK      "OK"
@@ -57,27 +56,6 @@ Var IsTAUCSInstalled
 
 !macro DownloadFile SRC_FOLDER FILE TGT
   !insertmacro DownloadFileFrom ${FTP_SRC} ${SRC_FOLDER} ${FILE} ${TGT}
-!macroend
-
-!macro Install_LAPACK_TAUCS_libs PLATFORM 
-  ; Headers are not platform dependent so we include this only once, but here since
-  ; we want to download headers only if at least one lib variant was selected.
-  ${If} $IsTAUCSInstalled = 0
-    StrCpy $IsTAUCSInstalled 1 
-    
-    !insertmacro DownloadFile "auxiliary/$Platform/TAUCS-CGAL-3.7/"  "taucs.h.zip"               "$INSTDIR\auxiliary\taucs\include"
-    !insertmacro DownloadFile "auxiliary/$Platform/TAUCS-CGAL-3.7/"  "taucs_private.h.zip"       "$INSTDIR\auxiliary\taucs\include"
-    !insertmacro DownloadFile "auxiliary/$Platform/TAUCS-CGAL-3.7/"  "taucs_config_tests.h.zip"  "$INSTDIR\auxiliary\taucs\include"
-    !insertmacro DownloadFile "auxiliary/$Platform/TAUCS-CGAL-3.7/"  "taucs_config_build.h.zip"  "$INSTDIR\auxiliary\taucs\include"
-    !insertmacro DownloadFile "auxiliary/$Platform/TAUCS-CGAL-3.7/"  "blaswrap.h.zip"            "$INSTDIR\auxiliary\taucs\include"
-
-    ${If} "$Platform" == "win32"
-      !insertmacro DownloadFile "auxiliary/win32/TAUCS-CGAL-3.7/" "taucs-common.zip" "$INSTDIR\auxiliary\taucs\lib"
-    ${Endif}
-    
-  ${Endif}
-  
-  !insertmacro DownloadFile "auxiliary/${PLATFORM}/TAUCS-CGAL-3.7/"  "taucs-libs.zip"  "$INSTDIR\auxiliary\taucs\lib"
 !macroend
 
 !macro Install_GMP_MPFR_bin PLATFORM

@@ -457,7 +457,9 @@ Image_3::labellized_trilinear_interpolation(const Coord_type& x,
   labels.insert(((Image_word_type*)image()->data)[(i2 * dimy + j2) * dimx + k1]);
   labels.insert(((Image_word_type*)image()->data)[(i2 * dimy + j2) * dimx + k2]);
 
-  CGAL_HISTOGRAM_PROFILER("Number of labels around a vertex, Image_3::labellized_trilinear_interpolation()", labels.size());
+  CGAL_HISTOGRAM_PROFILER(
+    "Number of labels around a vertex, Image_3::labellized_trilinear_interpolation()", 
+    static_cast<unsigned int>(labels.size()));
 
   if(labels.size() == 1) {
     return *(labels.begin());

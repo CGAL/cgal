@@ -23,6 +23,7 @@
 #include <QSettings>
 #include "MainWindow.moc"
 #include <CGAL/Timer.h>
+#include <CGAL/ipower.h>
 
 // Function defined in Linear_cell_complex_3_subivision.cpp
 void subdivide_lcc_3 (LCC & m);

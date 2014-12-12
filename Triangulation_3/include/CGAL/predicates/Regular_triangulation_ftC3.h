@@ -21,6 +21,9 @@
 #ifndef CGAL_REGULAR_TRIANGULATION_FTC3_H
 #define CGAL_REGULAR_TRIANGULATION_FTC3_H
 
+#include <CGAL/number_utils.h>
+#include <CGAL/predicates/sign_of_determinant.h>
+
 // This file contains the low level cartesian predicates
 // used by the 3D regular triangulation.
 

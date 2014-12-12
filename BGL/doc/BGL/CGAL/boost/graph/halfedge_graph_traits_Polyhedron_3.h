@@ -4,6 +4,9 @@ namespace CGAL {
 /*!
 \ingroup PkgBGLTraits
 
+\deprecated This class is deprecated since \cgal 4.5, the class
+`boost::graph_traits` should be used instead.
+ 
 The class `halfedge_graph_traits` is a partial specialization of `CGAL::halfedge_graph_traits` 
 for `Polyhedron_3`. It provides the types associated 
 to the `HalfedgeGraph` concept. 

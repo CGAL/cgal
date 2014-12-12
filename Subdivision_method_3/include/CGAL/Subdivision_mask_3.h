@@ -237,7 +237,7 @@ public:
     if (n == 6) {
       pt = Point((10*S[0]+R[0])/16, (10*S[1]+R[1])/16, (10*S[2]+R[2])/16);
     } else {
-      FT Cn = (FT) (5.0/8.0 - std::sqrt(3+2*std::cos(6.283/(double)n))/64.0);
+      FT Cn = (FT) (5.0/8.0 - CGAL::square(3+2*std::cos(2 * CGAL_PI/(double) n))/64.0);
       FT Sw = (double)n*(1-Cn)/Cn;
       FT W = (double)n/Cn;
       pt = Point((Sw*S[0]+R[0])/W, (Sw*S[1]+R[1])/W, (Sw*S[2]+R[2])/W);

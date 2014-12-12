@@ -41,7 +41,9 @@ public:
 
   //! Applicate for Point_sets with normals.
   bool applicable() const {
-    return qobject_cast<Scene_points_with_normal_item*>(scene->item(scene->mainSelectionIndex()));
+    Scene_points_with_normal_item* item =
+      qobject_cast<Scene_points_with_normal_item*>(scene->item(scene->mainSelectionIndex()));
+    return item && item->has_normals();
   }
 
   QList<QAction*> actions() const {
@@ -60,11 +62,7 @@ class Polyhedron_demo_poisson_plugin_dialog : public QDialog, private Ui::Poisso
     Polyhedron_demo_poisson_plugin_dialog(QWidget* /*parent*/ = 0)
     {
       setupUi(this);
-      
-      #ifdef CGAL_TAUCS_ENABLED
-      m_inputSolver->addItem("Taucs");
-      #endif
-      
+
       #ifdef CGAL_EIGEN3_ENABLED
       m_inputSolver->addItem("Eigen - built-in simplicial LDLt");
       m_inputSolver->addItem("Eigen - built-in CG");

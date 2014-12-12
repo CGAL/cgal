@@ -1,11 +1,13 @@
 #include <iostream>
 #include <fstream>
 
+
+
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
+#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 
-#include <CGAL/Surface_mesh_simplification/HalfedgeGraph_Polyhedron_3.h>
 #include <CGAL/Surface_mesh_simplification/edge_collapse.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Constrained_placement.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Midpoint_placement.h>
@@ -18,19 +20,15 @@
 typedef CGAL::Simple_cartesian<double> Kernel;
 typedef Kernel::Point_3 Point_3;
 typedef CGAL::Polyhedron_3<Kernel> Surface_mesh;
-typedef boost::graph_traits<Surface_mesh const>::edge_descriptor edge_descriptor;
+typedef boost::graph_traits<Surface_mesh>::vertex_descriptor vertex_descriptor;
+typedef boost::graph_traits<Surface_mesh>::halfedge_descriptor halfedge_descriptor;
+typedef boost::graph_traits<Surface_mesh>::edge_descriptor edge_descriptor;
+typedef boost::graph_traits<Surface_mesh>::edge_iterator edge_iterator;
 
 namespace SMS = CGAL::Surface_mesh_simplification ;
 
-
-typedef Surface_mesh::Facet_iterator Facet_iterator;
-typedef Surface_mesh::Halfedge_handle Halfedge_handle;
-typedef Surface_mesh::Halfedge_iterator Halfedge_iterator;
-
-
 //
 // BGL property map which indicates whether an edge is marked as non-removable
-//
 struct Constrained_edge_map : public boost::put_get_helper<bool,Constrained_edge_map>
 {
   typedef boost::readable_property_map_tag      category;
@@ -39,16 +37,29 @@ struct Constrained_edge_map : public boost::put_get_helper<bool,Constrained_edge
   typedef edge_descriptor                       key_type;
 
   Constrained_edge_map(const CGAL::Unique_hash_map<key_type,bool>& aConstraints)
-    : mConstraints(aConstraints) {}
+    : mConstraints(aConstraints)
+  {}
 
   reference operator[](key_type const& e) const { return  is_constrained(e); }
 
   bool is_constrained( key_type const& e ) const {
-    return mConstraints.is_defined(e) ? mConstraints[e] : false ; }
+    return mConstraints.is_defined(e);
+  }
 
 private:
   const CGAL::Unique_hash_map<key_type,bool>& mConstraints;
 };
+
+bool is_border (edge_descriptor e, const Surface_mesh& sm)
+{
+  return (face(halfedge(e,sm),sm) == boost::graph_traits<Surface_mesh>::null_face() )
+    || (face(opposite(halfedge(e,sm),sm),sm) == boost::graph_traits<Surface_mesh>::null_face() );
+}
+
+Point_3 point(vertex_descriptor vd,  const Surface_mesh& sm)
+{
+  return get(CGAL::vertex_point, sm, vd);
+}
 
 int main( int argc, char** argv )
 {
@@ -56,8 +67,8 @@ int main( int argc, char** argv )
 
   Surface_mesh surface_mesh;
 
-  if (argc!=2){
-    std::cerr<< "Usage: " << argv[0] << " input.off\n";
+  if (argc < 2){
+    std::cerr<< "Usage: " << argv[0] << " input.off [out.off]\n";
     return 1;
   }
 
@@ -75,41 +86,43 @@ int main( int argc, char** argv )
 
   // map used to check that constrained_edges and the points of its vertices
   // are preserved at the end of the simplification
-  // Warning: the computation of the diedral angle is only an approximation and can
+  // Warning: the computation of the dihedral angle is only an approximation and can
   //          be far from the real value and could influence the detection of sharp
   //          edges after the simplification
-  std::map<Surface_mesh::Halfedge_handle,std::pair<Point_3, Point_3> >constrained_edges;
+  std::map<edge_descriptor,std::pair<Point_3, Point_3> >constrained_edges;
   std::size_t nb_sharp_edges=0;
 
   // detect sharp edges
   std::ofstream cst_output("constrained_edges.cgal");
-  for(Surface_mesh::Edge_iterator eb = surface_mesh.edges_begin(), ee = surface_mesh.edges_end() ; eb != ee ; ++eb )
+  edge_iterator eb,ee;
+  for(boost::tie(eb,ee) = edges(surface_mesh); eb != ee ; ++eb )
   {
-    if ( eb->is_border_edge() ){
+    halfedge_descriptor hd = halfedge(*eb,surface_mesh);
+    if ( is_border(*eb,surface_mesh) ){
+      std::cerr << "border" << std::endl;
       ++nb_sharp_edges;
-      constraint_hmap[eb]=true;
-      constraint_hmap[eb->opposite()]=true;
-      constrained_edges[eb]=std::make_pair( eb->opposite()->vertex()->point(),
-                                            eb->vertex()->point() );
+      constraint_hmap[*eb]=true;
+      constrained_edges[*eb]=std::make_pair(point(source(hd,surface_mesh),surface_mesh),
+                                            point(target(hd,surface_mesh),surface_mesh));
     }
     else{
-      double angle = CGAL::Mesh_3::dihedral_angle(
-        eb->opposite()->vertex()->point(),
-        eb->vertex()->point(),
-        eb->next()->vertex()->point(),
-        eb->opposite()->next()->vertex()->point() );
-      if ( std::abs(angle)<100 ){
+      double angle = CGAL::Mesh_3::dihedral_angle(point(target(opposite(hd,surface_mesh),surface_mesh),surface_mesh),
+                                                  point(target(hd,surface_mesh),surface_mesh),
+                                                  point(target(next(hd,surface_mesh),surface_mesh),surface_mesh),
+                                                  point(target(next(opposite(hd,surface_mesh),surface_mesh),surface_mesh),surface_mesh));
+      if ( CGAL::abs(angle)<100 ){
         ++nb_sharp_edges;
-        constraint_hmap[eb]=true;
-        constraint_hmap[eb->opposite()]=true;
-        constrained_edges[eb]=std::make_pair( eb->opposite()->vertex()->point(),
-                                              eb->vertex()->point() );
-        cst_output << "2 " << eb->opposite()->vertex()->point() << " "
-                           << " "  << eb->vertex()->point() << "\n";
+        constraint_hmap[*eb]=true;
+        Point_3 p = point(source(hd,surface_mesh),surface_mesh);
+        Point_3 q = point(target(hd,surface_mesh),surface_mesh);
+        constrained_edges[*eb]=std::make_pair(p,q);
+        cst_output << "2 " << p << " "  << q << "\n";
       }
     }
   }
   cst_output.close();
+
+  std::cerr << "# sharp edges = " << nb_sharp_edges << std::endl;
 
   // Contract the surface mesh as much as possible
   SMS::Count_stop_predicate<Surface_mesh> stop(0);
@@ -117,47 +130,48 @@ int main( int argc, char** argv )
   int r
   = SMS::edge_collapse(surface_mesh
                        ,stop
-                       ,CGAL::vertex_index_map(boost::get(CGAL::vertex_external_index,surface_mesh))
-                       .edge_index_map  (boost::get(CGAL::edge_external_index  ,surface_mesh))
+                       ,CGAL::vertex_index_map(get(CGAL::vertex_external_index, surface_mesh))
+                       .halfedge_index_map(get(CGAL::halfedge_external_index, surface_mesh))
                        .edge_is_constrained_map(constraints_map)
                        .get_placement(placement)
    );
 
   std::cout << "\nFinished...\n" << r << " edges removed.\n"
-  << (surface_mesh.size_of_halfedges()/2) << " final edges.\n" ;
+            << num_edges(surface_mesh) << " final edges.\n" ;
   std::ofstream os(argc > 2 ? argv[2] : "out.off") ; os << surface_mesh ;
 
   std::cout  << "Checking sharped edges were preserved...\n";
   // check sharp edges were preserved
-  for(Surface_mesh::Edge_iterator eb = surface_mesh.edges_begin(), ee = surface_mesh.edges_end() ; eb != ee ; ++eb )
+  for(boost::tie(eb,ee) = edges(surface_mesh); eb != ee ; ++eb )
   {
-    if ( eb->is_border_edge() ){
+    halfedge_descriptor hd = halfedge(*eb,surface_mesh);
+    if ( is_border(*eb,surface_mesh) ){
       --nb_sharp_edges;
       assert(
-        constrained_edges[eb]==std::make_pair( eb->opposite()->vertex()->point(),
-                                               eb->vertex()->point() ) );
+             constrained_edges[*eb]==std::make_pair( point(source(hd,surface_mesh),surface_mesh),
+                                                     point(target(hd,surface_mesh),surface_mesh)));
     }
     else{
-      double angle = CGAL::Mesh_3::dihedral_angle(
-        eb->opposite()->vertex()->point(),
-        eb->vertex()->point(),
-        eb->next()->vertex()->point(),
-        eb->opposite()->next()->vertex()->point() );
-      if ( std::abs(angle)<100 ){
-        ++nb_sharp_edges;
+      double angle = CGAL::Mesh_3::dihedral_angle(point(target(opposite(hd,surface_mesh),surface_mesh),surface_mesh),
+                                                  point(target(hd,surface_mesh),surface_mesh),
+                                                  point(target(next(hd,surface_mesh),surface_mesh),surface_mesh),
+                                                  point(target(next(opposite(hd,surface_mesh),surface_mesh),surface_mesh),surface_mesh));
+      if ( CGAL::abs(angle)<100 ){
+        --nb_sharp_edges;
       assert(
-        constrained_edges[eb]==std::make_pair( eb->opposite()->vertex()->point(),
-                                               eb->vertex()->point() ) );
+        constrained_edges[*eb]==std::make_pair( point(source(hd,surface_mesh),surface_mesh),
+                                                point(target(hd,surface_mesh),surface_mesh)));
       }
     }
   }
   std::cout  << "OK\n";
+  std::cerr << "# sharp edges = " << nb_sharp_edges << std::endl;
 
   std::cout << "Check that no removable edge has been forgotten..." << std::endl;
   r = SMS::edge_collapse(surface_mesh
                          ,stop
-                         ,CGAL::vertex_index_map(boost::get(CGAL::vertex_external_index, surface_mesh))
-                         .edge_index_map  (boost::get(CGAL::edge_external_index, surface_mesh))
+                         ,CGAL::vertex_index_map(get(CGAL::vertex_external_index, surface_mesh))
+                         .halfedge_index_map  (get(CGAL::halfedge_external_index, surface_mesh))
                          .edge_is_constrained_map(constraints_map)
                          .get_placement(placement)
    );

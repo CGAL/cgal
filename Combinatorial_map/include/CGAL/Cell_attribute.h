@@ -70,16 +70,16 @@ namespace CGAL {
     template < unsigned int, class, class, class, class >
     friend class Combinatorial_map_base;
 
+    template < unsigned int, class, class, class, class >
+    friend class Generalized_map_base;
+
     template <unsigned int, typename>
     friend struct Dart;
 
-    template < unsigned int, class, class, class >
-    friend class Generalized_map_base;
-
-    template <int, typename>
+    template <unsigned int, typename>
     friend struct GMap_dart;
 
-    template <class, class>
+    template <class, class, class, class>
     friend class Compact_container;
 
     template<typename, unsigned int, typename>
@@ -182,16 +182,16 @@ namespace CGAL {
     template < unsigned int, class, class, class, class >
     friend class Combinatorial_map_base;
 
+    template < unsigned int, class, class, class, class >
+    friend class Generalized_map_base;
+
     template <unsigned int, typename>
     friend struct Dart;
 
-    template < unsigned int, class, class, class >
-    friend class Generalized_map_base;
-
-    template <int, typename>
+    template <unsigned int, typename>
     friend struct GMap_dart;
 
-    template <class, class>
+    template <class, class, class, class>
     friend class Compact_container;
 
     template<typename, unsigned int, typename>
@@ -300,7 +300,10 @@ namespace CGAL {
     template < unsigned int, class, class, class, class >
     friend class Combinatorial_map_base;
 
-    template <class, class>
+    template < unsigned int, class, class, class, class >
+    friend class Generalized_map_base;
+
+    template <class, class, class, class>
     friend class Compact_container;
 
   public:
@@ -329,7 +332,10 @@ namespace CGAL {
     template < unsigned int, class, class, class, class >
     friend class Combinatorial_map_base;
 
-    template <class, class>
+    template < unsigned int, class, class, class, class >
+    friend class Generalized_map_base;
+
+    template <class, class, class, class>
     friend class Compact_container;
 
   public:

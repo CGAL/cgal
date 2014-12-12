@@ -26,14 +26,14 @@
 
 #define CGAL_NEF3_SORT_OUTPUT 1
 
-#include <CGAL/Gmpq.h>
-typedef CGAL::Gmpq NT;
+#include <CGAL/Exact_rational.h>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Lazy_kernel.h>
 #include <CGAL/Timer.h>
 #include <CGAL/test_Nef_3.h>
 
 int main() {
+  typedef CGAL::Exact_rational NT;
   typedef CGAL::Lazy_kernel<CGAL::Simple_cartesian<NT> > LC_kernel;
   
 #ifdef CGAL_CFG_ISTREAM_INT_BUG

@@ -1,14 +1,14 @@
 //! \file examples/Envelope_3/ex_envelope_planes.cpp
 // Constructing the lower and the upper envelope of a set of planes.
 
-#include <CGAL/Gmpq.h>
+#include <CGAL/Exact_rational.h>
 #include <CGAL/Cartesian.h>
 #include <CGAL/Env_plane_traits_3.h>
 #include <CGAL/envelope_3.h>
 #include <iostream>
 #include <list>
 
-typedef CGAL::Gmpq                                       Number_type;
+typedef CGAL::Exact_rational                             Number_type;
 typedef CGAL::Cartesian<Number_type>                     Kernel;
 typedef Kernel::Plane_3                                  Plane_3;
 typedef CGAL::Env_plane_traits_3<Kernel>                 Traits_3;

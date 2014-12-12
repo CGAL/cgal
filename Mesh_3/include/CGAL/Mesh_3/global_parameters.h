@@ -55,6 +55,11 @@ private:
   { Class(double d) : Base<double>(d) { precondition(d); } };                 \
   inline Class function(double d) { return Class(d); }
 
+// see <CGAL/config.h>
+CGAL_PRAGMA_DIAG_PUSH
+// see <CGAL/Mesh_3/config.h>
+CGAL_MESH_3_IGNORE_BOOST_PARAMETER_NAME_WARNINGS
+
 BOOST_PARAMETER_NAME( c3t3 )
 BOOST_PARAMETER_NAME( domain )
 BOOST_PARAMETER_NAME( criteria )
@@ -75,6 +80,7 @@ BOOST_PARAMETER_NAME( (dump_after_glob_opt_prefix, tag ) dump_after_glob_opt_pre
 BOOST_PARAMETER_NAME( (dump_after_perturb_prefix, tag ) dump_after_perturb_prefix_)
 BOOST_PARAMETER_NAME( (dump_after_exude_prefix, tag ) dump_after_exude_prefix_)
 
+CGAL_PRAGMA_DIAG_POP
 } // end namespace parameters
 
 

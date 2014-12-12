@@ -40,6 +40,7 @@
  */
 
 #include <CGAL/function_objects.h>
+#include <CGAL/use.h>
 
 namespace CGAL {
 
@@ -909,6 +910,8 @@ insert_at_vertices(const X_monotone_curve_2& cv,
                    Vertex_handle v1, Vertex_handle v2,
                    Face_handle f)
 {
+  CGAL_USE(f);
+
   // Determine which one of the given vertices matches the left end of the
   // given curve.
   const bool at_obnd1 = !m_geom_traits->is_closed_2_object()(cv, ARR_MIN_END);
@@ -3672,7 +3675,6 @@ _compute_signs_and_min(const DHalfedge* he_anchor,
   // init with edges at first link.
   // assuming that he_anchor has been removed
   const DHalfedge* he_curr = he_anchor->opposite()->prev();
-  CGAL_assertion(! he_curr->has_null_curve());
   const DHalfedge* he_next = he_anchor->next();
   // init edge where loop should end
   const DHalfedge* he_end = he_anchor->opposite();
@@ -3681,12 +3683,17 @@ _compute_signs_and_min(const DHalfedge* he_anchor,
   int y_index = 0;
 
   // obtain the parameter space pair of he_curr
-  Arr_curve_end he_curr_tgt_end =
-    (he_curr->direction() == ARR_LEFT_TO_RIGHT) ? ARR_MAX_END : ARR_MIN_END;
-  Arr_parameter_space ps_x_save =
-    parameter_space_in_x(he_curr->curve(), he_curr_tgt_end);
-  Arr_parameter_space ps_y_save =
-    parameter_space_in_y(he_curr->curve(), he_curr_tgt_end);
+  Arr_parameter_space ps_x_save, ps_y_save;
+  if (he_curr->has_null_curve()) {
+    ps_x_save = he_curr->vertex()->parameter_space_in_x();
+    ps_y_save = he_curr->vertex()->parameter_space_in_y();
+  }
+  else {
+    Arr_curve_end he_curr_tgt_end =
+      (he_curr->direction() == ARR_LEFT_TO_RIGHT) ? ARR_MAX_END : ARR_MIN_END;
+    ps_x_save = parameter_space_in_x(he_curr->curve(), he_curr_tgt_end);
+    ps_y_save = parameter_space_in_y(he_curr->curve(), he_curr_tgt_end);
+  }
 
   // TODO EBEB 2012-09-20 check whether this fix is correct
   // EBEB 2012-08-22 the 'start' of one (out of two) loops might
@@ -3700,22 +3707,28 @@ _compute_signs_and_min(const DHalfedge* he_anchor,
   Arr_parameter_space ps_x_curr, ps_y_curr;
   Arr_parameter_space ps_x_next, ps_y_next;
 
-  // start loop
+  // Start loop
   do {
     ps_x_curr = ps_x_save;
     ps_y_curr = ps_y_save;
-    CGAL_assertion(!is_open(ps_x_curr, ps_y_curr));
 
-    Arr_curve_end he_next_src_end =
-      (he_next->direction() == ARR_LEFT_TO_RIGHT) ? ARR_MIN_END : ARR_MAX_END;
-    ps_x_next = parameter_space_in_x(he_next->curve(), he_next_src_end);
-    ps_y_next = parameter_space_in_y(he_next->curve(), he_next_src_end);
-    CGAL_assertion(!is_open(ps_x_next, ps_y_next));
+    if (he_next->has_null_curve()) {
+      ps_x_next = he_next->opposite()->vertex()->parameter_space_in_x();
+      ps_y_next = he_next->opposite()->vertex()->parameter_space_in_y();
+      ps_x_save = he_next->vertex()->parameter_space_in_x();
+      ps_y_save = he_next->vertex()->parameter_space_in_y();
+    }
+    else {
+      Arr_curve_end he_next_src_end =
+        (he_next->direction() == ARR_LEFT_TO_RIGHT) ? ARR_MIN_END : ARR_MAX_END;
+      ps_x_next = parameter_space_in_x(he_next->curve(), he_next_src_end);
+      ps_y_next = parameter_space_in_y(he_next->curve(), he_next_src_end);
 
-    Arr_curve_end he_next_tgt_end =
-      (he_next->direction() == ARR_LEFT_TO_RIGHT) ? ARR_MAX_END : ARR_MIN_END;
-    ps_x_save = parameter_space_in_x(he_next->curve(), he_next_tgt_end);
-    ps_y_save = parameter_space_in_y(he_next->curve(), he_next_tgt_end);
+      Arr_curve_end he_next_tgt_end =
+        (he_next->direction() == ARR_LEFT_TO_RIGHT) ? ARR_MAX_END : ARR_MIN_END;
+      ps_x_save = parameter_space_in_x(he_next->curve(), he_next_tgt_end);
+      ps_y_save = parameter_space_in_y(he_next->curve(), he_next_tgt_end);
+    }
 
     // If the halfedge is directed from right to left and its successor is
     // directed from left to right, the target vertex might be the smallest:
@@ -3790,6 +3803,19 @@ _is_smaller(const DHalfedge* he1,
   CGAL_precondition(he1->direction() == ARR_RIGHT_TO_LEFT);
   CGAL_precondition(he2->direction() == ARR_RIGHT_TO_LEFT);
   CGAL_precondition(he1->vertex() != he2->vertex());
+
+  /* If he1 points to a vertex on the left or the bottom boundary, then it
+   * is the smaller.
+   */
+  if ((ps_x1 == ARR_LEFT_BOUNDARY) || (ps_y1 == ARR_BOTTOM_BOUNDARY))
+    return true;
+
+  /* If he2 points to a vertex on the left or the bottom boundary, then it
+   * is the smaller.
+   */
+  if ((ps_x2 == ARR_LEFT_BOUNDARY) || (ps_y2 == ARR_BOTTOM_BOUNDARY))
+    return false;
+
   return _is_smaller(he1->curve(), he1->vertex()->point(), ps_x1, ps_y1,
                      he2->curve(), he2->vertex()->point(), ps_x2, ps_y2, tag);
 }
@@ -3875,7 +3901,8 @@ bool Arrangement_on_surface_2<GeomTraits, TopTraits>::
 _is_smaller_near_right(const X_monotone_curve_2& cv1,
                        const X_monotone_curve_2& cv2,
                        const Point_2& p,
-                       Arr_parameter_space /* ps_x */, Arr_parameter_space /* ps_y */,
+                       Arr_parameter_space /* ps_x */,
+                       Arr_parameter_space /* ps_y */,
                        Arr_all_sides_oblivious_tag) const
 {
   return
@@ -4153,12 +4180,12 @@ _remove_edge(DHalfedge* e, bool remove_source, bool remove_target)
   // is neither a need to compute signs and nor swapping of the halfedges
   if ((he1->next() != he2) && (he2->next() != he1)) {
 
-    // If f1 == f2 (same_face-case), then we consider two loops that occur
-    // when he1 and he2 get removedl;
-    // if f1 != f2, then he1 and he2 seperated the two faces that will be merged
-    // upon their removal - here each he1 and he2 belongs to a full cycle
-    // THAT IS WHY we give the f1 == f2 test to determine whether end of loop
-    // should be he1->opposite() and he2->opposite(), respectively.
+    // If f1 == f2 (same_face-case), then we consider two loops that occur when
+    // he1 and he2 get removed; if f1 != f2, then he1 and he2 seperates the two
+    // faces that will be merged upon their removal---here both he1 and he2
+    // belong to a full cycle, and THAT IS WHY we give the f1 == f2 test to
+    // determine whether end of loop should be he1->opposite() and
+    // he2->opposite(), respectively.
 
     // If f1 != f2, the removal of he1 (and its twin halfedge) will cause
     // the two incident faces to merge. Thus, swapping is not needed.
@@ -4189,7 +4216,9 @@ _remove_edge(DHalfedge* e, bool remove_source, bool remove_target)
 #if CGAL_ARRANGEMENT_ON_SURFACE_INSERT_VERBOSE
       std::cout << "signs1.x: " << signs1.first << std::endl;
       std::cout << "signs1.y: " << signs1.second << std::endl;
-      std::cout << "he_min1: " << he_min1->curve() << std::endl;
+      if (! he_min1->is_fictitious())
+        std::cout << "he_min1: " << he_min1->curve() << std::endl;
+      else std::cout << "he_min1 fictitious" << std::endl;
 #endif
 
       // Compute the signs and minimum along ccb of he2:
@@ -4203,7 +4232,9 @@ _remove_edge(DHalfedge* e, bool remove_source, bool remove_target)
 #if CGAL_ARRANGEMENT_ON_SURFACE_INSERT_VERBOSE
       std::cout << "signs2.x: " << signs2.first << std::endl;
       std::cout << "signs2.y: " << signs2.second << std::endl;
-      std::cout << "he_min2: " << he_min2->curve() << std::endl;
+      if (! he_min2->is_fictitious())
+        std::cout << "he_min2: " << he_min2->curve() << std::endl;
+      else std::cout << "he_min2 fictitious" << std::endl;
 #endif
 
       // TODO EBEB 2012-07-29
@@ -4241,17 +4272,14 @@ _remove_edge(DHalfedge* e, bool remove_source, bool remove_target)
 #endif
       }
       else {
-        CGAL_assertion(he_min1 != NULL);
-        CGAL_assertion(he_min2 != NULL);
-
-        // const DVertex* v_min1 = he_min1->vertex();
-        // const DVertex* v_min2 = he_min2->vertex();
-        // Both paths from he1 to he2 and back from he2 to he1 are not
-        // perimetric, so we are in case (a). As we want to determine which
-        // halfedge points to the new hole to be created (he1 or he2),
-        // we have to compare the two leftmost vertices lexicographically,
-        // first by the indices then by x and y. v_min2 lies to the left of
-        // v_min1 if and only if he1 points at the hole we are about to create.
+        // const DVertex* v_min1 = he_min1->vertex(); const DVertex* v_min2 =
+        // he_min2->vertex(); Both paths from he1 to he2 and back from he2 to
+        // he1 are not perimetric, so we are in case (a). As we want to
+        // determine which halfedge points to the new hole to be created (he1
+        // or he2), we have to compare the two leftmost vertices
+        // lexicographically, first by the indices then by x and y. v_min2
+        // lies to the left of v_min1 if and only if he1 points at the hole we
+        // are about to create.
         //
         //         +---------------------+
         //         |                     |
@@ -4272,7 +4300,8 @@ _remove_edge(DHalfedge* e, bool remove_source, bool remove_target)
         // on different sides of the identification, which is only
         // problematic when either he1 or he2 points to the
         // identification. In these cases, we have to adapt the indices:
-        typename Traits_adaptor_2::Parameter_space_in_x_2 parameter_space_in_x =
+        typename Traits_adaptor_2::Parameter_space_in_x_2
+          parameter_space_in_x =
           m_geom_traits->parameter_space_in_x_2_object();
 
         Arr_curve_end he1_tgt_end =

@@ -22,25 +22,6 @@ must be kept in place, not moved to a new position.
 class GetPlacement {
 public:
 
-/// \name Types 
-/// @{
-
-/*!
-The type of the edge profile cache, model of the `EdgeProfile` concept.
-*/ 
-typedef unspecified_type Profile; 
-
-/*!
-The point type for the surface mesh vertex.
-*/ 
-typename CGAL::halfedge_graph_traits<ECM>::Point Point; 
-
-/*!
-The type of the result (an optional point). 
-*/ 
-boost::optional<Point> result_type; 
-
-/// @} 
 
 /// \name Operations 
 /// @{
@@ -48,8 +29,11 @@ boost::optional<Point> result_type;
 /*!
 Computes and returns the placement, that is, the position of the vertex 
 which replaces the collapsing edge (represented by its profile). 
+
+\tparam Profile must be a model of `EdgeProfile`.
 */ 
-result_type operator()( Profile const& edge_profile ) const; 
+template <class Profile>
+boost::optional<Point>operator()( Profile const& edge_profile ) const; 
 
 /// @}
 

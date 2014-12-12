@@ -1,4 +1,4 @@
-// Copyright (c) 2002,2011 Utrecht University (The Netherlands).
+// Copyright (c) 2002,2011,2014 Utrecht University (The Netherlands), Max-Planck-Institute Saarbruecken (Germany).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -14,9 +14,9 @@
 //
 // $URL$
 // $Id$
-// 
 //
-// Author(s)     : Hans Tangelder (<hanst@cs.uu.nl>)
+// Author(s)     : Hans Tangelder (<hanst@cs.uu.nl>),
+//               : Waqar Khan <wkhan@mpi-inf.mpg.de>
 
 #ifndef CGAL_KD_TREE_H
 #define CGAL_KD_TREE_H
@@ -45,7 +45,7 @@ public:
   typedef Splitter_ Splitter;
   typedef typename SearchTraits::Point_d Point_d;
   typedef typename Splitter::Container Point_container;
-  
+
   typedef typename SearchTraits::FT FT;
   typedef Kd_tree_node<SearchTraits, Splitter, UseExtendedNode > Node;
   typedef Kd_tree<SearchTraits, Splitter> Tree;
@@ -58,7 +58,7 @@ public:
   typedef typename Splitter::Separator Separator;
   typedef typename std::vector<Point_d>::const_iterator iterator;
   typedef typename std::vector<Point_d>::const_iterator const_iterator;
-  
+
   typedef typename std::vector<Point_d>::size_type size_type;
 
 private:
@@ -74,7 +74,7 @@ private:
   // Instead of storing the points in arrays in the Kd_tree_node
   // we put all the data in a vector in the Kd_tree.
   // and we only store an iterator range in the Kd_tree_node.
-  // 
+  //
   std::vector<const Point_d*> data;
 
 
@@ -94,7 +94,7 @@ private:
   // the allocation of the nodes.
 
   // The leaf node
-  Node_handle 
+  Node_handle
   create_leaf_node(Point_container& c)
   {
     Node_handle nh = nodes.emplace(static_cast<unsigned int>(c.size()), Node::LEAF);
@@ -103,40 +103,40 @@ private:
     return nh;
   }
 
- 
+
   // The internal node
 
-  Node_handle 
+  Node_handle
   create_internal_node(Point_container& c, const Tag_true&)
   {
     return create_internal_node_use_extension(c);
   }
 
-  Node_handle 
+  Node_handle
   create_internal_node(Point_container& c, const Tag_false&)
   {
     return create_internal_node(c);
   }
 
- 
- 
+
+
   // TODO: Similiar to the leaf_init function above, a part of the code should be
   //       moved to a the class Kd_tree_node.
   //       It is not proper yet, but the goal was to see if there is
   //       a potential performance gain through the Compact_container
-  Node_handle 
+  Node_handle
   create_internal_node_use_extension(Point_container& c)
   {
     Node_handle nh = nodes.emplace(Node::EXTENDED_INTERNAL);
-    
+
     Point_container c_low(c.dimension(),traits_);
     split(nh->separator(), c, c_low);
-	        
+
     int cd  = nh->separator().cutting_dimension();
-    
+
     nh->low_val = c_low.bounding_box().min_coord(cd);
     nh->high_val = c.bounding_box().max_coord(cd);
-    
+
     CGAL_assertion(nh->separator().cutting_value() >= nh->low_val);
     CGAL_assertion(nh->separator().cutting_value() <= nh->high_val);
 
@@ -150,21 +150,21 @@ private:
     }else{
       nh->upper_ch = create_leaf_node(c);
     }
-    
+
     return nh;
   }
 
-  
+
   // Note also that I duplicated the code to get rid if the if's for
   // the boolean use_extension which was constant over the construction
-  Node_handle 
+  Node_handle
   create_internal_node(Point_container& c)
   {
     Node_handle nh = nodes.emplace(Node::INTERNAL);
-    
+
     Point_container c_low(c.dimension(),traits_);
     split(nh->separator(), c, c_low);
-	        
+
     if (c_low.size() > split.bucket_size()){
       nh->lower_ch = create_internal_node(c_low);
     }else{
@@ -185,11 +185,11 @@ public:
   Kd_tree(Splitter s = Splitter(),const SearchTraits traits=SearchTraits())
     : traits_(traits),split(s), built_(false)
   {}
-  
+
   template <class InputIterator>
   Kd_tree(InputIterator first, InputIterator beyond,
-	  Splitter s = Splitter(),const SearchTraits traits=SearchTraits()) 
-    : traits_(traits),split(s), built_(false) 
+	  Splitter s = Splitter(),const SearchTraits traits=SearchTraits())
+    : traits_(traits),split(s), built_(false)
   {
     pts.insert(pts.end(), first, beyond);
   }
@@ -197,13 +197,13 @@ public:
   bool empty() const {
     return pts.empty();
   }
-  
-  void 
+
+  void
   build()
   {
     const Point_d& p = *pts.begin();
     typename SearchTraits::Construct_cartesian_const_iterator_d ccci=traits_.construct_cartesian_const_iterator_d_object();
-    int dim = static_cast<int>(std::distance(ccci(p), ccci(p,0))); 
+    int dim = static_cast<int>(std::distance(ccci(p), ccci(p,0)));
 
     data.reserve(pts.size());
     for(unsigned int i = 0; i < pts.size(); i++){
@@ -214,12 +214,12 @@ public:
     if (c.size() <= split.bucket_size()){
       tree_root = create_leaf_node(c);
     }else {
-      tree_root = create_internal_node(c, UseExtendedNode()); 
+      tree_root = create_internal_node(c, UseExtendedNode());
     }
     built_ = true;
   }
 
-private:  
+private:
   //any call to this function is for the moment not threadsafe
   void const_build() const {
     #ifdef CGAL_HAS_THREADS
@@ -230,7 +230,7 @@ private:
       const_cast<Self*>(this)->build(); //THIS IS NOT THREADSAFE
   }
 public:
-  
+
   bool is_built() const
   {
     return built_;
@@ -245,35 +245,47 @@ public:
       built_ = false;
     }
   }
-  
+
   void clear()
   {
     invalidate_built();
     pts.clear();
   }
-  
+
   void
   insert(const Point_d& p)
   {
     invalidate_built();
     pts.push_back(p);
-  } 
- 
+  }
+
   template <class InputIterator>
-  void 
+  void
   insert(InputIterator first, InputIterator beyond)
   {
     invalidate_built();
     pts.insert(pts.end(),first, beyond);
   }
 
+  //For efficiency; reserve the size of the points vectors in advance (if the number of points is already known).
+  void reserve(size_t size)
+  {
+    pts.reserve(size);
+  }
+
+  //Get the capacity of the underlying points vector.
+  size_t capacity()
+  {
+    return pts.capacity();
+  }
+
 
   template <class OutputIterator, class FuzzyQueryItem>
-  OutputIterator 
+  OutputIterator
   search(OutputIterator it, const FuzzyQueryItem& q) const
   {
     if(! pts.empty()){
-  
+
       if(! is_built()){
 	const_build();
       }
@@ -291,27 +303,27 @@ public:
 
 
   const SearchTraits&
-  traits() const 
+  traits() const
   {
     return traits_;
   }
 
-  Node_const_handle 
-  root() const 
-  { 
+  Node_const_handle
+  root() const
+  {
     if(! is_built()){
       const_build();
     }
-    return tree_root; 
+    return tree_root;
   }
 
-  Node_handle 
+  Node_handle
   root()
   {
     if(! is_built()){
       build();
     }
-    return tree_root; 
+    return tree_root;
   }
 
   void
@@ -324,12 +336,12 @@ public:
   }
 
   const Kd_tree_rectangle<FT>&
-  bounding_box() const 
+  bounding_box() const
   {
     if(! is_built()){
       const_build();
     }
-    return *bbox; 
+    return *bbox;
   }
 
   const_iterator
@@ -344,23 +356,23 @@ public:
     return pts.end();
   }
 
-  size_type 
-  size() const 
+  size_type
+  size() const
   {
     return pts.size();
   }
 
   // Print statistics of the tree.
-  std::ostream& 
+  std::ostream&
   statistics(std::ostream& s) const
   {
     if(! is_built()){
       const_build();
     }
     s << "Tree statistics:" << std::endl;
-    s << "Number of items stored: " 
+    s << "Number of items stored: "
       << root()->num_items() << std::endl;
-    s << "Number of nodes: " 
+    s << "Number of nodes: "
       << root()->num_nodes() << std::endl;
     s << " Tree depth: " << root()->depth() << std::endl;
     return s;

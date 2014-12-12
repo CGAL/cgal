@@ -62,7 +62,8 @@ struct FirstIntersectionVisitor {
  * @tparam GeomTraits a model of SegmentationGeomTraits
  */
 template <
-class Polyhedron,
+      class Polyhedron,
+      class VertexPointPmap,
       class GeomTraits = typename Polyhedron::Traits,
       bool fast_bbox_intersection = true
       >
@@ -78,12 +79,10 @@ private:
   typedef typename GeomTraits::Segment_3  Segment;
   typedef typename GeomTraits::FT         FT;
 
-  typedef typename Polyhedron::Facet  Facet;
+  typedef typename boost::graph_traits<Polyhedron>::face_iterator face_iterator;
+  typedef typename boost::graph_traits<Polyhedron>::face_descriptor   face_handle;
 
-  typedef typename Polyhedron::Facet_const_iterator Facet_const_iterator;
-  typedef typename Polyhedron::Facet_const_handle   Facet_const_handle;
-
-  typedef AABB_face_graph_triangle_primitive<const Polyhedron> Primitive;
+  typedef AABB_face_graph_triangle_primitive<Polyhedron, VertexPointPmap> Primitive;
   typedef AABB_traits_SDF<GeomTraits, Primitive, fast_bbox_intersection>
   AABB_traits_internal;
   typedef typename CGAL::AABB_tree<AABB_traits_internal>                 Tree;
@@ -104,6 +103,8 @@ private:
 // member variables
 private:
   GeomTraits traits;
+  const Polyhedron& mesh;
+  VertexPointPmap vertex_point_map;
 
   typename GeomTraits::Angle_3                         angle_functor;
   typename GeomTraits::Construct_scaled_vector_3       scale_functor;
@@ -124,18 +125,23 @@ public:
    * @param use_diagonal if true: calculates diagonal of AABB tree and cast segments instead of rays using diagonal length
    * @param traits trait object
    */
-  SDF_calculation(const Polyhedron& mesh, bool build_kd_tree = false,
+  SDF_calculation(const Polyhedron& mesh,
+                  VertexPointPmap vertex_point_map,
+                  bool build_kd_tree = false,
                   bool use_diagonal = true, GeomTraits traits = GeomTraits())
     :
     traits(traits),
+    mesh(mesh),
+    vertex_point_map(vertex_point_map),
     angle_functor(traits.angle_3_object()),
     scale_functor(traits.construct_scaled_vector_3_object()),
     sum_functor(traits.construct_sum_of_vectors_3_object()),
     normal_functor(traits.construct_normal_3_object()),
     translated_point_functor(traits.construct_translated_point_3_object()),
     centroid_functor(traits.construct_centroid_3_object()),
-    use_diagonal(use_diagonal) {
-    tree.insert(mesh.facets_begin(), mesh.facets_end(), mesh);
+    use_diagonal(use_diagonal) 
+  {
+    tree.insert(faces(mesh).first, faces(mesh).second, mesh, vertex_point_map);
     tree.build();
 
     if(build_kd_tree) {
@@ -153,38 +159,8 @@ public:
   }
 
   /**
-   * Construct AABB tree with meshes inside interval.
-   * @tparam InputIterator Iterator over polyhedrons. Its value type is `pointer to polyhedron`.
-   * @param polyhedron_begin range begin
-   * @param polyhedron_end range past-the-end
-   * @param build_kd_tree requirement on internal kd-tree (it is only required if find_closest_with_AABB_distance is planned to use)
-   * @param traits trait object
-   */
-  template<class InputIterator>
-  SDF_calculation(InputIterator polyhedron_begin, InputIterator polyhedron_end,
-                  bool build_kd_tree = false, GeomTraits traits = GeomTraits())
-    : traits(traits),
-      angle_functor(traits.angle_3_object()),
-      scale_functor(traits.construct_scaled_vector_3_object()),
-      sum_functor(traits.construct_sum_of_vectors_3_object()),
-      normal_functor(traits.construct_normal_3_object()),
-      translated_point_functor(traits.construct_translated_point_3_object()),
-      centroid_functor(traits.construct_centroid_3_object()),
-      use_diagonal(false) {
-    for( ; polyhedron_begin != polyhedron_end; ++polyhedron_begin) {
-      tree.insert((*polyhedron_begin)->facets_begin(),
-                  (*polyhedron_begin)->facets_end());
-    }
-    tree.build();
-
-    if(build_kd_tree) {
-      tree.accelerate_distance_queries();
-    }
-  }
-
-  /**
    * Calculates SDF values for each facet in a range, and stores them in @a sdf_values. Note that sdf values are neither smoothed nor normalized.
-   * @tparam FacetValueMap `WritablePropertyMap` with `Polyhedron::Facet_const_handle` as key and `double` as value type
+   * @tparam FacetValueMap `WritablePropertyMap` with `boost::graph_traits<Polyhedron>::face_handle` as key and `double` as value type
    * @tparam InputIterator Iterator over polyhedrons. Its value type is `pointer to polyhedron`.
    * @param facet_begin range begin
    * @param facet_end range past-the-end
@@ -204,13 +180,13 @@ public:
     disk_sampler(number_of_rays, std::back_inserter(disk_samples));
 
     for( ; facet_begin != facet_end; ++facet_begin) {
-      boost::optional<double> sdf_value = calculate_sdf_value_of_facet(facet_begin,
+      boost::optional<double> sdf_value = calculate_sdf_value_of_facet(*facet_begin,
                                           cone_angle, true, disk_samples);
 
       if(sdf_value) {
-        sdf_values[facet_begin] = *sdf_value;
+        sdf_values[*facet_begin] = *sdf_value;
       } else          {
-        sdf_values[facet_begin] = -1.0;
+        sdf_values[*facet_begin] = -1.0;
       }
     }
   }
@@ -374,21 +350,22 @@ private:
    * @return calculated SDF value
    */
   boost::optional<double> calculate_sdf_value_of_facet(
-    Facet_const_handle facet,
+    face_handle facet,
     double cone_angle,
     bool accept_if_acute,
     const Disk_samples_list& disk_samples) const {
-    const Point& p1 = facet->halfedge()->vertex()->point();
-    const Point& p2 = facet->halfedge()->next()->vertex()->point();
-    const Point& p3 = facet->halfedge()->prev()->vertex()->point();
+    
+    const Point p1 = get(vertex_point_map,target(halfedge(facet,mesh),mesh));
+    const Point p2 = get(vertex_point_map,target(next(halfedge(facet,mesh),mesh),mesh));
+    const Point p3 = get(vertex_point_map,target(prev(halfedge(facet,mesh),mesh),mesh));
     const Point center  = centroid_functor(p1, p2, p3);
     Vector normal = normal_functor(p2, p1, p3);
     normal=scale_functor(normal,
                          FT(1.0/std::sqrt(to_double(normal.squared_length()))));
 
-    CGAL::internal::SkipPrimitiveFunctor<typename Polyhedron::Facet_const_handle>
+    CGAL::internal::SkipPrimitiveFunctor<face_handle>
     skip(facet);
-    CGAL::internal::FirstIntersectionVisitor<typename Polyhedron::Facet_const_handle>
+    CGAL::internal::FirstIntersectionVisitor<face_handle>
     visitor;
 
     return calculate_sdf_value_of_point(center, normal, skip, visitor, cone_angle,
@@ -454,9 +431,9 @@ private:
 
     if(accept_if_acute) {
       // check whether the ray makes acute angle with intersected facet
-      const Point& min_v1 = min_id->halfedge()->vertex()->point();
-      const Point& min_v2 = min_id->halfedge()->next()->vertex()->point();
-      const Point& min_v3 = min_id->halfedge()->prev()->vertex()->point();
+      const Point& min_v1 = get(vertex_point_map,target(halfedge(min_id,mesh),mesh));
+      const Point& min_v2 = get(vertex_point_map,target(next(halfedge(min_id,mesh),mesh),mesh));
+      const Point& min_v3 = get(vertex_point_map,target(prev(halfedge(min_id,mesh),mesh),mesh));
       Vector min_normal = scale_functor(normal_functor(min_v1, min_v2, min_v3), -1.0);
 
       if(angle_functor(translated_point_functor(Point(ORIGIN), min_i_ray),

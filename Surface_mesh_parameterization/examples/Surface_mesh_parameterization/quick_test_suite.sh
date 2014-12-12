@@ -91,7 +91,6 @@ else
   run polyhedron_ex_parameterization
   run Simple_parameterization 
   run Square_border_parameterization 
-  run Taucs_parameterization 
 fi
 
 #---------------------------------------------------------------------#

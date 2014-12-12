@@ -37,7 +37,7 @@ public:
   QMenu* contextMenu();
   
   // Indicate if rendering mode is supported
-  virtual bool supportsRenderingMode(RenderingMode m) const { return (m!=PointsPlusNormals); }
+  virtual bool supportsRenderingMode(RenderingMode m) const { return (m!=PointsPlusNormals && m!=Splatting); }
   // Points/Wireframe/Flat/Gouraud OpenGL drawing in a display list
   virtual void direct_draw() const;
   virtual void direct_draw_edges() const;
@@ -73,6 +73,9 @@ public slots:
 signals:
   void selected_vertex(void*);
   void selected_facet(void*);
+  void selected_edge(void*);
+  void selected_halfedge(void*);
+  void item_is_about_to_be_changed(); // emitted in changed()
 
 private:
   // Initialization

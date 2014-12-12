@@ -30,21 +30,84 @@
 #include <CGAL/Mesh_3/config.h>
 
 #include <CGAL/Regular_triangulation_cell_base_3.h>
-#include <CGAL/Triangulation_cell_base_with_circumcenter_3.h>
+#include <CGAL/Regular_triangulation_cell_base_with_weighted_circumcenter_3.h>
 #include <CGAL/Mesh_3/Mesh_surface_cell_base_3.h>
 #include <CGAL/Mesh_3/io_signature.h>
+#include <CGAL/tags.h>
+
+#include <boost/type_traits/is_convertible.hpp>
+
+#ifdef CGAL_LINKED_WITH_TBB
+# include <tbb/atomic.h>
+#endif
 
 namespace CGAL {
+    
+// Sequential
+template <typename Concurrency_tag>
+class Mesh_cell_base_3_base
+{
+public:
+#if defined(CGAL_MESH_3_USE_LAZY_SORTED_REFINEMENT_QUEUE) \
+ || defined(CGAL_MESH_3_USE_LAZY_UNSORTED_REFINEMENT_QUEUE)
+
+  // Erase counter (cf. Compact_container)
+  unsigned int erase_counter() const
+  {
+    return this->m_erase_counter;
+  }
+  void set_erase_counter(unsigned int c)
+  {
+    this->m_erase_counter = c;
+  }
+  void increment_erase_counter()
+  {
+    ++this->m_erase_counter;
+  }
+
+private:
+  typedef unsigned int              Erase_counter_type;
+  Erase_counter_type                m_erase_counter;
+#endif
+};
+
+#ifdef CGAL_LINKED_WITH_TBB
+// Specialized version (parallel)
+template <>
+class Mesh_cell_base_3_base<Parallel_tag>
+{
+public:
+  // Erase counter (cf. Compact_container)
+  unsigned int erase_counter() const
+  {
+    return this->m_erase_counter;
+  }
+  void set_erase_counter(unsigned int c)
+  {
+    this->m_erase_counter = c;
+  }
+  void increment_erase_counter()
+  {
+    ++this->m_erase_counter;
+  }
   
+protected:
+  typedef tbb::atomic<unsigned int> Erase_counter_type;
+  Erase_counter_type                m_erase_counter;
+};
+#endif // CGAL_LINKED_WITH_TBB
+
 // Class Mesh_cell_base_3
 // Cell base class used in 3D meshing process.
 // Adds information to Cb about the cell of the input complex containing it
 template< class GT,
-          class MD,
-          class Cb = CGAL::Regular_triangulation_cell_base_3<
-              GT, CGAL::Triangulation_cell_base_with_circumcenter_3<GT> > >
+  class MD,
+  class Cb= CGAL::Regular_triangulation_cell_base_with_weighted_circumcenter_3<
+              GT, CGAL::Regular_triangulation_cell_base_3<GT> > >
 class Mesh_cell_base_3
-: public Mesh_3::Mesh_surface_cell_base_3<GT, MD, Cb>
+: public Mesh_3::Mesh_surface_cell_base_3<GT, MD, Cb>,
+  public Mesh_cell_base_3_base<
+    typename Mesh_3::Mesh_surface_cell_base_3<GT, MD, Cb>::Tds::Concurrency_tag>
 {
   typedef typename GT::FT FT;
   
@@ -83,6 +146,7 @@ public:
     , next_intrusive_()
     , previous_intrusive_()
 #endif
+    , time_stamp_(-1)
   {}
   
   Mesh_cell_base_3 (Vertex_handle v0,
@@ -97,6 +161,7 @@ public:
     , next_intrusive_()
     , previous_intrusive_()
 #endif
+    , time_stamp_(-1)
   {}
   
   Mesh_cell_base_3 (Vertex_handle v0,
@@ -115,6 +180,7 @@ public:
     , next_intrusive_()
     , previous_intrusive_()
 #endif
+    , time_stamp_(-1)
   {}
   
   // Default copy constructor and assignment operator are ok
@@ -157,7 +223,19 @@ public:
     previous_intrusive_ = c; 
   }
 #endif // CGAL_INTRUSIVE_LIST
-  
+
+  /// For the determinism of Compact_container iterators
+  ///@{
+  typedef Tag_true Has_timestamp;
+
+  std::size_t time_stamp() const {
+    return time_stamp_;
+  }
+  void set_time_stamp(const std::size_t& ts) {
+    time_stamp_ = ts;
+  }
+  ///@}
+
 private:
   // The index of the cell of the input complex that contains me
   Subdomain_index subdomain_index_;
@@ -168,10 +246,9 @@ private:
 #ifdef CGAL_INTRUSIVE_LIST
   Cell_handle next_intrusive_, previous_intrusive_;
 #endif
+  std::size_t time_stamp_;
 
 };  // end class Mesh_cell_base_3
-
-
 
 template < class GT, class MT, class Cb >
 std::istream&

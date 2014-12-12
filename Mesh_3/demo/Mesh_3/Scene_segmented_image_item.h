@@ -49,9 +49,11 @@ public:
 
 private:
   bool m_initialized;
+#ifdef SCENE_SEGMENTED_IMAGE_GL_BUFFERS_AVAILABLE
   int m_voxel_scale;
   GLuint m_vbo[3];
   GLuint m_ibo;
+#endif // SCENE_SEGMENTED_IMAGE_GL_BUFFERS_AVAILABLE
 };
 
 #endif // SCENE_SEGMENTED_IMAGE_ITEM_H

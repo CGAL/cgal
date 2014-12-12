@@ -1,3 +1,7 @@
+#include "config.h"
+
+#ifdef CGAL_MESH_3_DEMO_ACTIVATE_SEGMENTED_IMAGES
+
 #include "C3t3_type.h"
 #include "Scene_c3t3_item.h"
 #include "Image_type.h"
@@ -23,6 +27,7 @@ Meshing_thread* cgal_code_mesh_3(const Image* pImage,
   Scene_c3t3_item* p_new_item = new Scene_c3t3_item();
   
   Mesh_parameters param;
+  param.protect_features = false;
   param.facet_angle = facet_angle;
   param.facet_sizing = facet_sizing;
   param.facet_approx = facet_approx;
@@ -32,3 +37,5 @@ Meshing_thread* cgal_code_mesh_3(const Image* pImage,
   Mesh_function* p_mesh_function = new Mesh_function(p_new_item->c3t3(), p_domain, param);
   return new Meshing_thread(p_mesh_function, p_new_item);
 }
+
+#endif

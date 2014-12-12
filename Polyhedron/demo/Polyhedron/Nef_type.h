@@ -14,8 +14,7 @@
 
 // Boolean operations work only with exact kernel
 #ifdef USE_FORWARD_DECL
-// struct Exact_Kernel : public CGAL::Exact_predicates_exact_constructions_kernel {};
-struct Exact_Kernel : public CGAL::Simple_cartesian<CGAL::Gmpq> {};
+struct Exact_Kernel : public CGAL::Exact_predicates_exact_constructions_kernel {};
 #else
 typedef CGAL::Exact_predicates_exact_constructions_kernel Exact_Kernel;
 #endif

@@ -35,13 +35,9 @@
 #include <climits>
 #include <math.h>
 
-#include <boost/version.hpp>
-#if BOOST_VERSION >= 104000
-  #include <boost/property_map/property_map.hpp>
-#else
-  #include <boost/property_map.hpp>
-#endif
+#include <CGAL/property_map.h>
 #include <boost/graph/adjacency_list.hpp>
+#include <CGAL/boost/graph/dijkstra_shortest_paths.h> // work around a bug in boost 1.54
 #include <boost/graph/prim_minimum_spanning_tree.hpp>
 
 namespace CGAL {

@@ -40,7 +40,9 @@
 #include <boost/type_traits/is_same.hpp>
 
 #ifndef CGAL_USE_LEDA
-#define LEDA_MEMORY(t) 
+#define LEDA_MEMORY(t)
+#else
+#include <LEDA/system/basic.h>
 #endif
 
 namespace CGAL {

@@ -1,4 +1,4 @@
-// Copyright (c) 2001  Tel-Aviv University (Israel).
+// Copyright (c) 2001, 2009, 2014 Tel-Aviv University (Israel), Max-Planck-Institute Saarbruecken (Germany).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -16,13 +16,14 @@
 // $Id$
 //
 //
-// author(s)     : Eli Packer <elip@post.tau.ac.il>
+// author(s)     : Eli Packer <elip@post.tau.ac.il>,
+//                 Waqar Khan <wkhan@mpi-inf.mpg.de>
+
 #ifndef CGAL_SNAP_ROUNDING_KD_2_H
 #define CGAL_SNAP_ROUNDING_KD_2_H
 
 #include <list>
 #include <CGAL/basic.h>
-#include <CGAL/kdtree_d.h>
 #include <CGAL/predicates_on_points_2.h>
 #include <iostream>
 #include <CGAL/predicates_on_points_2.h>
@@ -31,23 +32,81 @@
 
 #include <boost/type_traits/is_pointer.hpp>
 
+#include <CGAL/Kd_tree.h>
+#include <CGAL/Search_traits_2.h>
+#include <CGAL/Fuzzy_iso_box.h>
+
 namespace CGAL {
 
+namespace internal {
+
+//////////////////////
+//////////////////////
+//Point_with_hot_pixel_history
+//////////////////////
+
 template<class Traits, class SAVED_OBJECT>
-class My_point : public Traits::Point_2 {
+class Point_with_hot_pixel_history : public Traits::Point_2 {
+
 private:
-  typedef typename Traits::Point_2              Point_2;
-  typedef typename Traits::FT                   NT;
+
+  typedef typename Traits::Point_2                                Base;
+  typedef typename Traits::Point_2                                Point_2;
+  typedef typename Traits::FT                                     NT;
 
 public:
+
   Point_2 orig;
   SAVED_OBJECT object;
-  My_point(const Point_2& p, const Point_2& inp_orig, SAVED_OBJECT obj) :
-           Point_2(p), orig(inp_orig), object(obj) {}
-  My_point(const Point_2& p) : Point_2(p), orig(Point_2(0, 0)) {}
-  My_point() : Point_2(),orig() {}
-  My_point(NT x, NT y) : Point_2(x, y), orig(Point_2(0, 0)) {}
-};
+
+  Point_with_hot_pixel_history(const Base& p, const Point_2& inp_orig, SAVED_OBJECT obj) : Base(p), orig(inp_orig), object(obj) {}
+
+  Point_with_hot_pixel_history(const Base& p) : Base(p), orig(Point_2(0, 0)) {}
+
+  Point_with_hot_pixel_history() : Base(), orig() {}
+
+  Point_with_hot_pixel_history(NT x, NT y) : Base(x, y), orig(Point_2(0, 0)) {}
+
+}; // Point_with_hot_pixel_history
+
+
+//////////////////////
+//////////////////////
+//Search_traits_kd_tree_2
+//
+//(Search traits modified to be used by the Spacial Searching kd_trees for Snap rounding)
+//////////////////////
+
+template < class Traits_, class Point_ = typename Traits_::Point_2 >
+class Search_traits_kd_tree_2 {
+
+public:
+  typedef Traits_                                                Traits;
+  typedef Point_                                                 Point_d;
+
+  typedef typename Traits::Iso_rectangle_2                       Iso_box_d;
+  typedef typename Traits::Cartesian_const_iterator_2            Cartesian_const_iterator_d;
+  typedef typename Traits::Construct_cartesian_const_iterator_2  Construct_cartesian_const_iterator_d;
+
+  typedef typename Traits::Construct_min_vertex_2                Construct_min_vertex_d;
+  typedef typename Traits::Construct_max_vertex_2                Construct_max_vertex_d;
+
+  typedef typename Traits::Construct_iso_rectangle_2             Construct_iso_box_d;
+  typedef typename Traits::FT                                    FT;
+
+  Construct_cartesian_const_iterator_d construct_cartesian_const_iterator_d_object() const
+  {
+    return Construct_cartesian_const_iterator_d();
+  }
+
+}; // Search_traits_kd_tree_2
+
+} // namespace internal
+
+/////////////////////
+/////////////////////
+//Multiple_kd_tree
+/////////////////////
 
 template<class Traits_, class SAVED_OBJECT>
 class Multiple_kd_tree {
@@ -62,22 +121,25 @@ private:
   typedef typename Traits::Direction_2                  Direction_2;
   typedef typename Traits::Line_2                       Line_2;
   typedef typename Traits::Aff_transformation_2         Transformation_2;
-  typedef My_point<Traits, SAVED_OBJECT>                My_point_saved;
-  typedef CGAL::Kdtree_interface_2d<My_point_saved>     Kd_interface;
-  typedef CGAL::Kdtree_d<Kd_interface>                  Kd_tree;
-  typedef typename Kd_tree::Box                         Box;
-  typedef std::list<My_point_saved>                     Points_List;
-  typedef std::pair<Direction_2, NT>                    Direction_nt_pair;
-  typedef std::pair<Kd_tree *,Direction_nt_pair>        Kd_triple;
-  typedef std::pair<Kd_tree *, Direction_nt_pair>       Kd_direction_nt_pair;
-  typedef std::list<Kd_direction_nt_pair>               Kd_triple_list;
+
+  typedef CGAL::internal::Point_with_hot_pixel_history<Traits, SAVED_OBJECT>     Point_with_hot_pixel_history_saved;
+  typedef CGAL::internal::Search_traits_kd_tree_2<Traits, Point_with_hot_pixel_history_saved>
+                                                                                 Search_traits;
+  typedef CGAL::Kd_tree<Search_traits>                                           Kd_tree;
+  typedef CGAL::Fuzzy_iso_box<Search_traits>                                     Box;
+
+  typedef std::list<Point_with_hot_pixel_history_saved>   Points_List;
+  typedef std::pair<Direction_2, NT>                      Direction_nt_pair;
+  typedef std::pair<Kd_tree *,Direction_nt_pair>          Kd_triple;
+  typedef std::pair<Kd_tree *, Direction_nt_pair>         Kd_direction_nt_pair;
+  typedef std::list<Kd_direction_nt_pair>                 Kd_triple_list;
 
   typedef std::pair<Point_2, SAVED_OBJECT>              Point_saved_pair;
   typedef std::list<Point_saved_pair>                   Point_saved_pair_list;
   typedef typename Point_saved_pair_list::iterator      Point_saved_pair_iter;
 
-  typedef typename std::list<My_point_saved>            My_point_saved_list;
-  typedef typename My_point_saved_list::iterator        My_point_saved_iter;
+  typedef typename std::list<Point_with_hot_pixel_history_saved>            Point_with_hot_pixel_history_saved_list;
+  typedef typename Point_with_hot_pixel_history_saved_list::iterator        Point_with_hot_pixel_history_saved_iter;
 
   typedef std::list<Point_2>                            Point_list;
   typedef typename Point_list::iterator                 Point_iter;
@@ -88,11 +150,14 @@ private:
   typedef std::list<Direction_2>                        Direction_list;
   typedef typename Direction_list::const_iterator       Direction_const_iter;
 
+
 private:
   Traits m_gt;
   const double pi, half_pi;
   int number_of_trees;
-  Kd_triple_list kd_trees_list;
+
+  Kd_triple_list    kd_trees_list;
+
   Point_saved_pair_list input_points_list;
   std::map<int, NT> angle_to_sines_appr; // was const int
 
@@ -115,35 +180,38 @@ private:
   /*! */
   Kd_triple create_kd_tree(NT angle)
   {
-    Points_List l;
-    Kd_tree *tree = new Kd_tree(2);
 
-    for (Point_saved_pair_iter iter = input_points_list.begin();
-        iter != input_points_list.end(); ++iter)
+    Kd_tree *tree = new Kd_tree();
+
+    tree->reserve(input_points_list.size());
+
+    for (Point_saved_pair_iter iter = input_points_list.begin();  iter != input_points_list.end();  ++iter)
     {
       Point_2 p(iter->first);
       rotate(p,angle);
-      My_point_saved rotated_point(p,iter->first,iter->second);
-      l.push_back(rotated_point);
+      Point_with_hot_pixel_history_saved rotated_point(p,iter->first,iter->second);
+
+      tree->insert(rotated_point);
     }
 
-    tree->build(l);
+    tree->build();
 
-    //checking validity
-    if (!tree->is_valid()) tree->dump();
-    CGAL_assertion(tree->is_valid());
 
     typename Traits::To_double to_dbl;
     double buffer_angle(to_dbl(angle) - half_pi / (2 * number_of_trees));
 
-    if (buffer_angle < 0) buffer_angle = 0;
+    if (buffer_angle < 0)
+      buffer_angle = 0;
+
     Line_2 li(std::tan(buffer_angle), -1, 0);
     Direction_2 d(li);
+
     // rotate_by 180 degrees
     Transformation_2 t(ROTATION, 0, -1);
     d = d.transform(t);
     Direction_nt_pair kp(d, angle);
-    Kd_triple kt(tree,kp);
+
+    Kd_triple kt(tree, kp);
 
     return(kt);
   }
@@ -155,10 +223,12 @@ private:
 
   inline NT min BOOST_PREVENT_MACRO_SUBSTITUTION  (NT x1, NT x2, NT x3, NT x4, NT x5,
                 NT x6)
-  {return(min BOOST_PREVENT_MACRO_SUBSTITUTION (min BOOST_PREVENT_MACRO_SUBSTITUTION (min BOOST_PREVENT_MACRO_SUBSTITUTION (x1, x2), min BOOST_PREVENT_MACRO_SUBSTITUTION (x3, x4)),min BOOST_PREVENT_MACRO_SUBSTITUTION (x5, x6)));}
+  {return(min BOOST_PREVENT_MACRO_SUBSTITUTION (min BOOST_PREVENT_MACRO_SUBSTITUTION (min BOOST_PREVENT_MACRO_SUBSTITUTION (x1, x2),
+                                                min BOOST_PREVENT_MACRO_SUBSTITUTION (x3, x4)),min BOOST_PREVENT_MACRO_SUBSTITUTION (x5, x6)));}
 
   inline NT max BOOST_PREVENT_MACRO_SUBSTITUTION (NT x1, NT x2, NT x3, NT x4, NT x5, NT x6)
-  {return(max BOOST_PREVENT_MACRO_SUBSTITUTION (max BOOST_PREVENT_MACRO_SUBSTITUTION (max BOOST_PREVENT_MACRO_SUBSTITUTION (x1, x2), max BOOST_PREVENT_MACRO_SUBSTITUTION (x3, x4)),max BOOST_PREVENT_MACRO_SUBSTITUTION (x5, x6)));}
+  {return(max BOOST_PREVENT_MACRO_SUBSTITUTION (max BOOST_PREVENT_MACRO_SUBSTITUTION (max BOOST_PREVENT_MACRO_SUBSTITUTION (x1, x2),
+                                                max BOOST_PREVENT_MACRO_SUBSTITUTION (x3, x4)),max BOOST_PREVENT_MACRO_SUBSTITUTION (x5, x6)));}
 
   /*! */
   Direction_2 get_direction(Segment_2 seg)
@@ -330,6 +400,7 @@ public:
     pi(3.1415), half_pi(1.57075),
     number_of_trees(inp_number_of_trees), input_points_list(inp_points_list)
   {
+
     Kd_triple kd;
 
     // check that there are at least two trees
@@ -353,9 +424,13 @@ public:
          angle += half_pi / number_of_trees,++i)
     {
       buffer_angle = angle - half_pi / (2 * number_of_trees);
-      if (buffer_angle < 0) buffer_angle = 0;
+
+      if (buffer_angle < 0)
+        buffer_angle = 0;
+
       li = Line_2(std::tan(buffer_angle), -1, 0);
       d = Direction_2(li);
+
       // rotate_by 180 degrees
       Transformation_2 t(ROTATION, 0, -1);
       d = d.transform(t);
@@ -369,7 +444,9 @@ public:
 #ifdef CGAL_SR_DEBUG
     int number_of_actual_kd_trees = 0;
 #endif
+
     i = 0;
+
     for (NT angle = 0; i < number_of_trees;
          angle += NT(half_pi / number_of_trees),++i)
     {
@@ -377,6 +454,7 @@ public:
           (double)number_of_segments / (double)number_of_trees / 2.0)
       {
         kd = create_kd_tree(angle);
+
         kd_trees_list.push_back(kd);
 
 #ifdef CGAL_SR_DEBUG
@@ -397,14 +475,15 @@ public:
 
   }
 
-  ~Multiple_kd_tree() {
-    for(typename Kd_triple_list::iterator it = kd_trees_list.begin(); 
-        it != kd_trees_list.end(); ++it) { 
+  ~Multiple_kd_tree()
+  {
+    //delete all the kd_trees.
+    for(typename Kd_triple_list::iterator it = kd_trees_list.begin();   it != kd_trees_list.end(); ++it)
       delete (it->first);
-    }
 
-    for(typename Point_saved_pair_list::iterator it = input_points_list.begin(); 
-        it != input_points_list.end(); ++it) { 
+    //delete all the points.
+    for(typename Point_saved_pair_list::iterator it = input_points_list.begin();
+        it != input_points_list.end(); ++it) {
       delete (it->second);
     }
 
@@ -444,63 +523,71 @@ public:
   {
     // determine right kd-tree to work on, depending on the segment's slope
     Direction_2 d = get_direction(s);
+
     int i = 0;
     int n = kd_trees_list.size();
     bool found = false;
     typename Kd_triple_list::const_iterator iter = kd_trees_list.begin();
 
-    while(i < n && !found) {
-      if (iter->second.first > d) found = true;
+    while(i < n && !found)
+    {
+      if (iter->second.first > d)
+        found = true;
+
       ++i;
       ++iter;
     }
 
-    if (!found) iter = kd_trees_list.begin();
-    else --iter;
+    if (!found)
+      iter = kd_trees_list.begin();
+
+    else
+      --iter;
 
     Point_list points_list;
     m_gt.minkowski_sum_with_pixel_2_object()(points_list, s, unit_square);
 
     Point_iter points_iter;
 
-    for (points_iter = points_list.begin(); points_iter != points_list.end();
-         ++points_iter)
+    for (points_iter = points_list.begin();   points_iter != points_list.end();   ++points_iter)
       rotate(*points_iter, iter->second.second);
 
     // query
     points_iter = points_list.begin();
-    Point_2 point_left,point_right,point_bot,point_top;
+    Point_2 point_left, point_right, point_bot, point_top;
     point_left = point_right = point_bot = point_top = *points_iter;
-    for (++points_iter; points_iter != points_list.end(); ++points_iter) {
+
+    for (++points_iter; points_iter != points_list.end(); ++points_iter)
+    {
       point_left = small_x_point(point_left,*points_iter);
       point_right = big_x_point(point_right,*points_iter);
       point_bot = small_y_point(point_bot,*points_iter);
       point_top = big_y_point(point_top,*points_iter);
     }
 
-    typedef typename Traits::Construct_iso_rectangle_2
-      Construct_iso_rectangle_2;
-    Construct_iso_rectangle_2 construct_rec =
-      m_gt.construct_iso_rectangle_2_object();
-    Iso_rectangle_2 rec =
-      construct_rec(point_left, point_right, point_bot, point_top);
+    typedef typename Traits::Construct_iso_rectangle_2    Construct_iso_rectangle_2;
+
+    Construct_iso_rectangle_2 construct_rec = m_gt.construct_iso_rectangle_2_object();
+
+    Iso_rectangle_2 rec =  construct_rec(point_left, point_right, point_bot, point_top);
 
     Point_2 p1 = rec.vertex(0);
     Point_2 p2 = rec.vertex(2);
 
-    My_point_saved point1(p1);
-    My_point_saved point2(p2);
+    Point_with_hot_pixel_history_saved point1(p1);
+    Point_with_hot_pixel_history_saved point2(p2);
 
-    Box b(point1, point2, 2);
+    Box b(point1, point2);
 
     // the kd-tree query
-    My_point_saved_list res;
-    iter->first->search(std::back_inserter(res), b);
+    Point_with_hot_pixel_history_saved_list result;
+
+    iter->first->search(std::back_inserter(result), b);
 
     // create result
     result_list.empty();
-    for (My_point_saved_iter my_point_iter = res.begin();
-         my_point_iter != res.end(); ++my_point_iter)
+
+    for( Point_with_hot_pixel_history_saved_iter my_point_iter = result.begin();    my_point_iter != result.end();   ++my_point_iter )
       result_list.push_back(my_point_iter->object);
   }
 };

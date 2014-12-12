@@ -115,32 +115,32 @@ PartitionTraits_2(PartitionTraits_2 tr);
 /*!
 
 */ 
-Less_yx_2 less_yx_2_object(); 
+Less_yx_2 less_yx_2_object() const;
 
 /*!
 
 */ 
-Less_xy_2 less_xy_2_object(); 
+Less_xy_2 less_xy_2_object() const;
 
 /*!
 
 */ 
-Left_turn_2 left_turn_2_object(); 
+Left_turn_2 left_turn_2_object() const;
 
 /*!
 
 */ 
-Orientation_2 orientation_2_object(); 
+Orientation_2 orientation_2_object() const;
 
 /*!
 
 */ 
-Compare_y_2 compare_y_2_object(); 
+Compare_y_2 compare_y_2_object() const;
 
 /*!
 
 */ 
-Compare_x_2 compare_x_2_object(); 
+Compare_x_2 compare_x_2_object() const;
 
 /// @}
 

@@ -165,6 +165,9 @@ namespace CGAL_MINIBALL_NAMESPACE {
 
         for (int i=m-1; i>0; --i) {
           gamma[i] = beta[i];
+          // the next for won't do anything fori=m-1
+          // which triggers a warning with g++-4.8
+          // but it makes no sense to add an if(i!=m-1)
           for (int j=i+1; j<m; ++j)
             gamma[i] -= gamma[j]*tau[i][j];
           gamma0 -= gamma[i];

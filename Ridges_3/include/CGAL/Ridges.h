@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 //
-// Author(s)     : Marc Pouget and Frédéric Cazals
+// Author(s)     : Marc Pouget and FrÃ©dÃ©ric Cazals
 #ifndef CGAL_RIDGE_3_H_
 #define CGAL_RIDGE_3_H_
 

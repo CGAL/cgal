@@ -239,7 +239,7 @@ protected:
     Radius sq_radius = Geom_traits().compute_squared_radius_3_object();
     
     const FT size = sq_radius(p, q, r, s);
-    const FT sq_bound = CGAL::square( size_(ch->circumcenter(),
+    const FT sq_bound = CGAL::square( size_(ch->weighted_circumcenter(),
                                             3,
                                             Index(ch->subdomain_index())) );
     

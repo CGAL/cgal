@@ -13,7 +13,7 @@
 \cgalPkgDependsOn{\ref thirdpartyEigen}
 \cgalPkgBib{cgal:asg-srps}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
-\cgalPkgDemo{Surface Reconstruction,surface_reconstruction_points_3.zip}
+\cgalPkgDemo{See Polyhedral Surface,polyhedron_3.zip}
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd
 

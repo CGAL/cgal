@@ -124,7 +124,7 @@ CMAKE_BUILD_TYPE:STRING=Release
 CMAKE_COLOR_MAKEFILE:BOOL=ON
 
 //CXX compiler.
-CMAKE_CXX_COMPILER:FILEPATH=/no-raid/opt/intel/composer_xe_2013_sp1/bin/icpc
+CMAKE_CXX_COMPILER:FILEPATH=/opt/intel/composer_xe_2013_sp1/bin/icpc
 
 //User-defined flags
 CMAKE_CXX_FLAGS:STRING=-w1  -fp-model strict
@@ -144,7 +144,7 @@ CMAKE_CXX_FLAGS_RELEASE:STRING=-O3
 CMAKE_CXX_FLAGS_RELWITHDEBINFO:STRING=-O2 -g -DNDEBUG
 
 //C compiler.
-CMAKE_C_COMPILER:FILEPATH=/no-raid/opt/intel/composer_xe_2013_sp1/bin/icc
+CMAKE_C_COMPILER:FILEPATH=/opt/intel/composer_xe_2013_sp1/bin/icc
 
 //Flags used by the compiler during all build types.
 CMAKE_C_FLAGS:STRING=
@@ -1174,7 +1174,7 @@ X11_xf86misc_INCLUDE_PATH:PATH=/usr/include
 X11_xf86vmode_INCLUDE_PATH:PATH=/usr/include
 
 //Path to a program.
-XIAR:FILEPATH=/no-raid/opt/intel/composer_xe_2013_sp1/bin/xiar
+XIAR:FILEPATH=/opt/intel/composer_xe_2013_sp1/bin/xiar
 
 //Path to a file.
 ZLIB_INCLUDE_DIR:PATH=/usr/include

@@ -68,9 +68,6 @@ defining `CGAL_CH_CHECK_EXPENSIVE`.
 ## Traits Classes ##
 
 - `CGAL::Convex_hull_constructive_traits_2<R>`
-- `CGAL::Convex_hull_projective_xy_traits_2<Point_3>`
-- `CGAL::Convex_hull_projective_xz_traits_2<Point_3>`
-- `CGAL::Convex_hull_projective_yz_traits_2<Point_3>`
 - `CGAL::Convex_hull_traits_2<R>`
 
 ## Convex Hull Functions ##

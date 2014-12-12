@@ -95,16 +95,6 @@ CGAL packages, some are only needed for demos.
        http://www.netlib.org/blas/, http://www.netlib.org/lapack/
        or precompiled version that can be downloaded with CGAL-x.y-Setup.exe
 
-     - TAUCS (sparse matrix solver)
-       Required by the package (if EIGEN is not available):
-       o Surface Reconstruction from Point Sets 
-       Accelerates the package:
-       o Planar Parameterization of Triangulated Surface Meshes
-       http://www.tau.ac.il/~stoledo/taucs/
-       The version to used is available at
-       https://gforge.inria.fr/frs/download.php/24628/taucs_full.tgz
-       or automatically downloaded with CGAL-x.y-Setup.exe on Windows.
-
      - MPFI
        Required by the package:
        o Algebraic Kernel

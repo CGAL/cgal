@@ -22,7 +22,7 @@
 // Revision      : $Revision$
 // Revision_date : $Date$
 //
-// Author(s)     : Dominik Hülse <dominik.huelse@gmx.de>
+// Author(s)     : Dominik HÃ¼lse <dominik.huelse@gmx.de>
 //                 Michael Hemmer <hemmer@mpi-inf.mpg.de>
 //
 // ============================================================================
@@ -35,6 +35,8 @@
 #define MY_FUNCTION_CALL modular_gcd_utcf_dfai
 
 #include <CGAL/Arithmetic_kernel.h>
+#include <CGAL/CORE_arithmetic_kernel.h>
+#include <CGAL/LEDA_arithmetic_kernel.h>
 #include <CGAL/test_modular_gcd.h>
 
 int main(){

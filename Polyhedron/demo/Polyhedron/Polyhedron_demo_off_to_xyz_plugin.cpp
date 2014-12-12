@@ -1,6 +1,9 @@
 #include "Scene_points_with_normal_item.h"
-
+#include "Polyhedron_type.h"
 #include "Polyhedron_demo_io_plugin_interface.h"
+
+#include <CGAL/IO/Polyhedron_iostream.h>
+
 #include <fstream>
 
 class Polyhedron_demo_off_to_xyz_plugin :
@@ -30,12 +33,22 @@ Polyhedron_demo_off_to_xyz_plugin::load(QFileInfo fileinfo) {
 
   if(!in)
     std::cerr << "Error!\n";
-  Scene_points_with_normal_item* item = new Scene_points_with_normal_item();
 
-  if(!item->read_off_point_set(in))
-  {
-    delete item;
-    return 0;
+  Scene_points_with_normal_item* item;
+
+  Polyhedron p;
+  in >> p;
+  if (in && !p.empty())
+    item = new Scene_points_with_normal_item(p);
+  else{
+    in.close();
+    in.open(fileinfo.filePath().toUtf8());
+    item = new Scene_points_with_normal_item();
+    if(!item->read_off_point_set(in))
+    {
+      delete item;
+      return 0;
+    }
   }
 
   item->setName(fileinfo.baseName());

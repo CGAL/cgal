@@ -606,8 +606,12 @@ public:
 
 
 protected:
-    HDS     hds;  // the boundary representation.
+    HDS     hds_;  // the boundary representation.
     Traits  m_traits;
+
+public:
+    HDS& hds() { return hds_; }
+    const HDS& hds() const { return hds_; }
 
 // CREATION
 public:
@@ -617,7 +621,7 @@ public:
 
     Polyhedron_3( size_type v, size_type h, size_type f,
                   const Traits& traits = Traits())
-    : hds(v,h,f), m_traits(traits) {}
+    : hds_(v,h,f), m_traits(traits) {}
         // a polyhedron `P' with storage reserved for v vertices, h
         // halfedges, and f facets. The reservation sizes are a hint for
         // optimizing storage allocation.
@@ -628,16 +632,16 @@ public:
         // If the `capacity' is already greater than the requested size
         // nothing happens. If the `capacity' changes all iterators and
         // circulators invalidates.
-        hds.reserve(v,h,f);
+        hds_.reserve(v,h,f);
     }
 
 protected:
     Halfedge_handle
     make_triangle( Vertex_handle v1, Vertex_handle v2, Vertex_handle v3) {
-        HalfedgeDS_decorator<HDS> decorator(hds);
-        Halfedge_handle h  = hds.edges_push_back( Halfedge(), Halfedge());
-        h->HBase::set_next( hds.edges_push_back( Halfedge(), Halfedge()));
-        h->next()->HBase::set_next( hds.edges_push_back( Halfedge(),
+        HalfedgeDS_decorator<HDS> decorator(hds_);
+        Halfedge_handle h  = hds_.edges_push_back( Halfedge(), Halfedge());
+        h->HBase::set_next( hds_.edges_push_back( Halfedge(), Halfedge()));
+        h->next()->HBase::set_next( hds_.edges_push_back( Halfedge(),
                                                          Halfedge()));
         h->next()->next()->HBase::set_next( h);
         decorator.set_prev( h, h->next()->next());
@@ -675,15 +679,15 @@ protected:
                       Vertex_handle v2,
                       Vertex_handle v3,
                       Vertex_handle v4) {
-        HalfedgeDS_decorator<HDS> decorator(hds);
+        HalfedgeDS_decorator<HDS> decorator(hds_);
         Halfedge_handle h  = make_triangle(v1,v2,v3);
         // The remaining tip.
-        Halfedge_handle g  = hds.edges_push_back( Halfedge(), Halfedge());
+        Halfedge_handle g  = hds_.edges_push_back( Halfedge(), Halfedge());
         decorator.insert_tip( g->opposite(), h->opposite());
         decorator.close_tip( g);
         decorator.set_vertex( g, v4);
-        Halfedge_handle e  = hds.edges_push_back( Halfedge(), Halfedge());
-        Halfedge_handle d  = hds.edges_push_back( Halfedge(), Halfedge());
+        Halfedge_handle e  = hds_.edges_push_back( Halfedge(), Halfedge());
+        Halfedge_handle d  = hds_.edges_push_back( Halfedge(), Halfedge());
         decorator.insert_tip( e->opposite(), h->next()->opposite());
         decorator.insert_tip( e, g);
         decorator.insert_tip( d->opposite(),h->next()->next()->opposite());
@@ -716,7 +720,7 @@ public:
         reserve( 4 + size_of_vertices(),
                 12 + size_of_halfedges(),
                  4 + size_of_facets());
-        HalfedgeDS_decorator<HDS> decorator(hds);
+        HalfedgeDS_decorator<HDS> decorator(hds_);
         return make_tetrahedron( decorator.vertices_push_back( Vertex()),
                                  decorator.vertices_push_back( Vertex()),
                                  decorator.vertices_push_back( Vertex()),
@@ -730,7 +734,7 @@ public:
         reserve( 4 + size_of_vertices(),
                 12 + size_of_halfedges(),
                  4 + size_of_facets());
-        HalfedgeDS_decorator<HDS> decorator(hds);
+        HalfedgeDS_decorator<HDS> decorator(hds_);
         return make_tetrahedron( decorator.vertices_push_back( Vertex(p1)),
                                  decorator.vertices_push_back( Vertex(p2)),
                                  decorator.vertices_push_back( Vertex(p3)),
@@ -745,7 +749,7 @@ public:
         reserve( 3 + size_of_vertices(),
                  6 + size_of_halfedges(),
                  1 + size_of_facets());
-        HalfedgeDS_decorator<HDS> decorator(hds);
+        HalfedgeDS_decorator<HDS> decorator(hds_);
         return make_triangle( decorator.vertices_push_back( Vertex()),
                               decorator.vertices_push_back( Vertex()),
                               decorator.vertices_push_back( Vertex()));
@@ -760,7 +764,7 @@ public:
         reserve( 3 + size_of_vertices(),
                  6 + size_of_halfedges(),
                  1 + size_of_facets());
-        HalfedgeDS_decorator<HDS> decorator(hds);
+        HalfedgeDS_decorator<HDS> decorator(hds_);
         return make_triangle( decorator.vertices_push_back( Vertex(p1)),
                               decorator.vertices_push_back( Vertex(p2)),
                               decorator.vertices_push_back( Vertex(p3)));
@@ -768,76 +772,76 @@ public:
 
 // Access Member Functions
 
-    allocator_type get_allocator() const { return hds.get_allocator(); }
+    allocator_type get_allocator() const { return hds_.get_allocator(); }
 
-    size_type size_of_vertices() const { return hds.size_of_vertices();}
+    size_type size_of_vertices() const { return hds_.size_of_vertices();}
         // number of vertices.
 
-    size_type size_of_halfedges() const { return hds.size_of_halfedges();}
+    size_type size_of_halfedges() const { return hds_.size_of_halfedges();}
         // number of all halfedges (including border halfedges).
 
-    size_type size_of_facets() const { return hds.size_of_faces();}
+    size_type size_of_facets() const { return hds_.size_of_faces();}
         // number of facets.
 
     bool empty() const { return size_of_halfedges() == 0; }
 
     size_type capacity_of_vertices() const {
         // space reserved for vertices.
-        return hds.capacity_of_vertices();
+        return hds_.capacity_of_vertices();
     }
 
     size_type capacity_of_halfedges() const {
         // space reserved for halfedges.
-        return hds.capacity_of_halfedges();
+        return hds_.capacity_of_halfedges();
     }
 
     size_type capacity_of_facets() const {
         // space reserved for facets.
-        return hds.capacity_of_faces();
+        return hds_.capacity_of_faces();
     }
 
     std::size_t bytes() const {
         // bytes used for the polyhedron.
-        return sizeof(Self) - sizeof(HDS) + hds.bytes();
+        return sizeof(Self) - sizeof(HDS) + hds_.bytes();
     }
 
     std::size_t bytes_reserved() const {
         // bytes reserved for the polyhedron.
-        return sizeof(Self) - sizeof(HDS) + hds.bytes_reserved();
+        return sizeof(Self) - sizeof(HDS) + hds_.bytes_reserved();
     }
 
-    Vertex_iterator vertices_begin() { return hds.vertices_begin();}
+    Vertex_iterator vertices_begin() { return hds_.vertices_begin();}
         // iterator over all vertices.
 
-    Vertex_iterator vertices_end() { return hds.vertices_end();}
+    Vertex_iterator vertices_end() { return hds_.vertices_end();}
 
-    Halfedge_iterator halfedges_begin() { return hds.halfedges_begin();}
+    Halfedge_iterator halfedges_begin() { return hds_.halfedges_begin();}
         // iterator over all halfedges
 
-    Halfedge_iterator halfedges_end() { return hds.halfedges_end();}
+    Halfedge_iterator halfedges_end() { return hds_.halfedges_end();}
 
-    Facet_iterator facets_begin() { return hds.faces_begin();}
+    Facet_iterator facets_begin() { return hds_.faces_begin();}
         // iterator over all facets
 
-    Facet_iterator facets_end() { return hds.faces_end();}
+    Facet_iterator facets_end() { return hds_.faces_end();}
 
     // The constant iterators and circulators.
 
     Vertex_const_iterator vertices_begin() const {
-        return hds.vertices_begin();
+        return hds_.vertices_begin();
     }
     Vertex_const_iterator vertices_end() const {
-        return hds.vertices_end();
+        return hds_.vertices_end();
     }
 
     Halfedge_const_iterator halfedges_begin() const {
-      return hds.halfedges_begin();
+      return hds_.halfedges_begin();
     }
     Halfedge_const_iterator halfedges_end() const {
-        return hds.halfedges_end();
+        return hds_.halfedges_end();
     }
-    Facet_const_iterator facets_begin() const { return hds.faces_begin();}
-    Facet_const_iterator facets_end()   const { return hds.faces_end();}
+    Facet_const_iterator facets_begin() const { return hds_.faces_begin();}
+    Facet_const_iterator facets_end()   const { return hds_.faces_end();}
 
     // Auxiliary iterators for convinience
     Point_iterator       points_begin()       { return vertices_begin();}
@@ -1139,7 +1143,7 @@ public:
         reserve( size_of_vertices(),
                  2 + size_of_halfedges(),
                  1 + size_of_facets());
-        HalfedgeDS_decorator<HDS> D(hds);
+        HalfedgeDS_decorator<HDS> D(hds_);
         CGAL_precondition( D.get_face(h) == D.get_face(g));
         CGAL_precondition( h != g);
         CGAL_precondition( h != g->next());
@@ -1156,7 +1160,7 @@ public:
         // removed and the time to compute `h.prev()'. Precondition:
         // `HDS' supports removal of facets. The degree of both
         // vertices incident to h is at least three (no antennas).
-        HalfedgeDS_decorator<HDS> D(hds);
+        HalfedgeDS_decorator<HDS> D(hds_);
         CGAL_precondition( circulator_size(h->vertex_begin())
                            >= size_type(3));
         CGAL_precondition( circulator_size(h->opposite()->vertex_begin())
@@ -1174,7 +1178,7 @@ public:
         reserve( 1 + size_of_vertices(),
                  2 + size_of_halfedges(),
                  size_of_facets());
-        HalfedgeDS_decorator<HDS> D(hds);
+        HalfedgeDS_decorator<HDS> D(hds_);
         CGAL_precondition( D.get_vertex(h) == D.get_vertex(g));
         CGAL_precondition( h != g);
         return D.split_vertex( h, g);
@@ -1189,7 +1193,7 @@ public:
         // `h.prev()'.
         // Precondition: `HDS' supports removal of vertices. The size of
         // both facets incident to h is at least four (no multi-edges)
-        HalfedgeDS_decorator<HDS> D(hds);
+        HalfedgeDS_decorator<HDS> D(hds_);
         CGAL_precondition( circulator_size( h->facet_begin())
                            >= size_type(4));
         CGAL_precondition( circulator_size( h->opposite()->facet_begin())
@@ -1207,14 +1211,14 @@ public:
     }
 
     Halfedge_handle create_center_vertex( Halfedge_handle h) {
-        HalfedgeDS_decorator<HDS> D(hds);
+        HalfedgeDS_decorator<HDS> D(hds_);
         CGAL_assertion( circulator_size( h->facet_begin())
                         >= size_type(3));
         return D.create_center_vertex(h);
     }
 
     Halfedge_handle erase_center_vertex( Halfedge_handle h) {
-        HalfedgeDS_decorator<HDS> D(hds);
+        HalfedgeDS_decorator<HDS> D(hds_);
         return D.erase_center_vertex(h);
     }
 
@@ -1235,7 +1239,7 @@ public:
         reserve( 3 + size_of_vertices(),
                  6 + size_of_halfedges(),
                  2 + size_of_facets());
-        HalfedgeDS_decorator<HDS> D(hds);
+        HalfedgeDS_decorator<HDS> D(hds_);
         CGAL_precondition( h != i);
         CGAL_precondition( h != j);
         CGAL_precondition( i != j);
@@ -1282,7 +1286,7 @@ public:
         // and keeps the polyhedron unchanged. Precondition: `HDS'
         // supports removal of vertices and facets. The facets denoted by
         // h and g have equal size.
-        HalfedgeDS_decorator<HDS> D(hds);
+        HalfedgeDS_decorator<HDS> D(hds_);
         CGAL_precondition( D.get_face(h) == Facet_handle() ||
                            D.get_face(h) != D.get_face(g));
         CGAL_precondition( circulator_size( h->facet_begin())
@@ -1298,7 +1302,7 @@ public:
         // removes incident facet and makes all halfedges incident to the
         // facet to border edges. Returns h. Precondition: `HDS'
         // supports removal of facets. `! h.is_border()'.
-        HalfedgeDS_decorator<HDS> D(hds);
+        HalfedgeDS_decorator<HDS> D(hds_);
         return D.make_hole(h);
     }
 
@@ -1309,7 +1313,7 @@ public:
         reserve( size_of_vertices(),
                  size_of_halfedges(),
                  1 + size_of_facets());
-        HalfedgeDS_decorator<HDS> D(hds);
+        HalfedgeDS_decorator<HDS> D(hds_);
         return D.fill_hole(h);
     }
 
@@ -1326,7 +1330,7 @@ public:
         reserve( 1 + size_of_vertices(),
                  4 + size_of_halfedges(),
                  1 + size_of_facets());
-        HalfedgeDS_decorator<HDS> D(hds);
+        HalfedgeDS_decorator<HDS> D(hds_);
         Halfedge_handle hh = D.add_face_to_border( h, g);
         CGAL_assertion( hh == g->next());
         D.split_vertex( g, hh->opposite());
@@ -1347,7 +1351,7 @@ public:
         reserve( size_of_vertices(),
                  2 + size_of_halfedges(),
                  1 + size_of_facets());
-        HalfedgeDS_decorator<HDS> D(hds);
+        HalfedgeDS_decorator<HDS> D(hds_);
         return D.add_face_to_border( h, g);
     }
 
@@ -1359,7 +1363,7 @@ public:
         // the polyhedral surface if they were already border edges. See
         // `make_hole(h)' for a more specialized variant. Precondition:
         // `Traits' supports removal.
-        HalfedgeDS_decorator<HDS> D(hds);
+        HalfedgeDS_decorator<HDS> D(hds_);
         D.erase_face(h);
     }
 
@@ -1367,7 +1371,7 @@ public:
         // removes the vertices, halfedges, and facets that belong to the
         // connected component of h. Precondition: `Traits' supports
         // removal.
-        HalfedgeDS_decorator<HDS> D(hds);
+        HalfedgeDS_decorator<HDS> D(hds_);
         D.erase_connected_component(h);
     }
 
@@ -1382,11 +1386,11 @@ public:
     /// @return the number of connected components erased (ignoring isolated vertices).
     unsigned int keep_largest_connected_components(unsigned int nb_components_to_keep)
     {
-        HalfedgeDS_decorator<HDS> D(hds);
+        HalfedgeDS_decorator<HDS> D(hds_);
         return D.keep_largest_connected_components(nb_components_to_keep);
     }
 
-    void clear() { hds.clear(); }
+    void clear() { hds_.clear(); }
         // removes all vertices, halfedges, and facets.
 
     void erase_all() { clear(); }
@@ -1397,7 +1401,7 @@ public:
     void delegate( Modifier_base<HDS>& modifier) {
         // calls the `operator()' of the `modifier'. Precondition: The
         // `modifier' returns a consistent representation.
-        modifier( hds);
+        modifier( hds_);
         CGAL_expensive_postcondition( is_valid());
     }
 
@@ -1409,7 +1413,7 @@ public:
         // ()' has been called and no halfedge insertion or removal and no
         // change in border status of the halfedges have occured since
         // then.
-        return hds.size_of_border_halfedges();
+        return hds_.size_of_border_halfedges();
     }
 
     size_type size_of_border_edges() const {
@@ -1419,7 +1423,7 @@ public:
         // Precondition: `normalize_border()' has been called and no
         // halfedge insertion or removal and no change in border status of
         // the halfedges have occured since then.
-        return hds.size_of_border_edges();
+        return hds_.size_of_border_edges();
     }
 
     Halfedge_iterator border_halfedges_begin() {
@@ -1430,10 +1434,10 @@ public:
         // `normalize_border()' has been called and no halfedge insertion
         // or removal and no change in border status of the halfedges have
         // occured since then.
-        return hds.border_halfedges_begin();
+        return hds_.border_halfedges_begin();
     }
     Halfedge_const_iterator border_halfedges_begin() const {
-        return hds.border_halfedges_begin();
+        return hds_.border_halfedges_begin();
     }
 
     // Convenient edge iterator
@@ -1444,7 +1448,7 @@ public:
 
     bool normalized_border_is_valid( bool verbose = false) const {
         // checks whether all non-border edges precedes the border edges.
-        HalfedgeDS_const_decorator<HDS> decorator(hds);
+        HalfedgeDS_const_decorator<HDS> decorator(hds_);
         bool valid = decorator.normalized_border_is_valid( verbose);
         for ( Halfedge_const_iterator i = border_halfedges_begin();
               valid && (i != halfedges_end()); (++i, ++i)) {
@@ -1461,7 +1465,7 @@ public:
     void normalize_border() {
         // sorts halfedges such that the non-border edges precedes the
         // border edges.
-        hds.normalize_border();
+        hds_.normalize_border();
         CGAL_postcondition( normalized_border_is_valid());
     }
 
@@ -1476,7 +1480,7 @@ protected:            // Supports_face_plane
 public:
     void inside_out() {
         // reverse facet orientation.
-        HalfedgeDS_decorator<HDS> decorator(hds);
+        HalfedgeDS_decorator<HDS> decorator(hds_);
         decorator.inside_out();
         inside_out_geometry( Supports_face_plane());
     }
@@ -1486,7 +1490,7 @@ public:
         Verbose_ostream verr(verb);
         verr << "begin CGAL::Polyhedron_3<...>::is_valid( verb=true, "
                           "level = " << level << "):" << std::endl;
-        HalfedgeDS_const_decorator<HDS> D(hds);
+        HalfedgeDS_const_decorator<HDS> D(hds_);
         bool valid = D.is_valid( verb, level + 3);
         // All halfedges.
         Halfedge_const_iterator i   = halfedges_begin();
@@ -1528,5 +1532,9 @@ public:
 };
 
 } //namespace CGAL
+
+#ifndef CGAL_NO_DEPRECATED_CODE
+#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
+#endif
 
 #endif // CGAL_POLYHEDRON_3_H //

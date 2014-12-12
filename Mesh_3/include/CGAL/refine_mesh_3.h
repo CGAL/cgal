@@ -26,6 +26,7 @@
 #define CGAL_REFINE_MESH_3_H
 
 #include <CGAL/config.h>
+#include <CGAL/Mesh_3/config.h>
 #include <CGAL/Mesh_3/Dump_c3t3.h>
 #include <CGAL/Mesh_3/global_parameters.h>
 #include <CGAL/Mesh_3/Mesher_3.h>
@@ -69,6 +70,22 @@ namespace CGAL {
         Vertex_handle new_vertex = r_c3t3_.triangulation().insert(point);
         r_c3t3_.set_index(new_vertex, index);
         r_c3t3_.set_dimension(new_vertex, dimension);
+
+#if defined(CGAL_LINKED_WITH_TBB)\
+ && !defined(CGAL_PARALLEL_MESH_3_DO_NOT_ADD_OUTSIDE_POINTS_ON_A_FAR_SPHERE)
+        if (boost::is_convertible<typename C3T3::Concurrency_tag, CGAL::Parallel_tag>::value)
+        {
+          if (dimension == -1)
+            r_c3t3_.add_far_point(new_vertex);
+        }
+#endif
+#ifdef CGAL_SEQUENTIAL_MESH_3_ADD_OUTSIDE_POINTS_ON_A_FAR_SPHERE
+        if (boost::is_convertible<typename C3T3::Concurrency_tag, CGAL::Sequential_tag>::value)
+        {
+          if (dimension == -1)
+            r_c3t3_.add_far_point(new_vertex);
+        }
+#endif
       }
 
     private:
@@ -314,6 +331,11 @@ namespace parameters {
   CGAL_MESH_BOOLEAN_PARAMETER(Reset,reset_c3t3,no_reset_c3t3)
   // CGAL_MESH_BOOLEAN_PARAMETER defined in <CGAL/Mesh_3/global_parameters.h>
   
+// see <CGAL/config.h>
+CGAL_PRAGMA_DIAG_PUSH
+// see <CGAL/Mesh_3/config.h>
+CGAL_MESH_3_IGNORE_BOOST_PARAMETER_NAME_WARNINGS
+
   // -----------------------------------
   // Parameters
   // -----------------------------------
@@ -323,7 +345,8 @@ namespace parameters {
   BOOST_PARAMETER_NAME( lloyd_param )
   BOOST_PARAMETER_NAME( reset_param )
   BOOST_PARAMETER_NAME( mesh_options_param )
-  
+
+CGAL_PRAGMA_DIAG_POP
 } // end namespace parameters
   
   

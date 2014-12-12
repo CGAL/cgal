@@ -54,12 +54,18 @@ _test_angle(const R&)
   Point_2 org( RT0, RT0);
   assert( CGAL::angle( e0, org, e1) == CGAL::RIGHT );
 
-  Point_3 s0( RT1, RT0, RT0);
-  Point_3 s1( RT0, RT1, RT0);
-  Point_3 s2( RT0, RT0, RT1);
+  Point_3 sx( RT1, RT0, RT0);
+  Point_3 sy( RT0, RT1, RT0);
+  Point_3 sz( RT0, RT0, RT1);
   Point_3 org3( RT0, RT0, RT0);
-  assert( CGAL::angle( s0, org3, s1 ) == CGAL::RIGHT );
-  assert( CGAL::angle( s0, s1, s2) == CGAL::ACUTE );
+  assert( CGAL::angle( sx, org3, sy ) == CGAL::RIGHT );
+  assert( CGAL::angle( sx, sy, sz) == CGAL::ACUTE );
+  assert( CGAL::angle( org3, sy, sx, sz) == CGAL::RIGHT );
+  assert( CGAL::angle( org3, sz, sz, sy) == CGAL::OBTUSE );
+  assert( CGAL::angle( org3, sx, sy, sx) == CGAL::ACUTE );
+  assert( CGAL::angle( org3 - sy, sx - sz) == CGAL::RIGHT );
+  assert( CGAL::angle( org3 - sz, sz - sy) == CGAL::OBTUSE );
+  assert( CGAL::angle( org3 - sx, sy - sx) == CGAL::ACUTE );
 
   return true;
 }

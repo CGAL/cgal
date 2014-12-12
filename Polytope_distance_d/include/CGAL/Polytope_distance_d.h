@@ -574,8 +574,8 @@ public:
   insert( InputIterator1 p_first, InputIterator1 p_last,
 	  InputIterator2 q_first, InputIterator2 q_last)
   { 
-    int old_r = static_cast<int>(p_points.size());
-    int old_s = static_cast<int>(q_points.size());
+    CGAL_optimisation_precondition_code(int old_r = static_cast<int>(p_points.size()));
+    CGAL_optimisation_precondition_code(int old_s = static_cast<int>(q_points.size()));
     p_points.insert( p_points.end(), p_first, p_last);
     q_points.insert( q_points.end(), q_first, q_last);
     set_dimension();
@@ -590,7 +590,7 @@ public:
   void
   insert_p( InputIterator p_first, InputIterator p_last)
   { 
-    int old_r = static_cast<int>(p_points.size());
+    CGAL_optimisation_precondition_code(int old_r = static_cast<int>(p_points.size()));
     p_points.insert( p_points.end(), p_first, p_last);
     set_dimension();
     CGAL_optimisation_precondition_msg
@@ -603,7 +603,7 @@ public:
   void
   insert_q( InputIterator q_first, InputIterator q_last)
   { 
-    int old_s = static_cast<int>(q_points.size());
+    CGAL_optimisation_precondition_code( int old_s = static_cast<int>(q_points.size()));
     q_points.insert( q_points.end(), q_first, q_last);
     set_dimension();
     CGAL_optimisation_precondition_msg

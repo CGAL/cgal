@@ -1,3 +1,5 @@
+#include "config.h"
+
 #include "MainWindow.h"
 #include <QApplication>
 #include <CGAL/Qt/resources.h>

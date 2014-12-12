@@ -22,15 +22,12 @@
 #define CGAL_SEARCH_TRAITS_WITH_INFO
 
 #include <CGAL/Kd_tree_rectangle.h>
-#include <boost/mpl/has_xxx.hpp>
 #include <CGAL/Euclidean_distance.h> //for default distance specialization
+#include <CGAL/property_map.h>
 
-#include <boost/version.hpp>
-#if BOOST_VERSION >= 104000
-  #include <boost/property_map/property_map.hpp>
-#else
-  #include <boost/property_map.hpp>
-#endif
+#include <boost/mpl/has_xxx.hpp>
+#include <boost/static_assert.hpp>
+#include <boost/type_traits/is_same.hpp>
 
 namespace CGAL{
 
@@ -74,6 +71,10 @@ struct Get_iso_box_d<T,true>
 template <class Point_with_info,class PointPropertyMap,class Base_traits>
 class Search_traits_adapter : public Base_traits{
   PointPropertyMap ppmap;
+
+  BOOST_STATIC_ASSERT( ( boost::is_same< boost::lvalue_property_map_tag,
+                           typename boost::property_traits<PointPropertyMap>::category
+                         >::value ) );
 public:
   typedef Base_traits Base;
   typedef typename internal::Get_iso_box_d<Base>::type Iso_box_d;
@@ -126,6 +127,10 @@ template <class Point_with_info,class PointPropertyMap,class Base_distance>
 class Distance_adapter : public Base_distance {
   PointPropertyMap ppmap;
   typedef typename Base_distance::FT FT;
+
+  BOOST_STATIC_ASSERT( ( boost::is_same< boost::lvalue_property_map_tag,
+                           typename boost::property_traits<PointPropertyMap>::category
+                         >::value ) );
 public:
     
   Distance_adapter( const PointPropertyMap& ppmap_=PointPropertyMap(),

@@ -5,9 +5,7 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
-
-// Adaptor for Polyhedron_3
-#include <CGAL/Surface_mesh_simplification/HalfedgeGraph_Polyhedron_3.h>
+#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 
 // Simplification function
 #include <CGAL/Surface_mesh_simplification/edge_collapse.h>
@@ -31,12 +29,21 @@ namespace SMS = CGAL::Surface_mesh_simplification ;
 // BGL property map which indicates whether an edge is marked as non-removable
 //
 struct Border_is_constrained_edge_map{
+  const Surface_mesh* sm_ptr;
   typedef boost::graph_traits<Surface_mesh>::edge_descriptor key_type;
   typedef bool value_type;
   typedef value_type reference;
   typedef boost::readable_property_map_tag category;
-  friend bool get(Border_is_constrained_edge_map, key_type edge) {
-    return edge->is_border_edge();
+
+  Border_is_constrained_edge_map()
+  {}
+
+  Border_is_constrained_edge_map(const Surface_mesh& sm)
+    : sm_ptr(&sm)
+  {}
+
+  friend bool get(Border_is_constrained_edge_map m, const key_type& edge) {
+    return CGAL::is_border(edge, *m.sm_ptr);
   }
 };
 
@@ -89,9 +96,9 @@ int main( int argc, char** argv )
   int r = SMS::edge_collapse
             (surface_mesh
             ,stop
-            ,CGAL::vertex_index_map(boost::get(CGAL::vertex_external_index,surface_mesh))
-                  .edge_index_map  (boost::get(CGAL::edge_external_index  ,surface_mesh))
-                  .edge_is_constrained_map(Border_is_constrained_edge_map())
+            ,CGAL::vertex_index_map(get(CGAL::vertex_external_index,surface_mesh))
+                  .halfedge_index_map  (get(CGAL::halfedge_external_index  ,surface_mesh))
+                  .edge_is_constrained_map(Border_is_constrained_edge_map(surface_mesh))
                   .get_placement(Placement())
             );
 

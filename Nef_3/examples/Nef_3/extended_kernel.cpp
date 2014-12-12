@@ -1,9 +1,9 @@
-#include <CGAL/Gmpz.h>
+#include <CGAL/Exact_integer.h>
 #include <CGAL/Extended_homogeneous.h>
 #include <CGAL/Nef_polyhedron_3.h>
 #include <CGAL/IO/Nef_polyhedron_iostream_3.h>
 
-typedef CGAL::Gmpz  NT;
+typedef CGAL::Exact_integer  NT;
 //instead of
 //typedef CGAL::Extended_homogeneous<NT>  Kernel;
 // workaround for VC++

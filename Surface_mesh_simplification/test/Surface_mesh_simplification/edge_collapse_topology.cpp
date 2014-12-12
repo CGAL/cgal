@@ -5,8 +5,7 @@
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
 
-// Adaptor for Polyhedron_3
-#include <CGAL/Surface_mesh_simplification/HalfedgeGraph_Polyhedron_3.h>
+#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 
 // Simplification function
 #include <CGAL/Surface_mesh_simplification/edge_collapse.h>
@@ -45,8 +44,8 @@ int main( int argc, char** argv )
   int r = SMS::edge_collapse
             (surface
             ,stop
-            ,CGAL::vertex_index_map(boost::get(CGAL::vertex_external_index,surface)) 
-                  .edge_index_map  (boost::get(CGAL::edge_external_index  ,surface)) 
+            ,CGAL::vertex_index_map(get(CGAL::vertex_external_index,surface)) 
+                  .halfedge_index_map  (get(CGAL::halfedge_external_index  ,surface)) 
             );
 
   std::cout << "\nFinished...\n" << r << " edges removed.\n" 

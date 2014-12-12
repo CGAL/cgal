@@ -13,3 +13,6 @@ export LD_LIBRARY_PATH
 
 ESBTL_INC_DIR=$HOME/CGAL/esbtl/trunk/include
 export ESBTL_INC_DIR
+
+EIGEN3_INC_DIR=/usr/local/Eigen-3.2.1
+export EIGEN3_INC_DIR

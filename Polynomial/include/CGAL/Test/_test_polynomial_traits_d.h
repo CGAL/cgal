@@ -26,6 +26,8 @@
 #include <CGAL/basic.h>
 #include <CGAL/use.h>
 #include <CGAL/Arithmetic_kernel.h>
+#include <CGAL/CORE_arithmetic_kernel.h>
+#include <CGAL/LEDA_arithmetic_kernel.h>
 #include <CGAL/Sqrt_extension.h>
 #include <CGAL/ipower.h>
 #include <CGAL/Random.h>

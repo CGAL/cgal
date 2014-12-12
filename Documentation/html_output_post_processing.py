@@ -46,6 +46,8 @@ def conceptify(d):
     # fix the title
     title = d(".title")
     title.html(re.sub("((Class)|(Struct))( Template)? Reference", "Concept Reference", title.html()))
+    title = d("title")
+    title.html(re.sub("((Class)|(Struct))( Template)? Reference", "Concept Reference", title.html()))
     # remove the include
     include_statement = d(".contents").children().eq(0)
     # should check that this is really the div we think it is
@@ -186,19 +188,24 @@ def automagically_number_figures():
   for el in d('a.elRef'):
     text = pq(el).attr('href')
     if text.find("index.html")!=-1:
-      re_pkg_index=re.compile("\.\./([A-Z_a-z0-9]+/index\.html)")
+      re_pkg_index=re.compile("\.\./([A-Z_a-z0-9]+)/index\.html")
       res=re_pkg_index.match(text)
       if res:
         all_packages.append(res.group(1))
       else:
         stderr.write("Error: Figure numbering; skipping "+text+"\n")
-  #collect all the figure anchors in user manual and associate them a unique id
+  #collect all the figure anchors and associate them a unique id
   pkg_id=1 # the id of a package
   global_anchor_map={} #map a figure anchor to it unique name: pkg_id+.+fig_nb
-  for fname in all_packages:
-    infos=figure_anchor_info(pkg_id, global_anchor_map)
-    d = pq(filename=fname, parser='html')
-    d('a.anchor').each( lambda i: collect_figure_anchors(i,infos) )
+  for pkg_name in all_packages:
+    # collect first in the user manual
+    userman=os.path.join(pkg_name,"index.html")
+    all_pkg_files=glob.glob(os.path.join(pkg_name,"*.html"))
+    all_pkg_files.remove(userman)
+    for fname in [userman]+all_pkg_files:
+      infos=figure_anchor_info(pkg_id, global_anchor_map)
+      d = pq(filename=fname, parser='html')
+      d('a.anchor').each( lambda i: collect_figure_anchors(i,infos) )
     pkg_id+=1
 
   #Figure link dev Manual

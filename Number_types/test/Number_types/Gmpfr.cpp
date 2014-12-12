@@ -14,7 +14,7 @@
 // $URL$
 // $Id$
 //
-// Author: Luis Peñaranda <luis.penaranda@gmx.com>
+// Author: Luis PeÃ±aranda <luis.penaranda@gmx.com>
 
 #include <CGAL/basic.h>
 
@@ -131,6 +131,7 @@ template<class NumberType>
 int test_constructors(const NumberType &x){
         typedef CGAL::Gmpfr     Gmpfr;
         typedef NumberType      NT;
+        CGAL_USE_TYPE(NT);
         bool fail=false;
         Gmpfr::set_default_precision(70);
         Gmpfr f(x);

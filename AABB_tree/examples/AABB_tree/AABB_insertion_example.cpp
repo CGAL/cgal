@@ -3,7 +3,7 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits.h>
-#include <CGAL/Polyhedron_3.h>
+#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/AABB_face_graph_triangle_primitive.h>
 
 
@@ -35,11 +35,11 @@ int main()
     polyhedron2.make_tetrahedron(p2, q2, r2, s2);
     // constructs AABB tree and computes internal KD-tree
     // data structure to accelerate distance queries
-    Tree tree(polyhedron1.facets_begin(),polyhedron1.facets_end(), polyhedron1);
+    Tree tree(faces(polyhedron1).first, faces(polyhedron1).second, polyhedron1);
 
     tree.accelerate_distance_queries();
 
-    tree.insert(polyhedron2.facets_begin(),polyhedron2.facets_end(), polyhedron2);
+    tree.insert(faces(polyhedron2).first, faces(polyhedron2).second, polyhedron2);
 
     // query point
     Point query(0.0, 0.0, 3.0);

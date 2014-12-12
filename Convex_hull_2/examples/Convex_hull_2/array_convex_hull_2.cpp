@@ -11,6 +11,9 @@ int main()
   Point_2 result[5];
 
   Point_2 *ptr = CGAL::convex_hull_2( points, points+5, result );
-  std::cout <<  ptr - result << " points on the convex hull" << std::endl;
+  std::cout <<  ptr - result << " points on the convex hull:" << std::endl;
+  for(int i = 0; i < ptr - result; i++){
+    std::cout << result[i] << std::endl;
+  }
   return 0;
 }

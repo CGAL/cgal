@@ -1,6 +1,8 @@
 #ifndef TYPEDEFS_H
 #define TYPEDEFS_H
 
+#define CGAL_CONCURRENT_TRIANGULATION_3_PROFILING
+
 #include <vector>  //dynamic array
 #include <list>  //linked list
 
@@ -32,12 +34,15 @@ typedef Kernel::Direction_3		Direction_3;
 
 /*
  * The user has several ways to add his own data in the vertex
- * and cell base classes used by the TDS. He can either: * 1. use the classes Triangulation vertex base with info
+ * and cell base classes used by the TDS. He can either:
+ * 1. use the classes Triangulation vertex base with info
  *  and Triangulation cell base with info, which allow to
- *  add one data member of a user provided type, and give access to it. * 2. derive his own classes from the default base classes
+ *  add one data member of a user provided type, and give access to it.
+ * 2. derive his own classes from the default base classes
  *  Triangulation ds vertex base, and Triangulation ds cell base
  *  (or the geometric versions typically used by the geometric layer,
- *  Triangulation vertex base, and Triangulation cell base). * 3. write his own base classes following the requirements given by the concepts
+ *  Triangulation vertex base, and Triangulation cell base).
+ * 3. write his own base classes following the requirements given by the concepts
  *  TriangulationCellBase 3 and TriangulationVertexBase 3
  *  (described in page 2494 and page 2495).
  */
@@ -69,7 +74,6 @@ private:
   bool m_isSelected;  // whether it is selected
 };
 
-typedef CGAL::Triangulation_data_structure_3< Vertex_base<Kernel> >	Tds;
 /*
  * Delaunay_triangulation_3<arg1, arg2, arg3>
  * arg1: a model of the DelaunayTriangulationTraits_3 concept
@@ -81,7 +85,21 @@ typedef CGAL::Triangulation_data_structure_3< Vertex_base<Kernel> >	Tds;
  *       Compact_location saves memory by avoiding the separate data structure
  *     and point location is then O(n^(1/3)) time
  */
-typedef CGAL::Delaunay_triangulation_3<Kernel, Tds, CGAL::Fast_location>	DT3;
+#ifdef CGAL_CONCURRENT_TRIANGULATION_3
+typedef CGAL::Spatial_lock_grid_3<
+  CGAL::Tag_priority_blocking>                        Lock_ds;
+typedef CGAL::Triangulation_data_structure_3< 
+  Vertex_base<Kernel>, 
+  CGAL::Triangulation_ds_cell_base_3<>, 
+  CGAL::Parallel_tag >	                              Tds;
+typedef CGAL::Delaunay_triangulation_3<
+  Kernel, Tds, CGAL::Default, Lock_ds>	              DT3;
+
+#else
+typedef CGAL::Triangulation_data_structure_3< Vertex_base<Kernel> >	Tds;
+typedef CGAL::Delaunay_triangulation_3<
+  Kernel, Tds/*, CGAL::Fast_location*/>	                            DT3;
+#endif
 
 typedef DT3::Object		Object_3;
 typedef DT3::Point		Point_3;

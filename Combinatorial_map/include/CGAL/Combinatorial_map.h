@@ -475,12 +475,12 @@ namespace CGAL {
      */
     Dart_handle first_dart()
     {
-      if (darts().begin() == darts().end()) return null_dart_handle;
+      if (darts().begin() == darts().end()) return null_handle;
       return mdarts.begin();
     }
     Dart_const_handle first_dart() const
     {
-      if (darts().begin() == darts().end()) return null_dart_handle;
+      if (darts().begin() == darts().end()) return null_handle;
       return mdarts.begin();
     }
 
@@ -1272,18 +1272,8 @@ namespace CGAL {
      typename Attribute_handle<i>::type res=
        CGAL::cpp11::get<Helper::template Dimension_index<i>::value>
         (mattribute_containers).emplace(args...);
-     return res;
-    }
-    // If one attribute, could be a copy constructor => need to reinitialize
-    // ref counting
-    template<unsigned int i, typename T1>
-    typename Attribute_handle<i>::type create_attribute(const T1& t1)
-    {
-      CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
-                  "create_attribute<i> but i-attributes are disabled");
-     typename Attribute_handle<i>::type res=
-       CGAL::cpp11::get<Helper::template Dimension_index<i>::value>
-       (mattribute_containers).emplace(t1);
+     // Reinitialize the ref counting of the new attribute. This is normally
+     // not required except if create_attribute is used as "copy contructor".
      this->template get_attribute<i>(res).mrefcounting = 0;
      return res;
     }

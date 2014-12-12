@@ -17,6 +17,9 @@ and to an index characteristic of this face.
 The concept `MeshVertexBase_3` provides storage and read-write access to a boolean, a `FT` value, 
 and two `Vertex_handle` called 'intrusive'.
 
+The parallel algorithms require an erase counter in 
+each cell (see below).
+
 \cgalRefines `TriangulationVertexBase_3` 
 \cgalRefines `SurfaceMeshVertexBase_3`
 
@@ -117,7 +120,20 @@ Vertex_handle previous_intrusive() const;
 */
 void set_previous_intrusive(Vertex_handle);
 
+/// Get the erase counter. 
+/// Only required by the parallel algorithms.
+/// See `CGAL::Compact_container` for more details.
+unsigned int erase_counter() const;
 
+/// Sets the erase counter. 
+/// Only required by the parallel algorithms.
+/// See `CGAL::Compact_container` for more details.
+void set_erase_counter(unsigned int c);
+
+/// Increments the erase counter.
+/// Only required by the parallel algorithms. 
+/// See `CGAL::Compact_container` for more details.
+void increment_erase_counter();
 /// @}
 
 }; /* end MeshVertexBase_3 */

@@ -80,7 +80,7 @@ assign(const Self& other)
   // Take care of the traits object.
   if (m_own_geom_traits && m_geom_traits != NULL) {
     delete m_geom_traits;
-    m_geom_traits == NULL;
+    m_geom_traits = NULL;
   }
 
   if (other.m_own_geom_traits) {

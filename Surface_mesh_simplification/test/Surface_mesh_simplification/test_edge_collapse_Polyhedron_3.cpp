@@ -67,8 +67,8 @@ protected:
 
   typedef boost::graph_traits<Surface> GraphTraits ;
   
-  typedef GraphTraits::out_edge_iterator out_edge_iterator ;
-  typedef GraphTraits::edge_descriptor   edge_descriptor ;
+  typedef CGAL::Halfedge_around_source_iterator<Surface> out_edge_iterator ;
+  typedef GraphTraits::halfedge_descriptor   halfedge_descriptor ;
   typedef GraphTraits::vertex_descriptor vertex_descriptor ;
   typedef CGAL::Polyhedron_incremental_builder_3<Surface::HalfedgeDS> Builder ;
   
@@ -135,18 +135,18 @@ public:
   {
     Builder B( hds, true);
     
-    B.begin_surface( 1 + boost::out_degree(mV,ecm()), boost::out_degree(mV,ecm()) );
+    B.begin_surface( 1 + out_degree(mV,ecm()), out_degree(mV,ecm()) );
     
     this->add_vertex(B,mV);
     Profile::Triangle_vector triangles ;
     
     out_edge_iterator eb, ee ; 
-    for ( boost::tie(eb,ee) = boost::out_edges(mV,ecm()) ; eb != ee ; ++ eb )
+    for ( boost::tie(eb,ee) = halfedges_around_source(opposite(halfedge(mV,ecm()),ecm()),ecm()) ; eb != ee ; ++ eb )
     {
-      edge_descriptor out_edge1 = *eb ;
-      edge_descriptor out_edge2 = out_edge1->opposite()->next(); 
-      vertex_descriptor v1 = boost::target(out_edge1,ecm());
-      vertex_descriptor v2 = boost::target(out_edge2,ecm());
+      halfedge_descriptor out_edge1 = *eb ;
+      halfedge_descriptor out_edge2 = out_edge1->opposite()->next(); 
+      vertex_descriptor v1 = target(out_edge1,ecm());
+      vertex_descriptor v2 = target(out_edge2,ecm());
        
       this->add_vertex(B,v1);
       

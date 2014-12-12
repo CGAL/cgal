@@ -164,7 +164,11 @@ void hyperbolicIpelet::protected_run(int fn)
     circ = compute_circle_orthogonal<Kernel>(p1,p2,poincare);
     if (orientation(poincare.center(),p1.center(),p2.center())>0)
       draw_in_ipe(Circular_arc_2(circ,p2.center(),p1.center(),circ.orientation()));
-    else
+    else if (orientation(poincare.center(),p1.center(),p2.center())==0){
+      print_error_message(
+	"degenerate case, hyperbolic line is on a diameter of Poincare disk");
+      draw_in_ipe(Segment_2(p1.center(),p2.center()));
+    }else
       draw_in_ipe(Circular_arc_2(circ,p1.center(),p2.center(),circ.orientation()));
     return;
   case 2:
@@ -193,6 +197,24 @@ void hyperbolicIpelet::protected_run(int fn)
     draw_in_ipe(center);
     return;
   }     //end of switch
+
+  // detect degenerate case
+  if (circ==Circle_2()){ 
+    Kernel::Vector_2 v;
+    if (fn==2) v= Kernel::Vector_2
+       (p2.center().y()-p1.center().y(),p2.center().x()-p1.center().x());
+    else v=p2.center()-p1.center();
+    Kernel::FT sqr_length=poincare.squared_radius() / v.squared_length();
+    double length = sqrt( sqr_length.to_double());
+    v = Kernel::FT(length)*v;
+    Point_2 q1=poincare.center()+ v;
+    Point_2 q2=poincare.center()- v;
+    print_error_message(
+	"degenerate case, hyperbolic line is a diameter of Poincare disk");
+    Kernel::Segment_2 s(q1,q2);
+    draw_in_ipe(s);
+    return;
+    }
 
   // clip circ by poincare 
   std::vector< CGAL::Object > result;

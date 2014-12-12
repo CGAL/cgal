@@ -75,27 +75,32 @@ which performs the following:
 Let \f$ {z(p,q,r,s)}^{(w)}\f$ be the power sphere of the weighted points 
 \f$ (p,q,r,s)\f$. Returns 
 
-`ON_ORIENTED_BOUNDARY` if `t` is orthogonal to 
-\f$ {z(p,q,r,s)}^{(w)}\f$, 
+- `ON_ORIENTED_BOUNDARY` if `t` is orthogonal to 
+  \f$ {z(p,q,r,s)}^{(w)}\f$, 
 
-`ON_NEGATIVE_SIDE` if `t` lies outside the oriented sphere of 
-center \f$ z(p,q,r,s)\f$ and radius \f$ \sqrt{ w_{z(p,q,r,s)}^2 + w_t^2 }\f$ 
-(which is equivalent to \f$ \Pi({t}^{(w)},{z(p,q,r,s)}^{(w)} >0\f$)), 
+- `ON_NEGATIVE_SIDE` if `t` lies outside the oriented sphere of 
+  center \f$ z(p,q,r,s)\f$ and radius \f$ \sqrt{ w_{z(p,q,r,s)}^2 + w_t^2 }\f$ 
+  (which is equivalent to \f$ \Pi({t}^{(w)},{z(p,q,r,s)}^{(w)} >0\f$)), 
 
-`ON_POSITIVE_SIDE` if `t` lies inside this oriented sphere. 
+- `ON_POSITIVE_SIDE` if `t` lies inside this oriented sphere. 
+
 \pre `p, q, r, s` are not coplanar. 
 Note that with this definition, if all the points have a weight equal 
 to 0, then 
 `power_test_3(p,q,r,s,t)` = `side_of_oriented_sphere(p,q,r,s,t)`. 
 
+<HR WIDTH=50%>
+
 `Oriented_side operator()( Weighted_point_3 p, 			 Weighted_point_3 q, 			 Weighted_point_3 r, 			 Weighted_point_3 t)`, 
 
-which has an 
+which has a
 definition analogous to the previous method, for coplanar points, 
 with the power circle \f$ {z(p,q,r)}^{(w)}\f$. 
 \pre `p, q, r` are not collinear and `p, q, r, t` are coplanar. 
 If all the points have a weight equal to 0, then 
 `power_test_3(p,q,r,t)` = `side_of_oriented_circle(p,q,r,t)`. 
+
+<HR WIDTH=50%>
 
 `Oriented_side operator()( Weighted_point_3 p, 			 Weighted_point_3 q, 			 Weighted_point_3 t)`, 
 
@@ -106,6 +111,8 @@ If all points have a weight equal to 0, then
 `power_test_3(p,q,t)` gives the same answer as the kernel predicate 
 `s(p,q).has_on(t)` would give, where `s(p,q)` denotes the 
 segment with endpoints `p` and `q`. 
+
+<HR WIDTH=50%>
 
 `Oriented_side operator()( Weighted_point_3 p, Weighted_point_3 q)`, 
 

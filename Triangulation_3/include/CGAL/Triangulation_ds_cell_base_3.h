@@ -33,24 +33,42 @@ template < typename TDS = void >
 class Triangulation_ds_cell_base_3
 {
 public:
-  typedef TDS                          Triangulation_data_structure;
-  typedef typename TDS::Vertex_handle  Vertex_handle;
-  typedef typename TDS::Cell_handle    Cell_handle;
-  typedef typename TDS::Vertex         Vertex;
-  typedef typename TDS::Cell           Cell;
-  typedef typename TDS::Cell_data      TDS_data;
+  typedef TDS                           Triangulation_data_structure;
+  typedef typename TDS::Vertex_handle   Vertex_handle;
+  typedef typename TDS::Cell_handle     Cell_handle;
+  typedef typename TDS::Vertex          Vertex;
+  typedef typename TDS::Cell            Cell;
+  typedef typename TDS::Cell_data       TDS_data;
 
   template <typename TDS2>
   struct Rebind_TDS { typedef Triangulation_ds_cell_base_3<TDS2> Other; };
 
-  Triangulation_ds_cell_base_3() {}
+  Triangulation_ds_cell_base_3() 
+  {
+#ifdef SHOW_REMAINING_BAD_ELEMENT_IN_RED
+    mark = -1;
+    mark2 = -1;
+#endif
+  }
 
   Triangulation_ds_cell_base_3(Vertex_handle v0, Vertex_handle v1,
                                Vertex_handle v2, Vertex_handle v3)
 #ifndef CGAL_CFG_NO_CPP0X_UNIFIED_INITIALIZATION_SYNTAX
-    : V{v0, v1, v2, v3} {}
+    : V{v0, v1, v2, v3}
+  {
+#ifdef SHOW_REMAINING_BAD_ELEMENT_IN_RED
+    mark = -1;
+    mark2 = -1;
+#endif
+  }
 #else
-  { set_vertices(v0, v1, v2, v3); }
+  {
+    set_vertices(v0, v1, v2, v3);
+#ifdef SHOW_REMAINING_BAD_ELEMENT_IN_RED
+    mark = -1;
+    mark2 = -1;
+#endif
+  }
 #endif
 
   Triangulation_ds_cell_base_3(Vertex_handle v0, Vertex_handle v1,
@@ -63,6 +81,10 @@ public:
   {
     set_neighbors(n0, n1, n2, n3);
     set_vertices(v0, v1, v2, v3);
+#ifdef SHOW_REMAINING_BAD_ELEMENT_IN_RED
+    mark = -1;
+    mark2 = -1;
+#endif
   }
 #endif
 
@@ -201,6 +223,11 @@ public:
   // TDS internal data access functions.
         TDS_data& tds_data()       { return _tds_data; }
   const TDS_data& tds_data() const { return _tds_data; }
+  
+#ifdef SHOW_REMAINING_BAD_ELEMENT_IN_RED
+  int mark;
+  int mark2;
+#endif
 
 private:
 

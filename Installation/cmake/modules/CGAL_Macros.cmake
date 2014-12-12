@@ -361,19 +361,27 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
     #          - or even less specific if order becomes less relevant
     # Eric Berberich 2012/06/29
 
-    if(RS_FOUND)
-      use_component( RS )
-    endif()
+    if(NOT CGAL_DISABLE_GMP)
+      if(RS_FOUND)
+        use_component( RS )
+      endif()
 
-    if(MPFI_FOUND)
-      use_component( MPFI )
-    endif()
+      if(MPFI_FOUND)
+        use_component( MPFI )
+      endif()
 
-    use_component( MPFR )
-    if (GMPXX_FOUND)
-      use_component( GMPXX )
-    endif()
-    use_component( GMP )
+      if(MPFR_FOUND)
+        use_component( MPFR )
+      endif()
+
+      if (GMPXX_FOUND)
+        use_component( GMPXX )
+      endif()
+
+      if(GMP_FOUND)
+        use_component( GMP )
+      endif()
+    endif(NOT CGAL_DISABLE_GMP)
 
     if(LEDA_FOUND)
       use_component( LEDA )

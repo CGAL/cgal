@@ -9,7 +9,7 @@ INPUT = ${CMAKE_SOURCE_DIR}/Documentation/doc/Documentation \
 
 HTML_HEADER         = ${CGAL_DOC_HEADER}
 LAYOUT_FILE         = ${CMAKE_SOURCE_DIR}/Documentation/DoxygenLayout.xml
-GENERATE_TAGFILE    = ${CGAL_DOC_TAG_DIR}/Manual.tag
+GENERATE_TAGFILE    = ${CGAL_DOC_TAG_GEN_DIR}/Manual.tag
 EXAMPLE_PATH        = ${CMAKE_SOURCE_DIR}/Convex_hull_2/examples
 FILTER_PATTERNS     = *.txt=${CMAKE_BINARY_DIR}/pkglist_filter
 
@@ -112,4 +112,5 @@ IMAGE_PATH = ${CMAKE_SOURCE_DIR}/Documentation/doc/Documentation/fig \
              ${CMAKE_SOURCE_DIR}/Surface_reconstruction_points_3/doc/Surface_reconstruction_points_3/fig \
              ${CMAKE_SOURCE_DIR}/Stream_lines_2/doc/Stream_lines_2/fig \
              ${CMAKE_SOURCE_DIR}/Stream_support/doc/Stream_support/fig \
+             ${CMAKE_SOURCE_DIR}/Surface_modeling/doc/Surface_modeling/fig \
              ${CMAKE_SOURCE_DIR}/Barycentric_coordinates_2/doc/Barycentric_coordinates_2/fig \

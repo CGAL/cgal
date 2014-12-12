@@ -44,7 +44,7 @@ twice or more, the result is computed each time anew.
 The following example creates a polygon and illustrates the usage of
 some member functions.
 
-\include Polygon.cpp
+\cgalExample{Polygon/Polygon.cpp}
 
 \cgalFigureBegin{polygon2_algo,pgn_algos.png}
 A polygon and some points
@@ -55,7 +55,7 @@ A polygon and some points
 The following example creates a polygon and illustrates the usage of
 some global functions that operate on sequences of points.
 
-\include polygon_algorithms.cpp
+\cgalExample{Polygon/polygon_algorithms.cpp}
 
 \subsection Polygons in 3D Space
 
@@ -68,7 +68,7 @@ In order to avoid an explixit projection on the \c xy plane, one can
 use the traits class `Projection_traits_xy_3` which is part of the 2D
 and 3D Linear Geometric %Kernel.
 
-\include projected_polygon.cpp
+\cgalExample{Polygon/projected_polygon.cpp}
 
 */
 

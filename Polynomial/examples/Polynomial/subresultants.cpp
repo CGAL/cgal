@@ -2,12 +2,12 @@
 #include <CGAL/Polynomial_traits_d.h>
 #include <CGAL/Polynomial_type_generator.h>
 
-#include <CGAL/Gmpz.h>
+#include <CGAL/Exact_integer.h>
 
 int main(){
   CGAL::set_pretty_mode(std::cout);
 
-  typedef CGAL::Gmpz Int;
+  typedef CGAL::Exact_integer Int;
 
   typedef CGAL::Polynomial_type_generator<Int,1>::Type Poly_1;
   typedef CGAL::Polynomial_traits_d<Poly_1>            PT_1;

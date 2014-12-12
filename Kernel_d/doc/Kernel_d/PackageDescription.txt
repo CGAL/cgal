@@ -47,7 +47,8 @@
 
 ## Kernels ##
 - `CGAL::Cartesian_d<FieldNumberType>`
-- `CGAL::Homogeneous<RingNumberType>`
+- `CGAL::Homogeneous_d<RingNumberType>`
+- `CGAL::Epick_d<DimensionTag>`
 
 ## %Kernel Objects ##
 - `CGAL::Point_d<Kernel>`

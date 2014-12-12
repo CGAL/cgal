@@ -7,7 +7,7 @@ The concept `ImplicitFunction` describes a function object
 whose `operator()` computes the values of a function 
 \f$ f : \mathbb{R}^3 \longrightarrow \mathbb{R}\f$. 
 
-\cgalHasModel `CGAL::Gray_level_image_3`
+\cgalHasModel CGAL::Gray_level_image_3
 \cgalHasModel any pointer to a function of type `FT (*)(Point)`
 
 \sa `CGAL::Implicit_surface_3<Traits, Function>`
@@ -20,7 +20,7 @@ public:
 
 /// \name Types 
 /// @{
-
+///The following types aren't required for any pointer to a function of type `FT (*)(Point)`.
 /*!
 Number type 
 */ 

@@ -83,6 +83,9 @@
 //  feature is not available, even if that is wrong.
 //  ----------------------------------------------------------------------//
 
+#if defined(BOOST_NO_CXX11_RANGE_BASED_FOR) || BOOST_VERSION < 105000
+#define CGAL_NO_CPP0X_RANGE_BASED_FOR 1
+#endif
 #if defined(BOOST_NO_0X_HDR_ARRAY) || BOOST_VERSION < 104000
 #define CGAL_CFG_NO_CPP0X_ARRAY 1
 #endif
@@ -140,6 +143,20 @@
 #define CGAL_CFG_NO_CPP0X_EXPLICIT_CONVERSION_OPERATORS 1
 #endif
 
+// Some random list to let us write C++11 without thinking about
+// each feature we are using.
+#if __cplusplus >= 201103L && \
+    !defined CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES && \
+    !defined CGAL_CFG_NO_CPP0X_RVALUE_REFERENCE && \
+    !defined CGAL_CFG_NO_CPP0X_EXPLICIT_CONVERSION_OPERATORS && \
+    !defined CGAL_CFG_NO_CPP0X_TUPLE && \
+    !defined CGAL_CFG_NO_CPP0X_UNIFIED_INITIALIZATION_SYNTAX && \
+    !defined CGAL_CFG_NO_CPP0X_STATIC_ASSERT && \
+    !defined CGAL_CFG_NO_CPP0X_DECLTYPE && \
+    !defined CGAL_CFG_NO_CPP0X_DELETED_AND_DEFAULT_FUNCTIONS && \
+    !defined CGAL_CFG_NO_CPP0X_DEFAULT_TEMPLATE_ARGUMENTS_FOR_FUNCTION_TEMPLATES
+#define CGAL_CXX11
+#endif
 
 //----------------------------------------------------------------------//
 //  auto-link the CGAL library on platforms that support it
@@ -313,11 +330,17 @@ using std::max;
 #ifndef __has_builtin
   #define __has_builtin(x) 0  // Compatibility with non-clang compilers.
 #endif
+#ifndef __has_attribute
+  #define __has_attribute(x) 0  // Compatibility with non-clang compilers.
+#endif
+#ifndef __has_warning
+  #define __has_warning(x) 0  // Compatibility with non-clang compilers.
+#endif
 
 // Macro to trigger deprecation warnings
 #ifdef CGAL_NO_DEPRECATION_WARNINGS
 #  define CGAL_DEPRECATED
-#elif defined(__GNUC__)
+#elif defined(__GNUC__) || __has_attribute(__deprecated__)
 #  define CGAL_DEPRECATED __attribute__((__deprecated__))
 #elif defined (_MSC_VER) && (_MSC_VER > 1300)
 #  define CGAL_DEPRECATED __declspec(deprecated)
@@ -327,14 +350,14 @@ using std::max;
 
 
 // Macro to specify a 'noreturn' attribute.
-#ifdef __GNUG__
+#if defined(__GNUG__) || __has_attribute(__noreturn__)
 #  define CGAL_NORETURN  __attribute__ ((__noreturn__))
 #else
 #  define CGAL_NORETURN
 #endif
 
 // Macro to specify a 'unused' attribute.
-#ifdef __GNUG__
+#if defined(__GNUG__) || __has_attribute(__unused__)
 #  define CGAL_UNUSED  __attribute__ ((__unused__))
 #else
 #  define CGAL_UNUSED
@@ -361,6 +384,23 @@ using std::max;
 #  endif
 #endif
 
+// Support for LEDA with threads
+//   Not that, if CGAL_HAS_THREADS is defined, and you want to use LEDA,
+//   you must link with a version of LEDA libraries that support threads.
+#if defined(CGAL_HAS_THREADS) && CGAL_USE_LEDA
+#  define LEDA_MULTI_THREAD 1
+#endif
+// Support for LEDA_numbers on Windows
+#define LEDA_NUMBERS_DLL 1
+
+// Helper macros to disable macros
+#if defined(__clang__) || (BOOST_GCC >= 40600)
+#  define CGAL_PRAGMA_DIAG_PUSH _Pragma("GCC diagnostic push")
+#  define CGAL_PRAGMA_DIAG_POP  _Pragma("GCC diagnostic pop")
+#else
+#  define CGAL_PRAGMA_DIAG_PUSH
+#  define CGAL_PRAGMA_DIAG_POP
+#endif
 
 namespace CGAL {
 

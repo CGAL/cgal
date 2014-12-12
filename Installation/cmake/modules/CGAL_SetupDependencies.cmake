@@ -56,7 +56,7 @@ foreach (lib ${CGAL_SUPPORTING_3RD_PARTY_LIBRARIES})
 
       if (${lib} STREQUAL "LEDA") 
         # special case for LEDA - add a flag
-        message( STATUS "$LEDA cxx flags:   ${LEDA_CXX_FLAGS}" )
+        message( STATUS "LEDA cxx flags:   ${LEDA_CXX_FLAGS}" )
         uniquely_add_flags( CMAKE_CXX_FLAGS ${LEDA_CXX_FLAGS} )
       endif()
 

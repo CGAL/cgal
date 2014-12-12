@@ -9,13 +9,47 @@
 #include <CGAL/Random.h>
 #include <CGAL/Testsuite/use.h>
 
+#include <CGAL/tags.h>
+#include <CGAL/use.h>
+#include <CGAL/assertions.h>
 
+#include <boost/type_traits/is_base_of.hpp>
+
+template <typename Has_timestamp_ = CGAL::Tag_true>
 struct Node_1
 : public CGAL::Compact_container_base
 {
   bool operator==(const Node_1 &) const { return true; }
   bool operator!=(const Node_1 &) const { return false; }
   bool operator< (const Node_1 &) const { return false; }
+
+  // Erase counter (cf. Compact_container)
+  unsigned int erase_counter() const
+  {
+    return this->m_erase_counter;
+  }
+  void set_erase_counter(unsigned int c)
+  {
+    this->m_erase_counter = c;
+  }
+  void increment_erase_counter()
+  {
+    ++this->m_erase_counter;
+  }
+
+  /// For the determinism of Compact_container iterators
+  ///@{
+  typedef Has_timestamp_ Has_timestamp;
+
+  std::size_t time_stamp() const {
+    return time_stamp_;
+  }
+  void set_time_stamp(const std::size_t& ts) {
+    time_stamp_ = ts;
+  }
+  ///@}
+  int m_erase_counter;
+  std::size_t time_stamp_;
 };
 
 class Node_2
@@ -108,6 +142,7 @@ void test(const Cont &)
   assert(check_empty(c1));
 
   typename Cont::allocator_type  t20 = c0.get_allocator();
+  CGAL_USE(t20);
 
   std::cout << "Now filling some containers" << std::endl;
 
@@ -216,13 +251,84 @@ void test(const Cont &)
   assert(check_empty(c9));
 }
 
+template < class Cont >
+void test_index(const Cont &C)
+{
+  test(C);
+
+  Cont c1;
+  for (int i = 0 ; i < 1000000 ; ++i)
+    c1.emplace();
+
+  typename Cont::iterator it = c1.begin();
+  for (int i=0; i < 1000000 ; ++i, ++it)
+  {
+    assert( c1[i]==*it ); // test the contents
+    if ( i%1000==0 )
+    {
+      assert( Cont::s_iterator_to(c1[i])==it );
+      assert( c1.iterator_to(c1[i])==it );
+      assert( Cont::s_iterator_to(c1[i])==it );
+    }
+  }
+}
+
+struct Incomplete_struct;
 
 int main()
 {
-  CGAL::Compact_container<Node_1> C1;
-  CGAL::Compact_container<Node_2> C2;
-  test(C1);
-  test(C2);
+
+  typedef Node_1<CGAL::Tag_true > T1;
+  typedef CGAL::Compact_container<T1> C1; //    with timestamps
+
+  typedef Node_1<CGAL::Tag_false> T2;
+  typedef CGAL::Compact_container<T2> C2; // without timestamps
+
+  typedef CGAL::Compact_container<T2,
+                                  CGAL::Default,
+                                  CGAL::Default,
+                                  CGAL::Time_stamper<T2> > C4;
+                                          //    with timestamps
+
+  typedef Node_2 T3;
+  typedef CGAL::Compact_container<T3> C3; // without timestamps
+
+  C1 c1;  test(c1);
+  C2 c2;  test(c2);
+  C3 c3;  test(c3);
+  C4 c4;  test(c4);
+
+  // Check the time stamper policies
+  if(! boost::is_base_of<CGAL::Time_stamper<T1>,
+     C1::Time_stamper_impl>::value)
+  {
+    std::cerr << "Error timestamper of C1\n"; return 1;
+  }
+  if(! boost::is_base_of<CGAL::No_time_stamp<T2>,
+     C2::Time_stamper_impl>::value)
+  {
+    std::cerr << "Error timestamper of C2\n"; return 1;
+  }
+  if(! boost::is_base_of<CGAL::No_time_stamp<T3>,
+     C3::Time_stamper_impl>::value)
+  {
+    std::cerr << "Error timestamper of C3\n"; return 1;
+  }
+  if(! boost::is_base_of<CGAL::Time_stamper<T2>,
+     C4::Time_stamper_impl>::value)
+  {
+    std::cerr << "Error timestamper of C4\n"; return 1;
+  }
+
+  // Check that Compact_container does not require a complete type.
+  CGAL_static_assertion(sizeof(CGAL::Compact_container<Incomplete_struct>) > 0);
+
+  // Test increment policy
+  CGAL::Compact_container<Node_2, CGAL::Default, CGAL::Constant_size_policy<1024> > C5;
+  CGAL::Compact_container<Node_2, CGAL::Default, CGAL::Addition_size_policy<14,16> > C6;
+
+  test_index(C5);
+  test_index(C6);
   return 0;
 }
 // EOF //

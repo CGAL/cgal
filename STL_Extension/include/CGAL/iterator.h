@@ -41,6 +41,11 @@
 #if defined(BOOST_MSVC)
 #  pragma warning(push)
 #  pragma warning(disable:4396)
+
+#  pragma warning(disable:4522)  // multiple assignment operators specified
+// The warning, with VC12, was:
+// include\CGAL/iterator.h(1251) : warning C4522: 'CGAL::internal::Derivator<D,std::tuple<double,char>,std::tuple<std::back_insert_iterator<std::vector<double,std::allocator<_Ty>>>,std::back_insert_iterator<std::vector<char,std::allocator<char>>>>>' : multiple assignment operators specified
+
 #endif
 namespace CGAL {
 
@@ -490,6 +495,8 @@ template < class I, class P > struct Filter_iterator;
 
 template < class I, class P >
 bool operator==(const Filter_iterator<I,P>&, const Filter_iterator<I,P>&);
+template < class I, class P >
+bool operator<(const Filter_iterator<I,P>&, const Filter_iterator<I,P>&);
 
 template < class I, class P >
 struct Filter_iterator {
@@ -547,15 +554,17 @@ public:
     --(*this);
     return tmp;
   }
-
+  
   reference operator*() const { return *c_;  }
   pointer operator->() const  { return &*c_; }
   const Predicate& predicate() const { return p_; }
   Iterator base() const { return c_; }
 
+  Iterator end() const { return e_; }
   bool is_end() const { return (c_ == e_); }
 
   friend bool operator== <>(const Self&, const Self&);
+  friend bool operator< <>(const Self&, const Self&);
 };
 
 template < class I, class P >
@@ -575,6 +584,14 @@ bool operator==(const Filter_iterator<I,P>& it1,
 {
   CGAL_precondition(it1.e_ == it2.e_);
   return it1.base() == it2.base();
+}
+
+template < class I, class P >
+inline
+bool operator<(const Filter_iterator<I,P>& it1,
+                const Filter_iterator<I,P>& it2)
+{
+  return it1.base() < it2.base();
 }
 
 template < class I, class P >

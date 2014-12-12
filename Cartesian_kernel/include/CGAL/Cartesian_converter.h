@@ -49,6 +49,7 @@
 namespace CGAL {
 
 // Guess which compiler needs this work around ?
+// ... VC++, again!
 namespace internal {
 template < typename K1, typename K2 >
 struct Default_converter {

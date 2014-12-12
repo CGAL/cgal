@@ -398,7 +398,7 @@ public:
 			  const Weighted_point_3 & s,
 			  const FT& w) const
   {
-    return compare(
+    return CGAL::compare(
             squared_radius_orthogonal_sphereC3(
                 p.x(),p.y(),p.z(),p.weight(),
                 q.x(),q.y(),q.z(),q.weight(),
@@ -413,7 +413,7 @@ public:
 			  const Weighted_point_3 & r,
 			  const FT& w) const
   {
-    return compare(
+    return CGAL::compare(
             squared_radius_smallest_orthogonal_sphereC3(
                 p.x(),p.y(),p.z(),p.weight(),
                 q.x(),q.y(),q.z(),q.weight(),
@@ -426,7 +426,7 @@ public:
 			  const Weighted_point_3 & q,
 			  const FT& w) const
   {
-    return compare(
+    return CGAL::compare(
             squared_radius_smallest_orthogonal_sphereC3(
                 p.x(),p.y(),p.z(),p.weight(),
                 q.x(),q.y(),q.z(),q.weight() ),
@@ -437,7 +437,7 @@ public:
         const Weighted_point_3 & p,
 			  const FT& w) const
   {
-    return compare(-p.weight(),w);
+    return CGAL::compare(-p.weight(),w);
   }
 };
 

@@ -15,6 +15,10 @@ objects \f$ key\f$ stored in `map`. The template parameter has as default
 the `Handle_hash_function` that hashes all types of pointers, handles, 
 iterators, and circulators. 
 
+The parameter `Allocator` has to match the standard allocator 
+requirements, with value type `Data`. This parameter has the default 
+value `CGAL_ALLOCATOR(Data)`. 
+
 All variables are initialized to `default_data`, a value 
 of type `Data` specified in the definition of `map`. 
 
@@ -34,7 +38,7 @@ allow for a more time- and space-efficient implementation, see also
 of sentinels that lead to defined keys that have not been inserted. 
 
 */
-template< typename Key, typename Data, typename UniqueHashFunction >
+template< typename Key, typename Data, typename UniqueHashFunction, typename Allocator>
 class Unique_hash_map {
 public:
 

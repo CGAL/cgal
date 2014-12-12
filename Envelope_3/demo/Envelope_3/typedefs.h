@@ -27,7 +27,9 @@
 #include <CGAL/envelope_3.h>
 #include <CGAL/Env_triangle_traits_3.h>
 #include <CGAL/Env_surface_data_traits_3.h>
+#ifdef CGAL_USE_CORE
 #include <CGAL/CORE_algebraic_number_traits.h>
+#endif
 #include <CGAL/Arr_conic_traits_2.h>
 #include <CGAL/Env_sphere_traits_3.h>
 #include <CGAL/Env_plane_traits_3.h>

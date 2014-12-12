@@ -3,15 +3,18 @@
 #include <QAction>
 #include <QStringList>
 
+#include "opengl_tools.h"
 #include "Scene_polyhedron_item.h"
 #include "Scene_points_with_normal_item.h"
 #include "Scene_polylines_item.h"
+#include "Scene_polyhedron_selection_item.h"
 #include "Polyhedron_type.h"
 
 #include "Polyhedron_demo_plugin_helper.h"
 #include "Polyhedron_demo_plugin_interface.h"
 
 #include <CGAL/convex_hull_3.h>
+#include <boost/iterator/transform_iterator.hpp>
 
 class Polyhedron_demo_convex_hull_plugin : 
   public QObject,
@@ -30,7 +33,8 @@ public:
     return 
       qobject_cast<Scene_polyhedron_item*>(scene->item(scene->mainSelectionIndex())) ||
       qobject_cast<Scene_polylines_item*>(scene->item(scene->mainSelectionIndex())) ||
-      qobject_cast<Scene_points_with_normal_item*>(scene->item(scene->mainSelectionIndex()));
+      qobject_cast<Scene_points_with_normal_item*>(scene->item(scene->mainSelectionIndex())) ||
+      qobject_cast<Scene_polyhedron_selection_item*>(scene->item(scene->mainSelectionIndex()));
   }
 
 public slots:
@@ -38,6 +42,12 @@ public slots:
 
 }; // end Polyhedron_demo_convex_hull_plugin
 
+// for transform iterator
+struct Get_point {
+  typedef const Polyhedron::Point_3& result_type;
+  result_type operator()(const Polyhedron::Vertex_handle v) const
+  { return v->point(); }
+};
 
 void Polyhedron_demo_convex_hull_plugin::on_actionConvexHull_triggered()
 {
@@ -52,7 +62,10 @@ void Polyhedron_demo_convex_hull_plugin::on_actionConvexHull_triggered()
   Scene_polylines_item* lines_item = 
     qobject_cast<Scene_polylines_item*>(scene->item(index));
   
-  if(poly_item || pts_item || lines_item)
+  Scene_polyhedron_selection_item* selection_item = 
+    qobject_cast<Scene_polyhedron_selection_item*>(scene->item(index));
+
+  if(poly_item || pts_item || lines_item || selection_item)
   {
     // wait cursor
     QApplication::setOverrideCursor(Qt::WaitCursor);
@@ -63,7 +76,13 @@ void Polyhedron_demo_convex_hull_plugin::on_actionConvexHull_triggered()
 
     // add convex hull as new polyhedron
     Polyhedron *pConvex_hull = new Polyhedron;
-    if ( poly_item ){
+    if(selection_item) {
+      CGAL::convex_hull_3(
+        boost::make_transform_iterator(selection_item->selected_vertices.begin(), Get_point()),
+        boost::make_transform_iterator(selection_item->selected_vertices.end(), Get_point()),
+        *pConvex_hull);
+    }
+    else if ( poly_item ){
       Polyhedron* pMesh = poly_item->polyhedron();  
       CGAL::convex_hull_3(pMesh->points_begin(),pMesh->points_end(),*pConvex_hull);
     }

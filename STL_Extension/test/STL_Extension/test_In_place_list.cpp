@@ -888,6 +888,7 @@ void test_In_place_list() {
   {
     typedef CGAL::In_place_list<Cont,false> ContList;
     typedef CGAL::In_place_list<Cont,false>::iterator Iterator;
+    typedef CGAL::In_place_list<Cont,false>::const_iterator Const_iterator;
   
     ContList L;
     L.push_back(* new Cont(3));
@@ -901,7 +902,14 @@ void test_In_place_list() {
     for (++it2; it2 != L.end(); it1=it2, ++it2) {
       assert( (*it1).i_ <= (*it2).i_ );
     }
-    
+
+    // test remove_const
+    Const_iterator cit=L.begin();
+    Iterator it=cit.remove_const();
+
+    CGAL_USE(cit);
+    CGAL_USE(it);
+
     L.destroy();
   }
 

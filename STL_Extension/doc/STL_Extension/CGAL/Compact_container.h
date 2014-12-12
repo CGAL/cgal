@@ -48,7 +48,9 @@ namespace CGAL {
 \ingroup CompactContainer
 
 An object of the class `Compact_container` 
-is a container of objects of type `T`. It matches all the 
+is a container of objects of type `T`. 
+
+This container matches all the 
 standard requirements for reversible containers, except that 
 the complexity of its iterator increment and decrement operations 
 is not always guaranteed to be amortized constant time. 
@@ -97,7 +99,16 @@ In addition, in a way inspired from the Boost.Intrusive containers, it is
 possible to construct iterators from references to values in containers 
 using the `iterator_to` and `s_iterator_to` functions. 
 
-
+The objects stored in the `Compact_container` can optionally store an 
+"erase counter". If it exists, i.e.\ if the object is a model of the
+`ObjectWithEraseCounter` concept, each time an object is erased from the 
+container, the erase counter of the object will be incremented.
+For example, this erase counter can be exploited using the `CC_safe_handle` 
+helper class, so that one can know if a handle is still pointing to the same
+element.
+Note that this is meaningful only because the 
+`CGAL::Compact_container` doesn't 
+deallocate elements until the destruction or clear() of the container.
 
 \cgalHeading{Parameters}
 
@@ -479,7 +490,8 @@ size_type size() const;
 /// \name Access Member Functions 
 /// @{ 
 /*!
-returns the maximum possible size of the container `cc`. 
+returns the maximum possible size of the container `cc`.
+This is the allocator's max_size value.
 */ 
 size_type max_size() const; 
 
@@ -497,6 +509,41 @@ reallocation.
 size_type capacity() const; 
 
 
+/// \name Access Member Functions 
+/// @{ 
+/*!
+returns true if the element at position `i` in the container is used
+(i.e.\ valid).
+
+\pre \f$ 0 \leq \f$ `i` \f$ < \f$ `capacity()`
+*/
+
+bool is_used(size_type i) const;
+
+/// @} 
+
+/// \name Access Member Functions 
+/// @{ 
+/*!
+returns the element at pos `i` in the container. 
+
+\pre `is_used(i) == true` and \f$ 0 \leq \f$ `i` \f$ < \f$ `capacity()`
+*/ 
+
+const T& operator[] (size_type i) const;
+
+/// @}
+
+
+/// \name Access Member Functions 
+/// @{ 
+/*!
+returns the element at pos `i` in the container. 
+
+\pre `is_used(i) == true` and \f$ 0 \leq \f$ `i` \f$ < \f$ `capacity()`
+*/ 
+
+T& operator[] (size_type i);
 
 /// @} 
 

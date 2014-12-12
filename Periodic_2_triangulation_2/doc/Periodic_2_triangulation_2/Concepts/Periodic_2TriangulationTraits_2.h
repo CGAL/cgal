@@ -42,38 +42,38 @@ public:
   The point type. It must be a model of
   `Kernel::Point_2`.
   */
-  typedef Hidden_type Point_2;
+  typedef unspecified_type Point_2;
 
   /*!
   The segment type. It must be a model
   of `Kernel::Segment_2`.
   */
-  typedef Hidden_type Segment_2;
+  typedef unspecified_type Segment_2;
 
   /*!
   The vector type. It must be a model
   of `Kernel::Vector_2`.
   */
-  typedef Hidden_type Vector_2;
+  typedef unspecified_type Vector_2;
 
   /*!
   The triangle type. It must be a
   model of `Kernel::Triangle_2`.
   */
-  typedef Hidden_type Triangle_2;
+  typedef unspecified_type Triangle_2;
 
   /*!
   A type representing an
   axis-aligned rectangle. It must be a model of
   `Kernel::Iso_rectangle_2`.
   */
-  typedef Hidden_type Iso_rectangle_2;
+  typedef unspecified_type Iso_rectangle_2;
 
   /*!
   The offset type. It must
   be a model of the concept `Periodic_2Offset_2`.
   */
-  typedef Hidden_type Periodic_2_offset_2;
+  typedef unspecified_type Periodic_2_offset_2;
 
 /// @}
 
@@ -94,7 +94,7 @@ public:
   the two point-offset pairs are equal. Otherwise it must return a
   consistent order for any two points. \pre `p`, `q` lie inside the domain.
   */
-  typedef Hidden_type Compare_x_2;
+  typedef unspecified_type Compare_x_2;
 
   /*!
 
@@ -110,7 +110,7 @@ public:
   the two point-offset pairs are equal. Otherwise it must return a
   consistent order for any two points. \pre `p`, `q` lie inside the domain.
   */
-  typedef Hidden_type Compare_y_2;
+  typedef unspecified_type Compare_y_2;
 
   /*!
 
@@ -126,7 +126,7 @@ public:
   This predicate is only necessary if the insert function with a range
   of points (using Hilbert sorting) is used.
   */
-  typedef Hidden_type Less_x_2;
+  typedef unspecified_type Less_x_2;
 
   /*!
   Predicate object. Provides
@@ -143,7 +143,7 @@ public:
   points (using Hilbert sorting) is used.
 
   */
-  typedef Hidden_type Less_y_2;
+  typedef unspecified_type Less_y_2;
 
   /*!
   A predicate object that must provide the function operators
@@ -162,7 +162,7 @@ public:
   defined by `(p,o_p)(q,o_q)` on the left side, on the right side
   or on the line.
   */
-  typedef Hidden_type Orientation_2;
+  typedef unspecified_type Orientation_2;
 
 /// @}
 
@@ -181,7 +181,7 @@ public:
   \pre `p` lies inside the domain.
 
   */
-  typedef Hidden_type Construct_point_2;
+  typedef unspecified_type Construct_point_2;
 
   /*!
   A constructor object for
@@ -196,7 +196,7 @@ public:
   which constructs a segment from the points `(p,o_p)` and `(q,o_q)`.
 
   */
-  typedef Hidden_type Construct_segment_2;
+  typedef unspecified_type Construct_segment_2;
 
   /*!
   A constructor object for
@@ -211,7 +211,7 @@ public:
   which constructs a triangle from the three points `(p,o_p)`,
   `(q,o_q)` and `(r,o_r)`.
   */
-  typedef Hidden_type Construct_triangle_2;
+  typedef unspecified_type Construct_triangle_2;
 
 /// @}
 

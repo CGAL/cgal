@@ -1,3 +1,4 @@
+#define BOOST_FILESYSTEM_VERSION 2
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
@@ -14,7 +15,7 @@
 #include <sstream>
 #include <stdlib.h>
 #include <algorithm>
-#include <tr1/memory>
+#include <boost/tr1/memory.hpp>
 
 #include "thread_queue.h"
 
@@ -408,32 +409,32 @@ void save_histogram(const std::string& filename,
 		const Point_3& p3 = cit->vertex(3)->point();
 		
 		double a = CGAL::to_double(CGAL::abs(CGAL::Mesh_3::dihedral_angle(p0,p1,p2,p3)));
-		histo[std::floor(a)] += 1;
+		histo[static_cast<int>(std::floor(a))] += 1;
     min_value = (std::min)(min_value, a);
     max_value = (std::max)(max_value, a);
 
 		a = CGAL::to_double(CGAL::abs(CGAL::Mesh_3::dihedral_angle(p0, p2, p1, p3)));
-		histo[std::floor(a)] += 1;
+		histo[static_cast<int>(std::floor(a))] += 1;
     min_value = (std::min)(min_value, a);
     max_value = (std::max)(max_value, a);
 
 		a = CGAL::to_double(CGAL::abs(CGAL::Mesh_3::dihedral_angle(p0, p3, p1, p2)));
-		histo[std::floor(a)] += 1;
+		histo[static_cast<int>(std::floor(a))] += 1;
     min_value = (std::min)(min_value, a);
     max_value = (std::max)(max_value, a);
 
 		a = CGAL::to_double(CGAL::abs(CGAL::Mesh_3::dihedral_angle(p1, p2, p0, p3)));
-		histo[std::floor(a)] += 1;
+		histo[static_cast<int>(std::floor(a))] += 1;
     min_value = (std::min)(min_value, a);
     max_value = (std::max)(max_value, a);
 
 		a = CGAL::to_double(CGAL::abs(CGAL::Mesh_3::dihedral_angle(p1, p3, p0, p2)));
-		histo[std::floor(a)] += 1;
+		histo[static_cast<int>(std::floor(a))] += 1;
     min_value = (std::min)(min_value, a);
     max_value = (std::max)(max_value, a);
 
 		a = CGAL::to_double(CGAL::abs(CGAL::Mesh_3::dihedral_angle(p2, p3, p0, p1)));
-		histo[std::floor(a)] += 1;
+		histo[static_cast<int>(std::floor(a))] += 1;
     min_value = (std::min)(min_value, a);
     max_value = (std::max)(max_value, a);
 
@@ -570,7 +571,7 @@ void mesh(const std::string& data, const std::string& output_dir, const int nb_t
     //Load the domain
     std::stringstream cout_loc;
     cout_loc << "+ [" << filename << "] Create domain...";
-    std::tr1::shared_ptr<Domain_builder<Domain> > pdomain_builder(new Domain_builder<Domain>(it->string()));     
+    std::tr1::shared_ptr<Domain_builder<Domain> > pdomain_builder(new Domain_builder<Domain>(it->path().string()));
     cout_loc << "done (" << timer.time() << "s)\n";
     std::cout << cout_loc.str();
     

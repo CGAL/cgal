@@ -43,21 +43,26 @@ Meshing_thread* cgal_code_mesh_3(const Polyhedron*,
                                  const double sizing,
                                  const double approx,
                                  const double tets_sizing,
-                                 const double tet_shape);
+                                 const double tet_shape,
+                                 const bool protect_features);
 
+#ifdef CGAL_MESH_3_DEMO_ACTIVATE_SEGMENTED_IMAGES
 Meshing_thread* cgal_code_mesh_3(const Image*,
                                  const double angle,
                                  const double sizing,
                                  const double approx,
                                  const double tets_sizing,
                                  const double tet_shape);
+#endif
 
+#ifdef CGAL_MESH_3_DEMO_ACTIVATE_IMPLICIT_FUNCTIONS
 Meshing_thread* cgal_code_mesh_3(const Implicit_function_interface*,
                                  const double angle,
                                  const double sizing,
                                  const double approx,
                                  const double tets_sizing,
                                  const double tet_shape);
+#endif
 
 double get_approximate(double d, int precision, int& decimals);
 
@@ -155,6 +160,7 @@ void Mesh_3_plugin::mesh_3()
   QDialog dialog(mw);
   Ui::Meshing_dialog ui;
   ui.setupUi(&dialog);
+  ui.sharpFeaturesGroup->setVisible(poly_item != 0);
   connect(ui.buttonBox, SIGNAL(accepted()),
           &dialog, SLOT(accept()));
   connect(ui.buttonBox, SIGNAL(rejected()),
@@ -218,7 +224,7 @@ void Mesh_3_plugin::mesh_3()
   const double facet_sizing = !ui.noFacetSizing->isChecked() ? 0 : ui.facetSizing->value();
   const double radius_edge = !ui.noTetShape->isChecked() ? 0 : ui.tetShape->value();
   const double tet_sizing = !ui.noTetSizing->isChecked() ? 0  : ui.tetSizing->value();
-    
+  const bool protect_features = ui.protect->isChecked();
 
   // -----------------------------------
   // Dispatch mesh process
@@ -239,9 +245,11 @@ void Mesh_3_plugin::mesh_3()
 
     thread = cgal_code_mesh_3(pMesh,
                               angle, facet_sizing, approx,
-                              tet_sizing, radius_edge);
+                              tet_sizing, radius_edge,
+                              protect_features);
   }
-  // Image
+  // Image  
+#ifdef CGAL_MESH_3_DEMO_ACTIVATE_SEGMENTED_IMAGES
   else if( NULL != image_item )
   {
     const Image* pImage = image_item->image();
@@ -255,7 +263,10 @@ void Mesh_3_plugin::mesh_3()
                               angle, facet_sizing, approx,
                               tet_sizing, radius_edge);
   }
+#endif 
+  
   // Function
+#ifdef CGAL_MESH_3_DEMO_ACTIVATE_IMPLICIT_FUNCTIONS
   else if( NULL != function_item )
   {
     const Implicit_function_interface* pFunction = function_item->function();
@@ -270,6 +281,7 @@ void Mesh_3_plugin::mesh_3()
                               tet_sizing, radius_edge);
     
   }
+#endif
 
   if ( NULL == thread )
   {
@@ -346,10 +358,19 @@ meshing_done(Meshing_thread* thread)
     str.append(QString("( %1 )<br>").arg(param));
   }
   
+  Scene_c3t3_item* result_item = thread->item();
+  const Scene_item::Bbox& bbox = result_item->bbox();
+  str.append(QString("BBox (x,y,z): [ %1, %2 ], [ %3, %4 ], [ %5, %6 ], <br>")
+    .arg(bbox.xmin)
+    .arg(bbox.xmax)
+    .arg(bbox.ymin)
+    .arg(bbox.ymax)
+    .arg(bbox.zmin)
+    .arg(bbox.zmax));
+  
   msg->information(qPrintable(str));
   
   // Treat new c3t3 item
-  Scene_c3t3_item* result_item = thread->item();
   treat_result(*source_item_, *result_item);
   
   // close message box

@@ -1,6 +1,8 @@
 #!/bin/sh
 
-$2 -nodoc $1
+set -e
+
+$2 -q -nodoc $1
 mv ${1%.bib}.html tmp_array_bib.html
 mv ${1%.bib}_bib.html how_to_cite.html
 

@@ -11,8 +11,7 @@ export PATH=$PATH:'/cygdrive/c/CGAL/CGAL-I/scripts:/cygdrive/c/CGAL/CGAL-I/devel
 
 #Header only libraries
 export BOOST_INCLUDEDIR="C:\3rdPartyLibs\boost_${BOOST_VERSION}"
-#export EIGEN3_DIR="C:\3rdPartyLibs\Eigen-3.1.2"
-export EIGEN3_DIR="C:\3rdPartyLibs\eigen-eigen-36bf2ceaf8f5"
+export EIGEN3_DIR="C:\3rdPartyLibs\eigen-hg.git"
 export ESBTL_DIR="C:\3rdPartyLibs\esbtl"
 
 #paths depending on the architecture

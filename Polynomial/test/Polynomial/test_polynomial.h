@@ -1,6 +1,6 @@
 
 #include <CGAL/basic.h>
-
+#include <CGAL/use.h>
 #include <CGAL/Test/_test_algebraic_structure.h>
 #include <CGAL/Test/_test_real_embeddable.h>
 
@@ -19,13 +19,13 @@
 #define CGAL_DEFINE_TYPES_FROM_AK(AK)                           \
     typedef typename AK::Integer Integer;                       \
     typedef typename AK::Rational Rational;                     \
-    typedef typename AK::Field_with_sqrt Field_with_sqrt;       \
+    typedef typename AK::Field_with_sqrt Field_with_sqrt;  CGAL_USE_TYPE(Field_with_sqrt); \
     typedef CGAL::Polynomial<Integer> Poly_int1;                \
     typedef CGAL::Polynomial<Poly_int1> Poly_int2;              \
-    typedef CGAL::Polynomial<Poly_int2> Poly_int3;              \
+    typedef CGAL::Polynomial<Poly_int2> Poly_int3; CGAL_USE_TYPE(Poly_int3); \
     typedef CGAL::Polynomial<Rational> Poly_rat1;               \
     typedef CGAL::Polynomial<Poly_rat1> Poly_rat2;              \
-    typedef CGAL::Polynomial<Poly_rat2> Poly_rat3;             
+    typedef CGAL::Polynomial<Poly_rat2> Poly_rat3;  CGAL_USE_TYPE(Poly_rat3);
    
 
 // TODO: copied from number_type_utils.h
@@ -586,9 +586,9 @@ void psqff(){
         typedef CGAL::Polynomial<NT> POLY_1; 
         
         // monic factors 
-        POLY_1 a1(NT("4352435"), NT("4325245"));
-        POLY_1 b1(NT("123"), NT("432235"),NT("43324252"));
-        POLY_1 c1(NT("12324"), NT("25332235"),NT("24657252"));
+        POLY_1 a1(NT(std::string("4352435")), NT(std::string("4325245")));
+        POLY_1 b1(NT(std::string("123")), NT(std::string("432235")),NT(std::string("43324252")));
+        POLY_1 c1(NT(std::string("12324")), NT(std::string("25332235")),NT(std::string("24657252")));
  
         test_sqff_utcf(a1,b1,c1);
     }{
@@ -596,9 +596,9 @@ void psqff(){
         typedef CGAL::Polynomial<NT> POLY_1; 
         
         // monic factors 
-        POLY_1 a1(NT("4352435"), NT("4325245"));
-        POLY_1 b1(NT("123"), NT("432235"),NT("43324252"));
-        POLY_1 c1(NT("12324"), NT("25332235"),NT("24657252"));
+        POLY_1 a1(NT(std::string("4352435")), NT(std::string("4325245")));
+        POLY_1 b1(NT(std::string("123")), NT(std::string("432235")),NT(std::string("43324252")));
+        POLY_1 c1(NT(std::string("12324")), NT(std::string("25332235")),NT(std::string("24657252")));
  
         test_sqff_utcf(a1,b1,c1);
     }
@@ -989,32 +989,20 @@ void test_interoperable_at(){
     typedef int Coefficient_type;
     typedef CGAL::Polynomial<Coefficient_type>    Poly_1;
     typedef CGAL::Polynomial<Poly_1> Poly_2;
-    typedef CGAL::Polynomial<Poly_2> Poly_3;
-    typedef CGAL::Polynomial<Poly_3> Poly_4;
     test_interoperable_poly<Poly_1>();
     test_interoperable_poly<Poly_2>();
-    // test_interoperable_poly<Poly_3>();
-    // test_interoperable_poly<Poly_4>();
   }{
     typedef Integer Coefficient_type;
     typedef CGAL::Polynomial<Coefficient_type>    Poly_1;
     typedef CGAL::Polynomial<Poly_1> Poly_2;
-    typedef CGAL::Polynomial<Poly_2> Poly_3;
-    typedef CGAL::Polynomial<Poly_3> Poly_4;
     test_interoperable_poly<Poly_1>();
     test_interoperable_poly<Poly_2>();
-    // test_interoperable_poly<Poly_3>();
-    // test_interoperable_poly<Poly_4>();
   }{
     typedef EXT Coefficient_type;
     typedef CGAL::Polynomial<Coefficient_type>    Poly_1;
     typedef CGAL::Polynomial<Poly_1> Poly_2;
-    typedef CGAL::Polynomial<Poly_2> Poly_3;
-    typedef CGAL::Polynomial<Poly_3> Poly_4;
     test_interoperable_poly<Poly_1>();
     test_interoperable_poly<Poly_2>();
-    // test_interoperable_poly<Poly_3>();
-    // test_interoperable_poly<Poly_4>();
   }
 }
 

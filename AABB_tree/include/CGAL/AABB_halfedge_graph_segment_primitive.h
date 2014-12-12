@@ -23,8 +23,7 @@
 #define CGAL_AABB_HALFEDGE_GRAPH_SEGMENT_PRIMITIVE_H
 
 #include <CGAL/AABB_primitive.h>
-#include <CGAL/Polyhedron_3.h>
-#include <CGAL/Polyhedron_3_property_map.h>
+#include <CGAL/internal/AABB_tree/Halfedge_and_face_graph_property_maps.h>
 
 #include <iterator>
 #include <boost/mpl/and.hpp>
@@ -121,18 +120,18 @@ public:
   is available with `vppm` set to `boost::get(vertex_point, graph)`.
   */
   template <class Iterator>
-  AABB_halfedge_graph_segment_primitive(Iterator it, HalfedgeGraph& graph, VertexPointPMap vppm)
+  AABB_halfedge_graph_segment_primitive(Iterator it, const HalfedgeGraph& graph, VertexPointPMap vppm)
     : Base( Id_(*it),
-            Segment_property_map(&graph, vppm),
-            Point_property_map(&graph, vppm) )
+            Segment_property_map(const_cast<HalfedgeGraph*>(&graph), vppm),
+            Point_property_map(const_cast<HalfedgeGraph*>(&graph), vppm) )
   {}
 
   #ifndef DOXYGEN_RUNNING
   template <class Iterator>
-  AABB_halfedge_graph_segment_primitive(Iterator it, HalfedgeGraph& graph)
+  AABB_halfedge_graph_segment_primitive(Iterator it, const HalfedgeGraph& graph)
     : Base( Id_(*it),
-            Segment_property_map(&graph),
-            Point_property_map(&graph) ){}
+            Segment_property_map(const_cast<HalfedgeGraph*>(&graph)),
+            Point_property_map(const_cast<HalfedgeGraph*>(&graph)) ){}
   #endif
 
   /// \internal
@@ -140,9 +139,16 @@ public:
   /// \internal
   static
   typename Cstr_shared_data::Shared_data
-  construct_shared_data(HalfedgeGraph& graph)
+  construct_shared_data(const HalfedgeGraph& graph)
   {
-    return Cstr_shared_data::construct_shared_data(graph);
+    return Cstr_shared_data::construct_shared_data(const_cast<HalfedgeGraph&>(graph));
+  }
+
+  static
+  typename Cstr_shared_data::Shared_data
+  construct_shared_data(const HalfedgeGraph& graph, const VertexPointPMap& vpm)
+  {
+    return Cstr_shared_data::construct_shared_data(const_cast<HalfedgeGraph&>(graph), vpm);
   }
 };
 

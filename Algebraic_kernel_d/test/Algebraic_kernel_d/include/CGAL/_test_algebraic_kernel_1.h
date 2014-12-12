@@ -60,6 +60,7 @@ void test_algebraic_kernel_1(const AlgebraicKernel_d_1& ak_1){
     typedef Algebraic_structure_traits<Coefficient> CAST;
     typedef typename CAST::Is_exact Is_exact;
     typedef typename CAST::Algebraic_category Algebraic_category;
+    CGAL_USE_TYPE(Algebraic_category);
     test_ak_polynomial_traits_d<Is_exact,PT>()(PT());
 
     // test not possible due to bug in test_algebraic_structure

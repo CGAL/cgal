@@ -28,7 +28,8 @@
 #define CGAL_LABELED_IMAGE_MESH_DOMAIN_3_H
 
 
-#include <CGAL/Mesh_3/Labeled_mesh_domain_3.h>
+#include <CGAL/Random.h>
+#include <CGAL/Labeled_mesh_domain_3.h>
 #include <CGAL/Mesh_3/Image_to_labeled_function_wrapper.h>
 
 
@@ -43,10 +44,10 @@ template<class Image,
          class BGT,
          class Wrapper = Mesh_3::Image_to_labeled_function_wrapper<Image, BGT> >
 class Labeled_image_mesh_domain_3
-: public Mesh_3::Labeled_mesh_domain_3<Wrapper, BGT>
+: public Labeled_mesh_domain_3<Wrapper, BGT>
 {
 public:
-  typedef Mesh_3::Labeled_mesh_domain_3<Wrapper, BGT> Base;
+  typedef Labeled_mesh_domain_3<Wrapper, BGT> Base;
 
   typedef typename Base::Sphere_3 Sphere_3;
   typedef typename Base::FT FT;
@@ -55,10 +56,12 @@ public:
 
   /// Constructor
   Labeled_image_mesh_domain_3(const Image& image,
-                              const FT& error_bound = FT(1e-3))
+                              const FT& error_bound = FT(1e-3),
+                              CGAL::Random* p_rng = NULL)
     : Base(Wrapper(image),
            compute_bounding_box(image),
-           error_bound)
+           error_bound,
+           p_rng)
   {}
 
   /// Destructor

@@ -69,7 +69,19 @@ void Viewer::init()
          tr("Cancel insertion in <u>Input-Point</u> mode;<br>")
          + tr("Cancel current selection in <u>Select</u> mode") );
   setKeyDescription( Qt::Key_Delete, tr("Delete selected vertices in <u>Select</u> mode") );
-
+#if QGLVIEWER_VERSION >= 0x020500
+  setMouseBindingDescription(Qt::NoModifier, Qt::LeftButton,
+         tr("Hold to move new point in <u>Input-Point</u> mode;<br>")
+         + tr("Hold to move a vertex in <u>Move</u> mode") );
+  setMouseBindingDescription(Qt::ShiftModifier, Qt::LeftButton,
+         tr("Click to insert a vertex in <u>Input-Vertex</u> mode;<br>")
+         + tr("Click to insert a point in <u>Input-Point</u> mode;<br>")
+         + tr("Click or Drag to select multiple points in <u>Select</u> mode;<br>")
+         + tr("Click to place a query point in <u>Find-Nearest-Neighbor</u> mode;<br>")
+         + tr("Click to place a query point in <u>Show-Empty-Sphere</u> mode") );
+  setMouseBindingDescription(Qt::ControlModifier, Qt::LeftButton,
+         tr("Drag to add vertices to current selection in <u>Select</u> mode") );
+#else
   setMouseBindingDescription( Qt::LeftButton,
          tr("Hold to move new point in <u>Input-Point</u> mode;<br>")
          + tr("Hold to move a vertex in <u>Move</u> mode") );
@@ -81,6 +93,7 @@ void Viewer::init()
          + tr("Click to place a query point in <u>Show-Empty-Sphere</u> mode") );
   setMouseBindingDescription( Qt::CTRL + Qt::LeftButton,
          tr("Drag to add vertices to current selection in <u>Select</u> mode") );
+#endif
 }
 
 QString Viewer::helpString() const
@@ -979,8 +992,8 @@ void Viewer::wheelEvent(QWheelEvent *event)
     //  note: most mouse types work in steps of 15 degrees
     //  positive value: rotate forwards away from the user;
     //  negative value: rotate backwards toward the user.
-    m_fRadius += (event->delta()*1. / m_iStep ); // inc-/decrease by 0.1 per step
-    if( m_fRadius < 0.1 )
+    m_fRadius += (event->delta()*1.f / m_iStep ); // inc-/decrease by 0.1 per step
+    if( m_fRadius < 0.1f )
       m_fRadius = 0.1f;
 
     // redraw
@@ -993,8 +1006,8 @@ void Viewer::wheelEvent(QWheelEvent *event)
     //  positive value: rotate forwards away from the user;
     //  negative value: rotate backwards toward the user.
   	float origR = m_fRadius;
-    m_fRadius += (event->delta()*1. / m_iStep ); // inc-/decrease by 0.1 per step
-    if( m_fRadius < 0.1 )
+    m_fRadius += (event->delta()*1.f / m_iStep ); // inc-/decrease by 0.1 per step
+    if( m_fRadius < 0.1f )
       m_fRadius = 0.1f;
     // update the new point and its conflict region
     if( m_hasNewPt ) {
@@ -1011,8 +1024,8 @@ void Viewer::wheelEvent(QWheelEvent *event)
   // resize the trackball when moving a point
   else if( m_curMode == MOVE && modifiers == Qt::SHIFT && m_isMoving ) {
   	float origR = m_fRadius;
-    m_fRadius += (event->delta()*1. / m_iStep ); // inc-/decrease by 0.1 per step
-    if( m_fRadius < 0.1 )
+    m_fRadius += (event->delta()*1.f / m_iStep ); // inc-/decrease by 0.1 per step
+    if( m_fRadius < 0.1f )
       m_fRadius = 0.1f;
     origR = m_fRadius / origR;
     Point_3 pt = m_pScene->m_vhArray.at( m_vidMoving )->point();

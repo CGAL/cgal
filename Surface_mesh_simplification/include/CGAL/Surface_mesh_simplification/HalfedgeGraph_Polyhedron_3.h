@@ -21,9 +21,6 @@
 
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
-#include <CGAL/boost/graph/halfedge_graph_traits_Polyhedron_3.h>
-#include <CGAL/boost/graph/properties_Polyhedron_3.h>
-#include <CGAL/Surface_mesh_simplification/halfedge_collapse_Polyhedron_3.h>
 
 #endif // CGAL_SURFACE_MESH_SIMPLIFICATION_HALFEDGEGRAPH_POLYHEDRON_3_H
 // EOF //

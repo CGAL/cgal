@@ -1,3 +1,5 @@
+#define CGAL_MESH_3_VERBOSE
+
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <CGAL/Mesh_triangulation_3.h>
@@ -14,7 +16,15 @@ typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef CGAL::Labeled_image_mesh_domain_3<CGAL::Image_3,K> Mesh_domain;
 
 // Triangulation
-typedef CGAL::Mesh_triangulation_3<Mesh_domain>::type Tr;
+#ifdef CGAL_CONCURRENT_MESH_3
+  typedef CGAL::Mesh_triangulation_3<
+    Mesh_domain,
+    CGAL::Kernel_traits<Mesh_domain>::Kernel, // Same as sequential
+    CGAL::Parallel_tag                        // Tag to activate parallelism
+  >::type Tr;
+#else
+  typedef CGAL::Mesh_triangulation_3<Mesh_domain>::type Tr;
+#endif
 typedef CGAL::Mesh_complex_3_in_triangulation_3<Tr> C3t3;
 
 // Criteria

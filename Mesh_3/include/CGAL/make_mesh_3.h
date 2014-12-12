@@ -25,6 +25,7 @@
 #ifndef CGAL_MAKE_MESH_3_H
 #define CGAL_MAKE_MESH_3_H
 
+#include <CGAL/Mesh_3/config.h>
 #include <CGAL/Mesh_3/global_parameters.h>
 #include <CGAL/refine_mesh_3.h>
 #include <CGAL/tags.h>
@@ -113,7 +114,15 @@ namespace parameters {
   // -----------------------------------
   // Parameters
   // -----------------------------------
+
+// see <CGAL/config.h>
+CGAL_PRAGMA_DIAG_PUSH
+// see <CGAL/Mesh_3/config.h>
+CGAL_MESH_3_IGNORE_BOOST_PARAMETER_NAME_WARNINGS
+
   BOOST_PARAMETER_NAME( features_param )
+
+CGAL_PRAGMA_DIAG_POP
   
 } // end namespace parameters::internal
 
@@ -178,7 +187,7 @@ init_c3t3_with_features(C3T3& c3t3,
 {
   typedef typename MeshCriteria::Edge_criteria Edge_criteria;
   typedef Edge_criteria_sizing_field_wrapper<Edge_criteria> Sizing_field;
-    
+
   CGAL::Mesh_3::Protect_edges_sizing_field<C3T3,MeshDomain,Sizing_field>     
     protect_edges(c3t3, domain, Sizing_field(criteria.edge_criteria_object()));
   
@@ -393,6 +402,10 @@ void make_mesh_3_impl(C3T3& c3t3,
                       const parameters::internal::Mesh_3_options& 
                         mesh_options = parameters::internal::Mesh_3_options())
 {
+#ifdef CGAL_MESH_3_INITIAL_POINTS_NO_RANDOM_SHOOTING
+  CGAL::default_random = CGAL::Random(0);
+#endif
+
   // Initialize c3t3
   internal::Mesh_3::C3t3_initializer< 
     C3T3,

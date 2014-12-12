@@ -177,7 +177,9 @@ void AT_coercion_test_for_cgal_types_rat(){
     
     typedef CGAL::Sqrt_extension<Integer  , Integer> Extn_1;  
     typedef CGAL::Sqrt_extension<Extn_1   , Extn_1 > Extn_2n;
+    CGAL_USE_TYPE(Extn_2n);
     typedef CGAL::Sqrt_extension<Extn_1   , Integer> Extn_2d;
+    CGAL_USE_TYPE(Extn_2d);
 
     typedef CGAL::Sqrt_extension<Rational  , Integer> Extn_rat_int; 
     CGAL::test_explicit_interoperable_from_to<int         ,Extn_rat_int>();

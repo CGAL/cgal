@@ -63,7 +63,7 @@ classes that are described in the reference pages.
 - `CGAL::Orthogonal_k_neighbor_search<Traits, OrthogonalDistance, Splitter, SpatialTree>`
 - `CGAL::Kd_tree<Traits, Splitter, UseExtendedNode>`
 
-## Range Query Item Classes ##
+## %Range Query Item Classes ##
 - `CGAL::Fuzzy_iso_box<Traits>`
 - `CGAL::Fuzzy_sphere<Traits>`
 
@@ -79,7 +79,7 @@ classes that are described in the reference pages.
 - `CGAL::Euclidean_distance_sphere_point<Traits>`
 - `CGAL::Manhattan_distance_iso_box_point<Traits>`
 - `CGAL::Weighted_Minkowski_distance<Traits>`
-- `CGAL::Distance_for_point_adapter<Key,PointPropertyMap,Base_distance>`
+- `CGAL::Distance_adapter<Key,PointPropertyMap,Base_distance>`
 
 ## %Splitter Classes ##
 - `CGAL::Sliding_midpoint<Traits, SpatialSeparator>`

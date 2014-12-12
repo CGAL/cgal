@@ -1,4 +1,5 @@
 // Copyright (c) 2003,2004,2007-2010  INRIA Sophia-Antipolis (France).
+// Copyright (c) 2014  GeometryFactory Sarl (France)
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
@@ -30,6 +31,8 @@
 
 #include <CGAL/memory.h>
 #include <CGAL/iterator.h>
+#include <CGAL/CC_safe_handle.h>
+#include <CGAL/Time_stamper.h>
 
 #include <boost/mpl/if.hpp>
 
@@ -82,9 +85,78 @@
 
 namespace CGAL {
 
+#define CGAL_GENERATE_MEMBER_DETECTOR(X)                                             \
+template<typename T> class has_##X {                                          \
+    struct Fallback { int X; };                                               \
+    struct Derived : T, Fallback { };                                         \
+                                                                              \
+    template<typename U, U> struct Check;                                     \
+                                                                              \
+    typedef char ArrayOfOne[1];                                               \
+    typedef char ArrayOfTwo[2];                                               \
+                                                                              \
+    template<typename U> static ArrayOfOne & func(                            \
+                                            Check<int Fallback::*, &U::X> *); \
+    template<typename U> static ArrayOfTwo & func(...);                       \
+  public:                                                                     \
+    typedef has_##X type;                                                     \
+    enum { value = sizeof(func<Derived>(0)) == 2 };                           \
+} // semicolon is after the macro call
+
 #define CGAL_INIT_COMPACT_CONTAINER_BLOCK_SIZE 14
-#define CGAL_INCREMENT_COMPACT_CONTAINER_BLOCK_SIZE 16 
-  
+#define CGAL_INCREMENT_COMPACT_CONTAINER_BLOCK_SIZE 16
+
+template<unsigned int first_block_size_, unsigned int block_size_increment>
+struct Addition_size_policy
+{
+  static const unsigned int first_block_size = first_block_size_;
+
+  template<typename Compact_container>
+  static void increase_size(Compact_container& cc)
+  { cc.block_size += block_size_increment; }
+
+  template<typename Compact_container>
+  static void get_index_and_block(typename Compact_container::size_type i,
+                                  typename Compact_container::size_type& index,
+                                  typename Compact_container::size_type& block)
+  {
+    typedef typename Compact_container::size_type ST;
+    const ST TWO_M_N = 2*first_block_size_ - block_size_increment;
+    ST delta = TWO_M_N*TWO_M_N + 8*block_size_increment*i;
+    block= (static_cast<ST>(std::sqrt(static_cast<double>(delta))) - TWO_M_N)
+      / (2*block_size_increment);
+
+    if ( block==0 )
+    { index = i + 1; }
+    else
+    {
+      const typename Compact_container::size_type first_element_in_block =
+        block*(first_block_size_+ (block_size_increment*(block - 1))/2);
+
+      index=i - first_element_in_block + 1;
+    }
+  }
+};
+
+template<unsigned int k>
+struct Constant_size_policy
+{
+  static const unsigned int first_block_size = k;
+
+  template<typename Compact_container>
+  static void increase_size(Compact_container& /*cc*/)
+  {}
+
+  template<typename Compact_container>
+  static void get_index_and_block(typename Compact_container::size_type i,
+                                  typename Compact_container::size_type& index,
+                                  typename Compact_container::size_type& block)
+  {
+    block=i/k;
+    index=(i%k)+1;
+  }
+};
+
 // The following base class can be used to easily add a squattable pointer
 // to a class (maybe you loose a bit of compactness though).
 // TODO : Shouldn't adding these bits be done automatically and transparently,
@@ -110,16 +182,69 @@ struct Compact_container_traits {
 namespace internal {
   template < class DSC, bool Const >
   class CC_iterator;
+
+  CGAL_GENERATE_MEMBER_DETECTOR(increment_erase_counter);
+
+  // A basic "no erase counter" strategy
+  template <bool Has_erase_counter_tag>
+  class Erase_counter_strategy {
+  public:
+    // Do nothing
+    template <typename Element>
+    static unsigned int erase_counter(const Element &) { return 0; }
+    template <typename Element>
+    static void set_erase_counter(Element &, unsigned int) {}
+    template <typename Element>
+    static void increment_erase_counter(Element &) {}
+  };
+
+
+  // A strategy managing an internal counter
+  template <>
+  class Erase_counter_strategy<true>
+  {
+  public:
+    template <typename Element>
+    static unsigned int erase_counter(const Element &e)
+    {
+      return e.erase_counter();
+    }
+
+    template <typename Element>
+    static void set_erase_counter(Element &e, unsigned int c)
+    {
+      e.set_erase_counter(c);
+    }
+
+    template <typename Element>
+    static void increment_erase_counter(Element &e)
+    {
+      e.increment_erase_counter();
+    }
+  };
 }
 
-template < class T, class Allocator_ = Default >
+template < class T,
+           class Allocator_ = Default,
+           class Increment_policy_ = Default,
+           class TimeStamper_ = Default >
 class Compact_container
 {
   typedef Allocator_                                Al;
   typedef typename Default::Get< Al, CGAL_ALLOCATOR(T) >::type Allocator;
-  typedef Compact_container <T, Al>                 Self;
+  typedef Increment_policy_                         Ip;
+  typedef typename Default::Get< Ip, 
+            Addition_size_policy<CGAL_INIT_COMPACT_CONTAINER_BLOCK_SIZE,
+                             CGAL_INCREMENT_COMPACT_CONTAINER_BLOCK_SIZE> 
+          >::type                                   Increment_policy;
+  typedef TimeStamper_                              Ts;
+  typedef Compact_container <T, Al, Ip, Ts>         Self;
   typedef Compact_container_traits <T>              Traits;
 public:
+  typedef typename Default::Get< TimeStamper_,
+                                 CGAL::Time_stamper_impl<T> >::type
+                                                    Time_stamper_impl;
+
   typedef T                                         value_type;
   typedef Allocator                                 allocator_type;
   typedef typename Allocator::reference             reference;
@@ -128,24 +253,30 @@ public:
   typedef typename Allocator::const_pointer         const_pointer;
   typedef typename Allocator::size_type             size_type;
   typedef typename Allocator::difference_type       difference_type;
-  typedef internal::CC_iterator<Self, false>        iterator;
-  typedef internal::CC_iterator<Self, true>         const_iterator;
+  typedef internal::CC_iterator<Self, false> iterator;
+  typedef internal::CC_iterator<Self, true>  const_iterator;
   typedef std::reverse_iterator<iterator>           reverse_iterator;
   typedef std::reverse_iterator<const_iterator>     const_reverse_iterator;
 
   friend class internal::CC_iterator<Self, false>;
   friend class internal::CC_iterator<Self, true>;
 
+  template<unsigned int first_block_size_, unsigned int block_size_increment>
+    friend struct Addition_size_policy;
+  template<unsigned int k> friend struct Constant_size_policy;
+
   explicit Compact_container(const Allocator &a = Allocator())
   : alloc(a)
+  , time_stamper(new Time_stamper_impl())
   {
-    init();
+    init ();
   }
 
   template < class InputIterator >
   Compact_container(InputIterator first, InputIterator last,
                     const Allocator & a = Allocator())
   : alloc(a)
+  , time_stamper(new Time_stamper_impl())
   {
     init();
     std::copy(first, last, CGAL::inserter(*this));
@@ -154,9 +285,11 @@ public:
   // The copy constructor and assignment operator preserve the iterator order
   Compact_container(const Compact_container &c)
   : alloc(c.get_allocator())
+  , time_stamper(new Time_stamper_impl())
   {
     init();
     block_size = c.block_size;
+    *time_stamper = *c.time_stamper;
     std::copy(c.begin(), c.end(), CGAL::inserter(*this));
   }
 
@@ -172,6 +305,39 @@ public:
   ~Compact_container()
   {
     clear();
+    delete time_stamper;
+  }
+
+  bool is_used(size_type i) const
+  {
+    typename Self::size_type block_number, index_in_block;
+    Increment_policy::template get_index_and_block<Self>(i,
+                                                         index_in_block,
+                                                         block_number);
+    return (type(&all_items[block_number].first[index_in_block])
+                 == USED);
+  }
+
+  const T& operator[] (size_type i) const
+  {
+    CGAL_assertion( is_used(i) );
+
+    typename Self::size_type block_number, index_in_block;
+    Increment_policy::template get_index_and_block<Self>(i,
+                                                         index_in_block,
+                                                         block_number);
+    return all_items[block_number].first[index_in_block];
+  }
+
+  T& operator[] (size_type i)
+  {
+    CGAL_assertion( is_used(i) );
+
+    typename Self::size_type block_number, index_in_block;
+    Increment_policy::template get_index_and_block<Self>(i,
+                                                         index_in_block,
+                                                         block_number);
+    return all_items[block_number].first[index_in_block];
   }
 
   void swap(Self &c)
@@ -184,6 +350,7 @@ public:
     std::swap(last_item, c.last_item);
     std::swap(free_list, c.free_list);
     all_items.swap(c.all_items);
+    std::swap(time_stamper, c.time_stamper);
   }
 
   iterator begin() { return iterator(first_item, 0, 0); }
@@ -229,6 +396,7 @@ public:
     new (ret) value_type(args...);
     CGAL_assertion(type(ret) == USED);
     ++size_;
+    time_stamper->set_time_stamp(ret);
     return iterator(ret, 0);
   }
 #else
@@ -243,6 +411,7 @@ public:
     new (ret) value_type();
     CGAL_assertion(type(ret) == USED);
     ++size_;
+    time_stamper->set_time_stamp(ret);
     return iterator(ret, 0);
   }
 
@@ -258,6 +427,7 @@ public:
     new (ret) value_type(t1);
     CGAL_assertion(type(ret) == USED);
     ++size_;
+    time_stamper->set_time_stamp(ret);
     return iterator(ret, 0);
   }
 
@@ -273,6 +443,7 @@ public:
     new (ret) value_type(t1, t2);
     CGAL_assertion(type(ret) == USED);
     ++size_;
+    time_stamper->set_time_stamp(ret);
     return iterator(ret, 0);
   }
 
@@ -288,6 +459,7 @@ public:
     new (ret) value_type(t1, t2, t3);
     CGAL_assertion(type(ret) == USED);
     ++size_;
+    time_stamper->set_time_stamp(ret);
     return iterator(ret, 0);
   }
 
@@ -303,13 +475,14 @@ public:
     new (ret) value_type(t1, t2, t3, t4);
     CGAL_assertion(type(ret) == USED);
     ++size_;
+    time_stamper->set_time_stamp(ret);
     return iterator(ret, 0);
   }
 
   template < typename T1, typename T2, typename T3, typename T4, typename T5 >
   iterator
   emplace(const T1 &t1, const T2 &t2, const T3 &t3, const T4 &t4,
-	  const T5 &t5)
+          const T5 &t5)
   {
     if (free_list == NULL)
       allocate_new_block();
@@ -319,6 +492,7 @@ public:
     new (ret) value_type(t1, t2, t3, t4, t5);
     CGAL_assertion(type(ret) == USED);
     ++size_;
+    time_stamper->set_time_stamp(ret);
     return iterator(ret, 0);
   }
 
@@ -336,6 +510,7 @@ public:
     new (ret) value_type(t1, t2, t3, t4, t5, t6);
     CGAL_assertion(type(ret) == USED);
     ++size_;
+    time_stamper->set_time_stamp(ret);
     return iterator(ret, 0);
   }
 
@@ -353,6 +528,7 @@ public:
     new (ret) value_type(t1, t2, t3, t4, t5, t6, t7);
     CGAL_assertion(type(ret) == USED);
     ++size_;
+    time_stamper->set_time_stamp(ret);
     return iterator(ret, 0);
   }
 
@@ -370,6 +546,7 @@ public:
     new (ret) value_type(t1, t2, t3, t4, t5, t6, t7, t8);
     CGAL_assertion(type(ret) == USED);
     ++size_;
+    time_stamper->set_time_stamp(ret);
     return iterator(ret, 0);
   }
 #endif // CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
@@ -384,6 +561,7 @@ public:
     alloc.construct(ret, t);
     CGAL_assertion(type(ret) == USED);
     ++size_;
+    time_stamper->set_time_stamp(ret);
     return iterator(ret, 0);
   }
 
@@ -403,11 +581,15 @@ public:
 
   void erase(iterator x)
   {
+    typedef internal::Erase_counter_strategy<
+      internal::has_increment_erase_counter<T>::value> EraseCounterStrategy;
+
     CGAL_precondition(type(&*x) == USED);
+    EraseCounterStrategy::increment_erase_counter(*x);
     alloc.destroy(&*x);
-#ifndef CGAL_NO_ASSERTIONS
+/*#ifndef CGAL_NO_ASSERTIONS
     std::memset(&*x, 0, sizeof(T));
-#endif
+#endif*/
     put_on_free_list(&*x);
     --size_;
   }
@@ -491,16 +673,52 @@ public:
 
   /** Reserve method to ensure that the capacity of the Compact_container be
    * greater or equal than a given value n.
-   */ 
+   */
   void reserve(size_type n)
   {
     if ( capacity_>=n ) return;
-    size_type tmp = block_size;
-    block_size = (std::max)( n - capacity_, block_size );
-    allocate_new_block();
-    block_size = tmp+CGAL_INCREMENT_COMPACT_CONTAINER_BLOCK_SIZE;
+
+    size_type lastblock = all_items.size();
+
+    while ( capacity_<n )
+    { // Pb because the order of free list is no more the order of
+      // allocate_new_block();
+      pointer new_block = alloc.allocate(block_size + 2);
+      all_items.push_back(std::make_pair(new_block, block_size + 2));
+      capacity_ += block_size;
+      // We insert this new block at the end.
+      if (last_item == NULL) // First time
+      {
+        first_item = new_block;
+        last_item  = new_block + block_size + 1;
+        set_type(first_item, NULL, START_END);
+      }
+      else
+      {
+        set_type(last_item, new_block, BLOCK_BOUNDARY);
+        set_type(new_block, last_item, BLOCK_BOUNDARY);
+        last_item = new_block + block_size + 1;
+      }
+      set_type(last_item, NULL, START_END);
+      // Increase the block_size for the next time.
+      Increment_policy::increase_size(*this);
+    }
+
+    // Now we put all the new elements on freelist, starting from the last block
+    // inserted and mark them free in reverse order, so that the insertion order
+    // will correspond to the iterator order...
+    // We don't touch the first and the last one.
+    size_type curblock=all_items.size();
+    do
+    {
+      --curblock; // We are sure we have at least create a new block
+      pointer new_block = all_items[curblock].first;
+      for (size_type i = all_items[curblock].second-2; i >= 1; --i)
+        put_on_free_list(new_block + i);
+    }
+    while ( curblock>lastblock );
   }
-  
+
 private:
 
   void allocate_new_block();
@@ -552,7 +770,7 @@ private:
   {
     // This out of range compare is always true and causes lots of
     // unnecessary warnings.
-    // CGAL_precondition(0 <= t && t < 4); 
+    // CGAL_precondition(0 <= t && t < 4);
     Traits::pointer(*ptr) = (void *) ((clean_pointer((char *) p)) + (int) t);
   }
 
@@ -567,13 +785,14 @@ private:
 
   void init()
   {
-    block_size = CGAL_INIT_COMPACT_CONTAINER_BLOCK_SIZE;
+    block_size = Increment_policy::first_block_size;
     capacity_  = 0;
     size_      = 0;
     free_list  = NULL;
     first_item = NULL;
     last_item  = NULL;
     all_items  = All_items();
+    time_stamper->reset();
   }
 
   allocator_type   alloc;
@@ -584,10 +803,14 @@ private:
   pointer          first_item;
   pointer          last_item;
   All_items        all_items;
+
+  // This is a pointer, so that the definition of Compact_container does
+  // not require a complete type `T`.
+  Time_stamper_impl* time_stamper;
 };
 
-template < class T, class Allocator >
-void Compact_container<T, Allocator>::merge(Self &d)
+template < class T, class Allocator, class Increment_policy, class TimeStamper >
+void Compact_container<T, Allocator, Increment_policy, TimeStamper>::merge(Self &d)
 {
   CGAL_precondition(&d != this);
 
@@ -623,8 +846,8 @@ void Compact_container<T, Allocator>::merge(Self &d)
   d.init();
 }
 
-template < class T, class Allocator >
-void Compact_container<T, Allocator>::clear()
+template < class T, class Allocator, class Increment_policy, class TimeStamper >
+void Compact_container<T, Allocator, Increment_policy, TimeStamper>::clear()
 {
   for (typename All_items::iterator it = all_items.begin(), itend = all_items.end();
        it != itend; ++it) {
@@ -639,9 +862,12 @@ void Compact_container<T, Allocator>::clear()
   init();
 }
 
-template < class T, class Allocator >
-void Compact_container<T, Allocator>::allocate_new_block()
+template < class T, class Allocator, class Increment_policy, class TimeStamper >
+void Compact_container<T, Allocator, Increment_policy, TimeStamper>::allocate_new_block()
 {
+  typedef internal::Erase_counter_strategy<
+    internal::has_increment_erase_counter<T>::value> EraseCounterStrategy;
+
   pointer new_block = alloc.allocate(block_size + 2);
   all_items.push_back(std::make_pair(new_block, block_size + 2));
   capacity_ += block_size;
@@ -649,7 +875,10 @@ void Compact_container<T, Allocator>::allocate_new_block()
   // We mark them free in reverse order, so that the insertion order
   // will correspond to the iterator order...
   for (size_type i = block_size; i >= 1; --i)
+  {
+    EraseCounterStrategy::set_erase_counter(*(new_block + i), 0);
     put_on_free_list(new_block + i);
+  }
   // We insert this new block at the end.
   if (last_item == NULL) // First time
   {
@@ -665,55 +894,55 @@ void Compact_container<T, Allocator>::allocate_new_block()
   }
   set_type(last_item, NULL, START_END);
   // Increase the block_size for the next time.
-  block_size += CGAL_INCREMENT_COMPACT_CONTAINER_BLOCK_SIZE;
+  Increment_policy::increase_size(*this);
 }
 
-template < class T, class Allocator >
+template < class T, class Allocator, class Increment_policy, class TimeStamper >
 inline
-bool operator==(const Compact_container<T, Allocator> &lhs,
-                const Compact_container<T, Allocator> &rhs)
+bool operator==(const Compact_container<T, Allocator, Increment_policy, TimeStamper> &lhs,
+                const Compact_container<T, Allocator, Increment_policy, TimeStamper> &rhs)
 {
   return lhs.size() == rhs.size() &&
     std::equal(lhs.begin(), lhs.end(), rhs.begin());
 }
 
-template < class T, class Allocator >
+template < class T, class Allocator, class Increment_policy, class TimeStamper >
 inline
-bool operator!=(const Compact_container<T, Allocator> &lhs,
-                const Compact_container<T, Allocator> &rhs)
+bool operator!=(const Compact_container<T, Allocator, Increment_policy, TimeStamper> &lhs,
+                const Compact_container<T, Allocator, Increment_policy, TimeStamper> &rhs)
 {
   return ! (lhs == rhs);
 }
 
-template < class T, class Allocator >
+template < class T, class Allocator, class Increment_policy, class TimeStamper >
 inline
-bool operator< (const Compact_container<T, Allocator> &lhs,
-                const Compact_container<T, Allocator> &rhs)
+bool operator< (const Compact_container<T, Allocator, Increment_policy, TimeStamper> &lhs,
+                const Compact_container<T, Allocator, Increment_policy, TimeStamper> &rhs)
 {
   return std::lexicographical_compare(lhs.begin(), lhs.end(),
                                       rhs.begin(), rhs.end());
 }
 
-template < class T, class Allocator >
+template < class T, class Allocator, class Increment_policy, class TimeStamper >
 inline
-bool operator> (const Compact_container<T, Allocator> &lhs,
-                const Compact_container<T, Allocator> &rhs)
+bool operator> (const Compact_container<T, Allocator, Increment_policy, TimeStamper> &lhs,
+                const Compact_container<T, Allocator, Increment_policy, TimeStamper> &rhs)
 {
   return rhs < lhs;
 }
 
-template < class T, class Allocator >
+template < class T, class Allocator, class Increment_policy, class TimeStamper >
 inline
-bool operator<=(const Compact_container<T, Allocator> &lhs,
-                const Compact_container<T, Allocator> &rhs)
+bool operator<=(const Compact_container<T, Allocator, Increment_policy, TimeStamper> &lhs,
+                const Compact_container<T, Allocator, Increment_policy, TimeStamper> &rhs)
 {
   return ! (lhs > rhs);
 }
 
-template < class T, class Allocator >
+template < class T, class Allocator, class Increment_policy, class TimeStamper >
 inline
-bool operator>=(const Compact_container<T, Allocator> &lhs,
-                const Compact_container<T, Allocator> &rhs)
+bool operator>=(const Compact_container<T, Allocator, Increment_policy, TimeStamper> &lhs,
+                const Compact_container<T, Allocator, Increment_policy, TimeStamper> &rhs)
 {
   return ! (lhs < rhs);
 }
@@ -764,13 +993,19 @@ namespace internal {
 
   private:
 
+    typedef typename DSC::Time_stamper_impl           Time_stamper_impl;
+
     union {
       pointer      p;
       void        *vp;
     } m_ptr;
 
     // Only Compact_container should access these constructors.
-    friend class Compact_container<value_type, typename DSC::Al>;
+    friend class Compact_container<value_type,
+                                   typename DSC::Al,
+                                   typename DSC::Ip,
+                                   typename DSC::Ts>;
+
 
     // For begin()
     CC_iterator(pointer ptr, int, int)
@@ -795,9 +1030,9 @@ namespace internal {
     {
       // It's either pointing to end(), or valid.
       CGAL_assertion_msg(m_ptr.p != NULL,
-	 "Incrementing a singular iterator or an empty container iterator ?");
+         "Incrementing a singular iterator or an empty container iterator ?");
       CGAL_assertion_msg(DSC::type(m_ptr.p) != DSC::START_END,
-	 "Incrementing end() ?");
+         "Incrementing end() ?");
 
       // If it's not end(), then it's valid, we can do ++.
       do {
@@ -815,9 +1050,9 @@ namespace internal {
     {
       // It's either pointing to end(), or valid.
       CGAL_assertion_msg(m_ptr.p != NULL,
-	 "Decrementing a singular iterator or an empty container iterator ?");
+         "Decrementing a singular iterator or an empty container iterator ?");
       CGAL_assertion_msg(DSC::type(m_ptr.p - 1) != DSC::START_END,
-	 "Decrementing begin() ?");
+         "Decrementing begin() ?");
 
       // If it's not begin(), then it's valid, we can do --.
       do {
@@ -836,7 +1071,7 @@ namespace internal {
     Self & operator++()
     {
       CGAL_assertion_msg(m_ptr.p != NULL,
-	 "Incrementing a singular iterator or an empty container iterator ?");
+         "Incrementing a singular iterator or an empty container iterator ?");
       CGAL_assertion_msg(DSC::type(m_ptr.p) == DSC::USED,
                          "Incrementing an invalid iterator.");
       increment();
@@ -846,9 +1081,9 @@ namespace internal {
     Self & operator--()
     {
       CGAL_assertion_msg(m_ptr.p != NULL,
-	 "Decrementing a singular iterator or an empty container iterator ?");
+         "Decrementing a singular iterator or an empty container iterator ?");
       CGAL_assertion_msg(DSC::type(m_ptr.p) == DSC::USED
-		      || DSC::type(m_ptr.p) == DSC::START_END,
+                      || DSC::type(m_ptr.p) == DSC::START_END,
                          "Decrementing an invalid iterator.");
       decrement();
       return *this;
@@ -864,22 +1099,24 @@ namespace internal {
     // For std::less...
     bool operator<(const CC_iterator& other) const
     {
-      return (m_ptr.p < other.m_ptr.p);
+      return Time_stamper_impl::less(m_ptr.p, other.m_ptr.p);
     }
 
     bool operator>(const CC_iterator& other) const
     {
-      return (m_ptr.p > other.m_ptr.p);
+      return Time_stamper_impl::less(other.m_ptr.p, m_ptr.p);
     }
 
     bool operator<=(const CC_iterator& other) const
     {
-      return (m_ptr.p <= other.m_ptr.p);
+      return Time_stamper_impl::less(m_ptr.p, other.m_ptr.p)
+          || (*this == other);
     }
 
     bool operator>=(const CC_iterator& other) const
     {
-      return (m_ptr.p >= other.m_ptr.p);
+      return Time_stamper_impl::less(other.m_ptr.p, m_ptr.p)
+          || (*this == other);
     }
 
     // Can itself be used for bit-squatting.
@@ -916,7 +1153,7 @@ namespace internal {
   template < class DSC, bool Const >
   inline
   bool operator!=(const CC_iterator<DSC, Const> &rhs,
-		  Nullptr_t CGAL_assertion_code(n))
+                  Nullptr_t CGAL_assertion_code(n))
   {
     CGAL_assertion( n == NULL);
     return &*rhs != NULL;

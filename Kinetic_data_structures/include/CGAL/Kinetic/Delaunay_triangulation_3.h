@@ -87,8 +87,13 @@ private:
     typedef TriangulationT Triangulation;
     typedef typename TraitsT::Kinetic_kernel::Side_of_oriented_sphere_3 Side_of_oriented_sphere_3;
     typedef typename TraitsT::Kinetic_kernel::Orientation_3 Orientation_3;
+
+    // The next typedef is needed for VC++ as it does not pick the definition from ten lines above
+    typedef typename TraitsT::Kinetic_kernel::Side_of_oriented_sphere_3::result_type Root_stack;
+
     typedef internal::Delaunay_3_edge_flip_event<This_DT3, Root_stack> Edge_flip;
     typedef typename internal::Delaunay_3_facet_flip_event<This_DT3, Root_stack> Facet_flip;
+
 
     Side_of_oriented_sphere_3 side_of_oriented_sphere_3_object() const
     {

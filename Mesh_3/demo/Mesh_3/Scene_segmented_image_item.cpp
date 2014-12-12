@@ -1,3 +1,5 @@
+#include "config.h"
+
 #ifdef SCENE_SEGMENTED_IMAGE_GL_BUFFERS_AVAILABLE
 #  include <GL/glew.h>
 #endif
@@ -7,6 +9,7 @@
 #include <map>
 #include <CGAL/gl.h>
 #include <CGAL/ImageIO.h>
+#include <CGAL/use.h>
 
 //#define SCENE_SEGMENTED_IMAGE_GL_BUFFERS_AVAILABLE
 
@@ -471,8 +474,11 @@ Scene_segmented_image_item::Scene_segmented_image_item(Image* im,
                                                        int display_scale)
   : m_image(im)
   , m_initialized(false)
+#ifdef SCENE_SEGMENTED_IMAGE_GL_BUFFERS_AVAILABLE
   , m_voxel_scale(display_scale)
+#endif // SCENE_SEGMENTED_IMAGE_GL_BUFFERS_AVAILABLE
 {
+  CGAL_USE(display_scale);
 #ifdef SCENE_SEGMENTED_IMAGE_GL_BUFFERS_AVAILABLE
   if(gl_vbo_available()) {
     ::glGenBuffers(3,m_vbo);

@@ -20,10 +20,11 @@
 
 template <class Traits>
 void
-_test_cls_regular_euclidean_traits_3 (const Traits & )
+_test_cls_regular_euclidean_traits_3 (const Traits &)
 {
   typedef typename Traits::Weighted_point  Weighted_point;
   typedef typename Traits::Bare_point      Bare_point;
+  typedef typename Traits::Segment_3       Segment_3;
   typedef typename Traits::Power_test_3    Power_test_3;
   typedef typename Traits::Compare_power_distance_3
                                   Compare_power_distance_3;
@@ -146,12 +147,16 @@ _test_cls_regular_euclidean_traits_3 (const Traits & )
   Bare_point q2(0.,2.,0.);
   Bare_point q3(0.,0.,2.);
   Bare_point q4(2.,2.,2.);
+  Bare_point q5(-2.,0.,0.);
+  Bare_point q6(-4.,0.,0.);
 
   Weighted_point wq0(q0,0.);
   Weighted_point wq1(q1,0.);
   Weighted_point wq2(q2,0.);
   Weighted_point wq3(q3,0.);
   Weighted_point wq4(q4,0.);
+  Weighted_point wq5(q5,0.);
+  Weighted_point wq6(q6,0.);
   Weighted_point wq01(q0,2.);
   Weighted_point wq11(q1,2.);
   Weighted_point wq21(q2,2.);
@@ -239,4 +244,51 @@ _test_cls_regular_euclidean_traits_3 (const Traits & )
   assert( power_product(wc,wt) == 
 	  critical_squared_radius(wp01,wp1,wp2,wp3,wt));
   
+  // test power_test
+  // null weights
+  assert(power_test(wq0,wq1,wq2,wq3,wq4) ==
+         traits.side_of_oriented_sphere_3_object()(q0,q1,q2,q3,q4));
+  assert(power_test(wq1,wq0,wq2,wq3,wq6) ==
+         traits.side_of_oriented_sphere_3_object()(q1,q0,q2,q3,q6));
+  assert(power_test(wq0,wq1,wq2,wq5) == CGAL::ON_NEGATIVE_SIDE &&
+         traits.coplanar_side_of_bounded_circle_3_object()(q0,q1,q2,q5) ==
+                                                       CGAL::ON_UNBOUNDED_SIDE);
+  assert(power_test(wq5,wq1,wq0) == CGAL::ON_POSITIVE_SIDE &&
+         (Segment_3(wq5,wq1)).has_on(wq0));
+  assert(power_test(wq5,wq1,wq5) == CGAL::ON_ORIENTED_BOUNDARY &&
+         (Segment_3(wq5,wq1)).has_on(wq5));
+  assert(power_test(wq5,wq1,wq6) == CGAL::ON_NEGATIVE_SIDE &&
+         !(Segment_3(wq5,wq1)).has_on(wq6));
+  assert(power_test(wq3,wq2) == CGAL::ON_ORIENTED_BOUNDARY);
+
+  // wc = (1,1,1) -3
+  assert(power_test(wp01,wp1,wp2,wp3,wc) == CGAL::ON_NEGATIVE_SIDE);
+  Weighted_point wt2(wc.point(), wc.weight()+6);
+  assert(power_test(wp01,wp1,wp2,wp3,wt2) == CGAL::ON_ORIENTED_BOUNDARY);
+  Weighted_point wt3(wc.point(), wc.weight()+7);
+  assert(power_test(wp01,wp1,wp2,wp3,wt3) == CGAL::ON_POSITIVE_SIDE);
+  Weighted_point wt4(Bare_point(0.,2.,2.), 6.);
+  assert(power_test(wp01,wp1,wp2,wp3,wt4) == CGAL::ON_ORIENTED_BOUNDARY);
+
+  // wc = (1,2,0) -1
+  wc = Weighted_point(weighted_circumcenter(wp01,wp1,wq21),
+                      squared_radius_smallest_orthogonal_sphere(wp01,wp1,wq21));
+  assert(power_test(wp01,wp1,wq21,wc) == CGAL::ON_NEGATIVE_SIDE);
+  wt = Weighted_point(Bare_point(-1.,1.,0.),6);
+  assert(power_test(wp01,wp1,wq21,wt) == CGAL::ON_ORIENTED_BOUNDARY);
+  wt = Weighted_point(Bare_point(3.,4.,0.),10);
+  assert(power_test(wp01,wp1,wq21,wt) == CGAL::ON_POSITIVE_SIDE);
+
+  // wc = (0,0,3) -9
+  wc = Weighted_point(weighted_circumcenter(wp04,wp3),
+                      squared_radius_smallest_orthogonal_sphere(wp04,wp3));
+  assert(power_test(wp04,wp3,wc) == CGAL::ON_NEGATIVE_SIDE);
+  wt = Weighted_point(Bare_point(0.,0.,7.),25);
+  assert(power_test(wp04,wp3,wt) == CGAL::ON_ORIENTED_BOUNDARY);
+  wt = Weighted_point(Bare_point(0.,0.,2.),12);
+  assert(power_test(wp04,wp3,wt) == CGAL::ON_POSITIVE_SIDE);
+
+  assert(power_test(wq0,wq02) == CGAL::ON_POSITIVE_SIDE);
+  assert(power_test(wq01,wq01) == CGAL::ON_ORIENTED_BOUNDARY);
+  assert(power_test(wq01,wq02) == CGAL::ON_NEGATIVE_SIDE);
 }

@@ -22,7 +22,7 @@
 
 #if !defined CGAL_USE_GMP
 #include <iostream>
-int main(int, char*)
+int main()
 {
   std::cout << "Sorry, this demo needs GMP...";
   std::cout << std::endl;

@@ -13,6 +13,8 @@
 #include <QMenuBar>
 #include <QChar>
 #include <QAction>
+#include <QShortcut>
+#include <QKeySequence>
 #include <QLibrary>
 #include <QPluginLoader>
 #include <QMessageBox>
@@ -23,6 +25,7 @@
 #include <QCloseEvent>
 #include <QInputDialog>
 #include <QTreeView>
+#include <QSortFilterProxyModel>
 #include <QMap>
 #include <QStandardItemModel>
 #include <QStandardItem>
@@ -44,6 +47,9 @@
 
 #include "Show_point_dialog.h"
 #include "File_loader_dialog.h"
+
+#include <QGLViewer/manipulatedCameraFrame.h>
+#include <QGLViewer/manipulatedFrame.h>
 
 #ifdef QT_SCRIPT_LIB
 #  include <QScriptEngine>
@@ -133,7 +139,19 @@ MainWindow::MainWindow(QWidget* parent)
   // setup scene
   scene = new Scene(this);
   viewer->setScene(scene);
-  sceneView->setModel(scene);
+
+  {
+    QShortcut* shortcut = new QShortcut(QKeySequence(Qt::ALT+Qt::Key_Q), this);
+    connect(shortcut, SIGNAL(activated()),
+            this, SLOT(setFocusToQuickSearch()));
+  }
+
+  proxyModel = new QSortFilterProxyModel(this);
+  proxyModel->setSourceModel(scene);
+
+  connect(ui->searchEdit, SIGNAL(textChanged(QString)),
+          proxyModel, SLOT(setFilterFixedString(QString)));
+  sceneView->setModel(proxyModel);
 
   // setup the sceneview: delegation and columns sizing...
   sceneView->setItemDelegate(new SceneDelegate(this));
@@ -207,8 +225,6 @@ MainWindow::MainWindow(QWidget* parent)
   // connect(ui->infoLabel, SIGNAL(customContextMenuRequested(const QPoint & )),
   //         this, SLOT(showSceneContextMenu(const QPoint &)));
 
-  connect(ui->actionRecenterScene, SIGNAL(triggered()),
-          viewer->camera(), SLOT(interpolateToFitScene()));
   connect(ui->actionRecenterScene, SIGNAL(triggered()),
           viewer, SLOT(update()));
 
@@ -563,8 +579,36 @@ void MainWindow::addAction(QString actionName,
 #endif
 }
 
+void MainWindow::viewerShow(float xmin,
+                            float ymin,
+                            float zmin,
+                            float xmax,
+                            float ymax,
+                            float zmax)
+{
+  qglviewer::Vec
+    min_(xmin, ymin, zmin),
+    max_(xmax, ymax, zmax);
+#if QGLVIEWER_VERSION >= 0x020502
+  viewer->camera()->setPivotPoint((min_+max_)*0.5);
+#else
+  viewer->camera()->setRevolveAroundPoint((min_+max_)*0.5);
+#endif
+
+  qglviewer::ManipulatedCameraFrame backup_frame(*viewer->camera()->frame());
+  viewer->camera()->fitBoundingBox(min_, max_);
+  qglviewer::ManipulatedCameraFrame new_frame(*viewer->camera()->frame());
+  *viewer->camera()->frame() = backup_frame;
+  viewer->camera()->interpolateTo(new_frame, 1.f);
+  viewer->setVisualHintsMask(1);
+}
+
 void MainWindow::viewerShow(float x, float y, float z) {
+#if QGLVIEWER_VERSION >= 0x020502
+  viewer->camera()->setPivotPoint(qglviewer::Vec(x, y, z));
+#else
   viewer->camera()->setRevolveAroundPoint(qglviewer::Vec(x, y, z));
+#endif
   // viewer->camera()->lookAt(qglviewer::Vec(x, y, z));
 
   qglviewer::ManipulatedCameraFrame backup_frame(*viewer->camera()->frame());
@@ -785,7 +829,7 @@ void MainWindow::open(QString filename)
 
   Scene_item* scene_item = load_item(fileinfo, find_loader(load_pair.first));
   if(scene_item != 0) {
-    this->addToRecentFiles(filename);
+    this->addToRecentFiles(fileinfo.absoluteFilePath());
   }
   selectSceneItem(scene->addItem(scene_item));
 }
@@ -825,6 +869,11 @@ Scene_item* MainWindow::load_item(QFileInfo fileinfo, Polyhedron_demo_io_plugin_
   return item;
 }
 
+void MainWindow::setFocusToQuickSearch()
+{
+  ui->searchEdit->setFocus(Qt::ShortcutFocusReason);
+}
+
 void MainWindow::selectSceneItem(int i)
 {
   if(i < 0 || i >= scene->numberOfEntries()) {
@@ -833,8 +882,10 @@ void MainWindow::selectSceneItem(int i)
     updateDisplayInfo();
   }
   else {
-    sceneView->selectionModel()->select(scene->createSelection(i),
-                                       QItemSelectionModel::ClearAndSelect);
+    QItemSelection s =
+      proxyModel->mapSelectionFromSource(scene->createSelection(i));
+    sceneView->selectionModel()->select(s,
+                                        QItemSelectionModel::ClearAndSelect);
   }
 }
 
@@ -854,22 +905,27 @@ void MainWindow::unSelectSceneItem(int i)
 
 void MainWindow::addSceneItemInSelection(int i)
 {
-  sceneView->selectionModel()->select(scene->createSelection(i),
-                                     QItemSelectionModel::Select);
+  QItemSelection s =
+    proxyModel->mapSelectionFromSource(scene->createSelection(i));
+  sceneView->selectionModel()->select(s, QItemSelectionModel::Select);
   scene->itemChanged(i);
 }
 
 void MainWindow::removeSceneItemFromSelection(int i)
 {
-  sceneView->selectionModel()->select(scene->createSelection(i),
-                                     QItemSelectionModel::Deselect);
+  QItemSelection s =
+    proxyModel->mapSelectionFromSource(scene->createSelection(i));
+  sceneView->selectionModel()->select(s,
+                                      QItemSelectionModel::Deselect);
   scene->itemChanged(i);
 }
 
 void MainWindow::selectAll()
 {
-  sceneView->selectionModel()->select(scene->createSelectionAll(), 
-                                     QItemSelectionModel::ClearAndSelect);
+  QItemSelection s =
+    proxyModel->mapSelectionFromSource(scene->createSelectionAll());
+  sceneView->selectionModel()->select(s, 
+                                      QItemSelectionModel::ClearAndSelect);
 }
 
 int MainWindow::getSelectedSceneItemIndex() const
@@ -877,8 +933,10 @@ int MainWindow::getSelectedSceneItemIndex() const
   QModelIndexList selectedRows = sceneView->selectionModel()->selectedRows();
   if(selectedRows.size() != 1)
     return -1;
-  else
-    return selectedRows.first().row();
+  else {
+    QModelIndex i = proxyModel->mapToSource(selectedRows.first());
+    return i.row();
+  }
 }
 
 QList<int> MainWindow::getSelectedSceneItemIndices() const
@@ -886,7 +944,7 @@ QList<int> MainWindow::getSelectedSceneItemIndices() const
   QModelIndexList selectedRows = sceneView->selectionModel()->selectedRows();
   QList<int> result;
   Q_FOREACH(QModelIndex index, selectedRows) {
-    result << index.row();
+    result << proxyModel->mapToSource(index).row();
   }
   return result;
 }
@@ -935,14 +993,25 @@ void MainWindow::showSceneContextMenu(int selectedItemIndex,
   const char* prop_name = "Menu modified by MainWindow.";
 
   QMenu* menu = item->contextMenu();
-  if(menu && !item->property("source filename").toString().isEmpty()) {
+  if(menu) {
     bool menuChanged = menu->property(prop_name).toBool();
     if(!menuChanged) {
       menu->addSeparator();
-      QAction* reload = menu->addAction(tr("Reload item from file"));
-      reload->setData(qVariantFromValue(selectedItemIndex));
-      connect(reload, SIGNAL(triggered()),
-              this, SLOT(reload_item()));
+      if(!item->property("source filename").toString().isEmpty()) {
+        QAction* reload = menu->addAction(tr("&Reload item from file"));
+        reload->setData(qVariantFromValue(selectedItemIndex));
+        connect(reload, SIGNAL(triggered()),
+                this, SLOT(reload_item()));
+      }
+      QAction* saveas = menu->addAction(tr("&Save as..."));
+      saveas->setData(qVariantFromValue(selectedItemIndex));
+      connect(saveas,  SIGNAL(triggered()),
+              this, SLOT(on_actionSaveAs_triggered()));
+      QAction* showobject = menu->addAction(tr("&Zoom to this object"));
+      showobject->setData(qVariantFromValue(selectedItemIndex));
+      connect(showobject, SIGNAL(triggered()),
+              this, SLOT(viewerShowObject()));
+
       menu->setProperty(prop_name, true);
     }
   }
@@ -959,7 +1028,7 @@ void MainWindow::showSceneContextMenu(const QPoint& p) {
     QModelIndex modelIndex = sceneView->indexAt(p);
     if(!modelIndex.isValid()) return;
 
-    index = modelIndex.row();
+    index = proxyModel->mapToSource(modelIndex).row();
   }
   else {
     index = scene->mainSelectionIndex();
@@ -1138,10 +1207,19 @@ void MainWindow::on_actionLoad_triggered()
 
 void MainWindow::on_actionSaveAs_triggered()
 {
-  QModelIndexList selectedRows = sceneView->selectionModel()->selectedRows();
-  if(selectedRows.size() != 1)
-    return;
-  Scene_item* item = scene->item(getSelectedSceneItemIndex());
+  int index = -1;
+  QAction* sender_action = qobject_cast<QAction*>(sender());
+  if(sender_action && !sender_action->data().isNull()) {
+    index = sender_action->data().toInt();
+  }
+
+  if(index < 0) {
+    QModelIndexList selectedRows = sceneView->selectionModel()->selectedRows();
+    if(selectedRows.size() != 1)
+      return;
+    index = getSelectedSceneItemIndex();
+  }
+  Scene_item* item = scene->item(index);
 
   if(!item)
     return;
@@ -1164,9 +1242,10 @@ void MainWindow::on_actionSaveAs_triggered()
     return;
   }
 
+  QString caption = tr("Save %1 to File...").arg(item->name());
   QString filename = 
     QFileDialog::getSaveFileName(this,
-                                 tr("Save to File..."),
+                                 caption,
                                  QString(),
                                  filters.join(";;"));
   save(filename, item);
@@ -1208,7 +1287,7 @@ void MainWindow::on_actionShowHide_triggered()
 {
   Q_FOREACH(QModelIndex index, sceneView->selectionModel()->selectedRows())
   {
-    int i = index.row();
+    int i = proxyModel->mapToSource(index).row();
     Scene_item* item = scene->item(i);
     item->setVisible(!item->visible());
     scene->itemChanged(i);
@@ -1300,6 +1379,20 @@ void MainWindow::on_action_Look_at_triggered()
   }
 }
 
+void MainWindow::viewerShowObject()
+{
+  int index = -1;
+  QAction* sender_action = qobject_cast<QAction*>(sender());
+  if(sender_action && !sender_action->data().isNull()) {
+    index = sender_action->data().toInt();
+  }
+  if(index >= 0) {
+    const Scene::Bbox bbox = scene->item(index)->bbox();
+    viewerShow((float)bbox.xmin, (float)bbox.ymin, (float)bbox.zmin,
+               (float)bbox.xmax, (float)bbox.ymax, (float)bbox.zmax);
+  }
+}
+
 QString MainWindow::camera_string() const
 {
   return viewer->dumpCameraCoordinates();
@@ -1325,4 +1418,10 @@ void MainWindow::on_action_Paste_camera_triggered()
 void MainWindow::setAddKeyFrameKeyboardModifiers(::Qt::KeyboardModifiers m)
 {
   viewer->setAddKeyFrameKeyboardModifiers(m);
+}
+
+void MainWindow::on_actionRecenterScene_triggered()
+{
+  updateViewerBBox();
+  viewer->camera()->interpolateToFitScene();
 }
