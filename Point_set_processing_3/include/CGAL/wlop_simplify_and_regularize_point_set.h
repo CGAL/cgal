@@ -136,7 +136,7 @@ compute_update_sample_point(
   FT weight = (FT)0.0, average_weight_sum = (FT)0.0;
   FT iradius16 = -(FT)4.0 / radius2;
 
-  std::vector<Kd_tree_point>::iterator iter;
+  typename std::vector<Kd_tree_point>::iterator iter;
   iter = neighbor_original_points.begin();
   for (; iter != neighbor_original_points.end(); ++iter)
   {
@@ -260,7 +260,7 @@ compute_density_weight_for_original_point(
   FT density_weight = (FT)1.0;
   FT iradius16 = -(FT)4.0 / radius2;
 
-  std::vector<Kd_tree_point>::iterator iter;
+  typename std::vector<Kd_tree_point>::iterator iter;
   iter = neighbor_original_points.begin();
 
   for (; iter != neighbor_original_points.end(); iter++)
@@ -315,7 +315,7 @@ compute_density_weight_for_sample_point(
   FT density_weight = (FT)1.0;
   FT iradius16 = -(FT)4.0 / radius2;
 
-  std::vector<Kd_tree_point>::iterator iter;
+  typename std::vector<Kd_tree_point>::iterator iter;
   iter = neighbor_sample_points.begin();
 
   for (; iter != neighbor_sample_points.end(); iter++)
@@ -485,7 +485,7 @@ wlop_simplify_and_regularize_point_set(
 
 
   std::vector<Point> update_sample_points(number_of_sample);
-  std::vector<Point>::iterator sample_iter;
+  typename std::vector<Point>::iterator sample_iter;
   
   // Compute original density weight for original points if user needed
   std::vector<FT> original_density_weights;
@@ -570,7 +570,7 @@ wlop_simplify_and_regularize_point_set(
     }
     
 
-    std::vector<Point>::iterator update_iter = update_sample_points.begin();
+    typename std::vector<Point>::iterator update_iter = update_sample_points.begin();
     //parallel
 #ifdef CGAL_LINKED_WITH_TBB
     if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)

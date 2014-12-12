@@ -76,7 +76,7 @@ base_point_selection(
 
   FT best_dist2 = -10.0;
   const Rich_point& v = query;
-  std::vector<Rich_point>::const_iterator iter = neighbor_points.begin();
+  typename std::vector<Rich_point>::const_iterator iter = neighbor_points.begin();
   for (; iter != neighbor_points.end(); ++iter)
   {
     const Point& t = iter->pt;
@@ -93,7 +93,7 @@ base_point_selection(
     FT project_t = diff_t_mid * tm;
     FT min_dist2 = diff_t_mid.squared_length() - project_t * project_t;
 
-    std::vector<Rich_point>::const_iterator iter_in = neighbor_points.begin();
+    typename std::vector<Rich_point>::const_iterator iter_in = neighbor_points.begin();
     for (; iter_in != neighbor_points.end(); ++iter_in)
     {
       Vector diff_s_mid = mid_point - iter_in->pt;
