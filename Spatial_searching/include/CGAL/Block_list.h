@@ -12,11 +12,19 @@ namespace CGAL {
     typedef CGAL::cpp11::array<T,N> Block;
     int index;
     std::list<Block> blocks;
+    typedef typename std::list<Block>::iterator List_iterator;
+    typedef typename Block::iterator Block_iterator;
 
   public:    
     Block_list()
       : index(N)
     {}
+
+    std::size_t size() const
+    {
+      return (index == N)? (blocks.size()*N) : ((blocks.size()-1)*N+index);
+    }
+
 
     T* push_back(const T& t)
     {
@@ -32,6 +40,8 @@ namespace CGAL {
       return ptr;
     }
     
+
+
     void clear()
     {
       blocks.clear();
