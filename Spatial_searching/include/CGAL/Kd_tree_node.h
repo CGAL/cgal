@@ -208,7 +208,7 @@ namespace CGAL {
   private:
     
     // private variables for leaf nodes
-    unsigned int n; // denotes number of items in a leaf node
+    uint32_t n; // denotes number of items in a leaf node
     iterator data; // iterator to data in leaf node
 
                     
@@ -269,7 +269,7 @@ namespace CGAL {
   private:
     
        // private variables for internal nodes
-    int cut_dim;
+    uint32_t cut_dim;
     FT cut_val;
     Node_handle lower_ch, upper_ch;
 
@@ -381,7 +381,7 @@ namespace CGAL {
   private:
     
        // private variables for internal nodes
-    int cut_dim;
+    uint8_t cut_dim;
     FT cut_val;
 
     Node_handle lower_ch, upper_ch;

@@ -31,6 +31,7 @@
 #include <deque>
 #include <boost/mpl/has_xxx.hpp>
 #include <CGAL/Memory_sizer.h>
+#include <boost/container/deque.hpp>
 
 #ifdef CGAL_HAS_THREADS
 #include <boost/thread/mutex.hpp>
@@ -100,8 +101,8 @@ public:
 private:
   SearchTraits traits_;
   Splitter split;
-  std::deque<Internal_node> internal_nodes;
-  std::deque<Leaf_node> leaf_nodes;
+  boost::container::deque<Internal_node> internal_nodes;
+  boost::container::deque<Leaf_node> leaf_nodes;
 
   Node_handle tree_root;
 
