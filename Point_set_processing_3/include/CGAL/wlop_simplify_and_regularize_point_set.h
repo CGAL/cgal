@@ -35,7 +35,6 @@
 
 #include <tbb/parallel_for.h>
 #include <tbb/blocked_range.h>
-#include <tbb/tbbmalloc_proxy.h>
 
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Fuzzy_sphere.h>
