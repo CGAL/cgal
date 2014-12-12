@@ -230,6 +230,70 @@ public:
               << " seconds." << std::endl;
 #endif
   }
+  
+  void estimate_intrinsic_dimension()
+  {
+    const int amb_dim = m_k.point_dimension_d_object()(*m_points.begin());
+
+    // Kernel functors
+    typename Kernel::Construct_vector_d      constr_vec =
+      m_k.construct_vector_d_object();
+    typename Kernel::Compute_coordinate_d    coord =
+      m_k.compute_coordinate_d_object();
+    typename Kernel::Squared_length_d        sqlen =
+      m_k.squared_length_d_object();
+    typename Kernel::Scaled_vector_d         scaled_vec =
+      m_k.scaled_vector_d_object();
+    typename Kernel::Scalar_product_d        inner_pdct =
+      m_k.scalar_product_d_object();
+    typename Kernel::Difference_of_vectors_d diff_vec =
+      m_k.difference_of_vectors_d_object();
+
+    std::vector<FT> sum_eigen_values(amb_dim, FT(0));
+
+    Points::const_iterator it_p = m_points.begin();
+    Points::const_iterator it_p_end = m_points.end();
+    // For each point p
+    for ( ; it_p != it_p_end ; ++it_p)
+    {
+      const Point &p = *it_p;
+  
+      KNS_range kns_range = m_points_ds.query_ANN(
+        p, NUM_POINTS_FOR_PCA, false);
+
+      //******************************* PCA *************************************
+
+      // One row = one point
+      Eigen::MatrixXd mat_points(NUM_POINTS_FOR_PCA, amb_dim);
+      KNS_iterator nn_it = kns_range.begin();
+      for (int j = 0 ;
+            j < NUM_POINTS_FOR_PCA && nn_it != kns_range.end() ;
+            ++j, ++nn_it)
+      {
+        for (int i = 0 ; i < amb_dim ; ++i)
+          mat_points(j, i) = CGAL::to_double(coord(m_points[nn_it->first], i));
+      }
+      Eigen::MatrixXd centered = mat_points.rowwise() - mat_points.colwise().mean();
+      Eigen::MatrixXd cov = centered.adjoint() * centered;
+      Eigen::SelfAdjointEigenSolver<Eigen::MatrixXd> eig(cov);
+
+      // The eigenvectors are sorted in increasing order of their corresponding
+      // eigenvalues
+      Tangent_space_basis ts;
+      for (int i = 0 ; i < amb_dim ; ++i)
+        sum_eigen_values[i] += eig.eigenvalues()[i];
+
+      //*************************************************************************
+    }
+
+    // CJTODO: replace this by an actual estimation
+    for (FT v : sum_eigen_values) // CJTODO C++11
+    {
+      std::cout << v << " ";
+    }
+    std::cout << "\n";
+  }
+
 
   void refresh_tangential_complex()
   {
