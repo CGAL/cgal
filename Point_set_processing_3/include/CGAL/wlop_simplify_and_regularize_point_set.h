@@ -106,9 +106,7 @@ compute_update_sample_point(
   Tree& sample_kd_tree,                ///< sample Kd-tree
   const typename Kernel::FT radius,     ///< neighborhood radius square
   const std::vector<typename Kernel::FT>& original_densities, ///<  
-  const std::vector<typename Kernel::FT>& sample_densities, ///< 
-  RandomAccessIterator original_first_iter, ///<
-  RandomAccessIterator sample_first_iter ///<
+  const std::vector<typename Kernel::FT>& sample_densities ///< 
 )
 {
   CGAL_point_set_processing_precondition(radius > 0);
@@ -590,9 +588,7 @@ wlop_simplify_and_regularize_point_set(
                                                  sample_kd_tree,
                                                  radius, 
                                                  original_density_weights,
-                                                 sample_density_weights,
-                                                 first_original_iter,
-                                                 first_sample_iter);
+                                                 sample_density_weights);
           }
         }
       );
@@ -612,9 +608,7 @@ wlop_simplify_and_regularize_point_set(
                                        sample_kd_tree,
                                        radius2,
                                        original_density_weights,
-                                       sample_density_weights,
-                                       first_original_iter,
-                                       first_sample_iter);
+                                       sample_density_weights);
       }
     }
     
