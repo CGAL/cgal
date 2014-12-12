@@ -6,47 +6,57 @@
 #include <CGAL/Timer.h>
 #include <boost/container/deque.hpp>
 
-#if 1 // 
-// leaf
-struct X {
+const int N = 10000000;
+
+struct Leaf {
   bool b;
   int i;
   double d1;
 };
-#else
-// internal
-struct X {
+
+
+struct Internal {
   bool b;
   int i;
   double d1, d2, d3, d4,d5;
 };
-#endif
-int main()
+
+template <typename Container, typename T>
+void bench_container()
 {
+  std::cout << typeid(Container).name() << std::endl;
+
   CGAL::Memory_sizer ms;
   CGAL::Timer t;
   t.start();
-#if 0
-  std::cout <<"blocklist"<< std::endl;
-  CGAL::Block_list<X, 256> de;
-#elif 0
-  std::cout <<"boost::container::deque"<< std::endl;
-  boost::container::deque<X> de;
-#elif 0
-  std::cout <<"std::deque"<< std::endl;
-  std::deque<X> de;
-#else
-  std::cout <<"vector"<< std::endl;
-  std::vector<X> de;
-  // de.reserve(100000000);
-#endif
-
-  for(int i=0; i < 10000000; i++){
-    de.push_back(X());
+  
+  T element;
+  Container c;
+  for(int i=0; i <N ; i++){
+    c.push_back(element);
   }
   t.stop();
   std::cout << t.time() << "sec"<< std::endl;
-  std::cout << ms.virtual_size() << " " << ms.resident_size() << std::endl;
+  std::cout << "virtual : " << ms.virtual_size() << std::endl
+            << "resident: " << ms.resident_size() << std::endl << std::endl;
 
+}
+
+template <typename T>
+void
+bench()
+{
+  std::cout << "sizeof(" << typeid(T).name() << ") = " << sizeof(T) <<std::endl;
+  //bench_container<CGAL::Block_list<T, 256>,T>();
+  bench_container<std::deque<T>,T>();
+  bench_container<boost::container::deque<T>,T>();
+  //bench_container<std::vector<T>,T>();
+}
+
+int main()
+{
+  bench<double>();
+  bench<Leaf>();
+  bench<Internal>();
   return 0;
 }
