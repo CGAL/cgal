@@ -14,7 +14,7 @@ typedef CGAL::Simple_cartesian<double> K;
 typedef CGAL::Search_traits_3<K> TreeTraits_3;
 typedef K::Point_3 Point_3;
 typedef CGAL::Euclidean_distance<TreeTraits_3> Distance;
-typedef CGAL::Fair<TreeTraits_3> Splitter;
+typedef CGAL::Sliding_midpoint<TreeTraits_3> Splitter;
 typedef CGAL::Orthogonal_k_neighbor_search<TreeTraits_3,Distance,Splitter> Neighbor_search_3;
 typedef Neighbor_search_3::Tree Tree_3;
 typedef CGAL::Timer Timer;

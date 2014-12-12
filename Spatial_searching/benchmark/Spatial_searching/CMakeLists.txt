@@ -27,6 +27,7 @@ if ( CGAL_FOUND )
 
   create_single_source_cgal_program( "Compare_ANN_STANN_CGAL.cpp" )
   create_single_source_cgal_program( "nanoflan.cpp" )
+create_single_source_cgal_program( "binary.cpp" )
   create_single_source_cgal_program( "nearest_neighbor_searching_50.cpp" )
   create_single_source_cgal_program( "nearest_neighbor_searching_inplace_50.cpp" )
   create_single_source_cgal_program( "Nearest_neighbor_searching.cpp" )
