@@ -144,6 +144,27 @@ sparsify_point_set(
   return output;
 }
 
+template<typename Point, typename OutputIterator>
+bool load_points_from_file(
+  const std::string &filename, OutputIterator points)
+{
+  std::ifstream in(filename);
+  if (!in.is_open())
+  {
+    std::cerr << "Could not open '" << filename << "'" << std::endl;
+    return false;
+  }
+
+  Point p;
+  int dim_from_file;
+  in >> dim_from_file;
+
+  while(in >> p)
+    *points++ = p;
+
+  return true;
+}
+
 template <typename Kernel>
 std::vector<typename Kernel::Point_d> generate_points_on_plane(std::size_t num_points)
 {
