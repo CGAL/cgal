@@ -389,7 +389,6 @@ bilateral_smooth_point_set(
   typedef bilateral_smooth_point_set_internal::Kd_tree_traits<Kernel> Tree_traits;
   typedef CGAL::Orthogonal_k_neighbor_search<Tree_traits> Neighbor_search;
   typedef typename Neighbor_search::Tree Tree;
-  typedef typename Neighbor_search::iterator Search_iterator;
 
   // copy points and normals
   Pwns pwns;

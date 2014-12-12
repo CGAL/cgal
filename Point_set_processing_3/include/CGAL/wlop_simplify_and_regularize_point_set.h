@@ -240,7 +240,6 @@ compute_density_weight_for_original_point(
 
   // basic geometric types
   typedef typename Kernel::Point_3                         Point;
-  typedef typename Kernel::Vector_3                        Vector;
   typedef typename Kernel::FT                              FT;
                                                           
   //types for range search
@@ -296,7 +295,6 @@ compute_density_weight_for_sample_point(
 {
   // basic geometric types
   typedef typename Kernel::Point_3                          Point;
-  typedef typename Kernel::Vector_3                         Vector;
   typedef typename Kernel::FT                               FT;
 
   //types for range search
@@ -397,7 +395,6 @@ wlop_simplify_and_regularize_point_set(
 {
   // basic geometric types
   typedef typename Kernel::Point_3   Point;
-  typedef typename Kernel::Vector_3  Vector;
   typedef typename Kernel::FT        FT;
 
   // types for K nearest neighbors search structure
@@ -405,7 +402,6 @@ wlop_simplify_and_regularize_point_set(
   typedef simplify_and_regularize_internal::Kd_tree_traits<Kernel> Tree_traits;
   typedef CGAL::Orthogonal_k_neighbor_search<Tree_traits> Neighbor_search;
   typedef typename Neighbor_search::Tree Kd_Tree;
-  typedef typename Neighbor_search::iterator Search_iterator;
 
   // precondition: at least one element in the container.
   // to fix: should have at least three distinct points

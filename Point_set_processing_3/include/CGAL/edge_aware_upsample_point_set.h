@@ -140,7 +140,6 @@ update_new_point(
 )
 {
   // basic geometric types
-  typedef typename Kernel::Point_3 Point;
   typedef typename Kernel::Vector_3 Vector;
   typedef typename Kernel::FT FT;
   typedef typename rich_grid_internal::Rich_point<Kernel> Rich_point;
@@ -334,8 +333,6 @@ edge_aware_upsample_point_set(
   typedef typename Kernel::Vector_3 Vector;
   typedef typename Kernel::FT FT;
   typedef typename rich_grid_internal::Rich_point<Kernel> Rich_point;
-  typedef std::pair<Point, Vector> Point_with_normal;
-
 
   // preconditions
   CGAL_point_set_processing_precondition(first != beyond);

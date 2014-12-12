@@ -77,8 +77,8 @@ public:
 
 public:
   Point pt;
-  Vector normal;
   unsigned int index;
+  Vector normal;
   std::vector<unsigned int> neighbors;
   std::vector<unsigned int> original_neighbors;//it's not necessary
 };
@@ -184,7 +184,6 @@ void Rich_grid<Kernel>::init(std::vector<Rich_point<Kernel> > &vert,
                              CGAL::Bbox_3 bbox,
                              const typename Kernel::FT _radius) 
 {
-  typedef typename Kernel::Point_3 Point;
   typedef typename Kernel::FT FT;
 
   rich_points.resize(vert.size());
@@ -259,9 +258,6 @@ void Rich_grid<Kernel>::travel_itself(
   iterator startb, iterator endb, FT radius)
 ) 
 {
-  typedef typename Kernel::Point_3 Point;
-  typedef typename Kernel::FT FT;
-
   static int corner[8*3] = { 0, 0, 0,  1, 0, 0,  0, 1, 0,  0, 0, 1,
     0, 1, 1,  1, 0, 1,  1, 1, 0,  1, 1, 1 };
 
@@ -302,9 +298,6 @@ void Rich_grid<Kernel>::travel_others(
                         const typename Kernel::FT radius)
 ) 
 {
-  typedef typename Kernel::Point_3 Point;
-  typedef typename Kernel::FT FT;
-
   static int corner[8*3] = { 0, 0, 0,  1, 0, 0,  0, 1, 0,  0, 0, 1,
     0, 1, 1,  1, 0, 1,  1, 1, 0,  1, 1, 1 };
 
@@ -463,7 +456,6 @@ void compute_ball_neighbors_one_self(
   CGAL::Bbox_3 bbox, ///< bounding box
   const typename Kernel::FT radius)
 {
-  typedef typename Kernel::FT FT;
   CGAL_point_set_processing_precondition(radius > 0);
 
   for (unsigned int i = 0; i < points.size(); ++i)
