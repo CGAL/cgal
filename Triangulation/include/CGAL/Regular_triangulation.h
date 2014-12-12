@@ -920,12 +920,26 @@ Regular_triangulation<RTTraits, TDS>
 {
   typedef std::vector<Full_cell_handle> Full_cell_h_vector;
 
-  Orientation_d ori = geom_traits().orientation_d_object();
-  Power_test_d side = geom_traits().power_test_d_object();
-  Conflict_pred_in_fullspace c(*this, p, ori, side);
+  bool is_in_conflict = true;
+  if( current_dimension() < maximal_dimension() )
+  {
+    Conflict_pred_in_subspace c(
+      *this, p, 
+      coaffine_orientation_predicate(), 
+      power_test_in_flat_predicate());
+    is_in_conflict = c(s);
+  }
+  else
+  {
+    Orientation_d ori = geom_traits().orientation_d_object();
+    Power_test_d side = geom_traits().power_test_d_object();
+    Conflict_pred_in_fullspace c(*this, p, ori, side);
+    is_in_conflict = c(s);
+  }
+
   // If p is not in conflict with s, then p is hidden
   // => we don't insert it
-  if (!c(s))
+  if (!is_in_conflict)
   {
     m_hidden_points.push_back(p);
     return Vertex_handle();
