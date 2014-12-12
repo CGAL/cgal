@@ -14,7 +14,7 @@ int main(void)
 {
   // Reads a .xyz point set file in points[].
   std::vector<Point> points;
-  std::ifstream stream("data/ThreeLady.xyz");
+  std::ifstream stream("data/oni.xyz");
   if (!stream ||
       !CGAL::read_xyz_points(stream, std::back_inserter(points)))
   {
