@@ -35,7 +35,6 @@
 
 #include <tbb/parallel_for.h>
 #include <tbb/blocked_range.h>
-#include <tbb/tbbmalloc_proxy.h>
 
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Fuzzy_sphere.h>
@@ -134,7 +133,7 @@ compute_update_sample_point(
   FT weight = (FT)0.0, average_weight_sum = (FT)0.0;
   FT iradius16 = -(FT)4.0 / radius2;
 
-  std::vector<Kd_tree_point>::iterator iter;
+  typename std::vector<Kd_tree_point>::iterator iter;
   iter = neighbor_original_points.begin();
   for (; iter != neighbor_original_points.end(); ++iter)
   {
@@ -156,7 +155,7 @@ compute_update_sample_point(
     average = average + (np - CGAL::ORIGIN) * weight;
   }
 
-  if (neighbor_original_points.empty() || average_weight_sum < FT(1e-100))
+  if (neighbor_original_points.empty() || average_weight_sum < FT(1e-10))
   {
     average = query - CGAL::ORIGIN;
   }
@@ -239,7 +238,6 @@ compute_density_weight_for_original_point(
 
   // basic geometric types
   typedef typename Kernel::Point_3                         Point;
-  typedef typename Kernel::Vector_3                        Vector;
   typedef typename Kernel::FT                              FT;
                                                           
   //types for range search
@@ -258,7 +256,7 @@ compute_density_weight_for_original_point(
   FT density_weight = (FT)1.0;
   FT iradius16 = -(FT)4.0 / radius2;
 
-  std::vector<Kd_tree_point>::iterator iter;
+  typename std::vector<Kd_tree_point>::iterator iter;
   iter = neighbor_original_points.begin();
 
   for (; iter != neighbor_original_points.end(); iter++)
@@ -295,7 +293,6 @@ compute_density_weight_for_sample_point(
 {
   // basic geometric types
   typedef typename Kernel::Point_3                          Point;
-  typedef typename Kernel::Vector_3                         Vector;
   typedef typename Kernel::FT                               FT;
 
   //types for range search
@@ -313,7 +310,7 @@ compute_density_weight_for_sample_point(
   FT density_weight = (FT)1.0;
   FT iradius16 = -(FT)4.0 / radius2;
 
-  std::vector<Kd_tree_point>::iterator iter;
+  typename std::vector<Kd_tree_point>::iterator iter;
   iter = neighbor_sample_points.begin();
 
   for (; iter != neighbor_sample_points.end(); iter++)
@@ -396,7 +393,6 @@ wlop_simplify_and_regularize_point_set(
 {
   // basic geometric types
   typedef typename Kernel::Point_3   Point;
-  typedef typename Kernel::Vector_3  Vector;
   typedef typename Kernel::FT        FT;
 
   // types for K nearest neighbors search structure
@@ -404,7 +400,6 @@ wlop_simplify_and_regularize_point_set(
   typedef simplify_and_regularize_internal::Kd_tree_traits<Kernel> Tree_traits;
   typedef CGAL::Orthogonal_k_neighbor_search<Tree_traits> Neighbor_search;
   typedef typename Neighbor_search::Tree Kd_Tree;
-  typedef typename Neighbor_search::iterator Search_iterator;
 
   // precondition: at least one element in the container.
   // to fix: should have at least three distinct points
@@ -483,7 +478,7 @@ wlop_simplify_and_regularize_point_set(
 
 
   std::vector<Point> update_sample_points(number_of_sample);
-  std::vector<Point>::iterator sample_iter;
+  typename std::vector<Point>::iterator sample_iter;
   
   // Compute original density weight for original points if user needed
   std::vector<FT> original_density_weights;
@@ -568,7 +563,7 @@ wlop_simplify_and_regularize_point_set(
     }
     
 
-    std::vector<Point>::iterator update_iter = update_sample_points.begin();
+    typename std::vector<Point>::iterator update_iter = update_sample_points.begin();
     //parallel
 #ifdef CGAL_LINKED_WITH_TBB
     if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)

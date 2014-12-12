@@ -123,6 +123,8 @@ compute_denoise_projection(
   // basic geometric types
   typedef typename Kernel::FT FT;
   typedef CGAL::Point_with_normal_3<Kernel> Pwn;
+  typedef typename Kernel::Vector_3 Vector;
+  typedef typename Kernel::Point_3 Point;
 
   FT radius2 = radius * radius;
 
@@ -135,7 +137,7 @@ compute_denoise_projection(
   FT cos_sigma = cos(sharpness_angle / 180.0 * 3.1415926);
   FT sharpness_bandwidth = std::pow((CGAL::max)(1e-8, 1 - cos_sigma), 2);
 
-  std::vector<Pwn,tbb::scalable_allocator<Pwn>>::const_iterator 
+  typename std::vector<Pwn,tbb::scalable_allocator<Pwn> >::const_iterator 
     pwn_iter = neighbor_pwns.begin();
   for (; pwn_iter != neighbor_pwns.end(); ++pwn_iter)
   {
@@ -278,19 +280,19 @@ template <typename Kernel>
 class Pwn_updater 
 {
   typedef typename CGAL::Point_with_normal_3<Kernel> Pwn;
-  typedef typename std::vector<Pwn,tbb::scalable_allocator<Pwn>> Pwns;
+  typedef typename std::vector<Pwn,tbb::scalable_allocator<Pwn> > Pwns;
   typedef typename Kernel::FT FT;
 
   FT sharpness_angle;
   Pwns* pwns;
   Pwns* update_pwns;
-  std::vector<Pwns,tbb::scalable_allocator<Pwns>>* pwns_neighbors;
+  std::vector<Pwns,tbb::scalable_allocator<Pwns> >* pwns_neighbors;
 
 public:
   Pwn_updater(FT s, 
               Pwns *in,
               Pwns *out, 
-              std::vector<Pwns,tbb::scalable_allocator<Pwns>>* neighbors): 
+              std::vector<Pwns,tbb::scalable_allocator<Pwns> >* neighbors): 
                                              sharpness_angle(s), 
                                              pwns(in),
                                              update_pwns(out),
@@ -374,7 +376,7 @@ bilateral_smooth_point_set(
   // basic geometric types
   typedef typename Kernel::Point_3 Point;
   typedef typename CGAL::Point_with_normal_3<Kernel> Pwn;
-  typedef typename std::vector<Pwn,tbb::scalable_allocator<Pwn>> Pwns;
+  typedef typename std::vector<Pwn,tbb::scalable_allocator<Pwn> > Pwns;
   typedef typename Kernel::Vector_3 Vector;
   typedef typename Kernel::FT FT;
 
@@ -387,7 +389,6 @@ bilateral_smooth_point_set(
   typedef bilateral_smooth_point_set_internal::Kd_tree_traits<Kernel> Tree_traits;
   typedef CGAL::Orthogonal_k_neighbor_search<Tree_traits> Neighbor_search;
   typedef typename Neighbor_search::Tree Tree;
-  typedef typename Neighbor_search::iterator Search_iterator;
 
   // copy points and normals
   Pwns pwns;
@@ -410,9 +411,9 @@ bilateral_smooth_point_set(
 #endif
    // initiate a KD-tree search for points
    std::vector<Kd_tree_element,
-     tbb::scalable_allocator<Kd_tree_element>> treeElements;
+     tbb::scalable_allocator<Kd_tree_element> > treeElements;
    treeElements.reserve(pwns.size());
-   std::vector<Pwn,tbb::scalable_allocator<Pwn>>::iterator 
+   typename std::vector<Pwn,tbb::scalable_allocator<Pwn> >::iterator 
      pwn_iter = pwns.begin();
    for (unsigned int i = 0; pwn_iter != pwns.end(); ++pwn_iter)
    {
@@ -476,7 +477,7 @@ bilateral_smooth_point_set(
    task_timer.start();
 #endif
    // compute all neighbors
-   std::vector<Pwns,tbb::scalable_allocator<Pwns>> pwns_neighbors;
+   std::vector<Pwns,tbb::scalable_allocator<Pwns> > pwns_neighbors;
    pwns_neighbors.resize(nb_points);
  
 #ifdef CGAL_LINKED_WITH_TBB
@@ -496,7 +497,7 @@ bilateral_smooth_point_set(
    else
 #endif
    {
-     std::vector<Pwns,tbb::scalable_allocator<Pwns>>::iterator 
+     typename std::vector<Pwns,tbb::scalable_allocator<Pwns> >::iterator 
        pwns_iter = pwns_neighbors.begin();
 
      for(pwn_iter = pwns.begin(); pwn_iter != pwns.end(); ++pwn_iter, ++pwns_iter)
@@ -533,9 +534,9 @@ bilateral_smooth_point_set(
    else
 #endif // CGAL_LINKED_WITH_TBB
    {
-     std::vector<Pwn,tbb::scalable_allocator<Pwn>>::iterator 
+     typename std::vector<Pwn,tbb::scalable_allocator<Pwn> >::iterator 
        update_iter = update_pwns.begin();
-     std::vector<Pwns,tbb::scalable_allocator<Pwns>>::iterator 
+     typename std::vector<Pwns,tbb::scalable_allocator<Pwns> >::iterator 
        neighbor_iter = pwns_neighbors.begin();
      for(pwn_iter = pwns.begin(); pwn_iter != pwns.end(); 
          ++pwn_iter, ++update_iter, ++neighbor_iter)

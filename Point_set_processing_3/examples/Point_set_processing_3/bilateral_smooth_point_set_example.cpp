@@ -48,7 +48,7 @@ int main(void)
   
   for (int i = 0; i < iter_number; ++i)
   {
-    double error = 
+    /* double error = */
     CGAL::bilateral_smooth_point_set <CGAL::Parallel_tag>(
           points.begin(), 
           points.end(),
