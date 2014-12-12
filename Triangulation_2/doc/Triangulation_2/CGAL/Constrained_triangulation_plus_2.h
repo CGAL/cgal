@@ -63,9 +63,7 @@ The intersection tag as defined in `Tr`.
   
 /*!
 The identifier of a polyline constraint. 
-The class is model of `Assignable`, `CopyConstructible`, `DefaultConstructible`, and  `Comparable`.  For reasons of backward compatibility of
-functions that returned `std::pair<Vertex_handle,Vertex_handle>` instead of `Constraint_id`,
-the id class has a conversion operator to `std::pair<Vertex_handle,Vertex_handle>`.  
+The class is model of `Assignable`, `CopyConstructible`, `DefaultConstructible`, and  `Comparable`.  
 */
   typedef unspecified_type Constraint_id;
 

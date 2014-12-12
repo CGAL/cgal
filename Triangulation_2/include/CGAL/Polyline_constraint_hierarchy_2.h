@@ -114,13 +114,13 @@ public:
 
     Vertex_list* vl_ptr() const {return second;}
 
-    operator std::pair<Vertex_handle, Vertex_handle>()
+    operator std::pair<std::pair<Vertex_handle, Vertex_handle>,Vertex_list*>()
     { 
       if (second!=NULL){
-        return std::make_pair(second->front().vertex(),
-                              second->back().vertex());
+        return std::make_pair(std::make_pair(second->front().vertex(),
+                                             second->back().vertex()),second);
       } 
-      return std::make_pair(Vertex_handle(),Vertex_handle());
+      return std::make_pair(std::make_pair(Vertex_handle(),Vertex_handle()),second);
     }
 
     bool operator == (const Constraint_id& other) const
