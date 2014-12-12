@@ -401,7 +401,9 @@ bilateral_smooth_point_set(
     const Point& p = get(point_pmap, *it);
     const Vector& n = get(normal_pmap, *it);
 #endif
-      pwns.push_back(Pwn(p, n));
+    CGAL_point_set_processing_precondition(n.squared_length() < 1e-10);
+    
+    pwns.push_back(Pwn(p, n));
    }
 
    unsigned int nb_points = pwns.size();

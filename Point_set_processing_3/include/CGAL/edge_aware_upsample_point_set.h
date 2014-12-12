@@ -365,6 +365,7 @@ edge_aware_upsample_point_set(
 
     rich_point_set[i].index = i;
     bbox += rich_point_set[i].pt.bbox();
+    CGAL_point_set_processing_precondition(rich_point_set[i].normal.squared_length() < 1e-10);
   }
 
   // compute neighborhood
