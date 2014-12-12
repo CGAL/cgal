@@ -1690,9 +1690,13 @@ namespace CGAL {
     template<unsigned int i>
     void link_beta(Dart_handle adart1, Dart_handle adart2)
     {
-      if ( i==0 ) link_beta_0(adart1, adart2);
-      else if ( i==1 ) link_beta_1(adart1, adart2);
-      else link_beta_for_involution<i>(adart1, adart2);
+      if ( are_attributes_automatically_managed() )
+      {
+        if ( i==0 ) link_beta_0(adart1, adart2);
+        else if ( i==1 ) link_beta_1(adart1, adart2);
+        else link_beta_for_involution<i>(adart1, adart2);
+      }
+      else basic_link_beta<i>(adart1, adart2);
     }
 
     /** Double link a dart with betai to a second dart.
@@ -2092,9 +2096,13 @@ namespace CGAL {
     template<unsigned int i>
     void sew(Dart_handle adart1, Dart_handle adart2)
     {
-      if ( i==0 ) sew_0(adart1, adart2);
-      else if ( i==1 ) sew_1(adart1, adart2);
-      else sew_for_involution<i>(adart1, adart2);
+      if ( are_attributes_automatically_managed() )
+      {
+        if ( i==0 ) sew_0(adart1, adart2);
+        else if ( i==1 ) sew_1(adart1, adart2);
+        else sew_for_involution<i>(adart1, adart2);
+      }
+      else topo_sew<i>(adart1, adart2);
     }
 
     /** Sew by betai the two given darts plus all the required darts
@@ -2337,9 +2345,13 @@ namespace CGAL {
     template<unsigned int i>
     void unsew(Dart_handle adart)
     {
-      if ( i==0 ) unsew_0(adart);
-      else if ( i==1 ) unsew_1(adart);
-      else unsew_for_involution<i>(adart);
+      if ( are_attributes_automatically_managed() )
+      {
+        if ( i==0 ) unsew_0(adart);
+        else if ( i==1 ) unsew_1(adart);
+        else unsew_for_involution<i>(adart);
+      }
+      // else topo_unsew<i>(adart);
     }
 
     /** Unsew by betai the given dart plus all the required darts
