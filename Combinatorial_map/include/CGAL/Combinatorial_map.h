@@ -2128,22 +2128,22 @@ namespace CGAL {
      */
     void topo_unsew_1(Dart_handle adart)
     {
-      CGAL_assertion( !is_free<1>(adart) );
+      CGAL_assertion( !this->template is_free<1>(adart) );
 
       int m = get_new_mark();
       std::deque<Dart_handle> dartv;
       for ( CGAL::CMap_dart_iterator_basic_of_cell<Self,0> it(*this, adart, m);
             it.cont(); ++it )
       {
-        mark(*it,m);
-        dartv.push_back(*it);
+        mark(it,m);
+        dartv.push_back(it);
       }
 
       for ( CGAL::CMap_dart_iterator_of_involution<Self,1> it(*this, adart);
             it.cont(); ++it )
       {
-        if ( is_marked(*it,m) ) unlink_beta_1(*it);
-        else unlink_beta_0(*it);
+        if ( is_marked(it,m) ) unlink_beta_1(it);
+        else unlink_beta_0(it);
       }
 
       for ( typename std::deque<Dart_handle>::iterator it=dartv.begin();
@@ -2161,7 +2161,7 @@ namespace CGAL {
      */
     void topo_unsew_0(Dart_handle adart)
     {
-      CGAL_assertion( !is_free<0>(adart) );
+      CGAL_assertion( !this->template is_free<0>(adart) );
       topo_unsew_1( adart->template beta<0>() );
     }
 
@@ -2175,12 +2175,12 @@ namespace CGAL {
     template<unsigned int i>
     void topo_unsew_for_involution(Dart_handle adart)
     {
-      CGAL_assertion( !is_free<i>(adart) );
+      CGAL_assertion( !this->template is_free<i>(adart) );
       CGAL_assertion( 2<=i && i<=Self::dimension );
 
       for ( CGAL::CMap_dart_iterator_of_involution<Self,i> it(*this, adart);
             it.cont(); ++it )
-      { unlink_beta<i>(*it); }
+      { unlink_beta<i>(it); }
     }
 
     /** Topological unsew by betai the given dart plus all the required darts
