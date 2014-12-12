@@ -158,7 +158,7 @@ compute_update_sample_point(
     average = average + (np - CGAL::ORIGIN) * weight;
   }
 
-  if (neighbor_original_points.empty() || average_weight_sum < FT(1e-100))
+  if (neighbor_original_points.empty() || average_weight_sum < FT(1e-10))
   {
     average = query - CGAL::ORIGIN;
   }
