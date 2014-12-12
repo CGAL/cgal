@@ -374,6 +374,41 @@ public:
   template <class TDS_src,class ConvertVertex,class ConvertFace>
   Vertex_handle copy_tds(const TDS_src&, typename TDS_src::Vertex_handle,const ConvertVertex&,const ConvertFace&);
 
+  Vertex_handle collapse_edge(Edge e)
+  {
+    std::cout << "before collapse"<<std::endl;
+    Face_handle fh = e.first;
+    int i = e.second;
+    Vertex_handle vh = fh->vertex(cw(i));
+    Vertex_handle wh = fh->vertex(ccw(i));
+    Face_handle left = fh->neighbor(cw(i));
+    Face_handle right = fh->neighbor(ccw(i));
+    Face_handle nh = fh->neighbor(i);
+    int li = left->index(fh);
+    int ri = right->index(fh);
+    int ni = nh->index(fh);
+    left->set_neighbor(li, right);
+    right->set_neighbor(ri,left);
+    left->set_vertex(ccw(li), vh);
+    vh->set_face(right);
+    right->vertex(ccw(ri))->set_face(right);
+
+    left = nh->neighbor(ccw(ni));
+    right = nh->neighbor(cw(ni));
+    li = left->index(nh);
+    ri = right->index(nh);
+    left->set_neighbor(li, right);
+    right->set_neighbor(ri,left);
+    left->set_vertex(cw(li), vh);
+    right->vertex(cw(ri))->set_face(right);
+    delete_face(fh);
+    delete_face(nh);
+    delete_vertex(wh);
+    std::cout << "after collapse"<<std::endl;
+    return vh;
+  }
+
+
   // I/O
   Vertex_handle file_input(std::istream& is, bool skip_first=false);
   void file_output(std::ostream& os,

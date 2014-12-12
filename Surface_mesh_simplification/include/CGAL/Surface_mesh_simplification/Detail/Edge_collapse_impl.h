@@ -130,8 +130,8 @@ namespace Surface_mesh_simplification
 
     if ( is_constrained(lEdge) ) continue;//no not insert constrainted edges
 
-    CGAL_assertion( get_halfedge_id(lEdge) == id ) ;
-    CGAL_assertion( get_halfedge_id(opposite(lEdge,mSurface)) == id+1 ) ;
+    // AF CGAL_assertion( get_halfedge_id(lEdge) == id ) ;
+    // AF CGAL_assertion( get_halfedge_id(opposite(lEdge,mSurface)) == id+1 ) ;
 
     Profile const& lProfile = create_profile(lEdge);
     if ( !equal_points(lProfile.p0(),lProfile.p1()) )

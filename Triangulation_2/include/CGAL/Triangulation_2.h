@@ -561,6 +561,11 @@ public:
   void delete_face(Face_handle f);
   void delete_vertex(Vertex_handle v);
 
+  Vertex_handle collapse_edge(Edge e)
+  {
+    return _tds.collapse_edge(e);
+  }
+
   Vertex_handle file_input(std::istream& is);
   void file_output(std::ostream& os) const;
 

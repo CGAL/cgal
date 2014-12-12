@@ -19,6 +19,20 @@ typedef CGAL::Triangulation_2<K> Triangulation;
 
 namespace SMS = CGAL::Surface_mesh_simplification;
 
+
+namespace CGAL {
+  namespace Euler {
+
+    template<typename K>
+    typename boost::graph_traits<Triangulation_2<K> >::vertex_descriptor
+    collapse_edge(typename boost::graph_traits<Triangulation_2<K> >::edge_descriptor v0v1,
+                  Triangulation_2<K>& g)
+    {
+      return g.collapse_edge(v0v1);
+    }
+  } // namespace Euler
+} // namespace CGAL
+
 // As we want to run Dijskra's shortest path algorithm we only
 // consider finite vertices and edges.
 
