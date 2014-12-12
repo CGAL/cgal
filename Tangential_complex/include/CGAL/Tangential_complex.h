@@ -236,18 +236,8 @@ public:
     const int amb_dim = m_k.point_dimension_d_object()(*m_points.begin());
 
     // Kernel functors
-    typename Kernel::Construct_vector_d      constr_vec =
-      m_k.construct_vector_d_object();
-    typename Kernel::Compute_coordinate_d    coord =
+    typename Kernel::Compute_coordinate_d coord =
       m_k.compute_coordinate_d_object();
-    typename Kernel::Squared_length_d        sqlen =
-      m_k.squared_length_d_object();
-    typename Kernel::Scaled_vector_d         scaled_vec =
-      m_k.scaled_vector_d_object();
-    typename Kernel::Scalar_product_d        inner_pdct =
-      m_k.scalar_product_d_object();
-    typename Kernel::Difference_of_vectors_d diff_vec =
-      m_k.difference_of_vectors_d_object();
 
     std::vector<FT> sum_eigen_values(amb_dim, FT(0));
 
