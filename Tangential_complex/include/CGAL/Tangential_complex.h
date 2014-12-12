@@ -23,6 +23,7 @@
 #define TANGENTIAL_COMPLEX_H
 
 #include <CGAL/Tangential_complex/config.h>
+const double SQ_HALF_SPARSITY = 0.5*0.5*INPUT_SPARSITY*INPUT_SPARSITY;
 
 #include <CGAL/basic.h>
 #include <CGAL/tags.h>
@@ -715,7 +716,6 @@ private:
     // and which contains all the
     // circumspheres of the star of "center_vertex"
     boost::optional<FT> star_sphere_squared_radius;
-    FT star_sphere_squared_radius_plus_margin = 0;
 
     // Insert points until we find a point which is outside "star shere"
     for (INS_iterator nn_it = ins_range.begin() ;
@@ -732,7 +732,7 @@ private:
 
         if (star_sphere_squared_radius
           && k_sqdist(center_pt, neighbor_pt)
-             > star_sphere_squared_radius_plus_margin)
+             > *star_sphere_squared_radius + SQ_HALF_SPARSITY)
           break;
 
         Tr_point proj_pt = project_point_and_compute_weight(
@@ -746,7 +746,7 @@ private:
           // CJTODO TEMP TEST
           /*if (star_sphere_squared_radius
             && k_sqdist(center_pt, neighbor_pt)
-               > star_sphere_squared_radius_plus_margin)
+               > *star_sphere_squared_radius + SQ_HALF_SPARSITY)
             std::cout << "ARGGGGGGGH" << std::endl;*/
 
           vh->data() = neighbor_point_idx;
@@ -784,10 +784,6 @@ private:
                   || sq_power_sphere_diam > *star_sphere_squared_radius)
                 {
                   star_sphere_squared_radius = sq_power_sphere_diam;
-                  star_sphere_squared_radius_plus_margin =
-                    CGAL::sqrt(sq_power_sphere_diam) + 0.5*INPUT_SPARSITY;
-                  star_sphere_squared_radius_plus_margin *= 
-                    star_sphere_squared_radius_plus_margin; // squared
                 }
               }
             }
@@ -1085,8 +1081,7 @@ private:
         CGAL::Random rng;
         for (std::set<std::size_t>::iterator it=c.begin(); it!=c.end(); ++it)
         {
-          m_weights[*it] =
-            rng.get_double(0., (0.5*0.5*INPUT_SPARSITY*INPUT_SPARSITY));
+          m_weights[*it] = rng.get_double(0., SQ_HALF_SPARSITY);
         }
 
         refresh_tangential_complex();
@@ -1157,8 +1152,7 @@ private:
              it != neighbors.end() ; 
              ++it)
         {
-          m_weights[*it] =
-            rng.get_double(0., (0.5*0.5*INPUT_SPARSITY*INPUT_SPARSITY));
+          m_weights[*it] = rng.get_double(0., SQ_HALF_SPARSITY);
         }
         
         refresh_tangential_complex();
