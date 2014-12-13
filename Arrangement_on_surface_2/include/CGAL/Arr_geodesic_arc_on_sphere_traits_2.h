@@ -710,7 +710,8 @@ public:
       const Kernel* kernel = m_traits;
       typename Kernel::Construct_opposite_direction_3 opposite_3 =
         kernel->construct_opposite_direction_3_object();
-      if (!kernel->equal_3_object()(opposite_3(p), r1)) return EQUAL;
+      Point_2 tmp1 = opposite_3(p);     // pacify msvc 10
+      if (!kernel->equal_3_object()(tmp1, r1)) return EQUAL;
 
       Sign xsign = Traits::x_sign(p);
       Sign ysign = Traits::y_sign(p);
