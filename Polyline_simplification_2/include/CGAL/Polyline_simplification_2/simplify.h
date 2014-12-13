@@ -265,7 +265,6 @@ operator()()
     pct.simplify(v);
     
     if((*u)->is_removable()){
-      Vertices_in_constraint_iterator uu = boost::prior(u);
       boost::optional<FT> dist = cost(pct, u);
       if(! dist){
         std::cerr << "undefined cost not handled yet" << std::endl;
@@ -278,7 +277,6 @@ operator()()
     }
     
     if((*w)->is_removable()){
-      Vertices_in_constraint_iterator ww = boost::next(w);
       boost::optional<FT> dist = cost(pct, w);
       if(! dist){
         std::cerr << "undefined cost not handled yet" << std::endl;
