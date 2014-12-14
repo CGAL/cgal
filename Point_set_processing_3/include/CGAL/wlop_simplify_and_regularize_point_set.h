@@ -328,6 +328,58 @@ compute_density_weight_for_sample_point(
 
 /// \endcond
 
+/// \cond SKIP_IN_MANUAL
+/// This is for parallelization of function: compute_denoise_projection()
+template <typename Kernel, typename Tree, typename RandomAccessIterator>
+class Sample_point_updater 
+{
+  typedef typename Kernel::Point_3   Point;
+  typedef typename Kernel::FT        FT;
+
+  std::vector<Point>* update_sample_points;
+  std::vector<Point>* sample_points;
+  Tree* original_kd_tree;            
+  Tree* sample_kd_tree;              
+  const typename Kernel::FT radius;  
+  const std::vector<typename Kernel::FT>* original_densities;
+  const std::vector<typename Kernel::FT>* sample_densities; 
+
+public:
+  Sample_point_updater(
+    std::vector<Point>* out,
+    std::vector<Point>* in,
+    Tree* _original_kd_tree,            
+    Tree* _sample_kd_tree,              
+    const typename Kernel::FT _radius,  
+    const std::vector<typename Kernel::FT>* _original_densities,
+    const std::vector<typename Kernel::FT>* _sample_densities): 
+    update_sample_points(out), 
+    sample_points(in),
+    original_kd_tree(_original_kd_tree),
+    sample_kd_tree(_sample_kd_tree),
+    radius(_radius),
+    original_densities(_original_densities),
+    sample_densities(_sample_densities){} 
+
+
+  void operator() ( const tbb::blocked_range<size_t>& r ) const 
+  { 
+    for (size_t i = r.begin(); i != r.end(); ++i) 
+    {
+      (*update_sample_points)[i] = simplify_and_regularize_internal::
+        compute_update_sample_point<Kernel, Tree, RandomAccessIterator>(
+        (*sample_points)[i], 
+        *original_kd_tree,
+        *sample_kd_tree,
+        radius, 
+        *original_densities,
+        *sample_densities);
+    }
+  }
+};
+/// \endcond
+
+
 // ----------------------------------------------------------------------------
 // Public section
 // ----------------------------------------------------------------------------
@@ -571,25 +623,37 @@ wlop_simplify_and_regularize_point_set(
 #ifdef CGAL_LINKED_WITH_TBB
     if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
     {
-      tbb::parallel_for(
-        tbb::blocked_range<size_t>(0, number_of_sample),
-        [&](const tbb::blocked_range<size_t>& r)
-        {
-          for (size_t i = r.begin(); i != r.end(); ++i)
-          {
-              update_sample_points[i] = simplify_and_regularize_internal::
-                    compute_update_sample_point<Kernel,
-                                                Kd_Tree,
-                                                RandomAccessIterator>
-                                                (sample_points[i],
-                                                 original_kd_tree,
-                                                 sample_kd_tree,
-                                                 radius, 
-                                                 original_density_weights,
-                                                 sample_density_weights);
-          }
-        }
-      );
+//       tbb::parallel_for(
+//         tbb::blocked_range<size_t>(0, number_of_sample),
+//         [&](const tbb::blocked_range<size_t>& r)
+//         {
+//           for (size_t i = r.begin(); i != r.end(); ++i)
+//           {
+//               update_sample_points[i] = simplify_and_regularize_internal::
+//                     compute_update_sample_point<Kernel,
+//                                                 Kd_Tree,
+//                                                 RandomAccessIterator>
+//                                                 (sample_points[i],
+//                                                  original_kd_tree,
+//                                                  sample_kd_tree,
+//                                                  radius, 
+//                                                  original_density_weights,
+//                                                  sample_density_weights);
+//           }
+//         }
+//       );
+
+      tbb::blocked_range<size_t> block(0, number_of_sample);
+      Sample_point_updater<Kernel, Kd_Tree, RandomAccessIterator> sample_updater(
+                           &update_sample_points,
+                           &sample_points,          
+                           &original_kd_tree,
+                           &sample_kd_tree,
+                           radius, 
+                           &original_density_weights,
+                           &sample_density_weights);
+
+       tbb::parallel_for(block, sample_updater);
     }else
 #endif
     {
