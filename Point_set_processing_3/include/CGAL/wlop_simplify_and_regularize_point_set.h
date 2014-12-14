@@ -538,54 +538,23 @@ wlop_simplify_and_regularize_point_set(
   // Compute original density weight for original points if user needed
   std::vector<FT> original_density_weights;
 
-  if (require_uniform_sampling)
+  if (require_uniform_sampling)//default value is false
   {
-    //parallel
-#ifdef CGAL_LINKED_WITH_TBB
-    if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
+    //todo: this part could also be parallelized if needed
+    for (it = first_original_iter, i = 0; it != beyond ; ++it, ++i)
     {
-      original_density_weights.assign(number_of_original, FT(1.0));
-      tbb::parallel_for(
-        tbb::blocked_range<size_t>(0, number_of_original),
-        [&](const tbb::blocked_range<size_t>& r)
-      {
-        for (size_t i = r.begin(); i < r.end(); ++i)
-        {
-          RandomAccessIterator cur = first;
-          std::advance(cur, i);
-          FT density = simplify_and_regularize_internal::
-                  compute_density_weight_for_original_point<Kernel, Kd_Tree>
-                                           (
-                                           #ifdef CGAL_USE_PROPERTY_MAPS_API_V1
-                                             get(point_pmap, cur),
-                                           #else
-                                             get(point_pmap, *cur),
-                                           #endif 
-                                             original_kd_tree, 
-                                             radius);
+      FT density = simplify_and_regularize_internal::
+                   compute_density_weight_for_original_point<Kernel, Kd_Tree>
+                                         (
+                                         #ifdef CGAL_USE_PROPERTY_MAPS_API_V1
+                                           get(point_pmap, it),
+                                         #else
+                                           get(point_pmap, *it),
+                                         #endif  
+                                           original_kd_tree, 
+                                           radius);
 
-          original_density_weights[i] = density;
-        }
-      }
-      );
-    }else
-#endif
-    {
-      for (it = first_original_iter, i = 0; it != beyond ; ++it, ++i)
-      {
-        FT density = simplify_and_regularize_internal::
-                     compute_density_weight_for_original_point<Kernel, Kd_Tree>
-                                           (
-                                           #ifdef CGAL_USE_PROPERTY_MAPS_API_V1
-                                             get(point_pmap, it),
-                                           #else
-                                             get(point_pmap, *it),
-                                           #endif  
-                                             original_kd_tree, 
-                                             radius);
-
-        original_density_weights.push_back(density);
-      }
+      original_density_weights.push_back(density);
     }
   }
 
@@ -623,26 +592,6 @@ wlop_simplify_and_regularize_point_set(
 #ifdef CGAL_LINKED_WITH_TBB
     if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
     {
-//       tbb::parallel_for(
-//         tbb::blocked_range<size_t>(0, number_of_sample),
-//         [&](const tbb::blocked_range<size_t>& r)
-//         {
-//           for (size_t i = r.begin(); i != r.end(); ++i)
-//           {
-//               update_sample_points[i] = simplify_and_regularize_internal::
-//                     compute_update_sample_point<Kernel,
-//                                                 Kd_Tree,
-//                                                 RandomAccessIterator>
-//                                                 (sample_points[i],
-//                                                  original_kd_tree,
-//                                                  sample_kd_tree,
-//                                                  radius, 
-//                                                  original_density_weights,
-//                                                  sample_density_weights);
-//           }
-//         }
-//       );
-
       tbb::blocked_range<size_t> block(0, number_of_sample);
       Sample_point_updater<Kernel, Kd_Tree, RandomAccessIterator> sample_updater(
                            &update_sample_points,
