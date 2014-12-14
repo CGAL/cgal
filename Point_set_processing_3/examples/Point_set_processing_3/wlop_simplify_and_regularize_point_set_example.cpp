@@ -12,7 +12,7 @@ typedef Kernel::Point_3 Point;
 
 int main(void)
 {
-  const std::string input_filename_without_ext = "data/shere_20k";
+  const std::string input_filename_without_ext = "data/sphere_20k";
   const std::string input_filename = input_filename_without_ext + ".xyz";
   const std::string OUTPUT_FILENAME = input_filename_without_ext + "_WLOPED.xyz";
 
@@ -24,6 +24,8 @@ int main(void)
   {
     std::cerr << "Error: cannot read file "
               << input_filename.c_str()  << std::endl;
+
+    system("Pause");
     return EXIT_FAILURE;
   }
 

@@ -69,6 +69,7 @@ int main(void)
     return EXIT_FAILURE;
   }
 
+  system("Pause");
   return EXIT_SUCCESS;
 }
 
