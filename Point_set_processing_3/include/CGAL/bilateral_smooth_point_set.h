@@ -110,8 +110,8 @@ template <typename Kernel>
 CGAL::Point_with_normal_3<Kernel>
 compute_denoise_projection(
   const CGAL::Point_with_normal_3<Kernel>& query, ///< 3D point to project
-  const std::vector<CGAL::Point_with_normal_3<Kernel>,tbb::
-    scalable_allocator<CGAL::Point_with_normal_3<Kernel> > >& neighbor_pwns,  //
+  const std::vector<CGAL::Point_with_normal_3<Kernel>,
+  tbb::scalable_allocator<CGAL::Point_with_normal_3<Kernel> > >& neighbor_pwns,  //
   typename Kernel::FT radius,                   ///< accept neighborhood radius
   typename Kernel::FT sharpness_angle           ///< control sharpness(0-90)
 )
@@ -284,16 +284,19 @@ class Pwn_updater
   typedef typename Kernel::FT FT;
 
   FT sharpness_angle;
+  FT radius;
   Pwns* pwns;
   Pwns* update_pwns;
   std::vector<Pwns,tbb::scalable_allocator<Pwns> >* pwns_neighbors;
 
 public:
-  Pwn_updater(FT s, 
+  Pwn_updater(FT sharpness, 
+              FT r,
               Pwns *in,
               Pwns *out, 
               std::vector<Pwns,tbb::scalable_allocator<Pwns> >* neighbors): 
-                                             sharpness_angle(s), 
+                                             sharpness_angle(sharpness), 
+                                             radius(r),
                                              pwns(in),
                                              update_pwns(out),
                                              pwns_neighbors(neighbors){} 
@@ -306,7 +309,7 @@ public:
       (*update_pwns)[i] = bilateral_smooth_point_set_internal::
         compute_denoise_projection<Kernel>((*pwns)[i], 
                                            (*pwns_neighbors)[i], 
-                                           0.15,
+                                           radius,
                                            sharpness_angle);  
  
     }
@@ -401,7 +404,7 @@ bilateral_smooth_point_set(
     const Point& p = get(point_pmap, *it);
     const Vector& n = get(normal_pmap, *it);
 #endif
-    CGAL_point_set_processing_precondition(n.squared_length() < 1e-10);
+    CGAL_point_set_processing_precondition(n.squared_length() > 1e-10);
     
     pwns.push_back(Pwn(p, n));
    }
@@ -427,43 +430,15 @@ bilateral_smooth_point_set(
    CGAL::Timer task_timer;
    task_timer.start();
 #endif
-   FT guess_neighbor_radius = (FT)(std::numeric_limits<double>::max)(); 
+   FT guess_neighbor_radius = 0.0; 
 
-#ifdef CGAL_LINKED_WITH_TBB
-   if (boost::is_convertible<Concurrency_tag,Parallel_tag>::value)
+   for(pwn_iter = pwns.begin(); pwn_iter != pwns.end(); ++pwn_iter)
    {
-     //tbb::task_scheduler_init init(4);
-
-  #ifdef CGAL_DEBUG_MODE
-     std::cout<<"parallel mode !"<<std::endl;
-  #endif    
-     tbb::parallel_for(
-       tbb::blocked_range<size_t>(0,nb_points),
-       [&](const tbb::blocked_range<size_t>& r)
-       {
-         for (size_t i = r.begin(); i != r.end(); i++)
-         {
-           FT max_spacing = bilateral_smooth_point_set_internal::
-             compute_max_spacing<Kernel,Tree>(pwns[i], tree, k);
-       
-           guess_neighbor_radius = (CGAL::max)(max_spacing, guess_neighbor_radius);
-         }
-       }
-     );
+     FT max_spacing = bilateral_smooth_point_set_internal::
+       compute_max_spacing<Kernel,Tree>(*pwn_iter, tree, k);
+     guess_neighbor_radius = (CGAL::max)(max_spacing, guess_neighbor_radius); 
    }
-   else
-#endif
-   {
-  #ifdef CGAL_DEBUG_MODE
-     std::cout<<"sequential mode!"<<std::endl;
-  #endif
-     for(pwn_iter = pwns.begin(); pwn_iter != pwns.end(); ++pwn_iter)
-     {
-       FT max_spacing = bilateral_smooth_point_set_internal::
-         compute_max_spacing<Kernel,Tree>(*pwn_iter, tree, k);
-       guess_neighbor_radius = (CGAL::max)(max_spacing, guess_neighbor_radius);
-     }
-   }
+   
 #ifdef CGAL_DEBUG_MODE
    task_timer.stop();
 #endif
@@ -528,6 +503,7 @@ bilateral_smooth_point_set(
      //tbb::task_scheduler_init init(4);
      tbb::blocked_range<size_t> block(0, nb_points);
      Pwn_updater<Kernel> pwn_updater(sharpness_angle,
+                                     guess_neighbor_radius,
                                      &pwns,
                                      &update_pwns,
                                      &pwns_neighbors);
