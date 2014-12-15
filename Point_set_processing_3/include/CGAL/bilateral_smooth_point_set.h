@@ -191,7 +191,7 @@ std::vector<CGAL::Point_with_normal_3<Kernel>,
             CGAL_PSP3_DEFAULT_ALLOCATOR<CGAL::Point_with_normal_3<Kernel> > >
 compute_kdtree_neighbors(
   const CGAL::Point_with_normal_3<Kernel>& query, ///< 3D point
-  Tree& tree,                                     ///< KD-tree
+  const Tree& tree,                               ///< KD-tree
   unsigned int k                                  ///< number of neighbors         
 )                       
 {
@@ -285,6 +285,38 @@ compute_max_spacing(
 
 #ifdef CGAL_LINKED_WITH_TBB
 /// \cond SKIP_IN_MANUAL
+/// This is for parallelization of function: bilateral_smooth_point_set()
+template <typename Kernel, typename Tree>
+class Compute_pwns_neighbors
+{
+  typedef typename CGAL::Point_with_normal_3<Kernel> Pwn;
+  typedef typename std::vector<Pwn,CGAL_PSP3_DEFAULT_ALLOCATOR<Pwn> > Pwns;
+  typedef typename std::vector<Pwns,CGAL_PSP3_DEFAULT_ALLOCATOR<Pwns> > 
+                                                                Pwns_neighbors;
+  typedef typename Kernel::FT FT;
+
+  unsigned int                                              m_k;
+  const Tree                                              & m_tree;
+  const Pwns                                              & m_pwns;
+  Pwns_neighbors                                          & m_pwns_neighbors;
+
+public:
+  Compute_pwns_neighbors(unsigned int k, const Tree &tree,
+                         const Pwns &pwns, Pwns_neighbors &neighbors)
+    : m_k(k), m_tree(tree), m_pwns(pwns), m_pwns_neighbors(neighbors) {} 
+
+  void operator() ( const tbb::blocked_range<size_t>& r ) const 
+  {
+    for (size_t i = r.begin(); i!=r.end(); i++)
+    {
+      m_pwns_neighbors[i] = bilateral_smooth_point_set_internal::
+        compute_kdtree_neighbors<Kernel, Tree>(m_pwns[i], m_tree, m_k);
+    }
+  }
+};
+/// \endcond  
+
+/// \cond SKIP_IN_MANUAL
 /// This is for parallelization of function: compute_denoise_projection()
 template <typename Kernel>
 class Pwn_updater 
@@ -325,7 +357,7 @@ public:
     }
   }
 };
-/// \endcond  
+/// \endcond
 #endif // CGAL_LINKED_WITH_TBB
 
 
@@ -472,15 +504,8 @@ bilateral_smooth_point_set(
 #ifdef CGAL_LINKED_WITH_TBB
    if (boost::is_convertible<Concurrency_tag,Parallel_tag>::value)
    {
-     tbb::parallel_for(tbb::blocked_range<size_t>(0,nb_points),
-       [&](const tbb::blocked_range<size_t>& r)
-     {
-       for (size_t i = r.begin(); i!=r.end(); i++)
-       {
-         pwns_neighbors[i] = bilateral_smooth_point_set_internal::
-           compute_kdtree_neighbors<Kernel, Tree>(pwns[i], tree, k);
-       }
-     });
+     Compute_pwns_neighbors<Kernel, Tree> f(k, tree, pwns, pwns_neighbors);
+     tbb::parallel_for(tbb::blocked_range<size_t>(0, nb_points), f);
    }
    else
 #endif
