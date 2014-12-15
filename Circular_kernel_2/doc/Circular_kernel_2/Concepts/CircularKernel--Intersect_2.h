@@ -25,7 +25,7 @@ elements of type `CGAL::Object`, in lexicographic order.
 - `CircularKernel::Line_2`
 - `CircularKernel::Line_arc_2`
 - `CircularKernel::Circle_2`
--`CircularKernel::Circular_arc_2`.
+- `CircularKernel::Circular_arc_2`.
 
 Depending on the types `Type_1` and `Type_2`, these elements can be assigned to
 - `std::pair<CircularKernel::Circular_arc_point_2, unsigned>`, where the unsigned integer is the multiplicity of the corresponding intersection point between `obj_1` and `obj_2`, 

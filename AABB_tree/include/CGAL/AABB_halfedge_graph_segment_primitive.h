@@ -109,6 +109,8 @@ public:
   If `OneHalfedgeGraphPerTreeGraphPerTree` is CGAL::Tag_true, constructs a `Shared_data` object from a reference to the halfedge graph.
   */
   static unspecified_type construct_shared_data( HalfedgeGraph& graph );
+#else
+  typedef typename Base::Id Id;
 #endif
 
   /*!
@@ -126,10 +128,26 @@ public:
             Point_property_map(const_cast<HalfedgeGraph*>(&graph), vppm) )
   {}
 
+  /*!
+  Constructs a primitive.
+  If `VertexPointPMap` is the default of the class, an additional constructor
+  is available with `vppm` set to `boost::get(vertex_point, graph)`.
+  */
+  AABB_halfedge_graph_segment_primitive(Id id, const HalfedgeGraph& graph, VertexPointPMap vppm)
+    : Base( Id_(id),
+            Segment_property_map(const_cast<HalfedgeGraph*>(&graph), vppm),
+            Point_property_map(const_cast<HalfedgeGraph*>(&graph), vppm) )
+  {}
+
   #ifndef DOXYGEN_RUNNING
   template <class Iterator>
   AABB_halfedge_graph_segment_primitive(Iterator it, const HalfedgeGraph& graph)
     : Base( Id_(*it),
+            Segment_property_map(const_cast<HalfedgeGraph*>(&graph)),
+            Point_property_map(const_cast<HalfedgeGraph*>(&graph)) ){}
+
+  AABB_halfedge_graph_segment_primitive(Id id, const HalfedgeGraph& graph)
+    : Base( Id_(id),
             Segment_property_map(const_cast<HalfedgeGraph*>(&graph)),
             Point_property_map(const_cast<HalfedgeGraph*>(&graph)) ){}
   #endif

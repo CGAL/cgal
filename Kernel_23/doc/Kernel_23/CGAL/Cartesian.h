@@ -4,7 +4,7 @@ namespace CGAL {
 /*!
 \ingroup kernel_classes
 
-A model for `Kernel` that uses Cartesian coordinates to represent the 
+A model for `Kernel` that uses %Cartesian coordinates to represent the 
 geometric objects. In order for `Cartesian` to model Euclidean geometry 
 in \f$ E^2\f$ and/or \f$ E^3\f$, for some mathematical field \f$ E\f$ (<I>e.g.</I>, 
 the rationals \f$\mathbb{Q}\f$ or the reals \f$\mathbb{R}\f$), the template parameter `FieldNumberType` 

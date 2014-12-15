@@ -17,7 +17,7 @@ pushd Bounding_volumes_Demo;            zip ../bounding_volumes_2.zip *    ;    
 pushd Circular_kernel_2_Demo;           zip ../circular_kernel.zip    *    ;      popd
 pushd Mesh_3_Demo;                      zip -r ../mesh_3.zip          *    ;      popd
 pushd Periodic_3_triangulation_3_Demo;  zip ../periodic_3_triangulation_3.zip *;  popd
-pushd Periodic_Lloyd_3_Demo;            zip ../periodic_3_triangulation_3.zip *;  popd
+pushd Periodic_Lloyd_3_Demo;            zip ../periodic_3_lloyd.zip *;            popd
 pushd Polygon_Demo;                     zip ../polygon.zip *               ;      popd
 pushd Polyhedron_Demo;                  zip -r ../polyhedron_3.zip *       ;      popd
 pushd Segment_Delaunay_graph_2_Demo;    zip ../segment_voronoi_diagram_2.zip *;   popd

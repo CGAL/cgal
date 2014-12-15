@@ -62,7 +62,7 @@ The number type of the interval boundaries must be one of the built-in
 types <TT>int</TT>, <TT>unsigned int</TT>, <TT>double</TT> or
 <TT>float</TT>.
 
-In addition, a box has an unique `id`-number. It is used to order
+In addition, a box has a unique `id`-number. It is used to order
 boxes consistently in each dimension even if boxes have identical
 coordinates. In consequence, the algorithm guarantees that a pair of
 intersecting boxes is reported only once. Note that boxes with equal
