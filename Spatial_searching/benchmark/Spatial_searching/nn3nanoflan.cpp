@@ -132,7 +132,12 @@ void kdtree_demo(int argc, char** argv)
 
         timer.stop();
         std::cout << "construction time: " << timer.time() << " sec" << std::endl;
-        
+        std::cerr << "Tree statistics:" << std::endl;
+        std::cerr << "Number of items stored: "
+          << index.items << std::endl;
+        std::cerr << "Number of nodes: "
+          << index.internals << std::endl;
+        std::cerr << " Tree depth: " << index.depth() << std::endl;
 	// do a knn search
 	const size_t num_results = 10;
 	size_t ret_index[num_results];
@@ -144,8 +149,7 @@ void kdtree_demo(int argc, char** argv)
         double sum = 0;
 
         for(int i=0;i<runs;++i){
-          timer.reset();
-          timer.start();
+          
           nanoflann::KNNResultSet<num_t> resultSet(num_results);
          
           for(int i = 0 ; i < size; i++){
@@ -153,17 +157,25 @@ void kdtree_demo(int argc, char** argv)
             query_pt[1] = queries[i].y;
             query_pt[2] = queries[i].z;
 	    resultSet.init(ret_index, out_dist_sqr );
+            timer.reset();
+          timer.start();
             index.findNeighbors(resultSet, &query_pt[0], nanoflann::SearchParams(10,0));
+            timer.stop();
 
             for (int k=0; k<num_results; ++k){
 	      if(dump)
 	        std::cerr <<cloud.pts[ret_index[k]] << std::endl;
 	    }
 		    dump=false;
+                    sum += timer.time();
           }
-          timer.stop();
-          sum += timer.time();
+          
+          
         }
+        std::cerr << index.count_items <<" items\n";
+        std::cerr << index.count_leafs <<" leaf\n";
+        std::cerr << index.count_internals <<" internals visited\n";
+
         std::cerr<<std::endl << "total: " << sum << " sec\n";
         if(runs>1){
           std::cerr << "average: " << sum/runs << " sec\n";

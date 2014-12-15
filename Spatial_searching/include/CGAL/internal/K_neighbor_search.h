@@ -164,7 +164,18 @@ public:
       << number_of_items_visited << std::endl;
     return s;
   }
-    
+
+  int internals_visited(){
+    return number_of_internal_nodes_visited;
+  }
+  
+  int leafs_visited(){
+    return number_of_leaf_nodes_visited;
+  }
+
+  int items_visited(){
+    return number_of_items_visited;
+  }
 }; // class 
 
 }} // namespace CGAL::internal

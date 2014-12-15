@@ -85,12 +85,15 @@ int main(int argc,char *argv[])
   double sum=0;
   bool dump = true;
 
+
   for(int i = 0 ; i<runs; ++i){
 
-    t.reset();t.start();
+   
     for(Points::iterator it = query_points_3.begin(); it != query_points_3.end(); ++it) {
       // Initialize the search structure, and search all NN_number neighbors
+       t.reset();t.start();
       Neighbor_search_3 search(tree, *it, NN_number);
+       t.stop();
       int i=0;
       for (Neighbor_search_3::iterator it = search.begin(); it != search.end();it++, i++) {
         result[i] = it->first;
@@ -99,10 +102,18 @@ int main(int argc,char *argv[])
         }
       }
       dump = false;
+       sum += t.time();
+       items+=search.items_visited();
+       leafs+=search.leafs_visited();
+       internals+=search.internals_visited();
     }
-    t.stop();
-    sum += t.time();
+   
   }
+
+  std::cerr << items <<" items\n";
+  std::cerr << leafs <<" leaf\n";
+  std::cerr << internals <<" internals visited\n";
+
   std::cerr<<std::endl << "total: " << sum << " sec\n";
   if(runs>1){
     std::cerr << "average: " << sum/runs << " sec\n";
