@@ -6,10 +6,7 @@
 
 #include <boost/graph/filtered_graph.hpp>
 #include <boost/foreach.hpp>
-#include <CGAL/Surface_mesh_simplification/edge_collapse.h>
-#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Count_stop_predicate.h>
 
-#include <CGAL/use.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Epic;
 typedef CGAL::Projection_traits_xy_3<Epic>  K;
@@ -17,47 +14,7 @@ typedef K::Point_2 Point;
 
 typedef CGAL::Triangulation_2<K> Triangulation;
 
-namespace SMS = CGAL::Surface_mesh_simplification;
 
-
-namespace CGAL {
-  namespace Euler {
-
-    template<typename K>
-    typename boost::graph_traits<Triangulation_2<K> >::vertex_descriptor
-    collapse_edge(typename boost::graph_traits<Triangulation_2<K> >::edge_descriptor v0v1,
-                  Triangulation_2<K>& g)
-    {
-      return g.collapse_edge(v0v1);
-    }
-  } // namespace Euler
-} // namespace CGAL
-
-// As we want to run Dijskra's shortest path algorithm we only
-// consider finite vertices and edges.
-
-template <typename T>
-struct Is_finite {
-
-  const T* t_;
-
-  Is_finite()
-    : t_(NULL)
-  {}
-
-  Is_finite(const T& t)
-    : t_(&t)
-  { }
-
-  template <typename VertexOrEdge>
-  bool operator()(const VertexOrEdge& voe) const {
-    return ! t_->is_infinite(voe);
-  }
-};
-
-typedef Is_finite<Triangulation> Filter;
-//typedef boost::filtered_graph<Triangulation,Filter,Filter> Finite_triangulation;
-// TODO: introduce CGAL::Filtered_face_graph, as filtered_graph does not know Halfedge/Face
 typedef boost::graph_traits<Triangulation>::vertex_descriptor vertex_descriptor;
 typedef boost::graph_traits<Triangulation>::halfedge_descriptor halfedge_descriptor;
 typedef boost::graph_traits<Triangulation>::halfedge_iterator halfedge_iterator;
@@ -83,8 +40,6 @@ int
 main(int,char*[])
 {
   Triangulation t;
-  //Filter is_finite(t);
-  //Finite_triangulation ft(t, is_finite, is_finite);
 
   t.insert(Point(0.1,0,1));
   t.insert(Point(1,0,1));
@@ -152,20 +107,6 @@ main(int,char*[])
   BOOST_FOREACH(vertex_descriptor vd, vertices_around_target(*vertices(t).first, t)){
     std::cout <<  ppmap[vd] << std::endl;
   }
-
-
-  SMS::Count_stop_predicate<Triangulation> stop(5);
-     
-  // This the actual call to the simplification algorithm.
-  // The surface and stop conditions are mandatory arguments.
-  // The index maps are needed because the vertices and edges
-  // of this surface lack an "id()" field.
-  SMS::edge_collapse
-    (t
-    ,stop
-    ,CGAL::vertex_index_map(vertex_index_pmap) 
-          .halfedge_index_map  (halfedge_index_pmap)
-    );
 
 
   ppmap[*(++vertices(t).first)] = Point(78,1,2);
