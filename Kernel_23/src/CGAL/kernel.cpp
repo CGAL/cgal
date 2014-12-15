@@ -27,11 +27,11 @@
 
 namespace CGAL {
 
-Translation             TRANSLATION;
-Rotation                ROTATION;
-Scaling                 SCALING;
-Reflection              REFLECTION;
-Identity_transformation IDENTITY;
+const Translation             TRANSLATION;
+const Rotation                ROTATION;
+const Scaling                 SCALING;
+const Reflection              REFLECTION;
+const Identity_transformation IDENTITY;
 
 const Origin      ORIGIN = Origin();
 const Null_vector NULL_VECTOR = Null_vector();
