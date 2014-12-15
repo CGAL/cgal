@@ -455,14 +455,14 @@ namespace CGAL {
     FT
     low_value() const 
     { 
-      return low_val; 
+      return this->low_val;
     }
     
     inline 
     FT
     high_value() const 
     {
-      return high_val; 
+      return this->high_val;
     }
        
 

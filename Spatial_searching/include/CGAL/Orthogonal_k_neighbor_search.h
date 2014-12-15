@@ -112,7 +112,7 @@ private:
       this->number_of_leaf_nodes_visited++;
 #if 1
       bool full = this->queue.full();
-      FT worst_dist = queue.top().second;
+      FT worst_dist = this->queue.top().second;
 #endif
       if (node->size() > 0)
       {
