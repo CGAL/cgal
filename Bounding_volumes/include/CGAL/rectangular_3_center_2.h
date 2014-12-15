@@ -113,7 +113,6 @@ rectangular_3_center_2_type1(
 {
   using std::max;
   using std::less;
-  using std::nth_element;
 
   typedef typename Traits::FT                         FT;
   typedef typename Traits::Iso_rectangle_2            Rectangle;
@@ -171,7 +170,7 @@ rectangular_3_center_2_type1(
     while (e - s > 1) {
       // step (a)
       RandomAccessIterator m = s + (e - s - 1) / 2;
-      nth_element(s, m, e, boost::bind(less<FT>(), boost::bind(gamma, _1), boost::bind(gamma, _2)));
+      std::nth_element(s, m, e, boost::bind(less<FT>(), boost::bind(gamma, _1), boost::bind(gamma, _2)));
       
       // step (b)
       Rectangle b_prime = bounding_box_2(m + 1, e, t);
@@ -858,7 +857,6 @@ rectangular_3_center_2_type2(
   using std::not_equal_to;
   using std::logical_and;
   using std::max_element;
-  using std::nth_element;
   using std::find_if;
   using std::sort;
   using std::partition;
@@ -927,7 +925,7 @@ rectangular_3_center_2_type2(
   while (e - s > 6) {
     std::ptrdiff_t cutoff = (e - s) / 2;
     RandomAccessIterator m = s + cutoff - 1;
-    nth_element(s, m, e, 
+    std::nth_element(s, m, e, 
 		boost::bind(less<FT>(), boost::bind(op.delta(), _1), boost::bind(op.delta(), _2)));
     
     // step (b)
@@ -965,7 +963,7 @@ rectangular_3_center_2_type2(
     // step (a)
     std::ptrdiff_t cutoff = (e - s) / fraction;
     RandomAccessIterator m = s + cutoff - 1;
-    nth_element(s, m, e, 
+    std::nth_element(s, m, e, 
 		boost::bind(less<FT>(), boost::bind(op.delta(), _1), boost::bind(op.delta(), _2)));
     
     // step (b)
@@ -1076,13 +1074,13 @@ rectangular_3_center_2_type2(
     CGAL_optimisation_assertion(b1 - (m + 1) >= 5 * cutoff);
 
     // compute the four cutting lines for R
-    nth_element(m + 1, m + 1 + cutoff, b1, less_x_2);
+    std::nth_element(m + 1, m + 1 + cutoff, b1, less_x_2);
     Point x_min_cutoff = *(m + 1 + cutoff);
-    nth_element(m + 1, m + 1 + cutoff, b1, op.greater_x_2_object());
+    std::nth_element(m + 1, m + 1 + cutoff, b1, op.greater_x_2_object());
     Point x_max_cutoff = *(m + 1 + cutoff);
-    nth_element(m + 1, m + 1 + cutoff, b1, less_y_2);
+    std::nth_element(m + 1, m + 1 + cutoff, b1, less_y_2);
     Point y_min_cutoff = *(m + 1 + cutoff);
-    nth_element(m + 1, m + 1 + cutoff, b1, op.greater_y_2_object());
+    std::nth_element(m + 1, m + 1 + cutoff, b1, op.greater_y_2_object());
     Point y_max_cutoff = *(m + 1 + cutoff);
 
     Point Pmin = v(rect(x_min_cutoff, y_min_cutoff),
@@ -1105,7 +1103,7 @@ rectangular_3_center_2_type2(
     while (s_e - s_b > 1) {
       // step 1
       RandomAccessIterator s_m = s_b + (s_e - s_b - 1) / 2;
-      nth_element(s_b, s_m, s_e,
+      std::nth_element(s_b, s_m, s_e,
                   boost::bind(less<FT>(), 
 		       boost::bind(op.delta(), _1), 
 		       boost::bind(op.delta(), _2)));
