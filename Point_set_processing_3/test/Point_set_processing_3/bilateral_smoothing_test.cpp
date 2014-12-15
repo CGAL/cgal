@@ -42,6 +42,7 @@ typedef std::pair<Point, Vector> PointVectorPair;
 // Tests
 // ----------------------------------------------------------------------------
 
+template<typename Concurrency_tag>
 void test_bilateral_smoothing(std::deque<PointVectorPair>& points,// input point set
                              unsigned int nb_neighbors, // number of neighbors
                              double sharpness_sigma)
@@ -50,7 +51,7 @@ void test_bilateral_smoothing(std::deque<PointVectorPair>& points,// input point
   
   for (int i = 0; i < 3; i++)
   {
-      CGAL::bilateral_smooth_point_set <CGAL::Parallel_tag>(
+      CGAL::bilateral_smooth_point_set <Concurrency_tag>(
       points.begin(), 
       points.end(),
       CGAL::First_of_pair_property_map<PointVectorPair>(),
@@ -133,7 +134,17 @@ int main(int argc, char * argv[])
     // Test
     //***************************************
 
-    test_bilateral_smoothing(points, nb_neighbors, sharpness_sigma);
+#ifdef CGAL_LINKED_WITH_TBB
+    std::deque<PointVectorPair> points2(points);
+#endif // CGAL_LINKED_WITH_TBB
+    
+    test_bilateral_smoothing<CGAL::Sequential_tag>(
+      points, nb_neighbors, sharpness_sigma);
+
+#ifdef CGAL_LINKED_WITH_TBB
+    test_bilateral_smoothing<CGAL::Parallel_tag>(
+      points2, nb_neighbors, sharpness_sigma);
+#endif // CGAL_LINKED_WITH_TBB
 
   } // for each input file
 

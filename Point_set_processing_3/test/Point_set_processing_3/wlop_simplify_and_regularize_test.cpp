@@ -39,6 +39,7 @@ typedef Kernel::Point_3 Point;
 // ----------------------------------------------------------------------------
 
 // Removes outliers
+template<typename Concurrency_tag>
 void test_wlop_simplify_and_regularize(
                               std::vector<Point>& points, // input point set   
                               std::vector<Point>& output,
@@ -59,7 +60,7 @@ void test_wlop_simplify_and_regularize(
 
   output.clear();
   // Run algorithm 
-  CGAL::wlop_simplify_and_regularize_point_set<CGAL::Parallel_tag>(
+  CGAL::wlop_simplify_and_regularize_point_set<Concurrency_tag>(
                                                points.begin(), 
                                                points.end(), 
                                                std::back_inserter(output),
@@ -143,14 +144,17 @@ int main(int argc, char * argv[])
     // Test
     //***************************************
     std::vector<Point> output;
+    test_wlop_simplify_and_regularize<CGAL::Sequential_tag>(
+      points, output, retain_percentage, neighbor_radius, 
+      iter_number, need_compute_density);
 
+#ifdef CGAL_LINKED_WITH_TBB
+    output.clear();
+    test_wlop_simplify_and_regularize<CGAL::Parallel_tag>(
+      points, output, retain_percentage, neighbor_radius, 
+      iter_number, need_compute_density);
+#endif // CGAL_LINKED_WITH_TBB
 
-    test_wlop_simplify_and_regularize(points, 
-                                      output,
-                                      retain_percentage,
-                                      neighbor_radius,
-                                      iter_number,
-                                      need_compute_density);
 
   } // for each input file
 
@@ -159,4 +163,3 @@ int main(int argc, char * argv[])
   std::cerr << "Tool returned " << accumulated_fatal_err << std::endl;
   return accumulated_fatal_err;
 }
-
