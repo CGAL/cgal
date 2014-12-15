@@ -1374,10 +1374,13 @@ environment variable is sufficient.
 \subsection installation_tbb TBB Library
 
 If \sc{Tbb} is not automatically found, the user must set the `TBBROOT`
-environment variable. On Windows, `$TBBROOT\bin\tbbvars.bat <arch> <vs>` must be run 
-(running `tbbvars.bat` without args shows the available parameter values). On other 
-platforms, the environment variable `TBB_ARCH_PLATFORM=<arch>/<kernel>` must be set: 
-`<arch>` is `ia32` or `intel64` and `<linux_kernel_or_gcc_version>` is what is used in `$TBBROOT/lib/<arch>`.
+environment variable. The environment variable `TBB_ARCH_PLATFORM=<arch>/<compiler>` must be set. 
+`<arch>` is `ia32` or `intel64`. `<compiler>` describes the Linux kernel, gcc version or Visual Studio version
+used. It should be set to what is used in `$TBBROOT/lib/<arch>`.
+
+The folder `TBBROOT/bin/<arch>/<compiler>` should be added to the `PATH` variable.
+
+Note that the variables in the table below are begin used.
 
 | Variable             | Description           | Type        |
 | :-                   | :-                    | :-             |
