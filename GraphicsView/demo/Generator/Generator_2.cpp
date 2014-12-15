@@ -268,7 +268,6 @@ MainWindow::on_actionGenerateSegmentFans_triggered()
 void
 MainWindow::on_actionGeneratePolytopeInDisc_triggered()
 {
-    typedef CGAL::Points_on_segment_2<Point_2>                PG;
     boost::mt19937 gen;
     gen.seed(time(0));
     std::vector<Point_2> points;
