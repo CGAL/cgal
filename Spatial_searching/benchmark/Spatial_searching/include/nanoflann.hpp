@@ -33,6 +33,7 @@
 #ifndef  NANOFLANN_HPP_
 #define  NANOFLANN_HPP_
 
+#include <CGAL/Memory_sizer.h>
 #include <vector>
 #include <cassert>
 #include <algorithm>
