@@ -33,8 +33,10 @@
 #include <cmath>
 #include <ctime>
 
+#ifdef CGAL_LINKED_WITH_TBB
 #include <tbb/parallel_for.h>
 #include <tbb/blocked_range.h>
+#endif // CGAL_LINKED_WITH_TBB
 
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Fuzzy_sphere.h>
@@ -328,6 +330,7 @@ compute_density_weight_for_sample_point(
 
 /// \endcond
 
+#ifdef CGAL_LINKED_WITH_TBB
 /// \cond SKIP_IN_MANUAL
 /// This is for parallelization of function: compute_denoise_projection()
 template <typename Kernel, typename Tree, typename RandomAccessIterator>
@@ -353,7 +356,7 @@ public:
     const typename Kernel::FT _radius,  
     const std::vector<typename Kernel::FT>* _original_densities,
     const std::vector<typename Kernel::FT>* _sample_densities): 
-    update_sample_points(out), 
+  update_sample_points(out), 
     sample_points(in),
     original_kd_tree(_original_kd_tree),
     sample_kd_tree(_sample_kd_tree),
@@ -377,7 +380,8 @@ public:
     }
   }
 };
-/// \endcond
+/// \endcond  
+#endif // CGAL_LINKED_WITH_TBB
 
 
 // ----------------------------------------------------------------------------

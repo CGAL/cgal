@@ -41,9 +41,18 @@
 #include <boost/property_map.hpp>
 #endif
 
-#include "tbb/parallel_for.h"
-#include "tbb/blocked_range.h"
-#include "tbb/scalable_allocator.h"
+#ifdef CGAL_LINKED_WITH_TBB
+#include <tbb/parallel_for.h>
+#include <tbb/blocked_range.h>
+#include <tbb/scalable_allocator.h>  
+#endif // CGAL_LINKED_WITH_TBB
+
+// Default allocator: use TBB allocators if available
+#ifdef CGAL_LINKED_WITH_TBB
+# define CGAL_PSP3_DEFAULT_ALLOCATOR tbb::scalable_allocator
+#else // CGAL_LINKED_WITH_TBB
+# define CGAL_PSP3_DEFAULT_ALLOCATOR std::allocator
+#endif // CGAL_LINKED_WITH_TBB
 
 
 //#define CGAL_DEBUG_MODE //on-off cout
@@ -111,7 +120,7 @@ CGAL::Point_with_normal_3<Kernel>
 compute_denoise_projection(
   const CGAL::Point_with_normal_3<Kernel>& query, ///< 3D point to project
   const std::vector<CGAL::Point_with_normal_3<Kernel>,
-  tbb::scalable_allocator<CGAL::Point_with_normal_3<Kernel> > >& neighbor_pwns,  //
+  CGAL_PSP3_DEFAULT_ALLOCATOR<CGAL::Point_with_normal_3<Kernel> > >& neighbor_pwns,  //
   typename Kernel::FT radius,                   ///< accept neighborhood radius
   typename Kernel::FT sharpness_angle           ///< control sharpness(0-90)
 )
@@ -137,7 +146,7 @@ compute_denoise_projection(
   FT cos_sigma = cos(sharpness_angle / 180.0 * 3.1415926);
   FT sharpness_bandwidth = std::pow((CGAL::max)(1e-8, 1 - cos_sigma), 2);
 
-  typename std::vector<Pwn,tbb::scalable_allocator<Pwn> >::const_iterator 
+  typename std::vector<Pwn,CGAL_PSP3_DEFAULT_ALLOCATOR<Pwn> >::const_iterator 
     pwn_iter = neighbor_pwns.begin();
   for (; pwn_iter != neighbor_pwns.end(); ++pwn_iter)
   {
@@ -178,8 +187,8 @@ compute_denoise_projection(
 /// @return neighbors pwn of query point.
 template < typename Kernel,
            typename Tree>
-std::vector<CGAL::Point_with_normal_3<Kernel>,tbb::
-            scalable_allocator<CGAL::Point_with_normal_3<Kernel> > >
+std::vector<CGAL::Point_with_normal_3<Kernel>,
+            CGAL_PSP3_DEFAULT_ALLOCATOR<CGAL::Point_with_normal_3<Kernel> > >
 compute_kdtree_neighbors(
   const CGAL::Point_with_normal_3<Kernel>& query, ///< 3D point
   Tree& tree,                                     ///< KD-tree
@@ -203,8 +212,9 @@ compute_kdtree_neighbors(
   ++search_iterator;
   FT max_distance = (FT)0.0;
   unsigned int i;
-  std::vector<CGAL::Point_with_normal_3<Kernel>, 
-    tbb::scalable_allocator<CGAL::Point_with_normal_3<Kernel> > > neighbor_pwns;
+  std::vector<CGAL::Point_with_normal_3<Kernel>
+    , CGAL_PSP3_DEFAULT_ALLOCATOR<CGAL::Point_with_normal_3<Kernel> > 
+    > neighbor_pwns;
 
   for(i = 0; i < (k+1); ++i)
   {
@@ -273,34 +283,34 @@ compute_max_spacing(
 
 /// \endcond
 
-
+#ifdef CGAL_LINKED_WITH_TBB
 /// \cond SKIP_IN_MANUAL
 /// This is for parallelization of function: compute_denoise_projection()
 template <typename Kernel>
 class Pwn_updater 
 {
   typedef typename CGAL::Point_with_normal_3<Kernel> Pwn;
-  typedef typename std::vector<Pwn,tbb::scalable_allocator<Pwn> > Pwns;
+  typedef typename std::vector<Pwn,CGAL_PSP3_DEFAULT_ALLOCATOR<Pwn> > Pwns;
   typedef typename Kernel::FT FT;
 
   FT sharpness_angle;
   FT radius;
   Pwns* pwns;
   Pwns* update_pwns;
-  std::vector<Pwns,tbb::scalable_allocator<Pwns> >* pwns_neighbors;
+  std::vector<Pwns,CGAL_PSP3_DEFAULT_ALLOCATOR<Pwns> >* pwns_neighbors;
 
 public:
   Pwn_updater(FT sharpness, 
-              FT r,
-              Pwns *in,
-              Pwns *out, 
-              std::vector<Pwns,tbb::scalable_allocator<Pwns> >* neighbors): 
-                                             sharpness_angle(sharpness), 
-                                             radius(r),
-                                             pwns(in),
-                                             update_pwns(out),
-                                             pwns_neighbors(neighbors){} 
- 
+    FT r,
+    Pwns *in,
+    Pwns *out, 
+    std::vector<Pwns,CGAL_PSP3_DEFAULT_ALLOCATOR<Pwns> >* neighbors): 
+  sharpness_angle(sharpness), 
+    radius(r),
+    pwns(in),
+    update_pwns(out),
+    pwns_neighbors(neighbors){} 
+
 
   void operator() ( const tbb::blocked_range<size_t>& r ) const 
   { 
@@ -308,14 +318,16 @@ public:
     {
       (*update_pwns)[i] = bilateral_smooth_point_set_internal::
         compute_denoise_projection<Kernel>((*pwns)[i], 
-                                           (*pwns_neighbors)[i], 
-                                           radius,
-                                           sharpness_angle);  
- 
+        (*pwns_neighbors)[i], 
+        radius,
+        sharpness_angle);  
+
     }
   }
 };
-/// \endcond
+/// \endcond  
+#endif // CGAL_LINKED_WITH_TBB
+
 
 // ----------------------------------------------------------------------------
 // Public section
@@ -379,7 +391,7 @@ bilateral_smooth_point_set(
   // basic geometric types
   typedef typename Kernel::Point_3 Point;
   typedef typename CGAL::Point_with_normal_3<Kernel> Pwn;
-  typedef typename std::vector<Pwn,tbb::scalable_allocator<Pwn> > Pwns;
+  typedef typename std::vector<Pwn,CGAL_PSP3_DEFAULT_ALLOCATOR<Pwn> > Pwns;
   typedef typename Kernel::Vector_3 Vector;
   typedef typename Kernel::FT FT;
 
@@ -416,9 +428,9 @@ bilateral_smooth_point_set(
 #endif
    // initiate a KD-tree search for points
    std::vector<Kd_tree_element,
-     tbb::scalable_allocator<Kd_tree_element> > treeElements;
+     CGAL_PSP3_DEFAULT_ALLOCATOR<Kd_tree_element> > treeElements;
    treeElements.reserve(pwns.size());
-   typename std::vector<Pwn,tbb::scalable_allocator<Pwn> >::iterator 
+   typename std::vector<Pwn,CGAL_PSP3_DEFAULT_ALLOCATOR<Pwn> >::iterator 
      pwn_iter = pwns.begin();
    for (unsigned int i = 0; pwn_iter != pwns.end(); ++pwn_iter)
    {
@@ -454,13 +466,12 @@ bilateral_smooth_point_set(
    task_timer.start();
 #endif
    // compute all neighbors
-   std::vector<Pwns,tbb::scalable_allocator<Pwns> > pwns_neighbors;
+   std::vector<Pwns,CGAL_PSP3_DEFAULT_ALLOCATOR<Pwns> > pwns_neighbors;
    pwns_neighbors.resize(nb_points);
  
 #ifdef CGAL_LINKED_WITH_TBB
    if (boost::is_convertible<Concurrency_tag,Parallel_tag>::value)
    {
-     //tbb::task_scheduler_init init(4);
      tbb::parallel_for(tbb::blocked_range<size_t>(0,nb_points),
        [&](const tbb::blocked_range<size_t>& r)
      {
@@ -474,7 +485,7 @@ bilateral_smooth_point_set(
    else
 #endif
    {
-     typename std::vector<Pwns,tbb::scalable_allocator<Pwns> >::iterator 
+     typename std::vector<Pwns,CGAL_PSP3_DEFAULT_ALLOCATOR<Pwns> >::iterator 
        pwns_iter = pwns_neighbors.begin();
 
      for(pwn_iter = pwns.begin(); pwn_iter != pwns.end(); ++pwn_iter, ++pwns_iter)
@@ -512,9 +523,9 @@ bilateral_smooth_point_set(
    else
 #endif // CGAL_LINKED_WITH_TBB
    {
-     typename std::vector<Pwn,tbb::scalable_allocator<Pwn> >::iterator 
+     typename std::vector<Pwn,CGAL_PSP3_DEFAULT_ALLOCATOR<Pwn> >::iterator 
        update_iter = update_pwns.begin();
-     typename std::vector<Pwns,tbb::scalable_allocator<Pwns> >::iterator 
+     typename std::vector<Pwns,CGAL_PSP3_DEFAULT_ALLOCATOR<Pwns> >::iterator 
        neighbor_iter = pwns_neighbors.begin();
      for(pwn_iter = pwns.begin(); pwn_iter != pwns.end(); 
          ++pwn_iter, ++update_iter, ++neighbor_iter)
