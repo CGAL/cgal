@@ -31,6 +31,8 @@
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 
 #include <CGAL/Periodic_3_Regular_triangulation_3.h>
+#include <CGAL/Random.h>
+#include <CGAL/point_generators_3.h>
 
 #include <cassert>
 #include <iostream>
@@ -193,6 +195,8 @@ void test_construction ()
 
 void test_insert_1 ()
 {
+  std::cout << "--- test_insert_1" << std::endl;
+
   P3RT3 p3rt3;
 
   Weighted_point p(Bare_point(0,0,0), 0.1);
@@ -203,25 +207,56 @@ void test_insert_1 ()
   assert(p3rt3.number_of_stored_vertices() == 27);
 }
 
-void test_insert_rnd (unsigned pt_count = 100)
+void test_insert_rnd_as_delaunay (unsigned pt_count, double weight)
 {
-  P3RT3 p3rt3;
+  std::cout << "--- test_insert_rnd_as_delaunay " << weight << std::endl;
 
-  srand(time(NULL));
+  CGAL::Random random(7);
+  typedef CGAL::Creator_uniform_3<double,Bare_point>  Creator;
+  CGAL::Random_points_in_cube_3<Bare_point, Creator> in_cube(0.5, random);
 
-  auto gen_coord = [](){ return static_cast<double>(rand() % 1000) / 1000.; };
-  auto gen_weight = [](){ return static_cast<double>(rand() % 15600) / 1000000.; };
+  P3RT3 p3rt3(P3RT3::Iso_cuboid(-0.5, -0.5, -0.5, 0.5, 0.5, 0.5));
 
   std::ofstream stream("out");
   assert(stream);
 
-  for (unsigned cnt = pt_count; cnt--; )
+  for (unsigned cnt = 1; cnt <= pt_count; ++cnt)
   {
-    Weighted_point p(Bare_point(gen_coord(), gen_coord(), gen_coord()), 0.005/*rand()%2 ? 0.005f : 0.010f*/ /*gen_weight()*/);
-    std::cout << p << std::endl;
+    Weighted_point p(*in_cube++, weight);
+    std::cout << cnt << " : " << p << std::endl;
     stream << p << std::endl;
     p3rt3.insert(p);
     assert(p3rt3.is_valid());
+  }
+
+  stream.close();
+
+  assert(p3rt3.is_valid(true));
+
+  std::cout << "MEDIT" << std::endl;
+  std::ofstream medit_stream("medit_rnd_out.mesh");
+  periodic_triangulation_to_medit_file(p3rt3, medit_stream);
+}
+
+void test_insert_rnd (unsigned pt_count)
+{
+  std::cout << "--- test_insert_rnd" << std::endl;
+  CGAL::Random random(7);
+  typedef CGAL::Creator_uniform_3<double,Bare_point>  Creator;
+  CGAL::Random_points_in_cube_3<Bare_point, Creator> in_cube(0.5, random);
+
+  P3RT3 p3rt3(P3RT3::Iso_cuboid(-0.5, -0.5, -0.5, 0.5, 0.5, 0.5));
+
+  std::ofstream stream("out");
+  assert(stream);
+
+  for (unsigned cnt = 1; cnt <= pt_count; ++cnt)
+  {
+    Weighted_point p(*in_cube++, random.get_double(0., 0.015625));
+    std::cout << cnt << " : " << p << std::endl;
+    stream << p << std::endl;
+    p3rt3.insert(p);
+    assert(p3rt3.is_valid(cnt >= 64));
   }
 
   stream.close();
@@ -270,7 +305,7 @@ void test_insert_rt3_pointset ()
     for (int b=0;b!=5;b++)
       for (int d=0;d!=5;d++)
       {
-        Weighted_point p( Bare_point(a*b-d*a + (a-b)*10 +a , a-b+d +5*b, a*a-d*d+b), a*b-a*d );
+        Weighted_point p( Bare_point(a*b-d*a + (a-b)*10 +a , a-b+d +5*b, a*a-d*d+b),  a*b-a*d ); // TODO check weight
         std::cout << p << std::endl;
         p3rt3.insert(p);
       }
@@ -283,7 +318,10 @@ int main (int argc, char** argv)
 
   test_construction();
   test_insert_1();
-  test_insert_rt3_pointset();
+//  test_insert_rt3_pointset();
+  // Iso_cuboid unitaire ->  0 <= weight < 0.015625
+  test_insert_rnd_as_delaunay(100, 0.01);
+  test_insert_rnd_as_delaunay(100, 0.);
   test_insert_rnd(100);
 //  test_insert_from_file(argc > 1 ? argv[1] : "out");
 
