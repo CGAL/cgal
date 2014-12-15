@@ -606,64 +606,6 @@ protected:
   TLS_thread_uint_ids                                   m_tls_thread_ids;
 };
 
-//*****************************************************************************
-// class Spatial_lock_grid_3<Tag_non_blocking_with_mutexes>
-// Note: undocumented, for testing only...
-//*****************************************************************************
-
-template <>
-class Spatial_lock_grid_3<Tag_non_blocking_with_mutexes>
-  : public Spatial_lock_grid_base_3<
-      Spatial_lock_grid_3<Tag_non_blocking_with_mutexes> >
-{
-  typedef Spatial_lock_grid_base_3<
-    Spatial_lock_grid_3<Tag_non_blocking_with_mutexes> > Base;
-
-public:
-  // Constructors
-  Spatial_lock_grid_3(const Bbox_3 &bbox, int num_grid_cells_per_axis)
-  : Base(bbox, num_grid_cells_per_axis)
-  {
-    int num_cells =
-      num_grid_cells_per_axis*num_grid_cells_per_axis*num_grid_cells_per_axis;
-    m_grid.resize(num_cells);
-  }
-
-  /// Destructor
-  ~Spatial_lock_grid_3()
-  {
-  }
-
-  bool is_cell_locked_impl(int cell_index)
-  {
-    bool locked = m_grid[cell_index].try_lock();
-    if (locked)
-      m_grid[cell_index].unlock();
-    return !locked;
-  }
-
-  template <bool no_spin>
-  bool try_lock_cell_impl(int cell_index)
-  {
-    bool success = m_grid[cell_index].try_lock();
-    if (success)
-    {
-      get_thread_local_grid()[cell_index] = true;
-      m_tls_locked_cells.local().push_back(cell_index);
-    }
-    return success;
-  }
-
-  void unlock_cell_impl(int cell_index)
-  {
-    m_grid[cell_index].unlock();
-  }
-
-protected:
-
-  std::vector<tbb::recursive_mutex> m_grid;
-};
-
 } //namespace CGAL
 
 #else // !CGAL_LINKED_WITH_TBB

@@ -40,6 +40,13 @@
 #include <CGAL/CORE/CoreDefs.h>
 #include <CGAL/CORE/extLong.h>
 
+#ifdef CGAL_HEADER_ONLY
+#undef CGAL_EXPORT // CJTODO: TEMPORARY
+#undef CGAL_CORE_EXPORT
+#define CGAL_EXPORT
+#define CGAL_CORE_EXPORT
+#endif
+
 namespace CORE { 
 
 //  forward reference
@@ -144,11 +151,11 @@ private:
   //  conversion
 
   // toString() Joaquin Grech 31/5/2003
-  std::string toString(long prec=defBigFloatOutputDigits, bool sci=false) const;
+  std::string toString(long prec=get_static_defBigFloatOutputDigits(), bool sci=false) const;
   std::string round(std::string inRep, long& L10, unsigned int width) const;
-  DecimalOutput toDecimal(unsigned int width=defBigFloatOutputDigits,
+  DecimalOutput toDecimal(unsigned int width=get_static_defBigFloatOutputDigits(),
                           bool Scientific=false) const;
-  void fromString(const char *p, const extLong & prec = defBigFloatInputDigits);
+  void fromString(const char *p, const extLong & prec = get_static_defBigFloatInputDigits());
 
   void dump() const;  //inline
   long adjustE(long E, BigInt M, long e) const;

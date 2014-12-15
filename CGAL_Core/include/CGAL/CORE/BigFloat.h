@@ -37,6 +37,13 @@
 
 #include <CGAL/CORE/BigFloatRep.h>
 
+#ifdef CGAL_HEADER_ONLY
+#undef CGAL_EXPORT // CJTODO: TEMPORARY
+#undef CGAL_CORE_EXPORT
+#define CGAL_EXPORT
+#define CGAL_CORE_EXPORT
+#endif
+
 namespace CORE { 
 
 class Expr;
@@ -83,8 +90,8 @@ public:
   BigFloat(const BigInt& I)
       : RCBigFloat(new BigFloatRep(I)) {}
   /// constructor for <tt>BigRat</tt>
-  BigFloat(const BigRat& R, const extLong& r = defRelPrec,
-           const extLong& a = defAbsPrec)
+  BigFloat(const BigRat& R, const extLong& r = get_static_defRelPrec(),
+           const extLong& a = get_static_defAbsPrec())
       : RCBigFloat(new BigFloatRep()) {
     rep->approx(R, r, a);
   }
@@ -93,8 +100,8 @@ public:
   // know about Expr, but BigFloat has a special role in our system!
   // ===============================
   /// constructor for <tt>Expr</tt>
-  explicit BigFloat(const Expr& E, const extLong& r = defRelPrec,
-           const extLong& a = defAbsPrec);
+  explicit BigFloat(const Expr& E, const extLong& r = get_static_defRelPrec(),
+           const extLong& a = get_static_defAbsPrec());
 
   //Dummy
   explicit BigFloat(const BigFloat& E, const extLong& ,
@@ -161,7 +168,7 @@ public:
   /// operator/=
   BigFloat& operator/= (const BigFloat& x) {
     BigFloat z;
-    z.rep->div(*rep, *x.rep, defBFdivRelPrec);
+    z.rep->div(*rep, *x.rep, get_static_defBFdivRelPrec());
     *this = z;
     return *this;
   }
@@ -182,11 +189,11 @@ public:
   /// \name String Conversion Functions
   //@{
   /// set value from <tt>const char*</tt> (base = 10)
-  void fromString(const char* s, const extLong& p=defBigFloatInputDigits) {
+  void fromString(const char* s, const extLong& p=get_static_defBigFloatInputDigits()) {
     rep->fromString(s, p);
   }
   /// convert to <tt>std::string</tt> (base = 10)
-  std::string toString(long prec=defBigFloatOutputDigits, bool sci=false) const {
+  std::string toString(long prec=get_static_defBigFloatOutputDigits(), bool sci=false) const {
     return rep->toString(prec, sci);
   }
   std::string str() const {
@@ -435,7 +442,7 @@ inline BigFloat operator* (const BigFloat& x, const BigFloat& y) {
 /// operator/
 inline BigFloat operator/ (const BigFloat& x, const BigFloat& y) {
   BigFloat z;
-  z.getRep().div(x.getRep(),y.getRep(),defBFdivRelPrec);
+  z.getRep().div(x.getRep(),y.getRep(),get_static_defBFdivRelPrec());
   return z;
 }
 
@@ -490,12 +497,12 @@ inline BigFloat power(const BigFloat& x, unsigned long p) {
 ///   The argument x is an initial approximation.
 BigFloat root(const BigFloat&, unsigned long k, const extLong&, const BigFloat&);
 inline BigFloat root(const BigFloat& x, unsigned long k) {
-  return root(x, k, defBFsqrtAbsPrec, x);
+  return root(x, k, get_static_defBFsqrtAbsPrec(), x);
 }
 
 /// sqrt to defAbsPrec:
 inline BigFloat sqrt(const BigFloat& x) {
-  return x.sqrt(defBFsqrtAbsPrec);
+  return x.sqrt(get_static_defBFsqrtAbsPrec());
 }
 
 /// convert an BigFloat Interval to a BigFloat with error bits
@@ -625,4 +632,10 @@ inline BigRat::BigRat(const BigFloat& f) : RCBigRat(new BigRatRep()){
   *this = f.BigRatValue();
 }
 } //namespace CORE
+
+#ifdef CGAL_HEADER_ONLY
+#include <CGAL/CORE/BigFloat_impl.h>
+#include <CGAL/CORE/CoreIO_impl.h>
+#endif // CGAL_HEADER_ONLY
+
 #endif // _CORE_BIGFLOAT_H_
