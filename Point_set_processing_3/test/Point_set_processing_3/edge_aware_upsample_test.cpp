@@ -50,7 +50,7 @@ void test_edge_aware_upsample(std::vector<PointVectorPair>& points, // input poi
 
 {
   CGAL::Timer task_timer; task_timer.start();
-  std::cerr << "Run edge aware up-sample, (sharpness_sigma: "
+  std::cerr << "Running edge aware up-sample, (sharpness_sigma: "
             << sharpness_sigma << "%, number_of_output_points="
             << points.size() * times_of_output_points << ")...\n";
 
@@ -120,7 +120,7 @@ int main(int argc, char * argv[])
 
     // Reads the point set file in points[].
     std::vector<PointVectorPair> points;
-    std::cerr << "Open " << input_filename << " for reading..." << std::endl;
+    std::cerr << "Opening " << input_filename << " for reading..." << std::endl;
 
     // If XYZ file format:
     std::ifstream stream(input_filename.c_str());

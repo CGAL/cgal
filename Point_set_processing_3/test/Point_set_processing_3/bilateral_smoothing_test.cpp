@@ -111,7 +111,7 @@ int main(int argc, char * argv[])
 
     // Reads the point set file in points[].
     std::deque<PointVectorPair> points;
-    std::cerr << "Open " << input_filename << " for reading..." << std::endl;
+    std::cerr << "Opening " << input_filename << " for reading..." << std::endl;
 
     // If XYZ file format:
     std::ifstream stream(input_filename.c_str());

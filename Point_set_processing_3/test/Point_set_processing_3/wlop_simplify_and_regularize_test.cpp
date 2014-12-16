@@ -50,7 +50,7 @@ void test_wlop_simplify_and_regularize(
 
 {
   CGAL::Timer task_timer; task_timer.start();
-  std::cerr << "Run WLOP simplify and regularize, (retain_percentage: "
+  std::cerr << "Running WLOP simplify and regularize, (retain_percentage: "
             << retain_percentage << "%, neighbor_radius="
             << neighbor_radius << ")...\n";
 
@@ -124,7 +124,7 @@ int main(int argc, char * argv[])
 
     // Reads the point set file in points[].
     std::vector<Point> points;
-    std::cerr << "Open " << input_filename << " for reading..." << std::endl;
+    std::cerr << "Opening " << input_filename << " for reading..." << std::endl;
 
     // If XYZ file format:
     std::ifstream stream(input_filename.c_str());
