@@ -126,6 +126,22 @@ protected:
         return (distance > queue.top().second*multiplication_factor);      
   }
 
+  inline bool branch_nearest(FT distance) 
+  {
+    if (!queue.full()) 
+      return true;
+    else
+        return (distance*multiplication_factor < queue.top().second);     
+  }
+
+  inline bool branch_furthest(FT distance) 
+  {
+    if (!queue.full()) 
+      return true;
+    else
+        return (distance > queue.top().second*multiplication_factor);      
+  }
+
 public:
 
   iterator begin() const

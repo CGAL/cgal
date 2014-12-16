@@ -119,6 +119,9 @@ namespace CGAL {
     }
 
 
+    inline FT transformed_distance(const Query_item& q, const Point_d& p) const {
+        return transformed_distance(q,p, Dimension());
+    }
 
     //Dynamic version for runtime dimension
     inline 

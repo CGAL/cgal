@@ -171,39 +171,40 @@ private:
   create_internal_node_use_extension(Point_container& c)
   {
     Internal_node node(false);
-    
+    internal_nodes.push_back(node);
+    Internal_node_handle nh = &internal_nodes.back();
 
     Separator sep;
     Point_container c_low(c.dimension(),traits_);
     split(sep, c, c_low);
-    node.set_separator(sep);
+    nh->set_separator(sep);
 
-    int cd  = node.cutting_dimension();
+    int cd  = nh->cutting_dimension();
     if(!c_low.empty())
-      node.low_val = c_low.tight_bounding_box().max_coord(cd);
+      nh->low_val = c_low.tight_bounding_box().max_coord(cd);
     else
-      node.low_val = c_low.bounding_box().min_coord(cd);
+      nh->low_val = c_low.bounding_box().min_coord(cd);
     if(!c.empty())
-      node.high_val = c.tight_bounding_box().min_coord(cd);
+      nh->high_val = c.tight_bounding_box().min_coord(cd);
     else
-      node.high_val = c.bounding_box().max_coord(cd);
+      nh->high_val = c.bounding_box().max_coord(cd);
 
-    CGAL_assertion(node.cutting_value() >= node.low_val);
-    CGAL_assertion(node.cutting_value() <= node.high_val);
+    CGAL_assertion(nh->cutting_value() >= nh->low_val);
+    CGAL_assertion(nh->cutting_value() <= nh->high_val);
 
     if (c_low.size() > split.bucket_size()){
-      node.lower_ch = create_internal_node_use_extension(c_low);
+      nh->lower_ch = create_internal_node_use_extension(c_low);
     }else{
-      node.lower_ch = create_leaf_node(c_low);
+      nh->lower_ch = create_leaf_node(c_low);
     }
     if (c.size() > split.bucket_size()){
-      node.upper_ch = create_internal_node_use_extension(c);
+      nh->upper_ch = create_internal_node_use_extension(c);
     }else{
-      node.upper_ch = create_leaf_node(c);
+      nh->upper_ch = create_leaf_node(c);
     }
 
-    internal_nodes.push_back(node);
-    Internal_node_handle nh = &internal_nodes.back();
+    
+    
 
     return nh;
   }
@@ -215,25 +216,26 @@ private:
   create_internal_node(Point_container& c)
   {
     Internal_node node(false);
+    internal_nodes.push_back(node);
+    Internal_node_handle nh = &internal_nodes.back();
     Separator sep;
 
     Point_container c_low(c.dimension(),traits_);
     split(sep, c, c_low);
-    node.set_separator(sep);
+    nh->set_separator(sep);
 
     if (c_low.size() > split.bucket_size()){
-      node.lower_ch = create_internal_node(c_low);
+      nh->lower_ch = create_internal_node(c_low);
     }else{
-      node.lower_ch = create_leaf_node(c_low);
+      nh->lower_ch = create_leaf_node(c_low);
     }
     if (c.size() > split.bucket_size()){
-      node.upper_ch = create_internal_node(c);
+      nh->upper_ch = create_internal_node(c);
     }else{
-      node.upper_ch = create_leaf_node(c);
+      nh->upper_ch = create_leaf_node(c);
     }
 
-    internal_nodes.push_back(node);
-    Internal_node_handle nh = &internal_nodes.back();
+   
 
     return nh;
   }
