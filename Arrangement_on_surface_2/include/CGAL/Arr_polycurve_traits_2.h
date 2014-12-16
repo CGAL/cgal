@@ -960,6 +960,141 @@ public:
     template <typename OutputIterator>
     OutputIterator operator_impl(const Curve_2& cv, OutputIterator oi, Arr_all_sides_oblivious_tag) const
     {
+       typedef typename Curve_2::Segment_const_iterator const_seg_iterator;
+
+      // If the polyline is empty, return.
+      if (cv.number_of_segments() == 0) return oi;
+
+      Construct_x_monotone_curve_2 ctr_x_curve =
+        m_poly_traits.construct_x_monotone_curve_2_object();
+
+      typename Geometry_traits_2::Make_x_monotone_2 make_seg_x_monotone =
+        m_poly_traits.geometry_traits_2()->make_x_monotone_2_object();
+
+      typename Geometry_traits_2::Compare_endpoints_xy_2 cmp_seg_endpts =
+        m_poly_traits.geometry_traits_2()->compare_endpoints_xy_2_object();
+
+      typename Geometry_traits_2::Parameter_space_in_x_2 ps_x =
+           m_poly_traits.geometry_traits_2()->parameter_space_in_x_2_object();
+      typename Geometry_traits_2::Parameter_space_in_y_2 ps_y =
+           m_poly_traits.geometry_traits_2()->parameter_space_in_y_2_object();
+
+#ifdef CGAL_ALWAYS_LEFT_TO_RIGHT
+      typename Geometry_traits_2::Construct_opposite_2 ctr_seg_opposite =
+        m_poly_traits.geometry_traits_2()->construct_opposite_2_object();
+#endif
+
+      // Convert the input polyline to a sequence of CGAL objects, such
+      // that each Object wraps an x-monotone segment.
+      std::vector<Object> x_seg_objects;
+      const_seg_iterator it_segs;
+      for (it_segs = cv.begin_segments(); it_segs != cv.end_segments();
+           ++it_segs)
+        make_seg_x_monotone(*it_segs, std::back_inserter(x_seg_objects));
+      typename std::vector<Object>::iterator it = x_seg_objects.begin();
+      X_monotone_segment_2 x_seg;
+#if defined (CGAL_NO_ASSERTIONS)
+      CGAL::assign(x_seg, *it);
+#else
+      bool assign_res = CGAL::assign(x_seg, *it);
+      CGAL_assertion(assign_res);
+#endif
+
+      // If the polyline consists of a single x-monotone segment, return.
+      if (x_seg_objects.size() == 1) {
+#ifdef CGAL_ALWAYS_LEFT_TO_RIGHT
+        if (cmp_seg_endpts(x_seg) == LARGER)
+          x_seg = ctr_seg_opposite(x_seg);
+#endif
+        *oi++ = make_object(ctr_x_curve(x_seg));
+        x_seg_objects.clear();
+        return oi;
+      }
+
+      CGAL_precondition_code
+        (
+         // To be used in order to verify continuity and well-orientedness
+         // of the input curve cv.
+         typename Geometry_traits_2::Construct_min_vertex_2 min_seg_v =
+           m_poly_traits.geometry_traits_2()->construct_min_vertex_2_object();
+         typename Geometry_traits_2::Construct_max_vertex_2 max_seg_v =
+           m_poly_traits.geometry_traits_2()->construct_max_vertex_2_object();
+         typename Geometry_traits_2::Equal_2 equal =
+           m_poly_traits.geometry_traits_2()->equal_2_object();
+         Point_2 last_target = (cmp_seg_endpts(x_seg) == SMALLER) ?
+           max_seg_v(x_seg) : min_seg_v(x_seg);
+         Point_2 next_src;
+         );
+
+      // The polyline consists of at least 2 x-monotone segments:
+      Push_back_2 push_back = m_poly_traits.push_back_2_object();
+      typename Geometry_traits_2::Is_vertical_2 is_seg_vertical =
+        m_poly_traits.geometry_traits_2()->is_vertical_2_object();
+
+      bool is_start_vertical = is_seg_vertical(x_seg);
+      Comparison_result start_dir = cmp_seg_endpts(x_seg);
+
+#ifdef CGAL_ALWAYS_LEFT_TO_RIGHT
+      Push_front_2 push_front = m_poly_traits.push_front_2_object();
+      if (cmp_seg_endpts(x_seg) == LARGER) x_seg = ctr_seg_opposite(x_seg);
+#endif
+      X_monotone_curve_2 x_polyline = ctr_x_curve(x_seg);
+
+      for (++it; it != x_seg_objects.end(); ++it){
+        X_monotone_segment_2 x_seg;
+#if defined (CGAL_NO_ASSERTIONS)
+        CGAL::assign(x_seg, *it);
+#else
+        bool assign_res = CGAL::assign(x_seg, *it);
+        CGAL_assertion(assign_res);
+#endif
+
+        // Test that cv is continuous and well-oriented.
+        CGAL_precondition_code
+          (
+           next_src = (cmp_seg_endpts(x_seg) == SMALLER) ?
+             min_seg_v(x_seg) : max_seg_v(x_seg);
+           );
+        CGAL_precondition_msg
+          (
+           equal(last_target, next_src),
+             "cv must form a continuous and well oriented curve."
+           );
+        CGAL_precondition_code
+          (
+           last_target = (cmp_seg_endpts(x_seg) == SMALLER) ?
+             max_seg_v(x_seg) : min_seg_v(x_seg);
+           );
+
+        if ((cmp_seg_endpts(x_seg) != start_dir) ||
+            (is_seg_vertical(x_seg) != is_start_vertical))
+        {
+            // Construct an x-monotone curve from the sub-range which was found
+          *oi++ = make_object(x_polyline);
+          is_start_vertical = is_seg_vertical(x_seg);
+          start_dir = cmp_seg_endpts(x_seg);
+#ifdef CGAL_ALWAYS_LEFT_TO_RIGHT
+          if (cmp_seg_endpts(x_seg) == LARGER) x_seg = ctr_seg_opposite(x_seg);
+#endif
+          x_polyline = ctr_x_curve(x_seg);
+        }
+        else {
+#ifdef CGAL_ALWAYS_LEFT_TO_RIGHT
+          if (cmp_seg_endpts(x_seg) == LARGER) {
+            x_seg = ctr_seg_opposite(x_seg);
+              push_front(x_polyline, x_seg);
+          }
+          else
+            push_back(x_polyline, x_seg);
+#else
+          push_back(x_polyline, x_seg);
+#endif
+        }
+
+      } // for loop
+      if (x_polyline.number_of_segments() != 0)
+        *oi++ = make_object(x_polyline);
+      x_seg_objects.clear();
       return oi;
     }
     template <typename OutputIterator>
@@ -1074,7 +1209,6 @@ public:
           Arr_curve_end polyline_target = ( (cmp_seg_endpts(x_polyline[0])  == SMALLER ) ? ARR_MAX_END : ARR_MIN_END );
           Arr_curve_end seg_source = ( (cmp_seg_endpts(x_seg) == SMALLER) ? ARR_MIN_END : ARR_MAX_END);
           unsigned int num_segs = x_polyline.number_of_segments();
-
 
         if ((cmp_seg_endpts(x_seg) != start_dir) ||
             (is_seg_vertical(x_seg) != is_start_vertical))
