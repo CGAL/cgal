@@ -62,20 +62,6 @@ public:
                                                    Right_side_category>::result
     Are_all_sides_oblivious_tag;
 
-  // linear traits
-  typedef typename Arr_has_open_sides_two<Left_side_category,
-                                          Top_side_category>::result
-    Arr_two_open_side_tag;
-
-  // geodesic on spheres
-  typedef typename Arr_has_contracted_sides_two<Bottom_side_category,
-                                                Top_side_category>::result
-    Arr_two_contracted_sides_tag;
-
-  typedef typename Arr_has_identified_sides<Left_side_category,
-                                            Right_side_category>::result
-    Arr_two_identified_sides_tag;
-
 private:
   typedef Arr_polycurve_traits_2<Geometry_traits_2>  Self;
 
@@ -957,6 +943,7 @@ public:
      *           object is a wrapper of a X_monotone_curve_2.
      * \return The past-the-end iterator.
      */
+  private:
     template <typename OutputIterator>
     OutputIterator operator_impl(const Curve_2& cv, OutputIterator oi, Arr_all_sides_oblivious_tag) const
     {
@@ -973,11 +960,6 @@ public:
 
       typename Geometry_traits_2::Compare_endpoints_xy_2 cmp_seg_endpts =
         m_poly_traits.geometry_traits_2()->compare_endpoints_xy_2_object();
-
-      typename Geometry_traits_2::Parameter_space_in_x_2 ps_x =
-           m_poly_traits.geometry_traits_2()->parameter_space_in_x_2_object();
-      typename Geometry_traits_2::Parameter_space_in_y_2 ps_y =
-           m_poly_traits.geometry_traits_2()->parameter_space_in_y_2_object();
 
 #ifdef CGAL_ALWAYS_LEFT_TO_RIGHT
       typename Geometry_traits_2::Construct_opposite_2 ctr_seg_opposite =
@@ -1251,7 +1233,7 @@ public:
       x_seg_objects.clear();
       return oi;
     }
-
+public:
     template <typename OutputIterator>
     OutputIterator operator()(const Curve_2& cv, OutputIterator oi) const
     { return operator_impl(cv, oi, Are_all_sides_oblivious_tag()); }
@@ -1268,12 +1250,63 @@ public:
   class Push_back_2 {
   private:
     // Oblivious implementation
+    template<typename>
     void push_back_2_impl(X_monotone_curve_2& xcv,
                           const X_monotone_segment_2& seg,
                           Arr_all_sides_oblivious_tag) const
-    { xcv.push_back(seg); }
+    {
+      typedef typename X_monotone_curve_2::Segments_size_type size_type;
+      size_type num_seg = xcv.number_of_segments();
+
+      CGAL_precondition_code
+        (
+         const Geometry_traits_2* geom_traits =
+           m_poly_traits.geometry_traits_2();
+         typename Geometry_traits_2::Compare_endpoints_xy_2 cmp_seg_endpts =
+           geom_traits->compare_endpoints_xy_2_object();
+         Comparison_result dir = cmp_seg_endpts(seg);
+         typename Geometry_traits_2::Construct_max_vertex_2 get_max_v =
+           geom_traits->construct_max_vertex_2_object();
+         typename Geometry_traits_2::Construct_min_vertex_2 get_min_v =
+           geom_traits->construct_min_vertex_2_object();
+         typename Geometry_traits_2::Equal_2 equal =
+           geom_traits->equal_2_object();
+         typename Geometry_traits_2::Is_vertical_2 is_vertical =
+           geom_traits->is_vertical_2_object();
+         Polycurve_traits_2::Compare_endpoints_xy_2 cmp_poly_endpts =
+           m_poly_traits.compare_endpoints_xy_2_object();
+
+         CGAL_precondition_msg((num_seg == 0) ||
+                               ((is_vertical(xcv[0]) && is_vertical(seg)) ||
+                                (!is_vertical(xcv[0]) && !is_vertical(seg))),
+                               "xcv is vertical and seg is not or vice versa!");
+
+         CGAL_precondition_msg((num_seg == 0) ||
+                               (cmp_seg_endpts(xcv[0]) == dir),
+                               "xcv and seg do not have the same orientation!");
+
+           CGAL_precondition_msg((num_seg == 0) ||
+                                 !equal(get_min_v(seg), get_max_v(seg)),
+                                 "Seg degenerates to a point!");
+
+           CGAL_precondition_msg((num_seg == 0) ||
+                                 (((dir != SMALLER) ||
+                                   equal(get_max_v(xcv[num_seg-1]),
+                                         get_min_v(seg)))),
+                                 "Seg does not connect to the right!");
+
+           CGAL_precondition_msg((num_seg == 0) ||
+                                 (((dir != LARGER) ||
+                                   equal(get_min_v(xcv[num_seg-1]),
+                                         get_max_v(seg)))),
+                                 "Seg does not connect to the left!");
+         ); // precondition code ends
+
+      xcv.push_back(seg);
+    }
 
     // Boundary implementation
+    template<typename>
     void push_back_2_impl(X_monotone_curve_2& xcv,
                           const X_monotone_segment_2& seg,
                           Arr_not_all_sides_oblivious_tag) const
@@ -1400,7 +1433,7 @@ public:
     // Append a segment `seg` to an existing polyline `xcv` at the back.
     void operator()(X_monotone_curve_2& xcv, const X_monotone_segment_2& seg)
       const
-    { push_back_2_impl(xcv, seg, Are_all_sides_oblivious_tag()); }
+    { push_back_2_impl<void*>(xcv, seg, Are_all_sides_oblivious_tag()); }
   };
 
   /*! Obtain a Push_back_2 functor object. */
@@ -1413,13 +1446,60 @@ public:
   class Push_front_2 {
   private:
     // Oblivious implementation
+    template<typename>
     void push_front_2_impl(X_monotone_curve_2& xcv,
                            const X_monotone_segment_2& seg,
                            Arr_all_sides_oblivious_tag)
       const
-    { xcv.push_front(seg); }
+    {
+      CGAL_precondition_code
+        (
+         typedef typename X_monotone_curve_2::Segments_size_type size_type;
+           size_type num_seg = xcv.number_of_segments();
+         const Geometry_traits_2* geom_traits =
+           m_poly_traits.geometry_traits_2();
+         typename Geometry_traits_2::Compare_endpoints_xy_2 cmp_seg_endpts =
+           geom_traits->compare_endpoints_xy_2_object();
+         Comparison_result dir = cmp_seg_endpts(seg);
+         typename Geometry_traits_2::Construct_max_vertex_2 get_max_v =
+           geom_traits->construct_max_vertex_2_object();
+         typename Geometry_traits_2::Construct_min_vertex_2 get_min_v =
+           geom_traits->construct_min_vertex_2_object();
+         typename Geometry_traits_2::Compare_xy_2 comp_xy =
+           geom_traits->compare_xy_2_object();
+         typename Geometry_traits_2::Equal_2 equal =
+           geom_traits->equal_2_object();
+         typename Geometry_traits_2::Is_vertical_2 is_vertical =
+           geom_traits->is_vertical_2_object();
+
+         CGAL_precondition_msg((num_seg == 0) ||
+                               ((is_vertical(xcv[0]) && is_vertical(seg)) ||
+                                (!is_vertical(xcv[0]) && !is_vertical(seg))),
+                               "xcv is vertical and seg is not or vice versa!");
+
+         CGAL_precondition_msg((num_seg == 0) ||
+                               (cmp_seg_endpts(xcv[0]) == dir),
+                               "xcv and seg do not have the same orientation!");
+
+
+           CGAL_precondition_msg((num_seg == 0) ||
+                                 !equal(get_min_v(seg), get_max_v(seg)),
+                                 "Seg degenerates to a point!");
+           CGAL_precondition_msg((num_seg == 0) ||
+                                 (((dir != SMALLER) ||
+                                   equal(get_min_v(xcv[0]), get_max_v(seg)))),
+                                 "Seg does not connect to the left!");
+
+           CGAL_precondition_msg((num_seg == 0) ||
+                                 (((dir != LARGER) ||
+                                   equal(get_max_v(xcv[0]), get_min_v(seg)))),
+                                 "Seg does not connect to the right!");
+         ); // precondition code ends
+      xcv.push_front(seg);
+    }
 
     // Boundary implementation
+    template<typename>
     void push_front_2_impl(X_monotone_curve_2& xcv,
                            const X_monotone_segment_2& seg,
                            Arr_not_all_sides_oblivious_tag)
@@ -1537,7 +1617,7 @@ public:
     /* Append a segment `seg` to an existing polyline `xcv` at the front. */
     void operator()(X_monotone_curve_2& xcv, const X_monotone_segment_2& seg)
       const
-    { push_front_2_impl(xcv, seg, Are_all_sides_oblivious_tag()); }
+    { push_front_2_impl<void*>(xcv, seg, Are_all_sides_oblivious_tag()); }
   };
 
   /*! Obtain a Push_front_2 functor object. */
