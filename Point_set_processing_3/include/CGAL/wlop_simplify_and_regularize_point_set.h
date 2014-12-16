@@ -564,8 +564,6 @@ wlop_simplify_and_regularize_point_set(
 
   for (unsigned int iter_n = 0; iter_n < iter_number; ++iter_n)
   {
-    RandomAccessIterator first_sample_iter = sample_points.begin();
-
     // Initiate a KD-tree search for sample points
     std::vector<Kd_tree_element> sample_treeElements;
     for (i=0 ; i < sample_points.size(); i++)
