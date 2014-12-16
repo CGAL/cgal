@@ -3,7 +3,6 @@
 \ingroup PkgTriangulationsConcepts
 \cgalConcept
 
-\cgalModifBegin
 The concept `TriangulationDSVertex` describes the requirements for the 
 vertex base class of a `CGAL::Triangulation_data_structure`. It refines
 the concept `TriangulationDataStructure::Vertex`.
@@ -34,7 +33,6 @@ This <I>rebound</I> base class is the class
 that the `CGAL::Triangulation_data_structure` 
 actually uses as a base class for the class 
 of `CGAL::Triangulation_data_structure::Vertex`.
-\cgalModifEnd
 
 \cgalRefines `TriangulationDataStructure::Vertex`
 
@@ -55,11 +53,9 @@ public:
   
 /*!
 
-\cgalModifBegin
 The `Triangulation_data_structure` in which the vertex is
 defined/used.
 Must be a model of the `TriangulationDataStructure` concept.
-\cgalModifEnd
 
 */
 typedef unspecified_type Triangulation_data_structure;

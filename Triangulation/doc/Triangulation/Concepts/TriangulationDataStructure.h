@@ -653,14 +653,12 @@ std::ostream & operator<<(std::ostream & os, const TriangulationDataStructure
 \ingroup PkgTriangulationsConcepts
 \cgalConcept
 
-\cgalModifBegin
 The concept `TriangulationDataStructure::Vertex` describes the type used by a 
 `TriangulationDataStructure` to store the vertices. 
 
 It sets requirements of combinatorial nature
 only, as geometry is not concerned here. In particular, we only require that
 the vertex holds a handle to a full cell incident to it in the triangulation.
-\cgalModifEnd
 
 \cgalHasModel `CGAL::Triangulation_ds_vertex<TriangulationDataStructure>`
 \cgalHasModel `CGAL::Triangulation_vertex<TriangulationTraits, Data, TriangulationDSVertex>`
@@ -751,7 +749,6 @@ std::istream& operator>>(std::istream & is, Triangulation_ds_vertex<Triangulatio
 \ingroup PkgTriangulationsConcepts
 \cgalConcept
 
-\cgalModifBegin
 The concept `TriangulationDataStructure::FullCell` describes the type used by a 
 `TriangulationDataStructure` to store the full cells. 
 
@@ -766,7 +763,6 @@ storing handles to the vertices of the
 full cell as well as handles to the adjacent full cells. Two full cells
 are said to be adjacent when they share a facet. Adjacent full cells are
 called hereafter neighbors.
-\cgalModifEnd
 
 \cgalHasModel `CGAL::Triangulation_ds_full_cell<TriangulationDataStructure,DSFullCellStoragePolicy>`
 \cgalHasModel `CGAL::Triangulation_full_cell<TriangulationTraits, Data, TriangulationDSFullCell>`

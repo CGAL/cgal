@@ -67,7 +67,6 @@ class are not embedded in Euclidean space but are only of combinatorial
 nature. It deals with simplicial complexes 
 which are pure, connected and without boundaries nor singularities. 
 
-\cgalModifBegin
 The class `CGAL::Triangulation<TriangulationTraits, TriangulationDataStructure>` 
 describes an embedded triangulation that has as vertices a given set of points.
 Methods are provided for the insertion of points in the triangulation, the
@@ -300,7 +299,6 @@ simplices incident to boundary faces of the convex hull.
 Each infinite \f$ i\f$-simplex is 
 incident to the infinite vertex and to an \f$ (i-1)\f$-simplex of the 
 convex hull boundary.
-\cgalModifEnd
 
 See Chapters \ref Chapter_2D_Triangulations "2D Triangulations" and 
 \ref Chapter_3D_Triangulations "3D Triangulations" for more details
