@@ -958,7 +958,12 @@ public:
      * \return The past-the-end iterator.
      */
     template <typename OutputIterator>
-    OutputIterator operator()(const Curve_2& cv, OutputIterator oi) const
+    OutputIterator operator_impl(const Curve_2& cv, OutputIterator oi, Arr_all_sides_oblivious_tag) const
+    {
+      return oi;
+    }
+    template <typename OutputIterator>
+    OutputIterator operator_impl(const Curve_2& cv, OutputIterator oi, Arr_not_all_sides_oblivious_tag) const
     {
       typedef typename Curve_2::Segment_const_iterator const_seg_iterator;
 
@@ -973,6 +978,11 @@ public:
 
       typename Geometry_traits_2::Compare_endpoints_xy_2 cmp_seg_endpts =
         m_poly_traits.geometry_traits_2()->compare_endpoints_xy_2_object();
+
+      typename Geometry_traits_2::Parameter_space_in_x_2 ps_x =
+           m_poly_traits.geometry_traits_2()->parameter_space_in_x_2_object();
+      typename Geometry_traits_2::Parameter_space_in_y_2 ps_y =
+           m_poly_traits.geometry_traits_2()->parameter_space_in_y_2_object();
 
 #ifdef CGAL_ALWAYS_LEFT_TO_RIGHT
       typename Geometry_traits_2::Construct_opposite_2 ctr_seg_opposite =
@@ -1035,7 +1045,7 @@ public:
 #endif
       X_monotone_curve_2 x_polyline = ctr_x_curve(x_seg);
 
-      for (++it; it != x_seg_objects.end(); ++it) {
+      for (++it; it != x_seg_objects.end(); ++it){
         X_monotone_segment_2 x_seg;
 #if defined (CGAL_NO_ASSERTIONS)
         CGAL::assign(x_seg, *it);
@@ -1061,6 +1071,11 @@ public:
              max_seg_v(x_seg) : min_seg_v(x_seg);
            );
 
+          Arr_curve_end polyline_target = ( (cmp_seg_endpts(x_polyline[0])  == SMALLER ) ? ARR_MAX_END : ARR_MIN_END );
+          Arr_curve_end seg_source = ( (cmp_seg_endpts(x_seg) == SMALLER) ? ARR_MIN_END : ARR_MAX_END);
+          unsigned int num_segs = x_polyline.number_of_segments();
+
+
         if ((cmp_seg_endpts(x_seg) != start_dir) ||
             (is_seg_vertical(x_seg) != is_start_vertical))
         {
@@ -1073,11 +1088,22 @@ public:
 #endif
           x_polyline = ctr_x_curve(x_seg);
         }
+
+          else if (ps_x(x_polyline[num_segs-1], polyline_target) != ARR_INTERIOR ||
+                   ps_x(x_seg, seg_source) != ARR_INTERIOR)
+          {
+            *oi++ = make_object(x_polyline);
+#ifdef CGAL_ALWAYS_LEFT_TO_RIGHT
+          if (cmp_seg_endpts(x_seg) == LARGER) x_seg = ctr_seg_opposite(x_seg);
+#endif
+            x_polyline = ctr_x_curve(x_seg);
+          }
+
         else {
 #ifdef CGAL_ALWAYS_LEFT_TO_RIGHT
           if (cmp_seg_endpts(x_seg) == LARGER) {
             x_seg = ctr_seg_opposite(x_seg);
-            push_front(x_polyline, x_seg);
+              push_front(x_polyline, x_seg);
           }
           else
             push_back(x_polyline, x_seg);
@@ -1085,12 +1111,17 @@ public:
           push_back(x_polyline, x_seg);
 #endif
         }
-      }
+
+      } // for loop
       if (x_polyline.number_of_segments() != 0)
         *oi++ = make_object(x_polyline);
       x_seg_objects.clear();
       return oi;
     }
+
+    template <typename OutputIterator>
+    OutputIterator operator()(const Curve_2& cv, OutputIterator oi) const
+    { return operator_impl(cv, oi, Are_all_sides_oblivious_tag()); }
   };
 
   /*! Obtain a Make_x_monotone_2 functor object. */
