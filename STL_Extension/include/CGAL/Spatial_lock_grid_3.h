@@ -33,7 +33,6 @@
 # include <thread>
 #endif
 #include <tbb/enumerable_thread_specific.h>
-#include <tbb/recursive_mutex.h>
 
 #include <algorithm>
 #include <vector>
@@ -42,7 +41,6 @@ namespace CGAL {
 
 struct Tag_no_lock {};
 struct Tag_non_blocking {};
-struct Tag_non_blocking_with_mutexes {};
 struct Tag_priority_blocking {};
 
 //*****************************************************************************
@@ -527,6 +525,11 @@ public:
     int num_cells =
       num_grid_cells_per_axis*num_grid_cells_per_axis*num_grid_cells_per_axis;
     m_grid.resize(num_cells);
+    // Explicitly initialize the atomics
+    std::vector<tbb::atomic<unsigned int> >::iterator it     = m_grid.begin();
+    std::vector<tbb::atomic<unsigned int> >::iterator it_end = m_grid.end();
+    for ( ; it != it_end ; ++it)
+      *it = 0;
   }
 
   /// Destructor
