@@ -194,7 +194,7 @@ projecting each point onto a smooth parametric surface patch
 Function `bilateral_smooth_point_set()` smooths the input point set by
 iteratively projecting each point onto the implicit surface patch fitted over its `k` nearest neighbors.
 Bilateral projection preserves sharp features according to the normal (gradient) information. 
-Normals are thus required as input. See section 4 in \cgalCite{ear-2013}.
+Normals are thus required as input. For more details, see section 4 of \cgalCite{ear-2013}.
 
 \subsection Point_set_processing_3Example_5 Jet smoothing example
 
@@ -268,7 +268,7 @@ normals:
 \section Point_set_processing_3Upsampling Upsampling
 
 The function `edge_aware_upsample_point_set()` generates a denser point set from an input point set. This has applications in point-based rendering, hole filling, and sparse surface reconstruction.
-The algorithm can progressively upsample the point set while approaching the edge singularities, see \cgalCite{ear-2013} for more detail.
+The algorithm can progressively upsample the point set while approaching the edge singularities. See \cgalCite{ear-2013} for more details.
 
 \subsection Point_set_processing_3Example_8 Example
 
