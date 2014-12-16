@@ -144,7 +144,7 @@ update_new_point(
   typedef typename Kernel::FT FT;
   typedef typename rich_grid_internal::Rich_point<Kernel> Rich_point;
 
-  unsigned int size = rich_point_set.size();
+  CGAL_assertion_code( unsigned int size = rich_point_set.size() );
   CGAL_point_set_processing_precondition(father_index >= 0 &&
                                          father_index < size);
   CGAL_point_set_processing_precondition(mother_index >= 0 &&
