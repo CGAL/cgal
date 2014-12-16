@@ -1088,7 +1088,6 @@ public:
 #endif
           x_polyline = ctr_x_curve(x_seg);
         }
-
           else if (ps_x(x_polyline[num_segs-1], polyline_target) != ARR_INTERIOR ||
                    ps_x(x_seg, seg_source) != ARR_INTERIOR)
           {
