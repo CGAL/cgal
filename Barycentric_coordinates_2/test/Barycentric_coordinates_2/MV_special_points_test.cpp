@@ -8,6 +8,7 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Barycentric_coordinates_2/Mean_value_2.h>
 #include <CGAL/Barycentric_coordinates_2/Generalized_barycentric_coordinates_2.h>
+#include <boost/math/special_functions/fpclassify.hpp>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 
@@ -60,26 +61,26 @@ int main()
     for(int i = 0; i < 11; ++i) {
         const Output_type result = mean_value_coordinates(query_points[i], coordinates);
 
-        assert(!std::isnan(CGAL::to_double(coordinates[count + 0])));
-        assert(!std::isinf(CGAL::to_double(coordinates[count + 0])));
+        assert(!boost::math::isnan(CGAL::to_double(coordinates[count + 0])));
+        assert(!boost::math::isinf(CGAL::to_double(coordinates[count + 0])));
 
-        assert(!std::isnan(CGAL::to_double(coordinates[count + 1])));
-        assert(!std::isinf(CGAL::to_double(coordinates[count + 1])));
+        assert(!boost::math::isnan(CGAL::to_double(coordinates[count + 1])));
+        assert(!boost::math::isinf(CGAL::to_double(coordinates[count + 1])));
 
-        assert(!std::isnan(CGAL::to_double(coordinates[count + 2])));
-        assert(!std::isinf(CGAL::to_double(coordinates[count + 2])));
+        assert(!boost::math::isnan(CGAL::to_double(coordinates[count + 2])));
+        assert(!boost::math::isinf(CGAL::to_double(coordinates[count + 2])));
 
-        assert(!std::isnan(CGAL::to_double(coordinates[count + 3])));
-        assert(!std::isinf(CGAL::to_double(coordinates[count + 3])));
+        assert(!boost::math::isnan(CGAL::to_double(coordinates[count + 3])));
+        assert(!boost::math::isinf(CGAL::to_double(coordinates[count + 3])));
 
-        assert(!std::isnan(CGAL::to_double(coordinates[count + 4])));
-        assert(!std::isinf(CGAL::to_double(coordinates[count + 4])));
+        assert(!boost::math::isnan(CGAL::to_double(coordinates[count + 4])));
+        assert(!boost::math::isinf(CGAL::to_double(coordinates[count + 4])));
 
-        assert(!std::isnan(CGAL::to_double(coordinates[count + 5])));
-        assert(!std::isinf(CGAL::to_double(coordinates[count + 5])));
+        assert(!boost::math::isnan(CGAL::to_double(coordinates[count + 5])));
+        assert(!boost::math::isinf(CGAL::to_double(coordinates[count + 5])));
 
-        assert(!std::isnan(CGAL::to_double(coordinates[count + 6])));
-        assert(!std::isinf(CGAL::to_double(coordinates[count + 6])));
+        assert(!boost::math::isnan(CGAL::to_double(coordinates[count + 6])));
+        assert(!boost::math::isinf(CGAL::to_double(coordinates[count + 6])));
 
         const Scalar coordinate_sum = coordinates[count + 0] +
                                       coordinates[count + 1] +
