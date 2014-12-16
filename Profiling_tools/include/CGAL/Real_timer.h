@@ -51,7 +51,7 @@ private:
     bool        running;
 
 #ifdef CGAL_HEADER_ONLY
-    inline bool& get_static_realtimer_m_failed()
+    static bool& get_static_realtimer_m_failed()
     {
       static bool m_failed = false;
       return m_failed;

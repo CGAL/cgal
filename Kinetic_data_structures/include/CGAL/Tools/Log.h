@@ -67,7 +67,7 @@ private:
   
 #ifdef CGAL_HEADER_ONLY
   
-  inline static State& get_static_state()
+  static State& get_static_state()
   {
     static State state_;
     return state_;
@@ -76,7 +76,7 @@ private:
 #else // CGAL_HEADER_ONLY
 
   CGAL_EXPORT static State state_;
-  inline static State& get_static_state()
+  static State& get_static_state()
   { 
     return state_; 
   }
