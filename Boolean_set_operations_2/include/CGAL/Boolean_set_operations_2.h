@@ -32,6 +32,8 @@
 #include <CGAL/Gps_traits_2.h>
 #include <CGAL/iterator.h> 
 #include <CGAL/Boolean_set_operations_2/Bso_internal_functions.h>
+#include <CGAL/is_iterator.h>
+#include <boost/utility/enable_if.hpp>
 
 namespace CGAL {
 
@@ -902,7 +904,11 @@ inline OutputIterator intersection (InputIterator begin, InputIterator end,
 
 template <typename InputIterator, typename OutputIterator>
 inline OutputIterator intersection (InputIterator begin, InputIterator end,
-                                    OutputIterator oi, unsigned int k=5)
+                                    OutputIterator oi, unsigned int k=5,
+                                    typename boost::enable_if<
+                                      typename CGAL::is_iterator<InputIterator>
+                                    >::type* =0 // workaround to avoid ambiguous calls with kernel functions
+)
 {
   typename map_iterator_to_traits<InputIterator>::Traits          tr;
   return intersection(begin, end, oi, tr, k);

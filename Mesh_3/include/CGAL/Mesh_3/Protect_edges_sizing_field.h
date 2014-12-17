@@ -148,31 +148,38 @@ private:
    * It also ensures that no point of the triangulation will be inside its
    * sphere, by decreasing w.
    */
-  Vertex_handle smart_insert_point(const Bare_point& p,
-                                   Weight w,
-                                   int dim,
-                                   const Index& index);
+  template <typename ErasedVeOutIt>
+  std::pair<Vertex_handle, ErasedVeOutIt>
+  smart_insert_point(const Bare_point& p,
+		     Weight w,
+		     int dim,
+		     const Index& index,
+		     ErasedVeOutIt out);
   
   
   /// Insert balls between points which are pointed by handles \c vp and \c vq
   /// on curve identified by \c curve_index
-  void insert_balls(const Vertex_handle& vp,
-                    const Vertex_handle& vq,
-                    const Curve_segment_index& curve_index);
+  template <typename ErasedVeOutIt>
+  ErasedVeOutIt insert_balls(const Vertex_handle& vp,
+			     const Vertex_handle& vq,
+			     const Curve_segment_index& curve_index,
+			     ErasedVeOutIt out);
 
   /**
    * Insert balls
    * Preconditions:
    *  - size_p < size_q
    *  - pq_geodesic > 0
-   */              
-  void insert_balls(const Vertex_handle& vp,
-                    const Vertex_handle& vq,
-                    const FT size_p,
-                    const FT size_q,
-                    const FT pq_geodesic,
-                    const CGAL::Sign distance_sign,
-                    const Curve_segment_index& curve_index);
+   */
+  template <typename ErasedVeOutIt>
+  ErasedVeOutIt insert_balls(const Vertex_handle& vp,
+			     const Vertex_handle& vq,
+			     const FT size_p,
+			     const FT size_q,
+			     const FT pq_geodesic,
+			     const CGAL::Sign distance_sign,
+			     const Curve_segment_index& curve_index,
+			     ErasedVeOutIt out);
   
   /// Returns true if balls of \c va and \c vb intersect, and (va,vb) is not
   /// an edge of the complex
@@ -199,19 +206,19 @@ private:
   /// Checks if vertex \c v is well sampled, and if its not the case, fix it.
   /// Fills out with deleted vertices during this process. out value type
   /// is Vertex_handle.
-  template <typename OutputIterator>
-  OutputIterator
-  check_and_fix_vertex_along_edge(const Vertex_handle& v, OutputIterator out);
+  template <typename ErasedVeOutIt>
+  ErasedVeOutIt
+  check_and_fix_vertex_along_edge(const Vertex_handle& v, ErasedVeOutIt out);
   
   /// Walk along edge from \c start, following the direction \c start to 
   /// \c next, and fills \c out with the vertices which do not fullfill 
   /// the sampling conditions
-  template <typename OutputIterator>
-  OutputIterator
+  template <typename ErasedVeOutIt>
+  ErasedVeOutIt
   walk_along_edge(const Vertex_handle& start,
                   const Vertex_handle& next,
                   const bool test_sampling,
-                  OutputIterator out) const;
+                  ErasedVeOutIt out) const;
   
   /// Returns next vertex along edge, i.e vertex after \c start, following
   /// the direction from \c previous to \c start
@@ -222,16 +229,18 @@ private:
   /// Replace vertices between ]begin,last[ by new vertices, along curve
   /// identified by \c curve_index
   /// The value type of InputIterator is Vertex_handle.
-  template <typename InputIterator>
-  void repopulate(InputIterator begin,
-                  InputIterator last,
-                  const Curve_segment_index& index);
-  
-  template <typename InputIterator>
-  void
+  template <typename InputIterator, typename ErasedVeOutIt>
+  ErasedVeOutIt repopulate(InputIterator begin,
+			   InputIterator last,
+			   const Curve_segment_index& index,
+			   ErasedVeOutIt out);
+
+  template <typename InputIterator, typename ErasedVeOutIt>
+  ErasedVeOutIt
   analyze_and_repopulate(InputIterator begin,
                          InputIterator last,
-                         const Curve_segment_index& index);
+                         const Curve_segment_index& index,
+			 ErasedVeOutIt out);
   
   /// Checks if \c v2 size is compatible (i.e. greater) with the linear
   /// interpolation of sizes of \c v1 and \c v3 
@@ -241,9 +250,9 @@ private:
   
   /// Repopulate all incident curve around corner \c v
   /// \pre \c v is a corner of c3t3 
-  template <typename OutputIterator>
-  OutputIterator
-  repopulate_edges_around_corner(const Vertex_handle& v, OutputIterator out);
+  template <typename ErasedVeOutIt>
+  ErasedVeOutIt
+  repopulate_edges_around_corner(const Vertex_handle& v, ErasedVeOutIt out);
   
   /// Returns true if edge with index \c curve_index is already treated
   bool is_treated(const Curve_segment_index& curve_index) const
@@ -442,7 +451,8 @@ insert_corners()
     }
     
     // Insert corner with ball (dim is zero because p is a corner)
-    Vertex_handle v = smart_insert_point(p, w, 0, p_index);
+    Vertex_handle v = smart_insert_point(p, w, 0, p_index,
+					 CGAL::Emptyset_iterator()).first;
     CGAL_assertion(v != Vertex_handle());
 
     // As C3t3::add_to_complex modifies the 'in_dimension' of the vertex,
@@ -453,7 +463,7 @@ insert_corners()
       set_special(v);
     }
   }
-}
+} //end insert_corners()
 
 
 template <typename C3T3, typename MD, typename Sf>
@@ -516,9 +526,12 @@ insert_point(const Bare_point& p, const Weight& w, int dim, const Index& index,
 
   
 template <typename C3T3, typename MD, typename Sf>
-typename Protect_edges_sizing_field<C3T3, MD, Sf>::Vertex_handle
+template <typename ErasedVeOutIt>
+std::pair<typename Protect_edges_sizing_field<C3T3, MD, Sf>::Vertex_handle,
+	  ErasedVeOutIt>
 Protect_edges_sizing_field<C3T3, MD, Sf>::
-smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index)
+smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index,
+		   ErasedVeOutIt out)
 {
 #ifdef CGAL_MESH_3_PROTECTION_DEBUG
   std::cerr << "smart_insert_point( (" << p 
@@ -558,6 +571,7 @@ smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index)
       }
 
       // Adapt size
+      *out++ = nearest_vh;
       Vertex_handle new_vh = change_ball_size(nearest_vh, CGAL::sqrt(sq_d),
                                               special_ball);
       ch = tr.locate(p, lt, li, lj, new_vh);
@@ -575,8 +589,9 @@ smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index)
 
     // Change w in order to be sure that no existing point will be included
     // in (p,w)
-    std::set<Vertex_handle> vertices_in_conflict_zone;
+    std::vector<Vertex_handle> vertices_in_conflict_zone;
     { // fill vertices_in_conflict_zone
+      std::set<Vertex_handle> vertices_in_conflict_zone_set;
       std::vector<Cell_handle> cells_in_conflicts;
       tr.find_conflicts(Weighted_point(p, w), ch,
                         CGAL::Emptyset_iterator(),
@@ -590,16 +605,19 @@ smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index)
         for(int i = 0, d = tr.dimension(); i <= d; ++i) {
           const Vertex_handle v = (*it)->vertex(i);
           if( ! c3t3_.triangulation().is_infinite(v) ) {
-            vertices_in_conflict_zone.insert(v);
+            vertices_in_conflict_zone_set.insert(v);
           }
         }
       }
+      vertices_in_conflict_zone.insert(vertices_in_conflict_zone.end(),
+				       vertices_in_conflict_zone_set.begin(),
+				       vertices_in_conflict_zone_set.end());
     }
     FT min_sq_d = w;
 #ifdef CGAL_MESH_3_PROTECTION_DEBUG
     typename Tr::Point nearest_point;
 #endif
-    for(typename std::set<Vertex_handle>::const_iterator 
+    for(typename std::vector<Vertex_handle>::const_iterator
           it = vertices_in_conflict_zone.begin(),
           end = vertices_in_conflict_zone.end(); it != end ; ++it )
     {
@@ -611,6 +629,7 @@ smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index)
 #endif
         min_sq_d = minimal_weight_;
         if( ! is_special(*it) ) {
+	  *out++ = *it;
           ch = change_ball_size(*it, minimal_size_, true)->cell(); // special ball
         }
       } else {
@@ -666,6 +685,7 @@ smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index)
             insert_a_special_ball = true;
           }
           if( ! is_special(it) ) { 
+	    *out++ = it;
             change_ball_size(it, CGAL::sqrt(sq_d), special_ball);
             restart = true;
           }
@@ -714,9 +734,10 @@ smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index)
     insert_a_special_ball = true;
   }
   Vertex_handle v = insert_point(p,w,dim,index, insert_a_special_ball);
+  /// @TODO `insert_point` does insert in unchecked_vertices anyway!
   if ( add_handle_to_unchecked ) { unchecked_vertices_.insert(v); }
   
-  return v;
+  return std::pair<Vertex_handle, ErasedVeOutIt>(v, out);
 }
 
   
@@ -779,7 +800,8 @@ insert_balls_on_edges()
           vp = smart_insert_point(p,
                                   CGAL::square(p_size),
                                   1,
-                                  p_index);
+                                  p_index,
+				  CGAL::Emptyset_iterator()).first;
         }
         // No 'else' because in that case 'is_vertex(..)' already filled
         // the variable 'vp'.
@@ -792,7 +814,7 @@ insert_balls_on_edges()
       // }
       // else
       {
-        insert_balls(vp, vq, curve_index);
+        insert_balls(vp, vq, curve_index, Emptyset_iterator());
       }
       set_treated(curve_index);
     }
@@ -800,7 +822,7 @@ insert_balls_on_edges()
     // s << "dump-mesh-curve-" << curve_index << ".binary.cgal";
     // debug_dump_c3t3(s.str(), c3t3_);
   }
-}
+} //end insert_balls_on_edges()
 
 
 template <typename C3T3, typename MD, typename Sf>
@@ -820,11 +842,13 @@ get_vertex_corner_from_point(const Bare_point& p, const Index&) const
 
 
 template <typename C3T3, typename MD, typename Sf>
-void
+template <typename ErasedVeOutIt>
+ErasedVeOutIt
 Protect_edges_sizing_field<C3T3, MD, Sf>::
 insert_balls(const Vertex_handle& vp,
              const Vertex_handle& vq,
-             const Curve_segment_index& curve_index)
+             const Curve_segment_index& curve_index,
+	     ErasedVeOutIt out)
 {
   // Get size of p & q
   const Bare_point& p = vp->point().point();
@@ -839,14 +863,17 @@ insert_balls(const Vertex_handle& vp,
   const FT pq_geo = CGAL::abs(pq_geo_signed);
 
   // Insert balls
-  return (sp <= sq) ? insert_balls(vp, vq, sp, sq, pq_geo, d_sign, curve_index)
-                    : insert_balls(vq, vp, sq, sp, pq_geo, -d_sign, curve_index);  
+  return
+    (sp <= sq) ?
+    insert_balls(vp, vq, sp, sq, pq_geo, d_sign, curve_index, out) :
+    insert_balls(vq, vp, sq, sp, pq_geo, -d_sign, curve_index, out);
 }
 
 
 
 template <typename C3T3, typename MD, typename Sf>
-void
+template <typename ErasedVeOutIt>
+ErasedVeOutIt
 Protect_edges_sizing_field<C3T3, MD, Sf>::
 insert_balls(const Vertex_handle& vp,
              const Vertex_handle& vq,
@@ -854,7 +881,8 @@ insert_balls(const Vertex_handle& vp,
              const FT sq,
              const FT d,
              const CGAL::Sign d_sign,
-             const Curve_segment_index& curve_index)
+             const Curve_segment_index& curve_index,
+	     ErasedVeOutIt out)
 {
 #ifdef CGAL_MESH_3_PROTECTION_DEBUG
   std::cerr << "insert_balls(vp=" << (void*)(&*vp) << " (" << vp->point() << "),\n"
@@ -935,22 +963,26 @@ insert_balls(const Vertex_handle& vp,
     std::cerr << "  middle point: " << new_point << std::endl;
     std::cerr << "  new weight: " << point_weight << std::endl;
 #endif
-    const Vertex_handle new_vertex = smart_insert_point(new_point, 
-                                                        point_weight,
-                                                        dim,
-                                                        index);
+    std::pair<Vertex_handle, ErasedVeOutIt> pair =
+      smart_insert_point(new_point,
+			 point_weight,
+			 dim,
+			 index,
+			 out);
+    const Vertex_handle new_vertex = pair.first;
+    out = pair.second;
     const FT sn = get_size(new_vertex);
     if(sp <= sn) {
-      insert_balls(vp, new_vertex, sp, sn, d/2, d_sign, curve_index);
+      out=insert_balls(vp, new_vertex, sp, sn, d/2, d_sign, curve_index, out);
     } else {
-      insert_balls(new_vertex, vp, sn, sp, d/2, -d_sign, curve_index);
+      out=insert_balls(new_vertex, vp, sn, sp, d/2, -d_sign, curve_index, out);
     }
     if(sn <= sq) {
-      insert_balls(new_vertex, vq, sn, sq, d/2, d_sign, curve_index);
+      out=insert_balls(new_vertex, vq, sn, sq, d/2, d_sign, curve_index, out);
     } else {
-      insert_balls(vq, new_vertex, sq, sn, d/2, -d_sign, curve_index);
+      out=insert_balls(vq, new_vertex, sq, sn, d/2, -d_sign, curve_index, out);
     }
-    return;
+    return out;
   }
 #endif // not CGAL_MESH_3_NO_PROTECTION_NON_LINEAR
 
@@ -1009,7 +1041,10 @@ insert_balls(const Vertex_handle& vp,
     int dim = 1; // new_point is on edge
     
     // Insert point into c3t3
-    Vertex_handle new_vertex = smart_insert_point(new_point, point_weight, dim, index);
+    std::pair<Vertex_handle, ErasedVeOutIt> pair =
+      smart_insert_point(new_point, point_weight, dim, index, out);
+    Vertex_handle new_vertex = pair.first;
+    out = pair.second;
     
     // Add edge to c3t3
     if(!c3t3_.is_in_complex(prev, new_vertex)) {
@@ -1034,6 +1069,7 @@ insert_balls(const Vertex_handle& vp,
       c3t3_.add_to_complex(prev, vq, curve_index);
     }
   }
+  return out;
 }
   
   
@@ -1070,6 +1106,7 @@ refine_balls()
 
         // Compute correct size of balls
         const FT ab = compute_distance(va,vb);
+	/// @TOTO pb: get_size(va) is called several times
         FT sa_new = (std::min)(ab/distance_divisor, get_size(va));
         FT sb_new = (std::min)(ab/distance_divisor, get_size(vb));
         
@@ -1088,21 +1125,32 @@ refine_balls()
         { new_sizes[vb] = sb_new; }
       }
     }
+
+    // The std::map with Vertex_handle as the key is not robust, because
+    // the time stamp of vertices can change during the following loop. The
+    // solution is to copy it in a vector.
+    std::vector<std::pair<Vertex_handle, FT> >
+      new_sizes_copy(new_sizes.begin(), new_sizes.end());
+    new_sizes.clear();
     
     // Update size of balls
-    for ( typename std::map<Vertex_handle,FT>::iterator it = new_sizes.begin(),
-         end = new_sizes.end() ; it != end ; ++it)
+    for ( typename std::vector<std::pair<Vertex_handle,FT> >::iterator
+	    it = new_sizes_copy.begin(),
+	    end = new_sizes_copy.end();
+	  it != end ; ++it )
     {
+      const Vertex_handle v = it->first;
+      const FT new_size = it->second;
       // Set size of the ball to new value
-      if(minimal_size_ != FT() && it->second < minimal_size_) {
-        if(!is_special(it->first)) {
-          change_ball_size(it->first,minimal_size_,true); // special ball
+      if(minimal_size_ != FT() && new_size < minimal_size_) {
+        if(!is_special(v)) {
+          change_ball_size(v,minimal_size_,true); // special ball
                   
           // Loop will have to be run again
           restart = true;
         }
       } else {
-        change_ball_size(it->first,it->second);
+        change_ball_size(v,new_size);
                 
         // Loop will have to be run again
         restart = true;
@@ -1112,7 +1160,7 @@ refine_balls()
     // Check edges
     check_and_repopulate_edges();
   }
-}
+} // end refine_balls()
 
 
 template <typename C3T3, typename MD, typename Sf>
@@ -1188,7 +1236,8 @@ change_ball_size(const Vertex_handle& v, const FT size, const bool special_ball)
   Bare_point p = v->point().point();  
 
   // Remove v from corners
-  boost::optional<Corner_index> corner_index;
+  boost::optional<Corner_index> corner_index =
+    boost::make_optional(false, Corner_index());
   if ( c3t3_.is_in_complex(v) )
   {
     corner_index = c3t3_.corner_index(v);
@@ -1287,10 +1336,10 @@ check_and_repopulate_edges()
 
   
 template <typename C3T3, typename MD, typename Sf>
-template <typename OutputIterator>
-OutputIterator
+template <typename ErasedVeOutIt>
+ErasedVeOutIt
 Protect_edges_sizing_field<C3T3, MD, Sf>::
-check_and_fix_vertex_along_edge(const Vertex_handle& v, OutputIterator out)
+check_and_fix_vertex_along_edge(const Vertex_handle& v, ErasedVeOutIt out)
 {
 #ifdef CGAL_MESH_3_PROTECTION_DEBUG
   std::cerr << "check_and_fix_vertex_along_edge(" 
@@ -1353,14 +1402,15 @@ check_and_fix_vertex_along_edge(const Vertex_handle& v, OutputIterator out)
   }
   
   // Store erased vertices
-  std::copy(to_repopulate.begin(), to_repopulate.end(), out);
+  // out = std::copy(to_repopulate.begin(), to_repopulate.end(), out);
 
   // Repopulate edge
   const Curve_segment_index& curve_index = incident_vertices.front().second;
   
-  analyze_and_repopulate(to_repopulate.begin(),
-                         --to_repopulate.end(),
-                         curve_index);
+  out = analyze_and_repopulate(to_repopulate.begin(),
+			       --to_repopulate.end(),
+			       curve_index,
+			       out);
   
   return out;
 }
@@ -1388,12 +1438,12 @@ is_sampling_dense_enough(const Vertex_handle& v1, const Vertex_handle& v2) const
 
 
 template <typename C3T3, typename MD, typename Sf>
-template <typename OutputIterator>
-OutputIterator
+template <typename ErasedVeOutIt>
+ErasedVeOutIt
 Protect_edges_sizing_field<C3T3, MD, Sf>::
 walk_along_edge(const Vertex_handle& start, const Vertex_handle& next,
                 bool /*test_sampling*/,
-                OutputIterator out) const
+                ErasedVeOutIt out) const
 {
   CGAL_precondition( c3t3_.is_in_complex(start, next) );
   
@@ -1448,10 +1498,11 @@ next_vertex_along_edge(const Vertex_handle& start,
 
   
 template <typename C3T3, typename MD, typename Sf>
-template <typename InputIterator>
-void
+template <typename InputIterator, typename ErasedVeOutIt>
+ErasedVeOutIt
 Protect_edges_sizing_field<C3T3, MD, Sf>::
-repopulate(InputIterator begin, InputIterator last, const Curve_segment_index& index)
+repopulate(InputIterator begin, InputIterator last,
+	   const Curve_segment_index& index, ErasedVeOutIt out)
 {
 #ifdef CGAL_MESH_3_PROTECTION_DEBUG
   std::cerr << "repopulate(begin=" << (void*)(&**begin) 
@@ -1465,7 +1516,7 @@ repopulate(InputIterator begin, InputIterator last, const Curve_segment_index& i
   CGAL_assertion( std::distance(begin,last) >= 0 );
   
   // May happen
-  if ( begin == last ) { return; }
+  if ( begin == last ) { return out; }
   
   // Valid because begin < last
   InputIterator current = begin;
@@ -1502,6 +1553,7 @@ repopulate(InputIterator begin, InputIterator last, const Curve_segment_index& i
     }
     std::cerr  << c3t3_.index(*current) << std::endl;
 #endif // CGAL_MESH_3_PROTECTION_DEBUG
+    *out++ = *current;
     c3t3_.triangulation().remove(*current);
   }
   
@@ -1517,15 +1569,16 @@ repopulate(InputIterator begin, InputIterator last, const Curve_segment_index& i
   }
   
   // Repopulate edge
-  insert_balls(*begin, *last, index);
+  return insert_balls(*begin, *last, index, out);
 }
 
 
 template <typename C3T3, typename MD, typename Sf>
-template <typename InputIterator>
-void
+template <typename InputIterator, typename ErasedVeOutIt>
+ErasedVeOutIt
 Protect_edges_sizing_field<C3T3, MD, Sf>::
-analyze_and_repopulate(InputIterator begin, InputIterator last, const Curve_segment_index& index)
+analyze_and_repopulate(InputIterator begin, InputIterator last,
+		       const Curve_segment_index& index, ErasedVeOutIt out)
 {
 #ifdef CGAL_MESH_3_PROTECTION_DEBUG
   std::cerr << "analyze_and_repopulate(begin=" << (void*)(&**begin)
@@ -1539,11 +1592,11 @@ analyze_and_repopulate(InputIterator begin, InputIterator last, const Curve_segm
   CGAL_assertion( std::distance(begin,last) >= 0 );
   
   // May happen
-  if ( begin == last ) { return; }
+  if ( begin == last ) { return out; }
   if ( std::distance(begin,last) == 1 )
   {
-    repopulate(begin, last, index);
-    return;
+    out = repopulate(begin, last, index, out);
+    return out;
   }
   
   // Here std::distance(begin,last) > 1
@@ -1588,9 +1641,10 @@ analyze_and_repopulate(InputIterator begin, InputIterator last, const Curve_segm
     InputIterator next = ch_stack.top();
     ch_stack.pop();
     // Iterators are on the reverse order in the stack, thus use [next,current]
-    repopulate(next, current, index);
+    out = repopulate(next, current, index, out);
     current = next;
-  }  
+  }
+  return out;
 }
   
 template <typename C3T3, typename MD, typename Sf>
@@ -1611,10 +1665,10 @@ is_sizing_field_correct(const Vertex_handle& v1,
 
   
 template <typename C3T3, typename MD, typename Sf>
-template <typename OutputIterator>
-OutputIterator
+template <typename ErasedVeOutIt>
+ErasedVeOutIt
 Protect_edges_sizing_field<C3T3, MD, Sf>::
-repopulate_edges_around_corner(const Vertex_handle& v, OutputIterator out)
+repopulate_edges_around_corner(const Vertex_handle& v, ErasedVeOutIt out)
 {
   CGAL_precondition(c3t3_.is_in_complex(v));
   
@@ -1636,7 +1690,8 @@ repopulate_edges_around_corner(const Vertex_handle& v, OutputIterator out)
     std::copy(to_repopulate.begin(), to_repopulate.end(), out);
 
     // Repopulate
-    analyze_and_repopulate(to_repopulate.begin(), --to_repopulate.end(), curve_index);
+    out = analyze_and_repopulate(to_repopulate.begin(), --to_repopulate.end(),
+				 curve_index, out);
   }
   
   return out;
