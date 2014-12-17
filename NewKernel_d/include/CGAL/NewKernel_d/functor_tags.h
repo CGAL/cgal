@@ -98,7 +98,11 @@ namespace CGAL {
 	struct Provides_type_i <Kernel, Tg, true>
 	  : Has_type_different_from<typename Kernel::template Type<Tg>, Null_type> {};
 
+	//// This version does not like Functor<T,bool=false>
+	//namespace internal { BOOST_MPL_HAS_XXX_TEMPLATE_NAMED_DEF(has_Functor,Functor,false) }
+	// This version lets us use non-type template parameters, but fails with older EDG-based compilers (Intel 14).
 	namespace internal { BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(has_Functor,template Functor<Null_tag>,false) }
+
 	template<class Kernel, class Tg, class O=void,
 	  bool = internal::has_Functor<Kernel>::value /* false */>
 	struct Provides_functor_i : boost::false_type {};
@@ -110,14 +114,7 @@ namespace CGAL {
 	template <class K, class T, class D=void,
 		  //bool=Provides_functor<K,T>::value,
 		  //bool=Provides_functor_i<K,T>::value,
-		  bool =
-#ifdef __INTEL_COMPILER
-// FIXME: this is obviously wrong, but Intel's compiler evaluates it to false
-// and Epick_d doesn't seem to use the other case currently.
-		    true
-#else
-		    internal::has_Functor<K>::value
-#endif
+		  bool = internal::has_Functor<K>::value
 		  >
 	struct Inherit_functor : K::template Functor<T> {};
 	template <class K, class T, class D>

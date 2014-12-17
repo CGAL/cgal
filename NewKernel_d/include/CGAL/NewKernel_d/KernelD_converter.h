@@ -24,6 +24,7 @@
 #include <CGAL/tuple.h>
 #include <CGAL/typeset.h>
 #include <CGAL/Object.h>
+#include <CGAL/Origin.h>
 #include <CGAL/NT_converter.h>
 #include <CGAL/NewKernel_d/functor_tags.h>
 #include <CGAL/Kernel/mpl.h>
