@@ -77,7 +77,7 @@ Example's point pattern.
 
 \cgalExample{Barycentric_coordinates_2/Mean_value_coordinates_example.cpp}
 
-\subsection height_inter_example Height Interpolation for Terrain Modelling
+\subsection height_inter_example Height Interpolation for Terrain Modeling
 
 This is an advanced example that shows how to use generalized barycentric coordinates for height interpolation with applications to terrain modelling. It also shows how to use a non-default traits class with our package instead of a `Kernel` traits class. Suppose we know the boundary of three-dimensional piece of terrain that can be represented as a polygon with several three-dimensional vertices, where the third dimension gives the corresponding height. The task is to propagate the height from the known sample points on the boundary to the polygon's interior. This gives an approximate estimation of the terrain's surface in this region.
 
@@ -88,7 +88,7 @@ A 2D polygon with 50 vertices representing a piece of terrain with convex and co
 
 In this example we project a three-dimensional polygon orthogonally onto the two-dimensional plane using the class `CGAL::Projection_traits_xy_3`, triangulate its interior using the class `CGAL::Delaunay_mesher_2`, and compute mean value coordinates for all the obtained points with respect to all the polygon's vertices. Finally, we interpolate the height data from the polygon's boundary to its interior using the computed coordinates and the global interpolation function from the package \ref PkgInterpolation2Summary "2D and Surface Function Interpolation".
 
-\cgalExample{Barycentric_coordinates_2/Height_interpolation_for_terrain_modelling_example.cpp}
+\cgalExample{Barycentric_coordinates_2/Terrain_height_modeling.cpp}
 
 As a result we get a smooth function inside the polygon that approximates the underlying terrain's surface.
 
