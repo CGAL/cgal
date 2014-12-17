@@ -47,9 +47,9 @@ typedef CGAL::Periodic_3_Regular_triangulation_traits_3<Regular_traits> Traits;
 template class CGAL::Periodic_3_Regular_triangulation_3<Traits>;
 typedef CGAL::Periodic_3_Regular_triangulation_3<Traits> P3RT3;
 
-typedef typename Traits::Weighted_point Weighted_point;
-typedef typename Traits::Bare_point Bare_point;
-typedef typename Traits::Iso_cuboid_3 Iso_cuboid;
+typedef Traits::Weighted_point Weighted_point;
+typedef Traits::Bare_point Bare_point;
+typedef Traits::Iso_cuboid_3 Iso_cuboid;
 
 
 template <class PeriodicTriangulation>
@@ -247,7 +247,7 @@ void test_insert_rnd (unsigned pt_count)
 
   P3RT3 p3rt3(P3RT3::Iso_cuboid(-0.5, -0.5, -0.5, 0.5, 0.5, 0.5));
 
-  std::ofstream stream("out");
+  std::ofstream stream("out_p3rt3_test");
   assert(stream);
 
   for (unsigned cnt = 1; cnt <= pt_count; ++cnt)
@@ -270,7 +270,9 @@ void test_insert_rnd (unsigned pt_count)
 
 void test_insert_from_file (const char* filename)
 {
-  P3RT3 p3rt3;
+  std::cout << "--- test_insert_from_file" << std::endl;
+
+  P3RT3 p3rt3(P3RT3::Iso_cuboid(-0.5, -0.5, -0.5, 0.5, 0.5, 0.5));
 
   std::ifstream stream(filename);
   assert(stream);
@@ -279,12 +281,10 @@ void test_insert_from_file (const char* filename)
   while (stream && !(stream.eof()))
   {
     Weighted_point p = read_wpoint(stream);
-    std::cout << p << std::endl;
-    assert(p.weight() <= 0.015625);
+    std::cout << cnt << " : " << p << std::endl;
+    assert(p.weight() < 0.015625);
     p3rt3.insert(p);
-    assert(!p3rt3.is_1_cover());
-    if (cnt >= 86)
-      assert(p3rt3.is_valid(true));
+    assert(p3rt3.is_valid(true));
     ++cnt;
   }
   assert(p3rt3.is_valid(true));
@@ -316,14 +316,14 @@ int main (int argc, char** argv)
 {
   std::cout << "TESTING ..." << std::endl;
 
-  test_construction();
-  test_insert_1();
+//  test_construction();
+//  test_insert_1();
 //  test_insert_rt3_pointset();
-  // Iso_cuboid unitaire ->  0 <= weight < 0.015625
-  test_insert_rnd_as_delaunay(100, 0.01);
-  test_insert_rnd_as_delaunay(100, 0.);
+//    Iso_cuboid unitaire ->  0 <= weight < 0.015625
+//  test_insert_rnd_as_delaunay(100, 0.01);
+//  test_insert_rnd_as_delaunay(100, 0.);
   test_insert_rnd(100);
-//  test_insert_from_file(argc > 1 ? argv[1] : "out");
+//  test_insert_from_file("out_p3rt3_test");
 
   std::cout << "EXIT SUCCESS" << std::endl;
   return EXIT_SUCCESS;
