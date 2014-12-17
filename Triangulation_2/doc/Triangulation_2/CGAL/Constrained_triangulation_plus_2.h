@@ -121,7 +121,7 @@ through a subconstraint.
 
   /*!
     returns the iterator `vici`  of the enclosing constraint
-    for which `*vici` and `*std::next(vici)`
+    for which `*vici` and `*%std::next(vici)`
     correspond to the two vertices of the subconstraint.
      */
     Vertices_in_constraint_iterator current() const;
