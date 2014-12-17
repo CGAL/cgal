@@ -313,19 +313,8 @@ _side_of_power_sphere(const Cell_handle &c, const Weighted_point &q,
          std::make_pair(q,oq)};
   const Periodic_point *points[5] ={&pts[0],&pts[1],&pts[2],&pts[3],&pts[4]};
 
-  class Compare_xyz
-  {
-    const Periodic_3_Regular_triangulation_3* tr_;
-
-  public:
-    Compare_xyz (const Periodic_3_Regular_triangulation_3* tr) : tr_(tr) {}
-    bool operator() (const Periodic_point* l, const Periodic_point* r) const
-    {
-      return tr_->geom_traits().compare_xyz_3_object()(l->first, r->first, l->second, r->second)
-          == SMALLER;
-    }
-  };
-  std::sort(points, points+5, Compare_xyz(this));
+  std::sort(points, points+5,
+      typename Base::template Perturbation_order< typename Gt::Compare_xyz_3 >(geom_traits().compare_xyz_3_object()));
 
   // We successively look whether the leading monomial, then 2nd monomial
   // of the determinant has non null coefficient.
