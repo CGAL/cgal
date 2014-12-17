@@ -38,11 +38,11 @@ class Identity_transformation {};
 
 #ifndef CGAL_HEADER_ONLY
 
-CGAL_EXPORT extern Translation              TRANSLATION;
-CGAL_EXPORT extern Rotation                 ROTATION;
-CGAL_EXPORT extern Scaling                  SCALING;
-CGAL_EXPORT extern Reflection               REFLECTION;
-CGAL_EXPORT extern Identity_transformation  IDENTITY;
+CGAL_EXPORT extern const Translation              TRANSLATION;
+CGAL_EXPORT extern const Rotation                 ROTATION;
+CGAL_EXPORT extern const Scaling                  SCALING;
+CGAL_EXPORT extern const Reflection               REFLECTION;
+CGAL_EXPORT extern const Identity_transformation  IDENTITY;
 
 #endif
 
