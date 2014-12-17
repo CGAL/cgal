@@ -143,6 +143,9 @@ int main(int argc, char * argv[])
     //***************************************
     // Test
     //***************************************
+#ifdef CGAL_LINKED_WITH_TBB
+    std::vector<Point> points2(points);
+#endif
     std::vector<Point> output;
     test_wlop_simplify_and_regularize<CGAL::Sequential_tag>(
       points, output, retain_percentage, neighbor_radius, 
@@ -151,7 +154,7 @@ int main(int argc, char * argv[])
 #ifdef CGAL_LINKED_WITH_TBB
     output.clear();
     test_wlop_simplify_and_regularize<CGAL::Parallel_tag>(
-      points, output, retain_percentage, neighbor_radius, 
+      points2, output, retain_percentage, neighbor_radius, 
       iter_number, need_compute_density);
 #endif // CGAL_LINKED_WITH_TBB
 
