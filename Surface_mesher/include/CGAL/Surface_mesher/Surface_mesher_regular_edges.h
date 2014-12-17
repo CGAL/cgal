@@ -83,9 +83,15 @@ namespace CGAL {
     	Vertex_handle sommet1 = arete.first;
     	Vertex_handle sommet2 = arete.second;
     	Cell_handle c;
-	int index1, index2;
+	int index1 = -1, index2 = -1;
+	// Initialize the variables `index1` and `index2` to quiet a
+	// warning. Anyway, the function `tr.is_edge()` that is called
+	// after is really slow, so the initialization will be completely
+	// negligible in running time.
 
+	CGAL_assume_code(bool is_edge = )
 	SMB::tr.is_edge(sommet1, sommet2, c, index1, index2);
+	CGAL_assume(is_edge);
 
     	return make_triple( c, index1, index2 );
       }
