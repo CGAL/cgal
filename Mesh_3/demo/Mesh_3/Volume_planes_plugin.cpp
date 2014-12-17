@@ -128,7 +128,7 @@ signals:
   void realChange(int);
 
 private:
-  const static unsigned int scale;
+  static const unsigned int scale;
 
   qglviewer::Vec v;
   int id;

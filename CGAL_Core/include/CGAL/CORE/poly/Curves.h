@@ -390,7 +390,7 @@ class Curve : public BiPoly<NT> {
 public:
   // Colors for plotting curves
 
-  const static int NumColors=7;
+  static const int NumColors=7;
   static double red_comp(int i){
   	static double RED_COMP[] = {0.9, 0.8, 0.7, 0.6, 0.8, 0.8, 0.7};
 	return RED_COMP[i % NumColors];
