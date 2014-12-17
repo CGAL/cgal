@@ -48,7 +48,7 @@ if ( CGAL_FOUND )
   # Activate concurrency?
   option(ACTIVATE_CONCURRENT_PSP3
          "Enable concurrency"
-         ON)
+         OFF)
      
   if( ACTIVATE_CONCURRENT_PSP3 OR ENV{ACTIVATE_CONCURRENT_PSP3} )
     find_package( TBB REQUIRED )
