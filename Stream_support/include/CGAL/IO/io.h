@@ -28,6 +28,7 @@
 
 
 #include <cstdio>
+#include <cctype>
 #include <string>
 #include <iostream>
 #include <CGAL/tags.h>
@@ -90,6 +91,63 @@ public:
     //! perform the input, calls \c operator\>\> by default.
     std::istream& operator()( std::istream& in) const { return (in >> t); }
 };
+
+
+#if CGAL_FORCE_IFORMAT_DOUBLE || \
+  ( ( _MSC_VER > 1600 ) && (! defined( CGAL_NO_IFORMAT_DOUBLE )) )
+template <>
+class Input_rep<double> {
+    double& t;
+public:
+  //! initialize with a reference to \a t.
+  Input_rep( double& tt) : t(tt) {}
+
+  std::istream& operator()( std::istream& is) const 
+  {
+    typedef std::istream istream;
+    typedef istream::char_type char_type;
+    typedef istream::int_type int_type;
+    typedef istream::traits_type traits_type;
+
+    std::string buffer;
+    buffer.reserve(32);
+
+    char_type c;
+    do {
+      const int_type i = is.get();
+      if(i == traits_type::eof()) {
+	return is;
+      }
+      c = static_cast<char_type>(i);
+    }while (std::isspace(c));
+    if(c == '-'){
+      buffer += '-';
+    } else if(c != '+'){
+      is.unget();
+    }
+    do {
+      const int_type i = is.get();
+      if(i == traits_type::eof()) {
+	is.clear(is.rdstate() & ~std::ios_base::failbit);
+	break;
+      }
+      c = static_cast<char_type>(i);
+      if(std::isdigit(c) || (c =='.') || (c =='E') || (c =='e') || (c =='-')){
+        buffer += c;
+      }else{
+	is.unget();
+	break;
+      }
+    }while(true);
+
+    if(sscanf(buffer.c_str(), "%lf", &t) != 1) {
+      // if a 'buffer' does not contain a double, set the fail bit.
+      is.setstate(std::ios_base::failbit);
+    }
+    return is; 
+  }
+};
+#endif
 
 /*! \relates Input_rep
     \brief stream input to the \c Input_rep calls its \c operator().
@@ -168,17 +226,6 @@ bool
 is_binary(std::ios& i);
 
 
-  inline std::istream& extract(std::istream& is, double &d)
-{
-#if defined( _MSC_VER ) && ( _MSC_VER > 1600 )
-  std::string s;
-  is >> s;
-  sscanf(s.c_str(), "%lf", &d);
-#else
-  is >> d;
-#endif
-  return is;
-}
 
 template < class T >
 inline

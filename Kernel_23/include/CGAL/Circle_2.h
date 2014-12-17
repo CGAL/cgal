@@ -273,7 +273,7 @@ extract(std::istream& is, Circle_2<R>& c)
     int o;
     switch(is.iword(IO::mode)) {
     case IO::ASCII :
-        is >> center >> squared_radius >> o;
+        is >> center >> iformat(squared_radius) >> o;
         break;
     case IO::BINARY :
         is >> center;

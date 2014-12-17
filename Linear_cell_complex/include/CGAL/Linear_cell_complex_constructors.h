@@ -79,7 +79,7 @@ namespace CGAL {
         return alcc.null_handle;
       }
 
-      ais >> x >> y;
+      ais >> iformat(x) >> iformat(y);
       initVertices.push_back(alcc.create_vertex_attribute
                              (typename LCC::Point(x, y)));
       testVertices.push_back(std::list<Dart_handle>());

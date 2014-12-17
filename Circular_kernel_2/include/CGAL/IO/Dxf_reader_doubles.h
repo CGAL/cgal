@@ -129,13 +129,13 @@ private:
 
   is >> n;
   CGAL_assertion(n == 10);
-  is >> cx;
+  is >> iformat(cx);
   is >> n;
   CGAL_assertion(n == 20);
-  is >> cy;
+  is >> iformat(cy);
   is >> n;
   CGAL_assertion(n == 40);
-  is >> r;
+  is >> iformat(r);
   FT rft(r);
 
   circ = CGAL::make_array(cx,cy,rft);
@@ -166,10 +166,10 @@ read_polygon(std::istream& is, Polygon& poly)
       CGAL_assertion(n == 0);
       is >> n;
       CGAL_assertion(n == 10);
-      is >> x;
+      is >> iformat(x);
       is >> n;
       CGAL_assertion(n == 20);
-      is >> y;
+      is >> iformat(y);
       is >> n;
       len = 0;
       if(n == 42){
@@ -194,7 +194,6 @@ void
 read_entities(std::istream& is, Polygons& polys, Circles& circles)
 {
   int n;
-  //double x, y;
   std::string str;
   is >> n;
   CGAL_assertion(n == 0);

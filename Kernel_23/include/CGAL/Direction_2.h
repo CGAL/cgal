@@ -231,7 +231,7 @@ extract(std::istream& is, Direction_2<R>& d, const Cartesian_tag&)
     typename R::FT x, y;
     switch(is.iword(IO::mode)) {
     case IO::ASCII :
-        is >> x >> y;
+        is >> iformat(x) >> iformat(y);
         break;
     case IO::BINARY :
         read(is, x);
@@ -255,7 +255,7 @@ extract(std::istream& is, Direction_2<R>& d, const Homogeneous_tag&)
   switch(is.iword(IO::mode))
   {
     case IO::ASCII :
-        is >> x >> y;
+        is >> iformat(x) >> iformat(y);
         break;
     case IO::BINARY :
         read(is, x);

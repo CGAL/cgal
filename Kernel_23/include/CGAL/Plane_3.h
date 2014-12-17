@@ -258,7 +258,7 @@ operator>>(std::istream &is, Plane_3<R> &p)
     typename R::RT a, b, c, d;
     switch(is.iword(IO::mode)) {
     case IO::ASCII :
-        is >> a >> b >> c >> d;
+        is >> iformat(a) >> iformat(b) >> iformat(c) >> iformat(d);
         break;
     case IO::BINARY :
         read(is, a);

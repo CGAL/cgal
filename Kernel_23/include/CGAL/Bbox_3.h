@@ -217,7 +217,8 @@ operator>>(std::istream &is, Bbox_3& b)
   switch(is.iword(IO::mode))
   {
     case IO::ASCII :
-      is >> xmin >> ymin >> zmin >> xmax >> ymax >> zmax;
+      is >> iformat(xmin) >> iformat(ymin) >> iformat(zmin)
+         >> iformat(xmax) >> iformat(ymax) >> iformat(zmax);
         break;
     case IO::BINARY :
         read(is, xmin);

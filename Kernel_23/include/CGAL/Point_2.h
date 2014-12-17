@@ -216,7 +216,7 @@ extract(std::istream& is, Point_2<R>& p, const Cartesian_tag&)
     typename R::FT x, y;
     switch(is.iword(IO::mode)) {
     case IO::ASCII :
-        is >> x >> y;
+        is >> iformat(x) >> iformat(y);
         break;
     case IO::BINARY :
         read(is, x);
